@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T13:16:57.973Z",
+  "generatedAt": "2026-07-18T13:15:49.561Z",
   "datasetVersion": "v2",
   "curatedOnly": true,
   "preliminaryOriginLabels": false,
@@ -14,6 +14,17 @@
     "unlabeledCount": 0
   },
   "sampleCount": 120,
+  "config": {
+    "mode": "live",
+    "source": "data/detectors-benchmark/v0.2/calibration-preset.json",
+    "presetGeneratedAt": "2026-06-15T12:30:00.126Z",
+    "detectorsCalibrated": [
+      "cepstral",
+      "harmonic",
+      "spectral-flux"
+    ]
+  },
+  "splitFallback": true,
   "manifestPath": "data/detectors-benchmark/v0.2/manifest.json",
   "detectors": [
     {
@@ -28,8 +39,43 @@
         "precision": 0.43617021276595747,
         "recall": 0.6833333333333333,
         "f1": 0.5324675324675325,
-        "latencyP50Ms": 0.1535999999998694,
-        "latencyP95Ms": 0.30720000000019354
+        "pd": 0.6833333333333333,
+        "pfa": 0.8833333333333333,
+        "pdCI": {
+          "low": 0.5576599505698345,
+          "high": 0.7869429415882567
+        },
+        "pfaCI": {
+          "low": 0.7782097940014187,
+          "high": 0.9423235259654995
+        },
+        "rocAuc": 0.3013888888888889,
+        "prAuc": 0.40234649471483575,
+        "positiveShare": 0.5,
+        "precisionByPrior": [
+          {
+            "ratio": "1:1",
+            "prior": 0.5,
+            "precision": 0.43617021276595747
+          },
+          {
+            "ratio": "1:10",
+            "prior": 0.09090909090909091,
+            "precision": 0.07180385288966726
+          },
+          {
+            "ratio": "1:100",
+            "prior": 0.009900990099009901,
+            "precision": 0.007676465081445423
+          },
+          {
+            "ratio": "1:1000",
+            "prior": 0.000999000999000999,
+            "precision": 0.0007729869346354706
+          }
+        ],
+        "latencyP50Ms": 0.1929999999993015,
+        "latencyP95Ms": 0.6953999999996086
       },
       "perSample": [
         {
@@ -766,8 +812,43 @@
         "precision": 0.5,
         "recall": 1,
         "f1": 0.6666666666666666,
-        "latencyP50Ms": 0.26709999999911815,
-        "latencyP95Ms": 0.5104000000001179
+        "pd": 1,
+        "pfa": 1,
+        "pdCI": {
+          "low": 0.9398260695220669,
+          "high": 0.9999999999999999
+        },
+        "pfaCI": {
+          "low": 0.9398260695220669,
+          "high": 0.9999999999999999
+        },
+        "rocAuc": 0.4840277777777778,
+        "prAuc": 0.4917380862670718,
+        "positiveShare": 0.5,
+        "precisionByPrior": [
+          {
+            "ratio": "1:1",
+            "prior": 0.5,
+            "precision": 0.5
+          },
+          {
+            "ratio": "1:10",
+            "prior": 0.09090909090909091,
+            "precision": 0.09090909090909091
+          },
+          {
+            "ratio": "1:100",
+            "prior": 0.009900990099009901,
+            "precision": 0.009900990099009901
+          },
+          {
+            "ratio": "1:1000",
+            "prior": 0.000999000999000999,
+            "precision": 0.000999000999000999
+          }
+        ],
+        "latencyP50Ms": 0.5105000000003201,
+        "latencyP95Ms": 1.8911000000007334
       },
       "perSample": [
         {
@@ -1497,15 +1578,50 @@
       "family": "dsp",
       "status": "benchmarked",
       "metrics": {
-        "tp": 52,
-        "fp": 60,
-        "fn": 8,
-        "tn": 0,
-        "precision": 0.4642857142857143,
-        "recall": 0.8666666666666667,
-        "f1": 0.6046511627906976,
-        "latencyP50Ms": 0.08799999999973807,
-        "latencyP95Ms": 0.16270000000076834
+        "tp": 43,
+        "fp": 47,
+        "fn": 17,
+        "tn": 13,
+        "precision": 0.4777777777777778,
+        "recall": 0.7166666666666667,
+        "f1": 0.5733333333333334,
+        "pd": 0.7166666666666667,
+        "pfa": 0.7833333333333333,
+        "pdCI": {
+          "low": 0.5923247495026482,
+          "high": 0.8149332139569141
+        },
+        "pfaCI": {
+          "low": 0.6637973165265748,
+          "high": 0.8687707895359299
+        },
+        "rocAuc": 0.1988888888888889,
+        "prAuc": 0.3484371210279636,
+        "positiveShare": 0.5,
+        "precisionByPrior": [
+          {
+            "ratio": "1:1",
+            "prior": 0.5,
+            "precision": 0.4777777777777778
+          },
+          {
+            "ratio": "1:10",
+            "prior": 0.09090909090909091,
+            "precision": 0.0838206627680312
+          },
+          {
+            "ratio": "1:100",
+            "prior": 0.009900990099009901,
+            "precision": 0.009065991988193129
+          },
+          {
+            "ratio": "1:1000",
+            "prior": 0.000999000999000999,
+            "precision": 0.0009140573517845375
+          }
+        ],
+        "latencyP50Ms": 0.20049999999901047,
+        "latencyP95Ms": 0.6024000000033993
       },
       "perSample": [
         {
@@ -1577,7 +1693,7 @@
         {
           "id": "drone-dad-0041",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9883366118603545
         },
         {
@@ -1631,7 +1747,7 @@
         {
           "id": "drone-dad-0050",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9887326104919518
         },
         {
@@ -1709,7 +1825,7 @@
         {
           "id": "drone-mj-dji-avata",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9945798111649591
         },
         {
@@ -1721,7 +1837,7 @@
         {
           "id": "drone-mj-dji-matrice-600p",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9940958754794396
         },
         {
@@ -1763,7 +1879,7 @@
         {
           "id": "drone-mj-dji-neo",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9790287948069747
         },
         {
@@ -1787,7 +1903,7 @@
         {
           "id": "drone-mj-dji-tello-tt",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.988737853978044
         },
         {
@@ -1799,7 +1915,7 @@
         {
           "id": "drone-mj-holystone-hs210",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9974696404685703
         },
         {
@@ -1823,7 +1939,7 @@
         {
           "id": "drone-mj-syma-x20",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9984755571223669
         },
         {
@@ -1859,7 +1975,7 @@
         {
           "id": "drone-mj-udi-u46",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9949634663197273
         },
         {
@@ -1871,7 +1987,7 @@
         {
           "id": "not-bird-chirping-birds-01",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9977911904191018
         },
         {
@@ -1883,13 +1999,13 @@
         {
           "id": "not-bird-chirping-birds-03",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9927425896579011
         },
         {
           "id": "not-bird-chirping-birds-04",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9956699532919575
         },
         {
@@ -1937,7 +2053,7 @@
         {
           "id": "not-bird-insects-02",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.999566238136222
         },
         {
@@ -1949,25 +2065,25 @@
         {
           "id": "not-human-speech-coughing-01",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9997529246655031
         },
         {
           "id": "not-human-speech-coughing-02",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9998286192969419
         },
         {
           "id": "not-human-speech-coughing-03",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9996421639045365
         },
         {
           "id": "not-human-speech-laughing-01",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9994716859676263
         },
         {
@@ -1991,13 +2107,13 @@
         {
           "id": "not-human-speech-sneezing-01",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9999985158877767
         },
         {
           "id": "not-human-speech-sneezing-02",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9999977446297509
         },
         {
@@ -2027,13 +2143,13 @@
         {
           "id": "not-traffic-car-horn-01",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9973028072044826
         },
         {
           "id": "not-traffic-car-horn-02",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.999883660713547
         },
         {
@@ -2135,7 +2251,7 @@
         {
           "id": "not-wind-rain-03",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9928903860934779
         },
         {
@@ -2242,8 +2358,43 @@
         "precision": 0.675,
         "recall": 0.9,
         "f1": 0.7714285714285714,
-        "latencyP50Ms": 1.5342000000018743,
-        "latencyP95Ms": 2.5204000000012456
+        "pd": 0.9,
+        "pfa": 0.43333333333333335,
+        "pdCI": {
+          "low": 0.7985030550748896,
+          "high": 0.9533578005427642
+        },
+        "pfaCI": {
+          "low": 0.31572200394400635,
+          "high": 0.5589678534530513
+        },
+        "rocAuc": 0.44875,
+        "prAuc": 0.5196062850333883,
+        "positiveShare": 0.5,
+        "precisionByPrior": [
+          {
+            "ratio": "1:1",
+            "prior": 0.5,
+            "precision": 0.6749999999999999
+          },
+          {
+            "ratio": "1:10",
+            "prior": 0.09090909090909091,
+            "precision": 0.17197452229299365
+          },
+          {
+            "ratio": "1:100",
+            "prior": 0.009900990099009901,
+            "precision": 0.020346646571213264
+          },
+          {
+            "ratio": "1:1000",
+            "prior": 0.000999000999000999,
+            "precision": 0.002072618407922008
+          }
+        ],
+        "latencyP50Ms": 4.017199999994773,
+        "latencyP95Ms": 11.742500000000291
       },
       "perSample": [
         {
@@ -2980,8 +3131,43 @@
         "precision": 0.7142857142857143,
         "recall": 0.9166666666666666,
         "f1": 0.8029197080291971,
-        "latencyP50Ms": 97.08260000000155,
-        "latencyP95Ms": 131.95969999999943
+        "pd": 0.9166666666666666,
+        "pfa": 0.36666666666666664,
+        "pdCI": {
+          "low": 0.8193083153188752,
+          "high": 0.9638800759495141
+        },
+        "pfaCI": {
+          "low": 0.2562073884620827,
+          "high": 0.4931723263320327
+        },
+        "rocAuc": 0.7991666666666667,
+        "prAuc": 0.7337666439116515,
+        "positiveShare": 0.5,
+        "precisionByPrior": [
+          {
+            "ratio": "1:1",
+            "prior": 0.5,
+            "precision": 0.7142857142857143
+          },
+          {
+            "ratio": "1:10",
+            "prior": 0.09090909090909091,
+            "precision": 0.2
+          },
+          {
+            "ratio": "1:100",
+            "prior": 0.009900990099009901,
+            "precision": 0.02439024390243903
+          },
+          {
+            "ratio": "1:1000",
+            "prior": 0.000999000999000999,
+            "precision": 0.002493765586034913
+          }
+        ],
+        "latencyP50Ms": 276.79120000000694,
+        "latencyP95Ms": 365.96199999999953
       },
       "perSample": [
         {

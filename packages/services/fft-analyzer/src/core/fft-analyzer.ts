@@ -119,7 +119,7 @@ export class FftAnalyzer {
       rms: rmsValue,
       isDetected,
       spectrum: adv.enabled && adv.calculateSpectrum ? filtered : undefined,
-      lowEnergyPercent: adv.enabled ? lowEnergyPercent(filtered) : undefined,
+      lowEnergyPercent: adv.enabled ? lowEnergyPercent(filtered, sampleRate) : undefined,
       stability: adv.enabled ? stabilityFromFlux(fluxValue) : undefined,
     };
   }

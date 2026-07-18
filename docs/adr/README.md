@@ -41,6 +41,7 @@
 | [ADR-0003](./ADR-0003-drift-anchor-record-in-core.md) | 2026-07-13 | ACCEPTED | Контракт `DriftAnchorRecord` живёт в `@membrana/core`, а не в `@membrana/drift-anchor` |
 | [ADR-0002](./ADR-0002-pure-eligible-getmicrophone-getaudiostream.md) | 2026-07-12 | ACCEPTED | pure-toggle для `get-microphone` / `get-audio-stream` (default IMPURE) |
 | [loop-switch-control](../actions/device-board/LOOP_SWITCH_CONTROL_ADR.md) | 2026-07-11 | DRAFT | Переключение лупов main↔alarm: тумблер/захват/узлы (пример формата; исторически вне `docs/adr/`) |
+| [0006-benchmark-runs-calibrated-preset](./0006-benchmark-runs-calibrated-preset.md) | 2026-07-18 | ACCEPTED | Прогон бенчмарка исполняет калиброванный пресет; владелец истины — JSON калибратора, TS генерируется из него |
 
 > **История нумерации.** ADR 0002–0005 лежали под именами `NNNN-<slug>.md`, а канон процесса
 > (шаг 1 выше) требует `ADR-NNNN-<slug>.md` — приведено к канону 2026-07-15 (#504). Тогда же
