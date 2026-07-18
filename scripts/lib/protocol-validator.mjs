@@ -236,6 +236,7 @@ export function meetingVerdictProblems(protocolMd, siblingIds = []) {
   return problems;
 }
 
+
 /** Таблица «Роль | … | /10» инсайт-ревью → {scores[], average, declared}. */
 export function parseVotingTable(md) {
   const scores = [];
