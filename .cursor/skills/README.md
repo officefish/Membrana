@@ -22,7 +22,7 @@ Project-scoped skills for Cursor Agent and Claude Code (mirror in `.claude/skill
 | [`membrana-competition-packaging`](./membrana-competition-packaging/SKILL.md) | `comp:publish-catalog`, post-sprint picker, operator debug |
 | [`membrana-insight`](./membrana-insight/SKILL.md) | `yarn insight:*`, strategic ideas, Perplexity cascade, weekly weight |
 | [`membrana-insight-to-sprint`](./membrana-insight-to-sprint/SKILL.md) | adopted инсайт → спринт: task-промпт, реестр `insightId`, точка входа новой сессии |
-| [`membrana-insight-overview`](./membrana-insight-overview/SKILL.md) | «обзор инсайтов», «какой следующий», фаворит по детерминированным критериям (read-only) |
+| [`membrana-insight-overview`](./membrana-insight-overview/SKILL.md) | полный тезисный обзор всех инсайтов, личный top-3 агента + объективный кандидат (read-only; mirrored to Claude/Codex) |
 | [`membrana-client-logs-parsing`](./membrana-client-logs-parsing/SKILL.md) | «читай лог», `yarn logs:parse`, gate-true / reports vs tracks |
 | [`membrana-background-servers`](./membrana-background-servers/SKILL.md) | background-office vs media vs cabinet |
 | [`membrana-office-vds-deploy`](./membrana-office-vds-deploy/SKILL.md) | деплой office на MSK-VDS office.mmbrn.tech, фильтр сети / SSH виснет / LE timeout / build 429 / rag-контекст, OM3 |

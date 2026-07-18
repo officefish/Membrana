@@ -1,7 +1,7 @@
 {
   "id": "insight-comms-contour-topology",
   "title": "Контур внешних коммуникаций: изоляция по записи, не по чтению (Вариант A)",
-  "status": "adopted",
+  "status": "archived",
   "source": "user",
   "horizon": "week",
   "weight": 8.6,
@@ -10,5 +10,20 @@
   "reviewedAt": null,
   "closedAt": "2026-07-05",
   "sprintPhase": "comms-contour-environment",
-  "tags": ["comms", "topology", "monorepo", "boundaries", "isolation", "single-source-of-truth", "architecture"]
+  "tags": [
+    "comms",
+    "topology",
+    "monorepo",
+    "boundaries",
+    "isolation",
+    "single-source-of-truth",
+    "architecture"
+  ],
+  "previousStatus": "adopted",
+  "archivedAt": "2026-07-18",
+  "archiveReason": "implemented",
+  "implementationTaskIds": [
+    "comms-contour-environment"
+  ],
+  "archiveResult": "External communications leaf contour CC1-CC9 delivered; PRs 254-264 LGTM"
 }
