@@ -13,7 +13,7 @@
 | Когда | Команды (порядок) | Артефакт |
 |-------|-------------------|----------|
 | **Утро** | `morning-care` → `plan:day` → `standup` → **`main-day-issue`** | читает вчерашний `DAILY_CODE_REVIEW.md`; пишет `STRATEGIC_PLAN_DAY`, `DAILY_STANDUP`, **`MAIN_DAY_ISSUE`** |
-| **Вечер** | **`archive:daily-day`** → **`code-review`** → `task:archive` (по задачам) → `save-code-review` → `task:close-github` | архив плана/стендапа/фокуса, `DAILY_CODE_REVIEW.md` (+ архив), реестр, Issues |
+| **Вечер** | **`archive:daily-day`** → **`code-review`** → **`audit:evening`** → `task:archive` (по задачам) → `save-code-review` → `task:close-github` | архив плана/стендапа/фокуса, `DAILY_CODE_REVIEW.md` (+ архив), `DAILY_AUDIT.md` (+ снимок), реестр, Issues |
 | **Night Build** (опционально) | **`night:open`** → агент NB0…NBn → **`night:checkpoint`** → **`night:close`** → утро merge | `NIGHT_BUILD_ACTIVE.md`, `NIGHT_BUILD_LOG.md`, handoff в `docs/archive/night-build/` |
 | **Понедельник / неделя** | `analyzers:research:week` → `plan:week` | `WEEKLY_ANALYZERS_RESEARCH.md`, `STRATEGIC_PLAN_WEEK.md` |
 | **По необходимости** | `consilium`, `ask`, `task:list`, CI, **`mcp:verify-bootstrap`** | `docs/seanses/*`, `docs/discussions/*`, MCP docs |
@@ -123,6 +123,14 @@ yarn archive:daily-day --force
 yarn code-review
 yarn code-review:full
 # PR перед merge: yarn code-review:pr -- 140
+
+# 1b. Хроника дня (→ docs/DAILY_AUDIT.md + снимок docs/archive/daily-day/<date>/audit.md)
+#     Канон: ADR-0013. Детерминированно, без сети и LLM: репозиторий + реестр + граф правды
+#     и разрез строк по пяти областям. Оценок не выносит — выводы делает человек.
+#     Входит в yarn ritual:evening жёстким шагом: exit != 0 = отчёт не собрался.
+yarn audit:evening
+yarn audit:evening:stdout        # посмотреть, не записывая
+yarn audit:evening -- --date 2026-07-17
 
 # 2. Архив task-промптов, принятых за день (можно было и днём)
 yarn task:archive <id> --notes "кратко: что сделано, PR, Issue"
