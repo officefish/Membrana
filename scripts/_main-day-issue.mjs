@@ -51,7 +51,9 @@ const INPUT_DOCS = [
     required: false,
     label: 'FFT/trends: потолок эшелона 0 и приоритеты (эпик #84)',
   },
-  { rel: 'docs/STRATEGIC_PLAN_DAY.md', required: false, label: 'План на день' },
+  { rel: 'docs/STRATEGY_DAY.md', required: false, label: 'Горизонт дня (генератор #592 — веха, не список задач)' },
+  { rel: 'docs/STRATEGIC_PLAN_DAY.md', required: false, label: 'План на день (устар. генератор — вещдок, пока не удалён)' },
+  { rel: 'docs/truth/registry.json', required: false, label: 'Граф правды — кристаллы-посылки дня (S7: генератор читает граф, был grep=0)' },
   {
     rel: 'docs/DAILY_CODE_REVIEW.md',
     required: false,
