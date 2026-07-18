@@ -85,7 +85,10 @@ try {
     if (result.mode !== 'perplexity-api') {
       console.log('Дополни выжимку через MCP Perplexity или вручную, затем yarn insight review');
     }
-    process.exit(0);
+    // NB5: НЕ process.exit(0) после сети — гонка с закрытием сокета роняет libuv на
+    // Windows (UV_HANDLE_CLOSING). Паттерн репо (см. consilium.mjs): exitCode + дать
+    // циклу стечь. dispatcher уже закрыт в anthropicPost/runInsightResearch.
+    process.exitCode = 0;
   }
 
   if (cli.command === 'review') {
@@ -172,7 +175,9 @@ try {
     }
     writeRegistry(repoRoot, registry);
     console.log(`REVIEW.md записан: ${join(dir, 'REVIEW.md')}`);
-    process.exit(0);
+    // NB5: exitCode вместо process.exit(0) — не ронять libuv гонкой с закрытием
+    // сокета после anthropicPost (UV_HANDLE_CLOSING на Windows). См. коммент research.
+    process.exitCode = 0;
   }
 
   if (cli.command === 'close') {
@@ -210,9 +215,15 @@ try {
     process.exit(0);
   }
 
-  console.error(`Unknown command: ${cli.command}`);
-  printInsightHelp();
-  process.exit(1);
+  // NB5: гвард fall-through — research/review теперь ставят exitCode и НЕ выходят
+  // через process.exit, поэтому «Unknown command» должен срабатывать только для
+  // действительно неизвестной команды, а не после обработанной сетевой.
+  const KNOWN_COMMANDS = new Set(['help', 'create', 'list', 'research', 'review', 'close']);
+  if (!KNOWN_COMMANDS.has(cli.command)) {
+    console.error(`Unknown command: ${cli.command}`);
+    printInsightHelp();
+    process.exit(1);
+  }
 } catch (error) {
   console.error(error instanceof Error ? error.message : String(error));
   process.exit(1);

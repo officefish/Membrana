@@ -18,6 +18,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { loadDotEnv } from './_anthropic-env.mjs';
+import { resolveOfficeToken } from './lib/office-token.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
@@ -50,10 +51,14 @@ if (isMain) {
   }
 
   loadDotEnv();
-  const token = process.env.OFFICE_API_TOKEN?.trim() || process.env.API_INTERNAL_TOKEN?.trim();
+  const { token, source } = resolveOfficeToken(process.env);
   if (!token) {
-    console.error('Нет OFFICE_API_TOKEN/API_INTERNAL_TOKEN в .env/окружении.');
+    console.error('Нет OFFICE_API_TOKEN ни в .env, ни в .env соседних worktree репозитория.');
     process.exit(1);
+  }
+  if (source && !source.startsWith('env:OFFICE')) {
+    // Прозрачность: токен подхвачен не из локального OFFICE_API_TOKEN.
+    console.error(`[telegram-swallow] OFFICE_API_TOKEN взят из ${source}`);
   }
   const base = (process.env.OFFICE_BASE_URL?.trim() || 'https://office.mmbrn.tech').replace(/\/+$/, '');
 
@@ -69,7 +74,19 @@ if (isMain) {
       process.exit(1);
     }
     const body = await res.json().catch(() => ({}));
-    console.log(`[telegram-swallow] принято office: sent=${body.sent === true}`);
+    // NB6: доказательство доставки. office сегодня возвращает только {ok,sent} —
+    // 17.07 это дало ложную тревогу «ласточка Денису не пришла» (пришла в 19:47),
+    // потому что sent=true не несёт следа. Печатаем message_id/chat, ЕСЛИ office их
+    // вернёт (forward-compat), иначе явно называем ограничение — чтобы «sent=true»
+    // не читался как гарантия. Серверная часть (вернуть message_id) — NB6-follow-up.
+    const proof = body.messageId ?? body.message_id ?? body.result?.message_id ?? null;
+    if (body.sent === true && proof != null) {
+      console.log(`[telegram-swallow] доставлено: message_id=${proof}${body.chat ? ` chat=${body.chat}` : ''}`);
+    } else if (body.sent === true) {
+      console.log('[telegram-swallow] office: sent=true (без message_id — подтверждается только флагом, не следом; NB6-follow-up)');
+    } else {
+      console.error('[telegram-swallow] office: sent=false — Telegram не сконфигурирован/недоступен на VDS');
+    }
     if (body.sent !== true) process.exit(1);
   } catch (err) {
     console.error(`office недоступен: ${err?.message ?? err}`);

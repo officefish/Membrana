@@ -71,8 +71,14 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | `node scripts/_ssh-panel-smoke.mjs` | **Без `--read-only` пишет в ПРОД-стор** |
 | `yarn pr:ship`, `yarn repo:clean`, `yarn tasks:archive-closed` | По умолчанию **dry-run**; нужен `--execute` |
 | Мёрж `git merge origin/main` | **Без `-m`** — хук освобождает `Merge*`. Своё `-m "merge: …"` строчными хук отклонит (TF-1: находка «хук ломает merge» была **ложной**) |
-| Worktree занял ветку | `git checkout main` упадёт. Смотреть `yarn neighbors`, не писать grep — самописный **соврал** 16.07 |
+| Worktree занял ветку | `git checkout main` упадёт. Смотреть `yarn neighbors`, не писать grep — самописный **соврал** 16.07. Ночью ветку брать **от `origin/main`**, не от локального main |
 | Новый `scripts/_ssh-*.mjs` | Под gitignore — только `git add -f`, иначе молча не войдёт в коммит (#476 п.7) |
+| `rt-6` «ПОВЕСТКА НЕ ПОКРЫТА» | **Грепает МЕТКУ, не вердикт** (#558). Читать как «ID не проставлены», не «вопросы уронены». С NB3 (17.07) сообщение честное + смотрит наличие секции вердикта |
+| Футер консилиума «Реплик: N» | Число пишет **модель, врёт** (M0 17.07: 21≠20). С NB2 сверяется автоматически (`reconcileReplyCount`) |
+| `OFFICE_API_TOKEN` в параллельном worktree | Openrouter-`.env` несёт плейсхолдер `API_INTERNAL_TOKEN` → office 401. С NB4 (17.07) `resolveOfficeToken` берёт токен из `.env` любого worktree репо автоматически |
+| Ласточка `sent=true` | **Не гарантия доставки** — office не возвращал message_id (17.07 ложная тревога «не пришла»). С NB6 клиент называет ограничение явно; серверный след — follow-up |
+| MD060 в диагностиках | Шум IDE-расширения на компактных таблицах — заглушён `.markdownlint.json` (NB1). MD056 оставлен: он ловит реальный разрыв таблицы |
+| `process.exit(0)` после LLM-fetch | Роняет libuv на Windows (`UV_HANDLE_CLOSING`) гонкой с закрытием сокета. Паттерн: `process.exitCode` + дать циклу стечь (`consilium.mjs`, NB5 insight) |
 
 **Общий «работа за сегодня»** — `scripts/lib/git-day-context.mjs` (без `--author`-фильтра).
 
