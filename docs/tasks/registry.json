@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "dads-benchmark-bridge",
+      "title": "Мост DADS в бенчмарк: пресет в прогоне, дедуп обеих сторон, метрики без приора",
+      "promptPath": "docs/prompts/DADS_BENCHMARK_BRIDGE_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-18",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "kuryokhin"
+      ],
+      "insightId": "insight-dads-detector-integration",
+      "notes": "Спринт по итогам заседания dads-integration (5 прогонов консилиума, 4 отклонены аудитом; заседание распущено — узлы оказались проверяемыми, знание дали код и счёт) и ADR-0006 (ACCEPTED: прогон исполняет калиброванный пресет, владелец истины JSON, TS генерируется из него). Установлено расследованием: утечка ДВУСТОРОННЯЯ (91 из 120 наших сэмплов делят провенанс с DADS — 60 ESC-50 в no-drone и 31 saraalemadi/DroneAudioDataset в drone); прецедент дедупа готов (independence-блок vdr-hard-gate-pilot); 48 kHz жёстко привязан только у spectral-flux и template-match, yamnet нативно 16 kHz; базовая линия воспроизведена живым прогоном, но канон себе противоречит (автоген 67.5/90.0 против заметки 85.5/88.3). Приор снят как ложная развилка: precision предъявляется КРИВОЙ по приору, не точкой. ЗАПРЕТЫ: канон гейта 85/90 не трогать (отдельный ADR, решение владельца); борд вне scope (поправка владельца — только плагин модуля микрофон); развилку B (переезд на DADS основным) не открывать; при поехавших метриках рекалибровку НЕ делать — остановиться и прийти к владельцу; в main не мержить без слова владельца.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "agent-tooling-friction-2",
       "title": "agent-tooling-friction-2: 7 инструментов против трения агентских сессий (ti-6 mojibake-гард, ti-5 memory-хвост, ti-7 credit-ошибка, ti-4 neighbors, ti-3 task:register, ti-2 secretary-file, ti-1 task:review:ship)",
       "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_2_PROMPT.md",

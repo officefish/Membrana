@@ -9,7 +9,7 @@
 | **Research** | 2026-07-17 — [`RESEARCH.md`](./RESEARCH.md) |
 | **Review** | 2026-07-17 — [`REVIEW.md`](./REVIEW.md), 5 ролей, средний 7.4 |
 | **Закрыт** | 2026-07-17 (`yarn insight close --status adopted`) |
-| **Спринт** | не заведён — открытая развилка D2 идёт в M1-заседание |
+| **Спринт** | [`dads-benchmark-bridge`](../../prompts/DADS_BENCHMARK_BRIDGE_PROMPT.md) (18.07) — через заседание `dads-integration` и [`ADR-0006`](../../adr/0006-benchmark-runs-calibrated-preset.md) |
 
 Вход: [`docs/tasks/research/anton-dads-dataset.md`](../../tasks/research/anton-dads-dataset.md)
 (факты датасета и наша карта кода, проверены командами).

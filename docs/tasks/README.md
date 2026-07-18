@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `dads-benchmark-bridge` | Мост DADS в бенчмарк: пресет в прогоне, дедуп обеих сторон, метрики без приора | M | [`DADS_BENCHMARK_BRIDGE_PROMPT.md`](../docs/prompts/DADS_BENCHMARK_BRIDGE_PROMPT.md) | — |
 | `agent-tooling-friction-2` | agent-tooling-friction-2: 7 инструментов против трения агентских сессий (ti-6 mojibake-гард, ti-5 memory-хвост, ti-7 credit-ошибка, ti-4 neighbors, ti-3 task:register, ti-2 secretary-file, ti-1 task:review:ship) | M | [`AGENT_TOOLING_FRICTION_2_PROMPT.md`](../docs/prompts/AGENT_TOOLING_FRICTION_2_PROMPT.md) | [#469](https://github.com/officefish/Membrana/issues/469) |
 | `live-neural-combined-fusion` | yamnet в живом combinedScore: fusion спектр+нейро для FREE | M | [`LIVE_NEURAL_COMBINED_FUSION_PROMPT.md`](../docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md) | [#415](https://github.com/officefish/Membrana/issues/415) |
 | `drift-anchor-contour` | Drift-Anchor контур: детерминированный якорь против агентного дрейфа (DA0-DA4) | M | [`DRIFT_ANCHOR_CONTOUR_PROMPT.md`](../docs/prompts/DRIFT_ANCHOR_CONTOUR_PROMPT.md) | [#396](https://github.com/officefish/Membrana/issues/396) |
@@ -735,4 +736,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-14.*
+*Файл обновлён автоматически: 2026-07-18.*
