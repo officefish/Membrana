@@ -29,6 +29,7 @@
     "tooling:overview": "node scripts/tooling-overview.mjs",
     "morning-care": "node scripts/morning-care.mjs",
     "main-day-probe": "node scripts/main-day-probe.mjs",
+    "morning-ritual:run": "node scripts/morning-ritual-run.mjs",
     "truth": "node scripts/truth.mjs",
     "truth:verify": "node scripts/truth.mjs verify",
     "truth:cool": "node scripts/truth.mjs cool",

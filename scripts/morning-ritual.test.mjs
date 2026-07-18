@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
-import { canAdvance, hasDecision, advanceFrontier, ritualStatus } from './lib/morning-ritual.mjs';
+import { canAdvance, hasDecision, advanceFrontier, ritualStatus, renderStatus, bridgeMessage } from './lib/morning-ritual.mjs';
 
 const STEPS = JSON.parse(readFileSync(new URL('../docs/tasks/morning-ritual-steps.json', import.meta.url))).steps;
 
@@ -86,4 +86,19 @@ test('витрина: disabled НЕ выдаётся за done (молчун-з�
     assert.notEqual(status[i].status, 'done', `${status[i].id} за незакрытым гейтом выдан за done`);
   }
   assert.equal(status[firstGate].status, 'active-gate');
+});
+
+test('renderStatus: активный гейт помечен «ЖДЁТ РЕШЕНИЯ», done ≠ disabled по глифу', () => {
+  const out = renderStatus(STEPS, {});
+  assert.match(out, /ЖДЁТ РЕШЕНИЯ/u, 'застрявший гейт обязан кричать в витрине');
+  assert.match(out, /✓/u); // есть пройденные механические
+  assert.match(out, /ЗАСТЫЛ на гейте/u);
+});
+
+test('bridgeMessage: озвучивает гейт в диалог; пусто когда всё пройдено', () => {
+  assert.match(bridgeMessage(STEPS, {}), /ждёт твоего решения/u);
+  // все гейты решены → мостику нечего говорить
+  const allDecided = { decisions: {} };
+  for (const s of STEPS) if (s.kind === 'gate') allDecided.decisions[s.id] = 'решено';
+  assert.equal(bridgeMessage(STEPS, allDecided), null);
 });

@@ -79,3 +79,41 @@ export function ritualStatus(steps, state) {
     blocksOn: s.blocksOn ?? null,
   }));
 }
+
+const GLYPH = { done: '✓', 'active-gate': '⏸', disabled: '·' };
+
+/**
+ * Текстовая витрина для чата/CLI: лента шагов с состоянием. `disabled` рисуется
+ * приглушённо и НЕ похож на `done` (молчун-защита: за барьером ≠ сделано).
+ * @param {Step[]} steps
+ * @param {State} state
+ * @returns {string}
+ */
+export function renderStatus(steps, state) {
+  const rows = ritualStatus(steps, state);
+  const { blockedAt, blockedReason } = advanceFrontier(steps, state);
+  const lines = rows.map((r) => {
+    const g = GLYPH[r.status] ?? '?';
+    const tail = r.status === 'active-gate' ? `  ← ЖДЁТ РЕШЕНИЯ: ${r.blocksOn}` : '';
+    return `  ${g} ${r.kind === 'gate' ? '⟐' : ' '} ${r.label ?? r.id}${tail}`;
+  });
+  const done = rows.filter((r) => r.status === 'done').length;
+  const header = blockedAt
+    ? `Утренний ритуал: ${done}/${rows.length} пройдено, фон ЗАСТЫЛ на гейте «${blockedAt.label ?? blockedAt.id}»`
+    : `Утренний ритуал: ${done}/${rows.length} — все шаги пройдены`;
+  return [header, '', ...lines].join('\n');
+}
+
+/**
+ * МОСТИК диалог↔фон: строка для живого разговора с владельцем, когда фон упёрся в
+ * гейт. Пусто, если фон не застрял (нечего озвучивать). Это не только UI — вердикт
+ * требует, чтобы барьер звучал в диалоге.
+ * @param {Step[]} steps
+ * @param {State} state
+ * @returns {string|null}
+ */
+export function bridgeMessage(steps, state) {
+  const { blockedAt, blockedReason } = advanceFrontier(steps, state);
+  if (!blockedAt) return null;
+  return `Фон дошёл до «${blockedAt.label ?? blockedAt.id}» и ждёт твоего решения (${blockedReason}). Проверка шага: ${blockedAt.verify ?? '—'}`;
+}
