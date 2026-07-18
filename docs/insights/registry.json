@@ -474,11 +474,11 @@
     {
       "id": "insight-own-field-corpus-single-spec",
       "title": "Собственный полевой корпус: спецификация трека и ежедневная рутина сбора",
-      "status": "researched",
+      "status": "adopted",
       "source": "user",
       "sprintPhase": null,
       "horizon": null,
-      "weight": null,
+      "weight": 7,
       "createdAt": "2026-07-18",
       "tags": []
     }
