@@ -66,8 +66,8 @@ if (argv.includes('--sweep')) {
 }
 
 if (argv.includes('--yield')) {
-  // Развёртка до замера: иначе метрика считает по диску, где просроченное ещё pending.
-  sweepExpired();
+  // Замер НЕ пишет на диск (замечание ревью): nightYield считает через effectiveStatus,
+  // поэтому метрика верна и без развёртки — sweep здесь был бы побочкой чтения.
   const y = nightYield(readArtifacts(), { now });
   const pct = y.yield == null ? 'н/д (нет adopted+void за окно)' : `${(y.yield * 100).toFixed(0)}%`;
   console.log(`nightYield за ${y.window} дней: ${pct} (adopted=${y.adopted}, void=${y.void})`);
