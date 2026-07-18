@@ -31,6 +31,7 @@ import {
   FFT_METRICS_POTENTIAL_AND_LIMITS_REL,
 } from './lib/detection-planning-priorities.mjs';
 import { buildDriftSectionFromDisk } from './lib/drift-digest-section.mjs';
+import { headRevision } from './lib/git-day-context.mjs';
 import { CONSILIUM_ROLE_KEY_TO_SLUG, readPersonaMemory } from './lib/persona-memory.mjs';
 import { loadRegistry } from './lib/task-registry.mjs';
 import {
@@ -572,7 +573,7 @@ export async function runDailyStandup(options) {
 function writeStandupFile({ outputPath, commandName, body, meta }) {
   const stamp = new Date().toISOString();
   const header =
-    `<!-- Сгенерировано: ${stamp} (${commandName}) -->\n` +
+    `<!-- Сгенерировано: ${stamp} (${commandName}@${headRevision()}) -->\n` +
     `<!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->\n` +
     `<!-- Входы: VIRTUAL_TEAM_PROMPT, ${FFT_METRICS_POTENTIAL_AND_LIMITS_REL}, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (${meta.issues}), packages/temp (${meta.tempFiles} файлов) -->\n` +
     `<!-- Issues: ${meta.issueSource ?? 'n/a'} -->\n\n`;

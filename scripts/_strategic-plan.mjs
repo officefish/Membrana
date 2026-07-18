@@ -29,6 +29,7 @@ import {
   readFftMetricsPotentialAndLimits,
 } from './lib/detection-planning-priorities.mjs';
 import { buildDriftSectionFromDisk } from './lib/drift-digest-section.mjs';
+import { headRevision } from './lib/git-day-context.mjs';
 import { formatInsightsWeeklyBlock } from './lib/insight-ritual.mjs';
 
 const MAX_BUFFER = 12 * 1024 * 1024;
@@ -429,7 +430,7 @@ export async function runStrategicPlan(options) {
 function writePlanFile({ outputPath, commandName, rangeLabel, horizonLabel, body }) {
   const stamp = new Date().toISOString();
   const header =
-    `<!-- Сгенерировано: ${stamp} (${commandName}) -->\n` +
+    `<!-- Сгенерировано: ${stamp} (${commandName}@${headRevision()}) -->\n` +
     `<!-- Период: ${rangeLabel}; горизонт: ${horizonLabel} -->\n` +
     `<!-- Источник цели: WHITE_PAPER.md -->\n\n`;
   mkdirSync(dirname(outputPath), { recursive: true });
