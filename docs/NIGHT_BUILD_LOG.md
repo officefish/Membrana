@@ -171,3 +171,12 @@
 ## Checkpoint NB6 — 2026-07-11T20:18:11.498Z
 - Status: **pass**
 - Note: entry-id гард 12/12, ловит L36 до живого прогона
+
+## Re-open — 2026-07-17T17:54:14.009Z
+- Epic: `agent-tooling-night-build`
+- Continue: no
+
+
+## Checkpoint NB? — 2026-07-17T20:03:08.749Z
+- Status: **pass**
+- Note: 

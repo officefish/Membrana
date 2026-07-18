@@ -1,0 +1,19 @@
+{
+  "//": "Манифест шагов утреннего ритуала — ИСПОЛНЯЕМЫЙ ИСТОЧНИК ИСТИНЫ (вердикт morning-ritual-regulation-background-agent-2026-07-18). Регламент docs/prompts/MORNING_RITUAL_REGULATION.md ссылается на этот файл, не дублирует список прозой.",
+  "//kind": "mechanic — фон делает молча (детерминированная механика). gate — несёт ask(owner), фон ЗАСТЫВАЕТ до решения владельца (барьер canAdvance).",
+  "//barrier": "canAdvance(step, state) = kind==='mechanic' ∨ (kind==='gate' ∧ hasDecision(step.id, state)). Фон монотонно идёт по steps[], упирается в первый gate без решения (d/dt=0). Тест-инвариант: НИКОГДА не проходит gate без hasDecision.",
+  "version": 1,
+  "steps": [
+    { "id": "sync-check", "kind": "mechanic", "label": "Сверка расхождений ДО действий", "verify": "сводка: HANDOFF ↔ цепочка ritual:day ↔ граф правды ↔ опоры дня; расхождения списком", "blocksOn": null },
+    { "id": "generate-horizon", "kind": "mechanic", "label": "morning-care + strategy:day (горизонт-веха)", "verify": "docs/STRATEGY_DAY.md сгенерирован, горизонт из графа", "blocksOn": null },
+    { "id": "standup", "kind": "mechanic", "label": "daily-standup", "verify": "docs/DAILY_STANDUP.md сгенерирован", "blocksOn": null },
+    { "id": "probe-run", "kind": "mechanic", "label": "main-day-probe — проверка посылок дня", "verify": "probe отработал; находки собраны (не разрешены)", "blocksOn": null },
+    { "id": "probe-resolve", "kind": "gate", "label": "Разрешение находок probe (закрыть протухший issue / перевыпустить посылки)", "verify": "решение владельца/агента по каждой находке", "blocksOn": "probe-findings" },
+    { "id": "magistral", "kind": "gate", "label": "Магистраль дня — owner-choice (не синтез)", "verify": "sources[0].claim в main-day-assertions задан владельцем", "blocksOn": "owner-choice" },
+    { "id": "main-day-issue", "kind": "mechanic", "label": "main-day-issue — раскрытие магистрали из owner-source", "verify": "docs/MAIN_DAY_ISSUE.md; магистраль из sources[0], не синтез", "blocksOn": null },
+    { "id": "owner-checklist", "kind": "mechanic", "label": "Чеклист владельцу (1 центр / 2-3 укреп / 2-3 персп / 1-2 риск) из MAIN_DAY_ISSUE + issue", "verify": "черновик чеклиста собран, предъявлен владельцу", "blocksOn": null },
+    { "id": "ally-swallow-draft", "kind": "mechanic", "label": "Ласточка партнёрам — черновик через линзу Ожегова (продуктовый слой)", "verify": "черновик утренней ласточки готов, жаргон отсеян", "blocksOn": null },
+    { "id": "ally-swallow-send", "kind": "gate", "label": "Отправка ласточки — одобрение владельца + telegram:swallow", "verify": "явное одобрение владельца (#569), затем sent=true", "blocksOn": "owner-approval" },
+    { "id": "day-anchors", "kind": "gate", "label": "Опоры дня (morning_crystallization) — волеизъявление владельца через промежуточные вопросы", "verify": "owner-кристаллы дня с указателями; горизонт вехевой (d/dt=0), magistral/standup суточные", "blocksOn": "owner-utterance" }
+  ]
+}
