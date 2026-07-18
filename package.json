@@ -169,6 +169,8 @@
     "tasks:bookkeeping": "node scripts/tasks-bookkeeping.mjs",
     "tasks:reviewing": "node scripts/tasks-reviewing.mjs",
     "tasks:audit": "node scripts/tasks-audit.mjs",
+    "audit:evening": "node scripts/audit-evening.mjs",
+    "audit:evening:stdout": "node scripts/audit-evening.mjs --stdout",
     "tasks:audit:offline": "node scripts/tasks-audit.mjs --offline",
     "tasks:sync-issues": "node scripts/tasks-sync-issue-state.mjs",
     "tasks:sync-issues:dry": "node scripts/tasks-sync-issue-state.mjs --dry-run",
