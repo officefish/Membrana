@@ -1,6 +1,133 @@
 {
   "tasks": [
     {
+      "id": "detector-scoreboard",
+      "title": "Витрина качества детекции: плагин модуля микрофона + панель",
+      "promptPath": "docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-18",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin",
+        "ozhegov",
+        "kuryokhin"
+      ],
+      "insightId": "insight-dads-detector-integration",
+      "notes": "ЭПИК. Изделие — витрина, а не стенд: показать конкретными числами качество детекторов на растущих наборах. Родился из разбора 18.07: день ушёл на измерительную инфраструктуру, названную продуктом, витрины не появилось. ЗАПРЕТЫ: никаких заседаний и консилиумов (развилки нет); правка инфраструктуры только если видна в плагине; не качать данные, пока таблица не отрисована на имеющемся; каждый коммит отвечает «что теперь видно в продукте»; борд вне scope; канон гейта не трогать; в main не мержить без слова владельца. Пять фаз, каждая — свой PR и безопасная пауза.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "scoreboard-plugin-shell",
+      "title": "Ф1: плагин витрины в модуле микрофона на измеренных числах",
+      "promptPath": "docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-18",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "insightId": "insight-dads-detector-integration",
+      "notes": "Плагин показывает таблицу рабочих точек из версионируемого JSON. Новых замеров НЕ делает. Колонки в терминах датчика: обнаружено дронов, ложных тревог, объём набора, интервал. Проценты только рядом со штуками. Старт — три рабочие точки 18.07. ПАУЗА: плагин открывается, числа совпадают с отчётом.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "detector-scoreboard"
+    },
+    {
+      "id": "scoreboard-spectral-ladder",
+      "title": "Ф2: лестница спектрального детектора из наших 253 звуков",
+      "promptPath": "docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-18",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "insightId": "insight-dads-detector-integration",
+      "notes": "Наборы разного объёма из своих 253; тест неподвижен и по группам записи; параметры шаблонов подбираются только на обучающей части (механика в scripts/lab-learning-curve.mjs). В таблице видно, разваливаются ли цифры с ростом выборки. ПАУЗА: лестница спектрального видна в витрине.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "detector-scoreboard"
+    },
+    {
+      "id": "scoreboard-dataset-ladder",
+      "title": "Ф3: четыре набора из внешнего массива с дедупом обеих сторон",
+      "promptPath": "docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-18",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "insightId": "insight-dads-detector-integration",
+      "notes": "Скачивание подмножества, дедуп ОБЕИХ сторон (утечка двусторонняя: 91 из 120 наших сэмплов делят провенанс), манифест с блоком independence по паттерну fetch-vdr-pilot-corpus.mjs, сверка с апстримом real-collection. Извлечение ОБЯЗАНО сохранить исходное имя и источник. Наборы: 253 → 1000 → 3000 → 10000. Единственная фаза с внешним риском (~900 МБ). ПАУЗА: наборы в репозитории, провенанс виден.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "detector-scoreboard"
+    },
+    {
+      "id": "scoreboard-neural-ladder",
+      "title": "Ф4: лестница нейросети на четырёх наборах",
+      "promptPath": "docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-18",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "insightId": "insight-dads-detector-integration",
+      "notes": "Кэш представлений (Identity_1:0) обязателен — без него каждая точка пересчитывает модель. Голова на четырёх наборах, проверка группами записи. Основание: 18.07 обучение дало ложных 22→6 при 137 записях. ПАУЗА: прирост от обучения виден в витрине.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "detector-scoreboard"
+    },
+    {
+      "id": "scoreboard-panel-publish",
+      "title": "Ф5: публикация таблицы на панель mmbrn.tech",
+      "promptPath": "docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-18",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "insightId": "insight-dads-detector-integration",
+      "notes": "Та же таблица конкретными терминами и примерами: к строке — разбор, какие записи пропущены и на чём ложные тревоги. Внешняя публикация, требует деплоя. ТОЛЬКО ПО СЛОВУ ВЛАДЕЛЬЦА, вместе с остальными фазами не обещается.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "detector-scoreboard"
+    },
+    {
       "id": "swallow-delivery-idempotency",
       "title": "Ласточка: таймаут ≠ недоставка — идемпотентность отправки",
       "promptPath": "docs/prompts/SWALLOW_DELIVERY_IDEMPOTENCY_PROMPT.md",

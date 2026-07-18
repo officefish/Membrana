@@ -18,6 +18,12 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `detector-scoreboard` | Витрина качества детекции: плагин модуля микрофона + панель | L | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
+| `scoreboard-plugin-shell` | Ф1: плагин витрины в модуле микрофона на измеренных числах | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
+| `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
+| `scoreboard-dataset-ladder` | Ф3: четыре набора из внешнего массива с дедупом обеих сторон | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
+| `scoreboard-neural-ladder` | Ф4: лестница нейросети на четырёх наборах | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
+| `scoreboard-panel-publish` | Ф5: публикация таблицы на панель mmbrn.tech | S | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `swallow-delivery-idempotency` | Ласточка: таймаут ≠ недоставка — идемпотентность отправки | S | [`SWALLOW_DELIVERY_IDEMPOTENCY_PROMPT.md`](../docs/prompts/SWALLOW_DELIVERY_IDEMPOTENCY_PROMPT.md) | — |
 | `dads-benchmark-bridge` | Мост DADS в бенчмарк: пресет в прогоне, дедуп обеих сторон, метрики без приора | M | [`DADS_BENCHMARK_BRIDGE_PROMPT.md`](../docs/prompts/DADS_BENCHMARK_BRIDGE_PROMPT.md) | — |
 | `agent-tooling-friction-2` | agent-tooling-friction-2: 7 инструментов против трения агентских сессий (ti-6 mojibake-гард, ti-5 memory-хвост, ti-7 credit-ошибка, ti-4 neighbors, ti-3 task:register, ti-2 secretary-file, ti-1 task:review:ship) | M | [`AGENT_TOOLING_FRICTION_2_PROMPT.md`](../docs/prompts/AGENT_TOOLING_FRICTION_2_PROMPT.md) | [#469](https://github.com/officefish/Membrana/issues/469) |
