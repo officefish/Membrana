@@ -3,9 +3,13 @@
 | Поле | Значение |
 |------|----------|
 | **ID** | `insight-dads-detector-integration` |
-| **Статус** | draft |
+| **Статус** | adopted (вес 7.4) — развилка A; B заморожена до первых метрик |
 | **Источник** | user (партнёр Антон дал датасет) |
 | **Создан** | 2026-07-17 |
+| **Research** | 2026-07-17 — [`RESEARCH.md`](./RESEARCH.md) |
+| **Review** | 2026-07-17 — [`REVIEW.md`](./REVIEW.md), 5 ролей, средний 7.4 |
+| **Закрыт** | 2026-07-17 (`yarn insight close --status adopted`) |
+| **Спринт** | не заведён — открытая развилка D2 идёт в M1-заседание |
 
 Вход: [`docs/tasks/research/anton-dads-dataset.md`](../../tasks/research/anton-dads-dataset.md)
 (факты датасета и наша карта кода, проверены командами).
