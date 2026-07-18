@@ -21,12 +21,14 @@ const cardState = (t) => `${t.status}|${t.githubIssueClosedAt ?? ''}|${t.archive
  * @returns {{added: object[], archived: object[], statusChanged: object[], counts: object}}
  */
 export function registryMovement(before, after) {
-  const prev = new Map((before?.tasks ?? []).map((t) => [t.id, t]));
+  const wasTasks = before?.tasks ?? [];
+  const tasks = after?.tasks ?? [];
+  const prev = new Map(wasTasks.map((t) => [t.id, t]));
   const added = [];
   const archived = [];
   const statusChanged = [];
 
-  for (const t of after?.tasks ?? []) {
+  for (const t of tasks) {
     const old = prev.get(t.id);
     if (!old) {
       added.push({ id: t.id, title: t.title ?? '', status: t.status, issue: t.githubIssue ?? null });
@@ -42,12 +44,15 @@ export function registryMovement(before, after) {
     }
   }
 
-  const active = (after?.tasks ?? []).filter((t) => t.status === 'active').length;
   return {
     added,
     archived,
     statusChanged,
-    counts: { total: (after?.tasks ?? []).length, active, wasTotal: (before?.tasks ?? []).length },
+    counts: {
+      total: tasks.length,
+      active: tasks.filter((t) => t.status === 'active').length,
+      wasTotal: wasTasks.length,
+    },
   };
 }
 
