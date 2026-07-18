@@ -21,6 +21,27 @@ export function countRoleReplies(md, roleLabels = MEMBRANA_ROLE_LABELS) {
 }
 
 /**
+ * Сверить прозаический футер «Реплик в диалоге: N» с фактическим числом реплик
+ * и исправить N, если модель ошиблась. Возвращает исправленный md + метаданные.
+ *
+ * Трение 17.07: футер M0 говорил «21» при фактических 20 (поймал аудитор).
+ * Число в футере пишет МОДЕЛЬ и может соврать; фактическое — детерминируемо
+ * (`countRoleReplies`). Приводим прозу к факту, чтобы артефакт не нёс ложь.
+ * Если футера нет — md не трогаем (corrected:false, matched:false).
+ */
+export function reconcileReplyCount(md, roleLabels = MEMBRANA_ROLE_LABELS) {
+  const counts = countRoleReplies(md, roleLabels);
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  const re = /(Реплик в диалоге:\s*)(\d+)/u;
+  const m = md.match(re);
+  if (!m) return { md, total, matched: false, corrected: false, stated: null };
+  const stated = Number(m[2]);
+  const corrected = stated !== total;
+  const out = corrected ? md.replace(re, `$1${total}`) : md;
+  return { md: out, total, matched: true, corrected, stated };
+}
+
+/**
  * Метки `[…]:` в начале строк, НЕ совпавшие ни с одной известной ролью.
  *
  * rt-6: инцидент 16.07 — протокол пришёл в формате `[Имя · Роль]:` вместо
@@ -79,6 +100,22 @@ export function findUncoveredAgendaItems(topicMd, protocolMd) {
   const ids = extractAgendaIds(topicMd);
   const body = protocolBody(protocolMd);
   return ids.filter((id) => !new RegExp(`\\b${id}\\b`, 'u').test(body));
+}
+
+/**
+ * Есть ли в протоколе секция вердикта/итогового решения.
+ *
+ * NB3 (#558): findUncoveredAgendaItems грепает МЕТКУ, а не вердикт — не отличает
+ * «вопрос уронен» от «отвечен под другим заголовком без ID-метки» (17.07: консилиум
+ * ВИЗОР дал итоговую таблицу без меток V1..V4, rt-6 соврал «не покрыта»). Семантику
+ * машина не проверит, но НАЛИЧИЕ секции вердикта — да; это разводит два случая:
+ * метки нет + вердикта нет = вероятно уронено; метки нет + вердикт есть = вероятно
+ * отвечено без метки. Честный сигнал вместо ложноавторитетного «уронено».
+ */
+export function hasVerdictSection(protocolMd) {
+  const body = protocolBody(protocolMd);
+  return /^\s{0,3}#{1,4}\s.*(итогов\w*\s+решени|вердикт|решени\w*\s+консилиум|definition of done)/imu.test(body)
+    || /итоговое решение консилиума/iu.test(body);
 }
 
 /**

@@ -46,8 +46,10 @@ import {
 import {
   extractAgendaIds,
   findUncoveredAgendaItems,
+  hasVerdictSection,
   validateProtocol,
   meetingAgendaProblem,
+  reconcileReplyCount,
 } from './lib/protocol-validator.mjs';
 
 const MAX_PROMPT_SPEC_CHARS = 12_000;
@@ -402,7 +404,11 @@ function runSecretaryFile(cli, cwd) {
     '',
   ].join('\n');
   mkdirSync(resolve(cwd, 'docs/seanses'), { recursive: true });
-  writeFileSync(absPath, header + body.trim() + '\n', 'utf8');
+  const secReconciled = reconcileReplyCount(body);
+  if (secReconciled.corrected) {
+    console.error(`→ футер реплик исправлен: «${secReconciled.stated}» → факт ${secReconciled.total}`);
+  }
+  writeFileSync(absPath, header + secReconciled.md.trim() + '\n', 'utf8');
   console.log(`→ протокол (secretary): ${relPath}`);
 }
 
@@ -555,6 +561,14 @@ async function main() {
     return;
   }
 
+  // Сверить прозаический футер «Реплик в диалоге: N» с фактом (модель порой врёт;
+  // 17.07 M0: 21 против фактических 20). Приводим к детерминированному числу.
+  const reconciled = reconcileReplyCount(answer);
+  if (reconciled.corrected) {
+    console.error(`→ футер реплик исправлен: модель «${reconciled.stated}» → факт ${reconciled.total}`);
+  }
+  answer = reconciled.md;
+
   console.log(answer);
 
   if (!cli.noSave) {
@@ -571,21 +585,27 @@ async function main() {
     writeFileSync(absPath, fileBody, 'utf8');
     console.error(`→ протокол: ${relPath}`);
 
-    // rt-6 (#539): гейт полноты повестки. Три консилиума 16.07 молча уронили часть
-    // вопросов; ронять готовый (оплаченный) протокол нельзя, но пропуск обязан быть
-    // ВИДЕН — иначе паттерн повторяется незамеченным. Проверяем при наличии повестки.
+    // rt-6 (#539/#558): гейт полноты повестки. ЧЕСТНАЯ ОГОВОРКА: rt-6 грепает
+    // ID-МЕТКУ в теле, а НЕ вердикт — он не отличает «вопрос уронен» от «отвечен под
+    // другим заголовком без метки» (17.07: консилиум ВИЗОР дал итоговую таблицу без
+    // меток V1..V4 → rt-6 соврал «не покрыта»). Поэтому сообщение разводит два
+    // случая через наличие секции вердикта и не заявляет «уронено» как факт.
     if (cli.topicFile) {
       try {
         const agenda = readFileSync(resolve(cwd, cli.topicFile), 'utf8');
         const uncovered = findUncoveredAgendaItems(agenda, answer);
         if (uncovered.length > 0) {
+          const verdictPresent = hasVerdictSection(answer);
           console.error(
-            `\n⚠ ПОВЕСТКА НЕ ПОКРЫТА (rt-6): ${uncovered.join(', ')} — ни одной реплики/строки итога.\n` +
-              '  Консилиум склонен расходиться на первых вопросах и ронять остальные (паттерн 16.07).\n' +
-              '  Допроси команду по пропущенным ID или зафиксируй их явным «не готово к решению».',
+            `\n⚠ rt-6: ID-метки не найдены в теле: ${uncovered.join(', ')}.\n` +
+              '  rt-6 грепает МЕТКУ, не вердикт (#558) — это не значит «уронено».\n' +
+              (verdictPresent
+                ? '  Секция вердикта ЕСТЬ → вероятно, отвечены под другим заголовком без метки. Сверь глазами.\n'
+                : '  Секции вердикта НЕТ → вопросы могли быть уронены (паттерн 16.07). Допроси команду.\n') +
+              '  Либо проставь метки в теле, либо зафиксируй «не готово к решению».',
           );
         } else {
-          console.error('→ rt-6: повестка покрыта полностью.');
+          console.error('→ rt-6: все ID-метки повестки присутствуют в теле.');
         }
       } catch {
         // Повестка без ID-меток или нечитаема — гейт не мешает, просто молчит.
