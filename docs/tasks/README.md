@@ -19,7 +19,6 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `detector-scoreboard` | Витрина качества детекции: плагин модуля микрофона + панель | L | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
-| `scoreboard-plugin-shell` | Ф1: плагин витрины в модуле микрофона на измеренных числах | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `scoreboard-dataset-ladder` | Ф3: четыре набора из внешнего массива с дедупом обеих сторон | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `scoreboard-neural-ladder` | Ф4: лестница нейросети на четырёх наборах | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
@@ -199,6 +198,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `scoreboard-plugin-shell` | Ф1: плагин витрины в модуле микрофона на измеренных числах | 2026-07-18 | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — | [карточка](./archive/scoreboard-plugin-shell.md) |
 | `cowork-format-regulation` | Cowork Sprint: регламент формата — 3 изолированных блока одной разработки, поздняя стыковка, интеграция адаптерами | 2026-07-14 | [`COWORK_SPRINT_REGULATION.md`](../docs/COWORK_SPRINT_REGULATION.md) | #464 (Issue открыт) | [карточка](./archive/cowork-format-regulation.md) |
 | `qc-panel-boards` | qc-panel-boards: drift-борд + навигация shell в панели (QC1; detector-compare уступлен #452) | 2026-07-14 | [`QC_PANEL_BOARDS_PROMPT.md`](../docs/prompts/QC_PANEL_BOARDS_PROMPT.md) | #454 (Issue открыт) | [карточка](./archive/qc-panel-boards.md) |
 | `panel-detector-compare-board` | Борд detector-compare: таблица trends DRONE_TIGHT vs yamnet в панели (магистраль 14.07) | 2026-07-14 | [`PANEL_DETECTOR_COMPARE_BOARD_PROMPT.md`](../docs/prompts/PANEL_DETECTOR_COMPARE_BOARD_PROMPT.md) | #452 (Issue открыт) | [карточка](./archive/panel-detector-compare-board.md) |
