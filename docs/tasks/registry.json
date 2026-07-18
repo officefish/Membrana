@@ -201,7 +201,7 @@
       ],
       "notes": "Владельческая задача 18.07: наглядный отчёт движения за день, строки по областям",
       "archiveNotes": "PR #628/#629/#630 — три фазы: канон ADR-0013, чистое ядро с тестами, обвязка yarn audit:evening. Отчёт по трём источникам + строки по пяти областям. Включение в ritual:evening — за владельцем; ADR в статусе DRAFT",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-18"
     },
     {
       "id": "morning-ritual-regulation",
@@ -1195,7 +1195,7 @@
       ],
       "notes": "Идея владельца 2026-07-14. Консилиум-гейт: docs/seanses/cowork-sprint-format-2026-07-14.md (20 реплик; первый с памятью 5 персон default-on). Решения: событийный гейт интеграции ready(A)∧ready(B)∧ready(C)∨deadline; односторонние EXPECTATIONS + исполняемые стабы в своей зоне (договариваться об интерфейсах до Interface Consilium запрещено); резка brief по естественным швам с пустым пересечением файловых зон; интеграция адаптерами в отдельной ветке (блоки не переписываются, ведёт координатор); жюри/скоринга/победителя нет — мёржатся все три блока. Артефакты: регламент + cowork:open + скилл membrana-cowork (3 среды). Follow-up: cowork:phase/close.",
       "archiveNotes": "PR #465; review LGTM 04695297d862; PR #465 merged 2026-07-14T16:53:39Z (04695297d862329d46db797c12368214a74dfb4c)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-18"
     },
     {
       "id": "qc-panel-boards",
@@ -1215,7 +1215,7 @@
       ],
       "notes": "Консилиум-гейт: docs/seanses/quality-control-contour-2026-07-14.md (24 реплики). СКОУП СУЖЕН 14.07: QC2 (борд detector-compare + office-модуль benchmark) уступлен задаче panel-detector-compare-board #452 — её консилиум (detector-compare-board-2026-07-14, видение владельца: per-sample таблица, прослушивание, waveform, попапы, фильтр расхождений; вердикт «office не трогаем», статический артефакт экспортёра) предметнее и новее; office-модуль benchmark из ветки удалён до мёржа. Остаток: QC1 drift-борд (читает публичный /v1/drift-anchor/digest, происхождение чисел, prod-main сравнение) + открываемые карточки shell (нужны и борду #452).",
       "archiveNotes": "PR #455; review LGTM 9b9ced6de860; PR #455 merged 2026-07-14T14:40:18Z (a35615ccecb2268cfbfa00a52311ba2866a28dc5)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-18"
     },
     {
       "id": "panel-detector-compare-board",
@@ -1237,7 +1237,7 @@
       ],
       "notes": "Магистраль дня 2026-07-14, потребитель №2 каркаса эпика #438. Консилиум-гейт пройден ДО кода: docs/seanses/detector-compare-board-2026-07-14.md (6 развилок; сгенерирован координатором по подписке — API-ключ Anthropic исчерпан, формат канона соблюдён). Вердикты: офлайн-экспортёр detector-compare-export на инфраструктуре benchmark:detectors → docs/reports/detector-compare/latest.json (git); аудио-бандл ВНЕ git (деплой-копия wav, /compare-audio/); mini-waveform локально в панели (canvas, max-амплитуда, один AudioContext) — граница panel<=core цела; попап details+explanation детерминированным шаблоном БЕЗ LLM; данные публичны (прецедент digest), раздел operator = UX-гейт; фильтры все/дрон/не-дрон/расхождения + сортировка по уверенности + сводка P/R/F1/FPR. Запреты: live-вычисления, изменения office и detectors/*, новые зависимости панели, LLM, бандл в git.",
       "archiveNotes": "PR #457; review LGTM 09921c24f473; PR #457 merged 2026-07-14T15:31:21Z (44bac65827e4edef914277249f5840e280b4869a)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-18"
     },
     {
       "id": "persona-memory-all-personas",
@@ -1256,7 +1256,7 @@
       ],
       "notes": "Решение владельца 2026-07-14 по итогам суточного пилота (боевое применение: консилиум quality-control-contour). Экстрактор уже параметризован — нового кода экстракции нет; человек-гейт: 4 журнала отдельными diff + importance.json за владельцем. --with-memory default ТОЛЬКО в consilium (+--no-memory), ask не трогать. Гард суммарной инъекции 25K. Вне магистрали FREE. Запреты: фазы 2/3 и слои 2-3 субъектности не трогать.",
       "archiveNotes": "PR #461; review LGTM 2f9dd5218631; PR #461 merged 2026-07-14T16:14:01Z (d452582ddf2b194ee6c9ed6f485590490a21ca09)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-18"
     },
     {
       "id": "office-panel-contour",
@@ -1277,7 +1277,7 @@
       ],
       "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/office-panel-contour-2026-07-14.md (25 реплик, research Perplexity x3, --with-memory пилот). Вердикты: apps/panel отдельный SPA (стек кабинета) на panel.mmbrn.tech — ЗАОДНО разрешена развилка drift-panel-placement #396 (борды живут в panel); auth при stateless office: operator/owner=GitHub OAuth+allowlist-файл, ally=HMAC invite-код без БД, public=welcome; httpOnly cookie, default-deny+@Public; digest остаётся публичным; Caddy site-block + reverse_proxy /v1/*, LE только после DNS-гейта (урок OM4-C). Запреты: cabinet internals/auth, persisted-учётки на office, общий статический токен, localStorage, борды/LLM/мутации вне эпика. Owner-гейты: DNS A-запись, GitHub OAuth App, HMAC-secret + ally-коды.",
       "archiveNotes": "Эпик закрыт целиком 2026-07-14: OP1-OP5 смёржены (PR #440-#450, closure LGTM каждой фазы), панель ЖИВАЯ на https://panel.mmbrn.tech (LE после dns-gate [go]); live-подтверждения: ally-вход по invite-коду (201->cookie->ally, operator-ручка 403, no-store), GitHub OAuth owner-вход подтверждён владельцем 14.07 (302->authorize->allowlist->owner). Секреты PANEL_* в office.env; деплой-скрипт scripts/_ssh-panel-deploy.mjs + runbook PANEL_DEPLOY.md. Потребители каркаса: борд detector-compare (#452, в работе) и drift-борд (#396).",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-18"
     },
     {
       "id": "op1-panel-scaffold",
@@ -1389,7 +1389,7 @@
       ],
       "notes": "Решение владельца 2026-07-13 (вечер), консилиум не нужен — исполнение по канону #428. Шапка-пояснение: источник docs/comms/ALLY_DIGEST_HEADER.md → payload.primerMd → office конвертирует md→Telegram-HTML (чистая функция, без зависимостей) и вшивает <blockquote expandable>. Фактура: день — полные блоки задач; вечер — треки дня по ролям + вердикт + оценка + что дальше. Клэмп 4096. Graceful: нет шапки → отчёт без неё. Запреты канона #428 действуют (stateless office, без двустороннего бота, LLM-пересказ — отдельная фаза).",
       "archiveNotes": "PR #437; review LGTM b2c7e0faf6a1; PR #437 merged 2026-07-14T05:18:42Z (e9f30ebb8f78c4140f40ef4db848608315f8d4e0)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-18"
     },
     {
       "id": "agent-tooling-friction",
@@ -1409,7 +1409,7 @@
       ],
       "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/agent-tooling-friction-2026-07-13.md (24 реплики). Форма: один M-спринт-зонтик, 4 НЕЗАВИСИМЫЕ задачи, мерж по готовности, порядок ti-1→ti-3→ti-2→ti-4 (дешевле→дороже). Решения: ревью-артефакты — .gitignore docs/reviews/*/ (НЕ логика в скрипте); proxy-чистка всех форм переменных в setup-env + норма; insight:drift — hermes-паттерн, вызов из ritual:evening, 3 кейса 2026-07-13 как регресс-фикстуры; llm:probe — direct+via-proxy, классы ошибок (DPI/гео/баланс/ключ/сеть), ключи маскируются. Запреты: без межпакетных зависимостей, без auto-exclude в task-closure-review.mjs, без печати ключей/записи .env. Out of scope: worktree-бутстрап, pr:ship --worktree, хвосты #424/#425.",
       "archiveNotes": "PR #436; review LGTM fd1a39f6cf1f; PR #436 merged 2026-07-14T04:16:25Z (d8fe05db776c6692b18593ae466bcc6ea4130d14)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-18"
     },
     {
       "id": "night-narrative-deepseek-fallback",
@@ -14509,7 +14509,7 @@
       "insightId": "insight-telegram-work-reports",
       "notes": "Канон = REVIEW инсайта (5 ролей, adopted 4.0, owner override 2026-07-13 — владелец запросил сейчас; консилиум не нужен, исполнение по канону). MVP: fire-and-forget, stateless office, приватная группа, plain-language дайджесты day+evening. Запреты review дословно в промпте. Owner-гейты: BotFather token, chat_id, env на office VDS. Не трогать провайдер-модули (заняты llm-providers-unblock #424/#425 в worktree); коллизия app.module.ts — разрешать после их мёржа.",
       "archiveNotes": "PR #431 (squash 3124d6d2 side) + hotfix 0291f954 (proxy-aware client, OFFICE_API_TOKEN). E2E smoke 2026-07-13: day+evening дайджесты доставлены в приватную группу (sent=true), контур ritual→office→telegram живой. Остаток: фаза 2 LLM-пересказ (после владельческих хвостов #424/#425).",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-18"
     },
     {
       "id": "panel-partner-access",
@@ -14520,7 +14520,7 @@
       "createdAt": "2026-07-14",
       "archivedAt": "2026-07-14",
       "archiveNotes": "PU1 #466 (office panel-users + ADR 0005), PU2 #470 (регистрация+гранты), PU3 #473 (owner-раздел). Все фазы LGTM T1/T2, живые смоуки на VDS/проде зелёные. Партнёрский сценарий работает конец-в-конец.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-18",
       "size": "L",
       "sprintKind": "epic",
       "leadPersona": "vesnin",
