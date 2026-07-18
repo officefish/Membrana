@@ -23,17 +23,23 @@
 ### Участники: персонажи, label'ы, ветки, промпты
 
 Каждая роль имеет имя-персонажа с исторической отсылкой. Имя используется как
-Linear-label (для назначения задачи на «виртуального программиста») и одновременно
-как имя git-ветки (всю работу по этому персонажу складываем в одну ветку, PR в `main`).
+Linear-label (для назначения задачи на «виртуального программиста») и как значение
+`leadPersona` / `supportPersonas` в карточке [`docs/tasks/registry.json`](./tasks/registry.json).
 Те роли, для которых имя ещё не закреплено, помечены «—»; их можно добавить тем же
 паттерном.
+
+> **Колонка «Git branch» — историческая.** До 2026-06 канон предписывал вести всю работу
+> персонажа в одноимённой ветке с PR в `main`; механизм не прижился (1 PR из 330, ветки
+> `vesnin` не существует). Сейчас роль указывается в карточке реестра, а работа идёт в
+> обычной task-ветке со squash-PR — см. [`TASKS_MANAGEMENT.md` §7а](./TASKS_MANAGEMENT.md).
+> Существующие ветки `ozhegov` / `boyarskiy` / `dynin` сохраняются, новые задачи в них не ведутся.
 
 | Роль | Персонаж | Linear label | Git branch | Аватар | Системный промпт |
 |------|----------|--------------|------------|--------|------------------|
 | **Teamlead** | **Vesnin** (русский архитектурный авангард, конструктивизм; братья Веснины) | `vesnin` | `vesnin` | [аватар](https://i.pravatar.cc/400?u=membrana-vesnin-1923) | [PROMPT_TEAMLEAD.md](./virtual-team/PROMPT_TEAMLEAD.md) |
 | **Структурщик** | **Ozhegov** (С. И. Ожегов — толковый словарь, точность термина) | `ozhegov` | `ozhegov` | [аватар](https://i.pravatar.cc/400?u=membrana-ozhegov) | [PROMPT_STRUCTURER.md](./virtual-team/PROMPT_STRUCTURER.md) |
-| **Математик** | **Dynin** (русская математическая школа о неслучайности биологической жизни) | `dynin` | `dynin` | [аватар](https://i.pravatar.cc/400?u=membrana-dynin-math) | [PROMPT_MATHEMATICIAN.md](./virtual-team/PROMPT_MATHEMATICIAN.md) |
-| **Музыкант** | **Kuryokhin** (С. Курехин — авангард, смелые аудио-идеи) | `kuryokhin` | `kuryokhin` | [аватар](https://i.pravatar.cc/400?u=membrana-musician) | [PROMPT_MUSICIAN.md](./virtual-team/PROMPT_MUSICIAN.md) |
+| **Математик** | **Dynin** (Б. Дынин — философ науки и математик; целесообразность и неслучайность биологического мира) | `dynin` | `dynin` | [аватар](https://i.pravatar.cc/400?u=membrana-dynin-math) | [PROMPT_MATHEMATICIAN.md](./virtual-team/PROMPT_MATHEMATICIAN.md) |
+| **Музыкант** | **Kuryokhin** (С. Курёхин — авангард, смелые аудио-идеи) | `kuryokhin` | `kuryokhin` | [аватар](https://i.pravatar.cc/400?u=membrana-musician) | [PROMPT_MUSICIAN.md](./virtual-team/PROMPT_MUSICIAN.md) |
 | **Верстальщик** | **Rodchenko** (А. Родченко — конструктивизм, функциональная типографика) | `rodchenko` | `rodchenko` | [аватар](https://i.pravatar.cc/400?u=membrana-rodchenko) | [PROMPT_LAYOUT_DEVELOPER.md](./virtual-team/PROMPT_LAYOUT_DEVELOPER.md) |
 
 Соглашение про ветки: см. [TASKS_MANAGEMENT.md → Ветки персонажей](./TASKS_MANAGEMENT.md#ветки-персонажей).

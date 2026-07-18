@@ -145,6 +145,7 @@ export const SCENARIO_V04_PALETTE_SECTIONS: readonly V04PaletteSection[] = [
     'sequence',
     'print',
     'is-valid',
+    'is-window-elapsed',
     'branch-on-detection',
     'get-microphone',
     'get-recorder',

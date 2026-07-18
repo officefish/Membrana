@@ -42,9 +42,21 @@ ssh -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -N \
 # закреплено systemd-юнитом media-reverse-tunnel (Restart=always) на office
 ```
 
-Локально: `scripts/_ssh-office-local-forward.mjs` слушает `127.0.0.1:2224` → media → office:22.
-В корневом `.env`: `BACKGROUND_OFFICE_SSH_HOST=127.0.0.1`, `BACKGROUND_OFFICE_SSH_PORT=2224` —
-все `_ssh-office-*` скрипты ходят через туннель прозрачно (см. `scripts/_ssh-office-config.mjs`).
+Локально форвардер поднимается штатным ssh-клиентом (скрипта-обёртки **нет** —
+`_ssh-office-local-forward.mjs` не существует, был замыслом):
+
+```bash
+ssh -o ExitOnForwardFailure=yes -N -L 127.0.0.1:2224:127.0.0.1:2223 root@<MEDIA_IP>
+```
+
+Затем в корневом `.env` расскомментировать `BACKGROUND_OFFICE_SSH_HOST=127.0.0.1` и
+`BACKGROUND_OFFICE_SSH_PORT=2224` — все `_ssh-office-*` скрипты пойдут через туннель
+прозрачно (см. `scripts/_ssh-office-config.mjs`).
+
+> **Состояние на 2026-07-15:** туннель **не используется** — обе строки в `.env`
+> закомментированы, прямой SSH на `BACKGROUND_OFFICE_IPV4:22` работает (проверено
+> `yarn office:ssh 'hostname'` → `msk-mmbrn-office`). Раздел держим как fallback на
+> случай, если фильтр провайдера снова закроет прямой маршрут.
 
 ## 3. Сборка образа на фильтрованном/лимитированном хосте
 

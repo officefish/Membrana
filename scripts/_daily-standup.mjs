@@ -30,6 +30,14 @@ import {
   FFT_METRICS_POTENTIAL_AND_LIMITS_REL,
 } from './lib/detection-planning-priorities.mjs';
 import { buildDriftSectionFromDisk } from './lib/drift-digest-section.mjs';
+import { CONSILIUM_ROLE_KEY_TO_SLUG, readPersonaMemory } from './lib/persona-memory.mjs';
+import { loadRegistry } from './lib/task-registry.mjs';
+import {
+  buildStandupRouting,
+  findInventedTaskIds,
+  formatStandupRouting,
+  formatStandupSection,
+} from './lib/standup-routing.mjs';
 import {
   STANDUP_RAG_QUERY,
   formatRagContextBlock,
@@ -303,68 +311,67 @@ function collectDocInputs() {
   return { blocks: blocks.join('\n'), missingRequired };
 }
 
-function buildTaskPrompt({ outputRel, issueCount, tempFileCount }) {
+/**
+ * Склейка промпта: обрезается КОНТЕКСТ, задание защищено.
+ *
+ * Баг, найденный 16.07 (пре­существовал): `buildTaskPrompt` шёл последним внутри
+ * общей склейки, и обрезка по `MAX_CONTEXT_CHARS` съедала его ЦЕЛИКОМ. При 25
+ * открытых issues в промпт уходили роли + доки + issues и **ни одной инструкции** —
+ * модель импровизировала, а выход выглядел нормально. Тихий класс: скрипт печатал
+ * успех, стендап генерировался, задание модель не видела.
+ *
+ * @param {{ context: string, assignment: string, maxChars: number }} p
+ */
+export function assembleStandupPrompt({ context, assignment, maxChars }) {
+  // Бюджет учитывает и задание, и саму пометку об обрезке: иначе итог вылезает за
+  // maxChars ровно на длину пометки (поймано строгим тестом ≤ maxChars).
+  const note = '\n\n[… контекст обрезан (задание защищено от обрезки); полнее — yarn standup:full …]\n';
+  const budget = maxChars - assignment.length - note.length - 1;
+  if (budget <= 0) return assignment; // задание длиннее бюджета — оно важнее контекста
+  const trimmed = context.length > budget ? context.slice(0, budget) + note : context;
+  return `${trimmed}\n${assignment}`;
+}
+
+function buildTaskPrompt({ outputRel, issueCount, tempFileCount, routingBlock }) {
   const today = new Date().toISOString().slice(0, 10);
   return [
     '# Задание',
     '',
-    `Сформируй markdown-документ **«Ежедневный стендап виртуальной команды»** на **${today}**.`,
-    'Это синхронизационное «собрание» (daily standup / daily sync): не повторяй дословно входные',
-    'документы, а **сведи их в один согласованный план работы на сегодня**.',
+    `Дай **фокус дня** для стендапа виртуальной команды Membrana на **${today}**.`,
     '',
-    '## Обязательная структура (заголовки ## и ### — без отклонений)',
+    'Это НЕ отчёт и НЕ пересказ входов. Стендап смотрит ВПЕРЁД: вечерний',
+    'code-review смотрит назад, дублировать его не нужно (консилиум',
+    '`standup-charge-2026-07-16`: стендап — заряжающее утреннее собрание,',
+    'питаемое вечерним feedback-loop\'ом; это слои, а не одно и то же).',
     '',
-    '## Резюме дня',
-    '- 3–5 предложений: главный фокус, главный риск, критерий успеха к вечеру.',
+    '## Обязательная структура — РОВНО два раздела, без отклонений',
     '',
-    '## Входные артефакты',
-    '- Таблица: источник | актуальность | что из него берём сегодня.',
-    `- Упомяни: STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, открытые GitHub Issues (${issueCount}), наброски packages/temp (${tempFileCount} файл(ов)).`,
+    '## Фокус дня',
+    '- **Одна строка** — что одно главное делаем сегодня.',
+    '- 2–3 предложения: почему именно это, главный риск, критерий успеха к вечеру.',
     '',
-    '## Порядок работы',
-    '- Краткая цепочка ролей (кто первый, кто ревьюит).',
+    '## Что сознательно не делаем',
+    '- 2–4 буллета: что откладываем, чтобы не расползтись.',
     '',
-    '## [Teamlead]',
-    '- Стратегический фокус, LGTM-границы, что сознательно **не** делаем сегодня.',
-    '- Приоритизация GitHub Issues (номера #N) — что в скоупе дня, что отложить.',
-    '- **Детекция:** не магистраль «Этап 1.A / benchmark 3 DSP» — см. FFT_METRICS_POTENTIAL_AND_LIMITS.md; магистраль — trends DRONE_TIGHT, validated data или эшелон 2.',
+    '## Роутинг персон — НЕ ПИШИ ЕГО',
     '',
-    '## [Структурщик]',
-    '- Пакеты, интеграция, слабая связанность, agenda/telemetry.',
+    'Строки «кто на какой задаче» **вычислены детерминированно** из реестра задач',
+    '(`leadPersona`/`supportPersonas`) и подставляются скриптом ПОСЛЕ твоего ответа.',
+    'Ты их не пишешь и не повторяешь. Вот что будет подставлено — используй как',
+    'контекст для фокуса дня, но не копируй:',
     '',
-    '## [Математик]',
-    '- Чистые функции, тесты, контракты данных (FFT / классификатор).',
-    '',
-    '## [Музыкант]',
-    '- Поток audio-engine (sample rate, буфер), полевые сэмплы.',
-    '',
-    '## [Верстальщик]',
-    '- UI по DESIGN.md; что переносим из packages/temp, что **не** переносим (anti-patterns).',
-    '',
-    '## План на сегодня',
-    'Таблица: | Блок | Размер S/M/L | Задача | DoD | Issues |',
-    '3–6 строк с проверяемым Definition of Done.',
-    '',
-    '## Матрица Issues ↔ задачи дня',
-    '| Задача дня | GitHub Issues |',
-    '',
-    '## Итоговый артефакт',
-    '- Список файлов/пакетов, которые должны появиться или измениться.',
-    '',
-    '## Definition of Done (день)',
-    '- 5–8 чекбоксов `- [ ] …`.',
-    '',
-    '## Риски',
-    '- 2–4 пункта; если план перегружен — явно назови, что срезать первым.',
+    routingBlock || '(роутинг недоступен)',
     '',
     'Ограничения:',
     '- Язык — русский.',
-    '- Соблюдай формат ролей из VIRTUAL_TEAM_PROMPT (блоки `[Teamlead]:` и т.д. внутри соответствующих ##-разделов).',
-    '- Не выдумывай закрытые issues и несуществующие пакеты.',
-    '- Если набросок в packages/temp противоречит ARCHITECTURE/SERVICES — предпочти архитектуру, temp пометь как reference-only.',
+    '- **Не выдумывай task-id, issues и пакеты.** Задача существует, только если она',
+    '  есть в реестре или в открытых Issues выше. Скрипт проверяет это гейтом.',
+    '- Не пересказывай входные документы — только решение «что одно главное сейчас».',
     '- Не предлагай сроки в часах/днях — только размер S/M/L и зависимости.',
+    '- Не пиши мотивирующих лозунгов: заряд — это конкретная задача под сильную',
+    '  сторону, а не тон. Каждое утверждение должно быть проверяемым (фальсифицируемым).',
     ...buildDetectionPlanningConstraintsBullets(),
-    `- Документ предназначен для файла \`${outputRel}\` и должен быть самодостаточен.`,
+    `- Документ предназначен для файла \`${outputRel}\`; контекст: открытых Issues ${issueCount}, набросков temp ${tempFileCount}.`,
   ].join('\n');
 }
 
@@ -388,6 +395,23 @@ export async function runDailyStandup(options) {
   const temp = collectTempDrafts({ full: options.full });
   const status = collectStatusSnapshot();
   const outputRel = relative(process.cwd(), options.outputPath).replace(/\\/g, '/');
+
+  // Роутинг талантов ВЫЧИСЛЯЕТСЯ, а не пишется моделью (консилиум
+  // standup-charge-2026-07-16): детерминированно из реестра × компетенций
+  // VIRTUAL_TEAM_PROMPT. Что вычислено — то нельзя выдумать.
+  const registry = loadRegistry();
+  const memories = Object.fromEntries(
+    Object.values(CONSILIUM_ROLE_KEY_TO_SLUG).map((slug) => [slug, readPersonaMemory(slug) ?? '']),
+  );
+  const routing = buildStandupRouting({ registry, virtualTeamMd: virtualTeamPrompt, memories });
+  // Гейт против выдуманных задач (паттерн main-day-probe): страхует от того, что
+  // роутинг назовёт id, которого нет в реестре.
+  const invented = findInventedTaskIds(routing, registry);
+  if (invented.length > 0) {
+    console.error(`standup: выдуманные task-id — ${invented.join(', ')}`);
+    process.exitCode = 1;
+    return;
+  }
 
   let ragBlock = '';
   if (!options.noRag) {
@@ -430,19 +454,20 @@ export async function runDailyStandup(options) {
     status,
     '',
     '---',
-    buildTaskPrompt({
-      outputRel,
-      issueCount: issues.count,
-      tempFileCount: temp.fileCount,
-    }),
   ];
 
-  const assembled = sections.join('\n');
-  const bodyText =
-    assembled.length > MAX_CONTEXT_CHARS
-      ? assembled.slice(0, MAX_CONTEXT_CHARS) +
-        `\n\n[… контекст обрезан до ${MAX_CONTEXT_CHARS} символов; для набросков используйте yarn standup:full …]\n`
-      : assembled;
+  const assignment = buildTaskPrompt({
+    outputRel,
+    issueCount: issues.count,
+    tempFileCount: temp.fileCount,
+    routingBlock: formatStandupRouting(routing),
+  });
+
+  const bodyText = assembleStandupPrompt({
+    context: sections.join('\n'),
+    assignment,
+    maxChars: MAX_CONTEXT_CHARS,
+  });
 
   if (options.dryRun) {
     console.log(bodyText);
@@ -498,6 +523,11 @@ export async function runDailyStandup(options) {
         if (!out) out = JSON.stringify(json?.content ?? [], null, 2);
       } catch {
         out = text;
+      }
+      {
+        // Роутинг талантов — детерминированная секция, тот же паттерн, что drift ниже.
+        // Подставляется ПОСЛЕ ответа модели: что вычислено, то нельзя выдумать.
+        out = `${out}\n\n---\n\n${formatStandupSection(routing)}`;
       }
       {
         // DA5: read-only дрейф-секция из последнего DRIFT_*.json (DA3-раннер).

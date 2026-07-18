@@ -5,7 +5,15 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".tsbuildinfo"],
-      "inputs": ["src/**", "tsconfig.json", "package.json"]
+      "inputs": [
+        "src/**",
+        "tsconfig*.json",
+        "package.json",
+        "vite.config.*",
+        "postcss.config.*",
+        "tailwind.config.*",
+        "index.html"
+      ]
     },
     "dev": {
       "cache": false,

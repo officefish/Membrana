@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
+  // Относительный base: блок отдаётся с подпути /panel/section/research-tree/*
+  // маршрут-моста панели (GRP3, ADR-0010) — ассеты должны резолвиться относительно,
+  // не от корня домена. SPA одностраничный (без роутера) — './' безопасен.
+  base: './',
   plugins: [react()],
   resolve: {
     alias: {

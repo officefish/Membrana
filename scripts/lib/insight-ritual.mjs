@@ -99,7 +99,7 @@ export function createInsight(repoRoot, input) {
  * их и надо слать в поиск.
  * @param {string} insightMd
  */
-function parseResearchQuestions(insightMd) {
+export function parseResearchQuestions(insightMd) {
   // Терминатор — следующий заголовок H2 или конец файла. НЕ `\n*$` c флагом `m`:
   // между заголовком секции и списком есть пустая строка, и `$` (multiline) матчит
   // её конец сразу → пустой захват.
@@ -108,18 +108,67 @@ function parseResearchQuestions(insightMd) {
   );
   if (!section) return [];
   const items = [];
-  const re = /^\s*(\d+)\.\s+(?:\*\*(.+?):\*\*\s*)?(.+)$/gm;
+  // Вопрос кончается там, где начинается СЛЕДУЮЩИЙ пункт или секция, а не на первом
+  // переводе строки (#402). Прежняя `(.+)$` c флагом `m` рвала многострочный вопрос:
+  // 2026-07-12 Q1 ушёл как «…patterns exist in 2025-2026 for giving» — Perplexity
+  // добросовестно ответил про благотворительные пожертвования в США. Сбой тихий:
+  // скрипт печатал «RESEARCH.md обновлён», ран потрачен, мусор виден только глазами.
+  // `$(?![\s\S])` — именно КОНЕЦ СТРОКИ, а не конец любой строки: с флагом `m`
+  // голый `$` матчит каждый перевод строки, и вопрос рвётся снова (эту же ошибку
+  // допустила первая версия фикса — класс бага живучий).
+  const re = /^[ \t]*(\d+)\.[ \t]+([\s\S]*?)(?=\n[ \t]*\d+\.[ \t]|\n##\s|$(?![\s\S]))/gm;
   let m;
   while ((m = re.exec(section[1])) !== null) {
-    const label = (m[2] ?? '').trim();
-    const text = m[3].replace(/\*\*/g, '').trim();
+    // Перенос строки внутри вопроса — верстка markdown, а не смысл: склеиваем.
+    const raw = m[2].replace(/\s*\n\s*/g, ' ').trim();
+    const labelled = raw.match(/^\*\*(.+?):\*\*\s*([\s\S]+)$/);
+    const label = (labelled?.[1] ?? '').trim();
+    const text = (labelled?.[2] ?? raw).replace(/\*\*/g, '').trim();
+    if (!text) continue;
+    // В запрос уходит ТОЛЬКО текст вопроса, без метки. Метка — заголовок для нас;
+    // поисковику она вредна: «Fit (Membrana): …» заставляет искать продукт с таким
+    // названием, и 2026-07-15 Perplexity честно ответил про мембранную ткань для
+    // одежды, SAFe Kanban и culture fit при найме. Тот же тихий класс, что #402:
+    // ран потрачен, ответ бессмысленный, скрипт доволен.
     items.push({
       key: `Q${m[1]}`,
       label: label || `Q${m[1]}`,
-      query: label ? `${label}: ${text}` : text,
+      query: text,
     });
   }
   return items;
+}
+
+/**
+ * Гард против тихого мусора (#402).
+ *
+ * Обрезанный вопрос неотличим от нормального: Perplexity ответит на что угодно, а
+ * скрипт напечатает «обновлён». Поэтому запрос, который выглядит оборванным, — это
+ * ошибка ДО траты рана, а не сюрприз в выжимке.
+ *
+ * @param {{key:string,label:string,query:string}[]} queries
+ * @returns {{key:string,reason:string}[]} — пусто, если всё в порядке
+ */
+export function findTruncatedQueries(queries) {
+  const bad = [];
+  for (const q of queries) {
+    const text = q.query.replace(/^[^:]+:\s*/, '').trim();
+    if (text.length < 25) {
+      bad.push({ key: q.key, reason: `слишком короткий (${text.length} симв.)` });
+      continue;
+    }
+    // Оборвано на незакрытой круглой скобке — ровно случай «(Linear/Jira/GitHub Projects,».
+    const opens = (text.match(/\(/g) ?? []).length;
+    const closes = (text.match(/\)/g) ?? []).length;
+    if (opens > closes) {
+      bad.push({ key: q.key, reason: 'незакрытая скобка — похоже на обрыв' });
+      continue;
+    }
+    if (/[,;—-]$/.test(text)) {
+      bad.push({ key: q.key, reason: 'кончается запятой/тире — похоже на обрыв' });
+    }
+  }
+  return bad;
 }
 
 /** @param {string} insightMd */
@@ -213,6 +262,17 @@ export async function runInsightResearch(repoRoot, id, options = {}) {
   }
   const insightMd = readFileSync(insightPath, 'utf8');
   const queries = buildResearchQueries(insightMd);
+
+  // Гард #402: оборванный запрос неотличим от нормального — Perplexity ответит на
+  // что угодно, а скрипт напечатает «обновлён». Падаем ДО траты рана.
+  const truncated = findTruncatedQueries(queries);
+  if (truncated.length > 0) {
+    throw new Error(
+      `Вопросы выглядят оборванными — ран не тратим (#402):\n` +
+        truncated.map((t) => `  ${t.key}: ${t.reason}`).join('\n') +
+        `\nПочини формулировки в INSIGHT.md → «Вопросы для research».`,
+    );
+  }
 
   if (options.dryRun) {
     return { mode: 'dry-run', queries };

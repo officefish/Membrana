@@ -29,7 +29,7 @@
 | Момент | Команды / действия | Артефакт |
 |--------|-------------------|----------|
 | **Подготовка** | Brief владельца + бриф-интервью (≥20 вопросов) | `docs/prompts/*_HACKATHON_BRIEF.md`, `docs/seanses/hackathon-brief-interview-*.md` |
-| **Старт** | `yarn hackathon:open --id <hackathon-id>` *(или чеклист вручную)* | `docs/HACKATHON_ACTIVE.md` |
+| **Старт** | чеклист вручную (`yarn hackathon:open` — **не реализовано**, бэклог) | `docs/HACKATHON_ACTIVE.md` |
 | **В течение дня** | Эпики по реестру; консилиум при блокере | `docs/HACKATHON_LOG_DAY_N.md` |
 | **Закрытие дня** | Дневное интервью (≥20 вопросов) + handoff | `docs/archive/hackathon/<date>/DAY_N_HANDOFF.md` |
 | **Финал** | `yarn hackathon:close --id <hackathon-id>` | `docs/archive/hackathon/<date>/CLOSURE.md` |
@@ -48,7 +48,7 @@
 ## Жизненный цикл (7 шагов)
 
 ```
-Brief → бриф-интервью → hackathon:open → дни (эпики + handoff) → hackathon:close → ritual:day
+Brief → бриф-интервью → старт по чеклисту → дни (эпики + handoff) → hackathon:close → ritual:day
 ```
 
 ### Шаг 0. Предусловия
@@ -133,9 +133,9 @@ yarn turbo run lint typecheck test --continue --filter='…'
 
 | Команда | Статус |
 |---------|--------|
-| `yarn hackathon:open --id <id>` | Запланировано |
-| `yarn hackathon:day-close --day N` | Запланировано |
-| `yarn hackathon:close --id <id>` | Запланировано |
+| `yarn hackathon:open --id <id>` | **Не реализовано (бэклог)** — старт по чеклисту вручную |
+| `yarn hackathon:day-close --day N` | **Не реализовано (бэклог)** |
+| `yarn hackathon:close --id <id>` | **Реализовано** (`scripts/hackathon-close.mjs`) |
 
 До реализации скриптов — ручной чеклист по этому документу.
 

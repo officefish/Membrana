@@ -1,5 +1,8 @@
 # Промпт: agent-tooling-friction-2 — 7 инструментов против трения агентских сессий
 
+> **СТАТУС 2026-07-15:** все 7 ti реализованы. Первая половина (ti-6/5/7/4) —
+> PR #479 (main 886b8e22). Вторая (ti-3/2/1) — вторым PR. Ниже — исходный план.
+
 > **Task-промпт для агента-разработчика.** Размер: **M** (зонтик, 7 независимых ti).
 > Реестр: `id` = `agent-tooling-friction-2`. Issue: [#469](https://github.com/officefish/Membrana/issues/469).
 > Консилиум-гейт пройден ДО кода: [`agent-tooling-friction-2-2026-07-14.md`](../seanses/agent-tooling-friction-2-2026-07-14.md)

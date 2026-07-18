@@ -44,22 +44,66 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Центральная задача дня (после standup) | `yarn main-day-issue` → `docs/MAIN_DAY_ISSUE.md`; буфер: `docs/CURRENT_TASK.md`; `yarn ritual:day` |
 | Ритм утро/вечер/неделя (полный регламент) | см. `docs/DEVELOPER_RHYTHM.md` |
 
-### Agent tooling (night-build `agent-tooling`, 2026-07-08)
+### Agent tooling
 
-Скрипты/хуки, ускоряющие агентский цикл (эпик `agent-tooling-night-build`):
+**Инвентарь — не здесь: `yarn tooling:overview`.** Он генерируется из `package.json`,
+`.cursor/skills/README.md`, экспортов `scripts/lib/*.mjs` и `.githooks/` — всегда свеж.
 
-| Задача | Команда |
-|--------|---------|
-| One-shot PR-флоу (ветка→commit→PR→squash-merge→ff-sync) | `yarn pr:ship --type feat --scope core -m "..." [--issue N] [--branch x]` (default `--dry-run`; `--execute` — реально) |
-| Пересобрать dist изменённых пакетов (убить stale-dist) | `yarn build:affected` |
-| Сверить wire-контракт core ↔ background-cabinet CJS | `yarn verify:wire-sync` (в pre-push) |
-| Дождаться зелёного CI → напечатать команду деплоя (не запускает) | `yarn deploy:when-green` |
-| Оффлайн Prisma-миграция (diff HEAD↔рабочая схема) | `yarn prisma:migration --name X [--schema <path>]` |
-| Архив карточек с закрытыми GH-иссью | `yarn tasks:archive-closed [--execute]` |
+> **Почему не списком (#554 TF-6).** Здесь стоял рукописный снимок с датой
+> «2026-07-08»: **11 команд из 253** живых. Не было `neighbors`, `research`,
+> `consilium`, `task:register`, `task:review:*`, `insight`. Агент читал его как факт и
+> за одну сессию (16.07) **пять раз написал заново существующее** — в том числе
+> самописный grep про worktree вместо `yarn neighbors`, и **этот grep соврал**.
+> Та же болезнь, что у `detection-planning-priorities.mjs`: снимок от 06.07 звал
+> писать `fuseDetectorConfidences`, слитый 13.07. Рукой инвентарь не ведём.
 
 **Хуки** (`.githooks/`, авто через `prepare` → `core.hooksPath`): `pre-push` = catalog:verify-client + verify:wire-sync + affected typecheck (пропуск `SKIP_PREPUSH=1`); `commit-msg` = conventional-заголовок (блок) + Co-Authored-By трейлер (warn), пропуск `SKIP_COMMIT_MSG=1`.
 
-**Скиллы:** `membrana-ship` (add-A → code-review → pr:ship), `membrana-tooling-doctor` (health-check tooling). Общий «работа за сегодня» — `scripts/lib/git-day-context.mjs` (без --author-фильтра).
+#### Грабли — пишутся руками (генератор их не добудет)
+
+Обязательство обновлять раздел — скилл `membrana-tooling-needs`. Только то, что **врёт
+или кусает**, а не «что существует».
+
+| Грабля | Как кусает |
+|--------|------------|
+| `yarn office:ssh 'docker ps'` | **Без `--`**: yarn 4 съедает его сам |
+| `yarn code-review:pr 543` | **Без `--`** по той же причине: с `--` уходило `pr="--"` (починено TF-2 — теперь внятный отказ) |
+| `node scripts/_ssh-panel-smoke.mjs` | **Без `--read-only` пишет в ПРОД-стор** |
+| `yarn pr:ship`, `yarn repo:clean`, `yarn tasks:archive-closed` | По умолчанию **dry-run**; нужен `--execute` |
+| Мёрж `git merge origin/main` | **Без `-m`** — хук освобождает `Merge*`. Своё `-m "merge: …"` строчными хук отклонит (TF-1: находка «хук ломает merge» была **ложной**) |
+| Worktree занял ветку | `git checkout main` упадёт. Смотреть `yarn neighbors`, не писать grep — самописный **соврал** 16.07. Ночью ветку брать **от `origin/main`**, не от локального main |
+| Новый `scripts/_ssh-*.mjs` | Под gitignore — только `git add -f`, иначе молча не войдёт в коммит (#476 п.7) |
+| `rt-6` «ПОВЕСТКА НЕ ПОКРЫТА» | **Грепает МЕТКУ, не вердикт** (#558). Читать как «ID не проставлены», не «вопросы уронены». С NB3 (17.07) сообщение честное + смотрит наличие секции вердикта |
+| Футер консилиума «Реплик: N» | Число пишет **модель, врёт** (M0 17.07: 21≠20). С NB2 сверяется автоматически (`reconcileReplyCount`) |
+| `OFFICE_API_TOKEN` в параллельном worktree | Openrouter-`.env` несёт плейсхолдер `API_INTERNAL_TOKEN` → office 401. С NB4 (17.07) `resolveOfficeToken` берёт токен из `.env` любого worktree репо автоматически |
+| Ласточка `sent=true` | **Не гарантия доставки** — office не возвращал message_id (17.07 ложная тревога «не пришла»). С NB6 клиент называет ограничение явно; серверный след — follow-up |
+| MD060 в диагностиках | Шум IDE-расширения на компактных таблицах — заглушён `.markdownlint.json` (NB1). MD056 оставлен: он ловит реальный разрыв таблицы |
+| `process.exit(0)` после LLM-fetch | Роняет libuv на Windows (`UV_HANDLE_CLOSING`) гонкой с закрытием сокета. Паттерн: `process.exitCode` + дать циклу стечь (`consilium.mjs`, NB5 insight) |
+
+**Общий «работа за сегодня»** — `scripts/lib/git-day-context.mjs` (без `--author`-фильтра).
+
+#### Ветки: `git branch --merged` здесь врёт (#492)
+
+PR мёржатся **squash** → коммиты ветки не становятся предками `main`, и `git branch --merged`
+их не видит: на замере 2026-07-15 он признал влитыми **9** удалённых веток из **42** реально
+мёртвых. Не чистить по нему и не судить по нему о «невлитой работе» — источник истины
+только состояние PR (`yarn repo:clean`). По той же причине удаление идёт через `git branch -D`,
+а не `-d`: `-d` откажет на squash-мёрженной ветке.
+
+Никогда не удалять: **персона-ветки** (`vesnin`, `ozhegov`, `boyarskiy`, `dynin` — канон
+[`TASKS_MANAGEMENT.md` §7а](docs/TASKS_MANAGEMENT.md), живут между задачами, старый коммит
+≠ заброшенность) и ветки без PR, которых нет на `origin` (единственная копия работы).
+
+#### Windows-сессия (PowerShell 5.1) — канон
+
+Владелец работает на Windows; PS 5.1 ломает то, что в bash проходит молча. Живые эпизоды 14–15.07:
+
+- **`node -e` с JSON, `$(...)`, кавычками или переносами — только файлом в scratchpad**, не инлайном. PS-парсер съедает JSON-литерал (`register-epic` → `Unexpected token ':'`) и распознаёт `$(grep …)` как cmdlet (`send-swallow`). Однострочный `node -e` без спецсимволов — можно.
+- **Here-string `@'…'@` — это PowerShell, а не bash.** В bash-инструменте он приезжает как литерал `@` и `commit-msg`-хук отбивает заголовок (живой случай 15.07). В bash — heredoc `<<'EOF'`.
+- **PS 5.1 не знает `&&` / `||`** (parser error) — цепочка через `;` + `if ($?) { … }`.
+- **Не редиректить stderr натива (`2>&1`)**: PS 5.1 заворачивает строки в `NativeCommandError` и `$?` становится `$false` при exit 0 — зелёный шаг выглядит красным.
+- **`process.exit()` в скриптах — не использовать, только `process.exitCode`**: обрыв процесса с недописанным pipe-stdout роняет libuv ассертом `UV_HANDLE_CLOSING` и подменяет код возврата на **127** (поймано на `_ssh-panel-smoke`, тот же симптом у `code-review.mjs`).
+- **Файлы для VDS пишутся с CRLF** — bash падает на `$'\r': command not found`. `yarn vds:run` снимает CRLF сам; при ручном scp — `sed -i 's/\r$//'`.
 
 ### OpenCode operator commands
 

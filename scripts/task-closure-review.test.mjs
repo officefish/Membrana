@@ -8,7 +8,9 @@ import {
   applyTeamleadReview,
   buildTaskClosureReviewPrompt,
   detectReviewTier,
+  explainReviewEvidenceGap,
   finalizeReviewManifest,
+  hasP0P1Blockers,
   hasSufficientReviewEvidence,
   loadReviewManifest,
   manifestPath,
@@ -19,7 +21,7 @@ import {
   saveReviewManifest,
   writeReviewArtifact,
 } from './lib/task-closure-review.mjs';
-import { parseTaskClosureReviewCli } from './task-closure-review.mjs';
+import { CLOSURE_DIFF_EXCLUDES, parseTaskClosureReviewCli } from './task-closure-review.mjs';
 
 const SHA_A = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 const SHA_B = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
@@ -231,6 +233,57 @@ test('LGTM is rejected when T1 evidence has only diff check', () => {
   );
 });
 
+// ─── отказ обязан называть причину, а не указывать на tier (#515, трение A) ───────
+
+/** Манифест с одним упавшим чеком поверх прошедших. */
+function withFailedCheck(manifest, command = 'git diff --check', note = '') {
+  const base = withEvidence(manifest);
+  return {
+    ...base,
+    evidence: {
+      ...base.evidence,
+      checks: base.evidence.checks.map((check) =>
+        check.command === command ? { ...check, status: 'fail', exitCode: 2, note } : check,
+      ),
+    },
+  };
+}
+
+test('отказ называет упавший чек, а не tier (живой случай 15.07)', () => {
+  // Модель ревью дала LGTM; гейт отклонил из-за хвостовых пробелов в выжимке.
+  // Прежний текст «недостаточно evidence для tier» уводил в сторону: корень
+  // пришлось искать в manifest.json глазами.
+  const manifest = withFailedCheck(prepare(), 'git diff --check', 'trailing whitespace');
+  assert.equal(hasSufficientReviewEvidence(manifest), false);
+  const gap = explainReviewEvidenceGap(manifest);
+  assert.match(gap, /git diff --check/u, 'имя чека обязано быть в причине');
+  assert.match(gap, /fail/u);
+  assert.throws(() => applyTeamleadReview(manifest, lgtmBody), /git diff --check/u);
+});
+
+test('stale-чек тоже назван поимённо', () => {
+  const base = withEvidence(prepare());
+  const manifest = {
+    ...base,
+    evidence: {
+      ...base.evidence,
+      checks: base.evidence.checks.map((c) => (c.command === 'yarn test' ? { ...c, status: 'stale' } : c)),
+    },
+  };
+  assert.match(explainReviewEvidenceGap(manifest), /yarn test — stale/u);
+});
+
+test('нехватка чеков объясняется числом, а не «tier»', () => {
+  const gap = explainReviewEvidenceGap(withEvidence(prepare(), 1));
+  assert.match(gap, /T1/u);
+  assert.match(gap, /одного `git diff --check` мало|нужно ≥2/u);
+});
+
+test('достаточный evidence → причины нет', () => {
+  assert.equal(explainReviewEvidenceGap(withEvidence(prepare())), '');
+  assert.equal(hasSufficientReviewEvidence(withEvidence(prepare())), true);
+});
+
 test('review tier must match manifest tier', () => {
   assert.throws(
     () => applyTeamleadReview(withEvidence(prepare()), lgtmBody.replace('Tier: T1', 'Tier: T0')),
@@ -246,6 +299,43 @@ test('LGTM cannot contain unresolved P0/P1 text', () => {
     ),
     /LGTM несовместим/,
   );
+});
+
+// ─── ретро #485 п.4: гард решает по первому токену, а не по слову «P1» в прозе ────
+
+test('hasP0P1Blockers: отрицание в начале строки — блокеров нет', () => {
+  for (const line of ['—', '–', '-', 'none', 'None', 'нет', 'НЕТ', 'no', 'n/a', 'отсутствуют', 'не выявлено']) {
+    assert.equal(hasP0P1Blockers(line), false, `«${line}» — это отсутствие блокеров`);
+  }
+});
+
+test('hasP0P1Blockers: слово «P1» в прозе после отрицания не делает блокер', () => {
+  // Живой ложный BLOCK 2026-07-14: формулировка ниже стоила лишнего closure-цикла.
+  assert.equal(hasP0P1Blockers('нет (P1 из ревью OP5 закрыт)'), false);
+  assert.equal(hasP0P1Blockers('нет — P1 прошлого ревью снят'), false);
+});
+
+test('hasP0P1Blockers: настоящие блокеры ловятся (fail-closed)', () => {
+  assert.equal(hasP0P1Blockers('1. Hidden blocker'), true);
+  assert.equal(hasP0P1Blockers('P1 — гонка в сторе'), true);
+  // Неизвестная формулировка → считаем блокером: пропустить P0 хуже, чем переспросить.
+  assert.equal(hasP0P1Blockers('см. комментарии в PR'), true);
+});
+
+test('hasP0P1Blockers: тире засчитывается только одиноко (не markdown-пункт)', () => {
+  assert.equal(hasP0P1Blockers('—'), false);
+  // Это блокер в виде списка, а не отрицание: гард обязан остаться fail-closed.
+  assert.equal(hasP0P1Blockers('- гонка в сторе'), true);
+  assert.equal(hasP0P1Blockers('— P1 в runtime'), true);
+});
+
+test('LGTM с «P0/P1: нет (P1 из OP5 закрыт)» больше не даёт ложный BLOCK', () => {
+  const reviewed = applyTeamleadReview(
+    withEvidence(prepare()),
+    lgtmBody.replace('P0/P1: —', 'P0/P1: нет (P1 из ревью OP5 закрыт)'),
+  );
+  assert.equal(reviewed.verdict, 'LGTM');
+  assert.equal(reviewed.evidence.hasUnresolvedP0P1, false);
 });
 
 test('BLOCK transition records unresolved blocker state', () => {
@@ -346,4 +436,16 @@ test('review-file fallback does not require provider-sized diff', () => {
   );
   // The CLI intentionally bypasses prompt construction when --review-file is supplied.
   assert.equal(parseTaskClosureReviewCli(['run', '--id', task.id, '--review-file', 'review.md']).reviewFile, 'review.md');
+});
+
+// ─── B3 (#539): ревью-артефакты вне exact-диффа ───────────────────────────────────
+
+test('CLOSURE_DIFF_EXCLUDES исключает протоколы процесса, не код и не промпты', () => {
+  assert.ok(CLOSURE_DIFF_EXCLUDES.includes('docs/seanses'), 'протоколы консилиумов');
+  assert.ok(CLOSURE_DIFF_EXCLUDES.includes('docs/tasks/research'), 'выжимки research');
+  assert.ok(CLOSURE_DIFF_EXCLUDES.includes('docs/discussions'), 'артефакты код-ревью');
+  assert.ok(CLOSURE_DIFF_EXCLUDES.includes('docs/reviews'), 'артефакты closure-ревью');
+  // Код и промпты задач ДОЛЖНЫ ревьюиться — не в списке исключений.
+  assert.ok(!CLOSURE_DIFF_EXCLUDES.some((p) => p.startsWith('scripts')), 'код ревьюится');
+  assert.ok(!CLOSURE_DIFF_EXCLUDES.includes('docs/prompts'), 'промпты задач ревьюятся');
 });

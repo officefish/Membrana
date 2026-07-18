@@ -132,6 +132,19 @@ describe('UserCaseCatalogService', () => {
     expect(canonicalEntryViolations(scenario), 'entry канонические').toEqual([]);
   });
 
+  // Фикс cowork #487 (RETROSPECTIVE №2): FREE combined наследовал competition-штамп
+  // через Beta → isCompetitionStructureLocked блокировал правку структуры бесплатного
+  // сценария. FREE-шаблон competition-meta нести не должен. Гард против регресса.
+  it('usercase-free-combined-alarm НЕ competition-locked (правка структуры доступна во FREE)', () => {
+    const catalog = new UserCaseCatalogService();
+    const document = catalog.loadDocument('usercase-free-combined-alarm');
+    expect(document).not.toBeNull();
+    expect(document?.meta?.executionPolicy).not.toBe('competition');
+    // Донор Beta штамп сохраняет — снятие не должно протечь на competition-форк.
+    const beta = catalog.loadDocument('usercase-detection-alarm-beta');
+    expect(beta?.meta?.executionPolicy, 'Beta-форк остаётся competition').toBe('competition');
+  });
+
   it('listForDeviceKind filters by deviceKind', () => {
     const catalog = new UserCaseCatalogService();
     expect(catalog.listForDeviceKind('microphone')).toHaveLength(8);

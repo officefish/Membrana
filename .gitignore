@@ -70,7 +70,12 @@ packages/services/detectors/**/src/*.js.map
 packages/services/detectors/**/src/*.d.ts
 packages/services/detectors/**/src/*.d.ts.map
 
-# Локальные SSH/debug-скрипты и вывод (не коммитить)
+# Локальные SSH/debug-скрипты и вывод (не коммитить).
+# ВНИМАНИЕ: паттерн ловит и переиспользуемые хелперы — все существующие
+# scripts/_ssh-*.mjs трекаются, потому что были добавлены через `git add -f`.
+# Новый _ssh-скрипт, который должен жить в репо, коммитить только так:
+#   git add -f scripts/_ssh-<name>.mjs
+# иначе он молча не войдёт в коммит (ретро #476 п.7).
 scripts/_ssh-*.mjs
 scripts/_*-out.txt
 
@@ -134,8 +139,15 @@ __pycache__/
 # Артефакт code-review --uncommitted (перезаписывается каждым прогоном → autostash-трение)
 docs/discussions/uncommitted-code-review.md
 
+# Артефакты code-review --pr/--branch (TF-3, #554): генерируются на каждое ревью и
+# падали untracked — 16.07 после трёх PR-ревью пришлось git add поимённо, чтобы их
+# не втянуть. Ревью-артефакт — процесс, а не исходник (тот же класс, что docs/reviews/).
+docs/discussions/pr-*-code-review.md
+docs/discussions/branch-*-code-review.md
+
 # Артефакт yarn hermes:brief (генерируемый снимок состояния сессии, перезаписывается)
 docs/HERMES_BRIEF.md
 
 # Журнал drift-anchor (DA3 дайджесты + DA4/DA5 записи якорей) — локальный артефакт хоста (office/CI), не для репо
 docs/reports/drift-anchor/
+docs/tasks/morning-ritual-state.json

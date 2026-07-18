@@ -12,8 +12,8 @@
  *
  * Требуется ANTHROPIC_API_KEY в .env. Промпт: docs/prompts/CONSILIUM_PROMPT.md
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { resolve, basename } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 import {
@@ -43,6 +43,15 @@ import {
   personaMemoryPath,
   readPersonaMemory,
 } from './lib/persona-memory.mjs';
+import {
+  extractAgendaIds,
+  findUncoveredAgendaItems,
+  hasVerdictSection,
+  meetingVerdictProblems,
+  validateProtocol,
+  meetingAgendaProblem,
+  reconcileReplyCount,
+} from './lib/protocol-validator.mjs';
 
 const MAX_PROMPT_SPEC_CHARS = 12_000;
 const MAX_VIRTUAL_TEAM_CHARS = 8_000;
@@ -87,6 +96,9 @@ Options:
                          (#451, фаза 1.5); флаг сохранён для совместимости.
   --no-memory            Выключить журналы для этого запуска.
                          Эквивалент: PERSONA_MEMORY_INJECT=0.
+  --secretary-file <md>  Оффлайн-канал (#469 ti-2): протокол написан в IDE-чате,
+                         API не вызывается. Валидирует канон (реплики/роли/итог),
+                         оборачивает метаданными (канал secretary), кладёт в seanses.
   --no-save              Только stdout.
   --dry-run              Собрать промпт, не вызывать API.
   --help, -h             Справка.
@@ -105,12 +117,14 @@ function parseArgs(argv) {
   let saveAs = '';
   let ghIssue = '';
   let topicFile = '';
+  let meeting = '';
   let seed;
   let minReplies = MIN_REPLIES_DEFAULT;
   let noContext = false;
   let noRag = false;
   let noSave = false;
   let dryRun = false;
+  let secretaryFile = '';
   // #451 (фаза 1.5): в КОНСИЛИУМЕ память персон включена по умолчанию —
   // решение владельца 2026-07-14 по итогам пилота; в `yarn ask` остаётся opt-in.
   let withMemory = resolveWithMemory(argv, process.env);
@@ -124,6 +138,10 @@ function parseArgs(argv) {
     if (arg.startsWith('--gh-issue=')) { ghIssue = arg.slice('--gh-issue='.length); continue; }
     if (arg === '--topic-file') { topicFile = argv[++i] ?? ''; continue; }
     if (arg.startsWith('--topic-file=')) { topicFile = arg.slice('--topic-file='.length); continue; }
+    // ЗАСЕДАНИЕ (docs/MEETING_REGULATION.md): включает S-M1 — ровно один вопрос.
+    // Обычный консилиум вправе быть многовопросным, поэтому правило под флагом.
+    if (arg === '--meeting') { meeting = argv[++i] ?? ''; continue; }
+    if (arg.startsWith('--meeting=')) { meeting = arg.slice('--meeting='.length); continue; }
     if (arg === '--seed') { seed = Number(argv[++i]); continue; }
     if (arg.startsWith('--seed=')) { seed = Number(arg.slice('--seed='.length)); continue; }
     if (arg === '--min-replies') { minReplies = Number(argv[++i]); continue; }
@@ -132,11 +150,13 @@ function parseArgs(argv) {
     if (arg === '--no-rag') { noRag = true; continue; }
     if (arg === '--no-save') { noSave = true; continue; }
     if (arg === '--dry-run') { dryRun = true; continue; }
+    if (arg === '--secretary-file') { secretaryFile = argv[++i] ?? ''; continue; }
+    if (arg.startsWith('--secretary-file=')) { secretaryFile = arg.slice('--secretary-file='.length); continue; }
     rest.push(arg);
   }
 
   const question = rest.join(' ').trim();
-  if (!question) {
+  if (!question && !secretaryFile) {
     console.error('Не задан вопрос. Пример: yarn consilium "нужен ли пакет X?"');
     process.exit(1);
   }
@@ -149,7 +169,30 @@ function parseArgs(argv) {
     process.exit(1);
   }
 
-  return { question, saveAs, ghIssue, topicFile, seed, minReplies, noContext, noRag, noSave, dryRun, withMemory };
+  return { question, saveAs, ghIssue, topicFile, meeting, seed, minReplies, noContext, noRag, noSave, dryRun, withMemory, secretaryFile };
+}
+
+/**
+ * ID вопросов СОСЕДНИХ комнат заседания: их появление в DoD = колонизация (hard rule 2).
+ *
+ * На уровне модуля, потому что структурный гейт #616 стоит в ОБОИХ каналах — и в
+ * секретарском, и в LLM. Пока функция жила внутри LLM-ветки, канон заседания
+ * проверялся только там.
+ */
+function meetingSiblingIdsFor(root, meetingId, ownTopicFile) {
+  try {
+    const dir = resolve(root, 'docs', 'meeting', meetingId);
+    const own = ownTopicFile ? resolve(root, ownTopicFile) : '';
+    const ids = new Set();
+    for (const f of readdirSync(dir).filter((x) => /-topic\.md$/u.test(x))) {
+      const full = resolve(dir, f);
+      if (full === own) continue;
+      for (const id of extractAgendaIds(readFileSync(full, 'utf8'))) ids.add(id);
+    }
+    return [...ids];
+  } catch {
+    return [];
+  }
 }
 
 function readBounded(absPath, maxChars, optional = false) {
@@ -323,6 +366,11 @@ function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles
 function wrapSeanseFile({ body, question, orderedRoles, model, ghIssue, topicFile, relPath }) {
   const stamp = new Date().toISOString();
   const meta = [
+    // Пометка канала (#616, A3): по ней аудитор отличает протокол, произведённый
+    // инструментом (гейт посылок отработал при записи), от записанного в seanses
+    // напрямую — а напрямую гейт не вызывается вовсе.
+    '<!-- канал: llm — протокол произведён yarn consilium, гейт структуры вердикта пройден -->',
+    '',
     '# Метаданные сеанса',
     '',
     '| Поле | Значение |',
@@ -349,10 +397,112 @@ function wrapSeanseFile({ body, question, orderedRoles, model, ghIssue, topicFil
   return meta.join('\n');
 }
 
+/**
+ * Оффлайн-канал протокола (#469 ti-2): валидировать канон готового md,
+ * обернуть метаданными (канал secretary), сохранить в seanses. Без API.
+ */
+function runSecretaryFile(cli, cwd) {
+  const srcAbs = resolve(cwd, cli.secretaryFile);
+  if (!existsSync(srcAbs)) {
+    console.error(`Файл не найден: ${cli.secretaryFile}`);
+    process.exit(1);
+  }
+  const body = readFileSync(srcAbs, 'utf8');
+  const agendaMd = cli.topicFile ? readBounded(resolve(cwd, cli.topicFile), MAX_TOPIC_CHARS, true) : null;
+  // #616 (A): для заседания канон дополняется структурой вердикта — посылки
+  // обязательны ЗДЕСЬ, до записи, а не замечанием постфактум.
+  const { ok, problems, notes, stats } = validateProtocol(body, {
+    kind: 'consilium',
+    minReplies: cli.minReplies,
+    agenda: agendaMd || null,
+    meeting: Boolean(cli.meeting),
+    siblingIds: cli.meeting ? meetingSiblingIdsFor(cwd, cli.meeting, cli.topicFile) : [],
+  });
+  if (!ok) {
+    console.error(`Протокол не прошёл канон консилиума (${problems.length}):`);
+    for (const p of problems) console.error(`  - ${p}`);
+    process.exit(1);
+  }
+  // #619: заметки не роняют прогон, но должны быть видны — понизить сигнал не значит
+  // его проглотить.
+  for (const n of notes ?? []) console.error(`  ~ ${n}`);
+  console.error(`→ канон OK: реплик ${stats.total}, все ${Object.keys(stats.counts).length} ролей высказались`);
+
+  if (!cli.saveAs) {
+    console.error('--secretary-file требует --save-as <slug> (имя протокола в seanses).');
+    process.exit(1);
+  }
+  const relPath = resolveSeansePath({ cwd, saveAs: cli.saveAs, question: cli.saveAs });
+  const absPath = resolve(cwd, relPath);
+  const header = [
+    '<!-- канал: secretary (offline, #469 ti-2) — протокол написан в IDE-чате, LLM не вызывался -->',
+    `<!-- валидация канона: реплик ${stats.total}, роли ${Object.entries(stats.counts).map(([r, n]) => `${r}:${n}`).join(' ')} -->`,
+    '',
+  ].join('\n');
+  mkdirSync(resolve(cwd, 'docs/seanses'), { recursive: true });
+  const secReconciled = reconcileReplyCount(body);
+  if (secReconciled.corrected) {
+    console.error(`→ футер реплик исправлен: «${secReconciled.stated}» → факт ${secReconciled.total}`);
+  }
+  writeFileSync(absPath, header + secReconciled.md.trim() + '\n', 'utf8');
+  console.log(`→ протокол (secretary): ${relPath}`);
+}
+
 async function main() {
   loadDotEnv();
   const cli = parseArgs(process.argv.slice(2));
   const cwd = process.cwd();
+
+  // #469 ti-2: оффлайн-канал — протокол написан в IDE-чате (LLM недоступен).
+  if (cli.secretaryFile) {
+    runSecretaryFile(cli, cwd);
+    return;
+  }
+
+  // TF-5 (#554): предупредить ДО траты рана, если повестка без ID-меток — гейт
+  // полноты (rt-6) на такой повестке молчит, то есть декоративен. Две повестки
+  // 16.07 были прозаичными, и оба консилиума молча уронили по вопросу.
+  if (cli.topicFile) {
+    try {
+      const agendaIds = extractAgendaIds(readBounded(resolve(cwd, cli.topicFile), MAX_TOPIC_CHARS, true));
+      if (agendaIds.length === 0) {
+        console.error(
+          '\n⚠ Повестка без ID-меток вопросов (rt-6 гейт полноты не сработает).\n' +
+            '  Помечай вопросы жирным ID: **A1 — …**, **B2 — …**, **Q3 — …**\n' +
+            '  Иначе пропуск вопроса останется незамеченным — паттерн 16.07 (3 консилиума подряд).\n',
+        );
+      } else {
+        console.error(`→ повестка: ${agendaIds.length} вопрос(ов) под гейтом rt-6 (${agendaIds.join(', ')})`);
+      }
+
+    } catch {
+      // Повестка нечитаема — не мешаем прогону, это забота readBounded ниже.
+    }
+  }
+
+  // S-M1 (docs/MEETING_REGULATION.md): в заседании повестка несёт ровно один вопрос —
+  // иначе ОТКАЗ до прогона. Счётчик выше существовал и раньше: 17.07 он честно напечатал
+  // «10 вопросов» и пропустил прогон, который уронил центральный. Информация была на
+  // экране, останавливать её было нечему — здесь у неё зубы.
+  //
+  // НАМЕРЕННО вне try/catch выше: гейт, который глушится catch'ем, — это `|| true`,
+  // то есть отсутствие гейта. Нечитаемая повестка при --meeting обязана ронять прогон,
+  // а не пропускать его молча.
+  if (cli.meeting) {
+    const problem = cli.topicFile
+      ? meetingAgendaProblem(readBounded(resolve(cwd, cli.topicFile), MAX_TOPIC_CHARS, true))
+      : 'заседание без --topic-file: нечего проверять на один вопрос';
+    if (problem) {
+      console.error(
+        `\n✗ S-M1 — заседание «${cli.meeting}»: ${problem}.\n` +
+          '  Один вопрос — одно заседание: тогда «уронили молча» не существует,\n' +
+          '  вердикт либо есть, либо заседания не было (S-M2).\n' +
+          '  Разбей повестку и созывай по одному в порядке из M0.\n' +
+          '  Регламент: docs/MEETING_REGULATION.md\n',
+      );
+      process.exit(2);
+    }
+  }
 
   const orderedRoles = shuffleRoles(CONSILIUM_ROLES, cli.seed);
   if (process.stderr.isTTY) {
@@ -430,7 +580,11 @@ async function main() {
     );
     if (!ok) {
       printAnthropicHttpError(status, text);
-      process.exit(1);
+      // exitCode + return, а не process.exit(): сокеты HTTP-вызова ещё живы, и обрыв
+      // процесса роняет libuv на Windows ассертом UV_HANDLE_CLOSING → 127 вместо 1
+      // (тот же класс, что чинился в code-review.mjs). Это штатный путь «нет кредита».
+      process.exitCode = 1;
+      return;
     }
     const json = JSON.parse(text);
     const parts = json?.content ?? [];
@@ -438,8 +592,18 @@ async function main() {
     if (!answer) answer = JSON.stringify(parts, null, 2);
   } catch (e) {
     console.error(e);
-    process.exit(1);
+    // См. коммент выше: сокеты живы → exitCode + return вместо обрыва процесса.
+    process.exitCode = 1;
+    return;
   }
+
+  // Сверить прозаический футер «Реплик в диалоге: N» с фактом (модель порой врёт;
+  // 17.07 M0: 21 против фактических 20). Приводим к детерминированному числу.
+  const reconciled = reconcileReplyCount(answer);
+  if (reconciled.corrected) {
+    console.error(`→ футер реплик исправлен: модель «${reconciled.stated}» → факт ${reconciled.total}`);
+  }
+  answer = reconciled.md;
 
   console.log(answer);
 
@@ -454,11 +618,73 @@ async function main() {
       topicFile: cli.topicFile,
       relPath,
     });
+    // #616 (вариант A): структурный гейт стоит ДО записи. Раньше протокол сохранялся,
+    // а проверка печаталась следом предупреждением — отсюда «детектирует, но не
+    // предотвращает»: вердикт на неназванном фундаменте уже лежал в docs/seanses и
+    // считался состоявшимся. Порядок «проверить → сохранить» и есть предотвращение.
+    // ИЗВЕСТНАЯ АСИММЕТРИЯ (замер по замечанию ревью 18.07, не закрыта здесь).
+    // По структуре вердикта каналы сходятся один в один. Но секретарский канал гонит
+    // ПОЛНЫЙ канон через validateProtocol (метаданные, порог реплик, молчащие роли,
+    // секция итога), а этот путь — только структуру: на «тонком» протоколе секретарь
+    // ловит 7 нарушений, LLM-путь 1. Расхождение досталось по наследству, #616 его не
+    // вводил и сознательно не расширяется на него: включение полного канона здесь
+    // начнёт ронять прогоны по причинам, к посылкам не относящимся. Отдельный вопрос.
+    if (cli.meeting) {
+      const siblings = meetingSiblingIdsFor(cwd, cli.meeting, cli.topicFile);
+      const problems = meetingVerdictProblems(answer, siblings);
+      if (problems.length > 0) {
+        // Прогон дорогой: артефакт не выбрасываем, но и протоколом не считаем —
+        // иначе цена отказа толкала бы писать мимо инструмента (тот самый обход).
+        const rejDir = resolve(cwd, 'docs/seanses/rejected');
+        mkdirSync(rejDir, { recursive: true });
+        const rejPath = resolve(rejDir, basename(relPath));
+        writeFileSync(rejPath, fileBody, 'utf8');
+        console.error(
+          `\n✖ заседание НЕ состоялось — структура вердикта (${problems.length}):\n` +
+            problems.map((p) => `  ✖ ${p}`).join('\n') +
+            '\n  Вердикт на неназванном фундаменте нельзя ни отозвать каскадом, ни проверить.' +
+            `\n  Черновик сохранён: docs/seanses/rejected/${basename(relPath)} (НЕ протокол).` +
+            '\n  Назвать посылки задним числом ЗАПРЕЩЕНО (M2″ 18.07: комната выдала 8 уверенных' +
+            '\n  посылок ЧУЖОГО вердикта). Нужен перепрогон с посылками, названными в прогоне.',
+        );
+        process.exitCode = 1;
+        return;
+      }
+      console.error('→ структура вердикта: посылки названы, чужих комнат в DoD нет.');
+    }
+
     writeFileSync(absPath, fileBody, 'utf8');
     console.error(`→ протокол: ${relPath}`);
+
+    // rt-6 (#539/#558): гейт полноты повестки. ЧЕСТНАЯ ОГОВОРКА: rt-6 грепает
+    // ID-МЕТКУ в теле, а НЕ вердикт — он не отличает «вопрос уронен» от «отвечен под
+    // другим заголовком без метки» (17.07: консилиум ВИЗОР дал итоговую таблицу без
+    // меток V1..V4 → rt-6 соврал «не покрыта»). Поэтому сообщение разводит два
+    // случая через наличие секции вердикта и не заявляет «уронено» как факт.
+    if (cli.topicFile) {
+      try {
+        const agenda = readFileSync(resolve(cwd, cli.topicFile), 'utf8');
+        const uncovered = findUncoveredAgendaItems(agenda, answer);
+        if (uncovered.length > 0) {
+          const verdictPresent = hasVerdictSection(answer);
+          console.error(
+            `\n⚠ rt-6: ID-метки не найдены в теле: ${uncovered.join(', ')}.\n` +
+              '  rt-6 грепает МЕТКУ, не вердикт (#558) — это не значит «уронено».\n' +
+              (verdictPresent
+                ? '  Секция вердикта ЕСТЬ → вероятно, отвечены под другим заголовком без метки. Сверь глазами.\n'
+                : '  Секции вердикта НЕТ → вопросы могли быть уронены (паттерн 16.07). Допроси команду.\n') +
+              '  Либо проставь метки в теле, либо зафиксируй «не готово к решению».',
+          );
+        } else {
+          console.error('→ rt-6: все ID-метки повестки присутствуют в теле.');
+        }
+      } catch {
+        // Повестка без ID-меток или нечитаема — гейт не мешает, просто молчит.
+      }
+    }
+
   }
 
-  await new Promise((r) => setTimeout(r, 150));
 }
 
 main();

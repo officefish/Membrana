@@ -13,6 +13,57 @@ export const FFT_METRICS_POTENTIAL_AND_LIMITS_REL =
 export const MAX_FFT_METRICS_DOC_CHARS = 14_000;
 
 /**
+ * Дата снимка «продуктовой магистрали» ниже. ОБНОВЛЯТЬ при смене этапа (S2→S3→…).
+ *
+ * Текст магистрали — статический снимок форсайта, а не живое состояние. 16.07 он
+ * ещё говорил «магистраль = S2 combined UC (fusion)», хотя S2 слит 13.07 — и,
+ * подключённый к трём шагам ритуала (standup, plan:day, main-day-issue), звучал
+ * как три независимых подтверждения. День едва не ушёл на переписывание готового
+ * ядра (разбор: docs/seanses/main-day-issue-drift-report-2026-07-16.md).
+ */
+export const DETECTION_PLANNING_SNAPSHOT_DATE = '2026-07-06';
+
+/** Через сколько дней снимок этапа считается протухшим (этап живёт днями). */
+export const DETECTION_PLANNING_STALE_AFTER_DAYS = 7;
+
+/**
+ * Возраст снимка в днях. `today` — ISO-дата (для тестов и детерминизма).
+ *
+ * @param {string} [today]
+ * @returns {number}
+ */
+export function detectionPlanningSnapshotAgeDays(today) {
+  const now = today ? new Date(`${String(today).slice(0, 10)}T00:00:00Z`) : new Date();
+  const snap = new Date(`${DETECTION_PLANNING_SNAPSHOT_DATE}T00:00:00Z`);
+  if (!Number.isFinite(now.getTime())) return 0;
+  return Math.floor((now.getTime() - snap.getTime()) / 86_400_000);
+}
+
+/** Протух ли снимок этапа магистрали. */
+export function isDetectionPlanningSnapshotStale(today) {
+  return detectionPlanningSnapshotAgeDays(today) > DETECTION_PLANNING_STALE_AFTER_DAYS;
+}
+
+/**
+ * Предупреждение о протухшем снимке — ДЛЯ ПРОМПТА, не для человека.
+ *
+ * Пустая строка, пока снимок свежий. Смысл: LLM обязана сверить этап с кодом и
+ * реестром, а не принимать текст ниже как факт сегодняшнего дня.
+ */
+export function buildDetectionPlanningStalenessWarning(today) {
+  if (!isDetectionPlanningSnapshotStale(today)) return '';
+  const age = detectionPlanningSnapshotAgeDays(today);
+  return [
+    `> ⚠ **Снимок магистрали устарел: ${DETECTION_PLANNING_SNAPSHOT_DATE}, ${age} дн. назад.**`,
+    '> Этап (S2/S3/S4/S5) ниже — снимок на дату, НЕ факт сегодняшнего дня: он не сверяется',
+    '> ни с кодом, ни с реестром. Прежде чем назвать этап магистралью — проверь, не сделан',
+    '> ли он уже (символ в дереве, слитый PR), и не строй развилку на «issue open».',
+    '> Живой случай 16.07: снимок звал писать `fuseDetectorConfidences`, слитый 13.07.',
+    '',
+  ].join('\n');
+}
+
+/**
  * @param {string} [cwd]
  * @returns {string | null}
  */
@@ -28,9 +79,14 @@ export function readFftMetricsPotentialAndLimits(cwd = process.cwd()) {
   return text;
 }
 
-/** Краткие правила для промптов plan:day / standup / main-day-issue. */
-export function buildDetectionPlanningRulesMarkdown() {
+/**
+ * Краткие правила для промптов plan:day / standup / main-day-issue.
+ *
+ * @param {string} [today] ISO-дата (тесты/детерминизм); по умолчанию — сегодня.
+ */
+export function buildDetectionPlanningRulesMarkdown(today) {
   return [
+    buildDetectionPlanningStalenessWarning(today),
     'После эпика **fft-last-chance (#84)** потолок **эшелона 0** (чистый DSP/FFT на free-v1) **зафиксирован**.',
     'Полный разбор — в `docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md` (§0 TL;DR, §6 «куда дальше»).',
     '',
@@ -63,12 +119,12 @@ export function buildDetectionPlanningRulesMarkdown() {
 /**
  * @param {{ fftMetricsDoc: string | null }} opts
  */
-export function buildDetectionPlanningContextSection({ fftMetricsDoc }) {
+export function buildDetectionPlanningContextSection({ fftMetricsDoc, today }) {
   const blocks = [
     '---',
     '## Приоритеты детекции (обязательный контекст планирования)',
     '',
-    buildDetectionPlanningRulesMarkdown(),
+    buildDetectionPlanningRulesMarkdown(today),
   ];
   if (fftMetricsDoc) {
     blocks.push(

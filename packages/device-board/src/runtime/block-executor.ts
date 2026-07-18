@@ -11,6 +11,7 @@ import {
   fuseDetectorConfidences,
   isPolicyConstructorScenarioNodeKind,
   isRecordingGateScenarioNodeKind,
+  isScenarioIntegerValue,
   isScenarioReferenceValue,
   resolveScenarioGraphNodePure,
 } from '@membrana/core';
@@ -27,6 +28,12 @@ import {
   STREAMING_MIC_HANDLE,
 } from '../graph/palette-node.js';
 import { STOP_RUNTIME_DEVICE_HANDLE } from '../graph/stop-runtime-node.js';
+import {
+  DEFAULT_WINDOW_ELAPSED_MS,
+  IS_WINDOW_ELAPSED_FALSE_HANDLE,
+  IS_WINDOW_ELAPSED_TRUE_HANDLE,
+  IS_WINDOW_ELAPSED_WINDOW_MS_HANDLE,
+} from '../graph/is-window-elapsed-node.js';
 import { GET_RECORDER_DEVICE_HANDLE } from '../graph/get-recorder-node.js';
 import { GET_JOURNAL_DEVICE_HANDLE } from '../graph/get-journal-node.js';
 import { GET_REPORTER_JOURNAL_HANDLE } from '../graph/get-reporter-node.js';
@@ -309,6 +316,31 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
     };
   }
 
+  if (node.nodeKind === 'is-window-elapsed') {
+    // PC-2 (консилиум pc2-periodic-window-gate): периодический гейт окна по
+    // host-часам, БЕЗ рекордера. windowMs: провод Integer > поле узла > дефолт.
+    let windowMs = node.windowElapsedMs ?? DEFAULT_WINDOW_ELAPSED_MS;
+    if (variableStore !== undefined && resolveContext !== undefined) {
+      const windowWire = resolveInput(
+        subgraph,
+        variableStore.getAll(),
+        node.id,
+        IS_WINDOW_ELAPSED_WINDOW_MS_HANDLE,
+        resolveContext,
+      );
+      if (isScenarioIntegerValue(windowWire)) {
+        windowMs = windowWire.value;
+      }
+    }
+    const elapsed = host.isWindowElapsed?.(node.id, windowMs) ?? false;
+    host.log('is-window-elapsed', { nodeId: node.id, branch, windowMs, elapsed });
+    return {
+      lastDetection,
+      stopRequested: false,
+      execOutHandle: elapsed ? IS_WINDOW_ELAPSED_TRUE_HANDLE : IS_WINDOW_ELAPSED_FALSE_HANDLE,
+    };
+  }
+
   if (node.nodeKind === 'get-microphone') {
     host.log('get-microphone', {
       nodeId: node.id,
@@ -507,10 +539,33 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       isReferenceValid(analysisRef) &&
       host.makeReportFromAnalysis !== undefined
     ) {
+      // Спектральный путь — без изменений (ADR-0006 Р2: trend-путь не трогаем).
       const payload = await host.makeReportFromAnalysis(reporterRef, analysisRef);
       if (payload !== null) {
         reportStore.setNodeReport(node.id, payload);
         reportId = payload.reportId;
+      }
+    } else if (
+      reporterRef !== null &&
+      reporterRef.kind === 'ReporterRef' &&
+      isReferenceValid(reporterRef) &&
+      analysisRef !== null &&
+      analysisRef.kind === 'EnsembleAnalysisRef' &&
+      isReferenceValid(analysisRef) &&
+      analysisRef.handle !== null &&
+      host.makeReportFromEnsembleAnalysis !== undefined
+    ) {
+      // Нейро-путь (ADR-0006 Р2): детекция из ensembleStore → честный одиночный отчёт.
+      const detection = ensembleStore?.getDetectionByHandle(analysisRef.handle) ?? null;
+      if (detection !== null) {
+        const payload = await host.makeReportFromEnsembleAnalysis(reporterRef, {
+          handle: analysisRef.handle,
+          detection,
+        });
+        if (payload !== null) {
+          reportStore.setNodeReport(node.id, payload);
+          reportId = payload.reportId;
+        }
       }
     }
     host.log('make-report-from-analysis', {
@@ -518,7 +573,7 @@ export async function executeScenarioBlock(input: BlockExecutionInput): Promise<
       branch,
       analysis:
         analysisRef !== null &&
-        analysisRef.kind === 'FftTrendAnalysisRef' &&
+        (analysisRef.kind === 'FftTrendAnalysisRef' || analysisRef.kind === 'EnsembleAnalysisRef') &&
         isReferenceValid(analysisRef)
           ? analysisRef.handle
           : null,

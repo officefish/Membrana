@@ -14,6 +14,20 @@ description: >-
 Follow [`TASK_CLOSURE_REVIEW_REGULATION.md`](../../../docs/prompts/TASK_CLOSURE_REVIEW_REGULATION.md)
 and [`TASK_CLOSURE_REVIEW_PROMPT.md`](../../../docs/prompts/TASK_CLOSURE_REVIEW_PROMPT.md).
 
+## Порядок: доделать ВСЁ до `prepare` (#510)
+
+Артефакт ревью **неизменяем по SHA** — любой новый коммит обнуляет LGTM и требует полного
+повтора: `prepare` → CI → `run`. 2026-07-15 это стоило двух лишних циклов CI (~8 мин каждый):
+дописал промпт после ревью, слил `main` после ревью.
+
+Правило не ослабляет гейт (он в тот же день спас: `finalize` отказался закрывать задачу на
+конфликтующем PR) — оно лишь экономит циклы. **До `prepare`:**
+
+1. `git merge origin/main` — если `main` ушёл вперёд, слить СЕЙЧАС, а не после LGTM.
+2. Промпт задачи существует и заполнен (`task:register` кладёт заготовку — дописать).
+3. Все коммиты пакета на месте; после `prepare` в ветку не коммитить.
+4. `gh pr view <N> --json mergeable` = `MERGEABLE`.
+
 ## Workflow
 
 1. Resolve exactly one active `taskId` from `docs/tasks/registry.json`. Fail closed if

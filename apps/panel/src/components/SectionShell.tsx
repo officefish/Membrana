@@ -6,7 +6,9 @@ import { PANEL_SECTIONS, type PanelSection } from '@/lib/sections';
 import { DriftAnchorsBoard } from './DriftAnchorsBoard';
 import { SectionCard } from './SectionCard';
 import { DetectorCompareSection } from './detector-compare/DetectorCompareSection';
+import { GraphifyBoard } from './graphify/GraphifyBoard';
 import { PanelUsersBoard } from './panel-users/PanelUsersBoard';
+import { ResearchTreeBoard } from './research-tree/ResearchTreeBoard';
 
 /**
  * Shell авторизованного пользователя (OP3 + #454): навбар с ролью словом +
@@ -19,10 +21,12 @@ const SECTION_BOARDS: Partial<Record<string, ComponentType>> = {
   'drift-anchors': DriftAnchorsBoard,
   'detector-compare': DetectorCompareSection,
   'panel-users': PanelUsersBoard,
+  graphify: GraphifyBoard,
+  'research-tree': ResearchTreeBoard,
 };
 
-/** Широкие борды: таблицам сравнения и матрице грантов тесно в max-w-3xl. */
-const WIDE_SECTIONS = new Set(['detector-compare', 'panel-users']);
+/** Широкие борды: таблицам сравнения, матрице грантов и графам тесно в max-w-3xl. */
+const WIDE_SECTIONS = new Set(['detector-compare', 'panel-users', 'graphify', 'research-tree']);
 
 export function SectionShell() {
   const { identity, logout } = usePanelAuth();
@@ -69,16 +73,24 @@ export function SectionShell() {
             <OpenBoard />
           </section>
         ) : (
-          <section aria-label="Разделы панели" className="grid gap-3 sm:grid-cols-2">
-            {PANEL_SECTIONS.map((s) => (
-              <SectionCard
-                key={s.id}
-                section={s}
-                role={identity.role}
-                grants={identity.grants}
-                onOpen={hasBoard(s, identity.role, identity.grants) ? () => setOpenId(s.id) : undefined}
-              />
-            ))}
+          <section aria-label="Разделы панели" className="space-y-4">
+            {!PANEL_SECTIONS.some((s) => hasBoard(s, identity.role, identity.grants)) && (
+              <p className="rounded-lg border border-base-content/10 bg-base-200 px-4 py-3 text-sm text-base-content/70">
+                Доступ выдаётся по разделам. Пока открытых разделов нет — как только
+                владелец откроет доступ (галочкой или промокодом), они появятся здесь.
+              </p>
+            )}
+            <div className="grid gap-3 sm:grid-cols-2">
+              {PANEL_SECTIONS.map((s) => (
+                <SectionCard
+                  key={s.id}
+                  section={s}
+                  role={identity.role}
+                  grants={identity.grants}
+                  onOpen={hasBoard(s, identity.role, identity.grants) ? () => setOpenId(s.id) : undefined}
+                />
+              ))}
+            </div>
           </section>
         )}
       </main>

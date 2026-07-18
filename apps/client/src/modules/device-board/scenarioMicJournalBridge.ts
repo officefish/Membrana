@@ -260,6 +260,9 @@ export class ScenarioMicJournalBridge {
 
   private readonly fftTrendAnalyses = new Map<string, TrendsFftReport>();
 
+  /** PC-2: per-node точка отсчёта периодического окна (is-window-elapsed), мс. */
+  private readonly windowElapsedStartMs = new Map<string, number>();
+
   private readonly collectorRegistry: DeviceCollectorRegistry = createDeviceCollectorRegistry();
 
   private readonly continuousPcmByDevice = new Map<string, ScenarioContinuousPcmBuffer>();
@@ -1126,10 +1129,15 @@ export class ScenarioMicJournalBridge {
     return result;
   }
 
-  /** basn-4: сброс истории proximity + кэша combined-отчётов (scenario-run-start). */
+  /**
+   * Сброс per-run состояния на scenario-run-start: история proximity + кэш
+   * combined-отчётов + окна is-window-elapsed (PC-2 — новый ран стартует окна
+   * заново, иначе первый гейт нового рана сработал бы по протухшей точке отсчёта).
+   */
   resetProximityHistory(): void {
     this.proximityHistory.clear();
     this.combinedReportCache.clear();
+    this.windowElapsedStartMs.clear();
   }
 
   /**
@@ -1335,6 +1343,63 @@ export class ScenarioMicJournalBridge {
     return payload;
   }
 
+  /**
+   * ADR-0006 PC-1: честный отчёт одиночного НЕЙРО-детектора (EnsembleAnalysisRef).
+   * Детекция резолвится исполнителем из ensembleStore и приходит готовой. Схема
+   * `neuro-detection/v1`, summary БЕЗ слова «combined» — одна модальность.
+   */
+  async makeReportFromEnsembleAnalysis(
+    _reporterRef: ScenarioReferenceValue,
+    input: { readonly handle: string; readonly detection: ScenarioDetectionResult },
+  ): Promise<ScenarioReportPayload | null> {
+    const { detection } = input;
+    const isDetected = detection.isDrone ?? detection.detected;
+    // Синтетический trackId выводится из reportId (паттерн trendsFftSyntheticTrackId):
+    // у нейро-отчёта нет реального трека, но журналу нужен непустой стабильный id.
+    const reportId = createEntryId('neuro');
+    const payload = createScenarioReportPayload({
+      schema: 'neuro-detection/v1',
+      reportId,
+      trackId: `neuro-detection:${reportId}`,
+      isDetected,
+      summaryText: `нейро ${detection.confidence.toFixed(2)}${isDetected ? ' (дрон)' : ''}`,
+      payload: {
+        confidence: detection.confidence,
+        detected: detection.detected,
+        isDrone: detection.isDrone ?? null,
+        soundClass: detection.soundClass ?? null,
+        analysisHandle: input.handle,
+      },
+    });
+    scenarioChainLog('report', 'neuro-report-done', {
+      analysisHandle: input.handle,
+      reportId: payload.reportId,
+      schema: payload.schema,
+      isDetected: payload.isDetected,
+      summaryText: payload.summaryText,
+    });
+    return payload;
+  }
+
+  /**
+   * PC-2 (is-window-elapsed): периодический гейт окна по host-часам БЕЗ рекордера.
+   * Первый вызов на nodeId стартует окно (false); при elapsed >= windowMs → true +
+   * сброс окна (самосбрасывающееся, периодическое). Владелец времени — host-часы.
+   */
+  isWindowElapsed(nodeId: string, windowMs: number): boolean {
+    const now = Date.now();
+    const startedAt = this.windowElapsedStartMs.get(nodeId);
+    if (startedAt === undefined) {
+      this.windowElapsedStartMs.set(nodeId, now);
+      return false;
+    }
+    if (now - startedAt >= windowMs) {
+      this.windowElapsedStartMs.set(nodeId, now);
+      return true;
+    }
+    return false;
+  }
+
   /** v0.6 DBJ4: append ScenarioReportPayload в LiveJournal по JournalRef scope. */
   async publishReport(
     journalRef: ScenarioReferenceValue,
@@ -1478,6 +1543,7 @@ export class ScenarioMicJournalBridge {
     this.audioSamplePayloads.clear();
     this.fftFrameByNode.clear();
     this.fftFramePayloads.clear();
+    this.windowElapsedStartMs.clear();
     this.collectorRegistry.resetAll();
     scenarioChainLog('stream', 'stopAudioStreaming', { handle: this.audioStreamHandle });
   }

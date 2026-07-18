@@ -24,6 +24,18 @@ import {
   printAnthropicHttpError,
 } from './_anthropic-env.mjs';
 
+/**
+ * Каталоги ревью-артефактов, исключаемые из exact-диффа closure-ревью (B3, #539).
+ * Протоколы консилиумов, выжимки research, артефакты код-ревью — процесс, не
+ * предмет ревью; на эпик-контуре они пробивали лимит 80k и роняли ревью (#543).
+ */
+export const CLOSURE_DIFF_EXCLUDES = [
+  'docs/seanses',
+  'docs/tasks/research',
+  'docs/discussions',
+  'docs/reviews',
+];
+
 export function parseTaskClosureReviewCli(argv) {
   if (argv.includes('--help') || argv.includes('-h')) return { help: true };
   const command = argv[0] ?? '';
@@ -141,7 +153,9 @@ function runPrepare(cli) {
   });
   if (cli.dryRun) {
     console.log(JSON.stringify(manifest, null, 2));
-    console.error('dry-run: manifest не записан');
+    // Информационные строки — в stdout (см. коммент про NativeCommandError ниже):
+    // stderr здесь означал бы «упало», хотя dry-run отработал штатно.
+    console.log('dry-run: manifest не записан');
     return;
   }
   const path = saveReviewManifest(manifest);
@@ -207,7 +221,19 @@ async function runReview(cli) {
   const taskPrompt = readFileSync(resolve(process.cwd(), task.promptPath), 'utf8');
   const regulation = readFileSync(resolve(process.cwd(), 'docs/prompts/TASK_CLOSURE_REVIEW_REGULATION.md'), 'utf8');
   const teamleadPrompt = readFileSync(resolve(process.cwd(), 'docs/prompts/TASK_CLOSURE_REVIEW_PROMPT.md'), 'utf8');
-  const diff = git(['diff', '--no-ext-diff', manifest.scope.baseRef, manifest.currentCommitSha]);
+  // B3 (#539): ревью-артефакты (протоколы консилиумов, выжимки research, артефакты
+  // код-ревью) — это ПРОЦЕСС, не предмет closure-ревью. На эпик-контуре
+  // (расследование+research+консилиум+код) они раздували exact-дифф за 80k и роняли
+  // ревью (rt-8/#543). Исключаем их из диффа — код-предмет ревьюится, протоколы нет.
+  const diff = git([
+    'diff',
+    '--no-ext-diff',
+    manifest.scope.baseRef,
+    manifest.currentCommitSha,
+    '--',
+    '.',
+    ...CLOSURE_DIFF_EXCLUDES.map((p) => `:(exclude)${p}`),
+  ]);
   if (cli.dryRun) {
     const prompt = buildTaskClosureReviewPrompt({ manifest, task, taskPrompt, regulation, teamleadPrompt, diff });
     console.log(`Task: ${manifest.taskId}`);
@@ -215,7 +241,7 @@ async function runReview(cli) {
     console.log(`Tier: ${manifest.tier}`);
     console.log(`Prompt chars: ${prompt.length}`);
     console.log(`Checks: git diff --check${cli.checks.length ? ` + ${cli.checks.join(' + ')}` : ''}`);
-    console.error('dry-run: checks/provider/artifacts не запускались');
+    console.log('dry-run: checks/provider/artifacts не запускались');
     return;
   }
 
@@ -259,7 +285,10 @@ async function runReview(cli) {
   writeReviewArtifact(reviewed, body);
   saveReviewManifest(reviewed);
   console.log(body.trim());
-  console.error(`Review artifact: ${reviewed.reviewArtifact}`);
+  // stdout, а не stderr: под yarn.ps1 PowerShell 5.1 заворачивает ЛЮБОЙ stderr натива
+  // в NativeCommandError — успешный LGTM выглядел падением, и путь к артефакту
+  // приходилось доставать отдельным task:review:status (ретро #485 п.4).
+  console.log(`Review artifact: ${reviewed.reviewArtifact}`);
 }
 
 function runFinalize(cli) {
@@ -310,7 +339,7 @@ function runFinalize(cli) {
 
   if (cli.dryRun) {
     console.log(JSON.stringify({ taskId: cli.id, from: manifest.state, to: 'archived', notes }, null, 2));
-    console.error('dry-run: manifest/registry/Issue queue не изменены');
+    console.log('dry-run: manifest/registry/Issue queue не изменены');
     return;
   }
 

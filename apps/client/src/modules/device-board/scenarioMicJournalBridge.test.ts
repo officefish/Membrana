@@ -18,6 +18,86 @@ vi.mock('@/plugins/mic-buffer-recorder/clipRecorder', () => ({
   })),
 }));
 
+describe('scenarioMicJournalBridge — нейро-отчёт одиночного детектора (ADR-0006 PC-1)', () => {
+  const reporterRef = createReferenceValue('ReporterRef', 'reporter:dev-1');
+
+  it('строит честный отчёт neuro-detection/v1 без слова «combined»', async () => {
+    const bridge = createScenarioMicJournalBridge();
+    const payload = await bridge.makeReportFromEnsembleAnalysis(reporterRef, {
+      handle: 'ensemble-analysis:a-1',
+      detection: { detected: true, confidence: 0.82, isDrone: true },
+    });
+    expect(payload).not.toBeNull();
+    expect(payload?.schema).toBe('neuro-detection/v1');
+    expect(payload?.isDetected).toBe(true);
+    // Наглядность (Rodchenko): summary одиночной модальности НЕ содержит «combined».
+    expect(payload?.summaryText ?? '').not.toMatch(/combined/i);
+    expect(payload?.summaryText ?? '').toContain('нейро');
+  });
+
+  it('isDetected следует детекции (нет дрона → false)', async () => {
+    const bridge = createScenarioMicJournalBridge();
+    const payload = await bridge.makeReportFromEnsembleAnalysis(reporterRef, {
+      handle: 'ensemble-analysis:a-2',
+      detection: { detected: false, confidence: 0.1, isDrone: false },
+    });
+    expect(payload?.isDetected).toBe(false);
+  });
+});
+
+describe('scenarioMicJournalBridge — is-window-elapsed периодический гейт (PC-2)', () => {
+  it('первый вызов стартует окно (false); срабатывает при elapsed >= windowMs и сбрасывается', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-15T00:00:00Z'));
+    try {
+      const bridge = createScenarioMicJournalBridge();
+      const nodeId = 'iwe-node';
+      // Первый вызов — старт окна, ещё не прошло.
+      expect(bridge.isWindowElapsed(nodeId, 5000)).toBe(false);
+      // Не хватило.
+      vi.advanceTimersByTime(4000);
+      expect(bridge.isWindowElapsed(nodeId, 5000)).toBe(false);
+      // Накопилось (4000+1500 >= 5000) → true + сброс.
+      vi.advanceTimersByTime(1500);
+      expect(bridge.isWindowElapsed(nodeId, 5000)).toBe(true);
+      // Сразу после сброса — снова false (окно периодическое).
+      expect(bridge.isWindowElapsed(nodeId, 5000)).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('resetProximityHistory (scenario-run-start) сбрасывает окно — новый ран стартует заново', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-15T00:00:00Z'));
+    try {
+      const bridge = createScenarioMicJournalBridge();
+      expect(bridge.isWindowElapsed('n', 1000)).toBe(false);
+      vi.advanceTimersByTime(2000);
+      // Без сброса окно бы сработало; сброс run-start обнуляет точку отсчёта.
+      bridge.resetProximityHistory();
+      expect(bridge.isWindowElapsed('n', 1000)).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('окна независимы per-node', () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-07-15T00:00:00Z'));
+    try {
+      const bridge = createScenarioMicJournalBridge();
+      expect(bridge.isWindowElapsed('a', 1000)).toBe(false);
+      vi.advanceTimersByTime(1200);
+      // 'a' стартовало раньше → срабатывает; 'b' только сейчас стартует → false.
+      expect(bridge.isWindowElapsed('a', 1000)).toBe(true);
+      expect(bridge.isWindowElapsed('b', 1000)).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
 describe('scenarioMicJournalBridge collector sessions (DBC2)', () => {
   it('exposes stable recorder and analyser session refs per deviceHandle', () => {
     const bridge = createScenarioMicJournalBridge();

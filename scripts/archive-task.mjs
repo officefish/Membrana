@@ -20,29 +20,57 @@ function printHelp() {
   <task-id>   Поле id из docs/tasks/registry.json (kebab-case).
   --notes     Заметка в карточке архива (PR, итог).
   --force     Переархивировать, если уже archived.
+  --dry-run   Показать, что будет сделано, и НЕ писать.
   --help      Эта справка.
 
 Пример:
   yarn task:archive fft-indices-viz --notes "PR #45, plugin merged"`);
 }
 
-function parseArgs(argv) {
+/**
+ * Известные флаги. Неизвестный — ОТКАЗ, а не молчаливое игнорирование (TF-4, #554).
+ *
+ * Живой случай 16.07: `--dry-run` не поддерживался и просто отфильтровывался как
+ * «что-то с двумя дефисами» → скрипт заархивировал задачу ПО-НАСТОЯЩЕМУ с заметкой
+ * «test», пришлось перезархивировать через --force. Флаг, который молча делает
+ * вместо того, чтобы показать, — деструктив под видом проверки.
+ */
+const KNOWN_FLAGS = new Set(['--help', '-h', '--force', '--notes', '--dry-run']);
+
+export function parseArgs(argv) {
   const args = argv.slice(2);
   if (args.includes('--help') || args.includes('-h') || args.length === 0) {
     return { help: true };
   }
-  const force = args.includes('--force');
-  const positional = args.filter((a) => !a.startsWith('--') && a !== '-f');
-  const id = positional[0];
+  const positional = [];
   let notes = null;
-  const notesIdx = args.indexOf('--notes');
-  if (notesIdx !== -1 && args[notesIdx + 1]) {
-    notes = args[notesIdx + 1];
+  let force = false;
+  let dryRun = false;
+  for (let i = 0; i < args.length; i += 1) {
+    const arg = args[i];
+    if (arg.startsWith('-')) {
+      if (!KNOWN_FLAGS.has(arg)) {
+        throw new Error(
+          `Неизвестный флаг: ${arg}. Известные: ${[...KNOWN_FLAGS].join(', ')}`,
+        );
+      }
+      if (arg === '--force') force = true;
+      else if (arg === '--dry-run') dryRun = true;
+      else if (arg === '--notes') notes = args[++i] ?? null;
+      continue;
+    }
+    positional.push(arg);
   }
-  return { help: false, id, notes, force };
+  return { help: false, id: positional[0], notes, force, dryRun };
 }
 
-const opts = parseArgs(process.argv);
+let opts;
+try {
+  opts = parseArgs(process.argv);
+} catch (err) {
+  console.error(err.message);
+  process.exit(1);
+}
 if (opts.help) {
   printHelp();
   process.exit(opts.id === undefined && process.argv.length <= 3 ? 0 : 0);
@@ -82,6 +110,16 @@ if (opts.notes) {
 }
 if (task.githubIssue != null && task.githubIssueClosedAt === undefined) {
   task.githubIssueClosedAt = null;
+}
+
+// TF-4 (#554): dry-run ПОКАЗЫВАЕТ и ничего не пишет. Раньше флага не было и он
+// молча игнорировался — «проверка» архивировала по-настоящему.
+if (opts.dryRun) {
+  console.log(`dry-run: ${opts.id} был бы архивирован (${today})`);
+  console.log('  status: active → archived');
+  if (opts.notes) console.log('  archiveNotes:', opts.notes);
+  console.log('\nНичего не записано. Убери --dry-run, чтобы применить.');
+  process.exit(0);
 }
 
 saveRegistry(registry);

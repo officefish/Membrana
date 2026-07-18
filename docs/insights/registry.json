@@ -1,7 +1,62 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-18",
+  "updatedAt": "2026-07-17",
   "insights": [
+    {
+      "id": "insight-own-field-corpus-single-spec",
+      "title": "Собственный полевой корпус: спецификация трека и ежедневная рутина сбора",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": "research-query-hygiene",
+      "horizon": null,
+      "weight": 7,
+      "createdAt": "2026-07-18",
+      "tags": []
+    },
+    {
+      "id": "insight-evening-ritual-three-fuel-documents",
+      "title": "Вечерний ритуал производит три опорных документа — топливо для агентов, симметрично дневному",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-17",
+      "tags": []
+    },
+    {
+      "id": "insight-ozhegov-lens-speech-purity-skill",
+      "title": "Линза Ожегова — кроссагентский скилл верификации ЧИСТОТЫ РЕЧИ (не грамотности)",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-17",
+      "tags": []
+    },
+    {
+      "id": "insight-dads-detector-integration",
+      "title": "Интеграция внешнего датасета DADS (Антон) в контур детекторов",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": "detector-scoreboard",
+      "horizon": null,
+      "weight": 7.4,
+      "createdAt": "2026-07-17",
+      "tags": []
+    },
+    {
+      "id": "insight-effector-cue-integration",
+      "title": "Сопряжение с внешним эффектором C-UAS (ВИЗОР-МПВС, запрос Дениса)",
+      "status": "deferred",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 2.4,
+      "createdAt": "2026-07-17",
+      "tags": []
+    },
     {
       "id": "insight-operator-smoke-ci-gate",
       "title": "Operator smoke как pre-merge CI gate для async-v2 UserCase",
@@ -461,25 +516,36 @@
       "tags": []
     },
     {
-      "id": "insight-dads-detector-integration",
-      "title": "Интеграция внешнего датасета DADS (Антон) в контур детекторов",
-      "status": "adopted",
+      "id": "insight-weekly-antipattern-audit-bestiary",
+      "title": "Недельный аудит антипаттернов — бестиарий, детекторы, охотник-который-сам-не-молчун",
+      "status": "draft",
       "source": "user",
-      "sprintPhase": "detector-scoreboard",
+      "sprintPhase": null,
       "horizon": null,
-      "weight": 7.4,
+      "weight": null,
       "createdAt": "2026-07-17",
       "tags": []
     },
     {
-      "id": "insight-own-field-corpus-single-spec",
-      "title": "Собственный полевой корпус: спецификация трека и ежедневная рутина сбора",
-      "status": "adopted",
+      "id": "insight-landing-challenge-sources-in-battle",
+      "title": "Лендинг через челлендж — проба стратегических исходников в бою (Replit как кисть, Ожегов как судья)",
+      "status": "draft",
       "source": "user",
-      "sprintPhase": "research-query-hygiene",
+      "sprintPhase": null,
       "horizon": null,
-      "weight": 7,
-      "createdAt": "2026-07-18",
+      "weight": null,
+      "createdAt": "2026-07-17",
+      "tags": []
+    },
+    {
+      "id": "insight-research-tree-sprite-landscape",
+      "title": "Research-tree как sprite-landscape (техника Bear 71, MIT)",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-17",
       "tags": []
     }
   ]

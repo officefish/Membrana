@@ -20,7 +20,8 @@ export const ARCHIVE_DIR_REL = 'docs/tasks/archive';
  * @property {string} createdAt
  * @property {string | null} archivedAt
  * @property {string | null} archiveNotes
- * @property {string | null} [githubIssueClosedAt] ISO date; null — Issue ещё не закрыт на GitHub (очередь вечернего скрипта)
+ * @property {string | null} [githubIssueClosedAt] ISO date; null — Issue ещё не закрыт на GitHub. Пишут: `task:close-github` (те, что закрывает сам) и `tasks:sync-issues` (закрытые на GitHub любым путём, #620)
+ * @property {string | null} [githubIssueStateReason] COMPLETED | NOT_PLANNED — «сделано» vs «отменено»; архив один, история разная (вердикт H1)
  */
 
 /** @param {string} [cwd] */
@@ -62,10 +63,36 @@ export function listArchived(registry) {
   return registry.tasks.filter((t) => t.status === 'archived');
 }
 
-/** Архивные задачи с Issue, которые ещё не закрыты на GitHub. */
+/**
+ * Фазы, ошибочно носящие githubIssue СВОЕГО эпика (ретро #485 п.5).
+ *
+ * Такая фаза при архивации закрывает Issue всего эпика: task:close-github идёт по
+ * githubIssue задачи и не смотрит, чей это Issue. Это не гипотеза — в реестре
+ * видно, как #131 и #144 закрылись в одну и ту же секунду 2026-06-30T11:49:58Z.
+ * У фазы без своего Issue githubIssue обязан быть null.
+ *
+ * @param {{ version: number, tasks: TaskEntry[] }} registry
+ */
+export function findEpicIssueCollisions(registry) {
+  const byId = new Map(registry.tasks.map((t) => [t.id, t]));
+  return registry.tasks.filter((t) => {
+    if (!t.parentEpic || t.githubIssue == null) return false;
+    const epic = byId.get(t.parentEpic);
+    return Boolean(epic && epic.githubIssue != null && epic.githubIssue === t.githubIssue);
+  });
+}
+
+/**
+ * Архивные задачи с Issue, которые ещё не закрыты на GitHub.
+ *
+ * Фазы с Issue эпика исключены намеренно (см. findEpicIssueCollisions): молча
+ * закрыть чужой эпик хуже, чем не закрыть ничего. task:close-github показывает их
+ * отдельным списком, чтобы человек занулил поле или завёл фазе свой Issue.
+ */
 export function listPendingGithubClose(registry) {
+  const collisions = new Set(findEpicIssueCollisions(registry).map((t) => t.id));
   return listArchived(registry).filter(
-    (t) => t.githubIssue != null && !t.githubIssueClosedAt,
+    (t) => t.githubIssue != null && !t.githubIssueClosedAt && !collisions.has(t.id),
   );
 }
 
@@ -107,6 +134,97 @@ export function validateTaskId(id) {
       `Некорректный id "${id}": используй kebab-case (a-z, 0-9, дефис).`,
     );
   }
+}
+
+const TASK_SIZES = ['S', 'M', 'L'];
+const SPRINT_KINDS = ['day-sprint', 'epic', 'night-build', 'competition-sprint', 'cowork-sprint'];
+
+/**
+ * Собрать нормализованную запись карточки из полей CLI (#469 ti-3).
+ * Валидирует по схеме карточки; поля-константы задаёт как task:archive-совместимые.
+ * @param {object} input
+ * @returns {TaskEntry}
+ */
+export function buildTaskEntry(input, today) {
+  validateTaskId(input.id);
+  if (!input.title?.trim()) throw new Error('Пустой --title.');
+  if (!TASK_SIZES.includes(input.size)) {
+    throw new Error(`Некорректный --size "${input.size}": ${TASK_SIZES.join('/')}.`);
+  }
+  const kind = input.kind ?? 'day-sprint';
+  if (!SPRINT_KINDS.includes(kind)) {
+    throw new Error(`Некорректный --kind "${kind}": ${SPRINT_KINDS.join('/')}.`);
+  }
+  if (input.issue != null && !Number.isInteger(Number(input.issue))) {
+    throw new Error(`Некорректный --issue "${input.issue}": целое число.`);
+  }
+  // T1 (#548): CLI-флаг --prompt парсер кладёт в input.prompt, а не promptPath —
+  // раньше значение игнорилось и карточка получала дефолтный id-путь. Принимаем оба.
+  const promptPath =
+    input.promptPath ?? input.prompt ?? `docs/prompts/${input.id.replace(/-/g, '_').toUpperCase()}_PROMPT.md`;
+  // T1: --parent-epic / --parent → parentEpic (раньше не поддерживалось вовсе →
+  // фазы приходилось хэнд-фиксить node-скриптом).
+  const parentEpic = input.parentEpic ?? input['parent-epic'] ?? input.parent ?? null;
+  const entry = {
+    id: input.id,
+    title: input.title.trim(),
+    promptPath,
+    githubIssue: input.issue != null ? Number(input.issue) : null,
+    size: input.size,
+    status: 'active',
+    sprintKind: kind,
+    createdAt: today,
+    archivedAt: null,
+    leadPersona: input.lead ?? null,
+    supportPersonas: input.support ?? [],
+    notes: input.notes ?? '',
+    archiveNotes: null,
+    githubIssueClosedAt: null,
+  };
+  if (parentEpic) entry.parentEpic = parentEpic;
+  if (input.insight) entry.insightId = input.insight;
+  return entry;
+}
+
+/**
+ * Детерминированная вставка карточки в НАЧАЛО tasks[] (конвенция «свежие сверху»).
+ * НЕ мутирует вход; дубль id — ошибка. Формат registry не меняется (#469 запрет).
+ * @param {{ version: number, tasks: TaskEntry[] }} registry
+ * @param {TaskEntry} entry
+ */
+/**
+ * Заготовка task-промпта из шаблона (#476 п.5).
+ *
+ * Зачем: `buildTaskEntry` выводит `promptPath` из id, но файла не создаёт, а
+ * `task:review:run` читает его БЕЗУСЛОВНО — closure review падает на ровном месте.
+ * 2026-07-15 это случилось дважды за сессию, оба раза в момент закрытия задачи.
+ *
+ * Заготовка не заменяет постановку: она лишь не даёт гейту упасть и подсказывает,
+ * что заполнить. Существующий файл НЕ трогаем — там может быть живая постановка.
+ *
+ * @param {string} template — текст TASK_PROMPT_TEMPLATE.md
+ * @param {{id:string,title:string,size:string,githubIssue?:number|null}} task
+ */
+export function renderTaskPromptStub(template, task) {
+  const issue = task.githubIssue
+    ? `[#${task.githubIssue}](https://github.com/officefish/Membrana/issues/${task.githubIssue})`
+    : '— (не заведён)';
+  return template
+    .replace('# Промпт: <краткое название задачи>', `# Промпт: ${task.title}`)
+    .replace('Размер задачи: **S | M | L**.', `Размер задачи: **${task.size}**.`)
+    .replace('`id` = `<slug>`', `\`id\` = \`${task.id}\``)
+    .replace('**GitHub Issue:** #<номер> (после создания).', `**GitHub Issue:** ${issue}`)
+    .replace(
+      '<!-- Что заметили в эпике, продукте или архитектуре? -->',
+      '<!-- ЗАГОТОВКА, созданная yarn task:register. Заполнить до кода. -->',
+    );
+}
+
+export function insertTaskAtFront(registry, entry) {
+  if (registry.tasks.some((t) => t.id === entry.id)) {
+    throw new Error(`Карточка "${entry.id}" уже есть в реестре.`);
+  }
+  return { ...registry, tasks: [entry, ...registry.tasks] };
 }
 
 /**

@@ -18,35 +18,43 @@
 - Перед PR: те же проверки, что в CI — `yarn install --immutable` (при необходимости), `yarn test:scripts` (тесты политики путей и инвариантов скриптов) и `yarn turbo run lint typecheck test build` для затронутых пакетов или всего монорепо.
 - `yarn dev` / Vite HMR **не** заменяют typecheck: в apps `typecheck` = `tsc -b` (тот же solution build, что первый шаг `build`, без `vite build`).
 
-## Архитектурная ветка `vesnin`
+## Архитектурные изменения: консилиум-гейт и ADR
 
-Для изменений, затрагивающих **критические архитектурные элементы** (контракты `@membrana/core` и `agenda`, фасады регистрации модулей, lifecycle плагинов, ядро `audio-engine`, граф зависимостей сервисов, базовые типы store), работа ведётся в отдельной ветке `vesnin` (в честь братьев Весниных, русских архитекторов-авангардистов).
+Изменения, затрагивающие **критические архитектурные элементы** (контракты `@membrana/core`
+и `agenda`, `MembranaRegistry`, lifecycle плагинов, ядро `audio-engine`, граф зависимостей
+сервисов, базовые типы store), проходят **гейт до кода**, а не отдельную ветку.
 
-**Когда обязательно `vesnin`:**
+**Когда обязателен гейт:**
+
 - Изменение `MembranaRegistry`, `MembranaState`, типов `Module` / `Plugin` в `@membrana/agenda`.
 - Изменение публичного API `@membrana/core` или сервисов в `packages/services/*`.
 - Новый или существенный API в `packages/background-office` / `packages/background-media` (границы — [BACKGROUND_SERVERS.md](./BACKGROUND_SERVERS.md)).
 - Внедрение новых архитектурных паттернов (например, lifecycle `plugin.install()` в store).
 - Обновление стратегических документов (`ARCHITECTURE.md`, `BACKGROUND_SERVERS.md`, `SERVICES.md`, `MODULE_AND_PLUGIN_UI.md`).
 
-**Когда не нужно:**
+**Чем закрывается гейт:**
+
+| Вес решения | Механизм | Артефакт |
+|-------------|----------|----------|
+| Новый core-контракт, новый пакет, L-эпик, спор границ слоёв | **Консилиум** — `yarn consilium --save-as <slug>` (≥20 реплик до кода), скилл `membrana-consilium` | `docs/seanses/<slug>-<date>.md` |
+| Решение ниже консилиум-гейта: рантайм-рефактор, выбор реализации по готовому канону | **ADR** — скилл `membrana-adr` | `docs/adr/NNNN-<slug>.md` |
+| Исполнение по готовому канону | Достаточно inline-обсуждения ролей | — |
+
+**Когда гейт не нужен:**
+
 - Точечные правки UI внутри одного модуля без изменения контрактов.
 - Багфиксы с малой областью влияния.
 - Документация, которая описывает уже существующее поведение (без изменения кода).
 
-**Workflow:**
+**Workflow** — обычный, как у любой задачи: ветка от свежего `main` → атомарные коммиты →
+PR с базой `main` → **squash-merge**. Отдельной архитектурной ветки нет; в описании PR
+указываются затронутые контракты и ссылка на консилиум/ADR.
 
-```bash
-git checkout main
-git pull
-git checkout -b vesnin            # или git checkout vesnin && git pull
-# … изменения …
-yarn typecheck && yarn lint && yarn test && yarn build
-git push -u origin vesnin
-# Открыть PR с базой main; в описании указать [vesnin] и затронутые контракты.
-```
-
-После merge `vesnin → main` ветка локально удаляется (`git branch -d vesnin`) и заводится заново при следующей архитектурной задаче. Решение, нужна ли ветка `vesnin`, принимает **Teamlead** при формулировке задачи.
+> **Историческая справка.** До 2026-06 канон предписывал вести архитектурные задачи в
+> долгоживущей ветке `vesnin`. Механизм не прижился: из 330 PR через неё прошёл ровно один
+> (#132, 2026-06-21), а реальные изменения контрактов core (#375 ADR 0002, #413 ADR 0003,
+> #419 ADR 0004) шли обычными ветками под ADR/консилиумом. Ветки `vesnin` в репозитории нет.
+> Решение, какой гейт нужен, принимает **Teamlead** при формулировке задачи.
 
 ## Регламент веток деплоя (DR5 deploy-pipeline-refactor)
 
@@ -187,7 +195,9 @@ git push -u origin vesnin
 
 ### VPS deploy (SSH-скрипты)
 
-Операционные скрипты в `scripts/_ssh-*.mjs` — **часть CD**, коммитятся в репозиторий. Они читают секреты только из корневого `.env` (не коммитится): `BACKGROUND_MEDIA_IPV4`, `BACKGROUND_MEDIA_PASSWORD`, опционально `CABINET_GIT_BRANCH`. Для prod штатное значение ветки — `main`; переопределение ветки допускается только для диагностического hotfix с явным отчётом и последующим merge обратно в `main`.
+Операционные скрипты в `scripts/_ssh-*.mjs` — **часть CD**, коммитятся в репозиторий. **Внимание:** `.gitignore` глушит `scripts/_ssh-*.mjs` (одноразовые debug-скрипты), поэтому переиспользуемый хелпер входит в коммит только через `git add -f scripts/_ssh-<name>.mjs` — иначе молча не попадёт в PR. Они читают секреты только из корневого `.env` (не коммитится): `BACKGROUND_MEDIA_IPV4`, `BACKGROUND_MEDIA_PASSWORD`, опционально `CABINET_GIT_BRANCH`.
+
+Разовую команду или свой `.sh` на office-VDS не нужно оформлять новым скриптом — есть генерик: `yarn office:ssh '<команда>'` и `yarn vds:run <локальный.sh> [arg...]` (снимает CRLF, заливает, выполняет, убирает за собой). Для media-хоста — `node scripts/_ssh-media-exec.mjs '<команда>'`. Для prod штатное значение ветки — `main`; переопределение ветки допускается только для диагностического hotfix с явным отчётом и последующим merge обратно в `main`.
 
 | Команда | Назначение |
 |---------|------------|
@@ -202,6 +212,9 @@ git push -u origin vesnin
 | `yarn cabinet:mp3:post-deploy` | Patch `cabinet.env` (CLIENT_CORS, MEDIA_API_*) |
 | `yarn cabinet:mp6:prod` | Prod regression MP1–MP5 (one session) |
 | `yarn cabinet:mp7:prod` | MP7: MP1–MP5 + WebSocket journal/mic-live smoke |
+| `yarn office:ssh '<cmd>'` / `yarn vds:run <файл.sh>` | Разовая команда / локальный скрипт на office-VDS |
+| `node scripts/_ssh-panel-deploy.mjs [--audio <dir>]` | Деплой панели: права под caddy + сохранение wav-бандла |
+| `node scripts/_ssh-panel-smoke.mjs --read-only` | Прод-смоук панели owner-cookie (без флага — пишет в стор) |
 
 Подробно: [`docs/deploy/BACKGROUND_CABINET_DEPLOY.md`](./deploy/BACKGROUND_CABINET_DEPLOY.md), [`docs/deploy/MEMBRANE_PLATFORM_DEPLOY.md`](./deploy/MEMBRANE_PLATFORM_DEPLOY.md).
 
@@ -214,6 +227,23 @@ git push -u origin vesnin
 - Для обмена с командой: `docs/archive/` (коммит только по решению постановщика)
 
 Паттерны в `.gitignore`: `/cabinet-recover*.txt`, `/deploy-*.txt`, `/prod-check.txt`; вывод скриптов — `scripts/_*-out.txt`. Локальные каталоги AI IDE — `.claude/`, `.continue/` (целиком).
+
+## Гигиена веток (#492)
+
+PR мёржатся **squash**, поэтому коммиты ветки не становятся предками `main` и
+`git branch --merged` их **не видит** (замер 2026-07-15: признал влитыми 9 удалённых веток
+из 42 реально мёртвых). Не судить по нему ни о чистке, ни о «невлитой работе».
+
+```bash
+yarn repo:clean                          # dry-run: что мертво и что остаётся — с причинами
+yarn repo:clean --execute --remote       # удалить мёртвые ветки локально и на origin
+yarn repo:clean --execute --worktrees    # + убрать worktree архивных спринтов
+```
+
+Мертва = PR ветки **MERGED или CLOSED**. Инструмент никогда не трогает: персона-ветки
+(§7а — старый коммит не значит заброшенность), ветки в worktree, текущую ветку, ветки с
+открытым PR и ветки без PR, которых нет на `origin` (единственная копия работы). Worktree
+убирает только при archived-спринте и чистом дереве; `locked` — снимать вручную.
 
 ## Коммиты
 

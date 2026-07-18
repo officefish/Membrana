@@ -78,6 +78,27 @@ export const RULES = [
       /^\s*import\s.*apps\/client/,
     ],
   },
+  {
+    // ADR-0010 Р4 — панель не импортирует исходники блоков: раздел = iframe на
+    // маршрут-мост, presentation блока сменный. До 17.07 инвариант держался ТОЛЬКО
+    // комментарием в шапке GraphifyBoard/ResearchTreeBoard — P1 ревью 16.07 требовал
+    // убедиться, что линт границ реально в CI; его там не было.
+    //
+    // ИЗВЕСТНАЯ ШИРОТА (ревью 17.07): `@membrana/research-tree` матчит по префиксу —
+    // ловит и `-demo` (намеренно), и любой будущий `@membrana/research-tree-*`.
+    // Сейчас легальных суффиксных пакетов нет. Появится shared (`-utils`) — сузить
+    // до точного списка блоков, а не ослаблять правило.
+    id: 'panel-no-block-source-imports',
+    roots: ['apps/panel/src'],
+    patterns: [
+      /^\s*import\b[^;]*['"][^'"]*@membrana\/research-tree/,
+      /^\s*export\b[^;]*\bfrom\s+['"][^'"]*@membrana\/research-tree/,
+      /\brequire\(\s*['"][^'"]*@membrana\/research-tree/,
+      /^\s*import\b[^;]*['"][^'"]*apps\/demos\//,
+      /^\s*export\b[^;]*\bfrom\s+['"][^'"]*apps\/demos\//,
+      /\brequire\(\s*['"][^'"]*apps\/demos\//,
+    ],
+  },
 ];
 
 const SOURCE_EXT = /\.(ts|tsx|mts|cts|js|jsx|mjs|cjs)$/;

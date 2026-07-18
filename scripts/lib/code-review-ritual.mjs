@@ -109,8 +109,15 @@ export function parseCodeReviewCli(argv) {
 
   const focusQuestion = rest.join(' ').trim();
 
-  if (mode === 'pr' && !pr) {
-    throw new Error('Укажите номер PR: --pr <N>');
+  // TF-2 (#554): `--pr` обязан быть числом. `yarn code-review:pr -- 543` даёт
+  // argv [--pr, --, 543] → pr="--" уходил в gh и возвращал криптичное
+  // «accepts at most 1 arg(s), received 4». Паттерн отказа тот же, что в
+  // task-closure-review.mjs: назвать причину, а не отдать мусор наружу.
+  if (mode === 'pr' && !/^\d+$/u.test(String(pr))) {
+    throw new Error(
+      `--pr должен быть числом, получено «${pr}». ` +
+        'Подсказка: `yarn code-review:pr 543` (без `--` — yarn съедает его сам).',
+    );
   }
   if (mode === 'branch' && !branch) {
     throw new Error('Укажите ветку: --branch <name>');

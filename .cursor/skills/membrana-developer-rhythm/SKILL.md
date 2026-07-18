@@ -39,8 +39,14 @@ description: >-
 | 2 | `yarn plan:day` | `docs/STRATEGIC_PLAN_DAY.md` |
 | 3 | `yarn standup` | `docs/DAILY_STANDUP.md` |
 | 4 | `yarn main-day-issue` | `docs/MAIN_DAY_ISSUE.md` |
+| 5 | `yarn telegram:digest:day` (**после** MAIN_DAY_ISSUE) | ласточка партнёрам — план дня, `sent=true` |
 
 **Dry / no API:** `yarn ritual:day:no-api` or `yarn morning-care --no-anthropic` + `yarn standup:dry` + `yarn task:list`.
+
+**Партнёрский дайджест (шаг 5) — обязателен** (см. CLAUDE.md «Partner digest»):
+детерминирован (кредит не нужен), но читает MAIN_DAY_ISSUE → запускать ПОСЛЕ него;
+цепочечный `|| true` = best-effort, подтверждение — явный запуск + `sent=true`
+(office транзиентно таймаутит → повторить).
 
 **Never run `yarn code-review` in the morning** — only **read** existing `docs/DAILY_CODE_REVIEW.md`. Details: `membrana-code-review`.
 
@@ -54,8 +60,14 @@ description: >-
 4. `yarn task:archive <id>` (per accepted tasks; may have been done daytime)
 5. `yarn save-code-review`
 6. `yarn task:close-github` → `yarn team-evening-feedback` (via `ritual-evening-tail.mjs`)
+7. `yarn telegram:digest:evening` (**после** team-evening-feedback) → ласточка партнёрам — итоги дня, `sent=true`
 
 Team feedback: `membrana-team-evening-feedback` → `docs/seanses/team-evening-feedback-<date>.md`
+
+**Партнёрский дайджест (шаг 7) — обязателен** (CLAUDE.md «Partner digest»): читает
+team-evening-feedback → запускать ПОСЛЕ него. В fallback (кредит пуст) артефакт
+пишется вручную → цепочечный дайджест пропускается, запустить явно. Подтверждение —
+`sent=true`; office транзиентно таймаутит → повторить, не оставлять партнёров без итогов.
 
 ## Output format
 

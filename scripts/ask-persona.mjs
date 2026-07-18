@@ -460,7 +460,11 @@ async function main() {
 
     if (!ok) {
       printAnthropicHttpError(status, text);
-      process.exit(1);
+      // exitCode + return, а не process.exit(): сокеты HTTP-вызова ещё живы, и обрыв
+      // процесса роняет libuv на Windows ассертом UV_HANDLE_CLOSING → 127 вместо 1
+      // (тот же класс, что чинился в code-review.mjs). Это штатный путь «нет кредита».
+      process.exitCode = 1;
+      return;
     }
 
     try {
@@ -473,7 +477,9 @@ async function main() {
     }
   } catch (e) {
     console.error(e);
-    process.exit(1);
+    // См. коммент выше: сокеты живы → exitCode + return вместо обрыва процесса.
+    process.exitCode = 1;
+    return;
   }
 
   console.log(answer);
@@ -493,7 +499,6 @@ async function main() {
     console.error('→ не сохранено (нет --gh-issue / --ticket-file / --save-as).');
   }
 
-  await new Promise((r) => setTimeout(r, 150));
 }
 
 main();

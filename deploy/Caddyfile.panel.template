@@ -23,6 +23,29 @@
 		respond "Not found" 404
 	}
 
+	# GRP1 / ADR-0010: маршрут-мост visual-блоков. Статика блока отдаётся ТОЛЬКО
+	# при доступе — решает office (forward_auth → /v1/panel/gate/<id>: 2xx allow,
+	# иначе deny). Ролей в Caddy нет. handle_path срезает префикс → file_server
+	# отдаёт из /opt/membrana-<block>. Cookie в auth-подзапрос форвардит forward_auth.
+	handle_path /panel/section/graphify/* {
+		forward_auth 127.0.0.1:3000 {
+			uri /v1/panel/gate/graphify
+		}
+		header Cache-Control "no-store"
+		root * /opt/membrana-graphify
+		file_server
+	}
+
+	# GRP3: мост research-tree (тот же гейт-механизм, grant:research-tree).
+	handle_path /panel/section/research-tree/* {
+		forward_auth 127.0.0.1:3000 {
+			uri /v1/panel/gate/research-tree
+		}
+		header Cache-Control "no-store"
+		root * /opt/membrana-research-tree
+		file_server
+	}
+
 	# SPA: статика из turbo-сборки apps/panel (rsync → /opt/membrana-panel/dist),
 	# fallback на index.html для client-side путей.
 	handle {

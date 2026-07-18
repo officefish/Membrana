@@ -44,4 +44,22 @@ export const PANEL_SECTIONS: readonly PanelSection[] = [
     description: 'Партнёры, их доступ к разделам и промокоды — управление владельцем.',
     minRole: 'owner',
   },
+  {
+    id: 'graphify',
+    title: 'Граф кода',
+    description: 'Карта зависимостей кода по семействам — как устроен проект внутри.',
+    // GRP2: грант-гейт для техпартнёров. minRole=operator (грант открывает только
+    // не-owner разделы, консилиум Р1) → техпартнёр = ally + grant:graphify видит;
+    // плейн-ally без гранта — нет; operator+/owner — по роли. Реальный гейт —
+    // маршрут-мост /panel/section/graphify/* (office forward_auth), не UX-скрытие.
+    minRole: 'operator',
+  },
+  {
+    id: 'research-tree',
+    title: 'Древо исследований',
+    description: 'Карта знаний проекта: направления, гейты, прогресс — для инвесторов.',
+    // GRP2: грант research-tree (инвесторам/управленцам). Борд и мост — GRP3;
+    // сейчас раздел заведён ради гранта в owner-матрице (заглушка без контента).
+    minRole: 'operator',
+  },
 ] as const;
