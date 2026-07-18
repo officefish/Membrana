@@ -74,7 +74,7 @@
 | **Основной продукт** | `packages/core`, `packages/device-board`, `packages/drift-anchor`, `packages/agenda`, `packages/libs`, `packages/services/**`, `apps/client`, `apps/membrana-device`, `apps/membrana-studio` |
 | **Кабинет** | `apps/cabinet`, `packages/background-cabinet`, `packages/background-media`, `packages/background-office` |
 | **Тулинг** | `scripts/`, `tools/`, `.githooks/`, `.github/`, `.cursor/`, `.claude/`, корневые `package.json` / `turbo.json` / `yarn.lock` |
-| **Бизнес-процессы** | `docs/MEETING_REGULATION*`, `docs/prompts/`, `docs/seanses/`, `docs/meeting/`, `docs/truth/`, `docs/tasks/`, `docs/insights/`, `docs/virtual-team/`, `docs/actions/`, `docs/handoff/`, `docs/archive/`, корневые `docs/*.md` в CAPS, `prd/`, `AGENTS.md` |
+| **Бизнес-процессы** | `docs/prompts/`, `docs/seanses/`, `docs/meeting/`, `docs/truth/`, `docs/tasks/`, `docs/insights/`, `docs/virtual-team/`, `docs/actions/`, `docs/handoff/`, `docs/archive/`, `docs/adr/`, `docs/discussions/`, корневые `docs/*.md` в CAPS, `prd/`, `AGENTS.md`, `.cursorrules`, `.markdownlint.json` |
 | **Витрина для менеджмента** | `apps/panel`, `apps/docs`, `apps/demos`, `apps/comms-studio`, `docs/comms/`, `deploy/` |
 
 Правило отнесения: **первое совпадение выигрывает**, поэтому частное правило стоит выше
@@ -93,7 +93,10 @@ JavaScript, что в продукте; регламенты — бизнес-п
 - `AGENTS.md`, `.cursorrules`, `.markdownlint.json` → **бизнес-процессы** (правила
   работы команды), несмотря на положение в корне;
 - `data/`, `datasets/`, `logs/`, `deploy-artifacts/` → **Прочее**: это не работа, а её
-  входы и следы; засчитывать их в продукт значило бы мерить день объёмом данных.
+  входы и следы; засчитывать их в продукт значило бы мерить день объёмом данных;
+- `docs/adr/`, `docs/discussions/` → **бизнес-процессы**. Пропуск, найденный при
+  реализации фазы 2: без этой строки коммит самого ADR-0013 попал бы в «Прочее» —
+  канон не относил бы к процессам собственные решения и артефакты ревью.
 
 ### Р5 — строки считаются одним диффом, добавленное и удалённое врозь
 
