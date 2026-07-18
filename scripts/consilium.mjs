@@ -381,7 +381,7 @@ function runSecretaryFile(cli, cwd) {
   }
   const body = readFileSync(srcAbs, 'utf8');
   const agendaMd = cli.topicFile ? readBounded(resolve(cwd, cli.topicFile), MAX_TOPIC_CHARS, true) : null;
-  const { ok, problems, stats } = validateProtocol(body, {
+  const { ok, problems, notes, stats } = validateProtocol(body, {
     kind: 'consilium',
     minReplies: cli.minReplies,
     agenda: agendaMd || null,
@@ -391,6 +391,9 @@ function runSecretaryFile(cli, cwd) {
     for (const p of problems) console.error(`  - ${p}`);
     process.exit(1);
   }
+  // #619: заметки не роняют прогон, но должны быть видны — понизить сигнал не значит
+  // его проглотить.
+  for (const n of notes ?? []) console.error(`  ~ ${n}`);
   console.error(`→ канон OK: реплик ${stats.total}, все ${Object.keys(stats.counts).length} ролей высказались`);
 
   if (!cli.saveAs) {

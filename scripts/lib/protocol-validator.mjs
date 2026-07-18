@@ -114,7 +114,12 @@ export function findUncoveredAgendaItems(topicMd, protocolMd) {
  */
 export function hasVerdictSection(protocolMd) {
   const body = protocolBody(protocolMd);
-  return /^\s{0,3}#{1,4}\s.*(итогов\w*\s+решени|вердикт|решени\w*\s+консилиум|definition of done)/imu.test(body)
+  // `\p{L}`, не `\w`: в JS `\w` это [A-Za-z0-9_] и кириллицу НЕ матчит, поэтому ветка
+  // `итогов\w*\s+решени` была мертва — обычный заголовок «## Итоговое решение» не
+  // распознавался, проходил только частный случай «…консилиума» из второй альтернативы.
+  // Пока функция лишь уточняла формулировку сообщения, дефект был невиден; с #619 она
+  // решает, ронять прогон или нет, и молчаливый false стоил бы ложного красного.
+  return /^\s{0,3}#{1,4}\s.*(итогов\p{L}*\s+решени|вердикт|решени\p{L}*\s+консилиум|definition of done)/imu.test(body)
     || /итоговое решение консилиума/iu.test(body);
 }
 
@@ -258,13 +263,18 @@ export function parseVotingTable(md) {
  * Общий валидатор канона. kind: 'consilium' (≥ minReplies суммарно, каждая роль
  * ≥1, секция итога) | 'insight-review' (5 ролей ≥1, таблица голосования, средний
  * балл сходится с заявленным ±0.1).
- * @returns {{ ok: boolean, problems: string[], stats: object }}
+ *
+ * `notes` — наблюдения БЕЗ права отказа (#619). Отдельный канал нужен затем, чтобы
+ * слабый сигнал не подмешивался к `problems` и не ронял прогон: смешение этих двух
+ * и дало три ложных красных на заседании 18.07.
+ * @returns {{ ok: boolean, problems: string[], notes: string[], stats: object }}
  */
 export function validateProtocol(
   md,
   { kind = 'consilium', minReplies = 20, roleLabels = MEMBRANA_ROLE_LABELS, agenda = null } = {},
 ) {
   const problems = [];
+  const notes = [];
   const counts = countRoleReplies(md, roleLabels);
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
 
@@ -285,10 +295,25 @@ export function validateProtocol(
 
   // rt-6 полнота повестки: каждый ID вопроса обязан быть назван в реплике/итоге.
   // Ловит сбой, повторившийся трижды 16.07 — консилиум молча ронял часть повестки.
+  //
+  // #619: сама по себе метка — не вердикт. На заседании `evening-auditor` (18.07) три
+  // прогона из пяти дали ЛОЖНЫЙ КРАСНЫЙ: M0, M1′, M4 вынесли полный вердикт, но без
+  // ID-метки в теле — и rt-6 объявил повестку неразобранной. Поэтому решение «ронять»
+  // принимает не наличие метки, а связка с `hasVerdictSection`:
+  //   метки нет + вердикта нет  → вопрос вероятно уронен, это отказ (зубы сохранены);
+  //   метки нет + вердикт есть  → вероятно отвечено без метки, это ЗАМЕТКА, не отказ.
+  // Обратный режим (метка есть, существо не разобрано — ложный зелёный M1) машине не
+  // виден в принципе; его ловит структурная проверка `meetingVerdictProblems` (правило 6),
+  // независимая от меток. Эрратум к S-M2 в docs/MEETING_REGULATION.md это фиксирует.
   if (agenda) {
     const uncovered = findUncoveredAgendaItems(agenda, md);
     if (uncovered.length > 0) {
-      problems.push(`повестка не покрыта: ${uncovered.join(', ')} — ни одной реплики/строки итога`);
+      const line = `повестка не покрыта: ${uncovered.join(', ')} — ни одной реплики/строки итога`;
+      if (hasVerdictSection(md)) {
+        notes.push(`${line}. Секция вердикта есть → вероятно отвечено без ID-метки (не отказ, проверить глазами)`);
+      } else {
+        problems.push(`${line}, и секции вердикта нет — вопрос вероятно уронен`);
+      }
     }
   }
 
@@ -305,7 +330,7 @@ export function validateProtocol(
     if (!/рекомендуемый статус/iu.test(md)) {
       problems.push('нет резюме с «Рекомендуемый статус»');
     }
-    return { ok: problems.length === 0, problems, stats: { counts, total, vote } };
+    return { ok: problems.length === 0, problems, notes, stats: { counts, total, vote } };
   }
 
   // consilium
@@ -321,5 +346,5 @@ export function validateProtocol(
   if (!/итоговое решение|консенсус|## итог/iu.test(md)) {
     problems.push('нет секции итогового решения / консенсуса');
   }
-  return { ok: problems.length === 0, problems, stats: { counts, total } };
+  return { ok: problems.length === 0, problems, notes, stats: { counts, total } };
 }

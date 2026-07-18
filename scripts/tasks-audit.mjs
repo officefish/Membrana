@@ -10,7 +10,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { auditRegistry, registryDefects } from './lib/tasks-audit.mjs';
+import { auditRegistry, issuesFromRegistry, registryDefects } from './lib/tasks-audit.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -31,19 +31,32 @@ function main() {
   Аудит реестра задач: три корзины (архивировать / отменено / разобрать руками).
   Read-only. Требует gh (право на сеть — это registry-reaper, не вечерний аудитор).
 
+  --offline   считать по полю githubIssueClosedAt из реестра, без сети (#620).
+              Воспроизводимо по коммиту; актуальность — за yarn tasks:sync-issues.
+
   Спека процесса: docs/prompts/REGISTRY_AUDIT_PROMPT.md`);
     return;
   }
 
   const reg = JSON.parse(readFileSync(join(repoRoot, 'docs/tasks/registry.json'), 'utf8'));
+  const offline = process.argv.includes('--offline');
   let issues;
-  try {
-    issues = fetchIssues();
-  } catch (e) {
-    console.error(`gh недоступен — аудит невозможен: ${e.message.split('\n')[0]}`);
-    console.error('Это не «всё чисто»: без сети состояние закрытия неизвестно.');
-    process.exitCode = 1;
-    return;
+  if (offline) {
+    // #620 / DA1: вход целиком из коммита, поэтому результат воспроизводим бит-в-бит.
+    // Цена — данные настолько свежи, насколько свеж последний tasks:sync-issues; это
+    // честный размен, и он назван вслух, а не спрятан.
+    issues = issuesFromRegistry(reg.tasks);
+    console.log(`[offline] состояние иссью из реестра: ${issues.size} закрытых\n`);
+  } else {
+    try {
+      issues = fetchIssues();
+    } catch (e) {
+      console.error(`gh недоступен — аудит невозможен: ${e.message.split('\n')[0]}`);
+      console.error('Это не «всё чисто»: без сети состояние закрытия неизвестно.');
+      console.error('Если поле синхронизировано — повторите с --offline.');
+      process.exitCode = 1;
+      return;
+    }
   }
 
   const { archive, cancelled, manual, umbrellas } = auditRegistry(reg.tasks, issues);
