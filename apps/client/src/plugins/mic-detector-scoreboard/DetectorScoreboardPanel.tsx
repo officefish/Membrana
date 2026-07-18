@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMembranaStore } from '@membrana/agenda';
 
-import { SCOREBOARD_MEASURED_AT, SCOREBOARD_ROWS } from './scoreboardData';
+import { PENDING_LADDER, SCOREBOARD_MEASURED_AT, SCOREBOARD_ROWS } from './scoreboardData';
 import {
   MIC_DETECTOR_SCOREBOARD_PLUGIN_ID,
   probabilityOfDetection,

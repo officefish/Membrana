@@ -11,40 +11,40 @@ import { probabilityOfDetection, probabilityOfFalseAlarm } from './types';
  * (живой прогон 18.07 на боевой конфигурации, ADR-0006). Тест краснеет, если
  * витрина разойдётся с отчётом.
  */
-const REPORT_18_07: Record<string, { tp: number; fp: number; fn: number; tn: number }> = {
-  harmonic: { tp: 41, fp: 53, fn: 19, tn: 7 },
-  cepstral: { tp: 60, fp: 60, fn: 0, tn: 0 },
-  'spectral-flux': { tp: 43, fp: 47, fn: 17, tn: 13 },
-  'template-match': { tp: 54, fp: 26, fn: 6, tn: 34 },
-};
 
 describe('витрина не расходится с прогоном', () => {
-  it('строки бенчмарка совпадают с отчётом 18.07', () => {
-    for (const [name, m] of Object.entries(REPORT_18_07)) {
-      const row = SCOREBOARD_ROWS.find((r) => r.detector === name);
-      expect(row, `строка ${name} обязана быть в витрине`).toBeDefined();
-      expect(row!.detected, `${name}: обнаружено`).toBe(m.tp);
-      expect(row!.dronesTotal, `${name}: дронов всего`).toBe(m.tp + m.fn);
-      expect(row!.falseAlarms, `${name}: ложных`).toBe(m.fp);
-      expect(row!.cleanTotal, `${name}: чистых всего`).toBe(m.fp + m.tn);
-    }
-  });
-
-  it('yamnet стоковая — рабочая точка отгружаемого порога', () => {
-    const row = SCOREBOARD_ROWS.find((r) => r.detector.startsWith('yamnet (готовая'));
+  it('yamnet без обучения — рабочая точка отгружаемого порога', () => {
+    const row = SCOREBOARD_ROWS.find((r) => r.detector.includes('без обучения'));
     expect(row!.detected).toBe(55);
     expect(row!.falseAlarms).toBe(22);
     expect(probabilityOfDetection(row!)).toBeCloseTo(0.917, 3);
     expect(probabilityOfFalseAlarm(row!)).toBeCloseTo(0.367, 3);
   });
 
-  it('обученная голова — цифры лабораторного прогона с группировкой', () => {
+  it('обученная голова — прогон с группировкой по записи', () => {
     const row = SCOREBOARD_ROWS.find((r) => r.family === 'neural-trained');
-    expect(row!.detected).toBe(62);
-    expect(row!.dronesTotal).toBe(63);
+    expect(row!.detected).toBe(59);
     expect(row!.falseAlarms).toBe(6);
-    expect(row!.cleanTotal).toBe(74);
-    expect(row!.rocAuc).toBeCloseTo(0.985, 3);
+    expect(row!.rocAuc).toBeCloseTo(0.984, 3);
+  });
+
+  it('спектральный — отгружаемый шаблон на всех 120', () => {
+    const row = SCOREBOARD_ROWS.find((r) => r.family === 'dsp');
+    expect(row!.detected).toBe(53);
+    expect(row!.falseAlarms).toBe(9);
+  });
+
+  it('все строки приведены к одному знаменателю 60/60 — иначе несравнимы', () => {
+    for (const row of SCOREBOARD_ROWS) {
+      expect(row.dronesTotal, row.detector).toBe(60);
+      expect(row.cleanTotal, row.detector).toBe(60);
+    }
+  });
+
+  it('бракованные детекторы в витрину не попадают', () => {
+    for (const bad of ['harmonic', 'cepstral', 'spectral-flux']) {
+      expect(SCOREBOARD_ROWS.some((r) => r.detector === bad), bad).toBe(false);
+    }
   });
 });
 

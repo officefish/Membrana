@@ -94,12 +94,19 @@ async function main() {
   );
   console.log('Модель загружена. Достаём ЭМБЕДДИНГИ (Identity_1:0), а не scores.\n');
 
+  // Только канонические 120 из манифеста: на диске лежат ещё 17 файлов вне
+  // корпуса (3 drone + 14 not-drone), и они делали строку витрины несравнимой
+  // с остальными — у тех знаменатель 60/60, у этой был 63/74.
+  const manifest = JSON.parse(await (await import('node:fs/promises')).readFile(join(DATASET, 'manifest.json'), 'utf8'));
+  const inCorpus = new Set(manifest.samples.map((s) => s.id));
   const items = [];
   for (const [label, dir] of [
     ['drone', join(DATASET, 'drone')],
     ['not-drone', join(DATASET, 'not-drone')],
   ]) {
     for (const f of (await readdir(dir)).filter((x) => x.endsWith('.wav'))) {
+      const id = f.replace(/.wav$/, '');
+      if (!inCorpus.has(id)) continue;
       items.push({ id: f, label, path: join(dir, f) });
     }
   }
