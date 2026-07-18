@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "night-build-format-v2",
+      "title": "Формат night-build: доработка по трению ночи 17.07 (заседание)",
+      "promptPath": "docs/prompts/NIGHT_BUILD_FORMAT_V2_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-18",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "strategy-day-generator",
       "title": "Генератор стратегии дня: горизонт вместо списка задач",
       "promptPath": "docs/prompts/STRATEGY_DAY_GENERATOR_PROMPT.md",

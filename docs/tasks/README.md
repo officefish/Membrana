@@ -18,7 +18,9 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `night-build-format-v2` | Формат night-build: доработка по трению ночи 17.07 (заседание) | M | [`NIGHT_BUILD_FORMAT_V2_PROMPT.md`](../docs/prompts/NIGHT_BUILD_FORMAT_V2_PROMPT.md) | — |
 | `strategy-day-generator` | Генератор стратегии дня: горизонт вместо списка задач | L | [`STRATEGY_DAY_GENERATOR_PROMPT.md`](../docs/prompts/STRATEGY_DAY_GENERATOR_PROMPT.md) | [#592](https://github.com/officefish/Membrana/issues/592) |
+| `scripts-boundary-container` | Граница scripts/: контейнер для ритуала — пакет, регламент, реестр | M | [`SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md`](../docs/prompts/SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md) | — |
 | `truth-graph-contour` | Граф правды: архитектура, реестр зависимых процессов, охлаждение сессии, инструменты редактирования | L | [`TRUTH_GRAPH_CONTOUR_PROMPT.md`](../docs/prompts/TRUTH_GRAPH_CONTOUR_PROMPT.md) | [#576](https://github.com/officefish/Membrana/issues/576) |
 | `mf10-teeth-sm5` | Зубы S-M5: возможна ли независимость аудитора-субагента | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
 | `mf9-auditor-readonly` | Чем обеспечена read-only природа аудитора | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../docs/prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
@@ -230,7 +232,7 @@
 | `rt-8-code-review-sees-code` | RT-8: daily-ревью видит код дня, а не остаток рабочего дерева | 2026-07-16 | [`RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md`](../docs/prompts/RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md) | — | [карточка](./archive/rt-8-code-review-sees-code.md) |
 | `rt-6-consilium-integrity` | RT-6: валидатор консилиума — внятная ошибка + непропуск вопросов повестки | 2026-07-16 | [`RT_6_CONSILIUM_INTEGRITY_PROMPT.md`](../docs/prompts/RT_6_CONSILIUM_INTEGRITY_PROMPT.md) | — | [карточка](./archive/rt-6-consilium-integrity.md) |
 | `rt-0-gate` | RT-0: гейт эпика — сверить сделанное с деревом, а не с таблицей | 2026-07-16 | [`RT_0_GATE_PROMPT.md`](../docs/prompts/RT_0_GATE_PROMPT.md) | — | [карточка](./archive/rt-0-gate.md) |
-| `deep-research-sprint-flag` | deep-research: скилл + флаг --research для старта спринта | 2026-07-15 | [`DEEP_RESEARCH_SPRINT_FLAG_PROMPT.md`](../docs/prompts/DEEP_RESEARCH_SPRINT_FLAG_PROMPT.md) | #516 (Issue открыт) | [карточка](./archive/deep-research-sprint-flag.md) |
+| `deep-research-sprint-flag` | deep-research: скилл + флаг --research для старта спринта | 2026-07-15 | [`DEEP_RESEARCH_SPRINT_FLAG_PROMPT.md`](../docs/prompts/DEEP_RESEARCH_SPRINT_FLAG_PROMPT.md) | #516 | [карточка](./archive/deep-research-sprint-flag.md) |
 | `hot-repo-flow` | hot-repo-flow: merge-driver реестра + pr:ship в worktree + заготовка промпта + норма порядка ревью | 2026-07-15 | [`HOT_REPO_FLOW_PROMPT.md`](../docs/prompts/HOT_REPO_FLOW_PROMPT.md) | #510 | [карточка](./archive/hot-repo-flow.md) |
 | `pc2c-spectrum-recording-decouple` | PC-2c: полная развязка спектр-наблюдения от записи (StartRecording/StopRecording устарели — трек не производится) | 2026-07-15 | [`PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md`](../docs/prompts/PC2C_SPECTRUM_RECORDING_DECOUPLE_PROMPT.md) | #493 | [карточка](./archive/pc2c-spectrum-recording-decouple.md) |
 | `canon-tooling-debt` | canon-tooling-debt: ADR-гигиена, 26 живых фаз реестра, --report для repo:clean, libuv в горячих скриптах | 2026-07-15 | [`CANON_TOOLING_DEBT_PROMPT.md`](../docs/prompts/CANON_TOOLING_DEBT_PROMPT.md) | #504 | [карточка](./archive/canon-tooling-debt.md) |
@@ -786,4 +788,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-17.*
+*Файл обновлён автоматически: 2026-07-18.*
