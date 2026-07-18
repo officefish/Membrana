@@ -109,25 +109,33 @@ export const AREAS = [
   {
     key: 'product',
     label: 'Основной продукт',
-    hint: 'ядро, детекторы, клиент, устройство',
+    hint: 'ядро, детекторы, клиент, устройство, облик',
     match: (p) =>
       /^packages\/(core|device-board|drift-anchor|agenda|libs)\//u.test(p)
       || /^packages\/services\//u.test(p)
-      || /^apps\/(client|membrana-device|membrana-studio)\//u.test(p),
+      || /^apps\/(client|membrana-device|membrana-studio)\//u.test(p)
+      // Референсы облика — работа НАД продуктом, а не материал для менеджмента
+      // (правка владельца при принятии ADR-0013).
+      || /^docs\/design\//u.test(p),
   },
   {
     key: 'cabinet',
     label: 'Кабинет',
     hint: 'кабинет и его бэкенд',
-    match: (p) => /^apps\/cabinet\//u.test(p) || /^packages\/background-(cabinet|media|office)\//u.test(p),
+    match: (p) => /^apps\/cabinet\//u.test(p) || /^packages\/background-(cabinet|media)\//u.test(p),
   },
   {
     key: 'tooling',
     label: 'Тулинг',
-    hint: 'скрипты, хуки, скиллы, CI',
+    hint: 'скрипты, хуки, скиллы, CI, шлюз интеграций',
     match: (p) =>
       /^scripts\//u.test(p) || /^tools\//u.test(p) || /^\.githooks\//u.test(p)
-      || /^\.(github|cursor|claude)\//u.test(p) || /^(package\.json|turbo\.json|yarn\.lock)$/u.test(p),
+      || /^\.(github|cursor|claude)\//u.test(p) || /^(package\.json|turbo\.json|yarn\.lock)$/u.test(p)
+      // background-office — шлюз внешних интеграций (Claude, Linear, GitHub), то есть
+      // инфраструктура агентской работы, а НЕ пользовательский контур. Числился за
+      // кабинетом и приписывал ему работу, которой кабинет не касался (правка при
+      // принятии ADR-0013; подтверждено packages/background-office/README.md).
+      || /^packages\/background-office\//u.test(p),
   },
   {
     key: 'process',
@@ -145,7 +153,7 @@ export const AREAS = [
     hint: 'панель, доки, демо, коммуникации',
     match: (p) =>
       /^apps\/(panel|docs|demos|comms-studio)\//u.test(p)
-      || /^docs\/(comms|design)\//u.test(p)
+      || /^docs\/comms\//u.test(p)
       || /^deploy\//u.test(p),
   },
 ];
