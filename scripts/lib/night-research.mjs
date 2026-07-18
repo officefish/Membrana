@@ -73,13 +73,14 @@ function shortClaim(claim, max = 90) {
  * Возвращает и «сырой» вопрос (для нас), и внешний результат (для Perplexity/статуса).
  *
  * @param {{a: any, b: any}} pair
+ * @param {{internalNames?: readonly string[]}} [opts] словарь имён репозитория (#599)
  * @returns {{raw: string, external: ReturnType<typeof externalizeQuery>}}
  */
-export function buildDreamQuery(pair) {
+export function buildDreamQuery(pair, opts = {}) {
   const raw =
     `Наш вывод «${shortClaim(pair.a.claim)}» в сочетании с «${shortClaim(pair.b.claim)}» — ` +
     `правда или бред? Что говорит внешняя практика 2025–2026?`;
-  const external = externalizeQuery(neutralizeJargon(raw));
+  const external = externalizeQuery(neutralizeJargon(raw), { internalNames: opts.internalNames ?? [] });
   return { raw, external };
 }
 
@@ -96,7 +97,7 @@ export function pickTopic(registry, opts) {
   if (pairs.length === 0) return null;
   const idx = seedHash(opts?.seed) % pairs.length;
   const pair = pairs[idx];
-  const { raw, external } = buildDreamQuery(pair);
+  const { raw, external } = buildDreamQuery(pair, { internalNames: opts?.internalNames ?? [] });
   return {
     slug: pair.key.slice(0, 80),
     topic: `${shortClaim(pair.a.claim, 40)} × ${shortClaim(pair.b.claim, 40)}`,
@@ -108,6 +109,32 @@ export function pickTopic(registry, opts) {
     pairKey: pair.key,
     sharedParents: pair.sharedParents,
   };
+}
+
+/**
+ * Эффективный статус сна с учётом срока: `pending`, переживший свой TTL, — это `void`.
+ *
+ * ЗАЧЕМ (#598). `void` был объявлен в контракте статусов, но не писался никем: артефакт
+ * рождался `pending` и оставался им навсегда, потому что запрос наружу не уходил.
+ * «Честное нет» было недостижимо, а `nightYield` считал знаменателем `adopted + void`
+ * — то есть фактически `adopted`, и метрика не умела показать провал.
+ *
+ * Переход по сроку, а не по факту ответа: ночь не обязана знать, придёт ли ответ, но
+ * обязана перестать врать, что вопрос ещё «в работе», когда срок истёк. Это тот же
+ * honest-timeout, что и `orphan` для слота `consumed` в вердикте F1/M4.
+ *
+ * @param {{status?: string|null, date?: string|null, ttl?: number|string|null}} artifact
+ * @param {number} nowMs
+ * @returns {string|null}
+ */
+export function effectiveStatus(artifact, nowMs) {
+  const status = artifact?.status ?? null;
+  if (status !== 'pending') return status; // adopted/rejected/void — окончательные
+  const ms = parseMs(artifact?.date);
+  if (ms == null) return status; // без даты срок не вычислим — не выдумываем
+  const ttlDays = Number(artifact?.ttl ?? 14);
+  if (!Number.isFinite(ttlDays) || ttlDays <= 0) return status;
+  return nowMs - ms > ttlDays * 24 * 60 * 60 * 1000 ? 'void' : status;
 }
 
 /**
@@ -172,8 +199,12 @@ export function nightYield(artifacts, opts) {
   for (const a of artifacts ?? []) {
     const ms = parseMs(a?.date);
     if (ms == null || ms < floorMs || ms > nowMs) continue;
-    if (a.status === 'adopted') adopted += 1;
-    else if (a.status === 'void') voided += 1;
+    // Считаем ЭФФЕКТИВНЫЙ статус: пока просроченный pending не считался void, знаменатель
+    // равнялся adopted, и метрика структурно могла показать только 100% либо «нет данных»
+    // — сообщить о провале ночи она была неспособна (#598, находка аудита 18.07).
+    const status = effectiveStatus(a, nowMs);
+    if (status === 'adopted') adopted += 1;
+    else if (status === 'void') voided += 1;
   }
   const denom = adopted + voided;
   return { yield: denom === 0 ? null : adopted / denom, adopted, void: voided, window: windowDays };

@@ -14,7 +14,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 
-import { pickTopic, renderNightArtifact, nightYield } from './lib/night-research.mjs';
+import { pickTopic, renderNightArtifact, nightYield, effectiveStatus } from './lib/night-research.mjs';
 import { parseFrontmatter } from './lib/strategy-channels.mjs';
 
 const argv = process.argv.slice(2);
@@ -34,11 +34,40 @@ function readArtifacts() {
     .map((f) => {
       const fm = parseFrontmatter(readFileSync(join(nightDir, f), 'utf8'));
       const dm = f.match(/^(\d{4}-\d{2}-\d{2})-/u);
-      return { status: fm.status ?? null, date: fm.date || (dm ? dm[1] : null), file: f };
+      return { status: fm.status ?? null, date: fm.date || (dm ? dm[1] : null), ttl: fm.ttl ?? null, file: f };
     });
 }
 
+/**
+ * Перевести просроченные `pending` в `void` НА ДИСКЕ (#598). Без этого «честное нет»
+ * оставалось бы вычисляемым, а в файлах вечно висел бы `pending` — то есть артефакт
+ * продолжал бы утверждать, что вопрос в работе, спустя месяцы после срока.
+ */
+function sweepExpired() {
+  const nowMs = Date.parse(now);
+  const changed = [];
+  for (const a of readArtifacts()) {
+    if (effectiveStatus(a, nowMs) !== 'void' || a.status === 'void') continue;
+    const p = join(nightDir, a.file);
+    const src = readFileSync(p, 'utf8');
+    const out = src.replace(/^status:\s*pending\s*$/mu, 'status: void');
+    if (out === src) continue; // фронтматтер не той формы — молча не правим
+    writeFileSync(p, out, 'utf8');
+    changed.push(`${a.file} (срок ${a.ttl ?? 14} дн. с ${a.date})`);
+  }
+  return changed;
+}
+
+if (argv.includes('--sweep')) {
+  const changed = sweepExpired();
+  for (const c of changed) console.log(`  pending → void: ${c}`);
+  console.log(changed.length === 0 ? 'Просроченных снов нет.' : `Закрыто по сроку: ${changed.length}.`);
+  process.exit(0);
+}
+
 if (argv.includes('--yield')) {
+  // Развёртка до замера: иначе метрика считает по диску, где просроченное ещё pending.
+  sweepExpired();
   const y = nightYield(readArtifacts(), { now });
   const pct = y.yield == null ? 'н/д (нет adopted+void за окно)' : `${(y.yield * 100).toFixed(0)}%`;
   console.log(`nightYield за ${y.window} дней: ${pct} (adopted=${y.adopted}, void=${y.void})`);
@@ -55,7 +84,24 @@ if (!existsSync(registryPath)) {
 }
 const registry = JSON.parse(readFileSync(registryPath, 'utf8'));
 
-const topic = pickTopic(registry, { seed });
+/**
+ * Словарь внутренних имён для гварда жаргона (#599): базовые имена скриптов из
+ * `scripts/`. Берём только многосегментные (`main-day-issue`, не `verify`) — одиночное
+ * слово слишком часто законно во внешнем вопросе, а составное имя скрипта наружу
+ * утечь не может по смыслу. Читается из fs здесь, в обвязке: ядро остаётся чистым.
+ */
+function repoInternalNames() {
+  try {
+    return readdirSync(resolve(repoRoot, 'scripts'))
+      .filter((f) => f.endsWith('.mjs'))
+      .map((f) => f.replace(/\.mjs$/u, ''))
+      .filter((n) => n.includes('-') && !n.includes('.'));
+  } catch {
+    return []; // словаря нет — гвард работает по формальным правилам, не падает
+  }
+}
+
+const topic = pickTopic(registry, { seed, internalNames: repoInternalNames() });
 if (!topic) {
   console.error('Нет пар кристаллов-сиблингов (derived с общим родителем) — сну не из чего родиться.');
   process.exit(0);

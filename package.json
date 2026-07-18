@@ -104,6 +104,7 @@
     "strategy:day": "node scripts/strategy-day.mjs",
     "night:research": "node scripts/night-research.mjs",
     "night:research:yield": "node scripts/night-research.mjs --yield",
+    "night:research:sweep": "node scripts/night-research.mjs --sweep",
     "plan:day": "node scripts/strategy-day.mjs",
     "plan:day:full": "node scripts/strategic-plan-day.mjs --full",
     "probe:node-link": "node scripts/node-link-probe.mjs",
