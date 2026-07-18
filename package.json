@@ -279,7 +279,8 @@
     "repo:clean": "node scripts/repo-clean.mjs",
     "docs:verify-canon": "node scripts/verify-docs-canon.mjs",
     "research": "node scripts/research.mjs",
-    "meeting:status": "node scripts/meeting-status.mjs"
+    "meeting:status": "node scripts/meeting-status.mjs",
+    "meeting:audit": "node scripts/meeting-audit.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
