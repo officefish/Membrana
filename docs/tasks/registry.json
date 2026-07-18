@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "research-query-hygiene",
+      "title": "Гигиена research-запроса: ярлык рубрики уезжает в текст вопроса",
+      "promptPath": "docs/prompts/RESEARCH_QUERY_HYGIENE_PROMPT.md",
+      "githubIssue": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-18",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "insightId": "insight-own-field-corpus-single-spec",
+      "notes": "НАЙДЕНО ЖИВЫМ ПРОГОНОМ 18.07, ценой трёх ранов Perplexity. (1) scripts/lib/insight-ritual.mjs:119 склеивает query = label + \": \" + text, то есть ярлык рубрики уезжает в поисковый запрос. Ран Q2 ушёл как «Fit (Membrana): Как небольшие команды…» — поисковик принял Membrana за название проекта и ответил «информации о проекте не найдено». Ярлык это рубрика нашей таблицы, а не часть вопроса. (2) Технические вопросы на русском вытаскивают русскоязычную регуляторику вместо международной технической литературы: Q1 про спецификации аудиозаписей вернул ЭРА-ГЛОНАСС и штрафы пилотам. (3) Q3 ушёл в спор о терминологии — «аудиокорпус» прочитан как физический короб. ЧТО НУЖНО: не подмешивать label в query; гард на язык (технический landscape — по-английски); гард на многозначные термины. СМЕЖНОЕ: тот же корень, что #402 (обрезанный запрос) — тогда чинили длину, теперь примесь. Дry-run показывает итоговый текст, но НИКТО не смотрит на него глазами перед тратой рана — стоит сделать подтверждение обязательным.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "detector-scoreboard",
       "title": "Витрина качества детекции: плагин модуля микрофона + панель",
       "promptPath": "docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md",
