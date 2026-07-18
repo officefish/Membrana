@@ -18,7 +18,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `evening-audit-generator` | Генератор вечернего аудита: что происходило в репозитории, реестре задач и графе правды | M | [`EVENING_AUDIT_GENERATOR_PROMPT.md`](../docs/prompts/EVENING_AUDIT_GENERATOR_PROMPT.md) | — |
 | `morning-ritual-regulation` | Регламент утреннего ритуала + фоновый агент (барьер против проглоченного гейта) | L | [`MORNING_RITUAL_REGULATION.md`](../docs/prompts/MORNING_RITUAL_REGULATION.md) | [#605](https://github.com/officefish/Membrana/issues/605) |
 | `night-build-format-v2` | Формат night-build: доработка по трению ночи 17.07 (заседание) | M | [`NIGHT_BUILD_FORMAT_V2_PROMPT.md`](../docs/prompts/NIGHT_BUILD_FORMAT_V2_PROMPT.md) | — |
 | `strategy-day-generator` | Генератор стратегии дня: горизонт вместо списка задач | L | [`STRATEGY_DAY_GENERATOR_PROMPT.md`](../docs/prompts/STRATEGY_DAY_GENERATOR_PROMPT.md) | [#592](https://github.com/officefish/Membrana/issues/592) |
@@ -230,6 +229,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `evening-audit-generator` | Генератор вечернего аудита: что происходило в репозитории, реестре задач и графе правды | 2026-07-18 | [`EVENING_AUDIT_GENERATOR_PROMPT.md`](../docs/prompts/EVENING_AUDIT_GENERATOR_PROMPT.md) | #627 (Issue открыт) | [карточка](./archive/evening-audit-generator.md) |
 | `standup-charge-redesign` | DAILY_STANDUP как настоящий стендап: дисциплина+честность+код-стайл и раскрытие сильных сторон персон | 2026-07-16 | [`STANDUP_CHARGE_REDESIGN_PROMPT.md`](../docs/prompts/STANDUP_CHARGE_REDESIGN_PROMPT.md) | — | [карточка](./archive/standup-charge-redesign.md) |
 | `rt-8-code-review-sees-code` | RT-8: daily-ревью видит код дня, а не остаток рабочего дерева | 2026-07-16 | [`RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md`](../docs/prompts/RT_8_CODE_REVIEW_SEES_CODE_PROMPT.md) | — | [карточка](./archive/rt-8-code-review-sees-code.md) |
 | `rt-6-consilium-integrity` | RT-6: валидатор консилиума — внятная ошибка + непропуск вопросов повестки | 2026-07-16 | [`RT_6_CONSILIUM_INTEGRITY_PROMPT.md`](../docs/prompts/RT_6_CONSILIUM_INTEGRITY_PROMPT.md) | — | [карточка](./archive/rt-6-consilium-integrity.md) |

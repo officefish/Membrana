@@ -6,16 +6,16 @@
       "promptPath": "docs/prompts/EVENING_AUDIT_GENERATOR_PROMPT.md",
       "githubIssue": 627,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-18",
-      "archivedAt": null,
+      "archivedAt": "2026-07-18",
       "leadPersona": "Ozhegov",
       "supportPersonas": [
         "Dynin"
       ],
       "notes": "Владельческая задача 18.07: наглядный отчёт движения за день, строки по областям",
-      "archiveNotes": null,
+      "archiveNotes": "PR #628/#629/#630 — три фазы: канон ADR-0013, чистое ядро с тестами, обвязка yarn audit:evening. Отчёт по трём источникам + строки по пяти областям. Включение в ritual:evening — за владельцем; ADR в статусе DRAFT",
       "githubIssueClosedAt": null
     },
     {
