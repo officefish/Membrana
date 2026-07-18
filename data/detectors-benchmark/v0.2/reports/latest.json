@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T13:16:57.973Z",
+  "generatedAt": "2026-07-18T12:29:47.440Z",
   "datasetVersion": "v2",
   "curatedOnly": true,
   "preliminaryOriginLabels": false,
@@ -14,6 +14,17 @@
     "unlabeledCount": 0
   },
   "sampleCount": 120,
+  "config": {
+    "mode": "live",
+    "source": "data/detectors-benchmark/v0.2/calibration-preset.json",
+    "presetGeneratedAt": "2026-06-15T12:30:00.126Z",
+    "detectorsCalibrated": [
+      "cepstral",
+      "harmonic",
+      "spectral-flux"
+    ]
+  },
+  "splitFallback": true,
   "manifestPath": "data/detectors-benchmark/v0.2/manifest.json",
   "detectors": [
     {
@@ -28,8 +39,8 @@
         "precision": 0.43617021276595747,
         "recall": 0.6833333333333333,
         "f1": 0.5324675324675325,
-        "latencyP50Ms": 0.1535999999998694,
-        "latencyP95Ms": 0.30720000000019354
+        "latencyP50Ms": 0.09699999999975262,
+        "latencyP95Ms": 0.18589999999994689
       },
       "perSample": [
         {
@@ -766,8 +777,8 @@
         "precision": 0.5,
         "recall": 1,
         "f1": 0.6666666666666666,
-        "latencyP50Ms": 0.26709999999911815,
-        "latencyP95Ms": 0.5104000000001179
+        "latencyP50Ms": 0.2448999999996886,
+        "latencyP95Ms": 0.41190000000005966
       },
       "perSample": [
         {
@@ -1497,15 +1508,15 @@
       "family": "dsp",
       "status": "benchmarked",
       "metrics": {
-        "tp": 52,
-        "fp": 60,
-        "fn": 8,
-        "tn": 0,
-        "precision": 0.4642857142857143,
-        "recall": 0.8666666666666667,
-        "f1": 0.6046511627906976,
-        "latencyP50Ms": 0.08799999999973807,
-        "latencyP95Ms": 0.16270000000076834
+        "tp": 43,
+        "fp": 47,
+        "fn": 17,
+        "tn": 13,
+        "precision": 0.4777777777777778,
+        "recall": 0.7166666666666667,
+        "f1": 0.5733333333333334,
+        "latencyP50Ms": 0.0885999999991327,
+        "latencyP95Ms": 0.1550999999999476
       },
       "perSample": [
         {
@@ -1577,7 +1588,7 @@
         {
           "id": "drone-dad-0041",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9883366118603545
         },
         {
@@ -1631,7 +1642,7 @@
         {
           "id": "drone-dad-0050",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9887326104919518
         },
         {
@@ -1709,7 +1720,7 @@
         {
           "id": "drone-mj-dji-avata",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9945798111649591
         },
         {
@@ -1721,7 +1732,7 @@
         {
           "id": "drone-mj-dji-matrice-600p",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9940958754794396
         },
         {
@@ -1763,7 +1774,7 @@
         {
           "id": "drone-mj-dji-neo",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9790287948069747
         },
         {
@@ -1787,7 +1798,7 @@
         {
           "id": "drone-mj-dji-tello-tt",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.988737853978044
         },
         {
@@ -1799,7 +1810,7 @@
         {
           "id": "drone-mj-holystone-hs210",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9974696404685703
         },
         {
@@ -1823,7 +1834,7 @@
         {
           "id": "drone-mj-syma-x20",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9984755571223669
         },
         {
@@ -1859,7 +1870,7 @@
         {
           "id": "drone-mj-udi-u46",
           "truthDrone": true,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9949634663197273
         },
         {
@@ -1871,7 +1882,7 @@
         {
           "id": "not-bird-chirping-birds-01",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9977911904191018
         },
         {
@@ -1883,13 +1894,13 @@
         {
           "id": "not-bird-chirping-birds-03",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9927425896579011
         },
         {
           "id": "not-bird-chirping-birds-04",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9956699532919575
         },
         {
@@ -1937,7 +1948,7 @@
         {
           "id": "not-bird-insects-02",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.999566238136222
         },
         {
@@ -1949,25 +1960,25 @@
         {
           "id": "not-human-speech-coughing-01",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9997529246655031
         },
         {
           "id": "not-human-speech-coughing-02",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9998286192969419
         },
         {
           "id": "not-human-speech-coughing-03",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9996421639045365
         },
         {
           "id": "not-human-speech-laughing-01",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9994716859676263
         },
         {
@@ -1991,13 +2002,13 @@
         {
           "id": "not-human-speech-sneezing-01",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9999985158877767
         },
         {
           "id": "not-human-speech-sneezing-02",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9999977446297509
         },
         {
@@ -2027,13 +2038,13 @@
         {
           "id": "not-traffic-car-horn-01",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9973028072044826
         },
         {
           "id": "not-traffic-car-horn-02",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.999883660713547
         },
         {
@@ -2135,7 +2146,7 @@
         {
           "id": "not-wind-rain-03",
           "truthDrone": false,
-          "predDrone": true,
+          "predDrone": false,
           "maxConfidence": 0.9928903860934779
         },
         {
@@ -2242,8 +2253,8 @@
         "precision": 0.675,
         "recall": 0.9,
         "f1": 0.7714285714285714,
-        "latencyP50Ms": 1.5342000000018743,
-        "latencyP95Ms": 2.5204000000012456
+        "latencyP50Ms": 1.2937999999994645,
+        "latencyP95Ms": 2.0260999999991327
       },
       "perSample": [
         {
@@ -2980,8 +2991,8 @@
         "precision": 0.7142857142857143,
         "recall": 0.9166666666666666,
         "f1": 0.8029197080291971,
-        "latencyP50Ms": 97.08260000000155,
-        "latencyP95Ms": 131.95969999999943
+        "latencyP50Ms": 98.59560000000056,
+        "latencyP95Ms": 145.3063000000002
       },
       "perSample": [
         {

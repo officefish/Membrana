@@ -25,6 +25,7 @@ import {
   percentile,
 } from './lib/benchmark-metrics.mjs';
 import { patchDetectorBenchmarkMd } from './lib/benchmark-report-md.mjs';
+import { loadCalibrationPreset } from './lib/calibration-preset.mjs';
 import { filterCuratedSamples } from './lib/manifest-labels.mjs';
 import { readWavMono } from './lib/wav-read.mjs';
 
@@ -34,12 +35,31 @@ const DEFAULT_MANIFEST_PATH = join(DEFAULT_DATASET_DIR, 'manifest.json');
 const BENCHMARK_MD = join(ROOT, 'docs', 'DETECTOR_BENCHMARK.md');
 
 function parseArgs(argv) {
-  const options = { manifestPath: DEFAULT_MANIFEST_PATH, originLabels: false, reportPath: null };
+  const options = {
+    manifestPath: DEFAULT_MANIFEST_PATH,
+    originLabels: false,
+    reportPath: null,
+    // ADR-0006 Р1: боевая конфигурация — умолчание. `defaults` остаётся как
+    // ОТЛАДОЧНЫЙ режим и обязан быть помечен в отчёте: цифрой боевой
+    // поверхности он называться не вправе.
+    config: 'live',
+    strictSplit: false,
+  };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--manifest' && argv[i + 1]) {
       options.manifestPath = resolve(ROOT, argv[++i]);
     } else if (argv[i] === '--origin-labels') {
       options.originLabels = true;
+    } else if (argv[i] === '--config' && argv[i + 1]) {
+      const value = argv[++i];
+      if (value !== 'live' && value !== 'defaults') {
+        throw new Error(`--config принимает live|defaults, получено: ${value}`);
+      }
+      options.config = value;
+    } else if (argv[i] === '--strict-split') {
+      // Внешний корпус (напр. DADS) обязан нести собственный test-split:
+      // подмена сплита всем корпусом на нём выдаёт чужую цифру за тестовую.
+      options.strictSplit = true;
     } else if (argv[i] === '--report' && argv[i + 1]) {
       // drift-anchor code-anchor (#404): отчёт в сторону, канонические
       // reports/latest.json и DETECTOR_BENCHMARK.md НЕ трогаются.
@@ -118,7 +138,7 @@ export async function ensureBuilt(distPath, label) {
  * с background-media __tariff_dataset__ во временный каталог) — сигнатура
  * не завязана на канонический v0.2 манифест.
  */
-export async function runDetector(manifestSamples, spec, datasetDir) {
+export async function runDetector(manifestSamples, spec, datasetDir, sampleOptions = {}) {
   await ensureBuilt(spec.dist, spec.label);
   const { analyzeSample } = await import(pathToFileURL(DETECTOR_BASE_DIST).href);
   const mod = await import(pathToFileURL(spec.dist).href);
@@ -134,6 +154,9 @@ export async function runDetector(manifestSamples, spec, datasetDir) {
     const { samples, sampleRate } = await readWavMono(wavPath);
     const { verdict, frameLatenciesMs } = await analyzeSample(samples, sampleRate, detector, {
       fftSize,
+      // Пресет калиброван на детектор по имени; пусто = дефолты пакета
+      // (отладочный режим либо детектор, которого в пресете нет).
+      ...(sampleOptions[spec.name] ?? {}),
     });
     const truthDrone = entry.label === 'drone';
     perSample.push({
@@ -318,9 +341,15 @@ export async function runYamnet(manifestSamples, datasetDir) {
 export function selectBenchmarkSamples(samples) {
   const curated = filterCuratedSamples(samples);
   const withSplit = curated.filter((s) => s.split === 'test');
+  // splitFallback — НЕ деталь исполнения: при пустом test-split прогон меряет
+  // весь корпус, включая train, и цифра перестаёт быть тестовой. Раньше это
+  // происходило молча (отчёт всё равно печатал «test-split: N файлов»).
+  // Флаг обязан доехать до отчёта и до канона.
+  const splitFallback = withSplit.length === 0;
   return {
-    testSamples: withSplit.length > 0 ? withSplit : curated,
+    testSamples: splitFallback ? curated : withSplit,
     skippedUnlabeled: samples.length - curated.length,
+    splitFallback,
   };
 }
 
@@ -339,7 +368,8 @@ async function main() {
   const effectiveSamples = options.originLabels
     ? applyOriginLabels(manifest.samples)
     : manifest.samples;
-  const { testSamples, skippedUnlabeled } = selectBenchmarkSamples(effectiveSamples);
+  const { testSamples, skippedUnlabeled, splitFallback } =
+    selectBenchmarkSamples(effectiveSamples);
   if (skippedUnlabeled > 0) {
     console.log(`Skipping ${skippedUnlabeled} unlabeled samples`);
   }
@@ -348,17 +378,56 @@ async function main() {
       'No labeled samples in manifest — разметьте корпус (или используйте --origin-labels для предварительного прогона)',
     );
   }
+  // Подмена сплита всем корпусом перестала быть тихой: на внешнем корпусе она
+  // роняет прогон (--strict-split), на каноническом — кричит и едет в отчёт.
+  if (splitFallback) {
+    if (options.strictSplit) {
+      throw new Error(
+        `В манифесте нет ни одного сэмпла со split: "test" (${options.manifestPath}).\n` +
+          'Прогон по всему корпусу выдал бы train-данные за тестовую цифру. ' +
+          'Заведите test-split или снимите --strict-split осознанно.',
+      );
+    }
+    console.warn(
+      `⚠ split-fallback: сэмплов со split: "test" нет — меряем ВЕСЬ корпус (${testSamples.length}), включая train.\n` +
+        '  Это НЕ тестовая цифра. Для внешнего корпуса используйте --strict-split.',
+    );
+  }
+
+  // ADR-0006 Р1: боевая конфигурация по умолчанию.
+  const preset = options.config === 'live' ? await loadCalibrationPreset() : null;
+  const sampleOptions = preset?.options ?? {};
+  const configPassport = {
+    mode: options.config,
+    source:
+      options.config === 'live'
+        ? 'data/detectors-benchmark/v0.2/calibration-preset.json'
+        : 'дефолты пакетов детекторов',
+    presetGeneratedAt: preset?.generatedAt ?? null,
+    detectorsCalibrated: Object.keys(sampleOptions).sort(),
+  };
 
   if (options.originLabels) {
     console.log(
       'ПРЕДВАРИТЕЛЬНЫЙ прогон по originLabel (провенанс, не операторская истина) — не gate-результат.',
     );
   }
+  if (options.config === 'defaults') {
+    console.warn(
+      '⚠ ОТЛАДОЧНЫЙ прогон на дефолтах пакетов — НЕ конфигурация боевой поверхности (ADR-0006).',
+    );
+  }
   console.log(`Benchmark: ${testSamples.length} samples (dataset v${manifest.version})`);
+  console.log(
+    `Конфигурация: ${configPassport.mode} (${configPassport.source})` +
+      (configPassport.detectorsCalibrated.length > 0
+        ? ` — калиброваны: ${configPassport.detectorsCalibrated.join(', ')}`
+        : ''),
+  );
 
   const benchmarked = [];
   for (const spec of DSP_DETECTORS) {
-    const result = await runDetector(testSamples, spec, datasetDir);
+    const result = await runDetector(testSamples, spec, datasetDir, sampleOptions);
     benchmarked.push(result);
     const m = result.metrics;
     console.log(
@@ -398,6 +467,10 @@ async function main() {
     skippedUnlabeled,
     groundTruth: manifest.groundTruth ?? null,
     sampleCount: testSamples.length,
+    // Паспорт прогона (ADR-0006 Р3): цифра без указания конфигурации
+    // неинтерпретируема — двусмысленность канона выросла из его отсутствия.
+    config: configPassport,
+    splitFallback,
     manifestPath: options.manifestPath.replace(`${ROOT}`, '').replace(/^[/\\]/, '').replace(/\\/g, '/'),
     detectors,
   };

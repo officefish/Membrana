@@ -30,22 +30,25 @@
 
 <!-- BENCHMARK:auto:start -->
 
-> **Автогенерация:** `yarn benchmark:detectors` · 2026-07-06T13:16:57.973Z
-> **Датасет:** v2 · test-split: 120 файлов
+> **Автогенерация:** `yarn benchmark:detectors` · 2026-07-18T12:29:47.440Z
+> **Датасет:** v2 · ВЕСЬ корпус (test-split отсутствует): 120 файлов
+> **Конфигурация:** боевая (`data/detectors-benchmark/v0.2/calibration-preset.json`) — калиброваны: cepstral, harmonic, spectral-flux
+> **⚠ Внимание:** цифры получены НЕ на тестовом сплите — корпус содержит train-сэмплы.
 
 ### Результаты последнего прогона
 
 | name | family | TP | FP | FN | TN | precision | recall | F1 | latency p50 (ms) | latency p95 (ms) | статус |
 |------|--------|----|----|----|----|-----------|--------|-----|------------------|------------------|--------|
-| harmonic | dsp | 41 | 53 | 19 | 7 | 43.6% | 68.3% | 53.2% | 0.2 | 0.3 | benchmarked |
-| cepstral | dsp | 60 | 60 | 0 | 0 | 50.0% | 100.0% | 66.7% | 0.3 | 0.5 | benchmarked |
-| spectral-flux | dsp | 52 | 60 | 8 | 0 | 46.4% | 86.7% | 60.5% | 0.1 | 0.2 | benchmarked |
-| template-match | dsp | 54 | 26 | 6 | 34 | 67.5% | 90.0% | 77.1% | 1.5 | 2.5 | benchmarked |
-| yamnet | neural | 55 | 22 | 5 | 38 | 71.4% | 91.7% | 80.3% | 97.1 | 132.0 | benchmarked |
+| harmonic | dsp | 41 | 53 | 19 | 7 | 43.6% | 68.3% | 53.2% | 0.1 | 0.2 | benchmarked |
+| cepstral | dsp | 60 | 60 | 0 | 0 | 50.0% | 100.0% | 66.7% | 0.2 | 0.4 | benchmarked |
+| spectral-flux | dsp | 43 | 47 | 17 | 13 | 47.8% | 71.7% | 57.3% | 0.1 | 0.2 | benchmarked |
+| template-match | dsp | 54 | 26 | 6 | 34 | 67.5% | 90.0% | 77.1% | 1.3 | 2.0 | benchmarked |
+| yamnet | neural | 55 | 22 | 5 | 38 | 71.4% | 91.7% | 80.3% | 98.6 | 145.3 | benchmarked |
 | clap | neural | — | — | — | — | — | — | — | — | — | scaffold |
 | agentic-claude | agentic | — | — | — | — | — | — | — | — | — | scaffold |
 
 <!-- BENCHMARK:auto:end -->
+
 
 ### Заметка по stage-gate (template-match → DRONE_TIGHT)
 

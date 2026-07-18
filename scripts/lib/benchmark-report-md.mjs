@@ -20,11 +20,32 @@ export function patchDetectorBenchmarkMd(existingMd, report) {
 }
 
 function renderAutoBlock(report) {
+  // Ярлык сплита обязан быть честным: до ADR-0006 строка печаталась как
+  // «test-split: N файлов» даже когда test-сплита в манифесте нет вовсе и
+  // мерился весь корпус, включая train.
+  const splitLabel = report.splitFallback
+    ? `ВЕСЬ корпус (test-split отсутствует): ${report.sampleCount} файлов`
+    : `test-split: ${report.sampleCount} файлов`;
+  const cfg = report.config;
+  const configLine =
+    cfg == null
+      ? null
+      : cfg.mode === 'live'
+        ? `> **Конфигурация:** боевая (\`${cfg.source}\`)` +
+          (cfg.detectorsCalibrated?.length
+            ? ` — калиброваны: ${cfg.detectorsCalibrated.join(', ')}`
+            : '')
+        : `> **Конфигурация:** ⚠ ОТЛАДОЧНАЯ — ${cfg.source}; не поведение боевой поверхности`;
+
   const lines = [
     AUTO_START,
     '',
     `> **Автогенерация:** \`yarn benchmark:detectors\` · ${report.generatedAt}`,
-    `> **Датасет:** ${report.datasetVersion} · test-split: ${report.sampleCount} файлов`,
+    `> **Датасет:** ${report.datasetVersion} · ${splitLabel}`,
+    ...(configLine ? [configLine] : []),
+    ...(report.splitFallback
+      ? ['> **⚠ Внимание:** цифры получены НЕ на тестовом сплите — корпус содержит train-сэмплы.']
+      : []),
     '',
     '### Результаты последнего прогона',
     '',
