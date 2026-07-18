@@ -5,7 +5,7 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 32 из 122 кандидатов (бюджет <5000 токенов).
+Записей: 32 из 123 кандидатов (бюджет <5000 токенов).
 
 ### 2026-07-18 · голос · insight-own-field-corpus-single-spec
 
@@ -133,6 +133,12 @@
 
 — источник: `docs/seanses/night-build-format-m3-taxonomy-2026-07-18.md#reply-1`
 
+### 2026-07-18 · позиция · team-evening-feedback
+
+> Vesnin. Оценка артефактов: связка сегодня рассинхронна по природе. `STRATEGIC_PLAN_DAY` — явно помеченный ВЕЩДОК (заголовок «18.07» при генерации 17.07, DoD+роли в стратегии), читать как источник плана нельзя, и это честно зафиксировано в шапке. `MAIN_DAY_ISSUE` (18.07) — […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-18.md#reply-1`
+
 ### 2026-07-17 · голос · insight-dads-detector-integration
 
 > внедрять: Да (только развилка A) · этап: Сейчас: D1/D3/D4; D2/D5 после M1 · оценка: 8/10 — Инсайт зрелый: research-каскад уже переработал план (D2 S→M, D5 +PR-AUC), инварианты чёткие, развилка A/B честно вынесена наружу. Это ровно рост эшелона 0 через validated data — легитимно по `MAIN_DAY_ISSUE`, не тюнинг порогов на free-v1. Внедрять — да, но с двумя жёсткими […]
@@ -187,14 +193,8 @@
 
 — источник: `docs/seanses/strategy-day-q4b-topics-and-barren-2026-07-17.md#reply-1`
 
-### 2026-07-17 · позиция · strategy-day-q5-horizon-feeds
+### 2026-07-16 · позиция · team-evening-feedback
 
-> Рамку фиксирую, чтобы не переиграть решённое Q1–Q4b. Стратегия больше не пишет DoD и не назначает — выход `{horizon, focus, task_refs[]}`, `highlight` описывает акцент, `assign` меняет мир. Значит оба канала вливаются **только как highlight**, никогда как task с DoD. Это несущая […] _(реплик в сеансе: 5)_
+> Vesnin. **⚠️ ПОСЫЛКА НАРУШЕНА — оценка ниже опирается на ложный канон дня: S2 (fusion) слит 13.07 (5e42c937), символ `fuseDetectorConfidences` живёт в `@membrana/core`. Действовать по этой оценке нельзя — она улика механизма, а не итог дня.** Оценка артефактов: […]
 
-— источник: `docs/seanses/strategy-day-q5-horizon-feeds-2026-07-17.md#reply-1`
-
-### 2026-07-05 · голос · insight-comms-contour-topology
-
-> внедрять: Да, Вариант A · этап: Сейчас (вход в спринт) · оценка: 9/10
-
-— источник: `docs/insights/insight-comms-contour-topology/REVIEW.md#vote`
+— источник: `docs/seanses/team-evening-feedback-2026-07-16.md#reply-1`
