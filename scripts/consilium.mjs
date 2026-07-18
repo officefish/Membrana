@@ -13,7 +13,7 @@
  * Требуется ANTHROPIC_API_KEY в .env. Промпт: docs/prompts/CONSILIUM_PROMPT.md
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { resolve, basename } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 import {
@@ -170,6 +170,29 @@ function parseArgs(argv) {
   }
 
   return { question, saveAs, ghIssue, topicFile, meeting, seed, minReplies, noContext, noRag, noSave, dryRun, withMemory, secretaryFile };
+}
+
+/**
+ * ID вопросов СОСЕДНИХ комнат заседания: их появление в DoD = колонизация (hard rule 2).
+ *
+ * На уровне модуля, потому что структурный гейт #616 стоит в ОБОИХ каналах — и в
+ * секретарском, и в LLM. Пока функция жила внутри LLM-ветки, канон заседания
+ * проверялся только там.
+ */
+function meetingSiblingIdsFor(root, meetingId, ownTopicFile) {
+  try {
+    const dir = resolve(root, 'docs', 'meeting', meetingId);
+    const own = ownTopicFile ? resolve(root, ownTopicFile) : '';
+    const ids = new Set();
+    for (const f of readdirSync(dir).filter((x) => /-topic\.md$/u.test(x))) {
+      const full = resolve(dir, f);
+      if (full === own) continue;
+      for (const id of extractAgendaIds(readFileSync(full, 'utf8'))) ids.add(id);
+    }
+    return [...ids];
+  } catch {
+    return [];
+  }
 }
 
 function readBounded(absPath, maxChars, optional = false) {
@@ -343,6 +366,11 @@ function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles
 function wrapSeanseFile({ body, question, orderedRoles, model, ghIssue, topicFile, relPath }) {
   const stamp = new Date().toISOString();
   const meta = [
+    // Пометка канала (#616, A3): по ней аудитор отличает протокол, произведённый
+    // инструментом (гейт посылок отработал при записи), от записанного в seanses
+    // напрямую — а напрямую гейт не вызывается вовсе.
+    '<!-- канал: llm — протокол произведён yarn consilium, гейт структуры вердикта пройден -->',
+    '',
     '# Метаданные сеанса',
     '',
     '| Поле | Значение |',
@@ -381,10 +409,14 @@ function runSecretaryFile(cli, cwd) {
   }
   const body = readFileSync(srcAbs, 'utf8');
   const agendaMd = cli.topicFile ? readBounded(resolve(cwd, cli.topicFile), MAX_TOPIC_CHARS, true) : null;
+  // #616 (A): для заседания канон дополняется структурой вердикта — посылки
+  // обязательны ЗДЕСЬ, до записи, а не замечанием постфактум.
   const { ok, problems, notes, stats } = validateProtocol(body, {
     kind: 'consilium',
     minReplies: cli.minReplies,
     agenda: agendaMd || null,
+    meeting: Boolean(cli.meeting),
+    siblingIds: cli.meeting ? meetingSiblingIdsFor(cwd, cli.meeting, cli.topicFile) : [],
   });
   if (!ok) {
     console.error(`Протокол не прошёл канон консилиума (${problems.length}):`);
@@ -586,6 +618,41 @@ async function main() {
       topicFile: cli.topicFile,
       relPath,
     });
+    // #616 (вариант A): структурный гейт стоит ДО записи. Раньше протокол сохранялся,
+    // а проверка печаталась следом предупреждением — отсюда «детектирует, но не
+    // предотвращает»: вердикт на неназванном фундаменте уже лежал в docs/seanses и
+    // считался состоявшимся. Порядок «проверить → сохранить» и есть предотвращение.
+    // ИЗВЕСТНАЯ АСИММЕТРИЯ (замер по замечанию ревью 18.07, не закрыта здесь).
+    // По структуре вердикта каналы сходятся один в один. Но секретарский канал гонит
+    // ПОЛНЫЙ канон через validateProtocol (метаданные, порог реплик, молчащие роли,
+    // секция итога), а этот путь — только структуру: на «тонком» протоколе секретарь
+    // ловит 7 нарушений, LLM-путь 1. Расхождение досталось по наследству, #616 его не
+    // вводил и сознательно не расширяется на него: включение полного канона здесь
+    // начнёт ронять прогоны по причинам, к посылкам не относящимся. Отдельный вопрос.
+    if (cli.meeting) {
+      const siblings = meetingSiblingIdsFor(cwd, cli.meeting, cli.topicFile);
+      const problems = meetingVerdictProblems(answer, siblings);
+      if (problems.length > 0) {
+        // Прогон дорогой: артефакт не выбрасываем, но и протоколом не считаем —
+        // иначе цена отказа толкала бы писать мимо инструмента (тот самый обход).
+        const rejDir = resolve(cwd, 'docs/seanses/rejected');
+        mkdirSync(rejDir, { recursive: true });
+        const rejPath = resolve(rejDir, basename(relPath));
+        writeFileSync(rejPath, fileBody, 'utf8');
+        console.error(
+          `\n✖ заседание НЕ состоялось — структура вердикта (${problems.length}):\n` +
+            problems.map((p) => `  ✖ ${p}`).join('\n') +
+            '\n  Вердикт на неназванном фундаменте нельзя ни отозвать каскадом, ни проверить.' +
+            `\n  Черновик сохранён: docs/seanses/rejected/${basename(relPath)} (НЕ протокол).` +
+            '\n  Назвать посылки задним числом ЗАПРЕЩЕНО (M2″ 18.07: комната выдала 8 уверенных' +
+            '\n  посылок ЧУЖОГО вердикта). Нужен перепрогон с посылками, названными в прогоне.',
+        );
+        process.exitCode = 1;
+        return;
+      }
+      console.error('→ структура вердикта: посылки названы, чужих комнат в DoD нет.');
+    }
+
     writeFileSync(absPath, fileBody, 'utf8');
     console.error(`→ протокол: ${relPath}`);
 
@@ -616,40 +683,6 @@ async function main() {
       }
     }
 
-    // ID вопросов СОСЕДНИХ комнат заседания: их появление в DoD = колонизация.
-    const meetingSiblingIds = (root, meetingId, ownTopicFile) => {
-      try {
-        const dir = resolve(root, 'docs', 'meeting', meetingId);
-        const own = ownTopicFile ? resolve(root, ownTopicFile) : '';
-        const ids = new Set();
-        for (const f of readdirSync(dir).filter((x) => /-topic\.md$/u.test(x))) {
-          const full = resolve(dir, f);
-          if (full === own) continue;
-          for (const id of extractAgendaIds(readFileSync(full, 'utf8'))) ids.add(id);
-        }
-        return [...ids];
-      } catch {
-        return [];
-      }
-    };
-
-    // Структура вердикта — ПРЯМО В ЭТОМ ПРОГОНЕ, а не отдельной командой потом.
-    // 18.07 гейт `meeting:audit` поймал «нет секции посылок» в M2 уже постфактум, а
-    // добор задним числом (M2″) провалился: комната назвала посылки ЧУЖОГО вердикта.
-    // Значит момент, когда основание ещё можно назвать, — это сам прогон.
-    if (cli.meeting) {
-      const siblings = meetingSiblingIds(cwd, cli.meeting, cli.topicFile);
-      const problems = meetingVerdictProblems(answer, siblings);
-      if (problems.length > 0) {
-        console.error(
-          `\n⚠ структура вердикта (${problems.length}):\n` +
-            problems.map((p) => `  ✖ ${p}`).join('\n') +
-            '\n  Вердикт на неназванном фундаменте нельзя ни отозвать каскадом, ни проверить.',
-        );
-      } else {
-        console.error('→ структура вердикта: посылки названы, чужих комнат в DoD нет.');
-      }
-    }
   }
 
 }
