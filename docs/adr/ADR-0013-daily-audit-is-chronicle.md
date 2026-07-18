@@ -1,7 +1,7 @@
 # ADR-0013 — `DAILY_AUDIT.md` — хроника дня, а не аудитор плана
 
-> **Статус:** DRAFT · 2026-07-18
-> **merge файла ≠ принятие решения** пока статус DRAFT — решения действуют после LGTM владельца.
+> **Статус:** ACCEPTED · 2026-07-18 — LGTM владельца получен, с двумя правками Р4
+> (`background-office` → тулинг, `docs/design` → продукт).
 
 ## Контекст
 
@@ -71,9 +71,9 @@
 
 | Область | Что входит |
 |---|---|
-| **Основной продукт** | `packages/core`, `packages/device-board`, `packages/drift-anchor`, `packages/agenda`, `packages/libs`, `packages/services/**`, `apps/client`, `apps/membrana-device`, `apps/membrana-studio` |
-| **Кабинет** | `apps/cabinet`, `packages/background-cabinet`, `packages/background-media`, `packages/background-office` |
-| **Тулинг** | `scripts/`, `tools/`, `.githooks/`, `.github/`, `.cursor/`, `.claude/`, корневые `package.json` / `turbo.json` / `yarn.lock` |
+| **Основной продукт** | `packages/core`, `packages/device-board`, `packages/drift-anchor`, `packages/agenda`, `packages/libs`, `packages/services/**`, `apps/client`, `apps/membrana-device`, `apps/membrana-studio`, `docs/design/` |
+| **Кабинет** | `apps/cabinet`, `packages/background-cabinet`, `packages/background-media` |
+| **Тулинг** | `scripts/`, `tools/`, `.githooks/`, `.github/`, `.cursor/`, `.claude/`, корневые `package.json` / `turbo.json` / `yarn.lock`, `packages/background-office` |
 | **Бизнес-процессы** | `docs/prompts/`, `docs/seanses/`, `docs/meeting/`, `docs/truth/`, `docs/tasks/`, `docs/insights/`, `docs/virtual-team/`, `docs/actions/`, `docs/handoff/`, `docs/archive/`, `docs/adr/`, `docs/discussions/`, корневые `docs/*.md` в CAPS, `prd/`, `AGENTS.md`, `.cursorrules`, `.markdownlint.json` |
 | **Витрина для менеджмента** | `apps/panel`, `apps/docs`, `apps/demos`, `apps/comms-studio`, `docs/comms/`, `deploy/` |
 
@@ -89,7 +89,13 @@ JavaScript, что в продукте; регламенты — бизнес-п
 
 - `docs/handoff/`, `docs/archive/` → **бизнес-процессы** (передача смены и вещдоки
   ритуалов — это процесс, а не витрина);
-- `docs/design/` → **витрина** (референсы облика, не производственный канон);
+- `docs/design/` → **основной продукт**. Референсы облика — работа НАД продуктом, а не
+  материал для менеджмента. Правка владельца при принятии: в черновике стояла витрина;
+- `packages/background-office` → **тулинг**, не кабинет. Это шлюз внешних интеграций
+  (Claude, Linear, GitHub) — инфраструктура агентской работы, пользовательского контура
+  он не касается (`packages/background-office/README.md`). В черновике числился за
+  кабинетом и приписывал ему чужую работу. Соседний `background-media` (пользовательские
+  WAV, коллекции, шаблоны) остаётся кабинетом — граница проходит между ними;
 - `AGENTS.md`, `.cursorrules`, `.markdownlint.json` → **бизнес-процессы** (правила
   работы команды), несмотря на положение в корне;
 - `data/`, `datasets/`, `logs/`, `deploy-artifacts/` → **Прочее**: это не работа, а её
