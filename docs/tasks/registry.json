@@ -803,7 +803,8 @@
       ],
       "notes": "Строится на починенном #402: парсер резал многострочные вопросы, в Perplexity уходил обрывок (инцидент 12.07 — ответ про благотворительность), скрипт молча печатал успех. Машинерия не дублируется: тот же парсер/гард/каскад инсайтов читает промпт задачи. Флаг опт-ин; вопросы формулирует агент из контекста. Имя скилла с префиксом membrana- : deep-research занято встроенным скиллом Claude.",
       "archiveNotes": "PR #518; review LGTM 604363b97aea; PR #518 merged 2026-07-15T15:22:33Z (1234867fb614ef08395c8c26a7601bcc897cb382)",
-      "githubIssueClosedAt": "2026-07-17"
+      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "hot-repo-flow",
@@ -822,7 +823,8 @@
       ],
       "notes": "Хвост #476 по решению владельца: взято только измеренное эпизодами, гипотезы (mojibake-гейт, ветко-гард, Tier из манифеста — 0 эпизодов) сознательно не берём. ti-1 merge-driver: 10 эпизодов за 12-15.07; цена не время, а тихая потеря работы — 15.07 разрешение 'main за базу' молча откатило правку 26 карточек (ti-2 #504), заметил только по инварианту после слияния; алгоритм написан вручную 4 раза в одноразовых скриптах. Требование: честный 3-way, обе стороны правили по-разному → конфликт человеку, никакого 'сторона побеждает'. ti-2: pr-ship.mjs:50 делает git checkout base — в worktree падает; параллельные сессии норма (канон membrana-worktree), ff-sync там пропускать, а не чинить; чиним pr:ship, не заводим близнеца pr:land. ti-3: task:register выводит promptPath, файла нет, task:review:run читает безусловно → closure падает (2 эпизода 15.07). ti-4: норма 'слить main и дописать всё ДО prepare' — правило неизменяемости по SHA стоило 2 циклов CI.",
       "archiveNotes": "PR #512; review LGTM 63f6a19a5375; PR #512 merged 2026-07-15T13:28:40Z (abc422af99dda08531fa50d0bda2426938513fbe)",
-      "githubIssueClosedAt": "2026-07-16"
+      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "pc2c-spectrum-recording-decouple",
@@ -843,7 +845,8 @@
       ],
       "notes": "Уточнение владельца 2026-07-15: аудиопоток(StartStreaming/GetAudioStream)=трансляция != запись трека(StartRecording/StopRecording). MakeTrack в спектре снят → трек не производится → узлы устарели. Scout: поток независим от записи; развязка многоветочная (bootstrap StartStreaming→fn-1, main then-0 StopRecording, рестарт restartRecordingFn), риск L35. Backward-compat: start/stop-recording узлы НЕ трогать (др. графы). Границы: только usercase-free-spectrum-live+тест, is-window-elapsed(PC-2b) не регрессировать.",
       "archiveNotes": "PR #511 merged squash d46f0e1b; Teamlead LGTM + адверсариальная верификация PASS 10/10 (docs/reviews/pc2c-spectrum-recording-decouple-teamlead.md). Снята запись из 3 мест, fn-1 удалена, сирота GetDevice убран. device-board 808. CI-флейк Prisma background-cabinet перезапущен зелёным.",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "canon-tooling-debt",
@@ -862,7 +865,8 @@
       ],
       "notes": "Зонтик из 4 независимых ti по разбору бэклога 2026-07-15 (решение владельца, форма #433/#469/#485). ti-1 ADR: дубль 0005 — симптом; реестр содержал 2 записи из 7, именование разъехалось (0002-... против ADR-0006-...); механизм вчера объявлен каноном вместо ветки vesnin (#499), нельзя оставлять заброшенным. 0005 оставлен за panel-users (на него ссылается код roles.ts, деплой-док и эпик-промпт PU1), night-narrative → ADR-0007. ti-2: 26 живых фаз-носителей githubIssue эпика → null (прецедент #468); 163 архивных — история, вынесены в insight-registry-epic-issue-full-cleanup. ti-3: --report для repo:clean (потерял текст ошибок под | tail). ti-4 libuv: измерением установлено, что рвёт НЕ stdout вообще, а выход при живых сетевых сокетах — help-пути не падают (3 прогона), падают выходы после HTTP. Найден костыль sleep(150) в code-review, стоявший ТОЛЬКО на успешном пути — потому и падал путь ошибки. Починены code-review, team-evening-feedback (обязателен по CLAUDE.md, штатно упирается в пустой кредит), consilium, ask-persona; все 4 проверены живьём: 127 → 1.",
       "archiveNotes": "PR #506; review LGTM 922a7cb88db9; PR #506 merged 2026-07-15T11:22:39Z (6ec72b6c99cb09290387c1b154e260e85247ba42)",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "pc2b-spectrum-window-rebuild",
@@ -883,7 +887,8 @@
       ],
       "notes": "Фаза PC-2b спринта palette-clarity-nodes #493 (продуктовый, максимальное качество: консилиум+research+делегирование+адверсариальная верификация). Свап (scout ground truth): снять windowFull(is-recording-window-full)+recorderClock(get-recorder-168), поставить is-window-elapsed(windowMs из консилиума), перевесить true→sequence/false→infinity, collectFrames→is-window-elapsed, recorder-ребро не восстанавливать. PC-2a узел merged #505. Фазы: research(Dynin)→консилиум→impl(Kuryokhin)→adversarial verify→teamlead. Backward-compat: is-recording-window-full не трогать. OUT: collectorConfig.windowSec (F2), alarm.",
       "archiveNotes": null,
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "pc2-periodic-window-gate",
@@ -904,7 +909,8 @@
       ],
       "notes": "Фаза PC-2 спринта palette-clarity-nodes #493. Консилиум pc2-periodic-window-gate-2026-07-15 (22 реплики): НОВЫЙ узел is-window-elapsed (periodic-гейт по host-часам, вход windowMs, выходы exec true/false, per-node окно, БЕЗ RecorderRef) — не обобщение is-recording-window-full. Граница: onTick=pacing, is-window-elapsed=гейт. Реализация: SCENARIO_NODE_KINDS + host-хук + пересборка usercase-free-spectrum-live. OUT: alarm-loop, долг collectorConfig.windowSec (F2 path-specific). Старт реализации — LGTM владельца.",
       "archiveNotes": null,
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "repo-clean",
@@ -923,7 +929,8 @@
       ],
       "notes": "Ревизия 2026-07-15: открытых PR всего 3 (все живые) — чистить нечего; мусор в ветках. Корень: squash-мёрж делает git branch --merged слепым (видит 9 влитых из 42 реально мёртвых), поэтому классификация только по состоянию PR на GitHub. Гарды обязательны: персона-ветки канон TASKS_MANAGEMENT §7а (vesnin/ozhegov/boyarskiy/dynin), ветки в worktree, незапушенное с уникальными коммитами (живой случай chore/ritual-day-0715 — 4 коммита сегодня только локально, утренний ритуал соседней сессии). Worktree: удалять только archived-спринты с чистым деревом; cowork #487 и главное дерево соседней сессии НЕ трогать. dry-run по умолчанию. Out of scope: 8 локальных веток без PR с уникальными коммитами (codex/* 8-9 коммитов) — удаление безвозвратно, разбор владельцем отдельно.",
       "archiveNotes": "PR #496; review LGTM 3ef844490f43; PR #496 merged 2026-07-15T07:54:04Z (ea48829745eb929c73ec2c0a6c81294e4b23d178)",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "vds-panel-tooling",
@@ -942,7 +949,8 @@
       ],
       "notes": "ВСЕ 6 пунктов ретро #485 (githubIssue привязан только после того, как взят весь ишью — до этого стоял null, чтобы task:close-github не закрыл #485 по трём пунктам из шести; это ровно баг ti-5). ti-4/5/6 добиты во второй половине сессии 2026-07-15. ti-5 оказался крупнее заявленного: в реестре не 3, а 189 фаз носят githubIssue своего эпика, 33 из них были в очереди закрытия и оборвали бы эпики #438/#131/#147/#144/#176/#172; #131 и #144 закрыты в одну секунду 2026-06-30T11:49:58Z — механизм уже срабатывал. Гард стоит в listPendingGithubClose + громкий список в task:close-github. Исходные пункты 1-3 ретро #485 (сессия 2026-07-14: 4 повтора CRLF/scp/chmod-танца, chmod-баг 700 -> caddy отдаёт index.html вместо статики, 3 инлайн-переписывания owner-cookie). Консилиум не нужен: механика по готовому канону _ssh-* (прецедент #433/#469). githubIssue НАМЕРЕННО не привязан: #485 несёт 6 пунктов, берём 3 — привязка закрыла бы весь ишью на вечернем ритуале (это ровно баг п.5 того же ретро). Прецедент exec: scripts/_ssh-media-exec.mjs; конфиг: scripts/_ssh-office-config.mjs. Закрывает также п.3 ретро #476 (office:ssh).",
       "archiveNotes": "PR #488; review LGTM 28bb38886cef; PR #488 merged 2026-07-15T05:30:29Z (be91b1d29c98a532106085c7ade826f4f1607179)",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "agent-tooling-friction-2",
@@ -963,7 +971,8 @@
       ],
       "notes": "По итогам сессии 2026-07-14 (4 ручных closure-цикла, 3 чат-протокола без валидации, 2 конфликта registry, коллизия скоупа #452/#454, 3 инцидента PS 5.1, разнобой credit-ошибок). Консилиум-гейт: docs/seanses/agent-tooling-friction-2-2026-07-14.md (22 реплики) + research Perplexity x3. Форма #433: зонтик, независимые ti, порядок дешевле-дороже ti-6-5-7-4-3-2-1, мёрж по готовности. Ключевые решения: ship = ОБЁРТКА над lib-runner (SHA из gh pr view mergeCommit, база = родитель, чеки на detached при ушедшем main, fail-closed); register = регенерация вставки вместо ручного merge, формат registry НЕ меняется; neighbors = только чтение сигналов, координационный файл НЕ вводится; secretary-file = валидатор канона чистыми функциями, фикстуры - живые протоколы 14.07. Запреты: не переписывать lib/task-closure-review.mjs, не менять формат registry (task-archive-storage), не печатать секреты, ship не деплоит.",
       "archiveNotes": "PR #484; review LGTM 10dc5b6494b4; PR #484 merged 2026-07-15T02:50:44Z (10dc5b6494b4a26b1aebc0f47bc126b576f126ba)",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cowork-format-regulation",
@@ -984,7 +993,8 @@
       ],
       "notes": "Идея владельца 2026-07-14. Консилиум-гейт: docs/seanses/cowork-sprint-format-2026-07-14.md (20 реплик; первый с памятью 5 персон default-on). Решения: событийный гейт интеграции ready(A)∧ready(B)∧ready(C)∨deadline; односторонние EXPECTATIONS + исполняемые стабы в своей зоне (договариваться об интерфейсах до Interface Consilium запрещено); резка brief по естественным швам с пустым пересечением файловых зон; интеграция адаптерами в отдельной ветке (блоки не переписываются, ведёт координатор); жюри/скоринга/победителя нет — мёржатся все три блока. Артефакты: регламент + cowork:open + скилл membrana-cowork (3 среды). Follow-up: cowork:phase/close.",
       "archiveNotes": "PR #465; review LGTM 04695297d862; PR #465 merged 2026-07-14T16:53:39Z (04695297d862329d46db797c12368214a74dfb4c)",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-14",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "qc-panel-boards",
@@ -1004,7 +1014,8 @@
       ],
       "notes": "Консилиум-гейт: docs/seanses/quality-control-contour-2026-07-14.md (24 реплики). СКОУП СУЖЕН 14.07: QC2 (борд detector-compare + office-модуль benchmark) уступлен задаче panel-detector-compare-board #452 — её консилиум (detector-compare-board-2026-07-14, видение владельца: per-sample таблица, прослушивание, waveform, попапы, фильтр расхождений; вердикт «office не трогаем», статический артефакт экспортёра) предметнее и новее; office-модуль benchmark из ветки удалён до мёржа. Остаток: QC1 drift-борд (читает публичный /v1/drift-anchor/digest, происхождение чисел, prod-main сравнение) + открываемые карточки shell (нужны и борду #452).",
       "archiveNotes": "PR #455; review LGTM 9b9ced6de860; PR #455 merged 2026-07-14T14:40:18Z (a35615ccecb2268cfbfa00a52311ba2866a28dc5)",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-14",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "panel-detector-compare-board",
@@ -1026,7 +1037,8 @@
       ],
       "notes": "Магистраль дня 2026-07-14, потребитель №2 каркаса эпика #438. Консилиум-гейт пройден ДО кода: docs/seanses/detector-compare-board-2026-07-14.md (6 развилок; сгенерирован координатором по подписке — API-ключ Anthropic исчерпан, формат канона соблюдён). Вердикты: офлайн-экспортёр detector-compare-export на инфраструктуре benchmark:detectors → docs/reports/detector-compare/latest.json (git); аудио-бандл ВНЕ git (деплой-копия wav, /compare-audio/); mini-waveform локально в панели (canvas, max-амплитуда, один AudioContext) — граница panel<=core цела; попап details+explanation детерминированным шаблоном БЕЗ LLM; данные публичны (прецедент digest), раздел operator = UX-гейт; фильтры все/дрон/не-дрон/расхождения + сортировка по уверенности + сводка P/R/F1/FPR. Запреты: live-вычисления, изменения office и detectors/*, новые зависимости панели, LLM, бандл в git.",
       "archiveNotes": "PR #457; review LGTM 09921c24f473; PR #457 merged 2026-07-14T15:31:21Z (44bac65827e4edef914277249f5840e280b4869a)",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-14",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "persona-memory-all-personas",
@@ -1045,7 +1057,8 @@
       ],
       "notes": "Решение владельца 2026-07-14 по итогам суточного пилота (боевое применение: консилиум quality-control-contour). Экстрактор уже параметризован — нового кода экстракции нет; человек-гейт: 4 журнала отдельными diff + importance.json за владельцем. --with-memory default ТОЛЬКО в consilium (+--no-memory), ask не трогать. Гард суммарной инъекции 25K. Вне магистрали FREE. Запреты: фазы 2/3 и слои 2-3 субъектности не трогать.",
       "archiveNotes": "PR #461; review LGTM 2f9dd5218631; PR #461 merged 2026-07-14T16:14:01Z (d452582ddf2b194ee6c9ed6f485590490a21ca09)",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-14",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "office-panel-contour",
@@ -1066,7 +1079,8 @@
       ],
       "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/office-panel-contour-2026-07-14.md (25 реплик, research Perplexity x3, --with-memory пилот). Вердикты: apps/panel отдельный SPA (стек кабинета) на panel.mmbrn.tech — ЗАОДНО разрешена развилка drift-panel-placement #396 (борды живут в panel); auth при stateless office: operator/owner=GitHub OAuth+allowlist-файл, ally=HMAC invite-код без БД, public=welcome; httpOnly cookie, default-deny+@Public; digest остаётся публичным; Caddy site-block + reverse_proxy /v1/*, LE только после DNS-гейта (урок OM4-C). Запреты: cabinet internals/auth, persisted-учётки на office, общий статический токен, localStorage, борды/LLM/мутации вне эпика. Owner-гейты: DNS A-запись, GitHub OAuth App, HMAC-secret + ally-коды.",
       "archiveNotes": "Эпик закрыт целиком 2026-07-14: OP1-OP5 смёржены (PR #440-#450, closure LGTM каждой фазы), панель ЖИВАЯ на https://panel.mmbrn.tech (LE после dns-gate [go]); live-подтверждения: ally-вход по invite-коду (201->cookie->ally, operator-ручка 403, no-store), GitHub OAuth owner-вход подтверждён владельцем 14.07 (302->authorize->allowlist->owner). Секреты PANEL_* в office.env; деплой-скрипт scripts/_ssh-panel-deploy.mjs + runbook PANEL_DEPLOY.md. Потребители каркаса: борд detector-compare (#452, в работе) и drift-борд (#396).",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-14",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "op1-panel-scaffold",
@@ -1084,7 +1098,8 @@
         "vesnin"
       ],
       "archiveNotes": "review LGTM 3c7fca716f57; PR #440 merged (4835fc605369186784afd5642e39f60ce3b469eb)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-14",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "op2-panel-auth",
@@ -1103,7 +1118,8 @@
         "vesnin"
       ],
       "archiveNotes": "review LGTM c1a93588c64d; PR #442 merged (d724c027bb38b6cb23cd9a935f46c915725d7de0)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-14",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "op3-panel-welcome-shell",
@@ -1121,7 +1137,8 @@
         "vesnin"
       ],
       "archiveNotes": "review LGTM fa8504d5fbd2; PR #445 merged (e20e2a377767c3b1b1c55955699ab6a746a0aab8)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-14",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "op4-panel-deploy",
@@ -1140,7 +1157,8 @@
         "vesnin"
       ],
       "archiveNotes": "review LGTM 678a3ca1d9ce; PR #447 merged (255bbdd1a3ca36ac95e83d20defd4ec3de928788)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-14",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "op5-panel-api-hardening",
@@ -1158,7 +1176,8 @@
         "vesnin"
       ],
       "archiveNotes": "review LGTM 21fe3fbfe93e; PR #449 merged (9085d85ca1ec9a6eac4c6cadc19cc057131c0c47)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-14",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "telegram-digests-v2",
@@ -1178,7 +1197,8 @@
       ],
       "notes": "Решение владельца 2026-07-13 (вечер), консилиум не нужен — исполнение по канону #428. Шапка-пояснение: источник docs/comms/ALLY_DIGEST_HEADER.md → payload.primerMd → office конвертирует md→Telegram-HTML (чистая функция, без зависимостей) и вшивает <blockquote expandable>. Фактура: день — полные блоки задач; вечер — треки дня по ролям + вердикт + оценка + что дальше. Клэмп 4096. Graceful: нет шапки → отчёт без неё. Запреты канона #428 действуют (stateless office, без двустороннего бота, LLM-пересказ — отдельная фаза).",
       "archiveNotes": "PR #437; review LGTM b2c7e0faf6a1; PR #437 merged 2026-07-14T05:18:42Z (e9f30ebb8f78c4140f40ef4db848608315f8d4e0)",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-14",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "agent-tooling-friction",
@@ -1198,7 +1218,8 @@
       ],
       "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/agent-tooling-friction-2026-07-13.md (24 реплики). Форма: один M-спринт-зонтик, 4 НЕЗАВИСИМЫЕ задачи, мерж по готовности, порядок ti-1→ti-3→ti-2→ti-4 (дешевле→дороже). Решения: ревью-артефакты — .gitignore docs/reviews/*/ (НЕ логика в скрипте); proxy-чистка всех форм переменных в setup-env + норма; insight:drift — hermes-паттерн, вызов из ritual:evening, 3 кейса 2026-07-13 как регресс-фикстуры; llm:probe — direct+via-proxy, классы ошибок (DPI/гео/баланс/ключ/сеть), ключи маскируются. Запреты: без межпакетных зависимостей, без auto-exclude в task-closure-review.mjs, без печати ключей/записи .env. Out of scope: worktree-бутстрап, pr:ship --worktree, хвосты #424/#425.",
       "archiveNotes": "PR #436; review LGTM fd1a39f6cf1f; PR #436 merged 2026-07-14T04:16:25Z (d8fe05db776c6692b18593ae466bcc6ea4130d14)",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-14",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "night-narrative-deepseek-fallback",
@@ -1217,7 +1238,8 @@
       ],
       "notes": "Итог разбора инференс-провайдеров 2026-07-13 (LGTM владельца). Канон готов (модуль-близнец openrouter, OpenAI-совместимый direct API, доступен с office без прокси) → консилиум не нужен, шаг 0 = ADR цепочки OpenRouter→DeepSeek→graceful. Запреты: не менять детерминированные таблицы триажа, без LLM-роутера-пакета (YAGNI), без прокси-логики в модуле. Owner-гейт: DEEPSEEK_API_KEY (живой ран; код/тесты от ключа не зависят). Закрывает хвост #380 «нарратив пропускается».",
       "archiveNotes": "review LGTM a7b248e6df59; PR #426 merged 2026-07-13T17:35:07Z (bf6f7fb04b39da2bda4b00b8928a7e5fe4bd62c2)",
-      "githubIssueClosedAt": "2026-07-13"
+      "githubIssueClosedAt": "2026-07-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "rag-archive-embeddings-unblock",
@@ -1236,7 +1258,8 @@
       ],
       "notes": "Итог разбора инференс-провайдеров 2026-07-13 (LGTM владельца). Контракт RagEmbeddingProvider='openai'|'voyage' уже существует, voyage-эмбеддер не реализован; альтернатива — OPENAI_BASE_URL + совместимый endpoint (Jina/Cohere-compat) без кода. Развилка A/B решается по доступному ключу + geo-проверке с office. Запреты: не менять тип провайдера и публичные контракты rag, не трогать operative-контур и потребителей scripts, без новых сторов (pgvector = фаза 3 persona-memory). Owner-гейт: ключ Voyage/Jina/Cohere.",
       "archiveNotes": "review LGTM 0c0fe52d05d6; PR #426 merged 2026-07-13T17:35:07Z (bf6f7fb04b39da2bda4b00b8928a7e5fe4bd62c2)",
-      "githubIssueClosedAt": "2026-07-13"
+      "githubIssueClosedAt": "2026-07-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "persona-memory-phase1",
@@ -1275,7 +1298,9 @@
         "vesnin"
       ],
       "insightId": "insight-live-neural-combined-detector",
-      "notes": "Мандат владельца 2026-07-13: нейро-fusion ОБЯЗАТЕЛЕН для FREE — отменяет точку 3 (DSP-only) консилиума s2-combined-uc-dsp; остальные вердикты (топология, границы, единое окно, не трогать #357/make-detection-fusion, без новых узлов палитры) В СИЛЕ. Разведка: весь путь готов — createCombinedStreamDetectors (питает клиент + scenarioMicJournalBridge:1236) + loadYamnetBrowserModel (офлайн-бандл) + createYamnetDetector({modelProvider}). Работа = соединение + graceful DSP-only деградация с видимой меткой + метка «спектр+нейро» + перф-замер. Критпуть FREE: этот спринт → S2 live-smoke (гейт) → S3 упаковка. КОД СМЁРЖЕН 2026-07-13 (PR #417, review LGTM): yamnet в createCombinedStreamDetectors (weight 1), wrapNeuralWithTtl (6с опрос/15с TTL, транзиентный отказ переживается кэшем), метка модальностей по availability в панели + карточке UC (топология/пороги UC не тронуты). ОСТАТКИ до архива: перф-замер в браузере (#416) + S2 live-smoke с дроном — обе живые сессии, удобно совместить."
+      "notes": "Мандат владельца 2026-07-13: нейро-fusion ОБЯЗАТЕЛЕН для FREE — отменяет точку 3 (DSP-only) консилиума s2-combined-uc-dsp; остальные вердикты (топология, границы, единое окно, не трогать #357/make-detection-fusion, без новых узлов палитры) В СИЛЕ. Разведка: весь путь готов — createCombinedStreamDetectors (питает клиент + scenarioMicJournalBridge:1236) + loadYamnetBrowserModel (офлайн-бандл) + createYamnetDetector({modelProvider}). Работа = соединение + graceful DSP-only деградация с видимой меткой + метка «спектр+нейро» + перф-замер. Критпуть FREE: этот спринт → S2 live-smoke (гейт) → S3 упаковка. КОД СМЁРЖЕН 2026-07-13 (PR #417, review LGTM): yamnet в createCombinedStreamDetectors (weight 1), wrapNeuralWithTtl (6с опрос/15с TTL, транзиентный отказ переживается кэшем), метка модальностей по availability в панели + карточке UC (топология/пороги UC не тронуты). ОСТАТКИ до архива: перф-замер в браузере (#416) + S2 live-smoke с дроном — обе живые сессии, удобно совместить.",
+      "githubIssueClosedAt": "2026-07-16",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "drift-anchor-contour",
@@ -1310,7 +1335,8 @@
       ],
       "notes": "Повтор рецепта night-triage (#380): night-hunt на OpenRouter (гео-блок из РФ, fetch не видит media-прокси) → свап на ClaudeService (native Anthropic через HTTPS_PROXY=media/NL). +baseBranch techies68→main. Деплой на office 176.124.218.4, enable NIGHT_HUNT_ENABLED, приёмка. Fly night-hunt не затрагиваем.",
       "archiveNotes": "NH1-NH3 done 2026-07-12: night-hunt боевой на office (Claude через media-прокси, 3 job → PR #392/#393/#394, cron живёт).",
-      "githubIssueClosedAt": "2026-07-12"
+      "githubIssueClosedAt": "2026-07-12",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "night-triage-office",
@@ -1329,7 +1355,8 @@
       ],
       "notes": "Решение владельца 2026-07-12: детерминированное TS-ядро (ghost/orphan/stale) + LLM-нарратив (OpenRouter, graceful). Модуль night-triage в background-office по паттерну night-hunt. Наследует #344/INSIGHT_2026-07-10 (облачный пилот заморожен — нет канала ошибок). Инварианты консилиума night-triage-routine-2026-07-10 обязательны. Деплой на новый office-VDS 176.124.218.4.",
       "archiveNotes": "NT1-NT5 done 2026-07-12: детерминированный триаж + LLM-нарратив (media/NL прокси обходит гео-блок) на office, автономный draft PR #388, cron 02:30 МСК.",
-      "githubIssueClosedAt": "2026-07-12"
+      "githubIssueClosedAt": "2026-07-12",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "rt-day-report-script",
@@ -1361,7 +1388,8 @@
         "rodchenko"
       ],
       "notes": "Консилиум завершён 2026-07-01. Фазы: RECON-1 git анализ, RECON-2 заполнить transitions[], RECON-3 проверка playhead, RECON-4 PR.",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "rt-chron-s1-time-travel",
@@ -1399,7 +1427,8 @@
       "archivedAt": "2026-07-01",
       "archiveNotes": "Prep-epic завершён: S1 bootstrap, S2 state-decision, S3 verify-сверка (14 узлов), RT-RENDER марафон (интерактивный граф xyflow+dagre), 4 документа из треда добавлены. PR #220.",
       "notes": "Research-Tree — самостоятельный проект мониторинга разработки. Prep-epic готовит репо к марафону: bootstrap + state decision.",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "rt-prep-s0-registration",
@@ -1414,7 +1443,8 @@
       "supportPersonas": [],
       "archivedAt": "2026-07-01",
       "archiveNotes": "Issue #219 открыт, epic + 3 задачи зарегистрированы в реестре.",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "rt-prep-s1-bootstrap",
@@ -1433,7 +1463,8 @@
       "archivedAt": "2026-07-01",
       "archiveNotes": "Workspace создан, yarn dev запускается на :5174, граф грузится из JSON (60 узлов). package.json workspace прописан явно (Harmonic-Detector — legacy pnpm, несовместим с apps/demos/*).",
       "notes": "По §4 DEMO_STACK.md: package.json, tsconfig, vite.config.ts, tailwind, index.html, src/main.tsx + App.tsx. yarn dev запускается, JSON грузится.",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "rt-prep-s2-state-decision",
@@ -1454,7 +1485,8 @@
       "archivedAt": "2026-07-01",
       "archiveNotes": "STATE_ARCHITECTURE.md создан, выбрана 4-слойная архитектура: URL=useSearchParams, Async=TanStack Query, Canvas=xyflow store, Transient=useReducer+Context. PR #220.",
       "notes": "STATE_ARCHITECTURE.md указывает на TanStack Query для git time-travel. Нужно зафиксировать финальное решение и закрыть открытый вопрос §5.",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "fix-async-jobs-client",
@@ -1493,7 +1525,9 @@
         "dynin",
         "rodchenko",
         "kuryokhin"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ci-test-stability-refactor",
@@ -1506,7 +1540,8 @@
       "createdAt": "2026-06-29",
       "archivedAt": "2026-06-29",
       "archiveNotes": null,
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-29",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "main-sync-sprint-2026-06-29",
@@ -1542,7 +1577,8 @@
       "createdAt": "2026-05-15",
       "archivedAt": "2026-05-15",
       "archiveNotes": "GitHub #41; приёмка 2026-05-15. Плагин fft-indices-viz: live centroid/flux/RMS, adaptive activity, theme error/info/success, sidebar. PR в main — по запросу.",
-      "githubIssueClosedAt": "2026-05-15"
+      "githubIssueClosedAt": "2026-05-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "sound-quality-viz",
@@ -1555,7 +1591,8 @@
       "createdAt": "2026-05-15",
       "archivedAt": "2026-05-15",
       "archiveNotes": "GitHub #42; приёмка 2026-05-15. Плагин sound-quality-viz: SNR/clarity/dynamics/peak/overall, sound-quality.ts в fft-analyzer, sidebar + panel.",
-      "githubIssueClosedAt": "2026-05-15"
+      "githubIssueClosedAt": "2026-05-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "telemetry-journal-report-viz",
@@ -1568,7 +1605,8 @@
       "createdAt": "2026-05-15",
       "archivedAt": "2026-05-15",
       "archiveNotes": "GitHub #43; приёмка 2026-05-15. Ветка feat/telemetry-journal-report-viz (e2ca0d0). Карточки fft-threshold-test, фильтры со счётчиками, JSON view DaisyUI.",
-      "githubIssueClosedAt": "2026-05-15"
+      "githubIssueClosedAt": "2026-05-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dsp-drone-detector",
@@ -1585,7 +1623,8 @@
       "createdAt": "2026-05-15",
       "archivedAt": "2026-05-16",
       "archiveNotes": "GitHub #45; фазы 1–3 (2026-05-16): harmonic-detector-service, demo, плагин harmonic-detector-viz + coordinator + DroneDetectionIndicator. Client test 42 pass. Benchmark — #47.",
-      "githubIssueClosedAt": "2026-05-17"
+      "githubIssueClosedAt": "2026-05-17",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "single-node-detection-first",
@@ -1605,7 +1644,9 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "real-dataset-live-calibration",
@@ -1631,7 +1672,9 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "tariff-dataset-v1",
@@ -1644,7 +1687,8 @@
       "createdAt": "2026-06-14",
       "archivedAt": "2026-06-14",
       "archiveNotes": "Epic complete PR #70-#75. Prod smoke OK 2026-06-14.",
-      "githubIssueClosedAt": "2026-06-14"
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "tariff-dataset-ds1-corpus",
@@ -1660,7 +1704,8 @@
       "dependsOn": [
         "tariff-dataset-v1"
       ],
-      "githubIssueClosedAt": "2026-06-14"
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "tariff-dataset-ds2-domain",
@@ -1676,7 +1721,8 @@
       "dependsOn": [
         "tariff-dataset-ds1-corpus"
       ],
-      "githubIssueClosedAt": "2026-06-14"
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "tariff-dataset-ds3-client-bundled",
@@ -1692,7 +1738,8 @@
       "dependsOn": [
         "tariff-dataset-ds2-domain"
       ],
-      "githubIssueClosedAt": "2026-06-14"
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "tariff-dataset-ds4-benchmark-v02",
@@ -1708,7 +1755,8 @@
       "dependsOn": [
         "tariff-dataset-ds1-corpus"
       ],
-      "githubIssueClosedAt": "2026-06-14"
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "tariff-dataset-ds5-server-provision",
@@ -1724,7 +1772,8 @@
       "dependsOn": [
         "tariff-dataset-ds2-domain"
       ],
-      "githubIssueClosedAt": "2026-06-14"
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mcp-repo-bootstrap",
@@ -1737,7 +1786,8 @@
       "createdAt": "2026-06-09",
       "archivedAt": "2026-06-09",
       "archiveNotes": "techies68 e4cf038; yarn mcp:verify-bootstrap; docs/mcp/*, MCP strategy/usage, task prompts #50–#54.",
-      "githubIssueClosedAt": "2026-06-09"
+      "githubIssueClosedAt": "2026-06-09",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mcp-workstation-phase-a",
@@ -1750,7 +1800,8 @@
       "createdAt": "2026-06-09",
       "archivedAt": "2026-06-09",
       "archiveNotes": "Issue #51; tier0 in ~/.cursor/mcp.json; gitnexus list OK; analyze skip (upstream); fallback MCP_USAGE.",
-      "githubIssueClosedAt": "2026-06-09"
+      "githubIssueClosedAt": "2026-06-09",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mcp-workstation-phase-b",
@@ -1763,7 +1814,8 @@
       "createdAt": "2026-06-12",
       "archivedAt": "2026-06-12",
       "archiveNotes": "all 5 MCP servers green: gitnexus git filesystem perplexity playwright; git fixed uvx mcp-server-git",
-      "githubIssueClosedAt": "2026-06-14"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mcp-workstation-phase-c",
@@ -1776,7 +1828,8 @@
       "createdAt": "2026-06-12",
       "archivedAt": "2026-06-12",
       "archiveNotes": "glyph go install OK; WinLibs gcc; mcp.json 6 servers; glyph C:/Users/user190825/go/bin/glyph.exe mcp",
-      "githubIssueClosedAt": "2026-06-14"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "media-library-a1-storage",
@@ -1846,7 +1899,8 @@
       "createdAt": "2026-06-10",
       "archivedAt": "2026-06-10",
       "archiveNotes": "DetectionMetrics mock detector",
-      "githubIssueClosedAt": "2026-06-11"
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "detection-dataset-v01",
@@ -1859,7 +1913,8 @@
       "createdAt": "2026-06-10",
       "archivedAt": "2026-06-10",
       "archiveNotes": "DATASET.md v0.1 synthetic verified",
-      "githubIssueClosedAt": "2026-06-11"
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "detection-benchmark-runner",
@@ -1872,7 +1927,8 @@
       "createdAt": "2026-06-10",
       "archivedAt": "2026-06-10",
       "archiveNotes": "benchmark:detectors green",
-      "githubIssueClosedAt": "2026-06-11"
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "detection-harmonic-gate",
@@ -1885,7 +1941,8 @@
       "createdAt": "2026-06-10",
       "archivedAt": "2026-06-10",
       "archiveNotes": "harmonic on benchmark",
-      "githubIssueClosedAt": "2026-06-11"
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "detection-architecture-freeze",
@@ -1898,7 +1955,8 @@
       "createdAt": "2026-06-10",
       "archivedAt": "2026-06-10",
       "archiveNotes": "ARCHITECTURE freeze PR template",
-      "githubIssueClosedAt": "2026-06-11"
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "analyzer-frame-feed-refactor",
@@ -1911,7 +1969,8 @@
       "createdAt": "2026-06-11",
       "archivedAt": "2026-06-11",
       "archiveNotes": "techies68 ff5c8b5; AudioFrameFeed + fft-threshold-test + harmonic-detector-viz sample-library mode",
-      "githubIssueClosedAt": "2026-06-11"
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "trends-fft-microphone-plugin",
@@ -1927,7 +1986,8 @@
       "dependsOn": [
         "analyzer-frame-feed-refactor"
       ],
-      "githubIssueClosedAt": "2026-06-11"
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "trends-fft-template-editor",
@@ -1966,7 +2026,9 @@
       "supportPersonas": [
         "dynin"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": "2026-07-12",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "background-media-a5a-server",
@@ -1985,7 +2047,9 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-07-12",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "background-media-a5b-docker",
@@ -2004,7 +2068,9 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-07-12",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "background-media-a5c-deploy",
@@ -2023,7 +2089,9 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-07-12",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "background-office-v1",
@@ -2036,7 +2104,8 @@
       "createdAt": "2026-06-13",
       "archivedAt": "2026-06-13",
       "archiveNotes": "Epic O1-O4: https://office.membrana.space prod; PR pending",
-      "githubIssueClosedAt": "2026-06-13"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "background-office-o1-docker",
@@ -2052,7 +2121,8 @@
       "dependsOn": [
         "background-office-v1"
       ],
-      "githubIssueClosedAt": "2026-06-13"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "background-office-o2-prod-compose",
@@ -2068,7 +2138,8 @@
       "dependsOn": [
         "background-office-o1-docker"
       ],
-      "githubIssueClosedAt": "2026-06-13"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "background-office-o3-tls-deploy",
@@ -2084,7 +2155,8 @@
       "dependsOn": [
         "background-office-o2-prod-compose"
       ],
-      "githubIssueClosedAt": "2026-06-13"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "background-office-o4-webhook-acceptance",
@@ -2100,7 +2172,8 @@
       "dependsOn": [
         "background-office-o3-tls-deploy"
       ],
-      "githubIssueClosedAt": "2026-06-13"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "background-media-a5d-swagger",
@@ -2120,7 +2193,8 @@
       "supportPersonas": [
         "dynin"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrane-platform-v1",
@@ -2141,7 +2215,8 @@
         "ozhegov"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrane-platform-mp0-domain",
@@ -2157,7 +2232,8 @@
       "dependsOn": [
         "membrane-platform-v1"
       ],
-      "githubIssueClosedAt": "2026-06-13"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrane-platform-mp1-auth-cabinet",
@@ -2173,7 +2249,8 @@
       "dependsOn": [
         "membrane-platform-mp0-domain"
       ],
-      "githubIssueClosedAt": "2026-06-13"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrane-platform-mp2-membrane-node-keys",
@@ -2189,7 +2266,8 @@
       "dependsOn": [
         "membrane-platform-mp1-auth-cabinet"
       ],
-      "githubIssueClosedAt": "2026-06-13"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrane-platform-mp3-client-pairing",
@@ -2205,7 +2283,8 @@
       "dependsOn": [
         "membrane-platform-mp2-membrane-node-keys"
       ],
-      "githubIssueClosedAt": "2026-06-13"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrane-platform-mp4-media-membrane",
@@ -2221,7 +2300,8 @@
       "dependsOn": [
         "membrane-platform-mp3-client-pairing"
       ],
-      "githubIssueClosedAt": "2026-06-14"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrane-platform-mp5-telemetry-journal",
@@ -2237,7 +2317,8 @@
       "dependsOn": [
         "membrane-platform-mp1-auth-cabinet"
       ],
-      "githubIssueClosedAt": "2026-06-14"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrane-platform-mp6-prod-deploy",
@@ -2254,7 +2335,8 @@
         "membrane-platform-mp4-media-membrane",
         "membrane-platform-mp5-telemetry-journal"
       ],
-      "githubIssueClosedAt": "2026-06-14"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cabinet-sample-library-v1",
@@ -2276,7 +2358,8 @@
         "ozhegov"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cabinet-sample-library-csl1-api",
@@ -2296,7 +2379,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cabinet-sample-library-csl2-ui",
@@ -2316,7 +2400,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cabinet-sample-library-csl3-remote-ops",
@@ -2336,7 +2421,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cabinet-mp4-hardening-night-build",
@@ -2358,7 +2444,8 @@
         "rodchenko"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cabinet-mp4-nb0-merge-gate",
@@ -2380,7 +2467,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cabinet-mp4-nb1-sample-playback-dry",
@@ -2400,7 +2488,8 @@
       ],
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cabinet-mp4-nb2-cabinet-facade",
@@ -2422,7 +2511,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cabinet-mp4-nb3-quality-contracts",
@@ -2444,7 +2534,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "sample-library-drone-detection",
@@ -2468,7 +2559,9 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "sld1-sample-detection-contract",
@@ -2482,10 +2575,11 @@
       "createdAt": "2026-06-15",
       "archivedAt": "2026-06-15",
       "archiveNotes": "PR #77; analyzeSample + benchmark v0.2",
-      "githubIssueClosedAt": "2026-06-15",
+      "githubIssueClosedAt": "2026-06-11",
       "dependsOn": [
         "sample-library-drone-detection"
-      ]
+      ],
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "sld2-sample-library-drone-plugin",
@@ -2499,10 +2593,11 @@
       "createdAt": "2026-06-15",
       "archivedAt": "2026-06-15",
       "archiveNotes": "PR #77; sample-library-drone-analysis plugin",
-      "githubIssueClosedAt": "2026-06-15",
+      "githubIssueClosedAt": "2026-06-11",
       "dependsOn": [
         "sld1-sample-detection-contract"
-      ]
+      ],
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "sld3-dsp-detectors-free-v1",
@@ -2745,7 +2840,8 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-20",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "telemetry-journal-live-refactor",
@@ -2762,7 +2858,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-20",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "telemetry-journal-ux-hardening",
@@ -2775,7 +2872,8 @@
       "createdAt": "2026-06-14",
       "archivedAt": "2026-06-15",
       "archiveNotes": "GitHub #81; PR #82 merged 2026-06-15 @ 27ed842. BL1 buffer gate, TJ10 mic-live-drone-analysis, TJ7 refresh, TJ8 waveform, TJ9 pagination. Prod smoke OK 2026-06-15 on cabinet.membrana.space",
-      "githubIssueClosedAt": "2026-06-15"
+      "githubIssueClosedAt": "2026-06-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "telemetry-journal-event-driven",
@@ -2788,7 +2886,8 @@
       "createdAt": "2026-06-16",
       "archivedAt": "2026-06-16",
       "archiveNotes": "Epic #83 JE1-JE5 merged to main",
-      "githubIssueClosedAt": "2026-06-19"
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "je1-buffer-clear-event-chain",
@@ -2802,7 +2901,8 @@
       "createdAt": "2026-06-16",
       "archivedAt": "2026-06-16",
       "archiveNotes": "4ff346e",
-      "githubIssueClosedAt": "2026-06-19"
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "je2-stop-triggers-analysis",
@@ -2819,7 +2919,8 @@
       "dependsOn": [
         "je1-buffer-clear-event-chain"
       ],
-      "githubIssueClosedAt": "2026-06-19"
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "je3-client-journal-hub-refresh",
@@ -2836,7 +2937,8 @@
       "dependsOn": [
         "je2-stop-triggers-analysis"
       ],
-      "githubIssueClosedAt": "2026-06-19"
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "je4-cabinet-journal-fast-refresh",
@@ -2853,7 +2955,8 @@
       "dependsOn": [
         "je3-client-journal-hub-refresh"
       ],
-      "githubIssueClosedAt": "2026-06-19"
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "je5-journal-contextual-clear",
@@ -2871,7 +2974,8 @@
         "je1-buffer-clear-event-chain",
         "je4-cabinet-journal-fast-refresh"
       ],
-      "githubIssueClosedAt": "2026-06-19"
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mic-buffer-sample-count-loading",
@@ -3122,7 +3226,8 @@
       "notes": "Цель: recall дронов >=80% при FPR на не-дронах <=40% (train/val дисциплина). Ветка feat/fft-last-chance.",
       "archivedAt": "2026-06-16",
       "archiveNotes": "#84 epic done: threshold no-go, trends go; follow-up trends-drone-tight-curated-promotion",
-      "githubIssueClosedAt": "2026-06-16"
+      "githubIssueClosedAt": "2026-06-16",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "fl1-sample-library-fft-threshold-plugin",
@@ -3137,7 +3242,8 @@
       "notes": "Done: sample-library-fft-threshold-test (offline post-playback, opt-in), отчёт fft-threshold-test/v0.2 в журнал; 5/5 тестов, typecheck зелёный.",
       "archivedAt": "2026-06-16",
       "archiveNotes": "#84 done: plugin 5/5 tests, typecheck clean",
-      "githubIssueClosedAt": "2026-06-16"
+      "githubIssueClosedAt": "2026-06-16",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "fl2-benchmark-fft-trends-harness",
@@ -3155,7 +3261,8 @@
       "notes": "Done: scripts/benchmark-fft-trends.mjs + yarn benchmark:fft-trends; распределения по классам, recall/FPR train/val, JSON-отчёт.",
       "archivedAt": "2026-06-16",
       "archiveNotes": "#84 done: yarn benchmark:fft-trends",
-      "githubIssueClosedAt": "2026-06-16"
+      "githubIssueClosedAt": "2026-06-16",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "fl3-threshold-calibration",
@@ -3173,7 +3280,8 @@
       "notes": "Результат: цель НЕ достигнута. Фронтир val: A 95%/85%, B 85%/70%, C 75%/40% (recall/FPR). Box-голосование не разделяет высокочастотный фон.",
       "archivedAt": "2026-06-16",
       "archiveNotes": "#84 no-go: best val 75/40 or 85/70",
-      "githubIssueClosedAt": "2026-06-16"
+      "githubIssueClosedAt": "2026-06-16",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "fl4-trends-template-calibration",
@@ -3191,7 +3299,8 @@
       "notes": "Результат: ЦЕЛЬ ДОСТИГНУТА. DRONE_TIGHT + системные конкуренты → val recall 95% / FPR 30% / F1 0.844. Шаблон экспортирован.",
       "archivedAt": "2026-06-16",
       "archiveNotes": "#84 go: DRONE_TIGHT val 95/30/F1 0.844",
-      "githubIssueClosedAt": "2026-06-16"
+      "githubIssueClosedAt": "2026-06-16",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "fl5-fft-last-chance-report",
@@ -3210,7 +3319,8 @@
       "notes": "docs/datasets/week-2026-06-14/fft-last-chance-report.md: порог → no-go, trends (tight+competitors) → go.",
       "archivedAt": "2026-06-16",
       "archiveNotes": "#84 report committed",
-      "githubIssueClosedAt": "2026-06-16"
+      "githubIssueClosedAt": "2026-06-16",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "trends-drone-tight-curated-promotion",
@@ -3352,7 +3462,8 @@
       "notes": "Epic: честный typecheck apps, cabinet references, ~35 TS client fixes, CI techies68, prod build strategy. Follow-up после merge-hardening R2 gap.",
       "archivedAt": "2026-06-17",
       "archiveNotes": "https://github.com/officefish/Membrana/pull/87 Closes #86",
-      "githubIssueClosedAt": "2026-06-17"
+      "githubIssueClosedAt": "2026-06-17",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "tbga-f0-typecheck-honesty",
@@ -3492,7 +3603,8 @@
         "ozhegov"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cj-0-trends-enabled-keys",
@@ -3515,7 +3627,8 @@
         "ozhegov"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cj-1-media-api-safe-json",
@@ -3538,7 +3651,8 @@
         "rodchenko"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cj-2-journal-media-decouple",
@@ -3561,7 +3675,8 @@
         "rodchenko"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cj-3-brief-render-parity",
@@ -3584,7 +3699,8 @@
         "ozhegov"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cj-4-trends-counts-as-detection",
@@ -3607,7 +3723,8 @@
         "ozhegov"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cj-5-sync-push-observability",
@@ -3630,7 +3747,8 @@
         "rodchenko"
       ],
       "strategicWave": "W2",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "module-catalog-v1",
@@ -3649,7 +3767,8 @@
         "ozhegov"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-18",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mc-0-catalog-regulation",
@@ -3669,7 +3788,8 @@
       "notes": "Lead: Vesnin. docs/catalog/README.md lifecycle draft→stable→deprecated.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-18",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mc-1-prompt-templates",
@@ -3691,7 +3811,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-18",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mc-2-registry-microphone-pilot",
@@ -3711,7 +3832,8 @@
       "notes": "Lead: Ozhegov + Музыкант. hub, coordinator, 8 child plugins.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-18",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mc-3-pilot-plugins",
@@ -3733,7 +3855,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-18",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mc-4-telemetry-journal-stable",
@@ -3753,7 +3876,8 @@
       "notes": "Lead: Rodchenko. journal-report-views, live refresh UX.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-18",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mc-5-remaining-modules-draft",
@@ -3776,7 +3900,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-18",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mc-6-remaining-plugins-draft",
@@ -3797,7 +3922,8 @@
       "notes": "Lead: Ozhegov. distill from archived task prompts where available.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-18",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mc-7-verify-script-ci",
@@ -3819,7 +3945,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-18",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mc-8-agent-rules-integration",
@@ -3839,7 +3966,8 @@
       "notes": "Lead: Vesnin. read catalog prompt before module/plugin edits.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-18",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mc-9-stable-review",
@@ -3860,7 +3988,8 @@
       "notes": "Lead: Vesnin. microphone + telemetry-journal stable; agent smoke test.",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-18",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "device-board-hackathon-1",
@@ -4171,7 +4300,9 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-07-12",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrane-node-realtime-nr0-contract",
@@ -4527,7 +4658,9 @@
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-07-06",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dpr-dr0-git-hygiene-gate",
@@ -4712,7 +4845,8 @@
         "ozhegov"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrana-studio-ms0-ms4-day-sprint",
@@ -4735,7 +4869,8 @@
       "strategicWave": "W3",
       "archivedAt": "2026-06-23",
       "archiveNotes": "MS0-MS4 verify shipped; studio:package 0.1.0; MS5 deferred",
-      "githubIssueClosedAt": "2026-06-28"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrana-studio-ms0-canon",
@@ -4759,7 +4894,8 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": "2026-06-28"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrana-studio-ms1-shell",
@@ -4782,7 +4918,8 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": "2026-06-28"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrana-studio-ms2-media-fs",
@@ -4806,7 +4943,8 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrana-studio-ms3-journal-fs",
@@ -4829,7 +4967,8 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": "2026-06-28"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrana-studio-ms4-installer",
@@ -4852,7 +4991,8 @@
         "ozhegov"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": "2026-06-28"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "membrana-studio-ms5-prod-smoke",
@@ -4876,7 +5016,8 @@
         "rodchenko"
       ],
       "strategicWave": "W3",
-      "githubIssueClosedAt": "2026-06-28"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "device-board-refactor-v04",
@@ -4897,7 +5038,9 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": "2026-07-12",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbr-0-concept-core",
@@ -5078,7 +5221,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbh-0-canvas-overlay",
@@ -5100,7 +5244,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbh-1-sidebar-clamp",
@@ -5122,7 +5267,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbh-2-nav-split",
@@ -5144,7 +5290,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbh-3-delete-node",
@@ -5166,7 +5313,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbh-4-purge-expired-keys",
@@ -5188,7 +5336,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "device-board-clear-branch",
@@ -5207,7 +5356,8 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "device-board-manual-save",
@@ -5226,7 +5376,8 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "device-board-ux-ports-header",
@@ -5245,7 +5396,8 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-19",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "device-board-w0-hotfix",
@@ -5265,7 +5417,8 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-w0-h3-selection-modal-keep",
@@ -5286,7 +5439,8 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-29",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-w0-h1-function-palette",
@@ -5307,7 +5461,8 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-w0-h2-copy-paste-hotkeys",
@@ -5330,7 +5485,8 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-24",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-doc-v04-mvp",
@@ -5363,7 +5519,8 @@
       "archiveNotes": "techies68 D0-D6; R1-R12 closed; Closes #126",
       "dependsOn": [],
       "notes": "Вход: DAILY_CODE_REVIEW (MP4), archive 2026-06-19 (device-board), DAILY_STANDUP 2026-06-20. Out of scope: JE1-JE5, trends/zero-shot, deploy-pipeline #94, device-board v0.4 #95. Частично закрыто PR #87/#124/#125.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-20",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "crdc-d0-baseline-audit",
@@ -5379,7 +5536,8 @@
       "archiveNotes": "D0 complete",
       "dependsOn": [],
       "notes": "Lead: Vesnin. ✅ Baseline 2026-06-20: merge main, turbo 118/118, matrix in docs/archive/crdc-baseline-2026-06-20.md + Issue comment.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-20",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "crdc-d1-boundaries-registry",
@@ -5397,7 +5555,8 @@
         "crdc-d0-baseline-audit"
       ],
       "notes": "Lead: Ozhegov. ✅ D1 2026-06-20: yarn check:boundaries; bootstrap-order.test.ts; main.tsx contract comments. R1 R2 R8 R9 closed.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-20",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "crdc-d2-lint-hooks-green",
@@ -5415,7 +5574,8 @@
         "crdc-d0-baseline-audit"
       ],
       "notes": "Lead: Rodchenko. ✅ D2 2026-06-20: client + device-board lint 0 warnings (TelemetryJournalModule, board-flow-node, device-board-shell).",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-20",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "crdc-d3-test-health",
@@ -5433,7 +5593,8 @@
         "crdc-d0-baseline-audit"
       ],
       "notes": "Lead: Dynin. ✅ D3 2026-06-20: audio-engine vitest без passWithNoTests; trends vitest forks; validate-pre-run.test.ts. R4 R5 R6 closed.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-20",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "crdc-d4-waveform-a11y",
@@ -5451,7 +5612,8 @@
         "crdc-d2-lint-hooks-green"
       ],
       "notes": "Lead: Rodchenko. ✅ D4 2026-06-20: removed table inline waveform; Escape stops playback; region/group a11y; sample-library-a11y.test.ts. R7 closed.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-20",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "crdc-d5-hygiene-guardrails",
@@ -5469,7 +5631,8 @@
         "crdc-d1-boundaries-registry"
       ],
       "notes": "Lead: Ozhegov. ✅ D5 2026-06-20: .gitignore .claude/.continue; docker size doc; docs verify OK. R10 R11 R12 closed.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-20",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "crdc-d6-ci-green-archive",
@@ -5491,7 +5654,8 @@
         "crdc-d5-hygiene-guardrails"
       ],
       "notes": "Lead: Vesnin. yarn turbo green; task:archive; Closes Issue.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-20",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "device-board-collectors-v05",
@@ -5508,7 +5672,8 @@
         "device-board-refactor-v04"
       ],
       "notes": "Консилиум 2026-06-20: seanses/device-board-collectors-v05-2026-06-20.md. GetFFTFrame отдельный узел. Policy на singleton OOS. Collect config — правый сайдбар (mic defaults). Terminal inputs — массив ref. DBC6 = Vesnin code review + LGTM.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbc-0-core-contracts",
@@ -5526,7 +5691,8 @@
         "device-board-collectors-v05"
       ],
       "notes": "Lead: Vesnin + Ozhegov. Ветка vesnin. SocketType += RecorderRef/SpectralAnalyserRef; scenario node kinds get-recorder, get-spectral-analyser, collect-*, new-track, new-fft-trends-analysis; CollectorConfig; pin kind event; DEVICE_BOARD_CONCEPT v0.5 §collectors.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbc-1-getter-nodes",
@@ -5544,7 +5710,8 @@
         "dbc-0-core-contracts"
       ],
       "notes": "Lead: Ozhegov + Rodchenko. Device-method pattern (device in). GetFFTFrame = Sample→Frame transform, отдельный узел.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbc-2-host-singletons",
@@ -5562,7 +5729,8 @@
         "dbc-0-core-contracts"
       ],
       "notes": "Lead: Ozhegov + Музыкант. Per deviceHandle singleton; append/flush; без policy UI на singleton. Unit-тесты mock host.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbc-3-collect-nodes",
@@ -5581,7 +5749,8 @@
         "dbc-2-host-singletons"
       ],
       "notes": "Lead: Ozhegov + Rodchenko + Музыкант. collectorConfig: bufferSize 2048, smoothing 0.75, windowSec 3, queueCapacity; flush OR trigger; data-out ref arrays.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbc-4-terminal-nodes",
@@ -5599,7 +5768,8 @@
         "dbc-3-collect-nodes"
       ],
       "notes": "Lead: Ozhegov + Dynin + Музыкант. NewTrack(AudioSampleRef[]), NewFftTrendsAnalysis(FftFrameRef[]); journal + trends integration.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbc-5-runtime-event-dispatch",
@@ -5617,7 +5787,8 @@
         "dbc-4-terminal-nodes"
       ],
       "notes": "Lead: Ozhegov + Dynin. Event branch ≠ exec tick; канон GetSample→GetFFTFrame→CollectFft; apps/docs cookbook; MVP один Collect.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbc-6-teamlead-review",
@@ -5640,7 +5811,8 @@
         "dbc-5-runtime-event-dispatch"
       ],
       "notes": "Lead: Vesnin. Формальный review всех PR эпика; smoke с микрофоном; отчёт в #130; yarn task:archive device-board-collectors-v05 + фазы.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-21",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "device-board-journal-reporter-v06",
@@ -5657,7 +5829,8 @@
         "device-board-collectors-v05"
       ],
       "notes": "Консенсус 2026-06-20: per-device journal (device + server scope); ReporterRef с двумя node kinds make-report; DBJ0 vesnin gate.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbj-0-core-contracts",
@@ -5675,7 +5848,8 @@
         "device-board-journal-reporter-v06"
       ],
       "notes": "Lead: Vesnin + Ozhegov. Ветка vesnin. SocketType += journal/reporter/track/report/analysis refs; node kinds get-journal, get-reporter, make-report-*, publish-report; ScenarioReportPayload; DEVICE_BOARD_CONCEPT §17.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbj-1-get-journal",
@@ -5693,7 +5867,8 @@
         "dbj-0-core-contracts"
       ],
       "notes": "Lead: Ozhegov + Rodchenko. get-journal node, palette, suggest modal, host getDeviceJournalRef/getServerJournalRef.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbj-2-get-reporter",
@@ -5711,7 +5886,8 @@
         "dbj-1-get-journal"
       ],
       "notes": "Lead: Ozhegov. get-reporter node, ReporterRuntimeStore, resolve-input, connection-suggest JOURNAL_REF_METHOD_TARGETS.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbj-3-make-reports",
@@ -5729,7 +5905,8 @@
         "dbj-2-get-reporter"
       ],
       "notes": "Lead: Ozhegov + Dynin. make-report-from-track/analysis nodes, ReportRuntimeStore, host makeReportFromTrack/Analysis, REPORTER_REF_METHOD_TARGETS.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbj-4-publish-report",
@@ -5747,7 +5924,8 @@
         "dbj-3-make-reports"
       ],
       "notes": "Lead: Ozhegov. publish-report terminal node, host publishReport, REPORT_REF_METHOD_TARGETS, journal-reporter E2E.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbj-5-legacy-terminals",
@@ -5765,7 +5943,8 @@
         "dbj-4-publish-report"
       ],
       "notes": "Lead: Ozhegov. Palette (legacy) labels; block-executor deprecation log; NewFftTrends → in-memory only; cookbooks updated.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbj-6-teamlead-review",
@@ -5783,7 +5962,8 @@
         "dbj-5-legacy-terminals"
       ],
       "notes": "Lead: Vesnin. Epic device-board-journal-reporter-v06 archived; v0.6 journal reporter chain complete on vesnin.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-scenario-chain-trace-p0",
@@ -5959,13 +6139,14 @@
         "db-realtime-observation-pipeline"
       ],
       "notes": "Lead: Vesnin. Graph nodes for §16.5 MVP; Issue #133.",
-      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueClosedAt": "2026-06-21",
       "leadPersona": "kuryokhin",
       "supportPersonas": [
         "ozhegov"
       ],
       "archivedAt": "2026-06-29",
-      "archiveNotes": "Issue #133 closed; PR #132 merged and v0.8 parity A0-A5 archived"
+      "archiveNotes": "Issue #133 closed; PR #132 merged and v0.8 parity A0-A5 archived",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-recording-gate-r0-contracts",
@@ -5981,9 +6162,10 @@
         "db-recording-gate-v07"
       ],
       "notes": "SCENARIO_NODE_KINDS + types in @membrana/core.",
-      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-20",
-      "archiveNotes": "Core: node kinds, RecordingPolicy, RecordingSliceRef"
+      "archiveNotes": "Core: node kinds, RecordingPolicy, RecordingSliceRef",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-recording-gate-r1-graph-nodes",
@@ -5999,9 +6181,10 @@
         "db-recording-gate-r0-contracts"
       ],
       "notes": "device-board graph layer.",
-      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-20",
-      "archiveNotes": "Palette, pins, factories, tests"
+      "archiveNotes": "Palette, pins, factories, tests",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-recording-gate-r2-host-bridge",
@@ -6017,9 +6200,10 @@
         "db-recording-gate-r0-contracts"
       ],
       "notes": "apps/client scenarioMicJournalBridge + host ports.",
-      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-20",
-      "archiveNotes": "RecorderRecordingSession + bridge host ports"
+      "archiveNotes": "RecorderRecordingSession + bridge host ports",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-recording-gate-r3-executor",
@@ -6036,9 +6220,10 @@
         "db-recording-gate-r2-host-bridge"
       ],
       "notes": "MakeTrack slice input; runtime tests.",
-      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-20",
-      "archiveNotes": "Gate executor, MakeTrack slice, Publish exec-out"
+      "archiveNotes": "Gate executor, MakeTrack slice, Publish exec-out",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-recording-gate-r4-scenario-smoke",
@@ -6054,14 +6239,15 @@
         "db-recording-gate-r3-executor"
       ],
       "notes": "Partial: main-v07.json + Publish exec-out + smoke started; quality blocked on R5 parity.",
-      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueClosedAt": "2026-06-21",
       "leadPersona": "kuryokhin",
       "supportPersonas": [
         "ozhegov"
       ],
       "strategicWave": "W0",
       "archivedAt": "2026-06-29",
-      "archiveNotes": "Issue #133 closed; original blocker superseded and verified by v0.8 parity smoke in PR #132"
+      "archiveNotes": "Issue #133 closed; original blocker superseded and verified by v0.8 parity smoke in PR #132",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-recording-parity-mic-r5",
@@ -6077,9 +6263,10 @@
         "db-recording-gate-r3-executor"
       ],
       "notes": "Superseded by db-rec-parity-a1-capture-path; archive when A1 LGTM. One-day prompt kept for reference.",
-      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "Superseded by A1"
+      "archiveNotes": "Superseded by A1",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-recording-parity-mic-v08",
@@ -6094,9 +6281,10 @@
         "db-recording-gate-r3-executor"
       ],
       "notes": "Lead: Vesnin. Same v07 graph; policy windowSec+captureFormat enums; continuous capture. Blocks trends epic B.",
-      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "Epic A0-A5 complete"
+      "archiveNotes": "Epic A0-A5 complete",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-rec-parity-a0-policy-contract",
@@ -6112,9 +6300,10 @@
         "db-recording-parity-mic-v08"
       ],
       "notes": "Enum policies + constructor node kinds make-recording-policy / make-fft-trends-policy; CONCEPT §15.7.",
-      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "Enum RecordingPolicy in core; make-recording-policy node"
+      "archiveNotes": "Enum RecordingPolicy in core; make-recording-policy node",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-rec-parity-a1-capture-path",
@@ -6130,9 +6319,10 @@
         "db-rec-parity-a0-policy-contract"
       ],
       "notes": "Replaces R5 tick-chunk; GetSample → FFT only.",
-      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "clipRecorder continuous; bootstrap StartRecording"
+      "archiveNotes": "clipRecorder continuous; bootstrap StartRecording",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-rec-parity-a2-encode-upload",
@@ -6148,9 +6338,10 @@
         "db-rec-parity-a1-capture-path"
       ],
       "notes": "Journal preview duration/sampleRate parity.",
-      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "upload MIME; publish-done chain"
+      "archiveNotes": "upload MIME; publish-done chain",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-rec-parity-a3-constructor-ui",
@@ -6166,9 +6357,10 @@
         "db-rec-parity-a0-policy-contract"
       ],
       "notes": "Constructor palette category; enum inspector; v07 JSON wiring.",
-      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "MakeRecordingPolicy inspector"
+      "archiveNotes": "MakeRecordingPolicy inspector",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-rec-parity-a4-smoke-matrix",
@@ -6185,9 +6377,10 @@
         "db-rec-parity-a3-constructor-ui"
       ],
       "notes": "5s WAV sign-off run 85db5c36; CI green; trace in docs/device-board-scripts/logs/",
-      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "Run 85db5c36 5s WAV sign-off"
+      "archiveNotes": "Run 85db5c36 5s WAV sign-off",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-rec-parity-a5-lgtm",
@@ -6203,9 +6396,10 @@
         "db-rec-parity-a4-smoke-matrix"
       ],
       "notes": "Archive A0–A5, r5, r4-smoke; unblocks trends epic B.",
-      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "Epic A LGTM; unblocks trends B"
+      "archiveNotes": "Epic A LGTM; unblocks trends B",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-trends-fft-parity-mic-v08",
@@ -6284,7 +6478,8 @@
       ],
       "strategicWave": "W0",
       "archivedAt": "2026-06-23",
-      "archiveNotes": "PR #148 shipped; U11 #149"
+      "archiveNotes": "PR #148 shipped; U11 #149",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw-p0-migrate-guard",
@@ -6298,12 +6493,13 @@
       "createdAt": "2026-06-23",
       "dependsOn": [],
       "notes": "meta.workspaceKind guard в graph-context load + stamp on Save.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-23",
       "archivedAt": "2026-06-23",
       "archiveNotes": "Implemented in main (feat device-board P0 migrate guard)",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw-w1-indexeddb",
@@ -6319,12 +6515,13 @@
         "db-uw-p0-migrate-guard"
       ],
       "notes": "CRUD, list, active workspace id per deviceId.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-23",
       "archivedAt": "2026-06-23",
       "archiveNotes": "device-board-workspace-store.ts + tests",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw-w3-persist-adapter",
@@ -6340,12 +6537,13 @@
         "db-uw-w1-indexeddb"
       ],
       "notes": "Save/load IndexedDB; legacy localStorage migrate; useDeviceBoardClientBindings.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-23",
       "archivedAt": "2026-06-23",
       "archiveNotes": "device-board-workspace-persist.ts",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw-w2-shell-interim",
@@ -6361,14 +6559,15 @@
         "db-uw-w1-indexeddb"
       ],
       "notes": "BoardWorkspacePickerModal в shell — UX superseded; снять в db-uw-w2-deprecate-shell.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-23",
       "archivedAt": "2026-06-23",
       "archiveNotes": "Interim prototype; D-UW-ENTRY: launcher moves to module",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw-w2-module-launcher",
@@ -6384,14 +6583,15 @@
         "db-uw-w3-persist-adapter"
       ],
       "notes": "Над доской: системные RO + мои слоты N/max; create/rename/delete; enter board только после выбора контекста.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-23",
       "archivedAt": "2026-06-23",
       "archiveNotes": "DeviceBoardLauncher.tsx; commits 3d350f8",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw-w2-clone-catalog",
@@ -6407,14 +6607,15 @@
         "db-uw-w2-module-launcher"
       ],
       "notes": "Карточка системного кейса в модуле: клон в слот; preview read-only на доске; не shell dropdown.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-23",
       "archivedAt": "2026-06-23",
       "archiveNotes": "clone-user-case-to-workspace.ts + launcher button; commit 3d350f8",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw-w2-deprecate-shell",
@@ -6430,14 +6631,15 @@
         "db-uw-w2-module-launcher"
       ],
       "notes": "Удалить Мои сценарии/badge из device-board-shell; UserCase picker из dropdown → модуль.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-23",
       "archivedAt": "2026-06-23",
       "archiveNotes": "Removed BoardWorkspacePickerModal; commit 409436b",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw-w5-media-api",
@@ -6453,14 +6655,15 @@
         "db-uw-w4-tariff"
       ],
       "notes": "background-media device-workspaces REST; client hybrid host + persist feature-detect; legacy device-scenario compat.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-23",
       "archivedAt": "2026-06-23",
       "archiveNotes": "W5 media workspaces API wired",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw-w4-tariff",
@@ -6476,14 +6679,15 @@
         "db-uw-d1-docs"
       ],
       "notes": "Prisma Tariff.maxUserWorkspaces; pair + pair/status; client resolveMaxUserWorkspaces fallback 3.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-23",
       "archivedAt": "2026-06-23",
       "archiveNotes": "W4 tariff quota wired cabinet→client",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw-d1-docs",
@@ -6499,14 +6703,15 @@
         "db-uw-w2-deprecate-shell"
       ],
       "notes": "CONCEPT §22, user-workspace.mdx, usercases.mdx refresh, TARIFF_MATRIX maxUserWorkspaces, catalog prompt.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-06-23",
       "archivedAt": "2026-06-23",
       "archiveNotes": "D1 docs sync 2026-06-23",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-user-workspace-u11",
@@ -6530,7 +6735,8 @@
       ],
       "strategicWave": "S",
       "archivedAt": "2026-06-23",
-      "archiveNotes": "S2+S3+ D1 on main ec057ae; prod deploy smoke OK; cabinet out of scope"
+      "archiveNotes": "S2+S3+ D1 on main ec057ae; prod deploy smoke OK; cabinet out of scope",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw11-s2-remote-first",
@@ -6549,7 +6755,8 @@
       "supportPersonas": [],
       "strategicWave": "S",
       "archivedAt": "2026-06-23",
-      "archiveNotes": "7e3dabf"
+      "archiveNotes": "7e3dabf",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw11-s2-launcher-recovery",
@@ -6572,7 +6779,8 @@
       ],
       "strategicWave": "S",
       "archivedAt": "2026-06-23",
-      "archiveNotes": "502416c visibility refresh + hydrate"
+      "archiveNotes": "502416c visibility refresh + hydrate",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw11-s2-paired-smoke",
@@ -6593,7 +6801,8 @@
       "supportPersonas": [],
       "strategicWave": "S",
       "archivedAt": "2026-06-23",
-      "archiveNotes": "8ce7e0c prod-smoke paired checks"
+      "archiveNotes": "8ce7e0c prod-smoke paired checks",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw11-s3-lww-media",
@@ -6614,7 +6823,8 @@
       "supportPersonas": [],
       "strategicWave": "S",
       "archivedAt": "2026-06-23",
-      "archiveNotes": "6f59a84 media 409 LWW"
+      "archiveNotes": "6f59a84 media 409 LWW",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw11-s3-lww-client",
@@ -6635,7 +6845,8 @@
       "supportPersonas": [],
       "strategicWave": "S",
       "archivedAt": "2026-06-23",
-      "archiveNotes": "a67612a client expectedUpdatedAt"
+      "archiveNotes": "a67612a client expectedUpdatedAt",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw11-s3-conflict-ux",
@@ -6658,7 +6869,8 @@
       ],
       "strategicWave": "S",
       "archivedAt": "2026-06-23",
-      "archiveNotes": "9d87fe7 conflict banner"
+      "archiveNotes": "9d87fe7 conflict banner",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uw11-d1-docs",
@@ -6681,7 +6893,8 @@
       ],
       "strategicWave": "S",
       "archivedAt": "2026-06-23",
-      "archiveNotes": "ec057ae docs D1"
+      "archiveNotes": "ec057ae docs D1",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "server-tariff-enforcement-v1",
@@ -6706,7 +6919,8 @@
       "strategicWave": "W5",
       "archivedAt": "2026-06-23",
       "archiveNotes": "Day-sprint shipped W1+B0+D1+S1 prod; composeSha 020d749",
-      "githubIssueClosedAt": "2026-06-23"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ste-v1-w1-media-quota",
@@ -6725,7 +6939,8 @@
       "strategicWave": "W5",
       "archivedAt": "2026-06-23",
       "archiveNotes": "c47f2c4",
-      "githubIssueClosedAt": "2026-06-23"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ste-v1-b0-second-workspace",
@@ -6748,7 +6963,8 @@
       "strategicWave": "W5",
       "archivedAt": "2026-06-23",
       "archiveNotes": "034950f cabinet sync + client 403; e67a427 media v2 assert; 8db252a quota UX",
-      "githubIssueClosedAt": "2026-06-23"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ste-v1-w2-cabinet-sync",
@@ -6769,7 +6985,8 @@
       "strategicWave": "W5",
       "archivedAt": "2026-06-23",
       "archiveNotes": "merged B0 034950f pair to media maxUserWorkspaces",
-      "githubIssueClosedAt": "2026-06-23"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ste-v1-w3-client-403",
@@ -6792,7 +7009,8 @@
       "strategicWave": "W5",
       "archivedAt": "2026-06-23",
       "archiveNotes": "merged B0 WorkspaceQuotaExceededError + launcher refresh",
-      "githubIssueClosedAt": "2026-06-23"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ste-v1-s1-prod-smoke",
@@ -6815,7 +7033,8 @@
       "strategicWave": "W5",
       "archivedAt": "2026-06-23",
       "archiveNotes": "Prod deploy 020d749 cabinet-v0.2.0; smoke 17/17 OK 2026-06-23",
-      "githubIssueClosedAt": "2026-06-23"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ste-v1-d1-docs",
@@ -6836,7 +7055,8 @@
       "strategicWave": "W5",
       "archivedAt": "2026-06-23",
       "archiveNotes": "020d749 TARIFF_MATRIX v0.5, user-workspace.mdx, U10 STE section",
-      "githubIssueClosedAt": "2026-06-23"
+      "githubIssueClosedAt": "2026-06-23",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-pure-getters-blueprint-parity",
@@ -7224,7 +7444,8 @@
       "notes": "Consilium 2026-06-21 product: bundled + tariff UserCases; supersedes roadmap U1.",
       "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "GitHub #136 closed; PR #137"
+      "archiveNotes": "GitHub #136 closed; PR #137",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uc-r0-schema",
@@ -7240,7 +7461,8 @@
       "notes": "Generalize usercase:build; manifest contract; CI verify-kinds.",
       "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "manifest + yarn usercase:build/verify-kinds; ae3878f e9a7459"
+      "archiveNotes": "manifest + yarn usercase:build/verify-kinds; ae3878f e9a7459",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uc-l1-layout-canon",
@@ -7258,7 +7480,8 @@
       "notes": "yarn usercase:verify-layout; editorial pass MVP main branch.",
       "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "layout canon, verify-layout, comment groups; 8c9a770"
+      "archiveNotes": "layout canon, verify-layout, comment groups; 8c9a770",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uc-c1-catalog",
@@ -7276,7 +7499,8 @@
       "notes": "UserCaseCatalogService; index usercase-*/ manifests.",
       "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "UserCaseCatalogService bundled index; fa56418"
+      "archiveNotes": "UserCaseCatalogService bundled index; fa56418",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uc-g1-settings-gate",
@@ -7294,7 +7518,8 @@
       "notes": "Toggle catalog; bundled/tariff/locked badges; tariff stub.",
       "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "settings toggle + entitlement badges; fbdf158"
+      "archiveNotes": "settings toggle + entitlement badges; fbdf158",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uc-p1-picker-modal",
@@ -7314,7 +7539,8 @@
       "notes": "Modal cards; confirm dirty; ref-mapping; post-apply exec-layout.",
       "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "modal apply-all + ref-mapping; 7c520db"
+      "archiveNotes": "modal apply-all + ref-mapping; 7c520db",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-uc-d1-docs",
@@ -7332,7 +7558,8 @@
       "notes": "DEVICE_BOARD_CONCEPT §20; package README; apps/docs stub.",
       "githubIssueClosedAt": "2026-06-21",
       "archivedAt": "2026-06-21",
-      "archiveNotes": "CONCEPT section 20, README, Mintlify usercases; 4576abb"
+      "archiveNotes": "CONCEPT section 20, README, Mintlify usercases; 4576abb",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "device-board-function-modal-sprint-2026-06-22",
@@ -7921,7 +8148,8 @@
       "archivedAt": "2026-06-22",
       "archiveNotes": "Epic DBP-HF..DBP4 closed; Issue 142 close-github EOD",
       "notes": "Lead: Vesnin + Ozhegov. Day briefing 2026-06-22: pause = success criterion; blocks UserCase MVP confidence. Audio continues; scenario graph freezes.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbp-hf-marquee-collapse",
@@ -7939,7 +8167,8 @@
         "device-board-pause-runtime-v07"
       ],
       "notes": "Hotfix: collapse function/group blocked when Event/loop-repeat in marquee.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbp-0-runtime-pause-core",
@@ -7957,7 +8186,8 @@
         "device-board-pause-runtime-v07"
       ],
       "notes": "Lead: Ozhegov. waitWhilePaused in main/alarm loops and exec yield points.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbp-1-ui-toolbar",
@@ -7975,7 +8205,8 @@
         "dbp-0-runtime-pause-core"
       ],
       "notes": "Lead: Rodchenko. device-board-shell Pause/Resume next to Run/Stop.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbp-2-pause-runtime-node",
@@ -7993,7 +8224,8 @@
         "dbp-0-runtime-pause-core"
       ],
       "notes": "Lead: Ozhegov. Mirror stop-runtime-node pattern.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbp-3-docs-scenario-runtime",
@@ -8011,7 +8243,8 @@
         "dbp-1-ui-toolbar"
       ],
       "notes": "Lead: Vesnin. docs/SCENARIO_RUNTIME.md new section; CONCEPT §7.4.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "dbp-4-teamlead-closure",
@@ -8032,7 +8265,8 @@
         "dbp-3-docs-scenario-runtime"
       ],
       "notes": "Lead: Vesnin. Run→Pause→Resume→Stop smoke.",
-      "githubIssueClosedAt": "2026-06-22"
+      "githubIssueClosedAt": "2026-06-22",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "smoke-testing-s1-night-build",
@@ -8053,7 +8287,8 @@
         "ozhegov",
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "smoke-s1-nb0-gate-docs",
@@ -8076,7 +8311,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "smoke-s1-nb1-playwright-scaffold",
@@ -8097,7 +8333,8 @@
       "nightPhase": "NB1",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "smoke-s1-nb2-smoke-tests-testids",
@@ -8121,7 +8358,8 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "smoke-s1-nb3-optional-ci-workflow",
@@ -8142,7 +8380,8 @@
       "nightPhase": "NB3",
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "smoke-s1-nb4-docs-handoff",
@@ -8165,7 +8404,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "tasks-audit-v1",
@@ -8184,7 +8424,8 @@
         "ozhegov"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ta-0-process-regulations",
@@ -8207,7 +8448,8 @@
         "ozhegov"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ta-1-audit-paths-lib",
@@ -8230,7 +8472,8 @@
         "vesnin"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ta-2-bookkeeping-script",
@@ -8253,7 +8496,8 @@
         "vesnin"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ta-3-reviewing-script",
@@ -8276,7 +8520,8 @@
         "rodchenko"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ta-4-audit-orchestrator",
@@ -8300,7 +8545,8 @@
         "vesnin"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ta-5-script-tests",
@@ -8323,7 +8569,8 @@
         "dynin"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ta-6-cursor-skills",
@@ -8346,7 +8593,8 @@
         "ozhegov"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ta-7-docs-ritual-integration",
@@ -8369,7 +8617,8 @@
         "ozhegov"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "ta-8-epic-lgtm",
@@ -8392,7 +8641,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "usercase-mvp-v2-groups-async",
@@ -8607,7 +8857,8 @@
       "supportPersonas": [
         "vesnin"
       ],
-      "githubIssueClosedAt": "2026-06-28"
+      "githubIssueClosedAt": "2026-06-28",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-p3-a3-competition-restrictions",
@@ -8833,7 +9084,8 @@
       ],
       "parentEpic": "usercase-mvp-v2-groups-async",
       "archivedAt": "2026-07-01",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-25",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-ap-r0-consilium-spec",
@@ -8852,7 +9104,9 @@
       "dependsOn": [],
       "notes": "Lead: Vesnin. docs/discussions/device-board-async-pipeline-consilium-2026-06-25.md; AD1-AD7 LGTM.",
       "leadPersona": "vesnin",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": "2026-06-25",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-ap-r1-core-contracts",
@@ -9144,7 +9398,8 @@
       ],
       "archivedAt": "2026-06-24",
       "archiveNotes": "Merge train done: PR #159 + #160 merged (6cb04b7). CI green. Issue #161 closed. C3 docs in CONCEPT, catalog, user-functions.mdx. C4 P2 refactor deferred to backlog Issues.",
-      "githubIssueClosedAt": "2026-06-24"
+      "githubIssueClosedAt": "2026-06-24",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-ufc-c0-consilium",
@@ -9297,7 +9552,8 @@
       ],
       "archivedAt": "2026-06-24",
       "archiveNotes": "PR #164 merged, issue #163 closed; view-only UX for system-preview",
-      "githubIssueClosedAt": "2026-06-24"
+      "githubIssueClosedAt": "2026-06-24",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-vo-r0-audit",
@@ -9447,7 +9703,8 @@
       ],
       "archivedAt": "2026-06-24",
       "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity",
-      "githubIssueClosedAt": "2026-06-24"
+      "githubIssueClosedAt": "2026-06-24",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-es-r0-consilium",
@@ -9639,7 +9896,8 @@
       ],
       "archivedAt": "2026-06-24",
       "archiveNotes": "PR #168, device-board Sequence UX + recording graph clarity",
-      "githubIssueClosedAt": "2026-06-24"
+      "githubIssueClosedAt": "2026-06-24",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-rgc-r0-inspector-notes",
@@ -9762,7 +10020,9 @@
         "ozhegov",
         "rodchenko",
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-24",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "device-board-fn-blocks-sprint-2026-06-24",
@@ -9781,7 +10041,9 @@
       "supportPersonas": [
         "vesnin",
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-24",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "db-fb-s1-inspector-list",
@@ -9799,7 +10061,9 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-24",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "device-board-bundled-mvp-v09-sprint-2026-06-25",
@@ -9919,7 +10183,8 @@
         "rodchenko"
       ],
       "archivedAt": "2026-07-01",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-25",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "nh-s1-office-module",
@@ -9934,7 +10199,8 @@
       "parentEpic": "night-hunt-sprint-2026-06-25",
       "leadPersona": "ozhegov",
       "archivedAt": "2026-07-01",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-25",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "nh-s2-fly-deploy",
@@ -9949,7 +10215,8 @@
       "parentEpic": "night-hunt-sprint-2026-06-25",
       "leadPersona": "ozhegov",
       "archivedAt": "2026-07-01",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-25",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "nh-s3-rituals",
@@ -9964,7 +10231,8 @@
       "parentEpic": "night-hunt-sprint-2026-06-25",
       "leadPersona": "vesnin",
       "archivedAt": "2026-07-01",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-06-25",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "competition-async-v2-prep-2026-06-25",
@@ -10730,7 +10998,9 @@
       "supportPersonas": [
         "rodchenko",
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "neural-free-tier-dataset-report",
@@ -10774,7 +11044,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "da-a0-taxonomy-adr",
@@ -10790,7 +11061,8 @@
       "archiveNotes": "docs/actions/README.md taxonomy + D-ACT-* decisions; OPEN tracker.",
       "notes": "D-ACT-1/2: taxonomy README",
       "leadPersona": "vesnin",
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "da-a1-scaffold-mv",
@@ -10809,7 +11081,8 @@
       ],
       "notes": "13 MD + fixtures README",
       "leadPersona": "ozhegov",
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "da-a2-link-audit",
@@ -10828,7 +11101,8 @@
       ],
       "notes": "grep gate: only stubs on old MD paths",
       "leadPersona": "ozhegov",
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "da-a3-steering-sync",
@@ -10847,7 +11121,8 @@
       ],
       "notes": "skills + .cursorrules #11 + VIRTUAL_TEAM_PROMPT",
       "leadPersona": "vesnin",
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "da-a4-verify-ci",
@@ -10867,7 +11142,8 @@
       ],
       "notes": "verify-paths, verify-competition, link grep",
       "leadPersona": "ozhegov",
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "da-a5-rag-index",
@@ -10886,7 +11162,8 @@
       ],
       "notes": "yarn rag:index incremental",
       "leadPersona": "vesnin",
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "da-a6-closure",
@@ -10905,7 +11182,8 @@
       ],
       "notes": "Issue report, archive phases",
       "leadPersona": "vesnin",
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "opencode-operator-workflows-2026-06-26",
@@ -10924,7 +11202,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "oc-b0-register",
@@ -10941,7 +11220,8 @@
       "parentEpic": "opencode-operator-workflows-2026-06-26",
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "oc-b1-skills",
@@ -10958,7 +11238,8 @@
       "parentEpic": "opencode-operator-workflows-2026-06-26",
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "oc-b2-commands",
@@ -10975,7 +11256,8 @@
       "parentEpic": "opencode-operator-workflows-2026-06-26",
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "oc-b3-config",
@@ -10992,7 +11274,8 @@
       "parentEpic": "opencode-operator-workflows-2026-06-26",
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "oc-b4-closure",
@@ -11009,7 +11292,8 @@
       "parentEpic": "opencode-operator-workflows-2026-06-26",
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-06-26"
+      "githubIssueClosedAt": "2026-06-26",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "opencode-operator-skills-wave2-2026-06-26",
@@ -11366,7 +11650,8 @@
       "createdAt": "2026-06-29",
       "archivedAt": "2026-06-29",
       "archiveNotes": null,
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-29",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "rag-top-k-c2",
@@ -11380,7 +11665,8 @@
       "archivedAt": "2026-06-29",
       "archiveNotes": null,
       "epicId": "agent-context-optimization-v1",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-29",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "issue-178-async-v2-reconciliation",
@@ -11403,7 +11689,8 @@
         "dynin",
         "kuryokhin"
       ],
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-29",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "fv1-s2-closeout",
@@ -11444,7 +11731,9 @@
         "dynin",
         "kuryokhin",
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "fv1-s1-pipeline",
@@ -11463,7 +11752,8 @@
         "dynin"
       ],
       "epicId": "free-v1-sound-catalog",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "fv1-s2-content",
@@ -11483,7 +11773,8 @@
         "ozhegov"
       ],
       "epicId": "free-v1-sound-catalog",
-      "githubIssueClosedAt": "2026-07-02"
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "fv1-s3-integration",
@@ -11504,7 +11795,8 @@
         "rodchenko"
       ],
       "epicId": "free-v1-sound-catalog",
-      "githubIssueClosedAt": "2026-07-02"
+      "githubIssueClosedAt": "2026-06-30",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "device-board-capture-tariff-v2",
@@ -11780,7 +12072,9 @@
       "supportPersonas": [
         "dynin",
         "kuryokhin"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-06-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "vdr-hg1-pilot-corpus",
@@ -13124,7 +13418,8 @@
         "dynin",
         "kuryokhin"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
@@ -13144,7 +13439,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
@@ -13164,7 +13460,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
@@ -13185,7 +13482,8 @@
         "rodchenko",
         "dynin"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
@@ -13208,7 +13506,8 @@
         "ozhegov",
         "kuryokhin"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
@@ -13228,7 +13527,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SCENARIO_UX_SPRINT_PROMPT.md",
@@ -13249,7 +13549,8 @@
         "rodchenko",
         "dynin"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
@@ -13273,7 +13574,8 @@
         "rodchenko",
         "vesnin"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
@@ -13293,7 +13595,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
@@ -13316,7 +13619,8 @@
         "ozhegov",
         "kuryokhin"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/BOARD_TELEMETRY_JOURNAL_SPRINT_PROMPT.md",
@@ -13338,7 +13642,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/CABINET_KEY_EXPIRED_STATUS_PROMPT.md",
@@ -13358,7 +13663,8 @@
         "rodchenko",
         "dynin"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
@@ -13383,7 +13689,8 @@
         "dynin",
         "kuryokhin"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
@@ -13403,7 +13710,8 @@
       "supportPersonas": [
         "kuryokhin"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
@@ -13426,7 +13734,8 @@
         "dynin",
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "promptPath": "docs/prompts/CAPTURE_SHARED_RUNTIME_SPRINT_PROMPT.md",
@@ -13448,7 +13757,8 @@
       "supportPersonas": [
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-07-07"
+      "githubIssueClosedAt": "2026-07-07",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "tech-debt-2026-07",
@@ -13484,7 +13794,9 @@
       "supportPersonas": [
         "dynin"
       ],
-      "notes": "P0. dist detector-base не собран к job"
+      "notes": "P0. dist detector-base не собран к job",
+      "githubIssueClosedAt": "2026-07-08",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cg6-stale-dist-gate",
@@ -13498,7 +13810,9 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": "2026-07-08",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cg7-catalog-verify-prepush",
@@ -13512,7 +13826,9 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": "2026-07-08",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "td-scenario-registry-persistence",
@@ -13528,7 +13844,9 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-07-08",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "td-node-lastseen-reconnect",
@@ -13542,7 +13860,9 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": "2026-07-08",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "td-singleton-eslint-guard",
@@ -13556,7 +13876,9 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": "2026-07-08",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "td-samplelibrary-usememo",
@@ -13657,7 +13979,9 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": "2026-07-08",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "csp-2-tariff-to-node",
@@ -13673,7 +13997,9 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-07-08",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "csp-3-node-declares-system",
@@ -13691,7 +14017,9 @@
       "dependsOn": [
         "csp-1-contract",
         "csp-2-tariff-to-node"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-07-08",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "csp-4-shared-card",
@@ -13708,7 +14036,9 @@
       "supportPersonas": [],
       "dependsOn": [
         "csp-1-contract"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-07-08",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "csp-5-cabinet-ui",
@@ -13726,7 +14056,9 @@
       "dependsOn": [
         "csp-1-contract",
         "csp-4-shared-card"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-07-08",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "csp-6-smoke-docs",
@@ -13744,7 +14076,9 @@
       "dependsOn": [
         "csp-3-node-declares-system",
         "csp-5-cabinet-ui"
-      ]
+      ],
+      "githubIssueClosedAt": "2026-07-08",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "agent-tooling-night-build",
@@ -13946,7 +14280,8 @@
       "notes": "Кабинетный UI (NodesPage node card). S1: CabinetScenarioPicker из строки кнопок → отдельная ячейка ПОД NodeLastTrackPreview, collapsible (свёрнуто выбранный, раскрыто группы user/system), csp-5 семантика цела. S2: NodeLastTrackPreview голый audio → waveform-гистограмма SampleWaveformScrubber, данные по клику (offline-safe): fetchNodeTrackBlobUrl → декод audio-engine → computePeakEnvelope. Без сырого Web Audio, без изменения shared-сервисов. Обсуждено виртуальной командой. Out of scope: сервер/контракт журнала, автозагрузка waveform.",
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #319; review LGTM 34aa1e31de24; PR #319 merged 2026-07-09T13:00:25Z (5e66efb84b78de86091c6887798f9ae90a003080)",
-      "githubIssueClosedAt": "2026-07-09"
+      "githubIssueClosedAt": "2026-07-09",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "wire-contract-codegen",
@@ -13965,7 +14300,8 @@
       "notes": "Задача 3 плана дня 09.07. Вариант B (решение команды): апстрим parseHealthPongPayload в core; scripts/generate-wire-contract.mjs (конкат 6 core-файлов, strip внутренних импортов, дедуп идентичных приватных хелперов, fail на неидентичных, баннер GENERATED); node-realtime-wire.ts = checked-in generated; verify:wire-sync → freshness-check (генерируй+байтово сравни, уже в pre-push). Out of scope: dual-build core (вариант A), изменение самого контракта.",
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #321; review LGTM 59df295ba875; PR #321 merged 2026-07-09T14:10:38Z (0573b3ee7a9112e822f76a88e9b4f1039fac9a53)",
-      "githubIssueClosedAt": "2026-07-09"
+      "githubIssueClosedAt": "2026-07-09",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "board-alarm-scenario-nodes",
@@ -13986,7 +14322,8 @@
       "notes": "Gap-анализ 09.07: палитра v0.4–v0.9 + AP v1 покрывает поток/трек/trends/отчёты/async/управление; не хватает 5 узлов. Алarm-loop = композиция branch-on-detection + make-proximity-trend + loop-repeat. device-board только core → сервисы через host-мост. DoD: smoke полного сценария из палитры + LGTM = gate соревнования (device-board-hackathon формат).",
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #324-#329; 5/5 узлов + inspector-notes + эпик-smoke; консилиум 25 реплик; gate соревнования = LGTM владельца",
-      "githubIssueClosedAt": "2026-07-09"
+      "githubIssueClosedAt": "2026-07-09",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "basn-2-detection-fusion",
@@ -14080,7 +14417,8 @@
       ],
       "archivedAt": "2026-07-09",
       "archiveNotes": "Эпик закрыт: mdr-1 (PR #331, 5 node pages + cookbook + docs.json, LGTM), mdr-2 (PR #332, editor-страницы под текущий UX, LGTM), mdr-3 (verify OK, RAG archive-контур defer, деплой-аудит). ГЛАВНАЯ НАХОДКА: аккаунт Mintlify (membrana.mintlify.app) = отдельный репозиторий mintlify-community/docs-membrana-d6be932a, НЕ синхронизирован с apps/docs; detection-контент доставлен PR https://github.com/mintlify-community/docs-membrana-d6be932a/pull/1; выбор источника правды (reconnect на apps/docs vs вести Mintlify-репо) — отдельное решение владельца",
-      "githubIssueClosedAt": "2026-07-09"
+      "githubIssueClosedAt": "2026-07-09",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mdr-1-detection-node-pages",
@@ -14099,7 +14437,8 @@
       "epicId": "mintlify-docs-refresh",
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #331; review LGTM e352fb0c8637; PR #331 merged 2026-07-09T17:41:31Z (b82553cf1101cff9655ace3bc509182724c3b2af)",
-      "githubIssueClosedAt": "2026-07-09"
+      "githubIssueClosedAt": "2026-07-09",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mdr-2-editor-pages-refresh",
@@ -14118,7 +14457,8 @@
       "epicId": "mintlify-docs-refresh",
       "archivedAt": "2026-07-09",
       "archiveNotes": "PR #332; review LGTM b8bf1b010efb; PR #332 merged 2026-07-09T17:51:55Z (a673360e497e1379bd9cd26e7acf1d4aa4e6272b)",
-      "githubIssueClosedAt": "2026-07-09"
+      "githubIssueClosedAt": "2026-07-09",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "mdr-3-verify-rag-publish",
@@ -14139,7 +14479,8 @@
       ],
       "archivedAt": "2026-07-09",
       "archiveNotes": "docs:lint OK (51 pages) + catalog:verify-client OK; RAG: operative smoke query находит свежие термины, archive-контур (apps/docs mdx) DEFER — требует OPENAI_API_KEY; деплой-аудит: аккаунт Mintlify = ОТДЕЛЬНЫЙ репозиторий mintlify-community/docs-membrana-d6be932a (англ. реструктуризация, '37 файлов' ~2026-06-25), разошёлся с apps/docs; detection-контент доставлен туда аддитивным PR #1 (5 node pages + cookbook + palette index через Admin MCP), merge PR = решение владельца",
-      "githubIssueClosedAt": "2026-07-09"
+      "githubIssueClosedAt": "2026-07-09",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "deploy-image-tag-default",
@@ -14202,7 +14543,8 @@
       "notes": "Консилиум 21 реплика ДО кода (гейт соблюдён). Три решения: invalid-ref несёт целевой kind (закрывает type-mismatch до flush И пустые окна); fusion единственный писатель lastDetection (вход в alarm по combined, legacy fallback); анализаторы не бросают на пустоте. + CONCEPT alpha/gamma в docs. Перед живым тестом трёх сценариев владельцем.",
       "archivedAt": "2026-07-10",
       "archiveNotes": "PR #341; review LGTM 41e1025e1293; PR #341 merged 2026-07-10T11:32:38Z (e099db47363b1128e23dfa140bbdee626369b84b)",
-      "githubIssueClosedAt": "2026-07-10"
+      "githubIssueClosedAt": "2026-07-10",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "night-triage-routine-pilot",
@@ -14219,7 +14561,9 @@
         "dynin",
         "ozhegov"
       ],
-      "notes": "Консилиум 25 реплик ДО кода — GO с условиями (docs/seanses/night-triage-routine-2026-07-10.md): N=14 не канон (dwell-time в отчёт), daily draft PR, секрет-гейт блокирующий, детерминизм-критерий, issues:audit = эталон приёмки не CI-гейт. Бриф: docs/day-sprint/night-triage-routine-2026-07-10/SPRINT_BRIEF.md. Стоп-условие: preview недоступен / квота — заморозка + INSIGHT."
+      "notes": "Консилиум 25 реплик ДО кода — GO с условиями (docs/seanses/night-triage-routine-2026-07-10.md): N=14 не канон (dwell-time в отчёт), daily draft PR, секрет-гейт блокирующий, детерминизм-критерий, issues:audit = эталон приёмки не CI-гейт. Бриф: docs/day-sprint/night-triage-routine-2026-07-10/SPRINT_BRIEF.md. Стоп-условие: preview недоступен / квота — заморозка + INSIGHT.",
+      "githubIssueClosedAt": "2026-07-12",
+      "githubIssueStateReason": "NOT_PLANNED"
     },
     {
       "id": "office-vds-migration",
@@ -14239,7 +14583,8 @@
         "rodchenko"
       ],
       "notes": "Решения владельца 2026-07-11: VDS 2vCPU/4GB/40-60GB (запас под RAG T3), старый инстанс на 72.56.27.58 погасить после cutover, домен office.<новый>. OM1 параметризация done (#351), OM2 build+туннель done (#352). ПИВОТ 2026-07-12: московский Timeweb VDS (94.141.162.3 / server 8347521) фундаментально режется ТСПУ на магистрали (подтверждено саппортом Timeweb) → OM4 релокация office на non-RU (Казахстан). OM4-A смена IP опциональна/параллельна; OM4-B/C/D = провижн KZ + деплой канона O1-O4 + cutover. Дедлайн 15-е. Fly night-hunt не затрагивается.",
-      "githubIssueClosedAt": "2026-07-12"
+      "githubIssueClosedAt": "2026-07-11",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "detection-alarm-loop-refactor",
@@ -14298,7 +14643,8 @@
       "insightId": "insight-telegram-work-reports",
       "notes": "Канон = REVIEW инсайта (5 ролей, adopted 4.0, owner override 2026-07-13 — владелец запросил сейчас; консилиум не нужен, исполнение по канону). MVP: fire-and-forget, stateless office, приватная группа, plain-language дайджесты day+evening. Запреты review дословно в промпте. Owner-гейты: BotFather token, chat_id, env на office VDS. Не трогать провайдер-модули (заняты llm-providers-unblock #424/#425 в worktree); коллизия app.module.ts — разрешать после их мёржа.",
       "archiveNotes": "PR #431 (squash 3124d6d2 side) + hotfix 0291f954 (proxy-aware client, OFFICE_API_TOKEN). E2E smoke 2026-07-13: day+evening дайджесты доставлены в приватную группу (sent=true), контур ritual→office→telegram живой. Остаток: фаза 2 LLM-пересказ (после владельческих хвостов #424/#425).",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-13",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "panel-partner-access",
@@ -14309,7 +14655,7 @@
       "createdAt": "2026-07-14",
       "archivedAt": "2026-07-14",
       "archiveNotes": "PU1 #466 (office panel-users + ADR 0005), PU2 #470 (регистрация+гранты), PU3 #473 (owner-раздел). Все фазы LGTM T1/T2, живые смоуки на VDS/проде зелёные. Партнёрский сценарий работает конец-в-конец.",
-      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueClosedAt": "2026-07-14",
       "size": "L",
       "sprintKind": "epic",
       "leadPersona": "vesnin",
@@ -14319,7 +14665,8 @@
         "rodchenko",
         "kuryokhin"
       ],
-      "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/panel-promo-access-2026-07-14.md (7 развилок, Perplexity x2; сгенерирован координатором по подписке — API исчерпан, канон соблюдён). Вердикты: entitlements поверх ролей (ally + grants[], wildcard *); НОВЫЙ ADR 0005 — JSON-store на docker volume (0004 не правим), store=истина/cookie=кэш+permVersion-эпоха в /me; промокоды серверные отзываемые (base32x16, чеканка только из owner-UI); Q3: 5/час/IP, no-store, 404 не-owner, реестр никогда в git. Запреты: SQLite/Prisma, новая роль, секрет в браузере, email/OAuth партнёров, миграция старых invite."
+      "notes": "Консилиум-гейт пройден ДО кода: docs/seanses/panel-promo-access-2026-07-14.md (7 развилок, Perplexity x2; сгенерирован координатором по подписке — API исчерпан, канон соблюдён). Вердикты: entitlements поверх ролей (ally + grants[], wildcard *); НОВЫЙ ADR 0005 — JSON-store на docker volume (0004 не правим), store=истина/cookie=кэш+permVersion-эпоха в /me; промокоды серверные отзываемые (base32x16, чеканка только из owner-UI); Q3: 5/час/IP, no-store, 404 не-owner, реестр никогда в git. Запреты: SQLite/Prisma, новая роль, секрет в браузере, email/OAuth партнёров, миграция старых invite.",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "pu1-panel-users-office",
@@ -14401,7 +14748,8 @@
       ],
       "notes": "Фаза PC-1 спринта palette-clarity-nodes #493. ADR-0006 (DRAFT). Вариант A: расширить make-report-from-analysis до DetectionAnalysisRef (не новый узел — B был бы консилиум-гейт). Аддитивный ensemble-путь в рантайме (trend-путь не трогаем, нулевой риск), новый host-хук makeReportFromEnsembleAnalysis, честный отчёт neuro-detection/v1 без combined. Нейро-FREE-граф переходит с make-combined-report на make-report-from-analysis. Кросс-пакет: core socket + device-board executor + host + client bridge + graph.",
       "archiveNotes": "PR #498 merged squash cf7c8d423f50; Teamlead LGTM offline (docs/reviews/pc1-single-detector-report-teamlead.md); ADR-0006 ACCEPTED. CI: core 138 + device-board 793 + client 297.",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "batch-collection-run-contour",
@@ -14443,7 +14791,8 @@
       ],
       "notes": "Из консилиума palette-nodes-free-clarity-2026-07-15. Fast-follow после отгрузки FREE (#489/#490) — течи наглядности не блокер. PC-1 первой (нейро-одиночка носит combined-отчёт; расширить make-report-from-analysis до DetectionAnalysisRef vs новый make-detection-report; ADR с UI-ролью). PC-2 второй (нет периодического гейта без рекордера, spectrum юзает is-recording-window-full как таймер; новый владелец времени is-window-elapsed + чинит декоративный collectorConfig.windowSec; полный консилиум). Каждая задача — своя фазовая карточка при старте. Out of scope: узлы коллекции = эпик batch-collection-run-contour #494. Гейт старта: отгрузка FREE.",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "cowork-free-fragment-usercases",
@@ -14464,7 +14813,8 @@
       ],
       "notes": "3 блока spectrum-live/neuro-detection/sample-recording; изоляция до Interface Consilium; мёржатся все три, победителя нет. Первый Cowork Sprint (формат #464). Каркас 3+1 уже в free-tier-user-case-entries.ts — блоки наливают содержимое в заготовки, loadDocument переключается на интеграции. Constraints: новых узлов палитры НЕ вводить, combined UC не трогать (донор топологии), живой Run = проверка сборки не детекции, живой дрон НЕ гейт перед отгрузкой. Кредит Anthropic пуст → Interface Consilium через --secretary-file.",
       "archiveNotes": null,
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "docs-canon-drift",
@@ -14483,7 +14833,8 @@
       ],
       "notes": "Побочный результат ревизии #492. Диагноз: не «доки отстали», а канон, который не был правдой — спорные команды НИКОГДА не существовали (0 коммитов по git log -S). Персонажи как роли живы (leadPersona в каждой карточке, ролевое ревью), мёртв только ветковый механизм §7а: 1 PR из 330 (#132), vesnin нет нигде (404), dynin только локально. Разбор по случаям дал 2 ложных срабатывания аудита: REMOTE_NIGHT_CODER — проектный бриф (показывает предлагаемые записи package.json), VDR_VALIDATION_SCOPE_BRIEF сам пишет «не существуют». Отсюда требование к гарду: уважать честные пометки (не существует/Запланировано/optional) и НЕ сканировать архивы — их правка = фальсификация истории. Out of scope: реализация comp:phase/score/close и insight:research/review (отдельные спринты), оживление веткового механизма (консилиум).",
       "archiveNotes": "PR #499; review LGTM 1b9243237a15; PR #499 merged 2026-07-15T08:35:56Z (f0d39173b9026b4ecdb130febdf20697574ba389)",
-      "githubIssueClosedAt": "2026-07-15"
+      "githubIssueClosedAt": "2026-07-15",
+      "githubIssueStateReason": "COMPLETED"
     }
   ]
 }
