@@ -23,7 +23,8 @@
         "mic-live-drone-analysis",
         "vdr-validation",
         "mic-combined-detection",
-        "mic-proximity-alarm"
+        "mic-proximity-alarm",
+        "mic-detector-scoreboard"
       ],
       "services": [
         "@membrana/audio-engine-service"
@@ -306,6 +307,22 @@
       ],
       "relatedTasks": [
         "lp1-mic-drone-stream-modes"
+      ]
+    },
+    {
+      "id": "mic-detector-scoreboard",
+      "kind": "plugin",
+      "name": "Качество детекции",
+      "status": "draft",
+      "parentModuleId": "microphone",
+      "promptPath": "docs/catalog/client/prompts/plugins/mic-detector-scoreboard.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/mic-detector-scoreboard/micDetectorScoreboardPlugin.ts"
+      },
+      "services": [],
+      "relatedTasks": [
+        "scoreboard-plugin-shell",
+        "detector-scoreboard"
       ]
     },
     {
