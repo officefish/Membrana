@@ -1,6 +1,8 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
+import { normalizePersona } from './standup-routing.mjs';
+
 export const REGISTRY_REL = 'docs/tasks/registry.json';
 export const TASKS_README_REL = 'docs/tasks/README.md';
 export const ARCHIVE_DIR_REL = 'docs/tasks/archive';
@@ -175,8 +177,12 @@ export function buildTaskEntry(input, today) {
     sprintKind: kind,
     createdAt: today,
     archivedAt: null,
-    leadPersona: input.lead ?? null,
-    supportPersonas: input.support ?? [],
+    // Аватар кладём в канонической форме (имя, не роль): нормализация жила только
+    // на ЧТЕНИИ (`normalizePersona` в роутинге), поэтому реестр копил обе записи —
+    // 18.07 в нём лежало 9 карточек `musician` и 1 `kuryokhin` на одного аватара.
+    // Роутинг это переживал, а любой прямой читатель реестра — нет.
+    leadPersona: input.lead ? normalizePersona(input.lead) : null,
+    supportPersonas: (input.support ?? []).map(normalizePersona),
     notes: input.notes ?? '',
     archiveNotes: null,
     githubIssueClosedAt: null,

@@ -245,6 +245,24 @@ describe('renderTaskPromptStub', () => {
   });
 
   // T1 (#548): --prompt и --parent-epic реально применяются, а не игнорируются.
+  it('buildTaskEntry: аватар кладётся в канон — роль и регистр приводятся к имени', () => {
+    const e = buildTaskEntry(
+      { id: 'x-y', title: 'T', size: 'S', lead: 'musician', support: ['Ozhegov', 'teamlead'] },
+      '2026-07-18',
+    );
+    // Нормализация жила только на ЧТЕНИИ, поэтому реестр копил обе формы: 18.07 в нём
+    // лежало 36 значений `musician` против 1 `kuryokhin` и записи в разном регистре.
+    // Роутинг это переживал (PERSONA_ALIASES), прямой читатель реестра — нет.
+    assert.equal(e.leadPersona, 'kuryokhin');
+    assert.deepEqual(e.supportPersonas, ['ozhegov', 'vesnin']);
+  });
+
+  it('buildTaskEntry: аватара нет — остаётся null, пустой список пустым', () => {
+    const e = buildTaskEntry({ id: 'x-y', title: 'T', size: 'S' }, '2026-07-18');
+    assert.equal(e.leadPersona, null);
+    assert.deepEqual(e.supportPersonas, []);
+  });
+
   it('buildTaskEntry: --prompt → promptPath (не дефолтный id-путь)', () => {
     const e = buildTaskEntry(
       { id: 'my-epic', title: 'E', size: 'L', prompt: 'docs/prompts/SHARED_EPIC_PROMPT.md' },
