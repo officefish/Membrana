@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "evening-audit-generator",
+      "title": "Генератор вечернего аудита: что происходило в репозитории, реестре задач и графе правды",
+      "promptPath": "docs/prompts/EVENING_AUDIT_GENERATOR_PROMPT.md",
+      "githubIssue": 627,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-18",
+      "archivedAt": null,
+      "leadPersona": "Ozhegov",
+      "supportPersonas": [
+        "Dynin"
+      ],
+      "notes": "Владельческая задача 18.07: наглядный отчёт движения за день, строки по областям",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "morning-ritual-regulation",
       "title": "Регламент утреннего ритуала + фоновый агент (барьер против проглоченного гейта)",
       "promptPath": "docs/prompts/MORNING_RITUAL_REGULATION.md",
