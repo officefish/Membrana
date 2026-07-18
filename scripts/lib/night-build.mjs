@@ -1,7 +1,41 @@
+import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
 import { findTask, loadRegistry } from './task-registry.mjs';
+
+/**
+ * NB5 (кандидат 5, тулинг заседания night-build-format): извлечь `follow-up:`
+ * теги из тел коммитов. Чистая функция — тестируется без git.
+ * @param {string} commitText — склеенные тела/заголовки коммитов
+ * @returns {string[]}
+ */
+export function extractFollowUps(commitText) {
+  const out = [];
+  // [ \t]* (не \s*): \s поглотил бы \n и захватил следующую строку (баг, пойман тестом).
+  for (const m of String(commitText ?? '').matchAll(/^[ \t]*follow-?up:[ \t]*(.+?)[ \t]*$/gimu)) {
+    const item = m[1].trim();
+    if (item && !out.includes(item)) out.push(item);
+  }
+  return out;
+}
+
+/**
+ * Список коммитов ветки относительно base + извлечённые follow-up (для merge-handoff,
+ * night:close). git-обёртка: при недоступности git возвращает пустой безопасный набор.
+ * @returns {{ commits: string[], followUps: string[], ok: boolean }}
+ */
+export function collectBranchHandoff(branch, base = 'origin/main', cwd = process.cwd()) {
+  try {
+    const range = `${base}..${branch || 'HEAD'}`;
+    const oneline = execFileSync('git', ['log', '--format=%h %s', range], { cwd, encoding: 'utf8' })
+      .split(/\r?\n/).filter(Boolean);
+    const bodies = execFileSync('git', ['log', '--format=%B', range], { cwd, encoding: 'utf8' });
+    return { commits: oneline, followUps: extractFollowUps(bodies), ok: true };
+  } catch {
+    return { commits: [], followUps: [], ok: false };
+  }
+}
 
 export const NIGHT_ACTIVE_REL = 'docs/NIGHT_BUILD_ACTIVE.md';
 export const NIGHT_LOG_REL = 'docs/NIGHT_BUILD_LOG.md';
@@ -91,14 +125,16 @@ export function openNightBuild(epicId, opts = {}) {
 **Epic:** \`${epicId}\`
 **Старт:** ${startedAt}
 **Ветка:** \`${branch}\`
-**Base:** \`techies68\`
+**Base:** \`origin/main\`
 **Промпт:** [\`${epic.promptPath}\`](./${epic.promptPath.replace(/^docs\//, '')})
 
 ## Предусловия
 
 - [ ] \`yarn ritual:evening\` выполнен (или code-review актуален)
 - [ ] Epic-промпт прочитан агентом
-- [ ] Ветка \`${branch}\` создана от \`techies68\`
+- [ ] Ветка \`${branch}\` создана от **\`origin/main\`** — НЕ от локального \`main\`
+      (G3, регламент §Несущие гейты): локальный main залочен/грязен у параллельной
+      сессии; ветка от origin/main даёт фиксированную базу и исключает коллизию
 - [ ] Scope заморожен — без prod-deploy
 
 ## Фазы (чеклист)
@@ -185,6 +221,15 @@ export function closeNightBuild(epicId, opts = {}) {
     ? readFileSync(resolveNightLogPath(cwd), 'utf8')
     : '_(log empty)_';
 
+  // NB5: merge-handoff генерируется из коммитов ветки, а не печатается инструкцией.
+  const { commits, followUps, ok: gitOk } = collectBranchHandoff(active.branch, 'origin/main', cwd);
+  const commitList = gitOk
+    ? (commits.length ? commits.map((c) => `- \`${c}\``).join('\n') : '- _(нет коммитов относительно origin/main)_')
+    : '- _(git недоступен — заполнить вручную: `git log --oneline origin/main..HEAD`)_';
+  const followUpList = followUps.length
+    ? followUps.map((f) => `- [ ] ${f}`).join('\n')
+    : '- _(follow-up-тегов в коммитах нет)_';
+
   const handoffMd = `# Night Build handoff — ${dateKey}
 
 > Epic: \`${epicId}\`
@@ -193,14 +238,21 @@ export function closeNightBuild(epicId, opts = {}) {
 
 ## Для утреннего standup
 
-1. Прочитать лог ниже и решить: **merge** \`${active.branch}\` → \`techies68\` | **continue night** | **rollback**.
+1. Решить: **merge** \`${active.branch}\` → \`main\` (через PR) | **continue night** | **rollback**.
 2. \`yarn ritual:day\` — учесть блокеры в \`MAIN_DAY_ISSUE\`.
-3. После merge PR: \`yarn task:archive cabinet-mp4-nb*\` по фазам.
+3. После merge — \`yarn task:archive\` по закрытым фазам.
 
-## Рекомендуемые команды
+## Что смёржить (коммиты ветки vs origin/main)
+
+${commitList}
+
+## Follow-up (из тегов \`follow-up:\` в коммитах)
+
+${followUpList}
+
+## Проверка перед merge
 
 \`\`\`bash
-git log --oneline -10
 yarn turbo run lint typecheck test build --continue
 \`\`\`
 
