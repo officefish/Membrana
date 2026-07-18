@@ -25,6 +25,7 @@ import {
   groupByReason,
   latestPrByBranch,
   makeArchivedSprintPredicate,
+  rootScratchFiles,
 } from './lib/repo-clean.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -272,9 +273,45 @@ function main() {
     }
   }
 
+  reportRootScratch(out);
   out.log(`\nГотово: убрано ${removed}, ошибок ${failed}.`);
   writeReport(cli, out);
   if (failed > 0) process.exitCode = 1;
+}
+
+/**
+ * Черновики в корне репозитория — ПРЕДУПРЕЖДЕНИЕ, не блок.
+ *
+ * Повод (18.07): в корне лежали пять файлов чужой сессии — два черновика
+ * текстов и три одноразовых скрипта разбора. За ними стояла настоящая работа
+ * (issue #609, PR #612), поэтому автоматическое удаление снесло бы живое.
+ * Отсюда правило: страж НАЗЫВАЕТ, судьбу решает владелец дерева.
+ *
+ * Канон уже требует держать временное в `%TEMP%` / `$TMPDIR` — проверки не было.
+ */
+function reportRootScratch(out) {
+  let untracked = [];
+  try {
+    untracked = execSync('git status --porcelain --untracked-files=all', {
+      cwd: repoRoot,
+      encoding: 'utf8',
+    })
+      .split(/\r?\n/)
+      .filter((line) => line.startsWith('?? '))
+      .map((line) => line.slice(3));
+  } catch {
+    return; // git недоступен — чистка веток уже сделана, отчёт не роняем
+  }
+
+  const scratch = rootScratchFiles(untracked);
+  if (scratch.length === 0) return;
+
+  out.log('');
+  out.log(`--- ЧЕРНОВИКИ В КОРНЕ (${scratch.length}) ---`);
+  out.log('Временному место в %TEMP% / $TMPDIR. Ничего не удалено — решает владелец дерева.');
+  for (const file of scratch) {
+    out.log(`  ${file.path} — ${file.hint}`);
+  }
 }
 
 /**

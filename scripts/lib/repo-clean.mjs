@@ -126,6 +126,54 @@ export function makeArchivedSprintPredicate(registry) {
   };
 }
 
+/**
+ * Файлы в корне, которые лежат там законно, хотя и не отслеживаются.
+ * Всё остальное в корне — черновик, которому место во временном каталоге.
+ */
+export const ROOT_ALLOWED_UNTRACKED = new Set([
+  '.env',
+  '.env.local',
+  '.env.llm-proxy',
+  'yarn-error.log',
+]);
+
+/** Каталоги-инструменты в корне: их содержимое не наше дело. */
+const ROOT_TOOL_PREFIXES = ['.yarn/', 'node_modules/', '.turbo/', '.git/'];
+
+/**
+ * Черновики в корне репозитория.
+ *
+ * Повод (18.07): агент оставил в корне пять файлов — два черновика текстов и
+ * три одноразовых скрипта разбора. Работа была настоящей (issue #609, PR #612),
+ * но её черновики остались лежать рядом с `package.json`. Канон уже требует
+ * держать временное в `%TEMP%`/`$TMPDIR`, а проверки на это не было.
+ *
+ * Это ПРЕДУПРЕЖДЕНИЕ, а не блок: чужой черновик может быть живой работой, и
+ * решать его судьбу должен владелец дерева, а не автоматика. Ровно поэтому
+ * функция ничего не удаляет — только называет.
+ *
+ * @param {string[]} untrackedPaths вывод `git status --porcelain` без префикса
+ * @returns {{path: string, hint: string}[]}
+ */
+export function rootScratchFiles(untrackedPaths) {
+  const out = [];
+  for (const raw of untrackedPaths) {
+    const p = String(raw).trim();
+    if (!p) continue;
+    if (ROOT_TOOL_PREFIXES.some((prefix) => p.startsWith(prefix))) continue;
+    // Вложенное — не корень: каталоги живут по своим правилам.
+    if (p.includes('/')) continue;
+    if (ROOT_ALLOWED_UNTRACKED.has(p)) continue;
+    const hint = /\.(mjs|js|ts|py|sh|ps1)$/.test(p)
+      ? 'одноразовый скрипт — во временный каталог'
+      : /\.(md|txt)$/.test(p)
+        ? 'черновик текста — во временный каталог либо в docs/ осознанно'
+        : 'черновик — во временный каталог';
+    out.push({ path: p, hint });
+  }
+  return out.sort((a, b) => a.path.localeCompare(b.path));
+}
+
 /** Сводка для отчёта: сгруппировать решения по причине. */
 export function groupByReason(decisions) {
   const groups = new Map();
