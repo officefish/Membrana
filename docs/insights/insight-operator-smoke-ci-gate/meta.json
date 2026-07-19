@@ -1,14 +1,26 @@
 {
   "id": "insight-operator-smoke-ci-gate",
   "title": "Operator smoke как pre-merge CI gate для async-v2 UserCase",
-  "status": "adopted",
+  "status": "archived",
   "source": "packaging-epic",
   "sprintPhase": "ins-pilot-g-operator-smoke",
   "horizon": "week",
-  "weight": 7.0,
+  "weight": 7,
   "createdAt": "2026-06-25",
   "researchedAt": "2026-06-25",
   "reviewedAt": "2026-06-25",
   "closedAt": "2026-06-25",
-  "tags": ["competition", "operator", "ci", "device-board"]
+  "tags": [
+    "competition",
+    "operator",
+    "ci",
+    "device-board"
+  ],
+  "previousStatus": "adopted",
+  "archivedAt": "2026-07-18",
+  "archiveReason": "implemented",
+  "implementationTaskIds": [
+    "ins-pilot-g-operator-smoke"
+  ],
+  "archiveResult": "Operator smoke CI gate, UserCase verification workflow and smoke evidence delivered"
 }

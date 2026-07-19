@@ -1,7 +1,7 @@
 {
   "id": "insight-persona-persistent-memory",
   "title": "Персистентная память и непрерывность виртуальных персон",
-  "status": "adopted",
+  "status": "archived",
   "source": "user",
   "horizon": null,
   "weight": 5.4,
@@ -11,5 +11,13 @@
   "closedAt": "2026-07-12",
   "tags": [],
   "sprintPhase": "persona-memory-phase1",
-  "notes": "2026-07-13 owner override: старт спринта persona-memory-phase1 при весе 5.4 (<6.0, порог plan:week) по прямому решению владельца; вес не изменён, scope фазы 1 = «Следующий шаг» из REVIEW.md без переоткрытия. Фазы 2-3 (калибровка; LLM-суммаризация/pgvector-recall) - roadmap в INSIGHT.md."
+  "notes": "2026-07-13 owner override: старт спринта persona-memory-phase1 при весе 5.4 (<6.0, порог plan:week) по прямому решению владельца; вес не изменён, scope фазы 1 = «Следующий шаг» из REVIEW.md без переоткрытия. Фазы 2-3 (калибровка; LLM-суммаризация/pgvector-recall) - roadmap в INSIGHT.md.",
+  "previousStatus": "adopted",
+  "archivedAt": "2026-07-18",
+  "archiveReason": "implemented",
+  "implementationTaskIds": [
+    "persona-memory-phase1",
+    "persona-memory-all-personas"
+  ],
+  "archiveResult": "Persistent memory journals and default injection for all personas delivered; PRs 422 and 461 merged with LGTM"
 }
