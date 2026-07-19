@@ -168,16 +168,25 @@ async function main() {
   }
   const { number, once, timeoutMin, intervalSec } = parsed.args;
   const deadline = Date.now() + timeoutMin * 60_000;
+  let ghFails = 0;
 
   for (;;) {
     let pr;
     try {
       pr = readPr(number);
+      ghFails = 0;
     } catch (e) {
-      console.error(`[pr:wait] gh pr view ${number ?? '(PR текущей ветки)'} не отработал: ${e.message.split('\n')[0]}`);
-      console.error('  Проверить: gh auth status; существует ли PR (без номера — есть ли PR у текущей ветки).');
-      process.exitCode = 4;
-      return;
+      // Транзиентный сбой gh посреди поллинга не должен убивать ожидание:
+      // живой эпизод 19.07 — один сорвавшийся `gh pr view` оборвал ship до merge.
+      ghFails += 1;
+      console.error(`[pr:wait] gh pr view ${number ?? '(PR текущей ветки)'} не отработал (${ghFails}/3): ${e.message.split('\n')[0]}`);
+      if (once || ghFails >= 3 || Date.now() >= deadline) {
+        console.error('  Проверить: gh auth status; существует ли PR (без номера — есть ли PR у текущей ветки).');
+        process.exitCode = 4;
+        return;
+      }
+      await new Promise((r) => setTimeout(r, intervalSec * 1000));
+      continue;
     }
 
     const checks = classifyChecks(pr.statusCheckRollup);
