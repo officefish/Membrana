@@ -1,0 +1,44 @@
+{
+  "_stub": "S1: фикстура GraphQL-ответа Linear — страница 1 полного pull (data.issues). Замещает живой API в тестах производителя (сеть в тестах запрещена — вердикт M2).",
+  "data": {
+    "issues": {
+      "pageInfo": { "hasNextPage": true, "endCursor": "cursor-after-page-1" },
+      "nodes": [
+        {
+          "id": "uuid-fixture-dru-93",
+          "identifier": "DRU-93",
+          "state": { "name": "Done", "type": "completed" },
+          "assignee": { "name": "druid" },
+          "parent": null,
+          "relations": { "nodes": [] },
+          "inverseRelations": { "nodes": [] },
+          "attachments": {
+            "nodes": [{ "url": "https://github.com/officefish/Membrana/issues/178" }]
+          },
+          "createdAt": "2026-06-29T10:00:00.000Z",
+          "updatedAt": "2026-06-29T17:31:52.000Z",
+          "completedAt": "2026-06-29T17:31:52.000Z"
+        },
+        {
+          "id": "uuid-fixture-dru-120",
+          "identifier": "DRU-120",
+          "state": { "name": "In Progress", "type": "started" },
+          "assignee": { "name": "vesnin" },
+          "parent": { "id": "uuid-fixture-container-7" },
+          "relations": {
+            "nodes": [{ "type": "blocks", "relatedIssue": { "identifier": "DRU-121" } }]
+          },
+          "inverseRelations": {
+            "nodes": [{ "type": "blocks", "issue": { "identifier": "DRU-93" } }]
+          },
+          "attachments": {
+            "nodes": [{ "url": "https://github.com/officefish/Membrana/issues/660" }]
+          },
+          "createdAt": "2026-07-19T08:00:00.000Z",
+          "updatedAt": "2026-07-19T17:58:12.000Z",
+          "completedAt": null
+        }
+      ]
+    }
+  }
+}

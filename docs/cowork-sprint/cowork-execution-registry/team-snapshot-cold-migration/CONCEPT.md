@@ -267,7 +267,7 @@ exit-кодов спринта (ожидаемый шов №4 из brief).
 | `packages/background-office/src/linear-snapshot/linear-snapshot.service.ts` | производитель: полный pull за стабом API, материализация с провенансом, запрос курсора для свежести | Р2 |
 | `packages/background-office/src/linear-snapshot/linear-snapshot.trigger.ts` | приём триггеров (вебхук-сигнал / вечерний сигнал / ручной) — отдельно от тела | Р2 |
 | `packages/background-office/src/linear-snapshot/linear-snapshot.module.ts` | модуль NestJS; в `app.module.ts` НЕ проводится (интеграция) | Р2 |
-| `packages/background-office/src/linear-snapshot/linear-snapshot.service.spec.ts` | тесты на фикстурах Linear-ответов; сети нет | Р2 |
+| `packages/background-office/src/linear-snapshot/linear-snapshot.service.test.ts` | тесты на фикстурах Linear-ответов; сети нет (имя `.test.ts` — vitest office включает только `src/**/*.test.ts`) | Р2 |
 | `scripts/lib/snapshot-contract.mjs` (+`.test.mjs`) | загрузка/валидация снимка, коды `0/10/20`, свойство «тот же снимок → тот же вердикт бит-в-бит» | Р2 |
 | `scripts/lib/snapshot-freshness.mjs` (+`.test.mjs`) | `fresh(snapshot, sourceCursor)`, курсор инъецируется | Р2 |
 | `scripts/lib/cold-writer.mjs` (+`.test.mjs`) | append-only запись; **отвергает запись без honest-шапки** (тест) | Р3 |

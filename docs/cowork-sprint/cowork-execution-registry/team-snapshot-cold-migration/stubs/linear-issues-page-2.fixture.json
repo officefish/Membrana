@@ -1,0 +1,25 @@
+{
+  "_stub": "S1: фикстура GraphQL-ответа Linear — страница 2 (последняя) полного pull. Пагинация обязана дойти до hasNextPage=false: полный опрос, не «сколько успели».",
+  "data": {
+    "issues": {
+      "pageInfo": { "hasNextPage": false, "endCursor": null },
+      "nodes": [
+        {
+          "id": "uuid-fixture-dru-121",
+          "identifier": "DRU-121",
+          "state": { "name": "Backlog", "type": "backlog" },
+          "assignee": null,
+          "parent": null,
+          "relations": { "nodes": [] },
+          "inverseRelations": {
+            "nodes": [{ "type": "blocks", "issue": { "identifier": "DRU-120" } }]
+          },
+          "attachments": { "nodes": [{ "url": "https://linear.app/some/other/attachment" }] },
+          "createdAt": "2026-07-19T09:00:00.000Z",
+          "updatedAt": "2026-07-19T09:00:00.000Z",
+          "completedAt": null
+        }
+      ]
+    }
+  }
+}

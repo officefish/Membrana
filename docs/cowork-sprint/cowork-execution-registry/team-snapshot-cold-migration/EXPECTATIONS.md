@@ -33,11 +33,11 @@
 
 | Стаб | Замещает | Где живёт |
 |---|---|---|
-| S1. Фикстуры Linear GraphQL-ответов (страницы issues полного pull, ответ курсора, вебхук-payload) | живой Linear API | `team-snapshot-cold-migration/stubs/linear-*.json` + моки в тестах `linear-snapshot.service.spec.ts` |
-| S2. Фикстурная копия реестра (779 записей: 153 активных без Issue, 258 архивных без паспорта, `parked`-кандидаты `db-h1b…db-h4`) | живой `docs/tasks/registry.json` (его блок не трогает) | `team-snapshot-cold-migration/stubs/registry.fixture.json` |
-| S3. Стаб артефакта закрытия (LGTM + ревизия head) | форму следа блока `units-trace-measure` | фикстуры в `scripts/lib/debt-classify.test.mjs` |
-| S4. Стаб провайдера курсора источника | сетевой запрос курсора Linear | инъекция в `snapshot-freshness.test.mjs` |
-| S5. Стаб триггера (вебхук-сигнал / вечерний сигнал) | боевую вебхук-подписку и вечерний ритуал | фикстуры в тестах `linear-snapshot.trigger` |
+| S1. Фикстуры Linear GraphQL-ответов (2 страницы issues полного pull с пагинацией) | живой Linear API | `stubs/linear-issues-page-1.fixture.json`, `stubs/linear-issues-page-2.fixture.json`; потребитель — `linear-snapshot.service.test.ts` (fetch застаблен, сети в тестах нет) |
+| S2. Фикстурная копия реестра (представители всех классов M4: DRU-93, active-no-issue, archived-pre-passport, дефект db-h1b, record/work/owner-knowledge; массовые наборы 153/258 тесты строят программно от этих форм) | живой `docs/tasks/registry.json` (его блок не читает и не трогает) | `stubs/registry.fixture.json`; потребитель — `scripts/lib/debt-classify.test.mjs` |
+| S3. Стаб артефакта закрытия (`{lgtmBy, headRevision}`) | форму следа блока `units-trace-measure` | `stubs/closure-artifact.fixture.json` |
+| S4. Стаб провайдера курсора источника | сетевой запрос курсора Linear | `stubs/linear-cursor.fixture.json` + инъекция `getSourceCursor` в `snapshot-freshness.test.mjs` |
+| S5. Стаб триггера (вебхук-payload; сигналы webhook/evening-signal/manual) | боевую вебхук-подписку и вечерний ритуал | `stubs/linear-webhook-issue-update.fixture.json` + тесты коалесценции в `linear-snapshot.service.test.ts` |
 
 Стабы в интеграционную ветку не мёржатся; стаб, доживший до прода, — дефект интеграции.
 
@@ -48,22 +48,34 @@
 - **A2.** `blockedBy`/`blocking` видны в GraphQL, но **вебхуками не приходят** —
   из ресёрча 19.07; проверка по живому API — Phase 2 (см. «Пробелы»).
 - **A3.** Двухслойность `assignee` (ответственная) / `delegatedAgent` (исполнитель)
-  существует в API как два поля — факт проверяет сосед (`units-trace-measure`),
-  я снимаю оба поля и не склеиваю имена.
+  существует в API как два поля — факт проверяет сосед (`units-trace-measure`).
+  До проверки производитель поле делегата **не запрашивает** (неверифицированное
+  имя поля уронило бы живой GraphQL) и честно отдаёт `delegatedAgent: null`;
+  имена не склеиваются.
 - **A4.** Прецедент `linearId = DRU-93` — единственная заполненная связка в архивной
-  записи `issue-178-async-v2-reconciliation`; как делалась — проверка Phase 2.
+  записи `issue-178-async-v2-reconciliation`; репозиторная половина проверена
+  Phase 2 (см. «Пробелы»), Linear-половина — нет.
 - **A5.** `leadPersona` — строка-аватар в терминах текущего реестра.
 - **A6.** `sourceRevision` = курсор синхронизации Linear (кандидаты: org-level
   sync id / max(`updatedAt`) выборки) — точную форму даст проверка API Phase 2;
   контракт от выбора не зависит (строка-курсор, сравнение на равенство).
 
-## Пробелы (Phase 1)
+## Пробелы (обновлено Phase 2, 19.07)
 
-- **Проверка фактов Linear по живому API не выполнена** (Phase 1 — только доки).
-  План Phase 2: через office `v1/linear/issue/:id` проверить A2 (вебхуки без
-  blockedBy/blocking) и A4 (прецедент DRU-93). Если API недоступен — пробел
-  остаётся зафиксированным здесь; не блокер: контур снимко-центричный, вебхук —
-  только триггер в любом случае.
+- **Живой Linear через office недоступен — пробел остаётся, не блокер.**
+  Проверка выполнена 19.07: office жив (`/health` 200), аутентификация
+  `X-Membrana-Token` проходит, но `v1/linear/issue/DRU-93` и `DRU-1` стабильно
+  отвечают 400 `Linear API request failed` — отказ на плече office→Linear
+  (вероятно, ключ Linear на VDS). Следствия:
+  - **A2** («blockedBy/blocking вебхуками не приходят») по живому API не
+    подтверждён — остаётся допущением из ресёрча 19.07; контур снимко-центричный,
+    вебхук — только триггер в любом случае, поэтому на конструкцию не влияет.
+  - **A4** проверен наполовину: в реестре карточка `issue-178-async-v2-reconciliation`
+    несёт `linearId: "DRU-93"` простой строкой (заполнена вручную в day-sprint
+    29.06, `archiveNotes: PR #200`) — связка существованием, без механизма
+    автосинка. Как выглядит DRU-93 со стороны Linear — не проверено.
+  - **A6** (форма курсора; кандидат `organization.updatedAt`) по живому API не
+    подтверждён; контракт от выбора не зависит (строка-курсор, равенство).
 - **Код миграционного режима гейта комнатой не назван** — блок назвал `11 =
   LEGALITY_MIGRATING` сам (CONCEPT §3.3, §4); это решение блока, подлежит
   сведению в единую таблицу exit-кодов на Interface Consilium.
