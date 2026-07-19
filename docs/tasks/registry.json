@@ -6,16 +6,16 @@
       "promptPath": "docs/prompts/SWALLOW_SENT_LOG_PROMPT.md",
       "githubIssue": 585,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
+      "archivedAt": "2026-07-19",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "Closes #585; complements #664 ledger",
-      "archiveNotes": null,
+      "archiveNotes": "PR #674, Closes #585 — docs/comms/sent-log.jsonl",
       "githubIssueClosedAt": null
     },
     {
