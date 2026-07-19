@@ -242,6 +242,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `code-review-pr-skill-syntax` | docs: скилл code-review — синтаксис yarn code-review:pr без -- | 2026-07-19 | [`CODE_REVIEW_PR_SKILL_SYNTAX_PROMPT.md`](../docs/prompts/CODE_REVIEW_PR_SKILL_SYNTAX_PROMPT.md) | #587 (Issue открыт) | [карточка](./archive/code-review-pr-skill-syntax.md) |
 | `office-ready-error-path` | fix(office): GET /ready try/catch на error-path self-check | 2026-07-19 | [`OFFICE_READY_ERROR_PATH_PROMPT.md`](../docs/prompts/OFFICE_READY_ERROR_PATH_PROMPT.md) | #669 (Issue открыт) | [карточка](./archive/office-ready-error-path.md) |
 | `intern-t3-research-digest` | Intern T3: ресёрч-дайджест — утренняя пресса через Perplexity Sonar | 2026-07-19 | [`INTERN_T3_RESEARCH_DIGEST_PROMPT.md`](../docs/prompts/INTERN_T3_RESEARCH_DIGEST_PROMPT.md) | #197 (Issue открыт) | [карточка](./archive/intern-t3-research-digest.md) |
 | `intern-t2-health-ready` | Intern T2: /health и /ready — готовность background-office | 2026-07-19 | [`INTERN_T2_HEALTH_READY_PROMPT.md`](../docs/prompts/INTERN_T2_HEALTH_READY_PROMPT.md) | #196 (Issue открыт) | [карточка](./archive/intern-t2-health-ready.md) |

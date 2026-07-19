@@ -7,7 +7,7 @@
  * Запуск:
  *   yarn code-review
  *   yarn code-review:full
- *   yarn code-review:pr -- 140
+ *   yarn code-review:pr 140
  *   node scripts/code-review.mjs --branch feat/foo
  *   node scripts/code-review.mjs --uncommitted   (git diff HEAD: staged+unstaged)
  *   node scripts/code-review.mjs --staged        (git diff --cached: только staged)
