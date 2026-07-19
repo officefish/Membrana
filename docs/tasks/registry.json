@@ -1,6 +1,22 @@
 {
   "tasks": [
     {
+      "id": "pr-wait-ci-gate",
+      "title": "pr:wait — честное ожидание проверок PR (4 состояния) + грабли AGENTS.md",
+      "promptPath": "docs/prompts/PR_WAIT_CI_GATE_PROMPT.md",
+      "githubIssue": 643,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": null,
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "research-query-hygiene",
       "title": "Гигиена research-запроса: ярлык рубрики уезжает в текст вопроса",
       "promptPath": "docs/prompts/RESEARCH_QUERY_HYGIENE_PROMPT.md",
