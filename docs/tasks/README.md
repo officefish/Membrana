@@ -243,6 +243,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `swallow-sent-log` | docs/comms: sent-log.jsonl — след отправки ласточки/дайджеста | 2026-07-19 | [`SWALLOW_SENT_LOG_PROMPT.md`](../docs/prompts/SWALLOW_SENT_LOG_PROMPT.md) | #585 (Issue открыт) | [карточка](./archive/swallow-sent-log.md) |
 | `ritual-step-manifest-sf` | Манифест шагов ритуала: семантика отказа (S) + гейт свежести (F) | 2026-07-19 | [`RITUAL_STEP_MANIFEST_SF_PROMPT.md`](../docs/prompts/RITUAL_STEP_MANIFEST_SF_PROMPT.md) | #613 (Issue открыт) | [карточка](./archive/ritual-step-manifest-sf.md) |
 | `code-review-pr-skill-syntax` | docs: скилл code-review — синтаксис yarn code-review:pr без -- | 2026-07-19 | [`CODE_REVIEW_PR_SKILL_SYNTAX_PROMPT.md`](../docs/prompts/CODE_REVIEW_PR_SKILL_SYNTAX_PROMPT.md) | #587 | [карточка](./archive/code-review-pr-skill-syntax.md) |
 | `office-ready-error-path` | fix(office): GET /ready try/catch на error-path self-check | 2026-07-19 | [`OFFICE_READY_ERROR_PATH_PROMPT.md`](../docs/prompts/OFFICE_READY_ERROR_PATH_PROMPT.md) | #669 | [карточка](./archive/office-ready-error-path.md) |

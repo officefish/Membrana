@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "swallow-sent-log",
+      "title": "docs/comms: sent-log.jsonl — след отправки ласточки/дайджеста",
+      "promptPath": "docs/prompts/SWALLOW_SENT_LOG_PROMPT.md",
+      "githubIssue": 585,
+      "size": "S",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": "2026-07-19",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Closes #585; complements #664 ledger",
+      "archiveNotes": "PR #674, Closes #585 — docs/comms/sent-log.jsonl",
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "ritual-step-manifest-sf",
       "title": "Манифест шагов ритуала: семантика отказа (S) + гейт свежести (F)",
       "promptPath": "docs/prompts/RITUAL_STEP_MANIFEST_SF_PROMPT.md",
