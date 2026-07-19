@@ -306,14 +306,17 @@
     "ssh2": "^1.16.0",
     "turbo": "^2.0.0",
     "typescript": "^5.4.0",
-    "undici": "^6.21.0"
+    "undici": "^6.27.0"
   },
   "engines": {
     "node": ">=20.0.0"
   },
   "resolutions": {
     "estree-walker": "2.0.2",
-    "express": "4.21.2"
+    "express": "4.21.2",
+    "multer@npm:2.0.2": "2.2.0",
+    "ws@npm:8.18.0": "8.21.1",
+    "fastify@npm:4.28.1": "4.29.1"
   },
   "packageManager": "yarn@4.5.0"
 }
