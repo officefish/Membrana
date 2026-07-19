@@ -35,6 +35,14 @@ test('длинный список ложных удалений усекаетс
   assert.match(r.message, /…/u, 'хвост усечён');
 });
 
+test('граница: ровно 8 ложных удалений — все названы, многоточия НЕТ (P2 ревью)', () => {
+  const eight = Array.from({ length: 8 }, (_, i) => `f${i}.ts`);
+  const r = classifyBaseFreshness({ behind: 1, phantomDeletions: eight });
+  assert.match(r.message, /\(8\)/u);
+  assert.doesNotMatch(r.message, /…/u, 'при ровно 8 усечения быть не должно');
+  assert.match(r.message, /f7\.ts/u, 'восьмой элемент назван');
+});
+
 test('подсказка чинить названа явно', () => {
   const r = classifyBaseFreshness({ behind: 1, phantomDeletions: [] });
   assert.match(r.message, /git merge origin\/main/u);
