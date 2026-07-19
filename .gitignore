@@ -154,3 +154,7 @@ docs/HERMES_BRIEF.md
 # Журнал drift-anchor (DA3 дайджесты + DA4/DA5 записи якорей) — локальный артефакт хоста (office/CI), не для репо
 docs/reports/drift-anchor/
 docs/tasks/morning-ritual-state.json
+
+# Insight lifecycle runtime (C7 store/journal/lock)
+docs/insights/_lifecycle/
+
