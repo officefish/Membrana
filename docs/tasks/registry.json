@@ -1,6 +1,22 @@
 {
   "tasks": [
     {
+      "id": "truth-mint",
+      "title": "truth mint — писатель токенов: валидация ядром, отказ на дубль, dry-run по умолчанию",
+      "promptPath": "docs/prompts/TRUTH_MINT_PROMPT.md",
+      "githubIssue": 642,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": null,
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "env-sibling-worktree",
       "title": ".env из sibling-worktree: слоёная загрузка через git-common-dir + честный 401",
       "promptPath": "docs/prompts/ENV_SIBLING_WORKTREE_PROMPT.md",
