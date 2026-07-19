@@ -62,6 +62,11 @@ export const ALWAYS_YES_PROFILE = {
     'Bash(ssh *)',
     // Закрытие Issue в GitHub (ночью запрещён)
     'Bash(yarn task:close-github*)',
+    // Утренний land-каскад docs-report — owner-гейт; ночь только dry-run
+    'Bash(yarn night:land-reports --execute*)',
+    'Bash(yarn night:land-reports*--execute*)',
+    'Bash(node scripts/night-land-reports.mjs --execute*)',
+    'Bash(node scripts/night-land-reports.mjs*--execute*)',
     // Правки ядра — только консилиум/vesnin+LGTM (ADR-гейт)
     'Edit(packages/core/**)',
     'Write(packages/core/**)',
