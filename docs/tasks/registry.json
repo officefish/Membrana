@@ -1,6 +1,22 @@
 {
   "tasks": [
     {
+      "id": "pr-ship-worktree-merge",
+      "title": "pr:ship — ci-wait перед merge, без --delete-branch (спринт 5, задним числом по токену T1)",
+      "promptPath": "docs/prompts/PR_SHIP_WORKTREE_MERGE_PROMPT.md",
+      "githubIssue": 653,
+      "size": "S",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": "2026-07-19",
+      "leadPersona": null,
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": "PR #654 (squash), ci-wait+branch-cleanup; карточка задним числом по токену 19.07",
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "net-http-probe",
       "title": "net:http — HTTP-проба произвольного URL через прокси с классификацией ответа",
       "promptPath": "docs/prompts/NET_HTTP_PROBE_PROMPT.md",
