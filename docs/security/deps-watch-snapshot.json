@@ -1,0 +1,593 @@
+{
+  "date": "2026-07-19",
+  "findings": [
+    {
+      "pkg": "@babel/core",
+      "id": "1123528",
+      "severity": "low",
+      "issue": "@babel/core: Arbitrary File Read via sourceMappingURL Comment",
+      "url": "https://github.com/advisories/GHSA-4x5r-pxfx-6jf8"
+    },
+    {
+      "pkg": "@fastify/middie",
+      "id": "1112322",
+      "severity": "high",
+      "issue": "Fastify Middie Middleware Path Bypass",
+      "url": "https://github.com/advisories/GHSA-cxrg-g7r8-w69p"
+    },
+    {
+      "pkg": "@fastify/middie",
+      "id": "1114184",
+      "severity": "high",
+      "issue": "@fastify/middie has Improper Path Normalization when Using Path-Scoped Middleware",
+      "url": "https://github.com/advisories/GHSA-8p85-9qpw-fwgw"
+    },
+    {
+      "pkg": "@fastify/middie",
+      "id": "1116760",
+      "severity": "critical",
+      "issue": "@fastify/middie vulnerable to middleware authentication bypass in child plugin scopes",
+      "url": "https://github.com/advisories/GHSA-72c6-fx6q-fr5w"
+    },
+    {
+      "pkg": "@fastify/middie",
+      "id": "1116761",
+      "severity": "high",
+      "issue": "@fastify/middie vulnerable to middleware bypass via deprecated ignoreDuplicateSlashes option",
+      "url": "https://github.com/advisories/GHSA-v9ww-2j6r-98q6"
+    },
+    {
+      "pkg": "@humanwhocodes/config-array",
+      "id": "@humanwhocodes/config-array (deprecation)",
+      "severity": "moderate",
+      "issue": "Use @eslint/config-array instead",
+      "url": ""
+    },
+    {
+      "pkg": "@humanwhocodes/object-schema",
+      "id": "@humanwhocodes/object-schema (deprecation)",
+      "severity": "moderate",
+      "issue": "Use @eslint/object-schema instead",
+      "url": ""
+    },
+    {
+      "pkg": "@nestjs/core",
+      "id": "1117063",
+      "severity": "moderate",
+      "issue": "@nestjs/core Improperly Neutralizes Special Elements in Output Used by a Downstream Component ('Injection')",
+      "url": "https://github.com/advisories/GHSA-36xv-jgw5-4q75"
+    },
+    {
+      "pkg": "@nestjs/platform-fastify",
+      "id": "1111721",
+      "severity": "moderate",
+      "issue": "Nest has a Fastify URL Encoding Middleware Bypass (TOCTOU)",
+      "url": "https://github.com/advisories/GHSA-8wpr-639p-ccrj"
+    },
+    {
+      "pkg": "@nestjs/platform-fastify",
+      "id": "1113662",
+      "severity": "high",
+      "issue": "Nest has a Fastify URL Encoding Middleware Bypass ",
+      "url": "https://github.com/advisories/GHSA-r4wm-x892-vjmx"
+    },
+    {
+      "pkg": "@nestjs/platform-fastify",
+      "id": "1115135",
+      "severity": "high",
+      "issue": "Nest Fastify HEAD Request Middleware Bypass",
+      "url": "https://github.com/advisories/GHSA-wf42-42fg-fg84"
+    },
+    {
+      "pkg": "@nestjs/platform-fastify",
+      "id": "1123702",
+      "severity": "high",
+      "issue": "Nest: Middleware Bypass on Fastify via Trailing Slash",
+      "url": "https://github.com/advisories/GHSA-6v32-fjc9-9qf6"
+    },
+    {
+      "pkg": "@npmcli/move-file",
+      "id": "@npmcli/move-file (deprecation)",
+      "severity": "moderate",
+      "issue": "This functionality has been moved to @npmcli/fs",
+      "url": ""
+    },
+    {
+      "pkg": "adm-zip",
+      "id": "1123686",
+      "severity": "high",
+      "issue": "adm-zip: Crafted ZIP file triggers 4GB memory allocation",
+      "url": "https://github.com/advisories/GHSA-xcpc-8h2w-3j85"
+    },
+    {
+      "pkg": "ajv",
+      "id": "1113714",
+      "severity": "moderate",
+      "issue": "ajv has ReDoS when using `$data` option",
+      "url": "https://github.com/advisories/GHSA-2g4f-4pwh-qvx6"
+    },
+    {
+      "pkg": "are-we-there-yet",
+      "id": "are-we-there-yet (deprecation)",
+      "severity": "moderate",
+      "issue": "This package is no longer supported.",
+      "url": ""
+    },
+    {
+      "pkg": "boolean",
+      "id": "boolean (deprecation)",
+      "severity": "moderate",
+      "issue": "Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.",
+      "url": ""
+    },
+    {
+      "pkg": "electron",
+      "id": "1107272",
+      "severity": "moderate",
+      "issue": "Electron has ASAR Integrity Bypass via resource modification",
+      "url": "https://github.com/advisories/GHSA-vmqv-hx8q-j7mg"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116041",
+      "severity": "moderate",
+      "issue": "Electron: AppleScript injection in app.moveToApplicationsFolder on macOS",
+      "url": "https://github.com/advisories/GHSA-5rqw-r77c-jp79"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116045",
+      "severity": "moderate",
+      "issue": "Electron: Service worker can spoof executeJavaScript IPC replies",
+      "url": "https://github.com/advisories/GHSA-xj5x-m3f3-5x3h"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116049",
+      "severity": "moderate",
+      "issue": "Electron: Incorrect origin passed to permission request handler for iframe requests",
+      "url": "https://github.com/advisories/GHSA-r5p7-gp4j-qhrx"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116053",
+      "severity": "moderate",
+      "issue": "Electron: Out-of-bounds read in second-instance IPC on macOS and Linux",
+      "url": "https://github.com/advisories/GHSA-3c8v-cfp5-9885"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116057",
+      "severity": "moderate",
+      "issue": "Electron: nodeIntegrationInWorker not correctly scoped in shared renderer processes",
+      "url": "https://github.com/advisories/GHSA-xwr5-m59h-vwqr"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116060",
+      "severity": "high",
+      "issue": "Electron: Use-after-free in offscreen child window paint callback",
+      "url": "https://github.com/advisories/GHSA-532v-xpq5-8h95"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116064",
+      "severity": "moderate",
+      "issue": "Electron: Registry key path injection in app.setAsDefaultProtocolClient on Windows",
+      "url": "https://github.com/advisories/GHSA-mwmh-mq4g-g6gr"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116068",
+      "severity": "moderate",
+      "issue": "Electron: Use-after-free in download save dialog callback",
+      "url": "https://github.com/advisories/GHSA-9w97-2464-8783"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116072",
+      "severity": "high",
+      "issue": "Electron: Use-after-free in WebContents fullscreen, pointer-lock, and keyboard-lock permission callbacks",
+      "url": "https://github.com/advisories/GHSA-8337-3p73-46f4"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116076",
+      "severity": "high",
+      "issue": "Electron: Use-after-free in PowerMonitor on Windows and macOS",
+      "url": "https://github.com/advisories/GHSA-jjp3-mq3x-295m"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116084",
+      "severity": "low",
+      "issue": "Electron: Unquoted executable path in app.setLoginItemSettings on Windows",
+      "url": "https://github.com/advisories/GHSA-jfqx-fxh3-c62j"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116088",
+      "severity": "moderate",
+      "issue": "Electron: HTTP Response Header Injection in custom protocol handlers and webRequest",
+      "url": "https://github.com/advisories/GHSA-4p4r-m79c-wq3v"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116092",
+      "severity": "low",
+      "issue": "Electron: USB device selection not validated against filtered device list",
+      "url": "https://github.com/advisories/GHSA-9899-m83m-qhpj"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116111",
+      "severity": "low",
+      "issue": "Electron: Use-after-free in offscreen shared texture release() callback",
+      "url": "https://github.com/advisories/GHSA-8x5q-pvf5-64mp"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116259",
+      "severity": "low",
+      "issue": "Electron: Crash in clipboard.readImage() on malformed clipboard image data",
+      "url": "https://github.com/advisories/GHSA-f37v-82c4-4x64"
+    },
+    {
+      "pkg": "electron",
+      "id": "1116320",
+      "severity": "moderate",
+      "issue": "Electron: Named window.open targets not scoped to the opener's browsing context",
+      "url": "https://github.com/advisories/GHSA-f3pv-wv63-48x8"
+    },
+    {
+      "pkg": "electron",
+      "id": "1117459",
+      "severity": "high",
+      "issue": "Electron: Renderer command-line switch injection via undocumented commandLineSwitches webPreference",
+      "url": "https://github.com/advisories/GHSA-9wfr-w7mm-pc7f"
+    },
+    {
+      "pkg": "esbuild",
+      "id": "1102341",
+      "severity": "moderate",
+      "issue": "esbuild enables any website to send any requests to the development server and read the response",
+      "url": "https://github.com/advisories/GHSA-67mh-4wv8-2f99"
+    },
+    {
+      "pkg": "esbuild",
+      "id": "1120680",
+      "severity": "low",
+      "issue": "esbuild allows arbitrary file read when running the development server on Windows",
+      "url": "https://github.com/advisories/GHSA-g7r4-m6w7-qqqr"
+    },
+    {
+      "pkg": "eslint",
+      "id": "eslint (deprecation)",
+      "severity": "moderate",
+      "issue": "This version is no longer supported. Please see https://eslint.org/version-support for other options.",
+      "url": ""
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1117870",
+      "severity": "high",
+      "issue": "fast-uri vulnerable to path traversal via percent-encoded dot segments",
+      "url": "https://github.com/advisories/GHSA-q3j6-qgpj-74h6"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1117884",
+      "severity": "high",
+      "issue": "fast-uri vulnerable to host confusion via percent-encoded authority delimiters",
+      "url": "https://github.com/advisories/GHSA-v39h-62p7-jpjc"
+    },
+    {
+      "pkg": "fastify",
+      "id": "1112876",
+      "severity": "low",
+      "issue": "Fastify Vulnerable to DoS via Unbounded Memory Allocation in sendWebStream",
+      "url": "https://github.com/advisories/GHSA-mrq3-vjjr-p77c"
+    },
+    {
+      "pkg": "fastify",
+      "id": "1112877",
+      "severity": "high",
+      "issue": "Fastify's Content-Type header tab character allows body validation bypass",
+      "url": "https://github.com/advisories/GHSA-jx2c-rxcm-jvmq"
+    },
+    {
+      "pkg": "fastify",
+      "id": "1115367",
+      "severity": "moderate",
+      "issue": "fastify: request.protocol and request.host Spoofable via X-Forwarded-Proto/Host from Untrusted Connections",
+      "url": "https://github.com/advisories/GHSA-444r-cwp2-x5xf"
+    },
+    {
+      "pkg": "file-type",
+      "id": "1114301",
+      "severity": "moderate",
+      "issue": "file-type affected by infinite loop in ASF parser on malformed input with zero-size sub-header",
+      "url": "https://github.com/advisories/GHSA-5v7r-6r5c-r473"
+    },
+    {
+      "pkg": "file-type",
+      "id": "1114726",
+      "severity": "moderate",
+      "issue": "file-type: ZIP Decompression Bomb DoS via [Content_Types].xml entry",
+      "url": "https://github.com/advisories/GHSA-j47w-4g3g-c36v"
+    },
+    {
+      "pkg": "gauge",
+      "id": "gauge (deprecation)",
+      "severity": "moderate",
+      "issue": "This package is no longer supported.",
+      "url": ""
+    },
+    {
+      "pkg": "glob",
+      "id": "glob (deprecation)",
+      "severity": "moderate",
+      "issue": "Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me",
+      "url": ""
+    },
+    {
+      "pkg": "inflight",
+      "id": "inflight (deprecation)",
+      "severity": "moderate",
+      "issue": "This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.",
+      "url": ""
+    },
+    {
+      "pkg": "js-yaml",
+      "id": "1112715",
+      "severity": "moderate",
+      "issue": "js-yaml has prototype pollution in merge (<<)",
+      "url": "https://github.com/advisories/GHSA-mh29-5h37-fv8m"
+    },
+    {
+      "pkg": "js-yaml",
+      "id": "1121859",
+      "severity": "moderate",
+      "issue": "JS-YAML: Quadratic-complexity DoS in merge key handling via repeated aliases",
+      "url": "https://github.com/advisories/GHSA-h67p-54hq-rp68"
+    },
+    {
+      "pkg": "js-yaml",
+      "id": "1121860",
+      "severity": "moderate",
+      "issue": "JS-YAML: Quadratic-complexity DoS in merge key handling via repeated aliases",
+      "url": "https://github.com/advisories/GHSA-h67p-54hq-rp68"
+    },
+    {
+      "pkg": "lodash",
+      "id": "1115806",
+      "severity": "high",
+      "issue": "lodash vulnerable to Code Injection via `_.template` imports key names",
+      "url": "https://github.com/advisories/GHSA-r5fr-rjxr-66jc"
+    },
+    {
+      "pkg": "lodash",
+      "id": "1115810",
+      "severity": "moderate",
+      "issue": "lodash vulnerable to Prototype Pollution via array path bypass in `_.unset` and `_.omit`",
+      "url": "https://github.com/advisories/GHSA-f23m-r3pf-42rh"
+    },
+    {
+      "pkg": "lodash",
+      "id": "1120370",
+      "severity": "moderate",
+      "issue": "Lodash has Prototype Pollution Vulnerability in `_.unset` and `_.omit` functions",
+      "url": "https://github.com/advisories/GHSA-xxjr-mmjv-4gpg"
+    },
+    {
+      "pkg": "lodash.get",
+      "id": "lodash.get (deprecation)",
+      "severity": "moderate",
+      "issue": "This package is deprecated. Use the optional chaining (?.) operator instead.",
+      "url": ""
+    },
+    {
+      "pkg": "lodash.isequal",
+      "id": "lodash.isequal (deprecation)",
+      "severity": "moderate",
+      "issue": "This package is deprecated. Use require('node:util').isDeepStrictEqual instead.",
+      "url": ""
+    },
+    {
+      "pkg": "minimatch",
+      "id": "1113459",
+      "severity": "high",
+      "issue": "minimatch has a ReDoS via repeated wildcards with non-matching literal in pattern",
+      "url": "https://github.com/advisories/GHSA-3ppc-4f35-3m26"
+    },
+    {
+      "pkg": "minimatch",
+      "id": "1113538",
+      "severity": "high",
+      "issue": "minimatch has ReDoS: matchOne() combinatorial backtracking via multiple non-adjacent GLOBSTAR segments",
+      "url": "https://github.com/advisories/GHSA-7r86-cg39-jmmj"
+    },
+    {
+      "pkg": "minimatch",
+      "id": "1113546",
+      "severity": "high",
+      "issue": "minimatch ReDoS: nested *() extglobs generate catastrophically backtracking regular expressions",
+      "url": "https://github.com/advisories/GHSA-23c5-xmqv-rm74"
+    },
+    {
+      "pkg": "music-metadata",
+      "id": "1114969",
+      "severity": "high",
+      "issue": "music-metadata has an infinite loop vulnerability in ASF parser",
+      "url": "https://github.com/advisories/GHSA-v6c2-xwv6-8xf7"
+    },
+    {
+      "pkg": "npmlog",
+      "id": "npmlog (deprecation)",
+      "severity": "moderate",
+      "issue": "This package is no longer supported.",
+      "url": ""
+    },
+    {
+      "pkg": "path-to-regexp",
+      "id": "1115527",
+      "severity": "high",
+      "issue": "path-to-regexp vulnerable to Regular Expression Denial of Service via multiple route parameters",
+      "url": "https://github.com/advisories/GHSA-37ch-88jc-xwx2"
+    },
+    {
+      "pkg": "prebuild-install",
+      "id": "prebuild-install (deprecation)",
+      "severity": "moderate",
+      "issue": "No longer maintained. Please contact the author of the relevant native addon; alternatives are available.",
+      "url": ""
+    },
+    {
+      "pkg": "puppeteer",
+      "id": "puppeteer (deprecation)",
+      "severity": "moderate",
+      "issue": "< 24.15.0 is no longer supported",
+      "url": ""
+    },
+    {
+      "pkg": "qs",
+      "id": "1113161",
+      "severity": "low",
+      "issue": "qs's arrayLimit bypass in comma parsing allows denial of service",
+      "url": "https://github.com/advisories/GHSA-w7fw-mjwx-w883"
+    },
+    {
+      "pkg": "qs",
+      "id": "1113719",
+      "severity": "moderate",
+      "issue": "qs's arrayLimit bypass in its bracket notation allows DoS via memory exhaustion",
+      "url": "https://github.com/advisories/GHSA-6rw7-vpxm-498p"
+    },
+    {
+      "pkg": "qs",
+      "id": "1119502",
+      "severity": "moderate",
+      "issue": "qs has a remotely triggerable DoS: qs.stringify crashes with TypeError on null/undefined entries in comma-format arrays when encodeValuesOnly is set",
+      "url": "https://github.com/advisories/GHSA-q8mj-m7cp-5q26"
+    },
+    {
+      "pkg": "rimraf",
+      "id": "rimraf (deprecation)",
+      "severity": "moderate",
+      "issue": "Rimraf versions prior to v4 are no longer supported",
+      "url": ""
+    },
+    {
+      "pkg": "tar",
+      "id": "1112659",
+      "severity": "high",
+      "issue": "node-tar Vulnerable to Arbitrary File Creation/Overwrite via Hardlink Path Traversal",
+      "url": "https://github.com/advisories/GHSA-34x7-hfp2-rc4v"
+    },
+    {
+      "pkg": "tar",
+      "id": "1113300",
+      "severity": "high",
+      "issue": "node-tar is Vulnerable to Arbitrary File Overwrite and Symlink Poisoning via Insufficient Path Sanitization",
+      "url": "https://github.com/advisories/GHSA-8qq5-rm4j-mr97"
+    },
+    {
+      "pkg": "tar",
+      "id": "1113375",
+      "severity": "high",
+      "issue": "Arbitrary File Read/Write via Hardlink Target Escape Through Symlink Chain in node-tar Extraction",
+      "url": "https://github.com/advisories/GHSA-83g3-92jg-28cx"
+    },
+    {
+      "pkg": "tar",
+      "id": "1114200",
+      "severity": "high",
+      "issue": "tar has Hardlink Path Traversal via Drive-Relative Linkpath",
+      "url": "https://github.com/advisories/GHSA-qffp-2rhf-9h96"
+    },
+    {
+      "pkg": "tar",
+      "id": "1114302",
+      "severity": "high",
+      "issue": "node-tar Symlink Path Traversal via Drive-Relative Linkpath",
+      "url": "https://github.com/advisories/GHSA-9ppj-qmqm-q256"
+    },
+    {
+      "pkg": "tar",
+      "id": "1114680",
+      "severity": "high",
+      "issue": "Race Condition in node-tar Path Reservations via Unicode Ligature Collisions on macOS APFS",
+      "url": "https://github.com/advisories/GHSA-r6q2-hw4h-h46w"
+    },
+    {
+      "pkg": "tar",
+      "id": "1120782",
+      "severity": "moderate",
+      "issue": "node-tar applies PAX size override to intermediary GNU long-name/long-link headers, causing tar parser interpretation differential (file smuggling)",
+      "url": "https://github.com/advisories/GHSA-vmf3-w455-68vh"
+    },
+    {
+      "pkg": "turbo",
+      "id": "1119389",
+      "severity": "low",
+      "issue": "Turbo: Unexpected local code execution during Yarn Berry detection",
+      "url": "https://github.com/advisories/GHSA-3qcw-2rhx-2726"
+    },
+    {
+      "pkg": "turbo",
+      "id": "1121861",
+      "severity": "moderate",
+      "issue": "Turbo: Login callback CSRF/session fixation",
+      "url": "https://github.com/advisories/GHSA-hcf7-66rw-9f5r"
+    },
+    {
+      "pkg": "uuid",
+      "id": "1119441",
+      "severity": "moderate",
+      "issue": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+      "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq"
+    },
+    {
+      "pkg": "vite",
+      "id": "1116229",
+      "severity": "moderate",
+      "issue": "Vite Vulnerable to Path Traversal in Optimized Deps `.map` Handling",
+      "url": "https://github.com/advisories/GHSA-4w7w-66w2-5vf9"
+    },
+    {
+      "pkg": "vite",
+      "id": "1120784",
+      "severity": "moderate",
+      "issue": "launch-editor: NTLMv2 hash disclosure via UNC path handling on Windows",
+      "url": "https://github.com/advisories/GHSA-v6wh-96g9-6wx3"
+    },
+    {
+      "pkg": "vite",
+      "id": "1123525",
+      "severity": "high",
+      "issue": "vite: `server.fs.deny` bypass on Windows alternate paths",
+      "url": "https://github.com/advisories/GHSA-fx2h-pf6j-xcff"
+    },
+    {
+      "pkg": "vitest",
+      "id": "1120126",
+      "severity": "critical",
+      "issue": "When Vitest UI server is listening, arbitrary file can be read and executed",
+      "url": "https://github.com/advisories/GHSA-5xrq-8626-4rwp"
+    },
+    {
+      "pkg": "vue-template-compiler",
+      "id": "1111772",
+      "severity": "moderate",
+      "issue": "vue-template-compiler vulnerable to client-side Cross-Site Scripting (XSS)",
+      "url": "https://github.com/advisories/GHSA-g3ch-rx76-35fx"
+    },
+    {
+      "pkg": "whatwg-encoding",
+      "id": "whatwg-encoding (deprecation)",
+      "severity": "moderate",
+      "issue": "Use @exodus/bytes instead for a more spec-conformant and faster implementation",
+      "url": ""
+    }
+  ]
+}

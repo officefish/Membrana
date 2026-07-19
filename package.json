@@ -117,8 +117,8 @@
     "main-day-issue": "node scripts/main-day-issue.mjs",
     "main-day-issue:dry": "node scripts/main-day-issue.mjs --dry-run",
     "main-day-issue:full": "node scripts/main-day-issue.mjs --full",
-    "ritual:day": "node scripts/morning-care.mjs && node scripts/plan-week-if-monday.mjs && node scripts/strategy-day.mjs && node scripts/daily-standup.mjs && node scripts/main-day-probe.mjs && node scripts/main-day-issue.mjs",
-    "ritual:evening": "node scripts/archive-night-hunt-artifacts.mjs && node scripts/archive-daily-day-artifacts.mjs && node scripts/truth.mjs cool && node scripts/rag-evening-index.mjs && (node scripts/insight-drift.mjs || true) && (node scripts/code-review.mjs || true) && (node scripts/archive-daily-code-review.mjs || true) && node scripts/audit-evening.mjs && node scripts/ritual-evening-tail.mjs",
+    "ritual:day": "node scripts/morning-care.mjs && (node scripts/deps-watch.mjs --mode morning || true) && node scripts/plan-week-if-monday.mjs && node scripts/strategy-day.mjs && node scripts/daily-standup.mjs && node scripts/main-day-probe.mjs && node scripts/main-day-issue.mjs",
+    "ritual:evening": "node scripts/archive-night-hunt-artifacts.mjs && node scripts/archive-daily-day-artifacts.mjs && node scripts/truth.mjs cool && node scripts/rag-evening-index.mjs && (node scripts/insight-drift.mjs || true) && (node scripts/code-review.mjs || true) && (node scripts/archive-daily-code-review.mjs || true) && (node scripts/deps-watch.mjs --mode evening || true) && node scripts/audit-evening.mjs && node scripts/ritual-evening-tail.mjs",
     "ritual:evening:local": "yarn archive:daily-day && yarn ensure-ollama && yarn local-code-review && yarn save-code-review && yarn task:close-github",
     "night:open": "node scripts/night-build-open.mjs",
     "night:run": "node scripts/night-build-run-phase.mjs",
@@ -289,6 +289,7 @@
     "docs:verify-canon": "node scripts/verify-docs-canon.mjs",
     "research": "node scripts/research.mjs",
     "meeting:status": "node scripts/meeting-status.mjs",
+    "deps:watch": "node scripts/deps-watch.mjs",
     "meeting:audit": "node scripts/meeting-audit.mjs",
     "branch:check-base": "node scripts/branch-base-freshness.mjs"
   },
