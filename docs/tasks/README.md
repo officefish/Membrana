@@ -244,6 +244,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `rag-openai-proxy-geo` | RAG OpenAI embedder via proxy (geo-403) | 2026-07-19 | [`RAG_OPENAI_PROXY_GEO_PROMPT.md`](../docs/prompts/RAG_OPENAI_PROXY_GEO_PROMPT.md) | #593 (Issue открыт) | [карточка](./archive/rag-openai-proxy-geo.md) |
 | `pr-ship-worktree-merge` | pr:ship — ci-wait перед merge, без --delete-branch (спринт 5, задним числом по токену T1) | 2026-07-19 | [`PR_SHIP_WORKTREE_MERGE_PROMPT.md`](../docs/prompts/PR_SHIP_WORKTREE_MERGE_PROMPT.md) | #653 (Issue открыт) | [карточка](./archive/pr-ship-worktree-merge.md) |
 | `net-http-probe` | net:http — HTTP-проба произвольного URL через прокси с классификацией ответа | 2026-07-19 | [`NET_HTTP_PROBE_PROMPT.md`](../docs/prompts/NET_HTTP_PROBE_PROMPT.md) | #595 (Issue открыт) | [карточка](./archive/net-http-probe.md) |
 | `truth-mint` | truth mint — писатель токенов: валидация ядром, отказ на дубль, dry-run по умолчанию | 2026-07-19 | [`TRUTH_MINT_PROMPT.md`](../docs/prompts/TRUTH_MINT_PROMPT.md) | #642 (Issue открыт) | [карточка](./archive/truth-mint.md) |
