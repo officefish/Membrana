@@ -25,6 +25,7 @@ const MAX_TEMP_FILE_CHARS = 12_000;
 const MAX_TEMP_TOTAL_CHARS = 36_000;
 const MAX_ISSUE_BODY_CHARS = 1_200;
 
+import { assertReviewInputFresh } from './lib/artifact-freshness.mjs';
 import {
   buildDetectionPlanningConstraintsBullets,
   FFT_METRICS_POTENTIAL_AND_LIMITS_REL,
@@ -378,8 +379,24 @@ function buildTaskPrompt({ outputRel, issueCount, tempFileCount, routingBlock })
 /**
  * @param {{ full: boolean, dryRun: boolean, issueLimit: number, outputPath: string, commandName: string }} options
  */
+/** RT-9: если вчерашнее ревью на диске — штамп не старше 1 дня. Отсутствие файла — ок (optional). */
+export function guardDailyCodeReviewInput(today = new Date().toISOString().slice(0, 10)) {
+  const rel = 'docs/DAILY_CODE_REVIEW.md';
+  const abs = resolve(process.cwd(), rel);
+  if (!existsSync(abs)) return;
+  assertReviewInputFresh(readFileSync(abs, 'utf8'), { today, label: rel, maxAgeDays: 1 });
+}
+
 export async function runDailyStandup(options) {
   loadDotEnv();
+
+  try {
+    guardDailyCodeReviewInput();
+  } catch (err) {
+    console.error(err instanceof Error ? err.message : String(err));
+    process.exitCode = err && typeof err === 'object' && 'exitCode' in err ? Number(err.exitCode) || 2 : 2;
+    return;
+  }
 
   const { blocks: docBlocks, missingRequired } = collectDocInputs();
   if (missingRequired.length > 0) {
