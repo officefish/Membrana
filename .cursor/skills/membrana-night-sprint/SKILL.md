@@ -14,18 +14,20 @@ description: >-
 ## Lifecycle
 
 ```
-yarn ritual:evening → night:open → ДЕЛЕГИРОВАТЬ фоновому субагенту (NB0…NBn + checkpoint + close + HANDOFF) → morning: верифицировать HANDOFF → merge
+yarn ritual:evening → night:open → always-yes:on → ДЕЛЕГИРОВАТЬ субагенту (NB0…NBn + checkpoint + close + HANDOFF)
+  → morning: HANDOFF → yarn night:land-reports (dry-run → слово владельца → --execute) → review/merge code-epic PR
 ```
 
 ## Delegated execution (default, ADR-0009)
 
-Фазы NB0…NBn исполняет **делегированный фоновый субагент**, а не координатор. После
-`night:open` → **`yarn always-yes:on`** (scoped auto-yes, Р7; скилл
-[`membrana-always-yes`](../membrana-always-yes/SKILL.md)) → спавни субагент
-(`run_in_background`, `isolation: worktree`) с epic-промптом; он **наследует профиль
-разрешений** и автономно проходит фазы, чекпойнтит, пишет HANDOFF. Координатор
-получает уведомление, **верифицирует HANDOFF утром** (не мёржит вслепую), затем
-`yarn always-yes:off`.
+Фазы NB0…NBn исполняет **делегированный фоновый субагент**, а не координатор.
+**Перед спавном** обязательно **`yarn always-yes:on`** (scoped auto-yes, Р7; скилл
+[`membrana-always-yes`](../membrana-always-yes/SKILL.md)) — иначе субагент упрётся
+в confirm на каждой команде. Затем: `night:open` (если ещё не открыт) → спавни
+субагент (`run_in_background`, `isolation: worktree`) с epic-промптом; он
+**наследует профиль разрешений** и автономно проходит фазы, чекпойнтит, пишет
+HANDOFF. Координатор получает уведомление, **верифицирует HANDOFF утром** (не
+мёржит вслепую), затем `yarn always-yes:off`.
 
 Гардрейлы: **Р2** промпт эпика = контракт (фазы+DoD+жёсткие инварианты+вердикт
 консилиума/ADR); **Р3** human-in-loop (визуальная оценка, живой смоук) → владельцу,
@@ -39,9 +41,13 @@ yarn ritual:evening → night:open → ДЕЛЕГИРОВАТЬ фоновому
 ## Commands
 
 ```bash
+yarn always-yes:on          # ДО спавна субагента (ADR-0009 Р7)
 yarn night:open --id <epic-id>
 yarn night:checkpoint --phase NB0 --status pass --note "lint green"
 yarn night:close --id <epic-id>
+yarn night:land-reports              # утро: dry-run docs-report cascade
+yarn night:land-reports --execute    # после «да» владельца
+yarn always-yes:off         # после утренней верификации
 ```
 
 ## Artifacts
@@ -66,4 +72,8 @@ yarn night:close --id <epic-id>
 
 ## Morning after close
 
-Read handoff → `yarn ritual:day` → review/merge PR.
+1. Read HANDOFF.
+2. `yarn night:land-reports` (dry-run) → owner «да» → `--execute` — приземлить
+   eligible night-triage draft PR (allowlist `docs/reports/night-triage/**`).
+3. `yarn ritual:day` → adversarial review/merge code-epic PR `night/*`.
+4. `yarn always-yes:off` если день без авто-yes.

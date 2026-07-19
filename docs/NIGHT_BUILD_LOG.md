@@ -12,3 +12,11 @@
 ## Checkpoint NB2 — 2026-07-19T20:27:44.489Z
 - Status: **pass**
 - Note: yarn night:land-reports + pure lib + 7 unit tests; dry-run default
+
+## Checkpoint NB3 — 2026-07-19T20:29:56.999Z
+- Status: **pass**
+- Note: DEVELOPER_RHYTHM morning land-reports + skill always-yes:on before spawn
+
+## Checkpoint NB4 — 2026-07-19T20:29:57.952Z
+- Status: **pass**
+- Note: analysis linked from regulation v1.3 (already on branch)
