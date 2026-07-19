@@ -1,6 +1,38 @@
 {
   "tasks": [
     {
+      "id": "linear-agent-identity-facts",
+      "title": "Ресёрч: Linear — личность агента, состояние подзадач, блокирующие связи",
+      "promptPath": "docs/prompts/LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md",
+      "githubIssue": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": null,
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "meeting-registry-relocation",
+      "title": "Заседание: переезд реестра задач на внешний стек (Linear)",
+      "promptPath": "docs/prompts/MEETING_REGISTRY_RELOCATION_PROMPT.md",
+      "githubIssue": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "agent-ci-gate-tooling",
       "title": "Агентский тулинг: pr:wait + грабли (конфликт блокирует CI, tail в фоне, short-path)",
       "promptPath": "docs/prompts/AGENT_CI_GATE_TOOLING_PROMPT.md",

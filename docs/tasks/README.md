@@ -18,6 +18,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `linear-agent-identity-facts` | Ресёрч: Linear — личность агента, состояние подзадач, блокирующие связи | S | [`LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md`](../docs/prompts/LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md) | — |
+| `meeting-registry-relocation` | Заседание: переезд реестра задач на внешний стек (Linear) | L | [`MEETING_REGISTRY_RELOCATION_PROMPT.md`](../docs/prompts/MEETING_REGISTRY_RELOCATION_PROMPT.md) | — |
 | `agent-ci-gate-tooling` | Агентский тулинг: pr:wait + грабли (конфликт блокирует CI, tail в фоне, short-path) | S | [`AGENT_CI_GATE_TOOLING_PROMPT.md`](../docs/prompts/AGENT_CI_GATE_TOOLING_PROMPT.md) | [#643](https://github.com/officefish/Membrana/issues/643) |
 | `truth-minting-tooling` | Тулинг графа правды: ask-check, mint, utterance | S | [`TRUTH_MINTING_TOOLING_PROMPT.md`](../docs/prompts/TRUTH_MINTING_TOOLING_PROMPT.md) | [#642](https://github.com/officefish/Membrana/issues/642) |
 | `meeting-team-execution-contour` | Заседание: контур исполнения виртуальной команды (контур 2) | L | [`MEETING_TEAM_EXECUTION_CONTOUR_PROMPT.md`](../docs/prompts/MEETING_TEAM_EXECUTION_CONTOUR_PROMPT.md) | — |
