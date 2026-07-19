@@ -803,17 +803,17 @@
       "promptPath": "docs/prompts/RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md",
       "githubIssue": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-16",
-      "archivedAt": null,
+      "archivedAt": "2026-07-19",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "rodchenko"
       ],
       "notes": "Эпик #539, консилиум rt8-loose-ends. Находка 5 расследования: || true в ritual:evening глотает сбой code-review (15.07 фолбэк без кредита отдал 127, незамечено), downstream не проверяет дату DAILY_CODE_REVIEW.md. Фикс: isFresh(artifact)=dateOf(artifact)===today, dateOf из фронтматтера (не mtime — недетерминирован при checkout), today инъекцией параметром. NON_CRITICAL_STEPS явным массивом — всё вне списка теряет || true и падает громко. downstream (standup/main-day-issue) проверяет свежесть на входе, падает явно с читаемым «устарел на N дн», не голый 127. Тест обоих путей: свежий проходит, вчерашний падает. Родня rt-5.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #665 — dateOf/isFresh + morning age<=1 + ritual:evening без || true на code-review",
       "githubIssueClosedAt": null
     },
     {
