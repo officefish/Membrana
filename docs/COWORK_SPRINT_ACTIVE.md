@@ -2,12 +2,12 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` — Phase 0 (brief готов, ветки нарезаются), резка ждёт LGTM владельца |
+| **status** | `open` — Phase 1 Concept; резка подтверждена владельцем 2026-07-19 |
 | sprintId | `cowork-execution-registry` |
 | Brief | [`docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md) |
 | Вход | [`HANDOFF_2026-07-19_COWORK.md`](./HANDOFF_2026-07-19_COWORK.md) — свод эпиков двух заседаний 19.07 |
 | blocks | `lead-persona` · `units-trace-measure` · `snapshot-cold-migration` |
-| baseBranch / BASE_SHA | `fix/adr-0013-accepted` / фиксируется при `cowork:open` |
+| baseBranch / BASE_SHA | `fix/adr-0013-accepted` / `221d7801` |
 | Координатор | Vesnin (Teamlead) |
 | integration deadline (fallback) | 2026-07-21 |
 | Формат | Cowork Sprint v1.0 — [регламент](./COWORK_SPRINT_REGULATION.md) |
@@ -16,8 +16,8 @@
 
 | Фаза | Статус |
 |------|--------|
-| 0 — Brief + open | **в работе** |
-| 1 — Concept (CONCEPT.md + первый EXPECTATIONS.md) | — |
+| 0 — Brief + open | закрыта 2026-07-19 (BASE_SHA `221d7801`, LGTM владельца) |
+| 1 — Concept (CONCEPT.md + первый EXPECTATIONS.md) | **в работе** |
 | 2 — Isolated build (собственный DoD на стабах) | — |
 | 3 — Interface Consilium → INTERFACE_CONTRACT.md | — |
 | 4 — Integration (ветка `cowork/cowork-execution-registry/integration`) | — |

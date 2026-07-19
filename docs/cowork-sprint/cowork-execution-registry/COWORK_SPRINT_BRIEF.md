@@ -7,7 +7,7 @@
 | baseBranch | `fix/adr-0013-accepted` (актуальная магистраль дня; эпики обоих заседаний живут в ней) |
 | blocks | `lead-persona`, `units-trace-measure`, `snapshot-cold-migration` |
 | integration deadline | 2026-07-21 (fallback-гейт; основной гейт — событийный) |
-| LGTM Product | владелец — **ожидает подтверждения резки в чате** |
+| LGTM Product | владелец — резка подтверждена 2026-07-19 в чате |
 | Координатор | Vesnin (Teamlead) |
 | Формат | Cowork Sprint v1.0 — [регламент](../../COWORK_SPRINT_REGULATION.md) |
 
