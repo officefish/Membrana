@@ -6,16 +6,16 @@
       "promptPath": "docs/prompts/INTERN_T1_OUTBOUND_SELF_CHECK_PROMPT.md",
       "githubIssue": 195,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
+      "archivedAt": "2026-07-19",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "docs/intern вертикаль; DoD #195: сводка 4 эндпоинтов без ключей, таймаут не роняет",
-      "archiveNotes": null,
+      "archiveNotes": "PR #666 — yarn office:self-check, lib outbound-self-check, Closes #195",
       "githubIssueClosedAt": null
     },
     {
