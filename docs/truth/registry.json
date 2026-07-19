@@ -852,7 +852,7 @@
           "id": "review-was-author-invoked",
           "cmd": "grep -n 'anthropicPost' scripts/code-review.mjs && gh pr view 580 --json author,mergedBy",
           "expect": "code-review.mjs вызывает LLM; автор PR, заказчик ревью и мёржер — один агент",
-          "verified": "2026-07-18",
+          "verified": "2026-07-19",
           "note": "#580 и #564 — прогоны yarn code-review:pr, запущенные автором на собственном коде. #571 смёржен вообще без ревью. Предел: прочитаны импорты и место вызова, весь скрипт и его промпт — нет. [18.07] Перепрогнан на кристаллизации: anthropicPost на месте (2 вхождения), PR #580 author=officefish, mergedBy=officefish — автор и мёржер один, claim держится. Факт исторический (мёржи 17.07), контраст с 18.07 — см. review-legitimacy-restored-18-07.",
           "touches": [
             "scripts/code-review.mjs",
@@ -1853,15 +1853,15 @@
       "predicates": [
         {
           "id": "revocation-lost-in-union-merge",
-          "cmd": "node -e \"const t=require('./docs/truth/registry.json').tokens.find(x=>x.id==='todays-ritual-will-demo-c1'); console.log(t.status, !!t.revokedBecause)\" && git log --oneline -S revokedBecause -- docs/truth/registry.json | head -2",
-          "expect": "до починки: active + false, при этом в истории есть коммит с revokedBecause (491e5f36) — отзыв был и пропал",
-          "verified": "2026-07-18",
+          "cmd": "git log --oneline -S revokedBecause -- docs/truth/registry.json | head -3",
+          "expect": "история реестра содержит и потерю, и восстановление отзыва (2fabb6ab восстановил после 491e5f36) — эпизод потери был, ущерб починен; текущее состояние revoked+revokedBecause",
+          "verified": "2026-07-19",
           "cost": "миллисекунды",
           "touches": [
             "docs/truth/registry.json",
             "scripts/registry-merge-driver.mjs"
           ],
-          "note": "После ручного восстановления 18.07 токен снова revoked; предикат документирует МЕХАНИЗМ потери, а не текущее состояние. Проверять на следующем union-мёрже."
+          "note": "Переформулировка 19.07 после починки 2fabb6ab, НЕ переверификация исходного expect: старый проверял текущее состояние (до починки) и после восстановления отзыва перестал воспроизводить условие; новый проверяет git-историю эпизода."
         }
       ],
       "revocation": {
@@ -2180,6 +2180,157 @@
       "status": "active",
       "supersededBy": null,
       "episode": "Пара 3 фазы 2. Бьёт по замыслу владельца добавить аудиту данные из сессий: даже с манифестами машина скажет «что сделано», но не «что висит». Разница не количественная. Смежное — #585 (журнал отправок): с ним вопрос про ласточку стал бы предикатом."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "s-tooling-sprint-card-required-prompt-optional",
+      "claim": "Для тулинг-спринта размера S карточка реестра обязательна (трекинг), полный task-промпт не нужен — issue с эпизодами достаточно.",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-19",
+        "utterance": {
+          "sessionId": "0bd5fbbc-6423-44eb-8a0f-a9786db684a6",
+          "uuid": "6db202a5-0e19-411e-afe4-c70a3e3e2f1e",
+          "timestamp": "2026-07-19T10:25:56.254Z",
+          "kind": "option-click",
+          "quote": "Вопрос: «Формат спринтов для тулинг-задач S — что это значит для карточки и промпта?» → выбран вариант «Карточка, промпт не нужен».",
+          "limit": "КЛИК ПО ВАРИАНТАМ АГЕНТА из трёх. Про не-тулинговые S-задачи не сказано; про M/L не сказано (там канон и так требует промпт). Эпизод-повод: спринт 5 (#653) прошёл Issue-only без карточки, спринты 1-4,6 — с карточкой И промптом; оба прочтения жили в одной сессии."
+        }
+      },
+      "revocation": {
+        "kind": "owner"
+      },
+      "episode": "Сессия 19.07: шесть тулинг-спринтов, разнобой формата между ними."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "kit-account-manager-deterministic-first",
+      "claim": "Аккаунт-менеджер тулинг-китов в первой итерации — детерминированный маппинг (kind + ключевые слова → кит) в task:register; LLM-персона-рекомендатель — вторая итерация, вводится по факту промахов маппинга.",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-19",
+        "utterance": {
+          "sessionId": "0bd5fbbc-6423-44eb-8a0f-a9786db684a6",
+          "uuid": "6d842e9f-d0bd-443a-be74-2d57b1f6e3f9",
+          "timestamp": "2026-07-19T10:27:58.115Z",
+          "kind": "option-click",
+          "quote": "Вопрос: «Аккаунт-менеджер, рекомендующий кит под задачу, — что это в твоём замысле?» → выбран вариант «Детерм. маппинг сначала».",
+          "limit": "КЛИК ПО ВАРИАНТАМ АГЕНТА из трёх (маппинг сначала / LLM-роль сразу / владелец сам). Где живёт маппинг кроме task:register (утренний ритуал?) — не уточнялось. Термин появился в реплике владельца 19.07; в репо до инсайта tooling-kits не встречался (греп по docs/scripts/.cursor)."
+        }
+      },
+      "revocation": {
+        "kind": "owner"
+      },
+      "episode": "Инсайт insight-tooling-kits встроил интерпретацию агента до подтверждения владельцем; клик подтвердил её."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "meta-work-precedes-product-magistral"
+      ],
+      "id": "kit-sprint-next-slot-token-beats-review",
+      "claim": "M-спринт первой итерации тулинг-китов берётся ближайшим рабочим слотом, впереди продуктовой магистрали: владельческий токен приоритета применяется и к выбору между мета-работами, рекомендация LLM-ревью («отложить на неделю») — совещательная.",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-19",
+        "utterance": {
+          "sessionId": "0bd5fbbc-6423-44eb-8a0f-a9786db684a6",
+          "uuid": "9043b737-27dc-4757-ac04-abc5a4e01b01",
+          "timestamp": "2026-07-19T10:29:28.604Z",
+          "kind": "option-click",
+          "quote": "Вопрос: «Что побеждает: токен «мета впереди магистрали» или рекомендация ревью «отложить на неделю»?» → выбран вариант «Токен побеждает — ближайший слот».",
+          "limit": "КЛИК ПО ВАРИАНТАМ АГЕНТА из трёх. «Ближайший слот» календарно не назван (завтра/понедельник — не сказано). Расширяет применение родительского токена на конфликт «мета vs мета+продукт», сам родитель этого случая не покрывал (его limit)."
+        }
+      },
+      "revocation": {
+        "kind": "parents"
+      },
+      "episode": "Тупик сессии 19.07: цикл инсайта закончен adopted, переход в спринт по времени не был определён; ask-check нашёл родительский токен на вопрос о приоритете."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "s-tooling-sprint-card-required-prompt-optional",
+        "kit-account-manager-deterministic-first"
+      ],
+      "id": "kit-mapping-covers-all-tooling-sprints",
+      "claim": "Точка рекомендации кита покрывает 100% тулинг-спринтов: карточка реестра обязательна у каждого тулинг-спринта, а маппинг аккаунт-менеджера срабатывает при регистрации карточки — следовательно, ни один тулинг-спринт не останется без рекомендованного кита.",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "конъюнкция",
+        "premisesUsed": [
+          "s-tooling-sprint-card-required-prompt-optional",
+          "kit-account-manager-deterministic-first"
+        ],
+        "note": "T1 даёт всеобщность карточки (для тулинг-работ), T2 ставит маппинг в task:register — точку создания карточки. Пересечение: каждый тулинг-спринт проходит через точку маппинга. Граница: не-тулинговые задачи вне вывода (limit T1)."
+      },
+      "revocation": {
+        "kind": "parents"
+      },
+      "episode": "Синтез пары T1+T2, кристаллизация 19.07."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "kit-account-manager-deterministic-first",
+        "kit-sprint-next-slot-token-beats-review"
+      ],
+      "id": "next-kit-sprint-has-no-llm-recommender",
+      "claim": "Ближайший kit-спринт не содержит LLM-рекомендателя: спринт ближайшего слота — это первая итерация, а первая итерация — детерминированный маппинг; LLM-персона вне его скоупа. Это гейт от расползания скоупа, выведенный, а не назначенный.",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "цепочка",
+        "premisesUsed": [
+          "kit-account-manager-deterministic-first",
+          "kit-sprint-next-slot-token-beats-review"
+        ],
+        "note": "T3: ближайший слот берёт первую итерацию M-спринта. T2: первая итерация = детерминированный маппинг, LLM — вторая по факту промахов. Следствие: включение LLM-роли в ближайший спринт противоречило бы владельческому слову."
+      },
+      "revocation": {
+        "kind": "parents"
+      },
+      "episode": "Синтез пары T2+T3, кристаллизация 19.07."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "s-tooling-sprint-card-required-prompt-optional"
+      ],
+      "id": "canon-s-row-updated-19-07",
+      "claim": "Строка канона TASK_PROMPT_WORKFLOW о размере S противоречила слову владельца 19.07 («допускается только Issue» против «карточка обязательна для тулинг-S») и приведена к слову тем же PR, что чеканит этот токен.",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "противоречие + починка",
+        "premisesUsed": [
+          "s-tooling-sprint-card-required-prompt-optional",
+          "predicate:canon-s-row-mentions-card"
+        ],
+        "note": "T1 требует карточку для тулинг-S; строка канона (204, редакция до 19.07) допускала Issue-only без карточки. Слово владельца первично над документом — канон правится, предикат проверяет починку."
+      },
+      "predicates": [
+        {
+          "id": "canon-s-row-mentions-card",
+          "cmd": "grep -n \"карточка реестра обязательна\" docs/prompts/TASK_PROMPT_WORKFLOW.md",
+          "expect": "строка таблицы размеров S упоминает обязательность карточки для тулинг-спринтов",
+          "cost": "миллисекунды — греп одного файла",
+          "touches": [
+            "docs/prompts/TASK_PROMPT_WORKFLOW.md"
+          ],
+          "verified": "2026-07-19"
+        }
+      ],
+      "revocation": {
+        "kind": "parents"
+      },
+      "episode": "Синтез T1 + строка канона, кристаллизация 19.07; канон правится этим же PR."
     }
   ],
   "openGaps": [

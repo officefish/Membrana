@@ -3,7 +3,8 @@ name: membrana-insight
 description: >-
   Membrana Insight process: capture strategic ideas in docs/insights/, Perplexity
   research cascade, five-role review (1–10), weekly plan weight. Use when user says
-  инсайт, insight, yarn insight:, save strategic idea, or insight create/research/review.
+  инсайт, insight, yarn insight:, save strategic idea, insight create/research/review,
+  or archive a proven implemented insight.
   Do NOT use for M/L task archive (membrana-task-lifecycle) or daily ritual (membrana-developer-rhythm).
 ---
 
@@ -33,6 +34,10 @@ description: >-
    - `yarn insight research <id> --dry-run` — только запросы для ручного/MCP
 4. **Review:** `yarn insight review <id>` — 5 ролей, оценки **1–10**, `REVIEW.md`
 5. **Close:** `yarn insight close <id> --status adopted|deferred|rejected`
+6. **Archive implementation:** сначала сверить task registry, `git worktree list` и
+   открытые PR; затем dry-run:
+   `yarn insight archive <id> --task <task-id> --result "…"`.
+   Только при доказанном завершении повторить с `--execute`.
 
 ## Team insights
 
@@ -48,6 +53,9 @@ yarn insight create graph-trace-contract --title "…" --source virtual-team-ozh
 
 - Инсайт **не** меняет `ritual:day` / `ritual:evening`.
 - `adopted` не создаёт task без LGTM Teamlead. Переход adopted→спринт: [`membrana-insight-to-sprint`](../membrana-insight-to-sprint/SKILL.md).
+- `adopted` не равно «сделано». Не архивировать по одному sprintPhase, ветке или
+  впечатлению. Нужны связанные archived task-id, отсутствие active task/PR/worktree
+  и фактический `--result`; INSIGHT/RESEARCH/REVIEW не удалять.
 - Для research в Cursor без API: вызови Perplexity MCP 3 раза, запиши в `RESEARCH.md`.
 - Пилоты спринта: см. `docs/insights/registry.json`.
 
@@ -60,6 +68,8 @@ yarn insight create my-slug --title "…" --source user
 yarn insight research insight-my-slug
 yarn insight review insight-my-slug
 yarn insight close insight-my-slug --status adopted
+yarn insight archive insight-my-slug --task task-id --result "Результат" # dry-run
+yarn insight archive insight-my-slug --task task-id --result "Результат" --execute
 ```
 
 ## Output format (virtual team review)

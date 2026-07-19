@@ -4,17 +4,13 @@
  * закрывается (иначе на Windows возможен assert libuv при выходе процесса).
  * Не логируйте значения переменных.
  */
-import { existsSync, readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { dirname, parse, resolve } from 'node:path';
 import { fetch as undiciFetch, ProxyAgent, Agent } from 'undici';
 
-export function resolveDotEnvPath(cwd = process.cwd()) {
-  const explicit = process.env.MEMBRANA_ENV_PATH?.trim();
-  if (explicit) {
-    const explicitPath = resolve(explicit);
-    return existsSync(explicitPath) ? explicitPath : null;
-  }
-
+/** Ближайший `.env` вверх от cwd (старое поведение). @returns {string|null} */
+function nearestDotEnvPath(cwd) {
   let current = resolve(cwd);
   const root = parse(current).root;
   while (true) {
@@ -25,9 +21,70 @@ export function resolveDotEnvPath(cwd = process.cwd()) {
   }
 }
 
-export function loadDotEnv(cwd = process.cwd()) {
-  const envPath = resolveDotEnvPath(cwd);
-  if (!envPath) return;
+/**
+ * Корневой `.env` репозитория через git (#567): 8 worktree лежат СОСЕДЯМИ корня
+ * (`practice/Membrana-openrouter`), и поиск вверх корневой `.env` не найдёт никогда.
+ * `--git-common-dir` даёт `<root>/.git` из любого worktree — соседа или вложенного.
+ *
+ * @returns {string|null} null вне git-репозитория
+ */
+export function repoRootDotEnvPath(cwd = process.cwd()) {
+  try {
+    const commonDir = execFileSync(
+      'git',
+      ['rev-parse', '--path-format=absolute', '--git-common-dir'],
+      { cwd: resolve(cwd), encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+    ).trim();
+    if (!commonDir) return null;
+    const candidate = resolve(dirname(commonDir), '.env');
+    return existsSync(candidate) ? candidate : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Цепочка загрузки `.env`: `MEMBRANA_ENV_PATH` → только он (явный обход бьёт всё);
+ * иначе корневой репо-`.env` первым, ближайший-вверх — поверх. Локальные
+ * переопределения worktree живут, корень закрывает дыры (инцидент 16.07:
+ * локальный `.env` без OFFICE_API_TOKEN прятал корневой → office 401).
+ *
+ * @returns {string[]} в порядке загрузки (последний побеждает)
+ */
+export function resolveDotEnvPaths(cwd = process.cwd()) {
+  const explicit = process.env.MEMBRANA_ENV_PATH?.trim();
+  if (explicit) {
+    const explicitPath = resolve(explicit);
+    return existsSync(explicitPath) ? [explicitPath] : [];
+  }
+  // Канонизация против Windows 8.3: git отдаёт длинный путь, tmpdir/cwd бывают
+  // короткими (`USER19~1`) — без realpath дедуп корня и локального врёт (T6 #548).
+  const canon = (p) => {
+    try {
+      return realpathSync.native(p);
+    } catch {
+      return p;
+    }
+  };
+  const chain = [];
+  const rootEnv = repoRootDotEnvPath(cwd);
+  const nearest = nearestDotEnvPath(cwd);
+  // canon — только для сравнения; наружу пути отдаются как нашлись (совместимость).
+  if (rootEnv && (!nearest || canon(rootEnv) !== canon(nearest))) chain.push(rootEnv);
+  if (nearest) chain.push(nearest);
+  return chain;
+}
+
+/**
+ * Совместимость: один путь — ближайший вверх; при полном промахе — корневой.
+ * Для диагностики «какие .env подхвачены» используйте resolveDotEnvPaths.
+ */
+export function resolveDotEnvPath(cwd = process.cwd()) {
+  const chain = resolveDotEnvPaths(cwd);
+  return chain.length > 0 ? chain[chain.length - 1] : null;
+}
+
+function loadDotEnvFile(envPath) {
   let raw = readFileSync(envPath, 'utf8');
   if (raw.charCodeAt(0) === 0xfeff) raw = raw.slice(1);
 
@@ -46,6 +103,10 @@ export function loadDotEnv(cwd = process.cwd()) {
     }
     process.env[k] = v;
   }
+}
+
+export function loadDotEnv(cwd = process.cwd()) {
+  for (const envPath of resolveDotEnvPaths(cwd)) loadDotEnvFile(envPath);
 }
 
 function proxyUrlFromEnv() {

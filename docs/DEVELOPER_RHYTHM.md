@@ -122,7 +122,7 @@ yarn archive:daily-day --force
 #    Регламент: docs/prompts/CODE_REVIEW_REGULATION.md
 yarn code-review
 yarn code-review:full
-# PR перед merge: yarn code-review:pr -- 140
+# PR перед merge: yarn code-review:pr 140
 
 # 1b. Хроника дня (→ docs/DAILY_AUDIT.md + снимок docs/archive/daily-day/<date>/audit.md)
 #     Канон: ADR-0013. Детерминированно, без сети и LLM: репозиторий + реестр + граф правды

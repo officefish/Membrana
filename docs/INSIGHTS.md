@@ -18,6 +18,7 @@ yarn insight list
 yarn insight research <id>
 yarn insight review <id>
 yarn insight close <id> --status adopted|deferred|rejected
+yarn insight archive <id> --task <task-id> --result "…" [--execute]
 ```
 
 Skill: [`.cursor/skills/membrana-insight/SKILL.md`](../.cursor/skills/membrana-insight/SKILL.md)
@@ -25,16 +26,20 @@ Skill: [`.cursor/skills/membrana-insight/SKILL.md`](../.cursor/skills/membrana-i
 ## Жизненный цикл
 
 ```text
-draft → researched → reviewed → adopted | deferred | rejected
+draft → researched → reviewed → adopted | deferred | rejected → archived
 ```
+
+`adopted` означает «идея принята», а не «реализация завершена». `archived` ставится
+только evidence-gated командой после архивирования связанных задач и проверки живых
+PR/worktree; артефакты инсайта не удаляются.
 
 ## Реестр (2026-06-29)
 
 | ID | Тема | Статус | Weight | Горизонт |
 |----|------|--------|--------|----------|
-| `insight-operator-smoke-ci-gate` | Operator smoke pre-merge gate | adopted | 7.0 | week |
-| `insight-async-v2-product-narrative` | Async topology как продуктовая история | adopted | 6.6 | month |
-| `insight-competition-catalog-pipeline` | Competition → catalog pipeline | adopted | 6.6 | week |
+| `insight-operator-smoke-ci-gate` | Operator smoke pre-merge gate | archived | 7.0 | week |
+| `insight-async-v2-product-narrative` | Async topology как продуктовая история | archived | 6.6 | month |
+| `insight-competition-catalog-pipeline` | Competition → catalog pipeline | archived | 6.6 | week |
 | `insight-loop-engineering-competition-test` | Loop engineering + breakpoints | deferred | 6.8 | month |
 | `insight-agent-scenario-builder` | AI-агент UserCase (3 режима, токены) | adopted | 7.8 | quarter |
 | `insight-slide-fullscreen-presentation` | Slide object + fullscreen slides + export | adopted | 7.8 | month |

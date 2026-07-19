@@ -1,7 +1,7 @@
 /**
  * Insight ritual — paths, registry, templates, Perplexity cascade helpers.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fetch as undiciFetch, ProxyAgent, Agent } from 'undici';
 
@@ -11,6 +11,7 @@ export const VIRTUAL_TEAM_PATH = 'docs/VIRTUAL_TEAM_PROMPT.md';
 export const REGISTRY_PATH = 'docs/insights/registry.json';
 export const INSIGHTS_DIR = 'docs/insights';
 export const TEMPLATE_DIR = 'docs/insights/_template';
+export const TASK_REGISTRY_PATH = 'docs/tasks/registry.json';
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -43,6 +44,94 @@ export function writeRegistry(repoRoot, registry) {
   const path = join(resolve(repoRoot), REGISTRY_PATH);
   registry.updatedAt = new Date().toISOString().slice(0, 10);
   writeFileSync(path, `${JSON.stringify(registry, null, 2)}\n`, 'utf8');
+}
+
+/** @param {string} path @param {object} value */
+function writeJsonAtomic(path, value) {
+  const temporary = `${path}.tmp-${process.pid}`;
+  writeFileSync(temporary, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+  renameSync(temporary, path);
+}
+
+/**
+ * Build and validate the evidence for an implemented insight. A sprint marker is
+ * a link, never proof by itself: every explicit implementation task must exist and
+ * be archived, while any active linked task blocks the transition.
+ * @param {string} repoRoot
+ * @param {{id:string, taskIds:string[], result:string, reason?:string, date?:string}} input
+ */
+export function buildInsightArchivePlan(repoRoot, input) {
+  const root = resolve(repoRoot);
+  const id = normalizeInsightId(input.id);
+  const registry = readRegistry(root);
+  const entry = registry.insights.find((item) => item.id === id);
+  if (!entry) throw new Error(`Insight not found: ${id}`);
+  if (entry.status === 'archived') {
+    return { id, alreadyArchived: true, entry, registry };
+  }
+
+  const result = input.result?.trim() ?? '';
+  if (!result) throw new Error('Archive evidence requires --result');
+  const taskIds = [...new Set((input.taskIds ?? []).flatMap((value) => value.split(',')).map((value) => value.trim()).filter(Boolean))];
+  if (taskIds.length === 0) throw new Error('Archive evidence requires at least one --task');
+
+  const taskPath = join(root, TASK_REGISTRY_PATH);
+  if (!existsSync(taskPath)) throw new Error(`Task registry not found: ${TASK_REGISTRY_PATH}`);
+  const taskRegistry = JSON.parse(readFileSync(taskPath, 'utf8'));
+  const tasks = Array.isArray(taskRegistry.tasks) ? taskRegistry.tasks : [];
+  const selected = taskIds.map((taskId) => {
+    const task = tasks.find((candidate) => candidate.id === taskId);
+    if (!task) throw new Error(`Implementation task not found: ${taskId}`);
+    const linked = task.insightId === id || entry.sprintPhase === task.id;
+    if (!linked) throw new Error(`Task ${taskId} is not linked to ${id}`);
+    if (task.status !== 'archived') throw new Error(`Implementation task ${taskId} is ${task.status}, expected archived`);
+    return task;
+  });
+
+  const activeLinked = tasks.filter((task) =>
+    task.status === 'active' && (task.insightId === id || entry.sprintPhase === task.id));
+  if (activeLinked.length > 0) {
+    throw new Error(`Active linked tasks block archive: ${activeLinked.map((task) => task.id).join(', ')}`);
+  }
+
+  const date = input.date ?? new Date().toISOString().slice(0, 10);
+  return {
+    id,
+    alreadyArchived: false,
+    entry,
+    registry,
+    selectedTasks: selected.map((task) => task.id),
+    archive: {
+      previousStatus: entry.status,
+      status: 'archived',
+      archivedAt: date,
+      archiveReason: input.reason?.trim() || 'implemented',
+      implementationTaskIds: selected.map((task) => task.id),
+      archiveResult: result,
+    },
+  };
+}
+
+/**
+ * Dry-run by default. The caller must pass execute=true only after checking live
+ * PRs/worktrees, which are deliberately outside this local deterministic gate.
+ * @param {string} repoRoot
+ * @param {{id:string, taskIds:string[], result:string, reason?:string, date?:string, execute?:boolean}} input
+ */
+export function archiveInsight(repoRoot, input) {
+  const root = resolve(repoRoot);
+  const plan = buildInsightArchivePlan(root, input);
+  if (plan.alreadyArchived || !input.execute) return plan;
+
+  Object.assign(plan.entry, plan.archive);
+  plan.registry.updatedAt = plan.archive.archivedAt;
+  const metaPath = join(insightDir(root, plan.id), 'meta.json');
+  if (!existsSync(metaPath)) throw new Error(`Insight meta not found: ${plan.id}`);
+  const meta = JSON.parse(readFileSync(metaPath, 'utf8'));
+  Object.assign(meta, plan.archive);
+  writeJsonAtomic(metaPath, meta);
+  writeJsonAtomic(join(root, REGISTRY_PATH), plan.registry);
+  return plan;
 }
 
 /** @param {string} template @param {Record<string, string>} vars */
@@ -382,6 +471,9 @@ export function printInsightHelp() {
   research <id> [--dry-run]
   review <id> [--dry-run]
   close <id> --status adopted|deferred|rejected [--weight N]
+  archive <id> --task <task-id> [--task <task-id>] --result "…" [--reason implemented] [--execute]
+
+Archive is dry-run by default. Before --execute, cross-check open PRs and live worktrees.
 
 Regulation: ${REGULATION_PATH}
 `);
@@ -399,12 +491,32 @@ export function parseInsightCli(argv) {
   let weight = null;
   let statusFilter = '';
   let dryRun = false;
+  let execute = false;
   let id = '';
+  let result = '';
+  let reason = 'implemented';
+  const taskIds = [];
 
   for (let i = 1; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--dry-run') {
       dryRun = true;
+    } else if (arg === '--execute') {
+      execute = true;
+    } else if (arg === '--task' || arg === '--tasks') {
+      taskIds.push(argv[++i] ?? '');
+    } else if (arg.startsWith('--task=')) {
+      taskIds.push(arg.slice(7));
+    } else if (arg.startsWith('--tasks=')) {
+      taskIds.push(arg.slice(8));
+    } else if (arg === '--result') {
+      result = argv[++i] ?? '';
+    } else if (arg.startsWith('--result=')) {
+      result = arg.slice(9);
+    } else if (arg === '--reason') {
+      reason = argv[++i] ?? reason;
+    } else if (arg.startsWith('--reason=')) {
+      reason = arg.slice(9);
     } else if (arg === '--title') {
       title = argv[++i] ?? '';
     } else if (arg.startsWith('--title=')) {
@@ -431,5 +543,5 @@ export function parseInsightCli(argv) {
     statusFilter = argv[si + 1];
   }
 
-  return { command, id, title, source, status, weight, statusFilter, dryRun };
+  return { command, id, title, source, status, weight, statusFilter, dryRun, execute, taskIds, result, reason };
 }
