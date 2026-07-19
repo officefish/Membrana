@@ -32,6 +32,11 @@ export const PERSONA_ALIASES = {
   mathematician: 'dynin',
   musician: 'kuryokhin',
   layout: 'rodchenko',
+  // Ведущая персона (cowork-execution-registry, контракт §1.1): `angelina` —
+  // допустимое значение leadPersona/acceptedBy. НЕ шестая советующая: в
+  // консилиум-роутинге и ask не участвует, псевдонимов роли не имеет —
+  // тождественная запись фиксирует её в каноне реестра псевдонимов.
+  angelina: 'angelina',
 };
 
 /** @param {string} id */

@@ -1,0 +1,23 @@
+{
+  "_stub": "S1/S5: фикстура входящего Linear-вебхука (Issue update). Роль в контуре — ТОЛЬКО триггер «пора снимать» (вердикт M2): тело снимка всегда полный pull, payload производителем отбрасывается. Обратить внимание: полей blockedBy/blocking в payload НЕТ (допущение A2 — вебхуками отношения не приходят; проверка по живому API — см. EXPECTATIONS «Пробелы»).",
+  "headers": {
+    "linear-signature": "<hmac-sha256-hex>",
+    "content-type": "application/json"
+  },
+  "payload": {
+    "action": "update",
+    "type": "Issue",
+    "createdAt": "2026-07-19T17:58:12.345Z",
+    "organizationId": "org_fixture",
+    "webhookTimestamp": 1784743092345,
+    "data": {
+      "id": "uuid-fixture-dru-93",
+      "identifier": "DRU-93",
+      "title": "Issue #178: reconcile async-v2 upload fix and stale PR #179",
+      "state": { "id": "state_done", "name": "Done", "type": "completed" },
+      "assignee": { "id": "user_druid", "name": "druid" },
+      "updatedAt": "2026-07-19T17:58:12.000Z"
+    },
+    "updatedFrom": { "stateId": "state_in_progress" }
+  }
+}
