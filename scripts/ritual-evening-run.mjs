@@ -35,6 +35,10 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import {
+  assertDocumentedExitCode,
+  loadRitualExitCodesMap,
+} from './lib/ritual-exit-codes.mjs';
 import { blockedInputs, explainStatus, isBlocking, isFinding, stepStatus } from './lib/step-status.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -69,6 +73,7 @@ function main() {
 
   const manifest = readManifest();
   const steps = manifest.steps ?? [];
+  const exitCodesMap = loadRitualExitCodesMap();
 
   if (only) {
     const unknown = [...only].filter((id) => !steps.some((s) => s.id === id));
@@ -122,6 +127,27 @@ function main() {
     const res = spawnSync('node', [file, ...args], { cwd: root, stdio: 'inherit', env: process.env });
 
     const outcome = { exitCode: res.status ?? 1, ran: true };
+
+    // #622: ненулевой код обязан быть в ritual-exit-codes.json (failure|finding).
+    try {
+      assertDocumentedExitCode(exitCodesMap, 'evening', step.id, outcome.exitCode);
+    } catch (err) {
+      if (err && typeof err === 'object' && err.undocumented) {
+        console.error(`✗ ${err.message}`);
+        statuses[step.id] = 'failed-critical';
+        report.push({
+          id: step.id,
+          status: 'failed-critical',
+          ran: true,
+          exitCode: outcome.exitCode,
+          finding: false,
+          undocumentedExit: true,
+        });
+        continue;
+      }
+      throw err;
+    }
+
     const status = stepStatus(step, outcome);
     statuses[step.id] = status;
     console.error(explainStatus(step, status, outcome));
