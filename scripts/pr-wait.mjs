@@ -14,7 +14,9 @@
  * результат печатается вместе со способом проверки.
  *
  * Использование:
- *   yarn pr:wait <N> [--once] [--timeout-min 15] [--interval-sec 20]
+ *   yarn pr:wait [N] [--once] [--timeout-min 15] [--interval-sec 20]
+ *   Без номера — PR текущей ветки (gh pr view без аргумента); так его зовёт
+ *   шаг ci-wait в pr:ship (#653 п.2).
  *
  * Exit-коды: 0 green · 1 red · 2 none · 3 таймаут при running · 4 ошибка usage/gh.
  */
@@ -110,12 +112,14 @@ export function explainNoChecks(pr) {
 }
 
 function usage() {
-  console.error('Usage: yarn pr:wait <N> [--once] [--timeout-min 15] [--interval-sec 20]');
+  console.error('Usage: yarn pr:wait [N] [--once] [--timeout-min 15] [--interval-sec 20]');
+  console.error('  Без номера — PR текущей ветки.');
 }
 
 function readPr(number) {
+  const ref = number ? `${number} ` : '';
   const raw = execSync(
-    `gh pr view ${number} --json number,url,state,mergeable,mergeStateStatus,headRefOid,statusCheckRollup`,
+    `gh pr view ${ref}--json number,url,state,mergeable,mergeStateStatus,headRefOid,statusCheckRollup`,
     { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 30000 },
   ).trim();
   return JSON.parse(raw);
@@ -142,7 +146,7 @@ function parseArgs(argv) {
     else if (/^\d+$/.test(a)) args.number = a;
     else return { error: `неизвестный аргумент: ${a}` };
   }
-  if (!args.number) return { error: 'нужен номер PR' };
+  // Без номера — PR текущей ветки (#653): gh pr view сам резолвит head-ветку.
   if (!Number.isFinite(args.timeoutMin) || args.timeoutMin <= 0) {
     return { error: '--timeout-min должен быть положительным числом' };
   }
@@ -170,8 +174,8 @@ async function main() {
     try {
       pr = readPr(number);
     } catch (e) {
-      console.error(`[pr:wait] gh pr view ${number} не отработал: ${e.message.split('\n')[0]}`);
-      console.error('  Проверить: gh auth status; существует ли PR.');
+      console.error(`[pr:wait] gh pr view ${number ?? '(PR текущей ветки)'} не отработал: ${e.message.split('\n')[0]}`);
+      console.error('  Проверить: gh auth status; существует ли PR (без номера — есть ли PR у текущей ветки).');
       process.exitCode = 4;
       return;
     }
@@ -181,7 +185,7 @@ async function main() {
 
     if (checks.state === 'green' || checks.state === 'red') {
       if (checks.state === 'red') {
-        console.error('[pr:wait] красный CI — ссылки на упавшие прогоны: gh pr checks ' + number);
+        console.error('[pr:wait] красный CI — ссылки на упавшие прогоны: gh pr checks ' + (number ?? pr.number));
       }
       process.exitCode = EXIT_BY_STATE[checks.state];
       return;
@@ -200,7 +204,7 @@ async function main() {
     if (once || Date.now() >= deadline) {
       if (checks.state === 'none') {
         console.error(`[pr:wait] ${explainNoChecks(pr)}`);
-        console.error(`  Способ проверки: gh pr view ${number} --json statusCheckRollup,mergeable`);
+        console.error(`  Способ проверки: gh pr view ${number ?? pr.number} --json statusCheckRollup,mergeable`);
         process.exitCode = 2;
       } else {
         if (!once) console.error(`[pr:wait] таймаут ${timeoutMin} мин — проверки ещё идут.`);

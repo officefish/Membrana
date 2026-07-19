@@ -21,9 +21,40 @@ test('planPrShip: title + trailer + Closes + порядок шагов', () => {
   assert.match(commitBody, /Co-Authored-By: Claude Opus 4\.8/);
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['branch', 'commit', 'push', 'pr-create', 'merge', 'sync-checkout', 'sync-fetch', 'sync-ff'],
+    ['branch', 'commit', 'push', 'pr-create', 'ci-wait', 'merge', 'branch-cleanup', 'sync-checkout', 'sync-fetch', 'sync-ff'],
   );
   assert.deepEqual(steps[0].args, ['checkout', '-b', 'feat/x']);
+});
+
+// ─── #653: merge-шаг из worktree ───────────────────────────────────────────────
+
+test('#653 п.1: merge БЕЗ --delete-branch, remote-ветка отдельным branch-cleanup', () => {
+  const { steps } = planPrShip({ type: 'feat', message: 'x', branch: 'feat/x' });
+  const merge = steps.find((s) => s.label === 'merge');
+  assert.deepEqual(merge.args, ['pr', 'merge', '--squash']);
+  const cleanup = steps.find((s) => s.label === 'branch-cleanup');
+  assert.deepEqual(cleanup.args, ['push', 'origin', '--delete', 'feat/x']);
+});
+
+test('#653 п.2: ci-wait стоит ДО merge; --no-wait его снимает', () => {
+  const { steps } = planPrShip({ type: 'feat', message: 'x', branch: 'feat/x' });
+  const labels = steps.map((s) => s.label);
+  assert.ok(labels.indexOf('ci-wait') < labels.indexOf('merge'));
+  const noWait = planPrShip({ type: 'feat', message: 'x', branch: 'feat/x', wait: false });
+  assert.ok(!noWait.steps.map((s) => s.label).includes('ci-wait'));
+});
+
+test('#653: --no-commit берёт имя ветки из currentBranch для cleanup', () => {
+  const { steps } = planPrShip({ type: 'fix', message: 'x', commit: false, currentBranch: 'fix/y' });
+  const cleanup = steps.find((s) => s.label === 'branch-cleanup');
+  assert.deepEqual(cleanup.args, ['push', 'origin', '--delete', 'fix/y']);
+});
+
+test('#653: без имени ветки (или ветка = base) cleanup не планируется', () => {
+  const none = planPrShip({ type: 'fix', message: 'x', commit: false });
+  assert.ok(!none.steps.some((s) => s.label === 'branch-cleanup'));
+  const onBase = planPrShip({ type: 'fix', message: 'x', commit: false, currentBranch: 'main' });
+  assert.ok(!onBase.steps.some((s) => s.label === 'branch-cleanup'));
 });
 
 test('planPrShip: без scope и issue', () => {
@@ -92,7 +123,7 @@ test('base свободен → полный ff-sync как раньше', () =>
   });
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['commit', 'push', 'pr-create', 'merge', 'sync-checkout', 'sync-fetch', 'sync-ff'],
+    ['commit', 'push', 'pr-create', 'ci-wait', 'merge', 'sync-checkout', 'sync-fetch', 'sync-ff'],
   );
   assert.equal(skippedSync, undefined);
 });

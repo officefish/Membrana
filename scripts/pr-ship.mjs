@@ -11,6 +11,11 @@
  *   yarn pr:ship ... --execute            # реально выполнить
  *   yarn pr:ship ... --no-merge           # только PR, без squash-merge
  *   yarn pr:ship ... --no-commit          # коммиты уже готовы: push → PR → merge (без commit/branch)
+ *   yarn pr:ship ... --no-wait            # НЕ ждать зелёного CI перед merge (осознанный обход)
+ *
+ * Merge (#653): перед merge — ci-wait (scripts/pr-wait.mjs, четыре состояния CI);
+ * merge БЕЗ --delete-branch (чекаут base падает, когда base держит соседний worktree);
+ * remote-ветка удаляется отдельным шагом branch-cleanup, локальная остаётся.
  *
  * Логика планирования (planPrShip) — чистая и покрыта тестом; CLI лишь исполняет/печатает.
  */
@@ -69,11 +74,11 @@ export function extractIssueMentions(text) {
 }
 
 /**
- * @param {{type:string,scope?:string,message:string,issue?:number|string,branch?:string,base?:string,merge?:boolean,commit?:boolean,worktreeBranches?:string[],allowMentionWithoutClose?:boolean}} opts
+ * @param {{type:string,scope?:string,message:string,issue?:number|string,branch?:string,base:string,merge?:boolean,commit?:boolean,wait?:boolean,currentBranch?:string,worktreeBranches?:string[],allowMentionWithoutClose?:boolean}} opts
  * @returns {{title:string,commitBody:string,steps:{label:string,cmd:string,args:string[]}[],skippedSync?:string}}
  */
 export function planPrShip(opts) {
-  const { type, scope, message, issue, branch, base = 'main', merge = true, commit = true } = opts;
+  const { type, scope, message, issue, branch, base = 'main', merge = true, commit = true, wait = true } = opts;
   if (!type || !message) throw new Error('pr:ship: --type и --message обязательны');
   // --no-commit (ретроспектива 2026-07-09): коммиты уже готовы на ветке —
   // шаги branch/commit пропускаются, флоу начинается с push. Ветку с готовыми
@@ -108,7 +113,21 @@ export function planPrShip(opts) {
   });
   let skippedSync;
   if (merge) {
-    steps.push({ label: 'merge', cmd: 'gh', args: ['pr', 'merge', '--squash', '--delete-branch'] });
+    // #653 п.2: merge только после зелёного CI — pr-wait (#643) на PR текущей ветки
+    // различает none/running/green/red; red и none-при-конфликте роняют флоу ДО merge.
+    // --no-wait — осознанный обход (например, docs-only при выключенном CI).
+    if (wait) steps.push({ label: 'ci-wait', cmd: 'node', args: ['scripts/pr-wait.mjs'] });
+    // #653 п.1: БЕЗ --delete-branch. Он чекаутит base локально, а base почти всегда
+    // держит соседний worktree (8+ деревьев) → пять из пяти прогонов 19.07 «падали»
+    // после УЖЕ УСПЕШНОГО merge. Remote-ветка удаляется отдельным шагом; локальная
+    // остаётся (мы на ней стоим — её удаление и невозможно, и не нужно).
+    steps.push({ label: 'merge', cmd: 'gh', args: ['pr', 'merge', '--squash'] });
+    const headBranch = branch ?? opts.currentBranch;
+    if (headBranch && headBranch !== base) {
+      // optional: неудача удаления remote-ветки (уже удалена / protected) НЕ должна
+      // «уронить» уже успешный merge — тот же класс ложного падения, что и #653 п.1.
+      steps.push({ label: 'branch-cleanup', cmd: 'git', args: ['push', 'origin', '--delete', headBranch], optional: true });
+    }
     if (isBaseHeldElsewhere(base, opts.worktreeBranches)) {
       // Ветку base держит соседний worktree — checkout сюда невозможен, и это норма
       // при параллельных сессиях (канон membrana-worktree). Обновляем только
@@ -137,6 +156,7 @@ function parseArgs(argv) {
     else if (a === '--base') o.base = next();
     else if (a === '--no-merge') o.merge = false;
     else if (a === '--no-commit') o.commit = false;
+    else if (a === '--no-wait') o.wait = false;
     else if (a === '--allow-mention') o.allowMentionWithoutClose = true;
     else if (a === '--execute') o.execute = true;
   }
@@ -146,13 +166,15 @@ function parseArgs(argv) {
 function main() {
   const opts = parseArgs(process.argv);
   // Ветки соседних worktree решают, возможен ли ff-sync (см. isBaseHeldElsewhere).
+  // Гуард: без --branch коммит идёт в текущую ветку; запрет коммитить прямо в base.
+  const current = execFileSync('git', ['branch', '--show-current'], { encoding: 'utf8' }).trim();
+
   const { title, steps, skippedSync } = planPrShip({
     ...opts,
+    currentBranch: current,
     worktreeBranches: otherWorktreeBranches(),
   });
 
-  // Гуард: без --branch коммит идёт в текущую ветку; запрет коммитить прямо в base.
-  const current = execFileSync('git', ['branch', '--show-current'], { encoding: 'utf8' }).trim();
   if (!opts.branch && current === opts.base) {
     throw new Error(`pr:ship: на ветке "${opts.base}" без --branch — отказ (не коммитим прямо в base).`);
   }
@@ -166,7 +188,12 @@ function main() {
       continue;
     }
     console.log(`  → ${s.label}`);
-    execFileSync(s.cmd, s.args, { stdio: 'inherit' });
+    try {
+      execFileSync(s.cmd, s.args, { stdio: 'inherit' });
+    } catch (e) {
+      if (!s.optional) throw e;
+      console.error(`  ⚠ ${s.label} не удался (${String(e.message ?? e).split('\n')[0]}) — шаг необязательный, флоу продолжается`);
+    }
   }
   if (!opts.execute) console.log('\n(dry-run — ничего не выполнено; добавь --execute)');
 }
