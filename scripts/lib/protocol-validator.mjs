@@ -179,7 +179,7 @@ const CONCLUSION_IN_PREMISE_MARKERS =
 export const PREMISES_SECTION_TITLE = 'Список посылок';
 
 /** Заголовок секции посылок — регексп собран из {@link PREMISES_SECTION_TITLE}. */
-const PREMISES_HEADING_RE = new RegExp(PREMISES_SECTION_TITLE.replace(/\s+/u, '\\s+'), 'iu');
+const PREMISES_HEADING_RE = new RegExp(PREMISES_SECTION_TITLE.replace(/\s+/gu, '\\s+'), 'iu');
 
 /**
  * Тело секции посылок вердикта.
