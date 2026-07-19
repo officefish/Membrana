@@ -586,17 +586,17 @@
       "promptPath": "docs/prompts/INSIGHT_ARCHIVE_LIFECYCLE_PROMPT.md",
       "githubIssue": 609,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-18",
-      "archivedAt": null,
+      "archivedAt": "2026-07-19",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
         "dynin"
       ],
       "notes": "Add archive lifecycle, evidence audit, skills and tests",
-      "archiveNotes": null,
+      "archiveNotes": "PR #612, Closes #609 — evidence-gated insight archive; rebased onto main after Codex stall",
       "githubIssueClosedAt": null
     },
     {
