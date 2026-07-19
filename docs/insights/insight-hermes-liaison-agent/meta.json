@@ -1,7 +1,7 @@
 {
   "id": "insight-hermes-liaison-agent",
   "title": "Hermes — вестник-лиазон между сессиями",
-  "status": "adopted",
+  "status": "archived",
   "source": "user",
   "horizon": null,
   "weight": 7.4,
@@ -10,5 +10,12 @@
   "reviewedAt": "2026-07-09",
   "closedAt": "2026-07-09",
   "sprintPhase": "hermes-brief",
-  "tags": []
+  "tags": [],
+  "previousStatus": "adopted",
+  "archivedAt": "2026-07-18",
+  "archiveReason": "implemented",
+  "implementationTaskIds": [
+    "hermes-brief"
+  ],
+  "archiveResult": "Deterministic Hermes session brief delivered; PR 316 merged with LGTM"
 }

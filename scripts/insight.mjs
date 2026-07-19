@@ -21,6 +21,7 @@ import {
 import {
   REVIEW_PROMPT_PATH,
   VIRTUAL_TEAM_PATH,
+  archiveInsight,
   createInsight,
   formatInsightList,
   insightDir,
@@ -215,10 +216,36 @@ try {
     process.exit(0);
   }
 
+  if (cli.command === 'archive') {
+    if (!cli.id) {
+      console.error('Usage: yarn insight archive <id> --task <task-id> --result "…" [--execute]');
+      process.exit(1);
+    }
+    const plan = archiveInsight(repoRoot, {
+      id: cli.id,
+      taskIds: cli.taskIds,
+      result: cli.result,
+      reason: cli.reason,
+      execute: cli.execute,
+    });
+    if (plan.alreadyArchived) {
+      console.log(`Инсайт ${plan.id} уже архивирован ${plan.entry.archivedAt ?? ''}`.trim());
+      process.exit(0);
+    }
+    console.log(`${cli.execute ? 'ARCHIVED' : 'DRY-RUN'}: ${plan.id}`);
+    console.log(`previousStatus: ${plan.archive.previousStatus}`);
+    console.log(`tasks: ${plan.archive.implementationTaskIds.join(', ')}`);
+    console.log(`result: ${plan.archive.archiveResult}`);
+    if (!cli.execute) {
+      console.log('Проверь open PR и git worktree list; для записи повтори с --execute.');
+    }
+    process.exit(0);
+  }
+
   // NB5: гвард fall-through — research/review теперь ставят exitCode и НЕ выходят
   // через process.exit, поэтому «Unknown command» должен срабатывать только для
   // действительно неизвестной команды, а не после обработанной сетевой.
-  const KNOWN_COMMANDS = new Set(['help', 'create', 'list', 'research', 'review', 'close']);
+  const KNOWN_COMMANDS = new Set(['help', 'create', 'list', 'research', 'review', 'close', 'archive']);
   if (!KNOWN_COMMANDS.has(cli.command)) {
     console.error(`Unknown command: ${cli.command}`);
     printInsightHelp();
