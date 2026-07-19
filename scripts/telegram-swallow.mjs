@@ -16,12 +16,22 @@
  *
  * Идемпотентность (карточка swallow-delivery-idempotency): клиентский ledger
  * `.membrana/swallow-deliveries.jsonl`. Таймаут ≠ недоставка (exit 3 = unknown).
+ *
+ * След для графа правды (#585): docs/comms/sent-log.jsonl после sent=true
+ * (хеш + путь черновика, не тело).
  */
 import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { loadDotEnv, resolveDotEnvPaths } from './_anthropic-env.mjs';
+import {
+  appendSentLog,
+  defaultSentLogPath,
+  hashSentPayload,
+  redactOfficeResponse,
+  toRepoRelativeFile,
+} from './lib/comms-sent-log.mjs';
 import { resolveOfficeToken } from './lib/office-token.mjs';
 import {
   SWALLOW_EXIT_UNKNOWN,
@@ -37,11 +47,21 @@ const dryRun = argv.includes('--dry-run');
 const force = argv.includes('--force');
 
 export function resolveSwallowText(args, readFile = (p) => readFileSync(p, 'utf8')) {
+  return resolveSwallowSource(args, readFile).text;
+}
+
+/**
+ * @returns {{ text: string, file: string|null }}
+ */
+export function resolveSwallowSource(args, readFile = (p) => readFileSync(p, 'utf8')) {
   const fileIdx = args.indexOf('--file');
   const filePath = fileIdx !== -1 ? args[fileIdx + 1] : args.find((a) => a.startsWith('--file='))?.slice(7);
-  if (filePath) return readFile(resolve(repoRoot, filePath)).trim();
+  if (filePath) {
+    const abs = resolve(repoRoot, filePath);
+    return { text: readFile(abs).trim(), file: toRepoRelativeFile(repoRoot, abs) };
+  }
   const positional = args.filter((a) => !a.startsWith('--'));
-  return positional.join(' ').trim();
+  return { text: positional.join(' ').trim(), file: null };
 }
 
 /**
@@ -64,6 +84,8 @@ export function classifySwallowTransportError(err) {
  *   text: string,
  *   force?: boolean,
  *   ledgerPath?: string,
+ *   sentLogPath?: string|null,
+ *   sourceFile?: string|null,
  *   fetchImpl?: typeof fetch,
  *   baseUrl?: string,
  *   token?: string,
@@ -76,6 +98,9 @@ export async function sendSwallow(opts) {
     text,
     force: forceSend = false,
     ledgerPath = defaultLedgerPath(repoRoot),
+    // По умолчанию null: unit-тесты не пишут в docs/comms/. CLI main передаёт defaultSentLogPath.
+    sentLogPath = null,
+    sourceFile = null,
     fetchImpl = fetch,
     baseUrl = 'https://office.mmbrn.tech',
     token,
@@ -119,6 +144,15 @@ export async function sendSwallow(opts) {
     const proof = body.messageId ?? body.message_id ?? body.result?.message_id ?? null;
     if (body.sent === true) {
       recordDelivery(ledgerPath, { key, status: 'delivered', messageId: proof });
+      if (sentLogPath) {
+        appendSentLog(sentLogPath, {
+          kind: 'swallow',
+          file: sourceFile,
+          sha256: hashSentPayload(text),
+          sent: true,
+          office_response: redactOfficeResponse(body),
+        });
+      }
       return {
         outcome: 'delivered',
         key,
@@ -156,7 +190,7 @@ export async function sendSwallow(opts) {
 
 const isMain = process.argv[1]?.endsWith('telegram-swallow.mjs');
 if (isMain) {
-  const text = resolveSwallowText(argv);
+  const { text, file: sourceFile } = resolveSwallowSource(argv);
   if (!text) {
     console.error('Usage: yarn telegram:swallow "текст" | --file <path.md> [--dry-run] [--force]');
     process.exitCode = 1;
@@ -179,6 +213,8 @@ if (isMain) {
       const result = await sendSwallow({
         text,
         force,
+        sourceFile,
+        sentLogPath: defaultSentLogPath(repoRoot),
         token,
         tokenSource: source,
         envPaths: resolveDotEnvPaths(),

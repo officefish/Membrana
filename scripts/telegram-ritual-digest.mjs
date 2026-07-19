@@ -18,6 +18,12 @@ import { fileURLToPath } from 'node:url';
 import { loadDotEnv } from './_anthropic-env.mjs';
 import { explainStaleness } from './lib/artifact-freshness.mjs';
 import {
+  appendSentLog,
+  defaultSentLogPath,
+  hashSentPayload,
+  redactOfficeResponse,
+} from './lib/comms-sent-log.mjs';
+import {
   extractDayDigest,
   extractDigestHeader,
   extractEveningDigest,
@@ -142,6 +148,20 @@ try {
   if (!res.ok) skip(`office ответил ${res.status}`);
   const body = await res.json().catch(() => ({}));
   console.log(`[telegram-digest] дайджест (${kind}) принят office: sent=${body.sent === true}`);
+  // #585: след в репо (предикат «ушёл ли дайджест»), без тела артефакта.
+  if (body.sent === true) {
+    const sourceFile =
+      kind === 'day' ? 'docs/MAIN_DAY_ISSUE.md' : `docs/seanses/team-evening-feedback-${payload.date}.md`;
+    const { documentMd: _doc, primerMd: _primer, ...meta } = payload;
+    const fingerprint = `${kind}\n${payload.date ?? ''}\n${JSON.stringify(meta)}`;
+    appendSentLog(defaultSentLogPath(repoRoot), {
+      kind: 'digest',
+      file: sourceFile,
+      sha256: hashSentPayload(fingerprint),
+      sent: true,
+      office_response: redactOfficeResponse(body),
+    });
+  }
 } catch (err) {
   skip(`office недоступен: ${err?.message ?? err}`);
 }
