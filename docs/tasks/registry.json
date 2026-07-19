@@ -6,16 +6,16 @@
       "promptPath": "docs/prompts/INTERN_T2_HEALTH_READY_PROMPT.md",
       "githubIssue": 196,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
+      "archivedAt": "2026-07-19",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "Depends on T1 #195; /ready reuses outbound-self-check",
-      "archiveNotes": null,
+      "archiveNotes": "PR pending — GET /ready, Closes #196",
       "githubIssueClosedAt": null
     },
     {
