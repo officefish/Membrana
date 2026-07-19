@@ -8,3 +8,7 @@
 ## Checkpoint NB1 — 2026-07-19T20:23:57.413Z
 - Status: **pass**
 - Note: two genres + land cascade + draft blocker
+
+## Checkpoint NB2 — 2026-07-19T20:27:44.489Z
+- Status: **pass**
+- Note: yarn night:land-reports + pure lib + 7 unit tests; dry-run default
