@@ -1,6 +1,22 @@
 {
   "tasks": [
     {
+      "id": "truth-transcript-tooling",
+      "title": "lib/transcript + truth utterance/ask-check — поиск указателей правды по всем трём местам",
+      "promptPath": "docs/prompts/TRUTH_TRANSCRIPT_TOOLING_PROMPT.md",
+      "githubIssue": 642,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": null,
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "pr-wait-ci-gate",
       "title": "pr:wait — честное ожидание проверок PR (4 состояния) + грабли AGENTS.md",
       "promptPath": "docs/prompts/PR_WAIT_CI_GATE_PROMPT.md",
