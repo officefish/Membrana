@@ -16,6 +16,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { loadDotEnv } from './_anthropic-env.mjs';
+import { explainStaleness } from './lib/artifact-freshness.mjs';
 import {
   extractDayDigest,
   extractDigestHeader,
@@ -61,6 +62,12 @@ if (!payload) skip(`не удалось извлечь дайджест (${kind}
 // Вложение-файл (ALLY_DIGEST_FORMAT.md): полный md-артефакт дня отдельным
 // документом после тезисного текста. День — MAIN_DAY_ISSUE, вечер — code-review.
 // Graceful: файла нет / больше лимита DTO → уходит только текст.
+/** Локальный календарный день — общий для обоих гейтов свежести ниже. */
+function localToday() {
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
 const DOCUMENT_MD_LIMIT = 100_000;
 function attachDocument() {
   const rel = kind === 'day' ? 'docs/MAIN_DAY_ISSUE.md' : 'docs/DAILY_CODE_REVIEW.md';
@@ -69,6 +76,17 @@ function attachDocument() {
   const content = readFileSync(abs, 'utf8');
   if (!content.trim() || content.length > DOCUMENT_MD_LIMIT) {
     console.warn(`[telegram-digest] ${rel} пуст/больше ${DOCUMENT_MD_LIMIT} — уходит без вложения`);
+    return;
+  }
+  // ГЕЙТ СВЕЖЕСТИ ВЛОЖЕНИЯ (узел F, спринт ritual-step-manifest-sf). Гейт ниже
+  // (payload.date !== today) охраняет ТЕКСТ, но не этот файл — а имя вложения
+  // строится из payload.date, т.е. из СЕГОДНЯШНЕЙ даты. При упавшем code-review
+  // союзники получили бы вчерашний отчёт под сегодняшним именем: тот же инцидент,
+  // только экспортированный наружу. Оба артефакта пишутся в том же прогоне, что и
+  // дайджест, — поэтому ожидаемый возраст 0.
+  const stale = explainStaleness(rel, { content }, { today: localToday(), maxAgeDays: 0 });
+  if (stale && !argv.includes('--allow-stale')) {
+    console.warn(`[telegram-digest] ${stale} — уходит без вложения (--allow-stale чтобы приложить)`);
     return;
   }
   const d = payload.date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -97,8 +115,7 @@ if (existsSync(headerPath)) {
 // Свежесть: вечерний team-evening-feedback за СЕГОДНЯ появляется после хвоста
 // ritual:evening — устаревший артефакт не шлём (иначе группа получит вчерашние
 // итоги как сегодняшние). Повторный запуск после feedback / --allow-stale.
-const now = new Date();
-const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+const today = localToday();
 if (!dryRun && !argv.includes('--allow-stale') && payload.date !== today) {
   skip(`артефакт за ${payload.date}, сегодня ${today} (не шлём устаревшее; --allow-stale для отправки)`);
 }
