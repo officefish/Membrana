@@ -12,11 +12,13 @@
       "archivedAt": null,
       "leadPersona": "dynin",
       "supportPersonas": [
-        "ozhegov vesnin"
+        "ozhegov",
+        "vesnin"
       ],
-      "notes": "M1 scripts-boundary; Closes #613; parentEpic ritual-trust-contour",
+      "notes": "M1 scripts-boundary; Closes #613",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "parentEpic": "ritual-trust-contour"
     },
     {
       "id": "code-review-pr-skill-syntax",
