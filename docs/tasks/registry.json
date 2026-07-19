@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "office-ready-error-path",
+      "title": "fix(office): GET /ready try/catch на error-path self-check",
+      "promptPath": "docs/prompts/OFFICE_READY_ERROR_PATH_PROMPT.md",
+      "githubIssue": 669,
+      "size": "S",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": "2026-07-19",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "P1 from Teamlead review #667; Closes #669",
+      "archiveNotes": "PR #670, Closes #669 — try/catch on /ready error-path",
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "intern-t3-research-digest",
       "title": "Intern T3: ресёрч-дайджест — утренняя пресса через Perplexity Sonar",
       "promptPath": "docs/prompts/INTERN_T3_RESEARCH_DIGEST_PROMPT.md",
