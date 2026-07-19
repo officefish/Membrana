@@ -6,16 +6,16 @@
       "promptPath": "docs/prompts/INTERN_T3_RESEARCH_DIGEST_PROMPT.md",
       "githubIssue": 197,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
+      "archivedAt": "2026-07-19",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "yarn office:research-digest; topic OFFICE_DIGEST_TOPIC; Closes #197",
-      "archiveNotes": null,
+      "archiveNotes": "PR #668 — office:research-digest, Closes #197",
       "githubIssueClosedAt": null
     },
     {
