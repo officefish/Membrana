@@ -1,6 +1,22 @@
 {
   "tasks": [
     {
+      "id": "cowork-execution-registry",
+      "title": "Cowork Sprint: контур исполнения команды + переезд реестра",
+      "promptPath": "docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md",
+      "githubIssue": 660,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "cowork-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "3 блока lead-persona/units-trace-measure/snapshot-cold-migration; изоляция до Interface Consilium; мёрж всех трёх; вход HANDOFF_2026-07-19_COWORK",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "linear-agent-identity-facts",
       "title": "Ресёрч: Linear — личность агента, состояние подзадач, блокирующие связи",
       "promptPath": "docs/prompts/LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md",
