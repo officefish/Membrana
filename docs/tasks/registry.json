@@ -1,6 +1,116 @@
 {
   "tasks": [
     {
+      "id": "meeting-security-posture",
+      "title": "Заседание security-posture: аудит зависимостей + инцидент patchhog — DAG security-контура",
+      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "meeting",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "ЗАВЕРШЕНО 19.07: M0–M3 все с вердиктами, ратифицированы владельцем, аудированы S-M5 (6/7NA, 7/7, 7/7, 8/8). Артефакты: docs/meeting/security-posture/, регламенты DEPS_WATCH_REGULATION.md + INCIDENT_RESPONSE_REGULATION.md, дозор deps:watch в ритуалах, gitleaks-гейт, карточка инцидента patchhog. Открытыми остались 4 карточки sec-upgrade-* (вне контейнера). Архивировать через task:archive по слову владельца.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "githubIssue": null,
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "id": "sec-upgrade-backend-runtime",
+      "title": "Апгрейд №1 backend-runtime-major: Nest 11 + fastify 5 + @fastify/middie 9 + fast-uri 3 (атом, оба сервера синхронно)",
+      "size": "L",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
+      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты 2 critical рантайма + fastify/fast-uri/platform-fastify highs; smoke HTTP-роутов зелёный. Мерж поочерёдно с sec-upgrade-dev-tooling (общий lockfile)."
+    },
+    {
+      "githubIssue": null,
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "id": "sec-upgrade-dev-tooling",
+      "title": "Апгрейд №2 dev-tooling-major: vite 7 + vitest 3 (фазы: foundation → детекторы → client)",
+      "size": "L",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "kuryokhin"
+      ],
+      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
+      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: снят vitest critical + vite high; клиентский smoke (vite dev, HMR, прод-бандл, DESIGN-токены)."
+    },
+    {
+      "githubIssue": null,
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "id": "sec-upgrade-tar",
+      "title": "Апгрейд №3 tar 6→7: локальный форс + канареечная полная сборка desktop (без слепых resolutions)",
+      "size": "M",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "kuryokhin"
+      ],
+      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
+      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты 6 tar high; node-gyp/electron-builder не сломаны. Строго ПЕРЕД electron-major."
+    },
+    {
+      "githubIssue": null,
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "id": "sec-upgrade-electron",
+      "title": "Апгрейд №4 electron-major (рискованный, последним): UAF ×3 + cmdline injection",
+      "size": "M",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "kuryokhin"
+      ],
+      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
+      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты 4 electron high; ручной desktop-smoke (окно, захват device-board, CSP). После sec-upgrade-tar."
+    },
+    {
+      "id": "insight-archive-lifecycle",
+      "title": "Evidence-gated архивирование реализованных инсайтов",
+      "promptPath": "docs/prompts/INSIGHT_ARCHIVE_LIFECYCLE_PROMPT.md",
+      "githubIssue": 609,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-18",
+      "archivedAt": "2026-07-19",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ],
+      "notes": "Add archive lifecycle, evidence audit, skills and tests",
+      "archiveNotes": "PR #612, Closes #609 — evidence-gated insight archive; rebased onto main after Codex stall",
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "swallow-sent-log",
       "title": "docs/comms: sent-log.jsonl — след отправки ласточки/дайджеста",
       "promptPath": "docs/prompts/SWALLOW_SENT_LOG_PROMPT.md",
@@ -579,25 +689,6 @@
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "ritual-trust-contour"
-    },
-    {
-      "id": "insight-archive-lifecycle",
-      "title": "Evidence-gated архивирование реализованных инсайтов",
-      "promptPath": "docs/prompts/INSIGHT_ARCHIVE_LIFECYCLE_PROMPT.md",
-      "githubIssue": 609,
-      "size": "M",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-18",
-      "archivedAt": "2026-07-19",
-      "leadPersona": "vesnin",
-      "supportPersonas": [
-        "ozhegov",
-        "dynin"
-      ],
-      "notes": "Add archive lifecycle, evidence audit, skills and tests",
-      "archiveNotes": "PR #612, Closes #609 — evidence-gated insight archive; rebased onto main after Codex stall",
-      "githubIssueClosedAt": null
     },
     {
       "id": "morning-ritual-regulation",
