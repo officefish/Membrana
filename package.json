@@ -2,7 +2,7 @@
   "name": "membrana",
   "version": "0.1.0",
   "private": true,
-  "description": "Membrana вЂ” РјРѕРґСѓР»СЊРЅР°СЏ РїР»Р°С‚С„РѕСЂРјР° СѓРїСЂР°РІР»РµРЅРёСЏ СѓСЃС‚СЂРѕР№СЃС‚РІР°РјРё Рё СЂР°СЃРїРёСЃР°РЅРёРµРј",
+  "description": "Membrana — модульная платформа управления устройствами и расписанием",
   "workspaces": [
     "packages/*",
     "packages/libs/*",
