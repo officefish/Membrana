@@ -157,7 +157,17 @@ node scripts/_ssh-office-smoke.mjs --external
 yarn office:self-check
 ```
 
-Логика: `src/lib/outbound-self-check.ts` (переиспользуется `/ready` в T2).
+Логика: `src/lib/outbound-self-check.ts` (переиспользуется `/ready`).
+
+### `GET /ready` (Intern T2)
+
+Без авторизации. Liveness процесса + сетевой зонд тех же четырёх хостов (тело, не 503):
+
+```json
+{ "ready": true, "version": "…", "uptime": 12, "checks": [ { "id": "github", "reachable": true, "latencyMs": 40, "httpStatus": 200, "note": "http" } ] }
+```
+
+`ready=false`, если хотя бы один хост недоступен; HTTP остаётся 200 (процесс жив).
 
 ### Claude
 
