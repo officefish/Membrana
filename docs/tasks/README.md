@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `code-review-pr-skill-syntax` | docs: скилл code-review — синтаксис yarn code-review:pr без -- | S | [`CODE_REVIEW_PR_SKILL_SYNTAX_PROMPT.md`](../docs/prompts/CODE_REVIEW_PR_SKILL_SYNTAX_PROMPT.md) | [#587](https://github.com/officefish/Membrana/issues/587) |
 | `linear-agent-identity-facts` | Ресёрч: Linear — личность агента, состояние подзадач, блокирующие связи | S | [`LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md`](../docs/prompts/LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md) | — |
 | `meeting-registry-relocation` | Заседание: переезд реестра задач на внешний стек (Linear) | L | [`MEETING_REGISTRY_RELOCATION_PROMPT.md`](../docs/prompts/MEETING_REGISTRY_RELOCATION_PROMPT.md) | — |
 | `meeting-team-execution-contour` | Заседание: контур исполнения виртуальной команды (контур 2) | L | [`MEETING_TEAM_EXECUTION_CONTOUR_PROMPT.md`](../docs/prompts/MEETING_TEAM_EXECUTION_CONTOUR_PROMPT.md) | — |

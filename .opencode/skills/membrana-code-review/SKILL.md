@@ -26,7 +26,7 @@ description: "Membrana code review ritual v0.2: tiers T0/T1/T2, severity P0–P2
 |------|---------|--------|
 | Evening daily | `yarn code-review` | `docs/DAILY_CODE_REVIEW.md` |
 | Extended context | `yarn code-review:full` | same |
-| PR before merge | `yarn code-review:pr -- <N>` | `docs/discussions/pr-<N>-code-review.md` |
+| PR before merge | `yarn code-review:pr <N>` | `docs/discussions/pr-<N>-code-review.md` |
 | Branch | `node scripts/code-review.mjs --branch <name>` | `docs/discussions/branch-<slug>-code-review.md` |
 | Uncommitted | `node scripts/code-review.mjs --uncommitted` | `docs/discussions/uncommitted-code-review.md` |
 | No API (Ollama) | `yarn local-code-review` | `DAILY_CODE_REVIEW.md` (daily only) |

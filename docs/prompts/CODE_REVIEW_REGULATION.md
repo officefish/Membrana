@@ -185,7 +185,7 @@ Definition of Done: yarn turbo … --filter=[packages]
 | Инструмент | Назначение |
 |------------|------------|
 | `yarn code-review` | daily → `DAILY_CODE_REVIEW.md` |
-| `yarn code-review:pr -- <N>` | PR + MAIN_DAY_ISSUE context |
+| `yarn code-review:pr <N>` | PR + MAIN_DAY_ISSUE context (без `--` — yarn съедает его сам; TF-2 / #587) |
 | `yarn ask vesnin` | Точечный вопрос Teamlead |
 | `membrana-code-review` | Skill для агента |
 | `review-bugbot` | Diff-only bug pass |

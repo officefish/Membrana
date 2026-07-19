@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "code-review-pr-skill-syntax",
+      "title": "docs: скилл code-review — синтаксис yarn code-review:pr без --",
+      "promptPath": "docs/prompts/CODE_REVIEW_PR_SKILL_SYNTAX_PROMPT.md",
+      "githubIssue": 587,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "Closes #587; TF-2 yarn eats --",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "office-ready-error-path",
       "title": "fix(office): GET /ready try/catch на error-path self-check",
       "promptPath": "docs/prompts/OFFICE_READY_ERROR_PATH_PROMPT.md",
