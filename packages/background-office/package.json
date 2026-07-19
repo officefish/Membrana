@@ -13,6 +13,7 @@
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
     "test": "yarn prepare && vitest run",
+    "self-check": "tsx ./src/cli/outbound-self-check.ts",
     "verify:swagger": "yarn build && node scripts/verify-swagger.mjs"
   },
   "dependencies": {

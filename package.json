@@ -192,6 +192,7 @@
     "vds:run": "node scripts/_ssh-office-exec.mjs --script",
     "office:dev": "yarn workspace @membrana/background-office dev",
     "office:build": "yarn workspace @membrana/background-office build",
+    "office:self-check": "yarn workspace @membrana/background-office self-check",
     "office:verify-swagger": "yarn workspace @membrana/background-office verify:swagger",
     "office:docker:build": "docker compose -f packages/background-office/docker-compose.yml build",
     "office:docker:up": "docker compose -f packages/background-office/docker-compose.yml up -d",
