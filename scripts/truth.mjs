@@ -11,8 +11,16 @@
  *   node scripts/truth.mjs cool [--json]       — переоценка свежести по git-факту
  *   node scripts/truth.mjs review [--json]     — ОЧЕРЕДЬ РЕВИЗИИ на конец сессии
  *   node scripts/truth.mjs radius <token-id>   — кого утащит отзыв
+ *   node scripts/truth.mjs utterance "<фрагмент>" [--dir <path>] [--json]
+ *       — указатель на реплику владельца: sessionId, uuid, timestamp, kind, цитата.
+ *       Ищет по ВСЕМ трём местам транскрипта (#595 п.1); промах → сырой скан;
+ *       отрицательный ответ печатается со способом поиска и его границей.
+ *   node scripts/truth.mjs ask-check "<вопрос>" [--json]
+ *       — дубль-проверка ДО вопроса владельцу (#642 п.1): слова вопроса ищутся по
+ *       живым токенам и openGaps. Exit 3 = кандидат-ответ уже есть, вопрос не жечь.
  *
  * Exit: 0 — поток не блокируется · 2 — нарушен инвариант ИЛИ подписчик с onBreak=block задет
+ *       · 3 — (только ask-check) найден живой токен-кандидат
  *
  * ПРОТУХШЕЕ НЕ БЛОКИРУЕТ (решение владельца 17.07). Гейт, который краснеет постоянно,
  * отключают — так drift-якоря стали украшением. Вместо блокировки протухшее копится в
@@ -38,6 +46,12 @@ import {
   radiusOfBreak,
   usedPredicates,
 } from './lib/truth-graph.mjs';
+import {
+  defaultTranscriptDir,
+  findUtterances,
+  listTranscriptFiles,
+  rawScan,
+} from './lib/transcript.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const REGISTRY_REL = 'docs/truth/registry.json';
@@ -165,16 +179,137 @@ export function reviewQueue(graph, stale, today) {
   return { stale: staleItems, noEvidence, unreviewed };
 }
 
+/**
+ * Дубль-проверка ДО вопроса владельцу (#642 п.1): не отвечает ли на вопрос уже
+ * зачеканенный живой токен или открытый пробел. Детерминированный поиск по СЛОВАМ,
+ * не по смыслу — граница метода печатается потребителю.
+ *
+ * Порог: ≥2 значимых слов вопроса в токене (≥1, если значимых слов мало) — грубо,
+ * но ловит эпизод 18.07: вопрос «ушла ли ласточка Алексу» нашёл бы
+ * `alex-sparring-answered`, зачеканенный сутками раньше.
+ *
+ * @param {{tokens?: object[], openGaps?: unknown[]}} registry
+ * @param {string} question
+ */
+export function askCheckMatches(registry, question) {
+  const words = [...new Set((question.toLowerCase().match(/[\p{L}\d][\p{L}\d-]{3,}/gu) ?? []))];
+  const need = Math.min(2, Math.max(1, words.length));
+  // Усечение окончаний: «алексу» находит «алекса» — падежи не должны прятать ответ.
+  const stem = (w) => w.slice(0, Math.max(4, w.length - 2));
+  const matchedIn = (hay) => words.filter((w) => hay.includes(w) || hay.includes(stem(w)));
+  const hayOf = (t) =>
+    [t.claim, t.episode, t.source?.note, t.source?.utterance?.quote, t.id]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
+
+  const tokens = (registry.tokens ?? [])
+    .filter((t) => t.status === 'active')
+    .map((t) => ({ id: t.id, claim: t.claim, matched: matchedIn(hayOf(t)) }))
+    .filter((x) => x.matched.length >= need)
+    .sort((a, b) => b.matched.length - a.matched.length);
+
+  const gaps = (registry.openGaps ?? [])
+    .map((g, index) => {
+      const text = typeof g === 'string' ? g : JSON.stringify(g);
+      return { index, text: text.slice(0, 160), matched: matchedIn(text.toLowerCase()) };
+    })
+    .filter((x) => x.matched.length >= need)
+    .sort((a, b) => b.matched.length - a.matched.length);
+
+  return { words, need, tokens, gaps };
+}
+
+function utteranceCommand(argv, asJson) {
+  const rest = argv.slice(1).filter((a) => !a.startsWith('--'));
+  const dirFlag = argv.indexOf('--dir');
+  const dir = dirFlag !== -1 ? argv[dirFlag + 1] : defaultTranscriptDir();
+  const pattern = rest[0];
+  if (!pattern) {
+    console.error('usage: truth utterance "<фрагмент реплики>" [--dir <path>] [--json]');
+    process.exit(1);
+  }
+  if (!dir) {
+    console.error('каталог транскриптов не найден (~/.claude/projects/<slug cwd>) — укажи --dir');
+    process.exit(1);
+  }
+  const files = listTranscriptFiles(dir);
+  const boundary = `метод: структурный поиск по user/queued_command/tool_result, подстрока без регистра; граница: ${dir}, файлов ${files.length}`;
+
+  const hits = findUtterances(pattern, { dir });
+  if (hits.length > 0) {
+    if (asJson) {
+      console.log(JSON.stringify({ boundary, hits }, null, 2));
+    } else {
+      for (const h of hits) {
+        console.log(`${h.kind}  ${h.timestamp ?? '—'}\n  sessionId: ${h.sessionId}\n  uuid: ${h.uuid ?? '— (у attachment-записей uuid записи, не реплики)'}\n  цитата: ${h.text.replace(/\s+/gu, ' ').slice(0, 200)}\n`);
+      }
+      console.log(`найдено: ${hits.length} · ${boundary}`);
+    }
+    process.exit(0);
+  }
+
+  // Промах структурного поиска → сырой скан (#595 п.4: молчание — не факт).
+  const raw = rawScan(pattern, { dir });
+  if (asJson) {
+    console.log(JSON.stringify({ boundary, hits: [], rawHits: raw }, null, 2));
+  } else if (raw.length > 0) {
+    console.log('структурный поиск промахнулся, но СЫРОЙ скан нашёл — вероятно, новый тип записи или битый JSON:');
+    for (const r of raw.slice(0, 10)) console.log(`  ${r.file}:${r.line}  ${r.snippet.slice(0, 120)}`);
+    console.log(`\n${boundary} + фолбэк сырой строкой`);
+  } else {
+    console.log(`не найдено. ${boundary} + фолбэк сырой строкой — тоже пусто.`);
+  }
+  process.exit(raw.length > 0 ? 0 : 1);
+}
+
+function askCheckCommand(registry, argv, asJson) {
+  const question = argv.slice(1).filter((a) => !a.startsWith('--')).join(' ').trim();
+  if (!question) {
+    console.error('usage: truth ask-check "<вопрос владельцу>" [--json]');
+    process.exit(1);
+  }
+  const res = askCheckMatches(registry, question);
+  const boundary = `метод: поиск по словам/основам (${res.words.join(', ')}), порог ${res.need} — НЕ по смыслу; ложный промах возможен при перефразировке`;
+  if (asJson) {
+    console.log(JSON.stringify({ boundary, ...res }, null, 2));
+  } else {
+    if (res.tokens.length > 0) {
+      console.log('ОТВЕТ УЖЕ МОЖЕТ БЫТЬ — живые токены-кандидаты (вопрос не жечь, сначала прочитать):');
+      for (const t of res.tokens) console.log(`  ${t.id} [${t.matched.join(', ')}]\n    ${t.claim.slice(0, 160)}`);
+    }
+    if (res.gaps.length > 0) {
+      console.log('\nСовпавшие открытые пробелы (openGaps) — если токен выше отвечает на пробел, пробел пора закрыть:');
+      for (const g of res.gaps) console.log(`  [${g.index}] ${g.text}`);
+    }
+    if (res.tokens.length === 0 && res.gaps.length === 0) {
+      console.log('совпадений нет — вопрос выглядит новым.');
+    }
+    console.log(`\n${boundary}`);
+  }
+  process.exit(res.tokens.length > 0 ? 3 : 0);
+}
+
 function main() {
   const argv = process.argv.slice(2);
   const cmd = argv[0];
   const asJson = argv.includes('--json');
+
+  if (cmd === 'utterance') {
+    utteranceCommand(argv, asJson);
+    return;
+  }
 
   const registry = readJson(REGISTRY_REL);
   if (!registry) {
     console.error(`нет ${REGISTRY_REL} — нечего проверять`);
     process.exit(0);
   }
+  if (cmd === 'ask-check') {
+    askCheckCommand(registry, argv, asJson);
+    return;
+  }
+
   const manifest = readJson(SUBSCRIBERS_REL) ?? { subscribers: [] };
   const graph = buildGraph(registry);
 
