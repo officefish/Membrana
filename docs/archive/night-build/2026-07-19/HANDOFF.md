@@ -22,7 +22,7 @@
 | NB2 | **done** | `yarn night:land-reports` (+ `--execute`); pure lib + CLI; 7 unit tests; dry-run default |
 | NB3 | **done** | абзац в `DEVELOPER_RHYTHM.md`; скилл `membrana-night-sprint`: always-yes:on до спавна; land-reports утром |
 | NB4 | **done** | analysis на ветке + ссылки из регламента |
-| NB5 | **done** | этот HANDOFF; PR открыт, **не** смёржен |
+| NB5 | **done** | этот HANDOFF; PR [#683](https://github.com/officefish/Membrana/pull/683) открыт, **не** смёржен |
 
 ## Коммиты ветки vs origin/main
 
