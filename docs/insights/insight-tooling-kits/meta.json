@@ -1,13 +1,13 @@
 {
   "id": "insight-tooling-kits",
   "title": "Версионируемые тулинг-киты: наборы умений агента под задачу",
-  "status": "draft",
+  "status": "adopted",
   "source": "user",
   "horizon": null,
-  "weight": null,
+  "weight": 6.4,
   "createdAt": "2026-07-19",
-  "researchedAt": null,
-  "reviewedAt": null,
-  "closedAt": null,
+  "researchedAt": "2026-07-19",
+  "reviewedAt": "2026-07-19",
+  "closedAt": "2026-07-19",
   "tags": []
 }
