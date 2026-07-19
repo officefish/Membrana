@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-18",
+  "updatedAt": "2026-07-19",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -557,6 +557,17 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-18",
+      "tags": []
+    },
+    {
+      "id": "insight-tooling-kits",
+      "title": "Версионируемые тулинг-киты: наборы умений агента под задачу",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-19",
       "tags": []
     }
   ]
