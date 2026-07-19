@@ -469,7 +469,7 @@
       "githubIssue": null,
       "size": "M",
       "status": "active",
-      "sprintKind": "day-sprint",
+      "sprintKind": "night-build",
       "createdAt": "2026-07-18",
       "archivedAt": null,
       "leadPersona": "vesnin",
@@ -477,7 +477,7 @@
         "ozhegov",
         "dynin"
       ],
-      "notes": "",
+      "notes": "Night Build 19.07: NB0–NB5 land-reports + two genres. Analysis: docs/discussions/night-build-format-analysis-2026-07-19.md",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },

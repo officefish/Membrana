@@ -1,140 +1,64 @@
-# Промпт: Формат night-build: доработка по трению ночи 17.07 (заседание)
+# Промпт: Формат night-build v2 — приёмник отчётов + два жанра ночи
 
-> **Task-промпт для агента-разработчика** (Cursor IDE / Claude / другой LLM).
-> Процесс постановки: [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md).
-> Скопируй блок **«Промпт целиком»** в начало диалога. Размер задачи: **M**.
-> Ожидаемый артефакт: **N PR** — <одна фраза>.
-> Реестр: `id` = `night-build-format-v2` в [`docs/tasks/registry.json`](../tasks/registry.json).
+> **Night Build — промпт целиком.** Размер **M**.  
+> Реестр: `night-build-format-v2`.  
+> Сырьё: [`docs/discussions/night-build-format-analysis-2026-07-19.md`](../discussions/night-build-format-analysis-2026-07-19.md)  
+> (каскад triage #481→#638 19.07: draft блокировал merge; жанры Night Build vs night-triage путаются).
 
----
-
-## Контекст
-
-<1–2 абзаца: зачем задача, что уже есть в репозитории, что не трогаем.>
-
-**Связанные документы:**
-
-| Документ | Зачем |
-|----------|--------|
-| [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) | Роли, порядок работы |
-| [`ARCHITECTURE.md`](../ARCHITECTURE.md) | Границы модулей |
-| [`DESIGN.md`](../DESIGN.md) | UI (если есть) |
-| [`TASKS_MANAGEMENT.md`](../TASKS_MANAGEMENT.md) | Issue / PR |
-| <другие> | … |
-
-**Референс (только идеи UX, не копировать код):** `packages/temp/...` — если есть.
-
-**GitHub Issue:** — (не заведён)
-
----
-
-## Промпт целиком (для вставки агенту)
-
-> Всё ниже до раздела **«Заметки для человека-постановщика»** — текст задания для агента.
-
----
+## Night Build — промпт целиком
 
 ### Кто ты
 
-Ты — **координатор виртуальной команды Membrana** под руководством **Vesnin** (Teamlead). Перед кодом — краткий план (1–2 абзаца + список файлов). Соблюдай [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) и [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md).
+Делегированный ночной агент Membrana. Координатор уже включил `yarn always-yes:on`
+(ADR-0009 Р7). Работай в worktree на ветке `night/night-build-format-v2-YYYY-MM-DD`
+от **`origin/main`**. Чекпоинть: `yarn night:checkpoint --phase NB<n> --status pass|fail --note "…"`.
 
----
+### In scope (заморожено)
 
-### Что построить (продуктовое описание)
-
-1. …
-2. …
-
----
-
-### Архитектура / контракт
-
-| Слой | Путь | Ответственность |
-|------|------|-----------------|
-| … | … | … |
-
-**Запрещено:**
-
-- …
-
----
-
-### Визуальный дизайн (если есть UI)
-
-- …
-
----
-
-### Тесты
-
-| Область | Минимум |
-|---------|---------|
-| … | … |
-
----
-
-### Definition of Done
-
-- [ ] …
-- [ ] `yarn turbo run lint typecheck test build --continue` — зелёный (или указать scope).
-- [ ] LGTM Teamlead.
-
----
+| Фаза | Класс | W | DoD |
+|------|-------|---|-----|
+| **NB0** Gate | infra | 1 | Worktree от `origin/main`; `yarn worktree:bootstrap`; stale ACTIVE закрыт/`--force`; baseline `node --test` на новые тесты когда появятся |
+| **NB1** Canon | config | 2 | В `NIGHT_SPRINT_REGULATION.md`: (a) два жанра ночи — Night Build vs night-triage/hunt; (b) утренний **land-каскад** для docs-report draft PR; (c) draft без `ready` = блокер merge. Без переписывания G1–G3 |
+| **NB2** `night:land-reports` | code | 3 | CLI `yarn night:land-reports` (+ `--execute`): найти open PR title~`Night triage`, path-only `docs/reports/night-triage/**`, `gh pr ready` + squash-merge oldest-first; default dry-run; тесты на классификацию/порядок |
+| **NB3** Ритуал | config | 1 | Абзац в `DEVELOPER_RHYTHM.md` (утро): после HANDOFF — `yarn night:land-reports` (dry-run → слово владельца → `--execute`). Скилл `membrana-night-sprint`: always-yes:on до спавна; land-reports утром |
+| **NB4** Analysis park | config | 0 | Влить `docs/discussions/night-build-format-analysis-2026-07-19.md` в ветку (если ещё нет); ссылка из регламента |
+| **NB5** Close | infra | 1 | `yarn night:close --id night-build-format-v2`; HANDOFF с рекомендацией утреннего merge PR; **не** мёржить в main |
 
 ### Out of scope
 
-- …
+- Prod deploy / SSH / `task:close-github` / force-push / `reset --hard`
+- Правки `@membrana/core`, MembranaRegistry, audio-engine
+- Auto-merge без dry-run по умолчанию; закрытие GitHub Issues из triage-отчётов
+- Заполнение всего stub day-sprint шаблона вне Night Build блока
+- Мёрж в `main` ночью (норма: утро)
 
----
+### Жёсткие инварианты (СТОП)
 
-### Порядок работы ролей
+1. G1: always-yes deny остаётся (не обходить профилем).
+2. G2: только свой worktree; не `git add -A` чужого.
+3. G3: база ветки — `origin/main`, не локальный main.
+4. `night:land-reports` без `--execute` ничего не мёржит.
+5. Path allowlist land: только `docs/reports/night-triage/**` (один файл ADDED на PR). Иной diff → skip + note в отчёте CLI.
+6. При 2 падениях CI подряд — стоп, HANDOFF с блокером.
 
-1. **Teamlead** — …
-2. **Структурщик** — …
-3. **Математик** — …
-4. **Музыкант** — …
-5. **Верстальщик** — …
+### Тесты
 
----
+| Область | Гейт |
+|---------|------|
+| land-reports pure classify/order | unit (`node:test`) |
+| регламент / rhythm | `yarn docs:lint` или verify-encoding на затронутых md |
 
-### Формат ответа координатора (планирование)
+### Порядок
 
-```text
-[Teamlead]: …
-[Структурщик]: …
-[Математик]: …
-[Музыкант]: …
-[Верстальщик]: …
+NB0 → NB1 → checkpoint → NB2 + tests → checkpoint → NB3 → NB4 → NB5 close.
 
-Итоговый артефакт: …
-Definition of Done: …
-```
+### HANDOFF (утро)
+
+Координатор: adversarial review PR; `yarn always-yes:off` если день без авто-yes; merge по LGTM.
 
 ---
 
 ## Заметки для человека-постановщика
 
-1. GitHub Issue (`wish` / `bug` / `imperfection`) + ссылка на этот файл.
-2. Запись в `docs/tasks/registry.json` (`status: active`).
-3. После merge: отчёт в Issue → `yarn task:archive <slug> --notes "…"`.
-
-### Проверка после PR
-
-```bash
-# команды проверки
-```
-
----
-
-## Связь с дорожной картой
-
-- …
-
-## Вопросы для research (Q1–Q3)
-
-> Заполнить ДО `yarn research night-build-format-v2`. Вопрос — конкретный и самодостаточный:
-> Perplexity ответит на что угодно, включая обрывок (инцидент 2026-07-12, #402).
-
-1. **Landscape:** Как команды в 2025–2026 организуют автономные (unattended, ночные/пакетные) сессии AI-агентов, пишущих код: какая структура спринта применяется — фазы, чекпоинты и их каденс, гейты качества между шагами; какие границы задают агенту без надзора (что запрещено без человека — мёрж, деплой, правки критичных модулей); как оформляют branch/merge-дисциплину и передачу результата человеку (handoff-артефакты)? Различают ли классы правок по требованию тестов (код vs конфиг vs инфраструктура)?
-2. **Fit (Membrana):** Маленькая команда делегирует ночную сессию автономному агенту со scoped auto-approve профилем (авто-подтверждение рабочей поверхности, жёсткий запрет на прод/force/критичный модуль). По каким признакам команды дробят работу на кванты и назначают гранулярность фаз и каденс чекпоинтов; как решают, обязателен ли юнит-тест для правки (учитывая, что конфиг/инфра/интеграционные правки тестируются иначе или не тестируются юнитом); и как автоматизируют сбор handoff (что смёржить + follow-up) из коммитов ветки, а не руками?
-3. **Risk:** Каковы известные режимы отказа автономных агентских спринтов без надзора в 2025–2026 — молчаливый расширение объёма (scope creep), непротестированные инфраструктурные правки, мёрж без ревью, коллизии параллельных сессий/worktree, утечка секретов; какие guardrails эмпирически работают против каждого (запрет мёржа ночью, обязательное человеческое ревью утром, scoped-профиль разрешений, изоляция веток), а какие оказываются театром безопасности?
+Эпик переведён в `sprintKind: night-build` для пилота 19.07. После merge — обсудить
+развилки A–F из analysis (auto-merge vs ритуал; префиксы PR).
