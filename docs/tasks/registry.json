@@ -1,6 +1,22 @@
 {
   "tasks": [
     {
+      "id": "env-sibling-worktree",
+      "title": ".env из sibling-worktree: слоёная загрузка через git-common-dir + честный 401",
+      "promptPath": "docs/prompts/ENV_SIBLING_WORKTREE_PROMPT.md",
+      "githubIssue": 567,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": null,
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "truth-transcript-tooling",
       "title": "lib/transcript + truth utterance/ask-check — поиск указателей правды по всем трём местам",
       "promptPath": "docs/prompts/TRUTH_TRANSCRIPT_TOOLING_PROMPT.md",

@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { loadDotEnv } from './_anthropic-env.mjs';
+import { loadDotEnv, resolveDotEnvPaths } from './_anthropic-env.mjs';
 import { resolveOfficeToken } from './lib/office-token.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -71,6 +71,13 @@ if (isMain) {
     });
     if (!res.ok) {
       console.error(`office ответил ${res.status}: ${await res.text().catch(() => '')}`);
+      if (res.status === 401) {
+        // #567 п.2: отказ называет корень, а не симптом — «Invalid token» 16.07
+        // на деле означал «подхвачен не тот .env и не та переменная».
+        console.error(`  .env загружены (последний побеждает): ${resolveDotEnvPaths().join(' → ') || 'ни одного'}`);
+        console.error(`  источник токена: ${source ?? 'не найден'}`);
+        console.error('  явный обход: MEMBRANA_ENV_PATH=<путь к .env с OFFICE_API_TOKEN>');
+      }
       process.exit(1);
     }
     const body = await res.json().catch(() => ({}));
