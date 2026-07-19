@@ -1,13 +1,11 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync, mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, mkdirSync, writeFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import {
   buildResearchQueries,
-  archiveInsight,
-  buildInsightArchivePlan,
   collectInsightsForWeeklyPlan,
   createInsight,
   findTruncatedQueries,
@@ -16,24 +14,6 @@ import {
   readRegistry,
   parseInsightCli,
 } from './lib/insight-ritual.mjs';
-
-function createArchiveFixture({ taskStatus = 'archived', linked = true } = {}) {
-  const root = mkdtempSync(join(tmpdir(), 'membrana-insight-archive-'));
-  const id = 'insight-done';
-  mkdirSync(join(root, 'docs/insights', id), { recursive: true });
-  mkdirSync(join(root, 'docs/tasks'), { recursive: true });
-  writeFileSync(join(root, 'docs/insights/registry.json'), JSON.stringify({
-    version: 1,
-    insights: [{ id, title: 'Done', status: 'adopted', sprintPhase: 'done-task', weight: 7 }],
-  }), 'utf8');
-  writeFileSync(join(root, 'docs/insights', id, 'meta.json'), JSON.stringify({
-    id, title: 'Done', status: 'adopted', sprintPhase: 'done-task', weight: 7,
-  }), 'utf8');
-  writeFileSync(join(root, 'docs/tasks/registry.json'), JSON.stringify({
-    tasks: [{ id: 'done-task', status: taskStatus, insightId: linked ? id : 'insight-other' }],
-  }), 'utf8');
-  return { root, id };
-}
 
 describe('insight-ritual', () => {
   it('normalizeInsightId adds prefix', () => {
@@ -124,60 +104,24 @@ describe('insight-ritual', () => {
     }
   });
 
-  it('archive CLI is dry-run unless --execute is explicit', () => {
+  it('legacy archive CLI is parsed only so dispatcher can hard-deprecate it', () => {
     const cli = parseInsightCli(['archive', 'done', '--task', 'done-task', '--result', 'shipped']);
     assert.equal(cli.command, 'archive');
     assert.deepEqual(cli.taskIds, ['done-task']);
     assert.equal(cli.execute, false);
   });
 
-  it('archive requires explicit result and linked archived tasks', () => {
-    const { root, id } = createArchiveFixture();
-    try {
-      assert.throws(() => buildInsightArchivePlan(root, { id, taskIds: ['done-task'], result: '' }), /--result/);
-      assert.throws(() => buildInsightArchivePlan(root, { id, taskIds: [], result: 'shipped' }), /--task/);
-    } finally {
-      rmSync(root, { recursive: true, force: true });
-    }
-  });
-
-  it('archive rejects active or unrelated implementation tasks', () => {
-    const active = createArchiveFixture({ taskStatus: 'active' });
-    const unrelated = createArchiveFixture({ linked: false });
-    try {
-      assert.throws(() => buildInsightArchivePlan(active.root, { id: active.id, taskIds: ['done-task'], result: 'shipped' }), /expected archived/);
-      // sprintPhase remains a canonical direct link, so remove it to test unrelated evidence.
-      const registry = readRegistry(unrelated.root);
-      registry.insights[0].sprintPhase = null;
-      writeFileSync(join(unrelated.root, 'docs/insights/registry.json'), JSON.stringify(registry), 'utf8');
-      assert.throws(() => buildInsightArchivePlan(unrelated.root, { id: unrelated.id, taskIds: ['done-task'], result: 'shipped' }), /not linked/);
-    } finally {
-      rmSync(active.root, { recursive: true, force: true });
-      rmSync(unrelated.root, { recursive: true, force: true });
-    }
-  });
-
-  it('archive dry-run does not write and execute synchronizes registry/meta', () => {
-    const { root, id } = createArchiveFixture();
-    try {
-      const input = { id, taskIds: ['done-task'], result: 'Feature shipped', date: '2026-07-18' };
-      const dry = archiveInsight(root, input);
-      assert.equal(dry.archive.status, 'archived');
-      assert.equal(readRegistry(root).insights[0].status, 'adopted');
-      archiveInsight(root, { ...input, execute: true });
-      const entry = readRegistry(root).insights[0];
-      const meta = JSON.parse(readFileSync(join(root, 'docs/insights', id, 'meta.json'), 'utf8'));
-      for (const value of [entry, meta]) {
-        assert.equal(value.status, 'archived');
-        assert.equal(value.previousStatus, 'adopted');
-        assert.equal(value.archivedAt, '2026-07-18');
-        assert.deepEqual(value.implementationTaskIds, ['done-task']);
-        assert.equal(value.archiveResult, 'Feature shipped');
-      }
-      assert.equal(archiveInsight(root, input).alreadyArchived, true);
-    } finally {
-      rmSync(root, { recursive: true, force: true });
-    }
+  it('parses exact lifecycle request and authority flags', () => {
+    const cli = parseInsightCli([
+      'visibility', 'repr-1', '--set', 'active', '--reason', 'owner choice',
+      '--request-key', 'rk-1', '--authority', 'owner://decision/1', '--execute',
+    ]);
+    assert.equal(cli.command, 'visibility');
+    assert.equal(cli.id, 'repr-1');
+    assert.equal(cli.set, 'active');
+    assert.equal(cli.requestKey, 'rk-1');
+    assert.equal(cli.authority, 'owner://decision/1');
+    assert.equal(cli.execute, true);
   });
 });
 

@@ -84,6 +84,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Нет проверок на PR | **`no checks` ≠ зелено** (18.07 агент доложил зелёный CI, которого не было). СНАЧАЛА смотреть `mergeable`: CONFLICTING/DIRTY не строит merge-ref → CI не запускается вовсе; воркфлоу/paths-ignore проверять бессмысленно. `yarn pr:wait <N>` различает none/running/green/red (#643) |
 | Фоновый вывод в `\| tail` | `tail` буферизует до закрытия пайпа — лог-файл пуст все 20 минут прогона. Фоновая команда пишет **полный** вывод в файл; хвост читать уже из файла (#643) |
 | ESM-импорт из scratchpad | Short-path `USER19~1` рвёт резолв относительного пути (`ERR_MODULE_NOT_FOUND` на несуществующем пути). Из scratchpad в репо — только `pathToFileURL(длинный абсолютный путь)` (#643; та же ловушка, что T6 #548) |
+| `replit:*` / `replit-bridge*.mjs` «сироты» | **Не мусор (19.07).** Эксперимент лендинга через соревнование на Replit: yarn-скрипты уже в main, файлы моста часто untracked WIP в корневом дереве. Снимать мёртвую ссылку из `test:scripts` — ок; `git clean` / выкидывать `replit:task` «файлов нет» — нельзя. Канон: [`docs/handoff/replit-bridge-experimental-wip.md`](docs/handoff/replit-bridge-experimental-wip.md) |
 
 **Общий «работа за сегодня»** — `scripts/lib/git-day-context.mjs` (без `--author`-фильтра).
 
