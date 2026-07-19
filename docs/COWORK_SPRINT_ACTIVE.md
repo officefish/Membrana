@@ -2,7 +2,7 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` — Phase 1 Concept; резка подтверждена владельцем 2026-07-19 |
+| **status** | `open` — Phase 2 Isolated build; Phase 1 закрыта всеми блоками 2026-07-19 |
 | sprintId | `cowork-execution-registry` |
 | Brief | [`docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md) |
 | Вход | [`HANDOFF_2026-07-19_COWORK.md`](./HANDOFF_2026-07-19_COWORK.md) — свод эпиков двух заседаний 19.07 |
@@ -17,8 +17,8 @@
 | Фаза | Статус |
 |------|--------|
 | 0 — Brief + open | закрыта 2026-07-19 (BASE_SHA `221d7801`, LGTM владельца) |
-| 1 — Concept (CONCEPT.md + первый EXPECTATIONS.md) | **в работе** |
-| 2 — Isolated build (собственный DoD на стабах) | — |
+| 1 — Concept (CONCEPT.md + первый EXPECTATIONS.md) | закрыта 2026-07-19: `lead-persona` `8f927146` · `units-trace-measure` `81e74793` · `snapshot-cold-migration` `03a6b1ec`; блокеров нет |
+| 2 — Isolated build (собственный DoD на стабах) | **в работе** |
 | 3 — Interface Consilium → INTERFACE_CONTRACT.md | — |
 | 4 — Integration (ветка `cowork/cowork-execution-registry/integration`) | — |
 | 5 — Merge + RETROSPECTIVE + archive | — |
