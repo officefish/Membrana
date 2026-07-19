@@ -14811,7 +14811,7 @@
         "dynin",
         "ozhegov"
       ],
-      "notes": "M0 ратифицирован владельцем 19.07 (run2, посылки названы; run1 завернул гейт правила 6 → rejected/). DAG: корень №2 дозор; ребро №2→№1b апгрейд-спринт; листы без консилиума: №1a гигиена-патчи, critical рантайма (@fastify/middie), ревизия OAuth/Apps, gitleaks-гейт. Очередь: M1 дозор → M2 апгрейд → M3 регламенты (M-lite). Протокол: docs/seanses/security-posture-m0-order-run2-2026-07-19.md",
+      "notes": "ЗАВЕРШЕНО 19.07: M0–M3 все с вердиктами, ратифицированы владельцем, аудированы S-M5 (6/7NA, 7/7, 7/7, 8/8). Артефакты: docs/meeting/security-posture/, регламенты DEPS_WATCH_REGULATION.md + INCIDENT_RESPONSE_REGULATION.md, дозор deps:watch в ритуалах, gitleaks-гейт, карточка инцидента patchhog. Открытыми остались 4 карточки sec-upgrade-* (вне контейнера). Архивировать через task:archive по слову владельца.",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
