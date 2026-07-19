@@ -23,7 +23,10 @@ description: >-
 4. При **LGTM**: `yarn pr:ship --type <t> --scope <s> -m "<msg>" [--issue N] [--branch <b>] --execute`.
    - `pr:ship` по умолчанию `--dry-run` (печатает шаги), `--execute` — реально.
    - Гуард: отказ коммитить в `main` без `--branch`.
+   - Уже на нужной ветке: `--branch` идемпотентен (не делает `checkout -b` повторно).
    - Артефакт ревью `docs/discussions/uncommitted-code-review.md` — в gitignore (не трекается).
+5. Если в сессии остался **другой** незакрытый трек — перед ship новой темы
+   напомни одной строкой (ветка / PR / merged), не смешивай диффы.
 
 ## НЕ использовать
 

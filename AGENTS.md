@@ -70,6 +70,9 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | `yarn code-review:pr 543` | **Без `--`** по той же причине: с `--` уходило `pr="--"` (починено TF-2 — теперь внятный отказ) |
 | `node scripts/_ssh-panel-smoke.mjs` | **Без `--read-only` пишет в ПРОД-стор** |
 | `yarn pr:ship`, `yarn repo:clean`, `yarn tasks:archive-closed` | По умолчанию **dry-run**; нужен `--execute` |
+| `pr:ship --branch` на уже выбранной ветке | С 19.07 **идемпотентен** (не `checkout -b`). Раньше fatal `already exists` и обрыв ship |
+| Sibling worktree без `node_modules` | `yarn worktree:bootstrap` (junction/symlink + `.env`), не полный `yarn install` сразу |
+| Ласточка: голые `PR #N` | `yarn live-links` — отдельно от линзы Ожегова (тон ≠ кликабельность) |
 | Мёрж `git merge origin/main` | **Без `-m`** — хук освобождает `Merge*`. Своё `-m "merge: …"` строчными хук отклонит (TF-1: находка «хук ломает merge» была **ложной**) |
 | Worktree занял ветку | `git checkout main` упадёт. Смотреть `yarn neighbors`, не писать grep — самописный **соврал** 16.07. Ночью ветку брать **от `origin/main`**, не от локального main |
 | Новый `scripts/_ssh-*.mjs` | Под gitignore — только `git add -f`, иначе молча не войдёт в коммит (#476 п.7) |

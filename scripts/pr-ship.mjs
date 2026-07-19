@@ -11,6 +11,9 @@
  *   yarn pr:ship ... --execute            # реально выполнить
  *   yarn pr:ship ... --no-merge           # только PR, без squash-merge
  *   yarn pr:ship ... --no-commit          # коммиты уже готовы: push → PR → merge (без commit/branch)
+ *
+ * `--branch`: идемпотентен — если уже на этой ветке, шаг пропускается; если ветка
+ * есть локально — `checkout`, иначе `checkout -b` (фикс 19.07: already exists).
  *   yarn pr:ship ... --no-wait            # НЕ ждать зелёного CI перед merge (осознанный обход)
  *
  * Merge (#653): перед merge — ci-wait (scripts/pr-wait.mjs, четыре состояния CI);
@@ -74,7 +77,38 @@ export function extractIssueMentions(text) {
 }
 
 /**
- * @param {{type:string,scope?:string,message:string,issue?:number|string,branch?:string,base:string,merge?:boolean,commit?:boolean,wait?:boolean,currentBranch?:string,worktreeBranches?:string[],allowMentionWithoutClose?:boolean}} opts
+ * Шаг переключения на `--branch`: идемпотентен, если уже на ней;
+ * существующая локальная ветка — `checkout`, новая — `checkout -b`.
+ * Живой случай 19.07: `pr:ship --branch feat/…` на уже выбранной ветке → fatal
+ * «a branch named … already exists».
+ *
+ * @param {string|undefined} branch
+ * @param {{currentBranch?: string, localBranches?: string[]}} ctx
+ * @returns {{label:string,cmd:string,args:string[]}|null}
+ */
+export function planBranchStep(branch, ctx = {}) {
+  if (!branch) return null;
+  const current = ctx.currentBranch ?? '';
+  if (current && current === branch) return null;
+  const local = ctx.localBranches ?? [];
+  if (local.includes(branch)) {
+    return { label: 'branch', cmd: 'git', args: ['checkout', branch] };
+  }
+  return { label: 'branch', cmd: 'git', args: ['checkout', '-b', branch] };
+}
+
+/** Локальные имена веток (без remote). Пусто, если git недоступен. */
+export function listLocalBranches(run = execFileSync) {
+  try {
+    const out = String(run('git', ['branch', '--format=%(refname:short)'], { encoding: 'utf8' }));
+    return out.split(/\r?\n/u).map((s) => s.trim()).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * @param {{type:string,scope?:string,message:string,issue?:number|string,branch?:string,base:string,merge?:boolean,commit?:boolean,wait?:boolean,currentBranch?:string,localBranches?:string[],worktreeBranches?:string[],allowMentionWithoutClose?:boolean}} opts
  * @returns {{title:string,commitBody:string,steps:{label:string,cmd:string,args:string[]}[],skippedSync?:string}}
  */
 export function planPrShip(opts) {
@@ -103,7 +137,11 @@ export function planPrShip(opts) {
 
   /** @type {{label:string,cmd:string,args:string[]}[]} */
   const steps = [];
-  if (branch) steps.push({ label: 'branch', cmd: 'git', args: ['checkout', '-b', branch] });
+  const branchStep = planBranchStep(branch, {
+    currentBranch: opts.currentBranch,
+    localBranches: opts.localBranches,
+  });
+  if (branchStep) steps.push(branchStep);
   if (commit) steps.push({ label: 'commit', cmd: 'git', args: ['commit', '-m', commitBody] });
   steps.push({ label: 'push', cmd: 'git', args: ['push', '-u', 'origin', 'HEAD'] });
   steps.push({
@@ -172,6 +210,7 @@ function main() {
   const { title, steps, skippedSync } = planPrShip({
     ...opts,
     currentBranch: current,
+    localBranches: listLocalBranches(),
     worktreeBranches: otherWorktreeBranches(),
   });
 

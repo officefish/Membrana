@@ -5,6 +5,7 @@ import {
   extractIssueMentions,
   isBaseHeldElsewhere,
   otherWorktreeBranches,
+  planBranchStep,
   planPrShip,
 } from './pr-ship.mjs';
 
@@ -96,6 +97,33 @@ test('planPrShip --no-commit + --branch → ошибка (несовместим
     () => planPrShip({ type: 'fix', message: 'x', commit: false, branch: 'feat/x' }),
     /--no-commit несовместим с --branch/,
   );
+});
+
+test('planBranchStep: уже на ветке → шаг не нужен (живой случай 19.07)', () => {
+  assert.equal(planBranchStep('feat/x', { currentBranch: 'feat/x' }), null);
+  const { steps } = planPrShip({
+    type: 'feat',
+    message: 'x',
+    branch: 'feat/x',
+    currentBranch: 'feat/x',
+  });
+  assert.ok(!steps.some((s) => s.label === 'branch'));
+});
+
+test('planBranchStep: локальная ветка есть → checkout без -b', () => {
+  assert.deepEqual(planBranchStep('feat/x', { currentBranch: 'main', localBranches: ['feat/x'] }), {
+    label: 'branch',
+    cmd: 'git',
+    args: ['checkout', 'feat/x'],
+  });
+});
+
+test('planBranchStep: новой ветки нет → checkout -b', () => {
+  assert.deepEqual(planBranchStep('feat/new', { currentBranch: 'main', localBranches: ['main'] }), {
+    label: 'branch',
+    cmd: 'git',
+    args: ['checkout', '-b', 'feat/new'],
+  });
 });
 
 // ─── worktree: ff-sync невозможен, если base держит соседнее дерево (#476 п.2) ─────
