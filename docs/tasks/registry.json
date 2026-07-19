@@ -6,17 +6,17 @@
       "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
       "githubIssue": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "meeting",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
+      "archivedAt": "2026-07-19",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin",
         "ozhegov"
       ],
       "notes": "ЗАВЕРШЕНО 19.07: M0–M3 все с вердиктами, ратифицированы владельцем, аудированы S-M5 (6/7NA, 7/7, 7/7, 8/8). Артефакты: docs/meeting/security-posture/, регламенты DEPS_WATCH_REGULATION.md + INCIDENT_RESPONSE_REGULATION.md, дозор deps:watch в ритуалах, gitleaks-гейт, карточка инцидента patchhog. Открытыми остались 4 карточки sec-upgrade-* (вне контейнера). Архивировать через task:archive по слову владельца.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #676; review LGTM 9c0e9d413c3a; PR #676 merged 2026-07-19T16:32:15Z (5277101eccc6bcbf78c9db25f93f1e1f263b7e57)",
       "githubIssueClosedAt": null
     },
     {
