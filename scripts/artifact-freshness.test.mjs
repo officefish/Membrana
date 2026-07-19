@@ -1,10 +1,10 @@
-﻿/**
- * ╨в╨╡╤Б╤В╤Л ╨│╨╡╨╣╤В╨░ ╤Б╨▓╨╡╨╢╨╡╤Б╤В╨╕ (╤Г╨╖╨╡╨╗ F ╨▓╨╡╤А╨┤╨╕╨║╤В╨░ scripts-boundary M0, ╤Б╨┐╤А╨╕╨╜╤В
+/**
+ * Тесты гейта свежести (узел F вердикта scripts-boundary M0, спринт
  * ritual-step-manifest-sf).
  *
- * ╨Э╨╡╤Б╤Г╤Й╨╕╨╣ ╨╕╨╜╨▓╨░╤А╨╕╨░╨╜╤В: ╨│╨╡╨╣╤В ╨Ъ╨Ю╨Э╨б╨Х╨а╨Т╨Р╨в╨Ш╨Т╨Х╨Э тАФ ╨┐╤А╨╕ ╨╗╤О╨▒╨╛╨╣ ╨╜╨╡╨╛╨┐╤А╨╡╨┤╨╡╨╗╤С╨╜╨╜╨╛╤Б╤В╨╕ (╨╜╨╡╤В
- * ╨┐╤А╨╛╨▓╨╡╨╜╨░╨╜╤Б╨░, ╨▒╨╕╤В╨░╤П ╨┤╨░╤В╨░, ╤Г╨┐╨░╨▓╤И╨╕╨╣ upstream) ╨╛╨╜ ╨│╨╛╨▓╨╛╤А╨╕╤В ┬л╨╜╨╡ ╤Б╨▓╨╡╨╢┬╗. ╨Ш╨╜╤Ж╨╕╨┤╨╡╨╜╤В╨╛╨╝ ╨▒╤Л╨╗
- * ╤В╨╕╤Е╨╕╨╣ ╨┐╤А╨╛╤Е╨╛╨┤ ╨┐╤А╨╛╤В╤Г╤Е╤И╨╡╨│╨╛, ╨░ ╨╜╨╡ ╨╗╨╛╨╢╨╜╤Л╨╣ ╤Б╤В╨╛╨┐, ╨┐╨╛╤Н╤В╨╛╨╝╤Г ╨░╤Б╨╕╨╝╨╝╨╡╤В╤А╨╕╤П ╨╜╨░╨╝╨╡╤А╨╡╨╜╨╜╨░╤П.
+ * Несущий инвариант: гейт КОНСЕРВАТИВЕН — при любой неопределённости (нет
+ * провенанса, битая дата, упавший upstream) он говорит «не свеж». Инцидентом был
+ * тихий проход протухшего, а не ложный стоп, поэтому асимметрия намеренная.
  */
 import assert from 'node:assert/strict';
 import test from 'node:test';
@@ -12,119 +12,119 @@ import test from 'node:test';
 import { parseProvenance, dayOf, ageInDays, isFresh, explainStaleness, provenanceLine } from './lib/artifact-freshness.mjs';
 
 const TODAY = '2026-07-18T21:40:00.000Z';
-const REAL_HEADER = '<!-- ╨б╨│╨╡╨╜╨╡╤А╨╕╤А╨╛╨▓╨░╨╜╨╛: 2026-07-17T15:00:15.021Z (yarn code-review; daily) -->\n\n> ╨Ъ╨╛╨╜╤В╤Г╤А ╤А╨╡╨▓╤М╤О';
+const REAL_HEADER = '<!-- Сгенерировано: 2026-07-17T15:00:15.021Z (yarn code-review; daily) -->\n\n> Контур ревью';
 
-test('parseProvenance: ╤А╨╡╨░╨╗╤М╨╜╤Л╨╣ ╨╖╨░╨│╨╛╨╗╨╛╨▓╨╛╨║ DAILY_CODE_REVIEW ╤А╨░╨╖╨▒╨╕╤А╨░╨╡╤В╤Б╤П', () => {
+test('parseProvenance: реальный заголовок DAILY_CODE_REVIEW разбирается', () => {
   const p = parseProvenance(REAL_HEADER);
   assert.equal(p.generatedAt, '2026-07-17T15:00:15.021Z');
   assert.equal(p.tool, 'yarn code-review; daily');
   assert.equal(p.revision, null);
 });
 
-test('parseProvenance: ╤А╨╡╨▓╨╕╨╖╨╕╤П ╨┤╨╛╤Б╤В╨░╤С╤В╤Б╤П ╨╕╨╖ tool@sha', () => {
-  const p = parseProvenance('<!-- ╨б╨│╨╡╨╜╨╡╤А╨╕╤А╨╛╨▓╨░╨╜╨╛: 2026-07-18T03:00:00.000Z (yarn standup@0a122f2f) -->');
+test('parseProvenance: ревизия достаётся из tool@sha', () => {
+  const p = parseProvenance('<!-- Сгенерировано: 2026-07-18T03:00:00.000Z (yarn standup@0a122f2f) -->');
   assert.equal(p.revision, '0a122f2f');
 });
 
-test('parseProvenance: ╨╜╨╡╤В ╨╝╨╡╤В╨║╨╕ / ╨▒╨╕╤В╨░╤П ╨┤╨░╤В╨░ тЖТ generatedAt null (╨╜╨╡ ┬л╤Б╨▓╨╡╨╢╨╕╨╣ ╨┐╨╛ ╤Г╨╝╨╛╨╗╤З╨░╨╜╨╕╤О┬╗)', () => {
-  assert.equal(parseProvenance('# ╨Я╤А╨╛╤Б╤В╨╛ ╨╖╨░╨│╨╛╨╗╨╛╨▓╨╛╨║').generatedAt, null);
-  assert.equal(parseProvenance('<!-- ╨б╨│╨╡╨╜╨╡╤А╨╕╤А╨╛╨▓╨░╨╜╨╛: ╨╜╨╡-╨┤╨░╤В╨░ (yarn x) -->').generatedAt, null);
+test('parseProvenance: нет метки / битая дата → generatedAt null (не «свежий по умолчанию»)', () => {
+  assert.equal(parseProvenance('# Просто заголовок').generatedAt, null);
+  assert.equal(parseProvenance('<!-- Сгенерировано: не-дата (yarn x) -->').generatedAt, null);
   assert.equal(parseProvenance(null).generatedAt, null);
 });
 
-test('dayOf: ╤Б╤А╨░╨▓╨╜╨╕╨▓╨░╨╡╨╝ ╨Ъ╨Р╨Ы╨Х╨Э╨Ф╨Р╨а╨Э╨л╨Х ╨┤╨╜╨╕, ╨╜╨╡ ╨╝╨╛╨╝╨╡╨╜╤В╤Л', () => {
+test('dayOf: сравниваем КАЛЕНДАРНЫЕ дни, не моменты', () => {
   assert.equal(dayOf('2026-07-18T03:07:09.070Z'), '2026-07-18');
   assert.equal(dayOf('2026-07-18T23:59:59.999Z'), '2026-07-18');
-  assert.equal(dayOf('╨╝╤Г╤Б╨╛╤А'), null);
+  assert.equal(dayOf('мусор'), null);
 });
 
-test('ageInDays: ╨▓╤З╨╡╤А╨░╤И╨╜╨╕╨╣ = 1, ╤Б╨╡╨│╨╛╨┤╨╜╤П╤И╨╜╨╕╨╣ = 0, ╨╖╨░╨▓╤В╤А╨░╤И╨╜╨╕╨╣ = -1', () => {
+test('ageInDays: вчерашний = 1, сегодняшний = 0, завтрашний = -1', () => {
   assert.equal(ageInDays('2026-07-17T15:00:00.000Z', TODAY), 1);
   assert.equal(ageInDays('2026-07-18T03:00:00.000Z', TODAY), 0);
   assert.equal(ageInDays('2026-07-19T03:00:00.000Z', TODAY), -1);
 });
 
-test('isFresh: ╤Б╨╡╨│╨╛╨┤╨╜╤П╤И╨╜╨╕╨╣ + upstream ok тЖТ ╤Б╨▓╨╡╨╢', () => {
+test('isFresh: сегодняшний + upstream ok → свеж', () => {
   assert.equal(isFresh({ generatedAt: '2026-07-18T03:07:00.000Z' }, { today: TODAY, upstreamStatus: 'ok' }), true);
 });
 
-test('isFresh: ╨▓╤З╨╡╤А╨░╤И╨╜╨╕╨╣ тЖТ ╨Э╨Х ╤Б╨▓╨╡╨╢ (╤Б╨░╨╝ ╨╕╨╜╤Ж╨╕╨┤╨╡╨╜╤В)', () => {
+test('isFresh: вчерашний → НЕ свеж (сам инцидент)', () => {
   assert.equal(isFresh({ content: REAL_HEADER }, { today: TODAY, upstreamStatus: 'ok' }), false);
 });
 
-test('isFresh: upstream ╨╜╨╡ ok тЖТ ╨Э╨Х ╤Б╨▓╨╡╨╢ ╨┤╨░╨╢╨╡ ╨┐╤А╨╕ ╤Б╨╡╨│╨╛╨┤╨╜╤П╤И╨╜╨╡╨╣ ╨┤╨░╤В╨╡', () => {
+test('isFresh: upstream не ok → НЕ свеж даже при сегодняшней дате', () => {
   const artifact = { generatedAt: '2026-07-18T03:07:00.000Z' };
   assert.equal(isFresh(artifact, { today: TODAY, upstreamStatus: 'failed-critical' }), false);
   assert.equal(isFresh(artifact, { today: TODAY, upstreamStatus: 'skipped-noncritical' }), false);
 });
 
-test('isFresh: ╨╜╨╡╤В ╨┐╤А╨╛╨▓╨╡╨╜╨░╨╜╤Б╨░ тЖТ ╨Э╨Х ╤Б╨▓╨╡╨╢ (╨║╨╛╨╜╤Б╨╡╤А╨▓╨░╤В╨╕╨▓╨╜╨╛)', () => {
-  assert.equal(isFresh({ content: '# ╨С╨╡╨╖ ╨╝╨╡╤В╨║╨╕' }, { today: TODAY }), false);
+test('isFresh: нет провенанса → НЕ свеж (консервативно)', () => {
+  assert.equal(isFresh({ content: '# Без метки' }, { today: TODAY }), false);
   assert.equal(isFresh({}, { today: TODAY }), false);
 });
 
-test('isFresh: ╨▒╨╕╤В╤Л╨╣ today тЖТ ╨Э╨Х ╤Б╨▓╨╡╨╢ (╨╜╨╡ ╨┐╨░╨┤╨░╨╡╨╝ ╨╕ ╨╜╨╡ ╨┐╤А╨╛╨┐╤Г╤Б╨║╨░╨╡╨╝)', () => {
-  assert.equal(isFresh({ generatedAt: '2026-07-18T03:07:00.000Z' }, { today: '╨╝╤Г╤Б╨╛╤А' }), false);
+test('isFresh: битый today → НЕ свеж (не падаем и не пропускаем)', () => {
+  assert.equal(isFresh({ generatedAt: '2026-07-18T03:07:00.000Z' }, { today: 'мусор' }), false);
 });
 
-test('explainStaleness: ╤Б╨▓╨╡╨╢╨╕╨╣ тЖТ null; ╨┐╤А╨╛╤В╤Г╤Е╤И╨╕╨╣ тЖТ ╨з╨в╨Ю ╨╕ ╨Э╨Р ╨б╨Ъ╨Ю╨Ы╨м╨Ъ╨Ю ╨┤╨╜╨╡╨╣', () => {
+test('explainStaleness: свежий → null; протухший → ЧТО и НА СКОЛЬКО дней', () => {
   assert.equal(explainStaleness('X', { generatedAt: '2026-07-18T03:00:00.000Z' }, { today: TODAY }), null);
 
   const msg = explainStaleness('docs/DAILY_CODE_REVIEW.md', { content: REAL_HEADER }, { today: TODAY });
   assert.match(msg, /docs\/DAILY_CODE_REVIEW\.md/u);
-  assert.match(msg, /╤Г╤Б╤В╨░╤А╨╡╨╗ ╨╜╨░ 1 ╨┤╨╜/u);
+  assert.match(msg, /устарел на 1 дн/u);
   assert.match(msg, /2026-07-17/u);
 });
 
-test('explainStaleness: ╤Г╨┐╨░╨▓╤И╨╕╨╣ upstream ╨╛╨▒╤К╤П╤Б╨╜╤П╨╡╤В╤Б╤П ╨╛╤В╨┤╨╡╨╗╤М╨╜╨╛ ╨╛╤В ╨┐╤А╨╛╤В╤Г╤Е╨░╨╜╨╕╤П', () => {
+test('explainStaleness: упавший upstream объясняется отдельно от протухания', () => {
   const msg = explainStaleness('X', { generatedAt: '2026-07-18T03:00:00.000Z' }, { today: TODAY, upstreamStatus: 'failed-critical' });
-  assert.match(msg, /╤И╨░╨│-╨╕╤Б╤В╨╛╤З╨╜╨╕╨║ ╨╜╨╡ ╨╛╤В╤А╨░╨▒╨╛╤В╨░╨╗/u);
+  assert.match(msg, /шаг-источник не отработал/u);
 });
 
-test('explainStaleness: ╨╛╤В╤Б╤Г╤В╤Б╤В╨▓╨╕╨╡ ╨┐╤А╨╛╨▓╨╡╨╜╨░╨╜╤Б╨░ ╨╜╨░╨╖╨▓╨░╨╜╨╛ ╤З╨╡╤Б╤В╨╜╨╛', () => {
-  assert.match(explainStaleness('X', { content: '# ╨╜╨╡╤В ╨╝╨╡╤В╨║╨╕' }, { today: TODAY }), /╨╜╨╡╤В ╨┐╤А╨╛╨▓╨╡╨╜╨░╨╜╤Б╨░/u);
+test('explainStaleness: отсутствие провенанса названо честно', () => {
+  assert.match(explainStaleness('X', { content: '# нет метки' }, { today: TODAY }), /нет провенанса/u);
 });
 
-test('provenanceLine: ╨┐╨╕╤И╨╡╤В ╨┤╨░╤В╤Г ╨╕ ╤А╨╡╨▓╨╕╨╖╨╕╤О, ╤З╨╕╤В╨░╨╡╤В╤Б╤П ╨╛╨▒╤А╨░╤В╨╜╨╛ parseProvenance', () => {
+test('provenanceLine: пишет дату и ревизию, читается обратно parseProvenance', () => {
   const line = provenanceLine({ tool: 'yarn code-review', now: TODAY, revision: 'abc1234' });
   const back = parseProvenance(line);
   assert.equal(back.generatedAt, TODAY);
   assert.equal(back.revision, 'abc1234');
 });
 
-test('maxAgeDays: ╤Б╨▓╨╡╨╢╨╡╤Б╤В╤М тАФ ╤Б╨▓╨╛╨╣╤Б╤В╨▓╨╛ ╨а╨Х╨С╨а╨Р, ╨╜╨╡ ╨░╤А╤В╨╡╤Д╨░╨║╤В╨░', () => {
+test('maxAgeDays: свежесть — свойство РЕБРА, не артефакта', () => {
   const yesterday = { generatedAt: '2026-07-17T15:00:00.000Z' };
 
-  // ╨Т╨╡╤З╨╡╤А╨╜╨╡╨╡ ╤А╨╡╨▒╤А╨╛: ╨░╤А╤Е╨╕╨▓╨░╤В╨╛╤А ╤З╨╕╤В╨░╨╡╤В ╤А╨╡╨▓╤М╤О ╤В╨╛╨│╨╛ ╨╢╨╡ ╨▓╨╡╤З╨╡╤А╨░ тАФ ╨▓╤З╨╡╤А╨░╤И╨╜╨╡╨╡ ╨╜╨╡ ╨│╨╛╨┤╨╕╤В╤Б╤П.
+  // Вечернее ребро: архиватор читает ревью того же вечера — вчерашнее не годится.
   assert.equal(isFresh(yesterday, { today: TODAY, maxAgeDays: 0 }), false);
 
-  // ╨г╤В╤А╨╡╨╜╨╜╨╡╨╡ ╤А╨╡╨▒╤А╨╛: ╨┐╨╗╨░╨╜╨╕╤А╨╛╨▓╤Й╨╕╨║ ╤З╨╕╤В╨░╨╡╤В ╤А╨╡╨▓╤М╤О ╨Я╨а╨Ю╨и╨Ы╨Ю╨У╨Ю ╨▓╨╡╤З╨╡╤А╨░ тАФ ╤Н╤В╨╛ ╨╜╨╛╤А╨╝╨░, ╨░ ╨╜╨╡
-  // ╨┐╤А╨╛╤В╤Г╤Е╨░╨╜╨╕╨╡. ╨С╨╡╨╖ ╤Н╤В╨╛╨│╨╛ ╨┐╨╛╤Б╨╗╨░╨▒╨╗╨╡╨╜╨╕╤П ╤Г╤В╤А╨╡╨╜╨╜╨╕╨╣ ╤А╨╕╤В╤Г╨░╨╗ ╨▓╤Б╤В╨░╨▓╨░╨╗ ╨▒╤Л ╨║╨░╨╢╨┤╤Л╨╣ ╨┤╨╡╨╜╤М.
+  // Утреннее ребро: планировщик читает ревью ПРОШЛОГО вечера — это норма, а не
+  // протухание. Без этого послабления утренний ритуал вставал бы каждый день.
   assert.equal(isFresh(yesterday, { today: TODAY, maxAgeDays: 1 }), true);
 
-  // ╨Я╨╛╤Б╨╗╨░╨▒╨╗╨╡╨╜╨╕╨╡ ╨╜╨╡ ╨▒╨╡╨╖╨│╤А╨░╨╜╨╕╤З╨╜╨╛: ╨┐╨╛╨╖╨░╨▓╤З╨╡╤А╨░╤И╨╜╨╡╨╡ ╨╜╨╡ ╨┐╤А╨╛╤Е╨╛╨┤╨╕╤В ╨╕ ╨┐╨╛ ╤А╨╡╨▒╤А╤Г maxAgeDays=1.
+  // Послабление не безгранично: позавчерашнее не проходит и по ребру maxAgeDays=1.
   assert.equal(isFresh({ generatedAt: '2026-07-16T15:00:00.000Z' }, { today: TODAY, maxAgeDays: 1 }), false);
 });
 
-test('maxAgeDays: ╨┤╨╡╤Д╨╛╨╗╤В ╤Б╤В╤А╨╛╨│╨╕╨╣ (0) тАФ ╨┐╨╛╤Б╨╗╨░╨▒╨╗╨╡╨╜╨╕╨╡ ╨╛╨▒╤К╤П╨▓╨╗╤П╨╡╤В╤Б╤П ╤П╨▓╨╜╨╛', () => {
+test('maxAgeDays: дефолт строгий (0) — послабление объявляется явно', () => {
   const yesterday = { generatedAt: '2026-07-17T15:00:00.000Z' };
-  assert.equal(isFresh(yesterday, { today: TODAY }), false, '╨▒╨╡╨╖ ╨╛╨▒╤К╤П╨▓╨╗╨╡╨╜╨╕╤П ╤А╨╡╨▒╤А╨░ тАФ ╤Б╤В╤А╨╛╨│╨╛ ╤Б╨╡╨│╨╛╨┤╨╜╤П');
+  assert.equal(isFresh(yesterday, { today: TODAY }), false, 'без объявления ребра — строго сегодня');
 });
 
-test('maxAgeDays: ╨░╤А╤В╨╡╤Д╨░╨║╤В ╨╕╨╖ ╨▒╤Г╨┤╤Г╤Й╨╡╨│╨╛ ╨╜╨╡ ╤Б╨▓╨╡╨╢ ╨╜╨╕ ╨┐╤А╨╕ ╨║╨░╨║╨╛╨╝ ╨┐╨╛╤Б╨╗╨░╨▒╨╗╨╡╨╜╨╕╨╕', () => {
+test('maxAgeDays: артефакт из будущего не свеж ни при каком послаблении', () => {
   const tomorrow = { generatedAt: '2026-07-19T10:00:00.000Z' };
   for (const maxAgeDays of [0, 1, 7, 30]) {
     assert.equal(isFresh(tomorrow, { today: TODAY, maxAgeDays }), false, `maxAgeDays=${maxAgeDays}`);
   }
 });
 
-test('explainStaleness: ╨╜╨░╨╖╤Л╨▓╨░╨╡╤В ╨┤╨╛╨┐╤Г╤Б╨║ ╤А╨╡╨▒╤А╨░, ╨░ ╨╜╨╡ ╤В╨╛╨╗╤М╨║╨╛ ╨▓╨╛╨╖╤А╨░╤Б╤В', () => {
+test('explainStaleness: называет допуск ребра, а не только возраст', () => {
   const msg = explainStaleness('X', { generatedAt: '2026-07-16T10:00:00.000Z' }, { today: TODAY, maxAgeDays: 1 });
-  assert.match(msg, /╤Г╤Б╤В╨░╤А╨╡╨╗ ╨╜╨░ 2 ╨┤╨╜/u);
-  assert.match(msg, /╨┤╨╛╨┐╤Г╤Б╤В╨╕╨╝╨╛ ╨┤╨╛ 1 ╨┤╨╜/u);
+  assert.match(msg, /устарел на 2 дн/u);
+  assert.match(msg, /допустимо до 1 дн/u);
 });
 
-test('╨Ш╨Э╨Т╨Р╨а╨Ш╨Р╨Э╨в: ╨┐╨╡╤А╨╡╨▒╨╛╤А тАФ ╨│╨╡╨╣╤В ╨┐╤А╨╛╨┐╤Г╤Б╨║╨░╨╡╤В ╨в╨Ю╨Ы╨м╨Ъ╨Ю (╤Б╨╡╨│╨╛╨┤╨╜╤П тИз upstream ok)', () => {
+test('ИНВАРИАНТ: перебор — гейт пропускает ТОЛЬКО (сегодня ∧ upstream ok)', () => {
   const days = ['2026-07-16T10:00:00.000Z', '2026-07-17T10:00:00.000Z', '2026-07-18T10:00:00.000Z', '2026-07-19T10:00:00.000Z', null];
   const statuses = ['ok', 'failed-critical', 'skipped-noncritical'];
 

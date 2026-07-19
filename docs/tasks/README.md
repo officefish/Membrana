@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `ritual-step-manifest-sf` | Манифест шагов ритуала: семантика отказа (S) + гейт свежести (F) | M | [`RITUAL_STEP_MANIFEST_SF_PROMPT.md`](../docs/prompts/RITUAL_STEP_MANIFEST_SF_PROMPT.md) | [#613](https://github.com/officefish/Membrana/issues/613) |
 | `linear-agent-identity-facts` | Ресёрч: Linear — личность агента, состояние подзадач, блокирующие связи | S | [`LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md`](../docs/prompts/LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md) | — |
 | `meeting-registry-relocation` | Заседание: переезд реестра задач на внешний стек (Linear) | L | [`MEETING_REGISTRY_RELOCATION_PROMPT.md`](../docs/prompts/MEETING_REGISTRY_RELOCATION_PROMPT.md) | — |
 | `meeting-team-execution-contour` | Заседание: контур исполнения виртуальной команды (контур 2) | L | [`MEETING_TEAM_EXECUTION_CONTOUR_PROMPT.md`](../docs/prompts/MEETING_TEAM_EXECUTION_CONTOUR_PROMPT.md) | — |
@@ -31,6 +32,8 @@
 | `scoreboard-neural-ladder` | Ф4: лестница нейросети на четырёх наборах | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `scoreboard-panel-publish` | Ф5: публикация таблицы на панель mmbrn.tech | S | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `dads-benchmark-bridge` | Мост DADS в бенчмарк: пресет в прогоне, дедуп обеих сторон, метрики без приора | M | [`DADS_BENCHMARK_BRIDGE_PROMPT.md`](../docs/prompts/DADS_BENCHMARK_BRIDGE_PROMPT.md) | — |
+| `exit-code-semantics-audit` | Аудит семантики кодов возврата в scripts/ — находка ≠ сбой | M | [`EXIT_CODE_SEMANTICS_AUDIT_PROMPT.md`](../docs/prompts/EXIT_CODE_SEMANTICS_AUDIT_PROMPT.md) | [#622](https://github.com/officefish/Membrana/issues/622) |
+| `strategic-plan-day-legacy-fate` | Судьба STRATEGIC_PLAN_DAY.md — легаси-вход двух генераторов | S | [`STRATEGIC_PLAN_DAY_LEGACY_FATE_PROMPT.md`](../docs/prompts/STRATEGIC_PLAN_DAY_LEGACY_FATE_PROMPT.md) | [#621](https://github.com/officefish/Membrana/issues/621) |
 | `morning-ritual-regulation` | Регламент утреннего ритуала + фоновый агент (барьер против проглоченного гейта) | L | [`MORNING_RITUAL_REGULATION.md`](../docs/prompts/MORNING_RITUAL_REGULATION.md) | [#605](https://github.com/officefish/Membrana/issues/605) |
 | `night-build-format-v2` | Формат night-build: доработка по трению ночи 17.07 (заседание) | M | [`NIGHT_BUILD_FORMAT_V2_PROMPT.md`](../docs/prompts/NIGHT_BUILD_FORMAT_V2_PROMPT.md) | — |
 | `strategy-day-generator` | Генератор стратегии дня: горизонт вместо списка задач | L | [`STRATEGY_DAY_GENERATOR_PROMPT.md`](../docs/prompts/STRATEGY_DAY_GENERATOR_PROMPT.md) | [#592](https://github.com/officefish/Membrana/issues/592) |

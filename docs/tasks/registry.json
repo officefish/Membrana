@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "ritual-step-manifest-sf",
+      "title": "Манифест шагов ритуала: семантика отказа (S) + гейт свежести (F)",
+      "promptPath": "docs/prompts/RITUAL_STEP_MANIFEST_SF_PROMPT.md",
+      "githubIssue": 613,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov vesnin"
+      ],
+      "notes": "M1 scripts-boundary; Closes #613; parentEpic ritual-trust-contour",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "code-review-pr-skill-syntax",
       "title": "docs: скилл code-review — синтаксис yarn code-review:pr без --",
       "promptPath": "docs/prompts/CODE_REVIEW_PR_SKILL_SYNTAX_PROMPT.md",
