@@ -1,30 +1,20 @@
-# Replit bridge — экспериментальный WIP (не мусор)
+# Replit bridge — легитимизация
 
-> Зафиксировано 2026-07-19 по слову владельца.  
-> Следующая сессия: **не удалять** и **не «подчищать»** как сиротский код.
+> Было: half-landed эксперимент 17.07 (Claude-сессия `025b5696-…`).  
+> Сейчас: ветка `feat/replit-demo-bridge` — мост + тесты + `docs/replit-tasks/` (README/_TEMPLATE).
 
 ## Замысел
 
-Планируется разработка **лендинга через соревнование на Replit**. Под вечер 19.07 агент собрал двустороннюю связь Membrana ↔ Replit. Работа **экспериментальная**, полной легитимизации (карточка + DoD + коммит автором) ещё нет.
+Транспорт задания Membrana ↔ Replit-агент **через git** (у Agent нет публичного API):
+`yarn replit:task` → ветка `replit/<slug>` → агент в Repl → `yarn replit:pull-demo` → `apps/demos/`.
 
-## Что уже просочилось в git / что осталось WIP
+Цель продукта поверх моста: лендинг / соревнование на Replit — **отдельный** спринт, не этот PR.
 
-| Слой | Состояние | Где |
-|------|-----------|-----|
-| `package.json` → `replit:task`, `replit:pull-demo` | **уже в истории main** (полуприземление) | tracked |
-| `package.json` → `test:scripts` … `replit-bridge.test.mjs` | запись попадала в main **без файла** → ломала CI | снимать запись допустимо, пока нет файла |
-| `scripts/lib/replit-bridge.mjs` | untracked WIP | рабочее дерево main |
-| `scripts/replit-bridge.test.mjs` | untracked WIP | рабочее дерево main |
-| `scripts/replit-task.mjs` | untracked WIP | рабочее дерево main |
-| `scripts/replit-pull-demo.mjs` | untracked WIP | рабочее дерево main |
-| `docs/replit-tasks/` | untracked WIP | рабочее дерево main |
+## Сессия-источник
 
-## Правило для агентов
+`C:\Users\user190825\.claude\projects\C--Users-user190825-practice-Membrana\025b5696-d004-4478-a457-020c6a9faf47.jsonl`  
+(~17.07 22:13–22:33 MSK): DeepSeek smoke + двусторонний git-мост.
 
-1. **Не считать мусором** и не `git clean` / не выкидывать из `package.json` yarn-скрипты `replit:*` «потому что файлов нет» — это ожидаемый half-landed эксперимент.
-2. Починка CI вида «в `test:scripts` ссылка на отсутствующий файл» — **снимать ссылку**, а не удалять замысел. Когда мост легитимизируют, запись в `test:scripts` вернётся **вместе с файлами**.
-3. Легитимизация = отдельная карточка/Issue + коммит файлов автором (или явное «да» владельца), не silent cleanup соседней сессии.
+## Правило
 
-## Связь с вечером 19.07
-
-Ревью-гейт справедливо отклонил LGTM при красном GitHub-чеке: красный был из-за этой полуприземлённой записи в `test:scripts` на main, а не из-за предметного спринта. Ветка спринта, снявшая мёртвую ссылку, права; файлы эксперимента при этом не трогали.
+Не удалять `replit:*` yarn-скрипты как «сироты». Брифы `docs/replit-tasks/<slug>.md` — транспорт (gitignore); канон — `README.md` + `_TEMPLATE.md`.
