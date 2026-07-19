@@ -166,6 +166,22 @@ const CONCLUSION_IN_PREMISE_MARKERS =
   /(новое,?\s+здесь\s+принят|здесь\s+принят|принято\s+здесь|решено\s+здесь|вывод\s+эт(ой|ого)\s+комнат)/iu;
 
 /**
+ * Канонический заголовок секции посылок — ЕДИНЫЙ источник для гейта и промпта.
+ *
+ * Гейт (`premisesSection` ниже) ищет этот заголовок; режим `--meeting` в
+ * `consilium.mjs` его же кладёт в промпт требованием формата. Держать в одном месте
+ * обязательно: 19.07 три прогона M0 заседания `team-execution-contour` подряд ушли в
+ * `rejected/` именно на расхождении формулировок — регламент говорил «секция посылок»,
+ * гейт требовал слова «список посылок», а комната писала `**Посылки:**` и не знала о
+ * требовании вовсе, потому что промпт о нём молчал. Правило 6 имело зубы на выходе и
+ * не имело голоса на входе.
+ */
+export const PREMISES_SECTION_TITLE = 'Список посылок';
+
+/** Заголовок секции посылок — регексп собран из {@link PREMISES_SECTION_TITLE}. */
+const PREMISES_HEADING_RE = new RegExp(PREMISES_SECTION_TITLE.replace(/\s+/u, '\\s+'), 'iu');
+
+/**
  * Тело секции посылок вердикта.
  *
  * ЗАГОЛОВКОМ считается только строка-заголовок (`**…**` или `#…`), НЕ упоминание в
@@ -177,7 +193,7 @@ const CONCLUSION_IN_PREMISE_MARKERS =
 function premisesSection(protocolMd) {
   const lines = protocolBody(protocolMd).split(/\r?\n/);
   const isHeader = (l) =>
-    /^\s{0,3}(?:\*\*|#{1,4}\s)/u.test(l) && /список\s+посылок/iu.test(l);
+    /^\s{0,3}(?:\*\*|#{1,4}\s)/u.test(l) && PREMISES_HEADING_RE.test(l);
   const start = lines.findIndex(isHeader);
   if (start === -1) return '';
   // Секция кончается следующим заголовком любого рода.
