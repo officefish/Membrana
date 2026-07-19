@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `net-http-probe` | net:http — HTTP-проба произвольного URL через прокси с классификацией ответа | S | [`NET_HTTP_PROBE_PROMPT.md`](../docs/prompts/NET_HTTP_PROBE_PROMPT.md) | [#595](https://github.com/officefish/Membrana/issues/595) |
 | `research-query-hygiene` | Гигиена research-запроса: ярлык рубрики уезжает в текст вопроса | S | [`RESEARCH_QUERY_HYGIENE_PROMPT.md`](../docs/prompts/RESEARCH_QUERY_HYGIENE_PROMPT.md) | — |
 | `detector-scoreboard` | Витрина качества детекции: плагин модуля микрофона + панель | L | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
