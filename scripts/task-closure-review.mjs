@@ -16,6 +16,7 @@ import {
   writeReviewArtifact,
 } from './lib/task-closure-review.mjs';
 import { findTask, loadRegistry } from './lib/task-registry.mjs';
+import { reportOutcome, runAcceptanceGate } from './trace-gate.mjs';
 import {
   anthropicPost,
   defaultModel,
@@ -34,6 +35,11 @@ export const CLOSURE_DIFF_EXCLUDES = [
   'docs/tasks/research',
   'docs/discussions',
   'docs/reviews',
+  // 19.07, meeting-security-posture: контейнеры/повестки заседаний — тот же
+  // процессный класс, что протоколы seanses (их процедуру проверяет S-M5 аудит,
+  // не code-review); машинный снапшот дозора — артефакт прогона, не код.
+  'docs/meeting',
+  'docs/security/deps-watch-snapshot.json',
 ];
 
 export function parseTaskClosureReviewCli(argv) {
@@ -307,6 +313,17 @@ function runFinalize(cli) {
   if (actualSha !== manifest.currentCommitSha) {
     throw new Error('Finalize запрещён: HEAD/ref отличается от reviewed SHA');
   }
+
+  // Отказ-II «приёмка не подтверждена» в SOFT-режиме (cowork-execution-registry,
+  // контракт §2/§6-б): вердикт 12 — замечание печатается, работа не встаёт.
+  // Переключение на hard (вердикт 23) — после миграции карточек, решением
+  // постановки, не датой.
+  reportOutcome(
+    runAcceptanceGate(
+      { taskId: manifest.taskId, acceptance: manifest.acceptance ?? null },
+      { mode: 'soft', expectedHeadRev: manifest.currentCommitSha },
+    ),
+  );
 
   let completed = manifest;
   if (!['merged', 'accepted_branch_only'].includes(manifest.state)) {

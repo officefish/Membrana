@@ -13,6 +13,7 @@ import {
   validateTaskId,
   writeArchiveCard,
 } from './lib/task-registry.mjs';
+import { runLeadPersonaGate } from './trace-gate.mjs';
 
 function printHelp() {
   console.log(`Usage: yarn task:archive <task-id> [--notes "…"] [--force]
@@ -100,6 +101,18 @@ if (!task) {
 if (task.status === 'archived' && !opts.force) {
   console.error(`Задача "${opts.id}" уже в архиве (${task.archivedAt}). Используй --force.`);
   process.exit(1);
+}
+
+// Отказ-I «ответственный не назначен» (cowork-execution-registry, контракт §2/§6-б):
+// архивировать карточку без leadPersona нельзя — жёсткий вердикт 22 сразу,
+// exit = вердикт-коду. Гейт срабатывает и на --dry-run: отказ — вердикт, не запись.
+const leadGate = runLeadPersonaGate([task]);
+if (leadGate.code !== 0) {
+  for (const failure of leadGate.failures) {
+    console.error(`trace-gate: отказ-I [код ${failure.code}] — ${failure.reason}`);
+  }
+  console.error('Назначь leadPersona в docs/tasks/registry.json и повтори.');
+  process.exit(leadGate.code);
 }
 
 const today = new Date().toISOString().slice(0, 10);

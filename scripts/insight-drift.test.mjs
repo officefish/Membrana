@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   byCodePoint,
+  diagnosticsToDrifts,
   diffRegistries,
   renderDriftReport,
   tasksForInsight,
@@ -75,10 +76,21 @@ test('детерминизм: одинаковый вход → байт-в-ба
 
 test('снапшот отчёта: статус словом, выравнивание, лечение в подвале', () => {
   const report = renderDriftReport(diffRegistries(INSIGHTS_20260713, TASKS_20260713));
-  assert.ok(report.startsWith('[drift] insight-drift: расхождений 4'));
+  assert.ok(report.startsWith('[drift] insight-drift: diagnostics 4'));
   assert.ok(report.includes('| детали'));
-  assert.ok(report.includes('Лечение: бэкфилл sprintPhase'));
+  assert.ok(report.includes('Лечение: yarn insight verify'));
   assert.ok(!report.includes(String.fromCharCode(27)), 'без ANSI-цветов — статус только словом');
+});
+
+test('diagnosticsToDrifts: verify diagnostics → ritual table rows', () => {
+  const drifts = diagnosticsToDrifts([
+    { code: 'PROJECTION_DRIFT', message: 'Projection differs from replay', subjectRef: 'lifecycle' },
+  ]);
+  assert.deepEqual(drifts, [{
+    insightId: 'lifecycle',
+    kind: 'PROJECTION_DRIFT',
+    detail: 'Projection differs from replay',
+  }]);
 });
 
 test('чистые реестры → [ok] и пустой список', () => {

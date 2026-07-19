@@ -10,5 +10,10 @@
   "researchedAt": "2026-06-25",
   "reviewedAt": "2026-06-25",
   "closedAt": "2026-06-25",
-  "tags": ["async-v2", "ux", "competition", "device-board"]
+  "tags": [
+    "async-v2",
+    "ux",
+    "competition",
+    "device-board"
+  ]
 }

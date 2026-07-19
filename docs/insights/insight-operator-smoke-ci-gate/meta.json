@@ -5,10 +5,15 @@
   "source": "packaging-epic",
   "sprintPhase": "ins-pilot-g-operator-smoke",
   "horizon": "week",
-  "weight": 7.0,
+  "weight": 7,
   "createdAt": "2026-06-25",
   "researchedAt": "2026-06-25",
   "reviewedAt": "2026-06-25",
   "closedAt": "2026-06-25",
-  "tags": ["competition", "operator", "ci", "device-board"]
+  "tags": [
+    "competition",
+    "operator",
+    "ci",
+    "device-board"
+  ]
 }

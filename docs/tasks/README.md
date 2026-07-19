@@ -18,11 +18,15 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `cowork-execution-registry` | Cowork Sprint: контур исполнения команды + переезд реестра | L | [`COWORK_SPRINT_BRIEF.md`](../docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md) | [#660](https://github.com/officefish/Membrana/issues/660) |
-| `linear-agent-identity-facts` | Ресёрч: Linear — личность агента, состояние подзадач, блокирующие связи | S | [`LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md`](../docs/prompts/LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md) | — |
-| `meeting-registry-relocation` | Заседание: переезд реестра задач на внешний стек (Linear) | L | [`MEETING_REGISTRY_RELOCATION_PROMPT.md`](../docs/prompts/MEETING_REGISTRY_RELOCATION_PROMPT.md) | — |
 | `agent-ci-gate-tooling` | Агентский тулинг: pr:wait + грабли (конфликт блокирует CI, tail в фоне, short-path) | S | [`AGENT_CI_GATE_TOOLING_PROMPT.md`](../docs/prompts/AGENT_CI_GATE_TOOLING_PROMPT.md) | [#643](https://github.com/officefish/Membrana/issues/643) |
 | `truth-minting-tooling` | Тулинг графа правды: ask-check, mint, utterance | S | [`TRUTH_MINTING_TOOLING_PROMPT.md`](../docs/prompts/TRUTH_MINTING_TOOLING_PROMPT.md) | [#642](https://github.com/officefish/Membrana/issues/642) |
+| `meeting-security-posture` | Заседание security-posture: аудит зависимостей + инцидент patchhog — DAG security-контура | M | [`MEETING_BRIEF.md`](../docs/meeting/security-posture/MEETING_BRIEF.md) | — |
+| `sec-upgrade-backend-runtime` | Апгрейд №1 backend-runtime-major: Nest 11 + fastify 5 + @fastify/middie 9 + fast-uri 3 (атом, оба сервера синхронно) | L | [`MEETING_BRIEF.md`](../docs/meeting/security-posture/MEETING_BRIEF.md) | — |
+| `sec-upgrade-dev-tooling` | Апгрейд №2 dev-tooling-major: vite 7 + vitest 3 (фазы: foundation → детекторы → client) | L | [`MEETING_BRIEF.md`](../docs/meeting/security-posture/MEETING_BRIEF.md) | — |
+| `sec-upgrade-tar` | Апгрейд №3 tar 6→7: локальный форс + канареечная полная сборка desktop (без слепых resolutions) | M | [`MEETING_BRIEF.md`](../docs/meeting/security-posture/MEETING_BRIEF.md) | — |
+| `sec-upgrade-electron` | Апгрейд №4 electron-major (рискованный, последним): UAF ×3 + cmdline injection | M | [`MEETING_BRIEF.md`](../docs/meeting/security-posture/MEETING_BRIEF.md) | — |
+| `linear-agent-identity-facts` | Ресёрч: Linear — личность агента, состояние подзадач, блокирующие связи | S | [`LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md`](../docs/prompts/LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md) | — |
+| `meeting-registry-relocation` | Заседание: переезд реестра задач на внешний стек (Linear) | L | [`MEETING_REGISTRY_RELOCATION_PROMPT.md`](../docs/prompts/MEETING_REGISTRY_RELOCATION_PROMPT.md) | — |
 | `meeting-team-execution-contour` | Заседание: контур исполнения виртуальной команды (контур 2) | L | [`MEETING_TEAM_EXECUTION_CONTOUR_PROMPT.md`](../docs/prompts/MEETING_TEAM_EXECUTION_CONTOUR_PROMPT.md) | — |
 | `team-accountability-metrics` | Ресёрч: математическая оценка ответственности команды | S | [`TEAM_ACCOUNTABILITY_METRICS_PROMPT.md`](../docs/prompts/TEAM_ACCOUNTABILITY_METRICS_PROMPT.md) | — |
 | `generated-docs-quality-criteria` | Ресёрч: критерии качества генерируемых документов | S | [`GENERATED_DOCS_QUALITY_CRITERIA_PROMPT.md`](../docs/prompts/GENERATED_DOCS_QUALITY_CRITERIA_PROMPT.md) | — |
@@ -247,6 +251,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `cowork-execution-registry` | Cowork Sprint: контур исполнения команды + переезд реестра | 2026-07-19 | [`COWORK_SPRINT_BRIEF.md`](../docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md) | #660 (Issue открыт) | [карточка](./archive/cowork-execution-registry.md) |
 | `scoreboard-plugin-shell` | Ф1: плагин витрины в модуле микрофона на измеренных числах | 2026-07-18 | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — | [карточка](./archive/scoreboard-plugin-shell.md) |
 | `evening-audit-generator` | Генератор вечернего аудита: что происходило в репозитории, реестре задач и графе правды | 2026-07-18 | [`EVENING_AUDIT_GENERATOR_PROMPT.md`](../docs/prompts/EVENING_AUDIT_GENERATOR_PROMPT.md) | #627 | [карточка](./archive/evening-audit-generator.md) |
 | `standup-charge-redesign` | DAILY_STANDUP как настоящий стендап: дисциплина+честность+код-стайл и раскрытие сильных сторон персон | 2026-07-16 | [`STANDUP_CHARGE_REDESIGN_PROMPT.md`](../docs/prompts/STANDUP_CHARGE_REDESIGN_PROMPT.md) | — | [карточка](./archive/standup-charge-redesign.md) |

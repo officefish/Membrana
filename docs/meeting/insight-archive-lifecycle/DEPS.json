@@ -1,0 +1,32 @@
+{
+  "edges": {
+    "ial-c1-closure-object": [],
+    "ial-c2-state-axes": [
+      "ial-c1-closure-object"
+    ],
+    "ial-c3-evidence-contract": [
+      "ial-c2-state-axes"
+    ],
+    "ial-c4-history-model": [
+      "ial-c2-state-axes"
+    ],
+    "ial-c5-legacy-migration": [
+      "ial-c2-state-axes",
+      "ial-c3-evidence-contract",
+      "ial-c4-history-model"
+    ],
+    "ial-c7-operational-safety": [
+      "ial-c2-state-axes",
+      "ial-c3-evidence-contract",
+      "ial-c4-history-model"
+    ],
+    "ial-c6-agent-enforcement": [
+      "ial-c5-legacy-migration",
+      "ial-c7-operational-safety"
+    ]
+  },
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-18"
+  }
+}

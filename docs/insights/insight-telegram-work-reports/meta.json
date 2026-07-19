@@ -1,7 +1,7 @@
 {
   "id": "insight-telegram-work-reports",
   "title": "Докладывать о проделанной работе через Telegram-канал на базе background-office",
-  "status": "adopted",
+  "status": "archived",
   "source": "user",
   "horizon": null,
   "weight": 4,
@@ -10,5 +10,12 @@
   "reviewedAt": "2026-07-06",
   "closedAt": "2026-07-06",
   "sprintPhase": "telegram-ally-reports",
-  "tags": []
+  "tags": [],
+  "previousStatus": "adopted",
+  "archivedAt": "2026-07-18",
+  "archiveReason": "implemented",
+  "implementationTaskIds": [
+    "telegram-ally-reports"
+  ],
+  "archiveResult": "Telegram ally ritual reports delivered; PR 431 and E2E smoke complete"
 }

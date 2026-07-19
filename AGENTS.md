@@ -37,7 +37,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Daily standup (план + вчерашнее ревью + issues) | `yarn standup` (после `yarn plan:day`; **не** после `code-review`; dry: `yarn standup:dry`) |
 | Вечер (архив дня + ревью) | `yarn archive:daily-day` → incremental RAG index (non-blocking) → `yarn code-review` → `yarn save-code-review` → `yarn task:close-github` → `yarn team-evening-feedback`; цепочка: `yarn ritual:evening` |
 | Архив утренних артефактов (вечер, до code-review) | `yarn archive:daily-day` → `docs/archive/daily-day/<YYYY-MM-DD>/` |
-| Code-review (вечер) | `yarn code-review` → `docs/DAILY_CODE_REVIEW.md`; PR: `yarn code-review:pr -- <N>`; утром только читается |
+| Code-review (вечер) | `yarn code-review` → `docs/DAILY_CODE_REVIEW.md`; PR: `yarn code-review:pr <N>` (без `--`); утром только читается |
 | Team Evening Feedback (вечер) | `yarn team-evening-feedback` → `docs/seanses/team-evening-feedback-<date>.md`; dry: `yarn team-evening-feedback:dry`; регламент: [`TEAM_EVENING_FEEDBACK_REGULATION.md`](docs/prompts/TEAM_EVENING_FEEDBACK_REGULATION.md) |
 | Вечер одной командой | `yarn ritual:evening` (= archive:daily-day + rag:index:incremental + code-review + save-code-review + task:close-github + team-evening-feedback) |
 | Night Build (после вечера) | `yarn night:open --id <epic-id>` → агент → `yarn night:close`; регламент: `docs/NIGHT_SPRINT_REGULATION.md` |
@@ -76,9 +76,15 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | `rt-6` «ПОВЕСТКА НЕ ПОКРЫТА» | **Грепает МЕТКУ, не вердикт** (#558). Читать как «ID не проставлены», не «вопросы уронены». С NB3 (17.07) сообщение честное + смотрит наличие секции вердикта |
 | Футер консилиума «Реплик: N» | Число пишет **модель, врёт** (M0 17.07: 21≠20). С NB2 сверяется автоматически (`reconcileReplyCount`) |
 | `OFFICE_API_TOKEN` в параллельном worktree | Openrouter-`.env` несёт плейсхолдер `API_INTERNAL_TOKEN` → office 401. С NB4 (17.07) `resolveOfficeToken` берёт токен из `.env` любого worktree репо автоматически |
+| `.env` в sibling-worktree | Поиск вверх корневой `.env` НЕ находит (8 worktree — соседи корня, не вложены). С #567 `loadDotEnv` слоёный: корневой (через git-common-dir) первым, локальный поверх; 401 в swallow называет цепочку `.env` и источник токена. Явный обход — `MEMBRANA_ENV_PATH` |
+| `cmd \| tail; echo $?` | Пайп маскирует exit-код: получаешь код `tail`, не скрипта (16.07 укусило ТРИЖДЫ: gh pr checks, archive-task, swallow — «казалось 0, реально 1»). Мерить без пайпа (`cmd > файл 2>&1; echo $?`) или `PIPESTATUS[0]` (#567/#582) |
 | Ласточка `sent=true` | **Не гарантия доставки** — office не возвращал message_id (17.07 ложная тревога «не пришла»). С NB6 клиент называет ограничение явно; серверный след — follow-up |
 | MD060 в диагностиках | Шум IDE-расширения на компактных таблицах — заглушён `.markdownlint.json` (NB1). MD056 оставлен: он ловит реальный разрыв таблицы |
 | `process.exit(0)` после LLM-fetch | Роняет libuv на Windows (`UV_HANDLE_CLOSING`) гонкой с закрытием сокета. Паттерн: `process.exitCode` + дать циклу стечь (`consilium.mjs`, NB5 insight) |
+| Нет проверок на PR | **`no checks` ≠ зелено** (18.07 агент доложил зелёный CI, которого не было). СНАЧАЛА смотреть `mergeable`: CONFLICTING/DIRTY не строит merge-ref → CI не запускается вовсе; воркфлоу/paths-ignore проверять бессмысленно. `yarn pr:wait <N>` различает none/running/green/red (#643) |
+| Фоновый вывод в `\| tail` | `tail` буферизует до закрытия пайпа — лог-файл пуст все 20 минут прогона. Фоновая команда пишет **полный** вывод в файл; хвост читать уже из файла (#643) |
+| ESM-импорт из scratchpad | Short-path `USER19~1` рвёт резолв относительного пути (`ERR_MODULE_NOT_FOUND` на несуществующем пути). Из scratchpad в репо — только `pathToFileURL(длинный абсолютный путь)` (#643; та же ловушка, что T6 #548) |
+| `replit:*` / `replit-bridge*.mjs` «сироты» | **Не мусор (19.07).** Эксперимент лендинга через соревнование на Replit: yarn-скрипты уже в main, файлы моста часто untracked WIP в корневом дереве. Снимать мёртвую ссылку из `test:scripts` — ок; `git clean` / выкидывать `replit:task` «файлов нет» — нельзя. Канон: [`docs/handoff/replit-bridge-experimental-wip.md`](docs/handoff/replit-bridge-experimental-wip.md) |
 
 **Общий «работа за сегодня»** — `scripts/lib/git-day-context.mjs` (без `--author`-фильтра).
 

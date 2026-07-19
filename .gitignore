@@ -49,6 +49,9 @@ docs/discussions/mcp-tier0.generated.json
 # RAG (@membrana/rag-service) — LanceDB index + hash manifest (local only)
 .membrana/rag/
 
+# Ласточка: локальный ledger доставок (идемпотентность клиента)
+.membrana/swallow-deliveries.jsonl
+
 # Closure-review артефакты (manifest + <sha>-review.md) — локальные рабочие файлы
 # процесса закрытия, НЕ часть публичного контракта репо (консилиум
 # agent-tooling-friction 2026-07-13, ti-1). Историю чужих ревью не тянем в PR.
@@ -151,3 +154,13 @@ docs/HERMES_BRIEF.md
 # Журнал drift-anchor (DA3 дайджесты + DA4/DA5 записи якорей) — локальный артефакт хоста (office/CI), не для репо
 docs/reports/drift-anchor/
 docs/tasks/morning-ritual-state.json
+
+# Replit task briefs — транспорт (yarn replit:task), не канон; README + шаблон — в репо
+docs/replit-tasks/*
+!docs/replit-tasks/README.md
+!docs/replit-tasks/_TEMPLATE.md
+
+
+# Insight lifecycle runtime (C7 store/journal/lock)
+docs/insights/_lifecycle/
+

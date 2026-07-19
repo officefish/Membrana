@@ -1,0 +1,229 @@
+{
+  "//": "Карта кодов возврата ритуальных скриптов (#622). Проверяемый артефакт: scripts/lib/ritual-exit-codes.mjs + scripts/ritual-exit-codes.test.mjs. ЗАПРЕТ: не менять сами коды скриптов — только описывать.",
+  "version": 1,
+  "githubIssue": 622,
+  "updatedAt": "2026-07-19",
+  "chains": {
+    "evening": {
+      "command": "yarn ritual:evening",
+      "manifest": "docs/tasks/evening-ritual-steps.json",
+      "steps": {
+        "archive-night-hunt": {
+          "script": "scripts/archive-night-hunt-artifacts.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "архив/skip/help" },
+            "1": { "bucket": "failure", "meaning": "непойманный throw (Node default) — явного process.exit(1) нет" }
+          }
+        },
+        "archive-daily-day": {
+          "script": "scripts/archive-daily-day-artifacts.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "снимок записан / help" },
+            "1": { "bucket": "failure", "meaning": "нет исходных утренних артефактов" }
+          }
+        },
+        "truth-cool": {
+          "script": "scripts/truth.mjs cool",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "граф ок / нет реестра" },
+            "1": { "bucket": "failure", "meaning": "ошибка CLI / throw" },
+            "2": { "bucket": "finding", "meaning": "граф нарушен / процессы заблокированы" }
+          },
+          "findingExitCodes": [2]
+        },
+        "rag-index": {
+          "script": "scripts/rag-evening-index.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "индекс ок ИЛИ skip без ключа ИЛИ child fail проглочен (warn only)" }
+          },
+          "notes": "Child yarn rag:index ненулевой не пробрасывается — observability gap, см. undefinedDebt"
+        },
+        "persona-memory": {
+          "script": "scripts/persona-memory-extract.mjs --all",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "запись / stdout match" },
+            "1": { "bucket": "failure", "meaning": "usage / конфликт флагов / exception" }
+          },
+          "notes": "exit 3 только при --check (не в вечернем argv)"
+        },
+        "insight-drift": {
+          "script": "scripts/insight-drift.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "дрейфа нет" },
+            "1": { "bucket": "failure", "meaning": "реестр нечитаем" },
+            "3": { "bucket": "finding", "meaning": "найден дрейф реестров" }
+          },
+          "findingExitCodes": [3]
+        },
+        "code-review": {
+          "script": "scripts/code-review.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "ревью записано" },
+            "1": { "bucket": "failure", "meaning": "bad CLI / нет ключа / Anthropic fail / throw" }
+          }
+        },
+        "archive-code-review": {
+          "script": "scripts/archive-daily-code-review.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "архив / skip identical / help" },
+            "1": { "bucket": "failure", "meaning": "нет источника / гейт свежести без --allow-stale" }
+          }
+        },
+        "deps-watch": {
+          "script": "scripts/deps-watch.mjs --mode evening",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "diff напечатан / нет снапшота (деградация в полную сводку) / аудит недоступен (явный пропуск, не молчание)" }
+          },
+          "notes": "Дозор ИНФОРМИРУЕТ (вердикт M1 security-posture): advisories — данные отчёта, не код возврата; alert превращает в задачу Teamlead. Других exit-кодов скрипт не производит."
+        },
+        "evening-tail": {
+          "script": "scripts/ritual-evening-tail.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "оба дочерних шага ok" },
+            "1": { "bucket": "failure", "meaning": "passthrough статуса child (task:close-github / team-evening-feedback)" }
+          }
+        },
+        "telegram-digest": {
+          "script": "scripts/telegram-ritual-digest.mjs --kind evening",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "sent / skip (нет артефакта/токена/office) — skip тоже 0" },
+            "1": { "bucket": "failure", "meaning": "bad --kind при --dry-run" }
+          },
+          "notes": "bad kind без dry-run тоже exit 0 — см. undefinedDebt"
+        }
+      }
+    },
+    "day": {
+      "command": "yarn ritual:day",
+      "manifest": null,
+      "//": "Манифест утра (morning-ritual-steps.json) НЕ трогаем до архива #605. Здесь только карта shell-цепочки ritual:day.",
+      "steps": {
+        "morning-care": {
+          "script": "scripts/morning-care.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "прокси/git/тесты/Anthropic ok" },
+            "1": { "bucket": "failure", "meaning": "хотя бы одна утренняя проверка провалена" }
+          }
+        },
+        "plan-week-if-monday": {
+          "script": "scripts/plan-week-if-monday.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "не понедельник / план / child fail только logged" }
+          }
+        },
+        "strategy-day": {
+          "script": "scripts/strategy-day.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "план записан / soft setup-gap" },
+            "1": { "bucket": "failure", "meaning": "invalid horizon config" }
+          }
+        },
+        "daily-standup": {
+          "script": "scripts/daily-standup.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "стендап записан" },
+            "1": { "bucket": "failure", "meaning": "нет docs / invented ids / нет ключа / API" },
+            "2": { "bucket": "finding", "meaning": "RT-9: DAILY_CODE_REVIEW несвеж (assertReviewInputFresh)" }
+          },
+          "findingExitCodes": [2]
+        },
+        "main-day-probe": {
+          "script": "scripts/main-day-probe.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "ok / нет манифеста / --force после violate" },
+            "2": { "bucket": "finding", "meaning": "assertion violated — блокирует магистраль" }
+          },
+          "findingExitCodes": [2]
+        },
+        "main-day-issue": {
+          "script": "scripts/main-day-issue.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "MAIN_DAY_ISSUE записан" },
+            "1": { "bucket": "failure", "meaning": "bad --focus / нет VIRTUAL_TEAM / нет ключа / API" },
+            "2": { "bucket": "finding", "meaning": "RT-9 freshness guard на входе" }
+          },
+          "findingExitCodes": [2]
+        },
+        "telegram-digest-day": {
+          "script": "scripts/telegram-ritual-digest.mjs --kind day",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "sent / skip; shell || true глотает ненулевые" },
+            "1": { "bucket": "failure", "meaning": "bad --kind при --dry-run" }
+          },
+          "notes": "В package.json обёрнут || true — семантика скрыта до снятия swallow"
+        }
+      }
+    },
+    "night": {
+      "command": "yarn night:open | night:checkpoint | night:close (+ night:research)",
+      "manifest": null,
+      "steps": {
+        "night-open": {
+          "script": "scripts/night-build-open.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "спринт открыт" },
+            "1": { "bucket": "failure", "meaning": "нет --id / openNightBuild throw" }
+          }
+        },
+        "night-checkpoint": {
+          "script": "scripts/night-build-checkpoint.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "checkpoint записан" },
+            "1": { "bucket": "failure", "meaning": "append throw" }
+          }
+        },
+        "night-close": {
+          "script": "scripts/night-build-close.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "спринт закрыт" },
+            "1": { "bucket": "failure", "meaning": "нет --id / close throw" }
+          }
+        },
+        "night-research": {
+          "script": "scripts/night-research.mjs",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "сон записан / пусто / sweep/yield" },
+            "1": { "bucket": "failure", "meaning": "нет truth registry" }
+          }
+        }
+      }
+    }
+  },
+  "undefinedDebt": [
+    {
+      "id": "rag-evening-swallows-child",
+      "script": "scripts/rag-evening-index.mjs",
+      "note": "Ненулевой статус child yarn rag:index не пробрасывается — всегда exit 0. Observability gap при снятии || true."
+    },
+    {
+      "id": "plan-week-swallows-child",
+      "script": "scripts/plan-week-if-monday.mjs",
+      "note": "Child fail только logged; всегда exit 0."
+    },
+    {
+      "id": "telegram-digest-skip-as-zero",
+      "script": "scripts/telegram-ritual-digest.mjs",
+      "note": "skip (нет артефакта/токена/office) и bad kind без dry-run → exit 0; отличие от реальной доставки невидимо."
+    },
+    {
+      "id": "telegram-day-shell-true",
+      "script": "package.json ritual:day → telegram || true",
+      "note": "Shell || true глотает любой код дайджеста утра — тот же класс, что вскрыл вечер 18.07."
+    },
+    {
+      "id": "night-run-missing-script",
+      "script": "scripts/night-build-run-phase.mjs",
+      "note": "yarn night:run указывает на отсутствующий файл — entry broken; не классифицируем коды."
+    },
+    {
+      "id": "persona-memory-check-unused",
+      "script": "scripts/persona-memory-extract.mjs --check",
+      "note": "exit 3 = drift finding, но вечер зовёт --all. Заявить findingExitCodes, когда/если --check попадёт в манифест."
+    },
+    {
+      "id": "archive-night-hunt-implicit-1",
+      "script": "scripts/archive-night-hunt-artifacts.mjs",
+      "note": "Явного process.exit(1) нет; ненулевой только через uncaught — задокументирован как failure/1 осторожно."
+    }
+  ]
+}

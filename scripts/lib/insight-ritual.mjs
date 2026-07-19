@@ -381,7 +381,18 @@ export function printInsightHelp() {
   list [--status draft]
   research <id> [--dry-run]
   review <id> [--dry-run]
-  close <id> --status adopted|deferred|rejected [--weight N]
+  decide <mandate-id> --set accepted|rejected|deferred --request-key <key> --authority <ref> [--execute]
+  status <id> [--json]
+  overview [--json]
+  verify [<id>] [--json]
+  reconcile <id> --request <file> [--execute]
+  visibility <representation-id> --set active|archived --reason "…" --request-key <key> --authority <ref> [--execute]
+  correct <assertion-id> --request <file> [--execute]
+  reopen <revision-id> --reason "…" --request-key <key> --authority <ref> [--execute]
+  supersede <old-decision-assertion-id> --successor <revision-id> --reason "…" --request-key <key> --authority <ref> [--execute]
+  migrate-legacy --request <file> [--execute]
+
+Deprecated without writes: close --status …; archive --task … --result …
 
 Regulation: ${REGULATION_PATH}
 `);
@@ -399,12 +410,60 @@ export function parseInsightCli(argv) {
   let weight = null;
   let statusFilter = '';
   let dryRun = false;
+  let execute = false;
   let id = '';
+  let result = '';
+  let reason = 'implemented';
+  let request = '';
+  let requestKey = '';
+  let authority = '';
+  let set = '';
+  let successor = '';
+  let json = false;
+  const taskIds = [];
 
   for (let i = 1; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--dry-run') {
       dryRun = true;
+    } else if (arg === '--json') {
+      json = true;
+    } else if (arg === '--execute') {
+      execute = true;
+    } else if (arg === '--task' || arg === '--tasks') {
+      taskIds.push(argv[++i] ?? '');
+    } else if (arg.startsWith('--task=')) {
+      taskIds.push(arg.slice(7));
+    } else if (arg.startsWith('--tasks=')) {
+      taskIds.push(arg.slice(8));
+    } else if (arg === '--result') {
+      result = argv[++i] ?? '';
+    } else if (arg.startsWith('--result=')) {
+      result = arg.slice(9);
+    } else if (arg === '--reason') {
+      reason = argv[++i] ?? reason;
+    } else if (arg.startsWith('--reason=')) {
+      reason = arg.slice(9);
+    } else if (arg === '--request') {
+      request = argv[++i] ?? '';
+    } else if (arg.startsWith('--request=')) {
+      request = arg.slice(10);
+    } else if (arg === '--request-key') {
+      requestKey = argv[++i] ?? '';
+    } else if (arg.startsWith('--request-key=')) {
+      requestKey = arg.slice(14);
+    } else if (arg === '--authority') {
+      authority = argv[++i] ?? '';
+    } else if (arg.startsWith('--authority=')) {
+      authority = arg.slice(12);
+    } else if (arg === '--set') {
+      set = argv[++i] ?? '';
+    } else if (arg.startsWith('--set=')) {
+      set = arg.slice(6);
+    } else if (arg === '--successor') {
+      successor = argv[++i] ?? '';
+    } else if (arg.startsWith('--successor=')) {
+      successor = arg.slice(12);
     } else if (arg === '--title') {
       title = argv[++i] ?? '';
     } else if (arg.startsWith('--title=')) {
@@ -431,5 +490,5 @@ export function parseInsightCli(argv) {
     statusFilter = argv[si + 1];
   }
 
-  return { command, id, title, source, status, weight, statusFilter, dryRun };
+  return { command, id, title, source, status, weight, statusFilter, dryRun, execute, taskIds, result, reason, request, requestKey, authority, set, successor, json };
 }

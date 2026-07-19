@@ -1,44 +1,31 @@
 #!/usr/bin/env node
 /**
- * insight-drift — детерминированный крест-скан реестра инсайтов против реестра задач.
+ * insight-drift — thin compatibility adapter к insight lifecycle verify (C6).
  *
- * Спринт agent-tooling-friction ti-2 (#433, консилиум 2026-07-13). Повод: 2026-07-13
- * вручную найдены и починены 3 расхождения (hermes / comms / live-neural) — sprintPhase
- * систематически не бэкфилится, и обзор инсайтов предлагал фаворитом то, что уже в работе.
+ * Исторически (ti-2 #433) сканировал registry×tasks с mention/archive inference.
+ * После insight-archive-lifecycle C1–C7 CLI больше не читает legacy registry/meta
+ * как authority и не выводит L/O из archived/task/mention.
  *
- * Чистое ядро (паттерн hermes-brief): diff(insights, tasks) → Drift[]; IO только в CLI.
- * Связь инсайт↔задача: tasks[].insightId === id ИЛИ упоминание id в tasks[].notes.
- * Типы дрейфа:
- *   • active-no-phase   — активная задача по инсайту, а sprintPhase пуст/чужой;
- *   • archived-no-phase — задача(и) по инсайту уже archived, sprintPhase пуст (инсайт
- *                         «не знает», что реализован);
- *   • phase-missing     — sprintPhase указывает на несуществующую задачу;
- *   • deferred-active   — status deferred/rejected при АКТИВНОЙ задаче по инсайту.
+ * `yarn insight:drift` ≡ read-only `yarn insight verify` diagnostics.
+ * Exit: 0 — ok; 1 — ошибка IO/replay; 3 — verify diagnostics (finding для ritual).
  *
- * Exit-коды: 0 — дрейфа нет; 3 — дрейф найден (для ritual:evening / tooling-doctor).
- * Вывод — выровненная таблица, статус СЛОВОМ (не только цвет) — ревью Rodchenko.
- *
- *   yarn insight:drift            # скан + таблица + exit-код
- *   yarn insight:drift --quiet    # только exit-код и итоговая строка
+ * Экспорт `diffRegistries` оставлен для unit-тестов legacy helper; CLI его не зовёт.
  */
-import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
+import { verifyInsightLifecycle } from './lib/insight-lifecycle.mjs';
+import { loadLifecycleStore } from './lib/insight-lifecycle-store.mjs';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..');
-
-const INSIGHTS_REGISTRY = 'docs/insights/registry.json';
-const TASKS_REGISTRY = 'docs/tasks/registry.json';
-
-// ─── чистое ядро (экспортируется для тестов) ─────────────────────────────────────
 
 /** Детерминированное сравнение по code-point (не localeCompare — урок hermes-brief). */
 export function byCodePoint(a, b) {
   return a < b ? -1 : a > b ? 1 : 0;
 }
 
-/** Задачи, связанные с инсайтом: точный insightId ИЛИ упоминание id в notes. */
+/** @deprecated Legacy helper for unit tests only — not authority, not used by CLI. */
 export function tasksForInsight(tasks, insightId) {
   return tasks.filter(
     (t) => t && (t.insightId === insightId || String(t.notes ?? '').includes(insightId)),
@@ -46,8 +33,8 @@ export function tasksForInsight(tasks, insightId) {
 }
 
 /**
- * Крест-скан. @returns {Array<{insightId:string,kind:string,detail:string}>}
- * Детерминирован: вход одинаков → выход байт-в-байт (сортировка insightId ↑, kind ↑).
+ * @deprecated Legacy registry×task scan — kept for unit tests; CLI uses verify.
+ * @returns {Array<{insightId:string,kind:string,detail:string}>}
  */
 export function diffRegistries(insights, tasks) {
   const drifts = [];
@@ -103,12 +90,12 @@ export function diffRegistries(insights, tasks) {
 /** Чистый рендер таблицы: статус словом, моноширинное выравнивание. */
 export function renderDriftReport(drifts) {
   if (drifts.length === 0) {
-    return '[ok] insight-drift: реестры инсайтов и задач согласованы (расхождений: 0)';
+    return '[ok] insight-drift: lifecycle verify без diagnostics (расхождений: 0)';
   }
   const idW = Math.max(...drifts.map((d) => d.insightId.length), 'инсайт'.length);
   const kindW = Math.max(...drifts.map((d) => d.kind.length), 'дрейф'.length);
   const L = [];
-  L.push(`[drift] insight-drift: расхождений ${drifts.length}`);
+  L.push(`[drift] insight-drift: diagnostics ${drifts.length}`);
   L.push('');
   L.push(`${'инсайт'.padEnd(idW)} | ${'дрейф'.padEnd(kindW)} | детали`);
   L.push(`${'-'.repeat(idW)}-+-${'-'.repeat(kindW)}-+-${'-'.repeat(6)}`);
@@ -116,38 +103,45 @@ export function renderDriftReport(drifts) {
     L.push(`${d.insightId.padEnd(idW)} | ${d.kind.padEnd(kindW)} | ${d.detail}`);
   }
   L.push('');
-  L.push('Лечение: бэкфилл sprintPhase/status в docs/insights (см. PR #432 как образец).');
+  L.push('Лечение: yarn insight verify / reconcile / visibility (не rewrite registry/meta).');
   return L.join('\n');
 }
 
-// ─── CLI (единственная IO-точка) ─────────────────────────────────────────────────
-
-function loadJson(rel) {
-  return JSON.parse(readFileSync(path.join(REPO_ROOT, rel), 'utf8'));
+/** Map verify diagnostics → drift rows for ritual-compatible table/exit 3. */
+export function diagnosticsToDrifts(diagnostics) {
+  return (diagnostics ?? []).map((item, index) => ({
+    insightId: String(item.subjectRef ?? item.eventId ?? 'lifecycle'),
+    kind: String(item.code ?? `diagnostic-${index}`),
+    detail: String(item.message ?? JSON.stringify(item)),
+  })).sort((a, b) => byCodePoint(a.insightId, b.insightId) || byCodePoint(a.kind, b.kind));
 }
 
 function main() {
   const quiet = process.argv.includes('--quiet');
-  let insights;
-  let tasks;
+  let result;
   try {
-    insights = loadJson(INSIGHTS_REGISTRY).insights ?? [];
-    tasks = loadJson(TASKS_REGISTRY).tasks ?? [];
+    const store = loadLifecycleStore(REPO_ROOT);
+    result = verifyInsightLifecycle({
+      baseContext: store.baseContext,
+      eventLog: store.eventLog,
+      projection: store.projection ?? undefined,
+    });
   } catch (e) {
-    console.error(`[fail] insight-drift: реестр не читается — ${e.message}`);
+    console.error(`[fail] insight-drift: verify failed — ${e instanceof Error ? e.message : String(e)}`);
     process.exit(1);
   }
-  const drifts = diffRegistries(insights, tasks);
+
+  const drifts = diagnosticsToDrifts(result.diagnostics);
   if (quiet) {
     console.log(
-      drifts.length === 0
+      drifts.length === 0 && result.ok
         ? '[ok] insight-drift: 0'
         : `[drift] insight-drift: ${drifts.length} (запусти yarn insight:drift для таблицы)`,
     );
   } else {
     console.log(renderDriftReport(drifts));
   }
-  process.exit(drifts.length === 0 ? 0 : 3);
+  process.exit(result.ok && drifts.length === 0 ? 0 : 3);
 }
 
 if (import.meta.url === `file://${process.argv[1]}` || fileURLToPath(import.meta.url) === process.argv[1]) {

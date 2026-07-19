@@ -360,12 +360,32 @@ export function applyTeamleadReview(manifest, body, now = new Date().toISOString
   }
   const artifact = reviewArtifactPath(manifest.taskId, manifest.currentCommitSha);
   const approved = parsed.verdict === 'LGTM';
+
+  // Адаптер (е) cowork-execution-registry (INTERFACE_CONTRACT §1.1/§6):
+  // приёмка = событие «персона приняла выход» — канон `{acceptedBy, headRev}`
+  // пишется в артефакт закрытия при LGTM; история приёмок append-only
+  // (`acceptanceHistory`) — по ней escalationRate/reworkRate наблюдают
+  // переприсвоение. Пишет closure lifecycle, не блоки.
+  const acceptance = approved
+    ? { acceptedBy: 'vesnin', headRev: manifest.currentCommitSha }
+    : (manifest.acceptance ?? null);
+  const priorHistory = Array.isArray(manifest.acceptanceHistory) ? manifest.acceptanceHistory : [];
+  const acceptanceHistory =
+    approved &&
+    !priorHistory.some(
+      (h) => h.acceptedBy === acceptance.acceptedBy && h.headRev === acceptance.headRev,
+    )
+      ? [...priorHistory, acceptance]
+      : priorHistory;
+
   return validateReviewManifest({
     ...manifest,
     state: approved ? 'lgtm' : 'blocked',
     verdict: parsed.verdict,
     reviewedCommitSha: manifest.currentCommitSha,
     reviewArtifact: artifact,
+    acceptance,
+    acceptanceHistory,
     evidence: { ...manifest.evidence, hasUnresolvedP0P1: !approved },
     reviewersStatus: { ...manifest.reviewersStatus, vesnin: approved ? 'approved' : 'blocked' },
     updatedAt: now,

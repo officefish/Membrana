@@ -12,6 +12,7 @@ import {
   formatInsightsWeeklyBlock,
   normalizeInsightId,
   readRegistry,
+  parseInsightCli,
 } from './lib/insight-ritual.mjs';
 
 describe('insight-ritual', () => {
@@ -101,6 +102,26 @@ describe('insight-ritual', () => {
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
+  });
+
+  it('legacy archive CLI is parsed only so dispatcher can hard-deprecate it', () => {
+    const cli = parseInsightCli(['archive', 'done', '--task', 'done-task', '--result', 'shipped']);
+    assert.equal(cli.command, 'archive');
+    assert.deepEqual(cli.taskIds, ['done-task']);
+    assert.equal(cli.execute, false);
+  });
+
+  it('parses exact lifecycle request and authority flags', () => {
+    const cli = parseInsightCli([
+      'visibility', 'repr-1', '--set', 'active', '--reason', 'owner choice',
+      '--request-key', 'rk-1', '--authority', 'owner://decision/1', '--execute',
+    ]);
+    assert.equal(cli.command, 'visibility');
+    assert.equal(cli.id, 'repr-1');
+    assert.equal(cli.set, 'active');
+    assert.equal(cli.requestKey, 'rk-1');
+    assert.equal(cli.authority, 'owner://decision/1');
+    assert.equal(cli.execute, true);
   });
 });
 
