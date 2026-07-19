@@ -24,6 +24,8 @@ import {
   formatRegistryBlock,
   validateFocusId,
 } from './lib/main-day-issue-paths.mjs';
+import { headRevision } from './lib/git-day-context.mjs';
+import { readDated } from './lib/read-dated.mjs';
 import {
   buildDetectionPlanningConstraintsBullets,
   FFT_METRICS_POTENTIAL_AND_LIMITS_REL,
@@ -52,7 +54,7 @@ const INPUT_DOCS = [
     required: false,
     label: 'FFT/trends: потолок эшелона 0 и приоритеты (эпик #84)',
   },
-  { rel: 'docs/STRATEGY_DAY.md', required: false, label: 'Горизонт дня (генератор #592 — веха, не список задач)' },
+  { rel: 'docs/STRATEGY_DAY.md', required: false, label: 'Горизонт дня (генератор #592 — веха, не список задач)', maxAgeDays: 0 },
   { rel: 'docs/STRATEGIC_PLAN_DAY.md', required: false, label: 'План на день (устар. генератор — вещдок, пока не удалён)' },
   { rel: 'docs/truth/registry.json', required: false, label: 'Граф правды — кристаллы-посылки дня (S7: генератор читает граф, был grep=0)' },
   { rel: 'docs/tasks/main-day-assertions.json', required: false, label: 'МАГИСТРАЛЬ ВЛАДЕЛЬЦА (sources[0].claim) — приоритет над синтезом; probe и генератор читают ОДИН источник' },
@@ -60,6 +62,10 @@ const INPUT_DOCS = [
     rel: 'docs/DAILY_CODE_REVIEW.md',
     required: false,
     label: 'Вчерашнее вечернее code-review (вход, не генерировать утром)',
+    // Кросс-дневное ребро: утро ЗАКОННО читает ревью прошлого вечера. Поэтому 1,
+    // а не 0 — требование «сегодня» вставало бы каждое утро. Но ревью трёхдневной
+    // давности уже не вход, а вещдок того, что вечер не отработал.
+    maxAgeDays: 1,
   },
   { rel: 'docs/STRATEGIC_PLAN_WEEK.md', required: false, label: 'План на неделю' },
   { rel: MAIN_DAY_ISSUE_REL, required: false, label: 'Предыдущий MAIN_DAY_ISSUE' },
@@ -76,11 +82,19 @@ const INPUT_DOCS = [
   },
 ];
 
+/** Локальный календарный день — «сегодня» для гейта свежести входов. */
+function localDayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 function collectDocBlocks() {
   const blocks = [];
   const missingRequired = [];
+  const staleInputs = [];
+  const today = localDayKey();
 
-  for (const { rel, required, label } of INPUT_DOCS) {
+  for (const { rel, required, label, maxAgeDays } of INPUT_DOCS) {
     const abs = resolve(process.cwd(), rel);
     const maxChars = rel === CURRENT_TASK_BUFFER_REL ? MAX_BUFFER_CHARS : MAX_DOC_CHARS;
     const text = readBounded(abs, maxChars);
@@ -93,10 +107,26 @@ function collectDocBlocks() {
       }
       continue;
     }
+
+    // ГЕЙТ СВЕЖЕСТИ ВХОДА (узел F, спринт ritual-step-manifest-sf). Утро НЕ
+    // блокируем — план строить надо. Но протухший вход обязан стать ВИДИМЫМ, и
+    // именно в артефакте, а не только в консоли: читатель MAIN_DAY_ISSUE должен
+    // знать, что план построен на трёхдневном ревью. Молчаливое чтение
+    // протухшего входа и было инцидентом.
+    const stale = Number.isInteger(maxAgeDays)
+      ? readDated(rel, { today, maxAgeDays, label }).why
+      : null;
+    if (stale) {
+      staleInputs.push(stale);
+      console.warn(`[main-day-issue] ⚠ ${stale}`);
+      blocks.push(`### ${label} (\`${rel}\`)\n\n> ⚠ **ВХОД НЕСВЕЖ:** ${stale}\n\n${text}\n`);
+      continue;
+    }
+
     blocks.push(`### ${label} (\`${rel}\`)\n\n${text}\n`);
   }
 
-  return { blocks: blocks.join('\n'), missingRequired };
+  return { blocks: blocks.join('\n'), missingRequired, staleInputs };
 }
 
 function collectActivePromptExcerpts(active, { full }) {
@@ -399,7 +429,7 @@ export async function runMainDayIssue(options) {
 function writeMainDayIssueFile({ outputPath, commandName, body, meta }) {
   const stamp = new Date().toISOString();
   const header =
-    `<!-- Сгенерировано: ${stamp} (${commandName}) -->\n` +
+    `<!-- Сгенерировано: ${stamp} (${commandName}@${headRevision()}) -->\n` +
     `<!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->\n` +
     `<!-- Входы: DAILY_STANDUP, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->\n` +
     `<!-- CURRENT_TASK — только вспомогательный буфер, не канон -->\n` +

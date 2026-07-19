@@ -168,6 +168,7 @@ yarn office:self-check
 ```
 
 `ready=false`, если хотя бы один хост недоступен; HTTP остаётся 200 (процесс жив).
+Неожиданное исключение зонда (#669) тоже не даёт 500: `ready=false` и synthetic check `id: self-check`.
 
 ### Claude
 

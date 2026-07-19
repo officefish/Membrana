@@ -31,6 +31,8 @@ import {
   FFT_METRICS_POTENTIAL_AND_LIMITS_REL,
 } from './lib/detection-planning-priorities.mjs';
 import { buildDriftSectionFromDisk } from './lib/drift-digest-section.mjs';
+import { headRevision } from './lib/git-day-context.mjs';
+import { readDated } from './lib/read-dated.mjs';
 import { CONSILIUM_ROLE_KEY_TO_SLUG, readPersonaMemory } from './lib/persona-memory.mjs';
 import { loadRegistry } from './lib/task-registry.mjs';
 import {
@@ -58,8 +60,17 @@ const DOC_INPUTS = [
     rel: 'docs/DAILY_CODE_REVIEW.md',
     required: false,
     label: 'Вчерашнее вечернее code-review (не генерировать утром)',
+    // Кросс-дневное ребро: стендап законно читает ревью ПРОШЛОГО вечера.
+    maxAgeDays: 1,
   },
-  { rel: 'docs/MAIN_DAY_ISSUE.md', required: false, label: 'Предыдущий MAIN_DAY_ISSUE (канон)' },
+  {
+    rel: 'docs/MAIN_DAY_ISSUE.md',
+    required: false,
+    label: 'Предыдущий MAIN_DAY_ISSUE (канон)',
+    // Стендап идёт ДО main-day-issue в цепочке ritual:day, значит читает
+    // вчерашний выпуск — это норма, а не протухание.
+    maxAgeDays: 1,
+  },
   {
     rel: 'docs/CURRENT_TASK.md',
     required: false,
@@ -294,11 +305,19 @@ export function collectStatusSnapshot() {
   return [`Branch: ${branch}`, `Last commit: ${last}`, '--- working tree ---', status].join('\n');
 }
 
+/** Локальный календарный день — «сегодня» для гейта свежести входов. */
+function localDayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 function collectDocInputs() {
   const blocks = [];
   const missingRequired = [];
+  const staleInputs = [];
+  const today = localDayKey();
 
-  for (const { rel, required, label } of DOC_INPUTS) {
+  for (const { rel, required, label, maxAgeDays } of DOC_INPUTS) {
     const abs = resolve(process.cwd(), rel);
     const text = readBounded(abs, MAX_DOC_CHARS);
     if (!text) {
@@ -306,10 +325,24 @@ function collectDocInputs() {
       blocks.push(`### ${label}\n\n(файл ${rel} не найден — пропущен)\n`);
       continue;
     }
+
+    // ГЕЙТ СВЕЖЕСТИ ВХОДА (узел F, спринт ritual-step-manifest-sf). Стендап НЕ
+    // блокируем, но протухший вход обязан стать видимым В САМОМ АРТЕФАКТЕ:
+    // читатель стендапа должен знать, что тот собран на трёхдневном ревью.
+    // Гейт ставится ТОЛЬКО там, где вход реально датирован — на артефакте без
+    // провенанса он давал бы вечный ложный варнинг, т.е. шум вместо сигнала.
+    const stale = Number.isInteger(maxAgeDays) ? readDated(rel, { today, maxAgeDays, label }).why : null;
+    if (stale) {
+      staleInputs.push(stale);
+      console.warn(`[standup] ⚠ ${stale}`);
+      blocks.push(`### ${label} (\`${rel}\`)\n\n> ⚠ **ВХОД НЕСВЕЖ:** ${stale}\n\n${text}\n`);
+      continue;
+    }
+
     blocks.push(`### ${label} (\`${rel}\`)\n\n${text}\n`);
   }
 
-  return { blocks: blocks.join('\n'), missingRequired };
+  return { blocks: blocks.join('\n'), missingRequired, staleInputs };
 }
 
 /**
@@ -572,7 +605,7 @@ export async function runDailyStandup(options) {
 function writeStandupFile({ outputPath, commandName, body, meta }) {
   const stamp = new Date().toISOString();
   const header =
-    `<!-- Сгенерировано: ${stamp} (${commandName}) -->\n` +
+    `<!-- Сгенерировано: ${stamp} (${commandName}@${headRevision()}) -->\n` +
     `<!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->\n` +
     `<!-- Входы: VIRTUAL_TEAM_PROMPT, ${FFT_METRICS_POTENTIAL_AND_LIMITS_REL}, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (${meta.issues}), packages/temp (${meta.tempFiles} файлов) -->\n` +
     `<!-- Issues: ${meta.issueSource ?? 'n/a'} -->\n\n`;

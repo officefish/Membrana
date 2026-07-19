@@ -32,7 +32,7 @@ description: >-
 |------|---------|--------|
 | Evening daily | `yarn code-review` | `docs/DAILY_CODE_REVIEW.md` |
 | Extended context | `yarn code-review:full` | same |
-| PR before merge | `yarn code-review:pr -- <N>` | `docs/discussions/pr-<N>-code-review.md` |
+| PR before merge | `yarn code-review:pr <N>` | `docs/discussions/pr-<N>-code-review.md` |
 | Branch | `node scripts/code-review.mjs --branch <name>` | `docs/discussions/branch-<slug>-code-review.md` |
 | Uncommitted | `node scripts/code-review.mjs --uncommitted` | `docs/discussions/uncommitted-code-review.md` |
 | Staged only | `node scripts/code-review.mjs --staged` | `docs/discussions/uncommitted-code-review.md` |

@@ -37,7 +37,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Daily standup (план + вчерашнее ревью + issues) | `yarn standup` (после `yarn plan:day`; **не** после `code-review`; dry: `yarn standup:dry`) |
 | Вечер (архив дня + ревью) | `yarn archive:daily-day` → incremental RAG index (non-blocking) → `yarn code-review` → `yarn save-code-review` → `yarn task:close-github` → `yarn team-evening-feedback`; цепочка: `yarn ritual:evening` |
 | Архив утренних артефактов (вечер, до code-review) | `yarn archive:daily-day` → `docs/archive/daily-day/<YYYY-MM-DD>/` |
-| Code-review (вечер) | `yarn code-review` → `docs/DAILY_CODE_REVIEW.md`; PR: `yarn code-review:pr -- <N>`; утром только читается |
+| Code-review (вечер) | `yarn code-review` → `docs/DAILY_CODE_REVIEW.md`; PR: `yarn code-review:pr <N>` (без `--`); утром только читается |
 | Team Evening Feedback (вечер) | `yarn team-evening-feedback` → `docs/seanses/team-evening-feedback-<date>.md`; dry: `yarn team-evening-feedback:dry`; регламент: [`TEAM_EVENING_FEEDBACK_REGULATION.md`](docs/prompts/TEAM_EVENING_FEEDBACK_REGULATION.md) |
 | Вечер одной командой | `yarn ritual:evening` (= archive:daily-day + rag:index:incremental + code-review + save-code-review + task:close-github + team-evening-feedback) |
 | Night Build (после вечера) | `yarn night:open --id <epic-id>` → агент → `yarn night:close`; регламент: `docs/NIGHT_SPRINT_REGULATION.md` |
