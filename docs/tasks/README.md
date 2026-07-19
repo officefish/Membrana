@@ -18,7 +18,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `net-http-probe` | net:http — HTTP-проба произвольного URL через прокси с классификацией ответа | S | [`NET_HTTP_PROBE_PROMPT.md`](../docs/prompts/NET_HTTP_PROBE_PROMPT.md) | [#595](https://github.com/officefish/Membrana/issues/595) |
 | `research-query-hygiene` | Гигиена research-запроса: ярлык рубрики уезжает в текст вопроса | S | [`RESEARCH_QUERY_HYGIENE_PROMPT.md`](../docs/prompts/RESEARCH_QUERY_HYGIENE_PROMPT.md) | — |
 | `detector-scoreboard` | Витрина качества детекции: плагин модуля микрофона + панель | L | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
@@ -239,6 +238,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `net-http-probe` | net:http — HTTP-проба произвольного URL через прокси с классификацией ответа | 2026-07-19 | [`NET_HTTP_PROBE_PROMPT.md`](../docs/prompts/NET_HTTP_PROBE_PROMPT.md) | #595 (Issue открыт) | [карточка](./archive/net-http-probe.md) |
 | `truth-mint` | truth mint — писатель токенов: валидация ядром, отказ на дубль, dry-run по умолчанию | 2026-07-19 | [`TRUTH_MINT_PROMPT.md`](../docs/prompts/TRUTH_MINT_PROMPT.md) | #642 (Issue открыт) | [карточка](./archive/truth-mint.md) |
 | `env-sibling-worktree` | .env из sibling-worktree: слоёная загрузка через git-common-dir + честный 401 | 2026-07-19 | [`ENV_SIBLING_WORKTREE_PROMPT.md`](../docs/prompts/ENV_SIBLING_WORKTREE_PROMPT.md) | #567 (Issue открыт) | [карточка](./archive/env-sibling-worktree.md) |
 | `truth-transcript-tooling` | lib/transcript + truth utterance/ask-check — поиск указателей правды по всем трём местам | 2026-07-19 | [`TRUTH_TRANSCRIPT_TOOLING_PROMPT.md`](../docs/prompts/TRUTH_TRANSCRIPT_TOOLING_PROMPT.md) | #642 (Issue открыт) | [карточка](./archive/truth-transcript-tooling.md) |
