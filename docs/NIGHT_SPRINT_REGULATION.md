@@ -56,6 +56,25 @@
 
 ---
 
+## Два жанра ночи
+
+Оба контура «ночные» и оба дают PR, но **контракт разный**. Путать их в языке
+и в утреннем review — путь к очереди висящих draft (каскад 19.07: #481→#638).
+Разбор: [`docs/discussions/night-build-format-analysis-2026-07-19.md`](./discussions/night-build-format-analysis-2026-07-19.md).
+
+| | **Night Build** | **Night Triage / Hunt** |
+|--|-----------------|-------------------------|
+| Цель | замороженный эпик разработки (фазы NB*) | регулярный срез / охота (office cron) |
+| Выход | ветка `night/<epic>-<date>` + HANDOFF | **draft PR** с одним отчётом |
+| Merge | утро, человек после LGTM | утренний **land-каскад** (`yarn night:land-reports`) |
+| Scope | NB-фазы из epic-промпта | один файл, sink not source |
+
+**Draft без `ready` = блокер merge.** `gh pr merge` отказывает на draft; без
+утреннего `gh pr ready` отчёты копятся днями при зелёном CI. Это не «норма
+подождать», а незакрытый цикл приёмки.
+
+---
+
 ## Сводная таблица ритуалов
 
 | Момент | Команды | Артефакт |
@@ -63,6 +82,7 @@
 | **Старт ночи** | `yarn night:open --id <epic-id>` | `docs/NIGHT_BUILD_ACTIVE.md` |
 | **Во время ночи** | агент по epic-промпту, чекпоинты каждые ~90 мин | `docs/NIGHT_BUILD_LOG.md` (append) |
 | **Утро (до day ritual)** | `yarn night:close --id <epic-id>` | `docs/archive/night-build/<date>/HANDOFF.md` |
+| **Утро (land docs-report)** | `yarn night:land-reports` → слово владельца → `--execute` | squash-merge eligible night-triage draft PR |
 | **Утро (канон)** | `yarn ritual:day` | `MAIN_DAY_ISSUE` учитывает handoff |
 
 ---
@@ -222,8 +242,16 @@ Append в `docs/NIGHT_BUILD_LOG.md`:
 ### Шаг 6. Утро (Teamlead)
 
 1. Прочитать `HANDOFF.md`.
-2. `yarn ritual:day` — standup подмешивает handoff (если скрипт видит свежий архив night-build).
-3. Решение: PR `night/*` → `main`, или день 2 night build (`yarn night:open --id … --continue`).
+2. **Land-каскад docs-report** (жанр Night Triage / Hunt, не эпик Night Build):
+   - `yarn night:land-reports` — dry-run: список open PR с title~`Night triage`,
+     allowlist path `docs/reports/night-triage/**`, ровно **один ADDED** файл;
+   - показать владельцу → явное «да» → `yarn night:land-reports --execute`
+     (`gh pr ready` + squash-merge **oldest-first**);
+   - иной diff / не triage-title → skip + note в отчёте CLI (не мёржить).
+3. `yarn ritual:day` — standup подмешивает handoff (если скрипт видит свежий архив night-build).
+4. Решение по **code-epic** PR `night/*` → `main` (adversarial review), или день 2
+   night build (`yarn night:open --id … --continue`). Не смешивать с land-каскадом
+   отчётов.
 
 ---
 
@@ -322,6 +350,8 @@ Human-in-loop шаги (визуальная оценка, живой смоук
 | `yarn night:open --id <epic-id> --continue` | Продолжить с HANDOFF (день 2) |
 | `yarn night:checkpoint --phase NB<n> --status pass\|fail` | Append в `NIGHT_BUILD_LOG.md` |
 | `yarn night:close --id <epic-id>` | Handoff + закрытие active |
+| `yarn night:land-reports` | Утренний dry-run каскада night-triage docs-report PR |
+| `yarn night:land-reports --execute` | `gh pr ready` + squash-merge eligible oldest-first |
 | `yarn task:list` | NB* подзадачи в реестре |
 
 ---
@@ -334,6 +364,10 @@ Human-in-loop шаги (визуальная оценка, живой смоук
 
 ## Версия
 
+- **v1.3** (2026-07-19) — два жанра ночи (Night Build vs Night Triage/Hunt); утренний
+  land-каскад `yarn night:land-reports`; draft без `ready` = блокер merge. Сырьё:
+  [`night-build-format-analysis-2026-07-19.md`](./discussions/night-build-format-analysis-2026-07-19.md).
+  G1–G3 не переписывались.
 - **v1.2** (2026-07-16) — Р7 оформлен скиллом [`membrana-always-yes`](../.cursor/skills/membrana-always-yes/SKILL.md) (`yarn always-yes:on|off`): scoped auto-yes включён по умолчанию в делегированном ночном спринте (субагент наследует профиль), явно — в дневном.
 - **v1.1** (2026-07-15) — секция «Делегированное исполнение» (ADR-0009): фазы NB0…NBn исполняет фоновый субагент в worktree, гардрейлы Р1–Р7 (вкл. scoped auto-yes), шаблон промпта ночного агента и пресет `permissions`.
 - **v1.0** (2026-06-14) — регламент, команды `night:*`, эпик cabinet MP4 hardening.
