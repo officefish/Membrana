@@ -51,6 +51,7 @@ import {
   validateProtocol,
   meetingAgendaProblem,
   reconcileReplyCount,
+  PREMISES_SECTION_TITLE,
 } from './lib/protocol-validator.mjs';
 
 const MAX_PROMPT_SPEC_CHARS = 12_000;
@@ -251,7 +252,7 @@ function formatGhIssue(issue) {
   return text;
 }
 
-function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles, minReplies, ragBlock, withMemory = false }) {
+function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles, minReplies, ragBlock, withMemory = false, meeting = '' }) {
   const cwd = process.cwd();
   const parts = [];
 
@@ -350,6 +351,36 @@ function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles
     '',
     question,
     '',
+  );
+
+  // Режим заседания: гейт `meetingVerdictProblems` требует секцию посылок ПРИ ЗАПИСИ,
+  // поэтому требование обязано прозвучать и НА ВХОДЕ — иначе комната о нём не знает, а
+  // протокол уходит в rejected/ уже после траты прогона (19.07: три отказа подряд).
+  // Блок стоит последним намеренно: конец промпта — сильнейшая позиция для формата.
+  if (meeting) {
+    parts.push(
+      '---',
+      '## Формат вердикта заседания — обязателен',
+      '',
+      `Протокол ОБЯЗАН нести секцию с заголовком ровно «${PREMISES_SECTION_TITLE}»`,
+      '(эти слова в заголовке проверяет машинный гейт; «Посылки», «Основания» и прочие',
+      'синонимы он не примет, и протокол будет отклонён).',
+      '',
+      'Что в неё входит:',
+      '- ВХОДЫ вердикта — то, на чём он стоит ДО этой комнаты;',
+      '- у каждого входа пометка **факт** (проверяемо по коду или замеру) или **норма** (наше решение);',
+      '- список ровно тот, что использован в рассуждении: лишний вход лжёт об отзыве.',
+      '',
+      'Чего в неё вносить НЕЛЬЗЯ: выводы самой этой комнаты. Посылка — вход, а не',
+      'заключение; на заключении тест на отзыв не запускается.',
+      '',
+      'Секция Definition of Done несёт обязательства ТОЛЬКО своего вопроса: ID соседних',
+      'вопросов заседания в ней = колонизация чужой комнаты.',
+      '',
+    );
+  }
+
+  parts.push(
     '---',
     'Сгенерируй полный протокол по формату из инструкции. Только протокол, без преамбулы «как модель я…».',
   );

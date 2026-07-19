@@ -148,6 +148,27 @@ node scripts/_ssh-office-smoke.mjs --external
 
 Без авторизации. Ответ: `{ "status": "ok", "version": "…", "uptime": <секунды> }`.
 
+### Outbound self-check (Intern T1)
+
+Сетевой пинг Anthropic / Linear / GitHub / Perplexity **без API-ключей** (достижимость хоста).
+Недостижимый эндпоинт помечается; процесс не падает.
+
+```bash
+yarn office:self-check
+```
+
+Логика: `src/lib/outbound-self-check.ts` (переиспользуется `/ready`).
+
+### `GET /ready` (Intern T2)
+
+Без авторизации. Liveness процесса + сетевой зонд тех же четырёх хостов (тело, не 503):
+
+```json
+{ "ready": true, "version": "…", "uptime": 12, "checks": [ { "id": "github", "reachable": true, "latencyMs": 40, "httpStatus": 200, "note": "http" } ] }
+```
+
+`ready=false`, если хотя бы один хост недоступен; HTTP остаётся 200 (процесс жив).
+
 ### Claude
 
 **`POST /v1/claude/ask`** — универсальный вызов Messages API.

@@ -55,6 +55,18 @@ describe('background-office HTTP', () => {
     expect(typeof res.body.uptime).toBe('number');
   });
 
+  it('GET /ready returns dependency checks (Intern T2)', async () => {
+    const res = await request(app.getHttpServer()).get('/ready').expect(200);
+    expect(typeof res.body.ready).toBe('boolean');
+    expect(Array.isArray(res.body.checks)).toBe(true);
+    expect(res.body.checks).toHaveLength(4);
+    for (const check of res.body.checks) {
+      expect(typeof check.id).toBe('string');
+      expect(typeof check.reachable).toBe('boolean');
+      expect(typeof check.latencyMs).toBe('number');
+    }
+  });
+
   it('POST /v1/claude/ask without token → 401', async () => {
     await request(app.getHttpServer())
       .post('/v1/claude/ask')

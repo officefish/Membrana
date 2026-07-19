@@ -1,4 +1,7 @@
+import { fetch as undiciFetch, ProxyAgent } from 'undici';
+
 import type { RagConfig } from '../config.js';
+import { resolveProxyUrl } from './proxy.js';
 import type { Embedder } from './types.js';
 
 const DEFAULT_DIMENSIONS = 1536;
@@ -8,6 +11,10 @@ interface OpenAiEmbeddingResponse {
   error?: { message?: string };
 }
 
+/**
+ * OpenAI embeddings. При HTTPS_PROXY/HTTP_PROXY — undici+ProxyAgent (#593),
+ * иначе global fetch (как до фикса; чистые сети / office).
+ */
 export function createOpenAiEmbedder(
   config: RagConfig,
   env: NodeJS.ProcessEnv = process.env,
@@ -18,6 +25,8 @@ export function createOpenAiEmbedder(
   }
 
   const embeddingUrl = `${config.openaiBaseUrl}/embeddings`;
+  const proxyUrl = resolveProxyUrl(env);
+  const dispatcher = proxyUrl ? new ProxyAgent(proxyUrl) : undefined;
 
   return {
     dimensions: DEFAULT_DIMENSIONS,
@@ -26,7 +35,7 @@ export function createOpenAiEmbedder(
         return [];
       }
 
-      const response = await fetch(embeddingUrl, {
+      const init = {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${apiKey}`,
@@ -36,9 +45,21 @@ export function createOpenAiEmbedder(
           model: config.embeddingModel,
           input: [...texts],
         }),
-      });
+      };
 
-      const payload = (await response.json()) as OpenAiEmbeddingResponse;
+      const response = dispatcher
+        ? await undiciFetch(embeddingUrl, { ...init, dispatcher })
+        : await fetch(embeddingUrl, init);
+
+      const raw = await response.text();
+      let payload: OpenAiEmbeddingResponse;
+      try {
+        payload = JSON.parse(raw) as OpenAiEmbeddingResponse;
+      } catch {
+        throw new Error(
+          `OpenAI embeddings HTTP ${response.status}: non-JSON response: ${raw.slice(0, 200)}`,
+        );
+      }
       if (!response.ok) {
         throw new Error(payload.error?.message ?? `OpenAI embeddings HTTP ${response.status}`);
       }
