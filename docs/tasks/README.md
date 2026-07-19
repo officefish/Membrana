@@ -18,6 +18,12 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `linear-agent-identity-facts` | Ресёрч: Linear — личность агента, состояние подзадач, блокирующие связи | S | [`LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md`](../docs/prompts/LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md) | — |
+| `meeting-registry-relocation` | Заседание: переезд реестра задач на внешний стек (Linear) | L | [`MEETING_REGISTRY_RELOCATION_PROMPT.md`](../docs/prompts/MEETING_REGISTRY_RELOCATION_PROMPT.md) | — |
+| `meeting-team-execution-contour` | Заседание: контур исполнения виртуальной команды (контур 2) | L | [`MEETING_TEAM_EXECUTION_CONTOUR_PROMPT.md`](../docs/prompts/MEETING_TEAM_EXECUTION_CONTOUR_PROMPT.md) | — |
+| `team-accountability-metrics` | Ресёрч: математическая оценка ответственности команды | S | [`TEAM_ACCOUNTABILITY_METRICS_PROMPT.md`](../docs/prompts/TEAM_ACCOUNTABILITY_METRICS_PROMPT.md) | — |
+| `generated-docs-quality-criteria` | Ресёрч: критерии качества генерируемых документов | S | [`GENERATED_DOCS_QUALITY_CRITERIA_PROMPT.md`](../docs/prompts/GENERATED_DOCS_QUALITY_CRITERIA_PROMPT.md) | — |
+| `angelina-orchestrator-prompt` | Ресёрч: промпт агента-оркестратора (процедура оркестрации) | S | [`ANGELINA_ORCHESTRATOR_PROMPT_PROMPT.md`](../docs/prompts/ANGELINA_ORCHESTRATOR_PROMPT_PROMPT.md) | — |
 | `research-query-hygiene` | Гигиена research-запроса: ярлык рубрики уезжает в текст вопроса | S | [`RESEARCH_QUERY_HYGIENE_PROMPT.md`](../docs/prompts/RESEARCH_QUERY_HYGIENE_PROMPT.md) | — |
 | `detector-scoreboard` | Витрина качества детекции: плагин модуля микрофона + панель | L | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
