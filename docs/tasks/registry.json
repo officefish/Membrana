@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "intern-t1-outbound-self-check",
+      "title": "Intern T1: outbound self-check — пинг внешних каналов",
+      "promptPath": "docs/prompts/INTERN_T1_OUTBOUND_SELF_CHECK_PROMPT.md",
+      "githubIssue": 195,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "docs/intern вертикаль; DoD #195: сводка 4 эндпоинтов без ключей, таймаут не роняет",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "rag-openai-proxy-geo",
       "title": "RAG OpenAI embedder via proxy (geo-403)",
       "promptPath": "docs/prompts/RAG_OPENAI_PROXY_GEO_PROMPT.md",
