@@ -6,14 +6,14 @@
       "promptPath": "docs/prompts/PR_WAIT_CI_GATE_PROMPT.md",
       "githubIssue": 643,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
+      "archivedAt": "2026-07-19",
       "leadPersona": null,
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #645 (squash), pr:wait 4 состояния + грабли пп.2-4 AGENTS.md, догфуд на своём же PR",
       "githubIssueClosedAt": null
     },
     {
