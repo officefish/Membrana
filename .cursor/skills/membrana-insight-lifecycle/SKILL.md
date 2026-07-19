@@ -12,8 +12,9 @@ description: >-
 
 # Membrana insight lifecycle
 
-Канон: [`INSIGHT_REGULATION.md`](../../../docs/prompts/INSIGHT_REGULATION.md) и active
-verdicts [`C1–C7`](../../../docs/meeting/insight-archive-lifecycle/).
+Канон агента: [`INSIGHT_LIFECYCLE_FOR_AGENTS.md`](../../../docs/prompts/INSIGHT_LIFECYCLE_FOR_AGENTS.md) ·
+active verdicts [`C1–C7`](../../../docs/meeting/insight-archive-lifecycle/) ·
+артефакты: [`INSIGHT_REGULATION.md`](../../../docs/prompts/INSIGHT_REGULATION.md).
 
 ## Неподвижные правила
 

@@ -5,6 +5,12 @@
 > **Промпт review:** [`INSIGHT_REVIEW_PROMPT.md`](./INSIGHT_REVIEW_PROMPT.md)  
 > **Ритм:** [`docs/DEVELOPER_RHYTHM.md`](../DEVELOPER_RHYTHM.md) · **не** входит в `ritual:day` / `ritual:evening`
 
+> **Агентам сначала:** содержательный гид по открытию/закрытию и сервисам —
+> [`INSIGHT_LIFECYCLE_FOR_AGENTS.md`](./INSIGHT_LIFECYCLE_FOR_AGENTS.md).  
+> Lifecycle-истина — оси **D/L/O/V** (C1–C7), не линейный статус ниже.
+> Команды `insight close --status` и `insight archive --task --result` **hard-deprecated**;
+> решение — `decide`, поставка/исход — `reconcile`, видимость — `visibility`.
+
 ---
 
 ## Назначение

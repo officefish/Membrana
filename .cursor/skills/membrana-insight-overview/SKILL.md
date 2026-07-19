@@ -10,7 +10,8 @@ description: >-
 
 # Membrana insight overview
 
-Read-only. Канон: [`C6_VERDICT.md`](../../../docs/meeting/insight-archive-lifecycle/C6_VERDICT.md).
+Read-only. Канон: [`INSIGHT_LIFECYCLE_FOR_AGENTS.md`](../../../docs/prompts/INSIGHT_LIFECYCLE_FOR_AGENTS.md) §7.4 ·
+[`C6_VERDICT.md`](../../../docs/meeting/insight-archive-lifecycle/C6_VERDICT.md).
 
 ## Данные
 

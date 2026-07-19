@@ -10,7 +10,9 @@ description: >-
 
 # Membrana Insight
 
-Канон: [`docs/prompts/INSIGHT_REGULATION.md`](../../../docs/prompts/INSIGHT_REGULATION.md) · навигатор [`docs/INSIGHTS.md`](../../../docs/INSIGHTS.md)
+Канон агента: [`INSIGHT_LIFECYCLE_FOR_AGENTS.md`](../../../docs/prompts/INSIGHT_LIFECYCLE_FOR_AGENTS.md) ·
+артефакты: [`INSIGHT_REGULATION.md`](../../../docs/prompts/INSIGHT_REGULATION.md) ·
+навигатор: [`docs/INSIGHTS.md`](../../../docs/INSIGHTS.md)
 
 ## When to use
 
