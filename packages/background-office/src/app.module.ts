@@ -4,6 +4,9 @@ import { LoggerModule } from 'nestjs-pino';
 import { randomUUID } from 'node:crypto';
 import { AppConfigModule } from './config/config.module';
 import { ClaudeModule } from './modules/claude/claude.module';
+// Адаптер (в) cowork-execution-registry: провод модуля производителя снимков
+// (блок snapshot-cold-migration) — точка сборки, вносится на интеграции.
+import { LinearSnapshotModule } from './linear-snapshot/linear-snapshot.module';
 import { LinearModule } from './modules/linear/linear.module';
 import { RagModule } from './modules/rag/rag.module';
 import { WebhooksModule } from './modules/webhooks/webhooks.module';
@@ -49,6 +52,7 @@ const testImports =
     ...testImports,
     ClaudeModule,
     LinearModule,
+    LinearSnapshotModule,
     RagModule,
     WebhooksModule,
     NightHuntModule,
