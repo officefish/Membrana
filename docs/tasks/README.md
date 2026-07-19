@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `truth-mint` | truth mint — писатель токенов: валидация ядром, отказ на дубль, dry-run по умолчанию | S | [`TRUTH_MINT_PROMPT.md`](../docs/prompts/TRUTH_MINT_PROMPT.md) | [#642](https://github.com/officefish/Membrana/issues/642) |
 | `research-query-hygiene` | Гигиена research-запроса: ярлык рубрики уезжает в текст вопроса | S | [`RESEARCH_QUERY_HYGIENE_PROMPT.md`](../docs/prompts/RESEARCH_QUERY_HYGIENE_PROMPT.md) | — |
 | `detector-scoreboard` | Витрина качества детекции: плагин модуля микрофона + панель | L | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |

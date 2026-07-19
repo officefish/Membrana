@@ -18,6 +18,10 @@
  *   node scripts/truth.mjs ask-check "<вопрос>" [--json]
  *       — дубль-проверка ДО вопроса владельцу (#642 п.1): слова вопроса ищутся по
  *       живым токенам и openGaps. Exit 3 = кандидат-ответ уже есть, вопрос не жечь.
+ *   node scripts/truth.mjs mint --file <token.json> [--execute] [--json]
+ *       — писатель токенов (#642 п.2). По умолчанию dry-run; --execute добавляет
+ *       токен в реестр и прогоняет verify. Валидация — ядром (checkInvariants на
+ *       кандидат-реестре), не вторым местом подсчёта. Только добавляет (#533).
  *
  * Exit: 0 — поток не блокируется · 2 — нарушен инвариант ИЛИ подписчик с onBreak=block задет
  *       · 3 — (только ask-check) найден живой токен-кандидат
@@ -31,7 +35,7 @@
  * новых токенов; чаще это ревизия истекающих».
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -220,6 +224,109 @@ export function askCheckMatches(registry, question) {
   return { words, need, tokens, gaps };
 }
 
+/**
+ * Валидация нового токена ПЕРЕД записью (#642 п.2). Форма — минимальные проверки
+ * писателя; содержательные правила (контрабанда посылок, висячие parents, циклы,
+ * декоррелированность) — вызовом ядра на кандидат-реестре, НЕ вторым местом
+ * подсчёта (урок evidenceLabel 17.07: два места, считающие одно, разъезжаются).
+ *
+ * @param {{tokens?: object[]}} registry
+ * @param {object} rawToken как пришёл из --file
+ * @returns {{errors: string[], warnings: string[], token: object}} token — с дефолтами писателя
+ */
+export function validateMint(registry, rawToken) {
+  const errors = [];
+  const warnings = [];
+  const token = { status: 'active', parents: [], ...rawToken };
+
+  if (!token.id || typeof token.id !== 'string') errors.push('нет id');
+  else if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(token.id)) errors.push(`id не kebab-case: «${token.id}»`);
+  if (!token.claim || typeof token.claim !== 'string' || !token.claim.trim()) errors.push('нет claim');
+  if (token.class !== 'owner' && token.class !== 'derived') {
+    errors.push(`class должен быть owner|derived, а не «${token.class}»`);
+  }
+  if (!token.revocation || typeof token.revocation !== 'object' || !token.revocation.kind) {
+    errors.push('нет revocation.kind — токен без правила отзыва вечен, это украшение');
+  }
+  if ((registry.tokens ?? []).some((t) => t.id === token.id)) {
+    errors.push(`дубль id: «${token.id}» уже в реестре`);
+  }
+
+  // Дальше валидирует ядро — только если форма не развалена (иначе buildGraph шумит).
+  if (errors.length === 0) {
+    const candidate = { ...registry, tokens: [...(registry.tokens ?? []), token] };
+    const before = new Set(
+      checkInvariants(buildGraph(registry), { subscribers: [] }).map((v) => `${v.id}|${v.rule}|${v.message}`),
+    );
+    for (const v of checkInvariants(buildGraph(candidate), { subscribers: [] })) {
+      // Допущение диффинга: нарушение с тем же id|rule|message, что у старого долга,
+      // считается старым. Токен-новичок не может совпасть по id (дубль отрезан выше),
+      // так что проглотить СВОЁ нарушение он способен только через чужой id — а такие
+      // и есть чужой долг.
+      const key = `${v.id}|${v.rule}|${v.message}`;
+      if (before.has(key)) continue; // старый долг реестра — не вина нового токена
+      if (v.severity === 'error') errors.push(`[${v.rule}] ${v.id} — ${v.message}`);
+      else warnings.push(`[${v.rule}] ${v.id} — ${v.message}`);
+    }
+    if (token.class === 'owner' && !(token.source?.utterance?.sessionId && token.source?.utterance?.uuid)) {
+      warnings.push('owner без указателя на волеизъявление (I7) — найти реплику: yarn truth utterance "<фрагмент>"');
+    }
+  }
+
+  return { errors, warnings, token };
+}
+
+function mintCommand(registry, argv, asJson) {
+  const fileIdx = argv.indexOf('--file');
+  const file = fileIdx !== -1 ? argv[fileIdx + 1] : null;
+  const execute = argv.includes('--execute');
+  if (!file) {
+    console.error('usage: truth mint --file <token.json> [--execute] [--json]');
+    process.exit(1);
+  }
+  let rawToken;
+  try {
+    rawToken = JSON.parse(readFileSync(resolve(file), 'utf8'));
+  } catch (e) {
+    console.error(`не читается ${file}: ${e.message}`);
+    process.exit(1);
+  }
+
+  const { errors, warnings, token } = validateMint(registry, rawToken);
+  if (asJson) {
+    console.log(JSON.stringify({ errors, warnings, token, wouldWrite: errors.length === 0, executed: false }, null, 2));
+  } else {
+    for (const e of errors) console.error(`  ОТКАЗ: ${e}`);
+    for (const w of warnings) console.error(`  warn: ${w}`);
+  }
+  if (errors.length > 0) {
+    if (!asJson) console.error('\nне записано — почини токен и повтори (mint ничего не чинит сам, #533)');
+    process.exit(2);
+  }
+
+  const tokens = (registry.tokens ??= []);
+  if (!execute) {
+    if (!asJson) {
+      console.log(`dry-run: токен «${token.id}» валиден, будет добавлен в конец tokens (${tokens.length} → ${tokens.length + 1}).`);
+      console.log('записать: yarn truth mint --file ' + file + ' --execute');
+    }
+    process.exit(0);
+  }
+
+  tokens.push(token);
+  writeFileSync(resolve(root, REGISTRY_REL), JSON.stringify(registry, null, 2) + '\n', 'utf8');
+  console.log(`зачеканен «${token.id}» (${registry.tokens.length} токенов). Прогоняю verify:`);
+  // Автопрогон verify; его exit-код — наш (запись уже сделана, verify — контроль).
+  try {
+    console.log(execFileSync('node', ['scripts/truth.mjs', 'verify'], { cwd: root, encoding: 'utf8' }));
+    process.exit(0);
+  } catch (e) {
+    console.log(String(e.stdout ?? ''));
+    console.error(String(e.stderr ?? ''));
+    process.exit(typeof e.status === 'number' ? e.status : 1);
+  }
+}
+
 function utteranceCommand(argv, asJson) {
   const rest = argv.slice(1).filter((a) => !a.startsWith('--'));
   const dirFlag = argv.indexOf('--dir');
@@ -307,6 +414,11 @@ function main() {
   }
   if (cmd === 'ask-check') {
     askCheckCommand(registry, argv, asJson);
+    return;
+  }
+
+  if (cmd === 'mint') {
+    mintCommand(registry, argv, asJson);
     return;
   }
 
