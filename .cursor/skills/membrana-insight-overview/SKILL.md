@@ -1,101 +1,45 @@
 ---
 name: membrana-insight-overview
 description: >-
-  Краткий тезисный обзор ВСЕХ текущих инсайтов (docs/insights/registry.json +
-  meta/REVIEW) с личным top-3 агента и выбором объективного кандидата в спринт.
-  Use when user says «обзор
-  инсайтов», «что у нас по инсайтам», «какой инсайт брать следующим», «выбери
-  фаворита», «покажи все инсайты», «назови свой top-3», insight overview.
-  Read-only и дескриптивный: НЕ создаёт/не ревьюит
-  инсайты (membrana-insight), НЕ стартует спринт (membrana-insight-to-sprint),
-  НЕ меняет статусы и веса.
+  Read-only overview of every Membrana insight as a clear bullet list with exact D/L/O/V,
+  evidence gaps, a first-person personal top-3 and a separate deterministic sprint
+  candidate. Use when the user asks to show all insights, what is implemented, what to do
+  next, favorites, top-3, insight overview, or the insight queue. Never mutates lifecycle
+  state and never infers delivery/outcome from archive/task/PR/mentions.
 ---
 
-# Membrana insight overview — все инсайты + личный top-3
+# Membrana insight overview
 
-Дескриптивная **функция ритма** (паттерн hermes-brief, PR #316): читает артефакты,
-ничего не переписывает. Фаворит — **рекомендация со ссылками**, решение за владельцем.
-Канон статусов/весов: [`INSIGHT_REGULATION.md`](../../../docs/prompts/INSIGHT_REGULATION.md).
+Read-only. Канон: [`C6_VERDICT.md`](../../../docs/meeting/insight-archive-lifecycle/C6_VERDICT.md).
 
-## When to use
+## Данные
 
-- «Что у нас по инсайтам?», «покажи очередь идей», «какой инсайт следующий?».
-- Перед `plan:week` / после закрытия спринта — чем заняться дальше.
+1. Выполнить `yarn insight overview --json` или прочитать pinned BaseContext+EventLog view.
+2. Notes, sprintPhase, task archive, branch/PR показывать только как hints/live-work context.
+3. Никогда не использовать legacy registry/meta как второй source of truth.
 
-## When NOT to use
+## Обязательный ответ
 
-- Создать/ресёрчить/ревьюить инсайт → `membrana-insight`.
-- Запустить adopted-инсайт в работу → `membrana-insight-to-sprint`.
-- Недельное планирование целиком → `yarn plan:week` (сам подмешивает adopted ≥6).
+1. Короткий снимок counts/conflicts.
+2. **Все** insights по V-группам `active | archived | unclassified | conflict`.
+3. Один компактный пункт на insight:
+   `Название / id — смысл; D; L coverage; O coverage; V; gap/next action`.
+4. `Мой top-3` — три выбора от первого лица с личной причиной и честной readiness.
+5. `Объективный кандидат` — результат machine policy, отдельно от мнения.
 
-## Шаги
+Не прятать остальные записи в «и ещё N». Archived не означает delivered/realized.
+`None` показывать честно. Personal top-3 не создаёт event и не разрешает старт sprint.
 
-1. **Собрать данные.** `docs/insights/registry.json` — все записи; для каждой
-   папки `docs/insights/<id>/`: `meta.json` (status, weight, sprintPhase, horizon,
-   даты), одна строка сути из `INSIGHT.md` (заголовок или первая фраза гипотезы),
-   «Следующий шаг» из `REVIEW.md` (если ревью было). Расхождение registry ↔ meta
-   отметить, не чинить.
-2. **Крест-проверка занятости** — `sprintPhase` систематически не бэкфилится
-   (прецеденты 2026-07-13: hermes реализован PR #316; comms — эпик уже archived,
-   а инсайт числился «готов к спринту»). Поэтому занятость определяется по ВСЕМ
-   сигналам:
-   - `docs/tasks/registry.json`: задача/эпик с `insightId == <id>` или упоминанием
-     `<id>` в `notes` — `active` → инсайт **в работе**; `archived` без sprintPhase →
-     пометка «⚠️ реализован/частично, реестр инсайтов не бэкфилнут»;
-   - живые параллельные сессии: `git worktree list` (ветки) и `gh pr list` —
-     тематическое совпадение ветки/PR с инсайтом → «похоже, в работе прямо сейчас».
-3. **Сгруппировать:**
-   - **Архивированы** — `status == archived`; историческая строка, никогда не кандидат;
-   - **В работе** — `status != archived` И (`sprintPhase != null` ИЛИ сигнал занятости из шага 2);
-   - **Готовы к спринту** — `adopted` без сигналов занятости;
-   - **В процессе** — `draft` / `researched` / `reviewed`;
-   - **Отложены** — `deferred` (одной строкой каждый); `rejected` — только числом.
-4. **Тезисный обзор всех инсайтов.** Не прятать записи в «и ещё N» и не выдавать
-   сырую таблицу. В каждой группе дать по одному компактному пункту на инсайт:
-   `Название / id — суть простыми словами; статус · вес · horizon; следующий шаг
-   или причина ожидания`. Сначала человеческий смысл, затем метаданные. Сортировка:
-   вес ↓, затем дата создания ↓. `archived` и `rejected` тоже перечислить, но без рекомендации
-   к работе. Если список длинный, сохранять полноту за счёт коротких пунктов.
-5. **Объективный кандидат в спринт** — детерминированные критерии по порядку,
-   победитель первый
-   (кандидаты — только «Готовы к спринту», т.е. без ЛЮБОГО сигнала занятости):
-   1. `weight ≥ 6.0` (порог plan:week) — максимальный вес;
-   2. иначе максимальный вес — пометить, что старт потребует **owner override**
-      (прецедент persona-memory 5.4, 2026-07-13);
-   3. иначе `reviewed` с рекомендацией Teamlead «adopted»;
-   тай-брейки по порядку: свежий `reviewedAt` → ближний `horizon`
-   (week < month < quarter < null) → `id` byCodePoint. Объяснить выбор 2–3
-   предложениями и процитировать «Следующий шаг» Teamlead из REVIEW.md.
-6. **Личный top-3 агента.** После полного обзора каждый отвечающий агент обязан
-   назвать свои три фаворита и говорить от первого лица: `1–3 · название/id —
-   почему я выбираю его`. Это осознанное мнение агента, а не повтор сортировки по
-   весу: учитывать ожидаемый эффект, своевременность, готовность и собственную
-   профессиональную оптику/роль. Рядом честно указывать готовность (`готов`,
-   `нужен research/review`, `deferred`) и не выдавать личный выбор за разрешение
-   стартовать спринт. `rejected` в top-3 не включать. Если доступно меньше трёх
-   неотклонённых инсайтов, перечислить доступные и назвать причину неполного top.
-7. **Вывод в чат.** Порядок ответа обязателен: короткий снимок очереди → все
-   инсайты тезисными группами → `Мой top-3` → `Объективный кандидат в спринт`.
-   Писать ясно, без канцелярита и без абзацев-стен. Файл писать только по явному
-   «сохрани» →
-   `docs/seanses/insight-overview-<YYYY-MM-DD>.md` (без автосохранения).
+## Top-3
 
-## Anti-patterns
-
-- **Доверять только `sprintPhase` реестра инсайтов** — он не бэкфилится; без
-  крест-проверки по реестру задач и живым веткам фаворитом станет то, что уже
-  в работе у параллельной сессии (сбой первого прогона 2026-07-13: comms).
-- Менять meta.json / веса / статусы «по пути» — обзор строго read-only.
-- Выдумывать вес там, где `null` (draft/researched без ревью — «вес: —»).
-- Переоткрывать спор из REVIEW (вес и scope уже проголосованы).
-- Автоматически стартовать спринт фаворита — только после слова владельца.
-- Выбирать объективного кандидата в спринт из `deferred`/`rejected`.
-- Называть top-3 без личного объяснения или маскировать личное мнение под
-  детерминированный рейтинг.
-- Показывать только top-3 и терять остальные инсайты: обзор всегда полный.
-- Возвращать `archived` в готовые к спринту или личный top-3.
+По умолчанию выбирать среди V=`active|unclassified`, D не `rejected`, без Conflict.
+Deferred допустим как стратегический личный выбор с явной меткой, но не objective
+candidate. Archived включать только по явной просьбе о historical favorites. Readiness
+брать только из typed state/relations/live-work checks, не из hints.
 
 ## Handoff
 
-Владелец утвердил фаворита → [`membrana-insight-to-sprint`](../membrana-insight-to-sprint/SKILL.md)
-(гейты: adopted, вес ≥6 или owner override, «Следующий шаг», LGTM начать сейчас).
+- Выбран accepted Mandate → `membrana-insight-to-sprint`.
+- Нужно доказать delivery/outcome, изменить V или проверить историю →
+  `membrana-insight-lifecycle`.
+

@@ -1,14 +1,14 @@
 ---
 name: membrana-insight-overview
 description: >-
-  Краткий read-only обзор всех текущих инсайтов тезисным списком, с личным
-  top-3 отвечающего агента и отдельным объективным кандидатом в спринт.
-  Use when user says «обзор инсайтов», «что у нас по инсайтам», «покажи все
-  инсайты», «какой инсайт брать следующим», «выбери фаворита», «назови свой
-  top-3», insight overview. Do NOT use to create or review an insight
-  (membrana-insight) or to start the sprint (membrana-insight-to-sprint).
+  Read-only overview of every Membrana insight as a clear bullet list with exact D/L/O/V,
+  evidence gaps, a first-person personal top-3 and a separate deterministic sprint
+  candidate. Use when the user asks to show all insights, what is implemented, what to do
+  next, favorites, top-3, insight overview, or the insight queue. Never mutates lifecycle
+  state and never infers delivery/outcome from archive/task/PR/mentions.
 ---
 
 # membrana-insight-overview
 
 Delegates to [`.cursor/skills/membrana-insight-overview/SKILL.md`](../../../.cursor/skills/membrana-insight-overview/SKILL.md).
+

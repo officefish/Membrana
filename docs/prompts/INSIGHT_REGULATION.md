@@ -109,8 +109,8 @@ yarn insight archive <id> --task <task-id> --result "…" [--reason implemented]
 
 `archive` всегда dry-run без `--execute`. Перед записью обязательны одновременно:
 
-1. Явно перечисленные `--task` существуют, связаны с инсайтом через `insightId` или
-   его `sprintPhase` и имеют `status: archived`.
+1. Явно перечисленные `--task` существуют, имеют точную обратную ссылку
+   `task.insightId == insight.id` и `status: archived`.
 2. Нет ни одной active-задачи, связанной с этим инсайтом.
 3. `--result` кратко фиксирует фактически поставленный результат.
 4. Агент отдельно проверил `git worktree list` и открытые PR; CLI честно не может
@@ -120,7 +120,7 @@ yarn insight archive <id> --task <task-id> --result "…" [--reason implemented]
 `archivedAt`, `archiveReason`, `implementationTaskIds`, `archiveResult`. Папка инсайта,
 RESEARCH и REVIEW остаются на месте как исторический канон.
 
-**Не evidence:** один `adopted`, заполненный `sprintPhase`, совпадение названия ветки,
+**Не evidence:** один `adopted`, заполненный `sprintPhase` без `insightId`, совпадение названия ветки,
 архивная задача без связи с инсайтом или субъективное «кажется, уже сделано».
 
 Требования API:

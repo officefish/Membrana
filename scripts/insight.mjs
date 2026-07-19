@@ -21,7 +21,6 @@ import {
 import {
   REVIEW_PROMPT_PATH,
   VIRTUAL_TEAM_PATH,
-  archiveInsight,
   createInsight,
   formatInsightList,
   insightDir,
@@ -182,64 +181,32 @@ try {
   }
 
   if (cli.command === 'close') {
-    if (!cli.id || !cli.status) {
-      console.error('Usage: yarn insight close <id> --status adopted|deferred|rejected [--weight N]');
-      process.exit(1);
-    }
-    const allowed = new Set(['adopted', 'deferred', 'rejected']);
-    if (!allowed.has(cli.status)) {
-      throw new Error(`Invalid status: ${cli.status}`);
-    }
-    const id = normalizeInsightId(cli.id);
-    const dir = insightDir(repoRoot, id);
-    const metaPath = join(dir, 'meta.json');
-    if (!existsSync(metaPath)) {
-      throw new Error(`Insight not found: ${id}`);
-    }
-    const meta = JSON.parse(readFileSync(metaPath, 'utf8'));
-    meta.status = cli.status;
-    meta.closedAt = new Date().toISOString().slice(0, 10);
-    if (cli.weight !== null && Number.isFinite(cli.weight)) {
-      meta.weight = cli.weight;
-    }
-    writeFileSync(metaPath, `${JSON.stringify(meta, null, 2)}\n`, 'utf8');
-    const registry = readRegistry(repoRoot);
-    const entry = registry.insights.find((item) => item.id === id);
-    if (entry) {
-      entry.status = cli.status;
-      if (meta.weight !== null) {
-        entry.weight = meta.weight;
-      }
-    }
-    writeRegistry(repoRoot, registry);
-    console.log(`Инсайт ${id} → ${cli.status}`);
-    process.exit(0);
+    console.error(JSON.stringify({
+      ok: false,
+      mode: 'BLOCKED',
+      failure: {
+        code: 'DEPRECATED_AMBIGUOUS_CLOSE',
+        message: 'close/status смешивает legacy presentation и exact D decision',
+      },
+      next: 'yarn insight decide <mandate-id> --set accepted|rejected|deferred --request-key <key> --authority <ref>',
+    }, null, 2));
+    process.exit(2);
   }
 
   if (cli.command === 'archive') {
-    if (!cli.id) {
-      console.error('Usage: yarn insight archive <id> --task <task-id> --result "…" [--execute]');
-      process.exit(1);
-    }
-    const plan = archiveInsight(repoRoot, {
-      id: cli.id,
-      taskIds: cli.taskIds,
-      result: cli.result,
-      reason: cli.reason,
-      execute: cli.execute,
-    });
-    if (plan.alreadyArchived) {
-      console.log(`Инсайт ${plan.id} уже архивирован ${plan.entry.archivedAt ?? ''}`.trim());
-      process.exit(0);
-    }
-    console.log(`${cli.execute ? 'ARCHIVED' : 'DRY-RUN'}: ${plan.id}`);
-    console.log(`previousStatus: ${plan.archive.previousStatus}`);
-    console.log(`tasks: ${plan.archive.implementationTaskIds.join(', ')}`);
-    console.log(`result: ${plan.archive.archiveResult}`);
-    if (!cli.execute) {
-      console.log('Проверь open PR и git worktree list; для записи повтори с --execute.');
-    }
-    process.exit(0);
+    console.error(JSON.stringify({
+      ok: false,
+      mode: 'BLOCKED',
+      failure: {
+        code: 'DEPRECATED_AMBIGUOUS_ARCHIVE',
+        message: 'task/archive/result не доказывают L/O и не выбирают V',
+      },
+      next: [
+        'yarn insight reconcile <id> --request <file>',
+        'yarn insight visibility <representation-id> --set archived --reason "…" --request-key <key> --authority <ref>',
+      ],
+    }, null, 2));
+    process.exit(2);
   }
 
   // NB5: гвард fall-through — research/review теперь ставят exitCode и НЕ выходят

@@ -1,7 +1,7 @@
 {
   "id": "insight-competition-catalog-pipeline",
   "title": "Competition sprint → catalog publish как повторяемый pipeline",
-  "status": "archived",
+  "status": "adopted",
   "source": "packaging-epic",
   "sprintPhase": "ins-pilot-i-catalog-pipeline",
   "horizon": "week",
@@ -15,12 +15,5 @@
     "catalog",
     "usercase",
     "tooling"
-  ],
-  "previousStatus": "adopted",
-  "archivedAt": "2026-07-18",
-  "archiveReason": "implemented",
-  "implementationTaskIds": [
-    "ins-pilot-i-catalog-pipeline"
-  ],
-  "archiveResult": "Reusable competition catalog publish CLI, skill and regulation delivered"
+  ]
 }
