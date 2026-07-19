@@ -18,7 +18,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `pr-wait-ci-gate` | pr:wait — честное ожидание проверок PR (4 состояния) + грабли AGENTS.md | S | [`PR_WAIT_CI_GATE_PROMPT.md`](../docs/prompts/PR_WAIT_CI_GATE_PROMPT.md) | [#643](https://github.com/officefish/Membrana/issues/643) |
 | `research-query-hygiene` | Гигиена research-запроса: ярлык рубрики уезжает в текст вопроса | S | [`RESEARCH_QUERY_HYGIENE_PROMPT.md`](../docs/prompts/RESEARCH_QUERY_HYGIENE_PROMPT.md) | — |
 | `detector-scoreboard` | Витрина качества детекции: плагин модуля микрофона + панель | L | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
@@ -239,6 +238,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `pr-wait-ci-gate` | pr:wait — честное ожидание проверок PR (4 состояния) + грабли AGENTS.md | 2026-07-19 | [`PR_WAIT_CI_GATE_PROMPT.md`](../docs/prompts/PR_WAIT_CI_GATE_PROMPT.md) | #643 (Issue открыт) | [карточка](./archive/pr-wait-ci-gate.md) |
 | `scoreboard-plugin-shell` | Ф1: плагин витрины в модуле микрофона на измеренных числах | 2026-07-18 | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — | [карточка](./archive/scoreboard-plugin-shell.md) |
 | `evening-audit-generator` | Генератор вечернего аудита: что происходило в репозитории, реестре задач и графе правды | 2026-07-18 | [`EVENING_AUDIT_GENERATOR_PROMPT.md`](../docs/prompts/EVENING_AUDIT_GENERATOR_PROMPT.md) | #627 | [карточка](./archive/evening-audit-generator.md) |
 | `standup-charge-redesign` | DAILY_STANDUP как настоящий стендап: дисциплина+честность+код-стайл и раскрытие сильных сторон персон | 2026-07-16 | [`STANDUP_CHARGE_REDESIGN_PROMPT.md`](../docs/prompts/STANDUP_CHARGE_REDESIGN_PROMPT.md) | — | [карточка](./archive/standup-charge-redesign.md) |
