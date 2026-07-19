@@ -15,6 +15,7 @@ import {
 import {
   collectOpenIssues,
   collectStatusSnapshot,
+  guardDailyCodeReviewInput,
   readBounded,
 } from './_daily-standup.mjs';
 import {
@@ -214,6 +215,14 @@ function buildGenerationPrompt({ outputRel, focusOverride, activeCount, issueCou
  */
 export async function runMainDayIssue(options) {
   loadDotEnv();
+
+  try {
+    guardDailyCodeReviewInput();
+  } catch (err) {
+    console.error(err instanceof Error ? err.message : String(err));
+    process.exitCode = err && typeof err === 'object' && 'exitCode' in err ? Number(err.exitCode) || 2 : 2;
+    return;
+  }
 
   const registry = loadRegistry();
   const active = listActive(registry);

@@ -1,131 +1,71 @@
-# Промпт: RT-9: гвард свежести code-review — критичный сбой не молчит
+# Промпт: RT-9 — гвард свежести code-review (критичный сбой не молчит)
 
-> **Task-промпт для агента-разработчика** (Cursor IDE / Claude / другой LLM).
+> **Task-промпт для агента-разработчика.**
 > Процесс постановки: [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md).
-> Скопируй блок **«Промпт целиком»** в начало диалога. Размер задачи: **S**.
-> Ожидаемый артефакт: **N PR** — <одна фраза>.
+> Размер задачи: **S**. Ожидаемый артефакт: **1 PR** — `isFresh`/`dateOf` + `NON_CRITICAL_STEPS` + гвард в downstream.
 > Реестр: `id` = `rt-9-code-review-freshness` в [`docs/tasks/registry.json`](../tasks/registry.json).
+> Эпик: `ritual-trust-contour` (#539). Консилиум: `rt8-loose-ends-2026-07-16` вердикт A1.
 
 ---
 
 ## Контекст
 
-<1–2 абзаца: зачем задача, что уже есть в репозитории, что не трогаем.>
+`(node scripts/code-review.mjs || true)` в `ritual:evening` глотает сбой критичного шага
+(15.07 фолбэк без кредита → 127, незамечено). Downstream (standup / main-day-issue) читает
+`DAILY_CODE_REVIEW.md` без проверки даты. Вердикт консилиума: чистая функция свежести +
+явный список некритичных шагов; `|| true` только для них.
 
 **Связанные документы:**
 
 | Документ | Зачем |
 |----------|--------|
-| [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) | Роли, порядок работы |
-| [`ARCHITECTURE.md`](../ARCHITECTURE.md) | Границы модулей |
-| [`DESIGN.md`](../DESIGN.md) | UI (если есть) |
-| [`TASKS_MANAGEMENT.md`](../TASKS_MANAGEMENT.md) | Issue / PR |
-| <другие> | … |
+| `docs/seanses/rt8-loose-ends-2026-07-16.md` | Вердикт A1, DoD |
+| `scripts/lib/code-review-ritual.mjs` | Фронтматтер `<!-- Сгенерировано: … -->` |
+| Эпик #539 | Родитель |
 
-**Референс (только идеи UX, не копировать код):** `packages/temp/...` — если есть.
-
-**GitHub Issue:** — (не заведён)
+**GitHub Issue:** — (не заведён; parent #539).
 
 ---
 
 ## Промпт целиком (для вставки агенту)
 
-> Всё ниже до раздела **«Заметки для человека-постановщика»** — текст задания для агента.
+### Что построить
 
----
-
-### Кто ты
-
-Ты — **координатор виртуальной команды Membrana** под руководством **Vesnin** (Teamlead). Перед кодом — краткий план (1–2 абзаца + список файлов). Соблюдай [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) и [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md).
-
----
-
-### Что построить (продуктовое описание)
-
-1. …
-2. …
-
----
-
-### Архитектура / контракт
-
-| Слой | Путь | Ответственность |
-|------|------|-----------------|
-| … | … | … |
-
-**Запрещено:**
-
-- …
-
----
-
-### Визуальный дизайн (если есть UI)
-
-- …
-
----
+1. `scripts/lib/artifact-freshness.mjs`:
+   - `dateOf(text)` — дата из HTML-комментария `Сгенерировано:` (ISO), не mtime;
+   - `isFresh(text, today)` — `dateOf === today` (today инъекцией);
+   - `assertFreshOrThrow(text, { today, label, exitCode })` — читаемое
+     «устарел на N дн.» + ненулевой exit.
+2. `NON_CRITICAL_STEPS` — явный массив id шагов вечера, которым позволен soft-fail;
+   `code-review` и `archive-daily-code-review` **не** в списке (или archive — по норме
+   консилиума: критичный = code-review; archive может остаться рядом — зафиксировать
+   в PR: минимум снять `|| true` с `code-review.mjs`).
+3. Downstream: `_daily-standup.mjs` и `_main-day-issue.mjs` на входе проверяют
+   свежесть `DAILY_CODE_REVIEW.md` (если файл есть); при протухании — явный отказ.
+4. Рефактор `package.json` `ritual:evening`: убрать `|| true` у критичных шагов.
 
 ### Тесты
 
 | Область | Минимум |
 |---------|---------|
-| … | … |
-
----
+| dateOf / isFresh | сегодня → true; вчера → false; нет штампа → не fresh |
+| assertFreshOrThrow | сообщение содержит «устарел на N» |
+| ritual chain | code-review не под `\|\| true` (как в main-day-probe.test) |
 
 ### Definition of Done
 
-- [ ] …
-- [ ] `yarn turbo run lint typecheck test build --continue` — зелёный (или указать scope).
-- [ ] LGTM Teamlead.
-
----
+- [ ] Чистые функции + инъекция `today`; оба пути покрыты тестом.
+- [ ] `ritual:evening` не глотает сбой `code-review`.
+- [ ] standup / main-day-issue падают явно на вчерашнем ревью.
+- [ ] `yarn test:scripts` (затронутые) зелёные. LGTM Teamlead.
 
 ### Out of scope
 
-- …
-
----
-
-### Порядок работы ролей
-
-1. **Teamlead** — …
-2. **Структурщик** — …
-3. **Математик** — …
-4. **Музыкант** — …
-5. **Верстальщик** — …
-
----
-
-### Формат ответа координатора (планирование)
-
-```text
-[Teamlead]: …
-[Структурщик]: …
-[Математик]: …
-[Музыкант]: …
-[Верстальщик]: …
-
-Итоговый артефакт: …
-Definition of Done: …
-```
+- RT-10 precision mode; правка LLM code-review; telegram digest attachment date (#586).
 
 ---
 
 ## Заметки для человека-постановщика
 
-1. GitHub Issue (`wish` / `bug` / `imperfection`) + ссылка на этот файл.
-2. Запись в `docs/tasks/registry.json` (`status: active`).
-3. После merge: отчёт в Issue → `yarn task:archive <slug> --notes "…"`.
-
-### Проверка после PR
-
-```bash
-# команды проверки
-```
-
----
-
-## Связь с дорожной картой
-
-- …
+1. Закрытие: `yarn task:archive rt-9-code-review-freshness --notes "PR #…"`.
+2. Комментарий в #539 при желании.
