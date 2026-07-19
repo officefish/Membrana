@@ -38,7 +38,7 @@
 | [`RITUAL_STEP_MANIFEST_SF_PROMPT.md`](./RITUAL_STEP_MANIFEST_SF_PROMPT.md) | Спринт-родитель, модель S |
 | [`evening-ritual-steps.json`](../tasks/evening-ritual-steps.json) | Образец объявления `findingExitCodes` |
 
-**GitHub Issue:** # (после создания).
+**GitHub Issue:** [#622](https://github.com/officefish/Membrana/issues/622).
 
 ---
 

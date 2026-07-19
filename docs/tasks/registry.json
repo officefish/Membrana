@@ -6,17 +6,17 @@
       "promptPath": "docs/prompts/RITUAL_STEP_MANIFEST_SF_PROMPT.md",
       "githubIssue": 613,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
+      "archivedAt": "2026-07-19",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "vesnin"
       ],
       "notes": "M1 scripts-boundary; Closes #613",
-      "archiveNotes": null,
+      "archiveNotes": "PR #672, Closes #613 — evening manifest S+F + findingExitCodes + RT-9 compat",
       "githubIssueClosedAt": null,
       "parentEpic": "ritual-trust-contour"
     },
@@ -36,7 +36,7 @@
       ],
       "notes": "Closes #587; TF-2 yarn eats --",
       "archiveNotes": "PR #671, Closes #587 — skills/regulation without yarn --",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "office-ready-error-path",
@@ -54,7 +54,7 @@
       ],
       "notes": "P1 from Teamlead review #667; Closes #669",
       "archiveNotes": "PR #670, Closes #669 — try/catch on /ready error-path",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "intern-t3-research-digest",
@@ -72,7 +72,7 @@
       ],
       "notes": "yarn office:research-digest; topic OFFICE_DIGEST_TOPIC; Closes #197",
       "archiveNotes": "PR #668 — office:research-digest, Closes #197",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "intern-t2-health-ready",
@@ -90,7 +90,7 @@
       ],
       "notes": "Depends on T1 #195; /ready reuses outbound-self-check",
       "archiveNotes": "PR pending — GET /ready, Closes #196",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "intern-t1-outbound-self-check",
@@ -108,7 +108,7 @@
       ],
       "notes": "docs/intern вертикаль; DoD #195: сводка 4 эндпоинтов без ключей, таймаут не роняет",
       "archiveNotes": "PR #666 — yarn office:self-check, lib outbound-self-check, Closes #195",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "rag-openai-proxy-geo",
@@ -126,7 +126,7 @@
       ],
       "notes": "Issue #593: openai-embedder without ProxyAgent",
       "archiveNotes": "PR #663 — openai-embedder via HTTPS_PROXY/undici ProxyAgent; shared resolveProxyUrl",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "linear-agent-identity-facts",
@@ -238,7 +238,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #654 (squash), ci-wait+branch-cleanup; карточка задним числом по токену 19.07",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "net-http-probe",
@@ -254,7 +254,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #655 (squash), net:http c классами ok/geo-403/waf-html/timeout/proxy-dead, живой смоук двух маршрутов",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "truth-mint",
@@ -270,7 +270,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #651 (squash), mint с валидацией ядром, dry-run по умолчанию, живой смоук I3-отказа",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "env-sibling-worktree",
@@ -286,7 +286,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #649 (squash), слоёный .env через git-common-dir, sibling-тест красный-до/зелёный-после, честный 401",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "truth-transcript-tooling",
@@ -302,7 +302,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #647 (squash), utterance+ask-check+lib/transcript; #642 п.2 (mint) остаётся, issue переоткрыт",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "pr-wait-ci-gate",
@@ -318,7 +318,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #645 (squash), pr:wait 4 состояния + грабли пп.2-4 AGENTS.md, догфуд на своём же PR",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "research-query-hygiene",
@@ -529,17 +529,17 @@
       "promptPath": "docs/prompts/EXIT_CODE_SEMANTICS_AUDIT_PROMPT.md",
       "githubIssue": 622,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-18",
-      "archivedAt": null,
+      "archivedAt": "2026-07-19",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "vesnin"
       ],
       "notes": "Находка спринта ritual-step-manifest-sf (#613, 18.07), вскрыта ЖИВЫМ ПРОГОНОМ — ни тесты, ни --dry её не видели. Репортёры отдают ненулевой код как НАХОДКУ, не сбой: insight-drift exit 3 = найден дрейф, truth cool exit 2 = граф нарушен. Бинарная модель называла успешный отчёт 'пропущенным некритичным' — ложь о шаге. Под || true вопрос не вставал: любой код становился нулём, т.е. снятие проглатывания ОБНАЖИЛО скрытую семантику — тот же класс ждёт везде, где будем снимать || true дальше. Осмотрено 10 шагов вечера из 216 скриптов; утро/ночь/деплой не смотрели. ЗАПРЕТ: не менять сами коды возврата (унификация = отдельное решение, вероятно консилиум — меняет контракт 216 скриптов). ЗАВИСИМОСТЬ: требует смёрженного #613 (findingExitCodes и step-status.mjs живут там).",
-      "archiveNotes": null,
+      "archiveNotes": "PR #673, Closes #622 — ritual-exit-codes map + guard",
       "githubIssueClosedAt": null,
       "parentEpic": "ritual-trust-contour"
     },
