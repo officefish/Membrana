@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "intern-t2-health-ready",
+      "title": "Intern T2: /health и /ready — готовность background-office",
+      "promptPath": "docs/prompts/INTERN_T2_HEALTH_READY_PROMPT.md",
+      "githubIssue": 196,
+      "size": "S",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": "2026-07-19",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Depends on T1 #195; /ready reuses outbound-self-check",
+      "archiveNotes": "PR pending — GET /ready, Closes #196",
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "intern-t1-outbound-self-check",
       "title": "Intern T1: outbound self-check — пинг внешних каналов",
       "promptPath": "docs/prompts/INTERN_T1_OUTBOUND_SELF_CHECK_PROMPT.md",
