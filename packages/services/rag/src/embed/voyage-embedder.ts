@@ -1,7 +1,10 @@
 import { fetch as undiciFetch, ProxyAgent } from 'undici';
 
 import type { RagConfig } from '../config.js';
+import { resolveProxyUrl } from './proxy.js';
 import type { Embedder } from './types.js';
+
+export { resolveProxyUrl } from './proxy.js';
 
 /**
  * Voyage AI embeddings — второй провайдер слота `RagEmbeddingProvider` (Issue #425).
@@ -30,16 +33,6 @@ interface VoyageEmbeddingResponse {
 /** Ключ: канонический VOYAGE_API_KEY, допускаем VOYAGEAI_API_KEY (имя из .env владельца). */
 export function resolveVoyageApiKey(env: NodeJS.ProcessEnv = process.env): string | null {
   return env.VOYAGE_API_KEY?.trim() || env.VOYAGEAI_API_KEY?.trim() || null;
-}
-
-/**
- * Опциональный прокси (паттерн ClaudeService в background-office): прямой TLS-хендшейк
- * Node к api.voyageai.com режется DPI по отпечатку (живая проверка 2026-07-13: curl/PS
- * проходят, Node — 403 HTML), через прокси API отвечает нормально. Без прокси-переменных
- * остаётся global fetch — прямой путь (office и чистые сети).
- */
-export function resolveProxyUrl(env: NodeJS.ProcessEnv = process.env): string | null {
-  return env.HTTPS_PROXY?.trim() || env.HTTP_PROXY?.trim() || null;
 }
 
 const MAX_RETRIES_429 = 4;

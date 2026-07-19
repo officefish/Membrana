@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `rag-openai-proxy-geo` | RAG OpenAI embedder via proxy (geo-403) | S | [`RAG_OPENAI_PROXY_GEO_PROMPT.md`](../docs/prompts/RAG_OPENAI_PROXY_GEO_PROMPT.md) | [#593](https://github.com/officefish/Membrana/issues/593) |
 | `linear-agent-identity-facts` | Ресёрч: Linear — личность агента, состояние подзадач, блокирующие связи | S | [`LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md`](../docs/prompts/LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md) | — |
 | `meeting-registry-relocation` | Заседание: переезд реестра задач на внешний стек (Linear) | L | [`MEETING_REGISTRY_RELOCATION_PROMPT.md`](../docs/prompts/MEETING_REGISTRY_RELOCATION_PROMPT.md) | — |
 | `meeting-team-execution-contour` | Заседание: контур исполнения виртуальной команды (контур 2) | L | [`MEETING_TEAM_EXECUTION_CONTOUR_PROMPT.md`](../docs/prompts/MEETING_TEAM_EXECUTION_CONTOUR_PROMPT.md) | — |

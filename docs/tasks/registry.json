@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "rag-openai-proxy-geo",
+      "title": "RAG OpenAI embedder via proxy (geo-403)",
+      "promptPath": "docs/prompts/RAG_OPENAI_PROXY_GEO_PROMPT.md",
+      "githubIssue": 593,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "Issue #593: openai-embedder without ProxyAgent",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "linear-agent-identity-facts",
       "title": "Ресёрч: Linear — личность агента, состояние подзадач, блокирующие связи",
       "promptPath": "docs/prompts/LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md",

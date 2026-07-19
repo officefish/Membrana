@@ -54,7 +54,8 @@ export { createKeywordCorpusArchivePort } from './retriever/keyword-corpus-archi
 
 export { createLanceDbStore, resolveManifestPath } from './store/lancedb-store.js';
 export { createOpenAiEmbedder, embedInBatches } from './embed/openai-embedder.js';
-export { createVoyageEmbedder, resolveProxyUrl, resolveVoyageApiKey } from './embed/voyage-embedder.js';
+export { resolveProxyUrl } from './embed/proxy.js';
+export { createVoyageEmbedder, resolveVoyageApiKey } from './embed/voyage-embedder.js';
 export { createEmbedder } from './embed/factory.js';
 export { splitMarkdown } from './chunk/markdown-splitter.js';
 
