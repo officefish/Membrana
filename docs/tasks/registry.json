@@ -6,14 +6,14 @@
       "promptPath": "docs/prompts/NET_HTTP_PROBE_PROMPT.md",
       "githubIssue": 595,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
+      "archivedAt": "2026-07-19",
       "leadPersona": null,
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #655 (squash), net:http c классами ok/geo-403/waf-html/timeout/proxy-dead, живой смоук двух маршрутов",
       "githubIssueClosedAt": null
     },
     {
