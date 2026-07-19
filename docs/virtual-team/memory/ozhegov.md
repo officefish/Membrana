@@ -5,7 +5,7 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 32 из 123 кандидатов (бюджет <5000 токенов).
+Записей: 32 из 122 кандидатов (бюджет <5000 токенов).
 
 ### 2026-07-18 · голос · insight-own-field-corpus-single-spec
 
@@ -133,12 +133,6 @@
 
 — источник: `docs/seanses/night-build-format-m3-taxonomy-2026-07-18.md#reply-1`
 
-### 2026-07-18 · позиция · team-evening-feedback
-
-> Ozhegov. Оценка артефактов: MAIN_DAY_ISSUE даёт чистое разделение слоёв (стратегия = highlight, реестр = assign) и точно указывает границу охвата probe — провода в `package.json`/`scripts/` вне symbol-probe, гвард = тест интеграции. Это методологически верно. Стендап не […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-18.md#reply-1`
-
 ### 2026-07-17 · голос · insight-dads-detector-integration
 
 > внедрять: Да · этап: Сейчас (S-задачи чистые) · оценка: 8/10 — Мост — правильная форма: extraction-скрипт + версионируемый манифест, не ручная выгрузка (инвариант №4). D1/D4 ложатся на существующий контур: `scripts/lib/wav-read.mjs`, формат манифеста `data/detectors-benchmark/v0.2/manifest.json`, добавить `split: test` — это чистое […]
@@ -198,3 +192,9 @@
 > Начну с термина, иначе спор поплывёт. «Канал внешнего знания» — две разные леммы, Дынин прав по доменам. Но у меня жёсткий вопрос по хостингу истины: `includeInsights` и `includeAnalyzersResearch` — это флаги, которые сейчас живут ТОЛЬКО у замороженной недельной. Просто […] _(реплик в сеансе: 4)_
 
 — источник: `docs/seanses/strategy-day-q5-horizon-feeds-2026-07-17.md#reply-1`
+
+### 2026-07-17 · позиция · team-evening-feedback
+
+> Ozhegov. Оценка артефактов: документы точны в терминах — расхождение «замысел↔постройка» названо своим именем и вынесено в `strategy-day-investigation`, а не замазано. Ценно, что вещдоки помечены явно (append-only соблюдён, `.txt`-мусора в корне нет). Слабое место артефактов […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-17.md#reply-1`
