@@ -81,14 +81,36 @@ export class HealthController {
     description: 'Always 200 while process is up; see body.ready for dependency status',
   })
   async ready(): Promise<ReadyResponse> {
-    const results = await runOutboundSelfCheck();
-    const ready = results.every((r) => r.reachable);
-    return {
-      ready,
-      version: readVersion(),
-      uptime: Math.floor(process.uptime()),
-      checks: toReadyChecks(results),
-    };
+    try {
+      const results = await runOutboundSelfCheck();
+      const ready = results.every((r) => r.reachable);
+      return {
+        ready,
+        version: readVersion(),
+        uptime: Math.floor(process.uptime()),
+        checks: toReadyChecks(results),
+      };
+    } catch (err) {
+      // Контракт Intern T2 / #669: процесс жив → HTTP 200; ready в теле.
+      const note =
+        err instanceof Error && err.message.trim()
+          ? `self-check-error: ${err.message.trim().slice(0, 200)}`
+          : 'self-check-error';
+      return {
+        ready: false,
+        version: readVersion(),
+        uptime: Math.floor(process.uptime()),
+        checks: [
+          {
+            id: 'self-check',
+            reachable: false,
+            latencyMs: 0,
+            httpStatus: null,
+            note,
+          },
+        ],
+      };
+    }
   }
 }
 
