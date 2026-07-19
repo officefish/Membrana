@@ -18,6 +18,12 @@ fi
 
 set -e
 
+# Отказ-I «ответственный не назначен» (cowork-execution-registry, контракт §2/§6-б):
+# карточка со status active без leadPersona → жёсткий вердикт 22, push не проходит.
+# Гейт читает docs/tasks/registry.json офлайн; сети и yarn ему не нужно.
+echo "pre-push [trace-gate]: node scripts/trace-gate.mjs lead-persona"
+node scripts/trace-gate.mjs lead-persona
+
 echo "pre-push [cg7]: yarn catalog:verify-client"
 yarn catalog:verify-client
 
