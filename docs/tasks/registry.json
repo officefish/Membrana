@@ -677,17 +677,17 @@
       "promptPath": "docs/prompts/INSIGHT_ARCHIVE_LIFECYCLE_PROMPT.md",
       "githubIssue": 609,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "createdAt": "2026-07-18",
-      "archivedAt": null,
+      "archivedAt": "2026-07-19",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
         "dynin"
       ],
       "notes": "Canon after C1–C7 (follow-up to closed #609 / prototype #612): I1–I3 BaseContext+EventLog, C6 CLI, C7 ops, C5 migration fixtures, drift→verify",
-      "archiveNotes": null,
+      "archiveNotes": "PR #677 merged (093e189c) — lifecycle canon C1–C7→I1–I3 after #612 prototype; follow-up to closed #609",
       "githubIssueClosedAt": null
     },
     {
