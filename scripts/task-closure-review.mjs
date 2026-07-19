@@ -35,6 +35,11 @@ export const CLOSURE_DIFF_EXCLUDES = [
   'docs/tasks/research',
   'docs/discussions',
   'docs/reviews',
+  // 19.07, meeting-security-posture: контейнеры/повестки заседаний — тот же
+  // процессный класс, что протоколы seanses (их процедуру проверяет S-M5 аудит,
+  // не code-review); машинный снапшот дозора — артефакт прогона, не код.
+  'docs/meeting',
+  'docs/security/deps-watch-snapshot.json',
 ];
 
 export function parseTaskClosureReviewCli(argv) {

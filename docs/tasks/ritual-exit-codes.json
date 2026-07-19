@@ -69,6 +69,13 @@
             "1": { "bucket": "failure", "meaning": "нет источника / гейт свежести без --allow-stale" }
           }
         },
+        "deps-watch": {
+          "script": "scripts/deps-watch.mjs --mode evening",
+          "codes": {
+            "0": { "bucket": "ok", "meaning": "diff напечатан / нет снапшота (деградация в полную сводку) / аудит недоступен (явный пропуск, не молчание)" }
+          },
+          "notes": "Дозор ИНФОРМИРУЕТ (вердикт M1 security-posture): advisories — данные отчёта, не код возврата; alert превращает в задачу Teamlead. Других exit-кодов скрипт не производит."
+        },
         "evening-tail": {
           "script": "scripts/ritual-evening-tail.mjs",
           "codes": {

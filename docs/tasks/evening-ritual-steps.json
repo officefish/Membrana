@@ -121,6 +121,19 @@
       ]
     },
     {
+      "id": "deps-watch",
+      "script": "scripts/deps-watch.mjs --mode evening",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "whyNoncritical": "Дозор ИНФОРМИРУЕТ (вердикт M1 security-posture, ратифицирован 19.07): alert превращает в задачу Teamlead, а не цепочка. Сеть/registry транзиентны; скрипт не молчит ни в одной ветке — пропуск печатается явно, сам скрипт всегда exit 0.",
+      "label": "Дозор за зависимостями — вечерний diff",
+      "//": "Снапшот утреннего прогона (docs/security/deps-watch-snapshot.json) скрипт обрабатывает сам: нет снапшота — деградирует в полную сводку, не в стоп. Поэтому consumes пуст: freshness-гейт дублировал бы внутреннюю деградацию более грубым отказом.",
+      "consumes": [],
+      "produces": [
+        "отчёт в stdout: новые advisories за день"
+      ]
+    },
+    {
       "id": "evening-tail",
       "script": "scripts/ritual-evening-tail.mjs",
       "kind": "mechanic",
