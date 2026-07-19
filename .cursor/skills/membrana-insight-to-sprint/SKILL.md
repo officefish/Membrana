@@ -11,9 +11,9 @@ description: >-
 
 # Membrana insight → sprint
 
-Мост между [`membrana-insight`](../membrana-insight/SKILL.md) (кончается на `adopted`) и
-[`membrana-task-lifecycle`](../membrana-task-lifecycle/SKILL.md) (стартует с task-промпта).
-Канон: [`INSIGHT_REGULATION.md`](../../../docs/prompts/INSIGHT_REGULATION.md),
+Мост между [`membrana-insight`](../membrana-insight/SKILL.md) (D=`accepted` / presentation
+`adopted`) и [`membrana-task-lifecycle`](../membrana-task-lifecycle/SKILL.md).
+Канон агента: [`INSIGHT_LIFECYCLE_FOR_AGENTS.md`](../../../docs/prompts/INSIGHT_LIFECYCLE_FOR_AGENTS.md) §6 ·
 [`TASK_PROMPT_WORKFLOW.md`](../../../docs/prompts/TASK_PROMPT_WORKFLOW.md).
 
 ## When to use
@@ -29,7 +29,8 @@ description: >-
 
 ## Gate (не переходить, если не выполнено)
 
-1. `meta.json.status == adopted` (не draft/researched/reviewed/deferred/rejected).
+1. Replayed current D exact Mandate == `accepted`. Legacy `meta.status=adopted` — hint/
+   presentation и не заменяет replay.
 2. `weight ≥ 6.0` (порог `plan:week`) — слабый инсайт спринт **не** получает.
 3. В `REVIEW.md` есть конкретный **«Следующий шаг»** от Teamlead.
 4. LGTM человека/Teamlead начать спринт **сейчас**. `adopted` **не** создаёт task автоматически — это осознанный барьер.
@@ -49,20 +50,22 @@ task-промпт, а не новое обсуждение. Спор не пер
 3. **Task-промпт.** `docs/prompts/<SLUG>_PROMPT.md` из [`TASK_PROMPT_TEMPLATE.md`](../../../docs/prompts/TASK_PROMPT_TEMPLATE.md).
    «Промпт целиком», DoD, Out-of-scope — из scope инсайта; «Запрещено» — из review. Каждый
    голос роли → строка в «Порядке работы ролей». Шапка ссылается на инсайт.
-4. **Регистрация.** Запись в [`docs/tasks/registry.json`](../../../docs/tasks/registry.json):
-   `status: active`, `promptPath`, `size`, `leadPersona` (владелец из review) + **`insightId`
-   обратной ссылкой**. Затем `yarn task:sync-readme`.
+4. **Регистрация.** Создать новую BaseContext version только с canonical typed
+   `Task→Mandate` relation. В task projection: `status: active`, `promptPath`, `size`,
+   `leadPersona`, navigation `insightId` и exact `mandateId`. Declared Slice refs допустимы
+   в scoped request только как validated subset Mandate, не новая relation/evidence.
+   Затем `yarn task:sync-readme`.
 5. **Точка входа для холодной сессии.** [`CURRENT_TASK.md`](../../../docs/CURRENT_TASK.md) —
    буфер со стартовой строкой (copy-paste в новую сессию). `MAIN_DAY_ISSUE` — только через
    `yarn main-day-issue` после standup, не фабриковать.
-6. **Замкнуть трассировку.** В `INSIGHT.md` строка «Спринт → <id>». Теперь связь
-   инсайт → спринт → PR → архив прослеживается в обе стороны.
+6. **Замкнуть трассировку.** Relation/provenance записать в новой BaseContext version и
+   operation manifest. Frozen historical INSIGHT/REVIEW не редактировать backlink-ом.
 
 ## Anti-patterns
 
 - Переоткрывать scope/приоритет, уже решённые в review.
 - Терять запреты команды при переносе в промпт (они — проголосованные ограничения).
-- Оставить спринт без обратной ссылки на инсайт (`insightId`) → «висящая» задача.
+- Оставить спринт без exact Task→Mandate relation; одного `insightId` недостаточно.
 - Забыть точку входа: новая сессия стартует «с холода» — нужна одна copy-paste строка.
 - Спринт из `deferred`/слабого (вес < 6) инсайта.
 

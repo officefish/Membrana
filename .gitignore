@@ -154,3 +154,13 @@ docs/HERMES_BRIEF.md
 # Журнал drift-anchor (DA3 дайджесты + DA4/DA5 записи якорей) — локальный артефакт хоста (office/CI), не для репо
 docs/reports/drift-anchor/
 docs/tasks/morning-ritual-state.json
+
+# Replit task briefs — транспорт (yarn replit:task), не канон; README + шаблон — в репо
+docs/replit-tasks/*
+!docs/replit-tasks/README.md
+!docs/replit-tasks/_TEMPLATE.md
+
+
+# Insight lifecycle runtime (C7 store/journal/lock)
+docs/insights/_lifecycle/
+
