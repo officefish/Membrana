@@ -1,0 +1,13 @@
+{
+  "id": "insight-acting-subject-missing",
+  "title": "Нет субъекта действия: команда заявлена, но не исполняет",
+  "status": "draft",
+  "source": "user",
+  "horizon": null,
+  "weight": null,
+  "createdAt": "2026-07-18",
+  "researchedAt": null,
+  "reviewedAt": null,
+  "closedAt": null,
+  "tags": []
+}

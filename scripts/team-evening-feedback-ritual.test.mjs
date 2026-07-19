@@ -65,4 +65,12 @@ test('DAY_DOC_INPUTS covers ritual documents', () => {
   const rels = DAY_DOC_INPUTS.map((d) => d.rel);
   assert.ok(rels.includes('docs/MAIN_DAY_ISSUE.md'));
   assert.ok(rels.includes('docs/DAILY_CODE_REVIEW.md'));
+  // Конвейер владельца (18.07): рефлексия работает НА сухих фактах аудитора.
+  // Без этого входа она их не видит — 18.07 не назвала разрез областей ни разу.
+  assert.ok(rels.includes('docs/DAILY_AUDIT.md'));
+});
+
+test('хроника подаётся в рефлексию РАНЬШЕ code-review: сначала что было, потом как написано', () => {
+  const rels = DAY_DOC_INPUTS.map((d) => d.rel);
+  assert.ok(rels.indexOf('docs/DAILY_AUDIT.md') < rels.indexOf('docs/DAILY_CODE_REVIEW.md'));
 });

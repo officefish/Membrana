@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-17",
+  "updatedAt": "2026-07-18",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -546,6 +546,17 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-17",
+      "tags": []
+    },
+    {
+      "id": "insight-acting-subject-missing",
+      "title": "Нет субъекта действия: команда заявлена, но не исполняет",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-18",
       "tags": []
     }
   ]

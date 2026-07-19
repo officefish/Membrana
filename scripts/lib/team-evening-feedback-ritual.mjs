@@ -25,6 +25,12 @@ export const DAY_DOC_INPUTS = [
   { rel: 'docs/STRATEGIC_PLAN_DAY.md', label: 'Стратегический план на день' },
   { rel: 'docs/DAILY_STANDUP.md', label: 'Утренний стендап' },
   { rel: 'docs/MAIN_DAY_ISSUE.md', label: 'MAIN_DAY_ISSUE (канон дня)' },
+  // Конвейер (владелец, 18.07): генератор-аудитор считает сухие факты → рефлексия
+  // работает ПОСЛЕ него и НА нём → из неё растут дайджест партнёрам и фидбек владельцу.
+  // Порядок в цепочке был верен (audit-evening стоит до фидбека), а вход отсутствовал:
+  // 18.07 рефлексия обсуждала oversized из ревью и не назвала разрез 60/33/4 — самое
+  // информативное число дня, — потому что не видела хронику.
+  { rel: 'docs/DAILY_AUDIT.md', label: 'Хроника дня — сухие факты (ADR-0013)' },
   { rel: 'docs/DAILY_CODE_REVIEW.md', label: 'Вечернее code-review (сгенерировано сегодня)' },
   { rel: 'docs/CURRENT_TASK.md', label: 'Буфер CURRENT_TASK' },
 ];
