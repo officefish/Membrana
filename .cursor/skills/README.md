@@ -20,7 +20,7 @@ Project-scoped skills for Cursor Agent and Claude Code (mirror in `.claude/skill
 | [`membrana-usercase-lessons`](./membrana-usercase-lessons/SKILL.md) | журнал недочётов сценариев: читать ДО сборки UserCase, L-записи при отладке Run, live-Run чеклист |
 | [`membrana-usercase-generation`](./membrana-usercase-generation/SKILL.md) | usercase pack, collapse, `node scripts/usercase.mjs` |
 | [`membrana-competition-packaging`](./membrana-competition-packaging/SKILL.md) | `comp:publish-catalog`, post-sprint picker, operator debug |
-| [`membrana-insight`](./membrana-insight/SKILL.md) | `yarn insight:*`, strategic ideas, Perplexity cascade, weekly weight |
+| [`membrana-insight`](./membrana-insight/SKILL.md) | `yarn insight:*`, strategic ideas; гид: [`INSIGHT_LIFECYCLE_FOR_AGENTS.md`](../../docs/prompts/INSIGHT_LIFECYCLE_FOR_AGENTS.md) |
 | [`membrana-insight-to-sprint`](./membrana-insight-to-sprint/SKILL.md) | adopted инсайт → спринт: task-промпт, реестр `insightId`, точка входа новой сессии |
 | [`membrana-insight-lifecycle`](./membrana-insight-lifecycle/SKILL.md) | exact D/L/O/V, evidence reconciliation, visibility, correction/reopen/migration |
 | [`membrana-insight-overview`](./membrana-insight-overview/SKILL.md) | все insights тезисами, evidence gaps, личный top-3 и objective candidate (read-only; mirrored Claude/Codex/OpenCode) |

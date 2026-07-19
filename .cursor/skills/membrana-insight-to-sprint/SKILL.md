@@ -11,9 +11,9 @@ description: >-
 
 # Membrana insight → sprint
 
-Мост между [`membrana-insight`](../membrana-insight/SKILL.md) (кончается на `adopted`) и
-[`membrana-task-lifecycle`](../membrana-task-lifecycle/SKILL.md) (стартует с task-промпта).
-Канон: [`INSIGHT_REGULATION.md`](../../../docs/prompts/INSIGHT_REGULATION.md),
+Мост между [`membrana-insight`](../membrana-insight/SKILL.md) (D=`accepted` / presentation
+`adopted`) и [`membrana-task-lifecycle`](../membrana-task-lifecycle/SKILL.md).
+Канон агента: [`INSIGHT_LIFECYCLE_FOR_AGENTS.md`](../../../docs/prompts/INSIGHT_LIFECYCLE_FOR_AGENTS.md) §6 ·
 [`TASK_PROMPT_WORKFLOW.md`](../../../docs/prompts/TASK_PROMPT_WORKFLOW.md).
 
 ## When to use
