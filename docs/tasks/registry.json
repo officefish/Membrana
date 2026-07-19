@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "intern-t3-research-digest",
+      "title": "Intern T3: ресёрч-дайджест — утренняя пресса через Perplexity Sonar",
+      "promptPath": "docs/prompts/INTERN_T3_RESEARCH_DIGEST_PROMPT.md",
+      "githubIssue": 197,
+      "size": "S",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": "2026-07-19",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "yarn office:research-digest; topic OFFICE_DIGEST_TOPIC; Closes #197",
+      "archiveNotes": "PR #668 — office:research-digest, Closes #197",
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "intern-t2-health-ready",
       "title": "Intern T2: /health и /ready — готовность background-office",
       "promptPath": "docs/prompts/INTERN_T2_HEALTH_READY_PROMPT.md",
