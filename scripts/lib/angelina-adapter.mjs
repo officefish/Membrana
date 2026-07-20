@@ -96,3 +96,28 @@ export function gitFsIo(repoRoot, deps) {
     },
   };
 }
+
+/**
+ * Сгенерировать строку-заголовок провенанса — обратная к `parseProvenance`. Генератор
+ * документа зовёт её, чтобы подписать документ (автор + что прочитал у производителей).
+ * `digest` узла НЕ здесь — его считает страж из содержимого (см. `buildSnapshot`).
+ * @param {{author: string, guard?: string, readAt?: Record<string, {version?: string|null, digest?: string|null}>}} p
+ * @returns {string}
+ */
+export function provenanceHeader(p) {
+  const obj = { author: p.author, guard: p.guard ?? 'angelina', readAt: p.readAt ?? {} };
+  return `<!-- angelina ${JSON.stringify(obj)} -->`;
+}
+
+/**
+ * Что потребитель прочитал у производителя СЕЙЧАС: `{version, digest}`. Генератор кладёт
+ * это в `readAt[producer]` в момент чтения — тогда страж свежести совпадёт, пока
+ * производителя не тронут после.
+ * @param {{version: (p: string) => string|null, content: (p: string) => string|null}} io
+ * @param {string} relPath
+ * @returns {{version: string|null, digest: string|null}}
+ */
+export function readEntry(io, relPath) {
+  const content = io.content(relPath);
+  return { version: io.version(relPath), digest: content == null ? null : contentDigest(content) };
+}
