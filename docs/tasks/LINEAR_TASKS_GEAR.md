@@ -167,11 +167,9 @@
 
 ## 9. Внешняя реальность (проверено живьём 19.07)
 
-- **Linear заблокирован для России по IP** (`403 RESTRICTED_COUNTRY_BLOCKED`) —
-  и с рабочих машин, и с мск-VDS офиса. Ключ `LINEAR_API_KEY` валиден на
-  **media-NL**; office ключ для GraphQL не использует. Боевой pull:
-  `POST /v1/linear-snapshots/capture` на media (live `pullOk` с
-  `producedBy=media-NL` — 2026-07-20, #692). Режим движения:
+- **Linear GraphQL / batch-pull только через media-NL** (`403` с РФ и office MSK —
+  напрямую в `api.linear.app` не ходят). Ключ на **media-NL**; снимок `linear-snapshot@1`
+  через `POST /v1/linear-snapshots/capture` (live `pullOk`, `producedBy=media-NL` — #692).
   `movementMode: live-snapshot` после явного К5 lift (не silent).
 - Поле исполнителя в API — `delegate`; под-задачи `parent`/`children` — полноценные
   объекты; `relations` (blockedBy/blocking) в GraphQL есть, вебхуками — допущение.

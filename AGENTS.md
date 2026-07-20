@@ -67,6 +67,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Грабля | Как кусает |
 |--------|------------|
 | `yarn office:ssh 'docker ps'` | **Без `--`**: yarn 4 съедает его сам |
+| Linear GraphQL / pull снимка из РФ или office MSK | **403**; движение только через **media-NL** → `linear-snapshot@1` (паспорт `docs/tasks/LINEAR_TASKS_GEAR.md` §9) |
 | `yarn code-review:pr 543` | **Без `--`** по той же причине: с `--` уходило `pr="--"` (починено TF-2 — теперь внятный отказ) |
 | `node scripts/_ssh-panel-smoke.mjs` | **Без `--read-only` пишет в ПРОД-стор** |
 | `yarn pr:ship`, `yarn repo:clean`, `yarn tasks:archive-closed` | По умолчанию **dry-run**; нужен `--execute` |
