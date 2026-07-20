@@ -95,6 +95,49 @@ export function isTracked(repoRoot, relPath) {
 export const TOOL_CHANNEL_SINCE = '2026-07-19';
 
 /**
+ * Ключ комнаты из имени повестки/протокола (#721).
+ * `M1b-topic.md` / `…-m1b-sprint-….md` / `AGENDA_M0.md` → `m1b` / `m0`.
+ * Длинные суффиксы (m1b, m2p, m4b) важнее коротких (m1, m2, m4).
+ *
+ * @param {string} filename
+ * @returns {string|null}
+ */
+export function meetingRoomKey(filename) {
+  const base = String(filename ?? '').replace(/\.md$/iu, '');
+  const agenda = base.match(/^AGENDA_(M\d+[a-z]*)/iu);
+  if (agenda) return agenda[1].toLowerCase();
+  const matches = [...base.matchAll(/(?:^|[-_])(m\d+[a-z]*)(?=[-_.]|$)/giu)].map((m) => m[1].toLowerCase());
+  if (matches.length === 0) return null;
+  return matches.reduce((best, cur) => (cur.length > best.length ? cur : best));
+}
+
+/**
+ * Own-ID комнаты для check4: из topic-файла этой комнаты, не из тела протокола.
+ * Иначе DoD с «для E1» без `**E1` даёт ложную колонизацию (#721 / linear-egress).
+ *
+ * @param {{file: string, md: string}} protocol
+ * @param {{file: string, md: string}[]} topics
+ * @returns {string[]}
+ */
+export function ownAgendaIdsForProtocol(protocol, topics) {
+  const room = meetingRoomKey(protocol.file);
+  if (room) {
+    const roomTopics = topics.filter((t) => meetingRoomKey(t.file) === room);
+    if (roomTopics.length > 0) {
+      const ids = [];
+      for (const t of roomTopics) {
+        for (const id of extractAgendaIds(t.md)) {
+          if (!ids.includes(id)) ids.push(id);
+        }
+      }
+      if (ids.length > 0) return ids;
+    }
+  }
+  if (topics.length === 1) return extractAgendaIds(topics[0].md);
+  return extractAgendaIds(protocol.md);
+}
+
+/**
  * Шесть проверок. Чистая функция от собранного состояния — шов для тестов.
  *
  * @param {{topics: object[], protocols: object[], untracked: string[]}} state
@@ -102,7 +145,7 @@ export const TOOL_CHANNEL_SINCE = '2026-07-19';
  */
 export function auditMeeting(state) {
   const checks = [];
-  const allIds = state.topics.flatMap((t) => extractAgendaIds(t.md));
+  const allIds = [...new Set(state.topics.flatMap((t) => extractAgendaIds(t.md)))];
 
   // 1 — повестка = ровно один ID-вопрос.
   for (const t of state.topics) {
@@ -139,9 +182,10 @@ export function auditMeeting(state) {
   });
 
   // 4 — структура вердикта (зубы: вывод-в-посылках, колонизация по ID).
+  // siblings = topic IDs минус ID этой комнаты (topic-файл), не «всё минус grep тела» (#721).
   for (const p of state.protocols) {
-    const own = extractAgendaIds(p.md);
-    const siblings = [...new Set(allIds)].filter((id) => !own.includes(id));
+    const own = ownAgendaIdsForProtocol(p, state.topics);
+    const siblings = allIds.filter((id) => !own.includes(id));
     const problems = meetingVerdictProblems(p.md, siblings);
     checks.push({
       n: 4,

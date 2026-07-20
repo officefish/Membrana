@@ -1,6 +1,16 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { classifyChecks, explainNoChecks } from './pr-wait.mjs';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import {
+  classifyChecks,
+  classifyPrWait,
+  explainNoChecks,
+  readCheckpoint,
+  writeCheckpoint,
+  clearCheckpoint,
+} from './pr-wait.mjs';
 
 test('пустой rollup — none, не green (корень #643: no checks ≠ зелено)', () => {
   assert.equal(classifyChecks([]).state, 'none');
@@ -65,4 +75,53 @@ test('explainNoChecks при CONFLICTING называет причину и де
 test('explainNoChecks без конфликта: none — это НЕ зелено', () => {
   const msg = explainNoChecks({ mergeable: 'MERGEABLE', mergeStateStatus: 'CLEAN' });
   assert.match(msg, /НЕ зелено/);
+});
+
+test('#724: CI green + REVIEW_REQUIRED → approval (не green/red/none)', () => {
+  const rollup = [{ name: 'CI', status: 'COMPLETED', conclusion: 'SUCCESS' }];
+  const r = classifyPrWait({ rollup, reviewDecision: 'REVIEW_REQUIRED' });
+  assert.equal(r.state, 'approval');
+  assert.equal(r.reviewDecision, 'REVIEW_REQUIRED');
+});
+
+test('#724: CI green + CHANGES_REQUESTED → approval', () => {
+  const r = classifyPrWait({
+    rollup: [{ name: 'CI', status: 'COMPLETED', conclusion: 'SUCCESS' }],
+    reviewDecision: 'CHANGES_REQUESTED',
+  });
+  assert.equal(r.state, 'approval');
+});
+
+test('#724: CI red важнее review — остаётся red', () => {
+  const r = classifyPrWait({
+    rollup: [{ name: 'CI', status: 'COMPLETED', conclusion: 'FAILURE' }],
+    reviewDecision: 'REVIEW_REQUIRED',
+  });
+  assert.equal(r.state, 'red');
+});
+
+test('#724: CI green + APPROVED → green', () => {
+  const r = classifyPrWait({
+    rollup: [{ name: 'CI', status: 'COMPLETED', conclusion: 'SUCCESS' }],
+    reviewDecision: 'APPROVED',
+  });
+  assert.equal(r.state, 'green');
+});
+
+test('#724: checkpoint write/read/clear для --resume', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'pr-wait-cp-'));
+  try {
+    const path = writeCheckpoint(
+      { number: '999', deadlineMs: Date.now() + 60_000, timeoutMin: 15, intervalSec: 20 },
+      dir,
+    );
+    assert.ok(path.includes('pr-wait-999.json'));
+    const cp = readCheckpoint('999', dir);
+    assert.equal(cp.number, '999');
+    assert.equal(cp.timeoutMin, 15);
+    clearCheckpoint('999', dir);
+    assert.equal(readCheckpoint('999', dir), null);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });

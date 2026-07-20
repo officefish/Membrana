@@ -4,7 +4,13 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 
-import { AGENDA_FILE_MASK, auditMeeting, readTopics } from './lib/meeting-audit.mjs';
+import {
+  AGENDA_FILE_MASK,
+  auditMeeting,
+  meetingRoomKey,
+  ownAgendaIdsForProtocol,
+  readTopics,
+} from './lib/meeting-audit.mjs';
 
 const head = '# Метаданные\n\n---\n\n[Музыкант]: Начали.\n\n';
 
@@ -82,6 +88,46 @@ test('проверка 4 ловит колонизацию соседней ко
   const c = r.checks.find((x) => x.n === 4);
   assert.equal(c.status, 'FAIL');
   assert.match(c.note, /чужим вопросам \(H1\)/u);
+});
+
+test('#721: DoD с собственным En ID без **En в теле → check4 PASS (не ложная колонизация)', () => {
+  // Живой класс linear-egress: «Definition of Done (для E1 …)» — En не в **En-форме,
+  // старый own=extractAgendaIds(protocol) был пуст → E1 считался sibling.
+  const ownDod = `${head}[Teamlead]: Вердикт.
+
+## Итоговое решение консилиума
+
+**Полный список посылок вердикта:**
+1. Вход из предшественника.
+
+**Definition of Done (для E1 — вопрос порядка):**
+- Зафиксировать граф.
+`;
+  const r = auditMeeting(
+    state({
+      topics: [
+        { file: 'M0-topic.md', md: '**E1 — порядок?**\n\nПолный список посылок обязателен.\n' },
+        { file: 'M1-topic.md', md: '**E2 — соседний?**\n\nПолный список посылок обязателен.\n' },
+      ],
+      protocols: [{ file: 'demo-m0-order-2026-07-20.md', md: ownDod }],
+    }),
+  );
+  const c = r.checks.find((x) => x.n === 4);
+  assert.equal(c.status, 'PASS', c.note);
+  assert.deepEqual(
+    ownAgendaIdsForProtocol({ file: 'demo-m0-order-2026-07-20.md', md: ownDod }, [
+      { file: 'M0-topic.md', md: '**E1 — порядок?**\n' },
+      { file: 'M1-topic.md', md: '**E2 — соседний?**\n' },
+    ]),
+    ['E1'],
+  );
+});
+
+test('#721: meetingRoomKey предпочитает m1b над m1', () => {
+  assert.equal(meetingRoomKey('linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md'), 'm1b');
+  assert.equal(meetingRoomKey('linear-egress-gear-wiring-m1-egress-path-2026-07-20.md'), 'm1');
+  assert.equal(meetingRoomKey('M1b-topic.md'), 'm1b');
+  assert.equal(meetingRoomKey('AGENDA_M0.md'), 'm0');
 });
 
 test('проверка 5 при untracked даёт НЕЧЕМ, а не FAIL — и не валит код возврата', () => {
