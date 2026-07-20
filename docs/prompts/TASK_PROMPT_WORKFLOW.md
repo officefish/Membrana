@@ -19,6 +19,8 @@
 | **`MAIN_DAY_ISSUE.md`** | Один обязательный фокус дня (`yarn main-day-issue`) |
 | PR + CI | Реализация и LGTM |
 
+**Движение / Linear:** pull снимка и GraphQL — только через media-NL (не РФ, не office MSK); см. `docs/tasks/LINEAR_TASKS_GEAR.md` §9.
+
 ---
 
 ## MAIN_DAY_ISSUE и CURRENT_TASK (фокус дня)
