@@ -1,6 +1,43 @@
 {
   "tasks": [
     {
+      "id": "ritual-d-dreams",
+      "title": "Сны v2: соревнование 24→6 (D эпика ritual-refactor)",
+      "promptPath": "docs/prompts/RITUAL_D_DREAMS_PROMPT.md",
+      "githubIssue": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ],
+      "notes": "Дизайн M5. Последний в DAG, A/K/S/R в main. Ядро select 24→6 + failover-кубик; стор/инфра/доставка след. проходом.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "ritual-r-report",
+      "title": "Доклад наружу: линза + живые ссылки (R эпика ritual-refactor)",
+      "promptPath": "docs/prompts/RITUAL_R_REPORT_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "notes": "Дизайн M4. Четвёртый в DAG, A/K/S в main. Линза=rephraser (изоморфизм), canPublish.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "ritual-s-standup",
       "title": "Стендап Тимлидом + движок задач (S эпика ritual-refactor)",
       "promptPath": "docs/prompts/RITUAL_S_STANDUP_PROMPT.md",
