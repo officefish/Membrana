@@ -14,3 +14,5 @@
 
 - Task2 tar: targeted resolution `tar@npm:^6.0.0 → 7.5.20` (not whole-tree `tar` force). Consumers: app-builder-lib, @electron/rebuild, cacache, node-gyp@9.
 
+
+- Task3 electron: bumped membrana-studio to electron ^39.8.9 (lock 39.8.10) — UAF/cmdline-safe line. Auto: studio:build + electron-builder NSIS OK. Manual desktop-smoke (window / device-board capture / CSP) deferred headless — owner checklist in Issue #708.
