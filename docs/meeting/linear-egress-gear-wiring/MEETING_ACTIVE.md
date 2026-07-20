@@ -6,10 +6,10 @@
 
 ---
 
-## СТАТУС: M0–M1–M1b CLOSED · следующий по цепочке — К2
+## СТАТУС: M0–M1–M1b–M2 CLOSED · следующий — К3
 
-Слой 0 закрыт: К1 (форма egress) и К4a (каркас процедур). Цепочка дальше: **К2**
-(секреты/trust) → К3 → {К5, К4b}.
+Закрыты: порядок · форма egress · каркас процедур · секреты/trust.
+Дальше по DAG: **К3** (контракт снимка + DoD первого боевого pull) → {К5, К4b}.
 
 Аудитор (S-M5) — **отдельный** агент; председатель аудитора не играет.
 
@@ -28,67 +28,65 @@ leadPersona + closure = след).**
 
 | Роль | Кто | Ограничение |
 |---|---|---|
-| Председатель | агент сессии (этот прогон) | не судит соблюдение процедуры |
+| Председатель | агент сессии | не судит соблюдение процедуры |
 | Аудитор | **отдельный** агент, read-only | не пишет повестку, не голосует, не чинит (S-M5) |
 | Владелец | druid | задание, ратификация порядка M0 |
 
-## Порядок (вердикт M0 — **РАТИФИЦИРОВАН владельцем 2026-07-20**)
-
-**DAG (ратифицирован, дословно):**
+## Порядок (M0 — **РАТИФИЦИРОВАН 2026-07-20**)
 
 ```
 К1 ∥ К4a → К2 → К3 → {К5, К4b}
 ```
 
-## Вердикт M1 (К1 — форма egress) — CLOSED
+## Вердикты слоёв
 
-Протокол: [`linear-egress-gear-wiring-m1-egress-path-2026-07-20.md`](../../seanses/linear-egress-gear-wiring-m1-egress-path-2026-07-20.md).
+### M1 (К1) — CLOSED
+[`m1-egress-path`](../../seanses/linear-egress-gear-wiring-m1-egress-path-2026-07-20.md):
+media-NL = клиент+pull; office = потребитель снимка.
 
-media-NL = клиент Linear + инициатор pull; office = потребитель `linear-snapshot@1` только.
+### M1b (К4a) — CLOSED
+[`m1b-sprint-scaffold`](../../seanses/linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md):
+`task:start` · посев паспорта · Issue/registry/Linear roles.
 
-## Вердикт M1b (К4a — каркас процедур) — CLOSED
-
-Протокол: [`linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md`](../../seanses/linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md).
+### M2 (К2) — CLOSED
+[`m2-secrets-trust`](../../seanses/linear-egress-gear-wiring-m2-secrets-trust-2026-07-20.md).
 
 | Вопрос | Решение |
 |---|---|
-| Законный старт до кода | `yarn task:start`: Issue → биекция registry↔Issue → шаблон acceptance → stub `movement: deferred-egress` → `leadPersona` |
-| register vs start | `task:register` = содержание (черновик ок); `task:start` = событие старта (Issue обязателен) |
-| Гейт | `active ∧ ¬issueExists → reject` (register/pre-push) |
-| Посев | убрать registry-only из AGENTS/lifecycle; поставить паспорт §2–§4 + словарь + `task:start` |
-| Три носителя | Issue = удостоверение/счёт · registry = содержание · Linear parent = контейнер движения (stub, opt) |
-| MAIN_DAY | единица вне магистрали — только с явным `override` + Issue владельца |
+| Где `LINEAR_API_KEY` | **только media-NL** (политика; inventory на VPS не выдуман) |
+| Кто инициирует egress к Linear | **только процесс на media** (cron / локальный webhook) |
+| Office / агент РФ НЕ держат | `LINEAR_API_KEY`, прямой GraphQL, путь к egress |
+| Auth office→media (trigger) | существующий `X-Membrana-Token` / `API_INTERNAL_TOKEN`; Linear key не передаётся |
+| Отложено | узкий egress-secret при k≥2; cold-only pull при on-demand+полной изоляции |
 
-Секреты (К2), гейт closure (К4b), снятие stub (К5) — не решались здесь.
+Уходит в К3: провенанс `producedBy: media-NL` + регион (контракт, не секрет).
 
 ## Статус вопросов
 
 | Фаза | Вопрос | Статус | Протокол / повестка |
 |---|---|---|---|
-| M0 | порядок (`E1`) | **CLOSED / ratified** | [m0-order](../../seanses/linear-egress-gear-wiring-m0-order-2026-07-20.md) · [M0-topic](./M0-topic.md) |
-| M1 | форма egress (`E2`, К1) | **CLOSED** | [m1-egress-path](../../seanses/linear-egress-gear-wiring-m1-egress-path-2026-07-20.md) · [M1-topic](./M1-topic.md) |
-| M1b | каркас процедур (`E3`, К4a) | **CLOSED** | [m1b-sprint-scaffold](../../seanses/linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md) · [M1b-topic](./M1b-topic.md) |
-| след. | секреты / trust (`К2`) | **следующий** | — |
-| далее | К3 → {К5, К4b} | ждут К2 / К3 | — |
+| M0 | порядок (`E1`) | CLOSED / ratified | [m0-order](../../seanses/linear-egress-gear-wiring-m0-order-2026-07-20.md) · [M0-topic](./M0-topic.md) |
+| M1 | egress (`E2`, К1) | CLOSED | [m1](../../seanses/linear-egress-gear-wiring-m1-egress-path-2026-07-20.md) · [M1-topic](./M1-topic.md) |
+| M1b | каркас (`E3`, К4a) | CLOSED | [m1b](../../seanses/linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md) · [M1b-topic](./M1b-topic.md) |
+| M2 | секреты (`E4`, К2) | CLOSED | [m2](../../seanses/linear-egress-gear-wiring-m2-secrets-trust-2026-07-20.md) · [M2-topic](./M2-topic.md) |
+| след. | снимок / DoD pull (`К3`) | **следующий** | — |
+| далее | {К5, К4b} | ждут К3 | — |
 
 ## Решено владельцем (посылки)
 
-- Egress Linear / RU-блоков → **media-VPS NL**
-- Агент/ноут в РФ не ходит в Linear напрямую
-- Гейты читают снимок, не live fetch
-- Задача без GitHub Issue незаконна
+- Egress → media-VPS NL · агент РФ ≠ Linear напрямую · гейты = снимок · нет Issue → незаконно
 
 ## Аудитор
-
-Отдельный агент (председатель не играет, S-M5):
 
 ```bash
 yarn meeting:audit --id linear-egress-gear-wiring
 ```
 
+(отдельный агент; председатель не играет)
+
 ## Журнал
 
 | Когда | Что |
 |---|---|
-| 2026-07-20 | Контейнер · M0 · ратификация DAG · M1 (К1). |
-| 2026-07-20 | M1b (К4a): `task:start` + посев паспорта + роли трёх носителей. Следующий — К2. |
+| 2026-07-20 | M0 ratified · M1 · M1b |
+| 2026-07-20 | M2: LINEAR key только media; trigger office→media через X-Membrana-Token. Следующий — К3. |
