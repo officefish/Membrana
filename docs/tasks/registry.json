@@ -6,14 +6,14 @@
       "promptPath": "docs/prompts/LINEAR_EGRESS_MEDIA_WIRING_PROMPT.md",
       "githubIssue": 691,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-20",
-      "archivedAt": null,
+      "archivedAt": "2026-07-20",
       "leadPersona": "dynin",
       "supportPersonas": [],
       "notes": "pilot gear; deferred-egress stub; meeting linear-egress-gear-wiring; Issue #691",
-      "archiveNotes": null,
+      "archiveNotes": "PR #692 merged a82fd5af; media-NL deploy+LINEAR_API_KEY; live smoke pullOk=true producedBy=media-NL recordCount=224 via localhost and https://media.membrana.space",
       "githubIssueClosedAt": null
     },
     {
