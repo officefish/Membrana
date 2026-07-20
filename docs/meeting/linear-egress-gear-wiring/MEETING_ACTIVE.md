@@ -6,11 +6,10 @@
 
 ---
 
-## СТАТУС: M0 CLOSED (ratified) · M1 CLOSED (К1) · следующий слой — К2 или ∥ К4a
+## СТАТУС: M0–M1–M1b CLOSED · следующий по цепочке — К2
 
-Порядок M0 **ратифицирован владельцем 2026-07-20** («ратифицирую» = ок DAG без поправок).
-M1 по К1 состоялся. К4a **не блокировал** M1 — можно параллельным следующим прогоном.
-Цепочка К1→К2 разблокирована для созыва К2.
+Слой 0 закрыт: К1 (форма egress) и К4a (каркас процедур). Цепочка дальше: **К2**
+(секреты/trust) → К3 → {К5, К4b}.
 
 Аудитор (S-M5) — **отдельный** агент; председатель аудитора не играет.
 
@@ -35,42 +34,44 @@ leadPersona + closure = след).**
 
 ## Порядок (вердикт M0 — **РАТИФИЦИРОВАН владельцем 2026-07-20**)
 
-Источник: [`linear-egress-gear-wiring-m0-order-2026-07-20.md`](../../seanses/linear-egress-gear-wiring-m0-order-2026-07-20.md).
-Слово владельца: «ратифицирую» = ок DAG без поправок.
-
 **DAG (ратифицирован, дословно):**
 
 ```
 К1 ∥ К4a → К2 → К3 → {К5, К4b}
 ```
 
-**Параллель К4a:** каркас процедур спринта можно созвать следующим прогоном
-независимо от цепочки К1→К2; M1 на К4a не ждал. Повестка К4a ещё не открыта.
-
 ## Вердикт M1 (К1 — форма egress) — CLOSED
 
 Протокол: [`linear-egress-gear-wiring-m1-egress-path-2026-07-20.md`](../../seanses/linear-egress-gear-wiring-m1-egress-path-2026-07-20.md).
 
+media-NL = клиент Linear + инициатор pull; office = потребитель `linear-snapshot@1` только.
+
+## Вердикт M1b (К4a — каркас процедур) — CLOSED
+
+Протокол: [`linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md`](../../seanses/linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md).
+
 | Вопрос | Решение |
 |---|---|
-| Инициатор боевого pull | **media-VPS NL** (cron / webhook на media); office командного pull не даёт |
-| Клиент GraphQL → `api.linear.app` | **только на media-NL** |
-| Office (MSK) видит | **только готовый `linear-snapshot@1`** по внутреннему тракту; в Linear не ходит |
-| Форма | кандидат 2; «office-батч» → смысловое переименование: `mode=batch-full-pull`, producer = media-NL |
+| Законный старт до кода | `yarn task:start`: Issue → биекция registry↔Issue → шаблон acceptance → stub `movement: deferred-egress` → `leadPersona` |
+| register vs start | `task:register` = содержание (черновик ок); `task:start` = событие старта (Issue обязателен) |
+| Гейт | `active ∧ ¬issueExists → reject` (register/pre-push) |
+| Посев | убрать registry-only из AGENTS/lifecycle; поставить паспорт §2–§4 + словарь + `task:start` |
+| Три носителя | Issue = удостоверение/счёт · registry = содержание · Linear parent = контейнер движения (stub, opt) |
+| MAIN_DAY | единица вне магистрали — только с явным `override` + Issue владельца |
 
-Уходит дальше: секреты → К2; контракт/DoD снимка → К3. Деплой туннеля не решался.
+Секреты (К2), гейт closure (К4b), снятие stub (К5) — не решались здесь.
 
 ## Статус вопросов
 
 | Фаза | Вопрос | Статус | Протокол / повестка |
 |---|---|---|---|
-| M0 | порядок зависимостей (`E1`) | **CLOSED / ratified 2026-07-20** | [m0-order](../../seanses/linear-egress-gear-wiring-m0-order-2026-07-20.md) · [M0-topic](./M0-topic.md) |
-| M1 | форма egress-пути (`E2`, К1) | **CLOSED** | [m1-egress-path](../../seanses/linear-egress-gear-wiring-m1-egress-path-2026-07-20.md) · [M1-topic](./M1-topic.md) |
-| (∥) | каркас процедур (`К4a`) | можно параллельно; не созван | — |
-| след. | секреты / trust (`К2`) | разблокирован после M1 | — |
+| M0 | порядок (`E1`) | **CLOSED / ratified** | [m0-order](../../seanses/linear-egress-gear-wiring-m0-order-2026-07-20.md) · [M0-topic](./M0-topic.md) |
+| M1 | форма egress (`E2`, К1) | **CLOSED** | [m1-egress-path](../../seanses/linear-egress-gear-wiring-m1-egress-path-2026-07-20.md) · [M1-topic](./M1-topic.md) |
+| M1b | каркас процедур (`E3`, К4a) | **CLOSED** | [m1b-sprint-scaffold](../../seanses/linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md) · [M1b-topic](./M1b-topic.md) |
+| след. | секреты / trust (`К2`) | **следующий** | — |
 | далее | К3 → {К5, К4b} | ждут К2 / К3 | — |
 
-## Решено владельцем (посылки, не предмет спора)
+## Решено владельцем (посылки)
 
 - Egress Linear / RU-блоков → **media-VPS NL**
 - Агент/ноут в РФ не ходит в Linear напрямую
@@ -79,7 +80,7 @@ leadPersona + closure = след).**
 
 ## Аудитор
 
-После M1 — **отдельный** агент (председатель не играет, S-M5):
+Отдельный агент (председатель не играет, S-M5):
 
 ```bash
 yarn meeting:audit --id linear-egress-gear-wiring
@@ -89,6 +90,5 @@ yarn meeting:audit --id linear-egress-gear-wiring
 
 | Когда | Что |
 |---|---|
-| 2026-07-20 | Контейнер заведён в worktree `Membrana-meeting-egress`, ветка `meeting/linear-egress-gear-wiring`. |
-| 2026-07-20 | M0 состоялся; владелец ратифицировал DAG без поправок. |
-| 2026-07-20 | M1 (К1) состоялся: media-NL = клиент Linear + pull; office = потребитель снимка. |
+| 2026-07-20 | Контейнер · M0 · ратификация DAG · M1 (К1). |
+| 2026-07-20 | M1b (К4a): `task:start` + посев паспорта + роли трёх носителей. Следующий — К2. |
