@@ -167,11 +167,17 @@ export function buildTaskEntry(input, today) {
   // T1: --parent-epic / --parent → parentEpic (раньше не поддерживалось вовсе →
   // фазы приходилось хэнд-фиксить node-скриптом).
   const parentEpic = input.parentEpic ?? input['parent-epic'] ?? input.parent ?? null;
+  const linearRaw = input.linearId ?? input.linear ?? null;
+  const linearId =
+    linearRaw != null && String(linearRaw).trim() && String(linearRaw).trim() !== '—'
+      ? String(linearRaw).trim()
+      : null;
   const entry = {
     id: input.id,
     title: input.title.trim(),
     promptPath,
     githubIssue: input.issue != null ? Number(input.issue) : null,
+    linearId,
     size: input.size,
     status: 'active',
     sprintKind: kind,

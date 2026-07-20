@@ -29,3 +29,7 @@
 ## Checkpoint NB0 — 2026-07-20T17:40:22.448Z
 - Status: **pass**
 - Note: scoped dreams+task-start tests green; office typecheck green; neighbors ok; linearId DRU-249
+
+## Checkpoint NB1 — 2026-07-20T17:41:41.272Z
+- Status: **pass**
+- Note: anti-duplicate start/register + linearId + unit tests + canon note

@@ -45,3 +45,12 @@ test('ensureAcceptanceSection идемпотентен', () => {
   const twice = ensureAcceptanceSection(once);
   assert.equal(twice, once);
 });
+
+
+test('parseStartArgs: --linear проходит в register-флаги', () => {
+  const a = parseStartArgs([
+    '--id', 'demo-start', '--title', 'Demo', '--size', 'S', '--linear', 'DRU-249', '--dry-run',
+  ]);
+  assert.equal(a.linear, 'DRU-249');
+  assert.equal(a.dryRun, true);
+});

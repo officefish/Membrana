@@ -10,9 +10,12 @@
  * (ephemeral regeneration, research Q1 консилиума agent-tooling-friction-2).
  *
  * Usage:
- *   yarn task:register --id <slug> --title "…" --size M [--issue N] [--kind day-sprint]
- *                      [--lead vesnin] [--support a,b] [--insight <id>] [--notes "…"]
- *                      [--prompt docs/prompts/X.md] [--research] [--push]
+ *   yarn task:register --id <slug> --title "…" --size M [--issue N] [--linear DRU-N]
+ *                      [--kind day-sprint] [--lead vesnin] [--support a,b] [--insight <id>]
+ *                      [--notes "…"] [--prompt docs/prompts/X.md] [--research] [--push]
+ *
+ * Повторный register с тем же --id: дописывает недостающие githubIssue/linearId
+ * (anti-duplicate), не создаёт twin-карточку.
  *
  * --research (#514): в промпт кладётся заготовка секции «Вопросы для research».
  * Вопросы формулирует агент из контекста спринта, затем `yarn research <id>`
@@ -26,12 +29,12 @@ import { fileURLToPath } from 'node:url';
 import { researchSectionStub } from './lib/deep-research.mjs';
 import {
   buildTaskEntry,
-  insertTaskAtFront,
   loadRegistry,
   renderTaskPromptStub,
   saveRegistry,
   syncTasksReadme,
 } from './lib/task-registry.mjs';
+import { registerOrLinkTask } from './lib/task-start-links.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -67,25 +70,33 @@ if (isMain) {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  // Одна попытка: собрать запись, вставить в НАЧАЛО, записать, sync README.
+  // Одна попытка: собрать запись, insert или upsert связей, sync README.
   const applyOnce = () => {
     const registry = loadRegistry(root);
     const entry = buildTaskEntry(cli, today);
-    const next = insertTaskAtFront(registry, entry);
-    saveRegistry(next, root);
-    syncTasksReadme(next, root);
-    return entry;
+    const mode = registry.tasks.some((t) => t.id === entry.id) ? 'upsert-links' : 'insert';
+    const result = registerOrLinkTask(registry, entry, mode);
+    saveRegistry(result.registry, root);
+    syncTasksReadme(result.registry, root);
+    return { entry: result.entry, action: result.action };
   };
 
   let entry;
+  let action;
   try {
-    entry = applyOnce();
+    ({ entry, action } = applyOnce());
   } catch (e) {
     console.error(e.message);
     process.exit(1);
   }
 
-  console.log(`task:register → ${entry.id} (#${entry.githubIssue ?? '—'}, ${entry.size}, ${entry.sprintKind}) вставлена в начало реестра`);
+  const link =
+    `GH #${entry.githubIssue ?? '—'} · Linear ${entry.linearId ?? '—'} · ${entry.size} · ${entry.sprintKind}`;
+  console.log(
+    action === 'upserted-links'
+      ? `task:register → ${entry.id} обновлены связи (${link})`
+      : `task:register → ${entry.id} (${link}) вставлена в начало реестра`,
+  );
 
   // Заготовка промпта (#476 п.5): карточка несёт promptPath, а файла не было —
   // task:review:run читает его безусловно и closure review падал (2 раза 15.07).
