@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "ritual-k-karkas",
+      "title": "5-блочный каркас плана дня (K эпика ritual-refactor)",
+      "promptPath": "docs/prompts/RITUAL_K_KARKAS_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "rodchenko"
+      ],
+      "notes": "Дизайн ратифицирован M2 (docs/seanses/ritual-refactor-m2-karkas-2026-07-20.md). Второй в DAG A→K→{S→R→D}, A уже в main. Стенка Slot→Text.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "ritual-a-angelina-coordinator",
       "title": "Ангелина-координатор ритуала (компонент A эпика ritual-refactor): чистое ядро каскада",
       "promptPath": "docs/prompts/RITUAL_A_ANGELINA_PROMPT.md",
