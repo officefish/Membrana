@@ -158,7 +158,7 @@ export function passStatus(codexResult) {
  */
 export function isPetRemarkInReasons(reasons, remark) {
   if (!remark || remark.origin !== 'pet') return false;
-  return reasons.some((r) => r === remark || (r && r.origin === 'pet' && r === remark));
+  return reasons.some((r) => r === remark);
 }
 
 /**

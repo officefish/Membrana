@@ -15,6 +15,7 @@ import {
   sevenBreaths,
   KMIN_MANDATE,
   BREATH_CEILING,
+  MASK64,
 } from './lib/storm-breath.mjs';
 
 // ── SimHash / нормализация ────────────────────────────────────────────────
@@ -61,15 +62,11 @@ test('normalize по существу → d>0 (реальное изменени
 test('popcount64 и hammingDistance: базовые тождества', () => {
   assert.equal(popcount64(0n), 0);
   assert.equal(popcount64(0b1011n), 3);
-  assert.equal(popcount64(MASK_ALL()), 64, 'все 64 бита');
+  assert.equal(popcount64(MASK64), 64, 'все 64 бита');
   assert.equal(hammingDistance(0n, 0n), 0);
   assert.equal(hammingDistance(0b1010n, 0b0110n), 2, 'два различных бита');
-  assert.equal(hammingDistance(0n, MASK_ALL()), 64);
+  assert.equal(hammingDistance(0n, MASK64), 64);
 });
-
-function MASK_ALL() {
-  return (1n << 64n) - 1n;
-}
 
 // ── K_эфф: границы, монотонность, инварианты ──────────────────────────────
 
