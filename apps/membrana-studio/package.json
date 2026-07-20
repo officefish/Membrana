@@ -18,7 +18,7 @@
   "build": {
     "appId": "space.membrana.studio",
     "productName": "Membrana Studio",
-    "electronVersion": "33.2.1",
+    "electronVersion": "39.8.10",
     "directories": {
       "output": "release"
     },
@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
-    "electron": "^33.2.1",
+    "electron": "^39.8.9",
     "electron-builder": "^25.1.8",
     "rimraf": "^5.0.0",
     "typescript": "^5.4.0",

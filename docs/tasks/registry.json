@@ -1,6 +1,44 @@
 {
   "tasks": [
     {
+      "id": "ritual-k-karkas",
+      "title": "5-блочный каркас плана дня (K эпика ritual-refactor)",
+      "promptPath": "docs/prompts/RITUAL_K_KARKAS_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "rodchenko"
+      ],
+      "notes": "Дизайн ратифицирован M2 (docs/seanses/ritual-refactor-m2-karkas-2026-07-20.md). Второй в DAG A→K→{S→R→D}, A уже в main. Стенка Slot→Text.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "ritual-a-angelina-coordinator",
+      "title": "Ангелина-координатор ритуала (компонент A эпика ritual-refactor): чистое ядро каскада",
+      "promptPath": "docs/prompts/RITUAL_A_ANGELINA_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Дизайн ратифицирован заседанием M1 (docs/seanses/ritual-refactor-m1-angelina-2026-07-20.md). Корень DAG A→K→{S→R→D}. Linear (движок задач, доступен через медиа-сервер): DRU-233, делегат ozhegov.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "ritual-refactor"
+    },
+    {
       "id": "pr-ship-merge-only",
       "title": "pr:ship --merge-only: безопасный мердж уже открытого PR + норма против raw gh pr merge --delete-branch",
       "promptPath": "docs/prompts/PR_SHIP_MERGE_ONLY_PROMPT.md",
@@ -159,11 +197,11 @@
     },
     {
       "githubIssue": 707,
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-20",
+      "archiveNotes": "PR #713, 1bc42a0c5e42821b1c7624c30b1af2c69e939282; tar^6→7.5.20 targeted; desktop canary NSIS OK; LGTM TL",
       "githubIssueClosedAt": null,
       "id": "sec-upgrade-tar",
       "title": "Апгрейд №3 tar 6→7: локальный форс + канареечная полная сборка desktop (без слепых resolutions)",
@@ -177,11 +215,11 @@
     },
     {
       "githubIssue": 708,
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-20",
+      "archiveNotes": "PR #715, ec21c4f2; electron 39.8.10; NSIS canary OK; manual smoke deferred headless; LGTM TL",
       "githubIssueClosedAt": null,
       "id": "sec-upgrade-electron",
       "title": "Апгрейд №4 electron-major (рискованный, последним): UAF ×3 + cmdline injection",
