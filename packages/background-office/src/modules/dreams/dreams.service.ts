@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url';
 
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
-import { DeepSeekService } from '../deepseek/deepseek.service';
+import { synthesizeDreamProvider } from './dreams-providers';
 
 type DreamsLib = {
   DreamsLog: new (opts?: { path?: string }) => {
@@ -38,10 +38,7 @@ export class DreamsService {
   private readonly logger = new Logger(DreamsService.name);
   private libPromise: Promise<DreamsLib> | null = null;
 
-  constructor(
-    @Inject(APP_CONFIG) private readonly config: AppConfig,
-    private readonly deepseek: DeepSeekService,
-  ) {}
+  constructor(@Inject(APP_CONFIG) private readonly config: AppConfig) {}
 
   isEnabled(): boolean {
     return this.config.DREAMS_ENABLED === true;
@@ -110,25 +107,22 @@ export class DreamsService {
     error?: string;
   }> {
     const prompt =
-      `Ты Мастер снов. Пара тезисов: ${ctx.pair[0]} × ${ctx.pair[1]}. ` +
-      `Синтезируй короткий внешний сон (1–2 абзаца) без жаргона репозитория.`;
-    if (provider === 'deepseek' && this.deepseek.isConfigured()) {
-      try {
-        const text = await this.deepseek.chat(prompt);
-        return { ok: true, text, score: 0.55 };
-      } catch (err) {
-        return { ok: false, error: err instanceof Error ? err.message : String(err) };
-      }
-    }
-    // Остальные провайдеры — через тот же failover-контракт: явный отказ класса.
-    return {
-      ok: false,
-      status: 503,
-      bodyText: `provider ${provider} not wired on office yet`,
-      error: 'provider-not-wired',
-    };
+      `Ты мастер снов. Пара тезисов: ${ctx.pair[0]} — ${ctx.pair[1]}. ` +
+      `Короткий сон-образ на пару (1–2 абзаца) без жаргона разработки.`;
+    return synthesizeDreamProvider(provider, prompt, {
+      PERPLEXITY_API_KEY: this.config.PERPLEXITY_API_KEY,
+      DEEPSEEK_API_KEY: this.config.DEEPSEEK_API_KEY,
+      DEEPSEEK_MODEL: this.config.DEEPSEEK_MODEL,
+      OPENROUTER_API_KEY: this.config.OPENROUTER_API_KEY,
+      OPENROUTER_MODEL: this.config.OPENROUTER_MODEL,
+      DREAMS_GROK_MODEL: this.config.DREAMS_GROK_MODEL,
+      DREAMS_GEMINI_MODEL: this.config.DREAMS_GEMINI_MODEL,
+      HTTPS_PROXY: this.config.HTTPS_PROXY,
+      HTTP_PROXY: this.config.HTTP_PROXY,
+    });
   }
 
+  
   async tick(day: string, hour: number): Promise<Record<string, unknown>> {
     if (!this.isEnabled()) {
       return { ok: true, skipped: true, reason: 'DREAMS_ENABLED off' };

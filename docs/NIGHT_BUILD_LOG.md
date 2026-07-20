@@ -33,3 +33,7 @@
 ## Checkpoint NB1 — 2026-07-20T17:41:41.272Z
 - Status: **pass**
 - Note: anti-duplicate start/register + linearId + unit tests + canon note
+
+## Checkpoint NB2 — 2026-07-20T17:43:34.562Z
+- Status: **pass**
+- Note: 4 providers via proxy helper + mock vitest; tick failover green; office typecheck green
