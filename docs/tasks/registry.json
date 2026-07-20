@@ -6,14 +6,14 @@
       "promptPath": "docs/prompts/LINEAR_STUB_LIFT_OFFICE_GRAPHQL_PROMPT.md",
       "githubIssue": 694,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-20",
-      "archivedAt": null,
+      "archivedAt": "2026-07-20",
       "leadPersona": "dynin",
       "supportPersonas": [],
       "notes": "after #691/#692 live pullOk; movementMode live-snapshot; office no api.linear.app",
-      "archiveNotes": null,
+      "archiveNotes": "office MSK deploy tip main 698542b5; MEDIA_API_URL+token aligned; smoke health+503 LINEAR_OFFICE_EGRESS_DISABLED+media capture pullOk",
       "githubIssueClosedAt": null
     },
     {
