@@ -27,6 +27,7 @@ import {
 } from './lib/main-day-issue-paths.mjs';
 import { headRevision } from './lib/git-day-context.mjs';
 import { provenanceHeader, readEntry, gitFsIo } from './lib/angelina-adapter.mjs';
+import { frame } from './lib/day-plan-frame.mjs';
 import { readDated } from './lib/read-dated.mjs';
 import {
   buildDetectionPlanningConstraintsBullets,
@@ -150,6 +151,19 @@ function collectActivePromptExcerpts(active, { full }) {
   return blocks.length ? blocks.join('\n') : '(нет активных промптов)';
 }
 
+/**
+ * Гейт скелета (K, M2): какие заголовки слотов каркаса отсутствуют в теле. Пустая выдача =
+ * скелет цел. Экспорт — для юнит-теста без LLM.
+ * @param {string} body
+ * @returns {string[]}
+ */
+export function missingSlotHeadings(body) {
+  const text = String(body ?? '');
+  return frame()
+    .filter((s) => !new RegExp(`^##\\s+${s.title}\\s*$`, 'mu').test(text))
+    .map((s) => s.title);
+}
+
 function buildGenerationPrompt({ outputRel, focusOverride, activeCount, issueCount }) {
   const today = new Date().toISOString().slice(0, 10);
   const focusHint = focusOverride
@@ -176,9 +190,23 @@ function buildGenerationPrompt({ outputRel, focusOverride, activeCount, issueCou
     '- `promptPath` — путь к task-промпту или —',
     '- `сгенерировано` — дата',
     '',
-    '## Фокус дня',
-    '3–6 предложений: **что одно главное** делаем сегодня и **критерий успеха к вечеру**.',
-    '',
+    // 5-блочный каркас (K, вердикт M2): заголовки слотов задаёт ДЕТЕРМИНИРОВАННЫЙ слой
+    // (frame() из day-plan-frame.mjs), LLM владеет только текстом внутри. Пустой слот —
+    // легальное явное состояние («— пусто —»), не исчезновение заголовка.
+    ...frame().flatMap((s) => [
+      `## ${s.title}`,
+      s.kind === 'magistral'
+        ? 'ОДНА задача L/L+ — сильнейший прогресс дня; 3–6 предложений + критерий успеха к вечеру.'
+        : s.kind === 'reinforcement'
+          ? 'ДВЕ задачи M+ в поддержку магистрали (bullet list).'
+          : s.kind === 'perspective'
+            ? '2–3 темы-вектора (не обязательства); bullet list.'
+            : s.kind === 'experimental'
+              ? '2–3 предложения из инсайтов и снов; bullet list.'
+              : 'Санитарные по вчерашнему дню (архитектура/линт/тесты/бестиарий/безопасность); bullet list.',
+      'Если наполнить нечем — напиши «— пусто —» под заголовком, НЕ убирай заголовок.',
+      '',
+    ]),
     '## Почему это магистраль (таблица обоснования)',
     'Колонки строго: | Утверждение | Происхождение | Первоисточник | Свежесть |',
     '- **Происхождение** — откуда факт: `код` / `issue` / `снимок-хардкод` / `план` / `сессия`.',
@@ -407,18 +435,28 @@ export async function runMainDayIssue(options) {
       } catch {
         out = text;
       }
-      writeMainDayIssueFile({
-        outputPath: options.outputPath,
-        commandName: options.commandName,
-        body: out,
-        meta: {
-          primaryFocusOverride: options.focusOverride || null,
-          activeTasks: active.map((t) => t.id),
-          issues: issues.count,
-        },
-      });
-      console.log(out);
-      console.error('Записано:', options.outputPath);
+      // Гейт скелета (K, M2): все 5 заголовков слотов на месте, иначе ГРОМКИЙ отказ —
+      // структура детерминирована, LLM не вправе её ронять. Файл при провале не пишем.
+      const missingSlots = missingSlotHeadings(out);
+      if (missingSlots.length > 0) {
+        console.error(
+          `✖ гейт скелета (M2): LLM уронил слот(ы): ${missingSlots.join(', ')} — файл НЕ записан. Перезапусти генерацию.`,
+        );
+        exitCode = 22;
+      } else {
+        writeMainDayIssueFile({
+          outputPath: options.outputPath,
+          commandName: options.commandName,
+          body: out,
+          meta: {
+            primaryFocusOverride: options.focusOverride || null,
+            activeTasks: active.map((t) => t.id),
+            issues: issues.count,
+          },
+        });
+        console.log(out);
+        console.error('Записано:', options.outputPath);
+      }
     }
   } catch (e) {
     console.error(e);
