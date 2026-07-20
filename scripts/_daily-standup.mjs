@@ -32,6 +32,7 @@ import {
 } from './lib/detection-planning-priorities.mjs';
 import { buildDriftSectionFromDisk } from './lib/drift-digest-section.mjs';
 import { headRevision } from './lib/git-day-context.mjs';
+import { provenanceHeader, readEntry, gitFsIo } from './lib/angelina-adapter.mjs';
 import { readDated } from './lib/read-dated.mjs';
 import { CONSILIUM_ROLE_KEY_TO_SLUG, readPersonaMemory } from './lib/persona-memory.mjs';
 import { loadRegistry } from './lib/task-registry.mjs';
@@ -55,7 +56,7 @@ const DOC_INPUTS = [
     required: false,
     label: 'FFT/trends: потолок эшелона 0 и приоритеты планирования (эпик #84)',
   },
-  { rel: 'docs/STRATEGIC_PLAN_DAY.md', required: false, label: 'Стратегический план на день' },
+  { rel: 'docs/STRATEGY_DAY.md', required: false, label: 'Горизонт дня (генератор #592)' },
   {
     rel: 'docs/DAILY_CODE_REVIEW.md',
     required: false,
@@ -604,11 +605,14 @@ export async function runDailyStandup(options) {
 
 function writeStandupFile({ outputPath, commandName, body, meta }) {
   const stamp = new Date().toISOString();
+  const io = gitFsIo(process.cwd(), { execFileSync, readFileSync, existsSync, join });
+  const readAt = { STRATEGY_DAY: readEntry(io, 'docs/STRATEGY_DAY.md') };
   const header =
     `<!-- Сгенерировано: ${stamp} (${commandName}@${headRevision()}) -->\n` +
     `<!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->\n` +
-    `<!-- Входы: VIRTUAL_TEAM_PROMPT, ${FFT_METRICS_POTENTIAL_AND_LIMITS_REL}, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, GitHub Issues (${meta.issues}), packages/temp (${meta.tempFiles} файлов) -->\n` +
-    `<!-- Issues: ${meta.issueSource ?? 'n/a'} -->\n\n`;
+    `<!-- Входы: VIRTUAL_TEAM_PROMPT, ${FFT_METRICS_POTENTIAL_AND_LIMITS_REL}, STRATEGY_DAY, DAILY_CODE_REVIEW, GitHub Issues (${meta.issues}), packages/temp (${meta.tempFiles} файлов) -->\n` +
+    `<!-- Issues: ${meta.issueSource ?? 'n/a'} -->\n` +
+    `${provenanceHeader({ author: 'vesnin', readAt })}\n\n`;
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, header + body, 'utf8');
 }

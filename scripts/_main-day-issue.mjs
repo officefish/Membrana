@@ -3,7 +3,8 @@
  * Запускать **после** plan:day и standup. Code-review — вечером; утром читается DAILY_CODE_REVIEW.md.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, relative, resolve } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 import {
   anthropicPost,
@@ -25,6 +26,7 @@ import {
   validateFocusId,
 } from './lib/main-day-issue-paths.mjs';
 import { headRevision } from './lib/git-day-context.mjs';
+import { provenanceHeader, readEntry, gitFsIo } from './lib/angelina-adapter.mjs';
 import { readDated } from './lib/read-dated.mjs';
 import {
   buildDetectionPlanningConstraintsBullets,
@@ -428,10 +430,16 @@ export async function runMainDayIssue(options) {
 
 function writeMainDayIssueFile({ outputPath, commandName, body, meta }) {
   const stamp = new Date().toISOString();
+  const io = gitFsIo(process.cwd(), { execFileSync, readFileSync, existsSync, join });
+  const readAt = {
+    STRATEGY_DAY: readEntry(io, 'docs/STRATEGY_DAY.md'),
+    DAILY_STANDUP: readEntry(io, 'docs/DAILY_STANDUP.md'),
+  };
   const header =
     `<!-- Сгенерировано: ${stamp} (${commandName}@${headRevision()}) -->\n` +
     `<!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->\n` +
-    `<!-- Входы: DAILY_STANDUP, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->\n` +
+    `<!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->\n` +
+    `${provenanceHeader({ author: 'vesnin', readAt })}\n` +
     `<!-- CURRENT_TASK — только вспомогательный буфер, не канон -->\n` +
     (meta.primaryFocusOverride
       ? `<!-- focus override: ${meta.primaryFocusOverride} -->\n`

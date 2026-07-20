@@ -6,7 +6,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { parseProvenance, contentDigest, buildSnapshot, gitFsIo } from './lib/angelina-adapter.mjs';
+import { parseProvenance, contentDigest, buildSnapshot, gitFsIo, provenanceHeader, readEntry } from './lib/angelina-adapter.mjs';
 import { orchestrateCascade, topoOrder } from './lib/angelina-cascade.mjs';
 import { CASCADE_DAY } from './angelina.mjs';
 
@@ -73,6 +73,28 @@ test('дневной каскад ацикличен (ядро не бросит
   const order = topoOrder(CASCADE_DAY);
   assert.equal(order[0], 'STRATEGY_DAY', 'горизонт — корень');
   assert.equal(order[order.length - 1], 'MAIN_DAY_ISSUE', 'центральная задача — сток');
+});
+
+test('provenanceHeader ↔ parseProvenance: round-trip', () => {
+  const readAt = { STRATEGY_DAY: { version: 'vS', digest: 'dS' } };
+  const header = provenanceHeader({ author: 'vesnin', readAt });
+  const parsed = parseProvenance(`${header}\n# тело`);
+  assert.equal(parsed.author, 'vesnin');
+  assert.equal(parsed.guard, 'angelina');
+  assert.deepEqual(parsed.readAt, readAt);
+});
+
+test('provenanceHeader: guard по умолчанию angelina, readAt по умолчанию пуст', () => {
+  const parsed = parseProvenance(`${provenanceHeader({ author: 'human' })}\n#`);
+  assert.equal(parsed.guard, 'angelina');
+  assert.deepEqual(parsed.readAt, {});
+});
+
+test('readEntry: version+digest из io (fake), digest содержимого', () => {
+  const io = { version: () => 'commitX', content: () => 'привет' };
+  const e = readEntry(io, 'docs/x.md');
+  assert.equal(e.version, 'commitX');
+  assert.equal(e.digest, contentDigest('привет'));
 });
 
 test('gitFsIo: version возвращает null на несуществующем git-вызове (не бросает)', () => {
