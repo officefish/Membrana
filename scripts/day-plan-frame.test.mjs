@@ -4,7 +4,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { frame, rank, buildTop3, buildPlanDraft, fillInput, ZONE_ORDER } from './lib/day-plan-frame.mjs';
+import { frame, rank, buildTop3, buildPlanDraft, fillInput, candidatesFromRegistry, ZONE_ORDER } from './lib/day-plan-frame.mjs';
 
 const c = (id, zone, size) => ({ id, zone, size });
 
@@ -76,4 +76,33 @@ test('fillInput: стенка Slot→Text — не отдаёт id/order/title',
 
 test('ZONE_ORDER: продукт первым (крен владельца), затем тулинг, бизнес', () => {
   assert.deepEqual([...ZONE_ORDER], ['product', 'tooling', 'business']);
+});
+
+test('candidatesFromRegistry: только активные заданного размера, зона из поля (null допустим)', () => {
+  const tasks = [
+    { id: 'a', status: 'active', size: 'L', zone: 'product' },
+    { id: 'b', status: 'active', size: 'L' }, // без зоны → null
+    { id: 'c', status: 'active', size: 'M', zone: 'tooling' }, // не L
+    { id: 'd', status: 'archived', size: 'L', zone: 'business' }, // не active
+  ];
+  const cands = candidatesFromRegistry(tasks);
+  assert.deepEqual(cands.map((c) => c.id), ['a', 'b'], 'только active L');
+  assert.equal(cands[0].zone, 'product');
+  assert.equal(cands[1].zone, null, 'без зоны → null');
+});
+
+test('candidatesFromRegistry: пустой/битый вход → []', () => {
+  assert.deepEqual(candidatesFromRegistry([]), []);
+  assert.deepEqual(candidatesFromRegistry(undefined), []);
+});
+
+test('candidatesFromRegistry → buildTop3: незонированные кандидаты идут в хвост, топ-3 по силе', () => {
+  const tasks = [
+    { id: 'p', status: 'active', size: 'L', zone: 'product' },
+    { id: 'u1', status: 'active', size: 'L' },
+    { id: 'u2', status: 'active', size: 'L' },
+  ];
+  const top = buildTop3({ candidates: candidatesFromRegistry(tasks) });
+  assert.equal(top[0].id, 'p', 'зонированный продукт впереди хвоста');
+  assert.equal(top.length, 3);
 });

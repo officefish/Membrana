@@ -101,3 +101,20 @@ export function buildPlanDraft(snapshot) {
 export function fillInput(slot, tasks) {
   return Object.freeze({ kind: slot.kind, tasks: [...(tasks ?? [])] });
 }
+
+/**
+ * Кандидаты магистрали из реестра — чистая проекция активных карточек заданного размера
+ * (по умолчанию `L`) в форму `{id, zone, size}`. `zone` берётся из поля карточки (`product`
+ * / `tooling` / `business`); карточка без зоны получает `zone=null` → `rank` кладёт её в
+ * хвост (не в балансируемую тройку). Так балансировка активируется по мере разметки зон,
+ * а до разметки топ-3 честно берётся по силе. Реестр читает вызывающий (fs снаружи ядра).
+ * @param {Array<{id: string, status?: string, size?: string, zone?: string}>} tasks
+ * @param {{size?: string}} [opts]
+ * @returns {Array<{id: string, zone: string|null, size: string}>}
+ */
+export function candidatesFromRegistry(tasks, opts = {}) {
+  const size = opts.size ?? 'L';
+  return (tasks ?? [])
+    .filter((t) => t && t.status === 'active' && t.size === size)
+    .map((t) => ({ id: t.id, zone: t.zone ?? null, size: t.size }));
+}
