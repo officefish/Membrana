@@ -42,13 +42,12 @@ description: >-
    - новая ветка: `git worktree add -b feat/<topic> ../Membrana-<label> main`
    - персона-ветка (если основная сессия НЕ на ней): `git worktree add ../Membrana-dynin dynin`
 3. **Bootstrap нового worktree** (рабочий каталог отдельный, НЕ разделяется):
-   ```bash
-   cd ../Membrana-<label> && yarn worktree:bootstrap
-   ```
-   Подключает `node_modules` (junction/symlink с primary) и копирует `.env` при
-   отсутствии. Полный `yarn install` — только если bootstrap отказал (нет
-   primary `node_modules`). Живой случай 19.07: без этого `code-review` падает
-   с `ERR_MODULE_NOT_FOUND`.
+   - `.env` → скопировать из primary (gitignore).
+   - `node_modules` → **per-worktree `yarn install`** (Yarn cache ускоряет).
+   Shared junction/symlink на чужой `node_modules` — **anti-pattern** (#725):
+   ломает Nest11/express resolve. Не заводить новый bootstrap «с junction».
+   (`yarn worktree:bootstrap` исторически делал junction — не опираться на это
+   как на канон; follow-up #705 = install, не junction.)
 4. **Запустить сессию:** `cd ../Membrana-<label> && yarn claude:code` (proxy-aware).
 5. **Работать изолированно.** Каждая сессия коммитит/пушит свою ветку — общего индекса нет,
    контаминация исключена.
@@ -63,7 +62,8 @@ description: >-
 - Вкладывать worktree ВНУТРЬ репо (`./tmp-wt`) — ломает turbo/globs/tooling; только sibling.
 - Держать одну ветку в двух worktree (git откажет) или силой `checkout` под чужой активной
   сессией (сдёрнешь её работу).
-- Забыть `yarn worktree:bootstrap` → «нет ключа»/«module not found».
+- **Junction / symlink shared `node_modules`** (#725) — Nest11/express resolve ломается.
+- Забыть `.env` / `yarn install` в новом worktree → «нет ключа»/«module not found».
 - `git add -A`, когда в общем worktree лежит чужое (до изоляции) — коммить свои файлы поимённо.
 - Оставить мёртвый worktree — периодически `git worktree prune`.
 
@@ -73,7 +73,7 @@ description: >-
 git worktree list                                   # активные worktree
 git worktree add ../Membrana-<label> <branch>       # существующая ветка
 git worktree add -b feat/<topic> ../Membrana-<label> origin/main
-cd ../Membrana-<label> && yarn worktree:bootstrap   # modules + .env
+cd ../Membrana-<label> && yarn install              # per-wt modules (#725)
 git worktree remove ../Membrana-<label>             # убрать (--force если грязный)
 git worktree prune                                  # почистить записи мёртвых
 ```

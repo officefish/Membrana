@@ -1,7 +1,12 @@
 ---
 name: membrana-task-lifecycle
-description: "Manages Membrana M/L task prompts: registry active → work → yarn task:archive → task:close-github. Use when starting or closing a task, day-sprint phase, epic phase, or when user mentions task:archive, TASK_CLOSURE_REGULATION, or registry.json. Do NOT use for daily standup rhythm (membrana-developer-rhythm)."
+description: >-
+  Manages Membrana M/L task prompts: registry active → work → yarn task:archive →
+  task:close-github. Use when starting or closing a task, day-sprint phase, epic phase,
+  or when user mentions task:archive, TASK_CLOSURE_REGULATION, or registry.json.
+  Do NOT use for daily standup rhythm (membrana-developer-rhythm).
 ---
+
 # Membrana task lifecycle
 
 Канон: [`docs/prompts/TASK_PROMPT_WORKFLOW.md`](../../../docs/prompts/TASK_PROMPT_WORKFLOW.md), [`docs/prompts/TASK_CLOSURE_REGULATION.md`](../../../docs/prompts/TASK_CLOSURE_REGULATION.md).
@@ -19,10 +24,17 @@ description: "Manages Membrana M/L task prompts: registry active → work → ya
 
 ## Start (before first commit on M/L)
 
-1. Confirm `id` in [`docs/tasks/registry.json`](../../../docs/tasks/registry.json) — `status: active`.
-2. Read full task prompt `docs/prompts/*_PROMPT.md` — block **«Промпт целиком»**.
-3. Read [`docs/MAIN_DAY_ISSUE.md`](../../../docs/MAIN_DAY_ISSUE.md) if day work.
-4. Do **not** expand scope without new Issue/prompt.
+0. **`yarn neighbors`** — сверить пересечение СКОУПА (не только файлов) с соседними
+   сессиями: свежие коммиты main, открытые PR, active-карточки за сегодня, свежие
+   ветки (#469 ti-4; урок коллизии #452/#454).
+1. **Канон START (#722):** `yarn task:start --id <slug> --title "…" --size S|M|L`
+   — одна команда: GitHub Issue (если нужно) + registry + prompt stub с acceptance.
+   На Windows body Issue только через tempfile / `--body-file`. Узкий шаг без Issue:
+   `yarn task:register` (обёртка не ломает register).
+2. Confirm `id` in [`docs/tasks/registry.json`](../../../docs/tasks/registry.json) — `status: active`.
+3. Read full task prompt `docs/prompts/*_PROMPT.md` — block **«Промпт целиком»**.
+4. Read [`docs/MAIN_DAY_ISSUE.md`](../../../docs/MAIN_DAY_ISSUE.md) if day work.
+5. Do **not** expand scope without new Issue/prompt.
 
 ## Close (four levels)
 
@@ -38,6 +50,7 @@ Without registry archive, task stays **active** even if Issue is closed.
 ## Commands
 
 ```bash
+yarn task:start --id <slug> --title "…" --size M   # START (#722)
 yarn task:list
 yarn task:sync-readme
 yarn task:archive <id> --notes "PR #N, краткий итог"

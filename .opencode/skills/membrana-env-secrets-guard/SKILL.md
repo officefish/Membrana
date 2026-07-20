@@ -25,8 +25,11 @@ description: "Guards Membrana environment and secrets: which keys live where (.e
 |-------------|------|-----------|
 | RAG archive (`yarn rag:index --full` / `:incremental`) | `OPENAI_API_KEY` | index пропускается (evening hook — non-blocking) |
 | RAG operative (`standup:dry`, `code-review`, `ask`) | — | работает без ключа |
-| `background-office` | `ANTHROPIC_API_KEY`, `LINEAR_API_KEY` | office-функции недоступны |
+| `background-office` | `ANTHROPIC_API_KEY`, `LINEAR_API_KEY`, `OFFICE_API_TOKEN` / `API_INTERNAL_TOKEN` | office-функции / ласточки недоступны |
+| `background-media` / media smoke | `MEDIA_API_URL`, `MEDIA_API_TOKEN` (или `MEDIA_INTERNAL_TOKEN`) | smoke 401; **не путать** с office `API_INTERNAL_TOKEN` (#723) |
 | Client dev (`yarn workspace @membrana/client dev`) | — | работает без `.env` |
+
+**Media vs office (#723):** `yarn media:env:check` печатает наличие URL и *источник* токена без значения секрета. Резолвер — `scripts/lib/media-token.mjs` (класс `resolveOfficeToken`). Голый `API_INTERNAL_TOKEN` без `MEDIA_API_*` media-токеном не считается (часто office-плейсхолдер в sibling-worktree).
 
 ## Ловушка: `.env` не загружается автоматически
 
