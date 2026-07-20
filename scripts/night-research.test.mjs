@@ -10,6 +10,7 @@ import {
   buildDreamQuery,
   renderNightArtifact,
   nightYield,
+  classifyDreamAnswer,
 } from './lib/night-research.mjs';
 
 const REGISTRY = {
@@ -75,6 +76,38 @@ test('renderNightArtifact: отклонённый вопрос → status: rejec
   assert.match(md, /ОТКЛОНЁН externalizeQuery: жаргон X/u);
 });
 
+test('classifyDreamAnswer: пустой / unanswered → void, содержательный → checked', () => {
+  assert.equal(classifyDreamAnswer('').status, 'void');
+  assert.equal(classifyDreamAnswer('No relevant sources found for this query.').status, 'void');
+  assert.equal(
+    classifyDreamAnswer('Goal Displacement и закон Гудхарта описывают вытеснение цели инструментом.').status,
+    'checked',
+  );
+});
+
+test('renderNightArtifact: check.checked заполняет раздел и status', () => {
+  const topic = pickTopic(REGISTRY, { seed: '2026-07-18' });
+  const md = renderNightArtifact(
+    topic,
+    { date: '2026-07-18', ttlDays: 14 },
+    { status: 'checked', body: '**Вердикт: находка.**\n\nGoodhart applies.' },
+  );
+  assert.match(md, /status: checked/u);
+  assert.match(md, /Goodhart applies/u);
+  assert.match(md, /ждёт владельческого решения/u);
+});
+
+test('renderNightArtifact: check.void — честное пусто снаружи', () => {
+  const topic = pickTopic(REGISTRY, { seed: '2026-07-18' });
+  const md = renderNightArtifact(
+    topic,
+    { date: '2026-07-18' },
+    { status: 'void', body: '**Вердикт: честное «снаружи пусто».**' },
+  );
+  assert.match(md, /status: void/u);
+  assert.match(md, /снаружи пусто/u);
+});
+
 test('nightYield: adopted/(adopted+void) за окно; pending не в знаменателе', () => {
   const now = '2026-07-17T12:00:00Z';
   const arts = [
@@ -107,7 +140,7 @@ test('effectiveStatus: pending переживший TTL → void, свежий �
 test('effectiveStatus: окончательные статусы не переписываются сроком', async () => {
   const { effectiveStatus } = await import('./lib/night-research.mjs');
   const now = Date.parse('2026-07-18');
-  for (const s of ['adopted', 'rejected', 'void']) {
+  for (const s of ['adopted', 'rejected', 'void', 'checked']) {
     assert.equal(effectiveStatus({ status: s, date: '2026-01-01', ttl: 14 }, now), s);
   }
 });

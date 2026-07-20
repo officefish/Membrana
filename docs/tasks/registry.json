@@ -1,22 +1,61 @@
 {
   "tasks": [
     {
+      "id": "ritual-d-dreams-infra",
+      "title": "Сны v2: стор + office cron + доставка (обстройка ядра D)",
+      "promptPath": "docs/prompts/RITUAL_D_DREAMS_INFRA_PROMPT.md",
+      "githubIssue": 739,
+      "size": "L",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": "2026-07-20",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ],
+      "linearId": "DRU-247",
+      "notes": "Linear DRU-247 (#739). Ядро dreams-select не трогать. #598 не reuse. DRU-246 = canceled duplicate.",
+      "archiveNotes": "PR #740, Closes #739; Linear DRU-247",
+      "githubIssueClosedAt": null,
+      "parentEpic": "ritual-d-dreams"
+    },
+    {
+      "id": "night-research-perplexity",
+      "title": "S6 night:research: живой Perplexity (сон checked/void)",
+      "promptPath": "docs/prompts/NIGHT_RESEARCH_PERPLEXITY_PROMPT.md",
+      "githubIssue": 598,
+      "linearId": "DRU-199",
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": "2026-07-20",
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "Linear DRU-199. Ветка tooling/night-research-dreams-598. Не путать с ritual-d-dreams / DRU-223.",
+      "archiveNotes": "PR #735, Closes #598; Linear DRU-199",
+      "githubIssueClosedAt": null,
+      "parentEpic": "strategy-day-generator"
+    },
+    {
       "id": "ritual-d-dreams",
       "title": "Сны v2: соревнование 24→6 (D эпика ritual-refactor)",
       "promptPath": "docs/prompts/RITUAL_D_DREAMS_PROMPT.md",
       "githubIssue": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-20",
-      "archivedAt": null,
+      "archivedAt": "2026-07-20",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "rodchenko"
       ],
       "notes": "Дизайн M5. Последний в DAG, A/K/S/R в main. Ядро select 24→6 + failover-кубик; стор/инфра/доставка след. проходом.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #730 ядро select/failover; infra → ritual-d-dreams-infra #739 / DRU-247",
       "githubIssueClosedAt": null
     },
     {

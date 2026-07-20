@@ -13,6 +13,7 @@ import { WebhooksModule } from './modules/webhooks/webhooks.module';
 import { DriftAnchorModule } from './modules/drift-anchor/drift-anchor.module';
 import { NightHuntModule } from './modules/night-hunt/night-hunt.module';
 import { NightTriageModule } from './modules/night-triage/night-triage.module';
+import { DreamsModule } from './modules/dreams/dreams.module';
 import { PanelAuthModule } from './modules/panel-auth/panel-auth.module';
 import { PanelUsersModule } from './modules/panel-users/panel-users.module';
 import { TelegramModule } from './modules/telegram/telegram.module';
@@ -57,6 +58,7 @@ const testImports =
     WebhooksModule,
     NightHuntModule,
     NightTriageModule,
+    DreamsModule,
     DriftAnchorModule,
     TelegramModule,
     PanelAuthModule,

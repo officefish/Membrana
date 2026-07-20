@@ -57,6 +57,13 @@ export const envSchema = z.object({
     .transform((v) => v === 'true' || v === '1'),
   NIGHT_TRIAGE_BASE_BRANCH: z.string().optional(),
   NIGHT_TRIAGE_STALE_DAYS: z.string().optional(),
+  /** Сны v2 (M5): почасовой cron + append-only volume */
+  DREAMS_ENABLED: z
+    .string()
+    .optional()
+    .transform((v) => v === 'true' || v === '1'),
+  /** Корень volume: `<root>/dreams/<day>.jsonl` */
+  DREAMS_VOLUME_PATH: z.string().optional(),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;

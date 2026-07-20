@@ -51,8 +51,8 @@ function main() {
     const blocked = Object.values(report.results).filter((r) => r.blocked).length;
     console.log(
       report.ok
-        ? '\nкаскад чист: все узлы свежи (или нейтральны)'
-        : `\n✖ каскад заблокирован: ${blocked} узл(ов), первый — ${report.firstBlocked}`,
+        ? '\nАнгелина: каскад дня чист — все документы свежи и подписаны. Можно начинать день.'
+        : `\n✖ Ангелина: каскад заблокирован (${blocked} узл., первый — ${report.firstBlocked}). День НЕ начинаем на протухшем — чинить.`,
     );
   }
 

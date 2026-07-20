@@ -123,13 +123,15 @@ export function pickTopic(registry, opts) {
  * обязана перестать врать, что вопрос ещё «в работе», когда срок истёк. Это тот же
  * honest-timeout, что и `orphan` для слота `consumed` в вердикте F1/M4.
  *
+ * `checked` сроком не трогаем: проверка уже была, ждёт владельческого `adopted`.
+ *
  * @param {{status?: string|null, date?: string|null, ttl?: number|string|null}} artifact
  * @param {number} nowMs
  * @returns {string|null}
  */
 export function effectiveStatus(artifact, nowMs) {
   const status = artifact?.status ?? null;
-  if (status !== 'pending') return status; // adopted/rejected/void — окончательные
+  if (status !== 'pending') return status; // checked/adopted/rejected/void — не переписываем
   const ms = parseMs(artifact?.date);
   if (ms == null) return status; // без даты срок не вычислим — не выдумываем
   const ttlDays = Number(artifact?.ttl ?? 14);
@@ -138,17 +140,61 @@ export function effectiveStatus(artifact, nowMs) {
 }
 
 /**
+ * Классифицировать ответ Perplexity: находка → `checked`, честное «снаружи пусто» → `void`.
+ * Эвристика совпадает с `looksUnanswered` из deep-research (#402 / #516): лучше ложное
+ * void, чем pending с мусором, выданным за проверку.
+ *
+ * @param {string|null|undefined} answer
+ * @returns {{status: 'checked'|'void', reason: string|null}}
+ */
+export function classifyDreamAnswer(answer) {
+  const text = String(answer ?? '').trim();
+  if (text.length === 0) {
+    return { status: 'void', reason: 'пустой ответ Perplexity' };
+  }
+  const lower = text.toLowerCase();
+  const markers = [
+    'не содержат информации',
+    'не содержит информации',
+    'не найдено',
+    'не относятся к',
+    'ошибка в названии',
+    'no information',
+    'not found',
+    'could not find',
+    'no relevant',
+  ];
+  const hit = markers.find((m) => lower.includes(m));
+  if (hit) {
+    return { status: 'void', reason: `поиск не нашёл тему («${hit}»)` };
+  }
+  return { status: 'checked', reason: null };
+}
+
+/**
  * Фронтматтер артефакта ночного ресёрча (Q4b: {topic, mode, origin, status, ttl}).
- * status ∈ {pending, void, adopted, rejected}; adopted проставляется ТОЛЬКО обратной
- * ссылкой владельца, не здесь. rejected — если вопрос не прошёл externalizeQuery.
+ * status ∈ {pending, checked, void, adopted, rejected}; adopted проставляется ТОЛЬКО
+ * обратной ссылкой владельца, не здесь. rejected — если вопрос не прошёл externalizeQuery.
  *
  * @param {ReturnType<typeof pickTopic>} topic
  * @param {{date: string, ttlDays?: number}} meta
+ * @param {{status?: 'pending'|'checked'|'void', body?: string}|null} [check]
  * @returns {string}
  */
-export function renderNightArtifact(topic, meta) {
-  const status = topic.rejected ? 'rejected' : 'pending';
+export function renderNightArtifact(topic, meta, check = null) {
+  let status = 'pending';
+  if (topic.rejected) status = 'rejected';
+  else if (check?.status === 'checked' || check?.status === 'void' || check?.status === 'pending') {
+    status = check.status;
+  }
   const ttl = meta?.ttlDays ?? 14;
+  const resultBody =
+    check?.body ??
+    '_(заполняется после внешнего поиска; честное «нет» = `status: void`)_';
+  const adoptedNote =
+    status === 'checked'
+      ? '> `adopted` проставляется ТОЛЬКО обратной ссылкой из реестра задач или инсайта\n> (владельческий гейт), не этим контуром. Сейчас `status: checked` — проверено, находка есть, ждёт владельческого решения о принятии.'
+      : '> `adopted` проставляется ТОЛЬКО обратной ссылкой из реестра задач или инсайта\n> (владельческий гейт), не этим контуром.';
   const fm = [
     '---',
     `topic: "${String(topic.topic).replace(/"/gu, "'")}"`,
@@ -172,18 +218,17 @@ export function renderNightArtifact(topic, meta) {
     '',
     '## Результат проверки сна',
     '',
-    '_(заполняется после внешнего поиска; честное «нет» = `status: void`)_',
+    resultBody,
     '',
-    '> `adopted` проставляется ТОЛЬКО обратной ссылкой из реестра задач или инсайта',
-    '> (владельческий гейт), не этим контуром.',
+    adoptedNote,
   ];
   return fm.join('\n');
 }
 
 /**
  * nightYield = adopted / (adopted + void) за окно (Q4b). Считает по фронтматтерам
- * артефактов ночного ресёрча. pending/rejected в знаменатель НЕ входят (ещё не
- * разрешены). Пустой знаменатель → null (метрики нет, не 0/0).
+ * артефактов ночного ресёрча. pending/checked/rejected в знаменатель НЕ входят (ещё не
+ * разрешены владельцем / не провалились). Пустой знаменатель → null (метрики нет, не 0/0).
  *
  * @param {readonly {status?: string, date?: string}[]} artifacts
  * @param {{now: string|number, windowDays?: number}} opts
