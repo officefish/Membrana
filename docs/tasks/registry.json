@@ -1,6 +1,38 @@
 {
   "tasks": [
     {
+      "id": "meeting-storm-format-ratify",
+      "title": "Заседание: ратификация формата шторма в процедуру",
+      "promptPath": "docs/prompts/MEETING_STORM_FORMAT_RATIFY_PROMPT.md",
+      "githubIssue": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "storm-open-close-decision-timing",
+      "title": "Ресёрч: тайминг решения и границы открытия/закрытия дивергентной сессии",
+      "promptPath": "docs/prompts/STORM_OPEN_CLOSE_DECISION_TIMING_PROMPT.md",
+      "githubIssue": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": null,
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "cowork-execution-registry",
       "title": "Cowork Sprint: контур исполнения команды + переезд реестра",
       "promptPath": "docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md",
@@ -14,7 +46,7 @@
       "supportPersonas": [],
       "notes": "3 блока lead-persona/units-trace-measure/snapshot-cold-migration; изоляция до Interface Consilium; мёрж всех трёх; вход HANDOFF_2026-07-19_COWORK",
       "archiveNotes": "PR #675; review LGTM 6e6ce8608c31; PR #675 merged 2026-07-19T19:35:00Z (4d197ab26e53cc1aec7a4ac034f2e86b4e6b3bd7)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "agent-ci-gate-tooling",
@@ -469,7 +501,7 @@
       "githubIssue": null,
       "size": "M",
       "status": "active",
-      "sprintKind": "day-sprint",
+      "sprintKind": "night-build",
       "createdAt": "2026-07-18",
       "archivedAt": null,
       "leadPersona": "vesnin",
@@ -477,7 +509,7 @@
         "ozhegov",
         "dynin"
       ],
-      "notes": "",
+      "notes": "Night Build 19.07: NB0 gate, NB1 canon two genres + land cascade, NB2 yarn night:land-reports, NB3 ritual/skill, NB4 analysis park, NB5 close. Сырьё: docs/discussions/night-build-format-analysis-2026-07-19.md",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },

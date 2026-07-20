@@ -18,6 +18,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `meeting-storm-format-ratify` | Заседание: ратификация формата шторма в процедуру | L | [`MEETING_STORM_FORMAT_RATIFY_PROMPT.md`](../docs/prompts/MEETING_STORM_FORMAT_RATIFY_PROMPT.md) | — |
+| `storm-open-close-decision-timing` | Ресёрч: тайминг решения и границы открытия/закрытия дивергентной сессии | S | [`STORM_OPEN_CLOSE_DECISION_TIMING_PROMPT.md`](../docs/prompts/STORM_OPEN_CLOSE_DECISION_TIMING_PROMPT.md) | — |
 | `agent-ci-gate-tooling` | Агентский тулинг: pr:wait + грабли (конфликт блокирует CI, tail в фоне, short-path) | S | [`AGENT_CI_GATE_TOOLING_PROMPT.md`](../docs/prompts/AGENT_CI_GATE_TOOLING_PROMPT.md) | [#643](https://github.com/officefish/Membrana/issues/643) |
 | `truth-minting-tooling` | Тулинг графа правды: ask-check, mint, utterance | S | [`TRUTH_MINTING_TOOLING_PROMPT.md`](../docs/prompts/TRUTH_MINTING_TOOLING_PROMPT.md) | [#642](https://github.com/officefish/Membrana/issues/642) |
 | `meeting-security-posture` | Заседание security-posture: аудит зависимостей + инцидент patchhog — DAG security-контура | M | [`MEETING_BRIEF.md`](../docs/meeting/security-posture/MEETING_BRIEF.md) | — |
@@ -251,7 +253,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `cowork-execution-registry` | Cowork Sprint: контур исполнения команды + переезд реестра | 2026-07-19 | [`COWORK_SPRINT_BRIEF.md`](../docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md) | #660 (Issue открыт) | [карточка](./archive/cowork-execution-registry.md) |
+| `cowork-execution-registry` | Cowork Sprint: контур исполнения команды + переезд реестра | 2026-07-19 | [`COWORK_SPRINT_BRIEF.md`](../docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md) | #660 | [карточка](./archive/cowork-execution-registry.md) |
 | `scoreboard-plugin-shell` | Ф1: плагин витрины в модуле микрофона на измеренных числах | 2026-07-18 | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — | [карточка](./archive/scoreboard-plugin-shell.md) |
 | `evening-audit-generator` | Генератор вечернего аудита: что происходило в репозитории, реестре задач и графе правды | 2026-07-18 | [`EVENING_AUDIT_GENERATOR_PROMPT.md`](../docs/prompts/EVENING_AUDIT_GENERATOR_PROMPT.md) | #627 | [карточка](./archive/evening-audit-generator.md) |
 | `standup-charge-redesign` | DAILY_STANDUP как настоящий стендап: дисциплина+честность+код-стайл и раскрытие сильных сторон персон | 2026-07-16 | [`STANDUP_CHARGE_REDESIGN_PROMPT.md`](../docs/prompts/STANDUP_CHARGE_REDESIGN_PROMPT.md) | — | [карточка](./archive/standup-charge-redesign.md) |
@@ -813,4 +815,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-19.*
+*Файл обновлён автоматически: 2026-07-20.*
