@@ -4,7 +4,7 @@
  */
 import { fetch as undiciFetch, ProxyAgent } from 'undici';
 
-export type OutboundProbeId = 'anthropic' | 'linear' | 'github' | 'perplexity';
+export type OutboundProbeId = 'anthropic' | 'github' | 'perplexity';
 
 export interface OutboundProbeTarget {
   id: OutboundProbeId;
@@ -31,12 +31,9 @@ export const OUTBOUND_PROBE_TARGETS: readonly OutboundProbeTarget[] = [
     url: 'https://api.anthropic.com/',
     method: 'GET',
   },
-  {
-    id: 'linear',
-    label: 'Linear',
-    url: 'https://api.linear.app/graphql',
-    method: 'GET',
-  },
+  // Linear GraphQL intentionally omitted: office must not egress to api.linear.app
+  // (K1). Live pull = media-NL → linear-snapshot@1. Probing Linear from office
+  // would either 403 (RU) or falsely green-light a forbidden path.
   {
     id: 'github',
     label: 'GitHub',

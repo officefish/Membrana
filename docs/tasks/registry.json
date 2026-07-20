@@ -1,6 +1,22 @@
 {
   "tasks": [
     {
+      "id": "linear-stub-lift-office-graphql",
+      "title": "K5 stub-lift + remove office Linear GraphQL (K1 debt)",
+      "promptPath": "docs/prompts/LINEAR_STUB_LIFT_OFFICE_GRAPHQL_PROMPT.md",
+      "githubIssue": 694,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [],
+      "notes": "after #691/#692 live pullOk; movementMode live-snapshot; office no api.linear.app",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "linear-egress-media-wiring",
       "title": "media-NL Linear snapshot producer + office trigger (egress wiring K1-K3)",
       "promptPath": "docs/prompts/LINEAR_EGRESS_MEDIA_WIRING_PROMPT.md",

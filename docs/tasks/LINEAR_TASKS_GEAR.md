@@ -110,11 +110,17 @@
    Формат `linear-snapshot@1`; производитель — **media-NL** режимом
    `batch-full-pull` (вердикты M1/M3 `linear-egress-gear-wiring`); office —
    потребитель артефакта + trigger через `X-Membrana-Token`, в GraphQL Linear
-   по тракту снимка не ходит. Вебхук — только триггер «пора снимать», телом
-   источника не является. Предикат `pullOk(S)` — чистая функция от файла;
+   **не ходит** (ни snapshot-путь, ни issue-view — К1; refuse с
+   `LINEAR_OFFICE_EGRESS_DISABLED`). Вебхук — только триггер «пора снимать»,
+   телом источника не является. Предикат `pullOk(S)` — чистая функция от файла;
    freshness — один дешёвый запрос ВНЕ тела гейта. Владелец времени —
    производитель снимка (media-NL, UTC). Канон полей:
    [`LINEAR_SNAPSHOT_CONTRACT.md`](./LINEAR_SNAPSHOT_CONTRACT.md).
+   Режим движения после первого честного `pullOk`: атомарный флаг
+   `{movementMode, snapshotRef, switchedAt}` в
+   [`docs/tasks/movement-mode.json`](./movement-mode.json) (К5/M4) —
+   явный lift (`yarn movement:lift`), silent-flip запрещён; см.
+   [`MOVEMENT_MODE.md`](./MOVEMENT_MODE.md).
 2. **Расслоение носителей:** содержание → git; движение → снимок Linear;
    долговременность → **холод** `docs/tasks/archive/archive.jsonl` (append-only,
    один писатель — office-батч; принимает записи только с honest-шапкой; хранит
@@ -162,9 +168,11 @@
 ## 9. Внешняя реальность (проверено живьём 19.07)
 
 - **Linear заблокирован для России по IP** (`403 RESTRICTED_COUNTRY_BLOCKED`) —
-  и с рабочих машин, и с мск-VDS офиса. Ключ `LINEAR_API_KEY` валиден; работает
-  **только через внешний egress**. Маршрут владельца: **туннель через media-VPS
-  (NL)** — до его проводки боевой pull не летает, движок живёт на фикстурах.
+  и с рабочих машин, и с мск-VDS офиса. Ключ `LINEAR_API_KEY` валиден на
+  **media-NL**; office ключ для GraphQL не использует. Боевой pull:
+  `POST /v1/linear-snapshots/capture` на media (live `pullOk` с
+  `producedBy=media-NL` — 2026-07-20, #692). Режим движения:
+  `movementMode: live-snapshot` после явного К5 lift (не silent).
 - Поле исполнителя в API — `delegate`; под-задачи `parent`/`children` — полноценные
   объекты; `relations` (blockedBy/blocking) в GraphQL есть, вебхуками — допущение.
 - **Старые карточки Linear-workspace (до 19.07) — расходные** (слово владельца):
@@ -181,6 +189,7 @@
 | Зубы | `scripts/lib/trace-*.mjs`, `scripts/trace-gate.mjs` | контракт §2, [`INTERFACE_CONTRACT.md`](../cowork-sprint/cowork-execution-registry/INTERFACE_CONTRACT.md) |
 | Измерение | `scripts/lib/measure-*.mjs` | контракт §1.2 |
 | Снимок | `packages/background-media/src/linear-snapshot/**` (producer), office consumer/trigger, `scripts/lib/snapshot-*.mjs` | [`LINEAR_SNAPSHOT_CONTRACT.md`](./LINEAR_SNAPSHOT_CONTRACT.md) |
+| Режим движения (К5) | `scripts/lib/movement-mode.mjs`, `scripts/movement-mode-lift.mjs` | [`MOVEMENT_MODE.md`](./MOVEMENT_MODE.md), `docs/tasks/movement-mode.json` |
 | Холод | `scripts/lib/cold-*.mjs` | [`ARCHIVE_FORMAT.md`](./archive/ARCHIVE_FORMAT.md) |
 | Миграция | `scripts/lib/debt-*.mjs` | контракт §2, эпик registry-relocation Р4 |
 | История решений | — | эпики `docs/meeting/{team-execution-contour,registry-relocation}/EPIC.md`, протоколы `docs/seanses/*2026-07-19*`, [`RETROSPECTIVE`](../cowork-sprint/cowork-execution-registry/RETROSPECTIVE.md) |
