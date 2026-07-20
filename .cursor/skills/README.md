@@ -34,6 +34,7 @@ Project-scoped skills for Cursor Agent and Claude Code (mirror in `.claude/skill
 | [`membrana-truth-crystallization`](./membrana-truth-crystallization/SKILL.md) | «кристаллизация правды», «токены правды», бриф при закрытии сессии: до 3 вопросов владельцу о невыводимых фактах → синтез парами (только дедукция); mirrored to Claude |
 | [`membrana-telegram-swallow`](./membrana-telegram-swallow/SKILL.md) | «ласточка», «отправь союзникам», `yarn telegram:swallow` — разовое сообщение в группу по команде владельца; mirrored to Claude/Codex |
 | [`membrana-cowork`](./membrana-cowork/SKILL.md) | коворк, `yarn cowork:open` — 3 изолированных блока одной разработки → Interface Consilium → интеграция адаптерами; mirrored to Claude/Codex |
+| [`membrana-storm`](./membrana-storm/SKILL.md) | шторм, storm, «пошумим», породить тезисы, конспект будущего доклада — дивергентный формат: беседа → тезисы (Ангелина + 5 персон + питомец); регламент `STORM_REGULATION.md`; ≠ заседание; mirrored to Claude/Codex |
 | [`membrana-night-sprint`](./membrana-night-sprint/SKILL.md) | `night:open`, Night Build, handoff |
 | [`membrana-always-yes`](./membrana-always-yes/SKILL.md) | `yarn always-yes:on\|off`, scoped auto-yes (ADR-0009 Р7), «отойти от компьютера», default в ночном спринте |
 | [`membrana-worktree`](./membrana-worktree/SKILL.md) | отдельный worktree, параллельная сессия, разведи сессии, `git worktree add` |
