@@ -11,3 +11,6 @@
 - vite 7.3.6 + vitest 3.2.7; 34 package.json. Vite 7 строже: package exports требуют dist (turbo ^build).
 - Smoke: cold vite HTTP 200; client... build OK.
 - Drift gate: spectral-flux F1 0.5733 vs baseline 0.6047 — **pre-existing на origin/main** (воспроизводится без vite7; vite5 rebuild тот же F1). Path-filter detectors/** вскрыл гейт. Baseline обновлён осознанно в PR #710.
+
+- Task2 tar: targeted resolution `tar@npm:^6.0.0 → 7.5.20` (not whole-tree `tar` force). Consumers: app-builder-lib, @electron/rebuild, cacache, node-gyp@9.
+
