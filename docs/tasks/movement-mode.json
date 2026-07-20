@@ -1,0 +1,17 @@
+{
+  "movementMode": "live-snapshot",
+  "snapshotRef": "docs/tasks/snapshots/linear-snapshot-live-ref.json",
+  "switchedAt": "2026-07-20T08:48:52.016Z",
+  "switchedBy": "issue-694/dynin",
+  "notes": "Explicit K5 lift after first live pullOk (M4). Silent-flip forbidden. Units created before switchedAt keep historical stub.",
+  "provenance": {
+    "format": "linear-snapshot@1",
+    "producedBy": "media-NL",
+    "egressRegion": "NL",
+    "mode": "batch-full-pull",
+    "sourceRevision": "2026-07-19T22:45:05.793Z",
+    "capturedAt": "2026-07-20T08:47:45.278Z",
+    "recordCount": 225,
+    "trigger": "manual"
+  }
+}
