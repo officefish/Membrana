@@ -72,7 +72,11 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | `node scripts/_ssh-panel-smoke.mjs` | **Без `--read-only` пишет в ПРОД-стор** |
 | `yarn pr:ship`, `yarn repo:clean`, `yarn tasks:archive-closed` | По умолчанию **dry-run**; нужен `--execute` |
 | `pr:ship --branch` на уже выбранной ветке | С 19.07 **идемпотентен** (не `checkout -b`). Раньше fatal `already exists` и обрыв ship |
-| Sibling worktree без `node_modules` | `yarn worktree:bootstrap` (junction/symlink + `.env`), не полный `yarn install` сразу |
+| Sibling worktree: junction shared `node_modules` | **Anti-pattern (#725):** ломает Nest11/express resolve. Канон — per-wt `yarn install` + копия `.env`. Не заводить новый bootstrap с junction (#705 = install) |
+| `gh issue/pr --body` через bash-heredoc на Windows | PS 5.1 ломает heredoc → **только tempfile + `--body-file`** (#725 A; `yarn task:start` так и делает) |
+| Optional `night:*` нет в `package.json` на ветке | Soft-skip / не звать — hard-fail ритуала запрещён (#725 C). `scripts/lib/optional-yarn-script.mjs` |
+| Карточка background office/media «на память» | Сначала [`docs/BACKGROUND_SERVERS.md`](docs/BACKGROUND_SERVERS.md) / скилл `membrana-background-servers` — офис уже Fastify, не Express (#725 E) |
+| Раздувать AGENTS фиче-докой | AGENTS = грабли/ритуал; канон фичи — в целевом docs/skill (#725 D) |
 | Ласточка: голые `PR #N` | `yarn live-links` — отдельно от линзы Ожегова (тон ≠ кликабельность) |
 | Мёрж `git merge origin/main` | **Без `-m`** — хук освобождает `Merge*`. Своё `-m "merge: …"` строчными хук отклонит (TF-1: находка «хук ломает merge» была **ложной**) |
 | Worktree занял ветку | `git checkout main` упадёт. Смотреть `yarn neighbors`, не писать grep — самописный **соврал** 16.07. Ночью ветку брать **от `origin/main`**, не от локального main |
@@ -85,7 +89,8 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Ласточка `sent=true` | **Не гарантия доставки** — office не возвращал message_id (17.07 ложная тревога «не пришла»). С NB6 клиент называет ограничение явно; серверный след — follow-up |
 | MD060 в диагностиках | Шум IDE-расширения на компактных таблицах — заглушён `.markdownlint.json` (NB1). MD056 оставлен: он ловит реальный разрыв таблицы |
 | `process.exit(0)` после LLM-fetch | Роняет libuv на Windows (`UV_HANDLE_CLOSING`) гонкой с закрытием сокета. Паттерн: `process.exitCode` + дать циклу стечь (`consilium.mjs`, NB5 insight) |
-| Нет проверок на PR | **`no checks` ≠ зелено** (18.07 агент доложил зелёный CI, которого не было). СНАЧАЛА смотреть `mergeable`: CONFLICTING/DIRTY не строит merge-ref → CI не запускается вовсе; воркфлоу/paths-ignore проверять бессмысленно. `yarn pr:wait <N>` различает none/running/green/red (#643) |
+| Нет проверок на PR | **`no checks` ≠ зелено** (18.07 агент доложил зелёный CI, которого не было). СНАЧАЛА смотреть `mergeable`: CONFLICTING/DIRTY не строит merge-ref → CI не запускается вовсе; воркфлоу/paths-ignore проверять бессмысленно. `yarn pr:wait <N>`: none/running/green/red/**approval** (#643/#724); interrupt → `--resume` |
+| Media smoke 401 / «не тот токен» | Office `API_INTERNAL_TOKEN` ≠ media. `yarn media:env:check` — URL + источник токена без секрета (#723). Не класть media egress в AGENTS фиче-простынёй |
 | Фоновый вывод в `\| tail` | `tail` буферизует до закрытия пайпа — лог-файл пуст все 20 минут прогона. Фоновая команда пишет **полный** вывод в файл; хвост читать уже из файла (#643) |
 | ESM-импорт из scratchpad | Short-path `USER19~1` рвёт резолв относительного пути (`ERR_MODULE_NOT_FOUND` на несуществующем пути). Из scratchpad в репо — только `pathToFileURL(длинный абсолютный путь)` (#643; та же ловушка, что T6 #548) |
 | `replit:*` / `replit-bridge*.mjs` «сироты» | **Не мусор (19.07).** Эксперимент лендинга через соревнование на Replit: yarn-скрипты уже в main, файлы моста часто untracked WIP в корневом дереве. Снимать мёртвую ссылку из `test:scripts` — ок; `git clean` / выкидывать `replit:task` «файлов нет» — нельзя. Канон: [`docs/handoff/replit-bridge-experimental-wip.md`](docs/handoff/replit-bridge-experimental-wip.md) |
@@ -110,6 +115,7 @@ PR мёржатся **squash** → коммиты ветки не становя
 
 - **`node -e` с JSON, `$(...)`, кавычками или переносами — только файлом в scratchpad**, не инлайном. PS-парсер съедает JSON-литерал (`register-epic` → `Unexpected token ':'`) и распознаёт `$(grep …)` как cmdlet (`send-swallow`). Однострочный `node -e` без спецсимволов — можно.
 - **Here-string `@'…'@` — это PowerShell, а не bash.** В bash-инструменте он приезжает как литерал `@` и `commit-msg`-хук отбивает заголовок (живой случай 15.07). В bash — heredoc `<<'EOF'`.
+- **`gh issue/pr --body`:** не bash-heredoc и не PS here-string в аргументе — только tempfile + `--body-file` (см. `yarn task:start`, `bootstrap-test-issues`).
 - **PS 5.1 не знает `&&` / `||`** (parser error) — цепочка через `;` + `if ($?) { … }`.
 - **Не редиректить stderr натива (`2>&1`)**: PS 5.1 заворачивает строки в `NativeCommandError` и `$?` становится `$false` при exit 0 — зелёный шаг выглядит красным.
 - **`process.exit()` в скриптах — не использовать, только `process.exitCode`**: обрыв процесса с недописанным pipe-stdout роняет libuv ассертом `UV_HANDLE_CLOSING` и подменяет код возврата на **127** (поймано на `_ssh-panel-smoke`, тот же симптом у `code-review.mjs`).
