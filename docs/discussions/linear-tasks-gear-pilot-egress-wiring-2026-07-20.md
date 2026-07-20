@@ -78,3 +78,29 @@ Trigger требует явный URL media. Деплой: прописать UR
 - `LINEAR_API_KEY` на media-NL (env) + сеть NL → `api.linear.app`
 - `MEDIA_API_URL` (+ токен) на office MSK
 - Деплой media с новым модулем; первый live `pullOk` артефакт → потом К5
+
+## 5. Секреты vs egress (2026-07-20, слово владельца)
+
+Владелец: «все секреты у тебя есть, они в корневом env».
+
+### O9. Секреты в корневом `.env` ≠ egress
+
+| Факт | Следствие |
+|---|---|
+| Корневой `Membrana/.env` несёт `LINEAR_API_KEY` + класс токена (`API_INTERNAL_TOKEN` / `OFFICE_API_TOKEN`) | Достаточно для **локальных** скриптов и доказательств |
+| `MEDIA_API_URL` в корневом `.env` **missing** | Trigger office→media не сконфигурирован явно; канон-хост `https://media.membrana.space` |
+| Live `GET /health` media → 200 | Хост жив |
+| Live `POST /v1/linear-snapshots/capture` → **404** | Код PR #692 **не** на media; smoke pullOk невозможен до деплоя |
+| Прямой GraphQL с клиентской сети при валидном ключе → **403 / RESTRICTED_COUNTRY_BLOCKED** | Подтверждает паспорт §9: live pull только с media-NL |
+| `generate-media-env.sh` **не** пишет `LINEAR_API_KEY` | Ключ на NL надо дописать в `/etc/membrana/media.env` вручную (или расширить генератор) |
+| Ноутбук `.env` ≠ `/etc/membrana/media.env` | Ключ на ноутбуке **не** делает egress; контейнер media читает server env |
+
+**Норма:** «секреты в корневом `.env`» закрывает наличие ключей у агента; **не** закрывает тракт egress. Для боевого снимка ключ обязан лежать в **env на media-NL**, а образ — с модулем `linear-snapshots` (#692).
+
+### Dry-run деплоя (не выполнен — нет слова на ship/merge + 404 на роуте)
+
+1. Merge или явный ok на выкладку ветки `feat/linear-egress-media-wiring` на media VPS (текущие `_ssh-media-deploy.mjs` тянут `techies68` — **не** эту ветку).
+2. На NL: `git fetch` → checkout SHA/ветки #692 → `./deploy/media-stack.sh build && up`.
+3. В `/etc/membrana/media.env` добавить `LINEAR_API_KEY=…` (из корневого `.env` владельца, scp/ssh вручную; не в git). `docker compose … up -d --force-recreate media-api`.
+4. Локально/office: `MEDIA_API_URL=https://media.membrana.space`; токен = **тот же**, что в media.env (`API_INTERNAL_TOKEN` на VPS), не обязательно laptop-токен.
+5. Smoke: `POST /v1/linear-snapshots/capture` → `pullOk: true` + honest-шапка `producedBy=media-NL`.
