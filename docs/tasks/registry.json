@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "night-research-perplexity",
+      "title": "S6 night:research: живой Perplexity (сон checked/void)",
+      "promptPath": "docs/prompts/NIGHT_RESEARCH_PERPLEXITY_PROMPT.md",
+      "githubIssue": 598,
+      "linearId": "DRU-199",
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "Linear DRU-199. Ветка tooling/night-research-dreams-598. Не путать с ritual-d-dreams / DRU-223.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "strategy-day-generator"
+    },
+    {
       "id": "ritual-d-dreams",
       "title": "Сны v2: соревнование 24→6 (D эпика ritual-refactor)",
       "promptPath": "docs/prompts/RITUAL_D_DREAMS_PROMPT.md",
