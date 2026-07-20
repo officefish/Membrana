@@ -1,4 +1,4 @@
-﻿# Closure: sec-upgrade-dev-tooling
+# Closure: sec-upgrade-dev-tooling
 
 | Поле | Значение |
 |------|----------|

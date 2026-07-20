@@ -1,4 +1,4 @@
-﻿# Journal: sec-upgrade sprint (dev-tooling → tar → electron)
+# Journal: sec-upgrade sprint (dev-tooling → tar → electron)
 
 Дата: 2026-07-20  
 Порядок мержей (M2): #706 → #707 → #708. Backend-runtime (#688) уже в main.
