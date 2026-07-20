@@ -1,6 +1,6 @@
 # Пилот LINEAR_TASKS_GEAR × `linear-egress-media-wiring`
 
-> Открыт: 2026-07-20. Статус: **в работе** (первый PR = инкременты 1–2 + `pullOk`).  
+> Открыт: 2026-07-20. Статус: **ЗАКРЫТ** (код в main `a82fd5af` / PR #692; media-NL live smoke `pullOk=true`; карточка archived).  
 > Цель файла: трение старого регламента vs gear при проводке egress. Материал для адаптации процедур.
 
 ---
@@ -97,10 +97,27 @@ Trigger требует явный URL media. Деплой: прописать UR
 
 **Норма:** «секреты в корневом `.env`» закрывает наличие ключей у агента; **не** закрывает тракт egress. Для боевого снимка ключ обязан лежать в **env на media-NL**, а образ — с модулем `linear-snapshots` (#692).
 
-### Dry-run деплоя (не выполнен — нет слова на ship/merge + 404 на роуте)
+### Dry-run → выполнен (слово владельца «Разрешаю» 2026-07-20)
 
-1. Merge или явный ok на выкладку ветки `feat/linear-egress-media-wiring` на media VPS (текущие `_ssh-media-deploy.mjs` тянут `techies68` — **не** эту ветку).
-2. На NL: `git fetch` → checkout SHA/ветки #692 → `./deploy/media-stack.sh build && up`.
-3. В `/etc/membrana/media.env` добавить `LINEAR_API_KEY=…` (из корневого `.env` владельца, scp/ssh вручную; не в git). `docker compose … up -d --force-recreate media-api`.
-4. Локально/office: `MEDIA_API_URL=https://media.membrana.space`; токен = **тот же**, что в media.env (`API_INTERNAL_TOKEN` на VPS), не обязательно laptop-токен.
-5. Smoke: `POST /v1/linear-snapshots/capture` → `pullOk: true` + honest-шапка `producedBy=media-NL`.
+1. Teamlead `yarn code-review:pr 692` → **LGTM** (P1 oversized follow-up, не BLOCK).
+2. Squash-merge #692 → `a82fd5af` на `main`.
+3. Media VPS: `git fetch --depth 1 origin main` → checkout `a82fd5af` (клон раньше знал только `techies68`).
+4. `/etc/membrana/media.env`: `LINEAR_API_KEY` upsert из корневого `.env` (значение не логировалось) → `LINEAR_API_KEY_IN_ENV=present`.
+5. `media-stack.sh build media-api` + `up --force-recreate media-api` → healthy.
+6. Smoke localhost:3010 и `https://media.membrana.space`: **HTTP 200**, `pullOk=true`, `producedBy=media-NL`, `egressRegion=NL`, `mode=batch-full-pull`, `recordCount=224`.
+
+### O10. VPS clone без локальной `main`
+`git checkout main` падал (`pathspec did not match`) — shallow/`techies68`-only. Нужен `git fetch origin main && git checkout -B main FETCH_HEAD`. **Рефакторинг:** `_ssh-media-deploy` / tip-main path не должен предполагать существующую локальную `main`.
+
+### O11. `generate-media-env.sh` не знает Linear
+После generate ключ всё равно руками. Кандидат: опциональная строка `LINEAR_API_KEY` в генераторе или отдельный `media:env:set-linear` без echo значения.
+
+## 6. Live DoD (закрыт)
+
+- [x] Issue #691 + registry linked
+- [x] PR #692 MERGED `a82fd5af` (LGTM + green CI)
+- [x] media-NL deploy tip main + `LINEAR_API_KEY` в server env
+- [x] Live smoke `pullOk=true` / honest-шапка media-NL (224 records)
+- [x] `yarn task:archive linear-egress-media-wiring`
+- [x] Closure: `docs/tasks/closures/linear-egress-media-wiring.md`
+- [ ] Linear movement live units — stub снят по К5 отдельно (первый `pullOk` есть; явный `movementMode` switch — follow-up)
