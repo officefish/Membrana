@@ -23,11 +23,11 @@
 
 ```bash
 # 1) сохранить S с pullOk=true (media-NL)
-# 2) dry-run
-yarn movement:lift -- --snapshot docs/tasks/snapshots/linear-snapshot-live-ref.json
+# 2) dry-run  (без `--`: yarn 4 съедает его сам — TF-2)
+yarn movement:lift --snapshot docs/tasks/snapshots/linear-snapshot-live-ref.json
 # 3) записать
-yarn movement:lift -- --snapshot docs/tasks/snapshots/linear-snapshot-live-ref.json --execute --by issue-N/who
-yarn movement:status -- --audit
+yarn movement:lift --snapshot docs/tasks/snapshots/linear-snapshot-live-ref.json --execute --by issue-N/who
+yarn movement:status --audit
 ```
 
 ## Что незаконно после `t₀`
