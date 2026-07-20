@@ -15,6 +15,7 @@
 | **Утро** | `morning-care` → `plan:day` → `standup` → **`main-day-issue`** | читает вчерашний `DAILY_CODE_REVIEW.md`; пишет `STRATEGIC_PLAN_DAY`, `DAILY_STANDUP`, **`MAIN_DAY_ISSUE`** |
 | **Вечер** | **`archive:daily-day`** → **`code-review`** → **`audit:evening`** → `task:archive` (по задачам) → `save-code-review` → `task:close-github` | архив плана/стендапа/фокуса, `DAILY_CODE_REVIEW.md` (+ архив), `DAILY_AUDIT.md` (+ снимок), реестр, Issues |
 | **Night Build** (опционально) | **`night:open`** → агент NB0…NBn → **`night:checkpoint`** → **`night:close`** → утро merge | `NIGHT_BUILD_ACTIVE.md`, `NIGHT_BUILD_LOG.md`, handoff в `docs/archive/night-build/` |
+| **Утро (land docs-report)** | после HANDOFF: **`night:land-reports`** (dry-run) → слово владельца → **`--execute`** | squash-merge eligible night-triage draft PR (`docs/reports/night-triage/**`) |
 | **Понедельник / неделя** | `analyzers:research:week` → `plan:week` | `WEEKLY_ANALYZERS_RESEARCH.md`, `STRATEGIC_PLAN_WEEK.md` |
 | **По необходимости** | `consilium`, `ask`, `task:list`, CI, **`mcp:verify-bootstrap`** | `docs/seanses/*`, `docs/discussions/*`, MCP docs |
 
@@ -25,6 +26,20 @@
 Цель: спланировать день, **учитывая вчерашнее вечернее code-review** (`docs/DAILY_CODE_REVIEW.md`) и **приоритеты детекции** после эпика #84 ([`FFT_METRICS_POTENTIAL_AND_LIMITS.md`](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) §6), и зафиксировать один фокус.
 
 > **Code-review утром не запускаем.** Ревью кода — вечерняя процедура (`yarn code-review`). Утром только **читаем** уже сгенерированный `DAILY_CODE_REVIEW.md` (standup и main-day-issue подмешивают его как вход). **RAG operative** подмешивается автоматически (BM25 по недавним `docs/`); archive — только с `OPENAI_API_KEY` + индексом.
+
+**После HANDOFF Night Build (или если висят night-triage draft PR):** сначала
+приёмник отчётов, потом `ritual:day`. Жанр Night Triage / Hunt ≠ эпик Night Build
+([`NIGHT_SPRINT_REGULATION.md`](./NIGHT_SPRINT_REGULATION.md) §Два жанра ночи).
+
+```bash
+# dry-run: список eligible (title~Night triage, один ADDED под docs/reports/night-triage/**)
+yarn night:land-reports
+# слово владельца («да») → squash-merge oldest-first (+ gh pr ready для draft)
+yarn night:land-reports --execute
+```
+
+Без `--execute` ничего не мёржится. Code-epic PR `night/*` в этот каскад **не** входят —
+их ревью/merge отдельно после adversarial review.
 
 ### Рабочая ветка: `techies68`
 

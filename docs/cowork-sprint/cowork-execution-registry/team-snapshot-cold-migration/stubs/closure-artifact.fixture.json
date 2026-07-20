@@ -1,0 +1,21 @@
+{
+  "_stub": "S3: стаб артефакта закрытия — замещает форму следа блока units-trace-measure (их зона; здесь односторонняя фикстура, не договорённость). Ключи: id карточки → артефакт {lgtmBy, headRevision}. lgtmBy отсутствует/пуст = приёмка не подтверждена.",
+  "closures": {
+    "issue-178-async-v2-reconciliation": {
+      "lgtmBy": "vesnin",
+      "headRevision": "11fdb3cc05d7"
+    },
+    "fixture-well-archived": {
+      "lgtmBy": "vesnin",
+      "headRevision": "cf35592cadcfad0ad47c22267f1fe8b1a47dad82"
+    },
+    "fixture-record-debt": {
+      "lgtmBy": "vesnin",
+      "headRevision": "0acc3bf30acc3bf30acc3bf30acc3bf30acc3bf3"
+    },
+    "fixture-work-debt": {
+      "lgtmBy": "",
+      "headRevision": null
+    }
+  }
+}

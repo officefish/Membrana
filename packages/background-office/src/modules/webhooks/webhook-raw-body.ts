@@ -1,11 +1,13 @@
 import type { RawBodyRequest } from '@nestjs/common';
-import type { Request } from 'express';
+import type { FastifyRequest } from 'fastify';
 
 /**
  * Linear подпись считается от raw JSON. В e2e (supertest) `rawBody` иногда отсутствует;
  * в тестах восстанавливаем буфер из уже распарсенного тела (тот же JSON, что у клиента).
  */
-export function getLinearWebhookRawBody(req: RawBodyRequest<Request>): Buffer | undefined {
+export function getLinearWebhookRawBody(
+  req: RawBodyRequest<FastifyRequest>,
+): Buffer | undefined {
   if (Buffer.isBuffer(req.rawBody) && req.rawBody.length > 0) {
     return req.rawBody;
   }

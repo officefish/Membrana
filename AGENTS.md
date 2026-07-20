@@ -67,9 +67,13 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Грабля | Как кусает |
 |--------|------------|
 | `yarn office:ssh 'docker ps'` | **Без `--`**: yarn 4 съедает его сам |
+| Linear GraphQL / pull снимка из РФ или office MSK | **403**; движение только через **media-NL** → `linear-snapshot@1` (паспорт `docs/tasks/LINEAR_TASKS_GEAR.md` §9) |
 | `yarn code-review:pr 543` | **Без `--`** по той же причине: с `--` уходило `pr="--"` (починено TF-2 — теперь внятный отказ) |
 | `node scripts/_ssh-panel-smoke.mjs` | **Без `--read-only` пишет в ПРОД-стор** |
 | `yarn pr:ship`, `yarn repo:clean`, `yarn tasks:archive-closed` | По умолчанию **dry-run**; нужен `--execute` |
+| `pr:ship --branch` на уже выбранной ветке | С 19.07 **идемпотентен** (не `checkout -b`). Раньше fatal `already exists` и обрыв ship |
+| Sibling worktree без `node_modules` | `yarn worktree:bootstrap` (junction/symlink + `.env`), не полный `yarn install` сразу |
+| Ласточка: голые `PR #N` | `yarn live-links` — отдельно от линзы Ожегова (тон ≠ кликабельность) |
 | Мёрж `git merge origin/main` | **Без `-m`** — хук освобождает `Merge*`. Своё `-m "merge: …"` строчными хук отклонит (TF-1: находка «хук ломает merge» была **ложной**) |
 | Worktree занял ветку | `git checkout main` упадёт. Смотреть `yarn neighbors`, не писать grep — самописный **соврал** 16.07. Ночью ветку брать **от `origin/main`**, не от локального main |
 | Новый `scripts/_ssh-*.mjs` | Под gitignore — только `git add -f`, иначе молча не войдёт в коммит (#476 п.7) |
@@ -84,6 +88,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Нет проверок на PR | **`no checks` ≠ зелено** (18.07 агент доложил зелёный CI, которого не было). СНАЧАЛА смотреть `mergeable`: CONFLICTING/DIRTY не строит merge-ref → CI не запускается вовсе; воркфлоу/paths-ignore проверять бессмысленно. `yarn pr:wait <N>` различает none/running/green/red (#643) |
 | Фоновый вывод в `\| tail` | `tail` буферизует до закрытия пайпа — лог-файл пуст все 20 минут прогона. Фоновая команда пишет **полный** вывод в файл; хвост читать уже из файла (#643) |
 | ESM-импорт из scratchpad | Short-path `USER19~1` рвёт резолв относительного пути (`ERR_MODULE_NOT_FOUND` на несуществующем пути). Из scratchpad в репо — только `pathToFileURL(длинный абсолютный путь)` (#643; та же ловушка, что T6 #548) |
+| `replit:*` / `replit-bridge*.mjs` «сироты» | **Не мусор (19.07).** Эксперимент лендинга через соревнование на Replit: yarn-скрипты уже в main, файлы моста часто untracked WIP в корневом дереве. Снимать мёртвую ссылку из `test:scripts` — ок; `git clean` / выкидывать `replit:task` «файлов нет» — нельзя. Канон: [`docs/handoff/replit-bridge-experimental-wip.md`](docs/handoff/replit-bridge-experimental-wip.md) |
 
 **Общий «работа за сегодня»** — `scripts/lib/git-day-context.mjs` (без `--author`-фильтра).
 

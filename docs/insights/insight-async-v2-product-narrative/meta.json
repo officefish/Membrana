@@ -1,7 +1,7 @@
 {
   "id": "insight-async-v2-product-narrative",
   "title": "Async v2 topology как продуктовая история (Act IIb upload + detached drone)",
-  "status": "archived",
+  "status": "adopted",
   "source": "packaging-epic",
   "sprintPhase": "ins-pilot-h-async-v2-narrative",
   "horizon": "month",
@@ -15,12 +15,5 @@
     "ux",
     "competition",
     "device-board"
-  ],
-  "previousStatus": "adopted",
-  "archivedAt": "2026-07-18",
-  "archiveReason": "implemented",
-  "implementationTaskIds": [
-    "ins-pilot-h-async-v2-narrative"
-  ],
-  "archiveResult": "Async v2 product narrative delivered in scenarios, sign-off and operator documentation"
+  ]
 }

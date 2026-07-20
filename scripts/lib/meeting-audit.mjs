@@ -29,14 +29,37 @@ import {
   meetingVerdictProblems,
 } from './protocol-validator.mjs';
 
-/** Повестки заседания: `docs/meeting/<id>/M*-topic.md` → [{file, name, md}]. */
+/**
+ * Маска файла повестки. В репозитории живут ТРИ соглашения об именах — слепота к
+ * двум последним и есть корень #696 (маска ловила только `-topic.md`, а реальные
+ * заседания пишут `M*_AGENDA.md`; совпадений ноль → проверки 1 и 4 не запускались):
+ *   - `M0-topic.md … M2p-topic.md`  (evening-auditor, night-build-format, …);
+ *   - `M0_AGENDA.md … M4_AGENDA.md`  (registry-relocation, team-execution-contour, …);
+ *   - `AGENDA_M0.md … AGENDA_M1_RUN2.md`  (dads-integration).
+ * `EPIC.md`, `MEETING_ACTIVE.md`, `TOXIC_PILOT_RESULT.md` и прочий обвес — мимо.
+ * Переопределяется `MEETING_AGENDA_MASK` (env) для нестандартных заседаний.
+ */
+export const AGENDA_FILE_MASK = /(?:-topic\.md|_AGENDA\.md)$|^AGENDA_M[^/]*\.md$/u;
+
+function agendaMask() {
+  const raw = process.env.MEETING_AGENDA_MASK;
+  if (!raw) return AGENDA_FILE_MASK;
+  try {
+    return new RegExp(raw, 'u');
+  } catch {
+    return AGENDA_FILE_MASK;
+  }
+}
+
+/** Повестки заседания: `docs/meeting/<id>/<повестка>.md` → [{file, name, md}]. */
 export function readTopics(repoRoot, id) {
   const dir = join(repoRoot, 'docs', 'meeting', id);
   if (!existsSync(dir)) return [];
+  const mask = agendaMask();
   return readdirSync(dir)
-    .filter((f) => /-topic\.md$/u.test(f))
+    .filter((f) => mask.test(f))
     .sort()
-    .map((f) => ({ file: f, name: f.replace(/-topic\.md$/u, ''), md: readFileSync(join(dir, f), 'utf8') }));
+    .map((f) => ({ file: f, name: f.replace(/\.md$/u, ''), md: readFileSync(join(dir, f), 'utf8') }));
 }
 
 /** Протоколы заседания: `docs/seanses/<id>-*.md` → [{file, md}]. */

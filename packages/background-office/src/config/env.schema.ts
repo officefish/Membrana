@@ -8,8 +8,17 @@ export const envSchema = z.object({
   API_INTERNAL_TOKEN: z.string().min(1, 'API_INTERNAL_TOKEN is required'),
   ANTHROPIC_API_KEY: z.string().min(1, 'ANTHROPIC_API_KEY is required'),
   ANTHROPIC_MODEL: z.string().optional(),
-  LINEAR_API_KEY: z.string().min(1, 'LINEAR_API_KEY is required'),
-  LINEAR_WEBHOOK_SECRET: z.string().min(1, 'LINEAR_WEBHOOK_SECRET is required'),
+  /**
+   * Deprecated on office: GraphQL to api.linear.app is disabled (K1).
+   * Optional so deploys without the key still boot; value is ignored if present.
+   */
+  LINEAR_API_KEY: z.string().min(1).optional(),
+  /** Webhook signature secret (inbound). Not used for office→Linear GraphQL. */
+  LINEAR_WEBHOOK_SECRET: z.string().min(1).optional(),
+  /** Base URL of media (NL) for snapshot trigger, e.g. https://media… or http://localhost:3010 */
+  MEDIA_API_URL: z.string().url().optional(),
+  /** Optional override; defaults to API_INTERNAL_TOKEN (same X-Membrana-Token class). */
+  MEDIA_API_TOKEN: z.string().min(1).optional(),
   GITHUB_TOKEN: z.string().min(1, 'GITHUB_TOKEN is required'),
   GITHUB_OWNER: z.string().min(1, 'GITHUB_OWNER is required'),
   GITHUB_REPO: z.string().min(1, 'GITHUB_REPO is required'),

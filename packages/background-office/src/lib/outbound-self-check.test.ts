@@ -72,10 +72,11 @@ describe('runOutboundSelfCheck + format', () => {
         return { status: 404 };
       },
     });
-    expect(results).toHaveLength(4);
+    expect(results).toHaveLength(3);
     expect(results.some((r) => !r.reachable)).toBe(true);
     const table = formatOutboundSelfCheckTable(results);
     expect(table).toContain('anthropic');
     expect(table).toContain('perplexity');
+    expect(table).not.toContain('linear');
   });
 });

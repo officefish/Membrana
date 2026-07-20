@@ -52,6 +52,13 @@ export const envSchema = z.object({
   CLIENT_CORS_ORIGINS: corsOrigins.default(
     'http://localhost:5173,http://localhost:4173,http://localhost:5174,https://cabinet.membrana.space',
   ),
+  /**
+   * Linear GraphQL key — только media-NL (вердикт M2). Optional at boot so media
+   * starts without egress; capture fails with 503 until the key is set.
+   */
+  LINEAR_API_KEY: z.string().min(1).optional(),
+  /** Directory for persisted linear-snapshot@1 artifacts. */
+  LINEAR_SNAPSHOT_DIR: z.string().min(1).default('./data/linear-snapshots'),
 });
 
 const envSchemaWithDefaults = envSchema.transform((data) => ({

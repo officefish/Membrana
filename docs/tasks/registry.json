@@ -20,22 +20,22 @@
       "githubIssueClosedAt": null
     },
     {
-      "githubIssue": null,
-      "status": "active",
+      "githubIssue": 686,
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-20",
+      "archiveNotes": "PR #688, 5e703979; Nest11+Fastify atom office/media/cabinet; LGTM TL",
       "githubIssueClosedAt": null,
       "id": "sec-upgrade-backend-runtime",
-      "title": "Апгрейд №1 backend-runtime-major: Nest 11 + fastify 5 + @fastify/middie 9 + fast-uri 3 (атом, оба сервера синхронно)",
+      "title": "Апгрейд №1 backend-runtime-major: Nest 11 + fastify 5 + @fastify/middie 9 + fast-uri 3 (атом, office+media+cabinet)",
       "size": "L",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
       ],
-      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
-      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты 2 critical рантайма + fastify/fast-uri/platform-fastify highs; smoke HTTP-роутов зелёный. Мерж поочерёдно с sec-upgrade-dev-tooling (общий lockfile)."
+      "promptPath": "docs/prompts/SEC_UPGRADE_BACKEND_RUNTIME_PROMPT.md",
+      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты critical middie + fastify/fast-uri/platform-fastify highs; smoke HTTP. Пилот LINEAR_TASKS_GEAR: docs/discussions/linear-tasks-gear-pilot-sec-upgrade-backend-runtime-2026-07-20.md. Мерж поочерёдно с sec-upgrade-dev-tooling (общий lockfile)."
     },
     {
       "githubIssue": null,
@@ -92,169 +92,106 @@
       "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты 4 electron high; ручной desktop-smoke (окно, захват device-board, CSP). После sec-upgrade-tar."
     },
     {
-      "id": "insight-archive-lifecycle",
-      "title": "Evidence-gated архивирование реализованных инсайтов",
-      "promptPath": "docs/prompts/INSIGHT_ARCHIVE_LIFECYCLE_PROMPT.md",
-      "githubIssue": 609,
+      "id": "pr-ship-merge-only",
+      "title": "pr:ship --merge-only: безопасный мердж уже открытого PR + норма против raw gh pr merge --delete-branch",
+      "promptPath": "docs/prompts/PR_SHIP_MERGE_ONLY_PROMPT.md",
+      "githubIssue": 700,
+      "size": "S",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": "2026-07-20",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko"
+      ],
+      "notes": "Корень #700: raw gh pr merge --delete-branch падает на checkout base из чужого worktree (мердж уже прошёл — ложный красный). pr:ship уже кодирует фикс (#653), но недостижим для УЖЕ ОТКРЫТОГО PR. Добавить --merge-only режим + норма в membrana-ship/CLAUDE.md.",
+      "archiveNotes": "PR #701; review LGTM e2fa9ee9e666; PR #701 merged 2026-07-20T10:05:55Z (e56d3a33a35555de273daec24e8bb9077749476e)",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "linear-stub-lift-office-graphql",
+      "title": "K5 stub-lift + remove office Linear GraphQL (K1 debt)",
+      "promptPath": "docs/prompts/LINEAR_STUB_LIFT_OFFICE_GRAPHQL_PROMPT.md",
+      "githubIssue": 694,
       "size": "M",
       "status": "archived",
       "sprintKind": "day-sprint",
-      "createdAt": "2026-07-18",
-      "archivedAt": "2026-07-19",
+      "createdAt": "2026-07-20",
+      "archivedAt": "2026-07-20",
+      "leadPersona": "dynin",
+      "supportPersonas": [],
+      "notes": "after #691/#692 live pullOk; movementMode live-snapshot; office no api.linear.app",
+      "archiveNotes": "office MSK deploy tip main 698542b5; MEDIA_API_URL+token aligned; smoke health+503 LINEAR_OFFICE_EGRESS_DISABLED+media capture pullOk",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "linear-egress-media-wiring",
+      "title": "media-NL Linear snapshot producer + office trigger (egress wiring K1-K3)",
+      "promptPath": "docs/prompts/LINEAR_EGRESS_MEDIA_WIRING_PROMPT.md",
+      "githubIssue": 691,
+      "size": "L",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": "2026-07-20",
+      "leadPersona": "dynin",
+      "supportPersonas": [],
+      "notes": "pilot gear; deferred-egress stub; meeting linear-egress-gear-wiring; Issue #691",
+      "archiveNotes": "PR #692 merged a82fd5af; media-NL deploy+LINEAR_API_KEY; live smoke pullOk=true producedBy=media-NL recordCount=224 via localhost and https://media.membrana.space",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "cowork-execution-registry",
+      "title": "Cowork Sprint: контур исполнения команды + переезд реестра",
+      "promptPath": "docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md",
+      "githubIssue": 660,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "cowork-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "3 блока lead-persona/units-trace-measure/snapshot-cold-migration; изоляция до Interface Consilium; мёрж всех трёх; вход HANDOFF_2026-07-19_COWORK",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "agent-ci-gate-tooling",
+      "title": "Агентский тулинг: pr:wait + грабли (конфликт блокирует CI, tail в фоне, short-path)",
+      "promptPath": "docs/prompts/AGENT_CI_GATE_TOOLING_PROMPT.md",
+      "githubIssue": 643,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
       "leadPersona": "vesnin",
       "supportPersonas": [
-        "ozhegov",
+        "ozhegov"
+      ],
+      "notes": "Ретро тулинга 18.07. Общий корень: инструмент не врёт, он молчит. Ложное «зелено» от самописного цикла ожидания CI — доложен зелёный прогон, которого не было. Плюс три грабли в AGENTS.md по обязательству #554 TF-7.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "truth-minting-tooling",
+      "title": "Тулинг графа правды: ask-check, mint, utterance",
+      "promptPath": "docs/prompts/TRUTH_MINTING_TOOLING_PROMPT.md",
+      "githubIssue": 642,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
         "dynin"
       ],
-      "notes": "Add archive lifecycle, evidence audit, skills and tests",
-      "archiveNotes": "PR #612, Closes #609 — evidence-gated insight archive; rebased onto main after Codex stall",
+      "notes": "Ретро тулинга 18.07. Кристаллизация наполовину ручная: чеканка правкой JSON, указатель на реплику ad-hoc скриптом, дубль-проверки нет — сожжён вопрос владельца (токен alex-sparring-answered уже был от 17.07). Новых контрактов нет, форма токена — канон.",
+      "archiveNotes": null,
       "githubIssueClosedAt": null
-    },
-    {
-      "id": "swallow-sent-log",
-      "title": "docs/comms: sent-log.jsonl — след отправки ласточки/дайджеста",
-      "promptPath": "docs/prompts/SWALLOW_SENT_LOG_PROMPT.md",
-      "githubIssue": 585,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "vesnin"
-      ],
-      "notes": "Closes #585; complements #664 ledger",
-      "archiveNotes": "PR #674, Closes #585 — docs/comms/sent-log.jsonl",
-      "githubIssueClosedAt": null
-    },
-    {
-      "id": "ritual-step-manifest-sf",
-      "title": "Манифест шагов ритуала: семантика отказа (S) + гейт свежести (F)",
-      "promptPath": "docs/prompts/RITUAL_STEP_MANIFEST_SF_PROMPT.md",
-      "githubIssue": 613,
-      "size": "M",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": "dynin",
-      "supportPersonas": [
-        "ozhegov",
-        "vesnin"
-      ],
-      "notes": "M1 scripts-boundary; Closes #613",
-      "archiveNotes": "PR #672, Closes #613 — evening manifest S+F + findingExitCodes + RT-9 compat",
-      "githubIssueClosedAt": null,
-      "parentEpic": "ritual-trust-contour"
-    },
-    {
-      "id": "code-review-pr-skill-syntax",
-      "title": "docs: скилл code-review — синтаксис yarn code-review:pr без --",
-      "promptPath": "docs/prompts/CODE_REVIEW_PR_SKILL_SYNTAX_PROMPT.md",
-      "githubIssue": 587,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": "vesnin",
-      "supportPersonas": [
-        "ozhegov"
-      ],
-      "notes": "Closes #587; TF-2 yarn eats --",
-      "archiveNotes": "PR #671, Closes #587 — skills/regulation without yarn --",
-      "githubIssueClosedAt": "2026-07-19"
-    },
-    {
-      "id": "office-ready-error-path",
-      "title": "fix(office): GET /ready try/catch на error-path self-check",
-      "promptPath": "docs/prompts/OFFICE_READY_ERROR_PATH_PROMPT.md",
-      "githubIssue": 669,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "vesnin"
-      ],
-      "notes": "P1 from Teamlead review #667; Closes #669",
-      "archiveNotes": "PR #670, Closes #669 — try/catch on /ready error-path",
-      "githubIssueClosedAt": "2026-07-19"
-    },
-    {
-      "id": "intern-t3-research-digest",
-      "title": "Intern T3: ресёрч-дайджест — утренняя пресса через Perplexity Sonar",
-      "promptPath": "docs/prompts/INTERN_T3_RESEARCH_DIGEST_PROMPT.md",
-      "githubIssue": 197,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "vesnin"
-      ],
-      "notes": "yarn office:research-digest; topic OFFICE_DIGEST_TOPIC; Closes #197",
-      "archiveNotes": "PR #668 — office:research-digest, Closes #197",
-      "githubIssueClosedAt": "2026-07-19"
-    },
-    {
-      "id": "intern-t2-health-ready",
-      "title": "Intern T2: /health и /ready — готовность background-office",
-      "promptPath": "docs/prompts/INTERN_T2_HEALTH_READY_PROMPT.md",
-      "githubIssue": 196,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "vesnin"
-      ],
-      "notes": "Depends on T1 #195; /ready reuses outbound-self-check",
-      "archiveNotes": "PR pending — GET /ready, Closes #196",
-      "githubIssueClosedAt": "2026-07-19"
-    },
-    {
-      "id": "intern-t1-outbound-self-check",
-      "title": "Intern T1: outbound self-check — пинг внешних каналов",
-      "promptPath": "docs/prompts/INTERN_T1_OUTBOUND_SELF_CHECK_PROMPT.md",
-      "githubIssue": 195,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "vesnin"
-      ],
-      "notes": "docs/intern вертикаль; DoD #195: сводка 4 эндпоинтов без ключей, таймаут не роняет",
-      "archiveNotes": "PR #666 — yarn office:self-check, lib outbound-self-check, Closes #195",
-      "githubIssueClosedAt": "2026-07-19"
-    },
-    {
-      "id": "rag-openai-proxy-geo",
-      "title": "RAG OpenAI embedder via proxy (geo-403)",
-      "promptPath": "docs/prompts/RAG_OPENAI_PROXY_GEO_PROMPT.md",
-      "githubIssue": 593,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": "dynin",
-      "supportPersonas": [
-        "ozhegov"
-      ],
-      "notes": "Issue #593: openai-embedder without ProxyAgent",
-      "archiveNotes": "PR #663 — openai-embedder via HTTPS_PROXY/undici ProxyAgent; shared resolveProxyUrl",
-      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "linear-agent-identity-facts",
@@ -266,7 +203,7 @@
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
       "archivedAt": null,
-      "leadPersona": null,
+      "leadPersona": "dynin",
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": null,
@@ -314,7 +251,7 @@
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
       "archivedAt": null,
-      "leadPersona": null,
+      "leadPersona": "dynin",
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": null,
@@ -330,7 +267,7 @@
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
       "archivedAt": null,
-      "leadPersona": null,
+      "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": null,
@@ -346,107 +283,11 @@
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
       "archivedAt": null,
-      "leadPersona": null,
+      "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": null,
       "githubIssueClosedAt": null
-    },
-    {
-      "id": "pr-ship-worktree-merge",
-      "title": "pr:ship — ci-wait перед merge, без --delete-branch (спринт 5, задним числом по токену T1)",
-      "promptPath": "docs/prompts/PR_SHIP_WORKTREE_MERGE_PROMPT.md",
-      "githubIssue": 653,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": null,
-      "supportPersonas": [],
-      "notes": "",
-      "archiveNotes": "PR #654 (squash), ci-wait+branch-cleanup; карточка задним числом по токену 19.07",
-      "githubIssueClosedAt": "2026-07-19"
-    },
-    {
-      "id": "net-http-probe",
-      "title": "net:http — HTTP-проба произвольного URL через прокси с классификацией ответа",
-      "promptPath": "docs/prompts/NET_HTTP_PROBE_PROMPT.md",
-      "githubIssue": 595,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": null,
-      "supportPersonas": [],
-      "notes": "",
-      "archiveNotes": "PR #655 (squash), net:http c классами ok/geo-403/waf-html/timeout/proxy-dead, живой смоук двух маршрутов",
-      "githubIssueClosedAt": "2026-07-19"
-    },
-    {
-      "id": "truth-mint",
-      "title": "truth mint — писатель токенов: валидация ядром, отказ на дубль, dry-run по умолчанию",
-      "promptPath": "docs/prompts/TRUTH_MINT_PROMPT.md",
-      "githubIssue": 642,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": null,
-      "supportPersonas": [],
-      "notes": "",
-      "archiveNotes": "PR #651 (squash), mint с валидацией ядром, dry-run по умолчанию, живой смоук I3-отказа",
-      "githubIssueClosedAt": "2026-07-19"
-    },
-    {
-      "id": "env-sibling-worktree",
-      "title": ".env из sibling-worktree: слоёная загрузка через git-common-dir + честный 401",
-      "promptPath": "docs/prompts/ENV_SIBLING_WORKTREE_PROMPT.md",
-      "githubIssue": 567,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": null,
-      "supportPersonas": [],
-      "notes": "",
-      "archiveNotes": "PR #649 (squash), слоёный .env через git-common-dir, sibling-тест красный-до/зелёный-после, честный 401",
-      "githubIssueClosedAt": "2026-07-19"
-    },
-    {
-      "id": "truth-transcript-tooling",
-      "title": "lib/transcript + truth utterance/ask-check — поиск указателей правды по всем трём местам",
-      "promptPath": "docs/prompts/TRUTH_TRANSCRIPT_TOOLING_PROMPT.md",
-      "githubIssue": 642,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": null,
-      "supportPersonas": [],
-      "notes": "",
-      "archiveNotes": "PR #647 (squash), utterance+ask-check+lib/transcript; #642 п.2 (mint) остаётся, issue переоткрыт",
-      "githubIssueClosedAt": "2026-07-19"
-    },
-    {
-      "id": "pr-wait-ci-gate",
-      "title": "pr:wait — честное ожидание проверок PR (4 состояния) + грабли AGENTS.md",
-      "promptPath": "docs/prompts/PR_WAIT_CI_GATE_PROMPT.md",
-      "githubIssue": 643,
-      "size": "S",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": null,
-      "supportPersonas": [],
-      "notes": "",
-      "archiveNotes": "PR #645 (squash), pr:wait 4 состояния + грабли пп.2-4 AGENTS.md, догфуд на своём же PR",
-      "githubIssueClosedAt": "2026-07-19"
     },
     {
       "id": "research-query-hygiene",
@@ -600,16 +441,16 @@
       "promptPath": "docs/prompts/SWALLOW_DELIVERY_IDEMPOTENCY_PROMPT.md",
       "githubIssue": null,
       "size": "S",
-      "status": "archived",
+      "status": "active",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-18",
-      "archivedAt": "2026-07-19",
+      "archivedAt": null,
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "НАЙДЕНО ЖИВЫМ ПРОГОНОМ 18.07, ценой дубля у партнёров. scripts/telegram-swallow.mjs при таймауте ожидания ответа печатает «office недоступен» — агент расценивает это как несостоявшуюся отправку и повторяет, хотя сообщение УЖЕ доставлено. Владелец удалял копию руками. Канон усиливает ошибку: CLAUDE.md предписывает «повторить, не оставлять партнёров без дайджеста» — инструкция написана в предположении, что таймаут означает провал. Тот же класс, что exit-code-semantics-audit: транспортный таймаут ≠ отказ доставки. ЧТО НУЖНО: идемпотентный ключ отправки (повтор с тем же ключом не создаёт второе сообщение) + различать в выводе «не доставлено» и «ответ не дождались, статус неизвестен» + проверка факта доставки перед повтором. ЗАПРЕТ: не менять формат ласточки и не трогать редакторский гейт.",
-      "archiveNotes": "PR #664 — ledger + exit 3 unknown; timeout ≠ undelivered; relates #585",
+      "archiveNotes": null,
       "githubIssueClosedAt": null
     },
     {
@@ -652,45 +493,6 @@
       "githubIssueClosedAt": "2026-07-18"
     },
     {
-      "id": "exit-code-semantics-audit",
-      "title": "Аудит семантики кодов возврата в scripts/ — находка ≠ сбой",
-      "promptPath": "docs/prompts/EXIT_CODE_SEMANTICS_AUDIT_PROMPT.md",
-      "githubIssue": 622,
-      "size": "M",
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-18",
-      "archivedAt": "2026-07-19",
-      "leadPersona": "dynin",
-      "supportPersonas": [
-        "ozhegov",
-        "vesnin"
-      ],
-      "notes": "Находка спринта ritual-step-manifest-sf (#613, 18.07), вскрыта ЖИВЫМ ПРОГОНОМ — ни тесты, ни --dry её не видели. Репортёры отдают ненулевой код как НАХОДКУ, не сбой: insight-drift exit 3 = найден дрейф, truth cool exit 2 = граф нарушен. Бинарная модель называла успешный отчёт 'пропущенным некритичным' — ложь о шаге. Под || true вопрос не вставал: любой код становился нулём, т.е. снятие проглатывания ОБНАЖИЛО скрытую семантику — тот же класс ждёт везде, где будем снимать || true дальше. Осмотрено 10 шагов вечера из 216 скриптов; утро/ночь/деплой не смотрели. ЗАПРЕТ: не менять сами коды возврата (унификация = отдельное решение, вероятно консилиум — меняет контракт 216 скриптов). ЗАВИСИМОСТЬ: требует смёрженного #613 (findingExitCodes и step-status.mjs живут там).",
-      "archiveNotes": "PR #673, Closes #622 — ritual-exit-codes map + guard",
-      "githubIssueClosedAt": null,
-      "parentEpic": "ritual-trust-contour"
-    },
-    {
-      "id": "strategic-plan-day-legacy-fate",
-      "title": "Судьба STRATEGIC_PLAN_DAY.md — легаси-вход двух генераторов",
-      "promptPath": "docs/prompts/STRATEGIC_PLAN_DAY_LEGACY_FATE_PROMPT.md",
-      "githubIssue": 621,
-      "size": "S",
-      "status": "active",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-18",
-      "archivedAt": null,
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "vesnin"
-      ],
-      "notes": "Находка спринта ritual-step-manifest-sf (#613, 18.07), предъявлена не починена (#533). Кормит _daily-standup и _main-day-issue, но провенанса нет вовсе и в цепочке ritual:day НЕ генерируется (там strategy-day.mjs пишет STRATEGY_DAY.md). Сам канон помечает 'устар. генератор — вещдок, пока не удалён'. Гейт свежести поставить НЕЛЬЗЯ: без провенанса isFresh всегда вернёт 'не свеж' — вечный ложный варнинг. Единственное известное непроверяемое ребро контура F. ГЕЙТ ВЛАДЕЛЬЦА: судьбу (удалить / восстановить генерацию / пометить 'не вход') выбирает владелец, агент готовит развилку с последствиями.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
-      "parentEpic": "ritual-trust-contour"
-    },
-    {
       "id": "morning-ritual-regulation",
       "title": "Регламент утреннего ритуала + фоновый агент (барьер против проглоченного гейта)",
       "promptPath": "docs/prompts/MORNING_RITUAL_REGULATION.md",
@@ -717,7 +519,7 @@
       "githubIssue": null,
       "size": "M",
       "status": "active",
-      "sprintKind": "day-sprint",
+      "sprintKind": "night-build",
       "createdAt": "2026-07-18",
       "archivedAt": null,
       "leadPersona": "vesnin",
@@ -725,7 +527,7 @@
         "ozhegov",
         "dynin"
       ],
-      "notes": "",
+      "notes": "Night Build 19.07: NB0–NB5 land-reports + two genres. Analysis: docs/discussions/night-build-format-analysis-2026-07-19.md",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
@@ -1098,17 +900,17 @@
       "promptPath": "docs/prompts/RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md",
       "githubIssue": null,
       "size": "S",
-      "status": "archived",
+      "status": "active",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-16",
-      "archivedAt": "2026-07-19",
+      "archivedAt": null,
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "rodchenko"
       ],
       "notes": "Эпик #539, консилиум rt8-loose-ends. Находка 5 расследования: || true в ritual:evening глотает сбой code-review (15.07 фолбэк без кредита отдал 127, незамечено), downstream не проверяет дату DAILY_CODE_REVIEW.md. Фикс: isFresh(artifact)=dateOf(artifact)===today, dateOf из фронтматтера (не mtime — недетерминирован при checkout), today инъекцией параметром. NON_CRITICAL_STEPS явным массивом — всё вне списка теряет || true и падает громко. downstream (standup/main-day-issue) проверяет свежесть на входе, падает явно с читаемым «устарел на N дн», не голый 127. Тест обоих путей: свежий проходит, вчерашний падает. Родня rt-5.",
-      "archiveNotes": "PR #665 — dateOf/isFresh + morning age<=1 + ritual:evening без || true на code-review",
+      "archiveNotes": null,
       "githubIssueClosedAt": null
     },
     {
@@ -12051,7 +11853,8 @@
       "archivedAt": null,
       "archiveNotes": null,
       "notes": "Deferred per CRITICAL_RAG_AUDIT §12. Go/no-go после R6.",
-      "epicId": "rag-dual-circuit-v1"
+      "epicId": "rag-dual-circuit-v1",
+      "leadPersona": "kuryokhin"
     },
     {
       "id": "ci-observability",

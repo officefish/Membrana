@@ -1,16 +1,14 @@
 import 'reflect-metadata';
 import { rmSync } from 'node:fs';
 import type { INestApplication } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { ExpressAdapter, type NestExpressApplication } from '@nestjs/platform-express';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { AppModule } from '../src/app.module';
 import {
   mintSessionToken,
   PANEL_SESSION_COOKIE,
 } from '../src/modules/panel-auth/panel-auth-core';
+import { createOfficeFastifyApp } from './create-fastify-app';
 
 const SECRET = 'test-panel-session-secret'; // = setup-env.ts
 
@@ -29,11 +27,7 @@ describe('panel-users E2E (PU1): промокод → регистрация →
 
   beforeAll(async () => {
     rmSync(process.env.PANEL_USERS_STORE_PATH!, { force: true });
-    app = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(), {
-      bufferLogs: true,
-    });
-    app.useLogger(false);
-    await app.init();
+    app = await createOfficeFastifyApp();
   });
 
   afterAll(async () => {

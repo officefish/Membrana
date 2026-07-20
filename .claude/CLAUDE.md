@@ -75,6 +75,12 @@ Rules:
 2026-07-09 — чужая сессия переключила ветку; вынужденная сериализация работы).
 Коммитить строго свои файлы поимённо, никогда `git add -A` при параллельной работе.
 
+**Мердж — только через `yarn pr:ship`** (норма #700). Raw `gh pr merge --delete-branch`
+из feature-worktree падает на checkout base (его держит соседнее дерево) **после уже
+успешного merge** — ложный красный. PR ещё нет → `pr:ship … --execute`; PR уже открыт
+→ `pr:ship --merge-only --execute`. Если raw `gh` неизбежен — факт мерджа проверять
+`gh pr view <N> --json state`, не по exit code.
+
 ## CLI
 
 ```bash

@@ -1,6 +1,7 @@
 # docs/insights/
 
-Каталог инсайтов Membrana. Регламент: [`docs/prompts/INSIGHT_REGULATION.md`](../prompts/INSIGHT_REGULATION.md).
+Каталог инсайтов Membrana. Гид агента: [`INSIGHT_LIFECYCLE_FOR_AGENTS.md`](../prompts/INSIGHT_LIFECYCLE_FOR_AGENTS.md) ·
+артефакты: [`INSIGHT_REGULATION.md`](../prompts/INSIGHT_REGULATION.md).
 
 ## Структура одного инсайта
 

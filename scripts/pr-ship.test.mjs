@@ -5,6 +5,8 @@ import {
   extractIssueMentions,
   isBaseHeldElsewhere,
   otherWorktreeBranches,
+  planBranchStep,
+  planMergeTail,
   planPrShip,
 } from './pr-ship.mjs';
 
@@ -63,6 +65,57 @@ test('planPrShip: без scope и issue', () => {
   assert.doesNotMatch(commitBody, /Closes/);
 });
 
+// ─── #700: --merge-only — безопасный мердж уже открытого PR ──────────────────────
+
+test('#700: --merge-only даёт ТОЛЬКО merge-хвост, без branch/commit/push/pr-create', () => {
+  const { steps, title, commitBody } = planPrShip({ mergeOnly: true, currentBranch: 'fix/x' });
+  assert.deepEqual(
+    steps.map((s) => s.label),
+    ['ci-wait', 'merge', 'branch-cleanup', 'sync-checkout', 'sync-fetch', 'sync-ff'],
+  );
+  assert.equal(title, '', 'merge-only не строит заголовок (PR уже открыт)');
+  assert.equal(commitBody, '', 'merge-only ничего не коммитит');
+});
+
+test('#700: --merge-only мёржит без --delete-branch, remote-ветку чистит отдельным шагом', () => {
+  const { steps } = planPrShip({ mergeOnly: true, currentBranch: 'fix/x' });
+  assert.deepEqual(steps.find((s) => s.label === 'merge').args, ['pr', 'merge', '--squash']);
+  const cleanup = steps.find((s) => s.label === 'branch-cleanup');
+  assert.deepEqual(cleanup.args, ['push', 'origin', '--delete', 'fix/x']);
+  assert.equal(cleanup.optional, true, 'неуспех cleanup не роняет уже успешный merge');
+});
+
+test('#700: --merge-only не требует type/message (PR уже есть)', () => {
+  assert.doesNotThrow(() => planPrShip({ mergeOnly: true, currentBranch: 'fix/x' }));
+});
+
+test('#700: --merge-only worktree-aware — base занят соседним деревом → sync без checkout', () => {
+  const { steps, skippedSync } = planPrShip({
+    mergeOnly: true,
+    currentBranch: 'fix/x',
+    worktreeBranches: ['main'],
+  });
+  const labels = steps.map((s) => s.label);
+  assert.ok(!labels.includes('sync-checkout'));
+  assert.ok(labels.includes('sync-fetch'));
+  assert.match(skippedSync, /другой worktree/u);
+});
+
+test('#700: --merge-only несовместим с --branch и с --no-merge', () => {
+  assert.throws(() => planPrShip({ mergeOnly: true, branch: 'fix/x' }), /--merge-only несовместим с --branch/u);
+  assert.throws(() => planPrShip({ mergeOnly: true, merge: false }), /--merge-only и --no-merge/u);
+});
+
+test('#700: планировщики full и merge-only несут ОДИН merge-хвост (без дублей)', () => {
+  // Гарантия Структурщика: правку безопасного мерджа делаем в одном месте (planMergeTail).
+  const tail = planMergeTail({ currentBranch: 'fix/x' }).steps.map((s) => s.label);
+  const full = planPrShip({ type: 'fix', message: 'x', currentBranch: 'fix/x' }).steps;
+  const fullTail = full.slice(full.findIndex((s) => s.label === 'ci-wait')).map((s) => s.label);
+  const mergeOnly = planPrShip({ mergeOnly: true, currentBranch: 'fix/x' }).steps.map((s) => s.label);
+  assert.deepEqual(fullTail, tail, 'full-флоу использует тот же хвост');
+  assert.deepEqual(mergeOnly, tail, 'merge-only использует тот же хвост');
+});
+
 test('planPrShip: --no-merge не добавляет merge/sync', () => {
   const { steps } = planPrShip({ type: 'chore', message: 'z', merge: false });
   assert.deepEqual(
@@ -96,6 +149,33 @@ test('planPrShip --no-commit + --branch → ошибка (несовместим
     () => planPrShip({ type: 'fix', message: 'x', commit: false, branch: 'feat/x' }),
     /--no-commit несовместим с --branch/,
   );
+});
+
+test('planBranchStep: уже на ветке → шаг не нужен (живой случай 19.07)', () => {
+  assert.equal(planBranchStep('feat/x', { currentBranch: 'feat/x' }), null);
+  const { steps } = planPrShip({
+    type: 'feat',
+    message: 'x',
+    branch: 'feat/x',
+    currentBranch: 'feat/x',
+  });
+  assert.ok(!steps.some((s) => s.label === 'branch'));
+});
+
+test('planBranchStep: локальная ветка есть → checkout без -b', () => {
+  assert.deepEqual(planBranchStep('feat/x', { currentBranch: 'main', localBranches: ['feat/x'] }), {
+    label: 'branch',
+    cmd: 'git',
+    args: ['checkout', 'feat/x'],
+  });
+});
+
+test('planBranchStep: новой ветки нет → checkout -b', () => {
+  assert.deepEqual(planBranchStep('feat/new', { currentBranch: 'main', localBranches: ['main'] }), {
+    label: 'branch',
+    cmd: 'git',
+    args: ['checkout', '-b', 'feat/new'],
+  });
 });
 
 // ─── worktree: ff-sync невозможен, если base держит соседнее дерево (#476 п.2) ─────

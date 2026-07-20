@@ -4,13 +4,15 @@ description: >-
   Membrana Insight process: capture strategic ideas in docs/insights/, Perplexity
   research cascade, five-role review (1–10), weekly plan weight. Use when user says
   инсайт, insight, yarn insight:, save strategic idea, insight create/research/review,
-  or archive a proven implemented insight.
+  or record an exact decision over a reviewed mandate.
   Do NOT use for M/L task archive (membrana-task-lifecycle) or daily ritual (membrana-developer-rhythm).
 ---
 
 # Membrana Insight
 
-Канон: [`docs/prompts/INSIGHT_REGULATION.md`](../../../docs/prompts/INSIGHT_REGULATION.md) · навигатор [`docs/INSIGHTS.md`](../../../docs/INSIGHTS.md)
+Канон агента: [`INSIGHT_LIFECYCLE_FOR_AGENTS.md`](../../../docs/prompts/INSIGHT_LIFECYCLE_FOR_AGENTS.md) ·
+артефакты: [`INSIGHT_REGULATION.md`](../../../docs/prompts/INSIGHT_REGULATION.md) ·
+навигатор: [`docs/INSIGHTS.md`](../../../docs/INSIGHTS.md)
 
 ## When to use
 
@@ -33,11 +35,11 @@ description: >-
    - при сбое API → **Cursor MCP Perplexity** (те же 3 запроса из dry-run)
    - `yarn insight research <id> --dry-run` — только запросы для ручного/MCP
 4. **Review:** `yarn insight review <id>` — 5 ролей, оценки **1–10**, `REVIEW.md`
-5. **Close:** `yarn insight close <id> --status adopted|deferred|rejected`
-6. **Archive implementation:** сначала сверить task registry, `git worktree list` и
-   открытые PR; затем dry-run:
-   `yarn insight archive <id> --task <task-id> --result "…"`.
-   Только при доказанном завершении повторить с `--execute`.
+5. **Decide:** после REVIEW materialize deterministic DecisionRequest и выполнить
+   `yarn insight decide <mandate-id> --set accepted|rejected|deferred --request-key <key> --authority <ref>`;
+   затем `--execute`. Legacy `adopted` — только presentation D=`accepted`.
+6. **Handoff:** accepted Mandate → `membrana-insight-to-sprint`; delivery/outcome,
+   visibility, correction/reopen/history → `membrana-insight-lifecycle`.
 
 ## Team insights
 
@@ -53,9 +55,10 @@ yarn insight create graph-trace-contract --title "…" --source virtual-team-ozh
 
 - Инсайт **не** меняет `ritual:day` / `ritual:evening`.
 - `adopted` не создаёт task без LGTM Teamlead. Переход adopted→спринт: [`membrana-insight-to-sprint`](../membrana-insight-to-sprint/SKILL.md).
-- `adopted` не равно «сделано». Не архивировать по одному sprintPhase, ветке или
-  впечатлению. Нужны связанные archived task-id, отсутствие active task/PR/worktree
-  и фактический `--result`; INSIGHT/RESEARCH/REVIEW не удалять.
+- `accepted/adopted` не равно «сделано». Task archive, sprintPhase, ветка, PR и backlink
+  сами по себе не доказывают L/O и не выбирают V.
+- Не использовать deprecated `insight close --status` или `insight archive --task --result`:
+  они hard-blocked без writes.
 - Для research в Cursor без API: вызови Perplexity MCP 3 раза, запиши в `RESEARCH.md`.
 - Пилоты спринта: см. `docs/insights/registry.json`.
 
@@ -67,9 +70,7 @@ yarn insight list
 yarn insight create my-slug --title "…" --source user
 yarn insight research insight-my-slug
 yarn insight review insight-my-slug
-yarn insight close insight-my-slug --status adopted
-yarn insight archive insight-my-slug --task task-id --result "Результат" # dry-run
-yarn insight archive insight-my-slug --task task-id --result "Результат" --execute
+yarn insight decide mandate-id --set accepted --request-key decision-1 --authority owner://decision/1
 ```
 
 ## Output format (virtual team review)

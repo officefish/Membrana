@@ -4,7 +4,7 @@
 |------|----------|
 | **ID** | `insight-archive-lifecycle` |
 | **Статус** | archived |
-| **Размер** | M |
+| **Размер** | L |
 | **Создана** | 2026-07-18 |
 | **Архивирована** | 2026-07-19 |
 | **GitHub Issue** | #609 |
@@ -13,7 +13,7 @@
 
 ## Заметки при закрытии
 
-PR #612, Closes #609 — evidence-gated insight archive; rebased onto main after Codex stall
+PR #677 merged (093e189c) — lifecycle canon C1–C7→I1–I3 after #612 prototype; follow-up to closed #609
 
 ---
 
