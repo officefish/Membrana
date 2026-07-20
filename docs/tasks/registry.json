@@ -14,7 +14,7 @@
       "supportPersonas": [
         "dynin"
       ],
-      "notes": "Дизайн ратифицирован заседанием M1 (docs/seanses/ritual-refactor-m1-angelina-2026-07-20.md). Корень DAG A→K→{S→R→D}. Linear-сценарий — вручную (гео-блок).",
+      "notes": "Дизайн ратифицирован заседанием M1 (docs/seanses/ritual-refactor-m1-angelina-2026-07-20.md). Корень DAG A→K→{S→R→D}. Linear-сценарий: Linear доступен через медиа-сервер, делегат ozhegov.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "ritual-refactor"
