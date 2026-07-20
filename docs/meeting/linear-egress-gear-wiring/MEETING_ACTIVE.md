@@ -6,55 +6,47 @@
 
 ---
 
-## СТАТУС: M0–M3 CLOSED · следующий слой — К5 ∥ К4b
+## СТАТУС: ВСЕ УЗЛЫ DAG CLOSED · заседание готово к закрытию
 
-Цепочка до снимка закрыта. По ратифицированному DAG после К3 независимы:
-**К5** (снятие stub) и **К4b** (гейт closure) — оба опираются на `pullOk`.
+Все вопросы ратифицированного порядка закрыты вердиктами. Осталось:
+аудит процедуры **отдельным** агентом (S-M5) · слово владельца на merge PR #690 ·
+реализация вне контейнера заседания.
 
-Аудитор (S-M5) — **отдельный** агент; председатель не играет.
+Председатель аудитора не играет.
 
 ## Задание
 
-См. [`MEETING_BRIEF.md`](./MEETING_BRIEF.md). Поправка — только `BRIEF_AMENDMENT.md` + LGTM.
+См. [`MEETING_BRIEF.md`](./MEETING_BRIEF.md). Сборка: [`EPIC.md`](./EPIC.md).
 
-## Порядок (M0 — **РАТИФИЦИРОВАН 2026-07-20**)
+## Порядок (M0 — **РАТИФИЦИРОВАН владельцем 2026-07-20**)
 
 ```
 К1 ∥ К4a → К2 → К3 → {К5, К4b}
 ```
 
-## Вердикты
-
-| Фаза | Узел | Суть | Протокол |
-|---|---|---|---|
-| M1 | К1 | media-NL = client+pull; office = snapshot consumer | [m1](../../seanses/linear-egress-gear-wiring-m1-egress-path-2026-07-20.md) |
-| M1b | К4a | `task:start` + passport seed + three carriers | [m1b](../../seanses/linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md) |
-| M2 | К2 | LINEAR key only media; trigger via X-Membrana-Token | [m2](../../seanses/linear-egress-gear-wiring-m2-secrets-trust-2026-07-20.md) |
-| M3 | К3 | honest-шапка + `pullOk` от файла; гейт офлайн | [m3](../../seanses/linear-egress-gear-wiring-m3-snapshot-dod-2026-07-20.md) |
-
-### M3 (К3) — деталь
-
-| Вопрос | Решение |
-|---|---|
-| Honest-шапка | `format`, `capturedAt`, `sourceRevision`, `producedBy=media-NL`, `egressRegion=NL`, `mode=batch-full-pull`, `trigger`, `recordCount` |
-| `source: office-batch` | **заменён** парой `producedBy` + `mode` |
-| `pullOk(S)` | полная шапка ∧ producedBy ∧ region ∧ revision≠∅ ∧ mode ∧ recordCount=\|body\| — **только от файла** |
-| Гейт офлайн | читает байты снимка; ноль GraphQL Linear в теле |
-| Freshness | вне тела гейта (не в `pullOk`) |
-| digest/fingerprint | опциональны в `@1` |
-
-На выход: К5 ← первый артефакт с `pullOk` не-stub путём · К4b ← надстройка над `pullOk`.
-
 ## Статус вопросов
 
-| Фаза | Вопрос | Статус | Повестка |
+| Фаза | Вопрос | Статус | Протокол |
 |---|---|---|---|
-| M0 | порядок (`E1`) | CLOSED / ratified | [M0-topic](./M0-topic.md) |
-| M1 | egress (`E2`) | CLOSED | [M1-topic](./M1-topic.md) |
-| M1b | каркас (`E3`) | CLOSED | [M1b-topic](./M1b-topic.md) |
-| M2 | секреты (`E4`) | CLOSED | [M2-topic](./M2-topic.md) |
-| M3 | снимок DoD (`E5`) | CLOSED | [M3-topic](./M3-topic.md) |
-| след. | stub / closure (`К5` ∥ `К4b`) | **следующие** | — |
+| M0 | порядок (`E1`) | CLOSED / ratified | [m0-order](../../seanses/linear-egress-gear-wiring-m0-order-2026-07-20.md) |
+| M1 | egress (`E2`, К1) | CLOSED | [m1-egress-path](../../seanses/linear-egress-gear-wiring-m1-egress-path-2026-07-20.md) |
+| M1b | каркас (`E3`, К4a) | CLOSED | [m1b-sprint-scaffold](../../seanses/linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md) |
+| M2 | секреты (`E4`, К2) | CLOSED | [m2-secrets-trust](../../seanses/linear-egress-gear-wiring-m2-secrets-trust-2026-07-20.md) |
+| M3 | снимок (`E5`, К3) | CLOSED | [m3-snapshot-dod](../../seanses/linear-egress-gear-wiring-m3-snapshot-dod-2026-07-20.md) |
+| M4 | stub-lift (`E6`, К5) | CLOSED | [m4-stub-lift](../../seanses/linear-egress-gear-wiring-m4-stub-lift-2026-07-20.md) |
+| M4b | closure (`E7`, К4b) | CLOSED | [m4b-closure-gate](../../seanses/linear-egress-gear-wiring-m4b-closure-gate-2026-07-20.md) |
+
+### M4 (К5) — кратко
+
+Снятие stub: `∃S: pullOk(S) ∧ media-NL ∧ ¬fixture`. Переключатель явный
+`{movementMode, snapshotRef, switchedAt}`. Silent-flip запрещён. После `t₀` —
+stub при live незаконен; единицы до `t₀` не переписываются. Closure stub не снимает.
+
+### M4b (К4b) — кратко
+
+Closure-гейт: closure artifact + card + снимок офлайн. Сверх `pullOk`: `present`,
+`issueClosed@headRev`, `acceptedBy≠∅`. Digest не обязателен в `@1`. Коды: мягкий 10;
+жёсткий 20/22/23. Stub ортогонален closure.
 
 ## Аудитор
 
@@ -66,5 +58,4 @@ yarn meeting:audit --id linear-egress-gear-wiring
 
 | Когда | Что |
 |---|---|
-| 2026-07-20 | M0…M2 closed |
-| 2026-07-20 | M3: `pullOk` + honest-шапка с producedBy/egressRegion. Дальше К5∥К4b. |
+| 2026-07-20 | M0…M3 · M4 stub-lift · M4b closure. DAG закрыт. Ждёт audit + merge владельца. |
