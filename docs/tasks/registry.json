@@ -1,6 +1,22 @@
 {
   "tasks": [
     {
+      "id": "pr-ship-merge-only",
+      "title": "pr:ship --merge-only: безопасный мердж уже открытого PR + норма против raw gh pr merge --delete-branch",
+      "promptPath": "docs/prompts/PR_SHIP_MERGE_ONLY_PROMPT.md",
+      "githubIssue": 700,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": ["rodchenko"],
+      "notes": "Корень #700: raw gh pr merge --delete-branch падает на checkout base из чужого worktree (мердж уже прошёл — ложный красный). pr:ship уже кодирует фикс (#653), но недостижим для УЖЕ ОТКРЫТОГО PR. Добавить --merge-only режим + норма в membrana-ship/CLAUDE.md.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "linear-stub-lift-office-graphql",
       "title": "K5 stub-lift + remove office Linear GraphQL (K1 debt)",
       "promptPath": "docs/prompts/LINEAR_STUB_LIFT_OFFICE_GRAPHQL_PROMPT.md",
