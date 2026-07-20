@@ -186,9 +186,11 @@
         "kind": "parent+predicate",
         "value": "умирает с weekly-strategy-frozen; появление includeInsights у дневной или другого читателя → отозвать"
       },
-      "status": "active",
+      "status": "revoked",
       "supersededBy": null,
-      "episode": "Найдено при чеканке заморозки. Ни заседание Q3, ни владелец этого следствия не называли. Делает Q4 (три дип-ресёрча / includeInsights) срочным: заморозка открыла дыру, которую он должен закрыть."
+      "episode": "Найдено при чеканке заморозки. Ни заседание Q3, ни владелец этого следствия не называли. Делает Q4 (три дип-ресёрча / includeInsights) срочным: заморозка открыла дыру, которую он должен закрыть.",
+      "revokedAt": "2026-07-20",
+      "revokedBecause": "Слово владельца «чекань и ревоке испорченного» (кристаллизация 20.07). Предикат insights-only-via-weekly сломан после #592 S4/Q5: флаги includeInsights убраны из тела недельной (strategic-plan-week.mjs); дневная (strategy-day.mjs / strategy-channels) читает инсайты параметром. Expect «1 · 0 · только _strategic-plan» больше не выполняется; сработало собственное правило отзыва («появление includeInsights у дневной или другого читателя → отозвать»). Радиус: 0 детей."
     },
     {
       "id": "truth-artifacts-called-crystals",
@@ -2331,6 +2333,161 @@
         "kind": "parents"
       },
       "episode": "Синтез T1 + строка канона, кристаллизация 19.07; канон правится этим же PR."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "linear-works-for-owner-incl-mcp",
+      "claim": "Linear на данный момент работает для владельца, в том числе судя по всему через MCP",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-20",
+        "utterance": {
+          "sessionId": "e3b60eb1-0bc6-4402-959b-e21026ca49b8",
+          "uuid": "7a9c8df6-a385-4375-a007-ec2bbdb4d425",
+          "timestamp": "2026-07-20T14:39:00.000Z",
+          "kind": "free-text",
+          "quote": "Linear на данный момент работает, прчем судя по всему через mcp сервер тоже",
+          "limit": "НЕ утверждать, что MCP = media egress; MCP может быть отдельным каналом (Cursor MCP Linear), пока владелец не уточнит. office 503 не отменяет «работает». Cursor agent-transcripts (не Claude jsonl): uuid детерминирован из sessionId+quote (в jsonl нет поля uuid). Файл: agent-transcripts/e3b60eb1-0bc6-4402-959b-e21026ca49b8/e3b60eb1-0bc6-4402-959b-e21026ca49b8.jsonl"
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 фаза 1 Q1. Эпизод: непонимание 503 vs live; владелец снял посылку «Линеар так и не заработал»."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "m0-ratifies-media-egress-as-prod-path",
+      "claim": "Ратификация M0 обязала production-path: egress Linear → media — реальный канал; дальше hardening, не rediscovery",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-20",
+        "utterance": {
+          "sessionId": "e3b60eb1-0bc6-4402-959b-e21026ca49b8",
+          "uuid": "9cb9cbf9-8927-4374-a0c5-e64c55bdd73e",
+          "timestamp": "2026-07-20T14:40:00.000Z",
+          "kind": "free-text",
+          "quote": "2- B  прод",
+          "limit": "Свободный текст ответа на варианты агента (A архитектура / B prod-path / C артефакт заседания). Выбран B. Не сказано: готовность media-path доказана пробой для всех сценариев; тождество MCP и media. Cursor agent-transcripts (не Claude jsonl): uuid детерминирован из sessionId+quote (в jsonl нет поля uuid). Файл: agent-transcripts/e3b60eb1-0bc6-4402-959b-e21026ca49b8/e3b60eb1-0bc6-4402-959b-e21026ca49b8.jsonl"
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 фаза 1 Q2. Заседание linear-egress-gear-wiring; слово «ратифицирую» → объём = prod."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "magistral-shifts-to-live-egress",
+      "claim": "Завтрашняя магистраль смещается на live egress / движок задач; #598 уступает",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-20",
+        "utterance": {
+          "sessionId": "e3b60eb1-0bc6-4402-959b-e21026ca49b8",
+          "uuid": "e9f342bb-a23a-4f7c-a4f0-f7c711caed6f",
+          "timestamp": "2026-07-20T14:41:00.000Z",
+          "kind": "free-text",
+          "quote": "3 - С",
+          "limit": "Свободный текст ответа на варианты агента (A #598 only / B dual / C shift). Выбран C. «Движок задач» в расшифровке агента рядом с live egress — владелец буквой C не детализировал состав hardening. Cursor agent-transcripts (не Claude jsonl): uuid детерминирован из sessionId+quote (в jsonl нет поля uuid). Файл: agent-transcripts/e3b60eb1-0bc6-4402-959b-e21026ca49b8/e3b60eb1-0bc6-4402-959b-e21026ca49b8.jsonl"
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 фаза 1 Q3. MAIN_DAY был #598 night:research; пилот/egress был carve-out — завтра магистраль смещается."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "linear-works-for-owner-incl-mcp",
+        "m0-ratifies-media-egress-as-prod-path"
+      ],
+      "id": "owner-works-does-not-certify-m0-path",
+      "claim": "Владельческое «Linear работает» не сертифицирует M0 production-path (media egress), пока не установлено тождество канала «работает» и media",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "конъюнкция",
+        "premisesUsed": [
+          "linear-works-for-owner-incl-mcp",
+          "m0-ratifies-media-egress-as-prod-path"
+        ],
+        "note": "Посылки: (1) Linear работает для владельца, в т.ч. через MCP, с limit что MCP может ≠ media; (2) prod-path M0 = media egress. Из конъюнкции следует: «работает» не есть сертификация media-path.",
+        "date": "2026-07-20"
+      },
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с любым родителем; наследует min(родителей)"
+      },
+      "supersededBy": null,
+      "episode": "Фаза 2 кристаллизации 20.07, пара 1×2."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "m0-ratifies-media-egress-as-prod-path",
+        "magistral-shifts-to-live-egress"
+      ],
+      "id": "tomorrow-magistral-is-m0-hardening",
+      "claim": "Завтрашняя магистраль — hardening ратифицированного media-egress prod-path, не rediscovery канала",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "конъюнкция",
+        "premisesUsed": [
+          "m0-ratifies-media-egress-as-prod-path",
+          "magistral-shifts-to-live-egress"
+        ],
+        "note": "Посылки: (2) M0 ратифицировал media как prod (дальше hardening); (3) магистраль смещается на live egress, #598 уступает. Следствие о типе работы завтра — hardening, не rediscovery и не #598.",
+        "date": "2026-07-20"
+      },
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с любым родителем; наследует min(родителей)"
+      },
+      "supersededBy": null,
+      "episode": "Фаза 2 кристаллизации 20.07, пара 2×3."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "linear-works-for-owner-incl-mcp",
+        "m0-ratifies-media-egress-as-prod-path",
+        "magistral-shifts-to-live-egress"
+      ],
+      "id": "magistral-must-not-treat-works-as-media-proof",
+      "claim": "План завтрашнего дня не вправе брать «Linear работает» как доказательство готовности media-egress — магистраль на этот path требует отдельной посылки о media",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "конъюнкция (лес)",
+        "premisesUsed": [
+          "linear-works-for-owner-incl-mcp",
+          "m0-ratifies-media-egress-as-prod-path",
+          "magistral-shifts-to-live-egress"
+        ],
+        "note": "Все три owner: магистраль на media-egress + «работает» не сертифицирует media ⇒ ритуал/план не может опереться на Q1 как на proof media-path. Пара 1×3 без (2) пуста (контрабанда тождества каналов); лес из трёх закрывает дыру.",
+        "date": "2026-07-20"
+      },
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с любым родителем; наследует min(родителей)"
+      },
+      "supersededBy": null,
+      "episode": "Фаза 2 кристаллизации 20.07, лес 1×2×3 (пара 1×3 пуста без контрабанды)."
     }
   ],
   "openGaps": [
