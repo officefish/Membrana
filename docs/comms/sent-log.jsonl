@@ -1,2 +1,5 @@
 {"ts":"2026-07-19T15:51:06.872Z","kind":"swallow","file":null,"sha256":"5949a9ffcb201ef74ec6cef695852e0c46a169fb7008c769fb1aff62432ee0e0","sent":true,"office_response":{"sent":true,"message_id":99}}
 {"ts":"2026-07-19T15:51:06.877Z","kind":"swallow","file":null,"sha256":"e4058cadee3f8d85f74f6fca49fa3e96c02b6ac36e8f47a4d1196304cf0ba082","sent":true,"office_response":{"sent":true}}
+{"ts":"2026-07-19T19:44:35.073Z","kind":"swallow","file":"docs/comms/drafts/ally-swallow-task-engine-v2-2026-07-19.md","sha256":"7617fda14dc30fe30877b47efa7a5d65085c191eb5e87ef7bddfde5ee70edb7a","sent":true,"office_response":{"sent":true}}
+{"ts":"2026-07-19T20:07:34.821Z","kind":"swallow","file":"docs/comms/drafts/ally-swallow-evening-2026-07-19.md","sha256":"5c39bdc02e8a7119093785d61c888862ca0edc2cd0d7c918ef9c2c1be7d4751a","sent":true,"office_response":{"sent":true}}
+{"ts":"2026-07-20T04:02:26.025Z","kind":"swallow","file":"docs/comms/drafts/ally-swallow-morning-2026-07-20.md","sha256":"b5a026c48eb6353473140d48cc386092f0eacaaba2904f3ce4bc40f1d48d28dd","sent":true,"office_response":{"sent":true}}
