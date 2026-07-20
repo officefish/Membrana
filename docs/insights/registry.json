@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-19",
+  "updatedAt": "2026-07-20",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -611,6 +611,17 @@
       "horizon": null,
       "weight": 6.4,
       "createdAt": "2026-07-19",
+      "tags": []
+    },
+    {
+      "id": "insight-tier2-worktree-topology",
+      "title": "Tier2: 5 канонических рабочих деревьев (main/tooling/product/codex/cursor), спринт всегда уходит в свою ветку",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-20",
       "tags": []
     }
   ]
