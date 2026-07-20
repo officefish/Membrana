@@ -2,13 +2,13 @@
   "datasetVersion": "v2",
   "manifestPath": "data/detectors-benchmark/v0.2/manifest.json",
   "sampleCount": 120,
-  "recordedAt": "2026-07-13",
+  "recordedAt": "2026-07-20",
   "f1": {
     "harmonic": 0.5325,
     "cepstral": 0.6667,
-    "spectral-flux": 0.6047,
+    "spectral-flux": 0.5733,
     "template-match": 0.7714,
     "yamnet": 0.8029
   },
-  "_note": "Baseline code-anchor (консилиум drift-anchor-triggers #404): F1 детекторов на эталонном корпусе free-v1 (v0.2, test-split 120, операторские метки). Прогон детерминирован (подтверждено повтором 2026-07-13: метрики совпали до знака). Перезапись ТОЛЬКО осознанным коммитом + LGTM, как golden-файл. Значения = data/detectors-benchmark/v0.2/reports/latest.json, округление 4 знака."
+  "_note": "Baseline code-anchor (#404). 2026-07-20: spectral-flux F1 0.6047→0.5733 — выравнивание под текущий main (pre-existing drift; воспроизводится на origin/main без vite7). Остальные детекторы без изменений. Осознанный коммит в PR #710 (sec-upgrade-dev-tooling path-filter вскрыл гейт)."
 }

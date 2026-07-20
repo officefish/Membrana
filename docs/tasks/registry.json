@@ -1,97 +1,6 @@
 {
   "tasks": [
     {
-      "id": "meeting-security-posture",
-      "title": "Заседание security-posture: аудит зависимостей + инцидент patchhog — DAG security-контура",
-      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
-      "githubIssue": null,
-      "size": "M",
-      "status": "archived",
-      "sprintKind": "meeting",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-19",
-      "leadPersona": "vesnin",
-      "supportPersonas": [
-        "dynin",
-        "ozhegov"
-      ],
-      "notes": "ЗАВЕРШЕНО 19.07: M0–M3 все с вердиктами, ратифицированы владельцем, аудированы S-M5 (6/7NA, 7/7, 7/7, 8/8). Артефакты: docs/meeting/security-posture/, регламенты DEPS_WATCH_REGULATION.md + INCIDENT_RESPONSE_REGULATION.md, дозор deps:watch в ритуалах, gitleaks-гейт, карточка инцидента patchhog. Открытыми остались 4 карточки sec-upgrade-* (вне контейнера). Архивировать через task:archive по слову владельца.",
-      "archiveNotes": "PR #676; review LGTM 9c0e9d413c3a; PR #676 merged 2026-07-19T16:32:15Z (5277101eccc6bcbf78c9db25f93f1e1f263b7e57)",
-      "githubIssueClosedAt": null
-    },
-    {
-      "githubIssue": 686,
-      "status": "archived",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": "2026-07-20",
-      "archiveNotes": "PR #688, 5e703979; Nest11+Fastify atom office/media/cabinet; LGTM TL",
-      "githubIssueClosedAt": null,
-      "id": "sec-upgrade-backend-runtime",
-      "title": "Апгрейд №1 backend-runtime-major: Nest 11 + fastify 5 + @fastify/middie 9 + fast-uri 3 (атом, office+media+cabinet)",
-      "size": "L",
-      "leadPersona": "dynin",
-      "supportPersonas": [
-        "ozhegov"
-      ],
-      "promptPath": "docs/prompts/SEC_UPGRADE_BACKEND_RUNTIME_PROMPT.md",
-      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты critical middie + fastify/fast-uri/platform-fastify highs; smoke HTTP. Пилот LINEAR_TASKS_GEAR: docs/discussions/linear-tasks-gear-pilot-sec-upgrade-backend-runtime-2026-07-20.md. Мерж поочерёдно с sec-upgrade-dev-tooling (общий lockfile)."
-    },
-    {
-      "githubIssue": null,
-      "status": "active",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": null,
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
-      "id": "sec-upgrade-dev-tooling",
-      "title": "Апгрейд №2 dev-tooling-major: vite 7 + vitest 3 (фазы: foundation → детекторы → client)",
-      "size": "L",
-      "leadPersona": "rodchenko",
-      "supportPersonas": [
-        "kuryokhin"
-      ],
-      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
-      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: снят vitest critical + vite high; клиентский smoke (vite dev, HMR, прод-бандл, DESIGN-токены)."
-    },
-    {
-      "githubIssue": null,
-      "status": "active",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": null,
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
-      "id": "sec-upgrade-tar",
-      "title": "Апгрейд №3 tar 6→7: локальный форс + канареечная полная сборка desktop (без слепых resolutions)",
-      "size": "M",
-      "leadPersona": "dynin",
-      "supportPersonas": [
-        "kuryokhin"
-      ],
-      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
-      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты 6 tar high; node-gyp/electron-builder не сломаны. Строго ПЕРЕД electron-major."
-    },
-    {
-      "githubIssue": null,
-      "status": "active",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-19",
-      "archivedAt": null,
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
-      "id": "sec-upgrade-electron",
-      "title": "Апгрейд №4 electron-major (рискованный, последним): UAF ×3 + cmdline injection",
-      "size": "M",
-      "leadPersona": "dynin",
-      "supportPersonas": [
-        "kuryokhin"
-      ],
-      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
-      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты 4 electron high; ручной desktop-smoke (окно, захват device-board, CSP). После sec-upgrade-tar."
-    },
-    {
       "id": "pr-ship-merge-only",
       "title": "pr:ship --merge-only: безопасный мердж уже открытого PR + норма против raw gh pr merge --delete-branch",
       "promptPath": "docs/prompts/PR_SHIP_MERGE_ONLY_PROMPT.md",
@@ -192,6 +101,97 @@
       "notes": "Ретро тулинга 18.07. Кристаллизация наполовину ручная: чеканка правкой JSON, указатель на реплику ad-hoc скриптом, дубль-проверки нет — сожжён вопрос владельца (токен alex-sparring-answered уже был от 17.07). Новых контрактов нет, форма токена — канон.",
       "archiveNotes": null,
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "meeting-security-posture",
+      "title": "Заседание security-posture: аудит зависимостей + инцидент patchhog — DAG security-контура",
+      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "meeting",
+      "createdAt": "2026-07-19",
+      "archivedAt": "2026-07-19",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "ЗАВЕРШЕНО 19.07: M0–M3 все с вердиктами, ратифицированы владельцем, аудированы S-M5 (6/7NA, 7/7, 7/7, 8/8). Артефакты: docs/meeting/security-posture/, регламенты DEPS_WATCH_REGULATION.md + INCIDENT_RESPONSE_REGULATION.md, дозор deps:watch в ритуалах, gitleaks-гейт, карточка инцидента patchhog. Открытыми остались 4 карточки sec-upgrade-* (вне контейнера). Архивировать через task:archive по слову владельца.",
+      "archiveNotes": "PR #676; review LGTM 9c0e9d413c3a; PR #676 merged 2026-07-19T16:32:15Z (5277101eccc6bcbf78c9db25f93f1e1f263b7e57)",
+      "githubIssueClosedAt": null
+    },
+    {
+      "githubIssue": 686,
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": "2026-07-20",
+      "archiveNotes": "PR #688, 5e703979; Nest11+Fastify atom office/media/cabinet; LGTM TL",
+      "githubIssueClosedAt": null,
+      "id": "sec-upgrade-backend-runtime",
+      "title": "Апгрейд №1 backend-runtime-major: Nest 11 + fastify 5 + @fastify/middie 9 + fast-uri 3 (атом, office+media+cabinet)",
+      "size": "L",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "promptPath": "docs/prompts/SEC_UPGRADE_BACKEND_RUNTIME_PROMPT.md",
+      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты critical middie + fastify/fast-uri/platform-fastify highs; smoke HTTP. Пилот LINEAR_TASKS_GEAR: docs/discussions/linear-tasks-gear-pilot-sec-upgrade-backend-runtime-2026-07-20.md. Мерж поочерёдно с sec-upgrade-dev-tooling (общий lockfile)."
+    },
+    {
+      "githubIssue": 706,
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": "2026-07-20",
+      "archiveNotes": "PR #710, 05a0bf0d; vite7+vitest3; baseline spectral-flux reanchor; LGTM TL",
+      "githubIssueClosedAt": null,
+      "id": "sec-upgrade-dev-tooling",
+      "title": "Апгрейд №2 dev-tooling-major: vite 7 + vitest 3 (фазы: foundation → детекторы → client)",
+      "size": "L",
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "kuryokhin"
+      ],
+      "promptPath": "docs/prompts/SEC_UPGRADE_DEV_TOOLING_PROMPT.md",
+      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: снят vitest critical + vite high; клиентский smoke (vite dev, HMR, прод-бандл, DESIGN-токены)."
+    },
+    {
+      "githubIssue": 707,
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "id": "sec-upgrade-tar",
+      "title": "Апгрейд №3 tar 6→7: локальный форс + канареечная полная сборка desktop (без слепых resolutions)",
+      "size": "M",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "kuryokhin"
+      ],
+      "promptPath": "docs/prompts/SEC_UPGRADE_TAR_PROMPT.md",
+      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты 6 tar high; node-gyp/electron-builder не сломаны. Строго ПЕРЕД electron-major."
+    },
+    {
+      "githubIssue": 708,
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-19",
+      "archivedAt": null,
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "id": "sec-upgrade-electron",
+      "title": "Апгрейд №4 electron-major (рискованный, последним): UAF ×3 + cmdline injection",
+      "size": "M",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "kuryokhin"
+      ],
+      "promptPath": "docs/prompts/SEC_UPGRADE_ELECTRON_PROMPT.md",
+      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты 4 electron high; ручной desktop-smoke (окно, захват device-board, CSP). После sec-upgrade-tar."
     },
     {
       "id": "linear-agent-identity-facts",
