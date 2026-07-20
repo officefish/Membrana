@@ -61,6 +61,6 @@ Body: { "trigger": "office-trigger", "persist": true }
 
 ## Out of scope этого контракта `@1`
 
-- Stub-lift (`movementMode`, К5)
+- Stub-lift (`movementMode`, К5) — носитель и lift: [`MOVEMENT_MODE.md`](./MOVEMENT_MODE.md) / `docs/tasks/movement-mode.json`
 - Closure-гейт сверх `pullOk` (К4b)
 - Обязательный `contentDigest`

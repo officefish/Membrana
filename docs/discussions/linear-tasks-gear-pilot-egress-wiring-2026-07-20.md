@@ -120,4 +120,30 @@ Trigger требует явный URL media. Деплой: прописать UR
 - [x] Live smoke `pullOk=true` / honest-шапка media-NL (224 records)
 - [x] `yarn task:archive linear-egress-media-wiring`
 - [x] Closure: `docs/tasks/closures/linear-egress-media-wiring.md`
-- [ ] Linear movement live units — stub снят по К5 отдельно (первый `pullOk` есть; явный `movementMode` switch — follow-up)
+- [x] Linear movement live units — stub снят по К5 в #694 (явный `movementMode` switch)
+
+---
+
+## 7. Follow-up #694 — К5 stub-lift + office GraphQL refuse (2026-07-20)
+
+> Issue [#694](https://github.com/officefish/Membrana/issues/694) · registry `linear-stub-lift-office-graphql` · слово владельца «идем туда».
+
+### O12. К5 lift — явная атомарная запись, не silent
+
+После live `pullOk` (#692) stub снят скриптом `yarn movement:lift --execute` →
+`docs/tasks/movement-mode.json` = `{ movementMode: live-snapshot, snapshotRef, switchedAt }`.
+Producer/capture **не** мутирует флаг. Носитель — git-файл, не cold и не env
+(см. [`MOVEMENT_MODE.md`](../tasks/MOVEMENT_MODE.md)).
+
+### O13. Office issue-view больше не зонд Linear
+
+`LinearService` бросает `503` / `LINEAR_OFFICE_EGRESS_DISABLED` без `fetch`.
+`outbound-self-check` убрал probe `api.linear.app` — иначе RU→403 выглядел бы
+как «канал мёртв», а не как запрещённый путь. **Рефакторинг:** любой health-probe
+не должен зелёнить запрещённый egress.
+
+### O14. Live ref snapshot в git (~225 records)
+
+`docs/tasks/snapshots/linear-snapshot-live-ref.json` — сохранённый S для
+`audit(S)=pullOk(S)` без сети. Размер шумный для diff, но M4 требует
+переигрываемый артефакт; обрезать тело нельзя (`recordCount` = `|B|`).
