@@ -23,6 +23,10 @@
  * Логика планирования (planPrShip) — чистая и покрыта тестом; CLI лишь исполняет/печатает.
  */
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+import { classifyWorktree, parseWorktreeCard } from './lib/classify-worktree.mjs';
 
 const TRAILER = 'Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>';
 
@@ -271,6 +275,52 @@ function main() {
     }
   }
   if (!opts.execute) console.log('\n(dry-run — ничего не выполнено; добавь --execute)');
+  if (opts.execute && opts.merge) reportWorktreeFate(current);
+}
+
+/**
+ * Merge-гейт как потребитель classifyWorktree (K2, #717): после успешного мерджа
+ * дерево спринта обычно становится sprint-closed — сказать об этом сразу, а не
+ * ждать, пока хвост найдёт утренний repo:clean. Только подсказка, никаких мутаций.
+ */
+function reportWorktreeFate(branch) {
+  let card = null;
+  try {
+    card = parseWorktreeCard(readFileSync(resolve(process.cwd(), 'WORKTREE.md'), 'utf8'));
+  } catch {
+    /* нет карточки — classify сам скажет unregistered */
+  }
+  let pr = null;
+  let ghUnavailable = false;
+  try {
+    const raw = execFileSync('gh', ['pr', 'view', '--json', 'number,state'], { encoding: 'utf8' });
+    const parsed = JSON.parse(raw);
+    pr = { number: parsed.number, state: String(parsed.state).toUpperCase() };
+  } catch {
+    ghUnavailable = true;
+  }
+  let dirtyCount = 0;
+  try {
+    dirtyCount = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' })
+      .split(/\r?\n/u)
+      .filter(Boolean).length;
+  } catch {
+    /* без git подсказка не нужна */
+  }
+  const c = classifyWorktree({
+    path: process.cwd(),
+    branch,
+    card,
+    dirtyCount,
+    unpushedCount: 0, // merge только что прошёл — локальное состояние уехало в PR
+    pr,
+    ghUnavailable,
+  });
+  if (c.class === 'sprint-closed') {
+    console.log(`\n♻ дерево стало sprint-closed (${c.reasons[0]}) — снести: yarn repo:clean --execute --worktrees (руками)`);
+  } else if (c.class === 'unregistered') {
+    console.log('\n⚠ дерево без карточки WORKTREE.md (unregistered) — заведи: yarn worktree:bootstrap');
+  }
 }
 
 // ESM-эквивалент require.main === module

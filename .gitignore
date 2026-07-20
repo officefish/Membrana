@@ -164,3 +164,7 @@ docs/replit-tasks/*
 # Insight lifecycle runtime (C7 store/journal/lock)
 docs/insights/_lifecycle/
 
+
+# Worktree-гигиена (#717): карточка дерева и advisory-замок — per-tree, не версионируются
+/WORKTREE.md
+/.worktree-owner

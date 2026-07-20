@@ -19,12 +19,12 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { classifyWorktree, parseWorktreeCard } from './lib/classify-worktree.mjs';
 import {
   decideBranch,
   decideWorktree,
   groupByReason,
   latestPrByBranch,
-  makeArchivedSprintPredicate,
   rootScratchFiles,
 } from './lib/repo-clean.mjs';
 
@@ -74,7 +74,7 @@ function gitLines(args, cwd = repoRoot) {
 
 function fetchPrs() {
   const raw = execSync(
-    `gh pr list --state all --limit 500 --json number,state,headRefName --repo ${REPO}`,
+    `gh pr list --state all --limit 500 --json number,state,headRefName,headRefOid --repo ${REPO}`,
     { cwd: repoRoot, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 },
   );
   return JSON.parse(raw);
@@ -118,6 +118,60 @@ function aheadOfMain(branch) {
   }
 }
 
+/** Карточка дерева (WORKTREE.md) — носитель различителя canon/sprint (M1). */
+function readWorktreeCard(wtPath) {
+  const file = resolve(wtPath, 'WORKTREE.md');
+  if (!existsSync(file)) return null;
+  try {
+    return parseWorktreeCard(readFileSync(file, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Локальные коммиты, которых нет снаружи. После squash-мёржа remote-ветку обычно
+ * удаляют, поэтому «ahead origin/main» тут не годится (squash делает его >0 всегда):
+ * при живом origin/<branch> считаем против него, иначе сверяем tip с headRefOid PR —
+ * совпал → всё, что было в PR, снаружи есть. Непонятно → 1 (fail-closed, не сносить).
+ */
+function unpushedCount(branch, pr) {
+  try {
+    return Number(git(['rev-list', '--count', `origin/${branch}..${branch}`]));
+  } catch {
+    /* origin-ветки нет — сверяем с PR */
+  }
+  if (pr?.headRefOid) {
+    try {
+      return git(['rev-parse', branch]) === pr.headRefOid
+        ? 0
+        : Number(git(['rev-list', '--count', `${pr.headRefOid}..${branch}`]));
+    } catch {
+      return 1;
+    }
+  }
+  return aheadOfMain(branch) > 0 ? 1 : 0;
+}
+
+/**
+ * Таблица классификации K2 (вердикт M1: provenance каждой строки обязателен).
+ * `unknown` — отдельной строкой: состояние PR недоступно, снос запрещён.
+ */
+function reportWorktreeClasses(out, wts) {
+  out.log('\nКлассы lifecycle (K2, истина — состояние PR):');
+  const order = ['canon', 'sprint-closed', 'sprint-open', 'unregistered'];
+  for (const cls of order) {
+    for (const w of wts.filter((x) => x.class === cls)) {
+      out.log(`  ${cls.padEnd(13)} ${w.path} · ${w.branch ?? 'detached'} · ${w.reason}`);
+    }
+  }
+  const unknown = wts.filter((w) => w.class === 'unknown');
+  if (unknown.length > 0) {
+    out.log('  — unknown (не сносить):');
+    for (const w of unknown) out.log(`    ${w.path} · ${w.branch ?? 'detached'} · ${w.reason}`);
+  }
+}
+
 function report(out, title, groups) {
   out.log(`\n${title}`);
   if (groups.size === 0) {
@@ -152,8 +206,6 @@ function main() {
   const prByBranch = latestPrByBranch(prs);
   const currentBranch = git(['branch', '--show-current']);
   const wtBranches = worktreeBranches();
-  const registry = JSON.parse(readFileSync(resolve(repoRoot, 'docs/tasks/registry.json'), 'utf8'));
-  const isArchivedSprint = makeArchivedSprintPredicate(registry);
 
   const remoteSet = new Set(
     gitLines(['branch', '-r', '--format=%(refname:short)'])
@@ -188,24 +240,33 @@ function main() {
   report(out, `Удалённые ветки (${remotes.length}) — УДАЛИТЬ ${remoteDead.length}:`, groupByReason(remoteDead));
   report(out, 'Удалённые — оставить:', groupByReason(remoteDecisions.filter((d) => !d.delete)));
 
-  // ─── worktree ───────────────────────────────────────────────────────────────────
+  // ─── worktree: lifecycle-классификация K2 (#717), истина — состояние PR ─────────
   const wts = listWorktrees().map((wt, index) => {
-    const dirtyCount = existsSync(wt.path)
-      ? gitLines(['status', '--porcelain'], wt.path).length
-      : 0;
+    const exists = existsSync(wt.path);
+    const dirtyCount = exists ? gitLines(['status', '--porcelain'], wt.path).length : 0;
+    const card = exists ? readWorktreeCard(wt.path) : null;
+    const pr = wt.branch ? (prByBranch.get(wt.branch) ?? null) : null;
+    const classification = classifyWorktree({
+      path: wt.path,
+      branch: wt.branch,
+      card,
+      dirtyCount,
+      unpushedCount: wt.branch ? unpushedCount(wt.branch, pr) : 0,
+      pr: pr ? { number: pr.number, state: pr.state } : null,
+    });
     return decideWorktree(
       {
         ...wt,
         isMain: index === 0,
         isCurrent: resolve(wt.path) === resolve(repoRoot),
-        dirtyCount,
       },
-      isArchivedSprint,
+      classification,
     );
   });
   const wtDead = wts.filter((w) => w.remove);
   report(out, `Worktree (${wts.length}) — УБРАТЬ ${wtDead.length}:`, groupByReason(wtDead));
   report(out, 'Worktree — оставить:', groupByReason(wts.filter((w) => !w.remove)));
+  reportWorktreeClasses(out, wts);
 
   if (!cli.execute) {
     out.log('\ndry-run: ничего не тронуто. Реально удалить — --execute [--remote] [--worktrees].');

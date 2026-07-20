@@ -11,7 +11,7 @@
  *   yarn worktree:bootstrap --no-env     # только modules
  *   yarn worktree:bootstrap --from <path-to-primary>
  */
-import { copyFileSync, existsSync } from 'node:fs';
+import { copyFileSync, existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { platform } from 'node:os';
@@ -88,12 +88,49 @@ function main() {
     }
   }
 
+  // Инвариант регистрации (M1 worktree-hygiene-gaps, #717): create пишет карточку
+  // атомарно — дерево без WORKTREE.md гейт классифицирует как unregistered-хвост.
+  writeWorktreeCard(cwd);
+
   if (!plan.ok) {
     process.exitCode = 1;
     return;
   }
   console.log('[worktree:bootstrap] OK');
   process.exitCode = 0;
+}
+
+function writeWorktreeCard(cwd) {
+  const file = join(cwd, 'WORKTREE.md');
+  if (existsSync(file)) return;
+  let branch = '(detached)';
+  try {
+    branch =
+      execFileSync('git', ['branch', '--show-current'], { cwd, encoding: 'utf8' }).trim() ||
+      '(detached)';
+  } catch {
+    /* без git карточка всё равно нужна — с плейсхолдером ветки */
+  }
+  writeFileSync(
+    file,
+    [
+      '# WORKTREE — карточка дерева',
+      '',
+      '| Поле | Значение |',
+      '|---|---|',
+      '| kind | sprint |',
+      `| Ветка | ${branch} |`,
+      '| Владелец | агент сессии (заполните имя) |',
+      '| gc | запрещён (`gc.auto 0`); gc только в main-checkout |',
+      '| install | свой |',
+      '',
+      '> Спринт-дерево: срок жизни = жизнь PR его ветки. Снос — `yarn repo:clean`',
+      '> по классу sprint-closed (PR merged/closed, без хвостов). Канон: #717.',
+      '',
+    ].join('\n'),
+    'utf8',
+  );
+  console.log('  → WORKTREE.md (kind: sprint) — регистрация дерева');
 }
 
 try {

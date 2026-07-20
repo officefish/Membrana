@@ -8,6 +8,7 @@
  *
  * Здесь только чистые функции (без git/gh/fs) — их гоняют тесты на фикстурах.
  */
+import { shouldTeardown } from './classify-worktree.mjs';
 
 /**
  * Долгоживущие ветки персонажей (TASKS_MANAGEMENT §7а) + main.
@@ -24,6 +25,21 @@ export const PROTECTED_BRANCHES = new Set([
   'rodchenko',
   'kuryokhin',
 ]);
+
+/**
+ * Базовые ветки канонических деревьев (`base/<canonName>`) — держатели позиции
+ * (консилиум tier2-git-hygiene-multi-agent, #717): не место работы, но и не мусор.
+ * Имя `base/…`, а не голое `tooling`: refs/heads/tooling конфликтовал бы с
+ * существующим пространством `tooling/*`.
+ */
+export const PROTECTED_BRANCH_PREFIXES = ['base/'];
+
+export function isProtectedBranch(name) {
+  return (
+    PROTECTED_BRANCHES.has(name) ||
+    PROTECTED_BRANCH_PREFIXES.some((p) => String(name).startsWith(p))
+  );
+}
 
 /** Причины, по которым ветка НЕ удаляется. Печатаются в отчёте как есть. */
 export const KEEP_REASON = {
@@ -66,7 +82,7 @@ export function decideBranch(branch, prByBranch, ctx = {}) {
   const worktreeBranches = ctx.worktreeBranches ?? new Set();
   const keep = (reason, pr = null) => ({ name, delete: false, reason, pr });
 
-  if (PROTECTED_BRANCHES.has(name)) return keep(KEEP_REASON.protected);
+  if (isProtectedBranch(name)) return keep(KEEP_REASON.protected);
   if (worktreeBranches.has(name)) return keep(KEEP_REASON.worktree);
   if (ctx.currentBranch && name === ctx.currentBranch) return keep(KEEP_REASON.current);
 
@@ -84,45 +100,37 @@ export function decideBranch(branch, prByBranch, ctx = {}) {
 }
 
 /**
- * Решение по worktree.
+ * Решение по worktree — процессные гарды поверх lifecycle-классификации K2 (#717).
  *
- * Удаляем только когда сходится всё: дерево чистое, не заблокировано, это не
- * главный checkout и не текущая сессия, а спринт ветки — archived в реестре.
- * Любое сомнение → оставить: снести чужую активную сессию дороже, чем не убрать.
+ * Lifecycle решает `classifyWorktree` (scripts/lib/classify-worktree.mjs): под снос
+ * идёт ровно класс `sprint-closed` (kind=sprint ∧ PR merged/closed ∧ без хвостов).
+ * Реестр из предиката ушёл — истина по состоянию PR, не по карточке registry.json.
+ * Здесь остаются только гарды исполнения: главный checkout, текущая сессия, locked —
+ * это про то, МОЖНО ли сносить сейчас, а не про то, мертво ли дерево.
  *
- * @param {object} wt — { path, branch, isMain, locked, dirtyCount, isCurrent }
- * @param {(branch:string) => boolean} isArchivedSprint
+ * @param {object} wt — { path, branch, isMain, locked, isCurrent }
+ * @param {{class: string, reasons: string[]}} classification — от classifyWorktree
  */
-export function decideWorktree(wt, isArchivedSprint) {
-  const keep = (reason) => ({ path: wt.path, branch: wt.branch, remove: false, reason });
+export function decideWorktree(wt, classification) {
+  const keep = (reason) => ({
+    path: wt.path,
+    branch: wt.branch,
+    remove: false,
+    class: classification.class,
+    reason,
+  });
   if (wt.isMain) return keep('главный checkout репозитория');
   if (wt.isCurrent) return keep('текущая сессия');
   if (wt.locked) return keep('locked — снимать блокировку осознанно, вручную');
-  if (wt.dirtyCount > 0) return keep(`${wt.dirtyCount} незакоммиченных изменений`);
-  if (!wt.branch) return keep('detached HEAD — разбирать вручную');
-  if (!isArchivedSprint(wt.branch)) return keep('спринт ветки не archived в реестре');
-  return { path: wt.path, branch: wt.branch, remove: true, reason: 'спринт archived, дерево чистое' };
-}
-
-/**
- * Спринт ветки завершён? Ветка вида `comp/<sprint-id>/alpha` или
- * `cowork/<sprint-id>/<block>` → id спринта берём вторым сегментом и ищем в реестре.
- * Ветка без такой формы → «не знаем» → не трогаем (fail-closed).
- *
- * @param {{tasks: {id:string,status:string}[]}} registry
- */
-export function makeArchivedSprintPredicate(registry) {
-  const status = new Map(registry.tasks.map((t) => [t.id, t.status]));
-  return (branch) => {
-    const segments = String(branch).split('/');
-    if (segments.length < 2) return false;
-    const sprintId = segments[1];
-    // Реестр хранит id вида `comp-detection-alarm`, ветка — `comp-detection-alarm-2026-07-10`.
-    for (const [id, st] of status) {
-      if (st !== 'archived') continue;
-      if (sprintId === id || sprintId.startsWith(`${id}-`)) return true;
-    }
-    return false;
+  if (!shouldTeardown(classification)) {
+    return keep(`${classification.class}: ${classification.reasons[0] ?? 'без причины'}`);
+  }
+  return {
+    path: wt.path,
+    branch: wt.branch,
+    remove: true,
+    class: classification.class,
+    reason: classification.reasons[0],
   };
 }
 
@@ -135,6 +143,10 @@ export const ROOT_ALLOWED_UNTRACKED = new Set([
   '.env.local',
   '.env.llm-proxy',
   'yarn-error.log',
+  // Карточка дерева и advisory-замок (#717) — законные per-worktree файлы,
+  // в git не попадают (у каждого дерева своё содержимое), игнор в info/exclude.
+  'WORKTREE.md',
+  '.worktree-owner',
 ]);
 
 /** Каталоги-инструменты в корне: их содержимое не наше дело. */

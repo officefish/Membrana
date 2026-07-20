@@ -14,7 +14,6 @@ import {
   decideBranch,
   decideWorktree,
   latestPrByBranch,
-  makeArchivedSprintPredicate,
 } from './lib/repo-clean.mjs';
 import { createReporter, parseCli } from './repo-clean.mjs';
 
@@ -105,70 +104,45 @@ test('PROTECTED_BRANCHES содержит персонажей канона', ()
   assert.ok(PROTECTED_BRANCHES.has('vesnin') && PROTECTED_BRANCHES.has('main'));
 });
 
-// ─── worktree ─────────────────────────────────────────────────────────────────────
+// ─── worktree: гарды исполнения поверх classifyWorktree (K2, #717) ────────────────
 
-const registry = {
-  tasks: [
-    { id: 'comp-detection-alarm', status: 'archived' },
-    { id: 'cowork-free-fragment-usercases', status: 'active' },
-  ],
-};
-const isArchived = makeArchivedSprintPredicate(registry);
+const closed = { class: 'sprint-closed', reasons: ['PR #700 MERGED, дерево чистое — кандидат к сносу'] };
 
-test('worktree архивного спринта с чистым деревом — убрать', () => {
-  const w = decideWorktree(
-    { path: '/wt/alpha', branch: 'comp/comp-detection-alarm-2026-07-10/alpha', dirtyCount: 0 },
-    isArchived,
-  );
+test('sprint-closed без гардов — убрать, причина = provenance классификатора', () => {
+  const w = decideWorktree({ path: '/wt/alpha', branch: 'comp/x/alpha' }, closed);
   assert.equal(w.remove, true);
+  assert.match(w.reason, /#700 MERGED/);
 });
 
-test('worktree живого спринта — не трогать (cowork #487)', () => {
-  const w = decideWorktree(
-    { path: '/wt/integration', branch: 'cowork/cowork-free-fragment-usercases/integration', dirtyCount: 0 },
-    isArchived,
-  );
-  assert.equal(w.remove, false);
-  assert.match(w.reason, /не archived/);
+test('canon / sprint-open / unregistered / unknown — не убирать', () => {
+  for (const cls of ['canon', 'sprint-open', 'unregistered', 'unknown']) {
+    const w = decideWorktree(
+      { path: '/wt/x', branch: 'feat/x' },
+      { class: cls, reasons: ['причина'] },
+    );
+    assert.equal(w.remove, false, cls);
+    assert.match(w.reason, new RegExp(cls), 'класс виден в причине');
+  }
 });
 
-test('грязный worktree не убирается, даже если спринт archived', () => {
-  const w = decideWorktree(
-    { path: '/wt/alpha', branch: 'comp/comp-detection-alarm-2026-07-10/alpha', dirtyCount: 3 },
-    isArchived,
-  );
-  assert.equal(w.remove, false);
-  assert.match(w.reason, /3 незакоммиченных/);
-});
-
-test('locked worktree не убирается автоматически', () => {
-  const w = decideWorktree(
-    { path: '/wt/alpha', branch: 'comp/comp-detection-alarm-2026-07-10/alpha', locked: true, dirtyCount: 0 },
-    isArchived,
-  );
+test('locked worktree не убирается даже при sprint-closed', () => {
+  const w = decideWorktree({ path: '/wt/alpha', branch: 'comp/x/alpha', locked: true }, closed);
   assert.equal(w.remove, false);
   assert.match(w.reason, /locked/);
 });
 
 test('главный checkout и текущая сессия не убираются никогда', () => {
-  const base = { branch: 'comp/comp-detection-alarm-2026-07-10/alpha', dirtyCount: 0 };
-  assert.equal(decideWorktree({ ...base, path: '/repo', isMain: true }, isArchived).remove, false);
-  assert.equal(decideWorktree({ ...base, path: '/repo', isCurrent: true }, isArchived).remove, false);
+  assert.equal(decideWorktree({ path: '/repo', branch: 'x', isMain: true }, closed).remove, false);
+  assert.equal(decideWorktree({ path: '/repo', branch: 'x', isCurrent: true }, closed).remove, false);
 });
 
-test('detached HEAD и ветка вне формата спринта — не трогать (fail-closed)', () => {
-  assert.equal(decideWorktree({ path: '/wt/x', branch: null, dirtyCount: 0 }, isArchived).remove, false);
-  assert.equal(decideWorktree({ path: '/wt/x', branch: 'main', dirtyCount: 0 }, isArchived).remove, false);
-});
-
-test('предикат спринта не путает префиксы разных спринтов', () => {
-  const p = makeArchivedSprintPredicate({
-    tasks: [{ id: 'comp-alarm', status: 'archived' }, { id: 'comp-alarm-v2', status: 'active' }],
-  });
-  assert.equal(p('comp/comp-alarm-2026-07-10/alpha'), true);
-  // `comp-alarm-v2` активен; но он же начинается с «comp-alarm-» → совпал бы по
-  // startsWith со СТАРЫМ спринтом. Проверяем, что архивным считается только точный.
-  assert.equal(p('comp/comp-alarm-v2/alpha'), true);
+test('базовые ветки канона base/* защищены от чистки', () => {
+  const d = decideBranch(
+    { name: 'base/tooling', hasRemote: false },
+    prs({ number: 1, state: 'MERGED', headRefName: 'base/tooling' }),
+  );
+  assert.equal(d.delete, false);
+  assert.equal(d.reason, KEEP_REASON.protected);
 });
 
 // ─── CLI ──────────────────────────────────────────────────────────────────────────
