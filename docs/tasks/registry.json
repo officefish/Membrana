@@ -1,6 +1,22 @@
 {
   "tasks": [
     {
+      "id": "linear-egress-media-wiring",
+      "title": "media-NL Linear snapshot producer + office trigger (egress wiring K1-K3)",
+      "promptPath": "docs/prompts/LINEAR_EGRESS_MEDIA_WIRING_PROMPT.md",
+      "githubIssue": 691,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [],
+      "notes": "pilot gear; deferred-egress stub; meeting linear-egress-gear-wiring; Issue #691",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "cowork-execution-registry",
       "title": "Cowork Sprint: контур исполнения команды + переезд реестра",
       "promptPath": "docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md",

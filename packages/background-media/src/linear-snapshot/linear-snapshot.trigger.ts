@@ -1,6 +1,7 @@
 /**
- * Триггеры снимка на office — коалесценция сигналов перед вызовом media.
- * Payload вебхука в тело не попадает.
+ * Триггеры снимка — ОТДЕЛЬНО от тела производителя.
+ * Payload вебхука / office-trigger в тело не попадает: `signal(kind)` принимает
+ * только род триггера. Тело — всегда свежий полный pull.
  */
 import { Injectable, Logger } from '@nestjs/common';
 import { LinearSnapshotService } from './linear-snapshot.service';
@@ -15,6 +16,10 @@ export class LinearSnapshotTriggerService {
 
   constructor(private readonly producer: LinearSnapshotService) {}
 
+  /**
+   * Сигнал «пора снимать». Сигналы во время идущей съёмки коалесцируются в
+   * одну последующую съёмку.
+   */
   signal(trigger: LinearSnapshotTrigger): Promise<LinearSnapshot> {
     if (this.inFlight !== null) {
       if (this.queued === null) {

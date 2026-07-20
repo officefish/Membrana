@@ -6,10 +6,14 @@ import test from 'node:test';
 
 import {
   EXIT_CODES,
+  SNAPSHOT_EGRESS_REGION,
   SNAPSHOT_FORMAT,
+  SNAPSHOT_MODE,
+  SNAPSHOT_PRODUCED_BY,
   isHardCode,
   isSoftCode,
   loadSnapshot,
+  pullOk,
   resolveSnapshotCode,
   validateSnapshot,
 } from './snapshot-contract.mjs';
@@ -36,7 +40,9 @@ function makeSnapshot(overrides = {}) {
       format: SNAPSHOT_FORMAT,
       capturedAt: '2026-07-19T18:00:00.000Z',
       sourceRevision: 'cursor-2026-07-19T17:59:00.000Z',
-      source: 'office-batch',
+      producedBy: SNAPSHOT_PRODUCED_BY,
+      egressRegion: SNAPSHOT_EGRESS_REGION,
+      mode: SNAPSHOT_MODE,
       trigger: 'evening-signal',
       recordCount: records.length,
       ...(overrides.header ?? {}),
@@ -45,16 +51,41 @@ function makeSnapshot(overrides = {}) {
   };
 }
 
-test('валидный снимок проходит валидацию', () => {
+test('валидный снимок media-NL проходит валидацию и pullOk', () => {
   const { ok, problems } = validateSnapshot(makeSnapshot());
   assert.equal(ok, true);
   assert.deepEqual(problems, []);
+  assert.equal(pullOk(makeSnapshot()), true);
 });
 
 test('провенанс обязателен: пустой sourceRevision — брак', () => {
   const { ok, problems } = validateSnapshot(makeSnapshot({ header: { sourceRevision: '' } }));
   assert.equal(ok, false);
   assert.ok(problems.some((p) => p.includes('sourceRevision')));
+  assert.equal(pullOk(makeSnapshot({ header: { sourceRevision: '' } })), false);
+});
+
+test('чужой producedBy / egressRegion / mode — брак', () => {
+  assert.equal(pullOk(makeSnapshot({ header: { producedBy: 'office-MSK' } })), false);
+  assert.equal(pullOk(makeSnapshot({ header: { egressRegion: 'RU' } })), false);
+  assert.equal(pullOk(makeSnapshot({ header: { mode: 'webhook-delta' } })), false);
+});
+
+test('legacy source: office-batch отвергается', () => {
+  const legacy = {
+    header: {
+      format: SNAPSHOT_FORMAT,
+      capturedAt: '2026-07-19T18:00:00.000Z',
+      sourceRevision: 'cursor',
+      source: 'office-batch',
+      trigger: 'manual',
+      recordCount: 0,
+    },
+    records: [],
+  };
+  const { ok, problems } = validateSnapshot(legacy);
+  assert.equal(ok, false);
+  assert.ok(problems.some((p) => p.includes('producedBy') || p.includes('source')));
 });
 
 test('пустой capturedAt и не-ISO дата — брак', () => {
@@ -113,7 +144,6 @@ test('resolveSnapshotCode: три кода — в порядке / протух-
   assert.equal(resolveSnapshotCode(valid, true), EXIT_CODES.OK);
   assert.equal(resolveSnapshotCode(valid, false), EXIT_CODES.SNAPSHOT_STALE);
   assert.equal(resolveSnapshotCode({ ok: false }, true), EXIT_CODES.SNAPSHOT_NO_INPUT);
-  // свежесть не проверялась (тело гейта офлайн) — не влияет на валидность
   assert.equal(resolveSnapshotCode(valid, null), EXIT_CODES.OK);
 });
 
