@@ -73,6 +73,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Мёрж `git merge origin/main` | **Без `-m`** — хук освобождает `Merge*`. Своё `-m "merge: …"` строчными хук отклонит (TF-1: находка «хук ломает merge» была **ложной**) |
 | Worktree занял ветку | `git checkout main` упадёт. Смотреть `yarn neighbors`, не писать grep — самописный **соврал** 16.07. Ночью ветку брать **от `origin/main`**, не от локального main |
 | Новый `scripts/_ssh-*.mjs` | Под gitignore — только `git add -f`, иначе молча не войдёт в коммит (#476 п.7) |
+| `docs/tasks/README.md` | **Генерируется** — `yarn task:sync-readme` (`task-list.mjs --sync-readme`). Руками не править: `node -e` с бэктиками через heredoc **покорёжил** ячейки ID (20.07). Правишь реестр — гони sync-readme |
 | `rt-6` «ПОВЕСТКА НЕ ПОКРЫТА» | **Грепает МЕТКУ, не вердикт** (#558). Читать как «ID не проставлены», не «вопросы уронены». С NB3 (17.07) сообщение честное + смотрит наличие секции вердикта |
 | Футер консилиума «Реплик: N» | Число пишет **модель, врёт** (M0 17.07: 21≠20). С NB2 сверяется автоматически (`reconcileReplyCount`) |
 | `OFFICE_API_TOKEN` в параллельном worktree | Openrouter-`.env` несёт плейсхолдер `API_INTERNAL_TOKEN` → office 401. С NB4 (17.07) `resolveOfficeToken` берёт токен из `.env` любого worktree репо автоматически |
