@@ -15,8 +15,9 @@
  *
  * Exit-коды: 0 green · 1 red · 2 none · 3 таймаут running · 4 usage/gh · 5 approval.
  */
-import { execSync } from 'node:child_process';
+import { execFileSync, execSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync, unlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -33,6 +34,25 @@ const GREEN_CONCLUSIONS = new Set(['SUCCESS', 'SKIPPED', 'NEUTRAL']);
 const APPROVAL_DECISIONS = new Set(['REVIEW_REQUIRED', 'CHANGES_REQUESTED']);
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+
+/**
+ * Каталог для checkpoint.
+ * Нельзя писать в `repo/.git/…`: в sibling-worktree `.git` — файл, `mkdir` → EEXIST.
+ * `git rev-parse --git-dir` даёт реальную директорию (primary или …/worktrees/<name>).
+ */
+export function resolveCheckpointDir(root = ROOT) {
+  try {
+    const gitDir = execFileSync('git', ['rev-parse', '--path-format=absolute', '--git-dir'], {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+    if (gitDir) return gitDir;
+  } catch {
+    /* fallthrough */
+  }
+  return join(tmpdir(), 'membrana-pr-wait');
+}
 
 /**
  * Классифицировать statusCheckRollup из `gh pr view --json statusCheckRollup`.
@@ -117,18 +137,19 @@ export function explainNoChecks(pr) {
   );
 }
 
-/** @param {string|null} number */
-export function checkpointPath(number, root = ROOT) {
+/** @param {string|null} number @param {string} [checkpointDir] */
+export function checkpointPath(number, checkpointDir = resolveCheckpointDir()) {
   const key = number || 'branch';
-  return join(root, '.git', `pr-wait-${key}.json`);
+  return join(checkpointDir, `pr-wait-${key}.json`);
 }
 
 /**
  * @param {{number: string|null, deadlineMs: number, timeoutMin: number, intervalSec: number}} data
+ * @param {string} [checkpointDir]
  */
-export function writeCheckpoint(data, root = ROOT) {
-  const path = checkpointPath(data.number, root);
-  mkdirSync(dirname(path), { recursive: true });
+export function writeCheckpoint(data, checkpointDir = resolveCheckpointDir()) {
+  mkdirSync(checkpointDir, { recursive: true });
+  const path = checkpointPath(data.number, checkpointDir);
   writeFileSync(
     path,
     JSON.stringify({ ...data, savedAt: new Date().toISOString() }, null, 2),
@@ -138,8 +159,8 @@ export function writeCheckpoint(data, root = ROOT) {
 }
 
 /** @returns {{number: string|null, deadlineMs: number, timeoutMin: number, intervalSec: number}|null} */
-export function readCheckpoint(number, root = ROOT) {
-  const path = checkpointPath(number, root);
+export function readCheckpoint(number, checkpointDir = resolveCheckpointDir()) {
+  const path = checkpointPath(number, checkpointDir);
   if (!existsSync(path)) return null;
   try {
     return JSON.parse(readFileSync(path, 'utf8'));
@@ -148,8 +169,8 @@ export function readCheckpoint(number, root = ROOT) {
   }
 }
 
-export function clearCheckpoint(number, root = ROOT) {
-  const path = checkpointPath(number, root);
+export function clearCheckpoint(number, checkpointDir = resolveCheckpointDir()) {
+  const path = checkpointPath(number, checkpointDir);
   try {
     unlinkSync(path);
   } catch {

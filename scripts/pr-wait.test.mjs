@@ -109,19 +109,19 @@ test('#724: CI green + APPROVED → green', () => {
 });
 
 test('#724: checkpoint write/read/clear для --resume', () => {
-  const root = mkdtempSync(join(tmpdir(), 'pr-wait-cp-'));
+  const dir = mkdtempSync(join(tmpdir(), 'pr-wait-cp-'));
   try {
     const path = writeCheckpoint(
       { number: '999', deadlineMs: Date.now() + 60_000, timeoutMin: 15, intervalSec: 20 },
-      root,
+      dir,
     );
     assert.ok(path.includes('pr-wait-999.json'));
-    const cp = readCheckpoint('999', root);
+    const cp = readCheckpoint('999', dir);
     assert.equal(cp.number, '999');
     assert.equal(cp.timeoutMin, 15);
-    clearCheckpoint('999', root);
-    assert.equal(readCheckpoint('999', root), null);
+    clearCheckpoint('999', dir);
+    assert.equal(readCheckpoint('999', dir), null);
   } finally {
-    rmSync(root, { recursive: true, force: true });
+    rmSync(dir, { recursive: true, force: true });
   }
 });
