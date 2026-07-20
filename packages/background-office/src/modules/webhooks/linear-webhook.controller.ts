@@ -11,7 +11,7 @@ import {
   type RawBodyRequest,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiHeader } from '@nestjs/swagger';
-import type { Request } from 'express';
+import type { FastifyRequest } from 'fastify';
 import { createHash } from 'node:crypto';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
@@ -50,16 +50,20 @@ export class LinearWebhookController {
   @ApiResponse({ status: 400, description: 'Missing raw JSON body' })
   @ApiResponse({ status: 403, description: 'Invalid webhook signature' })
   @HttpCode(HttpStatus.OK)
-  handle(@Req() req: RawBodyRequest<Request>): { received: boolean } {
+  handle(@Req() req: RawBodyRequest<FastifyRequest>): { received: boolean } {
     const raw = getLinearWebhookRawBody(req);
     if (!raw) {
       throw new BadRequestException('Expected raw JSON body');
     }
 
-    const sig =
-      req.get('linear-signature') ??
-      req.get('Linear-Signature') ??
-      undefined;
+    const header = (name: string): string | undefined => {
+      const v = req.headers[name.toLowerCase()];
+      if (typeof v === 'string') return v;
+      if (Array.isArray(v) && typeof v[0] === 'string') return v[0];
+      return undefined;
+    };
+
+    const sig = header('linear-signature');
 
     if (
       !verifyLinearWebhookSignature(
@@ -71,8 +75,7 @@ export class LinearWebhookController {
       throw new ForbiddenException();
     }
 
-    const deliveryHeader =
-      req.get('linear-delivery') ?? req.get('Linear-Delivery') ?? '';
+    const deliveryHeader = header('linear-delivery') ?? '';
     const deliveryId =
       deliveryHeader.trim() ||
       createHash('sha256').update(raw).digest('hex');
@@ -92,7 +95,7 @@ export class LinearWebhookController {
         parsed = { parseError: true };
       }
       this.logger.log(
-        `Linear webhook (background) delivery=${deliveryId} event=${req.get('linear-event') ?? req.get('Linear-Event') ?? ''} payload=${JSON.stringify(parsed)}`,
+        `Linear webhook (background) delivery=${deliveryId} event=${header('linear-event') ?? ''} payload=${JSON.stringify(parsed)}`,
       );
     });
 

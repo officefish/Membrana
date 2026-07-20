@@ -1,12 +1,8 @@
 import 'reflect-metadata';
 import type { INestApplication } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { ExpressAdapter, type NestExpressApplication } from '@nestjs/platform-express';
 import request from 'supertest';
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { AppModule } from '../src/app.module';
-import { AllExceptionsFilter } from '../src/common/filters/http-exception.filter';
-import { RequestIdInterceptor } from '../src/common/interceptors/request-id.interceptor';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { createOfficeFastifyApp } from './create-fastify-app';
 
 function getUrl(input: RequestInfo | URL): string {
   if (typeof input === 'string') return input;
@@ -15,22 +11,7 @@ function getUrl(input: RequestInfo | URL): string {
 }
 
 async function createApp(): Promise<INestApplication> {
-  const app = await NestFactory.create<NestExpressApplication>(
-    AppModule,
-    new ExpressAdapter(),
-    { bufferLogs: true, rawBody: true },
-  );
-  app.useLogger({
-    log: () => undefined,
-    error: () => undefined,
-    warn: () => undefined,
-    debug: () => undefined,
-    verbose: () => undefined,
-  });
-  app.useGlobalInterceptors(new RequestIdInterceptor());
-  app.useGlobalFilters(new AllExceptionsFilter());
-  await app.init();
-  return app;
+  return createOfficeFastifyApp({ rawBody: true });
 }
 
 describe('background-office HTTP', () => {

@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import type { INestApplication } from '@nestjs/common';
+import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import { Test } from '@nestjs/testing';
-import { ExpressAdapter, type NestExpressApplication } from '@nestjs/platform-express';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { AllExceptionsFilter } from '../src/common/filters/http-exception.filter';
@@ -20,8 +20,8 @@ async function createRagTestApp(
     .useValue(gateway)
     .compile();
 
-  const app = moduleRef.createNestApplication<NestExpressApplication>(
-    new ExpressAdapter(),
+  const app = moduleRef.createNestApplication<NestFastifyApplication>(
+    new FastifyAdapter(),
     { bufferLogs: true },
   );
   app.useLogger({
@@ -34,6 +34,7 @@ async function createRagTestApp(
   app.useGlobalInterceptors(new RequestIdInterceptor());
   app.useGlobalFilters(new AllExceptionsFilter());
   await app.init();
+  await app.getHttpAdapter().getInstance().ready();
   return app;
 }
 

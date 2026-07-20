@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import type { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { ExpressAdapter, type NestExpressApplication } from '@nestjs/platform-express';
+import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
@@ -16,11 +16,12 @@ describe('panel-hardening E2E (OP5)', () => {
   beforeAll(async () => {
     process.env.PANEL_RATE_LIMIT_PER_MIN = '5';
     const { AppModule } = await import('../src/app.module');
-    app = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(), {
+    app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(), {
       bufferLogs: true,
     });
     app.useLogger(false);
     await app.init();
+    await app.getHttpAdapter().getInstance().ready();
   });
 
   afterAll(async () => {
