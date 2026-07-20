@@ -1,6 +1,6 @@
 # Пилот LINEAR_TASKS_GEAR × `sec-upgrade-backend-runtime`
 
-> Открыт: 2026-07-20. Статус: **в работе**.  
+> Открыт: 2026-07-20. Статус: **ЗАКРЫТ** (код в main `5e703979` / PR #688; карточка archived; closure записан).  
 > Цель файла: фиксировать трение старого регламента и нового движка, пока спринт-процесс не пересажен. Материал для рефакторинга процедур (шторм «подводка», T2).
 
 ---
@@ -78,9 +78,12 @@ state improvisation: Started (локально, не в Linear)
 При переносе office на Fastify агент скопировал `@fastify/cors` с `origin: true` + `credentials: true`. У Express-office CORS **не было**; panel cookies сделали бы это P0. Teamlead review (20.07) снял cors до merge. **Рефакторинг:** в шаблоне миграции адаптера — «не наследовать CORS/listen от соседнего сервера без сверки прежнего bootstrap».
 
 ### O13. Owner: «тим лид ревью и потом мердж»
-Приёмка владельцем = review→ship контур (не отдельный acceptance artifact ещё). После merge остаётся `task:archive` + Linear stub.
+Приёмка владельцем = review→ship контур. Closure artifact пишется руками после archive (провода `task:start` / auto-closure ещё нет).
 
-## 3. Чеклист исполнения (живой)
+### O14. Archive на tip main после squash
+После `pr:ship` feature-ветка `[gone]`; archive надо делать с ветки от `origin/main` @ merge SHA, иначе registry/journal расходятся с удостоверением. **Рефакторинг:** `task:archive` в help — «на tip main / после ff».
+
+## 3. Чеклист исполнения (закрыт)
 
 - [x] Прочитан паспорт + словарь + TASK_PROMPT_WORKFLOW
 - [x] GH Issue #686 (удостоверение)
@@ -91,17 +94,20 @@ state improvisation: Started (локально, не в Linear)
 - [x] typecheck/test трёх пакетов (office 186, media 39, cabinet 103)
 - [x] Audit: `@fastify/middie` отсутствует в дереве (`yarn why` пуст)
 - [x] Teamlead review LGTM (CORS P0 снят) → ship по слову владельца
-- [ ] PR merge + отчёт в #686
-- [ ] Closure artifact `{acceptedBy, headRev}` после merge SHA
-- [ ] `yarn task:archive` + Linear stub deferred
+- [x] PR [#688](https://github.com/officefish/Membrana/pull/688) merged → `5e703979`; Issue #686 CLOSED
+- [x] Closure: [`docs/tasks/closures/sec-upgrade-backend-runtime.md`](../tasks/closures/sec-upgrade-backend-runtime.md) `{acceptedBy: vesnin, headRev: 5e703979}`
+- [x] `yarn task:archive sec-upgrade-backend-runtime` → `status: archived`
+- [ ] Linear movement — deferred egress (не блокирует архив)
 
-## 4. Предложения в рефакторинг процесса (черновик)
+## 4. Что осталось для рефакторинга процесса (выжимка)
 
-1. **Легальный старт:** `yarn task:start --id <slug>` → Issue + registry biject + stub Linear (или честный `movement: deferred-egress`).
-2. **Отказ без Issue** в pre-push / task:archive уже частичный — расширить на «active без githubIssue».
-3. **Inventory-шаг** для dependency upgrades в task-промпт шаблоне.
-4. **Acceptance template** рядом с PR (не в commit message) — файл `docs/tasks/closures/<id>.md`.
-5. Переписать посев в AGENTS.md / lifecycle skill → ссылка на LINEAR_TASKS_GEAR §1–4.
+1. **`yarn task:start`** — Issue + biject registry + stub Linear/`movement: deferred-egress` до кода.
+2. **Отказ active без `githubIssue`** (законность движка) — зуб в register/pre-push.
+3. **Egress Linear** (туннель media-VPS) — без него движение только stub/фикстуры.
+4. **Посев AGENTS.md / lifecycle skill** — убрать «только registry.json»; ссылка на `LINEAR_TASKS_GEAR` §1–4 + `UNITS_DICTIONARY`.
+5. **Inventory адаптера** в шаблоне security/deps upgrade (office≠Express после correction).
+6. **`worktree:bootstrap` isolated** для lockfile-мажоров (не junction на чужой `node_modules`).
+7. **Closure path канон** — `docs/tasks/closures/<id>.md` связать с `task:archive` (сейчас руками).
 
 ## 5. Хронология
 
@@ -112,4 +118,6 @@ state improvisation: Started (локально, не в Linear)
 | — | Issue #686; worktree Membrana-sec-backend |
 | ~07:25 | Owner correction: office → Fastify (O9); Nest11 без middie (O10) |
 | ~07:45 | office переписан на FastifyAdapter; e2e зелёные; media/cabinet зелёные |
-| — | Ждём слово владельца на commit/PR |
+| ~07:55 | Teamlead: снят open CORS (P0); LGTM |
+| ~08:04 | `yarn pr:ship` → PR #688 MERGED `5e703979`; #686 closed |
+| ~08:05 | `task:archive` + closure artifact; docs-PR архива |
