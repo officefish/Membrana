@@ -6,10 +6,10 @@
       "promptPath": "docs/prompts/RITUAL_D_DREAMS_INFRA_PROMPT.md",
       "githubIssue": 739,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-20",
-      "archivedAt": null,
+      "archivedAt": "2026-07-20",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
@@ -17,7 +17,7 @@
       ],
       "linearId": "DRU-247",
       "notes": "Linear DRU-247 (#739). Ядро dreams-select не трогать. #598 не reuse. DRU-246 = canceled duplicate.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #740, Closes #739; Linear DRU-247",
       "githubIssueClosedAt": null,
       "parentEpic": "ritual-d-dreams"
     },

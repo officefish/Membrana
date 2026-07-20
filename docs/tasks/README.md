@@ -18,7 +18,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `ritual-d-dreams-infra` | Сны v2: стор + office cron + доставка (обстройка ядра D) | L | [`RITUAL_D_DREAMS_INFRA_PROMPT.md`](../docs/prompts/RITUAL_D_DREAMS_INFRA_PROMPT.md) | [#739](https://github.com/officefish/Membrana/issues/739) |
 | `ritual-r-report` | Доклад наружу: линза + живые ссылки (R эпика ritual-refactor) | M | [`RITUAL_R_REPORT_PROMPT.md`](../docs/prompts/RITUAL_R_REPORT_PROMPT.md) | — |
 | `ritual-s-standup` | Стендап Тимлидом + движок задач (S эпика ritual-refactor) | M | [`RITUAL_S_STANDUP_PROMPT.md`](../docs/prompts/RITUAL_S_STANDUP_PROMPT.md) | — |
 | `ritual-k-karkas` | 5-блочный каркас плана дня (K эпика ritual-refactor) | M | [`RITUAL_K_KARKAS_PROMPT.md`](../docs/prompts/RITUAL_K_KARKAS_PROMPT.md) | — |
@@ -252,6 +251,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `ritual-d-dreams-infra` | Сны v2: стор + office cron + доставка (обстройка ядра D) | 2026-07-20 | [`RITUAL_D_DREAMS_INFRA_PROMPT.md`](../docs/prompts/RITUAL_D_DREAMS_INFRA_PROMPT.md) | #739 (Issue открыт) | [карточка](./archive/ritual-d-dreams-infra.md) |
 | `night-research-perplexity` | S6 night:research: живой Perplexity (сон checked/void) | 2026-07-20 | [`NIGHT_RESEARCH_PERPLEXITY_PROMPT.md`](../docs/prompts/NIGHT_RESEARCH_PERPLEXITY_PROMPT.md) | #598 (Issue открыт) | [карточка](./archive/night-research-perplexity.md) |
 | `ritual-d-dreams` | Сны v2: соревнование 24→6 (D эпика ritual-refactor) | 2026-07-20 | [`RITUAL_D_DREAMS_PROMPT.md`](../docs/prompts/RITUAL_D_DREAMS_PROMPT.md) | — | [карточка](./archive/ritual-d-dreams.md) |
 | `tooling-needs-720-xs-norms` | tooling needs 20.07 XS грабли/нормы | 2026-07-20 | [`TOOLING_NEEDS_720_XS_NORMS_PROMPT.md`](../docs/prompts/TOOLING_NEEDS_720_XS_NORMS_PROMPT.md) | #725 (Issue открыт) | [карточка](./archive/tooling-needs-720-xs-norms.md) |
