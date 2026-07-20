@@ -147,6 +147,29 @@ function collectHandoff() {
   return { ok: true, date: latest.date, link: latest.path, title, sections };
 }
 
+/**
+ * HANDOFF сессии — корневой `docs/HANDOFF.md` (рукописный, дневной), в отличие от
+ * ночных чекпоинтов из `collectHandoff`. Первый параграф под H1 — центральная задача
+ * новой сессии: его выносим как «фокус» хендоффа, чтобы холодная сессия видела «что
+ * делать» сразу из брифа, а не только заголовки разделов.
+ */
+function collectSessionHandoff() {
+  const rel = 'docs/HANDOFF.md';
+  const md = readTextOrNull(path.join(REPO_ROOT, rel));
+  if (md == null) return { ok: false, reason: 'нет docs/HANDOFF.md' };
+  const headings = extractHeadings(md);
+  const title = headings.find((h) => h.level === 1)?.text ?? null;
+  const sections = headings.filter((h) => h.level === 2).map((h) => h.text);
+  // Первая непустая строка после H1, вне заголовка — центральная задача.
+  const lines = String(md).split(/\r?\n/);
+  const h1Idx = lines.findIndex((l) => /^#\s/.test(l));
+  const focus = lines
+    .slice(h1Idx + 1)
+    .find((l) => l.trim() !== '' && !/^#{1,6}\s/.test(l))
+    ?.trim() ?? null;
+  return { ok: true, link: rel, title, sections, focus };
+}
+
 function collectActiveCards() {
   const rel = 'docs/tasks/registry.json';
   const raw = readTextOrNull(path.join(REPO_ROOT, rel));
@@ -231,6 +254,7 @@ export function collectState({ generatedAt } = {}) {
     focus: collectFocus(),
     openPRs: collectOpenPRs(),
     activeCards: collectActiveCards(),
+    sessionHandoff: collectSessionHandoff(),
     handoff: collectHandoff(),
     memory: collectMemory(),
     git,
@@ -291,6 +315,23 @@ export function renderBrief(state) {
   // ── Контекст ─────────────────────────────────────────────────────────────────
   L.push('## Контекст');
   L.push('');
+  L.push('### HANDOFF сессии');
+  if (state.sessionHandoff.ok) {
+    const s = state.sessionHandoff;
+    L.push(`- ${link(s.title ?? 'HANDOFF', s.link)}`);
+    if (s.focus) L.push(`- **Задача новой сессии:** ${s.focus}`);
+    if (s.sections.length) {
+      const shown = s.sections.slice(0, HANDOFF_SECTIONS_CAP).map((x) => `«${x}»`).join(', ');
+      const more = s.sections.length > HANDOFF_SECTIONS_CAP
+        ? ` …ещё ${s.sections.length - HANDOFF_SECTIONS_CAP}`
+        : '';
+      L.push(`- Разделы: ${shown}${more}`);
+    }
+  } else {
+    L.push(`- ${NA} (${state.sessionHandoff.reason})`);
+  }
+  L.push('');
+
   L.push('### HANDOFF ночного билда');
   if (state.handoff.ok) {
     const h = state.handoff;
