@@ -18,7 +18,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `night-research-perplexity` | S6 night:research: живой Perplexity (сон checked/void) | M | [`NIGHT_RESEARCH_PERPLEXITY_PROMPT.md`](../docs/prompts/NIGHT_RESEARCH_PERPLEXITY_PROMPT.md) | [#598](https://github.com/officefish/Membrana/issues/598) |
 | `ritual-d-dreams` | Сны v2: соревнование 24→6 (D эпика ritual-refactor) | L | [`RITUAL_D_DREAMS_PROMPT.md`](../docs/prompts/RITUAL_D_DREAMS_PROMPT.md) | — |
 | `ritual-r-report` | Доклад наружу: линза + живые ссылки (R эпика ritual-refactor) | M | [`RITUAL_R_REPORT_PROMPT.md`](../docs/prompts/RITUAL_R_REPORT_PROMPT.md) | — |
 | `ritual-s-standup` | Стендап Тимлидом + движок задач (S эпика ritual-refactor) | M | [`RITUAL_S_STANDUP_PROMPT.md`](../docs/prompts/RITUAL_S_STANDUP_PROMPT.md) | — |
@@ -253,6 +252,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `night-research-perplexity` | S6 night:research: живой Perplexity (сон checked/void) | 2026-07-20 | [`NIGHT_RESEARCH_PERPLEXITY_PROMPT.md`](../docs/prompts/NIGHT_RESEARCH_PERPLEXITY_PROMPT.md) | #598 (Issue открыт) | [карточка](./archive/night-research-perplexity.md) |
 | `tooling-needs-720-xs-norms` | tooling needs 20.07 XS грабли/нормы | 2026-07-20 | [`TOOLING_NEEDS_720_XS_NORMS_PROMPT.md`](../docs/prompts/TOOLING_NEEDS_720_XS_NORMS_PROMPT.md) | #725 (Issue открыт) | [карточка](./archive/tooling-needs-720-xs-norms.md) |
 | `pr-wait-approval-resume` | pr:wait approval state + interrupt-resume | 2026-07-20 | [`PR_WAIT_APPROVAL_RESUME_PROMPT.md`](../docs/prompts/PR_WAIT_APPROVAL_RESUME_PROMPT.md) | #724 (Issue открыт) | [карточка](./archive/pr-wait-approval-resume.md) |
 | `media-env-token-resolve` | media env/token resolve + env-secrets-guard | 2026-07-20 | [`MEDIA_ENV_TOKEN_RESOLVE_PROMPT.md`](../docs/prompts/MEDIA_ENV_TOKEN_RESOLVE_PROMPT.md) | #723 (Issue открыт) | [карточка](./archive/media-env-token-resolve.md) |
