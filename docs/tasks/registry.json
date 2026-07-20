@@ -140,7 +140,7 @@
       "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты critical middie + fastify/fast-uri/platform-fastify highs; smoke HTTP. Пилот LINEAR_TASKS_GEAR: docs/discussions/linear-tasks-gear-pilot-sec-upgrade-backend-runtime-2026-07-20.md. Мерж поочерёдно с sec-upgrade-dev-tooling (общий lockfile)."
     },
     {
-      "githubIssue": null,
+      "githubIssue": 706,
       "status": "active",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
@@ -154,11 +154,11 @@
       "supportPersonas": [
         "kuryokhin"
       ],
-      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
+      "promptPath": "docs/prompts/SEC_UPGRADE_DEV_TOOLING_PROMPT.md",
       "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: снят vitest critical + vite high; клиентский smoke (vite dev, HMR, прод-бандл, DESIGN-токены)."
     },
     {
-      "githubIssue": null,
+      "githubIssue": 707,
       "status": "active",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
@@ -172,11 +172,11 @@
       "supportPersonas": [
         "kuryokhin"
       ],
-      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
+      "promptPath": "docs/prompts/SEC_UPGRADE_TAR_PROMPT.md",
       "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты 6 tar high; node-gyp/electron-builder не сломаны. Строго ПЕРЕД electron-major."
     },
     {
-      "githubIssue": null,
+      "githubIssue": 708,
       "status": "active",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
@@ -190,7 +190,7 @@
       "supportPersonas": [
         "kuryokhin"
       ],
-      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
+      "promptPath": "docs/prompts/SEC_UPGRADE_ELECTRON_PROMPT.md",
       "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты 4 electron high; ручной desktop-smoke (окно, захват device-board, CSP). После sec-upgrade-tar."
     },
     {
