@@ -6,14 +6,16 @@
       "promptPath": "docs/prompts/PR_SHIP_MERGE_ONLY_PROMPT.md",
       "githubIssue": 700,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-20",
-      "archivedAt": null,
+      "archivedAt": "2026-07-20",
       "leadPersona": "vesnin",
-      "supportPersonas": ["rodchenko"],
+      "supportPersonas": [
+        "rodchenko"
+      ],
       "notes": "Корень #700: raw gh pr merge --delete-branch падает на checkout base из чужого worktree (мердж уже прошёл — ложный красный). pr:ship уже кодирует фикс (#653), но недостижим для УЖЕ ОТКРЫТОГО PR. Добавить --merge-only режим + норма в membrana-ship/CLAUDE.md.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #701; review LGTM e2fa9ee9e666; PR #701 merged 2026-07-20T10:05:55Z (e56d3a33a35555de273daec24e8bb9077749476e)",
       "githubIssueClosedAt": null
     },
     {
