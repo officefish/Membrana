@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "ritual-s-standup",
+      "title": "Стендап Тимлидом + движок задач (S эпика ritual-refactor)",
+      "promptPath": "docs/prompts/RITUAL_S_STANDUP_PROMPT.md",
+      "githubIssue": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "Дизайн M3. Третий в DAG, A/K в main. Стендап резолвит существующие задачи, не создаёт (Linear-контейнеры в спринтах).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "ritual-k-karkas",
       "title": "5-блочный каркас плана дня (K эпика ritual-refactor)",
       "promptPath": "docs/prompts/RITUAL_K_KARKAS_PROMPT.md",
