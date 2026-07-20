@@ -1,4 +1,4 @@
-﻿# Closure: sec-upgrade-electron
+# Closure: sec-upgrade-electron
 
 | Поле | Значение |
 |------|----------|

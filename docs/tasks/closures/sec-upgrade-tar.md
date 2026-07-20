@@ -1,4 +1,4 @@
-﻿# Closure: sec-upgrade-tar
+# Closure: sec-upgrade-tar
 
 | Поле | Значение |
 |------|----------|
