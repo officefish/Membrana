@@ -18,6 +18,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `ritual-s-standup` | Стендап Тимлидом + движок задач (S эпика ritual-refactor) | M | [`RITUAL_S_STANDUP_PROMPT.md`](../docs/prompts/RITUAL_S_STANDUP_PROMPT.md) | — |
+| `ritual-k-karkas` | 5-блочный каркас плана дня (K эпика ritual-refactor) | M | [`RITUAL_K_KARKAS_PROMPT.md`](../docs/prompts/RITUAL_K_KARKAS_PROMPT.md) | — |
 | `ritual-a-angelina-coordinator` | Ангелина-координатор ритуала (компонент A эпика ritual-refactor): чистое ядро каскада | M | [`RITUAL_A_ANGELINA_PROMPT.md`](../docs/prompts/RITUAL_A_ANGELINA_PROMPT.md) | — |
 | `cowork-execution-registry` | Cowork Sprint: контур исполнения команды + переезд реестра | L | [`COWORK_SPRINT_BRIEF.md`](../docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md) | [#660](https://github.com/officefish/Membrana/issues/660) |
 | `agent-ci-gate-tooling` | Агентский тулинг: pr:wait + грабли (конфликт блокирует CI, tail в фоне, short-path) | S | [`AGENT_CI_GATE_TOOLING_PROMPT.md`](../docs/prompts/AGENT_CI_GATE_TOOLING_PROMPT.md) | [#643](https://github.com/officefish/Membrana/issues/643) |
