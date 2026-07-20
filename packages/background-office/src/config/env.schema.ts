@@ -8,8 +8,17 @@ export const envSchema = z.object({
   API_INTERNAL_TOKEN: z.string().min(1, 'API_INTERNAL_TOKEN is required'),
   ANTHROPIC_API_KEY: z.string().min(1, 'ANTHROPIC_API_KEY is required'),
   ANTHROPIC_MODEL: z.string().optional(),
+  /**
+   * Legacy: still required by LinearModule (issue-view). Snapshot path does NOT
+   * use this key — producer is media-NL (M1/M2). Follow-up: make optional / remove
+   * after issue-view moves or is retired.
+   */
   LINEAR_API_KEY: z.string().min(1, 'LINEAR_API_KEY is required'),
   LINEAR_WEBHOOK_SECRET: z.string().min(1, 'LINEAR_WEBHOOK_SECRET is required'),
+  /** Base URL of media (NL) for snapshot trigger, e.g. https://media… or http://localhost:3010 */
+  MEDIA_API_URL: z.string().url().optional(),
+  /** Optional override; defaults to API_INTERNAL_TOKEN (same X-Membrana-Token class). */
+  MEDIA_API_TOKEN: z.string().min(1).optional(),
   GITHUB_TOKEN: z.string().min(1, 'GITHUB_TOKEN is required'),
   GITHUB_OWNER: z.string().min(1, 'GITHUB_OWNER is required'),
   GITHUB_REPO: z.string().min(1, 'GITHUB_REPO is required'),

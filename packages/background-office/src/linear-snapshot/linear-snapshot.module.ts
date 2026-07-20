@@ -1,21 +1,16 @@
 /**
- * Модуль производителя снимков Linear (Р2, блок snapshot-cold-migration).
- *
- * ВНИМАНИЕ: в app.module.ts НЕ проводится — провод (импорт модуля, маршрут
- * вебхук-триггера, расписание вечернего сигнала) вносится на интеграции
- * коворка cowork-execution-registry, не в изолированной фазе.
+ * Модуль потребителя снимков на office.
+ * GraphQL Linear здесь нет — съёмка делегируется media-NL (M1/M2).
  */
 import { Module } from '@nestjs/common';
-import {
-  LinearSnapshotGraphqlSource,
-  LinearSnapshotService,
-} from './linear-snapshot.service';
+import { LinearSnapshotService } from './linear-snapshot.service';
 import { LinearSnapshotTriggerService } from './linear-snapshot.trigger';
-import { LINEAR_SNAPSHOT_SOURCE } from './linear-snapshot.types';
+import { MediaSnapshotClient } from './media-snapshot.client';
+import { LINEAR_SNAPSHOT_CAPTURE } from './linear-snapshot.types';
 
 @Module({
   providers: [
-    { provide: LINEAR_SNAPSHOT_SOURCE, useClass: LinearSnapshotGraphqlSource },
+    { provide: LINEAR_SNAPSHOT_CAPTURE, useClass: MediaSnapshotClient },
     LinearSnapshotService,
     LinearSnapshotTriggerService,
   ],

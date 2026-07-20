@@ -105,11 +105,16 @@
 
 1. **Вход гейтов — снимок, не сеть и не кэш.** Живой запрос дисквалифицирован
    (`gate(fetch()) ≠ gate(fetch())`). Снимок — контракт: адресуемый,
-   версионированный, с провенансом `(capturedAt, sourceRevision)`; слово «кэш»
-   в подсистеме запрещено. Формат `linear-snapshot@1`; производитель — office-батч
-   **полным pull-опросом**; вебхук — только триггер «пора снимать», телом
-   источника не является. Предикат свежести — один дешёвый запрос ВНЕ тела
-   гейта; тело офлайн. Владелец времени — производитель снимка (office, UTC).
+   версионированный, с провенансом `(capturedAt, sourceRevision)` и honest-шапкой
+   `producedBy`/`egressRegion`/`mode`; слово «кэш» в подсистеме запрещено.
+   Формат `linear-snapshot@1`; производитель — **media-NL** режимом
+   `batch-full-pull` (вердикты M1/M3 `linear-egress-gear-wiring`); office —
+   потребитель артефакта + trigger через `X-Membrana-Token`, в GraphQL Linear
+   по тракту снимка не ходит. Вебхук — только триггер «пора снимать», телом
+   источника не является. Предикат `pullOk(S)` — чистая функция от файла;
+   freshness — один дешёвый запрос ВНЕ тела гейта. Владелец времени —
+   производитель снимка (media-NL, UTC). Канон полей:
+   [`LINEAR_SNAPSHOT_CONTRACT.md`](./LINEAR_SNAPSHOT_CONTRACT.md).
 2. **Расслоение носителей:** содержание → git; движение → снимок Linear;
    долговременность → **холод** `docs/tasks/archive/archive.jsonl` (append-only,
    один писатель — office-батч; принимает записи только с honest-шапкой; хранит
@@ -175,7 +180,7 @@
 | Субъект | `scripts/lib/angelina-*.mjs` | `docs/virtual-team/PROMPT_ANGELINA.md`, `docs/virtual-team/angelina/**` |
 | Зубы | `scripts/lib/trace-*.mjs`, `scripts/trace-gate.mjs` | контракт §2, [`INTERFACE_CONTRACT.md`](../cowork-sprint/cowork-execution-registry/INTERFACE_CONTRACT.md) |
 | Измерение | `scripts/lib/measure-*.mjs` | контракт §1.2 |
-| Снимок | `packages/background-office/src/linear-snapshot/**`, `scripts/lib/snapshot-*.mjs` | контракт §1.2–1.3 |
+| Снимок | `packages/background-media/src/linear-snapshot/**` (producer), office consumer/trigger, `scripts/lib/snapshot-*.mjs` | [`LINEAR_SNAPSHOT_CONTRACT.md`](./LINEAR_SNAPSHOT_CONTRACT.md) |
 | Холод | `scripts/lib/cold-*.mjs` | [`ARCHIVE_FORMAT.md`](./archive/ARCHIVE_FORMAT.md) |
 | Миграция | `scripts/lib/debt-*.mjs` | контракт §2, эпик registry-relocation Р4 |
 | История решений | — | эпики `docs/meeting/{team-execution-contour,registry-relocation}/EPIC.md`, протоколы `docs/seanses/*2026-07-19*`, [`RETROSPECTIVE`](../cowork-sprint/cowork-execution-registry/RETROSPECTIVE.md) |
