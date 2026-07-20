@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Req, Res, UseGuards } from '@nestjs/common';
-import type { Response } from 'express';
+import type { FastifyReply } from 'fastify';
 
 import { canAccessSection, PUBLIC_IDENTITY } from './panel-auth-core';
 import { BRIDGE_GATED_SECTIONS } from './panel-bridge-sections';
@@ -25,15 +25,15 @@ export class PanelGateController {
   gate(
     @Param('sectionId') sectionId: string,
     @Req() req: PanelRequest,
-    @Res() res: Response,
+    @Res() res: FastifyReply,
   ): void {
     const section = BRIDGE_GATED_SECTIONS[sectionId];
     if (!section) {
-      res.status(404).end();
+      void res.status(404).send();
       return;
     }
     const identity = req.panelIdentity ?? PUBLIC_IDENTITY;
     const allowed = canAccessSection(identity.role, identity.grants, section.minRole, sectionId);
-    res.status(allowed ? 204 : 403).end();
+    void res.status(allowed ? 204 : 403).send();
   }
 }

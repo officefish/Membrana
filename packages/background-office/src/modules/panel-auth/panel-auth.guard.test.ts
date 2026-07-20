@@ -36,10 +36,10 @@ function makeContext(
       getRequest: () => ({
         headers: { cookie, ...(over.headers ?? {}) },
         ip: over.ip ?? '127.0.0.1',
-        path: '/v1/panel/test',
+        url: '/v1/panel/test',
       }),
       getResponse: () => ({
-        setHeader: over.onHeader ?? (() => undefined),
+        header: over.onHeader ?? (() => undefined),
       }),
     }),
   } as unknown as ExecutionContext;

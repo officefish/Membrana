@@ -12,7 +12,7 @@ import {
   ServiceUnavailableException,
   UseGuards,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import type { FastifyReply } from 'fastify';
 
 import {
   clearSessionCookieString,
@@ -47,7 +47,7 @@ export class PanelAuthController {
    */
   @Get('me')
   @PanelPublic()
-  me(@Req() req: PanelRequest, @Res({ passthrough: true }) res: Response) {
+  me(@Req() req: PanelRequest, @Res({ passthrough: true }) res: FastifyReply) {
     const identity = req.panelIdentity ?? { role: 'public' as const, sub: null };
     const userId =
       identity.pv !== undefined && identity.sub?.startsWith('user:')
@@ -66,11 +66,11 @@ export class PanelAuthController {
       return { role: identity.role, sub: identity.sub, grants: [] };
     }
     if (user.revoked) {
-      res.setHeader('Set-Cookie', clearSessionCookieString(this.service.cookieSecure()));
+      void res.header('Set-Cookie', clearSessionCookieString(this.service.cookieSecure()));
       return { role: 'public', sub: null, grants: [] };
     }
     if (user.permVersion !== identity.pv) {
-      res.setHeader(
+      void res.header(
         'Set-Cookie',
         sessionCookieString(
           this.service.mintPartnerSession(user.id, user.grants, user.permVersion),
@@ -86,7 +86,7 @@ export class PanelAuthController {
   /** Вход союзника по invite-коду → httpOnly session-cookie (ally). */
   @Post('invite')
   @PanelPublic()
-  invite(@Body() body: { code?: string }, @Res({ passthrough: true }) res: Response) {
+  invite(@Body() body: { code?: string }, @Res({ passthrough: true }) res: FastifyReply) {
     if (!this.service.isConfigured()) {
       throw new ServiceUnavailableException('panel auth is not configured');
     }
@@ -94,7 +94,7 @@ export class PanelAuthController {
     if (!code) throw new BadRequestException('code is required');
     const session = this.service.redeemInvite(code);
     if (!session) throw new ForbiddenException('invalid or expired invite code');
-    res.setHeader(
+    void res.header(
       'Set-Cookie',
       sessionCookieString(session.token, PANEL_SESSION_TTL_SEC, this.service.cookieSecure()),
     );
@@ -104,11 +104,11 @@ export class PanelAuthController {
   /** Старт GitHub OAuth (operator/owner): redirect на authorize с подписанным state. */
   @Get('github')
   @PanelPublic()
-  github(@Res() res: Response) {
+  github(@Res() res: FastifyReply) {
     if (!this.service.isGithubConfigured()) {
       throw new ServiceUnavailableException('github oauth is not configured');
     }
-    res.redirect(this.service.authorizeUrl(this.service.mintOauthState()));
+    void res.redirect(this.service.authorizeUrl(this.service.mintOauthState()));
   }
 
   /** Callback GitHub: state → code → user → allowlist-роль → cookie → redirect на витрину. */
@@ -117,7 +117,7 @@ export class PanelAuthController {
   async githubCallback(
     @Query('code') code: string,
     @Query('state') state: string,
-    @Res() res: Response,
+    @Res() res: FastifyReply,
   ) {
     if (!this.service.isGithubConfigured()) {
       throw new ServiceUnavailableException('github oauth is not configured');
@@ -130,7 +130,7 @@ export class PanelAuthController {
     if (!user) throw new ForbiddenException('github exchange failed');
     const role = this.service.roleForGithubUser(user);
     if (!role) throw new ForbiddenException('github user is not in the allowlist');
-    res.setHeader(
+    void res.header(
       'Set-Cookie',
       sessionCookieString(
         this.service.mintSessionForGithub(user, role),
@@ -138,14 +138,14 @@ export class PanelAuthController {
         this.service.cookieSecure(),
       ),
     );
-    res.redirect('/');
+    void res.redirect('/');
   }
 
   /** Выход: гашение cookie. */
   @Post('logout')
   @PanelPublic()
-  logout(@Res({ passthrough: true }) res: Response) {
-    res.setHeader('Set-Cookie', clearSessionCookieString(this.service.cookieSecure()));
+  logout(@Res({ passthrough: true }) res: FastifyReply) {
+    void res.header('Set-Cookie', clearSessionCookieString(this.service.cookieSecure()));
     return { ok: true };
   }
 

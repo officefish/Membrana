@@ -1,12 +1,10 @@
 import 'reflect-metadata';
 import type { INestApplication } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { ExpressAdapter, type NestExpressApplication } from '@nestjs/platform-express';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-import { AppModule } from '../src/app.module';
 import { mintInviteCode, PANEL_SESSION_COOKIE } from '../src/modules/panel-auth/panel-auth-core';
+import { createOfficeFastifyApp } from './create-fastify-app';
 
 const SECRET = 'test-panel-session-secret'; // = setup-env.ts
 
@@ -14,11 +12,7 @@ describe('panel-auth E2E (OP2): уровни доступа через реал�
   let app: INestApplication;
 
   beforeAll(async () => {
-    app = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(), {
-      bufferLogs: true,
-    });
-    app.useLogger(false);
-    await app.init();
+    app = await createOfficeFastifyApp();
   });
 
   afterAll(async () => {

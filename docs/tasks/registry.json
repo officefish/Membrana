@@ -72,7 +72,7 @@
       "githubIssueClosedAt": null
     },
     {
-      "githubIssue": null,
+      "githubIssue": 686,
       "status": "active",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
@@ -80,14 +80,14 @@
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "id": "sec-upgrade-backend-runtime",
-      "title": "Апгрейд №1 backend-runtime-major: Nest 11 + fastify 5 + @fastify/middie 9 + fast-uri 3 (атом, оба сервера синхронно)",
+      "title": "Апгрейд №1 backend-runtime-major: Nest 11 + fastify 5 + @fastify/middie 9 + fast-uri 3 (атом, office+media+cabinet)",
       "size": "L",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
       ],
-      "promptPath": "docs/meeting/security-posture/MEETING_BRIEF.md",
-      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты 2 critical рантайма + fastify/fast-uri/platform-fastify highs; smoke HTTP-роутов зелёный. Мерж поочерёдно с sec-upgrade-dev-tooling (общий lockfile)."
+      "promptPath": "docs/prompts/SEC_UPGRADE_BACKEND_RUNTIME_PROMPT.md",
+      "notes": "Вердикт M2 security-posture (ратифицирован 19.07): docs/seanses/security-posture-m2-upgrade-2026-07-19.md. DoD: сняты critical middie + fastify/fast-uri/platform-fastify highs; smoke HTTP. Пилот LINEAR_TASKS_GEAR: docs/discussions/linear-tasks-gear-pilot-sec-upgrade-backend-runtime-2026-07-20.md. Мерж поочерёдно с sec-upgrade-dev-tooling (общий lockfile)."
     },
     {
       "githubIssue": null,
