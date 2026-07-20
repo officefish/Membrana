@@ -18,7 +18,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `linear-stub-lift-office-graphql` | K5 stub-lift + remove office Linear GraphQL (K1 debt) | M | [`LINEAR_STUB_LIFT_OFFICE_GRAPHQL_PROMPT.md`](../docs/prompts/LINEAR_STUB_LIFT_OFFICE_GRAPHQL_PROMPT.md) | [#694](https://github.com/officefish/Membrana/issues/694) |
 | `cowork-execution-registry` | Cowork Sprint: контур исполнения команды + переезд реестра | L | [`COWORK_SPRINT_BRIEF.md`](../docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md) | [#660](https://github.com/officefish/Membrana/issues/660) |
 | `agent-ci-gate-tooling` | Агентский тулинг: pr:wait + грабли (конфликт блокирует CI, tail в фоне, short-path) | S | [`AGENT_CI_GATE_TOOLING_PROMPT.md`](../docs/prompts/AGENT_CI_GATE_TOOLING_PROMPT.md) | [#643](https://github.com/officefish/Membrana/issues/643) |
 | `truth-minting-tooling` | Тулинг графа правды: ask-check, mint, utterance | S | [`TRUTH_MINTING_TOOLING_PROMPT.md`](../docs/prompts/TRUTH_MINTING_TOOLING_PROMPT.md) | [#642](https://github.com/officefish/Membrana/issues/642) |
@@ -252,6 +251,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `linear-stub-lift-office-graphql` | K5 stub-lift + remove office Linear GraphQL (K1 debt) | 2026-07-20 | [`LINEAR_STUB_LIFT_OFFICE_GRAPHQL_PROMPT.md`](../docs/prompts/LINEAR_STUB_LIFT_OFFICE_GRAPHQL_PROMPT.md) | #694 (Issue открыт) | [карточка](./archive/linear-stub-lift-office-graphql.md) |
 | `linear-egress-media-wiring` | media-NL Linear snapshot producer + office trigger (egress wiring K1-K3) | 2026-07-20 | [`LINEAR_EGRESS_MEDIA_WIRING_PROMPT.md`](../docs/prompts/LINEAR_EGRESS_MEDIA_WIRING_PROMPT.md) | #691 (Issue открыт) | [карточка](./archive/linear-egress-media-wiring.md) |
 | `sec-upgrade-backend-runtime` | Апгрейд №1 backend-runtime-major: Nest 11 + fastify 5 + @fastify/middie 9 + fast-uri 3 (атом, office+media+cabinet) | 2026-07-20 | [`SEC_UPGRADE_BACKEND_RUNTIME_PROMPT.md`](../docs/prompts/SEC_UPGRADE_BACKEND_RUNTIME_PROMPT.md) | #686 (Issue открыт) | [карточка](./archive/sec-upgrade-backend-runtime.md) |
 | `scoreboard-plugin-shell` | Ф1: плагин витрины в модуле микрофона на измеренных числах | 2026-07-18 | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — | [карточка](./archive/scoreboard-plugin-shell.md) |
