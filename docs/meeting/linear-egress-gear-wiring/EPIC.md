@@ -1,7 +1,7 @@
 # Эпик: egress Linear + боевая подводка движка задач
 
-> Заседание `linear-egress-gear-wiring` (2026-07-20).
 > [`MEETING_BRIEF.md`](./MEETING_BRIEF.md) · [`MEETING_ACTIVE.md`](./MEETING_ACTIVE.md)
+> PR: https://github.com/officefish/Membrana/pull/690
 
 ---
 
@@ -9,67 +9,38 @@
 
 | Фаза | Вопрос | Вердикт | Протокол |
 |---|---|---|---|
-| M0 | порядок (`E1`) | `К1 ∥ К4a → К2 → К3 → {К5, К4b}` ratified | [m0](../../seanses/linear-egress-gear-wiring-m0-order-2026-07-20.md) |
-| M1 | egress (`E2`) | media-NL client+pull; office = snapshot consumer | [m1](../../seanses/linear-egress-gear-wiring-m1-egress-path-2026-07-20.md) |
-| M1b | каркас (`E3`) | `task:start` + passport seed + three carriers | [m1b](../../seanses/linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md) |
-| M2 | секреты (`E4`) | LINEAR key only media; trigger via X-Membrana-Token | [m2](../../seanses/linear-egress-gear-wiring-m2-secrets-trust-2026-07-20.md) |
-| след. | снимок DoD (К3) | *не созван* | — |
+| M0 | порядок | `К1 ∥ К4a → К2 → К3 → {К5, К4b}` ratified | [m0](../../seanses/linear-egress-gear-wiring-m0-order-2026-07-20.md) |
+| M1 | egress | media-NL client+pull | [m1](../../seanses/linear-egress-gear-wiring-m1-egress-path-2026-07-20.md) |
+| M1b | каркас | `task:start` + three carriers | [m1b](../../seanses/linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md) |
+| M2 | секреты | key only media; X-Membrana-Token trigger | [m2](../../seanses/linear-egress-gear-wiring-m2-secrets-trust-2026-07-20.md) |
+| M3 | снимок DoD | honest-шапка + `pullOk(S)` offline | [m3](../../seanses/linear-egress-gear-wiring-m3-snapshot-dod-2026-07-20.md) |
+| след. | К5 ∥ К4b | *не созваны* | — |
 
 ---
 
 ## Работы
 
-### Р0 — порядок (ratified)
+### Р3 — контракт снимка (CLOSED)
 
-`К1 ∥ К4a → К2 → К3 → {К5, К4b}`
+- Обязательная шапка `@1`: `format`, `capturedAt`, `sourceRevision`, `producedBy=media-NL`,
+  `egressRegion=NL`, `mode=batch-full-pull`, `trigger`, `recordCount`.
+- Литерал `source: office-batch` **удалён** → `producedBy` + `mode`.
+- `pullOk(S)` — булева функция только от файла снимка.
+- Гейт в теле: офлайн, без `api.linear.app`. Freshness — вне тела гейта.
+- `contentDigest` / `keyFingerprint` — опциональны в `@1`.
 
-### Р1 — egress (CLOSED)
+### Р4a / Р4b — следующие (после К3)
 
-media-NL → Linear; office ← `linear-snapshot@1`; producer = media-NL.
-
-### Р1b — каркас (CLOSED)
-
-`yarn task:start` · Issue/registry/Linear roles · AGENTS → passport.
-
-### Р2 — секреты / trust (CLOSED)
-
-- `LINEAR_API_KEY` (+ egress webhook secret) — **только media-NL** (политика размещения).
-- Egress к `api.linear.app` — только процесс media (cron / локальный webhook).
-- Office и агент РФ **не держат** Linear key и не ходят в GraphQL Linear.
-- Trigger office→media (заказ/забор снимка): существующий `X-Membrana-Token` /
-  `API_INTERNAL_TOKEN`; Linear key в вызове не передаётся.
-- Пересмотр: узкий egress-secret при k≥2; cold-only pull при on-demand+изоляции.
-- В К3: `producedBy: media-NL` + регион egress (контракт).
-
-### Р3 — контракт снимка / DoD pull (К3) — следующий
-
-*(ожидает прогона)*
+- **К5**: снятие stub, когда есть первый артефакт с `pullOk` не-stub путём.
+- **К4b**: гейт closure над `pullOk` (возможно обязательный digest).
 
 ---
 
 ## Порядок исполнения
 
 ```
-К1 ✓    К4a ✓
- │
- ▼
-К2 ✓
- │
- ▼
-К3   ← СЛЕДУЮЩИЙ
- │
- ├→ К5
- └→ К4b
+К1 ✓  К4a ✓ → К2 ✓ → К3 ✓ → { К5 , К4b }  ← СЛЕДУЮЩИЕ (независимы)
 ```
-
----
-
-## Гейты владельца
-
-| Что | Статус |
-|---|---|
-| Порядок M0 | ratified 2026-07-20 |
-| Раскладка секретов / туннель в прод | вне заседания |
 
 ---
 
@@ -77,7 +48,7 @@ media-NL → Linear; office ← `linear-snapshot@1`; producer = media-NL.
 
 | Что | Куда |
 |---|---|
-| Контракт `linear-snapshot@1` + DoD первого боевого pull | **К3** |
-| Снятие stub / гейт closure | К5 / К4b |
-| Снятие `LinearService`+key из env-модели office | след реализации политики M2 (не вердикт К3) |
+| Снятие stub | **К5** |
+| Гейт closure | **К4b** |
+| Миграция типа `LinearSnapshotHeader` в коде | реализация после заседания |
 | Аудит | `yarn meeting:audit --id linear-egress-gear-wiring` |
