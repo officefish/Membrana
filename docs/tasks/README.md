@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `ritual-r-report` | Доклад наружу: линза + живые ссылки (R эпика ritual-refactor) | M | [`RITUAL_R_REPORT_PROMPT.md`](../docs/prompts/RITUAL_R_REPORT_PROMPT.md) | — |
 | `ritual-s-standup` | Стендап Тимлидом + движок задач (S эпика ritual-refactor) | M | [`RITUAL_S_STANDUP_PROMPT.md`](../docs/prompts/RITUAL_S_STANDUP_PROMPT.md) | — |
 | `ritual-k-karkas` | 5-блочный каркас плана дня (K эпика ritual-refactor) | M | [`RITUAL_K_KARKAS_PROMPT.md`](../docs/prompts/RITUAL_K_KARKAS_PROMPT.md) | — |
 | `ritual-a-angelina-coordinator` | Ангелина-координатор ритуала (компонент A эпика ritual-refactor): чистое ядро каскада | M | [`RITUAL_A_ANGELINA_PROMPT.md`](../docs/prompts/RITUAL_A_ANGELINA_PROMPT.md) | — |
