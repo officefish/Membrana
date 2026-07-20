@@ -86,11 +86,58 @@ function extractIssuesTable(text) {
   return rows;
 }
 
+/** Тело секции `## <title>` до следующего `##`/конца. Пусто/«— пусто —» → null. */
+function slotSection(text, title) {
+  const re = new RegExp(`^##\\s+${title}\\s*$\\n([\\s\\S]*?)(?=^##\\s|$(?![\\s\\S]))`, 'mu');
+  const body = String(text ?? '').match(re)?.[1]?.trim() ?? '';
+  if (!body || /^—\s*пусто\s*—$/u.test(body)) return null;
+  return body;
+}
+
+/** Буллеты секции (строки `- …`), очищенные от md. */
+function slotBullets(text, title) {
+  const body = slotSection(text, title);
+  if (!body) return [];
+  return body
+    .split(/\r?\n/)
+    .map((l) => l.match(/^\s*[-*•]\s+(.*)$/u)?.[1])
+    .filter(Boolean)
+    .map((s) => stripInlineMd(collapseSpaces(s)));
+}
+
 /**
- * docs/MAIN_DAY_ISSUE.md → payload дня.
- * Возвращает null, если не найдены дата или ⚡-заголовок фокуса.
+ * Новый 5-блочный формат (K, вердикт M2): заголовки слотов детерминированы каркасом
+ * (`frame()` в day-plan-frame.mjs — здесь имена продублированы строками, чтобы lib
+ * оставалась без зависимости от каркаса; гейт скелета в генераторе держит их в синхроне).
+ * headline = первая фраза Магистрали; highPriority = Подкрепление; perspective = Перспективные.
+ */
+export function extractDayDigestSlots(text) {
+  const src = String(text ?? '');
+  const date =
+    src.match(/^#\s*(?:MAIN_DAY_ISSUE|Центральная задача дня)\s*—\s*(\d{4}-\d{2}-\d{2})/mu)?.[1] ??
+    src.match(/<!--\s*Сгенерировано:\s*(\d{4}-\d{2}-\d{2})/u)?.[1] ??
+    null;
+  const magistral = slotSection(src, 'Магистраль');
+  if (!date || !magistral) return null;
+  const headline = stripInlineMd(collapseSpaces(magistral.split(/\n/)[0])).replace(/[.;]\s*$/u, '');
+  const highPriority = slotBullets(src, 'Подкрепление');
+  const perspective = slotBullets(src, 'Перспективные');
+  return {
+    kind: 'day',
+    date,
+    headline,
+    ...(highPriority.length > 0 ? { highPriority: highPriority.slice(0, 4) } : {}),
+    ...(perspective.length > 0 ? { perspective: perspective.slice(0, 4) } : {}),
+  };
+}
+
+/**
+ * docs/MAIN_DAY_ISSUE.md → payload дня. Сначала новый 5-блочный формат (K);
+ * фолбэк — старый бокс-формат. Возвращает null, если не распознан ни один.
  */
 export function extractDayDigest(text) {
+  const slots = extractDayDigestSlots(text);
+  if (slots) return slots;
   const date = text.match(/^#\s*MAIN_DAY_ISSUE\s*—\s*(\d{4}-\d{2}-\d{2})/m)?.[1] ?? null;
   const box = boxLines(text);
   if (!date || box.length === 0) return null;
