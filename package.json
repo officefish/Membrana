@@ -322,7 +322,11 @@
   },
   "resolutions": {
     "estree-walker": "2.0.2",
-    "express": "4.21.2"
+    "express": "4.21.2",
+    "tar@npm:^6.0.5": "7.5.20",
+    "tar@npm:^6.1.2": "7.5.20",
+    "tar@npm:^6.1.11": "7.5.20",
+    "tar@npm:^6.1.12": "7.5.20"
   },
   "packageManager": "yarn@4.5.0"
 }
