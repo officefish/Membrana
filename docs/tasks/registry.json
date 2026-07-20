@@ -1,6 +1,22 @@
 {
   "tasks": [
     {
+      "id": "storm-format-impl",
+      "title": "Реализация формата шторма: контейнер, кодекс, вдох, место",
+      "promptPath": "docs/prompts/STORM_FORMAT_IMPL_PROMPT.md",
+      "githubIssue": 698,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "meeting-storm-format-ratify",
       "title": "Заседание: ратификация формата шторма в процедуру",
       "promptPath": "docs/prompts/MEETING_STORM_FORMAT_RATIFY_PROMPT.md",

@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `storm-format-impl` | Реализация формата шторма: контейнер, кодекс, вдох, место | L | [`STORM_FORMAT_IMPL_PROMPT.md`](../docs/prompts/STORM_FORMAT_IMPL_PROMPT.md) | [#698](https://github.com/officefish/Membrana/issues/698) |
 | `meeting-storm-format-ratify` | Заседание: ратификация формата шторма в процедуру | L | [`MEETING_STORM_FORMAT_RATIFY_PROMPT.md`](../docs/prompts/MEETING_STORM_FORMAT_RATIFY_PROMPT.md) | — |
 | `storm-open-close-decision-timing` | Ресёрч: тайминг решения и границы открытия/закрытия дивергентной сессии | S | [`STORM_OPEN_CLOSE_DECISION_TIMING_PROMPT.md`](../docs/prompts/STORM_OPEN_CLOSE_DECISION_TIMING_PROMPT.md) | — |
 | `agent-ci-gate-tooling` | Агентский тулинг: pr:wait + грабли (конфликт блокирует CI, tail в фоне, short-path) | S | [`AGENT_CI_GATE_TOOLING_PROMPT.md`](../docs/prompts/AGENT_CI_GATE_TOOLING_PROMPT.md) | [#643](https://github.com/officefish/Membrana/issues/643) |
