@@ -27,7 +27,7 @@ function main() {
   Пять проверок аудитора заседания (docs/MEETING_REGULATION.md § Аудитор).
   Ненулевой код возврата = процедура нарушена.
 
-  Читает: docs/meeting/<slug>/M*-topic.md, docs/seanses/<slug>-*.md`);
+  Читает: docs/meeting/<slug>/{M*-topic,M*_AGENDA,AGENDA_M*}.md, docs/seanses/<slug>-*.md`);
     process.exitCode = id ? 0 : 1;
     return;
   }
