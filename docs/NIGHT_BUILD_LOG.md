@@ -20,3 +20,12 @@
 ## Checkpoint NB4 — 2026-07-19T20:29:57.952Z
 - Status: **pass**
 - Note: analysis linked from regulation v1.3 (already on branch)
+
+## Re-open — 2026-07-20T17:32:28.221Z
+- Epic: `linear-hygiene-dreams-providers-night`
+- Continue: no
+
+
+## Checkpoint NB0 — 2026-07-20T17:40:22.448Z
+- Status: **pass**
+- Note: scoped dreams+task-start tests green; office typecheck green; neighbors ok; linearId DRU-249
