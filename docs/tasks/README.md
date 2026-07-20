@@ -20,12 +20,6 @@
 |----|----------|--------|--------|--------|
 | `ritual-d-dreams` | Сны v2: соревнование 24→6 (D эпика ritual-refactor) | L | [`RITUAL_D_DREAMS_PROMPT.md`](../docs/prompts/RITUAL_D_DREAMS_PROMPT.md) | — |
 | `ritual-r-report` | Доклад наружу: линза + живые ссылки (R эпика ritual-refactor) | M | [`RITUAL_R_REPORT_PROMPT.md`](../docs/prompts/RITUAL_R_REPORT_PROMPT.md) | — |
-| `tooling-needs-720-xs-norms` | tooling needs 20.07 XS грабли/нормы | S | [`TOOLING_NEEDS_720_XS_NORMS_PROMPT.md`](../docs/prompts/TOOLING_NEEDS_720_XS_NORMS_PROMPT.md) | [#725](https://github.com/officefish/Membrana/issues/725) |
-| `pr-wait-approval-resume` | pr:wait approval state + interrupt-resume | S | [`PR_WAIT_APPROVAL_RESUME_PROMPT.md`](../docs/prompts/PR_WAIT_APPROVAL_RESUME_PROMPT.md) | [#724](https://github.com/officefish/Membrana/issues/724) |
-| `media-env-token-resolve` | media env/token resolve + env-secrets-guard | S | [`MEDIA_ENV_TOKEN_RESOLVE_PROMPT.md`](../docs/prompts/MEDIA_ENV_TOKEN_RESOLVE_PROMPT.md) | [#723](https://github.com/officefish/Membrana/issues/723) |
-| `task-start-scaffold` | yarn task:start Issue+registry+stub+acceptance | M | [`TASK_START_SCAFFOLD_PROMPT.md`](../docs/prompts/TASK_START_SCAFFOLD_PROMPT.md) | [#722](https://github.com/officefish/Membrana/issues/722) |
-| `meeting-audit-check4-own-room` | meeting:audit check4: own En ID != sibling | S | [`MEETING_AUDIT_CHECK4_OWN_ROOM_PROMPT.md`](../docs/prompts/MEETING_AUDIT_CHECK4_OWN_ROOM_PROMPT.md) | [#721](https://github.com/officefish/Membrana/issues/721) |
-| `tooling-needs-720` | tooling needs 20.07 umbrella (meeting:audit / task:start / media env / pr:wait) | L | [`TOOLING_NEEDS_720_PROMPT.md`](../docs/prompts/TOOLING_NEEDS_720_PROMPT.md) | [#720](https://github.com/officefish/Membrana/issues/720) |
 | `ritual-s-standup` | Стендап Тимлидом + движок задач (S эпика ritual-refactor) | M | [`RITUAL_S_STANDUP_PROMPT.md`](../docs/prompts/RITUAL_S_STANDUP_PROMPT.md) | — |
 | `ritual-k-karkas` | 5-блочный каркас плана дня (K эпика ritual-refactor) | M | [`RITUAL_K_KARKAS_PROMPT.md`](../docs/prompts/RITUAL_K_KARKAS_PROMPT.md) | — |
 | `ritual-a-angelina-coordinator` | Ангелина-координатор ритуала (компонент A эпика ritual-refactor): чистое ядро каскада | M | [`RITUAL_A_ANGELINA_PROMPT.md`](../docs/prompts/RITUAL_A_ANGELINA_PROMPT.md) | — |
@@ -258,6 +252,12 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `tooling-needs-720-xs-norms` | tooling needs 20.07 XS грабли/нормы | 2026-07-20 | [`TOOLING_NEEDS_720_XS_NORMS_PROMPT.md`](../docs/prompts/TOOLING_NEEDS_720_XS_NORMS_PROMPT.md) | #725 (Issue открыт) | [карточка](./archive/tooling-needs-720-xs-norms.md) |
+| `pr-wait-approval-resume` | pr:wait approval state + interrupt-resume | 2026-07-20 | [`PR_WAIT_APPROVAL_RESUME_PROMPT.md`](../docs/prompts/PR_WAIT_APPROVAL_RESUME_PROMPT.md) | #724 (Issue открыт) | [карточка](./archive/pr-wait-approval-resume.md) |
+| `media-env-token-resolve` | media env/token resolve + env-secrets-guard | 2026-07-20 | [`MEDIA_ENV_TOKEN_RESOLVE_PROMPT.md`](../docs/prompts/MEDIA_ENV_TOKEN_RESOLVE_PROMPT.md) | #723 (Issue открыт) | [карточка](./archive/media-env-token-resolve.md) |
+| `task-start-scaffold` | yarn task:start Issue+registry+stub+acceptance | 2026-07-20 | [`TASK_START_SCAFFOLD_PROMPT.md`](../docs/prompts/TASK_START_SCAFFOLD_PROMPT.md) | #722 (Issue открыт) | [карточка](./archive/task-start-scaffold.md) |
+| `meeting-audit-check4-own-room` | meeting:audit check4: own En ID != sibling | 2026-07-20 | [`MEETING_AUDIT_CHECK4_OWN_ROOM_PROMPT.md`](../docs/prompts/MEETING_AUDIT_CHECK4_OWN_ROOM_PROMPT.md) | #721 (Issue открыт) | [карточка](./archive/meeting-audit-check4-own-room.md) |
+| `tooling-needs-720` | tooling needs 20.07 umbrella (meeting:audit / task:start / media env / pr:wait) | 2026-07-20 | [`TOOLING_NEEDS_720_PROMPT.md`](../docs/prompts/TOOLING_NEEDS_720_PROMPT.md) | #720 (Issue открыт) | [карточка](./archive/tooling-needs-720.md) |
 | `pr-ship-merge-only` | pr:ship --merge-only: безопасный мердж уже открытого PR + норма против raw gh pr merge --delete-branch | 2026-07-20 | [`PR_SHIP_MERGE_ONLY_PROMPT.md`](../docs/prompts/PR_SHIP_MERGE_ONLY_PROMPT.md) | #700 (Issue открыт) | [карточка](./archive/pr-ship-merge-only.md) |
 | `linear-stub-lift-office-graphql` | K5 stub-lift + remove office Linear GraphQL (K1 debt) | 2026-07-20 | [`LINEAR_STUB_LIFT_OFFICE_GRAPHQL_PROMPT.md`](../docs/prompts/LINEAR_STUB_LIFT_OFFICE_GRAPHQL_PROMPT.md) | #694 (Issue открыт) | [карточка](./archive/linear-stub-lift-office-graphql.md) |
 | `linear-egress-media-wiring` | media-NL Linear snapshot producer + office trigger (egress wiring K1-K3) | 2026-07-20 | [`LINEAR_EGRESS_MEDIA_WIRING_PROMPT.md`](../docs/prompts/LINEAR_EGRESS_MEDIA_WIRING_PROMPT.md) | #691 (Issue открыт) | [карточка](./archive/linear-egress-media-wiring.md) |
