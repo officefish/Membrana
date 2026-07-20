@@ -2701,6 +2701,157 @@
       },
       "supersededBy": null,
       "episode": "Кристаллизация 20.07 №2, синтез D3. Сессия #717 вела всё движение DRU-234 комментариями в issue — единственным живым каналом."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "dreams-ok-openrouter-model-content",
+      "claim": "Критерий «сны в бою работают»: запросы к OpenRouter с указанием конкретной модели отдают ожидаемый контент.",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-20",
+        "utterance": {
+          "sessionId": "f2cd7654-a610-4412-add6-c84acef2e5bc",
+          "uuid": "f2cd7654-a610-4412-add6-c84acef2e5bc:322",
+          "timestamp": "2026-07-20T18:05:00.000Z",
+          "kind": "free-text",
+          "quote": "Запросы к openrouter с упоминанием конкретной модели отдают ожидаемый контент",
+          "limit": "Cursor jsonl: uuid-поле = sessionId:lineNumber (не Claude uuid). Свободный текст."
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 вечер, бриф №1 (линза Ожегова): после Night Build #746/#747 владелец зафиксировал минимум «работают», а не «все 4 имени ok»."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "dreams-tier2-openrouter-tier3-direct",
+      "claim": "Для провайдеров снов: на tier2 — только OpenRouter (здесь готовы больше довериться случаю); на tier3 — только прямые запросы к оригиналам (больше управляемости с нашей стороны). Не путать с эшелонами INTEGRATIONS_STRATEGY (звук/ML).",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-20",
+        "utterance": {
+          "sessionId": "f2cd7654-a610-4412-add6-c84acef2e5bc",
+          "uuid": "f2cd7654-a610-4412-add6-c84acef2e5bc:328",
+          "timestamp": "2026-07-20T18:07:00.000Z",
+          "kind": "free-text",
+          "quote": "На tier2 только openRouter на tier3 только прямые запросы к оригиналам",
+          "limit": "Cursor jsonl: uuid-поле = sessionId:lineNumber (не Claude uuid). Свободный текст."
+        },
+        "note": "Вторая реплика: «На tier2 мы готовы больше доверится случаю На tier3 сны получат большую управляемость с нашей стороны» (2026-07-20T18:13) — вшита в claim."
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07, бриф №2 + правка пары O1+O2."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "dreams-tier-ladder-dreams-only",
+      "claim": "Лестница tier2/tier3 для LLM-провайдеров действует только для снов (DreamsModule / кубик), не на весь office LLM-egress.",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-20",
+        "utterance": {
+          "sessionId": "f2cd7654-a610-4412-add6-c84acef2e5bc",
+          "uuid": "f2cd7654-a610-4412-add6-c84acef2e5bc:333",
+          "timestamp": "2026-07-20T18:08:00.000Z",
+          "kind": "free-text",
+          "quote": "1. Только сны",
+          "limit": "Cursor jsonl: uuid-поле = sessionId:lineNumber (не Claude uuid). Свободный текст."
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07, бриф №3: вариант 1. Подвопрос про tier1 — openGap."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "dreams-ok-openrouter-model-content",
+        "dreams-tier2-openrouter-tier3-direct"
+      ],
+      "id": "dreams-tier2-check-is-openrouter-model",
+      "claim": "Проверка снов на tier2 закрывается успешным запросом к OpenRouter с явным model id и ожидаемым контентом; отдельный ключ оригинала (xAI/Google) эту проверку на tier2 не закрывает.",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "modus ponens",
+        "premisesUsed": [
+          "dreams-ok-openrouter-model-content",
+          "dreams-tier2-openrouter-tier3-direct"
+        ],
+        "note": "Следствие для smoke #747 эшелон A."
+      },
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с любым родителем"
+      },
+      "supersededBy": null,
+      "episode": "Фаза 2, пара O1+O2."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "dreams-tier2-openrouter-tier3-direct",
+        "dreams-tier-ladder-dreams-only"
+      ],
+      "id": "openrouter-tier2-probes-only-on-dreams",
+      "claim": "OpenRouter как канал tier2 пробует себя только на снах.",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "конъюнкция",
+        "premisesUsed": [
+          "dreams-tier2-openrouter-tier3-direct",
+          "dreams-tier-ladder-dreams-only"
+        ],
+        "note": "Владелец: «OpenRouter на tier2 пробует себя только на снах»."
+      },
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с любым родителем"
+      },
+      "supersededBy": null,
+      "episode": "Фаза 2, пара O2+O3."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "dreams-ok-openrouter-model-content",
+        "dreams-tier-ladder-dreams-only"
+      ],
+      "id": "dreams-ok-criterion-scoped-to-dreams",
+      "claim": "Критерий «OpenRouter+model → ожидаемый контент» — критерий контура снов, не общий SLA всего office LLM.",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "конъюнкция",
+        "premisesUsed": [
+          "dreams-ok-openrouter-model-content",
+          "dreams-tier-ladder-dreams-only"
+        ],
+        "note": "Владелец на O3+O1: «Да подтверждаю»."
+      },
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с любым родителем"
+      },
+      "supersededBy": null,
+      "episode": "Фаза 2, пара O1+O3."
     }
   ],
   "openGaps": [
@@ -2716,6 +2867,7 @@
     "ВОПРОС ВЛАДЕЛЬЦУ (из вывода amnesty-unbounded-while-parser-unbuilt): чем страхуется амнистия, если парсер не построят? Срок отзыва — предикат «парсер построен», и это сильнее даты, но предикат может не сработать НИКОГДА: длительность амнистии равна длительности непостройки, а стимул обратный нужному — не строить = держать дверь открытой. Прецедент рядом: insight-sunrise-flash принят 25.06 со статусом adopted и не построен три недели. Кандидаты (владельцем не названы): страховочная дата поверх предиката · карточка на постройку парсера с owner-гейтом.",
     "ФАКТ ДЛЯ КАРТОЧКИ ПАРСЕРА (проверено 17.07, не токен — выводится грепом): половина построена. scripts/night-triage-secret-scan.mjs (Issue #344) несёт готовые паттерны — Anthropic, GitHub, AWS, Slack, Google, PEM, Bearer — но это ДЕТЕКТОР (блокирует ненулевым выходом, режет ноль) и смотрит на ROUTINE_READ_PATHS, а не на транскрипты. Ни один не-тестовый скрипт не читает ~/.claude/projects/**/*.jsonl. Парсеру бэкапа нужен резак поверх этих паттернов + взгляд на сессии; с нуля не строится.",
     "ВОПРОС ВЛАДЕЛЬЦУ (снятая контрабанда — вывод не пустить в дедукцию без этой посылки): полевые данные (оборудование → записи → размеченный корпус → реальный F1) — единственный компонент продукта, чей lead-time физичен и НЕ ускоряется нашим темпом кода? Если да — откладывать заказ (equipment-funded-not-ordered-17-07) есть единственное место, где «действуем с запасом» (project-phase-scaffold-before-product) ложно, и заказ железа надо гнать параллельно каркасу, а не после. Владелец уже склонился («займусь завтра»), но факт-посылка о полевых данных как источнике истины детекции в графе не закреплён (world-fact, требует слова/пробы).",
-    "ФАКТ ДЛЯ РЕВИЗИИ: partner-asset-eval-becomes-insight — владельческий кристалл СОСЕДА без указателя (I7/warn). Чужой указатель агент этой сессии укрепить не может (не знает sessionId/uuid соседа) — на ревизию той сессии или на укрепление при следующей встрече владельца с этим фактом."
+    "ФАКТ ДЛЯ РЕВИЗИИ: partner-asset-eval-becomes-insight — владельческий кристалл СОСЕДА без указателя (I7/warn). Чужой указатель агент этой сессии укрепить не может (не знает sessionId/uuid соседа) — на ревизию той сессии или на укрепление при следующей встрече владельца с этим фактом.",
+    "OPEN GAP 20.07 кристаллизация снов: что такое tier1 для снов (если есть), или сны начинаются с tier2?"
   ]
 }
