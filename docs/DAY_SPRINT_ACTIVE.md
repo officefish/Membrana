@@ -1,5 +1,6 @@
 # Active day sprint
 
-> Нет активного спринта. Последний закрыт: `fv1-s1-pipeline-2026-06-30`  
-> **CLOSURE:** [`docs/day-sprint/fv1-s1-pipeline-2026-06-30/CLOSURE.md`](./day-sprint/fv1-s1-pipeline-2026-06-30/CLOSURE.md)  
-> **PR:** [#207](https://github.com/officefish/Membrana/pull/207)
+> **Активен:** `scripts-boundary-container-2026-07-21`  
+> **OPEN:** [`docs/day-sprint/scripts-boundary-container-2026-07-21/OPEN.md`](./day-sprint/scripts-boundary-container-2026-07-21/OPEN.md)  
+> **Эпик реестра:** `scripts-boundary-container` · фаза в работе: **S0** (`sbc-s0-contract`, lead ozhegov)  
+> **Ветка:** `feature/scripts-boundary-container`
