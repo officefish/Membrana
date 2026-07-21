@@ -88,6 +88,14 @@
       }
     },
     {
+      "id": "day-sprint",
+      "holder": "vesnin",
+      "homePath": "docs/procedures/day-sprint",
+      "container": { "value": true, "provenance": "ozhegov@dsp-f2" },
+      "vocabulary": { "value": false, "provenance": null },
+      "grammar": { "value": true, "provenance": "vesnin@dsp-f2" }
+    },
+    {
       "id": "storm",
       "holder": "angelina",
       "homePath": null,

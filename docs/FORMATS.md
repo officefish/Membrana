@@ -12,6 +12,11 @@
 | **Заседание (Meeting)** | многовопросная материя → по одному вопросу, вердикты в эпик | **конвергентная** | [`MEETING_REGULATION.md`](./MEETING_REGULATION.md) |
 | **Шторм (Storm)** | беседа → тезисы; конспектирование будущего доклада | **дивергентная** | [`STORM_REGULATION.md`](./STORM_REGULATION.md) |
 
+**Ритм задач (не строка таблицы форматов выше):** **day-sprint** — эпик + фазы +
+инстанс `docs/day-sprint/<id>/`. Регламент:
+[`DAY_SPRINT_REGULATION.md`](./DAY_SPRINT_REGULATION.md) · определение:
+[`procedures/day-sprint/`](./procedures/day-sprint/).
+
 ## Шов расхождение → схождение
 
 **Шторм** (дивергентный) порождает материал; одна ветвь его развилки — вход в

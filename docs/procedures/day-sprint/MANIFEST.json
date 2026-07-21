@@ -1,0 +1,21 @@
+{
+  "id": "day-sprint",
+  "leadPersona": "vesnin",
+  "kitVersion": null,
+  "engines": [
+    "scripts/task-start.mjs",
+    "scripts/task-register.mjs",
+    "scripts/archive-task.mjs",
+    "scripts/task-close-github-issues.mjs",
+    "scripts/task-list.mjs",
+    "scripts/lib/task-registry.mjs"
+  ],
+  "precedents": [
+    "docs/day-sprint/branch-mintlify-engine/CLOSURE.md",
+    "docs/day-sprint/kits-angelina-morning-2026-07-21/CLOSURE.md",
+    "docs/day-sprint/branch-assortment-sprint/CLOSURE.md",
+    "docs/day-sprint/backlog-cleanup-s1-2026-06-30/CLOSURE.md",
+    "docs/day-sprint/db3h-s1-tech-debt-2026-06-26/CLOSURE.md",
+    "docs/day-sprint/cursor-agent-skills-sprint-2026-06-22/CLOSURE.md"
+  ]
+}

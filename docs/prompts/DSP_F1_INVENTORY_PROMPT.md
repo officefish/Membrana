@@ -20,9 +20,8 @@
 
 ---
 
-## Acceptance criteria (scaffold)
+## Статус (2026-07-21)
 
-> Заполнить до кода. Чеклист приёмки = Definition of Done + явные AC Issue.
-
-- [ ] …
-- [ ] …
+- [x] [`INVENTORY.md`](../day-sprint/day-sprint-procedure-2026-07-21/INVENTORY.md)
+- [x] черновик engines/precedents + рекомендация F3 = regulation
+- [ ] Archive после ship
