@@ -4,11 +4,11 @@
 
 ---
 
-## 2026-07-21 — `day-sprint-procedure` — **OPEN**
+## 2026-07-21 — `day-sprint-procedure` — **CLOSED**
 
-- **Цель:** жилец `docs/procedures/day-sprint/` (определение ≠ инстансы) + regulation + провода
-- **OPEN:** [`day-sprint/day-sprint-procedure-2026-07-21/OPEN.md`](./day-sprint/day-sprint-procedure-2026-07-21/OPEN.md)
-- **Фазы:** F0–F5 (`dsp-f0`…`dsp-f5`); F4 lead ozhegov
+- **Delivered:** жилец `docs/procedures/day-sprint/` + `DAY_SPRINT_REGULATION.md` + провода · PR [#877](https://github.com/officefish/Membrana/pull/877)
+- **Register:** [#862](https://github.com/officefish/Membrana/pull/862) · Issues #848–#854
+- **CLOSURE:** [`day-sprint/day-sprint-procedure-2026-07-21/CLOSURE.md`](./day-sprint/day-sprint-procedure-2026-07-21/CLOSURE.md)
 
 ---
 
