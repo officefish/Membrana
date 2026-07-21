@@ -20,7 +20,6 @@
 |----|----------|--------|--------|--------|
 | `kdm-d4-closure` | D4: CLOSURE kits-dream-master | M | [`KDM_D4_CLOSURE_PROMPT.md`](../prompts/KDM_D4_CLOSURE_PROMPT.md) | [#860](https://github.com/officefish/Membrana/issues/860) |
 | `kdm-d3-procedure` | D3: процедура ritual-dreams / kitVersion | M | [`KDM_D3_PROCEDURE_PROMPT.md`](../prompts/KDM_D3_PROCEDURE_PROMPT.md) | [#859](https://github.com/officefish/Membrana/issues/859) |
-| `kdm-d2-kit` | D2: жилец kits/dream-master + пины | M | [`KDM_D2_KIT_PROMPT.md`](../prompts/KDM_D2_KIT_PROMPT.md) | [#858](https://github.com/officefish/Membrana/issues/858) |
 | `kits-dream-master` | Эпик: второй кит dream-master (Мастер снов) поверх kits/ | L | [`KITS_DREAM_MASTER_PROMPT.md`](../prompts/KITS_DREAM_MASTER_PROMPT.md) | [#855](https://github.com/officefish/Membrana/issues/855) |
 | `morning-report-completion` | Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям) | L | [`MORNING_REPORT_COMPLETION_PROMPT.md`](../prompts/MORNING_REPORT_COMPLETION_PROMPT.md) | [#788](https://github.com/officefish/Membrana/issues/788) |
 | `sbc-s4-wiring` | S4: провода AGENTS/skills/DoD для контейнера scripts/ | S | [`SBC_S4_WIRING_PROMPT.md`](../prompts/SBC_S4_WIRING_PROMPT.md) | [#796](https://github.com/officefish/Membrana/issues/796) |
@@ -212,6 +211,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `kdm-d2-kit` | D2: жилец kits/dream-master + пины | 2026-07-21 | [`KDM_D2_KIT_PROMPT.md`](../prompts/KDM_D2_KIT_PROMPT.md) | #858 (Issue открыт) | [карточка](./archive/kdm-d2-kit.md) |
 | `kdm-d1-roots` | D1: финальный список roots dream-master | 2026-07-21 | [`KDM_D1_ROOTS_PROMPT.md`](../prompts/KDM_D1_ROOTS_PROMPT.md) | #857 (Issue открыт) | [карточка](./archive/kdm-d1-roots.md) |
 | `kdm-d0-brief` | D0: бриф kits-dream-master, гейт готовности dreams | 2026-07-21 | [`KDM_D0_BRIEF_PROMPT.md`](../prompts/KDM_D0_BRIEF_PROMPT.md) | #856 (Issue открыт) | [карточка](./archive/kdm-d0-brief.md) |
 | `bme-f5-closure` | F5: CLOSURE, чеклист паттернов, handoff | 2026-07-21 | [`BME_F5_CLOSURE_PROMPT.md`](../prompts/BME_F5_CLOSURE_PROMPT.md) | #829 (Issue открыт) | [карточка](./archive/bme-f5-closure.md) |
