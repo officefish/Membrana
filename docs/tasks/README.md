@@ -18,6 +18,13 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `bc-b5-closure` | B5: CLOSURE bestiary-container | M | [`BC_B5_CLOSURE_PROMPT.md`](../prompts/BC_B5_CLOSURE_PROMPT.md) | [#884](https://github.com/officefish/Membrana/issues/884) |
+| `bc-b4-weekly` | B4: weekly run + anti-silent auditor | M | [`BC_B4_WEEKLY_PROMPT.md`](../prompts/BC_B4_WEEKLY_PROMPT.md) | [#883](https://github.com/officefish/Membrana/issues/883) |
+| `bc-b3-missing-beasts` | B3: echo / goal-displacement or defer | M | [`BC_B3_MISSING_BEASTS_PROMPT.md`](../prompts/BC_B3_MISSING_BEASTS_PROMPT.md) | [#882](https://github.com/officefish/Membrana/issues/882) |
+| `bc-b2-specimens` | B2: specimens + bestiary:audit + tests | M | [`BC_B2_SPECIMENS_PROMPT.md`](../prompts/BC_B2_SPECIMENS_PROMPT.md) | [#881](https://github.com/officefish/Membrana/issues/881) |
+| `bc-b1-home` | B1: home docs/audit/bestiary/ | M | [`BC_B1_HOME_PROMPT.md`](../prompts/BC_B1_HOME_PROMPT.md) | [#880](https://github.com/officefish/Membrana/issues/880) |
+| `bc-b0-brief` | B0: brief bestiary-container lemma | M | [`BC_B0_BRIEF_PROMPT.md`](../prompts/BC_B0_BRIEF_PROMPT.md) | [#879](https://github.com/officefish/Membrana/issues/879) |
+| `bestiary-container` | Epic: bestiary antipatterns as container | L | [`BESTIARY_CONTAINER_PROMPT.md`](../prompts/BESTIARY_CONTAINER_PROMPT.md) | [#878](https://github.com/officefish/Membrana/issues/878) |
 | `dsp-f5-closure` | F5: CLOSURE, archive фаз + эпика, handoff | M | [`DSP_F5_CLOSURE_PROMPT.md`](../prompts/DSP_F5_CLOSURE_PROMPT.md) | [#854](https://github.com/officefish/Membrana/issues/854) |
 | `dsp-f4-wire` | F4: провода skill/CONTRIBUTING/ACTIVE ± R5 migrated | M | [`DSP_F4_WIRE_PROMPT.md`](../prompts/DSP_F4_WIRE_PROMPT.md) | [#853](https://github.com/officefish/Membrana/issues/853) |
 | `dsp-f3-regulation` | F3: DAY_SPRINT_REGULATION (или явный отказ README-only) | M | [`DSP_F3_REGULATION_PROMPT.md`](../prompts/DSP_F3_REGULATION_PROMPT.md) | [#852](https://github.com/officefish/Membrana/issues/852) |
