@@ -30,8 +30,8 @@
 | Phase | Registry id | Issue | Lead | Status |
 |-------|-------------|------:|------|--------|
 | **D0** | `kdm-d0-brief` | [#856](https://github.com/officefish/Membrana/issues/856) | vesnin | ✅ done · [PR #863](https://github.com/officefish/Membrana/pull/863) |
-| **D1** | `kdm-d1-roots` | [#857](https://github.com/officefish/Membrana/issues/857) | ozhegov | ✅ LGTM — ship |
-| **D2** | `kdm-d2-kit` | [#858](https://github.com/officefish/Membrana/issues/858) | dynin | ⬜ |
+| **D1** | `kdm-d1-roots` | [#857](https://github.com/officefish/Membrana/issues/857) | ozhegov | ✅ done · [PR #865](https://github.com/officefish/Membrana/pull/865) |
+| **D2** | `kdm-d2-kit` | [#858](https://github.com/officefish/Membrana/issues/858) | dynin | ⬜ next |
 | **D3** | `kdm-d3-procedure` | [#859](https://github.com/officefish/Membrana/issues/859) | ozhegov | ⬜ |
 | **D4** | `kdm-d4-closure` | [#860](https://github.com/officefish/Membrana/issues/860) | vesnin | ⬜ |
 
