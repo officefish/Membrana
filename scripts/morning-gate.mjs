@@ -14,6 +14,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createHash } from 'node:crypto';
+import { spawnSync } from 'node:child_process';
 
 import { canSend, freezeTopThree, magistralChosen, swallowApproved } from './lib/morning-gates.mjs';
 
@@ -65,6 +66,14 @@ if (cmd === 'magistral') {
   }
   save(state);
   console.log(`✓ магистраль выбрана владельцем: ${choice}`);
+  // T7 (шторм 21.07, Ф1 #788): касание 1 закрыто → фон сразу собирает доклад по
+  // задачам. Exit-код команды magistral отражает ЧЕКАНКУ (уже сохранена), а не
+  // доклад: доклад — best-effort с ручным перезапуском, красный доклад не должен
+  // рушить вызывающую цепочку и тем более откатывать выбор владельца.
+  const report = spawnSync(process.execPath, ['scripts/day-report.mjs'], { stdio: 'inherit' });
+  if (report.status !== 0) {
+    console.error('⚠ доклад по задачам не собрался — чеканка в силе; перезапуск: yarn day:report');
+  }
   process.exit(0);
 }
 
