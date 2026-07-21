@@ -26,7 +26,7 @@
 2. ✅ README-контракт с таблицей «что писать / в git?» (ниже).
 3. ✅ Overwrite-реестр `registry/BESTIARY_LIST.md` с Meta (B2: производный от кода + specimens).
 4. ✅ `cache/` под gitignore.
-5. ⚠ Инструмент `yarn bestiary:audit` — **B2**; до него реестр — stub с Meta `Source: stub/B1`.
+5. ✅ `yarn bestiary:audit` пишет реестр сам; источник истины классов — `BESTIARY` в engines.
 6. ✅ `AGENT_PROMPT.md`; Scenario Specimen-Audit с HARD GATE на класс.
 7. ✅ Массовое «лечение» находок запрещено (#533 — линза находит, не чинит); правки кода — отдельные задачи.
 8. ✅ Провода: `docs/audit/README.md`, `AGENTS.md`, эпик OPEN; скилл — follow-up при потребности.
