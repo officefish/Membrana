@@ -1,10 +1,10 @@
 # Промпт: Эпик: второй кит — dream-master (Мастер снов)
 
-> **L** · `kits-dream-master` · Issue — *завести при старте* · lead **vesnin**  
-> Семя паттерна: [#761](https://github.com/officefish/Membrana/issues/761) · прецедент жильца: `kits-angelina-morning` (#814).  
-> Паттерн: [`PINNED_SUBGRAPH_VERSIONING`](../patterns/PINNED_SUBGRAPH_VERSIONING.md).  
+> **L** · `kits-dream-master` · [#855](https://github.com/officefish/Membrana/issues/855) · lead **vesnin**  
+> Цепь: D0→D4 (#856–#860). Семя: [#761](https://github.com/officefish/Membrana/issues/761).  
+> Прецедент: `kits-angelina-morning` (#814). Паттерн: [`PINNED_SUBGRAPH_VERSIONING`](../patterns/PINNED_SUBGRAPH_VERSIONING.md).  
 > Автор снов: [`DREAM_MASTER_PROMPT.md`](./DREAM_MASTER_PROMPT.md) («Мастер снов», не VT-персона).  
-> Статус: **бриф (черновик)** — дом `kits/` и зуб аудита уже есть; эпик = второй жилец + процедура.
+> Статус: **зарегистрирован** — дом `kits/` и зуб аудита уже есть; следующий шаг = D0.
 
 ---
 
@@ -23,7 +23,7 @@
 | Лемма | Адрес | Не путать |
 |-------|--------|-----------|
 | **Дом кода** | плоский [`scripts/`](../../scripts/README.md) (+ office-модуль снов — *ссылкой*, не копией) | класть код снов в `kits/` |
-| **Дом кита** | [`kits/dream-master/`](../../kits/) (K3) | `docs/audit/git/` pins (BME) |
+| **Дом кита** | [`kits/dream-master/`](../../kits/) (D2) | `docs/audit/git/` pins (BME) |
 | **Схема** | уже [`kits/MANIFEST.schema.json`](../../kits/MANIFEST.schema.json) | второй schema-остров |
 | **Аудит** | уже `yarn kits:audit` | писать новый зуб «для снов» |
 | **Owner пина** | **dynin** (реализация контура) + авторство текста снов = «Мастер снов» / `DREAM_MASTER_VERSION` | leadPersona ≠ Ангелина |
@@ -35,7 +35,7 @@
 - Глотать **`night:research`** в тот же кит без отдельного решения владельца — соседняя
   семантика («сон системы» / Perplexity по графу правды, #598), не dreams v2.
 - Подменять недоделанную инфру провайдеров (`ritual-d-dreams-infra`) «зелёным пином»
-  полусырого tick — гейт готовности до K3.
+  полусырого tick — гейт готовности до D2.
 - Копировать Nest/office исходники в `kits/` или `scripts/` дублями.
 
 **Соседство:**
@@ -50,13 +50,13 @@
 
 ## Фазы (черновик цепи)
 
-| Фаза | id (черновик) | lead | Суть |
-|------|---------------|------|------|
-| D0 | `kdm-d0-brief` | vesnin | этот бриф → LGTM; гейт готовности infra |
-| D1 | `kdm-d1-roots` | ozhegov | финальный список roots + что *не* в ките (office vs scripts) |
-| D2 | `kdm-d2-kit` | dynin | жилец `kits/dream-master/` + пины; `kits:audit` зелёный |
-| D3 | `kdm-d3-procedure` | ozhegov | `docs/procedures/ritual-dreams/` · `kitVersion` → кит; engines не дублируют subgraph |
-| D4 | `kdm-d4-closure` | vesnin | CLOSURE + archive + комментарий #761 (второй жилец) |
+| Фаза | id | Issue | lead | Суть |
+|------|-----|------:|------|------|
+| D0 | `kdm-d0-brief` | #856 | vesnin | бриф → LGTM; гейт готовности infra |
+| D1 | `kdm-d1-roots` | #857 | ozhegov | финальный список roots + что *не* в ките |
+| D2 | `kdm-d2-kit` | #858 | dynin | жилец `kits/dream-master/` + пины; audit зелёный |
+| D3 | `kdm-d3-procedure` | #859 | ozhegov | `ritual-dreams` · `kitVersion` → кит |
+| D4 | `kdm-d4-closure` | #860 | vesnin | CLOSURE + archive + #761 |
 
 Дом `kits/` и K2-аудит **не** повторяем — уже в main.
 
@@ -96,7 +96,7 @@
 - GitHub Releases раздачи
 - Новый schema-файл
 
-## Acceptance (эпик)
+## Acceptance criteria
 
 - [ ] Бриф D0 + LGTM vesnin
 - [ ] `kits/dream-master/` с пинами; `yarn kits:audit --id dream-master` зелёный
