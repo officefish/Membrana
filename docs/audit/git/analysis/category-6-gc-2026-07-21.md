@@ -1,4 +1,4 @@
-﻿# Category 6 GC — 2026-07-21
+# Category 6 GC — 2026-07-21
 
 Owner-approved immediate GC of category 6 (A4 locals + A2 remote night-triage discard).
 Branch: `chore/git-gc-cat6`. Worktree check: no target checked out.
