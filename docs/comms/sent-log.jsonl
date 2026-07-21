@@ -1,2 +1,3 @@
 {"ts":"2026-07-19T15:51:06.872Z","kind":"swallow","file":null,"sha256":"5949a9ffcb201ef74ec6cef695852e0c46a169fb7008c769fb1aff62432ee0e0","sent":true,"office_response":{"sent":true,"message_id":99}}
 {"ts":"2026-07-19T15:51:06.877Z","kind":"swallow","file":null,"sha256":"e4058cadee3f8d85f74f6fca49fa3e96c02b6ac36e8f47a4d1196304cf0ba082","sent":true,"office_response":{"sent":true}}
+{"ts":"2026-07-20T17:14:10.411Z","kind":"swallow","file":"docs/comms/drafts/ally-swallow-evening-2026-07-20.md","sha256":"eab27ec6eb1795a076088d19e5fcf60a28dfaa5ad67558ccd83581b4aca4e2ae","sent":true,"office_response":{"sent":true}}
