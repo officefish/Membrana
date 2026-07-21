@@ -29,7 +29,7 @@
 | D1 | #857 | [#865](https://github.com/officefish/Membrana/pull/865) | root = `scripts/dreams.mjs`; out-of-kit |
 | D2 | #858 | [#867](https://github.com/officefish/Membrana/pull/867) | жилец dream-master · 1 root / 10 pins |
 | D3 | #859 | [#869](https://github.com/officefish/Membrana/pull/869) | `ritual-dreams` → kitVersion |
-| D4 | #860 | *этот PR* | CLOSURE + archive + #761 |
+| D4 | #860 | [#874](https://github.com/officefish/Membrana/pull/874) | CLOSURE + archive + #761 |
 
 ## PINNED_SUBGRAPH
 

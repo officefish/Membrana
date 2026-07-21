@@ -32,5 +32,5 @@
 
 - [x] CLOSURE.md
 - [x] PINNED_SUBGRAPH ✅ в README кита (D2)
-- [x] Комментарий в #761 (второй жилец) — при ship
+- [x] Комментарий в #761 (второй жилец) · [comment](https://github.com/officefish/Membrana/issues/761#issuecomment-5038455057)
 - [x] LGTM vesnin (owner ok 2026-07-21) → archive D4 + эпик после merge

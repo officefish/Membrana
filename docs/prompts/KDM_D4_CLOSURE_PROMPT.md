@@ -16,7 +16,7 @@ D0–D3 в main. D4 закрывает спринт: CLOSURE, #761 (второй
 ## Acceptance criteria
 
 - [x] CLOSURE + ACTIVE очищен
-- [x] #761 обновлён (при ship)
+- [x] #761 обновлён ([comment](https://github.com/officefish/Membrana/issues/761#issuecomment-5038455057))
 - [x] LGTM vesnin (owner ok 2026-07-21)
 
 ## Out of scope
