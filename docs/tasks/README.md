@@ -18,12 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `pl-r5-migration` | Р5: миграция процедур — реестр процедур, валидатор, донор meeting | M | [`PL_R5_MIGRATION_PROMPT.md`](../docs/prompts/PL_R5_MIGRATION_PROMPT.md) | [#786](https://github.com/officefish/Membrana/issues/786) |
-| `pl-r4-grammar` | Р4: грамматика веток — словари, resolveHolder, валидатор имени, провод в шип-гейт | M | [`PL_R4_GRAMMAR_PROMPT.md`](../docs/prompts/PL_R4_GRAMMAR_PROMPT.md) | [#785](https://github.com/officefish/Membrana/issues/785) |
-| `pl-r3-boundary` | Р3: граница слоёв — файл правил, checkLayerDirection, CI-зуб, контракт кит-манифеста | M | [`PL_R3_BOUNDARY_PROMPT.md`](../docs/prompts/PL_R3_BOUNDARY_PROMPT.md) | [#784](https://github.com/officefish/Membrana/issues/784) |
-| `pl-r2-vocabulary` | Р2: словарь категорий — источник, генерация, check() + checkGenus | M | [`PL_R2_VOCABULARY_PROMPT.md`](../docs/prompts/PL_R2_VOCABULARY_PROMPT.md) | [#783](https://github.com/officefish/Membrana/issues/783) |
-| `pl-r1-home` | Р1: дом процедурного слоя docs/procedures + validateProcedure + жилец ritual-evening | M | [`PL_R1_HOME_PROMPT.md`](../docs/prompts/PL_R1_HOME_PROMPT.md) | [#782](https://github.com/officefish/Membrana/issues/782) |
-| `procedural-layer-impl` | Эпик: реализация процедурного слоя (Р1-Р5 заседания procedural-layer) | L | [`PROCEDURAL_LAYER_IMPL_PROMPT.md`](../docs/prompts/PROCEDURAL_LAYER_IMPL_PROMPT.md) | [#781](https://github.com/officefish/Membrana/issues/781) |
+| `morning-report-completion` | Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям) | L | [`MORNING_REPORT_COMPLETION_PROMPT.md`](../docs/prompts/MORNING_REPORT_COMPLETION_PROMPT.md) | [#788](https://github.com/officefish/Membrana/issues/788) |
 | `angelina-hostess-impl` | Спринт: реализация вердиктов «Ангелина — хозяйка утра» (C→B+G→H→GC) | L | [`angelina-hostess-EPIC-2026-07-21.md`](../docs/seanses/angelina-hostess-EPIC-2026-07-21.md) | — |
 | `linear-hygiene-dreams-providers-night` | Night: Linear-гигиена → живые провайдеры снов | M | [`LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `ritual-r-report` | Доклад наружу: линза + живые ссылки (R эпика ritual-refactor) | M | [`RITUAL_R_REPORT_PROMPT.md`](../docs/prompts/RITUAL_R_REPORT_PROMPT.md) | — |
