@@ -1,6 +1,6 @@
 # Промпт: B2 — specimens + audit + тесты
 
-> **M** · `bc-b2-specimens` · lead **dynin** · parent `bestiary-container`
+> **M** · `bc-b2-specimens` · [#881](https://github.com/officefish/Membrana/issues/881) · lead **dynin** · parent `bestiary-container`
 
 ## Промпт целиком
 
@@ -11,8 +11,8 @@
 
 ## Acceptance criteria
 
-- [ ] 4 specimen-класса ловятся
-- [ ] LGTM dynin
+- [x] 4 specimen-класса ловятся (`bestiary:audit` 4/4; tests 5/5)
+- [x] LGTM dynin (owner ok 2026-07-22)
 
 ## Out of scope
 

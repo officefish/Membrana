@@ -38,8 +38,8 @@ specimen’ами, не чинишь код молча (#533).
 | Команда | Назначение |
 |---------|------------|
 | `node scripts/lens-run.mjs [files…]` | Навести бестиарий; `--json` → stdout |
-| `node scripts/lens-run.mjs docs/audit/bestiary/specimens/**` | Самопроверка на бетиях (B2+) |
-| `yarn bestiary:audit` | **B2** — производный `BESTIARY_LIST.md` |
+| `yarn bestiary:audit` | Покрытие specimens → `registry/BESTIARY_LIST.md` (exit 1 если класс без hit) |
+| `node --test scripts/bestiary-audit.test.mjs` | Зуб: 4/4 class ловятся |
 
 Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`.
 
@@ -75,10 +75,10 @@ Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`.
 
 ## 5. Классы (as-of B1 / код)
 
-| defectClass | Label | Detector | Specimen (B2) |
-|-------------|-------|----------|---------------|
-| `silent` | Молчун | `detectSilent` | ⬜ |
-| `unwired` | Половина без провода | `detectUnwired` | ⬜ |
-| `ornament` | Украшение | `detectOrnament` | ⬜ |
-| `jargon-out` | Жаргон наружу | `detectJargonOut` | ⬜ |
+| defectClass | Label | Detector | Specimen |
+|-------------|-------|----------|----------|
+| `silent` | Молчун | `detectSilent` | ✅ `silent/swallow.mjs` |
+| `unwired` | Половина без провода | `detectUnwired` | ✅ `unwired/orphan-export.mjs` |
+| `ornament` | Украшение | `detectOrnament` | ✅ `ornament/unread-write.mjs` |
+| `jargon-out` | Жаргон наружу | `detectJargonOut` | ✅ `jargon-out/external-jargon.mjs` |
 | эхо / goal-displacement | — | нет в BESTIARY | B3 |

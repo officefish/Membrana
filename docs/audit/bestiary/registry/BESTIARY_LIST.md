@@ -5,22 +5,18 @@
 | Field | Value |
 |-------|-------|
 | Date | 2026-07-21 |
-| Head SHA | *(заполнить при B2 overwrite)* |
-| Source | stub/B1 — до `yarn bestiary:audit` |
+| Head SHA | a2995f2c |
+| Source | yarn bestiary:audit |
 | Engines | `scripts/lib/lens-bestiary.mjs` |
 
 ## Summary
 
-| defectClass | Label | In BESTIARY | Specimen dirs | Self-check |
-|-------------|-------|:-----------:|---------------|------------|
-| `silent` | Молчун | ✅ | ⬜ B2 | ⬜ |
-| `unwired` | Половина без провода | ✅ | ⬜ B2 | ⬜ |
-| `ornament` | Украшение | ✅ | ⬜ B2 | ⬜ |
-| `jargon-out` | Жаргон наружу | ✅ | ⬜ B2 | ⬜ |
+| defectClass | Label | Specimen files | Hits | Self-check |
+|-------------|-------|----------------|:----:|------------|
+| `silent` | Молчун | `docs/audit/bestiary/specimens/silent/swallow.mjs` | 1 | ✅ |
+| `unwired` | Половина без провода | `docs/audit/bestiary/specimens/unwired/orphan-export.mjs` | 1 | ✅ |
+| `ornament` | Украшение | `docs/audit/bestiary/specimens/ornament/unread-write.mjs` | 1 | ✅ |
+| `jargon-out` | Жаргон наружу | `docs/audit/bestiary/specimens/jargon-out/external-jargon.mjs` | 1 | ✅ |
 
-**Итого в коде:** 4. **Покрытие specimen:** 0/4 (ожидается B2).
+**Покрытие:** 4/4.
 
-## Notes
-
-- Эхо-камера и смещение цели — не в `BESTIARY` (фаза B3).
-- Этот файл — stub; B2 перезапишет производным снимком.
