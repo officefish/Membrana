@@ -6,21 +6,22 @@
 | --- | --- |
 | Date | 2026-07-21 |
 | Category | 6 — Застой / zombie |
-| Registry source | `docs/audit/git/registry/BRANCHES_DECOMPOSE_LIST.md` (= `BRANCHES_DECOMPOSE_LIST-2026-07-21.md`) |
+| Registry source | `docs/audit/git/registry/BRANCHES_DECOMPOSE_LIST.md` |
 | Base | origin/main |
 | Base SHA | `b03880c74f72c8aaf879ec2c3620cdc9f56e55e6` |
-| Method | members from registry only; churn via `git diff --shortstat origin/main...BRANCH` |
-| Thresholds | A1: churn≥2000 OR (files≥40 AND churn≥800); A2: churn≥200 OR files≥10; A3: churn>0 or ahead>0 below A2; A4: churn==0 AND ahead==0 |
+| Method | members from registry only (no ad-hoc rediscovery); churn via `git diff --shortstat origin/main...BRANCH` |
+| Thresholds | A1: churn≥2000 OR (files≥40 AND churn≥800); A2: churn≥200 OR files≥10 (below A1); A3: churn>0 OR ahead>0 below A2; A4: churn==0 AND ahead==0 |
+| Cache (optional) | `docs/audit/git/cache/cat6-churn-2026-07-21.json` (gitignored) |
 
 ## Summary by tier
 
 | Tier | Count | Meaning |
 | --- | --- | --- |
-| A1 | 0 | Large unique diff vs main — high attention |
-| A2 | 2 | Moderate unique diff — review before clean |
-| A3 | 0 | Small unique tip — glance |
-| A4 | 11 | No unique commits/diff vs main (typical ahead==0 zombie) |
-| **Total** | **13** | Matches registry cat.6 |
+| A1 | 0 | Крупный уникальный diff vs main — высокий приоритет внимания |
+| A2 | 2 | Умеренный уникальный diff — глянуть перед clean |
+| A3 | 0 | Малый уникальный tip — беглый взгляд |
+| A4 | 11 | Нет уникальных коммитов/diff vs main (типичный ahead==0 zombie) |
+| **Total** | **13** | Совпадает с registry cat.6 |
 
 ## A1 — high attention
 
@@ -55,7 +56,8 @@ _пусто_
 
 ## Recommendations (no execute)
 
-1. **A4 (11):** типичные кандидаты на `yarn repo:clean` **dry-run** (ahead==0). Не `--execute` без ok владельца. Проверить, что ветка не нужна как локальная метка.
-2. **A2 (2 remote night-triage):** есть 1 уникальный коммит и ~320 churn — перед remote-clean глянуть diff; возможно уже покрыто triage-отчётами в `docs/reports/night-triage/`.
+1. **A4 (11):** типичные кандидаты на `yarn repo:clean` **dry-run** (ahead==0). Не `--execute` без ok владельца. Убедиться, что ветка не нужна как локальная метка.
+2. **A2 (2 remote night-triage):** по 1 уникальному коммиту и ~320 churn — перед remote-clean глянуть diff; возможно уже покрыто triage-отчётами в `docs/reports/night-triage/`.
 3. Не смешивать с cat.7 Salvage — там ahead>0 и другой сценарий спасения коммитов.
 4. Персон и worktree-активных в этом файле нет (другие категории реестра).
+5. Тиры A1–A4 — эвристика внимания, не приговор на удаление.
