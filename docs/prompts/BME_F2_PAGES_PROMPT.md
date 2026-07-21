@@ -9,5 +9,6 @@
 один кейс — одна ясная страница или секция. Стиль существующих cookbooks
 device-board.
 
-**DoD:** ≥N страниц (минимум: kind, формат-теги, persona-grammar, open-PR vs
-salvage, антипримеры `feature/*`/agent-prefix); `yarn docs:lint` зелёный.
+**DoD:** ровно **5** страниц/секций-минимум (kind · формат-теги · persona-grammar ·
+open-PR vs salvage · антипримеры `feature/*`/agent-prefix); доп. страницы — по
+дырам каталога F1; `yarn docs:lint` зелёный.
