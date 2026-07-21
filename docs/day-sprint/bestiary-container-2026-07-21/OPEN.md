@@ -9,12 +9,13 @@
 | **Started** | 2026-07-21 |
 | **Size** | L |
 | **Lead epic** | vesnin |
-| **Branch** | — (B0 в main; next B1) |
+| **Branch** | `feat/bc-b1-home` (фаза B1) |
 | **Insight** | [`insight-weekly-antipattern-audit-bestiary`](../../insights/insight-weekly-antipattern-audit-bestiary/INSIGHT.md) (трек B) |
 
 **Prompt эпика:** [`BESTIARY_CONTAINER_PROMPT.md`](../../prompts/BESTIARY_CONTAINER_PROMPT.md)  
 **Паттерн:** [`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md)  
-**Engines (уже в main):** `scripts/lib/lens-bestiary.mjs` · `scripts/lens-run.mjs`
+**Дом:** [`docs/audit/bestiary/`](../../audit/bestiary/)  
+**Engines:** `scripts/lib/lens-bestiary.mjs` · `scripts/lens-run.mjs`
 
 ---
 
@@ -33,7 +34,7 @@
 | Phase | Registry id | Issue | Lead | Status |
 |-------|-------------|------:|------|--------|
 | **B0** | `bc-b0-brief` | [#879](https://github.com/officefish/Membrana/issues/879) | vesnin | ✅ done · [PR #885](https://github.com/officefish/Membrana/pull/885) |
-| **B1** | `bc-b1-home` | [#880](https://github.com/officefish/Membrana/issues/880) | ozhegov | ⬜ next |
+| **B1** | `bc-b1-home` | [#880](https://github.com/officefish/Membrana/issues/880) | ozhegov | ✅ LGTM — ship |
 | **B2** | `bc-b2-specimens` | [#881](https://github.com/officefish/Membrana/issues/881) | dynin | ⬜ |
 | **B3** | `bc-b3-missing-beasts` | [#882](https://github.com/officefish/Membrana/issues/882) | dynin | ⬜ |
 | **B4** | `bc-b4-weekly` | [#883](https://github.com/officefish/Membrana/issues/883) | angelina | ⬜ |
@@ -41,19 +42,19 @@
 
 ---
 
-## Gate checklist (B0)
+## Gate checklist (B1)
 
-- [x] Эпик + фазы в реестре (#878–#884)
-- [x] Лемма контейнера+specimens в INSIGHT
-- [x] OPEN + DAY_SPRINT_ACTIVE
-- [x] LGTM vesnin (owner ok 2026-07-21)
+- [x] `docs/audit/bestiary/` — README, AGENT_PROMPT, registry/, analysis/, cache/, specimens/
+- [x] Чеклист GROUP_CONTAINERIZATION в README (п.5 ⚠ до `yarn bestiary:audit` в B2)
+- [x] Провода: `docs/audit/README`, `AGENTS.md`, паттерн known implementations
+- [x] LGTM ozhegov (owner ok 2026-07-21)
 
 ---
 
-## As-is (для B1+)
+## As-is
 
-| Есть | Нет |
-|------|-----|
-| 4 детектора: silent / unwired / ornament / jargon-out | контейнер, specimens, тесты |
-| `lens-run.mjs` | эхо-камера, смещение цели |
-| | weekly + тренд |
+| Есть | Нет / next |
+|------|------------|
+| Контейнер-дом (B1) | specimens-файлы + `yarn bestiary:audit` (B2) |
+| 4 детектора в engines | эхо / goal-displacement (B3) |
+| stub `BESTIARY_LIST.md` | weekly + тренд (B4) |
