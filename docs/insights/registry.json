@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-20",
+  "updatedAt": "2026-07-21",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -622,6 +622,17 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-20",
+      "tags": []
+    },
+    {
+      "id": "insight-server-generators-office",
+      "title": "Серверные генераторы: конверты → чистые функции office, git-роутер с очередями",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-21",
       "tags": []
     }
   ]
