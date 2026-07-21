@@ -4,7 +4,7 @@
 > Цепь: D0→D4 (#856–#860). Семя: [#761](https://github.com/officefish/Membrana/issues/761).  
 > Прецедент: `kits-angelina-morning` (#814). Паттерн: [`PINNED_SUBGRAPH_VERSIONING`](../patterns/PINNED_SUBGRAPH_VERSIONING.md).  
 > Автор снов: [`DREAM_MASTER_PROMPT.md`](./DREAM_MASTER_PROMPT.md) («Мастер снов», не VT-персона).  
-> Статус: **D2** · жилец [`kits/dream-master/`](../../kits/dream-master/) · OPEN [`kits-dream-master-2026-07-21`](../day-sprint/kits-dream-master-2026-07-21/OPEN.md).
+> Статус: **CLOSED** · CLOSURE [`kits-dream-master-2026-07-21`](../day-sprint/kits-dream-master-2026-07-21/CLOSURE.md) · жилец [`kits/dream-master/`](../../kits/dream-master/).
 
 ---
 
@@ -103,6 +103,6 @@
 
 - [x] Бриф D0 + границы (LGTM vesnin owner ok 2026-07-21)
 - [x] `kits/dream-master/` с пинами; `yarn kits:audit --id dream-master` зелёный (LGTM dynin)
-- [x] Процедура `ritual-dreams` с `kitVersion` (ждёт LGTM D3)
-- [ ] CLOSURE; #761 — второй жилец назван
+- [x] Процедура `ritual-dreams` с `kitVersion` (PR #869)
+- [x] CLOSURE; #761 — второй жилец (LGTM vesnin — ship)
 - [x] `night:research` и Night Build явно вне кита (границы D0)

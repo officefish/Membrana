@@ -2,13 +2,23 @@
 
 > **M** · `kdm-d4-closure` · [#860](https://github.com/officefish/Membrana/issues/860) · lead **vesnin** · parent `kits-dream-master`
 
+## Контекст
+
+D0–D3 в main. D4 закрывает спринт: CLOSURE, #761 (второй жилец), archive.
+
 ## Промпт целиком
 
-CLOSURE спринта, archive фаз + эпика, комментарий в #761 (второй жилец паттерна).
-`DAY_SPRINT_ACTIVE` очистить.
+1. [`CLOSURE.md`](../day-sprint/kits-dream-master-2026-07-21/CLOSURE.md) — фазы, handoff, archive.
+2. OPEN → closed; `DAY_SPRINT_ACTIVE` — нет активного спринта.
+3. Комментарий в [#761](https://github.com/officefish/Membrana/issues/761) — второй жилец `kits/dream-master`.
+4. После merge: `task:archive kdm-d4-closure` + `kits-dream-master`.
 
 ## Acceptance criteria
 
-- [ ] CLOSURE + archive
-- [ ] #761 обновлён
-- [ ] LGTM vesnin
+- [x] CLOSURE + ACTIVE очищен
+- [x] #761 обновлён (при ship)
+- [x] LGTM vesnin (owner ok 2026-07-21)
+
+## Out of scope
+
+Новые киты; Night Build; `night:research` как жилец.
