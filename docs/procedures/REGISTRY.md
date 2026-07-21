@@ -18,3 +18,4 @@
 | `tasks-audit` | dynin | **legacy** | — | — | — |
 | `git-audit` | dynin | **legacy** | — | — | — |
 | `consilium` | vesnin | **legacy** | — | — | — |
+| [`code-review`](./code-review/README.md) | vesnin | **in-migration** | ✅ vesnin@c487d990 | — | — |
