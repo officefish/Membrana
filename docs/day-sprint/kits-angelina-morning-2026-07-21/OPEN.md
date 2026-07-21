@@ -34,8 +34,8 @@
 | **K1** | `kam-k1-home` | [#816](https://github.com/officefish/Membrana/issues/816) | ozhegov | ✅ done · [PR #836](https://github.com/officefish/Membrana/pull/836) |
 | **K2** | `kam-k2-audit` | [#817](https://github.com/officefish/Membrana/issues/817) | dynin | ✅ done · [PR #838](https://github.com/officefish/Membrana/pull/838) |
 | **K3** | `kam-k3-first-kit` | [#818](https://github.com/officefish/Membrana/issues/818) | angelina | ✅ done · [PR #841](https://github.com/officefish/Membrana/pull/841) |
-| **K4** | `kam-k4-wire` | [#819](https://github.com/officefish/Membrana/issues/819) | ozhegov | ✅ LGTM — ship |
-| **K5** | `kam-k5-closure` | [#820](https://github.com/officefish/Membrana/issues/820) | vesnin | ⬜ |
+| **K4** | `kam-k4-wire` | [#819](https://github.com/officefish/Membrana/issues/819) | ozhegov | ✅ done · [PR #843](https://github.com/officefish/Membrana/pull/843) |
+| **K5** | `kam-k5-closure` | [#820](https://github.com/officefish/Membrana/issues/820) | vesnin | ⬜ next |
 
 ---
 

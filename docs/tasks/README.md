@@ -18,15 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `bme-f5-closure` | F5: CLOSURE, чеклист паттернов, handoff | M | [`BME_F5_CLOSURE_PROMPT.md`](../prompts/BME_F5_CLOSURE_PROMPT.md) | [#829](https://github.com/officefish/Membrana/issues/829) |
-| `bme-f4-pins` | F4: PINNED_SUBGRAPH на подграф инструкций (манифест path→SHA + аудит) | M | [`BME_F4_PINS_PROMPT.md`](../prompts/BME_F4_PINS_PROMPT.md) | [#828](https://github.com/officefish/Membrana/issues/828) |
-| `bme-f3-wire` | F3: провод контейнера → Mintlify (docs.json, README/AGENT_PROMPT, орган engine) | M | [`BME_F3_WIRE_PROMPT.md`](../prompts/BME_F3_WIRE_PROMPT.md) | [#827](https://github.com/officefish/Membrana/issues/827) |
-| `bme-f2-pages` | F2: Mintlify cookbooks/pages с примерами (apps/docs) — основа пина | M | [`BME_F2_PAGES_PROMPT.md`](../prompts/BME_F2_PAGES_PROMPT.md) | [#826](https://github.com/officefish/Membrana/issues/826) |
-| `bme-f1-cases` | F1: каталог случаев «какая ветка под какой случай» из assortment + Р4 | M | [`BME_F1_CASES_PROMPT.md`](../prompts/BME_F1_CASES_PROMPT.md) | [#825](https://github.com/officefish/Membrana/issues/825) |
-| `bme-f0-brief` | F0: эпик-промпт, server-first (контейнер→Mintlify), границы vs kits/#761 | M | [`BME_F0_BRIEF_PROMPT.md`](../prompts/BME_F0_BRIEF_PROMPT.md) | [#824](https://github.com/officefish/Membrana/issues/824) |
-| `branch-mintlify-engine` | Эпик: docs/audit/git → движок Mintlify — инструкции «ветка→случай» + PINNED_SUBGRAPH подграфа доков | L | [`BRANCH_MINTLIFY_ENGINE_PROMPT.md`](../prompts/BRANCH_MINTLIFY_ENGINE_PROMPT.md) | [#823](https://github.com/officefish/Membrana/issues/823) |
 | `kam-k5-closure` | K5: CLOSURE, чеклист PINNED_SUBGRAPH в README кита, handoff | M | [`KAM_K5_CLOSURE_PROMPT.md`](../prompts/KAM_K5_CLOSURE_PROMPT.md) | [#820](https://github.com/officefish/Membrana/issues/820) |
-| `kam-k4-wire` | K4: провод в процедуру утра / kitVersion + режимы latest/pinned | M | [`KAM_K4_WIRE_PROMPT.md`](../prompts/KAM_K4_WIRE_PROMPT.md) | [#819](https://github.com/officefish/Membrana/issues/819) |
 | `kits-angelina-morning` | Эпик: слой kits/ + первый кит angelina-morning (PINNED_SUBGRAPH, #761) поверх scripts/ | L | [`KITS_ANGELINA_MORNING_PROMPT.md`](../prompts/KITS_ANGELINA_MORNING_PROMPT.md) | [#814](https://github.com/officefish/Membrana/issues/814) |
 | `morning-report-completion` | Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям) | L | [`MORNING_REPORT_COMPLETION_PROMPT.md`](../prompts/MORNING_REPORT_COMPLETION_PROMPT.md) | [#788](https://github.com/officefish/Membrana/issues/788) |
 | `sbc-s4-wiring` | S4: провода AGENTS/skills/DoD для контейнера scripts/ | S | [`SBC_S4_WIRING_PROMPT.md`](../prompts/SBC_S4_WIRING_PROMPT.md) | [#796](https://github.com/officefish/Membrana/issues/796) |
@@ -218,6 +210,14 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `bme-f5-closure` | F5: CLOSURE, чеклист паттернов, handoff | 2026-07-21 | [`BME_F5_CLOSURE_PROMPT.md`](../prompts/BME_F5_CLOSURE_PROMPT.md) | #829 (Issue открыт) | [карточка](./archive/bme-f5-closure.md) |
+| `bme-f4-pins` | F4: PINNED_SUBGRAPH на подграф инструкций (манифест path→SHA + аудит) | 2026-07-21 | [`BME_F4_PINS_PROMPT.md`](../prompts/BME_F4_PINS_PROMPT.md) | #828 (Issue открыт) | [карточка](./archive/bme-f4-pins.md) |
+| `bme-f3-wire` | F3: провод контейнера → Mintlify (docs.json, README/AGENT_PROMPT, орган engine) | 2026-07-21 | [`BME_F3_WIRE_PROMPT.md`](../prompts/BME_F3_WIRE_PROMPT.md) | #827 (Issue открыт) | [карточка](./archive/bme-f3-wire.md) |
+| `bme-f2-pages` | F2: Mintlify cookbooks/pages с примерами (apps/docs) — основа пина | 2026-07-21 | [`BME_F2_PAGES_PROMPT.md`](../prompts/BME_F2_PAGES_PROMPT.md) | #826 (Issue открыт) | [карточка](./archive/bme-f2-pages.md) |
+| `bme-f1-cases` | F1: каталог случаев «какая ветка под какой случай» из assortment + Р4 | 2026-07-21 | [`BME_F1_CASES_PROMPT.md`](../prompts/BME_F1_CASES_PROMPT.md) | #825 (Issue открыт) | [карточка](./archive/bme-f1-cases.md) |
+| `bme-f0-brief` | F0: эпик-промпт, server-first (контейнер→Mintlify), границы vs kits/#761 | 2026-07-21 | [`BME_F0_BRIEF_PROMPT.md`](../prompts/BME_F0_BRIEF_PROMPT.md) | #824 (Issue открыт) | [карточка](./archive/bme-f0-brief.md) |
+| `branch-mintlify-engine` | Эпик: docs/audit/git → движок Mintlify — инструкции «ветка→случай» + PINNED_SUBGRAPH подграфа доков | 2026-07-21 | [`BRANCH_MINTLIFY_ENGINE_PROMPT.md`](../prompts/BRANCH_MINTLIFY_ENGINE_PROMPT.md) | #823 (Issue открыт) | [карточка](./archive/branch-mintlify-engine.md) |
+| `kam-k4-wire` | K4: провод в процедуру утра / kitVersion + режимы latest/pinned | 2026-07-21 | [`KAM_K4_WIRE_PROMPT.md`](../prompts/KAM_K4_WIRE_PROMPT.md) | #819 (Issue открыт) | [карточка](./archive/kam-k4-wire.md) |
 | `kam-k3-first-kit` | K3: кит angelina-morning — набор скриптов секретаря + пины | 2026-07-21 | [`KAM_K3_FIRST_KIT_PROMPT.md`](../prompts/KAM_K3_FIRST_KIT_PROMPT.md) | #818 (Issue открыт) | [карточка](./archive/kam-k3-first-kit.md) |
 | `kam-k2-audit` | K2: аудит полноты подграфа (SHA ↔ imports) — зуб PINNED_SUBGRAPH | 2026-07-21 | [`KAM_K2_AUDIT_PROMPT.md`](../prompts/KAM_K2_AUDIT_PROMPT.md) | #817 (Issue открыт) | [карточка](./archive/kam-k2-audit.md) |
 | `kam-k1-home` | K1: дом kits/ + схема манифеста (потребить pl-r3, не второй остров) | 2026-07-21 | [`KAM_K1_HOME_PROMPT.md`](../prompts/KAM_K1_HOME_PROMPT.md) | #816 (Issue открыт) | [карточка](./archive/kam-k1-home.md) |
