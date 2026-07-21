@@ -17,6 +17,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
+import { provenanceHeader } from './lib/angelina-adapter.mjs';
 import { makeHorizon, collectHorizonInputs } from './lib/strategy-horizon.mjs';
 import {
   readHorizonChannels,
@@ -106,7 +107,8 @@ function writeArtifact(text) {
   const outputPath = resolve(repoRoot, 'docs/STRATEGY_DAY.md');
   const header =
     `<!-- Сгенерировано: ${now} (node scripts/strategy-day.mjs) -->\n` +
-    `<!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->\n\n`;
+    `<!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->\n` +
+    `${provenanceHeader({ author: 'human', readAt: {} })}\n\n`;
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, header + text + '\n', 'utf8');
   console.error('Записано:', outputPath);

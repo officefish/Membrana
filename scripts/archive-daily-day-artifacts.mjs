@@ -19,9 +19,14 @@ const ARCHIVE_ROOT_REL = 'docs/archive/daily-day';
 
 const ARTIFACTS = [
   {
+    rel: 'docs/STRATEGY_DAY.md',
+    archiveName: 'STRATEGY_DAY.md',
+    label: 'STRATEGY_DAY',
+  },
+  {
     rel: 'docs/STRATEGIC_PLAN_DAY.md',
     archiveName: 'STRATEGIC_PLAN_DAY.md',
-    label: 'STRATEGIC_PLAN_DAY',
+    label: 'STRATEGIC_PLAN_DAY (вещдок, устар.)',
   },
   {
     rel: 'docs/DAILY_STANDUP.md',
@@ -43,8 +48,8 @@ if (process.argv.includes('--help') || process.argv.includes('-h')) {
   --help   Эта справка.
   --force  Новый снимок в отдельной папке <YYYY-MM-DD>_<ISO-время>, даже если совпадает с архивом.
 
-Копирует три утренних артефакта в ${ARCHIVE_ROOT_REL}/<YYYY-MM-DD>/:
-  STRATEGIC_PLAN_DAY.md, DAILY_STANDUP.md, MAIN_DAY_ISSUE.md
+Копирует утренние артефакты в ${ARCHIVE_ROOT_REL}/<YYYY-MM-DD>/:
+  STRATEGY_DAY.md, STRATEGIC_PLAN_DAY.md (вещдок), DAILY_STANDUP.md, MAIN_DAY_ISSUE.md
 + manifest.json (метаданные для навигации).
 
 Ключ дня (<YYYY-MM-DD>) выводится из дат в тексте файлов (стендап, MAIN_DAY_ISSUE, комментарий «Сгенерировано»).

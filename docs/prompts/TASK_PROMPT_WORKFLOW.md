@@ -19,6 +19,8 @@
 | **`MAIN_DAY_ISSUE.md`** | Один обязательный фокус дня (`yarn main-day-issue`) |
 | PR + CI | Реализация и LGTM |
 
+**Движение / Linear:** pull снимка и GraphQL — только через media-NL (не РФ, не office MSK); см. `docs/tasks/LINEAR_TASKS_GEAR.md` §9.
+
 ---
 
 ## MAIN_DAY_ISSUE и CURRENT_TASK (фокус дня)
@@ -110,11 +112,24 @@ Definition of Done процесса: задача в архиве, промпт 
 
 ### Шаг 2. Запись в реестр (status: `active`)
 
-Отредактировать [`docs/tasks/registry.json`](../tasks/registry.json) или выполнить (когда появится):
+**Канон START (#722):** одна команда создаёт Issue (если нужно) + карточку + prompt stub
+с секцией acceptance:
+
+```bash
+yarn task:start --id <slug> --title "..." --size M
+# уже есть Issue:
+yarn task:start --id <slug> --title "..." --size M --issue <N>
+# только registry (без Issue):
+yarn task:start --id <slug> --title "..." --size M --no-issue
+```
+
+Узкий шаг без Issue-scaffold — по-прежнему:
 
 ```bash
 yarn task:register --id <slug> --title "..." --prompt docs/prompts/<SLUG>_PROMPT.md --issue <N> --size M
 ```
+
+На Windows тело Issue — только tempfile / `gh --body-file` (не bash-heredoc).
 
 Поля:
 

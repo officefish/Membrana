@@ -29,14 +29,37 @@ import {
   meetingVerdictProblems,
 } from './protocol-validator.mjs';
 
-/** Повестки заседания: `docs/meeting/<id>/M*-topic.md` → [{file, name, md}]. */
+/**
+ * Маска файла повестки. В репозитории живут ТРИ соглашения об именах — слепота к
+ * двум последним и есть корень #696 (маска ловила только `-topic.md`, а реальные
+ * заседания пишут `M*_AGENDA.md`; совпадений ноль → проверки 1 и 4 не запускались):
+ *   - `M0-topic.md … M2p-topic.md`  (evening-auditor, night-build-format, …);
+ *   - `M0_AGENDA.md … M4_AGENDA.md`  (registry-relocation, team-execution-contour, …);
+ *   - `AGENDA_M0.md … AGENDA_M1_RUN2.md`  (dads-integration).
+ * `EPIC.md`, `MEETING_ACTIVE.md`, `TOXIC_PILOT_RESULT.md` и прочий обвес — мимо.
+ * Переопределяется `MEETING_AGENDA_MASK` (env) для нестандартных заседаний.
+ */
+export const AGENDA_FILE_MASK = /(?:-topic\.md|_AGENDA\.md)$|^AGENDA_M[^/]*\.md$/u;
+
+function agendaMask() {
+  const raw = process.env.MEETING_AGENDA_MASK;
+  if (!raw) return AGENDA_FILE_MASK;
+  try {
+    return new RegExp(raw, 'u');
+  } catch {
+    return AGENDA_FILE_MASK;
+  }
+}
+
+/** Повестки заседания: `docs/meeting/<id>/<повестка>.md` → [{file, name, md}]. */
 export function readTopics(repoRoot, id) {
   const dir = join(repoRoot, 'docs', 'meeting', id);
   if (!existsSync(dir)) return [];
+  const mask = agendaMask();
   return readdirSync(dir)
-    .filter((f) => /-topic\.md$/u.test(f))
+    .filter((f) => mask.test(f))
     .sort()
-    .map((f) => ({ file: f, name: f.replace(/-topic\.md$/u, ''), md: readFileSync(join(dir, f), 'utf8') }));
+    .map((f) => ({ file: f, name: f.replace(/\.md$/u, ''), md: readFileSync(join(dir, f), 'utf8') }));
 }
 
 /** Протоколы заседания: `docs/seanses/<id>-*.md` → [{file, md}]. */
@@ -72,6 +95,49 @@ export function isTracked(repoRoot, relPath) {
 export const TOOL_CHANNEL_SINCE = '2026-07-19';
 
 /**
+ * Ключ комнаты из имени повестки/протокола (#721).
+ * `M1b-topic.md` / `…-m1b-sprint-….md` / `AGENDA_M0.md` → `m1b` / `m0`.
+ * Длинные суффиксы (m1b, m2p, m4b) важнее коротких (m1, m2, m4).
+ *
+ * @param {string} filename
+ * @returns {string|null}
+ */
+export function meetingRoomKey(filename) {
+  const base = String(filename ?? '').replace(/\.md$/iu, '');
+  const agenda = base.match(/^AGENDA_(M\d+[a-z]*)/iu);
+  if (agenda) return agenda[1].toLowerCase();
+  const matches = [...base.matchAll(/(?:^|[-_])(m\d+[a-z]*)(?=[-_.]|$)/giu)].map((m) => m[1].toLowerCase());
+  if (matches.length === 0) return null;
+  return matches.reduce((best, cur) => (cur.length > best.length ? cur : best));
+}
+
+/**
+ * Own-ID комнаты для check4: из topic-файла этой комнаты, не из тела протокола.
+ * Иначе DoD с «для E1» без `**E1` даёт ложную колонизацию (#721 / linear-egress).
+ *
+ * @param {{file: string, md: string}} protocol
+ * @param {{file: string, md: string}[]} topics
+ * @returns {string[]}
+ */
+export function ownAgendaIdsForProtocol(protocol, topics) {
+  const room = meetingRoomKey(protocol.file);
+  if (room) {
+    const roomTopics = topics.filter((t) => meetingRoomKey(t.file) === room);
+    if (roomTopics.length > 0) {
+      const ids = [];
+      for (const t of roomTopics) {
+        for (const id of extractAgendaIds(t.md)) {
+          if (!ids.includes(id)) ids.push(id);
+        }
+      }
+      if (ids.length > 0) return ids;
+    }
+  }
+  if (topics.length === 1) return extractAgendaIds(topics[0].md);
+  return extractAgendaIds(protocol.md);
+}
+
+/**
  * Шесть проверок. Чистая функция от собранного состояния — шов для тестов.
  *
  * @param {{topics: object[], protocols: object[], untracked: string[]}} state
@@ -79,7 +145,7 @@ export const TOOL_CHANNEL_SINCE = '2026-07-19';
  */
 export function auditMeeting(state) {
   const checks = [];
-  const allIds = state.topics.flatMap((t) => extractAgendaIds(t.md));
+  const allIds = [...new Set(state.topics.flatMap((t) => extractAgendaIds(t.md)))];
 
   // 1 — повестка = ровно один ID-вопрос.
   for (const t of state.topics) {
@@ -116,9 +182,10 @@ export function auditMeeting(state) {
   });
 
   // 4 — структура вердикта (зубы: вывод-в-посылках, колонизация по ID).
+  // siblings = topic IDs минус ID этой комнаты (topic-файл), не «всё минус grep тела» (#721).
   for (const p of state.protocols) {
-    const own = extractAgendaIds(p.md);
-    const siblings = [...new Set(allIds)].filter((id) => !own.includes(id));
+    const own = ownAgendaIdsForProtocol(p, state.topics);
+    const siblings = allIds.filter((id) => !own.includes(id));
     const problems = meetingVerdictProblems(p.md, siblings);
     checks.push({
       n: 4,

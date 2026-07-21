@@ -54,5 +54,9 @@ test('дефолтный ALWAYS_YES_PROFILE: deny перекрывает опа�
   assert.ok(ALWAYS_YES_PROFILE.deny.some((p) => /force/.test(p)));
   assert.ok(ALWAYS_YES_PROFILE.deny.some((p) => /deploy:prod/.test(p)));
   assert.ok(ALWAYS_YES_PROFILE.deny.some((p) => /packages\/core/.test(p)));
+  assert.ok(
+    ALWAYS_YES_PROFILE.deny.some((p) => /night:land-reports.*execute/.test(p)),
+    'land-reports --execute must be denied under always-yes (morning owner gate)',
+  );
   assert.ok(ALWAYS_YES_PROFILE.allow.includes('Edit'));
 });

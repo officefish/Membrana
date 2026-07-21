@@ -1,12 +1,8 @@
 import 'reflect-metadata';
 import type { INestApplication } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
-import { ExpressAdapter, type NestExpressApplication } from '@nestjs/platform-express';
 import request from 'supertest';
-import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
-import { AppModule } from '../src/app.module';
-import { AllExceptionsFilter } from '../src/common/filters/http-exception.filter';
-import { RequestIdInterceptor } from '../src/common/interceptors/request-id.interceptor';
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { createOfficeFastifyApp } from './create-fastify-app';
 
 function getUrl(input: RequestInfo | URL): string {
   if (typeof input === 'string') return input;
@@ -15,22 +11,7 @@ function getUrl(input: RequestInfo | URL): string {
 }
 
 async function createApp(): Promise<INestApplication> {
-  const app = await NestFactory.create<NestExpressApplication>(
-    AppModule,
-    new ExpressAdapter(),
-    { bufferLogs: true, rawBody: true },
-  );
-  app.useLogger({
-    log: () => undefined,
-    error: () => undefined,
-    warn: () => undefined,
-    debug: () => undefined,
-    verbose: () => undefined,
-  });
-  app.useGlobalInterceptors(new RequestIdInterceptor());
-  app.useGlobalFilters(new AllExceptionsFilter());
-  await app.init();
-  return app;
+  return createOfficeFastifyApp({ rawBody: true });
 }
 
 describe('background-office HTTP', () => {
@@ -59,7 +40,9 @@ describe('background-office HTTP', () => {
     const res = await request(app.getHttpServer()).get('/ready').expect(200);
     expect(typeof res.body.ready).toBe('boolean');
     expect(Array.isArray(res.body.checks)).toBe(true);
-    expect(res.body.checks).toHaveLength(4);
+    // Linear probe removed (K1): office must not call api.linear.app
+    expect(res.body.checks).toHaveLength(3);
+    expect(res.body.checks.map((c: { id: string }) => c.id)).not.toContain('linear');
     for (const check of res.body.checks) {
       expect(typeof check.id).toBe('string');
       expect(typeof check.reachable).toBe('boolean');
@@ -138,108 +121,30 @@ describe('background-office HTTP', () => {
     expect(res.body.request_id).toBe('req_test_1');
   });
 
-  it('GET /v1/linear/issue/TEC-42 returns issue (mocked)', async () => {
-    vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
-      const url = getUrl(input);
-      if (url.startsWith('https://api.linear.app')) {
-        return new Response(
-          JSON.stringify({
-            data: {
-              issues: {
-                nodes: [
-                  {
-                    id: 'iss-1',
-                    identifier: 'TEC-42',
-                    title: 'Test',
-                    description: 'Desc',
-                    url: 'https://linear.app/x/issue/TEC-42',
-                    state: { name: 'Todo' },
-                    labels: { nodes: [{ name: 'a', color: '#fff' }] },
-                    comments: {
-                      nodes: [
-                        {
-                          id: 'c1',
-                          body: 'hello',
-                          createdAt: '2020-01-01T00:00:00.000Z',
-                          user: { name: 'U', email: 'u@x.com' },
-                        },
-                      ],
-                    },
-                  },
-                ],
-              },
-            },
-          }),
-          { status: 200, headers: { 'content-type': 'application/json' } },
-        );
-      }
-      return new Response('unexpected ' + url, { status: 500 });
-    });
-
+  it('GET /v1/linear/issue/TEC-42 refuses office GraphQL (media egress)', async () => {
+    const fetchSpy = vi.spyOn(global, 'fetch');
     const res = await request(app.getHttpServer())
       .get('/v1/linear/issue/TEC-42')
       .set('X-Membrana-Token', 'test-internal-token')
-      .expect(200);
+      .expect(503);
 
-    expect(res.body.identifier).toBe('TEC-42');
-    expect(res.body.comments).toHaveLength(1);
+    const payload = typeof res.body.message === 'object' ? res.body.message : res.body;
+    expect(String(payload.code ?? payload.message ?? JSON.stringify(res.body))).toMatch(
+      /LINEAR_OFFICE_EGRESS_DISABLED|media-NL|linear-snapshots/i,
+    );
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
   });
 
-  it('POST /v1/linear/issue/TEC-42/comment (mocked)', async () => {
-    let linearCalls = 0;
-    vi.spyOn(global, 'fetch').mockImplementation(async (input) => {
-      const url = getUrl(input);
-      if (url.startsWith('https://api.linear.app')) {
-        linearCalls += 1;
-        if (linearCalls === 1) {
-          return new Response(
-            JSON.stringify({
-              data: {
-                issues: {
-                  nodes: [
-                    {
-                      id: 'iss-1',
-                      identifier: 'TEC-42',
-                      title: 'T',
-                      description: null,
-                      url: 'https://linear.app/x',
-                      state: { name: 'Todo' },
-                      labels: { nodes: [] },
-                      comments: { nodes: [] },
-                    },
-                  ],
-                },
-              },
-            }),
-            { status: 200, headers: { 'content-type': 'application/json' } },
-          );
-        }
-        return new Response(
-          JSON.stringify({
-            data: {
-              commentCreate: {
-                success: true,
-                comment: {
-                  id: 'com-1',
-                  url: 'https://linear.app/comment',
-                  createdAt: '2020-01-01T00:00:00.000Z',
-                },
-              },
-            },
-          }),
-          { status: 200, headers: { 'content-type': 'application/json' } },
-        );
-      }
-      return new Response('unexpected', { status: 500 });
-    });
-
-    const res = await request(app.getHttpServer())
+  it('POST /v1/linear/issue/TEC-42/comment refuses without network', async () => {
+    const fetchSpy = vi.spyOn(global, 'fetch');
+    await request(app.getHttpServer())
       .post('/v1/linear/issue/TEC-42/comment')
       .set('X-Membrana-Token', 'test-internal-token')
       .send({ body: 'note' })
-      .expect(200);
-
-    expect(res.body.commentId).toBe('com-1');
+      .expect(503);
+    expect(fetchSpy).not.toHaveBeenCalled();
+    fetchSpy.mockRestore();
   });
 
   it('POST /webhooks/linear rejects bad signature', async () => {

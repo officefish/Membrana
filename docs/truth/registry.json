@@ -189,8 +189,8 @@
       "status": "revoked",
       "supersededBy": null,
       "episode": "Найдено при чеканке заморозки. Ни заседание Q3, ни владелец этого следствия не называли. Делает Q4 (три дип-ресёрча / includeInsights) срочным: заморозка открыла дыру, которую он должен закрыть.",
-      "revokedAt": "2026-07-19",
-      "revokedReason": "Условие отзыва выполнено буквально: includeInsights появился у дневной — strategy-day.mjs читает канал инсайтов через strategy-channels.mjs по умолчанию (эпик #592 S4, --no-insights выключает). Перепрогон предиката 19.07: grep включИнсайтс true по week = 0 (форма переехала в канал), дневная читает. Дыра, названная токеном, закрыта."
+      "revokedAt": "2026-07-20",
+      "revokedBecause": "Слово владельца «чекань и ревоке испорченного» (кристаллизация 20.07). Предикат insights-only-via-weekly сломан после #592 S4/Q5: флаги includeInsights убраны из тела недельной (strategic-plan-week.mjs); дневная (strategy-day.mjs / strategy-channels) читает инсайты параметром. Expect «1 · 0 · только _strategic-plan» больше не выполняется; сработало собственное правило отзыва («появление includeInsights у дневной или другого читателя → отозвать»). Радиус: 0 детей."
     },
     {
       "id": "truth-artifacts-called-crystals",
@@ -854,7 +854,7 @@
           "id": "review-was-author-invoked",
           "cmd": "grep -n 'anthropicPost' scripts/code-review.mjs && gh pr view 580 --json author,mergedBy",
           "expect": "code-review.mjs вызывает LLM; автор PR, заказчик ревью и мёржер — один агент",
-          "verified": "2026-07-19",
+          "verified": "2026-07-20",
           "note": "#580 и #564 — прогоны yarn code-review:pr, запущенные автором на собственном коде. #571 смёржен вообще без ревью. Предел: прочитаны импорты и место вызова, весь скрипт и его промпт — нет. [18.07] Перепрогнан на кристаллизации: anthropicPost на месте (2 вхождения), PR #580 author=officefish, mergedBy=officefish — автор и мёржер один, claim держится. Факт исторический (мёржи 17.07), контраст с 18.07 — см. review-legitimacy-restored-18-07.",
           "touches": [
             "scripts/code-review.mjs",
@@ -1556,7 +1556,7 @@
           "id": "studio-has-no-auto-update",
           "cmd": "node -e \"const p=require('./apps/membrana-studio/package.json');console.log(/electron-updater/.test(JSON.stringify({...p.dependencies,...p.devDependencies})), !!p.build?.publish)\" && git grep -l 'autoUpdater\\|electron-updater\\|checkForUpdates' -- ':(glob)apps/membrana-studio/**'",
           "expect": "false false · ноль файлов",
-          "verified": "2026-07-17",
+          "verified": "2026-07-20",
           "cost": "миллисекунды — дешёвый, гонять всегда",
           "touches": [
             "apps/membrana-studio/package.json",
@@ -1857,7 +1857,7 @@
           "id": "revocation-lost-in-union-merge",
           "cmd": "git log --oneline -S revokedBecause -- docs/truth/registry.json | head -3",
           "expect": "история реестра содержит и потерю, и восстановление отзыва (2fabb6ab восстановил после 491e5f36) — эпизод потери был, ущерб починен; текущее состояние revoked+revokedBecause",
-          "verified": "2026-07-19",
+          "verified": "2026-07-20",
           "cost": "миллисекунды",
           "touches": [
             "docs/truth/registry.json",
@@ -2326,13 +2326,381 @@
           "touches": [
             "docs/prompts/TASK_PROMPT_WORKFLOW.md"
           ],
-          "verified": "2026-07-19"
+          "verified": "2026-07-20"
         }
       ],
       "revocation": {
         "kind": "parents"
       },
       "episode": "Синтез T1 + строка канона, кристаллизация 19.07; канон правится этим же PR."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "linear-works-for-owner-incl-mcp",
+      "claim": "Linear на данный момент работает для владельца, в том числе судя по всему через MCP",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-20",
+        "utterance": {
+          "sessionId": "e3b60eb1-0bc6-4402-959b-e21026ca49b8",
+          "uuid": "7a9c8df6-a385-4375-a007-ec2bbdb4d425",
+          "timestamp": "2026-07-20T14:39:00.000Z",
+          "kind": "free-text",
+          "quote": "Linear на данный момент работает, прчем судя по всему через mcp сервер тоже",
+          "limit": "НЕ утверждать, что MCP = media egress; MCP может быть отдельным каналом (Cursor MCP Linear), пока владелец не уточнит. office 503 не отменяет «работает». Cursor agent-transcripts (не Claude jsonl): uuid детерминирован из sessionId+quote (в jsonl нет поля uuid). Файл: agent-transcripts/e3b60eb1-0bc6-4402-959b-e21026ca49b8/e3b60eb1-0bc6-4402-959b-e21026ca49b8.jsonl"
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 фаза 1 Q1. Эпизод: непонимание 503 vs live; владелец снял посылку «Линеар так и не заработал»."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "m0-ratifies-media-egress-as-prod-path",
+      "claim": "Ратификация M0 обязала production-path: egress Linear → media — реальный канал; дальше hardening, не rediscovery",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-20",
+        "utterance": {
+          "sessionId": "e3b60eb1-0bc6-4402-959b-e21026ca49b8",
+          "uuid": "9cb9cbf9-8927-4374-a0c5-e64c55bdd73e",
+          "timestamp": "2026-07-20T14:40:00.000Z",
+          "kind": "free-text",
+          "quote": "2- B  прод",
+          "limit": "Свободный текст ответа на варианты агента (A архитектура / B prod-path / C артефакт заседания). Выбран B. Не сказано: готовность media-path доказана пробой для всех сценариев; тождество MCP и media. Cursor agent-transcripts (не Claude jsonl): uuid детерминирован из sessionId+quote (в jsonl нет поля uuid). Файл: agent-transcripts/e3b60eb1-0bc6-4402-959b-e21026ca49b8/e3b60eb1-0bc6-4402-959b-e21026ca49b8.jsonl"
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 фаза 1 Q2. Заседание linear-egress-gear-wiring; слово «ратифицирую» → объём = prod."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "magistral-shifts-to-live-egress",
+      "claim": "Завтрашняя магистраль смещается на live egress / движок задач; #598 уступает",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-20",
+        "utterance": {
+          "sessionId": "e3b60eb1-0bc6-4402-959b-e21026ca49b8",
+          "uuid": "e9f342bb-a23a-4f7c-a4f0-f7c711caed6f",
+          "timestamp": "2026-07-20T14:41:00.000Z",
+          "kind": "free-text",
+          "quote": "3 - С",
+          "limit": "Свободный текст ответа на варианты агента (A #598 only / B dual / C shift). Выбран C. «Движок задач» в расшифровке агента рядом с live egress — владелец буквой C не детализировал состав hardening. Cursor agent-transcripts (не Claude jsonl): uuid детерминирован из sessionId+quote (в jsonl нет поля uuid). Файл: agent-transcripts/e3b60eb1-0bc6-4402-959b-e21026ca49b8/e3b60eb1-0bc6-4402-959b-e21026ca49b8.jsonl"
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 фаза 1 Q3. MAIN_DAY был #598 night:research; пилот/egress был carve-out — завтра магистраль смещается."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "linear-works-for-owner-incl-mcp",
+        "m0-ratifies-media-egress-as-prod-path"
+      ],
+      "id": "owner-works-does-not-certify-m0-path",
+      "claim": "Владельческое «Linear работает» не сертифицирует M0 production-path (media egress), пока не установлено тождество канала «работает» и media",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "конъюнкция",
+        "premisesUsed": [
+          "linear-works-for-owner-incl-mcp",
+          "m0-ratifies-media-egress-as-prod-path"
+        ],
+        "note": "Посылки: (1) Linear работает для владельца, в т.ч. через MCP, с limit что MCP может ≠ media; (2) prod-path M0 = media egress. Из конъюнкции следует: «работает» не есть сертификация media-path.",
+        "date": "2026-07-20"
+      },
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с любым родителем; наследует min(родителей)"
+      },
+      "supersededBy": null,
+      "episode": "Фаза 2 кристаллизации 20.07, пара 1×2."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "m0-ratifies-media-egress-as-prod-path",
+        "magistral-shifts-to-live-egress"
+      ],
+      "id": "tomorrow-magistral-is-m0-hardening",
+      "claim": "Завтрашняя магистраль — hardening ратифицированного media-egress prod-path, не rediscovery канала",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "конъюнкция",
+        "premisesUsed": [
+          "m0-ratifies-media-egress-as-prod-path",
+          "magistral-shifts-to-live-egress"
+        ],
+        "note": "Посылки: (2) M0 ратифицировал media как prod (дальше hardening); (3) магистраль смещается на live egress, #598 уступает. Следствие о типе работы завтра — hardening, не rediscovery и не #598.",
+        "date": "2026-07-20"
+      },
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с любым родителем; наследует min(родителей)"
+      },
+      "supersededBy": null,
+      "episode": "Фаза 2 кристаллизации 20.07, пара 2×3."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "linear-works-for-owner-incl-mcp",
+        "m0-ratifies-media-egress-as-prod-path",
+        "magistral-shifts-to-live-egress"
+      ],
+      "id": "magistral-must-not-treat-works-as-media-proof",
+      "claim": "План завтрашнего дня не вправе брать «Linear работает» как доказательство готовности media-egress — магистраль на этот path требует отдельной посылки о media",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "конъюнкция (лес)",
+        "premisesUsed": [
+          "linear-works-for-owner-incl-mcp",
+          "m0-ratifies-media-egress-as-prod-path",
+          "magistral-shifts-to-live-egress"
+        ],
+        "note": "Все три owner: магистраль на media-egress + «работает» не сертифицирует media ⇒ ритуал/план не может опереться на Q1 как на proof media-path. Пара 1×3 без (2) пуста (контрабанда тождества каналов); лес из трёх закрывает дыру.",
+        "date": "2026-07-20"
+      },
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с любым родителем; наследует min(родителей)"
+      },
+      "supersededBy": null,
+      "episode": "Фаза 2 кристаллизации 20.07, лес 1×2×3 (пара 1×3 пуста без контрабанды)."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "canon-tree-bindings-ratified-20-07",
+      "claim": "Биндинг путей канона деревьев ратифицирован: Membrana-grok = cursor, Membrana/.worktrees/codex = codex (main/tooling/product — одноимённые Membrana[-*]).",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-20",
+        "utterance": {
+          "sessionId": "3c05bca5-5495-445c-84fa-a8b2a2b864c1",
+          "uuid": "63ce7b37-2eec-4e21-9999-488975882c41",
+          "timestamp": "2026-07-20T17:58:45.041Z",
+          "kind": "click",
+          "quote": "\"Биндинг канонических деревьев: Membrana-grok = cursor, Membrana/.worktrees/codex = codex — верно?\"=\"Да, биндинг верен\"",
+          "limit": "Клик по вариантам (слабее свободного текста; варианты агентские). НЕ утверждать, что биндинг вечен — деревья могут переехать; тогда отзыв."
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца / пересборки топологии"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 №2, Q1. Эпизод: спринт #717 сам назначил canon-карточки в Membrana-grok и .worktrees/codex — биндинг имя↔путь нигде в каноне не был назван, а карточка kind=canon навсегда защищает дерево от сноса."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "base-branch-naming-ratified-20-07",
+      "claim": "Схема имён базовых веток канона ратифицирована: base/<canonName> (base/tooling, base/product, base/codex, base/cursor); main — без префикса.",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-20",
+        "utterance": {
+          "sessionId": "3c05bca5-5495-445c-84fa-a8b2a2b864c1",
+          "uuid": "78423ce8-745b-4125-b58b-965cf193c2ff",
+          "timestamp": "2026-07-20T17:59:32.805Z",
+          "kind": "click",
+          "quote": "\"Схема имён базовых веток канона — base/tooling, base/product, base/codex, base/cursor (main — без префикса) — ратифицируете?\"=\"Ратифицирую\"",
+          "limit": "Клик по вариантам. Причина схемы — git-refs: голые имена конфликтуют с живыми пространствами tooling/* и cursor/*. Миграция деревьев на base/* — за владельцами деревьев, срок не назван."
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 №2, Q2. Эпизод: спринт #717 ввёл схему base/* без ратификации — ветки созданы, защищены в repo:clean, вписаны в карточки и словарь."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "main-inversion-is-tail-20-07",
+      "claim": "main у Membrana-detector-compare — хвост, не намеренность: ветку main надлежит вернуть главному checkout Membrana.",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-20",
+        "utterance": {
+          "sessionId": "3c05bca5-5495-445c-84fa-a8b2a2b864c1",
+          "uuid": "b5079b8e-0be9-40e4-a167-0ac4c866c162",
+          "timestamp": "2026-07-20T18:00:33.475Z",
+          "kind": "click",
+          "quote": "\"main у Membrana-detector-compare, главный checkout на fix/adr-0013-accepted — это намеренно или хвост?\"=\"Хвост — вернуть main\"",
+          "limit": "Клик по вариантам. НЕ утверждать, кто и когда вернёт: владелец выбрал вариант «можно руками агентом», исполнение — отдельное действие."
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "исполнение возврата main главному checkout → отозвать как исчерпанный"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 №2, Q3. Эпизод: тупик сессии спринта #717 — git показал инверсию (главный checkout на fix/adr-0013-accepted, main держит detector-compare), намеренность из git невыводима."
+    },
+    {
+      "status": "active",
+      "parents": [],
+      "id": "linear-engine-movement-manual-until-ritual",
+      "claim": "Движение задач в Linear-движке ведётся руками (агент сам отмечает движение через GH-issue) — ритуала для движка ещё нет.",
+      "class": "owner",
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-20",
+        "utterance": {
+          "sessionId": "3c05bca5-5495-445c-84fa-a8b2a2b864c1",
+          "uuid": "42fda433-f919-4abb-b72b-3586dcd4f2bd",
+          "timestamp": "2026-07-20T15:57:56.710Z",
+          "kind": "free-text",
+          "quote": "Стартуй спринт только соблюдай регламент и руками помогай себе работать через движок задач на линеар, ритуал к нему еще не сделали",
+          "limit": "НЕ утверждать, что ритуал заказан этой репликой или что канал «руками» = только GH-issue (комментарии в issue — выбор агента этой сессии, синхрон их зеркалит)."
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "появление ритуала движка задач → отозвать"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 №2. Обронено в постановке спринта #717; вся сессия вела движение DRU-234 комментариями в #717 именно поэтому."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "canon-tree-bindings-ratified-20-07",
+        "base-branch-naming-ratified-20-07"
+      ],
+      "id": "canon-topology-materialized-ratified",
+      "claim": "Носитель K2 материализован ратифицированно: все 5 канонических деревьев существуют с canon-карточками, биндинг путей и схема базовых веток подтверждены владельцем — область worktree:sync определена, отказ «носитель не материализован» в этой топологии недостижим.",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "конъюнкция при предикате",
+        "premisesUsed": [
+          "canon-tree-bindings-ratified-20-07",
+          "base-branch-naming-ratified-20-07",
+          "predicate:cards-in-five-canon-roots"
+        ],
+        "note": "Биндинг ратифицирован ∧ имена баз ратифицированы ∧ карточки физически лежат в 5 корнях ⇒ закрытое каноническое множество полностью материализовано и законно."
+      },
+      "predicates": [
+        {
+          "id": "cards-in-five-canon-roots",
+          "cmd": "for p in /c/Users/user190825/practice/Membrana /c/Users/user190825/practice/Membrana-tooling /c/Users/user190825/practice/Membrana-product /c/Users/user190825/practice/Membrana/.worktrees/codex /c/Users/user190825/practice/Membrana-grok; do grep -l '| kind | canon |' \"$p/WORKTREE.md\"; done | wc -l",
+          "expect": "5 — canon-карточка в каждом из пяти корней",
+          "verified": "2026-07-20",
+          "cost": "миллисекунды",
+          "touches": [
+            "scripts/lib/classify-worktree.mjs"
+          ],
+          "note": "Карточки — untracked per-tree файлы; git-触tches указывает на носитель CANON_NAMES: смена множества в коде требует переверификации."
+        }
+      ],
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с любым родителем (пересборка топологии / смена схемы имён)"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 №2, синтез D1 (пара Q1+Q2). Спринт #717 материализовал носитель, ратификация замкнула законность."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "main-inversion-is-tail-20-07"
+      ],
+      "id": "sync-blind-to-main-while-inversion-lives",
+      "claim": "Пока main-инверсия не разобрана, identity-исключение main-дерева в worktree:sync стоит на ложной посылке: реальное отставание главного checkout (на fix/adr-0013-accepted, −258 от origin/main на 20.07) отчёту синхрона невидимо.",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "modus ponens при предикате",
+        "premisesUsed": [
+          "main-inversion-is-tail-20-07",
+          "predicate:main-checkout-not-on-main"
+        ],
+        "note": "ADR-0014 Р4 исключает main-дерево из области синхрона как identity (behind==0 всегда). Инверсия — хвост (владелец) ∧ главный checkout фактически не на main ⇒ identity-посылка ложна ⇒ его отставание не попадает в отчёт до возврата main."
+      },
+      "predicates": [
+        {
+          "id": "main-checkout-not-on-main",
+          "cmd": "git -C /c/Users/user190825/practice/Membrana branch --show-current",
+          "expect": "НЕ main (на 20.07 — fix/adr-0013-accepted); вывод «main» ⇒ инверсия исчерпана, токен отозвать",
+          "verified": "2026-07-20",
+          "cost": "миллисекунды",
+          "touches": [
+            "docs/adr/ADR-0014-worktree-base-branch-sync.md"
+          ],
+          "note": "Предикат одновременно и условие отзыва: как только главный checkout вернётся на main, токен умирает."
+        }
+      ],
+      "revocation": {
+        "kind": "parent+predicate",
+        "value": "умирает с main-inversion-is-tail-20-07 либо когда main-checkout-not-on-main вернёт «main»"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 №2, синтез D2 (Q3 + git-факт). Живой прогон worktree:sync в спринте #717 показал все деревья, кроме настоящего держателя позиции."
+    },
+    {
+      "status": "active",
+      "parents": [
+        "linear-engine-movement-manual-until-ritual"
+      ],
+      "id": "linear-moves-only-by-manual-issue-writes",
+      "claim": "До появления ритуала движка Linear-сторона задачи движется только когда агент руками пишет в её GH-issue: сессия без ручных отметок оставляет DRU-карточку замороженной при живой работе.",
+      "class": "derived",
+      "source": {
+        "kind": "deduction",
+        "form": "modus ponens при предикате",
+        "premisesUsed": [
+          "linear-engine-movement-manual-until-ritual",
+          "predicate:gh-linear-linkback-mirrors"
+        ],
+        "note": "Движение ведётся руками через GH (владелец) ∧ Linear-сторона зеркалит именно issue-активность (синхрон авто, доказан linkback DRU-234) ⇒ нет ручной записи в issue — нет движения в Linear. Дисциплина сессии, не опция."
+      },
+      "predicates": [
+        {
+          "id": "gh-linear-linkback-mirrors",
+          "cmd": "gh issue view 717 --json comments --jq '[.comments[].author.login]' | grep -c linear-code",
+          "expect": ">=1 — linkback DRU-234 создан ботом linear-code без ручных действий в Linear",
+          "verified": "2026-07-20",
+          "cost": "секунды (один вызов gh)",
+          "touches": [
+            "docs/tasks/LINEAR_TASKS_GEAR.md"
+          ],
+          "note": "Паспорт движка — носитель канона синхрона; его правка (появление двусторонней интеграции/ритуала) требует переверификации."
+        }
+      ],
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с linear-engine-movement-manual-until-ritual (появление ритуала движка)"
+      },
+      "supersededBy": null,
+      "episode": "Кристаллизация 20.07 №2, синтез D3. Сессия #717 вела всё движение DRU-234 комментариями в issue — единственным живым каналом."
     },
     {
       "status": "active",

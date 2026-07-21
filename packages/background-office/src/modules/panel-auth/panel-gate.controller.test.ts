@@ -25,8 +25,9 @@ function fakeRes() {
       this.code = c;
       return this;
     },
-    end() {
+    send() {
       this.ended = true;
+      return this;
     },
   };
 }

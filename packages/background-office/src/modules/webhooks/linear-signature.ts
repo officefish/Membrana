@@ -1,11 +1,11 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
 export function verifyLinearWebhookSignature(
-  secret: string,
+  secret: string | undefined,
   rawBody: Buffer,
   headerSignature: string | undefined,
 ): boolean {
-  if (!headerSignature || typeof headerSignature !== 'string') {
+  if (!secret || !headerSignature || typeof headerSignature !== 'string') {
     return false;
   }
   let headerBuf: Buffer;

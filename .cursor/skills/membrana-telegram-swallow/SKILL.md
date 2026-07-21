@@ -1,11 +1,12 @@
 ---
 name: membrana-telegram-swallow
 description: >-
-  Sends a one-off owner-triggered message («ласточка») to the private ally telegram group
-  via yarn telegram:swallow (office push-ingest, md→Telegram-HTML). Use ONLY when the owner
-  explicitly commands: «ласточка», «отправь союзникам/партнёрам», «сообщение в группу»,
-  «опубликуй в телеграм». Do NOT use for ritual digests (they run automatically via
-  ritual:day/evening) or for alarm/product notifications (product feature, out of scope).
+  Sends a one-off owner-triggered ally Telegram message (swallow / lastochka) via
+  yarn telegram:swallow (office push-ingest, md to Telegram-HTML). Tone via Ozhegov lens;
+  clickable PR/Issue refs via yarn live-links (separate tool). Use ONLY when the owner
+  explicitly commands: lastochka, send to allies/partners, message to the group,
+  publish to telegram. Do NOT use for ritual digests (ritual:day/evening) or
+  alarm/product notifications (product feature, out of scope).
 ---
 
 # Membrana telegram swallow — «ласточка» союзникам
@@ -20,10 +21,25 @@ description: >-
    cron. Агент сам решил «стоит сообщить» → НЕ ласточка, а предложение владельцу.
 2. **Черновик — владельцу до отправки**, если текст сочиняет агент: показать
    финальный текст в чате; слать после «ок» (или если владелец продиктовал дословно).
-3. **Тон и содержание:** аудитория нетехническая; без секретов, токенов, внутренних
-   URL/IP; SHA и номера PR допустимы одной строкой «деталей». Правило
-   «по-простому: что это значит для продукта».
-4. Лимит 4096 символов md; длиннее — сократить или разбить на две ласточки.
+3. **Тон (линза Ожегова)** — отдельно от ссылок: аудитория нетехническая; без
+   секретов, токенов, внутренних URL/IP, SHA, имён файлов/переменных, жаргона
+   проверок. По-простому: что это значит для продукта. Избегать оценочных
+   «врать/лгать» — лучше «честно отличать сделанное от закрытого».
+4. **Живые ссылки** — отдельно от линзы: голые `PR #N` / `Issue #N` развернуть
+   инструментом `yarn live-links` (см. ниже), не смешивать с переписыванием тона.
+5. Лимит 4096 символов md; длиннее — сократить или разбить на две ласточки.
+
+## Перед показом черновика владельцу
+
+Если текст сочиняет агент и в нём есть номера PR/Issue:
+
+```bash
+yarn live-links --file docs/comms/drafts/<note>.md
+yarn live-links --check --file docs/comms/drafts/<note>.md
+```
+
+Линза Ожегова правит смысл и тон; `live-links` только делает ссылки кликабельными.
+Оба шага нужны вместе для партнёрской ласточки — но это **два** инструмента.
 
 ## Команды
 
@@ -31,6 +47,8 @@ description: >-
 yarn telegram:swallow "Текст с **md**: жирный, *курсив*, [ссылка](url), `код`"
 yarn telegram:swallow --file docs/comms/drafts/note.md
 yarn telegram:swallow "..." --dry-run    # показать payload, не отправлять
+yarn live-links --file docs/comms/drafts/note.md
+yarn live-links --check --file docs/comms/drafts/note.md
 ```
 
 Поддерживаемое md-подмножество: `**bold**`, `*italic*`, `[текст](url)`, `` `код` ``

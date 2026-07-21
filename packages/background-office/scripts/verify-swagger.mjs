@@ -25,6 +25,7 @@ process.env.GITHUB_OWNER ??= 'officefish';
 process.env.GITHUB_REPO ??= 'Membrana';
 
 const { NestFactory } = require('@nestjs/core');
+const { FastifyAdapter } = require('@nestjs/platform-fastify');
 const { SwaggerModule, DocumentBuilder } = require('@nestjs/swagger');
 const request = require('supertest');
 
@@ -32,7 +33,7 @@ async function main() {
   const distApp = pathToFileURL(resolve(pkgRoot, 'dist/app.module.js')).href;
   const { AppModule } = await import(distApp);
 
-  const app = await NestFactory.create(AppModule, { logger: false });
+  const app = await NestFactory.create(AppModule, new FastifyAdapter(), { logger: false });
   const swaggerConfig = new DocumentBuilder()
     .setTitle('@membrana/background-office')
     .setVersion('0.1.0')
@@ -44,6 +45,7 @@ async function main() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('docs', app, document, { swaggerOptions: { persistAuthorization: true } });
   await app.init();
+  await app.getHttpAdapter().getInstance().ready();
 
   const server = app.getHttpServer();
   const ui = await request(server).get('/docs/');

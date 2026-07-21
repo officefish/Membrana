@@ -13,7 +13,7 @@ import {
   ServiceUnavailableException,
   UseGuards,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import type { FastifyReply } from 'fastify';
 
 import {
   clientKey,
@@ -77,7 +77,7 @@ export class PanelUsersController {
   register(
     @Body() body: { code?: string; name?: string },
     @Req() req: PanelRequest,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) res: FastifyReply,
   ) {
     if (!this.auth.isConfigured()) {
       throw new ServiceUnavailableException('panel auth is not configured');
@@ -96,7 +96,7 @@ export class PanelUsersController {
       throw new ForbiddenException('code was not accepted');
     }
     const { user } = result;
-    res.setHeader(
+    void res.header(
       'Set-Cookie',
       sessionCookieString(
         this.auth.mintPartnerSession(user.id, user.grants, user.permVersion),

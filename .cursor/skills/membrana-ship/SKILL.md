@@ -23,7 +23,25 @@ description: >-
 4. При **LGTM**: `yarn pr:ship --type <t> --scope <s> -m "<msg>" [--issue N] [--branch <b>] --execute`.
    - `pr:ship` по умолчанию `--dry-run` (печатает шаги), `--execute` — реально.
    - Гуард: отказ коммитить в `main` без `--branch`.
+   - Уже на нужной ветке: `--branch` идемпотентен (не делает `checkout -b` повторно).
    - Артефакт ревью `docs/discussions/uncommitted-code-review.md` — в gitignore (не трекается).
+5. Если в сессии остался **другой** незакрытый трек — перед ship новой темы
+   напомни одной строкой (ветка / PR / merged), не смешивай диффы.
+
+## Мердж — только через pr:ship (норма #700)
+
+`gh pr merge --delete-branch` руками из feature-worktree **запрещён**: он чекаутит
+base локально, а base почти всегда держит соседний worktree → команда падает
+`fatal: '<base>' is already used by worktree at …` **после уже успешного merge**
+(ложный красный; живой инцидент — закрытие #696 / PR #697). `pr:ship` кодирует
+безопасный порядок (#653): merge без `--delete-branch`, remote-ветка отдельным
+optional-шагом, ff-sync worktree-aware.
+
+- PR **ещё нет** → полный `yarn pr:ship … --execute` (создаёт и мёржит).
+- PR **уже открыт** (ревью прошло отдельно, closure-review) → `yarn pr:ship
+  --merge-only --execute` — мёржит PR текущей ветки тем же безопасным хвостом.
+- Если raw `gh` всё же неизбежен — факт мерджа проверять `gh pr view <N> --json
+  state`, **а не по exit code** (код относится к пост-мердж уборке, не к мерджу).
 
 ## НЕ использовать
 

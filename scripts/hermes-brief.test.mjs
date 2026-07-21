@@ -38,6 +38,13 @@ function fixtureState(meta) {
       ],
       total: 2,
     },
+    sessionHandoff: {
+      ok: true,
+      link: 'docs/HANDOFF.md',
+      title: 'HANDOFF сессии',
+      sections: ['Что делать', 'Границы'],
+      focus: 'Запустить спринт X.',
+    },
     handoff: { ok: true, date: '2026-07-08', link: 'h.md', title: 'Handoff', sections: ['S1', 'S2'] },
     memory: { ok: true, link: 'MEMORY.md', entryCount: 3 },
     git: { commit: 'abc123', commits: '• abc123: msg (a)', changed: { files: ['f1', 'f2'], more: 0 } },
@@ -66,6 +73,22 @@ test('fallback: отсутствующий источник → блок «н/д
   assert.match(md, /_н\/д_ \(нет HANDOFF\)/);
   assert.match(md, /_н\/д_ \(gh недоступен\)/);
   assert.match(md, /_н\/д_ \(нет MEMORY\.md\)/);
+});
+
+test('HANDOFF сессии: заголовок, задача и разделы попадают в бриф', () => {
+  const md = renderBrief(fixtureState({ commit: 'abc123', generatedAt: 't' }));
+  assert.match(md, /### HANDOFF сессии/);
+  assert.match(md, /\[HANDOFF сессии\]\(docs\/HANDOFF\.md\)/);
+  assert.match(md, /\*\*Задача новой сессии:\*\* Запустить спринт X\./);
+  assert.match(md, /«Что делать», «Границы»/);
+});
+
+test('HANDOFF сессии fallback: нет docs/HANDOFF.md → «н/д», не бросает', () => {
+  const state = fixtureState({ commit: 'abc123', generatedAt: 't' });
+  state.sessionHandoff = { ok: false, reason: 'нет docs/HANDOFF.md' };
+  const md = renderBrief(state);
+  assert.match(md, /### HANDOFF сессии/);
+  assert.match(md, /_н\/д_ \(нет docs\/HANDOFF\.md\)/);
 });
 
 test('сортировка карточек: перемешанный вход + фильтр active → стабильно по id', () => {

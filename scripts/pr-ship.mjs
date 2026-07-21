@@ -11,6 +11,9 @@
  *   yarn pr:ship ... --execute            # реально выполнить
  *   yarn pr:ship ... --no-merge           # только PR, без squash-merge
  *   yarn pr:ship ... --no-commit          # коммиты уже готовы: push → PR → merge (без commit/branch)
+ *
+ * `--branch`: идемпотентен — если уже на этой ветке, шаг пропускается; если ветка
+ * есть локально — `checkout`, иначе `checkout -b` (фикс 19.07: already exists).
  *   yarn pr:ship ... --no-wait            # НЕ ждать зелёного CI перед merge (осознанный обход)
  *
  * Merge (#653): перед merge — ci-wait (scripts/pr-wait.mjs, четыре состояния CI);
@@ -20,6 +23,10 @@
  * Логика планирования (planPrShip) — чистая и покрыта тестом; CLI лишь исполняет/печатает.
  */
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+
+import { classifyWorktree, parseWorktreeCard } from './lib/classify-worktree.mjs';
 
 const TRAILER = 'Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>';
 
@@ -74,11 +81,96 @@ export function extractIssueMentions(text) {
 }
 
 /**
- * @param {{type:string,scope?:string,message:string,issue?:number|string,branch?:string,base:string,merge?:boolean,commit?:boolean,wait?:boolean,currentBranch?:string,worktreeBranches?:string[],allowMentionWithoutClose?:boolean}} opts
+ * Шаг переключения на `--branch`: идемпотентен, если уже на ней;
+ * существующая локальная ветка — `checkout`, новая — `checkout -b`.
+ * Живой случай 19.07: `pr:ship --branch feat/…` на уже выбранной ветке → fatal
+ * «a branch named … already exists».
+ *
+ * @param {string|undefined} branch
+ * @param {{currentBranch?: string, localBranches?: string[]}} ctx
+ * @returns {{label:string,cmd:string,args:string[]}|null}
+ */
+export function planBranchStep(branch, ctx = {}) {
+  if (!branch) return null;
+  const current = ctx.currentBranch ?? '';
+  if (current && current === branch) return null;
+  const local = ctx.localBranches ?? [];
+  if (local.includes(branch)) {
+    return { label: 'branch', cmd: 'git', args: ['checkout', branch] };
+  }
+  return { label: 'branch', cmd: 'git', args: ['checkout', '-b', branch] };
+}
+
+/** Локальные имена веток (без remote). Пусто, если git недоступен. */
+export function listLocalBranches(run = execFileSync) {
+  try {
+    const out = String(run('git', ['branch', '--format=%(refname:short)'], { encoding: 'utf8' }));
+    return out.split(/\r?\n/u).map((s) => s.trim()).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Хвост мерджа — общий для полного флоу и `--merge-only`: ci-wait → merge → cleanup →
+ * worktree-aware sync. Вынесен, чтобы обе точки входа несли РОВНО один безопасный
+ * порядок (#653): merge БЕЗ `--delete-branch`, remote-ветка отдельным optional-шагом.
+ *
+ * @param {{base?:string,wait?:boolean,branch?:string,currentBranch?:string,worktreeBranches?:string[]}} opts
+ * @returns {{steps:{label:string,cmd:string,args:string[],optional?:boolean}[],skippedSync?:string}}
+ */
+export function planMergeTail(opts = {}) {
+  const { base = 'main', wait = true, branch, currentBranch, worktreeBranches } = opts;
+  /** @type {{label:string,cmd:string,args:string[],optional?:boolean}[]} */
+  const steps = [];
+  let skippedSync;
+  // #653 п.2: merge только после зелёного CI — pr-wait (#643) на PR текущей ветки
+  // различает none/running/green/red; red и none-при-конфликте роняют флоу ДО merge.
+  // --no-wait — осознанный обход (например, docs-only при выключенном CI).
+  if (wait) steps.push({ label: 'ci-wait', cmd: 'node', args: ['scripts/pr-wait.mjs'] });
+  // #653 п.1: БЕЗ --delete-branch. Он чекаутит base локально, а base почти всегда
+  // держит соседний worktree (8+ деревьев) → прогон «падает» после УЖЕ УСПЕШНОГО
+  // merge (ложный красный, #700). Remote-ветка удаляется отдельным шагом; локальная
+  // остаётся (мы на ней стоим — её удаление и невозможно, и не нужно).
+  steps.push({ label: 'merge', cmd: 'gh', args: ['pr', 'merge', '--squash'] });
+  const headBranch = branch ?? currentBranch;
+  if (headBranch && headBranch !== base) {
+    // optional: неудача удаления remote-ветки (уже удалена / protected) НЕ должна
+    // «уронить» уже успешный merge — тот же класс ложного падения, что и #653 п.1.
+    steps.push({ label: 'branch-cleanup', cmd: 'git', args: ['push', 'origin', '--delete', headBranch], optional: true });
+  }
+  if (isBaseHeldElsewhere(base, worktreeBranches)) {
+    // Ветку base держит соседний worktree — checkout сюда невозможен, и это норма
+    // при параллельных сессиях (канон membrana-worktree). Обновляем только
+    // origin/<base>, чтобы локальные сверки видели свежий main; своё дерево не трогаем.
+    steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
+    skippedSync = `ff-sync пропущен: ветку ${base} держит другой worktree (параллельная сессия)`;
+  } else {
+    steps.push({ label: 'sync-checkout', cmd: 'git', args: ['checkout', base] });
+    steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
+    steps.push({ label: 'sync-ff', cmd: 'git', args: ['merge', '--ff-only', `origin/${base}`] });
+  }
+  return { steps, skippedSync };
+}
+
+/**
+ * @param {{type?:string,scope?:string,message?:string,issue?:number|string,branch?:string,base?:string,merge?:boolean,commit?:boolean,wait?:boolean,mergeOnly?:boolean,currentBranch?:string,localBranches?:string[],worktreeBranches?:string[],allowMentionWithoutClose?:boolean}} opts
  * @returns {{title:string,commitBody:string,steps:{label:string,cmd:string,args:string[]}[],skippedSync?:string}}
  */
 export function planPrShip(opts) {
-  const { type, scope, message, issue, branch, base = 'main', merge = true, commit = true, wait = true } = opts;
+  const { type, scope, message, issue, branch, base = 'main', merge = true, commit = true, wait = true, mergeOnly = false } = opts;
+
+  // --merge-only (#700): PR уже открыт — мёржим его безопасным хвостом, без
+  // branch/commit/push/pr-create. Закрывает дыру: без этого режима «смёржить уже
+  // открытый PR» тянуло к raw `gh pr merge --delete-branch` (ложный красный из worktree).
+  // type/message тут не нужны (нет ни коммита, ни заголовка PR).
+  if (mergeOnly) {
+    if (branch) throw new Error('pr:ship: --merge-only несовместим с --branch (PR уже открыт на текущей ветке)');
+    if (!merge) throw new Error('pr:ship: --merge-only и --no-merge взаимоисключают друг друга');
+    const { steps, skippedSync } = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches });
+    return { title: '', commitBody: '', steps, skippedSync };
+  }
+
   if (!type || !message) throw new Error('pr:ship: --type и --message обязательны');
   // --no-commit (ретроспектива 2026-07-09): коммиты уже готовы на ветке —
   // шаги branch/commit пропускаются, флоу начинается с push. Ветку с готовыми
@@ -103,7 +195,11 @@ export function planPrShip(opts) {
 
   /** @type {{label:string,cmd:string,args:string[]}[]} */
   const steps = [];
-  if (branch) steps.push({ label: 'branch', cmd: 'git', args: ['checkout', '-b', branch] });
+  const branchStep = planBranchStep(branch, {
+    currentBranch: opts.currentBranch,
+    localBranches: opts.localBranches,
+  });
+  if (branchStep) steps.push(branchStep);
   if (commit) steps.push({ label: 'commit', cmd: 'git', args: ['commit', '-m', commitBody] });
   steps.push({ label: 'push', cmd: 'git', args: ['push', '-u', 'origin', 'HEAD'] });
   steps.push({
@@ -113,32 +209,9 @@ export function planPrShip(opts) {
   });
   let skippedSync;
   if (merge) {
-    // #653 п.2: merge только после зелёного CI — pr-wait (#643) на PR текущей ветки
-    // различает none/running/green/red; red и none-при-конфликте роняют флоу ДО merge.
-    // --no-wait — осознанный обход (например, docs-only при выключенном CI).
-    if (wait) steps.push({ label: 'ci-wait', cmd: 'node', args: ['scripts/pr-wait.mjs'] });
-    // #653 п.1: БЕЗ --delete-branch. Он чекаутит base локально, а base почти всегда
-    // держит соседний worktree (8+ деревьев) → пять из пяти прогонов 19.07 «падали»
-    // после УЖЕ УСПЕШНОГО merge. Remote-ветка удаляется отдельным шагом; локальная
-    // остаётся (мы на ней стоим — её удаление и невозможно, и не нужно).
-    steps.push({ label: 'merge', cmd: 'gh', args: ['pr', 'merge', '--squash'] });
-    const headBranch = branch ?? opts.currentBranch;
-    if (headBranch && headBranch !== base) {
-      // optional: неудача удаления remote-ветки (уже удалена / protected) НЕ должна
-      // «уронить» уже успешный merge — тот же класс ложного падения, что и #653 п.1.
-      steps.push({ label: 'branch-cleanup', cmd: 'git', args: ['push', 'origin', '--delete', headBranch], optional: true });
-    }
-    if (isBaseHeldElsewhere(base, opts.worktreeBranches)) {
-      // Ветку base держит соседний worktree — checkout сюда невозможен, и это норма
-      // при параллельных сессиях (канон membrana-worktree). Обновляем только
-      // origin/<base>, чтобы локальные сверки видели свежий main; своё дерево не трогаем.
-      steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
-      skippedSync = `ff-sync пропущен: ветку ${base} держит другой worktree (параллельная сессия)`;
-    } else {
-      steps.push({ label: 'sync-checkout', cmd: 'git', args: ['checkout', base] });
-      steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
-      steps.push({ label: 'sync-ff', cmd: 'git', args: ['merge', '--ff-only', `origin/${base}`] });
-    }
+    const tail = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches });
+    steps.push(...tail.steps);
+    skippedSync = tail.skippedSync;
   }
   return { title, commitBody, steps, skippedSync };
 }
@@ -157,6 +230,7 @@ function parseArgs(argv) {
     else if (a === '--no-merge') o.merge = false;
     else if (a === '--no-commit') o.commit = false;
     else if (a === '--no-wait') o.wait = false;
+    else if (a === '--merge-only') o.mergeOnly = true;
     else if (a === '--allow-mention') o.allowMentionWithoutClose = true;
     else if (a === '--execute') o.execute = true;
   }
@@ -172,14 +246,19 @@ function main() {
   const { title, steps, skippedSync } = planPrShip({
     ...opts,
     currentBranch: current,
+    localBranches: listLocalBranches(),
     worktreeBranches: otherWorktreeBranches(),
   });
 
-  if (!opts.branch && current === opts.base) {
-    throw new Error(`pr:ship: на ветке "${opts.base}" без --branch — отказ (не коммитим прямо в base).`);
+  // Гуард коммита в base — только для флоу, что коммитит. В --merge-only коммита нет,
+  // но мёржить, стоя на base, всё равно нечего (у base нет своего PR) → отказ.
+  if (current === opts.base && (opts.mergeOnly || !opts.branch)) {
+    const why = opts.mergeOnly ? 'у base нет своего PR' : 'не коммитим прямо в base';
+    throw new Error(`pr:ship: на ветке "${opts.base}" — отказ (${why}).`);
   }
 
-  console.log(`pr:ship${opts.execute ? '' : ' [DRY-RUN]'}: ${title}`);
+  const head = opts.mergeOnly ? `merge-only PR ветки ${current}` : title;
+  console.log(`pr:ship${opts.execute ? '' : ' [DRY-RUN]'}: ${head}`);
   if (skippedSync) console.log(`  ⚠ ${skippedSync}`);
   for (const s of steps) {
     const printable = `${s.cmd} ${s.args.map((a) => (a.includes('\n') || a.includes(' ') ? JSON.stringify(a) : a)).join(' ')}`;
@@ -196,6 +275,52 @@ function main() {
     }
   }
   if (!opts.execute) console.log('\n(dry-run — ничего не выполнено; добавь --execute)');
+  if (opts.execute && opts.merge) reportWorktreeFate(current);
+}
+
+/**
+ * Merge-гейт как потребитель classifyWorktree (K2, #717): после успешного мерджа
+ * дерево спринта обычно становится sprint-closed — сказать об этом сразу, а не
+ * ждать, пока хвост найдёт утренний repo:clean. Только подсказка, никаких мутаций.
+ */
+function reportWorktreeFate(branch) {
+  let card = null;
+  try {
+    card = parseWorktreeCard(readFileSync(resolve(process.cwd(), 'WORKTREE.md'), 'utf8'));
+  } catch {
+    /* нет карточки — classify сам скажет unregistered */
+  }
+  let pr = null;
+  let ghUnavailable = false;
+  try {
+    const raw = execFileSync('gh', ['pr', 'view', '--json', 'number,state'], { encoding: 'utf8' });
+    const parsed = JSON.parse(raw);
+    pr = { number: parsed.number, state: String(parsed.state).toUpperCase() };
+  } catch {
+    ghUnavailable = true;
+  }
+  let dirtyCount = 0;
+  try {
+    dirtyCount = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' })
+      .split(/\r?\n/u)
+      .filter(Boolean).length;
+  } catch {
+    /* без git подсказка не нужна */
+  }
+  const c = classifyWorktree({
+    path: process.cwd(),
+    branch,
+    card,
+    dirtyCount,
+    unpushedCount: 0, // merge только что прошёл — локальное состояние уехало в PR
+    pr,
+    ghUnavailable,
+  });
+  if (c.class === 'sprint-closed') {
+    console.log(`\n♻ дерево стало sprint-closed (${c.reasons[0]}) — снести: yarn repo:clean --execute --worktrees (руками)`);
+  } else if (c.class === 'unregistered') {
+    console.log('\n⚠ дерево без карточки WORKTREE.md (unregistered) — заведи: yarn worktree:bootstrap');
+  }
 }
 
 // ESM-эквивалент require.main === module

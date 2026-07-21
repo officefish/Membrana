@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
-import type { NestExpressApplication } from '@nestjs/platform-express';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
@@ -12,10 +12,14 @@ import type { AppConfig } from './config/env.schema';
 
 async function bootstrap(): Promise<void> {
   loadDotenvFiles();
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    bufferLogs: true,
-    rawBody: true,
-  });
+  // Без @fastify/cors: прежний Express-office CORS не включал — open origin+credentials
+  // расширил бы поверхность panel cookies (Teamlead review 20.07).
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(),
+    { bufferLogs: true, rawBody: true },
+  );
+
   app.enableShutdownHooks();
   const logger = app.get(Logger);
   app.useLogger(logger);
@@ -52,17 +56,11 @@ async function bootstrap(): Promise<void> {
     },
   });
 
-  const server = await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   logger.log(`Listening on http://localhost:${port}`);
 
   const shutdown = async (signal: string): Promise<void> => {
     logger.log({ signal }, 'shutdown initiated');
-    await new Promise<void>((resolve) => {
-      server.close(() => {
-        resolve();
-      });
-      setTimeout(resolve, 10_000).unref();
-    });
     await app.close();
     process.exit(0);
   };

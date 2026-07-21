@@ -1,12 +1,6 @@
 /**
- * Триггеры снимка — ОТДЕЛЬНО от тела производителя (Р2, вердикт M2).
- *
- * Вебхук — только сигнал «пора снимать»: его payload сюда не попадает по
- * сигнатуре (`signal(kind)` принимает только род триггера). Тело снимка —
- * всегда свежий полный pull; накопление push-событий запрещено конструкцией.
- *
- * Вечерняя архивация после M3 редуцирована до такого же сигнала
- * (`evening-signal`) — своей дорожки записи она не ведёт.
+ * Триггеры снимка на office — коалесценция сигналов перед вызовом media.
+ * Payload вебхука в тело не попадает.
  */
 import { Injectable, Logger } from '@nestjs/common';
 import { LinearSnapshotService } from './linear-snapshot.service';
@@ -21,11 +15,6 @@ export class LinearSnapshotTriggerService {
 
   constructor(private readonly producer: LinearSnapshotService) {}
 
-  /**
-   * Сигнал «пора снимать». Сигналы во время идущей съёмки коалесцируются в
-   * ОДНУ последующую съёмку: тело — полный pull, одна досъёмка покрывает все
-   * пропущенные сигналы (вебхуки и так могут теряться — снимок не считает их).
-   */
   signal(trigger: LinearSnapshotTrigger): Promise<LinearSnapshot> {
     if (this.inFlight !== null) {
       if (this.queued === null) {
