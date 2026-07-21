@@ -1,0 +1,12 @@
+{
+  "id": "attribution",
+  "leadPersona": "dynin",
+  "kitVersion": null,
+  "engines": [
+    "scripts/check-layer-direction.mjs"
+  ],
+  "precedents": [
+    "docs/seanses/procedural-layer-m3-boundary-manual-2026-07-21.md",
+    "docs/seanses/rejected/procedural-layer-m3-boundary-2026-07-21.md"
+  ]
+}
