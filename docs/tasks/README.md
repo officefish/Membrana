@@ -23,7 +23,6 @@
 | `bc-b3-missing-beasts` | B3: echo / goal-displacement or defer | M | [`BC_B3_MISSING_BEASTS_PROMPT.md`](../prompts/BC_B3_MISSING_BEASTS_PROMPT.md) | [#882](https://github.com/officefish/Membrana/issues/882) |
 | `bc-b2-specimens` | B2: specimens + bestiary:audit + tests | M | [`BC_B2_SPECIMENS_PROMPT.md`](../prompts/BC_B2_SPECIMENS_PROMPT.md) | [#881](https://github.com/officefish/Membrana/issues/881) |
 | `bc-b1-home` | B1: home docs/audit/bestiary/ | M | [`BC_B1_HOME_PROMPT.md`](../prompts/BC_B1_HOME_PROMPT.md) | [#880](https://github.com/officefish/Membrana/issues/880) |
-| `bc-b0-brief` | B0: brief bestiary-container lemma | M | [`BC_B0_BRIEF_PROMPT.md`](../prompts/BC_B0_BRIEF_PROMPT.md) | [#879](https://github.com/officefish/Membrana/issues/879) |
 | `bestiary-container` | Epic: bestiary antipatterns as container | L | [`BESTIARY_CONTAINER_PROMPT.md`](../prompts/BESTIARY_CONTAINER_PROMPT.md) | [#878](https://github.com/officefish/Membrana/issues/878) |
 | `dsp-f5-closure` | F5: CLOSURE, archive фаз + эпика, handoff | M | [`DSP_F5_CLOSURE_PROMPT.md`](../prompts/DSP_F5_CLOSURE_PROMPT.md) | [#854](https://github.com/officefish/Membrana/issues/854) |
 | `dsp-f4-wire` | F4: провода skill/CONTRIBUTING/ACTIVE ± R5 migrated | M | [`DSP_F4_WIRE_PROMPT.md`](../prompts/DSP_F4_WIRE_PROMPT.md) | [#853](https://github.com/officefish/Membrana/issues/853) |
@@ -220,6 +219,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `bc-b0-brief` | B0: brief bestiary-container lemma | 2026-07-21 | [`BC_B0_BRIEF_PROMPT.md`](../prompts/BC_B0_BRIEF_PROMPT.md) | #879 (Issue открыт) | [карточка](./archive/bc-b0-brief.md) |
 | `kdm-d4-closure` | D4: CLOSURE kits-dream-master | 2026-07-21 | [`KDM_D4_CLOSURE_PROMPT.md`](../prompts/KDM_D4_CLOSURE_PROMPT.md) | #860 (Issue открыт) | [карточка](./archive/kdm-d4-closure.md) |
 | `kdm-d3-procedure` | D3: процедура ritual-dreams / kitVersion | 2026-07-21 | [`KDM_D3_PROCEDURE_PROMPT.md`](../prompts/KDM_D3_PROCEDURE_PROMPT.md) | #859 (Issue открыт) | [карточка](./archive/kdm-d3-procedure.md) |
 | `kdm-d2-kit` | D2: жилец kits/dream-master + пины | 2026-07-21 | [`KDM_D2_KIT_PROMPT.md`](../prompts/KDM_D2_KIT_PROMPT.md) | #858 (Issue открыт) | [карточка](./archive/kdm-d2-kit.md) |
