@@ -65,3 +65,11 @@ Remote twin с локальным тезкой не дублируется.
 - **Персоны** никогда не в `repo:clean` execute без явного исключения канона (их там и так берегут).
 - `git branch --merged` врёт при squash (#492) — не использовать.
 - Sibling inventory: `membrana-branch-audit`. Sibling cleanup: `yarn repo:clean`.
+
+## Registry / cache
+
+Снимки реестра по категориям и deep analysis хранятся в контейнере
+[`docs/audit/git/`](../../../docs/audit/git/) — канон агента:
+[`docs/audit/git/AGENT_PROMPT.md`](../../../docs/audit/git/AGENT_PROMPT.md)
+(Scenario A → `registry/`, Scenario B → `analysis/`). Этот скилл только классифицирует;
+не подменяет контейнер.
