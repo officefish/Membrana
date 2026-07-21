@@ -16,9 +16,9 @@
 | **Единица учёта скрипта** | Имя yarn-скрипта в корневом `package.json` и/или путь файла под `scripts/` |
 | **Реестр** | Производный снимок «текущего» состава группы (`registry/`), не источник истины |
 | **Источник истины** | Файловая система `scripts/**` + записи `"scripts"` в корневом `package.json` |
-| **Кит** | Именованный набор точек входа под задачу; **слой** `kits/` в [`layer-rules.json`](../docs/procedures/layer-rules.json) (спит до #761). Код движков — плоский `scripts/` |
-| **Кит-манифест** | Контракт **только** из Р3 — см. [§ Киты](#киты--канон-р3-не-второй-схемный-остров) ниже. Здесь JSON-схемы кита **нет** |
-| **kitVersion** | Поле `MANIFEST.json` процедуры: пин набора (`null` пока китов нет). Валидирует `validateProcedure` |
+| **Кит** | Именованный набор точек входа под задачу; **слой-дом** [`kits/`](../kits/README.md) (rank 1 в [`layer-rules.json`](../docs/procedures/layer-rules.json)). Код движков — плоский `scripts/` |
+| **Кит-манифест** | Контракт Р3 + схема в доме слоя: [`kits/MANIFEST.schema.json`](../kits/MANIFEST.schema.json). Здесь, в `scripts/`, JSON-схемы кита **нет** |
+| **kitVersion** | Поле `MANIFEST.json` процедуры: пин набора (`null` до проводки K4). Валидирует `validateProcedure` |
 | **Ядро (core) kits** | GitHub Releases (+ Actions) — раздача пина; runtime cron — office. Версия единицы — [`PINNED_SUBGRAPH_VERSIONING`](../docs/patterns/PINNED_SUBGRAPH_VERSIONING.md) |
 
 ## Соответствие паттерну GROUP_CONTAINERIZATION
@@ -45,15 +45,17 @@
 
 | Адрес | Что |
 |-------|-----|
-| [`docs/procedures/README.md`](../docs/procedures/README.md) § «Граница слоёв и киты» | Контракт: кит без манифеста / с битыми ссылками → машинный BLOCK на ревью; манифест — главный diffable-артефакт |
-| [`docs/procedures/layer-rules.json`](../docs/procedures/layer-rules.json) | Ранг слоя `кит` (`kits/`); ребро процедура→кит через `MANIFEST.json` `kitVersion` |
-| [`docs/procedures/*/MANIFEST.json`](../docs/procedures/ritual-evening/MANIFEST.json) | Потребитель: `kitVersion` (`null` до появления китов) |
-| [`PINNED_SUBGRAPH_VERSIONING`](../docs/patterns/PINNED_SUBGRAPH_VERSIONING.md) | Как версионировать кит (#761): подграф путь→SHA, не копии |
-| [`attribution/`](../docs/procedures/attribution/README.md) | Кандидат в первый кит (механизм парсера — T9, ещё не код) |
+| [`kits/README.md`](../kits/README.md) | Дом слоя (K1); жильцы `kits/<id>/` |
+| [`kits/MANIFEST.schema.json`](../kits/MANIFEST.schema.json) | Единственная JSON Schema кит-манифеста |
+| [`docs/procedures/README.md`](../docs/procedures/README.md) § «Граница слоёв и киты» | Контракт Р3: BLOCK без манифеста / с битыми ссылками |
+| [`docs/procedures/layer-rules.json`](../docs/procedures/layer-rules.json) | Ранг `кит` (`kits/`); ребро процедура→кит через `kitVersion` |
+| [`docs/procedures/*/MANIFEST.json`](../docs/procedures/ritual-evening/MANIFEST.json) | Потребитель: `kitVersion` (`null` до K4) |
+| [`PINNED_SUBGRAPH_VERSIONING`](../docs/patterns/PINNED_SUBGRAPH_VERSIONING.md) | Подграф путь→SHA (#761) |
+| [`attribution/`](../docs/procedures/attribution/README.md) | Кандидат-потребитель (механизм парсера — T9) |
 
 **Запрещено в `scripts/`:** заводить `kits.schema.json` / параллельный формат манифеста
-«временно». Пока слой `kits/` спит (#761) — код остаётся плоским здесь; пин с процедуры
-через `kitVersion`. Разбор выравнивания: [`analysis/kits-align-pl-r3-2026-07-21.md`](./analysis/kits-align-pl-r3-2026-07-21.md).
+«временно» — схема живёт только в `kits/`. Код движков по-прежнему плоский здесь.
+Разбор выравнивания S3: [`analysis/kits-align-pl-r3-2026-07-21.md`](./analysis/kits-align-pl-r3-2026-07-21.md).
 
 ## Layout
 
