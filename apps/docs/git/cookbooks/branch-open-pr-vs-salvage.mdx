@@ -1,0 +1,44 @@
+---
+title: Open PR vs salvage — какую ветку взять
+description: Продолжать open PR, salvage leftover или завести новую ветку от main.
+---
+
+# Cookbook: open PR vs salvage
+
+До имени — выбор **какой ref трогать**. Hygiene-реестр контейнера
+(`docs/audit/git/registry/BRANCHES_DECOMPOSE_LIST.md`) отвечает «можно ли»;
+здесь — «что взять под работу».
+
+## Решение
+
+| Ситуация | Действие | Пример сигнала |
+|----------|----------|----------------|
+| Уже открыт PR по тому же скоупу | продолжить **ту же** ветку | cat.4 · PR #813 `feat/pl-r4-grammar` |
+| Уникальная работа в leftover/salvage | довести / открыть PR, не копировать | cat.5 / cat.7 |
+| Новая тема, чистый main | `[persona/]kind/slug` от `origin/main` | `docs/branch-mintlify-engine` |
+| Baseline `base/*` | только читать / сравнивать | cat.3 |
+| Zombie / likely-discard | не образец; новая грамматичная ветка | cat.6 |
+
+## Checklist
+
+<Steps>
+  <Step title="Сверить соседей">
+    `yarn neighbors` — open PR и active-карточки с тем же скоупом.
+  </Step>
+  <Step title="Не форкать зря">
+    Второй tip «на всякий» с тем же смыслом = коллизия сессий.
+  </Step>
+  <Step title="Delete только по ok">
+    `repo:clean --execute` и ручной `-D` — слово владельца; персоны §7а — никогда.
+  </Step>
+  <Step title="main в другом worktree">
+    `git checkout main` может упасть — ff через `origin/main`, не через локальный main.
+  </Step>
+</Steps>
+
+## Антипример
+
+```text
+# скоуп уже в open PR #813, а агент заводит:
+feat/pl-r4-grammar-v2     ✗
+```

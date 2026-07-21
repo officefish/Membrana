@@ -220,3 +220,25 @@
 4. Шапка шип-гейта (тип · держатель · заморозка) — канон Р4; **этот контейнер не реализует** `resolveHolder`, только витрина.
 
 Канон покрытия на 2026-07-21: [`analysis/branch-assortment-coverage-2026-07-21.md`](./analysis/branch-assortment-coverage-2026-07-21.md).
+
+### Кейсы → движок Mintlify (спринт #823)
+
+Ассортимент отвечает «есть ли представитель»; **каталог случаев** — «какую форму
+имени взять». Markdown в контейнере (без длинных примеров здесь):
+
+[`analysis/branch-cases-catalog-2026-07-21.md`](./analysis/branch-cases-catalog-2026-07-21.md)
+
+**Инструкции с примерами — на движке Mintlify** (не дублировать в этом файле):
+
+| Тема | Cookbook |
+|------|----------|
+| kind | [`apps/docs/git/cookbooks/branch-kind-dictionary.mdx`](../../../apps/docs/git/cookbooks/branch-kind-dictionary.mdx) |
+| формат | [`apps/docs/git/cookbooks/branch-format-tags.mdx`](../../../apps/docs/git/cookbooks/branch-format-tags.mdx) |
+| persona | [`apps/docs/git/cookbooks/branch-persona-grammar.mdx`](../../../apps/docs/git/cookbooks/branch-persona-grammar.mdx) |
+| open PR / salvage | [`apps/docs/git/cookbooks/branch-open-pr-vs-salvage.mdx`](../../../apps/docs/git/cookbooks/branch-open-pr-vs-salvage.mdx) |
+| антипримеры | [`apps/docs/git/cookbooks/branch-anti-feature-agent.mdx`](../../../apps/docs/git/cookbooks/branch-anti-feature-agent.mdx) |
+
+Навигация: группа `Git — branch cases` в `apps/docs/docs.json`. Пин = подграф
+этих инструкций, не registry веток. Не путать с `kits-angelina-morning` (#814).
+
+Триггер: «каталог случаев», «ветка под случай», «инструкции Mintlify», F1–F3.
