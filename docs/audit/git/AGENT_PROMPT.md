@@ -3,6 +3,8 @@
 Канонический setup-промпт агента для аудита веток в монорепо Membrana.
 Контейнер: `docs/audit/git/`. Контракт layout: [`README.md`](./README.md).
 
+**При старте:** если есть [`SESSION_CONTEXT.md`](./SESSION_CONTEXT.md) — прочитай его первым (worktree, ветка, хвосты GC, next steps).
+
 **Не легализует** отдельный skill attention-tier A1–A4 — пороги живут здесь и в analysis-артефактах.
 
 ---
@@ -189,3 +191,32 @@
 | «Scenario B» (без номера/имени в этом сообщении) | **HARD STOP**: спросить 1–7; ничего не писать в `analysis/`; без `git diff`/churn |
 | «Scenario B, категория 6» | Attention A1–A4 по zombie из `registry/BRANCHES_DECOMPOSE_LIST.md` |
 | «Scenario B cat.7 по файлу registry/BRANCHES_DECOMPOSE_LIST-2026-07-21.md» | Salvage deep analysis от указанного снимка |
+| «Assortment» / «карта покрытия» / «ассортимент» | По registry → `analysis/branch-assortment-coverage-YYYY-MM-DD.md`; см. §8 |
+
+---
+
+## 8. Scenario Assortment — покрытие жанров работы
+
+**Триггер:** «ассортимент», «карта покрытия», «какие ветки покрывают жанры», Scenario Assortment.
+
+**Зачем:** hygiene (cat.1–7) отвечает «можно ли трогать»; ассортимент — «есть ли
+представитель жанра» для рефактора спринта и code review.
+
+### Шаги
+
+1. Убедиться, что есть свежий `registry/BRANCHES_DECOMPOSE_LIST.md` (иначе Scenario A).
+2. Опереться на историю пушей (`analysis/branch-push-history-*.md` или снять заново факты префиксов).
+3. Построить/обновить `analysis/branch-assortment-coverage-YYYY-MM-DD.md`:
+   - kind · формат · держатель · доставка · деревья
+   - для каждого: представитель из registry **или** явная дыра
+4. Не запускать delete / `repo:clean --execute`.
+5. Не путать с Scenario B (HARD GATE категории не требуется — ассортимент не churn).
+
+### Линза для CR / ship (30 секунд)
+
+1. Открыть coverage → найти жанр работы PR (kind / формат / держатель).
+2. Если представитель есть — сравнить имя ветки PR с каноном покрытия; отметить `feature/*` и агент-префиксы как вне словаря Р4 (документарно).
+3. Hygiene отдельно: cat.4 = in-flight; salvage/leftover — не смешивать с «нормой доставки».
+4. Шапка шип-гейта (тип · держатель · заморозка) — канон Р4; **этот контейнер не реализует** `resolveHolder`, только витрина.
+
+Канон покрытия на 2026-07-21: [`analysis/branch-assortment-coverage-2026-07-21.md`](./analysis/branch-assortment-coverage-2026-07-21.md).

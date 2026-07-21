@@ -1,8 +1,15 @@
 # docs/audit/git — контейнер git-аудита
 
-Специальный контейнер, где агент **легально** хранит промпты, реестры веток и глубокие разборы по гигиене git-репозитория Membrana. Реализация паттерна [`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md).
+Специальный контейнер, где агент **легально** хранит промпты, реестры веток и глубокие разборы по гигиене git-репозитория Membrana — и **ассортимент** веток для покрытия жанров работы (рефактор спринта, code review). Реализация паттерна [`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md).
 
 Канонический операторский промпт: [`AGENT_PROMPT.md`](./AGENT_PROMPT.md).
+
+Два измерения:
+
+| Измерение | Вопрос | Орган |
+|-----------|--------|-------|
+| **Гигиена** | Можно ли трогать / salvage / GC? | `registry/BRANCHES_DECOMPOSE_LIST.md` · Scenario A/B |
+| **Ассортимент** | Есть ли представитель жанра работы? | `analysis/branch-assortment-coverage-*.md` · Scenario Assortment |
 
 ## Соответствие паттерну GROUP_CONTAINERIZATION
 
@@ -35,6 +42,9 @@ docs/audit/git/
 | `registry/BRANCHES_DECOMPOSE_LIST-YYYY-MM-DD.md` | Опциональный dated-архив того же снимка | да |
 | `registry/*.json` (опционально) | Machine-readable twin реестра | лучше в `cache/` |
 | `analysis/category-N-attention-YYYY-MM-DD.md` | Deep analysis категории N | да |
+| `analysis/branch-assortment-coverage-YYYY-MM-DD.md` | Карта покрытия жанров (ассортимент) | да |
+| `analysis/branch-push-history-YYYY-MM-DD.md` | Снимок осей имён / истории пушей | да |
+| `analysis/*-review-lens-*.md` | Линза для CR / ship | да |
 | `cache/**` | Сырые JSON, churn dumps, временные артефакты | **нет** (gitignore) |
 
 ## Retention
@@ -50,6 +60,8 @@ docs/audit/git/
 3. Сценарии:
    - **A:** «Собери реестр веток по категориям» → перезаписывает `registry/BRANCHES_DECOMPOSE_LIST.md` (опционально dated `BRANCHES_DECOMPOSE_LIST-YYYY-MM-DD.md`).
    - **B:** «Глубокий разбор категории N». **HARD GATE:** категория (1–7 или ясное имя) обязана быть в **текущем** сообщении. Иначе STOP: спросить какую из 1–7; **ничего** не писать в `analysis/`; **не** запускать `git diff`/churn. Запрещено угадывать из истории сессии. Только после явной категории → `registry/BRANCHES_DECOMPOSE_LIST.md` → `analysis/…`.
+   - **Assortment:** «карта покрытия» / «ассортимент веток» → по актуальному registry строит/обновляет `analysis/branch-assortment-coverage-YYYY-MM-DD.md` (жанры kind/формат/держатель/доставка). Не удаляет ветки. Не путать с B.
 
 Связанный tooling: `yarn repo:branches:decompose`, скилл `membrana-branch-decompose`.
+Спринт органа: `branch-assortment-sprint` (#801).
 Указатель в процессе: [`docs/CONTRIBUTING.md`](../../CONTRIBUTING.md) → «Гигиена веток».
