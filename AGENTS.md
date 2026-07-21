@@ -43,6 +43,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Night Build (после вечера) | `yarn night:open --id <epic-id>` → агент → `yarn night:close`; регламент: `docs/NIGHT_SPRINT_REGULATION.md` |
 | Центральная задача дня (после standup) | `yarn main-day-issue` → `docs/MAIN_DAY_ISSUE.md`; буфер: `docs/CURRENT_TASK.md`; `yarn ritual:day` |
 | Ритм утро/вечер/неделя (полный регламент) | см. `docs/DEVELOPER_RHYTHM.md` |
+| Git hygiene audit (ветки) | entry: [`docs/audit/git/AGENT_PROMPT.md`](docs/audit/git/AGENT_PROMPT.md) · контейнер `docs/audit/git/` · `yarn repo:branches` / `yarn repo:branches:decompose` · skills `membrana-branch-audit` / `membrana-branch-decompose` |
 
 ### Agent tooling
 
@@ -108,6 +109,22 @@ PR мёржатся **squash** → коммиты ветки не становя
 Никогда не удалять: **персона-ветки** (`vesnin`, `ozhegov`, `boyarskiy`, `dynin` — канон
 [`TASKS_MANAGEMENT.md` §7а](docs/TASKS_MANAGEMENT.md), живут между задачами, старый коммит
 ≠ заброшенность) и ветки без PR, которых нет на `origin` (единственная копия работы).
+
+#### Git hygiene audit — контейнер и агент
+
+Не писать самописный inventory веток и не класть audit-cache в корень. Канон:
+
+| Что | Куда |
+|-----|------|
+| Entry агента | [`docs/audit/git/AGENT_PROMPT.md`](docs/audit/git/AGENT_PROMPT.md) |
+| Контейнер | `docs/audit/git/` — `registry/` (снимки), `analysis/` (deep), `cache/` (gitignore) |
+| Tooling | `yarn repo:branches` · skill `membrana-branch-audit`; `yarn repo:branches:decompose` · skill `membrana-branch-decompose` |
+| Scenario A | реестр 7 категорий → overwrite `registry/BRANCHES_DECOMPOSE_LIST.md` (+ опционально dated `BRANCHES_DECOMPOSE_LIST-YYYY-MM-DD.md`) |
+| Scenario B | deep по категории N → `analysis/…`; membership только из `registry/BRANCHES_DECOMPOSE_LIST.md` |
+
+**Scenario B HARD GATE:** если в **текущем** сообщении нет явной категории (1–7 или ясное имя) → немедленный STOP: спросить какую из 1–7; **ничего** не писать в `analysis/`; **не** запускать `git diff`/churn. Запрещено угадывать из прошлых реплик сессии. Анализ — только после явной категории в этом сообщении.
+
+`yarn repo:clean --execute` — только после явного ok человека (см. граблю dry-run выше).
 
 #### Windows-сессия (PowerShell 5.1) — канон
 

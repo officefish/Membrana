@@ -1,0 +1,3 @@
+# Сырые дампы / churn JSON — не коммитить (markdown registry/analysis — да)
+cache/**
+!cache/.gitkeep
