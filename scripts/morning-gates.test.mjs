@@ -66,3 +66,11 @@ test('terminalSend: pass → один выстрел; повтор того же
   assert.equal(r2.duplicate, true);
   assert.equal(calls, 1, 'таймаут+ретрай → один выстрел');
 });
+
+test('magistralChosen: подмена options при frozenDigest — гейт закрыт (P2 #762)', () => {
+  const { magistralOptions, frozenDigest } = freezeTopThree([{ id: 'a' }, { id: 'b' }, { id: 'c' }]);
+  const honest = { magistral: 'b', magistralOptions, frozenDigest };
+  assert.equal(magistralChosen(honest), true, 'честный снимок проходит');
+  const forged = { magistral: 'ghost', magistralOptions: [...magistralOptions, 'ghost'], frozenDigest };
+  assert.equal(magistralChosen(forged), false, 'подсунутый в options ghost не проходит сверку снимка');
+});

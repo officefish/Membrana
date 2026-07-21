@@ -13,14 +13,20 @@
 import { createHash } from 'node:crypto';
 
 /**
- * Гейт magistral: выбор владельца принадлежит замороженному снимку топ-3.
- * @param {{magistral?: {id?: string}|string|null, magistralOptions?: Array<{id: string}|string>}} state
+ * Гейт magistral: выбор владельца принадлежит замороженному снимку топ-3. Если состояние
+ * несёт `frozenDigest` — снимок сверяется с ним (защита от подмены options задним числом;
+ * P2 ревью #762): подменённый список не пройдёт, даже если выбор в нём «есть».
+ * @param {{magistral?: {id?: string}|string|null, magistralOptions?: Array<{id: string}|string>, frozenDigest?: string|null}} state
  * @returns {boolean}
  */
 export function magistralChosen(state) {
   const chosen = typeof state?.magistral === 'string' ? state.magistral : state?.magistral?.id;
   if (!chosen) return false;
   const options = (state?.magistralOptions ?? []).map((o) => (typeof o === 'string' ? o : o?.id));
+  if (state?.frozenDigest) {
+    const actual = createHash('sha256').update(options.join('\n')).digest('hex');
+    if (actual !== state.frozenDigest) return false; // снимок подменён — гейт закрыт
+  }
   return options.includes(chosen);
 }
 
