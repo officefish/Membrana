@@ -4,6 +4,9 @@
 # 1–2: заведомо фейковый ghp_-токен (алфавит по порядку) — фикстура тестов scrubSecrets,
 #      тест обязан содержать образец «секрета», чтобы проверить его вычистку.
 # 3: плейсхолдер dev-token-change-me в README background-media (curl-пример).
+# 4: SHA-пин кита (PINNED_SUBGRAPH_VERSIONING): хеш файла office-token.mjs в манифесте
+#    кита читается generic-api-key-правилом как ключ — это пин, не секрет (PR #813).
 58e07a88c039df5bebf3838932df7317e5b85c9d:scripts/session-archive-integration.test.mjs:github-pat:37
 58e07a88c039df5bebf3838932df7317e5b85c9d:packages/services/session-archive/src/session-archive.test.ts:github-pat:81
 414736160d519353cb596b1ad656013ae6553c66:packages/background-media/README.md:curl-auth-header:41
+ba51b7292d18618eb4955a2d77a15d48155ed2ce:kits/angelina-morning/MANIFEST.json:generic-api-key:39
