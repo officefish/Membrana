@@ -22,8 +22,8 @@
 |-------|-------------|------:|------|--------|
 | **D0** | `kdm-d0-brief` | [#856](https://github.com/officefish/Membrana/issues/856) | vesnin | ✅ [#863](https://github.com/officefish/Membrana/pull/863) |
 | **D1** | `kdm-d1-roots` | [#857](https://github.com/officefish/Membrana/issues/857) | ozhegov | ✅ [#865](https://github.com/officefish/Membrana/pull/865) |
-| **D2** | `kdm-d2-kit` | [#858](https://github.com/officefish/Membrana/issues/858) | dynin | ✅ LGTM — ship |
-| **D3** | `kdm-d3-procedure` | [#859](https://github.com/officefish/Membrana/issues/859) | ozhegov | ⬜ |
+| **D2** | `kdm-d2-kit` | [#858](https://github.com/officefish/Membrana/issues/858) | dynin | ✅ done · [PR #867](https://github.com/officefish/Membrana/pull/867) |
+| **D3** | `kdm-d3-procedure` | [#859](https://github.com/officefish/Membrana/issues/859) | ozhegov | ⬜ next |
 | **D4** | `kdm-d4-closure` | [#860](https://github.com/officefish/Membrana/issues/860) | vesnin | ⬜ |
 
 ---
