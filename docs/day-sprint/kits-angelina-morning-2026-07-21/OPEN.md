@@ -9,7 +9,7 @@
 | **Started** | 2026-07-21 |
 | **Size** | L |
 | **Lead epic** | vesnin |
-| **Branch** | `feature/kam-k0-brief` (фаза K0) |
+| **Branch** | `feature/kam-k1-home` (фаза K1) |
 
 **Prompt эпика:** [`KITS_ANGELINA_MORNING_PROMPT.md`](../../prompts/KITS_ANGELINA_MORNING_PROMPT.md)  
 **Семя:** [#761](https://github.com/officefish/Membrana/issues/761) · [`PINNED_SUBGRAPH_VERSIONING`](../../patterns/PINNED_SUBGRAPH_VERSIONING.md)  
@@ -31,7 +31,7 @@
 | Phase | Registry id | Issue | Lead | Status |
 |-------|-------------|------:|------|--------|
 | **K0** | `kam-k0-brief` | [#815](https://github.com/officefish/Membrana/issues/815) | vesnin | ✅ done · [PR #833](https://github.com/officefish/Membrana/pull/833) |
-| **K1** | `kam-k1-home` | [#816](https://github.com/officefish/Membrana/issues/816) | ozhegov | ⬜ next |
+| **K1** | `kam-k1-home` | [#816](https://github.com/officefish/Membrana/issues/816) | ozhegov | ✅ LGTM — ship |
 | **K2** | `kam-k2-audit` | [#817](https://github.com/officefish/Membrana/issues/817) | dynin | ⬜ |
 | **K3** | `kam-k3-first-kit` | [#818](https://github.com/officefish/Membrana/issues/818) | angelina | ⬜ |
 | **K4** | `kam-k4-wire` | [#819](https://github.com/officefish/Membrana/issues/819) | ozhegov | ⬜ |
@@ -45,14 +45,20 @@
 - [x] OPEN спринта создан
 - [x] LGTM vesnin на границы (owner ok 2026-07-21)
 
+## Gate checklist (K1)
+
+- [x] `kits/README.md` + `MANIFEST.schema.json` (поля id/leadPersona/roots/pins)
+- [x] Провода procedures + scripts README → дом слоя; нет schema в `scripts/`
+- [x] LGTM ozhegov (owner ok 2026-07-21)
+
 ---
 
 ## Первые команды
 
 ```bash
 # читать:
-# docs/prompts/KITS_ANGELINA_MORNING_PROMPT.md
-# scripts/README.md § Киты
-# docs/procedures/README.md § киты
+# kits/README.md
+# kits/MANIFEST.schema.json
+# docs/prompts/KAM_K1_HOME_PROMPT.md
 yarn neighbors
 ```

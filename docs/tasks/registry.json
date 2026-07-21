@@ -210,7 +210,7 @@
       "archivedAt": null,
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "K1: kits/README + MANIFEST.schema.json. LGTM ozhegov (owner ok 2026-07-21). Ship PR.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "kits-angelina-morning"
