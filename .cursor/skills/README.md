@@ -15,6 +15,7 @@ Project-scoped skills for Cursor Agent and Claude Code (mirror in `.claude/skill
 | [`membrana-tasks-audit`](./membrana-tasks-audit/SKILL.md) | ревизия устаревших карточек: `tasks:audit` → свидетельство по main на каждую → `task:archive --notes`; зонтики повердиктно read-only аудиторами; mirrored to Claude |
 | [`membrana-branch-audit`](./membrana-branch-audit/SKILL.md) | инвентарь веток vs `origin/main`: `yarn repo:branches` → таблицы ahead/behind + бакеты; не `branch --merged`; mirrored to Claude |
 | [`membrana-branch-decompose`](./membrana-branch-decompose/SKILL.md) | декомпозиция веток в 7 hygiene-категорий: `yarn repo:branches:decompose`; не auto-delete; mirrored to Claude |
+| [`membrana-tasks-decompose`](./membrana-tasks-decompose/SKILL.md) | декомпозиция реестра: `tasks:decompose` — категории из конфига, обязательная markdown-таблица долей, «вне категорий» = дополнить конфиг; mirrored to Claude |
 | [`membrana-virtual-team`](./membrana-virtual-team/SKILL.md) | `/architect`, `/refactor`, `/math`, `/ui`, `/audio`, `/review`, 5 roles |
 | [`membrana-audio-engine-guard`](./membrana-audio-engine-guard/SKILL.md) | mic, Web Audio, plugins, `AudioContext`, detectors |
 | [`membrana-service-scaffold`](./membrana-service-scaffold/SKILL.md) | `/service`, new `@membrana/*-service` |

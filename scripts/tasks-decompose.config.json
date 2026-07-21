@@ -1,0 +1,32 @@
+{
+  "categories": [
+    {
+      "name": "Детекция и качество распознавания",
+      "patterns": ["^(scoreboard|detector|dads-|vdr-|nb-vlr|neural-|real-dataset|live-parallel|lp\\d|detection-alarm|batch-collection|trends-fft|sample-library|sld\\d)"]
+    },
+    {
+      "name": "Device Board — сценарный редактор и runtime",
+      "patterns": ["^(db-|db3h|device-board|usercase|ucv2|mp7b|membrane-node-runtime)"]
+    },
+    {
+      "name": "Платформа, кабинет, продуктовая витрина",
+      "patterns": ["^(media-library|product-landing|root-domain|cabinet-scenario|pcb-|studio-capture|sca-|membrana-device-build|comp-packaging|grp\\d|graphify)"]
+    },
+    {
+      "name": "Ритуалы и контур достоверности команды",
+      "patterns": ["^(ritual|morning-ritual|night-build-format|strategy-day|rt-\\d|main-day-probe|meeting-|mf\\d|truth-graph|drift-anchor|linear-hygiene|angelina-hostess)"]
+    },
+    {
+      "name": "Агентский тулинг, CI и техдолг",
+      "patterns": ["^(agent-tooling|nb-at|ci-gate|cg\\d|scripts-boundary|tech-debt|oc-proxy|opencode|rag-|fv1-)"]
+    },
+    {
+      "name": "Партнёры и внешние коммуникации",
+      "patterns": ["^(swallow|ally-swallow|pt-|partner-tutorials)"]
+    },
+    {
+      "name": "Ресёрчи — входы для решений",
+      "patterns": ["^(linear-agent-identity|team-accountability|generated-docs|angelina-orchestrator|research-query)"]
+    }
+  ]
+}
