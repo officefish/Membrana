@@ -4,6 +4,14 @@
 
 ---
 
+## 2026-07-21 — `day-sprint-procedure` — **OPEN**
+
+- **Цель:** жилец `docs/procedures/day-sprint/` (определение ≠ инстансы) + regulation + провода
+- **OPEN:** [`day-sprint/day-sprint-procedure-2026-07-21/OPEN.md`](./day-sprint/day-sprint-procedure-2026-07-21/OPEN.md)
+- **Фазы:** F0–F5 (`dsp-f0`…`dsp-f5`); F4 lead ozhegov
+
+---
+
 ## 2026-06-30 — `backlog-cleanup-s1` — **CLOSED**
 
 - **Delivered:** 6 issues закрыто (#146 #151 #54 #11 #9 #157), 3 residual задокументировано (#7 #8 #34), 12 тестов добавлено · PR [#215](https://github.com/officefish/Membrana/pull/215)
