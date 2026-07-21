@@ -18,6 +18,13 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `dsp-f5-closure` | F5: CLOSURE, archive фаз + эпика, handoff | M | [`DSP_F5_CLOSURE_PROMPT.md`](../prompts/DSP_F5_CLOSURE_PROMPT.md) | [#854](https://github.com/officefish/Membrana/issues/854) |
+| `dsp-f4-wire` | F4: провода skill/CONTRIBUTING/ACTIVE ± R5 migrated | M | [`DSP_F4_WIRE_PROMPT.md`](../prompts/DSP_F4_WIRE_PROMPT.md) | [#853](https://github.com/officefish/Membrana/issues/853) |
+| `dsp-f3-regulation` | F3: DAY_SPRINT_REGULATION (или явный отказ README-only) | M | [`DSP_F3_REGULATION_PROMPT.md`](../prompts/DSP_F3_REGULATION_PROMPT.md) | [#852](https://github.com/officefish/Membrana/issues/852) |
+| `dsp-f2-home` | F2: жилец docs/procedures/day-sprint (README+MANIFEST, validateProcedure) | M | [`DSP_F2_HOME_PROMPT.md`](../prompts/DSP_F2_HOME_PROMPT.md) | [#851](https://github.com/officefish/Membrana/issues/851) |
+| `dsp-f1-inventory` | F1: инвентарь canon/engines/precedents/gaps для MANIFEST | M | [`DSP_F1_INVENTORY_PROMPT.md`](../prompts/DSP_F1_INVENTORY_PROMPT.md) | [#850](https://github.com/officefish/Membrana/issues/850) |
+| `dsp-f0-brief` | F0: эпик-промпт, границы day-sprint vs R5/kits, OPEN | M | [`DSP_F0_BRIEF_PROMPT.md`](../prompts/DSP_F0_BRIEF_PROMPT.md) | [#849](https://github.com/officefish/Membrana/issues/849) |
+| `day-sprint-procedure` | Эпик: процедура day-sprint → жилец docs/procedures/day-sprint (определение ≠ инстансы) | L | [`DAY_SPRINT_PROCEDURE_PROMPT.md`](../prompts/DAY_SPRINT_PROCEDURE_PROMPT.md) | [#848](https://github.com/officefish/Membrana/issues/848) |
 | `kdm-d4-closure` | D4: CLOSURE kits-dream-master | M | [`KDM_D4_CLOSURE_PROMPT.md`](../prompts/KDM_D4_CLOSURE_PROMPT.md) | [#860](https://github.com/officefish/Membrana/issues/860) |
 | `kits-dream-master` | Эпик: второй кит dream-master (Мастер снов) поверх kits/ | L | [`KITS_DREAM_MASTER_PROMPT.md`](../prompts/KITS_DREAM_MASTER_PROMPT.md) | [#855](https://github.com/officefish/Membrana/issues/855) |
 | `morning-report-completion` | Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям) | L | [`MORNING_REPORT_COMPLETION_PROMPT.md`](../prompts/MORNING_REPORT_COMPLETION_PROMPT.md) | [#788](https://github.com/officefish/Membrana/issues/788) |
