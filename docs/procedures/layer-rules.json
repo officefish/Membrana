@@ -12,6 +12,18 @@
     { "from": "процедура", "to": "кит", "via": "MANIFEST.json kitVersion — пин набора (#761, PINNED_SUBGRAPH_VERSIONING)" },
     { "from": "кит", "to": "скрипт", "via": "манифест кита — набор ссылок с SHA-пинами" }
   ],
+  "branchGrammar": {
+    "form": "[<персона>/]<kind>/<slug>",
+    "kinds": ["feat", "fix", "docs", "chore", "test", "tooling", "meeting", "storm", "cowork", "comp", "night", "truth", "research", "sprint"],
+    "personas": ["vesnin", "ozhegov", "dynin", "kuryokhin", "rodchenko", "angelina", "boyarskiy"],
+    "formatTags": { "night": "заморозка: ничего в репозиторий из-под ночной ветки до флага «ночь закончилась» (T7)" },
+    "notes": [
+      "kind вне словаря (в т.ч. feature) → MISSING с подсказкой; дубль feat/feature умер этим словарём (вердикт M4).",
+      "Агент-префиксы (cursor/codex/claude) вне канона: исполнитель живёт в Co-Authored-By, не в имени (K3).",
+      "История (501 ветка до 21.07) не переименовывается (K5); legacy-якоря — не входы новых веток.",
+      "Голая персона-ветка (§7а, например ozhegov) блокирует ref-неймспейс ozhegov/* на уровне git — живая коллизия 21.07; валидатор обязан её называть, судьба голых персона-веток — слово владельца."
+    ]
+  },
   "blindSpots": [
     "Динамические ссылки (import по строке, require из переменной) статическим графом не ловятся — вердикт M3, смотрит аудитор.",
     "Data-чтения (readFileSync путей docs/procedures/* из скриптов-наблюдателей: генераторы, валидаторы, тесты) — вне охвата зуба; расширение и категория «наблюдатели слоя» — issue #800."
