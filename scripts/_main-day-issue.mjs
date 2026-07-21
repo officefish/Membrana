@@ -403,30 +403,38 @@ export async function runMainDayIssue(options) {
   }
 
   const model = defaultModel();
-  const bodyJson = {
-    model,
-    max_tokens: 4096,
-    messages: [{ role: 'user', content: [{ type: 'text', text: bodyText }] }],
-  };
 
   let exitCode = 0;
   try {
-    const { ok, status: httpStatus, text } = await anthropicPost(
-      'https://api.anthropic.com/v1/messages',
-      {
-        headers: {
-          'content-type': 'application/json',
-          'x-api-key': key,
-          'anthropic-version': '2023-06-01',
+    // Ф3 #788 (T11): гейт при красном не ретраит вслепую — перезапускает генерацию
+    // С ПОПРАВКОЙ (диагноз потерянных слотов уходит модели). Две попытки, потом
+    // громкий стоп: бесконечный цикл поправок — та же слепота, что и тупой ретрай.
+    const MAX_ATTEMPTS = 2;
+    let lastMissing = [];
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
+      const promptText = attempt === 1 ? bodyText : `${bodyText}\n\n${skeletonCorrection(lastMissing)}`;
+      const { ok, status: httpStatus, text } = await anthropicPost(
+        'https://api.anthropic.com/v1/messages',
+        {
+          headers: {
+            'content-type': 'application/json',
+            'x-api-key': key,
+            'anthropic-version': '2023-06-01',
+          },
+          bodyJson: {
+            model,
+            max_tokens: 4096,
+            messages: [{ role: 'user', content: [{ type: 'text', text: promptText }] }],
+          },
         },
-        bodyJson,
-      },
-    );
+      );
 
-    if (!ok) {
-      printAnthropicHttpError(httpStatus, text);
-      exitCode = 1;
-    } else {
+      if (!ok) {
+        printAnthropicHttpError(httpStatus, text);
+        exitCode = 1;
+        break;
+      }
+
       let out = '';
       try {
         const json = JSON.parse(text);
@@ -438,15 +446,11 @@ export async function runMainDayIssue(options) {
       } catch {
         out = text;
       }
-      // Гейт скелета (K, M2): все 5 заголовков слотов на месте, иначе ГРОМКИЙ отказ —
+
+      // Гейт скелета (K, M2): все 5 заголовков слотов на месте, иначе отказ —
       // структура детерминирована, LLM не вправе её ронять. Файл при провале не пишем.
-      const missingSlots = missingSlotHeadings(out);
-      if (missingSlots.length > 0) {
-        console.error(
-          `✖ гейт скелета (M2): LLM уронил слот(ы): ${missingSlots.join(', ')} — файл НЕ записан. Перезапусти генерацию.`,
-        );
-        exitCode = 22;
-      } else {
+      lastMissing = missingSlotHeadings(out);
+      if (lastMissing.length === 0) {
         writeMainDayIssueFile({
           outputPath: options.outputPath,
           commandName: options.commandName,
@@ -459,6 +463,21 @@ export async function runMainDayIssue(options) {
         });
         console.log(out);
         console.error('Записано:', options.outputPath);
+        exitCode = 0;
+        break;
+      }
+
+      if (attempt < MAX_ATTEMPTS) {
+        console.error(
+          `⚠ гейт скелета (M2): потеряны слоты: ${lastMissing.join(', ')} — перезапуск генерации с поправкой (${attempt + 1}/${MAX_ATTEMPTS}).`,
+        );
+      } else {
+        // Формулировка привязана к факту (были ли поправки), не к константе.
+        const afterCorrections = attempt > 1 ? ' и после поправки' : '';
+        console.error(
+          `✖ гейт скелета (M2): LLM уронил слот(ы)${afterCorrections}: ${lastMissing.join(', ')} — файл НЕ записан. Перезапусти генерацию.`,
+        );
+        exitCode = 22;
       }
     }
   } catch (e) {
@@ -467,6 +486,23 @@ export async function runMainDayIssue(options) {
   }
 
   process.exitCode = exitCode;
+}
+
+/**
+ * Поправка перезапуска (Ф3 #788, T11): диагноз гейта скелета уходит модели явным
+ * заданием, а не повтором того же промпта. Экспорт — для юнит-теста без LLM.
+ * @param {string[]} missingSlots
+ * @returns {string}
+ */
+export function skeletonCorrection(missingSlots) {
+  return [
+    '# ПОПРАВКА ПЕРЕЗАПУСКА (гейт скелета M2)',
+    '',
+    `В предыдущей генерации потеряны слоты: ${missingSlots.join(', ')}.`,
+    'Выведи ВСЕ пять слотов каркаса, каждый строго заголовком второго уровня',
+    '`## <название>` без украшений, эмодзи и дополнений в строке заголовка.',
+    'Если наполнить слот нечем — оставь заголовок и напиши «— пусто —» под ним.',
+  ].join('\n');
 }
 
 function writeMainDayIssueFile({ outputPath, commandName, body, meta }) {

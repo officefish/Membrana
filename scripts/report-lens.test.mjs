@@ -133,3 +133,48 @@ test('day-report: «##» внутри code-fence не обрывает слот 
   assert.match(slots[0].body, /после #42/u, 'тело слота не усечено fence-блоком');
   assert.match(slots[0].body, /## не заголовок/u, 'содержимое fence сохранено в теле');
 });
+
+// ─── Ф2 #788: ласточка-зеркало — шаблон + гейт чистоты ───────────────────────────
+
+test('swallow-mirror: скелет содержит все 5 меток и строку деталей', async () => {
+  const { buildSwallowSkeleton, SWALLOW_LABELS, DETAILS_LABEL } = await import('./lib/swallow-mirror.mjs');
+  const sk = buildSwallowSkeleton();
+  for (const { label } of SWALLOW_LABELS) assert.match(sk, new RegExp(`^${label}:`, 'mu'));
+  assert.match(sk, new RegExp(`^${DETAILS_LABEL}:`, 'mu'));
+});
+
+test('swallow-mirror: чистый черновик проходит, детали с #N разрешены', async () => {
+  const { checkSwallowDraft } = await import('./lib/swallow-mirror.mjs');
+  const draft = ['Доброе утро! Сегодня чиним надёжность утреннего планирования.', '',
+    'Главное: доклад о задачах приходит сам после выбора главной цели.',
+    'Также: отчёт партнёрам собирается по тому же зеркалу.',
+    'Смотрим вперёд: витрины продукта вернутся после починки основы.',
+    'Пробуем: помощник перезапускает сборку сам, если она не отвечает критериям.',
+    'Гигиена: без изменений.', '', 'Детали: #592, #788'].join('\n');
+  const r = checkSwallowDraft(draft);
+  assert.deepEqual(r.violations, []);
+  assert.equal(r.ok, true);
+});
+
+test('swallow-mirror: жаргон в теле и потерянный блок ловятся с диагнозом', async () => {
+  const { checkSwallowDraft } = await import('./lib/swallow-mirror.mjs');
+  const dirty = ['Доброе утро!', '',
+    'Главное: чиним MAIN_DAY_ISSUE и провод ritual:day.',
+    'Также: без изменений.',
+    'Смотрим вперёд: без изменений.',
+    'Пробуем: без изменений.', '', 'Детали: #592'].join('\n'); // «Гигиена» потеряна
+  const r = checkSwallowDraft(dirty);
+  assert.equal(r.ok, false);
+  assert.ok(r.violations.some((v) => /Гигиена/u.test(v)), 'потерянный блок назван');
+  assert.ok(r.violations.some((v) => /жаргон/u.test(v)), 'жаргон назван');
+});
+
+test('swallow-mirror: плейсхолдер и нарушенный порядок ловятся', async () => {
+  const { checkSwallowDraft } = await import('./lib/swallow-mirror.mjs');
+  const bad = ['Привет!', '', 'Также: раньше главного.',
+    'Главное: <одной фразой, без внутренних имён>',
+    'Смотрим вперёд: ок.', 'Пробуем: ок.', 'Гигиена: ок.'].join('\n');
+  const r = checkSwallowDraft(bad);
+  assert.ok(r.violations.some((v) => /плейсхолдер/u.test(v)));
+  assert.ok(r.violations.some((v) => /порядок/u.test(v)));
+});
