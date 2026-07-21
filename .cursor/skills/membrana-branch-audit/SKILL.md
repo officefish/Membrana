@@ -23,6 +23,7 @@ description: >-
 ## Когда НЕ
 
 - Удалять мёртвые ветки → `yarn repo:clean` (истина — состояние PR, не ancestry).
+- **Декомпозиция по гигиене** (7 категорий: worktree / персоны / baseline / in-flight / leftover / zombie / salvage) → `membrana-branch-decompose` / `yarn repo:branches:decompose`.
 - Проверить одну feature-ветку перед ревью → `yarn branch:check-base`.
 - Создать изолированный checkout → `membrana-worktree`.
 
@@ -54,3 +55,4 @@ description: >-
 - **Персона-ветки** (`vesnin`, `ozhegov`, `boyarskiy`, `dynin`, …) никогда не
   авто-удалять — канон TASKS_MANAGEMENT §7а; `repo:clean` их бережёт.
 - Чистка ≠ инвентарь: этот скилл только показывает; удаление — `repo:clean`.
+- Гигиена-декомпозиция (7 категорий) — соседний скилл `membrana-branch-decompose`, не этот.
