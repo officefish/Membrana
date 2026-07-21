@@ -4,7 +4,7 @@
 > Цепь: D0→D4 (#856–#860). Семя: [#761](https://github.com/officefish/Membrana/issues/761).  
 > Прецедент: `kits-angelina-morning` (#814). Паттерн: [`PINNED_SUBGRAPH_VERSIONING`](../patterns/PINNED_SUBGRAPH_VERSIONING.md).  
 > Автор снов: [`DREAM_MASTER_PROMPT.md`](./DREAM_MASTER_PROMPT.md) («Мастер снов», не VT-персона).  
-> Статус: **зарегистрирован** — дом `kits/` и зуб аудита уже есть; следующий шаг = D0.
+> Статус: **D0** · OPEN [`kits-dream-master-2026-07-21`](../day-sprint/kits-dream-master-2026-07-21/OPEN.md).
 
 ---
 
@@ -18,7 +18,7 @@
 Прецедент: M5 ritual-refactor (`docs/seanses/ritual-refactor-m5-dreams-2026-07-20.md`);
 инфра — `ritual-d-dreams` / `ritual-d-dreams-infra`.
 
-## Границы (зафиксировать в K0)
+## Границы (D0 — зафиксировано)
 
 | Лемма | Адрес | Не путать |
 |-------|--------|-----------|
@@ -48,7 +48,7 @@
 | Night Build / vesnin | оркестрация ночного кода; не roots кита снов |
 | #761 | второй жилец паттерна; комментарий в closure |
 
-## Фазы (черновик цепи)
+## Фазы
 
 | Фаза | id | Issue | lead | Суть |
 |------|-----|------:|------|------|
@@ -98,8 +98,8 @@
 
 ## Acceptance criteria
 
-- [ ] Бриф D0 + LGTM vesnin
+- [x] Бриф D0 + границы (LGTM vesnin owner ok 2026-07-21)
 - [ ] `kits/dream-master/` с пинами; `yarn kits:audit --id dream-master` зелёный
 - [ ] Процедура `ritual-dreams` с `kitVersion`
 - [ ] CLOSURE; #761 — второй жилец назван
-- [ ] `night:research` и Night Build явно вне кита (или вынесены отдельным решением)
+- [x] `night:research` и Night Build явно вне кита (границы D0)

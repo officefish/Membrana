@@ -1,5 +1,7 @@
 # Active day sprint
 
-> **Нет активного day-sprint.**  
-> Последний закрыт: [`kits-angelina-morning-2026-07-21`](./day-sprint/kits-angelina-morning-2026-07-21/CLOSURE.md)  
-> (эпик `kits-angelina-morning` · #814 · K0–K5 · 2026-07-21).
+> **Активен:** `kits-dream-master-2026-07-21`  
+> **OPEN:** [`docs/day-sprint/kits-dream-master-2026-07-21/OPEN.md`](./day-sprint/kits-dream-master-2026-07-21/OPEN.md)  
+> **Эпик реестра:** `kits-dream-master` (#855) · фаза: **D0** (`kdm-d0-brief`, lead vesnin)  
+> **Ветка:** `feature/kdm-d0-brief`  
+> Предыдущий: [`kits-angelina-morning` CLOSED](./day-sprint/kits-angelina-morning-2026-07-21/CLOSURE.md).
