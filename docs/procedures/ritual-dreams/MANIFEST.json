@@ -1,0 +1,12 @@
+{
+  "id": "ritual-dreams",
+  "leadPersona": "dynin",
+  "kitVersion": "kits/dream-master",
+  "engines": [
+    "scripts/dreams.mjs"
+  ],
+  "precedents": [
+    "docs/prompts/DREAM_MASTER_PROMPT.md",
+    "docs/seanses/ritual-refactor-m5-dreams-2026-07-20.md"
+  ]
+}

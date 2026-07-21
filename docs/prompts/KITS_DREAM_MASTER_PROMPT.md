@@ -103,6 +103,6 @@
 
 - [x] Бриф D0 + границы (LGTM vesnin owner ok 2026-07-21)
 - [x] `kits/dream-master/` с пинами; `yarn kits:audit --id dream-master` зелёный (LGTM dynin)
-- [ ] Процедура `ritual-dreams` с `kitVersion`
+- [x] Процедура `ritual-dreams` с `kitVersion` (ждёт LGTM D3)
 - [ ] CLOSURE; #761 — второй жилец назван
 - [x] `night:research` и Night Build явно вне кита (границы D0)

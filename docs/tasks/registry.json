@@ -31,7 +31,7 @@
       "archivedAt": null,
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "D3: ritual-dreams kitVersion→kits/dream-master; engines=dreams.mjs. LGTM ozhegov — ship.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "kits-dream-master"

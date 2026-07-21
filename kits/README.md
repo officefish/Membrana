@@ -77,6 +77,7 @@ kits/
 | Аудит полноты подграфа path→SHA | K2 | ✅ `yarn kits:audit` |
 | Жилец + режимы latest/pinned | K3 | ✅ `kits/angelina-morning/` |
 | `kitVersion` с процедуры утра | K4 | ✅ `ritual-day` → `kits/angelina-morning` |
+| `kitVersion` с процедуры снов | D3 | ✅ `ritual-dreams` → `kits/dream-master` |
 
 ## Аудит (K2)
 
