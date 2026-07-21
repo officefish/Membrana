@@ -5,7 +5,7 @@
 | **Sprint** | `day-sprint-procedure-2026-07-21` |
 | **Registry epic** | `day-sprint-procedure` · [#848](https://github.com/officefish/Membrana/issues/848) |
 | **Kind** | epic (фазы day-sprint) |
-| **Status** | **open** |
+| **Status** | **CLOSED** · see [`CLOSURE.md`](./CLOSURE.md) |
 | **Started** | 2026-07-21 |
 | **Size** | L |
 | **Lead epic** | vesnin |
