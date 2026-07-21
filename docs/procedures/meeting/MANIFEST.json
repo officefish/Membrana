@@ -1,0 +1,18 @@
+{
+  "id": "meeting",
+  "leadPersona": "vesnin",
+  "kitVersion": null,
+  "engines": [
+    "scripts/consilium.mjs",
+    "scripts/meeting-audit.mjs",
+    "scripts/lib/protocol-validator.mjs",
+    "scripts/lib/consilium-premises.mjs",
+    "scripts/lib/meeting-walk.mjs"
+  ],
+  "precedents": [
+    "docs/meeting/procedural-layer/EPIC.md",
+    "docs/seanses/procedural-layer-m0-order-2026-07-21.md",
+    "docs/seanses/rejected/procedural-layer-m3-boundary-2026-07-21.md",
+    "docs/seanses/rejected/procedural-layer-m3-boundary-r6-2026-07-21.md"
+  ]
+}

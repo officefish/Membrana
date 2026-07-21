@@ -68,5 +68,14 @@ autonomous → **pinned** (см. [`angelina-morning`](../../kits/angelina-mornin
 манифест — главный diffable-артефакт. Версия единицы —
 [`PINNED_SUBGRAPH_VERSIONING`](../patterns/PINNED_SUBGRAPH_VERSIONING.md) (#761).
 
-Реестр процедур (`registry.json`, статусы `migrated`/`legacy`) появится в Р5;
-до него список ведётся этой таблицей.
+## Реестр процедур (Р5)
+
+Источник — [`registry.json`](./registry.json): все процедуры слоя записями
+`{holder, container, vocabulary, grammar, homePath}`; `migrated` — **производный**
+предикат (`container ∧ vocabulary ∧ grammar`), не хранимое поле; каждое `true`
+несёт провенанс `<persona>@<hash>`; немигрированные — честный `legacy`. Проекция —
+[`REGISTRY.md`](./REGISTRY.md) (`yarn procedures:registry`, руками не правится,
+дрейф ловит `--check`; зуб в CI — `scripts/procedures-registry.test.mjs`).
+Таблица «Жильцы» выше — краткая витрина; источник истины статусов — реестр.
+Миграция — **по касанию** (вердикт M5): мигрирует та процедура, которой коснулась
+работа; доноры первого залпа — `ritual-evening` и `meeting`.
