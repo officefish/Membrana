@@ -9,7 +9,7 @@
 | **Started** | 2026-07-21 |
 | **Size** | L |
 | **Lead epic** | ozhegov (Structurer) — принимает каркас контракта |
-| **Branch** | `feature/scripts-boundary-container` |
+| **Branch** | `feature/sbc-s3-kits-align` (фаза S3) |
 
 **Prompt эпика:** [`SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md`](../../prompts/SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md)  
 **Контейнер:** [`scripts/README.md`](../../../scripts/README.md)  
@@ -32,8 +32,8 @@
 |-------|-------------|-------|------|-------------|--------|
 | **S0** | `sbc-s0-contract` | [#792](https://github.com/officefish/Membrana/issues/792) | ozhegov | `scripts/README` + `AGENT_PROMPT` + `cache/` | ✅ merged #797 |
 | **S1** | `sbc-s1-registry` | [#793](https://github.com/officefish/Membrana/issues/793) | dynin | `registry/SCRIPTS_LIST.md` derived | ✅ merged #799 |
-| **S2** | `sbc-s2-tools-report` | [#794](https://github.com/officefish/Membrana/issues/794) | vesnin | tooling `--report` пишет в контейнер | ✅ LGTM vesnin 2026-07-21 |
-| **S3** | `sbc-s3-kits-align` | [#795](https://github.com/officefish/Membrana/issues/795) | ozhegov | align kits ↔ pl-r3 | ⬜ blocked on R3 |
+| **S2** | `sbc-s2-tools-report` | [#794](https://github.com/officefish/Membrana/issues/794) | vesnin | tooling `--report` пишет в контейнер | ✅ merged #812 |
+| **S3** | `sbc-s3-kits-align` | [#795](https://github.com/officefish/Membrana/issues/795) | ozhegov | align kits ↔ pl-r3 | ✅ LGTM ozhegov 2026-07-21 |
 | **S4** | `sbc-s4-wiring` | [#796](https://github.com/officefish/Membrana/issues/796) | vesnin | AGENTS / skills / DoD wires | ⬜ |
 
 ---

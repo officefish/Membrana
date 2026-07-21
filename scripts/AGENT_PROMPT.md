@@ -95,12 +95,15 @@ yarn scripts:registry --report
 - **HARD GATE:** подмножество (пути, yarn-имена или явный критерий) обязано быть в **текущем** сообщении. Иначе STOP: спросить; **ничего** не писать в `analysis/`.
 - Запрещено угадывать scope из истории сессии.
 
-### D — Kits (S3, blocked until pl-r3)
+### D — Kits (S3 align)
 
-«Подключить kit-manifest».
+«Выровнять kits с Р3».
 
-- Сначала прочитать контракт/статус `pl-r3-boundary`.
-- Не публиковать свой JSON-схему кита «временно».
+- Канон: [`scripts/README.md`](./README.md) § «Киты — канон Р3» +
+  [`docs/procedures/README.md`](../docs/procedures/README.md) § киты.
+- Слой `kits/` спит до #761; `kitVersion` в процедурных MANIFEST — пин.
+- **Запрещено:** второй `kits.schema.json` / параллельный формат под `scripts/`.
+- Разбор: [`analysis/kits-align-pl-r3-2026-07-21.md`](./analysis/kits-align-pl-r3-2026-07-21.md).
 
 ---
 
