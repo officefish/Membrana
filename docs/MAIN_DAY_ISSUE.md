@@ -1,92 +1,112 @@
-<!-- Сгенерировано: 2026-07-18T03:23:26.803Z (yarn main-day-issue) -->
+<!-- Сгенерировано: 2026-07-21T11:45:33.985Z (yarn main-day-issue@8d7ef4f1) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
-<!-- Входы: DAILY_STANDUP, STRATEGIC_PLAN_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
+<!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
+<!-- angelina {"author":"vesnin","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"055c968b1799f1accd7ce719a0215587d0f7709e","digest":"0eaa4df0d67ac47abca433e3cb99f460610041f1547e1566abbf52ab6d540110"},"DAILY_STANDUP":{"version":"055c968b1799f1accd7ce719a0215587d0f7709e","digest":"a23053fef3a3e92e76b46598c0c4bcc4e49b23eb7920fdcc83538ac2d4ae4710"}}} -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
-<!-- active в реестре: strategy-day-generator, scripts-boundary-container, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, agent-tooling-friction-3, membrana-device-build-profile, rt-10-review-precision-degradation, rt-9-code-review-freshness, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, live-neural-combined-fusion, drift-anchor-contour, single-node-detection-first, real-dataset-live-calibration, media-library-a3-mic-recorder, media-library-a4-sample-player, trends-fft-template-editor, background-media-v1, background-media-a5a-server, background-media-a5b-docker, background-media-a5c-deploy, sample-library-drone-detection, sld3-dsp-detectors-free-v1, sld4-stage-gate-calibration, live-parallel-detection-sprint, lp1-mic-drone-stream-modes, lp1b-drone-detailed-report-server, lp2-fft-plugins-journal-sink, lp3-track-import-backpressure, lp4-parallel-detection-smoke, lp5-journal-report-renderers, device-board-hackathon-1, db-h1b-board-shell, db-h1c-graph-serialize, db-h2a-json-import, db-h2b-scenario-runtime, db-h2c-mic-journal, db-h2d-cabinet-sync, db-h3a-trigger-stop, db-h3b-trigger-disconnect, db-h3c-subgraph, db-h4-alarm-close, membrane-node-realtime-gateway, membrane-node-realtime-nr0-contract, membrane-node-realtime-nr1-gateway, membrane-node-realtime-nr2-journal-ws, membrane-node-realtime-nr3-client-journal, membrane-node-realtime-nr4-mic-live, membrane-node-realtime-nr5-cabinet-live, membrane-node-realtime-nr6-prod-hardening, membrane-node-runtime-remote, mp7b-rt0-contract, mp7b-rt1-gateway, mp7b-rt2-client-runtime, mp7b-rt3-mode, mp7b-rt4-multinode-schema, mp7b-rt5-cabinet-nodes, mp7b-rt6-board-ux, mp7b-rt7-prod-hardening, deploy-pipeline-refactor, dpr-dr0-git-hygiene-gate, dpr-dr1-ci-gate, dpr-dr2-image-registry, dpr-dr3-rollback-runbook, dpr-dr4-smoke-suite, dpr-dr5-branch-migration-policy, dpr-dr6-client-delivery, dpr-dr7-zero-downtime, device-board-refactor-v04, dbr-0-concept-core, dbr-1-fullscreen, dbr-2-variables, dbr-3-event-node, dbr-4-dataflow-resolve, dbr-5-palette-nodes, dbr-6-run-gating, db-doc-v04-mvp, db-post-usercase-roadmap, usercase-mvp-v2-groups-async, ucv2-0-spec-lgtm, ucv2-1-graph-collapse, ucv2-2-freeze-async-tracks, ucv2-3-pack-verify, ucv2-4-operator-signoff, device-board-phase-3, db-p3-a1-usercase-catalog-service, db-p3-a2-runtime-validators, db-p3-a3-competition-restrictions, db-ap-r1-core-contracts, db-ap-r2-core-sequence-latent, db-ap-r3-async-job-store, db-ap-r4-sequence-latent-runtime, db-ap-r5-promise-nodes-editor, db-ap-r6-promise-nodes-executor, db-ap-r7-host-bridge-jobs, db-ap-r8-detached-event-dispatch, db-ap-r9-mvp-graph-v2, db-ap-r10-agenda-async-hub, db-ap-r11-observability-tests, db-ap-r12-docs-signoff, opencode-proxy-sprint-2026-06-25, oc-proxy-s0-research-isolation, oc-proxy-s1-opencode-install, oc-proxy-s2-freemodel-keys, oc-proxy-s3-llm-proxy-script, oc-proxy-s4-opencode-config, comp-packaging-catalog-2026-06-25, device-board-three-hosts-2026-06-26, ci-gate-stabilization, cg2-two-tier-test-gate, cg3-flaky-metrics-week, cg4-ci-testing-docs, db3h-s2-cabinet-host, db3h-s5-desktop-logging, db3h-s4-microphone-detectors, device-board-server-first, db-sf-0-canon, db-sf-1-core-contracts, db-sf-2-gateway-board, db-sf-3-cabinet-lease-api, db-sf-4-client-follower, db-sf-5-board-flags-ui, db-sf-6-nodes-runtime, db-sf-7-last-track-preview, db-sf-8-tests-smoke, db-sf-9-docs-sync, neural-tier-1b-contract, neural-free-tier-dataset-report, rag-dual-circuit-v1, rag-r6-closure, rag-r7-optional, fv1-s2-closeout, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, vdr-label-roundtrip-night-build, nb-vlr-0-gate, nb-vlr-1-labels-export-ui, nb-vlr-2-labels-merge-script, nb-vlr-3-library-label-filter, nb-vlr-4-docs, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, tech-debt-2026-07, cg5-detector-base-build-order, cg6-stale-dist-gate, cg7-catalog-verify-prepush, td-scenario-registry-persistence, td-node-lastseen-reconnect, td-singleton-eslint-guard, cabinet-scenario-picker-system, csp-1-contract, csp-2-tariff-to-node, csp-3-node-declares-system, csp-4-shared-card, csp-5-cabinet-ui, csp-6-smoke-docs, agent-tooling-night-build, nb-at-0-gate, nb-at-1-gitignore-review, nb-at-2-pr-ship, nb-at-3-build-affected, nb-at-4-verify-wire-sync, nb-at-5-hooks, nb-at-6-helpers, nb-at-7-bookkeeping-gitctx, nb-at-8-docs-skills, night-triage-routine-pilot, detection-alarm-loop-refactor, batch-collection-run-contour, palette-clarity-nodes -->
+<!-- active в реестре: angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, linear-agent-identity-facts, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-spectral-ladder, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, scripts-boundary-container, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, agent-tooling-friction-3, membrana-device-build-profile, rt-10-review-precision-degradation, rt-9-code-review-freshness, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, media-library-a3-mic-recorder, media-library-a4-sample-player, trends-fft-template-editor, live-parallel-detection-sprint, lp1-mic-drone-stream-modes, lp1b-drone-detailed-report-server, lp2-fft-plugins-journal-sink, lp3-track-import-backpressure, lp4-parallel-detection-smoke, lp5-journal-report-renderers, device-board-hackathon-1, db-h1b-board-shell, db-h1c-graph-serialize, db-h2a-json-import, db-h2b-scenario-runtime, db-h2c-mic-journal, db-h2d-cabinet-sync, db-h3a-trigger-stop, db-h3b-trigger-disconnect, db-h3c-subgraph, db-h4-alarm-close, membrane-node-runtime-remote, mp7b-rt0-contract, mp7b-rt1-gateway, mp7b-rt2-client-runtime, mp7b-rt3-mode, mp7b-rt4-multinode-schema, mp7b-rt5-cabinet-nodes, mp7b-rt6-board-ux, mp7b-rt7-prod-hardening, db-doc-v04-mvp, db-post-usercase-roadmap, usercase-mvp-v2-groups-async, ucv2-0-spec-lgtm, ucv2-1-graph-collapse, ucv2-2-freeze-async-tracks, ucv2-3-pack-verify, ucv2-4-operator-signoff, device-board-phase-3, db-p3-a1-usercase-catalog-service, db-p3-a2-runtime-validators, db-p3-a3-competition-restrictions, db-ap-r1-core-contracts, db-ap-r2-core-sequence-latent, db-ap-r3-async-job-store, db-ap-r4-sequence-latent-runtime, db-ap-r5-promise-nodes-editor, db-ap-r6-promise-nodes-executor, db-ap-r7-host-bridge-jobs, db-ap-r8-detached-event-dispatch, db-ap-r9-mvp-graph-v2, db-ap-r10-agenda-async-hub, db-ap-r11-observability-tests, db-ap-r12-docs-signoff, opencode-proxy-sprint-2026-06-25, oc-proxy-s0-research-isolation, oc-proxy-s1-opencode-install, oc-proxy-s2-freemodel-keys, oc-proxy-s3-llm-proxy-script, oc-proxy-s4-opencode-config, comp-packaging-catalog-2026-06-25, device-board-three-hosts-2026-06-26, ci-gate-stabilization, cg2-two-tier-test-gate, cg3-flaky-metrics-week, cg4-ci-testing-docs, db3h-s2-cabinet-host, db3h-s5-desktop-logging, db3h-s4-microphone-detectors, device-board-server-first, db-sf-0-canon, db-sf-1-core-contracts, db-sf-2-gateway-board, db-sf-3-cabinet-lease-api, db-sf-4-client-follower, db-sf-5-board-flags-ui, db-sf-6-nodes-runtime, db-sf-7-last-track-preview, db-sf-8-tests-smoke, db-sf-9-docs-sync, neural-tier-1b-contract, neural-free-tier-dataset-report, rag-dual-circuit-v1, rag-r6-closure, rag-r7-optional, fv1-s2-closeout, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, vdr-label-roundtrip-night-build, nb-vlr-0-gate, nb-vlr-1-labels-export-ui, nb-vlr-2-labels-merge-script, nb-vlr-3-library-label-filter, nb-vlr-4-docs, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, tech-debt-2026-07, cabinet-scenario-picker-system, agent-tooling-night-build, nb-at-0-gate, nb-at-1-gitignore-review, nb-at-2-pr-ship, nb-at-3-build-affected, nb-at-4-verify-wire-sync, nb-at-5-hooks, nb-at-6-helpers, nb-at-7-bookkeeping-gitctx, nb-at-8-docs-skills, detection-alarm-loop-refactor, batch-collection-run-contour -->
 
-# MAIN_DAY_ISSUE — 18.07.2026
+## Метаданные
 
-<!-- Магистраль дня взята из docs/tasks/main-day-assertions.json → sources[0].claim (owner-choice@c4f02fcb/AskUserQuestion-magistral-18-07). НЕ синтезирована из входов. -->
+| Поле | Значение |
+|------|----------|
+| `primaryFocusId` | strategy-day-generator |
+| `primaryTitle` | Подключить генератор стратегии #592 к ритуалу и погасить провод STRATEGIC_PLAN_DAY (#621) |
+| `githubIssue` | #592 (провод #621) |
+| `size` | M |
+| `promptPath` | docs/prompts/*strategy-day-generator*_PROMPT.md |
+| `сгенерировано` | 2026-07-21 |
 
-## 🎯 Магистраль дня (владельческая, не синтез)
+## Магистраль
 
-**Подключить генератор стратегии #592 к ритуалу: `ritual:day` зовёт старый `strategic-plan-day`; `main-day-issue` читает `STRATEGIC_PLAN_DAY` и не читает граф правды — три провода не кинуты.**
+Подключить генератор стратегии #592 к утреннему ритуалу так, чтобы источник плана давал **проверяемый выход**, а не вещдок. Магистраль взята из прямого волеизъявления владельца (`sources[0].claim`, origin `owner-choice@c4f02fcb/AskUserQuestion-magistral-18-07`): «подключить генератор стратегии #592 к ритуалу — три провода не кинуты: `ritual:day` зовёт старый `strategic-plan-day`, `main-day-issue` читает `STRATEGIC_PLAN_DAY` и не читает граф». Сегодня это раскрывается контекстом дня: вход несвеж (MAIN_DAY_ISSUE протух на 3 дня, `STRATEGIC_PLAN_DAY.md` явно помечен как вещдок), контур доверия держится на полусобранном генераторе. Пока источник плана врёт о работе, любую продуктовую магистраль (FREE S2→S5) назначать по нему нельзя — назначим фантом (ровно ошибка 16.07). Развилка судьбы `STRATEGIC_PLAN_DAY.md` (#621) выносится владельцу как gated-выбор (а: удалить провод / б: перевыпустить через #592), не решается молча.
 
-> Источник: `main-day-assertions.json` → `sources[0]` — прямой выбор владельца (AskUserQuestion «магистраль дня», session `c4f02fcb`). Один источник, ноль отражений. Это НЕ спорная развилка: `assertions` пуст, `main-day-probe` пропускает (посылка отсутствия работы невыразима текущими маркерами — провод генератор↔ритуал живёт в `package.json`/`scripts/`, вне охвата probe kind `symbol`; гвард подключения — тест интеграции, не posylka).
+**Критерий успеха к вечеру:** `ritual:day` зовёт #592 (тест интеграции зелёный); `main-day-issue` берёт источником граф правды (S7); выход генератора = `{horizon, focus, task_refs[]}` без DoD и ролей; развилка #621 оформлена как явный gated-выбор владельцу.
 
----
+## Подкрепление
 
-## Почему именно это (раскрытие магистрали контекстом, не выбор из него)
+- **`ritual-trust-contour`** — довести контур доверия до первого честного прогона: `main-day-probe` перед генератором (C1 починен 18.07), три провода из канона 18.07 подтверждены живым прогоном, а не вещдоком.
+- **Развязать провод #621 (`STRATEGIC_PLAN_DAY.md`)** — оформить gated-выбор владельцу (а/б), не удалять и не перевыпускать молча; append-only дисциплина сохранена.
 
-Три дня контур доверия чинили (граф правды #576 залит, C1 починен 17.07), но **сам генератор стратегии #592 остался полусобранным** — ровно то, о чём предупреждал стендап и вердикты Q1–Q3:
+## Перспективные
 
-1. **`ritual:day` зовёт устаревший генератор.** `STRATEGIC_PLAN_DAY.md` помечен вручную как ВЕЩДОК: заголовок «План на 18.07» при генерации 17.07 утром (календарный `nextDay` захардкожен), несёт DoD и роли — собственность реестра, не стратегии. Вердикт Q1: стратегия перестаёт писать DoD/назначать исполнителей, выход → `{horizon, focus, task_refs[]}`.
-2. **`main-day-issue` читает файл-вещдок, а не граф.** `_main-day-issue.mjs:54` берёт входом `STRATEGIC_PLAN_DAY` — тот самый протухший артефакт. Отсюда дрейф даты (17.07 → «18.07»).
-3. **Граф правды (S7) не подключён как источник плана.** 60 кристаллов активно, `insight`/`research` каналы живы — но ни `main-day-issue`, ни стендап граф не читают (grep=0, подтверждено `insight-flow-broken-by-weekly-freeze`).
+- Продуктовая магистраль FREE (S2 combined UC → S5 лендинг) — вернуться сразу после починки провода источника плана; пока по недостоверному плану = фантом.
+- Живой нейро-combined детектор (эшелон-2-live): yamnet в `combinedScore` — вектор роста качества за пределами эшелона 0.
+- Токены правды как источник истины для ритуала (`insight-truth-tokens-owner-facts`) — расширение читателей графа за пределы стратегии.
 
-**Главный риск (из стендапа):** снова назвать полусобранное «работающим» по формальной живости — как фантомы 13–17.07. Провенанс печатает «research: жив», за ним пустой сон (#598: S6 пишет `pending` навсегда, `void` недостижим; #599: утечка жаргона `ritual:day`/`C1`/`MAIN_DAY_ISSUE` → Perplexity вернул ЕГРЮЛ).
+## Экспериментальные
 
----
+- Маркер `kind:command` с `expect` для probe — тогда посылка о порядке шагов в цепочке (класс retired C1) станет выразимой без отдельного теста.
+- Форвардинг инсайтов в дневную стратегию напрямую (`includeInsights` у дневной) — закрыть дыру, открытую заморозкой недельной.
 
-## Роли и порядок работы
+## Санитарные
 
-Порядок по эвристике «только алгоритм/структура»: **Математик → Структурщик → Teamlead (LGTM)**.
+- `night:research` вечный `pending` (#598) — не принимать формальную живость за работу; проверить, что таск реально выполняется.
+- Утечка жаргона в `externalizeQuery` (#599) — очистить внешний слой запроса от внутреннего лексикона.
+- Проверить, что `STRATEGIC_PLAN_DAY.md` не читается ни одним живым потребителем до принятия развилки #621.
 
-```
-[Teamlead] (Vesnin): Владелец задал магистраль явно — я не синтезирую, раскрываю.
-  Держу границу слоёв (вердикт Q1): стратегия описывает highlight(day, focus),
-  реестр делает assign(task, persona). Три провода — это три починки, не рефактор.
-  LGTM по вечернему критерию: реальный прогон, не формальная живость.
+## Почему это магистраль (таблица обоснования)
 
-[Математик] (Dynin): ведёт strategy-day-generator (#592, 39 задач в очереди). Ядро:
-  1. externalizeQuery — стоп-лист жаргона: отклонять CAPS_SNAKE, ritual:day, C1,
-     MAIN_DAY_ISSUE, имена документов/меток консилиума (#599). Чистая функция +
-     тест-гард на реальных именах.
-  2. night:research — либо приносит внешний ответ, либо честно ставит void
-     (не вечный pending, #598). Провенанс не должен печатать «жив» над пустым сном.
+| Утверждение | Происхождение | Первоисточник | Свежесть |
+|-------------|---------------|---------------|----------|
+| Магистраль = подключить генератор #592 к ритуалу | сессия | `owner-choice@c4f02fcb/AskUserQuestion-magistral-18-07` (прямой выбор владельца) | 2026-07-18 |
+| `main-day-issue` читает `STRATEGIC_PLAN_DAY`, не граф; три провода не кинуты | код | main-day-assertions.json `//link` | 2026-07-18 |
+| `STRATEGIC_PLAN_DAY.md` — вещдок, читать как источник плана нельзя | план | заседание strategy-day-q1-stop-doing | 2026-07-17 |
+| Вход дня несвеж (MAIN_DAY_ISSUE протух на 3 дня) | код | шапка `docs/MAIN_DAY_ISSUE.md` (2026-07-18) | 2026-07-18 |
+| Выход генератора = `{horizon, focus, task_refs[]}` без DoD/ролей | план | вердикт strategy-day-q1-stop-doing | 2026-07-17 |
 
-[Структурщик] (Ozhegov): три провода к ритуалу (живут в package.json/scripts/ —
-  вне охвата probe, потому гвард = тест интеграции, не posylka):
-  1. ritual:day зовёт новый генератор #592 вместо strategic-plan-day.
-  2. main-day-issue читает граф правды (S7), не файл-вещдок STRATEGIC_PLAN_DAY.
-  3. выход генератора → {horizon, focus, task_refs[]} без DoD/ролей (вердикт Q1).
-  Слабая связанность: генератор читает граф, граф не знает о генераторе.
+Источник магистрали ОДИН, первичный — прямое волеизъявление владельца (ноль отражений снимка). Остальные строки — контекст раскрытия, не источник выбора. Сравни с archivedFork 16.07: четыре строки, один снимок 06.07, три отражения — фантом.
 
-[Музыкант] (Kuryokhin): — (audio/DSP не затронуты сегодня).
-[Верстальщик] (Rodchenko): — (UI/DESIGN.md не затронуты сегодня).
-```
+## Посылки
 
----
+| Посылка | Маркер | Вердикт |
+|---------|--------|---------|
+| Магистраль 18.07 не спорна (владелец выбрал явно) — блокирующих посылок нет | `sources[0]` заполнен в main-day-assertions.json | holds |
+| Провод генератор↔ритуал невыразим текущими маркерами probe (kind file/test/symbol; охват вне package.json/scripts) | — (retired C1 класс) | unknown |
 
-## Что сознательно НЕ делаем сегодня
+Развилки A/B по коду нет — магистраль задана владельцем напрямую. Гвард подключения — тест интеграции при реализации, не посылка probe. Развилка #621 — gated-выбор владельцу, а не posylka кода.
 
-- **Не подключаем процедуры к графу правды** — отдельный консилиум по слову владельца (перенос из 17.07); сегодня чиним генератор.
-- **Не трогаем продуктовую магистраль FREE (S2→S5)** и VDR labels — пока генератор стратегии врёт о работе, назначать по нему магистраль нельзя; сначала чиним источник плана.
-- **Не разворачиваем 6 oversized PR графа правды** (#577/#579/#580) построчно — это отдельный pr-проход из вечернего review, не утренний фокус.
-- **Не назначаем детекционную магистраль** (эшелон 0 исчерпан, yamnet в prod — `FFT_METRICS §6`); DSP-бенчмарки только при смене датасета/алгоритма/fusion.
+## Сегодня делаем
 
----
+1. `ritual:day` вызывает генератор #592 (`strategy-day.mjs`) вместо старого `strategic-plan-day` — провод перекинут.
+2. `main-day-issue` берёт источником граф правды (S7), а не `STRATEGIC_PLAN_DAY.md` — второй провод.
+3. Тест интеграции `ritual:day → #592` зелёный (живой прогон, не вещдок).
+4. Выход генератора приведён к `{horizon, focus, task_refs[]}` — без DoD и назначения ролей.
+5. Развилка судьбы `STRATEGIC_PLAN_DAY.md` (#621) оформлена как gated-выбор владельцу (а: удалить / б: перевыпустить через #592).
+6. `main-day-probe` прогнан на реальном сгенерированном плане — ноль ложных срабатываний.
 
-## Definition of Done (критерий вечера — реальный прогон, не живость)
+## Definition of Done (фокус)
 
-- [ ] **`externalizeQuery`** отклоняет имена ритуалов/документов/меток консилиума (CAPS_SNAKE, `ritual:day`, `C1`, `MAIN_DAY_ISSUE`) — на реальном прогоне, с тест-гардом (#599).
-- [ ] **`night:research`** либо приносит внешний ответ, либо честно ставит `void` (не вечный `pending`) — на реальном прогоне (#598).
-- [ ] **`ritual:day`** зовёт генератор #592, а не `strategic-plan-day` (тест интеграции — цепочка в `package.json`).
-- [ ] **`main-day-issue`** источником плана берёт граф правды (S7), не `STRATEGIC_PLAN_DAY.md`.
-- [ ] Выход генератора — `{horizon, focus, task_refs[]}` без DoD/ролей (вердикт Q1); длина O(n) по ссылкам, не по полям (инвариант Dynin).
-- [ ] `yarn turbo run lint typecheck test` зелёный; новый тест-гард включён в прогон.
+- [ ] `ritual:day` зовёт `strategy-day.mjs` (#592), тест интеграции зелёный
+- [ ] `main-day-issue` читает граф правды (S7), не `STRATEGIC_PLAN_DAY.md`
+- [ ] Выход генератора = `{horizon, focus, task_refs[]}` без DoD/ролей
+- [ ] Провод #621 вынесен владельцу как явный gated-выбор (а/б)
+- [ ] Живой прогон ритуала: три провода из канона 18.07 подтверждены, а не заявлены
+- [ ] `main-day-probe` даёт ноль ложных срабатываний на реальном плане
+- [ ] Ни один вещдок (`STRATEGIC_PLAN_DAY.md`) не читается как источник плана
 
----
+## Сознательно не делаем сегодня
 
-## Провенанс (честность источника)
+- **Не назначаем продуктовую магистраль FREE (S2 combined UC → S5 лендинг) и scoreboard-эпик (Ф1–Ф5)** — пока источник плана недостоверен, магистраль по нему = фантом; сначала чиним провод.
+- **Не трогаем детекцию как магистраль** — эшелон 0 исчерпан (`FFT_METRICS §6`), yamnet в prod (F1 0.803); DSP-бенчмарк только при смене датасета/алгоритма/fusion.
+- **Не реализуем инварианты вечернего аудитора (#615) в код** — стоит блокер посылок; Док 3 навигатора (#617) вне рамки дня.
+- **Не разворачиваем построчно oversized-PR графа правды и не гоняем ретро-шторм Ангелины (#741/#745)** — отдельные заседания.
 
-| Свойство | Значение |
-|---|---|
-| Источник магистрали | `sources[0].claim` — **владелец**, `owner-choice@c4f02fcb/AskUserQuestion-magistral-18-07` |
-| Синтез из входов | **НЕТ** (запрещён при заданном owner-source) |
-| Отражений источника | 0 (сравни `archivedFork` 16.07: 4 строки, один снимок 06.07, 3 отражения) |
-| `assertions` (probe) | пуст → `main-day-probe` пропускает (магистраль не спорна) |
-| Роль входов | стендап/ревью/горизонт/граф — **контекст раскрытия**, не выбор |
-| Дрейф-якоря | ok 8 · drift 0 · broken 0 (`computeDrift`, не LLM) |
+## Вторично (если останется время)
 
-**Одной строкой:** сегодня — довести генератор стратегии #592 до честного подключения к ритуалу (три провода: `ritual:day`→новый генератор, `main-day-issue`→граф, выход→`{horizon,focus,task_refs}`) и починить два дефекта живого прогона (`externalizeQuery` стоп-лист жаргона #599, `night:research` `void` вместо вечного `pending` #598) — с проверкой на реальном прогоне, не по формальной живости.
+- Санитария `night:research` #598 (вечный `pending`) и жаргон `externalizeQuery` #599 — если основной провод замкнут раньше вечера.
+- Черновик маркера `kind:command` для probe — сделать порядок шагов выразимым.
+
+## Зависимости и риски
+
+- **Зависит от** `strategy-day-generator` (active) и `ritual-trust-contour` — оба активны, но провод генератор↔ритуал живёт в `package.json`/`scripts/`, вне охвата probe (класс retired C1) → гвард только тестом интеграции.
+- **Риск:** снова принять формальную живость за работу (`night:research` вечный `pending` #598, утечка жаргона #599) — критерий успеха требует ЖИВОГО прогона, не заявления.
+- **Риск:** молча решить судьбу #621 вместо выноса владельцу — обязательно gated-выбор (а/б).
+- **Блокер:** без зелёного теста интеграции ритуал продолжит звать старый `strategic-plan-day` и воспроизводить дрейф даты.
+
+## Ссылки
+
+- [`docs/DAILY_STANDUP.md`](./DAILY_STANDUP.md) — фокус дня, роутинг персон
+- [`docs/tasks/main-day-assertions.json`](./tasks/main-day-assertions.json) — магистраль владельца (`sources[0]`)
+- [`docs/STRATEGY_DAY.md`](./STRATEGY_DAY.md) — горизонт `secret-parser-built`, граф правды (S7)
+- [`docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md`](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) — потолок эшелона 0
+- GitHub Issue #592 (генератор), #621 (провод STRATEGIC_PLAN_DAY), #598/#599 (санитария)
