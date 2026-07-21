@@ -6,16 +6,16 @@
 | --- | --- |
 | Date | 2026-07-21 |
 | Base | origin/main |
-| Base SHA | 82fe25f98548a44acd2f6a5b9bec80b4e5590b8a |
-| Fetch | no (--no-fetch; after rebase onto origin/main) |
-| Current branch | chore/git-gc-cat5 |
+| Base SHA | 944d1172af75e53ad53ce3960d217f40396e3b6d |
+| Fetch | yes |
+| Current branch | docs/audit-git-container-followup |
 | Source | yarn repo:branches:decompose |
-| gh open-PR | yes |
-| Note | Regenerated UTF-8 after code-review P1 mojibake on PR #772 |
+| Purpose | branch-assortment-sprint Ф1 (#803) |
+| Sprint | branch-assortment-sprint (#801) |
 
 # repo:branches:decompose — 7 hygiene categories
 
-base: origin/main · fetch: skipped (--no-fetch) · current: chore/git-gc-cat5 · gh open-PR: yes
+base: origin/main · fetch: yes · current: docs/audit-git-container-followup · gh open-PR: yes
 
 ## Taxonomy (first match wins)
 
@@ -41,11 +41,11 @@ _Skipped remote twins with local counterpart: 13_
 | --- | --- | --- | --- |
 | 1. Worktree-активные | 7 | 0 | 7 |
 | 2. Персоны | 2 | 0 | 2 |
-| 3. Baseline / sync-якоря | 4 | 0 | 4 |
+| 3. Baseline / sync-якоря | 5 | 0 | 5 |
 | 4. Доставка в полёте | 4 | 2 | 6 |
-| 5. Эксперимент leftover | 10 | 1 | 11 |
+| 5. Эксперимент leftover | 5 | 1 | 6 |
 | 6. Застой / zombie | 0 | 0 | 0 |
-| 7. Salvage | 16 | 1 | 17 |
+| 7. Salvage | 21 | 1 | 22 |
 
 ## 1. Worktree-активные
 
@@ -53,13 +53,13 @@ Worktree=yes или текущая ветка сессии — не трогат
 
 | Branch | Ahead | Behind | Bucket | Why/Note | Suggested action |
 | --- | --- | --- | --- | --- | --- |
-| chore/archive-insight-lifecycle-canon | 1 | 75 | diverged | worktree=yes | keep — active |
-| fix/adr-0013-accepted | 52 | 25 | diverged | worktree=yes | keep — active |
-| truth/crystallization-20-07-worktree | 0 | 25 | behind-only | worktree=yes | keep — active |
-| developer-rhythm-lifecycle | 0 | 1 | behind-only | worktree=yes | keep — active |
-| chore/git-gc-cat5 | 4 | 0 | ahead-only | worktree + current | keep — active |
-| main | 0 | 0 | sync | worktree=yes | keep — active |
-| tooling/meeting-consilium-voice | 0 | 0 | sync | worktree=yes | keep — active |
+| fix/adr-0013-accepted | 53 | 39 | diverged | worktree=yes | keep — active |
+| truth/crystallization-20-07-worktree | 0 | 39 | behind-only | worktree=yes | keep — active |
+| tooling/meeting-consilium-voice | 0 | 14 | behind-only | worktree=yes | keep — active |
+| developer-rhythm-lifecycle | 1 | 2 | diverged | worktree=yes | keep — active |
+| docs/audit-git-container-followup | 1 | 2 | diverged | worktree + current | keep — active |
+| feat/pl-r3-boundary | 1 | 0 | ahead-only | worktree=yes | keep — active |
+| feature/sbc-s1-registry | 2 | 0 | ahead-only | worktree=yes | keep — active |
 
 ## 2. Персоны
 
@@ -67,8 +67,8 @@ ozhegov / dynin / vesnin / boyarskiy — никогда не auto-delete.
 
 | Branch | Ahead | Behind | Bucket | Why/Note | Suggested action |
 | --- | --- | --- | --- | --- | --- |
-| ozhegov | 6 | 1232 | diverged | persona branch (canon) | never auto-delete |
-| dynin | 0 | 472 | behind-only | persona branch (canon) | never auto-delete |
+| ozhegov | 6 | 1246 | diverged | persona branch (canon) | never auto-delete |
+| dynin | 0 | 486 | behind-only | persona branch (canon) | never auto-delete |
 
 ## 3. Baseline / sync-якоря
 
@@ -76,10 +76,11 @@ ozhegov / dynin / vesnin / boyarskiy — никогда не auto-delete.
 
 | Branch | Ahead | Behind | Bucket | Why/Note | Suggested action |
 | --- | --- | --- | --- | --- | --- |
-| base/codex | 0 | 29 | behind-only | base/* sync anchor | keep — anchor |
-| base/cursor | 0 | 29 | behind-only | base/* sync anchor | keep — anchor |
-| base/product | 0 | 29 | behind-only | base/* sync anchor | keep — anchor |
-| base/tooling | 0 | 29 | behind-only | base/* sync anchor | keep — anchor |
+| base/codex | 0 | 43 | behind-only | base/* sync anchor | keep — anchor |
+| base/cursor | 0 | 43 | behind-only | base/* sync anchor | keep — anchor |
+| base/product | 0 | 43 | behind-only | base/* sync anchor | keep — anchor |
+| base/tooling | 0 | 43 | behind-only | base/* sync anchor | keep — anchor |
+| main | 0 | 0 | sync | main baseline | keep — anchor |
 
 ## 4. Доставка в полёте
 
@@ -87,12 +88,12 @@ Head открытого GitHub PR (нужен `gh`; иначе категори�
 
 | Branch | Ahead | Behind | Bucket | Why/Note | Suggested action |
 | --- | --- | --- | --- | --- | --- |
-| origin/night-hunt/graph-drift-1784622639476 | 1 | 9 | diverged | open PR #759 | wait PR |
-| origin/night-hunt/services-api-drift-1784545232727 | 1 | 53 | diverged | open PR #709 | wait PR |
-| feat/skill-truth-crystallization | 7 | 225 | diverged | open PR #575 | wait PR |
-| docs/insight-truth-tokens-asset | 1 | 225 | diverged | open PR #574 | wait PR |
-| chore/graphify-public-graph | 3 | 257 | diverged | open PR #525 | wait PR |
-| docs/board-refactor-update | 2 | 264 | diverged | open PR #517 | wait PR |
+| origin/night-hunt/graph-drift-1784622639476 | 1 | 23 | diverged | open PR #759 | wait PR |
+| origin/night-hunt/services-api-drift-1784545232727 | 1 | 67 | diverged | open PR #709 | wait PR |
+| feat/skill-truth-crystallization | 7 | 239 | diverged | open PR #575 | wait PR |
+| docs/insight-truth-tokens-asset | 1 | 239 | diverged | open PR #574 | wait PR |
+| chore/graphify-public-graph | 3 | 271 | diverged | open PR #525 | wait PR |
+| docs/board-refactor-update | 2 | 278 | diverged | open PR #517 | wait PR |
 
 ## 5. Эксперимент leftover
 
@@ -100,17 +101,12 @@ Head открытого GitHub PR (нужен `gh`; иначе категори�
 
 | Branch | Ahead | Behind | Bucket | Why/Note | Suggested action |
 | --- | --- | --- | --- | --- | --- |
-| origin/night/agent-context-optimization-v1-2026-06-27 | 4 | 835 | diverged | experiment/ritual leftover prefix | review leftover |
-| codex/fv1-s2-content | 8 | 708 | diverged | experiment/ritual leftover prefix | review leftover |
-| codex/task-archive-migration-sprint | 9 | 708 | diverged | experiment/ritual leftover prefix | review leftover |
-| comp/comp-detection-alarm-2026-07-10/alpha | 5 | 434 | diverged | experiment/ritual leftover prefix | review leftover |
-| comp/comp-detection-alarm-2026-07-10/gamma | 5 | 434 | diverged | experiment/ritual leftover prefix | review leftover |
-| parallel-persona-insight | 1 | 386 | diverged | experiment/ritual leftover prefix | review leftover |
-| chore/ritual-day-0715 | 4 | 285 | diverged | experiment/ritual leftover prefix | review leftover |
-| cowork/cowork-free-fragment-usercases/neuro-detection | 4 | 285 | diverged | experiment/ritual leftover prefix | review leftover |
-| cowork/cowork-free-fragment-usercases/sample-recording | 4 | 285 | diverged | experiment/ritual leftover prefix | review leftover |
-| cowork/cowork-free-fragment-usercases/spectrum-live | 4 | 285 | diverged | experiment/ritual leftover prefix | review leftover |
-| night/graphify-public-graph-2026-07-15 | 1 | 257 | diverged | experiment/ritual leftover prefix | review leftover |
+| origin/night/agent-context-optimization-v1-2026-06-27 | 4 | 849 | diverged | experiment/ritual leftover prefix | review leftover |
+| codex/fv1-s2-content | 8 | 722 | diverged | experiment/ritual leftover prefix | review leftover |
+| codex/task-archive-migration-sprint | 9 | 722 | diverged | experiment/ritual leftover prefix | review leftover |
+| comp/comp-detection-alarm-2026-07-10/alpha | 5 | 448 | diverged | experiment/ritual leftover prefix | review leftover |
+| comp/comp-detection-alarm-2026-07-10/gamma | 5 | 448 | diverged | experiment/ritual leftover prefix | review leftover |
+| night/graphify-public-graph-2026-07-15 | 1 | 271 | diverged | experiment/ritual leftover prefix | review leftover |
 
 ## 6. Застой / zombie
 
@@ -124,21 +120,25 @@ _none_
 
 | Branch | Ahead | Behind | Bucket | Why/Note | Suggested action |
 | --- | --- | --- | --- | --- | --- |
-| sprint/ritual-step-manifest-sf | 17 | 112 | diverged | ahead>0, no open PR | salvage commits first |
-| feat/truth-graph-core | 15 | 225 | diverged | ahead>0, no open PR | salvage commits first |
-| feat/fft-last-chance | 5 | 1038 | diverged | ahead>0, no open PR | salvage commits first |
-| chore/git-gc-cat6 | 4 | 7 | diverged | ahead>0, no open PR | salvage commits first |
-| linear-tasks-gear | 4 | 18 | diverged | ahead>0, no open PR | salvage commits first |
-| background-office | 3 | 1247 | diverged | ahead>0, no open PR | salvage commits first |
-| feat/tasks-decompose | 3 | 9 | diverged | ahead>0, no open PR | salvage commits first |
-| feature/device-board-exec-sequence-ux | 3 | 808 | diverged | ahead>0, no open PR | salvage commits first |
-| chore/tasks-audit-archive-sweep | 2 | 18 | diverged | ahead>0, no open PR | salvage commits first |
-| docs/epic-truth-graph-contour | 2 | 225 | diverged | ahead>0, no open PR | salvage commits first |
-| angelina/storm/branch-taxonomy-2026-07-21 | 1 | 1 | diverged | ahead>0, no open PR | salvage commits first |
-| docs/angelina-hostess-meeting | 1 | 18 | diverged | ahead>0, no open PR | salvage commits first |
-| docs/pattern-pinned-subgraph | 1 | 3 | diverged | ahead>0, no open PR | salvage commits first |
-| docs/patterns-containerization | 1 | 4 | diverged | ahead>0, no open PR | salvage commits first |
-| docs/stitch-tasks-audit-canon | 1 | 13 | diverged | ahead>0, no open PR | salvage commits first |
-| feat/tasks-audit-container | 1 | 7 | diverged | ahead>0, no open PR | salvage commits first |
-| origin/integration/pre-tj-live-79 | 1 | 1070 | diverged | ahead>0, no open PR | salvage commits first |
-
+| sprint/ritual-step-manifest-sf | 17 | 126 | diverged | ahead>0, no open PR | salvage commits first |
+| feat/truth-graph-core | 15 | 239 | diverged | ahead>0, no open PR | salvage commits first |
+| feat/fft-last-chance | 5 | 1052 | diverged | ahead>0, no open PR | salvage commits first |
+| linear-tasks-gear | 4 | 32 | diverged | ahead>0, no open PR | salvage commits first |
+| background-office | 3 | 1261 | diverged | ahead>0, no open PR | salvage commits first |
+| feat/tasks-decompose | 3 | 23 | diverged | ahead>0, no open PR | salvage commits first |
+| feature/device-board-exec-sequence-ux | 3 | 822 | diverged | ahead>0, no open PR | salvage commits first |
+| chore/tasks-audit-archive-sweep | 2 | 32 | diverged | ahead>0, no open PR | salvage commits first |
+| docs/epic-truth-graph-contour | 2 | 239 | diverged | ahead>0, no open PR | salvage commits first |
+| feat/pl-r2-vocabulary | 2 | 2 | diverged | ahead>0, no open PR | salvage commits first |
+| angelina/feat/pl-r1-home | 1 | 4 | diverged | ahead>0, no open PR | salvage commits first |
+| angelina/storm/branch-taxonomy-2026-07-21 | 1 | 15 | diverged | ahead>0, no open PR | salvage commits first |
+| chore/archive-insight-lifecycle-canon | 1 | 89 | diverged | ahead>0, no open PR | salvage commits first |
+| docs/angelina-hostess-meeting | 1 | 32 | diverged | ahead>0, no open PR | salvage commits first |
+| docs/stitch-tasks-audit-canon | 1 | 27 | diverged | ahead>0, no open PR | salvage commits first |
+| feat/tasks-audit-container | 1 | 21 | diverged | ahead>0, no open PR | salvage commits first |
+| feature/scripts-boundary-container | 1 | 2 | diverged | ahead>0, no open PR | salvage commits first |
+| origin/integration/pre-tj-live-79 | 1 | 1084 | diverged | ahead>0, no open PR | salvage commits first |
+| vesnin/chore/procedural-layer-sprint-start | 1 | 7 | diverged | ahead>0, no open PR | salvage commits first |
+| vesnin/fix/consilium-premises-gate | 1 | 9 | diverged | ahead>0, no open PR | salvage commits first |
+| vesnin/meeting/procedural-layer | 1 | 10 | diverged | ahead>0, no open PR | salvage commits first |
+| vesnin/meeting/procedural-layer-m2a | 1 | 8 | diverged | ahead>0, no open PR | salvage commits first |
