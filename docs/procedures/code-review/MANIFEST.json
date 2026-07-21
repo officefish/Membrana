@@ -1,0 +1,14 @@
+{
+  "id": "code-review",
+  "leadPersona": "vesnin",
+  "kitVersion": null,
+  "engines": [
+    "scripts/code-review.mjs",
+    "scripts/lib/code-review-ritual.mjs",
+    "scripts/lib/review-lead.mjs"
+  ],
+  "precedents": [
+    "docs/storm/storm-branch-taxonomy-2026-07-21/REPORT.md",
+    "docs/precedents/2026-07-21-morning-ritual-live-run-mechanics-pass-value-fail.md"
+  ]
+}
