@@ -43,6 +43,11 @@ import {
   loadDotEnv,
   printAnthropicHttpError,
 } from './_anthropic-env.mjs';
+import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import { formatLeadBlock, resolveReviewLead } from './lib/review-lead.mjs';
+import { readPersonaMemory } from './lib/persona-memory.mjs';
+import { listActive, loadRegistry } from './lib/task-registry.mjs';
 
 loadDotEnv();
 
@@ -99,6 +104,38 @@ if (!cli.noRag) {
   logRagStatus(rag, 'code-review');
 }
 
+// Ведущий ревью (T3/T4/T5, день-спринт code-review-lead-refactor): один из пяти,
+// назначенный по каскаду явное слово → карточка → скоуп диффа; его память и
+// бестиарий уходят в промпт. Снимки собираем здесь (ядро чистое).
+let leadBlock = '';
+try {
+  const diffPaths = execFileSync(
+    'git',
+    cli.mode === 'uncommitted' || cli.mode === 'staged'
+      ? ['diff', '--name-only', 'HEAD']
+      : ['diff', '--name-only', 'origin/main...HEAD'],
+    { encoding: 'utf8', timeout: 15_000 },
+  ).split(/\r?\n/u).filter(Boolean);
+  const branch = execFileSync('git', ['branch', '--show-current'], { encoding: 'utf8', timeout: 15_000 }).trim();
+  const lead = resolveReviewLead({
+    explicit: cli.lead ?? null,
+    branch,
+    diffPaths,
+    activeTasks: listActive(loadRegistry()),
+  });
+  if (lead.outOfConvention) console.error(`[review-lead] ⚠ ${lead.basis}`);
+  const bestiaryPath = resolve(process.cwd(), 'docs/bestiary/BESTIARY.md');
+  leadBlock = formatLeadBlock({
+    ...lead,
+    memoryExcerpt: readPersonaMemory(lead.persona, { maxChars: 4_000 }) ?? '',
+    bestiary: existsSync(bestiaryPath) ? readFileSync(bestiaryPath, 'utf8').slice(0, 6_000) : '',
+  });
+  console.error(`[review-lead] ведёт ${lead.persona} (${lead.basis})`);
+} catch (e) {
+  // Ведущий — усилитель ревью, не гейт запуска: без git/памяти ревью не падает.
+  console.error(`[review-lead] ⚠ назначение не собралось (${e?.message?.split('\n')[0] ?? e}) — ревью идёт без блока ведущего`);
+}
+
 const bodyText = buildCodeReviewUserMessage({
   mode: cli.mode,
   focusQuestion: cli.focusQuestion,
@@ -106,6 +143,7 @@ const bodyText = buildCodeReviewUserMessage({
   virtualTeam,
   contextBlock,
   ragBlock,
+  leadBlock,
 });
 
 const outputPath = cli.out ? resolve(process.cwd(), cli.out) : defaultOutputPath(cli);

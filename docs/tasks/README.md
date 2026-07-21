@@ -18,23 +18,13 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `bc-b5-closure` | B5: CLOSURE bestiary-container | M | [`BC_B5_CLOSURE_PROMPT.md`](../prompts/BC_B5_CLOSURE_PROMPT.md) | [#884](https://github.com/officefish/Membrana/issues/884) |
-| `bc-b4-weekly` | B4: weekly run + anti-silent auditor | M | [`BC_B4_WEEKLY_PROMPT.md`](../prompts/BC_B4_WEEKLY_PROMPT.md) | [#883](https://github.com/officefish/Membrana/issues/883) |
-| `bc-b3-missing-beasts` | B3: echo / goal-displacement or defer | M | [`BC_B3_MISSING_BEASTS_PROMPT.md`](../prompts/BC_B3_MISSING_BEASTS_PROMPT.md) | [#882](https://github.com/officefish/Membrana/issues/882) |
-| `bc-b2-specimens` | B2: specimens + bestiary:audit + tests | M | [`BC_B2_SPECIMENS_PROMPT.md`](../prompts/BC_B2_SPECIMENS_PROMPT.md) | [#881](https://github.com/officefish/Membrana/issues/881) |
-| `bc-b1-home` | B1: home docs/audit/bestiary/ | M | [`BC_B1_HOME_PROMPT.md`](../prompts/BC_B1_HOME_PROMPT.md) | [#880](https://github.com/officefish/Membrana/issues/880) |
-| `bestiary-container` | Epic: bestiary antipatterns as container | L | [`BESTIARY_CONTAINER_PROMPT.md`](../prompts/BESTIARY_CONTAINER_PROMPT.md) | [#878](https://github.com/officefish/Membrana/issues/878) |
-| `dsp-f5-closure` | F5: CLOSURE, archive фаз + эпика, handoff | M | [`DSP_F5_CLOSURE_PROMPT.md`](../prompts/DSP_F5_CLOSURE_PROMPT.md) | [#854](https://github.com/officefish/Membrana/issues/854) |
-| `dsp-f4-wire` | F4: провода skill/CONTRIBUTING/ACTIVE ± R5 migrated | M | [`DSP_F4_WIRE_PROMPT.md`](../prompts/DSP_F4_WIRE_PROMPT.md) | [#853](https://github.com/officefish/Membrana/issues/853) |
-| `dsp-f3-regulation` | F3: DAY_SPRINT_REGULATION (или явный отказ README-only) | M | [`DSP_F3_REGULATION_PROMPT.md`](../prompts/DSP_F3_REGULATION_PROMPT.md) | [#852](https://github.com/officefish/Membrana/issues/852) |
-| `dsp-f2-home` | F2: жилец docs/procedures/day-sprint (README+MANIFEST, validateProcedure) | M | [`DSP_F2_HOME_PROMPT.md`](../prompts/DSP_F2_HOME_PROMPT.md) | [#851](https://github.com/officefish/Membrana/issues/851) |
-| `dsp-f1-inventory` | F1: инвентарь canon/engines/precedents/gaps для MANIFEST | M | [`DSP_F1_INVENTORY_PROMPT.md`](../prompts/DSP_F1_INVENTORY_PROMPT.md) | [#850](https://github.com/officefish/Membrana/issues/850) |
-| `dsp-f0-brief` | F0: эпик-промпт, границы day-sprint vs R5/kits, OPEN | M | [`DSP_F0_BRIEF_PROMPT.md`](../prompts/DSP_F0_BRIEF_PROMPT.md) | [#849](https://github.com/officefish/Membrana/issues/849) |
-| `day-sprint-procedure` | Эпик: процедура day-sprint → жилец docs/procedures/day-sprint (определение ≠ инстансы) | L | [`DAY_SPRINT_PROCEDURE_PROMPT.md`](../prompts/DAY_SPRINT_PROCEDURE_PROMPT.md) | [#848](https://github.com/officefish/Membrana/issues/848) |
+| `code-review-lead-refactor` | Рефакторинг код-ревью: ведущий из пяти + память ведущего + бестиарий антипаттернов (T3/T4/T5) | M | [`CODE_REVIEW_LEAD_REFACTOR_PROMPT.md`](../prompts/CODE_REVIEW_LEAD_REFACTOR_PROMPT.md) | — |
 | `morning-report-completion` | Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям) | L | [`MORNING_REPORT_COMPLETION_PROMPT.md`](../prompts/MORNING_REPORT_COMPLETION_PROMPT.md) | [#788](https://github.com/officefish/Membrana/issues/788) |
 | `sbc-s4-wiring` | S4: провода AGENTS/skills/DoD для контейнера scripts/ | S | [`SBC_S4_WIRING_PROMPT.md`](../prompts/SBC_S4_WIRING_PROMPT.md) | [#796](https://github.com/officefish/Membrana/issues/796) |
 | `sbc-s3-kits-align` | S3: kits — выровнять с pl-r3 kit-manifest (не изобретать параллельный контракт) | M | [`SBC_S3_KITS_ALIGN_PROMPT.md`](../prompts/SBC_S3_KITS_ALIGN_PROMPT.md) | [#795](https://github.com/officefish/Membrana/issues/795) |
 | `sbc-s2-tools-report` | S2: инструменты пишут в scripts/registry сами (--report) | M | [`SBC_S2_TOOLS_REPORT_PROMPT.md`](../prompts/SBC_S2_TOOLS_REPORT_PROMPT.md) | [#794](https://github.com/officefish/Membrana/issues/794) |
+| `pl-r5-migration` | Р5: миграция процедур — реестр процедур, валидатор, донор meeting | M | [`PL_R5_MIGRATION_PROMPT.md`](../prompts/PL_R5_MIGRATION_PROMPT.md) | [#786](https://github.com/officefish/Membrana/issues/786) |
+| `pl-r4-grammar` | Р4: грамматика веток — словари, resolveHolder, валидатор имени, провод в шип-гейт | M | [`PL_R4_GRAMMAR_PROMPT.md`](../prompts/PL_R4_GRAMMAR_PROMPT.md) | [#785](https://github.com/officefish/Membrana/issues/785) |
 | `procedural-layer-impl` | Эпик: реализация процедурного слоя (Р1-Р5 заседания procedural-layer) | L | [`PROCEDURAL_LAYER_IMPL_PROMPT.md`](../prompts/PROCEDURAL_LAYER_IMPL_PROMPT.md) | [#781](https://github.com/officefish/Membrana/issues/781) |
 | `angelina-hostess-impl` | Спринт: реализация вердиктов «Ангелина — хозяйка утра» (C→B+G→H→GC) | L | [`angelina-hostess-EPIC-2026-07-21.md`](../seanses/angelina-hostess-EPIC-2026-07-21.md) | — |
 | `linear-hygiene-dreams-providers-night` | Night: Linear-гигиена → живые провайдеры снов | M | [`LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md) | — |
@@ -219,13 +209,6 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `bc-b0-brief` | B0: brief bestiary-container lemma | 2026-07-21 | [`BC_B0_BRIEF_PROMPT.md`](../prompts/BC_B0_BRIEF_PROMPT.md) | #879 (Issue открыт) | [карточка](./archive/bc-b0-brief.md) |
-| `kdm-d4-closure` | D4: CLOSURE kits-dream-master | 2026-07-21 | [`KDM_D4_CLOSURE_PROMPT.md`](../prompts/KDM_D4_CLOSURE_PROMPT.md) | #860 (Issue открыт) | [карточка](./archive/kdm-d4-closure.md) |
-| `kdm-d3-procedure` | D3: процедура ritual-dreams / kitVersion | 2026-07-21 | [`KDM_D3_PROCEDURE_PROMPT.md`](../prompts/KDM_D3_PROCEDURE_PROMPT.md) | #859 (Issue открыт) | [карточка](./archive/kdm-d3-procedure.md) |
-| `kdm-d2-kit` | D2: жилец kits/dream-master + пины | 2026-07-21 | [`KDM_D2_KIT_PROMPT.md`](../prompts/KDM_D2_KIT_PROMPT.md) | #858 (Issue открыт) | [карточка](./archive/kdm-d2-kit.md) |
-| `kdm-d1-roots` | D1: финальный список roots dream-master | 2026-07-21 | [`KDM_D1_ROOTS_PROMPT.md`](../prompts/KDM_D1_ROOTS_PROMPT.md) | #857 (Issue открыт) | [карточка](./archive/kdm-d1-roots.md) |
-| `kdm-d0-brief` | D0: бриф kits-dream-master, гейт готовности dreams | 2026-07-21 | [`KDM_D0_BRIEF_PROMPT.md`](../prompts/KDM_D0_BRIEF_PROMPT.md) | #856 (Issue открыт) | [карточка](./archive/kdm-d0-brief.md) |
-| `kits-dream-master` | Эпик: второй кит dream-master (Мастер снов) поверх kits/ | 2026-07-21 | [`KITS_DREAM_MASTER_PROMPT.md`](../prompts/KITS_DREAM_MASTER_PROMPT.md) | #855 (Issue открыт) | [карточка](./archive/kits-dream-master.md) |
 | `bme-f5-closure` | F5: CLOSURE, чеклист паттернов, handoff | 2026-07-21 | [`BME_F5_CLOSURE_PROMPT.md`](../prompts/BME_F5_CLOSURE_PROMPT.md) | #829 (Issue открыт) | [карточка](./archive/bme-f5-closure.md) |
 | `bme-f4-pins` | F4: PINNED_SUBGRAPH на подграф инструкций (манифест path→SHA + аудит) | 2026-07-21 | [`BME_F4_PINS_PROMPT.md`](../prompts/BME_F4_PINS_PROMPT.md) | #828 (Issue открыт) | [карточка](./archive/bme-f4-pins.md) |
 | `bme-f3-wire` | F3: провод контейнера → Mintlify (docs.json, README/AGENT_PROMPT, орган engine) | 2026-07-21 | [`BME_F3_WIRE_PROMPT.md`](../prompts/BME_F3_WIRE_PROMPT.md) | #827 (Issue открыт) | [карточка](./archive/bme-f3-wire.md) |
@@ -249,8 +232,6 @@
 | `ba-f1-inventory` | Ф1: Scenario A — свежий реестр веток + снимок истории пушей в analysis | 2026-07-21 | [`BA_F1_INVENTORY_PROMPT.md`](../prompts/BA_F1_INVENTORY_PROMPT.md) | #803 (Issue открыт) | [карточка](./archive/ba-f1-inventory.md) |
 | `ba-f0-brief` | Ф0: эпик-промпт, границы ассортимента vs hygiene/Р4, DoD спринта | 2026-07-21 | [`BA_F0_BRIEF_PROMPT.md`](../prompts/BA_F0_BRIEF_PROMPT.md) | #802 (Issue открыт) | [карточка](./archive/ba-f0-brief.md) |
 | `branch-assortment-sprint` | Эпик: ассортимент веток в docs/audit/git под рефактор спринта и code review | 2026-07-21 | [`BRANCH_ASSORTMENT_SPRINT_PROMPT.md`](../prompts/BRANCH_ASSORTMENT_SPRINT_PROMPT.md) | #801 (Issue открыт) | [карточка](./archive/branch-assortment-sprint.md) |
-| `pl-r5-migration` | Р5: миграция процедур — реестр процедур, валидатор, донор meeting | 2026-07-21 | [`PL_R5_MIGRATION_PROMPT.md`](../prompts/PL_R5_MIGRATION_PROMPT.md) | #786 (Issue открыт) | [карточка](./archive/pl-r5-migration.md) |
-| `pl-r4-grammar` | Р4: грамматика веток — словари, resolveHolder, валидатор имени, провод в шип-гейт | 2026-07-21 | [`PL_R4_GRAMMAR_PROMPT.md`](../prompts/PL_R4_GRAMMAR_PROMPT.md) | #785 (Issue открыт) | [карточка](./archive/pl-r4-grammar.md) |
 | `pl-r3-boundary` | Р3: граница слоёв — файл правил, checkLayerDirection, CI-зуб, контракт кит-манифеста | 2026-07-21 | [`PL_R3_BOUNDARY_PROMPT.md`](../prompts/PL_R3_BOUNDARY_PROMPT.md) | #784 (Issue открыт) | [карточка](./archive/pl-r3-boundary.md) |
 | `pl-r2-vocabulary` | Р2: словарь категорий — источник, генерация, check() + checkGenus | 2026-07-21 | [`PL_R2_VOCABULARY_PROMPT.md`](../prompts/PL_R2_VOCABULARY_PROMPT.md) | #783 (Issue открыт) | [карточка](./archive/pl-r2-vocabulary.md) |
 | `pl-r1-home` | Р1: дом процедурного слоя docs/procedures + validateProcedure + жилец ritual-evening | 2026-07-21 | [`PL_R1_HOME_PROMPT.md`](../prompts/PL_R1_HOME_PROMPT.md) | #782 (Issue открыт) | [карточка](./archive/pl-r1-home.md) |

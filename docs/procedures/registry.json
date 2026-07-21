@@ -91,9 +91,18 @@
       "id": "day-sprint",
       "holder": "vesnin",
       "homePath": "docs/procedures/day-sprint",
-      "container": { "value": true, "provenance": "ozhegov@dsp-f2" },
-      "vocabulary": { "value": false, "provenance": null },
-      "grammar": { "value": true, "provenance": "vesnin@dsp-f2" }
+      "container": {
+        "value": true,
+        "provenance": "ozhegov@dsp-f2"
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": true,
+        "provenance": "vesnin@dsp-f2"
+      }
     },
     {
       "id": "storm",
@@ -221,6 +230,23 @@
       "container": {
         "value": false,
         "provenance": null
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": false,
+        "provenance": null
+      }
+    },
+    {
+      "id": "code-review",
+      "holder": "vesnin",
+      "homePath": "docs/procedures/code-review",
+      "container": {
+        "value": true,
+        "provenance": "vesnin@c487d990"
       },
       "vocabulary": {
         "value": false,

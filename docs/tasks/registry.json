@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "code-review-lead-refactor",
+      "title": "Рефакторинг код-ревью: ведущий из пяти + память ведущего + бестиарий антипаттернов (T3/T4/T5)",
+      "promptPath": "docs/prompts/CODE_REVIEW_LEAD_REFACTOR_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-21",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "bc-b5-closure",
       "title": "B5: CLOSURE bestiary-container",
       "promptPath": "docs/prompts/BC_B5_CLOSURE_PROMPT.md",

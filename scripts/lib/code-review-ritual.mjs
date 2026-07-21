@@ -54,6 +54,7 @@ export function parseCodeReviewCli(argv) {
   let branch = '';
   let base = 'origin/main';
   let out = '';
+  let lead = '';
 
   const rest = [];
   for (let i = 0; i < argv.length; i++) {
@@ -104,6 +105,15 @@ export function parseCodeReviewCli(argv) {
       out = arg.slice('--out='.length);
       continue;
     }
+    // T3: явное слово владельца о ведущем ревью — вершина каскада назначения.
+    if (arg === '--lead') {
+      lead = argv[++i] ?? '';
+      continue;
+    }
+    if (arg.startsWith('--lead=')) {
+      lead = arg.slice('--lead='.length);
+      continue;
+    }
     rest.push(arg);
   }
 
@@ -123,7 +133,7 @@ export function parseCodeReviewCli(argv) {
     throw new Error('Укажите ветку: --branch <name>');
   }
 
-  return { help: false, mode, pr, branch, base, out, full, focusQuestion, ...rag };
+  return { help: false, mode, pr, branch, base, out, full, focusQuestion, lead: lead || null, ...rag };
 }
 
 function detectRepoSlug() {
@@ -306,7 +316,12 @@ export function buildCodeReviewUserMessage(p) {
     (p.ragBlock ? `## RAG context\n\n${p.ragBlock}\n\n---\n\n` : '') +
     '## Контекст для анализа\n\n' +
     trimText(p.contextBlock, MAX_CONTEXT_CHARS, 'контекст') +
-    '\n\n---\n\n## Задание\n\n' +
+    '\n\n---\n\n' +
+    // Блок ведущего (T3/T4/T5) идёт ПОСЛЕ обрезаемого контекста, рядом с заданием:
+    // он обязан пережить переполнение (зверь B1 «инструкция-в-хвосте» — обрезается
+    // только contextBlock через trimText, хвост конкатенируется после).
+    (p.leadBlock ? `${p.leadBlock}\n\n---\n\n` : '') +
+    '## Задание\n\n' +
     assignment
   );
 }
