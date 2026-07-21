@@ -7,11 +7,13 @@
  * категории показываются отдельной строкой «ВНЕ КАТЕГОРИЙ», а не прячутся.
  * Скилл: `.cursor/skills/membrana-tasks-decompose/SKILL.md`.
  */
-import { readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { compileCategories, decompose, formatTable } from './lib/tasks-decompose.mjs';
+import { execFileSync } from 'node:child_process';
+
+import { compileCategories, decompose, formatTable, renderReport } from './lib/tasks-decompose.mjs';
 import { listActive, loadRegistry } from './lib/task-registry.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -31,6 +33,8 @@ function main() {
   --examples <n>    сколько id-примеров в строке таблицы (default 3; 0 — без примеров)
   --full            после таблицы — полный список id по каждой категории
   --json            машинный вывод вместо таблицы
+  --report <file>   записать markdown-отчёт (Meta + таблица + полные списки) в файл;
+                    канонический путь — docs/audit/tasks/registry/TASKS_DECOMPOSE_LIST.md
 
   Категории менять в конфиге, не в коде. «ВНЕ КАТЕГОРИЙ» ≠ ошибка прогона,
   это находка: конфиг отстал от реестра — дополни паттерны.`);
@@ -43,6 +47,22 @@ function main() {
 
   const active = listActive(loadRegistry());
   const result = decompose(active, categories);
+
+  const reportPath = arg('--report', null);
+  if (reportPath) {
+    let headSha = 'n/a';
+    try { headSha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8', cwd: repoRoot }).trim(); } catch { /* вне git — Meta без SHA */ }
+    const meta = {
+      Date: new Date().toISOString().slice(0, 10),
+      'Head SHA': headSha,
+      Source: 'yarn tasks:decompose --report',
+      Config: configPath.replace(/\\/g, '/').split('/').slice(-2).join('/'),
+      Active: String(result.total),
+    };
+    mkdirSync(dirname(resolve(reportPath)), { recursive: true });
+    writeFileSync(reportPath, renderReport(result, meta));
+    console.log(`Реестр: ${reportPath}`);
+  }
 
   if (process.argv.includes('--json')) {
     console.log(JSON.stringify({

@@ -5,6 +5,9 @@
 > зеркало в `.claude/skills/`) — создан по живому прогону 2026-07-21 (226 active,
 > 57 кандидатов, 52 в архив, 5 зонтиков повердиктно). Новый скилл не заводить —
 > развивать этот; при расхождении канон (этот файл) первичен.
+> Артефакты ревизий живут в контейнере [`docs/audit/tasks/`](../audit/tasks/README.md)
+> (`analysis/registry-audit-YYYY-MM-DD.md`); операторский вход — Scenario C в
+> [`AGENT_PROMPT.md`](../audit/tasks/AGENT_PROMPT.md).
 > Написано по живому прогону 2026-07-18 (204 active-карточки, 27 кандидатов,
 > найдено 5 ложных срабатываний).
 > Канон рядом: [`GITHUB_ISSUES_AUDIT_PROMPT.md`](GITHUB_ISSUES_AUDIT_PROMPT.md),

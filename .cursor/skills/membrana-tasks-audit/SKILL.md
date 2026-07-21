@@ -22,6 +22,11 @@ description: >-
 `docs/tasks/registry.json`, архив: `docs/tasks/archive/<id>.md`.
 Концепт движка: [`LINEAR_TASKS_GEAR`](../../../docs/tasks/LINEAR_TASKS_GEAR.md) (паспорт движка задач).
 
+**Контейнер аудита:** [`docs/audit/tasks/`](../../../docs/audit/tasks/README.md) —
+итог каждой ревизии фиксировать в `analysis/registry-audit-YYYY-MM-DD.md`
+(числа до/после, корзины, вердикты по зонтикам, решения владельца, попутные находки);
+сценарии агента — [`AGENT_PROMPT.md`](../../../docs/audit/tasks/AGENT_PROMPT.md).
+
 ## Неподвижные правила
 
 - **«Иссью закрыта» — гипотеза, не вердикт.** Архив только после проверки
