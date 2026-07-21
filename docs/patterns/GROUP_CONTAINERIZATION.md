@@ -80,8 +80,8 @@ PR #764).
 | [`docs/audit/git/`](../audit/git/README.md) | Ветки репозитория | см. чеклист в README контейнера |
 | [`docs/audit/tasks/`](../audit/tasks/README.md) | Карточки реестра задач | см. чеклист в README контейнера |
 
-Кандидаты (группы, уже просящиеся в форму): скрипты (`scripts-boundary-container`
-в реестре задач), документы, инсайты.
+Кандидаты / в работе: скрипты — **один дом** [`scripts/`](../../scripts/README.md)
+(эпик `scripts-boundary-container` #791, фазы sbc-s0…s4); также документы, инсайты.
 
 ## Границы применимости
 

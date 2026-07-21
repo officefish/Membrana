@@ -19,6 +19,15 @@
 - Зуб заселённости: `validateProcedure(dir)` — `resolvable` ∧ `readmeNonEmpty` ∧
   `manifestSchemaOk`; гоняется в CI (`scripts/validate-procedure.test.mjs`).
 
+## Словарь категорий (Р2)
+
+Источник — [`vocabulary.json`](./vocabulary.json) (единственный машиночитаемый;
+ядро закрыто, расширение — ADR + LGTM владельца). Проекция —
+[`VOCABULARY.md`](./VOCABULARY.md), генерится `yarn vocabulary:generate`
+(руками не правится; дрейф ловит `--check`). Проверки: `check()` по маркерам
+`@cat:` и `checkGenus()` по `@op:effect:@cat:имя`
+(`scripts/lib/vocabulary-check.mjs`; роды и леммы — вердикт `m2a-rod`).
+
 ## Жильцы
 
 | Процедура | Держатель | Статус |
