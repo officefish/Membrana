@@ -11,11 +11,16 @@ description: >-
 
 Канон: [`docs/prompts/TASK_PROMPT_WORKFLOW.md`](../../../docs/prompts/TASK_PROMPT_WORKFLOW.md), [`docs/prompts/TASK_CLOSURE_REGULATION.md`](../../../docs/prompts/TASK_CLOSURE_REGULATION.md).
 
+**Процедура day-sprint (определение):** [`docs/procedures/day-sprint/`](../../../docs/procedures/day-sprint/) ·
+регламент [`DAY_SPRINT_REGULATION.md`](../../../docs/DAY_SPRINT_REGULATION.md).
+Инстансы — `docs/day-sprint/<id>/` (не путать с определением).
+
 ## When to use
 
 - New M/L work: verify registry `status: active` + prompt exists.
 - Phase/epic done: archive + optional sprint closure.
 - User asks «закрой задачу», «archive», «DoD».
+- Day-sprint epic/phases: follow procedure + regulation above.
 
 ## When NOT to use
 
