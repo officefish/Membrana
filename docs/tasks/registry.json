@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "angelina-hostess-impl",
+      "title": "Спринт: реализация вердиктов «Ангелина — хозяйка утра» (C→B+G→H→GC)",
+      "promptPath": "docs/seanses/angelina-hostess-EPIC-2026-07-21.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-21",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "rodchenko",
+        "kuryokhin"
+      ],
+      "notes": "Промпт = свод-эпик заседания (5 ратифицированных вердиктов, DoD с владельцами в протоколах M1-M5). B+G — куски DoD #592. Ветка developer-rhythm-lifecycle.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "linear-hygiene-dreams-providers-night",
       "title": "Night: Linear-гигиена → живые провайдеры снов",
       "promptPath": "docs/prompts/LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md",
