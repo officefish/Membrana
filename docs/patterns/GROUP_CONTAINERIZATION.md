@@ -80,6 +80,7 @@ PR #764).
 | [`docs/audit/git/`](../audit/git/README.md) | Ветки репозитория | см. чеклист в README контейнера |
 | [`docs/audit/tasks/`](../audit/tasks/README.md) | Карточки реестра задач | см. чеклист в README контейнера |
 | [`scripts/`](../../scripts/README.md) | Скрипты монорепо (один дом, не `docs/audit/scripts/`) | см. чеклист в README; эпик #791 |
+| [`docs/audit/bestiary/`](../audit/bestiary/README.md) | Антипаттерны + specimens | см. чеклист в README; эпик #878 |
 
 Кандидаты: документы, инсайты.
 

@@ -1,0 +1,3 @@
+# Сырые дампы JSON — не коммитить (markdown registry/analysis/specimens — да)
+cache/**
+!cache/.gitkeep
