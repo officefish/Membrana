@@ -1,0 +1,19 @@
+{
+  "id": "dream-master",
+  "leadPersona": "dynin",
+  "roots": [
+    "scripts/dreams.mjs"
+  ],
+  "pins": {
+    "scripts/_anthropic-env.mjs": "0adfa9909638f1ca54d092565480351f29fbc13a",
+    "scripts/dreams.mjs": "7702f63bacafbebce5191080bb2eeade784fb859",
+    "scripts/lib/dreams-format.mjs": "00fdf0314a986e0d6ef6208f4a1366b50c9d184c",
+    "scripts/lib/dreams-log.mjs": "e4955796024cceef5c3b69fc214556a08e8ef9dc",
+    "scripts/lib/dreams-select.mjs": "79b8636f666a33333fd0cf82e391a521ac18ddd9",
+    "scripts/lib/dreams-tick.mjs": "30700116b25ff8fe34dab02ae6aba1fbfaf38b58",
+    "scripts/lib/night-research.mjs": "3306d9d254dd08c8e996212d6ac7e5a7d814a6ef",
+    "scripts/lib/strategy-horizon.mjs": "d92be708a73158a69b788063e78afeed7eb6b992",
+    "scripts/lib/truth-graph.mjs": "54f1c23e0f0449e4adde145aa2d2633030baa22a",
+    "scripts/llm-probe.mjs": "1327fb00468340eeca09f23225bdee081a8ebe73"
+  }
+}

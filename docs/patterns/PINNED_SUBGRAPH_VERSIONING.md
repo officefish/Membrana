@@ -68,7 +68,8 @@
 
 - Дом слоя и схема манифеста: [`kits/`](../../kits/README.md) (K1 / #816).
 - Зуб полноты: `yarn kits:audit` (`scripts/lib/kit-subgraph-audit.mjs`, K2 / #817).
-- Первый жилец: [`kits/angelina-morning/`](../../kits/angelina-morning/) (K3 / #818). Семя: #761.
+- Первый жилец: [`kits/angelina-morning/`](../../kits/angelina-morning/) (K3 / #818).
+- Второй: [`kits/dream-master/`](../../kits/dream-master/) (D2 / #858). Семя: #761.
 
 Кандидаты-потребители дальше:
 датасеты (корпус + манифест меток), снимки-контракты (`LINEAR_SNAPSHOT_CONTRACT`,
