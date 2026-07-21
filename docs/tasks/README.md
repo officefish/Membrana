@@ -25,8 +25,6 @@
 | `dsp-f1-inventory` | F1: инвентарь canon/engines/precedents/gaps для MANIFEST | M | [`DSP_F1_INVENTORY_PROMPT.md`](../prompts/DSP_F1_INVENTORY_PROMPT.md) | [#850](https://github.com/officefish/Membrana/issues/850) |
 | `dsp-f0-brief` | F0: эпик-промпт, границы day-sprint vs R5/kits, OPEN | M | [`DSP_F0_BRIEF_PROMPT.md`](../prompts/DSP_F0_BRIEF_PROMPT.md) | [#849](https://github.com/officefish/Membrana/issues/849) |
 | `day-sprint-procedure` | Эпик: процедура day-sprint → жилец docs/procedures/day-sprint (определение ≠ инстансы) | L | [`DAY_SPRINT_PROCEDURE_PROMPT.md`](../prompts/DAY_SPRINT_PROCEDURE_PROMPT.md) | [#848](https://github.com/officefish/Membrana/issues/848) |
-| `kdm-d4-closure` | D4: CLOSURE kits-dream-master | M | [`KDM_D4_CLOSURE_PROMPT.md`](../prompts/KDM_D4_CLOSURE_PROMPT.md) | [#860](https://github.com/officefish/Membrana/issues/860) |
-| `kits-dream-master` | Эпик: второй кит dream-master (Мастер снов) поверх kits/ | L | [`KITS_DREAM_MASTER_PROMPT.md`](../prompts/KITS_DREAM_MASTER_PROMPT.md) | [#855](https://github.com/officefish/Membrana/issues/855) |
 | `morning-report-completion` | Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям) | L | [`MORNING_REPORT_COMPLETION_PROMPT.md`](../prompts/MORNING_REPORT_COMPLETION_PROMPT.md) | [#788](https://github.com/officefish/Membrana/issues/788) |
 | `sbc-s4-wiring` | S4: провода AGENTS/skills/DoD для контейнера scripts/ | S | [`SBC_S4_WIRING_PROMPT.md`](../prompts/SBC_S4_WIRING_PROMPT.md) | [#796](https://github.com/officefish/Membrana/issues/796) |
 | `sbc-s3-kits-align` | S3: kits — выровнять с pl-r3 kit-manifest (не изобретать параллельный контракт) | M | [`SBC_S3_KITS_ALIGN_PROMPT.md`](../prompts/SBC_S3_KITS_ALIGN_PROMPT.md) | [#795](https://github.com/officefish/Membrana/issues/795) |
@@ -217,10 +215,12 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `kdm-d4-closure` | D4: CLOSURE kits-dream-master | 2026-07-21 | [`KDM_D4_CLOSURE_PROMPT.md`](../prompts/KDM_D4_CLOSURE_PROMPT.md) | #860 (Issue открыт) | [карточка](./archive/kdm-d4-closure.md) |
 | `kdm-d3-procedure` | D3: процедура ritual-dreams / kitVersion | 2026-07-21 | [`KDM_D3_PROCEDURE_PROMPT.md`](../prompts/KDM_D3_PROCEDURE_PROMPT.md) | #859 (Issue открыт) | [карточка](./archive/kdm-d3-procedure.md) |
 | `kdm-d2-kit` | D2: жилец kits/dream-master + пины | 2026-07-21 | [`KDM_D2_KIT_PROMPT.md`](../prompts/KDM_D2_KIT_PROMPT.md) | #858 (Issue открыт) | [карточка](./archive/kdm-d2-kit.md) |
 | `kdm-d1-roots` | D1: финальный список roots dream-master | 2026-07-21 | [`KDM_D1_ROOTS_PROMPT.md`](../prompts/KDM_D1_ROOTS_PROMPT.md) | #857 (Issue открыт) | [карточка](./archive/kdm-d1-roots.md) |
 | `kdm-d0-brief` | D0: бриф kits-dream-master, гейт готовности dreams | 2026-07-21 | [`KDM_D0_BRIEF_PROMPT.md`](../prompts/KDM_D0_BRIEF_PROMPT.md) | #856 (Issue открыт) | [карточка](./archive/kdm-d0-brief.md) |
+| `kits-dream-master` | Эпик: второй кит dream-master (Мастер снов) поверх kits/ | 2026-07-21 | [`KITS_DREAM_MASTER_PROMPT.md`](../prompts/KITS_DREAM_MASTER_PROMPT.md) | #855 (Issue открыт) | [карточка](./archive/kits-dream-master.md) |
 | `bme-f5-closure` | F5: CLOSURE, чеклист паттернов, handoff | 2026-07-21 | [`BME_F5_CLOSURE_PROMPT.md`](../prompts/BME_F5_CLOSURE_PROMPT.md) | #829 (Issue открыт) | [карточка](./archive/bme-f5-closure.md) |
 | `bme-f4-pins` | F4: PINNED_SUBGRAPH на подграф инструкций (манифест path→SHA + аудит) | 2026-07-21 | [`BME_F4_PINS_PROMPT.md`](../prompts/BME_F4_PINS_PROMPT.md) | #828 (Issue открыт) | [карточка](./archive/bme-f4-pins.md) |
 | `bme-f3-wire` | F3: провод контейнера → Mintlify (docs.json, README/AGENT_PROMPT, орган engine) | 2026-07-21 | [`BME_F3_WIRE_PROMPT.md`](../prompts/BME_F3_WIRE_PROMPT.md) | #827 (Issue открыт) | [карточка](./archive/bme-f3-wire.md) |

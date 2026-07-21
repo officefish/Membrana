@@ -132,14 +132,14 @@
       "githubIssue": 860,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-21",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "D4: CLOSURE + ACTIVE cleared. LGTM vesnin — ship; #761 + archive после merge.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #874 merged; CLOSURE kits-dream-master; #761 second kit comment; LGTM vesnin owner ok",
       "githubIssueClosedAt": null,
       "parentEpic": "kits-dream-master"
     },
@@ -222,17 +222,17 @@
       "githubIssue": 855,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "createdAt": "2026-07-21",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin",
         "ozhegov"
       ],
       "notes": "D4 CLOSURE готов; ждёт LGTM vesnin → archive. Жилец kits/dream-master; ritual-dreams kitVersion. Owner пина dynin.",
-      "archiveNotes": null,
+      "archiveNotes": "Epic closed; CLOSURE docs/day-sprint/kits-dream-master-2026-07-21/CLOSURE.md; D0-D4 PRs #863 #865 #867 #869 #874; second kit #761",
       "githubIssueClosedAt": null
     },
     {
