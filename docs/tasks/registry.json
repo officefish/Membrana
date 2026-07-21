@@ -67,7 +67,7 @@
       "archivedAt": null,
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "D1: root=dreams.mjs; out-of-kit утверждено. LGTM ozhegov (owner ship 2026-07-21). Ship PR.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "kits-dream-master"
