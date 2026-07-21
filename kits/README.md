@@ -73,16 +73,31 @@ kits/
 | Зуб | Фаза | Статус |
 |-----|------|--------|
 | Схема манифеста (этот файл + schema) | K1 | ✅ |
-| Аудит полноты подграфа path→SHA | K2 | ⬜ |
+| Аудит полноты подграфа path→SHA | K2 | ✅ `yarn kits:audit` |
 | Жилец + режимы latest/pinned | K3 | ⬜ |
 | `kitVersion` с процедуры утра | K4 | ⬜ |
+
+## Аудит (K2)
+
+```bash
+yarn kits:audit                 # все жильцы, mode=pinned (CI)
+yarn kits:audit --mode latest   # sha_drift → warn, не exit 1
+yarn kits:audit --id <kit-id>
+```
+
+Зуб: `scripts/lib/kit-subgraph-audit.mjs` — замыкание статических импортов от
+`roots` ↔ `pins` (path→git blob SHA). Находки таблицей: `missing_pin`,
+`sha_drift`, `orphan_pin`, `unresolvable`, `schema`. Exit 0/1/2 как у
+`check:layer-direction` (ошибка инструмента ≠ «0 находок»). Пока жильцов нет —
+честный exit 0 («0 kits»). Слепая зона: data-чтения (`readFileSync` конфигов)
+в статический граф не входят (как у layer-direction).
 
 ## Чеклист PINNED_SUBGRAPH (слой)
 
 1. ✅ Единица версии — подграф в манифесте (`pins`).
 2. ✅ Пины — git SHA; копий нет (контракт).
-3. ⬜ Аудит полноты — K2.
-4. ✅ Режимы latest/pinned названы в контракте слоя.
+3. ✅ Аудит полноты — `yarn kits:audit`.
+4. ✅ Режимы latest/pinned названы в контракте слоя и в CLI `--mode`.
 5. ✅ Обновление пина — отдельный коммит (таблица выше).
 6. ✅ Владелец пина — `leadPersona`.
-7. ⬜ Дрейф audit-семьи — K2.
+7. ✅ Дрейф — табличный вывод audit (`missing_pin` / `sha_drift`).

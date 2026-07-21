@@ -51,6 +51,7 @@
 | [`docs/procedures/layer-rules.json`](../docs/procedures/layer-rules.json) | Ранг `кит` (`kits/`); ребро процедура→кит через `kitVersion` |
 | [`docs/procedures/*/MANIFEST.json`](../docs/procedures/ritual-evening/MANIFEST.json) | Потребитель: `kitVersion` (`null` до K4) |
 | [`PINNED_SUBGRAPH_VERSIONING`](../docs/patterns/PINNED_SUBGRAPH_VERSIONING.md) | Подграф путь→SHA (#761) |
+| `yarn kits:audit` | Зуб полноты (`scripts/lib/kit-subgraph-audit.mjs`, K2 / #817) |
 | [`attribution/`](../docs/procedures/attribution/README.md) | Кандидат-потребитель (механизм парсера — T9) |
 
 **Запрещено в `scripts/`:** заводить `kits.schema.json` / параллельный формат манифеста

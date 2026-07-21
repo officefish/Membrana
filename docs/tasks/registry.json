@@ -192,7 +192,7 @@
       "archivedAt": null,
       "leadPersona": "dynin",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "K2: yarn kits:audit + lib; тесты missing_pin/sha_drift. LGTM dynin (owner ok 2026-07-21). Ship PR.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "kits-angelina-morning"
