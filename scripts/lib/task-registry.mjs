@@ -296,14 +296,21 @@ export function renderTasksReadme(registry, cwd = process.cwd()) {
     (b.archivedAt ?? '').localeCompare(a.archivedAt ?? ''),
   );
 
+  /** Relative from docs/tasks/README.md → strip leading `docs/` so `docs/prompts/X` → `../prompts/X`. */
+  const promptLink = (promptPath) => {
+    if (!promptPath) return '—';
+    const rel = promptPath.replace(/\\/g, '/').replace(/^docs\//, '');
+    return `[\`${promptPath.split('/').pop()}\`](../${rel})`;
+  };
+
   const row = (t) => {
-    const prompt = t.promptPath ? `[\`${t.promptPath.split('/').pop()}\`](../${t.promptPath})` : '—';
+    const prompt = promptLink(t.promptPath);
     const gh = t.githubIssue != null ? `[#${t.githubIssue}](https://github.com/officefish/Membrana/issues/${t.githubIssue})` : '—';
     return `| \`${t.id}\` | ${t.title} | ${t.size} | ${prompt} | ${gh} |`;
   };
 
   const archivedRow = (t) => {
-    const prompt = t.promptPath ? `[\`${t.promptPath.split('/').pop()}\`](../${t.promptPath})` : '—';
+    const prompt = promptLink(t.promptPath);
     const card = `[карточка](./archive/${t.id}.md)`;
     const gh = t.githubIssue != null ? `#${t.githubIssue}` : '—';
     const ghPending =
