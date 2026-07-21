@@ -346,7 +346,7 @@
         "dynin",
         "vesnin"
       ],
-      "notes": "",
+      "notes": "S3 принято ozhegov 2026-07-21. README § Киты → канон Р3 (#808); analysis kits-align; нет schema-острова. Код kits/ — #761.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "scripts-boundary-container"

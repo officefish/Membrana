@@ -4,17 +4,19 @@
 
 ## Цель
 
-Выровнять kits / Releases с **контрактом kit-manifest из `pl-r3-boundary` (#784)** —
-потребить, не изобретать параллельный формат. Код китов остаётся в `scripts/`;
-ядро версий — GitHub Releases (+ Actions), как в карте ядер контейнеров.
+Выровнять kits / Releases с **контрактом kit-manifest из Р3** (`pl-r3-boundary` #784 /
+PR #808) — потребить, не изобретать параллельный формат. Код движков остаётся в
+плоском `scripts/`; слой `kits/` спит до #761. Ядро раздачи пина — GitHub Releases;
+версия единицы — `PINNED_SUBGRAPH_VERSIONING`.
 
 ## Gate
 
-Не стартовать имплементацию манифеста, пока R3 не дал адрес/схему (или явный stub-контракт в R3).
-До gate — только design note в `scripts/analysis/` по Scenario C.
+R3 в main (архив карточки + `docs/procedures/README` § киты + `layer-rules.json`).
+Имплементация кода китов — **не** этот DoD (#761).
 
 ## DoD
 
-- [ ] Ссылка на канон R3 в `scripts/README`.
-- [ ] Нет второго JSON-схемного острова.
-- [ ] LGTM ozhegov (+ sync с dynin как lead R3).
+- [x] Ссылка на канон Р3 в `scripts/README` (§ Киты).
+- [x] Нет второго JSON-схемного острова под `scripts/`.
+- [x] Analysis-снимок `scripts/analysis/kits-align-pl-r3-2026-07-21.md`.
+- [x] LGTM ozhegov (+ sync: канон = Р3/dynin, не новый остров).
