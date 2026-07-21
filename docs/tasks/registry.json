@@ -85,7 +85,7 @@
       "archivedAt": null,
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "D0: OPEN + границы. LGTM vesnin (owner ok 2026-07-21). Ship PR.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "kits-dream-master"
@@ -106,7 +106,7 @@
         "dynin",
         "ozhegov"
       ],
-      "notes": "Бриф PR #847. Фазы D0-D4. Owner пина dynin.",
+      "notes": "Эпик D0–D4 (#856–#860). OPEN: docs/day-sprint/kits-dream-master-2026-07-21/OPEN.md. Owner пина dynin.",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
