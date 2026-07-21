@@ -6,7 +6,8 @@
  * Именно их отсутствие стоило пяти повторов «написал заново существующее».
  */
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
@@ -16,8 +17,10 @@ import {
   extractLibExports,
   extractSkillNames,
   groupScripts,
+  parseToolingOverviewCli,
   selectAgentScripts,
 } from './lib/tooling-overview.mjs';
+import { writeScriptsRegistryReport } from './scripts-registry.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -81,4 +84,30 @@ test('обзор честно называет себя генерируемым
   assert.match(md, /membrana-ship/u);
   assert.match(md, /foo/u, 'чистые леммы видны — их и переиспользовать');
   assert.match(md, /Грабли и уроки — НЕ здесь/u, 'раскол генерация/руками явный');
+});
+
+test('parseToolingOverviewCli: --report без пути → канон SCRIPTS_LIST', () => {
+  assert.equal(parseToolingOverviewCli(['--report']).report, 'scripts/registry/SCRIPTS_LIST.md');
+  assert.equal(parseToolingOverviewCli(['--report', 'tmp/out.md']).report, 'tmp/out.md');
+  assert.equal(parseToolingOverviewCli(['--json']).json, true);
+});
+
+test('S2 writeScriptsRegistryReport пишет Meta Source tooling:overview --report', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'sbc-s2-'));
+  mkdirSync(join(dir, 'scripts', 'registry'), { recursive: true });
+  writeFileSync(
+    join(dir, 'package.json'),
+    JSON.stringify({ scripts: { neighbors: 'node scripts/neighbors.mjs' } }),
+    'utf8',
+  );
+  writeFileSync(join(dir, 'scripts', 'neighbors.mjs'), '// stub\n', 'utf8');
+  const written = writeScriptsRegistryReport(dir, {
+    report: 'scripts/registry/SCRIPTS_LIST.md',
+    source: 'yarn tooling:overview --report',
+    date: '2026-07-21',
+  });
+  const md = readFileSync(join(dir, written.reportRel), 'utf8');
+  assert.match(md, /yarn tooling:overview --report/);
+  assert.match(md, /`neighbors` → `scripts\/neighbors\.mjs`/);
+  assert.equal(written.counts.yarnTouching, 1);
 });

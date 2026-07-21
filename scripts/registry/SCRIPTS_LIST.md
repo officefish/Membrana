@@ -8,22 +8,22 @@
 | Field | Value |
 |-------|-------|
 | Date | 2026-07-21 |
-| Head SHA | 54a24dc3ac88039c5512932fc6d038c4085516e2 |
-| Source | yarn scripts:registry --report |
+| Head SHA | 1721b9fa4718bcee6f61b748d0cc0cdf6bff7371 |
+| Source | yarn tooling:overview --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
 ## Summary
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 541 |
-| Yarn scripts (package.json) | 300 |
-| Yarn → `scripts/` | 248 |
+| Code files under `scripts/` | 544 |
+| Yarn scripts (package.json) | 301 |
+| Yarn → `scripts/` | 249 |
 | Yarn без пути `scripts/` | 52 |
 | Yarn → missing file | 15 |
 | Code files without yarn ref | 209 |
 
-## Yarn → scripts/ (248)
+## Yarn → scripts/ (249)
 
 - `always-yes:off` → `scripts/always-yes.mjs`
 - `always-yes:on` → `scripts/always-yes.mjs`
@@ -241,7 +241,7 @@
 - `templates:generate` → `scripts/generate-class-template.mjs`
 - `templates:generate:drone-regression` → `scripts/generate-class-template.mjs`
 - `templates:stage-gate` → `scripts/evaluate-free-v1-stage-gate.mjs`
-- `test:scripts` → `scripts/lib/movement-mode.test.mjs`, `scripts/lib/snapshot-contract.test.mjs`, `scripts/angelina-cascade.test.mjs`, `scripts/angelina-adapter.test.mjs`, `scripts/ritual-green-cascade.test.mjs`, `scripts/skill-status.test.mjs`, `scripts/day-plan-assemble.test.mjs`, `scripts/morning-gates.test.mjs`, `scripts/gc-void.test.mjs`, `scripts/repo-branches.test.mjs`, `scripts/repo-branches-decompose.test.mjs`, `scripts/main-day-skeleton.test.mjs`, `scripts/day-plan-frame.test.mjs`, `scripts/standup-plan.test.mjs`, `scripts/report-lens.test.mjs`, `scripts/dreams-select.test.mjs`, `scripts/dreams-log.test.mjs`, `scripts/dreams-tick.test.mjs`, `scripts/dreams-format.test.mjs`, `scripts/dreams-providers.test.mjs`, `scripts/angelina-delegate.test.mjs`, `scripts/angelina-validate.test.mjs`, `scripts/trace-acceptance.test.mjs`, `scripts/trace-lead-persona.test.mjs`, `scripts/measure-metrics.test.mjs`, `scripts/measure-report.test.mjs`, `scripts/cowork-execution-smoke.test.mjs`, `scripts/context-collector-paths.test.mjs`, `scripts/consilium-paths.test.mjs`, `scripts/consilium-premises.test.mjs`, `scripts/main-day-issue-paths.test.mjs`, `scripts/daily-standup-paths.test.mjs`, `scripts/rag-ritual.test.mjs`, `scripts/code-review-ritual.test.mjs`, `scripts/team-evening-feedback-ritual.test.mjs`, `scripts/detection-planning-priorities.test.mjs`, `scripts/task-registry.test.mjs`, `scripts/task-closure-review-schema.test.mjs`, `scripts/task-closure-review.test.mjs`, `scripts/task-closure-review-skills.test.mjs`, `scripts/archive-doc-snapshot.test.mjs`, `scripts/artifact-freshness.test.mjs`, `scripts/benchmark-metrics.test.mjs`, `scripts/calibration-preset-sync.test.mjs`, `scripts/percentile-template.test.mjs`, `scripts/benchmark-prior-metrics.test.mjs`, `scripts/detector-compare-export.test.mjs`, `scripts/ground-truth-export.test.mjs`, `scripts/verify-mcp-bootstrap.test.mjs`, `scripts/github-issues-audit.test.mjs`, `scripts/usercase-manifest.test.mjs`, `scripts/client-logs-parser.test.mjs`, `scripts/insight-ritual.test.mjs`, `scripts/replit-bridge.test.mjs`, `scripts/insight-lifecycle.test.mjs`, `scripts/insight-lifecycle-ops.test.mjs`, `scripts/insight-lifecycle-migrate.test.mjs`, `scripts/insight-skill-mirrors.test.mjs`, `scripts/check-package-json-bom.test.mjs`, `scripts/tailwind-coverage.test.mjs`, `scripts/validate-vdr.test.mjs`, `scripts/parse-studio-shell-log.test.mjs`, `scripts/check-package-boundaries.test.mjs`, `scripts/plan-week-if-monday.test.mjs`, `scripts/node-link-probe.test.mjs`, `scripts/vdr-labels-merge.test.mjs`, `scripts/live-links.test.mjs`, `scripts/worktree-bootstrap.test.mjs`, `scripts/pr-ship.test.mjs`, `scripts/cabinet-deploy-image-tag.test.mjs`, `scripts/build-affected.test.mjs`, `scripts/verify-wire-sync.test.mjs`, `scripts/generate-wire-contract.test.mjs`, `scripts/deploy-when-green.test.mjs`, `scripts/prisma-migration-new.test.mjs`, `scripts/git-day-context.test.mjs`, `scripts/tasks-archive-closed.test.mjs`, `scripts/hermes-brief.test.mjs`, `scripts/persona-memory-extract.test.mjs`, `scripts/insight-drift.test.mjs`, `scripts/llm-probe.test.mjs`, `scripts/panel-dns-gate.test.mjs`, `scripts/night-triage-secret-scan.test.mjs`, `scripts/drift-anchor-snapshot.test.mjs`, `scripts/drift-anchor-behavioral.test.mjs`, `scripts/drift-anchor-code.test.mjs`, `scripts/drift-anchor-divergence.test.mjs`, `scripts/drift-anchor-data.test.mjs`, `scripts/media-samples-client.test.mjs`, `scripts/drift-digest-section.test.mjs`, `scripts/git-divergence.test.mjs`, `scripts/telegram-ritual-digest.test.mjs`, `scripts/telegram-swallow.test.mjs`, `scripts/comms-sent-log.test.mjs`, `scripts/research-digest.test.mjs`, `scripts/cowork-open.test.mjs`, `scripts/verify-encoding.test.mjs`, `scripts/anthropic-credit-hint.test.mjs`, `scripts/neighbors.test.mjs`, `scripts/task-register.test.mjs`, `scripts/protocol-validator.test.mjs`, `scripts/task-review-ship.test.mjs`, `scripts/_ssh-panel-smoke.test.mjs`, `scripts/_ssh-office-config.test.mjs`, `scripts/repo-clean.test.mjs`, `scripts/repo-clean-root.test.mjs`, `scripts/classify-worktree.test.mjs`, `scripts/worktree-sync-check.test.mjs`, `scripts/docs-canon.test.mjs`, `scripts/registry-merge.test.mjs`, `scripts/deep-research.test.mjs`, `scripts/main-day-probe.test.mjs`, `scripts/day-work-diff.test.mjs`, `scripts/tooling-overview.test.mjs`, `scripts/always-yes.test.mjs`, `scripts/studio-ms5-prod-smoke.test.mjs`, `scripts/truth-graph.test.mjs`, `scripts/standup-routing.test.mjs`, `scripts/strategy-horizon.test.mjs`, `scripts/strategy-channels.test.mjs`, `scripts/night-research.test.mjs`, `scripts/morning-ritual.test.mjs`, `scripts/anthropic-env.test.mjs`, `scripts/meeting-agenda.test.mjs`, `scripts/meeting-walk.test.mjs`, `scripts/net-diag.test.mjs`, `scripts/test-list-coverage.test.mjs`, `scripts/office-token.test.mjs`, `scripts/night-build-handoff.test.mjs`, `scripts/night-land-reports.test.mjs`, `scripts/meeting-audit.test.mjs`, `scripts/meeting-verdict.test.mjs`, `scripts/tasks-audit.test.mjs`, `scripts/tasks-decompose.test.mjs`, `scripts/validate-procedure.test.mjs`, `scripts/audit-evening.test.mjs`, `scripts/branch-base-freshness.test.mjs`, `scripts/pr-wait.test.mjs`, `scripts/transcript.test.mjs`, `scripts/truth-mint.test.mjs`, `scripts/net-http.test.mjs`, `scripts/step-status.test.mjs`, `scripts/ritual-exit-codes.test.mjs`, `scripts/read-dated.test.mjs`, `scripts/storm-lifecycle.test.mjs`, `scripts/storm-codex.test.mjs`, `scripts/storm-breath.test.mjs`, `scripts/media-token.test.mjs`, `scripts/task-start.test.mjs`, `scripts/task-start-links.test.mjs`, `scripts/optional-yarn-script.test.mjs`
+- `test:scripts` → `scripts/lib/movement-mode.test.mjs`, `scripts/lib/snapshot-contract.test.mjs`, `scripts/angelina-cascade.test.mjs`, `scripts/angelina-adapter.test.mjs`, `scripts/ritual-green-cascade.test.mjs`, `scripts/skill-status.test.mjs`, `scripts/day-plan-assemble.test.mjs`, `scripts/morning-gates.test.mjs`, `scripts/gc-void.test.mjs`, `scripts/repo-branches.test.mjs`, `scripts/repo-branches-decompose.test.mjs`, `scripts/main-day-skeleton.test.mjs`, `scripts/day-plan-frame.test.mjs`, `scripts/standup-plan.test.mjs`, `scripts/report-lens.test.mjs`, `scripts/dreams-select.test.mjs`, `scripts/dreams-log.test.mjs`, `scripts/dreams-tick.test.mjs`, `scripts/dreams-format.test.mjs`, `scripts/dreams-providers.test.mjs`, `scripts/angelina-delegate.test.mjs`, `scripts/angelina-validate.test.mjs`, `scripts/trace-acceptance.test.mjs`, `scripts/trace-lead-persona.test.mjs`, `scripts/measure-metrics.test.mjs`, `scripts/measure-report.test.mjs`, `scripts/cowork-execution-smoke.test.mjs`, `scripts/context-collector-paths.test.mjs`, `scripts/consilium-paths.test.mjs`, `scripts/consilium-premises.test.mjs`, `scripts/main-day-issue-paths.test.mjs`, `scripts/daily-standup-paths.test.mjs`, `scripts/rag-ritual.test.mjs`, `scripts/code-review-ritual.test.mjs`, `scripts/team-evening-feedback-ritual.test.mjs`, `scripts/detection-planning-priorities.test.mjs`, `scripts/task-registry.test.mjs`, `scripts/task-closure-review-schema.test.mjs`, `scripts/task-closure-review.test.mjs`, `scripts/task-closure-review-skills.test.mjs`, `scripts/archive-doc-snapshot.test.mjs`, `scripts/artifact-freshness.test.mjs`, `scripts/benchmark-metrics.test.mjs`, `scripts/calibration-preset-sync.test.mjs`, `scripts/percentile-template.test.mjs`, `scripts/benchmark-prior-metrics.test.mjs`, `scripts/detector-compare-export.test.mjs`, `scripts/ground-truth-export.test.mjs`, `scripts/verify-mcp-bootstrap.test.mjs`, `scripts/github-issues-audit.test.mjs`, `scripts/usercase-manifest.test.mjs`, `scripts/client-logs-parser.test.mjs`, `scripts/insight-ritual.test.mjs`, `scripts/replit-bridge.test.mjs`, `scripts/insight-lifecycle.test.mjs`, `scripts/insight-lifecycle-ops.test.mjs`, `scripts/insight-lifecycle-migrate.test.mjs`, `scripts/insight-skill-mirrors.test.mjs`, `scripts/check-package-json-bom.test.mjs`, `scripts/tailwind-coverage.test.mjs`, `scripts/validate-vdr.test.mjs`, `scripts/parse-studio-shell-log.test.mjs`, `scripts/check-package-boundaries.test.mjs`, `scripts/plan-week-if-monday.test.mjs`, `scripts/node-link-probe.test.mjs`, `scripts/vdr-labels-merge.test.mjs`, `scripts/live-links.test.mjs`, `scripts/worktree-bootstrap.test.mjs`, `scripts/pr-ship.test.mjs`, `scripts/cabinet-deploy-image-tag.test.mjs`, `scripts/build-affected.test.mjs`, `scripts/verify-wire-sync.test.mjs`, `scripts/generate-wire-contract.test.mjs`, `scripts/deploy-when-green.test.mjs`, `scripts/prisma-migration-new.test.mjs`, `scripts/git-day-context.test.mjs`, `scripts/tasks-archive-closed.test.mjs`, `scripts/hermes-brief.test.mjs`, `scripts/persona-memory-extract.test.mjs`, `scripts/insight-drift.test.mjs`, `scripts/llm-probe.test.mjs`, `scripts/panel-dns-gate.test.mjs`, `scripts/night-triage-secret-scan.test.mjs`, `scripts/drift-anchor-snapshot.test.mjs`, `scripts/drift-anchor-behavioral.test.mjs`, `scripts/drift-anchor-code.test.mjs`, `scripts/drift-anchor-divergence.test.mjs`, `scripts/drift-anchor-data.test.mjs`, `scripts/media-samples-client.test.mjs`, `scripts/drift-digest-section.test.mjs`, `scripts/git-divergence.test.mjs`, `scripts/telegram-ritual-digest.test.mjs`, `scripts/telegram-swallow.test.mjs`, `scripts/comms-sent-log.test.mjs`, `scripts/research-digest.test.mjs`, `scripts/cowork-open.test.mjs`, `scripts/verify-encoding.test.mjs`, `scripts/anthropic-credit-hint.test.mjs`, `scripts/neighbors.test.mjs`, `scripts/task-register.test.mjs`, `scripts/protocol-validator.test.mjs`, `scripts/task-review-ship.test.mjs`, `scripts/_ssh-panel-smoke.test.mjs`, `scripts/_ssh-office-config.test.mjs`, `scripts/repo-clean.test.mjs`, `scripts/repo-clean-root.test.mjs`, `scripts/classify-worktree.test.mjs`, `scripts/worktree-sync-check.test.mjs`, `scripts/docs-canon.test.mjs`, `scripts/registry-merge.test.mjs`, `scripts/deep-research.test.mjs`, `scripts/main-day-probe.test.mjs`, `scripts/day-work-diff.test.mjs`, `scripts/tooling-overview.test.mjs`, `scripts/always-yes.test.mjs`, `scripts/studio-ms5-prod-smoke.test.mjs`, `scripts/truth-graph.test.mjs`, `scripts/standup-routing.test.mjs`, `scripts/strategy-horizon.test.mjs`, `scripts/strategy-channels.test.mjs`, `scripts/night-research.test.mjs`, `scripts/morning-ritual.test.mjs`, `scripts/anthropic-env.test.mjs`, `scripts/meeting-agenda.test.mjs`, `scripts/meeting-walk.test.mjs`, `scripts/net-diag.test.mjs`, `scripts/test-list-coverage.test.mjs`, `scripts/office-token.test.mjs`, `scripts/night-build-handoff.test.mjs`, `scripts/night-land-reports.test.mjs`, `scripts/meeting-audit.test.mjs`, `scripts/meeting-verdict.test.mjs`, `scripts/tasks-audit.test.mjs`, `scripts/tasks-decompose.test.mjs`, `scripts/validate-procedure.test.mjs`, `scripts/vocabulary-check.test.mjs`, `scripts/audit-evening.test.mjs`, `scripts/branch-base-freshness.test.mjs`, `scripts/pr-wait.test.mjs`, `scripts/transcript.test.mjs`, `scripts/truth-mint.test.mjs`, `scripts/net-http.test.mjs`, `scripts/step-status.test.mjs`, `scripts/ritual-exit-codes.test.mjs`, `scripts/read-dated.test.mjs`, `scripts/storm-lifecycle.test.mjs`, `scripts/storm-codex.test.mjs`, `scripts/storm-breath.test.mjs`, `scripts/media-token.test.mjs`, `scripts/task-start.test.mjs`, `scripts/task-start-links.test.mjs`, `scripts/optional-yarn-script.test.mjs`, `scripts/scripts-inventory.test.mjs`
 - `tooling:overview` → `scripts/tooling-overview.mjs`
 - `trace:gate` → `scripts/trace-gate.mjs`
 - `trends-parity:smoke-matrix` → `scripts/trends-fft-parity-smoke-matrix.mjs`
@@ -269,6 +269,7 @@
 - `verify:encoding` → `scripts/verify-encoding.mjs`
 - `verify:tailwind-coverage` → `scripts/generate-tailwind-configs.mjs`
 - `verify:wire-sync` → `scripts/verify-wire-sync.mjs`
+- `vocabulary:generate` → `scripts/vocabulary-generate.mjs`
 - `wire:generate` → `scripts/generate-wire-contract.mjs`
 - `worktree:bootstrap` → `scripts/worktree-bootstrap.mjs`
 - `worktree:sync` → `scripts/worktree-sync.mjs`
@@ -467,6 +468,7 @@
 - `scripts/lib/usercase-post-build.mjs`
 - `scripts/lib/usercase-write-guard.mjs`
 - `scripts/lib/validate-procedure.mjs`
+- `scripts/lib/vocabulary-check.mjs`
 - `scripts/lib/wav-read.mjs`
 - `scripts/lib/worktree-bootstrap.mjs`
 - `scripts/lib/worktree-sync-check.mjs`
@@ -481,7 +483,6 @@
 - `scripts/refactor-usercase-mvp-pure-wires.mjs`
 - `scripts/ritual-evening-tail.mjs`
 - `scripts/scaffold-detectors.mjs`
-- `scripts/scripts-inventory.test.mjs`
 - `scripts/sync-github-token.mjs`
 - `scripts/verify-mintlify-docs.mjs`
 - `scripts/verify-usercase-write-paths.mjs`
@@ -504,7 +505,7 @@
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 - `vdr:collection-status` → missing `scripts/vdr-collection-status.mjs`
 
-## All code files (541)
+## All code files (544)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -849,6 +850,7 @@
 - `scripts/lib/usercase-post-build.mjs`
 - `scripts/lib/usercase-write-guard.mjs`
 - `scripts/lib/validate-procedure.mjs`
+- `scripts/lib/vocabulary-check.mjs`
 - `scripts/lib/wav-read.mjs`
 - `scripts/lib/worktree-bootstrap.mjs`
 - `scripts/lib/worktree-sync-check.mjs`
@@ -1043,6 +1045,8 @@
 - `scripts/verify-usercase-write-paths.mjs`
 - `scripts/verify-wire-sync.mjs`
 - `scripts/verify-wire-sync.test.mjs`
+- `scripts/vocabulary-check.test.mjs`
+- `scripts/vocabulary-generate.mjs`
 - `scripts/worktree-bootstrap.mjs`
 - `scripts/worktree-bootstrap.test.mjs`
 - `scripts/worktree-sync-check.test.mjs`

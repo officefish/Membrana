@@ -1,72 +1,45 @@
 {
   "tasks": [
     {
-      "id": "sbc-s4-wiring",
-      "title": "S4: провода AGENTS/skills/DoD для контейнера scripts/",
-      "promptPath": "docs/prompts/SBC_S4_WIRING_PROMPT.md",
-      "githubIssue": 796,
+      "promptPath": "docs/prompts/SBC_S0_CONTRACT_PROMPT.md",
+      "githubIssue": 792,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-21",
-      "archivedAt": null,
-      "leadPersona": "vesnin",
-      "supportPersonas": [
-        "ozhegov"
-      ],
-      "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
-      "parentEpic": "scripts-boundary-container"
-    },
-    {
-      "id": "sbc-s3-kits-align",
-      "title": "S3: kits — выровнять с pl-r3 kit-manifest (не изобретать параллельный контракт)",
-      "promptPath": "docs/prompts/SBC_S3_KITS_ALIGN_PROMPT.md",
-      "githubIssue": 795,
-      "linearId": null,
-      "size": "M",
-      "status": "active",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-21",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "ozhegov",
       "supportPersonas": [
-        "dynin",
         "vesnin"
       ],
-      "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
-      "parentEpic": "scripts-boundary-container"
+      "notes": "S0 принято ozhegov 2026-07-21 (термины дом/SoT/реестр/кит).",
+      "archiveNotes": "PR #797, LGTM ozhegov; Issue #792 closed",
+      "githubIssueClosedAt": "2026-07-21T15:46:30Z",
+      "parentEpic": "scripts-boundary-container",
+      "id": "sbc-s0-contract",
+      "title": "S0: контракт контейнера scripts/ — README + AGENT_PROMPT + cache"
     },
     {
-      "id": "sbc-s2-tools-report",
-      "title": "S2: инструменты пишут в scripts/registry сами (--report)",
-      "promptPath": "docs/prompts/SBC_S2_TOOLS_REPORT_PROMPT.md",
-      "githubIssue": 794,
+      "promptPath": "docs/prompts/SBC_S1_REGISTRY_PROMPT.md",
+      "githubIssue": 793,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-21",
-      "archivedAt": null,
-      "leadPersona": "vesnin",
+      "archivedAt": "2026-07-21",
+      "leadPersona": "dynin",
       "supportPersonas": [
-        "dynin",
-        "ozhegov"
+        "ozhegov",
+        "vesnin"
       ],
-      "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
-      "parentEpic": "scripts-boundary-container"
-    },
-    {
-      "notes": "S0 принято ozhegov 2026-07-21 (термины дом/SoT/реестр/кит). Артефакты: scripts/README.md, AGENT_PROMPT.md, cache/, registry/, analysis/.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
-      "parentEpic": "scripts-boundary-container"
+      "notes": "S1 принято dynin 2026-07-21. yarn scripts:registry --report.",
+      "archiveNotes": "PR #799, LGTM dynin; Issue #793 closed",
+      "githubIssueClosedAt": "2026-07-21T16:09:46Z",
+      "parentEpic": "scripts-boundary-container",
+      "id": "sbc-s1-registry",
+      "title": "S1: derived-реестр scripts/registry из кода (tooling:overview --report)"
     },
     {
       "id": "ba-f5-closure",
@@ -211,6 +184,68 @@
       "notes": "",
       "archiveNotes": null,
       "githubIssueClosedAt": null
+    },
+    {
+      "id": "sbc-s4-wiring",
+      "title": "S4: провода AGENTS/skills/DoD для контейнера scripts/",
+      "promptPath": "docs/prompts/SBC_S4_WIRING_PROMPT.md",
+      "githubIssue": 796,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-21",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "scripts-boundary-container"
+    },
+    {
+      "id": "sbc-s3-kits-align",
+      "title": "S3: kits — выровнять с pl-r3 kit-manifest (не изобретать параллельный контракт)",
+      "promptPath": "docs/prompts/SBC_S3_KITS_ALIGN_PROMPT.md",
+      "githubIssue": 795,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-21",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "scripts-boundary-container"
+    },
+    {
+      "id": "sbc-s2-tools-report",
+      "title": "S2: инструменты пишут в scripts/registry сами (--report)",
+      "promptPath": "docs/prompts/SBC_S2_TOOLS_REPORT_PROMPT.md",
+      "githubIssue": 794,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-21",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "S2 принято vesnin 2026-07-21. tooling:overview --report ≡ scripts:registry --report.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "scripts-boundary-container"
     },
     {
       "id": "pl-r5-migration",

@@ -22,9 +22,9 @@
 | `sbc-s4-wiring` | S4: провода AGENTS/skills/DoD для контейнера scripts/ | S | [`SBC_S4_WIRING_PROMPT.md`](../docs/prompts/SBC_S4_WIRING_PROMPT.md) | [#796](https://github.com/officefish/Membrana/issues/796) |
 | `sbc-s3-kits-align` | S3: kits — выровнять с pl-r3 kit-manifest (не изобретать параллельный контракт) | M | [`SBC_S3_KITS_ALIGN_PROMPT.md`](../docs/prompts/SBC_S3_KITS_ALIGN_PROMPT.md) | [#795](https://github.com/officefish/Membrana/issues/795) |
 | `sbc-s2-tools-report` | S2: инструменты пишут в scripts/registry сами (--report) | M | [`SBC_S2_TOOLS_REPORT_PROMPT.md`](../docs/prompts/SBC_S2_TOOLS_REPORT_PROMPT.md) | [#794](https://github.com/officefish/Membrana/issues/794) |
-| `sbc-s1-registry` | S1: derived-реестр scripts/registry из кода (tooling:overview --report) | M | [`SBC_S1_REGISTRY_PROMPT.md`](../docs/prompts/SBC_S1_REGISTRY_PROMPT.md) | [#793](https://github.com/officefish/Membrana/issues/793) |
 | `pl-r5-migration` | Р5: миграция процедур — реестр процедур, валидатор, донор meeting | M | [`PL_R5_MIGRATION_PROMPT.md`](../docs/prompts/PL_R5_MIGRATION_PROMPT.md) | [#786](https://github.com/officefish/Membrana/issues/786) |
 | `pl-r4-grammar` | Р4: грамматика веток — словари, resolveHolder, валидатор имени, провод в шип-гейт | M | [`PL_R4_GRAMMAR_PROMPT.md`](../docs/prompts/PL_R4_GRAMMAR_PROMPT.md) | [#785](https://github.com/officefish/Membrana/issues/785) |
+| `pl-r3-boundary` | Р3: граница слоёв — файл правил, checkLayerDirection, CI-зуб, контракт кит-манифеста | M | [`PL_R3_BOUNDARY_PROMPT.md`](../docs/prompts/PL_R3_BOUNDARY_PROMPT.md) | [#784](https://github.com/officefish/Membrana/issues/784) |
 | `procedural-layer-impl` | Эпик: реализация процедурного слоя (Р1-Р5 заседания procedural-layer) | L | [`PROCEDURAL_LAYER_IMPL_PROMPT.md`](../docs/prompts/PROCEDURAL_LAYER_IMPL_PROMPT.md) | [#781](https://github.com/officefish/Membrana/issues/781) |
 | `angelina-hostess-impl` | Спринт: реализация вердиктов «Ангелина — хозяйка утра» (C→B+G→H→GC) | L | [`angelina-hostess-EPIC-2026-07-21.md`](../docs/seanses/angelina-hostess-EPIC-2026-07-21.md) | — |
 | `linear-hygiene-dreams-providers-night` | Night: Linear-гигиена → живые провайдеры снов | M | [`LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md`](../docs/prompts/LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md) | — |
@@ -209,7 +209,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `pl-r3-boundary` | Р3: граница слоёв — файл правил, checkLayerDirection, CI-зуб, контракт кит-манифеста | 2026-07-21 | [`PL_R3_BOUNDARY_PROMPT.md`](../docs/prompts/PL_R3_BOUNDARY_PROMPT.md) | #784 (Issue открыт) | [карточка](./archive/pl-r3-boundary.md) |
+| `sbc-s0-contract` | S0: контракт контейнера scripts/ — README + AGENT_PROMPT + cache | 2026-07-21 | [`SBC_S0_CONTRACT_PROMPT.md`](../docs/prompts/SBC_S0_CONTRACT_PROMPT.md) | #792 | [карточка](./archive/sbc-s0-contract.md) |
+| `sbc-s1-registry` | S1: derived-реестр scripts/registry из кода (tooling:overview --report) | 2026-07-21 | [`SBC_S1_REGISTRY_PROMPT.md`](../docs/prompts/SBC_S1_REGISTRY_PROMPT.md) | #793 | [карточка](./archive/sbc-s1-registry.md) |
 | `pl-r2-vocabulary` | Р2: словарь категорий — источник, генерация, check() + checkGenus | 2026-07-21 | [`PL_R2_VOCABULARY_PROMPT.md`](../docs/prompts/PL_R2_VOCABULARY_PROMPT.md) | #783 (Issue открыт) | [карточка](./archive/pl-r2-vocabulary.md) |
 | `pl-r1-home` | Р1: дом процедурного слоя docs/procedures + validateProcedure + жилец ritual-evening | 2026-07-21 | [`PL_R1_HOME_PROMPT.md`](../docs/prompts/PL_R1_HOME_PROMPT.md) | #782 (Issue открыт) | [карточка](./archive/pl-r1-home.md) |
 | `cowork-execution-registry` | Cowork Sprint: контур исполнения команды + переезд реестра | 2026-07-21 | [`COWORK_SPRINT_BRIEF.md`](../docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md) | #660 (Issue открыт) | [карточка](./archive/cowork-execution-registry.md) |
