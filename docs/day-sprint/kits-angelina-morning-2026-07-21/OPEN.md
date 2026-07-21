@@ -26,7 +26,7 @@
 | **K2** | `kam-k2-audit` | [#817](https://github.com/officefish/Membrana/issues/817) | dynin | ✅ [#838](https://github.com/officefish/Membrana/pull/838) |
 | **K3** | `kam-k3-first-kit` | [#818](https://github.com/officefish/Membrana/issues/818) | angelina | ✅ [#841](https://github.com/officefish/Membrana/pull/841) |
 | **K4** | `kam-k4-wire` | [#819](https://github.com/officefish/Membrana/issues/819) | ozhegov | ✅ [#843](https://github.com/officefish/Membrana/pull/843) |
-| **K5** | `kam-k5-closure` | [#820](https://github.com/officefish/Membrana/issues/820) | vesnin | ✅ LGTM — ship |
+| **K5** | `kam-k5-closure` | [#820](https://github.com/officefish/Membrana/issues/820) | vesnin | ✅ done · [PR #845](https://github.com/officefish/Membrana/pull/845) |
 
 ## Gate checklist (K5)
 
