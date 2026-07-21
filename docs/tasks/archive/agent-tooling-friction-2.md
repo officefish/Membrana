@@ -6,14 +6,14 @@
 | **Статус** | archived |
 | **Размер** | M |
 | **Создана** | 2026-07-14 |
-| **Архивирована** | 2026-07-15 |
+| **Архивирована** | 2026-07-21 |
 | **GitHub Issue** | #469 |
 | **Linear** | — |
 | **Промпт** | [`docs/prompts/AGENT_TOOLING_FRICTION_2_PROMPT.md`](../../docs/prompts/AGENT_TOOLING_FRICTION_2_PROMPT.md) |
 
 ## Заметки при закрытии
 
-PR #484; review LGTM 10dc5b6494b4; PR #484 merged 2026-07-15T02:50:44Z (10dc5b6494b4a26b1aebc0f47bc126b576f126ba)
+#469 COMPLETED; архив был в PR #486, карточка воскресла в active — повторная фиксация статуса
 
 ---
 
