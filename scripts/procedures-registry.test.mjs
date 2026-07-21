@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import { derivedStatus, registryProblems, renderRegistryMd } from './lib/procedures-registry.mjs';
+import { listProcedureDirs } from './lib/validate-procedure.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const LIVE = JSON.parse(readFileSync(resolve(repoRoot, 'docs/procedures/registry.json'), 'utf8'));
@@ -45,9 +46,15 @@ test('пересечение ключей с реестром задач — д�
   assert.ok(p.some((x) => x.includes('пересекается с реестром задач')));
 });
 
+test('полнота: контейнер на диске без записи — дефект', () => {
+  const p = registryProblems({ procedures: [OK] }, { dirExists: () => true, containerIds: ['demo', 'ghost-dir'] });
+  assert.ok(p.some((x) => x.includes('ghost-dir')));
+});
+
 test('ЗУБ CI: боевой реестр валиден; доноры Р5 мигрированы; проекция синхронна', () => {
   const taskIds = (JSON.parse(readFileSync(resolve(repoRoot, 'docs/tasks/registry.json'), 'utf8')).tasks ?? []).map((t) => t.id);
-  const problems = registryProblems(LIVE, { taskIds, dirExists: (p) => existsSync(join(repoRoot, p)) });
+  const containerIds = listProcedureDirs(repoRoot).map((d) => basename(d));
+  const problems = registryProblems(LIVE, { taskIds, containerIds, dirExists: (p) => existsSync(join(repoRoot, p)) });
   assert.deepEqual(problems, []);
   const byId = Object.fromEntries(LIVE.procedures.map((p) => [p.id, p]));
   assert.equal(derivedStatus(byId['ritual-evening']), 'migrated', 'донор 1 (Р1+Р5)');

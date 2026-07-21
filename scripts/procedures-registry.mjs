@@ -6,10 +6,11 @@
  * Exit: 0 ок · 1 дефекты/дрейф · 2 инструментальная ошибка.
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { registryProblems, renderRegistryMd } from './lib/procedures-registry.mjs';
+import { listProcedureDirs } from './lib/validate-procedure.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const srcPath = resolve(repoRoot, 'docs/procedures/registry.json');
@@ -26,8 +27,10 @@ try {
   process.exit(2);
 }
 
+const containerIds = listProcedureDirs(repoRoot).map((d) => basename(d));
 const problems = registryProblems(reg, {
   taskIds,
+  containerIds,
   dirExists: (p) => existsSync(join(repoRoot, p)),
 });
 if (problems.length > 0) {

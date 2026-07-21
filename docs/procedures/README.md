@@ -35,7 +35,9 @@
 | [`ritual-evening/`](./ritual-evening/README.md) | Ангелина | первый жилец (Р1); `kitVersion: null` |
 | [`ritual-day/`](./ritual-day/README.md) | Ангелина | утро; **`kitVersion`: `kits/angelina-morning`** (K4 / #819) |
 | [`ritual-dreams/`](./ritual-dreams/README.md) | dynin | сны v2; **`kitVersion`: `kits/dream-master`** (D3 / #859) |
+| [`day-sprint/`](./day-sprint/README.md) | vesnin | дневной эпик+фазы; `kitVersion: null` (#848) |
 | [`attribution/`](./attribution/README.md) | dynin | адрес домена ответственности (Р3); механизм — T9 |
+| [`meeting/`](./meeting/README.md) | vesnin | заседание (донор Р5) |
 
 ## kitVersion (провод процедура → кит)
 

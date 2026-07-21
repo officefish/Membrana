@@ -37,6 +37,23 @@
       }
     },
     {
+      "id": "ritual-dreams",
+      "holder": "dynin",
+      "homePath": "docs/procedures/ritual-dreams",
+      "container": {
+        "value": true,
+        "provenance": "dynin@629cb7b6"
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": true,
+        "provenance": "dynin@629cb7b6"
+      }
+    },
+    {
       "id": "attribution",
       "holder": "dynin",
       "homePath": "docs/procedures/attribution",
@@ -68,6 +85,23 @@
       "grammar": {
         "value": true,
         "provenance": "vesnin@4f3388ed"
+      }
+    },
+    {
+      "id": "day-sprint",
+      "holder": "vesnin",
+      "homePath": "docs/procedures/day-sprint",
+      "container": {
+        "value": true,
+        "provenance": "ozhegov@dsp-f2"
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": true,
+        "provenance": "vesnin@dsp-f2"
       }
     },
     {
