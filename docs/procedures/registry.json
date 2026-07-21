@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "note": "Реестр процедур слоя (вердикт m5-migration-manual, Р5/#786). migrated — ПРОИЗВОДНЫЙ предикат (container ∧ vocabulary ∧ grammar), хранить его нельзя. Каждое true несёт провенанс <persona>@<hash>. Ключи не пересекаются с docs/tasks/registry.json. Проекция REGISTRY.md генерится (yarn procedures:registry), руками не правится.",
+  "procedures": [
+    {
+      "id": "ritual-evening",
+      "holder": "angelina",
+      "homePath": "docs/procedures/ritual-evening",
+      "container": { "value": true, "provenance": "angelina@78f49d2d" },
+      "vocabulary": { "value": true, "provenance": "ozhegov@pl-r5" },
+      "grammar": { "value": true, "provenance": "rodchenko@78f49d2d" }
+    },
+    {
+      "id": "ritual-day",
+      "holder": "angelina",
+      "homePath": "docs/procedures/ritual-day",
+      "container": { "value": true, "provenance": "angelina@66fc3b90" },
+      "vocabulary": { "value": false, "provenance": null },
+      "grammar": { "value": true, "provenance": "angelina@66fc3b90" }
+    },
+    {
+      "id": "attribution",
+      "holder": "dynin",
+      "homePath": "docs/procedures/attribution",
+      "container": { "value": true, "provenance": "dynin@ae2582d6" },
+      "vocabulary": { "value": false, "provenance": null },
+      "grammar": { "value": true, "provenance": "dynin@ae2582d6" }
+    },
+    {
+      "id": "meeting",
+      "holder": "vesnin",
+      "homePath": "docs/procedures/meeting",
+      "container": { "value": true, "provenance": "vesnin@pl-r5" },
+      "vocabulary": { "value": true, "provenance": "vesnin@pl-r5" },
+      "grammar": { "value": true, "provenance": "vesnin@4f3388ed" }
+    },
+    {
+      "id": "storm",
+      "holder": "angelina",
+      "homePath": null,
+      "container": { "value": false, "provenance": null },
+      "vocabulary": { "value": false, "provenance": null },
+      "grammar": { "value": false, "provenance": null }
+    },
+    {
+      "id": "cowork",
+      "holder": "vesnin",
+      "homePath": null,
+      "container": { "value": false, "provenance": null },
+      "vocabulary": { "value": false, "provenance": null },
+      "grammar": { "value": false, "provenance": null }
+    },
+    {
+      "id": "competition",
+      "holder": "vesnin",
+      "homePath": null,
+      "container": { "value": false, "provenance": null },
+      "vocabulary": { "value": false, "provenance": null },
+      "grammar": { "value": false, "provenance": null }
+    },
+    {
+      "id": "night-sprint",
+      "holder": "vesnin",
+      "homePath": null,
+      "container": { "value": false, "provenance": null },
+      "vocabulary": { "value": false, "provenance": null },
+      "grammar": { "value": false, "provenance": null }
+    },
+    {
+      "id": "ship-gate",
+      "holder": "vesnin",
+      "homePath": null,
+      "container": { "value": false, "provenance": null },
+      "vocabulary": { "value": false, "provenance": null },
+      "grammar": { "value": false, "provenance": null }
+    },
+    {
+      "id": "tasks-audit",
+      "holder": "dynin",
+      "homePath": null,
+      "container": { "value": false, "provenance": null },
+      "vocabulary": { "value": false, "provenance": null },
+      "grammar": { "value": false, "provenance": null }
+    },
+    {
+      "id": "git-audit",
+      "holder": "dynin",
+      "homePath": null,
+      "container": { "value": false, "provenance": null },
+      "vocabulary": { "value": false, "provenance": null },
+      "grammar": { "value": false, "provenance": null }
+    },
+    {
+      "id": "consilium",
+      "holder": "vesnin",
+      "homePath": null,
+      "container": { "value": false, "provenance": null },
+      "vocabulary": { "value": false, "provenance": null },
+      "grammar": { "value": false, "provenance": null }
+    }
+  ]
+}
