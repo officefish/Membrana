@@ -58,6 +58,14 @@ export function registryProblems(reg, opts = {}) {
       problems.push(`${id}: ключ пересекается с реестром задач — реестры разные (вердикт M5)`);
     }
   }
+  // Полнота (пробел ревизии 21.07: сосед заселил ritual-dreams мимо реестра за
+  // время шипа Р5): каждый контейнер на диске обязан иметь запись — иначе реестр
+  // лжёт статусом «источника истины».
+  for (const dirId of opts.containerIds ?? []) {
+    if (!seen.has(dirId)) {
+      problems.push(`контейнер docs/procedures/${dirId} существует, но записи в реестре нет — дополни registry.json`);
+    }
+  }
   return problems;
 }
 
