@@ -1,0 +1,4 @@
+# Сырые дампы / JSON — не коммитить (markdown registry/analysis — да)
+*
+!.gitignore
+!.gitkeep

@@ -20,6 +20,95 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "sbc-s4-wiring",
+      "title": "S4: провода AGENTS/skills/DoD для контейнера scripts/",
+      "promptPath": "docs/prompts/SBC_S4_WIRING_PROMPT.md",
+      "githubIssue": 796,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-21",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "scripts-boundary-container"
+    },
+    {
+      "id": "sbc-s3-kits-align",
+      "title": "S3: kits — выровнять с pl-r3 kit-manifest (не изобретать параллельный контракт)",
+      "promptPath": "docs/prompts/SBC_S3_KITS_ALIGN_PROMPT.md",
+      "githubIssue": 795,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-21",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "scripts-boundary-container"
+    },
+    {
+      "id": "sbc-s2-tools-report",
+      "title": "S2: инструменты пишут в scripts/registry сами (--report)",
+      "promptPath": "docs/prompts/SBC_S2_TOOLS_REPORT_PROMPT.md",
+      "githubIssue": 794,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-21",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "scripts-boundary-container"
+    },
+    {
+      "id": "sbc-s1-registry",
+      "title": "S1: derived-реестр scripts/registry из кода (tooling:overview --report)",
+      "promptPath": "docs/prompts/SBC_S1_REGISTRY_PROMPT.md",
+      "githubIssue": 793,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-21",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "scripts-boundary-container"
+    },
+    {
+      "notes": "S0 принято ozhegov 2026-07-21 (термины дом/SoT/реестр/кит). Артефакты: scripts/README.md, AGENT_PROMPT.md, cache/, registry/, analysis/.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "scripts-boundary-container"
+    },
+    {
       "id": "pl-r5-migration",
       "title": "Р5: миграция процедур — реестр процедур, валидатор, донор meeting",
       "promptPath": "docs/prompts/PL_R5_MIGRATION_PROMPT.md",
@@ -973,23 +1062,24 @@
     },
     {
       "id": "scripts-boundary-container",
-      "title": "Граница scripts/: контейнер для ритуала — пакет, регламент, реестр",
+      "title": "Эпик: граница scripts/ — GROUP_CONTAINERIZATION в одном доме scripts/",
       "promptPath": "docs/prompts/SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md",
-      "githubIssue": null,
-      "size": "M",
+      "githubIssue": 791,
+      "size": "L",
       "status": "active",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-17",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-21",
       "archivedAt": null,
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin",
         "vesnin"
       ],
-      "notes": "216 скриптов / 36669 строк вне workspace. Остров 0/0 (проверено парсингом 352 файлов). НЕ линтуется: yarn lint = turbo run lint по workspace, scripts/ не workspace; в .eslintrc.cjs нет override для .mjs — прямой прогон не парсит ни одного файла. НЕ типизируется: tsconfig нет. test:scripts ведётся рукой — 4 теста-сироты (anthropic-env, meeting-agenda, meeting-walk, net-diag). Ни одно правило границ не имеет корня в scripts/. Здесь живёт весь ритуал. Формат разбора: заседание (S-M1 отклонил повестку из 6 вопросов до прогона).",
+      "notes": "Эпик GROUP_CONTAINERIZATION в ОДНОМ доме scripts/ (не docs/audit/scripts). Фазы sbc-s0..s4. SoT=ФС scripts/** + yarn names. Ядро kits=GH Releases; контракт кита — pl-r3 (#784), S3 только align. Research Q про Temporal/отказоустойчивость — отдельный трек, не блок S0-S2. Было: остров вне workspace, test:scripts руками. parent: ritual-trust-contour. OPEN: docs/day-sprint/scripts-boundary-container-2026-07-21/OPEN.md",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
-      "parentEpic": "ritual-trust-contour"
+      "parentEpic": "ritual-trust-contour",
+      "linearId": null
     },
     {
       "id": "truth-graph-contour",
