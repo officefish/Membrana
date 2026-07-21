@@ -325,7 +325,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "notes": "",
+      "notes": "S4 принято vesnin 2026-07-21. AGENTS + audit/README + CONTRIBUTING + skills README → scripts/AGENT_PROMPT. Без нового skill.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "scripts-boundary-container"
