@@ -21,83 +21,15 @@
 
 ---
 
-## Утро (10–20 минут)
+## Утро
 
-Цель: спланировать день, **учитывая вчерашнее вечернее code-review** (`docs/DAILY_CODE_REVIEW.md`) и **приоритеты детекции** после эпика #84 ([`FFT_METRICS_POTENTIAL_AND_LIMITS.md`](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) §6), и зафиксировать один фокус.
-
-> **Code-review утром не запускаем.** Ревью кода — вечерняя процедура (`yarn code-review`). Утром только **читаем** уже сгенерированный `DAILY_CODE_REVIEW.md` (standup и main-day-issue подмешивают его как вход). **RAG operative** подмешивается автоматически (BM25 по недавним `docs/`); archive — только с `OPENAI_API_KEY` + индексом.
-
-**После HANDOFF Night Build (или если висят night-triage draft PR):** сначала
-приёмник отчётов, потом `ritual:day`. Жанр Night Triage / Hunt ≠ эпик Night Build
-([`NIGHT_SPRINT_REGULATION.md`](./NIGHT_SPRINT_REGULATION.md) §Два жанра ночи).
-
-```bash
-# dry-run: список eligible (title~Night triage, один ADDED под docs/reports/night-triage/**)
-yarn night:land-reports
-# слово владельца («да») → squash-merge oldest-first (+ gh pr ready для draft)
-yarn night:land-reports --execute
-```
-
-Без `--execute` ничего не мёржится. Code-epic PR `night/*` в этот каскад **не** входят —
-их ревью/merge отдельно после adversarial review.
-
-### Рабочая ветка: `techies68`
-
-Повседневная интеграционная ветка — **`techies68`** (не `cursor/*` и не персональные `vesnin`/`dynin`, если Teamlead не назначил иное). В начале дня переключаемся на неё и подтягиваем remote:
-
-```bash
-git checkout techies68
-git pull origin techies68
-```
-
-`yarn morning-care` делает это автоматически (если рабочее дерево чистое). Переопределение: `MEMBRANA_WORK_BRANCH=my-branch yarn morning-care`.
-
-Ветки `cursor/*` — для разовых Cloud-задач; после merge переносим результат в `techies68`.
-
-```bash
-# 0. (вручную или через morning-care) рабочая ветка techies68
-
-# 1. Среда: прокси, git, быстрый тест скриптов; опционально ping Anthropic
-yarn morning-care
-# без траты токенов:
-yarn morning-care --no-anthropic
-
-# 2. План на день (WHITE_PAPER + git за сутки)
-yarn plan:day
-yarn plan:day:full
-
-# 3. Стендап: план + вчерашнее ревью + Issues + наброски packages/temp
-yarn standup
-
-# 4. Центральная задача дня (последний шаг утра — канон для агентов)
-yarn main-day-issue
-# зафиксировать focus вручную:
-yarn main-day-issue --focus dsp-drone-detector
-
-# без API (только локальная сборка):
-yarn standup:dry
-# operative RAG в контексте (без OPENAI_API_KEY); отключить: --no-rag
-yarn standup --no-rag
-# больше текста из temp:
-yarn standup:full
-
-# вся цепочка одной командой:
-yarn ritual:day
-# без вызовов Anthropic (только standup dry + main-day-issue с предупреждением):
-yarn ritual:day:no-api
-```
-
-**Что читать после:** [`docs/MAIN_DAY_ISSUE.md`](./MAIN_DAY_ISSUE.md) — **обязательный фокус**; стендап и планы — контекст. [`docs/CURRENT_TASK.md`](./CURRENT_TASK.md) — только вспомогательный буфер (может содержать шум; см. [`TASK_PROMPT_WORKFLOW.md`](./prompts/TASK_PROMPT_WORKFLOW.md)).
-
-> **Планирование детекции:** `yarn plan:day`, `yarn standup` и `yarn main-day-issue` подмешивают [`prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md`](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md). Не ставить магистралью «Этап 1.A / benchmark 3 DSP» — эшелон 0 на free-v1 исчерпан; магистраль — trends `DRONE_TIGHT`, validated data или эшелон 2 (нейро/zero-shot).
-
-**Минимальный утренний набор** (нет API / экономия токенов):
-
-```bash
-yarn morning-care --no-anthropic
-yarn standup:dry
-yarn task:list
-```
+> **Утренний сценарий вычеркнут из этого канона** (вердикт заседания `angelina-hostess`
+> M1, 21.07, ратифицирован владельцем). Единственный источник истины по утру — скилл
+> [`membrana-morning-ritual`](../.cursor/skills/membrana-morning-ritual/SKILL.md):
+> пред-ритуальный порядок (ветка = main, чтение вчерашнего фидбека и развилок ДО запуска),
+> цепочка `yarn ritual:day` с Ангелиной-стражем, **двухгейтовое утро** (magistral
+> owner-choice из топ-3 · swallow-send с явным «ок»), запрет магистрали от скрипта.
+> Если скилл недоступен — СТОП; этот документ утро не описывает и не замещает.
 
 ---
 

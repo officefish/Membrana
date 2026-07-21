@@ -1,7 +1,12 @@
 # Аудит реестра задач — конспект процесса
 
-> Заготовка под будущий скилл (`membrana-registry-audit`). Написано по живому прогону
-> 2026-07-18 (204 active-карточки, 27 кандидатов, найдено 5 ложных срабатываний).
+> Скилл по этому конспекту существует: **`membrana-tasks-audit`**
+> ([`.cursor/skills/membrana-tasks-audit/SKILL.md`](../../.cursor/skills/membrana-tasks-audit/SKILL.md),
+> зеркало в `.claude/skills/`) — создан по живому прогону 2026-07-21 (226 active,
+> 57 кандидатов, 52 в архив, 5 зонтиков повердиктно). Новый скилл не заводить —
+> развивать этот; при расхождении канон (этот файл) первичен.
+> Написано по живому прогону 2026-07-18 (204 active-карточки, 27 кандидатов,
+> найдено 5 ложных срабатываний).
 > Канон рядом: [`GITHUB_ISSUES_AUDIT_PROMPT.md`](GITHUB_ISSUES_AUDIT_PROMPT.md),
 > [`TASK_CLOSURE_REGULATION.md`](TASK_CLOSURE_REGULATION.md).
 
