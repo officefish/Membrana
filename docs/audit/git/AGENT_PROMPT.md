@@ -3,6 +3,8 @@
 Канонический setup-промпт агента для аудита веток в монорепо Membrana.
 Контейнер: `docs/audit/git/`. Контракт layout: [`README.md`](./README.md).
 
+**При старте:** если есть [`SESSION_CONTEXT.md`](./SESSION_CONTEXT.md) — прочитай его первым (worktree, ветка, хвосты GC, next steps).
+
 **Не легализует** отдельный skill attention-tier A1–A4 — пороги живут здесь и в analysis-артефактах.
 
 ---
