@@ -1,20 +1,20 @@
-<!-- registry snapshot meta (agent-maintained) -->
+# BRANCHES_DECOMPOSE_LIST — Scenario A registry
+
 ## Meta
 
 | Field | Value |
 | --- | --- |
 | Date | 2026-07-21 |
 | Base | origin/main |
-| Base SHA | `b03880c74f72c8aaf879ec2c3620cdc9f56e55e6` |
-| Fetch | yes (prior fetch this session; regenerate used --no-fetch) |
+| Base SHA | b03880c74f72c8aaf879ec2c3620cdc9f56e55e6 |
+| Fetch | yes |
 | Current branch | docs/audit-git-container |
-| Source | yarn repo:branches:decompose --report |
-| Pointer | Canonical current registry: `registry/BRANCHES_DECOMPOSE_LIST.md` |
+| Source | yarn repo:branches:decompose |
+| gh open-PR | yes |
 
----
 # repo:branches:decompose — 7 hygiene categories
 
-base: origin/main · fetch: skipped (--no-fetch) · current: docs/audit-git-container · gh open-PR: yes
+base: origin/main · fetch: yes · current: docs/audit-git-container · gh open-PR: yes
 
 ## Taxonomy (first match wins)
 
@@ -41,7 +41,7 @@ _Skipped remote twins with local counterpart: 18_
 | 1. Worktree-активные | 7 | 0 | 7 |
 | 2. Персоны | 2 | 0 | 2 |
 | 3. Baseline / sync-якоря | 5 | 0 | 5 |
-| 4. Доставка в полёте | 4 | 1 | 5 |
+| 4. Доставка в полёте | 4 | 2 | 6 |
 | 5. Эксперимент leftover | 13 | 7 | 20 |
 | 6. Застой / zombie | 11 | 2 | 13 |
 | 7. Salvage | 10 | 1 | 11 |
@@ -57,8 +57,8 @@ Worktree=yes или текущая ветка сессии — не трогат
 | tooling/meeting-consilium-voice | 0 | 16 | behind-only | worktree=yes | keep — active |
 | truth/crystallization-20-07-worktree | 0 | 16 | behind-only | worktree=yes | keep — active |
 | developer-rhythm-lifecycle | 0 | 2 | behind-only | worktree=yes | keep — active |
-| feat/tasks-decompose | 1 | 2 | diverged | worktree=yes | keep — active |
-| docs/audit-git-container | 0 | 0 | sync | worktree + current | keep — active |
+| docs/audit-git-container | 7 | 0 | ahead-only | worktree + current | keep — active |
+| feat/tasks-decompose | 3 | 0 | ahead-only | worktree=yes | keep — active |
 
 ## 2. Персоны
 
@@ -87,6 +87,7 @@ Head открытого GitHub PR (нужен `gh`; иначе категори�
 
 | Branch | Ahead | Behind | Bucket | Why/Note | Suggested action |
 | --- | --- | --- | --- | --- | --- |
+| origin/night-hunt/graph-drift-1784622639476 | 1 | 0 | ahead-only | open PR #759 | wait PR |
 | origin/night-hunt/services-api-drift-1784545232727 | 1 | 44 | diverged | open PR #709 | wait PR |
 | feat/skill-truth-crystallization | 7 | 216 | diverged | open PR #575 | wait PR |
 | docs/insight-truth-tokens-asset | 1 | 216 | diverged | open PR #574 | wait PR |
@@ -157,3 +158,4 @@ ahead==0 vs origin/main, либо remote night-triage/claude без open PR.
 | docs/angelina-hostess-meeting | 1 | 9 | diverged | ahead>0, no open PR | salvage commits first |
 | docs/stitch-tasks-audit-canon | 1 | 4 | diverged | ahead>0, no open PR | salvage commits first |
 | origin/integration/pre-tj-live-79 | 1 | 1061 | diverged | ahead>0, no open PR | salvage commits first |
+
