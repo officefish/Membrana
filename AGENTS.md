@@ -45,6 +45,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Ритм утро/вечер/неделя (полный регламент) | см. `docs/DEVELOPER_RHYTHM.md` |
 | Git hygiene audit (ветки) | entry: [`docs/audit/git/AGENT_PROMPT.md`](docs/audit/git/AGENT_PROMPT.md) · контейнер `docs/audit/git/` · `yarn repo:branches` / `yarn repo:branches:decompose` · skills `membrana-branch-audit` / `membrana-branch-decompose` |
 | Tasks registry audit (задачи) | entry: [`docs/audit/tasks/AGENT_PROMPT.md`](docs/audit/tasks/AGENT_PROMPT.md) · контейнер `docs/audit/tasks/` · `yarn tasks:decompose` / `yarn tasks:audit` · skills `membrana-tasks-decompose` / `membrana-tasks-audit` |
+| Antipattern bestiary | entry: [`docs/audit/bestiary/AGENT_PROMPT.md`](docs/audit/bestiary/AGENT_PROMPT.md) · контейнер `docs/audit/bestiary/` · engines `scripts/lib/lens-bestiary.mjs` · эпик `bestiary-container` (#878) |
 | Scripts container (группа scripts/) | entry: [`scripts/AGENT_PROMPT.md`](scripts/AGENT_PROMPT.md) · **один дом** `scripts/` (не `docs/audit/scripts/`) · `yarn scripts:registry --report` ≡ `yarn tooling:overview --report` · паттерн [`GROUP_CONTAINERIZATION`](docs/patterns/GROUP_CONTAINERIZATION.md) |
 
 ### Agent tooling

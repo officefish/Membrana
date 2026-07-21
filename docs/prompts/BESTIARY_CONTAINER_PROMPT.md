@@ -42,7 +42,7 @@
 
 ## Acceptance criteria (эпик)
 
-- [ ] Контейнер + чеклист GROUP_CONTAINERIZATION
+- [x] Контейнер + чеклист GROUP_CONTAINERIZATION (B1, ждёт LGTM)
 - [ ] Каждый class в `BESTIARY` имеет ≥1 specimen, детектор ловит
 - [ ] Самопроверка: aim на `specimens/` не silent-green при живых бетиях
 - [ ] CLOSURE; ACTIVE cleared
