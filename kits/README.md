@@ -66,7 +66,7 @@ kits/
 
 | Кит | Держатель | Статус |
 |-----|-----------|--------|
-| — | — | дом создан (K1 / #816); первый жилец — K3 `angelina-morning` |
+| [`angelina-morning/`](./angelina-morning/) | angelina | ✅ первый жилец (K3 / #818); 13 roots · pins подграф |
 
 ## Зубы (по фазам эпика)
 
@@ -74,7 +74,7 @@ kits/
 |-----|------|--------|
 | Схема манифеста (этот файл + schema) | K1 | ✅ |
 | Аудит полноты подграфа path→SHA | K2 | ✅ `yarn kits:audit` |
-| Жилец + режимы latest/pinned | K3 | ⬜ |
+| Жилец + режимы latest/pinned | K3 | ✅ `kits/angelina-morning/` |
 | `kitVersion` с процедуры утра | K4 | ⬜ |
 
 ## Аудит (K2)

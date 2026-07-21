@@ -9,11 +9,11 @@
 | **Started** | 2026-07-21 |
 | **Size** | L |
 | **Lead epic** | vesnin |
-| **Branch** | `feature/kam-k2-audit` (фаза K2) |
+| **Branch** | `feature/kam-k3-first-kit` (фаза K3) |
 
 **Prompt эпика:** [`KITS_ANGELINA_MORNING_PROMPT.md`](../../prompts/KITS_ANGELINA_MORNING_PROMPT.md)  
 **Семя:** [#761](https://github.com/officefish/Membrana/issues/761) · [`PINNED_SUBGRAPH_VERSIONING`](../../patterns/PINNED_SUBGRAPH_VERSIONING.md)  
-**Код:** `scripts/` · **киты:** `kits/` (K1+)
+**Код:** `scripts/` · **киты:** `kits/` (K1+) · **жилец:** `kits/angelina-morning/`
 
 ---
 
@@ -33,7 +33,7 @@
 | **K0** | `kam-k0-brief` | [#815](https://github.com/officefish/Membrana/issues/815) | vesnin | ✅ done · [PR #833](https://github.com/officefish/Membrana/pull/833) |
 | **K1** | `kam-k1-home` | [#816](https://github.com/officefish/Membrana/issues/816) | ozhegov | ✅ done · [PR #836](https://github.com/officefish/Membrana/pull/836) |
 | **K2** | `kam-k2-audit` | [#817](https://github.com/officefish/Membrana/issues/817) | dynin | ✅ done · [PR #838](https://github.com/officefish/Membrana/pull/838) |
-| **K3** | `kam-k3-first-kit` | [#818](https://github.com/officefish/Membrana/issues/818) | angelina | ⬜ next |
+| **K3** | `kam-k3-first-kit` | [#818](https://github.com/officefish/Membrana/issues/818) | angelina | ✅ LGTM — ship |
 | **K4** | `kam-k4-wire` | [#819](https://github.com/officefish/Membrana/issues/819) | ozhegov | ⬜ |
 | **K5** | `kam-k5-closure` | [#820](https://github.com/officefish/Membrana/issues/820) | vesnin | ⬜ |
 
@@ -58,12 +58,18 @@
 - [x] Чеклист PINNED_SUBGRAPH в `kits/README` (п.3, п.7)
 - [x] LGTM dynin (owner ok 2026-07-21)
 
+## Gate checklist (K3)
+
+- [x] `kits/angelina-morning/` README + MANIFEST (`leadPersona: angelina`)
+- [x] 13 roots; `yarn kits:audit --id angelina-morning` → 0 blocking
+- [x] latest/pinned описаны в README жильца
+- [x] LGTM angelina (owner ok 2026-07-21)
+
 ---
 
 ## Первые команды
 
 ```bash
-yarn kits:audit
-yarn kits:audit --mode latest
-node --test scripts/kit-subgraph-audit.test.mjs
+yarn kits:audit --id angelina-morning
+yarn kits:audit --id angelina-morning --mode latest
 ```
