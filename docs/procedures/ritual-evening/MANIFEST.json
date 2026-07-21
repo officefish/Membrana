@@ -1,0 +1,17 @@
+{
+  "id": "ritual-evening",
+  "leadPersona": "angelina",
+  "kitVersion": null,
+  "engines": [
+    "scripts/ritual-evening-run.mjs",
+    "scripts/archive-daily-day-artifacts.mjs",
+    "scripts/code-review.mjs",
+    "scripts/archive-daily-code-review.mjs",
+    "scripts/task-close-github-issues.mjs",
+    "scripts/team-evening-feedback.mjs"
+  ],
+  "precedents": [
+    "docs/seanses/team-evening-feedback-2026-07-17.md",
+    "docs/seanses/team-evening-feedback-2026-07-18.md"
+  ]
+}
