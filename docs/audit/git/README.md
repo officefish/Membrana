@@ -38,7 +38,7 @@ docs/audit/git/
 2. Приложить / указать: `docs/audit/git/AGENT_PROMPT.md`.
 3. Сценарии:
    - **A:** «Собери реестр веток по категориям» → перезаписывает `registry/BRANCHES_DECOMPOSE_LIST.md` (опционально dated `BRANCHES_DECOMPOSE_LIST-YYYY-MM-DD.md`).
-   - **B:** «Глубокий разбор категории N» — **N (1–7) или ясное имя категории обязательны**; без них агент спрашивает и STOP. После подтверждения читает `registry/BRANCHES_DECOMPOSE_LIST.md`, пишет `analysis/…`. Не угадывать категорию из истории чата.
+   - **B:** «Глубокий разбор категории N». **HARD GATE:** категория (1–7 или ясное имя) обязана быть в **текущем** сообщении. Иначе STOP: спросить какую из 1–7; **ничего** не писать в `analysis/`; **не** запускать `git diff`/churn. Запрещено угадывать из истории сессии. Только после явной категории → `registry/BRANCHES_DECOMPOSE_LIST.md` → `analysis/…`.
 
 Связанный tooling: `yarn repo:branches:decompose`, скилл `membrana-branch-decompose`.
 Указатель в процессе: [`docs/CONTRIBUTING.md`](../../CONTRIBUTING.md) → «Гигиена веток».

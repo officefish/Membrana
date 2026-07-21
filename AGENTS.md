@@ -120,7 +120,9 @@ PR мёржатся **squash** → коммиты ветки не становя
 | Контейнер | `docs/audit/git/` — `registry/` (снимки), `analysis/` (deep), `cache/` (gitignore) |
 | Tooling | `yarn repo:branches` · skill `membrana-branch-audit`; `yarn repo:branches:decompose` · skill `membrana-branch-decompose` |
 | Scenario A | реестр 7 категорий → overwrite `registry/BRANCHES_DECOMPOSE_LIST.md` (+ опционально dated `BRANCHES_DECOMPOSE_LIST-YYYY-MM-DD.md`) |
-| Scenario B | deep по категории N → `analysis/…`; **без явного N (1–7) или имени категории — спросить и STOP** (не брать из истории чата); membership только из `registry/BRANCHES_DECOMPOSE_LIST.md` |
+| Scenario B | deep по категории N → `analysis/…`; membership только из `registry/BRANCHES_DECOMPOSE_LIST.md` |
+
+**Scenario B HARD GATE:** если в **текущем** сообщении нет явной категории (1–7 или ясное имя) → немедленный STOP: спросить какую из 1–7; **ничего** не писать в `analysis/`; **не** запускать `git diff`/churn. Запрещено угадывать из прошлых реплик сессии. Анализ — только после явной категории в этом сообщении.
 
 `yarn repo:clean --execute` — только после явного ok человека (см. граблю dry-run выше).
 
