@@ -4,7 +4,7 @@
 > Цепь: D0→D4 (#856–#860). Семя: [#761](https://github.com/officefish/Membrana/issues/761).  
 > Прецедент: `kits-angelina-morning` (#814). Паттерн: [`PINNED_SUBGRAPH_VERSIONING`](../patterns/PINNED_SUBGRAPH_VERSIONING.md).  
 > Автор снов: [`DREAM_MASTER_PROMPT.md`](./DREAM_MASTER_PROMPT.md) («Мастер снов», не VT-персона).  
-> Статус: **D0** · OPEN [`kits-dream-master-2026-07-21`](../day-sprint/kits-dream-master-2026-07-21/OPEN.md).
+> Статус: **D1** · OPEN [`kits-dream-master-2026-07-21`](../day-sprint/kits-dream-master-2026-07-21/OPEN.md).
 
 ---
 
@@ -60,28 +60,31 @@
 
 Дом `kits/` и K2-аудит **не** повторяем — уже в main.
 
-## Состав кита dream-master (черновик корней)
+## Состав кита dream-master (D1 — утверждено)
 
-Минимум (scripts-плоскость):
+### Roots (точки входа)
 
-| Корень | yarn / файл |
-|--------|-------------|
-| CLI снов | `scripts/dreams.mjs` (`dreams:tick`, `dreams:digest`) |
-| select | `scripts/lib/dreams-select.mjs` |
-| tick | `scripts/lib/dreams-tick.mjs` |
-| format | `scripts/lib/dreams-format.mjs` |
-| providers | `scripts/lib/dreams-providers.mjs` |
-| log / author | `scripts/lib/dreams-log.mjs` |
-| промпт автора | `docs/prompts/DREAM_MASTER_PROMPT.md` (*если* аудит научится пинить non-mjs — иначе держать в precedents процедуры, не в pins) |
+| Root | yarn | Замечание |
+|------|------|-----------|
+| `scripts/dreams.mjs` | `dreams:tick`, `dreams:digest` | единственный root; подкоманды CLI |
 
-Транзитивные импорты `scripts/lib/*` — в `pins` автоматически (как у angelina-morning).
+`scripts/lib/dreams-{select,tick,format,providers,log}.mjs` — **не** отдельные roots:
+входят в `pins` замыканием статических импортов (`yarn kits:audit`).
 
-**Опционально / gated (D1):**
+Замер замыкания на 2026-07-21 (~11 узлов): среди транзитивов есть
+`scripts/lib/night-research.mjs` (`enumeratePairs`), `llm-probe.mjs`,
+`_anthropic-env.mjs`, … — это **зависимости CLI снов**, не продукт
+`yarn night:research`.
 
-- `night:research` (+ lib) — только если владелец скажет «один ночной исследовательский кит»;
-  иначе отдельный будущий `kits/night-research/`.
-- Ссылки на `packages/background-office/.../dreams/*` — в README процедуры как runtime,
-  не в pins кита (слой scripts ≠ Nest), пока нет политики пина cross-package.
+### Вне кита (out-of-kit)
+
+| Что | Куда вместо |
+|-----|-------------|
+| Night Build (`night:open`…`close`, land-reports, always-yes) | свой контур / не pins |
+| CLI `scripts/night-research.mjs` (`yarn night:research*`) | будущий `kits/night-research/` или отдельный ok |
+| Nest `packages/background-office/.../dreams/*` | runtime office; README процедуры (D3), не pins |
+| `docs/prompts/DREAM_MASTER_PROMPT.md` | **precedents[]** процедуры `ritual-dreams` (D3), не pins — нет static import `.md`; версия = `DREAM_MASTER_VERSION` в тексте промпта |
+| `docs/truth/registry.json` (данные пар) | data-чтение runtime; слепая зона audit (как layer-direction) |
 
 ## Гейт готовности (до D2)
 
