@@ -4,16 +4,20 @@
 
 ## Цель
 
-Детерминированная команда (расширение `tooling:overview` или соседний yarn-скрипт) с `--report`
-пишет канонический реестр в `scripts/registry/` сама (как `repo:branches:decompose --report`).
+Детерминированная команда с `--report` пишет канонический реестр в `scripts/registry/` сама
+(как `repo:branches:decompose --report`).
+
+Канон: `yarn tooling:overview --report` ≡ `yarn scripts:registry --report`
+(общий `writeScriptsRegistryReport`). Stdout overview для людей не ломать и не коммитить в AGENTS.
 
 ## Запрещено
 
-Писать report в корень / `docs/archive/`; ломать существующий stdout overview для людей.
+Писать report в корень / `docs/archive/`; ломать существующий stdout overview для людей;
+коммитить вывод overview как «инвентарь в AGENTS».
 
 ## DoD
 
-- [ ] `--report` (или эквивалент) → `scripts/registry/SCRIPTS_LIST.md`.
-- [ ] Пункт 5 чеклиста в `scripts/README` → ✅.
-- [ ] Тест/smoke на запись отчёта.
-- [ ] LGTM vesnin.
+- [x] `--report` → `scripts/registry/SCRIPTS_LIST.md` (`tooling:overview` + `scripts:registry`).
+- [x] Пункт 5 чеклиста в `scripts/README` → ✅.
+- [x] Тест/smoke на запись отчёта (`tooling-overview.test.mjs`).
+- [x] LGTM vesnin.

@@ -76,16 +76,51 @@
         "dynin",
         "ozhegov"
       ],
-      "notes": "",
+      "notes": "S2 принято vesnin 2026-07-21. tooling:overview --report ≡ scripts:registry --report.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "scripts-boundary-container"
     },
     {
-      "notes": "S0 принято ozhegov 2026-07-21 (термины дом/SoT/реестр/кит). Артефакты: scripts/README.md, AGENT_PROMPT.md, cache/, registry/, analysis/.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
-      "parentEpic": "scripts-boundary-container"
+      "promptPath": "docs/prompts/SBC_S0_CONTRACT_PROMPT.md",
+      "githubIssue": 792,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-21",
+      "archivedAt": "2026-07-21",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "S0 принято ozhegov 2026-07-21 (термины дом/SoT/реестр/кит).",
+      "archiveNotes": "PR #797, LGTM ozhegov; Issue #792 closed",
+      "githubIssueClosedAt": "2026-07-21T15:46:30Z",
+      "parentEpic": "scripts-boundary-container",
+      "id": "sbc-s0-contract",
+      "title": "S0: контракт контейнера scripts/ — README + AGENT_PROMPT + cache"
+    },
+    {
+      "promptPath": "docs/prompts/SBC_S1_REGISTRY_PROMPT.md",
+      "githubIssue": 793,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-21",
+      "archivedAt": "2026-07-21",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "S1 принято dynin 2026-07-21. yarn scripts:registry --report.",
+      "archiveNotes": "PR #799, LGTM dynin; Issue #793 closed",
+      "githubIssueClosedAt": "2026-07-21T16:09:46Z",
+      "parentEpic": "scripts-boundary-container",
+      "id": "sbc-s1-registry",
+      "title": "S1: derived-реестр scripts/registry из кода (tooling:overview --report)"
     },
     {
       "id": "pl-r5-migration",

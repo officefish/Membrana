@@ -225,4 +225,6 @@ export const SCRIPTS_REGISTRY_HELP = `Usage: yarn scripts:registry --report [fil
   --dated             also write scripts/registry/SCRIPTS_LIST-YYYY-MM-DD.md
   --json              print inventory JSON to stdout (no write unless --report)
   --cache-overview    write yarn tooling:overview --json into scripts/cache/ (not SoT)
+
+  Эквивалент записи реестра: yarn tooling:overview --report  (S2 — тот же SoT-снимок)
 `;
