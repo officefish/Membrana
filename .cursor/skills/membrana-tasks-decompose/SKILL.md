@@ -18,6 +18,11 @@ description: >-
 (ревизия мёртвых душ — другой процесс), паспорт движка
 [`LINEAR_TASKS_GEAR.md`](../../../docs/tasks/LINEAR_TASKS_GEAR.md).
 
+**Контейнер аудита:** [`docs/audit/tasks/`](../../../docs/audit/tasks/README.md) —
+снимки реестра пишутся `--report docs/audit/tasks/registry/TASKS_DECOMPOSE_LIST.md`
+(overwrite; dated-копии рядом), сырой `--json` → `cache/` (gitignore). Сценарии и
+HARD GATE — [`AGENT_PROMPT.md`](../../../docs/audit/tasks/AGENT_PROMPT.md).
+
 ## Неподвижные правила
 
 - **Таблица — обязательная часть ответа.** Скрипт печатает markdown-таблицу

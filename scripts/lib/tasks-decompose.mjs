@@ -81,3 +81,28 @@ export function formatTable(result, opts = {}) {
     ...rows,
   ].join('\n');
 }
+
+/**
+ * Полный markdown-отчёт для реестра контейнера (Scenario A):
+ * Meta → сводная таблица → полные списки категорий → «вне категорий».
+ *
+ * @param {{buckets: {name: string, tasks: object[]}[], unassigned: object[], total: number}} result
+ * @param {Record<string, string>} meta пары Поле→Значение (Date, Base SHA, Source, …)
+ * @returns {string}
+ */
+export function renderReport(result, meta = {}) {
+  const parts = ['# TASKS_DECOMPOSE_LIST — реестр декомпозиции задач', '', '## Meta', '', '| Field | Value |', '|-------|-------|'];
+  for (const [k, v] of Object.entries(meta)) parts.push(`| ${k} | ${v} |`);
+  parts.push('', '## Summary', '', formatTable(result), '');
+  for (const b of result.buckets) {
+    parts.push(`## ${b.name} (${b.tasks.length})`, '');
+    for (const t of b.tasks) parts.push(`- \`${t.id}\`${t.size ? ` [${t.size}]` : ''}${t.githubIssue ? ` #${t.githubIssue}` : ''} — ${t.title ?? ''}`);
+    parts.push('');
+  }
+  if (result.unassigned.length > 0) {
+    parts.push(`## ВНЕ КАТЕГОРИЙ (${result.unassigned.length}) — дополнить конфиг`, '');
+    for (const t of result.unassigned) parts.push(`- \`${t.id}\` — ${t.title ?? ''}`);
+    parts.push('');
+  }
+  return parts.join('\n');
+}

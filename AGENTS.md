@@ -44,6 +44,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Центральная задача дня (после standup) | `yarn main-day-issue` → `docs/MAIN_DAY_ISSUE.md`; буфер: `docs/CURRENT_TASK.md`; `yarn ritual:day` |
 | Ритм утро/вечер/неделя (полный регламент) | см. `docs/DEVELOPER_RHYTHM.md` |
 | Git hygiene audit (ветки) | entry: [`docs/audit/git/AGENT_PROMPT.md`](docs/audit/git/AGENT_PROMPT.md) · контейнер `docs/audit/git/` · `yarn repo:branches` / `yarn repo:branches:decompose` · skills `membrana-branch-audit` / `membrana-branch-decompose` |
+| Tasks registry audit (задачи) | entry: [`docs/audit/tasks/AGENT_PROMPT.md`](docs/audit/tasks/AGENT_PROMPT.md) · контейнер `docs/audit/tasks/` · `yarn tasks:decompose` / `yarn tasks:audit` · skills `membrana-tasks-decompose` / `membrana-tasks-audit` |
 
 ### Agent tooling
 
@@ -125,6 +126,21 @@ PR мёржатся **squash** → коммиты ветки не становя
 **Scenario B HARD GATE:** если в **текущем** сообщении нет явной категории (1–7 или ясное имя) → немедленный STOP: спросить какую из 1–7; **ничего** не писать в `analysis/`; **не** запускать `git diff`/churn. Запрещено угадывать из прошлых реплик сессии. Анализ — только после явной категории в этом сообщении.
 
 `yarn repo:clean --execute` — только после явного ok человека (см. граблю dry-run выше).
+
+#### Tasks registry audit — контейнер и агент
+
+Аудит реестра задач — по тому же образцу; снимки и разборы не класть вне контейнера. Канон:
+
+| Что | Куда |
+|-----|------|
+| Entry агента | [`docs/audit/tasks/AGENT_PROMPT.md`](docs/audit/tasks/AGENT_PROMPT.md) |
+| Контейнер | `docs/audit/tasks/` — `registry/` (снимки), `analysis/` (deep + ревизии), `cache/` (gitignore) |
+| Tooling | `yarn tasks:decompose` · skill `membrana-tasks-decompose`; `yarn tasks:audit` · skill `membrana-tasks-audit` |
+| Scenario A | реестр категорий → `yarn tasks:decompose --report docs/audit/tasks/registry/TASKS_DECOMPOSE_LIST.md` (overwrite) |
+| Scenario B | deep по категории N → `analysis/…`; membership только из `registry/TASKS_DECOMPOSE_LIST.md`; тот же HARD GATE, что у git-аудита |
+| Scenario C | ревизия устаревших карточек → канон [`REGISTRY_AUDIT_PROMPT.md`](docs/prompts/REGISTRY_AUDIT_PROMPT.md); итог в `analysis/registry-audit-YYYY-MM-DD.md` |
+
+Массовая архивация — слово владельца; каждая карточка — `task:archive --notes` со свидетельством (SHA/PR).
 
 #### Windows-сессия (PowerShell 5.1) — канон
 

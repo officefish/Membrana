@@ -4,7 +4,7 @@ import { dirname, join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { compileCategories, decompose, formatTable } from './lib/tasks-decompose.mjs';
+import { compileCategories, decompose, formatTable, renderReport } from './lib/tasks-decompose.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -53,6 +53,15 @@ test('пустой вход: доли «—», итог 0, таблица не �
 test('битый конфиг — ошибка, а не тихий пустой результат', () => {
   assert.throws(() => compileCategories({ categories: [] }), /≥2 категорий/);
   assert.throws(() => compileCategories({ categories: [{ name: 'x', patterns: [] }, { name: 'y', patterns: ['^y'] }] }), /без name или patterns/);
+});
+
+test('renderReport: Meta из пар, Summary-таблица, полные списки, ВНЕ КАТЕГОРИЙ', () => {
+  const r = decompose([{ id: 'a-1', size: 'M', githubIssue: 42, title: 'Альфа-задача' }, { id: 'orphan' }], CATS);
+  const md = renderReport(r, { Date: '2026-07-21', Active: '2' });
+  assert.match(md, /\| Date \| 2026-07-21 \|/);
+  assert.match(md, /## Summary/);
+  assert.match(md, /## Альфа \(1\)\n\n- `a-1` \[M\] #42 — Альфа-задача/);
+  assert.match(md, /## ВНЕ КАТЕГОРИЙ \(1\) — дополнить конфиг\n\n- `orphan` — /);
 });
 
 test('боевой конфиг валиден: парсится, ≥2 категорий, все regexp компилируются', () => {
