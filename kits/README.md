@@ -67,6 +67,7 @@ kits/
 | Кит | Держатель | Статус |
 |-----|-----------|--------|
 | [`angelina-morning/`](./angelina-morning/) | angelina | ✅ первый жилец (K3 / #818); 13 roots · pins подграф |
+| [`dream-master/`](./dream-master/) | dynin | ✅ второй жилец (D2 / #858); root `dreams.mjs` · ~10 pins |
 
 ## Зубы (по фазам эпика)
 
