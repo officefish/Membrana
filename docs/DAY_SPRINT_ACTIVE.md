@@ -1,6 +1,5 @@
 # Active day sprint
 
-> **Активен:** `scripts-boundary-container-2026-07-21`  
-> **OPEN:** [`docs/day-sprint/scripts-boundary-container-2026-07-21/OPEN.md`](./day-sprint/scripts-boundary-container-2026-07-21/OPEN.md)  
-> **Эпик реестра:** `scripts-boundary-container` · фаза в работе: **S1** (`sbc-s1-registry`, lead dynin)  
-> **Ветка:** `feature/sbc-s1-registry`
+> **Нет активного day-sprint.**  
+> Последний закрыт: [`kits-angelina-morning-2026-07-21`](./day-sprint/kits-angelina-morning-2026-07-21/CLOSURE.md)  
+> (эпик `kits-angelina-morning` · #814 · K0–K5 · 2026-07-21).

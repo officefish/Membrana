@@ -16,8 +16,10 @@
 | **Единица учёта скрипта** | Имя yarn-скрипта в корневом `package.json` и/или путь файла под `scripts/` |
 | **Реестр** | Производный снимок «текущего» состава группы (`registry/`), не источник истины |
 | **Источник истины** | Файловая система `scripts/**` + записи `"scripts"` в корневом `package.json` |
-| **Кит** | Именованный набор скриптов/точек входа под задачу (контракт манифеста — **pl-r3**, не изобретать параллельный) |
-| **Ядро (core) kits** | GitHub Releases (+ Actions); runtime cron — office. Код кита остаётся в `scripts/` |
+| **Кит** | Именованный набор точек входа под задачу; **слой-дом** [`kits/`](../kits/README.md) (rank 1 в [`layer-rules.json`](../docs/procedures/layer-rules.json)). Код движков — плоский `scripts/` |
+| **Кит-манифест** | Контракт Р3 + схема в доме слоя: [`kits/MANIFEST.schema.json`](../kits/MANIFEST.schema.json). Здесь, в `scripts/`, JSON-схемы кита **нет** |
+| **kitVersion** | Поле `MANIFEST.json` процедуры: пин набора (`null` до проводки K4). Валидирует `validateProcedure` |
+| **Ядро (core) kits** | GitHub Releases (+ Actions) — раздача пина; runtime cron — office. Версия единицы — [`PINNED_SUBGRAPH_VERSIONING`](../docs/patterns/PINNED_SUBGRAPH_VERSIONING.md) |
 
 ## Соответствие паттерну GROUP_CONTAINERIZATION
 
@@ -25,14 +27,37 @@
 2. ✅ README-контракт с таблицей «что писать / в git?» (ниже).
 3. ✅ Overwrite-реестр `registry/SCRIPTS_LIST.md` — `yarn scripts:registry --report`.
 4. ✅ `cache/` под gitignore (этот файл + `.gitkeep`).
-5. ⚠ Инструменты пишут в контейнер сами (`--report`) — **фаза S2** (S1 уже пишет через `scripts:registry --report`; S2 — выровнять с `tooling:overview`).
+5. ✅ Инструменты пишут в контейнер сами: `yarn scripts:registry --report` ≡ `yarn tooling:overview --report`.
 6. ✅ `AGENT_PROMPT.md` со сценариями; у опасных — HARD GATE.
 7. ✅ Массовые мутации (массовое удаление/переименование скриптов) — только по слову владельца.
-8. ⚠ Провода в `AGENTS.md` / скиллы — **фаза S4** (минимальная отсылка допустима после S0).
+8. ✅ Провода: `AGENTS.md` (таблица + § Scripts container + грабля «второй дом»),
+   [`docs/audit/README.md`](../docs/audit/README.md), [`docs/CONTRIBUTING.md`](../docs/CONTRIBUTING.md)
+   («Гигиена веток» / контейнеры), указатель в [`.cursor/skills/README.md`](../.cursor/skills/README.md).
 
 **Граница с процедурным слоем:** процедуры живут в `docs/procedures/` (эпик `procedural-layer-impl`).
-Слой scripts ← вызывается процедурами; направление слоёв и контракт kit-manifest —
-карточка `pl-r3-boundary` (#784). Фаза **S3** не стартует контракт кита с нуля.
+Слой scripts ← вызывается процедурами; направление слоёв — `yarn check:layer-direction`
+([`layer-rules.json`](../docs/procedures/layer-rules.json), PR #808 / архив `pl-r3-boundary`).
+
+## Киты — канон Р3 (не второй схемный остров)
+
+Канон контракта кит-манифеста зафиксирован процедурным слоем (Р3, #784 / PR #808),
+не контейнером `scripts/`:
+
+| Адрес | Что |
+|-------|-----|
+| [`kits/README.md`](../kits/README.md) | Дом слоя (K1); жильцы `kits/<id>/` |
+| [`kits/MANIFEST.schema.json`](../kits/MANIFEST.schema.json) | Единственная JSON Schema кит-манифеста |
+| [`docs/procedures/README.md`](../docs/procedures/README.md) § «Граница слоёв и киты» | Контракт Р3: BLOCK без манифеста / с битыми ссылками |
+| [`docs/procedures/layer-rules.json`](../docs/procedures/layer-rules.json) | Ранг `кит` (`kits/`); ребро процедура→кит через `kitVersion` |
+| [`docs/procedures/ritual-day/MANIFEST.json`](../docs/procedures/ritual-day/MANIFEST.json) | Потребитель: `kitVersion: kits/angelina-morning` (K4) |
+| [`docs/procedures/*/MANIFEST.json`](../docs/procedures/ritual-evening/MANIFEST.json) | Прочие: `kitVersion` часто `null` |
+| [`PINNED_SUBGRAPH_VERSIONING`](../docs/patterns/PINNED_SUBGRAPH_VERSIONING.md) | Подграф путь→SHA (#761) |
+| `yarn kits:audit` | Зуб полноты (`scripts/lib/kit-subgraph-audit.mjs`, K2 / #817) |
+| [`attribution/`](../docs/procedures/attribution/README.md) | Кандидат-потребитель (механизм парсера — T9) |
+
+**Запрещено в `scripts/`:** заводить `kits.schema.json` / параллельный формат манифеста
+«временно» — схема живёт только в `kits/`. Код движков по-прежнему плоский здесь.
+Разбор выравнивания S3: [`analysis/kits-align-pl-r3-2026-07-21.md`](./analysis/kits-align-pl-r3-2026-07-21.md).
 
 ## Layout
 
@@ -66,9 +91,9 @@ scripts/
 
 ## Как вызвать агента
 
-1. Ветка от `main` (или worktree). Сверить соседей: `yarn neighbors` (особенно `pl-r3-boundary`).
-2. Указать: `scripts/AGENT_PROMPT.md`.
+1. Ветка от `main` (или worktree). Сверить соседей: `yarn neighbors`.
+2. Указать: [`scripts/AGENT_PROMPT.md`](./AGENT_PROMPT.md) (тот же entry из `AGENTS.md`).
 3. Сценарии — в AGENT_PROMPT.
 
-Связанный tooling: `yarn scripts:registry --report` · `yarn tooling:overview` · `yarn test:scripts`.
-Указатель процесса: эпик `scripts-boundary-container`, спринт OPEN в `docs/day-sprint/`.
+Связанный tooling: `yarn scripts:registry --report` · `yarn tooling:overview [--report]` · `yarn test:scripts`.
+Операторский вход: `AGENTS.md` → «Scripts container». Спринт: `docs/day-sprint/scripts-boundary-container-2026-07-21/`.

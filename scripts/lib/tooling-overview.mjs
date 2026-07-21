@@ -15,7 +15,10 @@
  * норма уместна (`membrana-tooling-needs`, TF-7).
  *
  * Ядро чистое: на вход — уже прочитанные тексты, на выход — строка. I/O в обвязке.
+ * S2: CLI `--report` (обвязка) пишет контейнерный SCRIPTS_LIST — это не снимок AGENTS.
  */
+
+import { DEFAULT_SCRIPTS_REPORT } from './scripts-inventory.mjs';
 
 /** Скрипты, не относящиеся к агентскому циклу (продуктовая сборка/деплой/датасеты). */
 const NOISE_PREFIXES = [
@@ -117,3 +120,39 @@ export function buildToolingOverview(input) {
   );
   return lines.join('\n');
 }
+
+/**
+ * CLI-флаги tooling:overview.
+ * `--report` пишет канон SCRIPTS_LIST в контейнер (S2); stdout overview не отключается.
+ *
+ * @param {string[]} argv
+ */
+export function parseToolingOverviewCli(argv) {
+  const out = { help: false, json: false, report: null };
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    if (a === '--help' || a === '-h') out.help = true;
+    else if (a === '--json') out.json = true;
+    else if (a === '--report') {
+      const next = argv[i + 1];
+      if (next && !next.startsWith('-')) {
+        out.report = next;
+        i++;
+      } else {
+        out.report = DEFAULT_SCRIPTS_REPORT;
+      }
+    } else if (a.startsWith('--report=')) {
+      out.report = a.slice('--report='.length) || DEFAULT_SCRIPTS_REPORT;
+    }
+  }
+  return out;
+}
+
+export const TOOLING_OVERVIEW_HELP = `Usage: yarn tooling:overview [--json] [--report [file]]
+
+  Live agent-tooling inventory on stdout (never a committed AGENTS snapshot).
+
+  --json              machine-readable agent scripts / libs / hooks
+  --report [file]     also write scripts container registry (default: ${DEFAULT_SCRIPTS_REPORT})
+                      Same SoT snapshot as \`yarn scripts:registry --report\` (S2 wiring).
+`;

@@ -39,6 +39,16 @@
       ]
     },
     {
+      "group": "Git — branch cases",
+      "pages": [
+        "git/cookbooks/branch-kind-dictionary",
+        "git/cookbooks/branch-format-tags",
+        "git/cookbooks/branch-persona-grammar",
+        "git/cookbooks/branch-open-pr-vs-salvage",
+        "git/cookbooks/branch-anti-feature-agent"
+      ]
+    },
+    {
       "group": "Nodes — index",
       "pages": ["device-board/nodes/index"]
     },

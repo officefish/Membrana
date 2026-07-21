@@ -1,0 +1,21 @@
+{
+  "id": "branch-mintlify-instructions",
+  "owner": "docs/audit/git",
+  "pattern": "PINNED_SUBGRAPH_VERSIONING",
+  "note": "Пин подграфа инструкций Mintlify (engine), не hygiene-реестра и не kits/. Контейнер registry по паттерну вне области — исключение владельца: версионируем только cookbooks+docs.json+каталог случаев.",
+  "modeDefault": "latest",
+  "pinnedAt": "2026-07-21",
+  "roots": [
+    "apps/docs/docs.json",
+    "apps/docs/git/cookbooks/branch-kind-dictionary.mdx"
+  ],
+  "nodes": {
+    "apps/docs/docs.json": "7d68a2e59eeb4118668b0dc82c25daf0626e4890",
+    "apps/docs/git/cookbooks/branch-kind-dictionary.mdx": "876c693bcf7ac3960d609002307035ece4b77829",
+    "apps/docs/git/cookbooks/branch-format-tags.mdx": "b363dcf2b19f684e6c0bf74326ccce344de8d7f3",
+    "apps/docs/git/cookbooks/branch-persona-grammar.mdx": "a7286290b9c7144ae331cb40e7d993a5216add38",
+    "apps/docs/git/cookbooks/branch-open-pr-vs-salvage.mdx": "21a09f514dfa3a37931fbd9d591b18106b6b9990",
+    "apps/docs/git/cookbooks/branch-anti-feature-agent.mdx": "f8122143af26228fc0a60d54c967bec0d79ae9d5",
+    "docs/audit/git/analysis/branch-cases-catalog-2026-07-21.md": "5ceae5c13aca780c7901c59dba934160aefb05f1"
+  }
+}

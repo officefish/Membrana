@@ -1,0 +1,51 @@
+---
+title: Format tags — storm meeting night cowork
+description: Когда формат работы важнее kind — сегмент формата в имени ветки.
+---
+
+# Cookbook: теги формата
+
+Формат работы (шторм, заседание, ночь…) — **ортогонален** kind. Если формат
+главный сигнал для агента и шип-гейта, кодируй его в имени явно.
+
+См. индекс форматов в репозитории (`docs/FORMATS.md`).
+
+## Когда ставить формат-сегмент
+
+| Формат | Форма имени | Пример |
+|--------|-------------|--------|
+| Шторм | `[persona/]storm/<slug>` | `angelina/storm/branch-taxonomy-2026-07-21` |
+| Заседание | `[persona/]meeting/<slug>` | `vesnin/meeting/procedural-layer` |
+| Night / Night Hunt | `night/<slug>` · `night-hunt/<slug>` | `night-hunt/graph-drift-…` |
+| Truth | `truth/<slug>` | `truth/crystallization-20-07-worktree` |
+| Competition | `comp/<slug>` | `comp/comp-detection-alarm-2026-07-10/alpha` |
+| Sprint-артефакт | `sprint/<slug>` | `sprint/ritual-step-manifest-sf` |
+
+## Дыры ассортимента (live-примера может не быть)
+
+| Формат | Что делать |
+|--------|------------|
+| `cowork/*` | грамматика `cowork/<block-slug>`; не брать leftover после GC как образец |
+| `research` | сразу `research/<slug>` — не ждать «привычного» префикса из истории |
+| `hackathon` | тег формата сразу; слабый формат ≠ безымянная `feat/` |
+
+## Checklist
+
+<Steps>
+  <Step title="Формат важнее kind?">
+    Если ревьюеру нужен жанр работы (ночь, шторм) — сегмент формата обязателен.
+  </Step>
+  <Step title="Не прятать формат в slug">
+    `feat/storm-notes` хуже, чем `storm/branch-taxonomy-…`.
+  </Step>
+  <Step title="Дыра ≠ отмена грамматики">
+    Нет live `cowork/` — всё равно заводить каноническое имя при новой работе.
+  </Step>
+</Steps>
+
+## Антипример
+
+```text
+feat/night-graph-drift     ✗  night спрятан в slug
+docs/meeting-notes-only    ✗  формат только в prose, не в имени
+```

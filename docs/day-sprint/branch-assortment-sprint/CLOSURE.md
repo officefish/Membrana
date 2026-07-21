@@ -5,7 +5,7 @@
 | Epic | `branch-assortment-sprint` · #801 |
 | Date | 2026-07-21 |
 | Branch | `docs/audit-git-container-followup` |
-| Status | **WIP** — артефакты Ф0–Ф4 в дереве; archive после PR |
+| Status | **CLOSED** — PR [#810](https://github.com/officefish/Membrana/pull/810) merged `b292c49c` |
 
 ## Сделано
 
@@ -16,7 +16,7 @@
 | Ф2 | #804 | `analysis/branch-assortment-coverage-2026-07-21.md` |
 | Ф3 | #805 | README два измерения · AGENT_PROMPT §8 Assortment |
 | Ф4 | #806 | `analysis/branch-review-lens-2026-07-21.md` |
-| Ф5 | #807 | этот CLOSURE — **после** merge: archive команд ниже |
+| Ф5 | #807 | CLOSURE + archive PR #810 |
 
 ## Дыры покрытия (handoff)
 
@@ -24,14 +24,6 @@
 - `research` / `hackathon` — нет представителей в registry
 - `feature/*` жив, вне словаря kind Р4
 
-## Archive (после PR)
+## Archive
 
-```bash
-yarn task:archive ba-f0-brief --notes "PR #…"
-yarn task:archive ba-f1-inventory --notes "PR #…"
-yarn task:archive ba-f2-coverage --notes "PR #…"
-yarn task:archive ba-f3-assortment --notes "PR #…"
-yarn task:archive ba-f4-review-lens --notes "PR #…"
-yarn task:archive ba-f5-closure --notes "PR #…"
-yarn task:archive branch-assortment-sprint --notes "PR #…"
-```
+Выполнено 2026-07-21: все фазы + эпик → `yarn task:archive … --notes "PR #810 merged"`.

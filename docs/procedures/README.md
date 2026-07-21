@@ -32,8 +32,22 @@
 
 | Процедура | Держатель | Статус |
 |-----------|-----------|--------|
-| [`ritual-evening/`](./ritual-evening/README.md) | Ангелина | первый жилец (Р1) |
-| [`attribution/`](./attribution/README.md) | dynin | адрес домена ответственности (Р3); механизм — T9, будущий первый кит |
+| [`ritual-evening/`](./ritual-evening/README.md) | Ангелина | первый жилец (Р1); `kitVersion: null` |
+| [`ritual-day/`](./ritual-day/README.md) | Ангелина | утро; **`kitVersion`: `kits/angelina-morning`** (K4 / #819) |
+| [`attribution/`](./attribution/README.md) | dynin | адрес домена ответственности (Р3); механизм — T9 |
+
+## kitVersion (провод процедура → кит)
+
+| Значение | Смысл |
+|----------|--------|
+| `null` | процедура без пина кита (вечер, attribution — пока) |
+| `kits/<id>` | дом кита; обязан существовать `kits/<id>/MANIFEST.json` |
+
+`engines[]` — точка входа / движки **вне** полного subgraph кита (или единственный
+якорь цепочки). Дублировать все roots кита в `engines[]` **нельзя** — набор
+пинится манифестом кита (`yarn kits:audit`). Режимы: interactive → **latest**,
+autonomous → **pinned** (см. [`kits/angelina-morning`](../../kits/angelina-morning/README.md)).
+Зуб резолва `kitVersion` — в `validateProcedure`.
 
 ## Граница слоёв и киты (Р3)
 
@@ -44,10 +58,13 @@
 **Охват зуба (честно):** судит статические `import`-рёбра; data-чтения
 (`readFileSync` путей слоя скриптами-наблюдателями) и динамические ссылки —
 названные слепые зоны (`blindSpots` файла правил), расширение — #800.
-Слой `kits/` объявлен в правилах заранее и **спит до #761** (кода китов нет).
-**Контракт кит-манифеста** (на будущее, киты — #761): кит без манифеста или
-с нерезолвящимися ссылками — машинный BLOCK на ревью; манифест — главный
-diffable-артефакт, ведущий ревьюер смотрит его первым.
+Слой `kits/` объявлен в [`layer-rules.json`](./layer-rules.json) (ранг 1).
+**Дом слоя:** [`kits/`](../../kits/README.md) (K1 / #816); схема манифеста —
+[`kits/MANIFEST.schema.json`](../../kits/MANIFEST.schema.json). Первый жилец —
+`angelina-morning` (K3 / эпик #814). **Контракт кит-манифеста** (Р3): кит без
+манифеста или с нерезолвящимися ссылками — машинный BLOCK на ревью; манифест —
+главный diffable-артефакт, ведущий ревьюер смотрит его первым. Версия единицы —
+[`PINNED_SUBGRAPH_VERSIONING`](../patterns/PINNED_SUBGRAPH_VERSIONING.md) (#761).
 
 Реестр процедур (`registry.json`, статусы `migrated`/`legacy`) появится в Р5;
 до него список ведётся этой таблицей.

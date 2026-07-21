@@ -4,11 +4,12 @@
 
 ## Цель
 
-Контейнер `scripts/` виден из `AGENTS.md` (короткая грабля/указатель), при необходимости
-скилл-указатель, CONTRIBUTING или `docs/audit/README` — без простыни и без второго дома.
+Контейнер `scripts/` виден из `AGENTS.md` (короткая грабля/указатель), скилл-указатель
+без нового skill-файла, CONTRIBUTING + `docs/audit/README` — без простыни и без второго дома.
 
 ## DoD
 
-- [ ] Пункт 8 чеклиста в `scripts/README` → ✅.
-- [ ] Ссылка на `scripts/AGENT_PROMPT.md` из операторского входа.
-- [ ] LGTM vesnin.
+- [x] Пункт 8 чеклиста в `scripts/README` → ✅.
+- [x] Ссылка на `scripts/AGENT_PROMPT.md` из `AGENTS.md` (таблица + § Scripts container).
+- [x] Указатели: `docs/audit/README`, `docs/CONTRIBUTING`, `.cursor/skills/README`.
+- [x] LGTM vesnin.

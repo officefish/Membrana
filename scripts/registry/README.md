@@ -4,6 +4,8 @@
 
 ```bash
 yarn scripts:registry --report
+# ≡
+yarn tooling:overview --report
 ```
 
-Dated-копии: `SCRIPTS_LIST-YYYY-MM-DD.md` (`--dated`). Не править руками — пересобрать.
+Dated-копии: `SCRIPTS_LIST-YYYY-MM-DD.md` (`--dated` у `scripts:registry`). Не править руками — пересобрать.

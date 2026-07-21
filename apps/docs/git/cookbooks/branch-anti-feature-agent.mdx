@@ -1,0 +1,54 @@
+---
+title: Anti-patterns — feature/* and agent prefix
+description: Почему feature/* и cursor/codex/claude в имени ветки — вне канона.
+---
+
+# Cookbook: антипримеры `feature/*` и agent-prefix
+
+Два самых частых наследия одноагентной эпохи. Оба **живы** в истории и open
+ветках — и оба **не** образец для новой работы.
+
+## `feature/*` — дубль kind
+
+| | |
+|---|---|
+| Почему плохо | тот же смысл, что `feat`, но вне словаря Р4 |
+| На ревью | помечать MISSING / доработка имени, не «нормальный kind» |
+| Миграция мысли | `feature/foo` → `feat/foo` (вперёд; историю не переименовывать оптом) |
+
+```text
+feature/scripts-boundary-container   ✗
+feature/sbc-s1-registry              ✗
+feat/scripts-boundary-container      ✓  (если это feat)
+```
+
+## Agent-prefix — путает оси
+
+| | |
+|---|---|
+| Почему плохо | кодирует исполнителя, а не держателя ответственности |
+| Куда писать исполнителя | `Co-Authored-By` в коммите |
+| Куда писать держателя | `<persona>/…` или leadPersona карточки |
+
+```text
+cursor/fix-something     ✗
+codex/feat-whatever       ✗
+claude/docs-notes         ✗
+ozhegov/docs/notes        ✓
+```
+
+## Checklist
+
+<Steps>
+  <Step title="Новая ветка — только словарь kind">
+    `feat` `fix` `docs` `chore` `tooling` (+ формат-сегменты из соседней страницы).
+  </Step>
+  <Step title="Live feature/* не канонизировать">
+    Представитель в ассортименте ≠ разрешение плодить новые `feature/`.
+  </Step>
+  <Step title="Агент в commit trailer">
+    Имя ветки остаётся про работу и persona.
+  </Step>
+</Steps>
+
+Каталог кейсов: K6, H5 в `docs/audit/git/analysis/branch-cases-catalog-*.md`.
