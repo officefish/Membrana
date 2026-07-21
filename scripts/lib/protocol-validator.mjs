@@ -197,6 +197,14 @@ const CONCLUSION_IN_PREMISE_MARKERS =
  */
 export const PREMISES_SECTION_TITLE = 'Список посылок';
 
+/**
+ * Текст дефекта «нет секции посылок» — экспортирован константой, чтобы
+ * потребители (шаг посылок в consilium) матчили по значению, а не по хрупкой
+ * подстроке (ревью 21.07, P2).
+ */
+export const MISSING_PREMISES_PROBLEM =
+  'нет секции «список посылок» — вердикт не называет, на чём стоит';
+
 /** Заголовок секции посылок — регексп собран из {@link PREMISES_SECTION_TITLE}. */
 const PREMISES_HEADING_RE = new RegExp(PREMISES_SECTION_TITLE.replace(/\s+/gu, '\\s+'), 'iu');
 
@@ -255,7 +263,7 @@ export function meetingVerdictProblems(protocolMd, siblingIds = []) {
 
   const premises = premisesSection(protocolMd);
   if (premises === '') {
-    problems.push('нет секции «список посылок» — вердикт не называет, на чём стоит');
+    problems.push(MISSING_PREMISES_PROBLEM);
   } else if (CONCLUSION_IN_PREMISE_MARKERS.test(premises)) {
     problems.push(
       'в списке посылок есть ВЫВОД этой же комнаты (маркер «новое, здесь принятое») — ' +

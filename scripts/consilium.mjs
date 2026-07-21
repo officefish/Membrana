@@ -53,6 +53,12 @@ import {
   reconcileReplyCount,
   PREMISES_SECTION_TITLE,
 } from './lib/protocol-validator.mjs';
+import {
+  buildPremisesRepairPrompt,
+  buildRerunNotice,
+  insertPremisesSection,
+  onlyMissingPremises,
+} from './lib/consilium-premises.mjs';
 
 const MAX_PROMPT_SPEC_CHARS = 12_000;
 const MAX_VIRTUAL_TEAM_CHARS = 8_000;
@@ -597,43 +603,46 @@ async function main() {
     console.error(`→ консилиум · model: ${model}`);
   }
 
-  const bodyJson = {
-    model,
-    max_tokens: 16_384,
-    messages: [{ role: 'user', content: [{ type: 'text', text: promptText }] }],
-  };
-
-  let answer = '';
-  try {
-    const { ok, status, text } = await anthropicPost(
-      'https://api.anthropic.com/v1/messages',
-      {
-        headers: {
-          'content-type': 'application/json',
-          'x-api-key': key,
-          'anthropic-version': '2023-06-01',
+  /**
+   * Один ход комнаты: messages → текст ответа. null = HTTP/сетевая ошибка
+   * (exitCode уже выставлен; сокеты живы → return, не process.exit — см. ниже).
+   */
+  async function askRoom(messages) {
+    const bodyJson = { model, max_tokens: 16_384, messages };
+    try {
+      const { ok, status, text } = await anthropicPost(
+        'https://api.anthropic.com/v1/messages',
+        {
+          headers: {
+            'content-type': 'application/json',
+            'x-api-key': key,
+            'anthropic-version': '2023-06-01',
+          },
+          bodyJson,
         },
-        bodyJson,
-      },
-    );
-    if (!ok) {
-      printAnthropicHttpError(status, text);
-      // exitCode + return, а не process.exit(): сокеты HTTP-вызова ещё живы, и обрыв
-      // процесса роняет libuv на Windows ассертом UV_HANDLE_CLOSING → 127 вместо 1
-      // (тот же класс, что чинился в code-review.mjs). Это штатный путь «нет кредита».
+      );
+      if (!ok) {
+        printAnthropicHttpError(status, text);
+        // exitCode + return, а не process.exit(): сокеты HTTP-вызова ещё живы, и обрыв
+        // процесса роняет libuv на Windows ассертом UV_HANDLE_CLOSING → 127 вместо 1
+        // (тот же класс, что чинился в code-review.mjs). Это штатный путь «нет кредита».
+        process.exitCode = 1;
+        return null;
+      }
+      const json = JSON.parse(text);
+      const parts = json?.content ?? [];
+      const out = parts.filter((b) => b?.type === 'text').map((b) => b.text).join('\n');
+      return out || JSON.stringify(parts, null, 2);
+    } catch (e) {
+      console.error(e);
+      // См. коммент выше: сокеты живы → exitCode + return вместо обрыва процесса.
       process.exitCode = 1;
-      return;
+      return null;
     }
-    const json = JSON.parse(text);
-    const parts = json?.content ?? [];
-    answer = parts.filter((b) => b?.type === 'text').map((b) => b.text).join('\n');
-    if (!answer) answer = JSON.stringify(parts, null, 2);
-  } catch (e) {
-    console.error(e);
-    // См. коммент выше: сокеты живы → exitCode + return вместо обрыва процесса.
-    process.exitCode = 1;
-    return;
   }
+
+  let answer = await askRoom([{ role: 'user', content: [{ type: 'text', text: promptText }] }]);
+  if (answer === null) return;
 
   // Сверить прозаический футер «Реплик в диалоге: N» с фактом (модель порой врёт;
   // 17.07 M0: 21 против фактических 20). Приводим к детерминированному числу.
@@ -642,6 +651,58 @@ async function main() {
     console.error(`→ футер реплик исправлен: модель «${reconciled.stated}» → факт ${reconciled.total}`);
   }
   answer = reconciled.md;
+
+  // Фикс 21.07 (вердикт заседания procedural-layer, 8 отказов гейта за день):
+  // принудительный шаг посылок + авто-перепрогон — ДО печати и записи.
+  let meetingProblems = [];
+  if (cli.meeting && !cli.noSave) {
+    const siblings = meetingSiblingIdsFor(cwd, cli.meeting, cli.topicFile);
+    meetingProblems = meetingVerdictProblems(answer, siblings);
+
+    // Шаг 1 — принудительный шаг посылок: единственный дефект «нет секции» лечится
+    // дозапросом у ТОЙ ЖЕ комнаты дополнительным ходом того же прогона (контекст
+    // диалога сохранён). Это не «посылки задним числом»: запрет M2″ 18.07 бьёт по
+    // ЧУЖОЙ комнате, называющей посылки чужого вердикта; здесь комната договаривает свой.
+    if (meetingProblems.length > 0 && onlyMissingPremises(meetingProblems)) {
+      console.error('→ шаг посылок: секции нет — дозапрашиваю у той же комнаты (доп. ход прогона)…');
+      const snippet = await askRoom([
+        { role: 'user', content: [{ type: 'text', text: promptText }] },
+        { role: 'assistant', content: [{ type: 'text', text: answer }] },
+        { role: 'user', content: [{ type: 'text', text: buildPremisesRepairPrompt() }] },
+      ]);
+      if (snippet !== null) {
+        answer = insertPremisesSection(answer, snippet);
+        meetingProblems = meetingVerdictProblems(answer, siblings);
+        if (meetingProblems.length === 0) {
+          console.error('→ шаг посылок: секция оглашена комнатой, гейт чист.');
+        }
+      }
+    }
+
+    // Шаг 2 — авто-перепрогон: ОДНА итерация с предупреждением о провале. Дефекты,
+    // которые дозапросом не лечатся (вывод в посылках, колонизация DoD), и провал
+    // шага 1 приходят сюда; после — честный отказ прежним путём.
+    if (meetingProblems.length > 0) {
+      console.error(
+        `→ авто-перепрогон: гейт вердикта (${meetingProblems.length}) — одна итерация с предупреждением…`,
+      );
+      const rerun = await askRoom([
+        {
+          role: 'user',
+          content: [{ type: 'text', text: `${buildRerunNotice(meetingProblems)}\n${promptText}` }],
+        },
+      ]);
+      if (rerun !== null) {
+        const rr = reconcileReplyCount(rerun);
+        const problems2 = meetingVerdictProblems(rr.md, siblings);
+        // Берём перепрогон в любом исходе: при успехе он протокол, при провале —
+        // самый свежий черновик для rejected/ (доказательная база полнее).
+        answer = rr.md;
+        meetingProblems = problems2;
+        if (problems2.length === 0) console.error('→ авто-перепрогон: гейт чист.');
+      }
+    }
+  }
 
   console.log(answer);
 
@@ -668,9 +729,10 @@ async function main() {
     // вводил и сознательно не расширяется на него: включение полного канона здесь
     // начнёт ронять прогоны по причинам, к посылкам не относящимся. Отдельный вопрос.
     if (cli.meeting) {
-      const siblings = meetingSiblingIdsFor(cwd, cli.meeting, cli.topicFile);
-      const problems = meetingVerdictProblems(answer, siblings);
-      if (problems.length > 0) {
+      // Гейт вычислен выше (после шага посылок и авто-перепрогона — фикс 21.07);
+      // здесь только исход: rejected/ либо запись. Пересчитывать нельзя — answer
+      // уже финальный, а двойной счёт разъехался бы с печатью прогресса.
+      if (meetingProblems.length > 0) {
         // Прогон дорогой: артефакт не выбрасываем, но и протоколом не считаем —
         // иначе цена отказа толкала бы писать мимо инструмента (тот самый обход).
         const rejDir = resolve(cwd, 'docs/seanses/rejected');
@@ -678,12 +740,13 @@ async function main() {
         const rejPath = resolve(rejDir, basename(relPath));
         writeFileSync(rejPath, fileBody, 'utf8');
         console.error(
-          `\n✖ заседание НЕ состоялось — структура вердикта (${problems.length}):\n` +
-            problems.map((p) => `  ✖ ${p}`).join('\n') +
+          `\n✖ заседание НЕ состоялось — структура вердикта (${meetingProblems.length}):\n` +
+            meetingProblems.map((p) => `  ✖ ${p}`).join('\n') +
             '\n  Вердикт на неназванном фундаменте нельзя ни отозвать каскадом, ни проверить.' +
             `\n  Черновик сохранён: docs/seanses/rejected/${basename(relPath)} (НЕ протокол).` +
+            '\n  Шаг посылок и авто-перепрогон уже исчерпаны этим прогоном (фикс 21.07).' +
             '\n  Назвать посылки задним числом ЗАПРЕЩЕНО (M2″ 18.07: комната выдала 8 уверенных' +
-            '\n  посылок ЧУЖОГО вердикта). Нужен перепрогон с посылками, названными в прогоне.',
+            '\n  посылок ЧУЖОГО вердикта). Дальше — слово владельца.',
         );
         process.exitCode = 1;
         return;
