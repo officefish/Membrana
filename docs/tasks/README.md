@@ -29,7 +29,6 @@
 | `kam-k4-wire` | K4: провод в процедуру утра / kitVersion + режимы latest/pinned | M | [`KAM_K4_WIRE_PROMPT.md`](../prompts/KAM_K4_WIRE_PROMPT.md) | [#819](https://github.com/officefish/Membrana/issues/819) |
 | `kam-k3-first-kit` | K3: кит angelina-morning — набор скриптов секретаря + пины | M | [`KAM_K3_FIRST_KIT_PROMPT.md`](../prompts/KAM_K3_FIRST_KIT_PROMPT.md) | [#818](https://github.com/officefish/Membrana/issues/818) |
 | `kam-k2-audit` | K2: аудит полноты подграфа (SHA ↔ imports) — зуб PINNED_SUBGRAPH | M | [`KAM_K2_AUDIT_PROMPT.md`](../prompts/KAM_K2_AUDIT_PROMPT.md) | [#817](https://github.com/officefish/Membrana/issues/817) |
-| `kam-k1-home` | K1: дом kits/ + схема манифеста (потребить pl-r3, не второй остров) | M | [`KAM_K1_HOME_PROMPT.md`](../prompts/KAM_K1_HOME_PROMPT.md) | [#816](https://github.com/officefish/Membrana/issues/816) |
 | `kits-angelina-morning` | Эпик: слой kits/ + первый кит angelina-morning (PINNED_SUBGRAPH, #761) поверх scripts/ | L | [`KITS_ANGELINA_MORNING_PROMPT.md`](../prompts/KITS_ANGELINA_MORNING_PROMPT.md) | [#814](https://github.com/officefish/Membrana/issues/814) |
 | `morning-report-completion` | Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям) | L | [`MORNING_REPORT_COMPLETION_PROMPT.md`](../prompts/MORNING_REPORT_COMPLETION_PROMPT.md) | [#788](https://github.com/officefish/Membrana/issues/788) |
 | `sbc-s4-wiring` | S4: провода AGENTS/skills/DoD для контейнера scripts/ | S | [`SBC_S4_WIRING_PROMPT.md`](../prompts/SBC_S4_WIRING_PROMPT.md) | [#796](https://github.com/officefish/Membrana/issues/796) |
@@ -221,6 +220,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `kam-k1-home` | K1: дом kits/ + схема манифеста (потребить pl-r3, не второй остров) | 2026-07-21 | [`KAM_K1_HOME_PROMPT.md`](../prompts/KAM_K1_HOME_PROMPT.md) | #816 (Issue открыт) | [карточка](./archive/kam-k1-home.md) |
 | `kam-k0-brief` | K0: эпик-промпт, границы kits vs sbc-s3/#761/audit-git, DoD | 2026-07-21 | [`KAM_K0_BRIEF_PROMPT.md`](../prompts/KAM_K0_BRIEF_PROMPT.md) | #815 (Issue открыт) | [карточка](./archive/kam-k0-brief.md) |
 | `sbc-s0-contract` | S0: контракт контейнера scripts/ — README + AGENT_PROMPT + cache | 2026-07-21 | [`SBC_S0_CONTRACT_PROMPT.md`](../prompts/SBC_S0_CONTRACT_PROMPT.md) | #792 | [карточка](./archive/sbc-s0-contract.md) |
 | `sbc-s1-registry` | S1: derived-реестр scripts/registry из кода (tooling:overview --report) | 2026-07-21 | [`SBC_S1_REGISTRY_PROMPT.md`](../prompts/SBC_S1_REGISTRY_PROMPT.md) | #793 | [карточка](./archive/sbc-s1-registry.md) |
