@@ -310,14 +310,14 @@
       "promptPath": "docs/cowork-sprint/cowork-execution-registry/COWORK_SPRINT_BRIEF.md",
       "githubIssue": 660,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "cowork-sprint",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "3 блока lead-persona/units-trace-measure/snapshot-cold-migration; изоляция до Interface Consilium; мёрж всех трёх; вход HANDOFF_2026-07-19_COWORK",
-      "archiveNotes": null,
+      "archiveNotes": "#660 COMPLETED 19.07; работа в main squash-PR #675 (3 блока + 6 адаптеров)",
       "githubIssueClosedAt": null
     },
     {
@@ -326,16 +326,16 @@
       "promptPath": "docs/prompts/AGENT_CI_GATE_TOOLING_PROMPT.md",
       "githubIssue": 643,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "Ретро тулинга 18.07. Общий корень: инструмент не врёт, он молчит. Ложное «зелено» от самописного цикла ожидания CI — доложен зелёный прогон, которого не было. Плюс три грабли в AGENTS.md по обязательству #554 TF-7.",
-      "archiveNotes": null,
+      "archiveNotes": "#643 COMPLETED 19.07; pr:wait в main (scripts/pr-wait.mjs), грабли в AGENTS.md",
       "githubIssueClosedAt": null
     },
     {
@@ -344,16 +344,16 @@
       "promptPath": "docs/prompts/TRUTH_MINTING_TOOLING_PROMPT.md",
       "githubIssue": 642,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-19",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "Ретро тулинга 18.07. Кристаллизация наполовину ручная: чеканка правкой JSON, указатель на реплику ad-hoc скриптом, дубль-проверки нет — сожжён вопрос владельца (токен alex-sparring-answered уже был от 17.07). Новых контрактов нет, форма токена — канон.",
-      "archiveNotes": null,
+      "archiveNotes": "#642 COMPLETED 19.07; truth.mjs + truth-mint в main",
       "githubIssueClosedAt": null
     },
     {
@@ -1704,10 +1704,10 @@
       "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_2_PROMPT.md",
       "githubIssue": 469,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-14",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
@@ -1716,7 +1716,7 @@
         "kuryokhin"
       ],
       "notes": "По итогам сессии 2026-07-14 (4 ручных closure-цикла, 3 чат-протокола без валидации, 2 конфликта registry, коллизия скоупа #452/#454, 3 инцидента PS 5.1, разнобой credit-ошибок). Консилиум-гейт: docs/seanses/agent-tooling-friction-2-2026-07-14.md (22 реплики) + research Perplexity x3. Форма #433: зонтик, независимые ti, порядок дешевле-дороже ti-6-5-7-4-3-2-1, мёрж по готовности. Ключевые решения: ship = ОБЁРТКА над lib-runner (SHA из gh pr view mergeCommit, база = родитель, чеки на detached при ушедшем main, fail-closed); register = регенерация вставки вместо ручного merge, формат registry НЕ меняется; neighbors = только чтение сигналов, координационный файл НЕ вводится; secretary-file = валидатор канона чистыми функциями, фикстуры - живые протоколы 14.07. Запреты: не переписывать lib/task-closure-review.mjs, не менять формат registry (task-archive-storage), не печатать секреты, ship не деплоит.",
-      "archiveNotes": null,
+      "archiveNotes": "#469 COMPLETED; архив был в PR #486, карточка воскресла в active — повторная фиксация статуса",
       "githubIssueClosedAt": null
     },
     {
@@ -2017,10 +2017,10 @@
       "promptPath": "docs/prompts/LIVE_NEURAL_COMBINED_FUSION_PROMPT.md",
       "githubIssue": 415,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-13",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "dynin",
       "supportPersonas": [
         "kuryokhin",
@@ -2029,7 +2029,9 @@
         "vesnin"
       ],
       "insightId": "insight-live-neural-combined-detector",
-      "notes": "Мандат владельца 2026-07-13: нейро-fusion ОБЯЗАТЕЛЕН для FREE — отменяет точку 3 (DSP-only) консилиума s2-combined-uc-dsp; остальные вердикты (топология, границы, единое окно, не трогать #357/make-detection-fusion, без новых узлов палитры) В СИЛЕ. Разведка: весь путь готов — createCombinedStreamDetectors (питает клиент + scenarioMicJournalBridge:1236) + loadYamnetBrowserModel (офлайн-бандл) + createYamnetDetector({modelProvider}). Работа = соединение + graceful DSP-only деградация с видимой меткой + метка «спектр+нейро» + перф-замер. Критпуть FREE: этот спринт → S2 live-smoke (гейт) → S3 упаковка. КОД СМЁРЖЕН 2026-07-13 (PR #417, review LGTM): yamnet в createCombinedStreamDetectors (weight 1), wrapNeuralWithTtl (6с опрос/15с TTL, транзиентный отказ переживается кэшем), метка модальностей по availability в панели + карточке UC (топология/пороги UC не тронуты). ОСТАТКИ до архива: перф-замер в браузере (#416) + S2 live-smoke с дроном — обе живые сессии, удобно совместить."
+      "notes": "Мандат владельца 2026-07-13: нейро-fusion ОБЯЗАТЕЛЕН для FREE — отменяет точку 3 (DSP-only) консилиума s2-combined-uc-dsp; остальные вердикты (топология, границы, единое окно, не трогать #357/make-detection-fusion, без новых узлов палитры) В СИЛЕ. Разведка: весь путь готов — createCombinedStreamDetectors (питает клиент + scenarioMicJournalBridge:1236) + loadYamnetBrowserModel (офлайн-бандл) + createYamnetDetector({modelProvider}). Работа = соединение + graceful DSP-only деградация с видимой меткой + метка «спектр+нейро» + перф-замер. Критпуть FREE: этот спринт → S2 live-smoke (гейт) → S3 упаковка. КОД СМЁРЖЕН 2026-07-13 (PR #417, review LGTM): yamnet в createCombinedStreamDetectors (weight 1), wrapNeuralWithTtl (6с опрос/15с TTL, транзиентный отказ переживается кэшем), метка модальностей по availability в панели + карточке UC (топология/пороги UC не тронуты). ОСТАТКИ до архива: перф-замер в браузере (#416) + S2 live-smoke с дроном — обе живые сессии, удобно совместить.",
+      "archiveNotes": "#415 COMPLETED 16.07; код смёржен PR #417, перф-замер p50/p95 в #416",
+      "githubIssueClosedAt": null
     },
     {
       "id": "drift-anchor-contour",
@@ -2767,17 +2769,18 @@
       "githubIssue": 59,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-11",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "#59 COMPLETED 12.07; деплой на VPS выполнен, дальнейшая инфра — office-vds-migration",
       "dependsOn": [
         "background-media-a5b-docker"
       ],
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "background-office-v1",
@@ -14231,15 +14234,17 @@
       "githubIssue": 290,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "ci-gate-stabilization",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
-      "notes": "P0. dist detector-base не собран к job"
+      "notes": "P0. dist detector-base не собран к job",
+      "archiveNotes": "#290 COMPLETED 08.07; фикс флейка PR #297 (turbo ^build gate)",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cg6-stale-dist-gate",
@@ -14248,12 +14253,14 @@
       "githubIssue": 291,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "ci-gate-stabilization",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archiveNotes": "#291 COMPLETED 08.07; pre-push гейт PR #298",
+      "githubIssueClosedAt": null
     },
     {
       "id": "cg7-catalog-verify-prepush",
@@ -14262,12 +14269,14 @@
       "githubIssue": 292,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "ci-gate-stabilization",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archiveNotes": "#292 COMPLETED 08.07; catalog:verify в pre-push PR #298",
+      "githubIssueClosedAt": null
     },
     {
       "id": "td-scenario-registry-persistence",
@@ -14276,14 +14285,16 @@
       "githubIssue": 293,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "tech-debt-2026-07",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
-      ]
+      ],
+      "archiveNotes": "#293 COMPLETED 08.07; персистентность DeviceScenarioRegistry PR #299",
+      "githubIssueClosedAt": null
     },
     {
       "id": "td-node-lastseen-reconnect",
@@ -14292,12 +14303,14 @@
       "githubIssue": 294,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "tech-debt-2026-07",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archiveNotes": "#294 COMPLETED 08.07; lastSeenAt на реконнекте PR #300",
+      "githubIssueClosedAt": null
     },
     {
       "id": "td-singleton-eslint-guard",
@@ -14306,12 +14319,14 @@
       "githubIssue": 295,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "tech-debt-2026-07",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archiveNotes": "#295 COMPLETED 08.07; eslint-гейт singleton §3.5 PR #301",
+      "githubIssueClosedAt": null
     },
     {
       "id": "td-samplelibrary-usememo",
@@ -14407,12 +14422,14 @@
       "githubIssue": 302,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-scenario-picker-system",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "archiveNotes": "#302 COMPLETED 08.07; BoardScenarioListItem kind+карточные поля PR #309",
+      "githubIssueClosedAt": null
     },
     {
       "id": "csp-2-tariff-to-node",
@@ -14421,14 +14438,16 @@
       "githubIssue": 303,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-scenario-picker-system",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
-      ]
+      ],
+      "archiveNotes": "#303 COMPLETED 08.07; node.entitlements сервер→узел PR #310",
+      "githubIssueClosedAt": null
     },
     {
       "id": "csp-3-node-declares-system",
@@ -14437,16 +14456,18 @@
       "githubIssue": 304,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-scenario-picker-system",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "dependsOn": [
         "csp-1-contract",
         "csp-2-tariff-to-node"
-      ]
+      ],
+      "archiveNotes": "#304 COMPLETED 08.07; единый список user+system сценариев PR #311",
+      "githubIssueClosedAt": null
     },
     {
       "id": "csp-4-shared-card",
@@ -14455,15 +14476,17 @@
       "githubIssue": 305,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-scenario-picker-system",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "rodchenko",
       "supportPersonas": [],
       "dependsOn": [
         "csp-1-contract"
-      ]
+      ],
+      "archiveNotes": "#305 COMPLETED 08.07; UserCaseCardView PR #312",
+      "githubIssueClosedAt": null
     },
     {
       "id": "csp-5-cabinet-ui",
@@ -14472,16 +14495,18 @@
       "githubIssue": 306,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-scenario-picker-system",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "rodchenko",
       "supportPersonas": [],
       "dependsOn": [
         "csp-1-contract",
         "csp-4-shared-card"
-      ]
+      ],
+      "archiveNotes": "#306 COMPLETED 08.07; карточный список + tariff-бейджи PR #313",
+      "githubIssueClosedAt": null
     },
     {
       "id": "csp-6-smoke-docs",
@@ -14490,16 +14515,18 @@
       "githubIssue": 307,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "cabinet-scenario-picker-system",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "dependsOn": [
         "csp-3-node-declares-system",
         "csp-5-cabinet-ui"
-      ]
+      ],
+      "archiveNotes": "#307 COMPLETED 08.07; smoke узел↔кабинет + docs PR #314",
+      "githubIssueClosedAt": null
     },
     {
       "id": "agent-tooling-night-build",
@@ -14966,7 +14993,7 @@
       "githubIssue": 344,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-10",
       "leadPersona": "vesnin",
@@ -14974,7 +15001,10 @@
         "dynin",
         "ozhegov"
       ],
-      "notes": "Консилиум 25 реплик ДО кода — GO с условиями (docs/seanses/night-triage-routine-2026-07-10.md): N=14 не канон (dwell-time в отчёт), daily draft PR, секрет-гейт блокирующий, детерминизм-критерий, issues:audit = эталон приёмки не CI-гейт. Бриф: docs/day-sprint/night-triage-routine-2026-07-10/SPRINT_BRIEF.md. Стоп-условие: preview недоступен / квота — заморозка + INSIGHT."
+      "notes": "Консилиум 25 реплик ДО кода — GO с условиями (docs/seanses/night-triage-routine-2026-07-10.md): N=14 не канон (dwell-time в отчёт), daily draft PR, секрет-гейт блокирующий, детерминизм-критерий, issues:audit = эталон приёмки не CI-гейт. Бриф: docs/day-sprint/night-triage-routine-2026-07-10/SPRINT_BRIEF.md. Стоп-условие: preview недоступен / квота — заморозка + INSIGHT.",
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "ОТМЕНЕНО, не сделано: #344 закрыта NOT_PLANNED 12.07 по стоп-условию 10.07 — 3 рана облачной рутины без следов в git, рутина disabled. Уроки в иссью; пере-открыть при разблокировке чеклиста",
+      "githubIssueClosedAt": null
     },
     {
       "id": "office-vds-migration",
@@ -15186,10 +15216,10 @@
       "promptPath": "docs/prompts/PALETTE_CLARITY_NODES_PROMPT.md",
       "githubIssue": 493,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-15",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "kuryokhin",
@@ -15198,7 +15228,7 @@
         "vesnin"
       ],
       "notes": "Из консилиума palette-nodes-free-clarity-2026-07-15. Fast-follow после отгрузки FREE (#489/#490) — течи наглядности не блокер. PC-1 первой (нейро-одиночка носит combined-отчёт; расширить make-report-from-analysis до DetectionAnalysisRef vs новый make-detection-report; ADR с UI-ролью). PC-2 второй (нет периодического гейта без рекордера, spectrum юзает is-recording-window-full как таймер; новый владелец времени is-window-elapsed + чинит декоративный collectorConfig.windowSec; полный консилиум). Каждая задача — своя фазовая карточка при старте. Out of scope: узлы коллекции = эпик batch-collection-run-contour #494. Гейт старта: отгрузка FREE.",
-      "archiveNotes": null,
+      "archiveNotes": "#493 COMPLETED 15.07; спринт PC-1 отчёт-одиночки + PC-2 таймер-гейт",
       "githubIssueClosedAt": "2026-07-15",
       "githubIssueStateReason": "COMPLETED"
     },
