@@ -104,3 +104,13 @@ test('ритуал утра ritual-day: kitVersion → kits/angelina-morning', (
   assert.equal(m.kitVersion, 'kits/angelina-morning');
   assert.equal(m.engines.length, 1, 'engines не дублируют весь кит');
 });
+
+test('ритуал снов ritual-dreams: kitVersion → kits/dream-master', () => {
+  const dreams = join(repoRoot, 'docs', 'procedures', 'ritual-dreams');
+  const r = validateProcedure(dreams, repoRoot);
+  assert.equal(r.valid, true, r.problems.join('; '));
+  const m = JSON.parse(readFileSync(join(dreams, 'MANIFEST.json'), 'utf8'));
+  assert.equal(m.kitVersion, 'kits/dream-master');
+  assert.equal(m.engines.length, 1);
+  assert.ok(m.precedents.some((p) => p.includes('DREAM_MASTER_PROMPT')));
+});
