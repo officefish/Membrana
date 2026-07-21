@@ -26,7 +26,7 @@
 | **D1** | `kdm-d1-roots` | [#857](https://github.com/officefish/Membrana/issues/857) | ozhegov | ✅ [#865](https://github.com/officefish/Membrana/pull/865) |
 | **D2** | `kdm-d2-kit` | [#858](https://github.com/officefish/Membrana/issues/858) | dynin | ✅ [#867](https://github.com/officefish/Membrana/pull/867) |
 | **D3** | `kdm-d3-procedure` | [#859](https://github.com/officefish/Membrana/issues/859) | ozhegov | ✅ [#869](https://github.com/officefish/Membrana/pull/869) |
-| **D4** | `kdm-d4-closure` | [#860](https://github.com/officefish/Membrana/issues/860) | vesnin | ✅ LGTM — ship |
+| **D4** | `kdm-d4-closure` | [#860](https://github.com/officefish/Membrana/issues/860) | vesnin | ✅ done · [PR #874](https://github.com/officefish/Membrana/pull/874) |
 
 ## Gate checklist (D4)
 
