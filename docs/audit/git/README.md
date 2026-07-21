@@ -1,8 +1,19 @@
 # docs/audit/git — контейнер git-аудита
 
-Специальный контейнер, где агент **легально** хранит промпты, реестры веток и глубокие разборы по гигиене git-репозитория Membrana.
+Специальный контейнер, где агент **легально** хранит промпты, реестры веток и глубокие разборы по гигиене git-репозитория Membrana. Реализация паттерна [`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md).
 
 Канонический операторский промпт: [`AGENT_PROMPT.md`](./AGENT_PROMPT.md).
+
+## Соответствие паттерну GROUP_CONTAINERIZATION
+
+1. ✅ Выделенный каталог `docs/audit/git/`; audit-cache не в корне репо.
+2. ✅ README-контракт с таблицей «что писать / в git?» (ниже).
+3. ✅ Overwrite-реестр `registry/BRANCHES_DECOMPOSE_LIST.md` с Meta; dated — опционально.
+4. ✅ `cache/` под gitignore.
+5. ✅ `yarn repo:branches:decompose --report` пишет реестр сам; источник истины назван: сам git (`origin/main`, worktree, gh PR).
+6. ✅ `AGENT_PROMPT.md`, Scenario B с HARD GATE.
+7. ✅ Никаких delete/force без явного ok; `repo:clean --execute` только по слову владельца; персоны — никогда.
+8. ✅ Провода: `AGENTS.md`, `docs/audit/README.md`, `docs/CONTRIBUTING.md` («Гигиена веток»), скиллы `membrana-branch-audit` / `membrana-branch-decompose`.
 
 ## Layout
 
