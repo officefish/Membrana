@@ -47,7 +47,12 @@ yarn kits:audit --id dream-master --mode latest
 6. ✅ Владелец пина — `leadPersona: dynin`.
 7. ✅ Дрейф — табличный вывод audit.
 
+## Процедура
+
+[`docs/procedures/ritual-dreams/`](../../docs/procedures/ritual-dreams/) —
+`kitVersion: kits/dream-master`; `engines[]` = `scripts/dreams.mjs`.
+
 ## Вне кита (D1)
 
 Night Build · CLI `night:research` · Nest office dreams · `DREAM_MASTER_PROMPT.md`
-(precedents D3) · `docs/truth/registry.json` (data runtime).
+(в `precedents[]` процедуры) · `docs/truth/registry.json` (data runtime).
