@@ -2350,10 +2350,10 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-05-16",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Скоуп промпта (docs+scaffolding+TDOA-freeze) выполнен коммитом 34089bd2 (2026-05-16), stage-gate решение — STAGE_GATE_1_TO_2_DECISION.md (8642b1fa, 2026-06-22). GH #47 closed COMPLETED. Карточка висела active из-за freeze-снапшота 2026-06-23",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
@@ -2361,7 +2361,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": null
     },
     {
       "id": "real-dataset-live-calibration",
@@ -2711,10 +2712,10 @@
       "githubIssue": 58,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-11",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "DONE: эпик #58 COMPLETED — A5a (41473616), A5b (7ae16ae6), A5c archived (деплой VPS, #59), A5d swagger (#64); все подзадачи реестра закрыты",
       "dependsOn": [
         "media-library-a2-ui"
       ],
@@ -2722,7 +2723,8 @@
       "supportPersonas": [
         "dynin"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "githubIssueClosedAt": null
     },
     {
       "id": "background-media-a5a-server",
@@ -2731,17 +2733,18 @@
       "githubIssue": 58,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-11",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "DONE: коммит 41473616 — packages/background-media (NestJS+Fastify, Prisma+PG, blob/audio ingest) + ServerStorageBackend в media-library + remote-server mode в client; Swagger добит в a5d (#64). #58 COMPLETED",
       "dependsOn": [
         "background-media-v1"
       ],
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "background-media-a5b-docker",
@@ -2750,17 +2753,18 @@
       "githubIssue": 58,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-11",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "DONE: коммит 7ae16ae6 — Dockerfile, docker-compose.yml (media-api+postgres+volumes), entrypoint c prisma migrate deploy, media:docker:* скрипты, BACKGROUND_MEDIA_DEPLOY.md. #58 COMPLETED",
       "dependsOn": [
         "background-media-a5a-server"
       ],
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "background-media-a5c-deploy",
@@ -3210,10 +3214,10 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-15",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Все фазы SLD1-SLD4 в main (PR #77, 5c79cc12, 9da3e25a); условие закрытия (честный stage-gate отчёт) выполнено STAGE_GATE_1_TO_2_DECISION.md (8642b1fa). Продуктовая цель ≥80% передана VDR → vdr-hard-gate per консилиум 2026-06-14",
       "dependsOn": [
         "single-node-detection-first",
         "media-library-a4-sample-player"
@@ -3225,7 +3229,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": null
     },
     {
       "id": "sld1-sample-detection-contract",
@@ -3268,11 +3273,11 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "sample-library-drone-detection",
       "createdAt": "2026-06-15",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Выполнено 5c79cc12 (2026-06-15): cepstral+spectral-flux детекторы + плагин + benchmark на free-v1(120); harmonic из #45. Консилиум 2026-06-14: merge→archive. Забыта в реестре из-за freeze 2026-06-23",
       "dependsOn": [
         "sld2-sample-library-drone-plugin"
       ],
@@ -3281,7 +3286,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": null
     },
     {
       "id": "sld4-stage-gate-calibration",
@@ -3290,11 +3296,11 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "sample-library-drone-detection",
       "createdAt": "2026-06-15",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Выполнено 9da3e25a (calibrate:detectors + DETECTOR_CALIBRATION.md) + stage-gate report STAGE_GATE_1_TO_2_DECISION.md (8642b1fa, 2026-06-22, вердикт: hard gate не пройден). Продолжение — VDR/vdr-hard-gate",
       "dependsOn": [
         "sld3-dsp-detectors-free-v1"
       ],
@@ -3305,7 +3311,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "githubIssueClosedAt": null
     },
     {
       "id": "validated-drone-recognition",
@@ -4916,10 +4923,10 @@
       "githubIssue": 92,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "MP7 эпик: весь NR0–NR6 в main (c2f5ad02+8e65e60e), prod, Issue #92 closed COMPLETED 2026-07-12. Отдельных 7 PR не было — один коммит",
       "dependsOn": [
         "membrane-platform-mp3-client-pairing",
         "membrane-platform-mp5-telemetry-journal"
@@ -4928,7 +4935,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-node-realtime-nr0-contract",
@@ -4937,11 +4945,11 @@
       "githubIssue": 92,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-realtime-gateway",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Commit c2f5ad02 (main, 2026-06-17): packages/core/src/contracts/node-realtime (envelope/events/parse + tests). Issue #92 closed",
       "dependsOn": [
         "membrane-node-realtime-gateway"
       ],
@@ -4949,7 +4957,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-node-realtime-nr1-gateway",
@@ -4958,11 +4967,11 @@
       "githubIssue": 92,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-realtime-gateway",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Commit c2f5ad02 + 8e65e60e: background-cabinet node-realtime gateway/auth/presence + NODE_REALTIME_ENABLED. Issue #92 closed",
       "dependsOn": [
         "membrane-node-realtime-nr0-contract"
       ],
@@ -4970,7 +4979,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-node-realtime-nr2-journal-ws",
@@ -4979,17 +4989,18 @@
       "githubIssue": 92,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-realtime-gateway",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Commit c2f5ad02: node-realtime-journal.handler (ingest+fan-out+acked, idempotency), realtime-journal-mapper. Issue #92 closed",
       "dependsOn": [
         "membrane-node-realtime-nr1-gateway"
       ],
       "notes": "Lead: Ozhegov.",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-node-realtime-nr3-client-journal",
@@ -4998,11 +5009,11 @@
       "githubIssue": 92,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-realtime-gateway",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Commit c2f5ad02: nodeRealtimeClient (backoff), hubBridge, journalPush dual-write за VITE_NODE_REALTIME_ENABLED. Issue #92 closed",
       "dependsOn": [
         "membrane-node-realtime-nr2-journal-ws"
       ],
@@ -5010,7 +5021,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-node-realtime-nr4-mic-live",
@@ -5019,11 +5031,11 @@
       "githubIssue": 92,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-realtime-gateway",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Commit c2f5ad02: micLiveRealtimeBridge, mic.session/analysis.brief/analysis.level в core. Issue #92 closed",
       "dependsOn": [
         "membrane-node-realtime-nr3-client-journal"
       ],
@@ -5031,7 +5043,8 @@
       "leadPersona": "kuryokhin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-node-realtime-nr5-cabinet-live",
@@ -5040,11 +5053,11 @@
       "githubIssue": 92,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-realtime-gateway",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Commit c2f5ad02: cabinetNodeRealtimeClient, useCabinetLiveJournal, JournalPage live+WS indicator+mic badge. Issue #92 closed",
       "dependsOn": [
         "membrane-node-realtime-nr2-journal-ws",
         "membrane-node-realtime-nr3-client-journal"
@@ -5053,7 +5066,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-node-realtime-nr6-prod-hardening",
@@ -5062,11 +5076,11 @@
       "githubIssue": 92,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-realtime-gateway",
       "createdAt": "2026-06-17",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Runbook §MP7 в MEMBRANE_PLATFORM_DEPLOY, флаги+REST fallback; smoke 06-23 FAIL→починен PCB-спринтом, prod подтверждён владельцем при закрытии #92 (07-12). Каветат: _ssh-cabinet-mp7-prod.mjs не в репо (gitignore)",
       "dependsOn": [
         "membrane-node-realtime-nr4-mic-live",
         "membrane-node-realtime-nr5-cabinet-live"
@@ -5076,7 +5090,8 @@
       "supportPersonas": [
         "vesnin",
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrane-node-runtime-remote",
@@ -5275,16 +5290,17 @@
       "githubIssue": 94,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Эпик выполнен: DR0-DR6 в main (71568f44..4cef08d8), остаток DR5 закрыт PR #267, Issue #94 closed COMPLETED 2026-07-06. DR7 отложен по условию (нет SLA)",
       "dependsOn": [],
       "notes": "Первопричина: POSTMORTEM-MP7B-2026-06-18 (прод-сборка упала из-за незакоммиченных зависимостей). Консенсус: seanses/deploy-process-mp7b-postmortem-2026-06-18. Источник истины при проверке ≠ при деплое — устраняется образом в registry (DR2). DR7 zero-downtime отложен с условием (после DR5).",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "dpr-dr0-git-hygiene-gate",
@@ -5293,11 +5309,11 @@
       "githubIssue": 94,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "deploy-pipeline-refactor",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Выполнено в 71568f44: .gitattributes eol=lf + _deploy-preflight.mjs (clean-worktree gate) в обоих SSH-деплой-скриптах. Issue #94 closed",
       "dependsOn": [
         "deploy-pipeline-refactor"
       ],
@@ -5305,7 +5321,8 @@
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "dpr-dr1-ci-gate",
@@ -5314,11 +5331,11 @@
       "githubIssue": 94,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "deploy-pipeline-refactor",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Выполнено в c9b9b3cd: ci.yml на main + assertCiGreen в деплое + deploy-when-green.mjs. Issue #94 closed",
       "dependsOn": [
         "dpr-dr0-git-hygiene-gate"
       ],
@@ -5326,7 +5343,8 @@
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "dpr-dr2-image-registry",
@@ -5335,11 +5353,11 @@
       "githubIssue": 94,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "deploy-pipeline-refactor",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Выполнено в 714ae379: cabinet-images.yml → registry, деплой pull по тегу (_ssh-cabinet-deploy-image.mjs), build/runtime env разделены; действующий прод-путь (fix #334). Issue #94 closed",
       "dependsOn": [
         "dpr-dr1-ci-gate"
       ],
@@ -5347,7 +5365,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "dpr-dr3-rollback-runbook",
@@ -5356,11 +5375,11 @@
       "githubIssue": 94,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "deploy-pipeline-refactor",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Выполнено в 261ca3fa: cabinet:rollback:prod по тегу, JSON-сводка deploy-artifacts/, раннбук MEMBRANE_PLATFORM_DEPLOY.md. Issue #94 closed",
       "dependsOn": [
         "dpr-dr2-image-registry"
       ],
@@ -5368,7 +5387,8 @@
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "dpr-dr4-smoke-suite",
@@ -5377,11 +5397,11 @@
       "githubIssue": 94,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "deploy-pipeline-refactor",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Выполнено в 2992e23a: _ssh-cabinet-smoke.mjs (health/login/nodes/migrate/runtime WS), exit!=0 при провале, врезан в image-деплой. Issue #94 closed",
       "dependsOn": [
         "dpr-dr2-image-registry"
       ],
@@ -5389,7 +5409,8 @@
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "dpr-dr5-branch-migration-policy",
@@ -5398,17 +5419,18 @@
       "githubIssue": 94,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "deploy-pipeline-refactor",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Выполнено: 709be227 (branch policy + expand/contract в CONTRIBUTING) + ba63d4a9 (techies68=main) + PR #267 (night base, CI allowlist, legacy-статус). Резидуал: _ssh-media-deploy*.mjs пуллят techies68 (=main, legacy, кодифицировано)",
       "dependsOn": [],
       "notes": "Lead: Vesnin. Параллельно DR0–DR4. Предпосылка к DR7 (expand/contract совместимые миграции). 2026-07-03: techies68 синхронизирована с main (force, уникального контента не было), morning-care DEFAULT_WORK_BRANCH -> main. Остаток DR5: night-build base, _ssh-media-deploy/_ssh-media-swagger-deploy (VPS пуллит techies68!), CI branch list, COMPETITION_SPRINT_REGULATION/TASKS_MANAGEMENT/CONTRIBUTING, судьба ветки.",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "dpr-dr6-client-delivery",
@@ -5417,11 +5439,11 @@
       "githubIssue": 94,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "deploy-pipeline-refactor",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Выполнено в 7ea94e82+4cef08d8: desktop-studio.yml (условная Electron-сборка, studio-v* release) + RUNTIME_PROTOCOL_VERSION/индикатор/compat-тесты. Follow-up (live-shell врезка, auto-update, device-app) — вне scope фазы. Issue #94 closed",
       "dependsOn": [
         "dpr-dr2-image-registry"
       ],
@@ -5429,7 +5451,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "githubIssueClosedAt": null
     },
     {
       "id": "dpr-dr7-zero-downtime",
@@ -5438,18 +5461,19 @@
       "githubIssue": 94,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "deploy-pipeline-refactor",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "ОТЛОЖЕНО по условию (промпт эпика): rolling только при SLA/внешних потребителях API — условие не наступило. Эпик #94 закрыт COMPLETED без DR7. При появлении SLA — регистрировать заново отдельной задачей",
       "dependsOn": [
         "dpr-dr2-image-registry",
         "dpr-dr5-branch-migration-policy"
       ],
       "notes": "Lead: Ozhegov. ОТЛОЖЕНО: стартует только после DR5 (регламент expand/contract) и при появлении SLA/внешних потребителей API. Rolling вместо down→up.",
       "leadPersona": "dynin",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "githubIssueClosedAt": null
     },
     {
       "id": "membrana-studio-desktop",
@@ -5642,10 +5666,10 @@
       "githubIssue": 95,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "Эпик закрыт: все фазы DBR0–DBR6 смёрджены PR #96–#102 за 2026-06-18, issue #95 CLOSED/COMPLETED; live-проверки перекрыты последующими usercase-соревнованиями",
       "dependsOn": [
         "device-board-hackathon-1"
       ],
@@ -5654,7 +5678,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbr-0-concept-core",
@@ -5663,11 +5688,11 @@
       "githubIssue": 95,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-refactor-v04",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "PR #96 (3012ae1d) merged 2026-06-18: core-контракты v0.4 — 4 обработчика, variables, DeviceRef/MicrophoneRef, миграция initial→onStart",
       "dependsOn": [
         "device-board-refactor-v04"
       ],
@@ -5676,7 +5701,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbr-1-fullscreen",
@@ -5685,11 +5711,11 @@
       "githubIssue": 95,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-refactor-v04",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "PR #97 (b8e98c7e) merged 2026-06-18: fullscreen канон — цепочка высоты shell, канвас min-h-0 flex-1 до низа",
       "dependsOn": [
         "device-board-refactor-v04"
       ],
@@ -5699,7 +5725,8 @@
         "rodchenko",
         "kuryokhin"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbr-2-variables",
@@ -5708,11 +5735,11 @@
       "githubIssue": 95,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-refactor-v04",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "PR #98 (12a03b77) merged 2026-06-18: переменные document-scope, конструктор в сайдбаре, get/set узлы (variable-node.ts)",
       "dependsOn": [
         "dbr-0-concept-core"
       ],
@@ -5721,7 +5748,8 @@
       "supportPersonas": [
         "dynin"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbr-3-event-node",
@@ -5730,11 +5758,11 @@
       "githubIssue": 95,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-refactor-v04",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "PR #99 (e62c03f7) merged 2026-06-18: системный Event-узел deletable:false + guard + авто-инжект (event-node.ts)",
       "dependsOn": [
         "dbr-0-concept-core"
       ],
@@ -5744,7 +5772,8 @@
         "rodchenko",
         "kuryokhin"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbr-4-dataflow-resolve",
@@ -5753,11 +5782,11 @@
       "githubIssue": 95,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-refactor-v04",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "PR #100 (c5334e13) merged 2026-06-18: resolveInput + validity ссылок, unit-тесты (resolve-input.ts, reference-validity.ts)",
       "dependsOn": [
         "dbr-2-variables",
         "dbr-3-event-node"
@@ -5768,7 +5797,8 @@
         "rodchenko",
         "kuryokhin"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbr-5-palette-nodes",
@@ -5777,11 +5807,11 @@
       "githubIssue": 95,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-refactor-v04",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "PR #101 (1bc2e488) merged 2026-06-18: палитра Print/isValid/GetMicrophone, легаси за VITE_DEVICE_BOARD_LEGACY_PALETTE",
       "dependsOn": [
         "dbr-2-variables",
         "dbr-4-dataflow-resolve"
@@ -5792,7 +5822,8 @@
         "rodchenko",
         "kuryokhin"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "dbr-6-run-gating",
@@ -5801,11 +5832,11 @@
       "githubIssue": 95,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-refactor-v04",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-21",
+      "archiveNotes": "PR #102 (48872c88) merged 2026-06-18: gating Пуска по online-presence, isDeviceLive/useDeviceLive на обеих сторонах",
       "dependsOn": [
         "device-board-refactor-v04"
       ],
@@ -5814,7 +5845,8 @@
       "supportPersonas": [
         "dynin"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "githubIssueClosedAt": null
     },
     {
       "id": "device-board-cabinet-hotfix",
