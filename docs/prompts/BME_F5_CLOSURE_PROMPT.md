@@ -8,3 +8,10 @@ CLOSURE спринта, archive фаз + эпика, handoff. SESSION_CONTEXT: e
 пин на инструкции. Комментарий в #823 / связанном issue.
 
 **DoD:** CLOSURE; карточки archived; провода в AGENTS/CONTRIBUTING при необходимости.
+
+## Статус (2026-07-21)
+
+- [x] [`docs/day-sprint/branch-mintlify-engine/CLOSURE.md`](../day-sprint/branch-mintlify-engine/CLOSURE.md)
+- [x] archive F0–F5 + эпик (notes: PR #835)
+- [x] CONTRIBUTING + SESSION_CONTEXT (engine=Mintlify)
+- [x] комментарий в #823
