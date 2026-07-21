@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { after, test } from 'node:test';
@@ -85,4 +85,22 @@ test('ЗУБ CI: каждый реальный контейнер docs/procedure
     const r = validateProcedure(dir, repoRoot);
     assert.equal(r.valid, true, `${dir}: ${r.problems.join('; ')}`);
   }
+});
+
+test('kitVersion на несуществующий кит → resolvable=false', () => {
+  const dir = makeContainer('badkit', {
+    manifest: { ...GOOD, id: 'badkit', kitVersion: 'kits/net-takogo' },
+  });
+  const r = validateProcedure(dir, tmp);
+  assert.equal(r.valid, false);
+  assert.ok(r.problems.some((p) => p.includes('kitVersion не резолвится')));
+});
+
+test('ритуал утра ritual-day: kitVersion → kits/angelina-morning', () => {
+  const day = join(repoRoot, 'docs', 'procedures', 'ritual-day');
+  const r = validateProcedure(day, repoRoot);
+  assert.equal(r.valid, true, r.problems.join('; '));
+  const m = JSON.parse(readFileSync(join(day, 'MANIFEST.json'), 'utf8'));
+  assert.equal(m.kitVersion, 'kits/angelina-morning');
+  assert.equal(m.engines.length, 1, 'engines не дублируют весь кит');
 });

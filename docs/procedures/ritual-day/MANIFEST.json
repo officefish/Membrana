@@ -1,0 +1,12 @@
+{
+  "id": "ritual-day",
+  "leadPersona": "angelina",
+  "kitVersion": "kits/angelina-morning",
+  "engines": [
+    "scripts/morning-care.mjs"
+  ],
+  "precedents": [
+    "docs/precedents/2026-07-21-morning-ritual-live-run-mechanics-pass-value-fail.md",
+    "docs/precedents/2026-07-21-morning-ritual-session-report-7f931953-ca19-490e-a919-6ca27a60a8c9.md"
+  ]
+}

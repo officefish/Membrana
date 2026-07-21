@@ -21,7 +21,7 @@ PR #808 / `pl-r3-boundary`). Эпик первого жильца: `kits-angelin
 | **pins** | Подграф `path → SHA` (git object id файла/узла); копии запрещены |
 | **roots** | Точки входа кита (пути под `scripts/…`); замыкание пинов строит K2-аудит |
 | **leadPersona** | Владелец пина (кто отвечает за дрейф манифест ↔ реальность) |
-| **kitVersion** | Поле *процедуры* (`docs/procedures/*/MANIFEST.json`) → пин этого кита (K4) |
+| **kitVersion** | Поле *процедуры* → дом кита (`kits/<id>`); утро: [`ritual-day`](../docs/procedures/ritual-day/) → `kits/angelina-morning` (K4) |
 
 ## Layout
 
@@ -75,7 +75,7 @@ kits/
 | Схема манифеста (этот файл + schema) | K1 | ✅ |
 | Аудит полноты подграфа path→SHA | K2 | ✅ `yarn kits:audit` |
 | Жилец + режимы latest/pinned | K3 | ✅ `kits/angelina-morning/` |
-| `kitVersion` с процедуры утра | K4 | ⬜ |
+| `kitVersion` с процедуры утра | K4 | ✅ `ritual-day` → `kits/angelina-morning` |
 
 ## Аудит (K2)
 
