@@ -236,6 +236,7 @@ PR мёржатся **squash**, поэтому коммиты ветки не с
 
 ```bash
 yarn repo:branches                       # инвентарь local + origin/* vs origin/main (таблицы ahead/behind)
+yarn repo:branches:decompose             # 7 hygiene-категорий (worktree/персоны/baseline/PR/leftover/zombie/salvage)
 yarn repo:clean                          # dry-run: что мертво и что остаётся — с причинами
 yarn repo:clean --execute --remote       # удалить мёртвые ветки локально и на origin
 yarn repo:clean --execute --worktrees    # + убрать worktree архивных спринтов
