@@ -47,12 +47,13 @@
 
 | Команда / skill | Назначение |
 |-----------------|------------|
-| `yarn tooling:overview` | Живой инвентарь команд/скиллов/скриптов (не рукописный AGENTS-снимок) |
+| `yarn scripts:registry --report` | Derived `registry/SCRIPTS_LIST.md` (SoT → снимок) |
+| `yarn tooling:overview` | Живой инвентарь команд/скиллов (не рукописный AGENTS-снимок) |
 | `yarn test:scripts` | Тесты скриптового контура |
 | `yarn neighbors` · `membrana-worktree` | Соседи; сверять скоуп с `pl-r3-boundary` |
 | Карточки `sbc-s0`…`sbc-s4` | Фазы эпика `scripts-boundary-container` |
 
-Опции `--report` в контейнер — цель фазы **S2** (пока можно писать снимок вручную в `registry/` только по явной фазе S1).
+S1 пишет реестр через `scripts:registry --report`. Выравнивание с `tooling:overview --report` — фаза **S2**.
 
 ### Грабли
 
@@ -77,9 +78,14 @@
 
 «Собери / обнови `registry/SCRIPTS_LIST.md`».
 
-- Источник: ФС + `package.json` (+ вывод `tooling:overview` в cache, не как SoT).
+```bash
+yarn scripts:registry --report
+# опционально: --dated · --cache-overview (дамп tooling:overview в cache/, не SoT)
+```
+
+- Источник: ФС + `package.json`. Плоский разрез yarn↔file (без доменных вёдер).
 - Overwrite канонического файла; dated — опционально.
-- **HARD GATE:** не выдумывать категории скриптов из чата — либо явная таксономия в текущем сообщении / промпте фазы, либо плоский инвентарь без «магических» вёдер.
+- **HARD GATE:** не выдумывать категории скриптов из чата — либо явная таксономия в текущем сообщении / промпте фазы, либо плоский инвентарь.
 
 ### C — Deep analysis (по запросу)
 

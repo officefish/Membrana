@@ -7,7 +7,8 @@
 Канонический overwrite-снимок `scripts/registry/SCRIPTS_LIST.md` (+ Meta: Date, SHA, Source)
 из SoT: ФС `scripts/**` + корневой `package.json` `"scripts"`. Опционально dated-копия.
 
-Сырой дамп `yarn tooling:overview` — только в `scripts/cache/` (не SoT).
+Команда: `yarn scripts:registry --report` (чистая лемма в `scripts/lib/scripts-inventory.mjs`).
+Сырой дамп `yarn tooling:overview` — только в `scripts/cache/` (`--cache-overview`), не SoT.
 
 ## Запрещено
 
@@ -15,6 +16,6 @@
 
 ## DoD
 
-- [ ] `SCRIPTS_LIST.md` overwrite с Meta; воспроизводимая команда в README/промпте.
-- [ ] README контейнера: пункт 3 чеклиста → ✅.
-- [ ] LGTM dynin.
+- [x] `SCRIPTS_LIST.md` overwrite с Meta; воспроизводимая команда в README/AGENT_PROMPT.
+- [x] README контейнера: пункт 3 чеклиста → ✅.
+- [x] LGTM dynin.

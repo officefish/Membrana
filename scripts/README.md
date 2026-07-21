@@ -23,9 +23,9 @@
 
 1. ✅ Выделенный каталог = сам `scripts/`; артефакты управления группой не живут вне него.
 2. ✅ README-контракт с таблицей «что писать / в git?» (ниже).
-3. ⚠ Overwrite-реестр `registry/SCRIPTS_LIST.md` — **фаза S1** (пока нет канонического снимка).
+3. ✅ Overwrite-реестр `registry/SCRIPTS_LIST.md` — `yarn scripts:registry --report`.
 4. ✅ `cache/` под gitignore (этот файл + `.gitkeep`).
-5. ⚠ Инструменты пишут в контейнер сами (`--report`) — **фаза S2**; до неё допустим ручной снимок.
+5. ⚠ Инструменты пишут в контейнер сами (`--report`) — **фаза S2** (S1 уже пишет через `scripts:registry --report`; S2 — выровнять с `tooling:overview`).
 6. ✅ `AGENT_PROMPT.md` со сценариями; у опасных — HARD GATE.
 7. ✅ Массовые мутации (массовое удаление/переименование скриптов) — только по слову владельца.
 8. ⚠ Провода в `AGENTS.md` / скиллы — **фаза S4** (минимальная отсылка допустима после S0).
@@ -70,5 +70,5 @@ scripts/
 2. Указать: `scripts/AGENT_PROMPT.md`.
 3. Сценарии — в AGENT_PROMPT.
 
-Связанный tooling (сейчас): `yarn tooling:overview` · `yarn test:scripts`.
+Связанный tooling: `yarn scripts:registry --report` · `yarn tooling:overview` · `yarn test:scripts`.
 Указатель процесса: эпик `scripts-boundary-container`, спринт OPEN в `docs/day-sprint/`.
