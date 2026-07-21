@@ -207,20 +207,17 @@ test('ИНВАРИАНТ КАНОНА: падение code-review блокиру
 
   // .claude/CLAUDE.md: «Run even if code-review step failed — feedback is independent.»
   assert.equal(st['evening-tail'], 'ok', 'team-evening-feedback обязан отработать при упавшем ревью');
-  assert.equal(st['telegram-digest'], 'ok', 'партнёрский дайджест не заложник ревью');
 });
 
-test('ИНВАРИАНТ: падение evening-tail блокирует дайджест — ему нечего слать', () => {
-  const st = simulate(STEPS, { 'evening-tail': { exitCode: 1 } });
-  assert.equal(st['evening-tail'], 'failed-critical');
-  assert.equal(st['telegram-digest'], 'skipped-noncritical', 'дайджест некритичен, но артефакта нет — слать нечего');
+test('ИНВАРИАНТ НОВОГО МИРА (M3-G): шага telegram-digest в манифесте НЕТ — send терминален', () => {
+  assert.equal(STEPS.some((s) => s.id === 'telegram-digest'), false, 'отправка — не автошаг, а следствие canSend');
 });
 
 test('ИНВАРИАНТ: некритичный сбой не роняет никого', () => {
   const st = simulate(STEPS, { 'insight-drift': { exitCode: 1 }, 'rag-index': { exitCode: 1 } });
   assert.equal(st['insight-drift'], 'skipped-noncritical');
   assert.equal(st['rag-index'], 'skipped-noncritical');
-  for (const id of ['code-review', 'archive-code-review', 'evening-tail', 'telegram-digest']) {
+  for (const id of ['code-review', 'archive-code-review', 'evening-tail']) {
     assert.equal(st[id], 'ok', `${id} не должен страдать от некритичного сбоя`);
   }
 });

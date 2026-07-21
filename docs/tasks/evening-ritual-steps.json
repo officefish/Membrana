@@ -41,7 +41,9 @@
       "criticality": "critical",
       "label": "Остывание графа правды",
       "//": "Ничего не чинит сам (запрет #533) — автопочинка скрыла бы находку, ради которой гейт строится.",
-      "findingExitCodes": [2],
+      "findingExitCodes": [
+        2
+      ],
       "//findings": "exit 2 = ГРАФ ПРАВДЫ НАРУШЕН (процессы заблокированы) — находка репортёра, не поломка скрипта. Настоящая ошибка = exit 1.",
       "consumes": [],
       "produces": [
@@ -81,7 +83,9 @@
       "criticality": "noncritical",
       "whyNoncritical": "Крест-скан-РЕПОРТЕР: сообщает о расхождениях реестров, ничего не меняет. Сбой скана не портит данные. ОДНАКО его находки обязаны быть видимы — некритичность шага НЕ означает, что его вывод можно проглотить.",
       "label": "Дрейф реестра инсайтов",
-      "findingExitCodes": [3],
+      "findingExitCodes": [
+        3
+      ],
       "//findings": "exit 3 = НАЙДЕН дрейф (находка), exit 1 = настоящая ошибка. Живой прогон 18.07: бинарная модель называла найденный дрейф «пропущенным некритичным» — ложь о шаге.",
       "consumes": [
         "docs/insights/",
@@ -147,23 +151,6 @@
       ],
       "produces": [
         "docs/seanses/team-evening-feedback-<date>.md"
-      ]
-    },
-    {
-      "id": "telegram-digest",
-      "script": "scripts/telegram-ritual-digest.mjs --kind evening",
-      "kind": "mechanic",
-      "criticality": "noncritical",
-      "whyNoncritical": "Цепочечный прогон — best-effort по .claude/CLAUDE.md: office транзиентно таймаутит, ронять из-за этого весь вечер нельзя. ВАЖНО: некритичность ЗДЕСЬ не снимает обязательства — дайджест запускается ЯВНО после появления артефакта и владелец убеждается в sent=true. Цепочечный || true никогда не был подтверждением отправки.",
-      "label": "Партнёрский дайджест (ласточка) — вечерний",
-      "consumes": [
-        "docs/seanses/team-evening-feedback-<date>.md"
-      ],
-      "consumesFrom": {
-        "docs/seanses/team-evening-feedback-<date>.md": "evening-tail"
-      },
-      "produces": [
-        "сообщение в приватную группу союзников"
       ]
     }
   ],
