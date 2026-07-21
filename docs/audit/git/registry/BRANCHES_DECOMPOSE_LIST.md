@@ -9,7 +9,7 @@
 | Fetch | yes (prior fetch this session; regenerate used --no-fetch) |
 | Current branch | docs/audit-git-container |
 | Source | yarn repo:branches:decompose --report |
-| Pointer | Also written to `registry/branches-by-category.md` |
+| Pointer | Canonical current registry: `registry/BRANCHES_DECOMPOSE_LIST.md` |
 
 ---
 # repo:branches:decompose — 7 hygiene categories
@@ -157,4 +157,3 @@ ahead==0 vs origin/main, либо remote night-triage/claude без open PR.
 | docs/angelina-hostess-meeting | 1 | 9 | diverged | ahead>0, no open PR | salvage commits first |
 | docs/stitch-tasks-audit-canon | 1 | 4 | diverged | ahead>0, no open PR | salvage commits first |
 | origin/integration/pre-tj-live-79 | 1 | 1061 | diverged | ahead>0, no open PR | salvage commits first |
-
