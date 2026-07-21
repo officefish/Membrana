@@ -1,4 +1,4 @@
-﻿# Category 5 GC A4 — 2026-07-21
+# Category 5 GC A4 — 2026-07-21
 
 Owner-approved GC: **only A4** (6 remote behind-only `origin/comp/*`).  
 A1/A2 unique-tip leftovers **not** deleted (e.g. local `comp/comp-detection-alarm-*`).  
