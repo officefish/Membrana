@@ -28,9 +28,11 @@
 | Читать/писать промпты, registry, analysis, cache **только** под `docs/audit/git/` | Класть audit-cache в корень репо, `docs/archive/` «на глаз», temp в tracked paths |
 | Запускать yarn/git tooling из корня репо | Менять прод-код «заодно» без отдельной задачи |
 | Коммитить markdown registry/analysis по запросу владельца | `yarn repo:clean --execute` без явного ok |
-| Перезаписывать `registry/LATEST.md` содержимым актуального снимка | Считать `git branch --merged` источником истины |
+| Перезаписывать `registry/branches-by-category.md` содержимым актуального снимка | Считать `git branch --merged` источником истины |
 
 `cache/` — gitignored (сырой JSON). Markdown в `registry/` и `analysis/` — commit-friendly dated snapshots.
+
+Канонический «текущий» реестр внутри контейнера: `docs/audit/git/registry/branches-by-category.md` (overwrite на Scenario A). Dated-снимки: `registry/branches-by-category-YYYY-MM-DD.md`.
 
 ---
 
@@ -72,7 +74,7 @@
 
 ## 4. Scenario A — Build category registry
 
-**Триггер:** «собери реестр», «декомпозиция в файл», «обнови LATEST», Scenario A.
+**Триггер:** «собери реестр», «декомпозиция в файл», «обнови реестр», Scenario A.
 
 ### Шаги
 
@@ -93,8 +95,8 @@
 3. Убедиться, что в файле есть: Meta · Taxonomy (можно оставить из скрипта) · **Summary** · **семь** category-таблиц с колонками скрипта.
 4. Опционально:  
    `yarn repo:branches:decompose --no-fetch --json` → `docs/audit/git/cache/branches-by-category-YYYY-MM-DD.json` (не коммитить).
-5. **Перезаписать** `docs/audit/git/registry/LATEST.md` тем же содержимым, что dated-файл (на Windows symlink не обязателен — copy/overwrite).
-6. Кратко отчитаться владельцу: путь dated-файла, totals по Summary, указать на LATEST.
+5. **Перезаписать** `docs/audit/git/registry/branches-by-category.md` тем же содержимым, что dated-файл (на Windows symlink не обязателен — copy/overwrite). Это стабильный указатель «текущего» реестра внутри контейнера.
+6. Кратко отчитаться владельцу: путь dated-файла, totals по Summary, указать на `registry/branches-by-category.md`.
 
 **Не** удалять ветки по итогам Scenario A.
 
@@ -106,10 +108,10 @@
 
 ### Шаги
 
-1. **Загрузить реестр:** `docs/audit/git/registry/LATEST.md`  
+1. **Загрузить реестр:** `docs/audit/git/registry/branches-by-category.md`  
    (или dated-файл, который назвал владелец).  
    **Не** пересобирать membership категории ad-hoc.
-2. Если реестра нет / LATEST пуст → сначала **Scenario A**, потом B.
+2. Если реестра нет / файл пуст → сначала **Scenario A**, потом B.
 3. Выписать членов категории N из таблицы реестра (ветки как в колонке Branch).
 4. Для каждой ветки посчитать code-volume attention:
 
@@ -160,6 +162,6 @@
 
 | Сказать агенту | Что сделает |
 |----------------|-------------|
-| «Прочитай `docs/audit/git/AGENT_PROMPT.md` и Scenario A» | Свежий registry + LATEST |
-| «Scenario B, категория 6» | Attention A1–A4 по zombie из LATEST |
+| «Прочитай `docs/audit/git/AGENT_PROMPT.md` и Scenario A» | Свежий dated registry + overwrite `registry/branches-by-category.md` |
+| «Scenario B, категория 6» | Attention A1–A4 по zombie из `registry/branches-by-category.md` |
 | «Scenario B cat.7 по файлу registry/branches-by-category-2026-07-21.md» | Salvage deep analysis от указанного снимка |

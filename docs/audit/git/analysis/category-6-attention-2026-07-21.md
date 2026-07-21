@@ -6,7 +6,7 @@
 | --- | --- |
 | Date | 2026-07-21 |
 | Category | 6 — Застой / zombie |
-| Registry source | `docs/audit/git/registry/LATEST.md` (= `branches-by-category-2026-07-21.md`) |
+| Registry source | `docs/audit/git/registry/branches-by-category.md` (= `branches-by-category-2026-07-21.md`) |
 | Base | origin/main |
 | Base SHA | `b03880c74f72c8aaf879ec2c3620cdc9f56e55e6` |
 | Method | members from registry only; churn via `git diff --shortstat origin/main...BRANCH` |

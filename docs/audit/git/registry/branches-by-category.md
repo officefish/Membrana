@@ -9,7 +9,7 @@
 | Fetch | yes (prior fetch this session; regenerate used --no-fetch) |
 | Current branch | docs/audit-git-container |
 | Source | yarn repo:branches:decompose --report |
-| Pointer | Also written to `registry/LATEST.md` |
+| Pointer | Also written to `registry/branches-by-category.md` |
 
 ---
 # repo:branches:decompose — 7 hygiene categories

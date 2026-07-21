@@ -119,8 +119,8 @@ PR мёржатся **squash** → коммиты ветки не становя
 | Entry агента | [`docs/audit/git/AGENT_PROMPT.md`](docs/audit/git/AGENT_PROMPT.md) |
 | Контейнер | `docs/audit/git/` — `registry/` (снимки), `analysis/` (deep), `cache/` (gitignore) |
 | Tooling | `yarn repo:branches` · skill `membrana-branch-audit`; `yarn repo:branches:decompose` · skill `membrana-branch-decompose` |
-| Scenario A | реестр 7 категорий → `registry/…` + `LATEST.md` |
-| Scenario B | deep по категории N из `registry/LATEST.md` → `analysis/…` |
+| Scenario A | реестр 7 категорий → dated `registry/branches-by-category-YYYY-MM-DD.md` + overwrite `registry/branches-by-category.md` |
+| Scenario B | deep по категории N из `registry/branches-by-category.md` → `analysis/…` |
 
 `yarn repo:clean --execute` — только после явного ok человека (см. граблю dry-run выше).
 

@@ -70,6 +70,8 @@ Remote twin с локальным тезкой не дублируется.
 
 Снимки реестра по категориям и deep analysis хранятся в контейнере
 [`docs/audit/git/`](../../../docs/audit/git/) — канон агента:
-[`docs/audit/git/AGENT_PROMPT.md`](../../../docs/audit/git/AGENT_PROMPT.md)
-(Scenario A → `registry/`, Scenario B → `analysis/`). Этот скилл только классифицирует;
+[`docs/audit/git/AGENT_PROMPT.md`](../../../docs/audit/git/AGENT_PROMPT.md).
+Scenario A → dated `registry/branches-by-category-YYYY-MM-DD.md` **и** overwrite
+[`registry/branches-by-category.md`](../../../docs/audit/git/registry/branches-by-category.md);
+Scenario B читает этот стабильный файл → `analysis/`. Этот скилл только классифицирует;
 не подменяет контейнер.
