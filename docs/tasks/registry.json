@@ -138,7 +138,7 @@
       "archivedAt": null,
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "D4: CLOSURE + ACTIVE cleared. LGTM vesnin — ship; #761 + archive после merge.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "kits-dream-master"
@@ -231,7 +231,7 @@
         "dynin",
         "ozhegov"
       ],
-      "notes": "Эпик D0–D4 (#856–#860). OPEN: docs/day-sprint/kits-dream-master-2026-07-21/OPEN.md. Owner пина dynin.",
+      "notes": "D4 CLOSURE готов; ждёт LGTM vesnin → archive. Жилец kits/dream-master; ritual-dreams kitVersion. Owner пина dynin.",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },

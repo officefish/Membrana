@@ -6,7 +6,7 @@
 **Owner пина:** `dynin` (`leadPersona` в [`MANIFEST.json`](./MANIFEST.json)).  
 **Автор текста снов:** «Мастер снов» / [`DREAM_MASTER_PROMPT.md`](../../docs/prompts/DREAM_MASTER_PROMPT.md)
 (`DREAM_MASTER_VERSION` — не в pins, см. D1 → precedents процедуры в D3).  
-**Эпик:** `kits-dream-master` (#855) · фаза D2 (#858).
+**Эпик:** `kits-dream-master` (#855) · CLOSURE [`kits-dream-master-2026-07-21`](../../docs/day-sprint/kits-dream-master-2026-07-21/CLOSURE.md).
 
 ## Режимы
 
