@@ -47,7 +47,7 @@
 - [x] `docs/audit/bestiary/` — README, AGENT_PROMPT, registry/, analysis/, cache/, specimens/
 - [x] Чеклист GROUP_CONTAINERIZATION в README (п.5 ⚠ до `yarn bestiary:audit` в B2)
 - [x] Провода: `docs/audit/README`, `AGENTS.md`, паттерн known implementations
-- [ ] LGTM ozhegov
+- [x] LGTM ozhegov (owner ok 2026-07-21)
 
 ---
 
