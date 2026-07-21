@@ -18,6 +18,13 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `bme-f5-closure` | F5: CLOSURE, чеклист паттернов, handoff | M | [`BME_F5_CLOSURE_PROMPT.md`](../docs/prompts/BME_F5_CLOSURE_PROMPT.md) | [#829](https://github.com/officefish/Membrana/issues/829) |
+| `bme-f4-pins` | F4: PINNED_SUBGRAPH на подграф инструкций (манифест path→SHA + аудит) | M | [`BME_F4_PINS_PROMPT.md`](../docs/prompts/BME_F4_PINS_PROMPT.md) | [#828](https://github.com/officefish/Membrana/issues/828) |
+| `bme-f3-wire` | F3: провод контейнера → Mintlify (docs.json, README/AGENT_PROMPT, орган engine) | M | [`BME_F3_WIRE_PROMPT.md`](../docs/prompts/BME_F3_WIRE_PROMPT.md) | [#827](https://github.com/officefish/Membrana/issues/827) |
+| `bme-f2-pages` | F2: Mintlify cookbooks/pages с примерами (apps/docs) — основа пина | M | [`BME_F2_PAGES_PROMPT.md`](../docs/prompts/BME_F2_PAGES_PROMPT.md) | [#826](https://github.com/officefish/Membrana/issues/826) |
+| `bme-f1-cases` | F1: каталог случаев «какая ветка под какой случай» из assortment + Р4 | M | [`BME_F1_CASES_PROMPT.md`](../docs/prompts/BME_F1_CASES_PROMPT.md) | [#825](https://github.com/officefish/Membrana/issues/825) |
+| `bme-f0-brief` | F0: эпик-промпт, server-first (контейнер→Mintlify), границы vs kits/#761 | M | [`BME_F0_BRIEF_PROMPT.md`](../docs/prompts/BME_F0_BRIEF_PROMPT.md) | [#824](https://github.com/officefish/Membrana/issues/824) |
+| `branch-mintlify-engine` | Эпик: docs/audit/git → движок Mintlify — инструкции «ветка→случай» + PINNED_SUBGRAPH подграфа доков | L | [`BRANCH_MINTLIFY_ENGINE_PROMPT.md`](../docs/prompts/BRANCH_MINTLIFY_ENGINE_PROMPT.md) | [#823](https://github.com/officefish/Membrana/issues/823) |
 | `kam-k5-closure` | K5: CLOSURE, чеклист PINNED_SUBGRAPH в README кита, handoff | M | [`KAM_K5_CLOSURE_PROMPT.md`](../docs/prompts/KAM_K5_CLOSURE_PROMPT.md) | [#820](https://github.com/officefish/Membrana/issues/820) |
 | `kam-k4-wire` | K4: провод в процедуру утра / kitVersion + режимы latest/pinned | M | [`KAM_K4_WIRE_PROMPT.md`](../docs/prompts/KAM_K4_WIRE_PROMPT.md) | [#819](https://github.com/officefish/Membrana/issues/819) |
 | `kam-k3-first-kit` | K3: кит angelina-morning — набор скриптов секретаря + пины | M | [`KAM_K3_FIRST_KIT_PROMPT.md`](../docs/prompts/KAM_K3_FIRST_KIT_PROMPT.md) | [#818](https://github.com/officefish/Membrana/issues/818) |
