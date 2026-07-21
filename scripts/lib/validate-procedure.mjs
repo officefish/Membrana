@@ -92,7 +92,7 @@ export function validateProcedure(dir, repoRoot) {
     }
   }
 
-  // resolvable: каждая ссылка engines[]/precedents[] существует от корня репо
+  // resolvable: engines[]/precedents[] + (если задан) kitVersion → дом кита
   let resolvable = false;
   if (manifest && Array.isArray(manifest.engines) && Array.isArray(manifest.precedents)) {
     const missing = [...manifest.engines, ...manifest.precedents].filter(
@@ -100,6 +100,17 @@ export function validateProcedure(dir, repoRoot) {
     );
     resolvable = missing.length === 0 && manifest.engines.length > 0;
     for (const rel of missing) problems.push(`ссылка не резолвится: ${rel}`);
+
+    // K4: kitVersion — путь к дому кита (kits/<id>) с MANIFEST.json; null допустим
+    if (typeof manifest.kitVersion === 'string' && manifest.kitVersion.trim() !== '') {
+      const kitRel = manifest.kitVersion.replace(/\\/gu, '/').replace(/\/+$/u, '');
+      const kitAbs = join(repoRoot, kitRel);
+      const kitManifest = join(kitAbs, 'MANIFEST.json');
+      if (!existsSync(kitAbs) || !existsSync(kitManifest)) {
+        problems.push(`kitVersion не резолвится как кит: ${manifest.kitVersion}`);
+        resolvable = false;
+      }
+    }
   } else {
     problems.push('resolvable непроверяем: engines/precedents не массивы');
   }

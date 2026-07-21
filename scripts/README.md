@@ -49,7 +49,8 @@
 | [`kits/MANIFEST.schema.json`](../kits/MANIFEST.schema.json) | Единственная JSON Schema кит-манифеста |
 | [`docs/procedures/README.md`](../docs/procedures/README.md) § «Граница слоёв и киты» | Контракт Р3: BLOCK без манифеста / с битыми ссылками |
 | [`docs/procedures/layer-rules.json`](../docs/procedures/layer-rules.json) | Ранг `кит` (`kits/`); ребро процедура→кит через `kitVersion` |
-| [`docs/procedures/*/MANIFEST.json`](../docs/procedures/ritual-evening/MANIFEST.json) | Потребитель: `kitVersion` (`null` до K4) |
+| [`docs/procedures/ritual-day/MANIFEST.json`](../docs/procedures/ritual-day/MANIFEST.json) | Потребитель: `kitVersion: kits/angelina-morning` (K4) |
+| [`docs/procedures/*/MANIFEST.json`](../docs/procedures/ritual-evening/MANIFEST.json) | Прочие: `kitVersion` часто `null` |
 | [`PINNED_SUBGRAPH_VERSIONING`](../docs/patterns/PINNED_SUBGRAPH_VERSIONING.md) | Подграф путь→SHA (#761) |
 | `yarn kits:audit` | Зуб полноты (`scripts/lib/kit-subgraph-audit.mjs`, K2 / #817) |
 | [`attribution/`](../docs/procedures/attribution/README.md) | Кандидат-потребитель (механизм парсера — T9) |

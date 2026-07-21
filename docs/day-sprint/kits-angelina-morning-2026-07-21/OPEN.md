@@ -9,11 +9,11 @@
 | **Started** | 2026-07-21 |
 | **Size** | L |
 | **Lead epic** | vesnin |
-| **Branch** | `feature/kam-k3-first-kit` (фаза K3) |
+| **Branch** | `feature/kam-k4-wire` (фаза K4) |
 
 **Prompt эпика:** [`KITS_ANGELINA_MORNING_PROMPT.md`](../../prompts/KITS_ANGELINA_MORNING_PROMPT.md)  
 **Семя:** [#761](https://github.com/officefish/Membrana/issues/761) · [`PINNED_SUBGRAPH_VERSIONING`](../../patterns/PINNED_SUBGRAPH_VERSIONING.md)  
-**Код:** `scripts/` · **киты:** `kits/` (K1+) · **жилец:** `kits/angelina-morning/`
+**Код:** `scripts/` · **киты:** `kits/angelina-morning/` · **процедура:** `docs/procedures/ritual-day/`
 
 ---
 
@@ -34,42 +34,29 @@
 | **K1** | `kam-k1-home` | [#816](https://github.com/officefish/Membrana/issues/816) | ozhegov | ✅ done · [PR #836](https://github.com/officefish/Membrana/pull/836) |
 | **K2** | `kam-k2-audit` | [#817](https://github.com/officefish/Membrana/issues/817) | dynin | ✅ done · [PR #838](https://github.com/officefish/Membrana/pull/838) |
 | **K3** | `kam-k3-first-kit` | [#818](https://github.com/officefish/Membrana/issues/818) | angelina | ✅ done · [PR #841](https://github.com/officefish/Membrana/pull/841) |
-| **K4** | `kam-k4-wire` | [#819](https://github.com/officefish/Membrana/issues/819) | ozhegov | ⬜ next |
+| **K4** | `kam-k4-wire` | [#819](https://github.com/officefish/Membrana/issues/819) | ozhegov | ✅ LGTM — ship |
 | **K5** | `kam-k5-closure` | [#820](https://github.com/officefish/Membrana/issues/820) | vesnin | ⬜ |
 
 ---
 
-## Gate checklist (K0)
+## Gate checklist (K0–K3)
 
-- [x] Эпик-промпт полон (границы, соседи, фазы, DoD)
-- [x] OPEN спринта создан
-- [x] LGTM vesnin на границы (owner ok 2026-07-21)
+- [x] K0–K3 done (см. PR выше)
 
-## Gate checklist (K1)
+## Gate checklist (K4)
 
-- [x] `kits/README.md` + `MANIFEST.schema.json` (поля id/leadPersona/roots/pins)
-- [x] Провода procedures + scripts README → дом слоя; нет schema в `scripts/`
+- [x] `docs/procedures/ritual-day/` + `kitVersion: kits/angelina-morning`
+- [x] `engines[]` = якорь (morning-care), не весь кит
+- [x] procedures/README § kitVersion; `validateProcedure` резолвит кит
+- [x] `check:layer-direction` + `kits:audit` зелёные
 - [x] LGTM ozhegov (owner ok 2026-07-21)
-
-## Gate checklist (K2)
-
-- [x] `yarn kits:audit` + `scripts/lib/kit-subgraph-audit.mjs`
-- [x] Тесты missing_pin + sha_drift (pinned/latest)
-- [x] Чеклист PINNED_SUBGRAPH в `kits/README` (п.3, п.7)
-- [x] LGTM dynin (owner ok 2026-07-21)
-
-## Gate checklist (K3)
-
-- [x] `kits/angelina-morning/` README + MANIFEST (`leadPersona: angelina`)
-- [x] 13 roots; `yarn kits:audit --id angelina-morning` → 0 blocking
-- [x] latest/pinned описаны в README жильца
-- [x] LGTM angelina (owner ok 2026-07-21)
 
 ---
 
 ## Первые команды
 
 ```bash
+node --test scripts/validate-procedure.test.mjs
+yarn check:layer-direction
 yarn kits:audit --id angelina-morning
-yarn kits:audit --id angelina-morning --mode latest
 ```

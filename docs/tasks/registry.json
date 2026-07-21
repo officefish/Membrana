@@ -156,7 +156,7 @@
       "archivedAt": null,
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "K4: ritual-day kitVersion→kits/angelina-morning; engines=morning-care. LGTM ozhegov (owner ok 2026-07-21). Ship PR.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "kits-angelina-morning"

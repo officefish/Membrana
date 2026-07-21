@@ -50,4 +50,4 @@ yarn kits:audit --id angelina-morning --mode latest
 
 - Ценностный доклад утра (#788) — не подменяет этот кит.
 - `repo:clean --execute` — только по ok владельца.
-- `kitVersion` на процедуре утра — фаза K4.
+- Процедура утра: [`docs/procedures/ritual-day/`](../../docs/procedures/ritual-day/) (`kitVersion`: `kits/angelina-morning`).
