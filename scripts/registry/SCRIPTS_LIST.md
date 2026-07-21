@@ -1,0 +1,1104 @@
+# SCRIPTS_LIST — реестр состава scripts/
+
+Производный снимок. Источник истины — ФС `scripts/**` (код) + `package.json#scripts`.
+Таксономия доменов отсутствует (плоский структурный разрез yarn↔file).
+
+## Meta
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-07-21 |
+| Head SHA | 54a24dc3ac88039c5512932fc6d038c4085516e2 |
+| Source | yarn scripts:registry --report |
+| SoT | scripts/** (code) + package.json#scripts |
+
+## Summary
+
+| Metric | Count |
+|--------|------:|
+| Code files under `scripts/` | 541 |
+| Yarn scripts (package.json) | 300 |
+| Yarn → `scripts/` | 248 |
+| Yarn без пути `scripts/` | 52 |
+| Yarn → missing file | 15 |
+| Code files without yarn ref | 209 |
+
+## Yarn → scripts/ (248)
+
+- `always-yes:off` → `scripts/always-yes.mjs`
+- `always-yes:on` → `scripts/always-yes.mjs`
+- `always-yes:status` → `scripts/always-yes.mjs`
+- `analyzers:research:week` → `scripts/analyzers-research-week.mjs`
+- `analyzers:research:week:dry` → `scripts/analyzers-research-week.mjs`
+- `anthropic:smoke` → `scripts/anthropic-smoke.mjs`
+- `anthropic:task` → `scripts/anthropic-task.mjs`
+- `apply:lead-persona` → `scripts/apply-lead-persona-defaults.mjs` ⚠ missing: `scripts/apply-lead-persona-defaults.mjs`
+- `apply:strategic-wave` → `scripts/apply-strategic-wave.mjs` ⚠ missing: `scripts/apply-strategic-wave.mjs`
+- `archive:daily-day` → `scripts/archive-daily-day-artifacts.mjs`
+- `archive:daily-review` → `scripts/archive-daily-code-review.mjs`
+- `archive:night-hunt` → `scripts/archive-night-hunt-artifacts.mjs`
+- `ask` → `scripts/ask-persona.mjs`
+- `audit:evening` → `scripts/audit-evening.mjs`
+- `audit:evening:stdout` → `scripts/audit-evening.mjs`
+- `benchmark:detectors` → `scripts/benchmark-detectors.mjs`
+- `benchmark:fft-trends` → `scripts/benchmark-fft-trends.mjs`
+- `bom:check` → `scripts/check-package-json-bom.mjs`
+- `bom:fix` → `scripts/check-package-json-bom.mjs`
+- `branch:check-base` → `scripts/branch-base-freshness.mjs`
+- `build:affected` → `scripts/build-affected.mjs`
+- `cabinet:deploy:image:prod` → `scripts/_ssh-cabinet-deploy-image.mjs`
+- `cabinet:deploy:prod` → `scripts/_ssh-cabinet-deploy.mjs`
+- `cabinet:mp3:post-deploy` → `scripts/_ssh-cabinet-mp3-post-deploy.mjs`
+- `cabinet:mp3:prod` → `scripts/_ssh-cabinet-mp3-prod.mjs`
+- `cabinet:mp3:smoke` → `scripts/_ssh-cabinet-mp3-smoke.mjs`
+- `cabinet:mp4:prod` → `scripts/_ssh-cabinet-mp4-prod.mjs`
+- `cabinet:mp5:prod` → `scripts/_ssh-cabinet-mp5-prod.mjs`
+- `cabinet:mp6:prod` → `scripts/_ssh-cabinet-mp6-prod.mjs`
+- `cabinet:mp7:prod` → `scripts/_ssh-cabinet-mp7-prod.mjs` ⚠ missing: `scripts/_ssh-cabinet-mp7-prod.mjs`
+- `cabinet:pair-unlink:prod` → `scripts/_ssh-cabinet-pair-unlink-prod.mjs`
+- `cabinet:pairing:e2e:deploy` → `scripts/_ssh-cabinet-pairing-e2e-deploy.mjs`
+- `cabinet:quota-refactor:prod` → `scripts/_ssh-cabinet-quota-refactor-prod.mjs`
+- `cabinet:rollback:prod` → `scripts/_ssh-cabinet-rollback.mjs`
+- `cabinet:smoke:prod` → `scripts/_ssh-cabinet-smoke.mjs`
+- `cabinet:tj6:prod` → `scripts/_ssh-cabinet-tj6-live-journal-smoke.mjs`
+- `cabinet:u10-workspace:prod` → `scripts/_ssh-cabinet-u10-workspace-prod.mjs`
+- `cabinet:u10-workspace:smoke` → `scripts/_ssh-cabinet-u10-workspace-smoke.mjs`
+- `calibrate:detectors` → `scripts/calibrate-detectors.mjs`
+- `canon:sign` → `scripts/canon-sign.mjs`
+- `catalog:verify-client` → `scripts/verify-client-catalog.mjs`
+- `check:boundaries` → `scripts/check-package-boundaries.mjs`
+- `claude:code` → `scripts/claude-code-with-proxy.mjs`
+- `code-review` → `scripts/code-review.mjs`
+- `code-review:full` → `scripts/code-review.mjs`
+- `code-review:pr` → `scripts/code-review.mjs`
+- `comp:open` → `scripts/comp-open.mjs`
+- `comp:publish-catalog` → `scripts/comp-publish-catalog.mjs`
+- `competition:synthesis-async-v2` → `scripts/generate-competition-async-v2-synthesis.mjs`
+- `competition:synthesis-v1` → `scripts/generate-competition-v1-synthesis.mjs`
+- `consilium` → `scripts/consilium.mjs`
+- `cowork:open` → `scripts/cowork-open.mjs`
+- `dataset:assign-splits` → `scripts/assign-dataset-splits.mjs`
+- `dataset:export-ground-truth` → `scripts/export-ground-truth-manifest.mjs`
+- `dataset:fetch-real` → `scripts/fetch-real-dataset-collection.mjs`
+- `dataset:fetch-vdr-pilot` → `scripts/fetch-vdr-pilot-corpus.mjs`
+- `dataset:generate` → `scripts/generate-dataset-synthetics.mjs`
+- `dataset:sync-free-v1` → `scripts/sync-free-v1-catalog.mjs`
+- `deepseek:task` → `scripts/deepseek-task.mjs`
+- `deploy:when-green` → `scripts/deploy-when-green.mjs`
+- `deps:watch` → `scripts/deps-watch.mjs`
+- `desktop:support-collect` → `scripts/desktop-support-collect.mjs`
+- `detector:compare:export` → `scripts/detector-compare-export.mjs`
+- `device-board:deploy:cabinet` → `scripts/_ssh-cabinet-redeploy.mjs` ⚠ missing: `scripts/_ssh-cabinet-redeploy.mjs`
+- `device-board:deploy:prod` → `scripts/_ssh-device-board-deploy.mjs`
+- `docs:lint` → `scripts/verify-encoding.mjs`
+- `docs:verify-canon` → `scripts/verify-docs-canon.mjs`
+- `dreams:digest` → `scripts/dreams.mjs`
+- `dreams:tick` → `scripts/dreams.mjs`
+- `drift:baseline` → `scripts/drift-anchor-snapshot.mjs`
+- `drift:behavioral` → `scripts/drift-anchor-behavioral.mjs`
+- `drift:code` → `scripts/drift-anchor-code.mjs`
+- `drift:code:schedule` → `scripts/drift-anchor-code.mjs`, `scripts/drift-anchor-divergence.mjs`
+- `drift:data` → `scripts/drift-anchor-data.mjs`
+- `drift:divergence` → `scripts/drift-anchor-divergence.mjs`
+- `drift:run` → `scripts/drift-anchor-run.mjs`
+- `drift:snapshot` → `scripts/drift-anchor-snapshot.mjs`
+- `ensure-ollama` → `scripts/ensure-ollama.mjs`
+- `git:check-divergence` → `scripts/git-check-divergence.mjs`
+- `git:fresh-branch` → `scripts/git-fresh-branch.mjs`
+- `hackathon:close` → `scripts/hackathon-close.mjs`
+- `headroom:claude` → `scripts/headroom-claude.mjs`
+- `headroom:start` → `scripts/headroom-start.mjs`
+- `hermes:brief` → `scripts/hermes-brief.mjs`
+- `insight` → `scripts/insight.mjs`
+- `insight:drift` → `scripts/insight-drift.mjs`
+- `insight:help` → `scripts/insight.mjs`
+- `insight:verify` → `scripts/insight.mjs`
+- `issues:audit` → `scripts/github-issues-audit.mjs`
+- `issues:audit:apply` → `scripts/github-issues-audit.mjs`
+- `live-links` → `scripts/live-links.mjs`
+- `llm:probe` → `scripts/llm-probe.mjs`
+- `local-code-review` → `scripts/local-code-review.mjs`
+- `local-code-review:check` → `scripts/local-code-review.mjs`
+- `local-code-review:full` → `scripts/local-code-review.mjs`
+- `logs:parse` → `scripts/parse-client-logs.mjs`
+- `logs:parse:shell` → `scripts/parse-studio-shell-log.mjs`
+- `logs:parse:studio` → `scripts/parse-client-logs.mjs`
+- `main-day-issue` → `scripts/main-day-issue.mjs`
+- `main-day-issue:dry` → `scripts/main-day-issue.mjs`
+- `main-day-issue:full` → `scripts/main-day-issue.mjs`
+- `main-day-probe` → `scripts/main-day-probe.mjs`
+- `mcp:phase-a` → `scripts/mcp-workstation-phase-a.mjs`
+- `mcp:phase-a:install` → `scripts/mcp-workstation-phase-a.mjs`
+- `mcp:phase-b` → `scripts/mcp-workstation-phase-b.mjs`
+- `mcp:phase-b:install` → `scripts/mcp-workstation-phase-b.mjs`
+- `mcp:phase-c` → `scripts/mcp-workstation-phase-c.mjs`
+- `mcp:phase-c:install` → `scripts/mcp-workstation-phase-c.mjs`
+- `mcp:phase-d` → `scripts/mcp-workstation-phase-d.mjs`
+- `mcp:phase-d:install` → `scripts/mcp-workstation-phase-d.mjs`
+- `mcp:verify-bootstrap` → `scripts/verify-mcp-bootstrap.mjs`
+- `media:cors:cabinet-prod` → `scripts/_ssh-media-cabinet-cors-fix.mjs`
+- `media:env:check` → `scripts/media-env-check.mjs`
+- `media:provision-catalog` → `scripts/media-provision-catalog.mjs`
+- `meeting:audit` → `scripts/meeting-audit.mjs`
+- `meeting:status` → `scripts/meeting-status.mjs`
+- `morning-care` → `scripts/morning-care.mjs`
+- `morning:gate` → `scripts/morning-gate.mjs`
+- `movement:lift` → `scripts/movement-mode-lift.mjs`
+- `movement:status` → `scripts/movement-mode-status.mjs`
+- `neighbors` → `scripts/neighbors.mjs`
+- `net:diag` → `scripts/net-diag.mjs`
+- `net:http` → `scripts/net-http.mjs`
+- `night-hunt:pr-review` → `scripts/night-hunt-pr-review.mjs`
+- `night-triage:secret-scan` → `scripts/night-triage-secret-scan.mjs`
+- `night:checkpoint` → `scripts/night-build-checkpoint.mjs`
+- `night:close` → `scripts/night-build-close.mjs`
+- `night:land-reports` → `scripts/night-land-reports.mjs`
+- `night:open` → `scripts/night-build-open.mjs`
+- `night:research` → `scripts/night-research.mjs`
+- `night:research:sweep` → `scripts/night-research.mjs`
+- `night:research:yield` → `scripts/night-research.mjs`
+- `night:run` → `scripts/night-build-run-phase.mjs` ⚠ missing: `scripts/night-build-run-phase.mjs`
+- `office:research-digest` → `scripts/office-research-digest.mjs`
+- `office:ssh` → `scripts/_ssh-office-exec.mjs`
+- `panel:dns-gate` → `scripts/panel-dns-gate.mjs`
+- `panel:invite` → `scripts/panel-invite.mjs`
+- `persona-memory:extract` → `scripts/persona-memory-extract.mjs`
+- `persona:memory` → `scripts/persona-memory-extract.mjs`
+- `plan:day` → `scripts/strategy-day.mjs`
+- `plan:day:full` → `scripts/strategic-plan-day.mjs`
+- `plan:week` → `scripts/strategic-plan-week.mjs`
+- `plan:week:full` → `scripts/strategic-plan-week.mjs`
+- `pr:ship` → `scripts/pr-ship.mjs`
+- `pr:wait` → `scripts/pr-wait.mjs`
+- `prepare` → `scripts/registry-merge-driver.mjs`
+- `prisma:migration` → `scripts/prisma-migration-new.mjs`
+- `probe:node-link` → `scripts/node-link-probe.mjs`
+- `proxy:claude` → `scripts/proxy-claude.mjs`
+- `rag:query` → `scripts/rag-query.mjs`
+- `recording-parity:smoke-matrix` → `scripts/recording-parity-smoke-matrix.mjs`
+- `replit:pull-demo` → `scripts/replit-pull-demo.mjs`
+- `replit:task` → `scripts/replit-task.mjs`
+- `repo:branches` → `scripts/repo-branches.mjs`
+- `repo:branches:decompose` → `scripts/repo-branches-decompose.mjs`
+- `repo:clean` → `scripts/repo-clean.mjs`
+- `report:vdr6` → `scripts/generate-vdr6-report.mjs`
+- `research` → `scripts/research.mjs`
+- `ritual:day` → `scripts/morning-care.mjs`, `scripts/worktree-sync.mjs`, `scripts/repo-clean.mjs`, `scripts/deps-watch.mjs`, `scripts/plan-week-if-monday.mjs`, `scripts/strategy-day.mjs`, `scripts/daily-standup.mjs`, `scripts/main-day-probe.mjs`, `scripts/main-day-issue.mjs`, `scripts/angelina.mjs`
+- `ritual:day:no-api` → `scripts/morning-care.mjs`, `scripts/daily-standup.mjs`, `scripts/main-day-probe.mjs`, `scripts/main-day-issue.mjs`
+- `ritual:evening` → `scripts/ritual-evening-run.mjs`
+- `root-site:check` → `scripts/_ssh-root-site-setup.mjs`
+- `root-site:deploy` → `scripts/_ssh-root-site-setup.mjs`
+- `root-site:deploy:installer` → `scripts/_ssh-root-site-setup.mjs`
+- `rt:day-report` → `scripts/rt-day-report.mjs`
+- `scripts:registry` → `scripts/scripts-registry.mjs`
+- `skills:closure-review:sync` → `scripts/sync-task-closure-review-skills.mjs`
+- `skills:closure-review:verify` → `scripts/sync-task-closure-review-skills.mjs`
+- `standup` → `scripts/daily-standup.mjs`
+- `standup:dry` → `scripts/daily-standup.mjs`
+- `standup:full` → `scripts/daily-standup.mjs`
+- `strategy:day` → `scripts/strategy-day.mjs`
+- `studio:build` → `scripts/studio-build.mjs`
+- `studio:dev` → `scripts/studio-dev.mjs`
+- `studio:journal-fs-check` → `scripts/studio-offline-journal-check.mjs`
+- `studio:ms5-smoke` → `scripts/studio-ms5-prod-smoke.mjs`
+- `studio:package` → `scripts/studio-package.mjs`
+- `tailwind:configs:fix` → `scripts/generate-tailwind-configs.mjs`
+- `task:archive` → `scripts/archive-task.mjs`
+- `task:board` → `scripts/generate-active-tasks-board.mjs` ⚠ missing: `scripts/generate-active-tasks-board.mjs`
+- `task:close-github` → `scripts/task-close-github-issues.mjs`
+- `task:close-github:dry` → `scripts/task-close-github-issues.mjs`
+- `task:list` → `scripts/task-list.mjs`
+- `task:register` → `scripts/task-register.mjs`
+- `task:review:finalize` → `scripts/task-closure-review.mjs`
+- `task:review:prepare` → `scripts/task-closure-review.mjs`
+- `task:review:run` → `scripts/task-closure-review.mjs`
+- `task:review:ship` → `scripts/task-review-ship.mjs`
+- `task:review:status` → `scripts/task-closure-review.mjs`
+- `task:start` → `scripts/task-start.mjs`
+- `task:sync-readme` → `scripts/task-list.mjs`
+- `tasks:archive-closed` → `scripts/tasks-archive-closed.mjs`
+- `tasks:audit` → `scripts/tasks-audit.mjs`
+- `tasks:audit:offline` → `scripts/tasks-audit.mjs`
+- `tasks:audit:verify` → `scripts/verify-tasks-audit.mjs` ⚠ missing: `scripts/verify-tasks-audit.mjs`
+- `tasks:bookkeeping` → `scripts/tasks-bookkeeping.mjs` ⚠ missing: `scripts/tasks-bookkeeping.mjs`
+- `tasks:decompose` → `scripts/tasks-decompose.mjs`
+- `tasks:reviewing` → `scripts/tasks-reviewing.mjs` ⚠ missing: `scripts/tasks-reviewing.mjs`
+- `tasks:sync-issues` → `scripts/tasks-sync-issue-state.mjs`
+- `tasks:sync-issues:dry` → `scripts/tasks-sync-issue-state.mjs`
+- `team-evening-feedback` → `scripts/team-evening-feedback.mjs`
+- `team-evening-feedback:dry` → `scripts/team-evening-feedback.mjs`
+- `telegram:digest:day` → `scripts/telegram-ritual-digest.mjs`
+- `telegram:digest:evening` → `scripts/telegram-ritual-digest.mjs`
+- `telegram:swallow` → `scripts/telegram-swallow.mjs`
+- `templates:build-from-dataset` → `scripts/build-templates-from-dataset.mjs`
+- `templates:content:qa` → `scripts/evaluate-free-v1-content.mjs`
+- `templates:content:real:birds` → `scripts/materialize-free-v1-real.py` ⚠ missing: `scripts/materialize-free-v1-real.py`
+- `templates:content:real:machine-hum` → `scripts/materialize-free-v1-real.py` ⚠ missing: `scripts/materialize-free-v1-real.py`
+- `templates:content:real:silence` → `scripts/materialize-free-v1-real.py` ⚠ missing: `scripts/materialize-free-v1-real.py`
+- `templates:content:real:speech` → `scripts/materialize-free-v1-real.py` ⚠ missing: `scripts/materialize-free-v1-real.py`
+- `templates:content:real:wind` → `scripts/materialize-free-v1-real.py` ⚠ missing: `scripts/materialize-free-v1-real.py`
+- `templates:content:research` → `scripts/research-free-v1-real-sources.mjs`
+- `templates:generate` → `scripts/generate-class-template.mjs`
+- `templates:generate:drone-regression` → `scripts/generate-class-template.mjs`
+- `templates:stage-gate` → `scripts/evaluate-free-v1-stage-gate.mjs`
+- `test:scripts` → `scripts/lib/movement-mode.test.mjs`, `scripts/lib/snapshot-contract.test.mjs`, `scripts/angelina-cascade.test.mjs`, `scripts/angelina-adapter.test.mjs`, `scripts/ritual-green-cascade.test.mjs`, `scripts/skill-status.test.mjs`, `scripts/day-plan-assemble.test.mjs`, `scripts/morning-gates.test.mjs`, `scripts/gc-void.test.mjs`, `scripts/repo-branches.test.mjs`, `scripts/repo-branches-decompose.test.mjs`, `scripts/main-day-skeleton.test.mjs`, `scripts/day-plan-frame.test.mjs`, `scripts/standup-plan.test.mjs`, `scripts/report-lens.test.mjs`, `scripts/dreams-select.test.mjs`, `scripts/dreams-log.test.mjs`, `scripts/dreams-tick.test.mjs`, `scripts/dreams-format.test.mjs`, `scripts/dreams-providers.test.mjs`, `scripts/angelina-delegate.test.mjs`, `scripts/angelina-validate.test.mjs`, `scripts/trace-acceptance.test.mjs`, `scripts/trace-lead-persona.test.mjs`, `scripts/measure-metrics.test.mjs`, `scripts/measure-report.test.mjs`, `scripts/cowork-execution-smoke.test.mjs`, `scripts/context-collector-paths.test.mjs`, `scripts/consilium-paths.test.mjs`, `scripts/consilium-premises.test.mjs`, `scripts/main-day-issue-paths.test.mjs`, `scripts/daily-standup-paths.test.mjs`, `scripts/rag-ritual.test.mjs`, `scripts/code-review-ritual.test.mjs`, `scripts/team-evening-feedback-ritual.test.mjs`, `scripts/detection-planning-priorities.test.mjs`, `scripts/task-registry.test.mjs`, `scripts/task-closure-review-schema.test.mjs`, `scripts/task-closure-review.test.mjs`, `scripts/task-closure-review-skills.test.mjs`, `scripts/archive-doc-snapshot.test.mjs`, `scripts/artifact-freshness.test.mjs`, `scripts/benchmark-metrics.test.mjs`, `scripts/calibration-preset-sync.test.mjs`, `scripts/percentile-template.test.mjs`, `scripts/benchmark-prior-metrics.test.mjs`, `scripts/detector-compare-export.test.mjs`, `scripts/ground-truth-export.test.mjs`, `scripts/verify-mcp-bootstrap.test.mjs`, `scripts/github-issues-audit.test.mjs`, `scripts/usercase-manifest.test.mjs`, `scripts/client-logs-parser.test.mjs`, `scripts/insight-ritual.test.mjs`, `scripts/replit-bridge.test.mjs`, `scripts/insight-lifecycle.test.mjs`, `scripts/insight-lifecycle-ops.test.mjs`, `scripts/insight-lifecycle-migrate.test.mjs`, `scripts/insight-skill-mirrors.test.mjs`, `scripts/check-package-json-bom.test.mjs`, `scripts/tailwind-coverage.test.mjs`, `scripts/validate-vdr.test.mjs`, `scripts/parse-studio-shell-log.test.mjs`, `scripts/check-package-boundaries.test.mjs`, `scripts/plan-week-if-monday.test.mjs`, `scripts/node-link-probe.test.mjs`, `scripts/vdr-labels-merge.test.mjs`, `scripts/live-links.test.mjs`, `scripts/worktree-bootstrap.test.mjs`, `scripts/pr-ship.test.mjs`, `scripts/cabinet-deploy-image-tag.test.mjs`, `scripts/build-affected.test.mjs`, `scripts/verify-wire-sync.test.mjs`, `scripts/generate-wire-contract.test.mjs`, `scripts/deploy-when-green.test.mjs`, `scripts/prisma-migration-new.test.mjs`, `scripts/git-day-context.test.mjs`, `scripts/tasks-archive-closed.test.mjs`, `scripts/hermes-brief.test.mjs`, `scripts/persona-memory-extract.test.mjs`, `scripts/insight-drift.test.mjs`, `scripts/llm-probe.test.mjs`, `scripts/panel-dns-gate.test.mjs`, `scripts/night-triage-secret-scan.test.mjs`, `scripts/drift-anchor-snapshot.test.mjs`, `scripts/drift-anchor-behavioral.test.mjs`, `scripts/drift-anchor-code.test.mjs`, `scripts/drift-anchor-divergence.test.mjs`, `scripts/drift-anchor-data.test.mjs`, `scripts/media-samples-client.test.mjs`, `scripts/drift-digest-section.test.mjs`, `scripts/git-divergence.test.mjs`, `scripts/telegram-ritual-digest.test.mjs`, `scripts/telegram-swallow.test.mjs`, `scripts/comms-sent-log.test.mjs`, `scripts/research-digest.test.mjs`, `scripts/cowork-open.test.mjs`, `scripts/verify-encoding.test.mjs`, `scripts/anthropic-credit-hint.test.mjs`, `scripts/neighbors.test.mjs`, `scripts/task-register.test.mjs`, `scripts/protocol-validator.test.mjs`, `scripts/task-review-ship.test.mjs`, `scripts/_ssh-panel-smoke.test.mjs`, `scripts/_ssh-office-config.test.mjs`, `scripts/repo-clean.test.mjs`, `scripts/repo-clean-root.test.mjs`, `scripts/classify-worktree.test.mjs`, `scripts/worktree-sync-check.test.mjs`, `scripts/docs-canon.test.mjs`, `scripts/registry-merge.test.mjs`, `scripts/deep-research.test.mjs`, `scripts/main-day-probe.test.mjs`, `scripts/day-work-diff.test.mjs`, `scripts/tooling-overview.test.mjs`, `scripts/always-yes.test.mjs`, `scripts/studio-ms5-prod-smoke.test.mjs`, `scripts/truth-graph.test.mjs`, `scripts/standup-routing.test.mjs`, `scripts/strategy-horizon.test.mjs`, `scripts/strategy-channels.test.mjs`, `scripts/night-research.test.mjs`, `scripts/morning-ritual.test.mjs`, `scripts/anthropic-env.test.mjs`, `scripts/meeting-agenda.test.mjs`, `scripts/meeting-walk.test.mjs`, `scripts/net-diag.test.mjs`, `scripts/test-list-coverage.test.mjs`, `scripts/office-token.test.mjs`, `scripts/night-build-handoff.test.mjs`, `scripts/night-land-reports.test.mjs`, `scripts/meeting-audit.test.mjs`, `scripts/meeting-verdict.test.mjs`, `scripts/tasks-audit.test.mjs`, `scripts/tasks-decompose.test.mjs`, `scripts/validate-procedure.test.mjs`, `scripts/audit-evening.test.mjs`, `scripts/branch-base-freshness.test.mjs`, `scripts/pr-wait.test.mjs`, `scripts/transcript.test.mjs`, `scripts/truth-mint.test.mjs`, `scripts/net-http.test.mjs`, `scripts/step-status.test.mjs`, `scripts/ritual-exit-codes.test.mjs`, `scripts/read-dated.test.mjs`, `scripts/storm-lifecycle.test.mjs`, `scripts/storm-codex.test.mjs`, `scripts/storm-breath.test.mjs`, `scripts/media-token.test.mjs`, `scripts/task-start.test.mjs`, `scripts/task-start-links.test.mjs`, `scripts/optional-yarn-script.test.mjs`
+- `tooling:overview` → `scripts/tooling-overview.mjs`
+- `trace:gate` → `scripts/trace-gate.mjs`
+- `trends-parity:smoke-matrix` → `scripts/trends-fft-parity-smoke-matrix.mjs`
+- `truth` → `scripts/truth.mjs`
+- `truth:cool` → `scripts/truth.mjs`
+- `truth:review` → `scripts/truth.mjs`
+- `truth:verify` → `scripts/truth.mjs`
+- `usercase` → `scripts/usercase.mjs`
+- `usercase:build` → `scripts/build-usercase.mjs`
+- `usercase:build-competition-all` → `scripts/build-usercase-competition-all.mjs`
+- `usercase:build-competition-async-v2` → `scripts/build-usercase-competition-async-v2-team.mjs`
+- `usercase:build-competition-async-v2-all` → `scripts/build-usercase-competition-async-v2-all.mjs`
+- `usercase:build-mvp-microphone` → `scripts/build-usercase-mvp-microphone.mjs`
+- `usercase:export-competition-templates` → `scripts/export-competition-templates.mjs`
+- `usercase:verify-competition` → `scripts/usercase.mjs`
+- `usercase:verify-competition-async-v2` → `scripts/usercase.mjs`
+- `usercase:verify-kinds` → `scripts/verify-usercase-kinds.mjs`
+- `usercase:verify-layout` → `scripts/verify-usercase-layout.mjs`
+- `usercase:verify-prerun` → `scripts/verify-usercase-prerun.mjs`
+- `validate:vdr` → `scripts/validate-vdr.mjs`
+- `vdr:collection-status` → `scripts/vdr-collection-status.mjs` ⚠ missing: `scripts/vdr-collection-status.mjs`
+- `vdr:labels-merge` → `scripts/vdr-labels-merge.mjs`
+- `vdr:list` → `scripts/list-free-v1-content.mjs`
+- `vds:run` → `scripts/_ssh-office-exec.mjs`
+- `verify:encoding` → `scripts/verify-encoding.mjs`
+- `verify:tailwind-coverage` → `scripts/generate-tailwind-configs.mjs`
+- `verify:wire-sync` → `scripts/verify-wire-sync.mjs`
+- `wire:generate` → `scripts/generate-wire-contract.mjs`
+- `worktree:bootstrap` → `scripts/worktree-bootstrap.mjs`
+- `worktree:sync` → `scripts/worktree-sync.mjs`
+- `worktree:sync:dry` → `scripts/worktree-sync.mjs`
+
+## Code files without yarn ref (209)
+
+- `scripts/_analyzers-research.mjs`
+- `scripts/_anthropic-env.mjs`
+- `scripts/_daily-standup.mjs`
+- `scripts/_deepseek-env.mjs`
+- `scripts/_deploy-ci-gate.mjs`
+- `scripts/_deploy-preflight.mjs`
+- `scripts/_llm-proxy-env.mjs`
+- `scripts/_main-day-issue.mjs`
+- `scripts/_ollama-client.mjs`
+- `scripts/_ssh-cabinet-mp2-post-deploy.mjs`
+- `scripts/_ssh-cabinet-mp2-smoke.mjs`
+- `scripts/_ssh-cabinet-mp2-verify.mjs`
+- `scripts/_ssh-cabinet-mp3-debug.mjs`
+- `scripts/_ssh-cabinet-mp3-media-fix.mjs`
+- `scripts/_ssh-cabinet-post-smoke.mjs`
+- `scripts/_ssh-cabinet-quota-refactor-smoke.mjs`
+- `scripts/_ssh-catalog-dedupe-prod.mjs`
+- `scripts/_ssh-media-check.mjs`
+- `scripts/_ssh-media-config.mjs`
+- `scripts/_ssh-media-deploy.mjs`
+- `scripts/_ssh-media-exec.mjs`
+- `scripts/_ssh-media-ports.mjs`
+- `scripts/_ssh-media-prod-up.mjs`
+- `scripts/_ssh-media-rebuild.mjs`
+- `scripts/_ssh-media-restart.mjs`
+- `scripts/_ssh-media-show-token.mjs`
+- `scripts/_ssh-media-smoke.mjs`
+- `scripts/_ssh-media-swagger-deploy.mjs`
+- `scripts/_ssh-media-tls-setup.mjs`
+- `scripts/_ssh-media-up-only.mjs`
+- `scripts/_ssh-office-check.mjs`
+- `scripts/_ssh-office-config.mjs`
+- `scripts/_ssh-office-env-status.mjs`
+- `scripts/_ssh-office-prod-up.mjs`
+- `scripts/_ssh-office-show-token.mjs`
+- `scripts/_ssh-office-smoke.mjs`
+- `scripts/_ssh-office-tls-setup.mjs`
+- `scripts/_ssh-pagination-catalog-smoke.mjs`
+- `scripts/_ssh-pagination-prod-deploy.mjs`
+- `scripts/_ssh-panel-deploy.mjs`
+- `scripts/_ssh-panel-smoke.mjs`
+- `scripts/_ssh-tariff-dataset-ds5-prod-smoke.mjs`
+- `scripts/_strategic-plan.mjs`
+- `scripts/_sync-office-env-from-root.mjs`
+- `scripts/bootstrap-test-issues.mjs`
+- `scripts/build-usercase-competition-team.mjs`
+- `scripts/build-v08-policy-constructor-json.mjs`
+- `scripts/context-collector-paths.mjs`
+- `scripts/context-collector.mjs`
+- `scripts/create-detector-github-issues.mjs`
+- `scripts/docs-dev.mjs`
+- `scripts/experimental/llm-proxy-ask.mjs`
+- `scripts/experimental/llm-proxy-parse.mjs`
+- `scripts/experimental/llm-proxy-parse.test.mjs`
+- `scripts/experimental/llm-proxy-smoke.mjs`
+- `scripts/experimental/opencode-consilium.mjs`
+- `scripts/experimental/opencode-task.mjs`
+- `scripts/fix-imports-with-claude.js`
+- `scripts/generate-calibration-preset-ts.mjs`
+- `scripts/generate_report.mjs`
+- `scripts/graphify-vendor-d3.mjs`
+- `scripts/lab-learning-curve.mjs`
+- `scripts/lab-trends-crossval.mjs`
+- `scripts/lab-yamnet-embeddings.mjs`
+- `scripts/lens-run.mjs`
+- `scripts/lib/angelina-adapter.mjs`
+- `scripts/lib/angelina-cascade.mjs`
+- `scripts/lib/angelina-delegate.mjs`
+- `scripts/lib/angelina-validate.mjs`
+- `scripts/lib/archive-doc-snapshot.mjs`
+- `scripts/lib/artifact-freshness.mjs`
+- `scripts/lib/audit-evening.mjs`
+- `scripts/lib/benchmark-metrics.mjs`
+- `scripts/lib/benchmark-report-md.mjs`
+- `scripts/lib/branch-base-freshness.mjs`
+- `scripts/lib/cabinet-catalog-client.mjs`
+- `scripts/lib/calibration-preset.mjs`
+- `scripts/lib/classify-worktree.mjs`
+- `scripts/lib/client-logs-parser.mjs`
+- `scripts/lib/code-review-ritual.mjs`
+- `scripts/lib/cold-reader.mjs`
+- `scripts/lib/cold-reader.test.mjs`
+- `scripts/lib/cold-writer.mjs`
+- `scripts/lib/cold-writer.test.mjs`
+- `scripts/lib/comms-sent-log.mjs`
+- `scripts/lib/consilium-paths.mjs`
+- `scripts/lib/consilium-premises.mjs`
+- `scripts/lib/consilium-prompt.mjs`
+- `scripts/lib/dataset-audio.mjs`
+- `scripts/lib/day-plan-assemble.mjs`
+- `scripts/lib/day-plan-frame.mjs`
+- `scripts/lib/day-work-diff.mjs`
+- `scripts/lib/debt-classify.mjs`
+- `scripts/lib/debt-classify.test.mjs`
+- `scripts/lib/debt-gate.mjs`
+- `scripts/lib/debt-gate.test.mjs`
+- `scripts/lib/deep-research.mjs`
+- `scripts/lib/detection-planning-priorities.mjs`
+- `scripts/lib/detector-compare-lib.mjs`
+- `scripts/lib/docs-canon.mjs`
+- `scripts/lib/dreams-format.mjs`
+- `scripts/lib/dreams-log.mjs`
+- `scripts/lib/dreams-providers.mjs`
+- `scripts/lib/dreams-select.mjs`
+- `scripts/lib/dreams-tick.mjs`
+- `scripts/lib/drift-digest-section.mjs`
+- `scripts/lib/fetch-catalog-prod-ssh.mjs`
+- `scripts/lib/gc-void.mjs`
+- `scripts/lib/git-day-context.mjs`
+- `scripts/lib/github-issues-audit.mjs`
+- `scripts/lib/ground-truth-export.mjs`
+- `scripts/lib/insight-lifecycle-migrate.mjs`
+- `scripts/lib/insight-lifecycle-ops.mjs`
+- `scripts/lib/insight-lifecycle-store.mjs`
+- `scripts/lib/insight-lifecycle.mjs`
+- `scripts/lib/insight-ritual.mjs`
+- `scripts/lib/lens-bestiary.mjs`
+- `scripts/lib/live-links.mjs`
+- `scripts/lib/main-day-issue-paths.mjs`
+- `scripts/lib/main-day-probe.mjs`
+- `scripts/lib/manifest-labels.mjs`
+- `scripts/lib/measure-fixtures.mjs`
+- `scripts/lib/measure-metrics.mjs`
+- `scripts/lib/measure-report.mjs`
+- `scripts/lib/measure-rework-rhetoric.mjs`
+- `scripts/lib/media-samples-client.mjs`
+- `scripts/lib/media-token.mjs`
+- `scripts/lib/meeting-audit.mjs`
+- `scripts/lib/meeting-walk.mjs`
+- `scripts/lib/morning-gates.mjs`
+- `scripts/lib/morning-ritual.mjs`
+- `scripts/lib/movement-mode.mjs`
+- `scripts/lib/net-diag.mjs`
+- `scripts/lib/night-build.mjs`
+- `scripts/lib/night-land-reports.mjs`
+- `scripts/lib/night-research.mjs`
+- `scripts/lib/office-token.mjs`
+- `scripts/lib/optional-yarn-script.mjs`
+- `scripts/lib/percentile-template.mjs`
+- `scripts/lib/persona-memory.mjs`
+- `scripts/lib/protocol-validator.mjs`
+- `scripts/lib/rag-ritual.mjs`
+- `scripts/lib/read-dated.mjs`
+- `scripts/lib/registry-merge.mjs`
+- `scripts/lib/replit-bridge.mjs`
+- `scripts/lib/repo-branches-decompose.mjs`
+- `scripts/lib/repo-branches.mjs`
+- `scripts/lib/repo-clean.mjs`
+- `scripts/lib/report-lens.mjs`
+- `scripts/lib/research-digest.mjs`
+- `scripts/lib/ritual-digest-extract.mjs`
+- `scripts/lib/ritual-exit-codes.mjs`
+- `scripts/lib/scenario-node-kinds.mjs`
+- `scripts/lib/scripts-inventory.mjs`
+- `scripts/lib/skill-status.mjs`
+- `scripts/lib/snapshot-contract.mjs`
+- `scripts/lib/snapshot-freshness.mjs`
+- `scripts/lib/snapshot-freshness.test.mjs`
+- `scripts/lib/snapshot-records-to-cards.mjs`
+- `scripts/lib/spawn-claude.mjs`
+- `scripts/lib/standup-plan.mjs`
+- `scripts/lib/standup-routing.mjs`
+- `scripts/lib/step-status.mjs`
+- `scripts/lib/storm-breath.mjs`
+- `scripts/lib/storm-codex.mjs`
+- `scripts/lib/storm-lifecycle.mjs`
+- `scripts/lib/strategy-channels.mjs`
+- `scripts/lib/strategy-horizon.mjs`
+- `scripts/lib/studio-ms5-prod-smoke.mjs`
+- `scripts/lib/swallow-delivery-ledger.mjs`
+- `scripts/lib/tailwind-coverage.mjs`
+- `scripts/lib/task-closure-review.mjs`
+- `scripts/lib/task-registry.mjs`
+- `scripts/lib/task-start-links.mjs`
+- `scripts/lib/tasks-audit.mjs`
+- `scripts/lib/tasks-decompose.mjs`
+- `scripts/lib/team-evening-feedback-ritual.mjs`
+- `scripts/lib/tooling-overview.mjs`
+- `scripts/lib/trace-acceptance.mjs`
+- `scripts/lib/trace-exit-codes.mjs`
+- `scripts/lib/trace-lead-persona.mjs`
+- `scripts/lib/transcript.mjs`
+- `scripts/lib/truth-graph.mjs`
+- `scripts/lib/u10-workspace-prod-smoke.mjs`
+- `scripts/lib/usercase-document.mjs`
+- `scripts/lib/usercase-embedded-write.mjs`
+- `scripts/lib/usercase-manifest.mjs`
+- `scripts/lib/usercase-paths.mjs`
+- `scripts/lib/usercase-post-build.mjs`
+- `scripts/lib/usercase-write-guard.mjs`
+- `scripts/lib/validate-procedure.mjs`
+- `scripts/lib/wav-read.mjs`
+- `scripts/lib/worktree-bootstrap.mjs`
+- `scripts/lib/worktree-sync-check.mjs`
+- `scripts/llm-proxy-preflight.mjs`
+- `scripts/mcp-tier0.mjs`
+- `scripts/migrate-docs-actions-phase-a.mjs`
+- `scripts/migrate-mvp-graph-v20-async.mjs`
+- `scripts/morning-ritual-run.mjs`
+- `scripts/opencode-with-llm-proxy.mjs`
+- `scripts/prepare-free-v1-content.mjs`
+- `scripts/rag-evening-index.mjs`
+- `scripts/refactor-usercase-mvp-pure-wires.mjs`
+- `scripts/ritual-evening-tail.mjs`
+- `scripts/scaffold-detectors.mjs`
+- `scripts/scripts-inventory.test.mjs`
+- `scripts/sync-github-token.mjs`
+- `scripts/verify-mintlify-docs.mjs`
+- `scripts/verify-usercase-write-paths.mjs`
+
+## Yarn → missing file (15)
+
+- `apply:lead-persona` → missing `scripts/apply-lead-persona-defaults.mjs`
+- `apply:strategic-wave` → missing `scripts/apply-strategic-wave.mjs`
+- `cabinet:mp7:prod` → missing `scripts/_ssh-cabinet-mp7-prod.mjs`
+- `device-board:deploy:cabinet` → missing `scripts/_ssh-cabinet-redeploy.mjs`
+- `night:run` → missing `scripts/night-build-run-phase.mjs`
+- `task:board` → missing `scripts/generate-active-tasks-board.mjs`
+- `tasks:audit:verify` → missing `scripts/verify-tasks-audit.mjs`
+- `tasks:bookkeeping` → missing `scripts/tasks-bookkeeping.mjs`
+- `tasks:reviewing` → missing `scripts/tasks-reviewing.mjs`
+- `templates:content:real:birds` → missing `scripts/materialize-free-v1-real.py`
+- `templates:content:real:machine-hum` → missing `scripts/materialize-free-v1-real.py`
+- `templates:content:real:silence` → missing `scripts/materialize-free-v1-real.py`
+- `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
+- `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
+- `vdr:collection-status` → missing `scripts/vdr-collection-status.mjs`
+
+## All code files (541)
+
+- `scripts/_analyzers-research.mjs`
+- `scripts/_anthropic-env.mjs`
+- `scripts/_daily-standup.mjs`
+- `scripts/_deepseek-env.mjs`
+- `scripts/_deploy-ci-gate.mjs`
+- `scripts/_deploy-preflight.mjs`
+- `scripts/_llm-proxy-env.mjs`
+- `scripts/_main-day-issue.mjs`
+- `scripts/_ollama-client.mjs`
+- `scripts/_ssh-cabinet-deploy-image.mjs`
+- `scripts/_ssh-cabinet-deploy.mjs`
+- `scripts/_ssh-cabinet-mp2-post-deploy.mjs`
+- `scripts/_ssh-cabinet-mp2-smoke.mjs`
+- `scripts/_ssh-cabinet-mp2-verify.mjs`
+- `scripts/_ssh-cabinet-mp3-debug.mjs`
+- `scripts/_ssh-cabinet-mp3-media-fix.mjs`
+- `scripts/_ssh-cabinet-mp3-post-deploy.mjs`
+- `scripts/_ssh-cabinet-mp3-prod.mjs`
+- `scripts/_ssh-cabinet-mp3-smoke.mjs`
+- `scripts/_ssh-cabinet-mp4-prod.mjs`
+- `scripts/_ssh-cabinet-mp5-prod.mjs`
+- `scripts/_ssh-cabinet-mp6-prod.mjs`
+- `scripts/_ssh-cabinet-pair-unlink-prod.mjs`
+- `scripts/_ssh-cabinet-pairing-e2e-deploy.mjs`
+- `scripts/_ssh-cabinet-post-smoke.mjs`
+- `scripts/_ssh-cabinet-quota-refactor-prod.mjs`
+- `scripts/_ssh-cabinet-quota-refactor-smoke.mjs`
+- `scripts/_ssh-cabinet-rollback.mjs`
+- `scripts/_ssh-cabinet-smoke.mjs`
+- `scripts/_ssh-cabinet-tj6-live-journal-smoke.mjs`
+- `scripts/_ssh-cabinet-u10-workspace-prod.mjs`
+- `scripts/_ssh-cabinet-u10-workspace-smoke.mjs`
+- `scripts/_ssh-catalog-dedupe-prod.mjs`
+- `scripts/_ssh-device-board-deploy.mjs`
+- `scripts/_ssh-media-cabinet-cors-fix.mjs`
+- `scripts/_ssh-media-check.mjs`
+- `scripts/_ssh-media-config.mjs`
+- `scripts/_ssh-media-deploy.mjs`
+- `scripts/_ssh-media-exec.mjs`
+- `scripts/_ssh-media-ports.mjs`
+- `scripts/_ssh-media-prod-up.mjs`
+- `scripts/_ssh-media-rebuild.mjs`
+- `scripts/_ssh-media-restart.mjs`
+- `scripts/_ssh-media-show-token.mjs`
+- `scripts/_ssh-media-smoke.mjs`
+- `scripts/_ssh-media-swagger-deploy.mjs`
+- `scripts/_ssh-media-tls-setup.mjs`
+- `scripts/_ssh-media-up-only.mjs`
+- `scripts/_ssh-office-check.mjs`
+- `scripts/_ssh-office-config.mjs`
+- `scripts/_ssh-office-config.test.mjs`
+- `scripts/_ssh-office-env-status.mjs`
+- `scripts/_ssh-office-exec.mjs`
+- `scripts/_ssh-office-prod-up.mjs`
+- `scripts/_ssh-office-show-token.mjs`
+- `scripts/_ssh-office-smoke.mjs`
+- `scripts/_ssh-office-tls-setup.mjs`
+- `scripts/_ssh-pagination-catalog-smoke.mjs`
+- `scripts/_ssh-pagination-prod-deploy.mjs`
+- `scripts/_ssh-panel-deploy.mjs`
+- `scripts/_ssh-panel-smoke.mjs`
+- `scripts/_ssh-panel-smoke.test.mjs`
+- `scripts/_ssh-root-site-setup.mjs`
+- `scripts/_ssh-tariff-dataset-ds5-prod-smoke.mjs`
+- `scripts/_strategic-plan.mjs`
+- `scripts/_sync-office-env-from-root.mjs`
+- `scripts/always-yes.mjs`
+- `scripts/always-yes.test.mjs`
+- `scripts/analyzers-research-week.mjs`
+- `scripts/angelina-adapter.test.mjs`
+- `scripts/angelina-cascade.test.mjs`
+- `scripts/angelina-delegate.test.mjs`
+- `scripts/angelina-validate.test.mjs`
+- `scripts/angelina.mjs`
+- `scripts/anthropic-credit-hint.test.mjs`
+- `scripts/anthropic-env.test.mjs`
+- `scripts/anthropic-smoke.mjs`
+- `scripts/anthropic-task.mjs`
+- `scripts/archive-daily-code-review.mjs`
+- `scripts/archive-daily-day-artifacts.mjs`
+- `scripts/archive-doc-snapshot.test.mjs`
+- `scripts/archive-night-hunt-artifacts.mjs`
+- `scripts/archive-task.mjs`
+- `scripts/artifact-freshness.test.mjs`
+- `scripts/ask-persona.mjs`
+- `scripts/assign-dataset-splits.mjs`
+- `scripts/audit-evening.mjs`
+- `scripts/audit-evening.test.mjs`
+- `scripts/benchmark-detectors.mjs`
+- `scripts/benchmark-fft-trends.mjs`
+- `scripts/benchmark-metrics.test.mjs`
+- `scripts/benchmark-prior-metrics.test.mjs`
+- `scripts/bootstrap-test-issues.mjs`
+- `scripts/branch-base-freshness.mjs`
+- `scripts/branch-base-freshness.test.mjs`
+- `scripts/build-affected.mjs`
+- `scripts/build-affected.test.mjs`
+- `scripts/build-templates-from-dataset.mjs`
+- `scripts/build-usercase-competition-all.mjs`
+- `scripts/build-usercase-competition-async-v2-all.mjs`
+- `scripts/build-usercase-competition-async-v2-team.mjs`
+- `scripts/build-usercase-competition-team.mjs`
+- `scripts/build-usercase-mvp-microphone.mjs`
+- `scripts/build-usercase.mjs`
+- `scripts/build-v08-policy-constructor-json.mjs`
+- `scripts/cabinet-deploy-image-tag.test.mjs`
+- `scripts/calibrate-detectors.mjs`
+- `scripts/calibration-preset-sync.test.mjs`
+- `scripts/canon-sign.mjs`
+- `scripts/check-package-boundaries.mjs`
+- `scripts/check-package-boundaries.test.mjs`
+- `scripts/check-package-json-bom.mjs`
+- `scripts/check-package-json-bom.test.mjs`
+- `scripts/classify-worktree.test.mjs`
+- `scripts/claude-code-with-proxy.mjs`
+- `scripts/client-logs-parser.test.mjs`
+- `scripts/code-review-ritual.test.mjs`
+- `scripts/code-review.mjs`
+- `scripts/comms-sent-log.test.mjs`
+- `scripts/comp-open.mjs`
+- `scripts/comp-publish-catalog.mjs`
+- `scripts/consilium-paths.test.mjs`
+- `scripts/consilium-premises.test.mjs`
+- `scripts/consilium.mjs`
+- `scripts/context-collector-paths.mjs`
+- `scripts/context-collector-paths.test.mjs`
+- `scripts/context-collector.mjs`
+- `scripts/cowork-execution-smoke.test.mjs`
+- `scripts/cowork-open.mjs`
+- `scripts/cowork-open.test.mjs`
+- `scripts/create-detector-github-issues.mjs`
+- `scripts/daily-standup-paths.test.mjs`
+- `scripts/daily-standup.mjs`
+- `scripts/day-plan-assemble.test.mjs`
+- `scripts/day-plan-frame.test.mjs`
+- `scripts/day-work-diff.test.mjs`
+- `scripts/deep-research.test.mjs`
+- `scripts/deepseek-task.mjs`
+- `scripts/deploy-when-green.mjs`
+- `scripts/deploy-when-green.test.mjs`
+- `scripts/deps-watch.mjs`
+- `scripts/desktop-support-collect.mjs`
+- `scripts/detection-planning-priorities.test.mjs`
+- `scripts/detector-compare-export.mjs`
+- `scripts/detector-compare-export.test.mjs`
+- `scripts/docs-canon.test.mjs`
+- `scripts/docs-dev.mjs`
+- `scripts/dreams-format.test.mjs`
+- `scripts/dreams-log.test.mjs`
+- `scripts/dreams-providers.test.mjs`
+- `scripts/dreams-select.test.mjs`
+- `scripts/dreams-tick.test.mjs`
+- `scripts/dreams.mjs`
+- `scripts/drift-anchor-behavioral.mjs`
+- `scripts/drift-anchor-behavioral.test.mjs`
+- `scripts/drift-anchor-code.mjs`
+- `scripts/drift-anchor-code.test.mjs`
+- `scripts/drift-anchor-data.mjs`
+- `scripts/drift-anchor-data.test.mjs`
+- `scripts/drift-anchor-divergence.mjs`
+- `scripts/drift-anchor-divergence.test.mjs`
+- `scripts/drift-anchor-run.mjs`
+- `scripts/drift-anchor-snapshot.mjs`
+- `scripts/drift-anchor-snapshot.test.mjs`
+- `scripts/drift-digest-section.test.mjs`
+- `scripts/ensure-ollama.mjs`
+- `scripts/evaluate-free-v1-content.mjs`
+- `scripts/evaluate-free-v1-stage-gate.mjs`
+- `scripts/experimental/llm-proxy-ask.mjs`
+- `scripts/experimental/llm-proxy-parse.mjs`
+- `scripts/experimental/llm-proxy-parse.test.mjs`
+- `scripts/experimental/llm-proxy-smoke.mjs`
+- `scripts/experimental/opencode-consilium.mjs`
+- `scripts/experimental/opencode-task.mjs`
+- `scripts/export-competition-templates.mjs`
+- `scripts/export-ground-truth-manifest.mjs`
+- `scripts/fetch-real-dataset-collection.mjs`
+- `scripts/fetch-vdr-pilot-corpus.mjs`
+- `scripts/fix-imports-with-claude.js`
+- `scripts/gc-void.test.mjs`
+- `scripts/generate-calibration-preset-ts.mjs`
+- `scripts/generate-class-template.mjs`
+- `scripts/generate-competition-async-v2-synthesis.mjs`
+- `scripts/generate-competition-v1-synthesis.mjs`
+- `scripts/generate-dataset-synthetics.mjs`
+- `scripts/generate-tailwind-configs.mjs`
+- `scripts/generate-vdr6-report.mjs`
+- `scripts/generate-wire-contract.mjs`
+- `scripts/generate-wire-contract.test.mjs`
+- `scripts/generate_report.mjs`
+- `scripts/git-check-divergence.mjs`
+- `scripts/git-day-context.test.mjs`
+- `scripts/git-divergence.test.mjs`
+- `scripts/git-fresh-branch.mjs`
+- `scripts/github-issues-audit.mjs`
+- `scripts/github-issues-audit.test.mjs`
+- `scripts/graphify-vendor-d3.mjs`
+- `scripts/ground-truth-export.test.mjs`
+- `scripts/hackathon-close.mjs`
+- `scripts/headroom-claude.mjs`
+- `scripts/headroom-start.mjs`
+- `scripts/hermes-brief.mjs`
+- `scripts/hermes-brief.test.mjs`
+- `scripts/insight-drift.mjs`
+- `scripts/insight-drift.test.mjs`
+- `scripts/insight-lifecycle-migrate.test.mjs`
+- `scripts/insight-lifecycle-ops.test.mjs`
+- `scripts/insight-lifecycle.test.mjs`
+- `scripts/insight-ritual.test.mjs`
+- `scripts/insight-skill-mirrors.test.mjs`
+- `scripts/insight.mjs`
+- `scripts/lab-learning-curve.mjs`
+- `scripts/lab-trends-crossval.mjs`
+- `scripts/lab-yamnet-embeddings.mjs`
+- `scripts/lens-run.mjs`
+- `scripts/lib/angelina-adapter.mjs`
+- `scripts/lib/angelina-cascade.mjs`
+- `scripts/lib/angelina-delegate.mjs`
+- `scripts/lib/angelina-validate.mjs`
+- `scripts/lib/archive-doc-snapshot.mjs`
+- `scripts/lib/artifact-freshness.mjs`
+- `scripts/lib/audit-evening.mjs`
+- `scripts/lib/benchmark-metrics.mjs`
+- `scripts/lib/benchmark-report-md.mjs`
+- `scripts/lib/branch-base-freshness.mjs`
+- `scripts/lib/cabinet-catalog-client.mjs`
+- `scripts/lib/calibration-preset.mjs`
+- `scripts/lib/classify-worktree.mjs`
+- `scripts/lib/client-logs-parser.mjs`
+- `scripts/lib/code-review-ritual.mjs`
+- `scripts/lib/cold-reader.mjs`
+- `scripts/lib/cold-reader.test.mjs`
+- `scripts/lib/cold-writer.mjs`
+- `scripts/lib/cold-writer.test.mjs`
+- `scripts/lib/comms-sent-log.mjs`
+- `scripts/lib/consilium-paths.mjs`
+- `scripts/lib/consilium-premises.mjs`
+- `scripts/lib/consilium-prompt.mjs`
+- `scripts/lib/dataset-audio.mjs`
+- `scripts/lib/day-plan-assemble.mjs`
+- `scripts/lib/day-plan-frame.mjs`
+- `scripts/lib/day-work-diff.mjs`
+- `scripts/lib/debt-classify.mjs`
+- `scripts/lib/debt-classify.test.mjs`
+- `scripts/lib/debt-gate.mjs`
+- `scripts/lib/debt-gate.test.mjs`
+- `scripts/lib/deep-research.mjs`
+- `scripts/lib/detection-planning-priorities.mjs`
+- `scripts/lib/detector-compare-lib.mjs`
+- `scripts/lib/docs-canon.mjs`
+- `scripts/lib/dreams-format.mjs`
+- `scripts/lib/dreams-log.mjs`
+- `scripts/lib/dreams-providers.mjs`
+- `scripts/lib/dreams-select.mjs`
+- `scripts/lib/dreams-tick.mjs`
+- `scripts/lib/drift-digest-section.mjs`
+- `scripts/lib/fetch-catalog-prod-ssh.mjs`
+- `scripts/lib/gc-void.mjs`
+- `scripts/lib/git-day-context.mjs`
+- `scripts/lib/github-issues-audit.mjs`
+- `scripts/lib/ground-truth-export.mjs`
+- `scripts/lib/insight-lifecycle-migrate.mjs`
+- `scripts/lib/insight-lifecycle-ops.mjs`
+- `scripts/lib/insight-lifecycle-store.mjs`
+- `scripts/lib/insight-lifecycle.mjs`
+- `scripts/lib/insight-ritual.mjs`
+- `scripts/lib/lens-bestiary.mjs`
+- `scripts/lib/live-links.mjs`
+- `scripts/lib/main-day-issue-paths.mjs`
+- `scripts/lib/main-day-probe.mjs`
+- `scripts/lib/manifest-labels.mjs`
+- `scripts/lib/measure-fixtures.mjs`
+- `scripts/lib/measure-metrics.mjs`
+- `scripts/lib/measure-report.mjs`
+- `scripts/lib/measure-rework-rhetoric.mjs`
+- `scripts/lib/media-samples-client.mjs`
+- `scripts/lib/media-token.mjs`
+- `scripts/lib/meeting-audit.mjs`
+- `scripts/lib/meeting-walk.mjs`
+- `scripts/lib/morning-gates.mjs`
+- `scripts/lib/morning-ritual.mjs`
+- `scripts/lib/movement-mode.mjs`
+- `scripts/lib/movement-mode.test.mjs`
+- `scripts/lib/net-diag.mjs`
+- `scripts/lib/night-build.mjs`
+- `scripts/lib/night-land-reports.mjs`
+- `scripts/lib/night-research.mjs`
+- `scripts/lib/office-token.mjs`
+- `scripts/lib/optional-yarn-script.mjs`
+- `scripts/lib/percentile-template.mjs`
+- `scripts/lib/persona-memory.mjs`
+- `scripts/lib/protocol-validator.mjs`
+- `scripts/lib/rag-ritual.mjs`
+- `scripts/lib/read-dated.mjs`
+- `scripts/lib/registry-merge.mjs`
+- `scripts/lib/replit-bridge.mjs`
+- `scripts/lib/repo-branches-decompose.mjs`
+- `scripts/lib/repo-branches.mjs`
+- `scripts/lib/repo-clean.mjs`
+- `scripts/lib/report-lens.mjs`
+- `scripts/lib/research-digest.mjs`
+- `scripts/lib/ritual-digest-extract.mjs`
+- `scripts/lib/ritual-exit-codes.mjs`
+- `scripts/lib/scenario-node-kinds.mjs`
+- `scripts/lib/scripts-inventory.mjs`
+- `scripts/lib/skill-status.mjs`
+- `scripts/lib/snapshot-contract.mjs`
+- `scripts/lib/snapshot-contract.test.mjs`
+- `scripts/lib/snapshot-freshness.mjs`
+- `scripts/lib/snapshot-freshness.test.mjs`
+- `scripts/lib/snapshot-records-to-cards.mjs`
+- `scripts/lib/spawn-claude.mjs`
+- `scripts/lib/standup-plan.mjs`
+- `scripts/lib/standup-routing.mjs`
+- `scripts/lib/step-status.mjs`
+- `scripts/lib/storm-breath.mjs`
+- `scripts/lib/storm-codex.mjs`
+- `scripts/lib/storm-lifecycle.mjs`
+- `scripts/lib/strategy-channels.mjs`
+- `scripts/lib/strategy-horizon.mjs`
+- `scripts/lib/studio-ms5-prod-smoke.mjs`
+- `scripts/lib/swallow-delivery-ledger.mjs`
+- `scripts/lib/tailwind-coverage.mjs`
+- `scripts/lib/task-closure-review.mjs`
+- `scripts/lib/task-registry.mjs`
+- `scripts/lib/task-start-links.mjs`
+- `scripts/lib/tasks-audit.mjs`
+- `scripts/lib/tasks-decompose.mjs`
+- `scripts/lib/team-evening-feedback-ritual.mjs`
+- `scripts/lib/tooling-overview.mjs`
+- `scripts/lib/trace-acceptance.mjs`
+- `scripts/lib/trace-exit-codes.mjs`
+- `scripts/lib/trace-lead-persona.mjs`
+- `scripts/lib/transcript.mjs`
+- `scripts/lib/truth-graph.mjs`
+- `scripts/lib/u10-workspace-prod-smoke.mjs`
+- `scripts/lib/usercase-document.mjs`
+- `scripts/lib/usercase-embedded-write.mjs`
+- `scripts/lib/usercase-manifest.mjs`
+- `scripts/lib/usercase-paths.mjs`
+- `scripts/lib/usercase-post-build.mjs`
+- `scripts/lib/usercase-write-guard.mjs`
+- `scripts/lib/validate-procedure.mjs`
+- `scripts/lib/wav-read.mjs`
+- `scripts/lib/worktree-bootstrap.mjs`
+- `scripts/lib/worktree-sync-check.mjs`
+- `scripts/list-free-v1-content.mjs`
+- `scripts/live-links.mjs`
+- `scripts/live-links.test.mjs`
+- `scripts/llm-probe.mjs`
+- `scripts/llm-probe.test.mjs`
+- `scripts/llm-proxy-preflight.mjs`
+- `scripts/local-code-review.mjs`
+- `scripts/main-day-issue-paths.test.mjs`
+- `scripts/main-day-issue.mjs`
+- `scripts/main-day-probe.mjs`
+- `scripts/main-day-probe.test.mjs`
+- `scripts/main-day-skeleton.test.mjs`
+- `scripts/mcp-tier0.mjs`
+- `scripts/mcp-workstation-phase-a.mjs`
+- `scripts/mcp-workstation-phase-b.mjs`
+- `scripts/mcp-workstation-phase-c.mjs`
+- `scripts/mcp-workstation-phase-d.mjs`
+- `scripts/measure-metrics.test.mjs`
+- `scripts/measure-report.test.mjs`
+- `scripts/media-env-check.mjs`
+- `scripts/media-provision-catalog.mjs`
+- `scripts/media-samples-client.test.mjs`
+- `scripts/media-token.test.mjs`
+- `scripts/meeting-agenda.test.mjs`
+- `scripts/meeting-audit.mjs`
+- `scripts/meeting-audit.test.mjs`
+- `scripts/meeting-status.mjs`
+- `scripts/meeting-verdict.test.mjs`
+- `scripts/meeting-walk.test.mjs`
+- `scripts/migrate-docs-actions-phase-a.mjs`
+- `scripts/migrate-mvp-graph-v20-async.mjs`
+- `scripts/morning-care.mjs`
+- `scripts/morning-gate.mjs`
+- `scripts/morning-gates.test.mjs`
+- `scripts/morning-ritual-run.mjs`
+- `scripts/morning-ritual.test.mjs`
+- `scripts/movement-mode-lift.mjs`
+- `scripts/movement-mode-status.mjs`
+- `scripts/neighbors.mjs`
+- `scripts/neighbors.test.mjs`
+- `scripts/net-diag.mjs`
+- `scripts/net-diag.test.mjs`
+- `scripts/net-http.mjs`
+- `scripts/net-http.test.mjs`
+- `scripts/night-build-checkpoint.mjs`
+- `scripts/night-build-close.mjs`
+- `scripts/night-build-handoff.test.mjs`
+- `scripts/night-build-open.mjs`
+- `scripts/night-hunt-pr-review.mjs`
+- `scripts/night-land-reports.mjs`
+- `scripts/night-land-reports.test.mjs`
+- `scripts/night-research.mjs`
+- `scripts/night-research.test.mjs`
+- `scripts/night-triage-secret-scan.mjs`
+- `scripts/night-triage-secret-scan.test.mjs`
+- `scripts/node-link-probe.mjs`
+- `scripts/node-link-probe.test.mjs`
+- `scripts/office-research-digest.mjs`
+- `scripts/office-token.test.mjs`
+- `scripts/opencode-with-llm-proxy.mjs`
+- `scripts/optional-yarn-script.test.mjs`
+- `scripts/panel-dns-gate.mjs`
+- `scripts/panel-dns-gate.test.mjs`
+- `scripts/panel-invite.mjs`
+- `scripts/parse-client-logs.mjs`
+- `scripts/parse-studio-shell-log.mjs`
+- `scripts/parse-studio-shell-log.test.mjs`
+- `scripts/percentile-template.test.mjs`
+- `scripts/persona-memory-extract.mjs`
+- `scripts/persona-memory-extract.test.mjs`
+- `scripts/plan-week-if-monday.mjs`
+- `scripts/plan-week-if-monday.test.mjs`
+- `scripts/pr-ship.mjs`
+- `scripts/pr-ship.test.mjs`
+- `scripts/pr-wait.mjs`
+- `scripts/pr-wait.test.mjs`
+- `scripts/prepare-free-v1-content.mjs`
+- `scripts/prisma-migration-new.mjs`
+- `scripts/prisma-migration-new.test.mjs`
+- `scripts/protocol-validator.test.mjs`
+- `scripts/proxy-claude.mjs`
+- `scripts/rag-evening-index.mjs`
+- `scripts/rag-query.mjs`
+- `scripts/rag-ritual.test.mjs`
+- `scripts/read-dated.test.mjs`
+- `scripts/recording-parity-smoke-matrix.mjs`
+- `scripts/refactor-usercase-mvp-pure-wires.mjs`
+- `scripts/registry-merge-driver.mjs`
+- `scripts/registry-merge.test.mjs`
+- `scripts/replit-bridge.test.mjs`
+- `scripts/replit-pull-demo.mjs`
+- `scripts/replit-task.mjs`
+- `scripts/repo-branches-decompose.mjs`
+- `scripts/repo-branches-decompose.test.mjs`
+- `scripts/repo-branches.mjs`
+- `scripts/repo-branches.test.mjs`
+- `scripts/repo-clean-root.test.mjs`
+- `scripts/repo-clean.mjs`
+- `scripts/repo-clean.test.mjs`
+- `scripts/report-lens.test.mjs`
+- `scripts/research-digest.test.mjs`
+- `scripts/research-free-v1-real-sources.mjs`
+- `scripts/research.mjs`
+- `scripts/ritual-evening-run.mjs`
+- `scripts/ritual-evening-tail.mjs`
+- `scripts/ritual-exit-codes.test.mjs`
+- `scripts/ritual-green-cascade.test.mjs`
+- `scripts/rt-day-report.mjs`
+- `scripts/scaffold-detectors.mjs`
+- `scripts/scripts-inventory.test.mjs`
+- `scripts/scripts-registry.mjs`
+- `scripts/skill-status.test.mjs`
+- `scripts/standup-plan.test.mjs`
+- `scripts/standup-routing.test.mjs`
+- `scripts/step-status.test.mjs`
+- `scripts/storm-breath.test.mjs`
+- `scripts/storm-codex.test.mjs`
+- `scripts/storm-lifecycle.test.mjs`
+- `scripts/strategic-plan-day.mjs`
+- `scripts/strategic-plan-week.mjs`
+- `scripts/strategy-channels.test.mjs`
+- `scripts/strategy-day.mjs`
+- `scripts/strategy-horizon.test.mjs`
+- `scripts/studio-build.mjs`
+- `scripts/studio-dev.mjs`
+- `scripts/studio-ms5-prod-smoke.mjs`
+- `scripts/studio-ms5-prod-smoke.test.mjs`
+- `scripts/studio-offline-journal-check.mjs`
+- `scripts/studio-package.mjs`
+- `scripts/sync-free-v1-catalog.mjs`
+- `scripts/sync-github-token.mjs`
+- `scripts/sync-task-closure-review-skills.mjs`
+- `scripts/tailwind-coverage.test.mjs`
+- `scripts/task-close-github-issues.mjs`
+- `scripts/task-closure-review-schema.test.mjs`
+- `scripts/task-closure-review-skills.test.mjs`
+- `scripts/task-closure-review.mjs`
+- `scripts/task-closure-review.test.mjs`
+- `scripts/task-list.mjs`
+- `scripts/task-register.mjs`
+- `scripts/task-register.test.mjs`
+- `scripts/task-registry.test.mjs`
+- `scripts/task-review-ship.mjs`
+- `scripts/task-review-ship.test.mjs`
+- `scripts/task-start-links.test.mjs`
+- `scripts/task-start.mjs`
+- `scripts/task-start.test.mjs`
+- `scripts/tasks-archive-closed.mjs`
+- `scripts/tasks-archive-closed.test.mjs`
+- `scripts/tasks-audit.mjs`
+- `scripts/tasks-audit.test.mjs`
+- `scripts/tasks-decompose.mjs`
+- `scripts/tasks-decompose.test.mjs`
+- `scripts/tasks-sync-issue-state.mjs`
+- `scripts/team-evening-feedback-ritual.test.mjs`
+- `scripts/team-evening-feedback.mjs`
+- `scripts/telegram-ritual-digest.mjs`
+- `scripts/telegram-ritual-digest.test.mjs`
+- `scripts/telegram-swallow.mjs`
+- `scripts/telegram-swallow.test.mjs`
+- `scripts/test-list-coverage.test.mjs`
+- `scripts/tooling-overview.mjs`
+- `scripts/tooling-overview.test.mjs`
+- `scripts/trace-acceptance.test.mjs`
+- `scripts/trace-gate.mjs`
+- `scripts/trace-lead-persona.test.mjs`
+- `scripts/transcript.test.mjs`
+- `scripts/trends-fft-parity-smoke-matrix.mjs`
+- `scripts/truth-graph.test.mjs`
+- `scripts/truth-mint.test.mjs`
+- `scripts/truth.mjs`
+- `scripts/usercase-manifest.test.mjs`
+- `scripts/usercase.mjs`
+- `scripts/validate-procedure.test.mjs`
+- `scripts/validate-vdr.mjs`
+- `scripts/validate-vdr.test.mjs`
+- `scripts/vdr-labels-merge.mjs`
+- `scripts/vdr-labels-merge.test.mjs`
+- `scripts/verify-client-catalog.mjs`
+- `scripts/verify-docs-canon.mjs`
+- `scripts/verify-encoding.mjs`
+- `scripts/verify-encoding.test.mjs`
+- `scripts/verify-mcp-bootstrap.mjs`
+- `scripts/verify-mcp-bootstrap.test.mjs`
+- `scripts/verify-mintlify-docs.mjs`
+- `scripts/verify-usercase-kinds.mjs`
+- `scripts/verify-usercase-layout.mjs`
+- `scripts/verify-usercase-prerun.mjs`
+- `scripts/verify-usercase-write-paths.mjs`
+- `scripts/verify-wire-sync.mjs`
+- `scripts/verify-wire-sync.test.mjs`
+- `scripts/worktree-bootstrap.mjs`
+- `scripts/worktree-bootstrap.test.mjs`
+- `scripts/worktree-sync-check.test.mjs`
+- `scripts/worktree-sync.mjs`
+
+## Yarn without scripts/ path (52)
+
+- `build`
+- `cabinet:app:dev`
+- `cabinet:build`
+- `cabinet:db:down`
+- `cabinet:db:up`
+- `cabinet:dev`
+- `cabinet:docker:build`
+- `cabinet:docker:down`
+- `cabinet:docker:smoke`
+- `cabinet:docker:up`
+- `cabinet:migrate`
+- `cabinet:migrate:dev`
+- `cabinet:seed`
+- `clean`
+- `detectors:build`
+- `dev`
+- `docs:build`
+- `docs:dev`
+- `lint`
+- `lint:detectors`
+- `media:build`
+- `media:db:down`
+- `media:db:up`
+- `media:dev`
+- `media:docker:build`
+- `media:docker:down`
+- `media:docker:logs`
+- `media:docker:prod:build`
+- `media:docker:prod:up`
+- `media:docker:up`
+- `media:migrate`
+- `media:verify-swagger`
+- `office:build`
+- `office:dev`
+- `office:docker:build`
+- `office:docker:down`
+- `office:docker:logs`
+- `office:docker:prod:build`
+- `office:docker:prod:up`
+- `office:docker:up`
+- `office:self-check`
+- `office:verify-swagger`
+- `rag:index`
+- `rag:index:incremental`
+- `ritual:evening:local`
+- `save-code-review`
+- `save-daily-day`
+- `smoke:test`
+- `templates:content:generate`
+- `test`
+- `test:detectors`
+- `typecheck`

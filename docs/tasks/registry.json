@@ -82,27 +82,6 @@
       "parentEpic": "scripts-boundary-container"
     },
     {
-      "id": "sbc-s1-registry",
-      "title": "S1: derived-реестр scripts/registry из кода (tooling:overview --report)",
-      "promptPath": "docs/prompts/SBC_S1_REGISTRY_PROMPT.md",
-      "githubIssue": 793,
-      "linearId": null,
-      "size": "M",
-      "status": "active",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-21",
-      "archivedAt": null,
-      "leadPersona": "dynin",
-      "supportPersonas": [
-        "ozhegov",
-        "vesnin"
-      ],
-      "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
-      "parentEpic": "scripts-boundary-container"
-    },
-    {
       "notes": "S0 принято ozhegov 2026-07-21 (термины дом/SoT/реестр/кит). Артефакты: scripts/README.md, AGENT_PROMPT.md, cache/, registry/, analysis/.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
