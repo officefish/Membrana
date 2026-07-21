@@ -29,7 +29,7 @@
 | K2 | #817 | [#838](https://github.com/officefish/Membrana/pull/838) | `yarn kits:audit` (missing_pin / sha_drift) |
 | K3 | #818 | [#841](https://github.com/officefish/Membrana/pull/841) | жилец angelina-morning · 13 roots / 42 pins |
 | K4 | #819 | [#843](https://github.com/officefish/Membrana/pull/843) | `ritual-day` → kitVersion |
-| K5 | #820 | *(этот PR)* | CLOSURE + archive + #761 |
+| K5 | #820 | [#845](https://github.com/officefish/Membrana/pull/845) | CLOSURE + archive + #761 |
 
 ## PINNED_SUBGRAPH
 

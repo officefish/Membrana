@@ -132,14 +132,14 @@
       "githubIssue": 820,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-21",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "K5: CLOSURE + #761 comment. LGTM vesnin (owner ok 2026-07-21). Ship + archive.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #845 merged; CLOSURE kits-angelina-morning; #761 comment; LGTM vesnin owner ok",
       "githubIssueClosedAt": null,
       "parentEpic": "kits-angelina-morning"
     },
@@ -240,10 +240,10 @@
       "githubIssue": 814,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "createdAt": "2026-07-21",
-      "archivedAt": null,
+      "archivedAt": "2026-07-21",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
@@ -251,7 +251,7 @@
         "angelina"
       ],
       "notes": "Эпик K0–K5 CLOSED (CLOSURE 2026-07-21). Семя #761. Жилец kits/angelina-morning; ritual-day kitVersion. Ждёт archive после K5 merge.",
-      "archiveNotes": null,
+      "archiveNotes": "Epic CLOSED PR #845; K0-K5 #833 #836 #838 #841 #843 #845; first kit kits/angelina-morning; seed #761",
       "githubIssueClosedAt": null
     },
     {
