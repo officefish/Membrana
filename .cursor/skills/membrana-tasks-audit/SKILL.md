@@ -13,9 +13,14 @@ description: >-
 
 # Membrana tasks audit — разбор устаревших карточек
 
+**Канон процесса:** [`REGISTRY_AUDIT_PROMPT.md`](../../../docs/prompts/REGISTRY_AUDIT_PROMPT.md)
+(слои L0–L3, три корзины, правила агента) — этот скилл его реализация; при расхождении
+канон первичен. Смежное: [`TASK_CLOSURE_REGULATION.md`](../../../docs/prompts/TASK_CLOSURE_REGULATION.md)
+(закрытие одной задачи), [`GITHUB_ISSUES_AUDIT_PROMPT.md`](../../../docs/prompts/GITHUB_ISSUES_AUDIT_PROMPT.md).
+
 Движок: `scripts/tasks-audit.mjs`, `scripts/archive-task.mjs`. Реестр:
 `docs/tasks/registry.json`, архив: `docs/tasks/archive/<id>.md`.
-Концепт движка: [`LINEAR_TASKS_GEAR`](../../../docs/tasks/) (паспорт движка задач).
+Концепт движка: [`LINEAR_TASKS_GEAR`](../../../docs/tasks/LINEAR_TASKS_GEAR.md) (паспорт движка задач).
 
 ## Неподвижные правила
 
