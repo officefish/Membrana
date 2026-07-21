@@ -88,9 +88,9 @@ yarn kits:audit --id <kit-id>
 Зуб: `scripts/lib/kit-subgraph-audit.mjs` — замыкание статических импортов от
 `roots` ↔ `pins` (path→git blob SHA). Находки таблицей: `missing_pin`,
 `sha_drift`, `orphan_pin`, `unresolvable`, `schema`. Exit 0/1/2 как у
-`check:layer-direction` (ошибка инструмента ≠ «0 находок»). Пока жильцов нет —
-честный exit 0 («0 kits»). Слепая зона: data-чтения (`readFileSync` конфигов)
-в статический граф не входят (как у layer-direction).
+`check:layer-direction` (ошибка инструмента ≠ «0 находок»). Нет жильцов с
+MANIFEST — честный exit 0 («0 kits»). Слепая зона: data-чтения
+(`readFileSync` конфигов) в статический граф не входят.
 
 ## Чеклист PINNED_SUBGRAPH (слой)
 

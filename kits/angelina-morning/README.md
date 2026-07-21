@@ -46,6 +46,19 @@ yarn kits:audit --id angelina-morning
 yarn kits:audit --id angelina-morning --mode latest
 ```
 
+## Чеклист PINNED_SUBGRAPH (этот кит)
+
+1. ✅ Единица версии — подграф в `MANIFEST.json` (`pins`).
+2. ✅ Пины — git blob SHA; копий файлов нет.
+3. ✅ Аудит полноты — `yarn kits:audit --id angelina-morning`.
+4. ✅ Режимы latest/pinned — таблица выше + CLI `--mode`.
+5. ✅ Обновление пина — отдельный ревьюируемый коммит манифеста.
+6. ✅ Владелец пина — `leadPersona: angelina`.
+7. ✅ Дрейф — табличный вывод audit (`missing_pin` / `sha_drift`).
+
+Канон слоя: [`kits/README.md`](../README.md). Паттерн:
+[`PINNED_SUBGRAPH_VERSIONING`](../../docs/patterns/PINNED_SUBGRAPH_VERSIONING.md).
+
 ## Вне скоупа (соседи)
 
 - Ценностный доклад утра (#788) — не подменяет этот кит.
