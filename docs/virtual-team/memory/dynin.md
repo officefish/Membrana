@@ -5,196 +5,196 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 32 из 123 кандидатов (бюджет <5000 токенов).
+Записей: 32 из 178 кандидатов (бюджет <5000 токенов).
 
-### 2026-07-18 · голос · insight-own-field-corpus-single-spec
+### 2026-07-21 · позиция · angelina-hostess-m0-order
 
-> внедрять: Да (SNR-функция + длительность как параметр) · этап: неделя · оценка: 8/10 — Замечания по величинам. Первое — **SNR как обязательное поле требует определения метода замера**, иначе поле будет заполнено несравнимыми числами. Нужна одна чистая функция оценки SNR (например, сегментное отношение энергии активных окон к фоновым) с зафиксированным алгоритмом; […]
+> Формализую Q0, иначе «порядок» останется вкусовым. Множество кандидатов V (|V| = 4): **C** — каноны/зеркала; **G** — гейты утра в код; **B** — сборка канона кодом; **H** — хозяйка фоном и встреча утра. Ищу частичный порядок по отношению «b предполагает уже принятый a». […] _(реплик в сеансе: 4)_
 
-— источник: `docs/insights/insight-own-field-corpus-single-spec/REVIEW.md#vote`
+— источник: `docs/seanses/angelina-hostess-m0-order-2026-07-21.md#reply-1`
 
-### 2026-07-18 · позиция · dads-integration-m0-order
+### 2026-07-21 · позиция · angelina-hostess-m1-canon
 
-> Формализую, иначе «порядок» останется вкусовым. Множество кандидатов V, |V|=8, строим частичный порядок по отношению «ответ на b предполагает принятый ответ на a». Проверяемый предикат корня: убери конфигурацию — базовая линия undefined (два числа без критерия выбора), внешний […] _(реплик в сеансе: 3)_
+> Формализую разбиение, иначе «вычеркнуть» останется вкусовым. Пусть S — множество шагов старого скилла. Требую три предиката: **покрытие** `S_morning ∪ S_day = S` (ни один шаг не потерян), **непересечение** `S_morning ∩ S_day = ∅` (нет двойного источника истины), **отсутствие […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/dads-integration-m0-order-2026-07-18.md#reply-1`
+— источник: `docs/seanses/angelina-hostess-m1-canon-2026-07-21.md#reply-1`
 
-### 2026-07-18 · позиция · dads-integration-m1-config
+### 2026-07-21 · позиция · angelina-hostess-m2-assembly
 
-> Формализую, иначе останется вкусовым. Пусть боевая поверхность — функция `surface: (audio, config) → verdict`, где `config = {detectors[], weights, hyperparams}`. DADS-цифра `metric(config_DADS)` означает поведение боя тогда и только тогда, когда `config_DADS ≡ config_live` — […] _(реплик в сеансе: 3)_
+> Начинаю с живого дефекта журнала: 4 прогона подряд LLM роняет слоты, потому что единый промпт просит модель выдать ВЕСЬ документ — структура и текст в одних руках. По M2-K код владеет `id/order/title`. Формализую: `frame(): Slot[]` — 5 секций кодом; LLM зовётся ТОЛЬКО per-slot: […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/dads-integration-m1-config-2026-07-18.md#reply-1`
+— источник: `docs/seanses/angelina-hostess-m2-assembly-2026-07-21.md#reply-1`
 
-### 2026-07-18 · позиция · dads-integration-m1-preset-delivery
+### 2026-07-21 · позиция · angelina-hostess-m3-gates
 
-> Формализую, иначе останется вкусовым. У нас две сущности `T` (TS) и `J` (JSON) и предикат согласованности `equal(T, J)`. Пока обе редактируются руками, `P(equal) < 1` и монотонно падает со временем — каждый ручной коммит независимо трогает одну из копий. Единственный способ […] _(реплик в сеансе: 4)_
+> Формализую, иначе «гейт» останется вкусовым. Гейт — это предикат `gate(state) → {pass, block, evidence}`, чистая функция над состоянием утра. Два гейта — две функции: `magistralChosen(state) = state.magistral ∈ topThree(state)` и `swallowApproved(state) = state.swallow.ownerAck […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/dads-integration-m1-preset-delivery-2026-07-18.md#reply-1`
+— источник: `docs/seanses/angelina-hostess-m3-gates-2026-07-21.md#reply-1`
 
-### 2026-07-18 · позиция · dads-integration-m4-split-prior
+### 2026-07-21 · позиция · angelina-hostess-m4-hostess
 
-> Формализую, иначе останется вкусовым. Accuracy на 9.8:1 имеет тривиальный baseline: классификатор «всегда drone» даёт 90.7% точности, ничего не детектируя. Это `n=1`, выданный за качество. Значит accuracy **дисквалифицирована** как главная метрика по определению. Правильная ось: […] _(реплик в сеансе: 3)_
+> Формализую, иначе «фоновая доступность» останется вкусовой. Есть предикат `available(t) → bool`: Ангелина отвечает на обращение владельца в момент `t`. Резидент даёт `available ≡ true` ценой постоянного ресурса `R > 0` без работы. Оркестратор даёт `available(t) = true ⟺ […] _(реплик в сеансе: 3)_
 
-— источник: `docs/seanses/dads-integration-m4-split-prior-2026-07-18.md#reply-1`
+— источник: `docs/seanses/angelina-hostess-m4-hostess-2026-07-21.md#reply-1`
 
-### 2026-07-18 · позиция · evening-auditor-doc2-report-generator
+### 2026-07-21 · позиция · angelina-hostess-m5-gc
 
-> Формализую, иначе спор поплывёт. Аудит — это чистая функция `audit(dayState) → {passed[], failed[], evidence[]}`, где вход детерминирован: множество коммитов `C = {c : merged_at ∈ [day_start, day_end)}` плюс граф правды `docs/truth/registry.json`. Ключевой вопрос: аудитор […] _(реплик в сеансе: 5)_
+> Формализую исполнение: `isDead(s) = status = rejected ∧ verdict_closed` — чистый предикат; дата берётся из вердикта, не из `Date.now()`. Один детерминированный проход `gc.mjs` в вечернем ритуале, после закрытия вердиктов дня. Производные (черновики, промежуточные прогоны) […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/evening-auditor-doc2-report-generator-2026-07-18.md#reply-1`
+— источник: `docs/seanses/angelina-hostess-m5-gc-2026-07-21.md#reply-1`
 
-### 2026-07-18 · позиция · evening-auditor-m0-order
+### 2026-07-21 · позиция · procedural-layer-m0-order
 
-> Формализую, иначе «порядок» останется вкусовым. У нас множество кандидатов V (|V|=5) и строим частичный порядок — DAG, где ребро a→b значит «ответ на b предполагает уже принятый ответ на a». Проверяемый критерий фундамента: кандидат, чей вердикт меняет **множество допустимых […] _(реплик в сеансе: 5)_
+> Формализую, иначе «порядок» останется вкусовым. Множество кандидатов V, |V|=5, строю частичный порядок по отношению «ответ на b предполагает уже принятый ответ на a». Проверяемый предикат фундамента: убери кандидат — становится ли множество допустимых ответов остальных […] _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/evening-auditor-m0-order-2026-07-18.md#reply-1`
+— источник: `docs/seanses/procedural-layer-m0-order-2026-07-21.md#reply-1`
 
-### 2026-07-18 · позиция · evening-auditor-m1-boundary
+### 2026-07-21 · позиция · procedural-layer-m1-home-r2
 
-> Формализую границу, иначе «предметная область» останется вкусовой. Аудитор — это чистая функция `audit(logs, dayPlan, truthCrystals[]) → report`. Область определения задаётся тремя входами: логи дня, план дня, множество кристаллов правды. Всё, что не выводимо из этих трёх […] _(реплик в сеансе: 4)_
+> Формализую, иначе «дом» останется вкусовым. У нас есть предикат заселения `settled(container) → bool` и множество кандидатов на адрес. Фактура даёт готовый паттерн: `docs/audit/git/`, `docs/audit/tasks/` — это уже контейнеры с контрактом (contract · registry · analysis · cache). […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/evening-auditor-m1-boundary-2026-07-18.md#reply-1`
+— источник: `docs/seanses/procedural-layer-m1-home-r2-2026-07-21.md#reply-1`
 
-### 2026-07-18 · позиция · evening-auditor-m1s-dayplan-scope
+### 2026-07-21 · позиция · procedural-layer-m2-vocabulary-r2
 
-> Формализую, иначе останется вкусовым. У аудитора вход `dayPlan`. Определим через проверяемый предикат стоимости. Вариант «день»: `|dayPlan| = |task_refs(today)| ≈ O(5)`, аудит детерминирован, работает **без сети** — все входы локальны (logs, срез, кристаллы). Вариант «история»: […] _(реплик в сеансе: 3)_
+> Формализую, иначе «полуоткрытый» останется вкусовым. Пусть словарь — конечное множество категорий `V = {команда, задача, ответственность, цель}`, `|V|=4`. Механизм проверки — это предикат `declared(term) → bool` над каждым термином, встречающимся в процедурном слое. Инвариант […] _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/evening-auditor-m1s-dayplan-scope-2026-07-18.md#reply-1`
+— источник: `docs/seanses/procedural-layer-m2-vocabulary-r2-2026-07-21.md#reply-1`
 
-### 2026-07-18 · позиция · evening-auditor-m2-hypothesis-verdict
+### 2026-07-21 · позиция · procedural-layer-m2a-rod
 
-> Формализую, иначе останется вкусовым. У нас две функции с разной стоимостью и разной надёжностью. `cheap(card) = issueClosed` — стоимость O(1), но ошибка первого рода наблюдаема: на прогоне 18.07 из 27 сработавших минимум 5 (зонтик #47) + 3 (#58) = 8 ложных, это `precision ≤ […] _(реплик в сеансе: 4)_
+> Формализую, иначе «род» останется вкусовым. Пусть процедура — функция `apply: (procedure, category) → effect`, где `effect ∈ {create, own, archive, link, unlink, read}`. Род задаёт **допустимое подмножество** `allowed(род) ⊆ effect`. По конструкции: `allowed(объект) = {create, […] _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/evening-auditor-m2-hypothesis-verdict-2026-07-18.md#reply-1`
+— источник: `docs/seanses/procedural-layer-m2a-rod-2026-07-21.md#reply-1`
 
-### 2026-07-18 · позиция · evening-auditor-m2p-reproducibility
+### 2026-07-21 · позиция · procedural-layer-m3-boundary-manual
 
-> Формализую детерминированность сразу, иначе слово останется вкусовым. Требование одно: `audit(x) = audit(x)` для одного и того же входа `x = (logs, dayPlan, truthCrystals[])` — чистая функция, `∀ прогонов результат бит-в-бит равен`. Это значит: **никаких** `Date.now()`, […] _(реплик в сеансе: 4)_
+> По пункту 1 — формализую направленность. Слоям приписан ранг: `rank(процедура)=0, rank(кит)=1, rank(скрипт)=2`. Инвариант границы: любая ссылка/импорт допустимы только при `rank(from) < rank(to)` либо внутри слоя; ребро с `rank(from) > rank(to)` — нарушение (скрипт, знающий о […] _(реплик в сеансе: 3)_
 
-— источник: `docs/seanses/evening-auditor-m2p-reproducibility-2026-07-18.md#reply-1`
+— источник: `docs/seanses/procedural-layer-m3-boundary-manual-2026-07-21.md#reply-1`
 
-### 2026-07-18 · позиция · evening-auditor-m2s-premises
+### 2026-07-21 · позиция · procedural-layer-m4-grammar-manual
 
-> Формализую задачу, иначе «полный список» останется вкусовым. Вердикт H1 — это следствие `verdict = f(P)`, где `P = {p₁…pₙ}` — множество посылок. Наша работа — не оспорить `verdict`, а **восстановить P по обратному ходу**: для каждой части вердикта найти минимальную посылку, без […] _(реплик в сеансе: 4)_
+> Пункт 2 — каскад. Функция `resolveHolder(explicit, branchPersona) → persona | CONFLICT | MISSING`, тотальная и детерминированная. «Явное» — объединение двух источников с внутренним приоритетом: слово владельца при шипе, иначе `leadPersona` карточки реестра, когда `slug` равен id […] _(реплик в сеансе: 2)_
 
-— источник: `docs/seanses/evening-auditor-m2s-premises-2026-07-18.md#reply-1`
+— источник: `docs/seanses/procedural-layer-m4-grammar-manual-2026-07-21.md#reply-1`
 
-### 2026-07-18 · позиция · evening-auditor-m3-trigger-reader
+### 2026-07-21 · позиция · procedural-layer-m5-migration-manual
 
-> Начну с фактов, чтобы не спорить о словах. «Читают» — это не настроение, а предикат: `consumed(report, t) → bool`. Ключевой вопрос — что делает его **проверяемым по коммиту**, а не самоотчётом. Самая честная форма: потребление доказывается только тем, что **следующий артефакт […] _(реплик в сеансе: 4)_
+> Пункт 2 — критерий, формализую. `migrated(p) := container(p) ∧ vocabulary(p) ∧ grammar(p)` — производный предикат, НЕ поле: хранить его нельзя, только вычислять, иначе разъедется с компонентами. Три компоненты раздельны: `container` — дом существует и проходит […] _(реплик в сеансе: 2)_
 
-— источник: `docs/seanses/evening-auditor-m3-trigger-reader-2026-07-18.md#reply-1`
+— источник: `docs/seanses/procedural-layer-m5-migration-manual-2026-07-21.md#reply-1`
 
-### 2026-07-18 · позиция · evening-auditor-m4-report-form
+### 2026-07-20 · позиция · linear-egress-gear-wiring-m0-order
 
-> Формализую, иначе форма поплывёт в вёрстку. Отчёт — это множество элементов `report = {header, entries[], footer}`, где `entry = {claim, verdict ∈ {ok, drift, stale}, evidenceRef, scope ∈ {sverka, recheck}, originHash}`. Топливо агенту означает предикат `citable(entry) → bool`: […] _(реплик в сеансе: 4)_
+> Формализую, иначе «порядок» останется вкусовым. Множество кандидатов V, |V|=5. Строю частичный порядок по предикату: ребро a→b, если ответ на b предполагает уже принятый ответ на a. Проверяю корень: убери кандидат 1 — где живёт клиент Linear становится undefined, а значит адрес […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/evening-auditor-m4-report-form-2026-07-18.md#reply-1`
+— источник: `docs/seanses/linear-egress-gear-wiring-m0-order-2026-07-20.md#reply-1`
 
-### 2026-07-18 · позиция · lenses-verification-class-container
+### 2026-07-20 · позиция · linear-egress-gear-wiring-m1-egress-path
 
-> Формализую, иначе «класс» останется вкусовым. Линза — это чистая функция `lens: (object, ruleset) → finding[]`, где `finding = {locus, defectClass, evidence}`. Тест на класс проверяемый: существует ли непустое пересечение сигнатур пяти существующих линз? Если у всех вход — […] _(реплик в сеансе: 4)_
+> Формализую, иначе «форма» останется вкусовой. Пусть путь — композиция `office → media → Linear`. Требование владельца — предикат: `egress_ip ∈ NL` для любого запроса к `api.linear.app`. Кандидат 1 (клиент в office, media как прокси) удовлетворяет предикат по TCP-выходу, но […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/lenses-verification-class-container-2026-07-18.md#reply-1`
+— источник: `docs/seanses/linear-egress-gear-wiring-m1-egress-path-2026-07-20.md#reply-1`
 
-### 2026-07-18 · позиция · morning-ritual-regulation-background-agent
+### 2026-07-20 · позиция · linear-egress-gear-wiring-m1b-sprint-scaffold
 
-> Формализую, иначе «безопасно делегировать» останется вкусовым. Каждый из восьми шагов — это функция с сигнатурой. Делимость на фон определяется предикатом `pure(step) ∧ verifiable(output)`: шаг чист (нет запроса к владельцу внутри) И его выход проверяется детерминированной […] _(реплик в сеансе: 4)_
+> Формализую, иначе «каркас» останется вкусовым. Старт единицы работы — это предикат `legalStart(unit) → bool`, конъюнкция трёх условий: `issueExists(unit)` ∧ `registryBijection(unit)` ∧ `acceptanceTemplate(unit)`. Норма владельца дисквалифицирует любой старт, где `issueExists = […] _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/morning-ritual-regulation-background-agent-2026-07-18.md#reply-1`
+— источник: `docs/seanses/linear-egress-gear-wiring-m1b-sprint-scaffold-2026-07-20.md#reply-1`
 
-### 2026-07-18 · позиция · night-build-format-m0-order-run1-drift
+### 2026-07-20 · позиция · linear-egress-gear-wiring-m2-secrets-trust
 
-> Формализую, иначе «порядок» останется вкусовым. У нас множество кандидатов V (|V|=6 с учётом guardrails) и нужен частичный порядок — DAG, где ребро a→b значит «ответ на b предполагает принятый ответ на a». Проверяю зависимости как предикаты. Guardrails (изоляция worktree) → всё: […] _(реплик в сеансе: 4)_
+> Формализую, иначе «граница доверия» останется вкусовой. Пусть множество узлов N = {media-NL, office-MSK, agent-РФ} и предикат `holdsLinearKey(n) ∈ {0,1}`. Норма владельца задаёт `holdsLinearKey(office)=0`, `holdsLinearKey(agent)=0`. Вероятность рассинхрона двух копий ключа […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/night-build-format-m0-order-run1-drift-2026-07-18.md#reply-1`
+— источник: `docs/seanses/linear-egress-gear-wiring-m2-secrets-trust-2026-07-20.md#reply-1`
 
-### 2026-07-18 · позиция · night-build-format-m0-order-run2-clean
+### 2026-07-20 · позиция · linear-egress-gear-wiring-m3-snapshot-dod
 
-> Посчитаю связность как граф, а не «на глаз». Пять узлов. Ребро X→Y ставлю только если Y численно/логически невыводим без X. 3→4: да (ветка origin/main — пункт hard-профиля). 3→5: да (handoff имеет смысл только когда ветка изолирована). 3→1: слабое — taxonomy тест-гейта […] _(реплик в сеансе: 5)_
+> Формализую, иначе «успешен» останется вкусовым. Снимок — это артефакт `S` с шапкой `H` и телом `B`. Предикат `pullOk(S)` должен быть чистой булевой функцией **только от файла**: `pullOk(S) = hasFullHeader(H) ∧ H.producedBy = 'media-NL' ∧ H.egressRegion = 'NL' ∧ H.sourceRevision […] _(реплик в сеансе: 3)_
 
-— источник: `docs/seanses/night-build-format-m0-order-run2-clean-2026-07-18.md#reply-1`
+— источник: `docs/seanses/linear-egress-gear-wiring-m3-snapshot-dod-2026-07-20.md#reply-1`
 
-### 2026-07-18 · позиция · night-build-format-m1-guardrails
+### 2026-07-20 · позиция · linear-egress-gear-wiring-m4-stub-lift
 
-> Начну с проверки посылки research Q3 численно, не «на глаз». «Процесс без технической изоляции = театр безопасности» — это утверждение о том, что защита сводится к вероятности несоблюдения. Процессная норма («ночь не мёржит») держится, только пока агент/человек её соблюдает: […] _(реплик в сеансе: 4)_
+> Формализую, иначе «критерий» останется вкусовым. Пусть `S` — снимок движения, `pullOk(S)` — предикат из M3 (полная шапка ∧ producedBy=media-NL ∧ egressRegion=NL ∧ …). Событие снятия — это переход состояния флага `movementMode: deferred-egress → live-snapshot`. Критерий кандидата […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/night-build-format-m1-guardrails-2026-07-18.md#reply-1`
+— источник: `docs/seanses/linear-egress-gear-wiring-m4-stub-lift-2026-07-20.md#reply-1`
 
-### 2026-07-18 · позиция · night-build-format-m2-cadence
+### 2026-07-20 · позиция · linear-egress-gear-wiring-m4b-closure-gate
 
-> Начну с наблюдения №2 доклада за ночь 17.07: NB1 (12 строк JSON) и NB4 (новый модуль + 7 тестов) шли как равновесные фазы под один чекпоинт. Это не «совпало» — это отсутствие метрики веса. Пока у фазы нет вычислимой оценки, регламент обречён трактовать плоско. Предлагаю ввести […] _(реплик в сеансе: 5)_
+> Формализую, иначе останется вкусовым. Гейт — чистый предикат `closureOk : (closureArtifact, card, S) → {ok, code}`, детерминированный: один вход → один код, никаких `Date.now()` внутри (кроме сравнения `S.pulledAt` с TTL, а TTL — параметр входа, не скрытое состояние). Конъюнкция […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/night-build-format-m2-cadence-2026-07-18.md#reply-1`
+— источник: `docs/seanses/linear-egress-gear-wiring-m4b-closure-gate-2026-07-20.md#reply-1`
 
-### 2026-07-18 · позиция · night-build-format-m3-taxonomy
+### 2026-07-20 · позиция · ritual-refactor-m5-dreams
 
-> Вот здесь я поставлю численный акцент. «Проверяется» — это не булево, это про *правдоподобие ложного зелёного*. Юнит на 12 строк `.markdownlint.json` не даёт информации: он проходит по построению, значит его информационная ценность ≈ 0. Фиктивный тест хуже отсутствия — он […] _(реплик в сеансе: 4)_
+> Формализую D, иначе «сны» останутся метафорой. Сутки = 24 тика, тик `h∈0..23`. Тик → один `Dream` = синтез пары `[ThesisRef, ThesisRef]` (случайные, seed воспроизводим). Соревнование — тотальная функция `select: Dream[24] → Winner[6]`: четвёрки по метке часа (`h//4`), в каждой […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/night-build-format-m3-taxonomy-2026-07-18.md#reply-1`
+— источник: `docs/seanses/ritual-refactor-m5-dreams-2026-07-20.md#reply-1`
 
-### 2026-07-18 · позиция · team-evening-feedback
+### 2026-07-20 · позиция · tier2-git-hygiene-multi-agent
 
-> Dynin. Оценка артефактов: MAIN_DAY_ISSUE точно сформулировал моё ядро — `externalizeQuery` как чистая функция + тест-гард на реальных именах, и `night:research` как честный `void` вместо вечного `pending`. Инвариант длины (O(n) по ссылкам) в DoD зафиксирован верно. Итоги дня: […]
+> Формализую, иначе «правильная гигиена» останется вкусовой. У нас 4 писателя `W = {claude1, claude2, codex, grok}` и общий ресурс — один `.git`-объектный стор. Ключевой предикат безопасности: `∀ w: write(w)` не должен пересекаться с `write(w')` в одной изменяемой области. Гит уже […] _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/team-evening-feedback-2026-07-18.md#reply-1`
+— источник: `docs/seanses/tier2-git-hygiene-multi-agent-2026-07-20.md#reply-1`
 
-### 2026-07-17 · голос · insight-dads-detector-integration
+### 2026-07-20 · позиция · worktree-hygiene-gaps-m0-order
 
-> внедрять: Да · этап: D2/D5 требуют M1-решения · оценка: 9/10 — Здесь два узла, и оба research развернул правильно. Первый — D2: `resampleLinear` из yamnet использовать **нельзя**, линейная интерполяция размывает транзиенты (это ровно то, на чём детектор дрона ловит сигнал). Полифазный FIR — чистая функция, я её дам: вход буфер 16k → выход […]
+> Формализую, иначе «порядок» останется вкусовым. Пусть популяция деревьев — множество `W`, `|W| ≥ 30` на 20.07. K1 определяет предикат на элементе: `stale(w) = distance(base(w), main) > θ`. K2 определяет само множество `W` и предикат легитимности `legit(w)`. Ключевое наблюдение: […] _(реплик в сеансе: 3)_
 
-— источник: `docs/insights/insight-dads-detector-integration/REVIEW.md#vote`
+— источник: `docs/seanses/worktree-hygiene-gaps-m0-order-2026-07-20.md#reply-1`
 
-### 2026-07-17 · голос · insight-effector-cue-integration
+### 2026-07-20 · позиция · worktree-hygiene-gaps-m1-lifecycle
 
-> внедрять: Нет (кода нет; предпосылка — эпик DOA) · этап: после stage-gate 1→2 · оценка: 2/10 — Ключевой численный факт корректен и это сердцевина вердикта: луч 2.5° при σ(азимут) в пару градусов на дистанции 1 км промахивается — геометрия неумолима. Порог возврата σ ≤ 0.6° выбран разумно (запас ~4× относительно ширины луча по угловому бюджету). Но подчеркну: […]
+> Формализую, иначе «lifecycle» останется вкусовым. Дерево `w` живёт как автомат с двумя событиями: `create(w)` и `teardown(w)`. Нужен проверяемый предикат сноса `shouldTeardown(w) → bool`, детерминированный и без сети по возможности. Кандидат 3 (по возрасту) дисквалифицирую […] _(реплик в сеансе: 5)_
 
-— источник: `docs/insights/insight-effector-cue-integration/REVIEW.md#vote`
+— источник: `docs/seanses/worktree-hygiene-gaps-m1-lifecycle-2026-07-20.md#reply-1`
 
-### 2026-07-17 · позиция · meeting-format-m0-order
+### 2026-07-19 · голос · insight-tooling-kits
 
-> Формализую задачу, иначе «порядок» останется вкусовым. У нас множество кандидатов V (|V| ≈ 10) и нужно построить частичный порядок — DAG, где ребро a→b значит «ответ на b предполагает уже принятый ответ на a». Это не полный порядок: часть вопросов независимы и могут идти […] _(реплик в сеансе: 4)_
+> внедрять: да · этап: неделя · оценка: 7/10 — Механика версии математически корректна: версия = `git log -1 <file>` (последний коммит, канон `lastTouchedAt`), changelog = `git diff` между рендерами. Это детерминированно и проверяемо — никакого mtime. Гейт свежести — хэш источников (упорядоченный `sha256` конкатенации […]
 
-— источник: `docs/seanses/meeting-format-m0-order-2026-07-17.md#reply-1`
+— источник: `docs/insights/insight-tooling-kits/REVIEW.md#vote`
 
-### 2026-07-17 · позиция · scripts-boundary-m0-order
+### 2026-07-19 · позиция · insight-archive-lifecycle-c2-state-axes-r2
 
-> Формализую DAG численно, иначе ранг останется вкусовым. У нас пять кандидатов-узлов: `S` (семантика отказа), `F` (гейт свежести), `J` (журнал прогонов), `R` (ретрай транзиентных), `Reg` (реестр процессов). Ребро `a→b` = «b опирается на инвариант, гарантируемый a». Инцидент — это […] _(реплик в сеансе: 4)_
+> Формализую, иначе «оси не смешиваются» останется вкусовым. У нас четыре независимые оси на разных subjects: decision над MANDATE/revision, delivery и outcome над SLICE, visibility над representation record. Каждая ось — это функция `axis: subject → assessment`, а не общий enum. […] _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/scripts-boundary-m0-order-2026-07-17.md#reply-1`
+— источник: `docs/seanses/insight-archive-lifecycle-c2-state-axes-r2-2026-07-19.md#reply-1`
 
-### 2026-07-17 · позиция · strategy-day-q1-stop-doing
+### 2026-07-19 · позиция · insight-archive-lifecycle-c2-state-axes-r3
 
-> Формализую, иначе останется вкусовым. У генератора сейчас функция `strategy(state) → {roles[], tasks_with_dod[]}`. Задачи с DoD — это уже детерминированный вывод из реестра: `tasks = filter(registry, active)`. Стратегия их **дублирует**, а дубль — это `n=1`, выданный за `n=2` […] _(реплик в сеансе: 3)_
+> Формализую, иначе останется вкусовым. Каждая ось — функция `axis: subject → Option<assessment_axis>`. Домены дискретны и **заданы явно**. Для V (validation/decision) исправление №2 требует покрыть `{proposed, accepted, rejected, deferred}` — четыре значения, не terminal, не […] _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/strategy-day-q1-stop-doing-2026-07-17.md#reply-1`
+— источник: `docs/seanses/insight-archive-lifecycle-c2-state-axes-r3-2026-07-19.md#reply-1`
 
-### 2026-07-17 · позиция · strategy-day-q2-horizon
+### 2026-07-19 · позиция · insight-archive-lifecycle-c2-state-axes-r4
 
-> Поддержу и формализую границу. Если `plan` живёт на оси суток (`t ∈ [today, today+1]`), то `horizon` живёт на оси **этапов** — дискретной, не календарной. У нас уже есть такая ось: stage-gate из `WHITE_PAPER.md` §8 (Single-Node Detection First → gate 1→2 → мультиузел). Это […] _(реплик в сеансе: 4)_
+> Формализую, иначе останется вкусовым. Запись — это кортеж из четырёх опциональных assessment: `Record = (D_opt, L_opt, O_opt, V_opt)`, где каждая ось — функция на своём exact subject. Домены не пересекаются: `dom(D)=MANDATE`, `dom(L)=dom(O)=SLICE`, `dom(V)=representation`. Пятая […] _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/strategy-day-q2-horizon-2026-07-17.md#reply-1`
+— источник: `docs/seanses/insight-archive-lifecycle-c2-state-axes-r4-2026-07-19.md#reply-1`
 
-### 2026-07-17 · позиция · strategy-day-q3-when-built
+### 2026-07-19 · позиция · insight-archive-lifecycle-c2-state-axes-r5
 
-> Формализую, иначе останется вкусовым. У нас две функции времени. Первая: `nextDay(genTime) = date(genTime) + 1` — календарная, `d/dt ≠ 0` каждые сутки, меняется независимо от состояния мира. Вторая (Q2): `horizon = {gate, phase, criteria[]}`, инвариант `d/dt = 0` — не движется, […] _(реплик в сеансе: 4)_
+> Формализую, иначе enum поплывёт. Обе оси по замороженной основе — `Option<assessment>`, где `None` строго вне enum и означает «нет assertion», а не «отрицательный assertion». Значит каждая ось — это тип-сумма мощности 3: `None ⊕ positive ⊕ negative`. Задача сегодня — назвать […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/strategy-day-q3-when-built-2026-07-17.md#reply-1`
+— источник: `docs/seanses/insight-archive-lifecycle-c2-state-axes-r5-2026-07-19.md#reply-1`
 
-### 2026-07-17 · позиция · strategy-day-q4-night-research
+### 2026-07-19 · позиция · insight-archive-lifecycle-c3-evidence-contract
 
-> Начну с фактов, а не с настроения. «Три обязательных дип-ресёрча ежеутренне» (посылка владельца из strategy-day-investigation) — это измеримая цена: 3 прогона Perplexity × кредит × минуты, каждый день. И у сырья есть та же болезнь, что мы формализовали в […] _(реплик в сеансе: 4)_
+> Формализую, иначе останется вкусовым. Каждая ось — функция `assert: SLICE → Option<value>`. L ∈ {delivered, not-delivered}, O ∈ {realized, not-realized}, и `None` — **отсутствие assertion**, не третье значение. Ключевой инвариант: `evidence(None)` не существует, потому что […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/strategy-day-q4-night-research-2026-07-17.md#reply-1`
+— источник: `docs/seanses/insight-archive-lifecycle-c3-evidence-contract-2026-07-19.md#reply-1`
 
-### 2026-07-17 · позиция · strategy-day-q4b-topics-and-barren
+### 2026-07-19 · позиция · insight-archive-lifecycle-c3-evidence-contract-r2
 
-> Соглашусь со Структурщиком и добавлю численную сторону. «В молоко» — не оценочное суждение, а измеримый предикат. Каждый ночной прогон производит артефакт; определим `value(run) → {adopted, shelved, void}` через проверяемый факт: adopted = существует инсайт/задача, ссылающаяся […] _(реплик в сеансе: 5)_
+> Формализую, иначе останется вкусовым. EvidenceNode = `{targetClaim, kind: evidence|hint|invalid, originRef, digest?, predicate, version}`. Cardinality: один target claim имеет `0..N` independent evidence nodes; каждый node доказывает **ровно один** claim — это не биекция, а […] _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/strategy-day-q4b-topics-and-barren-2026-07-17.md#reply-1`
+— источник: `docs/seanses/insight-archive-lifecycle-c3-evidence-contract-r2-2026-07-19.md#reply-1`
 
-### 2026-07-17 · позиция · strategy-day-q5-horizon-feeds
+### 2026-07-05 · голос · insight-comms-contour-topology
 
-> Формализую сразу, иначе поплывёт. Два канала = две функции с разными доменами: `insights: memory[] → highlight[]` (внутреннее свидетельство) и `research: horizon → question[3] → finding[]` (внешнее знание). Эхо — это когда origin-hash совпадает: `sha(source@commit)`. Дедуп […] _(реплик в сеансе: 6)_
+> внедрять: Да, `S=0 / M≈0` доминирует · этап: Сейчас · оценка: 9/10
 
-— источник: `docs/seanses/strategy-day-q5-horizon-feeds-2026-07-17.md#reply-1`
+— источник: `docs/insights/insight-comms-contour-topology/REVIEW.md#vote`
