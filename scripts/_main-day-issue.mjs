@@ -14,6 +14,7 @@ import {
   printAnthropicHttpError,
 } from './_anthropic-env.mjs';
 import {
+  assembleStandupPrompt,
   collectOpenIssues,
   collectStatusSnapshot,
   guardDailyCodeReviewInput,
@@ -366,20 +367,22 @@ export async function runMainDayIssue(options) {
     status,
     '',
     '---',
-    buildGenerationPrompt({
-      outputRel,
-      focusOverride: options.focusOverride,
-      activeCount: active.length,
-      issueCount: issues.count,
-    }),
   ];
 
-  const assembled = sections.join('\n');
-  const bodyText =
-    assembled.length > MAX_CONTEXT_CHARS
-      ? assembled.slice(0, MAX_CONTEXT_CHARS) +
-        `\n\n[… контекст обрезан; yarn main-day-issue:full …]\n`
-      : assembled;
+  // Задание собирается ОТДЕЛЬНО и защищено от обрезки: режется контекст, не скелет
+  // слотов (инцидент 21.07 — задание в хвосте выпало из 95К, гейт M2 валил все 5
+  // слотов; тот же баг стендапа 16.07 закрыт assembleStandupPrompt со строгим тестом).
+  const generationPrompt = buildGenerationPrompt({
+    outputRel,
+    focusOverride: options.focusOverride,
+    activeCount: active.length,
+    issueCount: issues.count,
+  });
+  const bodyText = assembleStandupPrompt({
+    context: sections.join('\n'),
+    assignment: generationPrompt,
+    maxChars: MAX_CONTEXT_CHARS,
+  });
 
   if (options.dryRun) {
     console.log(bodyText);
