@@ -1,4 +1,4 @@
-# BRANCHES_DECOMPOSE_LIST — Scenario A registry
+# BRANCHES_DECOMPOSE_LIST â€” Scenario A registry
 
 ## Meta
 

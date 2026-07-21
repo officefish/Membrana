@@ -1,4 +1,7 @@
-# BRANCHES_DECOMPOSE_LIST � Scenario A registry
+# BRANCHES_DECOMPOSE_LIST — Scenario A registry
+
+> **Dated archive** (2026-07-21) of the canonical BRANCHES_DECOMPOSE_LIST.md.
+> Same content on first commit by design — see [docs/audit/git/README.md](../README.md) («канон + опциональный dated-снимок»). Membership for Scenario B still loads from the canonical file unless the owner names this snapshot.
 
 ## Meta
 
