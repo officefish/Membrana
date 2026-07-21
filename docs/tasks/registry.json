@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "morning-report-completion",
+      "title": "Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям)",
+      "promptPath": "docs/prompts/MORNING_REPORT_COMPLETION_PROMPT.md",
+      "githubIssue": 788,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-21",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "angelina-hostess-impl",
       "title": "Спринт: реализация вердиктов «Ангелина — хозяйка утра» (C→B+G→H→GC)",
       "promptPath": "docs/seanses/angelina-hostess-EPIC-2026-07-21.md",
