@@ -18,6 +18,12 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `kdm-d4-closure` | D4: CLOSURE kits-dream-master | M | [`KDM_D4_CLOSURE_PROMPT.md`](../prompts/KDM_D4_CLOSURE_PROMPT.md) | [#860](https://github.com/officefish/Membrana/issues/860) |
+| `kdm-d3-procedure` | D3: процедура ritual-dreams / kitVersion | M | [`KDM_D3_PROCEDURE_PROMPT.md`](../prompts/KDM_D3_PROCEDURE_PROMPT.md) | [#859](https://github.com/officefish/Membrana/issues/859) |
+| `kdm-d2-kit` | D2: жилец kits/dream-master + пины | M | [`KDM_D2_KIT_PROMPT.md`](../prompts/KDM_D2_KIT_PROMPT.md) | [#858](https://github.com/officefish/Membrana/issues/858) |
+| `kdm-d1-roots` | D1: финальный список roots dream-master | M | [`KDM_D1_ROOTS_PROMPT.md`](../prompts/KDM_D1_ROOTS_PROMPT.md) | [#857](https://github.com/officefish/Membrana/issues/857) |
+| `kdm-d0-brief` | D0: бриф kits-dream-master, гейт готовности dreams | M | [`KDM_D0_BRIEF_PROMPT.md`](../prompts/KDM_D0_BRIEF_PROMPT.md) | [#856](https://github.com/officefish/Membrana/issues/856) |
+| `kits-dream-master` | Эпик: второй кит dream-master (Мастер снов) поверх kits/ | L | [`KITS_DREAM_MASTER_PROMPT.md`](../prompts/KITS_DREAM_MASTER_PROMPT.md) | [#855](https://github.com/officefish/Membrana/issues/855) |
 | `morning-report-completion` | Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям) | L | [`MORNING_REPORT_COMPLETION_PROMPT.md`](../prompts/MORNING_REPORT_COMPLETION_PROMPT.md) | [#788](https://github.com/officefish/Membrana/issues/788) |
 | `sbc-s4-wiring` | S4: провода AGENTS/skills/DoD для контейнера scripts/ | S | [`SBC_S4_WIRING_PROMPT.md`](../prompts/SBC_S4_WIRING_PROMPT.md) | [#796](https://github.com/officefish/Membrana/issues/796) |
 | `sbc-s3-kits-align` | S3: kits — выровнять с pl-r3 kit-manifest (не изобретать параллельный контракт) | M | [`SBC_S3_KITS_ALIGN_PROMPT.md`](../prompts/SBC_S3_KITS_ALIGN_PROMPT.md) | [#795](https://github.com/officefish/Membrana/issues/795) |
