@@ -106,9 +106,16 @@
 
 ## 5. Scenario B — Deep category analysis
 
-**Триггер:** «разбор категории N», «attention по cat.N», Scenario B. Вход: число **1–7**.
+**Триггер:** «разбор категории», «attention по категории», Scenario B.
 
-### Шаги
+### Gate: категория должна быть названа явно
+
+1. Если владелец **не** назвал номер категории (**1–7**) и **не** дал ясное имя категории (например «Застой / zombie»), агент **обязан спросить**, какую категорию разбирать, и **STOP** — не начинать churn-анализ и не писать файлы в `analysis/`.
+2. Допустимый вход: `6`, `категория 6`, `Застой / zombie`, «Scenario B, категория 6» и т.п.
+3. **Запрещено** молча брать категорию из истории чата / прошлого контекста сессии (например «раньше говорили про cat.6»).
+4. После явного подтверждения категории — membership брать **только** из `docs/audit/git/registry/BRANCHES_DECOMPOSE_LIST.md` (или dated-снимка, который назвал владелец). **Не** пересобирать membership ad-hoc.
+
+### Шаги (только после Gate)
 
 1. **Загрузить реестр:** `docs/audit/git/registry/BRANCHES_DECOMPOSE_LIST.md`  
    (или dated-файл `BRANCHES_DECOMPOSE_LIST-YYYY-MM-DD.md`, который назвал владелец).  
@@ -165,5 +172,6 @@
 | Сказать агенту | Что сделает |
 |----------------|-------------|
 | «Прочитай `docs/audit/git/AGENT_PROMPT.md` и Scenario A» | Overwrite `registry/BRANCHES_DECOMPOSE_LIST.md` (+ опциональный dated-архив) |
+| «Scenario B» (без номера/имени) | **Спросить категорию 1–7 и STOP** — не анализировать |
 | «Scenario B, категория 6» | Attention A1–A4 по zombie из `registry/BRANCHES_DECOMPOSE_LIST.md` |
 | «Scenario B cat.7 по файлу registry/BRANCHES_DECOMPOSE_LIST-2026-07-21.md» | Salvage deep analysis от указанного снимка |
