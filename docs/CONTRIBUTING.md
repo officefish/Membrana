@@ -235,6 +235,7 @@ PR мёржатся **squash**, поэтому коммиты ветки не с
 из 42 реально мёртвых). Не судить по нему ни о чистке, ни о «невлитой работе».
 
 ```bash
+yarn repo:branches                       # инвентарь local + origin/* vs origin/main (таблицы ahead/behind)
 yarn repo:clean                          # dry-run: что мертво и что остаётся — с причинами
 yarn repo:clean --execute --remote       # удалить мёртвые ветки локально и на origin
 yarn repo:clean --execute --worktrees    # + убрать worktree архивных спринтов
