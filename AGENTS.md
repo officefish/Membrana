@@ -45,6 +45,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Ритм утро/вечер/неделя (полный регламент) | см. `docs/DEVELOPER_RHYTHM.md` |
 | Git hygiene audit (ветки) | entry: [`docs/audit/git/AGENT_PROMPT.md`](docs/audit/git/AGENT_PROMPT.md) · контейнер `docs/audit/git/` · `yarn repo:branches` / `yarn repo:branches:decompose` · skills `membrana-branch-audit` / `membrana-branch-decompose` |
 | Tasks registry audit (задачи) | entry: [`docs/audit/tasks/AGENT_PROMPT.md`](docs/audit/tasks/AGENT_PROMPT.md) · контейнер `docs/audit/tasks/` · `yarn tasks:decompose` / `yarn tasks:audit` · skills `membrana-tasks-decompose` / `membrana-tasks-audit` |
+| Scripts container (группа scripts/) | entry: [`scripts/AGENT_PROMPT.md`](scripts/AGENT_PROMPT.md) · **один дом** `scripts/` (не `docs/audit/scripts/`) · `yarn scripts:registry --report` ≡ `yarn tooling:overview --report` · паттерн [`GROUP_CONTAINERIZATION`](docs/patterns/GROUP_CONTAINERIZATION.md) |
 
 ### Agent tooling
 
@@ -79,6 +80,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Optional `night:*` нет в `package.json` на ветке | Soft-skip / не звать — hard-fail ритуала запрещён (#725 C). `scripts/lib/optional-yarn-script.mjs` |
 | Карточка background office/media «на память» | Сначала [`docs/BACKGROUND_SERVERS.md`](docs/BACKGROUND_SERVERS.md) / скилл `membrana-background-servers` — офис уже Fastify, не Express (#725 E) |
 | Раздувать AGENTS фиче-докой | AGENTS = грабли/ритуал; канон фичи — в целевом docs/skill (#725 D) |
+| Второй дом для scripts | **Не** заводить `docs/audit/scripts/`. Контейнер группы — сам [`scripts/`](scripts/README.md); entry [`scripts/AGENT_PROMPT.md`](scripts/AGENT_PROMPT.md) |
 | Ласточка: голые `PR #N` | `yarn live-links` — отдельно от линзы Ожегова (тон ≠ кликабельность) |
 | Мёрж `git merge origin/main` | **Без `-m`** — хук освобождает `Merge*`. Своё `-m "merge: …"` строчными хук отклонит (TF-1: находка «хук ломает merge» была **ложной**) |
 | Worktree занял ветку | `git checkout main` упадёт. Смотреть `yarn neighbors`, не писать grep — самописный **соврал** 16.07. Ночью ветку брать **от `origin/main`**, не от локального main |
@@ -126,6 +128,19 @@ PR мёржатся **squash** → коммиты ветки не становя
 **Scenario B HARD GATE:** если в **текущем** сообщении нет явной категории (1–7 или ясное имя) → немедленный STOP: спросить какую из 1–7; **ничего** не писать в `analysis/`; **не** запускать `git diff`/churn. Запрещено угадывать из прошлых реплик сессии. Анализ — только после явной категории в этом сообщении.
 
 `yarn repo:clean --execute` — только после явного ok человека (см. граблю dry-run выше).
+
+#### Scripts container — один дом `scripts/`
+
+Группа скриптов уже живёт в `scripts/`; органы GROUP_CONTAINERIZATION — **там же**,
+не во втором audit-каталоге.
+
+| Что | Куда |
+|-----|------|
+| Entry агента | [`scripts/AGENT_PROMPT.md`](scripts/AGENT_PROMPT.md) |
+| Контракт | [`scripts/README.md`](scripts/README.md) |
+| Реестр состава | `yarn scripts:registry --report` → `scripts/registry/SCRIPTS_LIST.md` (≡ `yarn tooling:overview --report`) |
+| Cache | `scripts/cache/` (gitignore) |
+| Kits | канон манифеста — Р3 / `docs/procedures/`; слой `kits/` спит до #761 |
 
 #### Tasks registry audit — контейнер и агент
 

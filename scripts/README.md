@@ -30,7 +30,9 @@
 5. ✅ Инструменты пишут в контейнер сами: `yarn scripts:registry --report` ≡ `yarn tooling:overview --report`.
 6. ✅ `AGENT_PROMPT.md` со сценариями; у опасных — HARD GATE.
 7. ✅ Массовые мутации (массовое удаление/переименование скриптов) — только по слову владельца.
-8. ⚠ Провода в `AGENTS.md` / скиллы — **фаза S4** (минимальная отсылка допустима после S0).
+8. ✅ Провода: `AGENTS.md` (таблица + § Scripts container + грабля «второй дом»),
+   [`docs/audit/README.md`](../docs/audit/README.md), [`docs/CONTRIBUTING.md`](../docs/CONTRIBUTING.md)
+   («Гигиена веток» / контейнеры), указатель в [`.cursor/skills/README.md`](../.cursor/skills/README.md).
 
 **Граница с процедурным слоем:** процедуры живут в `docs/procedures/` (эпик `procedural-layer-impl`).
 Слой scripts ← вызывается процедурами; направление слоёв — `yarn check:layer-direction`
@@ -85,9 +87,9 @@ scripts/
 
 ## Как вызвать агента
 
-1. Ветка от `main` (или worktree). Сверить соседей: `yarn neighbors` (особенно `pl-r3-boundary`).
-2. Указать: `scripts/AGENT_PROMPT.md`.
+1. Ветка от `main` (или worktree). Сверить соседей: `yarn neighbors`.
+2. Указать: [`scripts/AGENT_PROMPT.md`](./AGENT_PROMPT.md) (тот же entry из `AGENTS.md`).
 3. Сценарии — в AGENT_PROMPT.
 
 Связанный tooling: `yarn scripts:registry --report` · `yarn tooling:overview [--report]` · `yarn test:scripts`.
-Указатель процесса: эпик `scripts-boundary-container`, спринт OPEN в `docs/day-sprint/`.
+Операторский вход: `AGENTS.md` → «Scripts container». Спринт: `docs/day-sprint/scripts-boundary-container-2026-07-21/`.
