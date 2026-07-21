@@ -228,7 +228,7 @@
       "archivedAt": null,
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "K0: границы + OPEN. LGTM vesnin (owner ok 2026-07-21). Ship PR.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "kits-angelina-morning"
@@ -241,12 +241,16 @@
       "linearId": null,
       "size": "L",
       "status": "active",
-      "sprintKind": "day-sprint",
+      "sprintKind": "epic",
       "createdAt": "2026-07-21",
       "archivedAt": null,
       "leadPersona": "vesnin",
-      "supportPersonas": [],
-      "notes": "",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "angelina"
+      ],
+      "notes": "Эпик K0–K5 (#815–#820). Семя #761. OPEN: docs/day-sprint/kits-angelina-morning-2026-07-21/OPEN.md. Код=scripts/; дом китов=kits/ (K1+).",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
