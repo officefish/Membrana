@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "linear-hygiene-dreams-providers-night",
+      "title": "Night: Linear-гигиена → живые провайдеры снов",
+      "promptPath": "docs/prompts/LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md",
+      "githubIssue": null,
+      "linearId": "DRU-249",
+      "size": "M",
+      "status": "active",
+      "sprintKind": "night-build",
+      "createdAt": "2026-07-20",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ],
+      "notes": "Владелец 20.07: NB1 Linear hygiene, затем NB2 dreams providers. Linear DRU-249.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": null
+    },
+    {
       "id": "ritual-d-dreams-infra",
       "title": "Сны v2: стор + office cron + доставка (обстройка ядра D)",
       "promptPath": "docs/prompts/RITUAL_D_DREAMS_INFRA_PROMPT.md",

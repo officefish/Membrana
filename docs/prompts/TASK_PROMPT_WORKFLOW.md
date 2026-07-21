@@ -168,12 +168,14 @@ docs/prompts/<SLUG>_PROMPT.md (блок «Промпт целиком»).
 
 ### Шаг 4. Triage (Teamlead) + Linear (неблокирующий)
 
+**Канон связей:** GitHub Issue = **удостоверение** (паспорт работы); Linear = **доска движения** (статусы, исполнитель). Один `id` в реестре ↔ не больше одного Issue и одного `linearId`. Повторный `yarn task:start` / `task:register` с тем же `--id` **не** плодит twin: reuse Issue, `--linear DRU-N` только дописывает пустой `linearId`.
+
 **Обязательно для M/L:** уточнить `size` и `package:*` labels.
 
 **Linear (рекомендуется, не блокирует старт кода):** см. [`LINEAR_GITHUB_SYNC_REGULATION.md`](./LINEAR_GITHUB_SYNC_REGULATION.md) — этап **R1**.
 
 - При наличии `githubIssue` — ticket в Linear **привязывается** к Issue, **не дублирует** его.
-- Записать `linearId` в `registry.json`; комментарий в Issue с URL Linear.
+- Записать `linearId` в `registry.json` (`yarn task:register --linear DRU-N` или `yarn task:start --linear DRU-N`); комментарий в Issue с URL Linear.
 - По желанию: `status:linear` на Issue.
 
 Отсутствие Linear **не** блокирует шаги 5–7.

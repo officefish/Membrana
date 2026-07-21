@@ -11,6 +11,10 @@
  *                   [--issue N] [--no-issue] [--body-file path] [--dry-run]
  *                   [--kind …] [--lead …] [--support a,b] [--prompt path]
  *                   [--parent-epic id] [--research] [--labels a,b]
+ *                   [--linear DRU-N]
+ *
+ * Канон: Issue = удостоверение, Linear (доска) = движение.
+ * Повторный START с тем же --id не создаёт второй Issue / Linear twin.
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -19,7 +23,8 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { parseRegisterArgs } from './task-register.mjs';
-import { renderTaskPromptStub } from './lib/task-registry.mjs';
+import { loadRegistry, renderTaskPromptStub } from './lib/task-registry.mjs';
+import { resolveGithubIssueAction, resolveLinearAttach } from './lib/task-start-links.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -146,6 +151,7 @@ Options:
   --no-issue         не создавать Issue
   --body-file path   тело Issue из файла (иначе tempfile с дефолтным шаблоном)
   --labels a,b       labels для gh issue create (default: tooling)
+  --linear DRU-N     записать linearId в registry (без автосоздания twin в Linear)
   --dry-run          показать план без записи registry / gh
   …плюс флаги task:register: --kind --lead --support --prompt --parent-epic --research`);
 }
@@ -161,9 +167,21 @@ function main() {
   const promptPath =
     cli.prompt || cli.promptPath || `docs/prompts/${cli.id.replace(/-/g, '_').toUpperCase()}_PROMPT.md`;
 
-  let issueNum = cli.issue != null ? Number(cli.issue) : null;
+  const registry = loadRegistry(root);
+  const existing = registry.tasks.find((t) => t.id === cli.id) ?? null;
+  const ghPlan = resolveGithubIssueAction({
+    existing,
+    requestedIssue: cli.issue != null ? Number(cli.issue) : null,
+    noIssue: cli.noIssue,
+  });
+  const linearPlan = resolveLinearAttach({
+    existingLinearId: existing?.linearId,
+    requestedLinearId: cli.linear ?? cli.linearId ?? null,
+  });
 
-  if (!cli.noIssue && issueNum == null) {
+  let issueNum = ghPlan.githubIssue;
+
+  if (ghPlan.action === 'create') {
     const body = cli.bodyFile
       ? readFileSync(resolve(root, cli.bodyFile), 'utf8')
       : defaultIssueBody({ id: cli.id, title: cli.title, size: cli.size, promptPath });
@@ -177,6 +195,9 @@ function main() {
       console.log(`[task:start] dry-run: создал бы Issue «${preview.title}» via --body-file`);
       console.log(`[task:start] dry-run: labels=${preview.labels.join(',')}`);
       console.log(`[task:start] dry-run: затем yarn task:register --id ${cli.id} --issue <N> …`);
+      if (linearPlan.linearId) {
+        console.log(`[task:start] dry-run: linearId=${linearPlan.linearId} (${linearPlan.reason})`);
+      }
       process.exitCode = 0;
       return;
     }
@@ -195,9 +216,21 @@ function main() {
       return;
     }
   } else if (cli.dryRun) {
-    console.log(`[task:start] dry-run: registry+stub для ${cli.id}` + (issueNum ? ` (#${issueNum})` : ' (без issue)'));
+    console.log(
+      `[task:start] dry-run: registry+stub для ${cli.id}` +
+        (issueNum ? ` (#${issueNum}, ${ghPlan.reason})` : ` (${ghPlan.reason})`),
+    );
+    if (linearPlan.linearId) {
+      console.log(`[task:start] dry-run: linearId=${linearPlan.linearId} (${linearPlan.reason})`);
+    }
     process.exitCode = 0;
     return;
+  } else if (ghPlan.action === 'reuse') {
+    console.log(`[task:start] reuse Issue #${issueNum} (${ghPlan.reason})`);
+  }
+
+  if (linearPlan.action === 'reuse') {
+    console.log(`[task:start] reuse Linear ${linearPlan.linearId} (${linearPlan.reason})`);
   }
 
   const regArgs = [
@@ -210,6 +243,7 @@ function main() {
     cli.size,
   ];
   if (issueNum != null) regArgs.push('--issue', String(issueNum));
+  if (linearPlan.linearId) regArgs.push('--linear', linearPlan.linearId);
   if (cli.kind) regArgs.push('--kind', cli.kind);
   if (cli.lead) regArgs.push('--lead', cli.lead);
   if (cli.support?.length) regArgs.push('--support', cli.support.join(','));

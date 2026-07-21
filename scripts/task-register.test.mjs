@@ -19,7 +19,15 @@ test('parseRegisterArgs: обе формы флагов, --support список,
 
 test('buildTaskEntry: нормализация + дефолтный promptPath + активный статус', () => {
   const e = buildTaskEntry(
-    { id: 'my-task', title: '  T  ', size: 'M', issue: '42', lead: 'vesnin', insight: 'ins-x' },
+    {
+      id: 'my-task',
+      title: '  T  ',
+      size: 'M',
+      issue: '42',
+      linear: 'DRU-249',
+      lead: 'vesnin',
+      insight: 'ins-x',
+    },
     '2026-07-14',
   );
   assert.equal(e.title, 'T');
@@ -27,9 +35,15 @@ test('buildTaskEntry: нормализация + дефолтный promptPath +
   assert.equal(e.sprintKind, 'day-sprint');
   assert.equal(e.promptPath, 'docs/prompts/MY_TASK_PROMPT.md');
   assert.equal(e.githubIssue, 42);
+  assert.equal(e.linearId, 'DRU-249');
   assert.equal(e.createdAt, '2026-07-14');
   assert.equal(e.insightId, 'ins-x');
   assert.equal(e.leadPersona, 'vesnin');
+});
+
+test('buildTaskEntry: без --linear → linearId null (поле всегда присутствует)', () => {
+  const e = buildTaskEntry({ id: 'bare', title: 't', size: 'S' }, '2026-07-20');
+  assert.equal(e.linearId, null);
 });
 
 test('buildTaskEntry: валидация id/size/kind/issue', () => {

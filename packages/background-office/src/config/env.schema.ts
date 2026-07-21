@@ -33,6 +33,11 @@ export const envSchema = z.object({
     .transform((v) => v === 'true' || v === '1'),
   OPENROUTER_API_KEY: z.string().optional(),
   OPENROUTER_MODEL: z.string().optional(),
+  /** Dreams NB2: Perplexity sonar via HTTPS_PROXY */
+  PERPLEXITY_API_KEY: z.string().optional(),
+  /** OpenRouter model overrides for grok/gemini dream routes */
+  DREAMS_GROK_MODEL: z.string().optional(),
+  DREAMS_GEMINI_MODEL: z.string().optional(),
   /** DeepSeek direct: fallback-канал нарратива ночных агентов (ADR 0005) */
   DEEPSEEK_API_KEY: z.string().optional(),
   DEEPSEEK_MODEL: z.string().optional(),

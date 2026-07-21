@@ -6,6 +6,7 @@ import { pathToFileURL } from 'node:url';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
 import { DeepSeekService } from '../deepseek/deepseek.service';
+import { OpenRouterService } from '../openrouter/openrouter.service';
 
 type DreamsLib = {
   DreamsLog: new (opts?: { path?: string }) => {
@@ -27,6 +28,19 @@ type DreamsLib = {
   ) => Promise<{ ok: boolean; reason?: string; skipped?: boolean; event?: unknown }>;
   formatDreamDigestMd: (proj: unknown) => string;
   enumeratePairs: (registry: unknown) => Array<{ a: { id: string }; b: { id: string } }>;
+  routeDreamProvider: (provider: string) => {
+    channel: 'deepseek' | 'openrouter';
+    model?: string;
+  } | null;
+  providerUnavailableResult: (
+    provider: string,
+    detail: string,
+  ) => {
+    ok: false;
+    status: number;
+    bodyText: string;
+    error: string;
+  };
 };
 
 /**
@@ -41,6 +55,7 @@ export class DreamsService {
   constructor(
     @Inject(APP_CONFIG) private readonly config: AppConfig,
     private readonly deepseek: DeepSeekService,
+    private readonly openrouter: OpenRouterService,
   ) {}
 
   isEnabled(): boolean {
@@ -63,12 +78,17 @@ export class DreamsService {
         const tickMod = await import(pathToFileURL(join(root, 'scripts/lib/dreams-tick.mjs')).href);
         const fmtMod = await import(pathToFileURL(join(root, 'scripts/lib/dreams-format.mjs')).href);
         const nightMod = await import(pathToFileURL(join(root, 'scripts/lib/night-research.mjs')).href);
+        const providersMod = await import(
+          pathToFileURL(join(root, 'scripts/lib/dreams-providers.mjs')).href
+        );
         return {
           DreamsLog: logMod.DreamsLog,
           dayLogPath: logMod.dayLogPath,
           commitDreamTick: tickMod.commitDreamTick,
           formatDreamDigestMd: fmtMod.formatDreamDigestMd,
           enumeratePairs: nightMod.enumeratePairs,
+          routeDreamProvider: providersMod.routeDreamProvider,
+          providerUnavailableResult: providersMod.providerUnavailableResult,
         };
       })();
     }
@@ -101,7 +121,17 @@ export class DreamsService {
     return existsSync(p) ? readFileSync(p, 'utf8') : '## DREAM_MASTER_VERSION\n\n`0.0.0-dev`\n';
   }
 
-  private async synthesize(provider: string, ctx: { pair: [string, string] }): Promise<{
+  /**
+   * Порт синтеза для dreams-tick. Экспорт ради unit-тестов с моками каналов.
+   */
+  async synthesizeForProvider(
+    provider: string,
+    ctx: { pair: [string, string] },
+    deps?: {
+      routeDreamProvider?: DreamsLib['routeDreamProvider'];
+      providerUnavailableResult?: DreamsLib['providerUnavailableResult'];
+    },
+  ): Promise<{
     ok: boolean;
     text?: string;
     score?: number;
@@ -109,24 +139,51 @@ export class DreamsService {
     bodyText?: string;
     error?: string;
   }> {
+    const routeFn = deps?.routeDreamProvider;
+    const unavailableFn = deps?.providerUnavailableResult;
+    const lib =
+      routeFn && unavailableFn
+        ? { routeDreamProvider: routeFn, providerUnavailableResult: unavailableFn }
+        : await this.lib();
+
+    const route = lib.routeDreamProvider(provider);
+    if (!route) {
+      return lib.providerUnavailableResult(provider, 'unknown-provider');
+    }
+
     const prompt =
       `Ты Мастер снов. Пара тезисов: ${ctx.pair[0]} × ${ctx.pair[1]}. ` +
       `Синтезируй короткий внешний сон (1–2 абзаца) без жаргона репозитория.`;
-    if (provider === 'deepseek' && this.deepseek.isConfigured()) {
+
+    if (route.channel === 'deepseek') {
+      if (!this.deepseek.isConfigured()) {
+        return lib.providerUnavailableResult(provider, 'DEEPSEEK_API_KEY missing');
+      }
       try {
         const text = await this.deepseek.chat(prompt);
         return { ok: true, text, score: 0.55 };
       } catch (err) {
-        return { ok: false, error: err instanceof Error ? err.message : String(err) };
+        const msg = err instanceof Error ? err.message : String(err);
+        return { ok: false, error: msg, bodyText: msg };
       }
     }
-    // Остальные провайдеры — через тот же failover-контракт: явный отказ класса.
-    return {
-      ok: false,
-      status: 503,
-      bodyText: `provider ${provider} not wired on office yet`,
-      error: 'provider-not-wired',
-    };
+
+    if (!this.openrouter.isConfigured()) {
+      return lib.providerUnavailableResult(provider, 'OPENROUTER_API_KEY missing');
+    }
+    try {
+      const text = await this.openrouter.chat(prompt, 4_096, route.model);
+      return { ok: true, text, score: 0.55 };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      const statusMatch = msg.match(/OpenRouter HTTP (\d+)/);
+      const status = statusMatch ? Number(statusMatch[1]) : undefined;
+      return { ok: false, status, error: msg, bodyText: msg };
+    }
+  }
+
+  private async synthesize(provider: string, ctx: { pair: [string, string] }) {
+    return this.synthesizeForProvider(provider, ctx);
   }
 
   async tick(day: string, hour: number): Promise<Record<string, unknown>> {
