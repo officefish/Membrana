@@ -1,0 +1,45 @@
+---
+title: Kind dictionary — feat fix docs chore
+description: Закрытый словарь типа изменения в имени ветки; отказ от feature/*.
+---
+
+# Cookbook: словарь kind
+
+Имя ветки кодирует **тип изменения** первым (или вторым после persona) сегментом.
+
+```text
+[<persona>/]<kind>/<slug>
+```
+
+## Когда какой kind
+
+| Kind | Случай | Пример |
+|------|--------|--------|
+| `feat` | новая возможность, контракт, модуль | `feat/pl-r3-boundary` |
+| `fix` | баг, регресс, ADR-accepted fix | `fix/adr-0013-accepted` |
+| `docs` | документация, промпты, audit-контейнер | `docs/branch-mintlify-engine` |
+| `chore` | реестр задач, мелкая infra без prose | `chore/tasks-readme-prompt-links` |
+| `tooling` | CI, skills, meta yarn/scripts | `tooling/meeting-consilium-voice` |
+
+## Checklist
+
+<Steps>
+  <Step title="Один kind на ветку">
+    Не смешивать «feat + заодно docs» в имени: kind = главный смысл PR.
+  </Step>
+  <Step title="Не использовать feature">
+    `feature/*` — исторический дубль `feat`; вне словаря Р4. См. антипримеры.
+  </Step>
+  <Step title="Slug читаемый">
+    Предпочтительно id карточки или короткий скоуп: `docs/branch-mintlify-engine`.
+  </Step>
+</Steps>
+
+## Антипример
+
+```text
+feature/scripts-boundary-container   ✗  дубль kind
+feat/fix-and-docs-mess               ✗  kind не про главную работу
+```
+
+Источник кейсов: каталог в `docs/audit/git/analysis/branch-cases-catalog-*.md` (K1–K6).

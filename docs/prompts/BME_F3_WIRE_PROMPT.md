@@ -11,3 +11,9 @@
 
 **DoD:** агент из контейнера находит инструкции за один клик/путь; server-first
 виден в контракте README.
+
+## Статус (2026-07-21)
+
+- [x] `docs.json` — группа `Git — branch cases`
+- [x] README + AGENT_PROMPT — engine Mintlify + таблица ссылок на cookbooks
+- [ ] Archive после ship

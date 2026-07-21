@@ -13,3 +13,11 @@ pinned (автономные прогоны). Владелец пина назв
 не плодить второй остров без нужды.
 
 **DoD:** манифест + команда аудита; тест на уехавший SHA; чеклист ✅/⚠.
+
+## Статус (2026-07-21)
+
+- [x] `docs/audit/git/pins/branch-instructions.manifest.json`
+- [x] `yarn audit:branch-instructions-pin` (+ `--write`)
+- [x] тесты drift/missing в `scripts/audit-branch-instructions-pin.test.mjs`
+- [x] чеклист в README контейнера
+- [ ] Archive после ship

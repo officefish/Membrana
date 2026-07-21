@@ -1,0 +1,49 @@
+---
+title: Persona grammar — holder vs agent
+description: Кто держит ветку — персона виртуальной команды, не агент-исполнитель.
+---
+
+# Cookbook: persona-грамматика
+
+Держатель в имени ветки — **ответственная персона** (leadPersona / шип-гейт), не
+модель и не Cursor/Codex/Claude.
+
+```text
+<persona>/<kind>/<slug>
+```
+
+Персоны (закрытый набор): `vesnin` · `ozhegov` · `dynin` · `rodchenko` · `angelina` · …
+(плюс §7а long-lived персона-ветки между задачами).
+
+## Когда ставить persona
+
+| Случай | Форма | Пример |
+|--------|-------|--------|
+| Нужен машинный lead | `<persona>/<kind>/<slug>` | `angelina/feat/pl-r1-home` |
+| Слаг = id карточки | kind/slug (+ persona по lead) | `docs/audit-git-container-followup` |
+| Long-lived роль | закрытое имя | `developer-rhythm-lifecycle` |
+| Персона §7а между задачами | голое имя персоны | `ozhegov` · `vesnin` — **не GC** |
+
+## Агент-исполнитель
+
+Исполнитель фиксируется в коммите (`Co-Authored-By`), **не** в первом сегменте ветки.
+
+```text
+cursor/fix-lint-stuff     ✗
+codex/feat-whatever        ✗
+claude/docs-notes          ✗
+```
+
+## Checklist
+
+<Steps>
+  <Step title="Persona = ответственность">
+    Сегмент 1 — кто отвечает за вердикт/шип, не кто печатал код.
+  </Step>
+  <Step title="Карточка с leadPersona">
+    Если slug = id задачи `registry.json` — persona согласована с `leadPersona`.
+  </Step>
+  <Step title="Не путать с именем worktree">
+    `Membrana-openrouter` — вендор дерева, не грамматика ветки.
+  </Step>
+</Steps>
