@@ -42,7 +42,7 @@
 - [x] Root: `scripts/dreams.mjs` (`dreams:tick` / `digest`)
 - [x] Out-of-kit таблица (Night Build, night:research CLI, Nest, DREAM_MASTER_PROMPT)
 - [x] Промпт автора → precedents D3, не pins; транзитив `lib/night-research.mjs` назван честно
-- [ ] LGTM ozhegov
+- [x] LGTM ozhegov (owner ship 2026-07-21)
 
 ### Roots / out-of-kit (сводка)
 
