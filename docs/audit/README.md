@@ -11,3 +11,5 @@
 Текущий снимок декомпозиции задач: [`tasks/registry/TASKS_DECOMPOSE_LIST.md`](./tasks/registry/TASKS_DECOMPOSE_LIST.md). Канон агента: [`tasks/AGENT_PROMPT.md`](./tasks/AGENT_PROMPT.md).
 
 Каждый подкаталог — отдельный контракт: что можно писать, что коммитить, как звать агента.
+Общая форма контейнеров — паттерн [`GROUP_CONTAINERIZATION`](../patterns/GROUP_CONTAINERIZATION.md);
+каждый контейнер несёт чеклист соответствия в своём README.

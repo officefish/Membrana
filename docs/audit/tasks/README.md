@@ -1,8 +1,20 @@
 # docs/audit/tasks — контейнер аудита реестра задач
 
 Специальный контейнер, где агент **легально** хранит промпты, снимки декомпозиции
-реестра задач и глубокие разборы категорий/ревизий. Зеркален по анатомии
-[`docs/audit/git/`](../git/) (контейнер · кеш · реестр · инструменты · агент).
+реестра задач и глубокие разборы категорий/ревизий. Реализация паттерна
+[`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md); зеркален по
+анатомии [`docs/audit/git/`](../git/) (контейнер · кеш · реестр · инструменты · агент).
+
+## Соответствие паттерну GROUP_CONTAINERIZATION
+
+1. ✅ Выделенный каталог `docs/audit/tasks/`; артефакты аудита задач — только здесь.
+2. ✅ README-контракт с таблицей «что писать / в git?» (ниже).
+3. ✅ Overwrite-реестр `registry/TASKS_DECOMPOSE_LIST.md` с Meta; dated — опционально.
+4. ✅ `cache/` под gitignore.
+5. ✅ `yarn tasks:decompose --report` пишет реестр сам; источник истины назван: `docs/tasks/registry.json`.
+6. ✅ `AGENT_PROMPT.md`, Scenario B с HARD GATE.
+7. ✅ Массовая архивация запрещена; только `task:archive --notes` со свидетельством по слову владельца.
+8. ✅ Провода: `AGENTS.md`, `docs/audit/README.md`, `docs/CONTRIBUTING.md`, скиллы `membrana-tasks-audit` / `membrana-tasks-decompose`.
 
 Канонический операторский промпт: [`AGENT_PROMPT.md`](./AGENT_PROMPT.md).
 Канон ревизии устаревших карточек: [`REGISTRY_AUDIT_PROMPT.md`](../../prompts/REGISTRY_AUDIT_PROMPT.md).
