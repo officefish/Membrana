@@ -120,13 +120,21 @@ Open PR (на момент снимка): #798 `feat/pl-r2-vocabulary`, #759/#70
 - likely-discard wave — shipped **#779**
 - Осталось на ревью: **codex / comp-alarm / night / cat7**
 
-## Следующие шаги
+## Следующий спринт (зарегистрирован)
 
-1. ~~Scenario A~~ — done (`944d1172`, Meta + dated).
-2. ~~Coverage + орган + линза~~ — done (analysis + README/AGENT_PROMPT §8).
-3. **Коммит / PR** постановки + артефактов спринта (по слову владельца).
-4. **Ф5** — CLOSURE + `yarn task:archive` фаз/эпика со свидетельством PR.
-5. Deep / GC leftover — только после явной категории (HARD GATE Scenario B).
+**`branch-mintlify-engine`** · [#823](https://github.com/officefish/Membrana/issues/823) · lead vesnin  
+Server-first: контейнер → движок **Mintlify**; пин = подграф инструкций «ветка→случай».
+
+| Фаза | id | Issue | lead |
+|------|-----|------:|------|
+| F0 | `bme-f0-brief` | [#824](https://github.com/officefish/Membrana/issues/824) | vesnin |
+| F1 | `bme-f1-cases` | [#825](https://github.com/officefish/Membrana/issues/825) | ozhegov |
+| F2 | `bme-f2-pages` | [#826](https://github.com/officefish/Membrana/issues/826) | rodchenko |
+| F3 | `bme-f3-wire` | [#827](https://github.com/officefish/Membrana/issues/827) | ozhegov |
+| F4 | `bme-f4-pins` | [#828](https://github.com/officefish/Membrana/issues/828) | dynin |
+| F5 | `bme-f5-closure` | [#829](https://github.com/officefish/Membrana/issues/829) | vesnin |
+
+Не путать с `kits-angelina-morning` (#814). GC leftover — только после явной категории (HARD GATE B).
 
 ## Опоры
 
