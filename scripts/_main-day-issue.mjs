@@ -439,8 +439,12 @@ export async function runMainDayIssue(options) {
       // структура детерминирована, LLM не вправе её ронять. Файл при провале не пишем.
       const missingSlots = missingSlotHeadings(out);
       if (missingSlots.length > 0) {
+        // Вещдок отказа обязателен: без него диагностика вслепую (находка live-прогона
+        // 21.07 — гейт молчал о том, ЧТО выдал LLM).
+        const rejectPath = resolve(dirname(options.outputPath), 'MAIN_DAY_ISSUE.rejected.md');
+        writeFileSync(rejectPath, out, 'utf8');
         console.error(
-          `✖ гейт скелета (M2): LLM уронил слот(ы): ${missingSlots.join(', ')} — файл НЕ записан. Перезапусти генерацию.`,
+          `✖ гейт скелета (M2): LLM уронил слот(ы): ${missingSlots.join(', ')} — файл НЕ записан. Вещдок: ${rejectPath}. Перезапусти генерацию.`,
         );
         exitCode = 22;
       } else {
