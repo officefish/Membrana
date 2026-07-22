@@ -9,7 +9,7 @@
 | **Started** | 2026-07-21 |
 | **Size** | L |
 | **Lead epic** | vesnin |
-| **Branch** | `feat/bc-b4-weekly` (holder angelina) |
+| **Branch** | `feat/bc-b5-closure` (holder vesnin) |
 | **Insight** | [`insight-weekly-antipattern-audit-bestiary`](../../insights/insight-weekly-antipattern-audit-bestiary/INSIGHT.md) (трек B) |
 
 **Prompt эпика:** [`BESTIARY_CONTAINER_PROMPT.md`](../../prompts/BESTIARY_CONTAINER_PROMPT.md)  
@@ -37,8 +37,8 @@
 | **B1** | `bc-b1-home` | [#880](https://github.com/officefish/Membrana/issues/880) | ozhegov | ✅ done · [PR #889](https://github.com/officefish/Membrana/pull/889) |
 | **B2** | `bc-b2-specimens` | [#881](https://github.com/officefish/Membrana/issues/881) | dynin | ✅ done · [PR #895](https://github.com/officefish/Membrana/pull/895) |
 | **B3** | `bc-b3-missing-beasts` | [#882](https://github.com/officefish/Membrana/issues/882) | dynin | ✅ done · [PR #898](https://github.com/officefish/Membrana/pull/898) |
-| **B4** | `bc-b4-weekly` | [#883](https://github.com/officefish/Membrana/issues/883) | angelina | 🔄 in progress · `feat/bc-b4-weekly` |
-| **B5** | `bc-b5-closure` | [#884](https://github.com/officefish/Membrana/issues/884) | vesnin | ⬜ |
+| **B4** | `bc-b4-weekly` | [#883](https://github.com/officefish/Membrana/issues/883) | angelina | ✅ done · [PR #919](https://github.com/officefish/Membrana/pull/919) |
+| **B5** | `bc-b5-closure` | [#884](https://github.com/officefish/Membrana/issues/884) | vesnin | 🔄 in progress · `feat/bc-b5-closure` |
 
 ---
 
