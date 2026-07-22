@@ -1,17 +1,20 @@
-<!-- Сгенерировано: 2026-07-21T16:05:38.608Z (yarn day:report; vesnin) -->
+<!-- Сгенерировано: 2026-07-22T06:46:01.287Z (yarn day:report; vesnin) -->
 
-# Доклад по задачам — 2026-07-21
+# Доклад по задачам — 2026-07-22
 
 Автор: Тимлид (vesnin) · зеркало 5-блочного плана дня.
 
 ## Магистраль
 
+- `strategy-day-generator` — ведёт dynin
+- `detector-scoreboard` — ведёт vesnin
 - #592 — OPEN
+- #598 — CLOSED
 - #621 — OPEN
 
 ## Подкрепление
 
-- `ritual-trust-contour` — ведёт vesnin
+- #592 — OPEN
 - #621 — OPEN
 
 ## Перспективные
@@ -24,6 +27,4 @@
 
 ## Санитарные
 
-- #598 — CLOSED
-- #599 — CLOSED
-- #621 — OPEN
+- #746 — MERGED

@@ -1,0 +1,38 @@
+{
+  "id": "containerization-master",
+  "leadPersona": "ozhegov",
+  "roots": [
+    "scripts/kits-audit.mjs",
+    "scripts/check-layer-direction.mjs",
+    "scripts/procedures-registry.mjs",
+    "scripts/scripts-registry.mjs",
+    "scripts/tooling-overview.mjs",
+    "scripts/repo-branches.mjs",
+    "scripts/repo-branches-decompose.mjs",
+    "scripts/tasks-decompose.mjs",
+    "scripts/tasks-audit.mjs"
+  ],
+  "pins": {
+    "scripts/check-layer-direction.mjs": "a1ba17f2349afd80a29ce68f1fedfd5bf2cf5a4d",
+    "scripts/kits-audit.mjs": "02bb5a8eece6607502ea61bed877f1ecf0efb92c",
+    "scripts/lib/kit-subgraph-audit.mjs": "6b2f83b407482234f0d7201278893c4389beea34",
+    "scripts/lib/layer-direction.mjs": "ad0c63e4c7e4d89a53cd112c655fc35196e0b1fd",
+    "scripts/lib/procedures-registry.mjs": "d22d12cef9082698c8580b3f26af7d97f351017e",
+    "scripts/lib/repo-branches-decompose.mjs": "1c339304a25eb0b70f566d08763e6666d8ccc043",
+    "scripts/lib/repo-branches.mjs": "aea204d40fdf1cffc042533817cb09de8d70dc8d",
+    "scripts/lib/scripts-inventory.mjs": "94aaa34fcb4ebf054b579f66e54f460f92af1cad",
+    "scripts/lib/standup-routing.mjs": "15d4a3750bfdb75be8eb56fa43d628a4122ae052",
+    "scripts/lib/task-registry.mjs": "b97a5b8618893857181d38f1b761e12b36f365cf",
+    "scripts/lib/tasks-audit.mjs": "e4a22ef66e482168060a3cc7af56b91d757cac47",
+    "scripts/lib/tasks-decompose.mjs": "55d245d1624fdf58c97a41b58f26358c357815b8",
+    "scripts/lib/tooling-overview.mjs": "7cb0acb63c37edb3ac6a610653916632cca0238c",
+    "scripts/lib/validate-procedure.mjs": "c9755496fffc12a81ca5c0b7cfb2486bd3b9ef4a",
+    "scripts/procedures-registry.mjs": "6d089af37383ce9bb2d568e0239c876e80fd7dcd",
+    "scripts/repo-branches-decompose.mjs": "04c178a43b1728f724c320d6c1489723ed5e1ea3",
+    "scripts/repo-branches.mjs": "f66c9a34c9419c6ee24ceb2c3ad7972e6c412cef",
+    "scripts/scripts-registry.mjs": "cb0c79a03dd8285c21aff3efde697232c29aa870",
+    "scripts/tasks-audit.mjs": "3ae13d88825df9f77dab9c0e248de78c96d7864e",
+    "scripts/tasks-decompose.mjs": "fb24004a1844bc967fbbe632e7053c3c3c3cbb09",
+    "scripts/tooling-overview.mjs": "072fcbbc8c3fd2b1c2b2f0aeeee2ab4752ba9fe5"
+  }
+}

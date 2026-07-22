@@ -12,6 +12,7 @@
 | [`attribution`](./attribution/README.md) | dynin | **in-migration** | ✅ dynin@ae2582d6 | — | ✅ dynin@ae2582d6 |
 | [`meeting`](./meeting/README.md) | vesnin | **migrated** | ✅ vesnin@pl-r5 | ✅ vesnin@pl-r5 | ✅ vesnin@4f3388ed |
 | [`day-sprint`](./day-sprint/README.md) | vesnin | **in-migration** | ✅ ozhegov@dsp-f2 | — | ✅ vesnin@dsp-f2 |
+| [`containerization`](./containerization/README.md) | ozhegov | **in-migration** | ✅ ozhegov@kcm-c3 | — | ✅ ozhegov@kcm-c3 |
 | `storm` | angelina | **legacy** | — | — | — |
 | `cowork` | vesnin | **legacy** | — | — | — |
 | `competition` | vesnin | **legacy** | — | — | — |

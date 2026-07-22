@@ -5,7 +5,7 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 33 из 178 кандидатов (бюджет <5000 токенов).
+Записей: 32 из 179 кандидатов (бюджет <5000 токенов).
 
 ### 2026-07-21 · позиция · angelina-hostess-m0-order
 
@@ -84,6 +84,12 @@
 > Пункт 1 — форма. «Сразу все» ложна по посылке 9: девять доноров по цене дня каждый — это спринт-неделя, замаскированная под галочку; получим девять пустых каталогов — «Половину без провода». «Только новые» ложна по посылке 1: ритуалы — процедуры уже сейчас, оставить их вне слоя […] _(реплик в сеансе: 3)_
 
 — источник: `docs/seanses/procedural-layer-m5-migration-manual-2026-07-21.md#reply-1`
+
+### 2026-07-21 · позиция · team-evening-feedback
+
+> Ozhegov. Оценка артефактов: MAIN_DAY_ISSUE и STANDUP формально безупречны (провенанс, таблицы), но описывают чужой день — их предметная точность обесценена трёхдневным лагом магистрали. Единственный документ, где термин совпал с миром — вечернее ревью. Итоги дня: структурно день […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-21.md#reply-1`
 
 ### 2026-07-20 · позиция · linear-egress-gear-wiring-m0-order
 
@@ -187,20 +193,8 @@
 
 — источник: `docs/seanses/insight-archive-lifecycle-c3-evidence-contract-2026-07-19.md#reply-1`
 
-### 2026-07-19 · позиция · insight-archive-lifecycle-c3-evidence-contract-r2
+### 2026-07-19 · позиция · registry-relocation-m0-order
 
-> Начну с термина, иначе граф поплывёт. У нас слиплись три леммы под словом «доказано»: **evidence** (affirmative node на exact SLICE claim), **hint** (не-обязывающий сигнал) и **invalid** (не проходит basis-правило). Пункт 6 брифа их уже разводит: «просто не нашли»/timeout без […] _(реплик в сеансе: 5)_
+> Начну с определений, иначе граф поплывёт. Четыре узла: К1 — что читают гейты (снимок или сеть); К2 — форма холодного хранилища и жив ли инвариант «единственный писатель»; К3 — миграция и форма включения законности при 151/219 карточек без Issue; К4 — уровень счёта (центральная […] _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/insight-archive-lifecycle-c3-evidence-contract-r2-2026-07-19.md#reply-1`
-
-### 2026-07-05 · голос · insight-comms-contour-topology
-
-> внедрять: Да, leaf + `check:boundaries` · этап: Сейчас · оценка: 9/10
-
-— источник: `docs/insights/insight-comms-contour-topology/REVIEW.md#vote`
-
-### 2026-06-28 · голос · insight-sessions-archive
-
-> внедрять: да · этап: квартал · оценка: 8/10
-
-— источник: `docs/insights/insight-sessions-archive/REVIEW.md#vote`
+— источник: `docs/seanses/registry-relocation-m0-order-2026-07-19.md#reply-1`

@@ -36,6 +36,7 @@
 | [`ritual-day/`](./ritual-day/README.md) | Ангелина | утро; **`kitVersion`: `kits/angelina-morning`** (K4 / #819) |
 | [`ritual-dreams/`](./ritual-dreams/README.md) | dynin | сны v2; **`kitVersion`: `kits/dream-master`** (D3 / #859) |
 | [`day-sprint/`](./day-sprint/README.md) | vesnin | дневной эпик+фазы; `kitVersion: null` (#848) |
+| [`containerization/`](./containerization/README.md) | ozhegov | крафт контейнеров/китов; **`kitVersion`: `kits/containerization-master`** |
 | [`attribution/`](./attribution/README.md) | dynin | адрес домена ответственности (Р3); механизм — T9 |
 | [`meeting/`](./meeting/README.md) | vesnin | заседание (донор Р5) |
 
@@ -65,7 +66,7 @@ autonomous → **pinned** (см. [`angelina-morning`](../../kits/angelina-mornin
 Слой `kits/` объявлен в [`layer-rules.json`](./layer-rules.json) (ранг 1).
 **Дом слоя:** [`kits/`](../../kits/README.md) (K1 / #816); схема манифеста —
 [`kits/MANIFEST.schema.json`](../../kits/MANIFEST.schema.json). Первый жилец —
-жильцы `angelina-morning` (#814) и `dream-master` (#855). **Контракт кит-манифеста**
+жильцы `angelina-morning` (#814), `dream-master` (#855), `containerization-master`. **Контракт кит-манифеста**
 (Р3): кит без манифеста или с нерезолвящимися ссылками — машинный BLOCK на ревью;
 манифест — главный diffable-артефакт. Версия единицы —
 [`PINNED_SUBGRAPH_VERSIONING`](../patterns/PINNED_SUBGRAPH_VERSIONING.md) (#761).
