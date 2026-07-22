@@ -18,16 +18,18 @@
 - **W2 paths (принято):** `registry/CATCH_LIST.md` · `traps/` + `TRAPS_LIST.md` · `antipatterns/<id>.md`
 - **W3 depth:** **thin mirror** (не pin-манифест); open decision закрыт в OPEN
 - **Open decisions:** имя кита (W4)
-- **Параллель:** `procedure-frames` остаётся open (ниже)
+- **Параллель:** `procedure-frames` — **CLOSED** (ниже)
 
 ---
 
-## 2026-07-22 — `procedure-frames` — **OPEN** (F0)
+## 2026-07-22 — `procedure-frames` — **CLOSED**
 
-- **OPEN:** [`day-sprint/procedure-frames-2026-07-22/OPEN.md`](./day-sprint/procedure-frames-2026-07-22/OPEN.md)
+- **Delivered:** `preflight`/`frames`/`post` + `pins[]` · `auditPins` · `morning-wiring` · PINNED_/GROUP_ `copies=1` · F0–F5 · PR [#942](https://github.com/officefish/Membrana/pull/942)…[#960](https://github.com/officefish/Membrana/pull/960) + F5 _(this PR)_
 - **Issue:** [#900](https://github.com/officefish/Membrana/issues/900) · фазы #926–#931
+- **OPEN:** [`day-sprint/procedure-frames-2026-07-22/OPEN.md`](./day-sprint/procedure-frames-2026-07-22/OPEN.md)
+- **CLOSURE:** [`day-sprint/procedure-frames-2026-07-22/CLOSURE.md`](./day-sprint/procedure-frames-2026-07-22/CLOSURE.md)
+- **Defer:** CI анти-дубль GROUP_* → dynin
 - **Вход:** EPIC procedure-frames + ritual-day-frames (#939) · ADR-0015 (**ACCEPTED** 22.07)
-- **Фаза:** F0 `pf-f0-brief` · ветка `feat/pf-f0-brief`
 
 ---
 
