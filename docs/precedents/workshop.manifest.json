@@ -1,0 +1,13 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская прецедентов",
+  "worksOn": "docs/precedents",
+  "kit": null,
+  "verbs": {
+    "audit": "yarn precedent:register --validate",
+    "decompose": "yarn precedent:register --rebuild",
+    "inspectElement": null,
+    "stackLike": [],
+    "domain": []
+  }
+}

@@ -634,6 +634,17 @@
       "weight": 3.4,
       "createdAt": "2026-07-22",
       "tags": []
+    },
+    {
+      "id": "insight-precedent-container",
+      "title": "Контейнер прецедентов + мастерская к нему",
+      "status": "reviewed",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 6.6,
+      "createdAt": "2026-07-22",
+      "tags": []
     }
   ]
 }
