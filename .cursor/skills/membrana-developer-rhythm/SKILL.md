@@ -13,11 +13,13 @@ description: >-
 
 Канон: [`docs/DEVELOPER_RHYTHM.md`](../../../docs/DEVELOPER_RHYTHM.md).
 
+<!-- pin:START morning-wiring-rhythm -->
 > **Утро вычеркнуто из этого скилла** (вердикт заседания `angelina-hostess` M1, 21.07,
 > ратифицирован владельцем: скилл был «слишком абстрактным» — корень №4 прецедента
 > холодной сессии). **Утро → [`membrana-morning-ritual`](../membrana-morning-ritual/SKILL.md)**
 > — единственный источник истины по утреннему сценарию. Если тот скилл недоступен —
 > **СТОП с явной ошибкой**; этот скилл утро НЕ замещает (мёртвая дверь запрещена).
+<!-- pin:END morning-wiring-rhythm -->
 
 ## When to use
 
