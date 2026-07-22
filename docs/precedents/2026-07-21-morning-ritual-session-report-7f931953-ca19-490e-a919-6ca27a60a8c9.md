@@ -1,5 +1,20 @@
 # Отчёт сессии: утренний ритуал 21.07 (тёплая сессия, дерево Membrana-angelina)
 
+<!-- precedent-meta
+{
+  "id": "2026-07-21-morning-ritual-session-report-7f931953-ca19-490e-a919-6ca27a60a8c9",
+  "date": "2026-07-21",
+  "class": "session-report",
+  "symptom": "хронологический самоотчёт прогона утреннего ритуала тёплой сессии",
+  "rootCause": "сырая фактура прогона для разбора, не обобщённый класс",
+  "fix": "фактура-донор для разбора класса ritual-mechanics-vs-value",
+  "canonicalCause": "сырой отчёт сессии (фактура, не класс)",
+  "prevention": "—",
+  "actionItems": [],
+  "related": ["2026-07-21-morning-ritual-live-run-mechanics-pass-value-fail"]
+}
+-->
+
 - **Дата:** 2026-07-21
 - **Session ID:** `7f931953-ca19-490e-a919-6ca27a60a8c9`
 - **Рабочее дерево:** `C:/Users/user190825/practice/Membrana-angelina` (по прямому указанию владельца)
