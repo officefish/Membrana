@@ -32,7 +32,7 @@
 | B2 | #881 | [#895](https://github.com/officefish/Membrana/pull/895) | specimens×4 + `yarn bestiary:audit` | [#896](https://github.com/officefish/Membrana/pull/896) |
 | B3 | #882 | [#898](https://github.com/officefish/Membrana/pull/898) | echo + specimen; goal-displacement defer | [#899](https://github.com/officefish/Membrana/pull/899) |
 | B4 | #883 | [#919](https://github.com/officefish/Membrana/pull/919) | `yarn bestiary:weekly` + anti-молчун | [#923](https://github.com/officefish/Membrana/pull/923) |
-| B5 | #884 | _(this PR)_ | CLOSURE + ACTIVE cleared | после merge (как D4/K5) |
+| B5 | #884 | [#937](https://github.com/officefish/Membrana/pull/937) | CLOSURE + ACTIVE cleared | после merge (как D4/K5) |
 
 ## Aim: container + engines matrix (B5)
 
@@ -66,6 +66,6 @@
 
 ## Archive
 
-**После merge этого PR** (как D4/K5): `yarn task:archive bc-b5-closure` + `yarn task:archive bestiary-container` · notes: PR B5 + этот CLOSURE.  
+**После merge [PR #937](https://github.com/officefish/Membrana/pull/937)** (как D4/K5): `yarn task:archive bc-b5-closure` + `yarn task:archive bestiary-container` · notes: PR #937 + этот CLOSURE.  
 B0–B4 уже archived (#887/#888, #891, #896, #899, #923).  
 **Не архивировать до ship** — только упомянуто здесь.

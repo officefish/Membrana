@@ -40,7 +40,7 @@
 | **B2** | `bc-b2-specimens` | [#881](https://github.com/officefish/Membrana/issues/881) | dynin | ✅ done · [PR #895](https://github.com/officefish/Membrana/pull/895) |
 | **B3** | `bc-b3-missing-beasts` | [#882](https://github.com/officefish/Membrana/issues/882) | dynin | ✅ done · [PR #898](https://github.com/officefish/Membrana/pull/898) |
 | **B4** | `bc-b4-weekly` | [#883](https://github.com/officefish/Membrana/issues/883) | angelina | ✅ done · [PR #919](https://github.com/officefish/Membrana/pull/919) |
-| **B5** | `bc-b5-closure` | [#884](https://github.com/officefish/Membrana/issues/884) | vesnin | ✅ done · _(this PR)_ · см. [`CLOSURE.md`](./CLOSURE.md) |
+| **B5** | `bc-b5-closure` | [#884](https://github.com/officefish/Membrana/issues/884) | vesnin | ✅ done · [PR #937](https://github.com/officefish/Membrana/pull/937) · см. [`CLOSURE.md`](./CLOSURE.md) |
 
 ---
 
