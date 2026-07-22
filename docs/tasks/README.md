@@ -20,8 +20,6 @@
 |----|----------|--------|--------|--------|
 | `tooling-atlas` | Атлас контейнеров — контейнер контейнеров + мастерская + mintlify | M | [`TOOLING_ATLAS_PROMPT.md`](../prompts/TOOLING_ATLAS_PROMPT.md) | — |
 | `assets-container` | Эпик: контейнер имущества — три яруса (git/сервер-БД/Drive), набор от чека, подтверждение датой-сегодня | L | [`ASSETS_CONTAINER_PROMPT.md`](../prompts/ASSETS_CONTAINER_PROMPT.md) | [#959](https://github.com/officefish/Membrana/issues/959) |
-| `bw-w5-closure` | W5: CLOSURE bestiary-workshop | M | [`BW_W5_CLOSURE_PROMPT.md`](../prompts/BW_W5_CLOSURE_PROMPT.md) | [#951](https://github.com/officefish/Membrana/issues/951) |
-| `bestiary-workshop` | Epic: bestiary workshop — trap supplier over closed home | L | [`BESTIARY_WORKSHOP_PROMPT.md`](../prompts/BESTIARY_WORKSHOP_PROMPT.md) | [#945](https://github.com/officefish/Membrana/issues/945) |
 | `bridge-room` | Спринт «мостик»: явное открытие/закрытие комнаты капитана, попугай-техдолг, конспекты фреймом в репо | M | [`BRIDGE_ROOM_PROMPT.md`](../prompts/BRIDGE_ROOM_PROMPT.md) | [#936](https://github.com/officefish/Membrana/issues/936) |
 | `precedent-container` | Контейнер прецедентов + мастерская к нему | M | [`PRECEDENT_CONTAINER_PROMPT.md`](../prompts/PRECEDENT_CONTAINER_PROMPT.md) | — |
 | `procedural-workshop` | Процедурная мастерская — три глагола над 2D-домом | M | [`PROCEDURAL_WORKSHOP_PROMPT.md`](../prompts/PROCEDURAL_WORKSHOP_PROMPT.md) | — |
@@ -224,11 +222,13 @@
 | `atf4-active-also-open` | ATF4-2: DAY_SPRINT_ACTIVE Also open канон | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #970 (Issue открыт) | [карточка](./archive/atf4-active-also-open.md) |
 | `atf4-pr-ship-conflicting` | ATF4-1: pr:ship STOP при CONFLICTING/DIRTY | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #969 (Issue открыт) | [карточка](./archive/atf4-pr-ship-conflicting.md) |
 | `agent-tooling-friction-4` | agent-tooling-friction-4: 4 фикса трения ship/rebase (PS) | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #968 (Issue открыт) | [карточка](./archive/agent-tooling-friction-4.md) |
+| `bw-w5-closure` | W5: CLOSURE bestiary-workshop | 2026-07-22 | [`BW_W5_CLOSURE_PROMPT.md`](../prompts/BW_W5_CLOSURE_PROMPT.md) | #951 (Issue открыт) | [карточка](./archive/bw-w5-closure.md) |
 | `bw-w4-trap-kit` | W4: trap kit resident + Witcher aim example | 2026-07-22 | [`BW_W4_TRAP_KIT_PROMPT.md`](../prompts/BW_W4_TRAP_KIT_PROMPT.md) | #950 (Issue открыт) | [карточка](./archive/bw-w4-trap-kit.md) |
 | `bw-w3-mintlify` | W3: thin Mintlify mirror over git bus | 2026-07-22 | [`BW_W3_MINTLIFY_PROMPT.md`](../prompts/BW_W3_MINTLIFY_PROMPT.md) | #949 (Issue открыт) | [карточка](./archive/bw-w3-mintlify.md) |
 | `bw-w2-registries` | W2: catch/trap registries + antipattern stub | 2026-07-22 | [`BW_W2_REGISTRIES_PROMPT.md`](../prompts/BW_W2_REGISTRIES_PROMPT.md) | #948 (Issue открыт) | [карточка](./archive/bw-w2-registries.md) |
 | `bw-w1-workshop` | W1: workshop manifest + HOME_WORKSHOP seam | 2026-07-22 | [`BW_W1_WORKSHOP_PROMPT.md`](../prompts/BW_W1_WORKSHOP_PROMPT.md) | #947 (Issue открыт) | [карточка](./archive/bw-w1-workshop.md) |
 | `bw-w0-brief` | W0: brief bestiary-workshop open/register | 2026-07-22 | [`BW_W0_BRIEF_PROMPT.md`](../prompts/BW_W0_BRIEF_PROMPT.md) | #946 (Issue открыт) | [карточка](./archive/bw-w0-brief.md) |
+| `bestiary-workshop` | Epic: bestiary workshop — trap supplier over closed home | 2026-07-22 | [`BESTIARY_WORKSHOP_PROMPT.md`](../prompts/BESTIARY_WORKSHOP_PROMPT.md) | #945 (Issue открыт) | [карточка](./archive/bestiary-workshop.md) |
 | `pf-f5-closure` | F5: CLOSURE + archive procedure-frames | 2026-07-22 | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | #931 (Issue открыт) | [карточка](./archive/pf-f5-closure.md) |
 | `pf-f4-pattern` | F4: уточнение PINNED_* / GROUP_* под segmentHash (m4) | 2026-07-22 | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | #930 (Issue открыт) | [карточка](./archive/pf-f4-pattern.md) |
 | `pf-f3-morning-wiring` | F3: morning-wiring в ritual-day + 3 двери + гейт утра (m3) | 2026-07-22 | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | #929 (Issue открыт) | [карточка](./archive/pf-f3-morning-wiring.md) |

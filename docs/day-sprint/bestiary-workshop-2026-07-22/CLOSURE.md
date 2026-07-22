@@ -20,7 +20,7 @@
 | W2 | #948 | [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` | CATCH/TRAPS + antipattern stub | archived |
 | W3 | #949 | [#967](https://github.com/officefish/Membrana/pull/967) · `ed997ce1` | thin Mintlify mirror `apps/docs/bestiary/` | archived |
 | W4 | #950 | [#978](https://github.com/officefish/Membrana/pull/978) · `e1a6eafb` | `kits/witcher` + aim «Ведьмак» | archived |
-| W5 | #951 | _(this PR)_ | CLOSURE + ACTIVE cleared | after merge |
+| W5 | #951 | [#982](https://github.com/officefish/Membrana/pull/982) · `f01a907e` | CLOSURE + ACTIVE cleared | archived |
 
 ## DoD эпика (матрица)
 
@@ -32,7 +32,7 @@
 | Антипаттерн = шаблон; kit пинит ловушку | `antipatterns/silent.md` вне pins · `kits/witcher` |
 | Mintlify = монитор; истина = git | overview + catch + trap · лемма в README дома |
 | Жилец кита + audit green + aim | `kits/witcher` · `yarn kits:audit --id witcher` blocking=0 |
-| CLOSURE + ACTIVE + archive | этот файл · ACTIVE cleared · archive W5+epic после merge |
+| CLOSURE + ACTIVE + archive | этот файл · ACTIVE cleared · `bw-w5-closure` + `bestiary-workshop` archived · #945/#951 closed |
 
 ## Sanity (W5)
 
@@ -55,5 +55,4 @@
 
 ## Archive
 
-W0–W4 уже archived. После merge этого PR: `yarn task:archive bw-w5-closure` +
-`yarn task:archive bestiary-workshop` со свидетельством PR.
+W0–W5 + эпик archived. Свидетельство: PR [#982](https://github.com/officefish/Membrana/pull/982) · `f01a907e`.
