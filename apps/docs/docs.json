@@ -129,6 +129,12 @@
         "device-board/nodes/loop-repeat",
         "device-board/nodes/variable-get-set"
       ]
+    },
+    {
+      "group": "Tooling",
+      "pages": [
+        "tooling/containers"
+      ]
     }
   ],
   "footer": {
