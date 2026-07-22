@@ -207,7 +207,7 @@
       "archivedAt": null,
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "branch feat/bw-w5-closure; after W4 #978",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "bestiary-workshop"
@@ -219,14 +219,14 @@
       "githubIssue": 950,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "dynin",
       "supportPersonas": [],
       "notes": "kit id witcher; branch feat/bw-w4-trap-kit; PR #978",
-      "archiveNotes": null,
+      "archiveNotes": "PR #978 merged e1a6eafb; kits/witcher + kits:audit green; workshop kit=kits/witcher; TRAPS silent-empty-catch kit-ready; aim Ведьмак; next W5 #951",
       "githubIssueClosedAt": null,
       "parentEpic": "bestiary-workshop"
     },
@@ -318,7 +318,7 @@
         "dynin",
         "ozhegov"
       ],
-      "notes": "W0–W3 done (#952/#954/#965/#967); next W4 #950 kits/witcher PR #978; инстанс bestiary-workshop-2026-07-22",
+      "notes": "W0–W4 done; W5 CLOSURE in flight; инстанс bestiary-workshop-2026-07-22",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
