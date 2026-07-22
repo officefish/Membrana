@@ -2,7 +2,8 @@
 
 Дом группы **антипаттернов** (звери) и их **бетий** (specimen’ы плохого кода).
 Реализация [`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md).
-Эпик: `bestiary-container` (#878) · инсайт:
+Эпик: `bestiary-container` (#878) · **CLOSED** ·
+[`CLOSURE`](../../day-sprint/bestiary-container-2026-07-21/CLOSURE.md) · инсайт:
 [`insight-weekly-antipattern-audit-bestiary`](../../insights/insight-weekly-antipattern-audit-bestiary/INSIGHT.md).
 
 **Лемма:** контейнер обязан **ловить** бетий в `specimens/` своими детекторами.

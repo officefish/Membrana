@@ -370,7 +370,7 @@
       "archivedAt": null,
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "notes": "B5 CLOSURE next after B4 #919. Branch feat/bc-b5-closure. Issue #884. Lead vesnin.",
+      "notes": "B5 CLOSURE: docs/day-sprint/bestiary-container-2026-07-21/CLOSURE.md; OPEN closed; DAY_SPRINT_ACTIVE cleared; audit+weekly 5/5 matrix; branch-check vesnin. Issue #884. LGTM vesnin (owner ok 2026-07-22) — ship.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "bestiary-container"
@@ -482,7 +482,7 @@
         "ozhegov",
         "angelina"
       ],
-      "notes": "Эпик B0–B5 (#879–#884). OPEN: docs/day-sprint/bestiary-container-2026-07-21/OPEN.md. Дом docs/audit/bestiary/.",
+      "notes": "Эпик B0–B5 (#879–#884) CLOSED в CLOSURE. Дом docs/audit/bestiary/; engines scripts/lib/lens-bestiary.mjs. ACTIVE cleared. Archive эпика — после merge B5 (как D4/K5). Follow-up: bc-followup-goal-displacement.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "insightId": "insight-weekly-antipattern-audit-bestiary"
