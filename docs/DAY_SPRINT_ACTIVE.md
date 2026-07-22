@@ -21,8 +21,9 @@
 |------|----------|
 | **Sprint** | [`procedure-frames-2026-07-22`](./day-sprint/procedure-frames-2026-07-22/OPEN.md) |
 | **Epic** | `procedure-frames` · [#900](https://github.com/officefish/Membrana/issues/900) |
-| **Phase** | **F1** `pf-f1-frames-contract` · lead ozhegov · ветка `feat/pf-f1-frames-contract` |
-| **F0** | [#942](https://github.com/officefish/Membrana/pull/942) · ADR-0015 ACCEPTED · archived |
+| **Phase** | **F2** `pf-f2-segment-pin` · lead **dynin** · ветка `feat/pf-f2-segment-pin` |
+| **F0** | [#942](https://github.com/officefish/Membrana/pull/942) · ADR-0015 · archived |
+| **F1** | [#944](https://github.com/officefish/Membrana/pull/944) · `validateProcedure` очередь · archived |
 | **Потребитель** | [`meeting/ritual-day-frames/EPIC.md`](./meeting/ritual-day-frames/EPIC.md) (#939) |
 
 Последний **закрытый:** [`bestiary-container-2026-07-21`](./day-sprint/bestiary-container-2026-07-21/CLOSURE.md) (#878).
