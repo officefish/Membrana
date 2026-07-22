@@ -17,8 +17,8 @@
  * Повторный START с тем же --id не создаёт второй Issue / Linear twin.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { makeLongTempDir } from './lib/long-temp-path.mjs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -111,7 +111,7 @@ export function createIssueWithBodyFile({ title, body, labels = [], dryRun = fal
   if (dryRun) {
     return { dryRun: true, title, labels, bodyBytes: Buffer.byteLength(body, 'utf8') };
   }
-  const dir = mkdtempSync(join(tmpdir(), 'membrana-task-start-'));
+  const dir = makeLongTempDir(root, 'task-start-');
   const bodyFile = join(dir, 'issue-body.md');
   try {
     writeFileSync(bodyFile, body, 'utf8');
