@@ -4,16 +4,17 @@
 
 ---
 
-## 2026-07-22 — `bestiary-workshop` — **OPEN** (W1)
+## 2026-07-22 — `bestiary-workshop` — **OPEN** (W2)
 
 - **Goal:** мастерская-поставщик ловушек поверх CLOSED-дома бестиария; доп. реестры улова/ловушек; Mintlify-зеркало; кит с aim «Ведьмак»
 - **Issue:** [#945](https://github.com/officefish/Membrana/issues/945) · фазы #946–#951 (W0–W5)
 - **OPEN:** [`day-sprint/bestiary-workshop-2026-07-22/OPEN.md`](./day-sprint/bestiary-workshop-2026-07-22/OPEN.md)
 - **Seed:** [`storm/storm-bestiary-workshop-2026-07-22/REPORT.md`](./storm/storm-bestiary-workshop-2026-07-22/REPORT.md) · T1–T18
-- **Фаза:** W1 `bw-w1-workshop` · ветка `feat/bw-w1-workshop` · lead ozhegov
+- **Фаза:** W2 `bw-w2-registries` · [#948](https://github.com/officefish/Membrana/issues/948) · lead ozhegov · _(указатель; код не стартован)_
 - **W0:** done · [#952](https://github.com/officefish/Membrana/pull/952) · `c1f067a7` · archived
+- **W1:** done · [#954](https://github.com/officefish/Membrana/pull/954) · `496ecb41` · archived · K25-B + `workshop.manifest` + `issueTrap`
 - **K25:** закрыт вариантом **B** (исключение supply-side + `issueTrap`)
-- **Open decisions:** имя кита (W4); пути CATCH/TRAPS (W2); глубина Mintlify (W3)
+- **Open decisions:** пути CATCH/TRAPS (W2); глубина Mintlify (W3); имя кита (W4)
 - **Параллель:** `procedure-frames` остаётся open (ниже)
 
 ---

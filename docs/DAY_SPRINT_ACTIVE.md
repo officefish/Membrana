@@ -2,20 +2,21 @@
 
 Допускается параллель (см. [`DAY_SPRINT_REGULATION.md`](./DAY_SPRINT_REGULATION.md) § ACTIVE/LOG).
 
-## Focus (этот сеанс / W1)
+## Focus (этот сеанс / W2)
 
 | Поле | Значение |
 |------|----------|
 | **Sprint** | [`bestiary-workshop-2026-07-22`](./day-sprint/bestiary-workshop-2026-07-22/OPEN.md) |
 | **Epic** | `bestiary-workshop` · [#945](https://github.com/officefish/Membrana/issues/945) |
-| **Phase now** | **W1** `bw-w1-workshop` · [#947](https://github.com/officefish/Membrana/issues/947) |
-| **Next** | W2 `bw-w2-registries` · [#948](https://github.com/officefish/Membrana/issues/948) — после LGTM ozhegov на W1 |
+| **Phase now** | **W2** `bw-w2-registries` · [#948](https://github.com/officefish/Membrana/issues/948) |
+| **Next** | W3 `bw-w3-mintlify` · [#949](https://github.com/officefish/Membrana/issues/949) — после LGTM ozhegov на W2 |
 | **Lead phase** | ozhegov |
 | **Lead epic** | vesnin |
 | **Opened** | 2026-07-22 |
 | **Seed** | [`storm-bestiary-workshop-2026-07-22`](./storm/storm-bestiary-workshop-2026-07-22/REPORT.md) |
-| **Branch (W1)** | `feat/bw-w1-workshop` |
+| **Branch (W2)** | _(не открыта — только указатель; код W2 не стартован)_ |
 | **W0** | [#952](https://github.com/officefish/Membrana/pull/952) · `c1f067a7` · archived |
+| **W1** | [#954](https://github.com/officefish/Membrana/pull/954) · `496ecb41` · archived |
 
 ## Also open (не затирать)
 
