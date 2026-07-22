@@ -27,9 +27,9 @@
 3. ✅ Overwrite-реестр `registry/BESTIARY_LIST.md` с Meta (B2: производный от кода + specimens).
 4. ✅ `cache/` под gitignore.
 5. ✅ `yarn bestiary:audit` пишет реестр сам; источник истины классов — `BESTIARY` в engines.
-6. ✅ `AGENT_PROMPT.md`; Scenario Specimen-Audit с HARD GATE на класс.
+6. ✅ `AGENT_PROMPT.md`; Scenario Specimen-Audit с HARD GATE на класс; Scenario Weekly-Report (B4).
 7. ✅ Массовое «лечение» находок запрещено (#533 — линза находит, не чинит); правки кода — отдельные задачи.
-8. ✅ Провода: `docs/audit/README.md`, `AGENTS.md`, эпик OPEN; скилл — follow-up при потребности.
+8. ✅ Провода: `docs/audit/README.md`, `AGENTS.md`, эпик OPEN; `yarn bestiary:weekly` → `analysis/`.
 
 ## Layout
 
@@ -51,7 +51,7 @@ docs/audit/bestiary/
 | `registry/BESTIARY_LIST.md` | Канонический снимок классов × покрытие specimen (overwrite) | да |
 | `registry/BESTIARY_LIST-YYYY-MM-DD.md` | Опциональный dated-архив | да |
 | `specimens/<defectClass>/**` | Specimen’ы с пометкой `specimen:` / meta | да |
-| `analysis/bestiary-run-YYYY-MM-DD.md` | Отчёт прогона (B4+) | да |
+| `analysis/bestiary-run-YYYY-MM-DD.md` | Недельный отчёт (`yarn bestiary:weekly`, B4/#883); Summary всегда | да |
 | `cache/**` | Сырой JSON (`lens-run --json`) | **нет** (gitignore) |
 
 **Источник истины классов:** массив `BESTIARY` в `scripts/lib/lens-bestiary.mjs`.

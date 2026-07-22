@@ -25,7 +25,7 @@ specimen’ами, не чинишь код молча (#533).
 | Разрешено | Запрещено |
 |-----------|-----------|
 | Читать/писать registry, analysis, specimens, cache **только** под `docs/audit/bestiary/` | Копировать `lens-bestiary.mjs` внутрь контейнера |
-| Запускать `node scripts/lens-run.mjs` / будущий `yarn bestiary:audit` из корня | Автофиксить находки в прод-коде «заодно» |
+| Запускать `node scripts/lens-run.mjs` / `yarn bestiary:audit` / `yarn bestiary:weekly` из корня | Автофиксить находки в прод-коде «заодно» |
 | Коммитить markdown + specimens по запросу владельца | Выдавать `not-run` за `clean` |
 | Перезаписывать `registry/BESTIARY_LIST.md` актуальным снимком | Ручной реестр классов без вывода из `BESTIARY` |
 
@@ -39,15 +39,17 @@ specimen’ами, не чинишь код молча (#533).
 |---------|------------|
 | `node scripts/lens-run.mjs [files…]` | Навести бестиарий; `--json` → stdout |
 | `yarn bestiary:audit` | Покрытие specimens → `registry/BESTIARY_LIST.md` (exit 1 если класс без hit) |
-| `node --test scripts/bestiary-audit.test.mjs` | Зуб: class BESTIARY ловятся на specimens |
+| `yarn bestiary:weekly` | Недельный прогон → `analysis/bestiary-run-YYYY-MM-DD.md` + тренд (B4) |
+| `node --test scripts/bestiary-audit.test.mjs scripts/bestiary-weekly.test.mjs` | Зуб: coverage + weekly anti-молчун |
 
-Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`.
+Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`, `scripts/lib/bestiary-weekly.mjs`.
 
 ### Грабли
 
 - Specimen без декларации `specimen:` / комментария намеренности ловит ложный «молчун» на себе — помечай.
 - Пустой отчёт при живых specimen’ах = красный (анти-молчун охотника).
-- Night-hunt drift ≠ этот контейнер; не смешивать jobs.
+- `not-run` ≠ `clean`: не запускали линзу — не «чисто». Weekly без секции Summary = баг.
+- Night-hunt drift ≠ этот контейнер; не смешивать jobs. Weekly — отдельный `yarn bestiary:weekly` (рядом по ритму, не ветка night-hunt).
 
 ---
 
@@ -65,11 +67,19 @@ Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`.
 **HARD GATE:** `defectClass` (или «все») обязан быть в **текущем** сообщении.
 Иначе STOP — спросить класс; не угадывать из сессии.
 
-### Scenario Weekly-Report (B4)
+### Scenario Weekly-Report (B4 / #883)
 
-Недельный прогон → `analysis/bestiary-run-YYYY-MM-DD.md` + тренд vs прошлый снимок.
-Не silent-green: summary обязателен даже при 0 findings на выбранных объектах
-(тогда явно: «прогнано N объектов, findings=0»).
+**Триггер:** «недельный прогон», «weekly report», Scenario Weekly-Report.
+
+1. Из корня: `yarn bestiary:weekly`  
+   (опции: `--json` · `--no-write` · `--date YYYY-MM-DD` · `--extra <path>`).
+2. Артефакт: overwrite/create `analysis/bestiary-run-YYYY-MM-DD.md`.
+3. Если в `analysis/` есть более ранний `bestiary-run-*.md` — секция **Trend** с Δ по классам.
+4. **Анти-молчун (HARD):** в отчёте всегда есть `## Summary`.  
+   - линза не отработала → вердикт `not-run` (≠ `clean`);  
+   - отработала и findings=0 → явно «прогнано N объектов, findings=0»;  
+   - 0 findings при живых specimens → silent-hunter (exit 1).
+5. Не копировать engines в контейнер; не чинить находки (#533).
 
 ---
 
