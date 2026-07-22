@@ -4,20 +4,21 @@
 
 ---
 
-## 2026-07-22 — `bestiary-workshop` — **OPEN** (W3)
+## 2026-07-22 — `bestiary-workshop` — **OPEN** (W4)
 
 - **Goal:** мастерская-поставщик ловушек поверх CLOSED-дома бестиария; доп. реестры улова/ловушек; Mintlify-зеркало; кит с aim «Ведьмак»
 - **Issue:** [#945](https://github.com/officefish/Membrana/issues/945) · фазы #946–#951 (W0–W5)
 - **OPEN:** [`day-sprint/bestiary-workshop-2026-07-22/OPEN.md`](./day-sprint/bestiary-workshop-2026-07-22/OPEN.md)
 - **Seed:** [`storm/storm-bestiary-workshop-2026-07-22/REPORT.md`](./storm/storm-bestiary-workshop-2026-07-22/REPORT.md) · T1–T18
-- **Фаза:** W3 `bw-w3-mintlify` · [#949](https://github.com/officefish/Membrana/issues/949) · lead ozhegov · [#967](https://github.com/officefish/Membrana/pull/967) awaiting LGTM
+- **Фаза:** W4 `bw-w4-trap-kit` · [#950](https://github.com/officefish/Membrana/issues/950) · lead dynin · _(указатель; код не стартован)_
 - **W0:** done · [#952](https://github.com/officefish/Membrana/pull/952) · `c1f067a7` · archived
 - **W1:** done · [#954](https://github.com/officefish/Membrana/pull/954) · `496ecb41` · archived · K25-B + `workshop.manifest` + `issueTrap`
 - **W2:** done · [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` · archived · CATCH/TRAPS/antipattern stubs
+- **W3:** done · [#967](https://github.com/officefish/Membrana/pull/967) · `ed997ce1` · archived · thin Mintlify mirror
 - **K25:** закрыт вариантом **B** (исключение supply-side + `issueTrap`)
 - **W2 paths (принято):** `registry/CATCH_LIST.md` · `traps/` + `TRAPS_LIST.md` · `antipatterns/<id>.md`
 - **W3 depth:** **thin mirror** (не pin-манифест); open decision закрыт в OPEN
-- **Open decisions:** имя кита (W4)
+- **Open decisions:** имя кита (`witcher` / иное) — W4
 - **Параллель:** `procedure-frames` — **CLOSED** (ниже)
 
 ---

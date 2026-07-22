@@ -12,7 +12,8 @@
 | **Branch (W0)** | `feat/bw-w0-brief` → merged [#952](https://github.com/officefish/Membrana/pull/952) |
 | **Branch (W1)** | `feat/bw-w1-workshop` → merged [#954](https://github.com/officefish/Membrana/pull/954) · `496ecb41` |
 | **Branch (W2)** | `feat/bw-w2-registries` → merged [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` |
-| **Branch (W3)** | `feat/bw-w3-mintlify` · [#967](https://github.com/officefish/Membrana/pull/967) · awaiting LGTM |
+| **Branch (W3)** | `feat/bw-w3-mintlify` → merged [#967](https://github.com/officefish/Membrana/pull/967) · `ed997ce1` |
+| **Branch (W4)** | _(указатель; код не стартован)_ · [#950](https://github.com/officefish/Membrana/issues/950) |
 | **Seed** | шторм [`storm-bestiary-workshop-2026-07-22`](../../storm/storm-bestiary-workshop-2026-07-22/REPORT.md) · T1–T18 |
 | **Дом** | [`docs/audit/bestiary/`](../../audit/bestiary/) (#878 CLOSED) |
 | **Паттерны** | [`HOME_WORKSHOP`](../../patterns/HOME_WORKSHOP.md) · [`PINNED_SUBGRAPH_VERSIONING`](../../patterns/PINNED_SUBGRAPH_VERSIONING.md) · [`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md) |
@@ -50,8 +51,8 @@
 | **W0** | `bw-w0-brief` | [#946](https://github.com/officefish/Membrana/issues/946) | vesnin | [`BW_W0_BRIEF_PROMPT.md`](../../prompts/BW_W0_BRIEF_PROMPT.md) | Реестр+Issues+OPEN open+ACTIVE; границы T* | **done** · [#952](https://github.com/officefish/Membrana/pull/952) |
 | **W1** | `bw-w1-workshop` | [#947](https://github.com/officefish/Membrana/issues/947) | ozhegov | [`BW_W1_WORKSHOP_PROMPT.md`](../../prompts/BW_W1_WORKSHOP_PROMPT.md) | `workshop.manifest.json` + шов HOME_WORKSHOP (A\|B) | **done** · [#954](https://github.com/officefish/Membrana/pull/954) · `496ecb41` |
 | **W2** | `bw-w2-registries` | [#948](https://github.com/officefish/Membrana/issues/948) | ozhegov | [`BW_W2_REGISTRIES_PROMPT.md`](../../prompts/BW_W2_REGISTRIES_PROMPT.md) | Форматы улова/ловушки + stub шаблона антипаттерна | **done** · [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` |
-| **W3** | `bw-w3-mintlify` | [#949](https://github.com/officefish/Membrana/issues/949) | ozhegov | [`BW_W3_MINTLIFY_PROMPT.md`](../../prompts/BW_W3_MINTLIFY_PROMPT.md) | Thin Mintlify-зеркало + провод из дома | **in review** · [#967](https://github.com/officefish/Membrana/pull/967) |
-| **W4** | `bw-w4-trap-kit` | [#950](https://github.com/officefish/Membrana/issues/950) | dynin | [`BW_W4_TRAP_KIT_PROMPT.md`](../../prompts/BW_W4_TRAP_KIT_PROMPT.md) | Жилец кита, audit green, aim «Ведьмак» | pending |
+| **W3** | `bw-w3-mintlify` | [#949](https://github.com/officefish/Membrana/issues/949) | ozhegov | [`BW_W3_MINTLIFY_PROMPT.md`](../../prompts/BW_W3_MINTLIFY_PROMPT.md) | Thin Mintlify-зеркало + провод из дома | **done** · [#967](https://github.com/officefish/Membrana/pull/967) · `ed997ce1` |
+| **W4** | `bw-w4-trap-kit` | [#950](https://github.com/officefish/Membrana/issues/950) | dynin | [`BW_W4_TRAP_KIT_PROMPT.md`](../../prompts/BW_W4_TRAP_KIT_PROMPT.md) | Жилец кита, audit green, aim «Ведьмак» | **pointer** |
 | **W5** | `bw-w5-closure` | [#951](https://github.com/officefish/Membrana/issues/951) | vesnin | [`BW_W5_CLOSURE_PROMPT.md`](../../prompts/BW_W5_CLOSURE_PROMPT.md) | CLOSURE + ACTIVE cleared + archive | pending |
 
 ---
@@ -101,7 +102,13 @@
 
 ## Gate checklist (W3)
 
-- [ ] ≥2 страницы зеркала в `apps/docs/bestiary/` (overview + улов/ловушка)
-- [ ] Навигация `docs.json` группа `Bestiary — workshop` + провод из README дома
-- [ ] Лемма «git = истина / Mintlify = монитор» + depth = **thin mirror** (не pin-манифест)
-- [ ] LGTM ozhegov (owner ok) → merge W3 → указатель W4 #950
+- [x] ≥2 страницы зеркала в `apps/docs/bestiary/` (overview + улов/ловушка)
+- [x] Навигация `docs.json` группа `Bestiary — workshop` + провод из README дома
+- [x] Лемма «git = истина / Mintlify = монитор» + depth = **thin mirror** (не pin-манифест)
+- [x] LGTM ozhegov (owner ok) → merge W3 [#967](https://github.com/officefish/Membrana/pull/967) · `ed997ce1` → указатель W4 #950
+
+## Gate checklist (W4)
+
+- [ ] Жилец кита объявлен (`kit` ≠ null); имя — open decision
+- [ ] Audit green; aim-пример «Ведьмак»
+- [ ] LGTM dynin (owner ok) → merge W4 → указатель W5 #951
