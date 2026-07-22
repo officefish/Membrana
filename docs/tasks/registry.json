@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "tooling-atlas",
+      "title": "Атлас контейнеров — контейнер контейнеров + мастерская + mintlify",
+      "promptPath": "docs/prompts/TOOLING_ATLAS_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Производный агрегатор всех контейнеров (README+workshop.manifest), без копий. Шестой жилец HOME_WORKSHOP. Витрина под mintlify (apps/docs/tooling).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "assets-container",
       "title": "Эпик: контейнер имущества — три яруса (git/сервер-БД/Drive), набор от чека, подтверждение датой-сегодня",
       "promptPath": "docs/prompts/ASSETS_CONTAINER_PROMPT.md",

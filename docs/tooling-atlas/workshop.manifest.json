@@ -1,0 +1,13 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская атласа контейнеров",
+  "worksOn": "docs/tooling-atlas",
+  "kit": null,
+  "verbs": {
+    "audit": "yarn tooling:atlas --audit",
+    "decompose": "yarn tooling:atlas --decompose",
+    "inspectElement": "yarn tooling:atlas --inspect",
+    "stackLike": [],
+    "domain": []
+  }
+}
