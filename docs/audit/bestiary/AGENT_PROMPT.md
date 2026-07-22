@@ -38,11 +38,13 @@ specimen’ами, не чинишь код молча (#533).
 | Команда | Назначение |
 |---------|------------|
 | `node scripts/lens-run.mjs [files…]` | Навести бестиарий; `--json` → stdout |
-| `yarn bestiary:audit` | Покрытие specimens → `registry/BESTIARY_LIST.md` (exit 1 если класс без hit) |
+| `yarn bestiary:audit` | Покрытие specimens → `registry/BESTIARY_LIST.md` (exit 1 если класс без hit); также `decompose` мастерской |
 | `yarn bestiary:weekly` | Недельный прогон → `analysis/bestiary-run-YYYY-MM-DD.md` + тренд (B4) |
 | `node --test scripts/bestiary-audit.test.mjs scripts/bestiary-weekly.test.mjs` | Зуб: coverage + weekly anti-молчун |
+| `issueTrap` (контракт) | Доменный глагол поставки ловушки; CLI/кит — W4 (`kit: null` до жильца) |
 
 Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`, `scripts/lib/bestiary-weekly.mjs`.
+Манифест мастерской: [`workshop.manifest.json`](./workshop.manifest.json) (K25-B).
 
 ### Грабли
 
@@ -66,6 +68,22 @@ Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`, `scripts/lib/b
 
 **HARD GATE:** `defectClass` (или «все») обязан быть в **текущем** сообщении.
 Иначе STOP — спросить класс; не угадывать из сессии.
+
+### Scenario Issue-Trap (W1 контракт / #947)
+
+**Триггер:** «заказать ловушку», «выдать ловушку», «issueTrap», «получить trap».
+
+Контракт (без реализации кита — это W4):
+
+1. Мастерская — **поставщик** ловушек (T6); шов HOME_WORKSHOP закрыт вариантом **K25-B**
+   (исключение supply-side в манифесте + таблица реализаций паттерна; MUST «заказывает kit» не трогаем).
+2. Канонический глагол: **`issueTrap`** (не `supplyTrap`).
+3. До W4: `kit: null` → ответ агента: «ловушка заказана на уровне контракта; жилец кита
+   и aim «Ведьмак» — фаза W4»; **не** вызывать несуществующий CLI и **не** подменять
+   соседней мастерской.
+4. После W4: вызов идёт через объявленный `kit` / tooling кита; недоступный kit →
+   видимый `unequipped`, не тихий пустой ответ.
+5. Не путать с Specimen-Audit (проверка класса на бетии) и с автофиксом прод (#533).
 
 ### Scenario Weekly-Report (B4 / #883)
 
