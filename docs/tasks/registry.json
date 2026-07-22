@@ -32,7 +32,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "CLOSURE docs/day-sprint/kits-containerization-master-2026-07-22/CLOSURE.md; archive C0-C4 + epic; #761 third kit",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-22",
       "parentEpic": "kits-containerization-master"
     },
     {
@@ -50,7 +50,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #911 merged; C0-C3 delivery kits/containerization-master + procedure + skill + OPEN",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-22",
       "parentEpic": "kits-containerization-master"
     },
     {
@@ -68,7 +68,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #911 merged; C0-C3 delivery kits/containerization-master + procedure + skill + OPEN",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-22",
       "parentEpic": "kits-containerization-master"
     },
     {
@@ -86,7 +86,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #911 merged; C0-C3 delivery kits/containerization-master + procedure + skill + OPEN",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-22",
       "parentEpic": "kits-containerization-master"
     },
     {
@@ -104,7 +104,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #911 merged; C0-C3 delivery kits/containerization-master + procedure + skill + OPEN",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-22",
       "parentEpic": "kits-containerization-master"
     },
     {
@@ -124,7 +124,7 @@
       ],
       "notes": "",
       "archiveNotes": "Epic CLOSED; CLOSURE kits-containerization-master-2026-07-22; C0-C3 PR #911; C4 this PR; third kit #761",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-22"
     },
     {
       "id": "procedure-frames",
