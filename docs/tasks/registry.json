@@ -50,7 +50,7 @@
       "archivedAt": null,
       "leadPersona": "angelina",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "B4: yarn bestiary:weekly → analysis/bestiary-run-YYYY-MM-DD.md; trend; anti-silent Summary. Branch feat/bc-b4-weekly. Issue #883. LGTM angelina — ship.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "bestiary-container"
