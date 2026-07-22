@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "assets-container",
+      "title": "Эпик: контейнер имущества — три яруса (git/сервер-БД/Drive), набор от чека, подтверждение датой-сегодня",
+      "promptPath": "docs/prompts/ASSETS_CONTAINER_PROMPT.md",
+      "githubIssue": 959,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "bridge-room",
       "title": "Спринт «мостик»: явное открытие/закрытие комнаты капитана, попугай-техдолг, конспекты фреймом в репо",
       "promptPath": "docs/prompts/BRIDGE_ROOM_PROMPT.md",

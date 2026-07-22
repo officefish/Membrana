@@ -18,7 +18,10 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `assets-container` | Эпик: контейнер имущества — три яруса (git/сервер-БД/Drive), набор от чека, подтверждение датой-сегодня | L | [`ASSETS_CONTAINER_PROMPT.md`](../prompts/ASSETS_CONTAINER_PROMPT.md) | [#959](https://github.com/officefish/Membrana/issues/959) |
 | `bridge-room` | Спринт «мостик»: явное открытие/закрытие комнаты капитана, попугай-техдолг, конспекты фреймом в репо | M | [`BRIDGE_ROOM_PROMPT.md`](../prompts/BRIDGE_ROOM_PROMPT.md) | [#936](https://github.com/officefish/Membrana/issues/936) |
+| `precedent-container` | Контейнер прецедентов + мастерская к нему | M | [`PRECEDENT_CONTAINER_PROMPT.md`](../prompts/PRECEDENT_CONTAINER_PROMPT.md) | — |
+| `procedural-workshop` | Процедурная мастерская — три глагола над 2D-домом | M | [`PROCEDURAL_WORKSHOP_PROMPT.md`](../prompts/PROCEDURAL_WORKSHOP_PROMPT.md) | — |
 | `office-stability-emergency` | АВАРИЯ: таймауты office — server-first не выполняется; починка до строительства роутера (T10) | M | [`OFFICE_STABILITY_EMERGENCY_PROMPT.md`](../prompts/OFFICE_STABILITY_EMERGENCY_PROMPT.md) | [#933](https://github.com/officefish/Membrana/issues/933) |
 | `procedural-branch-guard` | Грамматика веток: процедурная ветка — не транспорт; только артефакты процедуры по разрешению (провод Р4 + профиль сессии) | M | [`PROCEDURAL_BRANCH_GUARD_PROMPT.md`](../prompts/PROCEDURAL_BRANCH_GUARD_PROMPT.md) | [#925](https://github.com/officefish/Membrana/issues/925) |
 | `ship-review-tooth` | Шип-гейт: мердж только через ревью-вердикт по HEAD SHA + required check (стена от обхода ревью) | M | [`SHIP_REVIEW_TOOTH_PROMPT.md`](../prompts/SHIP_REVIEW_TOOTH_PROMPT.md) | [#924](https://github.com/officefish/Membrana/issues/924) |
@@ -29,11 +32,8 @@
 | `pf-f3-morning-wiring` | F3: morning-wiring в ritual-day + 3 двери + гейт утра (m3) | M | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#929](https://github.com/officefish/Membrana/issues/929) |
 | `pf-f2-segment-pin` | F2: ядро auditPins + segmentHash; кит на том же ядре (m2) | M | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#928](https://github.com/officefish/Membrana/issues/928) |
 | `pf-f1-frames-contract` | F1: frames[] optional в validateProcedure (m1) | M | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#927](https://github.com/officefish/Membrana/issues/927) |
-| `pf-f0-brief` | F0: sync prompt/OPEN + ADR pin shape + хвост прецедента 22.07 | S | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#926](https://github.com/officefish/Membrana/issues/926) |
 | `procedure-frames` | Спринт «фреймы»: frames[] в манифесте процедур + пин отрезков + первый фрейм «подводка утра» (Ожегов) | L | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#900](https://github.com/officefish/Membrana/issues/900) |
 | `code-review-lead-refactor` | Рефакторинг код-ревью: ведущий из пяти + память ведущего + бестиарий антипаттернов (T3/T4/T5) | M | [`CODE_REVIEW_LEAD_REFACTOR_PROMPT.md`](../prompts/CODE_REVIEW_LEAD_REFACTOR_PROMPT.md) | — |
-| `bc-b5-closure` | B5: CLOSURE bestiary-container | M | [`BC_B5_CLOSURE_PROMPT.md`](../prompts/BC_B5_CLOSURE_PROMPT.md) | [#884](https://github.com/officefish/Membrana/issues/884) |
-| `bestiary-container` | Epic: bestiary antipatterns as container | L | [`BESTIARY_CONTAINER_PROMPT.md`](../prompts/BESTIARY_CONTAINER_PROMPT.md) | [#878](https://github.com/officefish/Membrana/issues/878) |
 | `morning-report-completion` | Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям) | L | [`MORNING_REPORT_COMPLETION_PROMPT.md`](../prompts/MORNING_REPORT_COMPLETION_PROMPT.md) | [#788](https://github.com/officefish/Membrana/issues/788) |
 | `sbc-s4-wiring` | S4: провода AGENTS/skills/DoD для контейнера scripts/ | S | [`SBC_S4_WIRING_PROMPT.md`](../prompts/SBC_S4_WIRING_PROMPT.md) | [#796](https://github.com/officefish/Membrana/issues/796) |
 | `sbc-s3-kits-align` | S3: kits — выровнять с pl-r3 kit-manifest (не изобретать параллельный контракт) | M | [`SBC_S3_KITS_ALIGN_PROMPT.md`](../prompts/SBC_S3_KITS_ALIGN_PROMPT.md) | [#795](https://github.com/officefish/Membrana/issues/795) |
@@ -222,6 +222,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `pf-f0-brief` | F0: sync prompt/OPEN + ADR pin shape + хвост прецедента 22.07 | 2026-07-22 | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | #926 (Issue открыт) | [карточка](./archive/pf-f0-brief.md) |
 | `morning-wiring-hotfix` | Хотфикс проводов утра: CLAUDE.md + AGENTS.md → membrana-morning-ritual (фрейм подводки, Ожегов) | 2026-07-22 | [`MORNING_WIRING_HOTFIX_PROMPT.md`](../prompts/MORNING_WIRING_HOTFIX_PROMPT.md) | #902 (Issue открыт) | [карточка](./archive/morning-wiring-hotfix.md) |
 | `kcm-c4-closure` | C4: CLOSURE + archive + комментарий #761 | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #909 | [карточка](./archive/kcm-c4-closure.md) |
 | `kcm-c3-wire` | C3: процедура containerization + skill + kits/README | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #908 | [карточка](./archive/kcm-c3-wire.md) |
@@ -229,8 +230,10 @@
 | `kcm-c1-prompt` | C1: CONTAINERIZATION_MASTER_PROMPT + cold-start порядок | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #906 | [карточка](./archive/kcm-c1-prompt.md) |
 | `kcm-c0-brief` | C0: бриф kits-containerization-master, границы vs procedure-frames | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #905 | [карточка](./archive/kcm-c0-brief.md) |
 | `kits-containerization-master` | Эпик: кит Мастера контейнеризации (третий жилец kits/) | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #904 | [карточка](./archive/kits-containerization-master.md) |
+| `bc-b5-closure` | B5: CLOSURE bestiary-container | 2026-07-22 | [`BC_B5_CLOSURE_PROMPT.md`](../prompts/BC_B5_CLOSURE_PROMPT.md) | #884 (Issue открыт) | [карточка](./archive/bc-b5-closure.md) |
 | `bc-b4-weekly` | B4: weekly run + anti-silent auditor | 2026-07-22 | [`BC_B4_WEEKLY_PROMPT.md`](../prompts/BC_B4_WEEKLY_PROMPT.md) | #883 (Issue открыт) | [карточка](./archive/bc-b4-weekly.md) |
 | `bc-b3-missing-beasts` | B3: echo / goal-displacement or defer | 2026-07-22 | [`BC_B3_MISSING_BEASTS_PROMPT.md`](../prompts/BC_B3_MISSING_BEASTS_PROMPT.md) | #882 (Issue открыт) | [карточка](./archive/bc-b3-missing-beasts.md) |
+| `bestiary-container` | Epic: bestiary antipatterns as container | 2026-07-22 | [`BESTIARY_CONTAINER_PROMPT.md`](../prompts/BESTIARY_CONTAINER_PROMPT.md) | #878 (Issue открыт) | [карточка](./archive/bestiary-container.md) |
 | `bc-b2-specimens` | B2: specimens + bestiary:audit + tests | 2026-07-21 | [`BC_B2_SPECIMENS_PROMPT.md`](../prompts/BC_B2_SPECIMENS_PROMPT.md) | #881 (Issue открыт) | [карточка](./archive/bc-b2-specimens.md) |
 | `bc-b1-home` | B1: home docs/audit/bestiary/ | 2026-07-21 | [`BC_B1_HOME_PROMPT.md`](../prompts/BC_B1_HOME_PROMPT.md) | #880 (Issue открыт) | [карточка](./archive/bc-b1-home.md) |
 | `bc-b0-brief` | B0: brief bestiary-container lemma | 2026-07-21 | [`BC_B0_BRIEF_PROMPT.md`](../prompts/BC_B0_BRIEF_PROMPT.md) | #879 (Issue открыт) | [карточка](./archive/bc-b0-brief.md) |
