@@ -79,6 +79,32 @@ test('renderMintlifyPage: frontmatter + заголовок контейнера'
   assert.match(mdx, /## мастерская веток/);
 });
 
+test('ATLAS-ссылки резолвятся: ../../../ от registry/ (finding MAJOR-1)', () => {
+  const md = renderAtlasRegistry(discoverContainers(tmp));
+  assert.match(md, /\]\(\.\.\/\.\.\/\.\.\/docs\//u); // три уровня вверх
+  assert.doesNotMatch(md, /\]\(\.\.\/\.\.\/docs\//u); // НЕ два (мёртвая ссылка)
+});
+
+test('renderAtlasRegistry детерминирован (байт-идемпотентность, finding MINOR-4)', () => {
+  const cs = discoverContainers(tmp);
+  assert.equal(renderAtlasRegistry(cs), renderAtlasRegistry(cs));
+  assert.doesNotMatch(renderAtlasRegistry(cs), /Date:|SHA:/u); // без волатильной меты
+});
+
+test('mintlify нейтрализует {}<> (finding MAJOR-3, MDX-инъекция)', () => {
+  makeContainer('docs/inject', { name: 'мастерская <Foo> {bad}', worksOn: 'docs/inject', verbs: {}, readme: '# t\n\nИспользует {config} и <Component/>.' });
+  const mdx = renderMintlifyPage(discoverContainers(tmp));
+  assert.doesNotMatch(mdx, /\{config\}/u);
+  assert.doesNotMatch(mdx, /<Component/u);
+  assert.doesNotMatch(mdx, /<Foo>|\{bad\}/u);
+});
+
+test('readmeDigest: summary без H1 (finding MINOR-5)', () => {
+  makeContainer('docs/no-h1', { name: 'без H1', worksOn: 'docs/no-h1', verbs: {}, readme: 'Просто абзац без заголовка.' });
+  const c = discoverContainers(tmp).find((x) => x.worksOn === 'docs/no-h1');
+  assert.equal(c.summary, 'Просто абзац без заголовка.');
+});
+
 test('битый манифест не роняет discover целиком', () => {
   const dir = join(tmp, 'docs', 'broke');
   mkdirSync(dir, { recursive: true });

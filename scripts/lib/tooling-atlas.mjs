@@ -26,10 +26,11 @@ function readmeDigest(readmePath) {
   for (const raw of lines) {
     const line = raw.trim();
     if (!title && line.startsWith('# ')) { title = line.slice(2).trim(); continue; }
-    if (title && !summary && line !== '' && !line.startsWith('#') && !line.startsWith('>')) {
+    // summary — первый прозаический абзац, НЕ завязан на наличие H1.
+    if (!summary && line !== '' && !line.startsWith('#') && !line.startsWith('>') && !line.startsWith('<!--')) {
       summary = line;
-      break;
     }
+    if (title && summary) break;
   }
   return { title, summary };
 }
@@ -113,14 +114,18 @@ export function inspectContainer(repoRoot, home) {
 const cell = (v) => String(v ?? '—').replace(/[|\r\n]+/gu, ' ').trim();
 const verbMark = (c) => MANDATORY.map((k) => (c.verbs.includes(k) ? k : `~~${k}~~`)).join(' · ');
 
-/** Производный индекс ATLAS.md (дата/sha приходят извне — ядро чистое). */
-export function renderAtlasRegistry(containers, { date, sha } = {}) {
+/**
+ * Производный индекс ATLAS.md. Стабильный (без волатильных date/sha), поэтому
+ * `--render` байт-идемпотентен, а `--check` — плоское сравнение.
+ * Ссылки — от `docs/tooling-atlas/registry/` (3 уровня вглубь) → `../../../<home>`.
+ */
+export function renderAtlasRegistry(containers) {
   const fams = decomposeContainers(containers, 'family');
   const lines = [];
   lines.push('# ATLAS — контейнеры проекта (производный индекс, руками не править)');
   lines.push('');
-  lines.push(`> Meta · Date: ${date ?? '—'} · SHA: ${sha ?? '—'} · Source: docs/**/workshop.manifest.json + README.md`);
-  lines.push('> Пересобрать: `yarn tooling:atlas --render`. Источник истины — README + манифест каждого контейнера.');
+  lines.push('> Производный · Source: docs/**/workshop.manifest.json + README.md каждого контейнера.');
+  lines.push('> Пересобрать: `yarn tooling:atlas --render`. Дрейф ловит `yarn tooling:atlas --check`.');
   lines.push('');
   lines.push(`Контейнеров: **${containers.length}** · семей: **${fams.size}** · с полным набором из 3 глаголов: **${containers.filter((c) => c.missingVerbs.length === 0).length}**.`);
   lines.push('');
@@ -128,11 +133,15 @@ export function renderAtlasRegistry(containers, { date, sha } = {}) {
   lines.push('|-----------|-------|----------------------|-----|---------|');
   for (const c of containers) {
     const flag = c.valid ? '' : ' ✗';
-    lines.push(`| [${cell(c.worksOn)}](../../${c.home}/README.md)${flag} | ${cell(c.family)} | ${verbMark(c)} | ${cell(c.kit)} | ${cell(c.summary).slice(0, 90)} |`);
+    lines.push(`| [${cell(c.worksOn)}](../../../${c.home}/README.md)${flag} | ${cell(c.family)} | ${verbMark(c)} | ${cell(c.kit)} | ${cell(c.summary).slice(0, 90)} |`);
   }
   lines.push('');
   return lines.join('\n');
 }
+
+// MDX-безопасно: помимо |\r\n нейтрализуем { } < > — иначе README с `{config}`/`<Tag>`
+// в тексте ломает mintlify-билд (JSX-инъекция в .mdx).
+const mdxSafe = (v) => cell(v).replace(/[{}<>]/gu, (ch) => ({ '{': '｛', '}': '｝', '<': '‹', '>': '›' }[ch]));
 
 /** Витрина mintlify (.mdx). */
 export function renderMintlifyPage(containers) {
@@ -147,13 +156,13 @@ export function renderMintlifyPage(containers) {
   lines.push('Каждый контейнер несёт свою группу и мастерскую (три глагола: осмотр · декомпозиция · рассмотрение). Источник истины — `README.md` и `workshop.manifest.json` каждого контейнера.');
   lines.push('');
   for (const c of containers) {
-    lines.push(`## ${cell(c.name)} (\`${cell(c.worksOn)}\`)`);
+    lines.push(`## ${mdxSafe(c.name)} (\`${mdxSafe(c.worksOn)}\`)`);
     lines.push('');
-    if (c.summary) lines.push(cell(c.summary));
+    if (c.summary) lines.push(mdxSafe(c.summary));
     lines.push('');
-    lines.push(`- **Семья:** ${cell(c.family)}`);
+    lines.push(`- **Семья:** ${mdxSafe(c.family)}`);
     lines.push(`- **Глаголы мастерской:** ${MANDATORY.map((k) => (c.verbs.includes(k) ? `\`${k}\`` : `~~${k}~~`)).join(', ')}`);
-    lines.push(`- **kit:** \`${cell(c.kit)}\``);
+    lines.push(`- **kit:** \`${mdxSafe(c.kit)}\``);
     lines.push('');
   }
   return lines.join('\n');

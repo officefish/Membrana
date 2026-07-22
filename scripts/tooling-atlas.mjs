@@ -12,7 +12,6 @@
  * --check роняет CI при дрейфе производных. Канон: docs/tooling-atlas/README.md.
  */
 
-import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -34,16 +33,11 @@ const val = (n) => { const i = argv.indexOf(`--${n}`); const v = i >= 0 ? argv[i
 const REGISTRY = join(repoRoot, 'docs', 'tooling-atlas', 'registry', 'ATLAS.md');
 const MINTLIFY = join(repoRoot, 'apps', 'docs', 'tooling', 'containers.mdx');
 
-const today = () => new Date().toISOString().slice(0, 10);
-const headSha = () => { try { return execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: repoRoot }).toString().trim(); } catch { return 'no-git'; } };
-
 function generate() {
   const containers = discoverContainers(repoRoot);
   return {
     containers,
-    atlas: `${renderAtlasRegistry(containers, { date: today(), sha: headSha() })}\n`,
-    // ATLAS для сравнения --check: без волатильных Meta (дата/sha), чтобы дрейф ловился по существу.
-    atlasStable: `${renderAtlasRegistry(containers, { date: 'STABLE', sha: 'STABLE' })}\n`,
+    atlas: `${renderAtlasRegistry(containers)}\n`,
     mintlify: `${renderMintlifyPage(containers)}\n`,
   };
 }
@@ -57,12 +51,10 @@ function runRender() {
   console.log(`tooling:atlas --render → пересобрано: ATLAS.md + mintlify (${containers.length} контейнеров).`);
 }
 
-function stripMeta(s) { return s.replace(/> Meta · Date:.*$/mu, '> Meta · Date: STABLE · SHA: STABLE'); }
-
 function runCheck() {
-  const { atlasStable, mintlify } = generate();
+  const { atlas, mintlify } = generate();
   const problems = [];
-  if (!existsSync(REGISTRY) || stripMeta(readFileSync(REGISTRY, 'utf8')) !== stripMeta(atlasStable)) problems.push('registry/ATLAS.md разъехался с источником');
+  if (!existsSync(REGISTRY) || readFileSync(REGISTRY, 'utf8') !== atlas) problems.push('registry/ATLAS.md разъехался с источником');
   if (!existsSync(MINTLIFY) || readFileSync(MINTLIFY, 'utf8') !== mintlify) problems.push('apps/docs/tooling/containers.mdx разъехался с источником');
   if (problems.length) { for (const p of problems) console.error(`✗ ${p}`); console.error('tooling:atlas --check: ДРЕЙФ — пересобери `yarn tooling:atlas --render`.'); process.exit(1); }
   console.log('tooling:atlas --check: OK — производные свежи.');
