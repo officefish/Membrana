@@ -107,7 +107,7 @@ Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`, `scripts/lib/b
 1. Мастерская — **поставщик** ловушек (T6); шов HOME_WORKSHOP закрыт вариантом **K25-B**
    (исключение supply-side; MUST «заказывает kit» не трогаем).
 2. Канонический глагол: **`issueTrap`** (не `supplyTrap`).
-3. Жилец: `kit: "witcher"` · [`kits/witcher/`](../../../kits/witcher/) · aim cookbook в README кита.
+3. Жилец: `kit: "kits/witcher"` · [`kits/witcher/`](../../../kits/witcher/) · aim cookbook в README кита.
 4. Сверка: `yarn kits:audit --id witcher` → 0 blocking; осмотр дома: `yarn bestiary:audit`.
 5. Недоступный / сломанный kit → видимый `unequipped`, не тихий пустой ответ и не подмена соседней мастерской.
 6. Не путать с Specimen-Audit (проверка класса на бетии) и с автофиксом прод (#533).

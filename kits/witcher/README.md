@@ -7,7 +7,7 @@
 
 **Owner пина:** `dynin` (`leadPersona` в [`MANIFEST.json`](./MANIFEST.json)).  
 **Дом мастерской:** [`docs/audit/bestiary/`](../../docs/audit/bestiary/) ·
-[`workshop.manifest.json`](../../docs/audit/bestiary/workshop.manifest.json) → `kit: "witcher"`.  
+[`workshop.manifest.json`](../../docs/audit/bestiary/workshop.manifest.json) → `kit: "kits/witcher"`.  
 **Эпик:** `bestiary-workshop` (#945) · фаза W4 (#950).
 
 ## Режимы

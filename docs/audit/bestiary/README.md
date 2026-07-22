@@ -33,7 +33,7 @@
 **Мастерская дома** ([`HOME_WORKSHOP`](../../patterns/HOME_WORKSHOP.md), ось операций):
 [`workshop.manifest.json`](./workshop.manifest.json) — осмотр `bestiary:audit`,
 декомпозиция классов тем же CLI (реестр `BESTIARY_LIST`); `inspectElement` — ⚠ пока нет
-отдельного CLI (Scenario Specimen-Audit — агентный гейт); `kit: "witcher"` (W4 #950 ·
+отдельного CLI (Scenario Specimen-Audit — агентный гейт); `kit: "kits/witcher"` (W4 #950 ·
 human-label «Ведьмак» · [`kits/witcher/`](../../../kits/witcher/)).
 Доменный глагол поставки ловушек: **`issueTrap`** → жилец кита.
 
@@ -42,7 +42,7 @@ human-label «Ведьмак» · [`kits/witcher/`](../../../kits/witcher/)).
 Канон паттерна: мастерская — сторона **спроса** на kit. T6 шторма: эта мастерская —
 **поставщик** ловушек. Закрыто **исключением**, без правки MUST-контракта паттерна:
 
-- стрелка «мастерская заказывает kit» сохраняется (`kit: "witcher"` после W4);
+- стрелка «мастерская заказывает kit» сохраняется (`kit: "kits/witcher"` после W4);
 - поставка ловушек — доменный `issueTrap` (не MUST-тройка audit/decompose/inspect);
 - строка в таблице реализаций паттерна помечает **K25-B** и причину.
 
@@ -54,7 +54,7 @@ human-label «Ведьмак» · [`kits/witcher/`](../../../kits/witcher/)).
 2. ✅ `worksOn` = ровно `docs/audit/bestiary`; ссылка на паттерн резолвится; правила не скопированы.
 3. ✅ `audit` и `decompose` присутствуют (MUST); `inspectElement` — ⚠ (нет CLI; Specimen-Audit — сценарий агента).
 4. ✅ Доменная раскладка по `defectClass` не переписана через стек-примитивы (`domainPreserved`).
-5. ✅ `kit` = `witcher` (W4 #950); aim «Ведьмак» в README кита.
+5. ✅ `kit` = `kits/witcher` (W4 #950); aim «Ведьмак» в README кита.
 6. ✅ Доменный `issueTrap` несёт `worksOn` = дом бестиария (зуб `checkOwnership`).
 7. ✅ Отказы видимы: недоступный kit → `unequipped`, не тихая подмена; вызов через `kits/witcher`.
 8. ✅ Провода: паттерн (таблица реализаций + K25-B), этот README, `AGENT_PROMPT` Scenario Issue-Trap.
