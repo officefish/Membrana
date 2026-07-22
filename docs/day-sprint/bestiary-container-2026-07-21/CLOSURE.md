@@ -32,7 +32,7 @@
 | B2 | #881 | [#895](https://github.com/officefish/Membrana/pull/895) | specimens×4 + `yarn bestiary:audit` | [#896](https://github.com/officefish/Membrana/pull/896) |
 | B3 | #882 | [#898](https://github.com/officefish/Membrana/pull/898) | echo + specimen; goal-displacement defer | [#899](https://github.com/officefish/Membrana/pull/899) |
 | B4 | #883 | [#919](https://github.com/officefish/Membrana/pull/919) | `yarn bestiary:weekly` + anti-молчун | [#923](https://github.com/officefish/Membrana/pull/923) |
-| B5 | #884 | [#937](https://github.com/officefish/Membrana/pull/937) | CLOSURE + ACTIVE cleared | _(this archive PR)_ |
+| B5 | #884 | [#937](https://github.com/officefish/Membrana/pull/937) | CLOSURE + ACTIVE cleared | [#938](https://github.com/officefish/Membrana/pull/938) |
 
 ## Aim: container + engines matrix (B5)
 
