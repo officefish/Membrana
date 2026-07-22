@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  assertPrMergeableForShip,
   extractIssueMentions,
   isBaseHeldElsewhere,
   otherWorktreeBranches,
@@ -75,6 +76,30 @@ test('#700: --merge-only даёт ТОЛЬКО merge-хвост, без branch/c
   );
   assert.equal(title, '', 'merge-only не строит заголовок (PR уже открыт)');
   assert.equal(commitBody, '', 'merge-only ничего не коммитит');
+});
+
+test('ATF4-1: assertPrMergeableForShip STOP на CONFLICTING/DIRTY', () => {
+  assert.throws(
+    () => assertPrMergeableForShip({ mergeable: 'CONFLICTING', mergeStateStatus: 'DIRTY', branch: 'feat/x' }),
+    /STOP до merge/u,
+  );
+  assert.throws(
+    () => assertPrMergeableForShip({ mergeable: 'MERGEABLE', mergeStateStatus: 'DIRTY' }),
+    /DIRTY/u,
+  );
+  assert.doesNotThrow(() =>
+    assertPrMergeableForShip({ mergeable: 'MERGEABLE', mergeStateStatus: 'CLEAN' }),
+  );
+  assert.doesNotThrow(() => assertPrMergeableForShip({}));
+});
+
+test('ATF4-3: pr-create использует --body-file + bodyText, не --body', () => {
+  const { steps } = planPrShip({ type: 'feat', message: 'x', issue: 1, branch: 'feat/x' });
+  const create = steps.find((s) => s.label === 'pr-create');
+  assert.ok(create.args.includes('--body-file'));
+  assert.ok(!create.args.includes('--body'));
+  assert.equal(create.bodyText, 'Closes #1');
+  assert.ok(create.args.includes('__BODY_FILE__'));
 });
 
 test('#700: --merge-only мёржит без --delete-branch, remote-ветку чистит отдельным шагом', () => {

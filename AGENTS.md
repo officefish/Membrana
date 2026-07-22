@@ -76,6 +76,10 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | `node scripts/_ssh-panel-smoke.mjs` | **Без `--read-only` пишет в ПРОД-стор** |
 | `yarn pr:ship`, `yarn repo:clean`, `yarn tasks:archive-closed` | По умолчанию **dry-run**; нужен `--execute` |
 | `pr:ship --branch` на уже выбранной ветке | С 19.07 **идемпотентен** (не `checkout -b`). Раньше fatal `already exists` и обрыв ship |
+| `pr:ship` при CONFLICTING/DIRTY | **STOP до merge** (ATF4-1): rebase → `yarn git:rebase-continue` → force-with-lease → снова `--merge-only` |
+| `gh pr/issue --body` / heredoc на PS | Только `--body-file` + длинный путь (`scripts/cache/`, ATF4-3); `%TEMP%`/`USER19~1` — ловушка |
+| `git rebase --continue` без EDITOR | `yarn git:rebase-continue` (GIT_EDITOR=true, ATF4-4); иначе «Terminal is dumb» |
+| `DAY_SPRINT_ACTIVE` при параллели | Не затирать **Focus**; править только **Also open** (ATF4-2 / DAY_SPRINT_REGULATION) |
 | Sibling worktree: junction shared `node_modules` | **Anti-pattern (#725):** ломает Nest11/express resolve. Канон — per-wt `yarn install` + копия `.env`. Не заводить новый bootstrap с junction (#705 = install) |
 | `gh issue/pr --body` через bash-heredoc на Windows | PS 5.1 ломает heredoc → **только tempfile + `--body-file`** (#725 A; `yarn task:start` так и делает) |
 | Optional `night:*` нет в `package.json` на ветке | Soft-skip / не звать — hard-fail ритуала запрещён (#725 C). `scripts/lib/optional-yarn-script.mjs` |
