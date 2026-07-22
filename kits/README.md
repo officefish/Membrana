@@ -69,6 +69,7 @@ kits/
 | [`angelina-morning/`](./angelina-morning/) | angelina | ✅ первый жилец (K3 / #818); 13 roots · pins подграф |
 | [`dream-master/`](./dream-master/) | dynin | ✅ второй жилец (D2 / #858); root `dreams.mjs` · ~10 pins |
 | [`containerization-master/`](./containerization-master/) | ozhegov | ✅ третий жилец; 9 roots · ~21 pins · крафт контейнеров |
+| [`witcher/`](./witcher/) | dynin | ✅ четвёртый жилец (W4 / #950); root `bestiary-audit.mjs` · ~4 pins · aim «Ведьмак» |
 
 ## Зубы (по фазам эпика)
 

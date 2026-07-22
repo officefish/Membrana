@@ -44,7 +44,7 @@ specimen’ами, не чинишь код молча (#533).
 | `yarn bestiary:audit` | Покрытие specimens → `registry/BESTIARY_LIST.md` (exit 1 если класс без hit); также `decompose` мастерской |
 | `yarn bestiary:weekly` | Недельный прогон → `analysis/bestiary-run-YYYY-MM-DD.md` + тренд (B4) |
 | `node --test scripts/bestiary-audit.test.mjs scripts/bestiary-weekly.test.mjs` | Зуб: coverage + weekly anti-молчун |
-| `issueTrap` (контракт) | Доменный глагол поставки ловушки; CLI/кит — W4 (`kit: null` до жильца) |
+| `issueTrap` | Доменный глагол поставки ловушки → кит [`kits/witcher`](../../../kits/witcher/) («Ведьмак») |
 
 Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`, `scripts/lib/bestiary-weekly.mjs`.
 Манифест мастерской: [`workshop.manifest.json`](./workshop.manifest.json) (K25-B).
@@ -87,10 +87,10 @@ Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`, `scripts/lib/b
 
 1. Карточка → `traps/<id>.md`; индекс → `registry/TRAPS_LIST.md` (формат в шапке).
 2. `targets` ссылается на класс и/или шаблон; `scripts` — pure paths снаружи дома;
-   `kitPin: null` до W4.
+   `kitPin` → жилец кита (пример: `kits/witcher` для `silent-empty-catch`).
 3. **HARD GATE:** не создавать «ловушку» как копию specimen и не пинить шаблон
    антипаттерна вместо prompts+scripts (T18).
-4. Не реализовывать новый детектор в этой фазе (W2 = дока/формат).
+4. Новый детектор — отдельная карточка/задача; не раздувать кит без DoD.
 
 ### Scenario Specimen-Audit
 
@@ -100,21 +100,17 @@ Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`, `scripts/lib/b
 Иначе STOP — спросить класс; не угадывать из сессии.
 Не писать результат Specimen-Audit в `CATCH_LIST` молча — улов отдельным сценарием.
 
-### Scenario Issue-Trap (W1 контракт / #947)
+### Scenario Issue-Trap (W1 контракт / W4 wired / #947 · #950)
 
-**Триггер:** «заказать ловушку», «выдать ловушку», «issueTrap», «получить trap».
-
-Контракт (без реализации кита — это W4):
+**Триггер:** «заказать ловушку», «выдать ловушку», «issueTrap», «получить trap», «Ведьмак».
 
 1. Мастерская — **поставщик** ловушек (T6); шов HOME_WORKSHOP закрыт вариантом **K25-B**
-   (исключение supply-side в манифесте + таблица реализаций паттерна; MUST «заказывает kit» не трогаем).
+   (исключение supply-side; MUST «заказывает kit» не трогаем).
 2. Канонический глагол: **`issueTrap`** (не `supplyTrap`).
-3. До W4: `kit: null` → ответ агента: «ловушка заказана на уровне контракта; жилец кита
-   и aim «Ведьмак» — фаза W4»; **не** вызывать несуществующий CLI и **не** подменять
-   соседней мастерской.
-4. После W4: вызов идёт через объявленный `kit` / tooling кита; недоступный kit →
-   видимый `unequipped`, не тихий пустой ответ.
-5. Не путать с Specimen-Audit (проверка класса на бетии) и с автофиксом прод (#533).
+3. Жилец: `kit: "witcher"` · [`kits/witcher/`](../../../kits/witcher/) · aim cookbook в README кита.
+4. Сверка: `yarn kits:audit --id witcher` → 0 blocking; осмотр дома: `yarn bestiary:audit`.
+5. Недоступный / сломанный kit → видимый `unequipped`, не тихий пустой ответ и не подмена соседней мастерской.
+6. Не путать с Specimen-Audit (проверка класса на бетии) и с автофиксом прод (#533).
 
 ### Scenario Weekly-Report (B4 / #883)
 

@@ -126,7 +126,7 @@
 | [`docs/audit/tasks/`](../audit/tasks/workshop.manifest.json) | реестр карточек задач | `audit`+`decompose` ✅, `inspectElement` ⚠ (нет); `kit: null` |
 | [`docs/procedures/`](../procedures/workshop.manifest.json) | процедурный дом | `audit`+`decompose`+`inspectElement` ✅; `kit: null` |
 | [`docs/precedents/`](../precedents/workshop.manifest.json) | контейнер прецедентов | `audit`+`decompose` ✅, `inspectElement` ⚠ (нет); `kit: null` |
-| [`docs/audit/bestiary/`](../audit/bestiary/workshop.manifest.json) | бестиарий антипаттернов | `audit`+`decompose` ✅, `inspectElement` ⚠; `kit: null` до W4; **K25-B** — исключение supply-side: доменный `issueTrap` (T6 «поставщик ловушек»); MUST-стрелка «мастерская заказывает kit» **не** меняется |
+| [`docs/audit/bestiary/`](../audit/bestiary/workshop.manifest.json) | бестиарий антипаттернов | `audit`+`decompose` ✅, `inspectElement` ⚠; `kit: "witcher"` (W4 #950); **K25-B** — исключение supply-side: доменный `issueTrap` (T6 «поставщик ловушек»); MUST-стрелка «мастерская заказывает kit» **не** меняется |
 
 Кандидат-жилец: ~~**процедурная мастерская**~~ — живёт (см. таблицу).
 

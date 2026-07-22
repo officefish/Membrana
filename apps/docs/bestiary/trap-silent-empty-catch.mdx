@@ -1,5 +1,5 @@
 ---
-title: Trap — silent-empty-catch (stub)
+title: Trap — silent-empty-catch
 description: Thin mirror of the silent-empty-catch trap card; truth in traps/.
 ---
 
@@ -11,9 +11,9 @@ Engines **не** копируются сюда — только пути.
 | Поле | Значение (снимок монитора) |
 |------|----------------------------|
 | **id** | `silent-empty-catch` |
-| **status** | `stub` |
+| **status** | `kit-ready` |
 | **targets** | класс `silent` · шаблон `docs/audit/bestiary/antipatterns/silent.md` |
-| **kitPin** | `null` (жилец кита / aim «Ведьмак» = W4) |
+| **kitPin** | `kits/witcher` · human-label «Ведьмак» |
 
 ## Что ловит
 
@@ -29,10 +29,12 @@ Engines **не** копируются сюда — только пути.
 |------|------|
 | Trap-Doc / Issue-Trap | `docs/audit/bestiary/AGENT_PROMPT.md` |
 | Детектор | `scripts/lib/lens-bestiary.mjs` → `detectSilent` |
+| Root кита | `scripts/bestiary-audit.mjs` (`yarn bestiary:audit`) |
+| Кит | `kits/witcher/` |
 | Карточка (истина) | `docs/audit/bestiary/traps/silent-empty-catch.md` |
 | Индекс | `docs/audit/bestiary/registry/TRAPS_LIST.md` |
 
 Цепочка: `antipatterns/silent.md` → **эта ловушка** → гранула в `CATCH_LIST`.
-Kit (W4) пинит prompts+scripts ловушки, **не** файл шаблона.
+Kit `witcher` пинит prompts+scripts ловушки, **не** файл шаблона.
 
 Обзор слоёв: [Bestiary workshop — overview](/bestiary/overview).
