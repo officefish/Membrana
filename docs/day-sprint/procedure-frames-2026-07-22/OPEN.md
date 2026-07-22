@@ -5,13 +5,14 @@
 | **Sprint** | `procedure-frames-2026-07-22` |
 | **Registry epic** | `procedure-frames` · [#900](https://github.com/officefish/Membrana/issues/900) |
 | **Kind** | day-sprint (исполнение заседания) |
-| **Status** | **open** · also open в `DAY_SPRINT_ACTIVE` (focus: bestiary-workshop) |
+| **Status** | **closed** · [`CLOSURE.md`](./CLOSURE.md) |
 | **Started** | 2026-07-22 |
+| **Closed** | 2026-07-22 |
 | **Meeting (контракт)** | [`docs/meeting/procedure-frames/`](../../meeting/procedure-frames/) · EPIC ратифицирован |
 | **Meeting (раскладка утра)** | [`docs/meeting/ritual-day-frames/`](../../meeting/ritual-day-frames/) · EPIC ратифицирован · [#939](https://github.com/officefish/Membrana/pull/939) |
-| **Lead** | ozhegov · support dynin |
+| **Lead** | ozhegov · support dynin · F5 vesnin |
 | **Промпт** | [`PROCEDURE_FRAMES_PROMPT.md`](../../prompts/PROCEDURE_FRAMES_PROMPT.md) |
-| **Фаза сейчас** | **F4** · ветка `feat/pf-f4-pattern` · lead ozhegov |
+| **Фаза сейчас** | **F5 done** · см. CLOSURE |
 
 ---
 
@@ -23,8 +24,8 @@
 | **F1** | `pf-f1-frames-contract` | [#927](https://github.com/officefish/Membrana/issues/927) | ozhegov | **done** · [#944](https://github.com/officefish/Membrana/pull/944) |
 | **F2** | `pf-f2-segment-pin` | [#928](https://github.com/officefish/Membrana/issues/928) | dynin | **done** · [#953](https://github.com/officefish/Membrana/pull/953) |
 | **F3** | `pf-f3-morning-wiring` | [#929](https://github.com/officefish/Membrana/issues/929) | ozhegov | **done** · [#955](https://github.com/officefish/Membrana/pull/955) |
-| **F4** | `pf-f4-pattern` | [#930](https://github.com/officefish/Membrana/issues/930) | ozhegov | **in progress** |
-| **F5** | `pf-f5-closure` | [#931](https://github.com/officefish/Membrana/issues/931) | vesnin | open |
+| **F4** | `pf-f4-pattern` | [#930](https://github.com/officefish/Membrana/issues/930) | ozhegov | **done** · [#960](https://github.com/officefish/Membrana/pull/960) |
+| **F5** | `pf-f5-closure` | [#931](https://github.com/officefish/Membrana/issues/931) | vesnin | **done** · *(этот PR)* |
 
 ## Gate (к F5)
 
@@ -33,7 +34,7 @@
 - [x] `auditPins` + тесты 4 исходов; кит на том же ядре (F2)
 - [x] `morning-wiring` в ritual-day + 3 двери + зов на старте ритуала (**носитель preflight** — вердикт ritual-day-frames M2)
 - [x] Паттерны PINNED_* / GROUP_* уточнены (`copies=1`)
-- [ ] Приёмка #900 · LGTM · archive
+- [x] Приёмка #900 · LGTM · archive
 
 ## Binding из ritual-day-frames (не переоткрывать)
 
@@ -43,4 +44,4 @@
 
 ## Хвост №2 (вне критического пути)
 
-CI анти-дубль оговорки GROUP_CONTAINERIZATION → отдельная карточка **dynin** или deferred в CLOSURE.
+CI анти-дубль оговорки GROUP_CONTAINERIZATION → отдельная карточка **dynin** или deferred в CLOSURE — **deferred** (см. CLOSURE).
