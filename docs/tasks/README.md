@@ -18,12 +18,9 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `tooling-atlas` | Атлас контейнеров — контейнер контейнеров + мастерская + mintlify | M | [`TOOLING_ATLAS_PROMPT.md`](../prompts/TOOLING_ATLAS_PROMPT.md) | — |
 | `assets-container` | Эпик: контейнер имущества — три яруса (git/сервер-БД/Drive), набор от чека, подтверждение датой-сегодня | L | [`ASSETS_CONTAINER_PROMPT.md`](../prompts/ASSETS_CONTAINER_PROMPT.md) | [#959](https://github.com/officefish/Membrana/issues/959) |
 | `bw-w5-closure` | W5: CLOSURE bestiary-workshop | M | [`BW_W5_CLOSURE_PROMPT.md`](../prompts/BW_W5_CLOSURE_PROMPT.md) | [#951](https://github.com/officefish/Membrana/issues/951) |
 | `bw-w4-trap-kit` | W4: trap kit resident + Witcher aim example | M | [`BW_W4_TRAP_KIT_PROMPT.md`](../prompts/BW_W4_TRAP_KIT_PROMPT.md) | [#950](https://github.com/officefish/Membrana/issues/950) |
-| `bw-w3-mintlify` | W3: thin Mintlify mirror over git bus | M | [`BW_W3_MINTLIFY_PROMPT.md`](../prompts/BW_W3_MINTLIFY_PROMPT.md) | [#949](https://github.com/officefish/Membrana/issues/949) |
-| `bw-w2-registries` | W2: catch/trap registries + antipattern stub | M | [`BW_W2_REGISTRIES_PROMPT.md`](../prompts/BW_W2_REGISTRIES_PROMPT.md) | [#948](https://github.com/officefish/Membrana/issues/948) |
 | `bestiary-workshop` | Epic: bestiary workshop — trap supplier over closed home | L | [`BESTIARY_WORKSHOP_PROMPT.md`](../prompts/BESTIARY_WORKSHOP_PROMPT.md) | [#945](https://github.com/officefish/Membrana/issues/945) |
 | `bridge-room` | Спринт «мостик»: явное открытие/закрытие комнаты капитана, попугай-техдолг, конспекты фреймом в репо | M | [`BRIDGE_ROOM_PROMPT.md`](../prompts/BRIDGE_ROOM_PROMPT.md) | [#936](https://github.com/officefish/Membrana/issues/936) |
 | `precedent-container` | Контейнер прецедентов + мастерская к нему | M | [`PRECEDENT_CONTAINER_PROMPT.md`](../prompts/PRECEDENT_CONTAINER_PROMPT.md) | — |
@@ -33,9 +30,6 @@
 | `ship-review-tooth` | Шип-гейт: мердж только через ревью-вердикт по HEAD SHA + required check (стена от обхода ревью) | M | [`SHIP_REVIEW_TOOTH_PROMPT.md`](../prompts/SHIP_REVIEW_TOOTH_PROMPT.md) | [#924](https://github.com/officefish/Membrana/issues/924) |
 | `angelina-codex-no-repo-writes` | Кодекс Ангелины: запрет пушить/редактировать, право только на конспект, репо — по явному разрешению | S | [`ANGELINA_CODEX_NO_REPO_WRITES_PROMPT.md`](../prompts/ANGELINA_CODEX_NO_REPO_WRITES_PROMPT.md) | [#922](https://github.com/officefish/Membrana/issues/922) |
 | `swallow-format-frame-fix` | Фрейм форматирования ласточки: полноценное зеркало 5 блоков вместо телеграфных строк (Ожегов) | S | [`SWALLOW_FORMAT_FRAME_FIX_PROMPT.md`](../prompts/SWALLOW_FORMAT_FRAME_FIX_PROMPT.md) | [#918](https://github.com/officefish/Membrana/issues/918) |
-| `pf-f5-closure` | F5: CLOSURE + archive procedure-frames | S | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#931](https://github.com/officefish/Membrana/issues/931) |
-| `pf-f4-pattern` | F4: уточнение PINNED_* / GROUP_* под segmentHash (m4) | S | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#930](https://github.com/officefish/Membrana/issues/930) |
-| `procedure-frames` | Спринт «фреймы»: frames[] в манифесте процедур + пин отрезков + первый фрейм «подводка утра» (Ожегов) | L | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#900](https://github.com/officefish/Membrana/issues/900) |
 | `code-review-lead-refactor` | Рефакторинг код-ревью: ведущий из пяти + память ведущего + бестиарий антипаттернов (T3/T4/T5) | M | [`CODE_REVIEW_LEAD_REFACTOR_PROMPT.md`](../prompts/CODE_REVIEW_LEAD_REFACTOR_PROMPT.md) | — |
 | `morning-report-completion` | Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям) | L | [`MORNING_REPORT_COMPLETION_PROMPT.md`](../prompts/MORNING_REPORT_COMPLETION_PROMPT.md) | [#788](https://github.com/officefish/Membrana/issues/788) |
 | `sbc-s4-wiring` | S4: провода AGENTS/skills/DoD для контейнера scripts/ | S | [`SBC_S4_WIRING_PROMPT.md`](../prompts/SBC_S4_WIRING_PROMPT.md) | [#796](https://github.com/officefish/Membrana/issues/796) |
@@ -225,8 +219,17 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `atf4-git-editor-rebase` | ATF4-4: GIT_EDITOR для rebase --continue | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #972 (Issue открыт) | [карточка](./archive/atf4-git-editor-rebase.md) |
+| `atf4-pr-body-file` | ATF4-3: gh pr create через body-file (PS) | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #971 (Issue открыт) | [карточка](./archive/atf4-pr-body-file.md) |
+| `atf4-active-also-open` | ATF4-2: DAY_SPRINT_ACTIVE Also open канон | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #970 (Issue открыт) | [карточка](./archive/atf4-active-also-open.md) |
+| `atf4-pr-ship-conflicting` | ATF4-1: pr:ship STOP при CONFLICTING/DIRTY | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #969 (Issue открыт) | [карточка](./archive/atf4-pr-ship-conflicting.md) |
+| `agent-tooling-friction-4` | agent-tooling-friction-4: 4 фикса трения ship/rebase (PS) | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #968 (Issue открыт) | [карточка](./archive/agent-tooling-friction-4.md) |
+| `bw-w3-mintlify` | W3: thin Mintlify mirror over git bus | 2026-07-22 | [`BW_W3_MINTLIFY_PROMPT.md`](../prompts/BW_W3_MINTLIFY_PROMPT.md) | #949 (Issue открыт) | [карточка](./archive/bw-w3-mintlify.md) |
+| `bw-w2-registries` | W2: catch/trap registries + antipattern stub | 2026-07-22 | [`BW_W2_REGISTRIES_PROMPT.md`](../prompts/BW_W2_REGISTRIES_PROMPT.md) | #948 (Issue открыт) | [карточка](./archive/bw-w2-registries.md) |
 | `bw-w1-workshop` | W1: workshop manifest + HOME_WORKSHOP seam | 2026-07-22 | [`BW_W1_WORKSHOP_PROMPT.md`](../prompts/BW_W1_WORKSHOP_PROMPT.md) | #947 (Issue открыт) | [карточка](./archive/bw-w1-workshop.md) |
 | `bw-w0-brief` | W0: brief bestiary-workshop open/register | 2026-07-22 | [`BW_W0_BRIEF_PROMPT.md`](../prompts/BW_W0_BRIEF_PROMPT.md) | #946 (Issue открыт) | [карточка](./archive/bw-w0-brief.md) |
+| `pf-f5-closure` | F5: CLOSURE + archive procedure-frames | 2026-07-22 | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | #931 (Issue открыт) | [карточка](./archive/pf-f5-closure.md) |
+| `pf-f4-pattern` | F4: уточнение PINNED_* / GROUP_* под segmentHash (m4) | 2026-07-22 | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | #930 (Issue открыт) | [карточка](./archive/pf-f4-pattern.md) |
 | `pf-f3-morning-wiring` | F3: morning-wiring в ritual-day + 3 двери + гейт утра (m3) | 2026-07-22 | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | #929 (Issue открыт) | [карточка](./archive/pf-f3-morning-wiring.md) |
 | `pf-f2-segment-pin` | F2: ядро auditPins + segmentHash; кит на том же ядре (m2) | 2026-07-22 | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | #928 (Issue открыт) | [карточка](./archive/pf-f2-segment-pin.md) |
 | `pf-f1-frames-contract` | F1: frames[] optional в validateProcedure (m1) | 2026-07-22 | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | #927 (Issue открыт) | [карточка](./archive/pf-f1-frames-contract.md) |
@@ -238,6 +241,7 @@
 | `kcm-c1-prompt` | C1: CONTAINERIZATION_MASTER_PROMPT + cold-start порядок | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #906 | [карточка](./archive/kcm-c1-prompt.md) |
 | `kcm-c0-brief` | C0: бриф kits-containerization-master, границы vs procedure-frames | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #905 | [карточка](./archive/kcm-c0-brief.md) |
 | `kits-containerization-master` | Эпик: кит Мастера контейнеризации (третий жилец kits/) | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #904 | [карточка](./archive/kits-containerization-master.md) |
+| `procedure-frames` | Спринт «фреймы»: frames[] в манифесте процедур + пин отрезков + первый фрейм «подводка утра» (Ожегов) | 2026-07-22 | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | #900 (Issue открыт) | [карточка](./archive/procedure-frames.md) |
 | `bc-b5-closure` | B5: CLOSURE bestiary-container | 2026-07-22 | [`BC_B5_CLOSURE_PROMPT.md`](../prompts/BC_B5_CLOSURE_PROMPT.md) | #884 (Issue открыт) | [карточка](./archive/bc-b5-closure.md) |
 | `bc-b4-weekly` | B4: weekly run + anti-silent auditor | 2026-07-22 | [`BC_B4_WEEKLY_PROMPT.md`](../prompts/BC_B4_WEEKLY_PROMPT.md) | #883 (Issue открыт) | [карточка](./archive/bc-b4-weekly.md) |
 | `bc-b3-missing-beasts` | B3: echo / goal-displacement or defer | 2026-07-22 | [`BC_B3_MISSING_BEASTS_PROMPT.md`](../prompts/BC_B3_MISSING_BEASTS_PROMPT.md) | #882 (Issue открыт) | [карточка](./archive/bc-b3-missing-beasts.md) |
