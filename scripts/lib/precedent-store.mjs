@@ -22,16 +22,30 @@ const ACTION_STATUSES = ['open', 'done', 'wontfix'];
 
 const isNonEmptyString = (v) => typeof v === 'string' && v.trim() !== '';
 
-/** Прочитать закрытый перечень классов. @returns {Set<string>} */
+/**
+ * Прочитать закрытый перечень классов. Отсутствие/битость classes.json — ОШИБКА,
+ * а не пустой enum: иначе гейт класса тихо отключается (объявленное ≠ работающее).
+ * @returns {Set<string>}
+ * @throws Error если classes.json нет или не парсится
+ */
 export function loadClassKeys(repoRoot) {
   const p = join(repoRoot, 'docs', 'precedents', 'classes.json');
-  if (!existsSync(p)) return new Set();
+  if (!existsSync(p)) throw new Error('docs/precedents/classes.json отсутствует (enum классов обязателен)');
+  let parsed;
   try {
-    const { classes } = JSON.parse(readFileSync(p, 'utf8'));
-    return new Set((classes ?? []).map((c) => c.key));
+    parsed = JSON.parse(readFileSync(p, 'utf8'));
   } catch {
-    return new Set();
+    throw new Error('docs/precedents/classes.json — битый JSON');
   }
+  return new Set((parsed.classes ?? []).map((c) => c.key));
+}
+
+/** Календарная валидность YYYY-MM-DD (2026-13-45 — не дата). */
+function isCalendarDate(s) {
+  if (typeof s !== 'string' || !DATE_RE.test(s)) return false;
+  const [y, m, d] = s.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
 }
 
 /**
@@ -71,12 +85,12 @@ export function validatePrecedentMeta(meta, classKeys, fileBase) {
   if (keys.includes('id') && fileBase && meta.id !== fileBase) {
     problems.push(`id «${meta.id}» ≠ имени файла «${fileBase}»`);
   }
-  if (keys.includes('date') && (typeof meta.date !== 'string' || !DATE_RE.test(meta.date))) {
-    problems.push('date — не YYYY-MM-DD');
+  if (keys.includes('date') && !isCalendarDate(meta.date)) {
+    problems.push('date — не календарная YYYY-MM-DD');
   }
   if (keys.includes('class')) {
     if (!isNonEmptyString(meta.class)) problems.push('class — не непустая строка');
-    else if (classKeys.size > 0 && !classKeys.has(meta.class)) {
+    else if (!classKeys.has(meta.class)) {
       problems.push(`class «${meta.class}» вне закрытого перечня classes.json`);
     }
   }
@@ -182,11 +196,12 @@ export function renderSnapshot(precedents, { date, sha } = {}) {
   lines.push('');
   lines.push('| Дата | Класс | Прецедент | Корень |');
   lines.push('|------|-------|-----------|--------|');
+  const cell = (v) => String(v ?? '—').replace(/[|\r\n]+/gu, ' ').trim();
   for (const p of precedents) {
     const m = p.meta ?? {};
     const root = isNonEmptyString(m.canonicalCause) ? m.canonicalCause : (m.rootCause ?? '—');
     const flag = p.problems.length ? ' ✗' : '';
-    lines.push(`| ${m.date ?? '—'} | ${m.class ?? '—'} | [${p.id}](../${p.file})${flag} | ${String(root).replace(/\|/gu, '/').slice(0, 80)} |`);
+    lines.push(`| ${cell(m.date)} | ${cell(m.class)} | [${cell(p.id)}](../${p.file})${flag} | ${cell(root).slice(0, 80)} |`);
   }
   lines.push('');
   return lines.join('\n');

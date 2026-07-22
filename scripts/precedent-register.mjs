@@ -23,7 +23,10 @@ const precedentsDir = join(repoRoot, 'docs', 'precedents');
 
 function flag(name) {
   const i = process.argv.indexOf(`--${name}`);
-  return i >= 0 ? (process.argv[i + 1] ?? '') : null;
+  if (i < 0) return null;
+  const v = process.argv[i + 1];
+  // Следующий токен-флаг (или его нет) — значение не задано, а не «--другойфлаг».
+  return v && !v.startsWith('--') ? v : null;
 }
 const has = (name) => process.argv.includes(`--${name}`);
 
@@ -40,7 +43,9 @@ function headSha() {
 
 /** Пересобрать снимок-реестр. @returns {number} число дефектных записей */
 function rebuild() {
-  const precedents = listPrecedents(repoRoot);
+  let precedents;
+  try { precedents = listPrecedents(repoRoot); }
+  catch (e) { console.error(`precedent:register: инструментальная ошибка — ${e.message}`); process.exit(2); }
   const dir = join(precedentsDir, 'registry');
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
   const snap = renderSnapshot(precedents, { date: today(), sha: headSha() });
@@ -52,7 +57,9 @@ function rebuild() {
 
 /** Проверить все записи. @returns {number} число дефектных */
 function validate() {
-  const precedents = listPrecedents(repoRoot);
+  let precedents;
+  try { precedents = listPrecedents(repoRoot); }
+  catch (e) { console.error(`precedent:register: инструментальная ошибка — ${e.message}`); process.exit(2); }
   let bad = 0;
   console.log(`precedent:register --validate · записей: ${precedents.length}\n`);
   for (const p of precedents) {
@@ -68,10 +75,12 @@ function validate() {
 }
 
 function scaffoldNew(slug) {
-  const classKeys = loadClassKeys(repoRoot);
+  let classKeys;
+  try { classKeys = loadClassKeys(repoRoot); }
+  catch (e) { console.error(`precedent:register: инструментальная ошибка — ${e.message}`); process.exit(2); }
   const klass = flag('class');
   if (!klass) { console.error('precedent:register --new требует --class <c> (см. classes.json)'); process.exit(2); }
-  if (classKeys.size > 0 && !classKeys.has(klass)) {
+  if (!classKeys.has(klass)) {
     console.error(`precedent:register: class «${klass}» вне classes.json (${[...classKeys].join(', ')})`); process.exit(2);
   }
   const date = today();
@@ -101,8 +110,7 @@ if (has('new')) {
   const slug = flag('new');
   if (!slug) { console.error('precedent:register --new требует <slug>'); process.exit(2); }
   scaffoldNew(slug);
-  rebuild();
-  process.exit(0);
+  process.exit(rebuild() > 0 ? 1 : 0);
 }
 if (has('rebuild')) { process.exit(rebuild() > 0 ? 1 : 0); }
 // по умолчанию — validate (зуб)

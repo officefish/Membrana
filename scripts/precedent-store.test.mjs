@@ -1,8 +1,13 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { after, test } from 'node:test';
 
 import {
   countByClass,
+  listPrecedents,
+  loadClassKeys,
   parsePrecedent,
   recurrenceRate,
   renderSnapshot,
@@ -61,6 +66,10 @@ test('date не ISO → дефект', () => {
   assert.ok(validatePrecedentMeta(meta({ date: '22.07.2026' }), CLASSES, '2026-07-22-x').some((x) => x.includes('YYYY-MM-DD')));
 });
 
+test('date семантически невалидна (2026-13-45) → дефект (finding MAJOR-3)', () => {
+  assert.ok(validatePrecedentMeta(meta({ date: '2026-13-45' }), CLASSES, '2026-07-22-x').some((x) => x.includes('календарная')));
+});
+
 test('лишнее поле → дефект', () => {
   assert.ok(validatePrecedentMeta(meta({ bogus: 1 }), CLASSES, '2026-07-22-x').some((x) => x.includes('лишнее поле bogus')));
 });
@@ -89,6 +98,36 @@ test('recurrenceRate: 3 записи, 2 класса → (3-2)/3', () => {
 
 test('recurrenceRate: пусто → 0', () => {
   assert.equal(recurrenceRate([]), 0);
+});
+
+test('loadClassKeys: битый classes.json → ОШИБКА, не пустой enum (finding MAJOR-2)', () => {
+  const t = mkdtempSync(join(tmpdir(), 'prec-cls-'));
+  after(() => rmSync(t, { recursive: true, force: true }));
+  mkdirSync(join(t, 'docs', 'precedents'), { recursive: true });
+  writeFileSync(join(t, 'docs', 'precedents', 'classes.json'), '{ битый');
+  assert.throws(() => loadClassKeys(t), /битый JSON/);
+});
+
+test('loadClassKeys: отсутствие classes.json → ОШИБКА (enum обязателен)', () => {
+  const t = mkdtempSync(join(tmpdir(), 'prec-nocls-'));
+  after(() => rmSync(t, { recursive: true, force: true }));
+  mkdirSync(join(t, 'docs', 'precedents'), { recursive: true });
+  assert.throws(() => loadClassKeys(t), /отсутствует/);
+});
+
+test('listPrecedents: README пропущен, битый мета не роняет остальные', () => {
+  const t = mkdtempSync(join(tmpdir(), 'prec-list-'));
+  after(() => rmSync(t, { recursive: true, force: true }));
+  const dir = join(t, 'docs', 'precedents');
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, 'classes.json'), JSON.stringify({ classes: [{ key: 'cold-start' }] }));
+  writeFileSync(join(dir, 'README.md'), '# контракт');
+  writeFileSync(join(dir, '2026-07-22-good.md'), `<!-- precedent-meta\n${JSON.stringify(meta({ id: '2026-07-22-good' }))}\n-->`);
+  writeFileSync(join(dir, '2026-07-22-bad.md'), '# без мета');
+  const list = listPrecedents(t);
+  assert.ok(!list.some((p) => p.file === 'README.md'));
+  assert.equal(list.find((p) => p.id === '2026-07-22-good').problems.length, 0);
+  assert.ok(list.find((p) => p.file === '2026-07-22-bad.md').problems.length > 0);
 });
 
 test('renderSnapshot: помечает рецидив и содержит числа', () => {
