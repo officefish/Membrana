@@ -21,7 +21,6 @@
 | `procedure-frames` | Спринт «фреймы»: frames[] в манифесте процедур + пин отрезков + первый фрейм «подводка утра» (Ожегов) | L | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#900](https://github.com/officefish/Membrana/issues/900) |
 | `code-review-lead-refactor` | Рефакторинг код-ревью: ведущий из пяти + память ведущего + бестиарий антипаттернов (T3/T4/T5) | M | [`CODE_REVIEW_LEAD_REFACTOR_PROMPT.md`](../prompts/CODE_REVIEW_LEAD_REFACTOR_PROMPT.md) | — |
 | `bc-b5-closure` | B5: CLOSURE bestiary-container | M | [`BC_B5_CLOSURE_PROMPT.md`](../prompts/BC_B5_CLOSURE_PROMPT.md) | [#884](https://github.com/officefish/Membrana/issues/884) |
-| `bc-b4-weekly` | B4: weekly run + anti-silent auditor | M | [`BC_B4_WEEKLY_PROMPT.md`](../prompts/BC_B4_WEEKLY_PROMPT.md) | [#883](https://github.com/officefish/Membrana/issues/883) |
 | `bestiary-container` | Epic: bestiary antipatterns as container | L | [`BESTIARY_CONTAINER_PROMPT.md`](../prompts/BESTIARY_CONTAINER_PROMPT.md) | [#878](https://github.com/officefish/Membrana/issues/878) |
 | `morning-report-completion` | Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям) | L | [`MORNING_REPORT_COMPLETION_PROMPT.md`](../prompts/MORNING_REPORT_COMPLETION_PROMPT.md) | [#788](https://github.com/officefish/Membrana/issues/788) |
 | `sbc-s4-wiring` | S4: провода AGENTS/skills/DoD для контейнера scripts/ | S | [`SBC_S4_WIRING_PROMPT.md`](../prompts/SBC_S4_WIRING_PROMPT.md) | [#796](https://github.com/officefish/Membrana/issues/796) |
@@ -218,6 +217,7 @@
 | `kcm-c1-prompt` | C1: CONTAINERIZATION_MASTER_PROMPT + cold-start порядок | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #906 | [карточка](./archive/kcm-c1-prompt.md) |
 | `kcm-c0-brief` | C0: бриф kits-containerization-master, границы vs procedure-frames | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #905 | [карточка](./archive/kcm-c0-brief.md) |
 | `kits-containerization-master` | Эпик: кит Мастера контейнеризации (третий жилец kits/) | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #904 | [карточка](./archive/kits-containerization-master.md) |
+| `bc-b4-weekly` | B4: weekly run + anti-silent auditor | 2026-07-22 | [`BC_B4_WEEKLY_PROMPT.md`](../prompts/BC_B4_WEEKLY_PROMPT.md) | #883 (Issue открыт) | [карточка](./archive/bc-b4-weekly.md) |
 | `bc-b3-missing-beasts` | B3: echo / goal-displacement or defer | 2026-07-22 | [`BC_B3_MISSING_BEASTS_PROMPT.md`](../prompts/BC_B3_MISSING_BEASTS_PROMPT.md) | #882 (Issue открыт) | [карточка](./archive/bc-b3-missing-beasts.md) |
 | `bc-b2-specimens` | B2: specimens + bestiary:audit + tests | 2026-07-21 | [`BC_B2_SPECIMENS_PROMPT.md`](../prompts/BC_B2_SPECIMENS_PROMPT.md) | #881 (Issue открыт) | [карточка](./archive/bc-b2-specimens.md) |
 | `bc-b1-home` | B1: home docs/audit/bestiary/ | 2026-07-21 | [`BC_B1_HOME_PROMPT.md`](../prompts/BC_B1_HOME_PROMPT.md) | #880 (Issue открыт) | [карточка](./archive/bc-b1-home.md) |
