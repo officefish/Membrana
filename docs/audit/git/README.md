@@ -4,6 +4,10 @@
 
 Канонический операторский промпт: [`AGENT_PROMPT.md`](./AGENT_PROMPT.md).
 
+**Мастерская дома** ([`HOME_WORKSHOP`](../../patterns/HOME_WORKSHOP.md), ось операций):
+[`workshop.manifest.json`](./workshop.manifest.json) — осмотр `repo:branches`,
+декомпозиция `repo:branches:decompose`; `inspectElement` — ⚠ пока нет; `kit: null`.
+
 ### Движок (server-first)
 
 | | |
