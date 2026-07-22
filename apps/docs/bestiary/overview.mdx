@@ -1,0 +1,41 @@
+---
+title: Bestiary workshop — overview
+description: Thin Mintlify mirror of the antipattern bestiary house; git is truth.
+---
+
+# Мастерская бестиария — обзор
+
+**Монитор (это приложение)** зеркалит дом в git. Дом **не** переезжает сюда.
+
+| Слой | Смысл | Где истина (git) |
+|------|--------|------------------|
+| **Класс** | `defectClass` линзы | `docs/audit/bestiary/registry/BESTIARY_LIST.md` · engines `scripts/lib/lens-bestiary.mjs` |
+| **Шаблон** | абстракт антипаттерна | `docs/audit/bestiary/antipatterns/<id>.md` |
+| **Ловушка** | prompts + pure scripts | `docs/audit/bestiary/traps/` · индекс `registry/TRAPS_LIST.md` |
+| **Улов** | пойманная гранула (≠ specimen) | `docs/audit/bestiary/registry/CATCH_LIST.md` |
+| **Specimen** | фикстура forcing function | `docs/audit/bestiary/specimens/<class>/` |
+
+Цепочка: шаблон → ловушка → улов. Specimen — отдельно (не гранула улова).
+
+## Лемма: git = истина · Mintlify = монитор
+
+- Канон и правки — только в `docs/audit/bestiary/` (и engines снаружи дома).
+- Эти страницы **могут отставать**; сверка — по git-путям (и SHA при необходимости).
+- **Глубина W3:** thin mirror — overview + зеркала примеров улова/ловушки.
+  Полный pin-манифест инструкций (`PINNED_SUBGRAPH` как у #823 F4) **не** в этом спринте;
+  расширение каталога классов / cookbooks — follow-up.
+
+## Зеркала (примеры)
+
+| Страница | Git-источник |
+|----------|----------------|
+| [Улов `catch-silent-swallow-specimen`](/bestiary/catch-silent-swallow) | `docs/audit/bestiary/registry/CATCH_LIST.md` |
+| [Ловушка `silent-empty-catch`](/bestiary/trap-silent-empty-catch) | `docs/audit/bestiary/traps/silent-empty-catch.md` |
+
+Дом и операторский вход: `docs/audit/bestiary/README.md` · `AGENT_PROMPT.md`.
+Мастерская: `workshop.manifest.json` (K25-B · `issueTrap`; `kit: null` до W4).
+
+## Вне зеркала
+
+Engines, детекторы, автофикс (#533), жилец кита / aim «Ведьмак» (W4), sync внешнего
+mintlify-community — не здесь.

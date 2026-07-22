@@ -49,6 +49,14 @@
       ]
     },
     {
+      "group": "Bestiary — workshop",
+      "pages": [
+        "bestiary/overview",
+        "bestiary/catch-silent-swallow",
+        "bestiary/trap-silent-empty-catch"
+      ]
+    },
+    {
       "group": "Nodes — index",
       "pages": ["device-board/nodes/index"]
     },

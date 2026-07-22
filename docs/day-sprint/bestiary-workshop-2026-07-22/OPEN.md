@@ -12,7 +12,7 @@
 | **Branch (W0)** | `feat/bw-w0-brief` → merged [#952](https://github.com/officefish/Membrana/pull/952) |
 | **Branch (W1)** | `feat/bw-w1-workshop` → merged [#954](https://github.com/officefish/Membrana/pull/954) · `496ecb41` |
 | **Branch (W2)** | `feat/bw-w2-registries` → merged [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` |
-| **Branch (W3)** | _(указатель; ветка не открыта)_ |
+| **Branch (W3)** | `feat/bw-w3-mintlify` · in progress |
 | **Seed** | шторм [`storm-bestiary-workshop-2026-07-22`](../../storm/storm-bestiary-workshop-2026-07-22/REPORT.md) · T1–T18 |
 | **Дом** | [`docs/audit/bestiary/`](../../audit/bestiary/) (#878 CLOSED) |
 | **Паттерны** | [`HOME_WORKSHOP`](../../patterns/HOME_WORKSHOP.md) · [`PINNED_SUBGRAPH_VERSIONING`](../../patterns/PINNED_SUBGRAPH_VERSIONING.md) · [`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md) |
@@ -50,7 +50,7 @@
 | **W0** | `bw-w0-brief` | [#946](https://github.com/officefish/Membrana/issues/946) | vesnin | [`BW_W0_BRIEF_PROMPT.md`](../../prompts/BW_W0_BRIEF_PROMPT.md) | Реестр+Issues+OPEN open+ACTIVE; границы T* | **done** · [#952](https://github.com/officefish/Membrana/pull/952) |
 | **W1** | `bw-w1-workshop` | [#947](https://github.com/officefish/Membrana/issues/947) | ozhegov | [`BW_W1_WORKSHOP_PROMPT.md`](../../prompts/BW_W1_WORKSHOP_PROMPT.md) | `workshop.manifest.json` + шов HOME_WORKSHOP (A\|B) | **done** · [#954](https://github.com/officefish/Membrana/pull/954) · `496ecb41` |
 | **W2** | `bw-w2-registries` | [#948](https://github.com/officefish/Membrana/issues/948) | ozhegov | [`BW_W2_REGISTRIES_PROMPT.md`](../../prompts/BW_W2_REGISTRIES_PROMPT.md) | Форматы улова/ловушки + stub шаблона антипаттерна | **done** · [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` |
-| **W3** | `bw-w3-mintlify` | [#949](https://github.com/officefish/Membrana/issues/949) | ozhegov | [`BW_W3_MINTLIFY_PROMPT.md`](../../prompts/BW_W3_MINTLIFY_PROMPT.md) | Thin Mintlify-зеркало + провод из дома | **next** (указатель; код не стартован) |
+| **W3** | `bw-w3-mintlify` | [#949](https://github.com/officefish/Membrana/issues/949) | ozhegov | [`BW_W3_MINTLIFY_PROMPT.md`](../../prompts/BW_W3_MINTLIFY_PROMPT.md) | Thin Mintlify-зеркало + провод из дома | **in progress** · ветка `feat/bw-w3-mintlify` |
 | **W4** | `bw-w4-trap-kit` | [#950](https://github.com/officefish/Membrana/issues/950) | dynin | [`BW_W4_TRAP_KIT_PROMPT.md`](../../prompts/BW_W4_TRAP_KIT_PROMPT.md) | Жилец кита, audit green, aim «Ведьмак» | pending |
 | **W5** | `bw-w5-closure` | [#951](https://github.com/officefish/Membrana/issues/951) | vesnin | [`BW_W5_CLOSURE_PROMPT.md`](../../prompts/BW_W5_CLOSURE_PROMPT.md) | CLOSURE + ACTIVE cleared + archive | pending |
 
@@ -70,7 +70,7 @@
 | ~~K25~~ | ~~Шов T6 ↔ HOME_WORKSHOP: правка паттерна **или** исключение~~ | **закрыт W1: вариант B** (исключение supply-side + `issueTrap`; MUST kit-demand не тронут) |
 | — | Имя жильца кита (`witcher` / иное) | W4 |
 | ~~—~~ | ~~Точные пути CATCH/TRAPS под домом~~ | **принято W2** (LGTM): `registry/CATCH_LIST.md` · `traps/` + `registry/TRAPS_LIST.md` · `antipatterns/<id>.md` |
-| — | Глубина Mintlify (thin vs pin-манифест инструкций) | W3 |
+| ~~—~~ | ~~Глубина Mintlify (thin vs pin-манифест инструкций)~~ | **закрыт W3: thin mirror** (overview + ≥1 улов + ≥1 ловушка; pin-манифест как #823 F4 — out of sprint) |
 
 ---
 
@@ -98,3 +98,10 @@
 - [x] ≥1 stub шаблона антипаттерна (`antipatterns/silent.md`)
 - [x] README + AGENT_PROMPT (Inventory-Catch / Trap-Doc + HARD GATE specimen)
 - [x] LGTM ozhegov (owner ok) → merge W2 [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` → указатель W3 #949
+
+## Gate checklist (W3)
+
+- [ ] ≥2 страницы зеркала в `apps/docs/bestiary/` (overview + улов/ловушка)
+- [ ] Навигация `docs.json` группа `Bestiary — workshop` + провод из README дома
+- [ ] Лемма «git = истина / Mintlify = монитор» + depth = **thin mirror** (не pin-манифест)
+- [ ] LGTM ozhegov (owner ok) → merge W3 → указатель W4 #950

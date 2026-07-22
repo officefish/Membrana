@@ -11,6 +11,25 @@
 
 Канонический операторский промпт: [`AGENT_PROMPT.md`](./AGENT_PROMPT.md).
 
+### Монитор → Mintlify (thin mirror, W3)
+
+| | |
+|---|---|
+| **Истина** | **git** — этот дом (`docs/audit/bestiary/`) + engines снаружи |
+| **Монитор** | Mintlify · [`apps/docs/bestiary/`](../../../apps/docs/bestiary/) · группа `Bestiary — workshop` в [`docs.json`](../../../apps/docs/docs.json) |
+| **Глубина** | **thin mirror** — overview + примеры улова/ловушки; **не** pin-манифест инструкций (#823 F4) в этом спринте |
+| **Лемма** | Mintlify может отставать; сверка по git-путям (SHA при необходимости). Дом не переезжает. |
+
+Страницы монитора (один клик из дома):
+
+| Страница | Путь |
+|----------|------|
+| Overview (слои + лемма) | [`apps/docs/bestiary/overview.mdx`](../../../apps/docs/bestiary/overview.mdx) |
+| Улов `catch-silent-swallow-specimen` | [`apps/docs/bestiary/catch-silent-swallow.mdx`](../../../apps/docs/bestiary/catch-silent-swallow.mdx) |
+| Ловушка `silent-empty-catch` | [`apps/docs/bestiary/trap-silent-empty-catch.mdx`](../../../apps/docs/bestiary/trap-silent-empty-catch.mdx) |
+
+Внешний mintlify-community sync — только с ok владельца (вне W3).
+
 **Мастерская дома** ([`HOME_WORKSHOP`](../../patterns/HOME_WORKSHOP.md), ось операций):
 [`workshop.manifest.json`](./workshop.manifest.json) — осмотр `bestiary:audit`,
 декомпозиция классов тем же CLI (реестр `BESTIARY_LIST`); `inspectElement` — ⚠ пока нет
