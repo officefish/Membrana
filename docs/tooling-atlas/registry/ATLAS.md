@@ -7,7 +7,7 @@
 
 | Контейнер | Семья | Мастерская (глаголы) | kit | Про что |
 |-----------|-------|----------------------|-----|---------|
-| [docs/audit/bestiary](../../../docs/audit/bestiary/README.md) | audit-family | audit · decompose · ~~inspectElement~~ | — | Дом группы **антипаттернов** (звери) и их **бетий** (specimen’ы плохого кода). |
+| [docs/audit/bestiary](../../../docs/audit/bestiary/README.md) | audit-family | audit · decompose · ~~inspectElement~~ | kits/witcher | Дом группы **антипаттернов** (звери) и их **бетий** (specimen’ы плохого кода). |
 | [docs/audit/git](../../../docs/audit/git/README.md) | audit-family | audit · decompose · ~~inspectElement~~ | — | Специальный контейнер, где агент **легально** хранит промпты, реестры веток и глубокие раз |
 | [docs/audit/tasks](../../../docs/audit/tasks/README.md) | audit-family | audit · decompose · ~~inspectElement~~ | — | Специальный контейнер, где агент **легально** хранит промпты, снимки декомпозиции |
 | [docs/precedents](../../../docs/precedents/README.md) | domain | audit · decompose · ~~inspectElement~~ | — | Дом-контейнер прецедентов: единичных задокументированных случаев (симптом → корень → |

@@ -1,0 +1,13 @@
+{
+  "id": "witcher",
+  "leadPersona": "dynin",
+  "roots": [
+    "scripts/bestiary-audit.mjs"
+  ],
+  "pins": {
+    "scripts/bestiary-audit.mjs": "675c46ef616d0f3baf1bbf610874abf925a1f4a6",
+    "scripts/lib/bestiary-audit.mjs": "751958bb3b3bb5cc1c118b4f09f5ce40daedeee4",
+    "scripts/lib/lens-bestiary.mjs": "d1866b1e0684fa9ff5c2f0f9b4e49b5ddcd84392",
+    "scripts/lib/truth-graph.mjs": "54f1c23e0f0449e4adde145aa2d2633030baa22a"
+  }
+}
