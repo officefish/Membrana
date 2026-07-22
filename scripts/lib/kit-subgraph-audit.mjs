@@ -11,22 +11,15 @@
  * Детерминирована; ФС — единственный вход (без сети).
  */
 
-import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { basename, join, relative } from 'node:path';
 
+import { auditPins, gitBlobSha, makeFileResolveSegment } from './audit-pins.mjs';
+
+export { gitBlobSha } from './audit-pins.mjs';
+
 /** Тот же паттерн, что layer-direction (статические import/export from). */
 const IMPORT_RE = /(?:import\s[^'"]*?|import\s*\(\s*|export\s[^'"]*?\sfrom\s*)['"]([^'"]+)['"]/gu;
-
-/**
- * Git blob SHA-1 рабочего дерева (эквивалент `git hash-object`).
- * @param {Buffer|string} content
- * @returns {string} 40 hex
- */
-export function gitBlobSha(content) {
-  const buf = Buffer.isBuffer(content) ? content : Buffer.from(content);
-  return createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
-}
 
 /**
  * Схема MANIFEST кита (K1): четыре поля, лишние — дефект.
@@ -221,6 +214,35 @@ export function auditKit({ repoRoot, kitDir, mode = 'pinned' }) {
     }
   }
 
+  // SHA-сверка через единое ядро auditPins (F2 / T7): L = весь файл.
+  const filePins = Object.entries(pins)
+    .filter(([rel]) => rel in actual)
+    .map(([path, segmentHash]) => ({
+      path,
+      anchor: { kind: /** @type {const} */ ('marker'), ref: '__file__' },
+      segmentHash,
+    }));
+  const pinFindings = auditPins(filePins, makeFileResolveSegment(repoRoot), { pinType: 'file' });
+  for (const pf of pinFindings) {
+    if (pf.status === 'matched') continue;
+    if (pf.status === 'segment-drift') {
+      findings.push({
+        kind: 'sha_drift',
+        path: pf.path,
+        detail: `пин ${pf.expectedHash.slice(0, 8)}… ≠ факт ${(pf.actualHash ?? '').slice(0, 8)}…`,
+        blocking: mode === 'pinned',
+      });
+      continue;
+    }
+    // anchor-lost на file-пине = файл исчез между actual и чтением (редко)
+    findings.push({
+      kind: 'unresolvable',
+      path: pf.path,
+      detail: `auditPins(${pf.status}): ${pf.repairVerb}`,
+      blocking: true,
+    });
+  }
+
   for (const rel of Object.keys(actual)) {
     if (!(rel in pins)) {
       findings.push({
@@ -228,13 +250,6 @@ export function auditKit({ repoRoot, kitDir, mode = 'pinned' }) {
         path: rel,
         detail: 'в замыкании roots, нет в pins',
         blocking: true,
-      });
-    } else if (pins[rel] !== actual[rel]) {
-      findings.push({
-        kind: 'sha_drift',
-        path: rel,
-        detail: `пин ${pins[rel].slice(0, 8)}… ≠ факт ${actual[rel].slice(0, 8)}…`,
-        blocking: mode === 'pinned',
       });
     }
   }

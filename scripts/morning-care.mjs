@@ -21,6 +21,7 @@ import {
 // Занятость ветки соседним worktree уже решена в pr:ship (#476 п.2) — берём оттуда,
 // а не пишем второй раз: разъехались бы, как разъехались бы pr:land и pr:ship.
 import { isBaseHeldElsewhere, otherWorktreeBranches } from './pr-ship.mjs';
+import { runMorningWiringGate } from './lib/morning-wiring.mjs';
 
 function parseArgs(argv) {
   const noAnthropic = argv.includes('--no-anthropic');
@@ -332,6 +333,17 @@ console.log('=== Утренняя профилактика Membrana ===\n');
 
 loadDotEnv(cwd);
 
+// F3 / #929: preflight morning-wiring — missing = STOP до остальной профилактики.
+const wiringCode = runMorningWiringGate(cwd);
+if (wiringCode === 2) {
+  console.log('\n=== итог ===');
+  console.log('[fail] morning-wiring STOP — остальная профилактика не запущена.');
+  process.exitCode = 2;
+} else {
+  await runMorningCareBody({ cwd, noAnthropic });
+}
+
+async function runMorningCareBody({ cwd, noAnthropic }) {
 let failed = false;
 
 console.log(`[инфо] Node ${process.version}`);
@@ -418,3 +430,4 @@ if (failed) {
 } else {
   console.log('[ok]   всё пройдено.');
 }
+} // runMorningCareBody

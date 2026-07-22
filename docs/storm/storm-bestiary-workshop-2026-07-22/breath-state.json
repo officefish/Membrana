@@ -1,0 +1,22 @@
+{
+  "refHash": "1573445127654702949",
+  "count": 6,
+  "params": {
+    "K0": 1,
+    "Kmin": 1,
+    "c": 1
+  },
+  "lastEvidence": {
+    "breath": true,
+    "d": 6,
+    "kEff": 1,
+    "a": 0
+  },
+  "closed": {
+    "pora": true,
+    "sevenBreaths": false,
+    "fork": "спринт",
+    "ownerWords": "конспект в спринт",
+    "note": "CLOSED by floor «пора»+fork; no new thesis → breath 7 not burned (d=0 close)"
+  }
+}

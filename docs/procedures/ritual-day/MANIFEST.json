@@ -9,5 +9,28 @@
     "docs/precedents/2026-07-21-morning-ritual-live-run-mechanics-pass-value-fail.md",
     "docs/precedents/2026-07-21-morning-ritual-session-report-7f931953-ca19-490e-a919-6ca27a60a8c9.md",
     "docs/precedents/2026-07-22-session-8a0b3861-6e45-41a8-990f-a177dccd3b6b-cold-start-autostart.md"
+  ],
+  "preflight": [
+    {
+      "id": "morning-wiring",
+      "holder": "ozhegov",
+      "pins": [
+        {
+          "path": ".claude/CLAUDE.md",
+          "anchor": { "kind": "marker", "ref": "morning-wiring-claude" },
+          "segmentHash": "c5fe5216d54acabd8ea5601c6bd2b76566174092"
+        },
+        {
+          "path": ".cursor/skills/membrana-developer-rhythm/SKILL.md",
+          "anchor": { "kind": "marker", "ref": "morning-wiring-rhythm" },
+          "segmentHash": "c84f5c53a9fa2002417842bb1328ab782a57dd0e"
+        },
+        {
+          "path": "AGENTS.md",
+          "anchor": { "kind": "marker", "ref": "morning-wiring-agents" },
+          "segmentHash": "7a871ff535e854b617e865b746f6403ee1ab7133"
+        }
+      ]
+    }
   ]
 }
