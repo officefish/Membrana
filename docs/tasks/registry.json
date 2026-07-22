@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "precedent-container",
+      "title": "Контейнер прецедентов + мастерская к нему",
+      "promptPath": "docs/prompts/PRECEDENT_CONTAINER_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Из insight-precedent-container (accepted 22.07, вес 6.6). Предусловие: абзац таксономии прецедент/антипаттерн/урок. Recurrence — детерминированный счётчик, без ML.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "insightId": "insight-precedent-container"
+    },
+    {
       "id": "office-stability-emergency",
       "title": "АВАРИЯ: таймауты office — server-first не выполняется; починка до строительства роутера (T10)",
       "promptPath": "docs/prompts/OFFICE_STABILITY_EMERGENCY_PROMPT.md",
