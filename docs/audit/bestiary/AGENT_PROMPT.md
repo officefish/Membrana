@@ -83,7 +83,7 @@ Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`, `scripts/lib/b
 
 ---
 
-## 5. Классы (as-of B3 / код)
+## 5. Классы (as-of B5 closed / код)
 
 | defectClass | Label | Detector | Specimen |
 |-------------|-------|----------|----------|

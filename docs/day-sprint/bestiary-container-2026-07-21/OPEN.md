@@ -5,17 +5,19 @@
 | **Sprint** | `bestiary-container-2026-07-21` |
 | **Registry epic** | `bestiary-container` · [#878](https://github.com/officefish/Membrana/issues/878) |
 | **Kind** | epic (фазы day-sprint) |
-| **Status** | **open** |
+| **Status** | **closed** · см. [`CLOSURE.md`](./CLOSURE.md) |
 | **Started** | 2026-07-21 |
+| **Closed** | 2026-07-22 |
 | **Size** | L |
 | **Lead epic** | vesnin |
-| **Branch** | `feat/bc-b5-closure` (holder vesnin) |
+| **Branch** | `feat/bc-b5-closure` (фаза B5) |
 | **Insight** | [`insight-weekly-antipattern-audit-bestiary`](../../insights/insight-weekly-antipattern-audit-bestiary/INSIGHT.md) (трек B) |
 
 **Prompt эпика:** [`BESTIARY_CONTAINER_PROMPT.md`](../../prompts/BESTIARY_CONTAINER_PROMPT.md)  
 **Паттерн:** [`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md)  
 **Дом:** [`docs/audit/bestiary/`](../../audit/bestiary/)  
-**Engines:** `scripts/lib/lens-bestiary.mjs` · `scripts/lens-run.mjs` · `yarn bestiary:audit` · `yarn bestiary:weekly`
+**Engines:** `scripts/lib/lens-bestiary.mjs` · `scripts/lens-run.mjs` · `yarn bestiary:audit` · `yarn bestiary:weekly`  
+**CLOSURE:** [`CLOSURE.md`](./CLOSURE.md)
 
 ---
 
@@ -38,7 +40,19 @@
 | **B2** | `bc-b2-specimens` | [#881](https://github.com/officefish/Membrana/issues/881) | dynin | ✅ done · [PR #895](https://github.com/officefish/Membrana/pull/895) |
 | **B3** | `bc-b3-missing-beasts` | [#882](https://github.com/officefish/Membrana/issues/882) | dynin | ✅ done · [PR #898](https://github.com/officefish/Membrana/pull/898) |
 | **B4** | `bc-b4-weekly` | [#883](https://github.com/officefish/Membrana/issues/883) | angelina | ✅ done · [PR #919](https://github.com/officefish/Membrana/pull/919) |
-| **B5** | `bc-b5-closure` | [#884](https://github.com/officefish/Membrana/issues/884) | vesnin | 🔄 in progress · `feat/bc-b5-closure` |
+| **B5** | `bc-b5-closure` | [#884](https://github.com/officefish/Membrana/issues/884) | vesnin | ✅ done · _(this PR)_ · см. [`CLOSURE.md`](./CLOSURE.md) |
+
+---
+
+## Gate checklist (B5)
+
+- [x] [`CLOSURE.md`](./CLOSURE.md) — фазы B0–B5 + PR + matrix aim + handoff + archive notes
+- [x] OPEN → closed; `DAY_SPRINT_ACTIVE` → «Нет активного day-sprint» → этот CLOSURE
+- [x] `yarn bestiary:audit` + `yarn bestiary:weekly` · coverage 5/5 · matrix в CLOSURE
+- [x] `BESTIARY_CONTAINER_PROMPT` / `BC_B5` acceptance; registry notes `bc-b5-closure`
+- [x] `yarn branch:check feat/bc-b5-closure` · holder vesnin
+- [x] LGTM vesnin (owner ok 2026-07-22)
+- [ ] Archive `bc-b5-closure` + эпик — **после merge** (как D4/K5)
 
 ---
 
@@ -81,10 +95,10 @@
 
 ---
 
-## As-is
+## As-is (после B5)
 
-| Есть | Нет / next |
-|------|------------|
-| Контейнер + 5 specimens (echo) + audit | goal-displacement (defer → follow-up) |
+| Есть | Отложено |
+|------|----------|
+| Контейнер + 5 specimens + audit + weekly | `goal-displacement` → `bc-followup-goal-displacement` |
 | Производный BESTIARY_LIST | — |
-| `yarn bestiary:weekly` + analysis/ (B4) | CLOSURE B5 |
+| CLOSURE · ACTIVE cleared | Archive фаз B5 + эпика — после merge |
