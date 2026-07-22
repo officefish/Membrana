@@ -5,7 +5,7 @@
 | Field | Value |
 |-------|-------|
 | Date | 2026-07-22 |
-| Head SHA | c791a3dc |
+| Head SHA | cedfefa3 |
 | Source | yarn bestiary:audit |
 | Engines | `scripts/lib/lens-bestiary.mjs` |
 

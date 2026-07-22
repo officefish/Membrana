@@ -1,0 +1,13 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская задач",
+  "worksOn": "docs/audit/tasks",
+  "kit": null,
+  "verbs": {
+    "audit": "yarn tasks:audit",
+    "decompose": "yarn tasks:decompose",
+    "inspectElement": null,
+    "stackLike": [],
+    "domain": []
+  }
+}
