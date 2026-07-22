@@ -68,6 +68,7 @@ kits/
 |-----|-----------|--------|
 | [`angelina-morning/`](./angelina-morning/) | angelina | ✅ первый жилец (K3 / #818); 13 roots · pins подграф |
 | [`dream-master/`](./dream-master/) | dynin | ✅ второй жилец (D2 / #858); root `dreams.mjs` · ~10 pins |
+| [`containerization-master/`](./containerization-master/) | ozhegov | ✅ третий жилец; 9 roots · ~21 pins · крафт контейнеров |
 
 ## Зубы (по фазам эпика)
 
@@ -78,6 +79,7 @@ kits/
 | Жилец + режимы latest/pinned | K3 | ✅ `kits/angelina-morning/` |
 | `kitVersion` с процедуры утра | K4 | ✅ `ritual-day` → `kits/angelina-morning` |
 | `kitVersion` с процедуры снов | D3 | ✅ `ritual-dreams` → `kits/dream-master` |
+| `kitVersion` с процедуры крафта контейнеров | C3 | ✅ `containerization` → `kits/containerization-master` |
 
 ## Аудит (K2)
 
