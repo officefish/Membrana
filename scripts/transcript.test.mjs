@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { extractUtterances, findUtterances, rawScan } from './lib/transcript.mjs';
@@ -79,6 +79,35 @@ test('findUtterances: промах → пустой массив, указате
   assert.equal(hit.sessionId, 's1');
   assert.equal(hit.uuid, 'u2');
   assert.equal(hit.timestamp, 't2');
+});
+
+test('Cursor agent-transcripts: role=user + user_query + nested jsonl', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'transcript-cursor-'));
+  const session = 'ec290f46-5bd6-4f70-860a-4e069c64c474';
+  const nested = join(dir, session);
+  mkdirSync(nested);
+  writeFileSync(
+    join(nested, `${session}.jsonl`),
+    [
+      rec({
+        role: 'user',
+        message: {
+          content: [
+            {
+              type: 'text',
+              text: '<timestamp>Wednesday, Jul 22, 2026, 7:30 PM (UTC+3)</timestamp>\n<user_query>\nA\n</user_query>',
+            },
+          ],
+        },
+      }),
+      rec({ role: 'assistant', message: { content: [{ type: 'text', text: 'noise A' }] } }),
+    ].join('\n') + '\n',
+  );
+  const [hit] = findUtterances('A', { dir });
+  assert.equal(hit.text, 'A');
+  assert.equal(hit.sessionId, session);
+  assert.equal(hit.uuid, 'cursor-line-1');
+  assert.ok(hit.timestamp);
 });
 
 test('rawScan ловит то, что структурный парс не достал (битый JSON)', () => {
