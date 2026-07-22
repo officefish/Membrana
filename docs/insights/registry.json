@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-20",
+  "updatedAt": "2026-07-22",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -622,6 +622,17 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-20",
+      "tags": []
+    },
+    {
+      "id": "insight-change-routing-office",
+      "title": "Роутинг изменений: сессии без push, заявки-патчи, office-очередь, именные гейты",
+      "status": "reviewed",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 3.4,
+      "createdAt": "2026-07-22",
       "tags": []
     }
   ]

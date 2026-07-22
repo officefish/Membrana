@@ -18,14 +18,11 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `office-stability-emergency` | АВАРИЯ: таймауты office — server-first не выполняется; починка до строительства роутера (T10) | M | [`OFFICE_STABILITY_EMERGENCY_PROMPT.md`](../prompts/OFFICE_STABILITY_EMERGENCY_PROMPT.md) | [#933](https://github.com/officefish/Membrana/issues/933) |
+| `procedural-branch-guard` | Грамматика веток: процедурная ветка — не транспорт; только артефакты процедуры по разрешению (провод Р4 + профиль сессии) | M | [`PROCEDURAL_BRANCH_GUARD_PROMPT.md`](../prompts/PROCEDURAL_BRANCH_GUARD_PROMPT.md) | [#925](https://github.com/officefish/Membrana/issues/925) |
+| `ship-review-tooth` | Шип-гейт: мердж только через ревью-вердикт по HEAD SHA + required check (стена от обхода ревью) | M | [`SHIP_REVIEW_TOOTH_PROMPT.md`](../prompts/SHIP_REVIEW_TOOTH_PROMPT.md) | [#924](https://github.com/officefish/Membrana/issues/924) |
 | `angelina-codex-no-repo-writes` | Кодекс Ангелины: запрет пушить/редактировать, право только на конспект, репо — по явному разрешению | S | [`ANGELINA_CODEX_NO_REPO_WRITES_PROMPT.md`](../prompts/ANGELINA_CODEX_NO_REPO_WRITES_PROMPT.md) | [#922](https://github.com/officefish/Membrana/issues/922) |
 | `swallow-format-frame-fix` | Фрейм форматирования ласточки: полноценное зеркало 5 блоков вместо телеграфных строк (Ожегов) | S | [`SWALLOW_FORMAT_FRAME_FIX_PROMPT.md`](../prompts/SWALLOW_FORMAT_FRAME_FIX_PROMPT.md) | [#918](https://github.com/officefish/Membrana/issues/918) |
-| `kcm-c4-closure` | C4: CLOSURE + archive + комментарий #761 | S | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | [#909](https://github.com/officefish/Membrana/issues/909) |
-| `kcm-c3-wire` | C3: процедура containerization + skill + kits/README | M | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | [#908](https://github.com/officefish/Membrana/issues/908) |
-| `kcm-c2-kit` | C2: жилец kits/containerization-master + пины; kits:audit green | M | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | [#907](https://github.com/officefish/Membrana/issues/907) |
-| `kcm-c1-prompt` | C1: CONTAINERIZATION_MASTER_PROMPT + cold-start порядок | M | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | [#906](https://github.com/officefish/Membrana/issues/906) |
-| `kcm-c0-brief` | C0: бриф kits-containerization-master, границы vs procedure-frames | S | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | [#905](https://github.com/officefish/Membrana/issues/905) |
-| `kits-containerization-master` | Эпик: кит Мастера контейнеризации (третий жилец kits/) | L | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | [#904](https://github.com/officefish/Membrana/issues/904) |
 | `procedure-frames` | Спринт «фреймы»: frames[] в манифесте процедур + пин отрезков + первый фрейм «подводка утра» (Ожегов) | L | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#900](https://github.com/officefish/Membrana/issues/900) |
 | `code-review-lead-refactor` | Рефакторинг код-ревью: ведущий из пяти + память ведущего + бестиарий антипаттернов (T3/T4/T5) | M | [`CODE_REVIEW_LEAD_REFACTOR_PROMPT.md`](../prompts/CODE_REVIEW_LEAD_REFACTOR_PROMPT.md) | — |
 | `bc-b5-closure` | B5: CLOSURE bestiary-container | M | [`BC_B5_CLOSURE_PROMPT.md`](../prompts/BC_B5_CLOSURE_PROMPT.md) | [#884](https://github.com/officefish/Membrana/issues/884) |
@@ -220,6 +217,12 @@
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
 | `morning-wiring-hotfix` | Хотфикс проводов утра: CLAUDE.md + AGENTS.md → membrana-morning-ritual (фрейм подводки, Ожегов) | 2026-07-22 | [`MORNING_WIRING_HOTFIX_PROMPT.md`](../prompts/MORNING_WIRING_HOTFIX_PROMPT.md) | #902 (Issue открыт) | [карточка](./archive/morning-wiring-hotfix.md) |
+| `kcm-c4-closure` | C4: CLOSURE + archive + комментарий #761 | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #909 | [карточка](./archive/kcm-c4-closure.md) |
+| `kcm-c3-wire` | C3: процедура containerization + skill + kits/README | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #908 | [карточка](./archive/kcm-c3-wire.md) |
+| `kcm-c2-kit` | C2: жилец kits/containerization-master + пины; kits:audit green | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #907 | [карточка](./archive/kcm-c2-kit.md) |
+| `kcm-c1-prompt` | C1: CONTAINERIZATION_MASTER_PROMPT + cold-start порядок | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #906 | [карточка](./archive/kcm-c1-prompt.md) |
+| `kcm-c0-brief` | C0: бриф kits-containerization-master, границы vs procedure-frames | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #905 | [карточка](./archive/kcm-c0-brief.md) |
+| `kits-containerization-master` | Эпик: кит Мастера контейнеризации (третий жилец kits/) | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #904 | [карточка](./archive/kits-containerization-master.md) |
 | `bc-b3-missing-beasts` | B3: echo / goal-displacement or defer | 2026-07-22 | [`BC_B3_MISSING_BEASTS_PROMPT.md`](../prompts/BC_B3_MISSING_BEASTS_PROMPT.md) | #882 (Issue открыт) | [карточка](./archive/bc-b3-missing-beasts.md) |
 | `bc-b2-specimens` | B2: specimens + bestiary:audit + tests | 2026-07-21 | [`BC_B2_SPECIMENS_PROMPT.md`](../prompts/BC_B2_SPECIMENS_PROMPT.md) | #881 (Issue открыт) | [карточка](./archive/bc-b2-specimens.md) |
 | `bc-b1-home` | B1: home docs/audit/bestiary/ | 2026-07-21 | [`BC_B1_HOME_PROMPT.md`](../prompts/BC_B1_HOME_PROMPT.md) | #880 (Issue открыт) | [карточка](./archive/bc-b1-home.md) |
