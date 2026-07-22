@@ -20,6 +20,25 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "procedural-workshop",
+      "title": "Процедурная мастерская — три глагола над 2D-домом",
+      "promptPath": "docs/prompts/PROCEDURAL_WORKSHOP_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Эпик home-workshop: закрывает дыру T10 (у процедурного дома 0 из 3 глаголов). Предусловие переезда #915.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "office-stability-emergency",
       "title": "АВАРИЯ: таймауты office — server-first не выполняется; починка до строительства роутера (T10)",
       "promptPath": "docs/prompts/OFFICE_STABILITY_EMERGENCY_PROMPT.md",
