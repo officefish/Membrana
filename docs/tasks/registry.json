@@ -68,7 +68,7 @@
       "archivedAt": null,
       "leadPersona": "dynin",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "B3: echo detector+specimen (dedupeByOrigin); goal-displacement deferred → bc-followup-goal-displacement. LGTM dynin — ship. Issue #882.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "bestiary-container"

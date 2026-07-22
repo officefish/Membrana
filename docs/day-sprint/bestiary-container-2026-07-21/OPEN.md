@@ -9,7 +9,7 @@
 | **Started** | 2026-07-21 |
 | **Size** | L |
 | **Lead epic** | vesnin |
-| **Branch** | — (B2 в main; next B3) |
+| **Branch** | `feat/bc-b3-missing-beasts` (B3 in progress) |
 | **Insight** | [`insight-weekly-antipattern-audit-bestiary`](../../insights/insight-weekly-antipattern-audit-bestiary/INSIGHT.md) (трек B) |
 
 **Prompt эпика:** [`BESTIARY_CONTAINER_PROMPT.md`](../../prompts/BESTIARY_CONTAINER_PROMPT.md)  
@@ -36,13 +36,30 @@
 | **B0** | `bc-b0-brief` | [#879](https://github.com/officefish/Membrana/issues/879) | vesnin | ✅ done · [PR #885](https://github.com/officefish/Membrana/pull/885) |
 | **B1** | `bc-b1-home` | [#880](https://github.com/officefish/Membrana/issues/880) | ozhegov | ✅ done · [PR #889](https://github.com/officefish/Membrana/pull/889) |
 | **B2** | `bc-b2-specimens` | [#881](https://github.com/officefish/Membrana/issues/881) | dynin | ✅ done · [PR #895](https://github.com/officefish/Membrana/pull/895) |
-| **B3** | `bc-b3-missing-beasts` | [#882](https://github.com/officefish/Membrana/issues/882) | dynin | ⬜ next |
+| **B3** | `bc-b3-missing-beasts` | [#882](https://github.com/officefish/Membrana/issues/882) | dynin | 🔄 in progress |
 | **B4** | `bc-b4-weekly` | [#883](https://github.com/officefish/Membrana/issues/883) | angelina | ⬜ |
 | **B5** | `bc-b5-closure` | [#884](https://github.com/officefish/Membrana/issues/884) | vesnin | ⬜ |
 
 ---
 
-## Gate checklist (B2)
+## Gate checklist (B3)
+
+- [x] `echo` — детектор + specimen (`specimens/echo/triple-reflection.mjs`); lean on `dedupeByOrigin`/`originHash`
+- [x] `goal-displacement` — **явный defer** (см. ниже) + follow-up id
+- [x] `yarn bestiary:audit` → coverage ≥4 (ожид. 5/5 с echo)
+- [x] Тесты `scripts/bestiary-audit.test.mjs` расширены
+- [x] orphan-ruleset self-check
+- [x] LGTM dynin (owner ok 2026-07-22)
+
+### Defer: goal-displacement
+
+**Почему не в B3:** машинный сигнал из инсайта — «доля self-referential записей» над корпусом (кристаллы / реестр правды), не грубый file-lens в форме `(object, ruleset) → finding[]`. Пилить эвристику «слово self в файле» = украшение без forcing function.
+
+**Follow-up card (после B5 или отдельная M):** `bc-followup-goal-displacement` — корпусный детектор + specimen-корпус (или явная метрика тренда в B4 analysis). Не молчаливый пробел: класс отсутствует в `BESTIARY` до follow-up.
+
+---
+
+## Gate checklist (B2) — закрыт
 
 - [x] Specimens ×4 (silent / unwired / ornament / jargon-out)
 - [x] `yarn bestiary:audit` → `registry/BESTIARY_LIST.md` (4/4)
@@ -56,5 +73,5 @@
 
 | Есть | Нет / next |
 |------|------------|
-| Контейнер + 4 specimens + audit | эхо / goal-displacement (B3) |
+| Контейнер + 5 specimens (echo) + audit | goal-displacement (defer → follow-up) |
 | Производный BESTIARY_LIST | weekly + тренд (B4) |
