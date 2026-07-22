@@ -8,8 +8,12 @@ Claude Code skills in `.claude/skills/` are **thin mirrors** — follow the link
 
 ## Daily rhythm
 
-- Morning: `yarn ritual:day` — see `membrana-developer-rhythm`
-- Evening: `yarn ritual:evening` — archive day before code-review
+- Morning: **только скилл `membrana-morning-ritual` (live)** — пред-ритуальный
+  порядок, цепочка с Ангелиной, два owner-гейта. `membrana-developer-rhythm`
+  утро НЕ описывает и НЕ замещает (M1-C: недоступен скилл утра → СТОП, не
+  импровизировать). Приветствие владельца — сигнал присутствия, не команда:
+  ноль команд до его явного слова (прецедент 22.07).
+- Evening: `yarn ritual:evening` — archive day before code-review; see `membrana-developer-rhythm`
 - Task close: `yarn task:archive <id>` then evening `yarn task:close-github`
 
 ## Mandatory end-of-session: Team Evening Feedback
