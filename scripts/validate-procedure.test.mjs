@@ -6,8 +6,10 @@ import { after, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import {
+  frameLaneProblems,
   listProcedureDirs,
   manifestSchemaProblems,
+  normalizeFramePins,
   validateProcedure,
 } from './lib/validate-procedure.mjs';
 
@@ -113,4 +115,76 @@ test('ритуал снов ritual-dreams: kitVersion → kits/dream-master', ()
   assert.equal(m.kitVersion, 'kits/dream-master');
   assert.equal(m.engines.length, 1);
   assert.ok(m.precedents.some((p) => p.includes('DREAM_MASTER_PROMPT')));
+});
+
+const GOOD_PIN = {
+  path: 'docs/example.md',
+  anchor: { kind: 'marker', ref: '<!-- gate -->' },
+  segmentHash: 'a'.repeat(40),
+};
+
+test('F1: отсутствие очереди кадров — валидно (P2/P3 вакуумны)', () => {
+  assert.equal(manifestSchemaProblems(GOOD, 'demo').length, 0);
+});
+
+test('F1: frames с валидным кадром и pins[] — ок; лишний ключ — дефект', () => {
+  const withFrames = {
+    ...GOOD,
+    frames: [{ id: 'morning-hygiene', holder: 'ozhegov', pins: [GOOD_PIN] }],
+  };
+  assert.equal(manifestSchemaProblems(withFrames, 'demo').length, 0, manifestSchemaProblems(withFrames, 'demo').join('; '));
+  assert.ok(manifestSchemaProblems({ ...GOOD, scenes: [] }, 'demo').some((p) => p.includes('лишнее поле')));
+});
+
+test('F1: preflight + frames + post — три полосы; дубль id между полосами — P2 fail', () => {
+  const m = {
+    ...GOOD,
+    preflight: [{ id: 'morning-wiring', holder: 'ozhegov', pins: [GOOD_PIN] }],
+    frames: [{ id: 'strategy-day', holder: 'vesnin' }],
+    post: [{ id: 'swallow-send', holder: 'angelina' }],
+  };
+  assert.equal(manifestSchemaProblems(m, 'demo').length, 0, manifestSchemaProblems(m, 'demo').join('; '));
+  const dup = {
+    ...GOOD,
+    preflight: [{ id: 'same', holder: 'ozhegov' }],
+    frames: [{ id: 'same', holder: 'vesnin' }],
+  };
+  assert.ok(manifestSchemaProblems(dup, 'demo').some((p) => p.includes('дубль id')));
+});
+
+test('F1: holder вне Persona и битая структура pins — дефекты', () => {
+  assert.ok(
+    manifestSchemaProblems(
+      { ...GOOD, frames: [{ id: 'x', holder: 'manager' }] },
+      'demo',
+    ).some((p) => p.includes('holder')),
+  );
+  assert.ok(
+    manifestSchemaProblems(
+      { ...GOOD, frames: [{ id: 'x', holder: 'vesnin', pins: [{ path: 'a.md' }] }] },
+      'demo',
+    ).some((p) => p.includes('anchor') || p.includes('segmentHash')),
+  );
+});
+
+test('F1 ADR-0015: скаляр pin нормализуется в pins[]; pin+pins вместе — дефект', () => {
+  const { frame } = normalizeFramePins({ id: 'x', holder: 'vesnin', pin: GOOD_PIN });
+  assert.ok(Array.isArray(frame.pins) && frame.pins.length === 1);
+  const both = frameLaneProblems(
+    [{ id: 'x', holder: 'vesnin', pin: GOOD_PIN, pins: [GOOD_PIN] }],
+    'frames',
+  );
+  assert.ok(both.some((p) => p.includes('одновременно')));
+});
+
+test('F1: validateProcedure принимает контейнер с frames', () => {
+  const dir = makeContainer('framed', {
+    manifest: {
+      ...GOOD,
+      id: 'framed',
+      frames: [{ id: 'step-one', holder: 'angelina', pins: [GOOD_PIN] }],
+    },
+  });
+  const r = validateProcedure(dir, tmp);
+  assert.equal(r.valid, true, r.problems.join('; '));
 });
