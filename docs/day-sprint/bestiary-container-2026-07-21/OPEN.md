@@ -52,7 +52,7 @@
 - [x] `BESTIARY_CONTAINER_PROMPT` / `BC_B5` acceptance; registry notes `bc-b5-closure`
 - [x] `yarn branch:check feat/bc-b5-closure` · holder vesnin
 - [x] LGTM vesnin (owner ok 2026-07-22)
-- [ ] Archive `bc-b5-closure` + эпик — **после merge** (как D4/K5)
+- [x] Archive `bc-b5-closure` + эпик — PR archive (этот PR) · LGTM vesnin ship done
 
 ---
 
@@ -101,4 +101,4 @@
 |------|----------|
 | Контейнер + 5 specimens + audit + weekly | `goal-displacement` → `bc-followup-goal-displacement` |
 | Производный BESTIARY_LIST | — |
-| CLOSURE · ACTIVE cleared | Archive фаз B5 + эпика — после merge |
+| CLOSURE · ACTIVE cleared | Archive B5 + эпика — этот PR |
