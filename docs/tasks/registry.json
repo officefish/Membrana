@@ -67,7 +67,7 @@
       "archivedAt": null,
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "Next after W1 #954; awaiting start",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "bestiary-workshop"
@@ -79,14 +79,14 @@
       "githubIssue": 947,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "notes": "W1 in progress: K25-B + workshop.manifest + issueTrap; branch feat/bw-w1-workshop",
-      "archiveNotes": null,
+      "notes": "W1 done: K25-B + workshop.manifest + issueTrap",
+      "archiveNotes": "PR #954 merged 496ecb41; K25-B + workshop.manifest + issueTrap; next W2 #948",
       "githubIssueClosedAt": null,
       "parentEpic": "bestiary-workshop"
     },
@@ -124,7 +124,7 @@
         "dynin",
         "ozhegov"
       ],
-      "notes": "W0 done #952; W1 in progress #947; инстанс bestiary-workshop-2026-07-22",
+      "notes": "W0 done #952; W1 done #954; next W2 #948; инстанс bestiary-workshop-2026-07-22",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
