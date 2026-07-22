@@ -87,7 +87,7 @@
       "archivedAt": null,
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "Next after W2 #965; awaiting start",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "bestiary-workshop"
@@ -99,14 +99,14 @@
       "githubIssue": 948,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "notes": "Next after W1 #954; awaiting start",
-      "archiveNotes": null,
+      "notes": "W2 done: CATCH/TRAPS/antipattern stubs + path decision",
+      "archiveNotes": "PR #965, merge 7887ad73; CATCH_LIST + traps/TRAPS_LIST + antipatterns/silent stubs; BESTIARY_LIST untouched; path decision LGTM ozhegov; next W3 #949",
       "githubIssueClosedAt": null,
       "parentEpic": "bestiary-workshop"
     },
@@ -162,7 +162,7 @@
         "dynin",
         "ozhegov"
       ],
-      "notes": "W0 done #952; W1 done #954; next W2 #948; инстанс bestiary-workshop-2026-07-22",
+      "notes": "W0 done #952; W1 done #954; W2 done #965; next W3 #949; инстанс bestiary-workshop-2026-07-22",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },

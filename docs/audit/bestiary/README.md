@@ -67,25 +67,48 @@ docs/audit/bestiary/
   README.md              — этот файл
   AGENT_PROMPT.md        — setup агента
   workshop.manifest.json — мастерская HOME_WORKSHOP (W1; K25-B)
-  registry/              — BESTIARY_LIST.md (производный overwrite)
+  registry/              — BESTIARY_LIST + CATCH_LIST + TRAPS_LIST
+  traps/                 — карточки ловушек (дока; W2)
+  antipatterns/          — абстрактные шаблоны (W2; не pins кита)
   analysis/              — недельные / точечные прогоны (dated)
   specimens/<class>/     — намеренный плохой код (бетии); B2×4 + B3 echo
   cache/                 — сырые JSON прогонов (gitignore)
 ```
+
+### Доп. реестры W2 (T16) — ≠ `BESTIARY_LIST`
+
+| Носитель | Path | Роль |
+|----------|------|------|
+| Классы | `registry/BESTIARY_LIST.md` | справочник defectClass × specimen (overwrite audit) |
+| **Улов** | `registry/CATCH_LIST.md` | пойманные примеры / гранулы (T1); **не** замена классов |
+| **Ловушки** | `traps/` + `registry/TRAPS_LIST.md` | дока prompts+scripts (T3/T15) |
+| **Шаблон** | `antipatterns/<id>.md` | абстракт «как паттерн» (T13); kit пинит ловушку, не шаблон (T18) |
+
+Цепочка: шаблон → ловушка → улов. Specimen остаётся фикстурой (T2), не гранулой улова.
+
+**Path decision (W2, ждать LGTM ozhegov):** индекс улова — `registry/CATCH_LIST.md`
+(без отдельного `catch/` на старте); карточки ловушек — `traps/<id>.md`; шаблоны —
+`antipatterns/<id>.md`. Массовый импорт `analysis/` → CATCH без ok владельца запрещён.
 
 ## Что можно писать сюда
 
 | Путь | Что | В git? |
 |------|-----|--------|
 | `AGENT_PROMPT.md`, `README.md` | Промпт и контракт | да |
+| `workshop.manifest.json` | Мастерская HOME_WORKSHOP | да |
 | `registry/BESTIARY_LIST.md` | Канонический снимок классов × покрытие specimen (overwrite) | да |
 | `registry/BESTIARY_LIST-YYYY-MM-DD.md` | Опциональный dated-архив | да |
+| `registry/CATCH_LIST.md` | Доп. реестр улова (формат + строки); **≠** BESTIARY_LIST | да |
+| `registry/TRAPS_LIST.md` | Индекс ловушек | да |
+| `traps/<id>.md` | Карточка ловушки (prompts + scripts + kitPin) | да |
+| `antipatterns/<id>.md` | Абстрактный шаблон антипаттерна | да |
 | `specimens/<defectClass>/**` | Specimen’ы с пометкой `specimen:` / meta | да |
 | `analysis/bestiary-run-YYYY-MM-DD.md` | Недельный отчёт (`yarn bestiary:weekly`, B4/#883); Summary всегда | да |
 | `cache/**` | Сырой JSON (`lens-run --json`) | **нет** (gitignore) |
 
 **Источник истины классов:** массив `BESTIARY` в `scripts/lib/lens-bestiary.mjs`.
 Контейнер хранит производные снимки и бетий, не дублирует детекторы.
+Улов и ловушки — hand-maintained доп. реестры (не overwrite от `bestiary:audit`).
 
 ## Retention
 
@@ -95,4 +118,5 @@ docs/audit/bestiary/
 ## Как вызвать агента
 
 1. Указать: `docs/audit/bestiary/AGENT_PROMPT.md`.
-2. Сценарии — в промпте (Inventory / Specimen-Audit / Weekly-Report).
+2. Сценарии — в промпте (Inventory / Inventory-Catch / Trap-Doc / Specimen-Audit /
+   Issue-Trap / Weekly-Report).
