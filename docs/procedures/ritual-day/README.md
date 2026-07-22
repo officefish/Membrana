@@ -30,7 +30,9 @@
 ## Манифест
 
 [`MANIFEST.json`](./MANIFEST.json) — `id`, `leadPersona`, `kitVersion`,
-`engines[]`, `precedents[]`. Зуб: `validateProcedure` (в т.ч. резолв
+`engines[]`, `precedents[]`. Optional очередь кадров (F1 / #927): `preflight` /
+`frames` / `post` — элемент `{id, holder, pins?}` (ADR-0015); пока не объявлена
+(`D_live` после #928–#929). Зуб: `validateProcedure` (в т.ч. резолв
 `kitVersion` → дом кита с `MANIFEST.json`).
 
 ## Определение ↔ прогон
