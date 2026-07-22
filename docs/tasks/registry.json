@@ -168,7 +168,7 @@
       "archivedAt": null,
       "leadPersona": "dynin",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "kit id witcher; branch feat/bw-w4-trap-kit; PR #978",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "bestiary-workshop"
@@ -261,7 +261,7 @@
         "dynin",
         "ozhegov"
       ],
-      "notes": "W0 done #952; W1 done #954; W2 done #965; W3 done #967 ed997ce1; next W4 #950; инстанс bestiary-workshop-2026-07-22",
+      "notes": "W0–W3 done (#952/#954/#965/#967); next W4 #950 kits/witcher PR #978; инстанс bestiary-workshop-2026-07-22",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },

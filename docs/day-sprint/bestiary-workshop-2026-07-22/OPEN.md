@@ -13,7 +13,7 @@
 | **Branch (W1)** | `feat/bw-w1-workshop` → merged [#954](https://github.com/officefish/Membrana/pull/954) · `496ecb41` |
 | **Branch (W2)** | `feat/bw-w2-registries` → merged [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` |
 | **Branch (W3)** | `feat/bw-w3-mintlify` → merged [#967](https://github.com/officefish/Membrana/pull/967) · `ed997ce1` |
-| **Branch (W4)** | _(указатель; код не стартован)_ · [#950](https://github.com/officefish/Membrana/issues/950) |
+| **Branch (W4)** | `feat/bw-w4-trap-kit` · [#978](https://github.com/officefish/Membrana/pull/978) · kit id `witcher` · awaiting LGTM |
 | **Seed** | шторм [`storm-bestiary-workshop-2026-07-22`](../../storm/storm-bestiary-workshop-2026-07-22/REPORT.md) · T1–T18 |
 | **Дом** | [`docs/audit/bestiary/`](../../audit/bestiary/) (#878 CLOSED) |
 | **Паттерны** | [`HOME_WORKSHOP`](../../patterns/HOME_WORKSHOP.md) · [`PINNED_SUBGRAPH_VERSIONING`](../../patterns/PINNED_SUBGRAPH_VERSIONING.md) · [`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md) |
@@ -51,8 +51,8 @@
 | **W0** | `bw-w0-brief` | [#946](https://github.com/officefish/Membrana/issues/946) | vesnin | [`BW_W0_BRIEF_PROMPT.md`](../../prompts/BW_W0_BRIEF_PROMPT.md) | Реестр+Issues+OPEN open+ACTIVE; границы T* | **done** · [#952](https://github.com/officefish/Membrana/pull/952) |
 | **W1** | `bw-w1-workshop` | [#947](https://github.com/officefish/Membrana/issues/947) | ozhegov | [`BW_W1_WORKSHOP_PROMPT.md`](../../prompts/BW_W1_WORKSHOP_PROMPT.md) | `workshop.manifest.json` + шов HOME_WORKSHOP (A\|B) | **done** · [#954](https://github.com/officefish/Membrana/pull/954) · `496ecb41` |
 | **W2** | `bw-w2-registries` | [#948](https://github.com/officefish/Membrana/issues/948) | ozhegov | [`BW_W2_REGISTRIES_PROMPT.md`](../../prompts/BW_W2_REGISTRIES_PROMPT.md) | Форматы улова/ловушки + stub шаблона антипаттерна | **done** · [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` |
-| **W3** | `bw-w3-mintlify` | [#949](https://github.com/officefish/Membrana/issues/949) | ozhegov | [`BW_W3_MINTLIFY_PROMPT.md`](../../prompts/BW_W3_MINTLIFY_PROMPT.md) | Thin Mintlify-зеркало + провод из дома | **done** · [#967](https://github.com/officefish/Membrana/pull/967) · `ed997ce1` |
-| **W4** | `bw-w4-trap-kit` | [#950](https://github.com/officefish/Membrana/issues/950) | dynin | [`BW_W4_TRAP_KIT_PROMPT.md`](../../prompts/BW_W4_TRAP_KIT_PROMPT.md) | Жилец кита, audit green, aim «Ведьмак» | **pointer** |
+| **W3** | `bw-w3-mintlify` | [#949](https://github.com/officefish/Membrana/issues/949) | ozhegov | [`BW_W3_MINTLIFY_PROMPT.md`](../../prompts/BW_W3_MINTLIFY_PROMPT.md) | Thin Mintlify-зеркало + провод из дома | **done** · [#967](https://github.com/officefish/Membrana/pull/967) · `ed997ce1` · archived |
+| **W4** | `bw-w4-trap-kit` | [#950](https://github.com/officefish/Membrana/issues/950) | dynin | [`BW_W4_TRAP_KIT_PROMPT.md`](../../prompts/BW_W4_TRAP_KIT_PROMPT.md) | Жилец кита, audit green, aim «Ведьмак» | **in review** · [#978](https://github.com/officefish/Membrana/pull/978) |
 | **W5** | `bw-w5-closure` | [#951](https://github.com/officefish/Membrana/issues/951) | vesnin | [`BW_W5_CLOSURE_PROMPT.md`](../../prompts/BW_W5_CLOSURE_PROMPT.md) | CLOSURE + ACTIVE cleared + archive | pending |
 
 ---
@@ -69,7 +69,7 @@
 | # | Вопрос | Фаза |
 |---|--------|------|
 | ~~K25~~ | ~~Шов T6 ↔ HOME_WORKSHOP: правка паттерна **или** исключение~~ | **закрыт W1: вариант B** (исключение supply-side + `issueTrap`; MUST kit-demand не тронут) |
-| — | Имя жильца кита (`witcher` / иное) | W4 |
+| ~~—~~ | ~~Имя жильца кита (`witcher` / иное)~~ | **принято W4:** `witcher` · human-label «Ведьмак» |
 | ~~—~~ | ~~Точные пути CATCH/TRAPS под домом~~ | **принято W2** (LGTM): `registry/CATCH_LIST.md` · `traps/` + `registry/TRAPS_LIST.md` · `antipatterns/<id>.md` |
 | ~~—~~ | ~~Глубина Mintlify (thin vs pin-манифест инструкций)~~ | **закрыт W3: thin mirror** (overview + ≥1 улов + ≥1 ловушка; pin-манифест как #823 F4 — out of sprint) |
 
@@ -109,6 +109,8 @@
 
 ## Gate checklist (W4)
 
-- [ ] Жилец кита объявлен (`kit` ≠ null); имя — open decision
-- [ ] Audit green; aim-пример «Ведьмак»
+- [ ] Жилец `kits/witcher/` + `yarn kits:audit --id witcher` green
+- [ ] Пин = prompts+scripts ловушки; шаблоны антипаттернов вне pins
+- [ ] README с aim-примером («Ведьмак»)
+- [ ] `workshop.manifest.json` + TRAPS-индекс ссылаются на кит
 - [ ] LGTM dynin (owner ok) → merge W4 → указатель W5 #951

@@ -9,7 +9,7 @@
 | **Архивирована** | 2026-07-22 |
 | **GitHub Issue** | #949 |
 | **Linear** | — |
-| **Промпт** | [`docs/prompts/BW_W3_MINTLIFY_PROMPT.md`](../../docs/prompts/BW_W3_MINTLIFY_PROMPT.md) |
+| **Промпт** | [`docs/prompts/BW_W3_MINTLIFY_PROMPT.md`](../../prompts/BW_W3_MINTLIFY_PROMPT.md) |
 
 ## Заметки при закрытии
 

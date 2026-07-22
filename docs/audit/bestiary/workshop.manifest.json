@@ -2,7 +2,7 @@
   "pattern": "docs/patterns/HOME_WORKSHOP.md",
   "name": "мастерская бестиария",
   "worksOn": "docs/audit/bestiary",
-  "kit": null,
+  "kit": "kits/witcher",
   "verbs": {
     "audit": "yarn bestiary:audit",
     "decompose": "yarn bestiary:audit",

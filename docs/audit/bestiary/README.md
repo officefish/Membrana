@@ -33,15 +33,16 @@
 **Мастерская дома** ([`HOME_WORKSHOP`](../../patterns/HOME_WORKSHOP.md), ось операций):
 [`workshop.manifest.json`](./workshop.manifest.json) — осмотр `bestiary:audit`,
 декомпозиция классов тем же CLI (реестр `BESTIARY_LIST`); `inspectElement` — ⚠ пока нет
-отдельного CLI (Scenario Specimen-Audit — агентный гейт); `kit: null` до W4.
-Доменный глагол поставки ловушек: **`issueTrap`** (контракт до W4; реализация кита — вне W1).
+отдельного CLI (Scenario Specimen-Audit — агентный гейт); `kit: "kits/witcher"` (W4 #950 ·
+human-label «Ведьмак» · [`kits/witcher/`](../../../kits/witcher/)).
+Доменный глагол поставки ловушек: **`issueTrap`** → жилец кита.
 
 ### Шов K25 (T6 ↔ HOME_WORKSHOP) — вариант **B**
 
 Канон паттерна: мастерская — сторона **спроса** на kit. T6 шторма: эта мастерская —
 **поставщик** ловушек. Закрыто **исключением**, без правки MUST-контракта паттерна:
 
-- стрелка «мастерская заказывает kit» сохраняется (`kit: null` явно до жильца W4);
+- стрелка «мастерская заказывает kit» сохраняется (`kit: "kits/witcher"` после W4);
 - поставка ловушек — доменный `issueTrap` (не MUST-тройка audit/decompose/inspect);
 - строка в таблице реализаций паттерна помечает **K25-B** и причину.
 
@@ -53,9 +54,9 @@
 2. ✅ `worksOn` = ровно `docs/audit/bestiary`; ссылка на паттерн резолвится; правила не скопированы.
 3. ✅ `audit` и `decompose` присутствуют (MUST); `inspectElement` — ⚠ (нет CLI; Specimen-Audit — сценарий агента).
 4. ✅ Доменная раскладка по `defectClass` не переписана через стек-примитивы (`domainPreserved`).
-5. ✅ `kit` объявлен явно: `null` до W4 (имя жильца — open decision W4).
+5. ✅ `kit` = `kits/witcher` (W4 #950); aim «Ведьмак» в README кита.
 6. ✅ Доменный `issueTrap` несёт `worksOn` = дом бестиария (зуб `checkOwnership`).
-7. ✅ Отказы видимы: недоступный kit после W4 — `unequipped`, не тихая подмена; до W4 `issueTrap` — контракт без вызова кита.
+7. ✅ Отказы видимы: недоступный kit → `unequipped`, не тихая подмена; вызов через `kits/witcher`.
 8. ✅ Провода: паттерн (таблица реализаций + K25-B), этот README, `AGENT_PROMPT` Scenario Issue-Trap.
 
 ## Engines (код снаружи)
