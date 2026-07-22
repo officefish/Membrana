@@ -5,7 +5,7 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 32 из 178 кандидатов (бюджет <5000 токенов).
+Записей: 32 из 179 кандидатов (бюджет <5000 токенов).
 
 ### 2026-07-21 · позиция · angelina-hostess-m0-order
 
@@ -84,6 +84,12 @@
 > Пункт 2 — критерий, формализую. `migrated(p) := container(p) ∧ vocabulary(p) ∧ grammar(p)` — производный предикат, НЕ поле: хранить его нельзя, только вычислять, иначе разъедется с компонентами. Три компоненты раздельны: `container` — дом существует и проходит […] _(реплик в сеансе: 2)_
 
 — источник: `docs/seanses/procedural-layer-m5-migration-manual-2026-07-21.md#reply-1`
+
+### 2026-07-21 · позиция · team-evening-feedback
+
+> Dynin. Оценка артефактов: документы дня не дают мне опоры — ни FFT, ни спектра, ни метрик; проверяю процесс. Наблюдение: длина артефактов дня (реестр 771 карточка, десятки промптов kits/branch) растёт, а магистраль MAIN_DAY_ISSUE не двигается — рост O(n) по инфраструктуре, ноль […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-21.md#reply-1`
 
 ### 2026-07-20 · позиция · linear-egress-gear-wiring-m0-order
 
@@ -187,14 +193,8 @@
 
 — источник: `docs/seanses/insight-archive-lifecycle-c3-evidence-contract-2026-07-19.md#reply-1`
 
-### 2026-07-19 · позиция · insight-archive-lifecycle-c3-evidence-contract-r2
+### 2026-07-18 · позиция · team-evening-feedback
 
-> Формализую, иначе останется вкусовым. EvidenceNode = `{targetClaim, kind: evidence|hint|invalid, originRef, digest?, predicate, version}`. Cardinality: один target claim имеет `0..N` independent evidence nodes; каждый node доказывает **ровно один** claim — это не биекция, а […] _(реплик в сеансе: 5)_
+> Dynin. Оценка артефактов: MAIN_DAY_ISSUE точно сформулировал моё ядро — `externalizeQuery` как чистая функция + тест-гард на реальных именах, и `night:research` как честный `void` вместо вечного `pending`. Инвариант длины (O(n) по ссылкам) в DoD зафиксирован верно. Итоги дня: […]
 
-— источник: `docs/seanses/insight-archive-lifecycle-c3-evidence-contract-r2-2026-07-19.md#reply-1`
-
-### 2026-07-05 · голос · insight-comms-contour-topology
-
-> внедрять: Да, `S=0 / M≈0` доминирует · этап: Сейчас · оценка: 9/10
-
-— источник: `docs/insights/insight-comms-contour-topology/REVIEW.md#vote`
+— источник: `docs/seanses/team-evening-feedback-2026-07-18.md#reply-1`

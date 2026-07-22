@@ -5,7 +5,7 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 32 из 178 кандидатов (бюджет <5000 токенов).
+Записей: 32 из 179 кандидатов (бюджет <5000 токенов).
 
 ### 2026-07-21 · позиция · angelina-hostess-m0-order
 
@@ -84,6 +84,12 @@
 > Открываю последнюю комнату цепи и оглашаю посылки первой репликой. **Список посылок** (оглашено в прогоне): 1. Ритуалы — процедуры; процедурный контент → ведущая персона (T13, T6) — **норма**. 2. Контейнер процедуры без кода и тестов; связь ссылкой (T11, T12) — **норма**. 3. […] _(реплик в сеансе: 2)_
 
 — источник: `docs/seanses/procedural-layer-m5-migration-manual-2026-07-21.md#reply-1`
+
+### 2026-07-21 · позиция · team-evening-feedback
+
+> Vesnin. Оценка артефактов: связка дня рассинхронна по возрасту. `STRATEGIC_PLAN_DAY` — по-прежнему помеченный вещдок (заголовок «18.07», генератор под переписку), читать как источник плана нельзя — это честно. `DAILY_STANDUP` и `MAIN_DAY_ISSUE` сгенерированы **21.07**, но их […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-21.md#reply-1`
 
 ### 2026-07-20 · позиция · linear-egress-gear-wiring-m0-order
 
@@ -192,9 +198,3 @@
 > Рамку фиксирую сразу, чтобы repair не расползся в C4–C7. Мы правим **ровно C3**: контракт evidence-графа, cardinality, provenance/dedup, negative basis и derived summaries. История/storage (C4), legacy (C5), UX/enforcement (C6), operational safety (C7) — закрыты для нас, только […] _(реплик в сеансе: 3)_
 
 — источник: `docs/seanses/insight-archive-lifecycle-c3-evidence-contract-r2-2026-07-19.md#reply-1`
-
-### 2026-07-19 · позиция · security-posture-m1-watch
-
-> Принимаю разделение Ozhegov — это и есть конструкция дозора без украшательств. Напоминаю ограду: мы решаем ГДЕ живёт проверка, КАКОЙ порог, КАКОЙ каденс. Версии vite/fastify — это M2, не сюда. Даю форму решения: Dependabot включаем как корень, `yarn npm audit` встраиваем в […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/security-posture-m1-watch-2026-07-19.md#reply-1`

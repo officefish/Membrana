@@ -5,7 +5,7 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 32 из 178 кандидатов (бюджет <5000 токенов).
+Записей: 32 из 179 кандидатов (бюджет <5000 токенов).
 
 ### 2026-07-21 · позиция · angelina-hostess-m0-order
 
@@ -84,6 +84,12 @@
 > Носитель статуса — реестр `docs/procedures/registry.json`, отдельный от реестра задач: это разные предметы (задачи движутся, процедуры живут). Человекочитаемая проекция генерится из реестра — руками не правится (образец M2). Статус немигрированных — честное слово **`legacy`**, […] _(реплик в сеансе: 2)_
 
 — источник: `docs/seanses/procedural-layer-m5-migration-manual-2026-07-21.md#reply-1`
+
+### 2026-07-21 · позиция · team-evening-feedback
+
+> Rodchenko. Оценка артефактов: UI-контракта в документах дня нет; из презентационного затронуты только доки-страницы (`apps/docs/git/cookbooks/*.mdx` — Mintlify branch-cookbooks) и панель-план scoreboard Ф5 в буфере. Оцениваю процесс. Итоги дня: по React/DESIGN.md/a11y — «—», […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-21.md#reply-1`
 
 ### 2026-07-20 · позиция · linear-egress-gear-wiring-m0-order
 
@@ -187,14 +193,8 @@
 
 — источник: `docs/seanses/insight-archive-lifecycle-c3-evidence-contract-2026-07-19.md#reply-1`
 
-### 2026-07-19 · позиция · insight-archive-lifecycle-c3-evidence-contract-r2
+### 2026-07-18 · позиция · evening-auditor-m0-order
 
-> Начну с потребителя графа — а потребитель это агент/человек, читающий evidence по SLICE claim. Моя боль из `main-day-accuracy` та же: сейчас evidence-узел может показывать «доказано», не показывая, какой именно SLICE claim он закрывает. Требую по контракту: каждый EvidenceNode […] _(реплик в сеансе: 4)_
+> С точки зрения потребителя тройки — а потребитель это агент утром и человек в PR — я согласен, что триггер нельзя ронять в хвост. Но зафиксирую отличие от Музыканта: source и читатель — это две разные оси. Данные (фундамент) — что льём в бак; триггер — кто открывает кран. […] _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/insight-archive-lifecycle-c3-evidence-contract-r2-2026-07-19.md#reply-1`
-
-### 2026-07-05 · голос · insight-comms-contour-topology
-
-> внедрять: Да, монитор `out/**` + Drive · этап: Сейчас · оценка: 8/10
-
-— источник: `docs/insights/insight-comms-contour-topology/REVIEW.md#vote`
+— источник: `docs/seanses/evening-auditor-m0-order-2026-07-18.md#reply-1`
