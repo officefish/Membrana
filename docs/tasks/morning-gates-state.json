@@ -1,14 +1,14 @@
 {
   "magistralOptions": [
     "strategy-day-generator",
-    "free-distribution-s2-s5",
-    "detector-scoreboard-f2"
+    "dreams-oversized-review",
+    "procedure-frames"
   ],
-  "frozenDigest": "a5d6ac2ef14343af0645e9c8fd6762077dd12a249eb4ec2540b0234da7aedbc0",
-  "magistral": "strategy-day-generator",
+  "frozenDigest": "16ae00e7cccec5d829848af1af599f1ef45c0527c73ecc27f9ea5e3956c1cabb",
+  "magistral": "procedure-frames",
   "swallow": {
-    "draftDigest": "608e46c91d43665446f3f3fe547ebe3cb256903771023437f353d6a8d98f17ca",
-    "draftFile": "docs/comms/drafts/swallow-morning-2026-07-21.md",
-    "ownerAck": false
+    "draftDigest": "d6e0da47a26945a9f1cf00936b55b116c2dbd4fdc0b574354f4126abe9ae345d",
+    "draftFile": "docs/comms/drafts/swallow-morning-2026-07-22.md",
+    "ownerAck": true
   }
 }

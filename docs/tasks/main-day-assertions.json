@@ -12,6 +12,11 @@
   "//echo-today": "21.07: источник ОДИН, первичный — прямой выбор владельца из ЗАМОРОЖЕННОГО топ-3 (morning:gate freeze → AskUserQuestion → magistral --choose; снимок a5d6ac2e). Продолжение выбора 18.07 (та же магистраль #592), но перечеканено сегодняшним owner-choice, не унаследовано молча. Строка 18.07 хранится историей ниже.",
   "sources": [
     {
+      "claim": "Магистраль 22.07: procedure-frames (#900) — спринт «фреймы»: frames[] в манифесте процедур, пин отрезков, первый фрейм «подводка утра» (Ожегов). Выбор владельца из замороженного топ-3 (strategy-day-generator · dreams-oversized-review · procedure-frames).",
+      "origin": "owner-choice@3bb8d90d/AskUserQuestion-magistral-22-07",
+      "date": "2026-07-22"
+    },
+    {
       "claim": "Владелец 21.07: магистраль — strategy-day-generator: довести генератор #592 до ритуала (три провода: ritual:day зовёт #592, main-day-issue читает граф правды S7, выход {horizon, focus, task_refs[]}; тест интеграции зелёный; развилка #621 — gated-выбор владельцу). Выбор из замороженного топ-3: strategy-day-generator · free-distribution-s2-s5 · detector-scoreboard-f2",
       "origin": "owner-choice@8d7ef4f1/AskUserQuestion-magistral-21-07"
     },
@@ -26,21 +31,39 @@
     "assertions": [
       {
         "claim": "Ветка A: fusion в коде ещё не живёт — написать чистую функцию объединения confidence",
-        "marker": { "kind": "symbol", "value": "fuseDetectorConfidences" },
+        "marker": {
+          "kind": "symbol",
+          "value": "fuseDetectorConfidences"
+        },
         "issue": 415,
         "verdict": "ПОСЫЛКА НАРУШЕНА — символ существует, issue #415 closed"
       },
       {
         "claim": "Ветка B: три пустых UC-каркаса — налить спектр/нейро/библиотеку",
-        "marker": { "kind": "file", "value": "packages/device-board/src/graph/usercase-free-spectrum-live.ts" },
+        "marker": {
+          "kind": "file",
+          "value": "packages/device-board/src/graph/usercase-free-spectrum-live.ts"
+        },
         "verdict": "ПОСЫЛКА НАРУШЕНА — файл существует (436 строк)"
       }
     ],
     "sources": [
-      { "claim": "STRATEGIC_PLAN_DAY (16.07): магистраль = S2 combined UC (fusion + alarm-loop)", "origin": "detection-planning-priorities.mjs@2026-07-06" },
-      { "claim": "Форсайт 2026-07-06: S2 первый в цепочке S2→S3→S4→S5", "origin": "detection-planning-priorities.mjs@2026-07-06" },
-      { "claim": "DAILY_STANDUP (16.07): магистраль = S2 combined UC", "origin": "detection-planning-priorities.mjs@2026-07-06" },
-      { "claim": "MAIN_DAY_ISSUE (15.07): S2 слит (#416), остаток — упаковка UC-каркасов", "origin": "git-merge-fact@5e42c937" }
+      {
+        "claim": "STRATEGIC_PLAN_DAY (16.07): магистраль = S2 combined UC (fusion + alarm-loop)",
+        "origin": "detection-planning-priorities.mjs@2026-07-06"
+      },
+      {
+        "claim": "Форсайт 2026-07-06: S2 первый в цепочке S2→S3→S4→S5",
+        "origin": "detection-planning-priorities.mjs@2026-07-06"
+      },
+      {
+        "claim": "DAILY_STANDUP (16.07): магистраль = S2 combined UC",
+        "origin": "detection-planning-priorities.mjs@2026-07-06"
+      },
+      {
+        "claim": "MAIN_DAY_ISSUE (15.07): S2 слит (#416), остаток — упаковка UC-каркасов",
+        "origin": "git-merge-fact@5e42c937"
+      }
     ]
   }
 }

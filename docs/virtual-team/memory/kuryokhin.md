@@ -5,7 +5,7 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 32 из 179 кандидатов (бюджет <5000 токенов).
+Записей: 32 из 180 кандидатов (бюджет <5000 токенов).
 
 ### 2026-07-21 · позиция · angelina-hostess-m0-order
 
@@ -84,6 +84,12 @@
 > Пункт 3 — доноры первого залпа. Первый — **`ritual-evening`**: он уже назначен жильцом в M1, менять донора значило бы пересмотреть M1 без права на то; и у ритуала самый богатый набор движков — стресс-тест манифеста. Второй — **`meeting`** (заседание): мы сами восемь раз за день […] _(реплик в сеансе: 2)_
 
 — источник: `docs/seanses/procedural-layer-m5-migration-manual-2026-07-21.md#reply-1`
+
+### 2026-07-21 · позиция · team-evening-feedback
+
+> Kuryokhin. Оценка артефактов: аудио-контур в документах дня отсутствует; CURRENT_TASK держит эпик `detector-scoreboard` Ф1 (плагин в модуле микрофона на измеренных числах), но git 21.07 в него не заходил. Оцениваю процесс и буфер. Итоги дня: по звуку/эффектам/Web Audio — «—». […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-21.md#reply-1`
 
 ### 2026-07-20 · позиция · linear-egress-gear-wiring-m0-order
 
@@ -187,14 +193,8 @@
 
 — источник: `docs/seanses/insight-archive-lifecycle-c3-evidence-contract-2026-07-19.md#reply-1`
 
-### 2026-07-19 · позиция · insight-archive-lifecycle-c3-evidence-contract-r2
+### 2026-07-19 · позиция · security-posture-m1-watch
 
-> По касательной, аудио тут не задет, но у меня живой флаг из `ritual-inputs-echo`: три отражения одного снимка — это `n=1`, а не `n=3`. Здесь то же самое в пункте 5: один `originRef` может законно доказывать разные claims, но **дубликат одного target от одного origin не добавляет […] _(реплик в сеансе: 4)_
+> Скажу как человек с поля: 96 advisories — это шум, а нам нужен сигнал. Про инцидент patchhog 19.07 главное — о дырах мы узнали от спамеров, а не от себя. Дозор должен опережать чужие «отчёты», иначе мы всегда в роли догоняющих. Я за то, чтобы алерт приходил автоматически, а не […] _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/insight-archive-lifecycle-c3-evidence-contract-r2-2026-07-19.md#reply-1`
-
-### 2026-07-05 · голос · insight-comms-contour-topology
-
-> внедрять: Да, партнёр = тонкий срез в обеих · этап: Сейчас · оценка: 8/10
-
-— источник: `docs/insights/insight-comms-contour-topology/REVIEW.md#vote`
+— источник: `docs/seanses/security-posture-m1-watch-2026-07-19.md#reply-1`

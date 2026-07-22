@@ -1,5 +1,5 @@
 {
-  "date": "2026-07-21",
+  "date": "2026-07-22",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -350,6 +350,13 @@
       "severity": "moderate",
       "issue": "Rimraf versions prior to v4 are no longer supported",
       "url": ""
+    },
+    {
+      "pkg": "sharp",
+      "id": "1124066",
+      "severity": "high",
+      "issue": "sharp inherited vulnerabilities in libvips: CVE-2026-33327, CVE-2026-33328, CVE-2026-35590, CVE-2026-35591",
+      "url": "https://github.com/advisories/GHSA-f88m-g3jw-g9cj"
     },
     {
       "pkg": "tar",
