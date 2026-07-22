@@ -5,7 +5,8 @@
 > [`PINNED_SUBGRAPH_VERSIONING`](../patterns/PINNED_SUBGRAPH_VERSIONING.md) (#761).  
 > Прецедент жильцов: `kits-angelina-morning` (#814), `kits-dream-master` (#855).  
 > Автор крафта: [`CONTAINERIZATION_MASTER_PROMPT.md`](./CONTAINERIZATION_MASTER_PROMPT.md).  
-> OPEN: [`docs/day-sprint/kits-containerization-master-2026-07-22/OPEN.md`](../day-sprint/kits-containerization-master-2026-07-22/OPEN.md).
+> OPEN: [`docs/day-sprint/kits-containerization-master-2026-07-22/OPEN.md`](../day-sprint/kits-containerization-master-2026-07-22/OPEN.md).  
+> Статус: **CLOSED** · CLOSURE [`kits-containerization-master-2026-07-22`](../day-sprint/kits-containerization-master-2026-07-22/CLOSURE.md) · жилец [`kits/containerization-master/`](../../kits/containerization-master/).
 
 ---
 
@@ -84,9 +85,9 @@
 
 ## Acceptance (эпик)
 
-- [ ] Жилец `kits/containerization-master/` · `yarn kits:audit --id containerization-master` = 0 blocking
-- [ ] `CONTAINERIZATION_MASTER_PROMPT.md` с версией + cold-start
-- [ ] Процедура `docs/procedures/containerization/` · `kitVersion` → кит · `validateProcedure` green
-- [ ] Skill `membrana-containerization-master` (+ `.claude` mirror)
-- [ ] `kits/README.md` таблица жильцов обновлена
-- [ ] Фазы архивированы со свидетельством PR
+- [x] Жилец `kits/containerization-master/` · `yarn kits:audit --id containerization-master` = 0 blocking
+- [x] `CONTAINERIZATION_MASTER_PROMPT.md` с версией + cold-start
+- [x] Процедура `docs/procedures/containerization/` · `kitVersion` → кит · `validateProcedure` green
+- [x] Skill `membrana-containerization-master` (+ `.claude` mirror)
+- [x] `kits/README.md` таблица жильцов обновлена
+- [x] Фазы архивированы со свидетельством PR (#911 + C4)
