@@ -7,7 +7,7 @@
 > Вход шторма: [`storm-cold-start-entry-2026-07-22`](../storm/storm-cold-start-entry-2026-07-22/THESES.md)  
 > OPEN: [`docs/day-sprint/procedure-frames-2026-07-22/OPEN.md`](../day-sprint/procedure-frames-2026-07-22/OPEN.md)  
 > Заседания: **закрыты**; этот спринт — **исполнение**, не пересборка комнаты.  
-> ADR формы пина: [`ADR-0015`](../adr/ADR-0015-frame-pins-array-shape.md) (F0, DRAFT→LGTM).
+> ADR формы пина: [`ADR-0015`](../adr/ADR-0015-frame-pins-array-shape.md) (F0, **ACCEPTED** 22.07).
 
 ---
 

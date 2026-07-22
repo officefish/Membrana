@@ -28,7 +28,7 @@
 
 ## Gate (к F5)
 
-- [ ] ADR шов `pin?` / `pins[]` (F0 → ADR-0015)
+- [x] ADR шов `pin?` / `pins[]` (F0 → ADR-0015 **ACCEPTED** 22.07)
 - [ ] `frames[]` в validateProcedure; живущие процедуры зелёные без frames
 - [ ] `auditPins` + тесты 4 исходов; кит на том же ядре
 - [ ] `morning-wiring` в ritual-day + 3 двери + зов на старте ритуала (**носитель preflight** — вердикт ritual-day-frames M2)
