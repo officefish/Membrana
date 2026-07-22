@@ -170,6 +170,14 @@ PR мёржатся **squash** → коммиты ветки не становя
 - **`process.exit()` в скриптах — не использовать, только `process.exitCode`**: обрыв процесса с недописанным pipe-stdout роняет libuv ассертом `UV_HANDLE_CLOSING` и подменяет код возврата на **127** (поймано на `_ssh-panel-smoke`, тот же симптом у `code-review.mjs`).
 - **Файлы для VDS пишутся с CRLF** — bash падает на `$'\r': command not found`. `yarn vds:run` снимает CRLF сам; при ручном scp — `sed -i 's/\r$//'`.
 
+### Morning cold-start route
+
+<!-- pin:START morning-wiring-agents -->
+Утро холодной сессии: только скилл `membrana-morning-ritual` (live). Команды
+`yarn morning-care` / `yarn ritual:day` — см. таблицу Key commands выше.
+`membrana-developer-rhythm` утро не замещает.
+<!-- pin:END morning-wiring-agents -->
+
 ### OpenCode operator commands
 
 Operator workflows live in `.opencode/command/*.md` (auto-discovered) — thin wrappers over the `yarn` scripts above. Config: [`opencode.json`](./opencode.json) (`instructions: AGENTS.md`, `skills.paths: .opencode/skills`, `references.opencode-commands`). Sprint: `docs/prompts/OPENCODE_OPERATOR_WORKFLOWS_SPRINT_PROMPT.md` (Issue #183).
