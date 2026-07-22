@@ -17,7 +17,11 @@ import { listWorkshopManifests, validateWorkshop } from './validate-workshop.mjs
 
 const MANDATORY = ['audit', 'decompose', 'inspectElement'];
 
-/** Выжимка README: H1 + первый непустой не-заголовочный абзац. */
+// Markdown-ссылку → её текст: `[текст](rel)` относителен к README-источнику и ломается
+// при агрегации в другое место (ATLAS.md / mintlify). Оставляем только текст.
+const stripLinks = (s) => s.replace(/\[([^\]]+)\]\([^)]*\)/gu, '$1');
+
+/** Выжимка README: H1 + первый непустой не-заголовочный абзац (ссылки → текст). */
 function readmeDigest(readmePath) {
   if (!existsSync(readmePath)) return { title: null, summary: null };
   const lines = readFileSync(readmePath, 'utf8').split(/\r?\n/u);
@@ -28,7 +32,7 @@ function readmeDigest(readmePath) {
     if (!title && line.startsWith('# ')) { title = line.slice(2).trim(); continue; }
     // summary — первый прозаический абзац, НЕ завязан на наличие H1.
     if (!summary && line !== '' && !line.startsWith('#') && !line.startsWith('>') && !line.startsWith('<!--')) {
-      summary = line;
+      summary = stripLinks(line);
     }
     if (title && summary) break;
   }

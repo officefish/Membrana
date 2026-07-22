@@ -99,6 +99,13 @@ test('mintlify нейтрализует {}<> (finding MAJOR-3, MDX-инъекц�
   assert.doesNotMatch(mdx, /<Foo>|\{bad\}/u);
 });
 
+test('summary вычищает markdown-ссылки (иначе битые в mintlify — CI docs lint)', () => {
+  makeContainer('docs/linked', { name: 'со ссылкой', worksOn: 'docs/linked', verbs: {}, readme: '# t\n\nРеализация [GROUP_CONTAINERIZATION](../../patterns/GROUP_CONTAINERIZATION.md).' });
+  const c = discoverContainers(tmp).find((x) => x.worksOn === 'docs/linked');
+  assert.equal(c.summary, 'Реализация GROUP_CONTAINERIZATION.');
+  assert.doesNotMatch(c.summary, /\]\(/u); // ни одной ссылки
+});
+
 test('readmeDigest: summary без H1 (finding MINOR-5)', () => {
   makeContainer('docs/no-h1', { name: 'без H1', worksOn: 'docs/no-h1', verbs: {}, readme: 'Просто абзац без заголовка.' });
   const c = discoverContainers(tmp).find((x) => x.worksOn === 'docs/no-h1');
