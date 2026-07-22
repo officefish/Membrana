@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `swallow-format-frame-fix` | Фрейм форматирования ласточки: полноценное зеркало 5 блоков вместо телеграфных строк (Ожегов) | S | [`SWALLOW_FORMAT_FRAME_FIX_PROMPT.md`](../prompts/SWALLOW_FORMAT_FRAME_FIX_PROMPT.md) | [#918](https://github.com/officefish/Membrana/issues/918) |
 | `kcm-c4-closure` | C4: CLOSURE + archive + комментарий #761 | S | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | [#909](https://github.com/officefish/Membrana/issues/909) |
 | `kcm-c3-wire` | C3: процедура containerization + skill + kits/README | M | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | [#908](https://github.com/officefish/Membrana/issues/908) |
 | `kcm-c2-kit` | C2: жилец kits/containerization-master + пины; kits:audit green | M | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | [#907](https://github.com/officefish/Membrana/issues/907) |

@@ -1,6 +1,23 @@
 {
   "tasks": [
     {
+      "id": "swallow-format-frame-fix",
+      "title": "Фрейм форматирования ласточки: полноценное зеркало 5 блоков вместо телеграфных строк (Ожегов)",
+      "promptPath": "docs/prompts/SWALLOW_FORMAT_FRAME_FIX_PROMPT.md",
+      "githubIssue": 918,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "morning-wiring-hotfix",
       "title": "Хотфикс проводов утра: CLAUDE.md + AGENTS.md → membrana-morning-ritual (фрейм подводки, Ожегов)",
       "promptPath": "docs/prompts/MORNING_WIRING_HOTFIX_PROMPT.md",
