@@ -23,7 +23,6 @@
 | `bw-w3-mintlify` | W3: thin Mintlify mirror over git bus | M | [`BW_W3_MINTLIFY_PROMPT.md`](../prompts/BW_W3_MINTLIFY_PROMPT.md) | [#949](https://github.com/officefish/Membrana/issues/949) |
 | `bw-w2-registries` | W2: catch/trap registries + antipattern stub | M | [`BW_W2_REGISTRIES_PROMPT.md`](../prompts/BW_W2_REGISTRIES_PROMPT.md) | [#948](https://github.com/officefish/Membrana/issues/948) |
 | `bw-w1-workshop` | W1: workshop manifest + HOME_WORKSHOP seam | M | [`BW_W1_WORKSHOP_PROMPT.md`](../prompts/BW_W1_WORKSHOP_PROMPT.md) | [#947](https://github.com/officefish/Membrana/issues/947) |
-| `bw-w0-brief` | W0: brief bestiary-workshop open/register | M | [`BW_W0_BRIEF_PROMPT.md`](../prompts/BW_W0_BRIEF_PROMPT.md) | [#946](https://github.com/officefish/Membrana/issues/946) |
 | `bestiary-workshop` | Epic: bestiary workshop — trap supplier over closed home | L | [`BESTIARY_WORKSHOP_PROMPT.md`](../prompts/BESTIARY_WORKSHOP_PROMPT.md) | [#945](https://github.com/officefish/Membrana/issues/945) |
 | `bridge-room` | Спринт «мостик»: явное открытие/закрытие комнаты капитана, попугай-техдолг, конспекты фреймом в репо | M | [`BRIDGE_ROOM_PROMPT.md`](../prompts/BRIDGE_ROOM_PROMPT.md) | [#936](https://github.com/officefish/Membrana/issues/936) |
 | `precedent-container` | Контейнер прецедентов + мастерская к нему | M | [`PRECEDENT_CONTAINER_PROMPT.md`](../prompts/PRECEDENT_CONTAINER_PROMPT.md) | — |
@@ -37,8 +36,6 @@
 | `pf-f4-pattern` | F4: уточнение PINNED_* / GROUP_* под segmentHash (m4) | S | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#930](https://github.com/officefish/Membrana/issues/930) |
 | `pf-f3-morning-wiring` | F3: morning-wiring в ritual-day + 3 двери + гейт утра (m3) | M | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#929](https://github.com/officefish/Membrana/issues/929) |
 | `pf-f2-segment-pin` | F2: ядро auditPins + segmentHash; кит на том же ядре (m2) | M | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#928](https://github.com/officefish/Membrana/issues/928) |
-| `pf-f1-frames-contract` | F1: frames[] optional в validateProcedure (m1) | M | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#927](https://github.com/officefish/Membrana/issues/927) |
-| `pf-f0-brief` | F0: sync prompt/OPEN + ADR pin shape + хвост прецедента 22.07 | S | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#926](https://github.com/officefish/Membrana/issues/926) |
 | `procedure-frames` | Спринт «фреймы»: frames[] в манифесте процедур + пин отрезков + первый фрейм «подводка утра» (Ожегов) | L | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#900](https://github.com/officefish/Membrana/issues/900) |
 | `code-review-lead-refactor` | Рефакторинг код-ревью: ведущий из пяти + память ведущего + бестиарий антипаттернов (T3/T4/T5) | M | [`CODE_REVIEW_LEAD_REFACTOR_PROMPT.md`](../prompts/CODE_REVIEW_LEAD_REFACTOR_PROMPT.md) | — |
 | `morning-report-completion` | Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям) | L | [`MORNING_REPORT_COMPLETION_PROMPT.md`](../prompts/MORNING_REPORT_COMPLETION_PROMPT.md) | [#788](https://github.com/officefish/Membrana/issues/788) |
@@ -229,6 +226,9 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `bw-w0-brief` | W0: brief bestiary-workshop open/register | 2026-07-22 | [`BW_W0_BRIEF_PROMPT.md`](../prompts/BW_W0_BRIEF_PROMPT.md) | #946 (Issue открыт) | [карточка](./archive/bw-w0-brief.md) |
+| `pf-f1-frames-contract` | F1: frames[] optional в validateProcedure (m1) | 2026-07-22 | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | #927 (Issue открыт) | [карточка](./archive/pf-f1-frames-contract.md) |
+| `pf-f0-brief` | F0: sync prompt/OPEN + ADR pin shape + хвост прецедента 22.07 | 2026-07-22 | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | #926 (Issue открыт) | [карточка](./archive/pf-f0-brief.md) |
 | `morning-wiring-hotfix` | Хотфикс проводов утра: CLAUDE.md + AGENTS.md → membrana-morning-ritual (фрейм подводки, Ожегов) | 2026-07-22 | [`MORNING_WIRING_HOTFIX_PROMPT.md`](../prompts/MORNING_WIRING_HOTFIX_PROMPT.md) | #902 (Issue открыт) | [карточка](./archive/morning-wiring-hotfix.md) |
 | `kcm-c4-closure` | C4: CLOSURE + archive + комментарий #761 | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #909 | [карточка](./archive/kcm-c4-closure.md) |
 | `kcm-c3-wire` | C3: процедура containerization + skill + kits/README | 2026-07-22 | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | #908 | [карточка](./archive/kcm-c3-wire.md) |
