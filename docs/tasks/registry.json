@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "procedure-frames",
+      "title": "Спринт «фреймы»: frames[] в манифесте процедур + пин отрезков + первый фрейм «подводка утра» (Ожегов)",
+      "promptPath": "docs/prompts/PROCEDURE_FRAMES_PROMPT.md",
+      "githubIssue": 900,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "code-review-lead-refactor",
       "title": "Рефакторинг код-ревью: ведущий из пяти + память ведущего + бестиарий антипаттернов (T3/T4/T5)",
       "promptPath": "docs/prompts/CODE_REVIEW_LEAD_REFACTOR_PROMPT.md",
