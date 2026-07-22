@@ -14,7 +14,7 @@
 | **Branch (W2)** | `feat/bw-w2-registries` → merged [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` |
 | **Branch (W3)** | `feat/bw-w3-mintlify` → merged [#967](https://github.com/officefish/Membrana/pull/967) · `ed997ce1` |
 | **Branch (W4)** | `feat/bw-w4-trap-kit` → merged [#978](https://github.com/officefish/Membrana/pull/978) · `e1a6eafb` · kit `witcher` |
-| **Branch (W5)** | `feat/bw-w5-closure` · CLOSURE |
+| **Branch (W5)** | `feat/bw-w5-closure` → merged [#982](https://github.com/officefish/Membrana/pull/982) · `f01a907e` |
 | **CLOSURE** | [`CLOSURE.md`](./CLOSURE.md) |
 | **Seed** | шторм [`storm-bestiary-workshop-2026-07-22`](../../storm/storm-bestiary-workshop-2026-07-22/REPORT.md) · T1–T18 |
 | **Дом** | [`docs/audit/bestiary/`](../../audit/bestiary/) (#878 CLOSED) |
@@ -55,7 +55,7 @@
 | **W2** | `bw-w2-registries` | [#948](https://github.com/officefish/Membrana/issues/948) | ozhegov | [`BW_W2_REGISTRIES_PROMPT.md`](../../prompts/BW_W2_REGISTRIES_PROMPT.md) | Форматы улова/ловушки + stub шаблона антипаттерна | **done** · [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` |
 | **W3** | `bw-w3-mintlify` | [#949](https://github.com/officefish/Membrana/issues/949) | ozhegov | [`BW_W3_MINTLIFY_PROMPT.md`](../../prompts/BW_W3_MINTLIFY_PROMPT.md) | Thin Mintlify-зеркало + провод из дома | **done** · [#967](https://github.com/officefish/Membrana/pull/967) · `ed997ce1` · archived |
 | **W4** | `bw-w4-trap-kit` | [#950](https://github.com/officefish/Membrana/issues/950) | dynin | [`BW_W4_TRAP_KIT_PROMPT.md`](../../prompts/BW_W4_TRAP_KIT_PROMPT.md) | Жилец кита, audit green, aim «Ведьмак» | **done** · [#978](https://github.com/officefish/Membrana/pull/978) · `e1a6eafb` · archived |
-| **W5** | `bw-w5-closure` | [#951](https://github.com/officefish/Membrana/issues/951) | vesnin | [`BW_W5_CLOSURE_PROMPT.md`](../../prompts/BW_W5_CLOSURE_PROMPT.md) | CLOSURE + ACTIVE cleared + archive | **in review** · _(this PR)_ |
+| **W5** | `bw-w5-closure` | [#951](https://github.com/officefish/Membrana/issues/951) | vesnin | [`BW_W5_CLOSURE_PROMPT.md`](../../prompts/BW_W5_CLOSURE_PROMPT.md) | CLOSURE + ACTIVE cleared + archive | **done** · [#982](https://github.com/officefish/Membrana/pull/982) · `f01a907e` · archived |
 
 ---
 
@@ -122,4 +122,4 @@
 - [x] CLOSURE.md полный; OPEN closed; ACTIVE cleared
 - [x] Эпик acceptance отмечен; follow-up названы
 - [x] Sanity: `bestiary:audit` 5/5 · `kits:audit --id witcher` blocking=0
-- [ ] LGTM vesnin (owner ok) → merge W5 → archive W5 + epic
+- [x] LGTM vesnin (owner ok) → merge W5 [#982](https://github.com/officefish/Membrana/pull/982) · `f01a907e` → archive W5 + epic

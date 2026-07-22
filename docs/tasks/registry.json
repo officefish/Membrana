@@ -201,14 +201,14 @@
       "githubIssue": 951,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "branch feat/bw-w5-closure; after W4 #978",
-      "archiveNotes": null,
+      "archiveNotes": "PR #982 merged f01a907e; CLOSURE + ACTIVE cleared; sanity bestiary 5/5 + kits witcher blocking=0",
       "githubIssueClosedAt": null,
       "parentEpic": "bestiary-workshop"
     },
@@ -309,17 +309,17 @@
       "githubIssue": 945,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin",
         "ozhegov"
       ],
       "notes": "W0–W4 done; W5 CLOSURE in flight; инстанс bestiary-workshop-2026-07-22",
-      "archiveNotes": null,
+      "archiveNotes": "PR #982 merged f01a907e; W0-W5 done (#952/#954/#965/#967/#978/#982); CLOSURE docs/day-sprint/bestiary-workshop-2026-07-22/CLOSURE.md; ACTIVE cleared; kit witcher",
       "githubIssueClosedAt": null
     },
     {

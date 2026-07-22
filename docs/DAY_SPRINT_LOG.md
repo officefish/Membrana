@@ -11,7 +11,7 @@
 - **OPEN:** [`day-sprint/bestiary-workshop-2026-07-22/OPEN.md`](./day-sprint/bestiary-workshop-2026-07-22/OPEN.md)
 - **CLOSURE:** [`day-sprint/bestiary-workshop-2026-07-22/CLOSURE.md`](./day-sprint/bestiary-workshop-2026-07-22/CLOSURE.md)
 - **W0–W4:** [#952](https://github.com/officefish/Membrana/pull/952) · [#954](https://github.com/officefish/Membrana/pull/954) · [#965](https://github.com/officefish/Membrana/pull/965) · [#967](https://github.com/officefish/Membrana/pull/967) · [#978](https://github.com/officefish/Membrana/pull/978)
-- **W5:** _(this PR)_ · CLOSURE + ACTIVE cleared
+- **W5:** [#982](https://github.com/officefish/Membrana/pull/982) · `f01a907e` · CLOSURE + ACTIVE cleared · epic archived
 - **K25-B** · kit `kits/witcher` · follow-up: полный каталог ловушек / доп. Mintlify / новые детекторы
 
 ---
