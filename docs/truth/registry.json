@@ -2852,6 +2852,161 @@
       },
       "supersededBy": null,
       "episode": "Фаза 2, пара O1+O3."
+    },
+    {
+      "id": "magistral-is-active-focus-bestiary",
+      "claim": "Магистраль дня = Focus в DAY_SPRINT_ACTIVE (сейчас bestiary-workshop); закрытые procedure-frames и ATF4 не конкурируют за магистраль.",
+      "class": "owner",
+      "parents": [],
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-22",
+        "utterance": {
+          "sessionId": "ec290f46-5bd6-4f70-860a-4e069c64c474",
+          "uuid": "cursor-line-759",
+          "timestamp": "2026-07-22T16:30:00.000Z",
+          "kind": "click",
+          "quote": "A",
+          "limit": "Клик по вариантам агента (A/B/C): A = Focus ACTIVE (bestiary) — магистраль; frames/ATF4 закрыты и не конкурируют. НЕ сказано: горизонт (только завтра / пока Focus не сменят); что делать, если ACTIVE пуст или Focus сменят ночью; обязан ли standup цитировать Focus дословно."
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца или смены Focus в ACTIVE"
+      },
+      "status": "active",
+      "supersededBy": null,
+      "episode": "Кристаллизация 22.07 после закрытия procedure-frames (#900) и ATF4 (#974/#976). Весь день катили frames/ATF4, Focus в ACTIVE не переключали. Вопрос 1/3: что завтра считать магистралью. Ответ A. Remint: uncommitted mint был сброшен до коммита."
+    },
+    {
+      "id": "morning-wiring-stop-is-live",
+      "claim": "Missing дверей morning-wiring → STOP на старте morning-care / ritual:day — живой закон утра, не мягкий контракт «на будущее».",
+      "class": "owner",
+      "parents": [],
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-22",
+        "utterance": {
+          "sessionId": "ec290f46-5bd6-4f70-860a-4e069c64c474",
+          "uuid": "cursor-line-763",
+          "timestamp": "2026-07-22T16:31:00.000Z",
+          "kind": "click",
+          "quote": "A",
+          "limit": "Клик A: STOP намерен; чинит ozhegov, не импровизация обхода. НЕ сказано: whitelist исключений; можно ли SKIP_PREPUSH-подобным флагом обойти; что считать «дверь цела» сверх auditPins/markers."
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца"
+      },
+      "status": "active",
+      "supersededBy": null,
+      "episode": "Кристаллизация 22.07. morning-wiring ушёл в main (F3 procedure-frames); владелец сказал «ок» на мердж. Вопрос 2/3: живой STOP или soft. Ответ A."
+    },
+    {
+      "id": "stop-isolates-ritual-not-all-work",
+      "claim": "STOP morning-wiring режет цепочку ritual:day; product-работа (в т.ч. по Focus) может идти параллельно в другой сессии или ветке.",
+      "class": "owner",
+      "parents": [],
+      "source": {
+        "kind": "owner",
+        "date": "2026-07-22",
+        "utterance": {
+          "sessionId": "ec290f46-5bd6-4f70-860a-4e069c64c474",
+          "uuid": "cursor-line-767",
+          "timestamp": "2026-07-22T16:31:00.000Z",
+          "kind": "click",
+          "quote": "B",
+          "limit": "Клик B: магистраль параллельно; STOP не блокирует всю работу дня. НЕ сказано: обязан ли кто-то чинить двери в тот же календарный день; приоритет между починкой wiring и Focus, если один человек; распространяется ли изоляция на evening-ритуал."
+        }
+      },
+      "revocation": {
+        "kind": "owner",
+        "value": "до слова владельца"
+      },
+      "status": "active",
+      "supersededBy": null,
+      "episode": "Кристаллизация 22.07. Вопрос 3/3 после A+A: что важнее при сработавшем STOP. Ответ B. Дубль реплики B на cursor-line-769 — эхо UI, указатель на первое B."
+    },
+    {
+      "id": "focus-work-may-proceed-under-ritual-stop",
+      "claim": "Работа по Focus ACTIVE может продолжаться, пока ritual:day стоит на STOP morning-wiring.",
+      "class": "derived",
+      "parents": [
+        "magistral-is-active-focus-bestiary",
+        "stop-isolates-ritual-not-all-work"
+      ],
+      "source": {
+        "kind": "deduction",
+        "date": "2026-07-22",
+        "form": "конъюнкция",
+        "premisesUsed": [
+          "magistral-is-active-focus-bestiary",
+          "stop-isolates-ritual-not-all-work"
+        ],
+        "note": "Магистраль = Focus; STOP изолирует ритуал, не весь день ⇒ product по Focus не обязан ждать зелёного ritual:day."
+      },
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с любым родителем"
+      },
+      "status": "active",
+      "supersededBy": null,
+      "episode": "Фаза 2 кристаллизации 22.07, пара 1+3. Владелец отметил «1+3 +»."
+    },
+    {
+      "id": "morning-stop-is-ritual-gate-only",
+      "claim": "Красный morning-wiring = отказ цепочки утра (ritual:day), не отзыв Focus и прочих open-работ дня.",
+      "class": "derived",
+      "parents": [
+        "morning-wiring-stop-is-live",
+        "stop-isolates-ritual-not-all-work"
+      ],
+      "source": {
+        "kind": "deduction",
+        "date": "2026-07-22",
+        "form": "конъюнкция",
+        "premisesUsed": [
+          "morning-wiring-stop-is-live",
+          "stop-isolates-ritual-not-all-work"
+        ],
+        "note": "STOP живой (не soft) и при этом изолирует ритуал ⇒ красный wiring не отменяет магистраль/Focus как статус дня, только утреннюю цепочку."
+      },
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с любым родителем"
+      },
+      "status": "active",
+      "supersededBy": null,
+      "episode": "Фаза 2 кристаллизации 22.07, пара 2+3. Владелец отметил «2+3 +»."
+    },
+    {
+      "id": "two-gates-tomorrow",
+      "claim": "Завтра два независимых гейта: (a) ritual:day может STOP на дверях morning-wiring; (b) магистраль bestiary (Focus ACTIVE) может двигаться параллельно.",
+      "class": "derived",
+      "parents": [
+        "magistral-is-active-focus-bestiary",
+        "morning-wiring-stop-is-live",
+        "stop-isolates-ritual-not-all-work"
+      ],
+      "source": {
+        "kind": "deduction",
+        "date": "2026-07-22",
+        "form": "конъюнкция",
+        "premisesUsed": [
+          "magistral-is-active-focus-bestiary",
+          "morning-wiring-stop-is-live",
+          "stop-isolates-ritual-not-all-work"
+        ],
+        "note": "Арность 3: живой STOP + изоляция ритуала + магистраль=Focus ⇒ два гейта не схлопываются в одну очередь."
+      },
+      "revocation": {
+        "kind": "parent",
+        "value": "умирает с любым родителем"
+      },
+      "status": "active",
+      "supersededBy": null,
+      "episode": "Фаза 2 кристаллизации 22.07, 1+2+3. Владелец: «1+3 + / 2+3 + / 3 +1 +» — два парных + тройка (без отдельного 1+2)."
     }
   ],
   "openGaps": [
