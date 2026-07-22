@@ -5,6 +5,10 @@
 [`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md); зеркален по
 анатомии [`docs/audit/git/`](../git/) (контейнер · кеш · реестр · инструменты · агент).
 
+**Мастерская дома** ([`HOME_WORKSHOP`](../../patterns/HOME_WORKSHOP.md), ось операций):
+[`workshop.manifest.json`](./workshop.manifest.json) — осмотр `tasks:audit`,
+декомпозиция `tasks:decompose`; `inspectElement` — ⚠ пока нет; `kit: null`.
+
 ## Соответствие паттерну GROUP_CONTAINERIZATION
 
 1. ✅ Выделенный каталог `docs/audit/tasks/`; артефакты аудита задач — только здесь.

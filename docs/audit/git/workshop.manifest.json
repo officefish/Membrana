@@ -1,0 +1,13 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская веток",
+  "worksOn": "docs/audit/git",
+  "kit": null,
+  "verbs": {
+    "audit": "yarn repo:branches",
+    "decompose": "yarn repo:branches:decompose",
+    "inspectElement": null,
+    "stackLike": [],
+    "domain": []
+  }
+}
