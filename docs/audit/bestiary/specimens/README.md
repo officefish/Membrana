@@ -10,7 +10,7 @@
 | Аудит | `yarn bestiary:audit` → `registry/BESTIARY_LIST.md` |
 | Запрет | «лечебный» код без пометки; автофикс прод (#533) |
 
-## Текущие бетии (B2)
+## Текущие бетии (B2 + B3)
 
 | Class | Файл |
 |-------|------|
@@ -18,3 +18,6 @@
 | `unwired` | `unwired/orphan-export.mjs` — export без потребителей |
 | `ornament` | `ornament/unread-write.mjs` — write без читателей |
 | `jargon-out` | `jargon-out/external-jargon.mjs` — MAIN_DAY_ISSUE + perplexity |
+| `echo` | `echo/triple-reflection.mjs` — один origin ×3 без dedupeByOrigin |
+
+`goal-displacement` — нет specimen (явный defer B3; follow-up `bc-followup-goal-displacement`).

@@ -39,7 +39,7 @@ specimen’ами, не чинишь код молча (#533).
 |---------|------------|
 | `node scripts/lens-run.mjs [files…]` | Навести бестиарий; `--json` → stdout |
 | `yarn bestiary:audit` | Покрытие specimens → `registry/BESTIARY_LIST.md` (exit 1 если класс без hit) |
-| `node --test scripts/bestiary-audit.test.mjs` | Зуб: 4/4 class ловятся |
+| `node --test scripts/bestiary-audit.test.mjs` | Зуб: class BESTIARY ловятся на specimens |
 
 Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`.
 
@@ -73,7 +73,7 @@ Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`.
 
 ---
 
-## 5. Классы (as-of B1 / код)
+## 5. Классы (as-of B3 / код)
 
 | defectClass | Label | Detector | Specimen |
 |-------------|-------|----------|----------|
@@ -81,4 +81,5 @@ Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`.
 | `unwired` | Половина без провода | `detectUnwired` | ✅ `unwired/orphan-export.mjs` |
 | `ornament` | Украшение | `detectOrnament` | ✅ `ornament/unread-write.mjs` |
 | `jargon-out` | Жаргон наружу | `detectJargonOut` | ✅ `jargon-out/external-jargon.mjs` |
-| эхо / goal-displacement | — | нет в BESTIARY | B3 |
+| `echo` | Эхо-камера | `detectEchoChamber` (via `dedupeByOrigin`) | ✅ `echo/triple-reflection.mjs` |
+| `goal-displacement` | Смещение цели | — | ⏸ defer B3 → follow-up `bc-followup-goal-displacement` |

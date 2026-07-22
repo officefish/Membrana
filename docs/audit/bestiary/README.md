@@ -39,7 +39,7 @@ docs/audit/bestiary/
   AGENT_PROMPT.md        — setup агента
   registry/              — BESTIARY_LIST.md (производный overwrite)
   analysis/              — недельные / точечные прогоны (dated)
-  specimens/<class>/     — намеренный плохой код (бетии); наполнение — B2
+  specimens/<class>/     — намеренный плохой код (бетии); B2×4 + B3 echo
   cache/                 — сырые JSON прогонов (gitignore)
 ```
 

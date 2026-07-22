@@ -4,8 +4,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-07-21 |
-| Head SHA | a2995f2c |
+| Date | 2026-07-22 |
+| Head SHA | c791a3dc |
 | Source | yarn bestiary:audit |
 | Engines | `scripts/lib/lens-bestiary.mjs` |
 
@@ -17,6 +17,7 @@
 | `unwired` | Половина без провода | `docs/audit/bestiary/specimens/unwired/orphan-export.mjs` | 1 | ✅ |
 | `ornament` | Украшение | `docs/audit/bestiary/specimens/ornament/unread-write.mjs` | 1 | ✅ |
 | `jargon-out` | Жаргон наружу | `docs/audit/bestiary/specimens/jargon-out/external-jargon.mjs` | 1 | ✅ |
+| `echo` | Эхо-камера | `docs/audit/bestiary/specimens/echo/triple-reflection.mjs` | 1 | ✅ |
 
-**Покрытие:** 4/4.
+**Покрытие:** 5/5.
 
