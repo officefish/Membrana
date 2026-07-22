@@ -146,6 +146,18 @@
               "meaning": "passthrough статуса child (task:close-github / team-evening-feedback)"
             }
           }
+        },
+        "bridge-close": {
+          "codes": {
+            "0": {
+              "bucket": "ok",
+              "meaning": "мостик закрыт (или не был открыт — no-op)"
+            },
+            "2": {
+              "bucket": "failure",
+              "meaning": "ошибка записи состояния/конспекта комнаты"
+            }
+          }
         }
       }
     },
