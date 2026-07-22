@@ -24,7 +24,6 @@
 | `tooling-atlas` | Атлас контейнеров — контейнер контейнеров + мастерская + mintlify | M | [`TOOLING_ATLAS_PROMPT.md`](../prompts/TOOLING_ATLAS_PROMPT.md) | — |
 | `assets-container` | Эпик: контейнер имущества — три яруса (git/сервер-БД/Drive), набор от чека, подтверждение датой-сегодня | L | [`ASSETS_CONTAINER_PROMPT.md`](../prompts/ASSETS_CONTAINER_PROMPT.md) | [#959](https://github.com/officefish/Membrana/issues/959) |
 | `bw-w5-closure` | W5: CLOSURE bestiary-workshop | M | [`BW_W5_CLOSURE_PROMPT.md`](../prompts/BW_W5_CLOSURE_PROMPT.md) | [#951](https://github.com/officefish/Membrana/issues/951) |
-| `bw-w4-trap-kit` | W4: trap kit resident + Witcher aim example | M | [`BW_W4_TRAP_KIT_PROMPT.md`](../prompts/BW_W4_TRAP_KIT_PROMPT.md) | [#950](https://github.com/officefish/Membrana/issues/950) |
 | `bestiary-workshop` | Epic: bestiary workshop — trap supplier over closed home | L | [`BESTIARY_WORKSHOP_PROMPT.md`](../prompts/BESTIARY_WORKSHOP_PROMPT.md) | [#945](https://github.com/officefish/Membrana/issues/945) |
 | `bridge-room` | Спринт «мостик»: явное открытие/закрытие комнаты капитана, попугай-техдолг, конспекты фреймом в репо | M | [`BRIDGE_ROOM_PROMPT.md`](../prompts/BRIDGE_ROOM_PROMPT.md) | [#936](https://github.com/officefish/Membrana/issues/936) |
 | `precedent-container` | Контейнер прецедентов + мастерская к нему | M | [`PRECEDENT_CONTAINER_PROMPT.md`](../prompts/PRECEDENT_CONTAINER_PROMPT.md) | — |
@@ -228,6 +227,7 @@
 | `atf4-active-also-open` | ATF4-2: DAY_SPRINT_ACTIVE Also open канон | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #970 (Issue открыт) | [карточка](./archive/atf4-active-also-open.md) |
 | `atf4-pr-ship-conflicting` | ATF4-1: pr:ship STOP при CONFLICTING/DIRTY | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #969 (Issue открыт) | [карточка](./archive/atf4-pr-ship-conflicting.md) |
 | `agent-tooling-friction-4` | agent-tooling-friction-4: 4 фикса трения ship/rebase (PS) | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #968 (Issue открыт) | [карточка](./archive/agent-tooling-friction-4.md) |
+| `bw-w4-trap-kit` | W4: trap kit resident + Witcher aim example | 2026-07-22 | [`BW_W4_TRAP_KIT_PROMPT.md`](../prompts/BW_W4_TRAP_KIT_PROMPT.md) | #950 (Issue открыт) | [карточка](./archive/bw-w4-trap-kit.md) |
 | `bw-w3-mintlify` | W3: thin Mintlify mirror over git bus | 2026-07-22 | [`BW_W3_MINTLIFY_PROMPT.md`](../prompts/BW_W3_MINTLIFY_PROMPT.md) | #949 (Issue открыт) | [карточка](./archive/bw-w3-mintlify.md) |
 | `bw-w2-registries` | W2: catch/trap registries + antipattern stub | 2026-07-22 | [`BW_W2_REGISTRIES_PROMPT.md`](../prompts/BW_W2_REGISTRIES_PROMPT.md) | #948 (Issue открыт) | [карточка](./archive/bw-w2-registries.md) |
 | `bw-w1-workshop` | W1: workshop manifest + HOME_WORKSHOP seam | 2026-07-22 | [`BW_W1_WORKSHOP_PROMPT.md`](../prompts/BW_W1_WORKSHOP_PROMPT.md) | #947 (Issue открыт) | [карточка](./archive/bw-w1-workshop.md) |
