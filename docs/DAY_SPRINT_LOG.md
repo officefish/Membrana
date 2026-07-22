@@ -4,6 +4,18 @@
 
 ---
 
+## 2026-07-22 — `bestiary-workshop` — **OPEN** (W0)
+
+- **Goal:** мастерская-поставщик ловушек поверх CLOSED-дома бестиария; доп. реестры улова/ловушек; Mintlify-зеркало; кит с aim «Ведьмак»
+- **Issue:** [#945](https://github.com/officefish/Membrana/issues/945) · фазы #946–#951 (W0–W5)
+- **OPEN:** [`day-sprint/bestiary-workshop-2026-07-22/OPEN.md`](./day-sprint/bestiary-workshop-2026-07-22/OPEN.md)
+- **Seed:** [`storm/storm-bestiary-workshop-2026-07-22/REPORT.md`](./storm/storm-bestiary-workshop-2026-07-22/REPORT.md) · T1–T18
+- **Фаза:** W0 `bw-w0-brief` · ветка `feat/bw-w0-brief`
+- **Open decisions:** K25 (W1); имя кита (W4); пути CATCH/TRAPS (W2); глубина Mintlify (W3)
+- **Параллель:** `procedure-frames` остаётся open (ниже)
+
+---
+
 ## 2026-07-22 — `procedure-frames` — **OPEN** (F0)
 
 - **OPEN:** [`day-sprint/procedure-frames-2026-07-22/OPEN.md`](./day-sprint/procedure-frames-2026-07-22/OPEN.md)
