@@ -1,0 +1,16 @@
+{
+  "id": "containerization",
+  "leadPersona": "ozhegov",
+  "kitVersion": "kits/containerization-master",
+  "engines": [
+    "scripts/kits-audit.mjs",
+    "scripts/check-layer-direction.mjs",
+    "scripts/procedures-registry.mjs"
+  ],
+  "precedents": [
+    "docs/prompts/CONTAINERIZATION_MASTER_PROMPT.md",
+    "docs/patterns/GROUP_CONTAINERIZATION.md",
+    "docs/patterns/PINNED_SUBGRAPH_VERSIONING.md",
+    "docs/prompts/KITS_DREAM_MASTER_PROMPT.md"
+  ]
+}

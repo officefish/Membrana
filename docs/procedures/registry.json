@@ -105,6 +105,23 @@
       }
     },
     {
+      "id": "containerization",
+      "holder": "ozhegov",
+      "homePath": "docs/procedures/containerization",
+      "container": {
+        "value": true,
+        "provenance": "ozhegov@kcm-c3"
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": true,
+        "provenance": "ozhegov@kcm-c3"
+      }
+    },
+    {
       "id": "storm",
       "holder": "angelina",
       "homePath": null,
