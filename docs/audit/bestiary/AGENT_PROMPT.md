@@ -49,6 +49,9 @@ specimen’ами, не чинишь код молча (#533).
 Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`, `scripts/lib/bestiary-weekly.mjs`.
 Манифест мастерской: [`workshop.manifest.json`](./workshop.manifest.json) (K25-B).
 
+**Монитор (W3):** Mintlify thin mirror в `apps/docs/bestiary/` — не второй источник
+истины; правки канона только в этом доме. Провод: [`README.md`](./README.md) § «Монитор → Mintlify».
+
 ### Грабли
 
 - Specimen без декларации `specimen:` / комментария намеренности ловит ложный «молчун» на себе — помечай.

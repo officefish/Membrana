@@ -1,0 +1,38 @@
+---
+title: Trap — silent-empty-catch (stub)
+description: Thin mirror of the silent-empty-catch trap card; truth in traps/.
+---
+
+# Ловушка: `silent-empty-catch`
+
+Зеркало карточки ловушки. **Истина** — файл в git, не эта страница.
+Engines **не** копируются сюда — только пути.
+
+| Поле | Значение (снимок монитора) |
+|------|----------------------------|
+| **id** | `silent-empty-catch` |
+| **status** | `stub` |
+| **targets** | класс `silent` · шаблон `docs/audit/bestiary/antipatterns/silent.md` |
+| **kitPin** | `null` (жилец кита / aim «Ведьмак» = W4) |
+
+## Что ловит
+
+Пустой / проглоченный `catch` без декларации намеренности; родственный `|| true` /
+внешний вход → `null` без пометки — см. `detectSilent` в линзе.
+
+Пример улова (stub): [зеркало улова](/bestiary/catch-silent-swallow) · id
+`catch-silent-swallow-specimen`.
+
+## Промпты и scripts (пути, не код)
+
+| Роль | Path |
+|------|------|
+| Trap-Doc / Issue-Trap | `docs/audit/bestiary/AGENT_PROMPT.md` |
+| Детектор | `scripts/lib/lens-bestiary.mjs` → `detectSilent` |
+| Карточка (истина) | `docs/audit/bestiary/traps/silent-empty-catch.md` |
+| Индекс | `docs/audit/bestiary/registry/TRAPS_LIST.md` |
+
+Цепочка: `antipatterns/silent.md` → **эта ловушка** → гранула в `CATCH_LIST`.
+Kit (W4) пинит prompts+scripts ловушки, **не** файл шаблона.
+
+Обзор слоёв: [Bestiary workshop — overview](/bestiary/overview).

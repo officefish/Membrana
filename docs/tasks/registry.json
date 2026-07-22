@@ -26,16 +26,16 @@
       "githubIssue": 972,
       "linearId": "DRU-347",
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "Linear: только project agent-tooling-friction-4 (free issue limit); исполнитель Cursor · ревьюер Sergey",
-      "archiveNotes": null,
+      "archiveNotes": "PR #974 · yarn git:rebase-continue",
       "githubIssueClosedAt": null,
       "parentEpic": "agent-tooling-friction-4"
     },
@@ -46,16 +46,16 @@
       "githubIssue": 971,
       "linearId": "DRU-346",
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "Linear DRU-18 · исполнитель Cursor · ревьюер Sergey",
-      "archiveNotes": null,
+      "archiveNotes": "PR #974 · long --body-file scripts/cache",
       "githubIssueClosedAt": null,
       "parentEpic": "agent-tooling-friction-4"
     },
@@ -66,16 +66,16 @@
       "githubIssue": 970,
       "linearId": "DRU-345",
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "Linear DRU-114 · исполнитель Cursor · ревьюер Sergey",
-      "archiveNotes": null,
+      "archiveNotes": "PR #974 · DAY_SPRINT_REGULATION Focus/Also open",
       "githubIssueClosedAt": null,
       "parentEpic": "agent-tooling-friction-4"
     },
@@ -86,16 +86,16 @@
       "githubIssue": 969,
       "linearId": "DRU-344",
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "Linear DRU-137 · исполнитель Cursor · ревьюер Sergey",
-      "archiveNotes": null,
+      "archiveNotes": "PR #974 · assertPrMergeableForShip CONFLICTING/DIRTY STOP",
       "githubIssueClosedAt": null,
       "parentEpic": "agent-tooling-friction-4"
     },
@@ -106,16 +106,16 @@
       "githubIssue": 968,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "Linear project https://linear.app/techies68/project/agent-tooling-friction-4-67e19f002443; исполнитель Cursor / ревьюер Sergey",
-      "archiveNotes": null,
+      "archiveNotes": "PR #974 · ATF4-1..4 Done · Linear project agent-tooling-friction-4",
       "githubIssueClosedAt": null
     },
     {
