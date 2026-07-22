@@ -1,6 +1,63 @@
 {
   "tasks": [
     {
+      "id": "frames-alive-rodchenko",
+      "title": "Оживление фреймов — Верстальщик: рендер цепочки",
+      "promptPath": "docs/prompts/FRAMES_ALIVE_SPRINT_PROMPT.md",
+      "githubIssue": 981,
+      "linearId": "DRU-354",
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "angelina"
+      ],
+      "notes": "Контейнер DRU-348. Фрейм Ф5. accepted: angelina (кодекс #922).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "frames-alive-dynin",
+      "title": "Оживление фреймов — Дынин: математика версии+резолв",
+      "promptPath": "docs/prompts/FRAMES_ALIVE_SPRINT_PROMPT.md",
+      "githubIssue": 980,
+      "linearId": "DRU-353",
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "Контейнер DRU-348. Фреймы Ф2/Ф4/Ф7. Дыры 7.1/7.2/7.4. accepted: ozhegov.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "frames-alive-ozhegov",
+      "title": "Оживление фреймов — Ожегов: контракт+код+начинка",
+      "promptPath": "docs/prompts/FRAMES_ALIVE_SPRINT_PROMPT.md",
+      "githubIssue": 979,
+      "linearId": "DRU-352",
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Контейнер DRU-348. Фреймы Ф1/Ф3/Ф6/Ф8. accepted: vesnin.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "tooling-atlas",
       "title": "Атлас контейнеров — контейнер контейнеров + мастерская + mintlify",
       "promptPath": "docs/prompts/TOOLING_ATLAS_PROMPT.md",
