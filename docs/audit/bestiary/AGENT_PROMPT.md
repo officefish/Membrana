@@ -15,6 +15,8 @@ specimen’ами, не чинишь код молча (#533).
 1. Держать **производный** реестр классов (`registry/BESTIARY_LIST.md`).
 2. Проверять, что каждый class в `BESTIARY` **ловится** на своём specimen.
 3. Писать отчёты прогона в `analysis/` (недельный — B4).
+4. Вести **доп.** реестры улова (`CATCH_LIST`) и ловушек (`TRAPS_LIST` + `traps/`);
+   шаблоны в `antipatterns/` — абстракт, не pins кита (W2 / T16–T18).
 
 Язык артефактов: русский или RU+EN. Таблицы — markdown.
 
@@ -24,10 +26,11 @@ specimen’ами, не чинишь код молча (#533).
 
 | Разрешено | Запрещено |
 |-----------|-----------|
-| Читать/писать registry, analysis, specimens, cache **только** под `docs/audit/bestiary/` | Копировать `lens-bestiary.mjs` внутрь контейнера |
+| Читать/писать registry, traps, antipatterns, analysis, specimens, cache **только** под `docs/audit/bestiary/` | Копировать `lens-bestiary.mjs` внутрь контейнера |
 | Запускать `node scripts/lens-run.mjs` / `yarn bestiary:audit` / `yarn bestiary:weekly` из корня | Автофиксить находки в прод-коде «заодно» |
 | Коммитить markdown + specimens по запросу владельца | Выдавать `not-run` за `clean` |
 | Перезаписывать `registry/BESTIARY_LIST.md` актуальным снимком | Ручной реестр классов без вывода из `BESTIARY` |
+| Дописывать строки в `CATCH_LIST` / карточки `traps/` / stub `antipatterns/` | Подменять `BESTIARY_LIST` уловом; путать specimen с уловом; массовый импорт analysis→CATCH без ok |
 
 `cache/` — gitignored. Specimens — commit-friendly, с явной пометкой specimen.
 
@@ -61,6 +64,30 @@ Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`, `scripts/lib/b
 
 «Собери / обнови реестр бестиария» → overwrite `registry/BESTIARY_LIST.md`
 (после B2 — только через `yarn bestiary:audit`).
+**Не** трогать `CATCH_LIST` / `TRAPS_LIST` этой командой.
+
+### Scenario Inventory-Catch (W2 / #948)
+
+**Триггер:** «реестр улова», «CATCH_LIST», «записать зверёк/гранулу», Inventory-Catch.
+
+1. Писать **только** в `registry/CATCH_LIST.md` по формату T17 (поля в шапке файла).
+2. `class` / `template` — ссылки на класс и `antipatterns/<id>.md`; не дублировать
+   строки `BESTIARY_LIST`.
+3. **HARD GATE — не путать specimen:** если в сообщении просят «добавить specimen
+   как улов» без явного «это гранула / catch» → STOP и уточнить роль (T1 ≠ T2).
+   Specimen path в `evidence` допустим как stub-доказательство, но запись — улов.
+4. Массовый импорт из `analysis/` — только по явному ok владельца (out of scope W2).
+
+### Scenario Trap-Doc (W2 / #948)
+
+**Триггер:** «дока ловушки», «TRAPS_LIST», «карточка traps/», Trap-Doc.
+
+1. Карточка → `traps/<id>.md`; индекс → `registry/TRAPS_LIST.md` (формат в шапке).
+2. `targets` ссылается на класс и/или шаблон; `scripts` — pure paths снаружи дома;
+   `kitPin: null` до W4.
+3. **HARD GATE:** не создавать «ловушку» как копию specimen и не пинить шаблон
+   антипаттерна вместо prompts+scripts (T18).
+4. Не реализовывать новый детектор в этой фазе (W2 = дока/формат).
 
 ### Scenario Specimen-Audit
 
@@ -68,6 +95,7 @@ Engines: `scripts/lib/lens-bestiary.mjs`, `scripts/lens-run.mjs`, `scripts/lib/b
 
 **HARD GATE:** `defectClass` (или «все») обязан быть в **текущем** сообщении.
 Иначе STOP — спросить класс; не угадывать из сессии.
+Не писать результат Specimen-Audit в `CATCH_LIST` молча — улов отдельным сценарием.
 
 ### Scenario Issue-Trap (W1 контракт / #947)
 

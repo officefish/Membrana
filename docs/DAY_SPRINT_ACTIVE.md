@@ -14,7 +14,7 @@
 | **Lead epic** | vesnin |
 | **Opened** | 2026-07-22 |
 | **Seed** | [`storm-bestiary-workshop-2026-07-22`](./storm/storm-bestiary-workshop-2026-07-22/REPORT.md) |
-| **Branch (W2)** | _(не открыта — только указатель; код W2 не стартован)_ |
+| **Branch (W2)** | `feat/bw-w2-registries` · [#948](https://github.com/officefish/Membrana/issues/948) |
 | **W0** | [#952](https://github.com/officefish/Membrana/pull/952) · `c1f067a7` · archived |
 | **W1** | [#954](https://github.com/officefish/Membrana/pull/954) · `496ecb41` · archived |
 
