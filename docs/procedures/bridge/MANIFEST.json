@@ -1,0 +1,14 @@
+{
+  "id": "bridge",
+  "leadPersona": "angelina",
+  "kitVersion": null,
+  "engines": [
+    "scripts/bridge.mjs",
+    "scripts/lib/bridge-room.mjs",
+    "scripts/lib/bridge-debts.mjs"
+  ],
+  "precedents": [
+    "docs/storm/storm-cold-start-entry-2026-07-22/REPORT.md",
+    "docs/storm/storm-enforcement-walls-2026-07-22/REPORT.md"
+  ]
+}

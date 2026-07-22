@@ -22,3 +22,4 @@
 | `git-audit` | dynin | **legacy** | — | — | — |
 | `consilium` | vesnin | **legacy** | — | — | — |
 | [`code-review`](./code-review/README.md) | vesnin | **in-migration** | ✅ vesnin@c487d990 | — | — |
+| [`bridge`](./bridge/README.md) | angelina | **in-migration** | ✅ angelina@bridge-room-936 | — | — |

@@ -8,6 +8,17 @@
   "command": "yarn ritual:evening",
   "steps": [
     {
+      "id": "bridge-close",
+      "script": "scripts/bridge.mjs close",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "//": "НЕявное закрытие комнаты мостика (Б4 #936). Не открыта → no-op. Некритичен: закрытие комнаты не роняет вечерний ритуал.",
+      "consumes": [],
+      "produces": [
+        "docs/bridge/<date>/CONSPECTUS.md"
+      ]
+    },
+    {
       "id": "archive-night-hunt",
       "script": "scripts/archive-night-hunt-artifacts.mjs",
       "kind": "mechanic",

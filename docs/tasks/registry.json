@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "bridge-room",
+      "title": "Спринт «мостик»: явное открытие/закрытие комнаты капитана, попугай-техдолг, конспекты фреймом в репо",
+      "promptPath": "docs/prompts/BRIDGE_ROOM_PROMPT.md",
+      "githubIssue": 936,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "office-stability-emergency",
       "title": "АВАРИЯ: таймауты office — server-first не выполняется; починка до строительства роутера (T10)",
       "promptPath": "docs/prompts/OFFICE_STABILITY_EMERGENCY_PROMPT.md",

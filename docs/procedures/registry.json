@@ -273,6 +273,23 @@
         "value": false,
         "provenance": null
       }
+    },
+    {
+      "id": "bridge",
+      "holder": "angelina",
+      "homePath": "docs/procedures/bridge",
+      "container": {
+        "value": true,
+        "provenance": "angelina@bridge-room-936"
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": false,
+        "provenance": null
+      }
     }
   ]
 }
