@@ -14,9 +14,12 @@ import { basename, dirname, join } from 'node:path';
 
 /** Обязательные ключи манифеста мастерской (вердикт Ф1). */
 const REQUIRED_KEYS = ['pattern', 'name', 'worksOn', 'kit', 'verbs'];
-/** Обязательные ключи словаря глаголов (вердикт Ф2). */
-const REQUIRED_VERB_KEYS = ['audit', 'decompose', 'inspectElement'];
-const OPTIONAL_VERB_KEYS = ['stackLike', 'domain'];
+/** MUST-глаголы словаря (вердикт Ф2): их отсутствие — дефект. */
+const REQUIRED_VERB_KEYS = ['audit', 'decompose'];
+/** Все известные ключи словаря (прочие — «свалка»). `inspectElement` — SHOULD. */
+const KNOWN_VERB_KEYS = ['audit', 'decompose', 'inspectElement', 'stackLike', 'domain'];
+/** Допустимые ключи доменной записи (прочие — «свалка»). */
+const KNOWN_DOMAIN_KEYS = ['name', 'worksOn', 'tool'];
 
 const isNonEmptyString = (v) => typeof v === 'string' && v.trim() !== '';
 
@@ -59,18 +62,17 @@ export function workshopSchemaProblems(m) {
       const vkeys = Object.keys(v);
       for (const k of REQUIRED_VERB_KEYS) if (!vkeys.includes(k)) problems.push(`verbs: нет ключа ${k}`);
       for (const k of vkeys) {
-        if (!REQUIRED_VERB_KEYS.includes(k) && !OPTIONAL_VERB_KEYS.includes(k)) {
-          problems.push(`verbs: лишний ключ ${k}`);
-        }
+        if (!KNOWN_VERB_KEYS.includes(k)) problems.push(`verbs: лишний ключ ${k}`);
       }
       // audit / decompose — MUST (непустые строки).
       for (const k of ['audit', 'decompose']) {
         if (vkeys.includes(k) && !isNonEmptyString(v[k])) problems.push(`verbs.${k} — MUST, но не непустая строка`);
       }
-      // inspectElement — SHOULD: null допустим, но даёт предупреждение (⚠).
-      if (vkeys.includes('inspectElement')) {
-        if (v.inspectElement === null) warnings.push('inspectElement отсутствует (SHOULD) — ⚠ мастерская не спускается в элемент');
-        else if (!isNonEmptyString(v.inspectElement)) problems.push('verbs.inspectElement — не строка и не null');
+      // inspectElement — SHOULD: отсутствие ключа ИЛИ null → предупреждение (⚠), не провал (шов Ф2↔Ф5).
+      if (!vkeys.includes('inspectElement') || v.inspectElement === null) {
+        warnings.push('inspectElement отсутствует (SHOULD) — ⚠ мастерская не спускается в элемент');
+      } else if (!isNonEmptyString(v.inspectElement)) {
+        problems.push('verbs.inspectElement — не строка и не null');
       }
       // stackLike — опц. массив строк.
       if (vkeys.includes('stackLike')) {
@@ -89,6 +91,9 @@ export function workshopSchemaProblems(m) {
             } else {
               if (!isNonEmptyString(d.name)) problems.push(`verbs.domain[${i}].name — не непустая строка`);
               if (!isNonEmptyString(d.worksOn)) problems.push(`verbs.domain[${i}].worksOn — не непустая строка (каждый доменный инструмент несёт worksOn)`);
+              for (const dk of Object.keys(d)) {
+                if (!KNOWN_DOMAIN_KEYS.includes(dk)) problems.push(`verbs.domain[${i}] — лишний ключ ${dk}`);
+              }
             }
           });
         }

@@ -50,4 +50,13 @@ test('checkOwnership: дубль инструмента в двух манифе
   ];
   const r = checkOwnership(recs);
   assert.ok(r.violations.some((v) => v.kind === 'duplicate'));
+  // finding 4: дубль НЕ должен заодно попасть в ok
+  assert.ok(!r.ok.some((x) => x.name === 'dup'));
+});
+
+test('checkOwnership: инструмент без worksOn (адреса) — нарушение, не тихий ok (finding 2)', () => {
+  const recs = [{ name: 'ghost', declaredWorksOn: null, manifestWorksOn: null, home: 'x' }];
+  const r = checkOwnership(recs);
+  assert.equal(r.ok.length, 0);
+  assert.ok(r.violations.some((v) => v.kind === 'no-address'));
 });

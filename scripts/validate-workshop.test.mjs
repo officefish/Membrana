@@ -57,6 +57,25 @@ test('inspectElement: null — valid, но с предупреждением SHO
   assert.match(r.warnings[0], /inspectElement/);
 });
 
+test('inspectElement: ключ ОПУЩЕН целиком — тоже valid + предупреждение, не провал (finding 1)', () => {
+  const m = fullManifest();
+  delete m.verbs.inspectElement;
+  const p = writeManifest('docs/audit/omit-inspect', m);
+  const r = validateWorkshop(p);
+  assert.equal(r.valid, true, r.problems.join('; '));
+  assert.equal(r.warnings.length, 1);
+  assert.match(r.warnings[0], /inspectElement/);
+});
+
+test('лишний ключ в доменной записи — не valid (finding 5)', () => {
+  const m = fullManifest();
+  m.verbs.domain = [{ name: 'salvage', worksOn: 'docs/audit/full', bogus: 1 }];
+  const p = writeManifest('docs/audit/domain-extra', m);
+  const r = validateWorkshop(p);
+  assert.equal(r.valid, false);
+  assert.ok(r.problems.some((x) => x.includes('лишний ключ bogus')));
+});
+
 test('нет audit (MUST) — не valid', () => {
   const m = fullManifest();
   delete m.verbs.audit;

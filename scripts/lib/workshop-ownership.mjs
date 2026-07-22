@@ -55,10 +55,19 @@ export function checkOwnership(records, allowlist = []) {
   const amnestied = [];
   const ok = [];
 
+  // 2) уникальность: имя инструмента ровно в одном манифесте (считаем заранее,
+  //    чтобы дубль не попал заодно в ok первым циклом).
+  const byName = new Map();
+  for (const r of records) byName.set(r.name, (byName.get(r.name) ?? 0) + 1);
+  const duplicated = new Set([...byName].filter(([, c]) => c > 1).map(([n]) => n));
+
   // 1) приписка declaredWorksOn == manifestWorksOn.
   for (const r of records) {
-    const misfiled = r.declaredWorksOn !== r.manifestWorksOn;
-    if (misfiled) {
+    if (duplicated.has(r.name)) continue; // дубли обрабатываются ниже, не в ok
+    if (r.declaredWorksOn === null) {
+      // Инструмент без объявленного дома — не «ok» молча (принцип Ф4: без тихого pending).
+      violations.push({ ...r, kind: 'no-address', message: `инструмент «${r.name}» без worksOn — адрес не объявлен (${r.home})` });
+    } else if (r.declaredWorksOn !== r.manifestWorksOn) {
       if (amnesty.has(r.name)) {
         amnestied.push({ ...r, kind: 'misfiled-amnestied', allow: amnesty.get(r.name) });
       } else {
@@ -73,19 +82,12 @@ export function checkOwnership(records, allowlist = []) {
     }
   }
 
-  // 2) уникальность: имя инструмента ровно в одном манифесте.
-  const byName = new Map();
-  for (const r of records) {
-    byName.set(r.name, (byName.get(r.name) ?? 0) + 1);
-  }
-  for (const [name, count] of byName) {
-    if (count > 1) {
-      violations.push({
-        name,
-        kind: 'duplicate',
-        message: `инструмент «${name}» объявлен в ${count} манифестах — должен ровно в одном`,
-      });
-    }
+  for (const name of duplicated) {
+    violations.push({
+      name,
+      kind: 'duplicate',
+      message: `инструмент «${name}» объявлен ${byName.get(name)} раз — должен ровно один раз (в одном манифесте)`,
+    });
   }
 
   return { violations, amnestied, ok };
