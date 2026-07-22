@@ -20,15 +20,65 @@
  * merge БЕЗ --delete-branch (чекаут base падает, когда base держит соседний worktree);
  * remote-ветка удаляется отдельным шагом branch-cleanup, локальная остаётся.
  *
+ * ATF4-1 (#969): перед merge — STOP при CONFLICTING/DIRTY (не звать gh pr merge).
+ * ATF4-3 (#971): pr-create через --body-file (длинный путь под scripts/cache/).
+ *
  * Логика планирования (planPrShip) — чистая и покрыта тестом; CLI лишь исполняет/печатает.
  */
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { classifyWorktree, parseWorktreeCard } from './lib/classify-worktree.mjs';
+import { makeLongTempDir } from './lib/long-temp-path.mjs';
 
 const TRAILER = 'Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>';
+const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+
+/**
+ * Гейт mergeable перед `gh pr merge` (ATF4-1 / #969).
+ *
+ * @param {{mergeable?: string|null, mergeStateStatus?: string|null, branch?: string}} snap
+ * @returns {void}
+ */
+export function assertPrMergeableForShip(snap = {}) {
+  const mergeable = String(snap.mergeable ?? '').toUpperCase();
+  const state = String(snap.mergeStateStatus ?? '').toUpperCase();
+  if (mergeable === 'CONFLICTING' || state === 'DIRTY') {
+    const branch = snap.branch ? ` (${snap.branch})` : '';
+    throw new Error(
+      `pr:ship: PR не mergeable (${mergeable || '?'} / ${state || '?'}). STOP до merge${branch}.\n` +
+        '  git fetch origin && git rebase origin/main\n' +
+        '  # resolve → yarn git:rebase-continue\n' +
+        '  git push --force-with-lease\n' +
+        '  yarn pr:ship --merge-only --execute',
+    );
+  }
+}
+
+/**
+ * Снимок mergeable текущего PR (или пустой объект, если gh недоступен).
+ * @param {{run?: typeof execFileSync, branch?: string}} [opts]
+ */
+export function readPrMergeability(opts = {}) {
+  const run = opts.run ?? execFileSync;
+  try {
+    const raw = run(
+      'gh',
+      ['pr', 'view', '--json', 'mergeable,mergeStateStatus,headRefName'],
+      { encoding: 'utf8' },
+    );
+    const parsed = JSON.parse(raw);
+    return {
+      mergeable: parsed.mergeable ?? null,
+      mergeStateStatus: parsed.mergeStateStatus ?? null,
+      branch: parsed.headRefName ?? opts.branch ?? null,
+    };
+  } catch {
+    return { mergeable: null, mergeStateStatus: null, branch: opts.branch ?? null };
+  }
+}
 
 /**
  * Занята ли base-ветка ДРУГИМ worktree.
@@ -202,10 +252,12 @@ export function planPrShip(opts) {
   if (branchStep) steps.push(branchStep);
   if (commit) steps.push({ label: 'commit', cmd: 'git', args: ['commit', '-m', commitBody] });
   steps.push({ label: 'push', cmd: 'git', args: ['push', '-u', 'origin', 'HEAD'] });
+  // ATF4-3: тело PR — bodyText; исполнитель пишет tempfile + --body-file
   steps.push({
     label: 'pr-create',
     cmd: 'gh',
-    args: ['pr', 'create', '--base', base, '--title', title, '--body', closes ? closes.trim() : title],
+    args: ['pr', 'create', '--base', base, '--title', title, '--body-file', '__BODY_FILE__'],
+    bodyText: closes ? closes.trim() : title,
   });
   let skippedSync;
   if (merge) {
@@ -260,18 +312,44 @@ function main() {
   const head = opts.mergeOnly ? `merge-only PR ветки ${current}` : title;
   console.log(`pr:ship${opts.execute ? '' : ' [DRY-RUN]'}: ${head}`);
   if (skippedSync) console.log(`  ⚠ ${skippedSync}`);
+
+  // ATF4-1: до любого merge-шага — CONFLICTING/DIRTY = STOP
+  if (opts.execute && opts.merge) {
+    assertPrMergeableForShip(readPrMergeability({ branch: current }));
+  }
+
+  /** @type {string|null} */
+  let bodyDir = null;
   for (const s of steps) {
-    const printable = `${s.cmd} ${s.args.map((a) => (a.includes('\n') || a.includes(' ') ? JSON.stringify(a) : a)).join(' ')}`;
+    let args = s.args;
+    if (s.bodyText != null) {
+      if (opts.execute) {
+        bodyDir = makeLongTempDir(REPO_ROOT, 'pr-ship-');
+        const bodyFile = join(bodyDir, 'body.md');
+        writeFileSync(bodyFile, s.bodyText, 'utf8');
+        args = s.args.map((a) => (a === '__BODY_FILE__' ? bodyFile : a));
+      } else {
+        args = s.args.map((a) => (a === '__BODY_FILE__' ? '<long-temp/body.md>' : a));
+      }
+    }
+    const printable = `${s.cmd} ${args.map((a) => (a.includes('\n') || a.includes(' ') ? JSON.stringify(a) : a)).join(' ')}`;
     if (!opts.execute) {
       console.log(`  · ${s.label}: ${printable.slice(0, 200)}`);
       continue;
     }
     console.log(`  → ${s.label}`);
     try {
-      execFileSync(s.cmd, s.args, { stdio: 'inherit' });
+      execFileSync(s.cmd, args, { stdio: 'inherit' });
     } catch (e) {
       if (!s.optional) throw e;
       console.error(`  ⚠ ${s.label} не удался (${String(e.message ?? e).split('\n')[0]}) — шаг необязательный, флоу продолжается`);
+    }
+  }
+  if (bodyDir) {
+    try {
+      rmSync(bodyDir, { recursive: true, force: true });
+    } catch {
+      /* cache cleanup best-effort */
     }
   }
   if (!opts.execute) console.log('\n(dry-run — ничего не выполнено; добавь --execute)');

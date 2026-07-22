@@ -19,17 +19,4 @@
 | **W1** | [#954](https://github.com/officefish/Membrana/pull/954) · `496ecb41` · archived |
 | **W2** | [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` · archived |
 
-## Also open (не затирать)
-
-| Поле | Значение |
-|------|----------|
-| **Sprint** | [`procedure-frames-2026-07-22`](./day-sprint/procedure-frames-2026-07-22/OPEN.md) |
-| **Epic** | `procedure-frames` · [#900](https://github.com/officefish/Membrana/issues/900) |
-| **Phase** | **F4** `pf-f4-pattern` · lead **ozhegov** · ветка `feat/pf-f4-pattern` |
-| **F0** | [#942](https://github.com/officefish/Membrana/pull/942) · ADR-0015 · archived |
-| **F1** | [#944](https://github.com/officefish/Membrana/pull/944) · `validateProcedure` очередь · archived |
-| **F2** | [#953](https://github.com/officefish/Membrana/pull/953) · `auditPins` · archived |
-| **F3** | [#955](https://github.com/officefish/Membrana/pull/955) · morning-wiring · archived |
-| **Потребитель** | [`meeting/ritual-day-frames/EPIC.md`](./meeting/ritual-day-frames/EPIC.md) (#939) |
-
-Последний **закрытый:** [`bestiary-container-2026-07-21`](./day-sprint/bestiary-container-2026-07-21/CLOSURE.md) (#878).
+Последний **закрытый:** [`procedure-frames-2026-07-22`](./day-sprint/procedure-frames-2026-07-22/CLOSURE.md) (#900) · до него [`bestiary-container-2026-07-21`](./day-sprint/bestiary-container-2026-07-21/CLOSURE.md) (#878).

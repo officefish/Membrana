@@ -20,6 +20,105 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "atf4-git-editor-rebase",
+      "title": "ATF4-4: GIT_EDITOR для rebase --continue",
+      "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md",
+      "githubIssue": 972,
+      "linearId": "DRU-347",
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Linear: только project agent-tooling-friction-4 (free issue limit); исполнитель Cursor · ревьюер Sergey",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "agent-tooling-friction-4"
+    },
+    {
+      "id": "atf4-pr-body-file",
+      "title": "ATF4-3: gh pr create через body-file (PS)",
+      "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md",
+      "githubIssue": 971,
+      "linearId": "DRU-346",
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Linear DRU-18 · исполнитель Cursor · ревьюер Sergey",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "agent-tooling-friction-4"
+    },
+    {
+      "id": "atf4-active-also-open",
+      "title": "ATF4-2: DAY_SPRINT_ACTIVE Also open канон",
+      "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md",
+      "githubIssue": 970,
+      "linearId": "DRU-345",
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Linear DRU-114 · исполнитель Cursor · ревьюер Sergey",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "agent-tooling-friction-4"
+    },
+    {
+      "id": "atf4-pr-ship-conflicting",
+      "title": "ATF4-1: pr:ship STOP при CONFLICTING/DIRTY",
+      "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md",
+      "githubIssue": 969,
+      "linearId": "DRU-344",
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Linear DRU-137 · исполнитель Cursor · ревьюер Sergey",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "agent-tooling-friction-4"
+    },
+    {
+      "id": "agent-tooling-friction-4",
+      "title": "agent-tooling-friction-4: 4 фикса трения ship/rebase (PS)",
+      "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md",
+      "githubIssue": 968,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "Linear project https://linear.app/techies68/project/agent-tooling-friction-4-67e19f002443; исполнитель Cursor / ревьюер Sergey",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "assets-container",
       "title": "Эпик: контейнер имущества — три яруса (git/сервер-БД/Drive), набор от чека, подтверждение датой-сегодня",
       "promptPath": "docs/prompts/ASSETS_CONTAINER_PROMPT.md",
@@ -316,14 +415,14 @@
       "githubIssue": 931,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "CLOSURE docs/day-sprint/procedure-frames-2026-07-22/CLOSURE.md; ACTIVE also-open cleared",
       "githubIssueClosedAt": null,
       "parentEpic": "procedure-frames"
     },
@@ -334,14 +433,14 @@
       "githubIssue": 930,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #960 · PINNED_/GROUP_ copies=1 + kit/frame domains",
       "githubIssueClosedAt": null,
       "parentEpic": "procedure-frames"
     },
@@ -550,16 +649,16 @@
       "githubIssue": 900,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR F0-F5 #942-#960 + F5 CLOSURE; DoD #900",
       "githubIssueClosedAt": null
     },
     {
