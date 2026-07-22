@@ -1,0 +1,13 @@
+{
+  "id": "insight-change-routing-office",
+  "title": "Роутинг изменений: сессии без push, заявки-патчи, office-очередь, именные гейты",
+  "status": "reviewed",
+  "source": "user",
+  "horizon": null,
+  "weight": 3.4,
+  "createdAt": "2026-07-22",
+  "researchedAt": "2026-07-22",
+  "reviewedAt": "2026-07-22",
+  "closedAt": null,
+  "tags": []
+}
