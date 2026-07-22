@@ -9,7 +9,8 @@
 | **Size** | L |
 | **Lead epic** | vesnin |
 | **Started** | 2026-07-22 |
-| **Branch (W0)** | `feat/bw-w0-brief` |
+| **Branch (W0)** | `feat/bw-w0-brief` → merged [#952](https://github.com/officefish/Membrana/pull/952) |
+| **Branch (W1)** | `feat/bw-w1-workshop` |
 | **Seed** | шторм [`storm-bestiary-workshop-2026-07-22`](../../storm/storm-bestiary-workshop-2026-07-22/REPORT.md) · T1–T18 |
 | **Дом** | [`docs/audit/bestiary/`](../../audit/bestiary/) (#878 CLOSED) |
 | **Паттерны** | [`HOME_WORKSHOP`](../../patterns/HOME_WORKSHOP.md) · [`PINNED_SUBGRAPH_VERSIONING`](../../patterns/PINNED_SUBGRAPH_VERSIONING.md) · [`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md) |
@@ -44,8 +45,8 @@
 
 | Phase | Registry id | Issue | Lead | Prompt | DoD (одна строка) | Status |
 |-------|-------------|------:|------|--------|-------------------|--------|
-| **W0** | `bw-w0-brief` | [#946](https://github.com/officefish/Membrana/issues/946) | vesnin | [`BW_W0_BRIEF_PROMPT.md`](../../prompts/BW_W0_BRIEF_PROMPT.md) | Реестр+Issues+OPEN open+ACTIVE; границы T* | **open** (этот PR) |
-| **W1** | `bw-w1-workshop` | [#947](https://github.com/officefish/Membrana/issues/947) | ozhegov | [`BW_W1_WORKSHOP_PROMPT.md`](../../prompts/BW_W1_WORKSHOP_PROMPT.md) | `workshop.manifest.json` + шов HOME_WORKSHOP (A\|B) | pending |
+| **W0** | `bw-w0-brief` | [#946](https://github.com/officefish/Membrana/issues/946) | vesnin | [`BW_W0_BRIEF_PROMPT.md`](../../prompts/BW_W0_BRIEF_PROMPT.md) | Реестр+Issues+OPEN open+ACTIVE; границы T* | **done** · [#952](https://github.com/officefish/Membrana/pull/952) |
+| **W1** | `bw-w1-workshop` | [#947](https://github.com/officefish/Membrana/issues/947) | ozhegov | [`BW_W1_WORKSHOP_PROMPT.md`](../../prompts/BW_W1_WORKSHOP_PROMPT.md) | `workshop.manifest.json` + шов HOME_WORKSHOP (A\|B) | **in progress** (этот PR) |
 | **W2** | `bw-w2-registries` | [#948](https://github.com/officefish/Membrana/issues/948) | ozhegov | [`BW_W2_REGISTRIES_PROMPT.md`](../../prompts/BW_W2_REGISTRIES_PROMPT.md) | Форматы улова/ловушки + stub шаблона антипаттерна | pending |
 | **W3** | `bw-w3-mintlify` | [#949](https://github.com/officefish/Membrana/issues/949) | ozhegov | [`BW_W3_MINTLIFY_PROMPT.md`](../../prompts/BW_W3_MINTLIFY_PROMPT.md) | Thin Mintlify-зеркало + провод из дома | pending |
 | **W4** | `bw-w4-trap-kit` | [#950](https://github.com/officefish/Membrana/issues/950) | dynin | [`BW_W4_TRAP_KIT_PROMPT.md`](../../prompts/BW_W4_TRAP_KIT_PROMPT.md) | Жилец кита, audit green, aim «Ведьмак» | pending |
@@ -64,7 +65,7 @@
 
 | # | Вопрос | Фаза |
 |---|--------|------|
-| K25 | Шов T6 ↔ HOME_WORKSHOP: правка паттерна **или** исключение | W1 |
+| ~~K25~~ | ~~Шов T6 ↔ HOME_WORKSHOP: правка паттерна **или** исключение~~ | **закрыт W1: вариант B** (исключение supply-side + `issueTrap`; MUST kit-demand не тронут) |
 | — | Имя жильца кита (`witcher` / иное) | W4 |
 | — | Точные пути CATCH/TRAPS под домом | W2 |
 | — | Глубина Mintlify (thin vs pin-манифест инструкций) | W3 |
@@ -77,4 +78,12 @@
 - [x] GitHub Issues #945–#951
 - [x] OPEN Status **open**; промпты связаны; Issue-номера проставлены
 - [x] `DAY_SPRINT_ACTIVE` → этот инстанс; строка в `DAY_SPRINT_LOG`
-- [ ] LGTM vesnin (owner ok) → merge W0 → старт W1
+- [x] LGTM vesnin → merge W0 [#952](https://github.com/officefish/Membrana/pull/952) → старт W1
+
+## Gate checklist (W1)
+
+- [x] K25 закрыт вариантом **B** (манифест + таблица реализаций паттерна)
+- [x] `workshop.manifest.json` валиден; `worksOn` = `docs/audit/bestiary`; `kit: null` до W4
+- [x] Доменный глагол **`issueTrap`**; `audit`/`decompose` = `yarn bestiary:audit`
+- [x] README + AGENT_PROMPT (Scenario Issue-Trap) + чеклист HOME_WORKSHOP
+- [ ] LGTM ozhegov (owner ok) → merge W1 → старт W2

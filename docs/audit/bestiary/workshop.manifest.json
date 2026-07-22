@@ -1,0 +1,18 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская бестиария",
+  "worksOn": "docs/audit/bestiary",
+  "kit": null,
+  "verbs": {
+    "audit": "yarn bestiary:audit",
+    "decompose": "yarn bestiary:audit",
+    "inspectElement": null,
+    "stackLike": [],
+    "domain": [
+      {
+        "name": "issueTrap",
+        "worksOn": "docs/audit/bestiary"
+      }
+    ]
+  }
+}

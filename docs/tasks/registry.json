@@ -85,7 +85,7 @@
       "archivedAt": null,
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "notes": "",
+      "notes": "W1 in progress: K25-B + workshop.manifest + issueTrap; branch feat/bw-w1-workshop",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "bestiary-workshop"
@@ -97,14 +97,14 @@
       "githubIssue": 946,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-22",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "W0: OPEN open + ACTIVE (parallel with procedure-frames) + Issues #945–#951. Awaiting LGTM vesnin.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #952 merged c1f067a7; W0 open registry+Issues #945–#951+ACTIVE; conflicts with procedure-frames F1/F2 resolved in ACTIVE parallel",
       "githubIssueClosedAt": null,
       "parentEpic": "bestiary-workshop"
     },
@@ -124,7 +124,7 @@
         "dynin",
         "ozhegov"
       ],
-      "notes": "W0 open 2026-07-22; Issues #945–#951; инстанс bestiary-workshop-2026-07-22",
+      "notes": "W0 done #952; W1 in progress #947; инстанс bestiary-workshop-2026-07-22",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
