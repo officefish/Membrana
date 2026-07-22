@@ -12,11 +12,11 @@
       "script": "scripts/bridge.mjs close",
       "kind": "mechanic",
       "criticality": "noncritical",
-      "//": "НЕявное закрытие комнаты мостика (Б4 #936). Не открыта → no-op. Некритичен: закрытие комнаты не роняет вечерний ритуал.",
       "consumes": [],
       "produces": [
         "docs/bridge/<date>/CONSPECTUS.md"
-      ]
+      ],
+      "whyNoncritical": "Закрытие комнаты мостика не должно ронять вечерний ритуал: не открыта → no-op; конспект и так append-only, потеря шага не теряет данные."
     },
     {
       "id": "archive-night-hunt",
