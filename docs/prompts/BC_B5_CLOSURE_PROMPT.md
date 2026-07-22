@@ -12,7 +12,7 @@ CLOSURE: навести бестиарий на контейнер+engines; ACTI
 - [x] `yarn bestiary:audit` + `yarn bestiary:weekly` · matrix 5/5 в CLOSURE (HEAD `cedfefa3`)
 - [x] `yarn branch:check feat/bc-b5-closure` · holder vesnin
 - [x] LGTM vesnin (owner ok 2026-07-22)
-- [ ] Archive `bc-b5-closure` + эпик `bestiary-container` — **после merge** (как D4/K5)
+- [x] Archive `bc-b5-closure` + эпик `bestiary-container` — после merge PR #937
 
 ## Out of scope
 
