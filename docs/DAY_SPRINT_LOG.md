@@ -4,6 +4,15 @@
 
 ---
 
+## 2026-07-22 — `procedure-frames` — **OPEN** (F0)
+
+- **OPEN:** [`day-sprint/procedure-frames-2026-07-22/OPEN.md`](./day-sprint/procedure-frames-2026-07-22/OPEN.md)
+- **Issue:** [#900](https://github.com/officefish/Membrana/issues/900) · фазы #926–#931
+- **Вход:** EPIC procedure-frames + ritual-day-frames (#939) · ADR-0015 (DRAFT)
+- **Фаза:** F0 `pf-f0-brief` · ветка `feat/pf-f0-brief`
+
+---
+
 ## 2026-07-21…22 — `bestiary-container` — **CLOSED**
 
 - **Delivered:** контейнер `docs/audit/bestiary/` + specimens×5 + `yarn bestiary:audit` / `yarn bestiary:weekly` · B0–B5 · PR [#885](https://github.com/officefish/Membrana/pull/885)…[#919](https://github.com/officefish/Membrana/pull/919) + B5 _(this PR)_
