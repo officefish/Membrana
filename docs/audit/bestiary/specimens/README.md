@@ -8,6 +8,7 @@
 | Layout | `specimens/<defectClass>/*.mjs` |
 | Пометка | первая строка: `// specimen: <defectClass>` |
 | Аудит | `yarn bestiary:audit` → `registry/BESTIARY_LIST.md` |
+| Weekly | `yarn bestiary:weekly` → `analysis/bestiary-run-YYYY-MM-DD.md` |
 | Запрет | «лечебный» код без пометки; автофикс прод (#533) |
 
 ## Текущие бетии (B2 + B3)

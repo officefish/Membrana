@@ -37,7 +37,7 @@ goal-displacement — явный defer), дом группы + specimens + audit
 | B1 | `bc-b1-home` | ozhegov | дом контейнера + органы + audit/README |
 | B2 | `bc-b2-specimens` | dynin | specimens×4 + тест + `yarn bestiary:audit` |
 | B3 | `bc-b3-missing-beasts` | dynin | эхо-камера и/или смещение цели + specimen — или явный defer |
-| B4 | `bc-b4-weekly` | angelina | недельный report + тренд; анти-молчун аудитора |
+| B4 | `bc-b4-weekly` | angelina | `yarn bestiary:weekly` → analysis/ + тренд; анти-молчун (#883) |
 | B5 | `bc-b5-closure` | vesnin | CLOSURE: навести на контейнер; archive |
 
 ## Acceptance criteria (эпик)
