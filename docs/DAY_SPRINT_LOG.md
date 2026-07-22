@@ -10,7 +10,7 @@
 - **Issue:** [#945](https://github.com/officefish/Membrana/issues/945) · фазы #946–#951 (W0–W5)
 - **OPEN:** [`day-sprint/bestiary-workshop-2026-07-22/OPEN.md`](./day-sprint/bestiary-workshop-2026-07-22/OPEN.md)
 - **Seed:** [`storm/storm-bestiary-workshop-2026-07-22/REPORT.md`](./storm/storm-bestiary-workshop-2026-07-22/REPORT.md) · T1–T18
-- **Фаза:** W3 `bw-w3-mintlify` · [#949](https://github.com/officefish/Membrana/issues/949) · lead ozhegov · ветка `feat/bw-w3-mintlify`
+- **Фаза:** W3 `bw-w3-mintlify` · [#949](https://github.com/officefish/Membrana/issues/949) · lead ozhegov · [#967](https://github.com/officefish/Membrana/pull/967) awaiting LGTM
 - **W0:** done · [#952](https://github.com/officefish/Membrana/pull/952) · `c1f067a7` · archived
 - **W1:** done · [#954](https://github.com/officefish/Membrana/pull/954) · `496ecb41` · archived · K25-B + `workshop.manifest` + `issueTrap`
 - **W2:** done · [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` · archived · CATCH/TRAPS/antipattern stubs
