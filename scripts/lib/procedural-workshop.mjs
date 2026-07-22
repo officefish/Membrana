@@ -14,20 +14,28 @@
  */
 
 import { existsSync, readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 
-import { validateProcedure } from './validate-procedure.mjs';
+import { listProcedureDirs, validateProcedure } from './validate-procedure.mjs';
 
-/** Прочитать реестр процедур. @returns {object[]} */
+/**
+ * Прочитать реестр процедур. Битый/непустой-но-нечитаемый реестр — ОШИБКА (не []),
+ * чтобы гейт отличал «нет процедур» от «реестр не читается».
+ * @returns {object[]}
+ * @throws Error если registry.json есть, но не парсится / procedures не массив
+ */
 export function loadProcedureRegistry(repoRoot) {
   const p = join(repoRoot, 'docs', 'procedures', 'registry.json');
   if (!existsSync(p)) return [];
+  let d;
   try {
-    const d = JSON.parse(readFileSync(p, 'utf8'));
-    return d.procedures ?? (Array.isArray(d) ? d : []);
+    d = JSON.parse(readFileSync(p, 'utf8'));
   } catch {
-    return [];
+    throw new Error('docs/procedures/registry.json — битый JSON');
   }
+  const arr = d.procedures ?? (Array.isArray(d) ? d : null);
+  if (!Array.isArray(arr)) throw new Error('docs/procedures/registry.json: procedures — не массив');
+  return arr;
 }
 
 function readManifest(repoRoot, id) {
@@ -46,10 +54,17 @@ function readManifest(repoRoot, id) {
  */
 export function auditProcedures(repoRoot) {
   const reg = loadProcedureRegistry(repoRoot);
-  return reg.map((p) => {
+  const rows = [];
+  const seen = new Set();
+  for (const p of reg) {
+    if (typeof p?.id !== 'string' || p.id.trim() === '') {
+      rows.push({ id: '(без id)', holder: p?.holder ?? '—', declaredBuilt: false, dirExists: false, valid: false, state: 'invalid-entry', problems: ['запись реестра без строкового id'] });
+      continue;
+    }
+    seen.add(p.id);
     const dir = join(repoRoot, 'docs', 'procedures', p.id);
     const dirExists = existsSync(dir);
-    const declaredBuilt = Boolean(p.container?.value);
+    const declaredBuilt = p.container?.value === true;
     const problems = [];
     let valid = false;
     let state;
@@ -63,13 +78,24 @@ export function auditProcedures(repoRoot) {
       if (!r.valid) problems.push(...r.problems.map((x) => `validateProcedure: ${x}`));
     } else if (!declaredBuilt && dirExists) {
       state = 'drift-built-undeclared';
-      problems.push(`каталог есть, но container.value=false (реестр отстаёт)`);
+      problems.push(`каталог есть, но container.value≠true (реестр отстаёт)`);
     } else {
       state = 'declared-not-built';
     }
-    return { id: p.id, holder: p.holder ?? '—', declaredBuilt, dirExists, valid, state, problems };
-  });
+    rows.push({ id: p.id, holder: p.holder ?? '—', declaredBuilt, dirExists, valid, state, problems });
+  }
+  // Каталог-сирота: физически есть, но в реестре его нет вообще (дрейф в другую сторону).
+  for (const dir of listProcedureDirs(repoRoot)) {
+    const id = basename(dir);
+    if (!seen.has(id)) {
+      rows.push({ id, holder: '—', declaredBuilt: false, dirExists: true, valid: false, state: 'drift-built-undeclared', problems: [`каталог docs/procedures/${id} есть, но в реестре его нет`] });
+    }
+  }
+  return rows;
 }
+
+/** Состояния, роняющие CI (реальный дефект, не легальный бэклог). */
+export const FAILING_STATES = new Set(['built-invalid', 'drift-declared-missing', 'drift-built-undeclared', 'invalid-entry']);
 
 const DECOMPOSE_KEYS = {
   holder: (a) => a.holder,
@@ -88,8 +114,13 @@ export function decomposeProcedures(audited, by, repoRoot) {
   const push = (k, id) => out.set(k, [...(out.get(k) ?? []), id]);
   if (by === 'kit') {
     for (const a of audited) {
-      const man = a.dirExists ? readManifest(repoRoot, a.id) : null;
-      const kit = man ? (typeof man.kitVersion === 'string' ? man.kitVersion : 'null') : 'не построена';
+      let kit;
+      if (!a.dirExists) kit = 'не построена';
+      else {
+        const man = readManifest(repoRoot, a.id);
+        if (!man) kit = 'манифест битый/отсутствует';
+        else kit = typeof man.kitVersion === 'string' ? man.kitVersion : 'null';
+      }
       push(kit, a.id);
     }
     return out;

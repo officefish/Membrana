@@ -13,7 +13,7 @@
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { auditProcedures, decomposeProcedures, inspectProcedure } from './lib/procedural-workshop.mjs';
+import { auditProcedures, decomposeProcedures, FAILING_STATES, inspectProcedure } from './lib/procedural-workshop.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
@@ -21,24 +21,32 @@ const has = (n) => argv.includes(`--${n}`);
 const val = (n) => { const i = argv.indexOf(`--${n}`); return i >= 0 ? argv[i + 1] : null; };
 
 function runAudit() {
-  const rows = auditProcedures(repoRoot);
-  const drift = rows.filter((r) => r.state.startsWith('drift'));
+  let rows;
+  try {
+    rows = auditProcedures(repoRoot);
+  } catch (e) {
+    console.error(`procedures:workshop: инструментальная ошибка — ${e.message}`);
+    process.exit(2);
+  }
+  const failing = rows.filter((r) => FAILING_STATES.has(r.state));
   console.log(`procedures:workshop --audit · процедур: ${rows.length}\n`);
-  const mark = { 'built-valid': '✓', 'declared-not-built': '·', 'built-invalid': '✗', 'drift-declared-missing': '✗', 'drift-built-undeclared': '✗' };
+  const mark = { 'built-valid': '✓', 'declared-not-built': '·', 'built-invalid': '✗', 'drift-declared-missing': '✗', 'drift-built-undeclared': '✗', 'invalid-entry': '✗' };
   for (const r of rows) {
     console.log(`${mark[r.state] ?? '?'} ${r.id}  [${r.holder}]  ${r.state}`);
     for (const p of r.problems) console.log(`    ✗ ${p}`);
   }
   const built = rows.filter((r) => r.state === 'built-valid').length;
   const declared = rows.filter((r) => r.state === 'declared-not-built').length;
-  console.log(`\nПостроено-валидно: ${built} · объявлено-не-построено: ${declared} · дрейф: ${drift.length}`);
-  if (drift.length > 0) { console.error(`procedures:workshop: ДРЕЙФ реестр↔реальность — ${drift.length}.`); process.exit(1); }
-  console.log('procedures:workshop --audit: OK (дрейфа нет; объявленные-не-построенные — легальный бэклог).');
+  console.log(`\nПостроено-валидно: ${built} · объявлено-не-построено: ${declared} · дефектов: ${failing.length}`);
+  if (failing.length > 0) { console.error(`procedures:workshop: ДЕФЕКТ реестр↔реальность — ${failing.length} (built-invalid/дрейф/битая запись).`); process.exit(1); }
+  console.log('procedures:workshop --audit: OK (дефектов нет; объявленные-не-построенные — легальный бэклог).');
 }
 
 function runDecompose() {
   const by = val('by') ?? 'holder';
-  const rows = auditProcedures(repoRoot);
+  let rows;
+  try { rows = auditProcedures(repoRoot); }
+  catch (e) { console.error(`procedures:workshop: инструментальная ошибка — ${e.message}`); process.exit(2); }
   const groups = decomposeProcedures(rows, by, repoRoot);
   console.log(`procedures:workshop --decompose --by ${by} · процедур: ${rows.length}\n`);
   console.log('| Категория | Процедур | Список |');
