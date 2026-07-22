@@ -176,8 +176,8 @@ Operator workflows live in `.opencode/command/*.md` (auto-discovered) — thin w
 
 | Command | Wraps | Skill |
 |---------|-------|-------|
-| `/standup` | `yarn standup` | membrana-developer-rhythm |
-| `/main-day` | `yarn main-day-issue` | membrana-developer-rhythm |
+| `/standup` | `yarn standup` | membrana-morning-ritual |
+| `/main-day` | `yarn main-day-issue` | membrana-morning-ritual |
 | `/ritual-evening` | `yarn ritual:evening` | membrana-developer-rhythm, membrana-code-review |
 | `/full-ci` | `yarn turbo run lint typecheck test build --continue` | membrana-full-ci-operator |
 | `/triage-issues` | `yarn issues:audit` | membrana-issue-triage |

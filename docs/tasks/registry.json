@@ -1,6 +1,23 @@
 {
   "tasks": [
     {
+      "id": "morning-wiring-hotfix",
+      "title": "Хотфикс проводов утра: CLAUDE.md + AGENTS.md → membrana-morning-ritual (фрейм подводки, Ожегов)",
+      "promptPath": "docs/prompts/MORNING_WIRING_HOTFIX_PROMPT.md",
+      "githubIssue": 902,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "procedure-frames",
       "title": "Спринт «фреймы»: frames[] в манифесте процедур + пин отрезков + первый фрейм «подводка утра» (Ожегов)",
       "promptPath": "docs/prompts/PROCEDURE_FRAMES_PROMPT.md",
