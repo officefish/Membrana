@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `angelina-codex-no-repo-writes` | Кодекс Ангелины: запрет пушить/редактировать, право только на конспект, репо — по явному разрешению | S | [`ANGELINA_CODEX_NO_REPO_WRITES_PROMPT.md`](../prompts/ANGELINA_CODEX_NO_REPO_WRITES_PROMPT.md) | [#922](https://github.com/officefish/Membrana/issues/922) |
 | `swallow-format-frame-fix` | Фрейм форматирования ласточки: полноценное зеркало 5 блоков вместо телеграфных строк (Ожегов) | S | [`SWALLOW_FORMAT_FRAME_FIX_PROMPT.md`](../prompts/SWALLOW_FORMAT_FRAME_FIX_PROMPT.md) | [#918](https://github.com/officefish/Membrana/issues/918) |
 | `kcm-c4-closure` | C4: CLOSURE + archive + комментарий #761 | S | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | [#909](https://github.com/officefish/Membrana/issues/909) |
 | `kcm-c3-wire` | C3: процедура containerization + skill + kits/README | M | [`KITS_CONTAINERIZATION_MASTER_PROMPT.md`](../prompts/KITS_CONTAINERIZATION_MASTER_PROMPT.md) | [#908](https://github.com/officefish/Membrana/issues/908) |
