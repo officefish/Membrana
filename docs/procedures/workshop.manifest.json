@@ -1,0 +1,13 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская процедур",
+  "worksOn": "docs/procedures",
+  "kit": null,
+  "verbs": {
+    "audit": "yarn procedures:workshop --audit",
+    "decompose": "yarn procedures:workshop --decompose",
+    "inspectElement": "yarn procedures:workshop --inspect",
+    "stackLike": [],
+    "domain": []
+  }
+}

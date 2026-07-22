@@ -5,7 +5,7 @@
 | Field | Value |
 |-------|-------|
 | Date | 2026-07-22 |
-| Head SHA | c582fd97 |
+| Head SHA | cedfefa3 |
 | Source | yarn bestiary:weekly |
 | Engines | `scripts/lib/lens-bestiary.mjs` |
 | Lens status | ran |

@@ -4,6 +4,15 @@
 
 ---
 
+## 2026-07-21…22 — `bestiary-container` — **CLOSED**
+
+- **Delivered:** контейнер `docs/audit/bestiary/` + specimens×5 + `yarn bestiary:audit` / `yarn bestiary:weekly` · B0–B5 · PR [#885](https://github.com/officefish/Membrana/pull/885)…[#919](https://github.com/officefish/Membrana/pull/919) + B5 _(this PR)_
+- **Issue:** [#878](https://github.com/officefish/Membrana/issues/878) · фазы #879–#884
+- **CLOSURE:** [`day-sprint/bestiary-container-2026-07-21/CLOSURE.md`](./day-sprint/bestiary-container-2026-07-21/CLOSURE.md)
+- **Defer:** `goal-displacement` → `bc-followup-goal-displacement`
+
+---
+
 ## 2026-07-21 — `day-sprint-procedure` — **CLOSED**
 
 - **Delivered:** жилец `docs/procedures/day-sprint/` + `DAY_SPRINT_REGULATION.md` + провода · PR [#877](https://github.com/officefish/Membrana/pull/877)
