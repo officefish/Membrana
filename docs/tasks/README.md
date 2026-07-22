@@ -18,7 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `procedural-workshop` | Процедурная мастерская — три глагола над 2D-домом | M | [`PROCEDURAL_WORKSHOP_PROMPT.md`](../prompts/PROCEDURAL_WORKSHOP_PROMPT.md) | — |
+| `precedent-container` | Контейнер прецедентов + мастерская к нему | M | [`PRECEDENT_CONTAINER_PROMPT.md`](../prompts/PRECEDENT_CONTAINER_PROMPT.md) | — |
 | `office-stability-emergency` | АВАРИЯ: таймауты office — server-first не выполняется; починка до строительства роутера (T10) | M | [`OFFICE_STABILITY_EMERGENCY_PROMPT.md`](../prompts/OFFICE_STABILITY_EMERGENCY_PROMPT.md) | [#933](https://github.com/officefish/Membrana/issues/933) |
 | `procedural-branch-guard` | Грамматика веток: процедурная ветка — не транспорт; только артефакты процедуры по разрешению (провод Р4 + профиль сессии) | M | [`PROCEDURAL_BRANCH_GUARD_PROMPT.md`](../prompts/PROCEDURAL_BRANCH_GUARD_PROMPT.md) | [#925](https://github.com/officefish/Membrana/issues/925) |
 | `ship-review-tooth` | Шип-гейт: мердж только через ревью-вердикт по HEAD SHA + required check (стена от обхода ревью) | M | [`SHIP_REVIEW_TOOTH_PROMPT.md`](../prompts/SHIP_REVIEW_TOOTH_PROMPT.md) | [#924](https://github.com/officefish/Membrana/issues/924) |
