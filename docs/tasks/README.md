@@ -18,6 +18,14 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `pf-f5-closure` | F5: CLOSURE + archive procedure-frames | S | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#931](https://github.com/officefish/Membrana/issues/931) |
+| `pf-f4-pattern` | F4: уточнение PINNED_* / GROUP_* под segmentHash (m4) | S | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#930](https://github.com/officefish/Membrana/issues/930) |
+| `pf-f3-morning-wiring` | F3: morning-wiring в ritual-day + 3 двери + гейт утра (m3) | M | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#929](https://github.com/officefish/Membrana/issues/929) |
+| `pf-f2-segment-pin` | F2: ядро auditPins + segmentHash; кит на том же ядре (m2) | M | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#928](https://github.com/officefish/Membrana/issues/928) |
+| `pf-f1-frames-contract` | F1: frames[] optional в validateProcedure (m1) | M | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#927](https://github.com/officefish/Membrana/issues/927) |
+| `pf-f0-brief` | F0: sync prompt/OPEN + ADR pin shape + хвост прецедента 22.07 | S | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#926](https://github.com/officefish/Membrana/issues/926) |
+| `angelina-codex-no-repo-writes` | Кодекс Ангелины: запрет пушить/редактировать, право только на конспект, репо — по явному разрешению | S | [`ANGELINA_CODEX_NO_REPO_WRITES_PROMPT.md`](../prompts/ANGELINA_CODEX_NO_REPO_WRITES_PROMPT.md) | [#922](https://github.com/officefish/Membrana/issues/922) |
+| `swallow-format-frame-fix` | Фрейм форматирования ласточки: полноценное зеркало 5 блоков вместо телеграфных строк (Ожегов) | S | [`SWALLOW_FORMAT_FRAME_FIX_PROMPT.md`](../prompts/SWALLOW_FORMAT_FRAME_FIX_PROMPT.md) | [#918](https://github.com/officefish/Membrana/issues/918) |
 | `procedure-frames` | Спринт «фреймы»: frames[] в манифесте процедур + пин отрезков + первый фрейм «подводка утра» (Ожегов) | L | [`PROCEDURE_FRAMES_PROMPT.md`](../prompts/PROCEDURE_FRAMES_PROMPT.md) | [#900](https://github.com/officefish/Membrana/issues/900) |
 | `code-review-lead-refactor` | Рефакторинг код-ревью: ведущий из пяти + память ведущего + бестиарий антипаттернов (T3/T4/T5) | M | [`CODE_REVIEW_LEAD_REFACTOR_PROMPT.md`](../prompts/CODE_REVIEW_LEAD_REFACTOR_PROMPT.md) | — |
 | `bc-b5-closure` | B5: CLOSURE bestiary-container | M | [`BC_B5_CLOSURE_PROMPT.md`](../prompts/BC_B5_CLOSURE_PROMPT.md) | [#884](https://github.com/officefish/Membrana/issues/884) |
