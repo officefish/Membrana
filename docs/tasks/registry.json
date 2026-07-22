@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "assets-container",
+      "title": "Эпик: контейнер имущества — три яруса (git/сервер-БД/Drive), набор от чека, подтверждение датой-сегодня",
+      "promptPath": "docs/prompts/ASSETS_CONTAINER_PROMPT.md",
+      "githubIssue": 959,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-22",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "bw-w5-closure",
       "title": "W5: CLOSURE bestiary-workshop",
       "promptPath": "docs/prompts/BW_W5_CLOSURE_PROMPT.md",
