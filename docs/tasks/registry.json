@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "containerization-coldstart-sync",
+      "title": "Cold-start мастера контейнеризации: три паттерна + мета-уровень (контейнер контейнеров)",
+      "promptPath": "docs/prompts/CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md",
+      "githubIssue": 993,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-23",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Дрейф найден в холодной сессии 23.07: SKILL.md и kits README знают два паттерна из трёх (нет HOME_WORKSHOP), мета-уровень (docs/tooling-atlas, yarn tooling:atlas, двумерность docs/procedures) в скилле отсутствует. Три документные правки, пины кита не трогаются.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "tooling-atlas",
       "title": "Атлас контейнеров — контейнер контейнеров + мастерская + mintlify",
       "promptPath": "docs/prompts/TOOLING_ATLAS_PROMPT.md",

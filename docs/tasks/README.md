@@ -18,6 +18,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `containerization-coldstart-sync` | Cold-start мастера контейнеризации: три паттерна + мета-уровень (контейнер контейнеров) | S | [`CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md`](../prompts/CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md) | [#993](https://github.com/officefish/Membrana/issues/993) |
+| `tooling-atlas` | Атлас контейнеров — контейнер контейнеров + мастерская + mintlify | M | [`TOOLING_ATLAS_PROMPT.md`](../prompts/TOOLING_ATLAS_PROMPT.md) | — |
 | `assets-container` | Эпик: контейнер имущества — три яруса (git/сервер-БД/Drive), набор от чека, подтверждение датой-сегодня | L | [`ASSETS_CONTAINER_PROMPT.md`](../prompts/ASSETS_CONTAINER_PROMPT.md) | [#959](https://github.com/officefish/Membrana/issues/959) |
 | `bw-w5-closure` | W5: CLOSURE bestiary-workshop | M | [`BW_W5_CLOSURE_PROMPT.md`](../prompts/BW_W5_CLOSURE_PROMPT.md) | [#951](https://github.com/officefish/Membrana/issues/951) |
 | `bw-w4-trap-kit` | W4: trap kit resident + Witcher aim example | M | [`BW_W4_TRAP_KIT_PROMPT.md`](../prompts/BW_W4_TRAP_KIT_PROMPT.md) | [#950](https://github.com/officefish/Membrana/issues/950) |
@@ -920,4 +922,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-22.*
+*Файл обновлён автоматически: 2026-07-23.*
