@@ -97,6 +97,19 @@ export function extractAgendaIds(topicMd) {
 }
 
 /**
+ * Начало реплики роли: `[Роль]:`, `**[Роль]:**`, `**[Роль]**:`.
+ *
+ * `**` вокруг метки — легальный markdown и живая практика ручных протоколов: заседание
+ * `tasks-workshop` (23.07) писалось `**[Структурщик]:**`. Регексп без этой поблажки не
+ * находил ни одной реплики, `protocolBody` возвращал пустую строку — и ВСЕ проверки,
+ * работающие по телу (`hasVerdictSection`, `premisesSection`, `findUncoveredAgendaItems`,
+ * `meetingVerdictProblems`), давали ложный красный: шесть нарушений на здоровых файлах
+ * (#1046). Ложный красный на легальной записи обесценивает аудитора сильнее, чем
+ * пропущенный дефект: следующий агент чинит несуществующее или перестаёт верить гейту.
+ */
+const REPLY_START_RE = /^\s*(?:\*\*)?\[[^\]]+\](?:\*\*)?\s*:/u;
+
+/**
  * Тело протокола — реплики и итог, БЕЗ эхо-заголовка с вопросом.
  *
  * Ключ детектора: ID повестки встречаются в эхе `**Вопрос:**` (его вставляет сам
@@ -105,7 +118,7 @@ export function extractAgendaIds(topicMd) {
  */
 export function protocolBody(protocolMd) {
   const lines = String(protocolMd ?? '').split(/\r?\n/);
-  const firstReply = lines.findIndex((l) => /^\s*\[[^\]]+\]\s*:/u.test(l));
+  const firstReply = lines.findIndex((l) => REPLY_START_RE.test(l));
   return firstReply === -1 ? '' : lines.slice(firstReply).join('\n');
 }
 
