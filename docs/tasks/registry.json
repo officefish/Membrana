@@ -71,7 +71,7 @@
       "supportPersonas": [
         "dynin"
       ],
-      "notes": "Транскрипция review инсайта insight-one-shot-format (7.2, adopted по слову владельца 23.07). Три поправки панели обязательны до кода: развод с #900, вход предиката + проверка цепочки (contra capability chaining, research Q3), судьба чек-листа при потере сессии.",
+      "notes": "Транскрипция review инсайта insight-one-shot-format (7.2, adopted по слову владельца 23.07). Три поправки панели обязательны до кода: развод с #900, вход предиката + проверка цепочки (contra capability chaining, research Q3), судьба чек-листа при потере сессии. 23.07: дом docs/procedures/one-shot/ + evaluateOneShotS (ветка docs/one-shot-first-frame); Issue #1022 не закрывать через Closes без --allow-mention и сданного DoD (прецедент 2026-07-23-oneshot-issue-closed-without-procedure / урок #1024).",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "insightId": "insight-one-shot-format"
