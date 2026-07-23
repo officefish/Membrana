@@ -62,7 +62,7 @@
       "title": "Cold-start мастера контейнеризации: три паттерна + мета-уровень (контейнер контейнеров)",
       "promptPath": "docs/prompts/CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md",
       "githubIssue": 993,
-      "linearId": null,
+      "linearId": "DRU-369",
       "size": "S",
       "status": "archived",
       "sprintKind": "day-sprint",
