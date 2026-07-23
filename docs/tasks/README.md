@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `ritual-deliver-to-main` | Утренний ритуал: обязательный финальный кадр — доставка документов в main | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1016](https://github.com/officefish/Membrana/issues/1016) |
 | `issue-979-selfclose` | Аномалия: задача спринта закрылась сама | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1004](https://github.com/officefish/Membrana/issues/1004) |
 | `precedents-meta-backfill` | Три прецедента не проходят схему контейнера | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1003](https://github.com/officefish/Membrana/issues/1003) |
 | `gitleaks-block-on-leak` | gitleaks предупреждает, но не блокирует коммит | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1002](https://github.com/officefish/Membrana/issues/1002) |
@@ -27,6 +28,11 @@
 | `dreams-digest-tri-state` | Дайджест снов не различает «не запускалось»/«пусто» | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#998](https://github.com/officefish/Membrana/issues/998) |
 | `dreams-deploy-office` | Сны: смерджены, но не выкачены на office | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#997](https://github.com/officefish/Membrana/issues/997) |
 | `frame-rails-2307` | Эпик: базовые процедуры на фрейм-рельсы (утро/спринт/заседание) | L | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | — |
+| `lpc-d-panel` | LPC D: panel owner LLM page | M | [`LLM_PROCEDURE_CHANNELS_PROMPT.md`](../prompts/LLM_PROCEDURE_CHANNELS_PROMPT.md) | [#1011](https://github.com/officefish/Membrana/issues/1011) |
+| `lpc-c-office` | LPC C: office overlay + usage API | M | [`LLM_PROCEDURE_CHANNELS_PROMPT.md`](../prompts/LLM_PROCEDURE_CHANNELS_PROMPT.md) | [#1010](https://github.com/officefish/Membrana/issues/1010) |
+| `lpc-b-wire` | LPC B: wire code-review + consilium | M | [`LLM_PROCEDURE_CHANNELS_PROMPT.md`](../prompts/LLM_PROCEDURE_CHANNELS_PROMPT.md) | [#1009](https://github.com/officefish/Membrana/issues/1009) |
+| `lpc-a-lib` | LPC A: registry + resolve + catalog | M | [`LLM_PROCEDURE_CHANNELS_PROMPT.md`](../prompts/LLM_PROCEDURE_CHANNELS_PROMPT.md) | [#1008](https://github.com/officefish/Membrana/issues/1008) |
+| `llm-procedure-channels` | Epic: LLM procedure channels + usage panel | L | [`LLM_PROCEDURE_CHANNELS_PROMPT.md`](../prompts/LLM_PROCEDURE_CHANNELS_PROMPT.md) | [#1007](https://github.com/officefish/Membrana/issues/1007) |
 | `frames-alive-rodchenko` | Оживление фреймов — Верстальщик: рендер цепочки | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#981](https://github.com/officefish/Membrana/issues/981) |
 | `frames-alive-dynin` | Оживление фреймов — Дынин: математика версии+резолв | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#980](https://github.com/officefish/Membrana/issues/980) |
 | `frames-alive-ozhegov` | Оживление фреймов — Ожегов: контракт+код+начинка | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#979](https://github.com/officefish/Membrana/issues/979) |
