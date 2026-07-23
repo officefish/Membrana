@@ -24,7 +24,7 @@ description: >-
    |-----|---------|---------|
    | Пространство | [`GROUP_CONTAINERIZATION`](../../../docs/patterns/GROUP_CONTAINERIZATION.md) | где живёт группа, кто пишет, что коммитить; пять органов (контракт · реестр · кеш · инструменты · агент) |
    | Время / идентичность | [`PINNED_SUBGRAPH_VERSIONING`](../../../docs/patterns/PINNED_SUBGRAPH_VERSIONING.md) | какая ревизия оснастки; единица версии — подграф, пины git SHA (кит — файл, фрейм — отрезок) |
-   | Операции | [`HOME_WORKSHOP`](../../../docs/patterns/HOME_WORKSHOP.md) | чем над домом работают: `audit` · `decompose` · `inspectElement` |
+   | Операции | [`HOME_WORKSHOP`](../../../docs/patterns/HOME_WORKSHOP.md) | чем над домом работают: инвентарь `audit` · `decompose` · `inspectElement` (MUST покрытия **дома**; пара может жить в соседнем контуре — g0 V2) |
 
    Стороны разные: контейнер — **пространство**, кит — **поставка**, мастерская — **спрос**.
 4. Мета-уровень — раздел ниже (контейнер контейнеров)
