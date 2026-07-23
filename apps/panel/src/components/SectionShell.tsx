@@ -7,6 +7,7 @@ import { DriftAnchorsBoard } from './DriftAnchorsBoard';
 import { SectionCard } from './SectionCard';
 import { DetectorCompareSection } from './detector-compare/DetectorCompareSection';
 import { GraphifyBoard } from './graphify/GraphifyBoard';
+import { LlmChannelsBoard } from './llm-channels/LlmChannelsBoard';
 import { PanelUsersBoard } from './panel-users/PanelUsersBoard';
 import { ResearchTreeBoard } from './research-tree/ResearchTreeBoard';
 
@@ -21,12 +22,19 @@ const SECTION_BOARDS: Partial<Record<string, ComponentType>> = {
   'drift-anchors': DriftAnchorsBoard,
   'detector-compare': DetectorCompareSection,
   'panel-users': PanelUsersBoard,
+  'llm-channels': LlmChannelsBoard,
   graphify: GraphifyBoard,
   'research-tree': ResearchTreeBoard,
 };
 
 /** Широкие борды: таблицам сравнения, матрице грантов и графам тесно в max-w-3xl. */
-const WIDE_SECTIONS = new Set(['detector-compare', 'panel-users', 'graphify', 'research-tree']);
+const WIDE_SECTIONS = new Set([
+  'detector-compare',
+  'panel-users',
+  'llm-channels',
+  'graphify',
+  'research-tree',
+]);
 
 export function SectionShell() {
   const { identity, logout } = usePanelAuth();

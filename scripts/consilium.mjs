@@ -10,19 +10,15 @@
  * yarn consilium --seed 42 --dry-run "…"
  * yarn consilium --no-save "…"
  *
- * Требуется ANTHROPIC_API_KEY в .env. Промпт: docs/prompts/CONSILIUM_PROMPT.md
+ * LLM через procedure channels (anthropic|openrouter chain). Промпт: docs/prompts/CONSILIUM_PROMPT.md
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve, basename } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
-import {
-  anthropicPost,
-  defaultModel,
-  getAnthropicKey,
-  loadDotEnv,
-  printAnthropicHttpError,
-} from './_anthropic-env.mjs';
+import { loadDotEnv } from './_anthropic-env.mjs';
+import { invokeProcedureLlm, loadRitualLlmEnv } from './lib/llm-procedure-ritual.mjs';
+import { resolveEffective } from './lib/llm-procedure-resolve.mjs';
 import {
   CONSILIUM_PROMPT_FILE,
   CONSILIUM_ROLES,
@@ -582,25 +578,19 @@ async function main() {
     question: cli.question,
   });
   const absPath = resolve(cwd, relPath);
-  const model = defaultModel();
+  loadRitualLlmEnv();
+  const effective = resolveEffective('consilium');
+  const chainLabel = effective.chain.map((s) => `${s.provider}/${s.model}`).join(' → ');
 
   if (cli.dryRun) {
     console.error(`→ промпт: ${promptText.length} символов`);
     console.error(`→ сохранение: ${cli.noSave ? '(отключено)' : relPath}`);
-    console.error(`→ модель: ${model}`);
+    console.error(`→ chain (${effective.source}): ${chainLabel}`);
     process.exit(0);
   }
 
-  let key;
-  try {
-    key = getAnthropicKey();
-  } catch (e) {
-    console.error(e.message);
-    process.exit(1);
-  }
-
   if (process.stderr.isTTY) {
-    console.error(`→ консилиум · model: ${model}`);
+    console.error(`→ консилиум · chain (${effective.source}): ${chainLabel}`);
   }
 
   /**
@@ -608,31 +598,33 @@ async function main() {
    * (exitCode уже выставлен; сокеты живы → return, не process.exit — см. ниже).
    */
   async function askRoom(messages) {
-    const bodyJson = { model, max_tokens: 16_384, messages };
     try {
-      const { ok, status, text } = await anthropicPost(
-        'https://api.anthropic.com/v1/messages',
-        {
-          headers: {
-            'content-type': 'application/json',
-            'x-api-key': key,
-            'anthropic-version': '2023-06-01',
-          },
-          bodyJson,
+      const result = await invokeProcedureLlm({
+        procedureId: 'consilium',
+        messages,
+        maxTokens: 16_384,
+        onAttempt: ({ provider, model, attemptIndex, ok, errorClass }) => {
+          if (!process.stderr.isTTY) return;
+          if (ok) {
+            console.error(`[llm] consilium → ${provider}/${model} (attempt ${attemptIndex + 1})`);
+          } else {
+            console.error(
+              `[llm] consilium attempt ${attemptIndex + 1} ${provider}/${model} failed: ${errorClass ?? 'unknown'}`,
+            );
+          }
         },
-      );
-      if (!ok) {
-        printAnthropicHttpError(status, text);
+      });
+      if (!result.ok) {
+        console.error(
+          `[llm] chain exhausted for consilium after ${result.attempts} attempt(s) (${result.errorClass ?? 'unknown'})`,
+        );
         // exitCode + return, а не process.exit(): сокеты HTTP-вызова ещё живы, и обрыв
         // процесса роняет libuv на Windows ассертом UV_HANDLE_CLOSING → 127 вместо 1
         // (тот же класс, что чинился в code-review.mjs). Это штатный путь «нет кредита».
         process.exitCode = 1;
         return null;
       }
-      const json = JSON.parse(text);
-      const parts = json?.content ?? [];
-      const out = parts.filter((b) => b?.type === 'text').map((b) => b.text).join('\n');
-      return out || JSON.stringify(parts, null, 2);
+      return result.text;
     } catch (e) {
       console.error(e);
       // См. коммент выше: сокеты живы → exitCode + return вместо обрыва процесса.

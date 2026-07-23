@@ -1,0 +1,26 @@
+{
+  "code-review": {
+    "chain": [
+      {
+        "provider": "anthropic",
+        "model": "claude-haiku-4-5-20251001"
+      },
+      {
+        "provider": "openrouter",
+        "model": "anthropic/claude-haiku-4.5"
+      }
+    ]
+  },
+  "consilium": {
+    "chain": [
+      {
+        "provider": "anthropic",
+        "model": "claude-haiku-4-5-20251001"
+      },
+      {
+        "provider": "openrouter",
+        "model": "anthropic/claude-haiku-4.5"
+      }
+    ]
+  }
+}

@@ -327,7 +327,7 @@ export function buildCodeReviewUserMessage(p) {
 }
 
 /**
- * @param {{ path: string, body: string, meta: { mode: string, full?: boolean, pr?: string } }} opts
+ * @param {{ path: string, body: string, meta: { mode: string, full?: boolean, pr?: string, llmProvider?: string, llmModel?: string, llmSource?: string } }} opts
  */
 export function writeReviewMarkdown(opts) {
   const stamp = new Date().toISOString();
@@ -335,6 +335,7 @@ export function writeReviewMarkdown(opts) {
     opts.meta.mode,
     opts.meta.full ? 'full' : null,
     opts.meta.pr ? `pr-${opts.meta.pr}` : null,
+    opts.meta.llmProvider ? `llm-${opts.meta.llmProvider}` : null,
   ]
     .filter(Boolean)
     .join(', ');
