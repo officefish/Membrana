@@ -13,8 +13,9 @@ const sync = process.argv.includes('--sync-readme');
 const registry = loadRegistry();
 
 if (sync) {
-  const path = syncTasksReadme(registry);
-  console.log('Обновлён:', path);
+  const res = syncTasksReadme(registry);
+  if (res.written) console.log('Обновлён:', res.path);
+  else console.error(`⚠ README НЕ обновлён — ${res.reason}`);
   console.log('');
 }
 
