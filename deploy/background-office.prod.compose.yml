@@ -23,8 +23,14 @@ services:
       - '127.0.0.1:${OFFICE_PORT:-3000}:3000'
     # PU1 (#463, ADR 0005): реестр партнёров панели переживает редеплой.
     # Явный дубль базового volume — прод-файл самодостаточен для чтения глазами.
+    # Dreams M5: append-only jsonl на отдельном томе (не смешивать с panel-users).
+    environment:
+      DREAMS_ENABLED: ${DREAMS_ENABLED:-true}
+      DREAMS_VOLUME_PATH: ${DREAMS_VOLUME_PATH:-/var/lib/membrana-dreams}
     volumes:
       - panel-users-data:/var/lib/membrana-office
+      - dreams-data:/var/lib/membrana-dreams
 
 volumes:
   panel-users-data:
+  dreams-data:
