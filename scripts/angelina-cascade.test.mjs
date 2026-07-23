@@ -12,12 +12,23 @@ import {
   orderedDigest,
   freshness,
   provenanceProblem,
+  provenanceOutcome,
   topoOrder,
   orchestrateCascade,
   presentNode,
 } from './lib/angelina-cascade.mjs';
 
 const prov = (author = 'vesnin') => ({ author, guard: 'angelina', digest: 'd', readAt: {} });
+const manualProv = (overrides = {}) => ({
+  kind: 'honest-manual',
+  author: 'human',
+  guard: 'honest-manual',
+  digest: 'd',
+  mintedAt: '2026-07-23',
+  reason: 'Anthropic usage limits — генератор недоступен',
+  readAt: {},
+  ...overrides,
+});
 
 test('orderedDigest детерминирован и не зависит от порядка аргументов', () => {
   assert.equal(orderedDigest(['b', 'a']), orderedDigest(['a', 'b']));
@@ -104,6 +115,42 @@ test('orchestrateCascade: отсутствие провенанса = громк
   assert.equal(out.ok, false, 'нет провенанса = не ok');
   assert.equal(out.firstBlocked, 'a');
   assert.match(out.results.a.provenance, /нет провенанса/u);
+});
+
+test('honest-manual: не блок по провенансу, исход ≠ ok и ≠ «нет провенанса»', () => {
+  assert.equal(provenanceProblem({ provenance: manualProv() }), '');
+  assert.equal(provenanceOutcome({ provenance: manualProv() }), 'honest-manual');
+  assert.match(provenanceProblem({ provenance: manualProv({ reason: '' }) }), /honest-manual без поля «reason»/u);
+
+  const graph = { nodes: [{ id: 'MAIN_DAY_ISSUE' }], edges: [] };
+  const out = orchestrateCascade(graph, {
+    MAIN_DAY_ISSUE: { version: 'v1', digest: 'da', provenance: manualProv(), readAt: {} },
+  });
+  assert.equal(out.ok, true, 'честная ручная чеканка не роняет каскад');
+  assert.equal(out.results.MAIN_DAY_ISSUE.blocked, false);
+  assert.equal(out.results.MAIN_DAY_ISSUE.provenance, 'honest-manual');
+  assert.equal(out.results.MAIN_DAY_ISSUE.mintedAt, '2026-07-23');
+
+  const line = presentNode('MAIN_DAY_ISSUE', out.results.MAIN_DAY_ISSUE);
+  assert.match(line, /^◇ ручная/u);
+  assert.match(line, /honest-manual/u);
+  assert.doesNotMatch(line, /нет провенанса/u);
+});
+
+test('honest-manual: stale по ребру всё ещё блокирует', () => {
+  const graph = { nodes: [{ id: 'a' }, { id: 'k' }], edges: [{ from: 'a', to: 'k' }] };
+  const out = orchestrateCascade(graph, {
+    a: { version: 'v2', digest: 'da2', provenance: prov('ozhegov') },
+    k: {
+      version: 'v1',
+      digest: 'dk',
+      provenance: manualProv({ author: 'human' }),
+      readAt: { a: { version: 'v1', digest: 'da1' } },
+    },
+  });
+  assert.equal(out.ok, false);
+  assert.equal(out.results.k.freshness, FRESHNESS.STALE);
+  assert.equal(out.results.k.blocked, true);
 });
 
 test('orchestrateCascade: субагент-автор = блок', () => {
