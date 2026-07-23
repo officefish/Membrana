@@ -57,6 +57,13 @@
       ]
     },
     {
+      "group": "LLM calls — evidence",
+      "pages": [
+        "llm-calls/overview",
+        "llm-calls/specimen-cr-openrouter-001"
+      ]
+    },
+    {
       "group": "Nodes — index",
       "pages": ["device-board/nodes/index"]
     },

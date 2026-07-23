@@ -127,6 +127,7 @@
 | [`docs/procedures/`](../procedures/workshop.manifest.json) | процедурный дом | `audit`+`decompose`+`inspectElement` ✅; `kit: null` |
 | [`docs/precedents/`](../precedents/workshop.manifest.json) | контейнер прецедентов | `audit`+`decompose` ✅, `inspectElement` ⚠ (нет); `kit: null` |
 | [`docs/audit/bestiary/`](../audit/bestiary/workshop.manifest.json) | бестиарий антипаттернов | `audit`+`decompose` ✅, `inspectElement` ⚠; `kit: "kits/witcher"` (W4 #950); **K25-B** — исключение supply-side: доменный `issueTrap` (T6 «поставщик ловушек»); MUST-стрелка «мастерская заказывает kit» **не** меняется |
+| [`docs/audit/llm-calls/`](../audit/llm-calls/workshop.manifest.json) | evidence LLM-вызовов | `audit`+`decompose` ✅, `inspectElement` ⚠ (агентный Inspect); `kit: null` · эпик #1033 |
 
 Кандидат-жилец: ~~**процедурная мастерская**~~ — живёт (см. таблицу).
 

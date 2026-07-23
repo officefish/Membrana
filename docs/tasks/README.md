@@ -18,6 +18,13 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `lch-w5-closure` | W5: CLOSURE llm-calls-house | M | [`LCH_W5_CLOSURE_PROMPT.md`](../prompts/LCH_W5_CLOSURE_PROMPT.md) | [#1039](https://github.com/officefish/Membrana/issues/1039) |
+| `lch-w4-mintlify` | W4: Mintlify thin mirror llm-calls | M | [`LCH_W4_MINTLIFY_PROMPT.md`](../prompts/LCH_W4_MINTLIFY_PROMPT.md) | [#1038](https://github.com/officefish/Membrana/issues/1038) |
+| `lch-w3-emit` | W3: LPC evidence emit hashes+params + snapshot | M | [`LCH_W3_EMIT_PROMPT.md`](../prompts/LCH_W3_EMIT_PROMPT.md) | [#1037](https://github.com/officefish/Membrana/issues/1037) |
+| `lch-w2-workshop` | W2: llm-calls HOME_WORKSHOP audit/decompose | M | [`LCH_W2_WORKSHOP_PROMPT.md`](../prompts/LCH_W2_WORKSHOP_PROMPT.md) | [#1036](https://github.com/officefish/Membrana/issues/1036) |
+| `lch-w1-house` | W1: docs/audit/llm-calls five organs | M | [`LCH_W1_HOUSE_PROMPT.md`](../prompts/LCH_W1_HOUSE_PROMPT.md) | [#1035](https://github.com/officefish/Membrana/issues/1035) |
+| `lch-w0-brief` | W0: brief llm-calls-house OPEN+Issues+ACTIVE | M | [`LCH_W0_BRIEF_PROMPT.md`](../prompts/LCH_W0_BRIEF_PROMPT.md) | [#1034](https://github.com/officefish/Membrana/issues/1034) |
+| `llm-calls-house` | Epic: LLM calls evidence house + workshop + Mintlify mirror | L | [`LLM_CALLS_HOUSE_PROMPT.md`](../prompts/LLM_CALLS_HOUSE_PROMPT.md) | [#1033](https://github.com/officefish/Membrana/issues/1033) |
 | `pr-mergeable-graphql-stale` | Мержабельность по GraphQL протухает — pr:ship падает в ложный красный | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1028](https://github.com/officefish/Membrana/issues/1028) |
 | `registry-merge-driver-serverless` | Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1026](https://github.com/officefish/Membrana/issues/1026) |
 | `ritual-deliver-to-main` | Утренний ритуал: обязательный финальный кадр — доставка документов в main | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1016](https://github.com/officefish/Membrana/issues/1016) |

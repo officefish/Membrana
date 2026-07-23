@@ -4,10 +4,10 @@
 
 ## Focus
 
-_Нет активного day-sprint Focus._
-
-Последний **закрытый:** [`bestiary-workshop-2026-07-22`](./day-sprint/bestiary-workshop-2026-07-22/CLOSURE.md) (#945) · до него [`procedure-frames-2026-07-22`](./day-sprint/procedure-frames-2026-07-22/CLOSURE.md) (#900) · [`bestiary-container-2026-07-21`](./day-sprint/bestiary-container-2026-07-21/CLOSURE.md) (#878).
+[`llm-calls-house-2026-07-23`](./day-sprint/llm-calls-house-2026-07-23/OPEN.md) — дом доказательств LLM-вызовов (#1033) · W0 done · W1 in progress · craft ozhegov · lead vesnin.
 
 ## Also open
 
 _(пусто)_
+
+Последний **закрытый:** [`bestiary-workshop-2026-07-22`](./day-sprint/bestiary-workshop-2026-07-22/CLOSURE.md) (#945) · до него [`procedure-frames-2026-07-22`](./day-sprint/procedure-frames-2026-07-22/CLOSURE.md) (#900).

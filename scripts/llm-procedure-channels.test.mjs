@@ -231,6 +231,26 @@ test('emitUsage: opt-out + forbid prompt fields + POST', async () => {
   );
   assert.equal(off.reason, 'opt-out');
 
+  const withHash = buildUsageEvent({
+    procedureId: 'code-review',
+    provider: 'anthropic',
+    model: 'm',
+    source: 'default',
+    latencyMs: 1,
+    ok: true,
+    promptText: 'secret-prompt',
+    responseText: 'ok',
+    attemptIndex: 0,
+    chainLen: 2,
+    params: { maxTokens: 16 },
+  });
+  assert.equal(typeof withHash.promptSha256, 'string');
+  assert.equal(withHash.promptSha256.length, 64);
+  assert.equal(withHash.promptBytes, Buffer.byteLength('secret-prompt', 'utf8'));
+  assert.ok(!('prompt' in withHash));
+  assert.ok(!('promptText' in withHash));
+  assert.deepEqual(usageEventProblems(withHash), []);
+
   const bad = usageEventProblems({
     eventId: '1',
     ts: new Date().toISOString(),

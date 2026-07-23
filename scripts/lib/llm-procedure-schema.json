@@ -86,7 +86,19 @@
         "ok": { "type": "boolean" },
         "errorClass": { "$ref": "#/$defs/errorClass" },
         "entryMjs": { "type": "string" },
-        "gitSha": { "type": "string" }
+        "gitSha": { "type": "string" },
+        "promptSha256": { "type": "string", "minLength": 64, "maxLength": 64 },
+        "responseSha256": { "type": "string", "minLength": 64, "maxLength": 64 },
+        "promptBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "responseBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "attemptIndex": { "type": "integer", "minimum": 0 },
+        "chainLen": { "type": "integer", "minimum": 1 },
+        "providerRequestId": { "type": "string", "minLength": 1 },
+        "params": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Call parameters without secrets (maxTokens, model, provider, apiFormat, host)"
+        }
       },
       "not": {
         "anyOf": [

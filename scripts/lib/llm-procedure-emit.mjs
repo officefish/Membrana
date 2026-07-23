@@ -3,6 +3,7 @@
  */
 import { randomUUID } from 'node:crypto';
 
+import { buildEvidenceFields } from './llm-procedure-evidence.mjs';
 import { resolveOfficeToken } from './office-token.mjs';
 
 const ERROR_CLASSES = new Set(['auth', 'rate_limit', 'timeout', 'protocol', 'unknown']);
@@ -78,9 +79,27 @@ export function usageEventProblems(event) {
  *   errorClass?: string;
  *   entryMjs?: string;
  *   gitSha?: string;
+ *   promptText?: string | null;
+ *   responseText?: string | null;
+ *   params?: Record<string, unknown> | null;
+ *   attemptIndex?: number;
+ *   chainLen?: number;
+ *   providerRequestId?: string | null;
+ *   promptSha256?: string;
+ *   responseSha256?: string;
+ *   promptBytes?: number | null;
+ *   responseBytes?: number | null;
  * }>} partial
  */
 export function buildUsageEvent(partial) {
+  const evidence = buildEvidenceFields({
+    promptText: partial.promptText,
+    responseText: partial.responseText,
+    params: partial.params,
+    attemptIndex: partial.attemptIndex,
+    chainLen: partial.chainLen,
+    providerRequestId: partial.providerRequestId,
+  });
   return {
     eventId: partial.eventId ?? randomUUID(),
     ts: partial.ts ?? new Date().toISOString(),
@@ -95,6 +114,9 @@ export function buildUsageEvent(partial) {
     ...(partial.errorClass ? { errorClass: partial.errorClass } : {}),
     ...(partial.entryMjs ? { entryMjs: partial.entryMjs } : {}),
     ...(partial.gitSha ? { gitSha: partial.gitSha } : {}),
+    ...evidence,
+    ...(partial.promptSha256 ? { promptSha256: partial.promptSha256 } : {}),
+    ...(partial.responseSha256 ? { responseSha256: partial.responseSha256 } : {}),
   };
 }
 
