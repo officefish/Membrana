@@ -15,7 +15,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1040 product done; ACTIVE clear + epic archive this commit",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "llm-calls-house"
     },
     {
@@ -33,7 +33,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1040; apps/docs/llm-calls thin mirror",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "llm-calls-house"
     },
     {
@@ -51,7 +51,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1040; ADR-0016 + emit hashes + snapshot",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "llm-calls-house"
     },
     {
@@ -69,7 +69,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1040; workshop.manifest + yarn llm-calls:audit/decompose",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "llm-calls-house"
     },
     {
@@ -87,7 +87,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1040; docs/audit/llm-calls five organs",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "llm-calls-house"
     },
     {
@@ -105,7 +105,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1040 merged 6570769b; W0 OPEN+Issues+ACTIVE",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "llm-calls-house"
     },
     {
@@ -125,7 +125,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1040 merged 6570769b; W0-W5 delivered; CLOSURE docs/day-sprint/llm-calls-house-2026-07-23/CLOSURE.md",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-23"
     },
     {
       "id": "pr-mergeable-graphql-stale",
@@ -200,7 +200,7 @@
       ],
       "notes": "Транскрипция review инсайта insight-one-shot-format (7.2, adopted по слову владельца 23.07). Три поправки панели обязательны до кода: развод с #900, вход предиката + проверка цепочки (contra capability chaining, research Q3), судьба чек-листа при потере сессии. 23.07: дом docs/procedures/one-shot/ + evaluateOneShotS (ветка docs/one-shot-first-frame); Issue #1022 не закрывать через Closes без --allow-mention и сданного DoD (прецедент 2026-07-23-oneshot-issue-closed-without-procedure / урок #1024).",
       "archiveNotes": "Owner LGTM; PR #1031 MERGED; SHA b825a2c9; docs/procedures/one-shot/ + one-shot-s-predicate; Issue #1022 closed consciously (gh issue close), not via pr:ship --issue",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "insightId": "insight-one-shot-format"
     },
     {
@@ -534,7 +534,7 @@
       ],
       "notes": "Дрейф найден в холодной сессии 23.07: SKILL.md и kits README знают два паттерна из трёх (нет HOME_WORKSHOP), мета-уровень (docs/tooling-atlas, yarn tooling:atlas, двумерность docs/procedures) в скилле отсутствует. Три документные правки, пины кита не трогаются.",
       "archiveNotes": "Смёржено PR #995 (merge 30addc7e): SKILL.md — три оси паттернов в description/cold-start/Hard rules + раздел «Мета-уровень» (docs/tooling-atlas vs двумерный docs/procedures) + tooling:atlas в Tools; kits README — «два паттерна» → три. Пины не тронуты (MANIFEST.json вне диффа). Проверки: tooling:atlas --audit OK, check:layer-direction 0 нарушений. Унаследованный дрейф kits:audit (3 blocking с #953) вынесен за скоуп.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-23"
     },
     {
       "id": "tooling-atlas",
@@ -572,7 +572,7 @@
       ],
       "notes": "Linear: только project agent-tooling-friction-4 (free issue limit); исполнитель Cursor · ревьюер Sergey",
       "archiveNotes": "PR #974 · yarn git:rebase-continue",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "agent-tooling-friction-4"
     },
     {
@@ -592,7 +592,7 @@
       ],
       "notes": "Linear DRU-18 · исполнитель Cursor · ревьюер Sergey",
       "archiveNotes": "PR #974 · long --body-file scripts/cache",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "agent-tooling-friction-4"
     },
     {
@@ -612,7 +612,7 @@
       ],
       "notes": "Linear DRU-114 · исполнитель Cursor · ревьюер Sergey",
       "archiveNotes": "PR #974 · DAY_SPRINT_REGULATION Focus/Also open",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "agent-tooling-friction-4"
     },
     {
@@ -632,7 +632,7 @@
       ],
       "notes": "Linear DRU-137 · исполнитель Cursor · ревьюер Sergey",
       "archiveNotes": "PR #974 · assertPrMergeableForShip CONFLICTING/DIRTY STOP",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "agent-tooling-friction-4"
     },
     {
@@ -652,7 +652,7 @@
       ],
       "notes": "Linear project https://linear.app/techies68/project/agent-tooling-friction-4-67e19f002443; исполнитель Cursor / ревьюер Sergey",
       "archiveNotes": "PR #974 · ATF4-1..4 Done · Linear project agent-tooling-friction-4",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-23"
     },
     {
       "id": "assets-container",
@@ -688,7 +688,7 @@
       "supportPersonas": [],
       "notes": "branch feat/bw-w5-closure; after W4 #978",
       "archiveNotes": "PR #982 merged f01a907e; CLOSURE + ACTIVE cleared; sanity bestiary 5/5 + kits witcher blocking=0",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "bestiary-workshop"
     },
     {
@@ -706,7 +706,7 @@
       "supportPersonas": [],
       "notes": "kit id witcher; branch feat/bw-w4-trap-kit; PR #978",
       "archiveNotes": "PR #978 merged e1a6eafb; kits/witcher + kits:audit green; workshop kit=kits/witcher; TRAPS silent-empty-catch kit-ready; aim Ведьмак; next W5 #951",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "bestiary-workshop"
     },
     {
@@ -724,7 +724,7 @@
       "supportPersonas": [],
       "notes": "Next after W2 #965; awaiting start",
       "archiveNotes": "PR #967, merge ed997ce1; thin Mintlify mirror apps/docs/bestiary + docs.json group; lemma git=truth; depth thin; next W4 #950",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "bestiary-workshop"
     },
     {
@@ -742,7 +742,7 @@
       "supportPersonas": [],
       "notes": "W2 done: CATCH/TRAPS/antipattern stubs + path decision",
       "archiveNotes": "PR #965, merge 7887ad73; CATCH_LIST + traps/TRAPS_LIST + antipatterns/silent stubs; BESTIARY_LIST untouched; path decision LGTM ozhegov; next W3 #949",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "bestiary-workshop"
     },
     {
@@ -760,7 +760,7 @@
       "supportPersonas": [],
       "notes": "W1 done: K25-B + workshop.manifest + issueTrap",
       "archiveNotes": "PR #954 merged 496ecb41; K25-B + workshop.manifest + issueTrap; next W2 #948",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "bestiary-workshop"
     },
     {
@@ -778,7 +778,7 @@
       "supportPersonas": [],
       "notes": "W0: OPEN open + ACTIVE (parallel with procedure-frames) + Issues #945–#951. Awaiting LGTM vesnin.",
       "archiveNotes": "PR #952 merged c1f067a7; W0 open registry+Issues #945–#951+ACTIVE; conflicts with procedure-frames F1/F2 resolved in ACTIVE parallel",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "bestiary-workshop"
     },
     {
@@ -799,7 +799,7 @@
       ],
       "notes": "W0–W4 done; W5 CLOSURE in flight; инстанс bestiary-workshop-2026-07-22",
       "archiveNotes": "PR #982 merged f01a907e; W0-W5 done (#952/#954/#965/#967/#978/#982); CLOSURE docs/day-sprint/bestiary-workshop-2026-07-22/CLOSURE.md; ACTIVE cleared; kit witcher",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-23"
     },
     {
       "id": "bridge-room",
@@ -959,7 +959,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "CLOSURE docs/day-sprint/procedure-frames-2026-07-22/CLOSURE.md; ACTIVE also-open cleared",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "procedure-frames"
     },
     {
@@ -977,7 +977,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #960 · PINNED_/GROUP_ copies=1 + kit/frame domains",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "procedure-frames"
     },
     {
@@ -995,7 +995,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #955 · morning-wiring preflight + 3 doors + morning-care gate",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "procedure-frames"
     },
     {
@@ -1013,7 +1013,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #953 · auditPins + kit on same core",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "procedure-frames"
     },
     {
@@ -1031,7 +1031,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #944 · validateProcedure preflight/frames/post + pins[]",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "procedure-frames"
     },
     {
@@ -1049,7 +1049,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #942 · ADR-0015 ACCEPTED · cold-start in ritual-day precedents",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "procedure-frames"
     },
     {
@@ -1067,7 +1067,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #903, двери CLAUDE.md+AGENTS.md починены; ревью вёл ozhegov (пропуск), фрейм подводки утра — первый адресный ремонт",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-23"
     },
     {
       "id": "kcm-c4-closure",
@@ -1195,7 +1195,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR F0-F5 #942-#960 + F5 CLOSURE; DoD #900",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-23"
     },
     {
       "id": "code-review-lead-refactor",
@@ -1231,7 +1231,7 @@
       "supportPersonas": [],
       "notes": "B5 CLOSURE: docs/day-sprint/bestiary-container-2026-07-21/CLOSURE.md; OPEN closed; DAY_SPRINT_ACTIVE cleared; audit+weekly 5/5 matrix; branch-check vesnin. Issue #884. LGTM vesnin (owner ok 2026-07-22) — ship.",
       "archiveNotes": "PR #937; CLOSURE docs/day-sprint/bestiary-container-2026-07-21/CLOSURE.md; ACTIVE cleared; LGTM vesnin",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "bestiary-container"
     },
     {
@@ -1249,7 +1249,7 @@
       "supportPersonas": [],
       "notes": "B4: yarn bestiary:weekly → analysis/bestiary-run-YYYY-MM-DD.md; trend; anti-silent Summary. Branch feat/bc-b4-weekly. Issue #883. LGTM angelina — ship.",
       "archiveNotes": "PR #919; yarn bestiary:weekly + analysis; LGTM angelina",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "bestiary-container"
     },
     {
@@ -1267,7 +1267,7 @@
       "supportPersonas": [],
       "notes": "B3: echo detector+specimen (dedupeByOrigin); goal-displacement deferred → bc-followup-goal-displacement. LGTM dynin — ship. Issue #882.",
       "archiveNotes": "PR #898; echo+specimen; goal-displacement deferred; LGTM dynin",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "bestiary-container"
     },
     {
@@ -1285,7 +1285,7 @@
       "supportPersonas": [],
       "notes": "B2: specimens×4; yarn bestiary:audit 4/4; tests 5/5. LGTM dynin — ship.",
       "archiveNotes": "PR #895 merged; specimens 4/4; bestiary:audit; tests; LGTM dynin owner ok",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "bestiary-container"
     },
     {
@@ -1303,7 +1303,7 @@
       "supportPersonas": [],
       "notes": "B1: docs/audit/bestiary/ органы + провода. LGTM ozhegov — ship.",
       "archiveNotes": "PR #889 merged; docs/audit/bestiary home; GROUP_CONTAINERIZATION checklist; LGTM ozhegov owner ok",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "bestiary-container"
     },
     {
@@ -1321,7 +1321,7 @@
       "supportPersonas": [],
       "notes": "B0: OPEN + лемма контейнер+specimens. LGTM vesnin — ship.",
       "archiveNotes": "PR #885 merged; OPEN + lemma container+specimens; LGTM vesnin owner ok",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "bestiary-container"
     },
     {
@@ -1343,7 +1343,7 @@
       ],
       "notes": "Эпик B0–B5 (#879–#884) CLOSED в CLOSURE. Дом docs/audit/bestiary/; engines scripts/lib/lens-bestiary.mjs. ACTIVE cleared. Archive эпика — после merge B5 (как D4/K5). Follow-up: bc-followup-goal-displacement.",
       "archiveNotes": "Epic closed; CLOSURE docs/day-sprint/bestiary-container-2026-07-21/CLOSURE.md; B0-B5 PRs #885 #889 #895 #898 #919 #937; follow-up bc-followup-goal-displacement",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "insightId": "insight-weekly-antipattern-audit-bestiary"
     },
     {
@@ -2169,7 +2169,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #790, Closes #782: docs/procedures + жилец ritual-evening (MANIFEST, 6 движков) + validateProcedure (3 предиката + Т12-запрет, живой зуб в test:scripts) + подвид manifest-only в GROUP_CONTAINERIZATION",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-23",
       "parentEpic": "procedural-layer-impl"
     },
     {
@@ -2564,7 +2564,7 @@
       ],
       "notes": "Ретро тулинга 18.07. Кристаллизация наполовину ручная: чеканка правкой JSON, указатель на реплику ad-hoc скриптом, дубль-проверки нет — сожжён вопрос владельца (токен alex-sparring-answered уже был от 17.07). Новых контрактов нет, форма токена — канон.",
       "archiveNotes": "#642 COMPLETED 19.07; truth.mjs + truth-mint в main",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-23"
     },
     {
       "id": "meeting-security-posture",
