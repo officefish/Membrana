@@ -41,7 +41,10 @@ function main() {
   }
 
   console.log(`meeting:audit — ${id} (повесток: ${topics.length}, протоколов: ${protocols.length})\n`);
-  const mark = { PASS: '✓', FAIL: '✖', 'НЕЧЕМ': '?' };
+  // «ПРЕДУПР» (#1047) кодом не валит по тому же основанию, что и «НЕЧЕМ»: ручной протокол
+  // — не нарушение регламента, а другой канал записи; нарушением было бы выдать его за
+  // произведённый инструментом.
+  const mark = { PASS: '✓', FAIL: '✖', 'НЕЧЕМ': '?', 'ПРЕДУПР': '⚠' };
   for (const c of checks) {
     console.log(`  ${mark[c.status] ?? '·'} [${c.n}] ${c.subject}\n      ${c.note}`);
   }

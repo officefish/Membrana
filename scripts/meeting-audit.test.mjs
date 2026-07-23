@@ -153,6 +153,24 @@ test('#616: протокол с пометкой канала → PASS (гейт
   assert.equal(checks.filter((c) => c.n === 6)[0].status, 'PASS');
 });
 
+test('#1047: канал hand → ПРЕДУПР, не PASS (ложный зелёный о невызванном гейте)', () => {
+  const hand = `<!-- канал: hand — протокол вёл председатель вручную, панель не прогонялась -->\n${goodProtocol('B1')}`;
+  const r = auditMeeting(state({ protocols: [{ file: 'm1-2026-07-20.md', md: hand }] }));
+  const c6 = r.checks.filter((c) => c.n === 6)[0];
+  assert.equal(c6.status, 'ПРЕДУПР');
+  assert.match(c6.note, /канал «hand»/u);
+  assert.match(c6.note, /НЕ вызывался/u, 'сказано ровно то, что было: гейт при записи не звали');
+  assert.doesNotMatch(c6.note, /произведён инструментом/u);
+  assert.equal(r.violations, 0, 'ручной протокол — другой канал записи, не нарушение');
+});
+
+test('#1047: protocolChannel читает значение, а не факт пометки', async () => {
+  const { protocolChannel } = await import('./lib/meeting-audit.mjs');
+  assert.equal(protocolChannel('<!-- канал: llm — yarn consilium -->\nтекст'), 'llm');
+  assert.equal(protocolChannel('<!-- канал: HAND -->'), 'hand', 'регистр не значим');
+  assert.equal(protocolChannel(goodProtocol('B1')), null, 'пометки нет — null, а не пустая строка');
+});
+
 test('#616: протоколы ДО отсечки не судятся задним числом', () => {
   // Ретроактивность запрещена тем же принципом, что и добор посылок задним числом.
   const { checks } = auditMeeting(state({ protocols: [{ file: 'm1-2026-07-18.md', md: goodProtocol('B1') }] }));
