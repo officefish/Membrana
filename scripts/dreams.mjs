@@ -10,7 +10,7 @@ import { join, resolve } from 'node:path';
 import { loadDotEnv } from './_anthropic-env.mjs';
 import { DreamsLog, dayLogPath } from './lib/dreams-log.mjs';
 import { commitDreamTick } from './lib/dreams-tick.mjs';
-import { formatDreamDigestMd } from './lib/dreams-format.mjs';
+import { attachDigestSource, formatDreamDigestMd } from './lib/dreams-format.mjs';
 import { enumeratePairs } from './lib/night-research.mjs';
 
 loadDotEnv();
@@ -66,7 +66,11 @@ async function main() {
 
   if (cmd === 'digest') {
     const log = new DreamsLog({ path: dayLogPath(root, day) });
-    const proj = log.projectDay(day);
+    const proj = attachDigestSource(log.projectDay(day, { volumeRoot: root }), {
+      kind: 'local-volume',
+      root,
+      producerAlive: null,
+    });
     const md = formatDreamDigestMd(proj);
     if (argv.includes('--write')) {
       const out = resolve(process.cwd(), 'docs/DREAMS_DIGEST.md');

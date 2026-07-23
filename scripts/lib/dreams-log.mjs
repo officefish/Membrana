@@ -134,13 +134,26 @@ export class DreamsLog {
 
   /**
    * Derived: select/digest за день. Победители не пишутся в лог.
+   * Три исхода пустоты (анти-«одинаковая строка»): has-winners · ran-empty · never-ran.
    * @param {string} day
+   * @param {{ volumeRoot?: string }} [opts]
    */
-  projectDay(day) {
+  projectDay(day, opts = {}) {
     const dreams = this.readDay(day);
     const heats = select(dreams);
     const winners = digest(dreams);
     const noWinnerHeats = heats.filter((h) => h.winner == null).map((h) => h.heat);
+    const volumeRoot = opts.volumeRoot ?? null;
+    const volumeExists = volumeRoot != null ? existsSync(volumeRoot) : null;
+    const logExists = this.path != null ? existsSync(this.path) : null;
+    const classified = classifyDreamDigestState({
+      dreams,
+      winners,
+      logPath: this.path,
+      logExists,
+      volumeRoot,
+      volumeExists,
+    });
     return {
       day,
       dreams,
@@ -148,8 +161,54 @@ export class DreamsLog {
       winners,
       winnerCount: winners.length,
       noWinnerHeats,
+      eventCount: dreams.length,
+      logPath: this.path,
+      logExists,
+      volumeRoot,
+      volumeExists,
+      status: classified.status,
+      reason: classified.reason,
     };
   }
+}
+
+/**
+ * Классификация исхода суток: победители / отработало пусто / не запускалось.
+ * Чистая функция — без I/O (флаги существования передаёт вызывающий).
+ *
+ * @param {{
+ *   dreams?: object[],
+ *   winners?: object[],
+ *   logPath?: string|null,
+ *   logExists?: boolean|null,
+ *   volumeRoot?: string|null,
+ *   volumeExists?: boolean|null,
+ * }} input
+ * @returns {{ status: 'has-winners'|'ran-empty'|'never-ran', reason: string|null }}
+ */
+export function classifyDreamDigestState(input = {}) {
+  const dreams = input.dreams ?? [];
+  const winners = input.winners ?? [];
+  if (winners.length > 0) {
+    return { status: 'has-winners', reason: null };
+  }
+  if (dreams.length === 0) {
+    if (input.volumeRoot != null && input.volumeExists === false) {
+      return { status: 'never-ran', reason: 'volume-missing' };
+    }
+    if (input.logPath != null && input.logExists === false) {
+      return { status: 'never-ran', reason: 'day-log-missing' };
+    }
+    if (input.logPath != null && input.logExists === true) {
+      return { status: 'never-ran', reason: 'day-log-empty' };
+    }
+    return { status: 'never-ran', reason: 'no-events' };
+  }
+  const allSkipped = dreams.every((d) => d.status === 'skipped');
+  if (allSkipped) return { status: 'ran-empty', reason: 'all-skipped' };
+  const noneSynthesized = dreams.every((d) => d.status !== 'synthesized');
+  if (noneSynthesized) return { status: 'ran-empty', reason: 'all-failed-or-skipped' };
+  return { status: 'ran-empty', reason: 'no-winner-selected' };
 }
 
 /**
