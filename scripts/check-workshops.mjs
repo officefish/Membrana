@@ -4,9 +4,10 @@
  *
  * Находит все docs/**\/workshop.manifest.json, валидирует каждый (validateWorkshop),
  * печатает таблицу и роняет прогон (exit 1) при структурных нарушениях. Предупреждения
- * (⚠ inspectElement — SHOULD) не роняют — легально для живущих мастерских (Ф5).
+ * (⚠ inspectElement — SHOULD; ⚠ audit/decompose = null — инвентарь вовне, g0 V2)
+ * не роняют — легально для живущих и decision-мастерских.
  *
- * Канон: docs/patterns/HOME_WORKSHOP.md · заседание home-workshop (Ф2/Ф5).
+ * Канон: docs/patterns/HOME_WORKSHOP.md · заседание home-workshop (Ф2/Ф5) · g0 #1056.
  */
 
 import { dirname, relative, resolve } from 'node:path';

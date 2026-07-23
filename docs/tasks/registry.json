@@ -143,7 +143,7 @@
       "archivedAt": null,
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "notes": "После g0.",
+      "notes": "После g0 (V2 wins 23.07): 5 decision-verbs; audit/decompose вне. Фиксировать границу в README/манифесте.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "tasks-workshop"
@@ -179,7 +179,7 @@
       "archivedAt": null,
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "notes": "HARD GATE: ждать слово владельца. Не решать V2 молча.",
+      "notes": "HARD GATE снят 23.07: владелец — V2 wins («уточнять паттерн»). 5 decision-verbs в docs/tasks; audit/decompose вне (соседний контур/CI). HOME_WORKSHOP §Ф2 уточнён: MUST = покрытие дома, не каждая мастерская.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "tasks-workshop"

@@ -3,8 +3,10 @@
  *
  * Канон: [`docs/patterns/HOME_WORKSHOP.md`](../../docs/patterns/HOME_WORKSHOP.md),
  * вердикты `m1-contract` (поля манифеста) и `m2-vocabulary` (словарь глаголов).
- * Шов Ф2↔Ф5 разрешён Ф5: `audit`+`decompose` — MUST, `inspectElement` — SHOULD
- * (отсутствие = предупреждение, не провал), т.к. у живущих мастерских его пока нет.
+ * Шов Ф2↔Ф5: `inspectElement` — SHOULD (отсутствие = предупреждение, не провал).
+ * Amendment g0 / #1056 (V2 wins): `audit`+`decompose` — ключи MUST; значение —
+ * непустая строка (инвентарь в этой мастерской) или `null` (вынесены в соседний
+ * контур / CI; ⚠, не провал). MUST покрытия **дома** остаётся в паттерне.
  *
  * Детерминирована, без сети; файловая система — единственный вход (при резолве pattern/kit).
  */
@@ -14,7 +16,7 @@ import { basename, dirname, join } from 'node:path';
 
 /** Обязательные ключи манифеста мастерской (вердикт Ф1). */
 const REQUIRED_KEYS = ['pattern', 'name', 'worksOn', 'kit', 'verbs'];
-/** MUST-глаголы словаря (вердикт Ф2): их отсутствие — дефект. */
+/** MUST-ключи инвентаря (вердикт Ф2 + g0): отсутствие ключа — дефект; null — ⚠. */
 const REQUIRED_VERB_KEYS = ['audit', 'decompose'];
 /** Все известные ключи словаря (прочие — «свалка»). `inspectElement` — SHOULD. */
 const KNOWN_VERB_KEYS = ['audit', 'decompose', 'inspectElement', 'stackLike', 'domain'];
@@ -64,9 +66,17 @@ export function workshopSchemaProblems(m) {
       for (const k of vkeys) {
         if (!KNOWN_VERB_KEYS.includes(k)) problems.push(`verbs: лишний ключ ${k}`);
       }
-      // audit / decompose — MUST (непустые строки).
+      // audit / decompose — ключи MUST; значение: непустая строка (в этой мастерской)
+      // или null (вынесены вовне — ⚠; g0 V2 / #1056). Пустая строка — дефект.
       for (const k of ['audit', 'decompose']) {
-        if (vkeys.includes(k) && !isNonEmptyString(v[k])) problems.push(`verbs.${k} — MUST, но не непустая строка`);
+        if (!vkeys.includes(k)) continue;
+        if (v[k] === null) {
+          warnings.push(
+            `${k} = null (инвентарь вне этой мастерской — соседний контур/CI; покрытие дома MUST остаётся)`,
+          );
+        } else if (!isNonEmptyString(v[k])) {
+          problems.push(`verbs.${k} — непустая строка или null`);
+        }
       }
       // inspectElement — SHOULD: отсутствие ключа ИЛИ null → предупреждение (⚠), не провал (шов Ф2↔Ф5).
       if (!vkeys.includes('inspectElement') || v.inspectElement === null) {
