@@ -64,16 +64,16 @@
       "githubIssue": 993,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-23",
-      "archivedAt": null,
+      "archivedAt": "2026-07-23",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "Дрейф найден в холодной сессии 23.07: SKILL.md и kits README знают два паттерна из трёх (нет HOME_WORKSHOP), мета-уровень (docs/tooling-atlas, yarn tooling:atlas, двумерность docs/procedures) в скилле отсутствует. Три документные правки, пины кита не трогаются.",
-      "archiveNotes": null,
+      "archiveNotes": "Смёржено PR #995 (merge 30addc7e): SKILL.md — три оси паттернов в description/cold-start/Hard rules + раздел «Мета-уровень» (docs/tooling-atlas vs двумерный docs/procedures) + tooling:atlas в Tools; kits README — «два паттерна» → три. Пины не тронуты (MANIFEST.json вне диффа). Проверки: tooling:atlas --audit OK, check:layer-direction 0 нарушений. Унаследованный дрейф kits:audit (3 blocking с #953) вынесен за скоуп.",
       "githubIssueClosedAt": null
     },
     {
