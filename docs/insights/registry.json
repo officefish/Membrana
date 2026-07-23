@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-22",
+  "updatedAt": "2026-07-23",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -655,6 +655,17 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-22",
+      "tags": []
+    },
+    {
+      "id": "insight-one-shot-format",
+      "title": "Формат разработки one shot: подобранная S-проблема за один проход, процедура во фреймах",
+      "status": "researched",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-23",
       "tags": []
     }
   ]
