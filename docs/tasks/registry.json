@@ -1,6 +1,42 @@
 {
   "tasks": [
     {
+      "id": "pr-mergeable-graphql-stale",
+      "title": "Мержабельность по GraphQL протухает — pr:ship падает в ложный красный",
+      "promptPath": "docs/prompts/FRAME_RAILS_2307_PROMPT.md",
+      "githubIssue": 1028,
+      "linearId": "DRU-383",
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-23",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "frame-rails-2307"
+    },
+    {
+      "id": "registry-merge-driver-serverless",
+      "title": "Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере",
+      "promptPath": "docs/prompts/FRAME_RAILS_2307_PROMPT.md",
+      "githubIssue": 1026,
+      "linearId": "DRU-382",
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-23",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "frame-rails-2307"
+    },
+    {
       "id": "ritual-deliver-to-main",
       "title": "Утренний ритуал: обязательный финальный кадр — доставка документов в main",
       "promptPath": "docs/prompts/FRAME_RAILS_2307_PROMPT.md",
