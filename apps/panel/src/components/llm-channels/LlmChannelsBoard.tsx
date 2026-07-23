@@ -274,15 +274,16 @@ function ChainEditor({
           type="button"
           className="btn btn-ghost btn-sm"
           disabled={busy || !firstProvider}
-          onClick={() =>
+          onClick={() => {
+            if (!firstProvider) return;
             setSteps([
               ...steps,
               {
                 provider: firstProvider.id,
                 model: firstProvider.defaultModel,
               },
-            ])
-          }
+            ]);
+          }}
         >
           + шаг
         </button>
