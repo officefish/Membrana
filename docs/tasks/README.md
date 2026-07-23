@@ -21,7 +21,6 @@
 | `frames-alive-rodchenko` | Оживление фреймов — Верстальщик: рендер цепочки | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#981](https://github.com/officefish/Membrana/issues/981) |
 | `frames-alive-dynin` | Оживление фреймов — Дынин: математика версии+резолв | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#980](https://github.com/officefish/Membrana/issues/980) |
 | `frames-alive-ozhegov` | Оживление фреймов — Ожегов: контракт+код+начинка | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#979](https://github.com/officefish/Membrana/issues/979) |
-| `containerization-coldstart-sync` | Cold-start мастера контейнеризации: три паттерна + мета-уровень (контейнер контейнеров) | S | [`CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md`](../prompts/CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md) | [#993](https://github.com/officefish/Membrana/issues/993) |
 | `tooling-atlas` | Атлас контейнеров — контейнер контейнеров + мастерская + mintlify | M | [`TOOLING_ATLAS_PROMPT.md`](../prompts/TOOLING_ATLAS_PROMPT.md) | — |
 | `assets-container` | Эпик: контейнер имущества — три яруса (git/сервер-БД/Drive), набор от чека, подтверждение датой-сегодня | L | [`ASSETS_CONTAINER_PROMPT.md`](../prompts/ASSETS_CONTAINER_PROMPT.md) | [#959](https://github.com/officefish/Membrana/issues/959) |
 | `bridge-room` | Спринт «мостик»: явное открытие/закрытие комнаты капитана, попугай-техдолг, конспекты фреймом в репо | M | [`BRIDGE_ROOM_PROMPT.md`](../prompts/BRIDGE_ROOM_PROMPT.md) | [#936](https://github.com/officefish/Membrana/issues/936) |
@@ -221,6 +220,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `containerization-coldstart-sync` | Cold-start мастера контейнеризации: три паттерна + мета-уровень (контейнер контейнеров) | 2026-07-23 | [`CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md`](../prompts/CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md) | #993 (Issue открыт) | [карточка](./archive/containerization-coldstart-sync.md) |
 | `atf4-git-editor-rebase` | ATF4-4: GIT_EDITOR для rebase --continue | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #972 (Issue открыт) | [карточка](./archive/atf4-git-editor-rebase.md) |
 | `atf4-pr-body-file` | ATF4-3: gh pr create через body-file (PS) | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #971 (Issue открыт) | [карточка](./archive/atf4-pr-body-file.md) |
 | `atf4-active-also-open` | ATF4-2: DAY_SPRINT_ACTIVE Also open канон | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #970 (Issue открыт) | [карточка](./archive/atf4-active-also-open.md) |
