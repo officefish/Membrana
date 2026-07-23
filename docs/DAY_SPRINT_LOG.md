@@ -4,13 +4,13 @@
 
 ---
 
-## 2026-07-23 — `llm-calls-house` — **OPEN**
+## 2026-07-23 — `llm-calls-house` — **CLOSED**
 
-- **Goal:** дом доказательств LLM-вызовов (hash+params) + мастерская + thin Mintlify
+- **Delivered:** дом evidence LLM-вызовов + мастерская + emit hashes + thin Mintlify · W0–W5
 - **Issue:** [#1033](https://github.com/officefish/Membrana/issues/1033) · фазы #1034–#1039
-- **OPEN:** [`day-sprint/llm-calls-house-2026-07-23/OPEN.md`](./day-sprint/llm-calls-house-2026-07-23/OPEN.md)
+- **OPEN / CLOSURE:** [`day-sprint/llm-calls-house-2026-07-23/`](./day-sprint/llm-calls-house-2026-07-23/)
+- **Product:** [#1040](https://github.com/officefish/Membrana/pull/1040) · `6570769b`
 - **Ратификация:** владелец 2026-07-23
-- **W0:** registry + Issues + ACTIVE
 
 ---
 
