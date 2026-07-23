@@ -9,7 +9,14 @@ export const procedureIdSchema = z
   .string()
   .regex(/^[a-z][a-z0-9-]*$/, 'procedureId must be kebab-case');
 
-export const providerIdSchema = z.enum(['anthropic', 'openrouter', 'ollama']);
+export const providerIdSchema = z.enum([
+  'anthropic',
+  'openrouter',
+  'deepseek',
+  'perplexity',
+  'openai',
+  'ollama',
+]);
 
 export const chainStepSchema = z.object({
   provider: providerIdSchema,

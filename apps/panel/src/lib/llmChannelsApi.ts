@@ -2,6 +2,20 @@ import { apiPath } from './appMeta';
 
 export type ChainStep = { provider: string; model: string };
 
+export type CatalogModel = { id: string; label: string };
+
+export type CatalogProvider = {
+  id: string;
+  title: string;
+  defaultModel: string;
+  models: CatalogModel[];
+};
+
+export type ProviderCatalog = {
+  ritualEnum: string[];
+  providers: CatalogProvider[];
+};
+
 export type EffectiveProcedure = {
   procedureId: string;
   chain: ChainStep[];
@@ -53,6 +67,14 @@ export async function fetchEffectiveProcedures(): Promise<EffectiveProcedure[]> 
     procedures?: EffectiveProcedure[];
   };
   return Array.isArray(raw.procedures) ? raw.procedures : [];
+}
+
+export async function fetchProviderCatalog(): Promise<ProviderCatalog> {
+  const raw = (await ownerFetch('llm-procedure/catalog')) as ProviderCatalog;
+  return {
+    ritualEnum: Array.isArray(raw.ritualEnum) ? raw.ritualEnum : [],
+    providers: Array.isArray(raw.providers) ? raw.providers : [],
+  };
 }
 
 export async function fetchOverlay(): Promise<Record<string, { chain: ChainStep[] }>> {

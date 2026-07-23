@@ -19,16 +19,17 @@
  * GitHub OAuth (PANEL_GITHUB_*) скрипт НЕ трогает — OAuth App создаёт владелец.
  */
 import { randomBytes } from 'node:crypto';
-import { appendFileSync, existsSync, readFileSync, unlinkSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { appendFileSync, existsSync, mkdirSync, readFileSync, unlinkSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { execSync } from 'node:child_process';
+import { execFileSync, execSync } from 'node:child_process';
 import { Client } from 'ssh2';
 import { getOfficeSshConfig, readRootEnv, repoRoot } from './_ssh-office-config.mjs';
 
 const PANEL_DOMAIN = process.env.PANEL_DOMAIN?.trim() || 'panel.mmbrn.tech';
 const DIST_DIR = resolve(repoRoot, 'apps/panel/dist');
-const tarPath = join(tmpdir(), `panel-dist-${Date.now()}.tgz`);
+const cacheDir = join(repoRoot, 'scripts', 'cache');
+mkdirSync(cacheDir, { recursive: true });
+const tarPath = join(cacheDir, `panel-dist-${Date.now()}.tgz`);
 const remoteTar = '/tmp/panel-dist.tgz';
 
 /**
@@ -46,7 +47,7 @@ if (audioDir && !existsSync(audioDir)) {
   console.error(`[fail] --audio: каталог не найден: ${audioDir}`);
   process.exit(1);
 }
-const audioTarPath = audioDir ? join(tmpdir(), `panel-compare-audio-${Date.now()}.tgz`) : undefined;
+const audioTarPath = audioDir ? join(cacheDir, `panel-compare-audio-${Date.now()}.tgz`) : undefined;
 const remoteAudioTar = '/tmp/panel-compare-audio.tgz';
 
 /**
@@ -60,7 +61,7 @@ if (graphifyFlagIndex > -1 && (!graphifyDir || !existsSync(graphifyDir))) {
   console.error('[fail] --graphify требует существующий каталог: --graphify /path/to/graphify-site');
   process.exit(1);
 }
-const graphifyTarPath = graphifyDir ? join(tmpdir(), `panel-graphify-${Date.now()}.tgz`) : undefined;
+const graphifyTarPath = graphifyDir ? join(cacheDir, `panel-graphify-${Date.now()}.tgz`) : undefined;
 const remoteGraphifyTar = '/tmp/panel-graphify.tgz';
 
 /**
@@ -74,7 +75,7 @@ if (rtreeFlagIndex > -1 && (!rtreeDir || !existsSync(rtreeDir))) {
   console.error('[fail] --research-tree требует существующий каталог: --research-tree apps/demos/Research-Tree/dist');
   process.exit(1);
 }
-const rtreeTarPath = rtreeDir ? join(tmpdir(), `panel-rtree-${Date.now()}.tgz`) : undefined;
+const rtreeTarPath = rtreeDir ? join(cacheDir, `panel-rtree-${Date.now()}.tgz`) : undefined;
 const remoteRtreeTar = '/tmp/panel-rtree.tgz';
 
 function envGet(envText, key) {
@@ -134,24 +135,26 @@ console.log(
     `PANEL_INVITE_SECRET ${invite.created ? 'сгенерирован' : 'из .env'} (значения не печатаются)`,
 );
 
-// --force-local: Windows tmpdir даёт путь с диском (C:\…), GNU tar иначе примет
-// двоеточие за host:file (rsh) и упадёт (как в _ssh-office-prod-up).
+// Архив в scripts/cache (не tmpdir): Windows bsdtar не знает --force-local.
 console.log('Packing panel dist...');
-execSync(`tar --force-local -czf "${tarPath}" -C "${DIST_DIR}" .`, { cwd: repoRoot, stdio: 'inherit' });
+execFileSync('tar', ['-czf', tarPath, '-C', DIST_DIR, '.'], { cwd: repoRoot, stdio: 'inherit' });
 
 if (audioDir) {
   console.log(`Packing compare-audio from ${audioDir}...`);
-  execSync(`tar --force-local -czf "${audioTarPath}" -C "${audioDir}" .`, { cwd: repoRoot, stdio: 'inherit' });
+  execFileSync('tar', ['-czf', audioTarPath, '-C', audioDir, '.'], { cwd: repoRoot, stdio: 'inherit' });
 }
 
 if (graphifyDir) {
   console.log(`Packing graphify static from ${graphifyDir}...`);
-  execSync(`tar --force-local -czf "${graphifyTarPath}" -C "${graphifyDir}" .`, { cwd: repoRoot, stdio: 'inherit' });
+  execFileSync('tar', ['-czf', graphifyTarPath, '-C', graphifyDir, '.'], {
+    cwd: repoRoot,
+    stdio: 'inherit',
+  });
 }
 
 if (rtreeDir) {
   console.log(`Packing research-tree static from ${rtreeDir}...`);
-  execSync(`tar --force-local -czf "${rtreeTarPath}" -C "${rtreeDir}" .`, { cwd: repoRoot, stdio: 'inherit' });
+  execFileSync('tar', ['-czf', rtreeTarPath, '-C', rtreeDir, '.'], { cwd: repoRoot, stdio: 'inherit' });
 }
 
 const caddyfile = renderPanelCaddyfile();

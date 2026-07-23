@@ -70,6 +70,57 @@ export class LlmChannelsService {
     );
   }
 
+  /**
+   * Public catalog for panel: providers × curated models (no secrets).
+   * Model id is chosen independently of provider for each chain step.
+   */
+  loadProviderCatalogPublic(): {
+    ritualEnum: string[];
+    providers: Array<{
+      id: string;
+      title: string;
+      defaultModel: string;
+      models: Array<{ id: string; label: string }>;
+    }>;
+  } {
+    const raw = this.readJsonFile<{
+      ritualEnum?: string[];
+      providers?: Record<
+        string,
+        {
+          title?: string;
+          defaultModel?: string;
+          suggestedModel?: string;
+          models?: Array<{ id?: string; label?: string }>;
+        }
+      >;
+    }>('scripts/lib/llm-provider-catalog.json');
+    const ritualEnum = Array.isArray(raw?.ritualEnum) ? raw.ritualEnum.filter((x) => typeof x === 'string') : [];
+    const providers = ritualEnum
+      .map((id) => {
+        const p = raw?.providers?.[id];
+        if (!p) return null;
+        const models = Array.isArray(p.models)
+          ? p.models
+              .filter((m) => typeof m?.id === 'string' && m.id.trim() && typeof m?.label === 'string')
+              .map((m) => ({ id: String(m.id).trim(), label: String(m.label).trim() }))
+          : [];
+        const defaultModel =
+          (typeof p.defaultModel === 'string' && p.defaultModel.trim()) ||
+          (typeof p.suggestedModel === 'string' && p.suggestedModel.trim()) ||
+          models[0]?.id ||
+          '';
+        return {
+          id,
+          title: (typeof p.title === 'string' && p.title.trim()) || id,
+          defaultModel,
+          models,
+        };
+      })
+      .filter((x): x is NonNullable<typeof x> => Boolean(x));
+    return { ritualEnum, providers };
+  }
+
   getOverlaySnapshot() {
     return this.overlay.snapshot();
   }
