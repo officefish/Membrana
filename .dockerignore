@@ -51,12 +51,21 @@ packages/background-office
 !packages/background-office
 !packages/background-office/**
 docs
-# LPC defaults must enter office image (procedure→channel); keep rest of scripts out
+# LPC defaults + dreams runtime libs must enter office image; keep rest of scripts out
 scripts/**
 !scripts/lib/
 !scripts/lib/llm-procedures.json
 !scripts/lib/llm-procedure-defaults.json
 !scripts/lib/llm-provider-catalog.json
+!scripts/lib/dreams-log.mjs
+!scripts/lib/dreams-tick.mjs
+!scripts/lib/dreams-format.mjs
+!scripts/lib/dreams-providers.mjs
+!scripts/lib/dreams-select.mjs
+!scripts/lib/night-research.mjs
+!scripts/lib/strategy-horizon.mjs
+!scripts/lib/truth-graph.mjs
+!scripts/llm-probe.mjs
 node_modules
 *.md
 !packages/background-media/README.md
@@ -66,3 +75,7 @@ docs/**
 !docs/ARCHITECTURE.md
 !docs/SERVICES.md
 !docs/virtual-team
+!docs/truth/
+!docs/truth/registry.json
+!docs/prompts/
+!docs/prompts/DREAM_MASTER_PROMPT.md
