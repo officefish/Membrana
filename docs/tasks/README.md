@@ -18,6 +18,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `pr-mergeable-graphql-stale` | Мержабельность по GraphQL протухает — pr:ship падает в ложный красный | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1028](https://github.com/officefish/Membrana/issues/1028) |
+| `registry-merge-driver-serverless` | Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1026](https://github.com/officefish/Membrana/issues/1026) |
 | `ritual-deliver-to-main` | Утренний ритуал: обязательный финальный кадр — доставка документов в main | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1016](https://github.com/officefish/Membrana/issues/1016) |
 | `one-shot-first-frame` | one-shot: первый фрейм процедуры + чистая функция-предикат S-ности | S | [`ONE_SHOT_FIRST_FRAME_PROMPT.md`](../prompts/ONE_SHOT_FIRST_FRAME_PROMPT.md) | [#1022](https://github.com/officefish/Membrana/issues/1022) |
 | `issue-979-selfclose` | Аномалия: задача спринта закрылась сама | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1004](https://github.com/officefish/Membrana/issues/1004) |
