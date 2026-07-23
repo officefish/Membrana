@@ -21,7 +21,6 @@
 | `pr-mergeable-graphql-stale` | Мержабельность по GraphQL протухает — pr:ship падает в ложный красный | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1028](https://github.com/officefish/Membrana/issues/1028) |
 | `registry-merge-driver-serverless` | Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1026](https://github.com/officefish/Membrana/issues/1026) |
 | `ritual-deliver-to-main` | Утренний ритуал: обязательный финальный кадр — доставка документов в main | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1016](https://github.com/officefish/Membrana/issues/1016) |
-| `one-shot-first-frame` | one-shot: первый фрейм процедуры + чистая функция-предикат S-ности | S | [`ONE_SHOT_FIRST_FRAME_PROMPT.md`](../prompts/ONE_SHOT_FIRST_FRAME_PROMPT.md) | [#1022](https://github.com/officefish/Membrana/issues/1022) |
 | `issue-979-selfclose` | Аномалия: задача спринта закрылась сама | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1004](https://github.com/officefish/Membrana/issues/1004) |
 | `precedents-meta-backfill` | Три прецедента не проходят схему контейнера | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1003](https://github.com/officefish/Membrana/issues/1003) |
 | `gitleaks-block-on-leak` | gitleaks предупреждает, но не блокирует коммит | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1002](https://github.com/officefish/Membrana/issues/1002) |
@@ -238,6 +237,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `one-shot-first-frame` | one-shot: первый фрейм процедуры + чистая функция-предикат S-ности | 2026-07-23 | [`ONE_SHOT_FIRST_FRAME_PROMPT.md`](../prompts/ONE_SHOT_FIRST_FRAME_PROMPT.md) | #1022 (Issue открыт) | [карточка](./archive/one-shot-first-frame.md) |
 | `containerization-coldstart-sync` | Cold-start мастера контейнеризации: три паттерна + мета-уровень (контейнер контейнеров) | 2026-07-23 | [`CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md`](../prompts/CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md) | #993 (Issue открыт) | [карточка](./archive/containerization-coldstart-sync.md) |
 | `atf4-git-editor-rebase` | ATF4-4: GIT_EDITOR для rebase --continue | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #972 (Issue открыт) | [карточка](./archive/atf4-git-editor-rebase.md) |
 | `atf4-pr-body-file` | ATF4-3: gh pr create через body-file (PS) | 2026-07-22 | [`AGENT_TOOLING_FRICTION_4_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_4_PROMPT.md) | #971 (Issue открыт) | [карточка](./archive/atf4-pr-body-file.md) |
