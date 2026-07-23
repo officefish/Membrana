@@ -4,9 +4,11 @@
 
 ## Focus
 
-_Нет активного day-sprint Focus._
+**tasks-workshop-2026-07** · контейнер [DRU-403](https://linear.app/techies68/issue/DRU-403) · Project [Tasks workshop · 2026-07](https://linear.app/techies68/project/tasks-workshop-2026-07-a7f7f9e00fd1) · OPEN [`docs/day-sprint/tasks-workshop-2026-07/OPEN.md`](./day-sprint/tasks-workshop-2026-07/OPEN.md) · промпт [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](./prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md)
 
-Последний **закрытый:** [`llm-calls-house-2026-07-23`](./day-sprint/llm-calls-house-2026-07-23/CLOSURE.md) (#1033) · до него [`bestiary-workshop-2026-07-22`](./day-sprint/bestiary-workshop-2026-07-22/CLOSURE.md) (#945) · [`procedure-frames-2026-07-22`](./day-sprint/procedure-frames-2026-07-22/CLOSURE.md) (#900).
+Первый шаг: **g0** — слово владельца (V2 vs HOME_WORKSHOP).
+
+Последний **закрытый:** [`bestiary-workshop-2026-07-22`](./day-sprint/bestiary-workshop-2026-07-22/CLOSURE.md) (#945) · до него [`procedure-frames-2026-07-22`](./day-sprint/procedure-frames-2026-07-22/CLOSURE.md) (#900) · [`bestiary-container-2026-07-21`](./day-sprint/bestiary-container-2026-07-21/CLOSURE.md) (#878).
 
 ## Also open
 
