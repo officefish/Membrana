@@ -1,0 +1,13 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская llm-calls",
+  "worksOn": "docs/audit/llm-calls",
+  "kit": null,
+  "verbs": {
+    "audit": "yarn llm-calls:audit",
+    "decompose": "yarn llm-calls:decompose",
+    "inspectElement": null,
+    "stackLike": [],
+    "domain": []
+  }
+}
