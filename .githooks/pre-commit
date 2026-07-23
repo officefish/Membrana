@@ -6,6 +6,7 @@
 # пропускает (гейт с зубами живёт в CI: .github/workflows/gitleaks.yml).
 # Локальная установка (Windows): winget install gitleaks · (mac): brew install gitleaks
 #
+# Issue #1002 / DRU-366: non-zero gitleaks aborts.
 # Пропустить (аварийно): SKIP_PRECOMMIT=1 git commit ...
 if [ "$SKIP_PRECOMMIT" = "1" ]; then
   echo "pre-commit: пропущено (SKIP_PRECOMMIT=1)"
@@ -18,5 +19,5 @@ if ! command -v gitleaks >/dev/null 2>&1; then
 fi
 
 echo "pre-commit [№5]: gitleaks protect --staged"
-gitleaks protect --staged --no-banner --redact
+gitleaks protect --staged --no-banner --redact || exit $?
 echo "pre-commit: OK"
