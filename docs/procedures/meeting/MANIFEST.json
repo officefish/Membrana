@@ -14,5 +14,15 @@
     "docs/seanses/procedural-layer-m0-order-2026-07-21.md",
     "docs/seanses/rejected/procedural-layer-m3-boundary-2026-07-21.md",
     "docs/seanses/rejected/procedural-layer-m3-boundary-r6-2026-07-21.md"
+  ],
+  "frames": [
+    { "id": "cut", "holder": "vesnin" },
+    { "id": "rooms", "holder": "vesnin" },
+    { "id": "premises-gate", "holder": "ozhegov" },
+    { "id": "audit", "holder": "dynin" },
+    { "id": "verdicts", "holder": "vesnin" }
+  ],
+  "post": [
+    { "id": "ratification", "holder": "vesnin" }
   ]
 }

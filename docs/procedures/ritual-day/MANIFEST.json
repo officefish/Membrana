@@ -32,5 +32,15 @@
         }
       ]
     }
+  ],
+  "frames": [
+    { "id": "night-report", "holder": "angelina" },
+    { "id": "repo-hygiene", "holder": "ozhegov" },
+    { "id": "canon-cascade", "holder": "angelina" },
+    { "id": "magistral-gate", "holder": "angelina" },
+    { "id": "deliver-to-main", "holder": "angelina" }
+  ],
+  "post": [
+    { "id": "swallow", "holder": "angelina" }
   ]
 }

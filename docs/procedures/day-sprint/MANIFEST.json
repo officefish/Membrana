@@ -17,5 +17,21 @@
     "docs/day-sprint/backlog-cleanup-s1-2026-06-30/CLOSURE.md",
     "docs/day-sprint/db3h-s1-tech-debt-2026-06-26/CLOSURE.md",
     "docs/day-sprint/cursor-agent-skills-sprint-2026-06-22/CLOSURE.md"
+  ],
+  "preflight": [
+    { "id": "linear-egress", "holder": "dynin" }
+  ],
+  "frames": [
+    { "id": "container-open", "holder": "vesnin" },
+    { "id": "tasks-register", "holder": "vesnin" },
+    { "id": "billets-attach", "holder": "vesnin" },
+    { "id": "registry-trace", "holder": "dynin" },
+    { "id": "phases-run", "holder": "vesnin" },
+    { "id": "closure-accept", "holder": "vesnin" },
+    { "id": "countersign", "holder": "vesnin" },
+    { "id": "archive", "holder": "dynin" }
+  ],
+  "post": [
+    { "id": "close-github", "holder": "vesnin" }
   ]
 }
