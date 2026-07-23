@@ -61,6 +61,8 @@ export interface LinearSnapshotRecord {
   githubIssueRefs: number[];
   createdAt: string;
   updatedAt: string;
+  /** Когда впервые перешли в started (In Progress); null = не стартовали / прыжок в Done. */
+  startedAt: string | null;
   completedAt: string | null;
 }
 
