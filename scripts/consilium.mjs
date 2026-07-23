@@ -581,6 +581,10 @@ async function main() {
   loadRitualLlmEnv();
   const effective = resolveEffective('consilium');
   const chainLabel = effective.chain.map((s) => `${s.provider}/${s.model}`).join(' → ');
+  // Кто в цепочке реально ответил — в метаданные протокола. До перехода на procedure
+  // channels здесь была одиночная переменная `model`; после перехода звено выбирается
+  // на лету, поэтому имя пишет то звено, что ответило (fallback — метка цепочки).
+  let answeredBy = null;
 
   if (cli.dryRun) {
     console.error(`→ промпт: ${promptText.length} символов`);
@@ -604,6 +608,7 @@ async function main() {
         messages,
         maxTokens: 16_384,
         onAttempt: ({ provider, model, attemptIndex, ok, errorClass }) => {
+          if (ok) answeredBy = `${provider}/${model}`;
           if (!process.stderr.isTTY) return;
           if (ok) {
             console.error(`[llm] consilium → ${provider}/${model} (attempt ${attemptIndex + 1})`);
@@ -704,7 +709,7 @@ async function main() {
       body: answer,
       question: cli.question,
       orderedRoles,
-      model,
+      model: answeredBy ?? chainLabel,
       ghIssue: cli.ghIssue,
       topicFile: cli.topicFile,
       relPath,
