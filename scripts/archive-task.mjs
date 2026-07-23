@@ -137,8 +137,9 @@ if (opts.dryRun) {
 
 saveRegistry(registry);
 const cardPath = writeArchiveCard(task);
-const readmePath = syncTasksReadme(registry);
+const readme = syncTasksReadme(registry);
 
 console.log(`Архивировано: ${opts.id}`);
 console.log('Карточка:', cardPath);
-console.log('Реестр:', readmePath);
+if (readme.written) console.log('Реестр:', readme.path);
+else console.error(`⚠ README НЕ обновлён — ${readme.reason}`);

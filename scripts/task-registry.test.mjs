@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
@@ -13,6 +13,7 @@ import {
   renderTaskPromptStub,
   renderTasksReadme,
   saveRegistry,
+  syncTasksReadme,
   validateTaskId,
   writeArchiveCard,
 } from './lib/task-registry.mjs';
@@ -209,6 +210,49 @@ describe('task-registry', () => {
     assert.match(md, /done-one/);
     assert.match(md, /Активные задачи/);
     assert.match(md, /Архив/);
+  });
+});
+
+// ─── карантин синка README: генератор не должен молча стирать ручные секции ───────
+
+describe('syncTasksReadme — карантин (23.07)', () => {
+  const registry = { version: 1, tasks: [] };
+
+  /** Готовит временный docs/tasks/README.md с ручной секцией и возвращает пути. */
+  const withReadme = () => {
+    const dir = mkdtempSync(join(tmpdir(), 'tasks-readme-'));
+    const path = join(dir, 'docs', 'tasks', 'README.md');
+    mkdirSync(join(dir, 'docs', 'tasks'), { recursive: true });
+    writeFileSync(path, '# Реестр\n\n## Мастерская дома (HOME_WORKSHOP)\nручная секция\n', 'utf8');
+    return { dir, path };
+  };
+
+  it('по умолчанию НЕ пишет и называет причину — ручная секция цела', () => {
+    const { dir, path } = withReadme();
+    try {
+      const res = syncTasksReadme(registry, dir, { env: {} });
+      assert.equal(res.written, false);
+      assert.match(res.reason, /карантин/iu);
+      assert.match(res.reason, /tooling-atlas/u, 'причина называет правильный дом описания');
+      assert.match(readFileSync(path, 'utf8'), /HOME_WORKSHOP/u, 'чужая секция не стёрта');
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('обход осознанный: force / TASKS_README_SYNC_FORCE=1 пишет как раньше', () => {
+    const { dir, path } = withReadme();
+    try {
+      const res = syncTasksReadme(registry, dir, { force: true, env: {} });
+      assert.equal(res.written, true);
+      assert.doesNotMatch(readFileSync(path, 'utf8'), /HOME_WORKSHOP/u, 'генератор перезаписал — это и есть класс дефекта');
+
+      writeFileSync(path, '## Мастерская дома (HOME_WORKSHOP)\n', 'utf8');
+      const viaEnv = syncTasksReadme(registry, dir, { env: { TASKS_README_SYNC_FORCE: '1' } });
+      assert.equal(viaEnv.written, true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
 
