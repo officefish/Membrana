@@ -4,7 +4,7 @@
 |------|----------|
 | **Sprint** | `llm-calls-house-2026-07-23` |
 | **Registry epic** | `llm-calls-house` · [#1033](https://github.com/officefish/Membrana/issues/1033) |
-| **Status** | **open** |
+| **Status** | **closed** |
 | **Kind** | day-sprint (эпик L + фазы M) |
 | **Size** | L |
 | **Lead epic** | vesnin |
@@ -46,7 +46,7 @@
 | **W2** | `lch-w2-workshop` | [#1036](https://github.com/officefish/Membrana/issues/1036) | ozhegov | [`LCH_W2_WORKSHOP_PROMPT.md`](../../prompts/LCH_W2_WORKSHOP_PROMPT.md) | workshop + audit/decompose | **done** |
 | **W3** | `lch-w3-emit` | [#1037](https://github.com/officefish/Membrana/issues/1037) | ozhegov | [`LCH_W3_EMIT_PROMPT.md`](../../prompts/LCH_W3_EMIT_PROMPT.md) | schema/emit/snapshot/ADR | **done** |
 | **W4** | `lch-w4-mintlify` | [#1038](https://github.com/officefish/Membrana/issues/1038) | ozhegov | [`LCH_W4_MINTLIFY_PROMPT.md`](../../prompts/LCH_W4_MINTLIFY_PROMPT.md) | thin Mintlify + specimens | **done** |
-| **W5** | `lch-w5-closure` | [#1039](https://github.com/officefish/Membrana/issues/1039) | vesnin | [`LCH_W5_CLOSURE_PROMPT.md`](../../prompts/LCH_W5_CLOSURE_PROMPT.md) | CLOSURE + archive | pending |
+| **W5** | `lch-w5-closure` | [#1039](https://github.com/officefish/Membrana/issues/1039) | vesnin | [`LCH_W5_CLOSURE_PROMPT.md`](../../prompts/LCH_W5_CLOSURE_PROMPT.md) | CLOSURE + archive | **done** |
 
 ## Вне scope v1
 

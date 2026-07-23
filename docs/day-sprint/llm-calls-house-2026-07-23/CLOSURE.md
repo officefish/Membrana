@@ -3,30 +3,31 @@
 | Поле | Значение |
 |------|----------|
 | **Epic** | `llm-calls-house` · [#1033](https://github.com/officefish/Membrana/issues/1033) |
-| **Status** | **ready for W5 archive** (продукт W0–W4 в одном PR; archive — отдельный шаг) |
+| **Status** | **closed** |
 | **Date** | 2026-07-23 |
+| **Product PR** | [#1040](https://github.com/officefish/Membrana/pull/1040) · squash `6570769b` |
+| **Archive** | фазы + эпик `yarn task:archive` · W5 |
 
 ## Delivered
 
-- Дом [`docs/audit/llm-calls/`](../../audit/llm-calls/) — пять органов + specimens
-- Мастерская `workshop.manifest.json` · `yarn llm-calls:audit|decompose|snapshot`
-- ADR-0016 evidence minimum · emit hashes+params
+- Дом [`docs/audit/llm-calls/`](../../audit/llm-calls/) — пять органов + specimens + мастерская
+- Emit: `promptSha256` / `responseSha256` / params (ADR-0016); сырые тела запрещены
+- `yarn llm-calls:audit|decompose|snapshot`
 - Thin Mintlify `apps/docs/llm-calls/` · группа в docs.json
-- Инварианты E1–E8 соблюдены (сырые тела не в git)
+- Инварианты E1–E8
 
 ## Phases
 
 | Phase | Issue | Result |
 |-------|------:|--------|
-| W0 | #1034 | OPEN + registry + ACTIVE |
-| W1 | #1035 | дом |
-| W2 | #1036 | мастерская |
-| W3 | #1037 | emit + snapshot + ADR |
-| W4 | #1038 | Mintlify |
-| W5 | #1039 | pending archive после merge |
+| W0 | #1034 | OPEN + registry + ACTIVE · archived |
+| W1 | #1035 | дом · archived |
+| W2 | #1036 | мастерская · archived |
+| W3 | #1037 | emit + snapshot + ADR · archived |
+| W4 | #1038 | Mintlify · archived |
+| W5 | #1039 | CLOSURE + ACTIVE clear + archive · this PR |
 
-## Follow-up
+## Follow-up (не блокер закрытия)
 
-- `yarn task:archive` фаз/эпика после merge PR
-- Office redeploy чтобы DTO evidence полей принял prod
-- Live snapshot с office token (не только `--from-fixture`)
+- Redeploy office — DTO evidence на prod
+- Live `yarn llm-calls:snapshot` с office token (не только `--from-fixture`)
