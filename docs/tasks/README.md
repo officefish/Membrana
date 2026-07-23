@@ -27,7 +27,6 @@
 | `tw-v3-axes` | Оси decompose --by | M | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | [#1059](https://github.com/officefish/Membrana/issues/1059) |
 | `tw-v2-verbs` | Состав глаголов мастерской + граница в README | S | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | [#1058](https://github.com/officefish/Membrana/issues/1058) |
 | `tw-v1-manifest` | Манифест docs/tasks + иерархия + workshop-semantics + check | M | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | [#1057](https://github.com/officefish/Membrana/issues/1057) |
-| `tw-g0-v2-gate` | Слово владельца: V2 vs HOME_WORKSHOP (audit/decompose in/out) | S | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | [#1056](https://github.com/officefish/Membrana/issues/1056) |
 | `tasks-workshop` | Эпик: tasks-workshop — мастерская контейнера задач | L | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | — |
 | `pr-mergeable-graphql-stale` | Мержабельность по GraphQL протухает — pr:ship падает в ложный красный | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1028](https://github.com/officefish/Membrana/issues/1028) |
 | `registry-merge-driver-serverless` | Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1026](https://github.com/officefish/Membrana/issues/1026) |
@@ -248,6 +247,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `tw-g0-v2-gate` | Слово владельца: V2 vs HOME_WORKSHOP (audit/decompose in/out) | 2026-07-23 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1056 (Issue открыт) | [карточка](./archive/tw-g0-v2-gate.md) |
 | `lch-w5-closure` | W5: CLOSURE llm-calls-house | 2026-07-23 | [`LCH_W5_CLOSURE_PROMPT.md`](../prompts/LCH_W5_CLOSURE_PROMPT.md) | #1039 | [карточка](./archive/lch-w5-closure.md) |
 | `lch-w4-mintlify` | W4: Mintlify thin mirror llm-calls | 2026-07-23 | [`LCH_W4_MINTLIFY_PROMPT.md`](../prompts/LCH_W4_MINTLIFY_PROMPT.md) | #1038 | [карточка](./archive/lch-w4-mintlify.md) |
 | `lch-w3-emit` | W3: LPC evidence emit hashes+params + snapshot | 2026-07-23 | [`LCH_W3_EMIT_PROMPT.md`](../prompts/LCH_W3_EMIT_PROMPT.md) | #1037 | [карточка](./archive/lch-w3-emit.md) |
