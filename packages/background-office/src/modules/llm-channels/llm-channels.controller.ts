@@ -55,6 +55,17 @@ export class LlmProcedureController {
     return this.channels.resolveEffective(id.data);
   }
 
+  @Get('catalog')
+  @UseGuards(PanelAuthGuard)
+  @OwnerAdmin()
+  @ApiCookieAuth('panel_session')
+  @ApiOperation({
+    summary: 'Owner: provider × model catalog for chain editor (no secrets)',
+  })
+  getCatalog() {
+    return this.channels.loadProviderCatalogPublic();
+  }
+
   @Get('overlay')
   @UseGuards(PanelAuthGuard)
   @OwnerAdmin()

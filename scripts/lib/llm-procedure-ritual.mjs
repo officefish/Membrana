@@ -9,7 +9,8 @@ import { fetchOfficeOverlay } from './llm-procedure-office.mjs';
 import { resolveEffective } from './llm-procedure-resolve.mjs';
 
 /**
- * POST dispatcher: anthropic Messages API vs openai-compatible (openrouter).
+ * POST dispatcher: anthropic Messages API vs openai-compatible
+ * (openrouter / deepseek / perplexity / openai).
  * @returns {(url: string, opts: { headers: Record<string, string>; bodyJson: Record<string, unknown> }) => Promise<{ ok: boolean; status: number; text: string }>}
  */
 export function createCatalogPostFn() {

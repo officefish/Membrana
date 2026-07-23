@@ -48,7 +48,21 @@ test('defaults + catalog: clean for ritual enum', () => {
   const catalog = loadProviderCatalog();
   assert.deepEqual(procedureDefaultsProblems(defaults, { ritualEnum: catalog.ritualEnum }), []);
   assert.deepEqual(providerCatalogProblems(catalog), []);
-  assert.deepEqual(catalog.ritualEnum, ['anthropic', 'openrouter']);
+  assert.deepEqual(catalog.ritualEnum, [
+    'anthropic',
+    'openrouter',
+    'deepseek',
+    'perplexity',
+    'openai',
+  ]);
+  for (const id of catalog.ritualEnum) {
+    const p = catalog.providers[id];
+    assert.ok(Array.isArray(p.models) && p.models.length >= 1, `${id} models`);
+    assert.ok(
+      p.models.some((m) => m.id === p.defaultModel),
+      `${id} defaultModel in models`,
+    );
+  }
 });
 
 test('resolveEffective: overlay wins; else default + source', () => {
@@ -109,7 +123,7 @@ test('classifyTransportError: rate_limit / auth', () => {
   assert.equal(classifyTransportError(400, 'usage limit reached'), 'rate_limit');
 });
 
-test('buildProviderRequest: anthropic + openrouter shapes', () => {
+test('buildProviderRequest: anthropic + openrouter + openai-compat shapes', () => {
   const catalog = loadProviderCatalog();
   const a = buildProviderRequest({
     provider: 'anthropic',
@@ -132,6 +146,35 @@ test('buildProviderRequest: anthropic + openrouter shapes', () => {
   assert.match(o.url, /openrouter\.ai/);
   assert.match(o.headers.authorization, /^Bearer sk-o/);
   assert.equal(o.bodyJson.messages[0].content, 'hi');
+
+  const deep = buildProviderRequest({
+    provider: 'deepseek',
+    model: 'deepseek-chat',
+    prompt: 'hi',
+    apiKey: 'sk-d',
+    catalog,
+  });
+  assert.match(deep.url, /api\.deepseek\.com/);
+  assert.match(deep.headers.authorization, /^Bearer sk-d/);
+
+  const pplx = buildProviderRequest({
+    provider: 'perplexity',
+    model: 'sonar',
+    prompt: 'hi',
+    apiKey: 'pplx',
+    catalog,
+  });
+  assert.match(pplx.url, /api\.perplexity\.ai/);
+
+  const gpt = buildProviderRequest({
+    provider: 'openai',
+    model: 'gpt-4o-mini',
+    prompt: 'hi',
+    apiKey: 'sk-oai',
+    catalog,
+  });
+  assert.match(gpt.url, /api\.openai\.com/);
+  assert.equal(gpt.bodyJson.model, 'gpt-4o-mini');
 });
 
 test('parseProviderResponse: tokens nullable', () => {

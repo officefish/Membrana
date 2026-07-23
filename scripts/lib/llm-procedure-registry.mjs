@@ -82,7 +82,13 @@ export function procedureDefaultsProblems(defaults, opts = {}) {
   if (!defaults || typeof defaults !== 'object' || Array.isArray(defaults)) {
     return ['defaults — не объект'];
   }
-  const ritualEnum = opts.ritualEnum ?? ['anthropic', 'openrouter'];
+  const ritualEnum = opts.ritualEnum ?? [
+    'anthropic',
+    'openrouter',
+    'deepseek',
+    'perplexity',
+    'openai',
+  ];
   for (const [id, cfg] of Object.entries(defaults)) {
     if (!PROCEDURE_ID_RE.test(id)) problems.push(`${id}: ключ defaults не kebab`);
     if (!cfg || typeof cfg !== 'object' || Array.isArray(cfg)) {
@@ -145,6 +151,34 @@ export function providerCatalogProblems(catalog) {
     }
     if (typeof p?.path !== 'string' || !p.path) {
       problems.push(`${id}: path пуст`);
+    }
+    if (!Array.isArray(p?.models) || p.models.length < 1) {
+      problems.push(`${id}: models — нужен непустой список {id,label}`);
+    } else {
+      const ids = new Set();
+      for (const m of p.models) {
+        if (!m || typeof m.id !== 'string' || !m.id.trim()) {
+          problems.push(`${id}: model.id пуст`);
+        } else if (ids.has(m.id)) {
+          problems.push(`${id}: дубль model.id «${m.id}»`);
+        } else {
+          ids.add(m.id);
+        }
+        if (typeof m?.label !== 'string' || !m.label.trim()) {
+          problems.push(`${id}: model «${m?.id ?? '?'}» без label`);
+        }
+      }
+      const def =
+        typeof p.defaultModel === 'string' && p.defaultModel.trim()
+          ? p.defaultModel.trim()
+          : typeof p.suggestedModel === 'string'
+            ? p.suggestedModel.trim()
+            : '';
+      if (!def) {
+        problems.push(`${id}: defaultModel пуст`);
+      } else if (!ids.has(def)) {
+        problems.push(`${id}: defaultModel «${def}» не в models`);
+      }
     }
   }
   const forbidden = ['freemodel', 'freemodel-dev'];

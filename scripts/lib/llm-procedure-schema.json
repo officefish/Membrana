@@ -10,7 +10,14 @@
     },
     "providerId": {
       "type": "string",
-      "enum": ["anthropic", "openrouter", "ollama"]
+      "enum": [
+        "anthropic",
+        "openrouter",
+        "deepseek",
+        "perplexity",
+        "openai",
+        "ollama"
+      ]
     },
     "source": {
       "type": "string",

@@ -76,4 +76,37 @@ describe('LlmProcedureController.putOverlay', () => {
     expect(res.ok).toBe(true);
     expect(res.chain[0].provider).toBe('openrouter');
   });
+
+  it('accepts deepseek / openai / perplexity provider×model pairs', () => {
+    const svc = fakeService();
+    const res = new LlmProcedureController(svc).putOverlay('code-review', {
+      chain: [
+        { provider: 'deepseek', model: 'deepseek-chat' },
+        { provider: 'openai', model: 'gpt-4o-mini' },
+        { provider: 'perplexity', model: 'sonar' },
+      ],
+    });
+    expect(res.ok).toBe(true);
+    expect(res.chain).toHaveLength(3);
+  });
+});
+
+describe('LlmProcedureController.getCatalog', () => {
+  it('returns provider catalog without secrets', () => {
+    const catalog = {
+      ritualEnum: ['openai'],
+      providers: [
+        {
+          id: 'openai',
+          title: 'ChatGPT',
+          defaultModel: 'gpt-4o-mini',
+          models: [{ id: 'gpt-4o-mini', label: 'GPT-4o mini' }],
+        },
+      ],
+    };
+    const svc = fakeService({ loadProviderCatalogPublic: vi.fn(() => catalog) });
+    const res = new LlmProcedureController(svc).getCatalog();
+    expect(res).toEqual(catalog);
+    expect(svc.loadProviderCatalogPublic).toHaveBeenCalledOnce();
+  });
 });

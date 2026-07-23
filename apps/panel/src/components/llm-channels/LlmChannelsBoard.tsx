@@ -1,19 +1,77 @@
-import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from 'react';
 
 import {
   deleteOverlayChain,
   fetchDaySummary,
   fetchEffectiveProcedures,
+  fetchProviderCatalog,
   formatTokens,
   putOverlayChain,
+  type CatalogProvider,
   type ChainStep,
   type DaySummary,
   type EffectiveProcedure,
+  type ProviderCatalog,
 } from '@/lib/llmChannelsApi';
 
 type LoadState = 'loading' | 'error' | 'ready';
 
-const PROVIDERS = ['anthropic', 'openrouter'] as const;
+const CUSTOM_MODEL = '__custom__';
+
+/** Offline fallback if catalog endpoint unavailable (still provider × model). */
+const FALLBACK_CATALOG: ProviderCatalog = {
+  ritualEnum: ['anthropic', 'openrouter', 'deepseek', 'perplexity', 'openai'],
+  providers: [
+    {
+      id: 'anthropic',
+      title: 'Anthropic',
+      defaultModel: 'claude-haiku-4-5-20251001',
+      models: [
+        { id: 'claude-haiku-4-5-20251001', label: 'Haiku 4.5' },
+        { id: 'claude-sonnet-4-6', label: 'Sonnet 4.6' },
+        { id: 'claude-opus-4-7', label: 'Opus 4.7' },
+      ],
+    },
+    {
+      id: 'openrouter',
+      title: 'OpenRouter',
+      defaultModel: 'anthropic/claude-haiku-4.5',
+      models: [
+        { id: 'anthropic/claude-haiku-4.5', label: 'Claude Haiku 4.5' },
+        { id: 'openai/gpt-4o-mini', label: 'GPT-4o mini' },
+        { id: 'deepseek/deepseek-chat', label: 'DeepSeek Chat' },
+        { id: 'perplexity/sonar', label: 'Perplexity Sonar' },
+      ],
+    },
+    {
+      id: 'deepseek',
+      title: 'DeepSeek',
+      defaultModel: 'deepseek-chat',
+      models: [
+        { id: 'deepseek-chat', label: 'DeepSeek Chat' },
+        { id: 'deepseek-reasoner', label: 'DeepSeek Reasoner' },
+      ],
+    },
+    {
+      id: 'perplexity',
+      title: 'Perplexity',
+      defaultModel: 'sonar',
+      models: [
+        { id: 'sonar', label: 'Sonar' },
+        { id: 'sonar-pro', label: 'Sonar Pro' },
+      ],
+    },
+    {
+      id: 'openai',
+      title: 'ChatGPT',
+      defaultModel: 'gpt-4o-mini',
+      models: [
+        { id: 'gpt-4o-mini', label: 'GPT-4o mini' },
+        { id: 'gpt-4o', label: 'GPT-4o' },
+      ],
+    },
+  ],
+};
 
 function todayUtc(): string {
   return new Date().toISOString().slice(0, 10);
@@ -26,11 +84,121 @@ function SourceBadge({ source }: { source: 'overlay' | 'default' }) {
   return <span className="badge badge-outline badge-sm">default</span>;
 }
 
+function providerById(catalog: ProviderCatalog, id: string): CatalogProvider | undefined {
+  return catalog.providers.find((p) => p.id === id);
+}
+
+function ChainStepRow({
+  step,
+  index,
+  catalog,
+  busy,
+  canRemove,
+  onChange,
+  onRemove,
+}: {
+  step: ChainStep;
+  index: number;
+  catalog: ProviderCatalog;
+  busy: boolean;
+  canRemove: boolean;
+  onChange: (next: ChainStep) => void;
+  onRemove: () => void;
+}) {
+  const provider = providerById(catalog, step.provider);
+  const knownIds = useMemo(
+    () => new Set((provider?.models ?? []).map((m) => m.id)),
+    [provider],
+  );
+  const modelInList = knownIds.has(step.model);
+  const modelSelectValue = modelInList ? step.model : CUSTOM_MODEL;
+
+  return (
+    <div className="rounded-lg border border-base-300 bg-base-100 p-3 space-y-2">
+      <div className="text-xs font-medium text-base-content/60">Шаг {index + 1}</div>
+      <div className="flex flex-wrap gap-2 items-end">
+        <label className="form-control">
+          <span className="label-text text-xs">Провайдер</span>
+          <select
+            className="select select-bordered select-sm min-w-[10rem]"
+            value={step.provider}
+            onChange={(ev) => {
+              const nextId = ev.target.value;
+              const nextProvider = providerById(catalog, nextId);
+              onChange({
+                provider: nextId,
+                model: nextProvider?.defaultModel || nextProvider?.models[0]?.id || '',
+              });
+            }}
+            aria-label={`Провайдер шаг ${index + 1}`}
+          >
+            {catalog.providers.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.title}
+              </option>
+            ))}
+            {!provider ? <option value={step.provider}>{step.provider}</option> : null}
+          </select>
+        </label>
+        <label className="form-control flex-1 min-w-[14rem]">
+          <span className="label-text text-xs">Модель</span>
+          <select
+            className="select select-bordered select-sm w-full"
+            value={modelSelectValue}
+            onChange={(ev) => {
+              const v = ev.target.value;
+              if (v === CUSTOM_MODEL) {
+                onChange({
+                  provider: step.provider,
+                  model: modelInList ? '' : step.model,
+                });
+                return;
+              }
+              onChange({ provider: step.provider, model: v });
+            }}
+            aria-label={`Модель шаг ${index + 1}`}
+          >
+            {(provider?.models ?? []).map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.label} ({m.id})
+              </option>
+            ))}
+            <option value={CUSTOM_MODEL}>Своя модель…</option>
+          </select>
+        </label>
+        <button
+          type="button"
+          className="btn btn-ghost btn-sm"
+          disabled={!canRemove || busy}
+          onClick={onRemove}
+          aria-label={`Удалить шаг ${index + 1}`}
+        >
+          −
+        </button>
+      </div>
+      {modelSelectValue === CUSTOM_MODEL ? (
+        <label className="form-control w-full">
+          <span className="label-text text-xs">Id модели у провайдера</span>
+          <input
+            className="input input-bordered input-sm w-full font-mono"
+            value={step.model}
+            placeholder={provider?.defaultModel ?? 'model-id'}
+            onChange={(ev) => onChange({ provider: step.provider, model: ev.target.value })}
+            aria-label={`Свой id модели шаг ${index + 1}`}
+          />
+        </label>
+      ) : null}
+    </div>
+  );
+}
+
 function ChainEditor({
   procedure,
+  catalog,
   onSaved,
 }: {
   procedure: EffectiveProcedure;
+  catalog: ProviderCatalog;
   onSaved: () => void;
 }) {
   const [steps, setSteps] = useState<ChainStep[]>(() =>
@@ -46,6 +214,10 @@ function ChainEditor({
   async function onSave(e: FormEvent) {
     e.preventDefault();
     if (busy || steps.length < 1) return;
+    if (steps.some((s) => !s.provider.trim() || !s.model.trim())) {
+      setNotice('У каждого шага нужны и провайдер, и модель.');
+      return;
+    }
     setBusy(true);
     setNotice(null);
     try {
@@ -74,6 +246,8 @@ function ChainEditor({
     }
   }
 
+  const firstProvider = catalog.providers[0];
+
   return (
     <form className="card bg-base-200 p-4 space-y-3" onSubmit={(e) => void onSave(e)}>
       <div className="flex flex-wrap items-center gap-2">
@@ -83,55 +257,33 @@ function ChainEditor({
       </div>
       <div className="space-y-2">
         {steps.map((step, i) => (
-          <div key={i} className="flex flex-wrap gap-2 items-center">
-            <select
-              className="select select-bordered select-sm"
-              value={step.provider}
-              onChange={(ev) => {
-                const next = steps.map((s, j) =>
-                  j === i ? { provider: ev.target.value, model: s.model } : s,
-                );
-                setSteps(next);
-              }}
-              aria-label={`Провайдер шаг ${i + 1}`}
-            >
-              {PROVIDERS.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-              {!PROVIDERS.includes(step.provider as (typeof PROVIDERS)[number]) ? (
-                <option value={step.provider}>{step.provider}</option>
-              ) : null}
-            </select>
-            <input
-              className="input input-bordered input-sm flex-1 min-w-[12rem]"
-              value={step.model}
-              onChange={(ev) => {
-                const next = steps.map((s, j) =>
-                  j === i ? { provider: s.provider, model: ev.target.value } : s,
-                );
-                setSteps(next);
-              }}
-              aria-label={`Модель шаг ${i + 1}`}
-            />
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm"
-              disabled={steps.length <= 1 || busy}
-              onClick={() => setSteps(steps.filter((_, j) => j !== i))}
-            >
-              −
-            </button>
-          </div>
+          <ChainStepRow
+            key={i}
+            step={step}
+            index={i}
+            catalog={catalog}
+            busy={busy}
+            canRemove={steps.length > 1}
+            onChange={(next) => setSteps(steps.map((s, j) => (j === i ? next : s)))}
+            onRemove={() => setSteps(steps.filter((_, j) => j !== i))}
+          />
         ))}
       </div>
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
           className="btn btn-ghost btn-sm"
-          disabled={busy}
-          onClick={() => setSteps([...steps, { provider: 'openrouter', model: '' }])}
+          disabled={busy || !firstProvider}
+          onClick={() => {
+            if (!firstProvider) return;
+            setSteps([
+              ...steps,
+              {
+                provider: firstProvider.id,
+                model: firstProvider.defaultModel,
+              },
+            ]);
+          }}
         >
           + шаг
         </button>
@@ -162,17 +314,20 @@ export function LlmChannelsBoard() {
   const [date, setDate] = useState(todayUtc);
   const [day, setDay] = useState<DaySummary | null>(null);
   const [procedures, setProcedures] = useState<EffectiveProcedure[]>([]);
+  const [catalog, setCatalog] = useState<ProviderCatalog>(FALLBACK_CATALOG);
 
   const reload = useCallback(async () => {
     setState('loading');
     setError(null);
     try {
-      const [d, procs] = await Promise.all([
+      const [d, procs, cat] = await Promise.all([
         fetchDaySummary(date),
         fetchEffectiveProcedures(),
+        fetchProviderCatalog().catch(() => FALLBACK_CATALOG),
       ]);
       setDay(d);
       setProcedures(procs);
+      setCatalog(cat.providers.length > 0 ? cat : FALLBACK_CATALOG);
       setState('ready');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Не удалось загрузить.');
@@ -306,11 +461,17 @@ export function LlmChannelsBoard() {
       <section className="space-y-3" aria-label="Цепочки процедур">
         <h3 className="font-semibold">Цепочки (overlay поверх git default)</h3>
         <p className="text-sm text-base-content/70">
-          Секреты ключей здесь не хранятся — только порядок провайдеров и модели. При
-          недоступном Anthropic поставьте openrouter первым или вторым в цепочке.
+          У каждого шага две независимые оси: провайдер (куда слать запрос) и модель
+          (какой id у этого провайдера). Секреты ключей здесь не хранятся. При
+          недоступном Anthropic поставьте запасной шаг первым или вторым в цепочке.
         </p>
         {procedures.map((p) => (
-          <ChainEditor key={p.procedureId} procedure={p} onSaved={() => void reload()} />
+          <ChainEditor
+            key={p.procedureId}
+            procedure={p}
+            catalog={catalog}
+            onSaved={() => void reload()}
+          />
         ))}
       </section>
     </div>

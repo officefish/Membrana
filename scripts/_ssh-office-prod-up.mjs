@@ -3,21 +3,19 @@
  * Sync O1+O2 build context to VPS (tar) and run office-stack build + up.
  * Office files may be ahead of remote git — uploads local sources.
  */
-import { execSync } from 'node:child_process';
-import { unlinkSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { execFileSync } from 'node:child_process';
+import { mkdirSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
 import { Client } from 'ssh2';
 import { getOfficeSshConfig, repoRoot } from './_ssh-office-config.mjs';
 
-const tarPath = join(tmpdir(), `office-src-${Date.now()}.tgz`);
+// Не tmpdir(): на Windows bsdtar не знает --force-local, а GNU tar путает C:\ с host:file.
+const cacheDir = join(repoRoot, 'scripts', 'cache');
+mkdirSync(cacheDir, { recursive: true });
+const tarPath = join(cacheDir, `office-src-${Date.now()}.tgz`);
 const remoteTar = '/tmp/office-src.tgz';
 
 const tarArgs = [
-  'tar',
-  // Windows tmpdir даёт путь с диском (C:\…); GNU tar принимает двоеточие за
-  // `host:file` (rsh) → --force-local трактует архив как локальный файл.
-  '--force-local',
   '--exclude=packages/background-office/node_modules',
   '--exclude=packages/background-office/dist',
   '--exclude=packages/background-office/.env.docker',
@@ -34,13 +32,16 @@ const tarArgs = [
   'docs/SERVICES.md',
   'packages/services/rag',
   'packages/background-office',
+  'scripts/lib/llm-procedures.json',
+  'scripts/lib/llm-procedure-defaults.json',
+  'scripts/lib/llm-provider-catalog.json',
   'deploy/background-office.prod.compose.yml',
   'deploy/office-stack.sh',
   'deploy/generate-office-env.sh',
 ];
 
 console.log('Packing office build context...');
-execSync(tarArgs.join(' '), { cwd: repoRoot, stdio: 'inherit' });
+execFileSync('tar', tarArgs, { cwd: repoRoot, stdio: 'inherit' });
 
 const remoteScript = `#!/bin/bash
 set -euo pipefail
