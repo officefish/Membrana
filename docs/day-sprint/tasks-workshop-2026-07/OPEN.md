@@ -27,6 +27,7 @@
 
 ## Первый шаг
 
-✅ **g0 закрыт** (владелец 23.07: **V2 wins**). Дальше: `tw-v1-manifest` (адрес) и
-`tw-v2-verbs` (состав глаголов по V2) — отдельным словом / карточками; этот PR только
-паттерн + фиксация вердикта.
+✅ **g0 закрыт** (владелец 23.07: **V2 wins**).
+В работе / ship: `tw-v1-manifest` (#1057) + `tw-v2-verbs` (#1058) — манифест primary,
+иерархия derivative, `workshop-semantics.json`, `check:workshop-dependencies`, состав
+decision-verbs и граница в `docs/tasks/README.md`. Дальше: v3–v7.

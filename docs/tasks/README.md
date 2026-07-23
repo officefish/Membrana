@@ -5,12 +5,36 @@
 
 Машиночитаемый источник: [`registry.json`](./registry.json).
 
+## Мастерская дома (`HOME_WORKSHOP`)
+
+Первичная мастерская: [`workshop.manifest.json`](./workshop.manifest.json)
+(`role: primary`, `worksOn: docs/tasks/registry.json`, `rulesVersion` →
+[`docs/audit/workshop-semantics.json`](../audit/workshop-semantics.json)).
+
+Производный контур разборов: [`docs/audit/tasks/`](../audit/tasks/)
+(`role: derivative`, `dependentOn: ["docs/tasks"]`, `mirrorsFrom` = worksOn первичной).
+
+### Состав (V2 wins · #1056 / #1058)
+
+| В мастерской | Вне мастерской |
+|--------------|----------------|
+| `inspectElement`, `list`, `board`, `bookkeeping`, `reviewing` | `audit`, `decompose` (контур `docs/audit/tasks` + CI) |
+| | писатели: `register`, `archive`, `close-github` |
+| | sync: `sync-readme`, `sync-issues` |
+| | исполнитель: `start` |
+
+Граница: команда в мастерской тогда и только тогда, когда решает о мета-структуре
+реестра (целостность, категоризация, пересмотр) **или** порождает отчёты для таких
+решений. Реализации глаголов — фазы v3–v5; здесь зафиксированы состав и адресация.
+
 | Команда | Действие |
 |---------|----------|
 | `yarn task:list` | Список в терминале |
 | `yarn task:sync-readme` | Пересобрать этот файл |
 | `yarn task:archive <id>` | Закрыть задачу в реестре |
 | `yarn task:close-github` | Закрыть Issues по очереди из архива (вечером) |
+| `yarn validate:workshop` | Контракт манифестов |
+| `yarn check:workshop-dependencies` | Иерархия primary/derivative |
 
 ---
 
