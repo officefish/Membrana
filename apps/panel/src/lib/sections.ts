@@ -45,6 +45,12 @@ export const PANEL_SECTIONS: readonly PanelSection[] = [
     minRole: 'owner',
   },
   {
+    id: 'llm-channels',
+    title: 'Каналы LLM',
+    description: 'Учёт вызовов процедур и переключение цепочки провайдеров (owner).',
+    minRole: 'owner',
+  },
+  {
     id: 'graphify',
     title: 'Граф кода',
     description: 'Карта зависимостей кода по семействам — как устроен проект внутри.',

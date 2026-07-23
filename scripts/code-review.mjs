@@ -1,5 +1,6 @@
 /**
- * Code review через Anthropic + регламент CODE_REVIEW_REGULATION.md
+ * Code review через LLM procedure channels (anthropic|openrouter chain) +
+ * регламент CODE_REVIEW_REGULATION.md
  *
  * **Вечерняя процедура (daily):** утром не запускать — standup читает DAILY_CODE_REVIEW.md.
  * См. docs/DEVELOPER_RHYTHM.md и docs/prompts/CODE_REVIEW_REGULATION.md.
@@ -36,20 +37,12 @@ import {
   logRagStatus,
   retrieveRagContext,
 } from './lib/rag-ritual.mjs';
-import {
-  anthropicPost,
-  defaultModel,
-  getAnthropicKey,
-  loadDotEnv,
-  printAnthropicHttpError,
-} from './_anthropic-env.mjs';
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { formatLeadBlock, resolveReviewLead } from './lib/review-lead.mjs';
 import { readPersonaMemory } from './lib/persona-memory.mjs';
 import { listActive, loadRegistry } from './lib/task-registry.mjs';
-
-loadDotEnv();
+import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 
 let cli;
 try {
@@ -63,15 +56,6 @@ try {
 if (cli.help) {
   printCodeReviewHelp();
   process.exit(0);
-}
-
-let key;
-try {
-  key = getAnthropicKey();
-} catch (e) {
-  console.error(e.message);
-  console.error('См. .env.example и команды: yarn code-review');
-  process.exit(1);
 }
 
 const regulation = readRequiredFile(REGULATION_PATH);
@@ -148,40 +132,31 @@ const bodyText = buildCodeReviewUserMessage({
 
 const outputPath = cli.out ? resolve(process.cwd(), cli.out) : defaultOutputPath(cli);
 
-const model = defaultModel();
-const bodyJson = {
-  model,
-  max_tokens: 4096,
-  messages: [{ role: 'user', content: [{ type: 'text', text: bodyText }] }],
-};
-
 let exitCode = 0;
 try {
-  const { ok, status, text } = await anthropicPost('https://api.anthropic.com/v1/messages', {
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
+  const result = await invokeProcedureLlm({
+    procedureId: 'code-review',
+    prompt: bodyText,
+    maxTokens: 4096,
+    onAttempt: ({ provider, model, attemptIndex, ok, errorClass }) => {
+      if (ok) {
+        console.error(`[llm] code-review → ${provider}/${model} (attempt ${attemptIndex + 1})`);
+      } else {
+        console.error(
+          `[llm] code-review attempt ${attemptIndex + 1} ${provider}/${model} failed: ${errorClass ?? 'unknown'}`,
+        );
+      }
     },
-    bodyJson,
   });
 
-  if (!ok) {
-    printAnthropicHttpError(status, text);
+  if (!result.ok) {
+    console.error(
+      `[llm] chain exhausted for code-review after ${result.attempts} attempt(s) (${result.errorClass ?? 'unknown'})`,
+    );
+    console.error('Проверьте chain в scripts/lib/llm-procedure-defaults.json и ключи (.env / .env.llm-proxy).');
     exitCode = 1;
   } else {
-    let out = '';
-    try {
-      const json = JSON.parse(text);
-      const parts = json?.content ?? [];
-      out = parts
-        .filter((b) => b?.type === 'text')
-        .map((b) => b.text)
-        .join('\n');
-      if (!out) out = JSON.stringify(parts, null, 2);
-    } catch {
-      out = text;
-    }
+    const out = result.text;
     // Честная шапка в САМ артефакт: режим/precision/период — машиночитаемо downstream
     // (standup, main-day-issue), не зависит от формулировок LLM. Конец молчаливому
     // «T0 docs-only» — если ревьюился остаток дерева, это будет видно в шапке.
@@ -191,10 +166,18 @@ try {
     writeReviewMarkdown({
       path: outputPath,
       body: finalBody,
-      meta: { mode: cli.mode, full: cli.full, pr: cli.pr },
+      meta: {
+        mode: cli.mode,
+        full: cli.full,
+        pr: cli.pr,
+        llmProvider: result.provider,
+        llmModel: result.model,
+        llmSource: result.source,
+      },
     });
     console.log(out);
     console.error('Записано:', outputPath);
+    console.error(`[llm] source=${result.source}`);
   }
 } catch (e) {
   console.error(e);

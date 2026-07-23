@@ -1,0 +1,18 @@
+{
+  "procedures": [
+    {
+      "id": "code-review",
+      "entryMjs": "scripts/code-review.mjs",
+      "yarnScript": "code-review",
+      "title": "Code review (ritual)",
+      "meters": true
+    },
+    {
+      "id": "consilium",
+      "entryMjs": "scripts/consilium.mjs",
+      "yarnScript": "consilium",
+      "title": "Consilium",
+      "meters": true
+    }
+  ]
+}

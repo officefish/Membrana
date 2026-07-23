@@ -1,0 +1,25 @@
+{
+  "providers": {
+    "anthropic": {
+      "id": "anthropic",
+      "apiKeyEnv": "ANTHROPIC_API_KEY",
+      "apiFormat": "anthropic",
+      "defaultBaseUrl": "https://api.anthropic.com",
+      "path": "/v1/messages",
+      "envFiles": [".env"]
+    },
+    "openrouter": {
+      "id": "openrouter",
+      "apiKeyEnv": "OPENROUTER_API_KEY",
+      "apiFormat": "openai-compatible",
+      "defaultBaseUrl": "https://openrouter.ai/api/v1",
+      "path": "/chat/completions",
+      "envFiles": [".env.llm-proxy", ".env"],
+      "extraHeaders": {
+        "HTTP-Referer": "https://github.com/officefish/Membrana",
+        "X-Title": "Membrana"
+      }
+    }
+  },
+  "ritualEnum": ["anthropic", "openrouter"]
+}

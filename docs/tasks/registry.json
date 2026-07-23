@@ -21,6 +21,26 @@
       "parentEpic": "frame-rails-2307"
     },
     {
+      "id": "one-shot-first-frame",
+      "title": "one-shot: первый фрейм процедуры + чистая функция-предикат S-ности",
+      "promptPath": "docs/prompts/ONE_SHOT_FIRST_FRAME_PROMPT.md",
+      "githubIssue": 1022,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-23",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Транскрипция review инсайта insight-one-shot-format (7.2, adopted по слову владельца 23.07). Три поправки панели обязательны до кода: развод с #900, вход предиката + проверка цепочки (contra capability chaining, research Q3), судьба чек-листа при потере сессии.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "insightId": "insight-one-shot-format"
+    },
+    {
       "id": "issue-979-selfclose",
       "title": "Аномалия: задача спринта закрылась сама",
       "promptPath": "docs/prompts/FRAME_RAILS_2307_PROMPT.md",
