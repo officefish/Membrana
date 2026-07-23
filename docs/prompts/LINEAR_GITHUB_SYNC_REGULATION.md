@@ -14,7 +14,9 @@
 | **GitHub Issue** | Triage, `Closes #N`, формальный отчёт, история для агентов без доступа в Linear |
 | **Реестр** `docs/tasks/registry.json` | `id`, `githubIssue`, `linearId`, active/archived |
 | **Task-промпт** | DoD, архитектура, scope |
-| **Linear** | Статусы, декомпозиция, исполнитель, комментарии «внутренней кухни» |
+| **Linear UI-доска** | **Зеркало** жизненного цикла GitHub Issue (create/close → Backlog/Done). Не называть колонками «слой движения» / WIP (ADR-0017, #1000). |
+| **Слой движения** | `linear-snapshot@1` + `movementMode` (`yarn linear:movement-audit`, [`LINEAR_SNAPSHOT_CONTRACT.md`](../tasks/LINEAR_SNAPSHOT_CONTRACT.md)) |
+| **Linear (прочее)** | Декомпозиция, исполнитель, комментарии «внутренней кухни» — по желанию; R1–R3 неблокирующие |
 
 **Правило:** одна **рабочая единица** = один `id` в реестре + один GitHub Issue (если есть) + **не более одного** Linear ticket на этот Issue. Подзадачи эпика — отдельные `id` в реестре; в Linear — sub-issue или sibling с той же ссылкой на GitHub.
 

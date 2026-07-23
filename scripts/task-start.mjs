@@ -13,7 +13,9 @@
  *                   [--parent-epic id] [--research] [--labels a,b]
  *                   [--linear DRU-N]
  *
- * Канон: Issue = удостоверение, Linear (доска) = движение.
+ * Канон: Issue = удостоверение; Linear UI-доска = зеркало GitHub (не WIP);
+ * слой движения = linear-snapshot@1 (ADR-0017). `task:start` пишет linearId,
+ * состояние Linear не двигает (Started — follow-up после LGTM ADR).
  * Повторный START с тем же --id не создаёт второй Issue / Linear twin.
  */
 import { execFileSync } from 'node:child_process';

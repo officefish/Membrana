@@ -91,13 +91,27 @@ describe('LinearSnapshotGraphqlSource (фикстуры, сети нет)', () =
     expect(String(init.body)).not.toContain('test-linear-key');
   });
 
-  it('маппинг: passport / relations', async () => {
+  it('маппинг: passport / relations / startedAt', async () => {
     const source = new LinearSnapshotGraphqlSource(CONFIG);
     const records = await source.pullAllIssues();
     const byId = new Map(records.map((r) => [r.linearId, r]));
     expect(byId.get('DRU-93')?.githubIssueRefs).toEqual([178]);
+    expect(byId.get('DRU-93')?.startedAt).toBeNull();
     expect(byId.get('DRU-120')?.blocking).toEqual(['DRU-121']);
     expect(byId.get('DRU-120')?.assignee).toBe('vesnin');
+    expect(byId.get('DRU-120')?.startedAt).toBe('2026-07-19T10:00:00.000Z');
+    expect(byId.get('DRU-121')?.startedAt).toBeNull();
+  });
+
+  it('GraphQL SnapshotIssues запрашивает startedAt', async () => {
+    const source = new LinearSnapshotGraphqlSource(CONFIG);
+    await source.pullAllIssues();
+    const body = String(
+      fetchMock.mock.calls.find(([, init]) =>
+        String((init as RequestInit)?.body ?? '').includes('SnapshotIssues'),
+      )?.[1]?.body ?? '',
+    );
+    expect(body).toContain('startedAt');
   });
 
   it('курсор источника — один дешёвый запрос', async () => {
@@ -121,6 +135,7 @@ function fixtureRecord(linearId: string): LinearSnapshotRecord {
     githubIssueRefs: [178],
     createdAt: '2026-06-29T10:00:00.000Z',
     updatedAt: '2026-06-29T17:31:52.000Z',
+    startedAt: null,
     completedAt: '2026-06-29T17:31:52.000Z',
   };
 }
