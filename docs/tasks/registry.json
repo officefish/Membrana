@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "ritual-deliver-to-main",
+      "title": "Утренний ритуал: обязательный финальный кадр — доставка документов в main",
+      "promptPath": "docs/prompts/FRAME_RAILS_2307_PROMPT.md",
+      "githubIssue": 1016,
+      "linearId": "DRU-379",
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-23",
+      "archivedAt": null,
+      "leadPersona": "angelina",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "Требование владельца 23.07: утро не завершено, пока сгенерированные документы не в main. Кадр в полосе frames (автоцепочка), проверка фактом наличия в main.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "frame-rails-2307"
+    },
+    {
       "id": "one-shot-first-frame",
       "title": "one-shot: первый фрейм процедуры + чистая функция-предикат S-ности",
       "promptPath": "docs/prompts/ONE_SHOT_FIRST_FRAME_PROMPT.md",

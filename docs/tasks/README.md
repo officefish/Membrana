@@ -18,6 +18,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `ritual-deliver-to-main` | Утренний ритуал: обязательный финальный кадр — доставка документов в main | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1016](https://github.com/officefish/Membrana/issues/1016) |
 | `one-shot-first-frame` | one-shot: первый фрейм процедуры + чистая функция-предикат S-ности | S | [`ONE_SHOT_FIRST_FRAME_PROMPT.md`](../prompts/ONE_SHOT_FIRST_FRAME_PROMPT.md) | [#1022](https://github.com/officefish/Membrana/issues/1022) |
 | `issue-979-selfclose` | Аномалия: задача спринта закрылась сама | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1004](https://github.com/officefish/Membrana/issues/1004) |
 | `precedents-meta-backfill` | Три прецедента не проходят схему контейнера | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1003](https://github.com/officefish/Membrana/issues/1003) |
