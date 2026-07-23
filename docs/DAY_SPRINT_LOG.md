@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-07-23 — `llm-calls-house` — **OPEN**
+
+- **Goal:** дом доказательств LLM-вызовов (hash+params) + мастерская + thin Mintlify
+- **Issue:** [#1033](https://github.com/officefish/Membrana/issues/1033) · фазы #1034–#1039
+- **OPEN:** [`day-sprint/llm-calls-house-2026-07-23/OPEN.md`](./day-sprint/llm-calls-house-2026-07-23/OPEN.md)
+- **Ратификация:** владелец 2026-07-23
+- **W0:** registry + Issues + ACTIVE
+
+---
+
 ## 2026-07-22 — `bestiary-workshop` — **CLOSED**
 
 - **Delivered:** мастерская-поставщик ловушек; CATCH/TRAPS; thin Mintlify; `kits/witcher` («Ведьмак») · W0–W5

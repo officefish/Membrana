@@ -44,6 +44,14 @@ export const usageEventSchema = z
     errorClass: z.enum(['auth', 'rate_limit', 'timeout', 'protocol', 'unknown']).optional(),
     entryMjs: z.string().optional(),
     gitSha: z.string().optional(),
+    promptSha256: z.string().length(64).optional(),
+    responseSha256: z.string().length(64).optional(),
+    promptBytes: z.number().int().nonnegative().nullable().optional(),
+    responseBytes: z.number().int().nonnegative().nullable().optional(),
+    attemptIndex: z.number().int().nonnegative().optional(),
+    chainLen: z.number().int().positive().optional(),
+    providerRequestId: z.string().min(1).optional(),
+    params: z.record(z.string(), z.unknown()).optional(),
   })
   .strict();
 

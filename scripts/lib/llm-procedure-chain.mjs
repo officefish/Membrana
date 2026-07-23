@@ -86,6 +86,15 @@ export async function runProcedureChain(args) {
         ok,
         errorClass: ok ? undefined : result.errorClass ?? 'unknown',
         entryMjs: effective.entryMjs,
+        promptText: typeof prompt === 'string' ? prompt : null,
+        responseText: typeof result.text === 'string' ? result.text : null,
+        attemptIndex: i,
+        chainLen: chain.length,
+        params: {
+          maxTokens: args.maxTokens ?? null,
+          model: step.model,
+          provider: step.provider,
+        },
       }),
       { env: args.env },
     );

@@ -81,6 +81,7 @@ PR #764).
 | [`docs/audit/tasks/`](../audit/tasks/README.md) | Карточки реестра задач | см. чеклист в README контейнера |
 | [`scripts/`](../../scripts/README.md) | Скрипты монорепо (один дом, не `docs/audit/scripts/`) | см. чеклист в README; эпик #791 |
 | [`docs/audit/bestiary/`](../audit/bestiary/README.md) | Антипаттерны + specimens | см. чеклист в README; эпик #878 |
+| [`docs/audit/llm-calls/`](../audit/llm-calls/README.md) | Evidence LLM-вызовов процедур | см. чеклист в README; эпик #1033 |
 
 Кандидаты: документы, инсайты.
 

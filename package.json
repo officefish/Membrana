@@ -327,7 +327,10 @@
     "audit:branch-instructions-pin": "node scripts/audit-branch-instructions-pin.mjs",
     "kits:audit": "node scripts/kits-audit.mjs",
     "bestiary:audit": "node scripts/bestiary-audit.mjs",
-    "bestiary:weekly": "node scripts/bestiary-weekly.mjs"
+    "bestiary:weekly": "node scripts/bestiary-weekly.mjs",
+    "llm-calls:audit": "node scripts/llm-calls-audit.mjs",
+    "llm-calls:decompose": "node scripts/llm-calls-audit.mjs --decompose",
+    "llm-calls:snapshot": "node scripts/llm-calls-snapshot.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
