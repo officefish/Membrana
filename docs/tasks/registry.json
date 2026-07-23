@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "run-ledger",
+      "title": "run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify)",
+      "promptPath": "docs/prompts/RUN_LEDGER_PROMPT.md",
+      "githubIssue": 1088,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-23",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "frame-rails-2307"
+    },
+    {
       "id": "tw-v9-trail",
       "title": "one-shot-trail.jsonl анти-дробление",
       "promptPath": "docs/prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md",
