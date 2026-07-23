@@ -51,7 +51,12 @@ packages/background-office
 !packages/background-office
 !packages/background-office/**
 docs
-scripts
+# LPC defaults must enter office image (procedure→channel); keep rest of scripts out
+scripts/**
+!scripts/lib/
+!scripts/lib/llm-procedures.json
+!scripts/lib/llm-procedure-defaults.json
+!scripts/lib/llm-provider-catalog.json
 node_modules
 *.md
 !packages/background-media/README.md

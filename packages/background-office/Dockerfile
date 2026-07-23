@@ -13,6 +13,8 @@ COPY docs/WHITE_PAPER.md docs/ARCHITECTURE.md docs/SERVICES.md docs/
 # @membrana/rag-service — workspace-зависимость office (dynamic import RAG API).
 COPY packages/services/rag packages/services/rag
 COPY packages/background-office packages/background-office
+# LPC: git defaults for procedure→channel (runtime RAG_REPO_ROOT=/app)
+COPY scripts/lib/llm-procedures.json scripts/lib/llm-procedure-defaults.json scripts/lib/llm-provider-catalog.json scripts/lib/
 
 RUN yarn workspaces focus @membrana/background-office --all \
   && yarn workspace @membrana/background-office build
@@ -22,6 +24,7 @@ RUN corepack enable
 
 WORKDIR /app/packages/background-office
 ENV NODE_ENV=production
+ENV RAG_REPO_ROOT=/app
 
 COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/packages/background-office/dist ./dist
@@ -30,6 +33,7 @@ COPY --from=build /app/packages/background-office/package.json ./package.json
 # rag-service dist + package.json: цель workspace-симлинка node_modules/@membrana/rag-service
 COPY --from=build /app/packages/services/rag/dist /app/packages/services/rag/dist
 COPY --from=build /app/packages/services/rag/package.json /app/packages/services/rag/package.json
+COPY --from=build /app/scripts/lib /app/scripts/lib
 COPY packages/background-office/docker/entrypoint.sh /entrypoint.sh
 # Windows checkouts may ship CRLF; strip before exec.
 RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
