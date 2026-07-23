@@ -21,6 +21,7 @@
 | `frames-alive-rodchenko` | Оживление фреймов — Верстальщик: рендер цепочки | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#981](https://github.com/officefish/Membrana/issues/981) |
 | `frames-alive-dynin` | Оживление фреймов — Дынин: математика версии+резолв | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#980](https://github.com/officefish/Membrana/issues/980) |
 | `frames-alive-ozhegov` | Оживление фреймов — Ожегов: контракт+код+начинка | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#979](https://github.com/officefish/Membrana/issues/979) |
+| `containerization-coldstart-sync` | Cold-start мастера контейнеризации: три паттерна + мета-уровень (контейнер контейнеров) | S | [`CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md`](../prompts/CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md) | [#993](https://github.com/officefish/Membrana/issues/993) |
 | `tooling-atlas` | Атлас контейнеров — контейнер контейнеров + мастерская + mintlify | M | [`TOOLING_ATLAS_PROMPT.md`](../prompts/TOOLING_ATLAS_PROMPT.md) | — |
 | `assets-container` | Эпик: контейнер имущества — три яруса (git/сервер-БД/Drive), набор от чека, подтверждение датой-сегодня | L | [`ASSETS_CONTAINER_PROMPT.md`](../prompts/ASSETS_CONTAINER_PROMPT.md) | [#959](https://github.com/officefish/Membrana/issues/959) |
 | `bridge-room` | Спринт «мостик»: явное открытие/закрытие комнаты капитана, попугай-техдолг, конспекты фреймом в репо | M | [`BRIDGE_ROOM_PROMPT.md`](../prompts/BRIDGE_ROOM_PROMPT.md) | [#936](https://github.com/officefish/Membrana/issues/936) |
@@ -924,4 +925,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-22.*
+*Файл обновлён автоматически: 2026-07-23.*
