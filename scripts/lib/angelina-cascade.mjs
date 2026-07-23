@@ -54,14 +54,30 @@ export function freshness(producer, edgeRead) {
 }
 
 /**
- * Проверка провенанса узла — обязательное поле `{author, guard, digest, readAt}`.
- * Отсутствие = громкий отказ (M1). Автор ∈ {5 персон, человек}; субагент запрещён.
- * @param {{provenance?: {author?: string, guard?: string, digest?: string, readAt?: unknown}|null}|null|undefined} snap
+ * Проверка провенанса узла.
+ * Машинный: `{author, guard, digest, readAt}`.
+ * Честная ручная чеканка (#999): `{kind:'honest-manual', author, mintedAt, reason, digest}` —
+ * штатный фолбэк, не «нет провенанса». Автор ∈ {5 персон, человек}; субагент запрещён.
+ * @param {{provenance?: {kind?: string, author?: string, guard?: string, digest?: string, readAt?: unknown, mintedAt?: string, reason?: string}|null}|null|undefined} snap
  * @returns {string} пустая строка = ок, иначе текст проблемы
  */
 export function provenanceProblem(snap) {
   const p = snap?.provenance;
   if (!p) return 'нет провенанса {author, guard, digest, readAt}';
+  if (p.kind === 'honest-manual') {
+    for (const field of ['author', 'mintedAt', 'reason', 'digest']) {
+      if (p[field] == null || String(p[field]).trim() === '') {
+        return `honest-manual без поля «${field}»`;
+      }
+    }
+    if (!/^\d{4}-\d{2}-\d{2}$/u.test(String(p.mintedAt))) {
+      return 'honest-manual: mintedAt должен быть YYYY-MM-DD';
+    }
+    if (!AUTHOR_ROLES.has(p.author)) {
+      return `автор «${p.author}» не ∈ {5 персон, человек} — субагент автором быть не может`;
+    }
+    return '';
+  }
   for (const field of ['author', 'guard', 'digest', 'readAt']) {
     if (p[field] == null) return `провенанс без поля «${field}»`;
   }
@@ -69,6 +85,14 @@ export function provenanceProblem(snap) {
     return `автор «${p.author}» не ∈ {5 персон, человек} — субагент автором быть не может`;
   }
   return '';
+}
+
+/** Метка исхода провенанса: машинный ok · honest-manual · текст проблемы. */
+export function provenanceOutcome(snap) {
+  const problem = provenanceProblem(snap);
+  if (problem !== '') return problem;
+  if (snap?.provenance?.kind === 'honest-manual') return 'honest-manual';
+  return 'ok';
 }
 
 /**
@@ -133,6 +157,7 @@ export function orchestrateCascade(graph, snapshot) {
 
   for (const id of order) {
     const snap = snapshot?.[id] ?? {};
+    const provOutcome = provenanceOutcome(snap);
     const provProblem = provenanceProblem(snap);
 
     const incoming = graph.edges.filter((e) => e.to === id);
@@ -145,14 +170,17 @@ export function orchestrateCascade(graph, snapshot) {
       else if (fr === FRESHNESS.UNKNOWN && worst !== FRESHNESS.STALE) worst = FRESHNESS.UNKNOWN;
     }
 
+    // honest-manual не блокирует по провенансу; stale по рёбрам — по-прежнему громкий блок.
     const blocked = worst === FRESHNESS.STALE || provProblem !== '';
     results[id] = {
       freshness: worst,
-      provenance: provProblem === '' ? 'ok' : provProblem,
+      provenance: provOutcome,
       blocked,
       author: snap.provenance?.author ?? null,
-      guard: snap.provenance?.guard ?? null,
+      guard: snap.provenance?.guard ?? (snap.provenance?.kind === 'honest-manual' ? 'honest-manual' : null),
       digest: snap.provenance?.digest ?? null,
+      mintedAt: snap.provenance?.mintedAt ?? null,
+      reason: snap.provenance?.reason ?? null,
       edges,
     };
     if (blocked) {
@@ -166,14 +194,27 @@ export function orchestrateCascade(graph, snapshot) {
 
 /**
  * Предъявление узла человеку: строка `автор · страж · digest · состояние` (M1).
- * `stale`/провенанс-проблема — контрастно и первым словом; `unknown` явно «не проверено».
+ * `stale`/провенанс-проблема — контрастно и первым словом; `unknown` явно «не проверено»;
+ * `honest-manual` — отдельная метка (не красный «нет провенанса», не машинный ok).
  * @param {string} id
- * @param {{freshness: string, provenance: string, blocked: boolean, author: string|null, guard: string|null, digest: string|null}} r
+ * @param {{freshness: string, provenance: string, blocked: boolean, author: string|null, guard: string|null, digest: string|null, mintedAt?: string|null, reason?: string|null}} r
  * @returns {string}
  */
 export function presentNode(id, r) {
-  const mark = r.blocked ? '✖ БЛОК' : r.freshness === FRESHNESS.UNKNOWN ? '? не проверено' : '✓ свежо';
+  let mark;
+  if (r.blocked) mark = '✖ БЛОК';
+  else if (r.provenance === 'honest-manual') mark = '◇ ручная';
+  else if (r.freshness === FRESHNESS.UNKNOWN) mark = '? не проверено';
+  else mark = '✓ свежо';
   const dg = r.digest ? String(r.digest).slice(0, 8) : '—';
-  const prov = r.provenance === 'ok' ? '' : ` · провенанс: ${r.provenance}`;
-  return `${mark} · ${id} · автор ${r.author ?? '—'} · страж ${r.guard ?? '—'} · ${dg}${prov}`;
+  const guard = r.guard ?? (r.provenance === 'honest-manual' ? 'honest-manual' : '—');
+  let prov = '';
+  if (r.provenance === 'honest-manual') {
+    const when = r.mintedAt ? ` ${r.mintedAt}` : '';
+    const why = r.reason ? ` · ${r.reason}` : '';
+    prov = ` · чеканка: honest-manual${when}${why}`;
+  } else if (r.provenance !== 'ok') {
+    prov = ` · провенанс: ${r.provenance}`;
+  }
+  return `${mark} · ${id} · автор ${r.author ?? '—'} · страж ${guard} · ${dg}${prov}`;
 }

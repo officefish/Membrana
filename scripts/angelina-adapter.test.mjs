@@ -6,7 +6,16 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { parseProvenance, contentDigest, buildSnapshot, gitFsIo, provenanceHeader, readEntry } from './lib/angelina-adapter.mjs';
+import {
+  parseProvenance,
+  parseHonestManual,
+  honestManualHeader,
+  contentDigest,
+  buildSnapshot,
+  gitFsIo,
+  provenanceHeader,
+  readEntry,
+} from './lib/angelina-adapter.mjs';
 import { orchestrateCascade, topoOrder } from './lib/angelina-cascade.mjs';
 import { CASCADE_DAY } from './angelina.mjs';
 
@@ -24,6 +33,52 @@ test('parseProvenance: нет заголовка / битый JSON / нет auth
   assert.equal(parseProvenance('# без провенанса'), null);
   assert.equal(parseProvenance('<!-- angelina {битый} -->'), null);
   assert.equal(parseProvenance('<!-- angelina {"guard":"angelina"} -->'), null, 'без author');
+  assert.equal(
+    parseProvenance('<!-- angelina-manual {"author":"human","mintedAt":"2026-07-23","reason":"x"} -->'),
+    null,
+    'angelina-manual не путается с машинным angelina',
+  );
+});
+
+test('parseHonestManual: structured + fallback свободной шапки', () => {
+  const structured = parseHonestManual(
+    `${honestManualHeader({
+      author: 'human',
+      mintedAt: '2026-07-23',
+      reason: 'Anthropic usage limits',
+      session: '8a0b3861',
+    })}\n# тело`,
+  );
+  assert.equal(structured.author, 'human');
+  assert.equal(structured.mintedAt, '2026-07-23');
+  assert.equal(structured.session, '8a0b3861');
+
+  const fallback = parseHonestManual(`<!-- Отчеканено РУКАМИ 2026-07-23 (сессия abcd1234), НЕ генератором -->
+<!-- Причина ручной чеканки: генератор недоступен -->
+# тело`);
+  assert.equal(fallback.author, 'human');
+  assert.equal(fallback.mintedAt, '2026-07-23');
+  assert.match(fallback.reason, /генератор недоступен/u);
+  assert.equal(fallback.session, 'abcd1234');
+});
+
+test('buildSnapshot: honest-manual → kind, каскад не блокирует', () => {
+  const content = `${honestManualHeader({
+    author: 'human',
+    mintedAt: '2026-07-23',
+    reason: 'usage limits',
+  })}\n# MAIN\n`;
+  const io = { version: () => 'commitM', content: () => content };
+  const snap = buildSnapshot({ nodes: [{ id: 'MAIN_DAY_ISSUE', path: 'docs/MAIN_DAY_ISSUE.md' }] }, io);
+  assert.equal(snap.MAIN_DAY_ISSUE.provenance.kind, 'honest-manual');
+  assert.equal(snap.MAIN_DAY_ISSUE.provenance.guard, 'honest-manual');
+  assert.equal(snap.MAIN_DAY_ISSUE.provenance.digest, contentDigest(content));
+  const report = orchestrateCascade(
+    { nodes: [{ id: 'MAIN_DAY_ISSUE' }], edges: [] },
+    snap,
+  );
+  assert.equal(report.ok, true);
+  assert.equal(report.results.MAIN_DAY_ISSUE.provenance, 'honest-manual');
 });
 
 test('contentDigest: детерминирован, чувствителен к содержимому', () => {
