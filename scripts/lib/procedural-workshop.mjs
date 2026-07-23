@@ -5,9 +5,9 @@
  * собственный список каждой). Глаголы (паттерн HOME_WORKSHOP):
  *   audit         — инвентарь: сверка реестра с реальностью + validateProcedure;
  *   decompose     — раскладка процедур по правилу (holder / status / kit);
- *   inspectElement— рассмотрение ОДНОЙ процедуры вглубь (её второе измерение:
- *                   engines/precedents/kitVersion). Полиморфная рекурсия по фреймам —
- *                   ждёт #900 (frames[]); здесь второе измерение = подграф манифеста.
+ *   inspectElement— рассмотрение ОДНОЙ процедуры вглубь: ЦЕПОЧКА КАДРОВ по полосам
+ *                   preflight → frames → post, плюс подграф манифеста
+ *                   (engines/precedents/kitVersion).
  *
  * Канон: docs/patterns/HOME_WORKSHOP.md · заседание home-workshop (Ф2/Ф3).
  * Операции обзора — чтение, идемпотентны.
@@ -143,6 +143,7 @@ export function inspectProcedure(repoRoot, id) {
   const readmePresent = existsSync(join(dir, 'README.md'));
   const engines = Array.isArray(man?.engines) ? man.engines : [];
   const precedents = Array.isArray(man?.precedents) ? man.precedents : [];
+  const queue = readQueue(man);
   return {
     id,
     built: true,
@@ -151,9 +152,26 @@ export function inspectProcedure(repoRoot, id) {
     kitVersion: man?.kitVersion ?? null,
     engines,
     precedents,
-    // Второе измерение процедуры (её собственный список): подграф манифеста.
-    // Полиморфная рекурсия по frames[] — ждёт #900; сейчас список = engines + precedents.
-    secondDimension: { enginesCount: engines.length, precedentsCount: precedents.length },
+    // Второе измерение процедуры — её ЦЕПОЧКА КАДРОВ (полосы очереди), а не паспорт
+    // манифеста: `preflight` (гейт до) → `frames` (автоцепочка) → `post` (ручной хвост).
+    // Контракт полос ратифицирован спринтом «фреймы» и живёт в validate-procedure.
+    queue,
+    secondDimension: {
+      enginesCount: engines.length,
+      precedentsCount: precedents.length,
+      frameCount: queue.preflight.length + queue.frames.length + queue.post.length,
+    },
     note: man ? null : 'MANIFEST.json отсутствует или битый',
   };
+}
+
+/**
+ * Полосы очереди процедуры. Отсутствующая полоса — пустой массив (легальное
+ * состояние «кадров нет»), а не ошибка: пустота объявляется, не маскируется.
+ * @param {object|null} man разобранный MANIFEST.json
+ * @returns {{preflight: object[], frames: object[], post: object[]}}
+ */
+export function readQueue(man) {
+  const lane = (k) => (Array.isArray(man?.[k]) ? man[k] : []);
+  return { preflight: lane('preflight'), frames: lane('frames'), post: lane('post') };
 }

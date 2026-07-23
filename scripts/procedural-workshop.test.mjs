@@ -162,3 +162,51 @@ test('decompose by kit — реальный kitVersion в свой бакет', 
   assert.deepEqual(g.get('kits/dream-master'), ['with-kit']);
   assert.deepEqual(g.get('null'), ['no-kit']);
 });
+
+// --- Цепочка кадров: inspect отдаёт полосы очереди, а не только паспорт манифеста ---
+// Контракт полос (preflight → frames → post) ратифицирован спринтом «фреймы»;
+// до его снятия inspect печатал заглушку и цепочку не показывал.
+
+test('inspect: полосы очереди пусты по умолчанию — легальное состояние, не ошибка', () => {
+  const r = inspectProcedure(tmp, 'meeting');
+  assert.deepEqual(r.queue, { preflight: [], frames: [], post: [] });
+  assert.equal(r.secondDimension.frameCount, 0);
+});
+
+test('inspect: цепочка кадров читается из всех трёх полос с держателями', () => {
+  const dir = join(procRoot, 'queued');
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, 'README.md'), 'Определение.');
+  writeFileSync(join(tmp, 'scripts/queued-engine.mjs'), '// engine');
+  writeFileSync(join(dir, 'MANIFEST.json'), JSON.stringify({
+    id: 'queued',
+    leadPersona: 'vesnin',
+    kitVersion: null,
+    engines: ['scripts/queued-engine.mjs'],
+    precedents: [],
+    preflight: [{ id: 'gate', holder: 'dynin' }],
+    frames: [{ id: 'one', holder: 'vesnin' }, { id: 'two', holder: 'ozhegov' }],
+    post: [{ id: 'tail', holder: 'angelina' }],
+  }));
+  const r = inspectProcedure(tmp, 'queued');
+  assert.equal(r.queue.preflight[0].id, 'gate');
+  assert.deepEqual(r.queue.frames.map((f) => f.id), ['one', 'two']);
+  assert.equal(r.queue.frames[1].holder, 'ozhegov');
+  assert.equal(r.queue.post[0].id, 'tail');
+  // frameCount считает все три полосы, а не только автоцепочку.
+  assert.equal(r.secondDimension.frameCount, 4);
+});
+
+test('inspect: битая полоса (не массив) не роняет обзор — читается как пустая', () => {
+  const dir = join(procRoot, 'broken-lane');
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(join(dir, 'README.md'), 'Определение.');
+  writeFileSync(join(tmp, 'scripts/broken-lane-engine.mjs'), '// engine');
+  writeFileSync(join(dir, 'MANIFEST.json'), JSON.stringify({
+    id: 'broken-lane', leadPersona: 'vesnin', kitVersion: null,
+    engines: ['scripts/broken-lane-engine.mjs'], precedents: [], frames: 'не массив',
+  }));
+  const r = inspectProcedure(tmp, 'broken-lane');
+  assert.deepEqual(r.queue.frames, []);
+  assert.equal(r.secondDimension.frameCount, 0);
+});
