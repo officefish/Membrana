@@ -138,15 +138,15 @@
 | Мастерская | Дом (`worksOn`) | Соответствие |
 |-----------|-----------------|--------------|
 | [`docs/audit/git/`](../audit/git/workshop.manifest.json) | ветки репозитория | `audit`+`decompose` ✅, `inspectElement` ⚠ (нет); `kit: null` |
-| [`docs/audit/tasks/`](../audit/tasks/workshop.manifest.json) | реестр карточек задач | `audit`+`decompose` ✅, `inspectElement` ⚠ (нет); `kit: null` |
+| [`docs/tasks/`](../tasks/workshop.manifest.json) | реестр задач (`registry.json`, primary) | decision-verbs ✅ (`inspectElement`/`list`/`board`/`bookkeeping`/`reviewing`); `audit`/`decompose` ⚠=`null` → контур [`docs/audit/tasks/`](../audit/tasks/) + CI · V2 / #1056–#1058 |
+| [`docs/audit/tasks/`](../audit/tasks/workshop.manifest.json) | снимки разборов (`registry/`, derivative) | `audit`+`decompose` ✅; `dependentOn`/`mirrorsFrom`; `inspectElement` ⚠; `kit: null` |
 | [`docs/procedures/`](../procedures/workshop.manifest.json) | процедурный дом | `audit`+`decompose`+`inspectElement` ✅; `kit: null` |
 | [`docs/precedents/`](../precedents/workshop.manifest.json) | контейнер прецедентов | `audit`+`decompose` ✅, `inspectElement` ⚠ (нет); `kit: null` |
 | [`docs/audit/bestiary/`](../audit/bestiary/workshop.manifest.json) | бестиарий антипаттернов | `audit`+`decompose` ✅, `inspectElement` ⚠; `kit: "kits/witcher"` (W4 #950); **K25-B** — исключение supply-side: доменный `issueTrap` (T6 «поставщик ловушек»); MUST-стрелка «мастерская заказывает kit» **не** меняется |
 | [`docs/audit/llm-calls/`](../audit/llm-calls/workshop.manifest.json) | evidence LLM-вызовов | `audit`+`decompose` ✅, `inspectElement` ⚠ (агентный Inspect); `kit: null` · эпик #1033 |
-| [`docs/tasks/`](../tasks/) (primary, после v1/v2) | реестр задач (decision) | кандидат: decision-verbs ✅; `audit`/`decompose` ⚠ = вне (контур [`docs/audit/tasks/`](../audit/tasks/) + CI) · g0 V2 / #1056 |
 
 Кандидат-жилец: ~~**процедурная мастерская**~~ — живёт (см. таблицу).
-Первичная мастерская `docs/tasks` — после карточек `tw-v1-manifest` / `tw-v2-verbs`.
+Первичная мастерская `docs/tasks` — живёт (v1/v2).
 
 ## Границы применимости
 

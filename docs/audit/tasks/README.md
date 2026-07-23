@@ -5,9 +5,12 @@
 [`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md); зеркален по
 анатомии [`docs/audit/git/`](../git/) (контейнер · кеш · реестр · инструменты · агент).
 
-**Мастерская дома** ([`HOME_WORKSHOP`](../../patterns/HOME_WORKSHOP.md), ось операций):
-[`workshop.manifest.json`](./workshop.manifest.json) — осмотр `tasks:audit`,
-декомпозиция `tasks:decompose`; `inspectElement` — ⚠ пока нет; `kit: null`.
+**Мастерская** ([`HOME_WORKSHOP`](../../patterns/HOME_WORKSHOP.md), ось операций):
+[`workshop.manifest.json`](./workshop.manifest.json) — **`role: derivative`**,
+`dependentOn: ["docs/tasks"]`, `mirrorsFrom: docs/tasks/registry.json`
+(истина — первичная [`docs/tasks/workshop.manifest.json`](../../tasks/workshop.manifest.json)).
+Осмотр `tasks:audit`, декомпозиция `tasks:decompose`; `inspectElement` — ⚠ пока нет;
+`kit: null`. Зуб иерархии: `yarn check:workshop-dependencies`.
 
 ## Соответствие паттерну GROUP_CONTAINERIZATION
 
