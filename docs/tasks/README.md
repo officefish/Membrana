@@ -18,6 +18,15 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `issue-979-selfclose` | Аномалия: задача спринта закрылась сама | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1004](https://github.com/officefish/Membrana/issues/1004) |
+| `precedents-meta-backfill` | Три прецедента не проходят схему контейнера | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1003](https://github.com/officefish/Membrana/issues/1003) |
+| `gitleaks-block-on-leak` | gitleaks предупреждает, но не блокирует коммит | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1002](https://github.com/officefish/Membrana/issues/1002) |
+| `closure-acceptance-gate` | Приёмка фиксируется лишь в 10 из 32 закрытий | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1001](https://github.com/officefish/Membrana/issues/1001) |
+| `linear-movement-layer` | Linear не работает как слой движения (111 Done / 9 started) | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1000](https://github.com/officefish/Membrana/issues/1000) |
+| `cascade-honest-manual` | Каскад не выражает честную ручную чеканку | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#999](https://github.com/officefish/Membrana/issues/999) |
+| `dreams-digest-tri-state` | Дайджест снов не различает «не запускалось»/«пусто» | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#998](https://github.com/officefish/Membrana/issues/998) |
+| `dreams-deploy-office` | Сны: смерджены, но не выкачены на office | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#997](https://github.com/officefish/Membrana/issues/997) |
+| `frame-rails-2307` | Эпик: базовые процедуры на фрейм-рельсы (утро/спринт/заседание) | L | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | — |
 | `frames-alive-rodchenko` | Оживление фреймов — Верстальщик: рендер цепочки | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#981](https://github.com/officefish/Membrana/issues/981) |
 | `frames-alive-dynin` | Оживление фреймов — Дынин: математика версии+резолв | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#980](https://github.com/officefish/Membrana/issues/980) |
 | `frames-alive-ozhegov` | Оживление фреймов — Ожегов: контракт+код+начинка | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#979](https://github.com/officefish/Membrana/issues/979) |
