@@ -17,6 +17,7 @@ import { DreamsModule } from './modules/dreams/dreams.module';
 import { PanelAuthModule } from './modules/panel-auth/panel-auth.module';
 import { PanelUsersModule } from './modules/panel-users/panel-users.module';
 import { TelegramModule } from './modules/telegram/telegram.module';
+import { LlmChannelsModule } from './modules/llm-channels/llm-channels.module';
 import { HealthController } from './health.controller';
 import type { AppConfig } from './config/env.schema';
 import { APP_CONFIG } from './config/config.tokens';
@@ -63,6 +64,7 @@ const testImports =
     TelegramModule,
     PanelAuthModule,
     PanelUsersModule,
+    LlmChannelsModule,
   ],
   controllers: [HealthController],
 })
