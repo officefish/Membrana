@@ -8,7 +8,7 @@
 | **Создана** | 2026-07-23 |
 | **Архивирована** | 2026-07-23 |
 | **GitHub Issue** | #993 |
-| **Linear** | — |
+| **Linear** | [DRU-369](https://linear.app/techies68/issue/DRU-369/cold-start-mastera-kontejnerizacii-tri-patterna-meta-uroven-kontejner) (Done) |
 | **Промпт** | [`docs/prompts/CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md`](../../docs/prompts/CONTAINERIZATION_COLDSTART_SYNC_PROMPT.md) |
 
 ## Заметки при закрытии
