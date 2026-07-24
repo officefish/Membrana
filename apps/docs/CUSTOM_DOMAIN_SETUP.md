@@ -54,4 +54,4 @@ Harness (tooling / bestiary / llm-calls / git) — **отдельный** Mintli
 ## После подключения
 
 - Обновить `apps/docs/README.md` и `docs/DOCUMENTATION_WORKFLOW.md` ссылкой на публичный URL.
-- Атлас туллинга: `https://harness.mmbrn.tech/tooling/containers` (после owner DNS / W3–W4).
+- Атлас туллинга: `https://harness.mmbrn.tech/tooling/containers` (harness live; panel W3).

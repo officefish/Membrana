@@ -12,6 +12,6 @@
 
 ## Also open
 
-**dual-mintlify-docs-2026-07-24** · epic [#1121](https://github.com/officefish/Membrana/issues/1121) · OPEN [`docs/day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md`](./day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md) · промпт [`DUAL_MINTLIFY_DOCS_PROMPT.md`](./prompts/DUAL_MINTLIFY_DOCS_PROMPT.md) · harness URL **`harness.mmbrn.tech`** (owner may rename) · W0–W2 done (#1122–#1124 · PRs [#1129](https://github.com/officefish/Membrana/pull/1129), [#1132](https://github.com/officefish/Membrana/pull/1132)) → next `dmd-w3-surface` (#1125)
+**dual-mintlify-docs-2026-07-24** · epic [#1121](https://github.com/officefish/Membrana/issues/1121) · OPEN [`docs/day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md`](./day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md) · промпт [`DUAL_MINTLIFY_DOCS_PROMPT.md`](./prompts/DUAL_MINTLIFY_DOCS_PROMPT.md) · harness **live** `https://harness.mmbrn.tech` · W0–W2 done · **W3** `dmd-w3-surface` (#1125) in progress on `feat/dual-mintlify-w3` → next W4 closure (#1126)
 
 _(ранее: `atlas-report-plane` закрыт — [CLOSURE](./day-sprint/atlas-report-plane-2026-07-24/CLOSURE.md) · PR [#1107](https://github.com/officefish/Membrana/pull/1107))_
