@@ -10,7 +10,8 @@
 | Agent truth | `docs/catalog/client/prompts/modules/device-board.md` | ручной sync |
 | Спецификация эпика | `docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md` | git |
 | PRD (sync) | `prd/device-board-mvp-docs.md` | ChatPRD MCP |
-| Публикация | `apps/docs` | Mintlify |
+| Публикация (product) | `apps/docs` → `docs.mmbrn.tech` | Mintlify |
+| Публикация (harness) | `apps/docs-harness` → `harness.mmbrn.tech` | Mintlify (2-й project) |
 | Корп. glossary | Atlan tenant | Atlan MCP |
 | Интерактивные схемы | Cursor Canvas | Docs Canvas Skill |
 
@@ -28,12 +29,17 @@
 
 ## Локальный preview
 
+Два независимых Mintlify-workspace (спринт `dual-mintlify-docs`):
+
 ```bash
 yarn install
-yarn docs:dev
+yarn docs:dev              # product Device Board → http://localhost:3333
+yarn docs-harness:dev      # harness tooling/… → http://localhost:3334
+yarn docs:verify:all       # оба docs.json (CI)
 ```
 
-http://localhost:3333
+Custom domains (owner): [`apps/docs/CUSTOM_DOMAIN_SETUP.md`](../apps/docs/CUSTOM_DOMAIN_SETUP.md),
+[`apps/docs-harness/CUSTOM_DOMAIN_SETUP.md`](../apps/docs-harness/CUSTOM_DOMAIN_SETUP.md).
 
 ## MCP Tier 4
 
@@ -72,13 +78,15 @@ yarn mcp:phase-d:install        # записать в ~/.cursor/mcp.json
 - Registry id: `db-doc-v04-mvp`
 - Prompt: [`DEVICE_BOARD_DOC_V04_PROMPT.md`](./prompts/DEVICE_BOARD_DOC_V04_PROMPT.md)
 
-## CI (план Phase 2)
+## CI
 
 ```bash
-yarn workspace @membrana/docs lint   # broken-links
+yarn docs:verify:all                 # product + harness navigation/MDX
+yarn workspace @membrana/docs lint   # product broken-links
+yarn tooling:atlas --check           # harness containers.mdx свеж
 ```
 
-Добавить в turbo pipeline после стабилизации контента.
+Шаг `yarn docs:verify:all` — в `.github/workflows/ci.yml` (dual-mintlify W2).
 
 ## RAG index (dual-circuit)
 

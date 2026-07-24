@@ -39,9 +39,12 @@ Harness preview: `yarn docs-harness:dev` → http://localhost:3334
 ```bash
 yarn workspace @membrana/docs build   # CI-safe verify (без Mintlify CLI)
 yarn workspace @membrana/docs lint      # + проверка внутренних ссылок (--links)
+yarn docs:verify:all                  # оба корня: apps/docs + apps/docs-harness (CI)
 ```
 
 Полный Mintlify preview — только Node 20–24 (`yarn docs:dev`). UI-примеры в MDX должны соответствовать [`DESIGN.md`](../../docs/DESIGN.md); полный visual parity — Phase 1+ эпика `db-doc-v04-mvp`.
+
+Custom domain (owner): [`CUSTOM_DOMAIN_SETUP.md`](./CUSTOM_DOMAIN_SETUP.md) → `docs.mmbrn.tech`.
 
 ## Workflow с MCP
 
