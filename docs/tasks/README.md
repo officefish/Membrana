@@ -10,6 +10,7 @@
 | `yarn task:list` | Список в терминале |
 | `yarn task:inspect <id>` | Паспорт карточки (`inspectElement`, без сети) — [`INSPECT_ELEMENT.md`](./INSPECT_ELEMENT.md) |
 | `yarn task:validate [id]` | Валидность карточки/реестра (`validateTask`/`validateRegistry`) — [`VALIDITY.md`](./VALIDITY.md) |
+| `yarn task:invariants [id]` | Сцепка Linear/GitHub/closedAt (`checkCardIntegrity`) — [`SYNC_INVARIANTS.md`](./SYNC_INVARIANTS.md) |
 | `yarn task:sync-readme` | Пересобрать этот файл |
 | `yarn task:archive <id>` | Закрыть задачу в реестре |
 | `yarn task:close-github` | Закрыть Issues по очереди из архива (вечером) |

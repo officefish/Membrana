@@ -61,6 +61,7 @@ yarn task:validate [cardId] [--json] [--offline]
 
 - без `cardId` — весь реестр;
 - offline (default): prompt/insight/README с диска; issue/linear → `unknown`;
-- `--online` пока = offline (сетевой слой — фаза v6).
+- `--online` пока = offline для issue/linear в этом CLI; полный сетевой слепок
+  сцепки — [`yarn task:invariants --full`](./SYNC_INVARIANTS.md) (фаза v6).
 
 Оболочка: [`scripts/task-validate.mjs`](../../scripts/task-validate.mjs).

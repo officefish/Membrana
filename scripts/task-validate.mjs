@@ -53,7 +53,7 @@ function printUsage() {
   Без cardId — validateRegistry; с cardId — validateTask.
 
   Слепок links: offline (default) — fs для prompt/insight/README;
-  issue/linear → unknown. --online пока = offline (сеть — follow-up v6).
+  issue/linear → unknown. Сетевая сцепка — yarn task:invariants --full (v6).
 
   Exit: 0 при успешном прогоне (даже с blocker); 2 — ошибка CLI.
 `);
@@ -82,10 +82,10 @@ export function runTaskValidate(argv, deps = {}) {
     return 0;
   }
 
-  // --online зарезервирован; пока сети нет — честно offline (unknown для GH/Linear).
+  // --online: валидность остаётся offline по issue/linear; сцепка — task:invariants.
   if (!args.offline) {
     console.error(
-      'task:validate: --online пока собирает тот же offline-слепок (issue/linear=unknown); полный сетевой слой — v6 invariants.',
+      'task:validate: --online пока = offline (issue/linear=unknown); сцепка Linear/GitHub — yarn task:invariants --full.',
     );
   }
 
