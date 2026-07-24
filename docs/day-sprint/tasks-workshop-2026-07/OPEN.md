@@ -27,6 +27,6 @@
 
 ## Первый шаг
 
-✅ **g0…v6 закрыты** (v6: PR #1135 / archive #1137).
-В работе: **`tw-v7-readme-tooth`** (#1063 / DRU-411) — `task:sync-readme --check` +
-pre-commit зуб; #1014 переформулировать (не `Closes`). Дальше: v8 → v9.
+✅ **g0…v7 закрыты** (v7: PR #1139 / archive #1148; #1014 closed).
+В работе: **`tw-v8-oneshot-rank`** (#1064 / DRU-412) — `rankOneShotCandidates`, не вердикт.
+Дальше: v9 (`one-shot-trail.jsonl`).

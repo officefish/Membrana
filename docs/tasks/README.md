@@ -13,6 +13,7 @@
 | `yarn task:invariants [id]` | Сцепка Linear/GitHub/closedAt (`checkCardIntegrity`) — [`SYNC_INVARIANTS.md`](./SYNC_INVARIANTS.md) |
 | `yarn task:sync-readme` | Пересобрать этот файл (карантин; нужен `TASKS_README_SYNC_FORCE=1`) |
 | `yarn task:sync-readme --check` | Зуб README↔registry (active-набор) — падает, не чинит |
+| `yarn one-shot:rank` | Ранжирование кандидатов one-shot (не вердикт) — [`ONE_SHOT_RANK.md`](./ONE_SHOT_RANK.md) |
 | `yarn task:archive <id>` | Закрыть задачу в реестре |
 | `yarn task:close-github` | Закрыть Issues по очереди из архива (вечером) |
 
@@ -237,9 +238,6 @@
 | `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `detection-alarm-loop-refactor` | Detection-Alarm рефакторинг переключения лупов: fusion→lastDetection+front+loop-transition-policy (тема1), effectiveLoop-sync/захват-гейтинг (ADR Р1/Р2), pure-геттеры, Alpha L36 | L | [`docs/actions/device-board/LOOP_SWITCH_CONTROL_ADR.md`](../prompts/docs/actions/device-board/LOOP_SWITCH_CONTROL_ADR.md) | — |
 | `batch-collection-run-contour` | batch-collection-run-contour: прогон детекторов по коллекции — новая execution-модель live↔batch (пост-FREE, следующий цикл) | L | [`BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md`](../prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md) | [#494](https://github.com/officefish/Membrana/issues/494) |
-| `dmd-w4-closure` | W4: closure dual-mintlify-docs | S | [`DMD_W4_CLOSURE_PROMPT.md`](../prompts/DMD_W4_CLOSURE_PROMPT.md) | [#1126](https://github.com/officefish/Membrana/issues/1126) |
-| `dmd-w3-surface` | W3: panel surface + CUSTOM_DOMAIN notes | M | [`DMD_W3_SURFACE_PROMPT.md`](../prompts/DMD_W3_SURFACE_PROMPT.md) | [#1125](https://github.com/officefish/Membrana/issues/1125) |
-| `dual-mintlify-docs` | Epic: dual Mintlify docs — product + harness sites | L | [`DUAL_MINTLIFY_DOCS_PROMPT.md`](../prompts/DUAL_MINTLIFY_DOCS_PROMPT.md) | [#1121](https://github.com/officefish/Membrana/issues/1121) |
 | `consilium-save-path-test` | test(consilium): путь сохранения протокола исполняется тестом с мокнутой цепочкой | M | [`CONSILIUM_SAVE_PATH_TEST_PROMPT.md`](../prompts/CONSILIUM_SAVE_PATH_TEST_PROMPT.md) | [#1051](https://github.com/officefish/Membrana/issues/1051) |
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | M | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | [#1088](https://github.com/officefish/Membrana/issues/1088) |
 | `membrana-leveling-scripts` | membrana-leveling §8.3: скрипты main-fill / workspace-level по фрейм-раскладке | L | [`MEMBRANA_LEVELING_SCRIPTS_PROMPT.md`](../prompts/MEMBRANA_LEVELING_SCRIPTS_PROMPT.md) | — |
