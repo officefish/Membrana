@@ -320,16 +320,16 @@
       "githubIssue": 1062,
       "linearId": "DRU-410",
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-23",
-      "archivedAt": null,
+      "archivedAt": "2026-07-24",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1135 merge 6bc41e77; GitHub #1062 CLOSED via Closes; checkCardIntegrity + yarn task:invariants/--full + repair",
       "githubIssueClosedAt": null,
       "parentEpic": "tasks-workshop"
     },
