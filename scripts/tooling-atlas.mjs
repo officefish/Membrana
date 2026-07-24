@@ -31,7 +31,8 @@ const has = (n) => argv.includes(`--${n}`);
 const val = (n) => { const i = argv.indexOf(`--${n}`); const v = i >= 0 ? argv[i + 1] : null; return v && !v.startsWith('--') ? v : null; };
 
 const REGISTRY = join(repoRoot, 'docs', 'tooling-atlas', 'registry', 'ATLAS.md');
-const MINTLIFY = join(repoRoot, 'apps', 'docs', 'tooling', 'containers.mdx');
+// W1 dual-mintlify: mintlify page lives in harness workspace (W2 owns remaining CI/docs notes).
+const MINTLIFY = join(repoRoot, 'apps', 'docs-harness', 'tooling', 'containers.mdx');
 
 function generate() {
   const containers = discoverContainers(repoRoot);
@@ -55,7 +56,7 @@ function runCheck() {
   const { atlas, mintlify } = generate();
   const problems = [];
   if (!existsSync(REGISTRY) || readFileSync(REGISTRY, 'utf8') !== atlas) problems.push('registry/ATLAS.md разъехался с источником');
-  if (!existsSync(MINTLIFY) || readFileSync(MINTLIFY, 'utf8') !== mintlify) problems.push('apps/docs/tooling/containers.mdx разъехался с источником');
+  if (!existsSync(MINTLIFY) || readFileSync(MINTLIFY, 'utf8') !== mintlify) problems.push('apps/docs-harness/tooling/containers.mdx разъехался с источником');
   if (problems.length) { for (const p of problems) console.error(`✗ ${p}`); console.error('tooling:atlas --check: ДРЕЙФ — пересобери `yarn tooling:atlas --render`.'); process.exit(1); }
   console.log('tooling:atlas --check: OK — производные свежи.');
 }

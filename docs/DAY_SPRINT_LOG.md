@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-07-24 — `dual-mintlify-docs` — **OPEN**
+
+- **Goal:** два Mintlify-проекта (product `docs.mmbrn.tech` + harness `harness.mmbrn.tech`); layout A; tabs-as-final STOP (#1120 abandoned)
+- **Issue:** [#1121](https://github.com/officefish/Membrana/issues/1121) · фазы #1122–#1126
+- **OPEN:** [`day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md`](./day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md)
+- **Ратификация:** владелец «ратифицирую» 2026-07-24 · subdomain locked `harness.mmbrn.tech` (rename OK)
+- **W0:** brief done · Also open (Focus `tasks-workshop` intact)
+
+---
+
 ## 2026-07-24 — `atlas-report-plane` — **CLOSED**
 
 - **Delivered:** канон report-plane + atlas home/role/plane + Mintlify/провода · W0–W4

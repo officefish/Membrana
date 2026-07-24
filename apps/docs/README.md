@@ -1,6 +1,10 @@
 # @membrana/docs
 
-Публичная документация Membrana на [Mintlify](https://mintlify.com). Отдельное приложение монорепо — **не** часть `apps/client`.
+Публичная **product**-документация Membrana на [Mintlify](https://mintlify.com) —
+только Device Board. Отдельное приложение монорепо — **не** часть `apps/client`.
+
+Harness (tooling / bestiary / llm-calls / git) живёт в
+[`@membrana/docs-harness`](../docs-harness/README.md) → `apps/docs-harness`.
 
 ## Что делает
 
@@ -28,6 +32,8 @@ yarn docs:dev
 
 Откройте http://localhost:3333
 
+Harness preview: `yarn docs-harness:dev` → http://localhost:3334
+
 ## Сборка и проверка ссылок
 
 ```bash
@@ -49,3 +55,5 @@ yarn workspace @membrana/docs lint      # + проверка внутренни�
 | [`docs/SCENARIO_RUNTIME.md`](../../docs/SCENARIO_RUNTIME.md) | Runtime phases |
 | [`docs/catalog/client/prompts/modules/device-board.md`](../../docs/catalog/client/prompts/modules/device-board.md) | Обязательно агенту перед правками кода |
 | [`prd/device-board-mvp-docs.md`](../../prd/device-board-mvp-docs.md) | PRD-скелет (sync с ChatPRD) |
+| [`apps/docs-harness/README.md`](../docs-harness/README.md) | Harness Mintlify (tooling / bestiary / …) |
+| [`docs/day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md`](../../docs/day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md) | Dual Mintlify sprint |
