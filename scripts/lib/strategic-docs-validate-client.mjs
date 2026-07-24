@@ -15,8 +15,8 @@ export function stubOfficeValidateHandler(reqBody) {
   const reasons = [];
 
   if (!reqBody?.templateSnapshot?.slots?.length) reasons.push('empty slots');
-  if (typeof reqBody?.draft?.body !== 'string' || !reqBody.draft.body.includes('---')) {
-    reasons.push('body missing stub separator');
+  if (typeof reqBody?.draft?.body !== 'string' || reqBody.draft.body.length === 0) {
+    reasons.push('empty draft body');
   }
   if (reqBody?.templateSnapshot?.meta?.forceInvalid === true) {
     reasons.push('forceInvalid');
