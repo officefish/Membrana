@@ -16,7 +16,8 @@
         "deepseek",
         "perplexity",
         "openai",
-        "ollama"
+        "ollama",
+        "xai"
       ]
     },
     "source": {

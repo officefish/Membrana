@@ -20,7 +20,7 @@ const CUSTOM_MODEL = '__custom__';
 
 /** Offline fallback if catalog endpoint unavailable (still provider × model). */
 const FALLBACK_CATALOG: ProviderCatalog = {
-  ritualEnum: ['anthropic', 'openrouter', 'deepseek', 'perplexity', 'openai'],
+  ritualEnum: ['anthropic', 'openrouter', 'deepseek', 'perplexity', 'openai', 'xai'],
   providers: [
     {
       id: 'anthropic',
@@ -68,6 +68,16 @@ const FALLBACK_CATALOG: ProviderCatalog = {
       models: [
         { id: 'gpt-4o-mini', label: 'GPT-4o mini' },
         { id: 'gpt-4o', label: 'GPT-4o' },
+      ],
+    },
+    {
+      id: 'xai',
+      title: 'xAI (Grok)',
+      defaultModel: 'grok-4.5',
+      models: [
+        { id: 'grok-4.5', label: 'Grok 4.5' },
+        { id: 'grok-4.3', label: 'Grok 4.3' },
+        { id: 'grok-4.20-0309-reasoning', label: 'Grok 4.20 reasoning' },
       ],
     },
   ],

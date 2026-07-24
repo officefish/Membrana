@@ -81,7 +81,23 @@
         { "id": "gpt-4.1-mini", "label": "GPT-4.1 mini" },
         { "id": "o4-mini", "label": "o4-mini" }
       ]
+    },
+    "xai": {
+      "id": "xai",
+      "title": "xAI (Grok)",
+      "apiKeyEnv": "X_AI_API_KEY",
+      "apiFormat": "openai-compatible",
+      "defaultBaseUrl": "https://api.x.ai",
+      "path": "/v1/chat/completions",
+      "envFiles": [".env"],
+      "defaultModel": "grok-4.5",
+      "models": [
+        { "id": "grok-4.5", "label": "Grok 4.5" },
+        { "id": "grok-4.3", "label": "Grok 4.3" },
+        { "id": "grok-4.20-0309-reasoning", "label": "Grok 4.20 reasoning" },
+        { "id": "grok-4.20-0309-non-reasoning", "label": "Grok 4.20" }
+      ]
     }
   },
-  "ritualEnum": ["anthropic", "openrouter", "deepseek", "perplexity", "openai"]
+  "ritualEnum": ["anthropic", "openrouter", "deepseek", "perplexity", "openai", "xai"]
 }
