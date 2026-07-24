@@ -1,18 +1,24 @@
 #!/usr/bin/env sh
-# Membrana pre-commit gate: gitleaks по staged-изменениям (лист №5 заседания
-# security-posture, 19.07.2026 — вердикт M0: секрет-гигиена = машинный гейт).
+# Membrana pre-commit gate.
 #
-# Мягкий по дистрибуции: если бинарь gitleaks не установлен — предупреждает и
-# пропускает (гейт с зубами живёт в CI: .github/workflows/gitleaks.yml).
-# Локальная установка (Windows): winget install gitleaks · (mac): brew install gitleaks
+# 1) README↔registry tooth (M4D / #1063 / EPIC V7): только если в индексе
+#    docs/tasks/registry.json или docs/tasks/README.md. Падает, не чинит.
+# 2) gitleaks по staged (лист №5 security-posture / #1002).
 #
-# Issue #1002 / DRU-366: non-zero gitleaks aborts.
 # Пропустить (аварийно): SKIP_PRECOMMIT=1 git commit ...
 if [ "$SKIP_PRECOMMIT" = "1" ]; then
   echo "pre-commit: пропущено (SKIP_PRECOMMIT=1)"
   exit 0
 fi
 
+# --- tasks README tooth (M4D) ---
+STAGED=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null || true)
+if echo "$STAGED" | grep -qE '^docs/tasks/(registry\.json|README\.md)$'; then
+  echo "pre-commit [tasks-readme]: yarn task:sync-readme --check"
+  yarn task:sync-readme --check || exit $?
+fi
+
+# --- gitleaks (мягкий локально; зуб в CI) ---
 if ! command -v gitleaks >/dev/null 2>&1; then
   echo "pre-commit [№5]: gitleaks не установлен — локальный секрет-скан пропущен (CI проверит)."
   exit 0
