@@ -1,14 +1,19 @@
 import { describe, expect, it } from 'vitest';
 
-import { ATLAS_DOCS_FALLBACK_URL, ATLAS_DOCS_URL } from './ToolingAtlasBoard';
+import {
+  ATLAS_DOCS_FALLBACK_URL,
+  ATLAS_DOCS_URL,
+  ATLAS_GIT_URL,
+} from './ToolingAtlasBoard';
 
 describe('ToolingAtlasBoard links', () => {
-  it('канон — docs.mmbrn.tech/tooling/containers', () => {
-    expect(ATLAS_DOCS_URL).toBe('https://docs.mmbrn.tech/tooling/containers');
+  it('рабочая ссылка — ATLAS.md в main', () => {
+    expect(ATLAS_GIT_URL).toContain('github.com/officefish/Membrana');
+    expect(ATLAS_GIT_URL).toContain('docs/tooling-atlas/registry/ATLAS.md');
   });
 
-  it('fallback — membrana.mintlify.app', () => {
+  it('целевые Mintlify URL зарезервированы (ещё не live)', () => {
+    expect(ATLAS_DOCS_URL).toBe('https://docs.mmbrn.tech/tooling/containers');
     expect(ATLAS_DOCS_FALLBACK_URL).toContain('mintlify.app');
-    expect(ATLAS_DOCS_FALLBACK_URL).toContain('tooling/containers');
   });
 });
