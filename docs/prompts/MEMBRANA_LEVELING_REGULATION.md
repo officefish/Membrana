@@ -32,15 +32,27 @@ T9/#700) → **`workspace-level`** (`main` → деревья + гигиена).
 
 ```
 disposition(path, ctx) → live | ready | unfinished | trash
-порядок ветвлений (first-match): trash → live → ready → unfinished → fallback trash
+порядок ветвлений (first-match):
+  1. isTempOrScratch(path)                 → trash  (по расположению)
+  2. dirty ∧ inActiveSession               → live
+  3. ready-предикат (см. таблицу)          → ready
+  4. registered ∧ ¬(1–3)                   → unfinished
+  5. dirty ∧ ¬registered ∧ ¬(1–2)          → trash  (fallback: несохранённый хлам, не в работе)
 ```
+
+> **Исправление порядка (post-ратификация, багфикс, честит замысел R2).** Первоначальная запись
+> вердикта M1 ставила `trash = … ∨ (dirty ∧ ¬registered)` **первым** ветвлением — это ловило
+> активную незарегистрированную правку как мусор, и гейт снёс бы живую работу. `live` обязан идти
+> ДО клаузы `dirty ∧ ¬registered`; последняя — только **fallback** (шаг 5). Замысел R2 (live
+> пропускается) сохранён, поправлен лишь порядок выражения.
 
 | Состояние | Предикат | Действие гейта |
 |-----------|----------|----------------|
-| `trash` | `isTempOrScratch(path) ∨ (dirty ∧ ¬registered)` | убрать/назвать поимённо; **останавливает** гейт (T11, R2) |
-| `live` | `dirty ∧ inActiveSession` (session-lock, **не** голый mtime) | пропустить, не везти (R2) |
-| `ready` | `registered ∧ CI_green ∧ ¬conflicts(main) ∧ PR_approved ∧ leadStamp ∧ ¬inActiveSession` (T8) | в очередь `main-fill` |
-| `unfinished` | `registered ∧ ¬ready ∧ ¬live` (после отсечения trash) | регистрировать (T7); включает «ждёт штампа» |
+| `trash` (по расположению) | `isTempOrScratch(path)` — шаг 1 | убрать/назвать поимённо; **останавливает** гейт (T11, R2) |
+| `live` | `dirty ∧ inActiveSession` (session-lock, **не** голый mtime) — шаг 2 | пропустить, не везти (R2) |
+| `ready` | `registered ∧ CI_green ∧ ¬conflicts(main) ∧ PR_approved ∧ leadStamp ∧ ¬inActiveSession` (T8) — шаг 3 | в очередь `main-fill` |
+| `unfinished` | `registered ∧ ¬(шаги 1–3)` — шаг 4 | регистрировать (T7); включает «ждёт штампа» |
+| `trash` (fallback) | `dirty ∧ ¬registered ∧ ¬(шаги 1–2)` — шаг 5 | несохранённый хлам не в активной работе; убрать/назвать |
 
 **Граница детерминизм ↔ штамп (T8):** детерминированы факты (`dirty`, `registered`, `CI`,
 `conflicts`, `PR_approved`, `path`-паттерн, **наличие** `leadStamp` в ctx). Не детерминированы
