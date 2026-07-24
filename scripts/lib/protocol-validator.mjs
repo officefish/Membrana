@@ -12,7 +12,9 @@ export const MEMBRANA_ROLE_LABELS = ['Teamlead', 'Структурщик', 'Ма
 export function countRoleReplies(md, roleLabels = MEMBRANA_ROLE_LABELS) {
   const counts = Object.fromEntries(roleLabels.map((r) => [r, 0]));
   for (const line of md.split(/\r?\n/)) {
-    const m = line.match(/^\s*\[([^\]:]+?)(?:\s+—[^\]]*)?\]\s*:/u);
+    // `(?:\*\*)?` — жирная метка `**[Роль]:**` / `**[Роль]**:` легальна (mirrors REPLY_START_RE, #1046):
+    // без поблажки countRoleReplies возвращал 0 по всем ролям на жирных протоколах → ложный «0» в футере.
+    const m = line.match(/^\s*(?:\*\*)?\[([^\]:]+?)(?:\s+—[^\]]*)?\](?:\*\*)?\s*:/u);
     if (!m) continue;
     const role = m[1].trim();
     if (role in counts) counts[role] += 1;
@@ -53,7 +55,9 @@ export function unknownBracketLabels(md, roleLabels = MEMBRANA_ROLE_LABELS) {
   const known = new Set(roleLabels);
   const out = [];
   for (const line of md.split(/\r?\n/)) {
-    const m = line.match(/^\s*\[([^\]]+?)\]\s*:/u);
+    // `(?:\*\*)?` — жирная метка тоже легальна (mirrors REPLY_START_RE, #1046): иначе `**[Имя · Роль]:**`
+    // не матчится вовсе — гейт молчит вместо внятной подсказки о неизвестной форме метки.
+    const m = line.match(/^\s*(?:\*\*)?\[([^\]]+?)\](?:\*\*)?\s*:/u);
     if (!m) continue;
     const label = m[1].trim();
     // `[Роль — Имя]` — известная форма: сверяем ЛЕВУЮ часть до тире.
