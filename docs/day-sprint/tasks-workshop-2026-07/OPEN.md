@@ -27,7 +27,6 @@
 
 ## Первый шаг
 
-✅ **g0 закрыт** (владелец 23.07: **V2 wins**).
-В работе / ship: `tw-v1-manifest` (#1057) + `tw-v2-verbs` (#1058) — манифест primary,
-иерархия derivative, `workshop-semantics.json`, `check:workshop-dependencies`, состав
-decision-verbs и граница в `docs/tasks/README.md`. Дальше: v3–v7.
+✅ **g0…v5 закрыты** (g0: V2 wins 23.07; v5: PR #1127 / archive #1130).
+В работе: **`tw-v6-invariants`** (#1062 / DRU-410) — `checkCardIntegrity`, fast/full,
+repair без авто. Дальше: v7 → v8 → v9.
