@@ -16,6 +16,7 @@ export const providerIdSchema = z.enum([
   'perplexity',
   'openai',
   'ollama',
+  'xai',
 ]);
 
 export const chainStepSchema = z.object({

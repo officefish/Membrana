@@ -54,6 +54,7 @@ test('defaults + catalog: clean for ritual enum', () => {
     'deepseek',
     'perplexity',
     'openai',
+    'xai',
   ]);
   for (const id of catalog.ritualEnum) {
     const p = catalog.providers[id];
