@@ -74,7 +74,7 @@ Tabs на одном сайте **не** являются финальным р�
 | Phase | Registry id | Issue | Lead | Prompt | DoD | Status |
 |-------|-------------|------:|------|--------|-----|--------|
 | **W0** | `dmd-w0-brief` | [#1122](https://github.com/officefish/Membrana/issues/1122) | vesnin | [`DMD_W0_BRIEF_PROMPT.md`](../../prompts/DMD_W0_BRIEF_PROMPT.md) | OPEN + Issues + ACTIVE Also open | **done** |
-| **W1** | `dmd-w1-split` | [#1123](https://github.com/officefish/Membrana/issues/1123) | ozhegov | [`DMD_W1_SPLIT_PROMPT.md`](../../prompts/DMD_W1_SPLIT_PROMPT.md) | Split trees + 2× docs.json (valid object nav) | **open** |
+| **W1** | `dmd-w1-split` | [#1123](https://github.com/officefish/Membrana/issues/1123) | ozhegov | [`DMD_W1_SPLIT_PROMPT.md`](../../prompts/DMD_W1_SPLIT_PROMPT.md) | Split trees + 2× docs.json (valid object nav) | **done** (PR [#1129](https://github.com/officefish/Membrana/pull/1129)) |
 | **W2** | `dmd-w2-wires` | [#1124](https://github.com/officefish/Membrana/issues/1124) | ozhegov | [`DMD_W2_WIRES_PROMPT.md`](../../prompts/DMD_W2_WIRES_PROMPT.md) | atlas `--render` → harness path; CI ×2 | **open** |
 | **W3** | `dmd-w3-surface` | [#1125](https://github.com/officefish/Membrana/issues/1125) | ozhegov | [`DMD_W3_SURFACE_PROMPT.md`](../../prompts/DMD_W3_SURFACE_PROMPT.md) | Panel → harness URL; CUSTOM_DOMAIN notes | **open** |
 | **W4** | `dmd-w4-closure` | [#1126](https://github.com/officefish/Membrana/issues/1126) | vesnin | [`DMD_W4_CLOSURE_PROMPT.md`](../../prompts/DMD_W4_CLOSURE_PROMPT.md) | CLOSURE + owner DNS checklist | **open** |
