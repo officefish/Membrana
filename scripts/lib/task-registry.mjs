@@ -370,12 +370,39 @@ ${archived.map(archivedRow).join('\n')}`
 }
 
 /**
+ * КАРАНТИН синка README (слово владельца 23.07).
+ *
+ * `renderTasksReadme` печатает README целиком из реестра, поэтому любая секция, живущая в
+ * файле руками, стирается молча. 23.07 это чуть не снесло раздел `HOME_WORKSHOP`, добавленный
+ * соседней сессией часом раньше (PR #1087): состав мастерской V2, границу «в мастерской /
+ * вне», глаголы `validate:workshop` и `check:workshop-dependencies`.
+ *
+ * Правильный дом для такого описания — **атлас контейнеров** (`docs/tooling-atlas/`,
+ * `yarn tooling:atlas --inspect docs/tasks/registry.json`): он агрегирует README и манифест
+ * каждого контейнера и существует ровно против эхо-дрейфа. Пока содержимое не переехало,
+ * генератор писать не должен — иначе он тихо выигрывает у человека.
+ *
+ * Снятие карантина — отдельным решением, не флагом по привычке. Обход на один вызов:
+ * `TASKS_README_SYNC_FORCE=1` в окружении либо `{ force: true }` в коде.
+ */
+export const README_SYNC_QUARANTINE_REASON =
+  'синк README в карантине (23.07): генератор стирает ручные секции; дом такого описания — ' +
+  'атлас контейнеров docs/tooling-atlas. Обход: TASKS_README_SYNC_FORCE=1';
+
+/**
  * @param {{ version: number, tasks: TaskEntry[] }} registry
  * @param {string} [cwd]
+ * @param {{ force?: boolean, env?: NodeJS.ProcessEnv }} [opts]
+ * @returns {{ path: string, written: boolean, reason: string|null }}
  */
-export function syncTasksReadme(registry, cwd = process.cwd()) {
+export function syncTasksReadme(registry, cwd = process.cwd(), opts = {}) {
   const path = resolve(cwd, TASKS_README_REL);
+  const env = opts.env ?? process.env;
+  const forced = opts.force === true || env.TASKS_README_SYNC_FORCE === '1';
+  if (!forced) {
+    return { path, written: false, reason: README_SYNC_QUARANTINE_REASON };
+  }
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, renderTasksReadme(registry, cwd), 'utf8');
-  return path;
+  return { path, written: true, reason: null };
 }

@@ -1,0 +1,19 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская задач (primary)",
+  "worksOn": "docs/tasks/registry.json",
+  "kit": null,
+  "role": "primary",
+  "rulesVersion": "1",
+  "verbs": {
+    "audit": null,
+    "decompose": null,
+    "inspectElement": "planned: yarn task:inspect (v4)",
+    "list": "yarn task:list",
+    "board": "planned: yarn task:board (v3+)",
+    "bookkeeping": "planned: yarn task:bookkeeping",
+    "reviewing": "planned: yarn task:reviewing",
+    "stackLike": [],
+    "domain": []
+  }
+}

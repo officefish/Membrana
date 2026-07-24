@@ -121,6 +121,31 @@ test('лишнее поле — не valid («манифест — контра�
   assert.ok(r.problems.some((x) => x.includes('лишнее поле extra')));
 });
 
+test('иерархия V1: role/dependentOn/mirrorsFrom/rulesVersion — допустимы', () => {
+  const m = fullManifest({
+    role: 'derivative',
+    dependentOn: ['docs/tasks'],
+    mirrorsFrom: 'docs/tasks/registry.json',
+    rulesVersion: '1',
+  });
+  const p = writeManifest('docs/audit/hierarchy', m);
+  const r = validateWorkshop(p);
+  assert.equal(r.valid, true, r.problems.join('; '));
+});
+
+test('decision-verbs V2: list/board/bookkeeping/reviewing — допустимы', () => {
+  const m = fullManifest();
+  m.verbs.audit = null;
+  m.verbs.decompose = null;
+  m.verbs.list = 'yarn task:list';
+  m.verbs.board = 'planned: board';
+  m.verbs.bookkeeping = 'planned: bookkeeping';
+  m.verbs.reviewing = 'planned: reviewing';
+  const p = writeManifest('docs/tasks/decision-verbs', m);
+  const r = validateWorkshop(p);
+  assert.equal(r.valid, true, r.problems.join('; '));
+});
+
 test('доменный инструмент без worksOn — не valid', () => {
   const m = fullManifest();
   m.verbs.domain = [{ name: 'salvage' }];

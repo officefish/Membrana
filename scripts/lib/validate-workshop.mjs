@@ -16,12 +16,34 @@ import { basename, dirname, join } from 'node:path';
 
 /** Обязательные ключи манифеста мастерской (вердикт Ф1). */
 const REQUIRED_KEYS = ['pattern', 'name', 'worksOn', 'kit', 'verbs'];
+/**
+ * Опциональные поля иерархии / семантики (tasks-workshop V1).
+ * Носитель правил: docs/audit/workshop-semantics.json.
+ */
+const OPTIONAL_KEYS = ['role', 'dependentOn', 'mirrorsFrom', 'rulesVersion'];
+const ALLOWED_KEYS = [...REQUIRED_KEYS, ...OPTIONAL_KEYS];
 /** MUST-ключи инвентаря (вердикт Ф2 + g0): отсутствие ключа — дефект; null — ⚠. */
 const REQUIRED_VERB_KEYS = ['audit', 'decompose'];
-/** Все известные ключи словаря (прочие — «свалка»). `inspectElement` — SHOULD. */
-const KNOWN_VERB_KEYS = ['audit', 'decompose', 'inspectElement', 'stackLike', 'domain'];
+/**
+ * Известные ключи словаря. Decision-verbs (V2 wins): list/board/bookkeeping/reviewing
+ * — ядро мастерской docs/tasks; audit/decompose остаются ключами (часто null).
+ */
+const KNOWN_VERB_KEYS = [
+  'audit',
+  'decompose',
+  'inspectElement',
+  'list',
+  'board',
+  'bookkeeping',
+  'reviewing',
+  'stackLike',
+  'domain',
+];
+/** Decision-глаголы сверх inspectElement — строка (в т.ч. planned:) или отсутствие ключа. */
+const DECISION_VERB_KEYS = ['list', 'board', 'bookkeeping', 'reviewing'];
 /** Допустимые ключи доменной записи (прочие — «свалка»). */
 const KNOWN_DOMAIN_KEYS = ['name', 'worksOn', 'tool'];
+const KNOWN_ROLES = ['primary', 'derivative'];
 
 const isNonEmptyString = (v) => typeof v === 'string' && v.trim() !== '';
 
@@ -38,7 +60,7 @@ export function workshopSchemaProblems(m) {
   }
   const keys = Object.keys(m);
   for (const k of REQUIRED_KEYS) if (!keys.includes(k)) problems.push(`нет поля ${k}`);
-  for (const k of keys) if (!REQUIRED_KEYS.includes(k)) problems.push(`лишнее поле ${k}`);
+  for (const k of keys) if (!ALLOWED_KEYS.includes(k)) problems.push(`лишнее поле ${k}`);
 
   if (keys.includes('pattern') && !isNonEmptyString(m.pattern)) {
     problems.push('pattern — не непустая строка');
@@ -54,6 +76,24 @@ export function workshopSchemaProblems(m) {
   // kit — null (интерактивная мастерская) или строка kits/<id> (Ф5: null объявлен явно).
   if (keys.includes('kit') && m.kit !== null && !isNonEmptyString(m.kit)) {
     problems.push('kit — не строка и не null');
+  }
+
+  // Иерархия (V1): role / dependentOn / mirrorsFrom / rulesVersion.
+  if (keys.includes('role')) {
+    if (!KNOWN_ROLES.includes(m.role)) {
+      problems.push(`role — ожидается ${KNOWN_ROLES.join('|')}`);
+    }
+  }
+  if (keys.includes('dependentOn')) {
+    if (!Array.isArray(m.dependentOn) || m.dependentOn.length === 0 || !m.dependentOn.every(isNonEmptyString)) {
+      problems.push('dependentOn — непустой массив непустых строк');
+    }
+  }
+  if (keys.includes('mirrorsFrom') && !isNonEmptyString(m.mirrorsFrom)) {
+    problems.push('mirrorsFrom — не непустая строка');
+  }
+  if (keys.includes('rulesVersion') && !isNonEmptyString(m.rulesVersion) && typeof m.rulesVersion !== 'number') {
+    problems.push('rulesVersion — непустая строка или число');
   }
 
   if (keys.includes('verbs')) {
@@ -83,6 +123,13 @@ export function workshopSchemaProblems(m) {
         warnings.push('inspectElement отсутствует (SHOULD) — ⚠ мастерская не спускается в элемент');
       } else if (!isNonEmptyString(v.inspectElement)) {
         problems.push('verbs.inspectElement — не строка и не null');
+      }
+      // Decision-verbs (V2): если ключ есть — непустая строка (адрес/planned), не null.
+      for (const k of DECISION_VERB_KEYS) {
+        if (!vkeys.includes(k)) continue;
+        if (!isNonEmptyString(v[k])) {
+          problems.push(`verbs.${k} — непустая строка (состав мастерской / planned:)`);
+        }
       }
       // stackLike — опц. массив строк.
       if (vkeys.includes('stackLike')) {

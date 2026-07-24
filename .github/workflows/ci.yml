@@ -64,7 +64,7 @@ jobs:
         run: yarn test:scripts
 
       - name: Мастерские — контракт, принадлежность, свежесть атласа (HOME_WORKSHOP)
-        run: yarn validate:workshop && yarn check:workshop-ownership && yarn tooling:atlas --check
+        run: yarn validate:workshop && yarn check:workshop-ownership && yarn check:workshop-dependencies && yarn tooling:atlas --check
 
       - name: Catalog — verify client module/plugin prompts
         run: yarn catalog:verify-client

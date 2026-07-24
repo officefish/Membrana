@@ -1,8 +1,12 @@
 {
   "pattern": "docs/patterns/HOME_WORKSHOP.md",
-  "name": "мастерская задач",
-  "worksOn": "docs/audit/tasks",
+  "name": "мастерская разборов задач (derivative)",
+  "worksOn": "docs/audit/tasks/registry/",
   "kit": null,
+  "role": "derivative",
+  "dependentOn": ["docs/tasks"],
+  "mirrorsFrom": "docs/tasks/registry.json",
+  "rulesVersion": "1",
   "verbs": {
     "audit": "yarn tasks:audit",
     "decompose": "yarn tasks:decompose",

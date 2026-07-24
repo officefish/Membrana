@@ -1,0 +1,21 @@
+{
+  "rulesVersion": "1",
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "description": "Единый носитель правил валидации workshop.manifest.json (tasks-workshop V1 / EPIC V1).",
+  "manifestFields": {
+    "required": ["pattern", "name", "worksOn", "kit", "verbs"],
+    "optional": ["role", "dependentOn", "mirrorsFrom", "rulesVersion"]
+  },
+  "roles": ["primary", "derivative"],
+  "inventoryVerbKeys": ["audit", "decompose"],
+  "shouldVerbKeys": ["inspectElement"],
+  "structuralVerbKeys": ["stackLike", "domain"],
+  "decisionVerbKeys": ["inspectElement", "list", "board", "bookkeeping", "reviewing"],
+  "dependency": {
+    "exactlyOnePrimaryPerHouse": true,
+    "derivativeRequiresDependentOn": true,
+    "mirrorsFromMismatch": "warning",
+    "rulesVersionMismatch": "warning",
+    "missingSemantics": "error"
+  }
+}

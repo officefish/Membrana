@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "run-ledger",
+      "title": "run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify)",
+      "promptPath": "docs/prompts/RUN_LEDGER_PROMPT.md",
+      "githubIssue": 1088,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-23",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "frame-rails-2307"
+    },
+    {
       "id": "tw-v9-trail",
       "title": "one-shot-trail.jsonl анти-дробление",
       "promptPath": "docs/prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md",
@@ -137,14 +157,14 @@
       "githubIssue": 1058,
       "linearId": "DRU-406",
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-23",
-      "archivedAt": null,
+      "archivedAt": "2026-07-23",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "После g0 (V2 wins 23.07): 5 decision-verbs; audit/decompose вне. Фиксировать границу в README/манифесте.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1087 merge 2fafae98; GitHub #1058 already closed; SHA branch 293549b1",
       "githubIssueClosedAt": null,
       "parentEpic": "tasks-workshop"
     },
@@ -155,14 +175,14 @@
       "githubIssue": 1057,
       "linearId": "DRU-405",
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-23",
-      "archivedAt": null,
+      "archivedAt": "2026-07-23",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1087 merge 2fafae98; GitHub #1057 already closed; SHA branch 293549b1",
       "githubIssueClosedAt": null,
       "parentEpic": "tasks-workshop"
     },
