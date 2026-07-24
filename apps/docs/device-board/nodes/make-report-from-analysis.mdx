@@ -1,17 +1,27 @@
 ---
 title: MakeReportFromAnalysis
-description: ReportRef из FftTrendAnalysisRef.
+description: ReportRef из одного детекционного анализа — спектрального или нейро.
 ---
 
 # MakeReportFromAnalysis
 
+Отчёт по **одному** детектору любой модальности. Вход обобщён (ADR-0006): принимает
+`FftTrendAnalysisRef` (спектр) ИЛИ `EnsembleAnalysisRef` (нейро) через санкционированный
+union `DetectionAnalysisRef`. Одиночная модальность не носит `MakeCombinedReport` —
+узел честен по имени.
+
 ## Pins
 
-Exec + `reporter` + `analysis` in → `report` out.
+Exec + `reporter` + `analysis` (`DetectionAnalysisRef`) in → `report` out.
 
 ## Runtime
 
-Аналог MakeReportFromTrack для trends analysis ref.
+- Спектральный вход (`FftTrendAnalysisRef`) → схема отчёта `trends-fft/v0.1`.
+- Нейро-вход (`EnsembleAnalysisRef`) → схема `neuro-detection/v1` (host-хук
+  `makeReportFromEnsembleAnalysis`, детекция резолвится исполнителем из ensemble-store).
+
+Обратная совместимость: union шире прежнего `FftTrendAnalysisRef` — сохранённые
+графы остаются валидны.
 
 ## Code
 

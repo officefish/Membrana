@@ -1,0 +1,32 @@
+---
+title: IsWindowElapsed
+description: Периодический exec-гейт по host-часам, без рекордера.
+---
+
+# IsWindowElapsed
+
+Периодический гейт окна для наблюдательных сценариев — **без рекордера**. В отличие
+от `IsRecordingWindowFull` (держит `RecorderRef` на входе), читает только host-часы:
+спектральное наблюдение больше не заводит запись только ради «прошло N мс».
+
+## Pins
+
+Exec in + `windowMs` (`Integer`, nullable) → `exec-true-out` / `exec-false-out`.
+
+Без `RecorderRef`. Величина окна: провод `windowMs` перекрывает поле узла
+`windowElapsedMs` (дефолт 5000 мс).
+
+## Runtime
+
+Polling-гейт (true/false по факту), НЕ event-таймер. Host держит per-node точку
+отсчёта; при `elapsed >= windowMs` → `exec-true-out` + сброс окна (периодическое,
+самосбрасывающееся). Иначе `exec-false-out` — следующий тик копит окно.
+
+Граница с тиком: `onTick` / `waitUntilNextLoopTick` — это pacing лупа (как часто
+крутится); `IsWindowElapsed` — гейт-потребитель (накопилось ли окно). Не дубль тика.
+
+`IsRecordingWindowFull` не заменён — остаётся для сценариев, где запись реально нужна.
+
+## Code
+
+`is-window-elapsed-node.ts`
