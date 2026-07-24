@@ -8,6 +8,10 @@
       {
         "provider": "openrouter",
         "model": "anthropic/claude-haiku-4.5"
+      },
+      {
+        "provider": "deepseek",
+        "model": "deepseek-chat"
       }
     ]
   },
@@ -20,7 +24,39 @@
       {
         "provider": "openrouter",
         "model": "anthropic/claude-haiku-4.5"
+      },
+      {
+        "provider": "deepseek",
+        "model": "deepseek-chat"
       }
+    ]
+  },
+  "ritual-preflight": {
+    "chain": [
+      { "provider": "anthropic", "model": "claude-haiku-4-5-20251001" },
+      { "provider": "openrouter", "model": "anthropic/claude-haiku-4.5" },
+      { "provider": "deepseek", "model": "deepseek-chat" }
+    ]
+  },
+  "ritual-strategy-day": {
+    "chain": [
+      { "provider": "anthropic", "model": "claude-haiku-4-5-20251001" },
+      { "provider": "openrouter", "model": "anthropic/claude-haiku-4.5" },
+      { "provider": "deepseek", "model": "deepseek-chat" }
+    ]
+  },
+  "ritual-standup": {
+    "chain": [
+      { "provider": "anthropic", "model": "claude-haiku-4-5-20251001" },
+      { "provider": "openrouter", "model": "anthropic/claude-haiku-4.5" },
+      { "provider": "deepseek", "model": "deepseek-chat" }
+    ]
+  },
+  "ritual-main-day-issue": {
+    "chain": [
+      { "provider": "anthropic", "model": "claude-haiku-4-5-20251001" },
+      { "provider": "openrouter", "model": "anthropic/claude-haiku-4.5" },
+      { "provider": "deepseek", "model": "deepseek-chat" }
     ]
   }
 }

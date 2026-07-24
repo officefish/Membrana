@@ -15,6 +15,7 @@ type ProcedureRecord = {
   yarnScript?: string;
   title?: string;
   meters: boolean;
+  group?: string;
 };
 
 type EffectiveProcedure = {
@@ -25,6 +26,7 @@ type EffectiveProcedure = {
   entryMjs?: string;
   title?: string;
   yarnScript?: string;
+  group?: string;
 };
 
 @Injectable()
@@ -174,6 +176,7 @@ export class LlmChannelsService {
       entryMjs: record.entryMjs,
       title: record.title,
       yarnScript: record.yarnScript,
+      group: record.group,
     };
   }
 

@@ -11,13 +11,11 @@ import net from 'node:net';
 import { URL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 
-import {
-  anthropicPost,
-  defaultModel,
-  getAnthropicKey,
-  loadDotEnv,
-  printAnthropicHttpError,
-} from './_anthropic-env.mjs';
+import { loadDotEnv } from './_anthropic-env.mjs';
+// Провод ритуала к панели каналов (магистраль #1094 «подвести провода»): префлайт
+// проверяет НЕ Anthropic напрямую, а эффективный LLM-канал ритуала (overlay панели →
+// цепочка с фолбэком anthropic→openrouter→deepseek). Switch провайдера — через панель.
+import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 // Занятость ветки соседним worktree уже решена в pr:ship (#476 п.2) — берём оттуда,
 // а не пишем второй раз: разъехались бы, как разъехались бы pr:land и pr:ship.
 import { isBaseHeldElsewhere, otherWorktreeBranches } from './pr-ship.mjs';
@@ -194,43 +192,18 @@ function gitSnapshot(cwd) {
   return { inside: true, branchLine, statusShort };
 }
 
-async function runAnthropicProbe() {
-  let key;
+async function runRitualLlmProbe() {
   try {
-    key = getAnthropicKey();
-  } catch (e) {
-    return { ok: false, detail: e.message };
-  }
-  const model = defaultModel();
-  const bodyJson = {
-    model,
-    max_tokens: 64,
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'text',
-            text: 'Одним коротким словом на русском: «ок».',
-          },
-        ],
-      },
-    ],
-  };
-  try {
-    const { ok, status, text } = await anthropicPost('https://api.anthropic.com/v1/messages', {
-      headers: {
-        'content-type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-      },
-      bodyJson,
+    const r = await invokeProcedureLlm({
+      procedureId: 'ritual-preflight',
+      prompt: 'Одним коротким словом на русском: «ок».',
+      maxTokens: 64,
     });
-    if (!ok) {
-      printAnthropicHttpError(status, text);
-      return { ok: false, detail: `HTTP ${status}` };
+    if (!r.ok) {
+      const why = r.error || (r.status ? `HTTP ${r.status}` : 'нет ответа');
+      return { ok: false, detail: `LLM-канал ритуала исчерпан по всей цепочке: ${why}` };
     }
-    return { ok: true };
+    return { ok: true, channel: `${r.provider}/${r.model}` };
   } catch (e) {
     return { ok: false, detail: e?.message || String(e) };
   }
@@ -410,17 +383,17 @@ if (tests.ok) {
 }
 
 if (!noAnthropic) {
-  console.log('\n--- Anthropic API (короткий запрос) ---');
-  const api = await runAnthropicProbe();
+  console.log('\n--- LLM-канал ритуала (короткий запрос) ---');
+  const api = await runRitualLlmProbe();
   if (api.ok) {
-    console.log('[ok]   POST /v1/messages');
+    console.log(`[ok]   канал жив: ${api.channel}`);
   } else {
     console.log(`[fail] ${api.detail}`);
     failed = true;
   }
   await new Promise((r) => setTimeout(r, 150));
 } else {
-  console.log('\n[инфо] проверка Anthropic пропущена (--no-anthropic)');
+  console.log('\n[инфо] проверка LLM-канала пропущена (--no-anthropic)');
 }
 
 console.log('\n=== итог ===');

@@ -10,13 +10,9 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSy
 import { dirname, join, relative, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-import {
-  anthropicPost,
-  defaultModel,
-  getAnthropicKey,
-  loadDotEnv,
-  printAnthropicHttpError,
-} from './_anthropic-env.mjs';
+import { loadDotEnv } from './_anthropic-env.mjs';
+// Провод стадии стендапа к панели каналов (группа ritual): switch провайдера — в панели.
+import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 
 const MAX_BUFFER = 8 * 1024 * 1024;
 const MAX_CONTEXT_CHARS = 95_000;
@@ -529,52 +525,21 @@ export async function runDailyStandup(options) {
     return;
   }
 
-  let key;
-  try {
-    key = getAnthropicKey();
-  } catch (e) {
-    console.error(e.message);
-    console.error('См. .env.example. Для проверки контекста без API: yarn standup:dry');
-    process.exitCode = 1;
-    return;
-  }
-
-  const model = defaultModel();
-  const bodyJson = {
-    model,
-    max_tokens: 8192,
-    messages: [{ role: 'user', content: [{ type: 'text', text: bodyText }] }],
-  };
-
   let exitCode = 0;
   try {
-    const { ok, status: httpStatus, text } = await anthropicPost(
-      'https://api.anthropic.com/v1/messages',
-      {
-        headers: {
-          'content-type': 'application/json',
-          'x-api-key': key,
-          'anthropic-version': '2023-06-01',
-        },
-        bodyJson,
-      },
-    );
+    const r = await invokeProcedureLlm({
+      procedureId: 'ritual-standup',
+      prompt: bodyText,
+      maxTokens: 8192,
+    });
 
-    if (!ok) {
-      printAnthropicHttpError(httpStatus, text);
+    if (!r.ok) {
+      console.error(
+        `[fail] LLM-канал стендапа исчерпан по всей цепочке: ${r.error || (r.status ? `HTTP ${r.status}` : 'нет ответа')}`,
+      );
       exitCode = 1;
     } else {
-      let out = '';
-      try {
-        const json = JSON.parse(text);
-        out = (json?.content ?? [])
-          .filter((b) => b?.type === 'text')
-          .map((b) => b.text)
-          .join('\n');
-        if (!out) out = JSON.stringify(json?.content ?? [], null, 2);
-      } catch {
-        out = text;
-      }
+      let out = r.text || '';
       {
         // Роутинг талантов — детерминированная секция, тот же паттерн, что drift ниже.
         // Подставляется ПОСЛЕ ответа модели: что вычислено, то нельзя выдумать.
