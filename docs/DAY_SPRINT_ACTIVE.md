@@ -8,10 +8,8 @@
 
 Первый шаг: ✅ **g0** закрыт (V2 wins 23.07) → дальше `tw-v1-manifest` / `tw-v2-verbs`.
 
-Последний **закрытый:** [`bestiary-workshop-2026-07-22`](./day-sprint/bestiary-workshop-2026-07-22/CLOSURE.md) (#945) · до него [`procedure-frames-2026-07-22`](./day-sprint/procedure-frames-2026-07-22/CLOSURE.md) (#900) · [`bestiary-container-2026-07-21`](./day-sprint/bestiary-container-2026-07-21/CLOSURE.md) (#878).
+Последний **закрытый:** [`dual-mintlify-docs-2026-07-24`](./day-sprint/dual-mintlify-docs-2026-07-24/CLOSURE.md) (#1121) · до него [`atlas-report-plane-2026-07-24`](./day-sprint/atlas-report-plane-2026-07-24/CLOSURE.md) (#1097) · [`bestiary-workshop-2026-07-22`](./day-sprint/bestiary-workshop-2026-07-22/CLOSURE.md) (#945).
 
 ## Also open
 
-**dual-mintlify-docs-2026-07-24** · epic [#1121](https://github.com/officefish/Membrana/issues/1121) · OPEN [`docs/day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md`](./day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md) · промпт [`DUAL_MINTLIFY_DOCS_PROMPT.md`](./prompts/DUAL_MINTLIFY_DOCS_PROMPT.md) · harness **live** `https://harness.mmbrn.tech` · W0–W2 done · **W3** `dmd-w3-surface` (#1125) in progress on `feat/dual-mintlify-w3` → next W4 closure (#1126)
-
-_(ранее: `atlas-report-plane` закрыт — [CLOSURE](./day-sprint/atlas-report-plane-2026-07-24/CLOSURE.md) · PR [#1107](https://github.com/officefish/Membrana/pull/1107))_
+_(пусто — `dual-mintlify-docs` закрыт 2026-07-24 · [CLOSURE](./day-sprint/dual-mintlify-docs-2026-07-24/CLOSURE.md) · PRs [#1129](https://github.com/officefish/Membrana/pull/1129)/[#1132](https://github.com/officefish/Membrana/pull/1132)/[#1140](https://github.com/officefish/Membrana/pull/1140))_
