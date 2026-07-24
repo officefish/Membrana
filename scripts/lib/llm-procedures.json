@@ -13,6 +13,38 @@
       "yarnScript": "consilium",
       "title": "Consilium",
       "meters": true
+    },
+    {
+      "id": "ritual-preflight",
+      "entryMjs": "scripts/morning-care.mjs",
+      "yarnScript": "morning-care",
+      "title": "Ритуал · префлайт (проверка канала)",
+      "meters": true,
+      "group": "ritual"
+    },
+    {
+      "id": "ritual-strategy-day",
+      "entryMjs": "scripts/strategy-day.mjs",
+      "yarnScript": "strategy:day",
+      "title": "Ритуал · стратегия дня",
+      "meters": true,
+      "group": "ritual"
+    },
+    {
+      "id": "ritual-standup",
+      "entryMjs": "scripts/daily-standup.mjs",
+      "yarnScript": "standup",
+      "title": "Ритуал · стендап",
+      "meters": true,
+      "group": "ritual"
+    },
+    {
+      "id": "ritual-main-day-issue",
+      "entryMjs": "scripts/main-day-issue.mjs",
+      "yarnScript": "main-day-issue",
+      "title": "Ритуал · центральная задача дня",
+      "meters": true,
+      "group": "ritual"
     }
   ]
 }

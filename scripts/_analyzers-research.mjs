@@ -21,13 +21,9 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fetch as undiciFetch, Agent } from 'undici';
 
-import {
-  anthropicPost,
-  defaultModel,
-  getAnthropicKey,
-  loadDotEnv,
-  printAnthropicHttpError,
-} from './_anthropic-env.mjs';
+import { loadDotEnv } from './_anthropic-env.mjs';
+// Провод стадии стратегии к панели каналов (группа ritual): switch провайдера — в панели.
+import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 
 /** Жёсткий потолок контекста запроса к Anthropic (символы). */
 const MAX_CONTEXT_CHARS = 90_000;
@@ -471,57 +467,21 @@ export async function runAnalyzersResearch(options) {
     return;
   }
 
-  let key;
-  try {
-    key = getAnthropicKey();
-  } catch (e) {
-    console.error(e.message);
-    console.error('Подсказка: используйте --dry-run, чтобы прогнать сбор источников без ключа.');
-    process.exit(1);
-  }
-
-  const model = defaultModel();
-  const bodyJson = {
-    model,
-    max_tokens: 8192,
-    messages: [
-      {
-        role: 'user',
-        content: [{ type: 'text', text: bodyText }],
-      },
-    ],
-  };
-
   let exitCode = 0;
   try {
-    const { ok, status: httpStatus, text } = await anthropicPost(
-      'https://api.anthropic.com/v1/messages',
-      {
-        headers: {
-          'content-type': 'application/json',
-          'x-api-key': key,
-          'anthropic-version': '2023-06-01',
-        },
-        bodyJson,
-      },
-    );
+    const r = await invokeProcedureLlm({
+      procedureId: 'ritual-strategy-day',
+      prompt: bodyText,
+      maxTokens: 8192,
+    });
 
-    if (!ok) {
-      printAnthropicHttpError(httpStatus, text);
+    if (!r.ok) {
+      console.error(
+        `[fail] LLM-канал стратегии исчерпан по всей цепочке: ${r.error || (r.status ? `HTTP ${r.status}` : 'нет ответа')}`,
+      );
       exitCode = 1;
     } else {
-      let out = '';
-      try {
-        const json = JSON.parse(text);
-        const parts = json?.content ?? [];
-        out = parts
-          .filter((b) => b?.type === 'text')
-          .map((b) => b.text)
-          .join('\n');
-        if (!out) out = JSON.stringify(parts, null, 2);
-      } catch {
-        out = text;
-      }
+      const out = r.text || '';
       writeReportFile({
         outputPath: options.outputPath,
         commandName: options.commandName,
@@ -531,7 +491,7 @@ export async function runAnalyzersResearch(options) {
         body: out,
       });
       console.log(out);
-      console.error('Записано:', options.outputPath);
+      console.error(`Записано: ${options.outputPath} (канал: ${r.provider}/${r.model})`);
     }
   } catch (e) {
     console.error(e);

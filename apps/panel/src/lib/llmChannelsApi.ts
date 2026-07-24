@@ -23,6 +23,7 @@ export type EffectiveProcedure = {
   meters: boolean;
   title?: string;
   yarnScript?: string;
+  group?: string;
 };
 
 export type DaySummary = {

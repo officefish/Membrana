@@ -465,14 +465,42 @@ export function LlmChannelsBoard() {
           (какой id у этого провайдера). Секреты ключей здесь не хранятся. При
           недоступном Anthropic поставьте запасной шаг первым или вторым в цепочке.
         </p>
-        {procedures.map((p) => (
-          <ChainEditor
-            key={p.procedureId}
-            procedure={p}
-            catalog={catalog}
-            onSaved={() => void reload()}
-          />
-        ))}
+        {procedures
+          .filter((p) => !p.group)
+          .map((p) => (
+            <ChainEditor
+              key={p.procedureId}
+              procedure={p}
+              catalog={catalog}
+              onSaved={() => void reload()}
+            />
+          ))}
+        {Array.from(new Set(procedures.filter((p) => p.group).map((p) => p.group as string))).map(
+          (groupName) => {
+            const stages = procedures.filter((p) => p.group === groupName);
+            return (
+              <div
+                key={groupName}
+                className="rounded-xl border border-base-300 bg-base-200/40 p-3 space-y-3"
+                aria-label={`Группа ${groupName}`}
+              >
+                <div className="flex items-center gap-2">
+                  <span className="badge badge-accent badge-sm">группа</span>
+                  <h4 className="font-semibold capitalize">{groupName}</h4>
+                  <span className="text-xs text-base-content/60">{stages.length} стадий</span>
+                </div>
+                {stages.map((p) => (
+                  <ChainEditor
+                    key={p.procedureId}
+                    procedure={p}
+                    catalog={catalog}
+                    onSaved={() => void reload()}
+                  />
+                ))}
+              </div>
+            );
+          },
+        )}
       </section>
     </div>
   );

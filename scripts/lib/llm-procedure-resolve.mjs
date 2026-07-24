@@ -20,6 +20,7 @@ import {
  *   entryMjs?: string;
  *   title?: string;
  *   yarnScript?: string;
+ *   group?: string;
  * }} EffectiveProcedure
  */
 
@@ -77,5 +78,6 @@ export function resolveEffective(procedureId, opts = {}) {
     entryMjs: typeof record.entryMjs === 'string' ? record.entryMjs : undefined,
     title: typeof record.title === 'string' ? record.title : undefined,
     yarnScript: typeof record.yarnScript === 'string' ? record.yarnScript : undefined,
+    group: typeof record.group === 'string' ? record.group : undefined,
   };
 }

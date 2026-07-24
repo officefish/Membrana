@@ -6,13 +6,9 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-import {
-  anthropicPost,
-  defaultModel,
-  getAnthropicKey,
-  loadDotEnv,
-  printAnthropicHttpError,
-} from './_anthropic-env.mjs';
+import { loadDotEnv } from './_anthropic-env.mjs';
+// Провод стадии центральной задачи к панели каналов (группа ritual): switch — в панели.
+import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 import {
   assembleStandupPrompt,
   collectOpenIssues,
@@ -392,18 +388,6 @@ export async function runMainDayIssue(options) {
     return;
   }
 
-  let key;
-  try {
-    key = getAnthropicKey();
-  } catch (e) {
-    console.error(e.message);
-    console.error('См. .env.example. Без API: yarn main-day-issue:dry');
-    process.exitCode = 1;
-    return;
-  }
-
-  const model = defaultModel();
-
   let exitCode = 0;
   try {
     // Ф3 #788 (T11): гейт при красном не ретраит вслепую — перезапускает генерацию
@@ -413,39 +397,21 @@ export async function runMainDayIssue(options) {
     let lastMissing = [];
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
       const promptText = attempt === 1 ? bodyText : `${bodyText}\n\n${skeletonCorrection(lastMissing)}`;
-      const { ok, status: httpStatus, text } = await anthropicPost(
-        'https://api.anthropic.com/v1/messages',
-        {
-          headers: {
-            'content-type': 'application/json',
-            'x-api-key': key,
-            'anthropic-version': '2023-06-01',
-          },
-          bodyJson: {
-            model,
-            max_tokens: 4096,
-            messages: [{ role: 'user', content: [{ type: 'text', text: promptText }] }],
-          },
-        },
-      );
+      const r = await invokeProcedureLlm({
+        procedureId: 'ritual-main-day-issue',
+        prompt: promptText,
+        maxTokens: 4096,
+      });
 
-      if (!ok) {
-        printAnthropicHttpError(httpStatus, text);
+      if (!r.ok) {
+        console.error(
+          `[fail] LLM-канал центральной задачи исчерпан по всей цепочке: ${r.error || (r.status ? `HTTP ${r.status}` : 'нет ответа')}`,
+        );
         exitCode = 1;
         break;
       }
 
-      let out = '';
-      try {
-        const json = JSON.parse(text);
-        out = (json?.content ?? [])
-          .filter((b) => b?.type === 'text')
-          .map((b) => b.text)
-          .join('\n');
-        if (!out) out = JSON.stringify(json?.content ?? [], null, 2);
-      } catch {
-        out = text;
-      }
+      const out = r.text || '';
 
       // Гейт скелета (K, M2): все 5 заголовков слотов на месте, иначе отказ —
       // структура детерминирована, LLM не вправе её ронять. Файл при провале не пишем.
