@@ -1,9 +1,9 @@
 # PRECEDENTS — снимок-реестр (производный, руками не править)
 
-> Meta · Date: 2026-07-24 · SHA: 28c46250 · Source: docs/precedents/*.md
+> Meta · Date: 2026-07-24 · SHA: 16a44243 · Source: docs/precedents/*.md
 > Пересобрать: `yarn precedent:register --rebuild`. Источник истины — файлы прецедентов.
 
-Всего прецедентов: **10** · различных классов: **5** · доля рецидива: **44%** (ориентир ≤15%).
+Всего прецедентов: **11** · различных классов: **5** · доля рецидива: **50%** (ориентир ≤15%).
 
 ## Рецидив по классам
 
@@ -12,8 +12,8 @@
 | ritual-mechanics-vs-value | 3 ⚠ рецидив |
 | reporting-gap | 2 ⚠ рецидив |
 | session-report | 2 ⚠ рецидив |
+| tooling-gap | 2 ⚠ рецидив |
 | cold-start | 1 |
-| tooling-gap | 1 |
 
 ## Прецеденты
 
@@ -29,4 +29,5 @@
 | 2026-07-23 | ritual-mechanics-vs-value | [2026-07-23-oneshot-issue-closed-without-procedure](../2026-07-23-oneshot-issue-closed-without-procedure.md) | Issue закрыт мерджем промпта или карточки, DoD продукта не выполнен |
 | 2026-07-23 | reporting-gap | [2026-07-23-wrong-tree-main-day-request](../2026-07-23-wrong-tree-main-day-request.md) | существенный факт топологии worktree не доложен первой репликой |
 | 2026-07-24 | session-report | [2026-07-24-align-all-worktrees-to-main](../2026-07-24-align-all-worktrees-to-main.md) | Параллельные сессии в разных worktree накопили дивергенцию; общий origin/main уш |
+| 2026-07-24 | tooling-gap | [2026-07-24-consilium-green-but-hollow](../2026-07-24-consilium-green-but-hollow.md) | LLM-процедура без служебного фрейма «провода» молча деградирует: сигнал утоплен  |
 
