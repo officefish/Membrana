@@ -24,6 +24,11 @@ CLOSURE через `precedents[]`. Указатели `DAY_SPRINT_ACTIVE.md` /
 пишет агент по skill `membrana-task-lifecycle`; жизненный цикл карточек —
 `task:start` / `archive` / `close-github`.
 
+**Приёмка CLOSURE (кадр `closure-accept`, #1001):** в каждом
+`docs/day-sprint/<id>/CLOSURE.md` обязательны поля таблицы `acceptedBy` + `headRev`
+(кто дал LGTM и на какой ревизии). Зуб: `yarn closure:acceptance-audit`.
+Нарративное «LGTM» без ревизии — не подтверждение; Linear Done — не приёмка.
+
 ## Манифест
 
 [`MANIFEST.json`](./MANIFEST.json) — `id`, `leadPersona`, `kitVersion: null`

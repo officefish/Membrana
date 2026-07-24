@@ -13,7 +13,7 @@
 
 | Уровень | Критерий |
 |---------|----------|
-| **Продукт** | Definition of Done из task-промпта выполнен; приёмка Teamlead (или явное «LGTM» в Issue/PR). |
+| **Продукт** | Definition of Done из task-промпта выполнен; приёмка Teamlead с следом `{acceptedBy, headRev}` (для day-sprint — блок в `CLOSURE.md`, зуб `yarn closure:acceptance-audit`; голое «LGTM» в Issue/PR носителем следа не является — LINEAR_TASKS_GEAR §4 / #1001). |
 | **Код** | Изменения в `main` (merge PR) **или** зафиксированное исключение в `archiveNotes` (см. §4). |
 | **GitHub** | В Issue [#N] — формальный отчёт; Issue закрыт (`Closes #N` при merge или вручную после отчёта). |
 | **Реестр** | `yarn task:archive <id>`; карточка в `docs/tasks/archive/<id>.md`; промпт **не удаляется**. |

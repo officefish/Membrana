@@ -1,7 +1,7 @@
 # ADR-0017 — Linear-доска = зеркало GitHub; движение = снимок
 
-> **Статус:** DRAFT · 2026-07-23  
-> **merge файла ≠ принятие решения** пока статус DRAFT — решения действуют после LGTM владельца.  
+> **Статус:** ACCEPTED · 2026-07-23  
+> LGTM владельца 23.07 (эпик `frame-rails-2307`, после merge PR #1084).  
 > Issue: #1000 / DRU-364 · эпик `frame-rails-2307`
 
 ## Контекст
@@ -46,7 +46,7 @@
 - [x] ADR + правка канона «доска ≠ движение»
 - [x] `startedAt` в типе/GraphQL/map снимка
 - [x] `yarn linear:movement-audit` + тесты
-- [ ] LGTM владельца → статус ACCEPTED
+- [x] LGTM владельца → статус ACCEPTED
 - [ ] (follow-up) `task:start` → Started при наличии `linearId`
 
 ## Out of scope / открытые задачи

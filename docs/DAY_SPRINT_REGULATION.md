@@ -46,6 +46,8 @@
    - Запрещено подменять весь файл однострочным «Активен: мой спринт», если
      Focus уже указывает на другой эпик (рецидив конфликтов F3–F5 / bestiary).
 5. **CLOSURE** — `docs/day-sprint/<id>/CLOSURE.md` + archive фаз и эпика.
+   Кадр процедуры `closure-accept` (holder vesnin): без структурированной приёмки
+   файл «закрыт» ≠ «принят» (#1001 / DRU-365).
 6. **GitHub** — вечерний батч `yarn task:close-github` (не блокирует archive).
 
 Канон закрытия: [`TASK_CLOSURE_REGULATION.md`](./prompts/TASK_CLOSURE_REGULATION.md).  
@@ -58,11 +60,28 @@
 См. `engines[]` в [`procedures/day-sprint/MANIFEST.json`](./procedures/day-sprint/MANIFEST.json):
 `task:start`, `task:register`, `task:archive`, `task:close-github`, `task:sync-readme` / list,
 `task-registry` lib. `kitVersion: null`.
+Зуб приёмки инстансов: `yarn closure:acceptance-audit` (`scripts/closure-acceptance-audit.mjs`).
 
 ---
 
 ## Acceptance (инстанс закрыт)
 
+Обязательный блок в `CLOSURE.md` (канон следа [`LINEAR_TASKS_GEAR.md`](./tasks/LINEAR_TASKS_GEAR.md) §4;
+эталон таблицы — `docs/tasks/closures/*`):
+
+```markdown
+## Приёмка
+
+| Поле | Значение |
+|------|----------|
+| acceptedBy | vesnin |
+| headRev | <sha merge / закрывающей ревизии> |
+```
+
 - [ ] DoD фаз выполнены; CLOSURE написан
+- [ ] **`acceptedBy` + `headRev` заполнены** (иначе `yarn closure:acceptance-audit --file … --mode hard` → код 12)
 - [ ] Карточки archived с `archiveNotes` (PR)
 - [ ] Определение процедуры не разъехалось с фактическим ритмом (или follow-up Issue)
+
+**Не считать приёмкой:** голое «LGTM» в прозе, Linear Done (зеркало GitHub, ADR-0017),
+отсутствие блока при наличии Status=CLOSED.
