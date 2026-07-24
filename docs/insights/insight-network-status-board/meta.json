@@ -1,0 +1,13 @@
+{
+  "id": "insight-network-status-board",
+  "title": "Борд состояния сети в харнес-панели (здоровье N серверов)",
+  "status": "draft",
+  "source": "user",
+  "horizon": null,
+  "weight": null,
+  "createdAt": "2026-07-24",
+  "researchedAt": null,
+  "reviewedAt": null,
+  "closedAt": null,
+  "tags": []
+}
