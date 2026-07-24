@@ -153,7 +153,7 @@
     },
     {
       "id": "tw-v3-axes",
-      "title": "Оси decompose --by",
+      "title": "v3: оси decompose --by",
       "promptPath": "docs/prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md",
       "githubIssue": 1059,
       "linearId": "DRU-407",

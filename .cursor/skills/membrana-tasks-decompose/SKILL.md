@@ -1,55 +1,55 @@
 ---
 name: membrana-tasks-decompose
 description: >-
-  Декомпозиция активного реестра задач по категориям: yarn tasks:decompose —
-  детерминированная раскладка по префиксам id из конфига с ОБЯЗАТЕЛЬНЫМ
-  markdown-табличным выводом (категория / карточек / доля / примеры). Use when
-  user says разбей задачи на категории, декомпозиция списка задач, обзор реестра
-  по направлениям, сколько задач по темам, куда уходит реестр. Do NOT use for
-  ревизии устаревших карточек (membrana-tasks-audit), закрытия задачи
-  (membrana-task-lifecycle) или списка без группировки (yarn task:list).
+  Декомпозиция активного реестра задач по оси (--by): yarn tasks:decompose —
+  детерминированная раскладка (category/size/age/lead/kind/links) из конфига с
+  ОБЯЗАТЕЛЬНЫМ markdown-табличным выводом. Use when user says разбей задачи,
+  декомпозиция списка задач, обзор реестра по направлениям/размеру/возрасту,
+  tasks:decompose --by. Do NOT use for ревизии устаревших карточек
+  (membrana-tasks-audit), закрытия задачи (membrana-task-lifecycle) или списка
+  без группировки (yarn task:list). Не verb мастерской docs/tasks (V2 wins).
 ---
 
 # Membrana tasks decompose — декомпозиция списка задач
 
 Инструмент: `yarn tasks:decompose` (`scripts/tasks-decompose.mjs`, логика в
-`scripts/lib/tasks-decompose.mjs`). Категории: `scripts/tasks-decompose.config.json`.
-Смежный канон: [`REGISTRY_AUDIT_PROMPT.md`](../../../docs/prompts/REGISTRY_AUDIT_PROMPT.md)
-(ревизия мёртвых душ — другой процесс), паспорт движка
-[`LINEAR_TASKS_GEAR.md`](../../../docs/tasks/LINEAR_TASKS_GEAR.md).
+`scripts/lib/tasks-decompose.mjs`). Конфиг осей:
+`scripts/tasks-decompose.config.json`. Смежный канон:
+[`REGISTRY_AUDIT_PROMPT.md`](../../../docs/prompts/REGISTRY_AUDIT_PROMPT.md),
+паспорт [`LINEAR_TASKS_GEAR.md`](../../../docs/tasks/LINEAR_TASKS_GEAR.md).
+Вердикт осей: M3 / #1059 · `docs/seanses/tasks-workshop-m3-axes-2026-07-23.md`.
 
-**Контейнер аудита:** [`docs/audit/tasks/`](../../../docs/audit/tasks/README.md) —
-снимки реестра пишутся `--report docs/audit/tasks/registry/TASKS_DECOMPOSE_LIST.md`
-(overwrite; dated-копии рядом), сырой `--json` → `cache/` (gitignore). Сценарии и
-HARD GATE — [`AGENT_PROMPT.md`](../../../docs/audit/tasks/AGENT_PROMPT.md).
+**Контур:** соседний дом [`docs/audit/tasks/`](../../../docs/audit/tasks/README.md)
+(V2 wins: `decompose` **вне** мастерской `docs/tasks`). Снимки —
+`--report docs/audit/tasks/registry/TASKS_DECOMPOSE_LIST.md`. HARD GATE Scenario B —
+[`AGENT_PROMPT.md`](../../../docs/audit/tasks/AGENT_PROMPT.md).
 
 ## Неподвижные правила
 
-- **Таблица — обязательная часть ответа.** Скрипт печатает markdown-таблицу
-  (№ / категория / карточек / доля / примеры / итог) — показать её владельцу
-  как есть, не пересказом. Родилось из живого прогона 21.07 (175 карточек,
-  7 категорий): владельцу нужен взгляд сверху одной таблицей.
-- **Категории живут в конфиге, не в коде** (норма Р5). Менять раскладку =
-  править `tasks-decompose.config.json`, скрипт не трогать.
-- **Порядок категорий значим** — первая совпавшая забирает карточку. Точечные
-  паттерны (`^angelina-hostess`) держать раньше/уже, чем широкие, чтобы не
-  украсть карточку у другой категории.
-- **«ВНЕ КАТЕГОРИЙ» — находка, не ошибка.** Новая карточка с незнакомым
-  префиксом всплывает отдельной строкой; правильная реакция — дополнить конфиг
-  (живой пример: `angelina-hostess-impl` всплыла в первый же прогон).
+- **Одна ось за прогон.** `--by size --by age` или `--by size,age` — отказ.
+  Ось по умолчанию — `category` (без `--by` поведение прежнее).
+- **Набор осей:** `category` · `size` · `age` · `lead` · `kind` · `links`.
+  `health` отложена до M4B (`tw-v5-validity`) — не вызывать.
+- **Таблица — обязательная часть ответа.** Markdown (№ / категория / карточек /
+  доля / примеры / итог) — показать владельцу как есть.
+- **Параметры осей в конфиге, не в коде** (норма Р5). Менять раскладку =
+  править `tasks-decompose.config.json`.
+- **Порядок бакетов значим** — первая совпавшая забирает карточку.
+- **«ВНЕ КАТЕГОРИЙ» — на любую ось.** Нет значения по оси / нет матча — отдельная
+  строка, не молчание.
+- **links** смотрит **наличие** полей (`githubIssue` / `linearId` / `promptPath`),
+  не истинность связей (это валидность M4B).
 - Read-only: скрипт не пишет ни в реестр, ни в конфиг.
 
 ## Workflow
 
-1. `yarn tasks:decompose` — таблица по текущему конфигу. Флаги: `--full`
-   (полные списки id по категориям), `--examples N`, `--json` (машинный),
-   `--config <path>` (разовая альтернативная раскладка).
-2. Показать таблицу владельцу + 2–4 наблюдения по долям (перекосы, пустые
-   категории, разбухшие направления) — вывод, а не пересказ строк.
-3. Если есть «ВНЕ КАТЕГОРИЙ» — предложить паттерн, дополнить конфиг, перегнать.
-4. Просьба «разбей по-другому / на N категорий» — написать одноразовый конфиг
-   (в scratchpad или рядом), прогнать с `--config`; в репо коммитить только
-   раскладку, признанную владельцем основной.
+1. `yarn tasks:decompose` — ось `category`. Или `yarn tasks:decompose --by size`
+   (и др.). Флаги: `--full`, `--examples N`, `--json`, `--config <path>`,
+   `--report <file>`.
+2. Показать таблицу владельцу + 2–4 наблюдения по долям.
+3. Если есть «ВНЕ КАТЕГОРИЙ» — предложить паттерн/корзину в конфиг, перегнать.
+4. Просьба «разбей по-другому» — одноразовый `--config` или правка секции `axes`
+   в боевом конфиге (после ok владельца).
 
 ## Сопровождение конфига
 

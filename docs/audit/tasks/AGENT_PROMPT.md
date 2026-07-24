@@ -43,21 +43,23 @@ Dated-снимки (опционально): `registry/TASKS_DECOMPOSE_LIST-YYYY
 
 | Команда / skill | Назначение |
 |-----------------|------------|
-| `yarn tasks:decompose` · skill `membrana-tasks-decompose` | Категории из конфига → обязательная таблица; `--report <file>` пишет реестр |
+| `yarn tasks:decompose [--by category\|size\|age\|lead\|kind\|links]` · skill `membrana-tasks-decompose` | Одна ось за прогон; параметры в конфиге; таблица + `--report` → реестр |
 | `yarn tasks:audit` · skill `membrana-tasks-audit` | Три корзины ревизии (архивировать / отменено / разобрать руками); read-only |
 | `yarn tasks:audit:offline` | То же по кешу `githubIssueClosedAt` (без сети, воспроизводимо) |
 | `yarn task:list` / `yarn task:archive <id> --notes` | Список / архивация одной карточки со свидетельством |
 | `yarn tasks:sync-issues` | Освежить кеш состояния иссью в реестре |
 
-Опции decompose: `--config <path>` · `--examples <n>` · `--full` · `--json` · `--report <file>`.
+Опции decompose: `--by <ось>` · `--config <path>` · `--examples <n>` · `--full` · `--json` · `--report <file>`.
+Оси: `category` (default) · `size` · `age` · `lead` · `kind` · `links`. Две оси /
+CSV — отказ. `health` отложена (M4B). Контур — этот контейнер, не verb `docs/tasks`.
 
 ### Грабли (обязательно)
 
 - **«Иссью закрыта» — гипотеза, не вердикт** (канон L1→L2→L3). Зонтичная иссью
   накрывает N карточек — каждой нужен индивидуальный вердикт по коду в main.
-- **Категории decompose живут в конфиге** `scripts/tasks-decompose.config.json`
-  (норма Р5) — менять раскладку правкой конфига, не кода; порядок категорий значим.
-- «ВНЕ КАТЕГОРИЙ» в снимке — находка (конфиг отстал), не ошибка прогона.
+- **Оси/бакеты decompose живут в конфиге** `scripts/tasks-decompose.config.json`
+  (норма Р5) — менять раскладку правкой конфига, не кода; порядок бакетов значим.
+- «ВНЕ КАТЕГОРИЙ» в снимке — находка (нет значения по оси / конфиг отстал), не ошибка прогона.
 - «Воскресшие» карточки (архив есть, статус active) → `task:archive --force`.
 - Ранние работы влиты без PR (до эпохи pr:ship) — искать по ключам title, не только по id.
 
