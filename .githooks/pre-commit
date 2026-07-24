@@ -21,7 +21,6 @@ fi
 # --- gitleaks (мягкий локально; зуб в CI) ---
 if ! command -v gitleaks >/dev/null 2>&1; then
   echo "pre-commit [№5]: gitleaks не установлен — локальный секрет-скан пропущен (CI проверит)."
-  echo "pre-commit: OK"
   exit 0
 fi
 
