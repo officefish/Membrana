@@ -19,9 +19,9 @@ description: >-
 паспорт [`LINEAR_TASKS_GEAR.md`](../../../docs/tasks/LINEAR_TASKS_GEAR.md).
 Вердикт осей: M3 / #1059 · `docs/seanses/tasks-workshop-m3-axes-2026-07-23.md`.
 
-**Контур:** соседний дом [`docs/audit/tasks/`](../../../docs/audit/tasks/README.md)
-(V2 wins: `decompose` **вне** мастерской `docs/tasks`). Снимки —
-`--report docs/audit/tasks/registry/TASKS_DECOMPOSE_LIST.md`. HARD GATE Scenario B —
+**Контур / слот отчётов** (не дом заданий; V2 wins: `decompose` **вне** мастерской `docs/tasks`): [`docs/audit/tasks/`](../../../docs/audit/tasks/README.md) —
+снимки пишутся `--report docs/audit/tasks/registry/TASKS_DECOMPOSE_LIST.md`
+(overwrite; dated-копии рядом), сырой `--json` → `cache/` (gitignore). HARD GATE Scenario B —
 [`AGENT_PROMPT.md`](../../../docs/audit/tasks/AGENT_PROMPT.md).
 
 ## Неподвижные правила

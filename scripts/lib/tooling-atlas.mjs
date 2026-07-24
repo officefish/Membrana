@@ -1,10 +1,15 @@
 /**
- * tooling-atlas — агрегатор контейнера контейнеров (спринт tooling-atlas).
+ * tooling-atlas — агрегатор контейнера контейнеров (спринт tooling-atlas /
+ * atlas-report-plane #1097).
  *
  * Контейнер контейнеров: его элементы — сами дома с мастерскими. Атлас НЕ хранит
  * описаний, а собирает производный индекс из README + workshop.manifest каждого
  * контейнера. Источник истины остаётся в контейнерах; ATLAS.md и mintlify-страница —
  * производные (руками не правятся, дрейф ловит --check).
+ *
+ * Ссылки и группировка — по `home` (каталог манифеста). `worksOn` — «над чем
+ * работает» мастерская, не id строки. Плоскости: report (`docs/audit/*`) /
+ * domain / meta.
  *
  * Канон: docs/tooling-atlas/README.md · паттерны GROUP_CONTAINERIZATION + HOME_WORKSHOP.
  * Операции — чтение, идемпотентны.
@@ -16,6 +21,13 @@ import { dirname, join, relative } from 'node:path';
 import { listWorkshopManifests, validateWorkshop } from './validate-workshop.mjs';
 
 const MANDATORY = ['audit', 'decompose', 'inspectElement'];
+
+const PLANE_ORDER = { report: 0, domain: 1, meta: 2 };
+const PLANE_HEADING = {
+  report: 'Плоскость отчётов (`docs/audit`)',
+  domain: 'Domain (предметные дома)',
+  meta: 'Meta (атлас)',
+};
 
 // Markdown-ссылку → её текст: `[текст](rel)` относителен к README-источнику и ломается
 // при агрегации в другое место (ATLAS.md / mintlify). Оставляем только текст.
@@ -39,17 +51,33 @@ function readmeDigest(readmePath) {
   return { title, summary };
 }
 
-/** Семья контейнера по пути дома. */
-function familyOf(worksOn) {
-  if (worksOn.startsWith('docs/audit/')) return 'audit-family';
-  if (worksOn === 'docs/tooling-atlas') return 'meta';
+/** Семья (совместимость `--decompose --by family`) — по `home`. */
+function familyOf(home) {
+  if (home === 'docs/audit' || home.startsWith('docs/audit/')) return 'audit-family';
+  if (home === 'docs/tooling-atlas') return 'meta';
   return 'domain';
+}
+
+/** Плоскость индекса: report-plane vs domain vs meta. */
+export function planeOf(home) {
+  if (home === 'docs/audit' || home.startsWith('docs/audit/')) return 'report';
+  if (home === 'docs/tooling-atlas') return 'meta';
+  return 'domain';
+}
+
+/**
+ * @param {unknown} role
+ * @returns {'primary'|'derivative'|null}
+ */
+function normalizeRole(role) {
+  if (role === 'primary' || role === 'derivative') return role;
+  return null;
 }
 
 /**
  * Обнаружить контейнеры: каждый workshop.manifest.json = контейнер.
  * @param {string} repoRoot
- * @returns {{worksOn, home, name, kit, verbs, missingVerbs, title, summary, family, valid, warnings, problems}[]}
+ * @returns {{worksOn, home, name, kit, verbs, missingVerbs, title, summary, family, plane, role, valid, warnings, problems}[]}
  */
 export function discoverContainers(repoRoot) {
   const out = [];
@@ -61,24 +89,32 @@ export function discoverContainers(repoRoot) {
     const verbs = manifest?.verbs ?? {};
     const present = MANDATORY.filter((k) => typeof verbs[k] === 'string' && verbs[k].trim() !== '');
     const missingVerbs = MANDATORY.filter((k) => !present.includes(k));
-    const worksOn = typeof manifest?.worksOn === 'string' ? manifest.worksOn : relative(repoRoot, dir).replace(/\\/gu, '/');
+    const home = relative(repoRoot, dir).replace(/\\/gu, '/');
+    const worksOn = typeof manifest?.worksOn === 'string' ? manifest.worksOn : home;
     const { title, summary } = readmeDigest(join(dir, 'README.md'));
     out.push({
       worksOn,
-      home: relative(repoRoot, dir).replace(/\\/gu, '/'),
+      home,
       name: manifest?.name ?? '—',
       kit: manifest?.kit ?? null,
       verbs: present,
       missingVerbs,
       title,
       summary,
-      family: familyOf(worksOn),
+      family: familyOf(home),
+      plane: planeOf(home),
+      role: normalizeRole(manifest?.role),
       valid: v.valid,
       warnings: v.warnings,
       problems: v.problems,
     });
   }
-  return out.sort((a, b) => (a.worksOn < b.worksOn ? -1 : a.worksOn > b.worksOn ? 1 : 0));
+  return out.sort((a, b) => {
+    const pa = PLANE_ORDER[a.plane] ?? 9;
+    const pb = PLANE_ORDER[b.plane] ?? 9;
+    if (pa !== pb) return pa - pb;
+    return a.home < b.home ? -1 : a.home > b.home ? 1 : 0;
+  });
 }
 
 /** audit — здоровье контейнеров и их мастерских. @returns {{healthy, warned, broken, rows}} */
@@ -94,22 +130,23 @@ export function auditContainers(repoRoot) {
 
 const DECOMPOSE_BY = {
   family: (c) => c.family,
+  plane: (c) => c.plane,
   holder: (c) => c.name,
   kit: (c) => (typeof c.kit === 'string' ? c.kit : 'null'),
 };
 
-/** decompose — раскладка контейнеров. @returns {Map<string,string[]>} */
+/** decompose — раскладка контейнеров (значения = `home`). @returns {Map<string,string[]>} */
 export function decomposeContainers(containers, by) {
   const keyOf = DECOMPOSE_BY[by] ?? DECOMPOSE_BY.family;
   const out = new Map();
   for (const c of containers) {
     const k = keyOf(c) ?? '—';
-    out.set(k, [...(out.get(k) ?? []), c.worksOn]);
+    out.set(k, [...(out.get(k) ?? []), c.home]);
   }
   return out;
 }
 
-/** inspectElement — один контейнер вглубь. */
+/** inspectElement — один контейнер вглубь (по home или worksOn). */
 export function inspectContainer(repoRoot, home) {
   const c = discoverContainers(repoRoot).find((x) => x.worksOn === home || x.home === home);
   return c ?? null;
@@ -117,29 +154,40 @@ export function inspectContainer(repoRoot, home) {
 
 const cell = (v) => String(v ?? '—').replace(/[|\r\n]+/gu, ' ').trim();
 const verbMark = (c) => MANDATORY.map((k) => (c.verbs.includes(k) ? k : `~~${k}~~`)).join(' · ');
+const roleMark = (c) => (c.role == null ? '—' : c.role);
 
 /**
  * Производный индекс ATLAS.md. Стабильный (без волатильных date/sha), поэтому
  * `--render` байт-идемпотентен, а `--check` — плоское сравнение.
  * Ссылки — от `docs/tooling-atlas/registry/` (3 уровня вглубь) → `../../../<home>`.
+ * Якорь строки = **home**, не worksOn.
  */
 export function renderAtlasRegistry(containers) {
+  const planes = decomposeContainers(containers, 'plane');
   const fams = decomposeContainers(containers, 'family');
   const lines = [];
   lines.push('# ATLAS — контейнеры проекта (производный индекс, руками не править)');
   lines.push('');
   lines.push('> Производный · Source: docs/**/workshop.manifest.json + README.md каждого контейнера.');
   lines.push('> Пересобрать: `yarn tooling:atlas --render`. Дрейф ловит `yarn tooling:atlas --check`.');
+  lines.push('> Ссылка = `home` каталога. `docs/tasks` (domain) ≠ `docs/audit/tasks` (report, отчёты про задачи).');
   lines.push('');
-  lines.push(`Контейнеров: **${containers.length}** · семей: **${fams.size}** · с полным набором из 3 глаголов: **${containers.filter((c) => c.missingVerbs.length === 0).length}**.`);
+  lines.push(`Контейнеров: **${containers.length}** · плоскостей: **${planes.size}** · семей: **${fams.size}** · с полным набором из 3 глаголов: **${containers.filter((c) => c.missingVerbs.length === 0).length}**.`);
   lines.push('');
-  lines.push('| Контейнер | Семья | Мастерская (глаголы) | kit | Про что |');
-  lines.push('|-----------|-------|----------------------|-----|---------|');
-  for (const c of containers) {
-    const flag = c.valid ? '' : ' ✗';
-    lines.push(`| [${cell(c.worksOn)}](../../../${c.home}/README.md)${flag} | ${cell(c.family)} | ${verbMark(c)} | ${cell(c.kit)} | ${cell(c.summary).slice(0, 90)} |`);
+
+  for (const plane of ['report', 'domain', 'meta']) {
+    const rows = containers.filter((c) => c.plane === plane);
+    if (rows.length === 0) continue;
+    lines.push(`## ${PLANE_HEADING[plane]}`);
+    lines.push('');
+    lines.push('| Контейнер (`home`) | role | Мастерская (глаголы) | kit | Про что |');
+    lines.push('|--------------------|------|----------------------|-----|---------|');
+    for (const c of rows) {
+      const flag = c.valid ? '' : ' ✗';
+      lines.push(`| [${cell(c.home)}](../../../${c.home}/README.md)${flag} | ${roleMark(c)} | ${verbMark(c)} | ${cell(c.kit)} | ${cell(c.summary).slice(0, 90)} |`);
+    }
+    lines.push('');
   }
-  lines.push('');
   return lines.join('\n');
 }
 
@@ -147,7 +195,7 @@ export function renderAtlasRegistry(containers) {
 // в тексте ломает mintlify-билд (JSX-инъекция в .mdx).
 const mdxSafe = (v) => cell(v).replace(/[{}<>]/gu, (ch) => ({ '{': '｛', '}': '｝', '<': '‹', '>': '›' }[ch]));
 
-/** Витрина mintlify (.mdx). */
+/** Витрина mintlify (.mdx). Группировка по plane; заголовок несёт `home`. */
 export function renderMintlifyPage(containers) {
   const lines = [];
   lines.push('---');
@@ -157,17 +205,26 @@ export function renderMintlifyPage(containers) {
   lines.push('');
   lines.push('{/* Производная страница — генерится `yarn tooling:atlas --render`. Руками не править. */}');
   lines.push('');
-  lines.push('Каждый контейнер несёт свою группу и мастерскую (три глагола: осмотр · декомпозиция · рассмотрение). Источник истины — `README.md` и `workshop.manifest.json` каждого контейнера.');
+  lines.push('Каждый контейнер несёт свою группу и мастерскую (три глагола: осмотр · декомпозиция · рассмотрение). Источник истины — `README.md` и `workshop.manifest.json` каждого контейнера. Ссылка/адрес — **`home`**. `docs/tasks` (задания) ≠ `docs/audit/tasks` (отчёты про задачи).');
   lines.push('');
-  for (const c of containers) {
-    lines.push(`## ${mdxSafe(c.name)} (\`${mdxSafe(c.worksOn)}\`)`);
+
+  for (const plane of ['report', 'domain', 'meta']) {
+    const rows = containers.filter((c) => c.plane === plane);
+    if (rows.length === 0) continue;
+    lines.push(`## ${mdxSafe(PLANE_HEADING[plane])}`);
     lines.push('');
-    if (c.summary) lines.push(mdxSafe(c.summary));
-    lines.push('');
-    lines.push(`- **Семья:** ${mdxSafe(c.family)}`);
-    lines.push(`- **Глаголы мастерской:** ${MANDATORY.map((k) => (c.verbs.includes(k) ? `\`${k}\`` : `~~${k}~~`)).join(', ')}`);
-    lines.push(`- **kit:** \`${mdxSafe(c.kit)}\``);
-    lines.push('');
+    for (const c of rows) {
+      lines.push(`### ${mdxSafe(c.name)} (\`${mdxSafe(c.home)}\`)`);
+      lines.push('');
+      if (c.summary) lines.push(mdxSafe(c.summary));
+      lines.push('');
+      lines.push(`- **Плоскость:** ${mdxSafe(c.plane)}`);
+      lines.push(`- **role:** ${mdxSafe(roleMark(c))}`);
+      lines.push(`- **worksOn:** \`${mdxSafe(c.worksOn)}\``);
+      lines.push(`- **Глаголы мастерской:** ${MANDATORY.map((k) => (c.verbs.includes(k) ? `\`${k}\`` : `~~${k}~~`)).join(', ')}`);
+      lines.push(`- **kit:** \`${mdxSafe(c.kit)}\``);
+      lines.push('');
+    }
   }
   return lines.join('\n');
 }

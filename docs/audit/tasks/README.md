@@ -1,9 +1,13 @@
-# docs/audit/tasks — контейнер аудита реестра задач
+# docs/audit/tasks — отчёты про реестр задач (report-slot)
 
-Специальный контейнер, где агент **легально** хранит промпты, снимки декомпозиции
-реестра задач и глубокие разборы категорий/ревизий. Реализация паттерна
-[`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md); зеркален по
-анатомии [`docs/audit/git/`](../git/) (контейнер · кеш · реестр · инструменты · агент).
+Слот плоскости [`docs/audit/`](../README.md): здесь лежат **отчёты** (снимки
+декомпозиции, ревизии, analysis) **про** задания. Сами карточки заданий — не здесь,
+а в предметном доме [`docs/tasks/`](../../tasks/) (`registry.json`, primary).
+Это не «второй tasks».
+
+Реализация паттерна [`GROUP_CONTAINERIZATION`](../../patterns/GROUP_CONTAINERIZATION.md);
+зеркален по анатомии [`docs/audit/git/`](../git/) (контракт · кеш · реестр ·
+инструменты · агент).
 
 **Мастерская** ([`HOME_WORKSHOP`](../../patterns/HOME_WORKSHOP.md), ось операций):
 [`workshop.manifest.json`](./workshop.manifest.json) — **`role: derivative`**,

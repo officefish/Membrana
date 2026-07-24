@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-07-24 — `atlas-report-plane` — **CLOSED**
+
+- **Delivered:** канон report-plane + atlas home/role/plane + Mintlify/провода · W0–W4
+- **Issue:** [#1097](https://github.com/officefish/Membrana/issues/1097) · фазы #1098–#1102
+- **OPEN / CLOSURE:** [`day-sprint/atlas-report-plane-2026-07-24/`](./day-sprint/atlas-report-plane-2026-07-24/)
+- **PR:** [#1107](https://github.com/officefish/Membrana/pull/1107) · `bc5169da`
+- **Ратификация:** владелец 2026-07-24
+
+---
+
 ## 2026-07-23 — `llm-calls-house` — **CLOSED**
 
 - **Delivered:** дом evidence LLM-вызовов + мастерская + emit hashes + thin Mintlify · W0–W5

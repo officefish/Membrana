@@ -73,15 +73,27 @@ PR #764).
 8. [ ] Провода: контейнер виден из `AGENTS.md`, `docs/audit/README.md` (или
    соответствующего каталога) и связанных скиллов.
 
+## Плоскость отчётов `docs/audit/` (report-plane)
+
+Каталог [`docs/audit/`](../audit/README.md) — **не** склад предметных групп, а
+**двумерный контейнер отчётов**: слоты по предметной оси (git / tasks / bestiary /
+llm-calls / …) × органы снимка (registry / analysis / cache). Предметные дома
+живут снаружи плоскости (например задания — [`docs/tasks/`](../tasks/README.md));
+слот `docs/audit/<предмет>/` хранит только **отчёты про** эту группу.
+
+Индекс плоскости — мета-дом [`docs/tooling-atlas/`](../tooling-atlas/README.md)
+(ось `plane=report` в производном ATLAS; спринт `atlas-report-plane` / #1097).
+
 ## Известные реализации
 
-| Контейнер | Группа | Соответствие |
-|-----------|--------|--------------|
-| [`docs/audit/git/`](../audit/git/README.md) | Ветки репозитория | см. чеклист в README контейнера |
-| [`docs/audit/tasks/`](../audit/tasks/README.md) | Карточки реестра задач | см. чеклист в README контейнера |
+| Контейнер | Что за группа / слой | Соответствие |
+|-----------|----------------------|--------------|
+| [`docs/tasks/`](../tasks/README.md) | **Предмет:** карточки заданий (primary / domain) | дом реестра; мастерская — `HOME_WORKSHOP` |
+| [`docs/audit/git/`](../audit/git/README.md) | **Отчёты** про ветки репозитория | см. чеклист в README контейнера |
+| [`docs/audit/tasks/`](../audit/tasks/README.md) | **Отчёты** про карточки [`docs/tasks/`](../tasks/README.md) (не второй реестр) | derivative; см. чеклист в README |
 | [`scripts/`](../../scripts/README.md) | Скрипты монорепо (один дом, не `docs/audit/scripts/`) | см. чеклист в README; эпик #791 |
-| [`docs/audit/bestiary/`](../audit/bestiary/README.md) | Антипаттерны + specimens | см. чеклист в README; эпик #878 |
-| [`docs/audit/llm-calls/`](../audit/llm-calls/README.md) | Evidence LLM-вызовов процедур | см. чеклист в README; эпик #1033 |
+| [`docs/audit/bestiary/`](../audit/bestiary/README.md) | **Отчёты** / дом антипаттернов + specimens | см. чеклист в README; эпик #878 |
+| [`docs/audit/llm-calls/`](../audit/llm-calls/README.md) | **Отчёты** evidence LLM-вызовов процедур | см. чеклист в README; эпик #1033 |
 
 Кандидаты: документы, инсайты.
 

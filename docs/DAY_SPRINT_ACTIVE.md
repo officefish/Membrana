@@ -12,4 +12,4 @@
 
 ## Also open
 
-_(пусто)_
+_(пусто — `atlas-report-plane` закрыт: [CLOSURE](./day-sprint/atlas-report-plane-2026-07-24/CLOSURE.md) · PR [#1107](https://github.com/officefish/Membrana/pull/1107))_
