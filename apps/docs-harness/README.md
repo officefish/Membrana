@@ -12,8 +12,9 @@ containers, bestiary, llm-calls, git cookbooks. Отдельный Mintlify-пр
 - Git branch cookbooks
 
 Целевой URL (W0 lock): **`harness.mmbrn.tech`** (владелец может переименовать в `ops.mmbrn.tech`).
-Второй Mintlify project + DNS создаёт владелец (не код агента) — см. W3/W4 спринта
-`dual-mintlify-docs`.
+Второй Mintlify project + DNS создаёт владелец (не код агента) — чеклист
+[`CUSTOM_DOMAIN_SETUP.md`](./CUSTOM_DOMAIN_SETUP.md). Успех дашборда **не** блокирует
+W2; Panel URL → harness — фаза W3; закрытие эпика — W4.
 
 ## Установка
 
@@ -39,12 +40,15 @@ yarn docs-harness:dev
 ```bash
 yarn workspace @membrana/docs-harness build
 yarn workspace @membrana/docs-harness lint
+yarn docs:verify:all                  # оба Mintlify-корня (CI)
+yarn tooling:atlas --check            # производная containers.mdx свежа
 ```
 
 ## Связанные документы
 
 | Документ | Роль |
 |----------|------|
+| [`CUSTOM_DOMAIN_SETUP.md`](./CUSTOM_DOMAIN_SETUP.md) | Owner DNS / 2-й Mintlify project |
 | [`docs/day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md`](../../docs/day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md) | Спринт dual Mintlify |
 | [`docs/tooling-atlas/README.md`](../../docs/tooling-atlas/README.md) | Канон атласа контейнеров |
 | [`apps/docs/README.md`](../docs/README.md) | Product Device Board docs |

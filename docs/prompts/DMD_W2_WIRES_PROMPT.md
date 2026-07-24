@@ -19,6 +19,6 @@
 
 ## DoD
 
-- [ ] `--render` пишет в harness mintlify path
-- [ ] CI / verify покрывает оба docs.json
-- [ ] Тесты зелёные; product verify не ждёт harness pages в apps/docs
+- [x] `--render` пишет в harness mintlify path
+- [x] CI / verify покрывает оба docs.json
+- [x] Тесты зелёные; product verify не ждёт harness pages в apps/docs

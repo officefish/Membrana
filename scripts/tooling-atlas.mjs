@@ -31,7 +31,7 @@ const has = (n) => argv.includes(`--${n}`);
 const val = (n) => { const i = argv.indexOf(`--${n}`); const v = i >= 0 ? argv[i + 1] : null; return v && !v.startsWith('--') ? v : null; };
 
 const REGISTRY = join(repoRoot, 'docs', 'tooling-atlas', 'registry', 'ATLAS.md');
-// W1 dual-mintlify: mintlify page lives in harness workspace (W2 owns remaining CI/docs notes).
+// Dual-mintlify: public atlas page lives in harness workspace (not apps/docs).
 const MINTLIFY = join(repoRoot, 'apps', 'docs-harness', 'tooling', 'containers.mdx');
 
 function generate() {
