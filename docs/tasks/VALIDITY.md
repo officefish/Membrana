@@ -65,3 +65,17 @@ yarn task:validate [cardId] [--json] [--offline]
   сцепки — [`yarn task:invariants --full`](./SYNC_INVARIANTS.md) (фаза v6).
 
 Оболочка: [`scripts/task-validate.mjs`](../../scripts/task-validate.mjs).
+
+## Зуб README↔registry (V7 / M4D)
+
+Групповая находка `group.readme.drift` живёт здесь (предикат
+`computeReadmeMatchesRegistry`). Доставка зуба — **не** в `task:validate`
+(зрение), а в:
+
+```bash
+yarn task:sync-readme --check   # exit 1 при drift; не чинит
+```
+
+Тонкая обёртка: [`scripts/lib/task-readme-check.mjs`](../../scripts/lib/task-readme-check.mjs).
+Pre-commit (`.githooks/pre-commit`) гоняет `--check` только если в индексе
+`docs/tasks/registry.json` или `docs/tasks/README.md`.

@@ -27,6 +27,6 @@
 
 ## Первый шаг
 
-✅ **g0…v5 закрыты** (g0: V2 wins 23.07; v5: PR #1127 / archive #1130).
-В работе: **`tw-v6-invariants`** (#1062 / DRU-410) — `checkCardIntegrity`, fast/full,
-repair без авто. Дальше: v7 → v8 → v9.
+✅ **g0…v6 закрыты** (v6: PR #1135 / archive #1137).
+В работе: **`tw-v7-readme-tooth`** (#1063 / DRU-411) — `task:sync-readme --check` +
+pre-commit зуб; #1014 переформулировать (не `Closes`). Дальше: v8 → v9.
