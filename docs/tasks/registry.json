@@ -1,6 +1,59 @@
 {
   "tasks": [
     {
+      "id": "membrana-leveling-scripts",
+      "title": "membrana-leveling §8.3: скрипты main-fill / workspace-level по фрейм-раскладке",
+      "promptPath": "docs/prompts/MEMBRANA_LEVELING_SCRIPTS_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-24",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "§8.3 регламента v1.0 §5: скрипты main-fill (ready→main, pr:ship-поезд T9/#700) и workspace-level (main→деревья+гигиена, выдаёт манифест-отчёт K2); сюжетные фреймы leveling-main-fill/workspace + служебные wires/scratch/deliver. Зависит от membrana-leveling-disposition. Только регистрация.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "membrana-leveling-disposition",
+      "title": "membrana-leveling §8.2: чистая функция disposition(path,ctx) + тесты матрицы состояний",
+      "promptPath": "docs/prompts/MEMBRANA_LEVELING_DISPOSITION_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-24",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "§8.2 регламента v1.0 §2: реализовать disposition(path,ctx)→live/ready/unfinished/trash. ПОРЯДОК (исправлен): isTempOrScratch→trash; dirty∧inActiveSession→live; ready-предикат→ready; registered∧¬выше→unfinished; fallback dirty∧¬registered∧¬выше→trash. КРИТИЧНО: live ДО клаузы dirty∧¬registered, иначе гейт снесёт живую правку (R2). Полный промпт: docs/prompts/MEMBRANA_LEVELING_DISPOSITION_PROMPT.md. Фундамент гейта. Только регистрация.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "membrana-leveling-container",
+      "title": "membrana-leveling §8.1: контейнер процедурного слоя (README + MANIFEST.json, 6 frames)",
+      "promptPath": "docs/prompts/MEMBRANA_LEVELING_CONTAINER_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-24",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "notes": "§8.1 регламента MEMBRANA_LEVELING_REGULATION v1.0: заселить docs/procedures/membrana-leveling/ по канону docs/procedures/; шесть frames из вердикта M4 (leveling-wires/gate/main-fill/workspace/scratch/deliver) с holder+полосами; зуб validateProcedure. Только регистрация — стройка по слову владельца.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "dmd-w4-closure",
       "title": "W4: closure dual-mintlify-docs",
       "promptPath": "docs/prompts/DMD_W4_CLOSURE_PROMPT.md",
