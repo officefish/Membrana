@@ -75,5 +75,6 @@ describe('sections (заглушки OP3)', () => {
     expect(ids).toContain('ally-digest');
     expect(ids).toContain('drift-anchors');
     expect(ids).toContain('detector-compare');
+    expect(ids).toContain('tooling-atlas');
   });
 });

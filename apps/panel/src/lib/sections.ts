@@ -51,6 +51,12 @@ export const PANEL_SECTIONS: readonly PanelSection[] = [
     minRole: 'owner',
   },
   {
+    id: 'tooling-atlas',
+    title: 'Контейнеры',
+    description: 'Карта домов туллинга: задания, отчёты, атлас — без второго «tasks».',
+    minRole: 'operator',
+  },
+  {
     id: 'graphify',
     title: 'Граф кода',
     description: 'Карта зависимостей кода по семействам — как устроен проект внутри.',
