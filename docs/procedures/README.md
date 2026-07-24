@@ -19,6 +19,16 @@
 - Зуб заселённости: `validateProcedure(dir)` — `resolvable` ∧ `readmeNonEmpty` ∧
   `manifestSchemaOk`; гоняется в CI (`scripts/validate-procedure.test.mjs`).
 
+## Фреймы исполнения (#1094)
+
+Контракт выше — про **определение** процедуры (где живёт, кто держит). Из каких
+фреймов складывается её **ход** — рекомендательный паттерн
+[`PROCEDURE_FRAMES`](../patterns/PROCEDURE_FRAMES.md): серия **сюжетных** фреймов
+(основная линия, тег `сюжетный`) + до трёх **служебных** (`провода` — LLM-канал/входы,
+`времянки` — дом времянок вне репо, `доставка` — сервер/соседи). SHOULD, не зуб;
+механика очереди (`preflight`/`frames`/`post`, holder, пины) — эпик
+[`procedure-frames`](../meeting/procedure-frames/EPIC.md) #900. Держатель — ozhegov.
+
 ## Словарь категорий (Р2)
 
 Источник — [`vocabulary.json`](./vocabulary.json) (единственный машиночитаемый;
