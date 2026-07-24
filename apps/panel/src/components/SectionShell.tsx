@@ -10,6 +10,7 @@ import { GraphifyBoard } from './graphify/GraphifyBoard';
 import { LlmChannelsBoard } from './llm-channels/LlmChannelsBoard';
 import { PanelUsersBoard } from './panel-users/PanelUsersBoard';
 import { ResearchTreeBoard } from './research-tree/ResearchTreeBoard';
+import { ToolingAtlasBoard } from './tooling-atlas/ToolingAtlasBoard';
 
 /**
  * Shell авторизованного пользователя (OP3 + #454): навбар с ролью словом +
@@ -23,6 +24,7 @@ const SECTION_BOARDS: Partial<Record<string, ComponentType>> = {
   'detector-compare': DetectorCompareSection,
   'panel-users': PanelUsersBoard,
   'llm-channels': LlmChannelsBoard,
+  'tooling-atlas': ToolingAtlasBoard,
   graphify: GraphifyBoard,
   'research-tree': ResearchTreeBoard,
 };
