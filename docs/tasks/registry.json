@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "consilium-save-path-test",
+      "title": "test(consilium): путь сохранения протокола исполняется тестом с мокнутой цепочкой",
+      "promptPath": "docs/prompts/CONSILIUM_SAVE_PATH_TEST_PROMPT.md",
+      "githubIssue": 1051,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-24",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "run-ledger",
       "title": "run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify)",
       "promptPath": "docs/prompts/RUN_LEDGER_PROMPT.md",
