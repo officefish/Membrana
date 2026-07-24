@@ -1,20 +1,39 @@
 {
   "tasks": [
     {
+      "id": "consilium-save-path-test",
+      "title": "test(consilium): путь сохранения протокола исполняется тестом с мокнутой цепочкой",
+      "promptPath": "docs/prompts/CONSILIUM_SAVE_PATH_TEST_PROMPT.md",
+      "githubIssue": 1051,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-24",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "arp-w4-closure",
       "title": "W4: closure atlas-report-plane",
       "promptPath": "docs/prompts/ARP_W4_CLOSURE_PROMPT.md",
       "githubIssue": 1102,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-24",
-      "archivedAt": null,
+      "archivedAt": "2026-07-24",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "W4 CLOSURE + ACTIVE cleared; PR #1107 bc5169da",
       "githubIssueClosedAt": null,
       "parentEpic": "atlas-report-plane"
     },
@@ -97,35 +116,16 @@
       "githubIssue": 1097,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "createdAt": "2026-07-24",
-      "archivedAt": null,
+      "archivedAt": "2026-07-24",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
-    },
-    {
-      "id": "consilium-save-path-test",
-      "title": "test(consilium): путь сохранения протокола исполняется тестом с мокнутой цепочкой",
-      "promptPath": "docs/prompts/CONSILIUM_SAVE_PATH_TEST_PROMPT.md",
-      "githubIssue": 1051,
-      "linearId": null,
-      "size": "M",
-      "status": "active",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-24",
-      "archivedAt": null,
-      "leadPersona": "dynin",
-      "supportPersonas": [
-        "vesnin"
-      ],
-      "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1107 bc5169da; W0-W4; CLOSURE docs/day-sprint/atlas-report-plane-2026-07-24/CLOSURE.md",
       "githubIssueClosedAt": null
     },
     {

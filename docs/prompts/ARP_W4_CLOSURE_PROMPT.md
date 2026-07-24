@@ -11,6 +11,6 @@
 
 ## DoD
 
-- [ ] CLOSURE написан
-- [ ] Все карточки archived
-- [ ] ACTIVE/LOG согласованы
+- [x] CLOSURE написан
+- [x] Все карточки archived (после archive W4 + epic)
+- [x] ACTIVE/LOG согласованы

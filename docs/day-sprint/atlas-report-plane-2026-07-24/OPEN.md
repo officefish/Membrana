@@ -4,7 +4,7 @@
 |------|----------|
 | **Sprint** | `atlas-report-plane-2026-07-24` |
 | **Registry epic** | `atlas-report-plane` · [#1097](https://github.com/officefish/Membrana/issues/1097) |
-| **Status** | **open** |
+| **Status** | **closed** · см. [CLOSURE.md](./CLOSURE.md) · PR [#1107](https://github.com/officefish/Membrana/pull/1107) |
 | **Kind** | day-sprint (эпик L + фазы M) |
 | **Size** | L |
 | **Lead epic** | vesnin |
@@ -45,7 +45,7 @@ meta:       docs/tooling-atlas  ← индекс контейнеров
 | **W1** | `arp-w1-canon` | [#1099](https://github.com/officefish/Membrana/issues/1099) | ozhegov | [`ARP_W1_CANON_PROMPT.md`](../../prompts/ARP_W1_CANON_PROMPT.md) | Канон 2D в docs/patterns + audit | **done** |
 | **W2** | `arp-w2-engine` | [#1100](https://github.com/officefish/Membrana/issues/1100) | ozhegov | [`ARP_W2_ENGINE_PROMPT.md`](../../prompts/ARP_W2_ENGINE_PROMPT.md) | Агрегатор home/role/plane + тесты | **done** |
 | **W3** | `arp-w3-surface` | [#1101](https://github.com/officefish/Membrana/issues/1101) | ozhegov | [`ARP_W3_SURFACE_PROMPT.md`](../../prompts/ARP_W3_SURFACE_PROMPT.md) | Render + Mintlify + провода | **done** |
-| **W4** | `arp-w4-closure` | [#1102](https://github.com/officefish/Membrana/issues/1102) | vesnin | [`ARP_W4_CLOSURE_PROMPT.md`](../../prompts/ARP_W4_CLOSURE_PROMPT.md) | CLOSURE + archive | pending |
+| **W4** | `arp-w4-closure` | [#1102](https://github.com/officefish/Membrana/issues/1102) | vesnin | [`ARP_W4_CLOSURE_PROMPT.md`](../../prompts/ARP_W4_CLOSURE_PROMPT.md) | CLOSURE + archive | **done** |
 
 ## Вне scope v1
 
