@@ -8,7 +8,7 @@
   "verbs": {
     "audit": null,
     "decompose": null,
-    "inspectElement": "planned: yarn task:inspect (v4)",
+    "inspectElement": "yarn task:inspect",
     "list": "yarn task:list",
     "board": "planned: yarn task:board (v3+)",
     "bookkeeping": "planned: yarn task:bookkeeping",
