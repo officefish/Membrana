@@ -2,14 +2,14 @@
   "name": "@membrana/docs",
   "version": "0.1.0",
   "private": true,
-  "description": "Membrana product documentation (Mintlify). Autonomous from apps/client.",
+  "description": "Membrana product documentation (Mintlify) — Device Board only. Harness → @membrana/docs-harness.",
   "installConfig": {
     "hoistingLimits": "workspaces"
   },
   "scripts": {
-    "dev": "node ../../scripts/docs-dev.mjs",
-    "build": "node ../../scripts/verify-mintlify-docs.mjs",
-    "lint": "node ../../scripts/verify-mintlify-docs.mjs --links",
+    "dev": "node ../../scripts/docs-dev.mjs --root apps/docs",
+    "build": "node ../../scripts/verify-mintlify-docs.mjs --root apps/docs",
+    "lint": "node ../../scripts/verify-mintlify-docs.mjs --root apps/docs --links",
     "clean": "rimraf .mintlify",
     "typecheck": "echo \"@membrana/docs: no TypeScript\"",
     "test": "echo \"@membrana/docs: no unit tests\""

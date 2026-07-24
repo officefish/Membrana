@@ -1,0 +1,21 @@
+{
+  "name": "@membrana/docs-harness",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Membrana harness documentation (Mintlify): tooling, bestiary, llm-calls, git cookbooks.",
+  "installConfig": {
+    "hoistingLimits": "workspaces"
+  },
+  "scripts": {
+    "dev": "node ../../scripts/docs-dev.mjs --root apps/docs-harness --port 3334",
+    "build": "node ../../scripts/verify-mintlify-docs.mjs --root apps/docs-harness",
+    "lint": "node ../../scripts/verify-mintlify-docs.mjs --root apps/docs-harness --links",
+    "clean": "rimraf .mintlify",
+    "typecheck": "echo \"@membrana/docs-harness: no TypeScript\"",
+    "test": "echo \"@membrana/docs-harness: no unit tests\""
+  },
+  "devDependencies": {
+    "mintlify": "^4.2.123",
+    "rimraf": "^5.0.0"
+  }
+}

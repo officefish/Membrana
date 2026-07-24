@@ -42,7 +42,7 @@
 |-------|-----|-------|
 | **Элемент** | один контейнер = его `README.md` + `workshop.manifest.json` (живут В контейнере, не здесь) | внешний источник |
 | **Реестр** | производный индекс всех контейнеров (overwrite, Meta) | `registry/ATLAS.md` — пересобирается |
-| **Витрина** | mintlify-страница общей документации по туллингу | `apps/docs/tooling/containers.mdx` — генерится |
+| **Витрина** | mintlify-страница общей документации по туллингу | `apps/docs-harness/tooling/containers.mdx` — генерится |
 | **Инструмент** | осмотр/декомпозиция/рассмотрение + пересбор индекса и витрины | `yarn tooling:atlas` |
 
 **Источник истины — README + манифест каждого контейнера.** `registry/ATLAS.md` и
@@ -63,7 +63,8 @@ mintlify-страница руками не правятся (дрейф лов�
 ## Витрина mintlify
 
 `yarn tooling:atlas --render` пересобирает и `registry/ATLAS.md`, и mintlify-страницу
-`apps/docs/tooling/containers.mdx` (секция «Tooling» в `docs.json`). Оба — производные.
+`apps/docs-harness/tooling/containers.mdx` (группа «Tooling» в harness `docs.json`).
+Оба — производные. Product site (`apps/docs`) больше не содержит tooling.
 
 ## Границы
 

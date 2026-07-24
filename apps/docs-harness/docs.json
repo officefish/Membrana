@@ -1,0 +1,48 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Membrana Harness",
+  "theme": "mint",
+  "colors": {
+    "primary": "#0d9488",
+    "light": "#14b8a6",
+    "dark": "#0f766e"
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Tooling",
+        "pages": ["tooling/containers"]
+      },
+      {
+        "group": "Bestiary — workshop",
+        "pages": [
+          "bestiary/overview",
+          "bestiary/catch-silent-swallow",
+          "bestiary/trap-silent-empty-catch"
+        ]
+      },
+      {
+        "group": "LLM calls — evidence",
+        "pages": [
+          "llm-calls/overview",
+          "llm-calls/specimen-cr-openrouter-001"
+        ]
+      },
+      {
+        "group": "Git — branch cases",
+        "pages": [
+          "git/cookbooks/branch-kind-dictionary",
+          "git/cookbooks/branch-format-tags",
+          "git/cookbooks/branch-persona-grammar",
+          "git/cookbooks/branch-open-pr-vs-salvage",
+          "git/cookbooks/branch-anti-feature-agent"
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/officefish/Membrana"
+    }
+  }
+}
