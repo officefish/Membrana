@@ -7,143 +7,153 @@
     "light": "#14b8a6",
     "dark": "#0f766e"
   },
-  "navigation": [
-    {
-      "group": "Device Board",
-      "pages": [
-        "device-board/mvp-overview",
-        "device-board/architecture",
-        "device-board/canvas-overview",
-        "device-board/usercases",
-        "device-board/user-workspace",
-        "device-board/editor/overview",
-        "device-board/editor/edit-and-navigation",
-        "device-board/editor/user-functions"
-      ]
-    },
-    {
-      "group": "Concepts",
-      "pages": [
-        "concepts/reference-model",
-        "concepts/variable-store",
-        "concepts/streaming-lifecycle"
-      ]
-    },
-    {
-      "group": "Cookbooks",
-      "pages": [
-        "device-board/cookbooks/on-start-to-main",
-        "device-board/cookbooks/collect-to-terminal",
-        "device-board/cookbooks/journal-reporter-v06",
-        "device-board/cookbooks/detection-alarm-chain"
-      ]
-    },
-    {
-      "group": "Git — branch cases",
-      "pages": [
-        "git/cookbooks/branch-kind-dictionary",
-        "git/cookbooks/branch-format-tags",
-        "git/cookbooks/branch-persona-grammar",
-        "git/cookbooks/branch-open-pr-vs-salvage",
-        "git/cookbooks/branch-anti-feature-agent"
-      ]
-    },
-    {
-      "group": "Bestiary — workshop",
-      "pages": [
-        "bestiary/overview",
-        "bestiary/catch-silent-swallow",
-        "bestiary/trap-silent-empty-catch"
-      ]
-    },
-    {
-      "group": "LLM calls — evidence",
-      "pages": [
-        "llm-calls/overview",
-        "llm-calls/specimen-cr-openrouter-001"
-      ]
-    },
-    {
-      "group": "Nodes — index",
-      "pages": ["device-board/nodes/index"]
-    },
-    {
-      "group": "Nodes — globals & control",
-      "pages": [
-        "device-board/nodes/device-global",
-        "device-board/nodes/stop-runtime",
-        "device-board/nodes/print",
-        "device-board/nodes/is-valid"
-      ]
-    },
-    {
-      "group": "Nodes — streaming",
-      "pages": [
-        "device-board/nodes/get-microphone",
-        "device-board/nodes/start-streaming",
-        "device-board/nodes/stop-streaming",
-        "device-board/nodes/get-audio-stream",
-        "device-board/nodes/get-sample",
-        "device-board/nodes/get-fft-frame"
-      ]
-    },
-    {
-      "group": "Nodes — collectors",
-      "pages": [
-        "device-board/nodes/get-recorder",
-        "device-board/nodes/get-spectral-analyser",
-        "device-board/nodes/collect-samples",
-        "device-board/nodes/collect-fft-frames",
-        "device-board/nodes/flush-spectral-analyser"
-      ]
-    },
-    {
-      "group": "Nodes — recording",
-      "pages": [
-        "device-board/nodes/make-recording-policy",
-        "device-board/nodes/start-recording",
-        "device-board/nodes/stop-recording",
-        "device-board/nodes/is-recording-window-full",
-        "device-board/nodes/make-track",
-        "device-board/nodes/make-fft-trends-policy",
-        "device-board/nodes/make-fft-trends-analysis"
-      ]
-    },
-    {
-      "group": "Nodes — journal & reports",
-      "pages": [
-        "device-board/nodes/get-journal",
-        "device-board/nodes/get-reporter",
-        "device-board/nodes/make-report-from-track",
-        "device-board/nodes/make-report-from-analysis",
-        "device-board/nodes/publish-report"
-      ]
-    },
-    {
-      "group": "Nodes — detection & alarm",
-      "pages": [
-        "device-board/nodes/make-ensemble-analysis",
-        "device-board/nodes/make-detection-fusion",
-        "device-board/nodes/branch-on-detection",
-        "device-board/nodes/make-proximity-trend",
-        "device-board/nodes/make-combined-report"
-      ]
-    },
-    {
-      "group": "Nodes — system",
-      "pages": [
-        "device-board/nodes/event",
-        "device-board/nodes/loop-repeat",
-        "device-board/nodes/variable-get-set"
-      ]
-    },
-    {
-      "group": "Tooling",
-      "pages": [
-        "tooling/containers"
-      ]
-    }
-  ],
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Продукт",
+        "groups": [
+          {
+            "group": "Device Board",
+            "pages": [
+              "device-board/mvp-overview",
+              "device-board/architecture",
+              "device-board/canvas-overview",
+              "device-board/usercases",
+              "device-board/user-workspace",
+              "device-board/editor/overview",
+              "device-board/editor/edit-and-navigation",
+              "device-board/editor/user-functions"
+            ]
+          },
+          {
+            "group": "Concepts",
+            "pages": [
+              "concepts/reference-model",
+              "concepts/variable-store",
+              "concepts/streaming-lifecycle"
+            ]
+          },
+          {
+            "group": "Cookbooks",
+            "pages": [
+              "device-board/cookbooks/on-start-to-main",
+              "device-board/cookbooks/collect-to-terminal",
+              "device-board/cookbooks/journal-reporter-v06",
+              "device-board/cookbooks/detection-alarm-chain"
+            ]
+          },
+          {
+            "group": "Nodes — index",
+            "pages": ["device-board/nodes/index"]
+          },
+          {
+            "group": "Nodes — globals & control",
+            "pages": [
+              "device-board/nodes/device-global",
+              "device-board/nodes/stop-runtime",
+              "device-board/nodes/print",
+              "device-board/nodes/is-valid"
+            ]
+          },
+          {
+            "group": "Nodes — streaming",
+            "pages": [
+              "device-board/nodes/get-microphone",
+              "device-board/nodes/start-streaming",
+              "device-board/nodes/stop-streaming",
+              "device-board/nodes/get-audio-stream",
+              "device-board/nodes/get-sample",
+              "device-board/nodes/get-fft-frame"
+            ]
+          },
+          {
+            "group": "Nodes — collectors",
+            "pages": [
+              "device-board/nodes/get-recorder",
+              "device-board/nodes/get-spectral-analyser",
+              "device-board/nodes/collect-samples",
+              "device-board/nodes/collect-fft-frames",
+              "device-board/nodes/flush-spectral-analyser"
+            ]
+          },
+          {
+            "group": "Nodes — recording",
+            "pages": [
+              "device-board/nodes/make-recording-policy",
+              "device-board/nodes/start-recording",
+              "device-board/nodes/stop-recording",
+              "device-board/nodes/is-recording-window-full",
+              "device-board/nodes/make-track",
+              "device-board/nodes/make-fft-trends-policy",
+              "device-board/nodes/make-fft-trends-analysis"
+            ]
+          },
+          {
+            "group": "Nodes — journal & reports",
+            "pages": [
+              "device-board/nodes/get-journal",
+              "device-board/nodes/get-reporter",
+              "device-board/nodes/make-report-from-track",
+              "device-board/nodes/make-report-from-analysis",
+              "device-board/nodes/publish-report"
+            ]
+          },
+          {
+            "group": "Nodes — detection & alarm",
+            "pages": [
+              "device-board/nodes/make-ensemble-analysis",
+              "device-board/nodes/make-detection-fusion",
+              "device-board/nodes/branch-on-detection",
+              "device-board/nodes/make-proximity-trend",
+              "device-board/nodes/make-combined-report"
+            ]
+          },
+          {
+            "group": "Nodes — system",
+            "pages": [
+              "device-board/nodes/event",
+              "device-board/nodes/loop-repeat",
+              "device-board/nodes/variable-get-set"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Харнес",
+        "groups": [
+          {
+            "group": "Tooling",
+            "pages": ["tooling/containers"]
+          },
+          {
+            "group": "Bestiary — workshop",
+            "pages": [
+              "bestiary/overview",
+              "bestiary/catch-silent-swallow",
+              "bestiary/trap-silent-empty-catch"
+            ]
+          },
+          {
+            "group": "LLM calls — evidence",
+            "pages": [
+              "llm-calls/overview",
+              "llm-calls/specimen-cr-openrouter-001"
+            ]
+          },
+          {
+            "group": "Git — branch cases",
+            "pages": [
+              "git/cookbooks/branch-kind-dictionary",
+              "git/cookbooks/branch-format-tags",
+              "git/cookbooks/branch-persona-grammar",
+              "git/cookbooks/branch-open-pr-vs-salvage",
+              "git/cookbooks/branch-anti-feature-agent"
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "footer": {
     "socials": {
       "github": "https://github.com/officefish/Membrana"

@@ -20,9 +20,28 @@ function fail(message) {
   process.exitCode = 1;
 }
 
+/**
+ * Mintlify docs.json: `navigation` is an object (`groups` / `tabs` / …).
+ * Older drafts used a bare array-of-groups — still accepted for local checks.
+ */
+function navigationGroups(navigation) {
+  if (Array.isArray(navigation)) return navigation;
+  if (navigation && typeof navigation === 'object') {
+    if (Array.isArray(navigation.groups)) return navigation.groups;
+    if (Array.isArray(navigation.tabs)) {
+      return navigation.tabs.flatMap((tab) => {
+        if (Array.isArray(tab?.groups)) return tab.groups;
+        if (Array.isArray(tab?.pages)) return [{ group: tab.tab ?? 'tab', pages: tab.pages }];
+        return [];
+      });
+    }
+  }
+  return [];
+}
+
 function collectPages(navigation) {
   const pages = [];
-  for (const group of navigation ?? []) {
+  for (const group of navigationGroups(navigation)) {
     for (const page of group.pages ?? []) {
       if (typeof page === 'string') {
         pages.push(page);
