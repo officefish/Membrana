@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-23",
+  "updatedAt": "2026-07-24",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -666,6 +666,17 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-23",
+      "tags": []
+    },
+    {
+      "id": "insight-network-status-board",
+      "title": "Борд состояния сети в харнес-панели (здоровье N серверов)",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-24",
       "tags": []
     }
   ]
