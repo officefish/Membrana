@@ -168,3 +168,7 @@ docs/insights/_lifecycle/
 # Worktree-гигиена (#717): карточка дерева и advisory-замок — per-tree, не версионируются
 /WORKTREE.md
 /.worktree-owner
+
+# LPC evidence house — сырой кеш агента (не истина)
+docs/audit/llm-calls/cache/**
+!docs/audit/llm-calls/cache/.gitkeep

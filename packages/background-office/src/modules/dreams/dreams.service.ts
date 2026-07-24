@@ -8,18 +8,24 @@ import { APP_CONFIG } from '../../config/config.tokens';
 import { DeepSeekService } from '../deepseek/deepseek.service';
 import { OpenRouterService } from '../openrouter/openrouter.service';
 
+type DreamsProjection = {
+  day: string;
+  winners: unknown[];
+  heats: unknown[];
+  noWinnerHeats: number[];
+  winnerCount: number;
+  dreams: unknown[];
+  eventCount?: number;
+  status?: 'has-winners' | 'ran-empty' | 'never-ran';
+  reason?: string | null;
+  source?: { kind: string; root?: string; producerAlive?: boolean | null };
+};
+
 type DreamsLib = {
   DreamsLog: new (opts?: { path?: string }) => {
     hasSlot: (day: string, hour: number) => boolean;
     append: (e: unknown) => { ok: boolean; reason?: string; event?: unknown };
-    projectDay: (day: string) => {
-      day: string;
-      winners: unknown[];
-      heats: unknown[];
-      noWinnerHeats: number[];
-      winnerCount: number;
-      dreams: unknown[];
-    };
+    projectDay: (day: string, opts?: { volumeRoot?: string }) => DreamsProjection;
   };
   dayLogPath: (root: string, day: string) => string;
   commitDreamTick: (
@@ -27,6 +33,10 @@ type DreamsLib = {
     input: Record<string, unknown>,
   ) => Promise<{ ok: boolean; reason?: string; skipped?: boolean; event?: unknown }>;
   formatDreamDigestMd: (proj: unknown) => string;
+  attachDigestSource: (
+    proj: DreamsProjection,
+    source: { kind: 'local-volume' | 'office'; root?: string; producerAlive?: boolean | null },
+  ) => DreamsProjection;
   enumeratePairs: (registry: unknown) => Array<{ a: { id: string }; b: { id: string } }>;
   routeDreamProvider: (provider: string) => {
     channel: 'deepseek' | 'openrouter';
@@ -86,6 +96,7 @@ export class DreamsService {
           dayLogPath: logMod.dayLogPath,
           commitDreamTick: tickMod.commitDreamTick,
           formatDreamDigestMd: fmtMod.formatDreamDigestMd,
+          attachDigestSource: fmtMod.attachDigestSource,
           enumeratePairs: nightMod.enumeratePairs,
           routeDreamProvider: providersMod.routeDreamProvider,
           providerUnavailableResult: providersMod.providerUnavailableResult,
@@ -211,8 +222,13 @@ export class DreamsService {
 
   async digest(day: string): Promise<{ projection: unknown; markdown: string }> {
     const lib = await this.lib();
-    const log = new lib.DreamsLog({ path: lib.dayLogPath(this.volumeRoot(), day) });
-    const projection = log.projectDay(day);
+    const root = this.volumeRoot();
+    const log = new lib.DreamsLog({ path: lib.dayLogPath(root, day) });
+    const projection = lib.attachDigestSource(log.projectDay(day, { volumeRoot: root }), {
+      kind: 'office',
+      root,
+      producerAlive: true,
+    });
     return { projection, markdown: lib.formatDreamDigestMd(projection) };
   }
 

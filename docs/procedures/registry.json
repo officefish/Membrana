@@ -290,6 +290,23 @@
         "value": false,
         "provenance": null
       }
+    },
+    {
+      "id": "one-shot",
+      "holder": "vesnin",
+      "homePath": "docs/procedures/one-shot",
+      "container": {
+        "value": true,
+        "provenance": "vesnin@oneshot-ff"
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": true,
+        "provenance": "vesnin@oneshot-ff"
+      }
     }
   ]
 }

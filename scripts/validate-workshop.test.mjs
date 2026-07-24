@@ -76,7 +76,7 @@ test('лишний ключ в доменной записи — не valid (fin
   assert.ok(r.problems.some((x) => x.includes('лишний ключ bogus')));
 });
 
-test('нет audit (MUST) — не valid', () => {
+test('нет audit (ключ отсутствует) — не valid', () => {
   const m = fullManifest();
   delete m.verbs.audit;
   const p = writeManifest('docs/audit/no-audit', m);
@@ -85,13 +85,24 @@ test('нет audit (MUST) — не valid', () => {
   assert.ok(r.problems.some((x) => x.includes('audit')));
 });
 
-test('пустой decompose (MUST) — не valid', () => {
+test('пустой decompose — не valid', () => {
   const m = fullManifest();
   m.verbs.decompose = '';
   const p = writeManifest('docs/audit/empty-decompose', m);
   const r = validateWorkshop(p);
   assert.equal(r.valid, false);
   assert.ok(r.problems.some((x) => x.includes('decompose')));
+});
+
+test('audit+decompose = null — valid с ⚠ (g0 V2: инвентарь вне мастерской)', () => {
+  const m = fullManifest();
+  m.verbs.audit = null;
+  m.verbs.decompose = null;
+  const p = writeManifest('docs/tasks/decision', m);
+  const r = validateWorkshop(p);
+  assert.equal(r.valid, true, r.problems.join('; '));
+  assert.ok(r.warnings.some((x) => x.includes('audit') && x.includes('null')));
+  assert.ok(r.warnings.some((x) => x.includes('decompose') && x.includes('null')));
 });
 
 test('worksOn массив — не valid (кратность 1)', () => {
@@ -108,6 +119,31 @@ test('лишнее поле — не valid («манифест — контра�
   const r = validateWorkshop(p);
   assert.equal(r.valid, false);
   assert.ok(r.problems.some((x) => x.includes('лишнее поле extra')));
+});
+
+test('иерархия V1: role/dependentOn/mirrorsFrom/rulesVersion — допустимы', () => {
+  const m = fullManifest({
+    role: 'derivative',
+    dependentOn: ['docs/tasks'],
+    mirrorsFrom: 'docs/tasks/registry.json',
+    rulesVersion: '1',
+  });
+  const p = writeManifest('docs/audit/hierarchy', m);
+  const r = validateWorkshop(p);
+  assert.equal(r.valid, true, r.problems.join('; '));
+});
+
+test('decision-verbs V2: list/board/bookkeeping/reviewing — допустимы', () => {
+  const m = fullManifest();
+  m.verbs.audit = null;
+  m.verbs.decompose = null;
+  m.verbs.list = 'yarn task:list';
+  m.verbs.board = 'planned: board';
+  m.verbs.bookkeeping = 'planned: bookkeeping';
+  m.verbs.reviewing = 'planned: reviewing';
+  const p = writeManifest('docs/tasks/decision-verbs', m);
+  const r = validateWorkshop(p);
+  assert.equal(r.valid, true, r.problems.join('; '));
 });
 
 test('доменный инструмент без worksOn — не valid', () => {

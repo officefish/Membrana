@@ -1,8 +1,11 @@
 # containerization-master — кит Мастера контейнеризации
 
 Третий жилец слоя [`kits/`](../README.md). Именованный набор инструментов, чтобы
-агент в **холодной сессии** крафтил и аудитил контейнеры / киты, опираясь на два
-паттерна и опыт действующих домов.
+агент в **холодной сессии** крафтил и аудитил контейнеры / киты, опираясь на три
+паттерна ([`GROUP_CONTAINERIZATION`](../../docs/patterns/GROUP_CONTAINERIZATION.md) —
+пространство, [`PINNED_SUBGRAPH_VERSIONING`](../../docs/patterns/PINNED_SUBGRAPH_VERSIONING.md) —
+время/идентичность, [`HOME_WORKSHOP`](../../docs/patterns/HOME_WORKSHOP.md) — операции)
+и опыт действующих домов.
 
 **Owner пина:** `ozhegov` (`leadPersona` в [`MANIFEST.json`](./MANIFEST.json)).  
 **Автор крафта:** «Мастер контейнеризации» /
@@ -63,7 +66,7 @@ yarn kits:audit --id containerization-master --mode latest
 
 | Что | Куда |
 |-----|------|
-| Паттерны GROUP_* / PINNED_* | `docs/patterns/` · precedents процедуры |
+| Паттерны `GROUP_*` / `PINNED_*` / `HOME_WORKSHOP` | `docs/patterns/` · precedents процедуры |
 | `CONTAINERIZATION_MASTER_PROMPT.md` | precedents процедуры (нет static import `.md`) |
 | `AGENT_PROMPT.md` целевых контейнеров | дома контейнеров; не pins |
 | Mintlify pin `docs/audit/git/pins/` | движок git-кейсов; не этот кит |
@@ -73,6 +76,6 @@ yarn kits:audit --id containerization-master --mode latest
 
 1. [`CONTAINERIZATION_MASTER_PROMPT.md`](../../docs/prompts/CONTAINERIZATION_MASTER_PROMPT.md)
 2. Этот README
-3. Оба паттерна
-4. Skill `membrana-containerization-master`
+3. Все три паттерна ([`docs/patterns/README.md`](../../docs/patterns/README.md) — навигатор по осям)
+4. Skill `membrana-containerization-master` (там же мета-уровень: контейнер контейнеров)
 5. `yarn neighbors` → `yarn kits:audit --id containerization-master --mode latest`

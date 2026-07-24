@@ -49,6 +49,8 @@ interface IssueNode {
   attachments: { nodes: { url: string }[] } | null;
   createdAt: string;
   updatedAt: string;
+  /** Аддитивно в @1; старые фикстуры/снимки могут не нести поле. */
+  startedAt?: string | null;
   completedAt: string | null;
 }
 
@@ -87,6 +89,7 @@ export function mapIssueNode(node: IssueNode): LinearSnapshotRecord {
     githubIssueRefs,
     createdAt: node.createdAt,
     updatedAt: node.updatedAt,
+    startedAt: node.startedAt ?? null,
     completedAt: node.completedAt,
   };
 }
@@ -156,6 +159,7 @@ export class LinearSnapshotGraphqlSource implements LinearSnapshotSourcePort {
             attachments { nodes { url } }
             createdAt
             updatedAt
+            startedAt
             completedAt
           }
         }

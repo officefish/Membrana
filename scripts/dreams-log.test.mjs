@@ -6,6 +6,8 @@ import { tmpdir } from 'node:os';
 
 import {
   DreamsLog,
+  classifyDreamDigestState,
+  dayLogPath,
   dreamMasterVersion,
   reduceOutcomes,
   validateDreamEvent,
@@ -72,6 +74,58 @@ test('projectDay: digest ≤6, no-winner явен; reduceOutcomes тотален
   const outcomes = reduceOutcomes(proj.dreams);
   assert.equal(outcomes.length, 24);
   assert.ok(outcomes.every((o) => ['won', 'lost', 'failed', 'skipped', 'no-winner-slot'].includes(o.outcome)));
+});
+
+test('classifyDreamDigestState: tri-state never-ran / ran-empty / has-winners', () => {
+  assert.deepEqual(
+    classifyDreamDigestState({
+      dreams: [],
+      winners: [],
+      logPath: '/x/dreams/d.jsonl',
+      logExists: false,
+      volumeRoot: '/x',
+      volumeExists: true,
+    }),
+    { status: 'never-ran', reason: 'day-log-missing' },
+  );
+  assert.deepEqual(
+    classifyDreamDigestState({
+      dreams: [],
+      winners: [],
+      volumeRoot: '/missing',
+      volumeExists: false,
+    }),
+    { status: 'never-ran', reason: 'volume-missing' },
+  );
+  assert.equal(
+    classifyDreamDigestState({
+      dreams: [{ status: 'skipped' }, { status: 'synthesisFailed' }],
+      winners: [],
+    }).status,
+    'ran-empty',
+  );
+  assert.deepEqual(
+    classifyDreamDigestState({
+      dreams: [{ status: 'synthesized' }],
+      winners: [{ id: 'w1' }],
+    }),
+    { status: 'has-winners', reason: null },
+  );
+});
+
+test('projectDay: never-ran когда лога суток нет на томе', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'dreams-proj-'));
+  try {
+    const path = dayLogPath(dir, '2026-07-21');
+    const log = new DreamsLog({ path });
+    const proj = log.projectDay('2026-07-21', { volumeRoot: dir });
+    assert.equal(proj.status, 'never-ran');
+    assert.equal(proj.reason, 'day-log-missing');
+    assert.equal(proj.eventCount, 0);
+    assert.equal(proj.winnerCount, 0);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 });
 
 test('DreamsLog file backend: append переживает reopen', () => {

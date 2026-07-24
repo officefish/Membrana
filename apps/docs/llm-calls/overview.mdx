@@ -1,0 +1,30 @@
+---
+title: LLM calls evidence — overview
+description: Thin Mintlify mirror of the LPC evidence house; git is truth.
+---
+
+# LLM calls — evidence (overview)
+
+**Монитор (это приложение)** зеркалит дом в git. Дом **не** переезжает сюда.
+
+| Слой | Смысл | Где истина (git) |
+|------|--------|------------------|
+| **Гранула** | один attempt (шаг chain) | `docs/audit/llm-calls/registry/LLM_CALLS_LIST.md` |
+| **Evidence** | sha256 тел + params + мета | emit LPC → office; snapshot → дом |
+| **Specimen** | курируемая фикстура | `docs/audit/llm-calls/specimens/` |
+| **Кеш** | сырьё отладки (не истина) | `docs/audit/llm-calls/cache/` (gitignore) |
+
+## Лемма: git = истина · Mintlify = монитор
+
+- Канон и правки — только в `docs/audit/llm-calls/`.
+- Эти страницы **могут отставать**; сверка — по git-путям.
+- Сырой prompt/response **никогда** не публикуется (E1); только hashes и параметры.
+- **Глубина:** thin mirror — overview + зеркала specimens. Pin F4 out of v1.
+
+## Зеркала
+
+| Страница | Git-источник |
+|----------|--------------|
+| Specimen openrouter attempt | [`specimen-cr-openrouter-001.md`](https://github.com/officefish/Membrana/blob/main/docs/audit/llm-calls/specimens/specimen-cr-openrouter-001.md) |
+
+Дом: [`docs/audit/llm-calls/README.md`](https://github.com/officefish/Membrana/blob/main/docs/audit/llm-calls/README.md) · эпик #1033.

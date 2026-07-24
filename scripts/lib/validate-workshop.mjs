@@ -3,8 +3,10 @@
  *
  * Канон: [`docs/patterns/HOME_WORKSHOP.md`](../../docs/patterns/HOME_WORKSHOP.md),
  * вердикты `m1-contract` (поля манифеста) и `m2-vocabulary` (словарь глаголов).
- * Шов Ф2↔Ф5 разрешён Ф5: `audit`+`decompose` — MUST, `inspectElement` — SHOULD
- * (отсутствие = предупреждение, не провал), т.к. у живущих мастерских его пока нет.
+ * Шов Ф2↔Ф5: `inspectElement` — SHOULD (отсутствие = предупреждение, не провал).
+ * Amendment g0 / #1056 (V2 wins): `audit`+`decompose` — ключи MUST; значение —
+ * непустая строка (инвентарь в этой мастерской) или `null` (вынесены в соседний
+ * контур / CI; ⚠, не провал). MUST покрытия **дома** остаётся в паттерне.
  *
  * Детерминирована, без сети; файловая система — единственный вход (при резолве pattern/kit).
  */
@@ -14,12 +16,34 @@ import { basename, dirname, join } from 'node:path';
 
 /** Обязательные ключи манифеста мастерской (вердикт Ф1). */
 const REQUIRED_KEYS = ['pattern', 'name', 'worksOn', 'kit', 'verbs'];
-/** MUST-глаголы словаря (вердикт Ф2): их отсутствие — дефект. */
+/**
+ * Опциональные поля иерархии / семантики (tasks-workshop V1).
+ * Носитель правил: docs/audit/workshop-semantics.json.
+ */
+const OPTIONAL_KEYS = ['role', 'dependentOn', 'mirrorsFrom', 'rulesVersion'];
+const ALLOWED_KEYS = [...REQUIRED_KEYS, ...OPTIONAL_KEYS];
+/** MUST-ключи инвентаря (вердикт Ф2 + g0): отсутствие ключа — дефект; null — ⚠. */
 const REQUIRED_VERB_KEYS = ['audit', 'decompose'];
-/** Все известные ключи словаря (прочие — «свалка»). `inspectElement` — SHOULD. */
-const KNOWN_VERB_KEYS = ['audit', 'decompose', 'inspectElement', 'stackLike', 'domain'];
+/**
+ * Известные ключи словаря. Decision-verbs (V2 wins): list/board/bookkeeping/reviewing
+ * — ядро мастерской docs/tasks; audit/decompose остаются ключами (часто null).
+ */
+const KNOWN_VERB_KEYS = [
+  'audit',
+  'decompose',
+  'inspectElement',
+  'list',
+  'board',
+  'bookkeeping',
+  'reviewing',
+  'stackLike',
+  'domain',
+];
+/** Decision-глаголы сверх inspectElement — строка (в т.ч. planned:) или отсутствие ключа. */
+const DECISION_VERB_KEYS = ['list', 'board', 'bookkeeping', 'reviewing'];
 /** Допустимые ключи доменной записи (прочие — «свалка»). */
 const KNOWN_DOMAIN_KEYS = ['name', 'worksOn', 'tool'];
+const KNOWN_ROLES = ['primary', 'derivative'];
 
 const isNonEmptyString = (v) => typeof v === 'string' && v.trim() !== '';
 
@@ -36,7 +60,7 @@ export function workshopSchemaProblems(m) {
   }
   const keys = Object.keys(m);
   for (const k of REQUIRED_KEYS) if (!keys.includes(k)) problems.push(`нет поля ${k}`);
-  for (const k of keys) if (!REQUIRED_KEYS.includes(k)) problems.push(`лишнее поле ${k}`);
+  for (const k of keys) if (!ALLOWED_KEYS.includes(k)) problems.push(`лишнее поле ${k}`);
 
   if (keys.includes('pattern') && !isNonEmptyString(m.pattern)) {
     problems.push('pattern — не непустая строка');
@@ -54,6 +78,24 @@ export function workshopSchemaProblems(m) {
     problems.push('kit — не строка и не null');
   }
 
+  // Иерархия (V1): role / dependentOn / mirrorsFrom / rulesVersion.
+  if (keys.includes('role')) {
+    if (!KNOWN_ROLES.includes(m.role)) {
+      problems.push(`role — ожидается ${KNOWN_ROLES.join('|')}`);
+    }
+  }
+  if (keys.includes('dependentOn')) {
+    if (!Array.isArray(m.dependentOn) || m.dependentOn.length === 0 || !m.dependentOn.every(isNonEmptyString)) {
+      problems.push('dependentOn — непустой массив непустых строк');
+    }
+  }
+  if (keys.includes('mirrorsFrom') && !isNonEmptyString(m.mirrorsFrom)) {
+    problems.push('mirrorsFrom — не непустая строка');
+  }
+  if (keys.includes('rulesVersion') && !isNonEmptyString(m.rulesVersion) && typeof m.rulesVersion !== 'number') {
+    problems.push('rulesVersion — непустая строка или число');
+  }
+
   if (keys.includes('verbs')) {
     const v = m.verbs;
     if (v === null || typeof v !== 'object' || Array.isArray(v)) {
@@ -64,15 +106,30 @@ export function workshopSchemaProblems(m) {
       for (const k of vkeys) {
         if (!KNOWN_VERB_KEYS.includes(k)) problems.push(`verbs: лишний ключ ${k}`);
       }
-      // audit / decompose — MUST (непустые строки).
+      // audit / decompose — ключи MUST; значение: непустая строка (в этой мастерской)
+      // или null (вынесены вовне — ⚠; g0 V2 / #1056). Пустая строка — дефект.
       for (const k of ['audit', 'decompose']) {
-        if (vkeys.includes(k) && !isNonEmptyString(v[k])) problems.push(`verbs.${k} — MUST, но не непустая строка`);
+        if (!vkeys.includes(k)) continue;
+        if (v[k] === null) {
+          warnings.push(
+            `${k} = null (инвентарь вне этой мастерской — соседний контур/CI; покрытие дома MUST остаётся)`,
+          );
+        } else if (!isNonEmptyString(v[k])) {
+          problems.push(`verbs.${k} — непустая строка или null`);
+        }
       }
       // inspectElement — SHOULD: отсутствие ключа ИЛИ null → предупреждение (⚠), не провал (шов Ф2↔Ф5).
       if (!vkeys.includes('inspectElement') || v.inspectElement === null) {
         warnings.push('inspectElement отсутствует (SHOULD) — ⚠ мастерская не спускается в элемент');
       } else if (!isNonEmptyString(v.inspectElement)) {
         problems.push('verbs.inspectElement — не строка и не null');
+      }
+      // Decision-verbs (V2): если ключ есть — непустая строка (адрес/planned), не null.
+      for (const k of DECISION_VERB_KEYS) {
+        if (!vkeys.includes(k)) continue;
+        if (!isNonEmptyString(v[k])) {
+          problems.push(`verbs.${k} — непустая строка (состав мастерской / planned:)`);
+        }
       }
       // stackLike — опц. массив строк.
       if (vkeys.includes('stackLike')) {

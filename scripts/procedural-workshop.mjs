@@ -61,11 +61,27 @@ function runInspect(id) {
   console.log(`procedures:workshop --inspect ${id}\n`);
   if (!r.built) { console.log(`· ${r.note}`); return; }
   console.log(`holder: ${r.leadPersona ?? '—'} · README: ${r.readmePresent ? '✓' : '✗'} · kitVersion: ${r.kitVersion ?? 'null'}`);
-  console.log(`второе измерение (подграф манифеста): engines ${r.secondDimension.enginesCount}, precedents ${r.secondDimension.precedentsCount}`);
-  if (r.engines.length) console.log(`  engines:\n${r.engines.map((e) => `    · ${e}`).join('\n')}`);
+  console.log(`цепочка кадров: ${r.secondDimension.frameCount} · подграф манифеста: engines ${r.secondDimension.enginesCount}, precedents ${r.secondDimension.precedentsCount}\n`);
+  renderLane('preflight', 'гейт до цепочки', r.queue.preflight);
+  renderLane('frames', 'автоцепочка', r.queue.frames);
+  renderLane('post', 'ручной хвост', r.queue.post);
+  if (r.engines.length) console.log(`\n  engines:\n${r.engines.map((e) => `    · ${e}`).join('\n')}`);
   if (r.precedents.length) console.log(`  precedents:\n${r.precedents.map((e) => `    · ${e}`).join('\n')}`);
   if (r.note) console.log(`  ⚠ ${r.note}`);
-  console.log('\n(полиморфная рекурсия по frames[] — ждёт #900; здесь второе измерение = подграф манифеста.)');
+}
+
+/**
+ * Полоса очереди на холст. Пустая полоса печатается ЯВНО («— кадров нет —»),
+ * а не пропускается: honest empty-state, читатель не гадает.
+ */
+function renderLane(name, hint, lane) {
+  console.log(`  ${name} (${hint}): ${lane.length}`);
+  if (!lane.length) { console.log('    — кадров нет —'); return; }
+  lane.forEach((f, i) => {
+    const pins = Array.isArray(f.pins) ? f.pins.length : 0;
+    const arrow = name === 'frames' && i < lane.length - 1 ? ' →' : '';
+    console.log(`    ${i + 1}. ${f.id} [${f.holder}]${pins ? ` · пинов: ${pins}` : ''}${arrow}`);
+  });
 }
 
 if (has('audit')) runAudit();

@@ -29,10 +29,14 @@ services:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-docker-placeholder}
       GITHUB_OWNER: ${GITHUB_OWNER:-officefish}
       GITHUB_REPO: ${GITHUB_REPO:-Membrana}
+      DREAMS_ENABLED: ${DREAMS_ENABLED:-true}
+      DREAMS_VOLUME_PATH: ${DREAMS_VOLUME_PATH:-/var/lib/membrana-dreams}
     # PU1 (#463, ADR 0005): реестр партнёров панели — единственные
     # невоспроизводимые данные office; без volume пропадут при редеплое.
+    # Dreams append-only jsonl (M5): отдельный том, не вложенный в panel-users.
     volumes:
       - panel-users-data:/var/lib/membrana-office
+      - dreams-data:/var/lib/membrana-dreams
     healthcheck:
       test:
         [
@@ -48,3 +52,4 @@ services:
 
 volumes:
   panel-users-data:
+  dreams-data:

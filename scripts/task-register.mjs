@@ -131,13 +131,14 @@ if (isMain) {
   }
 
   if (!cli.push) {
-    console.log('Дальше: закоммить docs/tasks/registry.json + README поимённо (или запусти с --push).');
+    // README в карантине (23.07) — регистрация его больше не трогает, коммитить нечего.
+    console.log('Дальше: закоммить docs/tasks/registry.json поимённо (или запусти с --push).');
     process.exit(0);
   }
 
   // --push: коммит + пуш; при отказе (соседи ушли вперёд) — rebase + РЕГЕНЕРАЦИЯ вставки.
   const commitAndPush = () => {
-    sh('git add docs/tasks/registry.json docs/tasks/README.md');
+    sh('git add docs/tasks/registry.json');
     sh(`git commit -m "chore(tasks): регистрация ${entry.id} (#${entry.githubIssue ?? '—'})"`);
     sh('git push');
   };
@@ -148,7 +149,7 @@ if (isMain) {
     console.error('Push отклонён — соседи ушли вперёд. Регенерирую вставку на свежем реестре…');
     try {
       sh('git reset --soft HEAD~1'); // снять свой коммит, оставить правки в индексе
-      sh('git checkout -- docs/tasks/registry.json docs/tasks/README.md'); // откатить к текущему main-состоянию
+      sh('git checkout -- docs/tasks/registry.json'); // откатить к текущему main-состоянию
       sh('git pull --rebase');
       applyOnce(); // перестроить вставку поверх свежего реестра — ручной merge исключён
       commitAndPush();

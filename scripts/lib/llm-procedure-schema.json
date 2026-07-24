@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://membrana.local/schemas/llm-procedure-channels.json",
+  "title": "LLM procedure channels (v1)",
+  "description": "Contracts for registry, defaults/overlay, and usage events (EPIC llm-procedure-channels).",
+  "$defs": {
+    "procedureId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "providerId": {
+      "type": "string",
+      "enum": [
+        "anthropic",
+        "openrouter",
+        "deepseek",
+        "perplexity",
+        "openai",
+        "ollama"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "enum": ["overlay", "default"]
+    },
+    "errorClass": {
+      "type": "string",
+      "enum": ["auth", "rate_limit", "timeout", "protocol", "unknown"]
+    },
+    "chainStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "model"],
+      "properties": {
+        "provider": { "$ref": "#/$defs/providerId" },
+        "model": { "type": "string", "minLength": 1 }
+      }
+    },
+    "chainConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chain"],
+      "properties": {
+        "chain": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/chainStep" }
+        }
+      }
+    },
+    "procedureRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "entryMjs", "meters"],
+      "properties": {
+        "id": { "$ref": "#/$defs/procedureId" },
+        "entryMjs": { "type": "string", "minLength": 1 },
+        "yarnScript": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "meters": { "type": "boolean" }
+      }
+    },
+    "usageEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eventId",
+        "ts",
+        "procedureId",
+        "provider",
+        "model",
+        "source",
+        "latencyMs",
+        "ok"
+      ],
+      "properties": {
+        "eventId": { "type": "string", "minLength": 1 },
+        "ts": { "type": "string", "format": "date-time" },
+        "procedureId": { "$ref": "#/$defs/procedureId" },
+        "provider": { "$ref": "#/$defs/providerId" },
+        "model": { "type": "string", "minLength": 1 },
+        "source": { "$ref": "#/$defs/source" },
+        "tokensIn": { "type": ["integer", "null"], "minimum": 0 },
+        "tokensOut": { "type": ["integer", "null"], "minimum": 0 },
+        "latencyMs": { "type": "integer", "minimum": 0 },
+        "ok": { "type": "boolean" },
+        "errorClass": { "$ref": "#/$defs/errorClass" },
+        "entryMjs": { "type": "string" },
+        "gitSha": { "type": "string" },
+        "promptSha256": { "type": "string", "minLength": 64, "maxLength": 64 },
+        "responseSha256": { "type": "string", "minLength": 64, "maxLength": 64 },
+        "promptBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "responseBytes": { "type": ["integer", "null"], "minimum": 0 },
+        "attemptIndex": { "type": "integer", "minimum": 0 },
+        "chainLen": { "type": "integer", "minimum": 1 },
+        "providerRequestId": { "type": "string", "minLength": 1 },
+        "params": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Call parameters without secrets (maxTokens, model, provider, apiFormat, host)"
+        }
+      },
+      "not": {
+        "anyOf": [
+          { "required": ["prompt"] },
+          { "required": ["apiKey"] },
+          { "required": ["rawResponse"] }
+        ]
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "proceduresRegistry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["procedures"],
+      "properties": {
+        "procedures": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/procedureRecord" }
+        }
+      }
+    },
+    "defaultsOrOverlay": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/chainConfig" },
+      "propertyNames": { "$ref": "#/$defs/procedureId" }
+    },
+    "usageEvent": { "$ref": "#/$defs/usageEvent" }
+  }
+}

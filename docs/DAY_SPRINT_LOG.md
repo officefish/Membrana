@@ -4,21 +4,25 @@
 
 ---
 
-## 2026-07-22 — `bestiary-workshop` — **OPEN** (W3)
+## 2026-07-23 — `llm-calls-house` — **CLOSED**
 
-- **Goal:** мастерская-поставщик ловушек поверх CLOSED-дома бестиария; доп. реестры улова/ловушек; Mintlify-зеркало; кит с aim «Ведьмак»
-- **Issue:** [#945](https://github.com/officefish/Membrana/issues/945) · фазы #946–#951 (W0–W5)
+- **Delivered:** дом evidence LLM-вызовов + мастерская + emit hashes + thin Mintlify · W0–W5
+- **Issue:** [#1033](https://github.com/officefish/Membrana/issues/1033) · фазы #1034–#1039
+- **OPEN / CLOSURE:** [`day-sprint/llm-calls-house-2026-07-23/`](./day-sprint/llm-calls-house-2026-07-23/)
+- **Product:** [#1040](https://github.com/officefish/Membrana/pull/1040) · `6570769b`
+- **Ратификация:** владелец 2026-07-23
+
+---
+
+## 2026-07-22 — `bestiary-workshop` — **CLOSED**
+
+- **Delivered:** мастерская-поставщик ловушек; CATCH/TRAPS; thin Mintlify; `kits/witcher` («Ведьмак») · W0–W5
+- **Issue:** [#945](https://github.com/officefish/Membrana/issues/945) · фазы #946–#951
 - **OPEN:** [`day-sprint/bestiary-workshop-2026-07-22/OPEN.md`](./day-sprint/bestiary-workshop-2026-07-22/OPEN.md)
-- **Seed:** [`storm/storm-bestiary-workshop-2026-07-22/REPORT.md`](./storm/storm-bestiary-workshop-2026-07-22/REPORT.md) · T1–T18
-- **Фаза:** W3 `bw-w3-mintlify` · [#949](https://github.com/officefish/Membrana/issues/949) · lead ozhegov · [#967](https://github.com/officefish/Membrana/pull/967) awaiting LGTM
-- **W0:** done · [#952](https://github.com/officefish/Membrana/pull/952) · `c1f067a7` · archived
-- **W1:** done · [#954](https://github.com/officefish/Membrana/pull/954) · `496ecb41` · archived · K25-B + `workshop.manifest` + `issueTrap`
-- **W2:** done · [#965](https://github.com/officefish/Membrana/pull/965) · `7887ad73` · archived · CATCH/TRAPS/antipattern stubs
-- **K25:** закрыт вариантом **B** (исключение supply-side + `issueTrap`)
-- **W2 paths (принято):** `registry/CATCH_LIST.md` · `traps/` + `TRAPS_LIST.md` · `antipatterns/<id>.md`
-- **W3 depth:** **thin mirror** (не pin-манифест); open decision закрыт в OPEN
-- **Open decisions:** имя кита (W4)
-- **Параллель:** `procedure-frames` — **CLOSED** (ниже)
+- **CLOSURE:** [`day-sprint/bestiary-workshop-2026-07-22/CLOSURE.md`](./day-sprint/bestiary-workshop-2026-07-22/CLOSURE.md)
+- **W0–W4:** [#952](https://github.com/officefish/Membrana/pull/952) · [#954](https://github.com/officefish/Membrana/pull/954) · [#965](https://github.com/officefish/Membrana/pull/965) · [#967](https://github.com/officefish/Membrana/pull/967) · [#978](https://github.com/officefish/Membrana/pull/978)
+- **W5:** [#982](https://github.com/officefish/Membrana/pull/982) · `f01a907e` · CLOSURE + ACTIVE cleared · epic archived
+- **K25-B** · kit `kits/witcher` · follow-up: полный каталог ловушек / доп. Mintlify / новые детекторы
 
 ---
 

@@ -61,7 +61,7 @@
 
 ### Словарь инструментов (Ф2)
 
-**Обязательный минимум — три глагола** (различны по арности):
+**Каноническая тройка инвентаря** (различны по арности) — ориентир audit-family:
 
 | Глагол | Тип | Смысл |
 |--------|-----|-------|
@@ -69,17 +69,30 @@
 | `decompose` | `House → Element[]` | раскладка по удобным ЭТОМУ дому правилам |
 | `inspectElement` | `Element → Detail \| recurse` | рассмотрение одного элемента вглубь |
 
-- **`audit` и `decompose` — MUST.** `inspectElement` — **SHOULD** (его отсутствие —
-  ⚠ с причиной, не провал; шов вердиктов Ф2↔Ф5 разрешён Ф5 в пользу SHOULD, т.к. у
-  живущих мастерских его пока нет — достройка отдельной задачей).
+- **Покрытие дома инвентарём — MUST на уровне дома, не каждой мастерской.**
+  `audit` и `decompose` обязаны существовать *для дома*: либо как `verbs` **этой**
+  мастерской (классика audit-family: git, `docs/audit/tasks`, bestiary, precedents,
+  procedures, llm-calls), либо **вынесены вовне** — производная мастерская, CI-гейт
+  или парный audit-контур — с явной пометкой ⚠ и указателем куда (не молча). Ключи
+  `verbs.audit` / `verbs.decompose` в манифесте остаются (контракт зуба): значение —
+  непустая строка (**✅ в этой мастерской**) или `null` (**⚠ вне этой мастерской**).
+  Вердикт владельца 23.07 (g0 / [#1056](https://github.com/officefish/Membrana/issues/1056),
+  **V2 wins**): первичная мастерская `docs/tasks` несёт decision-verbs; `audit` /
+  `decompose` живут вне неё (соседний контур `docs/audit/tasks` + CI), вместе с
+  писателями / sync / `start`. Живые дома с `audit`+`decompose` в своих verbs **не**
+  становятся невалидны — это по-прежнему нормальный (и предпочтительный) профиль.
+- **`inspectElement` — SHOULD** (его отсутствие — ⚠ с причиной, не провал; шов
+  вердиктов Ф2↔Ф5 разрешён Ф5 в пользу SHOULD, т.к. у живущих мастерских его пока
+  нет — достройка отдельной задачей).
 - **Стек-подобный слой — SHOULD-ориентир, тождественный но НЕ идентичный.** Инструменты
   *соответствуют* `map`/`filter`/`reduce` по роли (гомоморфизм смысла), но не обязаны
   реализовывать эти сигнатуры (не MUST-интерфейс). Рекомендация — сходство, не контракт.
 - **Декомпозиция НЕ поглощается стек-примитивами** (`domainPreserved`): доменная
   раскладка (ветки — 7 категорий гигиены, задачи — префиксы конфига) остаётся своим
   глаголом, её не переписывают через `reduce`.
-- **Класс `domain` открыт**: специализированные инструменты сверх минимума, каждый
-  несёт `worksOn`.
+- **Класс `domain` открыт**: специализированные инструменты сверх инвентарного
+  минимума (в т.ч. decision-verbs вроде `list` / `board` / `bookkeeping` / `reviewing`),
+  каждый несёт `worksOn`.
 
 ### Полиморфизм и рекурсия в двумерном доме (Ф3)
 
@@ -111,7 +124,9 @@
 
 1. [ ] `workshop.manifest.json` с полями `pattern`/`name`/`worksOn`(1)/`verbs`/`kit`.
 2. [ ] `worksOn` — ровно один дом; ссылка на паттерн резолвится; правила не скопированы.
-3. [ ] `audit` и `decompose` присутствуют (MUST); `inspectElement` — ✅ либо ⚠ с причиной.
+3. [ ] Инвентарное покрытие дома: `audit`+`decompose` ✅ в verbs этой мастерской **или**
+   ⚠ = `null` с указателем на соседний контур (производная / CI); `inspectElement` —
+   ✅ либо ⚠ с причиной. Молчаливый пропуск ключей — запрещён.
 4. [ ] Доменная декомпозиция не переписана через стек-примитивы (`domainPreserved`).
 5. [ ] `kit` объявлен явно (`null` допустим для интерактивной мастерской).
 6. [ ] Каждый доменный инструмент несёт `worksOn`; приписка совпадает (зуб `checkOwnership`).
@@ -123,12 +138,15 @@
 | Мастерская | Дом (`worksOn`) | Соответствие |
 |-----------|-----------------|--------------|
 | [`docs/audit/git/`](../audit/git/workshop.manifest.json) | ветки репозитория | `audit`+`decompose` ✅, `inspectElement` ⚠ (нет); `kit: null` |
-| [`docs/audit/tasks/`](../audit/tasks/workshop.manifest.json) | реестр карточек задач | `audit`+`decompose` ✅, `inspectElement` ⚠ (нет); `kit: null` |
+| [`docs/tasks/`](../tasks/workshop.manifest.json) | реестр задач (`registry.json`, primary) | decision-verbs ✅ (`inspectElement`/`list`/`board`/`bookkeeping`/`reviewing`); `audit`/`decompose` ⚠=`null` → контур [`docs/audit/tasks/`](../audit/tasks/) + CI · V2 / #1056–#1058 |
+| [`docs/audit/tasks/`](../audit/tasks/workshop.manifest.json) | снимки разборов (`registry/`, derivative) | `audit`+`decompose` ✅; `dependentOn`/`mirrorsFrom`; `inspectElement` ⚠; `kit: null` |
 | [`docs/procedures/`](../procedures/workshop.manifest.json) | процедурный дом | `audit`+`decompose`+`inspectElement` ✅; `kit: null` |
 | [`docs/precedents/`](../precedents/workshop.manifest.json) | контейнер прецедентов | `audit`+`decompose` ✅, `inspectElement` ⚠ (нет); `kit: null` |
-| [`docs/audit/bestiary/`](../audit/bestiary/workshop.manifest.json) | бестиарий антипаттернов | `audit`+`decompose` ✅, `inspectElement` ⚠; `kit: null` до W4; **K25-B** — исключение supply-side: доменный `issueTrap` (T6 «поставщик ловушек»); MUST-стрелка «мастерская заказывает kit» **не** меняется |
+| [`docs/audit/bestiary/`](../audit/bestiary/workshop.manifest.json) | бестиарий антипаттернов | `audit`+`decompose` ✅, `inspectElement` ⚠; `kit: "kits/witcher"` (W4 #950); **K25-B** — исключение supply-side: доменный `issueTrap` (T6 «поставщик ловушек»); MUST-стрелка «мастерская заказывает kit» **не** меняется |
+| [`docs/audit/llm-calls/`](../audit/llm-calls/workshop.manifest.json) | evidence LLM-вызовов | `audit`+`decompose` ✅, `inspectElement` ⚠ (агентный Inspect); `kit: null` · эпик #1033 |
 
 Кандидат-жилец: ~~**процедурная мастерская**~~ — живёт (см. таблицу).
+Первичная мастерская `docs/tasks` — живёт (v1/v2).
 
 ## Границы применимости
 

@@ -3,9 +3,9 @@
 | Поле | Значение |
 |------|----------|
 | **id** | `silent-empty-catch` |
-| **status** | `stub` (W2 #948) |
+| **status** | `kit-ready` (W4 #950) |
 | **targets** | класс `silent` · шаблон [`../antipatterns/silent.md`](../antipatterns/silent.md) |
-| **kitPin** | `null` — жилец кита и aim «Ведьмак» = W4 (#950) |
+| **kitPin** | [`kits/witcher`](../../../../kits/witcher/) · human-label «Ведьмак» |
 
 ## Что ловит (на примерах, T14)
 
@@ -34,4 +34,5 @@
 
 `antipatterns/silent.md` (шаблон) → **эта ловушка** → гранула в `CATCH_LIST`.
 
-Kit (W4) пинит набор prompts+scripts этой ловушки, **не** файл шаблона.
+Kit [`witcher`](../../../../kits/witcher/) пинит набор prompts+scripts этой ловушки
+(`bestiary-audit` + `lens-bestiary` / `detectSilent`), **не** файл шаблона антипаттерна.

@@ -29,6 +29,11 @@
 
 Опционально в `@1` (не гейт): `contentDigest`, `keyFingerprint`.
 
+**Запись `records[]` (слой движения одной карточки):** помимо идентификаторов/связей —
+`createdAt`, `updatedAt`, `startedAt: string | null`, `completedAt: string | null`.
+`startedAt` аддитивен в `@1` (#1000 / ADR-0017): старые снимки без поля читаются как
+`null`; прыжок `completed ∧ ¬started` меряет `yarn linear:movement-audit` офлайн.
+
 **Запрещено:** поле `source: 'office-batch'` — заменено парой `producedBy` + `mode` (M3).
 
 ## Предикат `pullOk(S)`

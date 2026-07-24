@@ -69,6 +69,10 @@ export const envSchema = z.object({
     .transform((v) => v === 'true' || v === '1'),
   /** Корень volume: `<root>/dreams/<day>.jsonl` */
   DREAMS_VOLUME_PATH: z.string().optional(),
+  /** LPC C: overlay процедура→chain (JSON на volume, без секретов) */
+  LLM_PROCEDURE_OVERLAY_STORE_PATH: z.string().optional(),
+  /** LPC C: usage events JSONL volume (`<root>/YYYY-MM-DD.jsonl`, retention 30d) */
+  LLM_USAGE_VOLUME_PATH: z.string().optional(),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;

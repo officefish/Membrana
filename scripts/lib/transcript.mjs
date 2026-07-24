@@ -1,7 +1,8 @@
 /**
- * transcript — поиск реплик владельца в jsonl-транскриптах Claude Code (#595 п.1).
+ * transcript — поиск реплик владельца в jsonl-транскриптах Claude Code (#595 п.1)
+ * и Cursor agent-transcripts (role=user + nested <sessionId>/<sessionId>.jsonl).
  *
- * Реплика прячется в ТРЁХ местах, и фильтр по `type === 'user'` трижды за сессию
+ * Реплика прячется в ТРЁХ местах (Claude), и фильтр по `type === 'user'` трижды за сессию
  * 17.07 объявлял живую реплику несуществующей:
  *   1. `type: user` — `message.content` строка ИЛИ массив text-блоков;
  *   2. `type: attachment`, `attachment.type: queued_command` — реплика, присланная
@@ -9,12 +10,15 @@
  *      (замер 19.07 по живым транскриптам: 21 строка / 50 массивов);
  *   3. `tool_result` внутри `message.content` записи `type: user` — клик по вариантам.
  *
+ * Cursor (22.07): `role: 'user'` без `type`/`sessionId`/`uuid`; текст в
+ * `<user_query>…</user_query>`; сессии вложены на один уровень.
+ *
  * Чистая lib: без CLI, без process.exit. Потребители: `truth utterance`,
  * скилл membrana-truth-crystallization, будущий валидатор указателей.
  */
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 
 /**
  * Каталог транскриптов проекта: ~/.claude/projects/<slug>, где slug — путь cwd
@@ -48,27 +52,70 @@ function textOfBlock(block) {
 }
 
 /**
- * Все владельческие тексты одной записи транскрипта с их видом.
+ * Cursor agent-transcripts кладут реплику в `<user_query>…</user_query>` внутри
+ * text-блока; для указателя и цитаты берём внутренность, если тег есть.
+ * @param {string} text
+ * @returns {string}
+ */
+function unwrapUserQuery(text) {
+  const m = String(text).match(/<user_query>\s*([\s\S]*?)\s*<\/user_query>/i);
+  return m ? m[1].trim() : text;
+}
+
+/**
+ * ISO-ish из Cursor `<timestamp>Wednesday, Jul 22, 2026, 7:30 PM (UTC+3)</timestamp>`.
+ * @param {string} text
+ * @returns {string|null}
+ */
+function timestampFromCursorText(text) {
+  const m = String(text).match(/<timestamp>\s*([^<]+?)\s*<\/timestamp>/i);
+  if (!m) return null;
+  const d = Date.parse(m[1].replace(/\s*\(UTC([+-]\d+)\)\s*$/i, ' GMT$1'));
+  return Number.isFinite(d) ? new Date(d).toISOString() : null;
+}
+
+/**
+ * Все владельческие тексты одной custom записи транскрипта с их видом.
  *
  * @param {object} record разобранная строка jsonl
- * @returns {{kind: 'user'|'queued_command'|'tool_result', text: string}[]}
+ * @returns {{kind: 'user'|'queued_command'|'tool_result', text: string, raw?: string, timestampHint?: string|null}[]}
  */
 export function extractUtterances(record) {
   if (!record || typeof record !== 'object') return [];
   const out = [];
 
-  if (record.type === 'user' && record.message) {
+  // Claude Code: type === 'user'
+  // Cursor: role === 'user' (type отсутствует; sessionId/uuid на записи нет)
+  const isUser =
+    (record.type === 'user' || record.role === 'user') && record.message;
+  if (isUser) {
     const content = record.message.content;
     if (typeof content === 'string') {
-      if (content) out.push({ kind: 'user', text: content });
+      if (content) {
+        const text = unwrapUserQuery(content);
+        /** @type {{kind: string, text: string, raw?: string, timestampHint?: string|null}} */
+        const entry = { kind: 'user', text };
+        if (text !== content) entry.raw = content;
+        const ts = timestampFromCursorText(content);
+        if (ts) entry.timestampHint = ts;
+        out.push(entry);
+      }
     } else if (Array.isArray(content)) {
       for (const block of content) {
         if (block?.type === 'tool_result') {
           const text = textOfBlock(block);
           if (text) out.push({ kind: 'tool_result', text });
         } else {
-          const text = textOfBlock(block);
-          if (text) out.push({ kind: 'user', text });
+          const raw = textOfBlock(block);
+          if (raw) {
+            const text = unwrapUserQuery(raw);
+            /** @type {{kind: string, text: string, raw?: string, timestampHint?: string|null}} */
+            const entry = { kind: 'user', text };
+            if (text !== raw) entry.raw = raw;
+            const ts = timestampFromCursorText(raw);
+            if (ts) entry.timestampHint = ts;
+            out.push(entry);
+          }
         }
       }
     }
@@ -96,12 +143,38 @@ function matcherOf(pattern) {
   return (text) => text.toLowerCase().includes(needle);
 }
 
-/** Список jsonl-файлов каталога (не рекурсивно — сессии лежат плоско). */
-export function listTranscriptFiles(dir) {
-  if (!dir || !existsSync(dir)) return [];
-  return readdirSync(dir)
-    .filter((f) => f.endsWith('.jsonl'))
-    .map((f) => join(dir, f));
+/**
+ * Список jsonl-файлов каталога.
+ * Claude Code — плоско; Cursor `agent-transcripts/<sessionId>/<sessionId>.jsonl` —
+ * на один уровень глубже → обходим рекурсивно (глубина ≤ 3).
+ * @param {string} dir
+ * @param {number} [depth]
+ * @returns {string[]}
+ */
+export function listTranscriptFiles(dir, depth = 0) {
+  if (!dir || !existsSync(dir) || depth > 3) return [];
+  const out = [];
+  for (const name of readdirSync(dir)) {
+    const abs = join(dir, name);
+    let st;
+    try {
+      st = statSync(abs);
+    } catch {
+      continue;
+    }
+    if (st.isDirectory()) out.push(...listTranscriptFiles(abs, depth + 1));
+    else if (name.endsWith('.jsonl')) out.push(abs);
+  }
+  return out;
+}
+
+/** sessionId из пути Cursor/Claude, если в записи поля нет. */
+function sessionIdFromFile(file) {
+  const base = basename(file, '.jsonl');
+  const parent = basename(dirname(file));
+  // Cursor: …/agent-transcripts/<uuid>/<uuid>.jsonl
+  if (parent && parent !== 'agent-transcripts' && parent === base) return parent;
+  return base;
 }
 
 /**
@@ -122,7 +195,9 @@ export function findUtterances(pattern, { dir }) {
     } catch {
       continue;
     }
-    for (const line of raw.split('\n')) {
+    const lines = raw.split('\n');
+    for (let i = 0; i < lines.length; i += 1) {
+      const line = lines[i];
       if (!line.trim()) continue;
       let record;
       try {
@@ -131,11 +206,17 @@ export function findUtterances(pattern, { dir }) {
         continue; // битые строки ловит rawScan
       }
       for (const u of extractUtterances(record)) {
-        if (match(u.text)) {
+        // Матч по цитате И по сырому блоку (Cursor: ищем «A» или кусок timestamp-обёртки).
+        if (match(u.text) || (u.raw && match(u.raw))) {
           hits.push({
-            sessionId: record.sessionId ?? null,
-            uuid: record.uuid ?? null,
-            timestamp: record.timestamp ?? record.attachment?.timestamp ?? null,
+            sessionId: record.sessionId ?? sessionIdFromFile(file),
+            // Cursor не пишет uuid — стабильный указатель на строку файла (очная ставка).
+            uuid: record.uuid ?? `cursor-line-${i + 1}`,
+            timestamp:
+              record.timestamp ??
+              record.attachment?.timestamp ??
+              u.timestampHint ??
+              null,
             kind: u.kind,
             text: u.text,
             file,

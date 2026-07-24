@@ -1,0 +1,87 @@
+{
+  "providers": {
+    "anthropic": {
+      "id": "anthropic",
+      "title": "Anthropic",
+      "apiKeyEnv": "ANTHROPIC_API_KEY",
+      "apiFormat": "anthropic",
+      "defaultBaseUrl": "https://api.anthropic.com",
+      "path": "/v1/messages",
+      "envFiles": [".env"],
+      "defaultModel": "claude-haiku-4-5-20251001",
+      "models": [
+        { "id": "claude-haiku-4-5-20251001", "label": "Haiku 4.5" },
+        { "id": "claude-sonnet-4-6", "label": "Sonnet 4.6" },
+        { "id": "claude-opus-4-7", "label": "Opus 4.7" }
+      ]
+    },
+    "openrouter": {
+      "id": "openrouter",
+      "title": "OpenRouter",
+      "apiKeyEnv": "OPENROUTER_API_KEY",
+      "apiFormat": "openai-compatible",
+      "defaultBaseUrl": "https://openrouter.ai/api/v1",
+      "path": "/chat/completions",
+      "envFiles": [".env.llm-proxy", ".env"],
+      "extraHeaders": {
+        "HTTP-Referer": "https://github.com/officefish/Membrana",
+        "X-Title": "Membrana"
+      },
+      "defaultModel": "anthropic/claude-haiku-4.5",
+      "models": [
+        { "id": "anthropic/claude-haiku-4.5", "label": "Claude Haiku 4.5" },
+        { "id": "anthropic/claude-sonnet-4.6", "label": "Claude Sonnet 4.6" },
+        { "id": "openai/gpt-4o-mini", "label": "GPT-4o mini" },
+        { "id": "openai/gpt-4o", "label": "GPT-4o" },
+        { "id": "deepseek/deepseek-chat", "label": "DeepSeek Chat" },
+        { "id": "perplexity/sonar", "label": "Perplexity Sonar" }
+      ]
+    },
+    "deepseek": {
+      "id": "deepseek",
+      "title": "DeepSeek",
+      "apiKeyEnv": "DEEPSEEK_API_KEY",
+      "apiFormat": "openai-compatible",
+      "defaultBaseUrl": "https://api.deepseek.com",
+      "path": "/v1/chat/completions",
+      "envFiles": [".env"],
+      "defaultModel": "deepseek-chat",
+      "models": [
+        { "id": "deepseek-chat", "label": "DeepSeek Chat" },
+        { "id": "deepseek-reasoner", "label": "DeepSeek Reasoner" }
+      ]
+    },
+    "perplexity": {
+      "id": "perplexity",
+      "title": "Perplexity",
+      "apiKeyEnv": "PERPLEXITY_API_KEY",
+      "apiFormat": "openai-compatible",
+      "defaultBaseUrl": "https://api.perplexity.ai",
+      "path": "/chat/completions",
+      "envFiles": [".env"],
+      "defaultModel": "sonar",
+      "models": [
+        { "id": "sonar", "label": "Sonar" },
+        { "id": "sonar-pro", "label": "Sonar Pro" },
+        { "id": "sonar-reasoning", "label": "Sonar Reasoning" }
+      ]
+    },
+    "openai": {
+      "id": "openai",
+      "title": "ChatGPT",
+      "apiKeyEnv": "OPENAI_API_KEY",
+      "apiFormat": "openai-compatible",
+      "defaultBaseUrl": "https://api.openai.com/v1",
+      "path": "/chat/completions",
+      "envFiles": [".env"],
+      "defaultModel": "gpt-4o-mini",
+      "models": [
+        { "id": "gpt-4o-mini", "label": "GPT-4o mini" },
+        { "id": "gpt-4o", "label": "GPT-4o" },
+        { "id": "gpt-4.1-mini", "label": "GPT-4.1 mini" },
+        { "id": "o4-mini", "label": "o4-mini" }
+      ]
+    }
+  },
+  "ritualEnum": ["anthropic", "openrouter", "deepseek", "perplexity", "openai"]
+}

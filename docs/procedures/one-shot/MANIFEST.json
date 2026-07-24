@@ -1,0 +1,19 @@
+{
+  "id": "one-shot",
+  "leadPersona": "vesnin",
+  "kitVersion": null,
+  "engines": [
+    "scripts/lib/one-shot-s-predicate.mjs"
+  ],
+  "precedents": [
+    "docs/storm/storm-one-shot-format-2026-07-23/REPORT.md",
+    "docs/insights/insight-one-shot-format/REVIEW.md",
+    "docs/precedents/2026-07-23-oneshot-issue-closed-without-procedure.md"
+  ],
+  "frames": [
+    {
+      "id": "first-frame",
+      "holder": "vesnin"
+    }
+  ]
+}

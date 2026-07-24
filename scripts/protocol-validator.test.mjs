@@ -97,6 +97,35 @@ test('protocolBody отсекает эхо-вопрос до первой реп
   assert.doesNotMatch(body, /A3 B1 упомянуты/u, 'эхо-вопрос НЕ в теле');
 });
 
+test('protocolBody видит жирную метку роли — обе формы записи (#1046)', () => {
+  const head = '# Метаданные\n**Вопрос:** A3 упомянут тут\n\n';
+  // `**[Роль]:**` — так писались ручные протоколы заседания tasks-workshop 23.07.
+  const bold = protocolBody(`${head}**[Структурщик]:** обсуждаем A1\n## Итоговое решение`);
+  assert.match(bold, /обсуждаем A1/u);
+  assert.doesNotMatch(bold, /Метаданные/u, 'эхо-заголовок всё так же отсечён');
+  // `**[Роль]**:` — двоеточие снаружи жирного.
+  assert.match(protocolBody(`${head}**[Teamlead]**: обсуждаем A1`), /обсуждаем A1/u);
+  // Голая форма не сломалась.
+  assert.match(protocolBody(`${head}[Teamlead]: обсуждаем A1`), /обсуждаем A1/u);
+});
+
+test('жирные реплики: секция вердикта и посылок видна аудитору (#1046)', async () => {
+  const { hasVerdictSection, meetingVerdictProblems } = await import('./lib/protocol-validator.mjs');
+  const md = [
+    '**Вопрос:** V2',
+    '',
+    '**[Структурщик]:** посылки таковы',
+    '',
+    '**Список посылок**',
+    '- вердикт M0 закрыт',
+    '',
+    '## Итоговое решение',
+    'мастерская остаётся одна',
+  ].join('\n');
+  assert.equal(hasVerdictSection(md), true, 'секция вердикта была в файле — ложного красного нет');
+  assert.deepEqual(meetingVerdictProblems(md), [], 'секция посылок найдена');
+});
+
 test('unknownBracketLabels ловит формат [Имя · Роль] (инцидент 16.07)', () => {
   const md = '[Ozhegov · Структурщик]: раз\n[Teamlead]: два';
   const unknown = unknownBracketLabels(md);
