@@ -12,4 +12,6 @@
 
 ## Also open
 
-_(пусто)_
+**atlas-report-plane-2026-07-24** · [#1097](https://github.com/officefish/Membrana/issues/1097) · OPEN [`docs/day-sprint/atlas-report-plane-2026-07-24/OPEN.md`](./day-sprint/atlas-report-plane-2026-07-24/OPEN.md) · промпт [`ATLAS_REPORT_PLANE_PROMPT.md`](./prompts/ATLAS_REPORT_PLANE_PROMPT.md)
+
+Фаза: ✅ **W0–W3** (#1098–#1101) → дальше `arp-w4-closure` (#1102) после PR. Focus `tasks-workshop` не затирать.

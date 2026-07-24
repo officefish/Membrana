@@ -20,13 +20,17 @@ after(() => rmSync(tmp, { recursive: true, force: true }));
 mkdirSync(join(tmp, 'docs', 'patterns'), { recursive: true });
 writeFileSync(join(tmp, 'docs', 'patterns', 'HOME_WORKSHOP.md'), '# паттерн');
 
-function makeContainer(homeRel, { name, worksOn, verbs, readme }) {
+function makeContainer(homeRel, { name, worksOn, verbs, readme, role, dependentOn, mirrorsFrom }) {
   const dir = join(tmp, homeRel);
   mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, 'workshop.manifest.json'), JSON.stringify({
+  const manifest = {
     pattern: 'docs/patterns/HOME_WORKSHOP.md', name, worksOn, kit: null,
     verbs: { audit: 'a', decompose: 'd', inspectElement: verbs.inspect ? 'i' : null, stackLike: [], domain: [] },
-  }));
+  };
+  if (role) manifest.role = role;
+  if (dependentOn) manifest.dependentOn = dependentOn;
+  if (mirrorsFrom) manifest.mirrorsFrom = mirrorsFrom;
+  writeFileSync(join(dir, 'workshop.manifest.json'), JSON.stringify(manifest));
   if (readme) writeFileSync(join(dir, 'README.md'), readme);
 }
 
@@ -73,10 +77,45 @@ test('renderAtlasRegistry: числа и вычеркнутые глаголы',
   assert.match(md, /~~inspectElement~~/); // git без него
 });
 
-test('renderMintlifyPage: frontmatter + заголовок контейнера', () => {
+test('renderMintlifyPage: frontmatter + home в заголовке + секция plane', () => {
   const mdx = renderMintlifyPage(discoverContainers(tmp));
   assert.match(mdx, /title: Контейнеры и мастерские/);
-  assert.match(mdx, /## мастерская веток/);
+  assert.match(mdx, /### мастерская веток \(`docs\/audit\/git`\)/);
+  assert.match(mdx, /Плоскость отчётов/);
+});
+
+test('plane/role: docs/tasks ≠ docs/audit/tasks', () => {
+  makeContainer('docs/tasks', {
+    name: 'мастерская задач (primary)',
+    worksOn: 'docs/tasks/registry.json',
+    role: 'primary',
+    verbs: { inspect: true },
+    readme: '# tasks\n\nДом заданий.',
+  });
+  makeContainer('docs/audit/tasks', {
+    name: 'мастерская разборов задач (derivative)',
+    worksOn: 'docs/audit/tasks/registry/',
+    role: 'derivative',
+    dependentOn: ['docs/tasks'],
+    mirrorsFrom: 'docs/tasks/registry.json',
+    verbs: {},
+    readme: '# audit/tasks\n\nОтчёты про задачи.',
+  });
+  const cs = discoverContainers(tmp);
+  const domainTasks = cs.find((c) => c.home === 'docs/tasks');
+  const reportTasks = cs.find((c) => c.home === 'docs/audit/tasks');
+  assert.equal(domainTasks.plane, 'domain');
+  assert.equal(domainTasks.role, 'primary');
+  assert.equal(reportTasks.plane, 'report');
+  assert.equal(reportTasks.role, 'derivative');
+  const md = renderAtlasRegistry(cs);
+  assert.match(md, /\[docs\/audit\/tasks\]\(/u);
+  assert.doesNotMatch(md, /\[docs\/audit\/tasks\/registry\/\]\(/u);
+  assert.match(md, /\[docs\/tasks\]\(/u);
+  assert.doesNotMatch(md, /\[docs\/tasks\/registry\.json\]\(/u);
+  const byPlane = decomposeContainers(cs, 'plane');
+  assert.ok(byPlane.get('report').includes('docs/audit/tasks'));
+  assert.ok(byPlane.get('domain').includes('docs/tasks'));
 });
 
 test('ATLAS-ссылки резолвятся: ../../../ от registry/ (finding MAJOR-1)', () => {

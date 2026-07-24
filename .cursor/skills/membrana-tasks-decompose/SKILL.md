@@ -19,10 +19,17 @@ description: >-
 паспорт [`LINEAR_TASKS_GEAR.md`](../../../docs/tasks/LINEAR_TASKS_GEAR.md).
 Вердикт осей: M3 / #1059 · `docs/seanses/tasks-workshop-m3-axes-2026-07-23.md`.
 
+<<<<<<< HEAD
 **Контур:** соседний дом [`docs/audit/tasks/`](../../../docs/audit/tasks/README.md)
 (V2 wins: `decompose` **вне** мастерской `docs/tasks`). Снимки —
 `--report docs/audit/tasks/registry/TASKS_DECOMPOSE_LIST.md`. HARD GATE Scenario B —
 [`AGENT_PROMPT.md`](../../../docs/audit/tasks/AGENT_PROMPT.md).
+=======
+**Слот отчётов** (не дом заданий): [`docs/audit/tasks/`](../../../docs/audit/tasks/README.md) —
+снимки пишутся `--report docs/audit/tasks/registry/TASKS_DECOMPOSE_LIST.md`
+(overwrite; dated-копии рядом), сырой `--json` → `cache/` (gitignore). Сценарии и
+HARD GATE — [`AGENT_PROMPT.md`](../../../docs/audit/tasks/AGENT_PROMPT.md).
+>>>>>>> 7daf210c (feat(tooling): atlas report-plane — home/role/plane (#1097))
 
 ## Неподвижные правила
 

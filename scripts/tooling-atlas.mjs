@@ -3,7 +3,7 @@
  * yarn tooling:atlas — мастерская контейнера контейнеров (спринт tooling-atlas).
  *
  *   --audit                     инвентарь контейнеров + здоровье мастерских (зуб)
- *   --decompose [--by family|holder|kit]   раскладка контейнеров
+ *   --decompose [--by family|plane|holder|kit]   раскладка контейнеров (список = home)
  *   --inspect <home>            один контейнер вглубь
  *   --render                    пересобрать registry/ATLAS.md + mintlify-страницу
  *   --check                     производные не разъехались с источником (зуб для CI)
@@ -65,7 +65,7 @@ function runAudit() {
   console.log(`tooling:atlas --audit · контейнеров: ${rows.length}\n`);
   for (const c of rows) {
     const mark = !c.valid ? '✗' : c.warnings.length ? '⚠' : '✓';
-    console.log(`${mark} ${c.worksOn}  [${c.name}]  глаголы: ${c.verbs.join('+') || '—'}${c.missingVerbs.length ? `  (нет: ${c.missingVerbs.join(',')})` : ''}`);
+    console.log(`${mark} ${c.home}  [${c.plane}/${c.role ?? '—'}]  [${c.name}]  глаголы: ${c.verbs.join('+') || '—'}${c.missingVerbs.length ? `  (нет: ${c.missingVerbs.join(',')})` : ''}`);
     for (const p of c.problems) console.log(`    ✗ ${p}`);
   }
   console.log(`\nЗдоровы: ${healthy} · с ⚠: ${warned} · битых: ${broken}`);
@@ -87,8 +87,9 @@ function runDecompose() {
 function runInspect(home) {
   const c = inspectContainer(repoRoot, home);
   if (!c) { console.error(`tooling:atlas: контейнер «${home}» не найден`); process.exit(2); }
-  console.log(`tooling:atlas --inspect ${c.worksOn}\n`);
-  console.log(`имя: ${c.name} · семья: ${c.family} · kit: ${c.kit ?? 'null'} · валиден: ${c.valid ? '✓' : '✗'}`);
+  console.log(`tooling:atlas --inspect ${c.home}\n`);
+  console.log(`имя: ${c.name} · home: ${c.home} · plane: ${c.plane} · role: ${c.role ?? '—'} · семья: ${c.family}`);
+  console.log(`worksOn: ${c.worksOn} · kit: ${c.kit ?? 'null'} · валиден: ${c.valid ? '✓' : '✗'}`);
   console.log(`глаголы: ${c.verbs.join(' + ') || '—'}${c.missingVerbs.length ? ` (нет: ${c.missingVerbs.join(', ')})` : ''}`);
   if (c.title) console.log(`README: ${c.title}`);
   if (c.summary) console.log(`  ${c.summary}`);
@@ -100,4 +101,4 @@ else if (has('check')) runCheck();
 else if (has('audit')) runAudit();
 else if (has('decompose')) runDecompose();
 else if (has('inspect')) { const h = val('inspect'); if (!h) { console.error('tooling:atlas --inspect требует <home>'); process.exit(2); } runInspect(h); }
-else { console.log('Usage: yarn tooling:atlas --audit | --decompose [--by family|holder|kit] | --inspect <home> | --render | --check'); process.exit(2); }
+else { console.log('Usage: yarn tooling:atlas --audit | --decompose [--by family|plane|holder|kit] | --inspect <home> | --render | --check'); process.exit(2); }

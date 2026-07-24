@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-07-24 — `atlas-report-plane` — **OPEN**
+
+- **Цель:** атлас различает domain (`docs/tasks`) и report-plane (`docs/audit/*`); `audit/tasks` = отчёты про задачи
+- **Issue:** [#1097](https://github.com/officefish/Membrana/issues/1097) · фазы #1098–#1102
+- **OPEN:** [`day-sprint/atlas-report-plane-2026-07-24/`](./day-sprint/atlas-report-plane-2026-07-24/)
+- **Ратификация:** владелец 2026-07-24 · Also open (параллель с Focus `tasks-workshop`)
+- **W0:** brief done (Issues + ACTIVE)
+
+---
+
 ## 2026-07-23 — `llm-calls-house` — **CLOSED**
 
 - **Delivered:** дом evidence LLM-вызовов + мастерская + emit hashes + thin Mintlify · W0–W5
