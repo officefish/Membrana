@@ -1,17 +1,18 @@
 /**
  * Раздел «Контейнеры» — тонкий вход в атлас туллинга (report-plane).
- * Живой индекс сейчас — git (ATLAS.md). Mintlify-витрина в apps/docs есть,
- * но live membrana.mintlify.app смотрит в community-fork без tooling/;
- * docs.mmbrn.tech — custom domain ещё не подключён (CUSTOM_DOMAIN_SETUP).
+ * Публичная витрина — harness Mintlify (`apps/docs-harness`), не product docs.
  */
 
-/** Рабочая ссылка: производный индекс в main. */
+/** Производный индекс в main (agent-truth зеркало). */
 export const ATLAS_GIT_URL =
   'https://github.com/officefish/Membrana/blob/main/docs/tooling-atlas/registry/ATLAS.md';
 
-/** Целевая Mintlify-витрина (пока не на live — см. баннер в борде). */
-export const ATLAS_DOCS_URL = 'https://docs.mmbrn.tech/tooling/containers';
-export const ATLAS_DOCS_FALLBACK_URL = 'https://membrana.mintlify.app/tooling/containers';
+/** Live harness custom domain (W0 lock / W3 surface). */
+export const ATLAS_DOCS_URL = 'https://harness.mmbrn.tech/tooling/containers';
+
+/** Fallback harness Mintlify project slug (не product `membrana.mintlify.app`). */
+export const ATLAS_DOCS_FALLBACK_URL =
+  'https://membrana-harness.mintlify.app/tooling/containers';
 
 type PlaneBlock = {
   plane: 'report' | 'domain' | 'meta';
@@ -52,37 +53,36 @@ export function ToolingAtlasBoard() {
       <p className="text-sm text-base-content/70">
         <span className="font-medium text-base-content">docs/tasks</span> — задания ·{' '}
         <span className="font-medium text-base-content">docs/audit/tasks</span> — отчёты про
-        них. Истина индекса — git; Mintlify — монитор, когда подключён к{' '}
-        <code className="text-xs">apps/docs</code>.
+        них. Публичный монитор — harness{' '}
+        <code className="text-xs">apps/docs-harness</code> (
+        <code className="text-xs">harness.mmbrn.tech</code>), не product Device Board.
       </p>
-
-      <div
-        className="rounded-lg border border-warning/40 bg-warning/10 px-3 py-2 text-sm text-base-content/80"
-        role="status"
-      >
-        Публичная витрина ещё не на live: <code className="text-xs">membrana.mintlify.app</code>{' '}
-        отдаёт старый community-fork (без <code className="text-xs">tooling/containers</code> →
-        404), а <code className="text-xs">docs.mmbrn.tech</code> не подключён (DNS/custom
-        domain). Пока открывайте индекс в git.
-      </div>
 
       <div className="flex flex-wrap gap-2">
         <a
           className="btn btn-primary btn-sm"
+          href={ATLAS_DOCS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Открыть атлас (harness)
+        </a>
+        <a
+          className="btn btn-ghost btn-sm"
+          href={ATLAS_DOCS_FALLBACK_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Fallback Mintlify project slug"
+        >
+          membrana-harness.mintlify.app
+        </a>
+        <a
+          className="btn btn-ghost btn-sm"
           href={ATLAS_GIT_URL}
           target="_blank"
           rel="noopener noreferrer"
         >
-          Открыть ATLAS.md в git
-        </a>
-        <a
-          className="btn btn-ghost btn-sm btn-disabled pointer-events-none opacity-50"
-          href={ATLAS_DOCS_URL}
-          aria-disabled="true"
-          tabIndex={-1}
-          title="docs.mmbrn.tech ещё не подключён"
-        >
-          docs.mmbrn.tech (скоро)
+          ATLAS.md в git
         </a>
       </div>
 

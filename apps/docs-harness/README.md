@@ -11,10 +11,10 @@ containers, bestiary, llm-calls, git cookbooks. Отдельный Mintlify-пр
 - LLM calls — evidence specimens
 - Git branch cookbooks
 
-Целевой URL (W0 lock): **`harness.mmbrn.tech`** (владелец может переименовать в `ops.mmbrn.tech`).
-Второй Mintlify project + DNS создаёт владелец (не код агента) — чеклист
-[`CUSTOM_DOMAIN_SETUP.md`](./CUSTOM_DOMAIN_SETUP.md). Успех дашборда **не** блокирует
-W2; Panel URL → harness — фаза W3; закрытие эпика — W4.
+Live URL: **`https://harness.mmbrn.tech`** (W0 lock; владелец может переименовать в
+`ops.mmbrn.tech`). Fallback: `https://membrana-harness.mintlify.app`.
+Чеклист DNS: [`CUSTOM_DOMAIN_SETUP.md`](./CUSTOM_DOMAIN_SETUP.md). Panel → harness — W3;
+закрытие эпика — W4.
 
 ## Установка
 

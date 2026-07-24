@@ -13,10 +13,10 @@ W0 lock: subdomain **`harness.mmbrn.tech`** (владелец может пер�
 
 ## Предусловия
 
-- [ ] **Второй Mintlify project** создан владельцем (отдельно от product `membrana`).
-- [ ] GitHub App / deploy path указывает на корень **`apps/docs-harness`** (не `apps/docs`).
-- [ ] Тариф позволяет второй project + custom domain (свериться в billing).
-- [ ] Доступ к дашборду Mintlify и DNS-зоне `mmbrn.tech`.
+- [x] **Второй Mintlify project** создан владельцем (`membrana-harness`, отдельно от product).
+- [x] GitHub App / deploy path указывает на корень **`apps/docs-harness`** (не `apps/docs`).
+- [x] Тариф позволяет второй project + custom domain (свериться в billing).
+- [x] Доступ к дашборду Mintlify и DNS-зоне `mmbrn.tech`.
 
 ## Шаг 1 — Mintlify dashboard (harness project)
 
@@ -26,17 +26,19 @@ W0 lock: subdomain **`harness.mmbrn.tech`** (владелец может пер�
 
 ## Шаг 2 — DNS в зоне `mmbrn.tech`
 
-- [ ] `CNAME  harness  →  <цель из дашборда>` (напр. `cname.mintlify-dns.com`).
-- [ ] `TXT  _acme-challenge.harness  →  <значение из дашборда>`.
-- [ ] `TXT  _cf-custom-hostname.harness  →  <значение>` (если просят).
+- [x] `CNAME  harness  →  cname.mintlify.builders`.
+- [x] `TXT  _acme-challenge.harness  →  <значение из дашборда>` (в Timeweb: хост
+      «Ввести вручную»; значение копировать целиком — `1`/`l` и `0`/`O` путаются).
+- [x] `TXT  _cf-custom-hostname.harness  →  <значение>`.
 
 **Не трогать** `docs.mmbrn.tech`, `office.mmbrn.tech`, корень `mmbrn.tech`.
+Не привязывать `harness` к App Platform / office — только DNS CNAME на Mintlify.
 
 ## Шаг 3 — Верификация (owner)
 
-- [ ] DNS propagation + Retry validation в дашборде.
-- [ ] `https://harness.mmbrn.tech/tooling/containers` отдаёт атлас по HTTPS.
-- [ ] Fallback `*.mintlify.app` harness-проекта работает, пока custom domain не готов.
+- [x] DNS propagation + Retry validation в дашборде.
+- [x] `https://harness.mmbrn.tech/tooling/containers` отдаёт атлас по HTTPS (2026-07-24).
+- [x] Fallback: `https://membrana-harness.mintlify.app/tooling/containers`.
 
 ## Граница публичности
 
@@ -54,4 +56,4 @@ W0 lock: subdomain **`harness.mmbrn.tech`** (владелец может пер�
 | `yarn docs:verify:all` | оба `docs.json` (product + harness) |
 | `yarn tooling:atlas --render` | пишет `apps/docs-harness/tooling/containers.mdx` |
 
-Panel URL (`ToolingAtlasBoard` → harness) — фаза **W3**, не этот чеклист.
+Panel URL (`ToolingAtlasBoard` → harness) — фаза **W3** (`dmd-w3-surface`).
