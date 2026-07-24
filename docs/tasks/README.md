@@ -24,7 +24,6 @@
 |----|----------|--------|--------|--------|
 | `tw-v9-trail` | one-shot-trail.jsonl анти-дробление | M | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | [#1065](https://github.com/officefish/Membrana/issues/1065) |
 | `tw-v8-oneshot-rank` | one-shot rank (не вердикт) | L | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | [#1064](https://github.com/officefish/Membrana/issues/1064) |
-| `tw-v7-readme-tooth` | README↔registry pre-commit зуб + #1014 | M | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | [#1063](https://github.com/officefish/Membrana/issues/1063) |
 | `tasks-workshop` | Эпик: tasks-workshop — мастерская контейнера задач | L | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | — |
 | `pr-mergeable-graphql-stale` | Мержабельность по GraphQL протухает — pr:ship падает в ложный красный | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1028](https://github.com/officefish/Membrana/issues/1028) |
 | `registry-merge-driver-serverless` | Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1026](https://github.com/officefish/Membrana/issues/1026) |
@@ -243,6 +242,9 @@
 | `dual-mintlify-docs` | Epic: dual Mintlify docs — product + harness sites | L | [`DUAL_MINTLIFY_DOCS_PROMPT.md`](../prompts/DUAL_MINTLIFY_DOCS_PROMPT.md) | [#1121](https://github.com/officefish/Membrana/issues/1121) |
 | `consilium-save-path-test` | test(consilium): путь сохранения протокола исполняется тестом с мокнутой цепочкой | M | [`CONSILIUM_SAVE_PATH_TEST_PROMPT.md`](../prompts/CONSILIUM_SAVE_PATH_TEST_PROMPT.md) | [#1051](https://github.com/officefish/Membrana/issues/1051) |
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | M | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | [#1088](https://github.com/officefish/Membrana/issues/1088) |
+| `membrana-leveling-scripts` | membrana-leveling §8.3: скрипты main-fill / workspace-level по фрейм-раскладке | L | [`MEMBRANA_LEVELING_SCRIPTS_PROMPT.md`](../prompts/MEMBRANA_LEVELING_SCRIPTS_PROMPT.md) | — |
+| `membrana-leveling-disposition` | membrana-leveling §8.2: чистая функция disposition(path,ctx) + тесты матрицы состояний | M | [`MEMBRANA_LEVELING_DISPOSITION_PROMPT.md`](../prompts/MEMBRANA_LEVELING_DISPOSITION_PROMPT.md) | — |
+| `membrana-leveling-container` | membrana-leveling §8.1: контейнер процедурного слоя (README + MANIFEST.json, 6 frames) | M | [`MEMBRANA_LEVELING_CONTAINER_PROMPT.md`](../prompts/MEMBRANA_LEVELING_CONTAINER_PROMPT.md) | — |
 
 ## Архив
 
