@@ -14,6 +14,7 @@
 | `yarn task:sync-readme` | Пересобрать этот файл (карантин; нужен `TASKS_README_SYNC_FORCE=1`) |
 | `yarn task:sync-readme --check` | Зуб README↔registry (active-набор) — падает, не чинит |
 | `yarn one-shot:rank` | Ранжирование кандидатов one-shot (не вердикт) — [`ONE_SHOT_RANK.md`](./ONE_SHOT_RANK.md) |
+| `yarn one-shot:trail` | Журнал анти-дробления `one-shot-trail.jsonl` — [`ONE_SHOT_TRAIL.md`](./ONE_SHOT_TRAIL.md) |
 | `yarn task:archive <id>` | Закрыть задачу в реестре |
 | `yarn task:close-github` | Закрыть Issues по очереди из архива (вечером) |
 
