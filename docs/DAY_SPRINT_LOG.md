@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-07-25 — `strategy-affine-routing` — **OPEN**
+
+- **Goal:** `strategy.mmbrn.tech` → Affine self-host on office VDS (scope B)
+- **Issue:** [#1156](https://github.com/officefish/Membrana/issues/1156) · фазы #1157–#1161
+- **OPEN:** [`day-sprint/strategy-affine-routing-2026-07-25/`](./day-sprint/strategy-affine-routing-2026-07-25/)
+- **Ратификация:** владелец «Ратифицирую» 2026-07-25 · Also open (Focus `tasks-workshop` цел)
+- **W0:** brief in progress
+
+---
+
 ## 2026-07-24 — `dual-mintlify-docs` — **CLOSED**
 
 - **Delivered:** layout A (`apps/docs` + `apps/docs-harness`); harness live `harness.mmbrn.tech`; panel → harness; #1120 not merged

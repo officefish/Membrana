@@ -12,4 +12,6 @@
 
 ## Also open
 
-_(пусто — `dual-mintlify-docs` закрыт 2026-07-24 · [CLOSURE](./day-sprint/dual-mintlify-docs-2026-07-24/CLOSURE.md) · PRs [#1129](https://github.com/officefish/Membrana/pull/1129)/[#1132](https://github.com/officefish/Membrana/pull/1132)/[#1140](https://github.com/officefish/Membrana/pull/1140))_
+**strategy-affine-routing-2026-07-25** · [#1156](https://github.com/officefish/Membrana/issues/1156) · OPEN [`docs/day-sprint/strategy-affine-routing-2026-07-25/OPEN.md`](./day-sprint/strategy-affine-routing-2026-07-25/OPEN.md) · промпт [`STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md`](./prompts/STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md) · lock `strategy.mmbrn.tech` · scope B · host office VDS · фазы #1157–#1161 · W0 brief in progress
+
+_(ранее: `dual-mintlify-docs` закрыт 2026-07-24 · [CLOSURE](./day-sprint/dual-mintlify-docs-2026-07-24/CLOSURE.md))_

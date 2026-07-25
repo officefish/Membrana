@@ -8,13 +8,7 @@
 | Команда | Действие |
 |---------|----------|
 | `yarn task:list` | Список в терминале |
-| `yarn task:inspect <id>` | Паспорт карточки (`inspectElement`, без сети) — [`INSPECT_ELEMENT.md`](./INSPECT_ELEMENT.md) |
-| `yarn task:validate [id]` | Валидность карточки/реестра (`validateTask`/`validateRegistry`) — [`VALIDITY.md`](./VALIDITY.md) |
-| `yarn task:invariants [id]` | Сцепка Linear/GitHub/closedAt (`checkCardIntegrity`) — [`SYNC_INVARIANTS.md`](./SYNC_INVARIANTS.md) |
-| `yarn task:sync-readme` | Пересобрать этот файл (карантин; нужен `TASKS_README_SYNC_FORCE=1`) |
-| `yarn task:sync-readme --check` | Зуб README↔registry (active-набор) — падает, не чинит |
-| `yarn one-shot:rank` | Ранжирование кандидатов one-shot (не вердикт) — [`ONE_SHOT_RANK.md`](./ONE_SHOT_RANK.md) |
-| `yarn one-shot:trail` | Журнал анти-дробления `one-shot-trail.jsonl` — [`ONE_SHOT_TRAIL.md`](./ONE_SHOT_TRAIL.md) |
+| `yarn task:sync-readme` | Пересобрать этот файл |
 | `yarn task:archive <id>` | Закрыть задачу в реестре |
 | `yarn task:close-github` | Закрыть Issues по очереди из архива (вечером) |
 
@@ -24,6 +18,17 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `sar-w4-closure` | W4: closure strategy-affine-routing | S | [`SAR_W4_CLOSURE_PROMPT.md`](../prompts/SAR_W4_CLOSURE_PROMPT.md) | [#1161](https://github.com/officefish/Membrana/issues/1161) |
+| `sar-w3-smoke-surface` | W3: HTTPS smoke + panel/docs surface link | M | [`SAR_W3_SMOKE_SURFACE_PROMPT.md`](../prompts/SAR_W3_SMOKE_SURFACE_PROMPT.md) | [#1160](https://github.com/officefish/Membrana/issues/1160) |
+| `sar-w2-affine-install` | W2: Affine Docker install behind Caddy | L | [`SAR_W2_AFFINE_INSTALL_PROMPT.md`](../prompts/SAR_W2_AFFINE_INSTALL_PROMPT.md) | [#1159](https://github.com/officefish/Membrana/issues/1159) |
+| `sar-w1-canon-dns` | W1: DNS canon + Affine deploy runbook | M | [`SAR_W1_CANON_DNS_PROMPT.md`](../prompts/SAR_W1_CANON_DNS_PROMPT.md) | [#1158](https://github.com/officefish/Membrana/issues/1158) |
+| `sar-w0-brief` | W0: brief strategy-affine-routing | S | [`SAR_W0_BRIEF_PROMPT.md`](../prompts/SAR_W0_BRIEF_PROMPT.md) | [#1157](https://github.com/officefish/Membrana/issues/1157) |
+| `strategy-affine-routing` | Epic: strategy.mmbrn.tech + Affine on office VDS | L | [`STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md`](../prompts/STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md) | [#1156](https://github.com/officefish/Membrana/issues/1156) |
+| `membrana-leveling-scripts` | membrana-leveling §8.3: скрипты main-fill / workspace-level по фрейм-раскладке | L | [`MEMBRANA_LEVELING_SCRIPTS_PROMPT.md`](../prompts/MEMBRANA_LEVELING_SCRIPTS_PROMPT.md) | — |
+| `membrana-leveling-disposition` | membrana-leveling §8.2: чистая функция disposition(path,ctx) + тесты матрицы состояний | M | [`MEMBRANA_LEVELING_DISPOSITION_PROMPT.md`](../prompts/MEMBRANA_LEVELING_DISPOSITION_PROMPT.md) | — |
+| `membrana-leveling-container` | membrana-leveling §8.1: контейнер процедурного слоя (README + MANIFEST.json, 6 frames) | M | [`MEMBRANA_LEVELING_CONTAINER_PROMPT.md`](../prompts/MEMBRANA_LEVELING_CONTAINER_PROMPT.md) | — |
+| `consilium-save-path-test` | test(consilium): путь сохранения протокола исполняется тестом с мокнутой цепочкой | M | [`CONSILIUM_SAVE_PATH_TEST_PROMPT.md`](../prompts/CONSILIUM_SAVE_PATH_TEST_PROMPT.md) | [#1051](https://github.com/officefish/Membrana/issues/1051) |
+| `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | M | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | [#1088](https://github.com/officefish/Membrana/issues/1088) |
 | `tasks-workshop` | Эпик: tasks-workshop — мастерская контейнера задач | L | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | — |
 | `pr-mergeable-graphql-stale` | Мержабельность по GraphQL протухает — pr:ship падает в ложный красный | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1028](https://github.com/officefish/Membrana/issues/1028) |
 | `registry-merge-driver-serverless` | Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1026](https://github.com/officefish/Membrana/issues/1026) |
@@ -61,7 +66,7 @@
 | `sbc-s3-kits-align` | S3: kits — выровнять с pl-r3 kit-manifest (не изобретать параллельный контракт) | M | [`SBC_S3_KITS_ALIGN_PROMPT.md`](../prompts/SBC_S3_KITS_ALIGN_PROMPT.md) | [#795](https://github.com/officefish/Membrana/issues/795) |
 | `sbc-s2-tools-report` | S2: инструменты пишут в scripts/registry сами (--report) | M | [`SBC_S2_TOOLS_REPORT_PROMPT.md`](../prompts/SBC_S2_TOOLS_REPORT_PROMPT.md) | [#794](https://github.com/officefish/Membrana/issues/794) |
 | `procedural-layer-impl` | Эпик: реализация процедурного слоя (Р1-Р5 заседания procedural-layer) | L | [`PROCEDURAL_LAYER_IMPL_PROMPT.md`](../prompts/PROCEDURAL_LAYER_IMPL_PROMPT.md) | [#781](https://github.com/officefish/Membrana/issues/781) |
-| `angelina-hostess-impl` | Спринт: реализация вердиктов «Ангелина — хозяйка утра» (C→B+G→H→GC) | L | [`docs/seanses/angelina-hostess-EPIC-2026-07-21.md`](../prompts/docs/seanses/angelina-hostess-EPIC-2026-07-21.md) | — |
+| `angelina-hostess-impl` | Спринт: реализация вердиктов «Ангелина — хозяйка утра» (C→B+G→H→GC) | L | [`angelina-hostess-EPIC-2026-07-21.md`](../seanses/angelina-hostess-EPIC-2026-07-21.md) | — |
 | `linear-hygiene-dreams-providers-night` | Night: Linear-гигиена → живые провайдеры снов | M | [`LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `ritual-r-report` | Доклад наружу: линза + живые ссылки (R эпика ritual-refactor) | M | [`RITUAL_R_REPORT_PROMPT.md`](../prompts/RITUAL_R_REPORT_PROMPT.md) | — |
 | `ritual-s-standup` | Стендап Тимлидом + движок задач (S эпика ritual-refactor) | M | [`RITUAL_S_STANDUP_PROMPT.md`](../prompts/RITUAL_S_STANDUP_PROMPT.md) | — |
@@ -181,7 +186,7 @@
 | `oc-proxy-s3-llm-proxy-script` | OC3: llm-proxy-ask.mjs CLI | M | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `oc-proxy-s4-opencode-config` | OC4: OpenCode config template | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `comp-packaging-catalog-2026-06-25` | Competition packaging: async-v2 catalog publish + operator debug | M | [`COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md`](../prompts/COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md) | — |
-| `device-board-three-hosts-2026-06-26` | Device-board UserCase: стабильность на cabinet + Studio + Device (эпик) | L | [`docs/seanses/neural-detectors-strategy-2026-06-26.md`](../prompts/docs/seanses/neural-detectors-strategy-2026-06-26.md) | — |
+| `device-board-three-hosts-2026-06-26` | Device-board UserCase: стабильность на cabinet + Studio + Device (эпик) | L | [`neural-detectors-strategy-2026-06-26.md`](../seanses/neural-detectors-strategy-2026-06-26.md) | — |
 | `ci-gate-stabilization` | Epic: CI-gate stabilization — флейки rag-service, двухуровневый test gate, flaky-метрики | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
 | `cg2-two-tier-test-gate` | CG2: двухуровневый test gate — smoke (hard) + full (опциональный) на vitest | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
 | `cg3-flaky-metrics-week` | CG3: логирование + сбор flaky-метрик за неделю (7 прогонов main) | S | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
@@ -200,8 +205,8 @@
 | `db-sf-7-last-track-preview` | SF7: last journal track preview on node card | S | [`DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md`](../prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md) | — |
 | `db-sf-8-tests-smoke` | SF8: tests + smoke runbook | M | [`DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md`](../prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md) | — |
 | `db-sf-9-docs-sync` | SF9: docs sync CONCEPT/catalog/ARCHITECTURE | S | [`DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md`](../prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md) | — |
-| `neural-tier-1b-contract` | Neural tier 1.B: NeuralDetector контракт + YAMNet/CLAP skeleton | L | [`docs/INTEGRATIONS_STRATEGY.md`](../prompts/docs/INTEGRATIONS_STRATEGY.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
-| `neural-free-tier-dataset-report` | Free-tier: датасет + трек → детектор → отчёт (1 ГБ library) | L | [`docs/seanses/neural-detectors-strategy-2026-06-26.md`](../prompts/docs/seanses/neural-detectors-strategy-2026-06-26.md) | — |
+| `neural-tier-1b-contract` | Neural tier 1.B: NeuralDetector контракт + YAMNet/CLAP skeleton | L | [`INTEGRATIONS_STRATEGY.md`](../INTEGRATIONS_STRATEGY.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `neural-free-tier-dataset-report` | Free-tier: датасет + трек → детектор → отчёт (1 ГБ library) | L | [`neural-detectors-strategy-2026-06-26.md`](../seanses/neural-detectors-strategy-2026-06-26.md) | — |
 | `rag-dual-circuit-v1` | RAG Dual-Circuit v1: doc-memory + code-structure (эпик) | L | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
 | `rag-r6-closure` | RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive | S | — | — |
 | `rag-r7-optional` | RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker | S | — | — |
@@ -235,18 +240,34 @@
 | `nb-at-6-helpers` | NB6: deploy:when-green (print) + prisma:migration (оффлайн diff) | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-7-bookkeeping-gitctx` | NB7: tasks:archive-closed + lib/git-day-context (общий «работа дня») | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
-| `detection-alarm-loop-refactor` | Detection-Alarm рефакторинг переключения лупов: fusion→lastDetection+front+loop-transition-policy (тема1), effectiveLoop-sync/захват-гейтинг (ADR Р1/Р2), pure-геттеры, Alpha L36 | L | [`docs/actions/device-board/LOOP_SWITCH_CONTROL_ADR.md`](../prompts/docs/actions/device-board/LOOP_SWITCH_CONTROL_ADR.md) | — |
+| `detection-alarm-loop-refactor` | Detection-Alarm рефакторинг переключения лупов: fusion→lastDetection+front+loop-transition-policy (тема1), effectiveLoop-sync/захват-гейтинг (ADR Р1/Р2), pure-геттеры, Alpha L36 | L | [`LOOP_SWITCH_CONTROL_ADR.md`](../actions/device-board/LOOP_SWITCH_CONTROL_ADR.md) | — |
 | `batch-collection-run-contour` | batch-collection-run-contour: прогон детекторов по коллекции — новая execution-модель live↔batch (пост-FREE, следующий цикл) | L | [`BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md`](../prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md) | [#494](https://github.com/officefish/Membrana/issues/494) |
-| `consilium-save-path-test` | test(consilium): путь сохранения протокола исполняется тестом с мокнутой цепочкой | M | [`CONSILIUM_SAVE_PATH_TEST_PROMPT.md`](../prompts/CONSILIUM_SAVE_PATH_TEST_PROMPT.md) | [#1051](https://github.com/officefish/Membrana/issues/1051) |
-| `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | M | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | [#1088](https://github.com/officefish/Membrana/issues/1088) |
-| `membrana-leveling-scripts` | membrana-leveling §8.3: скрипты main-fill / workspace-level по фрейм-раскладке | L | [`MEMBRANA_LEVELING_SCRIPTS_PROMPT.md`](../prompts/MEMBRANA_LEVELING_SCRIPTS_PROMPT.md) | — |
-| `membrana-leveling-disposition` | membrana-leveling §8.2: чистая функция disposition(path,ctx) + тесты матрицы состояний | M | [`MEMBRANA_LEVELING_DISPOSITION_PROMPT.md`](../prompts/MEMBRANA_LEVELING_DISPOSITION_PROMPT.md) | — |
-| `membrana-leveling-container` | membrana-leveling §8.1: контейнер процедурного слоя (README + MANIFEST.json, 6 frames) | M | [`MEMBRANA_LEVELING_CONTAINER_PROMPT.md`](../prompts/MEMBRANA_LEVELING_CONTAINER_PROMPT.md) | — |
+
+---
 
 ## Архив
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `tw-v9-trail` | one-shot-trail.jsonl анти-дробление | 2026-07-25 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1065 (Issue открыт) | [карточка](./archive/tw-v9-trail.md) |
+| `dmd-w4-closure` | W4: closure dual-mintlify-docs | 2026-07-24 | [`DMD_W4_CLOSURE_PROMPT.md`](../prompts/DMD_W4_CLOSURE_PROMPT.md) | #1126 (Issue открыт) | [карточка](./archive/dmd-w4-closure.md) |
+| `dmd-w3-surface` | W3: panel surface + CUSTOM_DOMAIN notes | 2026-07-24 | [`DMD_W3_SURFACE_PROMPT.md`](../prompts/DMD_W3_SURFACE_PROMPT.md) | #1125 (Issue открыт) | [карточка](./archive/dmd-w3-surface.md) |
+| `dmd-w2-wires` | W2: wires atlas render + CI x2 | 2026-07-24 | [`DMD_W2_WIRES_PROMPT.md`](../prompts/DMD_W2_WIRES_PROMPT.md) | #1124 (Issue открыт) | [карточка](./archive/dmd-w2-wires.md) |
+| `dmd-w1-split` | W1: split trees + two docs.json | 2026-07-24 | [`DMD_W1_SPLIT_PROMPT.md`](../prompts/DMD_W1_SPLIT_PROMPT.md) | #1123 (Issue открыт) | [карточка](./archive/dmd-w1-split.md) |
+| `dmd-w0-brief` | W0: brief dual-mintlify-docs | 2026-07-24 | [`DMD_W0_BRIEF_PROMPT.md`](../prompts/DMD_W0_BRIEF_PROMPT.md) | #1122 (Issue открыт) | [карточка](./archive/dmd-w0-brief.md) |
+| `dual-mintlify-docs` | Epic: dual Mintlify docs — product + harness sites | 2026-07-24 | [`DUAL_MINTLIFY_DOCS_PROMPT.md`](../prompts/DUAL_MINTLIFY_DOCS_PROMPT.md) | #1121 (Issue открыт) | [карточка](./archive/dual-mintlify-docs.md) |
+| `arp-w4-closure` | W4: closure atlas-report-plane | 2026-07-24 | [`ARP_W4_CLOSURE_PROMPT.md`](../prompts/ARP_W4_CLOSURE_PROMPT.md) | #1102 (Issue открыт) | [карточка](./archive/arp-w4-closure.md) |
+| `arp-w3-surface` | W3: atlas render Mintlify wires | 2026-07-24 | [`ARP_W3_SURFACE_PROMPT.md`](../prompts/ARP_W3_SURFACE_PROMPT.md) | #1101 (Issue открыт) | [карточка](./archive/arp-w3-surface.md) |
+| `arp-w2-engine` | W2: tooling-atlas home/role/plane engine | 2026-07-24 | [`ARP_W2_ENGINE_PROMPT.md`](../prompts/ARP_W2_ENGINE_PROMPT.md) | #1100 (Issue открыт) | [карточка](./archive/arp-w2-engine.md) |
+| `arp-w1-canon` | W1: canon report-plane docs | 2026-07-24 | [`ARP_W1_CANON_PROMPT.md`](../prompts/ARP_W1_CANON_PROMPT.md) | #1099 (Issue открыт) | [карточка](./archive/arp-w1-canon.md) |
+| `arp-w0-brief` | W0: brief atlas-report-plane | 2026-07-24 | [`ARP_W0_BRIEF_PROMPT.md`](../prompts/ARP_W0_BRIEF_PROMPT.md) | #1098 (Issue открыт) | [карточка](./archive/arp-w0-brief.md) |
+| `atlas-report-plane` | Epic: atlas report-plane — audit ≠ domain tasks | 2026-07-24 | [`ATLAS_REPORT_PLANE_PROMPT.md`](../prompts/ATLAS_REPORT_PLANE_PROMPT.md) | #1097 (Issue открыт) | [карточка](./archive/atlas-report-plane.md) |
+| `tw-v8-oneshot-rank` | one-shot rank (не вердикт) | 2026-07-24 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1064 (Issue открыт) | [карточка](./archive/tw-v8-oneshot-rank.md) |
+| `tw-v7-readme-tooth` | README↔registry pre-commit зуб + #1014 | 2026-07-24 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1063 (Issue открыт) | [карточка](./archive/tw-v7-readme-tooth.md) |
+| `tw-v6-invariants` | Linear HARD / Issue WARN / closed→closedAt | 2026-07-24 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1062 (Issue открыт) | [карточка](./archive/tw-v6-invariants.md) |
+| `tw-v5-validity` | validateTask/Registry уровни | 2026-07-24 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1061 (Issue открыт) | [карточка](./archive/tw-v5-validity.md) |
+| `tw-v4-inspect` | inspectElement pure+CLI | 2026-07-24 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1060 (Issue открыт) | [карточка](./archive/tw-v4-inspect.md) |
+| `tw-v3-axes` | v3: оси decompose --by | 2026-07-24 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1059 (Issue открыт) | [карточка](./archive/tw-v3-axes.md) |
 | `tw-v2-verbs` | Состав глаголов мастерской + граница в README | 2026-07-23 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1058 (Issue открыт) | [карточка](./archive/tw-v2-verbs.md) |
 | `tw-v1-manifest` | Манифест docs/tasks + иерархия + workshop-semantics + check | 2026-07-23 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1057 (Issue открыт) | [карточка](./archive/tw-v1-manifest.md) |
 | `tw-g0-v2-gate` | Слово владельца: V2 vs HOME_WORKSHOP (audit/decompose in/out) | 2026-07-23 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1056 | [карточка](./archive/tw-g0-v2-gate.md) |
@@ -963,4 +984,4 @@
 3. Добавить объект в `registry.json` (`"status": "active"`).
 4. `yarn task:sync-readme`.
 
-*Файл обновлён автоматически: 2026-07-23.*
+*Файл обновлён автоматически: 2026-07-25.*
