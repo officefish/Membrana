@@ -21,6 +21,8 @@ const ISSUE_RE = /#(\d+)\b/gu;
 const DATE_RE = /\bdate:(\d{4}-\d{2}-\d{2})\b/gu;
 /** absent: долг «нужен файл X» — «absent:.gitleaks.toml» (гаснет, когда файл ПОЯВИТСЯ; инверсия). */
 const ABSENT_RE = /\babsent:([\w./@-]+)/gu;
+/** state: долг про состояние (дерева/мостика) — «state:bridge-closed». Проба-реестр, resolveState инъектируется. */
+const STATE_RE = /\bstate:([\w-]+)/gu;
 
 /**
  * Извлечь типизированные ссылки из вольного текста вещдока (M1-эвристика до миграции).
@@ -46,6 +48,9 @@ export function extractRefs(evidence) {
   }
   for (const m of text.matchAll(ABSENT_RE)) {
     refs.push({ kind: 'absent', ref: m[0], file: m[1] });
+  }
+  for (const m of text.matchAll(STATE_RE)) {
+    refs.push({ kind: 'state', ref: m[0], probe: m[1] });
   }
   return refs;
 }
@@ -73,10 +78,10 @@ export function ageDays(dateStr, today) {
  * @param {{resolveFile:(p:string)=>string|null, today:string, maxAgeDays?:number}} deps
  * @returns {{id:string, refs:number, deadRefs:Array<{ref:string, why:string}>, age:number, aged:boolean, verdict:'ok'|'stale-ref'|'aged'}}
  */
-export function validateDebt(debt, { resolveFile, today, maxAgeDays = 3 }) {
+export function validateDebt(debt, { resolveFile, today, maxAgeDays = 3, resolveState }) {
   const refs = extractRefs(debt.evidence);
   const deadRefs = [];
-  const resolvedHints = []; // сигналы, что долг ПОРА снять (date истёк / absent-файл появился)
+  const resolvedHints = []; // сигналы, что долг ПОРА снять (date истёк / absent-файл появился / state снят)
   for (const r of refs) {
     if (r.kind === 'issue') continue; // issue-состояние решает audit (сеть), не validate
     if (r.kind === 'date') {
@@ -86,6 +91,12 @@ export function validateDebt(debt, { resolveFile, today, maxAgeDays = 3 }) {
     if (r.kind === 'absent') {
       // инверсия: долг «нужен файл X». Файл появился → снять; отсутствует → долг ещё жив.
       if (resolveFile(r.file) != null) resolvedHints.push({ ref: r.ref, why: `нужный файл появился: ${r.file}` });
+      continue;
+    }
+    if (r.kind === 'state') {
+      // проба-реестр (resolveState инъектируется вызывающим). resolved → снять; live/unknown → жив.
+      const st = resolveState ? resolveState(r.probe) : 'unknown';
+      if (st === 'resolved') resolvedHints.push({ ref: r.ref, why: `состояние снято: ${r.probe}` });
       continue;
     }
     const text = resolveFile(r.file);

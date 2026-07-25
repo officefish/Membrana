@@ -133,10 +133,16 @@ if (cmd === 'debt') {
     }
     return null;
   };
+  // Резолвер состояний для вида вещдока `state:` (проба-реестр). Первая проба —
+  // `bridge-closed`: долг гаснет, когда мостик закрыт. Новые пробы добавлять сюда.
+  const resolveState = (probe) => {
+    if (probe === 'bridge-closed') return isOpen(loadState()) ? 'live' : 'resolved';
+    return 'unknown';
+  };
   if (sub === 'validate') {
     // ЗУБ 1 (заседание bridge-ledger-toolset, M3): живость ссылок вещдока + возраст, offline.
     const open = openDebts(debts);
-    const vals = open.map((d) => validateDebt(d, { resolveFile, today: today() }));
+    const vals = open.map((d) => validateDebt(d, { resolveFile, resolveState, today: today() }));
     const bad = vals.filter((v) => v.verdict !== 'ok');
     for (const v of vals) {
       if (v.verdict === 'stale-ref') {
@@ -166,7 +172,7 @@ if (cmd === 'debt') {
   if (sub === 'invariants') {
     // ЗУБ 2 (M3): честное число живых + семантические кластеры по теме (M1). Offline.
     const open = openDebts(debts);
-    const vals = open.map((d) => validateDebt(d, { resolveFile, today: today() }));
+    const vals = open.map((d) => validateDebt(d, { resolveFile, resolveState, today: today() }));
     const count = realActiveCount(debts, vals);
     const clusters = themeClusters(debts);
     const h = healthMetrics(debts, vals);
@@ -219,7 +225,7 @@ if (cmd === 'debt') {
       }
     };
     const open = openDebts(debts);
-    const vals = open.map((x) => validateDebt(x, { resolveFile, today: today() }));
+    const vals = open.map((x) => validateDebt(x, { resolveFile, resolveState, today: today() }));
     const audits = open.map((x) => auditDebt(x, { resolveIssue }));
     const p = propose(debts, vals, audits);
     const count = realActiveCount(debts, vals);
