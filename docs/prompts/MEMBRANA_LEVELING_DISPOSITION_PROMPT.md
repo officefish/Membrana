@@ -1,6 +1,6 @@
 # Промпт: `membrana-leveling` §8.2 — чистая функция `disposition(path, ctx)`
 
-> **СТАТУС: ЗАРЕГИСТРИРОВАНО, НЕ В РАБОТЕ.** Не начинать без явного слова владельца.
+> **СТАТУС: В РАБОТЕ** (слово владельца 2026-07-25, после §8.1).
 > Реестр: `id = membrana-leveling-disposition` в [`docs/tasks/registry.json`](../tasks/registry.json). Размер: **M**. Lead: **vesnin**, support: **dynin**.
 > Основание: [`MEMBRANA_LEVELING_REGULATION.md`](./MEMBRANA_LEVELING_REGULATION.md) v1.0 § 2 (вердикт M1).
 
@@ -43,13 +43,14 @@ disposition(path, ctx) → 'live' | 'ready' | 'unfinished' | 'trash'
 (готовое / брошенное / мусор корня / времянка scratch / live-правка). Именно этот прогон, а не
 синтетика юнит-тестов, доказывает, что гейт `membrana-leveling` не снесёт работу и не пропустит мусор.
 
-- [ ] Продуктовый критерий выше пройден и приложен таблицей «путь → ожидание → факт».
-- [ ] Чистая функция + контракт ctx-словаря (`dirty`, `registered`, `inActiveSession`, `ciGreen`,
+- [x] Продуктовый критерий выше пройден и приложен таблицей «путь → ожидание → факт»
+  (`scripts/fixtures/membrana-leveling-disposition-product.mjs`, 12 кейсов).
+- [x] Чистая функция + контракт ctx-словаря (`dirty`, `registered`, `inActiveSession`, `ciGreen`,
   `conflictsMain`, `prApproved`, `leadStamp`, `isTempOrScratch`, `unitOf`) как порты.
-- [ ] Тесты матрицы состояний: `readyFacts ∧ ¬stamp → unfinished`; `dirty ∧ ¬registered → trash`;
-  `dirty ∧ session → live`; тотальность на домене (fallback trash). **Определить `inActiveSession`**
-  (session-lock/оркестратор, не голый mtime) — названный gap M1.
-- [ ] `node --test` зелёный. LGTM Teamlead.
+- [x] Тесты матрицы состояний: `readyFacts ∧ ¬stamp → unfinished`; `dirty ∧ ¬registered → trash`;
+  `dirty ∧ session → live`; тотальность на домене (fallback trash). **`inActiveSession`** =
+  порт session-lock/оркестратора (не mtime) — gap M1 закрыт контрактом.
+- [x] `node --test` зелёный. LGTM Teamlead — в PR.
 
 ## Out of scope
 
