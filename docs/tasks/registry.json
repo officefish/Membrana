@@ -528,16 +528,16 @@
       "githubIssue": 1051,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-24",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1189 MERGED 86809822; seanseModelLabel/seansePlan/wrapSeanseFile + consilium-save-path.test.mjs; DoD #1051; Closes #1051",
       "githubIssueClosedAt": null
     },
     {
