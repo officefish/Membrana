@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `readme-managed-template` | docs/tasks/README.md — собственный Template в движке стратегических документов; снять карантин sync | M | [`README_MANAGED_TEMPLATE_PROMPT.md`](../prompts/README_MANAGED_TEMPLATE_PROMPT.md) | [#1201](https://github.com/officefish/Membrana/issues/1201) |
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | M | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | [#1088](https://github.com/officefish/Membrana/issues/1088) |
 | `registry-merge-driver-serverless` | Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1026](https://github.com/officefish/Membrana/issues/1026) |
 | `ritual-deliver-to-main` | Утренний ритуал: обязательный финальный кадр — доставка документов в main | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1016](https://github.com/officefish/Membrana/issues/1016) |
