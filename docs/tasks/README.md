@@ -224,8 +224,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `kits-pins-wiring` | Описи китов: инструмент kits:pins, выравнивание трёх китов, зуб сверки на pre-push + CI | 2026-07-25 | [`KITS_PINS_WIRING_PROMPT.md`](../prompts/KITS_PINS_WIRING_PROMPT.md) | #1196 (Issue открыт) | [карточка](./archive/kits-pins-wiring.md) |
-| `bridge-cross-agent-skill` | Мостик: кросс-агентский скилл входа + кит angelina-bridge (инструментарий ведущей) | 2026-07-25 | [`BRIDGE_CROSS_AGENT_SKILL_PROMPT.md`](../prompts/BRIDGE_CROSS_AGENT_SKILL_PROMPT.md) | #1195 (Issue открыт) | [карточка](./archive/bridge-cross-agent-skill.md) |
+| `kits-pins-wiring` | Описи китов: инструмент kits:pins, выравнивание трёх китов, зуб сверки на pre-push + CI | 2026-07-25 | [`KITS_PINS_WIRING_PROMPT.md`](../prompts/KITS_PINS_WIRING_PROMPT.md) | #1196 | [карточка](./archive/kits-pins-wiring.md) |
+| `bridge-cross-agent-skill` | Мостик: кросс-агентский скилл входа + кит angelina-bridge (инструментарий ведущей) | 2026-07-25 | [`BRIDGE_CROSS_AGENT_SKILL_PROMPT.md`](../prompts/BRIDGE_CROSS_AGENT_SKILL_PROMPT.md) | #1195 | [карточка](./archive/bridge-cross-agent-skill.md) |
 | `ml-adopt-pilot` | ml-adopt-pilot: dry/--only pilot + CLOSURE | 2026-07-25 | [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](../prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md) | — | [карточка](./archive/ml-adopt-pilot.md) |
 | `ml-adopt-rhythm` | ml-adopt-rhythm: wire membrana-leveling into developer-rhythm evening | 2026-07-25 | [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](../prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md) | — | [карточка](./archive/ml-adopt-rhythm.md) |
 | `ml-adopt-deliver` | ml-adopt-deliver: HANDOFF seam for evening leveling report | 2026-07-25 | [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](../prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md) | — | [карточка](./archive/ml-adopt-deliver.md) |
@@ -237,7 +237,7 @@
 | `sar-w4-closure` | W4: closure strategy-affine-routing | 2026-07-25 | [`SAR_W4_CLOSURE_PROMPT.md`](../prompts/SAR_W4_CLOSURE_PROMPT.md) | #1161 | [карточка](./archive/sar-w4-closure.md) |
 | `sar-w3-smoke-surface` | W3: HTTPS smoke + panel/docs surface link | 2026-07-25 | [`SAR_W3_SMOKE_SURFACE_PROMPT.md`](../prompts/SAR_W3_SMOKE_SURFACE_PROMPT.md) | #1160 | [карточка](./archive/sar-w3-smoke-surface.md) |
 | `sar-w2-affine-install` | W2: Affine Docker install behind Caddy | 2026-07-25 | [`SAR_W2_AFFINE_INSTALL_PROMPT.md`](../prompts/SAR_W2_AFFINE_INSTALL_PROMPT.md) | #1159 | [карточка](./archive/sar-w2-affine-install.md) |
-| `sar-w1-canon-dns` | W1: DNS canon + Affine deploy runbook | 2026-07-25 | [`SAR_W1_CANON_DNS_PROMPT.md`](../prompts/SAR_W1_CANON_DNS_PROMPT.md) | #1158 (Issue открыт) | [карточка](./archive/sar-w1-canon-dns.md) |
+| `sar-w1-canon-dns` | W1: DNS canon + Affine deploy runbook | 2026-07-25 | [`SAR_W1_CANON_DNS_PROMPT.md`](../prompts/SAR_W1_CANON_DNS_PROMPT.md) | #1158 | [карточка](./archive/sar-w1-canon-dns.md) |
 | `sar-w0-brief` | W0: brief strategy-affine-routing | 2026-07-25 | [`SAR_W0_BRIEF_PROMPT.md`](../prompts/SAR_W0_BRIEF_PROMPT.md) | #1157 | [карточка](./archive/sar-w0-brief.md) |
 | `strategy-affine-routing` | Epic: strategy.mmbrn.tech + Affine on office VDS | 2026-07-25 | [`STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md`](../prompts/STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md) | #1156 | [карточка](./archive/strategy-affine-routing.md) |
 | `friction5-pr-audit-skill` | скилл membrana-pr-audit — параллельный аудит открытых PR | 2026-07-25 | [`FRICTION5_PR_AUDIT_SKILL_PROMPT.md`](../prompts/FRICTION5_PR_AUDIT_SKILL_PROMPT.md) | #1169 | [карточка](./archive/friction5-pr-audit-skill.md) |
@@ -281,13 +281,13 @@
 | `dmd-w1-split` | W1: split trees + two docs.json | 2026-07-24 | [`DMD_W1_SPLIT_PROMPT.md`](../prompts/DMD_W1_SPLIT_PROMPT.md) | #1123 | [карточка](./archive/dmd-w1-split.md) |
 | `dmd-w0-brief` | W0: brief dual-mintlify-docs | 2026-07-24 | [`DMD_W0_BRIEF_PROMPT.md`](../prompts/DMD_W0_BRIEF_PROMPT.md) | #1122 | [карточка](./archive/dmd-w0-brief.md) |
 | `dual-mintlify-docs` | Epic: dual Mintlify docs — product + harness sites | 2026-07-24 | [`DUAL_MINTLIFY_DOCS_PROMPT.md`](../prompts/DUAL_MINTLIFY_DOCS_PROMPT.md) | #1121 | [карточка](./archive/dual-mintlify-docs.md) |
-| `arp-w4-closure` | W4: closure atlas-report-plane | 2026-07-24 | [`ARP_W4_CLOSURE_PROMPT.md`](../prompts/ARP_W4_CLOSURE_PROMPT.md) | #1102 (Issue открыт) | [карточка](./archive/arp-w4-closure.md) |
+| `arp-w4-closure` | W4: closure atlas-report-plane | 2026-07-24 | [`ARP_W4_CLOSURE_PROMPT.md`](../prompts/ARP_W4_CLOSURE_PROMPT.md) | #1102 | [карточка](./archive/arp-w4-closure.md) |
 | `arp-w3-surface` | W3: atlas render Mintlify wires | 2026-07-24 | [`ARP_W3_SURFACE_PROMPT.md`](../prompts/ARP_W3_SURFACE_PROMPT.md) | #1101 | [карточка](./archive/arp-w3-surface.md) |
 | `arp-w2-engine` | W2: tooling-atlas home/role/plane engine | 2026-07-24 | [`ARP_W2_ENGINE_PROMPT.md`](../prompts/ARP_W2_ENGINE_PROMPT.md) | #1100 | [карточка](./archive/arp-w2-engine.md) |
 | `arp-w1-canon` | W1: canon report-plane docs | 2026-07-24 | [`ARP_W1_CANON_PROMPT.md`](../prompts/ARP_W1_CANON_PROMPT.md) | #1099 | [карточка](./archive/arp-w1-canon.md) |
 | `arp-w0-brief` | W0: brief atlas-report-plane | 2026-07-24 | [`ARP_W0_BRIEF_PROMPT.md`](../prompts/ARP_W0_BRIEF_PROMPT.md) | #1098 | [карточка](./archive/arp-w0-brief.md) |
 | `atlas-report-plane` | Epic: atlas report-plane — audit ≠ domain tasks | 2026-07-24 | [`ATLAS_REPORT_PLANE_PROMPT.md`](../prompts/ATLAS_REPORT_PLANE_PROMPT.md) | #1097 | [карточка](./archive/atlas-report-plane.md) |
-| `tw-v8-oneshot-rank` | one-shot rank (не вердикт) | 2026-07-24 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1064 (Issue открыт) | [карточка](./archive/tw-v8-oneshot-rank.md) |
+| `tw-v8-oneshot-rank` | one-shot rank (не вердикт) | 2026-07-24 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1064 | [карточка](./archive/tw-v8-oneshot-rank.md) |
 | `tw-v7-readme-tooth` | README↔registry pre-commit зуб + #1014 | 2026-07-24 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1063 | [карточка](./archive/tw-v7-readme-tooth.md) |
 | `tw-v6-invariants` | Linear HARD / Issue WARN / closed→closedAt | 2026-07-24 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1062 | [карточка](./archive/tw-v6-invariants.md) |
 | `tw-v5-validity` | validateTask/Registry уровни | 2026-07-24 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | #1061 | [карточка](./archive/tw-v5-validity.md) |
