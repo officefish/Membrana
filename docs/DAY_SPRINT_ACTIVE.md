@@ -8,12 +8,8 @@
 
 Первый шаг: ✅ **g0** закрыт (V2 wins 23.07) → дальше `tw-v1-manifest` / `tw-v2-verbs`.
 
-Последний **закрытый:** [`membrana-leveling-adopt-2026-07`](./day-sprint/membrana-leveling-adopt-2026-07/CLOSURE.md) · до него [`dual-mintlify-docs-2026-07-24`](./day-sprint/dual-mintlify-docs-2026-07-24/CLOSURE.md) (#1121) · [`atlas-report-plane-2026-07-24`](./day-sprint/atlas-report-plane-2026-07-24/CLOSURE.md) (#1097).
+Последний **закрытый:** [`strategy-affine-routing-2026-07-25`](./day-sprint/strategy-affine-routing-2026-07-25/CLOSURE.md) (#1156) · до него [`dual-mintlify-docs-2026-07-24`](./day-sprint/dual-mintlify-docs-2026-07-24/CLOSURE.md) (#1121) · [`atlas-report-plane-2026-07-24`](./day-sprint/atlas-report-plane-2026-07-24/CLOSURE.md) (#1097) · [`bestiary-workshop-2026-07-22`](./day-sprint/bestiary-workshop-2026-07-22/CLOSURE.md) (#945).
 
 ## Also open
 
-**strategy-affine-routing-2026-07-25** · [#1156](https://github.com/officefish/Membrana/issues/1156) · OPEN [`docs/day-sprint/strategy-affine-routing-2026-07-25/OPEN.md`](./day-sprint/strategy-affine-routing-2026-07-25/OPEN.md) · промпт [`STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md`](./prompts/STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md) · lock `strategy.mmbrn.tech` · scope B · host office VDS · фазы #1157–#1161 · W0–W2 done (#1163 / W1 / #1179) · **W3** smoke/surface (#1160)
-
-_(закрыт Also open: `membrana-leveling-adopt` → [CLOSURE](./day-sprint/membrana-leveling-adopt-2026-07/CLOSURE.md))_
-
-_(ранее: `dual-mintlify-docs` закрыт 2026-07-24 · [CLOSURE](./day-sprint/dual-mintlify-docs-2026-07-24/CLOSURE.md))_
+_(пусто — `strategy-affine-routing` закрыт 2026-07-25 · [CLOSURE](./day-sprint/strategy-affine-routing-2026-07-25/CLOSURE.md))_

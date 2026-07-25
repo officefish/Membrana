@@ -13,13 +13,15 @@
 
 ---
 
-## 2026-07-25 — `strategy-affine-routing` — **OPEN**
+## 2026-07-25 — `strategy-affine-routing` — **CLOSED**
 
-- **Goal:** `strategy.mmbrn.tech` → Affine self-host on office VDS (scope B)
+- **Delivered:** `strategy.mmbrn.tech` → Affine self-host on office VDS (scope B); HTTPS UI + owner admin; panel «Стратегия»; capacity gate + post-install facts
 - **Issue:** [#1156](https://github.com/officefish/Membrana/issues/1156) · фазы #1157–#1161
-- **OPEN:** [`day-sprint/strategy-affine-routing-2026-07-25/`](./day-sprint/strategy-affine-routing-2026-07-25/)
-- **Ратификация:** владелец «Ратифицирую» 2026-07-25 · Also open (Focus `tasks-workshop` цел)
-- **W0:** brief in progress
+- **OPEN / CLOSURE:** [`day-sprint/strategy-affine-routing-2026-07-25/`](./day-sprint/strategy-affine-routing-2026-07-25/)
+- **PRs:** [#1163](https://github.com/officefish/Membrana/pull/1163) · [#1173](https://github.com/officefish/Membrana/pull/1173) · [#1179](https://github.com/officefish/Membrana/pull/1179) · [#1181](https://github.com/officefish/Membrana/pull/1181) · W4 _(this PR)_
+- **Live:** https://strategy.mmbrn.tech
+- **Ратификация:** владелец 2026-07-25 · Focus `tasks-workshop` цел · residual: git↔Affine sync / VDS upgrade 8 GB+80G
+- **Abandoned note:** N/A (нет аналога #1120)
 
 ---
 

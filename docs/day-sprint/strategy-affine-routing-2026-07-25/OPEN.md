@@ -4,7 +4,7 @@
 |------|----------|
 | **Sprint** | `strategy-affine-routing-2026-07-25` |
 | **Registry epic** | `strategy-affine-routing` · [#1156](https://github.com/officefish/Membrana/issues/1156) |
-| **Status** | **open** |
+| **Status** | **closed** → [`CLOSURE.md`](./CLOSURE.md) |
 | **Kind** | day-sprint (эпик L + фазы S/M/L) |
 | **Size** | L |
 | **Lead epic** | vesnin |
@@ -61,10 +61,10 @@ strategy.mmbrn.tech  → Affine self-host                 — THIS sprint
 | Phase | Registry id | Issue | Lead | Prompt | DoD | Status |
 |-------|-------------|------:|------|--------|-----|--------|
 | **W0** | `sar-w0-brief` | [#1157](https://github.com/officefish/Membrana/issues/1157) | vesnin | [`SAR_W0_BRIEF_PROMPT.md`](../../prompts/SAR_W0_BRIEF_PROMPT.md) | OPEN + Issues + ACTIVE Also open; Focus цел; lock strategy + scope B | **done** (PR [#1163](https://github.com/officefish/Membrana/pull/1163)) |
-| **W1** | `sar-w1-canon-dns` | [#1158](https://github.com/officefish/Membrana/issues/1158) | ozhegov | [`SAR_W1_CANON_DNS_PROMPT.md`](../../prompts/SAR_W1_CANON_DNS_PROMPT.md) | DNS_DOMAIN_POLICY + STRATEGY_AFFINE_DEPLOY; capacity gate; owner DNS checklist | **done** |
+| **W1** | `sar-w1-canon-dns` | [#1158](https://github.com/officefish/Membrana/issues/1158) | ozhegov | [`SAR_W1_CANON_DNS_PROMPT.md`](../../prompts/SAR_W1_CANON_DNS_PROMPT.md) | DNS_DOMAIN_POLICY + STRATEGY_AFFINE_DEPLOY; capacity gate; owner DNS checklist | **done** (PR [#1173](https://github.com/officefish/Membrana/pull/1173)) |
 | **W2** | `sar-w2-affine-install` | [#1159](https://github.com/officefish/Membrana/issues/1159) | ozhegov | [`SAR_W2_AFFINE_INSTALL_PROMPT.md`](../../prompts/SAR_W2_AFFINE_INSTALL_PROMPT.md) | Compose + Caddy site-block; secrets off-git; up after gate; LE | **done** (PR [#1179](https://github.com/officefish/Membrana/pull/1179)) |
-| **W3** | `sar-w3-smoke-surface` | [#1160](https://github.com/officefish/Membrana/issues/1160) | ozhegov | [`SAR_W3_SMOKE_SURFACE_PROMPT.md`](../../prompts/SAR_W3_SMOKE_SURFACE_PROMPT.md) | HTTPS UI; owner admin; panel/docs note; backup path | **done when this PR merges** |
-| **W4** | `sar-w4-closure` | [#1161](https://github.com/officefish/Membrana/issues/1161) | vesnin | [`SAR_W4_CLOSURE_PROMPT.md`](../../prompts/SAR_W4_CLOSURE_PROMPT.md) | CLOSURE + archive; ACTIVE/LOG; VDS upgrade note if needed | open |
+| **W3** | `sar-w3-smoke-surface` | [#1160](https://github.com/officefish/Membrana/issues/1160) | ozhegov | [`SAR_W3_SMOKE_SURFACE_PROMPT.md`](../../prompts/SAR_W3_SMOKE_SURFACE_PROMPT.md) | HTTPS UI; owner admin; panel/docs note; backup path | **done** (PR [#1181](https://github.com/officefish/Membrana/pull/1181)) |
+| **W4** | `sar-w4-closure` | [#1161](https://github.com/officefish/Membrana/issues/1161) | vesnin | [`SAR_W4_CLOSURE_PROMPT.md`](../../prompts/SAR_W4_CLOSURE_PROMPT.md) | CLOSURE + archive; ACTIVE/LOG; VDS upgrade note if needed | **done** → [`CLOSURE.md`](./CLOSURE.md) |
 
 ## Инварианты (R1–R5)
 
@@ -118,7 +118,14 @@ strategy.mmbrn.tech  → Affine self-host                 — THIS sprint
 - [x] Admin bootstrap — чеклист владельца отмечен («Готово» 2026-07-25)
 - [x] Surface: panel раздел «Стратегия» → `https://strategy.mmbrn.tech` + [`SURFACE.md`](../../containers/strategic-docs/SURFACE.md)
 - [x] Backup volumes path + процедура в [`STRATEGY_AFFINE_DEPLOY.md`](../../deploy/STRATEGY_AFFINE_DEPLOY.md) (post-W2 размеры)
-- [ ] PR W3 merges (Closes #1160)
+- [x] PR W3 merges (Closes #1160) — [#1181](https://github.com/officefish/Membrana/pull/1181)
+
+## Gate checklist (W4)
+
+- [x] CLOSURE написан
+- [x] Карточки W0–W4 + эпик archived
+- [x] ACTIVE Also open снят; Focus `tasks-workshop` цел
+- [x] CLOSED строка в `DAY_SPRINT_LOG.md`
 
 ## Post-install capacity (W2)
 
