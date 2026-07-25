@@ -18,12 +18,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `sar-w4-closure` | W4: closure strategy-affine-routing | S | [`SAR_W4_CLOSURE_PROMPT.md`](../prompts/SAR_W4_CLOSURE_PROMPT.md) | [#1161](https://github.com/officefish/Membrana/issues/1161) |
-| `sar-w3-smoke-surface` | W3: HTTPS smoke + panel/docs surface link | M | [`SAR_W3_SMOKE_SURFACE_PROMPT.md`](../prompts/SAR_W3_SMOKE_SURFACE_PROMPT.md) | [#1160](https://github.com/officefish/Membrana/issues/1160) |
-| `sar-w2-affine-install` | W2: Affine Docker install behind Caddy | L | [`SAR_W2_AFFINE_INSTALL_PROMPT.md`](../prompts/SAR_W2_AFFINE_INSTALL_PROMPT.md) | [#1159](https://github.com/officefish/Membrana/issues/1159) |
-| `sar-w1-canon-dns` | W1: DNS canon + Affine deploy runbook | M | [`SAR_W1_CANON_DNS_PROMPT.md`](../prompts/SAR_W1_CANON_DNS_PROMPT.md) | [#1158](https://github.com/officefish/Membrana/issues/1158) |
-| `sar-w0-brief` | W0: brief strategy-affine-routing | S | [`SAR_W0_BRIEF_PROMPT.md`](../prompts/SAR_W0_BRIEF_PROMPT.md) | [#1157](https://github.com/officefish/Membrana/issues/1157) |
-| `strategy-affine-routing` | Epic: strategy.mmbrn.tech + Affine on office VDS | L | [`STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md`](../prompts/STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md) | [#1156](https://github.com/officefish/Membrana/issues/1156) |
 | `consilium-save-path-test` | test(consilium): путь сохранения протокола исполняется тестом с мокнутой цепочкой | M | [`CONSILIUM_SAVE_PATH_TEST_PROMPT.md`](../prompts/CONSILIUM_SAVE_PATH_TEST_PROMPT.md) | [#1051](https://github.com/officefish/Membrana/issues/1051) |
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | M | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | [#1088](https://github.com/officefish/Membrana/issues/1088) |
 | `tasks-workshop` | Эпик: tasks-workshop — мастерская контейнера задач | L | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | — |
@@ -254,6 +248,12 @@
 | `ml-adopt-skill` | ml-adopt-skill: membrana-leveling SKILL + mirrors + README | 2026-07-25 | [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](../prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md) | — | [карточка](./archive/ml-adopt-skill.md) |
 | `ml-adopt-g0` | g0: OPEN + sprint prompt + register epic/phases | 2026-07-25 | [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](../prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md) | — | [карточка](./archive/ml-adopt-g0.md) |
 | `membrana-leveling-adopt` | Epic: membrana-leveling adopt — skill + soft evening + snapshot wires | 2026-07-25 | [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](../prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md) | — | [карточка](./archive/membrana-leveling-adopt.md) |
+| `sar-w4-closure` | W4: closure strategy-affine-routing | 2026-07-25 | [`SAR_W4_CLOSURE_PROMPT.md`](../prompts/SAR_W4_CLOSURE_PROMPT.md) | #1161 (Issue открыт) | [карточка](./archive/sar-w4-closure.md) |
+| `sar-w3-smoke-surface` | W3: HTTPS smoke + panel/docs surface link | 2026-07-25 | [`SAR_W3_SMOKE_SURFACE_PROMPT.md`](../prompts/SAR_W3_SMOKE_SURFACE_PROMPT.md) | #1160 (Issue открыт) | [карточка](./archive/sar-w3-smoke-surface.md) |
+| `sar-w2-affine-install` | W2: Affine Docker install behind Caddy | 2026-07-25 | [`SAR_W2_AFFINE_INSTALL_PROMPT.md`](../prompts/SAR_W2_AFFINE_INSTALL_PROMPT.md) | #1159 (Issue открыт) | [карточка](./archive/sar-w2-affine-install.md) |
+| `sar-w1-canon-dns` | W1: DNS canon + Affine deploy runbook | 2026-07-25 | [`SAR_W1_CANON_DNS_PROMPT.md`](../prompts/SAR_W1_CANON_DNS_PROMPT.md) | #1158 (Issue открыт) | [карточка](./archive/sar-w1-canon-dns.md) |
+| `sar-w0-brief` | W0: brief strategy-affine-routing | 2026-07-25 | [`SAR_W0_BRIEF_PROMPT.md`](../prompts/SAR_W0_BRIEF_PROMPT.md) | #1157 (Issue открыт) | [карточка](./archive/sar-w0-brief.md) |
+| `strategy-affine-routing` | Epic: strategy.mmbrn.tech + Affine on office VDS | 2026-07-25 | [`STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md`](../prompts/STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md) | #1156 (Issue открыт) | [карточка](./archive/strategy-affine-routing.md) |
 | `friction5-pr-audit-skill` | скилл membrana-pr-audit — параллельный аудит открытых PR | 2026-07-25 | [`FRICTION5_PR_AUDIT_SKILL_PROMPT.md`](../prompts/FRICTION5_PR_AUDIT_SKILL_PROMPT.md) | #1169 (Issue открыт) | [карточка](./archive/friction5-pr-audit-skill.md) |
 | `friction5-prepush-md-skip` | pre-push affected-build не триггерит билд пакета на markdown-правку (vite 127) | 2026-07-25 | [`FRICTION5_PREPUSH_MD_SKIP_PROMPT.md`](../prompts/FRICTION5_PREPUSH_MD_SKIP_PROMPT.md) | #1168 (Issue открыт) | [карточка](./archive/friction5-prepush-md-skip.md) |
 | `friction5-pr-recreate` | yarn pr:recreate <N>: пересборка устаревшего PR чистой веткой от main | 2026-07-25 | [`FRICTION5_PR_RECREATE_PROMPT.md`](../prompts/FRICTION5_PR_RECREATE_PROMPT.md) | #1167 (Issue открыт) | [карточка](./archive/friction5-pr-recreate.md) |
