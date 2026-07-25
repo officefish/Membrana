@@ -162,6 +162,83 @@ export function realActiveCount(debts, validations) {
   };
 }
 
+/** Возрастная корзина долга (для decompose --by age). */
+export function ageBucket(days) {
+  if (days <= 0) return 'сегодня';
+  if (days <= 3) return '≤3д';
+  return '>3д';
+}
+
+/**
+ * ЗУБ 4a — decompose: раскладка ОТКРЫТЫХ долгов по оси. Offline, детерминир.
+ * @param {Debt[]} debts
+ * @param {'theme'|'age'|'status'} axis
+ * @param {string} [today] нужен для axis='age'
+ * @returns {{axis:string, groups:Array<{key:string, count:number, ids:string[]}>}}
+ */
+export function decompose(debts, axis, today = '') {
+  const src = axis === 'status' ? (debts ?? []) : (debts ?? []).filter((d) => d.status === 'open');
+  const keyOf = (d) =>
+    axis === 'theme' ? (d.theme || '—без-темы') : axis === 'age' ? ageBucket(ageDays(d.date, today)) : d.status;
+  const map = new Map();
+  for (const d of src) {
+    const k = keyOf(d);
+    const g = map.get(k) ?? { key: k, count: 0, ids: [] };
+    g.count += 1;
+    g.ids.push(d.id);
+    map.set(k, g);
+  }
+  return { axis, groups: [...map.values()].sort((a, b) => b.count - a.count) };
+}
+
+/**
+ * ЗУБ 3 — audit: сверка issue-вещдока с main (то, что validate не судит — нужна сеть).
+ * `resolveIssue(n) → 'resolved'|'live'|'unknown'` инъектируется (в команде — gh).
+ * Долг с issue CLOSED/MERGED → resolved (кандидат в settle). Без issue-ссылок → 'n/a'.
+ * @param {Debt} debt
+ * @param {{resolveIssue:(n:number)=>'resolved'|'live'|'unknown'}} deps
+ * @returns {{id:string, issues:number[], verdict:'resolved'|'live'|'unknown'|'n/a'}}
+ */
+export function auditDebt(debt, { resolveIssue }) {
+  const issues = extractRefs(debt.evidence).filter((r) => r.kind === 'issue').map((r) => r.issue);
+  if (issues.length === 0) return { id: debt.id, issues: [], verdict: 'n/a' };
+  const states = issues.map((n) => resolveIssue(n));
+  // resolved только если ВСЕ issue закрыты; хоть один live → live; иначе unknown
+  const verdict = states.every((s) => s === 'resolved')
+    ? 'resolved'
+    : states.some((s) => s === 'live')
+      ? 'live'
+      : 'unknown';
+  return { id: debt.id, issues, verdict };
+}
+
+/**
+ * ЗУБ 4b — propose: синтез validate+audit+invariants в предложение действий.
+ * @param {Debt[]} debts
+ * @param {Array<ReturnType<typeof validateDebt>>} validations
+ * @param {Array<ReturnType<typeof auditDebt>>} audits
+ * @returns {{settle:Array<{id:string, why:string}>, supersede:Array<{id:string, why:string}>, hold:string[], auditOpen:string[]}}
+ */
+export function propose(debts, validations, audits) {
+  const vById = new Map((validations ?? []).map((v) => [v.id, v]));
+  const aById = new Map((audits ?? []).map((a) => [a.id, a]));
+  const out = { settle: [], supersede: [], hold: [], auditOpen: [] };
+  for (const d of (debts ?? []).filter((x) => x.status === 'open')) {
+    const v = vById.get(d.id);
+    const a = aById.get(d.id);
+    if (a?.verdict === 'resolved') {
+      out.settle.push({ id: d.id, why: `issue #${a.issues.join('/#')} закрыт` });
+    } else if (v?.verdict === 'stale-ref') {
+      out.supersede.push({ id: d.id, why: v.deadRefs.map((r) => r.why).join('; ') });
+    } else if (extractRefs(d.evidence).length === 0 && (!a || a.verdict === 'n/a')) {
+      out.auditOpen.push(d.id); // prose без issue — машиной не решить
+    } else {
+      out.hold.push(d.id);
+    }
+  }
+  return out;
+}
+
 /**
  * Health-метрики реестра (M2-ядро: честное число вместо «заявлено N»).
  * `realActiveHint` — грубая нижняя оценка живых: open минус долги с мёртвой ссылкой

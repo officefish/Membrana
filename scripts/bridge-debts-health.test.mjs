@@ -8,6 +8,10 @@ import {
   healthMetrics,
   themeClusters,
   realActiveCount,
+  ageBucket,
+  decompose,
+  auditDebt,
+  propose,
 } from './lib/bridge-debts-health.mjs';
 
 test('extractRefs: file:line symbol → symbol-ref; #N → issue', () => {
@@ -127,4 +131,60 @@ test('realActiveCount: тема, где ВСЕ долги стухли, выпа
   const r = realActiveCount(debts, vals);
   assert.equal(r.themeNodes, 2);
   assert.equal(r.realActive, 1); // 'dead' выпала (единственный долг стухший)
+});
+
+test('ageBucket: границы сегодня / ≤3д / >3д', () => {
+  assert.equal(ageBucket(0), 'сегодня');
+  assert.equal(ageBucket(3), '≤3д');
+  assert.equal(ageBucket(4), '>3д');
+});
+
+test('decompose --by theme: группы отсортированы по размеру; только open', () => {
+  const debts = [
+    { id: 'a', debt: '', evidence: '', status: 'open', date: '2026-07-25', theme: 'каналы' },
+    { id: 'b', debt: '', evidence: '', status: 'open', date: '2026-07-25', theme: 'каналы' },
+    { id: 'c', debt: '', evidence: '', status: 'open', date: '2026-07-25', theme: 'сны' },
+    { id: 'd', debt: '', evidence: '', status: 'settled', date: '2026-07-22', theme: 'каналы' },
+  ];
+  const d = decompose(debts, 'theme', '2026-07-25');
+  assert.equal(d.groups[0].key, 'каналы');
+  assert.equal(d.groups[0].count, 2); // settled 'd' не в счёт
+  assert.equal(d.groups[1].key, 'сны');
+});
+
+test('auditDebt: все issue закрыты → resolved; хоть один open → live; без issue → n/a', () => {
+  const mk = (ev) => ({ id: 'x', debt: '', evidence: ev, status: 'open', date: '2026-07-25', theme: '' });
+  const closed = auditDebt(mk('Issue #1094 #1112'), { resolveIssue: () => 'resolved' });
+  assert.equal(closed.verdict, 'resolved');
+  const mixed = auditDebt(mk('#1 #2'), { resolveIssue: (n) => (n === 1 ? 'resolved' : 'live') });
+  assert.equal(mixed.verdict, 'live');
+  const noIssue = auditDebt(mk('вольный текст'), { resolveIssue: () => 'resolved' });
+  assert.equal(noIssue.verdict, 'n/a');
+});
+
+test('propose: resolved→settle, stale-ref→supersede, prose→auditOpen, иначе hold', () => {
+  const debts = [
+    { id: 'closed', debt: '', evidence: '#1094', status: 'open', date: '2026-07-25', theme: 't' },
+    { id: 'stale', debt: '', evidence: 'foo.mjs:1 bar', status: 'open', date: '2026-07-25', theme: 't' },
+    { id: 'prosy', debt: '', evidence: 'вольный текст', status: 'open', date: '2026-07-25', theme: 't' },
+    { id: 'alive', debt: '', evidence: 'baz.mjs:2 qux', status: 'open', date: '2026-07-25', theme: 't' },
+    { id: 'done', debt: '', evidence: 'x', status: 'settled', date: '2026-07-22', theme: 't' },
+  ];
+  const vals = [
+    { id: 'closed', verdict: 'ok', deadRefs: [] },
+    { id: 'stale', verdict: 'stale-ref', deadRefs: [{ ref: 'foo.mjs:1', why: 'символа нет' }] },
+    { id: 'prosy', verdict: 'ok', deadRefs: [] },
+    { id: 'alive', verdict: 'ok', deadRefs: [] },
+  ];
+  const audits = [
+    { id: 'closed', issues: [1094], verdict: 'resolved' },
+    { id: 'stale', issues: [], verdict: 'n/a' },
+    { id: 'prosy', issues: [], verdict: 'n/a' },
+    { id: 'alive', issues: [], verdict: 'n/a' },
+  ];
+  const p = propose(debts, vals, audits);
+  assert.deepEqual(p.settle.map((s) => s.id), ['closed']);
+  assert.deepEqual(p.supersede.map((s) => s.id), ['stale']);
+  assert.deepEqual(p.auditOpen, ['prosy']);
+  assert.deepEqual(p.hold, ['alive']);
 });
