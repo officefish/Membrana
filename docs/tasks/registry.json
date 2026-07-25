@@ -1,6 +1,23 @@
 {
   "tasks": [
     {
+      "id": "readme-managed-template",
+      "title": "docs/tasks/README.md — собственный Template в движке стратегических документов; снять карантин sync",
+      "promptPath": "docs/prompts/README_MANAGED_TEMPLATE_PROMPT.md",
+      "githubIssue": 1201,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-25",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "kits-pins-wiring",
       "title": "Описи китов: инструмент kits:pins, выравнивание трёх китов, зуб сверки на pre-push + CI",
       "promptPath": "docs/prompts/KITS_PINS_WIRING_PROMPT.md",
@@ -206,7 +223,7 @@
       ],
       "notes": "",
       "archiveNotes": "W4 CLOSURE strategy-affine-routing ACTIVE Also open cleared LOG CLOSED Focus tasks-workshop intact Closes #1161 residual git-Affine sync / VDS upgrade",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "strategy-affine-routing"
     },
     {
@@ -226,7 +243,7 @@
       ],
       "notes": "",
       "archiveNotes": "W3 HTTPS 200 AFFiNE UI owner admin panel Стратегия SURFACE.md PR #1181 abc5fb21 Closes #1160",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "strategy-affine-routing"
     },
     {
@@ -246,7 +263,7 @@
       ],
       "notes": "",
       "archiveNotes": "W2 Affine install /opt/membrana-affine Caddy LE live strategy.mmbrn.tech PR #1179 bc955fb6 Closes #1159 post-install MemAvailable 2.32GiB disk 14.24GiB",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "strategy-affine-routing"
     },
     {
@@ -286,7 +303,7 @@
       ],
       "notes": "",
       "archiveNotes": "W0 brief PR #1163 810108ba Issues #1156-#1161 OPEN Also open Focus tasks-workshop intact",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "strategy-affine-routing"
     },
     {
@@ -306,7 +323,7 @@
       ],
       "notes": "",
       "archiveNotes": "Epic CLOSED live https://strategy.mmbrn.tech PRs #1163 #1173 #1179 #1181 + W4 CLOSURE Closes #1156 residual sync/VDS upgrade #1120-style N/A",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-25"
     },
     {
       "id": "friction5-pr-audit-skill",
@@ -323,7 +340,7 @@
       "supportPersonas": [],
       "notes": "См. #1169. Зеркало membrana-tasks-audit для PR: параллельные аудиторы → вердикты merge/close-superseded/needs-work. Только регистрация.",
       "archiveNotes": "Иссью #1169 closed. PR #1180 (44687fec): скилл membrana-pr-audit.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "agent-tooling-friction-5"
     },
     {
@@ -341,7 +358,7 @@
       "supportPersonas": [],
       "notes": "См. #1168. markdown внутри пакета поднял билд telemetry-journal-service → vite 127 → форс --no-verify. Исключить *.md(x) из affected-триггера либо чинить vite-env. Только регистрация.",
       "archiveNotes": "Иссью #1168 closed. PR #1185 (99446d5d): prepush-typecheck-scope исключает .md из affected, чинит vite 127.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "agent-tooling-friction-5"
     },
     {
@@ -359,7 +376,7 @@
       "supportPersonas": [],
       "notes": "См. #1167. Force-push закрыт → устаревшие ветки пересобираются, не ребейзятся. + грабля gitleaks merge-catch-up в AGENTS.md. Только регистрация.",
       "archiveNotes": "Иссью #1167 closed. PR #1177 (ef19ac82): yarn pr:recreate + грабли AGENTS.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "agent-tooling-friction-5"
     },
     {
@@ -377,7 +394,7 @@
       "supportPersonas": [],
       "notes": "См. иссью #1166 (полный спек с эпизодами). fail-loud non-zero при OPEN-после-ship + обработка pr:wait кодов 2/3 через --resume + зуб yarn pr:verify. Только регистрация.",
       "archiveNotes": "Иссью #1166 closed. PR #1176 (2f7dfad9: fail-loud verify-шаг + pr:verify) + PR #1182 (71fd4f95: ci-resume). 3/3.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "agent-tooling-friction-5"
     },
     {
@@ -465,7 +482,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "CLOSURE dual-mintlify-docs harness live #1120 not merged residual product docs DNS",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "dual-mintlify-docs"
     },
     {
@@ -483,7 +500,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "\\",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "dual-mintlify-docs"
     },
     {
@@ -501,7 +518,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "W2 wires: atlas→harness confirmed; CI docs:verify:all; CUSTOM_DOMAIN product+harness owner checklist (dashboard not required); verify-mintlify-docs.test; branch feat/dual-mintlify-w2",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "dual-mintlify-docs"
     },
     {
@@ -519,7 +536,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "W1 split: apps/docs-harness + object nav; git mv tooling/bestiary/llm-calls/git; verify both green; PR #1129",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "dual-mintlify-docs"
     },
     {
@@ -537,7 +554,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "W0 brief: Issues #1121-#1126, OPEN open, DAY_SPRINT_ACTIVE Also open; Focus tasks-workshop intact; harness.mmbrn.tech locked; #1120 abandoned",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "dual-mintlify-docs"
     },
     {
@@ -557,7 +574,7 @@
       ],
       "notes": "",
       "archiveNotes": "Epic closed W0-W4 PRs #1129 #1132 #1140 harness.mmbrn.tech live CLOSURE 2026-07-24",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-25"
     },
     {
       "id": "consilium-save-path-test",
@@ -576,7 +593,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1189 MERGED 86809822; seanseModelLabel/seansePlan/wrapSeanseFile + consilium-save-path.test.mjs; DoD #1051; Closes #1051",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-25"
     },
     {
       "id": "arp-w4-closure",
@@ -611,7 +628,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "W3: tooling:atlas --render/--check OK; AGENTS + tasks-audit/decompose skills wires",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "atlas-report-plane"
     },
     {
@@ -629,7 +646,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "W2 engine: home/role/plane in tooling-atlas.mjs; 14/14 tests; ATLAS links by home",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "atlas-report-plane"
     },
     {
@@ -647,7 +664,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "W1 canon report-plane: GROUP + audit README + audit/tasks + tooling-atlas README on feature/atlas-report-plane",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "atlas-report-plane"
     },
     {
@@ -665,7 +682,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "W0 brief: Issues #1097-#1102, OPEN open, DAY_SPRINT_ACTIVE Also open; Focus tasks-workshop intact",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "atlas-report-plane"
     },
     {
@@ -685,7 +702,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1107 bc5169da; W0-W4; CLOSURE docs/day-sprint/atlas-report-plane-2026-07-24/CLOSURE.md",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-25"
     },
     {
       "id": "run-ledger",
@@ -724,7 +741,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1153 merge 6aec3c1b; GitHub #1065 CLOSED via Closes; one-shot-trail.jsonl + yarn one-shot:trail",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "tasks-workshop"
     },
     {
@@ -760,7 +777,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1139 merge d939d13e; GitHub #1063 CLOSED via Closes; task:sync-readme --check + pre-commit tooth; #1014 reformulated",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "tasks-workshop"
     },
     {
@@ -780,7 +797,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1135 merge 6bc41e77; GitHub #1062 CLOSED via Closes; checkCardIntegrity + yarn task:invariants/--full + repair",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "tasks-workshop"
     },
     {
@@ -798,7 +815,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1127 merge c89a1f09; GitHub #1061 CLOSED; validateTask/validateRegistry + yarn task:validate",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "tasks-workshop"
     },
     {
@@ -816,7 +833,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1113 merge a5c11c33; GitHub #1060 CLOSED; inspectElement pure+CLI (task-inspect + yarn tasks:inspect)",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "tasks-workshop"
     },
     {
@@ -834,7 +851,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1106 merge 319f426f; Closes #1059; axes --by category|size|age|lead|kind|links; health follow-up #1104; V2 contour docs/audit/tasks",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "tasks-workshop"
     },
     {
@@ -852,7 +869,7 @@
       "supportPersonas": [],
       "notes": "После g0 (V2 wins 23.07): 5 decision-verbs; audit/decompose вне. Фиксировать границу в README/манифесте.",
       "archiveNotes": "PR #1087 merge 2fafae98; GitHub #1058 already closed; SHA branch 293549b1",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "tasks-workshop"
     },
     {
@@ -870,7 +887,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1087 merge 2fafae98; GitHub #1057 already closed; SHA branch 293549b1",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "tasks-workshop"
     },
     {
@@ -1053,7 +1070,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1198 MERGED 7e585e06; scripts/lib/pr-mergeability.mjs REST recheck; Closes #1028",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "frame-rails-2307"
     },
     {
@@ -2948,7 +2965,7 @@
       ],
       "notes": "S4 принято vesnin 2026-07-21. AGENTS + audit/README + CONTRIBUTING + skills README → scripts/AGENT_PROMPT. Без нового skill.",
       "archiveNotes": "DoD выполнен 2026-07-21 (LGTM vesnin); провода AGENTS/skills/CONTRIBUTING уже на main; archive по обратному порядку плана 2026-07-25; Closes #796",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "scripts-boundary-container"
     },
     {
@@ -2969,7 +2986,7 @@
       ],
       "notes": "S3 принято ozhegov 2026-07-21. README § Киты → канон Р3 (#808); analysis kits-align; нет schema-острова. Код kits/ — #761.",
       "archiveNotes": "PR #822 MERGED; DoD S3 kits-align pl-r3; analysis/kits-align-pl-r3-2026-07-21.md; Closes #795",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "scripts-boundary-container"
     },
     {
@@ -2990,7 +3007,7 @@
       ],
       "notes": "S2 принято vesnin 2026-07-21. tooling:overview --report ≡ scripts:registry --report.",
       "archiveNotes": "PR #812 MERGED; DoD S2 2026-07-21; CLOSURE scripts-boundary; Closes #794",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "scripts-boundary-container"
     },
     {
@@ -3962,7 +3979,7 @@
       ],
       "notes": "Эпик GROUP_CONTAINERIZATION в ОДНОМ доме scripts/ (не docs/audit/scripts). Фазы sbc-s0..s4. SoT=ФС scripts/** + yarn names. Ядро kits=GH Releases; контракт кита — pl-r3 (#784), S3 только align. Research Q про Temporal/отказоустойчивость — отдельный трек, не блок S0-S2. Было: остров вне workspace, test:scripts руками. parent: ritual-trust-contour. OPEN: docs/day-sprint/scripts-boundary-container-2026-07-21/OPEN.md",
       "archiveNotes": "CLOSURE docs/day-sprint/scripts-boundary-container-2026-07-21/CLOSURE.md; S0-S4 archived; Closes #791",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "ritual-trust-contour",
       "linearId": null
     },
@@ -9039,7 +9056,7 @@
       "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
       "githubIssue": 104,
       "linearId": null,
-      "size": "XS",
+      "size": "S",
       "status": "archived",
       "parentEpic": "device-board-cabinet-hotfix",
       "createdAt": "2026-06-18",
@@ -9061,7 +9078,7 @@
       "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
       "githubIssue": 104,
       "linearId": null,
-      "size": "XS",
+      "size": "S",
       "status": "archived",
       "parentEpic": "device-board-cabinet-hotfix",
       "createdAt": "2026-06-18",
@@ -12762,6 +12779,7 @@
       "status": "archived",
       "title": "Device-board async pipeline: Promise nodes, latent Sequence, non-blocking runtime",
       "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "size": "L",
       "githubIssue": 176,
       "leadPersona": "vesnin",
       "supportPersonas": [
@@ -15094,7 +15112,7 @@
       "promptPath": null,
       "githubIssue": null,
       "linearId": null,
-      "size": "XS",
+      "size": "S",
       "status": "archived",
       "createdAt": "2026-06-27",
       "sprintKind": "day-sprint",
@@ -15179,7 +15197,7 @@
       "promptPath": null,
       "githubIssue": null,
       "linearId": null,
-      "size": "XS",
+      "size": "S",
       "status": "archived",
       "createdAt": "2026-06-27",
       "sprintKind": "day-sprint",
@@ -16002,7 +16020,7 @@
       "archiveNotes": null,
       "id": "nb-vlr-0-gate",
       "title": "NB0: gate — baseline scoped CI + фиксация модели хранения библиотеки",
-      "size": "XS",
+      "size": "S",
       "parentEpic": "vdr-label-roundtrip-night-build",
       "dependsOn": [
         "vdr-label-roundtrip-night-build"
@@ -16090,7 +16108,7 @@
       "archiveNotes": null,
       "id": "nb-vlr-4-docs",
       "title": "NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip",
-      "size": "XS",
+      "size": "S",
       "parentEpic": "vdr-label-roundtrip-night-build",
       "dependsOn": [
         "nb-vlr-2-labels-merge-script",
