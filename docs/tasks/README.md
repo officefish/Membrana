@@ -21,7 +21,6 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | M | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | [#1088](https://github.com/officefish/Membrana/issues/1088) |
-| `pr-mergeable-graphql-stale` | Мержабельность по GraphQL протухает — pr:ship падает в ложный красный | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1028](https://github.com/officefish/Membrana/issues/1028) |
 | `registry-merge-driver-serverless` | Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1026](https://github.com/officefish/Membrana/issues/1026) |
 | `ritual-deliver-to-main` | Утренний ритуал: обязательный финальный кадр — доставка документов в main | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1016](https://github.com/officefish/Membrana/issues/1016) |
 | `issue-979-selfclose` | Аномалия: задача спринта закрылась сама | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1004](https://github.com/officefish/Membrana/issues/1004) |
@@ -53,8 +52,6 @@
 | `swallow-format-frame-fix` | Фрейм форматирования ласточки: полноценное зеркало 5 блоков вместо телеграфных строк (Ожегов) | S | [`SWALLOW_FORMAT_FRAME_FIX_PROMPT.md`](../prompts/SWALLOW_FORMAT_FRAME_FIX_PROMPT.md) | [#918](https://github.com/officefish/Membrana/issues/918) |
 | `code-review-lead-refactor` | Рефакторинг код-ревью: ведущий из пяти + память ведущего + бестиарий антипаттернов (T3/T4/T5) | M | [`CODE_REVIEW_LEAD_REFACTOR_PROMPT.md`](../prompts/CODE_REVIEW_LEAD_REFACTOR_PROMPT.md) | — |
 | `morning-report-completion` | Спринт достройки утра: доклад по задачам — главный продукт (Ф1 доклад-зеркало, Ф2 ласточка, Ф3 перезапуски по критериям) | L | [`MORNING_REPORT_COMPLETION_PROMPT.md`](../prompts/MORNING_REPORT_COMPLETION_PROMPT.md) | [#788](https://github.com/officefish/Membrana/issues/788) |
-| `sbc-s3-kits-align` | S3: kits — выровнять с pl-r3 kit-manifest (не изобретать параллельный контракт) | M | [`SBC_S3_KITS_ALIGN_PROMPT.md`](../prompts/SBC_S3_KITS_ALIGN_PROMPT.md) | [#795](https://github.com/officefish/Membrana/issues/795) |
-| `sbc-s2-tools-report` | S2: инструменты пишут в scripts/registry сами (--report) | M | [`SBC_S2_TOOLS_REPORT_PROMPT.md`](../prompts/SBC_S2_TOOLS_REPORT_PROMPT.md) | [#794](https://github.com/officefish/Membrana/issues/794) |
 | `procedural-layer-impl` | Эпик: реализация процедурного слоя (Р1-Р5 заседания procedural-layer) | L | [`PROCEDURAL_LAYER_IMPL_PROMPT.md`](../prompts/PROCEDURAL_LAYER_IMPL_PROMPT.md) | [#781](https://github.com/officefish/Membrana/issues/781) |
 | `angelina-hostess-impl` | Спринт: реализация вердиктов «Ангелина — хозяйка утра» (C→B+G→H→GC) | L | [`angelina-hostess-EPIC-2026-07-21.md`](../seanses/angelina-hostess-EPIC-2026-07-21.md) | — |
 | `linear-hygiene-dreams-providers-night` | Night: Linear-гигиена → живые провайдеры снов | M | [`LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md) | — |
@@ -79,7 +76,6 @@
 | `morning-ritual-regulation` | Регламент утреннего ритуала + фоновый агент (барьер против проглоченного гейта) | L | [`MORNING_RITUAL_REGULATION.md`](../prompts/MORNING_RITUAL_REGULATION.md) | [#605](https://github.com/officefish/Membrana/issues/605) |
 | `night-build-format-v2` | Формат night-build: доработка по трению ночи 17.07 (заседание) | M | [`NIGHT_BUILD_FORMAT_V2_PROMPT.md`](../prompts/NIGHT_BUILD_FORMAT_V2_PROMPT.md) | — |
 | `strategy-day-generator` | Генератор стратегии дня: горизонт вместо списка задач | L | [`STRATEGY_DAY_GENERATOR_PROMPT.md`](../prompts/STRATEGY_DAY_GENERATOR_PROMPT.md) | [#592](https://github.com/officefish/Membrana/issues/592) |
-| `scripts-boundary-container` | Эпик: граница scripts/ — GROUP_CONTAINERIZATION в одном доме scripts/ | L | [`SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md`](../prompts/SCRIPTS_BOUNDARY_CONTAINER_PROMPT.md) | [#791](https://github.com/officefish/Membrana/issues/791) |
 | `truth-graph-contour` | Граф правды: архитектура, реестр зависимых процессов, охлаждение сессии, инструменты редактирования | L | [`TRUTH_GRAPH_CONTOUR_PROMPT.md`](../prompts/TRUTH_GRAPH_CONTOUR_PROMPT.md) | [#576](https://github.com/officefish/Membrana/issues/576) |
 | `mf10-teeth-sm5` | Зубы S-M5: возможна ли независимость аудитора-субагента | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
 | `mf9-auditor-readonly` | Чем обеспечена read-only природа аудитора | M | [`MEETING_FORMAT_EPIC_PROMPT.md`](../prompts/MEETING_FORMAT_EPIC_PROMPT.md) | — |
@@ -157,18 +153,6 @@
 | `db-p3-a1-usercase-catalog-service` | DB-P3-A1: migrate usercase-catalog-service package | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
 | `db-p3-a2-runtime-validators` | DB-P3-A2: runtime validators + live UI | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
 | `db-p3-a3-competition-restrictions` | DB-P3-A3: competition executionPolicy + restrictions | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
-| `db-ap-r1-core-contracts` | DB-AP-R1: core PromiseRef + async job types + node kinds | L | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
-| `db-ap-r2-core-sequence-latent` | DB-AP-R2: core sequenceConfig.latentThen | M | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
-| `db-ap-r3-async-job-store` | DB-AP-R3: AsyncJobStore + backpressure + cancel | L | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
-| `db-ap-r4-sequence-latent-runtime` | DB-AP-R4: exec-sequence latent Then mode | M | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
-| `db-ap-r5-promise-nodes-editor` | DB-AP-R5: promise nodes palette + inspector + validators | L | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
-| `db-ap-r6-promise-nodes-executor` | DB-AP-R6: block-executor promise nodes + supportsAsync | L | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
-| `db-ap-r7-host-bridge-jobs` | DB-AP-R7: scenarioMicJournalBridge async job wiring | M | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
-| `db-ap-r8-detached-event-dispatch` | DB-AP-R8: detached event branches + abort | M | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
-| `db-ap-r9-mvp-graph-v2` | DB-AP-R9: bundled MVP graph v2.0-async + groups | L | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
-| `db-ap-r10-agenda-async-hub` | DB-AP-R10: ScenarioAsyncJobHub in @membrana/agenda | M | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
-| `db-ap-r11-observability-tests` | DB-AP-R11: chain-log, logs:parse, vitest smoke matrix | M | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
-| `db-ap-r12-docs-signoff` | DB-AP-R12: CONCEPT, SCENARIO_RUNTIME, operator LGTM, archive | S | [`DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md) | — |
 | `opencode-proxy-sprint-2026-06-25` | Day sprint: OpenCode + LLM proxy providers (freemodel.dev) | M | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `oc-proxy-s0-research-isolation` | OC0: research + env isolation for LLM proxy | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `oc-proxy-s1-opencode-install` | OC1: install OpenCode CLI | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
