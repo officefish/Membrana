@@ -10,6 +10,7 @@ import { GraphifyBoard } from './graphify/GraphifyBoard';
 import { LlmChannelsBoard } from './llm-channels/LlmChannelsBoard';
 import { PanelUsersBoard } from './panel-users/PanelUsersBoard';
 import { ResearchTreeBoard } from './research-tree/ResearchTreeBoard';
+import { StrategicDocsBoard } from './strategic-docs/StrategicDocsBoard';
 import { ToolingAtlasBoard } from './tooling-atlas/ToolingAtlasBoard';
 
 /**
@@ -25,6 +26,7 @@ const SECTION_BOARDS: Partial<Record<string, ComponentType>> = {
   'panel-users': PanelUsersBoard,
   'llm-channels': LlmChannelsBoard,
   'tooling-atlas': ToolingAtlasBoard,
+  'strategic-docs': StrategicDocsBoard,
   graphify: GraphifyBoard,
   'research-tree': ResearchTreeBoard,
 };

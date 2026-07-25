@@ -26,11 +26,21 @@
 
 Шаги владельца — до/вокруг LE и первого admin. Агент DNS в Timeweb **не** меняет.
 
-- [ ] **DNS (Timeweb):** A-запись `strategy` → `176.124.218.4` (или CNAME на тот же
-      хост, если так принято для panel; канон — A на office IP).
-- [ ] Дождаться пропагации; перед LE — `yarn panel:dns-gate --domain strategy.mmbrn.tech --expect 176.124.218.4` → `[go]`.
-- [ ] После W2 up + HTTPS: первый **admin** Affine в UI.
+- [x] **DNS (Timeweb):** A-запись `strategy` → `176.124.218.4` (gate `[go]` 2026-07-25).
+- [x] Дождаться пропагации; перед LE — `yarn panel:dns-gate --domain strategy.mmbrn.tech --expect 176.124.218.4` → `[go]`.
+- [x] После W2 up + HTTPS: первый **admin** Affine в UI (владелец «Готово» 2026-07-25;
+      email verify в v1 не требуется).
 - [ ] При OOM / нехватке диска — **апгрейд тарифа** VDS (не «ещё контейнер»).
+
+## Surface (W3)
+
+| Куда | Ссылка |
+|------|--------|
+| Affine UI | **https://strategy.mmbrn.tech** |
+| Panel | раздел «Стратегия» (`strategic-docs`) → кнопка на URL выше |
+| Docs note | [`docs/containers/strategic-docs/SURFACE.md`](../containers/strategic-docs/SURFACE.md) |
+
+Полный git↔Affine sync — вне scope v1.
 
 ---
 
@@ -141,13 +151,36 @@ strategy.mmbrn.tech {
 
 ---
 
-## Backup volumes
+## Backup volumes (W3)
 
-Минимум для W3:
+Факт post-W2 (readonly probe 2026-07-25, Affine up ~55 min после admin bootstrap):
 
-- Путь данных: `/opt/membrana-affine/postgres`, `storage`, `config`.
-- Снимки: `/opt/membrana-affine/backups/YYYY-MM-DD/` (tar/`pg_dump` — детализация в W3).
-- Перед разрушающими операциями — остановить compose, скопировать volumes, проверить размер на диске (gate 12G).
+| Путь | Назначение | Размер (замер) |
+|------|------------|----------------|
+| `/opt/membrana-affine/postgres/` | Postgres data dir | ~68 MiB |
+| `/opt/membrana-affine/storage/` | Affine upload/blob | ~4 KiB (пусто) |
+| `/opt/membrana-affine/config/` | `private.key` и конфиг | ~8 KiB |
+| `/opt/membrana-affine/backups/` | точка снимков | пусто до первого dump |
+| `/opt/membrana-affine/.env` | секреты (не в tar публично) | mode `600` |
+
+Каталог снимков: `/opt/membrana-affine/backups/YYYY-MM-DD/`.
+
+### Ручной снимок (не разрушает живой Affine)
+
+Логический dump Postgres **без** `compose down` (предпочтительно для регулярного бэкапа):
+
+```bash
+yarn office:ssh 'DAY=$(date -u +%F); DEST=/opt/membrana-affine/backups/$DAY; mkdir -p "$DEST" && docker exec affine_postgres pg_dump -U affine -Fc affine > "$DEST/affine.dump" && tar -C /opt/membrana-affine -czf "$DEST/storage-config.tgz" storage config && ls -lah "$DEST"'
+```
+
+Перед **разрушающими** операциями (переустановка volumes, смена major Postgres):
+
+1. Capacity: disk `/` avail ≥ 12G (`yarn affine:capacity-gate`).
+2. `cd /opt/membrana-affine && docker compose stop`
+3. `DAY=$(date -u +%F); DEST=backups/$DAY; mkdir -p "$DEST" && tar -czf "$DEST/volumes.tgz" postgres storage config`
+4. Проверить размер архива; только потом — destructive steps / `compose up -d`.
+
+Cron автоматизации — follow-up (не DoD v1); минимум — путь и процедура выше.
 
 ---
 

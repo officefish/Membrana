@@ -57,6 +57,12 @@ export const PANEL_SECTIONS: readonly PanelSection[] = [
     minRole: 'operator',
   },
   {
+    id: 'strategic-docs',
+    title: 'Стратегия',
+    description: 'Живая поверхность стратегических документов — Affine на strategy.mmbrn.tech.',
+    minRole: 'ally',
+  },
+  {
     id: 'graphify',
     title: 'Граф кода',
     description: 'Карта зависимостей кода по семействам — как устроен проект внутри.',
