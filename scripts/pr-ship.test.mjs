@@ -24,7 +24,7 @@ test('planPrShip: title + trailer + Closes + порядок шагов', () => {
   assert.match(commitBody, /Co-Authored-By: Claude Opus 4\.8/);
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['branch', 'commit', 'push', 'pr-create', 'ci-wait', 'merge', 'branch-cleanup', 'sync-checkout', 'sync-fetch', 'sync-ff'],
+    ['branch', 'commit', 'push', 'pr-create', 'ci-wait', 'merge', 'verify', 'branch-cleanup', 'sync-checkout', 'sync-fetch', 'sync-ff'],
   );
   assert.deepEqual(steps[0].args, ['checkout', '-b', 'feat/x']);
 });
@@ -72,7 +72,7 @@ test('#700: --merge-only даёт ТОЛЬКО merge-хвост, без branch/c
   const { steps, title, commitBody } = planPrShip({ mergeOnly: true, currentBranch: 'fix/x' });
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['ci-wait', 'merge', 'branch-cleanup', 'sync-checkout', 'sync-fetch', 'sync-ff'],
+    ['ci-wait', 'merge', 'verify', 'branch-cleanup', 'sync-checkout', 'sync-fetch', 'sync-ff'],
   );
   assert.equal(title, '', 'merge-only не строит заголовок (PR уже открыт)');
   assert.equal(commitBody, '', 'merge-only ничего не коммитит');
@@ -228,7 +228,7 @@ test('base свободен → полный ff-sync как раньше', () =>
   });
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['commit', 'push', 'pr-create', 'ci-wait', 'merge', 'sync-checkout', 'sync-fetch', 'sync-ff'],
+    ['commit', 'push', 'pr-create', 'ci-wait', 'merge', 'verify', 'sync-checkout', 'sync-fetch', 'sync-ff'],
   );
   assert.equal(skippedSync, undefined);
 });

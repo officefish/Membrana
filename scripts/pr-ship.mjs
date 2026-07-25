@@ -183,6 +183,10 @@ export function planMergeTail(opts = {}) {
   // merge (ложный красный, #700). Remote-ветка удаляется отдельным шагом; локальная
   // остаётся (мы на ней стоим — её удаление и невозможно, и не нужно).
   steps.push({ label: 'merge', cmd: 'gh', args: ['pr', 'merge', '--squash'] });
+  // #1166 fail-loud: сразу после merge — ассерт по СОСТОЯНИЮ (state=MERGED ∧ mergeCommit),
+  // не по exit-коду шага. Стоим ещё на head-ветке (до branch-cleanup/sync-checkout), поэтому
+  // `pr:verify` без номера читает PR текущей ветки. Не optional: не подтвердилось → ship падает.
+  steps.push({ label: 'verify', cmd: 'node', args: ['scripts/pr-verify.mjs'] });
   const headBranch = branch ?? currentBranch;
   if (headBranch && headBranch !== base) {
     // optional: неудача удаления remote-ветки (уже удалена / protected) НЕ должна
