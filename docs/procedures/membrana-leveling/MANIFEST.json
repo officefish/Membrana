@@ -1,0 +1,53 @@
+{
+  "id": "membrana-leveling",
+  "leadPersona": "ozhegov",
+  "kitVersion": null,
+  "engines": [
+    "scripts/lib/membrana-leveling-disposition.mjs",
+    "scripts/membrana-leveling-main-fill.mjs",
+    "scripts/membrana-leveling-workspace-level.mjs"
+  ],
+  "precedents": [
+    "docs/prompts/MEMBRANA_LEVELING_REGULATION.md",
+    "docs/meeting/membrana-leveling/EPIC.md",
+    "docs/storm/storm-membrana-leveling-2026-07-24/REPORT.md",
+    "docs/seanses/membrana-leveling-m4-rails-2026-07-24.md",
+    "docs/patterns/PROCEDURE_FRAMES.md"
+  ],
+  "preflight": [
+    {
+      "id": "leveling-wires",
+      "holder": "vesnin",
+      "tag": "служебный-провода"
+    },
+    {
+      "id": "leveling-gate",
+      "holder": "vesnin",
+      "tag": "сюжетный"
+    }
+  ],
+  "frames": [
+    {
+      "id": "leveling-main-fill",
+      "holder": "ozhegov",
+      "tag": "сюжетный"
+    },
+    {
+      "id": "leveling-workspace",
+      "holder": "ozhegov",
+      "tag": "сюжетный"
+    },
+    {
+      "id": "leveling-scratch",
+      "holder": "dynin",
+      "tag": "служебный-времянки"
+    }
+  ],
+  "post": [
+    {
+      "id": "leveling-deliver",
+      "holder": "vesnin",
+      "tag": "служебный-доставка"
+    }
+  ]
+}

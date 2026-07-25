@@ -1,8 +1,8 @@
 # Промпт: `membrana-leveling` §8.1 — контейнер процедурного слоя
 
-> **СТАТУС: ЗАРЕГИСТРИРОВАНО, НЕ В РАБОТЕ.** Не начинать без явного слова владельца.
+> **СТАТУС: В РАБОТЕ** (слово владельца 2026-07-25).
 > Реестр: `id = membrana-leveling-container` в [`docs/tasks/registry.json`](../tasks/registry.json). Размер: **M**. Lead: **ozhegov**.
-> Основание: [`MEMBRANA_LEVELING_REGULATION.md`](./MEMBRANA_LEVELING_REGULATION.md) v1.0 (ратифицирован 24.07), § 8.1.
+> Основание: [`MEMBRANA_LEVELING_REGULATION.md`](./MEMBRANA_LEVELING_REGULATION.md) v1.0 (ратифицирован 24.07), § 8.1 · вердикт M4.
 
 ---
 
@@ -18,12 +18,12 @@
 
 | Фрейм | Тег | Holder | Полоса |
 |-------|-----|--------|--------|
-| `leveling-wires` | служебный·провода | vesnin | preflight |
+| `leveling-wires` | служебный-провода | vesnin | preflight |
 | `leveling-gate` | сюжетный | vesnin | preflight |
-| `leveling-main-fill` | сюжетный | vesnin | frames |
+| `leveling-main-fill` | сюжетный | ozhegov | frames |
 | `leveling-workspace` | сюжетный | ozhegov | frames |
-| `leveling-scratch` | служебный·времянки | dynin | frames |
-| `leveling-deliver` | служебный·доставка | vesnin | post |
+| `leveling-scratch` | служебный-времянки | dynin | frames |
+| `leveling-deliver` | служебный-доставка | vesnin | post |
 
 ## Что построить
 
