@@ -25,7 +25,6 @@
 | `sar-w0-brief` | W0: brief strategy-affine-routing | S | [`SAR_W0_BRIEF_PROMPT.md`](../prompts/SAR_W0_BRIEF_PROMPT.md) | [#1157](https://github.com/officefish/Membrana/issues/1157) |
 | `strategy-affine-routing` | Epic: strategy.mmbrn.tech + Affine on office VDS | L | [`STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md`](../prompts/STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md) | [#1156](https://github.com/officefish/Membrana/issues/1156) |
 | `membrana-leveling-scripts` | membrana-leveling §8.3: скрипты main-fill / workspace-level по фрейм-раскладке | L | [`MEMBRANA_LEVELING_SCRIPTS_PROMPT.md`](../prompts/MEMBRANA_LEVELING_SCRIPTS_PROMPT.md) | — |
-| `membrana-leveling-disposition` | membrana-leveling §8.2: чистая функция disposition(path,ctx) + тесты матрицы состояний | M | [`MEMBRANA_LEVELING_DISPOSITION_PROMPT.md`](../prompts/MEMBRANA_LEVELING_DISPOSITION_PROMPT.md) | — |
 | `consilium-save-path-test` | test(consilium): путь сохранения протокола исполняется тестом с мокнутой цепочкой | M | [`CONSILIUM_SAVE_PATH_TEST_PROMPT.md`](../prompts/CONSILIUM_SAVE_PATH_TEST_PROMPT.md) | [#1051](https://github.com/officefish/Membrana/issues/1051) |
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | M | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | [#1088](https://github.com/officefish/Membrana/issues/1088) |
 | `tasks-workshop` | Эпик: tasks-workshop — мастерская контейнера задач | L | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | — |

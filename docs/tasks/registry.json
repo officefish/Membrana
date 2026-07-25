@@ -143,16 +143,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-24",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "§8.2 регламента v1.0 §2: реализовать disposition(path,ctx)→live/ready/unfinished/trash. ПОРЯДОК (исправлен): isTempOrScratch→trash; dirty∧inActiveSession→live; ready-предикат→ready; registered∧¬выше→unfinished; fallback dirty∧¬registered∧¬выше→trash. КРИТИЧНО: live ДО клаузы dirty∧¬registered, иначе гейт снесёт живую правку (R2). Полный промпт: docs/prompts/MEMBRANA_LEVELING_DISPOSITION_PROMPT.md. Фундамент гейта. Только регистрация.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1170 merge 562c805a; disposition K1 + product table 12; Teamlead LGTM (LLM review rate_limit)",
       "githubIssueClosedAt": null
     },
     {
