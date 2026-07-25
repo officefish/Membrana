@@ -9,6 +9,7 @@ Project-scoped skills for Cursor Agent and Claude Code (mirror in `.claude/skill
 | [`membrana-anthropic-cli`](./membrana-anthropic-cli/SKILL.md) | `yarn anthropic:*`, API smoke, file audit via Anthropic |
 | [`membrana-opencode-proxy`](./membrana-opencode-proxy/SKILL.md) | `yarn opencode:*`, OpenRouter/FreeModel proxy, `.env.llm-proxy` |
 | [`membrana-developer-rhythm`](./membrana-developer-rhythm/SKILL.md) | утро, вечер, `ritual:day`, `ritual:evening`, standup, main-day-issue |
+| [`membrana-leveling`](./membrana-leveling/SKILL.md) | leveling, выравнивание, `membrana-leveling:*`, workspace-level, unnamed-trash; soft evening step; mirrored Claude/OpenCode |
 | [`membrana-code-review`](./membrana-code-review/SKILL.md) | code review, `yarn code-review`, PR LGTM, вечернее ревью |
 | [`membrana-task-lifecycle`](./membrana-task-lifecycle/SKILL.md) | M/L task, `task:archive`, closure, day-sprint phases |
 | [`membrana-task-closure-review`](./membrana-task-closure-review/SKILL.md) | automatic Teamlead review after push, exact-SHA LGTM/BLOCK, guarded finalize; mirrored to Claude/Codex |
