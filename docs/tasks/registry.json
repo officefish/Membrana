@@ -2900,16 +2900,16 @@
       "githubIssue": 796,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-21",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "S4 принято vesnin 2026-07-21. AGENTS + audit/README + CONTRIBUTING + skills README → scripts/AGENT_PROMPT. Без нового skill.",
-      "archiveNotes": null,
+      "archiveNotes": "DoD выполнен 2026-07-21 (LGTM vesnin); провода AGENTS/skills/CONTRIBUTING уже на main; archive по обратному порядку плана 2026-07-25; Closes #796",
       "githubIssueClosedAt": null,
       "parentEpic": "scripts-boundary-container"
     },
