@@ -16,6 +16,8 @@ const tarPath = join(cacheDir, `office-src-${Date.now()}.tgz`);
 const remoteTar = '/tmp/office-src.tgz';
 
 const tarArgs = [
+  // Windows: GNU tar видит `C:\…` как host:file без --force-local (норма tooling-ретро #548).
+  '--force-local',
   '--exclude=packages/background-office/node_modules',
   '--exclude=packages/background-office/dist',
   '--exclude=packages/background-office/.env.docker',
