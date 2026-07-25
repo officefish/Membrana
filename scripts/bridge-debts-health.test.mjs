@@ -157,6 +157,22 @@ test('validateDebt absent: файл появился → resolved-hint; отсу
   assert.equal(missing.verdict, 'ok'); // отсутствие = долг ещё жив, НЕ dead-ref
 });
 
+test('extractRefs: state:bridge-closed → проба', () => {
+  const refs = extractRefs('мостик открыт state:bridge-closed');
+  assert.ok(refs.some((r) => r.kind === 'state' && r.probe === 'bridge-closed'));
+});
+
+test('validateDebt state: проба resolved → resolved-hint; live → ok; без resolveState → ok', () => {
+  const mk = () => ({ id: 'x', debt: '', evidence: 'state:bridge-closed', status: 'open', date: '2026-07-25', theme: '' });
+  const closed = validateDebt(mk(), { resolveFile: () => null, today: '2026-07-25', resolveState: () => 'resolved' });
+  assert.equal(closed.verdict, 'resolved-hint');
+  assert.match(closed.resolvedHints[0].why, /состояние снято/u);
+  const openBridge = validateDebt(mk(), { resolveFile: () => null, today: '2026-07-25', resolveState: () => 'live' });
+  assert.equal(openBridge.verdict, 'ok');
+  const noProbe = validateDebt(mk(), { resolveFile: () => null, today: '2026-07-25' }); // resolveState не передан
+  assert.equal(noProbe.verdict, 'ok'); // unknown → жив
+});
+
 test('propose: resolved-hint → settle', () => {
   const debts = [{ id: 'h', debt: '', evidence: 'date:2026-08-01', status: 'open', date: '2026-07-25', theme: 't' }];
   const vals = [{ id: 'h', verdict: 'resolved-hint', resolvedHints: [{ ref: 'date:2026-08-01', why: 'срок истёк' }], deadRefs: [] }];
