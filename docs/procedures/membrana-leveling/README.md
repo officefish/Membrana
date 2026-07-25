@@ -42,6 +42,8 @@
 |------|----------|--------|
 | `scripts/lib/membrana-leveling-disposition.mjs` | §8.2 | `disposition` — [`DISPOSITION.md`](./DISPOSITION.md) |
 | `scripts/lib/membrana-leveling-gate.mjs` + CLI | §8.3 | гейт + main-fill + отчёт — [`SCRIPTS.md`](./SCRIPTS.md) |
+| `scripts/lib/membrana-leveling-snapshot.mjs` + `:snapshot` / `:evening` | adopt | dirty→ctx wires + soft evening |
+| Skill `membrana-leveling` | adopt | `.cursor/skills/membrana-leveling/` (+ mirrors) |
 
 Кода и тестов в этом каталоге нет (Т12 / `manifest-only`).
 

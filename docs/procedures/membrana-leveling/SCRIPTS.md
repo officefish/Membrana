@@ -12,12 +12,19 @@
 ## CLI
 
 ```bash
+yarn membrana-leveling:snapshot [--out snap.json] [--ctx overlay.json]
 yarn membrana-leveling:main-fill --units units.json          # dry-run plan
 yarn membrana-leveling:workspace-level --snapshot snap.json --ship-ok --out report.md
+yarn membrana-leveling:evening                               # soft ritual step (plan-only)
 ```
 
-Реальный merge через CLI **не** делается молча: нужен inject `shipOne` / флаг `--ship-ok`
-(орхистратор вечера подключает `pr:ship`).
+`snapshot` строит JSON `{ items, namedTrash, unfinishedCards }` из `git status --porcelain`.
+Порты `registered` / `inActiveSession` / `leadStamp` — только `--ctx` overlay или флаги
+(`--session` / `--registered` / `--lead-stamp`); mtime не используется.
+
+Реальный merge через CLI **не** делается молча: нужен inject `shipOne` / флаг `--ship-ok`.
+Вечерний soft-шаг (`leveling-workspace` в `evening-ritual-steps.json`) пишет отчёт и
+план очереди; `pr:ship` — только из skill после слова владельца.
 
 ## Гейт STOP
 

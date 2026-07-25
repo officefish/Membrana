@@ -107,6 +107,23 @@
       ]
     },
     {
+      "id": "leveling-workspace",
+      "script": "scripts/membrana-leveling-evening.mjs",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "whyNoncritical": "Soft-first adopt (membrana-leveling-adopt): отчёт/STOP-причины видимы, но не роняют team-evening-feedback. Hard-gate PASS вечером — вне скоупа. Реальный pr:ship только из skill после слова владельца.",
+      "label": "Выравнивание рабочего пространства (leveling)",
+      "findingExitCodes": [
+        3
+      ],
+      "//findings": "exit 3 = gate STOP (unnamed-trash / unregistered-unfinished / ready ждёт owner) — находка; exit 1 = поломка скрипта; exit 0 = PASS.",
+      "//placement": "После insight-drift, до code-review (OPEN membrana-leveling-adopt-2026-07).",
+      "consumes": [],
+      "produces": [
+        "docs/seanses/workspace-level-<date>.md"
+      ]
+    },
+    {
       "id": "code-review",
       "script": "scripts/code-review.mjs",
       "kind": "mechanic",

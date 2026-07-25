@@ -1,8 +1,7 @@
 # Промпт: `membrana-leveling` §8.3 — скрипты `main-fill` / `workspace-level`
 
-> **СТАТУС: В РАБОТЕ** (слово владельца 2026-07-25, после §8.1/§8.2).
-> Реестр: `id = membrana-leveling-scripts` в [`docs/tasks/registry.json`](../tasks/registry.json). Размер: **L**. Lead: **vesnin**.
-> **Зависит от** `membrana-leveling-disposition` (нужна чистая функция) и `membrana-leveling-container` (фрейм-раскладка).
+> **СТАТУС: DONE в main** (§8.3). Adopt: skill + soft evening — [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](./MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md).
+> Реестр: `id = membrana-leveling-scripts` (archived). Размер: **L**. Lead: **vesnin**.
 > Основание: [`MEMBRANA_LEVELING_REGULATION.md`](./MEMBRANA_LEVELING_REGULATION.md) v1.0 §§ 3–5 (вердикты M2, M3, M4).
 
 ---

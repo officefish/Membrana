@@ -41,11 +41,17 @@ description: >-
 ## Evening (`yarn ritual:evening`)
 
 **Гнать через манифест** `docs/tasks/evening-ritual-steps.json`, не по памяти. Порядок
-важен — архив утренних файлов **до** code-review:
+важен — архив утренних файлов **до** code-review. Манифест включает soft-шаг
+`leveling-workspace` (после `insight-drift`, до `code-review`): отчёт
+`docs/seanses/workspace-level-<date>.md`, finding на STOP, **не** hard-gate и **не**
+авто-`pr:ship`. Ручное выравнивание дерева / ship после «ок» владельца → отдельный
+skill [`membrana-leveling`](../membrana-leveling/SKILL.md).
+
+Ориентиры (не дублировать манифест наизусть):
 
 1. `yarn archive:daily-day` → `docs/archive/daily-day/<YYYY-MM-DD>/`
 2. `yarn rag:index:incremental` (non-blocking)
-3. `yarn code-review` → `docs/DAILY_CODE_REVIEW.md`
+3. leveling soft (манифест) → затем `yarn code-review` → `docs/DAILY_CODE_REVIEW.md`
 4. `yarn task:archive <id>` (per accepted tasks)
 5. `yarn save-code-review`
 6. `yarn task:close-github` → `yarn team-evening-feedback` (обязателен, даже при упавшем review)

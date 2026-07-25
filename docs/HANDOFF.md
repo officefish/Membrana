@@ -96,6 +96,14 @@ Anthropic напрямую, мимо канала панели (OpenRouter→Son
 - **`yarn task:start`** ставит labels `tooling` по умолчанию — метки нет в репо, падает;
   задавать `--labels "package:infra,enhancement"` (или валидные из `gh label list`).
 
+## Вечерний leveling (куда смотреть)
+
+Soft-шаг `leveling-workspace` в `yarn ritual:evening` пишет отчёт
+`docs/seanses/workspace-level-<YYYY-MM-DD>.md` (план ready-очереди, без авто-`pr:ship`).
+Процедура: [`docs/procedures/membrana-leveling/`](procedures/membrana-leveling/) ·
+skill: `membrana-leveling` · CLI: `yarn membrana-leveling:snapshot` /
+`yarn membrana-leveling:evening`.
+
 ## Открытые хвосты
 
 - **#1088 `run-ledger`** — active, кода нет. Следующий шаг: канонформа + тест CRLF/LF.
