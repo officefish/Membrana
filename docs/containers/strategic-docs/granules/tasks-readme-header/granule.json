@@ -1,0 +1,7 @@
+{
+  "id": "tasks-readme-header",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Шапка README реестра: заголовок, источник, таблица команд, ссылка на мастерскую"
+}

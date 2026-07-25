@@ -1,0 +1,8 @@
+{
+  "id": "tasks-readme-archive-table",
+  "version": "1.0.0",
+  "kind": "function",
+  "fn": "renderTasksArchiveTable",
+  "modulePath": "./render.mjs",
+  "description": "Секция «Архив» README реестра — извлечение из docs/tasks/registry.json"
+}

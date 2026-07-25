@@ -1,0 +1,8 @@
+{
+  "id": "tasks-readme-active-table",
+  "version": "1.0.0",
+  "kind": "function",
+  "fn": "renderTasksActiveTable",
+  "modulePath": "./render.mjs",
+  "description": "Секция «Активные задачи» README реестра — извлечение из docs/tasks/registry.json"
+}

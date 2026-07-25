@@ -118,7 +118,7 @@ export function runSyncReadmeCheck(deps = {}) {
   if (result.extra.length) {
     lines.push(`  в README лишние (нет в registry active): ${result.extra.join(', ')}`);
   }
-  lines.push('  чинит человек: правка README / registry вручную (хук не автофиксит)');
-  lines.push('  карантин синка: TASKS_README_SYNC_FORCE=1 yarn task:sync-readme — только осознанно');
+  lines.push('  чинит пересборка: yarn task:sync-readme (хук не автофиксит)');
+  lines.push('  README этого класса руками не правят — источник набора registry.json (#1201)');
   return { code: 1, report: lines.join('\n') };
 }

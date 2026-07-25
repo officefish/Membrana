@@ -137,7 +137,7 @@ if (opts.dryRun) {
 
 saveRegistry(registry);
 const cardPath = writeArchiveCard(task);
-const readme = syncTasksReadme(registry);
+const readme = await syncTasksReadme(registry);
 
 console.log(`Архивировано: ${opts.id}`);
 console.log('Карточка:', cardPath);
