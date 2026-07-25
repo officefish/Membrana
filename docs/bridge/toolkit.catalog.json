@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "home": "docs/bridge",
+  "kit": "kits/angelina-bridge",
+  "procedure": "docs/procedures/bridge",
+  "leadPersona": "angelina",
+  "tools": [
+    {
+      "id": "open",
+      "zone": "room",
+      "yarn": "yarn bridge open",
+      "doc": "docs/procedures/bridge/README.md",
+      "summary": "ЯВНОЕ открытие по слову капитана; первой репликой попугай зачитывает живые долги"
+    },
+    {
+      "id": "status",
+      "zone": "room",
+      "yarn": "yarn bridge status",
+      "doc": "docs/procedures/bridge/README.md",
+      "summary": "Где стоим: открыт/закрыт, чей день, живые долги"
+    },
+    {
+      "id": "close",
+      "zone": "room",
+      "yarn": "yarn bridge close",
+      "doc": "docs/procedures/bridge/README.md",
+      "summary": "НЕявное закрытие — зовёт вечерний ритуал, не капитан и не агент; конспект уезжает фреймом"
+    },
+    {
+      "id": "conspectus",
+      "zone": "room",
+      "path": "docs/bridge",
+      "doc": "docs/procedures/bridge/README.md",
+      "summary": "Дом конспекта дня: docs/bridge/<день>/CONSPECTUS.md — ведёт Ангелина"
+    },
+    {
+      "id": "debt-add",
+      "zone": "debts",
+      "yarn": "yarn bridge debt add --id <id> --text \"…\" --evidence \"…\"",
+      "path": "docs/bridge/DEBTS.md",
+      "summary": "Пополнить реестр; append-only, правка только с вещдоком"
+    },
+    {
+      "id": "debt-settle",
+      "zone": "debts",
+      "yarn": "yarn bridge debt settle --id <id> --evidence \"…\"",
+      "path": "docs/bridge/DEBTS.md",
+      "summary": "Погасить долг: запись остаётся помеченной, не стирается"
+    },
+    {
+      "id": "debt-supersede",
+      "zone": "debts",
+      "yarn": "yarn bridge debt supersede --id <id> --to \"…\" --evidence \"…\"",
+      "path": "docs/bridge/DEBTS.md",
+      "summary": "Переформулировать долг с нитью: старый settled, новый open со ссылкой"
+    },
+    {
+      "id": "debt-validate",
+      "zone": "debts",
+      "yarn": "yarn bridge debt validate",
+      "script": "scripts/lib/bridge-debts-health.mjs",
+      "summary": "Offline: живость ссылок вещдока (file/date/absent/state) + возраст; стухшая ссылка = exit 1"
+    },
+    {
+      "id": "debt-invariants",
+      "zone": "debts",
+      "yarn": "yarn bridge debt invariants",
+      "script": "scripts/lib/bridge-debts-health.mjs",
+      "summary": "Честное число живых: заявленные open → тем-узлы после схлопывания кластеров"
+    },
+    {
+      "id": "debt-audit",
+      "zone": "debts",
+      "yarn": "yarn bridge debt audit",
+      "script": "scripts/lib/bridge-debts-health.mjs",
+      "summary": "Сеть (gh): сверка issue-вещдока с main; сбой gh → unknown, не падение"
+    },
+    {
+      "id": "debt-decompose",
+      "zone": "debts",
+      "yarn": "yarn bridge debt decompose --by theme|age|status",
+      "script": "scripts/lib/bridge-debts-health.mjs",
+      "summary": "Раскладка реестра по оси; offline"
+    },
+    {
+      "id": "debt-propose",
+      "zone": "debts",
+      "yarn": "yarn bridge debt propose",
+      "script": "scripts/lib/bridge-debts-health.mjs",
+      "summary": "Синтез validate+audit+invariants → settle / supersede / audit-открыто / hold"
+    },
+    {
+      "id": "debt-journal",
+      "zone": "debts",
+      "path": "docs/bridge/DEBT_ANALYSIS_JOURNAL.md",
+      "summary": "Журнал разбора долгов: почему долг переформулирован или снят"
+    },
+    {
+      "id": "lead-journal",
+      "zone": "lead",
+      "path": "docs/virtual-team/angelina/JOURNAL.md",
+      "summary": "Журнал ведущей — лог незавершённого; пишет только Ангелина, читает следующий день"
+    },
+    {
+      "id": "lead-memory",
+      "zone": "lead",
+      "path": "docs/virtual-team/angelina/MEMORY_SCHEMA.md",
+      "summary": "Схема журнала: три поля, провенанс «день + источник»; журнал ведущей ≠ журналы советующих"
+    },
+    {
+      "id": "lead-subagent",
+      "zone": "lead",
+      "path": "docs/virtual-team/angelina/SUBAGENT_TEMPLATE.md",
+      "summary": "Шаблон обезличенного субагента (писарь | аналитик); возврат проверяет isValid до сборки"
+    },
+    {
+      "id": "lead-report-lens",
+      "zone": "lead",
+      "path": "docs/virtual-team/angelina/MORNING_REPORT_FORMAT.md",
+      "summary": "Линза Ожегова и фиксированные секции доклада капитану — образец формы отчёта"
+    },
+    {
+      "id": "lead-storm",
+      "zone": "lead",
+      "path": "docs/virtual-team/angelina/STORM_PROCEDURE.md",
+      "summary": "Процедура ведения шторма — соседний формат той же ведущей (дивергентный)"
+    },
+    {
+      "id": "kit-bridge",
+      "zone": "neighbor",
+      "path": "kits/angelina-bridge/README.md",
+      "summary": "Кит мостика: пины движков комнаты; режимы latest/pinned, yarn kits:audit --id angelina-bridge"
+    },
+    {
+      "id": "kit-morning",
+      "zone": "neighbor",
+      "path": "kits/angelina-morning/README.md",
+      "summary": "Утренний кит той же ведущей — соседняя поставка (каскад, стендап, ласточка); на мостике не грузится"
+    },
+    {
+      "id": "procedure",
+      "zone": "neighbor",
+      "path": "docs/procedures/bridge/README.md",
+      "summary": "Определение процедуры: держатель, жизненный цикл, очередь фреймов, границы"
+    }
+  ]
+}

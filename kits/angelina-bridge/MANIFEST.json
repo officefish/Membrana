@@ -1,0 +1,14 @@
+{
+  "id": "angelina-bridge",
+  "leadPersona": "angelina",
+  "roots": [
+    "scripts/bridge.mjs"
+  ],
+  "pins": {
+    "scripts/bridge.mjs": "0f97e517dccb4835ffa6ba89c8e7e67d6af26f46",
+    "scripts/lib/bridge-debts-health.mjs": "8d7e4b190738a3c5d1b3e6651969c0cd78943f19",
+    "scripts/lib/bridge-debts.mjs": "c4949cca3d012ea0132b6df612cf52c16316e223",
+    "scripts/lib/bridge-room.mjs": "0fd88f979186bb40ff91906394ca7e603ca7e64f",
+    "scripts/lib/bridge-toolkit.mjs": "d25920071340c4837860aaab30d7f4a8158e25cc"
+  }
+}

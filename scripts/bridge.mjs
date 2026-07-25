@@ -6,11 +6,13 @@
  *   yarn bridge open              — ЯВНОЕ открытие; попугай зачитывает живые долги (Б3)
  *   yarn bridge status            — где стоим
  *   yarn bridge close             — НЕявное закрытие (зовётся вечерним ритуалом, Б4)
+ *   yarn bridge tools             — инструментарий ведущей: каталог кита angelina-bridge
  *   yarn bridge debt add    --id <id> --text "…" --evidence "…"
  *   yarn bridge debt settle --id <id> --evidence "…"
  *
  * Состояние — docs/bridge/state.json (один источник истины). Дом дня —
  * docs/bridge/<день>/CONSPECTUS.md. Реестр долгов — docs/bridge/DEBTS.md (append-only).
+ * Каталог инструментария — docs/bridge/toolkit.catalog.json (кит kits/angelina-bridge).
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -19,10 +21,12 @@ import { execFileSync } from 'node:child_process';
 import { CLOSED, closeRoom, isOpen, openRoom } from './lib/bridge-room.mjs';
 import { addDebt, openDebts, parseDebts, renderDebts, settleDebt, supersedeDebt } from './lib/bridge-debts.mjs';
 import { validateDebt, healthMetrics, themeClusters, realActiveCount, decompose, auditDebt, propose } from './lib/bridge-debts-health.mjs';
+import { findTool, inventoryToolkit, renderToolkit } from './lib/bridge-toolkit.mjs';
 
 const ROOT = process.cwd();
 const STATE_PATH = resolve(ROOT, 'docs/bridge/state.json');
 const DEBTS_PATH = resolve(ROOT, 'docs/bridge/DEBTS.md');
+const TOOLKIT_PATH = resolve(ROOT, 'docs/bridge/toolkit.catalog.json');
 
 const argv = process.argv.slice(2);
 const cmd = argv[0];
@@ -47,6 +51,15 @@ function saveState(state) {
 }
 function loadDebts() {
   return existsSync(DEBTS_PATH) ? parseDebts(readFileSync(DEBTS_PATH, 'utf8')) : [];
+}
+/** Каталог инструментария ведущей (кит angelina-bridge). Битый/отсутствующий — честно, не молча. */
+function loadToolkit() {
+  if (!existsSync(TOOLKIT_PATH)) return { catalog: null, error: 'нет docs/bridge/toolkit.catalog.json' };
+  try {
+    return { catalog: JSON.parse(readFileSync(TOOLKIT_PATH, 'utf8')), error: null };
+  } catch (e) {
+    return { catalog: null, error: `docs/bridge/toolkit.catalog.json: ${e.message}` };
+  }
 }
 function saveDebts(debts) {
   writeFileSync(DEBTS_PATH, renderDebts(debts), 'utf8');
@@ -78,6 +91,7 @@ if (cmd === 'open') {
     console.log(`[мостик] открыт капитаном (${day}). Дом: docs/bridge/${day}/CONSPECTUS.md`);
   }
   parrotSquawk();
+  console.log('[мостик] инструментарий ведущей — yarn bridge tools (кит kits/angelina-bridge).');
   process.exit(0);
 }
 
@@ -86,6 +100,42 @@ if (cmd === 'status') {
   console.log(isOpen(s) ? `[мостик] открыт (${s.day}, кто открыл: ${s.openedBy})` : '[мостик] закрыт');
   parrotSquawk();
   process.exit(isOpen(s) ? 0 : 0);
+}
+
+if (cmd === 'tools') {
+  // Инструментарий ведущей комнаты — то, что грузит скилл membrana-bridge при входе.
+  // Отсутствие файла инструмента = видимое предупреждение, не тихий пропуск.
+  const { catalog, error } = loadToolkit();
+  if (error) {
+    console.error(`[мостик] инструментарий не поднят — ${error}`);
+    process.exit(2);
+  }
+  const exists = (rel) => existsSync(resolve(ROOT, rel));
+  if (arg('doc')) {
+    const found = findTool(catalog, arg('doc'));
+    if (!found.ok) { console.error(`tools --doc: ${found.error}`); process.exit(2); }
+    const rel = found.tool.doc || found.tool.path || found.tool.script;
+    if (!rel || !exists(rel)) { console.error(`tools --doc: у «${found.tool.id}» нет читаемого документа (${rel ?? '—'})`); process.exit(1); }
+    console.log(`# ${found.tool.id} · ${rel}\n`);
+    console.log(readFileSync(resolve(ROOT, rel), 'utf8').split(/\r?\n/).slice(0, 40).join('\n'));
+    process.exit(0);
+  }
+  const inv = inventoryToolkit(catalog, { exists, zone: arg('zone') });
+  if (inv.problems.length) {
+    for (const p of inv.problems) console.error(`✗ каталог: ${p}`);
+    process.exit(2);
+  }
+  if (argv.includes('--json')) {
+    console.log(JSON.stringify({ kit: catalog.kit, tools: inv.tools, warnings: inv.warnings }, null, 2));
+    process.exit(0);
+  }
+  console.log(`[мостик] инструментарий ведущей (${catalog.leadPersona}) · кит ${catalog.kit}`);
+  console.log(renderToolkit(inv.tools));
+  if (inv.warnings.length) {
+    console.log(`\n⚠ оснастка неполна (${inv.warnings.length}):`);
+    for (const w of inv.warnings) console.log(`  ${w}`);
+  }
+  process.exit(0);
 }
 
 if (cmd === 'close') {
@@ -240,5 +290,5 @@ if (cmd === 'debt') {
   process.exit(2);
 }
 
-console.error('bridge: open | status | close | debt add|settle');
+console.error('bridge: open | status | close | tools | debt add|settle');
 process.exit(2);

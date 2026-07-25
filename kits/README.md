@@ -71,6 +71,7 @@ kits/
 | [`containerization-master/`](./containerization-master/) | ozhegov | ✅ третий жилец; 9 roots · ~21 pins · крафт контейнеров |
 | [`witcher/`](./witcher/) | dynin | ✅ четвёртый жилец (W4 / #950); root `bestiary-audit.mjs` · ~4 pins · aim «Ведьмак» |
 | [`tasks-master/`](./tasks-master/) | vesnin | ✅ жилец primary-мастерской `docs/tasks`; roots inspect/list/validate/invariants/one-shot/task-tools · `yarn task:tools` |
+| [`angelina-bridge/`](./angelina-bridge/) | angelina | ✅ жилец комнаты «мостик» (#936); root `bridge.mjs` · 5 pins · `yarn bridge tools`; сосед утреннего кита, не замена |
 
 ## Зубы (по фазам эпика)
 
