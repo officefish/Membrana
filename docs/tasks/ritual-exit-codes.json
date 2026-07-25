@@ -98,6 +98,30 @@
             3
           ]
         },
+        "leveling-workspace": {
+          "script": "scripts/membrana-leveling-evening.mjs",
+          "codes": {
+            "0": {
+              "bucket": "ok",
+              "meaning": "gate PASS; отчёт записан"
+            },
+            "1": {
+              "bucket": "failure",
+              "meaning": "ошибка скрипта / T13 WIP в repo / overlay"
+            },
+            "2": {
+              "bucket": "failure",
+              "meaning": "bad CLI / usage"
+            },
+            "3": {
+              "bucket": "finding",
+              "meaning": "gate STOP (корзины/ready-очередь) — soft finding"
+            }
+          },
+          "findingExitCodes": [
+            3
+          ]
+        },
         "code-review": {
           "script": "scripts/code-review.mjs",
           "codes": {

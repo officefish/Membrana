@@ -1,7 +1,7 @@
 # Промпт: `membrana-leveling` §8.2 — чистая функция `disposition(path, ctx)`
 
-> **СТАТУС: В РАБОТЕ** (слово владельца 2026-07-25, после §8.1).
-> Реестр: `id = membrana-leveling-disposition` в [`docs/tasks/registry.json`](../tasks/registry.json). Размер: **M**. Lead: **vesnin**, support: **dynin**.
+> **СТАТУС: DONE в main** (§8.2). Adopt: [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](./MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md).
+> Реестр: `id = membrana-leveling-disposition` (archived). Размер: **M**. Lead: **vesnin**, support: **dynin**.
 > Основание: [`MEMBRANA_LEVELING_REGULATION.md`](./MEMBRANA_LEVELING_REGULATION.md) v1.0 § 2 (вердикт M1).
 
 ---

@@ -156,10 +156,18 @@ T11 (мусор ≠ незавершёнка) · T12 (процедура во ф
 
 ## 8. Ратификация
 
-**Ратифицирован владельцем 2026-07-24.** Разблокированы след-шаги:
+**Ратифицирован владельцем 2026-07-24.**
 
-1. Завести контейнер `docs/procedures/membrana-leveling/` (README + MANIFEST.json с шестью `frames[]`).
-2. Спринт реализации `disposition` (чистая функция + тесты матрицы состояний, вердикт M1 § DoD).
-3. Скрипты `main-fill` / `workspace-level` по фрейм-раскладке § 5.
+**Статус реализации (2026-07-25):** пункты 1–3 ниже — **реализованы** в `main`
+(§8.1 container · §8.2 disposition · §8.3 scripts). Следующий слой — **adopt**:
+кросс-агентский skill + soft wire в `ritual:evening` (спринт
+[`membrana-leveling-adopt`](../day-sprint/membrana-leveling-adopt-2026-07/OPEN.md),
+промпт [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](./MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md)).
+
+След-шаги (исторически разблокированы ратификацией; закрыты в main):
+
+1. ~~Завести контейнер `docs/procedures/membrana-leveling/`~~ → done (§8.1).
+2. ~~Спринт реализации `disposition`~~ → done (§8.2).
+3. ~~Скрипты `main-fill` / `workspace-level`~~ → done (§8.3).
 
 Отказ/поправки — словом владельца; заседание переоткрывается через `BRIEF_AMENDMENT.md`.

@@ -4,6 +4,15 @@
 
 ---
 
+## 2026-07-25 — `membrana-leveling-adopt` — **CLOSED**
+
+- **Delivered:** skill `membrana-leveling` + mirrors; `yarn membrana-leveling:snapshot`; soft evening step `leveling-workspace`; HANDOFF seam; rhythm wire
+- **OPEN / CLOSURE:** [`day-sprint/membrana-leveling-adopt-2026-07/`](./day-sprint/membrana-leveling-adopt-2026-07/)
+- **Промпт:** [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](./prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md)
+- **Also open** был (Focus `tasks-workshop` цел · ATF4-2)
+
+---
+
 ## 2026-07-25 — `strategy-affine-routing` — **OPEN**
 
 - **Goal:** `strategy.mmbrn.tech` → Affine self-host on office VDS (scope B)
