@@ -317,16 +317,16 @@
       "githubIssue": 1065,
       "linearId": "DRU-413",
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-23",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1153 merge 6aec3c1b; GitHub #1065 CLOSED via Closes; one-shot-trail.jsonl + yarn one-shot:trail",
       "githubIssueClosedAt": null,
       "parentEpic": "tasks-workshop"
     },
