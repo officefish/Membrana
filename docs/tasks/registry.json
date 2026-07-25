@@ -7,16 +7,16 @@
       "githubIssue": 1196,
       "linearId": "DRU-456",
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-25",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1199 (merge 1571464e): yarn kits:pins (ядро+CLI+5 тестов), описи angelina-morning/containerization-master/dream-master выровнены отдельными коммитами (30 находок → 0), зуб на двух путях — pre-push --mode latest + CI pinned; долг попугая kits-pins-audit-unwired погашен; Linear DRU-456",
       "githubIssueClosedAt": null
     },
     {
@@ -26,16 +26,16 @@
       "githubIssue": 1195,
       "linearId": "DRU-455",
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-25",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "angelina"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1199 (merge 1571464e): скилл membrana-bridge в 4 зеркалах (.cursor канон + .claude/.agents/.opencode), кит kits/angelina-bridge (root bridge.mjs, 5 пинов), kitVersion процедуры bridge, yarn bridge tools по 4 зонам; kits:audit --id angelina-bridge = 0 находок; Linear DRU-455",
       "githubIssueClosedAt": null
     },
     {
