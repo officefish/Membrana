@@ -1,5 +1,5 @@
 {
-  "date": "2026-07-22",
+  "date": "2026-07-25",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -21,6 +21,20 @@
       "severity": "moderate",
       "issue": "@fastify/static vulnerable to route guard bypass via encoded path separators",
       "url": "https://github.com/advisories/GHSA-x428-ghpx-8j92"
+    },
+    {
+      "pkg": "@fastify/static",
+      "id": "1124285",
+      "severity": "moderate",
+      "issue": "@fastify/static vulnerable to Authorization Bypass via Non-Canonical URL Paths",
+      "url": "https://github.com/advisories/GHSA-8pvw-jcv7-9cmj"
+    },
+    {
+      "pkg": "@fastify/static",
+      "id": "1124286",
+      "severity": "high",
+      "issue": "@fastify/static vulnerable to route guard bypass via path traversal",
+      "url": "https://github.com/advisories/GHSA-83w8-p2f5-377r"
     },
     {
       "pkg": "@humanwhocodes/config-array",
@@ -56,6 +70,13 @@
       "severity": "moderate",
       "issue": "ajv has ReDoS when using `$data` option",
       "url": "https://github.com/advisories/GHSA-2g4f-4pwh-qvx6"
+    },
+    {
+      "pkg": "app-builder-lib",
+      "id": "1124279",
+      "severity": "high",
+      "issue": "electron-updater: Uncontrolled search path elements within `AppImage` built by `app-builder-lib`",
+      "url": "https://github.com/advisories/GHSA-7g7r-gx96-252g"
     },
     {
       "pkg": "are-we-there-yet",
@@ -170,6 +191,20 @@
       "url": "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp"
     },
     {
+      "pkg": "brace-expansion",
+      "id": "1124334",
+      "severity": "high",
+      "issue": "brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash",
+      "url": "https://github.com/advisories/GHSA-mh99-v99m-4gvg"
+    },
+    {
+      "pkg": "builder-util-runtime",
+      "id": "1124278",
+      "severity": "high",
+      "issue": "electron-updater: Cross-origin redirect leaks `PRIVATE-TOKEN` and mixed-case `Authorization` credentials in `builder-util-runtime`",
+      "url": "https://github.com/advisories/GHSA-p2f4-r6v6-j797"
+    },
+    {
       "pkg": "esbuild",
       "id": "1120680",
       "severity": "low",
@@ -189,6 +224,13 @@
       "severity": "moderate",
       "issue": "file-type affected by infinite loop in ASF parser on malformed input with zero-size sub-header",
       "url": "https://github.com/advisories/GHSA-5v7r-6r5c-r473"
+    },
+    {
+      "pkg": "find-my-way",
+      "id": "1124273",
+      "severity": "high",
+      "issue": "find-my-way: DDoS with HTTP2",
+      "url": "https://github.com/advisories/GHSA-c96f-x56v-gq3h"
     },
     {
       "pkg": "gauge",
@@ -238,6 +280,13 @@
       "severity": "high",
       "issue": "js-yaml: YAML merge-key chains can force quadratic CPU consumption",
       "url": "https://github.com/advisories/GHSA-52cp-r559-cp3m"
+    },
+    {
+      "pkg": "js-yaml",
+      "id": "1124281",
+      "severity": "high",
+      "issue": "js-yaml: Exponential parsing time in flow collections leads to denial of service",
+      "url": "https://github.com/advisories/GHSA-pm4m-ph32-ghv5"
     },
     {
       "pkg": "lodash",
@@ -308,6 +357,13 @@
       "severity": "high",
       "issue": "path-to-regexp vulnerable to Regular Expression Denial of Service via multiple route parameters",
       "url": "https://github.com/advisories/GHSA-37ch-88jc-xwx2"
+    },
+    {
+      "pkg": "postcss",
+      "id": "1124288",
+      "severity": "high",
+      "issue": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
+      "url": "https://github.com/advisories/GHSA-r28c-9q8g-f849"
     },
     {
       "pkg": "prebuild-install",
@@ -392,6 +448,13 @@
       "severity": "moderate",
       "issue": "node-tar: Uncaught Exception DoS via NUL byte in PAX path/linkpath records",
       "url": "https://github.com/advisories/GHSA-gvwx-54wh-qm9j"
+    },
+    {
+      "pkg": "tar",
+      "id": "1124287",
+      "severity": "moderate",
+      "issue": "node-tar: Uncontrolled recursion in mapHas/filesFilter allows uncatchable stack-overflow DoS via crafted long-path tar with member selection",
+      "url": "https://github.com/advisories/GHSA-r292-9mhp-454m"
     },
     {
       "pkg": "turbo",
