@@ -2,7 +2,7 @@
   "pattern": "docs/patterns/HOME_WORKSHOP.md",
   "name": "мастерская задач (primary)",
   "worksOn": "docs/tasks/registry.json",
-  "kit": null,
+  "kit": "kits/tasks-master",
   "role": "primary",
   "rulesVersion": "1",
   "verbs": {
@@ -10,9 +10,9 @@
     "decompose": null,
     "inspectElement": "yarn task:inspect",
     "list": "yarn task:list",
-    "board": "planned: yarn task:board (v3+)",
-    "bookkeeping": "planned: yarn task:bookkeeping",
-    "reviewing": "planned: yarn task:reviewing",
+    "board": "planned: yarn task:board (engine missing: scripts/generate-active-tasks-board.mjs)",
+    "bookkeeping": "planned: yarn tasks:bookkeeping (engine missing: scripts/tasks-bookkeeping.mjs)",
+    "reviewing": "planned: yarn tasks:reviewing (engine missing: scripts/tasks-reviewing.mjs)",
     "stackLike": [],
     "domain": []
   }

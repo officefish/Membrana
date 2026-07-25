@@ -70,6 +70,7 @@ kits/
 | [`dream-master/`](./dream-master/) | dynin | ✅ второй жилец (D2 / #858); root `dreams.mjs` · ~10 pins |
 | [`containerization-master/`](./containerization-master/) | ozhegov | ✅ третий жилец; 9 roots · ~21 pins · крафт контейнеров |
 | [`witcher/`](./witcher/) | dynin | ✅ четвёртый жилец (W4 / #950); root `bestiary-audit.mjs` · ~4 pins · aim «Ведьмак» |
+| [`tasks-master/`](./tasks-master/) | vesnin | ✅ жилец primary-мастерской `docs/tasks`; roots inspect/list/validate/invariants/one-shot/task-tools · `yarn task:tools` |
 
 ## Зубы (по фазам эпика)
 
