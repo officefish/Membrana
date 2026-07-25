@@ -293,6 +293,43 @@ function parseArgs(argv) {
   return o;
 }
 
+/**
+ * #1166: как трактовать exit-код pr:wait (0 green · 1 red · 2 none · 3 timeout-running · 4 error · 5 approval).
+ * transient (2 none / 3 timeout-running) — CI ещё не готов, а не провал: повторяем с --resume.
+ * @param {number} code
+ * @returns {'green'|'transient'|'fatal'}
+ */
+export function ciWaitDisposition(code) {
+  if (code === 0) return 'green';
+  if (code === 2 || code === 3) return 'transient';
+  return 'fatal'; // 1 red · 4 error · 5 approval
+}
+
+const MAX_CI_WAIT_RESUMES = 3;
+
+/**
+ * Прогон шага ci-wait с повтором на транзиентных кодах (#1166). Первый заход — как есть,
+ * повторы — с `--resume` (pr:wait продолжает с чекпойнта). Красный/approval/error и
+ * исчерпание повторов — пробрасываем (ship падает честно, как и должен).
+ * @param {string} cmd @param {string[]} baseArgs
+ */
+function runCiWaitWithResume(cmd, baseArgs) {
+  for (let attempt = 0; attempt <= MAX_CI_WAIT_RESUMES; attempt += 1) {
+    const args = attempt === 0 ? baseArgs : [...baseArgs, '--resume'];
+    try {
+      execFileSync(cmd, args, { stdio: 'inherit' });
+      return; // green
+    } catch (e) {
+      const disp = ciWaitDisposition(typeof e.status === 'number' ? e.status : 4);
+      if (disp === 'transient' && attempt < MAX_CI_WAIT_RESUMES) {
+        console.error(`  ⚠ ci-wait транзиент (код ${e.status}: ${e.status === 2 ? 'проверки не созданы' : 'CI ещё идёт'}) — повтор ${attempt + 1}/${MAX_CI_WAIT_RESUMES}, --resume`);
+        continue;
+      }
+      throw e;
+    }
+  }
+}
+
 function main() {
   const opts = parseArgs(process.argv);
   // Ветки соседних worktree решают, возможен ли ff-sync (см. isBaseHeldElsewhere).
@@ -342,6 +379,12 @@ function main() {
       continue;
     }
     console.log(`  → ${s.label}`);
+    // #1166: ci-wait транзиентен — pr:wait возвращает 2 (проверки не созданы после push) или
+    // 3 (таймаут, но CI ещё ИДЁТ). Это НЕ провал — повторяем с --resume, а не роняем ship целиком.
+    if (s.label === 'ci-wait') {
+      runCiWaitWithResume(s.cmd, args);
+      continue;
+    }
     try {
       execFileSync(s.cmd, args, { stdio: 'inherit' });
     } catch (e) {

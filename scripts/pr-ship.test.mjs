@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import {
   assertPrMergeableForShip,
+  ciWaitDisposition,
   extractIssueMentions,
   isBaseHeldElsewhere,
   otherWorktreeBranches,
@@ -10,6 +11,21 @@ import {
   planMergeTail,
   planPrShip,
 } from './pr-ship.mjs';
+
+test('#1166 ciWaitDisposition: 0 → green', () => {
+  assert.equal(ciWaitDisposition(0), 'green');
+});
+
+test('#1166 ciWaitDisposition: 2 (none) и 3 (timeout-running) → transient (повтор с --resume)', () => {
+  assert.equal(ciWaitDisposition(2), 'transient');
+  assert.equal(ciWaitDisposition(3), 'transient');
+});
+
+test('#1166 ciWaitDisposition: 1 red / 4 error / 5 approval → fatal (ship падает честно)', () => {
+  assert.equal(ciWaitDisposition(1), 'fatal');
+  assert.equal(ciWaitDisposition(4), 'fatal');
+  assert.equal(ciWaitDisposition(5), 'fatal');
+});
 
 test('planPrShip: title + trailer + Closes + порядок шагов', () => {
   const { title, commitBody, steps } = planPrShip({
