@@ -27,6 +27,12 @@ node scripts/trace-gate.mjs lead-persona
 echo "pre-push [cg7]: yarn catalog:verify-client"
 yarn catalog:verify-client
 
+# Описи китов (kits-pins-wiring / #1196): МЯГКИЙ режим — блокирует только структурную
+# ложь (узел подграфа без пина), смену версии пропускает как warn. Строгая сверка —
+# в CI (pinned). Без этого шага описи расходились молча: 25.07 накопилось 30 находок.
+echo "pre-push [kits]: yarn kits:audit --mode latest"
+yarn kits:audit --mode latest
+
 echo "pre-push [NB4]: yarn verify:wire-sync (core ↔ background-cabinet)"
 yarn verify:wire-sync
 
