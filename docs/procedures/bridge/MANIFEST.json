@@ -1,11 +1,9 @@
 {
   "id": "bridge",
   "leadPersona": "angelina",
-  "kitVersion": null,
+  "kitVersion": "kits/angelina-bridge",
   "engines": [
-    "scripts/bridge.mjs",
-    "scripts/lib/bridge-room.mjs",
-    "scripts/lib/bridge-debts.mjs"
+    "scripts/bridge.mjs"
   ],
   "precedents": [
     "docs/storm/storm-cold-start-entry-2026-07-22/REPORT.md",

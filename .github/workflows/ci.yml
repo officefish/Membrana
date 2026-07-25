@@ -66,6 +66,11 @@ jobs:
       - name: Мастерские — контракт, принадлежность, свежесть атласа (HOME_WORKSHOP)
         run: yarn validate:workshop && yarn check:workshop-ownership && yarn check:workshop-dependencies && yarn tooling:atlas --check
 
+      # Строгий режим описей китов (PINNED_SUBGRAPH / #1196): подграф корней обязан
+      # совпадать с pins. Локальный pre-push гоняет мягкий latest — здесь барьер.
+      - name: Киты — описи совпадают с подграфом корней (pinned)
+        run: yarn kits:audit
+
       # Dual Mintlify (W2): product + harness docs.json / MDX navigation — CI-safe, no Mintlify CLI.
       - name: Docs — verify both Mintlify roots (product + harness)
         run: yarn docs:verify:all
