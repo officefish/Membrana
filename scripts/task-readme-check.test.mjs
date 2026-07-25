@@ -86,8 +86,8 @@ test('удаление предиката ломает check (throw)', () => {
   }, /predicate removed/);
 });
 
-test('runTaskList --check: exit mirrors runSyncReadmeCheck', () => {
-  const code = runTaskList(['--sync-readme', '--check'], {
+test('runTaskList --check: exit mirrors runSyncReadmeCheck', async () => {
+  const code = await runTaskList(['--sync-readme', '--check'], {
     load: () => ({ tasks: [card({ id: 'a' })] }),
     readReadme: () => readmeWith(['ghost']),
   });

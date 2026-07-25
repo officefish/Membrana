@@ -38,5 +38,13 @@ yarn task:tools --doc inspect
 ## README и sync
 
 Описание мастерской живёт **здесь** и в catalog/manifest, не в длинной hand-секции
-[`README.md`](./README.md): `yarn task:sync-readme` переписывает README целиком
-(карантин 23.07). В шапке README — только указатель на этот файл.
+[`README.md`](./README.md): `yarn task:sync-readme` переписывает README целиком.
+В шапке README — только указатель на этот файл.
+
+Карантин синка снят (#1201): README реестра собирается движком стратегических
+документов из шаблона `tasks-readme`
+([`templates/tasks-readme`](../containers/strategic-docs/templates/tasks-readme/template.json)).
+Ручная правка README запрещена — постоянный текст добавляют **гранулой** шаблона
+([`granules/tasks-readme-header`](../containers/strategic-docs/granules/tasks-readme-header/body.md)),
+набор задач приходит из `registry.json`. Переменной `TASKS_README_SYNC_FORCE` больше нет:
+если шаблон не сходится с гранулами, сборка уходит в `experiment` и файл не пишется.

@@ -1,0 +1,7 @@
+{
+  "id": "tasks-readme-howto",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Секция «Как добавить задачу» + подпись о запрете ручной правки"
+}

@@ -1,0 +1,33 @@
+{
+  "id": "tasks-readme",
+  "version": "1.0.0",
+  "target": "docs/tasks/README.md",
+  "meta": {
+    "description": "README реестра задач — единственный законный путь производства документа (#1201)",
+    "status": "validated",
+    "surface": ["github"]
+  },
+  "skeleton": "{{header}}\n\n{{active_table}}\n\n{{archive_table}}\n\n{{howto}}",
+  "slots": [
+    {
+      "granuleId": "tasks-readme-header",
+      "pin": "1.0.0",
+      "placeholder": "{{header}}"
+    },
+    {
+      "granuleId": "tasks-readme-active-table",
+      "pin": "1.0.0",
+      "placeholder": "{{active_table}}"
+    },
+    {
+      "granuleId": "tasks-readme-archive-table",
+      "pin": "1.0.0",
+      "placeholder": "{{archive_table}}"
+    },
+    {
+      "granuleId": "tasks-readme-howto",
+      "pin": "1.0.0",
+      "placeholder": "{{howto}}"
+    }
+  ]
+}

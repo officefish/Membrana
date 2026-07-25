@@ -19,8 +19,12 @@ describe('readme-main granules', () => {
     const granules = await loadGranules(granulesDir);
     const index = buildGranuleIndex(granules);
 
-    assert.equal(granules.length, 12, `expected 12 granules, got ${granules.length}`);
+    // Контейнер общий: рядом живут гранулы других шаблонов (tasks-readme, #1201),
+    // поэтому считаем не все гранулы, а покрытие слотов readme-main.
     assert.equal(template.slots.length, 12);
+    for (const slot of template.slots) {
+      assert.ok(index.get(`${slot.granuleId}@${slot.pin}`), `нет гранулы ${slot.granuleId}@${slot.pin}`);
+    }
 
     const result = valid(template, index);
     assert.equal(result.ok, true, JSON.stringify(result.reasons));

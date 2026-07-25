@@ -11,12 +11,12 @@ import {
   listPendingGithubClose,
   loadRegistry,
   renderTaskPromptStub,
-  renderTasksReadme,
   saveRegistry,
   syncTasksReadme,
   validateTaskId,
   writeArchiveCard,
 } from './lib/task-registry.mjs';
+import { generateTasksReadme } from './lib/tasks-readme-engine.mjs';
 
 /** Фаза эпика: githubIssue задаётся тестом (свой номер / номер эпика / null). */
 function phase(id, parentEpic, githubIssue, status = 'archived') {
@@ -176,8 +176,8 @@ describe('task-registry', () => {
     );
   });
 
-  it('renderTasksReadme lists active and archived', () => {
-    const md = renderTasksReadme({
+  it('generateTasksReadme lists active and archived', async () => {
+    const { body: md } = await generateTasksReadme({
       version: 1,
       tasks: [
         {
@@ -216,43 +216,66 @@ describe('task-registry', () => {
   });
 });
 
-// ─── карантин синка README: генератор не должен молча стирать ручные секции ───────
+// ─── синк README: карантин снят, пишет только движок (#1201) ──────────────────────
 
-describe('syncTasksReadme — карантин (23.07)', () => {
+describe('syncTasksReadme — через движок strategic-docs', () => {
   const registry = { version: 1, tasks: [] };
 
-  /** Готовит временный docs/tasks/README.md с ручной секцией и возвращает пути. */
+  /** Временное дерево с посторонним содержимым в README. */
   const withReadme = () => {
     const dir = mkdtempSync(join(tmpdir(), 'tasks-readme-'));
     const path = join(dir, 'docs', 'tasks', 'README.md');
     mkdirSync(join(dir, 'docs', 'tasks'), { recursive: true });
-    writeFileSync(path, '# Реестр\n\n## Мастерская дома (HOME_WORKSHOP)\nручная секция\n', 'utf8');
+    writeFileSync(path, '# Реестр\n\nдописано руками\n', 'utf8');
     return { dir, path };
   };
 
-  it('по умолчанию НЕ пишет и называет причину — ручная секция цела', () => {
+  it('пишет без FORCE — карантина больше нет', async () => {
     const { dir, path } = withReadme();
     try {
-      const res = syncTasksReadme(registry, dir, { env: {} });
-      assert.equal(res.written, false);
-      assert.match(res.reason, /карантин/iu);
-      assert.match(res.reason, /tooling-atlas/u, 'причина называет правильный дом описания');
-      assert.match(readFileSync(path, 'utf8'), /HOME_WORKSHOP/u, 'чужая секция не стёрта');
+      const res = await syncTasksReadme(registry, dir);
+      assert.equal(res.written, true);
+      assert.equal(res.reason, null);
+      assert.equal(res.route, 'release');
+      assert.doesNotMatch(readFileSync(path, 'utf8'), /дописано руками/u);
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
   });
 
-  it('обход осознанный: force / TASKS_README_SYNC_FORCE=1 пишет как раньше', () => {
+  it('ручной текст переживает пересборку, если он живёт гранулой шаблона', async () => {
     const { dir, path } = withReadme();
     try {
-      const res = syncTasksReadme(registry, dir, { force: true, env: {} });
-      assert.equal(res.written, true);
-      assert.doesNotMatch(readFileSync(path, 'utf8'), /HOME_WORKSHOP/u, 'генератор перезаписал — это и есть класс дефекта');
+      await syncTasksReadme(registry, dir);
+      const written = readFileSync(path, 'utf8');
+      // Указатели мастерской лежат в literal-грануле tasks-readme-header —
+      // именно этот класс текста ad-hoc-генератор стирал 23.07 (HOME_WORKSHOP).
+      assert.match(written, /WORKSHOP\.md/u);
+      assert.match(written, /kits\/tasks-master/u);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
 
-      writeFileSync(path, '## Мастерская дома (HOME_WORKSHOP)\n', 'utf8');
-      const viaEnv = syncTasksReadme(registry, dir, { env: { TASKS_README_SYNC_FORCE: '1' } });
-      assert.equal(viaEnv.written, true);
+  it('невалидный шаблон — файл НЕ переписан (предохранитель вместо флага)', async () => {
+    const { dir, path } = withReadme();
+    try {
+      const res = await syncTasksReadme(registry, dir, {
+        deps: {
+          // Гранулы резолвятся (иначе generate падает раньше валидации), но в
+          // скелете висит плейсхолдер без слота — шаблон не сходится.
+          loadTemplate: async () => ({
+            id: 'tasks-readme',
+            version: '1.0.0',
+            skeleton: '{{header}}\n\n{{ghost}}',
+            slots: [{ granuleId: 'tasks-readme-header', pin: '1.0.0', placeholder: '{{header}}' }],
+          }),
+        },
+      });
+      assert.equal(res.written, false);
+      assert.equal(res.route, 'experiment');
+      assert.match(res.reason, /невалиден/u);
+      assert.match(readFileSync(path, 'utf8'), /дописано руками/u, 'чужой текст цел');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

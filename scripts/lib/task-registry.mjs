@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
 import { normalizePersona } from './standup-routing.mjs';
+import { generateTasksReadme } from './tasks-readme-engine.mjs';
 
 export const REGISTRY_REL = 'docs/tasks/registry.json';
 export const TASKS_README_REL = 'docs/tasks/README.md';
@@ -287,124 +288,38 @@ ${notes}
 }
 
 /**
+ * Синк README реестра — делегирование в движок стратегических документов (#1201).
+ *
+ * Карантин `TASKS_README_SYNC_FORCE` снят вместе с его причиной. Он стоял, потому что
+ * ad-hoc-генератор `renderTasksReadme` печатал документ целиком из реестра и стирал
+ * секции, живущие в файле руками (23.07 — HOME_WORKSHOP из соседней сессии, PR #1087).
+ * Теперь ручной текст живёт literal-гранулами шаблона `tasks-readme`, и стирать его
+ * нечем: генератор собирает документ из гранул, а не печатает из головы.
+ *
+ * Новый предохранитель вместо флага: невалидный шаблон уводит сборку в маршрут
+ * `experiment`, и файл НЕ пишется. Это гейт по факту (шаблон не сошёлся с гранулами),
+ * а не по переменной окружения.
+ *
  * @param {{ version: number, tasks: TaskEntry[] }} registry
  * @param {string} [cwd]
+ * @param {{ deps?: object }} [opts]
+ * @returns {Promise<{ path: string, written: boolean, reason: string|null, route: string }>}
  */
-export function renderTasksReadme(registry, cwd = process.cwd()) {
-  const active = listActive(registry);
-  const archived = listArchived(registry).sort((a, b) =>
-    (b.archivedAt ?? '').localeCompare(a.archivedAt ?? ''),
-  );
-
-  /** Relative from docs/tasks/README.md → strip leading `docs/` so `docs/prompts/X` → `../prompts/X`. */
-  const promptLink = (promptPath) => {
-    if (!promptPath) return '—';
-    const rel = promptPath.replace(/\\/g, '/').replace(/^docs\//, '');
-    return `[\`${promptPath.split('/').pop()}\`](../${rel})`;
-  };
-
-  const row = (t) => {
-    const prompt = promptLink(t.promptPath);
-    const gh = t.githubIssue != null ? `[#${t.githubIssue}](https://github.com/officefish/Membrana/issues/${t.githubIssue})` : '—';
-    return `| \`${t.id}\` | ${t.title} | ${t.size} | ${prompt} | ${gh} |`;
-  };
-
-  const archivedRow = (t) => {
-    const prompt = promptLink(t.promptPath);
-    const card = `[карточка](./archive/${t.id}.md)`;
-    const gh = t.githubIssue != null ? `#${t.githubIssue}` : '—';
-    const ghPending =
-      t.githubIssue != null && !t.githubIssueClosedAt ? ' (Issue открыт)' : '';
-    return `| \`${t.id}\` | ${t.title} | ${t.archivedAt ?? '—'} | ${prompt} | ${gh}${ghPending} | ${card} |`;
-  };
-
-  return `# Реестр задач (task prompts)
-
-Актуальные **активные** и **архивные** задачи по стандарту
-[\`TASK_PROMPT_WORKFLOW.md\`](../prompts/TASK_PROMPT_WORKFLOW.md).
-
-Машиночитаемый источник: [\`registry.json\`](./registry.json).
-
-| Команда | Действие |
-|---------|----------|
-| \`yarn task:list\` | Список в терминале |
-| \`yarn task:sync-readme\` | Пересобрать этот файл |
-| \`yarn task:archive <id>\` | Закрыть задачу в реестре |
-| \`yarn task:close-github\` | Закрыть Issues по очереди из архива (вечером) |
-
-Мастерская: [\`WORKSHOP.md\`](./WORKSHOP.md) · [\`workshop.manifest.json\`](./workshop.manifest.json) · кит [\`kits/tasks-master\`](../../kits/tasks-master/) · \`yarn task:tools\`.
-
----
-
-## Активные задачи
-
-${
-  active.length === 0
-    ? '_Нет активных задач. Новую добавь в `registry.json` (см. workflow)._'
-    : `| ID | Название | Размер | Промпт | GitHub |
-|----|----------|--------|--------|--------|
-${active.map(row).join('\n')}`
-}
-
----
-
-## Архив
-
-${
-  archived.length === 0
-    ? '_Архив пуст._'
-    : `| ID | Название | Архивировано | Промпт | GitHub | Карточка |
-|----|----------|--------------|--------|--------|----------|
-${archived.map(archivedRow).join('\n')}`
-}
-
----
-
-## Как добавить задачу
-
-1. GitHub Issue → [\`TASKS_MANAGEMENT.md\`](../TASKS_MANAGEMENT.md).
-2. Скопировать [\`TASK_PROMPT_TEMPLATE.md\`](../prompts/TASK_PROMPT_TEMPLATE.md) в \`docs/prompts/<SLUG>_PROMPT.md\`.
-3. Добавить объект в \`registry.json\` (\`"status": "active"\`).
-4. \`yarn task:sync-readme\`.
-
-*Файл обновлён автоматически: ${new Date().toISOString().slice(0, 10)}.*
-`;
-}
-
-/**
- * КАРАНТИН синка README (слово владельца 23.07).
- *
- * `renderTasksReadme` печатает README целиком из реестра, поэтому любая секция, живущая в
- * файле руками, стирается молча. 23.07 это чуть не снесло раздел `HOME_WORKSHOP`, добавленный
- * соседней сессией часом раньше (PR #1087): состав мастерской V2, границу «в мастерской /
- * вне», глаголы `validate:workshop` и `check:workshop-dependencies`.
- *
- * Правильный дом для такого описания — **атлас контейнеров** (`docs/tooling-atlas/`,
- * `yarn tooling:atlas --inspect docs/tasks/registry.json`): он агрегирует README и манифест
- * каждого контейнера и существует ровно против эхо-дрейфа. Пока содержимое не переехало,
- * генератор писать не должен — иначе он тихо выигрывает у человека.
- *
- * Снятие карантина — отдельным решением, не флагом по привычке. Обход на один вызов:
- * `TASKS_README_SYNC_FORCE=1` в окружении либо `{ force: true }` в коде.
- */
-export const README_SYNC_QUARANTINE_REASON =
-  'синк README в карантине (23.07): генератор стирает ручные секции; дом такого описания — ' +
-  'атлас контейнеров docs/tooling-atlas. Обход: TASKS_README_SYNC_FORCE=1';
-
-/**
- * @param {{ version: number, tasks: TaskEntry[] }} registry
- * @param {string} [cwd]
- * @param {{ force?: boolean, env?: NodeJS.ProcessEnv }} [opts]
- * @returns {{ path: string, written: boolean, reason: string|null }}
- */
-export function syncTasksReadme(registry, cwd = process.cwd(), opts = {}) {
+export async function syncTasksReadme(registry, cwd = process.cwd(), opts = {}) {
   const path = resolve(cwd, TASKS_README_REL);
-  const env = opts.env ?? process.env;
-  const forced = opts.force === true || env.TASKS_README_SYNC_FORCE === '1';
-  if (!forced) {
-    return { path, written: false, reason: README_SYNC_QUARANTINE_REASON };
+  const { body, route, validation } = await generateTasksReadme(registry, opts.deps ?? {});
+
+  if (route !== 'release') {
+    const reasons = validation?.reasons?.join('; ') || 'без причины';
+    return {
+      path,
+      written: false,
+      route,
+      reason: `шаблон tasks-readme невалиден, README не переписан: ${reasons}`,
+    };
   }
+
   mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, renderTasksReadme(registry, cwd), 'utf8');
-  return { path, written: true, reason: null };
+  writeFileSync(path, body, 'utf8');
+  return { path, written: true, reason: null, route };
 }

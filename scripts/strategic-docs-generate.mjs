@@ -13,8 +13,11 @@ import { fileURLToPath } from 'node:url';
 import { valid } from './lib/strategic-docs-model.mjs';
 import { buildGranuleIndex, integratedGenerate } from './lib/strategic-docs-integration.mjs';
 import { loadGranules, loadTemplate, CONTAINER_ROOT } from './lib/strategic-docs-loader.mjs';
+import { loadRegistry } from './lib/task-registry.mjs';
+import { makeRegistryIo } from './lib/tasks-readme-engine.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.join(__dirname, '..');
 
 function arg(name, fallback = null) {
   const i = process.argv.indexOf(name);
@@ -37,7 +40,11 @@ async function main() {
     console.log('valid(template): OK');
   }
 
+  // fn-гранулы ходят за данными только через io-адаптер. Единственная разрешённая
+  // операция сейчас — отдать реестр задач (шаблон tasks-readme, #1201); без адаптера
+  // такая гранула падает на pureIoThrow, и это правильное поведение движка.
   const result = await integratedGenerate(template, granules, {
+    io: makeRegistryIo(loadRegistry(ROOT)),
     renderBody: (parts) => parts.join('\n\n'),
   });
 
@@ -64,7 +71,7 @@ async function main() {
     version: template.version,
     templateId: template.id,
     templateVersion: template.version,
-    title: 'Membrana README',
+    title: template.meta?.title ?? template.meta?.description ?? templateId,
     target: template.target,
     pins,
     status: result.route,

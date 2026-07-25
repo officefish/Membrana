@@ -71,20 +71,20 @@ if (isMain) {
   const today = new Date().toISOString().slice(0, 10);
 
   // Одна попытка: собрать запись, insert или upsert связей, sync README.
-  const applyOnce = () => {
+  const applyOnce = async () => {
     const registry = loadRegistry(root);
     const entry = buildTaskEntry(cli, today);
     const mode = registry.tasks.some((t) => t.id === entry.id) ? 'upsert-links' : 'insert';
     const result = registerOrLinkTask(registry, entry, mode);
     saveRegistry(result.registry, root);
-    syncTasksReadme(result.registry, root);
+    await syncTasksReadme(result.registry, root);
     return { entry: result.entry, action: result.action };
   };
 
   let entry;
   let action;
   try {
-    ({ entry, action } = applyOnce());
+    ({ entry, action } = await applyOnce());
   } catch (e) {
     console.error(e.message);
     process.exit(1);
@@ -151,7 +151,7 @@ if (isMain) {
       sh('git reset --soft HEAD~1'); // снять свой коммит, оставить правки в индексе
       sh('git checkout -- docs/tasks/registry.json'); // откатить к текущему main-состоянию
       sh('git pull --rebase');
-      applyOnce(); // перестроить вставку поверх свежего реестра — ручной merge исключён
+      await applyOnce(); // перестроить вставку поверх свежего реестра — ручной merge исключён
       commitAndPush();
       console.log('Регенерировано и запушено поверх свежего реестра.');
     } catch (e2) {

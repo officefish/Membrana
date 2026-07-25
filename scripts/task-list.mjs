@@ -2,7 +2,7 @@
  * Список задач из docs/tasks/registry.json
  *
  * yarn task:list
- * yarn task:sync-readme           — перезаписать README (карантин, нужен FORCE)
+ * yarn task:sync-readme           — пересобрать README движком strategic-docs (шаблон tasks-readme)
  * yarn task:sync-readme --check   — тонкая обёртка над computeReadmeMatchesRegistry (M4D)
  */
 import {
@@ -21,9 +21,9 @@ import { runSyncReadmeCheck } from './lib/task-readme-check.mjs';
  *   readReadme?: (cwd: string) => string,
  *   computeReadmeMatchesRegistry?: (cards: object[], readmeText: string) => boolean | 'unknown',
  * }} [deps]
- * @returns {number}
+ * @returns {Promise<number>}
  */
-export function runTaskList(argv = process.argv.slice(2), deps = {}) {
+export async function runTaskList(argv = process.argv.slice(2), deps = {}) {
   const wantCheck = argv.includes('--check');
   const wantSync = argv.includes('--sync-readme');
 
@@ -39,7 +39,7 @@ export function runTaskList(argv = process.argv.slice(2), deps = {}) {
   const registry = load(cwd);
 
   if (wantSync) {
-    const res = syncTasksReadme(registry, cwd);
+    const res = await syncTasksReadme(registry, cwd);
     if (res.written) console.log('Обновлён:', res.path);
     else console.error(`⚠ README НЕ обновлён — ${res.reason}`);
     console.log('');
@@ -72,5 +72,5 @@ export function runTaskList(argv = process.argv.slice(2), deps = {}) {
 
 const entry = (process.argv[1] ?? '').replace(/\\/g, '/');
 if (entry.endsWith('/task-list.mjs')) {
-  process.exitCode = runTaskList(process.argv.slice(2));
+  process.exitCode = await runTaskList(process.argv.slice(2));
 }
