@@ -215,14 +215,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-24",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "§8.3 регламента v1.0 §5: скрипты main-fill (ready→main, pr:ship-поезд T9/#700) и workspace-level (main→деревья+гигиена, выдаёт манифест-отчёт K2); сюжетные фреймы leveling-main-fill/workspace + служебные wires/scratch/deliver. Зависит от membrana-leveling-disposition. Только регистрация.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1174 merge 05af8777; gate+main-fill+report+T13; Teamlead LGTM (LLM rate_limit); 2x rebase package.json",
       "githubIssueClosedAt": null
     },
     {

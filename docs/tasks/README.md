@@ -29,7 +29,6 @@
 | `friction5-pr-recreate` | yarn pr:recreate <N>: пересборка устаревшего PR чистой веткой от main | M | [`FRICTION5_PR_RECREATE_PROMPT.md`](../prompts/FRICTION5_PR_RECREATE_PROMPT.md) | [#1167](https://github.com/officefish/Membrana/issues/1167) |
 | `friction5-pr-ship-reliability` | pr:ship reliability: fail-loud при не-мердже + транзиентные pr:wait + pr:verify | S | [`FRICTION5_PR_SHIP_RELIABILITY_PROMPT.md`](../prompts/FRICTION5_PR_SHIP_RELIABILITY_PROMPT.md) | [#1166](https://github.com/officefish/Membrana/issues/1166) |
 | `agent-tooling-friction-5` | Agent tooling friction — раунд 5 (сессия 2026-07-24): PR/merge надёжность + пересборка устаревших PR | M | [`AGENT_TOOLING_FRICTION_5_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_5_PROMPT.md) | — |
-| `membrana-leveling-scripts` | membrana-leveling §8.3: скрипты main-fill / workspace-level по фрейм-раскладке | L | [`MEMBRANA_LEVELING_SCRIPTS_PROMPT.md`](../prompts/MEMBRANA_LEVELING_SCRIPTS_PROMPT.md) | — |
 | `consilium-save-path-test` | test(consilium): путь сохранения протокола исполняется тестом с мокнутой цепочкой | M | [`CONSILIUM_SAVE_PATH_TEST_PROMPT.md`](../prompts/CONSILIUM_SAVE_PATH_TEST_PROMPT.md) | [#1051](https://github.com/officefish/Membrana/issues/1051) |
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | M | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | [#1088](https://github.com/officefish/Membrana/issues/1088) |
 | `tasks-workshop` | Эпик: tasks-workshop — мастерская контейнера задач | L | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | — |
@@ -69,7 +68,7 @@
 | `sbc-s3-kits-align` | S3: kits — выровнять с pl-r3 kit-manifest (не изобретать параллельный контракт) | M | [`SBC_S3_KITS_ALIGN_PROMPT.md`](../prompts/SBC_S3_KITS_ALIGN_PROMPT.md) | [#795](https://github.com/officefish/Membrana/issues/795) |
 | `sbc-s2-tools-report` | S2: инструменты пишут в scripts/registry сами (--report) | M | [`SBC_S2_TOOLS_REPORT_PROMPT.md`](../prompts/SBC_S2_TOOLS_REPORT_PROMPT.md) | [#794](https://github.com/officefish/Membrana/issues/794) |
 | `procedural-layer-impl` | Эпик: реализация процедурного слоя (Р1-Р5 заседания procedural-layer) | L | [`PROCEDURAL_LAYER_IMPL_PROMPT.md`](../prompts/PROCEDURAL_LAYER_IMPL_PROMPT.md) | [#781](https://github.com/officefish/Membrana/issues/781) |
-| `angelina-hostess-impl` | Спринт: реализация вердиктов «Ангелина — хозяйка утра» (C→B+G→H→GC) | L | [`angelina-hostess-EPIC-2026-07-21.md`](../seanses/angelina-hostess-EPIC-2026-07-21.md) | — |
+| `angelina-hostess-impl` | Спринт: реализация вердиктов «Ангелина — хозяйка утра» (C→B+G→H→GC) | L | [`docs/seanses/angelina-hostess-EPIC-2026-07-21.md`](../prompts/docs/seanses/angelina-hostess-EPIC-2026-07-21.md) | — |
 | `linear-hygiene-dreams-providers-night` | Night: Linear-гигиена → живые провайдеры снов | M | [`LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/LINEAR_HYGIENE_DREAMS_PROVIDERS_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `ritual-r-report` | Доклад наружу: линза + живые ссылки (R эпика ritual-refactor) | M | [`RITUAL_R_REPORT_PROMPT.md`](../prompts/RITUAL_R_REPORT_PROMPT.md) | — |
 | `ritual-s-standup` | Стендап Тимлидом + движок задач (S эпика ritual-refactor) | M | [`RITUAL_S_STANDUP_PROMPT.md`](../prompts/RITUAL_S_STANDUP_PROMPT.md) | — |
@@ -189,7 +188,7 @@
 | `oc-proxy-s3-llm-proxy-script` | OC3: llm-proxy-ask.mjs CLI | M | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `oc-proxy-s4-opencode-config` | OC4: OpenCode config template | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `comp-packaging-catalog-2026-06-25` | Competition packaging: async-v2 catalog publish + operator debug | M | [`COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md`](../prompts/COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md) | — |
-| `device-board-three-hosts-2026-06-26` | Device-board UserCase: стабильность на cabinet + Studio + Device (эпик) | L | [`neural-detectors-strategy-2026-06-26.md`](../seanses/neural-detectors-strategy-2026-06-26.md) | — |
+| `device-board-three-hosts-2026-06-26` | Device-board UserCase: стабильность на cabinet + Studio + Device (эпик) | L | [`docs/seanses/neural-detectors-strategy-2026-06-26.md`](../prompts/docs/seanses/neural-detectors-strategy-2026-06-26.md) | — |
 | `ci-gate-stabilization` | Epic: CI-gate stabilization — флейки rag-service, двухуровневый test gate, flaky-метрики | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
 | `cg2-two-tier-test-gate` | CG2: двухуровневый test gate — smoke (hard) + full (опциональный) на vitest | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
 | `cg3-flaky-metrics-week` | CG3: логирование + сбор flaky-метрик за неделю (7 прогонов main) | S | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
@@ -208,8 +207,8 @@
 | `db-sf-7-last-track-preview` | SF7: last journal track preview on node card | S | [`DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md`](../prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md) | — |
 | `db-sf-8-tests-smoke` | SF8: tests + smoke runbook | M | [`DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md`](../prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md) | — |
 | `db-sf-9-docs-sync` | SF9: docs sync CONCEPT/catalog/ARCHITECTURE | S | [`DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md`](../prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md) | — |
-| `neural-tier-1b-contract` | Neural tier 1.B: NeuralDetector контракт + YAMNet/CLAP skeleton | L | [`INTEGRATIONS_STRATEGY.md`](../INTEGRATIONS_STRATEGY.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
-| `neural-free-tier-dataset-report` | Free-tier: датасет + трек → детектор → отчёт (1 ГБ library) | L | [`neural-detectors-strategy-2026-06-26.md`](../seanses/neural-detectors-strategy-2026-06-26.md) | — |
+| `neural-tier-1b-contract` | Neural tier 1.B: NeuralDetector контракт + YAMNet/CLAP skeleton | L | [`docs/INTEGRATIONS_STRATEGY.md`](../prompts/docs/INTEGRATIONS_STRATEGY.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
+| `neural-free-tier-dataset-report` | Free-tier: датасет + трек → детектор → отчёт (1 ГБ library) | L | [`docs/seanses/neural-detectors-strategy-2026-06-26.md`](../prompts/docs/seanses/neural-detectors-strategy-2026-06-26.md) | — |
 | `rag-dual-circuit-v1` | RAG Dual-Circuit v1: doc-memory + code-structure (эпик) | L | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
 | `rag-r6-closure` | RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive | S | — | — |
 | `rag-r7-optional` | RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker | S | — | — |
@@ -243,10 +242,8 @@
 | `nb-at-6-helpers` | NB6: deploy:when-green (print) + prisma:migration (оффлайн diff) | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-7-bookkeeping-gitctx` | NB7: tasks:archive-closed + lib/git-day-context (общий «работа дня») | M | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `nb-at-8-docs-skills` | NB8: docs AGENTS.md + скиллы membrana-ship / tooling-doctor | S | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — |
-| `detection-alarm-loop-refactor` | Detection-Alarm рефакторинг переключения лупов: fusion→lastDetection+front+loop-transition-policy (тема1), effectiveLoop-sync/захват-гейтинг (ADR Р1/Р2), pure-геттеры, Alpha L36 | L | [`LOOP_SWITCH_CONTROL_ADR.md`](../actions/device-board/LOOP_SWITCH_CONTROL_ADR.md) | — |
+| `detection-alarm-loop-refactor` | Detection-Alarm рефакторинг переключения лупов: fusion→lastDetection+front+loop-transition-policy (тема1), effectiveLoop-sync/захват-гейтинг (ADR Р1/Р2), pure-геттеры, Alpha L36 | L | [`docs/actions/device-board/LOOP_SWITCH_CONTROL_ADR.md`](../prompts/docs/actions/device-board/LOOP_SWITCH_CONTROL_ADR.md) | — |
 | `batch-collection-run-contour` | batch-collection-run-contour: прогон детекторов по коллекции — новая execution-модель live↔batch (пост-FREE, следующий цикл) | L | [`BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md`](../prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md) | [#494](https://github.com/officefish/Membrana/issues/494) |
-
----
 
 ## Архив
 
