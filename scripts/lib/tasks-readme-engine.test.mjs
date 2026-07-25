@@ -142,6 +142,16 @@ describe('renderBySkeleton', () => {
     const out = renderBySkeleton(template)(['ПЕРВЫЙ', 'ВТОРОЙ']);
     assert.equal(out, 'ВТОРОЙ\n\nПЕРВЫЙ\n');
   });
+
+  it('подстановка одним проходом: плейсхолдер ВНУТРИ данных не раскрывается', () => {
+    // Заголовок задачи в registry.json пишет человек — он может содержать что угодно.
+    const template = {
+      skeleton: '{{a}}\n\n{{b}}',
+      slots: [{ placeholder: '{{a}}' }, { placeholder: '{{b}}' }],
+    };
+    const out = renderBySkeleton(template)(['задача про {{b}}', 'ХВОСТ']);
+    assert.equal(out, 'задача про {{b}}\n\nХВОСТ\n', 'вставленный текст не должен переподставляться');
+  });
 });
 
 describe('generateTasksReadme', () => {

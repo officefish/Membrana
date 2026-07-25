@@ -66,7 +66,7 @@
     "scripts/lib/swallow-delivery-ledger.mjs": "bc0466723d3f14fdcc8a8738cf545a38a3632be9",
     "scripts/lib/swallow-mirror.mjs": "03e32d4540d6fb0b8d5201a8e02252cdcf587b34",
     "scripts/lib/task-registry.mjs": "2e2117d614ea69448bc132856da35c2f53aca8b4",
-    "scripts/lib/tasks-readme-engine.mjs": "ce33ba7c90698fd3672ff8679bae7e836f0bccc3",
+    "scripts/lib/tasks-readme-engine.mjs": "3a45a41f5e17587bc54b85011eeacbeffa7c264b",
     "scripts/lib/truth-graph.mjs": "54f1c23e0f0449e4adde145aa2d2633030baa22a",
     "scripts/lib/worktree-sync-check.mjs": "a86b1b518c06699535552e05a773bd0fc4b8658f",
     "scripts/main-day-issue.mjs": "2fedf0afde710809d4ab06a9069f76c80a3b27f6",

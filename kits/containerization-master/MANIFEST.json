@@ -31,7 +31,7 @@
     "scripts/lib/task-registry.mjs": "2e2117d614ea69448bc132856da35c2f53aca8b4",
     "scripts/lib/tasks-audit.mjs": "e4a22ef66e482168060a3cc7af56b91d757cac47",
     "scripts/lib/tasks-decompose.mjs": "064d231da40ab7e8e044ca6fcbc40049aaaaa9a2",
-    "scripts/lib/tasks-readme-engine.mjs": "ce33ba7c90698fd3672ff8679bae7e836f0bccc3",
+    "scripts/lib/tasks-readme-engine.mjs": "3a45a41f5e17587bc54b85011eeacbeffa7c264b",
     "scripts/lib/tooling-overview.mjs": "7cb0acb63c37edb3ac6a610653916632cca0238c",
     "scripts/lib/validate-procedure.mjs": "49864d782327839f154e0e958b857fa5a4840814",
     "scripts/procedures-registry.mjs": "6d089af37383ce9bb2d568e0239c876e80fd7dcd",

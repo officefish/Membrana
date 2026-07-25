@@ -36,6 +36,11 @@ export function makeRegistryIo(registry) {
   };
 }
 
+/** @param {string} s */
+function escapeRegExp(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 /**
  * renderBody, в котором скелет шаблона — АВТОРИТЕТ порядка.
  *
@@ -43,15 +48,25 @@ export function makeRegistryIo(registry) {
  * игнорирует; тогда `skeleton` в template.json — украшение, и переставленный слот
  * молча меняет документ. Здесь части кладутся в свои плейсхолдеры.
  *
+ * Подстановка ОДНИМ проходом, а не цепочкой replaceAll: тела гранул приходят из
+ * registry.json, то есть из текста, который пишут люди. Последовательные замены
+ * подставляли бы в уже вставленный текст — заголовок задачи вида `{{howto}}`
+ * утащил бы в себя соседний слот.
+ *
  * @param {{ skeleton: string, slots: Array<{ placeholder: string }> }} template
  * @returns {(parts: string[]) => string}
  */
 export function renderBySkeleton(template) {
   return (parts) => {
-    let out = template.skeleton;
-    template.slots.forEach((slot, i) => {
-      out = out.replaceAll(slot.placeholder, String(parts[i] ?? '').trim());
-    });
+    const bySlot = new Map(
+      (template.slots ?? []).map((slot, i) => [slot.placeholder, String(parts[i] ?? '').trim()]),
+    );
+    const out = bySlot.size
+      ? template.skeleton.replace(
+          new RegExp([...bySlot.keys()].map(escapeRegExp).join('|'), 'g'),
+          (hit) => bySlot.get(hit),
+        )
+      : template.skeleton;
     return out.endsWith('\n') ? out : `${out}\n`;
   };
 }
