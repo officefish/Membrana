@@ -14,14 +14,28 @@
 Правило: **user-facing → `membrana.space`; background/team → `mmbrn.tech`.** При
 развилке «где разместить сервис» — по тому, кому он адресован, а не по удобству.
 
-## Карта поддоменов (состояние 2026-07-15)
+## Карта поддоменов (состояние 2026-07-25)
 
 ### `mmbrn.tech` — команда / фон
 | Поддомен | Сервис | Статус |
 |----------|--------|--------|
-| `office.mmbrn.tech` | `@membrana/background-office` (VDS 176.124.218.4, Caddy+LE) | ✅ актуален |
-| `panel.mmbrn.tech` | office panel (эпик #438) | ✅ актуален |
+| `office.mmbrn.tech` | `@membrana/background-office` (VDS 176.124.218.4, Caddy+LE) | ✅ актуален — **не переназначать** |
+| `panel.mmbrn.tech` | office panel (эпик #438) | ✅ актуален — **не переназначать** |
+| `harness.mmbrn.tech` | Mintlify harness (tooling docs) | ✅ live — **не переназначать** |
+| `strategy.mmbrn.tech` | Affine self-host на office VDS `176.124.218.4` (эпик #1156, scope B) | 🟡 DNS owner + install W2 — канон/runbook: [`STRATEGY_AFFINE_DEPLOY.md`](./STRATEGY_AFFINE_DEPLOY.md) |
+| `docs.mmbrn.tech` | product Mintlify (`apps/docs`) | ⏸ residual dual-mintlify — **вне scope B**, не трогать в Affine-спринте |
 | `other.mmbrn.tech` | (уточнить назначение) | ❓ |
+
+**Карта имён (docs / harness / strategy):**
+
+```text
+docs.mmbrn.tech      → Mintlify product (apps/docs)     — later / residual
+harness.mmbrn.tech   → Mintlify harness                 — already live
+strategy.mmbrn.tech  → Affine self-host (office VDS)    — strategy-affine-routing
+```
+
+Owner DNS для strategy (Timeweb): A `strategy` → `176.124.218.4`. Агент DNS не
+меняет. Перед LE — `yarn panel:dns-gate --domain strategy.mmbrn.tech --expect 176.124.218.4`.
 
 ### `membrana.space` — продукт
 | Путь/поддомен | Сервис | Статус |
