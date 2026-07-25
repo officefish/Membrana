@@ -1,0 +1,8 @@
+{
+  "id": "readme-background-servers-table",
+  "version": "1.0.0",
+  "kind": "function",
+  "fn": "renderBackgroundServersTable",
+  "modulePath": "./render.mjs",
+  "description": "Таблица фоновых серверов (office/media/cabinet): порты, команды, ссылка на BACKGROUND_SERVERS"
+}

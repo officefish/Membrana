@@ -98,8 +98,13 @@ export async function generate(template, granuleIndex, opts = {}) {
     let bodyChunk;
     if (granule.kind === 'literal') {
       bodyChunk = granule.body;
-    } else if (granule.kind === 'fn') {
-      const result = await invokeGranuleFn(granule, slot.pin ?? {}, io);
+    } else if (granule.kind === 'fn' || granule.kind === 'function') {
+      const fnGranule =
+        granule.kind === 'function'
+          ? { ...granule, kind: 'fn', exportName: granule.fn ?? granule.exportName }
+          : granule;
+      const fnPin = typeof slot.pin === 'object' && slot.pin !== null ? slot.pin : {};
+      const result = await invokeGranuleFn(fnGranule, fnPin, io);
       bodyChunk = result.body;
     } else {
       throw new TypeError(`Unknown granule kind: ${granule.kind}`);

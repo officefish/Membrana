@@ -1,0 +1,7 @@
+{
+  "id": "readme-quickstart",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Секция «Быстрый старт»: Corepack, yarn install, dev/build/lint/test"
+}

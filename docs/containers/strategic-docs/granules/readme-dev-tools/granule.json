@@ -1,0 +1,7 @@
+{
+  "id": "readme-dev-tools",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Секция «Инструменты разработки»: TypeScript, Turbo, ESLint, Cursor"
+}
