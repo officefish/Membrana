@@ -1,0 +1,7 @@
+{
+  "id": "readme-virtual-team",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Секция «Виртуальная команда AI»: docs/, workflow, GitHub Actions"
+}

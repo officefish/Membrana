@@ -1,0 +1,7 @@
+{
+  "id": "readme-strategic-context",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Стратегический контекст: north-star и платформа (blockquote под заголовком README)"
+}

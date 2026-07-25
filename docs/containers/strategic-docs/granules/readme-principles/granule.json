@@ -1,0 +1,7 @@
+{
+  "id": "readme-principles",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Архитектурные принципы монорепо (секция «Принципы» корневого README)"
+}

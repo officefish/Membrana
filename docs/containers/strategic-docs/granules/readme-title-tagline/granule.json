@@ -1,0 +1,7 @@
+{
+  "id": "readme-title-tagline",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Заголовок и tagline корневого README (# Membrana)"
+}

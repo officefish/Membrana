@@ -48,9 +48,12 @@ function makeRealValidate(index) {
 }
 
 /** Интегрированный генератор: generate + РЕАЛЬНЫЙ предикат canon-data (а не стаб-предикат блока). */
-export async function integratedGenerate(template, granules) {
+export async function integratedGenerate(template, granules, opts = {}) {
   const index = buildGranuleIndex(granules);
-  return generate(normalizeTemplate(template), index, { validate: makeRealValidate(index) });
+  return generate(normalizeTemplate(template), index, {
+    validate: makeRealValidate(index),
+    ...opts,
+  });
 }
 
 /** Рендер поверхности релиза через engine-renderer (renderRelease уже рендерит — не двойной вызов). */

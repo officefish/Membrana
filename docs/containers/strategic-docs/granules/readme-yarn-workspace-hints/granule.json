@@ -1,0 +1,7 @@
+{
+  "id": "readme-yarn-workspace-hints",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Секция «Полезные yarn-команды»: workspace add/foreach"
+}

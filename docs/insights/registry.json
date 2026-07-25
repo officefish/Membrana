@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-24",
+  "updatedAt": "2026-07-25",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -688,6 +688,17 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-21",
+      "tags": []
+    },
+    {
+      "id": "insight-dreams-procedure-frames",
+      "title": "Ночные сны → процедура во фреймах с настраиваемым через панель провайдером",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-25",
       "tags": []
     }
   ]

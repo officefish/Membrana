@@ -1,0 +1,7 @@
+{
+  "id": "readme-documentation-index",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Секция «Документация»: нормативные docs/ vs Mintlify apps/docs/"
+}
