@@ -1,6 +1,44 @@
 {
   "tasks": [
     {
+      "id": "kits-pins-wiring",
+      "title": "Описи китов: инструмент kits:pins, выравнивание трёх китов, зуб сверки на pre-push + CI",
+      "promptPath": "docs/prompts/KITS_PINS_WIRING_PROMPT.md",
+      "githubIssue": 1196,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-25",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "bridge-cross-agent-skill",
+      "title": "Мостик: кросс-агентский скилл входа + кит angelina-bridge (инструментарий ведущей)",
+      "promptPath": "docs/prompts/BRIDGE_CROSS_AGENT_SKILL_PROMPT.md",
+      "githubIssue": 1195,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-25",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "angelina"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "ml-adopt-pilot",
       "title": "ml-adopt-pilot: dry/--only pilot + CLOSURE",
       "promptPath": "docs/prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md",

@@ -20,6 +20,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `bridge-cross-agent-skill` | Мостик: кросс-агентский скилл входа + кит angelina-bridge (инструментарий ведущей) | M | [`BRIDGE_CROSS_AGENT_SKILL_PROMPT.md`](../prompts/BRIDGE_CROSS_AGENT_SKILL_PROMPT.md) | [#1195](https://github.com/officefish/Membrana/issues/1195) |
+| `kits-pins-wiring` | Описи китов: инструмент kits:pins, выравнивание трёх китов, зуб сверки на pre-push + CI | M | [`KITS_PINS_WIRING_PROMPT.md`](../prompts/KITS_PINS_WIRING_PROMPT.md) | [#1196](https://github.com/officefish/Membrana/issues/1196) |
 | `consilium-save-path-test` | test(consilium): путь сохранения протокола исполняется тестом с мокнутой цепочкой | M | [`CONSILIUM_SAVE_PATH_TEST_PROMPT.md`](../prompts/CONSILIUM_SAVE_PATH_TEST_PROMPT.md) | [#1051](https://github.com/officefish/Membrana/issues/1051) |
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | M | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | [#1088](https://github.com/officefish/Membrana/issues/1088) |
 | `tasks-workshop` | Эпик: tasks-workshop — мастерская контейнера задач | L | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | — |
