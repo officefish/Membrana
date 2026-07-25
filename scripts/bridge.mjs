@@ -141,6 +141,8 @@ if (cmd === 'debt') {
     for (const v of vals) {
       if (v.verdict === 'stale-ref') {
         console.log(`✗ ${v.id} · СТУХЛА ССЫЛКА: ${v.deadRefs.map((d) => d.why).join('; ')}`);
+      } else if (v.verdict === 'resolved-hint') {
+        console.log(`✔ ${v.id} · ПОРА СНЯТЬ: ${v.resolvedHints.map((d) => d.why).join('; ')}`);
       } else if (v.verdict === 'aged') {
         console.log(`~ ${v.id} · без касания ${v.age} дн. (проверить, жив ли)`);
       }

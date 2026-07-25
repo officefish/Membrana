@@ -17,6 +17,10 @@
 const FILE_LINE_SYMBOL_RE = /([\w./@-]+\.\w+):(\d+)(?:\s+([A-Za-z_$][\w$]*))?/gu;
 /** Issue/PR-ссылка — «#1094», «Issue #933», «PR #746». */
 const ISSUE_RE = /#(\d+)\b/gu;
+/** date: время-ограниченный долг — «date:2026-08-01» (после порога гаснет/проверить снятие). */
+const DATE_RE = /\bdate:(\d{4}-\d{2}-\d{2})\b/gu;
+/** absent: долг «нужен файл X» — «absent:.gitleaks.toml» (гаснет, когда файл ПОЯВИТСЯ; инверсия). */
+const ABSENT_RE = /\babsent:([\w./@-]+)/gu;
 
 /**
  * Извлечь типизированные ссылки из вольного текста вещдока (M1-эвристика до миграции).
@@ -36,6 +40,12 @@ export function extractRefs(evidence) {
   }
   for (const m of text.matchAll(ISSUE_RE)) {
     refs.push({ kind: 'issue', ref: m[0], issue: Number(m[1]) });
+  }
+  for (const m of text.matchAll(DATE_RE)) {
+    refs.push({ kind: 'date', ref: m[0], date: m[1] });
+  }
+  for (const m of text.matchAll(ABSENT_RE)) {
+    refs.push({ kind: 'absent', ref: m[0], file: m[1] });
   }
   return refs;
 }
@@ -66,8 +76,18 @@ export function ageDays(dateStr, today) {
 export function validateDebt(debt, { resolveFile, today, maxAgeDays = 3 }) {
   const refs = extractRefs(debt.evidence);
   const deadRefs = [];
+  const resolvedHints = []; // сигналы, что долг ПОРА снять (date истёк / absent-файл появился)
   for (const r of refs) {
     if (r.kind === 'issue') continue; // issue-состояние решает audit (сеть), не validate
+    if (r.kind === 'date') {
+      if (String(today) > r.date) resolvedHints.push({ ref: r.ref, why: `срок истёк (${r.date}) — проверить снятие` });
+      continue;
+    }
+    if (r.kind === 'absent') {
+      // инверсия: долг «нужен файл X». Файл появился → снять; отсутствует → долг ещё жив.
+      if (resolveFile(r.file) != null) resolvedHints.push({ ref: r.ref, why: `нужный файл появился: ${r.file}` });
+      continue;
+    }
     const text = resolveFile(r.file);
     if (text == null) {
       deadRefs.push({ ref: r.ref, why: `файла нет: ${r.file}` });
@@ -79,8 +99,9 @@ export function validateDebt(debt, { resolveFile, today, maxAgeDays = 3 }) {
   }
   const age = ageDays(debt.date, today);
   const aged = debt.status === 'open' && age > maxAgeDays;
-  const verdict = deadRefs.length > 0 ? 'stale-ref' : aged ? 'aged' : 'ok';
-  return { id: debt.id, refs: refs.length, deadRefs, age, aged, verdict };
+  const verdict =
+    deadRefs.length > 0 ? 'stale-ref' : resolvedHints.length > 0 ? 'resolved-hint' : aged ? 'aged' : 'ok';
+  return { id: debt.id, refs: refs.length, deadRefs, resolvedHints, age, aged, verdict };
 }
 
 /**
@@ -228,6 +249,8 @@ export function propose(debts, validations, audits) {
     const a = aById.get(d.id);
     if (a?.verdict === 'resolved') {
       out.settle.push({ id: d.id, why: `issue #${a.issues.join('/#')} закрыт` });
+    } else if (v?.verdict === 'resolved-hint') {
+      out.settle.push({ id: d.id, why: v.resolvedHints.map((r) => r.why).join('; ') });
     } else if (v?.verdict === 'stale-ref') {
       out.supersede.push({ id: d.id, why: v.deadRefs.map((r) => r.why).join('; ') });
     } else if (extractRefs(d.evidence).length === 0 && (!a || a.verdict === 'n/a')) {
