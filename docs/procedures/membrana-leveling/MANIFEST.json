@@ -4,6 +4,10 @@
   "kitVersion": null,
   "engines": [
     "scripts/lib/membrana-leveling-disposition.mjs",
+    "scripts/lib/membrana-leveling-gate.mjs",
+    "scripts/lib/membrana-leveling-main-fill.mjs",
+    "scripts/lib/membrana-leveling-report.mjs",
+    "scripts/lib/membrana-leveling-scratch.mjs",
     "scripts/membrana-leveling-main-fill.mjs",
     "scripts/membrana-leveling-workspace-level.mjs"
   ],

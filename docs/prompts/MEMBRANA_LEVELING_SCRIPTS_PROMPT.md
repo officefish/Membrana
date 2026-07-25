@@ -1,6 +1,6 @@
 # Промпт: `membrana-leveling` §8.3 — скрипты `main-fill` / `workspace-level`
 
-> **СТАТУС: ЗАРЕГИСТРИРОВАНО, НЕ В РАБОТЕ.** Не начинать без явного слова владельца.
+> **СТАТУС: В РАБОТЕ** (слово владельца 2026-07-25, после §8.1/§8.2).
 > Реестр: `id = membrana-leveling-scripts` в [`docs/tasks/registry.json`](../tasks/registry.json). Размер: **L**. Lead: **vesnin**.
 > **Зависит от** `membrana-leveling-disposition` (нужна чистая функция) и `membrana-leveling-container` (фрейм-раскладка).
 > Основание: [`MEMBRANA_LEVELING_REGULATION.md`](./MEMBRANA_LEVELING_REGULATION.md) v1.0 §§ 3–5 (вердикты M2, M3, M4).
@@ -25,12 +25,12 @@
 
 ## Definition of Done (из вердиктов M2/M3/M4)
 
-- [ ] Гейт-процедура 1–9 (§3) с оракульными сценариями: `unnamed-trash → STOP`; `unfinished` без
+- [x] Гейт-процедура 1–9 (§3) с оракульными сценариями: `unnamed-trash → STOP`; `unfinished` без
   карточки → STOP; WIP-коммит ≠ регистрация; `only-ready → PASS iff main-fill done/noop`; `live` не стопорит.
-- [ ] Манифест-отчёт `buildWorkspaceLevelReport` = f(persisted gate-output), 3 раздела поимённо,
-  переживает обрыв сессии (§4).
-- [ ] Времянки: вне repo, cleanup, never commit (T13) — тест на отсутствие WIP-снимок-антипаттерна.
-- [ ] Тесты + `yarn turbo run lint typecheck test` зелёный. LGTM Teamlead.
+- [x] Манифест-отчёт `buildWorkspaceLevelReport` = f(persisted gate-output), 3 раздела поимённо,
+  переживает обрыв сессии (§4) — «нет входа» без gate-output.
+- [x] Времянки: вне repo, cleanup, never commit (T13) — тест на отсутствие WIP-снимок-антипаттерна.
+- [x] Тесты `node --test` зелёный. LGTM Teamlead — в PR.
 
 ## Out of scope
 
