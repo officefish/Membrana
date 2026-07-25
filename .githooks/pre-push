@@ -32,12 +32,10 @@ yarn verify:wire-sync
 
 # NB5: typecheck сужен до affected-пакетов (изменённые с origin/main + их зависимые),
 # turbo ^build держит dist свежим. Быстрее полного прогона → меньше соблазна SKIP.
-# Если origin/main недоступен (нет fetch) — fallback на полный typecheck.
-echo "pre-push [cg6/NB5]: yarn turbo run typecheck (affected)"
-if git rev-parse --verify --quiet origin/main >/dev/null; then
-  yarn turbo run typecheck --filter='...[origin/main]'
-else
-  yarn typecheck
-fi
+# #1168: вычисление affected ИСКЛЮЧАЕТ .md/.mdx (docs не влияют на типы) — иначе markdown
+# внутри пакета поднимал его билд-цепочку (vite 127 на telemetry-journal). Логика — в скрипте
+# (origin/main недоступен → полный; docs-only/корневые скрипты → skip; корневой конфиг → полный).
+echo "pre-push [cg6/NB5]: typecheck (affected без docs-триггера)"
+node scripts/prepush-typecheck-scope.mjs
 
 echo "pre-push: OK"
