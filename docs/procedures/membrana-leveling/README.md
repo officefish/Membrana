@@ -40,7 +40,7 @@
 
 | Путь | Карточка | Статус |
 |------|----------|--------|
-| `scripts/lib/membrana-leveling-disposition.mjs` | §8.2 `membrana-leveling-disposition` | stub → реализация |
+| `scripts/lib/membrana-leveling-disposition.mjs` | §8.2 `membrana-leveling-disposition` | `disposition` + порты ctx — [`DISPOSITION.md`](./DISPOSITION.md) |
 | `scripts/membrana-leveling-main-fill.mjs` | §8.3 `membrana-leveling-scripts` | stub → реализация |
 | `scripts/membrana-leveling-workspace-level.mjs` | §8.3 `membrana-leveling-scripts` | stub → реализация |
 
