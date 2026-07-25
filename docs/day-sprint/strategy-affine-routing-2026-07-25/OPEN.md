@@ -62,8 +62,8 @@ strategy.mmbrn.tech  → Affine self-host                 — THIS sprint
 |-------|-------------|------:|------|--------|-----|--------|
 | **W0** | `sar-w0-brief` | [#1157](https://github.com/officefish/Membrana/issues/1157) | vesnin | [`SAR_W0_BRIEF_PROMPT.md`](../../prompts/SAR_W0_BRIEF_PROMPT.md) | OPEN + Issues + ACTIVE Also open; Focus цел; lock strategy + scope B | **done** (PR [#1163](https://github.com/officefish/Membrana/pull/1163)) |
 | **W1** | `sar-w1-canon-dns` | [#1158](https://github.com/officefish/Membrana/issues/1158) | ozhegov | [`SAR_W1_CANON_DNS_PROMPT.md`](../../prompts/SAR_W1_CANON_DNS_PROMPT.md) | DNS_DOMAIN_POLICY + STRATEGY_AFFINE_DEPLOY; capacity gate; owner DNS checklist | **done** |
-| **W2** | `sar-w2-affine-install` | [#1159](https://github.com/officefish/Membrana/issues/1159) | ozhegov | [`SAR_W2_AFFINE_INSTALL_PROMPT.md`](../../prompts/SAR_W2_AFFINE_INSTALL_PROMPT.md) | Compose + Caddy site-block; secrets off-git; up after gate; LE | **done when this PR merges** |
-| **W3** | `sar-w3-smoke-surface` | [#1160](https://github.com/officefish/Membrana/issues/1160) | ozhegov | [`SAR_W3_SMOKE_SURFACE_PROMPT.md`](../../prompts/SAR_W3_SMOKE_SURFACE_PROMPT.md) | HTTPS UI; owner admin; panel/docs note; backup path | open |
+| **W2** | `sar-w2-affine-install` | [#1159](https://github.com/officefish/Membrana/issues/1159) | ozhegov | [`SAR_W2_AFFINE_INSTALL_PROMPT.md`](../../prompts/SAR_W2_AFFINE_INSTALL_PROMPT.md) | Compose + Caddy site-block; secrets off-git; up after gate; LE | **done** (PR [#1179](https://github.com/officefish/Membrana/pull/1179)) |
+| **W3** | `sar-w3-smoke-surface` | [#1160](https://github.com/officefish/Membrana/issues/1160) | ozhegov | [`SAR_W3_SMOKE_SURFACE_PROMPT.md`](../../prompts/SAR_W3_SMOKE_SURFACE_PROMPT.md) | HTTPS UI; owner admin; panel/docs note; backup path | **done when this PR merges** |
 | **W4** | `sar-w4-closure` | [#1161](https://github.com/officefish/Membrana/issues/1161) | vesnin | [`SAR_W4_CLOSURE_PROMPT.md`](../../prompts/SAR_W4_CLOSURE_PROMPT.md) | CLOSURE + archive; ACTIVE/LOG; VDS upgrade note if needed | open |
 
 ## Инварианты (R1–R5)
@@ -84,7 +84,7 @@ strategy.mmbrn.tech  → Affine self-host                 — THIS sprint
 ## Owner checklist (не агент)
 
 - [x] DNS: `strategy` → IP office VDS (Timeweb DNS tab) — gate `[go]` 2026-07-25.
-- [ ] Первый admin Affine в UI: открыть https://strategy.mmbrn.tech/ → создать admin (агент bootstrap **не** делает).
+- [x] Первый admin Affine в UI: https://strategy.mmbrn.tech/ — владелец «Готово» 2026-07-25 (druid / feedback@mmbrn.ru; email verify не требуется в v1).
 - [ ] При OOM/диске — апгрейд тарифа (не «ещё контейнер»).
 
 ## Gate checklist (W0)
@@ -109,8 +109,16 @@ strategy.mmbrn.tech  → Affine self-host                 — THIS sprint
 - [x] Caddy `strategy.caddy` + LE на `strategy.mmbrn.tech` (HTTPS 302 → Affine)
 - [x] Секреты только в `/opt/membrana-affine/.env` (вне git); `yarn affine:install`
 - [x] Post-install: `docker stats` + MemAvailable → заметка ниже
-- [ ] Owner: первый admin в UI (не агент)
-- [ ] PR W2 merges (Closes #1159)
+- [x] Owner: первый admin в UI (не агент) — «Готово» 2026-07-25
+- [x] PR W2 merges (Closes #1159) — [#1179](https://github.com/officefish/Membrana/pull/1179)
+
+## Gate checklist (W3)
+
+- [x] HTTPS smoke: `https://strategy.mmbrn.tech/` → **HTTP 200** `text/html` AFFiNE UI (не `/admin/setup`)
+- [x] Admin bootstrap — чеклист владельца отмечен («Готово» 2026-07-25)
+- [x] Surface: panel раздел «Стратегия» → `https://strategy.mmbrn.tech` + [`SURFACE.md`](../../containers/strategic-docs/SURFACE.md)
+- [x] Backup volumes path + процедура в [`STRATEGY_AFFINE_DEPLOY.md`](../../deploy/STRATEGY_AFFINE_DEPLOY.md) (post-W2 размеры)
+- [ ] PR W3 merges (Closes #1160)
 
 ## Post-install capacity (W2)
 
@@ -120,5 +128,15 @@ strategy.mmbrn.tech  → Affine self-host                 — THIS sprint
 | MemAvailable | **2.32 GiB** (2486005760 B; было 2.78 GiB pre-up; total 3.8 GiB) |
 | Disk `/` avail | **14.24 GiB** (15292116992 B; 48G · used 34G · 70%) |
 | `docker stats` | `affine_server` ~165 MiB / 1.5 GiB · `affine_postgres` ~57 MiB / 512 MiB · `affine_redis` ~6 MiB / 256 MiB · office-api ~49 MiB |
-| HTTPS smoke | `https://strategy.mmbrn.tech/` → **HTTP 302** `Location: /admin/setup` (Affine admin bootstrap) |
+| HTTPS smoke (W2) | `https://strategy.mmbrn.tech/` → **HTTP 302** `Location: /admin/setup` (до admin) |
 | Bind | `127.0.0.1:3010` only (R3) |
+
+## W3 smoke + volumes (post-admin)
+
+| Метрика | Факт |
+|---------|------|
+| Дата | 2026-07-25 (после admin bootstrap владельцем) |
+| HTTPS | `https://strategy.mmbrn.tech/` → **HTTP 200** · `Content-Type: text/html` · `<title>AFFiNE</title>` · **не** `/admin/setup` |
+| Containers | `affine_server` / `affine_postgres` / `affine_redis` Up (healthy) |
+| Volumes | postgres ~68 MiB · storage ~4 KiB · config ~8 KiB · backups/ готов, пуст до первого dump |
+| Surface | panel `strategic-docs` → https://strategy.mmbrn.tech · docs [`SURFACE.md`](../../containers/strategic-docs/SURFACE.md) |

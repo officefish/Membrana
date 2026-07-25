@@ -19,7 +19,14 @@ yarn affine:install                # → node scripts/_ssh-affine-install.mjs
 После up: первый **admin** создаёт владелец в UI `https://strategy.mmbrn.tech`
 (агент admin bootstrap не делает — W2/W3 owner checklist).
 
-## Backup path
+## Backup path (W3)
 
-`/opt/membrana-affine/backups/YYYY-MM-DD/` — детализация dump в W3.
-Volumes: `postgres/`, `storage/`, `config/`.
+| Путь | Назначение |
+|------|------------|
+| `/opt/membrana-affine/postgres/` | Postgres data |
+| `/opt/membrana-affine/storage/` | blobs |
+| `/opt/membrana-affine/config/` | private key / config |
+| `/opt/membrana-affine/backups/YYYY-MM-DD/` | снимки (`pg_dump` + tar storage/config) |
+
+Процедура и post-W2 размеры — [`STRATEGY_AFFINE_DEPLOY.md`](../../docs/deploy/STRATEGY_AFFINE_DEPLOY.md) § Backup volumes.
+Surface UI: https://strategy.mmbrn.tech · panel раздел «Стратегия».
