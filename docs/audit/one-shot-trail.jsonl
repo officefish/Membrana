@@ -1,0 +1,2 @@
+# one-shot-trail.jsonl — события one-shot (не реестр задач). M5B / #1065
+# Fields: {timestamp, path, slug, headRev, status: "merged"|"cancelled"}

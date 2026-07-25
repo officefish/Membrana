@@ -5,10 +5,16 @@
  * Допуск (штамп S) остаётся у тимлида — самоаттестация исключена.
  *
  * Канон: docs/seanses/tasks-workshop-m5a-pick-2026-07-23.md · EPIC V8.
+ * Анти-дробление (M5B / #1065 / V9): options.trailRecords → история + штраф цепочки.
  * Предикат S по диффу — соседний `evaluateOneShotS` (#1022); здесь — до диффа.
  */
 
 import { isForbiddenServerPath, ONE_SHOT_S_DEFAULTS } from './one-shot-s-predicate.mjs';
+import {
+  applyTrailScorePenalty,
+  historyStatsFromTrail,
+  loadShotHistory,
+} from './one-shot-trail.mjs';
 
 /** @typedef {'ready' | 'pending' | 'error'} DataReadiness */
 /** @typedef {'unknown' | 'low' | 'medium' | 'critical'} ServerImpactClue */
@@ -28,6 +34,9 @@ import { isForbiddenServerPath, ONE_SHOT_S_DEFAULTS } from './one-shot-s-predica
  * @property {string} reasoning
  * @property {RankSource[]} sources
  * @property {ServerImpactClue} serverImpactClue
+ * @property {boolean} [shotChain]
+ * @property {boolean} [riskOverride]
+ * @property {number} [adjacentShots]
  */
 
 /**
@@ -163,7 +172,7 @@ export function scoreScopeClarity(card) {
  */
 export function scoreHistoricalReputation(card, history) {
   if (history == null) {
-    return { value: 0.5, readiness: 'pending', note: 'no history feed (trail — v9)' };
+    return { value: 0.5, readiness: 'pending', note: 'no history feed' };
   }
   if (typeof history !== 'object') {
     return { value: 0.5, readiness: 'error', note: 'history malformed' };
@@ -229,23 +238,47 @@ export function computeScore(sources) {
 }
 
 /**
+ * Пути-пробы для смежности trail: diff → иначе promptPath.
+ *
+ * @param {object} card
+ * @param {string[] | undefined} diffPaths
+ * @returns {string[]}
+ */
+export function candidateProbePaths(card, diffPaths) {
+  if (Array.isArray(diffPaths) && diffPaths.length > 0) {
+    return diffPaths.filter((p) => typeof p === 'string' && p.trim());
+  }
+  const prompt = typeof card?.promptPath === 'string' ? card.promptPath.trim() : '';
+  return prompt ? [prompt] : [];
+}
+
+/**
  * @param {RankedCandidate} c
  * @returns {string}
  */
 function formatReasoning(c) {
   const bits = c.sources.map((s) => `${s.id}=${s.value.toFixed(2)}[${s.dataReadiness}]`);
-  return `score=${c.score.toFixed(3)}; server=${c.serverImpactClue}; ${bits.join(' · ')}`;
+  let trail = '';
+  if (c.shotChain) {
+    trail = c.riskOverride
+      ? `; trail=chain(${c.adjacentShots ?? '?'}) [risk-override]`
+      : `; trail=chain(${c.adjacentShots ?? '?'}) penalty`;
+  }
+  return `score=${c.score.toFixed(3)}; server=${c.serverImpactClue}; ${bits.join(' · ')}${trail}`;
 }
 
 /**
  * rankOneShotCandidates(cards, options) → Result
  *
- * Чистая: без fs/сети. История и дифф — только из options.
+ * Чистая: без fs/сети. История, дифф и trail — только из options.
  *
  * @param {object[]} cards
  * @param {{
  *   history?: Record<string, { successRate?: number, shots?: number }> | null,
  *   diffByCard?: Record<string, string[]>,
+ *   trailRecords?: import('./one-shot-trail.mjs').ShotRecord[],
+ *   riskOverride?: boolean,
+ *   now?: number,
  * }} [options]
  * @returns {OneShotRankResult}
  */
@@ -254,6 +287,16 @@ export function rankOneShotCandidates(cards, options = {}) {
   const candidates = [];
   /** @type {ExcludedCandidate[]} */
   const excluded = [];
+
+  const trailRecords = Array.isArray(options.trailRecords) ? options.trailRecords : null;
+  const history =
+    options.history !== undefined
+      ? options.history
+      : trailRecords != null && trailRecords.length > 0
+        ? historyStatsFromTrail(trailRecords)
+        : null;
+  const riskOverride = Boolean(options.riskOverride);
+  const now = Number.isFinite(options.now) ? Number(options.now) : undefined;
 
   for (const card of cards ?? []) {
     const cardId = card?.id != null ? String(card.id) : '(без id)';
@@ -281,7 +324,7 @@ export function rankOneShotCandidates(cards, options = {}) {
     const sizeValue = sizeNormFromHours(/** @type {number} */ (sizeInfo.hours));
     const risk = serverImpactRisk(server.clue);
     const scope = scoreScopeClarity(card);
-    const hist = scoreHistoricalReputation(card, options.history);
+    const hist = scoreHistoricalReputation(card, history);
 
     /** @type {RankSource[]} */
     const sources = [
@@ -296,7 +339,23 @@ export function rankOneShotCandidates(cards, options = {}) {
       { id: 'history', value: hist.value, dataReadiness: hist.readiness, note: hist.note },
     ];
 
-    const score = computeScore(sources);
+    let score = computeScore(sources);
+    let shotChain = false;
+    let adjacentShots = 0;
+    let overrideApplied = false;
+
+    if (trailRecords) {
+      const probe = candidateProbePaths(card, diffPaths);
+      if (probe.length > 0) {
+        const adjacent = loadShotHistory(trailRecords, probe, now != null ? { now } : {});
+        adjacentShots = adjacent.length;
+        const pen = applyTrailScorePenalty(score, adjacentShots, riskOverride);
+        score = pen.score;
+        shotChain = pen.chained;
+        overrideApplied = pen.overridden;
+      }
+    }
+
     if (score < SCORE_THRESHOLD) {
       excluded.push({ cardId, reasons: [`score<${SCORE_THRESHOLD} (${score.toFixed(3)})`] });
       continue;
@@ -309,6 +368,9 @@ export function rankOneShotCandidates(cards, options = {}) {
       reasoning: '',
       sources,
       serverImpactClue: server.clue,
+      shotChain: shotChain || undefined,
+      riskOverride: overrideApplied || undefined,
+      adjacentShots: shotChain ? adjacentShots : undefined,
     };
     ranked.reasoning = formatReasoning(ranked);
     candidates.push(ranked);

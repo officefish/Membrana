@@ -27,6 +27,5 @@
 
 ## Первый шаг
 
-✅ **g0…v7 закрыты** (v7: PR #1139 / archive #1148; #1014 closed).
-В работе: **`tw-v8-oneshot-rank`** (#1064 / DRU-412) — `rankOneShotCandidates`, не вердикт.
-Дальше: v9 (`one-shot-trail.jsonl`).
+✅ **g0…v8 закрыты** (v8: PR #1150 / archive #1151).
+В работе: **`tw-v9-trail`** (#1065 / DRU-413) — `one-shot-trail.jsonl` анти-дробление.

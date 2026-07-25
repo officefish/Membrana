@@ -32,15 +32,19 @@ rankOneShotCandidates(cards, options?) → {
 
 Каждый источник несёт `dataReadiness ∈ {ready, pending, error}`.
 
-История по умолчанию `pending` (след — фаза v9 / `one-shot-trail.jsonl`).
+История: без feed — `pending`. CLI по умолчанию читает
+[`one-shot-trail.jsonl`](../audit/one-shot-trail.jsonl) (фаза v9) → `historicalReputation`
++ штраф цепочки (см. [`ONE_SHOT_TRAIL.md`](./ONE_SHOT_TRAIL.md)).
 
 ## CLI
 
 ```bash
-yarn one-shot:rank              # active size=S
+yarn one-shot:rank              # active size=S (+ trail)
 yarn one-shot:rank --all        # все active
 yarn one-shot:rank <id> --json
 yarn one-shot:rank --history path/to/stats.json
+yarn one-shot:rank --no-trail
+yarn one-shot:rank --override-one-shot-limit
 ```
 
 Оболочка: [`scripts/one-shot-rank.mjs`](../../scripts/one-shot-rank.mjs).
