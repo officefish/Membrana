@@ -158,6 +158,7 @@
     "panel:invite": "node scripts/panel-invite.mjs",
     "panel:dns-gate": "node scripts/panel-dns-gate.mjs",
     "affine:capacity-gate": "node scripts/affine-capacity-gate.mjs",
+    "affine:install": "node scripts/_ssh-affine-install.mjs",
     "insight:help": "node scripts/insight.mjs help",
     "rag:query": "node scripts/rag-query.mjs",
     "rag:index": "yarn workspace @membrana/rag-service build && yarn workspace @membrana/rag-service run index -- --full",

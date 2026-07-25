@@ -1,0 +1,10 @@
+# Caddy v2 — production site block for strategy.mmbrn.tech (SAR W2 / #1159)
+# Template: {{STRATEGY_DOMAIN}} / {{AFFINE_PORT}}
+# → /etc/caddy/Caddyfile.d/strategy.caddy (рядом с office.caddy / panel.caddy).
+# TLS: Let's Encrypt — только после DNS gate [go] (урок OM4-C).
+# Не править office.caddy / panel.caddy; не дублировать import Caddyfile.d.
+
+{{STRATEGY_DOMAIN}} {
+	encode gzip
+	reverse_proxy 127.0.0.1:{{AFFINE_PORT}}
+}
