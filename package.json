@@ -346,7 +346,9 @@
     "task:invariants:repair": "node scripts/task-invariants-repair.mjs",
     "tasks:sync-check": "node scripts/task-invariants.mjs",
     "one-shot:rank": "node scripts/one-shot-rank.mjs",
-    "one-shot:trail": "node scripts/one-shot-trail.mjs"
+    "one-shot:trail": "node scripts/one-shot-trail.mjs",
+    "membrana-leveling:main-fill": "node scripts/membrana-leveling-main-fill.mjs",
+    "membrana-leveling:workspace-level": "node scripts/membrana-leveling-workspace-level.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
