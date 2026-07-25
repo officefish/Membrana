@@ -21,6 +21,8 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { isMergeBlocked, reconcileMergeability, resolveRepoSlug, fetchRestPullMergeFields } from './lib/pr-mergeability.mjs';
+
 const RED_CONCLUSIONS = new Set([
   'FAILURE',
   'ERROR',
@@ -190,7 +192,26 @@ function readPr(number) {
     `gh pr view ${ref}--json number,url,state,mergeable,mergeStateStatus,headRefOid,statusCheckRollup,reviewDecision`,
     { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], timeout: 30000 },
   ).trim();
-  return JSON.parse(raw);
+  const pr = JSON.parse(raw);
+  try {
+    const repoSlug = resolveRepoSlug(execFileSync);
+    const restSnap = fetchRestPullMergeFields(execFileSync, repoSlug, pr.number ?? number);
+    const reconciled = reconcileMergeability(
+      { mergeable: pr.mergeable, mergeStateStatus: pr.mergeStateStatus, headRefOid: pr.headRefOid },
+      restSnap,
+    );
+    if (reconciled.mergeabilitySource === 'rest-recheck') {
+      console.log(
+        `[pr:wait] mergeability rest-recheck (#1028): graphql ${reconciled.graphqlStale?.mergeable}/${reconciled.graphqlStale?.mergeStateStatus} → ${reconciled.mergeable}/${reconciled.mergeStateStatus}`,
+      );
+    }
+    pr.mergeable = reconciled.mergeable;
+    pr.mergeStateStatus = reconciled.mergeStateStatus;
+    if (reconciled.headRefOid) pr.headRefOid = reconciled.headRefOid;
+  } catch {
+    /* graphql-only fallback */
+  }
+  return pr;
 }
 
 function report(pr, checks) {
@@ -311,9 +332,7 @@ async function main() {
         return;
       }
 
-      const conflict =
-        (pr.mergeable || '').toUpperCase() === 'CONFLICTING' ||
-        (pr.mergeStateStatus || '').toUpperCase() === 'DIRTY';
+      const conflict = isMergeBlocked(pr);
       if (checks.state === 'none' && conflict) {
         console.error(`[pr:wait] ${explainNoChecks(pr)}`);
         clearCheckpoint(String(pr.number));

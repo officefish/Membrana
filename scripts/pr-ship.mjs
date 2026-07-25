@@ -32,6 +32,7 @@ import { fileURLToPath } from 'node:url';
 
 import { classifyWorktree, parseWorktreeCard } from './lib/classify-worktree.mjs';
 import { makeLongTempDir } from './lib/long-temp-path.mjs';
+import { readMergeabilityWithRestRecheck } from './lib/pr-mergeability.mjs';
 
 const TRAILER = 'Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>';
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -64,16 +65,12 @@ export function assertPrMergeableForShip(snap = {}) {
 export function readPrMergeability(opts = {}) {
   const run = opts.run ?? execFileSync;
   try {
-    const raw = run(
-      'gh',
-      ['pr', 'view', '--json', 'mergeable,mergeStateStatus,headRefName'],
-      { encoding: 'utf8' },
-    );
-    const parsed = JSON.parse(raw);
+    const snap = readMergeabilityWithRestRecheck(run, opts.prNumber ?? null);
     return {
-      mergeable: parsed.mergeable ?? null,
-      mergeStateStatus: parsed.mergeStateStatus ?? null,
-      branch: parsed.headRefName ?? opts.branch ?? null,
+      mergeable: snap.mergeable ?? null,
+      mergeStateStatus: snap.mergeStateStatus ?? null,
+      branch: snap.branch ?? opts.branch ?? null,
+      mergeabilitySource: snap.mergeabilitySource ?? null,
     };
   } catch {
     return { mergeable: null, mergeStateStatus: null, branch: opts.branch ?? null };
