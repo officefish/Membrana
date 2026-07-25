@@ -61,8 +61,8 @@ strategy.mmbrn.tech  → Affine self-host                 — THIS sprint
 | Phase | Registry id | Issue | Lead | Prompt | DoD | Status |
 |-------|-------------|------:|------|--------|-----|--------|
 | **W0** | `sar-w0-brief` | [#1157](https://github.com/officefish/Membrana/issues/1157) | vesnin | [`SAR_W0_BRIEF_PROMPT.md`](../../prompts/SAR_W0_BRIEF_PROMPT.md) | OPEN + Issues + ACTIVE Also open; Focus цел; lock strategy + scope B | **done** (PR [#1163](https://github.com/officefish/Membrana/pull/1163)) |
-| **W1** | `sar-w1-canon-dns` | [#1158](https://github.com/officefish/Membrana/issues/1158) | ozhegov | [`SAR_W1_CANON_DNS_PROMPT.md`](../../prompts/SAR_W1_CANON_DNS_PROMPT.md) | DNS_DOMAIN_POLICY + STRATEGY_AFFINE_DEPLOY; capacity gate; owner DNS checklist | **done when this PR merges** |
-| **W2** | `sar-w2-affine-install` | [#1159](https://github.com/officefish/Membrana/issues/1159) | ozhegov | [`SAR_W2_AFFINE_INSTALL_PROMPT.md`](../../prompts/SAR_W2_AFFINE_INSTALL_PROMPT.md) | Compose + Caddy site-block; secrets off-git; up after gate; LE | open — **не начинать без слова владельца** |
+| **W1** | `sar-w1-canon-dns` | [#1158](https://github.com/officefish/Membrana/issues/1158) | ozhegov | [`SAR_W1_CANON_DNS_PROMPT.md`](../../prompts/SAR_W1_CANON_DNS_PROMPT.md) | DNS_DOMAIN_POLICY + STRATEGY_AFFINE_DEPLOY; capacity gate; owner DNS checklist | **done** |
+| **W2** | `sar-w2-affine-install` | [#1159](https://github.com/officefish/Membrana/issues/1159) | ozhegov | [`SAR_W2_AFFINE_INSTALL_PROMPT.md`](../../prompts/SAR_W2_AFFINE_INSTALL_PROMPT.md) | Compose + Caddy site-block; secrets off-git; up after gate; LE | **done when this PR merges** |
 | **W3** | `sar-w3-smoke-surface` | [#1160](https://github.com/officefish/Membrana/issues/1160) | ozhegov | [`SAR_W3_SMOKE_SURFACE_PROMPT.md`](../../prompts/SAR_W3_SMOKE_SURFACE_PROMPT.md) | HTTPS UI; owner admin; panel/docs note; backup path | open |
 | **W4** | `sar-w4-closure` | [#1161](https://github.com/officefish/Membrana/issues/1161) | vesnin | [`SAR_W4_CLOSURE_PROMPT.md`](../../prompts/SAR_W4_CLOSURE_PROMPT.md) | CLOSURE + archive; ACTIVE/LOG; VDS upgrade note if needed | open |
 
@@ -83,8 +83,8 @@ strategy.mmbrn.tech  → Affine self-host                 — THIS sprint
 
 ## Owner checklist (не агент)
 
-- [ ] DNS: `strategy` → IP office VDS (Timeweb DNS tab).
-- [ ] Первый admin Affine в UI.
+- [x] DNS: `strategy` → IP office VDS (Timeweb DNS tab) — gate `[go]` 2026-07-25.
+- [ ] Первый admin Affine в UI: открыть https://strategy.mmbrn.tech/ → создать admin (агент bootstrap **не** делает).
 - [ ] При OOM/диске — апгрейд тарифа (не «ещё контейнер»).
 
 ## Gate checklist (W0)
@@ -100,4 +100,25 @@ strategy.mmbrn.tech  → Affine self-host                 — THIS sprint
 - [x] `DNS_DOMAIN_POLICY.md` — слот `strategy.mmbrn.tech` → Affine; docs/harness/office/panel не трогать
 - [x] `STRATEGY_AFFINE_DEPLOY.md` — layout, Caddy notes, secrets, backup path, owner DNS
 - [x] `yarn affine:capacity-gate` — пороги MemAvailable / disk
-- [ ] PR W1 merges (Closes #1158)
+- [x] PR W1 merges (Closes #1158)
+
+## Gate checklist (W2)
+
+- [x] `yarn affine:capacity-gate` → `[go]` перед `compose up` (2.78 GiB / 15.87 GiB)
+- [x] `/opt/membrana-affine` up (app + postgres + redis); bind `127.0.0.1:3010`
+- [x] Caddy `strategy.caddy` + LE на `strategy.mmbrn.tech` (HTTPS 302 → Affine)
+- [x] Секреты только в `/opt/membrana-affine/.env` (вне git); `yarn affine:install`
+- [x] Post-install: `docker stats` + MemAvailable → заметка ниже
+- [ ] Owner: первый admin в UI (не агент)
+- [ ] PR W2 merges (Closes #1159)
+
+## Post-install capacity (W2)
+
+| Метрика | Факт |
+|---------|------|
+| Дата | 2026-07-25 (после `yarn affine:install`) |
+| MemAvailable | **2.32 GiB** (2486005760 B; было 2.78 GiB pre-up; total 3.8 GiB) |
+| Disk `/` avail | **14.24 GiB** (15292116992 B; 48G · used 34G · 70%) |
+| `docker stats` | `affine_server` ~165 MiB / 1.5 GiB · `affine_postgres` ~57 MiB / 512 MiB · `affine_redis` ~6 MiB / 256 MiB · office-api ~49 MiB |
+| HTTPS smoke | `https://strategy.mmbrn.tech/` → **HTTP 302** `Location: /admin/setup` (Affine admin bootstrap) |
+| Bind | `127.0.0.1:3010` only (R3) |

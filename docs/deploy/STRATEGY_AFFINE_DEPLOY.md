@@ -76,9 +76,21 @@ Baseline 2026-07-25: MemAvailable ~2.8 GiB, disk avail ~16G — тонкий з�
 | `/opt/membrana-affine/config/` | Affine config (private key и т.п.) |
 | `/opt/membrana-affine/backups/` | точка бэкапа volumes (cron/ручной dump — W3) |
 
-Опционально в репо (шаблон без секретов, W2): `deploy/affine/` — compose overlay /
-документированный pin upstream AFFiNE stable compose. Живые данные и `.env` **не**
-коммитить.
+В репо (шаблон без секретов): [`deploy/affine/`](../../deploy/affine/) — compose pin
+upstream AFFiNE stable + bind `127.0.0.1` + memory limits; Caddy template
+[`deploy/Caddyfile.strategy.template`](../../deploy/Caddyfile.strategy.template).
+Живые данные и `.env` **не** коммитить.
+
+### Install (W2)
+
+```bash
+yarn affine:capacity-gate   # [go] обязателен
+yarn panel:dns-gate --domain strategy.mmbrn.tech --expect 176.124.218.4
+yarn affine:install         # scripts/_ssh-affine-install.mjs → /opt/membrana-affine
+```
+
+После up: `https://strategy.mmbrn.tech` → Affine UI / setup. **Первый admin** —
+только владелец в браузере (агент bootstrap не делает).
 
 ### Compose constraints (R3)
 
@@ -155,6 +167,7 @@ strategy.mmbrn.tech {
 | Команда | Когда |
 |---------|--------|
 | `yarn affine:capacity-gate` | перед W2 `up` (и при сомнении в запасе) |
+| `yarn affine:install` | W2: compose + Caddy `strategy.caddy` + up (после capacity [go]) |
 | `yarn office:ssh '…'` | readonly probe / `docker stats` |
 | `yarn panel:dns-gate --domain strategy.mmbrn.tech --expect 176.124.218.4` | перед LE |
 | Office deploy | [`BACKGROUND_OFFICE_DEPLOY.md`](./BACKGROUND_OFFICE_DEPLOY.md) — не смешивать стеки |
