@@ -1,17 +1,17 @@
 # PRECEDENTS — снимок-реестр (производный, руками не править)
 
-> Meta · Date: 2026-07-25 · SHA: 31f9a7c2 · Source: docs/precedents/*.md
+> Meta · Date: 2026-07-25 · SHA: 7f5f9a68 · Source: docs/precedents/*.md
 > Пересобрать: `yarn precedent:register --rebuild`. Источник истины — файлы прецедентов.
 
-Всего прецедентов: **15** · различных классов: **5** · доля рецидива: **67%** (ориентир ≤15%).
+Всего прецедентов: **16** · различных классов: **5** · доля рецидива: **69%** (ориентир ≤15%).
 
 ## Рецидив по классам
 
 | Класс | Прецедентов |
 |-------|-------------|
+| tooling-gap | 5 ⚠ рецидив |
 | ritual-mechanics-vs-value | 4 ⚠ рецидив |
 | session-report | 4 ⚠ рецидив |
-| tooling-gap | 4 ⚠ рецидив |
 | reporting-gap | 2 ⚠ рецидив |
 | cold-start | 1 |
 
@@ -31,6 +31,7 @@
 | 2026-07-24 | session-report | [2026-07-24-align-all-worktrees-to-main](../2026-07-24-align-all-worktrees-to-main.md) | Параллельные сессии в разных worktree накопили дивергенцию; общий origin/main уш |
 | 2026-07-24 | tooling-gap | [2026-07-24-consilium-green-but-hollow](../2026-07-24-consilium-green-but-hollow.md) | LLM-процедура без служебного фрейма «провода» молча деградирует: сигнал утоплен  |
 | 2026-07-24 | tooling-gap | [2026-07-24-evening-ritual-conduct-channel-gap-and-swallow-links](../2026-07-24-evening-ritual-conduct-channel-gap-and-swallow-links.md) | Объявленный шаг ритуала (вечер) не покрыт тулингом на своём пути: каналы только  |
+| 2026-07-25 | tooling-gap | [2026-07-25-bridge-open-three-days-close-step-has-no-carrier](../2026-07-25-bridge-open-three-days-close-step-has-no-carrier.md) | Канон описывает шаг жизненного цикла (bridge-close) как обязанность соседней про |
 | 2026-07-25 | tooling-gap | [2026-07-25-bridge-room-declared-cast-without-carriers](../2026-07-25-bridge-room-declared-cast-without-carriers.md) | Агент оформляет декларацию (состав комнаты, ответственный в карточке) в артефакт |
 | 2026-07-25 | ritual-mechanics-vs-value | [2026-07-25-morning-ritual-silent-magistral-inherit-and-dead-channels](../2026-07-25-morning-ritual-silent-magistral-inherit-and-dead-channels.md) | Ритуал считает гейт магистрали пройденным по наличию любого sources[0], не по св |
 | 2026-07-25 | session-report | [2026-07-25-tasks-workshop-map-lookup](../2026-07-25-tasks-workshop-map-lookup.md) | Дом docs/tasks имеет primary-workshop с манифестом и границей V2; знание размаза |
