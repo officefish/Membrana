@@ -1,6 +1,23 @@
 {
   "tasks": [
     {
+      "id": "readme-managed-template",
+      "title": "docs/tasks/README.md — собственный Template в движке стратегических документов; снять карантин sync",
+      "promptPath": "docs/prompts/README_MANAGED_TEMPLATE_PROMPT.md",
+      "githubIssue": 1201,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-25",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "kits-pins-wiring",
       "title": "Описи китов: инструмент kits:pins, выравнивание трёх китов, зуб сверки на pre-push + CI",
       "promptPath": "docs/prompts/KITS_PINS_WIRING_PROMPT.md",
@@ -9039,7 +9056,7 @@
       "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
       "githubIssue": 104,
       "linearId": null,
-      "size": "XS",
+      "size": "S",
       "status": "archived",
       "parentEpic": "device-board-cabinet-hotfix",
       "createdAt": "2026-06-18",
@@ -9061,7 +9078,7 @@
       "promptPath": "docs/prompts/DEVICE_BOARD_CABINET_HOTFIX_EPIC_PROMPT.md",
       "githubIssue": 104,
       "linearId": null,
-      "size": "XS",
+      "size": "S",
       "status": "archived",
       "parentEpic": "device-board-cabinet-hotfix",
       "createdAt": "2026-06-18",
@@ -12762,6 +12779,7 @@
       "status": "archived",
       "title": "Device-board async pipeline: Promise nodes, latent Sequence, non-blocking runtime",
       "promptPath": "docs/prompts/DEVICE_BOARD_ASYNC_PIPELINE_EPIC_PROMPT.md",
+      "size": "L",
       "githubIssue": 176,
       "leadPersona": "vesnin",
       "supportPersonas": [
@@ -15094,7 +15112,7 @@
       "promptPath": null,
       "githubIssue": null,
       "linearId": null,
-      "size": "XS",
+      "size": "S",
       "status": "archived",
       "createdAt": "2026-06-27",
       "sprintKind": "day-sprint",
@@ -15179,7 +15197,7 @@
       "promptPath": null,
       "githubIssue": null,
       "linearId": null,
-      "size": "XS",
+      "size": "S",
       "status": "archived",
       "createdAt": "2026-06-27",
       "sprintKind": "day-sprint",
@@ -16002,7 +16020,7 @@
       "archiveNotes": null,
       "id": "nb-vlr-0-gate",
       "title": "NB0: gate — baseline scoped CI + фиксация модели хранения библиотеки",
-      "size": "XS",
+      "size": "S",
       "parentEpic": "vdr-label-roundtrip-night-build",
       "dependsOn": [
         "vdr-label-roundtrip-night-build"
@@ -16090,7 +16108,7 @@
       "archiveNotes": null,
       "id": "nb-vlr-4-docs",
       "title": "NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip",
-      "size": "XS",
+      "size": "S",
       "parentEpic": "vdr-label-roundtrip-night-build",
       "dependsOn": [
         "nb-vlr-2-labels-merge-script",
