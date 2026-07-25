@@ -6,9 +6,11 @@
  * DEBTS.md чистыми функциями; fs — у вызывающего (bridge.mjs).
  */
 
-/** @typedef {{id: string, debt: string, evidence: string, status: 'open'|'settled', date: string}} Debt */
+/** @typedef {{id: string, debt: string, evidence: string, status: 'open'|'settled', date: string, theme: string}} Debt */
 
-const ROW_RE = /^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*(open|settled)\s*\|\s*([^|]+?)\s*\|\s*$/u;
+// M1 (контракт вещдока, ратифицирован 25.07): `тема` — трейлинг-колонка. Старые 5-колоночные
+// строки парсятся с theme='' (обратная совместимость), новые несут тему для кластер-счёта.
+const ROW_RE = /^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*(open|settled)\s*\|\s*([^|]+?)\s*\|(?:\s*([^|]*?)\s*\|)?\s*$/u;
 
 /**
  * Разобрать DEBTS.md → массив долгов (порядок сохранён — append-only лог).
@@ -21,7 +23,7 @@ export function parseDebts(md) {
     const m = ROW_RE.exec(line);
     if (!m) continue;
     if (m[1] === 'id' || /^-+$/u.test(m[1])) continue; // шапка/разделитель
-    out.push({ id: m[1], debt: m[2], evidence: m[3], status: m[4], date: m[5] });
+    out.push({ id: m[1], debt: m[2], evidence: m[3], status: m[4], date: m[5], theme: (m[6] ?? '').trim() });
   }
   return out;
 }
@@ -38,10 +40,10 @@ export function openDebts(debts) {
  * @param {{id: string, debt: string, evidence: string, date: string}} entry
  * @returns {Debt[]}
  */
-export function addDebt(debts, { id, debt, evidence, date }) {
+export function addDebt(debts, { id, debt, evidence, date, theme = '' }) {
   if (!id || !debt || !evidence) throw new Error('addDebt: нужны id, debt, evidence (вещдок обязателен)');
   if ((debts ?? []).some((d) => d.id === id)) throw new Error(`addDebt: долг «${id}» уже в реестре (append-only, не дублируем)`);
-  return [...(debts ?? []), { id, debt, evidence, status: 'open', date }];
+  return [...(debts ?? []), { id, debt, evidence, status: 'open', date, theme }];
 }
 
 /**
@@ -62,17 +64,38 @@ export function settleDebt(debts, id) {
   return next;
 }
 
+/**
+ * supersede (M3, ратифицирован 25.07): переформулировать долг С НИТЬЮ.
+ * Старый → settled (не удаляется, append-only), новый → open с обратной ссылкой на старый.
+ * В отличие от «settle + add руками» нить старая→новая не теряется. Тему наследует.
+ * @param {Debt[]} debts
+ * @param {string} oldId
+ * @param {{newId?: string, debt: string, evidence: string, date: string, theme?: string}} to
+ * @returns {Debt[]}
+ */
+export function supersedeDebt(debts, oldId, { newId, debt, evidence, date, theme }) {
+  const old = (debts ?? []).find((d) => d.id === oldId);
+  if (!old) throw new Error(`supersede: долг «${oldId}» не найден`);
+  if (old.status !== 'open') throw new Error(`supersede: «${oldId}» уже settled — переформулировать нечего`);
+  if (!debt || !evidence) throw new Error('supersede: нужны новый текст (--to) и --evidence');
+  const id = newId || `${oldId}-r2`;
+  if (debts.some((d) => d.id === id)) throw new Error(`supersede: долг «${id}» уже в реестре`);
+  const settled = settleDebt(debts, oldId);
+  return addDebt(settled, { id, debt, evidence: `${evidence} ⟵ supersedes ${oldId}`, date, theme: theme ?? old.theme });
+}
+
 /** Сериализация обратно в markdown-таблицу (детерминированно, порядок сохранён). */
 export function renderDebts(debts) {
   const head = [
     '# DEBTS — реестр техдолгов попугая (мостик, append-only)',
     '',
     '> Попугай «запомнил → не забудет»: долг не удаляется, settled лишь помечается.',
-    '> Правка — только через `yarn bridge debt add|settle --evidence`.',
+    '> Правка — только через `yarn bridge debt add|settle --evidence`. Колонка `тема` (M1) —',
+    '> ось кластер-счёта (`yarn bridge debt invariants`).',
     '',
-    '| id | долг | вещдок | статус | дата |',
-    '|----|------|--------|--------|------|',
+    '| id | долг | вещдок | статус | дата | тема |',
+    '|----|------|--------|--------|------|------|',
   ];
-  const rows = (debts ?? []).map((d) => `| ${d.id} | ${d.debt} | ${d.evidence} | ${d.status} | ${d.date} |`);
+  const rows = (debts ?? []).map((d) => `| ${d.id} | ${d.debt} | ${d.evidence} | ${d.status} | ${d.date} | ${d.theme ?? ''} |`);
   return [...head, ...rows, ''].join('\n');
 }
