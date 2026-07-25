@@ -133,6 +133,37 @@ test('realActiveCount: тема, где ВСЕ долги стухли, выпа
   assert.equal(r.realActive, 1); // 'dead' выпала (единственный долг стухший)
 });
 
+test('extractRefs: date: и absent: разбираются в свои виды', () => {
+  const refs = extractRefs('лимит date:2026-08-01; нужен absent:.gitleaks.toml');
+  assert.ok(refs.some((r) => r.kind === 'date' && r.date === '2026-08-01'));
+  assert.ok(refs.some((r) => r.kind === 'absent' && r.file === '.gitleaks.toml'));
+});
+
+test('validateDebt date: порог истёк → resolved-hint; в будущем → ok', () => {
+  const mk = () => ({ id: 'x', debt: '', evidence: 'лимит date:2026-08-01', status: 'open', date: '2026-07-25', theme: '' });
+  const past = validateDebt(mk(), { resolveFile: () => null, today: '2026-08-02' });
+  assert.equal(past.verdict, 'resolved-hint');
+  assert.match(past.resolvedHints[0].why, /срок истёк/u);
+  const future = validateDebt(mk(), { resolveFile: () => null, today: '2026-07-25' });
+  assert.equal(future.verdict, 'ok');
+});
+
+test('validateDebt absent: файл появился → resolved-hint; отсутствует → живой (ok)', () => {
+  const mk = () => ({ id: 'x', debt: '', evidence: 'нужен absent:.gitleaks.toml', status: 'open', date: '2026-07-25', theme: '' });
+  const appeared = validateDebt(mk(), { resolveFile: () => '[allowlist]', today: '2026-07-25' });
+  assert.equal(appeared.verdict, 'resolved-hint');
+  assert.match(appeared.resolvedHints[0].why, /появился/u);
+  const missing = validateDebt(mk(), { resolveFile: () => null, today: '2026-07-25' });
+  assert.equal(missing.verdict, 'ok'); // отсутствие = долг ещё жив, НЕ dead-ref
+});
+
+test('propose: resolved-hint → settle', () => {
+  const debts = [{ id: 'h', debt: '', evidence: 'date:2026-08-01', status: 'open', date: '2026-07-25', theme: 't' }];
+  const vals = [{ id: 'h', verdict: 'resolved-hint', resolvedHints: [{ ref: 'date:2026-08-01', why: 'срок истёк' }], deadRefs: [] }];
+  const p = propose(debts, vals, []);
+  assert.deepEqual(p.settle.map((s) => s.id), ['h']);
+});
+
 test('ageBucket: границы сегодня / ≤3д / >3д', () => {
   assert.equal(ageBucket(0), 'сегодня');
   assert.equal(ageBucket(3), '≤3д');
