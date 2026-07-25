@@ -1,6 +1,23 @@
 {
   "tasks": [
     {
+      "id": "readme-managed-template",
+      "title": "docs/tasks/README.md — собственный Template в движке стратегических документов; снять карантин sync",
+      "promptPath": "docs/prompts/README_MANAGED_TEMPLATE_PROMPT.md",
+      "githubIssue": 1201,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-25",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "kits-pins-wiring",
       "title": "Описи китов: инструмент kits:pins, выравнивание трёх китов, зуб сверки на pre-push + CI",
       "promptPath": "docs/prompts/KITS_PINS_WIRING_PROMPT.md",
