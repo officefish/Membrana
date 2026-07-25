@@ -678,6 +678,17 @@
       "weight": null,
       "createdAt": "2026-07-24",
       "tags": []
+    },
+    {
+      "id": "insight-server-generators-office",
+      "title": "Серверные генераторы: конверты → чистые функции office, git-роутер с очередями",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-21",
+      "tags": []
     }
   ]
 }
