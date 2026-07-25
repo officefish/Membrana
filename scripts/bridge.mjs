@@ -14,9 +14,11 @@
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 import { CLOSED, closeRoom, isOpen, openRoom } from './lib/bridge-room.mjs';
-import { addDebt, openDebts, parseDebts, renderDebts, settleDebt } from './lib/bridge-debts.mjs';
+import { addDebt, openDebts, parseDebts, renderDebts, settleDebt, supersedeDebt } from './lib/bridge-debts.mjs';
+import { validateDebt, healthMetrics, themeClusters, realActiveCount, decompose, auditDebt, propose } from './lib/bridge-debts-health.mjs';
 
 const ROOT = process.cwd();
 const STATE_PATH = resolve(ROOT, 'docs/bridge/state.json');
@@ -122,7 +124,111 @@ if (cmd === 'debt') {
     console.log(`[попугай] погашено: ${arg('id')} (${arg('evidence')}). Запись остаётся.`);
     process.exit(0);
   }
-  console.error('debt: add | settle (нужен --id и --evidence)');
+  // Резолвер файла для offline-зубов: путь как есть от корня → scripts/ → scripts/lib/
+  // (эвристика до миграции контракта M1 на типизированный ref).
+  const resolveFile = (p) => {
+    for (const cand of [p, `scripts/${p}`, `scripts/lib/${p}`]) {
+      const abs = resolve(ROOT, cand);
+      if (existsSync(abs)) return readFileSync(abs, 'utf8');
+    }
+    return null;
+  };
+  if (sub === 'validate') {
+    // ЗУБ 1 (заседание bridge-ledger-toolset, M3): живость ссылок вещдока + возраст, offline.
+    const open = openDebts(debts);
+    const vals = open.map((d) => validateDebt(d, { resolveFile, today: today() }));
+    const bad = vals.filter((v) => v.verdict !== 'ok');
+    for (const v of vals) {
+      if (v.verdict === 'stale-ref') {
+        console.log(`✗ ${v.id} · СТУХЛА ССЫЛКА: ${v.deadRefs.map((d) => d.why).join('; ')}`);
+      } else if (v.verdict === 'aged') {
+        console.log(`~ ${v.id} · без касания ${v.age} дн. (проверить, жив ли)`);
+      }
+    }
+    const h = healthMetrics(debts, vals);
+    console.log(
+      `\n[validate] заявлено open ${h.declaredOpen} · стухших ссылок ${h.staleRef} · застарелых ${h.aged} · prose ${h.prose} · реальный намёк ~${h.realActiveHint}`,
+    );
+    process.exit(bad.some((v) => v.verdict === 'stale-ref') ? 1 : 0);
+  }
+  if (sub === 'supersede') {
+    // M3: переформулировать долг с нитью (старый settled, новый open со ссылкой).
+    const oldId = arg('id');
+    if (!arg('to')) { console.error('supersede: нужен --to "новый текст долга"'); process.exit(2); }
+    if (!arg('evidence')) { console.error('supersede: нужен --evidence (чем обоснована новая формулировка)'); process.exit(2); }
+    const newId = arg('to-id') || `${oldId}-r2`;
+    saveDebts(supersedeDebt(debts, oldId, { newId, debt: arg('to'), evidence: arg('evidence'), date: today(), theme: arg('theme') }));
+    console.log(`[попугай] переформулировал: ${oldId} → ${newId}. Старый settled, нить сохранена.`);
+    process.exit(0);
+  }
+  if (sub === 'invariants') {
+    // ЗУБ 2 (M3): честное число живых + семантические кластеры по теме (M1). Offline.
+    const open = openDebts(debts);
+    const vals = open.map((d) => validateDebt(d, { resolveFile, today: today() }));
+    const count = realActiveCount(debts, vals);
+    const clusters = themeClusters(debts);
+    const h = healthMetrics(debts, vals);
+    console.log(`[invariants] заявлено open ${count.declaredOpen} → РЕАЛЬНО ~${count.realActive} тем-узлов (кластеры схлопнуты) · стухших ${count.staleRef} · prose ${h.prose}`);
+    if (clusters.length === 0) {
+      console.log('  кластеров нет (каждая тема — один долг)');
+    } else {
+      for (const c of clusters) console.log(`  ⧉ кластер «${c.theme}» (${c.ids.length}→1 узел): ${c.ids.join(', ')}`);
+    }
+    process.exit(0);
+  }
+  if (sub === 'decompose') {
+    // ЗУБ 4a (M3): раскладка по оси. Offline.
+    const axis = arg('by') || 'theme';
+    if (!['theme', 'age', 'status'].includes(axis)) { console.error('decompose: --by theme|age|status'); process.exit(2); }
+    const d = decompose(debts, axis, today());
+    console.log(`[decompose --by ${axis}]`);
+    for (const g of d.groups) console.log(`  ${String(g.count).padStart(2)} · ${g.key}: ${g.ids.join(', ')}`);
+    process.exit(0);
+  }
+  if (sub === 'audit') {
+    // ЗУБ 3 (M3): сверка issue-вещдока с main через gh. Сеть; сбой gh → unknown, не падение.
+    const resolveIssue = (n) => {
+      try {
+        const out = execFileSync('gh', ['issue', 'view', String(n), '--json', 'state', '--jq', '.state'], { encoding: 'utf8', timeout: 15_000 }).trim();
+        return out === 'CLOSED' || out === 'MERGED' ? 'resolved' : out === 'OPEN' ? 'live' : 'unknown';
+      } catch {
+        return 'unknown';
+      }
+    };
+    const open = openDebts(debts);
+    const audits = open.map((x) => auditDebt(x, { resolveIssue }));
+    for (const a of audits) {
+      if (a.verdict === 'n/a') continue;
+      const mark = a.verdict === 'resolved' ? '✓ РЕШЁН' : a.verdict === 'live' ? '· жив' : '? неясно';
+      console.log(`${mark} · ${a.id} · issue #${a.issues.join('/#')}`);
+    }
+    const resolved = audits.filter((a) => a.verdict === 'resolved').length;
+    console.log(`\n[audit] issue-долгов сверено ${audits.filter((a) => a.verdict !== 'n/a').length} · решённых по факту ${resolved}`);
+    process.exit(0);
+  }
+  if (sub === 'propose') {
+    // ЗУБ 4b (M3): синтез validate+audit+invariants → предложение действий.
+    const resolveIssue = (n) => {
+      try {
+        const out = execFileSync('gh', ['issue', 'view', String(n), '--json', 'state', '--jq', '.state'], { encoding: 'utf8', timeout: 15_000 }).trim();
+        return out === 'CLOSED' || out === 'MERGED' ? 'resolved' : out === 'OPEN' ? 'live' : 'unknown';
+      } catch {
+        return 'unknown';
+      }
+    };
+    const open = openDebts(debts);
+    const vals = open.map((x) => validateDebt(x, { resolveFile, today: today() }));
+    const audits = open.map((x) => auditDebt(x, { resolveIssue }));
+    const p = propose(debts, vals, audits);
+    const count = realActiveCount(debts, vals);
+    console.log(`═══ ПРЕДЛОЖЕНИЕ ПОПУГАЯ (open ${count.declaredOpen} → реально ~${count.realActive}) ═══`);
+    if (p.settle.length) { console.log('\n▸ SETTLE (решены по факту):'); for (const s of p.settle) console.log(`  ✔ ${s.id} — ${s.why}`); }
+    if (p.supersede.length) { console.log('\n▸ SUPERSEDE (стухла ссылка, переформулировать):'); for (const s of p.supersede) console.log(`  ~ ${s.id} — ${s.why}`); }
+    if (p.auditOpen.length) { console.log(`\n▸ AUDIT-ОТКРЫТО (prose, машиной не решить): ${p.auditOpen.join(', ')}`); }
+    if (p.hold.length) { console.log(`\n▸ HOLD (живы): ${p.hold.join(', ')}`); }
+    process.exit(0);
+  }
+  console.error('debt: add | settle | supersede | validate | invariants | audit | decompose | propose');
   process.exit(2);
 }
 
