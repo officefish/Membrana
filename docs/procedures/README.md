@@ -50,6 +50,7 @@
 | [`attribution/`](./attribution/README.md) | dynin | адрес домена ответственности (Р3); механизм — T9 |
 | [`meeting/`](./meeting/README.md) | vesnin | заседание (донор Р5) |
 | [`one-shot/`](./one-shot/README.md) | vesnin | подобранная S-правка за один проход (#1022) |
+| [`membrana-leveling/`](./membrana-leveling/README.md) | ozhegov | вечернее выравнивание workspace (регламент §8.1) |
 
 ## kitVersion (провод процедура → кит)
 

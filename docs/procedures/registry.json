@@ -307,6 +307,23 @@
         "value": true,
         "provenance": "vesnin@oneshot-ff"
       }
+    },
+    {
+      "id": "membrana-leveling",
+      "holder": "ozhegov",
+      "homePath": "docs/procedures/membrana-leveling",
+      "container": {
+        "value": true,
+        "provenance": "ozhegov@ml-81"
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": true,
+        "provenance": "ozhegov@ml-81"
+      }
     }
   ]
 }

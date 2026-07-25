@@ -121,7 +121,7 @@ gate-output)`; без входа отчёт не выдумывается («н�
 |-------|-----|--------|--------|-----------|
 | `leveling-wires` | служебный · провода | Vesnin | `preflight` | входы: `disposition` (K1), снимок dirty, LLM-канал; SoT не здесь — только доставляет |
 | `leveling-gate` | сюжетный | Vesnin | `preflight` | голова-гейт (K4): решение по disposition; без PASS полоса `frames` не открывается |
-| `leveling-main-fill` | сюжетный | Vesnin | `frames` | `ready` → `main` (T9/#700-поезд) |
+| `leveling-main-fill` | сюжетный | Ozhegov | `frames` | `ready` → `main` (T9/#700-поезд) |
 | `leveling-workspace` | сюжетный | Ozhegov | `frames` | `main` → деревья + гигиена; SoT для `isLeveled`/`legit`; материал отчёта K2 |
 | `leveling-scratch` | служебный · времянки | Dynin | `frames` | T13: времянки в `%TEMP%`/scratchpad; cleanup; **never commit** — убивает WIP-снимок-антипаттерн |
 | `leveling-deliver` | служебный · доставка | Vesnin | `post` | доставка манифест-отчёта (K2) до сервера/соседей; шов к вечернему ритуалу/`HANDOFF` |
