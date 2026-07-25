@@ -16,6 +16,8 @@
 
 **Промпт эпика:** [`STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md`](../../prompts/STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md)
 
+**Also open pointer:** [`DAY_SPRINT_ACTIVE.md`](../../DAY_SPRINT_ACTIVE.md) → Also open (Focus `tasks-workshop` цел).
+
 ---
 
 ## Цель
@@ -52,14 +54,14 @@ strategy.mmbrn.tech  → Affine self-host                 — THIS sprint
 | Disk `/` | avail **16G** (ниже комфортных 20G) |
 | Контейнеры | `membrana-office-office-api-1` (~45 MiB) |
 
-**Гейт перед W2 `compose up`:** повторный `free`/`df`; если `MemAvailable < 1.5 GiB` или `Avail < 12G` → STOP, эскалация владельцу. W1 не ставит Affine — только канон/runbook/gate notes.
+**Гейт перед W2 `compose up`:** `yarn affine:capacity-gate` (или `yarn office:ssh 'free -b; echo ---; df -B1 /'`). Если `MemAvailable < 1.5 GiB` или `Avail < 12G` → STOP, эскалация владельцу. Канон: [`STRATEGY_AFFINE_DEPLOY.md`](../../deploy/STRATEGY_AFFINE_DEPLOY.md).
 
 ## Phases
 
 | Phase | Registry id | Issue | Lead | Prompt | DoD | Status |
 |-------|-------------|------:|------|--------|-----|--------|
-| **W0** | `sar-w0-brief` | [#1157](https://github.com/officefish/Membrana/issues/1157) | vesnin | [`SAR_W0_BRIEF_PROMPT.md`](../../prompts/SAR_W0_BRIEF_PROMPT.md) | OPEN + Issues + ACTIVE Also open; Focus цел; lock strategy + scope B | **done** (this PR) |
-| **W1** | `sar-w1-canon-dns` | [#1158](https://github.com/officefish/Membrana/issues/1158) | ozhegov | [`SAR_W1_CANON_DNS_PROMPT.md`](../../prompts/SAR_W1_CANON_DNS_PROMPT.md) | DNS_DOMAIN_POLICY + STRATEGY_AFFINE_DEPLOY; capacity gate; owner DNS checklist | open |
+| **W0** | `sar-w0-brief` | [#1157](https://github.com/officefish/Membrana/issues/1157) | vesnin | [`SAR_W0_BRIEF_PROMPT.md`](../../prompts/SAR_W0_BRIEF_PROMPT.md) | OPEN + Issues + ACTIVE Also open; Focus цел; lock strategy + scope B | **done** (PR [#1163](https://github.com/officefish/Membrana/pull/1163)) |
+| **W1** | `sar-w1-canon-dns` | [#1158](https://github.com/officefish/Membrana/issues/1158) | ozhegov | [`SAR_W1_CANON_DNS_PROMPT.md`](../../prompts/SAR_W1_CANON_DNS_PROMPT.md) | DNS_DOMAIN_POLICY + STRATEGY_AFFINE_DEPLOY; capacity gate; owner DNS checklist | **done when this PR merges** |
 | **W2** | `sar-w2-affine-install` | [#1159](https://github.com/officefish/Membrana/issues/1159) | ozhegov | [`SAR_W2_AFFINE_INSTALL_PROMPT.md`](../../prompts/SAR_W2_AFFINE_INSTALL_PROMPT.md) | Compose + Caddy site-block; secrets off-git; up after gate; LE | open — **не начинать без слова владельца** |
 | **W3** | `sar-w3-smoke-surface` | [#1160](https://github.com/officefish/Membrana/issues/1160) | ozhegov | [`SAR_W3_SMOKE_SURFACE_PROMPT.md`](../../prompts/SAR_W3_SMOKE_SURFACE_PROMPT.md) | HTTPS UI; owner admin; panel/docs note; backup path | open |
 | **W4** | `sar-w4-closure` | [#1161](https://github.com/officefish/Membrana/issues/1161) | vesnin | [`SAR_W4_CLOSURE_PROMPT.md`](../../prompts/SAR_W4_CLOSURE_PROMPT.md) | CLOSURE + archive; ACTIVE/LOG; VDS upgrade note if needed | open |
@@ -85,10 +87,17 @@ strategy.mmbrn.tech  → Affine self-host                 — THIS sprint
 - [ ] Первый admin Affine в UI.
 - [ ] При OOM/диске — апгрейд тарифа (не «ещё контейнер»).
 
-## Gate checklist (W0, после ратификации)
+## Gate checklist (W0)
 
 - [x] Слово владельца («Ратифицирую») + lock `strategy.mmbrn.tech` + scope B
 - [x] Эпик + 5 фаз в registry + GitHub Issues #1156–#1161
 - [x] `DAY_SPRINT_ACTIVE` → **Also open** (Focus `tasks-workshop` цел)
 - [x] Номера Issue в таблице Phases
-- [ ] PR W0 brief merged
+- [x] PR W0 brief merged (#1163)
+
+## Gate checklist (W1)
+
+- [x] `DNS_DOMAIN_POLICY.md` — слот `strategy.mmbrn.tech` → Affine; docs/harness/office/panel не трогать
+- [x] `STRATEGY_AFFINE_DEPLOY.md` — layout, Caddy notes, secrets, backup path, owner DNS
+- [x] `yarn affine:capacity-gate` — пороги MemAvailable / disk
+- [ ] PR W1 merges (Closes #1158)
