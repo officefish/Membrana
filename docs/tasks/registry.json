@@ -34,7 +34,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1199 (merge 1571464e): yarn kits:pins (ядро+CLI+5 тестов), описи angelina-morning/containerization-master/dream-master выровнены отдельными коммитами (30 находок → 0), зуб на двух путях — pre-push --mode latest + CI pinned; долг попугая kits-pins-audit-unwired погашен; Linear DRU-456",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-25"
     },
     {
       "id": "bridge-cross-agent-skill",
@@ -53,7 +53,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1199 (merge 1571464e): скилл membrana-bridge в 4 зеркалах (.cursor канон + .claude/.agents/.opencode), кит kits/angelina-bridge (root bridge.mjs, 5 пинов), kitVersion процедуры bridge, yarn bridge tools по 4 зонам; kits:audit --id angelina-bridge = 0 находок; Linear DRU-455",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-25"
     },
     {
       "id": "ml-adopt-pilot",
@@ -283,7 +283,7 @@
       ],
       "notes": "",
       "archiveNotes": "W1 DNS canon + STRATEGY_AFFINE_DEPLOY + capacity-gate PR #1173 4cd760fd Closes #1158",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "strategy-affine-routing"
     },
     {
@@ -610,7 +610,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "W4 CLOSURE + ACTIVE cleared; PR #1107 bc5169da",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "atlas-report-plane"
     },
     {
@@ -759,7 +759,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1150 merge 38677da2; GitHub #1064 CLOSED via Closes; rankOneShotCandidates + yarn one-shot:rank",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-25",
       "parentEpic": "tasks-workshop"
     },
     {
