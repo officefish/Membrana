@@ -396,7 +396,36 @@ function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles
   return assembled;
 }
 
-function wrapSeanseFile({ body, question, orderedRoles, model, ghIssue, topicFile, relPath }) {
+/**
+ * Метка модели для метаданных протокола (#1051). Регрессия #1032: раньше здесь стояла
+ * переменная `model`, которой после перехода на procedure channels (#1021) больше нет
+ * (звено выбирается на лету) → `ReferenceError` ПОСЛЕ траты прогона (деньги в трубу).
+ * Правильно: имя ответившего звена (`answeredBy`); никто не ответил → метка всей цепочки.
+ * @param {{ answeredBy: string|null, chainLabel: string }} p
+ * @returns {string}
+ */
+export function seanseModelLabel({ answeredBy, chainLabel }) {
+  return answeredBy ?? chainLabel;
+}
+
+/**
+ * План записи протокола (#1051): метка модели + куда писать. Гейт заседания упал →
+ * `docs/seanses/rejected/` (черновик, НЕ протокол); чист → `docs/seanses/` (принят).
+ * Итог гейта выражает МЕСТО файла, поэтому решение о ветке записи — здесь, чистой функцией.
+ * @param {{ answeredBy: string|null, chainLabel: string, rejected?: boolean, relPath: string, cwd?: string }} p
+ * @returns {{ model: string, rejected: boolean, targetPath: string }}
+ */
+export function seansePlan({ answeredBy, chainLabel, rejected = false, relPath, cwd = process.cwd() }) {
+  return {
+    model: seanseModelLabel({ answeredBy, chainLabel }),
+    rejected: Boolean(rejected),
+    targetPath: rejected
+      ? resolve(cwd, 'docs/seanses/rejected', basename(relPath))
+      : resolve(cwd, relPath),
+  };
+}
+
+export function wrapSeanseFile({ body, question, orderedRoles, model, ghIssue, topicFile, relPath }) {
   const stamp = new Date().toISOString();
   const meta = [
     // Пометка канала (#616, A3): по ней аудитор отличает протокол, произведённый
@@ -709,7 +738,7 @@ async function main() {
       body: answer,
       question: cli.question,
       orderedRoles,
-      model: answeredBy ?? chainLabel,
+      model: seanseModelLabel({ answeredBy, chainLabel }),
       ghIssue: cli.ghIssue,
       topicFile: cli.topicFile,
       relPath,
@@ -732,9 +761,8 @@ async function main() {
       if (meetingProblems.length > 0) {
         // Прогон дорогой: артефакт не выбрасываем, но и протоколом не считаем —
         // иначе цена отказа толкала бы писать мимо инструмента (тот самый обход).
-        const rejDir = resolve(cwd, 'docs/seanses/rejected');
-        mkdirSync(rejDir, { recursive: true });
-        const rejPath = resolve(rejDir, basename(relPath));
+        mkdirSync(resolve(cwd, 'docs/seanses/rejected'), { recursive: true });
+        const rejPath = seansePlan({ answeredBy, chainLabel, rejected: true, relPath, cwd }).targetPath;
         writeFileSync(rejPath, fileBody, 'utf8');
         console.error(
           `\n✖ заседание НЕ состоялось — структура вердикта (${meetingProblems.length}):\n` +
@@ -785,4 +813,9 @@ async function main() {
 
 }
 
-main();
+// #1051: гард запуска — без него ЛЮБОЙ импорт (в т.ч. из теста) прогонял бы консилиум.
+// Образец — scripts/meeting-audit.mjs. Теперь save-path (seanseModelLabel/seansePlan/wrapSeanseFile)
+// можно тестировать, не запуская прогон.
+if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('consilium.mjs')) {
+  main();
+}
