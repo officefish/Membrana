@@ -5,16 +5,14 @@
       "title": "Описи китов: инструмент kits:pins, выравнивание трёх китов, зуб сверки на pre-push + CI",
       "promptPath": "docs/prompts/KITS_PINS_WIRING_PROMPT.md",
       "githubIssue": 1196,
-      "linearId": null,
+      "linearId": "DRU-456",
       "size": "M",
       "status": "active",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-25",
       "archivedAt": null,
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "vesnin"
-      ],
+      "leadPersona": null,
+      "supportPersonas": [],
       "notes": "",
       "archiveNotes": null,
       "githubIssueClosedAt": null
@@ -24,16 +22,14 @@
       "title": "Мостик: кросс-агентский скилл входа + кит angelina-bridge (инструментарий ведущей)",
       "promptPath": "docs/prompts/BRIDGE_CROSS_AGENT_SKILL_PROMPT.md",
       "githubIssue": 1195,
-      "linearId": null,
+      "linearId": "DRU-455",
       "size": "M",
       "status": "active",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-25",
       "archivedAt": null,
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "angelina"
-      ],
+      "leadPersona": null,
+      "supportPersonas": [],
       "notes": "",
       "archiveNotes": null,
       "githubIssueClosedAt": null
