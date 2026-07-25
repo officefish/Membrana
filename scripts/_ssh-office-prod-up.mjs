@@ -5,24 +5,26 @@
  */
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, unlinkSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, relative } from 'node:path';
 import { Client } from 'ssh2';
 import { getOfficeSshConfig, repoRoot } from './_ssh-office-config.mjs';
 
-// Не tmpdir(): на Windows bsdtar не знает --force-local, а GNU tar путает C:\ с host:file.
+// Не tmpdir(): держим архив внутри репо, чтобы путь для tar был ОТНОСИТЕЛЬНЫМ.
 const cacheDir = join(repoRoot, 'scripts', 'cache');
 mkdirSync(cacheDir, { recursive: true });
 const tarPath = join(cacheDir, `office-src-${Date.now()}.tgz`);
+// #1128 follow-up: аргумент `-czf` — ОТНОСИТЕЛЬНЫЙ путь с forward-slash (tar cwd = repoRoot).
+// Так GNU tar не путает `C:\…` с host:file, а bsdtar (Windows tar.exe) не давится на
+// `--force-local` (флаг GNU-only; мы его больше НЕ передаём — работает на обоих tar).
+const tarArg = relative(repoRoot, tarPath).replace(/\\/gu, '/');
 const remoteTar = '/tmp/office-src.tgz';
 
 const tarArgs = [
-  // Windows: GNU tar видит `C:\…` как host:file без --force-local (норма tooling-ретро #548).
-  '--force-local',
   '--exclude=packages/background-office/node_modules',
   '--exclude=packages/background-office/dist',
   '--exclude=packages/background-office/.env.docker',
   '-czf',
-  tarPath,
+  tarArg,
   'package.json',
   'yarn.lock',
   '.yarnrc.yml',
