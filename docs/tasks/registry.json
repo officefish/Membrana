@@ -11,8 +11,10 @@
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-25",
       "archivedAt": null,
-      "leadPersona": null,
-      "supportPersonas": [],
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
       "notes": "",
       "archiveNotes": null,
       "githubIssueClosedAt": null
@@ -28,8 +30,10 @@
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-25",
       "archivedAt": null,
-      "leadPersona": null,
-      "supportPersonas": [],
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "angelina"
+      ],
       "notes": "",
       "archiveNotes": null,
       "githubIssueClosedAt": null
