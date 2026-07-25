@@ -22,7 +22,6 @@
 |----|----------|--------|--------|--------|
 | `consilium-save-path-test` | test(consilium): путь сохранения протокола исполняется тестом с мокнутой цепочкой | M | [`CONSILIUM_SAVE_PATH_TEST_PROMPT.md`](../prompts/CONSILIUM_SAVE_PATH_TEST_PROMPT.md) | [#1051](https://github.com/officefish/Membrana/issues/1051) |
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | M | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | [#1088](https://github.com/officefish/Membrana/issues/1088) |
-| `tasks-workshop` | Эпик: tasks-workshop — мастерская контейнера задач | L | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | — |
 | `pr-mergeable-graphql-stale` | Мержабельность по GraphQL протухает — pr:ship падает в ложный красный | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1028](https://github.com/officefish/Membrana/issues/1028) |
 | `registry-merge-driver-serverless` | Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1026](https://github.com/officefish/Membrana/issues/1026) |
 | `ritual-deliver-to-main` | Утренний ритуал: обязательный финальный кадр — доставка документов в main | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1016](https://github.com/officefish/Membrana/issues/1016) |
@@ -244,6 +243,7 @@
 |----|----------|--------------|--------|--------|----------|
 | `ml-adopt-pilot` | ml-adopt-pilot: dry/--only pilot + CLOSURE | 2026-07-25 | [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](../prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md) | — | [карточка](./archive/ml-adopt-pilot.md) |
 | `ml-adopt-rhythm` | ml-adopt-rhythm: wire membrana-leveling into developer-rhythm evening | 2026-07-25 | [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](../prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md) | — | [карточка](./archive/ml-adopt-rhythm.md) |
+| `tasks-workshop` | Эпик: tasks-workshop — мастерская контейнера задач | 2026-07-25 | [`TASKS_WORKSHOP_SPRINT_PROMPT.md`](../prompts/TASKS_WORKSHOP_SPRINT_PROMPT.md) | — | [карточка](./archive/tasks-workshop.md) |
 | `ml-adopt-deliver` | ml-adopt-deliver: HANDOFF seam for evening leveling report | 2026-07-25 | [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](../prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md) | — | [карточка](./archive/ml-adopt-deliver.md) |
 | `ml-adopt-evening` | ml-adopt-evening: soft step leveling-workspace in evening ritual | 2026-07-25 | [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](../prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md) | — | [карточка](./archive/ml-adopt-evening.md) |
 | `ml-adopt-wires` | ml-adopt-wires: dirty→ctx snapshot + yarn membrana-leveling:snapshot | 2026-07-25 | [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](../prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md) | — | [карточка](./archive/ml-adopt-wires.md) |

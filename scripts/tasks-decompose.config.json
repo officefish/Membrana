@@ -46,7 +46,7 @@
       "order": ["vesnin", "ozhegov", "dynin", "angelina", "rodchenko"]
     },
     "kind": {
-      "order": ["day-sprint", "night-build", "epic", "oneshot"]
+      "order": ["day-sprint", "night-build", "epic", "hackathon", "competition-packaging", "oneshot"]
     },
     "links": {
       "groups": [

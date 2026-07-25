@@ -860,17 +860,17 @@
       "githubIssue": null,
       "linearId": "DRU-403",
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-23",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
         "dynin"
       ],
       "notes": "Контейнер Linear-only DRU-403. Project Tasks workshop · 2026-07. Основание PR #1032.",
-      "archiveNotes": null,
+      "archiveNotes": "CLOSURE docs/day-sprint/tasks-workshop-2026-07-23/CLOSURE.md; phases g0-v9 archived; discoverability PR #1190 MERGED; kit kits/tasks-master + yarn task:tools + skill membrana-tasks-workshop",
       "githubIssueClosedAt": null
     },
     {
@@ -3894,17 +3894,17 @@
       "promptPath": "docs/prompts/VISOR_MPVS_INTEGRATION_PROMPT.md",
       "githubIssue": null,
       "size": "M",
-      "status": "deferred",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-17",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "kuryokhin",
         "dynin"
       ],
       "notes": " [17.07] deferred по вердикту консилиума: кода не порождает, сопряжение отложено до пеленга (σ≤0.6°) и gate 1→2. См. insight-effector-cue-integration.",
-      "archiveNotes": null,
+      "archiveNotes": " [17.07] deferred по вердикту консилиума: кода не порождает, сопряжение отложено до пеленга (σ≤0.6°) и gate 1→2. См. insight-effector-cue-integration.",
       "githubIssueClosedAt": null
     },
     {
@@ -5472,7 +5472,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "sprintKind": "epic"
     },
     {
       "id": "tariff-dataset-v1",
@@ -5657,7 +5658,8 @@
       "leadPersona": "kuryokhin",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "sprintKind": "day-sprint"
     },
     {
       "id": "media-library-a4-sample-player",
@@ -5674,7 +5676,8 @@
       "supportPersonas": [
         "rodchenko",
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "day-sprint"
     },
     {
       "id": "detection-base-contract",
@@ -5787,7 +5790,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "background-media-v1",
@@ -6824,7 +6828,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "sprintKind": "epic"
     },
     {
       "id": "lp1-mic-drone-stream-modes",
@@ -6843,7 +6848,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "sprintKind": "epic"
     },
     {
       "id": "lp1b-drone-detailed-report-server",
@@ -6866,7 +6872,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "sprintKind": "epic"
     },
     {
       "id": "lp2-fft-plugins-journal-sink",
@@ -6889,7 +6896,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "sprintKind": "epic"
     },
     {
       "id": "lp3-track-import-backpressure",
@@ -6911,7 +6919,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "sprintKind": "epic"
     },
     {
       "id": "lp4-parallel-detection-smoke",
@@ -6936,7 +6945,8 @@
       "freezeStatus": "deferred",
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
-      "strategicWave": "W5"
+      "strategicWave": "W5",
+      "sprintKind": "epic"
     },
     {
       "id": "lp5-journal-report-renderers",
@@ -6956,7 +6966,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W2"
+      "strategicWave": "W2",
+      "sprintKind": "epic"
     },
     {
       "id": "fft-last-chance-calibration",
@@ -8195,7 +8206,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "mp7b-rt0-contract",
@@ -8216,7 +8228,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "mp7b-rt1-gateway",
@@ -8237,7 +8250,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "mp7b-rt2-client-runtime",
@@ -8258,7 +8272,8 @@
       "leadPersona": "kuryokhin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "mp7b-rt3-mode",
@@ -8279,7 +8294,8 @@
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "mp7b-rt4-multinode-schema",
@@ -8300,7 +8316,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "mp7b-rt5-cabinet-nodes",
@@ -8322,7 +8339,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "mp7b-rt6-board-ux",
@@ -8343,7 +8361,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "mp7b-rt7-prod-hardening",
@@ -8365,7 +8384,8 @@
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "deploy-pipeline-refactor",
@@ -9220,7 +9240,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "code-review-debt-closeout-jun2026",
@@ -10133,7 +10154,8 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "strategicWave": "W0"
+      "strategicWave": "W0",
+      "sprintKind": "epic"
     },
     {
       "id": "db-user-workspace-u10",
@@ -12287,7 +12309,8 @@
       "supportPersonas": [
         "ozhegov",
         "rodchenko"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "ucv2-0-spec-lgtm",
@@ -12309,7 +12332,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "ucv2-1-graph-collapse",
@@ -12332,7 +12356,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "ucv2-2-freeze-async-tracks",
@@ -12354,7 +12379,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "ucv2-3-pack-verify",
@@ -12374,7 +12400,8 @@
       ],
       "notes": "Lead: Ozhegov.",
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "sprintKind": "epic"
     },
     {
       "id": "ucv2-4-operator-signoff",
@@ -12394,7 +12421,8 @@
       ],
       "notes": "Lead: Vesnin. USERCASE_MVP_V2_GROUPS_ASYNC_LGTM.md",
       "leadPersona": "vesnin",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "sprintKind": "epic"
     },
     {
       "id": "device-board-phase-3",
@@ -14049,7 +14077,8 @@
       "supportPersonas": [
         "ozhegov",
         "rodchenko"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "db3h-s1-tech-debt",
@@ -14134,7 +14163,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "cg3-flaky-metrics-week",
@@ -14151,7 +14181,8 @@
       "archiveNotes": null,
       "notes": "test-run-id/attempt/seed/duration → docs/ci-metrics/flaky-report-<дата>.md. Условие эскалации scoped-gate: flaky > 10%. Lead Dynin.",
       "leadPersona": "dynin",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "sprintKind": "epic"
     },
     {
       "id": "cg4-ci-testing-docs",
@@ -14173,7 +14204,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "tailwind-coverage-hardening",
@@ -14276,7 +14308,8 @@
       "supportPersonas": [
         "rodchenko",
         "vesnin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "db3h-s3-studio-host",
@@ -14321,7 +14354,8 @@
       "supportPersonas": [
         "ozhegov",
         "rodchenko"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "db3h-s4-microphone-detectors",
@@ -14344,7 +14378,8 @@
       "supportPersonas": [
         "dynin",
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "device-board-server-first",
@@ -14366,7 +14401,8 @@
       "supportPersonas": [
         "ozhegov",
         "rodchenko"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "db-sf-0-canon",
@@ -14387,7 +14423,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "db-sf-1-core-contracts",
@@ -14409,7 +14446,8 @@
       "supportPersonas": [
         "ozhegov",
         "dynin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "db-sf-2-gateway-board",
@@ -14430,7 +14468,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "db-sf-3-cabinet-lease-api",
@@ -14451,7 +14490,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "db-sf-4-client-follower",
@@ -14472,7 +14512,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "kuryokhin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "db-sf-5-board-flags-ui",
@@ -14493,7 +14534,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "db-sf-6-nodes-runtime",
@@ -14514,7 +14556,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "vesnin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "db-sf-7-last-track-preview",
@@ -14535,7 +14578,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "kuryokhin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "db-sf-8-tests-smoke",
@@ -14557,7 +14601,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "db-sf-9-docs-sync",
@@ -14578,7 +14623,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "neural-tier-1b-contract",
@@ -14603,7 +14649,8 @@
       "supportPersonas": [
         "rodchenko",
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "neural-free-tier-dataset-report",
@@ -14628,7 +14675,8 @@
       "supportPersonas": [
         "rodchenko",
         "dynin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "docs-actions-phase-a-2026-06-26",
@@ -15060,13 +15108,13 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "deferred",
+      "status": "archived",
       "createdAt": "2026-06-27",
       "sprintKind": "day-sprint",
       "parentEpic": "mcp-agent-tooling-2026-06-27",
       "leadPersona": "dynin",
       "supportPersonas": [],
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "archiveNotes": "Deferred: не на критическом пути. Вернуть при запросе product на keyless DSP-ресёрч."
     },
     {
@@ -15076,7 +15124,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "deferred",
+      "status": "archived",
       "createdAt": "2026-06-27",
       "sprintKind": "day-sprint",
       "parentEpic": "mcp-agent-tooling-2026-06-27",
@@ -15084,7 +15132,7 @@
       "supportPersonas": [
         "vesnin"
       ],
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "archiveNotes": "Vectorize-хостед §5-запрет. Self-hostable вариант — отдельный mini-spike, не в этом спринте."
     },
     {
@@ -15120,7 +15168,8 @@
         "ozhegov"
       ],
       "kind": "epic",
-      "notes": "CRITICAL_RAG_AUDIT.md принят 2026-06-21; условный LGTM Vesnin после R3 acceptance-demo."
+      "notes": "CRITICAL_RAG_AUDIT.md принят 2026-06-21; условный LGTM Vesnin после R3 acceptance-demo.",
+      "sprintKind": "epic"
     },
     {
       "id": "rag-r0-scaffold",
@@ -15212,7 +15261,8 @@
       "archivedAt": null,
       "archiveNotes": null,
       "leadPersona": "dynin",
-      "epicId": "rag-dual-circuit-v1"
+      "epicId": "rag-dual-circuit-v1",
+      "sprintKind": "day-sprint"
     },
     {
       "id": "rag-r7-optional",
@@ -15227,7 +15277,8 @@
       "archiveNotes": null,
       "notes": "Deferred per CRITICAL_RAG_AUDIT §12. Go/no-go после R6.",
       "epicId": "rag-dual-circuit-v1",
-      "leadPersona": "kuryokhin"
+      "leadPersona": "kuryokhin",
+      "sprintKind": "day-sprint"
     },
     {
       "id": "ci-observability",
@@ -15721,7 +15772,8 @@
       "leadPersona": "dynin",
       "supportPersonas": [
         "kuryokhin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "id": "vdr-hg4-hard-gate-report",
@@ -15743,7 +15795,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "promptPath": "docs/prompts/STUDIO_CAPTURE_ADAPTATION_SPRINT_PROMPT.md",
@@ -15874,7 +15927,8 @@
       "supportPersonas": [
         "rodchenko",
         "dynin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
@@ -15919,7 +15973,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "night-build"
     },
     {
       "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
@@ -15940,7 +15995,8 @@
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "rodchenko"
-      ]
+      ],
+      "sprintKind": "night-build"
     },
     {
       "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
@@ -15961,7 +16017,8 @@
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "night-build"
     },
     {
       "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
@@ -15982,7 +16039,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "sprintKind": "night-build"
     },
     {
       "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
@@ -16004,7 +16062,8 @@
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
-      ]
+      ],
+      "sprintKind": "night-build"
     },
     {
       "promptPath": "docs/prompts/PAIRING_LIFECYCLE_SPRINT_PROMPT.md",
@@ -16333,7 +16392,8 @@
       "supportPersonas": [
         "rodchenko",
         "dynin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "promptPath": "docs/prompts/COMMS_CONTOUR_ENVIRONMENT_SPRINT_PROMPT.md",
@@ -16730,7 +16790,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "promptPath": "docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md",
@@ -16751,7 +16812,8 @@
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "promptPath": "docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md",
@@ -16772,7 +16834,8 @@
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "ozhegov"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "promptPath": "docs/prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md",
@@ -16794,7 +16857,8 @@
       "leadPersona": "kuryokhin",
       "supportPersonas": [
         "vesnin"
-      ]
+      ],
+      "sprintKind": "epic"
     },
     {
       "promptPath": "docs/prompts/NEURAL_DRONE_PLUGIN_SPRINT_PROMPT.md",
@@ -17451,15 +17515,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "deferred",
+      "status": "archived",
       "parentEpic": "tech-debt-2026-07",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "rodchenko",
       "supportPersonas": [],
       "freezeStatus": "deferred",
       "freezeReason": "Backlog чистки — фоном, не в ядре спринта",
-      "freezeAt": "2026-07-08"
+      "freezeAt": "2026-07-08",
+      "archiveNotes": "Backlog чистки — фоном, не в ядре спринта"
     },
     {
       "id": "td-deprecated-todo-triage",
@@ -17468,15 +17533,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "deferred",
+      "status": "archived",
       "parentEpic": "tech-debt-2026-07",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "rodchenko",
       "supportPersonas": [],
       "freezeStatus": "deferred",
       "freezeReason": "Backlog чистки — фоном",
-      "freezeAt": "2026-07-08"
+      "freezeAt": "2026-07-08",
+      "archiveNotes": "Backlog чистки — фоном"
     },
     {
       "id": "td-linkstate-ratelimit",
@@ -17485,15 +17551,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "deferred",
+      "status": "archived",
       "parentEpic": "tech-debt-2026-07",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "freezeStatus": "deferred",
       "freezeReason": "Backlog — фоном",
-      "freezeAt": "2026-07-08"
+      "freezeAt": "2026-07-08",
+      "archiveNotes": "Backlog — фоном"
     },
     {
       "id": "td-tariff-v3-skips-registry",
@@ -17502,15 +17569,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "deferred",
+      "status": "archived",
       "parentEpic": "tech-debt-2026-07",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "freezeStatus": "deferred",
       "freezeReason": "Backlog — фоном",
-      "freezeAt": "2026-07-08"
+      "freezeAt": "2026-07-08",
+      "archiveNotes": "Backlog — фоном"
     },
     {
       "id": "cabinet-scenario-picker-system",
@@ -17674,7 +17742,8 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "vesnin",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "sprintKind": "night-build"
     },
     {
       "id": "nb-at-1-gitignore-review",
@@ -17688,7 +17757,8 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "sprintKind": "night-build"
     },
     {
       "id": "nb-at-2-pr-ship",
@@ -17702,7 +17772,8 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "sprintKind": "night-build"
     },
     {
       "id": "nb-at-3-build-affected",
@@ -17716,7 +17787,8 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "sprintKind": "night-build"
     },
     {
       "id": "nb-at-4-verify-wire-sync",
@@ -17730,7 +17802,8 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "sprintKind": "night-build"
     },
     {
       "id": "nb-at-5-hooks",
@@ -17744,7 +17817,8 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "sprintKind": "night-build"
     },
     {
       "id": "nb-at-6-helpers",
@@ -17758,7 +17832,8 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "sprintKind": "night-build"
     },
     {
       "id": "nb-at-7-bookkeeping-gitctx",
@@ -17772,7 +17847,8 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "ozhegov",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "sprintKind": "night-build"
     },
     {
       "id": "nb-at-8-docs-skills",
@@ -17786,7 +17862,8 @@
       "createdAt": "2026-07-08",
       "archivedAt": null,
       "leadPersona": "vesnin",
-      "supportPersonas": []
+      "supportPersonas": [],
+      "sprintKind": "night-build"
     },
     {
       "id": "hermes-brief",
