@@ -1,0 +1,7 @@
+{
+  "id": "readme-developer-rhythm",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Секция «Ритм разработки»: утро/вечер/неделя, ritual:day/evening"
+}

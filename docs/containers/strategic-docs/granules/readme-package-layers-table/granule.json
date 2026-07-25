@@ -1,0 +1,8 @@
+{
+  "id": "readme-package-layers-table",
+  "version": "1.0.0",
+  "kind": "function",
+  "fn": "renderPackageLayersTable",
+  "modulePath": "./render.mjs",
+  "description": "Таблица слоёв пакетов монорепо (Core → Apps)"
+}

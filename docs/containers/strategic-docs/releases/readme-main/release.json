@@ -1,0 +1,91 @@
+{
+  "releaseId": "readme-main",
+  "version": "0.1.0",
+  "templateId": "readme-main",
+  "templateVersion": "0.1.0",
+  "title": "Membrana README",
+  "target": "README.md",
+  "pins": {
+    "readme-title-tagline": "1.0.0",
+    "readme-strategic-context": "1.0.0",
+    "readme-architecture": "1.0.0",
+    "readme-principles": "1.0.0",
+    "readme-quickstart": "1.0.0",
+    "readme-background-servers-table": "1.0.0",
+    "readme-developer-rhythm": "1.0.0",
+    "readme-yarn-workspace-hints": "1.0.0",
+    "readme-package-layers-table": "1.0.0",
+    "readme-dev-tools": "1.0.0",
+    "readme-virtual-team": "1.0.0",
+    "readme-documentation-index": "1.0.0"
+  },
+  "status": "release",
+  "bodyPath": "./README.md",
+  "generatedAt": "2026-07-25T12:38:34.591Z",
+  "trace": {
+    "templateId": "readme-main",
+    "templateVersion": "0.1.0",
+    "granules": {
+      "readme-title-tagline@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "readme-strategic-context@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "readme-architecture@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "readme-principles@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "readme-quickstart@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "readme-background-servers-table@1.0.0": {
+        "kind": "function",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "readme-developer-rhythm@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "readme-yarn-workspace-hints@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "readme-package-layers-table@1.0.0": {
+        "kind": "function",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "readme-dev-tools@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "readme-virtual-team@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "readme-documentation-index@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      }
+    }
+  }
+}

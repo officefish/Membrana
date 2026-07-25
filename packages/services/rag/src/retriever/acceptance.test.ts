@@ -12,7 +12,11 @@ const REPO_ROOT = findMonorepoRoot();
 const ACCEPTANCE_CASES = [
   {
     query: 'background-office background-media port 3000 3010',
-    expectedSources: ['BACKGROUND_SERVERS.md'],
+    expectedSources: [
+      'BACKGROUND_SERVERS.md',
+      'readme-background-servers-table',
+      'strategic-docs/releases/readme-main',
+    ],
   },
   {
     query: 'Web Audio getUserMedia AudioContext createAnalyser запрещён',

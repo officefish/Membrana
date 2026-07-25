@@ -1,0 +1,73 @@
+{
+  "id": "readme-main",
+  "version": "0.1.0",
+  "target": "README.md",
+  "meta": {
+    "description": "Корневой README проекта — композиция стратегических гранул",
+    "status": "validated",
+    "surface": ["github", "strategy.mmbrn.tech"]
+  },
+  "skeleton": "{{title_tagline}}\n\n{{strategic_context}}\n\n{{architecture}}\n\n{{principles}}\n\n{{quickstart}}\n\n{{background_servers}}\n\n{{developer_rhythm}}\n\n{{yarn_hints}}\n\n{{package_layers}}\n\n{{dev_tools}}\n\n{{virtual_team}}\n\n{{documentation}}",
+  "slots": [
+    {
+      "granuleId": "readme-title-tagline",
+      "pin": "1.0.0",
+      "placeholder": "{{title_tagline}}"
+    },
+    {
+      "granuleId": "readme-strategic-context",
+      "pin": "1.0.0",
+      "placeholder": "{{strategic_context}}"
+    },
+    {
+      "granuleId": "readme-architecture",
+      "pin": "1.0.0",
+      "placeholder": "{{architecture}}"
+    },
+    {
+      "granuleId": "readme-principles",
+      "pin": "1.0.0",
+      "placeholder": "{{principles}}"
+    },
+    {
+      "granuleId": "readme-quickstart",
+      "pin": "1.0.0",
+      "placeholder": "{{quickstart}}"
+    },
+    {
+      "granuleId": "readme-background-servers-table",
+      "pin": "1.0.0",
+      "placeholder": "{{background_servers}}"
+    },
+    {
+      "granuleId": "readme-developer-rhythm",
+      "pin": "1.0.0",
+      "placeholder": "{{developer_rhythm}}"
+    },
+    {
+      "granuleId": "readme-yarn-workspace-hints",
+      "pin": "1.0.0",
+      "placeholder": "{{yarn_hints}}"
+    },
+    {
+      "granuleId": "readme-package-layers-table",
+      "pin": "1.0.0",
+      "placeholder": "{{package_layers}}"
+    },
+    {
+      "granuleId": "readme-dev-tools",
+      "pin": "1.0.0",
+      "placeholder": "{{dev_tools}}"
+    },
+    {
+      "granuleId": "readme-virtual-team",
+      "pin": "1.0.0",
+      "placeholder": "{{virtual_team}}"
+    },
+    {
+      "granuleId": "readme-documentation-index",
+      "pin": "1.0.0",
+      "placeholder": "{{documentation}}"
+    }
+  ]
+}

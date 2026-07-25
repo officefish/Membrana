@@ -1,0 +1,7 @@
+{
+  "id": "readme-architecture",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Секция «Архитектура»: дерево монорепо и границы пакетов"
+}
