@@ -162,14 +162,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-24",
-      "archivedAt": null,
+      "archivedAt": "2026-07-25",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "§8.1 регламента MEMBRANA_LEVELING_REGULATION v1.0: заселить docs/procedures/membrana-leveling/ по канону docs/procedures/; шесть frames из вердикта M4 (leveling-wires/gate/main-fill/workspace/scratch/deliver) с holder+полосами; зуб validateProcedure. Только регистрация — стройка по слову владельца.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1155 merge 5b66a4ec; validateProcedure green; 6 frames M4; stub engines for §8.2/§8.3",
       "githubIssueClosedAt": null
     },
     {
