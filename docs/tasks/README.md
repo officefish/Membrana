@@ -12,6 +12,8 @@
 | `yarn task:archive <id>` | Закрыть задачу в реестре |
 | `yarn task:close-github` | Закрыть Issues по очереди из архива (вечером) |
 
+Мастерская: [`WORKSHOP.md`](./WORKSHOP.md) · [`workshop.manifest.json`](./workshop.manifest.json) · кит [`kits/tasks-master`](../../kits/tasks-master/) · `yarn task:tools`.
+
 ---
 
 ## Активные задачи

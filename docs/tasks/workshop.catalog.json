@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "home": "docs/tasks",
+  "manifest": "docs/tasks/workshop.manifest.json",
+  "kit": "kits/tasks-master",
+  "tools": [
+    {
+      "id": "inspect",
+      "verb": "inspectElement",
+      "zone": "workshop",
+      "yarn": "yarn task:inspect",
+      "doc": "docs/tasks/INSPECT_ELEMENT.md",
+      "summary": "Паспорт карточки реестра; в сеть не ходит"
+    },
+    {
+      "id": "list",
+      "verb": "list",
+      "zone": "workshop",
+      "yarn": "yarn task:list",
+      "doc": "docs/tasks/WORKSHOP.md",
+      "summary": "Список активных/архивных задач в терминале"
+    },
+    {
+      "id": "board",
+      "verb": "board",
+      "zone": "workshop",
+      "yarn": "yarn task:board",
+      "script": "scripts/generate-active-tasks-board.mjs",
+      "doc": "docs/tasks/WORKSHOP.md",
+      "summary": "Снимок доски активных задач (⚠ движок отсутствует в дереве)"
+    },
+    {
+      "id": "bookkeeping",
+      "verb": "bookkeeping",
+      "zone": "workshop",
+      "yarn": "yarn tasks:bookkeeping",
+      "script": "scripts/tasks-bookkeeping.mjs",
+      "doc": "docs/tasks/WORKSHOP.md",
+      "summary": "Бухгалтерия реестра (⚠ движок отсутствует в дереве)"
+    },
+    {
+      "id": "reviewing",
+      "verb": "reviewing",
+      "zone": "workshop",
+      "yarn": "yarn tasks:reviewing",
+      "script": "scripts/tasks-reviewing.mjs",
+      "doc": "docs/tasks/WORKSHOP.md",
+      "summary": "Обзор эпиков/сводок (⚠ движок отсутствует в дереве)"
+    },
+    {
+      "id": "validate",
+      "verb": null,
+      "zone": "contract",
+      "yarn": "yarn task:validate",
+      "doc": "docs/tasks/VALIDITY.md",
+      "summary": "Валидность карточки/реестра (зрение, не забор)"
+    },
+    {
+      "id": "invariants",
+      "verb": null,
+      "zone": "contract",
+      "yarn": "yarn task:invariants",
+      "doc": "docs/tasks/SYNC_INVARIANTS.md",
+      "summary": "Инварианты сцепки Linear/Issue/closedAt"
+    },
+    {
+      "id": "invariants-repair",
+      "verb": null,
+      "zone": "contract",
+      "yarn": "yarn task:invariants:repair",
+      "doc": "docs/tasks/SYNC_INVARIANTS.md",
+      "summary": "Интерактивный ремонт мёртвых ссылок (нужен --execute)"
+    },
+    {
+      "id": "one-shot-rank",
+      "verb": null,
+      "zone": "contract",
+      "yarn": "yarn one-shot:rank",
+      "doc": "docs/tasks/ONE_SHOT_RANK.md",
+      "summary": "Ранжированный подбор one-shot (не вердикт)"
+    },
+    {
+      "id": "one-shot-trail",
+      "verb": null,
+      "zone": "contract",
+      "yarn": "yarn one-shot:trail",
+      "doc": "docs/tasks/ONE_SHOT_TRAIL.md",
+      "summary": "Журнал шотов / анти-дробление"
+    },
+    {
+      "id": "audit",
+      "verb": "audit",
+      "zone": "neighbor",
+      "yarn": "yarn tasks:audit",
+      "doc": "docs/audit/tasks/README.md",
+      "summary": "Вне primary: осмотр active vs внешний мир (docs/audit/tasks)"
+    },
+    {
+      "id": "decompose",
+      "verb": "decompose",
+      "zone": "neighbor",
+      "yarn": "yarn tasks:decompose",
+      "doc": "docs/audit/tasks/README.md",
+      "summary": "Вне primary: раскладка по осям --by (docs/audit/tasks)"
+    }
+  ]
+}

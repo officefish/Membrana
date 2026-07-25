@@ -1,17 +1,17 @@
 # PRECEDENTS — снимок-реестр (производный, руками не править)
 
-> Meta · Date: 2026-07-24 · SHA: 16a44243 · Source: docs/precedents/*.md
+> Meta · Date: 2026-07-25 · SHA: 3feb345c · Source: docs/precedents/*.md
 > Пересобрать: `yarn precedent:register --rebuild`. Источник истины — файлы прецедентов.
 
-Всего прецедентов: **11** · различных классов: **5** · доля рецидива: **50%** (ориентир ≤15%).
+Всего прецедентов: **12** · различных классов: **5** · доля рецидива: **55%** (ориентир ≤15%).
 
 ## Рецидив по классам
 
 | Класс | Прецедентов |
 |-------|-------------|
 | ritual-mechanics-vs-value | 3 ⚠ рецидив |
+| session-report | 3 ⚠ рецидив |
 | reporting-gap | 2 ⚠ рецидив |
-| session-report | 2 ⚠ рецидив |
 | tooling-gap | 2 ⚠ рецидив |
 | cold-start | 1 |
 
@@ -30,4 +30,5 @@
 | 2026-07-23 | reporting-gap | [2026-07-23-wrong-tree-main-day-request](../2026-07-23-wrong-tree-main-day-request.md) | существенный факт топологии worktree не доложен первой репликой |
 | 2026-07-24 | session-report | [2026-07-24-align-all-worktrees-to-main](../2026-07-24-align-all-worktrees-to-main.md) | Параллельные сессии в разных worktree накопили дивергенцию; общий origin/main уш |
 | 2026-07-24 | tooling-gap | [2026-07-24-consilium-green-but-hollow](../2026-07-24-consilium-green-but-hollow.md) | LLM-процедура без служебного фрейма «провода» молча деградирует: сигнал утоплен  |
+| 2026-07-25 | session-report | [2026-07-25-tasks-workshop-map-lookup](../2026-07-25-tasks-workshop-map-lookup.md) | Дом docs/tasks имеет primary-workshop с манифестом и границей V2; знание размаза |
 

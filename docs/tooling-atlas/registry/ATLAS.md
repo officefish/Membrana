@@ -21,7 +21,7 @@
 |--------------------|------|----------------------|-----|---------|
 | [docs/precedents](../../../docs/precedents/README.md) | — | audit · decompose · ~~inspectElement~~ | — | Дом-контейнер прецедентов: единичных задокументированных случаев (симптом → корень → |
 | [docs/procedures](../../../docs/procedures/README.md) | — | audit · decompose · inspectElement | — | Дом **определений процедур** — спроектированных сущностей, оперирующих категориями |
-| [docs/tasks](../../../docs/tasks/README.md) | primary | ~~audit~~ · ~~decompose~~ · inspectElement | — | Актуальные **активные** и **архивные** задачи по стандарту |
+| [docs/tasks](../../../docs/tasks/README.md) | primary | ~~audit~~ · ~~decompose~~ · inspectElement | kits/tasks-master | Актуальные **активные** и **архивные** задачи по стандарту |
 
 ## Meta (атлас)
 

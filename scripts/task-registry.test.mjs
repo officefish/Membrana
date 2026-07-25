@@ -210,6 +210,9 @@ describe('task-registry', () => {
     assert.match(md, /done-one/);
     assert.match(md, /Активные задачи/);
     assert.match(md, /Архив/);
+    assert.match(md, /WORKSHOP\.md/, 'указатель на мастерскую в boilerplate');
+    assert.match(md, /task:tools/, 'указатель на yarn task:tools');
+    assert.match(md, /kits\/tasks-master/, 'указатель на кит');
   });
 });
 
