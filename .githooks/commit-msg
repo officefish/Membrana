@@ -17,6 +17,13 @@ case "$first_line" in
   Merge*|Revert*|"fixup!"*|"squash!"*|"amend!"*) exit 0 ;;
 esac
 
+# #1232 Ф2: main не выдаётся никому — коммит из HEAD == main только с явным обходом.
+branch=$(git branch --show-current 2>/dev/null || true)
+if [ "$branch" = "main" ] && [ "$ALLOW_MAIN_COMMIT" != "1" ]; then
+  echo "commit-msg: HEAD == main — коммит запрещён (#1232). Обход: ALLOW_MAIN_COMMIT=1" >&2
+  exit 1
+fi
+
 # Conventional-заголовок: type(scope)?: subject
 if ! printf '%s' "$first_line" | grep -Eq '^(feat|fix|chore|docs|refactor|test|ci|perf|build|style|revert|comp|cowork)(\([^)]+\))?!?: .+'; then
   echo "commit-msg: заголовок не conventional: «$first_line»" >&2

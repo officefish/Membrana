@@ -1,6 +1,44 @@
 {
   "tasks": [
     {
+      "id": "procedures-corpus",
+      "title": "Ревизия корпуса процедур: ядро · homes · легальное нет (Ф5 #1220)",
+      "promptPath": "docs/prompts/PROCEDURES_CORPUS_PROMPT.md",
+      "githubIssue": 1284,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "procedures-core-fields"
+    },
+    {
+      "id": "worktree-hygiene-epic",
+      "title": "Эпик: гигиена рабочих деревьев — freshEnough∧clean, гард держателя, инвентарь",
+      "promptPath": "docs/prompts/WORKTREE_HYGIENE_EPIC_PROMPT.md",
+      "githubIssue": 1232,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "notes-regex-cyrillic-translit",
       "title": "Грабли в канон: кириллица в регулярках JS и транслит при сверке имён",
       "promptPath": "docs/prompts/NOTES_REGEX_CYRILLIC_TRANSLIT_PROMPT.md",
@@ -172,24 +210,6 @@
       "notes": "Опись мастерской (docs/tasks/workshop.manifest.json) объявляет board/bookkeeping/reviewing как planned, движков нет: yarn task:tools печатает три предупреждения. Развилка владельца: строить или честно объявить отсутствующими по норме зверя B10 (легальное «нет» — не дефект). Вещдок 26.07: сверка инструментария мастерской в сессии мостика.",
       "archiveNotes": null,
       "githubIssueClosedAt": null
-    },
-    {
-      "id": "procedures-corpus",
-      "title": "Ревизия корпуса процедур: ядро · homes · легальное нет (Ф5 #1220)",
-      "promptPath": "docs/prompts/PROCEDURES_CORPUS_PROMPT.md",
-      "githubIssue": 1284,
-      "linearId": null,
-      "size": "M",
-      "status": "active",
-      "sprintKind": "day-sprint",
-      "createdAt": "2026-07-26",
-      "archivedAt": null,
-      "leadPersona": "vesnin",
-      "supportPersonas": [],
-      "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
-      "parentEpic": "procedures-core-fields"
     },
     {
       "id": "procedures-versions",

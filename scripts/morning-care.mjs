@@ -16,10 +16,16 @@ import { loadDotEnv } from './_anthropic-env.mjs';
 // проверяет НЕ Anthropic напрямую, а эффективный LLM-канал ритуала (overlay панели →
 // цепочка с фолбэком anthropic→openrouter→deepseek). Switch провайдера — через панель.
 import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
-// Занятость ветки соседним worktree уже решена в pr:ship (#476 п.2) — берём оттуда,
-// а не пишем второй раз: разъехались бы, как разъехались бы pr:land и pr:ship.
-import { isBaseHeldElsewhere, otherWorktreeBranches } from './pr-ship.mjs';
 import { runMorningWiringGate } from './lib/morning-wiring.mjs';
+import {
+  DEFAULT_BASE_REF,
+  DEFAULT_MAX_BEHIND,
+  baseHolderGuard,
+  findBaseHolders,
+  parseWorktreeHolders,
+  ritualTreeReady,
+  selfHoldsBase,
+} from './lib/ritual-tree-hygiene.mjs';
 
 function parseArgs(argv) {
   const noAnthropic = argv.includes('--no-anthropic');
@@ -94,55 +100,6 @@ function gitEnvWithoutProxyEnv() {
   return env;
 }
 
-function gitPullArgv(branchName, proxy) {
-  const pull = ['pull', '--ff-only', 'origin', branchName];
-  if (!proxy) return pull;
-  return ['-c', `http.proxy=${proxy}`, '-c', `https.proxy=${proxy}`, ...pull];
-}
-
-function gitBehindOrigin(cwd, branchName) {
-  try {
-    const line = execFileSync(
-      'git',
-      ['rev-list', '--left-right', '--count', `origin/${branchName}...HEAD`],
-      { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], env: gitEnvWithoutProxyEnv() },
-    ).trim();
-    const [behind] = line.split(/\s+/).map((n) => Number(n));
-    return Number.isFinite(behind) ? behind : null;
-  } catch {
-    return null;
-  }
-}
-
-function runGitPull(cwd, branchName) {
-  const proxy = firstProxyUrl();
-  const attempts = proxy
-    ? [
-        { argv: gitPullArgv(branchName, proxy), label: 'через http.proxy' },
-        { argv: gitPullArgv(branchName, ''), label: 'напрямую (без прокси)' },
-      ]
-    : [{ argv: gitPullArgv(branchName, ''), label: 'напрямую' }];
-
-  let lastErr;
-  for (const { argv, label } of attempts) {
-    try {
-      execFileSync('git', argv, { cwd, stdio: 'inherit', env: gitEnvWithoutProxyEnv() });
-      return { ok: true, detail: label };
-    } catch (e) {
-      lastErr = e;
-    }
-  }
-
-  const behind = gitBehindOrigin(cwd, branchName);
-  if (behind === 0) {
-    return {
-      ok: true,
-      detail: 'pull не удался (сеть/прокси), но локально не отстаём от origin',
-    };
-  }
-  return { ok: false, detail: lastErr?.message || 'pull не удался' };
-}
-
 function runScriptTests(cwd) {
   const testFile = resolve(cwd, 'scripts/context-collector-paths.test.mjs');
   if (!existsSync(testFile)) {
@@ -209,111 +166,142 @@ async function runRitualLlmProbe() {
   }
 }
 
-// 2026-07-03: повседневная интеграция — main (DR5 «main деплоируемое»);
-// techies68 синхронизирована с main и уходит в архив регламентом DR5.
-const DEFAULT_WORK_BRANCH = process.env.MEMBRANA_WORK_BRANCH?.trim() || 'main';
+/**
+ * #1232 Ф1: ритуалу не нужен чекаут main — нужно freshEnough ∧ clean.
+ * Порог отставания: MEMBRANA_RITUAL_MAX_BEHIND (по умолчанию 0).
+ * Ф2: любой держатель main (чужой или это дерево) — находка с путём, не warn-skip.
+ */
+const RITUAL_MAX_BEHIND = (() => {
+  const raw = process.env.MEMBRANA_RITUAL_MAX_BEHIND?.trim();
+  if (raw === undefined || raw === '') return DEFAULT_MAX_BEHIND;
+  const n = Number(raw);
+  return Number.isFinite(n) && n >= 0 ? n : DEFAULT_MAX_BEHIND;
+})();
 
-function ensureWorkBranch(cwd, branchName) {
+function gitRun(cwd, args) {
+  return execFileSync('git', args, {
+    cwd,
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+    env: gitEnvWithoutProxyEnv(),
+  });
+}
+
+/** Свежесть + чистота + гард держателя main. Checkout main НЕ делается. */
+export function ensureRitualTree(cwd, opts = {}) {
+  const maxBehind = opts.maxBehind ?? RITUAL_MAX_BEHIND;
+  const baseRef = opts.baseRef ?? DEFAULT_BASE_REF;
   try {
-    execFileSync('git', ['rev-parse', '--is-inside-work-tree'], {
-      cwd,
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
+    gitRun(cwd, ['rev-parse', '--is-inside-work-tree']);
   } catch {
-    return { ok: false, skipped: true, detail: 'не git-репозиторий' };
+    return { ok: false, detail: 'не git-репозиторий', findings: [], blockedBy: [] };
   }
 
   let current = '';
   try {
-    current = execFileSync('git', ['branch', '--show-current'], {
-      cwd,
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'pipe'],
-    }).trim();
+    current = gitRun(cwd, ['branch', '--show-current']).trim();
   } catch {
-    return { ok: false, skipped: false, detail: 'не удалось прочитать текущую ветку' };
+    return { ok: false, detail: 'не удалось прочитать текущую ветку', findings: [], blockedBy: [] };
   }
 
-  if (current === branchName) {
-    const pull = runGitPull(cwd, branchName);
-    if (pull.ok) {
-      return { ok: true, detail: `уже на ${branchName}, ${pull.detail}` };
-    }
-    return { ok: false, detail: `на ${branchName}, но pull не удался` };
+  let fetchNote = '';
+  try {
+    const proxy = firstProxyUrl();
+    const fetchArgv = proxy
+      ? ['-c', `http.proxy=${proxy}`, '-c', `https.proxy=${proxy}`, 'fetch', 'origin', 'main', '--prune']
+      : ['fetch', 'origin', 'main', '--prune'];
+    gitRun(cwd, fetchArgv);
+    fetchNote = 'fetch origin/main ок';
+  } catch {
+    fetchNote = 'fetch origin/main не прошёл — считаем по локальным refs';
   }
 
-  // Ветку держит соседний worktree — checkout невозможен физически (одна ветка не
-  // может быть в двух деревьях), и это норма при параллельных сессиях (канон
-  // membrana-worktree), а не сбой. Раньше ритуал рвался здесь на ровном месте:
-  // при параллельной работе main почти всегда занят соседом (#515 п.2, живой
-  // случай 15.07). Проверяем ДО checkout, а не ловим текст ошибки git: он
-  // локализуем и контрактом не является.
-  const heldBy = otherWorktreeBranches();
-  if (isBaseHeldElsewhere(branchName, heldBy)) {
+  let behind = 0;
+  try {
+    behind = Number(gitRun(cwd, ['rev-list', '--count', `HEAD..${baseRef}`]).trim()) || 0;
+  } catch {
     return {
       ok: false,
-      skipped: true,
-      detail: `${branchName} держит другой worktree (параллельная сессия) — остаёмся на ${current || '(detached)'}`,
+      detail: `не удалось измерить отставание от ${baseRef} (${fetchNote})`,
+      findings: [],
+      blockedBy: [`свежесть: нет refs ${baseRef}`],
     };
   }
 
-  let dirty = false;
+  let porcelain = '';
   try {
-    const status = execFileSync('git', ['status', '--porcelain'], {
-      cwd,
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'pipe'],
-    }).trim();
-    dirty = status.length > 0;
+    porcelain = gitRun(cwd, ['status', '--porcelain']);
   } catch {
-    return { ok: false, detail: 'не удалось проверить чистоту рабочего дерева' };
+    return { ok: false, detail: 'не удалось проверить чистоту рабочего дерева', findings: [], blockedBy: [] };
   }
+  const dirtyPaths = porcelain
+    .split(/\r?\n/u)
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((l) => l.replace(/^.. /, '').trim());
 
-  if (dirty) {
-    return {
-      ok: false,
-      skipped: true,
-      detail: `сейчас ${current || '(detached)'}, есть незакоммиченные изменения — checkout ${branchName} вручную`,
-    };
-  }
+  const ready = ritualTreeReady({
+    behind,
+    dirtyCount: dirtyPaths.length,
+    dirtyPaths,
+    maxBehind,
+  });
 
+  let holdersPorcelain = '';
   try {
-    execFileSync('git', ['checkout', branchName], { cwd, stdio: 'inherit' });
-    const pull = runGitPull(cwd, branchName);
-    if (!pull.ok) throw new Error('pull failed');
-    return { ok: true, detail: `переключено ${current || '?'} → ${branchName} (${pull.detail})` };
+    holdersPorcelain = gitRun(cwd, ['worktree', 'list', '--porcelain']);
   } catch {
-    return { ok: false, detail: `checkout/pull ${branchName} не удался` };
+    holdersPorcelain = '';
   }
+  let root = cwd;
+  try {
+    root = gitRun(cwd, ['rev-parse', '--show-toplevel']).trim();
+  } catch {
+    /* cwd как fallback */
+  }
+  const foreign = findBaseHolders(parseWorktreeHolders(holdersPorcelain), root, 'main');
+  const holder = baseHolderGuard(foreign, { selfOnBase: selfHoldsBase(current) });
+
+  const blockedBy = [...ready.blockedBy, ...holder.findings];
+  const ok = ready.ok && holder.ok;
+  const branchLabel = current || '(detached)';
+  const detail = ok
+    ? `дерево готово к ритуалу: ${branchLabel}, behind=${behind}/${maxBehind}, чисто (${fetchNote})`
+    : `дерево НЕ готово (${branchLabel}): ${blockedBy.join(' · ')}`;
+
+  return { ok, detail, blockedBy, findings: holder.findings, behind, current, fetchNote };
 }
 
-const cwd = process.cwd();
-const { noAnthropic, help } = parseArgs(process.argv.slice(2));
+const isMain = process.argv[1]?.endsWith('morning-care.mjs');
+if (isMain) {
+  const cwd = process.cwd();
+  const { noAnthropic, help } = parseArgs(process.argv.slice(2));
 
-if (help) {
-  console.log(`Утренняя профилактика (корень репозитория).
+  if (help) {
+    console.log(`Утренняя профилактика (корень репозитория).
 
   yarn morning-care
   yarn morning-care --no-anthropic   без вызова Anthropic API
 
 Переменные: .env в корне (HTTPS_PROXY и др.), ANTHROPIC_API_KEY для проверки API.
+Порог свежести ритуала: MEMBRANA_RITUAL_MAX_BEHIND (по умолчанию 0). Чекаут main не нужен (#1232).
 `);
-  process.exit(0);
-}
+    process.exitCode = 0;
+  } else {
+    console.log('=== Утренняя профилактика Membrana ===\n');
 
-console.log('=== Утренняя профилактика Membrana ===\n');
+    loadDotEnv(cwd);
 
-loadDotEnv(cwd);
-
-// F3 / #929: preflight morning-wiring — missing = STOP до остальной профилактики.
-const wiringCode = runMorningWiringGate(cwd);
-if (wiringCode === 2) {
-  console.log('\n=== итог ===');
-  console.log('[fail] morning-wiring STOP — остальная профилактика не запущена.');
-  process.exitCode = 2;
-} else {
-  await runMorningCareBody({ cwd, noAnthropic });
+    // F3 / #929: preflight morning-wiring — missing = STOP до остальной профилактики.
+    const wiringCode = runMorningWiringGate(cwd);
+    if (wiringCode === 2) {
+      console.log('\n=== итог ===');
+      console.log('[fail] morning-wiring STOP — остальная профилактика не запущена.');
+      process.exitCode = 2;
+    } else {
+      await runMorningCareBody({ cwd, noAnthropic });
+    }
+  }
 }
 
 async function runMorningCareBody({ cwd, noAnthropic }) {
@@ -347,14 +335,13 @@ if (proxyUrl) {
   console.log('[инфо] прокси не задан — запросы к Anthropic пойдут напрямую');
 }
 
-console.log(`\n--- рабочая ветка (${DEFAULT_WORK_BRANCH}) ---`);
-const branchSwitch = ensureWorkBranch(cwd, DEFAULT_WORK_BRANCH);
-if (branchSwitch.skipped) {
-  console.log(`[warn] ${branchSwitch.detail}`);
-} else if (branchSwitch.ok) {
-  console.log(`[ok]   ${branchSwitch.detail}`);
+console.log(`\n--- дерево ритуала (fresh∧clean, порог behind≤${RITUAL_MAX_BEHIND}; чекаут main не требуется) ---`);
+const tree = ensureRitualTree(cwd);
+if (tree.ok) {
+  console.log(`[ok]   ${tree.detail}`);
 } else {
-  console.log(`[fail] ${branchSwitch.detail}`);
+  for (const line of tree.blockedBy ?? []) console.log(`[fail] ${line}`);
+  if (!(tree.blockedBy ?? []).length) console.log(`[fail] ${tree.detail}`);
   failed = true;
 }
 
