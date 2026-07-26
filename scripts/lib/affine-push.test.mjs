@@ -5,9 +5,11 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
 import {
+  buildAffineCliEnvFromAuth,
   detectSocketIoBlocked,
   isSocketIoPushError,
   pushImportBundle,
+  resetAffineCliPushEnv,
   resolveAffineCliPath,
   socketIoPushHint,
 } from './affine-push.mjs';
@@ -25,7 +27,20 @@ describe('affine-push', () => {
       { ok: false, error: "missing 'data' field" },
     ];
     assert.equal(detectSocketIoBlocked(results), true);
-    assert.match(socketIoPushHint('https://strategy.mmbrn.tech'), /WebSocket/);
+    assert.match(socketIoPushHint('https://strategy.mmbrn.tech'), /socket\.io/);
+  });
+
+  it('buildAffineCliEnvFromAuth prefers session cookie over bearer token', () => {
+    const prevToken = process.env.AFFINE_API_TOKEN;
+    process.env.AFFINE_API_TOKEN = 'test-token';
+    try {
+      const env = buildAffineCliEnvFromAuth({ cookieHeader: 'affine_session=x', token: 'ignored' });
+      assert.equal(env.AFFINE_COOKIE, 'affine_session=x');
+      assert.equal(env.AFFINE_API_TOKEN, undefined);
+    } finally {
+      if (prevToken === undefined) delete process.env.AFFINE_API_TOKEN;
+      else process.env.AFFINE_API_TOKEN = prevToken;
+    }
   });
 
   it('resolveAffineCliPath returns null or string', () => {
@@ -33,9 +48,13 @@ describe('affine-push', () => {
     assert.ok(p === null || typeof p === 'string');
   });
 
-  it('pushImportBundle fails without manifest', () => {
+  it('pushImportBundle fails without manifest', async () => {
+    resetAffineCliPushEnv();
     const dir = mkdtempSync(join(tmpdir(), 'affine-push-'));
-    const r = pushImportBundle({ bundleDir: dir, workspaceId: '00000000-0000-0000-0000-000000000001' });
+    const r = await pushImportBundle({
+      bundleDir: dir,
+      workspaceId: '00000000-0000-0000-0000-000000000001',
+    });
     if (resolveAffineCliPath()) {
       assert.equal(r.ok, false);
       assert.match(r.error ?? '', /manifest missing/);
@@ -45,10 +64,11 @@ describe('affine-push', () => {
     }
   });
 
-  it('pushImportBundle dry-run with manifest when cli present', () => {
+  it('pushImportBundle dry-run with manifest when cli present', async () => {
     const cli = resolveAffineCliPath();
     if (!cli) return;
 
+    resetAffineCliPushEnv();
     const dir = mkdtempSync(join(tmpdir(), 'affine-push-'));
     mkdirSync(join(dir, 'strategic-docs'), { recursive: true });
     writeFileSync(join(dir, 'strategic-docs', 'Test.md'), '# Test\n', 'utf8');
@@ -67,7 +87,7 @@ describe('affine-push', () => {
       'utf8',
     );
 
-    const r = pushImportBundle({
+    const r = await pushImportBundle({
       bundleDir: dir,
       workspaceId: process.env.AFFINE_WORKSPACE_TEMPLATES_ID ?? '00000000-0000-0000-0000-000000000001',
       dryRun: true,

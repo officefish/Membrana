@@ -8,5 +8,29 @@
   "precedents": [
     "docs/prompts/DREAM_MASTER_PROMPT.md",
     "docs/seanses/ritual-refactor-m5-dreams-2026-07-20.md"
-  ]
+  ],
+  "trigger": {
+    "kind": "schedule",
+    "cron": "0 * * * *",
+    "timezone": "UTC",
+    "note": "office DreamsScheduler hourly; DREAMS_ENABLED off → skip"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "tick",
+        "criticality": "critical"
+      },
+      {
+        "id": "digest-deliver",
+        "criticality": "noncritical",
+        "whyNoncritical": "доставка дайджеста в ритуал только в час 5 UTC; пропуск слота = skipped, тик часа не теряется"
+      }
+    ]
+  },
+  "gates": {
+    "kind": "none",
+    "why": "автономный контур office; человек не в цикле тика и не возобновляет поток"
+  }
 }

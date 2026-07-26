@@ -58,13 +58,24 @@ Env те же + per-target workspace ID. Upsert: существующий doc с
 | Этап | Протокол | Что проверяет |
 |------|----------|----------------|
 | `auth status`, `doc list`, dry-run | **GraphQL** HTTPS | токен/пароль, workspace id |
-| `create-from-markdown`, `replace-markdown` | **socket.io** WebSocket | запись Y.js-тела документа |
+| `create-from-markdown`, `replace-markdown` | **socket.io** at `/socket.io/` | запись Y.js-тела документа |
 
-affine-cli подключается к **корню** `AFFINE_BASE_URL` (не `/graphql`) через WebSocket.  
-Типичные ошибки push при живом dry-run:
+affine-cli подключается к **корню** `AFFINE_BASE_URL` (не `/graphql`); путь socket.io — **`/socket.io/`**.
+`yarn strategic-docs:publish --push` перед вызовом affine-cli делает password sign-in и передаёт **`AFFINE_COOKIE`** (session cookies). GraphQL-only bearer token без cookie часто даёт `missing 'data' field`.
 
-- `socket.io connect timeout after 10s` — WS не доходит (VPN, firewall, Caddy без upgrade на VDS)
-- `missing 'data' field` — обрыв socket.io handshake
+Типичные ошибки push:
+
+- `socket.io connect timeout after 10s` — WS не доходит (VPN, firewall, proxy)
+- `missing 'data' field` — socket.io connect отклонён (часто: только `AFFINE_API_TOKEN` без session cookie; или обрыв handshake)
+
+**Auth для `--push`:** предпочтительно `AFFINE_PASSWORD` / `AFFINE_ADMIN_PASSWORD` в root `.env` (не только access token).
+
+**Probe (infra OK если sid JSON):**
+
+```bash
+curl.exe -s "https://strategy.mmbrn.tech/socket.io/?EIO=4&transport=polling"
+# → 0{"sid":"…","upgrades":["websocket"],…}
+```
 
 **Fallback:** даже при падении `--push` bundle **уже записан** в `scripts/cache/affine-import/publish-*-*/` — в stderr будет `bundleDir` + `manifest`. Дальше v1 UI Import (см. ниже).
 

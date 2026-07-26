@@ -8,5 +8,41 @@
   "precedents": [
     "docs/storm/storm-cold-start-entry-2026-07-22/REPORT.md",
     "docs/storm/storm-enforcement-walls-2026-07-22/REPORT.md"
-  ]
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "yarn bridge open",
+    "note": "открытие явное по слову капитана; не обязано быть с утра"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "tools",
+        "criticality": "critical"
+      },
+      {
+        "id": "open",
+        "criticality": "critical"
+      },
+      {
+        "id": "dialog",
+        "criticality": "critical"
+      },
+      {
+        "id": "debt",
+        "criticality": "noncritical",
+        "whyNoncritical": "реестр долгов append-only; пропуск шага не стирает уже записанное"
+      },
+      {
+        "id": "bridge-close",
+        "criticality": "noncritical",
+        "whyNoncritical": "закрытие вечером шагом ritual-evening; не открыта → no-op, потеря шага не теряет конспект"
+      }
+    ]
+  },
+  "gates": {
+    "kind": "none",
+    "why": "паузы на человека — в живом диалоге капитана, не машинные точки остановки потока с контрактом resume; закрытие неявное через procedure-event ritual-evening/bridge-close"
+  }
 }

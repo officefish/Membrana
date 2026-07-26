@@ -16,6 +16,10 @@
 - **Определение ≠ прогон.** Здесь — классы; инстансы (прогоны) живут в своих
   домах (`docs/storm/<id>/`, `docs/meeting/<id>/`, `docs/seanses/`) и не
   мигрируют — на них ссылаются `precedents[]`.
+- **Ядро настроек** (`trigger` · `steps` · `gates`) — контракт
+  [`CORE.md`](./CORE.md) (Ф1 #1220). Все три вместе или ни одного; отсутствие —
+  находка, частичное/битое — отказ. Пилоты: `ritual-evening`, `bridge`,
+  `ritual-dreams`.
 - Зуб заселённости: `validateProcedure(dir)` — `resolvable` ∧ `readmeNonEmpty` ∧
   `manifestSchemaOk`; гоняется в CI (`scripts/validate-procedure.test.mjs`).
 

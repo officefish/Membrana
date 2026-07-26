@@ -14,7 +14,7 @@
 | `primaryTitle` | Универсальное ядро настроек процедуры: trigger · steps[] · gates[] |
 | `githubIssue` | эпик [#1220](https://github.com/officefish/Membrana/issues/1220), фаза Ф1 |
 | `size` | M |
-| `promptPath` | — (заводится при регистрации карточки) |
+| `promptPath` | [`docs/prompts/PROCEDURES_CORE_FIELDS_PROMPT.md`](prompts/PROCEDURES_CORE_FIELDS_PROMPT.md) |
 | `сгенерировано` | 2026-07-26 (ручная чеканка владельца, author=human) |
 | `источник магистрали` | **owner-choice 26.07** (`sources[0]`, origin `owner-choice@chat/magistral-26-07`) — не синтез из стендапа/горизонта |
 | `родитель` | эпик рефакторинга контейнера процедур #1220 (родился из беседы на мостике 26.07) |
