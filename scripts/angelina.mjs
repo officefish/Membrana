@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 
 import { orchestrateCascade, presentNode } from './lib/angelina-cascade.mjs';
 import { buildSnapshot, gitFsIo } from './lib/angelina-adapter.mjs';
-import { canSend } from './lib/morning-gates.mjs';
+import { canSend, todayIso } from './lib/morning-gates.mjs';
 
 const EXIT_BLOCKED = 22;
 
@@ -63,7 +63,7 @@ function greet(repoRoot) {
   if (!state) gatesLine = 'гейты: состояние не заведено (magistral и swallow ждут; yarn morning:gate)';
   else if (state.corrupt) gatesLine = 'гейты: файл состояния битый — считаю оба закрытыми';
   else {
-    const gate = canSend(state);
+    const gate = canSend(state, todayIso());
     gatesLine = gate.ok
       ? 'гейты: оба пройдены — отправка разрешена'
       : `гейты: ${gate.blockedBy.join(' · ')}`;
