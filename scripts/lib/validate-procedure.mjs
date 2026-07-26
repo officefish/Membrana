@@ -20,11 +20,16 @@
  * optional-ключи `home` | `mode`. Объявленный дом → существует + форма;
  * живой дом без декларации → finding (`auditProcedureHomes`).
  *
+ * Версия формы дома (эпик #1220 Ф4, канон docs/procedures/VERSIONS.md):
+ * `formVersion` + `compat[]` в *.form.json; legacy `version:1` — дефект до миграции.
+ *
  * Детерминирована, без сети; файловая система — единственный вход.
  */
 
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { basename, join } from 'node:path';
+
+import { homeFormProblems, migrateHomeForm } from './procedure-home-form.mjs';
 
 /** Расширения, запрещённые в контейнере (Т12: код и тесты живут в scripts/). */
 const CODE_EXT_RE = /\.(mjs|cjs|js|ts|tsx|jsx|py|sh|ps1)$/iu;
@@ -495,25 +500,17 @@ export function homeFieldsProblems(m, repoRoot) {
         problems.push(`home.form не резолвится: ${h.form}`);
       } else {
         try {
-          const form = JSON.parse(readFileSync(formAbs, 'utf8'));
-          if (!form || typeof form !== 'object' || Array.isArray(form)) {
-            problems.push('home.form — не объект');
-          } else if (!Array.isArray(form.mustExist) || form.mustExist.length === 0) {
-            problems.push('home.form.mustExist — непустой массив');
-          } else if (existsSync(homeAbs)) {
-            for (const rel of form.mustExist) {
-              if (typeof rel !== 'string' || rel.trim() === '') {
-                problems.push('home.form.mustExist: элемент — не непустая строка');
-                continue;
-              }
+          const formRaw = JSON.parse(readFileSync(formAbs, 'utf8'));
+          problems.push(...homeFormProblems(formRaw));
+          const migrated = migrateHomeForm(formRaw);
+          if (migrated.ok && Array.isArray(migrated.form.mustExist) && existsSync(homeAbs)) {
+            for (const rel of migrated.form.mustExist) {
+              if (typeof rel !== 'string' || rel.trim() === '') continue;
               const fileAbs = join(homeAbs, rel);
               if (!existsSync(fileAbs)) {
                 problems.push(`home.form: нет ${h.path}/${rel}`);
               }
             }
-          }
-          if (form && typeof form === 'object' && form.extensionsMayNotOverride !== true) {
-            problems.push('home.form: extensionsMayNotOverride обязан быть true');
           }
         } catch {
           problems.push(`home.form: ${h.form} — битый JSON`);
