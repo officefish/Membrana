@@ -1,6 +1,88 @@
 {
   "tasks": [
     {
+      "id": "tc-nightly-frame",
+      "title": "Ночной полный прогон от пина; фрейм night-report получает носитель и блокирует утро",
+      "promptPath": "docs/prompts/TC_NIGHTLY_FRAME_PROMPT.md",
+      "githubIssue": 1293,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "angelina",
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "tests-container"
+    },
+    {
+      "id": "tc-setups-selector",
+      "title": "Сетапы smoke/gate/full и селектор по графу импортов; отчёт «что не гонялось»",
+      "promptPath": "docs/prompts/TC_SETUPS_SELECTOR_PROMPT.md",
+      "githubIssue": 1292,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "tests-container"
+    },
+    {
+      "id": "tc-home-workshop",
+      "title": "Контейнер тестов: дом в корневом tests/, кит tests-master, мастерская (homePath начинает работать)",
+      "promptPath": "docs/prompts/TC_HOME_WORKSHOP_PROMPT.md",
+      "githubIssue": 1291,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "tests-container"
+    },
+    {
+      "id": "tests-container",
+      "title": "Эпик: контейнер тестов — дом в корневом tests/, кит, мастерская, сетапы и ночной полный прогон",
+      "promptPath": "docs/prompts/TESTS_CONTAINER_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "tooling-friction-2607",
       "title": "Тулинг-фрикции 25–26.07: скан по диффу, чужая база ветки, слияние в изоляции, честные отказы хуков",
       "promptPath": "docs/prompts/TOOLING_FRICTION_2607_PROMPT.md",
