@@ -100,6 +100,16 @@ test('ATF4-1: assertPrMergeableForShip STOP на CONFLICTING/DIRTY', () => {
     /STOP до merge/u,
   );
   assert.throws(
+    () =>
+      assertPrMergeableForShip({
+        mergeable: 'CONFLICTING',
+        mergeStateStatus: 'DIRTY',
+        touchesRegistry: true,
+        prNumber: 1023,
+      }),
+    /task:pr-land 1023/u,
+  );
+  assert.throws(
     () => assertPrMergeableForShip({ mergeable: 'MERGEABLE', mergeStateStatus: 'DIRTY' }),
     /DIRTY/u,
   );
