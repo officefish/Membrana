@@ -45,6 +45,14 @@
 `@cat:` и `checkGenus()` по `@op:effect:@cat:имя`
 (`scripts/lib/vocabulary-check.mjs`; роды и леммы — вердикт `m2a-rod`).
 
+## Лицензия контракта (Ф3 #1220)
+
+Два класса артефактов — **prose** и **contract**. Лицензию выдаёт парсер
+(`происхождение` ∧ `соответствие`); канон — [`LICENSE.md`](./LICENSE.md),
+реестр — [`contracts.registry.json`](./contracts.registry.json).
+Зуб: `yarn procedures:license --check`. Пилоты: `VOCABULARY.md`, `REGISTRY.md`.
+Сквозной механизм на весь репо — отдельно [#1227](https://github.com/officefish/Membrana/issues/1227).
+
 ## Жильцы
 
 | Процедура | Держатель | Статус |

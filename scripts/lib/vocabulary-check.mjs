@@ -4,10 +4,12 @@
  * Канон: вердикты `m2-vocabulary-r2` (структура словаря, check по маркерам) и
  * `m2a-rod` (леммы родов, checkGenus) заседания procedural-layer. Источник —
  * `docs/procedures/vocabulary.json` (единственный машиночитаемый); VOCABULARY.md —
- * генерируемая проекция, руками не правится.
+ * генерируемая проекция, руками не правится (лицензия контракта Ф3 #1220).
  *
  * Все функции чистые и детерминированные: без сети, часов и случайности.
  */
+
+import { stampContractHeader } from './procedure-contract-stamp.mjs';
 
 /** Маркер категории в тексте слоя: @cat:имя (имя — kebab/кириллица без пробелов). */
 const CAT_MARKER_RE = /@cat:([\p{L}0-9-]+)/gu;
@@ -112,7 +114,10 @@ export function checkGenus(layerText, vocabulary) {
  */
 export function renderVocabularyMd(v) {
   const out = [
-    '<!-- generated: yarn vocabulary:generate из docs/procedures/vocabulary.json — руками не править -->',
+    stampContractHeader({
+      generator: 'yarn vocabulary:generate',
+      source: 'docs/procedures/vocabulary.json',
+    }),
     '',
     '# VOCABULARY — словарь категорий процедурного слоя',
     '',
