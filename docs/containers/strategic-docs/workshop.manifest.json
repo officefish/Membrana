@@ -1,0 +1,34 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская strategic-docs",
+  "worksOn": "docs/containers/strategic-docs",
+  "kit": null,
+  "verbs": {
+    "audit": null,
+    "decompose": null,
+    "inspectElement": null,
+    "stackLike": [],
+    "domain": [
+      {
+        "name": "generate",
+        "worksOn": "docs/containers/strategic-docs/templates"
+      },
+      {
+        "name": "publish",
+        "worksOn": "docs/containers/strategic-docs"
+      },
+      {
+        "name": "publishTemplates",
+        "worksOn": "docs/containers/strategic-docs"
+      },
+      {
+        "name": "publishReleases",
+        "worksOn": "docs/containers/strategic-docs/releases"
+      },
+      {
+        "name": "discoverWorkspaces",
+        "worksOn": "strategy.mmbrn.tech"
+      }
+    ]
+  }
+}
