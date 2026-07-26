@@ -20,6 +20,9 @@
   [`CORE.md`](./CORE.md) (Ф1 #1220). Все три вместе или ни одного; отсутствие —
   находка, частичное/битое — отказ. Пилоты: `ritual-evening`, `bridge`,
   `ritual-dreams`.
+- **Дом и режим** (`home` · `mode`) — контракт [`HOME.md`](./HOME.md) (Ф2 #1220).
+  Кит ≠ дом; объявленный дом обязан существовать; живой дом без декларации —
+  находка (`auditProcedureHomes`). Пилот дома: `bridge` → `docs/bridge`.
 - Зуб заселённости: `validateProcedure(dir)` — `resolvable` ∧ `readmeNonEmpty` ∧
   `manifestSchemaOk`; гоняется в CI (`scripts/validate-procedure.test.mjs`).
 
