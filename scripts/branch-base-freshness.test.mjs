@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { classifyBaseFreshness } from './lib/branch-base-freshness.mjs';
+import { classifyBaseFreshness, classifyBaseOwnership } from './lib/branch-base-freshness.mjs';
 
 test('ветка на уровне базы → дифф достоверен', () => {
   const r = classifyBaseFreshness({ behind: 0, phantomDeletions: [] });
@@ -51,4 +51,42 @@ test('подсказка чинить названа явно', () => {
 test('пустой вход безопасен (дефолты)', () => {
   const r = classifyBaseFreshness();
   assert.equal(r.state, 'fresh');
+});
+
+// ─── Владение базой ветки (#1272 Ф2) ──────────────────────────────────────────────────
+// Эпизод 26.07: ветвление «от текущей точки» (встать на свежую общую ветку не давало
+// занятое дерево) утащило в базу чужой невлитый коммит. Заявка предлагала чужой труд под
+// моим именем; поймалось только на конфликте слияния. Коммиты были поимённые и честные —
+// ложь возникла на уровне БАЗЫ, чего не видел ни один зуб.
+
+test('база чиста: только свои коммиты поверх общей ветки', () => {
+  const r = classifyBaseOwnership({ own: ['aaa1111', 'bbb2222'], foreign: [] });
+  assert.equal(r.state, 'clean');
+  assert.match(r.message, /2 свой/);
+});
+
+test('пустая база — тоже чистая, а не подозрительная', () => {
+  const r = classifyBaseOwnership({ own: [], foreign: [] });
+  assert.equal(r.state, 'clean');
+  assert.match(r.message, /своих коммитов поверх origin\/main пока нет/);
+});
+
+test('чужой коммит в базе называется автором и темой, а не просто числом', () => {
+  const r = classifyBaseOwnership({
+    own: ['aaa1111'],
+    foreign: [{ sha: 'bce70731', author: 'Cursor', subject: 'feat(strategic-docs): add workshop publish CLI' }],
+  });
+  assert.equal(r.state, 'foreign-base');
+  assert.match(r.message, /bce70731/, 'коммит назван');
+  assert.match(r.message, /Cursor/, 'автор назван — иначе непонятно, чей труд');
+  assert.match(r.message, /чужой труд под вашим именем/i);
+  assert.match(r.message, /собрать ветку начисто/, 'назван выход, а не только диагноз');
+});
+
+test('много чужих коммитов: список усечён, но количество честное', () => {
+  const foreign = Array.from({ length: 7 }, (_, i) => ({ sha: `sha${i}`, author: 'Сосед', subject: `работа ${i}` }));
+  const r = classifyBaseOwnership({ own: [], foreign });
+  assert.equal(r.state, 'foreign-base');
+  assert.match(r.message, /7 ЧУЖОЙ/, 'число не усечено');
+  assert.ok(r.message.includes('…'), 'перечень усечён явно, а не молча');
 });

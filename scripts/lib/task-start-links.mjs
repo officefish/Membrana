@@ -142,6 +142,16 @@ export function registerOrLinkTask(registry, entry, mode = 'insert') {
           ? entry.githubIssue
           : null,
     linearId: normalizeLinearId(prev.linearId) ?? normalizeLinearId(entry.linearId),
+    // Ответственный и поддержка НЕ затираются пустым (#1272 Ф5). Эпизод 25.07: повторный
+    // register ради привязки Linear шёл без --lead, поле обнулялось, и pre-push
+    // trace-gate останавливал отправку словами «ответственный не назначен». Снятие
+    // ответственного — осознанный акт, он не должен быть побочным эффектом линковки.
+    leadPersona: entry.leadPersona ?? prev.leadPersona ?? null,
+    supportPersonas:
+      Array.isArray(entry.supportPersonas) && entry.supportPersonas.length > 0
+        ? entry.supportPersonas
+        : (prev.supportPersonas ?? []),
+    notes: entry.notes || prev.notes || '',
   };
   assertNoLinkCollision(registry, nextEntry);
   const tasks = registry.tasks.slice();

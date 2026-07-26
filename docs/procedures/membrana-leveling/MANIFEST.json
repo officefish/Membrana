@@ -53,5 +53,40 @@
       "holder": "vesnin",
       "tag": "служебный-доставка"
     }
-  ]
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "note": "вечернее выравнивание workspace по скиллу membrana-leveling / регламенту §8.1"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "leveling-wires", "criticality": "critical" },
+      { "id": "leveling-gate", "criticality": "critical" },
+      { "id": "leveling-main-fill", "criticality": "critical" },
+      { "id": "leveling-workspace", "criticality": "critical" },
+      {
+        "id": "leveling-scratch",
+        "criticality": "noncritical",
+        "whyNoncritical": "служебные времянки; пропуск не отменяет PASS гейта и main-fill"
+      },
+      { "id": "leveling-deliver", "criticality": "critical" }
+    ]
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "leveling-gate",
+        "waitsFor": "owner",
+        "resume": "PASS гейта K4 (Named∧Registered∧Filled) → открытие frames main-fill/workspace",
+        "note": "preflight leveling-gate; без PASS frames не открываются"
+      }
+    ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "выравнивание пишет в рабочие артефакты дня/workspace, не в отдельный git-дом процедуры"
+  }
 }

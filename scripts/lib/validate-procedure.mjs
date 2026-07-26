@@ -56,7 +56,11 @@ export const MANIFEST_QUEUE_KEYS = Object.freeze(['preflight', 'frames', 'post']
  */
 export const MANIFEST_CORE_KEYS = Object.freeze(['trigger', 'steps', 'gates']);
 
-/** Пилоты Ф1 — обязаны нести полное валидное ядро. */
+/**
+ * Пилоты Ф1 (исторические три профиля). После Ф5 (#1220 / #1284) требование
+ * полного ядра распространено на весь built-корпус — см. `listBuiltProcedureIds`
+ * и тест корпуса; константа сохранена для точечных ссылок в доках.
+ */
 export const PROCEDURE_CORE_PILOTS = Object.freeze([
   'ritual-evening',
   'bridge',
@@ -65,8 +69,7 @@ export const PROCEDURE_CORE_PILOTS = Object.freeze([
 
 /**
  * Пилоты Ф2 — обязаны нести `home` и `mode`.
- * Совпадает с Ф1 намеренно (те же три профиля); расширять отдельно, когда
- * появится процедура с домом без ядра или наоборот.
+ * После Ф5 совпадает по охвату с built-корпусом (тест), не только с этой тройкой.
  */
 export const PROCEDURE_HOME_PILOTS = PROCEDURE_CORE_PILOTS;
 
@@ -737,4 +740,46 @@ export function listProcedureDirs(repoRoot) {
   return readdirSync(root, { withFileTypes: true })
     .filter((e) => e.isDirectory())
     .map((e) => join(root, e.name));
+}
+
+/**
+ * Id построенных процедур (есть MANIFEST.json). Ф5: корпус с полным ядром.
+ * @param {string} repoRoot
+ * @returns {string[]} sorted kebab ids
+ */
+export function listBuiltProcedureIds(repoRoot) {
+  return listProcedureDirs(repoRoot)
+    .filter((dir) => existsSync(join(dir, 'MANIFEST.json')))
+    .map((dir) => basename(dir))
+    .sort();
+}
+
+/**
+ * Ревизия корпуса (Ф5): built без полного ядра / без home+mode → findings.
+ * Не роняет valid отдельного контейнера (validateProcedure), но ловится тестом.
+ * @param {string} repoRoot
+ * @returns {string[]}
+ */
+export function auditProcedureCorpus(repoRoot) {
+  const findings = [];
+  for (const id of listBuiltProcedureIds(repoRoot)) {
+    const dir = join(repoRoot, 'docs', 'procedures', id);
+    const r = validateProcedure(dir, repoRoot);
+    if (!r.valid) {
+      findings.push(`${id}: контейнер невалиден — ${r.problems.join('; ')}`);
+      continue;
+    }
+    if (r.core !== 'full') {
+      findings.push(`${id}: нет полного ядра (trigger/steps/gates) — см. docs/procedures/CORPUS.md`);
+    }
+    try {
+      const m = JSON.parse(readFileSync(join(dir, 'MANIFEST.json'), 'utf8'));
+      if (!m.home || !m.mode) {
+        findings.push(`${id}: нет home+mode — см. docs/procedures/HOME.md / CORPUS.md`);
+      }
+    } catch {
+      findings.push(`${id}: MANIFEST.json нечитаем при аудите корпуса`);
+    }
+  }
+  return findings;
 }
