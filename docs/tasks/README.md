@@ -20,11 +20,22 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `notes-regex-cyrillic-translit` | Грабли в канон: кириллица в регулярках JS и транслит при сверке имён | S | [`NOTES_REGEX_CYRILLIC_TRANSLIT_PROMPT.md`](../prompts/NOTES_REGEX_CYRILLIC_TRANSLIT_PROMPT.md) | — |
+| `leveling-snapshot-out-path` | Снимок выравнивания ломается на абсолютном --out (клеит путь к корню репозитория) | S | [`LEVELING_SNAPSHOT_OUT_PATH_PROMPT.md`](../prompts/LEVELING_SNAPSHOT_OUT_PATH_PROMPT.md) | — |
+| `insight-mandate-for-new` | Решение по инсайту недостижимо для новых инсайтов: мандаты только из зашитой миграции | M | [`INSIGHT_MANDATE_FOR_NEW_PROMPT.md`](../prompts/INSIGHT_MANDATE_FOR_NEW_PROMPT.md) | — |
+| `insight-review-from-file` | insight review принимает готовый REVIEW.md из чата (как консилиум — протокол) | S | [`INSIGHT_REVIEW_FROM_FILE_PROMPT.md`](../prompts/INSIGHT_REVIEW_FROM_FILE_PROMPT.md) | — |
+| `kits-pins-prepush-strict` | Строгая сверка описей китов на pre-push для затронутых файлов | S | [`KITS_PINS_PREPUSH_STRICT_PROMPT.md`](../prompts/KITS_PINS_PREPUSH_STRICT_PROMPT.md) | — |
+| `ship-automerge-predicate` | Предикат автослияния спрашивает галку вместо правил защиты ветки | S | [`SHIP_AUTOMERGE_PREDICATE_PROMPT.md`](../prompts/SHIP_AUTOMERGE_PREDICATE_PROMPT.md) | — |
+| `ship-merge-state-guard` | Гард незавершённого слияния перед пушем: тихий отказ хука не выдаёт себя за успех | S | [`SHIP_MERGE_STATE_GUARD_PROMPT.md`](../prompts/SHIP_MERGE_STATE_GUARD_PROMPT.md) | — |
+| `tw-state-batch-norm` | Состояния задач опрашивать списком, не поштучно — норма мастерской + гард | S | [`TW_STATE_BATCH_NORM_PROMPT.md`](../prompts/TW_STATE_BATCH_NORM_PROMPT.md) | — |
+| `tw-handoff-liveness` | Сверка живости топ-10 хендоффа: строки таблицы против состояний задач | S | [`TW_HANDOFF_LIVENESS_PROMPT.md`](../prompts/TW_HANDOFF_LIVENESS_PROMPT.md) | — |
+| `tw-declared-verbs-honest-no` | Мастерская задач: три глагола объявлены без движков — строить или объявить declared-not-built | S | [`TW_DECLARED_VERBS_HONEST_NO_PROMPT.md`](../prompts/TW_DECLARED_VERBS_HONEST_NO_PROMPT.md) | — |
 | `procedures-versions` | Версии · совместимость · миграции процедурного слоя (Ф4 #1220) | M | [`PROCEDURES_VERSIONS_PROMPT.md`](../prompts/PROCEDURES_VERSIONS_PROMPT.md) | [#1274](https://github.com/officefish/Membrana/issues/1274) |
 | `friction6-secret-inventory` | yarn secret:inventory — инвентарь засвеченного как вход ротации ключей | S | [`FRICTION6_SECRET_INVENTORY_PROMPT.md`](../prompts/FRICTION6_SECRET_INVENTORY_PROMPT.md) | [#1266](https://github.com/officefish/Membrana/issues/1266) |
 | `friction6-hygiene-notes` | Реестр скриптов не протухает + три грабли окружения в AGENTS.md | S | [`FRICTION6_HYGIENE_NOTES_PROMPT.md`](../prompts/FRICTION6_HYGIENE_NOTES_PROMPT.md) | [#1265](https://github.com/officefish/Membrana/issues/1265) |
 | `friction6-scripts-lint` | scripts/*.mjs вне линтера: дать парсер ESM и назвать шум числом | M | [`FRICTION6_SCRIPTS_LINT_PROMPT.md`](../prompts/FRICTION6_SCRIPTS_LINT_PROMPT.md) | [#1264](https://github.com/officefish/Membrana/issues/1264) |
 | `friction6-test-scripts-groups` | test:scripts разбить на именованные группы — снять файл-перекрёсток | S | [`FRICTION6_TEST_SCRIPTS_GROUPS_PROMPT.md`](../prompts/FRICTION6_TEST_SCRIPTS_GROUPS_PROMPT.md) | [#1263](https://github.com/officefish/Membrana/issues/1263) |
+| `friction6-secret-gate-parity` | Секрет-гейт локально = CI: проверка по диапазону вместо растущей истории | S | [`FRICTION6_SECRET_GATE_PARITY_PROMPT.md`](../prompts/FRICTION6_SECRET_GATE_PARITY_PROMPT.md) | [#1262](https://github.com/officefish/Membrana/issues/1262) |
 | `agent-tooling-friction-6` | Agent tooling friction — раунд 6 (сессия 2026-07-26): ship не врёт, секрет-гейт не блокирует чужих | M | [`AGENT_TOOLING_FRICTION_6_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_6_PROMPT.md) | — |
 | `main-day-issue-channel-diagnosis` | Диагноз канала ritual-main-day-issue: звено называется, полый артефакт не пишется | M | [`MAIN_DAY_ISSUE_CHANNEL_DIAGNOSIS_PROMPT.md`](../prompts/MAIN_DAY_ISSUE_CHANNEL_DIAGNOSIS_PROMPT.md) | [#1239](https://github.com/officefish/Membrana/issues/1239) |
 | `tef-channel-resolver` | Вечерний фидбек команды через резолвер каналов процедур | S | [`TEF_CHANNEL_RESOLVER_PROMPT.md`](../prompts/TEF_CHANNEL_RESOLVER_PROMPT.md) | [#1210](https://github.com/officefish/Membrana/issues/1210) |
@@ -224,7 +235,6 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `friction6-secret-gate-parity` | Секрет-гейт локально = CI: проверка по диапазону вместо растущей истории | 2026-07-26 | [`FRICTION6_SECRET_GATE_PARITY_PROMPT.md`](../prompts/FRICTION6_SECRET_GATE_PARITY_PROMPT.md) | #1262 (Issue открыт) | [карточка](./archive/friction6-secret-gate-parity.md) |
 | `friction6-ship-determinism` | Ship перестаёт врать и проигрывать гонку: pr-wait бэкофф, pr-land на Windows, --auto, гард занятой base | 2026-07-26 | [`FRICTION6_SHIP_DETERMINISM_PROMPT.md`](../prompts/FRICTION6_SHIP_DETERMINISM_PROMPT.md) | #1261 (Issue открыт) | [карточка](./archive/friction6-ship-determinism.md) |
 | `procedures-license` | Лицензия контракта процедурного слоя: parser · provenance · compliance (Ф3 #1220) | 2026-07-26 | [`PROCEDURES_LICENSE_PROMPT.md`](../prompts/PROCEDURES_LICENSE_PROMPT.md) | #1268 (Issue открыт) | [карточка](./archive/procedures-license.md) |
 | `procedures-homes` | Легализация домов процедур: home · mode (Ф2 #1220) | 2026-07-26 | [`PROCEDURES_HOMES_PROMPT.md`](../prompts/PROCEDURES_HOMES_PROMPT.md) | #1259 (Issue открыт) | [карточка](./archive/procedures-homes.md) |
