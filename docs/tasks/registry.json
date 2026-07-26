@@ -63,6 +63,25 @@
       "parentEpic": "llm-procedure-channels"
     },
     {
+      "id": "audit-concentrate-v1",
+      "title": "Аудит дня как концентрат: сверка источников правды, первая версия на существующих данных",
+      "promptPath": "docs/prompts/AUDIT_CONCENTRATE_PROMPT.md",
+      "githubIssue": 1238,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "readme-managed-template",
       "title": "docs/tasks/README.md — собственный Template в движке стратегических документов; снять карантин sync",
       "promptPath": "docs/prompts/README_MANAGED_TEMPLATE_PROMPT.md",
