@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "tooling-friction-2607",
+      "title": "Тулинг-фрикции 25–26.07: скан по диффу, чужая база ветки, слияние в изоляции, честные отказы хуков",
+      "promptPath": "docs/prompts/TOOLING_FRICTION_2607_PROMPT.md",
+      "githubIssue": 1272,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "notes-regex-cyrillic-translit",
       "title": "Грабли в канон: кириллица в регулярках JS и транслит при сверке имён",
       "promptPath": "docs/prompts/NOTES_REGEX_CYRILLIC_TRANSLIT_PROMPT.md",
