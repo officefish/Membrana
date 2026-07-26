@@ -7,7 +7,10 @@
  * `<persona>@<hash>` непуст. Немигрированные — честный `legacy`.
  *
  * Чистые функции; ФС — только у вызывающего.
+ * Проекция REGISTRY.md несёт лицензию контракта (Ф3 #1220).
  */
+
+import { stampContractHeader } from './procedure-contract-stamp.mjs';
 
 /** Производный статус записи. */
 export function derivedStatus(p) {
@@ -69,7 +72,7 @@ export function registryProblems(reg, opts = {}) {
   return problems;
 }
 
-/** Генерируемая проекция REGISTRY.md (руками не правится). */
+/** Генерируемая проекция REGISTRY.md (руками не правится; лицензия Ф3). */
 export function renderRegistryMd(reg) {
   const rows = (reg?.procedures ?? []).map((p) => {
     const mark = (c) => (c?.value ? `✅ ${c.provenance}` : '—');
@@ -77,7 +80,10 @@ export function renderRegistryMd(reg) {
     return `| ${home} | ${p.holder} | **${derivedStatus(p)}** | ${mark(p.container)} | ${mark(p.vocabulary)} | ${mark(p.grammar)} |`;
   });
   return [
-    '<!-- generated: yarn procedures:registry из docs/procedures/registry.json — руками не править -->',
+    stampContractHeader({
+      generator: 'yarn procedures:registry',
+      source: 'docs/procedures/registry.json',
+    }),
     '',
     '# REGISTRY — процедуры слоя (проекция)',
     '',
