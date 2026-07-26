@@ -23,7 +23,7 @@ import {
   signIn,
   writeImportBundle,
 } from './lib/affine-import.mjs';
-import { pushImportBundle, resolveAffineCliPath } from './lib/affine-push.mjs';
+import { pushImportBundle, resolveAffineCliPath, socketIoPushHint } from './lib/affine-push.mjs';
 
 loadDotEnv();
 
@@ -194,11 +194,20 @@ async function exportTarget(target, opts, releaseTemplate) {
         'affine-cli not found for --push. Install: go install github.com/tomohiro-owada/affine-cli@latest',
       );
     }
+    console.error(
+      `[strategic-docs:publish] pushing ${entries.length} doc(s) → ${target} workspace ${workspaceId}`,
+    );
     const push = pushImportBundle({ bundleDir: outDir, workspaceId, dryRun: false });
     result.push = push;
     result.ok = push.ok;
     if (!push.ok) {
-      throw new Error(push.error ?? 'affine push failed');
+      result.status = 'push-failed-bundle-ready';
+      result.pushFailed = true;
+      result.socketIoBlocked = push.socketIoBlocked === true;
+      if (result.socketIoBlocked) {
+        result.pushHint = socketIoPushHint(base);
+      }
+      return result;
     }
   }
 
@@ -223,6 +232,19 @@ async function runPublishSteps(target, opts) {
 
   for (const r of reports) {
     console.log(JSON.stringify(r, null, 2));
+  }
+
+  const pushFailed = reports.filter((r) => r.pushFailed);
+  if (pushFailed.length) {
+    for (const r of pushFailed) {
+      console.error('');
+      console.error('[strategic-docs:publish] push failed — bundle saved for UI Import:');
+      console.error(`  bundleDir: ${r.bundleDir}`);
+      console.error(`  manifest:  ${r.manifest}`);
+      console.error(`  workspace: ${r.workspaceUrl}`);
+      if (r.pushHint) console.error(`  hint: ${r.pushHint}`);
+    }
+    throw new Error(pushFailed[0].push?.error ?? 'affine push failed');
   }
 
   return reports;

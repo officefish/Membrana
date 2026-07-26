@@ -41,8 +41,10 @@ yarn strategic-docs:publish --target releases --skip-generate
 
 ```bash
 go install github.com/tomohiro-owada/affine-cli@latest
-affine auth status
+affine auth status   # needs AFFINE_BASE_URL + token/password in root .env
 ```
+
+Windows: бинарь — `%USERPROFILE%\go\bin\affine-cli.exe`; при необходимости `AFFINE_CLI_PATH` в `.env`.
 
 ```bash
 yarn strategic-docs:publish --push --target templates --skip-generate
@@ -50,6 +52,21 @@ yarn strategic-docs:publish --push --template affine-surface-policy
 ```
 
 Env те же + per-target workspace ID. Upsert: существующий doc с тем же **title** → `replace-markdown`.
+
+### GraphQL vs WebSocket (`--push`)
+
+| Этап | Протокол | Что проверяет |
+|------|----------|----------------|
+| `auth status`, `doc list`, dry-run | **GraphQL** HTTPS | токен/пароль, workspace id |
+| `create-from-markdown`, `replace-markdown` | **socket.io** WebSocket | запись Y.js-тела документа |
+
+affine-cli подключается к **корню** `AFFINE_BASE_URL` (не `/graphql`) через WebSocket.  
+Типичные ошибки push при живом dry-run:
+
+- `socket.io connect timeout after 10s` — WS не доходит (VPN, firewall, Caddy без upgrade на VDS)
+- `missing 'data' field` — обрыв socket.io handshake
+
+**Fallback:** даже при падении `--push` bundle **уже записан** в `scripts/cache/affine-import/publish-*-*/` — в stderr будет `bundleDir` + `manifest`. Дальше v1 UI Import (см. ниже).
 
 **Namespace folders:** affine-cli создаёт docs flat; папку `strategic-docs/` в UI расставьте вручную или follow-up.
 
