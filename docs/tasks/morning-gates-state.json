@@ -1,14 +1,14 @@
 {
   "magistralOptions": [
-    "strategy-day-generator",
-    "dreams-oversized-review",
-    "procedure-frames"
+    "procedures-core-fields",
+    "secret-parser-cutter",
+    "worktree-hygiene"
   ],
-  "frozenDigest": "16ae00e7cccec5d829848af1af599f1ef45c0527c73ecc27f9ea5e3956c1cabb",
-  "magistral": "procedure-frames",
+  "frozenDigest": "bce44160bdb52f5ad98143edc08371cfdaa594d166477f4b1bb236ed1e811654",
+  "magistral": "procedures-core-fields",
   "swallow": {
-    "draftDigest": "d6e0da47a26945a9f1cf00936b55b116c2dbd4fdc0b574354f4126abe9ae345d",
-    "draftFile": "docs/comms/drafts/swallow-morning-2026-07-22.md",
+    "draftDigest": "e41271842159f362c1c6d8717ccf0857522aecc4e3fe8ea2331b5a66d5ac34d7",
+    "draftFile": "docs/comms/drafts/ally-swallow-morning-2026-07-26.md",
     "ownerAck": true
   }
 }
