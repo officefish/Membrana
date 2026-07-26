@@ -8,18 +8,82 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
-import { resolveBaseUrl } from './affine-import.mjs';
+import { resolveBaseUrl, signIn } from './affine-import.mjs';
+
+/** @type {NodeJS.ProcessEnv | null} */
+let pushCliEnv = null;
 
 /**
  * Env for affine-cli child processes — inherits root .env, ensures base URL.
  * @returns {NodeJS.ProcessEnv}
  */
 export function buildAffineCliEnv() {
+  if (pushCliEnv) return { ...pushCliEnv };
+
   const env = { ...process.env };
   if (!env.AFFINE_BASE_URL?.trim()) {
     env.AFFINE_BASE_URL = resolveBaseUrl();
   }
+  if (!env.AFFINE_PASSWORD?.trim() && env.AFFINE_ADMIN_PASSWORD?.trim()) {
+    env.AFFINE_PASSWORD = env.AFFINE_ADMIN_PASSWORD.trim();
+  }
   return env;
+}
+
+/**
+ * AFFiNE socket.io auth reads session cookies from the WebSocket upgrade request.
+ * GraphQL bearer tokens alone make affine-cli fail with `missing 'data' field`.
+ *
+ * @param {{ cookieHeader: string, token?: string }} auth
+ * @returns {NodeJS.ProcessEnv}
+ */
+export function buildAffineCliEnvFromAuth(auth) {
+  const env = buildAffineCliEnv();
+  if (auth.cookieHeader) {
+    env.AFFINE_COOKIE = auth.cookieHeader;
+    delete env.AFFINE_API_TOKEN;
+  } else if (auth.token) {
+    env.AFFINE_API_TOKEN = auth.token;
+  }
+  return env;
+}
+
+/**
+ * Resolve session cookies for socket.io doc writes (prefers password sign-in).
+ * @returns {Promise<NodeJS.ProcessEnv>}
+ */
+export async function prepareAffineCliPushEnv() {
+  if (pushCliEnv) return pushCliEnv;
+
+  const base = resolveBaseUrl();
+  const hasPassword = Boolean(
+    process.env.AFFINE_PASSWORD?.trim() || process.env.AFFINE_ADMIN_PASSWORD?.trim(),
+  );
+
+  /** @type {{ cookieHeader: string, token?: string }} */
+  let auth;
+  if (hasPassword) {
+    const savedToken = process.env.AFFINE_API_TOKEN;
+    delete process.env.AFFINE_API_TOKEN;
+    auth = await signIn(base);
+    if (savedToken) process.env.AFFINE_API_TOKEN = savedToken;
+  } else {
+    auth = await signIn(base);
+  }
+
+  if (!auth.cookieHeader && !auth.token) {
+    throw new Error(
+      'Affine push auth missing: set AFFINE_PASSWORD / AFFINE_ADMIN_PASSWORD (preferred for socket.io) or AFFINE_API_TOKEN in root .env',
+    );
+  }
+
+  pushCliEnv = buildAffineCliEnvFromAuth(auth);
+  return pushCliEnv;
+}
+
+/** Reset cached push env (tests). */
+export function resetAffineCliPushEnv() {
+  pushCliEnv = null;
 }
 
 /** Windows CreateProcess argv budget; larger bodies need a follow-up (temp file). */
@@ -65,7 +129,7 @@ export function assertAffineCliAuth(cli) {
     if (parsed.authenticated === true) return;
     throw new Error(
       parsed.error ??
-        'affine-cli not authenticated. Set AFFINE_BASE_URL + AFFINE_API_TOKEN (or AFFINE_PASSWORD) in root .env, then run: affine-cli auth status',
+        'affine-cli not authenticated. Set AFFINE_BASE_URL + AFFINE_PASSWORD (or AFFINE_API_TOKEN) in root .env, then run: affine-cli auth status',
     );
   } catch (err) {
     if (err instanceof Error && err.message.includes('affine-cli not authenticated')) throw err;
@@ -100,9 +164,10 @@ export function detectSocketIoBlocked(results) {
 export function socketIoPushHint(baseUrl = resolveBaseUrl()) {
   const root = baseUrl.replace(/\/graphql\/?$/u, '').replace(/\/$/u, '');
   return (
-    `GraphQL auth OK; doc content needs WebSocket (socket.io) to ${root}. ` +
-    'If timeout from dev machine — VPN/firewall or Caddy WS on strategy VDS. ' +
-    'Bundle is saved — use Import → Markdown in Affine UI (see JSON bundleDir).'
+    `Doc writes use socket.io at ${root}/socket.io/ (not /graphql). ` +
+    'GraphQL bearer tokens alone often fail — set AFFINE_PASSWORD / AFFINE_ADMIN_PASSWORD for session cookies. ' +
+    `Probe: curl.exe -s "${root}/socket.io/?EIO=4&transport=polling" (expect sid JSON). ` +
+    'Bundle saved — use Import → Markdown in Affine UI (see JSON bundleDir).'
   );
 }
 
@@ -240,9 +305,9 @@ export function pushOneDoc(cli, workspaceId, title, markdown, existingDocId, dry
  * Push all entries from import bundle manifest via affine-cli.
  *
  * @param {{ bundleDir: string, workspaceId: string, dryRun?: boolean }} opts
- * @returns {{ ok: boolean, cli: string, results: object[], error?: string }}
+ * @returns {Promise<{ ok: boolean, cli: string, results: object[], error?: string }>}
  */
-export function pushImportBundle(opts) {
+export async function pushImportBundle(opts) {
   const { bundleDir, workspaceId, dryRun = false } = opts;
   const cli = resolveAffineCliPath();
   if (!cli) {
@@ -264,6 +329,17 @@ export function pushImportBundle(opts) {
   const entries = manifest.entries ?? manifest;
   if (!Array.isArray(entries)) {
     return { ok: false, cli, results: [], error: 'manifest.entries — not array' };
+  }
+
+  try {
+    await prepareAffineCliPushEnv();
+  } catch (err) {
+    return {
+      ok: false,
+      cli,
+      results: [],
+      error: err instanceof Error ? err.message : String(err),
+    };
   }
 
   if (!dryRun) {

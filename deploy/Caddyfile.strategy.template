@@ -5,6 +5,23 @@
 # Не править office.caddy / panel.caddy; не дублировать import Caddyfile.d.
 
 {{STRATEGY_DOMAIN}} {
+	# socket.io lives at /socket.io/ (root), not /graphql. Caddy reverse_proxy
+	# upgrades WebSocket by default; long-lived sync connections need open timeouts.
+	@socketio path /socket.io/*
+	handle @socketio {
+		reverse_proxy 127.0.0.1:{{AFFINE_PORT}} {
+			transport http {
+				read_timeout 0
+				write_timeout 0
+			}
+		}
+	}
+
 	encode gzip
-	reverse_proxy 127.0.0.1:{{AFFINE_PORT}}
+	reverse_proxy 127.0.0.1:{{AFFINE_PORT}} {
+		transport http {
+			read_timeout 0
+			write_timeout 0
+		}
+	}
 }
