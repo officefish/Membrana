@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import {
   assertPrMergeableForShip,
   autoMergeDecision,
+  headSyncProblem,
   ciWaitDisposition,
   extractIssueMentions,
   isBaseHeldElsewhere,
@@ -415,8 +416,8 @@ test('--auto без разрешения репозитория откатыва
   assert.match(denied.note, /allow_auto_merge=false/);
   assert.match(denied.note, /Allow auto-merge/, 'сообщение должно говорить, ЧТО включить');
 
-  assert.equal(autoMergeDecision({ requested: true, allowed: true }).mode, 'auto');
-  assert.equal(autoMergeDecision({ requested: true, allowed: true }).note, null);
+  // Одной галки НЕ достаточно: см. отдельный тест про обязательные проверки.
+  assert.equal(autoMergeDecision({ requested: true, allowed: true, requiredChecks: ['CI'] }).mode, 'auto');
 
   // gh недоступен — не гадаем, идём безопасным путём и говорим об этом.
   const unknown = autoMergeDecision({ requested: true, allowed: null });
@@ -425,4 +426,42 @@ test('--auto без разрешения репозитория откатыва
 
   // Без флага решение молчит.
   assert.deepEqual(autoMergeDecision({}), { mode: 'wait', note: null });
+});
+
+test('--auto без обязательных проверок у base отказывается: сервер слил бы СРАЗУ, мимо CI', () => {
+  // Найдено двумя сессиями независимо 26.07. Симптомы разные, дефект один: предикат
+  // спрашивал про галку allow_auto_merge, а условие сервера — правила защиты ветки.
+  // У меня (проверки не обязательны) PR #1276/#1278 слились за секунды БЕЗ зелёного CI;
+  // у соседней сессии GitHub отказал «Protected branch rules not configured».
+  const unprotected = autoMergeDecision({ requested: true, allowed: true, requiredChecks: [] });
+  assert.equal(unprotected.mode, 'wait');
+  assert.match(unprotected.note, /НЕТ обязательных проверок/);
+  assert.match(unprotected.note, /минуя CI/, 'риск должен быть назван прямо');
+
+  const protectedBase = autoMergeDecision({ requested: true, allowed: true, requiredChecks: ['CI', 'Turbo unit tests'] });
+  assert.equal(protectedBase.mode, 'auto');
+  assert.equal(protectedBase.note, null);
+
+  // Галка выключена — прежняя ветка решения не сломана.
+  assert.equal(autoMergeDecision({ requested: true, allowed: false, requiredChecks: ['CI'] }).mode, 'wait');
+});
+
+test('--merge-only при расхождении с origin отказывается, а не мержит чужое', () => {
+  // Находка соседней сессии 26.07. Норма #700 держит merge-only БЕЗ push намеренно,
+  // поэтому лечим не отправкой, а громким отказом: мердж взял бы содержание из origin.
+  const problem = headSyncProblem({ local: 'a'.repeat(40), remote: 'b'.repeat(40) });
+  assert.match(problem, /не совпадает с origin/);
+  assert.match(problem, /git push/, 'отказ обязан называть команду выхода');
+  assert.equal(headSyncProblem({ local: 'a'.repeat(40), remote: 'a'.repeat(40) }), null);
+  // Upstream не настроен — не выдумываем проблему.
+  assert.equal(headSyncProblem({ local: 'a'.repeat(40), remote: null }), null);
+  assert.equal(headSyncProblem({}), null);
+});
+
+test('#700 сохранён: merge-only по-прежнему без push/commit/pr-create', () => {
+  const { steps } = planPrShip({ mergeOnly: true, currentBranch: 'feat/x', type: 'feat', message: 'm' });
+  const labels = steps.map((s) => s.label);
+  assert.ok(!labels.includes('push'));
+  assert.ok(!labels.includes('commit'));
+  assert.ok(!labels.includes('pr-create'));
 });
