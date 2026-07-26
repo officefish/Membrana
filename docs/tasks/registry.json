@@ -15,7 +15,8 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "README реестра переведён на движок strategic-docs: шаблон tasks-readme (4 слота), гранулы active/archive из registry.json через io-адаптер, syncTasksReadme делегирует в generate(), ad-hoc-генератор renderTasksReadme удалён. Карантин TASKS_README_SYNC_FORCE снят — вместо флага предохранитель по факту: невалидный шаблон уводит сборку в experiment, файл не пишется. Подпись с датой заменена на детерминированную (идемпотентность). PR #1214, merge 1e269b3d. Проверки: test:scripts 1777/1777, turbo lint typecheck 97/97, pre-commit [tasks-readme] проходит без -n.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-25",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "kits-pins-wiring",
