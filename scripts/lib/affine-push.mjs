@@ -77,16 +77,51 @@ export function assertAffineCliAuth(cli) {
 }
 
 /**
+ * @param {string} message
+ */
+export function isSocketIoPushError(message) {
+  const m = String(message ?? '').toLowerCase();
+  return m.includes('socket.io') || m.includes("missing 'data' field");
+}
+
+/**
  * @param {object[]} results
  */
-function summarizePushFailures(results) {
+export function detectSocketIoBlocked(results) {
+  const failed = results.filter((r) => !r.ok);
+  if (!failed.length) return false;
+  return failed.every((r) => isSocketIoPushError(r.error));
+}
+
+/**
+ * Human hint when GraphQL works but socket.io doc writes fail.
+ * @param {string} [baseUrl]
+ */
+export function socketIoPushHint(baseUrl = resolveBaseUrl()) {
+  const root = baseUrl.replace(/\/graphql\/?$/u, '').replace(/\/$/u, '');
+  return (
+    `GraphQL auth OK; doc content needs WebSocket (socket.io) to ${root}. ` +
+    'If timeout from dev machine — VPN/firewall or Caddy WS on strategy VDS. ' +
+    'Bundle is saved — use Import → Markdown in Affine UI (see JSON bundleDir).'
+  );
+}
+
+/**
+ * @param {object[]} results
+ * @param {{ baseUrl?: string }} [opts]
+ */
+function summarizePushFailures(results, opts = {}) {
   const failed = results.filter((r) => !r.ok);
   if (!failed.length) return '';
   const sample = failed
     .slice(0, 3)
     .map((r) => `  - ${r.title}: ${r.error ?? 'unknown'}`)
     .join('\n');
-  return `${failed.length} doc(s) failed:\n${sample}`;
+  let msg = `${failed.length} doc(s) failed:\n${sample}`;
+  if (detectSocketIoBlocked(results)) {
+    msg += `\n\n${socketIoPushHint(opts.baseUrl)}`;
+  }
+  return msg;
 }
 
 /**
@@ -272,10 +307,12 @@ export function pushImportBundle(opts) {
   }
 
   const failed = results.filter((r) => !r.ok);
+  const baseUrl = buildAffineCliEnv().AFFINE_BASE_URL;
   return {
     ok: failed.length === 0,
     cli,
     results,
-    error: failed.length ? summarizePushFailures(results) : undefined,
+    socketIoBlocked: detectSocketIoBlocked(results),
+    error: failed.length ? summarizePushFailures(results, { baseUrl }) : undefined,
   };
 }

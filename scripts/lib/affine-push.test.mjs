@@ -4,9 +4,30 @@ import { mkdtempSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
-import { pushImportBundle, resolveAffineCliPath } from './affine-push.mjs';
+import {
+  detectSocketIoBlocked,
+  isSocketIoPushError,
+  pushImportBundle,
+  resolveAffineCliPath,
+  socketIoPushHint,
+} from './affine-push.mjs';
 
 describe('affine-push', () => {
+  it('isSocketIoPushError detects socket.io failures', () => {
+    assert.equal(isSocketIoPushError('socket.io connect timeout after 10s'), true);
+    assert.equal(isSocketIoPushError("missing 'data' field"), true);
+    assert.equal(isSocketIoPushError('affine-cli not found'), false);
+  });
+
+  it('detectSocketIoBlocked when all failures are socket.io', () => {
+    const results = [
+      { ok: false, error: 'socket.io connect timeout after 10s' },
+      { ok: false, error: "missing 'data' field" },
+    ];
+    assert.equal(detectSocketIoBlocked(results), true);
+    assert.match(socketIoPushHint('https://strategy.mmbrn.tech'), /WebSocket/);
+  });
+
   it('resolveAffineCliPath returns null or string', () => {
     const p = resolveAffineCliPath();
     assert.ok(p === null || typeof p === 'string');
