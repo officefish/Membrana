@@ -64,16 +64,23 @@ function pemBlockEnd(text, from) {
   if (end && typeof end.index === 'number') {
     return { end: from + end.index + end[0].length, unterminated: false };
   }
-  let cursor = from;
+  // `from` стоит ПОСРЕДИ строки — сразу за BEGIN-маркером, поэтому идти по строкам надо
+  // со СЛЕДУЮЩЕЙ. Иначе первый срез в CRLF-файле — одинокий «\r», он тримится в пусто,
+  // цикл выходит на первом же шаге, и тело ключа остаётся в тексте (найдено ревью-указанием
+  // на pemBlockEnd + CRLF и подтверждено прогоном: LF резал, CRLF оставлял тело живым).
+  const beginLineEnd = text.indexOf('\n', from);
+  if (beginLineEnd === -1) return { end: text.length, unterminated: true };
+
+  let cursor = beginLineEnd;
   while (cursor < text.length) {
     const nl = text.indexOf('\n', cursor + 1);
     const lineEnd = nl === -1 ? text.length : nl;
-    const line = text.slice(cursor, lineEnd);
-    if (!PEM_BODY_LINE_RE.test(line) || line.trim() === '') break;
+    const line = text.slice(cursor + 1, lineEnd); // без ведущего \n; хвостовой \r остаётся
+    if (line.trim() === '' || !PEM_BODY_LINE_RE.test(line)) break;
     cursor = lineEnd;
     if (nl === -1) break;
   }
-  if (cursor === from) {
+  if (cursor === beginLineEnd) {
     // Ни END-маркера, ни построчного тела: так выглядит PEM внутри ОДНОЙ строки —
     // а это ровно формат сессий (jsonl, один JSON-объект на строку). Останавливаться
     // здесь нельзя: вырезался бы только BEGIN-маркер, тело ключа осталось бы в тексте,
@@ -83,6 +90,9 @@ function pemBlockEnd(text, from) {
     const nl = text.indexOf('\n', from);
     cursor = nl === -1 ? text.length : nl;
   }
+  // Граница реза не должна съедать хвостовой «\r»: иначе после вырезанного блока CRLF
+  // вырождается в LF, то есть рез молча меняет носитель (инвариант «переводы строк не трогаем»).
+  if (text[cursor - 1] === '\r') cursor -= 1;
   return { end: cursor, unterminated: true };
 }
 
@@ -127,16 +137,25 @@ function collectSpans(text) {
 }
 
 /**
+ * Счётчик строк одним проходом по УЖЕ отсортированным позициям.
+ *
+ * Наивный `lineAt` считал переводы от начала текста для каждого выреза: на сессии 12 МБ
+ * с десятком находок это десятки миллионов лишних сравнений (замечание ревью, P2).
+ * Спаны отсортированы по `start`, поэтому достаточно двигать курсор вперёд.
+ *
  * @param {string} text
- * @param {number} index
- * @returns {number} 1-based номер строки
+ * @returns {(index: number) => number} 1-based номер строки; вызывать по возрастанию index
  */
-function lineAt(text, index) {
+function createLineCounter(text) {
+  let cursor = 0;
   let line = 1;
-  for (let i = 0; i < index && i < text.length; i += 1) {
-    if (text[i] === '\n') line += 1;
-  }
-  return line;
+  return (index) => {
+    const limit = Math.min(index, text.length);
+    for (; cursor < limit; cursor += 1) {
+      if (text[cursor] === '\n') line += 1;
+    }
+    return line;
+  };
 }
 
 /**
@@ -158,6 +177,7 @@ export function redactSecrets(text) {
 
   let out = '';
   let cursor = 0;
+  const lineOf = createLineCounter(text);
   /** @type {Array<{ name: string; start: number; end: number; length: number; line: number; unterminated?: boolean }>} */
   const cuts = [];
   for (const span of spans) {
@@ -167,7 +187,7 @@ export function redactSecrets(text) {
       start: span.start,
       end: span.end,
       length: span.end - span.start,
-      line: lineAt(text, span.start),
+      line: lineOf(span.start),
       ...(span.unterminated ? { unterminated: true } : {}),
     });
     cursor = span.end;
@@ -189,7 +209,9 @@ export function redactSecrets(text) {
  * поля; факт реза несёт `cuts[]` и манифест, а не сам архив (кристалл
  * `secret-parser-cuts-aggressively`: архив не читают ни код, ни промпт).
  *
- * @param {unknown} value
+ * @param {unknown} value ТОЛЬКО результат `JSON.parse` — обход рекурсивный и защиты от
+ *   циклических ссылок не имеет; живой объект с циклом уронит его переполнением стека
+ *   (замечание ревью, P2: в CLI-пути недостижимо, но контракт назван явно).
  * @param {string} [path]
  * @returns {{ value: unknown; cuts: Array<{ name: string; path: string; length: number }> }}
  */
