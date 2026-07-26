@@ -33,5 +33,37 @@
   ],
   "post": [
     { "id": "close-github", "holder": "vesnin" }
-  ]
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "yarn task:start",
+    "note": "эпик+фазы открывает агент по skill membrana-task-lifecycle; оркестратора day-sprint:open нет"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "container-open", "criticality": "critical" },
+      { "id": "tasks-register", "criticality": "critical" },
+      { "id": "billets-attach", "criticality": "noncritical", "whyNoncritical": "заготовки фаз опциональны; эпик может идти без billets" },
+      { "id": "phases-run", "criticality": "critical" },
+      { "id": "closure-accept", "criticality": "critical" },
+      { "id": "archive", "criticality": "critical" }
+    ]
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "closure-accept",
+        "waitsFor": "owner",
+        "resume": "LGTM / явное принятие CLOSURE эпика → archive + close-github",
+        "note": "кадр closure-accept; ответственность за выход фазы — на принимающем"
+      }
+    ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "инстансы в docs/day-sprint/<id>/ — прогоны с OPEN/CLOSURE, не пространство имён с формой дома"
+  }
 }

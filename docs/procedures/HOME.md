@@ -87,3 +87,6 @@ Legacy `{ "version": 1 }` без `formVersion` — дефект до мигра�
 | `bridge` | `docs/bridge` + форма + writers (bridge, ritual-evening) | `mirrored` |
 | `ritual-evening` | `none` — прогоны в seanses/archive, не пространство имён | `local` |
 | `ritual-dreams` | `none` — volume office, не git-дом | `orchestrated` |
+
+После Ф5 (#1284) `home`+`mode` несут **все** built-контейнеры; единственный
+объявленный path-дом по-прежнему мостик. Снимок — [`CORPUS.md`](./CORPUS.md).
