@@ -79,6 +79,47 @@ export function readPrMergeability(opts = {}) {
 }
 
 /**
+ * Решение по `--auto` при известной возможности репозитория.
+ *
+ * Живой случай 26.07: первый же прогон `--auto` дал
+ * `GraphQL: Auto merge is not allowed for this repository (enablePullRequestAutoMerge)` —
+ * и оставил PR #1269 открытым без мерджа. Флаг верен, но включение автослияния — настройка
+ * репозитория (`allow_auto_merge`), то есть решение владельца. Поэтому возможность
+ * опрашивается ДО планирования, а при запрете — честный откат на обычный хвост, а не
+ * повисший PR.
+ *
+ * @param {{requested?: boolean, allowed?: boolean|null}} opts
+ * @returns {{mode: 'auto'|'wait', note: string|null}}
+ */
+export function autoMergeDecision(opts = {}) {
+  const requested = opts.requested === true;
+  if (!requested) return { mode: 'wait', note: null };
+  if (opts.allowed === true) return { mode: 'auto', note: null };
+  if (opts.allowed === false) {
+    return {
+      mode: 'wait',
+      note: '--auto запрошен, но в настройках репозитория автослияние выключено (allow_auto_merge=false) — иду обычным хвостом с ожиданием CI. Включить: Settings → General → Allow auto-merge.',
+    };
+  }
+  return {
+    mode: 'wait',
+    note: '--auto запрошен, но возможность автослияния не удалось выяснить (gh недоступен) — иду обычным хвостом.',
+  };
+}
+
+/** Разрешено ли автослияние в репозитории. `null`, если выяснить не удалось. */
+export function readAutoMergeAllowed(run = execFileSync) {
+  try {
+    const raw = String(run('gh', ['api', 'repos/{owner}/{repo}', '--jq', '.allow_auto_merge'], { encoding: 'utf8' })).trim();
+    if (raw === 'true') return true;
+    if (raw === 'false') return false;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Занята ли base-ветка ДРУГИМ worktree.
  *
  * `git checkout main` из worktree, где main держит соседнее дерево, падает —
@@ -347,6 +388,16 @@ function main() {
   // Ветки соседних worktree решают, возможен ли ff-sync (см. isBaseHeldElsewhere).
   // Гуард: без --branch коммит идёт в текущую ветку; запрет коммитить прямо в base.
   const current = execFileSync('git', ['branch', '--show-current'], { encoding: 'utf8' }).trim();
+
+  // Возможность автослияния — свойство репозитория, а не флага: спрашиваем ДО плана,
+  // иначе `gh pr merge --auto` падает и оставляет PR открытым (26.07, PR #1269).
+  if (opts.auto) {
+    const decision = autoMergeDecision({ requested: true, allowed: readAutoMergeAllowed() });
+    if (decision.mode === 'wait') {
+      console.log(`  ⚠ ${decision.note}`);
+      opts.auto = false;
+    }
+  }
 
   const { title, steps, skippedSync } = planPrShip({
     ...opts,

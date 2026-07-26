@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import {
   assertPrMergeableForShip,
+  autoMergeDecision,
   ciWaitDisposition,
   extractIssueMentions,
   isBaseHeldElsewhere,
@@ -404,4 +405,24 @@ test('planPrShip прокидывает --auto в хвост и в merge-only', 
   const only = planPrShip({ mergeOnly: true, auto: true, currentBranch: 'feat/x', type: 'feat', message: 'm' });
   assert.ok(only.steps.some((s) => s.label === 'merge-auto'));
   assert.ok(!only.steps.some((s) => s.label === 'ci-wait'));
+});
+
+test('--auto без разрешения репозитория откатывается на ожидание, а не вешает PR', () => {
+  // Живой случай 26.07: первый прогон --auto дал «Auto merge is not allowed for this
+  // repository» и оставил PR #1269 открытым. allow_auto_merge — настройка владельца.
+  const denied = autoMergeDecision({ requested: true, allowed: false });
+  assert.equal(denied.mode, 'wait');
+  assert.match(denied.note, /allow_auto_merge=false/);
+  assert.match(denied.note, /Allow auto-merge/, 'сообщение должно говорить, ЧТО включить');
+
+  assert.equal(autoMergeDecision({ requested: true, allowed: true }).mode, 'auto');
+  assert.equal(autoMergeDecision({ requested: true, allowed: true }).note, null);
+
+  // gh недоступен — не гадаем, идём безопасным путём и говорим об этом.
+  const unknown = autoMergeDecision({ requested: true, allowed: null });
+  assert.equal(unknown.mode, 'wait');
+  assert.match(unknown.note, /не удалось выяснить/);
+
+  // Без флага решение молчит.
+  assert.deepEqual(autoMergeDecision({}), { mode: 'wait', note: null });
 });
