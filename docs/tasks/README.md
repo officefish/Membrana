@@ -23,7 +23,6 @@
 | `secret-cutter` | Резак секретов: redactSecrets на существующих детекторах — веха secret-parser-built | L | [`SECRET_CUTTER_PROMPT.md`](../prompts/SECRET_CUTTER_PROMPT.md) | [#1240](https://github.com/officefish/Membrana/issues/1240) |
 | `main-day-issue-channel-diagnosis` | Диагноз канала ritual-main-day-issue: звено называется, полый артефакт не пишется | M | [`MAIN_DAY_ISSUE_CHANNEL_DIAGNOSIS_PROMPT.md`](../prompts/MAIN_DAY_ISSUE_CHANNEL_DIAGNOSIS_PROMPT.md) | [#1239](https://github.com/officefish/Membrana/issues/1239) |
 | `tef-channel-resolver` | Вечерний фидбек команды через резолвер каналов процедур | S | [`TEF_CHANNEL_RESOLVER_PROMPT.md`](../prompts/TEF_CHANNEL_RESOLVER_PROMPT.md) | [#1210](https://github.com/officefish/Membrana/issues/1210) |
-| `audit-concentrate-v1` | Аудит дня как концентрат: сверка источников правды, первая версия на существующих данных | M | [`AUDIT_CONCENTRATE_PROMPT.md`](../prompts/AUDIT_CONCENTRATE_PROMPT.md) | [#1238](https://github.com/officefish/Membrana/issues/1238) |
 | `issue-979-selfclose` | Аномалия: задача спринта закрылась сама | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1004](https://github.com/officefish/Membrana/issues/1004) |
 | `closure-acceptance-gate` | Приёмка фиксируется лишь в 10 из 32 закрытий | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1001](https://github.com/officefish/Membrana/issues/1001) |
 | `cascade-honest-manual` | Каскад не выражает честную ручную чеканку | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#999](https://github.com/officefish/Membrana/issues/999) |
@@ -221,6 +220,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `audit-concentrate-v1` | Аудит дня как концентрат: сверка источников правды, первая версия на существующих данных | 2026-07-26 | [`AUDIT_CONCENTRATE_PROMPT.md`](../prompts/AUDIT_CONCENTRATE_PROMPT.md) | #1238 (Issue открыт) | [карточка](./archive/audit-concentrate-v1.md) |
 | `readme-managed-template` | docs/tasks/README.md — собственный Template в движке стратегических документов; снять карантин sync | 2026-07-26 | [`README_MANAGED_TEMPLATE_PROMPT.md`](../prompts/README_MANAGED_TEMPLATE_PROMPT.md) | #1201 | [карточка](./archive/readme-managed-template.md) |
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | 2026-07-26 | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | #1088 (Issue открыт) | [карточка](./archive/run-ledger.md) |
 | `registry-merge-driver-serverless` | Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере | 2026-07-26 | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | #1026 (Issue открыт) | [карточка](./archive/registry-merge-driver-serverless.md) |

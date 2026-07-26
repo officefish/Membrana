@@ -69,16 +69,16 @@
       "githubIssue": 1238,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-07-26",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1242 (merge 16caa69f): ядро сверки (чистое) + 5 адаптеров + CLI audit:concentrate, 18 тестов. Приёмка на днях с известными ответами — 3 из 4 машиной: комната (canon vs opened с 22.07), вечер 24.07 (проведён vs следов нет), ответственные без участия (5 карточек 25.07, 12 за 24.07). Четвёртая (битые ссылки снимка) не воспроизводится: возникла и починена внутри дня — ушла требованием в #1229. Две поправки нашла сама приёмка: ревизия на конец дня + голос канона процедуры. Дельта требований к архиву в #1229.",
       "githubIssueClosedAt": null
     },
     {
