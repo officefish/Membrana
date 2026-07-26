@@ -40,3 +40,9 @@
 
 Код и тесты — в плоском `scripts/` (Т12 шторма фреймов: контейнер процедуры без
 собственного кода). Провод в цепочку — `docs/tasks/evening-ritual-steps.json`.
+
+## Ядро настроек ([`CORE.md`](../CORE.md))
+
+Пилот Ф1 #1220: `trigger` = `yarn bridge open` (слово капитана); `steps` —
+inline жизненный цикл (`tools` → `open` → `dialog` → `debt` → `bridge-close`);
+`gates` = легальное `none` (паузы в диалоге, не машинный resume-контракт).

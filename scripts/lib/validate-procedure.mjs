@@ -7,10 +7,14 @@
  * Дополнительный запрет Т12: кода и тестов в контейнере быть не может.
  *
  * Очередь кадров (procedure-frames F1 / #927 + ritual-day-frames):
- * optional-ключи `preflight` | `frames` | `post` — единственные легальные
- * расширения пятиполёвки Р1. Элемент: `{ id, holder, pins? }` (ADR-0015);
+ * optional-ключи `preflight` | `frames` | `post` — легальные расширения
+ * пятиполёвки Р1. Элемент: `{ id, holder, pins? }` (ADR-0015);
  * `id` уникален в пределах процедуры (все три полосы); `holder` ∈ Persona.
  * Резолв segmentHash (P3 сеть) — F2 / auditPins; здесь — структура пина.
+ *
+ * Ядро настроек (эпик #1220 Ф1, канон docs/procedures/CORE.md):
+ * optional-ключи `trigger` | `steps` | `gates`. Отсутствие всех трёх — находка
+ * (findings), не отказ valid. Частичное ядро или провал суб-схемы — дефект.
  *
  * Детерминирована, без сети; файловая система — единственный вход.
  */
@@ -35,6 +39,28 @@ export const MANIFEST_BASE_KEYS = Object.freeze([
  * `frames` — автоцепочка; `preflight` — гейт до frames; `post` — ручной хвост.
  */
 export const MANIFEST_QUEUE_KEYS = Object.freeze(['preflight', 'frames', 'post']);
+
+/**
+ * Ядро настроек процедуры (#1220 Ф1). Все три вместе или ни одного:
+ * частичное ядро — дефект; отсутствие — находка (миграция по касанию).
+ * Канон: docs/procedures/CORE.md.
+ */
+export const MANIFEST_CORE_KEYS = Object.freeze(['trigger', 'steps', 'gates']);
+
+/** Пилоты Ф1 — обязаны нести полное валидное ядро. */
+export const PROCEDURE_CORE_PILOTS = Object.freeze([
+  'ritual-evening',
+  'bridge',
+  'ritual-dreams',
+]);
+
+const TRIGGER_KINDS = Object.freeze(['schedule', 'captain-word', 'procedure-event', 'none']);
+const STEPS_KINDS = Object.freeze(['ref', 'inline', 'none']);
+const GATES_KINDS = Object.freeze(['inline', 'none']);
+const CRITICALITY = Object.freeze(['critical', 'noncritical']);
+const GATE_WAITS = Object.freeze(['owner', 'human']);
+const STUB_WHY_RE = /^(todo|n\/?a|tbd|none|null|-|—|\.+)$/iu;
+const KEBAB_RE = /^[a-z0-9][a-z0-9-]*$/u;
 
 /** Канон персон (m1 + VIRTUAL_TEAM_PROMPT), нижний регистр. */
 export const PROCEDURE_PERSONAS = Object.freeze([
@@ -163,25 +189,230 @@ export function frameLaneProblems(lane, laneName, alreadySeen = new Set()) {
 }
 
 /**
- * Схема MANIFEST.json (Р1 + F1): ядро пяти полей; optional очередь
- * `preflight`/`frames`/`post`; любой иной ключ — дефект «свалка».
+ * Причина легального «нет» / whyNoncritical: непустая и не шаблон-заглушка.
+ * @param {unknown} why
+ * @returns {boolean}
+ */
+export function isHonestWhy(why) {
+  if (typeof why !== 'string') return false;
+  const t = why.trim();
+  return t.length > 0 && !STUB_WHY_RE.test(t);
+}
+
+/**
+ * Суб-схема одного шага ядра (inline item или элемент ref.steps).
+ * @param {unknown} step
+ * @param {string} label
+ * @param {Set<string>} seenIds
+ * @returns {string[]}
+ */
+export function coreStepProblems(step, label, seenIds = new Set()) {
+  const problems = [];
+  if (step === null || typeof step !== 'object' || Array.isArray(step)) {
+    return [`${label}: не объект шага`];
+  }
+  const s = /** @type {Record<string, unknown>} */ (step);
+  if (typeof s.id !== 'string' || !KEBAB_RE.test(s.id)) {
+    problems.push(`${label}: id — не kebab-case строка`);
+  } else if (seenIds.has(s.id)) {
+    problems.push(`${label}: дубль id «${s.id}» в steps`);
+  } else {
+    seenIds.add(s.id);
+  }
+  if (!CRITICALITY.includes(/** @type {string} */ (s.criticality))) {
+    problems.push(`${label}: criticality ∉ {critical, noncritical}`);
+  } else if (s.criticality === 'noncritical') {
+    if (!isHonestWhy(s.whyNoncritical)) {
+      problems.push(`${label}: noncritical без честного whyNoncritical`);
+    }
+  } else if (Object.prototype.hasOwnProperty.call(s, 'whyNoncritical')) {
+    problems.push(`${label}: whyNoncritical запрещён при critical`);
+  }
+  return problems;
+}
+
+/**
+ * Суб-схема одного гейта.
+ * @param {unknown} gate
+ * @param {string} label
+ * @param {Set<string>} seenIds
+ * @returns {string[]}
+ */
+export function coreGateProblems(gate, label, seenIds = new Set()) {
+  const problems = [];
+  if (gate === null || typeof gate !== 'object' || Array.isArray(gate)) {
+    return [`${label}: не объект гейта`];
+  }
+  const g = /** @type {Record<string, unknown>} */ (gate);
+  if (typeof g.id !== 'string' || !KEBAB_RE.test(g.id)) {
+    problems.push(`${label}: id — не kebab-case строка`);
+  } else if (seenIds.has(g.id)) {
+    problems.push(`${label}: дубль id «${g.id}» в gates`);
+  } else {
+    seenIds.add(g.id);
+  }
+  if (!GATE_WAITS.includes(/** @type {string} */ (g.waitsFor))) {
+    problems.push(`${label}: waitsFor ∉ {owner, human}`);
+  }
+  if (typeof g.resume !== 'string' || g.resume.trim() === '') {
+    problems.push(`${label}: resume — не непустая строка`);
+  }
+  if (Object.prototype.hasOwnProperty.call(g, 'note') && typeof g.note !== 'string') {
+    problems.push(`${label}: note — не строка`);
+  }
+  return problems;
+}
+
+/**
+ * Суб-схема trigger / steps / gates (при полном ядре).
+ * @param {Record<string, unknown>} m
+ * @param {string} [repoRoot] для резолва steps.ref
+ * @returns {string[]}
+ */
+export function coreFieldsProblems(m, repoRoot) {
+  const problems = [];
+
+  // trigger
+  const trigger = m.trigger;
+  if (trigger === null || typeof trigger !== 'object' || Array.isArray(trigger)) {
+    problems.push('trigger — не объект');
+  } else {
+    const t = /** @type {Record<string, unknown>} */ (trigger);
+    if (!TRIGGER_KINDS.includes(/** @type {string} */ (t.kind))) {
+      problems.push('trigger.kind ∉ {schedule, captain-word, procedure-event, none}');
+    } else if (t.kind === 'none') {
+      if (!isHonestWhy(t.why)) problems.push('trigger.none: нет честного why');
+    } else if (t.kind === 'schedule') {
+      if (typeof t.cron !== 'string' || t.cron.trim() === '') {
+        problems.push('trigger.schedule: cron — не непустая строка');
+      }
+      if (Object.prototype.hasOwnProperty.call(t, 'timezone') && typeof t.timezone !== 'string') {
+        problems.push('trigger.schedule: timezone — не строка');
+      }
+    } else if (t.kind === 'captain-word') {
+      if (Object.prototype.hasOwnProperty.call(t, 'command') &&
+          (typeof t.command !== 'string' || t.command.trim() === '')) {
+        problems.push('trigger.captain-word: command — не непустая строка');
+      }
+    } else if (t.kind === 'procedure-event') {
+      if (typeof t.procedureId !== 'string' || !KEBAB_RE.test(t.procedureId)) {
+        problems.push('trigger.procedure-event: procedureId — не kebab-case');
+      }
+      if (typeof t.event !== 'string' || t.event.trim() === '') {
+        problems.push('trigger.procedure-event: event — не непустая строка');
+      }
+    }
+  }
+
+  // steps
+  const steps = m.steps;
+  if (steps === null || typeof steps !== 'object' || Array.isArray(steps)) {
+    problems.push('steps — не объект');
+  } else {
+    const s = /** @type {Record<string, unknown>} */ (steps);
+    if (!STEPS_KINDS.includes(/** @type {string} */ (s.kind))) {
+      problems.push('steps.kind ∉ {ref, inline, none}');
+    } else if (s.kind === 'none') {
+      if (!isHonestWhy(s.why)) problems.push('steps.none: нет честного why');
+    } else if (s.kind === 'inline') {
+      if (!Array.isArray(s.items) || s.items.length === 0) {
+        problems.push('steps.inline: items — непустой массив');
+      } else {
+        const seen = new Set();
+        s.items.forEach((item, i) => {
+          problems.push(...coreStepProblems(item, `steps.items[${i}]`, seen));
+        });
+      }
+    } else if (s.kind === 'ref') {
+      if (typeof s.path !== 'string' || s.path.trim() === '') {
+        problems.push('steps.ref: path — не непустая строка');
+      } else if (repoRoot) {
+        const abs = join(repoRoot, s.path.replace(/\\/gu, '/'));
+        if (!existsSync(abs)) {
+          problems.push(`steps.ref: путь не резолвится: ${s.path}`);
+        } else {
+          try {
+            const doc = JSON.parse(readFileSync(abs, 'utf8'));
+            if (!doc || typeof doc !== 'object' || !Array.isArray(doc.steps)) {
+              problems.push(`steps.ref: в ${s.path} нет массива steps`);
+            } else if (doc.steps.length === 0) {
+              problems.push(`steps.ref: ${s.path} — steps пуст`);
+            } else {
+              const seen = new Set();
+              doc.steps.forEach((item, i) => {
+                problems.push(...coreStepProblems(item, `steps.ref[${i}]`, seen));
+              });
+            }
+          } catch {
+            problems.push(`steps.ref: ${s.path} — битый JSON`);
+          }
+        }
+      }
+    }
+  }
+
+  // gates
+  const gates = m.gates;
+  if (gates === null || typeof gates !== 'object' || Array.isArray(gates)) {
+    problems.push('gates — не объект');
+  } else {
+    const g = /** @type {Record<string, unknown>} */ (gates);
+    if (!GATES_KINDS.includes(/** @type {string} */ (g.kind))) {
+      problems.push('gates.kind ∉ {inline, none}');
+    } else if (g.kind === 'none') {
+      if (!isHonestWhy(g.why)) problems.push('gates.none: нет честного why');
+    } else if (g.kind === 'inline') {
+      if (!Array.isArray(g.items) || g.items.length === 0) {
+        problems.push('gates.inline: items — непустой массив');
+      } else {
+        const seen = new Set();
+        g.items.forEach((item, i) => {
+          problems.push(...coreGateProblems(item, `gates.items[${i}]`, seen));
+        });
+      }
+    }
+  }
+
+  return problems;
+}
+
+/**
+ * Наличие ядра: none | partial | full.
+ * @param {Record<string, unknown>} m
+ * @returns {'none'|'partial'|'full'}
+ */
+export function corePresence(m) {
+  const present = MANIFEST_CORE_KEYS.filter((k) => Object.prototype.hasOwnProperty.call(m, k));
+  if (present.length === 0) return 'none';
+  if (present.length === MANIFEST_CORE_KEYS.length) return 'full';
+  return 'partial';
+}
+
+/**
+ * Схема MANIFEST.json (Р1 + очередь кадров + ядро #1220):
+ * пять обязательных; optional очередь и ядро; иной ключ — «свалка».
  *
  * @param {unknown} m распарсенный манифест
  * @param {string} dirName имя каталога контейнера (id обязан совпадать)
+ * @param {string} [repoRoot] для резолва steps.ref
  * @returns {string[]} дефекты схемы
  */
-export function manifestSchemaProblems(m, dirName) {
+export function manifestSchemaProblems(m, dirName, repoRoot) {
   const problems = [];
   if (m === null || typeof m !== 'object' || Array.isArray(m)) {
     return ['MANIFEST.json — не объект'];
   }
   const keys = Object.keys(m);
-  const allowed = new Set([...MANIFEST_BASE_KEYS, ...MANIFEST_QUEUE_KEYS]);
+  const allowed = new Set([
+    ...MANIFEST_BASE_KEYS,
+    ...MANIFEST_QUEUE_KEYS,
+    ...MANIFEST_CORE_KEYS,
+  ]);
   for (const k of MANIFEST_BASE_KEYS) if (!keys.includes(k)) problems.push(`нет поля ${k}`);
   for (const k of keys) if (!allowed.has(k)) problems.push(`лишнее поле ${k}`);
 
   if (typeof m.id === 'string') {
-    if (!/^[a-z0-9][a-z0-9-]*$/u.test(m.id)) problems.push('id не kebab-case');
+    if (!KEBAB_RE.test(m.id)) problems.push('id не kebab-case');
     if (dirName && m.id !== dirName) problems.push(`id «${m.id}» ≠ имени каталога «${dirName}»`);
   } else if (keys.includes('id')) problems.push('id — не строка');
 
@@ -209,6 +440,15 @@ export function manifestSchemaProblems(m, dirName) {
     }
   }
 
+  // Ядро #1220: partial → дефект; full → суб-схема; none → не здесь (findings)
+  const presence = corePresence(/** @type {Record<string, unknown>} */ (m));
+  if (presence === 'partial') {
+    const missing = MANIFEST_CORE_KEYS.filter((k) => !keys.includes(k));
+    problems.push(`ядро частичное — нет: ${missing.join(', ')} (все три или ни одного)`);
+  } else if (presence === 'full') {
+    problems.push(...coreFieldsProblems(/** @type {Record<string, unknown>} */ (m), repoRoot));
+  }
+
   return problems;
 }
 
@@ -218,10 +458,12 @@ export function manifestSchemaProblems(m, dirName) {
  * @param {string} dir абсолютный путь контейнера `docs/procedures/<id>`
  * @param {string} repoRoot корень репозитория (ссылки манифеста резолвятся от него)
  * @returns {{valid: boolean, resolvable: boolean, readmeNonEmpty: boolean,
- *   manifestSchemaOk: boolean, problems: string[]}}
+ *   manifestSchemaOk: boolean, problems: string[], findings: string[],
+ *   core: 'none'|'partial'|'full'|null}}
  */
 export function validateProcedure(dir, repoRoot) {
   const problems = [];
+  const findings = [];
 
   // readmeNonEmpty
   let readmeNonEmpty = false;
@@ -234,15 +476,23 @@ export function validateProcedure(dir, repoRoot) {
   // manifestSchemaOk
   let manifestSchemaOk = false;
   let manifest = null;
+  /** @type {'none'|'partial'|'full'|null} */
+  let core = null;
   const manifestPath = join(dir, 'MANIFEST.json');
   if (!existsSync(manifestPath)) {
     problems.push('MANIFEST.json отсутствует');
   } else {
     try {
       manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-      const schemaProblems = manifestSchemaProblems(manifest, basename(dir));
+      const schemaProblems = manifestSchemaProblems(manifest, basename(dir), repoRoot);
       manifestSchemaOk = schemaProblems.length === 0;
       problems.push(...schemaProblems);
+      if (manifest && typeof manifest === 'object' && !Array.isArray(manifest)) {
+        core = corePresence(/** @type {Record<string, unknown>} */ (manifest));
+        if (core === 'none') {
+          findings.push('нет ядра настроек (trigger/steps/gates) — см. docs/procedures/CORE.md');
+        }
+      }
     } catch {
       problems.push('MANIFEST.json — битый JSON');
     }
@@ -288,6 +538,8 @@ export function validateProcedure(dir, repoRoot) {
     readmeNonEmpty,
     manifestSchemaOk,
     problems,
+    findings,
+    core,
   };
 }
 
