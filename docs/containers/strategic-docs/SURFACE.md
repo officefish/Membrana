@@ -14,7 +14,7 @@ Harness остаётся атласом **контейнеров** и ops-док
 |---------|---------|---------|
 | **Workspace** | Только **два** top-level workspace в Affine | **Templates**, **Releases** |
 | **Namespace** | Папка внутри workspace = **id контейнера**, документы в ней **управляют** этим контейнером | `strategic-docs/` |
-| **Document** | Отдельный doc в namespace; тип задаётся **title + metadata**, не git-папкой | `Granule · readme-principles`, `Template · readme-main`, `Release · readme-main` |
+| **Document** | Пара **content + meta** в namespace; тип задаётся **title**, не git-папкой | `Granule · readme-principles` ↔ `Meta · Granule · readme-principles` |
 
 **Неправильно (отменено):** зеркалить git-структуру `granules/…`, `templates/…`, `releases/…` как папки в Affine.
 В git `granules/` · `templates/` · `releases/` — **типы артефактов** и каталоги SoT; в Affine — flat namespace на контейнер.
@@ -41,9 +41,9 @@ Product Mintlify (`docs.mmbrn.tech` / `apps/docs`) — device-board; strategic-d
 
 | Каталог git | Содержимое | Affine |
 |-------------|------------|--------|
-| [`granules/`](./granules/) | `granule.json` + `body.md` / `render.mjs` | workspace **Templates** → doc `Granule · <id>` в namespace `strategic-docs` |
-| [`templates/`](./templates/) | `template.json` (skeleton + slots) | workspace **Templates** → doc `Template · <id>` в namespace `strategic-docs` |
-| [`releases/`](./releases/) | `README.md` + `release.json` после generate | workspace **Releases** → `Release · <id>` + `Meta · <id>` в namespace `strategic-docs` |
+| [`granules/`](./granules/) | `granule.json` + `body.md` / `render.mjs` | **Templates** → `Granule · <id>` (content) + `Meta · Granule · <id>` |
+| [`templates/`](./templates/) | `template.json` (skeleton + slots) | **Templates** → `Template · <id>` (editable md) + `Meta · Template · <id>` |
+| [`releases/`](./releases/) | `README.md` + `release.json` после generate | **Releases** → `Release · <id>` + `Meta · Release · <id>` |
 
 Generate: `yarn strategic-docs:generate --template readme-main` → запись в `releases/readme-main/`.
 
@@ -83,26 +83,26 @@ Generate: `yarn strategic-docs:generate --template readme-main` → запись
 
 ```text
 Templates/                          ← workspace (не категория)
-└── strategic-docs/                 ← namespace = container id
-    ├── Granule · readme-title-tagline
-    ├── Granule · readme-strategic-context
-    ├── Granule · readme-principles
-    ├── … (по одному doc на granule id)
-    ├── Template · readme-main      ← skeleton + таблица slots
-    └── Template · affine-surface-policy  ← workspace/namespace policy
+└── strategic-docs/                 ← namespace = container id (UI folder + push tag)
+    ├── Granule · readme-principles          ← content (literal / fn output)
+    ├── Meta · Granule · readme-principles   ← purpose + provenance
+    ├── Template · readme-main               ← editable skeleton markdown
+    ├── Meta · Template · readme-main        ← slots + purpose
+    ├── Template · affine-surface-policy
+    └── Meta · Template · affine-surface-policy
 ```
 
-Редактируемые артефакты: шаблон, гранулы, metadata (provenance, foundations). Git `granules/` + `templates/` — канон; Affine — owner-facing UI поверх них.
+Каждая гранула / шаблон = **две linked** страницы (content ↔ meta). Не JSON dump.
 
 ### Workspace «Releases» — опубликованные snapshots
 
 ```text
 Releases/                           ← workspace
 └── strategic-docs/                 ← namespace = container id
-    ├── Release · readme-main       ← собранный README (markdown для чтения)
-    ├── Meta · readme-main          ← pins из release.json + trace (read-only)
+    ├── Release · readme-main
+    ├── Meta · Release · readme-main
     ├── Release · affine-surface-policy
-    └── Meta · affine-surface-policy
+    └── Meta · Release · affine-surface-policy
 ```
 
 Источник после generate:
@@ -137,9 +137,9 @@ Programmatic push через `@affine/native` / socket.io — follow-up (`affine
 | `AFFINE_BASE_URL` | default `https://strategy.mmbrn.tech` |
 | `AFFINE_API_TOKEN` | Bearer token (Settings → Access tokens) |
 | `AFFINE_PASSWORD` / `AFFINE_ADMIN_PASSWORD` | sign-in fallback |
-| `AFFINE_WORKSPACE_TEMPLATES_ID` | UUID workspace **Templates** |
-| `AFFINE_WORKSPACE_RELEASES_ID` | UUID workspace **Releases** |
-| `AFFINE_WORKSPACE_ID` | optional override обоих target |
+| `AFFINE_WORKSPACE_TEMPLATES_ID` | UUID workspace **Templates** (обязателен для `--target templates`) |
+| `AFFINE_WORKSPACE_RELEASES_ID` | UUID workspace **Releases** (обязателен для `--target releases`) |
+| `AFFINE_WORKSPACE_ID` | fallback **только если** target-specific не задан; **не** перекрывает два выше |
 
 После создания workspace в UI (Affine не даёт переименовать — ок, новые имена):
 
@@ -166,12 +166,12 @@ yarn affine:workspace:list
 
 | Git path (тип артефакта) | Workspace | Namespace | Doc title |
 |--------------------------|-----------|-----------|-----------|
-| `granules/<id>/` | Templates | `strategic-docs` | `Granule · <id>` |
-| `templates/<id>/` | Templates | `strategic-docs` | `Template · <id>` |
-| `releases/<id>/` | Releases | `strategic-docs` | `Release · <id>` + `Meta · <id>` |
+| `granules/<id>/` | Templates | `strategic-docs` | `Granule · <id>` + `Meta · Granule · <id>` |
+| `templates/<id>/` | Templates | `strategic-docs` | `Template · <id>` + `Meta · Template · <id>` |
+| `releases/<id>/` | Releases | `strategic-docs` | `Release · <id>` + `Meta · Release · <id>` |
 
-Granule doc = `body.md` (или render function output) + metadata block из `granule.json`.
-Тип документа — в **title** и metadata, не в Affine-папке.
+Content = literal / pure function / skeleton / README. Meta = purpose + provenance (editable markdown).  
+`--push` вешает tag namespace; UI-папку `strategic-docs/` создайте вручную (у affine-cli нет folder API).
 
 #### Примеры (owner)
 
