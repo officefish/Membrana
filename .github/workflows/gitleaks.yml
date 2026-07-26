@@ -26,5 +26,18 @@ jobs:
             | tar -xz gitleaks
           ./gitleaks version
 
+      # Заявка отвечает за СВОЙ диапазон, а не за всю историю репозитория.
+      # Эпизод 26.07 (#1272 Ф1): скан полной истории валил ЛЮБУЮ заявку из-за фикстуры
+      # в чужой ветке — файла, которого не было ни в общей ветке, ни в заявке. Блокировало
+      # всех, причём чинить приходилось не автору заявки. Полная история осталась там, где
+      # она уместна: на общей ветке и по расписанию.
+      - name: Scan PR range (base..head)
+        if: github.event_name == 'pull_request'
+        run: |
+          git fetch --no-tags --depth=200 origin "${{ github.base_ref }}"
+          ./gitleaks detect --source . --no-banner --redact -v \
+            --log-opts="origin/${{ github.base_ref }}..HEAD"
+
       - name: Scan full history
+        if: github.event_name != 'pull_request'
         run: ./gitleaks detect --source . --no-banner --redact -v

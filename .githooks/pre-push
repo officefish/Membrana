@@ -18,30 +18,52 @@ fi
 
 set -e
 
+# Свежее рабочее дерево без установленных зависимостей (#1272 Ф4).
+# Эпизод 26.07: слияние делалось в отдельном дереве (общее держали чужие правки), и
+# отправка оттуда падала невнятным «Couldn't find the node_modules state file» — вместо
+# диагноза приходилось глушить весь хук (SKIP_PREPUSH). Проверки, которым нужен yarn,
+# честно объявляются пропущенными; те, что работают на голом node, идут как обычно.
+YARN_READY=1
+if [ ! -d node_modules ]; then
+  YARN_READY=0
+  echo "pre-push [окружение]: зависимости не установлены (свежее рабочее дерево)."
+  echo "  Пропущены проверки, которым нужен yarn: catalog:verify-client · kits:audit · typecheck."
+  echo "  Гейт ответственности отработает — ему нужен только node."
+  echo "  Полный набор: yarn install (или yarn worktree:bootstrap) в этом дереве."
+fi
+
 # Отказ-I «ответственный не назначен» (cowork-execution-registry, контракт §2/§6-б):
 # карточка со status active без leadPersona → жёсткий вердикт 22, push не проходит.
 # Гейт читает docs/tasks/registry.json офлайн; сети и yarn ему не нужно.
 echo "pre-push [trace-gate]: node scripts/trace-gate.mjs lead-persona"
 node scripts/trace-gate.mjs lead-persona
 
-echo "pre-push [cg7]: yarn catalog:verify-client"
-yarn catalog:verify-client
+if [ "$YARN_READY" = "1" ]; then
+  echo "pre-push [cg7]: yarn catalog:verify-client"
+  yarn catalog:verify-client
+fi
 
 # Описи китов (kits-pins-wiring / #1196): МЯГКИЙ режим — блокирует только структурную
 # ложь (узел подграфа без пина), смену версии пропускает как warn. Строгая сверка —
 # в CI (pinned). Без этого шага описи расходились молча: 25.07 накопилось 30 находок.
-echo "pre-push [kits]: yarn kits:audit --mode latest"
-yarn kits:audit --mode latest
+if [ "$YARN_READY" = "1" ]; then
+  echo "pre-push [kits]: yarn kits:audit --mode latest"
+  yarn kits:audit --mode latest
+fi
 
-echo "pre-push [NB4]: yarn verify:wire-sync (core ↔ background-cabinet)"
-yarn verify:wire-sync
+if [ "$YARN_READY" = "1" ]; then
+  echo "pre-push [NB4]: yarn verify:wire-sync (core ↔ background-cabinet)"
+  yarn verify:wire-sync
+fi
 
 # NB5: typecheck сужен до affected-пакетов (изменённые с origin/main + их зависимые),
 # turbo ^build держит dist свежим. Быстрее полного прогона → меньше соблазна SKIP.
 # #1168: вычисление affected ИСКЛЮЧАЕТ .md/.mdx (docs не влияют на типы) — иначе markdown
 # внутри пакета поднимал его билд-цепочку (vite 127 на telemetry-journal). Логика — в скрипте
 # (origin/main недоступен → полный; docs-only/корневые скрипты → skip; корневой конфиг → полный).
-echo "pre-push [cg6/NB5]: typecheck (affected без docs-триггера)"
-node scripts/prepush-typecheck-scope.mjs
+if [ "$YARN_READY" = "1" ]; then
+  echo "pre-push [cg6/NB5]: typecheck (affected без docs-триггера)"
+  node scripts/prepush-typecheck-scope.mjs
+fi
 
 echo "pre-push: OK"

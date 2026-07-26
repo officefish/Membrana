@@ -83,3 +83,36 @@ test('registerOrLinkTask: upsert дописывает linearId, не плоди�
   assert.equal(twice.entry.linearId, 'DRU-249');
   assert.equal(normalizeLinearId('  DRU-1  '), 'DRU-1');
 });
+
+// ─── Повторная регистрация не обнуляет ответственного (#1272 Ф5) ──────────────────────
+// Эпизод 25.07: второй прогон register ради привязки Linear шёл без --lead → поле
+// затиралось null → pre-push trace-gate останавливал отправку «ответственный не назначен».
+// Снятие ответственного — осознанный акт, а не побочный эффект линковки.
+
+test('upsert без --lead сохраняет прежнего ответственного', () => {
+  const registry = {
+    version: 1,
+    tasks: [{ id: 'card', leadPersona: 'ozhegov', supportPersonas: ['angelina'], notes: 'важное', githubIssue: 1195, linearId: null }],
+  };
+  const patch = { id: 'card', leadPersona: null, supportPersonas: [], notes: '', githubIssue: null, linearId: 'DRU-455' };
+  const { entry } = registerOrLinkTask(registry, patch, 'upsert-links');
+  assert.equal(entry.leadPersona, 'ozhegov', 'ответственный не обнулён');
+  assert.deepEqual(entry.supportPersonas, ['angelina'], 'поддержка не обнулена');
+  assert.equal(entry.notes, 'важное', 'заметки не стёрты пустой строкой');
+  assert.equal(entry.linearId, 'DRU-455', 'связь при этом дописана');
+  assert.equal(entry.githubIssue, 1195, 'существующая связь сохранена');
+});
+
+test('upsert с явным --lead меняет ответственного (осознанный акт проходит)', () => {
+  const registry = { version: 1, tasks: [{ id: 'card', leadPersona: 'ozhegov', supportPersonas: [] }] };
+  const patch = { id: 'card', leadPersona: 'vesnin', supportPersonas: ['dynin'] };
+  const { entry } = registerOrLinkTask(registry, patch, 'upsert-links');
+  assert.equal(entry.leadPersona, 'vesnin');
+  assert.deepEqual(entry.supportPersonas, ['dynin']);
+});
+
+test('карточка без ответственного остаётся без него — пустота не выдумывается', () => {
+  const registry = { version: 1, tasks: [{ id: 'card', leadPersona: null, supportPersonas: [] }] };
+  const { entry } = registerOrLinkTask(registry, { id: 'card', leadPersona: null }, 'upsert-links');
+  assert.equal(entry.leadPersona, null, 'null остаётся null — заглушка не появляется');
+});
