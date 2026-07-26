@@ -13,12 +13,18 @@ import { join } from 'node:path';
 import { registryProblems, renderRegistryMd } from './procedures-registry.mjs';
 import {
   PARSER_VERSION,
+  migrateLegacyContractText,
   parseContractHeader,
   stampContractHeader,
 } from './procedure-contract-stamp.mjs';
 import { renderVocabularyMd, vocabularySchemaProblems } from './vocabulary-check.mjs';
 
-export { PARSER_VERSION, parseContractHeader, stampContractHeader };
+export {
+  PARSER_VERSION,
+  migrateLegacyContractText,
+  parseContractHeader,
+  stampContractHeader,
+};
 
 /**
  * @param {string} repoRoot
@@ -180,17 +186,24 @@ export function licenseContract(entry, repoRoot, opts = {}) {
     }
   }
 
+  // Ф4: legacy-штамп вне допуска — миграция обязательна (не soft-warning)
+  if (header?.legacy) {
+    provenance = 'legacy';
+    problems.push(
+      'legacy-штамп: мигрируй yarn procedures:license --write (см. docs/procedures/VERSIONS.md)',
+    );
+  }
+
   const expected = renderLicensedContract(entry, repoRoot);
   let compliance = 'ok';
   if (!expected.ok) {
     compliance = 'unchecked';
     problems.push(`пересборка невозможна: ${expected.error}`);
   } else if (text !== expected.text) {
-    // Допуск: legacy-штамп при байт-совпадении тела
     const bodyOk = stripFirstLine(text) === stripFirstLine(expected.text);
     if (bodyOk && header?.legacy) {
+      // тело воспроизводимо, штамп — нет: compliance ok по телу, provenance=legacy блокирует
       compliance = 'ok';
-      problems.push('legacy-штамп: тело совпало — перегенерируй для parser@штампа');
     } else if (bodyOk && header && !header.legacy) {
       compliance = 'drift';
       problems.push('штамп/пробелы разъехались с каноном пересборки');
@@ -200,9 +213,7 @@ export function licenseContract(entry, repoRoot, opts = {}) {
     }
   }
 
-  // Legacy warning не роняет valid, если provenance+compliance иначе ok
-  const blocking = problems.filter((p) => !p.startsWith('legacy-штамп'));
-  const valid = provenance === 'ok' && compliance === 'ok' && blocking.length === 0;
+  const valid = provenance === 'ok' && compliance === 'ok' && problems.length === 0;
 
   return { id, valid, provenance, compliance, problems };
 }

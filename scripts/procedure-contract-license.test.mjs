@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
@@ -10,6 +11,7 @@ import {
   contractsRegistryProblems,
   licenseContract,
   loadContractsRegistry,
+  migrateLegacyContractText,
   parseContractHeader,
   renderLicensedContract,
   stampContractHeader,
@@ -51,6 +53,49 @@ test('пересборка vocabulary/registry со штампом parser@', () 
     assert.ok(out.text.startsWith('<!-- contract: parser@'));
     assert.ok(parseContractHeader(out.text));
   }
+});
+
+test('Ф4: migrateLegacyContractText → neo; legacy лицензия недействительна', () => {
+  const live = renderLicensedContract(
+    {
+      generator: 'yarn vocabulary:generate',
+      source: 'docs/procedures/vocabulary.json',
+      renderer: 'vocabulary',
+    },
+    repoRoot,
+  );
+  assert.equal(live.ok, true);
+  if (!live.ok) return;
+  const body = live.text.slice(live.text.indexOf('\n') + 1);
+  const legacyText = `<!-- generated: yarn vocabulary:generate из docs/procedures/vocabulary.json — руками не править -->\n${body}`;
+
+  const mig = migrateLegacyContractText(legacyText);
+  assert.equal(mig.ok, true);
+  if (!mig.ok) return;
+  assert.ok(mig.text.startsWith(`<!-- contract: parser@${PARSER_VERSION}`));
+  assert.equal(parseContractHeader(mig.text)?.legacy, false);
+
+  const root = mkdtempSync(join(tmpdir(), 'proc-lic-'));
+  mkdirSync(join(root, 'docs/procedures'), { recursive: true });
+  writeFileSync(join(root, 'docs/procedures/VOCABULARY.md'), legacyText);
+  // source для пересборки — из живого репо через symlink-подобный copy path: подставим absolute via entry
+  // licenseContract читает entry.path от repoRoot и source от того же root — положим vocabulary.json
+  writeFileSync(
+    join(root, 'docs/procedures/vocabulary.json'),
+    readFileSync(resolve(repoRoot, 'docs/procedures/vocabulary.json')),
+  );
+  const entry = {
+    id: 'legacy-probe',
+    path: 'docs/procedures/VOCABULARY.md',
+    class: 'contract',
+    generator: 'yarn vocabulary:generate',
+    source: 'docs/procedures/vocabulary.json',
+    renderer: 'vocabulary',
+  };
+  const verdict = licenseContract(entry, root, { compat: [PARSER_VERSION] });
+  assert.equal(verdict.valid, false);
+  assert.equal(verdict.provenance, 'legacy');
+  assert.ok(verdict.problems.some((p) => p.includes('legacy-штамп')));
 });
 
 test('рукопись без штампа — недействительна; живые пилоты — valid', () => {

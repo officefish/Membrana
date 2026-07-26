@@ -36,9 +36,13 @@
 
 ### Форма дома (`*.form.json`)
 
+Версия живёт **в форме** (`formVersion`), не только в ссылке из манифеста.
+Канон версий — [`VERSIONS.md`](./VERSIONS.md) (Ф4).
+
 ```json
 {
-  "version": 1,
+  "formVersion": "1.0.0",
+  "compat": ["1.0.0"],
   "mustExist": ["state.json", "DEBTS.md"],
   "extensionsMayAdd": true,
   "extensionsMayNotOverride": true
@@ -47,12 +51,15 @@
 
 | Поле | Смысл |
 |------|--------|
+| `formVersion` | semver поколения формы; обязан ∈ `compat[]` и ∈ окно слоя |
+| `compat[]` | окно совместимости поколений этой формы |
 | `mustExist[]` | относительные пути от `home.path`; каждый обязан существовать как файл |
 | `extensionsMayAdd` | соседи/расширения могут класть новое |
-| `extensionsMayNotOverride` | расширение не перебивает базовое (норма; зуб полного diff — Ф4) |
+| `extensionsMayNotOverride` | расширение не перебивает базовое (норма) |
 
-Инстансы прогона (`docs/bridge/<date>/CONSPECTUS.md`) — **не** элементы формы:
-они появляются и уезжают; форма держит постоянный каркас дома.
+Legacy `{ "version": 1 }` без `formVersion` — дефект до миграции
+(`migrateHomeForm`). Инстансы прогона (`docs/bridge/<date>/CONSPECTUS.md`) —
+**не** элементы формы: они появляются и уезжают; форма держит каркас дома.
 
 ## `mode`
 

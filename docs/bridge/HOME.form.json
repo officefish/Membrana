@@ -1,5 +1,6 @@
 {
-  "version": 1,
+  "formVersion": "1.0.0",
+  "compat": ["1.0.0"],
   "mustExist": [
     "state.json",
     "DEBTS.md",
