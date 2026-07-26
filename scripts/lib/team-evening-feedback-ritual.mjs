@@ -14,6 +14,8 @@ export const PROMPT_PATH = 'docs/prompts/TEAM_EVENING_FEEDBACK.md';
 export const VIRTUAL_TEAM_PATH = 'docs/VIRTUAL_TEAM_PROMPT.md';
 export const SEANSES_DIR = 'docs/seanses';
 export const DEFAULT_SAVE_AS = 'team-evening-feedback';
+/** id процедуры-канала (реестр `scripts/lib/llm-procedures.json`, цепочка в defaults). */
+export const EVENING_FEEDBACK_PROCEDURE_ID = 'team-evening-feedback';
 
 const MAX_BUFFER = 8 * 1024 * 1024;
 const MAX_DOC_CHARS = 24_000;
@@ -242,15 +244,122 @@ export function buildEveningFeedbackUserMessage(p) {
 }
 
 /**
- * @param {{ readonly path: string; readonly body: string; readonly saveAs?: string }} opts
+ * @param {{
+ *   readonly path: string;
+ *   readonly body: string;
+ *   readonly saveAs?: string;
+ *   readonly meta?: { llmProvider?: string; llmModel?: string; llmSource?: string };
+ * }} opts
  */
 export function writeEveningFeedbackMarkdown(opts) {
   const stamp = new Date().toISOString();
   const slug = opts.saveAs ?? DEFAULT_SAVE_AS;
-  const header =
-    `<!-- Сгенерировано: ${stamp} (yarn team-evening-feedback; ${slug}) -->\n\n`;
+  // Провенанс канала — в САМ протокол, а не только в консоль: из файла должно быть видно,
+  // какое звено цепочки отвечало (образец — writeReviewMarkdown в code-review-ritual.mjs).
+  const flags = [
+    slug,
+    opts.meta?.llmProvider ? `llm-${opts.meta.llmProvider}` : null,
+    opts.meta?.llmModel ? `model-${opts.meta.llmModel}` : null,
+    opts.meta?.llmSource ? `source-${opts.meta.llmSource}` : null,
+  ]
+    .filter(Boolean)
+    .join('; ');
+  const header = `<!-- Сгенерировано: ${stamp} (yarn team-evening-feedback; ${flags}) -->\n\n`;
   mkdirSync(dirname(opts.path), { recursive: true });
   writeFileSync(opts.path, header + opts.body, 'utf8');
+}
+
+/**
+ * Чистое ядро вызова канала процедуры для вечернего фидбека.
+ *
+ * Сеть и ФС приходят инъекцией (`invoke` / `write`), поэтому оба пути проверяются тестом
+ * без сети: фолбэк на второе звено и исчерпанная цепочка. Инвариант — **пустой протокол
+ * не пишется**: файл, который выдаёт себя за состоявшийся ритуал, хуже отсутствующего
+ * (прецедент 25.07 — протокола нет вообще, и это заметили только на следующий день).
+ *
+ * @param {{
+ *   readonly prompt: string;
+ *   readonly outputPath: string;
+ *   readonly saveAs?: string;
+ *   readonly noSave?: boolean;
+ *   readonly maxTokens?: number;
+ *   readonly invoke: (args: {
+ *     procedureId: string;
+ *     prompt: string;
+ *     maxTokens?: number;
+ *     onAttempt: (a: { provider: string; model: string; attemptIndex: number; ok: boolean; errorClass?: string }) => void;
+ *   }) => Promise<{
+ *     ok: boolean;
+ *     text?: string;
+ *     provider?: string;
+ *     model?: string;
+ *     source?: string;
+ *     attempts?: number;
+ *     errorClass?: string;
+ *   }>;
+ *   readonly write: (opts: {
+ *     path: string;
+ *     body: string;
+ *     saveAs?: string;
+ *     meta?: { llmProvider?: string; llmModel?: string; llmSource?: string };
+ *   }) => void;
+ *   readonly log?: (line: string) => void;
+ *   readonly emit?: (body: string) => void;
+ * }} deps
+ * @returns {Promise<{ exitCode: number; wrote: boolean; provider?: string; model?: string; source?: string }>}
+ */
+export async function runEveningFeedbackLlm(deps) {
+  const log = deps.log ?? (() => {});
+  const result = await deps.invoke({
+    procedureId: EVENING_FEEDBACK_PROCEDURE_ID,
+    prompt: deps.prompt,
+    maxTokens: deps.maxTokens ?? 8192,
+    onAttempt: ({ provider, model, attemptIndex, ok, errorClass }) => {
+      log(
+        ok
+          ? `[llm] ${EVENING_FEEDBACK_PROCEDURE_ID} → ${provider}/${model} (attempt ${attemptIndex + 1})`
+          : `[llm] ${EVENING_FEEDBACK_PROCEDURE_ID} attempt ${attemptIndex + 1} ${provider}/${model} failed: ${errorClass ?? 'unknown'}`,
+      );
+    },
+  });
+
+  if (!result.ok) {
+    log(
+      `[llm] цепочка исчерпана для ${EVENING_FEEDBACK_PROCEDURE_ID}: ${result.attempts ?? 0} попыт(ки) (${result.errorClass ?? 'unknown'})`,
+    );
+    log('Ни одно звено не ответило. Проверьте chain в scripts/lib/llm-procedure-defaults.json и ключи (.env / .env.llm-proxy).');
+    log('Протокол НЕ записан — пустой файл выдал бы себя за состоявшийся ритуал.');
+    return { exitCode: 1, wrote: false };
+  }
+
+  const body = typeof result.text === 'string' ? result.text : '';
+  if (!body.trim()) {
+    log(
+      `[llm] ${result.provider ?? '?'}/${result.model ?? '?'} ответил пустым телом — протокол НЕ записан.`,
+    );
+    return { exitCode: 1, wrote: false, provider: result.provider, model: result.model, source: result.source };
+  }
+
+  deps.emit?.(body);
+
+  if (deps.noSave) {
+    log('--no-save: файл не записан');
+    return { exitCode: 0, wrote: false, provider: result.provider, model: result.model, source: result.source };
+  }
+
+  deps.write({
+    path: deps.outputPath,
+    body,
+    saveAs: deps.saveAs,
+    meta: {
+      llmProvider: result.provider,
+      llmModel: result.model,
+      llmSource: result.source,
+    },
+  });
+  log(`Записано: ${deps.outputPath}`);
+  log(`[llm] source=${result.source ?? '?'} provider=${result.provider ?? '?'}`);
+  return { exitCode: 0, wrote: true, provider: result.provider, model: result.model, source: result.source };
 }
 
 export function readRequiredFile(relPath) {

@@ -46,5 +46,13 @@
       { "provider": "deepseek", "model": "deepseek-chat" },
       { "provider": "xai", "model": "grok-4.5" }
     ]
+  },
+  "team-evening-feedback": {
+    "chain": [
+      { "provider": "anthropic", "model": "claude-haiku-4-5-20251001" },
+      { "provider": "openrouter", "model": "anthropic/claude-haiku-4.5" },
+      { "provider": "deepseek", "model": "deepseek-chat" },
+      { "provider": "xai", "model": "grok-4.5" }
+    ]
   }
 }
