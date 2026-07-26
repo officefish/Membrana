@@ -21,7 +21,6 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `issue-979-selfclose` | Аномалия: задача спринта закрылась сама | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1004](https://github.com/officefish/Membrana/issues/1004) |
-| `precedents-meta-backfill` | Три прецедента не проходят схему контейнера | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1003](https://github.com/officefish/Membrana/issues/1003) |
 | `closure-acceptance-gate` | Приёмка фиксируется лишь в 10 из 32 закрытий | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1001](https://github.com/officefish/Membrana/issues/1001) |
 | `linear-movement-layer` | Linear не работает как слой движения (111 Done / 9 started) | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1000](https://github.com/officefish/Membrana/issues/1000) |
 | `cascade-honest-manual` | Каскад не выражает честную ручную чеканку | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#999](https://github.com/officefish/Membrana/issues/999) |
@@ -223,6 +222,7 @@
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | 2026-07-26 | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | #1088 (Issue открыт) | [карточка](./archive/run-ledger.md) |
 | `registry-merge-driver-serverless` | Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере | 2026-07-26 | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | #1026 (Issue открыт) | [карточка](./archive/registry-merge-driver-serverless.md) |
 | `ritual-deliver-to-main` | Утренний ритуал: обязательный финальный кадр — доставка документов в main | 2026-07-26 | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | #1016 (Issue открыт) | [карточка](./archive/ritual-deliver-to-main.md) |
+| `precedents-meta-backfill` | Три прецедента не проходят схему контейнера | 2026-07-26 | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | #1003 (Issue открыт) | [карточка](./archive/precedents-meta-backfill.md) |
 | `gitleaks-block-on-leak` | gitleaks предупреждает, но не блокирует коммит | 2026-07-26 | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | #1002 (Issue открыт) | [карточка](./archive/gitleaks-block-on-leak.md) |
 | `kits-pins-wiring` | Описи китов: инструмент kits:pins, выравнивание трёх китов, зуб сверки на pre-push + CI | 2026-07-25 | [`KITS_PINS_WIRING_PROMPT.md`](../prompts/KITS_PINS_WIRING_PROMPT.md) | #1196 | [карточка](./archive/kits-pins-wiring.md) |
 | `bridge-cross-agent-skill` | Мостик: кросс-агентский скилл входа + кит angelina-bridge (инструментарий ведущей) | 2026-07-25 | [`BRIDGE_CROSS_AGENT_SKILL_PROMPT.md`](../prompts/BRIDGE_CROSS_AGENT_SKILL_PROMPT.md) | #1195 | [карточка](./archive/bridge-cross-agent-skill.md) |
