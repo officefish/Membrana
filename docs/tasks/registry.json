@@ -1,6 +1,23 @@
 {
   "tasks": [
     {
+      "id": "procedures-core-fields",
+      "title": "Универсальное ядро настроек процедуры: trigger · steps[] · gates[]",
+      "promptPath": "docs/prompts/PROCEDURES_CORE_FIELDS_PROMPT.md",
+      "githubIssue": 1220,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "audit-concentrate-v1",
       "title": "Аудит дня как концентрат: сверка источников правды, первая версия на существующих данных",
       "promptPath": "docs/prompts/AUDIT_CONCENTRATE_PROMPT.md",

@@ -32,5 +32,8 @@ GitHub-иссью и командный вечерний фидбек. Опер�
 
 [`MANIFEST.json`](./MANIFEST.json) — машиночитаемый: `id`, `leadPersona`,
 `kitVersion` (`null` — вечер без кита; утренний пин — [`ritual-day`](../ritual-day/)
-→ `kits/angelina-morning`), `engines[]`, `precedents[]`. Валидность проверяет
-`validateProcedure(dir)` в CI.
+→ `kits/angelina-morning`), `engines[]`, `precedents[]`, плюс **ядро**
+([`CORE.md`](../CORE.md)): `trigger` = `yarn ritual:evening`, `steps` =
+`ref` → [`evening-ritual-steps.json`](../../tasks/evening-ritual-steps.json),
+`gates` = `partner-swallow` (owner). Валидность проверяет `validateProcedure`
+в CI.

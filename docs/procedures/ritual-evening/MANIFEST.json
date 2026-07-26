@@ -13,5 +13,25 @@
   "precedents": [
     "docs/seanses/team-evening-feedback-2026-07-17.md",
     "docs/seanses/team-evening-feedback-2026-07-18.md"
-  ]
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "yarn ritual:evening",
+    "note": "запускает агент или капитан; авторасписания на office пока нет"
+  },
+  "steps": {
+    "kind": "ref",
+    "path": "docs/tasks/evening-ritual-steps.json"
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "partner-swallow",
+        "waitsFor": "owner",
+        "resume": "явное «ок» владельца на черновик ласточки → yarn telegram:swallow",
+        "note": "вне evening-ritual-steps.json; обязательство процесса до машинного canSend на пути (#1233)"
+      }
+    ]
+  }
 }

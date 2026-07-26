@@ -6,7 +6,11 @@ import { after, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import {
+  PROCEDURE_CORE_PILOTS,
+  coreFieldsProblems,
+  corePresence,
   frameLaneProblems,
+  isHonestWhy,
   listProcedureDirs,
   manifestSchemaProblems,
   normalizeFramePins,
@@ -187,4 +191,83 @@ test('F1: validateProcedure принимает контейнер с frames', ()
   });
   const r = validateProcedure(dir, tmp);
   assert.equal(r.valid, true, r.problems.join('; '));
+});
+
+const GOOD_CORE = {
+  trigger: { kind: 'captain-word', command: 'yarn demo' },
+  steps: {
+    kind: 'inline',
+    items: [{ id: 'one', criticality: 'critical' }],
+  },
+  gates: { kind: 'none', why: 'нет машинной паузы на человека' },
+};
+
+test('CORE: отсутствие ядра — valid + finding; частичное — дефект', () => {
+  const bare = makeContainer('bare-core', { manifest: { ...GOOD, id: 'bare-core' } });
+  const bareR = validateProcedure(bare, tmp);
+  assert.equal(bareR.valid, true, bareR.problems.join('; '));
+  assert.equal(bareR.core, 'none');
+  assert.ok(bareR.findings.some((f) => f.includes('нет ядра')));
+
+  assert.equal(corePresence({ ...GOOD, trigger: GOOD_CORE.trigger }), 'partial');
+  assert.ok(
+    manifestSchemaProblems({ ...GOOD, trigger: GOOD_CORE.trigger }, 'demo').some((p) =>
+      p.includes('частичное'),
+    ),
+  );
+});
+
+test('CORE: полное ядро валидно; заглушка why — дефект; noncritical без why — дефект', () => {
+  assert.equal(isHonestWhy('TODO'), false);
+  assert.equal(isHonestWhy('паузы в диалоге, не в потоке'), true);
+  assert.equal(
+    manifestSchemaProblems({ ...GOOD, ...GOOD_CORE }, 'demo', tmp).length,
+    0,
+    manifestSchemaProblems({ ...GOOD, ...GOOD_CORE }, 'demo', tmp).join('; '),
+  );
+  const stub = {
+    ...GOOD,
+    ...GOOD_CORE,
+    gates: { kind: 'none', why: 'TODO' },
+  };
+  assert.ok(manifestSchemaProblems(stub, 'demo', tmp).some((p) => p.includes('честного why')));
+  const badStep = {
+    ...GOOD,
+    ...GOOD_CORE,
+    steps: {
+      kind: 'inline',
+      items: [{ id: 'x', criticality: 'noncritical' }],
+    },
+  };
+  assert.ok(
+    coreFieldsProblems(badStep, tmp).some((p) => p.includes('whyNoncritical')),
+  );
+});
+
+test('CORE: steps.ref резолвит evening-ritual-steps.json', () => {
+  const eveningish = {
+    ...GOOD,
+    trigger: { kind: 'captain-word', command: 'yarn ritual:evening' },
+    steps: { kind: 'ref', path: 'docs/tasks/evening-ritual-steps.json' },
+    gates: {
+      kind: 'inline',
+      items: [{
+        id: 'partner-swallow',
+        waitsFor: 'owner',
+        resume: 'ок владельца → yarn telegram:swallow',
+      }],
+    },
+  };
+  const probs = manifestSchemaProblems(eveningish, 'demo', repoRoot);
+  assert.equal(probs.length, 0, probs.join('; '));
+});
+
+test('CORE Ф1: пилоты ritual-evening / bridge / ritual-dreams несут валидное ядро', () => {
+  for (const id of PROCEDURE_CORE_PILOTS) {
+    const dir = join(repoRoot, 'docs', 'procedures', id);
+    const r = validateProcedure(dir, repoRoot);
+    assert.equal(r.valid, true, `${id}: ${r.problems.join('; ')}`);
+    assert.equal(r.core, 'full', `${id}: ядро неполное`);
+    assert.equal(r.findings.length, 0, `${id}: ${r.findings.join('; ')}`);
+  }
 });

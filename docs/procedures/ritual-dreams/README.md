@@ -32,10 +32,13 @@ Nest-модуль office (`packages/background-office/.../dreams`) — runtime �
 ## Манифест
 
 [`MANIFEST.json`](./MANIFEST.json) — `id`, `leadPersona`, `kitVersion`,
-`engines[]`, `precedents[]`. Среди precedents — промпт Мастера снов (версия
+`engines[]`, `precedents[]`, плюс **ядро** ([`CORE.md`](../CORE.md)):
+`trigger` = schedule `0 * * * *` UTC (office DreamsScheduler); `steps` =
+inline `tick` + `digest-deliver`; `gates` = легальное `none` (автономный
+контур). Среди precedents — промпт Мастера снов (версия
 `DREAM_MASTER_VERSION`, не SHA-пин) и протокол M5.
 
-Зуб: `validateProcedure` (резолв `kitVersion` → дом кита).
+Зуб: `validateProcedure` (резолв `kitVersion` → дом кита + суб-схема ядра).
 
 ## Определение ↔ прогон
 
