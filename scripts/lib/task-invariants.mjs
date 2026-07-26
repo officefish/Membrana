@@ -218,6 +218,28 @@ export function checkCardIntegrity(card, apiCache) {
           ],
         }),
       );
+    } else if (live === 'closed' && isActive) {
+      // Живой случай #979 (22.07): Issue закрыта при active-карточке после PR #986
+      // (регистрация спринта), без Closes и без task:archive. Сiblings #980/#981
+      // остались OPEN — упоминание (#N) в squash не закрывает; см. precedent
+      // docs/precedents/2026-07-26-issue-979-selfclose-premature-github-close.md
+      violations.push(
+        violation({
+          invariant: 'github-live',
+          level: 'WARNING',
+          cardId,
+          field: 'githubIssue',
+          message:
+            `active + githubIssue #${issueN} закрыта на GitHub — карточка ещё не archived; ` +
+            'вероятно преждевременное закрытие (Linear sync или ручное)',
+          code: 'invariant.github.closedWhileActive',
+          suggestions: [
+            `gh issue reopen ${issueN} — если DoD не сдан`,
+            `yarn tasks:sync-issues — обновить githubIssueClosedAt после осознанного закрытия`,
+            `yarn task:archive ${cardId} — только после LGTM и DoD`,
+          ],
+        }),
+      );
     }
 
     // 3. Issue closed → githubIssueClosedAt заполнена (DATALOSS)

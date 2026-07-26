@@ -98,6 +98,18 @@ test('yellow DATALOSS: closed issue без closedAt', () => {
   assert.ok(r.violations.some((v) => v.level === 'DATALOSS' && v.code === 'invariant.closedAt.missing'));
 });
 
+test('yellow WARNING: active + closed github issue (#979 class)', () => {
+  const r = checkCardIntegrity(
+    card({ id: 'frames-alive-ozhegov', githubIssue: 979, status: 'active' }),
+    {
+      github: { '979': 'closed' },
+      fetchedAt: '2026-07-26T12:00:00.000Z',
+    },
+  );
+  assert.equal(r.status, 'yellow');
+  assert.ok(r.violations.some((v) => v.code === 'invariant.github.closedWhileActive'));
+});
+
 test('unknown ≠ HARD_BLOCK', () => {
   const r = checkCardIntegrity(card({ id: 'u', linearId: 'DRU-1', githubIssue: 1 }), {
     linear: { 'DRU-1': 'unknown' },
