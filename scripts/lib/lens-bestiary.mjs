@@ -151,12 +151,58 @@ export function detectEchoChamber(o) {
   return out;
 }
 
+/**
+ * НЕМОЙ НОСИТЕЛЬ — работающая часть контура, о которой репозиторий не знает (#1221).
+ * Зеркало «Прозы»: там написано, а за этим никого; здесь работает, а нигде не написано.
+ *
+ * Ловим repo-сторону невыводимости: живой адрес контура и дом данных, на которые код
+ * ссылается, но которые не объявлены НИ В ОДНОМ каноне/манифесте. Обратное направление
+ * зуба: «объявленное обязано существовать» проверяют другие; здесь — «существующее
+ * обязано быть объявленным».
+ *
+ * `declarationsOf` обязателен: без него класс не может отличить необъявленное от
+ * объявленного, а тихая выдача `clean` — сама по себе молчун (лемма аудитора).
+ *
+ * @param {ObjectFile} o
+ * @param {{declarationsOf: (token:string) => number}} ruleset
+ * @returns {Finding[]}
+ */
+export function detectUndeclared(o, ruleset) {
+  if (typeof ruleset?.declarationsOf !== 'function') {
+    throw new Error('detectUndeclared: ruleset.declarationsOf обязателен (иначе класс молчит зелёным)');
+  }
+  const out = [];
+  const ls = lines(o.text);
+  const seen = new Set();
+  ls.forEach((l, i) => {
+    const at = `${o.path}:${i + 1}`;
+    for (const m of l.matchAll(/\b([a-z0-9-]+\.(?:mmbrn\.tech|membrana\.space))\b/g)) {
+      const host = m[1];
+      if (seen.has(host)) continue;
+      seen.add(host);
+      if (ruleset.declarationsOf(host) === 0) {
+        out.push({ locus: at, defectClass: 'undeclared', evidence: `адрес ${host} живой, но не объявлен ни в одном каноне/манифесте` });
+      }
+    }
+    for (const m of l.matchAll(/['"`](docs\/[a-z0-9-]+)\//g)) {
+      const home = m[1];
+      if (seen.has(home)) continue;
+      seen.add(home);
+      if (ruleset.declarationsOf(home) === 0) {
+        out.push({ locus: at, defectClass: 'undeclared', evidence: `дом данных ${home}/ используется кодом, но не объявлен манифестом` });
+      }
+    }
+  });
+  return out;
+}
+
 export const BESTIARY = [
   { defectClass: 'silent', label: 'Молчун', run: detectSilent },
   { defectClass: 'unwired', label: 'Половина без провода', run: detectUnwired },
   { defectClass: 'ornament', label: 'Украшение', run: detectOrnament },
   { defectClass: 'jargon-out', label: 'Жаргон наружу', run: detectJargonOut },
   { defectClass: 'echo', label: 'Эхо-камера', run: detectEchoChamber },
+  { defectClass: 'undeclared', label: 'Немой носитель', run: detectUndeclared },
 ];
 
 /**

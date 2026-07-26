@@ -7,10 +7,11 @@ import { join, relative } from 'node:path';
 
 import { aimBestiary, BESTIARY } from './lens-bestiary.mjs';
 
-/** Ruleset для самопроверки: все экспорты/артефакты — «сироты». */
+/** Ruleset для самопроверки: все экспорты/артефакты — «сироты», всё необъявлено. */
 export const ORPHAN_RULESET = {
   consumersOf: () => 0,
   readersOf: () => 0,
+  declarationsOf: () => 0,
 };
 
 /**
