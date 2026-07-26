@@ -30,7 +30,6 @@
 | `tw-state-batch-norm` | Состояния задач опрашивать списком, не поштучно — норма мастерской + гард | S | [`TW_STATE_BATCH_NORM_PROMPT.md`](../prompts/TW_STATE_BATCH_NORM_PROMPT.md) | — |
 | `tw-handoff-liveness` | Сверка живости топ-10 хендоффа: строки таблицы против состояний задач | S | [`TW_HANDOFF_LIVENESS_PROMPT.md`](../prompts/TW_HANDOFF_LIVENESS_PROMPT.md) | — |
 | `tw-declared-verbs-honest-no` | Мастерская задач: три глагола объявлены без движков — строить или объявить declared-not-built | S | [`TW_DECLARED_VERBS_HONEST_NO_PROMPT.md`](../prompts/TW_DECLARED_VERBS_HONEST_NO_PROMPT.md) | — |
-| `procedures-corpus` | Ревизия корпуса процедур: ядро · homes · легальное нет (Ф5 #1220) | M | [`PROCEDURES_CORPUS_PROMPT.md`](../prompts/PROCEDURES_CORPUS_PROMPT.md) | [#1284](https://github.com/officefish/Membrana/issues/1284) |
 | `friction6-secret-inventory` | yarn secret:inventory — инвентарь засвеченного как вход ротации ключей | S | [`FRICTION6_SECRET_INVENTORY_PROMPT.md`](../prompts/FRICTION6_SECRET_INVENTORY_PROMPT.md) | [#1266](https://github.com/officefish/Membrana/issues/1266) |
 | `friction6-hygiene-notes` | Реестр скриптов не протухает + три грабли окружения в AGENTS.md | S | [`FRICTION6_HYGIENE_NOTES_PROMPT.md`](../prompts/FRICTION6_HYGIENE_NOTES_PROMPT.md) | [#1265](https://github.com/officefish/Membrana/issues/1265) |
 | `friction6-scripts-lint` | scripts/*.mjs вне линтера: дать парсер ESM и назвать шум числом | M | [`FRICTION6_SCRIPTS_LINT_PROMPT.md`](../prompts/FRICTION6_SCRIPTS_LINT_PROMPT.md) | [#1264](https://github.com/officefish/Membrana/issues/1264) |
@@ -234,6 +233,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `procedures-corpus` | Ревизия корпуса процедур: ядро · homes · легальное нет (Ф5 #1220) | 2026-07-26 | [`PROCEDURES_CORPUS_PROMPT.md`](../prompts/PROCEDURES_CORPUS_PROMPT.md) | #1284 (Issue открыт) | [карточка](./archive/procedures-corpus.md) |
 | `procedures-versions` | Версии · совместимость · миграции процедурного слоя (Ф4 #1220) | 2026-07-26 | [`PROCEDURES_VERSIONS_PROMPT.md`](../prompts/PROCEDURES_VERSIONS_PROMPT.md) | #1274 (Issue открыт) | [карточка](./archive/procedures-versions.md) |
 | `friction6-secret-gate-parity` | Секрет-гейт локально = CI: проверка по диапазону вместо растущей истории | 2026-07-26 | [`FRICTION6_SECRET_GATE_PARITY_PROMPT.md`](../prompts/FRICTION6_SECRET_GATE_PARITY_PROMPT.md) | #1262 (Issue открыт) | [карточка](./archive/friction6-secret-gate-parity.md) |
 | `friction6-ship-determinism` | Ship перестаёт врать и проигрывать гонку: pr-wait бэкофф, pr-land на Windows, --auto, гард занятой base | 2026-07-26 | [`FRICTION6_SHIP_DETERMINISM_PROMPT.md`](../prompts/FRICTION6_SHIP_DETERMINISM_PROMPT.md) | #1261 (Issue открыт) | [карточка](./archive/friction6-ship-determinism.md) |
