@@ -229,6 +229,62 @@ function report(pr, checks) {
   }
 }
 
+/**
+ * Класс сбоя `gh`. Транзиент сети лечится ожиданием, «нет PR» и «нет auth» — нет,
+ * а раньше все три лечились одинаково: жёсткие три попытки без бэкоффа.
+ *
+ * Эпизоды 26.07 (#1261): PR #1243 — `spawnSync … ETIMEDOUT` трижды плюс
+ * `TLS handshake timeout` от GraphQL, ожидание умерло и merge НЕ выполнился;
+ * PR #1253 — то же. Классифицируем по ПОЛНОМУ тексту ошибки: реальная причина у `gh`
+ * лежит в stderr, то есть НЕ в первой строке (её одну и печатал лог).
+ *
+ * @param {string} message
+ * @returns {'network'|'notfound'|'auth'|'unknown'}
+ */
+export function classifyGhFailure(message) {
+  const m = String(message ?? '');
+  if (/no pull requests found|could not resolve to a (pullrequest|repository)|not found|no such/i.test(m)) {
+    return 'notfound';
+  }
+  if (/gh auth login|authentication|unauthorized|bad credentials|http 40[13]/i.test(m)) return 'auth';
+  if (
+    /etimedout|econnreset|enotfound|eai_again|econnrefused|esockettimedout|socket hang up/i.test(m) ||
+    /tls handshake timeout|timeout|timed out|temporary failure|502|503|504|bad gateway|gateway time-?out/i.test(m)
+  ) {
+    return 'network';
+  }
+  return 'unknown';
+}
+
+/**
+ * Бюджет ПОДРЯД идущих неудач по классу. Сеть терпим долго (всё равно ограничены
+ * дедлайном), «нет PR / нет auth» — сразу, ожидание их не вылечит.
+ *
+ * @param {'network'|'notfound'|'auth'|'unknown'} cls
+ * @returns {number}
+ */
+export function ghRetryBudget(cls) {
+  if (cls === 'notfound' || cls === 'auth') return 1;
+  if (cls === 'network') return 10;
+  return 5;
+}
+
+/**
+ * Пауза перед повтором: экспонента от интервала опроса, с потолком.
+ * Раньше пауза равнялась интервалу — три подряд таймаута укладывались в секунды
+ * и сжигали весь бюджет до того, как сеть успевала прийти в себя.
+ *
+ * @param {number} consecutiveFails 1-based номер неудачи
+ * @param {number} intervalSec
+ * @param {number} [capMs]
+ * @returns {number}
+ */
+export function ghBackoffMs(consecutiveFails, intervalSec, capMs = 120_000) {
+  const base = Math.max(1, intervalSec) * 1000;
+  const grown = base * 2 ** Math.max(0, consecutiveFails - 1);
+  return Math.min(grown, capMs);
+}
+
 export function parseArgs(argv) {
   const args = { number: null, once: false, timeoutMin: 15, intervalSec: 20, resume: false };
   for (let i = 0; i < argv.length; i += 1) {
@@ -306,13 +362,26 @@ async function main() {
         if (!number) number = String(pr.number);
       } catch (e) {
         ghFails += 1;
-        console.error(`[pr:wait] gh pr view ${number ?? '(PR текущей ветки)'} не отработал (${ghFails}/3): ${e.message.split('\n')[0]}`);
-        if (once || ghFails >= 3 || Date.now() >= deadline) {
-          console.error('  Проверить: gh auth status; существует ли PR (без номера — есть ли PR у текущей ветки).');
+        const cls = classifyGhFailure(e.message);
+        const budget = ghRetryBudget(cls);
+        const first = String(e.message ?? '').split('\n')[0];
+        console.error(
+          `[pr:wait] gh pr view ${number ?? '(PR текущей ветки)'} не отработал (${ghFails}/${budget}, класс ${cls}): ${first}`,
+        );
+        if (once || ghFails >= budget || Date.now() >= deadline) {
+          console.error(
+            cls === 'network'
+              ? '  Сеть/прокси не отвечает. Мердж НЕ выполнен — состояние смотреть: gh pr view <N> --json state,mergeCommit'
+              : '  Проверить: gh auth status; существует ли PR (без номера — есть ли PR у текущей ветки).',
+          );
+          if (cls === 'network' || cls === 'unknown') {
+            // Полный текст только на выходе: в нём причина, а её первая строка не несёт.
+            console.error(`  Полный текст последней ошибки:\n${e.message}`);
+          }
           process.exitCode = 4;
           return;
         }
-        await new Promise((r) => setTimeout(r, intervalSec * 1000));
+        await new Promise((r) => setTimeout(r, ghBackoffMs(ghFails, intervalSec)));
         continue;
       }
 

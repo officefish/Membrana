@@ -1,4 +1,4 @@
-<!-- generated: yarn vocabulary:generate из docs/procedures/vocabulary.json — руками не править -->
+<!-- contract: parser@1.0.0 · generated: yarn vocabulary:generate · source: docs/procedures/vocabulary.json — руками не править -->
 
 # VOCABULARY — словарь категорий процедурного слоя
 

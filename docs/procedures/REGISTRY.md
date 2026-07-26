@@ -1,4 +1,4 @@
-<!-- generated: yarn procedures:registry из docs/procedures/registry.json — руками не править -->
+<!-- contract: parser@1.0.0 · generated: yarn procedures:registry · source: docs/procedures/registry.json — руками не править -->
 
 # REGISTRY — процедуры слоя (проекция)
 

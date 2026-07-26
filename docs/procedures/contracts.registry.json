@@ -1,0 +1,23 @@
+{
+  "parserVersion": "1.0.0",
+  "compat": ["1.0.0"],
+  "rootOfTrust": "закрытый словарь категорий vocabulary.json — расширение только ADR + LGTM владельца (вердикт M2 procedural-layer)",
+  "contracts": [
+    {
+      "id": "vocabulary-projection",
+      "path": "docs/procedures/VOCABULARY.md",
+      "class": "contract",
+      "generator": "yarn vocabulary:generate",
+      "source": "docs/procedures/vocabulary.json",
+      "renderer": "vocabulary"
+    },
+    {
+      "id": "procedures-registry-projection",
+      "path": "docs/procedures/REGISTRY.md",
+      "class": "contract",
+      "generator": "yarn procedures:registry",
+      "source": "docs/procedures/registry.json",
+      "renderer": "procedures-registry"
+    }
+  ]
+}
