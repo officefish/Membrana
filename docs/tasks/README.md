@@ -20,6 +20,9 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `secret-cutter` | Резак секретов: redactSecrets на существующих детекторах — веха secret-parser-built | L | [`SECRET_CUTTER_PROMPT.md`](../prompts/SECRET_CUTTER_PROMPT.md) | [#1240](https://github.com/officefish/Membrana/issues/1240) |
+| `main-day-issue-channel-diagnosis` | Диагноз канала ritual-main-day-issue: звено называется, полый артефакт не пишется | M | [`MAIN_DAY_ISSUE_CHANNEL_DIAGNOSIS_PROMPT.md`](../prompts/MAIN_DAY_ISSUE_CHANNEL_DIAGNOSIS_PROMPT.md) | [#1239](https://github.com/officefish/Membrana/issues/1239) |
+| `tef-channel-resolver` | Вечерний фидбек команды через резолвер каналов процедур | S | [`TEF_CHANNEL_RESOLVER_PROMPT.md`](../prompts/TEF_CHANNEL_RESOLVER_PROMPT.md) | [#1210](https://github.com/officefish/Membrana/issues/1210) |
 | `issue-979-selfclose` | Аномалия: задача спринта закрылась сама | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1004](https://github.com/officefish/Membrana/issues/1004) |
 | `precedents-meta-backfill` | Три прецедента не проходят схему контейнера | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1003](https://github.com/officefish/Membrana/issues/1003) |
 | `closure-acceptance-gate` | Приёмка фиксируется лишь в 10 из 32 закрытий | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1001](https://github.com/officefish/Membrana/issues/1001) |

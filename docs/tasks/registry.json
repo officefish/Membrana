@@ -1,6 +1,68 @@
 {
   "tasks": [
     {
+      "id": "secret-cutter",
+      "title": "Резак секретов: redactSecrets на существующих детекторах — веха secret-parser-built",
+      "promptPath": "docs/prompts/SECRET_CUTTER_PROMPT.md",
+      "githubIssue": 1240,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "main-day-issue-channel-diagnosis",
+      "title": "Диагноз канала ritual-main-day-issue: звено называется, полый артефакт не пишется",
+      "promptPath": "docs/prompts/MAIN_DAY_ISSUE_CHANNEL_DIAGNOSIS_PROMPT.md",
+      "githubIssue": 1239,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "llm-procedure-channels"
+    },
+    {
+      "id": "tef-channel-resolver",
+      "title": "Вечерний фидбек команды через резолвер каналов процедур",
+      "promptPath": "docs/prompts/TEF_CHANNEL_RESOLVER_PROMPT.md",
+      "githubIssue": 1210,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "llm-procedure-channels"
+    },
+    {
       "id": "readme-managed-template",
       "title": "docs/tasks/README.md — собственный Template в движке стратегических документов; снять карантин sync",
       "promptPath": "docs/prompts/README_MANAGED_TEMPLATE_PROMPT.md",
