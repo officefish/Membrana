@@ -8,7 +8,8 @@ import {
   prTouchesRegistry,
   registryMergeLandHint,
   REGISTRY_JSON,
-  yarnBin,
+  shipMergeStep,
+  PR_SHIP_ENTRY,
 } from './lib/task-pr-land.mjs';
 
 test('prTouchesRegistry: registry.json и README', () => {
@@ -49,13 +50,15 @@ test('planPrLand: merge origin/main без -m, затем pr:ship --merge-only',
   assert.deepEqual(merge?.args, ['merge', 'origin/main']);
   assert.ok(!merge?.args.includes('-m'));
   const ship = steps.find((s) => s.label === 'ship-merge');
-  assert.deepEqual(ship?.args, ['pr:ship', '--merge-only', '--execute']);
+  // Контракт изменён (#1261): шаг зовёт node-вход pr:ship, а не шим yarn — тот падал
+  // ENOENT, а `yarn.cmd` падал EINVAL (Node не запускает .cmd без shell).
+  assert.deepEqual(ship?.args, [PR_SHIP_ENTRY, '--merge-only', '--execute']);
 });
 
 test('planPrLand: --no-wait пробрасывается в pr:ship', () => {
   const { steps } = planPrLand({ prNumber: 1, wait: false, execute: true });
   const ship = steps.find((s) => s.label === 'ship-merge');
-  assert.deepEqual(ship?.args, ['pr:ship', '--merge-only', '--no-wait', '--execute']);
+  assert.deepEqual(ship?.args, [PR_SHIP_ENTRY, '--merge-only', '--no-wait', '--execute']);
 });
 
 test('planPrLand: preflight checkout если не на ветке PR', () => {
@@ -79,20 +82,24 @@ test(`живой прецедент #1026: путь ${REGISTRY_JSON} в спис
 
 // --- #1261: последний шаг не должен падать на Windows ---------------------------------------
 
-test('yarnBin: на win32 нужен .cmd — spawnSync без shell иначе даёт ENOENT', () => {
-  assert.equal(yarnBin('win32'), 'yarn.cmd');
-  assert.equal(yarnBin('linux'), 'yarn');
-  assert.equal(yarnBin('darwin'), 'yarn');
+test('ship-merge не зависит от yarn: запуск через node-вход pr:ship', () => {
+  // 26.07 шаг не выполнился ДВАЖДЫ: spawnSync yarn ENOENT (PR #1256), затем на «yarn.cmd» —
+  // EINVAL (PR #1269): Node с 18.20 не запускает .cmd без shell (CVE-2024-27980).
+  const step = shipMergeStep({ execute: true, nodeBin: '/usr/bin/node' });
+  assert.equal(step.label, 'ship-merge');
+  assert.equal(step.cmd, '/usr/bin/node');
+  assert.deepEqual(step.args, [PR_SHIP_ENTRY, '--merge-only', '--execute']);
+  assert.ok(!JSON.stringify(step).includes('yarn'), 'yarn не должен участвовать вовсе');
 });
 
-test('planPrLand: шаг ship-merge зовёт бинарь по платформе, а не литерал yarn', () => {
-  // Эпизод 26.07: PR #1256 — базу слил, запушил, а мердж не выполнился:
-  // «spawnSync yarn ENOENT». Работа встала на последнем шаге штатного пути.
-  const win = planPrLand({ prNumber: 1256, currentBranch: 'chore/x', execute: true, platform: 'win32' });
-  const ship = win.steps.find((s) => s.label === 'ship-merge');
-  assert.equal(ship.cmd, 'yarn.cmd');
-  assert.deepEqual(ship.args, ['pr:ship', '--merge-only', '--execute']);
+test('ship-merge: --no-wait прокидывается, по умолчанию ожидание включено', () => {
+  assert.deepEqual(shipMergeStep({ wait: false, nodeBin: 'node' }).args, [PR_SHIP_ENTRY, '--merge-only', '--no-wait']);
+  assert.deepEqual(shipMergeStep({ nodeBin: 'node' }).args, [PR_SHIP_ENTRY, '--merge-only']);
+});
 
-  const nix = planPrLand({ prNumber: 1256, currentBranch: 'chore/x', execute: true, platform: 'linux' });
-  assert.equal(nix.steps.find((s) => s.label === 'ship-merge').cmd, 'yarn');
+test('planPrLand: последний шаг — node, а не шим пакетного менеджера', () => {
+  const plan = planPrLand({ prNumber: 1269, currentBranch: 'chore/x', execute: true, nodeBin: 'node' });
+  const ship = plan.steps.find((s) => s.label === 'ship-merge');
+  assert.equal(ship.cmd, 'node');
+  assert.equal(ship.args[0], PR_SHIP_ENTRY);
 });
