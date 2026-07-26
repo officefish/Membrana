@@ -38,17 +38,38 @@ const readObj = (rel) => {
   return { path: rel, text: existsSync(abs) ? readFileSync(abs, 'utf8') : null };
 };
 
-/** Сколько раз имя встречается в scripts/ вне файла-владельца (грубый счётчик потребителей). */
-function countIn(pattern) {
+/** Сколько файлов по pathspec содержат pattern (грубый счётчик). */
+function countIn(pattern, ...pathspec) {
   try {
-    const out = execFileSync('git', ['grep', '-l', '--', pattern, 'scripts/'], { cwd: root, encoding: 'utf8' });
+    const out = execFileSync('git', ['grep', '-l', '--', pattern, ...(pathspec.length ? pathspec : ['scripts/'])], { cwd: root, encoding: 'utf8' });
     return out.split('\n').filter(Boolean).length;
   } catch { return 0; }
+}
+
+/**
+ * Дома ОБЪЯВЛЕНИЯ — структурные записи, а не проза. Упоминание в README объявлением
+ * не считается: спека зверя (#1221) отделяет невыводимость от бедной документации —
+ * носитель не нем, если у него объявлены адрес и держатель, а не «где-то сказано».
+ */
+const DECLARATION_HOMES = [
+  '*MANIFEST.json',
+  'docs/procedures/registry.json',
+  'docs/LIVE_SERVICES.md',
+];
+
+/**
+ * Объявлен ли токен (адрес контура, дом данных) в одном из домов объявления.
+ * Дома опрашиваются ПООТДЕЛЬНОСТИ: отсутствующий дом (например, инвентарь ещё не заведён)
+ * иначе роняет весь git grep и выдал бы «не объявлено нигде» — ложный улов на пустом месте.
+ */
+function declarationsOf(token) {
+  return DECLARATION_HOMES.reduce((sum, home) => sum + countIn(token, home), 0);
 }
 
 const ruleset = {
   consumersOf: (name) => Math.max(0, countIn(name) - 1), // минус файл-владелец
   readersOf: (artifact) => Math.max(0, countIn(artifact) - 1),
+  declarationsOf,
 };
 
 function main() {
