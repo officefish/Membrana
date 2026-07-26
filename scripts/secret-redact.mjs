@@ -32,13 +32,24 @@ import {
  */
 export function parseRedactCli(argv) {
   const o = { input: null, out: null, manifest: null, dryRun: false, date: null, help: false };
+  /**
+   * Ключ без значения — явная ошибка, а не молчаливый `undefined`: иначе `--redact`
+   * последним аргументом давал бы «нет входа» вместо «у --redact нет значения»
+   * (замечание ревью, P2 — диагностика).
+   * @param {number} i @param {string} flag
+   */
+  const valueAt = (i, flag) => {
+    const v = argv[i];
+    if (v === undefined || v.startsWith('-')) throw new Error(`secret:redact: ключ ${flag} требует значение`);
+    return v;
+  };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--help' || a === '-h') o.help = true;
-    else if (a === '--redact' || a === '--in') o.input = argv[++i] ?? null;
-    else if (a === '--out') o.out = argv[++i] ?? null;
-    else if (a === '--manifest') o.manifest = argv[++i] ?? null;
-    else if (a === '--date') o.date = argv[++i] ?? null;
+    else if (a === '--redact' || a === '--in') o.input = valueAt(++i, a);
+    else if (a === '--out') o.out = valueAt(++i, a);
+    else if (a === '--manifest') o.manifest = valueAt(++i, a);
+    else if (a === '--date') o.date = valueAt(++i, a);
     else if (a === '--dry-run') o.dryRun = true;
     else if (!a.startsWith('-') && o.input == null) o.input = a;
     else throw new Error(`secret:redact: неизвестный аргумент «${a}»`);

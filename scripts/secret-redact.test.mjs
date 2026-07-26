@@ -8,6 +8,7 @@ import {
   redactSecrets,
 } from './lib/secret-redact.mjs';
 import { scanJsonForSensitiveKeys, scanTextForSecrets } from './night-triage-secret-scan.mjs';
+import { parseRedactCli, resolveRedactOutputPath } from './secret-redact.mjs';
 
 // Синтетические образцы: настоящих секретов в репозитории быть не должно, иначе
 // фикстура сама становится утечкой. Формы взяты из SECRET_PATTERNS сканера.
@@ -174,4 +175,47 @@ test('манифест пустого реза говорит прямо, а н�
   const md = formatRotationManifest([], { file: 'clean.md', date: '2026-07-26', dryRun: true });
   assert.match(md, /Секретов не найдено/);
   assert.match(md, /сухой прогон/);
+});
+
+// --- Найдено ревью ветки (LGTM с P1) ------------------------------------------------------
+
+test('P1 ревью: PEM без END в CRLF-файле — тело НЕ выживает (LF и CRLF режут одинаково)', () => {
+  const lf = '-----BEGIN PRIVATE KEY-----\nMIIEowIBAAKCAQEAxKZ1Q0aBcDeFg\n\nОбычный текст.\n';
+  const crlf = lf.replace(/\n/g, '\r\n');
+  for (const [tag, text] of [['LF', lf], ['CRLF', crlf]]) {
+    const { text: clean, cuts } = redactSecrets(text);
+    assert.equal(cuts.length, 1, `${tag}: не вырезано`);
+    assert.ok(!clean.includes('MIIEowIBAAKCAQEA'), `${tag}: тело ключа выжило`);
+    assert.ok(clean.includes('Обычный текст.'), `${tag}: рез съел текст за телом ключа`);
+    assert.deepEqual(scanTextForSecrets(clean, 'k.pem'), []);
+  }
+  // Причина бага была в том, что курсор стоял посреди строки: в CRLF первый срез — «\r».
+  assert.equal(
+    redactSecrets(crlf).text,
+    redactSecrets(lf).text.replace(/\n/g, '\r\n'),
+    'CRLF и LF дали разный результат',
+  );
+});
+
+test('parseRedactCli: ключ без значения — явная ошибка, а не «нет входа»', () => {
+  assert.throws(() => parseRedactCli(['--redact']), /--redact требует значение/);
+  assert.throws(() => parseRedactCli(['--redact', 'f.md', '--out']), /--out требует значение/);
+  assert.throws(() => parseRedactCli(['--redact', '--dry-run']), /--redact требует значение/);
+  const cli = parseRedactCli(['--redact', 'f.jsonl', '--dry-run', '--date', '2026-07-26']);
+  assert.equal(cli.input, 'f.jsonl');
+  assert.equal(cli.dryRun, true);
+  assert.equal(cli.date, '2026-07-26');
+});
+
+test('resolveRedactOutputPath: in-place отвергается, дефолт — суффикс .redacted', () => {
+  assert.throws(
+    () => resolveRedactOutputPath({ input: 'a/b.jsonl', out: 'a/b.jsonl', cwd: '/repo' }),
+    /никогда не пишет поверх оригинала/,
+  );
+  assert.throws(
+    () => resolveRedactOutputPath({ input: 'a/b.jsonl', out: './a/b.jsonl', cwd: '/repo' }),
+    /никогда не пишет поверх оригинала/,
+    'путь тот же, запись другая — сравнивать надо после resolve',
+  );
+  assert.match(resolveRedactOutputPath({ input: 'a/b.jsonl', out: null, cwd: '/repo' }), /b\.jsonl\.redacted$/);
 });
