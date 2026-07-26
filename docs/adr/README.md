@@ -28,6 +28,7 @@
 
 | ADR | Дата | Статус | Тема |
 |-----|------|--------|------|
+| [ADR-0018](./ADR-0018-tests-container-selective-gate-nightly-full.md) | 2026-07-26 | ACCEPTED | Мердж-гейт выборочный (`smoke` + `gate`), полный набор `full` — ночной от пина на `main`; результат ночи приходит в утро через фрейм `night-report` как блокер дня; дом контейнера тестов — корневой `tests/`, оснастка — мастерская. Условие честности: отчёт «что не гонялось». Предусловие: защита `main` · эпик `tests-container` (#1291/#1292/#1293) |
 | [ADR-0017](./ADR-0017-linear-board-is-mirror.md) | 2026-07-23 | DRAFT | Linear UI-доска = зеркало GitHub; слой движения = `linear-snapshot@1` + `startedAt` + `yarn linear:movement-audit` · #1000 / DRU-364 · LGTM владельца → ACCEPTED |
 | [ADR-0016](./ADR-0016-lpc-evidence-minimum.md) | 2026-07-23 | ACCEPTED | LPC T1 evidence minimum: sha256 тел + params в emit; сырые тела запрещены; дом `docs/audit/llm-calls` · эпик #1033 |
 | [ADR-0015](./ADR-0015-frame-pins-array-shape.md) | 2026-07-22 | ACCEPTED | Шов Ф1↔Ф3: канон `pins?: Pin[]` (не скаляр `pin?`); transitional чтение `pin`→`[pin]` в F1; запись F3 только `pins`. Спринт #900 F0 · LGTM владельца 22.07 |

@@ -20,6 +20,12 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `adr-procedure-legalize` | Легализовать ADR как процедуру: запись в реестре, ядро trigger/steps/gates, зуб на реестр записей | M | [`ADR_PROCEDURE_LEGALIZE_PROMPT.md`](../prompts/ADR_PROCEDURE_LEGALIZE_PROMPT.md) | [#1296](https://github.com/officefish/Membrana/issues/1296) |
+| `tc-nightly-frame` | Ночной полный прогон от пина; фрейм night-report получает носитель и блокирует утро | M | [`TC_NIGHTLY_FRAME_PROMPT.md`](../prompts/TC_NIGHTLY_FRAME_PROMPT.md) | [#1293](https://github.com/officefish/Membrana/issues/1293) |
+| `tc-setups-selector` | Сетапы smoke/gate/full и селектор по графу импортов; отчёт «что не гонялось» | M | [`TC_SETUPS_SELECTOR_PROMPT.md`](../prompts/TC_SETUPS_SELECTOR_PROMPT.md) | [#1292](https://github.com/officefish/Membrana/issues/1292) |
+| `tc-home-workshop` | Контейнер тестов: дом в корневом tests/, кит tests-master, мастерская (homePath начинает работать) | M | [`TC_HOME_WORKSHOP_PROMPT.md`](../prompts/TC_HOME_WORKSHOP_PROMPT.md) | [#1291](https://github.com/officefish/Membrana/issues/1291) |
+| `tests-container` | Эпик: контейнер тестов — дом в корневом tests/, кит, мастерская, сетапы и ночной полный прогон | L | [`TESTS_CONTAINER_PROMPT.md`](../prompts/TESTS_CONTAINER_PROMPT.md) | — |
+| `tooling-friction-2607` | Тулинг-фрикции 25–26.07: скан по диффу, чужая база ветки, слияние в изоляции, честные отказы хуков | M | [`TOOLING_FRICTION_2607_PROMPT.md`](../prompts/TOOLING_FRICTION_2607_PROMPT.md) | [#1272](https://github.com/officefish/Membrana/issues/1272) |
 | `notes-regex-cyrillic-translit` | Грабли в канон: кириллица в регулярках JS и транслит при сверке имён | S | [`NOTES_REGEX_CYRILLIC_TRANSLIT_PROMPT.md`](../prompts/NOTES_REGEX_CYRILLIC_TRANSLIT_PROMPT.md) | — |
 | `leveling-snapshot-out-path` | Снимок выравнивания ломается на абсолютном --out (клеит путь к корню репозитория) | S | [`LEVELING_SNAPSHOT_OUT_PATH_PROMPT.md`](../prompts/LEVELING_SNAPSHOT_OUT_PATH_PROMPT.md) | — |
 | `insight-mandate-for-new` | Решение по инсайту недостижимо для новых инсайтов: мандаты только из зашитой миграции | M | [`INSIGHT_MANDATE_FOR_NEW_PROMPT.md`](../prompts/INSIGHT_MANDATE_FOR_NEW_PROMPT.md) | — |

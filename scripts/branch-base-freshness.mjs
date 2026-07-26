@@ -11,7 +11,7 @@
  * Отставание — не нарушение, а риск недостоверного диффа: ронять поток по умолчанию
  * значило бы выдавать риск за дефект (урок «находка ≠ сбой», #622).
  */
-import { checkBaseFreshness } from './lib/branch-base-freshness.mjs';
+import { baseOwnership, checkBaseFreshness } from './lib/branch-base-freshness.mjs';
 
 function parseArgs(argv) {
   const o = { base: 'origin/main', ref: 'HEAD', strict: false };
@@ -33,6 +33,16 @@ if (isMain) {
     } else {
       console.error(`[branch:check-base] ⚠ ${r.message}`);
       if (cli.strict) process.exit(1);
+    }
+
+    // Владение базой (#1272 Ф2): отставание — риск недостоверного диффа, а ЧУЖОЙ коммит
+    // в базе — уже подмена авторства. Второе жёстче: заявка предложит чужой труд.
+    const own = baseOwnership(cli.base, cli.ref);
+    if (own.state === 'clean') {
+      console.log(`[branch:check-base] ${own.message}`);
+    } else {
+      console.error(`[branch:check-base] ✖ ${own.message}`);
+      process.exit(2);
     }
   } catch (e) {
     console.error(`[branch:check-base] не удалось проверить: ${e?.message ?? e}`);

@@ -34,3 +34,32 @@ test('pre-commit: gitleaks non-zero aborts (no blind OK)', () => {
   const between = hookBody.slice(protectIdx, okIdx);
   assert.ok(between.includes('|| exit'), 'OK must be unreachable after failed protect');
 });
+
+// ─── Контракт workflow скана (#1272 Ф1) ───────────────────────────────────────────────
+// Эпизод 26.07: скан полной истории на КАЖДОЙ заявке валился из-за фикстуры в чужой
+// ветке — файла, которого нет ни в общей ветке, ни в заявке. Блокировало всех подряд,
+// а чинить приходилось не автору заявки. Заявка отвечает за свой диапазон.
+const scanWorkflow = readFileSync(join(root, '.github', 'workflows', 'gitleaks.yml'), 'utf8');
+
+test('gitleaks workflow: заявка сканируется по своему диапазону, не по всей истории', () => {
+  assert.match(scanWorkflow, /Scan PR range/, 'шаг скана диапазона заявки существует');
+  assert.match(scanWorkflow, /--log-opts=/, 'диапазон задан через log-opts');
+  assert.ok(
+    /if:\s*github\.event_name == 'pull_request'/.test(scanWorkflow),
+    'скан диапазона привязан к событию заявки',
+  );
+});
+
+test('gitleaks workflow: полная история осталась вне заявок (общая ветка и расписание)', () => {
+  assert.match(scanWorkflow, /Scan full history/, 'полный скан не удалён — он уместен на общей ветке');
+  assert.ok(
+    /if:\s*github\.event_name != 'pull_request'/.test(scanWorkflow),
+    'полный скан не гоняется на заявках',
+  );
+});
+
+test('gitleaks workflow: baseline исключений сохранён (не заменён списком на лету)', () => {
+  // Решение 26.07: разовый повод убирается заменой фикстуры, а не расширением исключений;
+  // baseline остаётся тем, чем был — проверенными вручную находками 19.07.
+  assert.ok(readFileSync(join(root, '.gitleaksignore'), 'utf8').length > 0);
+});

@@ -6,13 +6,16 @@
  * Usage:
  *   yarn telegram:swallow "Текст с **md**: жирный, *курсив*, [ссылка](url), `код`"
  *   yarn telegram:swallow --file docs/comms/drafts/note.md
- *   yarn telegram:swallow "..." --dry-run     # показать payload, не отправлять
- *   yarn telegram:swallow "..." --force       # обойти ledger (повтор после delivered/unknown)
+ *   yarn telegram:swallow "..." --dry-run     # показать payload, не отправлять (гейт не зовёт)
+ *   yarn telegram:swallow "..." --force       # обойти ledger (повтор после delivered/unknown); гейт НЕ обходит
  *
  * Транспорт — тот же push-ingest, что дайджесты (#428/#434):
  * POST office /v1/telegram/ally-message, office конвертирует md→Telegram-HTML.
  * В отличие от ритуальных хвостов скрипт НЕ graceful: ошибки → exit 1
  * (команда интерактивная, молчаливый пропуск вводил бы в заблуждение).
+ *
+ * Гейт отправки (#1233): перед транспортом — `canSendAlly` (день ∧ ack ∧ digest).
+ * Состояние: docs/tasks/morning-gates-state.json. `--force` обходит только ledger.
  *
  * Идемпотентность (карточка swallow-delivery-idempotency): клиентский ledger
  * `.membrana/swallow-deliveries.jsonl`. Таймаут ≠ недоставка (exit 3 = unknown).
@@ -20,7 +23,7 @@
  * След для графа правды (#585): docs/comms/sent-log.jsonl после sent=true
  * (хеш + путь черновика, не тело).
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -32,6 +35,7 @@ import {
   redactOfficeResponse,
   toRepoRelativeFile,
 } from './lib/comms-sent-log.mjs';
+import { canSendAlly, todayIso } from './lib/morning-gates.mjs';
 import { resolveOfficeToken } from './lib/office-token.mjs';
 import {
   SWALLOW_EXIT_UNKNOWN,
@@ -40,6 +44,19 @@ import {
   latestStatus,
   recordDelivery,
 } from './lib/swallow-delivery-ledger.mjs';
+
+export const GATES_STATE_REL = 'docs/tasks/morning-gates-state.json';
+
+/** @param {string} root */
+export function loadGatesState(root = repoRoot) {
+  const p = resolve(root, GATES_STATE_REL);
+  if (!existsSync(p)) return {};
+  try {
+    return JSON.parse(readFileSync(p, 'utf8'));
+  } catch {
+    return { corrupt: true };
+  }
+}
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
@@ -83,6 +100,9 @@ export function classifySwallowTransportError(err) {
  * @param {{
  *   text: string,
  *   force?: boolean,
+ *   requireGate?: boolean,
+ *   gatesState?: object,
+ *   today?: string,
  *   ledgerPath?: string,
  *   sentLogPath?: string|null,
  *   sourceFile?: string|null,
@@ -97,6 +117,10 @@ export async function sendSwallow(opts) {
   const {
     text,
     force: forceSend = false,
+    // CLI: true. Unit-тесты транспорта: false (гейт покрыт отдельно + morning-gates.test).
+    requireGate = true,
+    gatesState,
+    today = todayIso(),
     ledgerPath = defaultLedgerPath(repoRoot),
     // По умолчанию null: unit-тесты не пишут в docs/comms/. CLI main передаёт defaultSentLogPath.
     sentLogPath = null,
@@ -107,6 +131,33 @@ export async function sendSwallow(opts) {
     tokenSource = null,
     envPaths = [],
   } = opts;
+
+  if (requireGate) {
+    const state = gatesState ?? loadGatesState(repoRoot);
+    if (state?.corrupt) {
+      return {
+        outcome: 'gate-blocked',
+        key: null,
+        exitCode: 3,
+        blockedBy: ['day: файл состояния гейтов битый'],
+        message:
+          '[telegram-swallow] гейт закрыт: файл docs/tasks/morning-gates-state.json битый — отправка запрещена',
+      };
+    }
+    const gate = canSendAlly(state, today, text);
+    if (!gate.ok) {
+      return {
+        outcome: 'gate-blocked',
+        key: null,
+        exitCode: 3,
+        blockedBy: gate.blockedBy,
+        message:
+          `[telegram-swallow] гейт закрыт — отправка запрещена:\n` +
+          gate.blockedBy.map((b) => `  · ${b}`).join('\n') +
+          '\n  путь: yarn morning:gate swallow --draft <file> → показать владельцу → --ack → снова swallow',
+      };
+    }
+  }
 
   const key = computeDeliveryKey(text);
   const prev = latestStatus(ledgerPath, key);
@@ -213,6 +264,8 @@ if (isMain) {
       const result = await sendSwallow({
         text,
         force,
+        requireGate: true,
+        gatesState: loadGatesState(repoRoot),
         sourceFile,
         sentLogPath: defaultSentLogPath(repoRoot),
         token,
@@ -221,7 +274,9 @@ if (isMain) {
         baseUrl: base,
       });
 
-      if (result.outcome === 'skipped-delivered') {
+      if (result.outcome === 'gate-blocked') {
+        console.error(result.message);
+      } else if (result.outcome === 'skipped-delivered') {
         console.log(result.message);
       } else if (result.outcome === 'delivered') {
         if (result.proof != null) {
