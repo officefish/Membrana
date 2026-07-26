@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `adr-procedure-legalize` | Легализовать ADR как процедуру: запись в реестре, ядро trigger/steps/gates, зуб на реестр записей | M | [`ADR_PROCEDURE_LEGALIZE_PROMPT.md`](../prompts/ADR_PROCEDURE_LEGALIZE_PROMPT.md) | [#1296](https://github.com/officefish/Membrana/issues/1296) |
 | `tc-nightly-frame` | Ночной полный прогон от пина; фрейм night-report получает носитель и блокирует утро | M | [`TC_NIGHTLY_FRAME_PROMPT.md`](../prompts/TC_NIGHTLY_FRAME_PROMPT.md) | [#1293](https://github.com/officefish/Membrana/issues/1293) |
 | `tc-setups-selector` | Сетапы smoke/gate/full и селектор по графу импортов; отчёт «что не гонялось» | M | [`TC_SETUPS_SELECTOR_PROMPT.md`](../prompts/TC_SETUPS_SELECTOR_PROMPT.md) | [#1292](https://github.com/officefish/Membrana/issues/1292) |
 | `tc-home-workshop` | Контейнер тестов: дом в корневом tests/, кит tests-master, мастерская (homePath начинает работать) | M | [`TC_HOME_WORKSHOP_PROMPT.md`](../prompts/TC_HOME_WORKSHOP_PROMPT.md) | [#1291](https://github.com/officefish/Membrana/issues/1291) |

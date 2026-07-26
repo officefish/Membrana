@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "adr-procedure-legalize",
+      "title": "Легализовать ADR как процедуру: запись в реестре, ядро trigger/steps/gates, зуб на реестр записей",
+      "promptPath": "docs/prompts/ADR_PROCEDURE_LEGALIZE_PROMPT.md",
+      "githubIssue": 1296,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "dynin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "send-gate-on-path",
       "title": "Гейт отправки на путь отправки: день в предикатах, canSendAlly в swallow, сверка digest",
       "promptPath": "docs/prompts/SEND_GATE_ON_PATH_PROMPT.md",
