@@ -26,17 +26,17 @@
       "githubIssue": 1240,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-07-26",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin",
         "ozhegov"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1252 (squash 211243df), Closes #1240. Резак поверх правил сканера: redactSecrets + JSON-класс + манифест ротации; 24 теста; живой прогон 2.5 МБ jsonl (sha входа не изменился, повторный скан копии — ноль, 1042 строки парсятся); инвентарь 19 сессий = 46 вырезаний в 6 файлах (верхняя граница). Критерий вехи 1 из 3 закрыт; ротация ключей и датированный проход остаются за владельцем (кристалл archive-cleanup-rotate-then-single-dated-pass).",
       "githubIssueClosedAt": null
     },
     {
