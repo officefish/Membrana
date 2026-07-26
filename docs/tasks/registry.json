@@ -141,6 +141,24 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "procedures-homes",
+      "title": "Легализация домов процедур: home · mode (Ф2 #1220)",
+      "promptPath": "docs/prompts/PROCEDURES_HOMES_PROMPT.md",
+      "githubIssue": 1259,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": "2026-07-26",
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": "PR #1260 → 8e679ee8; HOME.md + bridge HOME.form; auditProcedureHomes; Closes #1259",
+      "githubIssueClosedAt": null,
+      "parentEpic": "procedures-core-fields"
+    },
+    {
       "id": "procedures-core-fields",
       "title": "Универсальное ядро настроек процедуры: trigger · steps[] · gates[]",
       "promptPath": "docs/prompts/PROCEDURES_CORE_FIELDS_PROMPT.md",

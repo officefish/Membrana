@@ -46,3 +46,10 @@
 Пилот Ф1 #1220: `trigger` = `yarn bridge open` (слово капитана); `steps` —
 inline жизненный цикл (`tools` → `open` → `dialog` → `debt` → `bridge-close`);
 `gates` = легальное `none` (паузы в диалоге, не машинный resume-контракт).
+
+## Дом ([`HOME.md`](../HOME.md))
+
+Пилот Ф2 #1220: `mode` = `mirrored`; `home.path` = [`docs/bridge`](../../bridge/)
+с формой [`HOME.form.json`](../../bridge/HOME.form.json). Писатели: `bridge`
+(`yarn bridge`) и `ritual-evening` (шаг `bridge-close`). Соседи в файлы дома
+напрямую не пишут.
