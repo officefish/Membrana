@@ -14,6 +14,11 @@
 // Usage:
 //   node scripts/night-triage-secret-scan.mjs          # exit 1 при находках
 //   node scripts/night-triage-secret-scan.mjs --json   # findings в JSON на stdout
+//
+// Резак (#1240, веха secret-parser-built) живёт отдельно и строится ПОВЕРХ этих же
+// правил — `yarn secret:redact` (scripts/secret-redact.mjs, ядро scripts/lib/secret-redact.mjs).
+// Здесь только детекторы: этот файл остаётся блокирующим гейтом, чтобы рез и гейт
+// не превратились в один скрипт с двумя ответственностями.
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
