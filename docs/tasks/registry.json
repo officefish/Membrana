@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "worktree-hygiene-epic",
+      "title": "Эпик: гигиена рабочих деревьев — freshEnough∧clean, гард держателя, инвентарь",
+      "promptPath": "docs/prompts/WORKTREE_HYGIENE_EPIC_PROMPT.md",
+      "githubIssue": 1232,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "adr-procedure-legalize",
       "title": "Легализовать ADR как процедуру: запись в реестре, ядро trigger/steps/gates, зуб на реестр записей",
       "promptPath": "docs/prompts/ADR_PROCEDURE_LEGALIZE_PROMPT.md",

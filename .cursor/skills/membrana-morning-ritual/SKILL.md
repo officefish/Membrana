@@ -3,8 +3,9 @@ name: membrana-morning-ritual
 status: live
 description: >-
   Runs the Membrana MORNING ritual — the full owner-gated scenario: pre-ritual order
-  (branch=main, escalate on dirty tree, read yesterday's feedback + open owner forks
-  BEFORE start), the chain with Angelina as freshness guard, the two owner gates
+  (tree freshEnough∧clean vs origin/main — not checkout main; escalate dirty/
+  main-holder; read yesterday's feedback + open owner forks BEFORE start),
+  the chain with Angelina as freshness guard, the two owner gates
   (magistral owner-choice from top-3, swallow-send with explicit «ок»), and the ban on
   accepting a magistral chosen by a script. Use when the user says утро, утренний ритуал,
   ritual:day, standup, main-day-issue, стендап, план дня, or asks to start the morning.
@@ -23,9 +24,13 @@ description: >-
 
 ## ПЕРЕД ритуалом (обязательный порядок — нарушение = прецедент 21.07)
 
-1. **Ветка утра — `main`** (или назначенная Тимлидом). Грязное дерево / занятый main —
-   **эскалация владельцу**, не молчаливое продолжение на боковой ветке. Холодная сессия
-   21.07 прогнала ритуал старым кодом с боковой ветки — весь новый контур жил в main.
+1. **Дерево утра — свежее и чистое** (#1232): `freshEnough(дерево, origin/main) ∧
+   clean(дерево)` (порог behind по умолчанию **0**). Чекаут `main` **не нужен** и
+   `main` никому не выдаётся — держатель с путём дерева = находка (`morning-care`
+   падает громко). Грязь / чужие незакоммиченные правки → **эскалация владельцу**,
+   не переключение веток и не снос чужого. Холодная сессия 21.07 прогнала ритуал
+   устаревшим кодом — лечится свежестью относительно `origin/main`, не конкуренцией
+   за чекаут.
 2. **Прочитать** вчерашний `docs/seanses/team-evening-feedback-<вчера>.md` (блок «на
    завтра» + резюме Teamlead) **и открытые развилки владельца** в свежих Issue — ДО
    запуска. Это дешевле одного лишнего прогона.

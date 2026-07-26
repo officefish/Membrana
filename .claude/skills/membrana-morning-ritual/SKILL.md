@@ -2,8 +2,9 @@
 name: membrana-morning-ritual
 status: live
 description: >-
-  Runs the Membrana MORNING ritual — owner-gated scenario: pre-ritual order (branch=main,
-  read yesterday's feedback + owner forks first), chain with Angelina freshness guard,
+  Runs the Membrana MORNING ritual — owner-gated scenario: pre-ritual order
+  (freshEnough∧clean vs origin/main, not checkout main; #1232),
+  read yesterday's feedback + owner forks first, chain with Angelina freshness guard,
   two owner gates (magistral owner-choice from top-3, swallow-send with explicit «ок»),
   ban on script-chosen magistral. Use when user says утро, утренний ритуал, ritual:day,
   standup, main-day-issue, стендап, план дня. Do NOT use for evening/day rhythm
@@ -16,7 +17,7 @@ description: >-
 
 Run that playbook verbatim. Key invariants:
 
-- Ветка утра = main; грязное дерево → эскалация, не молчаливое продолжение.
+- Дерево утра = freshEnough∧clean vs origin/main; main никому не выдаётся; грязь → эскалация.
 - ДО запуска: вчерашний team-evening-feedback + открытые развилки владельца.
 - Два гейта: **magistral** (owner-choice из топ-3, не скрипт) · **swallow-send**
   (черновик через линзу → явное «ок» → отправка). `canSend = оба предиката`.
