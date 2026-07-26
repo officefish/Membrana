@@ -42,5 +42,42 @@
   ],
   "post": [
     { "id": "swallow", "holder": "angelina" }
-  ]
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "yarn ritual:day",
+    "note": "открытие дня по слову капитана / агента; скилл membrana-morning-ritual"
+  },
+  "steps": {
+    "kind": "ref",
+    "path": "docs/tasks/morning-ritual-steps.json"
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "magistral-choice",
+        "waitsFor": "owner",
+        "resume": "явный owner-choice в main-day-assertions → продолжение main-day-issue",
+        "note": "шаг magistral в morning-ritual-steps.json; id ядра — magistral-choice (CORE.md)"
+      },
+      {
+        "id": "ally-swallow-send",
+        "waitsFor": "owner",
+        "resume": "явное «ок» на черновик ласточки → yarn telegram:swallow",
+        "note": "гейт утренней ласточки; симметричен вечернему partner-swallow"
+      },
+      {
+        "id": "day-anchors",
+        "waitsFor": "owner",
+        "resume": "волеизъявление владельца на опоры дня (morning_crystallization)",
+        "note": "шаг day-anchors в morning-ritual-steps.json"
+      }
+    ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "артефакты утра — датированные файлы дня (MAIN_DAY_ISSUE, standup) и archive, не живое пространство имён процедуры"
+  }
 }

@@ -15,5 +15,36 @@
       "id": "first-frame",
       "holder": "vesnin"
     }
-  ]
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "note": "подобранная S-находка агента; не заказ из бэклога; явной yarn-команды оркестрации нет"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "find", "criticality": "critical" },
+      { "id": "stamp-s", "criticality": "critical" },
+      { "id": "predicate-s", "criticality": "critical" },
+      { "id": "checklist", "criticality": "critical" },
+      { "id": "owner-ratify", "criticality": "critical" },
+      { "id": "execute", "criticality": "critical" }
+    ]
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "owner-ratify",
+        "waitsFor": "owner",
+        "resume": "явное «да» владельца на чек-лист → исполнение до «весь код дописан»",
+        "note": "T10 one-shot; ревью/мердж снаружи формата"
+      }
+    ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "одноразовый проход без пространства имён; артефакты — ветка/дифф, не дом процедуры"
+  }
 }
