@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "adr-procedure-legalize",
+      "title": "Легализовать ADR как процедуру: запись в реестре, ядро trigger/steps/gates, зуб на реестр записей",
+      "promptPath": "docs/prompts/ADR_PROCEDURE_LEGALIZE_PROMPT.md",
+      "githubIssue": 1296,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "dynin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "tc-nightly-frame",
       "title": "Ночной полный прогон от пина; фрейм night-report получает носитель и блокирует утро",
       "promptPath": "docs/prompts/TC_NIGHTLY_FRAME_PROMPT.md",
