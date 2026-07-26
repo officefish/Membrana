@@ -10,5 +10,28 @@
   "precedents": [
     "docs/storm/storm-branch-taxonomy-2026-07-21/REPORT.md",
     "docs/precedents/2026-07-21-morning-ritual-live-run-mechanics-pass-value-fail.md"
-  ]
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "yarn code-review",
+    "note": "также шаг вечерней цепочки; режимы --pr / --branch / --uncommitted"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "resolve-lead", "criticality": "critical" },
+      { "id": "collect-diff", "criticality": "critical" },
+      { "id": "bestiary-check", "criticality": "noncritical", "whyNoncritical": "сверка с бестиарием усиливает вердикт; отсутствие совпадений не блокирует отчёт" },
+      { "id": "write-verdict", "criticality": "critical" }
+    ]
+  },
+  "gates": {
+    "kind": "none",
+    "why": "вердикт (пропуск/блок) пишется в артефакт ревью; пауза на LGTM владельца для ship — снаружи процедуры (pr:ship / слово капитана), без машинного resume в ядре"
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "прогоны в DAILY_CODE_REVIEW / discussions / PR-артефактах — датированные снимки, не пространство имён"
+  }
 }

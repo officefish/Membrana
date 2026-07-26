@@ -83,11 +83,13 @@ procedural-layer / procedure-frames. `mode` и `home` — [`HOME.md`](./HOME.md)
 Живёт в `scripts/lib/validate-procedure.mjs`:
 
 1. **Нет ни одного поля ядра** → находка (`findings[]`), `valid` не роняется
-   (миграция по касанию; Ф5 заполнит корпус).
+   (миграция по касанию для новых контейнеров).
 2. **Частичное ядро** (есть одно/два из трёх) → дефект схемы (отказ).
 3. **Полное ядро** → суб-схема; провал → `manifestSchemaOk=false`.
-4. Пилоты Ф1 (`ritual-evening`, `bridge`, `ritual-dreams`) обязаны нести полное
-   валидное ядро — жёсткий тест в `scripts/validate-procedure.test.mjs`.
+4. **Ф5 корпус:** все built-контейнеры обязаны нести полное валидное ядро +
+   `home`/`mode` — `auditProcedureCorpus` + тест; снимок решений —
+   [`CORPUS.md`](./CORPUS.md). Исторические пилоты Ф1
+   (`ritual-evening`, `bridge`, `ritual-dreams`) остаются в константе.
 
 ## Пилоты
 

@@ -24,5 +24,37 @@
   ],
   "post": [
     { "id": "ratification", "holder": "vesnin" }
-  ]
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "yarn consilium",
+    "note": "заседание/консилиум по слову капитана; скилл membrana-meeting / membrana-consilium"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "cut", "criticality": "critical" },
+      { "id": "rooms", "criticality": "critical" },
+      { "id": "premises-gate", "criticality": "critical" },
+      { "id": "audit", "criticality": "noncritical", "whyNoncritical": "meeting-audit усиливает протокол; пропуск не отменяет вердикты комнат" },
+      { "id": "verdicts", "criticality": "critical" },
+      { "id": "ratification", "criticality": "critical" }
+    ]
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "ratification",
+        "waitsFor": "owner",
+        "resume": "явная ратификация вердиктов владельцем / Teamlead → протокол закрыт",
+        "note": "кадр post.ratification; premises-gate — машинный/персона ozhegov, не owner-pause ядра"
+      }
+    ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "инстансы в docs/meeting/<id>/ и протоколы seanses — прогоны, не форма дома процедуры"
+  }
 }
