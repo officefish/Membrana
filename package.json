@@ -331,6 +331,8 @@
     "scripts:registry": "node scripts/scripts-registry.mjs",
     "docs:verify-canon": "node scripts/verify-docs-canon.mjs",
     "strategic-docs:generate": "node scripts/strategic-docs-generate.mjs",
+    "strategic-docs:tools": "node scripts/strategic-docs-tools.mjs",
+    "strategic-docs:publish": "node scripts/strategic-docs-publish.mjs",
     "research": "node scripts/research.mjs",
     "meeting:status": "node scripts/meeting-status.mjs",
     "deps:watch": "node scripts/deps-watch.mjs",
