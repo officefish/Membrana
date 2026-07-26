@@ -45,6 +45,14 @@
       "title": "Ритуал · центральная задача дня",
       "meters": true,
       "group": "ritual"
+    },
+    {
+      "id": "team-evening-feedback",
+      "entryMjs": "scripts/team-evening-feedback.mjs",
+      "yarnScript": "team-evening-feedback",
+      "title": "Ритуал · вечерний фидбек команды",
+      "meters": true,
+      "group": "ritual"
     }
   ]
 }

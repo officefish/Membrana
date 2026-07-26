@@ -7,14 +7,12 @@
  * Промпт: docs/prompts/TEAM_EVENING_FEEDBACK.md
  * Регламент: docs/prompts/TEAM_EVENING_FEEDBACK_REGULATION.md
  * Выход: docs/seanses/team-evening-feedback-<YYYY-MM-DD>.md
+ *
+ * LLM-канал: процедура `team-evening-feedback` (реестр каналов, эпик #1007) — цепочка
+ * с фолбэком вместо прямого вызова Anthropic (#1210). Провенанс звена уходит в шапку протокола.
  */
-import {
-  anthropicPost,
-  defaultModel,
-  getAnthropicKey,
-  loadDotEnv,
-  printAnthropicHttpError,
-} from './_anthropic-env.mjs';
+import { loadDotEnv } from './_anthropic-env.mjs';
+import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 import {
   EVENING_FEEDBACK_RAG_QUERY,
   buildEveningFeedbackUserMessage,
@@ -26,6 +24,7 @@ import {
   readRequiredFile,
   REGULATION_PATH,
   resolveEveningFeedbackOutputPath,
+  runEveningFeedbackLlm,
   VIRTUAL_TEAM_PATH,
   writeEveningFeedbackMarkdown,
 } from './lib/team-evening-feedback-ritual.mjs';
@@ -86,63 +85,22 @@ if (cli.dryRun) {
   process.exit(0);
 }
 
-let key;
-try {
-  key = getAnthropicKey();
-} catch (e) {
-  console.error(e.message);
-  console.error('См. .env.example и: yarn team-evening-feedback:dry');
-  process.exit(1);
-}
-
-const model = defaultModel();
-const bodyJson = {
-  model,
-  max_tokens: 8192,
-  messages: [{ role: 'user', content: [{ type: 'text', text: bodyText }] }],
-};
-
+// Канал процедуры, а не прямой вызов Anthropic (#1210): шаг обязателен по CLAUDE.md, а
+// единственное звено без фолбэка умирает вместе с лимитом провайдера — вечер 25.07 остался
+// без протокола вообще. Ключи и порядок звеньев решает резолвер каналов (эпик #1007).
 let exitCode = 0;
 try {
-  const { ok, status, text } = await anthropicPost('https://api.anthropic.com/v1/messages', {
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-    },
-    bodyJson,
+  const run = await runEveningFeedbackLlm({
+    prompt: bodyText,
+    outputPath,
+    saveAs: cli.saveAs,
+    noSave: cli.noSave,
+    invoke: invokeProcedureLlm,
+    write: writeEveningFeedbackMarkdown,
+    log: (line) => console.error(line),
+    emit: (body) => console.log(body),
   });
-
-  if (!ok) {
-    printAnthropicHttpError(status, text);
-    exitCode = 1;
-  } else {
-    let out = '';
-    try {
-      const json = JSON.parse(text);
-      const parts = json?.content ?? [];
-      out = parts
-        .filter((b) => b?.type === 'text')
-        .map((b) => b.text)
-        .join('\n');
-      if (!out) out = JSON.stringify(parts, null, 2);
-    } catch {
-      out = text;
-    }
-
-    console.log(out);
-
-    if (!cli.noSave) {
-      writeEveningFeedbackMarkdown({
-        path: outputPath,
-        body: out,
-        saveAs: cli.saveAs,
-      });
-      console.error('Записано:', outputPath);
-    } else {
-      console.error('--no-save: файл не записан');
-    }
-  }
+  exitCode = run.exitCode;
 } catch (e) {
   console.error(e);
   exitCode = 1;
@@ -151,6 +109,6 @@ try {
 // exitCode, а не process.exit(): обрыв процесса при живых сокетах от HTTP-вызова роняет
 // libuv на Windows ассертом UV_HANDLE_CLOSING и подменяет код возврата на 127 (см.
 // code-review.mjs — тот же класс). Для этого шага цена особенно высока: team-evening-feedback
-// обязателен в конце дня по CLAUDE.md и штатно упирается в «Anthropic без кредита» —
-// честная единица отличает «нет кредита» от «скрипт сломался».
+// обязателен в конце дня по CLAUDE.md и штатно упирается в исчерпанную цепочку —
+// честная единица отличает «ни одно звено не ответило» от «скрипт сломался».
 process.exitCode = exitCode;
