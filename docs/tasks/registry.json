@@ -7,14 +7,14 @@
       "githubIssue": 1220,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-07-26",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1254 → 59c66813; CORE.md + validate-procedure зуб; пилоты evening/bridge/dreams",
       "githubIssueClosedAt": null
     },
     {
