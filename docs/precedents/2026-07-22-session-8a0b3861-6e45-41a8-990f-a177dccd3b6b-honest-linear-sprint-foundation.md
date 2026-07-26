@@ -1,5 +1,20 @@
 # Прецедент 2026-07-22: честное создание основания спринта на Linear через туннель
 
+<!-- precedent-meta
+{
+  "id": "2026-07-22-session-8a0b3861-6e45-41a8-990f-a177dccd3b6b-honest-linear-sprint-foundation",
+  "date": "2026-07-22",
+  "class": "session-report",
+  "symptom": "положительный образец: основание спринта «Оживление фреймов» заземлено на Linear честно, с признанием каждого промаха",
+  "rootCause": "фактура процесса для нормы зеркала и трёх ног основания (Linear / GitHub / реестр)",
+  "fix": "норма #984 (не создавать под-задачи руками), DRU-348 + GitHub #979–981 + карточки frames-alive-* + PR #986",
+  "canonicalCause": "честное заземление спринта без декларации",
+  "prevention": "стена free-лимита — доклад, не обход; дубли зеркала — архив, не замалчивание",
+  "actionItems": [{"text": "запустить S0→Ф9 frames-alive после основания", "owner": "vesnin", "status": "open"}],
+  "related": ["2026-07-22-session-8a0b3861-6e45-41a8-990f-a177dccd3b6b-cold-start-autostart"]
+}
+-->
+
 <!-- Тип: прецедент-доклад (положительный образец процесса). Автор: Claude Code (холодная сессия 22.07, id 8a0b3861-6e45-41a8-990f-a177dccd3b6b). -->
 <!-- Повод: капитан — «твой опыт честного создания спринта на Linear нужно сделать прецедентом». Сам спринт (S0+) НЕ запускался — поздно. -->
 
@@ -46,5 +61,5 @@
 - Контейнер: Linear **DRU-348** (дети DRU-352/353/354); ответственность: GitHub **#979/#980/#981**
 - След: PR **#986** (merged), карточки `frames-alive-*`, `docs/prompts/FRAMES_ALIVE_SPRINT_PROMPT.md`
 - Норма зеркала: Issue **#984**; паспорт туннеля: `docs/tasks/LINEAR_TASKS_GEAR.md`
-- Родственные прецеденты дня: `2026-07-22-…-cold-start-autostart.md`, `2026-07-22-…-bridge-without-personas.md`
+- Родственные прецеденты дня: `2026-07-22-…-cold-start-autostart.md` (черновик `bridge-without-personas` снят — неточен, не коммитился)
 - Память: `frames-sprint-linear-mirror`, `captain-addressing` (билет Фаррелла = Linear-контейнер)

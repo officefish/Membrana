@@ -5,6 +5,11 @@
       "tool": "обзор-спринта",
       "reason": "#915 — обзор сценария спринта работает над процедурным элементом, а не над карточкой задач; принадлежит процедурной мастерской, которой ещё нет (замер 22.07: у процедурного дома 0 из 3 глаголов).",
       "expiresWhen": "процедурная мастерская создана и обзор-спринта переехал в неё (отдельная задача)"
+    },
+    {
+      "tool": "discoverWorkspaces",
+      "reason": "внешний Affine workspace (strategy.mmbrn.tech) — не подкаталог docs/containers/strategic-docs; дом-приёмник = контейнер strategic-docs до отдельной мастерской egress.",
+      "expiresWhen": "мастерская affine-egress или worksOn перенесён на docs/containers/strategic-docs с явным external в скрипте"
     }
   ]
 }
