@@ -41,8 +41,10 @@ yarn strategic-docs:publish --target releases --skip-generate
 
 ```bash
 go install github.com/tomohiro-owada/affine-cli@latest
-affine auth status
+affine auth status   # needs AFFINE_BASE_URL + token/password in root .env
 ```
+
+Windows: бинарь — `%USERPROFILE%\go\bin\affine-cli.exe`; при необходимости `AFFINE_CLI_PATH` в `.env`.
 
 ```bash
 yarn strategic-docs:publish --push --target templates --skip-generate

@@ -1,25 +1,122 @@
 /**
  * affine-push — programmatic import via external affine-cli (W3).
  *
- * Requires `affine` on PATH or AFFINE_CLI_PATH (https://github.com/tomohiro-owada/affine-cli).
- * Falls back with clear error when CLI missing.
+ * Requires `affine-cli` on PATH, GOPATH/bin, or AFFINE_CLI_PATH.
+ * https://github.com/tomohiro-owada/affine-cli
  */
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
+import { resolveBaseUrl } from './affine-import.mjs';
+
 /**
- * @returns {string | null}
+ * Env for affine-cli child processes — inherits root .env, ensures base URL.
+ * @returns {NodeJS.ProcessEnv}
+ */
+export function buildAffineCliEnv() {
+  const env = { ...process.env };
+  if (!env.AFFINE_BASE_URL?.trim()) {
+    env.AFFINE_BASE_URL = resolveBaseUrl();
+  }
+  return env;
+}
+
+/** Windows CreateProcess argv budget; larger bodies need a follow-up (temp file). */
+const MAX_CONTENT_ARG_CHARS = 30_000;
+
+/**
+ * @param {string} cli
+ * @param {string[]} args
+ */
+function runAffineCli(cli, args) {
+  return spawnSync(cli, args, {
+    encoding: 'utf8',
+    env: buildAffineCliEnv(),
+    shell: false,
+    maxBuffer: 20 * 1024 * 1024,
+  });
+}
+
+/**
+ * affine-cli on Windows does not reliably read piped stdin from Node; use --content.
+ *
+ * @param {string} cli
+ * @param {string[]} argsWithoutContent
+ * @param {string} markdown
+ */
+function runAffineCliWithMarkdown(cli, argsWithoutContent, markdown) {
+  if (markdown.length > MAX_CONTENT_ARG_CHARS) {
+    throw new Error(
+      `markdown too large for affine-cli --content (${markdown.length} chars > ${MAX_CONTENT_ARG_CHARS})`,
+    );
+  }
+  return runAffineCli(cli, [...argsWithoutContent, '--content', markdown]);
+}
+
+/**
+ * @param {string} cli
+ */
+export function assertAffineCliAuth(cli) {
+  const res = runAffineCli(cli, ['auth', 'status']);
+  const text = `${res.stdout ?? ''}\n${res.stderr ?? ''}`.trim();
+  try {
+    const parsed = JSON.parse((res.stdout ?? '').trim());
+    if (parsed.authenticated === true) return;
+    throw new Error(
+      parsed.error ??
+        'affine-cli not authenticated. Set AFFINE_BASE_URL + AFFINE_API_TOKEN (or AFFINE_PASSWORD) in root .env, then run: affine-cli auth status',
+    );
+  } catch (err) {
+    if (err instanceof Error && err.message.includes('affine-cli not authenticated')) throw err;
+    if (err instanceof Error && err.message.includes('AFFINE_BASE_URL')) throw err;
+    throw new Error(
+      `affine-cli auth check failed (${res.status ?? 1}): ${text.slice(0, 400)}`,
+    );
+  }
+}
+
+/**
+ * @param {object[]} results
+ */
+function summarizePushFailures(results) {
+  const failed = results.filter((r) => !r.ok);
+  if (!failed.length) return '';
+  const sample = failed
+    .slice(0, 3)
+    .map((r) => `  - ${r.title}: ${r.error ?? 'unknown'}`)
+    .join('\n');
+  return `${failed.length} doc(s) failed:\n${sample}`;
+}
+
+/**
+ * @returns {string | null} CLI command or absolute path to invoke
  */
 export function resolveAffineCliPath() {
   const custom = process.env.AFFINE_CLI_PATH?.trim();
   if (custom) return custom;
 
-  const probe = process.platform === 'win32' ? 'where affine' : 'which affine';
-  const res = spawnSync(probe, [], { shell: true, encoding: 'utf8' });
-  if (res.status === 0 && res.stdout.trim()) {
-    return 'affine';
+  const candidates =
+    process.platform === 'win32'
+      ? ['affine-cli', 'affine']
+      : ['affine', 'affine-cli'];
+
+  for (const name of candidates) {
+    const probe = process.platform === 'win32' ? `where ${name}` : `which ${name}`;
+    const res = spawnSync(probe, [], { shell: true, encoding: 'utf8' });
+    if (res.status === 0 && res.stdout.trim()) {
+      const first = res.stdout.trim().split(/\r?\n/u)[0]?.trim();
+      return first || name;
+    }
   }
+
+  const gopath = process.env.GOPATH?.trim();
+  if (gopath) {
+    const exe = process.platform === 'win32' ? 'affine-cli.exe' : 'affine-cli';
+    const fallback = join(gopath, 'bin', exe);
+    if (existsSync(fallback)) return fallback;
+  }
+
   return null;
 }
 
@@ -29,15 +126,7 @@ export function resolveAffineCliPath() {
  * @returns {Map<string, string>} title → docId
  */
 export function listDocsByTitle(cli, workspaceId) {
-  const res = spawnSync(
-    cli,
-    ['doc', 'list', '--fields', 'id,title', '-w', workspaceId],
-    {
-      encoding: 'utf8',
-      env: process.env,
-      shell: process.platform === 'win32',
-    },
-  );
+  const res = runAffineCli(cli, ['doc', 'list', '--fields', 'id,title', '-w', workspaceId]);
   if (res.status !== 0) {
     throw new Error(
       `affine doc list failed (${res.status}): ${(res.stderr || res.stdout || '').slice(0, 300)}`,
@@ -57,7 +146,6 @@ export function listDocsByTitle(cli, workspaceId) {
     }
     return map;
   } catch {
-    // Plain text fallback: lines "id\ttitle" or similar
     for (const line of text.split(/\r?\n/u)) {
       const m = line.match(/([0-9a-f-]{36})\s+(.+)/iu);
       if (m) map.set(m[2].trim(), m[1]);
@@ -79,10 +167,10 @@ export function pushOneDoc(cli, workspaceId, title, markdown, existingDocId, dry
   if (dryRun) baseArgs.push('--dry-run');
 
   if (existingDocId) {
-    const res = spawnSync(
+    const res = runAffineCliWithMarkdown(
       cli,
-      ['doc', 'replace-markdown', '--doc-id', existingDocId, '--content', markdown, ...baseArgs],
-      { encoding: 'utf8', env: process.env, shell: process.platform === 'win32' },
+      ['doc', 'replace-markdown', '--doc-id', existingDocId, ...baseArgs],
+      markdown,
     );
     if (res.status !== 0) {
       throw new Error(
@@ -92,10 +180,10 @@ export function pushOneDoc(cli, workspaceId, title, markdown, existingDocId, dry
     return { action: 'updated', docId: existingDocId, title };
   }
 
-  const res = spawnSync(
+  const res = runAffineCliWithMarkdown(
     cli,
-    ['doc', 'create-from-markdown', '--title', title, '--content', markdown, ...baseArgs],
-    { encoding: 'utf8', env: process.env, shell: process.platform === 'win32' },
+    ['doc', 'create-from-markdown', '--title', title, ...baseArgs],
+    markdown,
   );
   if (res.status !== 0) {
     throw new Error(
@@ -143,6 +231,10 @@ export function pushImportBundle(opts) {
     return { ok: false, cli, results: [], error: 'manifest.entries — not array' };
   }
 
+  if (!dryRun) {
+    assertAffineCliAuth(cli);
+  }
+
   /** @type {Map<string, string>} */
   let byTitle = new Map();
   if (!dryRun) {
@@ -155,7 +247,11 @@ export function pushImportBundle(opts) {
 
   /** @type {object[]} */
   const results = [];
-  for (const entry of entries) {
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i];
+    if (!dryRun) {
+      console.error(`[affine-push] ${i + 1}/${entries.length}: ${entry.title}`);
+    }
     const filePath = join(bundleDir, entry.file);
     if (!existsSync(filePath)) {
       results.push({ title: entry.title, ok: false, error: `file missing: ${entry.file}` });
@@ -180,6 +276,6 @@ export function pushImportBundle(opts) {
     ok: failed.length === 0,
     cli,
     results,
-    error: failed.length ? `${failed.length} doc(s) failed` : undefined,
+    error: failed.length ? summarizePushFailures(results) : undefined,
   };
 }

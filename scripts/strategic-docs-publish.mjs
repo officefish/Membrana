@@ -194,6 +194,9 @@ async function exportTarget(target, opts, releaseTemplate) {
         'affine-cli not found for --push. Install: go install github.com/tomohiro-owada/affine-cli@latest',
       );
     }
+    console.error(
+      `[strategic-docs:publish] pushing ${entries.length} doc(s) → ${target} workspace ${workspaceId}`,
+    );
     const push = pushImportBundle({ bundleDir: outDir, workspaceId, dryRun: false });
     result.push = push;
     result.ok = push.ok;
