@@ -33,5 +33,10 @@
         "note": "вне evening-ritual-steps.json; обязательство процесса до машинного canSend на пути (#1233)"
       }
     ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "артефакты вечера — датированные прогоны в docs/seanses и docs/archive, не живое пространство имён процедуры; сосед пишет в дом мостика только через step bridge-close"
   }
 }

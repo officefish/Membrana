@@ -44,5 +44,22 @@
   "gates": {
     "kind": "none",
     "why": "паузы на человека — в живом диалоге капитана, не машинные точки остановки потока с контрактом resume; закрытие неявное через procedure-event ritual-evening/bridge-close"
+  },
+  "mode": "mirrored",
+  "home": {
+    "kind": "path",
+    "path": "docs/bridge",
+    "form": "docs/bridge/HOME.form.json",
+    "holder": "angelina",
+    "writers": [
+      {
+        "procedureId": "bridge",
+        "via": "yarn bridge"
+      },
+      {
+        "procedureId": "ritual-evening",
+        "via": "scripts/bridge.mjs close (step bridge-close)"
+      }
+    ]
   }
 }
