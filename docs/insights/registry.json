@@ -722,6 +722,17 @@
       "weight": null,
       "createdAt": "2026-07-26",
       "tags": []
+    },
+    {
+      "id": "insight-intent-contract-graph-bridge",
+      "title": "Контракт намерения: граф правды ↔ мостик, треугольник + мана + твёрдость",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-26",
+      "tags": []
     }
   ]
 }
