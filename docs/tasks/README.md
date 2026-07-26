@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `procedures-versions` | Версии · совместимость · миграции процедурного слоя (Ф4 #1220) | M | [`PROCEDURES_VERSIONS_PROMPT.md`](../prompts/PROCEDURES_VERSIONS_PROMPT.md) | [#1274](https://github.com/officefish/Membrana/issues/1274) |
 | `friction6-secret-inventory` | yarn secret:inventory — инвентарь засвеченного как вход ротации ключей | S | [`FRICTION6_SECRET_INVENTORY_PROMPT.md`](../prompts/FRICTION6_SECRET_INVENTORY_PROMPT.md) | [#1266](https://github.com/officefish/Membrana/issues/1266) |
 | `friction6-hygiene-notes` | Реестр скриптов не протухает + три грабли окружения в AGENTS.md | S | [`FRICTION6_HYGIENE_NOTES_PROMPT.md`](../prompts/FRICTION6_HYGIENE_NOTES_PROMPT.md) | [#1265](https://github.com/officefish/Membrana/issues/1265) |
 | `friction6-scripts-lint` | scripts/*.mjs вне линтера: дать парсер ESM и назвать шум числом | M | [`FRICTION6_SCRIPTS_LINT_PROMPT.md`](../prompts/FRICTION6_SCRIPTS_LINT_PROMPT.md) | [#1264](https://github.com/officefish/Membrana/issues/1264) |
@@ -225,6 +224,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `procedures-versions` | Версии · совместимость · миграции процедурного слоя (Ф4 #1220) | 2026-07-26 | [`PROCEDURES_VERSIONS_PROMPT.md`](../prompts/PROCEDURES_VERSIONS_PROMPT.md) | #1274 (Issue открыт) | [карточка](./archive/procedures-versions.md) |
 | `friction6-ship-determinism` | Ship перестаёт врать и проигрывать гонку: pr-wait бэкофф, pr-land на Windows, --auto, гард занятой base | 2026-07-26 | [`FRICTION6_SHIP_DETERMINISM_PROMPT.md`](../prompts/FRICTION6_SHIP_DETERMINISM_PROMPT.md) | #1261 (Issue открыт) | [карточка](./archive/friction6-ship-determinism.md) |
 | `procedures-license` | Лицензия контракта процедурного слоя: parser · provenance · compliance (Ф3 #1220) | 2026-07-26 | [`PROCEDURES_LICENSE_PROMPT.md`](../prompts/PROCEDURES_LICENSE_PROMPT.md) | #1268 (Issue открыт) | [карточка](./archive/procedures-license.md) |
 | `procedures-homes` | Легализация домов процедур: home · mode (Ф2 #1220) | 2026-07-26 | [`PROCEDURES_HOMES_PROMPT.md`](../prompts/PROCEDURES_HOMES_PROMPT.md) | #1259 (Issue открыт) | [карточка](./archive/procedures-homes.md) |
