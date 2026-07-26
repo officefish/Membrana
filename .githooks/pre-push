@@ -51,6 +51,15 @@ if [ "$YARN_READY" = "1" ]; then
   yarn kits:audit --mode latest
 fi
 
+# Паритет секрет-гейта (#1262): pre-commit смотрит только индекс (`protect --staged`),
+# а CI — `detect` по истории ВСЕХ ветвей (fetch-depth: 0). 26.07 синтетическая PEM-фикстура
+# прошла локально, в CI стала находкой и покрасила заявку соседней сессии. Здесь тот же
+# `detect` и тот же .gitleaksignore, но по диапазону origin/main..HEAD — объём не растёт
+# с историей. Мягко при отсутствии gitleaks/базы; обход — SKIP_SECRET_GATE=1.
+# Работает на голом node — флагом окружения не закрывается (#1272 Ф4).
+echo "pre-push [#1262]: секрет-скан диапазона (тем же правилом, что CI)"
+node scripts/secret-gate-push.mjs
+
 if [ "$YARN_READY" = "1" ]; then
   echo "pre-push [NB4]: yarn verify:wire-sync (core ↔ background-cabinet)"
   yarn verify:wire-sync

@@ -16,7 +16,8 @@
 
 Поля Р1 (`id`, `leadPersona`, `kitVersion`, `engines`, `precedents`) и очередь
 кадров (`preflight` / `frames` / `post`) — **не** ядро: они уже закрыты вердиктами
-procedural-layer / procedure-frames. `mode` и `home` — Ф2 эпика #1220, сюда не входят.
+procedural-layer / procedure-frames. `mode` и `home` — [`HOME.md`](./HOME.md)
+(Ф2 #1220).
 
 ## Легальное «нет»
 

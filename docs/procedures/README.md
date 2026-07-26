@@ -20,6 +20,9 @@
   [`CORE.md`](./CORE.md) (Ф1 #1220). Все три вместе или ни одного; отсутствие —
   находка, частичное/битое — отказ. Пилоты: `ritual-evening`, `bridge`,
   `ritual-dreams`.
+- **Дом и режим** (`home` · `mode`) — контракт [`HOME.md`](./HOME.md) (Ф2 #1220).
+  Кит ≠ дом; объявленный дом обязан существовать; живой дом без декларации —
+  находка (`auditProcedureHomes`). Пилот дома: `bridge` → `docs/bridge`.
 - Зуб заселённости: `validateProcedure(dir)` — `resolvable` ∧ `readmeNonEmpty` ∧
   `manifestSchemaOk`; гоняется в CI (`scripts/validate-procedure.test.mjs`).
 
@@ -41,6 +44,21 @@
 (руками не правится; дрейф ловит `--check`). Проверки: `check()` по маркерам
 `@cat:` и `checkGenus()` по `@op:effect:@cat:имя`
 (`scripts/lib/vocabulary-check.mjs`; роды и леммы — вердикт `m2a-rod`).
+
+## Лицензия контракта (Ф3 #1220)
+
+Два класса артефактов — **prose** и **contract**. Лицензию выдаёт парсер
+(`происхождение` ∧ `соответствие`); канон — [`LICENSE.md`](./LICENSE.md),
+реестр — [`contracts.registry.json`](./contracts.registry.json).
+Зуб: `yarn procedures:license --check`. Пилоты: `VOCABULARY.md`, `REGISTRY.md`.
+Сквозной механизм на весь репо — отдельно [#1227](https://github.com/officefish/Membrana/issues/1227).
+
+## Версии и миграции (Ф4 #1220)
+
+Инвентарь пяти сущностей (парсер · генератор · контракт · кит · форма дома),
+явное окно `compat[]`, обязательные переходы — [`VERSIONS.md`](./VERSIONS.md).
+Форма дома несёт `formVersion` в себе; legacy-штамп контракта и `version:1`
+формы — дефект до миграции.
 
 ## Жильцы
 

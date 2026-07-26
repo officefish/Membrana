@@ -196,6 +196,87 @@ export function detectUndeclared(o, ruleset) {
   return out;
 }
 
+/**
+ * ПРОЗА — декларация без носителя (#1204). Артефакт, который читает следующий агент
+ * (SKILL.md, README процедуры, промпт), утверждает состав/роль/поведение, за которым
+ * машинно никого нет. Опровергнуть нечем: оформленное неотличимо от существующего.
+ *
+ * НОСИТЕЛЬ (что детектор им считает) — участник, которого можно ВЫЗВАТЬ: карта персонажей
+ * (`scripts/ask-persona.mjs`, `scripts/consilium.mjs`) или реестр каналов
+ * (`scripts/lib/llm-procedures.json`). Абзац носителем не является — в этом весь зверь;
+ * `leadPersona` в описи тоже не является — это строка-держатель, а не вызов (спека #1204).
+ *
+ * Норма владельца 25.07: проза в процедурах ДОПУСТИМА, но проверку не проходит и
+ * честно ловится. Альтернатива — контракт, опровержимый машиной.
+ *
+ * @param {ObjectFile} o
+ * @param {{carriersOf: (name:string) => number}} ruleset
+ * @returns {Finding[]}
+ */
+export function detectProse(o, ruleset) {
+  if (typeof ruleset?.carriersOf !== 'function') {
+    throw new Error('detectProse: ruleset.carriersOf обязателен (иначе класс молчит зелёным)');
+  }
+  const out = [];
+  const ls = lines(o.text);
+  const seen = new Set();
+  // «Ведущая — Ангелина», «Фаррелл — свободный голос», «отвечает Ожегов», «роль: Дынин»
+  const ROLE_ASSERTION = /(?:ведущ(?:ая|ий)|секретар[ья]|голос|участник|роль|отвеча(?:ет|ют)|держатель|исполнитель)/iu;
+  ls.forEach((l, i) => {
+    if (!ROLE_ASSERTION.test(l)) return;
+    // NB: `\b` вокруг кириллицы не работает — в JS `\w` остаётся ASCII даже с флагом `u`,
+    // поэтому границы слова у русского имени нет вовсе (поймано на своём же specimen).
+    for (const m of l.matchAll(/([А-ЯЁ][а-яё]{3,}|\b[A-Z][a-z]{3,}\b)/gu)) {
+      const name = m[1];
+      if (seen.has(name)) continue;
+      seen.add(name);
+      // Само слово роли именем участника не считается («Ведущая», «Роль», «Держатель»).
+      if (ROLE_ASSERTION.test(name)) continue;
+      if (ruleset.carriersOf(name) === 0) {
+        out.push({
+          locus: `${o.path}:${i + 1}`,
+          defectClass: 'prose',
+          evidence: `состав объявлен прозой: «${name}» в роли — вызвать нечем (нет ни в картах персонажей, ни в реестре каналов)`,
+        });
+      }
+    }
+  });
+  return out;
+}
+
+/**
+ * ЗАГЛУШКА — обязательное поле, заполненное ради прохождения зуба (#1219).
+ * Родня «Прозе», но рождается с другого конца: проза — от свободы (никто не сверяет),
+ * заглушка — от ПРИНУЖДЕНИЯ (поле обязательно, честно заполнить нечем, зуб не пускает).
+ *
+ * Опаснее прозы тем, что выглядит настоящим значением и попадает в агрегаты: счётчики,
+ * сводки, проценты покрытия. Отчёт лжёт, оставаясь формально корректным.
+ *
+ * Профилактика (норма #1219): прежде чем делать поле обязательным — назови его
+ * легальное «нет». Поэтому явные легальные значения (`declared-not-built`, `null`,
+ * пустая строка) заглушкой НЕ считаются: честное «нет» — не дефект.
+ *
+ * @param {ObjectFile} o
+ * @returns {Finding[]}
+ */
+export function detectStub(o) {
+  const out = [];
+  const ls = lines(o.text);
+  const FILLER = /^(?:tbd|todo|n\/?a|—|-|\?+|xxx+|заглушка|уточнить(?:\s+позже)?|позже|later|placeholder|none|пока\s+нет)$/iu;
+  ls.forEach((l, i) => {
+    for (const m of l.matchAll(/['"`]?([A-Za-z_][A-Za-z0-9_]*)['"`]?\s*[:=]\s*['"`]([^'"`]*)['"`]/g)) {
+      const [, field, value] = m;
+      if (!FILLER.test(value.trim())) continue;
+      out.push({
+        locus: `${o.path}:${i + 1}`,
+        defectClass: 'stub',
+        evidence: `поле ${field} = «${value.trim()}» — зуб пройден, информации нет (легального «нет» у поля не объявлено)`,
+      });
+    }
+  });
+  return out;
+}
+
 export const BESTIARY = [
   { defectClass: 'silent', label: 'Молчун', run: detectSilent },
   { defectClass: 'unwired', label: 'Половина без провода', run: detectUnwired },
@@ -203,6 +284,8 @@ export const BESTIARY = [
   { defectClass: 'jargon-out', label: 'Жаргон наружу', run: detectJargonOut },
   { defectClass: 'echo', label: 'Эхо-камера', run: detectEchoChamber },
   { defectClass: 'undeclared', label: 'Немой носитель', run: detectUndeclared },
+  { defectClass: 'prose', label: 'Проза', run: detectProse },
+  { defectClass: 'stub', label: 'Заглушка', run: detectStub },
 ];
 
 /**

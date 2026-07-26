@@ -1,0 +1,12 @@
+{
+  "formVersion": "1.0.0",
+  "compat": ["1.0.0"],
+  "mustExist": [
+    "state.json",
+    "DEBTS.md",
+    "toolkit.catalog.json"
+  ],
+  "extensionsMayAdd": true,
+  "extensionsMayNotOverride": true,
+  "note": "Дневные <date>/CONSPECTUS.md — инстансы прогона комнаты, не элементы формы дома."
+}

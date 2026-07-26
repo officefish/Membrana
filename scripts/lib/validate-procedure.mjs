@@ -16,11 +16,20 @@
  * optional-ключи `trigger` | `steps` | `gates`. Отсутствие всех трёх — находка
  * (findings), не отказ valid. Частичное ядро или провал суб-схемы — дефект.
  *
+ * Дом и режим (эпик #1220 Ф2, канон docs/procedures/HOME.md):
+ * optional-ключи `home` | `mode`. Объявленный дом → существует + форма;
+ * живой дом без декларации → finding (`auditProcedureHomes`).
+ *
+ * Версия формы дома (эпик #1220 Ф4, канон docs/procedures/VERSIONS.md):
+ * `formVersion` + `compat[]` в *.form.json; legacy `version:1` — дефект до миграции.
+ *
  * Детерминирована, без сети; файловая система — единственный вход.
  */
 
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { basename, join } from 'node:path';
+
+import { homeFormProblems, migrateHomeForm } from './procedure-home-form.mjs';
 
 /** Расширения, запрещённые в контейнере (Т12: код и тесты живут в scripts/). */
 const CODE_EXT_RE = /\.(mjs|cjs|js|ts|tsx|jsx|py|sh|ps1)$/iu;
@@ -54,9 +63,29 @@ export const PROCEDURE_CORE_PILOTS = Object.freeze([
   'ritual-dreams',
 ]);
 
+/**
+ * Пилоты Ф2 — обязаны нести `home` и `mode`.
+ * Совпадает с Ф1 намеренно (те же три профиля); расширять отдельно, когда
+ * появится процедура с домом без ядра или наоборот.
+ */
+export const PROCEDURE_HOME_PILOTS = PROCEDURE_CORE_PILOTS;
+
+/**
+ * Известные живые дома вне контейнера процедуры (прецедент мостика 22.07).
+ * Существование без декларации в MANIFEST → finding (зуб Ф2).
+ */
+export const KNOWN_LIVING_HOMES = Object.freeze([
+  { path: 'docs/bridge', since: '2026-07-22' },
+]);
+
+/** Optional Ф2-ключи (дом + режим). */
+export const MANIFEST_HOME_KEYS = Object.freeze(['home', 'mode']);
+
 const TRIGGER_KINDS = Object.freeze(['schedule', 'captain-word', 'procedure-event', 'none']);
 const STEPS_KINDS = Object.freeze(['ref', 'inline', 'none']);
 const GATES_KINDS = Object.freeze(['inline', 'none']);
+const HOME_KINDS = Object.freeze(['path', 'none']);
+const MODE_KINDS = Object.freeze(['orchestrated', 'mirrored', 'local']);
 const CRITICALITY = Object.freeze(['critical', 'noncritical']);
 const GATE_WAITS = Object.freeze(['owner', 'human']);
 const STUB_WHY_RE = /^(todo|n\/?a|tbd|none|null|-|—|\.+)$/iu;
@@ -389,12 +418,160 @@ export function corePresence(m) {
 }
 
 /**
- * Схема MANIFEST.json (Р1 + очередь кадров + ядро #1220):
- * пять обязательных; optional очередь и ядро; иной ключ — «свалка».
+ * Суб-схема home + mode (Ф2). Вызывать только если ключ присутствует.
+ * @param {Record<string, unknown>} m
+ * @param {string} [repoRoot]
+ * @returns {string[]}
+ */
+export function homeFieldsProblems(m, repoRoot) {
+  const problems = [];
+  const keys = Object.keys(m);
+
+  if (keys.includes('mode')) {
+    if (!MODE_KINDS.includes(/** @type {string} */ (m.mode))) {
+      problems.push('mode ∉ {orchestrated, mirrored, local}');
+    }
+  }
+
+  if (!keys.includes('home')) return problems;
+
+  const home = m.home;
+  if (home === null || typeof home !== 'object' || Array.isArray(home)) {
+    problems.push('home — не объект');
+    return problems;
+  }
+  const h = /** @type {Record<string, unknown>} */ (home);
+  if (!HOME_KINDS.includes(/** @type {string} */ (h.kind))) {
+    problems.push('home.kind ∉ {path, none}');
+    return problems;
+  }
+  if (h.kind === 'none') {
+    if (!isHonestWhy(h.why)) problems.push('home.none: нет честного why');
+    return problems;
+  }
+
+  // kind === path
+  if (typeof h.path !== 'string' || h.path.trim() === '') {
+    problems.push('home.path: не непустая строка');
+  }
+  if (typeof h.form !== 'string' || h.form.trim() === '') {
+    problems.push('home.form: не непустая строка');
+  }
+  if (typeof h.holder !== 'string' || !PROCEDURE_PERSONAS.includes(h.holder)) {
+    problems.push(`home.holder ∉ Persona (${PROCEDURE_PERSONAS.join('/')})`);
+  }
+  if (!Array.isArray(h.writers) || h.writers.length === 0) {
+    problems.push('home.writers — непустой массив');
+  } else {
+    h.writers.forEach((w, i) => {
+      const label = `home.writers[${i}]`;
+      if (w === null || typeof w !== 'object' || Array.isArray(w)) {
+        problems.push(`${label}: не объект`);
+        return;
+      }
+      const writer = /** @type {Record<string, unknown>} */ (w);
+      if (typeof writer.procedureId !== 'string' || !KEBAB_RE.test(writer.procedureId)) {
+        problems.push(`${label}: procedureId — не kebab-case`);
+      }
+      if (typeof writer.via !== 'string' || writer.via.trim() === '') {
+        problems.push(`${label}: via — не непустая строка`);
+      }
+    });
+  }
+
+  if (!repoRoot) return problems;
+
+  if (typeof h.path === 'string' && h.path.trim() !== '') {
+    const homeAbs = join(repoRoot, h.path.replace(/\\/gu, '/'));
+    if (!existsSync(homeAbs)) {
+      problems.push(`home.path не существует: ${h.path}`);
+    } else {
+      try {
+        const st = readdirSync(homeAbs);
+        if (!Array.isArray(st)) problems.push(`home.path не каталог: ${h.path}`);
+      } catch {
+        problems.push(`home.path не читается как каталог: ${h.path}`);
+      }
+    }
+
+    if (typeof h.form === 'string' && h.form.trim() !== '') {
+      const formAbs = join(repoRoot, h.form.replace(/\\/gu, '/'));
+      if (!existsSync(formAbs)) {
+        problems.push(`home.form не резолвится: ${h.form}`);
+      } else {
+        try {
+          const formRaw = JSON.parse(readFileSync(formAbs, 'utf8'));
+          problems.push(...homeFormProblems(formRaw));
+          const migrated = migrateHomeForm(formRaw);
+          if (migrated.ok && Array.isArray(migrated.form.mustExist) && existsSync(homeAbs)) {
+            for (const rel of migrated.form.mustExist) {
+              if (typeof rel !== 'string' || rel.trim() === '') continue;
+              const fileAbs = join(homeAbs, rel);
+              if (!existsSync(fileAbs)) {
+                problems.push(`home.form: нет ${h.path}/${rel}`);
+              }
+            }
+          }
+        } catch {
+          problems.push(`home.form: ${h.form} — битый JSON`);
+        }
+      }
+    }
+  }
+
+  return problems;
+}
+
+/**
+ * Собрать объявленные home.path из всех контейнеров процедур.
+ * @param {string} repoRoot
+ * @returns {Set<string>}
+ */
+export function collectDeclaredHomePaths(repoRoot) {
+  const declared = new Set();
+  for (const dir of listProcedureDirs(repoRoot)) {
+    const mp = join(dir, 'MANIFEST.json');
+    if (!existsSync(mp)) continue;
+    try {
+      const m = JSON.parse(readFileSync(mp, 'utf8'));
+      if (m?.home?.kind === 'path' && typeof m.home.path === 'string') {
+        declared.add(m.home.path.replace(/\\/gu, '/').replace(/\/+$/u, ''));
+      }
+    } catch {
+      // битый манифест — отдельный дефект validateProcedure
+    }
+  }
+  return declared;
+}
+
+/**
+ * Зуб «дом без декларации» (Ф2): известные живые дома ↔ объявления в манифестах.
+ * @param {string} repoRoot
+ * @returns {string[]} findings
+ */
+export function auditProcedureHomes(repoRoot) {
+  const findings = [];
+  const declared = collectDeclaredHomePaths(repoRoot);
+  for (const known of KNOWN_LIVING_HOMES) {
+    const abs = join(repoRoot, known.path);
+    if (!existsSync(abs)) continue;
+    const norm = known.path.replace(/\\/gu, '/').replace(/\/+$/u, '');
+    if (!declared.has(norm)) {
+      findings.push(
+        `дом без декларации: ${norm} (живёт с ${known.since}) — объяви home в MANIFEST процедуры (см. docs/procedures/HOME.md)`,
+      );
+    }
+  }
+  return findings;
+}
+
+/**
+ * Схема MANIFEST.json (Р1 + очередь кадров + ядро #1220 + дом Ф2):
+ * пять обязательных; optional очередь, ядро, home/mode; иной ключ — «свалка».
  *
  * @param {unknown} m распарсенный манифест
  * @param {string} dirName имя каталога контейнера (id обязан совпадать)
- * @param {string} [repoRoot] для резолва steps.ref
+ * @param {string} [repoRoot] для резолва steps.ref / home
  * @returns {string[]} дефекты схемы
  */
 export function manifestSchemaProblems(m, dirName, repoRoot) {
@@ -407,6 +584,7 @@ export function manifestSchemaProblems(m, dirName, repoRoot) {
     ...MANIFEST_BASE_KEYS,
     ...MANIFEST_QUEUE_KEYS,
     ...MANIFEST_CORE_KEYS,
+    ...MANIFEST_HOME_KEYS,
   ]);
   for (const k of MANIFEST_BASE_KEYS) if (!keys.includes(k)) problems.push(`нет поля ${k}`);
   for (const k of keys) if (!allowed.has(k)) problems.push(`лишнее поле ${k}`);
@@ -447,6 +625,11 @@ export function manifestSchemaProblems(m, dirName, repoRoot) {
     problems.push(`ядро частичное — нет: ${missing.join(', ')} (все три или ни одного)`);
   } else if (presence === 'full') {
     problems.push(...coreFieldsProblems(/** @type {Record<string, unknown>} */ (m), repoRoot));
+  }
+
+  // Ф2 home/mode — каждый ключ валидируется при наличии
+  if (keys.includes('home') || keys.includes('mode')) {
+    problems.push(...homeFieldsProblems(/** @type {Record<string, unknown>} */ (m), repoRoot));
   }
 
   return problems;

@@ -1,5 +1,13 @@
-# Секрет-скан всего репозитория (лист №5 заседания security-posture, 19.07.2026).
+# Секрет-скан репозитория (лист №5 заседания security-posture, 19.07.2026).
 # Baseline ложных срабатываний — .gitleaksignore (проверены вручную).
+#
+# ДВА РЕЖИМА (#1262, инцидент 26.07):
+#   pull_request → скан ДИАПАЗОНА заявки (base..HEAD). Раньше здесь шёл `detect --source .`
+#     при `fetch-depth: 0`, то есть по истории ВСЕХ ветвей: находка в чужой ветке красила
+#     заявку, в которой её коммита нет. 26.07 так встала работа соседней сессии — синтетическая
+#     PEM-фикстура из ветки резака секретов блокировала ЛЮБУЮ заявку, пока ветка жила в origin.
+#   push: main → полный скан истории. Гарантия «в репозитории нет живых секретов» остаётся,
+#     но её нарушение указывает на main, а не на невиновную заявку.
 name: gitleaks
 
 on:
@@ -26,17 +34,14 @@ jobs:
             | tar -xz gitleaks
           ./gitleaks version
 
-      # Заявка отвечает за СВОЙ диапазон, а не за всю историю репозитория.
-      # Эпизод 26.07 (#1272 Ф1): скан полной истории валил ЛЮБУЮ заявку из-за фикстуры
-      # в чужой ветке — файла, которого не было ни в общей ветке, ни в заявке. Блокировало
-      # всех, причём чинить приходилось не автору заявки. Полная история осталась там, где
-      # она уместна: на общей ветке и по расписанию.
-      - name: Scan PR range (base..head)
+      - name: Scan PR range
         if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          git fetch --no-tags --depth=200 origin "${{ github.base_ref }}"
-          ./gitleaks detect --source . --no-banner --redact -v \
-            --log-opts="origin/${{ github.base_ref }}..HEAD"
+          echo "диапазон заявки: $BASE_SHA..$HEAD_SHA"
+          ./gitleaks detect --source . --no-banner --redact -v --log-opts="$BASE_SHA..$HEAD_SHA"
 
       - name: Scan full history
         if: github.event_name != 'pull_request'

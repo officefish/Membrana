@@ -7,9 +7,13 @@ import { fileURLToPath } from 'node:url';
 
 import {
   PROCEDURE_CORE_PILOTS,
+  PROCEDURE_HOME_PILOTS,
+  auditProcedureHomes,
+  collectDeclaredHomePaths,
   coreFieldsProblems,
   corePresence,
   frameLaneProblems,
+  homeFieldsProblems,
   isHonestWhy,
   listProcedureDirs,
   manifestSchemaProblems,
@@ -270,4 +274,62 @@ test('CORE Ф1: пилоты ritual-evening / bridge / ritual-dreams несут 
     assert.equal(r.core, 'full', `${id}: ядро неполное`);
     assert.equal(r.findings.length, 0, `${id}: ${r.findings.join('; ')}`);
   }
+});
+
+test('HOME Ф2: mode вне словаря и home.path без каталога — дефекты', () => {
+  assert.ok(
+    homeFieldsProblems({ mode: 'remote' }, tmp).some((p) => p.includes('mode')),
+  );
+  const ghost = {
+    ...GOOD,
+    mode: 'local',
+    home: {
+      kind: 'path',
+      path: 'docs/net-takogo-home',
+      form: 'docs/net-takogo-home/HOME.form.json',
+      holder: 'angelina',
+      writers: [{ procedureId: 'bridge', via: 'yarn bridge' }],
+    },
+  };
+  assert.ok(
+    manifestSchemaProblems(ghost, 'demo', tmp).some((p) => p.includes('не существует')),
+  );
+});
+
+test('HOME Ф2: пилоты несут home+mode; bridge объявляет docs/bridge', () => {
+  for (const id of PROCEDURE_HOME_PILOTS) {
+    const dir = join(repoRoot, 'docs', 'procedures', id);
+    const r = validateProcedure(dir, repoRoot);
+    assert.equal(r.valid, true, `${id}: ${r.problems.join('; ')}`);
+    const m = JSON.parse(readFileSync(join(dir, 'MANIFEST.json'), 'utf8'));
+    assert.ok(m.home && m.mode, `${id}: нет home/mode`);
+  }
+  const bridge = JSON.parse(
+    readFileSync(join(repoRoot, 'docs/procedures/bridge/MANIFEST.json'), 'utf8'),
+  );
+  assert.equal(bridge.home.kind, 'path');
+  assert.equal(bridge.home.path, 'docs/bridge');
+  assert.equal(bridge.mode, 'mirrored');
+  assert.ok(collectDeclaredHomePaths(repoRoot).has('docs/bridge'));
+});
+
+test('HOME Ф2: auditProcedureHomes — docs/bridge объявлен, находки пусты', () => {
+  const findings = auditProcedureHomes(repoRoot);
+  assert.equal(
+    findings.filter((f) => f.includes('docs/bridge')).length,
+    0,
+    findings.join('; '),
+  );
+});
+
+test('HOME Ф4: форма мостика несёт formVersion; bridge валиден', () => {
+  const form = JSON.parse(
+    readFileSync(join(repoRoot, 'docs/bridge/HOME.form.json'), 'utf8'),
+  );
+  assert.equal(form.formVersion, '1.0.0');
+  assert.ok(Array.isArray(form.compat) && form.compat.includes('1.0.0'));
+  assert.equal('version' in form, false);
+  const dir = join(repoRoot, 'docs/procedures/bridge');
+  const r = validateProcedure(dir, repoRoot);
+  assert.equal(r.valid, true, r.problems.join('; '));
 });
