@@ -66,10 +66,48 @@ function declarationsOf(token) {
   return DECLARATION_HOMES.reduce((sum, home) => sum + countIn(token, home), 0);
 }
 
+/**
+ * Дома НОСИТЕЛЯ участника (#1204): где имя перестаёт быть абзацем и становится вызываемым —
+ * карта персонажей, реестр каналов, поля описей. README и SKILL сюда НЕ входят: абзац в них
+ * и есть проза, которую ловим.
+ */
+const CARRIER_HOMES = [
+  'scripts/ask-persona.mjs',
+  'scripts/consilium.mjs',
+  'scripts/lib/llm-procedures.json',
+];
+// NB: `*MANIFEST.json` носителем НЕ считается — `leadPersona` там строка-держатель,
+// а не вызов; ровно эту подмену и вскрыл прецедент 25.07 (спека #1204).
+
+const TRANSLIT = {
+  а: 'a', б: 'b', в: 'v', г: 'g', д: 'd', е: 'e', ё: 'e', ж: 'zh', з: 'z', и: 'i',
+  й: 'y', к: 'k', л: 'l', м: 'm', н: 'n', о: 'o', п: 'p', р: 'r', с: 's', т: 't',
+  у: 'u', ф: 'f', х: 'kh', ц: 'ts', ч: 'ch', ш: 'sh', щ: 'shch', ъ: '', ы: 'y',
+  ь: '', э: 'e', ю: 'yu', я: 'ya',
+};
+
+/** Кириллица → латиница: в машинных домах имена латиницей (`ozhegov`), в прозе — русские. */
+function translit(name) {
+  return [...name.toLowerCase()].map((ch) => (ch in TRANSLIT ? TRANSLIT[ch] : ch)).join('');
+}
+
+/**
+ * Есть ли у имени машинный носитель. Ищем и как написано, и в транслите, и по КОРНЮ
+ * (без двух последних букв) — русское имя в прозе склоняется («Ангелины», «Ожегову»),
+ * а в карте персонажей лежит в одной форме.
+ */
+function carriersOf(name) {
+  const forms = new Set([name, name.toLowerCase(), translit(name), translit(name).slice(0, -2)]);
+  return [...forms]
+    .filter((f) => f.length >= 4)
+    .reduce((sum, form) => sum + CARRIER_HOMES.reduce((s, home) => s + countIn(form, home), 0), 0);
+}
+
 const ruleset = {
   consumersOf: (name) => Math.max(0, countIn(name) - 1), // минус файл-владелец
   readersOf: (artifact) => Math.max(0, countIn(artifact) - 1),
   declarationsOf,
+  carriersOf,
 };
 
 function main() {

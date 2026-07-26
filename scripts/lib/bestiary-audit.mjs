@@ -12,6 +12,7 @@ export const ORPHAN_RULESET = {
   consumersOf: () => 0,
   readersOf: () => 0,
   declarationsOf: () => 0,
+  carriersOf: () => 0,
 };
 
 /**
