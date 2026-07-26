@@ -1,19 +1,20 @@
 # PRECEDENTS — снимок-реестр (производный, руками не править)
 
-> Meta · Date: 2026-07-26 · SHA: eff07a0c · Source: docs/precedents/*.md
+> Meta · Date: 2026-07-26 · SHA: 190331f1 · Source: docs/precedents/*.md
 > Пересобрать: `yarn precedent:register --rebuild`. Источник истины — файлы прецедентов.
 
-Всего прецедентов: **17** · различных классов: **5** · доля рецидива: **71%** (ориентир ≤15%).
+Всего прецедентов: **19** · различных классов: **6** · доля рецидива: **68%** (ориентир ≤15%).
 
 ## Рецидив по классам
 
 | Класс | Прецедентов |
 |-------|-------------|
-| tooling-gap | 5 ⚠ рецидив |
+| tooling-gap | 6 ⚠ рецидив |
 | ritual-mechanics-vs-value | 4 ⚠ рецидив |
 | session-report | 4 ⚠ рецидив |
 | cold-start | 2 ⚠ рецидив |
 | reporting-gap | 2 ⚠ рецидив |
+| task-lifecycle | 1 |
 
 ## Прецеденты
 
@@ -28,7 +29,6 @@
 | 2026-07-23 | tooling-gap | [2026-07-23-manual-mint-invisible-to-cascade](../2026-07-23-manual-mint-invisible-to-cascade.md) | Документированный ручной путь не имеет представления в гейте, который его судит |
 | 2026-07-23 | ritual-mechanics-vs-value | [2026-07-23-night-merged-not-deployed](../2026-07-23-night-merged-not-deployed.md) | Работа принята мерджем, но не доехала до среды исполнения: зелёные гейты слияния |
 | 2026-07-23 | ritual-mechanics-vs-value | [2026-07-23-oneshot-issue-closed-without-procedure](../2026-07-23-oneshot-issue-closed-without-procedure.md) | Issue закрыт мерджем промпта или карточки, DoD продукта не выполнен |
-| 2026-07-26 | task-lifecycle | [2026-07-26-issue-979-selfclose-premature-github-close](../2026-07-26-issue-979-selfclose-premature-github-close.md) | Issue #979 CLOSED при active-карточке после PR регистрации спринта |
 | 2026-07-23 | reporting-gap | [2026-07-23-wrong-tree-main-day-request](../2026-07-23-wrong-tree-main-day-request.md) | существенный факт топологии worktree не доложен первой репликой |
 | 2026-07-24 | session-report | [2026-07-24-align-all-worktrees-to-main](../2026-07-24-align-all-worktrees-to-main.md) | Параллельные сессии в разных worktree накопили дивергенцию; общий origin/main уш |
 | 2026-07-24 | tooling-gap | [2026-07-24-consilium-green-but-hollow](../2026-07-24-consilium-green-but-hollow.md) | LLM-процедура без служебного фрейма «провода» молча деградирует: сигнал утоплен  |
@@ -37,4 +37,6 @@
 | 2026-07-25 | tooling-gap | [2026-07-25-bridge-room-declared-cast-without-carriers](../2026-07-25-bridge-room-declared-cast-without-carriers.md) | Агент оформляет декларацию (состав комнаты, ответственный в карточке) в артефакт |
 | 2026-07-25 | ritual-mechanics-vs-value | [2026-07-25-morning-ritual-silent-magistral-inherit-and-dead-channels](../2026-07-25-morning-ritual-silent-magistral-inherit-and-dead-channels.md) | Ритуал считает гейт магистрали пройденным по наличию любого sources[0], не по св |
 | 2026-07-25 | session-report | [2026-07-25-tasks-workshop-map-lookup](../2026-07-25-tasks-workshop-map-lookup.md) | Дом docs/tasks имеет primary-workshop с манифестом и границей V2; знание размаза |
+| 2026-07-26 | tooling-gap | [2026-07-26-affine-editor-paradigm-impedance](../2026-07-26-affine-editor-paradigm-impedance.md) | Инструмент выбран по КЛАССУ («редактор документов»), а нужен по СПОСОБУ работы ( |
+| 2026-07-26 | task-lifecycle | [2026-07-26-issue-979-selfclose-premature-github-close](../2026-07-26-issue-979-selfclose-premature-github-close.md) ✗ | Issue закрыта без task:archive и без DoD — active-карточка и GitHub расходятся |
 
