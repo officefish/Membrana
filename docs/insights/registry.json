@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-25",
+  "updatedAt": "2026-07-26",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -699,6 +699,28 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-25",
+      "tags": []
+    },
+    {
+      "id": "insight-cast-carrier-contract",
+      "title": "Контракт носителя: объявленный участник процедуры обязан быть вызываемым",
+      "status": "reviewed",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 8,
+      "createdAt": "2026-07-25",
+      "tags": []
+    },
+    {
+      "id": "insight-procedures-orchestration-n8n",
+      "title": "Оркестрация процедур через n8n: кожух и производный рендер поверх git как единственного источника правды",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-26",
       "tags": []
     }
   ]
