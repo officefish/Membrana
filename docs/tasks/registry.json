@@ -1220,14 +1220,14 @@
       "githubIssue": 1004,
       "linearId": "DRU-368",
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-23",
-      "archivedAt": null,
+      "archivedAt": "2026-07-26",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "Forensics #1004: #979 closed 22.07 with PR #986 reg, not DoD; reopened; guard invariant.github.closedWhileActive; precedent 2026-07-26-issue-979-selfclose-premature-github-close.md",
       "githubIssueClosedAt": null,
       "parentEpic": "frame-rails-2307"
     },
@@ -1523,7 +1523,7 @@
       "supportPersonas": [
         "dynin"
       ],
-      "notes": "Контейнер DRU-348. Фреймы Ф1/Ф3/Ф6/Ф8. accepted: vesnin.",
+      "notes": "Контейнер DRU-348. Фреймы Ф1/Ф3/Ф6/Ф8. accepted: vesnin. #979 преждевременно CLOSED 22.07 (PR #986 reg) — reopen 26.07, см. precedent 2026-07-26-issue-979-selfclose-premature-github-close.",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },

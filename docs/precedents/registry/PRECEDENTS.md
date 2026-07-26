@@ -28,6 +28,7 @@
 | 2026-07-23 | tooling-gap | [2026-07-23-manual-mint-invisible-to-cascade](../2026-07-23-manual-mint-invisible-to-cascade.md) | Документированный ручной путь не имеет представления в гейте, который его судит |
 | 2026-07-23 | ritual-mechanics-vs-value | [2026-07-23-night-merged-not-deployed](../2026-07-23-night-merged-not-deployed.md) | Работа принята мерджем, но не доехала до среды исполнения: зелёные гейты слияния |
 | 2026-07-23 | ritual-mechanics-vs-value | [2026-07-23-oneshot-issue-closed-without-procedure](../2026-07-23-oneshot-issue-closed-without-procedure.md) | Issue закрыт мерджем промпта или карточки, DoD продукта не выполнен |
+| 2026-07-26 | task-lifecycle | [2026-07-26-issue-979-selfclose-premature-github-close](../2026-07-26-issue-979-selfclose-premature-github-close.md) | Issue #979 CLOSED при active-карточке после PR регистрации спринта |
 | 2026-07-23 | reporting-gap | [2026-07-23-wrong-tree-main-day-request](../2026-07-23-wrong-tree-main-day-request.md) | существенный факт топологии worktree не доложен первой репликой |
 | 2026-07-24 | session-report | [2026-07-24-align-all-worktrees-to-main](../2026-07-24-align-all-worktrees-to-main.md) | Параллельные сессии в разных worktree накопили дивергенцию; общий origin/main уш |
 | 2026-07-24 | tooling-gap | [2026-07-24-consilium-green-but-hollow](../2026-07-24-consilium-green-but-hollow.md) | LLM-процедура без служебного фрейма «провода» молча деградирует: сигнал утоплен  |
