@@ -114,8 +114,11 @@
    `LINEAR_OFFICE_EGRESS_DISABLED`). Вебхук — только триггер «пора снимать»,
    телом источника не является. Предикат `pullOk(S)` — чистая функция от файла;
    freshness — один дешёвый запрос ВНЕ тела гейта. Владелец времени —
-   производитель снимка (media-NL, UTC). Канон полей:
+   производитель снимка (media-NL, UTC).    Канон полей:
    [`LINEAR_SNAPSHOT_CONTRACT.md`](./LINEAR_SNAPSHOT_CONTRACT.md).
+   В каждой записи снимка — `startedAt: string | null` (аддитивно в `@1`, #1000 /
+   ADR-0017): прыжок `completed ∧ ¬started` меряет `yarn linear:movement-audit`
+   офлайн; UI-доска Linear при этом остаётся зеркалом GitHub, не WIP-слоем.
    Режим движения после первого честного `pullOk`: атомарный флаг
    `{movementMode, snapshotRef, switchedAt}` в
    [`docs/tasks/movement-mode.json`](./movement-mode.json) (К5/M4) —
@@ -142,6 +145,7 @@
 | `wip(p)` | очередь намерений персоны | `throughput` |
 | `throughput(p,w)` | закрытых за окно | `reworkRate` |
 | `escalationRate` | смены ответственного/приёмки | ограничитель, вниз |
+| `jumpRatioAmongDone` | доля Done без `startedAt` (зеркало GitHub) | диагностика, не KPI (#1000) |
 
 - Обязательная подпись любого отчёта: **«wip = очередь намерений, не
   производительность»**. Честного источника производительности нет — заявлено явно.
@@ -187,6 +191,7 @@
 | Зубы | `scripts/lib/trace-*.mjs`, `scripts/trace-gate.mjs` | контракт §2, [`INTERFACE_CONTRACT.md`](../cowork-sprint/cowork-execution-registry/INTERFACE_CONTRACT.md) |
 | Измерение | `scripts/lib/measure-*.mjs` | контракт §1.2 |
 | Снимок | `packages/background-media/src/linear-snapshot/**` (producer), office consumer/trigger, `scripts/lib/snapshot-*.mjs` | [`LINEAR_SNAPSHOT_CONTRACT.md`](./LINEAR_SNAPSHOT_CONTRACT.md) |
+| Аудит прыжков (зеркало) | `scripts/linear-movement-audit.mjs`, `scripts/lib/linear-movement-audit.mjs` | [`ADR-0017`](../adr/ADR-0017-linear-board-is-mirror.md), #1000 |
 | Режим движения (К5) | `scripts/lib/movement-mode.mjs`, `scripts/movement-mode-lift.mjs` | [`MOVEMENT_MODE.md`](./MOVEMENT_MODE.md), `docs/tasks/movement-mode.json` |
 | Холод | `scripts/lib/cold-*.mjs` | [`ARCHIVE_FORMAT.md`](./archive/ARCHIVE_FORMAT.md) |
 | Миграция | `scripts/lib/debt-*.mjs` | контракт §2, эпик registry-relocation Р4 |

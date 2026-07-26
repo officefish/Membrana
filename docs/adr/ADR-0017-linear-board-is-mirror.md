@@ -43,11 +43,11 @@
 - Исторические Done без `startedAt` не переписываются задним числом.
 
 ## Definition of Done
-- [x] ADR + правка канона «доска ≠ движение»
-- [x] `startedAt` в типе/GraphQL/map снимка
+- [x] ADR + правка канона «доска ≠ движение» (`LINEAR_GITHUB_SYNC_REGULATION`, `TASKS_MANAGEMENT` §5, `LINEAR_TASKS_GEAR` §6/§7/§10)
+- [x] `startedAt` в типе/GraphQL/map снимка (PR #1084)
 - [x] `yarn linear:movement-audit` + тесты
 - [ ] LGTM владельца → статус ACCEPTED
-- [ ] (follow-up) `task:start` → Started при наличии `linearId`
+- [ ] (follow-up) `task:start` → Started при наличии `linearId` — отдельная карточка после ACCEPTED
 
 ## Out of scope / открытые задачи
 - Mass archive / mass state-update в Linear.
