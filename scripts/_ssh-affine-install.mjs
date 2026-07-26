@@ -15,6 +15,7 @@
  *
  *   yarn affine:install
  *   node scripts/_ssh-affine-install.mjs --skip-capacity   # только если gate уже прогнан
+ *   node scripts/_ssh-affine-install.mjs --caddy-only      # только strategy.caddy + reload (без docker)
  */
 import { randomBytes } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
@@ -27,6 +28,7 @@ const STRATEGY_DOMAIN = process.env.STRATEGY_DOMAIN?.trim() || 'strategy.mmbrn.t
 const AFFINE_PORT = process.env.AFFINE_PORT?.trim() || '3010';
 const REMOTE_ROOT = '/opt/membrana-affine';
 const SKIP_CAPACITY = process.argv.includes('--skip-capacity');
+const CADDY_ONLY = process.argv.includes('--caddy-only');
 
 const cacheDir = join(repoRoot, 'scripts', 'cache');
 mkdirSync(cacheDir, { recursive: true });
@@ -214,6 +216,24 @@ df -h /
 echo "[deploy-summary] affine=ok bind=127.0.0.1:\${PORT} caddy=reloaded https=\$HTTP_CODE domain=\${DOMAIN}"
 `;
 
+const caddyOnlyScript = `#!/bin/bash
+set -euo pipefail
+DOMAIN=${STRATEGY_DOMAIN}
+echo "=== caddy-only: strategy site-block ==="
+mkdir -p /etc/caddy/Caddyfile.d
+cat > /etc/caddy/Caddyfile.d/strategy.caddy <<'CADDY_EOF'
+${caddyfile}
+CADDY_EOF
+grep -q 'Caddyfile\\.d' /etc/caddy/Caddyfile || echo 'import /etc/caddy/Caddyfile.d/*' >> /etc/caddy/Caddyfile
+caddy validate --config /etc/caddy/Caddyfile
+systemctl reload caddy
+CODE=\$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "https://\${DOMAIN}/" || echo 000)
+echo "https://\${DOMAIN}/ -> HTTP \${CODE}"
+PROBE=\$(curl -s --max-time 10 "https://\${DOMAIN}/socket.io/?EIO=4&transport=polling" | head -c 120 || true)
+echo "socket.io probe: \${PROBE}"
+echo "[deploy-summary] caddy-only=reloaded https=\${CODE} domain=\${DOMAIN}"
+`;
+
 async function main() {
   if (!SKIP_CAPACITY) {
     console.log('=== capacity gate ===');
@@ -222,12 +242,16 @@ async function main() {
     console.log('=== capacity gate SKIPPED (--skip-capacity) ===');
   }
 
-  const dbPassword = randomBytes(24).toString('base64url');
-  writeEnvSeed(dbPassword);
-  packBundle();
+  if (!CADDY_ONLY) {
+    const dbPassword = randomBytes(24).toString('base64url');
+    writeEnvSeed(dbPassword);
+    packBundle();
+  }
 
   const { host, username } = getOfficeSshConfig();
-  console.log(`\nAffine install → ${username}@${host} (${STRATEGY_DOMAIN})\n`);
+  console.log(
+    `\nAffine ${CADDY_ONLY ? 'caddy-only' : 'install'} → ${username}@${host} (${STRATEGY_DOMAIN})\n`,
+  );
 
   await new Promise((resolvePromise, rejectPromise) => {
     const conn = new Client();
@@ -238,10 +262,14 @@ async function main() {
     conn
       .on('ready', async () => {
         try {
-          console.log('Uploading compose bundle + env seed...');
-          await sftpPut(conn, tarPath, remoteTar);
-          await sftpPut(conn, envSeedPath, remoteEnvSeed);
-          await execBash(conn, remoteScript);
+          if (CADDY_ONLY) {
+            await execBash(conn, caddyOnlyScript);
+          } else {
+            console.log('Uploading compose bundle + env seed...');
+            await sftpPut(conn, tarPath, remoteTar);
+            await sftpPut(conn, envSeedPath, remoteEnvSeed);
+            await execBash(conn, remoteScript);
+          }
           clearTimeout(timeout);
           conn.end();
           resolvePromise(0);
@@ -255,7 +283,7 @@ async function main() {
       .connect(getOfficeSshConfig());
   });
 
-  console.log('\nAffine install OK.');
+  console.log(`\nAffine ${CADDY_ONLY ? 'caddy-only' : 'install'} OK.`);
   console.log(`Live: https://${STRATEGY_DOMAIN}/`);
   console.log('Owner: открой UI и создай первого admin (агент bootstrap не делает).');
 }
@@ -267,14 +295,16 @@ try {
   console.error(`[fail] ${e instanceof Error ? e.message : e}`);
   process.exitCode = 1;
 } finally {
-  try {
-    unlinkSync(tarPath);
-  } catch {
-    /* ignore */
-  }
-  try {
-    unlinkSync(envSeedPath);
-  } catch {
-    /* ignore */
+  if (!CADDY_ONLY) {
+    try {
+      unlinkSync(tarPath);
+    } catch {
+      /* ignore */
+    }
+    try {
+      unlinkSync(envSeedPath);
+    } catch {
+      /* ignore */
+    }
   }
 }

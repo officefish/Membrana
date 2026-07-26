@@ -197,7 +197,7 @@ async function exportTarget(target, opts, releaseTemplate) {
     console.error(
       `[strategic-docs:publish] pushing ${entries.length} doc(s) → ${target} workspace ${workspaceId}`,
     );
-    const push = pushImportBundle({ bundleDir: outDir, workspaceId, dryRun: false });
+    const push = await pushImportBundle({ bundleDir: outDir, workspaceId, dryRun: false });
     result.push = push;
     result.ok = push.ok;
     if (!push.ok) {

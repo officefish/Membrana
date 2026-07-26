@@ -129,14 +129,40 @@ yarn affine:install         # scripts/_ssh-affine-install.mjs → /opt/membrana-
 **отдельный** site block — без правки существующих `office.caddy` / `panel.caddy`
 и без двойного `import` (урок: ambiguous site definition).
 
-Черновик site-block (порт уточнить по фактическому bind после compose):
+Черновик site-block (канон — [`deploy/Caddyfile.strategy.template`](../../deploy/Caddyfile.strategy.template)):
 
 ```caddy
 strategy.mmbrn.tech {
+	@socketio path /socket.io/*
+	handle @socketio {
+		reverse_proxy 127.0.0.1:3010 {
+			transport http {
+				read_timeout 0
+				write_timeout 0
+			}
+		}
+	}
+
 	encode gzip
-	reverse_proxy 127.0.0.1:3010
+	reverse_proxy 127.0.0.1:3010 {
+		transport http {
+			read_timeout 0
+			write_timeout 0
+		}
+	}
 }
 ```
+
+**socket.io path:** `/socket.io/` на корне домена (не `/graphql`). Caddy `reverse_proxy` апгрейдит WebSocket по умолчанию; отдельный `handle @socketio` — явные таймауты для long-lived sync.
+
+### Smoke: socket.io через Caddy
+
+```bash
+curl.exe -s "https://strategy.mmbrn.tech/socket.io/?EIO=4&transport=polling"
+# ожидание: 0{"sid":"…","upgrades":["websocket"],…}
+```
+
+Если polling OK, а `--push` падает — см. [`PUBLISH.md`](../containers/strategic-docs/PUBLISH.md) (auth cookie vs bearer token).
 
 Порядок W2:
 
