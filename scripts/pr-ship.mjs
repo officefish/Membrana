@@ -94,7 +94,21 @@ export function readPrMergeability(opts = {}) {
 export function autoMergeDecision(opts = {}) {
   const requested = opts.requested === true;
   if (!requested) return { mode: 'wait', note: null };
-  if (opts.allowed === true) return { mode: 'auto', note: null };
+  if (opts.allowed === true) {
+    // ВТОРОЕ условие, найденное на живых прогонах 26.07: без обязательных проверок в
+    // защите ветки серверу нечего ждать, и `--auto` мержит НЕМЕДЛЕННО — то есть мимо CI.
+    // PR #1276 и #1278 так и слились за секунды. Это ломает инвариант #653 «merge только
+    // после зелёного», поэтому при незащищённой базе флаг обязан отказаться сам.
+    const checks = opts.requiredChecks;
+    if (Array.isArray(checks) && checks.length > 0) return { mode: 'auto', note: null };
+    return {
+      mode: 'wait',
+      note:
+        'автослияние разрешено, но у base НЕТ обязательных проверок (ветка не защищена) — ' +
+        'тогда сервер сливает СРАЗУ, минуя CI. Иду обычным хвостом с ожиданием. ' +
+        'Чтобы --auto означал «по зелёному», нужна защита ветки с required status checks.',
+    };
+  }
   if (opts.allowed === false) {
     return {
       mode: 'wait',
@@ -105,6 +119,60 @@ export function autoMergeDecision(opts = {}) {
     mode: 'wait',
     note: '--auto запрошен, но возможность автослияния не удалось выяснить (gh недоступен) — иду обычным хвостом.',
   };
+}
+
+/**
+ * `--merge-only` мержит то, что лежит в origin. Если локально есть неотправленные коммиты,
+ * мердж возьмёт ДРУГОЕ содержание — молча.
+ *
+ * Находка соседней сессии 26.07: режим звал слияние, не отправив коммиты, и приходил отказ
+ * «ветка разошлась с локальной». Норма #700 держит merge-only без push намеренно (он не
+ * должен трогать remote помимо мерджа), поэтому чиним не push'ем, а громким отказом.
+ *
+ * @param {{ local?: string|null, remote?: string|null, branch?: string }} refs
+ * @returns {string|null} текст отказа или null, если синхронно/выяснить нельзя
+ */
+export function headSyncProblem(refs = {}) {
+  const { local, remote } = refs;
+  if (!local || !remote) return null;
+  if (local === remote) return null;
+  return [
+    `pr:ship --merge-only: локальный HEAD (${local.slice(0, 8)}) не совпадает с origin (${remote.slice(0, 8)}).`,
+    'Мердж взял бы содержание из origin, то есть НЕ то, что у вас на ветке.',
+    `Отправьте свои коммиты и повторите: git push`,
+  ].join('\n');
+}
+
+/** Локальный и удалённый SHA текущей ветки. `null`, если upstream не настроен. */
+export function readHeadRefs(run = execFileSync) {
+  const read = (args) => {
+    try {
+      return String(run('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })).trim() || null;
+    } catch {
+      return null;
+    }
+  };
+  return { local: read(['rev-parse', 'HEAD']), remote: read(['rev-parse', '@{u}']) };
+}
+
+/**
+ * Обязательные проверки base-ветки. `[]` — ветка не защищена (или проверок нет),
+ * `null` — выяснить не удалось.
+ */
+export function readRequiredChecks(base = 'main', run = execFileSync) {
+  try {
+    const raw = String(
+      run('gh', ['api', `repos/{owner}/{repo}/branches/${base}/protection`, '--jq', '[.required_status_checks.contexts // []] | flatten | join(",")'], {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }),
+    ).trim();
+    return raw ? raw.split(',').filter(Boolean) : [];
+  } catch {
+    // 404 «Branch not protected» приходит ошибкой — это НЕ «не смогли выяснить»,
+    // это «проверок нет». Различать важно: во втором случае --auto молча мержит мимо CI.
+    return [];
+  }
 }
 
 /** Разрешено ли автослияние в репозитории. `null`, если выяснить не удалось. */
@@ -391,8 +459,21 @@ function main() {
 
   // Возможность автослияния — свойство репозитория, а не флага: спрашиваем ДО плана,
   // иначе `gh pr merge --auto` падает и оставляет PR открытым (26.07, PR #1269).
+  if (opts.mergeOnly && opts.execute) {
+    const problem = headSyncProblem(readHeadRefs());
+    if (problem) {
+      console.error(problem);
+      process.exitCode = 1;
+      return;
+    }
+  }
+
   if (opts.auto) {
-    const decision = autoMergeDecision({ requested: true, allowed: readAutoMergeAllowed() });
+    const decision = autoMergeDecision({
+      requested: true,
+      allowed: readAutoMergeAllowed(),
+      requiredChecks: readRequiredChecks(opts.base ?? 'main'),
+    });
     if (decision.mode === 'wait') {
       console.log(`  ⚠ ${decision.note}`);
       opts.auto = false;
