@@ -75,7 +75,7 @@
     "scripts/morning-care.mjs": "82e01a5498f41f008c25b9a2300fff170744b8c8",
     "scripts/morning-gate.mjs": "7da6b1c87121eacd3b35fb2ce932289714bd56fe",
     "scripts/plan-week-if-monday.mjs": "4de9f7e1d42d88c5cd262041c3eb29e918cec194",
-    "scripts/pr-ship.mjs": "5f7fc2bb0d03e8fdd2b4adf5433b4523067ff493",
+    "scripts/pr-ship.mjs": "15729ea54e2d0a59a865ae27631e8f3bd7889b98",
     "scripts/repo-clean.mjs": "490de3404657288b9c5e3184461c0a180b05a60c",
     "scripts/strategy-day.mjs": "4e87373353828c2551fe04f740fd6b600a09dfe6",
     "scripts/telegram-swallow.mjs": "d2c50753ca26a7ba57345ea5cdcf0cd40e7f381d",
