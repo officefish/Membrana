@@ -43,7 +43,10 @@ export function refusalsBeforeMerge({ branch, base, branchExists = true, pathBus
  */
 export function planIsolatedMerge({ branch, base, path, detach = false }) {
   const addArgs = detach ? ['worktree', 'add', '--detach', path, branch] : ['worktree', 'add', path, branch];
-  const pushArgs = detach ? ['push', 'origin', `HEAD:${branch}`] : ['push', 'origin', 'HEAD'];
+  // При отсоединённой голове нужен ПОЛНЫЙ путь ссылки: короткий `HEAD:<branch>` git
+  // отвергает («The <src> part of the refspec is a commit object»), потому что цель
+  // неоднозначна. Поймано на самом инструменте при первом же живом прогоне 26.07.
+  const pushArgs = detach ? ['push', 'origin', `HEAD:refs/heads/${branch}`] : ['push', 'origin', 'HEAD'];
   return [
     { id: 'fetch', args: ['fetch', 'origin', base.replace(/^origin\//u, '')], where: 'root' },
     { id: 'add', args: addArgs, where: 'root' },

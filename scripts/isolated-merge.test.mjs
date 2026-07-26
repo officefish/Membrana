@@ -54,7 +54,11 @@ test('план: пять шагов, отправка в явный ref при �
 
   const detached = planIsolatedMerge({ branch: 'feat/x', base: 'origin/main', path: '/tmp/w', detach: true });
   assert.ok(detached[1].args.includes('--detach'));
-  assert.deepEqual(detached[3].args, ['push', 'origin', 'HEAD:feat/x'], 'иначе отсоединённая голова никуда не приедет');
+  assert.deepEqual(
+    detached[3].args,
+    ['push', 'origin', 'HEAD:refs/heads/feat/x'],
+    'полный путь ссылки: короткий HEAD:<branch> git отвергает при detach (поймано 26.07 на самом инструменте)',
+  );
 });
 
 test('конфликт — не провал: дерево остаётся для разбора и назван путь', () => {
