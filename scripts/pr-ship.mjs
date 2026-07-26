@@ -32,7 +32,12 @@ import { fileURLToPath } from 'node:url';
 
 import { classifyWorktree, parseWorktreeCard } from './lib/classify-worktree.mjs';
 import { makeLongTempDir } from './lib/long-temp-path.mjs';
-import { readMergeabilityWithRestRecheck } from './lib/pr-mergeability.mjs';
+import { isMergeBlocked, readMergeabilityWithRestRecheck } from './lib/pr-mergeability.mjs';
+import {
+  assertPrMergeableOrRegistryLand,
+  prTouchesRegistry,
+  readPrChangedPaths,
+} from './lib/task-pr-land.mjs';
 
 const TRAILER = 'Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>';
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -44,18 +49,7 @@ const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
  * @returns {void}
  */
 export function assertPrMergeableForShip(snap = {}) {
-  const mergeable = String(snap.mergeable ?? '').toUpperCase();
-  const state = String(snap.mergeStateStatus ?? '').toUpperCase();
-  if (mergeable === 'CONFLICTING' || state === 'DIRTY') {
-    const branch = snap.branch ? ` (${snap.branch})` : '';
-    throw new Error(
-      `pr:ship: PR не mergeable (${mergeable || '?'} / ${state || '?'}). STOP до merge${branch}.\n` +
-        '  git fetch origin && git rebase origin/main\n' +
-        '  # resolve → yarn git:rebase-continue\n' +
-        '  git push --force-with-lease\n' +
-        '  yarn pr:ship --merge-only --execute',
-    );
-  }
+  assertPrMergeableOrRegistryLand(snap);
 }
 
 /**
@@ -67,6 +61,7 @@ export function readPrMergeability(opts = {}) {
   try {
     const snap = readMergeabilityWithRestRecheck(run, opts.prNumber ?? null);
     return {
+      number: snap.number ?? null,
       mergeable: snap.mergeable ?? null,
       mergeStateStatus: snap.mergeStateStatus ?? null,
       branch: snap.branch ?? opts.branch ?? null,
@@ -351,9 +346,27 @@ function main() {
   console.log(`pr:ship${opts.execute ? '' : ' [DRY-RUN]'}: ${head}`);
   if (skippedSync) console.log(`  ⚠ ${skippedSync}`);
 
-  // ATF4-1: до любого merge-шага — CONFLICTING/DIRTY = STOP
+  // ATF4-1: до любого merge-шага — CONFLICTING/DIRTY = STOP (#1026: hint task:pr-land для registry)
   if (opts.execute && opts.merge) {
-    assertPrMergeableForShip(readPrMergeability({ branch: current }));
+    const run = (cmd, a) => execFileSync(cmd, a, { encoding: 'utf8' });
+    const snap = readPrMergeability({ branch: current, run });
+    if (isMergeBlocked(snap)) {
+      let touchesRegistry = false;
+      let prNumber = snap.number ?? null;
+      try {
+        if (prNumber == null) {
+          const raw = run('gh', ['pr', 'view', '--json', 'number,files']);
+          const parsed = JSON.parse(raw);
+          prNumber = parsed.number ?? null;
+          touchesRegistry = prTouchesRegistry((parsed.files ?? []).map((f) => String(f.path ?? f)));
+        } else {
+          touchesRegistry = prTouchesRegistry(readPrChangedPaths(run, prNumber));
+        }
+      } catch {
+        /* gh недоступен — hint без registry */
+      }
+      assertPrMergeableForShip({ ...snap, touchesRegistry, prNumber });
+    }
   }
 
   /** @type {string|null} */
