@@ -1,7 +1,6 @@
 # ADR-0018 — Мердж-гейт выборочный, полный набор ночной; дом тестов — корневой `tests/`
 
-> **Статус:** DRAFT · 2026-07-26
-> **merge файла ≠ принятие решения** пока статус DRAFT — решения действуют после LGTM владельца.
+> **Статус:** ACCEPTED · 2026-07-26 (LGTM владельца в сессии 26.07)
 > Эпик `tests-container` · фазы [#1291](https://github.com/officefish/Membrana/issues/1291), [#1292](https://github.com/officefish/Membrana/issues/1292), [#1293](https://github.com/officefish/Membrana/issues/1293)
 
 ## Контекст
