@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import {
   PROCEDURE_CORE_PILOTS,
   PROCEDURE_HOME_PILOTS,
+  auditProcedureCorpus,
   auditProcedureHomes,
   collectDeclaredHomePaths,
   coreFieldsProblems,
@@ -15,6 +16,7 @@ import {
   frameLaneProblems,
   homeFieldsProblems,
   isHonestWhy,
+  listBuiltProcedureIds,
   listProcedureDirs,
   manifestSchemaProblems,
   normalizeFramePins,
@@ -274,6 +276,42 @@ test('CORE Ф1: пилоты ritual-evening / bridge / ritual-dreams несут 
     assert.equal(r.core, 'full', `${id}: ядро неполное`);
     assert.equal(r.findings.length, 0, `${id}: ${r.findings.join('; ')}`);
   }
+});
+
+test('CORPUS Ф5: все built несут полное ядро + home+mode; audit пуст', () => {
+  const built = listBuiltProcedureIds(repoRoot);
+  assert.ok(built.length >= 11, `ожидали ≥11 built, получили ${built.length}`);
+  for (const id of built) {
+    const dir = join(repoRoot, 'docs', 'procedures', id);
+    const r = validateProcedure(dir, repoRoot);
+    assert.equal(r.valid, true, `${id}: ${r.problems.join('; ')}`);
+    assert.equal(r.core, 'full', `${id}: ядро неполное`);
+    const m = JSON.parse(readFileSync(join(dir, 'MANIFEST.json'), 'utf8'));
+    assert.ok(m.home && m.mode, `${id}: нет home/mode`);
+    assert.ok(isHonestWhy(m.home.kind === 'none' ? m.home.why : 'path-home-ok') || m.home.kind === 'path',
+      `${id}: home.none без честного why`);
+  }
+  const findings = auditProcedureCorpus(repoRoot);
+  assert.equal(findings.length, 0, findings.join('\n'));
+});
+
+test('CORPUS Ф5: morning-ritual-steps.json годится как steps.ref (criticality)', () => {
+  const probs = coreFieldsProblems(
+    {
+      trigger: { kind: 'captain-word', command: 'yarn ritual:day' },
+      steps: { kind: 'ref', path: 'docs/tasks/morning-ritual-steps.json' },
+      gates: {
+        kind: 'inline',
+        items: [{
+          id: 'magistral-choice',
+          waitsFor: 'owner',
+          resume: 'owner-choice → main-day-issue',
+        }],
+      },
+    },
+    repoRoot,
+  );
+  assert.equal(probs.length, 0, probs.join('; '));
 });
 
 test('HOME Ф2: mode вне словаря и home.path без каталога — дефекты', () => {

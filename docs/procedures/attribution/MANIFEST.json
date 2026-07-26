@@ -8,5 +8,28 @@
   "precedents": [
     "docs/seanses/procedural-layer-m3-boundary-manual-2026-07-21.md",
     "docs/seanses/rejected/procedural-layer-m3-boundary-2026-07-21.md"
-  ]
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "yarn check:layer-direction",
+    "note": "адрес домена ответственности (T9); первый движок — направленческий чекер границы"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "layer-direction-check",
+        "criticality": "critical"
+      }
+    ]
+  },
+  "gates": {
+    "kind": "none",
+    "why": "детерминированный отчёт чекера (exit 0/1/2); человек не возобновляет поток — читает rulesSha и прецеденты"
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "статус «адрес, не механизм»: парсер attribution ещё не пишет в git-дом; правила — layer-rules.json"
+  }
 }

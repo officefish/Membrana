@@ -12,5 +12,26 @@
     "docs/patterns/GROUP_CONTAINERIZATION.md",
     "docs/patterns/PINNED_SUBGRAPH_VERSIONING.md",
     "docs/prompts/KITS_DREAM_MASTER_PROMPT.md"
-  ]
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "note": "крафт по скиллу membrana-containerization-master; единой yarn-команды оркестрации нет"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "distinguish-axes", "criticality": "critical" },
+      { "id": "audit-teeth", "criticality": "critical" },
+      { "id": "craft", "criticality": "critical" }
+    ]
+  },
+  "gates": {
+    "kind": "none",
+    "why": "крафт в интерактивной сессии Мастера; паузы на LGTM — вне машинного resume ядра (зубы kits:audit / layer-direction сами стопят)"
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "артефакты крафта пишутся в дом целевой группы (kits/, docs/audit/*, scripts/), не в собственное пространство имён процедуры"
+  }
 }
