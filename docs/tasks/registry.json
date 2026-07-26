@@ -347,7 +347,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1277 → ca765913; VERSIONS.md + formVersion + legacy migrate; Closes #1274",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-26",
       "parentEpic": "procedures-core-fields"
     },
     {
@@ -447,7 +447,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1278 + #1279 (Closes #1262). Паритет двухслойный: (1) объём — pre-push гоняет detect --log-opts=origin/main..HEAD тем же ruleset и baseline, что CI, вместо protect --staged по индексу; CI на pull_request сканирует диапазон заявки, полная история осталась на push:main — одна ветка больше не красит чужие заявки; (2) ВЕРСИЯ — найдено проверкой падением: локальный gitleaks 8.30.1 не считает находкой синтетический PEM, а пришпиленный в CI 8.21.2 считает, поэтому versionParity называет расхождение вслух. Норма про рантайм-сборку образцов: baseline .gitleaksignore привязан к SHA и при ребейзе рассыпается.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-26",
       "parentEpic": "agent-tooling-friction-6"
     },
     {
@@ -467,7 +467,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1269 (squash bb20e567), Closes #1261. Четыре дефекта: classifyGhFailure+бэкофф в pr:wait (сеть≠нет-PR), node-вход вместо шима yarn в task:pr-land (ENOENT→EINVAL→node), pr:ship --auto с опросом allow_auto_merge и откатом, guard base-free перечитывается в момент исполнения. Тесты 74. Настройка allow_auto_merge включена по слову владельца.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-26",
       "parentEpic": "agent-tooling-friction-6"
     },
     {
@@ -505,7 +505,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1271 → 1da16b83; LICENSE.md + procedures:license; пилоты VOCABULARY/REGISTRY; Closes #1268",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-26",
       "parentEpic": "procedures-core-fields"
     },
     {
@@ -523,7 +523,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1260 → 8e679ee8; HOME.md + bridge HOME.form; auditProcedureHomes; Closes #1259",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-26",
       "parentEpic": "procedures-core-fields"
     },
     {
@@ -541,7 +541,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1254 → 59c66813; CORE.md + validate-procedure зуб; пилоты evening/bridge/dreams",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-26"
     },
     {
       "id": "audit-concentrate-v1",
@@ -560,7 +560,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1242 (merge 16caa69f): ядро сверки (чистое) + 5 адаптеров + CLI audit:concentrate, 18 тестов. Приёмка на днях с известными ответами — 3 из 4 машиной: комната (canon vs opened с 22.07), вечер 24.07 (проведён vs следов нет), ответственные без участия (5 карточек 25.07, 12 за 24.07). Четвёртая (битые ссылки снимка) не воспроизводится: возникла и починена внутри дня — ушла требованием в #1229. Две поправки нашла сама приёмка: ревизия на конец дня + голос канона процедуры. Дельта требований к архиву в #1229.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-26"
     },
     {
       "id": "secret-cutter",
@@ -580,7 +580,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1252 (squash 211243df), Closes #1240. Резак поверх правил сканера: redactSecrets + JSON-класс + манифест ротации; 24 теста; живой прогон 2.5 МБ jsonl (sha входа не изменился, повторный скан копии — ноль, 1042 строки парсятся); инвентарь 19 сессий = 46 вырезаний в 6 файлах (верхняя граница, не число живых ключей). Критерий вехи 1 из 3; ротация ключей и датированный проход остаются за владельцем.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-26"
     },
     {
       "id": "main-day-issue-channel-diagnosis",
@@ -1346,7 +1346,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1206",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-26",
       "parentEpic": "frame-rails-2307"
     },
     {
@@ -1713,7 +1713,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1231 MERGED db86ac64; yarn task:pr-land + pr:ship registry hint; Closes #1026",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-26",
       "parentEpic": "frame-rails-2307"
     },
     {
@@ -1733,7 +1733,7 @@
       ],
       "notes": "Требование владельца 23.07: утро не завершено, пока сгенерированные документы не в main. Кадр в полосе frames (автоцепочка), проверка фактом наличия в main.",
       "archiveNotes": "PR #1224 verify gate + ritual:day wire",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-26",
       "parentEpic": "frame-rails-2307"
     },
     {
@@ -1771,7 +1771,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "Forensics #1004: #979 closed 22.07 with PR #986 reg, not DoD; reopened; guard invariant.github.closedWhileActive; precedent 2026-07-26-issue-979-selfclose-premature-github-close.md",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-26",
       "parentEpic": "frame-rails-2307"
     },
     {
@@ -1789,7 +1789,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1237 MERGED 81409006",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-26",
       "parentEpic": "frame-rails-2307"
     },
     {
@@ -1807,7 +1807,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "PR #1020",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-26",
       "parentEpic": "frame-rails-2307"
     },
     {
@@ -1843,7 +1843,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "ADR-0017: доска=зеркало GitHub, движение=linear-snapshot@1+startedAt+yarn linear:movement-audit. Код PR #1084. Канон: TASKS_MANAGEMENT §5, LINEAR_TASKS_GEAR §6/7/10, LINEAR_GITHUB_SYNC. Остаётся: LGTM→ACCEPTED ADR; follow-up task:start→Started.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-26",
       "parentEpic": "frame-rails-2307"
     },
     {

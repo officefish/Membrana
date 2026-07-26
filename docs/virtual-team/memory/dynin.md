@@ -5,7 +5,13 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 33 из 230 кандидатов (бюджет <5000 токенов).
+Записей: 34 из 230 кандидатов (бюджет <5000 токенов).
+
+### 2026-07-26 · позиция · team-evening-feedback
+
+> Оценка артефактов: математического контента нет — день целиком процедурный/тулинговый. MAIN_DAY_ISSUE корректен в части «легальное нет» (прецедент #1219 учтён). Итоги дня: чистых функций не писалось. Секретный гейт получил версионность — применимо к хэшам, но не моя зона. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-26.md#reply-1`
 
 ### 2026-07-25 · голос · insight-cast-carrier-contract
 
@@ -199,8 +205,8 @@
 
 — источник: `docs/insights/insight-change-routing-office/REVIEW.md#vote`
 
-### 2026-07-22 · голос · insight-precedent-container
+### 2026-07-05 · голос · insight-comms-contour-topology
 
-> внедрять: да · этап: сейчас (register + валидатор + счётчик класса) · оценка: 7/10 — Здесь чистого DSP нет, но есть мой вторичный контур — скрипт `precedent:register` (`scripts/*.mjs`) и валидатор схемы. Рекомендую: детектор рецидива = чистая функция `countByClass(precedents[]) → Map<class, count>` плюс `recurrenceRate`, порог из Q1 (≤15%) как справочный, не […]
+> внедрять: Да, `S=0 / M≈0` доминирует · этап: Сейчас · оценка: 9/10
 
-— источник: `docs/insights/insight-precedent-container/REVIEW.md#vote`
+— источник: `docs/insights/insight-comms-contour-topology/REVIEW.md#vote`
