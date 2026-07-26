@@ -7,8 +7,9 @@
   "frozenDigest": "bce44160bdb52f5ad98143edc08371cfdaa594d166477f4b1bb236ed1e811654",
   "magistral": "procedures-core-fields",
   "swallow": {
-    "draftDigest": "e41271842159f362c1c6d8717ccf0857522aecc4e3fe8ea2331b5a66d5ac34d7",
-    "draftFile": "docs/comms/drafts/ally-swallow-morning-2026-07-26.md",
+    "draftDigest": "343d8f41d30feb37a554f96b03afe5f561a06a7f573230be12e14e821e67d53d",
+    "draftFile": "docs/comms/drafts/ally-swallow-evening-2026-07-26.md",
     "ownerAck": true
-  }
+  },
+  "day": "2026-07-26"
 }

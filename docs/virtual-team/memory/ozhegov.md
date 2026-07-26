@@ -5,7 +5,13 @@
 > `insight-persona-persistent-memory`; важность записи — человек-флаг в
 > `docs/virtual-team/memory/importance.json` (ключ = provenance).
 
-Записей: 33 из 230 кандидатов (бюджет <5000 токенов).
+Записей: 34 из 230 кандидатов (бюджет <5000 токенов).
+
+### 2026-07-26 · позиция · team-evening-feedback
+
+> Оценка артефактов: MAIN_DAY_ISSUE чётко отделил контракт ядра от реализации — зуб и легальное «нет» зафиксированы в CORE.md и CORPUS.md. DAILY_CODE_REVIEW (25.07) предупреждал о B2-гонках registry.json — архивные PR подтвердили сериализацию. Итоги дня: дом процедур легализован […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-26.md#reply-1`
 
 ### 2026-07-25 · голос · insight-cast-carrier-contract
 
@@ -199,8 +205,8 @@
 
 — источник: `docs/insights/insight-change-routing-office/REVIEW.md#vote`
 
-### 2026-07-22 · голос · insight-precedent-container
+### 2026-07-05 · голос · insight-comms-contour-topology
 
-> внедрять: да · этап: сейчас (со снимком-реестром и миграцией 4 файлов) · оценка: 8/10 — Схема ложится на GROUP_CONTAINERIZATION чисто: README-контракт + снимок-реестр с Meta + схема записи + кеш под gitignore — тот же скелет, что `docs/audit/git/` и `docs/audit/tasks/`. Настаиваю: реестр — **снимок** (regenerated), не рукописный источник; источник истины = сами […]
+> внедрять: Да, leaf + `check:boundaries` · этап: Сейчас · оценка: 9/10
 
-— источник: `docs/insights/insight-precedent-container/REVIEW.md#vote`
+— источник: `docs/insights/insight-comms-contour-topology/REVIEW.md#vote`
