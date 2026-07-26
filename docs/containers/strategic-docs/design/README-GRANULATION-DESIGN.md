@@ -1,13 +1,14 @@
 # Дизайн: грануляция корневого README
 
-> Phase: проектирование (до интеграции). Git = SoT; Affine strategy = surface позже.
+> Phase: проектирование (до интеграции). Git = SoT.
+> **Surface routing:** harness (`harness.mmbrn.tech`) = атлас **контейнеров** (не strategic-docs релизы); Affine (`strategy.mmbrn.tech`) = **Templates** (конструктор) + **Releases** (snapshots). См. [`SURFACE.md`](../SURFACE.md).
 > Реальный `README.md` в корне **не трогаем** — только черновики в этом контейнере.
 
 ## Завершение оборванной фразы владельца
 
 **«Спроектируй его шаблон в»** → `docs/containers/strategic-docs/templates/readme-main/template.json`
 
-Целевой релиз (после generate + office-валидации): `docs/containers/strategic-docs/releases/readme-main/` (read-only; в интеграции — зеркало или замена корневого `README.md`).
+Целевой релиз (после generate + office-валидации): `docs/containers/strategic-docs/releases/readme-main/` (read-only в git; публикация — Affine **Releases** workspace; в интеграции — зеркало или замена корневого `README.md`).
 
 ---
 
@@ -111,6 +112,21 @@ docs/containers/strategic-docs/
 
 ---
 
+## Surface routing (не schema)
+
+| Артефакт | Git (SoT) | Affine workspace | Affine namespace | Harness |
+|----------|-----------|------------------|------------------|---------|
+| Granule | `granules/<id>/` | **Templates** — doc `Granule · <id>` + metadata | `strategic-docs` | — |
+| Template | `templates/<id>/template.json` | **Templates** — doc `Template · <id>` | `strategic-docs` | — |
+| Release | `releases/<id>/` | **Releases** — `Release · <id>` + `Meta · <id>` | `strategic-docs` | — |
+| Container atlas | `docs/tooling-atlas/` | — | — | `tooling/containers.mdx` |
+
+Git `granules/` · `templates/` · `releases/` — типы артефактов, **не** папки в Affine. См. [`SURFACE.md`](../SURFACE.md).
+
+Поле `meta.surface` в `template.json` — куда **целится** собранный релиз (`github`, `strategy.mmbrn.tech`), не harness.
+
+---
+
 ## Schema шаблона (valid(template))
 
 Согласовано с `scripts/lib/strategic-docs-model.mjs` и INTERFACE_CONTRACT Phase 3.
@@ -134,6 +150,39 @@ docs/containers/strategic-docs/
   }
 }
 ```
+
+### Schema гранулы (v1.1 — metadata для Affine)
+
+Поля loader/model уже знают (`id`, `version`, `kind`, `bodyPath` / `fn` + `modulePath`). Для конструктора в Affine добавляем provenance (опционально до первого owner import):
+
+```json
+{
+  "id": "readme-strategic-context",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "…",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/readme-strategic-context/body.md"
+  },
+  "foundations": [
+    { "path": "docs/WHITE_PAPER.md", "role": "north-star" },
+    { "path": "docs/MEMBRANE_PLATFORM.md", "role": "platform" }
+  ],
+  "usedBy": [
+    { "templateId": "readme-main", "placeholder": "{{strategic_context}}", "pin": "1.0.0" }
+  ]
+}
+```
+
+| Поле | Обязательно | Назначение |
+|------|-------------|------------|
+| `id`, `version` | да | ключ `id@version` в index |
+| `kind` | да | `literal` \| `function` |
+| `bodyPath` / `fn`+`modulePath` | по kind | откуда рендерится тело |
+| `source.repoPath` | v1.1 | git-путь для Affine metadata block |
+| `foundations[]` | v1.1 | основания / provenance (нормативные docs) |
+| `usedBy[]` | v1.1 | обратная ссылка: какой template slot потребляет |
 
 **Правила valid:**
 

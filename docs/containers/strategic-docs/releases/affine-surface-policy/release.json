@@ -1,0 +1,49 @@
+{
+  "releaseId": "affine-surface-policy",
+  "version": "1.0.0",
+  "templateId": "affine-surface-policy",
+  "templateVersion": "1.0.0",
+  "title": "Affine Surface Policy",
+  "target": "SURFACE-POLICY.md",
+  "pins": {
+    "affine-surface-title-purpose": "1.0.0",
+    "affine-surface-workspaces": "1.0.0",
+    "affine-surface-namespaces": "1.0.0",
+    "affine-surface-document-types": "1.0.0",
+    "affine-surface-automation": "1.0.0"
+  },
+  "status": "release",
+  "bodyPath": "./README.md",
+  "generatedAt": "2026-07-26T03:00:12.914Z",
+  "trace": {
+    "templateId": "affine-surface-policy",
+    "templateVersion": "1.0.0",
+    "granules": {
+      "affine-surface-title-purpose@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "affine-surface-workspaces@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "affine-surface-namespaces@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "affine-surface-document-types@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "affine-surface-automation@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      }
+    }
+  }
+}

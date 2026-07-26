@@ -1,0 +1,39 @@
+{
+  "id": "affine-surface-policy",
+  "version": "1.0.0",
+  "target": "SURFACE-POLICY.md",
+  "meta": {
+    "description": "Formal Affine workspace/namespace policy for strategic-docs container",
+    "status": "validated",
+    "title": "Affine Surface Policy",
+    "surface": ["strategy.mmbrn.tech"]
+  },
+  "skeleton": "{{title_purpose}}\n\n{{workspaces}}\n\n{{namespaces}}\n\n{{document_types}}\n\n{{automation}}",
+  "slots": [
+    {
+      "granuleId": "affine-surface-title-purpose",
+      "pin": "1.0.0",
+      "placeholder": "{{title_purpose}}"
+    },
+    {
+      "granuleId": "affine-surface-workspaces",
+      "pin": "1.0.0",
+      "placeholder": "{{workspaces}}"
+    },
+    {
+      "granuleId": "affine-surface-namespaces",
+      "pin": "1.0.0",
+      "placeholder": "{{namespaces}}"
+    },
+    {
+      "granuleId": "affine-surface-document-types",
+      "pin": "1.0.0",
+      "placeholder": "{{document_types}}"
+    },
+    {
+      "granuleId": "affine-surface-automation",
+      "pin": "1.0.0",
+      "placeholder": "{{automation}}"
+    }
+  ]
+}

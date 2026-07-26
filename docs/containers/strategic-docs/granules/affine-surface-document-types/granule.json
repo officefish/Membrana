@@ -1,0 +1,9 @@
+{
+  "id": "affine-surface-document-types",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Типы документов: Granule · / Template · / Release · / Meta ·",
+  "foundations": ["docs/containers/strategic-docs/SURFACE.md"],
+  "usedBy": ["affine-surface-policy"]
+}

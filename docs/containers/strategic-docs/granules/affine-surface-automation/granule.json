@@ -1,0 +1,12 @@
+{
+  "id": "affine-surface-automation",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Generate + Affine import CLI и env vars (кратко)",
+  "foundations": [
+    "docs/containers/strategic-docs/SURFACE.md",
+    "deploy/affine/.env.example"
+  ],
+  "usedBy": ["affine-surface-policy"]
+}

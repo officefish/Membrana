@@ -21,6 +21,7 @@ describe('readme-main granules', () => {
 
     // Контейнер общий: рядом живут гранулы других шаблонов (tasks-readme, #1201),
     // поэтому считаем не все гранулы, а покрытие слотов readme-main.
+    assert.ok(granules.length >= 12, `expected at least 12 granules, got ${granules.length}`);
     assert.equal(template.slots.length, 12);
     for (const slot of template.slots) {
       assert.ok(index.get(`${slot.granuleId}@${slot.pin}`), `нет гранулы ${slot.granuleId}@${slot.pin}`);
@@ -42,6 +43,34 @@ describe('readme-main granules', () => {
     assert.ok(result.body.includes('## Архитектура'));
     assert.ok(result.body.includes('### Фоновые серверы'));
     assert.ok(result.body.includes('## Структура пакетов'));
+  });
+});
+
+describe('affine-surface-policy granules', () => {
+  it('valid(template): all 5 slots resolve @1.0.0', async () => {
+    const template = await loadTemplate('affine-surface-policy');
+    const granules = await loadGranules(granulesDir);
+    const index = buildGranuleIndex(granules);
+
+    assert.equal(template.slots.length, 5);
+
+    const result = valid(template, index);
+    assert.equal(result.ok, true, JSON.stringify(result.reasons));
+  });
+
+  it('integratedGenerate(affine-surface-policy) → release', async () => {
+    const template = await loadTemplate('affine-surface-policy');
+    const granules = await loadGranules(granulesDir);
+    const result = await integratedGenerate(template, granules, {
+      renderBody: (parts) => parts.join('\n\n'),
+    });
+
+    assert.equal(result.route, 'release');
+    assert.ok(result.body.includes('# Affine Surface Policy'));
+    assert.ok(result.body.includes('## Workspaces'));
+    assert.ok(result.body.includes('## Namespaces'));
+    assert.ok(result.body.includes('## Document types'));
+    assert.ok(result.body.includes('## Automation'));
   });
 });
 

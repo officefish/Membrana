@@ -1,0 +1,9 @@
+{
+  "id": "affine-surface-workspaces",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Два workspace Affine: Templates (конструктор) и Releases (snapshots)",
+  "foundations": ["docs/containers/strategic-docs/SURFACE.md"],
+  "usedBy": ["affine-surface-policy"]
+}
