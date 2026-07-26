@@ -115,14 +115,23 @@
 
 ## 5. Этап 3–4: работа в Linear
 
-Linear — единственное место, где задача:
+Linear — место, где задача:
 
 - декомпозируется на подзадачи,
 - получает исполнителя и роль виртуальной команды
   (Teamlead / Структурщик / Математик / Музыкант / Верстальщик
   — см. `VIRTUAL_TEAM_PROMPT.md`),
-- переходит по статусам (Backlog → To Do → In Progress → Review → Done),
 - обсуждается внутренне (комментарии в Linear).
+
+**UI-доска Linear = зеркало GitHub Issue** (create/close → Backlog/Done), а не
+WIP-доска труда (ADR-0017, #1000). Интеграция GitHub↔Linear часто даёт прыжок
+Backlog→Done без «In Progress» — это ожидаемо для зеркала, не дефект archive.
+
+**Слой движения** — офлайн `linear-snapshot@1` + поле `startedAt` +
+`yarn linear:movement-audit` (см. [`LINEAR_GITHUB_SYNC_REGULATION.md`](./prompts/LINEAR_GITHUB_SYNC_REGULATION.md),
+[`LINEAR_SNAPSHOT_CONTRACT.md`](./tasks/LINEAR_SNAPSHOT_CONTRACT.md)). Колонки
+Linear по-прежнему можно вести вручную (Backlog → In Progress → Done), но
+гейты и отчёты опираются на снимок, не на UI.
 
 GitHub Issue в это время **тихая**. Никаких параллельных дискуссий.
 
