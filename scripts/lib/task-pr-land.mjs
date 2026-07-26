@@ -95,6 +95,36 @@ export function readPrHeadBranch(run, prNumber = null) {
  *   wait?: boolean,
  * }} opts
  */
+/** Прямой node-вход `pr:ship` — минуя yarn (см. `shipMergeStep`). */
+export const PR_SHIP_ENTRY = 'scripts/pr-ship.mjs';
+
+/**
+ * Шаг мерджа без участия yarn.
+ *
+ * 26.07 (#1261) этот шаг дважды не выполнился на Windows: сначала `spawnSync yarn ENOENT`
+ * (PR #1256), затем — после «фикса» на `yarn.cmd` — `spawnSync yarn.cmd EINVAL` (PR #1269).
+ * Причина второго: Node с 18.20/20.12 отказывается запускать `.cmd`/`.bat` без `shell:true`
+ * (защита от CVE-2024-27980). Правильный вывод: не чинить имя шима, а не звать его —
+ * `pr:ship` это обычный node-скрипт, и запуск через `process.execPath` не зависит ни от
+ * платформы, ни от shell, ни от PATH.
+ *
+ * @param {{ wait?: boolean, execute?: boolean, nodeBin?: string }} [opts]
+ * @returns {{ label: string, cmd: string, args: string[] }}
+ */
+export function shipMergeStep(opts = {}) {
+  const wait = opts.wait !== false;
+  return {
+    label: 'ship-merge',
+    cmd: opts.nodeBin ?? process.execPath,
+    args: [
+      PR_SHIP_ENTRY,
+      '--merge-only',
+      ...(wait ? [] : ['--no-wait']),
+      ...(opts.execute ? ['--execute'] : []),
+    ],
+  };
+}
+
 export function planPrLand(opts) {
   const base = opts.base ?? 'main';
   const branch = opts.branch ?? opts.currentBranch ?? null;
@@ -109,11 +139,7 @@ export function planPrLand(opts) {
       note: 'без -m: commit-msg хук пропускает Merge branch …; union-драйвер сливает registry',
     },
     { label: 'push', cmd: 'git', args: ['push'] },
-    {
-      label: 'ship-merge',
-      cmd: 'yarn',
-      args: ['pr:ship', '--merge-only', ...(wait ? [] : ['--no-wait']), ...(opts.execute ? ['--execute'] : [])],
-    },
+    shipMergeStep({ wait, execute: opts.execute, nodeBin: opts.nodeBin }),
   ];
   return {
     prNumber: opts.prNumber,

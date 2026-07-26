@@ -10,6 +10,9 @@ import {
   readCheckpoint,
   writeCheckpoint,
   clearCheckpoint,
+  classifyGhFailure,
+  ghRetryBudget,
+  ghBackoffMs,
 } from './pr-wait.mjs';
 
 test('пустой rollup — none, не green (корень #643: no checks ≠ зелено)', () => {
@@ -124,4 +127,45 @@ test('#724: checkpoint write/read/clear для --resume', () => {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+// --- #1261: транзиент сети ≠ «нет PR» ------------------------------------------------------
+// Эпизоды 26.07: PR #1243 и #1253 — три подряд ETIMEDOUT/TLS-таймаута убивали ожидание,
+// merge НЕ выполнялся, и спасало только ручное --merge-only.
+
+test('classifyGhFailure: сетевые транзиенты отделены от отсутствия PR и auth', () => {
+  assert.equal(classifyGhFailure('spawnSync C:\Windows\system32\cmd.exe ETIMEDOUT'), 'network');
+  assert.equal(
+    classifyGhFailure('Post "https://api.github.com/graphql": net/http: TLS handshake timeout'),
+    'network',
+  );
+  assert.equal(classifyGhFailure('error: ECONNRESET'), 'network');
+  assert.equal(classifyGhFailure('HTTP 503 Bad Gateway'), 'network');
+  assert.equal(classifyGhFailure('no pull requests found for branch "feat/x"'), 'notfound');
+  assert.equal(classifyGhFailure('Could not resolve to a PullRequest with the number of 999'), 'notfound');
+  assert.equal(classifyGhFailure('gh auth login required'), 'auth');
+  assert.equal(classifyGhFailure('HTTP 401: Bad credentials'), 'auth');
+  assert.equal(classifyGhFailure('Command failed: gh pr view 1253 --json number'), 'unknown');
+});
+
+test('classifyGhFailure смотрит ВЕСЬ текст: причина лежит в stderr, а не в первой строке', () => {
+  const multi = 'Command failed: gh pr view 1253 --json state\nerror connecting: ETIMEDOUT';
+  assert.equal(classifyGhFailure(multi), 'network');
+  // Именно так выглядел лог 26.07 — печаталась только первая строка, класс был не виден.
+  assert.equal(classifyGhFailure(multi.split('\n')[0]), 'unknown');
+});
+
+test('ghRetryBudget: сеть терпим долго, «нет PR / нет auth» — сразу', () => {
+  assert.ok(ghRetryBudget('network') >= 8, 'три попытки при таймаутах — корень #1243');
+  assert.equal(ghRetryBudget('notfound'), 1);
+  assert.equal(ghRetryBudget('auth'), 1);
+  assert.ok(ghRetryBudget('unknown') > 1 && ghRetryBudget('unknown') < ghRetryBudget('network'));
+});
+
+test('ghBackoffMs: экспонента от интервала с потолком, первая пауза = интервал', () => {
+  assert.equal(ghBackoffMs(1, 10), 10_000);
+  assert.equal(ghBackoffMs(2, 10), 20_000);
+  assert.equal(ghBackoffMs(3, 10), 40_000);
+  assert.equal(ghBackoffMs(99, 10), 120_000, 'потолок обязателен, иначе ожидание уходит в часы');
+  assert.equal(ghBackoffMs(1, 0), 1000, 'нулевой интервал не должен давать нулевую паузу');
 });

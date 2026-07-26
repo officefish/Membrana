@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import {
   assertPrMergeableForShip,
+  autoMergeDecision,
   ciWaitDisposition,
   extractIssueMentions,
   isBaseHeldElsewhere,
@@ -363,4 +364,65 @@ test('otherWorktreeBranches: git недоступен → пусто, а не п
     throw new Error('git not found');
   });
   assert.deepEqual(branches, []);
+});
+
+// --- #1261: ship не врёт и не проигрывает гонку --------------------------------------------
+
+test('--auto: слияние отдаётся серверу, локальные ci-wait/verify не планируются', () => {
+  const { steps, skippedSync } = planMergeTail({ auto: true, branch: 'feat/x' });
+  const labels = steps.map((s) => s.label);
+  assert.deepEqual(labels, ['merge-auto']);
+  assert.deepEqual(steps[0].args, ['pr', 'merge', '--squash', '--auto']);
+  assert.match(skippedSync, /сервер/);
+  // Гонка 26.07: PR #1248/#1253/#1256 становились CONFLICTING уже ПОСЛЕ зелёного CI.
+  assert.ok(!labels.includes('ci-wait'), 'локальное ожидание — то самое окно, в котором уезжает base');
+});
+
+test('--auto не отменяет обычный путь: без флага хвост прежний', () => {
+  const labels = planMergeTail({ branch: 'feat/x' }).steps.map((s) => s.label);
+  assert.deepEqual(labels.slice(0, 4), ['ci-wait', 'merge', 'verify', 'branch-cleanup']);
+});
+
+test('sync-шаги несут guard base-free — предикат перепроверяется в момент исполнения', () => {
+  const { steps } = planMergeTail({ branch: 'feat/x', worktreeBranches: [] });
+  const guarded = steps.filter((s) => s.guard === 'base-free').map((s) => s.label);
+  // План строится ДО ci-wait (минуты), за это время сосед может занять base — 26.07 так и
+  // случилось: PR #1256 смёржен, ветка снесена, ship упал на checkout main.
+  assert.deepEqual(guarded, ['sync-checkout', 'sync-ff']);
+});
+
+test('base уже занят на этапе плана — ff-sync не планируется вовсе (прежнее поведение)', () => {
+  const { steps, skippedSync } = planMergeTail({ branch: 'feat/x', worktreeBranches: ['main'] });
+  const labels = steps.map((s) => s.label);
+  assert.ok(!labels.includes('sync-checkout'));
+  assert.ok(labels.includes('sync-fetch'), 'origin/base обновить всё равно надо');
+  assert.match(skippedSync, /держит другой worktree/);
+});
+
+test('planPrShip прокидывает --auto в хвост и в merge-only', () => {
+  const full = planPrShip({ type: 'feat', scope: 'x', message: 'm', auto: true, commit: false, currentBranch: 'feat/x' });
+  assert.ok(full.steps.some((s) => s.label === 'merge-auto'));
+  const only = planPrShip({ mergeOnly: true, auto: true, currentBranch: 'feat/x', type: 'feat', message: 'm' });
+  assert.ok(only.steps.some((s) => s.label === 'merge-auto'));
+  assert.ok(!only.steps.some((s) => s.label === 'ci-wait'));
+});
+
+test('--auto без разрешения репозитория откатывается на ожидание, а не вешает PR', () => {
+  // Живой случай 26.07: первый прогон --auto дал «Auto merge is not allowed for this
+  // repository» и оставил PR #1269 открытым. allow_auto_merge — настройка владельца.
+  const denied = autoMergeDecision({ requested: true, allowed: false });
+  assert.equal(denied.mode, 'wait');
+  assert.match(denied.note, /allow_auto_merge=false/);
+  assert.match(denied.note, /Allow auto-merge/, 'сообщение должно говорить, ЧТО включить');
+
+  assert.equal(autoMergeDecision({ requested: true, allowed: true }).mode, 'auto');
+  assert.equal(autoMergeDecision({ requested: true, allowed: true }).note, null);
+
+  // gh недоступен — не гадаем, идём безопасным путём и говорим об этом.
+  const unknown = autoMergeDecision({ requested: true, allowed: null });
+  assert.equal(unknown.mode, 'wait');
+  assert.match(unknown.note, /не удалось выяснить/);
+
+  // Без флага решение молчит.
+  assert.deepEqual(autoMergeDecision({}), { mode: 'wait', note: null });
 });
