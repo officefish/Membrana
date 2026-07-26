@@ -11,7 +11,7 @@
     "domain": [
       {
         "name": "generate",
-        "worksOn": "docs/containers/strategic-docs/templates"
+        "worksOn": "docs/containers/strategic-docs"
       },
       {
         "name": "publish",
@@ -23,7 +23,7 @@
       },
       {
         "name": "publishReleases",
-        "worksOn": "docs/containers/strategic-docs/releases"
+        "worksOn": "docs/containers/strategic-docs"
       },
       {
         "name": "discoverWorkspaces",
