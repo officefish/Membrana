@@ -8,6 +8,7 @@ import {
   prTouchesRegistry,
   registryMergeLandHint,
   REGISTRY_JSON,
+  yarnBin,
 } from './lib/task-pr-land.mjs';
 
 test('prTouchesRegistry: registry.json и README', () => {
@@ -74,4 +75,24 @@ test('parsePrLandArgs', () => {
 
 test(`живой прецедент #1026: путь ${REGISTRY_JSON} в списке файлов`, () => {
   assert.ok(prTouchesRegistry(['docs/tasks/registry.json', 'package.json']));
+});
+
+// --- #1261: последний шаг не должен падать на Windows ---------------------------------------
+
+test('yarnBin: на win32 нужен .cmd — spawnSync без shell иначе даёт ENOENT', () => {
+  assert.equal(yarnBin('win32'), 'yarn.cmd');
+  assert.equal(yarnBin('linux'), 'yarn');
+  assert.equal(yarnBin('darwin'), 'yarn');
+});
+
+test('planPrLand: шаг ship-merge зовёт бинарь по платформе, а не литерал yarn', () => {
+  // Эпизод 26.07: PR #1256 — базу слил, запушил, а мердж не выполнился:
+  // «spawnSync yarn ENOENT». Работа встала на последнем шаге штатного пути.
+  const win = planPrLand({ prNumber: 1256, currentBranch: 'chore/x', execute: true, platform: 'win32' });
+  const ship = win.steps.find((s) => s.label === 'ship-merge');
+  assert.equal(ship.cmd, 'yarn.cmd');
+  assert.deepEqual(ship.args, ['pr:ship', '--merge-only', '--execute']);
+
+  const nix = planPrLand({ prNumber: 1256, currentBranch: 'chore/x', execute: true, platform: 'linux' });
+  assert.equal(nix.steps.find((s) => s.label === 'ship-merge').cmd, 'yarn');
 });

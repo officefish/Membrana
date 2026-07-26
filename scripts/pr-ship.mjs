@@ -15,6 +15,12 @@
  * `--branch`: идемпотентен — если уже на этой ветке, шаг пропускается; если ветка
  * есть локально — `checkout`, иначе `checkout -b` (фикс 19.07: already exists).
  *   yarn pr:ship ... --no-wait            # НЕ ждать зелёного CI перед merge (осознанный обход)
+ *   yarn pr:ship ... --auto               # серверное автослияние: GitHub сольёт по зелёному
+ *
+ * `--auto` (#1261) — против гонки с base на плотном трафике: локальный ci-wait длится
+ * минуты, за это время общая ветка уезжает и PR становится CONFLICTING уже ПОСЛЕ зелёного
+ * (26.07: три PR подряд). Сервер такую гонку не проигрывает. Цена: факт мерджа
+ * подтверждается не в этом прогоне — смотреть состоянием (`gh pr view N --json state`).
  *
  * Merge (#653): перед merge — ci-wait (scripts/pr-wait.mjs, четыре состояния CI);
  * merge БЕЗ --delete-branch (чекаут base падает, когда base держит соседний worktree);
@@ -162,10 +168,19 @@ export function listLocalBranches(run = execFileSync) {
  * @returns {{steps:{label:string,cmd:string,args:string[],optional?:boolean}[],skippedSync?:string}}
  */
 export function planMergeTail(opts = {}) {
-  const { base = 'main', wait = true, branch, currentBranch, worktreeBranches } = opts;
-  /** @type {{label:string,cmd:string,args:string[],optional?:boolean}[]} */
+  const { base = 'main', wait = true, branch, currentBranch, worktreeBranches, auto = false } = opts;
+  /** @type {{label:string,cmd:string,args:string[],optional?:boolean,guard?:string}[]} */
   const steps = [];
   let skippedSync;
+  // --auto (#1261): серверное автослияние. Локальное ожидание проигрывает гонку с base на
+  // плотном трафике — CI идёт минуты, за это время общая ветка уезжает и PR становится
+  // CONFLICTING уже ПОСЛЕ зелёного (26.07: PR #1248, #1253, #1256 подряд). GitHub сольёт
+  // сам, как только проверки позеленеют, поэтому ci-wait/verify локально не нужны:
+  // подтверждение факта мерджа переносится на следующий заход (норма — смотреть состояние).
+  if (auto) {
+    steps.push({ label: 'merge-auto', cmd: 'gh', args: ['pr', 'merge', '--squash', '--auto'] });
+    return { steps, skippedSync: 'хвост после merge пропущен: слияние делает сервер по зелёному (--auto)' };
+  }
   // #653 п.2: merge только после зелёного CI — pr-wait (#643) на PR текущей ветки
   // различает none/running/green/red; red и none-при-конфликте роняют флоу ДО merge.
   // --no-wait — осознанный обход (например, docs-only при выключенном CI).
@@ -192,9 +207,13 @@ export function planMergeTail(opts = {}) {
     steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
     skippedSync = `ff-sync пропущен: ветку ${base} держит другой worktree (параллельная сессия)`;
   } else {
-    steps.push({ label: 'sync-checkout', cmd: 'git', args: ['checkout', base] });
+    // guard:'base-free' — предикат ПЕРЕПРОВЕРЯЕТСЯ перед исполнением шага, а не только
+    // здесь. План строится один раз, а между планом и хвостом стоит ci-wait на минуты:
+    // 26.07 (#1261) соседняя сессия заняла main ЗА ЭТО ВРЕМЯ, и уже успешный ship
+    // (PR #1256 смёржен, ветка снесена) свалился ложным красным на checkout.
+    steps.push({ label: 'sync-checkout', cmd: 'git', args: ['checkout', base], guard: 'base-free' });
     steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
-    steps.push({ label: 'sync-ff', cmd: 'git', args: ['merge', '--ff-only', `origin/${base}`] });
+    steps.push({ label: 'sync-ff', cmd: 'git', args: ['merge', '--ff-only', `origin/${base}`], guard: 'base-free' });
   }
   return { steps, skippedSync };
 }
@@ -204,7 +223,7 @@ export function planMergeTail(opts = {}) {
  * @returns {{title:string,commitBody:string,steps:{label:string,cmd:string,args:string[]}[],skippedSync?:string}}
  */
 export function planPrShip(opts) {
-  const { type, scope, message, issue, branch, base = 'main', merge = true, commit = true, wait = true, mergeOnly = false } = opts;
+  const { type, scope, message, issue, branch, base = 'main', merge = true, commit = true, wait = true, mergeOnly = false, auto = false } = opts;
 
   // --merge-only (#700): PR уже открыт — мёржим его безопасным хвостом, без
   // branch/commit/push/pr-create. Закрывает дыру: без этого режима «смёржить уже
@@ -213,7 +232,7 @@ export function planPrShip(opts) {
   if (mergeOnly) {
     if (branch) throw new Error('pr:ship: --merge-only несовместим с --branch (PR уже открыт на текущей ветке)');
     if (!merge) throw new Error('pr:ship: --merge-only и --no-merge взаимоисключают друг друга');
-    const { steps, skippedSync } = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches });
+    const { steps, skippedSync } = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto });
     return { title: '', commitBody: '', steps, skippedSync };
   }
 
@@ -257,7 +276,7 @@ export function planPrShip(opts) {
   });
   let skippedSync;
   if (merge) {
-    const tail = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches });
+    const tail = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto });
     steps.push(...tail.steps);
     skippedSync = tail.skippedSync;
   }
@@ -279,6 +298,7 @@ function parseArgs(argv) {
     else if (a === '--no-commit') o.commit = false;
     else if (a === '--no-wait') o.wait = false;
     else if (a === '--merge-only') o.mergeOnly = true;
+    else if (a === '--auto') o.auto = true;
     else if (a === '--allow-mention') o.allowMentionWithoutClose = true;
     else if (a === '--execute') o.execute = true;
   }
@@ -386,6 +406,15 @@ function main() {
     const printable = `${s.cmd} ${args.map((a) => (a.includes('\n') || a.includes(' ') ? JSON.stringify(a) : a)).join(' ')}`;
     if (!opts.execute) {
       console.log(`  · ${s.label}: ${printable.slice(0, 200)}`);
+      continue;
+    }
+    // Гард времени исполнения: между планом и этим шагом прошли минуты ci-wait, и base
+    // мог уйти к соседнему дереву. Плановый расчёт остаётся (он даёт честный dry-run),
+    // но решение принимается по состоянию СЕЙЧАС — иначе ложный красный после мерджа.
+    if (s.guard === 'base-free' && isBaseHeldElsewhere(opts.base ?? 'main', otherWorktreeBranches())) {
+      console.log(
+        `  ⤼ ${s.label} пропущен: ветку ${opts.base ?? 'main'} занял другой worktree, пока шёл CI (параллельная сессия — норма)`,
+      );
       continue;
     }
     console.log(`  → ${s.label}`);

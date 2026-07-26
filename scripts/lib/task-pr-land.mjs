@@ -95,6 +95,18 @@ export function readPrHeadBranch(run, prNumber = null) {
  *   wait?: boolean,
  * }} opts
  */
+/**
+ * Бинарь yarn для `execFileSync` (без shell). На Windows `yarn` — это `.cmd`-шим, и
+ * `spawnSync('yarn')` падает `ENOENT`: 26.07 (#1261) `task:pr-land` на PR #1256 слил базу
+ * и запушил, а последний шаг мерджа не выполнился — работа встала на ровном месте.
+ *
+ * @param {NodeJS.Platform} [platform]
+ * @returns {'yarn'|'yarn.cmd'}
+ */
+export function yarnBin(platform = process.platform) {
+  return platform === 'win32' ? 'yarn.cmd' : 'yarn';
+}
+
 export function planPrLand(opts) {
   const base = opts.base ?? 'main';
   const branch = opts.branch ?? opts.currentBranch ?? null;
@@ -111,7 +123,7 @@ export function planPrLand(opts) {
     { label: 'push', cmd: 'git', args: ['push'] },
     {
       label: 'ship-merge',
-      cmd: 'yarn',
+      cmd: yarnBin(opts.platform ?? process.platform),
       args: ['pr:ship', '--merge-only', ...(wait ? [] : ['--no-wait']), ...(opts.execute ? ['--execute'] : [])],
     },
   ];
