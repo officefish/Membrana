@@ -116,9 +116,9 @@ docs/containers/strategic-docs/
 
 | Артефакт | Git (SoT) | Affine workspace | Affine namespace | Harness |
 |----------|-----------|------------------|------------------|---------|
-| Granule | `granules/<id>/` | **Templates** — doc `Granule · <id>` + metadata | `strategic-docs` | — |
-| Template | `templates/<id>/template.json` | **Templates** — doc `Template · <id>` | `strategic-docs` | — |
-| Release | `releases/<id>/` | **Releases** — `Release · <id>` + `Meta · <id>` | `strategic-docs` | — |
+| Granule | `granules/<id>/` | **Templates** — `Granule · <id>` + `Meta · Granule · <id>` | `strategic-docs` | — |
+| Template | `templates/<id>/template.json` | **Templates** — `Template · <id>` + `Meta · Template · <id>` | `strategic-docs` | — |
+| Release | `releases/<id>/` | **Releases** — `Release · <id>` + `Meta · Release · <id>` | `strategic-docs` | — |
 | Container atlas | `docs/tooling-atlas/` | — | — | `tooling/containers.mdx` |
 
 Git `granules/` · `templates/` · `releases/` — типы артефактов, **не** папки в Affine. См. [`SURFACE.md`](../SURFACE.md).

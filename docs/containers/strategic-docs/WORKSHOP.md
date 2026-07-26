@@ -30,21 +30,25 @@ yarn strategic-docs:tools --doc publish
 yarn strategic-docs:generate --template readme-main
 
 # 3) Публикация в Affine
-yarn strategic-docs:publish --dry-run --template readme-main
-yarn strategic-docs:publish --template readme-main              # bundle + UI Import
-yarn strategic-docs:publish --push --template readme-main       # affine-cli (W3)
+# --template без --target → только Releases (не заливает конструктор)
+yarn strategic-docs:publish --dry-run --template readme-main --skip-generate
+yarn strategic-docs:publish --push --template readme-main --skip-generate
+
+# Конструктор (Templates workspace)
+yarn strategic-docs:publish --push --target templates --skip-generate
 ```
 
-Workspace **Templates** — конструктор (granules + templates).  
-Workspace **Releases** — snapshots (`Release ·` + `Meta ·`).  
-Namespace в Affine = **id контейнера** (`strategic-docs`), не git-папки `granules/`.
+Workspace **Templates** — конструктор (`Granule ·` / `Template ·` + linked `Meta · Granule ·` / `Meta · Template ·`).  
+Workspace **Releases** — snapshots (`Release ·` + `Meta · Release ·`).  
+Namespace = **id контейнера** (`strategic-docs`): UI-папка + tag при `--push` (affine-cli не умеет folders).
 
 ## Env
 
 См. [`deploy/affine/.env.example`](../../../deploy/affine/.env.example):
 
-- `AFFINE_WORKSPACE_TEMPLATES_ID`
-- `AFFINE_WORKSPACE_RELEASES_ID`
+- `AFFINE_WORKSPACE_TEMPLATES_ID` — UUID workspace **Templates**
+- `AFFINE_WORKSPACE_RELEASES_ID` — UUID workspace **Releases**
+- `AFFINE_WORKSPACE_ID` — только fallback; **не** перекрывает два выше
 
 ```bash
 yarn affine:workspace:list

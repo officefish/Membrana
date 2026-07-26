@@ -44,6 +44,7 @@ export function parsePublishArgs(argv) {
  *   skipGenerate: boolean,
  *   template?: string,
  *   target: PublishTarget,
+ *   targetExplicit: boolean,
  *   namespace: string,
  * }} */
   const out = {
@@ -51,6 +52,7 @@ export function parsePublishArgs(argv) {
     push: false,
     skipGenerate: false,
     target: 'all',
+    targetExplicit: false,
     namespace: DEFAULT_CONTAINER_NAMESPACE,
   };
 
@@ -68,16 +70,25 @@ export function parsePublishArgs(argv) {
         throw new Error(`--target: expected all|templates|releases, got ${t}`);
       }
       out.target = t;
+      out.targetExplicit = true;
     } else if (a.startsWith('--target=')) {
       const t = a.slice('--target='.length);
       if (t !== 'all' && t !== 'templates' && t !== 'releases') {
         throw new Error(`--target: expected all|templates|releases, got ${t}`);
       }
       out.target = t;
+      out.targetExplicit = true;
     } else if (a === '--namespace') out.namespace = argv[++i];
     else if (a.startsWith('--namespace=')) out.namespace = a.slice('--namespace='.length);
     else throw new Error(`Unknown arg: ${a}`);
   }
+
+  // Publishing a named template without --target means "this release", not "all
+  // granules+templates into whatever workspace". Prevents Templates→Releases mixups.
+  if (out.template && !out.targetExplicit) {
+    out.target = 'releases';
+  }
+
   return out;
 }
 
@@ -137,6 +148,9 @@ async function exportTarget(target, opts, releaseTemplate) {
     authError = err instanceof Error ? err.message : String(err);
   }
 
+  const envKey =
+    target === 'templates' ? 'AFFINE_WORKSPACE_TEMPLATES_ID' : 'AFFINE_WORKSPACE_RELEASES_ID';
+
   if (opts.dryRun && !opts.push) {
     return {
       ok: true,
@@ -146,41 +160,50 @@ async function exportTarget(target, opts, releaseTemplate) {
       user,
       authError,
       workspaceId: workspaceId ?? null,
+      workspaceEnv: envKey,
       workspaceMissing: !workspaceId,
       entryCount: entries.length,
       entries: entries.map((e) => ({
         title: e.title,
         namespace: e.namespace,
         kind: e.kind,
+        pairRole: e.pairRole,
+        pairTitle: e.pairTitle,
         sourcePath: e.sourcePath,
       })),
       ownerUiSteps: ownerUiSteps(base, workspaceId, entries),
       pushAvailable: Boolean(resolveAffineCliPath()),
-      limitation: opts.push
-        ? null
-        : 'v1 default: bundle + UI Import. Use --push with affine-cli installed.',
+      limitation:
+        'Plan only. Use --push for affine-cli upsert (pass --dry-run --push to probe without write).',
     };
   }
 
   if (!workspaceId) {
     throw new Error(
-      `Missing AFFINE_WORKSPACE_${target === 'templates' ? 'TEMPLATES' : 'RELEASES'}_ID`,
+      `Missing ${envKey} (target=${target}). Set it in root .env — do not point AFFINE_WORKSPACE_ID at Releases for Templates. Run yarn affine:workspace:list`,
     );
   }
 
   const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const outDir = join(repoRoot, 'scripts/cache/affine-import', `publish-${target}-${stamp}`);
+  const outDir = join(
+    repoRoot,
+    'scripts/cache/affine-import',
+    `publish-${target}${opts.dryRun ? '-dry' : ''}-${stamp}`,
+  );
   const { manifest } = writeImportBundle(entries, outDir);
 
   /** @type {object} */
   const result = {
     ok: true,
-    status: opts.push ? 'push' : 'bundle-export',
+    status: opts.push ? (opts.dryRun ? 'push-dry-run' : 'push') : 'bundle-export',
+    dryRun: opts.dryRun,
     target,
     base,
     user,
     workspaceId,
+    workspaceEnv: envKey,
     workspaceUrl: `${base}/workspace/${workspaceId}`,
+    namespace: opts.namespace,
     bundleDir: outDir,
     entryCount: manifest.length,
     manifest: join(outDir, 'manifest.json'),
@@ -195,13 +218,17 @@ async function exportTarget(target, opts, releaseTemplate) {
       );
     }
     console.error(
-      `[strategic-docs:publish] pushing ${entries.length} doc(s) → ${target} workspace ${workspaceId}`,
+      `[strategic-docs:publish] ${opts.dryRun ? 'dry-run push' : 'pushing'} ${entries.length} doc(s) → ${target} via ${envKey}=${workspaceId} (namespace tag: ${opts.namespace})`,
     );
-    const push = await pushImportBundle({ bundleDir: outDir, workspaceId, dryRun: false });
+    const push = await pushImportBundle({
+      bundleDir: outDir,
+      workspaceId,
+      dryRun: opts.dryRun,
+    });
     result.push = push;
     result.ok = push.ok;
     if (!push.ok) {
-      result.status = 'push-failed-bundle-ready';
+      result.status = opts.dryRun ? 'push-dry-run-failed' : 'push-failed-bundle-ready';
       result.pushFailed = true;
       result.socketIoBlocked = push.socketIoBlocked === true;
       if (result.socketIoBlocked) {
@@ -254,17 +281,24 @@ function usage() {
   console.log(`Usage: yarn strategic-docs:publish [options]
 
 Options:
-  --template <id>           Run generate before publish (unless --skip-generate)
-  --target all|templates|releases   Default: all
-  --dry-run                 Plan only (add --push to probe affine-cli)
-  --push                    Push via affine-cli (requires install on PATH)
+  --template <id>           Run generate before publish (unless --skip-generate).
+                            Without --target, implies --target releases.
+  --target all|templates|releases   Default: all (or releases if --template set)
+  --dry-run                 Plan only; with --push probes affine-cli without write
+  --push                    Push via affine-cli (upsert by title + namespace tag)
   --skip-generate           Skip generate step
-  --namespace <id>          Affine namespace (default: strategic-docs)
+  --namespace <id>          Namespace tag / UI folder (default: strategic-docs)
+
+Workspaces (root .env):
+  AFFINE_WORKSPACE_TEMPLATES_ID  → granules + templates (content + meta)
+  AFFINE_WORKSPACE_RELEASES_ID   → releases (content + meta)
+  AFFINE_WORKSPACE_ID            → fallback only (does NOT override the two above)
 
 Examples:
   yarn strategic-docs:publish --dry-run --template readme-main
   yarn strategic-docs:publish --push --target templates --skip-generate
-  yarn strategic-docs:publish --push --template affine-surface-policy
+  yarn strategic-docs:publish --push --target releases --template affine-surface-policy --skip-generate
+  yarn strategic-docs:publish --push --dry-run --target templates --skip-generate
 
 See docs/containers/strategic-docs/PUBLISH.md`);
 }

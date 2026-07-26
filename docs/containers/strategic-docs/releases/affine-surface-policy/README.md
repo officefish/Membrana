@@ -27,26 +27,32 @@
 |---------------|------------------|
 | `docs/containers/strategic-docs/` | `strategic-docs` |
 
-Документы контейнера лежат **flat** под `strategic-docs/` — **тип** задаётся **title + metadata**, не Affine-папкой.
+Документы контейнера живут в namespace `strategic-docs/` (UI-папка).  
+`--push` дополнительно вешает **tag** с тем же именем — у affine-cli нет folder/collection API.
+
+Тип документа задаётся **title** (content + meta pair), не подпапкой `granules/` / `templates/`.
 
 Паттерн: [`GROUP_CONTAINERIZATION`](../../../../patterns/GROUP_CONTAINERIZATION.md) — один git-контейнер → один namespace.
 
 
 ## Document types
 
-Префикс title + metadata определяют kind:
+Каждый артефакт = **две linked** страницы: **content** + **meta**.  
+Тип задаётся title-префиксом (не Affine-папкой).
 
-| Type | Title prefix | Git source | Workspace |
-|------|--------------|------------|-----------|
-| Granule | `Granule · <id>` | `granules/<id>/` | Templates |
-| Template | `Template · <id>` | `templates/<id>/template.json` | Templates |
-| Release | `Release · <id>` | `releases/<id>/README.md` | Releases |
-| Meta | `Meta · <id>` | `releases/<id>/release.json` | Releases |
+| Type | Content title | Meta title | Git source | Workspace |
+|------|---------------|------------|------------|-----------|
+| Granule | `Granule · <id>` | `Meta · Granule · <id>` | `granules/<id>/` | Templates |
+| Template | `Template · <id>` | `Meta · Template · <id>` | `templates/<id>/` | Templates |
+| Release | `Release · <id>` | `Meta · Release · <id>` | `releases/<id>/` | Releases |
+
+- **content** — literal markdown **или** результат pure function (для template — editable skeleton; для release — собранный README).
+- **meta** — кто создал / зачем: purpose, identity, foundations, slots/pins. Editable markdown, **не** JSON dump.
 
 Пример namespace `strategic-docs/`:
 
-- **Templates:** `Granule · readme-principles`, `Template · readme-main`, `Template · affine-surface-policy`
-- **Releases:** `Release · readme-main`, `Meta · readme-main`, `Release · affine-surface-policy`, `Meta · affine-surface-policy`
+- **Templates:** `Granule · readme-principles` ↔ `Meta · Granule · readme-principles`, `Template · affine-surface-policy` ↔ `Meta · Template · affine-surface-policy`
+- **Releases:** `Release · affine-surface-policy` ↔ `Meta · Release · affine-surface-policy`
 
 
 ## Automation
@@ -56,12 +62,16 @@
     yarn strategic-docs:generate --template affine-surface-policy
     yarn strategic-docs:generate --template readme-main --dry-run
 
-### Affine import (сначала `--dry-run`)
+### Publish (сначала `--dry-run`)
 
     yarn affine:workspace:list
-    yarn affine:sync:templates --dry-run
-    yarn affine:sync:templates
-    yarn affine:import:releases -- docs/containers/strategic-docs/releases/affine-surface-policy
+    # Releases only (--template implies --target releases)
+    yarn strategic-docs:publish --dry-run --template affine-surface-policy --skip-generate
+    yarn strategic-docs:publish --push --template affine-surface-policy --skip-generate
+    # Templates constructor (content + meta)
+    yarn strategic-docs:publish --push --target templates --skip-generate
+    # Probe push without write
+    yarn strategic-docs:publish --push --dry-run --target templates --skip-generate
 
 ### Env (dev `.env`, см. [`deploy/affine/.env.example`](../../../../deploy/affine/.env.example))
 
@@ -71,5 +81,6 @@
 | `AFFINE_API_TOKEN` | Bearer (Settings → Access tokens) |
 | `AFFINE_WORKSPACE_TEMPLATES_ID` | UUID workspace **Templates** |
 | `AFFINE_WORKSPACE_RELEASES_ID` | UUID workspace **Releases** |
+| `AFFINE_WORKSPACE_ID` | fallback only — does **not** override the two above |
 
-v1: CLI пишет markdown bundle → owner UI Import в нужный workspace/namespace. Programmatic push — follow-up.
+`--push` upserts by title and tags docs with namespace (`strategic-docs`). UI folder still manual (no folder API in affine-cli).

@@ -11,6 +11,7 @@ import {
   pushImportBundle,
   resetAffineCliPushEnv,
   resolveAffineCliPath,
+  resolveExistingDocId,
   socketIoPushHint,
 } from './affine-push.mjs';
 
@@ -64,6 +65,24 @@ describe('affine-push', () => {
     }
   });
 
+  it('resolveExistingDocId prefers title then legacyTitles', () => {
+    const map = new Map([
+      ['Meta · affine-surface-policy', 'legacy-id'],
+      ['Meta · Release · affine-surface-policy', 'new-id'],
+    ]);
+    assert.equal(
+      resolveExistingDocId(map, 'Meta · Release · affine-surface-policy', [
+        'Meta · affine-surface-policy',
+      ]),
+      'new-id',
+    );
+    assert.equal(
+      resolveExistingDocId(map, 'Meta · Release · other', ['Meta · affine-surface-policy']),
+      'legacy-id',
+    );
+    assert.equal(resolveExistingDocId(map, 'Missing', ['Also missing']), undefined);
+  });
+
   it('pushImportBundle dry-run with manifest when cli present', async () => {
     const cli = resolveAffineCliPath();
     if (!cli) return;
@@ -81,6 +100,8 @@ describe('affine-push', () => {
             namespace: 'strategic-docs',
             file: 'strategic-docs/Test.md',
             kind: 'granule',
+            pairRole: 'content',
+            pairTitle: 'Meta · Granule · dry-run-only',
           },
         ],
       }),
@@ -92,6 +113,8 @@ describe('affine-push', () => {
       workspaceId: process.env.AFFINE_WORKSPACE_TEMPLATES_ID ?? '00000000-0000-0000-0000-000000000001',
       dryRun: true,
     });
+    assert.equal(r.dryRun, true);
     assert.ok(Array.isArray(r.results));
+    assert.match(r.namespaceStrategy ?? '', /tag/);
   });
 });

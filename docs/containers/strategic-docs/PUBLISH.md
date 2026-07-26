@@ -10,30 +10,55 @@ yarn strategic-docs:publish [options]
 
 | Флаг | Default | Смысл |
 |------|---------|--------|
-| `--template <id>` | — | Перед publish вызвать `yarn strategic-docs:generate --template <id>` |
-| `--target all\|templates\|releases` | `all` | Куда export bundle |
-| `--dry-run` | off | Auth + plan без записи bundle / generate |
+| `--template <id>` | — | Перед publish вызвать `yarn strategic-docs:generate --template <id>`. **Без** `--target` подразумевает `--target releases` |
+| `--target all\|templates\|releases` | `all` (или `releases` если задан `--template`) | Куда export / push |
+| `--dry-run` | off | Auth + plan без записи; с `--push` — probe affine-cli **без** live write |
 | `--push` | off | Push через **affine-cli** (после bundle); требует `affine` на PATH |
 | `--skip-generate` | off | Не вызывать generate (только export) |
-| `--namespace <id>` | `strategic-docs` | Affine namespace (= container id) |
+| `--namespace <id>` | `strategic-docs` | Namespace (= container id): tag при `--push` + UI-папка при Import |
 
 ## Примеры
 
 ```bash
-# Полный цикл readme-main
-yarn strategic-docs:publish --dry-run --template readme-main
-yarn strategic-docs:publish --template readme-main
+# Один release (Templates workspace НЕ трогаем)
+yarn strategic-docs:publish --dry-run --template affine-surface-policy --skip-generate
+yarn strategic-docs:publish --push --template affine-surface-policy --skip-generate
 
-# Только Templates (все granules + templates)
+# Только Templates (все granules + templates, content + meta)
 yarn strategic-docs:publish --target templates --skip-generate --dry-run
-yarn strategic-docs:publish --target templates --skip-generate
-
-# Один release
-yarn strategic-docs:publish --target releases --template affine-surface-policy --skip-generate
+yarn strategic-docs:publish --push --target templates --skip-generate
 
 # Все releases/
 yarn strategic-docs:publish --target releases --skip-generate
+
+# Оба workspace явно
+yarn strategic-docs:publish --target all --skip-generate --dry-run
+
+# Probe push без записи
+yarn strategic-docs:publish --push --dry-run --target templates --skip-generate
 ```
+
+## Workspace routing (критично)
+
+| Git | Env | Workspace |
+|-----|-----|-----------|
+| `granules/` + `templates/` | `AFFINE_WORKSPACE_TEMPLATES_ID` | **Templates** |
+| `releases/` | `AFFINE_WORKSPACE_RELEASES_ID` | **Releases** |
+
+- Expected IDs (owner): Templates `04deee42-187d-41ae-89d6-c7ff1e3dd80c`, Releases `fa8b440d-0d43-42c9-a9f9-b27baba5ddd4` — сверьте через `yarn affine:workspace:list`.
+- `AFFINE_WORKSPACE_ID` — **только fallback**, если target-specific не задан. Он **не** перекрывает `TEMPLATES` / `RELEASES`.
+- `--template X` без `--target` → только **Releases** (раньше default `all` заливал конструктор туда же, куда и snapshot).
+
+## Granule model: content + meta
+
+Каждый артефакт → **две связанные** Affine-страницы (editable markdown, не JSON dump):
+
+| Role | Title | Содержимое |
+|------|-------|------------|
+| **content** | `Granule · <id>` / `Template · <id>` / `Release · <id>` | literal body **или** результат pure function / skeleton / README |
+| **meta** | `Meta · Granule · <id>` / `Meta · Template · <id>` / `Meta · Release · <id>` | кто/зачем: purpose, identity, foundations, slots/pins |
+
+В теле каждой страницы — banner со ссылкой на pair (по title). Upsert: существующий doc с тем же title (или legacy `Meta · <id>`) → `replace-markdown`.
 
 ## v2 — programmatic push (`--push`)
 
@@ -48,10 +73,9 @@ Windows: бинарь — `%USERPROFILE%\go\bin\affine-cli.exe`; при необ
 
 ```bash
 yarn strategic-docs:publish --push --target templates --skip-generate
-yarn strategic-docs:publish --push --template affine-surface-policy
+yarn strategic-docs:publish --push --template affine-surface-policy --skip-generate
+yarn strategic-docs:publish --push --dry-run --target releases --template affine-surface-policy --skip-generate
 ```
-
-Env те же + per-target workspace ID. Upsert: существующий doc с тем же **title** → `replace-markdown`.
 
 ### GraphQL vs WebSocket (`--push`)
 
@@ -79,7 +103,15 @@ curl.exe -s "https://strategy.mmbrn.tech/socket.io/?EIO=4&transport=polling"
 
 **Fallback:** даже при падении `--push` bundle **уже записан** в `scripts/cache/affine-import/publish-*-*/` — в stderr будет `bundleDir` + `manifest`. Дальше v1 UI Import (см. ниже).
 
-**Namespace folders:** affine-cli создаёт docs flat; папку `strategic-docs/` в UI расставьте вручную или follow-up.
+### Namespace (папки vs tags)
+
+| Механизм | Статус |
+|----------|--------|
+| UI folder `strategic-docs/` | **Канон визуально** — создайте папку вручную, перетащите docs |
+| affine-cli folder/collection/parent | **Нет API** (проверено: только `doc` + `tag`) |
+| `--push` namespace tag | Создаёт/вешает tag с именем namespace (`strategic-docs`) на каждый doc |
+
+Follow-up: когда Affine/affine-cli даст parent folder — перейти с tag на folder placement.
 
 ## v1 limitation (без `--push`)
 
@@ -88,22 +120,22 @@ Stable self-host Affine **не** принимает markdown через публ
 
 Owner finish в UI:
 
-1. Открыть workspace URL из вывода
+1. Открыть workspace URL из вывода (**Templates** vs **Releases** — разные env)
 2. **Import → Markdown** (batch или по файлам из `manifest.json`)
 3. Папка namespace **`strategic-docs`**
-4. Titles по manifest: `Granule · …`, `Template · …`, `Release · …`, `Meta · …`
+4. Titles: content + linked meta (см. таблицу выше)
 
 ## Mapping
 
-| Git | Affine workspace | Namespace | Doc title |
-|-----|------------------|-----------|-----------|
-| `granules/<id>/` | Templates | container id | `Granule · <id>` |
-| `templates/<id>/` | Templates | container id | `Template · <id>` |
-| `releases/<id>/` | Releases | container id | `Release · <id>` + `Meta · <id>` |
+| Git | Affine workspace | Namespace | Docs |
+|-----|------------------|-----------|------|
+| `granules/<id>/` | Templates | container id | `Granule · <id>` + `Meta · Granule · <id>` |
+| `templates/<id>/` | Templates | container id | `Template · <id>` + `Meta · Template · <id>` |
+| `releases/<id>/` | Releases | container id | `Release · <id>` + `Meta · Release · <id>` |
 
-## Follow-up (v2)
+## Follow-up
 
-- Programmatic push (affine-cli / DocWriter / Playwright UI-import)
-- Idempotent upsert по title
+- Folder/collection API → programmatic namespace placement (сейчас tag + UI folder)
 - `publish --check` drift git vs last manifest
 - CI gate после generate
+- Issue note: affine-cli namespace folders

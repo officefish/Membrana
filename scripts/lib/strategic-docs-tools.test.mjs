@@ -17,11 +17,19 @@ describe('strategic-docs publish args', () => {
     assert.equal(a.dryRun, false);
   });
 
-  it('parses template and dry-run', () => {
+  it('parses template and dry-run; template alone implies releases', () => {
     const a = parsePublishArgs(['--dry-run', '--template', 'readme-main', '--skip-generate']);
     assert.equal(a.dryRun, true);
     assert.equal(a.template, 'readme-main');
     assert.equal(a.skipGenerate, true);
+    assert.equal(a.target, 'releases');
+    assert.equal(a.targetExplicit, false);
+  });
+
+  it('keeps explicit --target all with --template', () => {
+    const a = parsePublishArgs(['--template', 'readme-main', '--target', 'all', '--skip-generate']);
+    assert.equal(a.target, 'all');
+    assert.equal(a.targetExplicit, true);
   });
 
   it('parses --push flag', () => {

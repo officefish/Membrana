@@ -255,6 +255,78 @@ export function listDocsByTitle(cli, workspaceId) {
 }
 
 /**
+ * Resolve existing doc id by preferred title, then legacy titles (upsert without dupes).
+ * @param {Map<string, string>} byTitle
+ * @param {string} title
+ * @param {string[]} [legacyTitles]
+ */
+export function resolveExistingDocId(byTitle, title, legacyTitles = []) {
+  if (byTitle.has(title)) return byTitle.get(title);
+  for (const legacy of legacyTitles) {
+    if (legacy && byTitle.has(legacy)) return byTitle.get(legacy);
+  }
+  return undefined;
+}
+
+/**
+ * Ensure a workspace tag exists for the namespace (best available Affine grouping —
+ * affine-cli has no folder/collection/parent API).
+ *
+ * @param {string} cli
+ * @param {string} workspaceId
+ * @param {string} namespace
+ * @param {boolean} dryRun
+ * @param {Set<string>} ensured
+ */
+export function ensureNamespaceTag(cli, workspaceId, namespace, dryRun, ensured) {
+  const tag = String(namespace || '').trim();
+  if (!tag || ensured.has(tag)) return;
+  const baseArgs = ['-w', workspaceId];
+  if (dryRun) baseArgs.push('--dry-run');
+
+  const list = runAffineCli(cli, ['tag', 'list', ...baseArgs]);
+  const text = `${list.stdout ?? ''}\n${list.stderr ?? ''}`;
+  if (list.status === 0 && text.toLowerCase().includes(tag.toLowerCase())) {
+    ensured.add(tag);
+    return;
+  }
+
+  const create = runAffineCli(cli, ['tag', 'create', '--name', tag, ...baseArgs]);
+  if (create.status !== 0) {
+    const err = `${create.stderr || create.stdout || ''}`.toLowerCase();
+    // Idempotent: tag may already exist under another list format
+    if (!err.includes('already') && !err.includes('exist')) {
+      throw new Error(
+        `tag create «${tag}» failed: ${(create.stderr || create.stdout || '').slice(0, 300)}`,
+      );
+    }
+  }
+  ensured.add(tag);
+}
+
+/**
+ * @param {string} cli
+ * @param {string} workspaceId
+ * @param {string} docId
+ * @param {string} namespace
+ * @param {boolean} dryRun
+ */
+export function tagDocWithNamespace(cli, workspaceId, docId, namespace, dryRun) {
+  const tag = String(namespace || '').trim();
+  if (!tag || !docId) return;
+  const args = ['tag', 'add', '--tag', tag, '--doc-id', docId, '-w', workspaceId];
+  if (dryRun) args.push('--dry-run');
+  const res = runAffineCli(cli, args);
+  if (res.status !== 0) {
+    const err = `${res.stderr || res.stdout || ''}`.toLowerCase();
+    if (err.includes('already') || err.includes('exist')) return;
+    throw new Error(
+      `tag add «${tag}» → ${docId} failed: ${(res.stderr || res.stdout || '').slice(0, 300)}`,
+    );
+  }
+}
+
+/**
  * @param {string} cli
  * @param {string} workspaceId
  * @param {string} title
@@ -331,18 +403,18 @@ export async function pushImportBundle(opts) {
     return { ok: false, cli, results: [], error: 'manifest.entries — not array' };
   }
 
-  try {
-    await prepareAffineCliPushEnv();
-  } catch (err) {
-    return {
-      ok: false,
-      cli,
-      results: [],
-      error: err instanceof Error ? err.message : String(err),
-    };
-  }
-
   if (!dryRun) {
+    try {
+      await prepareAffineCliPushEnv();
+    } catch (err) {
+      return {
+        ok: false,
+        cli,
+        dryRun: false,
+        results: [],
+        error: err instanceof Error ? err.message : String(err),
+      };
+    }
     assertAffineCliAuth(cli);
   }
 
@@ -356,12 +428,16 @@ export async function pushImportBundle(opts) {
     }
   }
 
+  /** @type {Set<string>} */
+  const ensuredTags = new Set();
   /** @type {object[]} */
   const results = [];
   for (let i = 0; i < entries.length; i++) {
     const entry = entries[i];
     if (!dryRun) {
       console.error(`[affine-push] ${i + 1}/${entries.length}: ${entry.title}`);
+    } else {
+      console.error(`[affine-push] dry-run ${i + 1}/${entries.length}: ${entry.title}`);
     }
     const filePath = join(bundleDir, entry.file);
     if (!existsSync(filePath)) {
@@ -369,15 +445,45 @@ export async function pushImportBundle(opts) {
       continue;
     }
     const markdown = readFileSync(filePath, 'utf8');
-    const existingId = byTitle.get(entry.title);
+    const legacyTitles = Array.isArray(entry.legacyTitles) ? entry.legacyTitles : [];
+    const existingId = resolveExistingDocId(byTitle, entry.title, legacyTitles);
     try {
+      if (entry.namespace) {
+        try {
+          ensureNamespaceTag(cli, workspaceId, entry.namespace, dryRun, ensuredTags);
+        } catch (tagErr) {
+          // Tag API is best-effort grouping; do not block content push.
+          console.error(
+            `[affine-push] namespace tag warn: ${tagErr instanceof Error ? tagErr.message : tagErr}`,
+          );
+        }
+      }
+
       const r = pushOneDoc(cli, workspaceId, entry.title, markdown, existingId, dryRun);
-      results.push({ ...r, ok: true, namespace: entry.namespace });
+      if (r.docId && entry.namespace) {
+        try {
+          tagDocWithNamespace(cli, workspaceId, r.docId, entry.namespace, dryRun);
+        } catch (tagErr) {
+          console.error(
+            `[affine-push] tag add warn: ${tagErr instanceof Error ? tagErr.message : tagErr}`,
+          );
+        }
+      }
+      if (r.docId) byTitle.set(entry.title, r.docId);
+      results.push({
+        ...r,
+        ok: true,
+        namespace: entry.namespace,
+        pairRole: entry.pairRole,
+        pairTitle: entry.pairTitle,
+        dryRun: Boolean(dryRun),
+      });
     } catch (err) {
       results.push({
         title: entry.title,
         ok: false,
         error: err instanceof Error ? err.message : String(err),
+        dryRun: Boolean(dryRun),
       });
     }
   }
@@ -387,8 +493,11 @@ export async function pushImportBundle(opts) {
   return {
     ok: failed.length === 0,
     cli,
+    dryRun: Boolean(dryRun),
     results,
     socketIoBlocked: detectSocketIoBlocked(results),
+    namespaceStrategy:
+      'tag (affine-cli has no folder/collection API; create UI folder manually if needed)',
     error: failed.length ? summarizePushFailures(results, { baseUrl }) : undefined,
   };
 }
