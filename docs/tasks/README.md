@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `readme-managed-template` | docs/tasks/README.md — собственный Template в движке стратегических документов; снять карантин sync | M | [`README_MANAGED_TEMPLATE_PROMPT.md`](../prompts/README_MANAGED_TEMPLATE_PROMPT.md) | [#1201](https://github.com/officefish/Membrana/issues/1201) |
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | M | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | [#1088](https://github.com/officefish/Membrana/issues/1088) |
 | `registry-merge-driver-serverless` | Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1026](https://github.com/officefish/Membrana/issues/1026) |
 | `ritual-deliver-to-main` | Утренний ритуал: обязательный финальный кадр — доставка документов в main | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1016](https://github.com/officefish/Membrana/issues/1016) |
@@ -224,6 +223,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `readme-managed-template` | docs/tasks/README.md — собственный Template в движке стратегических документов; снять карантин sync | 2026-07-26 | [`README_MANAGED_TEMPLATE_PROMPT.md`](../prompts/README_MANAGED_TEMPLATE_PROMPT.md) | #1201 (Issue открыт) | [карточка](./archive/readme-managed-template.md) |
 | `kits-pins-wiring` | Описи китов: инструмент kits:pins, выравнивание трёх китов, зуб сверки на pre-push + CI | 2026-07-25 | [`KITS_PINS_WIRING_PROMPT.md`](../prompts/KITS_PINS_WIRING_PROMPT.md) | #1196 | [карточка](./archive/kits-pins-wiring.md) |
 | `bridge-cross-agent-skill` | Мостик: кросс-агентский скилл входа + кит angelina-bridge (инструментарий ведущей) | 2026-07-25 | [`BRIDGE_CROSS_AGENT_SKILL_PROMPT.md`](../prompts/BRIDGE_CROSS_AGENT_SKILL_PROMPT.md) | #1195 | [карточка](./archive/bridge-cross-agent-skill.md) |
 | `ml-adopt-pilot` | ml-adopt-pilot: dry/--only pilot + CLOSURE | 2026-07-25 | [`MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md`](../prompts/MEMBRANA_LEVELING_ADOPT_SPRINT_PROMPT.md) | — | [карточка](./archive/ml-adopt-pilot.md) |
