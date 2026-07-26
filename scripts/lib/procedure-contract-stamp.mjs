@@ -47,3 +47,23 @@ export function parseContractHeader(text) {
   }
   return null;
 }
+
+/**
+ * Миграция legacy-штампа → contract: parser@… (Ф4). Тело не трогает.
+ * @param {string} text
+ * @param {{parserVersion?: string}} [opts]
+ * @returns {{ok: true, text: string}|{ok: false, error: string}}
+ */
+export function migrateLegacyContractText(text, opts = {}) {
+  const header = parseContractHeader(text);
+  if (!header) return { ok: false, error: 'нет штампа' };
+  if (!header.legacy) return { ok: false, error: 'уже neo-штамп (не legacy)' };
+  const nl = text.indexOf('\n');
+  const body = nl === -1 ? '' : text.slice(nl + 1);
+  const neo = stampContractHeader({
+    generator: header.generator,
+    source: header.source,
+    parserVersion: opts.parserVersion ?? PARSER_VERSION,
+  });
+  return { ok: true, text: body === '' ? `${neo}\n` : `${neo}\n${body}` };
+}

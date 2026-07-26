@@ -321,3 +321,15 @@ test('HOME Ф2: auditProcedureHomes — docs/bridge объявлен, наход
     findings.join('; '),
   );
 });
+
+test('HOME Ф4: форма мостика несёт formVersion; bridge валиден', () => {
+  const form = JSON.parse(
+    readFileSync(join(repoRoot, 'docs/bridge/HOME.form.json'), 'utf8'),
+  );
+  assert.equal(form.formVersion, '1.0.0');
+  assert.ok(Array.isArray(form.compat) && form.compat.includes('1.0.0'));
+  assert.equal('version' in form, false);
+  const dir = join(repoRoot, 'docs/procedures/bridge');
+  const r = validateProcedure(dir, repoRoot);
+  assert.equal(r.valid, true, r.problems.join('; '));
+});
