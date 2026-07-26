@@ -174,6 +174,26 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "send-gate-on-path",
+      "title": "Гейт отправки на путь отправки: день в предикатах, canSendAlly в swallow, сверка digest",
+      "promptPath": "docs/prompts/SEND_GATE_ON_PATH_PROMPT.md",
+      "githubIssue": 1233,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-26",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "procedures-versions",
       "title": "Версии · совместимость · миграции процедурного слоя (Ф4 #1220)",
       "promptPath": "docs/prompts/PROCEDURES_VERSIONS_PROMPT.md",
