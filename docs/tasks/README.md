@@ -20,8 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `procedures-core-fields` | Универсальное ядро настроек процедуры: trigger · steps[] · gates[] | M | [`PROCEDURES_CORE_FIELDS_PROMPT.md`](../prompts/PROCEDURES_CORE_FIELDS_PROMPT.md) | [#1220](https://github.com/officefish/Membrana/issues/1220) |
-| `audit-concentrate-v1` | Аудит дня как концентрат: сверка источников правды, первая версия на существующих данных | M | [`AUDIT_CONCENTRATE_PROMPT.md`](../prompts/AUDIT_CONCENTRATE_PROMPT.md) | [#1238](https://github.com/officefish/Membrana/issues/1238) |
 | `main-day-issue-channel-diagnosis` | Диагноз канала ritual-main-day-issue: звено называется, полый артефакт не пишется | M | [`MAIN_DAY_ISSUE_CHANNEL_DIAGNOSIS_PROMPT.md`](../prompts/MAIN_DAY_ISSUE_CHANNEL_DIAGNOSIS_PROMPT.md) | [#1239](https://github.com/officefish/Membrana/issues/1239) |
 | `tef-channel-resolver` | Вечерний фидбек команды через резолвер каналов процедур | S | [`TEF_CHANNEL_RESOLVER_PROMPT.md`](../prompts/TEF_CHANNEL_RESOLVER_PROMPT.md) | [#1210](https://github.com/officefish/Membrana/issues/1210) |
 | `closure-acceptance-gate` | Приёмка фиксируется лишь в 10 из 32 закрытий | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1001](https://github.com/officefish/Membrana/issues/1001) |
@@ -220,6 +218,9 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `procedures-homes` | Легализация домов процедур: home · mode (Ф2 #1220) | 2026-07-26 | [`PROCEDURES_HOMES_PROMPT.md`](../prompts/PROCEDURES_HOMES_PROMPT.md) | #1259 (Issue открыт) | [карточка](./archive/procedures-homes.md) |
+| `procedures-core-fields` | Универсальное ядро настроек процедуры: trigger · steps[] · gates[] | 2026-07-26 | [`PROCEDURES_CORE_FIELDS_PROMPT.md`](../prompts/PROCEDURES_CORE_FIELDS_PROMPT.md) | #1220 (Issue открыт) | [карточка](./archive/procedures-core-fields.md) |
+| `audit-concentrate-v1` | Аудит дня как концентрат: сверка источников правды, первая версия на существующих данных | 2026-07-26 | [`AUDIT_CONCENTRATE_PROMPT.md`](../prompts/AUDIT_CONCENTRATE_PROMPT.md) | #1238 (Issue открыт) | [карточка](./archive/audit-concentrate-v1.md) |
 | `secret-cutter` | Резак секретов: redactSecrets на существующих детекторах — веха secret-parser-built | 2026-07-26 | [`SECRET_CUTTER_PROMPT.md`](../prompts/SECRET_CUTTER_PROMPT.md) | #1240 (Issue открыт) | [карточка](./archive/secret-cutter.md) |
 | `readme-managed-template` | docs/tasks/README.md — собственный Template в движке стратегических документов; снять карантин sync | 2026-07-26 | [`README_MANAGED_TEMPLATE_PROMPT.md`](../prompts/README_MANAGED_TEMPLATE_PROMPT.md) | #1201 | [карточка](./archive/readme-managed-template.md) |
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | 2026-07-26 | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | #1088 (Issue открыт) | [карточка](./archive/run-ledger.md) |
