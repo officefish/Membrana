@@ -8,8 +8,8 @@
     },
     {
       "tool": "discoverWorkspaces",
-      "reason": "Affine surface discovery — внешний дом strategy.mmbrn.tech; отдельной мастерской для AFFINE surface пока нет, инструмент живёт в strategic-docs до выделения surface-workshop.",
-      "expiresWhen": "мастерская AFFINE surface создана и discoverWorkspaces переехал в неё"
+      "reason": "внешний Affine workspace (strategy.mmbrn.tech) — не подкаталог docs/containers/strategic-docs; дом-приёмник = контейнер strategic-docs до отдельной мастерской egress.",
+      "expiresWhen": "мастерская affine-egress или worksOn перенесён на docs/containers/strategic-docs с явным external в скрипте"
     }
   ]
 }
