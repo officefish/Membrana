@@ -2,8 +2,9 @@
  * Движок синтеза центральной задачи дня → docs/MAIN_DAY_ISSUE.md.
  * Запускать **после** plan:day и standup. Code-review — вечером; утром читается DAILY_CODE_REVIEW.md.
  */
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
+import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
 
 import { loadDotEnv } from './_anthropic-env.mjs';
@@ -395,13 +396,18 @@ export async function runMainDayIssue(options) {
     // громкий стоп: бесконечный цикл поправок — та же слепота, что и тупой ретрай.
     const MAX_ATTEMPTS = 2;
     let lastMissing = [];
+    let lastLink = { provider: null, model: null, source: null };
+    let lastRaw = '';
     for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
       const promptText = attempt === 1 ? bodyText : `${bodyText}\n\n${skeletonCorrection(lastMissing)}`;
       const r = await invokeProcedureLlm({
         procedureId: 'ritual-main-day-issue',
         prompt: promptText,
         maxTokens: 4096,
+        // #1239: каждое звено называет себя — иначе диагноз канала невозможен.
+        onAttempt: (a) => console.error(attemptLogLine(a)),
       });
+      lastLink = { provider: r.provider ?? null, model: r.model ?? null, source: r.source ?? null };
 
       if (!r.ok) {
         console.error(
@@ -412,6 +418,7 @@ export async function runMainDayIssue(options) {
       }
 
       const out = r.text || '';
+      lastRaw = out;
 
       // Гейт скелета (K, M2): все 5 заголовков слотов на месте, иначе отказ —
       // структура детерминирована, LLM не вправе её ронять. Файл при провале не пишем.
@@ -425,6 +432,7 @@ export async function runMainDayIssue(options) {
             primaryFocusOverride: options.focusOverride || null,
             activeTasks: active.map((t) => t.id),
             issues: issues.count,
+            llm: { ...lastLink, generations: attempt },
           },
         });
         console.log(out);
@@ -438,10 +446,17 @@ export async function runMainDayIssue(options) {
           `⚠ гейт скелета (M2): потеряны слоты: ${lastMissing.join(', ')} — перезапуск генерации с поправкой (${attempt + 1}/${MAX_ATTEMPTS}).`,
         );
       } else {
-        // Формулировка привязана к факту (были ли поправки), не к константе.
-        const afterCorrections = attempt > 1 ? ' и после поправки' : '';
+        // #1239: отказ называет ЗВЕНО и кладёт сырой ответ в %TEMP% — вещдок для диагноза,
+        // не в репозиторий (сырой ответ может нести чувствительное).
+        const rawPath = saveRawResponse(lastRaw);
         console.error(
-          `✖ гейт скелета (M2): LLM уронил слот(ы)${afterCorrections}: ${lastMissing.join(', ')} — файл НЕ записан. Перезапусти генерацию.`,
+          skeletonFailureMessage({
+            missing: lastMissing,
+            provider: lastLink.provider,
+            model: lastLink.model,
+            attempts: attempt,
+            rawPath,
+          }),
         );
         exitCode = 22;
       }
@@ -452,6 +467,45 @@ export async function runMainDayIssue(options) {
   }
 
   process.exitCode = exitCode;
+}
+
+/**
+ * Строка лога попытки канала (#1239). Звено обязано называть себя: без этого диагноз
+ * невозможен — ровно поэтому два утра платили ручной чеканкой. Приём — из `code-review.mjs`.
+ * @param {{provider?:string, model?:string, attemptIndex:number, ok:boolean, errorClass?:string}} a
+ * @returns {string}
+ */
+export function attemptLogLine({ provider, model, attemptIndex, ok, errorClass }) {
+  const link = `${provider ?? 'неизвестный провайдер'}/${model ?? 'неизвестная модель'}`;
+  return ok
+    ? `[llm] центральная задача → ${link} (попытка ${attemptIndex + 1})`
+    : `[llm] центральная задача: попытка ${attemptIndex + 1} ${link} не удалась: ${errorClass ?? 'причина не названа'}`;
+}
+
+/**
+ * Провенанс ответившего звена в шапку артефакта (#1239) — машиночитаемо, чтобы человек и
+ * downstream видели, КТО написал сегодняшнюю задачу дня.
+ * @param {{provider?:string, model?:string, source?:string, generations?:number}} p
+ * @returns {string}
+ */
+export function provenanceLlmComment({ provider, model, source, generations }) {
+  return `<!-- Звено канала: provider=${provider ?? '—'} model=${model ?? '—'} source=${source ?? '—'} generations=${generations ?? 1} -->`;
+}
+
+/**
+ * Текст громкого отказа гейта скелета (#1239): называет ЗВЕНО, потерянные слоты словами и
+ * место сырого ответа. Безымянный отказ для диагноза не лучше тихого нуля.
+ * @param {{missing:string[], provider?:string, model?:string, attempts:number, rawPath?:string|null}} f
+ * @returns {string}
+ */
+export function skeletonFailureMessage({ missing, provider, model, attempts, rawPath }) {
+  const link = `${provider ?? 'неизвестный провайдер'}/${model ?? 'неизвестная модель'}`;
+  return [
+    `✖ гейт скелета (M2): звено ${link} не удержало каркас за ${attempts} попытк(и).`,
+    `   Потеряны слоты: ${missing.join(', ')}.`,
+    '   Файл НЕ записан — полый артефакт выдавал бы себя за результат.',
+    rawPath ? `   Сырой ответ звена сохранён: ${rawPath}` : '   Сырой ответ сохранить не удалось.',
+  ].join('\n');
 }
 
 /**
@@ -471,6 +525,24 @@ export function skeletonCorrection(missingSlots) {
   ].join('\n');
 }
 
+/**
+ * Сырой ответ звена — вещдок диагноза (#1239). Кладём во временное место ОС, не в
+ * репозиторий: ответ модели может нести чувствительное. Сбой записи вещдока не должен
+ * ронять диагноз — возвращаем null, и отказ честно говорит, что сохранить не удалось.
+ * @param {string} raw
+ * @returns {string|null}
+ */
+function saveRawResponse(raw) {
+  try {
+    const dir = mkdtempSync(join(tmpdir(), 'main-day-issue-'));
+    const file = join(dir, 'raw-response.md');
+    writeFileSync(file, String(raw ?? ''), 'utf8');
+    return file;
+  } catch {
+    return null;
+  }
+}
+
 function writeMainDayIssueFile({ outputPath, commandName, body, meta }) {
   const stamp = new Date().toISOString();
   const io = gitFsIo(process.cwd(), { execFileSync, readFileSync, existsSync, join });
@@ -483,6 +555,7 @@ function writeMainDayIssueFile({ outputPath, commandName, body, meta }) {
     `<!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->\n` +
     `<!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->\n` +
     `${provenanceHeader({ author: 'vesnin', readAt })}\n` +
+    `${provenanceLlmComment(meta.llm ?? {})}\n` +
     `<!-- CURRENT_TASK — только вспомогательный буфер, не канон -->\n` +
     (meta.primaryFocusOverride
       ? `<!-- focus override: ${meta.primaryFocusOverride} -->\n`
