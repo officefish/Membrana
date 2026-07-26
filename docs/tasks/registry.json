@@ -107,16 +107,16 @@
       "githubIssue": 1261,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-07-26",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1269 (squash bb20e567), Closes #1261. Четыре дефекта: classifyGhFailure+бэкофф в pr:wait (сеть≠нет-PR), node-вход вместо шима yarn в task:pr-land (ENOENT→EINVAL→node), pr:ship --auto с опросом allow_auto_merge и откатом, guard base-free перечитывается в момент исполнения. Тесты 74. Настройка allow_auto_merge включена по слову владельца.",
       "githubIssueClosedAt": null,
       "parentEpic": "agent-tooling-friction-6"
     },
