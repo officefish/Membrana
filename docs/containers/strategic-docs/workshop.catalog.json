@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "home": "docs/containers/strategic-docs",
+  "manifest": "docs/containers/strategic-docs/workshop.manifest.json",
+  "kit": null,
+  "tools": [
+    {
+      "id": "tools",
+      "verb": null,
+      "zone": "workshop",
+      "yarn": "yarn strategic-docs:tools",
+      "script": "scripts/strategic-docs-tools.mjs",
+      "doc": "docs/containers/strategic-docs/WORKSHOP.md",
+      "summary": "Таблица инструментов мастерской (catalog + manifest)"
+    },
+    {
+      "id": "generate",
+      "verb": "generate",
+      "zone": "workshop",
+      "yarn": "yarn strategic-docs:generate --template <id>",
+      "script": "scripts/strategic-docs-generate.mjs",
+      "doc": "docs/containers/strategic-docs/WORKSHOP.md",
+      "summary": "Сборка релиза из шаблона + pinned гранул → releases/ или experiments/"
+    },
+    {
+      "id": "publish",
+      "verb": "publish",
+      "zone": "workshop",
+      "yarn": "yarn strategic-docs:publish",
+      "script": "scripts/strategic-docs-publish.mjs",
+      "doc": "docs/containers/strategic-docs/PUBLISH.md",
+      "summary": "Generate (опц.) + export bundle → Affine Templates и/или Releases"
+    },
+    {
+      "id": "publish-push",
+      "verb": null,
+      "zone": "workshop",
+      "yarn": "yarn strategic-docs:publish --push",
+      "script": "scripts/lib/affine-push.mjs",
+      "doc": "docs/containers/strategic-docs/PUBLISH.md",
+      "summary": "Programmatic push via affine-cli (W3)"
+    },
+    {
+      "id": "publish-templates",
+      "verb": "publishTemplates",
+      "zone": "workshop",
+      "yarn": "yarn strategic-docs:publish --target templates --skip-generate",
+      "script": "scripts/strategic-docs-publish.mjs",
+      "doc": "docs/containers/strategic-docs/PUBLISH.md",
+      "summary": "Export всех granules + templates в workspace Templates / namespace контейнера"
+    },
+    {
+      "id": "publish-releases",
+      "verb": "publishReleases",
+      "zone": "workshop",
+      "yarn": "yarn strategic-docs:publish --target releases --skip-generate",
+      "script": "scripts/strategic-docs-publish.mjs",
+      "doc": "docs/containers/strategic-docs/PUBLISH.md",
+      "summary": "Export releases/ в workspace Releases (или один --template)"
+    },
+    {
+      "id": "discover-workspaces",
+      "verb": "discoverWorkspaces",
+      "zone": "workshop",
+      "yarn": "yarn affine:workspace:list",
+      "script": "scripts/affine-workspace-list.mjs",
+      "doc": "docs/containers/strategic-docs/WORKSHOP.md",
+      "summary": "GraphQL: UUID workspace Templates / Releases + URLs"
+    },
+    {
+      "id": "surface",
+      "verb": null,
+      "zone": "contract",
+      "yarn": "—",
+      "doc": "docs/containers/strategic-docs/SURFACE.md",
+      "summary": "Канон routing: git SoT → Affine workspaces · namespaces · document types"
+    },
+    {
+      "id": "granulation-design",
+      "verb": null,
+      "zone": "contract",
+      "yarn": "—",
+      "doc": "docs/containers/strategic-docs/design/README-GRANULATION-DESIGN.md",
+      "summary": "Schema гранул, шаблонов, release.json, metadata v1.1"
+    },
+    {
+      "id": "affine-sync-templates",
+      "verb": null,
+      "zone": "neighbor",
+      "yarn": "yarn affine:sync:templates",
+      "script": "scripts/affine-sync.mjs",
+      "doc": "docs/containers/strategic-docs/PUBLISH.md",
+      "summary": "Низкоуровневый batch export → Templates (prefer publish)"
+    },
+    {
+      "id": "affine-sync-releases",
+      "verb": null,
+      "zone": "neighbor",
+      "yarn": "yarn affine:sync:releases",
+      "script": "scripts/affine-sync.mjs",
+      "doc": "docs/containers/strategic-docs/PUBLISH.md",
+      "summary": "Низкоуровневый batch export → Releases (prefer publish)"
+    }
+  ]
+}
