@@ -1,19 +1,19 @@
-# Архив: gitleaks предупреждает, но не блокирует коммит
+# Архив: run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify)
 
 | Поле | Значение |
 |------|----------|
-| **ID** | `gitleaks-block-on-leak` |
+| **ID** | `run-ledger` |
 | **Статус** | archived |
 | **Размер** | M |
 | **Создана** | 2026-07-23 |
 | **Архивирована** | 2026-07-26 |
-| **GitHub Issue** | #1002 |
-| **Linear** | DRU-366 |
-| **Промпт** | [`docs/prompts/FRAME_RAILS_2307_PROMPT.md`](../../docs/prompts/FRAME_RAILS_2307_PROMPT.md) |
+| **GitHub Issue** | #1088 |
+| **Linear** | — |
+| **Промпт** | [`docs/prompts/RUN_LEDGER_PROMPT.md`](../../docs/prompts/RUN_LEDGER_PROMPT.md) |
 
 ## Заметки при закрытии
 
-PR #1020
+PR #1206
 
 ---
 
