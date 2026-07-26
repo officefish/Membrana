@@ -1,0 +1,12 @@
+{
+  "id": "affine-surface-namespaces",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Namespace = id контейнера, не git-тип артефакта",
+  "foundations": [
+    "docs/containers/strategic-docs/SURFACE.md",
+    "docs/patterns/GROUP_CONTAINERIZATION.md"
+  ],
+  "usedBy": ["affine-surface-policy"]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "affine-surface-title-purpose",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Заголовок и назначение formal policy: Affine routing для strategic-docs",
+  "foundations": ["docs/containers/strategic-docs/SURFACE.md"],
+  "usedBy": ["affine-surface-policy"]
+}
