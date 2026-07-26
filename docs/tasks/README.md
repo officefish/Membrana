@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `procedures-core-fields` | Универсальное ядро настроек процедуры: trigger · steps[] · gates[] | M | [`PROCEDURES_CORE_FIELDS_PROMPT.md`](../prompts/PROCEDURES_CORE_FIELDS_PROMPT.md) | [#1220](https://github.com/officefish/Membrana/issues/1220) |
 | `audit-concentrate-v1` | Аудит дня как концентрат: сверка источников правды, первая версия на существующих данных | M | [`AUDIT_CONCENTRATE_PROMPT.md`](../prompts/AUDIT_CONCENTRATE_PROMPT.md) | [#1238](https://github.com/officefish/Membrana/issues/1238) |
 | `secret-cutter` | Резак секретов: redactSecrets на существующих детекторах — веха secret-parser-built | L | [`SECRET_CUTTER_PROMPT.md`](../prompts/SECRET_CUTTER_PROMPT.md) | [#1240](https://github.com/officefish/Membrana/issues/1240) |
 | `main-day-issue-channel-diagnosis` | Диагноз канала ritual-main-day-issue: звено называется, полый артефакт не пишется | M | [`MAIN_DAY_ISSUE_CHANNEL_DIAGNOSIS_PROMPT.md`](../prompts/MAIN_DAY_ISSUE_CHANNEL_DIAGNOSIS_PROMPT.md) | [#1239](https://github.com/officefish/Membrana/issues/1239) |
@@ -221,6 +220,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `procedures-core-fields` | Универсальное ядро настроек процедуры: trigger · steps[] · gates[] | 2026-07-26 | [`PROCEDURES_CORE_FIELDS_PROMPT.md`](../prompts/PROCEDURES_CORE_FIELDS_PROMPT.md) | #1220 (Issue открыт) | [карточка](./archive/procedures-core-fields.md) |
 | `readme-managed-template` | docs/tasks/README.md — собственный Template в движке стратегических документов; снять карантин sync | 2026-07-26 | [`README_MANAGED_TEMPLATE_PROMPT.md`](../prompts/README_MANAGED_TEMPLATE_PROMPT.md) | #1201 | [карточка](./archive/readme-managed-template.md) |
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | 2026-07-26 | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | #1088 (Issue открыт) | [карточка](./archive/run-ledger.md) |
 | `registry-merge-driver-serverless` | Merge-драйвер реестра только локальный — PR с реестром конфликтуют на сервере | 2026-07-26 | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | #1026 (Issue открыт) | [карточка](./archive/registry-merge-driver-serverless.md) |
