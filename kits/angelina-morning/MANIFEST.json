@@ -26,7 +26,7 @@
     "scripts/deps-watch.mjs": "9cb0714e8f41df23b59edb7c4b6753111103a89b",
     "scripts/experimental/llm-proxy-parse.mjs": "83c1ccd774f33dec3765d176baa03deb3f884db7",
     "scripts/hermes-brief.mjs": "3190a986312134e57e9bf449e61bc54510394042",
-    "scripts/lib/angelina-adapter.mjs": "efa8699aa7d9d9efd126db0521ddd35d0c8d1a69",
+    "scripts/lib/angelina-adapter.mjs": "a0e340960e406c5e4ed4a91c3644281b5e047998",
     "scripts/lib/angelina-cascade.mjs": "bc22558cd647a2f7760ffbe5d865a960e2e77414",
     "scripts/lib/artifact-freshness.mjs": "05a0e753da742d7a7c9dcb775b637e93b49b2eb3",
     "scripts/lib/audit-pins.mjs": "8c1b3326e592214871cf87eef0cdb150497ec6b2",
