@@ -57,6 +57,7 @@ test('sendSwallow: повтор после delivered → skip (не зовёт f
   let fetches = 0;
   const result = await sendSwallow({
     text: 'одна и та же ласточка',
+    requireGate: false,
     ledgerPath,
     token: 't',
     fetchImpl: async () => {
@@ -75,6 +76,7 @@ test('sendSwallow: таймаут → unknown exit 3, не «office недост
   const ledgerPath = join(dir, 'ledger.jsonl');
   const result = await sendSwallow({
     text: 'таймаут-кейс',
+    requireGate: false,
     ledgerPath,
     token: 't',
     fetchImpl: async () => {
@@ -96,6 +98,7 @@ test('sendSwallow: успех пишет delivered в ledger', async () => {
   const ledgerPath = join(dir, 'ledger.jsonl');
   const result = await sendSwallow({
     text: 'ok-кейс',
+    requireGate: false,
     ledgerPath,
     token: 't',
     fetchImpl: async () => ({
@@ -119,6 +122,7 @@ test('sendSwallow: --force после delivered снова шлёт', async () =
   const result = await sendSwallow({
     text: 'force-кейс',
     force: true,
+    requireGate: false,
     ledgerPath,
     token: 't',
     fetchImpl: async () => {
@@ -127,6 +131,49 @@ test('sendSwallow: --force после delivered снова шлёт', async () =
     },
   });
   assert.equal(result.outcome, 'delivered');
+  assert.equal(fetches, 1);
+  rmSync(dir, { recursive: true, force: true });
+});
+
+test('sendSwallow: гейт блокирует без ack/day; --force гейт не обходит', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'swallow-gate-'));
+  const ledgerPath = join(dir, 'ledger.jsonl');
+  let fetches = 0;
+  const blocked = await sendSwallow({
+    text: 'секретный текст',
+    requireGate: true,
+    gatesState: {},
+    today: '2026-07-26',
+    ledgerPath,
+    token: 't',
+    fetchImpl: async () => {
+      fetches += 1;
+      return { ok: true, json: async () => ({ sent: true }) };
+    },
+  });
+  assert.equal(blocked.outcome, 'gate-blocked');
+  assert.equal(blocked.exitCode, 3);
+  assert.equal(fetches, 0);
+
+  const { draftDigestOf } = await import('./lib/morning-gates.mjs');
+  const body = 'одобренный текст';
+  const open = await sendSwallow({
+    text: body,
+    force: true,
+    requireGate: true,
+    today: '2026-07-26',
+    gatesState: {
+      day: '2026-07-26',
+      swallow: { ownerAck: true, draftDigest: draftDigestOf(body) },
+    },
+    ledgerPath,
+    token: 't',
+    fetchImpl: async () => {
+      fetches += 1;
+      return { ok: true, json: async () => ({ sent: true }) };
+    },
+  });
+  assert.equal(open.outcome, 'delivered');
   assert.equal(fetches, 1);
   rmSync(dir, { recursive: true, force: true });
 });

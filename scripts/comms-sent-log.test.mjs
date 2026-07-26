@@ -54,6 +54,7 @@ test('sendSwallow: delivered пишет sent-log; dry path не зовётся �
   const text = 'ok для sent-log';
   const result = await sendSwallow({
     text,
+    requireGate: false,
     ledgerPath,
     sentLogPath,
     sourceFile: 'docs/comms/drafts/note.md',
@@ -75,6 +76,7 @@ test('sendSwallow: sentLogPath=null — не пишет журнал (#585 opt-o
   const sentLogPath = join(dir, 'would-not.jsonl');
   await sendSwallow({
     text: 'без лога',
+    requireGate: false,
     ledgerPath,
     sentLogPath: null,
     token: 't',

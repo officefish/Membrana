@@ -28,8 +28,8 @@ const today = new Date().toISOString().slice(0, 10);
 // зеркалил бы канон, который владелец ещё не чеканил.
 const gatesAbs = resolve(process.cwd(), GATES_REL);
 const gates = existsSync(gatesAbs) ? JSON.parse(readFileSync(gatesAbs, 'utf8')) : {};
-if (!magistralChosen(gates)) {
-  console.error('✖ day:report: магистраль не чеканена владельцем (morning:gate magistral) — доклад после касания 1, не до.');
+if (!magistralChosen(gates, today)) {
+  console.error('✖ day:report: магистраль не чеканена владельцем на сегодня (morning:gate magistral) — доклад после касания 1, не до.');
   process.exit(3);
 }
 
