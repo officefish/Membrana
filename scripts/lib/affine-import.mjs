@@ -17,6 +17,8 @@ import { pathToFileURL } from 'node:url';
 
 import { CONTAINER_ROOT, GRANULES_DIR, TEMPLATES_DIR } from './strategic-docs-loader.mjs';
 import { pureIoThrow } from './strategic-docs-generate.mjs';
+import { loadRegistry } from './task-registry.mjs';
+import { makeRegistryIo } from './tasks-readme-engine.mjs';
 
 export { CONTAINER_ROOT as STRATEGIC_DOCS_ROOT };
 
@@ -223,10 +225,20 @@ export function composeMarkdown(body, metadataBlock) {
 }
 
 /**
+ * IO adapter for function granules during Affine sync — same contract as
+ * `strategic-docs-generate.mjs` (registry via `loadRegistry`, no direct fs in granules).
+ * @param {string} repoRoot
+ */
+export function makeAffineSyncIo(repoRoot) {
+  return makeRegistryIo(loadRegistry(repoRoot));
+}
+
+/**
  * @param {Record<string, unknown>} granuleJson
  * @param {string} granuleDir
+ * @param {{ exec: (req: { op: string, args?: object }) => Promise<unknown> }} [io]
  */
-export async function resolveGranuleBody(granuleJson, granuleDir) {
+export async function resolveGranuleBody(granuleJson, granuleDir, io = pureIoThrow) {
   if (granuleJson.kind === 'literal') {
     const bodyPath = String(granuleJson.bodyPath ?? './body.md').replace(/^\.\//, '');
     const file = join(granuleDir, bodyPath);
@@ -247,7 +259,7 @@ export async function resolveGranuleBody(granuleJson, granuleDir) {
     }
     const out = await fn(
       { pin: {}, ctx: { granuleId: granuleJson.id, version: granuleJson.version } },
-      pureIoThrow,
+      io,
     );
     if (!out?.body) throw new Error(`Granule ${granuleJson.id} returned no body`);
     return out.body;
@@ -268,7 +280,7 @@ export async function prepareGranuleEntry(granuleDir, repoRoot, opts = {}) {
   const granuleJson = JSON.parse(readFileSync(metaPath, 'utf8'));
   const rel = relative(join(repoRoot, 'docs/containers/strategic-docs'), granuleDir).replace(/\\/g, '/');
   const namespace = mapGitPathToAffineNamespace(rel, 'templates', opts.namespace);
-  const body = await resolveGranuleBody(granuleJson, granuleDir);
+  const body = await resolveGranuleBody(granuleJson, granuleDir, makeAffineSyncIo(repoRoot));
   const meta = {
     ...granuleJson,
     source: `docs/containers/strategic-docs/${rel}/body.md`,

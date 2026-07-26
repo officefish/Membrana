@@ -7,10 +7,14 @@ import {
   buildDocTitle,
   buildMetadataBlock,
   DEFAULT_CONTAINER_NAMESPACE,
+  discoverSyncPlan,
+  makeAffineSyncIo,
   mapGitPathToAffineNamespace,
   normalizeNamespace,
   parseImportArgs,
+  prepareGranuleEntry,
   prepareReleaseEntries,
+  resolveGranuleBody,
   resolveWorkspaceId,
 } from './affine-import.mjs';
 
@@ -134,4 +138,53 @@ test('resolveWorkspaceId throws with helpful message when missing', () => {
   else process.env.AFFINE_WORKSPACE_TEMPLATES_ID = prevTemplates;
   if (prevGeneric === undefined) delete process.env.AFFINE_WORKSPACE_ID;
   else process.env.AFFINE_WORKSPACE_ID = prevGeneric;
+});
+
+test('makeAffineSyncIo supplies loadRegistry to fn granules', async () => {
+  const io = makeAffineSyncIo(repoRoot);
+  const registry = await io.exec({ op: 'loadRegistry' });
+  assert.ok(Array.isArray(registry.tasks), 'registry.tasks must be an array');
+});
+
+test('resolveGranuleBody: pure fn granule works without registry io', async () => {
+  const granuleDir = path.join(
+    repoRoot,
+    'docs/containers/strategic-docs/granules/readme-background-servers-table',
+  );
+  const { readFileSync } = await import('node:fs');
+  const granuleJson = JSON.parse(readFileSync(path.join(granuleDir, 'granule.json'), 'utf8'));
+  const body = await resolveGranuleBody(granuleJson, granuleDir);
+  assert.match(body, /### Фоновые серверы/);
+});
+
+test('resolveGranuleBody: tasks-readme fn granule needs registry io', async () => {
+  const granuleDir = path.join(
+    repoRoot,
+    'docs/containers/strategic-docs/granules/tasks-readme-active-table',
+  );
+  const { readFileSync } = await import('node:fs');
+  const granuleJson = JSON.parse(readFileSync(path.join(granuleDir, 'granule.json'), 'utf8'));
+  const body = await resolveGranuleBody(granuleJson, granuleDir, makeAffineSyncIo(repoRoot));
+  assert.match(body, /## Активные задачи/);
+  assert.match(body, /\| ID \|/);
+});
+
+test('prepareGranuleEntry: tasks-readme-active-table resolves for sync', async () => {
+  const granuleDir = path.join(
+    repoRoot,
+    'docs/containers/strategic-docs/granules/tasks-readme-active-table',
+  );
+  const entry = await prepareGranuleEntry(granuleDir, repoRoot);
+  assert.equal(entry.kind, 'granule');
+  assert.equal(entry.id, 'tasks-readme-active-table');
+  assert.match(entry.markdown, /## Активные задачи/);
+});
+
+test('discoverSyncPlan(templates) includes all function granules', async () => {
+  const entries = await discoverSyncPlan('templates', repoRoot);
+  const ids = entries.filter((e) => e.kind === 'granule').map((e) => e.id);
+  assert.ok(ids.includes('tasks-readme-active-table'));
+  assert.ok(ids.includes('tasks-readme-archive-table'));
+  assert.ok(ids.includes('readme-background-servers-table'));
+  assert.ok(entries.length >= 20, `expected >=20 entries, got ${entries.length}`);
 });
