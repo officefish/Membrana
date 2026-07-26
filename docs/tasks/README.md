@@ -20,8 +20,13 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `procedures-core-fields` | Универсальное ядро настроек процедуры: trigger · steps[] · gates[] | M | [`PROCEDURES_CORE_FIELDS_PROMPT.md`](../prompts/PROCEDURES_CORE_FIELDS_PROMPT.md) | [#1220](https://github.com/officefish/Membrana/issues/1220) |
-| `audit-concentrate-v1` | Аудит дня как концентрат: сверка источников правды, первая версия на существующих данных | M | [`AUDIT_CONCENTRATE_PROMPT.md`](../prompts/AUDIT_CONCENTRATE_PROMPT.md) | [#1238](https://github.com/officefish/Membrana/issues/1238) |
+| `friction6-secret-inventory` | yarn secret:inventory — инвентарь засвеченного как вход ротации ключей | S | [`FRICTION6_SECRET_INVENTORY_PROMPT.md`](../prompts/FRICTION6_SECRET_INVENTORY_PROMPT.md) | [#1266](https://github.com/officefish/Membrana/issues/1266) |
+| `friction6-hygiene-notes` | Реестр скриптов не протухает + три грабли окружения в AGENTS.md | S | [`FRICTION6_HYGIENE_NOTES_PROMPT.md`](../prompts/FRICTION6_HYGIENE_NOTES_PROMPT.md) | [#1265](https://github.com/officefish/Membrana/issues/1265) |
+| `friction6-scripts-lint` | scripts/*.mjs вне линтера: дать парсер ESM и назвать шум числом | M | [`FRICTION6_SCRIPTS_LINT_PROMPT.md`](../prompts/FRICTION6_SCRIPTS_LINT_PROMPT.md) | [#1264](https://github.com/officefish/Membrana/issues/1264) |
+| `friction6-test-scripts-groups` | test:scripts разбить на именованные группы — снять файл-перекрёсток | S | [`FRICTION6_TEST_SCRIPTS_GROUPS_PROMPT.md`](../prompts/FRICTION6_TEST_SCRIPTS_GROUPS_PROMPT.md) | [#1263](https://github.com/officefish/Membrana/issues/1263) |
+| `friction6-secret-gate-parity` | Секрет-гейт локально = CI: проверка по диапазону вместо растущей истории | S | [`FRICTION6_SECRET_GATE_PARITY_PROMPT.md`](../prompts/FRICTION6_SECRET_GATE_PARITY_PROMPT.md) | [#1262](https://github.com/officefish/Membrana/issues/1262) |
+| `friction6-ship-determinism` | Ship перестаёт врать и проигрывать гонку: pr-wait бэкофф, pr-land на Windows, --auto, гард занятой base | M | [`FRICTION6_SHIP_DETERMINISM_PROMPT.md`](../prompts/FRICTION6_SHIP_DETERMINISM_PROMPT.md) | [#1261](https://github.com/officefish/Membrana/issues/1261) |
+| `agent-tooling-friction-6` | Agent tooling friction — раунд 6 (сессия 2026-07-26): ship не врёт, секрет-гейт не блокирует чужих | M | [`AGENT_TOOLING_FRICTION_6_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_6_PROMPT.md) | — |
 | `main-day-issue-channel-diagnosis` | Диагноз канала ritual-main-day-issue: звено называется, полый артефакт не пишется | M | [`MAIN_DAY_ISSUE_CHANNEL_DIAGNOSIS_PROMPT.md`](../prompts/MAIN_DAY_ISSUE_CHANNEL_DIAGNOSIS_PROMPT.md) | [#1239](https://github.com/officefish/Membrana/issues/1239) |
 | `tef-channel-resolver` | Вечерний фидбек команды через резолвер каналов процедур | S | [`TEF_CHANNEL_RESOLVER_PROMPT.md`](../prompts/TEF_CHANNEL_RESOLVER_PROMPT.md) | [#1210](https://github.com/officefish/Membrana/issues/1210) |
 | `closure-acceptance-gate` | Приёмка фиксируется лишь в 10 из 32 закрытий | M | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | [#1001](https://github.com/officefish/Membrana/issues/1001) |
@@ -220,6 +225,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `procedures-core-fields` | Универсальное ядро настроек процедуры: trigger · steps[] · gates[] | 2026-07-26 | [`PROCEDURES_CORE_FIELDS_PROMPT.md`](../prompts/PROCEDURES_CORE_FIELDS_PROMPT.md) | #1220 (Issue открыт) | [карточка](./archive/procedures-core-fields.md) |
+| `audit-concentrate-v1` | Аудит дня как концентрат: сверка источников правды, первая версия на существующих данных | 2026-07-26 | [`AUDIT_CONCENTRATE_PROMPT.md`](../prompts/AUDIT_CONCENTRATE_PROMPT.md) | #1238 (Issue открыт) | [карточка](./archive/audit-concentrate-v1.md) |
 | `secret-cutter` | Резак секретов: redactSecrets на существующих детекторах — веха secret-parser-built | 2026-07-26 | [`SECRET_CUTTER_PROMPT.md`](../prompts/SECRET_CUTTER_PROMPT.md) | #1240 (Issue открыт) | [карточка](./archive/secret-cutter.md) |
 | `readme-managed-template` | docs/tasks/README.md — собственный Template в движке стратегических документов; снять карантин sync | 2026-07-26 | [`README_MANAGED_TEMPLATE_PROMPT.md`](../prompts/README_MANAGED_TEMPLATE_PROMPT.md) | #1201 | [карточка](./archive/readme-managed-template.md) |
 | `run-ledger` | run-ledger: цепь прогонов процедур (канонформа → sha256 → Merkle → Ed25519 → verify) | 2026-07-26 | [`RUN_LEDGER_PROMPT.md`](../prompts/RUN_LEDGER_PROMPT.md) | #1088 (Issue открыт) | [карточка](./archive/run-ledger.md) |
