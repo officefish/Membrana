@@ -31,8 +31,10 @@
 
 [`MANIFEST.json`](./MANIFEST.json) — `id`, `leadPersona`, `kitVersion`,
 `engines[]`, `precedents[]`. Optional очередь кадров (F1 / #927): `preflight` /
-`frames` / `post` — элемент `{id, holder, pins?}` (ADR-0015); пока не объявлена
-(`D_live` после #928–#929). Зуб: `validateProcedure` (в т.ч. резолв
+`frames` / `post` — элемент `{id, holder, pins?}` (ADR-0015). Кадр
+**`deliver-to-main`** (frames, holder angelina) проверяется
+`yarn ritual:deliver-to-main` — утренние документы должны быть на `origin/main`
+(#1016). Зуб: `validateProcedure` (в т.ч. резолв
 `kitVersion` → дом кита с `MANIFEST.json`).
 
 ## Определение ↔ прогон
