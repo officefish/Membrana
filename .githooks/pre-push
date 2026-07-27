@@ -58,6 +58,14 @@ if [ "$YARN_READY" = "1" ]; then
   yarn kits:audit --mode latest
 fi
 
+# kits-pins-prepush-strict (friction-6): СТРОГАЯ сверка только китов, чьи запиненные
+# файлы затронуты пушем — дрейф ловится за секунду локально, а не за 5 минут CI
+# (26.07: lens-bestiary развёл witcher, _main-day-issue — angelina-morning; красный
+# main красил PR всех сессий). Пустой прогон — чтение манифестов + один git diff.
+# Голый node, ремонт называется точной командой перепина.
+echo "pre-push [kits-strict]: node scripts/kits-prepush-strict.mjs"
+node scripts/kits-prepush-strict.mjs
+
 # Паритет секрет-гейта (#1262): pre-commit смотрит только индекс (`protect --staged`),
 # а CI — `detect` по истории ВСЕХ ветвей (fetch-depth: 0). 26.07 синтетическая PEM-фикстура
 # прошла локально, в CI стала находкой и покрасила заявку соседней сессии. Здесь тот же
