@@ -7,6 +7,7 @@ export const CONSILIUM_PROMPT_FILE = 'docs/prompts/CONSILIUM_PROMPT.md';
 /** Порядок ролей по умолчанию (метки в протоколе). */
 export const CONSILIUM_ROLES = [
   { key: 'teamlead', label: 'Teamlead', tag: '[Teamlead]' },
+  { key: 'architect', label: 'Архитектор', tag: '[Архитектор]' },
   { key: 'structurer', label: 'Структурщик', tag: '[Структурщик]' },
   { key: 'mathematician', label: 'Математик', tag: '[Математик]' },
   { key: 'musician', label: 'Музыкант', tag: '[Музыкант]' },

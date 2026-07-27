@@ -6,6 +6,7 @@ import { test } from 'node:test';
 
 import {
   countRoleReplies,
+  MEMBRANA_ROLE_LABELS_V5,
   extractAgendaIds,
   findUncoveredAgendaItems,
   parseVotingTable,
@@ -42,7 +43,7 @@ test('живой консилиум-протокол 14.07 проходит ка
     'docs/seanses/quality-control-contour-2026-07-14.md',
     'docs/seanses/cowork-sprint-format-2026-07-14.md',
   ]) {
-    const res = validateProtocol(read(rel), { kind: 'consilium', minReplies: 20 });
+    const res = validateProtocol(read(rel), { kind: 'consilium', minReplies: 20, roleLabels: MEMBRANA_ROLE_LABELS_V5 });
     assert.ok(res.ok, `${rel}: ${res.problems.join('; ')}`);
   }
 });
@@ -179,7 +180,7 @@ test('золотой: три протокола 16.07 РЕАЛЬНО ронял�
 test('validateProtocol с agenda: пропуск повестки БЕЗ вердикта → problem', () => {
   const topic = '**A1 —** раз\n**A2 —** два';
   const goodBody = Array.from({ length: 20 }, (_, i) =>
-    `[${['Teamlead', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'][i % 5]}]: реплика ${i} про A1 и A2`,
+    `[${['Teamlead', 'Архитектор', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'][i % 6]}]: реплика ${i} про A1 и A2`,
   ).join('\n');
   const md = `| Поле | Значение |\n**Вопрос:** A1 A2\n\n${goodBody}\n## Итоговое решение\nконсенсус`;
   assert.equal(validateProtocol(md, { agenda: topic }).ok, true, 'A1+A2 покрыты → ok');
@@ -195,7 +196,7 @@ test('validateProtocol с agenda: пропуск повестки БЕЗ вер�
 test('#619: метки нет, но вердикт есть → заметка, а не отказ (ложный красный M0/M1′/M4)', () => {
   const topic = '**A1 —** раз\n**A2 —** два\n**A3 —** три';
   const body = Array.from({ length: 20 }, (_, i) =>
-    `[${['Teamlead', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'][i % 5]}]: реплика ${i} про A1 и A2`,
+    `[${['Teamlead', 'Архитектор', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'][i % 6]}]: реплика ${i} про A1 и A2`,
   ).join('\n');
   // A3 разобран по существу, но ID-метка в теле не проставлена — ровно кейс 18.07.
   const md = `| Поле | Значение |\n**Вопрос:** A1 A2 A3\n\n${body}\n## Итоговое решение\nконсенсус по всем трём`;
@@ -282,7 +283,7 @@ test('NB3 связка: метки нет, но вердикт есть → сл
 test('#616: заседание без секции посылок не проходит канон (гейт при записи)', async () => {
   const { validateProtocol } = await import('./lib/protocol-validator.mjs');
   const body = Array.from({ length: 20 }, (_, i) =>
-    `[${['Teamlead', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'][i % 5]}]: реплика ${i}`,
+    `[${['Teamlead', 'Архитектор', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'][i % 6]}]: реплика ${i}`,
   ).join('\n');
   const md = `| Поле | Значение |\n\n${body}\n## Итоговое решение\nконсенсус`;
 
@@ -297,7 +298,7 @@ test('#616: заседание без секции посылок не прох�
 test('#616: заседание с посылками и чистым DoD проходит', async () => {
   const { validateProtocol } = await import('./lib/protocol-validator.mjs');
   const body = Array.from({ length: 20 }, (_, i) =>
-    `[${['Teamlead', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'][i % 5]}]: реплика ${i}`,
+    `[${['Teamlead', 'Архитектор', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'][i % 6]}]: реплика ${i}`,
   ).join('\n');
   const md = `| Поле | Значение |\n\n${body}\n## Итоговое решение\n\n**Полный список посылок вердикта:**\n1. Вход из предшественника.\n\n**Definition of Done:**\n- своё обязательство\n`;
   const r = validateProtocol(md, { meeting: true, siblingIds: ['F1', 'H1'] });
@@ -346,7 +347,7 @@ test('#639 фазовая метка как ЕДИНСТВЕННОЕ содер�
 test('19.07: заголовок посылок — единый источник для гейта и промпта', async () => {
   const { validateProtocol, PREMISES_SECTION_TITLE } = await import('./lib/protocol-validator.mjs');
   const body = Array.from({ length: 20 }, (_, i) =>
-    `[${['Teamlead', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'][i % 5]}]: реплика ${i}`,
+    `[${['Teamlead', 'Архитектор', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'][i % 6]}]: реплика ${i}`,
   ).join('\n');
 
   // Гейт обязан принять ровно тот заголовок, который режим --meeting требует в промпте.
@@ -377,4 +378,28 @@ test('19.07: --meeting кладёт требование формата в пр�
     false,
     'дубль формулировки: заголовок обязан подставляться из константы',
   );
+});
+
+test('консилиум-2: гости вне счёта — Фаррелл ≤3 (4 — отказ), Ангелина — заметка', () => {
+  const SIX = ['Teamlead', 'Архитектор', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'];
+  const six = Array.from({ length: 30 }, (_, i) => `[${SIX[i % 6]}]: реплика ${i}`).join('\n');
+  const head = '| Поле | Значение |\n';
+  const tail = '\n## Итоговое решение\nконсенсус';
+
+  const ok = validateProtocol(
+    `${head}${six}\n[Фаррелл]: фыр — заноза с вещдоком\n[Ангелина]: опровержение — вещдок X${tail}`,
+    { minReplies: 30 },
+  );
+  assert.equal(ok.ok, true, ok.problems.join('; '));
+  assert.ok(ok.notes.some((n) => /Ангелина/u.test(n)), 'реплика Ангелины даёт заметку-проверку');
+
+  const four = validateProtocol(
+    `${head}${six}\n[Фаррелл]: 1\n[Фаррелл]: 2\n[Фаррелл]: 3\n[Фаррелл]: 4${tail}`,
+    { minReplies: 30 },
+  );
+  assert.equal(four.ok, false);
+  assert.ok(four.problems.some((p) => /Фаррелл.*до 3/u.test(p)), 'четвёртая реплика Фаррелла — отказ');
+
+  const silentGuests = validateProtocol(`${head}${six}${tail}`, { minReplies: 30 });
+  assert.equal(silentGuests.ok, true, 'молчание гостей — норма, не дефект');
 });

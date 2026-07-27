@@ -6,7 +6,23 @@
  * Роли Membrana (метки в квадратных скобках). Реплика роли начинается со
  * строки `[Роль]:` или `[Роль — Имя]:` (формат competition-протоколов).
  */
-export const MEMBRANA_ROLE_LABELS = ['Teamlead', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'];
+export const MEMBRANA_ROLE_LABELS = ['Teamlead', 'Архитектор', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'];
+
+/**
+ * Состав эпохи до консилиума-2 (до 27.07): пять советчиков. Исторические протоколы
+ * append-only и легитимны — валидируются составом СВОЕЙ эпохи, не сегодняшним.
+ * Инсайт-ревью остаётся пятиролевым каноном (капитан менял консилиум, не ревью).
+ */
+export const MEMBRANA_ROLE_LABELS_V5 = ['Teamlead', 'Структурщик', 'Математик', 'Музыкант', 'Верстальщик'];
+
+/**
+ * Гости консилиума-2 (рефакторинг 27.07, слово капитана): не советчики, в порог реплик
+ * не входят, «молчание» для них — норма, НЕ дефект.
+ * - Фаррелл: локальный голос (origin: pet, сервер его НЕ генерит), 0–3 реплики;
+ *   участники вправе не реагировать.
+ * - Ангелина: только опровержение — когда ловит роль на неправде, с вещдоком.
+ */
+export const CONSILIUM_GUEST_LABELS = ['Фаррелл', 'Ангелина'];
 
 /** Число реплик каждой роли: `[Роль]:` / `[Роль — Имя]:` в начале строки. */
 export function countRoleReplies(md, roleLabels = MEMBRANA_ROLE_LABELS) {
@@ -351,12 +367,27 @@ export function validateProtocol(
 ) {
   const problems = [];
   const notes = [];
-  const counts = countRoleReplies(md, roleLabels);
+  // Инсайт-ревью — пятиролевой канон (не тронут консилиумом-2), если состав не задан явно.
+  const effectiveRoles =
+    kind === 'insight-review' && roleLabels === MEMBRANA_ROLE_LABELS ? MEMBRANA_ROLE_LABELS_V5 : roleLabels;
+  const counts = countRoleReplies(md, effectiveRoles);
+  // Порог реплик считают ТОЛЬКО советчики: гости (Фаррелл, Ангелина) — вне счёта.
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
+
+  // Гости консилиума-2: молчание — норма; лимиты и формы — свои.
+  const guestCounts = countRoleReplies(md, CONSILIUM_GUEST_LABELS);
+  if ((guestCounts['Фаррелл'] ?? 0) > 3) {
+    problems.push(`Фаррелл высказался ${guestCounts['Фаррелл']} раз — контракт даёт до 3`);
+  }
+  if ((guestCounts['Ангелина'] ?? 0) > 0) {
+    notes.push(
+      `Ангелина: ${guestCounts['Ангелина']} реплик(и) — каждая обязана быть опровержением с вещдоком (проверить глазами: она не советчик)`,
+    );
+  }
 
   // (3) каждая роль ≥1 реплики (обе формы протокола)
   const silent = Object.entries(counts).filter(([, n]) => n === 0);
-  const unknown = unknownBracketLabels(md, roleLabels);
+  const unknown = unknownBracketLabels(md, [...roleLabels, ...CONSILIUM_GUEST_LABELS]);
   for (const [role] of silent) {
     problems.push(`роль «${role}» не высказалась ни разу`);
   }
@@ -395,8 +426,8 @@ export function validateProtocol(
 
   if (kind === 'insight-review') {
     const vote = parseVotingTable(md);
-    if (vote.scores.length < roleLabels.length) {
-      problems.push(`таблица голосования: распознано ${vote.scores.length} из ${roleLabels.length} ролей`);
+    if (vote.scores.length < effectiveRoles.length) {
+      problems.push(`таблица голосования: распознано ${vote.scores.length} из ${effectiveRoles.length} ролей`);
     }
     if (vote.declared == null) {
       problems.push('нет строки «**Средний балл:**»');

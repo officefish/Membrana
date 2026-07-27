@@ -41,8 +41,10 @@ test('createRng детерминирован', () => {
 
 test('formatRoleOrderLine', () => {
   const line = formatRoleOrderLine([CONSILIUM_ROLES[0], CONSILIUM_ROLES[1]]);
+  assert.equal(CONSILIUM_ROLES.length, 6, 'консилиум-2: шесть советчиков');
+  assert.ok(CONSILIUM_ROLES.some((r) => r.key === 'architect'), 'архитектор в составе');
   assert.match(line, /Teamlead/);
-  assert.match(line, /Структурщик/);
+  assert.match(line, /Архитектор/);
 });
 
 test('resolveWithMemory (#451): default ON, --no-memory/env=0 выключают, --with-memory перебивает env', () => {
