@@ -8,6 +8,10 @@
 yarn strategic-docs:publish [options]
 ```
 
+> **STOP:** Affine publish is frozen by `workshop.catalog.json#surfaceStatus.affinePublish`.
+> Commands refuse unless rerun with `--allow-affine-frozen-publish`; see
+> `docs/precedents/2026-07-26-affine-editor-paradigm-impedance.md`.
+
 | Флаг | Default | Смысл |
 |------|---------|--------|
 | `--template <id>` | — | Перед publish вызвать `yarn strategic-docs:generate --template <id>`. **Без** `--target` подразумевает `--target releases` |

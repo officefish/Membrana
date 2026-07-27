@@ -304,7 +304,7 @@
       "id": "tw-handoff-liveness",
       "title": "Сверка живости топ-10 хендоффа: строки таблицы против состояний задач",
       "promptPath": "docs/prompts/TW_HANDOFF_LIVENESS_PROMPT.md",
-      "githubIssue": null,
+      "githubIssue": 1319,
       "linearId": null,
       "size": "S",
       "status": "active",

@@ -86,6 +86,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | Карточка background office/media «на память» | Сначала [`docs/BACKGROUND_SERVERS.md`](docs/BACKGROUND_SERVERS.md) / скилл `membrana-background-servers` — офис уже Fastify, не Express (#725 E) |
 | Раздувать AGENTS фиче-докой | AGENTS = грабли/ритуал; канон фичи — в целевом docs/skill (#725 D) |
 | Второй дом для scripts | **Не** заводить `docs/audit/scripts/`. Контейнер группы — сам [`scripts/`](scripts/README.md); entry [`scripts/AGENT_PROMPT.md`](scripts/AGENT_PROMPT.md) |
+| Affine publish после 26.07 | **Заморожено машиной**: `strategic-docs:publish`, `affine:import`, `affine:sync` откажут без `--allow-affine-frozen-publish`; статус в `docs/containers/strategic-docs/workshop.catalog.json#surfaceStatus.affinePublish`, прецедент 2026-07-26 |
 | Ласточка: голые `PR #N` | `yarn live-links` — отдельно от линзы Ожегова (тон ≠ кликабельность) |
 | Мёрж `git merge origin/main` | **Без `-m`** — хук освобождает `Merge*`. Своё `-m "merge: …"` строчными хук отклонит (TF-1: находка «хук ломает merge» была **ложной**) |
 | Worktree занял ветку | `git checkout main` упадёт. Смотреть `yarn neighbors`, не писать grep — самописный **соврал** 16.07. Ночью ветку брать **от `origin/main`**, не от локального main |

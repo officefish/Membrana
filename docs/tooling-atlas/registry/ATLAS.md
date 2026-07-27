@@ -19,7 +19,7 @@
 
 | Контейнер (`home`) | role | Мастерская (глаголы) | kit | Про что |
 |--------------------|------|----------------------|-----|---------|
-| [docs/containers/strategic-docs](../../../docs/containers/strategic-docs/README.md) | — | ~~audit~~ · ~~decompose~~ · ~~inspectElement~~ | — | Контейнер стратегических документов: гранулы, шаблоны, релизы. Git — SoT; Affine — owner-f |
+| [docs/containers/strategic-docs](../../../docs/containers/strategic-docs/README.md) | — | ~~audit~~ · ~~decompose~~ · ~~inspectElement~~ | — | Статус Affine publish: **frozen** с 2026-07-26; источник — `workshop.catalog.json#surfaceS |
 | [docs/precedents](../../../docs/precedents/README.md) | — | audit · decompose · ~~inspectElement~~ | — | Дом-контейнер прецедентов: единичных задокументированных случаев (симптом → корень → |
 | [docs/procedures](../../../docs/procedures/README.md) | — | audit · decompose · inspectElement | — | Дом **определений процедур** — спроектированных сущностей, оперирующих категориями |
 | [docs/tasks](../../../docs/tasks/README.md) | primary | ~~audit~~ · ~~decompose~~ · inspectElement | kits/tasks-master | Актуальные **активные** и **архивные** задачи по стандарту |

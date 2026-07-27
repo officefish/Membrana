@@ -24,6 +24,7 @@ import {
   writeImportBundle,
 } from './lib/affine-import.mjs';
 import { pushImportBundle, resolveAffineCliPath, socketIoPushHint } from './lib/affine-push.mjs';
+import { guardAffinePublishFreeze } from './lib/strategic-docs-affine-freeze.mjs';
 
 loadDotEnv();
 
@@ -307,7 +308,7 @@ See docs/containers/strategic-docs/PUBLISH.md`);
  * @param {string[]} [argv]
  */
 export async function runStrategicDocsPublish(argv = process.argv.slice(2)) {
-  const opts = parsePublishArgs(argv);
+  const opts = parsePublishArgs(guardAffinePublishFreeze(repoRoot, argv, 'strategic-docs:publish'));
   if (opts.help) {
     usage();
     return;

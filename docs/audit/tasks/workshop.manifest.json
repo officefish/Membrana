@@ -12,6 +12,12 @@
     "decompose": "yarn tasks:decompose",
     "inspectElement": null,
     "stackLike": [],
-    "domain": []
+    "domain": [
+      {
+        "name": "handoffLiveness",
+        "worksOn": "docs/audit/tasks/registry/",
+        "tool": "yarn tasks:handoff-liveness"
+      }
+    ]
   }
 }

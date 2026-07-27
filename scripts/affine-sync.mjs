@@ -17,6 +17,7 @@ import {
   signIn,
   writeImportBundle,
 } from './lib/affine-import.mjs';
+import { guardAffinePublishFreeze } from './lib/strategic-docs-affine-freeze.mjs';
 
 loadDotEnv();
 
@@ -36,7 +37,7 @@ Env: AFFINE_WORKSPACE_${defaultTarget === 'templates' ? 'TEMPLATES' : 'RELEASES'
  * @param {import('./lib/affine-import.mjs').AffineTarget} defaultTarget
  */
 export async function runAffineSync(defaultTarget, argv = process.argv.slice(2)) {
-  const args = parseImportArgs(argv, defaultTarget);
+  const args = parseImportArgs(guardAffinePublishFreeze(repoRoot, argv, 'affine:sync'), defaultTarget);
   args.sync = true;
   if (args.help) {
     usage(defaultTarget);

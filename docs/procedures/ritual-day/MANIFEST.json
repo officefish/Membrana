@@ -34,7 +34,16 @@
     }
   ],
   "frames": [
-    { "id": "night-report", "holder": "angelina" },
+    {
+      "id": "night-report",
+      "holder": "angelina",
+      "carrier": {
+        "kind": "file",
+        "path": "tests/reports/nightly-full/latest.json",
+        "writer": "node scripts/tests-nightly-full.mjs",
+        "blocksMorningWhen": "execution.status != pass"
+      }
+    },
     { "id": "repo-hygiene", "holder": "ozhegov" },
     { "id": "canon-cascade", "holder": "angelina" },
     { "id": "magistral-gate", "holder": "angelina" },

@@ -18,6 +18,7 @@
 | `smoke` | быстрые предикаты ритуалов и доставки | `node scripts/tests-container.mjs --setup smoke` |
 | `gate` | `smoke` + тесты, затронутые изменениями по графу импортов | `node scripts/tests-container.mjs --setup gate` |
 | `full` | весь набор `scripts/**/*.test.mjs` | `node scripts/tests-container.mjs --setup full` |
+| `nightly-full` | ночной full от пина `kits/tests-master`; пишет carrier для `ritual-day/night-report` | `node scripts/tests-nightly-full.mjs` |
 
 Любой выборочный сетап печатает `not run`: это обязательное условие честности из ADR.
 

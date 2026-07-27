@@ -3,6 +3,26 @@
   "home": "docs/containers/strategic-docs",
   "manifest": "docs/containers/strategic-docs/workshop.manifest.json",
   "kit": null,
+  "surfaceStatus": {
+    "affinePublish": {
+      "status": "frozen",
+      "since": "2026-07-26",
+      "reason": "Five Affine publish-leg repairs in one day exhausted agent time; Affine remains storage, not the editing/publishing instrument.",
+      "precedent": "docs/precedents/2026-07-26-affine-editor-paradigm-impedance.md",
+      "bypassFlag": "--allow-affine-frozen-publish",
+      "appliesTo": [
+        "strategic-docs:publish",
+        "affine:import",
+        "affine:sync"
+      ],
+      "hostRole": "storage-only",
+      "doesNotFreeze": [
+        "granules",
+        "passports",
+        "generators"
+      ]
+    }
+  },
   "tools": [
     {
       "id": "tools",
@@ -29,7 +49,7 @@
       "yarn": "yarn strategic-docs:publish",
       "script": "scripts/strategic-docs-publish.mjs",
       "doc": "docs/containers/strategic-docs/PUBLISH.md",
-      "summary": "Generate (опц.) + export bundle → Affine Templates и/или Releases"
+      "summary": "FROZEN: Generate (опц.) + export bundle → Affine Templates и/или Releases"
     },
     {
       "id": "publish-push",
@@ -38,7 +58,7 @@
       "yarn": "yarn strategic-docs:publish --push",
       "script": "scripts/lib/affine-push.mjs",
       "doc": "docs/containers/strategic-docs/PUBLISH.md",
-      "summary": "Programmatic push via affine-cli (W3)"
+      "summary": "FROZEN: Programmatic push via affine-cli (W3)"
     },
     {
       "id": "publish-templates",
@@ -47,7 +67,7 @@
       "yarn": "yarn strategic-docs:publish --target templates --skip-generate",
       "script": "scripts/strategic-docs-publish.mjs",
       "doc": "docs/containers/strategic-docs/PUBLISH.md",
-      "summary": "Export всех granules + templates в workspace Templates / namespace контейнера"
+      "summary": "FROZEN: Export всех granules + templates в workspace Templates / namespace контейнера"
     },
     {
       "id": "publish-releases",
@@ -56,7 +76,7 @@
       "yarn": "yarn strategic-docs:publish --target releases --skip-generate",
       "script": "scripts/strategic-docs-publish.mjs",
       "doc": "docs/containers/strategic-docs/PUBLISH.md",
-      "summary": "Export releases/ в workspace Releases (или один --template)"
+      "summary": "FROZEN: Export releases/ в workspace Releases (или один --template)"
     },
     {
       "id": "discover-workspaces",
@@ -90,7 +110,7 @@
       "yarn": "yarn affine:sync:templates",
       "script": "scripts/affine-sync.mjs",
       "doc": "docs/containers/strategic-docs/PUBLISH.md",
-      "summary": "Низкоуровневый batch export → Templates (prefer publish)"
+      "summary": "FROZEN: Низкоуровневый batch export → Templates (prefer publish)"
     },
     {
       "id": "affine-sync-releases",
@@ -99,7 +119,7 @@
       "yarn": "yarn affine:sync:releases",
       "script": "scripts/affine-sync.mjs",
       "doc": "docs/containers/strategic-docs/PUBLISH.md",
-      "summary": "Низкоуровневый batch export → Releases (prefer publish)"
+      "summary": "FROZEN: Низкоуровневый batch export → Releases (prefer publish)"
     }
   ]
 }
