@@ -92,12 +92,46 @@ export function expandLiveLinks(text, repo) {
 }
 
 /**
- * Проверка: остались ли голые refs (для гейта перед ласточкой).
+ * ЧИСЛЕННЫЕ ссылки без адреса (хотфикс 27.07, кейс 26.07): «задачи 1298, 1303» —
+ * число читается как Issue/PR, но не несёт ни `#`, ни URL: телеграм не сделает его
+ * ссылкой, а `--check` по `#N` его не видел — зелёный гейт не доказывал кликабельность.
+ *
+ * Ловим ТОЛЬКО при контекст-слове в той же строке (задач/изменени/эпик/тикет/Issue/PR/№),
+ * иначе шумели бы на годах и портах. Годы 20xx исключены явно; код-заборы пропускаются.
  *
  * @param {string} text
- * @returns {{ok: boolean, bare: ReturnType<typeof findBareRefs>}}
+ * @returns {{ n: number, raw: string, line: number }[]}
+ */
+export function findNakedNumbers(text) {
+  /** @type {{ n: number, raw: string, line: number }[]} */
+  const hits = [];
+  const CONTEXT = /(задач|изменени|эпик|тикет|issue|\bpr\b|№)/iu;
+  const lines = String(text ?? '').split('\n');
+  let fenced = false;
+  lines.forEach((line, i) => {
+    if (/^```/u.test(line)) { fenced = !fenced; return; }
+    if (fenced || !CONTEXT.test(line)) return;
+    for (const m of line.matchAll(/(?<![#\w/.])(\d{3,5})\b/gu)) {
+      const n = Number(m[1]);
+      if (n >= 2000 && n <= 2099) continue; // годы
+      if (isInsideMarkdownLink(line, m.index ?? 0, m[1].length)) continue;
+      if (/https?:\/\/\S*$/u.test(line.slice(0, m.index))) continue; // внутри URL
+      hits.push({ n, raw: m[1], line: i + 1 });
+    }
+  });
+  return hits;
+}
+
+/**
+ * Проверка: остались ли голые refs (для гейта перед ласточкой).
+ * Два класса находок: `bare` — `#N` без ссылки (чинит expand), `naked` — число без
+ * адреса вовсе (чинит автор: полный URL или `#N`).
+ *
+ * @param {string} text
+ * @returns {{ok: boolean, bare: ReturnType<typeof findBareRefs>, naked: ReturnType<typeof findNakedNumbers>}}
  */
 export function checkLiveLinks(text) {
   const bare = findBareRefs(text);
-  return { ok: bare.length === 0, bare };
+  const naked = findNakedNumbers(text);
+  return { ok: bare.length === 0 && naked.length === 0, bare, naked };
 }

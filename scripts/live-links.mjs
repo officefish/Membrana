@@ -66,17 +66,25 @@ function main() {
   }
 
   if (opts.check) {
-    const { ok, bare } = checkLiveLinks(text);
+    const { ok, bare, naked } = checkLiveLinks(text);
     if (!ok) {
-      console.error(`[live-links] голые ссылки (${bare.length}):`);
-      for (const b of bare) {
-        console.error(`  · ${b.raw} → ${b.kind} #${b.n}`);
+      if (bare.length) {
+        console.error(`[live-links] голые ссылки (${bare.length}):`);
+        for (const b of bare) {
+          console.error(`  · ${b.raw} → ${b.kind} #${b.n}`);
+        }
+        console.error('Развернуть: yarn live-links --file <path>');
       }
-      console.error('Развернуть: yarn live-links --file <path>');
+      if (naked.length) {
+        console.error(`[live-links] численные ссылки БЕЗ адреса (${naked.length}) — телеграм не сделает число ссылкой:`);
+        for (const nk of naked) {
+          console.error(`  · строка ${nk.line}: «${nk.raw}» — дай полный URL или #${nk.n}`);
+        }
+      }
       process.exitCode = 1;
       return;
     }
-    console.error('[live-links] OK — голых PR/Issue нет');
+    console.error('[live-links] OK — голых PR/Issue и чисел без адреса нет');
     process.exitCode = 0;
     return;
   }
