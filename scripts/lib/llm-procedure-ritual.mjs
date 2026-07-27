@@ -6,7 +6,8 @@ import { anthropicPost, loadDotEnv } from '../_anthropic-env.mjs';
 import { llmProxyPost, loadLlmProxyDotEnv } from '../_llm-proxy-env.mjs';
 import { runProcedureChain } from './llm-procedure-chain.mjs';
 import { fetchOfficeOverlay } from './llm-procedure-office.mjs';
-import { resolveEffective } from './llm-procedure-resolve.mjs';
+import { loadProcedureDefaults } from './llm-procedure-registry.mjs';
+import { formatChainLine, overlayDroppedSteps, resolveEffective } from './llm-procedure-resolve.mjs';
 
 /**
  * POST dispatcher: anthropic Messages API vs openai-compatible
@@ -44,8 +45,11 @@ export function loadRitualLlmEnv() {
  */
 export async function invokeProcedureLlm(args) {
   loadRitualLlmEnv();
+  const env = args.env ?? process.env;
+  // #1306: разовый обход overlay — обещанный каноном escape-hatch, которого не было.
+  const noOverlay = env.LLM_NO_OVERLAY === '1' || args.skipOfficeOverlay === true;
   let overlay = args.overlay ?? null;
-  if (overlay == null && args.skipOfficeOverlay !== true) {
+  if (overlay == null && !noOverlay) {
     overlay = await fetchOfficeOverlay({
       env: args.env,
       fetchImpl: args.fetchImpl,
@@ -55,7 +59,18 @@ export async function invokeProcedureLlm(args) {
     });
   }
   const effective = resolveEffective(args.procedureId, { overlay });
-  return runProcedureChain({
+  // #1306: действующая цепочка печатается ДО попыток, с источником; усечение — не молча.
+  console.error(formatChainLine(effective) + (noOverlay ? ' [LLM_NO_OVERLAY]' : ''));
+  let dropped = [];
+  if (effective.source === 'overlay') {
+    try {
+      dropped = overlayDroppedSteps(effective.chain, loadProcedureDefaults()[args.procedureId]?.chain ?? []);
+    } catch { /* defaults недоступны — предупреждение лучше пропустить, чем уронить вызов */ }
+    if (dropped.length) {
+      console.error(`[llm] ⚠ overlay убрал звенья умолчаний: ${dropped.map((s) => `${s.provider}/${s.model}`).join(', ')} (обход: LLM_NO_OVERLAY=1)`);
+    }
+  }
+  const result = await runProcedureChain({
     effective,
     prompt: args.prompt,
     messages: args.messages,
@@ -64,4 +79,8 @@ export async function invokeProcedureLlm(args) {
     postFn: args.postFn ?? createCatalogPostFn(),
     onAttempt: args.onAttempt,
   });
+  if (!result.ok && dropped.length) {
+    console.error(`[llm] цепочка исчерпана (источник: overlay), НЕпробованные живые звенья умолчаний: ${dropped.map((s) => s.provider).join(', ')} — LLM_NO_OVERLAY=1 для прогона по умолчаниям`);
+  }
+  return result;
 }
