@@ -26,4 +26,5 @@
 | M0 | ✓ вердикт, ратифицирован | bridge-command-post-m0-order-2026-07-27.md |
 | M1 | ✓ вердикт (38 реплик), **ратифицирован владельцем 27.07** | bridge-command-post-m1-cast-2026-07-27.md |
 | M2 | ✓ вердикт (55 реплик), **ратифицирован владельцем 27.07** | bridge-command-post-m2-frames-2026-07-27.md |
-| M3 | ✓ вердикт (34 реплики), ждёт ратификации V3 | bridge-command-post-m3-truth-contract-2026-07-27.md |
+| M3 | ✓ вердикт (34 реплики), **ратифицирован владельцем 27.07** | bridge-command-post-m3-truth-contract-2026-07-27.md |
+| M4 | ✓ вердикт (48 реплик, единогласно), ждёт ратификации V4 | bridge-command-post-m4-improvisation-cases-2026-07-27.md |
