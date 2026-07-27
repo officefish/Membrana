@@ -262,6 +262,12 @@ function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles
   const spec = readBounded(resolve(cwd, CONSILIUM_PROMPT_FILE), MAX_PROMPT_SPEC_CHARS);
   const virtualTeam = readBounded(resolve(cwd, 'docs/VIRTUAL_TEAM_PROMPT.md'), MAX_VIRTUAL_TEAM_CHARS, true);
 
+  // Зверь B1 «инструкция-в-хвосте», пойман на себе 27.07 (M0 bridge-command-post):
+  // вопрос стоял ТОЛЬКО в хвосте сборки, потолок MAX_ASSEMBLED_CHARS отрезал его первым —
+  // комната честно остановила сеанс («консилиум без вопроса — декор»). Вопрос дублируется
+  // В ГОЛОВУ: обрезка хвоста больше не уносит повестку; хвостовое эхо сохранено.
+  parts.push('## Вопрос на консилиум (полное эхо — в конце сборки)', '', question, '', '---', '');
+
   parts.push(
     '## Инструкция консилиума (docs/prompts/CONSILIUM_PROMPT.md)',
     '',
