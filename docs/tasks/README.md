@@ -33,8 +33,6 @@
 | `insight-mandate-for-new` | Решение по инсайту недостижимо для новых инсайтов: мандаты только из зашитой миграции | M | [`INSIGHT_MANDATE_FOR_NEW_PROMPT.md`](../prompts/INSIGHT_MANDATE_FOR_NEW_PROMPT.md) | — |
 | `insight-review-from-file` | insight review принимает готовый REVIEW.md из чата (как консилиум — протокол) | S | [`INSIGHT_REVIEW_FROM_FILE_PROMPT.md`](../prompts/INSIGHT_REVIEW_FROM_FILE_PROMPT.md) | — |
 | `ship-automerge-predicate` | Предикат автослияния спрашивает галку вместо правил защиты ветки | S | [`SHIP_AUTOMERGE_PREDICATE_PROMPT.md`](../prompts/SHIP_AUTOMERGE_PREDICATE_PROMPT.md) | — |
-| `ship-merge-state-guard` | Гард незавершённого слияния перед пушем: тихий отказ хука не выдаёт себя за успех | S | [`SHIP_MERGE_STATE_GUARD_PROMPT.md`](../prompts/SHIP_MERGE_STATE_GUARD_PROMPT.md) | — |
-| `tw-state-batch-norm` | Состояния задач опрашивать списком, не поштучно — норма мастерской + гард | S | [`TW_STATE_BATCH_NORM_PROMPT.md`](../prompts/TW_STATE_BATCH_NORM_PROMPT.md) | — |
 | `tw-handoff-liveness` | Сверка живости топ-10 хендоффа: строки таблицы против состояний задач | S | [`TW_HANDOFF_LIVENESS_PROMPT.md`](../prompts/TW_HANDOFF_LIVENESS_PROMPT.md) | [#1319](https://github.com/officefish/Membrana/issues/1319) |
 | `tw-declared-verbs-honest-no` | Мастерская задач: три глагола объявлены без движков — строить или объявить declared-not-built | S | [`TW_DECLARED_VERBS_HONEST_NO_PROMPT.md`](../prompts/TW_DECLARED_VERBS_HONEST_NO_PROMPT.md) | — |
 | `procedures-corpus` | Ревизия корпуса процедур: ядро · homes · легальное нет (Ф5 #1220) | M | [`PROCEDURES_CORPUS_PROMPT.md`](../prompts/PROCEDURES_CORPUS_PROMPT.md) | [#1284](https://github.com/officefish/Membrana/issues/1284) |
@@ -242,6 +240,8 @@
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
 | `kits-pins-prepush-strict` | Строгая сверка описей китов на pre-push для затронутых файлов | 2026-07-27 | [`KITS_PINS_PREPUSH_STRICT_PROMPT.md`](../prompts/KITS_PINS_PREPUSH_STRICT_PROMPT.md) | — | [карточка](./archive/kits-pins-prepush-strict.md) |
+| `ship-merge-state-guard` | Гард незавершённого слияния перед пушем: тихий отказ хука не выдаёт себя за успех | 2026-07-27 | [`SHIP_MERGE_STATE_GUARD_PROMPT.md`](../prompts/SHIP_MERGE_STATE_GUARD_PROMPT.md) | #1321 (Issue открыт) | [карточка](./archive/ship-merge-state-guard.md) |
+| `tw-state-batch-norm` | Состояния задач опрашивать списком, не поштучно — норма мастерской + гард | 2026-07-27 | [`TW_STATE_BATCH_NORM_PROMPT.md`](../prompts/TW_STATE_BATCH_NORM_PROMPT.md) | #1322 (Issue открыт) | [карточка](./archive/tw-state-batch-norm.md) |
 | `procedures-versions` | Версии · совместимость · миграции процедурного слоя (Ф4 #1220) | 2026-07-26 | [`PROCEDURES_VERSIONS_PROMPT.md`](../prompts/PROCEDURES_VERSIONS_PROMPT.md) | #1274 | [карточка](./archive/procedures-versions.md) |
 | `friction6-secret-gate-parity` | Секрет-гейт локально = CI: проверка по диапазону вместо растущей истории | 2026-07-26 | [`FRICTION6_SECRET_GATE_PARITY_PROMPT.md`](../prompts/FRICTION6_SECRET_GATE_PARITY_PROMPT.md) | #1262 | [карточка](./archive/friction6-secret-gate-parity.md) |
 | `friction6-ship-determinism` | Ship перестаёт врать и проигрывать гонку: pr-wait бэкофф, pr-land на Windows, --auto, гард занятой base | 2026-07-26 | [`FRICTION6_SHIP_DETERMINISM_PROMPT.md`](../prompts/FRICTION6_SHIP_DETERMINISM_PROMPT.md) | #1261 | [карточка](./archive/friction6-ship-determinism.md) |
