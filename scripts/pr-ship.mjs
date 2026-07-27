@@ -38,6 +38,7 @@ import { fileURLToPath } from 'node:url';
 
 import { classifyWorktree, parseWorktreeCard } from './lib/classify-worktree.mjs';
 import { makeLongTempDir } from './lib/long-temp-path.mjs';
+import { EXTERNAL_CALL_TIMEOUT_MS, alreadyInBase } from './lib/merge-fact.mjs';
 import { isMergeBlocked, readMergeabilityWithRestRecheck } from './lib/pr-mergeability.mjs';
 import {
   assertPrMergeableOrRegistryLand,
@@ -165,6 +166,7 @@ export function readRequiredChecks(base = 'main', run = execFileSync) {
       run('gh', ['api', `repos/{owner}/{repo}/branches/${base}/protection`, '--jq', '[.required_status_checks.contexts // []] | flatten | join(",")'], {
         encoding: 'utf8',
         stdio: ['ignore', 'pipe', 'ignore'],
+        timeout: EXTERNAL_CALL_TIMEOUT_MS,
       }),
     ).trim();
     return raw ? raw.split(',').filter(Boolean) : [];
@@ -178,7 +180,7 @@ export function readRequiredChecks(base = 'main', run = execFileSync) {
 /** Разрешено ли автослияние в репозитории. `null`, если выяснить не удалось. */
 export function readAutoMergeAllowed(run = execFileSync) {
   try {
-    const raw = String(run('gh', ['api', 'repos/{owner}/{repo}', '--jq', '.allow_auto_merge'], { encoding: 'utf8' })).trim();
+    const raw = String(run('gh', ['api', 'repos/{owner}/{repo}', '--jq', '.allow_auto_merge'], { encoding: 'utf8', timeout: EXTERNAL_CALL_TIMEOUT_MS })).trim();
     if (raw === 'true') return true;
     if (raw === 'false') return false;
     return null;
@@ -460,6 +462,25 @@ function main() {
   // Возможность автослияния — свойство репозитория, а не флага: спрашиваем ДО плана,
   // иначе `gh pr merge --auto` падает и оставляет PR открытым (26.07, PR #1269).
   if (opts.mergeOnly && opts.execute) {
+    // #1320: гард повторного хвоста. PR уже приземлён? Решает git (fetch + коммит в
+    // origin/<base>), НЕ gh: 27.07 два фоновых хвоста одного PR погнались друг за
+    // другом, проигравший переключил дерево под живой сессией. Уже в main → честный
+    // no-op, а не вторая гонка. gh здесь только даёт номер; без него — обычный путь.
+    let prNum = null;
+    try {
+      prNum = JSON.parse(
+        execFileSync('gh', ['pr', 'view', '--json', 'number'], { encoding: 'utf8', timeout: EXTERNAL_CALL_TIMEOUT_MS }),
+      ).number ?? null;
+    } catch {
+      /* gh вспомогательный — гард молча уступает обычному пути */
+    }
+    const landed = alreadyInBase(prNum, opts.base ?? 'main');
+    if (landed) {
+      console.log(
+        `pr:ship --merge-only: PR #${prNum} уже в origin/${opts.base ?? 'main'} как ${landed.slice(0, 8)} — no-op, второй хвост не нужен (#1320)`,
+      );
+      return;
+    }
     const problem = headSyncProblem(readHeadRefs());
     if (problem) {
       console.error(problem);
@@ -589,7 +610,7 @@ function reportWorktreeFate(branch) {
   let pr = null;
   let ghUnavailable = false;
   try {
-    const raw = execFileSync('gh', ['pr', 'view', '--json', 'number,state'], { encoding: 'utf8' });
+    const raw = execFileSync('gh', ['pr', 'view', '--json', 'number,state'], { encoding: 'utf8', timeout: EXTERNAL_CALL_TIMEOUT_MS });
     const parsed = JSON.parse(raw);
     pr = { number: parsed.number, state: String(parsed.state).toUpperCase() };
   } catch {

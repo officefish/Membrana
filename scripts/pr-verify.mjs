@@ -2,34 +2,39 @@
 /**
  * pr:verify — ассерт, что PR ДЕЙСТВИТЕЛЬНО смёржен (agent-tooling-friction-5 · #1166).
  *
- * Закрывает «exit 0 ≠ merged»: за сессию 2026-07-24 факт мерджа приходилось проверять
- * руками (`git fetch + gh pr view --json state,mergeCommit + git cat-file`) ~6 раз, потому
- * что pipe `… | tail` маскирует exit-код, а поздний optional-шаг мог оставить PR OPEN.
+ * #1320: факт мерджа устанавливается по origin/<base> — git fetch + поиск коммита,
+ * приземлившего PR (сквош «(#N)» / merge-коммит). gh — ВСПОМОГАТЕЛЬНЫЙ источник
+ * (номер PR текущей ветки, mergeCommit как кандидат для сверки с графом), не решающий:
+ * вещдок 27.07 — gh через прокси отдавал merged true/false вперемешку и фантомные SHA.
  *
- * Проверяет: state == MERGED ∧ mergeCommit != null [∧ файл присутствует в origin/<base>].
+ * Проверяет: коммит PR в origin/<base> [∧ файл присутствует в origin/<base>].
  *
  *   yarn pr:verify [N] [--file <path>] [--base main]
- *   Без номера — PR текущей ветки (gh pr view без аргумента).
+ *   Без номера — PR текущей ветки (номер даёт gh; без gh и номера — честный отказ).
  *
- * Exit: 0 — подтверждено смёржено; 1 — НЕ смёржено / файла нет; 4 — usage/gh/git ошибка.
+ * Exit: 0 — подтверждено графом; 1 — НЕ смёржен / файла нет; 4 — установить нельзя
+ * (сеть: origin не обновился и графом не подтверждается / номер PR неизвестен).
  */
 import { execFileSync } from 'node:child_process';
 
+import {
+  EXTERNAL_CALL_TIMEOUT_MS,
+  assessMergeFact,
+  fetchBase,
+  findPrCommitInBase,
+  shaInBase,
+} from './lib/merge-fact.mjs';
+
 /**
- * Чистый вердикт по собранным фактам (тестируется без сети).
- * @param {{state?: string, mergeCommit?: string|null, file?: string|null, fileInBase?: boolean|null, base?: string}} facts
- * @returns {{ok: boolean, reasons: string[]}}
+ * Дополнительный ассерт файла — поверх факта мерджа.
+ * @param {{ verdict: string, file?: string|null, fileInBase?: boolean|null, base?: string }} facts
+ * @returns {string[]} причины отказа по файлу (пусто — ок или файл не запрашивался)
  */
-export function assessMerge(facts = {}) {
-  const state = String(facts.state ?? '').toUpperCase();
-  const reasons = [];
-  if (state !== 'MERGED') reasons.push(`state=${state || '?'} (ожидалось MERGED)`);
-  if (!facts.mergeCommit) reasons.push('mergeCommit отсутствует (merge не состоялся)');
-  if (facts.file) {
-    if (facts.fileInBase === false) reasons.push(`файл «${facts.file}» НЕ найден в origin/${facts.base ?? 'main'}`);
-    else if (facts.fileInBase == null) reasons.push(`не удалось проверить файл «${facts.file}»`);
-  }
-  return { ok: reasons.length === 0, reasons };
+export function fileReasons(facts = {}) {
+  if (!facts.file) return [];
+  if (facts.fileInBase === true) return [];
+  if (facts.fileInBase === false) return [`файл «${facts.file}» НЕ найден в origin/${facts.base ?? 'main'}`];
+  return [`не удалось проверить файл «${facts.file}»`];
 }
 
 /** @param {string[]} argv */
@@ -44,22 +49,22 @@ export function parseArgs(argv) {
   return o;
 }
 
-function ghPrJson(pr) {
-  const args = ['pr', 'view', '--json', 'state,mergeCommit'];
+/** gh — вспомогательный: номер PR текущей ветки + кандидат mergeCommit. Может не отработать. */
+function ghPrJsonAux(pr) {
+  const args = ['pr', 'view', '--json', 'number,state,mergeCommit'];
   if (pr) args.splice(2, 0, pr);
-  const raw = execFileSync('gh', args, { encoding: 'utf8' });
-  const p = JSON.parse(raw);
-  return { state: p.state, mergeCommit: p.mergeCommit?.oid ?? null };
+  try {
+    const raw = execFileSync('gh', args, { encoding: 'utf8', timeout: EXTERNAL_CALL_TIMEOUT_MS });
+    const p = JSON.parse(raw);
+    return { number: p.number ?? null, state: p.state ?? null, mergeCommit: p.mergeCommit?.oid ?? null };
+  } catch (e) {
+    return { number: null, state: null, mergeCommit: null, error: String(e.message ?? e).split('\n')[0] };
+  }
 }
 
 function fileInBase(file, base) {
   try {
-    execFileSync('git', ['fetch', 'origin', base], { stdio: ['ignore', 'ignore', 'ignore'] });
-  } catch {
-    /* fetch best-effort — cat-file ниже всё равно проверит по локальному origin/<base> */
-  }
-  try {
-    execFileSync('git', ['cat-file', '-e', `origin/${base}:${file}`], { stdio: ['ignore', 'ignore', 'ignore'] });
+    execFileSync('git', ['cat-file', '-e', `origin/${base}:${file}`], { stdio: ['ignore', 'ignore', 'ignore'], timeout: EXTERNAL_CALL_TIMEOUT_MS });
     return true;
   } catch {
     return false;
@@ -68,21 +73,37 @@ function fileInBase(file, base) {
 
 export function main(argv = process.argv) {
   const { pr, file, base } = parseArgs(argv);
-  let gh;
-  try {
-    gh = ghPrJson(pr);
-  } catch (e) {
-    console.error(`pr:verify: не удалось прочитать PR (${String(e.message ?? e).split('\n')[0]})`);
+  const gh = ghPrJsonAux(pr);
+  const prNumber = pr ?? gh.number;
+  if (prNumber == null && !gh.mergeCommit) {
+    console.error(
+      `pr:verify: номер PR неизвестен (gh не отработал${gh.error ? `: ${gh.error}` : ''}) — ` +
+        'факт по origin не установить. Повтори с явным номером: yarn pr:verify <N>',
+    );
     return 4;
   }
-  const facts = { ...gh, file, base, fileInBase: file ? fileInBase(file, base) : null };
-  const { ok, reasons } = assessMerge(facts);
-  const label = pr ? `PR #${pr}` : 'PR текущей ветки';
-  if (ok) {
-    console.log(`pr:verify: ✓ ${label} СМЁРЖЕН (mergeCommit ${gh.mergeCommit.slice(0, 8)}${file ? `, файл в origin/${base}` : ''})`);
+
+  const fetchOk = fetchBase(base);
+  const facts = {
+    prNumber,
+    base,
+    fetchOk,
+    commitInBase: prNumber != null ? findPrCommitInBase(prNumber, base) : null,
+    ghState: gh.state,
+    ghMergeCommit: gh.mergeCommit,
+    ghShaInBase: gh.mergeCommit ? shaInBase(gh.mergeCommit, base) : false,
+  };
+  const { verdict, reasons } = assessMergeFact(facts);
+  const fReasons = verdict === 'merged' ? fileReasons({ verdict, file, base, fileInBase: file ? fileInBase(file, base) : null }) : [];
+  const label = prNumber != null ? `PR #${prNumber}` : 'PR текущей ветки';
+
+  if (verdict === 'merged' && fReasons.length === 0) {
+    console.log(`pr:verify: ✓ ${label} СМЁРЖЕН — ${reasons[0]}${file ? `; файл в origin/${base}` : ''}`);
     return 0;
   }
-  console.error(`pr:verify: ✗ ${label} НЕ подтверждён смёрженным:\n  - ${reasons.join('\n  - ')}`);
+  const all = [...reasons, ...fReasons];
+  console.error(`pr:verify: ✗ ${label} НЕ подтверждён смёрженным:\n  - ${all.join('\n  - ')}`);
+  if (verdict === 'unknown') return 4;
   return 1;
 }
 
