@@ -1,0 +1,24 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская кейсов",
+  "worksOn": "docs/cases",
+  "kit": null,
+  "verbs": {
+    "audit": "yarn case:register --validate",
+    "decompose": "yarn case:decompose",
+    "inspectElement": "yarn case:inspect",
+    "stackLike": [],
+    "domain": [
+      {
+        "name": "portfolio",
+        "worksOn": "docs/cases",
+        "tool": "yarn case:portfolio"
+      },
+      {
+        "name": "generalize",
+        "worksOn": "docs/cases",
+        "tool": "yarn case:generalize"
+      }
+    ]
+  }
+}
