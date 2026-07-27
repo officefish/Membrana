@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-26",
+  "updatedAt": "2026-07-27",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -732,6 +732,17 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-26",
+      "tags": []
+    },
+    {
+      "id": "insight-handoff-orchestration",
+      "title": "Оркестрация хендофф: разрез дня на изолированные брифы с асимметрией знания",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-27",
       "tags": []
     }
   ]
