@@ -126,6 +126,7 @@
     "main-day-issue:full": "node scripts/main-day-issue.mjs --full",
     "ritual:day": "node scripts/morning-care.mjs && (node scripts/worktree-sync.mjs || true) && (node scripts/repo-clean.mjs || true) && (node scripts/deps-watch.mjs --mode morning || true) && node scripts/plan-week-if-monday.mjs && node scripts/strategy-day.mjs && node scripts/daily-standup.mjs && node scripts/main-day-probe.mjs && node scripts/main-day-issue.mjs && node scripts/angelina.mjs && node scripts/ritual-deliver-to-main.mjs",
     "ritual:deliver-to-main": "node scripts/ritual-deliver-to-main.mjs",
+    "report:check": "node scripts/report-check.mjs",
     "ritual:evening": "node scripts/ritual-evening-run.mjs",
     "ritual:evening:local": "yarn archive:daily-day && yarn ensure-ollama && yarn local-code-review && yarn save-code-review && yarn task:close-github",
     "night:open": "node scripts/night-build-open.mjs",
