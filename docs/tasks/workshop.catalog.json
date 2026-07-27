@@ -56,6 +56,14 @@
       "summary": "Валидность карточки/реестра (зрение, не забор)"
     },
     {
+      "id": "states",
+      "verb": null,
+      "zone": "contract",
+      "yarn": "yarn task:states",
+      "doc": "docs/tasks/STATES_BATCH.md",
+      "summary": "Состояния issue/PR списком одним вызовом (не поштучно; honest unknown на сеть)"
+    },
+    {
       "id": "invariants",
       "verb": null,
       "zone": "contract",
