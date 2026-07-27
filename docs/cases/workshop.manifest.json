@@ -1,0 +1,16 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская кейсов",
+  "worksOn": "docs/cases",
+  "kit": null,
+  "verbs": {
+    "audit": "yarn case:register --validate",
+    "decompose": "yarn case:decompose",
+    "inspectElement": "yarn case:inspect",
+    "stackLike": [],
+    "domain": [
+      { "name": "portfolio", "yarn": "yarn case:portfolio", "desc": "Сводка: какие механизмы чаще дают ценность, что повторяемо, что везение" },
+      { "name": "generalize", "yarn": "yarn case:generalize", "desc": "Номинация повторяемых кейсов в кандидат-гранулы (только номинация с вещдоками, не автозапись в канон)" }
+    ]
+  }
+}

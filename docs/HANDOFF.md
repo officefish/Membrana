@@ -51,6 +51,9 @@
 `ship-merge-state-guard` [#1321](https://github.com/officefish/Membrana/issues/1321) ·
 состояния списком `tw-state-batch-norm` [#1322](https://github.com/officefish/Membrana/issues/1322).
 
+**Занято агентом А, блок «Контейнер кейсов» (дерево `Membrana-delivery`):** дом `docs/cases/`
+по спеке [#1298](https://github.com/officefish/Membrana/issues/1298) — подвал двух слоёв, закрытые перечни, пять глаголов, шесть первых кейсов; сбор из архива по-прежнему ждёт [#1229](https://github.com/officefish/Membrana/issues/1229).
+
 **Ниже черты (живое, но сегодня не тянем):** переезд Affine на `static.mmbrn.tech`
 [#1305](https://github.com/officefish/Membrana/issues/1305) — имя врёт, но не горит: сначала
 стоп №8, двигать живую ногу дороже · ночной полный прогон
