@@ -1,0 +1,16 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская вещдоков (primary)",
+  "worksOn": "docs/evidence/registry.jsonl",
+  "kit": null,
+  "role": "primary",
+  "rulesVersion": "1",
+  "verbs": {
+    "audit": "yarn evidence verify",
+    "decompose": "yarn evidence decompose --by store|date|source",
+    "inspectElement": "yarn evidence inspect <id>",
+    "list": "yarn evidence list",
+    "stackLike": [],
+    "domain": []
+  }
+}
