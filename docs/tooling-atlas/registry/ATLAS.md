@@ -19,7 +19,7 @@
 
 | Контейнер (`home`) | role | Мастерская (глаголы) | kit | Про что |
 |--------------------|------|----------------------|-----|---------|
-| [docs/cases](../../../docs/cases/README.md) ✗ | — | audit · decompose · inspectElement | — | Дом-контейнер кейсов: записанных **удачных** импровизаций и прогонов. Кейс — **зеркало |
+| [docs/cases](../../../docs/cases/README.md) | — | audit · decompose · inspectElement | — | Дом-контейнер кейсов: записанных **удачных** импровизаций и прогонов. Кейс — **зеркало |
 | [docs/containers/strategic-docs](../../../docs/containers/strategic-docs/README.md) | — | ~~audit~~ · ~~decompose~~ · ~~inspectElement~~ | — | Статус Affine publish: **frozen** с 2026-07-26; источник — `workshop.catalog.json#surfaceS |
 | [docs/evidence](../../../docs/evidence/README.md) | primary | audit · decompose · inspectElement | — | Мастерская индексации вещдоков (#1303, слово капитана 26–27.07): **индекс — суть, |
 | [docs/precedents](../../../docs/precedents/README.md) | — | audit · decompose · ~~inspectElement~~ | — | Дом-контейнер прецедентов: единичных задокументированных случаев (симптом → корень → |
