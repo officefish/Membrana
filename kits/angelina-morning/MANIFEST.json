@@ -18,9 +18,9 @@
   ],
   "pins": {
     "scripts/_anthropic-env.mjs": "0adfa9909638f1ca54d092565480351f29fbc13a",
-    "scripts/_daily-standup.mjs": "7b4865f1648d017d311c15c94f6f0ec0f61bf039",
+    "scripts/_daily-standup.mjs": "bf2013f9dec772670c345a4ae47ef51eb3c6a48c",
     "scripts/_llm-proxy-env.mjs": "968266cc5076bb569dd3d8181d89f3201a385f6a",
-    "scripts/_main-day-issue.mjs": "b5ab60f2611bf1e0f5dd78e5bdd6bf637a87a2e4",
+    "scripts/_main-day-issue.mjs": "4bcdc4bd8544f9dd2b8abfa2b4473d1b3e64bdb9",
     "scripts/angelina.mjs": "7958ec8a8aab856ce6acca3c5246ab6bca5d8e37",
     "scripts/daily-standup.mjs": "8ba645d4f508843bc58cb9c59a298c06f5c2640c",
     "scripts/deps-watch.mjs": "9cb0714e8f41df23b59edb7c4b6753111103a89b",

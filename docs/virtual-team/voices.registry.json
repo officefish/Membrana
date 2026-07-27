@@ -1,0 +1,70 @@
+{
+  "$comment": "Реестр голосов команды (блок 3 коворка 27.07, слово капитана). Закон — insight-cast-carrier-contract: объявленный участник обязан быть вызываемым; декларация без носителя не считается. Зуб: yarn verify:voices — промпт существует, секции характера/стиля на месте, память/эрудиция/журнал характера заведены, каждый callable резолвится в карте вызовов своего инструмента. kind — закрытый перечень: teamlead | architect | lead | advisor | voice.",
+  "version": 1,
+  "voices": [
+    {
+      "id": "tarasov",
+      "human": "Анатолий Владимирович Тарасов",
+      "kind": "teamlead",
+      "promptFile": "docs/virtual-team/PROMPT_TEAMLEAD.md",
+      "callable": ["ask", "consilium"],
+      "notes": "Тимлид с 27.07 (слово капитана): основатель системы — высочайшие нагрузки, сложные упражнения, коллективная комбинационная игра. Роль тимлида живёт в PROMPT_TEAMLEAD.md — все вызовы роли получают Тарасова без переделки проводов."
+    },
+    {
+      "id": "vesnin",
+      "human": "Веснин",
+      "kind": "architect",
+      "promptFile": "docs/virtual-team/PROMPT_ARCHITECT.md",
+      "callable": ["ask"],
+      "notes": "С 27.07 — архитектор, не тимлид: границы модулей, контракты, конструктивизм. Тимлидские обязанности переданы Тарасову."
+    },
+    {
+      "id": "ozhegov",
+      "human": "Ожегов",
+      "kind": "advisor",
+      "promptFile": "docs/virtual-team/PROMPT_STRUCTURER.md",
+      "callable": ["ask", "consilium"],
+      "notes": "Структурщик: термины, границы пакетов, словарь. Линза докладов наружу носит его имя."
+    },
+    {
+      "id": "dynin",
+      "human": "Дынин",
+      "kind": "advisor",
+      "promptFile": "docs/virtual-team/PROMPT_MATHEMATICIAN.md",
+      "callable": ["ask", "consilium"],
+      "notes": "Математик: предикаты, разрешимость, статистика. Судит по вычислимости, не по убедительности."
+    },
+    {
+      "id": "kuryokhin",
+      "human": "Курёхин",
+      "kind": "advisor",
+      "promptFile": "docs/virtual-team/PROMPT_MUSICIAN.md",
+      "callable": ["consilium"],
+      "notes": "Музыкант: смелые аудио-гипотезы, риск со структурой. В ask не заведён — легальное «нет»: его жанр — спор в консилиуме, не консультация тет-а-тет; включение в ask — отдельное слово владельца."
+    },
+    {
+      "id": "rodchenko",
+      "human": "Родченко",
+      "kind": "advisor",
+      "promptFile": "docs/virtual-team/PROMPT_LAYOUT_DEVELOPER.md",
+      "callable": ["ask", "consilium"],
+      "notes": "Верстальщик: конструкция экрана, форма = сообщение."
+    },
+    {
+      "id": "angelina",
+      "human": "Ангелина",
+      "kind": "lead",
+      "promptFile": "docs/virtual-team/PROMPT_ANGELINA.md",
+      "callable": ["ask"],
+      "notes": "Секретарь и мастер процедур (кристалл angelina-kit-is-procedures-master). Кода не пишет, ведёт конспект и журнал; гейт каскада. Вызов в комнатах (bridge/morning) — следующая фаза: машинного вызова там пока нет, callable его честно НЕ заявляет."
+    },
+    {
+      "id": "farrell",
+      "human": "Фаррелл",
+      "kind": "voice",
+      "promptFile": "docs/virtual-team/PROMPT_FARRELL.md",
+      "callable": ["storm"],
+      "notes": "Свободный голос, origin: pet. НЕ гейт: движок шторма гарантирует — реплика питомца никогда не входит в основания вердикта (isPetRemark + фильтр). Свобода записана контрактом в промпте: право не отвечать, менять тему, говорить не по форме."
+    }
+  ]
+}
