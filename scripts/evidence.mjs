@@ -79,5 +79,42 @@ if (cmd === 'list') {
   process.exit(0);
 }
 
-console.error('usage: yarn evidence add|verify|list');
+if (cmd === 'inspect') {
+  const id = argv[1] && !argv[1].startsWith('--') ? argv[1] : null;
+  if (!id) { console.error('usage: yarn evidence inspect <id>'); process.exit(1); }
+  const { records } = loadRegistry();
+  const r = records.find((x) => x.id === id);
+  if (!r) { console.error(`evidence: id «${id}» не найден`); process.exit(1); }
+  console.log(JSON.stringify(r, null, 2));
+  const [row] = verifyRecords([r], (loc) => {
+    if (loc.kind !== 'local') return 'skip';
+    if (!existsSync(loc.ref)) return null;
+    const buf = readFileSync(loc.ref);
+    return { sha256: createHash('sha256').update(buf).digest('hex'), bytes: buf.length };
+  });
+  console.log(`достижимость: ${row.status}${row.detail ? ` (${row.detail})` : ''}`);
+  process.exit(row.status === 'hash-mismatch' || row.status === 'unreachable' ? 1 : 0);
+}
+
+if (cmd === 'decompose') {
+  const by = flag('by') ?? 'store';
+  const axes = {
+    store: (r) => r.location.kind,
+    date: (r) => r.addedAt,
+    source: (r) => r.source.split(',')[0],
+  };
+  if (!axes[by]) { console.error('usage: yarn evidence decompose --by store|date|source'); process.exit(1); }
+  const { records } = loadRegistry();
+  const groups = new Map();
+  for (const r of records) {
+    const k = axes[by](r);
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(r.id);
+  }
+  for (const [k, ids] of [...groups.entries()].sort()) console.log(`  ${k} (${ids.length}): ${ids.join(', ')}`);
+  console.log(`evidence: ось ${by} · групп ${groups.size} · записей ${records.length}`);
+  process.exit(0);
+}
+
+console.error('usage: yarn evidence add|verify|list|inspect|decompose');
 process.exit(1);

@@ -4,7 +4,7 @@
 > Пересобрать: `yarn tooling:atlas --render`. Дрейф ловит `yarn tooling:atlas --check`.
 > Ссылка = `home` каталога. `docs/tasks` (domain) ≠ `docs/audit/tasks` (report, отчёты про задачи).
 
-Контейнеров: **9** · плоскостей: **3** · семей: **3** · с полным набором из 3 глаголов: **2**.
+Контейнеров: **10** · плоскостей: **3** · семей: **3** · с полным набором из 3 глаголов: **3**.
 
 ## Плоскость отчётов (`docs/audit`)
 
@@ -20,6 +20,7 @@
 | Контейнер (`home`) | role | Мастерская (глаголы) | kit | Про что |
 |--------------------|------|----------------------|-----|---------|
 | [docs/containers/strategic-docs](../../../docs/containers/strategic-docs/README.md) | — | ~~audit~~ · ~~decompose~~ · ~~inspectElement~~ | — | Статус Affine publish: **frozen** с 2026-07-26; источник — `workshop.catalog.json#surfaceS |
+| [docs/evidence](../../../docs/evidence/README.md) | primary | audit · decompose · inspectElement | — | Мастерская индексации вещдоков (#1303, слово капитана 26–27.07): **индекс — суть, |
 | [docs/precedents](../../../docs/precedents/README.md) | — | audit · decompose · ~~inspectElement~~ | — | Дом-контейнер прецедентов: единичных задокументированных случаев (симптом → корень → |
 | [docs/procedures](../../../docs/procedures/README.md) | — | audit · decompose · inspectElement | — | Дом **определений процедур** — спроектированных сущностей, оперирующих категориями |
 | [docs/tasks](../../../docs/tasks/README.md) | primary | ~~audit~~ · ~~decompose~~ · inspectElement | kits/tasks-master | Актуальные **активные** и **архивные** задачи по стандарту |
