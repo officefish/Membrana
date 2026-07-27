@@ -58,7 +58,9 @@ for (const v of voices) {
       findings.push(`${who}: callable=consilium, но PERSONA_FILES не несёт ${v.promptFile}`);
     } else if (c === 'storm' && !/origin\s*!==\s*'pet'|origin\s*===\s*'pet'/u.test(stormSrc)) {
       findings.push(`${who}: callable=storm, но механизм origin:pet в движке шторма не найден`);
-    } else if (!['ask', 'consilium', 'storm'].includes(c)) {
+    } else if (c === 'bridge' && !(existsSync(join(repoRoot, 'scripts/bridge-lead-call.mjs')) && read('scripts/bridge-lead-call.mjs').includes(v.promptFile))) {
+      findings.push(`${who}: callable=bridge, но scripts/bridge-lead-call.mjs не несёт ${v.promptFile} — вызвать нечем`);
+    } else if (!['ask', 'consilium', 'storm', 'bridge'].includes(c)) {
       findings.push(`${who}: callable «${c}» неизвестен зубу — либо заведи резолв, либо не заявляй`);
     }
   }

@@ -7,7 +7,10 @@
       "human": "Анатолий Владимирович Тарасов",
       "kind": "teamlead",
       "promptFile": "docs/virtual-team/PROMPT_TEAMLEAD.md",
-      "callable": ["ask", "consilium"],
+      "callable": [
+        "ask",
+        "consilium"
+      ],
       "notes": "Тимлид с 27.07 (слово капитана): основатель системы — высочайшие нагрузки, сложные упражнения, коллективная комбинационная игра. Роль тимлида живёт в PROMPT_TEAMLEAD.md — все вызовы роли получают Тарасова без переделки проводов."
     },
     {
@@ -15,7 +18,9 @@
       "human": "Веснин",
       "kind": "architect",
       "promptFile": "docs/virtual-team/PROMPT_ARCHITECT.md",
-      "callable": ["ask"],
+      "callable": [
+        "ask"
+      ],
       "notes": "С 27.07 — архитектор, не тимлид: границы модулей, контракты, конструктивизм. Тимлидские обязанности переданы Тарасову."
     },
     {
@@ -23,7 +28,10 @@
       "human": "Ожегов",
       "kind": "advisor",
       "promptFile": "docs/virtual-team/PROMPT_STRUCTURER.md",
-      "callable": ["ask", "consilium"],
+      "callable": [
+        "ask",
+        "consilium"
+      ],
       "notes": "Структурщик: термины, границы пакетов, словарь. Линза докладов наружу носит его имя."
     },
     {
@@ -31,7 +39,10 @@
       "human": "Дынин",
       "kind": "advisor",
       "promptFile": "docs/virtual-team/PROMPT_MATHEMATICIAN.md",
-      "callable": ["ask", "consilium"],
+      "callable": [
+        "ask",
+        "consilium"
+      ],
       "notes": "Математик: предикаты, разрешимость, статистика. Судит по вычислимости, не по убедительности."
     },
     {
@@ -39,7 +50,9 @@
       "human": "Курёхин",
       "kind": "advisor",
       "promptFile": "docs/virtual-team/PROMPT_MUSICIAN.md",
-      "callable": ["consilium"],
+      "callable": [
+        "consilium"
+      ],
       "notes": "Музыкант: смелые аудио-гипотезы, риск со структурой. В ask не заведён — легальное «нет»: его жанр — спор в консилиуме, не консультация тет-а-тет; включение в ask — отдельное слово владельца."
     },
     {
@@ -47,7 +60,10 @@
       "human": "Родченко",
       "kind": "advisor",
       "promptFile": "docs/virtual-team/PROMPT_LAYOUT_DEVELOPER.md",
-      "callable": ["ask", "consilium"],
+      "callable": [
+        "ask",
+        "consilium"
+      ],
       "notes": "Верстальщик: конструкция экрана, форма = сообщение."
     },
     {
@@ -55,15 +71,20 @@
       "human": "Ангелина",
       "kind": "lead",
       "promptFile": "docs/virtual-team/PROMPT_ANGELINA.md",
-      "callable": ["ask"],
-      "notes": "Секретарь и мастер процедур (кристалл angelina-kit-is-procedures-master). Кода не пишет, ведёт конспект и журнал; гейт каскада. Вызов в комнатах (bridge/morning) — следующая фаза: машинного вызова там пока нет, callable его честно НЕ заявляет."
+      "callable": [
+        "ask",
+        "bridge"
+      ],
+      "notes": "Секретарь и мастер процедур (кристалл angelina-kit-is-procedures-master). Кода не пишет, ведёт конспект и журнал; гейт каскада. Канал bridge — v0-ЭКСПЕРИМЕНТ (27.07): scripts/bridge-lead-call.mjs, тумблер BRIDGE_LEAD=1, дежурного движка нет — вызовы дисциплиной сессии в контрактные моменты."
     },
     {
       "id": "farrell",
       "human": "Фаррелл",
       "kind": "voice",
       "promptFile": "docs/virtual-team/PROMPT_FARRELL.md",
-      "callable": ["storm"],
+      "callable": [
+        "storm"
+      ],
       "notes": "Свободный голос, origin: pet. НЕ гейт: движок шторма гарантирует — реплика питомца никогда не входит в основания вердикта (isPetRemark + фильтр). Свобода записана контрактом в промпте: право не отвечать, менять тему, говорить не по форме."
     }
   ]

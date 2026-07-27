@@ -21,6 +21,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const MUST_USE_FACADE = [
   'scripts/ask-persona.mjs',
   'scripts/team-evening-feedback.mjs',
+  'scripts/bridge-lead-call.mjs',
 ];
 
 // Легаси с прямым anthropicPost — известный долг, только на уменьшение (#1306-класс).

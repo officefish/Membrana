@@ -397,7 +397,8 @@
     "test:scripts:list": "node scripts/test-scripts-run.mjs --list",
     "test:scripts:smoke": "node scripts/tests-container.mjs --setup smoke",
     "test:scripts:gate": "node scripts/tests-container.mjs --setup gate",
-    "test:scripts:full": "node scripts/tests-container.mjs --setup full"
+    "test:scripts:full": "node scripts/tests-container.mjs --setup full",
+    "bridge:lead": "node scripts/bridge-lead-call.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
