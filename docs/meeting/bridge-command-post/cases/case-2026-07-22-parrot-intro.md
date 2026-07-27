@@ -31,14 +31,14 @@
 - schemaVersion: case-meta/1
 - sessionDate: 2026-07-22
 - sourceBridge: session:7f931953-ca19-490e-a919-6ca27a60a8c9 (первый мостик)
-- status: candidate
+- status: bearing
 - rawRefs: [transcript:7f931953#dc77679c-14ef-4b10-b444-0ea4f2d0cee0, transcript:7f931953#0dab27dd-0979-44a3-adad-172afeb2266e]
 - conclusionDigest: Новый голос вводится функцией и характером; первая реплика — долги, поднятые из вещдоков дня, с названным провенансом, не выдумка.
 - tags: [role-split, provenance]
 - logicalSlot: role-split.parrot-intro
 - derivedInstructionId: null
-- stampedBy: null
-- stampedAt: null
+- stampedBy: владелец — делегированное слово 27.07 («согласен на твои рекомендации»; рекомендация председателя P2: bearing)
+- stampedAt: 2026-07-27
 - capturedBy: agent-researcher (задание «пять удачных примеров мостика», 27.07)
 
 Сводная строка: сессия `7f931953-ca19-490e-a919-6ca27a60a8c9`, **первый день мостика** (22.07); в реплике капитана формат «мостик» впервые назван по имени им самим.
