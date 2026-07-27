@@ -63,11 +63,12 @@ const MAX_CONTEXT_CHARS = 6_000;
 const MAX_TOPIC_CHARS = 12_000;
 const MAX_TICKET_CHARS = 20_000;
 const MAX_ASSEMBLED_CHARS = 95_000;
-const MIN_REPLIES_DEFAULT = 20;
-const MAX_MEMORY_CHARS_PER_ROLE = 6_000; // 5 ролей в одном промпте — держим компактно
+const MIN_REPLIES_DEFAULT = 30;
+const MAX_MEMORY_CHARS_PER_ROLE = 6_000; // 6 советчиков в одном промпте — держим компактно
 
 const PERSONA_FILES = {
   teamlead: 'docs/virtual-team/PROMPT_TEAMLEAD.md',
+  architect: 'docs/virtual-team/PROMPT_ARCHITECT.md',
   structurer: 'docs/virtual-team/PROMPT_STRUCTURER.md',
   mathematician: 'docs/virtual-team/PROMPT_MATHEMATICIAN.md',
   musician: 'docs/virtual-team/PROMPT_MUSICIAN.md',
@@ -83,7 +84,7 @@ const CONTEXT_FILES = [
 function printHelp() {
   console.log(`Usage: yarn consilium [options] "<question>"
 
-Консилиум пяти ролей виртуальной команды. Протокол → docs/seanses/<slug>-<date>.md
+Консилиум-2: шесть советчиков + гости (Фаррелл 0–3 локально, Ангелина — опровержения). Протокол → docs/seanses/<slug>-<date>.md
 Промпт-спека: ${CONSILIUM_PROMPT_FILE}
 
 Options:
@@ -282,6 +283,17 @@ function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles
     '',
     'Метки в протоколе:',
     orderedRoles.map((r) => `${r.tag} — ${r.label}`).join('\n'),
+    '',
+    '## Гости комнаты (консилиум-2, 27.07)',
+    '',
+    '- **[Фаррелл]** — локальный голос (`origin: pet`): его реплики добавляет локальная',
+    '  сторона, ТЫ ИХ НЕ ПИШЕШЬ. В протоколе их может быть 0–3. Участники вправе не',
+    '  реагировать на Фаррелла — молчание в ответ ему не дефект. Его слово никогда не',
+    '  входит в основания вердикта.',
+    '- **[Ангелина]** — только опровержение: вступает, когда ловит роль на неправде,',
+    '  и обязана нести вещдок (файл/строку/цитату/номер). Не советчик: мнений не даёт,',
+    '  в счёт реплик не входит. Если опровергать нечего — молчит, и это норма.',
+    '- Порог реплик считают только шесть советчиков; гости — сверх.',
     '',
   );
 

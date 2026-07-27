@@ -2,7 +2,7 @@
 name: membrana-consilium
 description: >-
   Runs Membrana virtual team consilium via yarn consilium with protocol saved to docs/seanses.
-  Use for multi-role architectural or product disputes needing ≥20 role replies and a
+  Use for multi-role architectural or product disputes needing ≥30 role replies and a
   written consensus. Do NOT use for single-persona yarn ask or routine code review.
 ---
 
@@ -27,7 +27,7 @@ Output: `docs/seanses/<topic-slug>.md` (or `docs/discussions/` per script).
 
 ## Protocol rules
 
-- **≥20 replies** `[Роль]: …` in discussion body.
+- **≥30 replies** (шесть советчиков; гости Фаррелл ≤3 и Ангелина-опровержение — сверх счёта) `[Роль]: …` in discussion body.
 - Secretary does not vote; voices five roles per `docs/virtual-team/PROMPT_*.md`.
 - Conflict: Teamlead + `ARCHITECTURE.md`.
 

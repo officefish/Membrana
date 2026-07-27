@@ -2,7 +2,7 @@
 name: membrana-consilium
 description: >-
   Runs Membrana virtual team consilium via yarn consilium with protocol saved to
-  docs/seanses (≥20 role replies + written consensus). Use for architectural or product
+  docs/seanses (≥30 role replies (6 советчиков; гости сверх) + written consensus). Use for architectural or product
   disputes BEFORE code: new core contracts, new package, new palette nodes, L-epic,
   layer-boundary disputes — or when user says консилиум, архитектурный спор. Do NOT use
   for single-persona yarn ask or routine code review (membrana-code-review).
@@ -30,5 +30,5 @@ Output: `docs/seanses/<topic-slug>-<date>.md` — коммитится вмес�
 
 ## Protocol rules
 
-≥20 реплик `[Роль]: …`; секретарь не голосует; конфликт решает Teamlead + ARCHITECTURE.md.
+≥30 реплик шести советчиков (Фаррелл ≤3 локально, Ангелина — опровержение с вещдоком — сверх счёта); `[Роль]: …`; секретарь не голосует; конфликт решает Teamlead + ARCHITECTURE.md.
 Не заменяет Issue / task-промпт / PR LGTM. Итог: путь к протоколу + 3 буллета консенсуса.
