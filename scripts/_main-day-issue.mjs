@@ -554,7 +554,7 @@ function writeMainDayIssueFile({ outputPath, commandName, body, meta }) {
     `<!-- Сгенерировано: ${stamp} (${commandName}@${headRevision()}) -->\n` +
     `<!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->\n` +
     `<!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->\n` +
-    `${provenanceHeader({ author: 'vesnin', readAt })}\n` +
+    `${provenanceHeader({ author: 'tarasov', readAt })}\n` +
     `${provenanceLlmComment(meta.llm ?? {})}\n` +
     `<!-- CURRENT_TASK — только вспомогательный буфер, не канон -->\n` +
     (meta.primaryFocusOverride

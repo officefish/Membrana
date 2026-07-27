@@ -577,7 +577,7 @@ function writeStandupFile({ outputPath, commandName, body, meta }) {
     `<!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->\n` +
     `<!-- Входы: VIRTUAL_TEAM_PROMPT, ${FFT_METRICS_POTENTIAL_AND_LIMITS_REL}, STRATEGY_DAY, DAILY_CODE_REVIEW, GitHub Issues (${meta.issues}), packages/temp (${meta.tempFiles} файлов) -->\n` +
     `<!-- Issues: ${meta.issueSource ?? 'n/a'} -->\n` +
-    `${provenanceHeader({ author: 'vesnin', readAt })}\n\n`;
+    `${provenanceHeader({ author: 'tarasov', readAt })}\n\n`;
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, header + body, 'utf8');
 }
