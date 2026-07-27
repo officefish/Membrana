@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `archivarius-sessions-container` | Контейнер сессий Archivarius: Mongo office, адресуемые span, ingest/search с секрет-маской | L | [`ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md`](../prompts/ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md) | [#1330](https://github.com/officefish/Membrana/issues/1330) |
 | `worktree-hygiene-epic` | Эпик: гигиена рабочих деревьев — freshEnough∧clean, гард держателя, инвентарь | L | [`WORKTREE_HYGIENE_EPIC_PROMPT.md`](../prompts/WORKTREE_HYGIENE_EPIC_PROMPT.md) | [#1232](https://github.com/officefish/Membrana/issues/1232) |
 | `adr-procedure-legalize` | Легализовать ADR как процедуру: запись в реестре, ядро trigger/steps/gates, зуб на реестр записей | M | [`ADR_PROCEDURE_LEGALIZE_PROMPT.md`](../prompts/ADR_PROCEDURE_LEGALIZE_PROMPT.md) | [#1296](https://github.com/officefish/Membrana/issues/1296) |
 | `send-gate-on-path` | Гейт отправки на путь отправки: день в предикатах, canSendAlly в swallow, сверка digest | S | [`SEND_GATE_ON_PATH_PROMPT.md`](../prompts/SEND_GATE_ON_PATH_PROMPT.md) | [#1233](https://github.com/officefish/Membrana/issues/1233) |
@@ -240,8 +241,8 @@
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
 | `kits-pins-prepush-strict` | Строгая сверка описей китов на pre-push для затронутых файлов | 2026-07-27 | [`KITS_PINS_PREPUSH_STRICT_PROMPT.md`](../prompts/KITS_PINS_PREPUSH_STRICT_PROMPT.md) | — | [карточка](./archive/kits-pins-prepush-strict.md) |
-| `ship-merge-state-guard` | Гард незавершённого слияния перед пушем: тихий отказ хука не выдаёт себя за успех | 2026-07-27 | [`SHIP_MERGE_STATE_GUARD_PROMPT.md`](../prompts/SHIP_MERGE_STATE_GUARD_PROMPT.md) | #1321 (Issue открыт) | [карточка](./archive/ship-merge-state-guard.md) |
-| `tw-state-batch-norm` | Состояния задач опрашивать списком, не поштучно — норма мастерской + гард | 2026-07-27 | [`TW_STATE_BATCH_NORM_PROMPT.md`](../prompts/TW_STATE_BATCH_NORM_PROMPT.md) | #1322 (Issue открыт) | [карточка](./archive/tw-state-batch-norm.md) |
+| `ship-merge-state-guard` | Гард незавершённого слияния перед пушем: тихий отказ хука не выдаёт себя за успех | 2026-07-27 | [`SHIP_MERGE_STATE_GUARD_PROMPT.md`](../prompts/SHIP_MERGE_STATE_GUARD_PROMPT.md) | #1321 | [карточка](./archive/ship-merge-state-guard.md) |
+| `tw-state-batch-norm` | Состояния задач опрашивать списком, не поштучно — норма мастерской + гард | 2026-07-27 | [`TW_STATE_BATCH_NORM_PROMPT.md`](../prompts/TW_STATE_BATCH_NORM_PROMPT.md) | #1322 | [карточка](./archive/tw-state-batch-norm.md) |
 | `procedures-versions` | Версии · совместимость · миграции процедурного слоя (Ф4 #1220) | 2026-07-26 | [`PROCEDURES_VERSIONS_PROMPT.md`](../prompts/PROCEDURES_VERSIONS_PROMPT.md) | #1274 | [карточка](./archive/procedures-versions.md) |
 | `friction6-secret-gate-parity` | Секрет-гейт локально = CI: проверка по диапазону вместо растущей истории | 2026-07-26 | [`FRICTION6_SECRET_GATE_PARITY_PROMPT.md`](../prompts/FRICTION6_SECRET_GATE_PARITY_PROMPT.md) | #1262 | [карточка](./archive/friction6-secret-gate-parity.md) |
 | `friction6-ship-determinism` | Ship перестаёт врать и проигрывать гонку: pr-wait бэкофф, pr-land на Windows, --auto, гард занятой base | 2026-07-26 | [`FRICTION6_SHIP_DETERMINISM_PROMPT.md`](../prompts/FRICTION6_SHIP_DETERMINISM_PROMPT.md) | #1261 | [карточка](./archive/friction6-ship-determinism.md) |
