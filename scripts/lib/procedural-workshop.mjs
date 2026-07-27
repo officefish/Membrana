@@ -18,6 +18,10 @@ import { basename, join } from 'node:path';
 
 import { listProcedureDirs, validateProcedure } from './validate-procedure.mjs';
 
+function procedureHomePath(p) {
+  return typeof p?.homePath === 'string' && p.homePath ? p.homePath : `docs/procedures/${p.id}`;
+}
+
 /**
  * Прочитать реестр процедур. Битый/непустой-но-нечитаемый реестр — ОШИБКА (не []),
  * чтобы гейт отличал «нет процедур» от «реестр не читается».
@@ -62,7 +66,8 @@ export function auditProcedures(repoRoot) {
       continue;
     }
     seen.add(p.id);
-    const dir = join(repoRoot, 'docs', 'procedures', p.id);
+    const homePath = procedureHomePath(p);
+    const dir = join(repoRoot, ...homePath.split('/'));
     const dirExists = existsSync(dir);
     const declaredBuilt = p.container?.value === true;
     const problems = [];
@@ -70,12 +75,15 @@ export function auditProcedures(repoRoot) {
     let state;
     if (declaredBuilt && !dirExists) {
       state = 'drift-declared-missing';
-      problems.push(`container.value=true, но каталога docs/procedures/${p.id} нет`);
-    } else if (declaredBuilt && dirExists) {
+      problems.push(`container.value=true, но каталога ${homePath} нет`);
+    } else if (declaredBuilt && dirExists && homePath.startsWith('docs/procedures/')) {
       const r = validateProcedure(dir, repoRoot);
       valid = r.valid;
       state = r.valid ? 'built-valid' : 'built-invalid';
       if (!r.valid) problems.push(...r.problems.map((x) => `validateProcedure: ${x}`));
+    } else if (declaredBuilt && dirExists) {
+      valid = true;
+      state = 'built-external-home';
     } else if (!declaredBuilt && dirExists) {
       state = 'drift-built-undeclared';
       problems.push(`каталог есть, но container.value≠true (реестр отстаёт)`);

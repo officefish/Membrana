@@ -20,11 +20,14 @@ import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { GROUPS, groupOf, planTestRun, SKIP_WITH_REASON } from './lib/test-scripts-plan.mjs';
+import { groupOf, planTestRun } from './lib/test-scripts-plan.mjs';
+import { loadTestCatalog } from './lib/tests-container.mjs';
 import { discoverTestFiles } from './test-scripts-run.mjs';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8'));
+const catalog = loadTestCatalog(repoRoot);
+const groups = catalog.groups.map((g) => g.name);
 
 test('test:scripts делегирует раннеру, а не хранит список путей', () => {
   const cmd = pkg.scripts['test:scripts'];
@@ -41,7 +44,7 @@ test('открытие рекурсивное: тесты в scripts/lib/** по
 
 test('ни один файл не теряется молча: run ∪ skipped = всё, что на диске', () => {
   const files = discoverTestFiles();
-  const { run, skipped } = planTestRun({ files });
+  const { run, skipped } = planTestRun({ files, catalog });
   const covered = new Set([...run, ...skipped.map((s) => s.file)]);
   const lost = files.filter((f) => !covered.has(f));
   assert.deepEqual(lost, [], `файлы вне плана (не гоняются и не исключены явно): ${lost.join(', ')}`);
@@ -49,7 +52,7 @@ test('ни один файл не теряется молча: run ∪ skipped =
 });
 
 test('каждое исключение несёт непустую причину', () => {
-  for (const [file, reason] of Object.entries(SKIP_WITH_REASON)) {
+  for (const [file, reason] of Object.entries(catalog.skips)) {
     assert.equal(typeof reason, 'string');
     assert.ok(reason.trim().length > 10, `исключение ${file} без внятной причины — через месяц не отличить от забытого файла`);
   }
@@ -57,7 +60,7 @@ test('каждое исключение несёт непустую причин
 
 test('группы разбивают набор без пересечений и без остатка', () => {
   const files = discoverTestFiles();
-  const byGroup = GROUPS.map((g) => planTestRun({ files, group: g }).run);
+  const byGroup = groups.map((g) => planTestRun({ files, group: g, catalog }).run);
   const sum = byGroup.reduce((n, list) => n + list.length, 0);
   const all = planTestRun({ files }).run.length;
   assert.equal(sum, all, 'сумма групп ≠ общему набору: файл попал в две группы или ни в одну');
@@ -72,18 +75,27 @@ test('группы разбивают набор без пересечений �
 
 test('каждая группа из package.json существует в ядре плана', () => {
   for (const key of Object.keys(pkg.scripts)) {
-    const m = key.match(/^test:scripts:(?!list$)(.+)$/u);
-    if (m) assert.ok(GROUPS.includes(m[1]), `скрипт ${key} ссылается на несуществующую группу`);
+    const m = key.match(/^test:scripts:(?!list$|smoke$|gate$|full$)(.+)$/u);
+    if (m) assert.ok(groups.includes(m[1]), `скрипт ${key} ссылается на несуществующую группу`);
   }
-  for (const g of GROUPS) {
+  for (const g of groups) {
     assert.ok(pkg.scripts[`test:scripts:${g}`], `нет ярлыка test:scripts:${g}`);
   }
 });
 
 test('groupOf детерминирован и не зависит от регистра пути', () => {
-  assert.equal(groupOf('scripts/secret-redact.test.mjs'), 'security');
-  assert.equal(groupOf('scripts/morning-ritual.test.mjs'), 'rituals');
-  assert.equal(groupOf('scripts/task-registry.test.mjs'), 'tasks');
-  assert.equal(groupOf('scripts/pr-ship.test.mjs'), 'repo');
-  assert.equal(groupOf('scripts/lib/movement-mode.test.mjs'), 'domain');
+  assert.equal(groupOf('scripts/secret-redact.test.mjs', catalog), 'security');
+  assert.equal(groupOf('scripts/morning-ritual.test.mjs', catalog), 'rituals');
+  assert.equal(groupOf('scripts/task-registry.test.mjs', catalog), 'tasks');
+  assert.equal(groupOf('scripts/pr-ship.test.mjs', catalog), 'repo');
+  assert.equal(groupOf('scripts/lib/movement-mode.test.mjs', catalog), 'domain');
+});
+
+test('catalog — источник данных раннера вне package.json', () => {
+  assert.equal(catalog.discovery.root, 'scripts');
+  assert.ok(Array.isArray(catalog.setups.smoke.include));
+  assert.ok(catalog.setups.smoke.include.length > 0);
+  const files = new Set(discoverTestFiles());
+  const missingSmoke = catalog.setups.smoke.include.filter((file) => !files.has(file));
+  assert.deepEqual(missingSmoke, [], `smoke ссылается на отсутствующие тесты: ${missingSmoke.join(', ')}`);
 });

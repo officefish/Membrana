@@ -1,0 +1,16 @@
+{
+  "id": "tests-master",
+  "leadPersona": "dynin",
+  "roots": [
+    "scripts/tests-container.mjs",
+    "scripts/test-scripts-run.mjs",
+    "tests/test-scripts.catalog.json"
+  ],
+  "pins": {
+    "scripts/tests-container.mjs": "b4e0ea5d615c43e8d8384178442589a37177bf72",
+    "scripts/test-scripts-run.mjs": "949022dbb1cdad885e4d8e332821e25aad240e25",
+    "scripts/lib/tests-container.mjs": "99e88b7db4bc4568f0b293acaca100045f263508",
+    "scripts/lib/test-scripts-plan.mjs": "1363761179672732b9132f2a00d2a7b049f11b7d",
+    "tests/test-scripts.catalog.json": "afd488c422c4748bac3d63457dc11629c493671c"
+  }
+}

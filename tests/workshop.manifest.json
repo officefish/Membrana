@@ -1,0 +1,22 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская тестового контейнера",
+  "worksOn": "tests",
+  "kit": "kits/tests-master",
+  "verbs": {
+    "audit": "node scripts/tests-container.mjs --setup gate --list",
+    "decompose": "node scripts/tests-container.mjs --decompose",
+    "inspectElement": "node scripts/tests-container.mjs --inspect <test-file>",
+    "stackLike": [],
+    "domain": [
+      {
+        "name": "selectSetup",
+        "worksOn": "tests"
+      },
+      {
+        "name": "reportNotRun",
+        "worksOn": "tests"
+      }
+    ]
+  }
+}
