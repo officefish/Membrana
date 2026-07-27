@@ -1,0 +1,17 @@
+{
+  "$comment": "Полиси защиты main (#1310, магистраль 27.07, owner-choice). ДЕКЛАРАЦИЯ: как ветка ДОЛЖНА быть защищена. Факт сверяет yarn verify:branch-protection — расхождение кричит по имени. Правки здесь — только со словом владельца: это правила его ветки.",
+  "branch": "main",
+  "requiredStatusChecks": {
+    "contexts": ["scan", "Lint, typecheck, test, build"],
+    "strict": false,
+    "$why": "scan — секрет-гейт; основная сборка обязательна, иначе PR с красным CI мержится (замер 27.07: стояла одна scan). strict=false осознанно: строгая актуальность ветки вернула бы гонку с base (26.07 — шесть заходов на один PR)."
+  },
+  "allowForcePushes": false,
+  "allowDeletions": false,
+  "requiredPullRequestReviews": {
+    "required": false,
+    "$why": "Легальное «нет» с причиной (норма B10): агентский контур мержит свои PR через pr:ship с ожиданием CI; обязательное человеческое ревью остановило бы все сессии. Качество держат зубы: CI, kits:audit, секрет-гейт, вечерний code-review."
+  },
+  "enforceAdmins": { "required": false, "$why": "Аварийный обход владельца; включение — его отдельное слово." },
+  "requiredLinearHistory": { "required": false, "$why": "pr:ship мержит squash'ем — история линейна по факту." }
+}

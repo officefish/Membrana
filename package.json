@@ -21,6 +21,7 @@
     "build:affected": "node scripts/build-affected.mjs",
     "wire:generate": "node scripts/generate-wire-contract.mjs",
     "verify:wire-sync": "node scripts/verify-wire-sync.mjs",
+    "verify:branch-protection": "node scripts/verify-branch-protection.mjs",
     "deploy:when-green": "node scripts/deploy-when-green.mjs",
     "prisma:migration": "node scripts/prisma-migration-new.mjs",
     "tasks:archive-closed": "node scripts/tasks-archive-closed.mjs",
