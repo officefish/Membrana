@@ -27,6 +27,14 @@ const DOCS_RE = /\.(md|mdx)$/iu;
  */
 const GLOBAL_CONFIGS = ['tsconfig.base.json', 'turbo.json', '.env'];
 
+export function yarnBin(platform = process.platform) {
+  return platform === 'win32' ? 'yarn.cmd' : 'yarn';
+}
+
+function execYarn(args) {
+  execFileSync(yarnBin(), args, { stdio: 'inherit', shell: process.platform === 'win32' });
+}
+
 /** @param {string[]} files */
 export function nonDocsFiles(files) {
   return files.filter((f) => f && !DOCS_RE.test(f));
@@ -87,7 +95,7 @@ export function main() {
   const changed = changedVsMain();
   if (changed === null) {
     console.log('pre-push: origin/main недоступен → полный typecheck');
-    execFileSync('yarn', ['typecheck'], { stdio: 'inherit' });
+    execYarn(['typecheck']);
     return 0;
   }
   const plan = planPrepushTypecheck(changed, { packageDirs: discoverPackageDirs() });
@@ -97,19 +105,19 @@ export function main() {
   }
   if (plan.mode === 'full') {
     console.log(`pre-push [cg6/NB5]: полный typecheck — ${plan.reason}`);
-    execFileSync('yarn', ['typecheck'], { stdio: 'inherit' });
+    execYarn(['typecheck']);
     return 0;
   }
   const names = plan.dirs.map((d) => dirToPkgName(d)).filter(Boolean);
   if (names.length === 0) {
     // имена не прочитались — безопасный полный прогон
     console.log('pre-push [cg6/NB5]: имена пакетов не прочитались → полный typecheck');
-    execFileSync('yarn', ['typecheck'], { stdio: 'inherit' });
+    execYarn(['typecheck']);
     return 0;
   }
   const filters = names.flatMap((n) => ['--filter', `...${n}`]);
   console.log(`pre-push [cg6/NB5]: typecheck affected без docs (${names.join(', ')})`);
-  execFileSync('yarn', ['turbo', 'run', 'typecheck', ...filters], { stdio: 'inherit' });
+  execYarn(['turbo', 'run', 'typecheck', ...filters]);
   return 0;
 }
 

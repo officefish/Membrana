@@ -129,6 +129,7 @@
     "ritual:deliver-to-main": "node scripts/ritual-deliver-to-main.mjs",
     "verify:voices": "node scripts/verify-voices.mjs",
     "evidence": "node scripts/evidence.mjs",
+    "archivarius": "node scripts/archivarius.mjs",
     "report:check": "node scripts/report-check.mjs",
     "ritual:evening": "node scripts/ritual-evening-run.mjs",
     "ritual:evening:local": "yarn archive:daily-day && yarn ensure-ollama && yarn local-code-review && yarn save-code-review && yarn task:close-github",

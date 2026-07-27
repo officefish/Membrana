@@ -73,6 +73,9 @@ export const envSchema = z.object({
   LLM_PROCEDURE_OVERLAY_STORE_PATH: z.string().optional(),
   /** LPC C: usage events JSONL volume (`<root>/YYYY-MM-DD.jsonl`, retention 30d) */
   LLM_USAGE_VOLUME_PATH: z.string().optional(),
+  /** Archivarius (#1330): sessions archive MongoDB store, local compose only until owner-gated prod migration. */
+  ARCHIVARIUS_MONGO_URI: z.string().optional(),
+  ARCHIVARIUS_MONGO_DB: z.string().optional(),
 });
 
 export type AppConfig = z.infer<typeof envSchema>;

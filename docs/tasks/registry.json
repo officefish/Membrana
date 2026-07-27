@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "archivarius-sessions-container",
+      "title": "Контейнер сессий Archivarius: Mongo office, адресуемые span, ingest/search с секрет-маской",
+      "promptPath": "docs/prompts/ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md",
+      "githubIssue": 1330,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-27",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ],
+      "notes": "Блок 1: контейнер-архивариус сессий. База MongoDB в office-стеке — источник; репо — нотариус контракта и снимков (#1229).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "worktree-hygiene-epic",
       "title": "Эпик: гигиена рабочих деревьев — freshEnough∧clean, гард держателя, инвентарь",
       "promptPath": "docs/prompts/WORKTREE_HYGIENE_EPIC_PROMPT.md",

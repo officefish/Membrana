@@ -1,0 +1,23 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская Archivarius",
+  "worksOn": "docs/archivarius",
+  "kit": null,
+  "verbs": {
+    "audit": "yarn archivarius audit",
+    "decompose": "yarn archivarius decompose",
+    "inspectElement": "yarn archivarius inspect <sessionId>",
+    "domain": [
+      {
+        "name": "search",
+        "worksOn": "docs/archivarius",
+        "tool": "yarn archivarius search"
+      },
+      {
+        "name": "ingest",
+        "worksOn": "docs/archivarius",
+        "tool": "yarn archivarius ingest --from ~/.claude/projects"
+      }
+    ]
+  }
+}

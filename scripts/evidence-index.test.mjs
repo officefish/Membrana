@@ -21,6 +21,15 @@ test('валидная запись проходит без находок', () 
   assert.deepEqual(recordProblems(OK), []);
 });
 
+test('archivarius span:// — валидный склад для акта изъятия', () => {
+  assert.deepEqual(recordProblems({
+    ...OK,
+    id: 'session-span-extraction',
+    source: 'Archivarius span extraction',
+    location: { kind: 'archivarius', ref: 'span://session-1/uuid-1' },
+  }), []);
+});
+
 test('предикат дома: без хеша и без адреса — не вещдок, находки по именам', () => {
   const p1 = recordProblems({ ...OK, sha256: 'xyz' });
   assert.ok(p1.some((m) => m.includes('без хеша')));

@@ -50,7 +50,7 @@ flowchart LR
 
 | Пакет | Порт (dev) | Prod URL | Stateful? | Назначение |
 |-------|------------|----------|-----------|------------|
-| **`@membrana/background-office`** | 3000 | `https://office.membrana.space` | Нет | **Интеграционный шлюз:** Anthropic Claude, Linear GraphQL, Linear webhooks, GitHub Issues (persona-контекст), **RAG query** (`POST /api/rag/query`, R4), **push-ingest observability/telemetry** (drift-anchor, ADR 0004 — см. ниже). Скрипты `yarn ask`, CI, dev-tools. |
+| **`@membrana/background-office`** | 3000 | `https://office.membrana.space` | Частично | **Интеграционный шлюз:** Anthropic Claude, Linear GraphQL, Linear webhooks, GitHub Issues (persona-контекст), **RAG query** (`POST /api/rag/query`, R4), **push-ingest observability/telemetry** (drift-anchor, ADR 0004 — см. ниже), **Archivarius sessions** (`/v1/archivarius/*`, MongoDB, #1330). Скрипты `yarn ask`, CI, dev-tools. |
 | **`@membrana/background-media`** | 3010 | `https://media.membrana.space` | **Да** | **Data-plane веб-клиента:** библиотека сэмплов (коллекции, multipart upload, blob storage), trends-шаблоны (JSON), квота. Изоляция по **`deviceId`** (узел/клиент); v2 эпика #67 — scope по **`membraneId`**. Стек: **NestJS + Fastify**, **Prisma + PostgreSQL**. |
 | **`@membrana/background-cabinet`** *(план)* | 3020 | `https://cabinet.membrana.space` | **Да** | **Identity + domain:** users (login/password), membranes, nodes, access keys (TTL enum), tariffs, telemetry metadata. SPA: `apps/cabinet` → `cabinet.membrana.space`. |
 
@@ -62,6 +62,10 @@ flowchart LR
 - CRUD коллекций сэмплов;
 - trends-шаблоны пользователя;
 - PostgreSQL / файловые volume под пользовательские данные.
+
+Исключение: Archivarius (#1330) хранит сессионные span в MongoDB office-стека;
+репозиторий остаётся нотариусом контракта и снимков, prod-миграция Mongo — отдельный
+owner-gated шаг. Не смешивать это с media blob storage.
 
 **В `background-media` НЕ добавлять:**
 
@@ -118,7 +122,7 @@ Producer'ы вне office (CI-джобы, серверные cron-скрипты
 | Правило | Обоснование |
 |---------|-------------|
 | Producer POST'ит **готовый JSON**; office НЕ импортирует его тип из `packages/*` | сохраняет «автономность от монорепо-клиента» (см. выше); office объявляет **локальный** zod-DTO (structurally совпадающий, без workspace-зависимости) — как `commentSchema` в `linear.controller.ts` |
-| Хранение — **in-memory** (последняя запись на ключ), без файлов/Prisma | office — stateless (см. таблицу выше, нет `volumes:` ни в одном compose); после редеплоя store пуст до следующего прогона producer'а — это **видимо** через таймстемп записи, не тихая деградация |
+| Хранение — **in-memory** (последняя запись на ключ), без файлов/Prisma | этот push-ingest контур остаётся stateless; после редеплоя store пуст до следующего прогона producer'а — это **видимо** через таймстемп записи, не тихая деградация |
 | `POST /v1/<модуль>/records` — под `ApiTokenGuard`, как остальные `/v1/*` | producer доверенный (CI-секрет из `secrets.OFFICE_API_TOKEN` / серверный cron с доступом к `API_INTERNAL_TOKEN` на хосте) |
 | `GET /v1/<модуль>/digest` — публичный **без токена**, ТОЛЬКО если данные не секретны | `X-Membrana-Token` нельзя класть в клиентский бандл; решается по существу на ревью (для drift-anchor — метрики уже публичны в `DETECTOR_BENCHMARK.md`), не по умолчанию |
 | Бизнес-логика над данными (сравнение, вердикт) — на стороне **потребителя** (клиент/кабинет), не в office | office остаётся тупым транспортом; чистые функции живут там, где `@membrana/core` уже легальная зависимость |
