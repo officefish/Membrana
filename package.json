@@ -213,6 +213,8 @@
     "validate:workshop": "node scripts/check-workshops.mjs",
     "check:workshop-ownership": "node scripts/check-workshop-ownership.mjs",
     "precedent:register": "node scripts/precedent-register.mjs",
+    "sessions:scan": "node scripts/session-scan.mjs",
+    "sessions:extract": "node scripts/session-extract.mjs",
     "case:register": "node scripts/case-register.mjs",
     "case:inspect": "node scripts/case-inspect.mjs",
     "case:decompose": "node scripts/case-decompose.mjs",
