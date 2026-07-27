@@ -479,3 +479,24 @@ test('#1321: слияние не висит (или выяснить нельз�
   assert.equal(unfinishedMergeProblem({ mergeHeadPath: null }), null);
   assert.equal(unfinishedMergeProblem({}), null);
 });
+
+test('--issue-mention: упоминание в заголовке легально, тело несёт Issue без Closes', () => {
+  const { steps } = planPrShip({ type: 'chore', message: 'архив со свидетельством PR #1316', issueMention: '1298', currentBranch: 'feat/x' });
+  const create = steps.find((s) => s.label === 'pr-create');
+  assert.match(create.bodyText, /Issue: #1298/u);
+  assert.ok(!create.bodyText.includes('Closes'));
+});
+
+test('--issue и --issue-mention вместе — отказ (закрыть ИЛИ упомянуть)', () => {
+  assert.throws(
+    () => planPrShip({ type: 'feat', message: 'x', issue: '5', issueMention: '6', currentBranch: 'feat/x' }),
+    /взаимоисключают/u,
+  );
+});
+
+test('--body-file: pr-create несёт маркер пользовательского файла, Closes из --issue не теряется в коммите', () => {
+  const { steps, commitBody } = planPrShip({ type: 'feat', message: 'y', issue: '7', bodyFile: '/tmp/b.md', currentBranch: 'feat/x' });
+  const create = steps.find((s) => s.label === 'pr-create');
+  assert.equal(create.bodyText, '__USER_BODY_FILE__/tmp/b.md');
+  assert.match(commitBody, /Closes #7/u);
+});
