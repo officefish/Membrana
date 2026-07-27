@@ -10,6 +10,7 @@ import {
   ingestJsonlText,
   inspectSession,
   searchSpans,
+  sessionIdFromRolloutName,
   sha256Utf8,
   spanAddress,
 } from './lib/archivarius.mjs';
@@ -43,6 +44,54 @@ test('archivarius audit/decompose/inspect/search keep the honest shape', () => {
   assert.equal(inspectSession(spans, 's1').spans, 1);
   assert.equal(searchSpans(spans, { text: 'beta', actor: 'codex' }).length, 1);
   assert.equal(searchSpans(spans, { from: '2026-07-28T00:00:00.000Z' }).length, 1);
+});
+
+test('archivarius ingest читает Codex-конверты: session_meta даёт тред, payload — роль', () => {
+  const input = [
+    JSON.stringify({ timestamp: '2026-07-27T04:34:55.693Z', type: 'session_meta', payload: { session_id: 'codex-parent', id: 'codex-thread', cwd: 'C:\\practice\\Membrana' } }),
+    JSON.stringify({ timestamp: '2026-07-27T04:35:18.314Z', type: 'response_item', payload: { type: 'message', id: 'msg_1', role: 'user', content: [{ type: 'input_text', text: 'На каком ты делеве?' }] } }),
+    JSON.stringify({ timestamp: '2026-07-27T04:35:22.334Z', type: 'event_msg', payload: { type: 'user_message', message: 'На каком ты делеве?\n' } }),
+    JSON.stringify({ timestamp: '2026-07-27T04:35:27.674Z', type: 'event_msg', payload: { type: 'agent_message', message: 'смотрю ветку по факту' } }),
+    JSON.stringify({ timestamp: '2026-07-27T04:36:00.000Z', type: 'response_item', payload: { type: 'message', id: 'msg_2', role: 'assistant', content: [{ type: 'output_text', text: 'я на ветке main' }] } }),
+    // resume-повтор session_meta не должен дать duplicate-address
+    JSON.stringify({ timestamp: '2026-07-27T06:03:31.438Z', type: 'session_meta', payload: { session_id: 'codex-parent', id: 'codex-thread' } }),
+  ].join('\n');
+
+  const { spans } = ingestJsonlText(input, { sourcePath: 'rollout.jsonl', ingestTs: '2026-07-27T10:00:00.000Z' });
+
+  assert.deepEqual([...new Set(spans.map((span) => span.sessionId))], ['codex-thread']);
+  assert.equal(spans[1].uuid, 'msg_1');
+  assert.equal(spans[1].actor, 'user');
+  assert.equal(spans[1].replyType, 'message');
+  assert.equal(spans[1].ts, '2026-07-27T04:35:18.314Z');
+  assert.equal(spans[2].actor, 'user'); // event_msg/user_message — голос владельца
+  assert.equal(spans[2].replyType, 'user_message');
+  assert.equal(spans[3].actor, 'assistant'); // agent_message без поля role
+  assert.equal(spans[4].actor, 'assistant');
+  assert.equal(auditSpans(spans).ok, true, JSON.stringify(auditSpans(spans).findings));
+  assert.equal(searchSpans(spans, { text: 'делеве', actor: 'user' }).length, 2);
+});
+
+test('archivarius ingest читает Cursor-записи: ts из тега <timestamp>, actor из role', () => {
+  const line = JSON.stringify({
+    role: 'user',
+    message: { content: [{ type: 'text', text: '<timestamp>Wednesday, Jul 22, 2026, 7:30 PM (UTC+3)</timestamp>\n<user_query>\nпривет из Cursor\n</user_query>' }] },
+  });
+
+  const { spans } = ingestJsonlText(line, { defaultSessionId: 'ec290f46-5bd6-4f70-860a-4e069c64c474', ingestTs: '2026-07-27T10:00:00.000Z' });
+
+  assert.equal(spans[0].sessionId, 'ec290f46-5bd6-4f70-860a-4e069c64c474');
+  assert.equal(spans[0].actor, 'user');
+  assert.equal(spans[0].replyType, 'user');
+  assert.equal(spans[0].ts, '2026-07-22T16:30:00.000Z');
+});
+
+test('sessionIdFromRolloutName вынимает uuid треда из имени rollout-файла', () => {
+  assert.equal(
+    sessionIdFromRolloutName('rollout-2026-07-27T07-34-38-019fa1da-7c93-7033-b24b-535965a63570'),
+    '019fa1da-7c93-7033-b24b-535965a63570',
+  );
+  assert.equal(sessionIdFromRolloutName('s1'), null);
 });
 
 test('archivarius CLI ingest writes span JSONL', async () => {

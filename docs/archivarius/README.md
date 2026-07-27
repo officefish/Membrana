@@ -46,10 +46,26 @@ yarn evidence add <extracted-file> --id <slug> --source "Archivarius span extrac
 Правило: честное `замаскировано N` лучше тихой утечки. Значения находок в индекс,
 логи и README не попадают.
 
+## Источники ingest
+
+Ingest построчный и терпимый к формату; три харнеса читаются с полными
+`sessionId/actor/ts` (форматы сняты с живых транскриптов 27.07):
+
+| Харнес | Где лежит | Особенность формата |
+|---|---|---|
+| Claude Code | `~/.claude/projects/<slug>/*.jsonl` | `sessionId`/`uuid`/`timestamp` в каждой строке |
+| Codex | `~/.codex/sessions/<Y>/<M>/<D>/rollout-*.jsonl` | конверт `{timestamp, type, payload}`: роль и вид — в `payload`; id треда объявляет `session_meta` (fallback — uuid в имени файла); голос владельца дублируется в `response_item/message` и `event_msg/user_message` |
+| Cursor | `~/.cursor/projects/<slug>/agent-transcripts/<sessionId>/<sessionId>.jsonl` | `role` на записи; момент реплики — тег `<timestamp>` в тексте; sessionId — имя файла |
+
+Формат транскриптов харнеса не «чинится» — читается как есть; незнакомые строки
+получают детерминированный `uuid` и `actor=unknown`, а не отбрасываются.
+
 ## Команды
 
 ```bash
 yarn archivarius ingest --from ~/.claude/projects --out docs/archivarius/cache/spans.jsonl
+yarn archivarius ingest --from ~/.codex/sessions --out docs/archivarius/cache/spans.jsonl
+yarn archivarius ingest --from ~/.cursor/projects/<slug>/agent-transcripts --out docs/archivarius/cache/spans.jsonl
 yarn archivarius audit --index docs/archivarius/cache/spans.jsonl
 yarn archivarius decompose --index docs/archivarius/cache/spans.jsonl --by sessions
 yarn archivarius inspect <sessionId> --index docs/archivarius/cache/spans.jsonl

@@ -11,6 +11,7 @@ import {
   inspectSession,
   parseSpanJsonl,
   searchSpans,
+  sessionIdFromRolloutName,
   spanAddress,
 } from './lib/archivarius.mjs';
 
@@ -67,6 +68,8 @@ function printHelp() {
     '',
     '  node scripts/archivarius.mjs ingest --file <transcript.jsonl> [--out spans.jsonl] [--session-id <id>]',
     '  node scripts/archivarius.mjs ingest --from ~/.claude/projects [--out spans.jsonl]',
+    '  node scripts/archivarius.mjs ingest --from ~/.codex/sessions [--out spans.jsonl]',
+    '  node scripts/archivarius.mjs ingest --from ~/.cursor/projects/<slug>/agent-transcripts [--out spans.jsonl]',
     '  node scripts/archivarius.mjs audit --index spans.jsonl',
     '  node scripts/archivarius.mjs decompose --index spans.jsonl --by sessions|days|actors',
     '  node scripts/archivarius.mjs inspect <sessionId> --index spans.jsonl',
@@ -83,7 +86,8 @@ async function ingest(argv) {
   let maskedLines = 0;
   for (const p of files) {
     const text = readFileSync(p, 'utf8');
-    const defaultSessionId = flag(argv, 'session-id') ?? basename(p, extname(p));
+    const base = basename(p, extname(p));
+    const defaultSessionId = flag(argv, 'session-id') ?? sessionIdFromRolloutName(base) ?? base;
     const result = ingestJsonlText(text, { sourcePath: p.replaceAll('\\', '/'), defaultSessionId });
     spans.push(...result.spans);
     maskedLines += result.summary.maskedLines;

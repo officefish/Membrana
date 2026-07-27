@@ -38,6 +38,41 @@ function parseJson(rawLine) {
   }
 }
 
+// Codex rollout (~/.codex/sessions/YYYY/MM/DD/rollout-*.jsonl): каждая строка —
+// конверт {timestamp, type, payload}; роль, вид и id лежат в payload, поэтому
+// generic-пути верхнего уровня давали actor=unknown и replyType=response_item.
+function codexPayloadOf(parsed) {
+  if (typeof getPath(parsed, ['type']) !== 'string') return null;
+  const payload = getPath(parsed, ['payload']);
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return null;
+  return payload;
+}
+
+// event_msg-события Codex не несут поля role — актор известен по виду события.
+const CODEX_EVENT_ACTOR = {
+  user_message: 'user',
+  agent_message: 'assistant',
+  agent_reasoning: 'assistant',
+};
+
+// Cursor пишет момент реплики не полем записи, а тегом в тексте:
+// <timestamp>Wednesday, Jul 22, 2026, 7:30 PM (UTC+3)</timestamp>.
+function timestampFromCursorTag(rawLine) {
+  const m = String(rawLine).match(/<timestamp>\s*([^<]+?)\s*<\/timestamp>/iu);
+  if (!m) return null;
+  const t = Date.parse(m[1].replace(/\s*\(UTC([+-]\d+)\)\s*$/iu, ' GMT$1'));
+  return Number.isFinite(t) ? new Date(t).toISOString() : null;
+}
+
+// rollout-2026-07-27T07-34-38-<uuid> → uuid треда; fallback на случай, когда
+// строка session_meta не дожила до конца файла (обрезанный транскрипт).
+export function sessionIdFromRolloutName(name) {
+  const m = String(name).match(
+    /^rollout-.+-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/iu,
+  );
+  return m ? m[1] : null;
+}
+
 export function redactTranscriptLine(rawLine) {
   const parsed = parseJson(rawLine);
   if (parsed != null) {
@@ -56,18 +91,25 @@ export function spanFromTranscriptLine(input) {
   const lineNo = Number(input.lineNo ?? 1);
   const ingestTs = input.ingestTs ?? new Date().toISOString();
   const parsed = parseJson(rawLine);
+  const codex = codexPayloadOf(parsed);
   const sessionSeed = input.defaultSessionId ?? sourcePath ?? 'local-transcript';
   const sessionId = firstString(
     getPath(parsed, ['sessionId']),
     getPath(parsed, ['session_id']),
     getPath(parsed, ['conversationId']),
     getPath(parsed, ['conversation_id']),
+    // Codex session_meta: id — тред этого файла, session_id — родитель сабагента.
+    getPath(parsed, ['type']) === 'session_meta' ? getPath(codex, ['id']) : null,
+    getPath(parsed, ['type']) === 'session_meta' ? getPath(codex, ['session_id']) : null,
     input.defaultSessionId,
     sourcePath,
   );
   const uuid = firstString(
     getPath(parsed, ['uuid']),
     getPath(parsed, ['id']),
+    // session_meta повторяется при каждом resume треда — его payload.id как uuid
+    // дал бы duplicate-address; повторам оставляем детерминированный fallback.
+    getPath(parsed, ['type']) === 'session_meta' ? null : getPath(codex, ['id']),
     getPath(parsed, ['message', 'id']),
     getPath(parsed, ['message', 'uuid']),
   ) ?? deterministicUuid(`${sessionSeed}:${lineNo}:${rawLine}`);
@@ -78,6 +120,7 @@ export function spanFromTranscriptLine(input) {
     getPath(parsed, ['created_at']),
     getPath(parsed, ['message', 'ts']),
     getPath(parsed, ['message', 'timestamp']),
+    timestampFromCursorTag(rawLine),
     ingestTs,
   );
   const actor = firstString(
@@ -86,12 +129,17 @@ export function spanFromTranscriptLine(input) {
     getPath(parsed, ['role']),
     getPath(parsed, ['message', 'role']),
     getPath(parsed, ['author', 'role']),
+    getPath(codex, ['role']),
+    codex ? CODEX_EVENT_ACTOR[codex.type] : null,
   ) ?? 'unknown';
   const replyType = firstString(
+    getPath(codex, ['type']),
     getPath(parsed, ['type']),
     getPath(parsed, ['kind']),
     getPath(parsed, ['message', 'type']),
     getPath(parsed, ['message', 'role']),
+    // Cursor: на записи только role — им и характеризуем вид реплики.
+    getPath(parsed, ['role']),
   ) ?? 'unknown';
   const redacted = redactTranscriptLine(rawLine);
   const bytes = redacted.text;
@@ -114,14 +162,24 @@ export function ingestJsonlText(text, opts = {}) {
   const ingestTs = opts.ingestTs ?? new Date().toISOString();
   const lines = String(text ?? '').split(/\r?\n/u);
   const spans = [];
+  // Codex-строки не несут id треда — его объявляет session_meta в начале файла
+  // (и повторяет при resume); выуженный id действует на все последующие строки.
+  let defaultSessionId = opts.defaultSessionId ?? null;
   for (let i = 0; i < lines.length; i += 1) {
     if (lines[i] === '' && i === lines.length - 1) continue;
     if (!lines[i].trim()) continue;
+    const parsed = parseJson(lines[i]);
+    if (getPath(parsed, ['type']) === 'session_meta') {
+      defaultSessionId = firstString(
+        getPath(parsed, ['payload', 'id']),
+        getPath(parsed, ['payload', 'session_id']),
+      ) ?? defaultSessionId;
+    }
     spans.push(spanFromTranscriptLine({
       rawLine: lines[i],
       lineNo: i + 1,
       sourcePath: opts.sourcePath ?? null,
-      defaultSessionId: opts.defaultSessionId ?? null,
+      defaultSessionId,
       ingestTs,
     }));
   }
