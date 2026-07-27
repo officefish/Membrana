@@ -269,7 +269,7 @@
       "id": "ship-merge-state-guard",
       "title": "Гард незавершённого слияния перед пушем: тихий отказ хука не выдаёт себя за успех",
       "promptPath": "docs/prompts/SHIP_MERGE_STATE_GUARD_PROMPT.md",
-      "githubIssue": null,
+      "githubIssue": 1321,
       "linearId": null,
       "size": "S",
       "status": "active",

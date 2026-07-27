@@ -12,6 +12,7 @@ import {
   planBranchStep,
   planMergeTail,
   planPrShip,
+  unfinishedMergeProblem,
 } from './pr-ship.mjs';
 
 test('#1166 ciWaitDisposition: 0 → green', () => {
@@ -464,4 +465,17 @@ test('#700 сохранён: merge-only по-прежнему без push/commit
   assert.ok(!labels.includes('push'));
   assert.ok(!labels.includes('commit'));
   assert.ok(!labels.includes('pr-create'));
+});
+
+test('#1321: живой MERGE_HEAD — стоп с текстом ремонта, а не «Everything up-to-date» видом успеха', () => {
+  const problem = unfinishedMergeProblem({ mergeHeadPath: 'C:/repo/.git/worktrees/tree/MERGE_HEAD' });
+  assert.match(problem, /MERGE_HEAD жив/u);
+  assert.match(problem, /git commit/u, 'ремонт назван: завершить');
+  assert.match(problem, /git merge --abort/u, 'ремонт назван: отменить');
+  assert.match(problem, /Молчаливый зелёный/u, 'референс зверя B6 на месте');
+});
+
+test('#1321: слияние не висит (или выяснить нельзя) — гард молчит', () => {
+  assert.equal(unfinishedMergeProblem({ mergeHeadPath: null }), null);
+  assert.equal(unfinishedMergeProblem({}), null);
 });
