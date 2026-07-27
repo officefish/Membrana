@@ -287,7 +287,7 @@
       "id": "tw-state-batch-norm",
       "title": "Состояния задач опрашивать списком, не поштучно — норма мастерской + гард",
       "promptPath": "docs/prompts/TW_STATE_BATCH_NORM_PROMPT.md",
-      "githubIssue": null,
+      "githubIssue": 1322,
       "linearId": null,
       "size": "S",
       "status": "active",
