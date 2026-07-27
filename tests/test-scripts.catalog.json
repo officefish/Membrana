@@ -1,0 +1,50 @@
+{
+  "$schema": "./test-scripts.catalog.schema.json",
+  "version": 1,
+  "discovery": {
+    "root": "scripts",
+    "suffix": ".test.mjs",
+    "prune": ["node_modules", "cache", ".git"]
+  },
+  "groups": [
+    {
+      "name": "security",
+      "pattern": "(secret|gitleaks|leak)"
+    },
+    {
+      "name": "rituals",
+      "pattern": "(ritual|morning|evening|standup|main-day|day-plan|digest|telegram|swallow|persona|angelina|bridge|storm|meeting|consilium|insight|feedback|dreams|night|strategy|horizon|audit)"
+    },
+    {
+      "name": "tasks",
+      "pattern": "(task|registry|closure|one-shot|trace|kit|precedent|workshop|procedur|truth|run-ledger|docs-canon|vocabulary|readme|bestiary)"
+    },
+    {
+      "name": "repo",
+      "pattern": "(^pr-|repo|worktree|branch|classify|git-|neighbors|prepush|deploy|build|wire|catalog|package|encoding|bom|long-temp|net-|ssh|office|panel|affine|strategic-docs|live-links|mcp|tailwind|replit|scripts-inventory|test-list)"
+    },
+    {
+      "name": "domain",
+      "fallback": true
+    }
+  ],
+  "skips": {},
+  "setups": {
+    "smoke": {
+      "include": [
+        "scripts/test-list-coverage.test.mjs",
+        "scripts/secret-redact.test.mjs",
+        "scripts/morning-ritual.test.mjs",
+        "scripts/pr-ship.test.mjs",
+        "scripts/worktree-bootstrap.test.mjs"
+      ]
+    },
+    "gate": {
+      "mode": "imports",
+      "base": "smoke"
+    },
+    "full": {
+      "mode": "all"
+    }
+  }
+}

@@ -41,6 +41,13 @@ test('container ⟺ homePath; несуществующий каталог — д
   assert.ok(registryProblems({ procedures: [OK] }, { dirExists: () => false }).some((x) => x.includes('не существует')));
 });
 
+test('renderRegistryMd: homePath вне docs/procedures даёт честную ссылку', () => {
+  const md = renderRegistryMd({
+    procedures: [{ ...OK, id: 'test-runs', homePath: 'tests' }],
+  });
+  assert.match(md, /\[`test-runs`\]\(\.\.\/\.\.\/tests\/README\.md\)/u);
+});
+
 test('пересечение ключей с реестром задач — дефект (реестры разные)', () => {
   const p = registryProblems({ procedures: [OK] }, { taskIds: ['demo'], dirExists: () => true });
   assert.ok(p.some((x) => x.includes('пересекается с реестром задач')));
@@ -59,6 +66,7 @@ test('ЗУБ CI: боевой реестр валиден; доноры Р5 ми
   const byId = Object.fromEntries(LIVE.procedures.map((p) => [p.id, p]));
   assert.equal(derivedStatus(byId['ritual-evening']), 'migrated', 'донор 1 (Р1+Р5)');
   assert.equal(derivedStatus(byId['meeting']), 'migrated', 'донор 2 (Р5)');
+  assert.equal(derivedStatus(byId['test-runs']), 'in-migration', 'контейнер тестов: внешний homePath tests');
   assert.equal(derivedStatus(byId['storm']), 'legacy');
   const projection = readFileSync(resolve(repoRoot, 'docs/procedures/REGISTRY.md'), 'utf8');
   assert.equal(projection, renderRegistryMd(LIVE), 'проекция не разъехалась');

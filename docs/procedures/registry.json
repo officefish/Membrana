@@ -122,6 +122,23 @@
       }
     },
     {
+      "id": "test-runs",
+      "holder": "dynin",
+      "homePath": "tests",
+      "container": {
+        "value": true,
+        "provenance": "dynin@tc-f1"
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": true,
+        "provenance": "dynin@tc-f1"
+      }
+    },
+    {
       "id": "storm",
       "holder": "angelina",
       "homePath": null,

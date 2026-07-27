@@ -174,6 +174,10 @@
     "rag:index:incremental": "yarn workspace @membrana/rag-service build && yarn workspace @membrana/rag-service run index -- --incremental",
     "archive:daily-review": "node scripts/archive-daily-code-review.mjs",
     "test:scripts": "node scripts/test-scripts-run.mjs",
+    "tests:workshop": "node scripts/tests-container.mjs",
+    "tests:smoke": "node scripts/tests-container.mjs --setup smoke",
+    "tests:gate": "node scripts/tests-container.mjs --setup gate",
+    "tests:full": "node scripts/tests-container.mjs --setup full",
     "bridge": "node scripts/bridge.mjs",
     "task:list": "node scripts/task-list.mjs",
     "task:inspect": "node scripts/task-inspect.mjs",
@@ -376,7 +380,10 @@
     "test:scripts:tasks": "node scripts/test-scripts-run.mjs --group tasks",
     "test:scripts:repo": "node scripts/test-scripts-run.mjs --group repo",
     "test:scripts:domain": "node scripts/test-scripts-run.mjs --group domain",
-    "test:scripts:list": "node scripts/test-scripts-run.mjs --list"
+    "test:scripts:list": "node scripts/test-scripts-run.mjs --list",
+    "test:scripts:smoke": "node scripts/tests-container.mjs --setup smoke",
+    "test:scripts:gate": "node scripts/tests-container.mjs --setup gate",
+    "test:scripts:full": "node scripts/tests-container.mjs --setup full"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

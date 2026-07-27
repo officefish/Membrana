@@ -9,33 +9,22 @@
 //
 // Ядро плана (группы, исключения) — scripts/lib/test-scripts-plan.mjs, чистое и покрыто тестом.
 import { spawnSync } from 'node:child_process';
-import { readdirSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { DISCOVERY_PRUNE, planTestRun } from './lib/test-scripts-plan.mjs';
+import { planTestRun } from './lib/test-scripts-plan.mjs';
+import { discoverTestFiles as discoverCatalogTests, loadTestCatalog } from './lib/tests-container.mjs';
 
 const SCRIPTS_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = join(SCRIPTS_DIR, '..');
 
-/**
- * Все `*.test.mjs` под каталогом, рекурсивно. Пути — от корня репозитория, со слэшами
- * (не платформенными): именно в таком виде они попадают в план и в сравнения.
- *
- * @param {string} dir
- * @param {string[]} [acc]
- * @returns {string[]}
- */
-export function discoverTestFiles(dir = SCRIPTS_DIR, acc = []) {
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    const full = join(dir, entry.name);
-    if (entry.isDirectory()) {
-      if (!DISCOVERY_PRUNE.includes(entry.name)) discoverTestFiles(full, acc);
-    } else if (entry.name.endsWith('.test.mjs')) {
-      acc.push(relative(REPO_ROOT, full).split('\\').join('/'));
-    }
+export function discoverTestFiles(dir = SCRIPTS_DIR) {
+  if (dir !== SCRIPTS_DIR) {
+    // Back-compat for focused tests that used to pass a nested directory: keep the signature
+    // but route normal execution through the catalog-backed discovery.
+    return discoverCatalogTests(REPO_ROOT).filter((f) => f.startsWith(relative(REPO_ROOT, dir).split('\\').join('/')));
   }
-  return acc;
+  return discoverCatalogTests(REPO_ROOT);
 }
 
 function parse(argv) {
@@ -64,7 +53,8 @@ function main() {
 
   let plan;
   try {
-    plan = planTestRun({ files: discoverTestFiles(), group: cli.group });
+    const catalog = loadTestCatalog(REPO_ROOT);
+    plan = planTestRun({ files: discoverTestFiles(), group: cli.group, catalog });
   } catch (e) {
     console.error(e.message);
     process.exitCode = 1;

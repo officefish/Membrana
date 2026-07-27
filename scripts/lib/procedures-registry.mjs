@@ -12,6 +12,19 @@
 
 import { stampContractHeader } from './procedure-contract-stamp.mjs';
 
+function slash(p) {
+  return String(p).split('\\').join('/');
+}
+
+function registryLink(homePath, id) {
+  if (!homePath) return `\`${id}\``;
+  const normalized = slash(homePath).replace(/\/$/u, '');
+  const rel = normalized.startsWith('docs/procedures/')
+    ? `./${normalized.slice('docs/procedures/'.length)}`
+    : `../../${normalized}`;
+  return `[\`${id}\`](${rel}/README.md)`;
+}
+
 /** Производный статус записи. */
 export function derivedStatus(p) {
   const c = p?.container?.value === true;
@@ -76,7 +89,7 @@ export function registryProblems(reg, opts = {}) {
 export function renderRegistryMd(reg) {
   const rows = (reg?.procedures ?? []).map((p) => {
     const mark = (c) => (c?.value ? `✅ ${c.provenance}` : '—');
-    const home = p.homePath ? `[\`${p.id}\`](./${p.id}/README.md)` : `\`${p.id}\``;
+    const home = registryLink(p.homePath, p.id);
     return `| ${home} | ${p.holder} | **${derivedStatus(p)}** | ${mark(p.container)} | ${mark(p.vocabulary)} | ${mark(p.grammar)} |`;
   });
   return [

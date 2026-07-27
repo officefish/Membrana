@@ -20,7 +20,7 @@
     "scripts/lib/layer-direction.mjs": "ad0c63e4c7e4d89a53cd112c655fc35196e0b1fd",
     "scripts/lib/procedure-contract-stamp.mjs": "af43e936d958784b1b824786e0eca4c6ebf1bffb",
     "scripts/lib/procedure-home-form.mjs": "39a162665b322e5ac81a0769dd2cd6d650d933ae",
-    "scripts/lib/procedures-registry.mjs": "a60720384be134591fa3ebe9e36fe5190e438fa5",
+    "scripts/lib/procedures-registry.mjs": "49311b4c8d04565cd484361ba4a81977dabb2bf2",
     "scripts/lib/repo-branches-decompose.mjs": "1c339304a25eb0b70f566d08763e6666d8ccc043",
     "scripts/lib/repo-branches.mjs": "aea204d40fdf1cffc042533817cb09de8d70dc8d",
     "scripts/lib/scripts-inventory.mjs": "94aaa34fcb4ebf054b579f66e54f460f92af1cad",
