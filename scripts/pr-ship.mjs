@@ -16,6 +16,8 @@
  * есть локально — `checkout`, иначе `checkout -b` (фикс 19.07: already exists).
  *   yarn pr:ship ... --no-wait            # НЕ ждать зелёного CI перед merge (осознанный обход)
  *   yarn pr:ship ... --auto               # серверное автослияние: GitHub сольёт по зелёному
+ *   yarn pr:ship ... --issue-mention N    # issue в теле ссылкой БЕЗ Closes (эпик не закрывать)
+ *   yarn pr:ship ... --body-file <путь>   # своё тело PR при создании (таблицы/отчёты)
  *
  * `--auto` (#1261) — против гонки с base на плотном трафике: локальный ci-wait длится
  * минуты, за это время общая ветка уезжает и PR становится CONFLICTING уже ПОСЛЕ зелёного
@@ -396,18 +398,26 @@ export function planPrShip(opts) {
     throw new Error('pr:ship: --no-commit несовместим с --branch (коммиты уже на существующей ветке)');
   }
   const title = `${type}${scope ? `(${scope})` : ''}: ${message}`;
+  // --issue-mention (тулинг-нидс 27.07 №3): issue в теле ссылкой БЕЗ Closes. Живой
+  // случай: PR #1332 с Closes #1298 чуть не закрыл эпик при живом объёме — Closes
+  // вычищали руками через gh pr edit. Третий режим между «Closes» и «ничего».
+  const issueMention = opts.issueMention ?? null;
+  if (issue && issueMention) {
+    throw new Error('pr:ship: --issue и --issue-mention взаимоисключают друг друга (закрыть ИЛИ упомянуть)');
+  }
   // Гейт корня 1: упомянул issue в заголовке — либо закрывай (--issue), либо
-  // скажи явно, что не закрываешь (--allow-mention). Молчаливое «(#N)» уже
-  // стоило дня планирования 16.07.
+  // скажи явно, что не закрываешь (--allow-mention / --issue-mention). Молчаливое
+  // «(#N)» уже стоило дня планирования 16.07.
   const mentioned = extractIssueMentions(title);
-  if (!issue && mentioned.length > 0 && opts.allowMentionWithoutClose !== true) {
+  if (!issue && !issueMention && mentioned.length > 0 && opts.allowMentionWithoutClose !== true) {
     throw new Error(
       `pr:ship: заголовок упоминает #${mentioned.join(', #')}, но --issue не задан — ` +
-        '«(#N)» НЕ закрывает issue (нужен Closes). Добавь --issue N либо --allow-mention, ' +
-        'если ссылка намеренная.',
+        '«(#N)» НЕ закрывает issue (нужен Closes). Добавь --issue N, --issue-mention N ' +
+        'либо --allow-mention, если ссылка намеренная.',
     );
   }
   const closes = issue ? `Closes #${issue}\n` : '';
+  const mention = issueMention ? `Issue: #${issueMention} (не закрывается этим PR)\n` : '';
   const commitBody = `${title}\n\n${closes}${TRAILER}`;
 
   /** @type {{label:string,cmd:string,args:string[]}[]} */
@@ -419,12 +429,14 @@ export function planPrShip(opts) {
   if (branchStep) steps.push(branchStep);
   if (commit) steps.push({ label: 'commit', cmd: 'git', args: ['commit', '-m', commitBody] });
   steps.push({ label: 'push', cmd: 'git', args: ['push', '-u', 'origin', 'HEAD'] });
-  // ATF4-3: тело PR — bodyText; исполнитель пишет tempfile + --body-file
+  // ATF4-3: тело PR — bodyText; исполнитель пишет tempfile + --body-file.
+  // --body-file пользователя (тулинг-нидс 27.07 №4): своё тело сразу при создании —
+  // 27.07 дважды дописывали таблицу через gh pr edit после факта (окно с пустым телом).
   steps.push({
     label: 'pr-create',
     cmd: 'gh',
     args: ['pr', 'create', '--base', base, '--title', title, '--body-file', '__BODY_FILE__'],
-    bodyText: closes ? closes.trim() : title,
+    bodyText: opts.bodyFile ? `__USER_BODY_FILE__${opts.bodyFile}` : mention ? mention.trim() : closes ? closes.trim() : title,
   });
   let skippedSync;
   if (merge) {
@@ -452,6 +464,8 @@ function parseArgs(argv) {
     else if (a === '--merge-only') o.mergeOnly = true;
     else if (a === '--auto') o.auto = true;
     else if (a === '--allow-mention') o.allowMentionWithoutClose = true;
+    else if (a === '--issue-mention') o.issueMention = next();
+    else if (a === '--body-file') o.bodyFile = next();
     else if (a === '--execute') o.execute = true;
   }
   return o;
@@ -599,13 +613,21 @@ function main() {
   for (const s of steps) {
     let args = s.args;
     if (s.bodyText != null) {
+      const userFile = s.bodyText.startsWith('__USER_BODY_FILE__') ? s.bodyText.slice('__USER_BODY_FILE__'.length) : null;
+      if (userFile && !existsSync(userFile)) {
+        throw new Error(`pr:ship: --body-file «${userFile}» не найден — тело PR взять неоткуда`);
+      }
       if (opts.execute) {
-        bodyDir = makeLongTempDir(REPO_ROOT, 'pr-ship-');
-        const bodyFile = join(bodyDir, 'body.md');
-        writeFileSync(bodyFile, s.bodyText, 'utf8');
-        args = s.args.map((a) => (a === '__BODY_FILE__' ? bodyFile : a));
+        if (userFile) {
+          args = s.args.map((a) => (a === '__BODY_FILE__' ? userFile : a));
+        } else {
+          bodyDir = makeLongTempDir(REPO_ROOT, 'pr-ship-');
+          const bodyFile = join(bodyDir, 'body.md');
+          writeFileSync(bodyFile, s.bodyText, 'utf8');
+          args = s.args.map((a) => (a === '__BODY_FILE__' ? bodyFile : a));
+        }
       } else {
-        args = s.args.map((a) => (a === '__BODY_FILE__' ? '<long-temp/body.md>' : a));
+        args = s.args.map((a) => (a === '__BODY_FILE__' ? (userFile ?? '<long-temp/body.md>') : a));
       }
     }
     const printable = `${s.cmd} ${args.map((a) => (a.includes('\n') || a.includes(' ') ? JSON.stringify(a) : a)).join(' ')}`;
