@@ -206,6 +206,7 @@
     "tasks:reviewing": "node scripts/tasks-reviewing.mjs",
     "tasks:audit": "node scripts/tasks-audit.mjs",
     "tasks:handoff-liveness": "node scripts/handoff-liveness.mjs",
+    "handoff:claim": "node scripts/handoff-claim.mjs",
     "tasks:decompose": "node scripts/tasks-decompose.mjs",
     "vocabulary:generate": "node scripts/vocabulary-generate.mjs",
     "check:layer-direction": "node scripts/check-layer-direction.mjs",
