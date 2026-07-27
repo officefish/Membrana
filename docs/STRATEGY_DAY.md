@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-07-26T04:56:21.863Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-07-27T05:01:00.003Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -13,7 +13,7 @@
 
 ## Посылки горизонта (граф правды)
 
-_Кристаллов активно: 106 (owner: 63, derived: 43). Стратегия читает граф правды (S7)._
+_Кристаллов активно: 114 (owner: 71, derived: 43). Стратегия читает граф правды (S7)._
 
 - 🪨 `research-night-sensemaking-morning` — Внешние исследования проводятся ночью и осмысливаются утром; дневная стратегия делается утром. Вечер — подведение итогов…
 - 🪨 `weekly-strategy-frozen` — Недельная стратегия пока замораживается — уровень планирования слишком серьёзный, пока не разобрана дневная рутина.
@@ -23,7 +23,7 @@ _Кристаллов активно: 106 (owner: 63, derived: 43). Страте
 - 🪨 `credential-rotation-biweekly` — Ключи доступа перевыпускаются раз в две недели везде, где это возможно.
 - 🪨 `alex-sparring-answered` — Ответ Алексу на спарринг про «паспорт детектора» отправлен.
 - 🪨 `graph-first-step-572-dropped` — Первое в контуре доверия — пять вопросов, уронённых консилиумом 16.07 (#572): C1 гейты приходят позже факта, C2 должен л…
-- …ещё 55 owner-кристаллов
+- …ещё 63 owner-кристаллов
 
 ## Акценты (highlights)
 
@@ -71,13 +71,14 @@ _Кристаллов активно: 106 (owner: 63, derived: 43). Страте
 - **Публикация документации туллинга на docs.mmbrn.tech (Mintlify custom domain)** — `insight:insight-docs-custom-domain`
 - ~~**Hindsight — обучающаяся память агента между сессиями**~~ — `insight:insight-mcp-hindsight-agent-memory` _(stale · 2026-06-27)_
 - ~~**ServerFunctionRegistry в @membrana/core**~~ — `insight:insight-ozhegov-server-function-registry` _(stale · 2026-06-25)_
+- **Контракт намерения: граф правды ↔ мостик, треугольник + мана + твёрдость** — `insight:insight-intent-contract-graph-bridge`
 - ~~**Живой нейро-combined детектор (эшелон-2-live): yamnet в combinedScore**~~ — `insight:insight-live-neural-combined-detector` _(stale · 2026-07-12)_
 - ~~**Хранилище архива закрытых задач: append-only log vs Postgres**~~ — `insight:insight-task-archive-storage` _(stale · 2026-06-28)_
 - ~~**Chain-log golden oracle для operator smoke**~~ — `insight:insight-dynin-chain-log-golden-oracle` _(stale · 2026-06-25)_
 
 ## Provenance каналов
 
-- ✅ `insight` — жив, элементов: 42
+- ✅ `insight` — жив, элементов: 43
 - ✅ `research` — жив, элементов: 2
 
 > Стратегия описывает акцент (`highlight`), но не назначает исполнителей и не пишет DoD:
