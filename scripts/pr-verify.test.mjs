@@ -38,3 +38,13 @@ test('parseArgs: без номера → PR текущей ветки (pr=null),
   assert.equal(o.base, 'main');
   assert.equal(o.file, 'x.md');
 });
+
+test('parseArgs: --wait с дефолтами таймаута и интервала', () => {
+  const o = parseArgs(['node', 'pr-verify.mjs', '1356', '--wait']);
+  assert.equal(o.wait, true);
+  assert.equal(o.timeoutMin, 10);
+  assert.equal(o.intervalSec, 20);
+  const o2 = parseArgs(['node', 'pr-verify.mjs', '--wait', '--timeout-min', '3', '--interval-sec', '5']);
+  assert.equal(o2.timeoutMin, 3);
+  assert.equal(o2.intervalSec, 5);
+});

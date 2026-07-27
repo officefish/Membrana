@@ -107,6 +107,26 @@ export function shaInBase(sha, base = 'main', run = execFileSync) {
 }
 
 /**
+ * Merged-событие в таймлайне PR (REST) — самый несбиваемый ВСПОМОГАТЕЛЬНЫЙ сигнал
+ * (27.07: gh state и даже git-реплики за прокси врали вперемешку, таймлайн — ни разу).
+ * Решающим остаётся git-факт; таймлайн говорит «сервер слил, жди реплику».
+ * @returns {boolean|null} null — выяснить не удалось (сеть)
+ */
+export function mergedEventSeen(prNumber, run = execFileSync) {
+  try {
+    const raw = String(run('gh', ['api', `repos/{owner}/{repo}/issues/${prNumber}/timeline`, '--jq', '[.[]|select(.event=="merged")]|length'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+      timeout: EXTERNAL_CALL_TIMEOUT_MS,
+    })).trim();
+    const n = Number(raw);
+    return Number.isFinite(n) ? n > 0 : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Однострочный факт для гарда повторного хвоста (#1320): PR уже в origin/<base>?
  * fetch + поиск; gh не участвует. null — не найден ИЛИ не удалось установить
  * (различие для гарда не критично: гард при null просто идёт обычным путём).
