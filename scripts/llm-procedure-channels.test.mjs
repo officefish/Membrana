@@ -22,7 +22,7 @@ import {
   providerCatalogProblems,
   V1_PROCEDURE_IDS,
 } from './lib/llm-procedure-registry.mjs';
-import { resolveEffective } from './lib/llm-procedure-resolve.mjs';
+import { formatChainLine, overlayDroppedSteps, resolveEffective } from './lib/llm-procedure-resolve.mjs';
 import {
   buildProviderRequest,
   classifyTransportError,
@@ -380,4 +380,24 @@ test('ritual module does not import experimental/', async () => {
     const src = readFileSync(join(REPO, rel), 'utf8');
     assert.equal(importRe.test(src), false, `${rel} must not import experimental/ (X1)`);
   }
+});
+
+test('formatChainLine: называет звенья и ИСТОЧНИК (#1306)', () => {
+  const line = formatChainLine({ procedureId: 'code-review', source: 'overlay', chain: [
+    { provider: 'anthropic', model: 'claude-sonnet-4-6' }, { provider: 'openrouter', model: 'anthropic/claude-sonnet-4.6' },
+  ] });
+  assert.match(line, /chain\(code-review\)/u);
+  assert.ok(line.includes('anthropic/claude-sonnet-4-6 → openrouter/anthropic/claude-sonnet-4.6'));
+  assert.match(line, /overlay панели/u);
+  assert.match(formatChainLine({ procedureId: 'x', source: 'default', chain: [{ provider: 'deepseek', model: 'deepseek-chat' }] }), /умолчания/u);
+});
+
+test('overlayDroppedSteps: усечение названо по именам, пустое — пусто (#1306)', () => {
+  const dflt = [
+    { provider: 'anthropic', model: 'a' }, { provider: 'openrouter', model: 'b' },
+    { provider: 'deepseek', model: 'c' }, { provider: 'xai', model: 'd' },
+  ];
+  const eff = [{ provider: 'anthropic', model: 'a2' }, { provider: 'openrouter', model: 'b2' }];
+  assert.deepEqual(overlayDroppedSteps(eff, dflt).map((s) => s.provider), ['deepseek', 'xai']);
+  assert.deepEqual(overlayDroppedSteps(dflt, dflt), []);
 });

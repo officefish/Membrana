@@ -1,40 +1,27 @@
-<!-- Сгенерировано: 2026-07-25T16:31:20.123Z (yarn code-review; daily, llm-xai) -->
+<!-- Сгенерировано: 2026-07-27T05:10:34.754Z (yarn code-review; daily, llm-deepseek) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: af0307669677677fa1ffab327511d2273f53331d^..b93c8ca5778b5dc80a36b641d847d83affbc20c8 (44 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 6aec3c1b #1153 (952), 810108ba #1163 (515), 562c805a #1170 (499), 4cd760fd #1173 (517), 05af8777 #1174 (1037), bc955fb6 #1179 (472), 3197ee85 #1183 (1054), 3feb345c #1184 (1249), 9614b02e #1190 (797), 19bd9338 #1197 (440), 9aa243b0 #1193 (1048), 1571464e #1199 (1309), 736ff77f #1203 (482), a793fd95 #1206 (685)
+> Период: e55a07e29de18b3b995cddc7a03e57fef01718e5^..79e5ea31979e6ea529bdb6814f8d4308b81df41f (2 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 79e5ea31 (448)
 
 ---
 
 Tier: T1
 
-[Teamlead]: День плотный: 44 коммита, доминируют процедурный слой (`membrana-leveling` §8.1→§8.2), тулинг friction-5 (регистрация), docs device-board (PC-1/PC-2), night-triage/insight и череда archive. **PR size:** 14 oversized (>400) без развёрнутого diff в daily — `#1153` (952), `#1163` (515), `#1170` (499), `#1173` (517), `#1174` (1037), `#1179` (472), `#1183` (1054), `#1184` (1249), `#1190` (797), `#1197` (440), `#1193` (1048), `#1199` (1309), `#1203` (482), `#1206` (685) → **P1 recommend split / точечный review**, не авто-BLOCK merge’ей уже в main. Мелкие OK: `#1128` tar `--force-local` (Windows deploy), `#1162` docs nodes, `#1164` insight draft. Бестиарий: **B2** на `docs/tasks/registry.json` / `README` — ожидаемый перекрёсток archive+register, держать сериализацию; в `#1165` мелькали битые `promptPath` (`../prompts/docs/seanses/...`) — в `#1171` часть откатилась, **утром проверить** `yarn task`/линк-целостность README. **B3/B6:** stub engines §8.1 честно `throw` + exit 2 — не молчаливый зелёный; DoD контейнера = registration, не runtime leveling. Night-triage: ghost 5 / orphan 162 / stale 116 — риск «канон врёт о фокусе», не код. Утро: читать этот файл; не гонять `yarn code-review`; фокус — verify leveling disposition + friction-5 scope, не новые эпики.
+[Teamlead]: Дифф дня компактный — 2 коммита, 6 модифицированных файлов. Первый коммит (e55a07e2) — только docs(HANDOFF), содержательный. Второй (79e5ea31) — chore, развёрнутый на 448 строк, правила T2-oversized, запущен без diff — рекомендую разобрать его в отдельном PR или команде `yarn code-review:pr`. Ревью фокусирую на содержательной части: изменения в `scripts/lib/llm-procedure-resolve.mjs`, `scripts/lib/llm-procedure-ritual.mjs`, `scripts/llm-procedure-channels.test.mjs`, `kits/angelina-morning/MANIFEST.json` и `docs/STRATEGY_DAY.md`. Тип ревью: T1 (один пакет `@membrana/membrana-studio` скорее всего, не пересекает core, audio, security). Бестиарий: пройдем B2 (файл-перекресток не тронут), B6 (надо следить за возвратами exit кода). Новых зверей нет. Слабое место: второй коммит oversized (448 строк) без развёрнутого diff для детального анализа — рекомендую в будущем разбить на 2 коммита (docs + scripts) как Google eng-practices.
 
-[Структурщик]: Границы пакетов в развёрнутом diff соблюдены: `docs/procedures/membrana-leveling` + stub `scripts/lib/membrana-leveling-disposition.mjs` / `*-main-fill` / `*-workspace-level` без React и без циклов плагинов. `#1128` — точечный ops-fix deploy-tar, C9 ок. C1/C4/C7: реализация disposition (#1170) и oversized tooling PR — **вне развёрнутого daily**, нужна отдельная сверка тестов матрицы K1 и отсутствия side-effects в pure `disposition`. Реестры tasks/procedures/insights синхронизированы archive-карточками; следить за B2-гонками на `registry.json`. C8: `console.error` в CLI-stub entry — норма, не production bundle.
+[Структурщик]: Прошёлся по изменениям в `scripts/lib/llm-procedure-resolve.mjs` и `scripts/lib/llm-procedure-ritual.mjs` — функция вызова процедур логична, нет прямых импортов между пакетами (C3 соблюдён). Изменения в `MANIFEST.json` kits/angelina-morning — добавили новое поле `attention.scope` (scope работы ведущей). Убедись, что это поле поддерживается инструментом `yarn kits:pins` — иначе будет B9 (проза без машинного носителя). В `docs/STRATEGY_DAY.md` поправлен compose-файл — подозрительно, не затирает ли это какие-то привязки к реестру? В целом, не вижу структурных нарушений (C1–C4). Тесты (`scripts/llm-procedure-channels.test.mjs`) — зелёная зона, покрытие основных веток сохранено.
 
-[Математик]: В развёрнутом diff чистой FFT/спектр-математики нет (—). Night-hunt `#709` фиксирует drift контракта `fft-analyzer` (deprecated без since/removal, публичные `SPECTRAL_FLUX_*`, рассинхрон default 2048) — **P2 opportunity**, не блокер дня; контракт-тест `bufferSize === fftSize === 2048` стоит в бэклог, не в сегодняшнем коде. Disposition K1 (#1170 oversized) — зона pure-функции: утром `yarn test` на матрицу live/ready/unfinished/trash.
+[Математик]: Дифф не затрагивает чистые функции анализа, сигнатурные буферы или DSP. Нефункциональные изменения в `docs/security/deps-watch-snapshot.json` — автоапдейт зависимостей, не требует ревью. Замечаний нет.
 
-[Музыкант]: Runtime audio-path / Web Audio в развёрнутом diff не трогался (C2 —). `#1162` + CONCEPT: `is-window-elapsed` (host-часы, без RecorderRef) и расширение `make-report-from-analysis` → `DetectionAnalysisRef` — docs/sync PC-1/PC-2; убедиться, что код узлов уже в main и catalog не расходится (C10). Инвариант `windowMs / tick >= measurementsCount` — guard-тестом, не только прозой CONCEPT.
+[Музыкант]: Дифф не затрагивает audio-engine, Web Audio или эффекты. Не требует ревью.
 
-[Верстальщик]: UI/DESIGN.md/a11y в diff дня нет (—). Mintlify device-board: новый MDX `is-window-elapsed`, правка `docs.json` + index — презентационный слой docs, C5 N/A для product UI.
+[Верстальщик]: Дифф не затрагивает UI, DESIGN.md или a11y. Не требует ревью.
 
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-07-25; сегмент `af030766^..b93c8ca`)
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md`
+Definition of Done: `yarn turbo run typecheck test lint --filter=scripts/llm-procedure-channels.test.mjs` + `yarn kits:pins --check` (убедится, что MANIFEST не дрейфует).
+Риски: P2 (второй коммит oversized — рекомендация, не блок). Утром: прочитать `DAILY_CODE_REVIEW.md` и переключиться на №1 (полиси защиты main) + №2 (проверить `--auto` под новыми правилами).
 
-Definition of Done (утро):
-1. Прочитать этот daily + `MAIN_DAY_ISSUE` / standup — **без** утреннего `yarn code-review`.
-2. `yarn node --check scripts/lib/membrana-leveling-disposition.mjs` (и соседние stub/impl entry), затем тесты disposition если есть:  
-   `yarn turbo run test --filter=./scripts` или точечный vitest по `membrana-leveling` (как в package scripts).
-3. Целостность реестра после archive-волны:  
-   `yarn docs:lint` (или task-registry verify, если есть в scripts) + выборочно открыть 2–3 `promptPath` из README (angelina-hostess, neural-tier, detection-alarm-loop).
-4. Deploy-регрессия Windows path: не ломать `#1128` — при office deploy smoke с tar.  
-5. По возможности точечный review **одного** oversized с runtime: приоритет `#1170` (disposition) → `#1153` (one-shot-trail), не все 14 сразу.
-6. Device-board docs vs code: `yarn catalog:verify-client` при наличии; иначе сверка `is-window-elapsed-node` / DetectionAnalysisRef в пакете.
-
-Риски:
-- **P1:** 14 oversized PR в main без daily-diff — скрытый correctness/tooling долг; recommend split / `yarn code-review:pr <N>` на `#1170`, `#1153`, крупные friction/leveling.
-- **P1:** битые/мигающие `promptPath` в tasks README после `#1165`/`#1171` — агенты уйдут в несуществующий путь (B4-adjacent).
-- **P2:** night-triage orphan/stale лавина + services-api-drift deprecated без removal window — эрозия фокуса и контракта fft-analyzer.
-- **P2:** stub §8.3 main-fill/workspace ещё throw — не вызывать из evening ritual до `membrana-leveling-scripts` (иначе B6 «ритуал зелёный, leveling нет» если проглотят exit).
-- **—** P0 по развёрнутому diff не видно (секретов/console.log в prod/циклов пакетов нет).
+Вердикт: LGTM (условно — после развёртывания 79e5ea31 в отдельный PR для полного ревью)

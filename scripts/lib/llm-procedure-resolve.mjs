@@ -81,3 +81,27 @@ export function resolveEffective(procedureId, opts = {}) {
     group: typeof record.group === 'string' ? record.group : undefined,
   };
 }
+
+/**
+ * Одна строка о действующей цепочке — с ИСТОЧНИКОМ (#1306). Подмена overlay'ем не
+ * объявлялась нигде: диагноз «почему две попытки вместо четырёх» стоил ручного сравнения.
+ * Печатается ДО попыток вызывающей стороной.
+ * @param {EffectiveProcedure} effective
+ * @returns {string}
+ */
+export function formatChainLine(effective) {
+  const steps = effective.chain.map((s) => `${s.provider}/${s.model}`).join(' → ');
+  return `[llm] chain(${effective.procedureId}) = ${steps} (источник: ${effective.source === 'overlay' ? 'overlay панели' : 'умолчания'})`;
+}
+
+/**
+ * Звенья умолчаний, которые overlay УБРАЛ (#1306): сравнение по провайдеру. Живые
+ * deepseek/xai не пробовались никогда ровно потому, что усечение молчало.
+ * @param {ChainStep[]} effectiveChain
+ * @param {ChainStep[]} defaultChain
+ * @returns {ChainStep[]}
+ */
+export function overlayDroppedSteps(effectiveChain, defaultChain) {
+  const present = new Set((effectiveChain ?? []).map((s) => s.provider));
+  return (defaultChain ?? []).filter((s) => !present.has(s.provider));
+}

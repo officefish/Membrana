@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `worktree-hygiene-epic` | Эпик: гигиена рабочих деревьев — freshEnough∧clean, гард держателя, инвентарь | L | [`WORKTREE_HYGIENE_EPIC_PROMPT.md`](../prompts/WORKTREE_HYGIENE_EPIC_PROMPT.md) | [#1232](https://github.com/officefish/Membrana/issues/1232) |
 | `adr-procedure-legalize` | Легализовать ADR как процедуру: запись в реестре, ядро trigger/steps/gates, зуб на реестр записей | M | [`ADR_PROCEDURE_LEGALIZE_PROMPT.md`](../prompts/ADR_PROCEDURE_LEGALIZE_PROMPT.md) | [#1296](https://github.com/officefish/Membrana/issues/1296) |
 | `send-gate-on-path` | Гейт отправки на путь отправки: день в предикатах, canSendAlly в swallow, сверка digest | S | [`SEND_GATE_ON_PATH_PROMPT.md`](../prompts/SEND_GATE_ON_PATH_PROMPT.md) | [#1233](https://github.com/officefish/Membrana/issues/1233) |
 | `tc-nightly-frame` | Ночной полный прогон от пина; фрейм night-report получает носитель и блокирует утро | M | [`TC_NIGHTLY_FRAME_PROMPT.md`](../prompts/TC_NIGHTLY_FRAME_PROMPT.md) | [#1293](https://github.com/officefish/Membrana/issues/1293) |
