@@ -21,20 +21,16 @@
  *   4) Контекст задачи: GitHub Issue (--gh-issue), файл (--ticket-file) или строка (--task).
  *   5) Вопрос пользователя.
  *
- * Требуется ANTHROPIC_API_KEY в .env. Опционально ANTHROPIC_MODEL.
+ * Канал: панельная цепочка процедуры «ask» (invokeProcedureLlm) — overlay панели,
+ * фолбэки по каталогу провайдеров; ключи звеньев в .env / .env.llm-proxy.
  * Для --gh-issue нужен установленный и авторизованный `gh` CLI.
  */
 import { existsSync, mkdirSync, readFileSync, appendFileSync } from 'node:fs';
 import { resolve, basename } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
-import {
-  anthropicPost,
-  defaultModel,
-  getAnthropicKey,
-  loadDotEnv,
-  printAnthropicHttpError,
-} from './_anthropic-env.mjs';
+import { loadDotEnv } from './_anthropic-env.mjs';
+import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 import {
   formatRagContextBlock,
   logRagStatus,
@@ -120,8 +116,9 @@ Options:
   --help, -h                Эта справка.
 
 Среда:
-  ANTHROPIC_API_KEY (обязательно)   — в .env или окружении.
-  ANTHROPIC_MODEL   (опционально)   — переопределение модели.
+  Канал — панельная цепочка процедуры «ask»: overlay панели + фолбэки каталога
+  (ключи звеньев в .env / .env.llm-proxy; см. scripts/lib/llm-provider-catalog.json).
+  LLM_NO_OVERLAY=1 — разовый обход overlay, только по слову владельца.
   Для --gh-issue: gh CLI установлен и авторизован для текущего репо.
 `);
 }
@@ -418,15 +415,6 @@ async function main() {
 
   const cli = parseArgs(process.argv.slice(2));
 
-  let key;
-  try {
-    key = getAnthropicKey();
-  } catch (e) {
-    console.error(e.message);
-    console.error('См. .env.example.');
-    process.exit(1);
-  }
-
   // Сначала подтягиваем gh-issue (если попросили) — чтобы при ошибке не дёргать API.
   let ghIssueData = null;
   if (cli.ghIssue) {
@@ -442,54 +430,38 @@ async function main() {
   }
 
   const { text: bodyText, ticketSourceLabel } = buildPrompt({ ...cli, ghIssueData, ragBlock });
-  const model = defaultModel();
 
   if (process.stderr.isTTY) {
-    console.error(`→ ${cli.persona} (${PERSONAS[cli.persona].role}) · model: ${model}`);
+    console.error(`→ ${cli.persona} (${PERSONAS[cli.persona].role})`);
   }
 
-  const bodyJson = {
-    model,
-    max_tokens: 4096,
-    messages: [{ role: 'user', content: [{ type: 'text', text: bodyText }] }],
-  };
-
+  // Панельная цепочка процедуры «ask»: overlay панели — рука владельца, фасад сам
+  // печатает действующую цепочку и перебирает звенья. Прямой anthropicPost здесь
+  // был прибит намертво и падал при исчерпанном канале (27.07, req_011CdSzFaXRY…).
   let answer = '';
+  let res;
   try {
-    const { ok, status, text } = await anthropicPost(
-      'https://api.anthropic.com/v1/messages',
-      {
-        headers: {
-          'content-type': 'application/json',
-          'x-api-key': key,
-          'anthropic-version': '2023-06-01',
-        },
-        bodyJson,
-      },
-    );
-
-    if (!ok) {
-      printAnthropicHttpError(status, text);
-      // exitCode + return, а не process.exit(): сокеты HTTP-вызова ещё живы, и обрыв
-      // процесса роняет libuv на Windows ассертом UV_HANDLE_CLOSING → 127 вместо 1
-      // (тот же класс, что чинился в code-review.mjs). Это штатный путь «нет кредита».
-      process.exitCode = 1;
-      return;
-    }
-
-    try {
-      const json = JSON.parse(text);
-      const parts = json?.content ?? [];
-      answer = parts.filter((b) => b?.type === 'text').map((b) => b.text).join('\n');
-      if (!answer) answer = JSON.stringify(parts, null, 2);
-    } catch {
-      answer = text;
-    }
+    res = await invokeProcedureLlm({
+      procedureId: 'ask',
+      prompt: bodyText,
+      maxTokens: 4096,
+    });
   } catch (e) {
     console.error(e);
-    // См. коммент выше: сокеты живы → exitCode + return вместо обрыва процесса.
+    // exitCode + return, а не process.exit(): сокеты HTTP-вызова ещё живы, и обрыв
+    // процесса роняет libuv на Windows ассертом UV_HANDLE_CLOSING → 127 вместо 1.
     process.exitCode = 1;
     return;
+  }
+  if (!res.ok) {
+    // Фасад уже отчитался по каждому звену в stderr; здесь — итог по норме панели.
+    console.error('ПАНЕЛЬНАЯ ЦЕПОЧКА НЕ ОТДАЛА КОНТЕНТ (процедура ask) — сообщить владельцу; разовый обход LLM_NO_OVERLAY=1 только по его слову.');
+    process.exitCode = 1;
+    return;
+  }
+  answer = res.text;
+  if (process.stderr.isTTY) {
+    console.error(`→ ответило звено: ${res.provider}/${res.model}`);
   }
 
   console.log(answer);

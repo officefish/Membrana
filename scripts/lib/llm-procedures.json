@@ -15,6 +15,13 @@
       "meters": true
     },
     {
+      "id": "ask",
+      "entryMjs": "scripts/ask-persona.mjs",
+      "yarnScript": "ask",
+      "title": "Ask persona (совет члена команды)",
+      "meters": true
+    },
+    {
       "id": "ritual-preflight",
       "entryMjs": "scripts/morning-care.mjs",
       "yarnScript": "morning-care",
