@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * yarn evidence — обвязка индекса вещдоков (#1303). Глаголы:
- *   add <file> --id <slug> --source "…" [--about "…"] [--store local|affine --ref <adr>]
+ *   add <file> --id <slug> --source "…" [--about "…"] [--store local|affine|archivarius --ref <adr>]
  *   verify        — сверка индекса с фактом (local считает хеш; affine/url → unknown)
  *   list [--json] — реестр на экран
  * Реестр: docs/evidence/registry.jsonl (append-only; правки строк запрещены).
@@ -27,7 +27,7 @@ function loadRegistry() {
 if (cmd === 'add') {
   const file = argv[1] && !argv[1].startsWith('--') ? argv[1] : null;
   if (!file || !flag('id') || !flag('source')) {
-    console.error('usage: yarn evidence add <file> --id <slug> --source "…" [--about "…"] [--store affine --ref <adr>]');
+    console.error('usage: yarn evidence add <file> --id <slug> --source "…" [--about "…"] [--store affine|archivarius --ref <adr>]');
     process.exit(1);
   }
   const abs = resolve(process.cwd(), file);

@@ -9,7 +9,7 @@
  * Ни fs, ни сети — обвязка в scripts/evidence.mjs.
  */
 
-/** @typedef {{kind:'local'|'affine'|'url', ref:string}} Location */
+/** @typedef {{kind:'local'|'affine'|'url'|'archivarius', ref:string}} Location */
 /** @typedef {{
  *   id:string, sha256:string, bytes:number, addedAt:string,
  *   source:string, location:Location, about?:string,
@@ -18,7 +18,7 @@
 
 const ID_RE = /^[a-z0-9][a-z0-9-]{2,63}$/u;
 const SHA_RE = /^[0-9a-f]{64}$/u;
-const LOCATION_KINDS = new Set(['local', 'affine', 'url']);
+const LOCATION_KINDS = new Set(['local', 'affine', 'url', 'archivarius']);
 
 /**
  * Валидность записи — по предикату дома. Находки по именам.
@@ -32,7 +32,7 @@ export function recordProblems(r) {
   if (!SHA_RE.test(String(r.sha256 ?? ''))) p.push('sha256: вещдок без хеша — не вещдок');
   if (!Number.isInteger(r.bytes) || r.bytes <= 0) p.push('bytes: размер обязателен');
   if (!r.location || !LOCATION_KINDS.has(r.location.kind) || !String(r.location.ref ?? '').trim()) {
-    p.push('location: вещдок без адреса — не вещдок (kind: local|affine|url + ref)');
+    p.push('location: вещдок без адреса — не вещдок (kind: local|affine|url|archivarius + ref)');
   }
   if (!String(r.source ?? '').trim()) p.push('source: происхождение обязательно (от кого/откуда)');
   if (!/^\d{4}-\d{2}-\d{2}/u.test(String(r.addedAt ?? ''))) p.push('addedAt: дата приёма обязательна');

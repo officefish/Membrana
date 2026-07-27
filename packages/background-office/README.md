@@ -53,7 +53,10 @@ curl http://localhost:3000/health
 | `yarn office:docker:down` | остановить контейнер |
 | `yarn office:docker:logs` | логи API |
 
-Порт по умолчанию **3000** (не конфликтует с media `3010`). Плейсхолдеры в `.env.docker.example` достаточны для `/health`; для `POST /v1/claude/ask` нужен настоящий `ANTHROPIC_API_KEY`.
+Порт по умолчанию **3000** (не конфликтует с media `3010`). Compose также поднимает
+`archivarius-mongo` для контейнера сессий (#1330); prod-миграция Mongo в office-стек —
+отдельный owner-gated шаг. Плейсхолдеры в `.env.docker.example` достаточны для `/health`;
+для `POST /v1/claude/ask` нужен настоящий `ANTHROPIC_API_KEY`.
 
 Прод VPS + TLS: [`docs/deploy/BACKGROUND_OFFICE_DEPLOY.md`](../../docs/deploy/BACKGROUND_OFFICE_DEPLOY.md).  
 **Fly (Night Hunt) + когда переезжать на VPS:** [`DEPLOY.md`](./DEPLOY.md) · [`docs/deploy/BACKGROUND_OFFICE_FLY_DEPLOY.md`](../../docs/deploy/BACKGROUND_OFFICE_FLY_DEPLOY.md).
@@ -195,6 +198,19 @@ curl -sS -X POST "http://localhost:3000/v1/claude/persona/vesnin/ask" \
 **`GET /v1/linear/issue/:id`** — `:id` в формате `TEC-42`.
 
 **`POST /v1/linear/issue/:id/comment`** — тело `{ "body": "…" }`.
+
+### Archivarius
+
+**`POST /v1/archivarius/ingest`** — принять батч маскированных span от локального ingest.
+
+**`GET /v1/archivarius/span/:sessionId/:uuid`** — акт изъятия отрезка сессии:
+`{ "bytes": "…", "sha256": "…" }`. Координаты для вещдока:
+`span://<sessionId>/<uuid>`.
+
+**`GET /v1/archivarius/search`** — полнотекстовый поиск + фильтры `actor`, `from`, `to`,
+`replyType`.
+
+Дом и мастерская: [`docs/archivarius/README.md`](../../docs/archivarius/README.md).
 
 ### Webhook Linear
 

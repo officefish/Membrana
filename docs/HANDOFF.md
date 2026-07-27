@@ -59,7 +59,8 @@
 стоп №8, двигать живую ногу дороже · ночной полный прогон
 [#1293](https://github.com/officefish/Membrana/issues/1293) — агент Б · `Membrana-agent-b-tests` (`codex/tests-block2-1293`) · кейсы
 [#1298](https://github.com/officefish/Membrana/issues/1298) — подвал принят, сбор заблокирован
-адресуемым архивом [#1229](https://github.com/officefish/Membrana/issues/1229) · решение по
+адресуемым архивом [#1229](https://github.com/officefish/Membrana/issues/1229) ·
+архивариус сессий [#1330](https://github.com/officefish/Membrana/issues/1330) — агент Codex · `Membrana-archivarius` (`codex/archivarius-sessions`) · решение по
 инсайтам недостижимо (карточка `insight-mandate-for-new`) — консилиум-гейт, тяжёлые форматы
 до 01.08 · ревизия скиллов [#1212](https://github.com/officefish/Membrana/issues/1212) —
 важно, но не ежедневная боль.

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { nonDocsFiles, planPrepushTypecheck } from './prepush-typecheck-scope.mjs';
+import { nonDocsFiles, planPrepushTypecheck, yarnBin } from './prepush-typecheck-scope.mjs';
 
 const PKGS = ['packages/device-board', 'packages/services/telemetry-journal', 'apps/docs'];
 
@@ -52,4 +52,9 @@ test('корневой package.json + скрипты → skip, НЕ full (не �
 
 test('пустой список → skip', () => {
   assert.equal(planPrepushTypecheck([], { packageDirs: PKGS }).mode, 'skip');
+});
+
+test('yarnBin: Windows hook запускает yarn.cmd, не голый yarn', () => {
+  assert.equal(yarnBin('win32'), 'yarn.cmd');
+  assert.equal(yarnBin('linux'), 'yarn');
 });
