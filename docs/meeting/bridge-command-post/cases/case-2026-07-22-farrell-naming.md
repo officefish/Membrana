@@ -42,14 +42,14 @@
 - schemaVersion: case-meta/1
 - sessionDate: 2026-07-22
 - sourceBridge: session:7f931953-ca19-490e-a919-6ca27a60a8c9 (первый мостик)
-- status: candidate
+- status: bearing
 - rawRefs: [transcript:7f931953#6c69dc79-48d8-43a2-8cd8-f73e1aecb50b, transcript:7f931953#d38b1987-1488-41a4-8472-39aa3c821664, transcript:7f931953#ab3edd96-fb92-4934-8004-1d3e057dfaf3, transcript:7f931953#8f34b3a9-75ab-44e2-aaaa-61881cb13c9c, transcript:7f931953#dc0b1c6b-9c43-45e2-a96f-b0dd68ea8107, transcript:7f931953#e02fc8a1-f6b0-445e-bd2c-7cec6e6cd086, transcript:7f931953#ca9f59f3-8e4c-4d0b-9779-900c2620fdd1]
 - conclusionDigest: Имя рождается двухступенчатым ревью: питомец предлагает, секретарь проверяет слаг, капитан штампует/отклоняет с причиной; чеканка append-only.
 - tags: [naming]
 - logicalSlot: naming.farrell
 - derivedInstructionId: null
-- stampedBy: null
-- stampedAt: null
+- stampedBy: владелец — делегированное слово 27.07 («согласен на твои рекомендации»; рекомендация председателя P2: bearing)
+- stampedAt: 2026-07-27
 - capturedBy: agent-researcher (задание «пять удачных примеров мостика», 27.07)
 
 Сводная строка: сессия `7f931953-ca19-490e-a919-6ca27a60a8c9`, **первый день мостика** (22.07). Примечание: заседание M4 датировало первый мостик ~25.07 (показ скриншотов); сырьё транскрипта показывает — эпизод случился 22.07.

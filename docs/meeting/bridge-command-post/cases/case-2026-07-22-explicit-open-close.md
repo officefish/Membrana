@@ -20,14 +20,14 @@
 - schemaVersion: case-meta/1
 - sessionDate: 2026-07-22
 - sourceBridge: session:7f931953-ca19-490e-a919-6ca27a60a8c9 (первый мостик)
-- status: candidate
+- status: bearing
 - rawRefs: [transcript:7f931953#0dab27dd-0979-44a3-adad-172afeb2266e, transcript:7f931953#9e5b0583-ec2a-48fa-a9cd-27e27f14b6de]
 - conclusionDigest: Комната не открывается сама: открытие явное, закрытие явное в ночном ритуале, конспекты уходят фреймом в репозиторий.
 - tags: [other, provenance]
 - logicalSlot: lifecycle.explicit-open-close
 - derivedInstructionId: null
-- stampedBy: null
-- stampedAt: null
+- stampedBy: владелец — делегированное слово 27.07 («согласен на твои рекомендации»; рекомендация председателя P2: bearing)
+- stampedAt: 2026-07-27
 - capturedBy: agent-researcher (задание «пять удачных примеров мостика», 27.07; пятый жест — находка исследователя)
 
 Сводная строка: сессия `7f931953-ca19-490e-a919-6ca27a60a8c9`, **первый день мостика** (22.07); последняя реплика капитана перед уходом комнаты в спринт.

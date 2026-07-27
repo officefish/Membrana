@@ -26,14 +26,14 @@
 - schemaVersion: case-meta/1
 - sessionDate: 2026-07-22
 - sourceBridge: session:7f931953-ca19-490e-a919-6ca27a60a8c9 (первый мостик)
-- status: candidate
+- status: bearing
 - rawRefs: [transcript:7f931953#185efa1f-bb20-46ca-b68e-124de1c4e840, transcript:7f931953#034ce9fe-3422-4a0f-a957-bd56ffd50c11, transcript:7f931953#ba244c54-4cb6-4e5e-b27c-7c58467fc29e]
 - conclusionDigest: Разница регистров, не переименование: в диалоге — капитан, в механике гейтов — формальный «владелец»; юридика канонов нетронута.
 - tags: [gate-language]
 - logicalSlot: gate-language.captain-vs-owner
 - derivedInstructionId: null
-- stampedBy: null
-- stampedAt: null
+- stampedBy: владелец — делегированное слово 27.07 («согласен на твои рекомендации»; рекомендация председателя P2: bearing)
+- stampedAt: 2026-07-27
 - capturedBy: agent-researcher (задание «пять удачных примеров мостика», 27.07)
 
 Сводная строка: сессия `7f931953-ca19-490e-a919-6ca27a60a8c9`, **первый день мостика** (22.07); в этой же реплике секретаря слово «мостик» впервые звучит как имя комнаты.
