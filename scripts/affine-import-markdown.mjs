@@ -22,6 +22,7 @@ import {
   signIn,
   writeImportBundle,
 } from './lib/affine-import.mjs';
+import { guardAffinePublishFreeze } from './lib/strategic-docs-affine-freeze.mjs';
 
 loadDotEnv();
 
@@ -54,7 +55,7 @@ Always run --dry-run before live import.`);
  * @param {string[]} [argv]
  */
 export async function runAffineImport(defaultTarget, argv = process.argv.slice(2)) {
-  const args = parseImportArgs(argv, defaultTarget);
+  const args = parseImportArgs(guardAffinePublishFreeze(repoRoot, argv, 'affine:import'), defaultTarget);
   if (args.help) {
     usage(defaultTarget);
     return;

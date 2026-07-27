@@ -28,7 +28,7 @@ docs/HANDOFF.md несёт топ-10 дня со ссылками на зада�
 
 **Референс (только идеи UX, не копировать код):** `packages/temp/...` — если есть.
 
-**GitHub Issue:** — (не заведён)
+**GitHub Issue:** [#1319](https://github.com/officefish/Membrana/issues/1319)
 
 ---
 

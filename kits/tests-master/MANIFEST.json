@@ -3,13 +3,18 @@
   "leadPersona": "dynin",
   "roots": [
     "scripts/tests-container.mjs",
+    "scripts/tests-nightly-full.mjs",
     "scripts/test-scripts-run.mjs",
     "tests/test-scripts.catalog.json"
   ],
   "pins": {
     "scripts/tests-container.mjs": "b4e0ea5d615c43e8d8384178442589a37177bf72",
+    "scripts/tests-nightly-full.mjs": "82064db88749330996bf9179d4fab18a97cbfa83",
     "scripts/test-scripts-run.mjs": "949022dbb1cdad885e4d8e332821e25aad240e25",
+    "scripts/lib/audit-pins.mjs": "8c1b3326e592214871cf87eef0cdb150497ec6b2",
+    "scripts/lib/kit-subgraph-audit.mjs": "e49f55ab4f897133de790cb9e9c2bb53f39ebab1",
     "scripts/lib/tests-container.mjs": "99e88b7db4bc4568f0b293acaca100045f263508",
+    "scripts/lib/tests-nightly-full.mjs": "8020ad7aa544166dd9082ed7a19ad9543c3bed07",
     "scripts/lib/test-scripts-plan.mjs": "1363761179672732b9132f2a00d2a7b049f11b7d",
     "tests/test-scripts.catalog.json": "afd488c422c4748bac3d63457dc11629c493671c"
   }
