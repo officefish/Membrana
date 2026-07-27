@@ -32,7 +32,7 @@
  * Логика планирования (planPrShip) — чистая и покрыта тестом; CLI лишь исполняет/печатает.
  */
 import { execFileSync } from 'node:child_process';
-import { readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -142,6 +142,47 @@ export function headSyncProblem(refs = {}) {
     'Мердж взял бы содержание из origin, то есть НЕ то, что у вас на ветке.',
     `Отправьте свои коммиты и повторите: git push`,
   ].join('\n');
+}
+
+/**
+ * Гард незавершённого слияния (#1321, ship-merge-state-guard).
+ *
+ * Вещдок 26.07 (PR #1275): pre-commit отклонил merge-коммит, слияние осталось висеть
+ * (MERGE_HEAD жив), а следующий шаг цепочки напечатал «Everything up-to-date» — отказ
+ * дошёл до агента ВИДОМ УСПЕХА, диагноз ушёл в сторону сервера (зверь B6 «Молчаливый
+ * зелёный», docs/bestiary/BESTIARY.md). Push при живом MERGE_HEAD отправляет СТАРЫЙ
+ * HEAD; посадка мержит не то, что на столе. Поэтому стоп с текстом ремонта ДО push/merge.
+ *
+ * @param {{ mergeHeadPath?: string|null }} state
+ * @returns {string|null} текст отказа или null (слияние не висит / выяснить нельзя)
+ */
+export function unfinishedMergeProblem(state = {}) {
+  if (!state.mergeHeadPath) return null;
+  return [
+    `pr:ship: слияние НЕ завершено — MERGE_HEAD жив (${state.mergeHeadPath}).`,
+    'Заверши: git commit (после разрешения конфликтов) ЛИБО отмени: git merge --abort.',
+    'Иначе push отправит СТАРЫЙ HEAD и напечатает «Everything up-to-date» — отказ видом успеха',
+    '(вещдок 26.07 / PR #1275, зверь B6 «Молчаливый зелёный»).',
+  ].join('\n');
+}
+
+/**
+ * Путь живого MERGE_HEAD или null. У worktree MERGE_HEAD лежит в git-dir ДЕРЕВА
+ * (`.git/worktrees/<имя>/MERGE_HEAD`), не в общем `.git` — путь спрашиваем у
+ * `git rev-parse --git-path` (worktree-aware), руками не строим.
+ */
+export function liveMergeHeadPath(run = execFileSync) {
+  try {
+    const p = String(
+      run('git', ['rev-parse', '--path-format=absolute', '--git-path', 'MERGE_HEAD'], {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }),
+    ).trim();
+    return p && existsSync(p) ? p : null;
+  } catch {
+    return null; // git недоступен — гард молчит, дальше упадёт сам git громче
+  }
 }
 
 /** Локальный и удалённый SHA текущей ветки. `null`, если upstream не настроен. */
@@ -458,6 +499,17 @@ function main() {
   // Ветки соседних worktree решают, возможен ли ff-sync (см. isBaseHeldElsewhere).
   // Гуард: без --branch коммит идёт в текущую ветку; запрет коммитить прямо в base.
   const current = execFileSync('git', ['branch', '--show-current'], { encoding: 'utf8' }).trim();
+
+  // #1321: незавершённое слияние — стоп ДО любых шагов (отправка И посадка).
+  // Push при живом MERGE_HEAD уходит «Everything up-to-date» — отказ видом успеха (B6).
+  if (opts.execute) {
+    const hanging = unfinishedMergeProblem({ mergeHeadPath: liveMergeHeadPath() });
+    if (hanging) {
+      console.error(hanging);
+      process.exitCode = 1;
+      return;
+    }
+  }
 
   // Возможность автослияния — свойство репозитория, а не флага: спрашиваем ДО плана,
   // иначе `gh pr merge --auto` падает и оставляет PR открытым (26.07, PR #1269).
