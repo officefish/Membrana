@@ -15,8 +15,16 @@
 
 import { createHash } from 'node:crypto';
 
-/** Автор документа каскада ∈ {5 персон, человек}. Субагент автором быть не может (M1). */
-export const AUTHOR_ROLES = new Set(['vesnin', 'ozhegov', 'dynin', 'kuryokhin', 'rodchenko', 'human']);
+/**
+ * Автор документа каскада ∈ {8 голосов реестра, человек}. Субагент автором быть не может (M1).
+ * Рефакторинг команды 27.07 (#1331): Тарасов — тимлид (автор стендапа/задачи дня), Ангелина
+ * и Фаррелл — голоса реестра; список зеркалит docs/virtual-team/voices.registry.json (зуб
+ * verify:voices). Провод пойман стражем 28.07: стендап Тарасова блокировала старая пятёрка.
+ */
+export const AUTHOR_ROLES = new Set([
+  'tarasov', 'vesnin', 'ozhegov', 'dynin', 'kuryokhin', 'rodchenko', 'angelina', 'farrell',
+  'human',
+]);
 
 /** Три исхода проверки свежести ребра. `unknown` («не проверено») ≠ `fresh` — не мёртвая дверь. */
 export const FRESHNESS = Object.freeze({ FRESH: 'fresh', STALE: 'stale', UNKNOWN: 'unknown' });
