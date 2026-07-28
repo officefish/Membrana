@@ -28,14 +28,14 @@
 - schemaVersion: case-meta/1
 - sessionDate: 2026-07-27
 - sourceBridge: session:139af2d5-8ada-4d94-b43f-00b2df079a2e (заседание bridge-command-post, M1–M6)
-- status: candidate
+- status: bearing
 - rawRefs: [docs/seanses/bridge-command-post-m1-cast-2026-07-27.md, docs/seanses/bridge-command-post-m2-frames-2026-07-27.md, docs/seanses/bridge-command-post-m3-truth-contract-2026-07-27.md, docs/seanses/bridge-command-post-m4-improvisation-cases-2026-07-27.md, docs/seanses/bridge-command-post-m5-console-2026-07-27.md, docs/seanses/bridge-command-post-m6-debts-observations-2026-07-27.md]
 - conclusionDigest: Полный формат = структурная повестка + порог + rt-проверки; на слабом звене — честная деградация вместо имитации.
 - tags: [other]
 - logicalSlot: consilium.format-by-assembly
 - derivedInstructionId: null
-- stampedBy: null
-- stampedAt: null
+- stampedBy: владелец — делегированное слово 28.07 («добивай всё своё»; ранее 27.07 «согласен на твои рекомендации»); рекомендация председателя: все пять несущие
+- stampedAt: 2026-07-28
 - capturedBy: агент сессии мостика (председатель), 27.07
 
 Сводная строка: сессия `139af2d5`, конвейер M1–M6 заседания (27.07).

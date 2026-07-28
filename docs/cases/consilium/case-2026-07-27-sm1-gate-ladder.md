@@ -30,14 +30,14 @@
 - schemaVersion: case-meta/1
 - sessionDate: 2026-07-27
 - sourceBridge: session:139af2d5-8ada-4d94-b43f-00b2df079a2e (заседание bridge-command-post, созыв M0)
-- status: candidate
+- status: bearing
 - rawRefs: [scripts/lib/protocol-validator.mjs@main (meetingAgendaProblem, S-M1), docs/meeting/bridge-command-post/M0_AGENDA.md (итоговая форма P1 со строкой посылок), docs/seanses/bridge-command-post-m0-order-2026-07-27.md]
 - conclusionDigest: Четыре легитимных машинных отказа подряд по председателю; ответ — локальный предчек повестки до созыва; M2–M6 с первого раза.
 - tags: [gate-language, other]
 - logicalSlot: consilium.agenda-precheck
 - derivedInstructionId: null
-- stampedBy: null
-- stampedAt: null
+- stampedBy: владелец — делегированное слово 28.07 («добивай всё своё»; ранее 27.07 «согласен на твои рекомендации»); рекомендация председателя: все пять несущие
+- stampedAt: 2026-07-28
 - capturedBy: агент сессии мостика (председатель — сам объект всех четырёх отказов), 27.07
 
 Сводная строка: сессия `139af2d5`, заседание bridge-command-post, созыв M0 (27.07).
