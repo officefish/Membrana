@@ -755,6 +755,17 @@
       "weight": null,
       "createdAt": "2026-07-28",
       "tags": []
+    },
+    {
+      "id": "insight-bearing-tracking",
+      "title": "Наземная пеленгация цели: угловой трек без дальности + временная фильтрация детекций",
+      "status": "reviewed",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 6.8,
+      "createdAt": "2026-07-28",
+      "tags": []
     }
   ]
 }
