@@ -470,6 +470,9 @@ function parseArgs(argv) {
     else if (a === '--no-wait') o.wait = false;
     else if (a === '--merge-only') o.mergeOnly = true;
     else if (a === '--auto') o.auto = true;
+    // --keep-branch (28.07): не переключать дерево на base после мерджа — пять укусов
+    // за день, когда следующий коммит ловил гейт «HEAD == main» (#1232).
+    else if (a === '--keep-branch') o.keepBranch = true;
     else if (a === '--allow-mention') o.allowMentionWithoutClose = true;
     else if (a === '--issue-mention') o.issueMention = next();
     else if (a === '--body-file') o.bodyFile = next();
