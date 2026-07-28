@@ -88,6 +88,23 @@
       ]
     },
     {
+      "id": "team-memory-report",
+      "script": "scripts/team-memory-report.mjs",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "whyNoncritical": "Отчёт-читатель поверх журналов персон (git-дифф, без LLM) — первоисточник не трогает, сбой ничего не теряет, прогон повторим руками (yarn team-memory:report). Exit 3 = вытеснение найдено (находка, образец leveling), не отказ.",
+      "label": "Отчёт памяти команды (записал/вытеснил, token 121)",
+      "consumes": [
+        "docs/virtual-team/memory/"
+      ],
+      "produces": [
+        "docs/seanses/team-memory-report-<дата>.md"
+      ],
+      "findingExitCodes": [
+        3
+      ]
+    },
+    {
       "id": "insight-drift",
       "script": "scripts/insight-drift.mjs",
       "kind": "mechanic",

@@ -1,0 +1,50 @@
+<!-- канал: код — yarn team-memory:report (детерминированный, без LLM); база: 3d468eb8148b -->
+
+# Память команды — 2026-07-28
+
+> Форма — кристалл token 121: записал / утонуло / всплывало. v1: контуры
+> подсознания и всплытия не поставлены (#1366 ч.2, #1368) — вытеснение = потеря, поимённо.
+
+## angelina
+- записал в оперативку: изменений нет
+- утонуло в подсознание: ничего
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## dynin
+- записал в оперативку (9): bridge-command-post-m0-order [2026-07-27] · bridge-command-post-m1-cast [2026-07-27] · bridge-command-post-m2-frames [2026-07-27] · bridge-command-post-m3-truth-contract [2026-07-27] · bridge-command-post-m4-improvisation-cases [2026-07-27] · bridge-command-post-m5-console [2026-07-27] · bridge-command-post-m6-debts-observations [2026-07-27] · day-memo-evening [2026-07-27] · team-evening-feedback [2026-07-27]
+- утонуло в подсознание (10, v1 = ПОТЕРЯНО): tasks-workshop-m2-set [2026-07-23] · tasks-workshop-m3-axes [2026-07-23] · tasks-workshop-m4a-inspect [2026-07-23] · tasks-workshop-m4b-validity [2026-07-23] · tasks-workshop-m4c-invariants [2026-07-23] · tasks-workshop-m4d-readme [2026-07-23] · tasks-workshop-m5a-pick [2026-07-23] · tasks-workshop-m5b-chaining [2026-07-23] · insight-change-routing-office [2026-07-22] · insight-comms-contour-topology [2026-07-05]
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## farrell
+- записал в оперативку: изменений нет
+- утонуло в подсознание: ничего
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## kuryokhin
+- записал в оперативку (10): bridge-command-post-m0-order [2026-07-27] · bridge-command-post-m1-cast [2026-07-27] · bridge-command-post-m2-frames [2026-07-27] · bridge-command-post-m3-truth-contract [2026-07-27] · bridge-command-post-m4-improvisation-cases [2026-07-27] · bridge-command-post-m5-console [2026-07-27] · bridge-command-post-m6-debts-observations [2026-07-27] · day-memo-evening [2026-07-27] · team-evening-feedback [2026-07-27] · insight-comms-contour-topology [2026-07-05]
+- утонуло в подсознание (10, v1 = ПОТЕРЯНО): tasks-workshop-m3-axes [2026-07-23] · tasks-workshop-m4a-inspect [2026-07-23] · tasks-workshop-m4b-validity [2026-07-23] · tasks-workshop-m4c-invariants [2026-07-23] · tasks-workshop-m4d-readme [2026-07-23] · tasks-workshop-m5a-pick [2026-07-23] · tasks-workshop-m5b-chaining [2026-07-23] · insight-change-routing-office [2026-07-22] · insight-precedent-container [2026-07-22] · home-workshop-m0-order [2026-07-22]
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## ozhegov
+- записал в оперативку (9): bridge-command-post-m0-order [2026-07-27] · bridge-command-post-m1-cast [2026-07-27] · bridge-command-post-m2-frames [2026-07-27] · bridge-command-post-m3-truth-contract [2026-07-27] · bridge-command-post-m4-improvisation-cases [2026-07-27] · bridge-command-post-m5-console [2026-07-27] · bridge-command-post-m6-debts-observations [2026-07-27] · day-memo-evening [2026-07-27] · team-evening-feedback [2026-07-27]
+- утонуло в подсознание (10, v1 = ПОТЕРЯНО): tasks-workshop-m2-set [2026-07-23] · tasks-workshop-m3-axes [2026-07-23] · tasks-workshop-m4a-inspect [2026-07-23] · tasks-workshop-m4b-validity [2026-07-23] · tasks-workshop-m4c-invariants [2026-07-23] · tasks-workshop-m4d-readme [2026-07-23] · tasks-workshop-m5a-pick [2026-07-23] · tasks-workshop-m5b-chaining [2026-07-23] · insight-change-routing-office [2026-07-22] · insight-comms-contour-topology [2026-07-05]
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## rodchenko
+- записал в оперативку (9): bridge-command-post-m0-order [2026-07-27] · bridge-command-post-m1-cast [2026-07-27] · bridge-command-post-m2-frames [2026-07-27] · bridge-command-post-m3-truth-contract [2026-07-27] · bridge-command-post-m4-improvisation-cases [2026-07-27] · bridge-command-post-m5-console [2026-07-27] · bridge-command-post-m6-debts-observations [2026-07-27] · day-memo-evening [2026-07-27] · team-evening-feedback [2026-07-27]
+- утонуло в подсознание (9, v1 = ПОТЕРЯНО): tasks-workshop-m4a-inspect [2026-07-23] · tasks-workshop-m4b-validity [2026-07-23] · tasks-workshop-m4c-invariants [2026-07-23] · tasks-workshop-m4d-readme [2026-07-23] · tasks-workshop-m5a-pick [2026-07-23] · tasks-workshop-m5b-chaining [2026-07-23] · insight-change-routing-office [2026-07-22] · insight-precedent-container [2026-07-22] · home-workshop-m0-order [2026-07-22]
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## tarasov
+- записал в оперативку: изменений нет
+- утонуло в подсознание: ничего
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## vesnin
+- записал в оперативку (9): bridge-command-post-m0-order [2026-07-27] · bridge-command-post-m1-cast [2026-07-27] · bridge-command-post-m2-frames [2026-07-27] · bridge-command-post-m3-truth-contract [2026-07-27] · bridge-command-post-m4-improvisation-cases [2026-07-27] · bridge-command-post-m5-console [2026-07-27] · bridge-command-post-m6-debts-observations [2026-07-27] · day-memo-evening [2026-07-27] · team-evening-feedback [2026-07-27]
+- утонуло в подсознание (9, v1 = ПОТЕРЯНО): tasks-workshop-m1-adress [2026-07-23] · tasks-workshop-m2-set [2026-07-23] · tasks-workshop-m4a-inspect [2026-07-23] · tasks-workshop-m4b-validity [2026-07-23] · tasks-workshop-m4c-invariants [2026-07-23] · tasks-workshop-m4d-readme [2026-07-23] · tasks-workshop-m5a-pick [2026-07-23] · tasks-workshop-m5b-chaining [2026-07-23] · insight-change-routing-office [2026-07-22]
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+**Итог:** записано 46 · вытеснено 48.
+
+⚠ **СИГНАЛ РЕГРЕССИИ: вытеснено больше, чем записано** — память команды сегодня сжалась; поимённый список выше, решение о ценности — за владельцем.

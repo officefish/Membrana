@@ -5,11 +5,13 @@
     "scripts/bridge.mjs"
   ],
   "pins": {
-    "scripts/bridge.mjs": "916cf77b873693621676a1f91ec65771c9ea0b1a",
+    "scripts/bridge.mjs": "36fbef75a0e1f04887024b6a55f9cedadc1900ff",
     "scripts/lib/bridge-cast.mjs": "8e37e276d8fb9c04d452ae9630a2f5e8f207f74f",
+    "scripts/lib/bridge-debt-engine.mjs": "6cbbac6f0ecd3cb7e1d86a42e45c385c838c068e",
     "scripts/lib/bridge-debts-health.mjs": "8d7e4b190738a3c5d1b3e6651969c0cd78943f19",
     "scripts/lib/bridge-debts.mjs": "c4949cca3d012ea0132b6df612cf52c16316e223",
     "scripts/lib/bridge-room.mjs": "abf093a7e774026d04c2361a8d96d8bcc3293246",
-    "scripts/lib/bridge-toolkit.mjs": "d25920071340c4837860aaab30d7f4a8158e25cc"
+    "scripts/lib/bridge-toolkit.mjs": "d25920071340c4837860aaab30d7f4a8158e25cc",
+    "scripts/lib/captain-notebook.mjs": "404ba09965d4608988337e6b5eaf3bcb99428280"
   }
 }
