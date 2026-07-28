@@ -13,4 +13,5 @@
 | Комната | Статус | Протокол |
 |---------|--------|----------|
 | M0 | ✓ вердикт, ратифицирован 28.07 | memory-subconscious-m0-order-2026-07-28.md |
-| M1 (C1) | ✓ вердикт (40 реплик), ждёт ратификации | memory-subconscious-m1-subconscious-2026-07-28.md |
+| M1 (C1) | ✓ вердикт, **ратифицирован 28.07** | memory-subconscious-m1-subconscious-2026-07-28.md |
+| M2 (C2) | ✓ вердикт (41 реплика), ждёт ратификации | memory-subconscious-m2-priority-2026-07-28.md |
