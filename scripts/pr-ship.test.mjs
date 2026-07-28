@@ -500,3 +500,20 @@ test('--body-file: pr-create несёт маркер пользовательс�
   assert.equal(create.bodyText, '__USER_BODY_FILE__/tmp/b.md');
   assert.match(commitBody, /Closes #7/u);
 });
+
+test('--keep-branch: хвост не переключает дерево на base (28.07, гейт #1232)', () => {
+  const withFlag = planPrShip({
+    type: 'fix', scope: 'x', message: 'm', commit: false, wait: false,
+    currentBranch: 'fix/my-work', keepBranch: true,
+  });
+  const labels = withFlag.steps.map((s) => s.label);
+  assert.ok(!labels.includes('sync-checkout'), 'дерево остаётся на рабочей ветке');
+  assert.ok(labels.includes('sync-fetch'), 'origin/base всё равно обновляется');
+  assert.match(withFlag.skippedSync ?? '', /keep-branch/u, 'причина пропуска названа вслух');
+
+  const without = planPrShip({
+    type: 'fix', scope: 'x', message: 'm', commit: false, wait: false,
+    currentBranch: 'fix/my-work',
+  });
+  assert.ok(without.steps.map((s) => s.label).includes('sync-checkout'), 'без флага поведение прежнее');
+});

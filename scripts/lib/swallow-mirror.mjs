@@ -114,6 +114,15 @@ export function checkSwallowDraft(draft) {
         'дать markdown-ссылку [#N](url) либо убрать номер из текста',
     );
   }
+  // Битые формы адреса — вторая поимка владельцем 28.07 («кликнул и попал на 404»).
+  const FORM_HINT = {
+    ellipsis: 'сокращение многоточием — телеграм линкует огрызок; писать адрес целиком',
+    schemeless: 'адрес без схемы — добавить https://',
+    'branch-blob': 'ссылка на файл в ветке умирает вместе с веткой при мердже — для чтения давать /blob/main/… (PR-ссылка адресует событие, не содержание)',
+  };
+  for (const b of live.broken) {
+    violations.push(`строка ${b.line}: «${b.raw}» — ${FORM_HINT[b.kind]}`);
+  }
 
   return { ok: violations.length === 0, violations };
 }
