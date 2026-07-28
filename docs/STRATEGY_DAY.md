@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-07-27T05:13:26.365Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-07-28T03:55:46.703Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -13,7 +13,7 @@
 
 ## Посылки горизонта (граф правды)
 
-_Кристаллов активно: 114 (owner: 71, derived: 43). Стратегия читает граф правды (S7)._
+_Кристаллов активно: 115 (owner: 72, derived: 43). Стратегия читает граф правды (S7)._
 
 - 🪨 `research-night-sensemaking-morning` — Внешние исследования проводятся ночью и осмысливаются утром; дневная стратегия делается утром. Вечер — подведение итогов…
 - 🪨 `weekly-strategy-frozen` — Недельная стратегия пока замораживается — уровень планирования слишком серьёзный, пока не разобрана дневная рутина.
@@ -23,7 +23,7 @@ _Кристаллов активно: 114 (owner: 71, derived: 43). Страте
 - 🪨 `credential-rotation-biweekly` — Ключи доступа перевыпускаются раз в две недели везде, где это возможно.
 - 🪨 `alex-sparring-answered` — Ответ Алексу на спарринг про «паспорт детектора» отправлен.
 - 🪨 `graph-first-step-572-dropped` — Первое в контуре доверия — пять вопросов, уронённых консилиумом 16.07 (#572): C1 гейты приходят позже факта, C2 должен л…
-- …ещё 63 owner-кристаллов
+- …ещё 64 owner-кристаллов
 
 ## Акценты (highlights)
 
@@ -32,6 +32,7 @@ _Кристаллов активно: 114 (owner: 71, derived: 43). Страте
 - **Сегодняшний ritual:day продемонстрирует… × Граф правды второй день вытесняет рутину…** — `research:todays-ritual-will-demo-c1__truth-graph-displaces-its-own-purpose`
 
 **Фоновые** (не своевременны сейчас):
+- **Оркестрация хендофф: разрез дня на изолированные брифы с асимметрией знания** — `insight:insight-handoff-orchestration`
 - **Контракт носителя: объявленный участник процедуры обязан быть вызываемым** — `insight:insight-cast-carrier-contract`
 - ~~**AI-агент построения UserCase по описанию пользователя**~~ — `insight:insight-agent-scenario-builder` _(stale · 2026-06-25)_
 - ~~**Loop engineering: соревновательное тестирование с точками останова**~~ — `insight:insight-loop-engineering-competition-test` _(stale · 2026-06-25)_
@@ -49,7 +50,7 @@ _Кристаллов активно: 114 (owner: 71, derived: 43). Страте
 - ~~**Dual-density UI: operator vs engineer mode**~~ — `insight:insight-rodchenko-operator-density-mode` _(stale · 2026-06-25)_
 - **Tier2: 5 канонических рабочих деревьев (main/tooling/product/codex/cursor), спринт всегда уходит в свою ветку** — `insight:insight-tier2-worktree-topology`
 - ~~**Начитанная виртуальная команда: досье персон + фоновый stack-watch за новинками стека**~~ — `insight:insight-team-stack-watch` _(stale · 2026-07-09)_
-- **QA-раздел в панели офиса: накапливать вопросы союзников и ответы команды** — `insight:insight-office-panel-qa-section`
+- ~~**QA-раздел в панели офиса: накапливать вопросы союзников и ответы команды**~~ — `insight:insight-office-panel-qa-section` _(stale · 2026-07-14)_
 - **Вечерний ритуал производит три опорных документа — топливо для агентов, симметрично дневному** — `insight:insight-evening-ritual-three-fuel-documents`
 - **Нет субъекта действия: команда заявлена, но не исполняет** — `insight:insight-acting-subject-missing`
 - ~~**Канонический FSM сессии recorder (anti-L18)**~~ — `insight:insight-kuryokhin-recorder-session-fsm` _(stale · 2026-06-25)_
@@ -78,7 +79,7 @@ _Кристаллов активно: 114 (owner: 71, derived: 43). Страте
 
 ## Provenance каналов
 
-- ✅ `insight` — жив, элементов: 43
+- ✅ `insight` — жив, элементов: 44
 - ✅ `research` — жив, элементов: 2
 
 > Стратегия описывает акцент (`highlight`), но не назначает исполнителей и не пишет DoD:
