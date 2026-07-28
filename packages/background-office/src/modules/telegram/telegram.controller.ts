@@ -51,7 +51,13 @@ export class TelegramController {
     if (!parsed.success) {
       throw new BadRequestException(parsed.error.flatten());
     }
-    const sent = await this.telegram.sendMessage(formatAllyMessage(parsed.data));
+    const message = parsed.data;
+    const sent = await this.telegram.sendMessage(formatAllyMessage(message));
+    // Вложение — отдельным сообщением после текста, как у дайджеста (#1398).
+    // Fire-and-forget: неудача вложения не влияет на `sent` основного текста.
+    if (message.documentMd && message.documentName) {
+      await this.telegram.sendDocument(message.documentName, message.documentMd);
+    }
     return { ok: true, sent };
   }
 }

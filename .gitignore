@@ -53,6 +53,11 @@ docs/discussions/mcp-tier0.generated.json
 .membrana/swallow-deliveries.jsonl
 .membrana/infra-probe-latest.json
 
+# Кеши контейнеров — рабочие файлы, не артефакты (зуб scripts/lib/container-cache-hygiene.mjs).
+# Вещдок 28.07: docs/archivarius/cache/spans.jsonl — редактированные транскрипты сессий;
+# git add -A утащил бы их в историю ПУБЛИЧНОГО репозитория.
+docs/*/cache/
+
 # Closure-review артефакты (manifest + <sha>-review.md) — локальные рабочие файлы
 # процесса закрытия, НЕ часть публичного контракта репо (консилиум
 # agent-tooling-friction 2026-07-13, ti-1). Историю чужих ревью не тянем в PR.
