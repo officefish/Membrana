@@ -138,6 +138,39 @@ test('жирные реплики: секция вердикта и посыло
   assert.deepEqual(meetingVerdictProblems(md), [], 'секция посылок найдена');
 });
 
+test('неймспейс P*: локальный ряд «P1–P5» в DoD — не колонизация соседа P1 (аудит 27.07)', async () => {
+  const { localSeriesIds, meetingVerdictProblems } = await import('./lib/protocol-validator.mjs');
+  const mk = (dodLine) => [
+    '**Вопрос:** V4',
+    '',
+    '**[Структурщик]:** посылки и путь ниже',
+    '',
+    '**Список посылок**',
+    '- вердикты M1–M3 ратифицированы',
+    '',
+    '## Итоговое решение',
+    'форма кейса принята',
+    '',
+    '## Definition of Done',
+    dodLine,
+  ].join('\n');
+
+  // Ложный красный M4/M6: путь этапов P1–P5 / посылки P1..P12 — локальный ряд.
+  const range = mk('- зафиксирован путь P1–P5 (capture → linkback)');
+  assert.ok(localSeriesIds(range).has('P1') && localSeriesIds(range).has('P5'));
+  assert.deepEqual(
+    meetingVerdictProblems(range, ['P1']),
+    [],
+    'диапазонный литерал — неймспейс комнаты, не чужой вопрос',
+  );
+  assert.deepEqual(meetingVerdictProblems(mk('- ссылка на посылки P1..P12'), ['P1']), []);
+
+  // Настоящая колонизация ловится по-прежнему: голый ID соседа без локального ряда.
+  const bare = mk('- закрыть вопрос P1 порядка разбора этим же DoD');
+  const problems = meetingVerdictProblems(bare, ['P1']);
+  assert.ok(problems.some((p) => p.includes('P1')), 'standalone-ссылка на чужой вопрос — красная');
+});
+
 test('unknownBracketLabels ловит формат [Имя · Роль] (инцидент 16.07)', () => {
   const md = '[Ozhegov · Структурщик]: раз\n[Teamlead]: два';
   const unknown = unknownBracketLabels(md);

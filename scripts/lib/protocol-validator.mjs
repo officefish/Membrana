@@ -290,6 +290,26 @@ function premisesSection(protocolMd) {
  * @param {string[]} siblingIds ID соседних вопросов заседания (чужие комнаты)
  * @returns {string[]} список нарушений; пусто = структура вердикта годна
  */
+/**
+ * ID, объявленные протоколом как ЛОКАЛЬНЫЙ ряд — через диапазон «P1–P5» / «P1..P12»
+ * (тире/дефис/двоеточие-точки). Такой литерал принадлежит неймспейсу комнаты, не
+ * соседнему вопросу. Канон впредь — префикс комнаты (M4-P1); диапазон — легаси-форма.
+ * @param {string} md
+ * @returns {Set<string>}
+ */
+export function localSeriesIds(md) {
+  const local = new Set();
+  const re = /\b([A-ZА-ЯЁ]{1,2})(\d{1,3})\s*(?:[–—-]|\.\.)\s*(?:\1)?(\d{1,3})\b/gu;
+  for (const m of String(md ?? '').matchAll(re)) {
+    const [, prefix, fromS, toS] = m;
+    const from = Number(fromS);
+    const to = Number(toS);
+    if (!(to > from) || to - from > 200) continue; // не диапазон ряда — не трогаем
+    for (let i = from; i <= to; i += 1) local.add(`${prefix}${i}`);
+  }
+  return local;
+}
+
 export function meetingVerdictProblems(protocolMd, siblingIds = []) {
   const problems = [];
   const body = protocolBody(protocolMd);
@@ -305,8 +325,14 @@ export function meetingVerdictProblems(protocolMd, siblingIds = []) {
   }
 
   // DoD — обязательства своей комнаты; ID соседей там = колонизация (hard rule 2).
+  // Скоуп неймспейса (вердикт аудитора Веснина 27.07): литерал соседа, объявленный
+  // в ЭТОМ протоколе локальным рядом (диапазон «P1–P5», «P1..P12»), — не чужой вопрос,
+  // а ошибка адресации имён; ловить её колонизацией = ложный красный (M4/M6, 27.07).
   const dod = body.match(/Definition of Done([\s\S]*?)(?=\n\s{0,3}#{1,4}\s|$)/iu)?.[1] ?? '';
-  const colonized = siblingIds.filter((id) => new RegExp(`\\b${id}\\b`, 'u').test(dod));
+  const local = localSeriesIds(body);
+  const colonized = siblingIds.filter(
+    (id) => !local.has(id) && new RegExp(`\\b${id}\\b`, 'u').test(dod),
+  );
   if (colonized.length > 0) {
     problems.push(
       `DoD несёт обязательства по чужим вопросам (${colonized.join(', ')}) — ` +
