@@ -78,6 +78,24 @@
           },
           "notes": "exit 3 только при --check (не в вечернем argv)"
         },
+        "team-memory-report": {
+          "script": "scripts/team-memory-report.mjs",
+          "codes": {
+            "0": {
+              "bucket": "ok",
+              "meaning": "отчёт записан, вытеснения нет"
+            },
+            "1": {
+              "bucket": "failure",
+              "meaning": "git/фс недоступны или exception"
+            },
+            "3": {
+              "bucket": "finding",
+              "meaning": "вытеснение из оперативной памяти найдено — поимённый список в отчёте (token 121); читать, не чинить молча"
+            }
+          },
+          "notes": "#1366 ч.1: детерминированный дифф журналов персон; finding по образцу leveling"
+        },
         "insight-drift": {
           "script": "scripts/insight-drift.mjs",
           "codes": {
