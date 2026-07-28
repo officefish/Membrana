@@ -7,9 +7,9 @@
   "frozenDigest": "bce44160bdb52f5ad98143edc08371cfdaa594d166477f4b1bb236ed1e811654",
   "magistral": "procedures-core-fields",
   "swallow": {
-    "draftDigest": "1a9a4bf4ec57d289fce1e12035281f3542ca1906ef70a3177f83a73ef270cfc7",
-    "draftFile": "docs/comms/drafts/swallow-morning-2026-07-28.md",
-    "ownerAck": true
+    "draftDigest": "2ed7fdb88bdf7f5375b3a026ed51571a91c0464a18307d3bfa695e5d752507f0",
+    "draftFile": "docs/comms/drafts/swallow-plotva-2026-07-28.md",
+    "ownerAck": false
   },
   "day": "2026-07-28"
 }
