@@ -1,0 +1,239 @@
+{
+  "$comment": "Инфраструктурная полиси (#1393 ч.1, слово владельца 28.07): реестр внешних мощностей — что, где и когда поддерживать, пополнять, как наращивать. Жанр — branch-protection-policy.json (#1310): ДЕКЛАРАЦИЯ в репо, факт сверяет yarn infra:probe, расхождение кричит по имени. СЕКРЕТОВ И БАЛАНСОВ ЗДЕСЬ НЕТ — только env-ИМЕНА, модели оплаты и датные события; живые балансы probe кладёт в локальный .membrana/infra-probe-latest.json (gitignore). billing — закрытый перечень: monthly-limit | credits | rent | included. knownBlocked — отдельный статус probe (НЕ ok и НЕ красный) до решения указанной части. Правки — со словом владельца: это его мощности.",
+  "version": 1,
+  "links": [
+    {
+      "id": "anthropic",
+      "envKeys": [
+        "ANTHROPIC_API_KEY"
+      ],
+      "billing": "monthly-limit",
+      "renewsAt": "2026-08-01",
+      "replenish": {
+        "who": "владелец",
+        "signal": "лимит месяца исчерпан (вещдок 27.07) / начало месяца"
+      },
+      "scale": "поднятие лимита со следующего месяца (слово владельца 28.07)",
+      "probe": {
+        "method": "llm-probe:anthropic"
+      },
+      "balanceApi": "not-provided (Anthropic не отдаёт remaining по API — лимит виден только консолью)",
+      "fallback": "панельная цепочка → openrouter → deepseek (ремонт #1306)"
+    },
+    {
+      "id": "openrouter",
+      "envKeys": [
+        "OPENROUTER_API_KEY"
+      ],
+      "billing": "credits",
+      "replenish": {
+        "who": "владелец",
+        "signal": "infra:probe показывает низкий остаток кредитов"
+      },
+      "scale": "докупка кредитов по факту расхода; порогов v1 нет — сигнал словом",
+      "probe": {
+        "method": "llm-probe:openrouter",
+        "notes": "403 через прямой путь = ГЕО, не ключ (ловушка #1393) — смотреть viaProxy"
+      },
+      "balanceApi": "https://openrouter.ai/api/v1/credits (отдаёт total_credits/total_usage)",
+      "fallback": "deepseek / xai"
+    },
+    {
+      "id": "xai",
+      "envKeys": [
+        "X_AI_API_KEY",
+        "XAI_API_KEY"
+      ],
+      "billing": "credits",
+      "replenish": {
+        "who": "владелец",
+        "signal": "конвейеры красные по balance/429 (xAI вынес двое суток заседаний 27–28.07 — расход высокий)"
+      },
+      "scale": "докупка кредитов; при системном расходе — вынести тяжёлые форматы обратно на Anthropic после 01.08",
+      "probe": {
+        "method": "infra-probe:xai",
+        "notes": "реальное имя ключа в env — X_AI_API_KEY (находка первого прогона 28.07)"
+      },
+      "balanceApi": "not-provided (публичного billing-эндпоинта нет — проверено 28.07; остаток смотреть консолью x.ai)",
+      "fallback": "deepseek"
+    },
+    {
+      "id": "deepseek",
+      "envKeys": [
+        "DEEPSEEK_API_KEY"
+      ],
+      "billing": "credits",
+      "replenish": {
+        "who": "владелец",
+        "signal": "infra:probe balance < расход дня"
+      },
+      "scale": "докупка; слабое звено для строгих форматов (консилиум-2 на нём не тянет — вещдок 26.07)",
+      "probe": {
+        "method": "llm-probe:deepseek"
+      },
+      "balanceApi": "https://api.deepseek.com/user/balance (отдаёт balance_infos)",
+      "fallback": "openrouter"
+    },
+    {
+      "id": "perplexity",
+      "envKeys": [
+        "PERPLEXITY_API_KEY"
+      ],
+      "billing": "credits",
+      "replenish": {
+        "who": "владелец",
+        "signal": "deep-research красный по quota"
+      },
+      "scale": "докупка под ресёрч-волны (deep-research по 3 запроса на спринт)",
+      "probe": {
+        "method": "infra-probe:perplexity"
+      },
+      "balanceApi": "not-provided (billing-эндпоинт не публикуется — проверено 28.07)",
+      "fallback": "ресёрч откладывается, не имитируется (норма deep-research)"
+    },
+    {
+      "id": "voyage",
+      "envKeys": [
+        "VOYAGE_API_KEY",
+        "VOYAGEAI_API_KEY"
+      ],
+      "billing": "credits",
+      "replenish": {
+        "who": "владелец",
+        "signal": "ПОСЛЕ починки маршрута — probe balance; ДО того пополнение бессмысленно (вещдок 28.07)"
+      },
+      "scale": "часть 3 #1393: server-first — эмбеддинги на office-VDS ЛИБО туннель media-VPS NL ЛИБО смена провайдера (консилиум при C3-стройке)",
+      "probe": {
+        "method": "llm-probe:voyage"
+      },
+      "balanceApi": "unknown-until-route (маршрут заблокирован — эндпоинт недостижим)",
+      "knownBlocked": {
+        "reason": "сетевой фильтр отдаёт HTML-заглушку и напрямую, и через прокси (вещдок llm:probe 28.07) — это НЕ баланс и НЕ ключ",
+        "until": "#1393 часть 3 (консилиум при C3-стройке)"
+      },
+      "fallback": "RAG-контур без переиндексации не теряется; всплытие C3 ждёт retrieval-порт"
+    },
+    {
+      "id": "office-vds",
+      "envKeys": [
+        "OFFICE_API_TOKEN"
+      ],
+      "billing": "rent",
+      "replenish": {
+        "who": "владелец",
+        "signal": "срок аренды MSK VDS (провайдерский биллинг; probe аренду не видит)"
+      },
+      "scale": "вертикально по тарифу; сервисы переезжают только owner-gated (канон office-vds-deploy)",
+      "probe": {
+        "method": "http-health:https://office.mmbrn.tech/health"
+      },
+      "balanceApi": "not-provided (аренда — биллинг провайдера VDS)",
+      "fallback": "office транзиентно таймаутит — повторить (канон ласточки); прод-деплой только по слову"
+    },
+    {
+      "id": "cabinet-vds",
+      "envKeys": [],
+      "billing": "rent",
+      "replenish": {
+        "who": "владелец",
+        "signal": "срок аренды + диск: prune по расписанию (карта #1393) — переполнение диска = деградация деплоя"
+      },
+      "scale": "диск: расписание prune; рост — тариф VDS",
+      "probe": {
+        "method": "none",
+        "notes": "health-адрес кабинета не декларирован этой полиси — честный пропуск; кандидат в часть 3 вместе с маршрутами"
+      },
+      "balanceApi": "not-provided",
+      "fallback": "деплой кабинета останавливается, main не страдает"
+    },
+    {
+      "id": "proxy-nl",
+      "envKeys": [
+        "HTTPS_PROXY",
+        "HTTP_PROXY"
+      ],
+      "billing": "rent",
+      "replenish": {
+        "who": "владелец",
+        "signal": "несущая точка (карта #1393): без прокси падают Linear/LLM-пути — сигнал = infra:probe tcp-fail"
+      },
+      "scale": "второй туннель (media-VPS NL — образец Linear-обхода) как резерв",
+      "probe": {
+        "method": "proxy-tcp",
+        "notes": "TCP-connect до локального прокси (тот же зонд, что в morning-care)"
+      },
+      "balanceApi": "not-provided",
+      "fallback": "часть путей живёт напрямую; гео-зависимые (Linear, ряд LLM) — ждут восстановления"
+    },
+    {
+      "id": "github",
+      "envKeys": [],
+      "billing": "included",
+      "replenish": {
+        "who": "владелец",
+        "signal": "тариф аккаунта; CI-минуты в лимите тарифа"
+      },
+      "scale": "при упоре в CI-минуты — self-hosted runner (решение владельца)",
+      "probe": {
+        "method": "gh-api:rate_limit",
+        "notes": "живость + остаток rate limit; реплики за прокси отстают (урок 27.07) — probe не судит мердж-факты"
+      },
+      "balanceApi": "gh api rate_limit (remaining/limit)",
+      "fallback": "локальные зубы работают офлайн; доставка ждёт"
+    },
+    {
+      "id": "linear",
+      "envKeys": [
+        "LINEAR_API_KEY"
+      ],
+      "billing": "included",
+      "replenish": {
+        "who": "владелец",
+        "signal": "тариф Linear-аккаунта"
+      },
+      "scale": "по тарифу Linear",
+      "probe": {
+        "method": "none",
+        "notes": "Linear 403 из РФ без прокси — живость проверяется рабочим путём (undici ProxyAgent, память проекта); отдельный зонд — кандидат части 3"
+      },
+      "balanceApi": "not-provided",
+      "fallback": "карточки рождаются от GitHub-иссью автосинком — Linear-простой не блокирует"
+    },
+    {
+      "id": "openai-rag",
+      "envKeys": [
+        "OPENAI_API_KEY"
+      ],
+      "billing": "credits",
+      "replenish": {
+        "who": "владелец",
+        "signal": "rag-evening-index деградирует в skip без ключа (шаг некритичный)"
+      },
+      "scale": "докупка под RAG; при переезде эмбеддингов на office (часть 3) — пересмотр",
+      "probe": {
+        "method": "none",
+        "notes": "зонд не жжёт кредиты OpenAI ради живости — деградация видна шагом rag-index; кандидат части 3"
+      },
+      "balanceApi": "not-provided (billing-эндпоинт закрыт)",
+      "fallback": "rag-index честно скипается"
+    },
+    {
+      "id": "media-vps",
+      "envKeys": [
+        "VITE_MEDIA_API_TOKEN"
+      ],
+      "billing": "rent",
+      "replenish": {
+        "who": "владелец",
+        "signal": "срок аренды NL VPS (несущая точка туннеля-кандидата части 3)"
+      },
+      "scale": "кандидат второго туннеля (образец Linear-обхода)",
+      "probe": {
+        "method": "none",
+        "notes": "health-адрес media не декларирован — честный пропуск; кандидат части 3"
+      },
+      "balanceApi": "not-provided",
+      "fallback": "media-функции ждут; office не зависит"
+    }
+  ]
+}

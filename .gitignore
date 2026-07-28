@@ -51,6 +51,7 @@ docs/discussions/mcp-tier0.generated.json
 
 # Ласточка: локальный ledger доставок (идемпотентность клиента)
 .membrana/swallow-deliveries.jsonl
+.membrana/infra-probe-latest.json
 
 # Closure-review артефакты (manifest + <sha>-review.md) — локальные рабочие файлы
 # процесса закрытия, НЕ часть публичного контракта репо (консилиум

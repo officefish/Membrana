@@ -249,6 +249,31 @@
             }
           }
         },
+        "infra-summary": {
+          "script": "scripts/infra-probe.mjs --summary",
+          "codes": {
+            "0": {
+              "bucket": "ok",
+              "meaning": "инфра-сводка напечатана, датных событий близко нет"
+            },
+            "1": {
+              "bucket": "failure",
+              "meaning": "red-звено или расхождение декларация↔env (полный infra:probe для диагноза)"
+            },
+            "2": {
+              "bucket": "failure",
+              "meaning": "декларация infra-policy.json битая"
+            },
+            "3": {
+              "bucket": "finding",
+              "meaning": "что-то кончается (событие ≤3 дн.) или звено known-blocked — читать сводку, не чинить молча"
+            }
+          },
+          "notes": "#1393 ч.2: некритичный шаг (в цепочке под || true — обе оси: mechanic × noncritical), findingExitCodes ниже; полный зонд — yarn infra:probe",
+          "findingExitCodes": [
+            3
+          ]
+        },
         "plan-week-if-monday": {
           "script": "scripts/plan-week-if-monday.mjs",
           "codes": {
