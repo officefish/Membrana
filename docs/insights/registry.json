@@ -766,6 +766,17 @@
       "weight": 6.8,
       "createdAt": "2026-07-28",
       "tags": []
+    },
+    {
+      "id": "insight-spectrum-tiers",
+      "title": "Второй тариф: MFCC-спектр + нейроанализ спектрограмм машинным зрением, разделение продукта по тарифам",
+      "status": "reviewed",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 7.2,
+      "createdAt": "2026-07-28",
+      "tags": []
     }
   ]
 }
