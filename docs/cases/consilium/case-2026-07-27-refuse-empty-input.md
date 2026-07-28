@@ -24,14 +24,14 @@
 - schemaVersion: case-meta/1
 - sessionDate: 2026-07-27
 - sourceBridge: session:139af2d5-8ada-4d94-b43f-00b2df079a2e (сессия мостика 27.07, контур консилиума-2)
-- status: candidate
+- status: bearing
 - rawRefs: [scripts/consilium.mjs@main (промпты ролей консилиума-2), docs/seanses/day-memo (боевой контур 27.07)]
 - conclusionDigest: На пустом входе комната отказывается явным BLOCK, а не имитирует разбор; отказ — полноценный результат.
 - tags: [refusal]
 - logicalSlot: consilium.refusal-empty-input
 - derivedInstructionId: null
-- stampedBy: null
-- stampedAt: null
+- stampedBy: владелец — делегированное слово 28.07 («добивай всё своё»; ранее 27.07 «согласен на твои рекомендации»); рекомендация председателя: все пять несущие
+- stampedAt: 2026-07-28
 - capturedBy: агент сессии мостика (председатель заседания bridge-command-post), 27.07
 
 Сводная строка: сессия `139af2d5`, день рефакторинга консилиума-2 (27.07).

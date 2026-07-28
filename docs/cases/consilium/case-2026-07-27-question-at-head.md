@@ -28,14 +28,14 @@ scripts/consilium.mjs, в main через #1337}. Пятый прогон M0 с�
 - schemaVersion: case-meta/1
 - sessionDate: 2026-07-27
 - sourceBridge: session:139af2d5-8ada-4d94-b43f-00b2df079a2e (заседание bridge-command-post, комната M0)
-- status: candidate
+- status: bearing
 - rawRefs: [scripts/consilium.mjs@main (B1-фикс, PR #1337), docs/seanses/bridge-command-post-m0-order-2026-07-27.md, docs/bestiary (зверь B1)]
 - conclusionDigest: Вопрос дублируется в голову сборки — хвост усекается первым; отказ комнаты = диагностика дефекта сборки, дожим запрещён.
 - tags: [refusal, other]
 - logicalSlot: consilium.assembly-head
 - derivedInstructionId: null
-- stampedBy: null
-- stampedAt: null
+- stampedBy: владелец — делегированное слово 28.07 («добивай всё своё»; ранее 27.07 «согласен на твои рекомендации»); рекомендация председателя: все пять несущие
+- stampedAt: 2026-07-28
 - capturedBy: агент сессии мостика (председатель), 27.07
 
 Сводная строка: сессия `139af2d5`, заседание bridge-command-post, M0 (27.07).

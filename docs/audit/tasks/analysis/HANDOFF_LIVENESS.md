@@ -1,20 +1,20 @@
 # Handoff liveness
 
-Generated: 2026-07-27T11:50:25.350Z
+Generated: 2026-07-28T13:32:26.964Z
 Source: docs/HANDOFF.md
 Issue query: ok (single GraphQL batch)
 
 | # | liveness | carriers | occupied | evidence |
 |---|----------|----------|----------|----------|
-| 1 | dead | #1310 | **агент А, дерево `Membrana-delivery`** (`feat/branch-protection-policy`); скоуп сверен: `chore/main-protection-followup` пуст против main | #1310 CLOSED/COMPLETED |
-| 2 | unknown | — | **агент А, дерево `Membrana-delivery`** | no GitHub issue carrier |
-| 3 | dead | #1263 | агент Б · `Membrana-agent-b-tests` (`codex/tests-container-1291`) | #1263 CLOSED/COMPLETED |
-| 4 | unknown | `kits-pins-prepush-strict` | **агент А, дерево `Membrana-delivery`** | no GitHub issue carrier for task kits-pins-prepush-strict |
-| 5 | dead | #1291 | агент Б · `Membrana-agent-b-tests` (`codex/tests-container-1291`) | #1291 CLOSED/COMPLETED |
-| 6 | dead | #1292 | агент Б · `Membrana-agent-b-tests` (`codex/tests-container-1291`) | #1292 CLOSED/COMPLETED |
-| 7 | alive | #1306 | свободно | #1306 OPEN |
-| 8 | alive | #1304 | агент Б · `Membrana-agent-b-tests` (`codex/tests-block2-1293`) | #1304 OPEN |
+| 1 | alive | #1363 | сессия мостика (это дерево), после слова капитана | #1363 OPEN |
+| 2 | alive | #1351 | свободно | #1351 OPEN |
+| 3 | alive | #1352, #1208 | свободно | #1352 OPEN, #1208 OPEN |
+| 4 | unknown | — | **агент А, дерево Membrana-weave (feat/clean-runs-obstacles)** | no GitHub issue carrier |
+| 5 | alive | #1366 | свободно | #1366 OPEN |
+| 6 | unknown | — | свободно | no GitHub issue carrier |
+| 7 | alive | #1353 | свободно | #1353 OPEN |
+| 8 | unknown | — | **агент А, дерево Membrana-weave (chore/oversized-review-debt)** | no GitHub issue carrier |
 | 9 | alive | #1303 | свободно | #1303 OPEN |
-| 10 | alive | #1319 | агент Б · `Membrana-agent-b-tests` (`codex/tests-block2-1293`) | #1319 OPEN |
+| 10 | unknown | — | сессия мостика (регистрация утром) | no GitHub issue carrier |
 
-Summary: alive=4, dead=4, unknown=2.
+Summary: alive=6, dead=0, unknown=4.
