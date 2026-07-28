@@ -5,8 +5,8 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14383/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 198 (причины в op-log) -->
+Записей: 50 · бюджет 14361/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 200 (причины в op-log) -->
 
 ### 2026-07-28 · позиция · memory-subconscious-m0-order
 
@@ -49,6 +49,12 @@
 > Формализую selectOperational без UI: `selectOperational(candidates, importance, budget) → {retained, transferred, report}`. Инварианты: Σtokens(retained) ≤ budget; pinned ⊆ retained ∨ fail-closed error; transfer сопровождается importanceSnapshot. Предикат erase: отсутствует в […] _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/memory-subconscious-m6-extractor-2026-07-28.md#reply-1`
+
+### 2026-07-28 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** MAIN_DAY_ISSUE честно маркирует отсутствие математического слоя — это правильно. DAILY_CODE_REVIEW отметил, что на видимом diff FFT/NaN/analyzer нет — продуктовая математика не двигалась. **Итоги дня:** Спектральные детекторы не затронуты — вся работа на […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-28.md#reply-1`
 
 ### 2026-07-27 · позиция · bridge-command-post-m0-order
 
@@ -295,12 +301,6 @@
 > Формализую, иначе «мастерская» останется вкусовой. Пусть три паттерна — три ортогональные оси в пространстве описания подграфа: `GC` — ось **пространства** (`where`), `PSV` — ось **времени/идентичности** (`when/which`), «Мастерская» — ось **операций** (`what-on`). […] _(реплик в сеансе: 4)_
 
 — источник: `docs/seanses/home-workshop-m1-contract-2026-07-22.md#reply-1`
-
-### 2026-07-22 · позиция · home-workshop-m2-vocabulary
-
-> Формализую, иначе «минимум трёх» останется вкусовым. Мастерская — это множество инструментов `T`, разбитое на три непересекающихся класса: `T = M ⊎ S ⊎ D`, где `M` (mandatory) — фиксированное `|M| = 3`, `S` (stack-like) — рекомендованное подмножество, `D` (domain) — открытое. […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/home-workshop-m2-vocabulary-2026-07-22.md#reply-1`
 
 ### 2026-07-23 · рутина · insight-one-shot-format
 

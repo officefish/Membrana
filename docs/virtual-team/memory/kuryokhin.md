@@ -5,8 +5,8 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 52 · бюджет 14375/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 197 (причины в op-log) -->
+Записей: 52 · бюджет 14358/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 199 (причины в op-log) -->
 
 ### 2026-07-28 · позиция · memory-subconscious-m0-order
 
@@ -49,6 +49,12 @@
 > На слух extractor сейчас — mono-take: перезаписал md, выкинул «лишнее», и тишина. Под C1 архив jsonl — master-tape, md — сведение. Нельзя снова сводить поверх мастера. Backfill из git — как dig по старым take: можно, но с честной меткой «restored», иначе provenance врёт. _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/memory-subconscious-m6-extractor-2026-07-28.md#reply-1`
+
+### 2026-07-28 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** Web Audio / audio-engine / 48 kHz не затронуты ни в одном документе. DAILY_CODE_REVIEW фиксирует «—» по продуктовому аудио. **Итоги дня:** Аудио-контур не двигался. Инсайты (`bearing-tracking`, `night-doc-intern`) — вне домена. Код `feat/keep-branch-cli` — […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-28.md#reply-1`
 
 ### 2026-07-27 · позиция · bridge-command-post-m0-order
 
@@ -307,12 +313,6 @@
 > Флаг тихой дыры — как в `angelina-hostess-m2-assembly`. Что если у элемента **нет якоря**? Спуск упёрся в лист, а якорного документа нет — это дыра в полу. Требую тотальности: `inspectElement` ВСЕГДА терминирует, и отсутствие якоря — не тихое падение, а видимый маркер `⚠ […] _(реплик в сеансе: 3)_
 
 — источник: `docs/seanses/home-workshop-m3-polymorphism-2026-07-22.md#reply-1`
-
-### 2026-07-22 · позиция · home-workshop-m4-belonging
-
-> По касательной, аудио тут не задет, но маршрут сигнала я узнаю — это как патч-кабель, воткнутый не в тот вход: звук идёт, но обработка не та, что на этикетке. #915 именно это: обзор спринта «звучит» над сценарием, а этикетка говорит «мастерская задач». Мой флаг: переезд не […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/home-workshop-m4-belonging-2026-07-22.md#reply-1`
 
 ### 2026-07-23 · рутина · insight-one-shot-format
 

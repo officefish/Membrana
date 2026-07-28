@@ -5,8 +5,8 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14387/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 198 (причины в op-log) -->
+Записей: 50 · бюджет 14357/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 200 (причины в op-log) -->
 
 ### 2026-07-28 · позиция · memory-subconscious-m0-order
 
@@ -49,6 +49,12 @@
 > Леммы. **Extractor** — оркестратор такта: collect → rank/select → append archive → project md → emit op-log. **Archive** — per-persona append-only jsonl (C1). **Projection** — md, производная. **importance.json** — вход selectOperational (C2), сейчас объявлен и не читается — это […] _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/memory-subconscious-m6-extractor-2026-07-28.md#reply-1`
+
+### 2026-07-28 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** Модульная структура дня — чистая. P0–P6 памяти разложены по отдельным PR с чёткими границами (схема ArchiveRecord, дома, append-only архив, политика отбора, проекция, миграция, extractor). DAY_MEMO — три слоя без циклов импортов. Bridge Charter и […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-28.md#reply-1`
 
 ### 2026-07-27 · позиция · bridge-command-post-m0-order
 
@@ -295,12 +301,6 @@
 > Начну с термина, иначе DAG поплывёт. «Мастерская» — это лемма о **стороне спроса**, и её нельзя слить с китом (сторона поставки) и контейнером (пространство). Даю словарную статью: `Workshop` — именованный набор инструментов, поставляемый для работы **с одним домом**; […] _(реплик в сеансе: 3)_
 
 — источник: `docs/seanses/home-workshop-m1-contract-2026-07-22.md#reply-1`
-
-### 2026-07-22 · позиция · home-workshop-m2-vocabulary
-
-> Начну с термина, иначе DAG поплывёт. У нас три разные леммы под словом «инструмент»: **обязательный глагол** (часть контракта мастерской, MUST), **стек-ориентир** (рекомендация формы, SHOULD, тождество а не интерфейс) и **специализированный инструмент** (расширение, доменный, […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/home-workshop-m2-vocabulary-2026-07-22.md#reply-1`
 
 ### 2026-07-23 · рутина · insight-one-shot-format
 

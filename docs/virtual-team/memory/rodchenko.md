@@ -5,8 +5,8 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 52 · бюджет 14288/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 196 (причины в op-log) -->
+Записей: 52 · бюджет 14266/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 198 (причины в op-log) -->
 
 ### 2026-07-28 · позиция · memory-subconscious-m0-order
 
@@ -49,6 +49,12 @@
 > С витрины потребителей (консилиум --with-memory, day-memo persona-trace, team-memory-report) md остаётся читаемым блоком. Если проекция ломает заголовок/секции — это фальшь. Честная пустота: «архив начат с даты D, pre-D не в оперативке» — видима в шапке md, не спрятана в conf. _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/memory-subconscious-m6-extractor-2026-07-28.md#reply-1`
+
+### 2026-07-28 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** UI/DESIGN.md/a11y не затронуты. DAILY_CODE_REVIEW отмечает: сгенерированные markdown (DAY_PLAN, STANDUP, MAIN_DAY_ISSUE, HANDOFF) — презентация для агентов, не продукт. **Итоги дня:** Пользовательского интерфейса не касались. `docs/memos/2026-07-28.md` — […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-28.md#reply-1`
 
 ### 2026-07-27 · позиция · bridge-command-post-m0-order
 
@@ -307,12 +313,6 @@
 > С точки зрения потребителя — а потребитель здесь агент, вызывающий `inspectElement` над процедурой, и человек в PR — начну с честности экрана. Диспетчер по роду должен быть **виден в артефакте обзора**: заголовок «Обзор спринта» vs «Обзор ритуала» — не косметика, а честная […] _(реплик в сеансе: 4)_
 
 — источник: `docs/seanses/home-workshop-m3-polymorphism-2026-07-22.md#reply-1`
-
-### 2026-07-22 · позиция · home-workshop-m4-belonging
-
-> Со стороны потребителя — а потребитель здесь агент, читающий манифест мастерской, и человек в PR — принадлежность обязана быть **видимой различием**, а не декоративным полем. Моя больная тема из `main-day-accuracy`: если `worksOn` стоит, а физический дом другой — это «мёртвая […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/home-workshop-m4-belonging-2026-07-22.md#reply-1`
 
 ### 2026-07-23 · рутина · insight-one-shot-format
 
