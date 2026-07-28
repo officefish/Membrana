@@ -20,6 +20,8 @@ import { execFileSync } from 'node:child_process';
 
 import { CLOSED, awaitCaptain, closeRoom, isOpen, normalizeState, openRoom, resumeFree } from './lib/bridge-room.mjs';
 import { castResolveProblems, castSchemaProblems } from './lib/bridge-cast.mjs';
+import { blocksOpen as engineBlocksOpen, counts as engineCounts } from './lib/bridge-debt-engine.mjs';
+import { foldNotebook, notebookCounts, readNotebook } from './lib/captain-notebook.mjs';
 import { addDebt, openDebts, parseDebts, renderDebts, settleDebt, supersedeDebt } from './lib/bridge-debts.mjs';
 import { validateDebt, healthMetrics, themeClusters, realActiveCount, decompose, auditDebt, propose } from './lib/bridge-debts-health.mjs';
 import { findTool, inventoryToolkit, renderToolkit } from './lib/bridge-toolkit.mjs';
@@ -50,12 +52,17 @@ function loadState() {
 
 const CAST_PATH = resolve(ROOT, 'docs/bridge/cast.json');
 
-/** Стык с очередью 2 (#1352): предикаты долгов. Реализацию заменит блок Б, сигнатуры — контракт. */
+/** Стык с очередью 2 (#1352) СШИТ: движок леджера — источник истины, DEBTS.md — витрина. */
 function blocksOpen() {
   try {
-    return openDebts(loadDebts()).length > 0;
+    return engineBlocksOpen(ROOT).length > 0;
   } catch {
-    return true; // реестр нечитаем при заявленных долгах — считаем блокирующим, не молчим
+    // Движок недоступен — читаем витрину; и она нечитаема → блокируем, не молчим.
+    try {
+      return openDebts(loadDebts()).length > 0;
+    } catch {
+      return true;
+    }
   }
 }
 /** Попугай live ⇔ движок кита активен: реестр долгов читается и каталог кита поднимается. */
@@ -67,20 +74,37 @@ function parrotLive() {
     return false;
   }
 }
-/** Счётчики трёх контуров памяти для квитанции. Непоставленный контур — честная пометка. */
-function memoryCounts() {
-  let debts = { open: 0, settled: 0, note: null };
+/** Счётчики трёх контуров памяти для квитанции (M6 DoD п.5) — все три контура живые. */
+function memoryCounts(day) {
+  let debts;
   try {
-    const all = loadDebts();
-    debts = { open: openDebts(all).length, settled: all.length - openDebts(all).length, note: null };
-  } catch {
-    debts = { open: 0, settled: 0, note: 'реестр долгов нечитаем' };
+    debts = { ...engineCounts(ROOT), note: null };
+  } catch (e) {
+    debts = { open: 0, repeated: 0, repaid: 0, parked: 0, blocksOpen: 0, note: `движок долгов: ${e.message}` };
   }
-  return {
-    debts,
-    observations: { uttered: 0, unuttered: 0, note: 'контур не поставлен (очередь 2, #1352)' },
-    shown: { attached: 0, note: 'контур не поставлен (очередь 2, #1352)' },
-  };
+  let observations;
+  try {
+    observations = { ...notebookCounts(foldNotebook(readNotebook(ROOT, day))), note: null };
+  } catch (e) {
+    observations = { uttered: 0, unuttered: 0, note: `тетрадь: ${e.message}` };
+  }
+  let shown;
+  try {
+    const reg = readFileSync(resolve(ROOT, 'docs/evidence/registry.jsonl'), 'utf8');
+    const attached = reg.split(/\r?\n/).filter((l) => {
+      if (!l.trim()) return false;
+      try {
+        const j = JSON.parse(l);
+        return j.shown && (j.shown.shownAt === day || j.shown.session === day);
+      } catch {
+        return false;
+      }
+    }).length;
+    shown = { attached, note: null };
+  } catch (e) {
+    shown = { attached: 0, note: `реестр вещдоков: ${e.message}` };
+  }
+  return { debts, observations, shown };
 }
 
 /** Гейты открытия (M2): cast_resolvable + parrot_live_if_debts. Пусто = путь открыт. */
@@ -248,7 +272,7 @@ if (cmd === 'close') {
     console.log('[мостик] не открыт — закрывать нечего (no-op).');
     process.exit(0);
   }
-  const counts = memoryCounts();
+  const counts = memoryCounts(r.day);
   const receiptPath = resolve(ROOT, `docs/bridge/${r.day}/RECEIPT.md`);
   const fmt = (c) => (c.note ? `${JSON.stringify({ ...c, note: undefined }).slice(1, -1)} · ${c.note}` : JSON.stringify(c).slice(1, -1));
   try {
