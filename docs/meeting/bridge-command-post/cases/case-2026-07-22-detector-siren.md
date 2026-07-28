@@ -21,7 +21,7 @@
 - conclusionDigest: Разводка шин: детектор находит один раз, сирена повторяет до починки; у каждого голоса своя функция, ни один не гейт.
 - tags: [signal-route]
 - logicalSlot: role-split.detector-siren
-- derivedInstructionId: null
+- derivedInstructionId: charter.detector-siren-routing
 - stampedBy: владелец — делегированное слово 27.07 («согласен на твои рекомендации»; рекомендация председателя P2: bearing)
 - stampedAt: 2026-07-27
 - capturedBy: agent-researcher (задание «пять удачных примеров мостика», 27.07)

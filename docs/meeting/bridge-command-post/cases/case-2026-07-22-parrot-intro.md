@@ -36,7 +36,7 @@
 - conclusionDigest: Новый голос вводится функцией и характером; первая реплика — долги, поднятые из вещдоков дня, с названным провенансом, не выдумка.
 - tags: [role-split, provenance]
 - logicalSlot: role-split.parrot-intro
-- derivedInstructionId: null
+- derivedInstructionId: charter.voice-intro-grounded
 - stampedBy: владелец — делегированное слово 27.07 («согласен на твои рекомендации»; рекомендация председателя P2: bearing)
 - stampedAt: 2026-07-27
 - capturedBy: agent-researcher (задание «пять удачных примеров мостика», 27.07)
