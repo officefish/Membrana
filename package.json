@@ -167,6 +167,7 @@
     "swallow:draft": "node scripts/swallow-draft.mjs",
     "ritual:artifacts-commit": "node scripts/ritual-artifacts-commit.mjs",
     "telegram:swallow": "node scripts/telegram-swallow.mjs",
+    "telegram:file": "node scripts/telegram-file.mjs",
     "telegram:digest:day": "node scripts/telegram-ritual-digest.mjs --kind day",
     "telegram:digest:evening": "node scripts/telegram-ritual-digest.mjs --kind evening",
     "panel:invite": "node scripts/panel-invite.mjs",

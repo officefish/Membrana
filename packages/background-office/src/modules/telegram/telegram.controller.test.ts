@@ -104,4 +104,33 @@ describe('TelegramController.allyMessage («ласточка»)', () => {
     const res = await new TelegramController(client).allyMessage({ text: 'проверка связи' });
     expect(res).toEqual({ ok: true, sent: false });
   });
+
+  // #1398: тот же носитель вложения, что у дайджеста, теперь доступен ласточке.
+  it('вложение уходит отдельным документом ПОСЛЕ текста', async () => {
+    const { client, sentTexts, sentDocs } = fakeClient();
+    const res = await new TelegramController(client).allyMessage({
+      text: 'как обещал — методичка',
+      documentMd: '# Методика\n\nтело документа',
+      documentName: 'metodika.md',
+    });
+    expect(res).toEqual({ ok: true, sent: true });
+    expect(sentTexts).toHaveLength(1);
+    expect(sentDocs[0]).toMatchObject({ name: 'metodika.md' });
+    expect(sentDocs[0].content).toContain('тело документа');
+  });
+
+  it('без вложения документ не отправляется (текст один)', async () => {
+    const { client, sentDocs } = fakeClient();
+    await new TelegramController(client).allyMessage({ text: 'только текст' });
+    expect(sentDocs).toHaveLength(0);
+  });
+
+  it('имя без содержимого (и наоборот) → BadRequest: поля идут парой', async () => {
+    const { client, sentDocs } = fakeClient();
+    await expect(new TelegramController(client).allyMessage({ text: 'x', documentName: 'a.md' }))
+      .rejects.toThrow(BadRequestException);
+    await expect(new TelegramController(client).allyMessage({ text: 'x', documentMd: '# a' }))
+      .rejects.toThrow(BadRequestException);
+    expect(sentDocs).toHaveLength(0);
+  });
 });
