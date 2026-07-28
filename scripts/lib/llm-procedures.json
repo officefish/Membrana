@@ -22,6 +22,13 @@
       "meters": true
     },
     {
+      "id": "insight-review",
+      "entryMjs": "scripts/insight.mjs",
+      "yarnScript": "insight",
+      "title": "Insight · ревью пяти ролей",
+      "meters": true
+    },
+    {
       "id": "bridge-lead",
       "entryMjs": "scripts/bridge-lead-call.mjs",
       "yarnScript": "bridge:lead",

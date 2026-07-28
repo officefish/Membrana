@@ -11,7 +11,6 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 import {
-  anthropicPost,
   CREDIT_FALLBACKS,
   defaultModel,
   getAnthropicKey,
@@ -357,7 +356,7 @@ try {
     }
     // NB5: НЕ process.exit(0) после сети — гонка с закрытием сокета роняет libuv на
     // Windows (UV_HANDLE_CLOSING). Паттерн репо (см. consilium.mjs): exitCode + дать
-    // циклу стечь. dispatcher уже закрыт в anthropicPost/runInsightResearch.
+    // циклу стечь. dispatcher уже закрыт в транспорте research.
     process.exitCode = 0;
   }
 
@@ -395,34 +394,22 @@ try {
       process.exit(0);
     }
 
-    const key = getAnthropicKey();
-    const { ok, status, text: responseText } = await anthropicPost(
-      'https://api.anthropic.com/v1/messages',
-      {
-        headers: {
-          'content-type': 'application/json',
-          'x-api-key': key,
-          'anthropic-version': '2023-06-01',
-        },
-        bodyJson: {
-          model: defaultModel(),
-          max_tokens: 4096,
-          system: `${reviewPrompt}\n\n---\n\n${virtualTeam}`,
-          messages: [{ role: 'user', content: userMessage }],
-        },
-      },
-    );
-    if (!ok) {
-      if (isCreditExhausted(responseText)) console.error(`\n${CREDIT_FALLBACKS}\n`);
-      throw new Error(`Anthropic HTTP ${status}: ${responseText.slice(0, 300)}`);
+    // Панельная цепочка (норма procedure-must-follow-panel-chain; провод 28.07
+    // «по касанию» — рейтчет llm-panel-wire): прямой Anthropic падал намертво
+    // при месячном лимите, ревью инсайтов было мертво до 01.08.
+    const { invokeProcedureLlm } = await import('./lib/llm-procedure-ritual.mjs');
+    const res = await invokeProcedureLlm({
+      procedureId: 'insight-review',
+      prompt: `${reviewPrompt}\n\n---\n\n${virtualTeam}\n\n---\n\n${userMessage}`,
+      maxTokens: 4096,
+    });
+    if (!res.ok) {
+      console.error(`\n${CREDIT_FALLBACKS}\n`);
+      throw new Error('Панельная цепочка insight-review не отдала контент — сообщить владельцу; LLM_NO_OVERLAY=1 только его словом.');
     }
-    const json = JSON.parse(responseText);
-    const text = (json.content ?? [])
-      .filter((b) => b?.type === 'text')
-      .map((b) => b.text)
-      .join('\n');
+    const text = res.text;
     if (!text.trim()) {
-      throw new Error('Empty review from Anthropic');
+      throw new Error('Empty review from chain');
     }
     writeFileSync(join(dir, 'REVIEW.md'), `${text.trim()}\n`, 'utf8');
 
@@ -446,7 +433,7 @@ try {
     writeRegistry(repoRoot, registry);
     console.log(`REVIEW.md записан: ${join(dir, 'REVIEW.md')}`);
     // NB5: exitCode вместо process.exit(0) — не ронять libuv гонкой с закрытием
-    // сокета после anthropicPost (UV_HANDLE_CLOSING на Windows). См. коммент research.
+    // сокета после прямого поста Anthropic — UV_HANDLE_CLOSING на Windows). См. коммент research.
     process.exitCode = 0;
   }
 
