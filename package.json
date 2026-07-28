@@ -402,7 +402,8 @@
     "test:scripts:smoke": "node scripts/tests-container.mjs --setup smoke",
     "test:scripts:gate": "node scripts/tests-container.mjs --setup gate",
     "test:scripts:full": "node scripts/tests-container.mjs --setup full",
-    "bridge:lead": "node scripts/bridge-lead-call.mjs"
+    "bridge:lead": "node scripts/bridge-lead-call.mjs",
+    "team-memory:report": "node scripts/team-memory-report.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

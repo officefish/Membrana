@@ -88,6 +88,13 @@
       ]
     },
     {
+      "id": "team-memory-report",
+      "title": "Отчёт памяти команды (записал/вытеснил, token 121)",
+      "script": "scripts/team-memory-report.mjs",
+      "critical": false,
+      "//": "#1366 ч.1: детерминированный дифф журналов персон; exit 3 = находки (вытеснение поимённо), не отказ — по образцу leveling."
+    },
+    {
       "id": "insight-drift",
       "script": "scripts/insight-drift.mjs",
       "kind": "mechanic",
