@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-27",
+  "updatedAt": "2026-07-28",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -743,6 +743,17 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-27",
+      "tags": []
+    },
+    {
+      "id": "insight-night-doc-intern",
+      "title": "Ночной интерн документации: слепой проход → глубокий → дельта-патчи докам",
+      "status": "reviewed",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-28",
       "tags": []
     }
   ]

@@ -19,6 +19,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 // Скрипты, обязанные ходить через фасад (зарегистрированные процедуры + ask).
 const MUST_USE_FACADE = [
+  'scripts/insight.mjs',
   'scripts/ask-persona.mjs',
   'scripts/team-evening-feedback.mjs',
   'scripts/bridge-lead-call.mjs',
@@ -31,7 +32,6 @@ const LEGACY_DIRECT_CALLERS = [
   'scripts/anthropic-task.mjs',
   'scripts/generate-competition-async-v2-synthesis.mjs',
   'scripts/generate-competition-v1-synthesis.mjs',
-  'scripts/insight.mjs',
   'scripts/task-closure-review.mjs',
 ];
 
