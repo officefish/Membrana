@@ -171,6 +171,37 @@ test('неймспейс P*: локальный ряд «P1–P5» в DoD — н
   assert.ok(problems.some((p) => p.includes('P1')), 'standalone-ссылка на чужой вопрос — красная');
 });
 
+test('межа №1 сшивки памяти: исключения из DoD и отсылки к рамкам — не колонизация', async () => {
+  const { meetingVerdictProblems } = await import('./lib/protocol-validator.mjs');
+  const mk = (dodLine) => [
+    '**Вопрос:** C3',
+    '',
+    '**[Структурщик]:** посылки ниже',
+    '',
+    '**Список посылок**',
+    '- рамки ратифицированы',
+    '',
+    '## Итоговое решение',
+    'облако принято',
+    '',
+    '## Definition of Done',
+    dodLine,
+  ].join('\n');
+
+  // Ложные красные 28.07 (C2–C5): исключение и отсылка к ратифицированной рамке.
+  assert.deepEqual(
+    meetingVerdictProblems(mk('- Вне DoD C3: cron/утренний вызов (C4), retrieval-recall (C5)'), ['C4', 'C5']),
+    [], 'список исключений — анти-колонизация, не колонизация',
+  );
+  assert.deepEqual(
+    meetingVerdictProblems(mk('- явная отсылка к C1 transfer + importanceSnapshot (рамка ратифицирована)'), ['C1']),
+    [], 'отсылка к ратифицированной рамке легальна',
+  );
+  // Настоящее обязательство по чужому — по-прежнему красное.
+  const real = meetingVerdictProblems(mk('- реализовать провод шага в extractor и закрыть C6 этим же PR'), ['C6']);
+  assert.ok(real.some((p) => p.includes('C6')), 'обязательство по чужому вопросу — красное');
+});
+
 test('unknownBracketLabels ловит формат [Имя · Роль] (инцидент 16.07)', () => {
   const md = '[Ozhegov · Структурщик]: раз\n[Teamlead]: два';
   const unknown = unknownBracketLabels(md);
