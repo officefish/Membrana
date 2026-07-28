@@ -7,10 +7,11 @@
  * Реестр: docs/evidence/registry.jsonl (append-only; правки строк запрещены).
  */
 import { createHash } from 'node:crypto';
-import { appendFileSync, existsSync, readFileSync, statSync } from 'node:fs';
+import { appendFileSync, existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import { findDuplicates, parseRegistry, recordProblems, verifyRecords } from './lib/evidence-index.mjs';
+import { liveRecords, portabilityProblems, renderIndex, renderInventory } from './lib/evidence-inventory.mjs';
 
 const REGISTRY = resolve(process.cwd(), 'docs/evidence/registry.jsonl');
 const argv = process.argv.slice(2);
@@ -85,9 +86,37 @@ if (cmd === 'verify') {
 if (cmd === 'list') {
   const { records } = loadRegistry();
   if (argv.includes('--json')) { console.log(JSON.stringify(records, null, 2)); process.exit(0); }
+  const byIdx = argv.indexOf('--by');
+  const by = byIdx > -1 ? argv[byIdx + 1] : null;
+  if (by) {
+    if (!['kind', 'source', 'date'].includes(by)) {
+      console.error('usage: yarn evidence list [--by kind|source|date] [--json]');
+      process.exit(1);
+    }
+    console.log(renderInventory(records, by));
+    process.exit(0);
+  }
   for (const r of records) console.log(`  ${r.id} · ${r.addedAt} · ${r.location.kind} · ${r.source}${r.about ? ` — ${r.about}` : ''}`);
   console.log(`evidence: ${records.length} записей`);
   process.exit(0);
+}
+
+if (cmd === 'index') {
+  // Производный снимок описи: детерминирован, руками не правится (#1303, №9).
+  const { records } = loadRegistry();
+  const out = renderIndex(records);
+  const path = resolve(process.cwd(), 'docs/evidence/INDEX.md');
+  if (argv.includes('--check')) {
+    const disk = existsSync(path) ? readFileSync(path, 'utf8') : '';
+    if (disk === out) { console.log('evidence index --check: OK (индекс совпадает с реестром)'); process.exit(0); }
+    console.error('evidence index --check: ✗ индекс отстал от реестра — yarn evidence index');
+    process.exit(1);
+  }
+  writeFileSync(path, out, 'utf8');
+  const problems = portabilityProblems(records);
+  for (const p of problems) console.error(`  ✗ переносимость: ${p}`);
+  console.log(`evidence index: docs/evidence/INDEX.md пересобран (${liveRecords(records).live.length} живых записей)`);
+  process.exit(problems.length ? 1 : 0);
 }
 
 if (cmd === 'inspect') {
