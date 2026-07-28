@@ -56,7 +56,7 @@ const INPUT_DOCS = [
     label: 'FFT/trends: потолок эшелона 0 и приоритеты (эпик #84)',
   },
   { rel: 'docs/STRATEGY_DAY.md', required: false, label: 'Горизонт дня (генератор #592 — веха, не список задач)', maxAgeDays: 0 },
-  { rel: 'docs/STRATEGIC_PLAN_DAY.md', required: false, label: 'План на день (устар. генератор — вещдок, пока не удалён)' },
+  { rel: 'docs/DAY_PLAN.md', required: false, label: 'План дня — 5 слотов (канон M2-B, драйвер #1363)' },
   { rel: 'docs/truth/registry.json', required: false, label: 'Граф правды — кристаллы-посылки дня (S7: генератор читает граф, был grep=0)' },
   { rel: 'docs/tasks/main-day-assertions.json', required: false, label: 'МАГИСТРАЛЬ ВЛАДЕЛЬЦА (sources[0].claim) — приоритет над синтезом; probe и генератор читают ОДИН источник' },
   {

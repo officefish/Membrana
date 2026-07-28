@@ -3,7 +3,7 @@
  *
  * Сводит в один план:
  *   - docs/VIRTUAL_TEAM_PROMPT.md
- *   - docs/STRATEGIC_PLAN_DAY.md
+ *   - docs/DAY_PLAN.md (канон дня, 5 слотов)
  *   - docs/DAILY_CODE_REVIEW.md
  *   - docs/MAIN_DAY_ISSUE.md, docs/CURRENT_TASK.md (буфер, опционально)
  *   - открытые GitHub Issues

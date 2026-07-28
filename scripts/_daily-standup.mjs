@@ -53,6 +53,7 @@ const DOC_INPUTS = [
     label: 'FFT/trends: потолок эшелона 0 и приоритеты планирования (эпик #84)',
   },
   { rel: 'docs/STRATEGY_DAY.md', required: false, label: 'Горизонт дня (генератор #592)' },
+  { rel: 'docs/DAY_PLAN.md', required: false, label: 'План дня — 5 слотов (канон M2-B, драйвер #1363)' },
   {
     rel: 'docs/DAILY_CODE_REVIEW.md',
     required: false,
