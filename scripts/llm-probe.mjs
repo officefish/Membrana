@@ -125,7 +125,7 @@ export function parseDotEnv(text) {
   return out;
 }
 
-function loadEnv() {
+export function loadEnv() {
   let fileEnv = {};
   try {
     fileEnv = parseDotEnv(readFileSync(path.join(REPO_ROOT, '.env'), 'utf8'));
@@ -135,7 +135,7 @@ function loadEnv() {
   return { ...fileEnv, ...process.env };
 }
 
-async function probeOnce(spec, key, { dispatcher } = {}) {
+export async function probeOnce(spec, key, { dispatcher } = {}) {
   try {
     const init = {
       method: 'POST',
@@ -156,7 +156,7 @@ async function probeOnce(spec, key, { dispatcher } = {}) {
   }
 }
 
-async function probeProvider(name, env) {
+export async function probeProvider(name, env) {
   const spec = PROVIDERS[name];
   const keyName = spec.keyEnv.find((k) => env[k]?.trim());
   const key = keyName ? env[keyName].trim() : null;
