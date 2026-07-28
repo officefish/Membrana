@@ -170,6 +170,26 @@
       ]
     },
     {
+      "id": "day-memo",
+      "script": "scripts/day-memo.mjs",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "whyNoncritical": "Мемоизация — производный документ поверх артефактов дня; сбой не теряет первоисточники, прогон повторим руками (yarn day:memo). Exit 3 = проблемы слоёв в хендофф-блоке (находка).",
+      "label": "DAY_MEMO — мемоизация дня (факты/инсайты/след)",
+      "consumes": [
+        "docs/evidence/registry.jsonl",
+        "docs/bridge/",
+        "docs/virtual-team/memory/",
+        "docs/seanses/"
+      ],
+      "produces": [
+        "docs/memos/<дата>.md"
+      ],
+      "findingExitCodes": [
+        3
+      ]
+    },
+    {
       "id": "deps-watch",
       "script": "scripts/deps-watch.mjs --mode evening",
       "kind": "mechanic",

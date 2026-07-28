@@ -169,6 +169,27 @@
             }
           }
         },
+        "day-memo": {
+          "script": "scripts/day-memo.mjs",
+          "codes": {
+            "0": {
+              "bucket": "ok",
+              "meaning": "снапшот записан, вещдок зарегистрирован"
+            },
+            "1": {
+              "bucket": "failure",
+              "meaning": "immutable-конфликт или сбой фс"
+            },
+            "3": {
+              "bucket": "finding",
+              "meaning": "снапшот записан с проблемами слоёв — хендофф-блок в мемо, читать"
+            }
+          },
+          "findingExitCodes": [
+            3
+          ],
+          "notes": "магистраль 28.07: мемоизация дня; след придерживается гейтом #569 до показа партнёрам"
+        },
         "deps-watch": {
           "script": "scripts/deps-watch.mjs --mode evening",
           "codes": {

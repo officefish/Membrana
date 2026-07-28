@@ -403,7 +403,8 @@
     "test:scripts:gate": "node scripts/tests-container.mjs --setup gate",
     "test:scripts:full": "node scripts/tests-container.mjs --setup full",
     "bridge:lead": "node scripts/bridge-lead-call.mjs",
-    "team-memory:report": "node scripts/team-memory-report.mjs"
+    "team-memory:report": "node scripts/team-memory-report.mjs",
+    "day:memo": "node scripts/day-memo.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
