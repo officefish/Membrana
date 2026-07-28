@@ -205,3 +205,9 @@
 {"ts":"2026-07-28T10:44:04.143Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-25-insight-cast-carrier-contract","reason":"class_routine","origin":"persona-extract","class":"routine"}
 {"ts":"2026-07-28T10:44:04.143Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
 {"ts":"2026-07-28T10:47:57.014Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-07-28T12:05:19.393Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-07-28-insight-bearing-tracking","origin":"persona-extract"}
+{"ts":"2026-07-28T12:05:19.393Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-07-28-insight-night-doc-intern","origin":"persona-extract"}
+{"ts":"2026-07-28T12:05:19.393Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-07-28T12:06:47.942Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-07-28T12:27:07.806Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-07-28T12:27:32.849Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
