@@ -14,7 +14,7 @@ import { HOMES } from './archive-schema.mjs';
 
 /** Класс записи из русской метки журнала. Неизвестное — честно routine. */
 const KIND_TO_CLASS = Object.freeze({
-  'позиция': 'position', 'инсайт': 'insight', 'прецедент': 'precedent',
+  'позиция': 'position', 'инсайт': 'insight', 'прецедент': 'precedent', 'рутина': 'routine',
 });
 
 /**

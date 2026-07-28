@@ -76,9 +76,17 @@ export function renderMemoryReport(byPersona, opts = {}) {
         ? `- записал в оперативку (${p.added.length}): ${p.added.map((x) => `${x.slug} [${x.date}]`).join(' · ')}`
         : '- записал в оперативку: изменений нет',
     );
+    // Межа №5 сшивки memory-subconscious: причина из op-log отличает переток от
+    // потери. Есть причина → запись УШЛА В АРХИВ (жива); нет — честное «потеряно».
+    const reasons = opts.reasonsByPersona?.[id];
+    const evictedLine = (x) => {
+      const reason = reasons?.get(`${id}-${x.date}-${x.slug}`);
+      return `${x.slug} [${x.date}]${reason ? ` → архив (${reason})` : ''}`;
+    };
+    const anyReason = p.evicted.some((x) => reasons?.get(`${id}-${x.date}-${x.slug}`));
     lines.push(
       p.evicted.length
-        ? `- утонуло в подсознание (${p.evicted.length}, v1 = ПОТЕРЯНО): ${p.evicted.map((x) => `${x.slug} [${x.date}]`).join(' · ')}`
+        ? `- утонуло в подсознание (${p.evicted.length}${anyReason ? ', переток — не потеря' : ', v1 = ПОТЕРЯНО'}): ${p.evicted.map(evictedLine).join(' · ')}`
         : '- утонуло в подсознание: ничего',
     );
     lines.push('- всплывало сегодня: контур не поставлен (#1366 ч.2)');
