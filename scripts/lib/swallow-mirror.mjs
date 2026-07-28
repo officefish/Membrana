@@ -12,6 +12,7 @@
  */
 
 import { frame } from './day-plan-frame.mjs';
+import { checkLiveLinks } from './live-links.mjs';
 import { externalizeQuery } from './strategy-horizon.mjs';
 
 /**
@@ -36,7 +37,7 @@ export const DETAILS_LABEL = 'Детали';
  */
 export function buildSwallowSkeleton() {
   const rows = SWALLOW_LABELS.map((l) => `${l.label}: <одной фразой, без внутренних имён>`);
-  return ['Доброе утро! <интро одной-двумя фразами>', '', ...rows, '', `${DETAILS_LABEL}: <#номера Issue/PR — только здесь>`].join('\n');
+  return ['Доброе утро! <интро одной-двумя фразами>', '', ...rows, '', `${DETAILS_LABEL}: [#N](https://github.com/officefish/Membrana/pull/N) — ТОЛЬКО кликабельными markdown-ссылками`].join('\n');
 }
 
 /**
@@ -91,6 +92,28 @@ export function checkSwallowDraft(draft) {
       violations.push(`строка ${i + 1}: внутренний жаргон (${check.offending.join(', ')}) — переписать словами продукта`);
     }
   });
+
+  // 3) ЖИВЫЕ ССЫЛКИ — провод линзы (слово владельца 28.07 «исправь сразу провода
+  //    линзы, научи всех агентов использовать инструмент правильно»). Линза
+  //    checkLiveLinks существовала, но её НИКТО не звал: партнёрам дважды ушли
+  //    нерабочие детали — 27.07 голые URL, 28.07 голые коды «#N». Норма: ссылка в
+  //    письме обязана быть КЛИКАБЕЛЬНОЙ, т.е. markdown-формой `[#N](url)`, которую
+  //    office превращает в <a href> (mdToTelegramHtml, не менялся с 14.07 — прод
+  //    умеет; «прод отстал» был неверным диагнозом, виноват формат).
+  const live = checkLiveLinks(String(draft ?? ''));
+  for (const b of live.bare) {
+    const path = b.kind === 'issue' ? 'issues' : 'pull';
+    violations.push(
+      `голая ссылка «${b.raw}» — в телеграме это просто текст, не ссылка; оформить ` +
+        `кликабельно: [${b.raw}](https://github.com/officefish/Membrana/${path}/${b.n})`,
+    );
+  }
+  for (const n of live.naked) {
+    violations.push(
+      `строка ${n.line}: число «${n.raw}» читается как задача, но адреса нет — ` +
+        'дать markdown-ссылку [#N](url) либо убрать номер из текста',
+    );
+  }
 
   return { ok: violations.length === 0, violations };
 }
