@@ -330,9 +330,18 @@ export function meetingVerdictProblems(protocolMd, siblingIds = []) {
   // а ошибка адресации имён; ловить её колонизацией = ложный красный (M4/M6, 27.07).
   const dod = body.match(/Definition of Done([\s\S]*?)(?=\n\s{0,3}#{1,4}\s|$)/iu)?.[1] ?? '';
   const local = localSeriesIds(body);
-  const colonized = siblingIds.filter(
-    (id) => !local.has(id) && new RegExp(`\\b${id}\\b`, 'u').test(dod),
-  );
+  const colonized = siblingIds.filter((id) => {
+    if (local.has(id)) return false;
+    const re = new RegExp(`\\b${id}\\b`, 'u');
+    // Межа сшивки memory-subconscious №1 (вердикт аудитора Веснина 28.07):
+    // исключение из DoD («Вне DoD…», «не входит», «не решать») и отсылка к уже
+    // ратифицированной рамке — ЛЕГАЛЬНЫЕ упоминания, не вердикт по чужому.
+    // Колонизация = ID соседа в строке-ОБЯЗАТЕЛЬСТВЕ без маркера исключения/рамки.
+    const lines = dod.split(/\r?\n/).filter((l) => re.test(l));
+    if (lines.length === 0) return false;
+    const LEGAL = /вне\s+DoD|не\s+входит|не\s+содержит|не\s+решат|не\s+блокир|не\s+колонизир|нет\s+обязательств|для\s+зуба|исключени|рамк\w*|ратифицирован|соседн|отсылк|слот|join|→\s*C\d|→\s*M\d/iu;
+    return lines.some((l) => !LEGAL.test(l));
+  });
   if (colonized.length > 0) {
     problems.push(
       `DoD несёт обязательства по чужим вопросам (${colonized.join(', ')}) — ` +
