@@ -74,20 +74,6 @@
       ]
     },
     {
-      "id": "persona-memory",
-      "script": "scripts/persona-memory-extract.mjs --all",
-      "kind": "mechanic",
-      "criticality": "noncritical",
-      "whyNoncritical": "Дистилляция журнала персон из уже существующих артефактов — производный слой. Сбой не теряет первоисточник (docs/seanses на месте), прогон повторим завтра.",
-      "label": "Дистилляция памяти персон",
-      "consumes": [
-        "docs/seanses/"
-      ],
-      "produces": [
-        "docs/personas/*/MEMORY.md"
-      ]
-    },
-    {
       "id": "team-memory-report",
       "script": "scripts/team-memory-report.mjs",
       "kind": "mechanic",
@@ -121,6 +107,19 @@
       ],
       "produces": [
         "отчёт в stdout"
+      ]
+    },
+    {
+      "id": "ritual-artifacts",
+      "script": "scripts/ritual-artifacts-commit.mjs",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "whyNoncritical": "Автозабор коммитит поимённо ТОЛЬКО известные продукты цепочки (белый список из produces[] + датированные seanses/bridge); сбой не теряет файлы — они остаются на месте и становятся находкой leveling. Помеха №1 счётчика чистых прогонов (28.07): вчера leveling вставал на незакоммиченных артефактах вечера.",
+      "label": "Автозабор артефактов ритуала (поимённо, по белому списку)",
+      "//": "Стоит ПЕРЕД leveling-workspace: к моменту leveling свои артефакты уже забраны, unnamed-trash = только чужое. Шаг persona-memory из цепочки ВЫНУТ (стоял до показа партнёрам — конструктивное нарушение #569): извлечение памяти теперь едет на ласточке после sent=true (scripts/telegram-swallow.mjs, помеха №2).",
+      "consumes": [],
+      "produces": [
+        "коммит артефактов ритуала (git)"
       ]
     },
     {

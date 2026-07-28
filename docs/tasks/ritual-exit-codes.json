@@ -64,20 +64,6 @@
           },
           "notes": "Child yarn rag:index ненулевой не пробрасывается — observability gap, см. undefinedDebt"
         },
-        "persona-memory": {
-          "script": "scripts/persona-memory-extract.mjs --all",
-          "codes": {
-            "0": {
-              "bucket": "ok",
-              "meaning": "запись / stdout match"
-            },
-            "1": {
-              "bucket": "failure",
-              "meaning": "usage / конфликт флагов / exception"
-            }
-          },
-          "notes": "exit 3 только при --check (не в вечернем argv)"
-        },
         "team-memory-report": {
           "script": "scripts/team-memory-report.mjs",
           "codes": {
@@ -118,6 +104,24 @@
           "findingExitCodes": [
             3
           ]
+        },
+        "ritual-artifacts": {
+          "script": "scripts/ritual-artifacts-commit.mjs",
+          "codes": {
+            "0": {
+              "bucket": "ok",
+              "meaning": "артефакты забраны поимённо либо честный no-op (забирать нечего)"
+            },
+            "1": {
+              "bucket": "failure",
+              "meaning": "отказ: HEAD == main без ALLOW_MAIN_COMMIT либо хук отклонил коммит — проверять git status глазами (B6)"
+            },
+            "2": {
+              "bucket": "failure",
+              "meaning": "инструментальная ошибка (манифест/git недоступны)"
+            }
+          },
+          "notes": "помеха №1 счётчика чистых прогонов (28.07): автозабор по белому списку из produces[]; persona-memory из цепочки вынут — извлечение едет на ласточке после sent=true (#569)"
         },
         "leveling-workspace": {
           "script": "scripts/membrana-leveling-evening.mjs",

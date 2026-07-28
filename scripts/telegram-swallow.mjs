@@ -23,6 +23,7 @@
  * След для графа правды (#585): docs/comms/sent-log.jsonl после sent=true
  * (хеш + путь черновика, не тело).
  */
+import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -284,6 +285,22 @@ if (isMain) {
         } else {
           console.log(
             '[telegram-swallow] office: sent=true (без message_id — подтверждается только флагом, не следом; NB6-follow-up)',
+          );
+        }
+        // Помеха №2 (28.07) / #569: показ партнёрам состоялся — извлечение памяти
+        // персон едет НА ласточке, не руками и не до показа. Шаг persona-memory
+        // вынут из вечерней цепочки (стоял ДО фидбека — конструктивное нарушение #569).
+        // Сбой извлечения не отменяет доставку — ласточка уже у партнёров.
+        try {
+          execFileSync(process.execPath, ['scripts/persona-memory-extract.mjs', '--all'], {
+            cwd: repoRoot,
+            stdio: 'inherit',
+            timeout: 300_000,
+          });
+          console.log('[telegram-swallow] память персон извлечена после показа (#569, помеха №2 закрыта)');
+        } catch (e) {
+          console.error(
+            `[telegram-swallow] ⚠ извлечение памяти после показа не прошло (${String(e.message ?? e).split('\n')[0]}) — доставка в силе; повтор руками: yarn persona-memory:extract --all`,
           );
         }
       } else if (result.outcome === 'http-error') {

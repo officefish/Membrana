@@ -163,6 +163,8 @@
     "insight:drift": "node scripts/insight-drift.mjs",
     "persona-memory:extract": "node scripts/persona-memory-extract.mjs",
     "llm:probe": "node scripts/llm-probe.mjs",
+    "swallow:draft": "node scripts/swallow-draft.mjs",
+    "ritual:artifacts-commit": "node scripts/ritual-artifacts-commit.mjs",
     "telegram:swallow": "node scripts/telegram-swallow.mjs",
     "telegram:digest:day": "node scripts/telegram-ritual-digest.mjs --kind day",
     "telegram:digest:evening": "node scripts/telegram-ritual-digest.mjs --kind evening",
