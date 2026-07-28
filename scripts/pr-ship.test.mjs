@@ -517,3 +517,9 @@ test('--keep-branch: хвост не переключает дерево на ba
   });
   assert.ok(without.steps.map((s) => s.label).includes('sync-checkout'), 'без флага поведение прежнее');
 });
+
+test('--keep-branch: флаг ДОХОДИТ из CLI (28.07 — правка легла мимо парсера, план молчал)', async () => {
+  const { readFileSync } = await import('node:fs');
+  const src = readFileSync(new URL('./pr-ship.mjs', import.meta.url), 'utf8');
+  assert.match(src, /a === '--keep-branch'\) o\.keepBranch = true/u, 'парсер обязан знать флаг');
+});
