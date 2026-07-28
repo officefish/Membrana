@@ -24,6 +24,11 @@ const ARTIFACTS = [
     label: 'STRATEGY_DAY',
   },
   {
+    rel: 'docs/DAY_PLAN.md',
+    archiveName: 'DAY_PLAN.md',
+    label: 'DAY_PLAN (канон дня, 5 слотов)',
+  },
+  {
     rel: 'docs/STRATEGIC_PLAN_DAY.md',
     archiveName: 'STRATEGIC_PLAN_DAY.md',
     label: 'STRATEGIC_PLAN_DAY (вещдок, устар.)',

@@ -38,9 +38,9 @@
     },
     {
       "id": "ritual-strategy-day",
-      "entryMjs": "scripts/strategy-day.mjs",
-      "yarnScript": "strategy:day",
-      "title": "Ритуал · стратегия дня",
+      "entryMjs": "scripts/day-plan.mjs",
+      "yarnScript": "plan:day",
+      "title": "Ритуал · план дня (канон, 5 слотов)",
       "meters": true,
       "group": "ritual"
     },
