@@ -17,6 +17,17 @@ const argv = process.argv.slice(2);
 const cmd = argv[0];
 const flag = (n) => { const i = argv.indexOf(`--${n}`); return i > -1 && argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[i + 1] : null; };
 
+/**
+ * P2 (ревью 27.07): абсолютный Windows-путь в ref привязывает вещдок к одной машине.
+ * Файл ВНУТРИ репозитория — repo-relative ref (переносимо между машинами и деревьями);
+ * внешний файл — абсолютный как был (честно: он и правда живёт только там).
+ */
+function toPortableRef(abs) {
+  const root = process.cwd().replaceAll('\\', '/');
+  const norm = abs.replaceAll('\\', '/');
+  return norm.startsWith(`${root}/`) ? norm.slice(root.length + 1) : norm;
+}
+
 function loadRegistry() {
   const text = existsSync(REGISTRY) ? readFileSync(REGISTRY, 'utf8') : '';
   const { records, broken } = parseRegistry(text);
@@ -39,7 +50,7 @@ if (cmd === 'add') {
     bytes: statSync(abs).size,
     addedAt: new Date().toISOString().slice(0, 10),
     source: flag('source'),
-    location: flag('store') ? { kind: flag('store'), ref: flag('ref') ?? '' } : { kind: 'local', ref: abs.replaceAll('\\', '/') },
+    location: flag('store') ? { kind: flag('store'), ref: flag('ref') ?? '' } : { kind: 'local', ref: toPortableRef(abs) },
     ...(flag('about') ? { about: flag('about') } : {}),
   };
   const problems = recordProblems(record);
