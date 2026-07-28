@@ -1,0 +1,13 @@
+{
+  "id": "insight-spectrum-tiers",
+  "title": "Второй тариф: MFCC-спектр + нейроанализ спектрограмм машинным зрением, разделение продукта по тарифам",
+  "status": "reviewed",
+  "source": "user",
+  "horizon": null,
+  "weight": 7.2,
+  "createdAt": "2026-07-28",
+  "researchedAt": "2026-07-28",
+  "reviewedAt": "2026-07-28",
+  "closedAt": null,
+  "tags": []
+}
