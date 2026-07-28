@@ -295,7 +295,7 @@ export function buildCodeReviewUserMessage(p) {
 
   const assignmentByMode = {
     daily:
-      'Проведи вечернее daily code review (регламент v0.2). Используй сокращённый формат (Teamlead + Структурщик), если затронут один пакет; иначе — все пять ролей. Укажи Tier и конкретные yarn-команды на утро.',
+      'Проведи вечернее daily code review (регламент v0.2). Используй сокращённый формат (Teamlead + Структурщик), если затронут один пакет; иначе — все шесть ролей (с Архитектором). Укажи Tier и конкретные yarn-команды на утро.',
     pr: 'Проведи PR code review перед merge. Укажи Tier, PR size OK/oversized, вердикт LGTM или BLOCK в [Teamlead] и в строке Вердикт. Сверь с MAIN_DAY_ISSUE и acceptance criteria.',
     branch:
       'Проведи review ветки перед PR. Укажи Tier, PR size, вердикт LGTM или BLOCK.',
