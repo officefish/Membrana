@@ -47,7 +47,7 @@
 - conclusionDigest: Имя рождается двухступенчатым ревью: питомец предлагает, секретарь проверяет слаг, капитан штампует/отклоняет с причиной; чеканка append-only.
 - tags: [naming]
 - logicalSlot: naming.farrell
-- derivedInstructionId: null
+- derivedInstructionId: charter.naming-two-step-review
 - stampedBy: владелец — делегированное слово 27.07 («согласен на твои рекомендации»; рекомендация председателя P2: bearing)
 - stampedAt: 2026-07-27
 - capturedBy: agent-researcher (задание «пять удачных примеров мостика», 27.07)

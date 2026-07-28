@@ -31,7 +31,7 @@
 - conclusionDigest: Разница регистров, не переименование: в диалоге — капитан, в механике гейтов — формальный «владелец»; юридика канонов нетронута.
 - tags: [gate-language]
 - logicalSlot: gate-language.captain-vs-owner
-- derivedInstructionId: null
+- derivedInstructionId: charter.captain-owner-registers
 - stampedBy: владелец — делегированное слово 27.07 («согласен на твои рекомендации»; рекомендация председателя P2: bearing)
 - stampedAt: 2026-07-27
 - capturedBy: agent-researcher (задание «пять удачных примеров мостика», 27.07)

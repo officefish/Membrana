@@ -25,7 +25,7 @@
 - conclusionDigest: Комната не открывается сама: открытие явное, закрытие явное в ночном ритуале, конспекты уходят фреймом в репозиторий.
 - tags: [other, provenance]
 - logicalSlot: lifecycle.explicit-open-close
-- derivedInstructionId: null
+- derivedInstructionId: charter.explicit-open-close
 - stampedBy: владелец — делегированное слово 27.07 («согласен на твои рекомендации»; рекомендация председателя P2: bearing)
 - stampedAt: 2026-07-27
 - capturedBy: agent-researcher (задание «пять удачных примеров мостика», 27.07; пятый жест — находка исследователя)
