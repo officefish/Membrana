@@ -109,8 +109,18 @@ async function main() {
     location: { kind: 'local', ref: memoRel },
     about: `DAY_MEMO ${date}: факты=${JSON.stringify(facts.stats)}; инсайты/след — по статусу слоёв`,
   };
-  const already = existsSync(regAbs) && readFileSync(regAbs, 'utf8').includes(`"id":"day-memo-${date}"`);
-  if (!already) appendFileSync(regAbs, JSON.stringify(record) + '\n', 'utf8');
+  // Закон вещдоков: файл изменился → старый sha протух; --force перерегистрирует
+  // append-only записью -rN (образец ozon-receipt -r2), не правит старую.
+  const regText = existsSync(regAbs) ? readFileSync(regAbs, 'utf8') : '';
+  const priorIds = [...regText.matchAll(new RegExp(`"id":"(day-memo-${date}(?:-r\\d+)?)"`, 'gu'))].map((m) => m[1]);
+  const already = priorIds.length > 0 && regText.includes(`"sha256":"${sha256}"`);
+  if (!already) {
+    if (priorIds.length > 0) {
+      record.id = `day-memo-${date}-r${priorIds.length + 1}`;
+      record.about += ` · перегенерация, суперсидит ${priorIds[priorIds.length - 1]} (append-only)`;
+    }
+    appendFileSync(regAbs, JSON.stringify(record) + '\n', 'utf8');
+  }
 
   const layerStatus = (l, extra = null) =>
     l.markdown.includes('слой не поставлен') ? 'не поставлен' : (extra ?? 'ok');
