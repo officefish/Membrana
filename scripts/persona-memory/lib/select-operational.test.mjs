@@ -77,7 +77,7 @@ test('проекция: путь/структура журнала сохран�
   const { retained, report } = selectOperational([...WORKSHOP.slice(0, 2)], null, { limit: 10_000, nowIso: NOW });
   const md = projectMarkdown({ personaId: 'dynin', retained, report, archiveRel: 'docs/virtual-team/memory/archive/dynin.jsonl' });
   assert.ok(md.startsWith('# Журнал субъектного опыта — dynin'));
-  assert.ok(md.includes('### 2026-07-23 · position ·'), 'формат записей потребителей сохранён');
+  assert.ok(md.includes('### 2026-07-23 · позиция ·'), 'формат записей потребителей сохранён');
   assert.ok(md.includes('importance.json ПРОВОДИТСЯ в отбор'), 'легенда обновлена (DoD C2 п.7)');
   assert.ok(md.includes('archive_from:'), 'meta проекции на месте');
 });
