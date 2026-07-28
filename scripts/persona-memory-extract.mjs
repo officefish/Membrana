@@ -29,6 +29,11 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 import { PERSONA_ROLE_LABELS, MEMORY_DIR, personaMemoryPath } from './lib/persona-memory.mjs';
+import { appendArchive, readArchive } from './persona-memory/lib/archive-append.mjs';
+import { emitOp } from './persona-memory/lib/op-log.mjs';
+import { backfillWindow, dayZeroSnapshot, parseJournalMd } from './persona-memory/lib/migrate.mjs';
+import { projectMarkdown } from './persona-memory/lib/project-markdown.mjs';
+import { selectOperational } from './persona-memory/lib/select-operational.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -276,6 +281,11 @@ function collectImportance({ repoRoot = REPO_ROOT } = {}) {
 }
 
 /** Полная сборка журнала персоны (единственная IO-точка). */
+/**
+ * ЛЕГАСИ-сборка (float-score 0.6·recency+0.4·importance) — приговорена контуром
+ * memory-subconscious (C2, 28.07): ровно она вытесняла мастерскую Дынина. Экспорт
+ * сохранён для зубов чистых функций; CLI идёт через buildOperationalJournal.
+ */
 export function buildJournal(slug, { repoRoot = REPO_ROOT } = {}) {
   const roleLabel = PERSONA_ROLE_LABELS[slug];
   if (!roleLabel) {
@@ -293,31 +303,140 @@ export function buildJournal(slug, { repoRoot = REPO_ROOT } = {}) {
   return renderJournal({ slug, roleLabel, entries, totalCandidates: candidates.length });
 }
 
+// ─── Контур памяти (P6 — заседание memory-subconscious, сшито 28.07) ─────────────
+
+const CAND_CLASS = Object.freeze({
+  'позиция': 'position', 'инсайт': 'insight', 'инсайт-ревью': 'insight', 'прецедент': 'precedent',
+});
+
+/** Кандидат сбора → ArchiveRecord (verbatim; source = persona-extract). */
+export function candidateToRecord(c, slug) {
+  return {
+    id: `${slug}-${c.date ?? '0000-00-00'}-${c.topic}`,
+    personaId: slug,
+    ts: c.date ?? '0000-00-00',
+    provenance: c.provenance,
+    source: 'persona-extract',
+    kind: 'verbatim',
+    text: c.body,
+    class: CAND_CLASS[c.kind] ?? 'routine',
+  };
+}
+
+/**
+ * Оркестратор контура (C6): сбор → архив (append-only, ничто не умирает) →
+ * политика C2 над полной лентой → op-log события (причина и класс перетока —
+ * в журнале, не в ArchiveRecord: межа №2) → проекция md (потребители не ломаются).
+ * @returns {{journal: string, report: object, events: number}}
+ */
+export function buildOperationalJournal(slug, { repoRoot = REPO_ROOT, nowIso = new Date().toISOString() } = {}) {
+  const roleLabel = PERSONA_ROLE_LABELS[slug];
+  if (!roleLabel) {
+    throw new Error(`Неизвестная персона "${slug}". Доступные: ${Object.keys(PERSONA_ROLE_LABELS).join(', ')}.`);
+  }
+  const candidates = [
+    ...collectSeansesCandidates(roleLabel, { repoRoot }),
+    ...collectReviewCandidates(roleLabel, { repoRoot }),
+  ];
+
+  // 1) Подсознание: новые кандидаты — в архив; дубль id — молчаливый skip легален
+  //    (append-only не значит дважды), невалидное — в problems отчёта.
+  const known = new Set(readArchive(repoRoot, slug).records.map((r) => r.id));
+  let events = 0;
+  for (const c of candidates) {
+    const rec = candidateToRecord(c, slug);
+    if (known.has(rec.id)) continue;
+    const r = appendArchive(repoRoot, rec);
+    if (r.ok) {
+      emitOp(repoRoot, { ts: nowIso, persona: slug, verb: 'write_operational', ref: rec.id, origin: 'persona-extract' });
+      events += 1;
+      known.add(rec.id);
+    }
+  }
+
+  // 2) Оперативная проекция: политика C2 над ПОЛНОЙ лентой архива.
+  const archive = readArchive(repoRoot, slug);
+  const importanceRaw = readTextOrNull(path.join(repoRoot, IMPORTANCE_FILE));
+  let importance = null;
+  try { importance = importanceRaw ? JSON.parse(importanceRaw) : null; } catch { importance = null; }
+  const HEADER_ALLOWANCE = 600;
+  const { retained, transferred, report } = selectOperational(archive.records, importance, {
+    limit: TOKEN_BUDGET * CHARS_PER_TOKEN - HEADER_ALLOWANCE,
+    nowIso,
+  });
+
+  // 3) Переток: события только для записей, уходящих из ПРЕЖНЕЙ проекции.
+  const prevMd = readTextOrNull(path.join(repoRoot, personaMemoryPath(slug)));
+  const prevIds = new Set(prevMd ? parseJournalMd(prevMd, slug).map((e) => e.id) : []);
+  for (const t of transferred) {
+    if (!prevIds.has(t.record.id)) continue;
+    emitOp(repoRoot, {
+      ts: nowIso, persona: slug, verb: 'transfer_to_archive',
+      ref: t.record.id, reason: t.reason, class: t.record.class, origin: 'persona-extract',
+    });
+    events += 1;
+  }
+  emitOp(repoRoot, { ts: nowIso, persona: slug, verb: 'rebuild_report', ref: `retained:${retained.length}`, origin: 'persona-extract' });
+  events += 1;
+
+  const pinnedSet = new Set(report.pinned);
+  const journal = projectMarkdown({
+    personaId: slug,
+    personaTitle: roleLabel,
+    retained: retained.map((r) => (pinnedSet.has(r.provenance) ? { ...r, _pinned: true } : r)),
+    report,
+    archiveRel: `docs/virtual-team/memory/archive/${slug}.jsonl`,
+  });
+  return { journal, report, events };
+}
+
 // ─── CLI ─────────────────────────────────────────────────────────────────────────
 
-/** Один слаг: 0 = ок/записано, 3 = дрейф при --check. Ошибки сборки бросают. */
+/** Один слаг: 0 = ок · 3 = дрейф при --check либо pinned_overflow. Ошибки бросают. */
 function runForSlug(slug, flags) {
-  const journal = buildJournal(slug);
   const outRel = personaMemoryPath(slug);
   const outAbs = path.join(REPO_ROOT, outRel);
 
+  // Миграция (P5, воспроизводима): day-zero из текущего md; backfill окна — флагом.
+  if (flags.has('--migrate-day-zero')) {
+    const md = existsSync(outAbs) ? readFileSync(outAbs, 'utf8') : '';
+    const r = dayZeroSnapshot(REPO_ROOT, slug, md);
+    console.log(`day-zero ${slug}: +${r.appended} · skip ${r.skipped}${r.problems.length ? ` · problems ${r.problems.length}` : ''}`);
+    for (const p of r.problems) console.error(`  ⚠ ${p}`);
+    return r.problems.length ? 3 : 0;
+  }
+  const backfillBefore = [...flags].find((f) => f.startsWith('--backfill-before='));
+  if (backfillBefore) {
+    const r = backfillWindow(REPO_ROOT, slug, { before: backfillBefore.split('=')[1] });
+    console.log(`backfill ${slug}: +${r.appended} (git-restore@${r.sha ? r.sha.slice(0, 8) : '—'}) · skip ${r.skipped}${r.problems.length ? ` · problems ${r.problems.length}` : ''}`);
+    for (const p of r.problems) console.error(`  ⚠ ${p}`);
+    return r.problems.length ? 3 : 0;
+  }
+
+  // Оркестратор контура (P6): архив → политика → op-log → проекция.
+  const { journal, report } = buildOperationalJournal(slug);
+  const overflow = report.status === 'pinned_overflow';
+  if (overflow) {
+    console.error(`✗ ${slug}: pinned_overflow — закреплённого больше бюджета (${report.pinned.length} записей); pinned НЕ усечён, разбор — слово владельца.`);
+  }
+
   if (flags.has('--stdout')) {
     console.log(journal);
-    return 0;
+    return overflow ? 3 : 0;
   }
   if (flags.has('--check')) {
     const existing = existsSync(outAbs) ? readFileSync(outAbs, 'utf8') : null;
     if (existing === journal) {
       console.log(`OK: ${outRel} соответствует пересборке (идемпотентно).`);
-      return 0;
+      return overflow ? 3 : 0;
     }
     console.error(`DRIFT: ${outRel} ${existing == null ? 'отсутствует' : 'отличается от пересборки'} — запусти yarn persona:memory ${slug}.`);
     return 3;
   }
   mkdirSync(path.dirname(outAbs), { recursive: true });
   writeFileSync(outAbs, journal, 'utf8');
-  console.log(`persona-memory → ${outRel}`);
-  return 0;
+  console.log(`persona-memory → ${outRel} · retained ${report.retainedCount} · transferred ${report.transferred.length} · ${report.status}`);
+  return overflow ? 3 : 0;
 }
 
 function main() {

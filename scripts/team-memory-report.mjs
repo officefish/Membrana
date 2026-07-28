@@ -14,11 +14,12 @@
  * Exit: 0 — чисто · 3 — есть вытеснение (находка, не отказ; по образцу leveling).
  */
 import { execFileSync } from 'node:child_process';
-import { appendFileSync, existsSync, readdirSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { parseMemoryDiff, renderMemoryReport } from './lib/team-memory-report.mjs';
+import { opLogRel, parseOpLog } from './persona-memory/lib/op-log.mjs';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const MEMORY_DIR = 'docs/virtual-team/memory';
@@ -61,7 +62,20 @@ function main() {
     .filter((f) => f.endsWith('.md'))
     .map((f) => f.replace(/\.md$/u, ''))
     .sort();
-  const { markdown, totals, regression } = renderMemoryReport(byPersona, { date, personas });
+  // Межа №5: причины перетока из сегодняшнего op-log (transfer ≠ потеря).
+  const reasonsByPersona = {};
+  for (const p of personas) {
+    const logAbs = join(repoRoot, opLogRel(p, date));
+    if (!existsSync(logAbs)) continue;
+    const { entries } = parseOpLog(readFileSync(logAbs, 'utf8'));
+    const map = new Map();
+    for (const e of entries ?? []) {
+      if (e.verb === 'transfer_to_archive' && e.ref && e.reason) map.set(e.ref, e.reason);
+    }
+    if (map.size) reasonsByPersona[p] = map;
+  }
+
+  const { markdown, totals, regression } = renderMemoryReport(byPersona, { date, personas, reasonsByPersona });
 
   console.log(markdown);
 
