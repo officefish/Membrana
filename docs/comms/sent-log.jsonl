@@ -16,3 +16,5 @@
 {"ts":"2026-07-27T05:26:36.476Z","kind":"swallow","file":"docs/comms/drafts/ally-swallow-morning-2026-07-27.md","sha256":"f480f0e2f837a3bade8acde30be7228e6fa68e926ee8a1340d7517c3a5e11057","sent":true,"office_response":{"sent":true}}
 {"ts":"2026-07-27T19:12:54.380Z","kind":"swallow","file":"docs/comms/drafts/swallow-evening-2026-07-27.md","sha256":"1c90423282b63a884e9b9808a901ca3d69bc9a57c180a3a59124b61b31ec685b","sent":true,"office_response":{"sent":true}}
 {"ts":"2026-07-28T04:14:49.897Z","kind":"swallow","file":"docs/comms/drafts/swallow-morning-2026-07-28.md","sha256":"1a9a4bf4ec57d289fce1e12035281f3542ca1906ef70a3177f83a73ef270cfc7","sent":true,"office_response":{"sent":true}}
+{"ts":"2026-07-28T12:05:18.754Z","kind":"swallow","file":"docs/comms/drafts/swallow-yana-idea-2026-07-28.md","sha256":"b348aeb83968cdde7eb07bb8d67053d7271e962c0ec7ef72482d0848288e34b3","sent":true,"office_response":{"sent":true}}
+{"ts":"2026-07-28T12:06:47.537Z","kind":"swallow","file":"docs/comms/drafts/swallow-denis-algo-2026-07-28.md","sha256":"02363ca0716c4480f9882f272aa25380e30264f165f6f9920c7ac31ff96288c3","sent":true,"office_response":{"sent":true}}

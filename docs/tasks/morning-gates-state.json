@@ -7,9 +7,9 @@
   "frozenDigest": "bce44160bdb52f5ad98143edc08371cfdaa594d166477f4b1bb236ed1e811654",
   "magistral": "procedures-core-fields",
   "swallow": {
-    "draftDigest": "2ed7fdb88bdf7f5375b3a026ed51571a91c0464a18307d3bfa695e5d752507f0",
-    "draftFile": "docs/comms/drafts/swallow-plotva-2026-07-28.md",
-    "ownerAck": false
+    "draftDigest": "02363ca0716c4480f9882f272aa25380e30264f165f6f9920c7ac31ff96288c3",
+    "draftFile": "docs/comms/drafts/swallow-denis-algo-2026-07-28.md",
+    "ownerAck": true
   },
   "day": "2026-07-28"
 }

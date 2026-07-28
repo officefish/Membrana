@@ -204,3 +204,7 @@
 {"ts":"2026-07-28T10:44:02.754Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-07-05-insight-comms-contour-topology","reason":"expired_ttl","origin":"persona-extract","class":"routine"}
 {"ts":"2026-07-28T10:44:02.754Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:52","origin":"persona-extract"}
 {"ts":"2026-07-28T10:47:56.848Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:52","origin":"persona-extract"}
+{"ts":"2026-07-28T12:05:19.181Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-07-28-insight-bearing-tracking","origin":"persona-extract"}
+{"ts":"2026-07-28T12:05:19.181Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-07-28-insight-night-doc-intern","origin":"persona-extract"}
+{"ts":"2026-07-28T12:05:19.181Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:52","origin":"persona-extract"}
+{"ts":"2026-07-28T12:06:47.762Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:52","origin":"persona-extract"}
