@@ -1,0 +1,35 @@
+{
+  "//": "BridgeCast — машинный состав комнаты мостика. Вердикт M1 заседания bridge-command-post (ратифицирован 27.07), DoD п.2: три записи, callsInRoom явно. Схема/инвариант: scripts/lib/bridge-cast.mjs; зуб: scripts/bridge-frames.test.mjs. Проза SKILL/README носителем состава НЕ является — при расхождении врёт проза (M1).",
+  "entries": [
+    {
+      "id": "angelina",
+      "kind": "lead",
+      "carrier": "llm-persona",
+      "callsExisting": ["ask", "bridge"],
+      "callsInRoom": ["bridge"],
+      "castMandatory": true,
+      "liveMandatory": false,
+      "presenceMeaning": "конспект + провенанс решений; не починка и не дубль движка долгов; live ⇔ реальный вызов носителя в сеансе (v0-канал bridge, тумблер BRIDGE_LEAD=1); absent → session-scribe под своим статусом"
+    },
+    {
+      "id": "farrell",
+      "kind": "voice",
+      "carrier": "pet-local",
+      "callsExisting": ["storm"],
+      "callsInRoom": "none",
+      "castMandatory": true,
+      "liveMandatory": false,
+      "presenceMeaning": "0..N свободных реплик, молчание — норма; не основание вердиктов комнаты и не carrier open/close/gates"
+    },
+    {
+      "id": "parrot",
+      "kind": "memory",
+      "carrier": "kit-engine",
+      "callsExisting": ["bridge-debts"],
+      "callsInRoom": ["bridge-debts"],
+      "castMandatory": true,
+      "liveMandatory": "if-debts-in-open",
+      "presenceMeaning": "детерминированный учёт/повтор долгов; присутствие ⇔ движок кита angelina-bridge активен (реестр долгов читается); обязателен live, если долги входят в открытие (gate.parrot_live_if_debts)"
+    }
+  ]
+}

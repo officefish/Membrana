@@ -18,7 +18,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-import { CLOSED, closeRoom, isOpen, openRoom } from './lib/bridge-room.mjs';
+import { CLOSED, awaitCaptain, closeRoom, isOpen, normalizeState, openRoom, resumeFree } from './lib/bridge-room.mjs';
+import { castResolveProblems, castSchemaProblems } from './lib/bridge-cast.mjs';
 import { addDebt, openDebts, parseDebts, renderDebts, settleDebt, supersedeDebt } from './lib/bridge-debts.mjs';
 import { validateDebt, healthMetrics, themeClusters, realActiveCount, decompose, auditDebt, propose } from './lib/bridge-debts-health.mjs';
 import { findTool, inventoryToolkit, renderToolkit } from './lib/bridge-toolkit.mjs';
@@ -40,10 +41,78 @@ const today = () => new Date().toISOString().slice(0, 10);
 function loadState() {
   if (!existsSync(STATE_PATH)) return { ...CLOSED };
   try {
-    return JSON.parse(readFileSync(STATE_PATH, 'utf8'));
+    // Фазовый апгрейд (#1351): легаси opened/closed нормализуется в free/idle.
+    return normalizeState(JSON.parse(readFileSync(STATE_PATH, 'utf8')));
   } catch {
     return { ...CLOSED };
   }
+}
+
+const CAST_PATH = resolve(ROOT, 'docs/bridge/cast.json');
+
+/** Стык с очередью 2 (#1352): предикаты долгов. Реализацию заменит блок Б, сигнатуры — контракт. */
+function blocksOpen() {
+  try {
+    return openDebts(loadDebts()).length > 0;
+  } catch {
+    return true; // реестр нечитаем при заявленных долгах — считаем блокирующим, не молчим
+  }
+}
+/** Попугай live ⇔ движок кита активен: реестр долгов читается и каталог кита поднимается. */
+function parrotLive() {
+  try {
+    loadDebts();
+    return loadToolkit().error === null;
+  } catch {
+    return false;
+  }
+}
+/** Счётчики трёх контуров памяти для квитанции. Непоставленный контур — честная пометка. */
+function memoryCounts() {
+  let debts = { open: 0, settled: 0, note: null };
+  try {
+    const all = loadDebts();
+    debts = { open: openDebts(all).length, settled: all.length - openDebts(all).length, note: null };
+  } catch {
+    debts = { open: 0, settled: 0, note: 'реестр долгов нечитаем' };
+  }
+  return {
+    debts,
+    observations: { uttered: 0, unuttered: 0, note: 'контур не поставлен (очередь 2, #1352)' },
+    shown: { attached: 0, note: 'контур не поставлен (очередь 2, #1352)' },
+  };
+}
+
+/** Гейты открытия (M2): cast_resolvable + parrot_live_if_debts. Пусто = путь открыт. */
+function openGateProblems({ absent } = {}) {
+  const problems = [];
+  let cast = null;
+  try {
+    cast = JSON.parse(readFileSync(CAST_PATH, 'utf8'));
+  } catch (e) {
+    return [`gate.cast_resolvable: docs/bridge/cast.json не читается (${e.message}) — состав без носителя`];
+  }
+  const schema = castSchemaProblems(cast);
+  if (schema.length) return schema.map((p) => `gate.cast_resolvable: ${p}`);
+
+  const resolveCarrier = (entry) => {
+    if (entry.carrier === 'llm-persona') {
+      return existsSync(resolve(ROOT, 'docs/virtual-team/PROMPT_ANGELINA.md')) &&
+        existsSync(resolve(ROOT, 'scripts/bridge-lead-call.mjs'));
+    }
+    if (entry.carrier === 'pet-local') {
+      return existsSync(resolve(ROOT, 'scripts/lib/storm-codex.mjs'));
+    }
+    if (entry.carrier === 'kit-engine') return parrotLive();
+    return false;
+  };
+  const r = castResolveProblems(cast, { resolve: resolveCarrier, absent });
+  problems.push(...r.problems.map((p) => `gate.cast_resolvable: ${p}`));
+
+  if (blocksOpen() && !parrotLive()) {
+    problems.push('gate.parrot_live_if_debts: долги в открытии, а движок попугая не поднимается — stop open (M2)');
+  }
+  return problems;
 }
 function saveState(state) {
   mkdirSync(dirname(STATE_PATH), { recursive: true });
@@ -76,8 +145,40 @@ function parrotSquawk() {
   for (const d of live) console.log(`  • ${d.debt} (${d.evidence})`);
 }
 
+if (cmd === 'presence') {
+  // gate.presence_is_not_trigger (M2, норма 22.07): presence обновляет присутствие,
+  // фазу НЕ меняет, действий open/mint/debts НЕ вызывает.
+  const s = loadState();
+  console.log(`[мостик] присутствие капитана отмечено · фаза: ${s.phase} (не изменена — presence ≠ trigger)`);
+  process.exit(0);
+}
+
+if (cmd === 'await') {
+  const r = awaitCaptain(loadState());
+  if (!r.waited) { console.log('[мостик] await легален только из открытой комнаты (free).'); process.exit(1); }
+  saveState(r.state);
+  console.log('[мостик] φ=await_captain — действия ждут слова капитана (gate.await_captain: wait, не действие).');
+  process.exit(0);
+}
+
+if (cmd === 'resume') {
+  const r = resumeFree(loadState());
+  if (!r.resumed) { console.log('[мостик] resume: комната не в ожидании.'); process.exit(1); }
+  saveState(r.state);
+  console.log('[мостик] слово капитана принято — φ=free.');
+  process.exit(0);
+}
+
 if (cmd === 'open') {
   const day = today();
+  // Гейты открытия (M2): состав резолвится, попугай жив при долгах — иначе stop open.
+  const absent = new Set((arg('absent') ?? '').split(',').map((s) => s.trim()).filter(Boolean));
+  const gateProblems = openGateProblems({ absent });
+  if (gateProblems.length) {
+    for (const p of gateProblems) console.error(`✗ ${p}`);
+    console.error('[мостик] открытие остановлено гейтами (stop open). Явный absent: --absent id1,id2.');
+    process.exit(1);
+  }
   const r = openRoom(loadState(), { day, cap: 'cap' });
   if (r.already) {
     console.log(`[мостик] уже открыт (${r.state.day}) — второй дом не заводим.`);
@@ -139,16 +240,40 @@ if (cmd === 'tools') {
 }
 
 if (cmd === 'close') {
-  // НЕявное закрытие (Б4): вызывается вечерним ритуалом, не капитаном. Мягко:
-  // закрытой комнаты нет → честный no-op, не пустота.
+  // Закрытие (Б4 + M2): вечерний ритуал или явная команда. Закрытой комнаты нет →
+  // честный no-op. Печать sealed — ТОЛЬКО после записанной квитанции
+  // (gate.close_carrier: квитанция не записалась → состояние не сохраняем).
   const r = closeRoom(loadState());
   if (!r.closed) {
     console.log('[мостик] не открыт — закрывать нечего (no-op).');
     process.exit(0);
   }
+  const counts = memoryCounts();
+  const receiptPath = resolve(ROOT, `docs/bridge/${r.day}/RECEIPT.md`);
+  const fmt = (c) => (c.note ? `${JSON.stringify({ ...c, note: undefined }).slice(1, -1)} · ${c.note}` : JSON.stringify(c).slice(1, -1));
+  try {
+    mkdirSync(dirname(receiptPath), { recursive: true });
+    writeFileSync(
+      receiptPath,
+      [
+        `# Квитанция закрытия мостика — ${r.day}`,
+        '',
+        `- закрыт: ${today()} · carrier: scripts/bridge.mjs close · φ: sealed`,
+        `- долги (попугай): ${fmt(counts.debts)}`,
+        `- наблюдения (тетрадь): ${fmt(counts.observations)}`,
+        `- показанное (ShownMemo): ${fmt(counts.shown)}`,
+        '',
+        '<!-- gate.close_carrier: sealed ставится только при записанной квитанции (M2) -->',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+  } catch (e) {
+    console.error(`✗ gate.close_carrier: квитанция не записалась (${e.message}) — печать sealed НЕ ставится.`);
+    process.exit(1);
+  }
   saveState(r.state);
-  // Отправка конспекта — ФРЕЙМОМ, не прямым пушем (граница Ожегова): помечаем
-  // конспект дня к отправке; сам фрейм-контракт — потребитель #900.
+  // Отправка конспекта — ФРЕЙМОМ, не прямым пушем (граница Ожегова).
   const home = resolve(ROOT, `docs/bridge/${r.day}/CONSPECTUS.md`);
   if (existsSync(home)) {
     const body = readFileSync(home, 'utf8');
@@ -156,7 +281,7 @@ if (cmd === 'close') {
       writeFileSync(home, `${body}\n<!-- закрыт вечерним ритуалом ${today()}; поставлен на отправку фреймом (не прямой пуш) -->\n`, 'utf8');
     }
   }
-  console.log(`[мостик] закрыт вечерним ритуалом (${r.day}); конспект — на отправку фреймом.`);
+  console.log(`[мостик] закрыт (${r.day}) · φ=sealed · квитанция: docs/bridge/${r.day}/RECEIPT.md`);
   process.exit(0);
 }
 

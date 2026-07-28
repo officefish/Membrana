@@ -1,0 +1,32 @@
+{
+  "//": "Манифест фреймов ядра мостика — вердикт M2 заседания bridge-command-post (ратифицирован 27.07), DoD п.1–2: id зафиксированы, без TBD на mandatory; закон frame ⇒ carrier ∧ home. Runtime: scripts/bridge.mjs; фазовый автомат: scripts/lib/bridge-room.mjs; зубы: scripts/bridge-frames.test.mjs. Пульт (M5), кейсы (M4), чеканка (M3) — слоты-ссылки, здесь не специфицированы.",
+  "phases": ["idle", "open", "free", "await_captain", "close", "sealed"],
+  "frames": [
+    { "id": "bridge.presence", "mandatory": false, "carrier": "script:bridge.mjs presence", "home": "home.session", "note": "presence обновляет присутствие, НЕ меняет фазу (норма 22.07 → gate.presence_is_not_trigger)" },
+    { "id": "bridge.open_command", "mandatory": true, "carrier": "script:bridge.mjs open (явное слово капитана)", "home": "home.session", "note": "единственный триггер idle→open; повторный open — идемпотентный no-op со статусом" },
+    { "id": "bridge.open", "mandatory": true, "carrier": "angelina | session-scribe", "home": "home.session", "note": "открытие: дом сеанса + проверка cast (+ parrot при долгах) + φ=free" },
+    { "id": "bridge.free", "mandatory": true, "carrier": "angelina | session-scribe", "home": "home.conspect_scratch", "note": "режим, не конвейер: жесты optional, пустой конспект допустим" },
+    { "id": "bridge.close", "mandatory": true, "carrier": "script:bridge.mjs close (вечерний контур или явная команда)", "home": "home.close_receipt", "note": "идемпотентен; close ⇏ nonempty conspect; печать sealed только при отработавшем carrier" }
+  ],
+  "gates": [
+    { "id": "gate.presence_is_not_trigger", "action": "ignore", "predicate": "событие presence не вызывает open/mint/debts-действий", "carrier": "script:bridge.mjs" },
+    { "id": "gate.cast_resolvable", "action": "stop-open", "predicate": "∀ e ∈ cast: resolvable(e) ∨ explicitAbsent(e) — scripts/lib/bridge-cast.mjs", "carrier": "script:bridge.mjs open" },
+    { "id": "gate.parrot_live_if_debts", "action": "stop-open", "predicate": "blocksOpen() ⇒ parrotLive() — долги в открытии требуют живого движка кита", "carrier": "script:bridge.mjs open (предикаты — кит angelina-bridge, стык с очередью 2)" },
+    { "id": "gate.await_captain", "action": "wait", "predicate": "критический вопрос капитану → φ=await_captain; действия ждут слова, φ возвращается в free словом", "carrier": "script:bridge.mjs await|resume" },
+    { "id": "gate.close_carrier", "action": "stop-seal", "predicate": "печать sealed только после отработавшего bridge.mjs close (квитанция записана)", "carrier": "script:bridge.mjs close" }
+  ],
+  "homes": [
+    { "id": "home.session", "path": "docs/bridge/<day>/", "note": "дом сеанса комнаты" },
+    { "id": "home.conspect_scratch", "path": "docs/bridge/<day>/CONSPECTUS.md", "note": "non-canon scratch — канона конспекта нет, не притворяемся (M2)" },
+    { "id": "home.precedents", "path": "docs/precedents/", "note": "только жестом выноса, не автозаписью" },
+    { "id": "home.truth_graph_ref", "path": "docs/truth/", "note": "слот-ссылка → контракт M3 (нотариат); здесь не специфицирован" },
+    { "id": "home.close_receipt", "path": "docs/bridge/<day>/RECEIPT.md", "note": "квитанция закрытия: фазы, счётчики трёх контуров памяти (контур не поставлен → честные нули с пометкой)" }
+  ],
+  "gestures": [
+    { "id": "gesture.conspect", "mandatory": false, "carrier": "session-scribe | angelina" },
+    { "id": "gesture.debts", "mandatory": false, "carrier": "parrot (кит angelina-bridge)" },
+    { "id": "gesture.mint_intent", "mandatory": false, "carrier": "lead инициирует; исполнение — контракт M3 (admit_v1, очередь 2)" },
+    { "id": "gesture.captain_notebook", "mandatory": false, "carrier": "тетрадь капитана (контур M6, очередь 2)" },
+    { "id": "gesture.attach_shown", "mandatory": false, "carrier": "ShownMemo → evidence-реестр (контур M6, очередь 2)" }
+  ]
+}
