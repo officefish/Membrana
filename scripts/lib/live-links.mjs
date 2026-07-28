@@ -123,15 +123,50 @@ export function findNakedNumbers(text) {
 }
 
 /**
- * Проверка: остались ли голые refs (для гейта перед ласточкой).
- * Два класса находок: `bare` — `#N` без ссылки (чинит expand), `naked` — число без
- * адреса вовсе (чинит автор: полный URL или `#N`).
+ * Битые ФОРМЫ адреса (28.07, две поимки владельцем подряд):
+ *  - сокращение многоточием («…/docs/memos/README.md») — телеграм линкует огрызок → 404;
+ *  - адрес без схемы («raw.githubusercontent.com/…») — кликается не везде;
+ *  - ссылка на файл в ПРОИЗВОЛЬНОЙ ветке («/blob/insight/foo/…») — ветку удаляет мердж,
+ *    ссылка умирает. Для чтения содержания — только `/blob/main/…` либо permalink по sha.
+ *    (PR-ссылка адресует СОБЫТИЕ — что и когда влилось; её внутренности живут в ветке.)
  *
  * @param {string} text
- * @returns {{ok: boolean, bare: ReturnType<typeof findBareRefs>, naked: ReturnType<typeof findNakedNumbers>}}
+ * @returns {{kind: 'ellipsis'|'schemeless'|'branch-blob', raw: string, line: number}[]}
+ */
+export function findBrokenUrlForms(text) {
+  /** @type {{kind: 'ellipsis'|'schemeless'|'branch-blob', raw: string, line: number}[]} */
+  const hits = [];
+  const lines = String(text ?? '').split(/\r?\n/u);
+  let fenced = false;
+  lines.forEach((line, i) => {
+    if (/^```/u.test(line)) { fenced = !fenced; return; }
+    if (fenced) return;
+    for (const m of line.matchAll(/(?:…|\.{3})\/\S+/gu)) {
+      hits.push({ kind: 'ellipsis', raw: m[0], line: i + 1 });
+    }
+    for (const m of line.matchAll(/(?<![\w./@:-])((?:raw\.githubusercontent|github)\.com\/\S+)/gu)) {
+      hits.push({ kind: 'schemeless', raw: m[1], line: i + 1 });
+    }
+    for (const m of line.matchAll(/https?:\/\/github\.com\/[^/\s]+\/[^/\s]+\/blob\/([^/\s]+)\/\S+/gu)) {
+      if (m[1] !== 'main' && !/^[0-9a-f]{7,40}$/iu.test(m[1])) {
+        hits.push({ kind: 'branch-blob', raw: m[0], line: i + 1 });
+      }
+    }
+  });
+  return hits;
+}
+
+/**
+ * Проверка: остались ли мёртвые формы ссылок (гейт перед ласточкой).
+ * Три класса: `bare` — `#N` без ссылки (чинит expand), `naked` — число без адреса,
+ * `broken` — битая форма адреса (многоточие / без схемы / ветка вместо main).
+ *
+ * @param {string} text
+ * @returns {{ok: boolean, bare: ReturnType<typeof findBareRefs>, naked: ReturnType<typeof findNakedNumbers>, broken: ReturnType<typeof findBrokenUrlForms>}}
  */
 export function checkLiveLinks(text) {
   const bare = findBareRefs(text);
   const naked = findNakedNumbers(text);
-  return { ok: bare.length === 0 && naked.length === 0, bare, naked };
+  const broken = findBrokenUrlForms(text);
+  return { ok: bare.length === 0 && naked.length === 0 && broken.length === 0, bare, naked, broken };
 }

@@ -322,7 +322,7 @@ export function listLocalBranches(run = execFileSync) {
  * @returns {{steps:{label:string,cmd:string,args:string[],optional?:boolean}[],skippedSync?:string}}
  */
 export function planMergeTail(opts = {}) {
-  const { base = 'main', wait = true, branch, currentBranch, worktreeBranches, auto = false } = opts;
+  const { base = 'main', wait = true, branch, currentBranch, worktreeBranches, auto = false, keepBranch = false } = opts;
   /** @type {{label:string,cmd:string,args:string[],optional?:boolean,guard?:string}[]} */
   const steps = [];
   let skippedSync;
@@ -354,7 +354,14 @@ export function planMergeTail(opts = {}) {
     // «уронить» уже успешный merge — тот же класс ложного падения, что и #653 п.1.
     steps.push({ label: 'branch-cleanup', cmd: 'git', args: ['push', 'origin', '--delete', headBranch], optional: true });
   }
-  if (isBaseHeldElsewhere(base, worktreeBranches)) {
+  if (keepBranch) {
+    // --keep-branch (28.07, пять укусов за день у сессии мостика и один у соседа):
+    // хвост оставлял дерево НА base, а следующий коммит ловил гейт «HEAD == main»
+    // (#1232) — правка терялась в стейдже, агент диагностировал её как чужую поломку.
+    // Здесь дерево остаётся на рабочей ветке, свежесть base обеспечивает fetch.
+    steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
+    skippedSync = `ff-sync пропущен по --keep-branch: дерево осталось на «${branch ?? currentBranch ?? 'текущей ветке'}», origin/${base} обновлён`;
+  } else if (isBaseHeldElsewhere(base, worktreeBranches)) {
     // Ветку base держит соседний worktree — checkout сюда невозможен, и это норма
     // при параллельных сессиях (канон membrana-worktree). Обновляем только
     // origin/<base>, чтобы локальные сверки видели свежий main; своё дерево не трогаем.
@@ -377,7 +384,7 @@ export function planMergeTail(opts = {}) {
  * @returns {{title:string,commitBody:string,steps:{label:string,cmd:string,args:string[]}[],skippedSync?:string}}
  */
 export function planPrShip(opts) {
-  const { type, scope, message, issue, branch, base = 'main', merge = true, commit = true, wait = true, mergeOnly = false, auto = false } = opts;
+  const { type, scope, message, issue, branch, base = 'main', merge = true, commit = true, wait = true, mergeOnly = false, auto = false, keepBranch = false } = opts;
 
   // --merge-only (#700): PR уже открыт — мёржим его безопасным хвостом, без
   // branch/commit/push/pr-create. Закрывает дыру: без этого режима «смёржить уже
@@ -386,7 +393,7 @@ export function planPrShip(opts) {
   if (mergeOnly) {
     if (branch) throw new Error('pr:ship: --merge-only несовместим с --branch (PR уже открыт на текущей ветке)');
     if (!merge) throw new Error('pr:ship: --merge-only и --no-merge взаимоисключают друг друга');
-    const { steps, skippedSync } = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto });
+    const { steps, skippedSync } = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto, keepBranch: opts.keepBranch });
     return { title: '', commitBody: '', steps, skippedSync };
   }
 
@@ -440,7 +447,7 @@ export function planPrShip(opts) {
   });
   let skippedSync;
   if (merge) {
-    const tail = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto });
+    const tail = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto, keepBranch: opts.keepBranch });
     steps.push(...tail.steps);
     skippedSync = tail.skippedSync;
   }

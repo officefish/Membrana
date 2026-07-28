@@ -63,3 +63,23 @@ test('issue против pull: подсказка ведёт на верный �
   const r = checkSwallowDraft([...BASE, 'Детали: Issue #1366 (память)'].join('\n'));
   assert.ok(r.violations.some((v) => v.includes('/issues/1366')), 'для Issue — путь issues');
 });
+
+test('битые формы адреса ловятся: многоточие, без схемы, ветка вместо main (28.07)', () => {
+  const mk = (details) => [...BASE, `Детали: ${details}`].join('\n');
+
+  const ell = checkSwallowDraft(mk('каноны: https://raw.githubusercontent.com/o/M/main/a.md и …/b.md'));
+  assert.ok(ell.violations.some((v) => v.includes('огрызок')), 'сокращение многоточием — красное');
+
+  const noScheme = checkSwallowDraft(mk('каноны: raw.githubusercontent.com/o/M/main/a.md'));
+  assert.ok(noScheme.violations.some((v) => v.includes('https://')), 'адрес без схемы — красный');
+
+  const branch = checkSwallowDraft(
+    mk('[#1402](https://github.com/officefish/Membrana/blob/insight/bearing/docs/insights/x/INSIGHT.md)'),
+  );
+  assert.ok(branch.violations.some((v) => v.includes('/blob/main/')), 'файл в ветке — красный с подсказкой про main');
+
+  const good = checkSwallowDraft(
+    mk('[#1402](https://github.com/officefish/Membrana/blob/main/docs/insights/x/INSIGHT.md)'),
+  );
+  assert.equal(good.ok, true, `blob/main законен: ${good.violations.join(' · ')}`);
+});
