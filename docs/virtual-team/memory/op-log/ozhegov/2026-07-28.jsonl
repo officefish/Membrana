@@ -208,3 +208,5 @@
 {"ts":"2026-07-28T12:05:19.260Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-07-28-insight-night-doc-intern","origin":"persona-extract"}
 {"ts":"2026-07-28T12:05:19.260Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
 {"ts":"2026-07-28T12:06:47.824Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-07-28T12:27:07.698Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-07-28T12:27:32.741Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
