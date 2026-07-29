@@ -4,9 +4,11 @@
  * опубликовать его как commit status `review/teamlead` (карточка ship-review-tooth
  * #924; слово владельца 29.07: весь код в main — через ревью тимлида, BLOCK — стоп).
  *
- *   yarn review:gate [--pr N] [--publish]
+ *   yarn review:gate [--pr N] [--publish] [--ensure]
  *     без --pr        — PR текущей ветки (номер даёт gh)
  *     --publish       — записать commit status в GitHub (иначе только вердикт в stdout)
+ *     --ensure        — исход unknown: прогнать ревью один раз и перечитать вердикт
+ *                       (BLOCK не переспрашивается; вердикт по-прежнему выносит ревьюер)
  *
  * Читает docs/discussions/pr-<N>-code-review.md, ищет маркер вердикта и сверяет его
  * SHA с HEAD ветки. Три исхода: pass · block · unknown (ревью не прогонялось — НЕ pass).
@@ -26,6 +28,7 @@ import {
   parseVerdict,
   renderVerdictMarker,
   reviewGateDecision,
+  shouldEnsureReview,
   statusFromDecision,
 } from './lib/review-gate.mjs';
 
@@ -79,14 +82,33 @@ function main() {
     writeFileSync(reviewPath, md, 'utf8');
     console.log(`  маркер пересчитан по телу ревью: ${verdict} на ${String(headSha).slice(0, 8)}`);
   }
-  const decision = reviewGateDecision({
-    headSha,
-    verdict: parseVerdict(md),
-    override: {
-      enabled: process.env.REVIEW_GATE_OVERRIDE === '1',
-      reason: process.env.REVIEW_GATE_OVERRIDE_REASON,
-    },
-  });
+  const override = {
+    enabled: process.env.REVIEW_GATE_OVERRIDE === '1',
+    reason: process.env.REVIEW_GATE_OVERRIDE_REASON,
+  };
+  let decision = reviewGateDecision({ headSha, verdict: parseVerdict(md), override });
+
+  // --ensure (#1465 Ф2): «ревью не прогонялось» — не повод останавливать шип и звать
+  // человека переставить две команды руками. Последовательность gate → code-review:pr →
+  // pr:ship --merge-only повторялась 29.07 дважды знак в знак (PR #1461, #1464).
+  //
+  // Гейт при этом НЕ ослабляется: прогоняется ровно тот же ревьюер, вердикт выносит он,
+  // и повтор ровно один — если после прогона вердикта всё ещё нет, исход остаётся unknown.
+  // BLOCK не трогаем никогда: он и был вердиктом, переспрашивать нечего.
+  if (shouldEnsureReview(decision.state, argv.includes('--ensure'))) {
+    console.log(`  --ensure: ревью не найдено — прогоняю code-review:pr ${pr}`);
+    try {
+      execFileSync('node', [join(repoRoot, 'scripts/code-review.mjs'), '--pr', String(pr)], {
+        cwd: repoRoot,
+        stdio: 'inherit',
+        timeout: EXTERNAL_CALL_TIMEOUT_MS * 10,
+      });
+    } catch (e) {
+      console.error(`  ⚠ ревью не отработало (${String(e.message ?? e).split('\n')[0]}) — вердикта нет, гейт остаётся закрытым`);
+    }
+    md = existsSync(reviewPath) ? readFileSync(reviewPath, 'utf8') : '';
+    decision = reviewGateDecision({ headSha, verdict: parseVerdict(md), override });
+  }
 
   const mark = decision.state === 'pass' ? '✓' : decision.state === 'block' ? '✗' : '?';
   console.log(`review:gate — PR #${pr} · ${mark} ${decision.state}: ${decision.reason}`);

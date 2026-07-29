@@ -322,8 +322,20 @@ export function listLocalBranches(run = execFileSync) {
  * @param {{base?:string,wait?:boolean,branch?:string,currentBranch?:string,worktreeBranches?:string[]}} opts
  * @returns {{steps:{label:string,cmd:string,args:string[],optional?:boolean}[],skippedSync?:string}}
  */
+/**
+ * `--with-review` (#1465 Ф2): исход гейта «ревью не прогонялось» перестаёт быть ручной
+ * пересадкой. 29.07 связка gate → `code-review:pr N` → `pr:ship --merge-only` повторена
+ * дважды знак в знак (PR #1461, #1464). Прогоняет ревью САМ гейт — вердикт по-прежнему
+ * выносит ревьюер, BLOCK по-прежнему останавливает.
+ */
+export function reviewGateArgs(withReview = false) {
+  const args = ['scripts/review-gate.mjs', '--publish'];
+  if (withReview) args.push('--ensure');
+  return args;
+}
+
 export function planMergeTail(opts = {}) {
-  const { base = 'main', wait = true, branch, currentBranch, worktreeBranches, auto = false, keepBranch = false } = opts;
+  const { base = 'main', wait = true, branch, currentBranch, worktreeBranches, auto = false, keepBranch = false, withReview = false } = opts;
   /** @type {{label:string,cmd:string,args:string[],optional?:boolean,guard?:string}[]} */
   const steps = [];
   let skippedSync;
@@ -336,7 +348,7 @@ export function planMergeTail(opts = {}) {
     // Шип-гейт и в auto-режиме (#924): сервер сольёт по зелёным проверкам, но ревью
     // тимлида обязано состояться ДО взвода — иначе PR повиснет с pending-статусом,
     // которого никто уже не закроет. Гейт падает внятно: «прогони yarn code-review:pr N».
-    steps.push({ label: 'review-gate', cmd: 'node', args: ['scripts/review-gate.mjs', '--publish'] });
+    steps.push({ label: 'review-gate', cmd: 'node', args: reviewGateArgs(withReview) });
     steps.push({ label: 'merge-auto', cmd: 'gh', args: ['pr', 'merge', '--squash', '--auto'] });
     return { steps, skippedSync: 'хвост после merge пропущен: слияние делает сервер по зелёному (--auto)' };
   }
@@ -348,7 +360,7 @@ export function planMergeTail(opts = {}) {
   // ревью тимлида. Вердикт привязан к HEAD SHA; BLOCK и «ревью не было» одинаково
   // не пускают. Стоит ПЕРЕД merge и ПОСЛЕ ci-wait: ревьюить есть смысл то, что
   // прошло сборку. Громкий обход — REVIEW_GATE_OVERRIDE=1 с причиной.
-  steps.push({ label: 'review-gate', cmd: 'node', args: ['scripts/review-gate.mjs', '--publish'] });
+  steps.push({ label: 'review-gate', cmd: 'node', args: reviewGateArgs(withReview) });
   // #653 п.1: БЕЗ --delete-branch. Он чекаутит base локально, а base почти всегда
   // держит соседний worktree (8+ деревьев) → прогон «падает» после УЖЕ УСПЕШНОГО
   // merge (ложный красный, #700). Remote-ветка удаляется отдельным шагом; локальная
@@ -394,7 +406,7 @@ export function planMergeTail(opts = {}) {
  * @returns {{title:string,commitBody:string,steps:{label:string,cmd:string,args:string[]}[],skippedSync?:string}}
  */
 export function planPrShip(opts) {
-  const { type, scope, message, issue, branch, base = 'main', merge = true, commit = true, wait = true, mergeOnly = false, auto = false, keepBranch = false } = opts;
+  const { type, scope, message, issue, branch, base = 'main', merge = true, commit = true, wait = true, mergeOnly = false, auto = false, keepBranch = false, withReview = false } = opts;
 
   // --merge-only (#700): PR уже открыт — мёржим его безопасным хвостом, без
   // branch/commit/push/pr-create. Закрывает дыру: без этого режима «смёржить уже
@@ -403,7 +415,7 @@ export function planPrShip(opts) {
   if (mergeOnly) {
     if (branch) throw new Error('pr:ship: --merge-only несовместим с --branch (PR уже открыт на текущей ветке)');
     if (!merge) throw new Error('pr:ship: --merge-only и --no-merge взаимоисключают друг друга');
-    const { steps, skippedSync } = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto, keepBranch: opts.keepBranch });
+    const { steps, skippedSync } = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto, keepBranch: opts.keepBranch, withReview: opts.withReview });
     return { title: '', commitBody: '', steps, skippedSync };
   }
 
@@ -462,7 +474,7 @@ export function planPrShip(opts) {
   });
   let skippedSync;
   if (merge) {
-    const tail = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto, keepBranch: opts.keepBranch });
+    const tail = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto, keepBranch: opts.keepBranch, withReview: opts.withReview });
     steps.push(...tail.steps);
     skippedSync = tail.skippedSync;
   }
@@ -488,6 +500,7 @@ function parseArgs(argv) {
     // --keep-branch (28.07): не переключать дерево на base после мерджа — пять укусов
     // за день, когда следующий коммит ловил гейт «HEAD == main» (#1232).
     else if (a === '--keep-branch') o.keepBranch = true;
+    else if (a === '--with-review') o.withReview = true;
     else if (a === '--allow-mention') o.allowMentionWithoutClose = true;
     else if (a === '--issue-mention') o.issueMention = next();
     else if (a === '--body-file') o.bodyFile = next();

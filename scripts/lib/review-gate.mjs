@@ -24,6 +24,20 @@ export const REVIEW_STATUS_CONTEXT = 'review/teamlead';
 export const VERDICT_MARKER = '<!-- review-verdict';
 
 /**
+ * Можно ли догнать ревью автоматически (`--ensure`, #1465 Ф2).
+ *
+ * Догоняем ТОЛЬКО `unknown` — «ревьюер ещё не высказался». `block` — это уже сказанное
+ * слово, и переспрашивать его значило бы крутить ревью до нужного ответа; `pass` догонять
+ * нечего. Предикат вынесен из CLI, чтобы эта граница проверялась тестом, а не глазами.
+ *
+ * @param {'pass'|'block'|'unknown'} state
+ * @param {boolean} ensure
+ */
+export function shouldEnsureReview(state, ensure) {
+  return Boolean(ensure) && state === 'unknown';
+}
+
+/**
  * Разбор вердикта из markdown ревью: маркер несёт SHA и решение.
  * Форма: `<!-- review-verdict sha:<40hex> verdict:LGTM|BLOCK lead:<id> at:<iso> -->`
  * @param {string} md
