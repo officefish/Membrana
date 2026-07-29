@@ -44,6 +44,20 @@ import { readPersonaMemory } from './lib/persona-memory.mjs';
 import { listActive, loadRegistry } from './lib/task-registry.mjs';
 import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 
+/**
+ * HEAD SHA ветки PR — к нему привязывается вердикт ревью (шип-гейт #924).
+ * null, если gh недоступен: маркер вердикта тогда не пишется, а review:gate честно
+ * скажет unknown вместо ложного pass.
+ */
+function headShaOfPr(pr) {
+  try {
+    const raw = execFileSync("gh", ["pr", "view", String(pr), "--json", "headRefOid"], { encoding: "utf8", timeout: 30000 });
+    return JSON.parse(raw).headRefOid ?? null;
+  } catch {
+    return null;
+  }
+}
+
 let cli;
 try {
   cli = parseCodeReviewCli(process.argv.slice(2));
@@ -92,6 +106,8 @@ if (!cli.noRag) {
 // назначенный по каскаду явное слово → карточка → скоуп диффа; его память и
 // бестиарий уходят в промпт. Снимки собираем здесь (ядро чистое).
 let leadBlock = '';
+// Ведущий ревью во внешней области: нужен в мете вердикта шип-гейта (#924).
+let reviewLeadId = null;
 try {
   const diffPaths = execFileSync(
     'git',
@@ -107,6 +123,7 @@ try {
     diffPaths,
     activeTasks: listActive(loadRegistry()),
   });
+  reviewLeadId = lead?.id ?? lead?.persona ?? null;
   if (lead.outOfConvention) console.error(`[review-lead] ⚠ ${lead.basis}`);
   const bestiaryPath = resolve(process.cwd(), 'docs/bestiary/BESTIARY.md');
   leadBlock = formatLeadBlock({
@@ -176,7 +193,7 @@ try {
         // Шип-гейт (#924): вердикт ревью PR привязывается к ИМЕННО той версии кода,
         // которую смотрел ведущий; новый коммит протухает вердикт (yarn review:gate).
         headSha: cli.mode === 'pr' ? headShaOfPr(cli.pr) : null,
-        lead: lead?.id ?? lead?.persona ?? null,
+        lead: reviewLeadId,
       },
     });
     console.log(out);
