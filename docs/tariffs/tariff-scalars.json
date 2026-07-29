@@ -1,0 +1,63 @@
+{
+  "//": "S0 плана интеграции тарифной сетки (заседание tariff-grid, ратифицировано владельцем 29.07). ДЕКЛАРАЦИЯ числовых потолков трёх тарифов — единственный источник этих чисел. Носители (сид, будущие ячейки матрицы) читают отсюда, не дублируют.",
+  "//provenance": "Матрица владельца: шторм storm-tariff-boundary-dev-2026-07-29, тезисы T2-T5. Каркас: docs/meeting/tariff-grid/MEETING_VERDICT.md.",
+  "//legal-no": "Неизвестное значение объявляется явно: null + причина в *_note. Молчаливое отсутствие — дефект (зуб tariff_scalars_declared).",
+  "//scope": "ТОЛЬКО числовые потолки (род quota) и ссылка на каталог. Инструменты, gated-возможности и produce живут в матрице сетки (S1), не здесь.",
+  "version": 1,
+  "tariffs": [
+    {
+      "id": "free-v1",
+      "productName": "Датчик",
+      "rank": 0,
+      "userStorageQuotaMiB": 512,
+      "userStorageQuotaMiB_note": "намеренный регресс с 1 ГБ (T5 шторма): бесплатный тариф сжат вдвое сознательно",
+      "coldStorageQuotaMiB": null,
+      "coldStorageQuotaMiB_note": "владелец назвал холодную память только для «Блокпоста»; для «Датчика» не объявлена — содержание набора уточняется отдельно",
+      "bufferQuotaMiB": 1024,
+      "bufferQuotaMiB_note": "живой буфер записи — третья квота (M4), владельцем не пересматривался; оставлен как есть",
+      "maxNodesPerMembrane": 1,
+      "maxUserWorkspaces": 3,
+      "maxActiveKeysPerNode": 1,
+      "datasetCatalogId": "free-v1-catalog",
+      "datasetSounds": 250
+    },
+    {
+      "id": "checkpoint-v1",
+      "productName": "Блокпост",
+      "rank": 1,
+      "userStorageQuotaMiB": 2048,
+      "coldStorageQuotaMiB": 2048,
+      "coldStorageQuotaMiB_note": "«2 ГБ + 2 ГБ холодной памяти»: холодная — хранилище треков, горячая — область детекторов (T10-T11)",
+      "bufferQuotaMiB": null,
+      "bufferQuotaMiB_note": "владельцем не назван; содержание набора уточняется отдельно",
+      "maxNodesPerMembrane": 4,
+      "maxUserWorkspaces": null,
+      "maxUserWorkspaces_note": "владельцем не назван для старших тарифов",
+      "maxActiveKeysPerNode": null,
+      "maxActiveKeysPerNode_note": "владельцем не назван",
+      "datasetCatalogId": null,
+      "datasetCatalogId_note": "каталог на 600 звуков объявлен по смыслу, идентификатор не назначен — S1",
+      "datasetSounds": 600
+    },
+    {
+      "id": "observatory-v1",
+      "productName": "Наблюдательный пункт",
+      "rank": 2,
+      "userStorageQuotaMiB": null,
+      "userStorageQuotaMiB_note": "«всё остальное на уточнении» (T4) — объём не назван",
+      "coldStorageQuotaMiB": null,
+      "coldStorageQuotaMiB_note": "не назван (T4)",
+      "bufferQuotaMiB": null,
+      "bufferQuotaMiB_note": "не назван (T4)",
+      "maxNodesPerMembrane": 9,
+      "maxUserWorkspaces": null,
+      "maxUserWorkspaces_note": "не назван (T4)",
+      "maxActiveKeysPerNode": null,
+      "maxActiveKeysPerNode_note": "не назван (T4)",
+      "datasetCatalogId": null,
+      "datasetCatalogId_note": "не назначен — S1",
+      "datasetSounds": null,
+      "datasetSounds_note": "не назван (T4); «доступно всё из предыдущих тарифов» — не число"
+    }
+  ]
+}
