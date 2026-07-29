@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `night-triage-insight-channel` | Канал «ночной триаж → карточка инсайта»: дома сырья, promote-only PR, стык с магистралью дня | M | [`NIGHT_TRIAGE_INSIGHT_CHANNEL_PROMPT.md`](../prompts/NIGHT_TRIAGE_INSIGHT_CHANNEL_PROMPT.md) | [#1445](https://github.com/officefish/Membrana/issues/1445) |
 | `deps-basket-immediate-2026-07-29` | Корзина deps «СРАЗУ»: 1 critical (tar DoS) + 22 high по порогу M1 | S | [`DEPS_BASKET_IMMEDIATE_2026_07_29_PROMPT.md`](../prompts/DEPS_BASKET_IMMEDIATE_2026_07_29_PROMPT.md) | [#1422](https://github.com/officefish/Membrana/issues/1422) |
 | `archivarius-sessions-container` | Контейнер сессий Archivarius: Mongo office, адресуемые span, ingest/search с секрет-маской | L | [`ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md`](../prompts/ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md) | [#1330](https://github.com/officefish/Membrana/issues/1330) |
 | `worktree-hygiene-epic` | Эпик: гигиена рабочих деревьев — freshEnough∧clean, гард держателя, инвентарь | L | [`WORKTREE_HYGIENE_EPIC_PROMPT.md`](../prompts/WORKTREE_HYGIENE_EPIC_PROMPT.md) | [#1232](https://github.com/officefish/Membrana/issues/1232) |

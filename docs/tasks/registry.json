@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "night-triage-insight-channel",
+      "title": "Канал «ночной триаж → карточка инсайта»: дома сырья, promote-only PR, стык с магистралью дня",
+      "promptPath": "docs/prompts/NIGHT_TRIAGE_INSIGHT_CHANNEL_PROMPT.md",
+      "githubIssue": 1445,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-29",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "kuryokhin"
+      ],
+      "notes": "Консилиум 29.07: четыре ночных триажа (25-28.07) легли черновиками PR #1215/#1309/#1369/#1415, insight_yield=0, все шестеро выбрали альтернативу вместо натянутой идеи. Отчёт отдаёт сырьё (158 orphan с одним словом relink, 106 stale с re-scope, dwell +1 в сутки) вместо наблюдения; носитель есть, читателя нет — зверь B8. Черновики закрыты вердиктом close_no_card.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "deps-basket-immediate-2026-07-29",
       "title": "Корзина deps «СРАЗУ»: 1 critical (tar DoS) + 22 high по порогу M1",
       "promptPath": "docs/prompts/DEPS_BASKET_IMMEDIATE_2026_07_29_PROMPT.md",
