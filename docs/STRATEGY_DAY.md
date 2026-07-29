@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-07-28T03:55:46.703Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-07-29T04:48:57.838Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -32,7 +32,9 @@ _Кристаллов активно: 115 (owner: 72, derived: 43). Страте
 - **Сегодняшний ritual:day продемонстрирует… × Граф правды второй день вытесняет рутину…** — `research:todays-ritual-will-demo-c1__truth-graph-displaces-its-own-purpose`
 
 **Фоновые** (не своевременны сейчас):
+- **Наземная пеленгация цели: угловой трек без дальности + временная фильтрация детекций** — `insight:insight-bearing-tracking`
 - **Оркестрация хендофф: разрез дня на изолированные брифы с асимметрией знания** — `insight:insight-handoff-orchestration`
+- **Ночной интерн документации: слепой проход → глубокий → дельта-патчи докам** — `insight:insight-night-doc-intern`
 - **Контракт носителя: объявленный участник процедуры обязан быть вызываемым** — `insight:insight-cast-carrier-contract`
 - ~~**AI-агент построения UserCase по описанию пользователя**~~ — `insight:insight-agent-scenario-builder` _(stale · 2026-06-25)_
 - ~~**Loop engineering: соревновательное тестирование с точками останова**~~ — `insight:insight-loop-engineering-competition-test` _(stale · 2026-06-25)_
@@ -47,6 +49,7 @@ _Кристаллов активно: 115 (owner: 72, derived: 43). Страте
 - **Оркестрация процедур через n8n: кожух и производный рендер поверх git как единственного источника правды** — `insight:insight-procedures-orchestration-n8n`
 - **Токены правды: владельческие факты как источник истины для ритуала** — `insight:insight-truth-tokens-owner-facts`
 - **Контейнер прецедентов + мастерская к нему** — `insight:insight-precedent-container`
+- **Второй тариф: MFCC-спектр + нейроанализ спектрограмм машинным зрением, разделение продукта по тарифам** — `insight:insight-spectrum-tiers`
 - ~~**Dual-density UI: operator vs engineer mode**~~ — `insight:insight-rodchenko-operator-density-mode` _(stale · 2026-06-25)_
 - **Tier2: 5 канонических рабочих деревьев (main/tooling/product/codex/cursor), спринт всегда уходит в свою ветку** — `insight:insight-tier2-worktree-topology`
 - ~~**Начитанная виртуальная команда: досье персон + фоновый stack-watch за новинками стека**~~ — `insight:insight-team-stack-watch` _(stale · 2026-07-09)_
@@ -60,7 +63,7 @@ _Кристаллов активно: 115 (owner: 72, derived: 43). Страте
 - **Интеграция внешнего датасета DADS (Антон) в контур детекторов** — `insight:insight-dads-detector-integration`
 - ~~**Объект Slide и fullscreen-режим презентации сценария**~~ — `insight:insight-slide-fullscreen-presentation` _(stale · 2026-06-25)_
 - ~~**Sunrise flashes — утренний тематический flash (RAG + news)**~~ — `insight:insight-sunrise-flash` _(stale · 2026-06-25)_
-- **Полная чистка реестра: 189 фаз носят githubIssue своего эпика** — `insight:insight-registry-epic-issue-full-cleanup`
+- ~~**Полная чистка реестра: 189 фаз носят githubIssue своего эпика**~~ — `insight:insight-registry-epic-issue-full-cleanup` _(stale · 2026-07-15)_
 - **Research-tree как sprite-landscape (техника Bear 71, MIT)** — `insight:insight-research-tree-sprite-landscape`
 - ~~**SearXNG — приватный keyless веб-поиск для агентов**~~ — `insight:insight-mcp-searxng-private-search` _(stale · 2026-06-27)_
 - **Борд состояния сети в харнес-панели (здоровье N серверов)** — `insight:insight-network-status-board`
@@ -79,7 +82,7 @@ _Кристаллов активно: 115 (owner: 72, derived: 43). Страте
 
 ## Provenance каналов
 
-- ✅ `insight` — жив, элементов: 44
+- ✅ `insight` — жив, элементов: 47
 - ✅ `research` — жив, элементов: 2
 
 > Стратегия описывает акцент (`highlight`), но не назначает исполнителей и не пишет DoD:
