@@ -9,8 +9,8 @@ import { checkSwallowDraft } from './lib/swallow-mirror.mjs';
 import { skeletonFor } from './swallow-draft.mjs';
 
 test('заготовка day = скелет гейта дословно; evening меняет только интро', () => {
-  assert.match(skeletonFor('day'), /^Доброе утро!/u);
-  assert.match(skeletonFor('evening'), /^Добрый вечер!/u);
+  assert.match(skeletonFor('day'), /^☀️ Доброе утро!/u);
+  assert.match(skeletonFor('evening'), /^🌙 Добрый вечер!/u);
   const dayRest = skeletonFor('day').split('\n').slice(1).join('\n');
   const eveRest = skeletonFor('evening').split('\n').slice(1).join('\n');
   assert.equal(dayRest, eveRest);

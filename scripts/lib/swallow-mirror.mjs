@@ -20,15 +20,19 @@ import { externalizeQuery } from './strategy-horizon.mjs';
  * Партнёры не знают внутренних названий блоков; порядок — зеркало плана (T8).
  */
 export const SWALLOW_LABELS = Object.freeze([
-  { slotId: 'magistral', label: 'Главное' },
-  { slotId: 'reinforcement', label: 'Также' },
-  { slotId: 'perspective', label: 'Смотрим вперёд' },
-  { slotId: 'experimental', label: 'Пробуем' },
-  { slotId: 'sanitary', label: 'Гигиена' },
+  { slotId: 'magistral', label: 'Главное', emoji: '🎯' },
+  { slotId: 'reinforcement', label: 'Также', emoji: '🔧' },
+  { slotId: 'perspective', label: 'Смотрим вперёд', emoji: '🔭' },
+  { slotId: 'experimental', label: 'Пробуем', emoji: '🧪' },
+  { slotId: 'sanitary', label: 'Гигиена', emoji: '🧹' },
 ]);
 
 /** Метка хвостовой строки деталей — единственное место, где допустимы #N. */
 export const DETAILS_LABEL = 'Детали';
+
+/** Эмодзи интро (утро) и деталей — в скелете; гейт требует только эмодзи блоков. */
+export const INTRO_EMOJI = '☀️';
+export const DETAILS_EMOJI = '📎';
 
 /**
  * Шаблон черновика: интро свободное, затем 5 строк-зеркал по порядку frame(),
@@ -36,8 +40,10 @@ export const DETAILS_LABEL = 'Детали';
  * @returns {string}
  */
 export function buildSwallowSkeleton() {
-  const rows = SWALLOW_LABELS.map((l) => `${l.label}: <одной фразой, без внутренних имён>`);
-  return ['Доброе утро! <интро одной-двумя фразами>', '', ...rows, '', `${DETAILS_LABEL}: [#N](https://github.com/officefish/Membrana/pull/N) — ТОЛЬКО кликабельными markdown-ссылками`].join('\n');
+  // Эмодзи — обязательная часть формата (слово владельца 29.07); гейт зеркала
+  // требует строку С МЕТКИ, поэтому эмодзи стоит ПОСЛЕ метки: «Главное: 🎯 …».
+  const rows = SWALLOW_LABELS.map((l) => `${l.label}: ${l.emoji} <одной фразой, без внутренних имён>`);
+  return [`${INTRO_EMOJI} Доброе утро! <интро одной-двумя фразами>`, '', ...rows, '', `${DETAILS_LABEL}: ${DETAILS_EMOJI} [#N](https://github.com/officefish/Membrana/pull/N) — ТОЛЬКО кликабельными markdown-ссылками`].join('\n');
 }
 
 /**
@@ -70,13 +76,18 @@ export function checkSwallowDraft(draft) {
   });
 
   let prevIndex = -1;
-  for (const { label } of SWALLOW_LABELS) {
+  for (const { label, emoji } of SWALLOW_LABELS) {
     const hit = labelLineIndex.get(label);
     if (!hit) {
       violations.push(`нет строки «${label}:» — зеркало блока потеряно`);
       continue;
     }
-    if (hit.text.trim() === '' || /^<.*>$/u.test(hit.text.trim())) {
+    // Эмодзи — обязательная часть формата (слово владельца 29.07): после метки.
+    if (!hit.text.includes(emoji)) {
+      violations.push(`строка «${label}:» без эмодзи ${emoji} — эмодзи обязательны; форма: «${label}: ${emoji} …»`);
+    }
+    const textSansEmoji = hit.text.trim().replace(/^[\p{Extended_Pictographic}️\s]+/u, '');
+    if (textSansEmoji === '' || /^<.*>$/u.test(textSansEmoji)) {
       violations.push(`строка «${label}:» пуста или осталась плейсхолдером`);
     }
     if (hit.index < prevIndex) violations.push(`строка «${label}:» стоит раньше предыдущего блока — порядок зеркала нарушен`);

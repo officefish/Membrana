@@ -26,7 +26,12 @@ function main() {
     console.error('ritual:artifacts-commit — отказ: HEAD == main (#1232); цепочка ритуала обязана жить на своей ветке');
     return 1;
   }
-  const manifest = JSON.parse(readFileSync(join(repoRoot, 'docs/tasks/evening-ritual-steps.json'), 'utf8'));
+  // --manifest <path> — какой цепочке принадлежат артефакты (утро спотыкалось о
+  // свои же, помеха 29.07 — близнец вечерней №1). Умолчание — вечер, как было.
+  const argv = process.argv.slice(2);
+  const mi = argv.indexOf('--manifest');
+  const manifestRel = mi > -1 && argv[mi + 1] ? argv[mi + 1] : 'docs/tasks/evening-ritual-steps.json';
+  const manifest = JSON.parse(readFileSync(join(repoRoot, manifestRel), 'utf8'));
   const whitelist = whitelistFromManifest(manifest, date);
   const { take, leave } = classifyStatus(run('git', ['status', '--porcelain']), whitelist, date);
 
