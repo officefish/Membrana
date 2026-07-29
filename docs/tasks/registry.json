@@ -5460,7 +5460,11 @@
       "notes": "Фаза PC-2 спринта palette-clarity-nodes #493. Консилиум pc2-periodic-window-gate-2026-07-15 (22 реплики): НОВЫЙ узел is-window-elapsed (periodic-гейт по host-часам, вход windowMs, выходы exec true/false, per-node окно, БЕЗ RecorderRef) — не обобщение is-recording-window-full. Граница: onTick=pacing, is-window-elapsed=гейт. Реализация: SCENARIO_NODE_KINDS + host-хук + пересборка usercase-free-spectrum-live. OUT: alarm-loop, долг collectorConfig.windowSec (F2 path-specific). Старт реализации — LGTM владельца.",
       "archiveNotes": null,
       "githubIssueClosedAt": "2026-07-15",
-      "githubIssueStateReason": "COMPLETED"
+      "githubIssueStateReason": "COMPLETED",
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "repo-clean",
@@ -5902,7 +5906,11 @@
       "branch": "chore/backlog-cleanup-s1-clean",
       "opened": "2026-07-01",
       "closed": null,
-      "archivedAt": "2026-07-01"
+      "archivedAt": "2026-07-01",
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "rt-recon-s1",
@@ -5939,7 +5947,11 @@
         "vesnin"
       ],
       "archiveNotes": "52 перехода в transitions[]: 17 genesis (2026-05-12) + 35 now (2026-07-01). computeStatesAt + buildFlowGraph(playhead). UI-тогл в шапке. PR #220. TypeScript чистый.",
-      "notes": "Ретроактивная регистрация: работа выполнена без промпта. Архитектурное решение: event sourcing через transitions[] в JSON, playhead в UIState."
+      "notes": "Ретроактивная регистрация: работа выполнена без промпта. Архитектурное решение: event sourcing через transitions[] в JSON, playhead в UIState.",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "research-tree-marathon-prep",
@@ -5959,7 +5971,11 @@
       "archivedAt": "2026-07-01",
       "archiveNotes": "Prep-epic завершён: S1 bootstrap, S2 state-decision, S3 verify-сверка (14 узлов), RT-RENDER марафон (интерактивный граф xyflow+dagre), 4 документа из треда добавлены. PR #220.",
       "notes": "Research-Tree — самостоятельный проект мониторинга разработки. Prep-epic готовит репо к марафону: bootstrap + state decision.",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "rt-prep-s0-registration",
@@ -5974,7 +5990,11 @@
       "supportPersonas": [],
       "archivedAt": "2026-07-01",
       "archiveNotes": "Issue #219 открыт, epic + 3 задачи зарегистрированы в реестре.",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "rt-prep-s1-bootstrap",
@@ -5993,7 +6013,11 @@
       "archivedAt": "2026-07-01",
       "archiveNotes": "Workspace создан, yarn dev запускается на :5174, граф грузится из JSON (60 узлов). package.json workspace прописан явно (Harmonic-Detector — legacy pnpm, несовместим с apps/demos/*).",
       "notes": "По §4 DEMO_STACK.md: package.json, tsconfig, vite.config.ts, tailwind, index.html, src/main.tsx + App.tsx. yarn dev запускается, JSON грузится.",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "rt-prep-s2-state-decision",
@@ -6014,7 +6038,11 @@
       "archivedAt": "2026-07-01",
       "archiveNotes": "STATE_ARCHITECTURE.md создан, выбрана 4-слойная архитектура: URL=useSearchParams, Async=TanStack Query, Canvas=xyflow store, Transient=useReducer+Context. PR #220.",
       "notes": "STATE_ARCHITECTURE.md указывает на TanStack Query для git time-travel. Нужно зафиксировать финальное решение и закрыть открытый вопрос §5.",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "fix-async-jobs-client",
@@ -6053,7 +6081,11 @@
         "dynin",
         "rodchenko",
         "kuryokhin"
-      ]
+      ],
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "ci-test-stability-refactor",
@@ -12668,7 +12700,11 @@
         "ozhegov",
         "rodchenko"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "smoke-s1-nb0-gate-docs",
@@ -12691,7 +12727,11 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "smoke-s1-nb1-playwright-scaffold",
@@ -12712,7 +12752,11 @@
       "nightPhase": "NB1",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "smoke-s1-nb2-smoke-tests-testids",
@@ -12736,7 +12780,11 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "smoke-s1-nb3-optional-ci-workflow",
@@ -12757,7 +12805,11 @@
       "nightPhase": "NB3",
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "smoke-s1-nb4-docs-handoff",
@@ -12780,7 +12832,11 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "githubIssueClosedAt": "2026-07-01"
+      "githubIssueClosedAt": "2026-07-01",
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "tasks-audit-v1",
@@ -12799,7 +12855,11 @@
         "ozhegov"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "ta-0-process-regulations",
@@ -12822,7 +12882,11 @@
         "ozhegov"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "ta-1-audit-paths-lib",
@@ -12845,7 +12909,11 @@
         "vesnin"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "ta-2-bookkeeping-script",
@@ -12868,7 +12936,11 @@
         "vesnin"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "ta-3-reviewing-script",
@@ -12891,7 +12963,11 @@
         "rodchenko"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "ta-4-audit-orchestrator",
@@ -12915,7 +12991,11 @@
         "vesnin"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "ta-5-script-tests",
@@ -12938,7 +13018,11 @@
         "dynin"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "ta-6-cursor-skills",
@@ -12961,7 +13045,11 @@
         "ozhegov"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "ta-7-docs-ritual-integration",
@@ -12984,7 +13072,11 @@
         "ozhegov"
       ],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "ta-8-epic-lgtm",
@@ -13007,7 +13099,11 @@
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "strategicWave": "meta",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "usercase-mvp-v2-groups-async",
@@ -15785,7 +15881,11 @@
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "archivedAt": "2026-07-01",
-      "archiveNotes": "Протокол: docs/discussions/mcp-agent-tooling-consilium-2026-06-27-PROTOCOL.md"
+      "archiveNotes": "Протокол: docs/discussions/mcp-agent-tooling-consilium-2026-06-27-PROTOCOL.md",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "mcp-tooling-m1-codebase-memory",
@@ -15804,7 +15904,11 @@
       ],
       "archivedAt": "2026-07-01",
       "archiveNotes": "codebase-memory-mcp 0.8.1 запущен, граф 26936/60872, хуки подключены — M1 gate снят",
-      "completedAt": "2026-07-01"
+      "completedAt": "2026-07-01",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "mcp-tooling-m2-headroom-pilot",
@@ -15820,7 +15924,11 @@
       "leadPersona": "dynin",
       "supportPersonas": [],
       "archivedAt": "2026-07-01",
-      "archiveNotes": "Реальная сессия замерена: 4.9% compression (gate не пройден), но cache_hit=98.2% — прокси не мешает prompt cache. Рекомендация: переопределить gate на cache_hit ≥80%. Отчёт: proxy-perf-report-real.json"
+      "archiveNotes": "Реальная сессия замерена: 4.9% compression (gate не пройден), но cache_hit=98.2% — прокси не мешает prompt cache. Рекомендация: переопределить gate на cache_hit ≥80%. Отчёт: proxy-perf-report-real.json",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "mcp-tooling-m3-searxng",
@@ -15836,7 +15944,11 @@
       "leadPersona": "dynin",
       "supportPersonas": [],
       "archivedAt": "2026-07-25",
-      "archiveNotes": "Deferred: не на критическом пути. Вернуть при запросе product на keyless DSP-ресёрч."
+      "archiveNotes": "Deferred: не на критическом пути. Вернуть при запросе product на keyless DSP-ресёрч.",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "mcp-tooling-m4-hindsight-spike",
@@ -15854,7 +15966,11 @@
         "vesnin"
       ],
       "archivedAt": "2026-07-25",
-      "archiveNotes": "Vectorize-хостед §5-запрет. Self-hostable вариант — отдельный mini-spike, не в этом спринте."
+      "archiveNotes": "Vectorize-хостед §5-запрет. Self-hostable вариант — отдельный mini-spike, не в этом спринте.",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "mcp-tooling-m5-strategy-sync",
@@ -15871,7 +15987,11 @@
       "supportPersonas": [],
       "archivedAt": "2026-07-01",
       "archiveNotes": "MCP_INTEGRATION_STRATEGY.md §5 обновлён в рамках спринта mcp-agent-tooling-2026-06-27",
-      "completedAt": "2026-07-01"
+      "completedAt": "2026-07-01",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "rag-dual-circuit-v1",
@@ -15903,7 +16023,11 @@
       "createdAt": "2026-06-21",
       "archivedAt": "2026-06-21",
       "archiveNotes": "Done post-factum. scaffold + typecheck green. Эпик: rag-dual-circuit-v1.",
-      "epicId": "rag-dual-circuit-v1"
+      "epicId": "rag-dual-circuit-v1",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "rag-r1-lancedb-index",
@@ -15916,7 +16040,11 @@
       "createdAt": "2026-06-21",
       "archivedAt": "2026-06-24",
       "archiveNotes": "Done post-factum. yarn rag:index --full работает; ~500-800 chunks; incremental без дубликатов. Эпик: rag-dual-circuit-v1.",
-      "epicId": "rag-dual-circuit-v1"
+      "epicId": "rag-dual-circuit-v1",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "rag-r2-operative-circuit",
@@ -15929,7 +16057,11 @@
       "createdAt": "2026-06-22",
       "archivedAt": "2026-06-24",
       "archiveNotes": "Done post-factum. operative/: recent-docs, keyword-search, path-filters, scoring. Эпик: rag-dual-circuit-v1.",
-      "epicId": "rag-dual-circuit-v1"
+      "epicId": "rag-dual-circuit-v1",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "rag-r3-dual-retriever",
@@ -15942,7 +16074,11 @@
       "createdAt": "2026-06-24",
       "archivedAt": "2026-06-24",
       "archiveNotes": "Done post-factum. retriever/dual-retriever.ts + archive-port.ts. Условный LGTM Vesnin — pending acceptance-demo (ragx-c2). Эпик: rag-dual-circuit-v1.",
-      "epicId": "rag-dual-circuit-v1"
+      "epicId": "rag-dual-circuit-v1",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "rag-r4-office-endpoint",
@@ -15955,7 +16091,11 @@
       "createdAt": "2026-06-25",
       "archivedAt": "2026-06-25",
       "archiveNotes": "Done post-factum. background-office/modules/rag/: controller, service, module. Эпик: rag-dual-circuit-v1.",
-      "epicId": "rag-dual-circuit-v1"
+      "epicId": "rag-dual-circuit-v1",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "rag-r5-rituals",
@@ -15968,7 +16108,11 @@
       "createdAt": "2026-06-27",
       "archivedAt": "2026-06-27",
       "archiveNotes": "Done post-factum (коммит dbaaff8). rag-evening-index.mjs интегрирован. standup/consilium через rag:query. Эпик: rag-dual-circuit-v1.",
-      "epicId": "rag-dual-circuit-v1"
+      "epicId": "rag-dual-circuit-v1",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "rag-r6-closure",
@@ -16026,7 +16170,11 @@
       "archivedAt": "2026-06-29",
       "archiveNotes": null,
       "epicId": "agent-context-optimization-v1",
-      "githubIssueClosedAt": "2026-06-30"
+      "githubIssueClosedAt": "2026-06-30",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "issue-178-async-v2-reconciliation",
@@ -18850,7 +18998,11 @@
       "leadPersona": "dynin",
       "notes": "Ретроспектива 09.07: дефолт latest молча откатил прод (cabinet-images пушит latest только на релиз-теги cabinet-v*, main-пуш тегирует main/sha-*). Фикс: DEFAULT tag main в _ssh-cabinet-deploy-image.mjs ЛИБО обязательный явный CABINET_IMAGE_TAG (fail без него). + строка в docs. См. память project-cabinet-deploy-traps ловушка 3.",
       "archivedAt": "2026-07-10",
-      "archiveNotes": "PR #334 merged (408944ce); дефолт main, resolveCabinetImageTag + 3 unit; ловушка latest закрыта"
+      "archiveNotes": "PR #334 merged (408944ce); дефолт main, resolveCabinetImageTag + 3 unit; ловушка latest закрыта",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "pr-ship-no-commit",
@@ -18865,7 +19017,11 @@
       "leadPersona": "ozhegov",
       "notes": "Ретроспектива 09.07: pr:ship содержит git commit без варианта пропуска — при готовых коммитах флоу неприменим (дважды за день обходили руками push→PR→merge). Добавить --no-commit (skip commit step, гард: есть unpushed коммиты) + unit в pr-ship.test.mjs.",
       "archivedAt": "2026-07-10",
-      "archiveNotes": "PR #335 merged (b7abe4c5); --no-commit + гард --branch, +2 unit (7/7)"
+      "archiveNotes": "PR #335 merged (b7abe4c5); --no-commit + гард --branch, +2 unit (7/7)",
+      "promptLost": {
+        "reason": "карточка легаси-периода без адреса промпта — задание жило вне репозитория, восстановить нечего",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "comp-detection-alarm",
@@ -19101,7 +19257,11 @@
       "notes": "Фаза PC-1 спринта palette-clarity-nodes #493. ADR-0006 (DRAFT). Вариант A: расширить make-report-from-analysis до DetectionAnalysisRef (не новый узел — B был бы консилиум-гейт). Аддитивный ensemble-путь в рантайме (trend-путь не трогаем, нулевой риск), новый host-хук makeReportFromEnsembleAnalysis, честный отчёт neuro-detection/v1 без combined. Нейро-FREE-граф переходит с make-combined-report на make-report-from-analysis. Кросс-пакет: core socket + device-board executor + host + client bridge + graph.",
       "archiveNotes": "PR #498 merged squash cf7c8d423f50; Teamlead LGTM offline (docs/reviews/pc1-single-detector-report-teamlead.md); ADR-0006 ACCEPTED. CI: core 138 + device-board 793 + client 297.",
       "githubIssueClosedAt": "2026-07-15",
-      "githubIssueStateReason": "COMPLETED"
+      "githubIssueStateReason": "COMPLETED",
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "batch-collection-run-contour",
@@ -19166,7 +19326,11 @@
       "notes": "3 блока spectrum-live/neuro-detection/sample-recording; изоляция до Interface Consilium; мёржатся все три, победителя нет. Первый Cowork Sprint (формат #464). Каркас 3+1 уже в free-tier-user-case-entries.ts — блоки наливают содержимое в заготовки, loadDocument переключается на интеграции. Constraints: новых узлов палитры НЕ вводить, combined UC не трогать (донор топологии), живой Run = проверка сборки не детекции, живой дрон НЕ гейт перед отгрузкой. Кредит Anthropic пуст → Interface Consilium через --secretary-file.",
       "archiveNotes": null,
       "githubIssueClosedAt": "2026-07-15",
-      "githubIssueStateReason": "COMPLETED"
+      "githubIssueStateReason": "COMPLETED",
+      "promptLost": {
+        "reason": "промпт не сохранён в репозитории — карточка пришла легаси-миграцией архива (3b28ca3e, 30.06): файл по этому пути никогда не создавался (git log --diff-filter=A пуст)",
+        "since": "2026-06-30"
+      }
     },
     {
       "id": "docs-canon-drift",

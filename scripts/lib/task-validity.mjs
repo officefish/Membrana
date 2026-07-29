@@ -132,6 +132,32 @@ function finding(p) {
 }
 
 /**
+ * Легальная утрата промпта (норма B10, долг «битые ссылки на промпты», 29.07).
+ *
+ * Вещдок: миграция легаси-архива 30.06 (`3b28ca3e`) принесла карточки со ссылками
+ * на промпты, которых в репозитории НИКОГДА не было (git log --diff-filter=A пуст),
+ * плюс карточки вовсе без промпта — 43 blocker'а копились месяц как «давний долг».
+ * Восстанавливать нечего: файлы не удалялись, они не существовали.
+ *
+ * Правило: АРХИВНАЯ карточка вправе объявить утрату полем
+ * `promptLost: {reason, since}` — тогда находка становится warning со следом в
+ * истории. Молчаливая пустота по-прежнему blocker; ЖИВАЯ карточка без промпта —
+ * blocker при любой причине (работа без задания не легализуется).
+ *
+ * @param {object} card
+ * @returns {boolean}
+ */
+export function isLegalPromptLoss(card) {
+  return (
+    card?.status === 'archived' &&
+    typeof card?.promptLost?.reason === 'string' &&
+    card.promptLost.reason.trim().length > 0 &&
+    typeof card?.promptLost?.since === 'string' &&
+    card.promptLost.since.trim().length > 0
+  );
+}
+
+/**
  * validateTask(card, links) — элемент: только одна карточка + её слепок.
  *
  * @param {object} card
@@ -206,15 +232,31 @@ export function validateTask(card, links) {
   }
 
   if (!card.promptPath || typeof card.promptPath !== 'string' || !card.promptPath.trim()) {
-    findings.push(
-      finding({
-        level: 'blocker',
-        cardId,
-        field: 'promptPath',
-        message: 'promptPath пуст — у карточки нет адреса промпта',
-        code: 'field.promptPath.missing',
-      }),
-    );
+    // Легальное «нет» (норма B10): архивная карточка легаси-миграции, промпт которой
+    // НИКОГДА не лежал в репозитории, объявляет это полем promptLost{reason, since}.
+    // Молчаливой пустоты по-прежнему нет: без причины — blocker; у ЖИВОЙ карточки
+    // отсутствие промпта остаётся blocker'ом при любой причине (работа без задания).
+    if (isLegalPromptLoss(card)) {
+      findings.push(
+        finding({
+          level: 'warning',
+          cardId,
+          field: 'promptPath',
+          message: `промпт не сохранён: ${card.promptLost.reason} (с ${card.promptLost.since})`,
+          code: 'link.prompt.legacy-lost',
+        }),
+      );
+    } else {
+      findings.push(
+        finding({
+          level: 'blocker',
+          cardId,
+          field: 'promptPath',
+          message: 'promptPath пуст — у карточки нет адреса промпта',
+          code: 'field.promptPath.missing',
+        }),
+      );
+    }
   }
 
   if (card.status === 'archived' && (card.archivedAt == null || card.archivedAt === '')) {
@@ -242,7 +284,23 @@ export function validateTask(card, links) {
   }
 
   // Промпт: отсутствие файла — blocker; unknown — только warning.
-  if (snap.promptExists === false) {
+  // Исключение — объявленная утрата (promptLost) у АРХИВНОЙ карточки: ссылка
+  // сохранена как след истории, но названа мёртвой с причиной и датой.
+  const hasPromptPath = typeof card.promptPath === 'string' && card.promptPath.trim().length > 0;
+  if (!hasPromptPath) {
+    // Пустой путь уже назван выше (field.promptPath.missing / legacy-lost);
+    // второй находкой «файл «null» не найден» шуметь незачем — это не адрес.
+  } else if (snap.promptExists === false && isLegalPromptLoss(card)) {
+    findings.push(
+      finding({
+        level: 'warning',
+        cardId,
+        field: 'promptPath',
+        message: `промпт «${card.promptPath}» не сохранён: ${card.promptLost.reason} (с ${card.promptLost.since})`,
+        code: 'link.prompt.legacy-lost',
+      }),
+    );
+  } else if (snap.promptExists === false) {
     findings.push(
       finding({
         level: 'blocker',
