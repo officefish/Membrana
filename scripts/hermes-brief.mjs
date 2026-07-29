@@ -17,6 +17,10 @@
  * переиспользуется из `lib/git-day-context.mjs`, не дублируется.
  *
  * Инсайт: insight-hermes-liaison-agent (adopted, вес 7.4/10). Владелец — Dynin.
+ *
+ * Добавка #1416 Ф1 (не переписывание): рядом с 6 источниками — свежесть origin
+ * (`git fetch` + `origin/main:docs/HANDOFF.md`); при отставании локального дерева
+ * бриф открывается секцией «Локальное дерево отстало» (прецедент 29.07).
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync, existsSync, writeFileSync } from 'node:fs';
@@ -24,6 +28,7 @@ import { fileURLToPath } from 'node:url';
 import os from 'node:os';
 import path from 'node:path';
 import { todaysCommits, todaysChangedFiles } from './lib/git-day-context.mjs';
+import { isoDay, parseHandoffHeaderDate, pickFreshnessGap, ruDays } from './lib/freshness.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -41,9 +46,9 @@ function readTextOrNull(absPath) {
   }
 }
 
-function runOrNull(cmd, args) {
+function runOrNull(cmd, args, { timeout } = {}) {
   try {
-    return execFileSync(cmd, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    return execFileSync(cmd, args, { encoding: 'utf8', timeout, stdio: ['ignore', 'pipe', 'ignore'] });
   } catch {
     return null;
   }
@@ -239,6 +244,33 @@ function collectMemory() {
   return { ok: false, reason: `нет MEMORY.md (проверены ${candidates.length} пути)` };
 }
 
+/**
+ * Свежесть origin (#1416 Ф1). Боль 29.07: hermes читал только ЛОКАЛЬНЫЙ
+ * docs/HANDOFF.md и честно пересказал бы хендоф от 26.07 как «Сейчас», когда
+ * свежий (28.07) жил лишь в origin/main. Поэтому: `git fetch origin` (graceful,
+ * под таймаутом — сети может не быть) + чтение `origin/main:docs/HANDOFF.md`
+ * РЯДОМ с локальным; дыра в днях — по датам заголовков HANDOFF, фолбэк — по
+ * датам tip-коммитов (lib/freshness.mjs). Это ДОБАВКА 7-м источником: шесть
+ * существующих не трогает.
+ */
+const FETCH_TIMEOUT_MS = 15_000;
+
+function collectOriginFreshness() {
+  const fetched = runOrNull('git', ['fetch', 'origin', '--quiet'], { timeout: FETCH_TIMEOUT_MS }) != null;
+  if (!fetched) {
+    return { ok: false, reason: 'git fetch origin не прошёл (offline) — свежесть origin/main не сверена' };
+  }
+  const localDate = parseHandoffHeaderDate(readTextOrNull(path.join(REPO_ROOT, 'docs/HANDOFF.md')));
+  const originDate = parseHandoffHeaderDate(runOrNull('git', ['show', 'origin/main:docs/HANDOFF.md']));
+  const gap = pickFreshnessGap({
+    localHandoffDate: localDate,
+    originHandoffDate: originDate,
+    localTipDay: isoDay(runOrNull('git', ['log', '-1', '--format=%cI', 'HEAD'])),
+    originTipDay: isoDay(runOrNull('git', ['log', '-1', '--format=%cI', 'origin/main'])),
+  });
+  return { ok: true, localDate, originDate, gap };
+}
+
 function collectGit() {
   return {
     commit: (runOrNull('git', ['rev-parse', '--short', 'HEAD']) || '').trim() || null,
@@ -251,6 +283,7 @@ function collectGit() {
 export function collectState({ generatedAt } = {}) {
   const git = collectGit();
   return {
+    originFreshness: collectOriginFreshness(),
     focus: collectFocus(),
     openPRs: collectOpenPRs(),
     activeCards: collectActiveCards(),
@@ -271,6 +304,30 @@ function link(text, href) {
   return `[${text}](${href})`;
 }
 
+/**
+ * Секция свежести origin (#1416 Ф1) — чистая, экспорт для теста.
+ * Пустой массив, когда источник не собирался (обратная совместимость state)
+ * или дыры нет; громкая секция — только при реальном отставании ≥1 дня.
+ */
+export function renderFreshnessLines(f) {
+  if (!f) return [];
+  if (!f.ok) return [`> ⚠ **Свежесть не сверена:** ${f.reason}.`, ''];
+  if (f.gap && f.gap.days >= 1) {
+    const dates =
+      f.gap.basis === 'handoff'
+        ? ` (локальный HANDOFF: ${f.localDate ?? NA}, в origin/main: ${f.originDate ?? NA})`
+        : ' (по датам tip-коммитов)';
+    return [
+      '## ⚠ Локальное дерево отстало',
+      '',
+      `- локальное дерево отстало на ${ruDays(f.gap.days)}, свежий хендоф в origin/main${dates}`,
+      '- до любых утверждений о состоянии — читать `origin/main:docs/HANDOFF.md` (прецедент 29.07)',
+      '',
+    ];
+  }
+  return [];
+}
+
 /** @returns {string} markdown-бриф. Чистая функция от state. */
 export function renderBrief(state) {
   const L = [];
@@ -279,6 +336,9 @@ export function renderBrief(state) {
   L.push('> Автогенерация `yarn hermes:brief`. Дескриптивный сборник ссылок на 6 источников —');
   L.push('> не переписывает `plan:day` / `standup`, не резюмирует их своими словами.');
   L.push('');
+
+  // ── Свежесть origin (#1416 Ф1): громко и ДО «Сейчас», если дерево отстало ────
+  L.push(...renderFreshnessLines(state.originFreshness));
 
   // ── Сейчас ──────────────────────────────────────────────────────────────────
   L.push('## Сейчас');
@@ -375,6 +435,10 @@ export function renderBrief(state) {
   L.push('## Метаданные');
   L.push('');
   L.push(`- commit: \`${state.meta.commit ?? 'н/д'}\``);
+  if (state.originFreshness?.ok) {
+    const f = state.originFreshness;
+    L.push(`- origin/main:docs/HANDOFF.md: ${f.originDate ?? 'н/д'} (локальный: ${f.localDate ?? 'н/д'})`);
+  }
   L.push(`- сгенерировано: ${state.meta.generatedAt}`);
   L.push('');
 
