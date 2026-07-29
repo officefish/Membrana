@@ -67,7 +67,9 @@ export async function invokeProcedureLlm(args) {
       dropped = overlayDroppedSteps(effective.chain, loadProcedureDefaults()[args.procedureId]?.chain ?? []);
     } catch { /* defaults недоступны — предупреждение лучше пропустить, чем уронить вызов */ }
     if (dropped.length) {
-      console.error(`[llm] ⚠ overlay убрал звенья умолчаний: ${dropped.map((s) => `${s.provider}/${s.model}`).join(', ')} (обход: LLM_NO_OVERLAY=1)`);
+      // Кристалл procedure-must-follow-panel-chain: находка адресуется ВЛАДЕЛЬЦУ
+      // (панель — его рука), а не подсказывает агенту тихий обход.
+      console.error(`[llm] ⚠ overlay панели не несёт звеньев умолчаний: ${dropped.map((s) => `${s.provider}/${s.model}`).join(', ')} — правка цепочки: панель (владелец)`);
     }
   }
   const result = await runProcedureChain({
@@ -80,7 +82,11 @@ export async function invokeProcedureLlm(args) {
     onAttempt: args.onAttempt,
   });
   if (!result.ok && dropped.length) {
-    console.error(`[llm] цепочка исчерпана (источник: overlay), НЕпробованные живые звенья умолчаний: ${dropped.map((s) => s.provider).join(', ')} — LLM_NO_OVERLAY=1 для прогона по умолчаниям`);
+    console.error(
+      `[llm] ПАНЕЛЬНАЯ ЦЕПОЧКА НЕ ОТДАЛА КОНТЕНТ (${args.procedureId}): все звенья overlay исчерпаны; ` +
+        `непробованные звенья умолчаний: ${dropped.map((s) => s.provider).join(', ')}. ` +
+        'Решение владельца: поправить overlay в панели ЛИБО разово разрешить умолчания (LLM_NO_OVERLAY=1 — только по его слову).',
+    );
   }
   return result;
 }
