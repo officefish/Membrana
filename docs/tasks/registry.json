@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "weekly-dead-wire-audit",
+      "title": "Недельная процедура «мёртвые провода»: declared ⇒ файл существует ∨ явный pending",
+      "promptPath": "docs/prompts/WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md",
+      "githubIssue": 1447,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-29",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Находка 29.07: из 398 команд package.json десять ведут в несуществующие файлы; ни один из десяти НИКОГДА не существовал в истории (git log --diff-filter=A пуст) — объявлены авансом, четыре пачками из фич-коммитов 72b6eee6/714ae379 (18-23.06). scripts:registry идёт от файлов к списку, обратного направления нет. Слово владельца 29.07: недельная процедура, реализация и прогон — выходные 1-2.08, не в дневную трёхдневку тарифов. Родитель класса — зверь «Мёртвый провод» #1411.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "night-triage-insight-channel",
       "title": "Канал «ночной триаж → карточка инсайта»: дома сырья, promote-only PR, стык с магистралью дня",
       "promptPath": "docs/prompts/NIGHT_TRIAGE_INSIGHT_CHANNEL_PROMPT.md",
