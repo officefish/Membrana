@@ -21,6 +21,48 @@ test('пустой rollup — none, не green (корень #643: no checks ≠
   assert.equal(classifyChecks(undefined).state, 'none');
 });
 
+test('ВЕЩДОК #1461: review/teamlead=pending не держит ci-wait — иначе самоссылка', () => {
+  // Живой тупик 29.07: ship упал на гейте, оставив pending; повторный --merge-only
+  // ждал статус, который выставляет шаг ПОСЛЕ ожидания. Пятнадцать минут тишины.
+  const r = classifyChecks([
+    { name: 'Lint, typecheck, test, build', status: 'COMPLETED', conclusion: 'SUCCESS' },
+    { name: 'Turbo unit tests', status: 'COMPLETED', conclusion: 'SUCCESS' },
+    { name: 'scan', status: 'COMPLETED', conclusion: 'SUCCESS' },
+    { name: 'optional-review', status: 'COMPLETED', conclusion: 'SKIPPED' },
+    { context: 'review/teamlead', state: 'PENDING' },
+  ]);
+  assert.equal(r.state, 'green');
+  assert.equal(r.ok, 4);
+  assert.equal(r.total, 4);
+  assert.deepEqual(r.pending, []);
+  assert.deepEqual(r.selfManaged, ['review/teamlead']);
+});
+
+test('review/teamlead=success тоже вне счёта CI — считаем сборку, не ревью', () => {
+  const r = classifyChecks([
+    { name: 'CI', status: 'COMPLETED', conclusion: 'SUCCESS' },
+    { context: 'review/teamlead', state: 'SUCCESS' },
+  ]);
+  assert.equal(r.state, 'green');
+  assert.equal(r.total, 1);
+  assert.deepEqual(r.selfManaged, ['review/teamlead']);
+});
+
+test('красный CI не маскируется отсечением самоссылки', () => {
+  const r = classifyChecks([
+    { name: 'CI', status: 'COMPLETED', conclusion: 'FAILURE' },
+    { context: 'review/teamlead', state: 'PENDING' },
+  ]);
+  assert.equal(r.state, 'red');
+});
+
+test('только самоссылка и ни одной проверки CI — none, не green', () => {
+  const r = classifyChecks([{ context: 'review/teamlead', state: 'PENDING' }]);
+  assert.equal(r.state, 'none');
+  assert.equal(r.total, 0);
+  assert.deepEqual(r.selfManaged, ['review/teamlead']);
+});
+
 test('незавершённый CheckRun — running', () => {
   const r = classifyChecks([
     { name: 'CI', status: 'IN_PROGRESS', conclusion: '' },

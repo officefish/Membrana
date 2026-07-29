@@ -39,6 +39,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { classifyWorktree, parseWorktreeCard } from './lib/classify-worktree.mjs';
+import { explainCommitType } from './lib/commit-types.mjs';
 import { makeLongTempDir } from './lib/long-temp-path.mjs';
 import { EXTERNAL_CALL_TIMEOUT_MS, alreadyInBase } from './lib/merge-fact.mjs';
 import { isMergeBlocked, readMergeabilityWithRestRecheck } from './lib/pr-mergeability.mjs';
@@ -407,6 +408,11 @@ export function planPrShip(opts) {
   }
 
   if (!type || !message) throw new Error('pr:ship: --type и --message обязательны');
+  // Тип проверяем ЗДЕСЬ, а не молча несём до commit-msg: 29.07 `--type tooling` уронил
+  // ship после уже отработавшего pre-commit (скан секретов ~минута), и сообщение хука
+  // ничего не говорило про словарь kind-ов ветки, откуда «tooling» и взялся.
+  const typeProblem = explainCommitType(type);
+  if (typeProblem) throw new Error(typeProblem);
   // --no-commit (ретроспектива 2026-07-09): коммиты уже готовы на ветке —
   // шаги branch/commit пропускаются, флоу начинается с push. Ветку с готовыми
   // коммитами создавать через pr:ship бессмысленно → branch и no-commit несовместимы.

@@ -22,6 +22,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { isMergeBlocked, reconcileMergeability, resolveRepoSlug, fetchRestPullMergeFields } from './lib/pr-mergeability.mjs';
+import { REVIEW_STATUS_CONTEXT } from './lib/review-gate.mjs';
 
 const RED_CONCLUSIONS = new Set([
   'FAILURE',
@@ -34,6 +35,21 @@ const RED_CONCLUSIONS = new Set([
 ]);
 const GREEN_CONCLUSIONS = new Set(['SUCCESS', 'SKIPPED', 'NEUTRAL']);
 const APPROVAL_DECISIONS = new Set(['REVIEW_REQUIRED', 'CHANGES_REQUESTED']);
+
+/**
+ * Статусы, которые ставит САМ шип-флоу, а не CI. Их нельзя ждать здесь: в цепочке
+ * `pr:ship` порядок ci-wait → review-gate → merge, и гейт публикует `review/teamlead`
+ * ПОСЛЕ этого ожидания. Первый заход оставляет `pending` (ревью ещё не было), и любой
+ * следующий ci-wait ждёт статус, выставить который может только шаг за ним, — самоссылка.
+ *
+ * Живой тупик 29.07 (PR #1461): ship упал на гейте «ревью не найдено», оставив
+ * `review/teamlead=pending`; после `code-review:pr` повторный `--merge-only` встал
+ * навсегда — 4 проверки CI зелёные, пятая ждёт саму себя. Расклинивали руками.
+ *
+ * Вердикт гейта здесь не теряется: `review-gate` идёт следующим шагом и падает громко,
+ * если ревью нет или BLOCK. Дело ci-wait — сборка, не ревью.
+ */
+export const SELF_MANAGED_CONTEXTS = new Set([REVIEW_STATUS_CONTEXT]);
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -63,9 +79,19 @@ export function resolveCheckpointDir(root = ROOT) {
  *            failing: string[], pending: string[]}}
  */
 export function classifyChecks(rollup) {
-  const items = Array.isArray(rollup) ? rollup : [];
+  const all = Array.isArray(rollup) ? rollup : [];
+  // Самоссылку отсекаем ДО подсчёта: иначе `pending`, оставленный собственным гейтом,
+  // навсегда держит state=running (см. SELF_MANAGED_CONTEXTS). Отсечённые не исчезают
+  // молча — возвращаем их отдельным полем, вызывающий печатает строкой.
+  const selfManaged = [];
+  const items = [];
+  for (const item of all) {
+    const label = item.name || item.context || item.workflowName || '';
+    if (SELF_MANAGED_CONTEXTS.has(label)) selfManaged.push(label);
+    else items.push(item);
+  }
   if (items.length === 0) {
-    return { state: 'none', total: 0, ok: 0, failing: [], pending: [] };
+    return { state: 'none', total: 0, ok: 0, failing: [], pending: [], selfManaged };
   }
 
   const failing = [];
@@ -99,7 +125,7 @@ export function classifyChecks(rollup) {
   }
 
   const state = failing.length > 0 ? 'red' : pending.length > 0 ? 'running' : 'green';
-  return { state, total: items.length, ok, failing, pending };
+  return { state, total: items.length, ok, failing, pending, selfManaged };
 }
 
 /**
@@ -224,6 +250,10 @@ function report(pr, checks) {
   );
   for (const f of checks.failing) console.log(`  ✗ ${f}`);
   for (const p of checks.pending) console.log(`  … ${p}`);
+  // Не «пропало из счёта», а названо: ждёт следующий шаг цепочки, не сборка.
+  for (const s of checks.selfManaged ?? []) {
+    console.log(`  ○ ${s} — ставит шип-гейт после этого ожидания, здесь не ждём`);
+  }
   if (checks.state === 'approval') {
     console.log('  ⏳ CI не red, но PR ждёт review/approval — не считать зелёным merge-ready.');
   }
