@@ -1,15 +1,11 @@
 {
   "magistralOptions": [
-    "procedures-core-fields",
-    "secret-parser-cutter",
-    "worktree-hygiene"
+    "product-tariffs-support",
+    "agent-tooling-night-build",
+    "archivarius-sessions-container"
   ],
-  "frozenDigest": "bce44160bdb52f5ad98143edc08371cfdaa594d166477f4b1bb236ed1e811654",
-  "magistral": "procedures-core-fields",
-  "swallow": {
-    "draftDigest": "9aa8bcb117e8680722b3ed0e2bb8887a29f213fad18f5c20b6586abf65e39d2d",
-    "draftFile": "docs/comms/drafts/swallow-denis-algo-2026-07-28.md",
-    "ownerAck": true
-  },
-  "day": "2026-07-28"
+  "frozenDigest": "c0fccbcbff9b8312cce4cc442e9bcf4f7fdcff0fcd136726be48d0041ad63308",
+  "magistral": "product-tariffs-support",
+  "swallow": null,
+  "day": "2026-07-29"
 }

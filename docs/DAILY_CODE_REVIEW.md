@@ -1,36 +1,28 @@
-<!-- Сгенерировано: 2026-07-27T19:06:29.973Z (yarn code-review; daily, llm-xai) -->
+<!-- Сгенерировано: 2026-07-29T04:54:05.216Z (yarn code-review; daily, llm-xai) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: df0b9175103a562b15bffadad45eba810e176ee6^..0e437223a3a66047dd360cf6c2490bf72ae30a17 (32 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): df0b9175 #1311 (913), 4354c83a #1315 (773), 2d2ad517 #1323 (649), 624f2ecf #1331 (691), 222e1901 #1332 (1035), 0a091573 #1335 (1266)
+> Период: e57ad7edcec136c75aca8868c26c91081531dbd3^..e57ad7edcec136c75aca8868c26c91081531dbd3 (1 коммит(ов))
 
 ---
 
-Tier: T2
+Tier: T0
 
-[Teamlead]: День 27.07 — плотная инструментальная магистраль: защита main (#1314), kits-strict pre-push (#1316), факт мерджа по git (#1320), зуб доклада капитану (#1317), индекс вещдоков (#1303), инсайт handoff-orchestration (#1313). Паттерн сильный и повторяемый: декларация + чистое ядро + honest unknown + находки по имени + тесты обоих путей. Бестиарий: B6/B10 сознательно закрыты (unknown ≠ ok; легальное «нет» с `$why`); B8 на branch-protection снят декларацией в репо. **Oversized без разворота diff** — #1311 (913), #1315 (773), #1323 (649), #1331 (691), #1332 (1035), #1335 (1266) — в daily не LGTM’ить пакетом; каждый — отдельный pr-review. Риски на завтра: (P1) oversized-хвосты без точечного ревью; (P2) HANDOFF как файл-перекрёсток (B2) — держать короткие слоты «Занято». Утро: прочитать этот файл; не гонять `yarn code-review`; smoke зубьев ниже.
+[Teamlead]: За день один коммит e57ad7ed (#1416/#1417) — docs-only прецедент cold-start: устаревшая картина из кеша памяти + локального git без штампов дат. PR size OK (~82 строки). Канон прецедентов соблюдён (precedent-meta, class, prevention, actionItems, related). Реестр PRECEDENTS.md пересобран (19→20, cold-start 2→3, рецидив 70%). Звери бестиария в диффе не найдены — наоборот, зафиксирован живой вещдок формы «кеш без даты пожирает актуальность» (рядом с 21.07/22.07/25.07). C8/C9: секретов и runtime нет. Вердикт по сути дня: LGTM. Утро: сначала `git fetch` + `origin/main:docs/HANDOFF.md`; open actionItem владельца — норма приветствия холодной сессии в CLAUDE.md / скилл утра.
 
-[Структурщик]: Границы соблюдены: `compareProtection` / `affectedKits` / `assessMergeFact` / `reportFormatProblems` / `findNakedNumbers` — чистые ядра без fs/сети; обвязка снаружи. `pr-verify` корректно делегировал вердикт в `merge-fact` (тесты переехали, file-assert остался). Pre-push: pinned только затронутых китов — не раздувает хук. C1/C4/C7 — ок на видимом diff. C8/C9 — секретов/console.log в production-пути не видно. Следить: `package.json` scripts и `docs/HANDOFF.md` остаются B2-зоной при параллельных агентах.
+[Структурщик]: Границы пакетов не затронуты. Новый файл в `docs/precedents/`, реестр — производный снимок (meta SHA/date). Связность related-прецедентов и id=filename согласованы. Тесты/lint зелёные на фоне; к docs не применимы. Uncommitted `DAY_PLAN` / `STRATEGY_DAY` / deps-watch — вне scope ревью (гигиена ритуала).
 
-[Математик]: Зубные предикаты читаемы: множества required checks (want⊆have и have⊆want), `prLandingPatterns` якорит squash в конце строки (ложные «(PR #N)» в середине отсечены), naked-numbers с контекст-словом и исключением годов 20xx. Exit-коды 0/1/2 (ok / drift / unknown) согласованы. На видимом diff — ок; oversized (#1315 selector и др.) — отдельно.
-
+[Математик]: —
 [Музыкант]: —
 [Верстальщик]: —
 
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 27.07)
-Definition of Done (утро):
-- `yarn verify:branch-protection`
-- `node scripts/kits-prepush-strict.mjs`
-- `yarn turbo run test --filter=./scripts` (или точечно: `node --test scripts/branch-protection.test.mjs scripts/kits-prepush-strict.test.mjs scripts/lib/merge-fact.test.mjs scripts/report-format-check.test.mjs scripts/live-links.test.mjs scripts/pr-verify.test.mjs`)
-- `yarn report:check --file docs/STRATEGIC_PLAN_DAY.md` (если утренний доклад уже сгенерирован)
-- `yarn live-links --check --file docs/STRATEGIC_PLAN_DAY.md`
-- По возможности: `yarn evidence verify`
-- Oversized PR (#1311, #1315, #1323, #1331, #1332, #1335): `yarn code-review:pr <N>` по одному, не пакетом
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (этот вердикт); исходный diff — `docs/precedents/2026-07-29-greeting-stale-picture-from-memory-cache.md` + `docs/precedents/registry/PRECEDENTS.md`
 
-Риски:
-- **P1** — шесть oversized PR без развёрнутого diff в daily; merge-уверенность только после отдельного ревью или уже прошедшего CI+LGTM human
-- **P1** — #1320/merge-fact: при лживом прокси полагаемся на git; если `fetch` стабильно падает, хвосты уйдут в unknown/exit 4 — мониторить, не маскировать
-- **P2** — insight-handoff-orchestration в draft, RESEARCH/REVIEW пустые — не блокер кода
-- **P2** — evidence registry: path `local` с абсолютным Windows-путём в первой записи — склад сменный, индекс ок; не коммитить секреты/личные пути сверх необходимого
+Definition of Done (утро):
+1. `git fetch origin` и чтение `origin/main:docs/HANDOFF.md` до любых утверждений о состоянии
+2. `yarn standup` (или `yarn ritual:day`) — вчерашний review только читать
+3. При работе с прецедентами: `yarn precedent:register --rebuild` если появятся новые файлы
+4. Open AI владельца: кандидат нормы приветствия (штампы дат / запрет «сегодня» без верификации) — не блокирует merge
+
+Риски: P2 — доля рецидива cold-start растёт (3, класс ⚠); mitigation уже в prevention прецедента, машинный зуб пока не обязателен. P0/P1 — нет.
