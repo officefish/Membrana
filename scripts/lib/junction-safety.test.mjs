@@ -1,25 +1,29 @@
 /**
  * Зуб junction-safety (#1436): связь наружу дерева распознаётся до сноса,
  * массовые удаления в main-дереве после операции видны как находка.
+ * Фикстуры строятся resolve()-ом — зуб один и тот же на Windows и в Linux-CI.
  */
 import assert from 'node:assert/strict';
+import { resolve } from 'node:path';
 import { test } from 'node:test';
 
 import { newDeletions, resolveLinkTarget, targetIsOutsideTree } from './junction-safety.mjs';
 
+const ROOT = resolve('/practice/Membrana-x');
+const NEIGHBOR = resolve('/practice/Membrana');
+
 test('resolveLinkTarget: относительная цель резолвится от каталога линка, абсолютная — как есть', () => {
-  const link = 'C:\\practice\\Membrana-x\\node_modules\\@m\\pkg';
-  assert.match(resolveLinkTarget(link, '..\\..\\packages\\pkg'), /Membrana-x[\\/]packages[\\/]pkg$/u);
-  assert.match(resolveLinkTarget(link, 'C:\\practice\\Membrana\\packages\\pkg'), /Membrana[\\/]packages[\\/]pkg$/u);
+  const link = resolve(ROOT, 'node_modules/@m/pkg');
+  assert.equal(resolveLinkTarget(link, '../../packages/pkg'), resolve(ROOT, 'packages/pkg'));
+  assert.equal(resolveLinkTarget(link, resolve(NEIGHBOR, 'packages/pkg')), resolve(NEIGHBOR, 'packages/pkg'));
 });
 
-test('targetIsOutsideTree: внутри/снаружи/границы каталога/регистр Windows', () => {
-  const root = 'C:\\practice\\Membrana-x';
-  assert.equal(targetIsOutsideTree('C:\\practice\\Membrana-x\\apps\\a', root), false);
-  assert.equal(targetIsOutsideTree('C:\\practice\\Membrana\\apps\\a', root), true, 'соседнее дерево — наружа');
-  assert.equal(targetIsOutsideTree('C:\\practice\\Membrana-xy\\a', root), true, 'префикс имени ≠ вложенность');
-  assert.equal(targetIsOutsideTree('c:\\PRACTICE\\membrana-x\\b', root), false, 'регистр Windows не делает наружу');
-  assert.equal(targetIsOutsideTree(root, root), false, 'сам корень — не наружа');
+test('targetIsOutsideTree: внутри/снаружи/границы каталога', () => {
+  assert.equal(targetIsOutsideTree(resolve(ROOT, 'apps/a'), ROOT), false);
+  assert.equal(targetIsOutsideTree(resolve(NEIGHBOR, 'apps/a'), ROOT), true, 'соседнее дерево — наружа');
+  assert.equal(targetIsOutsideTree(`${ROOT}y`, ROOT), true, 'префикс имени ≠ вложенность');
+  assert.equal(targetIsOutsideTree(ROOT.toUpperCase(), ROOT), false, 'регистр не делает наружу (Windows-семантика)');
+  assert.equal(targetIsOutsideTree(ROOT, ROOT), false, 'сам корень — не наружа');
 });
 
 test('newDeletions: видит только НОВЫЕ ` D`-строки', () => {
