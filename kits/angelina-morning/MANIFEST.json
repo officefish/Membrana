@@ -37,6 +37,7 @@
     "scripts/lib/drift-digest-section.mjs": "6d05fe61db3cb834b283f6c4f1cdf172937b112d",
     "scripts/lib/freshness.mjs": "ae963549de6010ba4231e5764855d13af5aba1e5",
     "scripts/lib/git-day-context.mjs": "9ca07d0d9804974420a2260d32e7dbc9142acfb8",
+    "scripts/lib/junction-safety.mjs": "1cefab5db557ec3446eeded3c4bb155d6a5b1b24",
     "scripts/lib/live-links.mjs": "8e17b32583450dae24bd0b42a688ace0eeb19dd1",
     "scripts/lib/llm-procedure-chain.mjs": "3bcfcfe6695d9910384595cf7aab4f6f5b81210a",
     "scripts/lib/llm-procedure-emit.mjs": "e737650ce0cac714f9440b8ea94a6dc126a661c4",
@@ -75,7 +76,7 @@
     "scripts/morning-care.mjs": "ebb7ea1aaf597f88f151eafda3ea3a2bc6716f27",
     "scripts/morning-gate.mjs": "f12e4ca6c1f455cb0125c494689910a3d1db4dfe",
     "scripts/plan-week-if-monday.mjs": "4de9f7e1d42d88c5cd262041c3eb29e918cec194",
-    "scripts/repo-clean.mjs": "490de3404657288b9c5e3184461c0a180b05a60c",
+    "scripts/repo-clean.mjs": "ca27a87b50981258ef4e428ca2cbfaf0a34aa783",
     "scripts/strategy-day.mjs": "4e87373353828c2551fe04f740fd6b600a09dfe6",
     "scripts/telegram-swallow.mjs": "02e6b6247fe4da6fcb7cee3331f56b1adab32d57",
     "scripts/worktree-sync.mjs": "b45d3ca3cdf7d22432bbfefb1daa11f37a45de5f"
