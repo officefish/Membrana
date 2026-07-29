@@ -1,0 +1,245 @@
+{
+  "//": "ДОКУМЕНТ ТАРИФНОЙ СЕТКИ (S1 плана интеграции; заседание tariff-grid ратифицировано владельцем 29.07). Реестр прав + матрица SKU × entitlementId. Автор — сервер (кабинет); клиент получает проекцию по проводу и её читает, но не пишет.",
+  "//deny-by-default": "Нет ячейки / неизвестный id / несовпадение рода → права нет. Полнота обязательна: у КАЖДОГО тарифа ячейка на КАЖДОЕ право реестра (зуб matrix_complete). Пустая клетка — дыра в контракте, а не «пока не решили».",
+  "//scope": "Каркас, не содержание набора: состав прав уточняется владельцем отдельно (слово 29.07). Здесь — минимальный набор, вытекающий из названной матрицы трёх тарифов.",
+  "//numbers": "Числовые потолки дублировать нельзя — их дом docs/tariffs/tariff-scalars.json (S0). Там, где значение владельцем не названо, ячейка несёт честный ноль-эквивалент рода с пояснением в _note, а не выдуманное число.",
+  "version": 1,
+  "registry": [
+    {
+      "id": "nodes.max",
+      "kind": "quota",
+      "titleKey": "tariff.nodes.max",
+      "description": "Сколько устройств можно держать в мембране"
+    },
+    {
+      "id": "workspaces.user.max",
+      "kind": "quota",
+      "titleKey": "tariff.workspaces.max",
+      "description": "Сколько пользовательских сценариев можно завести"
+    },
+    {
+      "id": "storage.hot",
+      "kind": "quota",
+      "titleKey": "tariff.storage.hot",
+      "description": "Рабочая память: её задействуют детекторы для пользовательских задач"
+    },
+    {
+      "id": "storage.cold",
+      "kind": "quota",
+      "titleKey": "tariff.storage.cold",
+      "description": "Холодное хранилище треков"
+    },
+    {
+      "id": "dataset.sounds",
+      "kind": "catalog",
+      "titleKey": "tariff.dataset.sounds",
+      "description": "Словарь звуков, доступный распознаванию"
+    },
+    {
+      "id": "instrument.fft_trends",
+      "kind": "instrument",
+      "titleKey": "tariff.instrument.fftTrends",
+      "description": "Трендовый анализ спектра"
+    },
+    {
+      "id": "instrument.yamnet",
+      "kind": "instrument",
+      "titleKey": "tariff.instrument.yamnet",
+      "description": "Распознавание по словарю YAMNet"
+    },
+    {
+      "id": "instrument.mfcc",
+      "kind": "instrument",
+      "titleKey": "tariff.instrument.mfcc",
+      "description": "Тембральный портрет цели (MFCC): узлы и плагины"
+    },
+    {
+      "id": "bearing.position",
+      "kind": "gated",
+      "titleKey": "tariff.bearing.position",
+      "description": "Пеленг и оценка позиции дрона — при построенной сети"
+    },
+    {
+      "id": "produce.own",
+      "kind": "produce",
+      "titleKey": "tariff.produce.own",
+      "description": "Право производить своё: индексировать датасет и строить сценарии на своих детекциях"
+    }
+  ],
+  "rows": [
+    {
+      "sku": "free-v1",
+      "productName": "Датчик",
+      "rank": 0,
+      "cells": {
+        "nodes.max": {
+          "kind": "quota",
+          "limit": 1,
+          "unit": "count"
+        },
+        "workspaces.user.max": {
+          "kind": "quota",
+          "limit": 3,
+          "unit": "count"
+        },
+        "storage.hot": {
+          "kind": "quota",
+          "limit": 536870912,
+          "unit": "bytes"
+        },
+        "storage.cold": {
+          "kind": "quota",
+          "limit": 0,
+          "unit": "bytes"
+        },
+        "dataset.sounds": {
+          "kind": "catalog",
+          "catalogId": "free-v1-catalog"
+        },
+        "instrument.fft_trends": {
+          "kind": "instrument",
+          "enabled": true
+        },
+        "instrument.yamnet": {
+          "kind": "instrument",
+          "enabled": true
+        },
+        "instrument.mfcc": {
+          "kind": "instrument",
+          "enabled": false
+        },
+        "bearing.position": {
+          "kind": "gated",
+          "enabled": false,
+          "preconditionId": "minimal_network_ready"
+        },
+        "produce.own": {
+          "kind": "produce",
+          "enabled": false
+        }
+      }
+    },
+    {
+      "sku": "checkpoint-v1",
+      "productName": "Блокпост",
+      "rank": 1,
+      "cells": {
+        "nodes.max": {
+          "kind": "quota",
+          "limit": 4,
+          "unit": "count"
+        },
+        "workspaces.user.max": {
+          "kind": "quota",
+          "limit": 3,
+          "unit": "count"
+        },
+        "storage.hot": {
+          "kind": "quota",
+          "limit": 2147483648,
+          "unit": "bytes"
+        },
+        "storage.cold": {
+          "kind": "quota",
+          "limit": 2147483648,
+          "unit": "bytes"
+        },
+        "dataset.sounds": {
+          "kind": "catalog",
+          "catalogId": "checkpoint-v1-catalog"
+        },
+        "instrument.fft_trends": {
+          "kind": "instrument",
+          "enabled": true
+        },
+        "instrument.yamnet": {
+          "kind": "instrument",
+          "enabled": true
+        },
+        "instrument.mfcc": {
+          "kind": "instrument",
+          "enabled": true
+        },
+        "bearing.position": {
+          "kind": "gated",
+          "enabled": true,
+          "preconditionId": "minimal_network_ready"
+        },
+        "produce.own": {
+          "kind": "produce",
+          "enabled": true,
+          "scope": [
+            "dataset_index",
+            "own_detection",
+            "scenario_on_own"
+          ]
+        }
+      }
+    },
+    {
+      "sku": "observatory-v1",
+      "productName": "Наблюдательный пункт",
+      "rank": 2,
+      "cells": {
+        "nodes.max": {
+          "kind": "quota",
+          "limit": 9,
+          "unit": "count"
+        },
+        "workspaces.user.max": {
+          "kind": "quota",
+          "limit": 3,
+          "unit": "count"
+        },
+        "storage.hot": {
+          "kind": "quota",
+          "limit": 2147483648,
+          "unit": "bytes"
+        },
+        "storage.cold": {
+          "kind": "quota",
+          "limit": 2147483648,
+          "unit": "bytes"
+        },
+        "dataset.sounds": {
+          "kind": "catalog",
+          "catalogId": "checkpoint-v1-catalog"
+        },
+        "instrument.fft_trends": {
+          "kind": "instrument",
+          "enabled": true
+        },
+        "instrument.yamnet": {
+          "kind": "instrument",
+          "enabled": true
+        },
+        "instrument.mfcc": {
+          "kind": "instrument",
+          "enabled": true
+        },
+        "bearing.position": {
+          "kind": "gated",
+          "enabled": true,
+          "preconditionId": "minimal_network_ready"
+        },
+        "produce.own": {
+          "kind": "produce",
+          "enabled": true,
+          "scope": [
+            "dataset_index",
+            "own_detection",
+            "scenario_on_own"
+          ]
+        }
+      }
+    }
+  ],
+  "//provisional": {
+    "//": "Ячейки, где значение НЕ названо владельцем и стоит выведенная нижняя граница. Полнота матрицы соблюдена (ячейка есть), но число ждёт слова — это не «решено», а «не меньше чем».",
+    "free-v1.storage.cold": "холодная память объявлена владельцем только для «Блокпоста»; у «Датчика» её нет — ноль означает «нельзя», а не «неизвестно»",
+    "observatory-v1.storage.hot": "нижняя граница от «точно доступно всё из предыдущих тарифов» (T4); точный объём владельцем не назван",
+    "observatory-v1.storage.cold": "нижняя граница от «точно доступно всё из предыдущих тарифов» (T4); точный объём владельцем не назван",
+    "observatory-v1.dataset.sounds": "каталог «Блокпоста» как нижняя граница; свой каталог владельцем не назначен",
+    "*.workspaces.user.max": "число пользовательских сценариев названо владельцем только для «Датчика» (3); старшим поставлено то же как нижняя граница"
+  }
+}

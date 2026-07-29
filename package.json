@@ -413,7 +413,8 @@
     "network:probe": "node scripts/network/probe.mjs",
     "network:snapshot": "node scripts/network/snapshot.mjs",
     "network:preflight": "node scripts/network/preflight.mjs",
-    "network:tooth": "node scripts/network/tooth.mjs"
+    "network:tooth": "node scripts/network/tooth.mjs",
+    "tariff:grid": "node scripts/tariff-grid-validate.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
