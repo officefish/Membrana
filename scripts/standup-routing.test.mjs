@@ -74,9 +74,11 @@ test('parseRoleSlugs связывает роль со slug', () => {
   assert.deepEqual(parseRoleSlugs(VT), { Teamlead: 'vesnin', Математик: 'dynin' });
 });
 
-test('живой VIRTUAL_TEAM_PROMPT парсится: ровно 5 ролей', () => {
+// 28.07: команда шесть (рефакторинг 27.07 — Тарасов тимлид, Веснин архитектор);
+// витрина ролей отставала от реестра голосов, отсюда 5 голосов в фидбеке и ревью.
+test('живой VIRTUAL_TEAM_PROMPT парсится: ровно 6 ролей', () => {
   const vt = readFileSync(join(root, 'docs/VIRTUAL_TEAM_PROMPT.md'), 'utf8');
-  assert.equal(parseRoleCompetencies(vt).length, 5, 'пять ролей команды');
+  assert.equal(parseRoleCompetencies(vt).length, 6, 'шесть ролей команды (с Архитектором)');
   assert.equal(Object.keys(parseRoleSlugs(vt)).length >= 5, true);
 });
 
