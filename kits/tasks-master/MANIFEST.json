@@ -29,7 +29,7 @@
     "scripts/lib/task-registry.mjs": "2e2117d614ea69448bc132856da35c2f53aca8b4",
     "scripts/lib/task-tools.mjs": "e0d70928fe4be4018549221f8dfd4229d8f1024f",
     "scripts/lib/task-validity-links.mjs": "73c2463a78c7c43f1adfec88fcc006d630a9b5fe",
-    "scripts/lib/task-validity.mjs": "b8d84170e71bf369fd12c0dab76c0c3ccc4d017d",
+    "scripts/lib/task-validity.mjs": "624a2812312966b3727c76e9ede90a05bfd2311a",
     "scripts/lib/tasks-readme-engine.mjs": "3a45a41f5e17587bc54b85011eeacbeffa7c264b",
     "scripts/one-shot-rank.mjs": "4a0ef8a7583b95748b921429080d910c5b39a6da",
     "scripts/one-shot-trail.mjs": "173c4669a100ec61f9ae38216dce819ae65017d2",
