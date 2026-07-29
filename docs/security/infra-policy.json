@@ -125,10 +125,15 @@
       },
       "scale": "вертикально по тарифу; сервисы переезжают только owner-gated (канон office-vds-deploy)",
       "probe": {
-        "method": "http-health:https://office.mmbrn.tech/health"
+        "method": "http-health:https://office.mmbrn.tech/health",
+        "notes": "health-эндпоинт живой; ВХОДЯЩИЙ трафик в порядке. Ограничение — ИСХОДЯЩИЙ: см. knownBlocked (вещдок: digest снов, 29.07)"
       },
       "balanceApi": "not-provided (аренда — биллинг провайдера VDS)",
-      "fallback": "office транзиентно таймаутит — повторить (канон ласточки); прод-деплой только по слову"
+      "fallback": "office транзиентно таймаутит — повторить (канон ласточки); прод-деплой только по слову",
+      "knownBlocked": {
+        "reason": "исходящий маршрут с office-VDS к LLM-провайдерам отсутствует: сны на проде дают net на всех четырёх звеньях (deepseek/grok/gemini/perplexity), 30/30 тиков 28–29.07 — тот же сетевой фильтр, что режет voyage; это НЕ баланс и НЕ ключи",
+        "until": "#1425 (маршрут office→LLM) — решается вместе с #1393 часть 3, server-first"
+      }
     },
     {
       "id": "cabinet-vds",
