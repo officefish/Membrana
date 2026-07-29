@@ -30,6 +30,12 @@
       "description": "Холодное хранилище треков"
     },
     {
+      "id": "storage.buffer",
+      "kind": "quota",
+      "titleKey": "tariff.storage.buffer",
+      "description": "Живой буфер записи: чем больше, тем больше устройств пишут одновременно"
+    },
+    {
       "id": "dataset.sounds",
       "kind": "catalog",
       "titleKey": "tariff.dataset.sounds",
@@ -116,6 +122,11 @@
         "produce.own": {
           "kind": "produce",
           "enabled": false
+        },
+        "storage.buffer": {
+          "kind": "quota",
+          "limit": 1073741824,
+          "unit": "bytes"
         }
       }
     },
@@ -173,6 +184,11 @@
             "own_detection",
             "scenario_on_own"
           ]
+        },
+        "storage.buffer": {
+          "kind": "quota",
+          "limit": 1073741824,
+          "unit": "bytes"
         }
       }
     },
@@ -230,6 +246,11 @@
             "own_detection",
             "scenario_on_own"
           ]
+        },
+        "storage.buffer": {
+          "kind": "quota",
+          "limit": 1073741824,
+          "unit": "bytes"
         }
       }
     }
@@ -240,6 +261,8 @@
     "observatory-v1.storage.hot": "нижняя граница от «точно доступно всё из предыдущих тарифов» (T4); точный объём владельцем не назван",
     "observatory-v1.storage.cold": "нижняя граница от «точно доступно всё из предыдущих тарифов» (T4); точный объём владельцем не назван",
     "observatory-v1.dataset.sounds": "каталог «Блокпоста» как нижняя граница; свой каталог владельцем не назначен",
-    "*.workspaces.user.max": "число пользовательских сценариев названо владельцем только для «Датчика» (3); старшим поставлено то же как нижняя граница"
+    "*.workspaces.user.max": "число пользовательских сценариев названо владельцем только для «Датчика» (3); старшим поставлено то же как нижняя граница",
+    "checkpoint-v1.storage.buffer": "буфер записи владельцем для «Блокпоста» не назван; поставлен как у «Датчика» — нижняя граница",
+    "observatory-v1.storage.buffer": "буфер записи владельцем не назван (T4); поставлен как у «Датчика» — нижняя граница"
   }
 }
