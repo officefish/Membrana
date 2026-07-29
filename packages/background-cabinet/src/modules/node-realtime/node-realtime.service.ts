@@ -10,6 +10,8 @@ import {
   type JournalAckPayload,
   type NodeRealtimeEnvelope,
 } from '../../domain/node-realtime-wire';
+import { isTariffGridMode, loadTariffGrid } from '../../domain/tariff-grid-source';
+import { projectEntitlements } from '../../domain/tariff-projection';
 
 export interface NodeHealthPingResult {
   readonly reachable: boolean;
@@ -159,11 +161,21 @@ export class NodeRealtimeService {
       select: { tariffId: true, tariff: { select: { entitledTariffSkus: true } } },
     });
     if (!membrane || socket.readyState !== socket.OPEN) return;
+
+    // S3 плана интеграции сетки: значение для провода рождается в ОДНОЙ точке и
+    // несёт имя автора. До переключения (S9) автор — адаптер легаси, после —
+    // матрица; двойной записи не бывает по построению (вердикт M2).
+    const projected = projectEntitlements(
+      loadTariffGrid(),
+      { tariffId: membrane.tariffId, entitledTariffSkus: membrane.tariff.entitledTariffSkus },
+      isTariffGridMode(),
+    );
+
     socket.send(
       JSON.stringify(
         createNodeRealtimeEnvelope('presence', NODE_REALTIME_EVENT_TYPES.presence.entitlements, {
-          tariffId: membrane.tariffId,
-          entitledTariffSkus: membrane.tariff.entitledTariffSkus,
+          tariffId: projected.tariffId,
+          entitledTariffSkus: projected.entitledTariffSkus,
         }),
       ),
     );
