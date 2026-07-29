@@ -7,14 +7,14 @@
       "githubIssue": 1465,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-29",
-      "archivedAt": null,
+      "archivedAt": "2026-07-29",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "Ф1 PR #1466 (yarn workspace:links) · Ф2 PR #1469 (pr:ship --with-review) · Ф3 PR #1470 (грабли AGENTS) · Ф4 PR #1472 (bootstrap под канон #725). Ф4 получил BLOCK по dry-run — снят тестом-песочницей, не спором.",
       "githubIssueClosedAt": null
     },
     {
