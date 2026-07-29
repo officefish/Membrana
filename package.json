@@ -414,7 +414,8 @@
     "network:snapshot": "node scripts/network/snapshot.mjs",
     "network:preflight": "node scripts/network/preflight.mjs",
     "network:tooth": "node scripts/network/tooth.mjs",
-    "tariff:grid": "node scripts/tariff-grid-validate.mjs"
+    "tariff:grid": "node scripts/tariff-grid-validate.mjs",
+    "tariff:cutover": "node scripts/tariff-cutover-check.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
