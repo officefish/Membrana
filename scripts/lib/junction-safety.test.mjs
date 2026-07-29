@@ -26,9 +26,14 @@ test('targetIsOutsideTree: внутри/снаружи/границы катал
   assert.equal(targetIsOutsideTree(ROOT, ROOT), false, 'сам корень — не наружа');
 });
 
-test('newDeletions: видит только НОВЫЕ ` D`-строки', () => {
+test('newDeletions: видит только НОВЫЕ удаления', () => {
   const before = ' D docs/old.md\n M scripts/x.mjs';
   const after = ' D docs/old.md\n D apps/cabinet/App.tsx\n D packages/core/i.ts\n?? tmp.txt';
   assert.deepEqual(newDeletions(before, after), ['apps/cabinet/App.tsx', 'packages/core/i.ts']);
   assert.deepEqual(newDeletions(after, after), []);
+});
+
+test('newDeletions: удаление в любой колонке статуса — staged, unstaged, смесь (P2 ревью #1443)', () => {
+  const after = 'D  staged/gone.ts\n D unstaged/gone.ts\nDD both/gone.ts\n M kept.ts\n?? new.txt';
+  assert.deepEqual(newDeletions('', after), ['staged/gone.ts', 'unstaged/gone.ts', 'both/gone.ts']);
 });

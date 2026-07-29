@@ -43,10 +43,13 @@ export function targetIsOutsideTree(targetAbsPath, treeRootAbsPath) {
  * @returns {string[]} пути новых ` D`-строк
  */
 export function newDeletions(porcelainBefore, porcelainAfter) {
+  // Ловим удаление в ЛЮБОЙ колонке статуса: ` D` (unstaged), `D ` (staged),
+  // `DD`/`AD` (конфликт/смесь). Снос сквозь связь оставляет unstaged, но
+  // сузиться до одной формы — значит поверить, что вектор ровно один (P2 ревью).
   const deleted = (raw) =>
     String(raw ?? '')
       .split(/\r?\n/u)
-      .filter((l) => /^.D /u.test(l))
+      .filter((l) => /^(D.|.D) /u.test(l))
       .map((l) => l.slice(3).trim());
   const before = new Set(deleted(porcelainBefore));
   return deleted(porcelainAfter).filter((p) => !before.has(p));
