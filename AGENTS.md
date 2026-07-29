@@ -240,6 +240,8 @@ Operator skills — wave 2 (`docs/prompts/OPENCODE_OPERATOR_SKILLS_WAVE2_SPRINT_
 Перед внешним API — `yarn network:preflight` (или `--from-snapshot`, если сеть трогать не
 нужно). Свежая картина мира: [`docs/network/env.snapshot.md`](docs/network/env.snapshot.md),
 словарь исходов: [`docs/network/outcomes.yml`](docs/network/outcomes.yml).
+Просят доложить состояние сети — [`docs/network/HOWTO_REPORT_STATE.md`](docs/network/HOWTO_REPORT_STATE.md):
+три команды, без чтения кода.
 
 - **Не считай любой отказ сетевым.** Если сервер ответил HTTP-статусом — транспорт
   работает. Сетью считаются ровно шесть исходов: `dns_fail`, `tcp_fail`, `tls_fail`,
