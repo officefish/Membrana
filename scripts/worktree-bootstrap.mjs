@@ -22,15 +22,21 @@ import {
 } from './lib/worktree-bootstrap.mjs';
 
 function parseArgs(argv) {
-  const o = { dryRun: false, linkEnv: true };
+  const o = { dryRun: false, linkEnv: true, mode: 'install' };
   for (let i = 2; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--dry-run') o.dryRun = true;
     else if (a === '--no-env') o.linkEnv = false;
+    else if (a === '--junction') o.mode = 'junction';
     else if (a === '--from') o.from = argv[(i += 1)];
     else if (a === '--help' || a === '-h') o.help = true;
   }
   return o;
+}
+
+function runInstall(cwd) {
+  // shell: yarn на Windows — .cmd, execFile без shell его не находит.
+  execFileSync('yarn', ['install'], { cwd, stdio: 'inherit', shell: true });
 }
 
 function linkModules(source, target) {
@@ -45,10 +51,12 @@ function linkModules(source, target) {
 function main() {
   const opts = parseArgs(process.argv);
   if (opts.help) {
-    console.log(`Usage: yarn worktree:bootstrap [--dry-run] [--no-env] [--from <primary-root>]
+    console.log(`Usage: yarn worktree:bootstrap [--dry-run] [--no-env] [--junction] [--from <primary-root>]
 
-Подключает node_modules (junction/symlink) и при необходимости копирует .env
-из primary checkout (git-common-dir). Полный yarn install не запускает.`);
+По умолчанию — СВОЙ yarn install в дереве (канон #725) + копия .env из primary.
+--junction  подключить node_modules ссылкой на primary: дёшево, но АНТИ-ПАТТЕРН #725 —
+            ломает resolve и прячет несобранные пакеты (29.07: rag-service, пять e2e).
+            Выбранный способ пишется в WORKTREE.md.`);
     process.exitCode = 0;
     return;
   }
@@ -59,6 +67,7 @@ function main() {
     cwd,
     primaryRoot: primary,
     linkEnv: opts.linkEnv,
+    mode: opts.mode,
   });
 
   console.log(`[worktree:bootstrap] cwd=${cwd}`);
@@ -73,7 +82,10 @@ function main() {
   }
 
   for (const s of plan.steps) {
-    if (s.action === 'modules-link') {
+    if (s.action === 'modules-install') {
+      runInstall(cwd);
+      console.log(`  → yarn install выполнен (своё дерево зависимостей, канон #725)`);
+    } else if (s.action === 'modules-link') {
       const source = plan.sourceModules;
       const target = join(cwd, 'node_modules');
       linkModules(source, target);
@@ -90,7 +102,7 @@ function main() {
 
   // Инвариант регистрации (M1 worktree-hygiene-gaps, #717): create пишет карточку
   // атомарно — дерево без WORKTREE.md гейт классифицирует как unregistered-хвост.
-  writeWorktreeCard(cwd);
+  writeWorktreeCard(cwd, plan.mode);
 
   if (!plan.ok) {
     process.exitCode = 1;
@@ -100,7 +112,15 @@ function main() {
   process.exitCode = 0;
 }
 
-function writeWorktreeCard(cwd) {
+/** Карточка называет ФАКТИЧЕСКИЙ способ: до 29.07 здесь стояла константа «свой», и дерево
+ *  на junction утверждало канонное состояние, которого у него не было (#1465 Ф4). */
+export function installCell(mode) {
+  return mode === 'junction'
+    ? 'junction на primary (анти-паттерн #725 — выбран явно через --junction)'
+    : 'свой (yarn install, канон #725)';
+}
+
+function writeWorktreeCard(cwd, mode = 'install') {
   const file = join(cwd, 'WORKTREE.md');
   if (existsSync(file)) return;
   let branch = '(detached)';
@@ -122,7 +142,7 @@ function writeWorktreeCard(cwd) {
       `| Ветка | ${branch} |`,
       '| Владелец | агент сессии (заполните имя) |',
       '| gc | запрещён (`gc.auto 0`); gc только в main-checkout |',
-      '| install | свой |',
+      `| install | ${installCell(mode)} |`,
       '',
       '> Спринт-дерево: срок жизни = жизнь PR его ветки. Снос — `yarn repo:clean`',
       '> по классу sprint-closed (PR merged/closed, без хвостов). Канон: #717.',
@@ -133,9 +153,14 @@ function writeWorktreeCard(cwd) {
   console.log('  → WORKTREE.md (kind: sprint) — регистрация дерева');
 }
 
-try {
-  main();
-} catch (e) {
-  console.error(`[worktree:bootstrap] ${e instanceof Error ? e.message : String(e)}`);
-  process.exitCode = 1;
+// Guard запуска: без него `import` модуля ВЫПОЛНЯЛ main() — то есть чтение кода тестом
+// начинало править дерево (линковать node_modules, писать WORKTREE.md). Та же форма, что
+// у tooth.mjs / pr-wait.mjs / workspace-links.mjs.
+if (process.argv[1]?.endsWith('worktree-bootstrap.mjs')) {
+  try {
+    main();
+  } catch (e) {
+    console.error(`[worktree:bootstrap] ${e instanceof Error ? e.message : String(e)}`);
+    process.exitCode = 1;
+  }
 }
