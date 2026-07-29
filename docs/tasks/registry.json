@@ -1,6 +1,23 @@
 {
   "tasks": [
     {
+      "id": "agent-tooling-friction-2026-07-29",
+      "title": "Трение тулинга 29.07: резолв воркспейса, ревью в шипе, грабли, bootstrap против канона",
+      "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_2026_07_29_PROMPT.md",
+      "githubIssue": 1465,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-29",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "network-container",
       "title": "Контейнер network: словарь исходов, зонды обоими путями, предполётная проверка, снимок окружения для агентов",
       "promptPath": "docs/prompts/NETWORK_CONTAINER_PROMPT.md",

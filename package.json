@@ -370,6 +370,7 @@
     "meeting:audit": "node scripts/meeting-audit.mjs",
     "branch:check-base": "node scripts/branch-base-freshness.mjs",
     "live-links": "node scripts/live-links.mjs",
+    "workspace:links": "node scripts/workspace-links.mjs",
     "worktree:bootstrap": "node scripts/worktree-bootstrap.mjs",
     "worktree:sync": "node scripts/worktree-sync.mjs",
     "worktree:sync:dry": "node scripts/worktree-sync.mjs --dry-run",
