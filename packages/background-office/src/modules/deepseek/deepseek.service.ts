@@ -3,8 +3,11 @@ import { Inject } from '@nestjs/common';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
 
-// Прямой URL без прокси-логики (ADR 0005): ценность канала — независимость
-// от прокси-инфраструктуры, через которую ходит ClaudeService.
+// Прямой URL без прокси-логики (ADR-0007; решение записывалось как 0005 до
+// перенумерации #504): ценность канала — независимость от прокси-инфраструктуры,
+// через которую ходит ClaudeService. Голый fetch здесь — решение, а не недосмотр:
+// если DeepSeek зафильтруют, это отдельное решение, а не тихая деградация.
+// network-tooth:allow-bare-fetch ADR-0007
 const DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
 
 @Injectable()
