@@ -1,9 +1,9 @@
 # PRECEDENTS — снимок-реестр (производный, руками не править)
 
-> Meta · Date: 2026-07-26 · SHA: 190331f1 · Source: docs/precedents/*.md
+> Meta · Date: 2026-07-29 · SHA: e00433e2 · Source: docs/precedents/*.md
 > Пересобрать: `yarn precedent:register --rebuild`. Источник истины — файлы прецедентов.
 
-Всего прецедентов: **19** · различных классов: **6** · доля рецидива: **68%** (ориентир ≤15%).
+Всего прецедентов: **20** · различных классов: **6** · доля рецидива: **70%** (ориентир ≤15%).
 
 ## Рецидив по классам
 
@@ -12,7 +12,7 @@
 | tooling-gap | 6 ⚠ рецидив |
 | ritual-mechanics-vs-value | 4 ⚠ рецидив |
 | session-report | 4 ⚠ рецидив |
-| cold-start | 2 ⚠ рецидив |
+| cold-start | 3 ⚠ рецидив |
 | reporting-gap | 2 ⚠ рецидив |
 | task-lifecycle | 1 |
 
@@ -39,4 +39,5 @@
 | 2026-07-25 | session-report | [2026-07-25-tasks-workshop-map-lookup](../2026-07-25-tasks-workshop-map-lookup.md) | Дом docs/tasks имеет primary-workshop с манифестом и границей V2; знание размаза |
 | 2026-07-26 | tooling-gap | [2026-07-26-affine-editor-paradigm-impedance](../2026-07-26-affine-editor-paradigm-impedance.md) | Инструмент выбран по КЛАССУ («редактор документов»), а нужен по СПОСОБУ работы ( |
 | 2026-07-26 | task-lifecycle | [2026-07-26-issue-979-selfclose-premature-github-close](../2026-07-26-issue-979-selfclose-premature-github-close.md) ✗ | Issue закрыта без task:archive и без DoD — active-карточка и GitHub расходятся |
+| 2026-07-29 | cold-start | [2026-07-29-greeting-stale-picture-from-memory-cache](../2026-07-29-greeting-stale-picture-from-memory-cache.md) | Холодная сессия озвучивает картину состояния из кеша (память + локальный git-сни |
 
