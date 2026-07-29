@@ -15,11 +15,16 @@
  * Ничего не удаляется молча: всё пропущенное печатается с причиной.
  */
 import { execFileSync, execSync } from 'node:child_process';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, lstatSync, readdirSync, readFileSync, readlinkSync, rmdirSync, unlinkSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { classifyWorktree, parseWorktreeCard } from './lib/classify-worktree.mjs';
+import {
+  newDeletions,
+  resolveLinkTarget,
+  targetIsOutsideTree,
+} from './lib/junction-safety.mjs';
 import {
   decideBranch,
   decideWorktree,
@@ -283,7 +288,19 @@ function main() {
     // После удалений он опасен: маскирует упавший remove (git забывает worktree,
     // а каталог остаётся). Живой случай на Windows — два осиротевших каталога по 1.5 ГБ.
     git(['worktree', 'prune']);
+    // #1436: снимок удалений main-дерева ДО сносов — пост-чек ловит проход
+    // рекурсивного удаления сквозь связь наружу (инциденты 20.07 и 29.07).
+    const deletionsBefore = mainTreeStatus();
     for (const w of wtDead) {
+      // #1436: связи, ведущие НАРУЖУ сносимого дерева, снимаются как связи —
+      // иначе remove --force удаляет сквозь них чужие файлы (29.07: 2097 в main).
+      try {
+        neutralizeOutboundLinks(w.path, out);
+      } catch (e) {
+        out.error(`  worktree ПРОПУЩЕН (скан связей упал): ${w.path} — ${e.message.split('\n')[0]}`);
+        failed++;
+        continue;
+      }
       let ok = false;
       for (const args of [['worktree', 'remove', w.path], ['worktree', 'remove', '--force', w.path]]) {
         try {
@@ -305,6 +322,18 @@ function main() {
           '      git-запись снята, файлы нет (Windows держит node_modules). Убрать вручную.',
       );
       failed++;
+    }
+    // #1436: пост-чек — не появились ли в main-дереве НОВЫЕ удаления после сносов.
+    const lost = newDeletions(deletionsBefore, mainTreeStatus());
+    if (lost.length > 0) {
+      out.error(
+        `\n  ██ СТОП #1436: после сноса деревьев в main-дереве ${lost.length} НОВЫХ удалений ` +
+          `(${lost.slice(0, 3).join(', ')}${lost.length > 3 ? '…' : ''})\n` +
+          '     Восстановить НЕМЕДЛЕННО: git restore -- <пути> (tracked вернутся из HEAD).\n' +
+          '     Это проход удаления сквозь связь наружу — вектор инцидентов 20.07/29.07.',
+      );
+      failed++;
+      process.exitCode = 2;
     }
   }
 
@@ -338,6 +367,67 @@ function main() {
   out.log(`\nГотово: убрано ${removed}, ошибок ${failed}.`);
   writeReport(cli, out);
   if (failed > 0) process.exitCode = 1;
+}
+
+/**
+ * `git status --porcelain` main-дерева (this checkout) — сырьё пост-чека #1436.
+ * Ошибка git здесь не валит снос: пост-чек тогда честно пропускается с воплем.
+ */
+function mainTreeStatus() {
+  try {
+    return execSync('git status --porcelain', { cwd: repoRoot, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+  } catch (e) {
+    console.error(`  ⚠ пост-чек #1436: git status main-дерева не собрался (${e.message.split('\n')[0]})`);
+    return '';
+  }
+}
+
+/**
+ * Снять связи (symlink/junction), ведущие НАРУЖУ дерева, ПЕРЕД его сносом (#1436).
+ * Снимается сам линк (unlink/rmdir), цель не трогается. Обход пропускает .git.
+ */
+function neutralizeOutboundLinks(treeRoot, out) {
+  const stack = [treeRoot];
+  let cut = 0;
+  while (stack.length > 0) {
+    const dir = stack.pop();
+    let entries;
+    try {
+      entries = readdirSync(dir, { withFileTypes: true });
+    } catch {
+      continue; // каталог исчез/недоступен — не повод ронять весь скан
+    }
+    for (const e of entries) {
+      if (e.name === '.git') continue;
+      const p = resolve(dir, e.name);
+      let st;
+      try {
+        st = lstatSync(p);
+      } catch {
+        continue;
+      }
+      if (st.isSymbolicLink()) {
+        const target = resolveLinkTarget(p, readlinkSync(p));
+        if (targetIsOutsideTree(target, treeRoot)) {
+          try {
+            st.isDirectory() ? rmdirSync(p) : unlinkSync(p);
+          } catch {
+            // директория-junction под lstat не isDirectory — пробуем оба глагола
+            try {
+              rmdirSync(p);
+            } catch {
+              unlinkSync(p);
+            }
+          }
+          out.log(`    связь наружу снята: ${p} → ${target}`);
+          cut++;
+        }
+        continue; // внутрь связей не ходим — даже внутренних
+      }
+      if (st.isDirectory()) stack.push(p);
+    }
+  }
+  if (cut > 0) out.log(`  связей наружу снято: ${cut} (${treeRoot})`);
 }
 
 /**
