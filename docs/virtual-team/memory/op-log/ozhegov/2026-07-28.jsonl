@@ -210,3 +210,7 @@
 {"ts":"2026-07-28T12:06:47.824Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
 {"ts":"2026-07-28T12:27:07.698Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
 {"ts":"2026-07-28T12:27:32.741Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-07-28T15:14:34.291Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-07-28-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-07-28T15:14:34.291Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-07-28-insight-spectrum-tiers","origin":"persona-extract"}
+{"ts":"2026-07-28T15:14:34.291Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-22-home-workshop-m2-vocabulary","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-07-28T15:14:34.291Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

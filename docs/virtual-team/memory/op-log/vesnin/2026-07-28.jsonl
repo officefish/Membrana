@@ -211,3 +211,7 @@
 {"ts":"2026-07-28T12:06:47.942Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
 {"ts":"2026-07-28T12:27:07.806Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
 {"ts":"2026-07-28T12:27:32.849Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-07-28T15:14:34.419Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-07-28-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-07-28T15:14:34.419Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-07-28-insight-spectrum-tiers","origin":"persona-extract"}
+{"ts":"2026-07-28T15:14:34.419Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-22-home-workshop-m1-contract","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-07-28T15:14:34.419Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
