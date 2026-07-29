@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `agent-tooling-friction-2026-07-29` | Трение тулинга 29.07: резолв воркспейса, ревью в шипе, грабли, bootstrap против канона | M | [`AGENT_TOOLING_FRICTION_2026_07_29_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_2026_07_29_PROMPT.md) | [#1465](https://github.com/officefish/Membrana/issues/1465) |
 | `network-container` | Контейнер network: словарь исходов, зонды обоими путями, предполётная проверка, снимок окружения для агентов | M | [`NETWORK_CONTAINER_PROMPT.md`](../prompts/NETWORK_CONTAINER_PROMPT.md) | [#1449](https://github.com/officefish/Membrana/issues/1449) |
 | `weekly-dead-wire-audit` | Недельная процедура «мёртвые провода»: declared ⇒ файл существует ∨ явный pending | M | [`WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md`](../prompts/WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md) | [#1447](https://github.com/officefish/Membrana/issues/1447) |
 | `night-triage-insight-channel` | Канал «ночной триаж → карточка инсайта»: дома сырья, promote-only PR, стык с магистралью дня | M | [`NIGHT_TRIAGE_INSIGHT_CHANNEL_PROMPT.md`](../prompts/NIGHT_TRIAGE_INSIGHT_CHANNEL_PROMPT.md) | [#1445](https://github.com/officefish/Membrana/issues/1445) |
@@ -241,6 +240,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `agent-tooling-friction-2026-07-29` | Трение тулинга 29.07: резолв воркспейса, ревью в шипе, грабли, bootstrap против канона | 2026-07-29 | [`AGENT_TOOLING_FRICTION_2026_07_29_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_2026_07_29_PROMPT.md) | #1465 (Issue открыт) | [карточка](./archive/agent-tooling-friction-2026-07-29.md) |
 | `procedures-corpus` | Ревизия корпуса процедур: ядро · homes · легальное нет (Ф5 #1220) | 2026-07-29 | [`PROCEDURES_CORPUS_PROMPT.md`](../prompts/PROCEDURES_CORPUS_PROMPT.md) | #1284 (Issue открыт) | [карточка](./archive/procedures-corpus.md) |
 | `ship-review-tooth` | Шип-гейт: мердж только через ревью-вердикт по HEAD SHA + required check (стена от обхода ревью) | 2026-07-29 | [`SHIP_REVIEW_TOOTH_PROMPT.md`](../prompts/SHIP_REVIEW_TOOTH_PROMPT.md) | #924 (Issue открыт) | [карточка](./archive/ship-review-tooth.md) |
 | `rag-r6-closure` | RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive | 2026-07-29 | — | — | [карточка](./archive/rag-r6-closure.md) |
