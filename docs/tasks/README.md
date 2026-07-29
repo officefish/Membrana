@@ -37,7 +37,6 @@
 | `ship-automerge-predicate` | Предикат автослияния спрашивает галку вместо правил защиты ветки | S | [`SHIP_AUTOMERGE_PREDICATE_PROMPT.md`](../prompts/SHIP_AUTOMERGE_PREDICATE_PROMPT.md) | — |
 | `tw-handoff-liveness` | Сверка живости топ-10 хендоффа: строки таблицы против состояний задач | S | [`TW_HANDOFF_LIVENESS_PROMPT.md`](../prompts/TW_HANDOFF_LIVENESS_PROMPT.md) | [#1319](https://github.com/officefish/Membrana/issues/1319) |
 | `tw-declared-verbs-honest-no` | Мастерская задач: три глагола объявлены без движков — строить или объявить declared-not-built | S | [`TW_DECLARED_VERBS_HONEST_NO_PROMPT.md`](../prompts/TW_DECLARED_VERBS_HONEST_NO_PROMPT.md) | — |
-| `procedures-corpus` | Ревизия корпуса процедур: ядро · homes · легальное нет (Ф5 #1220) | M | [`PROCEDURES_CORPUS_PROMPT.md`](../prompts/PROCEDURES_CORPUS_PROMPT.md) | [#1284](https://github.com/officefish/Membrana/issues/1284) |
 | `friction6-secret-inventory` | yarn secret:inventory — инвентарь засвеченного как вход ротации ключей | S | [`FRICTION6_SECRET_INVENTORY_PROMPT.md`](../prompts/FRICTION6_SECRET_INVENTORY_PROMPT.md) | [#1266](https://github.com/officefish/Membrana/issues/1266) |
 | `friction6-hygiene-notes` | Реестр скриптов не протухает + три грабли окружения в AGENTS.md | S | [`FRICTION6_HYGIENE_NOTES_PROMPT.md`](../prompts/FRICTION6_HYGIENE_NOTES_PROMPT.md) | [#1265](https://github.com/officefish/Membrana/issues/1265) |
 | `friction6-scripts-lint` | scripts/*.mjs вне линтера: дать парсер ESM и назвать шум числом | M | [`FRICTION6_SCRIPTS_LINT_PROMPT.md`](../prompts/FRICTION6_SCRIPTS_LINT_PROMPT.md) | [#1264](https://github.com/officefish/Membrana/issues/1264) |
@@ -240,6 +239,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `procedures-corpus` | Ревизия корпуса процедур: ядро · homes · легальное нет (Ф5 #1220) | 2026-07-29 | [`PROCEDURES_CORPUS_PROMPT.md`](../prompts/PROCEDURES_CORPUS_PROMPT.md) | #1284 (Issue открыт) | [карточка](./archive/procedures-corpus.md) |
 | `ship-review-tooth` | Шип-гейт: мердж только через ревью-вердикт по HEAD SHA + required check (стена от обхода ревью) | 2026-07-29 | [`SHIP_REVIEW_TOOTH_PROMPT.md`](../prompts/SHIP_REVIEW_TOOTH_PROMPT.md) | #924 (Issue открыт) | [карточка](./archive/ship-review-tooth.md) |
 | `kits-pins-prepush-strict` | Строгая сверка описей китов на pre-push для затронутых файлов | 2026-07-27 | [`KITS_PINS_PREPUSH_STRICT_PROMPT.md`](../prompts/KITS_PINS_PREPUSH_STRICT_PROMPT.md) | — | [карточка](./archive/kits-pins-prepush-strict.md) |
 | `ship-merge-state-guard` | Гард незавершённого слияния перед пушем: тихий отказ хука не выдаёт себя за успех | 2026-07-27 | [`SHIP_MERGE_STATE_GUARD_PROMPT.md`](../prompts/SHIP_MERGE_STATE_GUARD_PROMPT.md) | #1321 | [карточка](./archive/ship-merge-state-guard.md) |
