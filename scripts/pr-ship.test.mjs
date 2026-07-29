@@ -43,7 +43,7 @@ test('planPrShip: title + trailer + Closes + порядок шагов', () => {
   assert.match(commitBody, /Co-Authored-By: Claude Opus 4\.8/);
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['branch', 'commit', 'push', 'pr-create', 'ci-wait', 'merge', 'verify', 'branch-cleanup', 'sync-checkout', 'sync-fetch', 'sync-ff'],
+    ['branch', 'commit', 'push', 'pr-create', 'ci-wait', 'review-gate', 'merge', 'verify', 'branch-cleanup', 'sync-checkout', 'sync-fetch', 'sync-ff'],
   );
   assert.deepEqual(steps[0].args, ['checkout', '-b', 'feat/x']);
 });
@@ -91,7 +91,7 @@ test('#700: --merge-only даёт ТОЛЬКО merge-хвост, без branch/c
   const { steps, title, commitBody } = planPrShip({ mergeOnly: true, currentBranch: 'fix/x' });
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['ci-wait', 'merge', 'verify', 'branch-cleanup', 'sync-checkout', 'sync-fetch', 'sync-ff'],
+    ['ci-wait', 'review-gate', 'merge', 'verify', 'branch-cleanup', 'sync-checkout', 'sync-fetch', 'sync-ff'],
   );
   assert.equal(title, '', 'merge-only не строит заголовок (PR уже открыт)');
   assert.equal(commitBody, '', 'merge-only ничего не коммитит');
@@ -257,7 +257,7 @@ test('base свободен → полный ff-sync как раньше', () =>
   });
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['commit', 'push', 'pr-create', 'ci-wait', 'merge', 'verify', 'sync-checkout', 'sync-fetch', 'sync-ff'],
+    ['commit', 'push', 'pr-create', 'ci-wait', 'review-gate', 'merge', 'verify', 'sync-checkout', 'sync-fetch', 'sync-ff'],
   );
   assert.equal(skippedSync, undefined);
 });
@@ -373,8 +373,11 @@ test('otherWorktreeBranches: git недоступен → пусто, а не п
 test('--auto: слияние отдаётся серверу, локальные ci-wait/verify не планируются', () => {
   const { steps, skippedSync } = planMergeTail({ auto: true, branch: 'feat/x' });
   const labels = steps.map((s) => s.label);
-  assert.deepEqual(labels, ['merge-auto']);
-  assert.deepEqual(steps[0].args, ['pr', 'merge', '--squash', '--auto']);
+  assert.deepEqual(labels, ['review-gate', 'merge-auto']);
+  assert.deepEqual(steps[1].args, ['pr', 'merge', '--squash', '--auto']);
+  // Шип-гейт (#924) стоит ПЕРЕД взводом автослияния: сервер сольёт по зелёному,
+  // но ревью тимлида обязано состояться до того, иначе PR повиснет в pending.
+  assert.equal(steps[0].label, 'review-gate');
   assert.match(skippedSync, /сервер/);
   // Гонка 26.07: PR #1248/#1253/#1256 становились CONFLICTING уже ПОСЛЕ зелёного CI.
   assert.ok(!labels.includes('ci-wait'), 'локальное ожидание — то самое окно, в котором уезжает base');
@@ -382,7 +385,7 @@ test('--auto: слияние отдаётся серверу, локальные
 
 test('--auto не отменяет обычный путь: без флага хвост прежний', () => {
   const labels = planMergeTail({ branch: 'feat/x' }).steps.map((s) => s.label);
-  assert.deepEqual(labels.slice(0, 4), ['ci-wait', 'merge', 'verify', 'branch-cleanup']);
+  assert.deepEqual(labels.slice(0, 5), ['ci-wait', 'review-gate', 'merge', 'verify', 'branch-cleanup']);
 });
 
 test('sync-шаги несут guard base-free — предикат перепроверяется в момент исполнения', () => {
