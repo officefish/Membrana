@@ -3,6 +3,7 @@ import { Inject } from '@nestjs/common';
 
 import { APP_CONFIG } from '../../config/config.tokens';
 import type { AppConfig } from '../../config/env.schema';
+import { proxyAwareFetch, proxyUrlFrom } from '../../lib/proxy-fetch';
 import {
   buildGithubAuthorizeUrl,
   mintPartnerSessionToken,
@@ -24,8 +25,8 @@ export interface GithubUser {
 
 /**
  * Сервис auth-контура панели (OP2). Stateless: секреты и allowlist — из env,
- * ничего не персистится. GitHub OAuth — plain fetch (без passport: office уже
- * ходит в GitHub плоским fetch в GithubService, новая зависимость не нужна).
+ * ничего не персистится. GitHub OAuth — без passport (office уже ходит в GitHub
+ * из GithubService, новая зависимость не нужна); путь тот же, proxy-aware (#1449).
  */
 @Injectable()
 export class PanelAuthService {
@@ -124,19 +125,24 @@ export class PanelAuthService {
     );
   }
 
-  /** OAuth code → GitHub user (plain fetch, тот же путь, что GithubService). */
+  /** OAuth code → GitHub user (тот же proxy-aware путь, что GithubService). */
   async exchangeGithubCode(code: string): Promise<GithubUser | null> {
+    const proxyUrl = proxyUrlFrom(this.config);
     try {
-      const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json', accept: 'application/json' },
-        body: JSON.stringify({
-          client_id: this.config.PANEL_GITHUB_CLIENT_ID?.trim(),
-          client_secret: this.config.PANEL_GITHUB_CLIENT_SECRET?.trim(),
-          code,
-        }),
-        signal: AbortSignal.timeout(20_000),
-      });
+      const tokenRes = await proxyAwareFetch(
+        'https://github.com/login/oauth/access_token',
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          body: JSON.stringify({
+            client_id: this.config.PANEL_GITHUB_CLIENT_ID?.trim(),
+            client_secret: this.config.PANEL_GITHUB_CLIENT_SECRET?.trim(),
+            code,
+          }),
+          signal: AbortSignal.timeout(20_000),
+        },
+        proxyUrl,
+      );
       const tokenJson = (await tokenRes.json()) as {
         access_token?: string;
         token_type?: string;
@@ -156,14 +162,18 @@ export class PanelAuthService {
       if (tokenJson.scope && !tokenJson.scope.split(',').includes('read:user')) {
         this.logger.warn({ scope: tokenJson.scope }, 'panel-auth: unexpected oauth scope');
       }
-      const userRes = await fetch('https://api.github.com/user', {
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-          accept: 'application/vnd.github+json',
-          'user-agent': 'membrana-panel-auth',
+      const userRes = await proxyAwareFetch(
+        'https://api.github.com/user',
+        {
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+            accept: 'application/vnd.github+json',
+            'user-agent': 'membrana-panel-auth',
+          },
+          signal: AbortSignal.timeout(20_000),
         },
-        signal: AbortSignal.timeout(20_000),
-      });
+        proxyUrl,
+      );
       if (!userRes.ok) {
         this.logger.warn({ status: userRes.status }, 'panel-auth: github user fetch failed');
         return null;

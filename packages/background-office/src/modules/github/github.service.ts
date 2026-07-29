@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import type { Octokit } from '@octokit/rest' with { 'resolution-mode': 'import' };
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
+import { proxyAwareFetch, proxyUrlFrom } from '../../lib/proxy-fetch';
 
 const MAX_TICKET_CHARS = 20_000;
 
@@ -30,15 +31,22 @@ export class GithubService {
 
   private async getOctokit(): Promise<Octokit> {
     if (!this.octokitPromise) {
+      const proxyUrl = proxyUrlFrom(this.config);
       this.octokitPromise = import('@octokit/rest').then(({ Octokit }) => {
         return new Octokit({
           auth: this.config.GITHUB_TOKEN,
           request: {
+            // Proxy-aware (#1449): голый fetch не читает HTTPS_PROXY. GitHub открыт
+            // и напрямую, но путь должен быть один с остальным исходящим трафиком.
             fetch: (url: string | URL | Request, options?: RequestInit) =>
-              fetch(url, {
-                ...options,
-                signal: AbortSignal.timeout(30_000),
-              }),
+              proxyAwareFetch(
+                url as Parameters<typeof proxyAwareFetch>[0],
+                {
+                  ...(options as Parameters<typeof proxyAwareFetch>[1]),
+                  signal: AbortSignal.timeout(30_000),
+                },
+                proxyUrl,
+              ),
           },
         });
       });
