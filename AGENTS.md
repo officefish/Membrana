@@ -80,7 +80,7 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | `gh pr/issue --body` / heredoc на PS | Только `--body-file` + длинный путь (`scripts/cache/`, ATF4-3); `%TEMP%`/`USER19~1` — ловушка |
 | `git rebase --continue` без EDITOR | `yarn git:rebase-continue` (GIT_EDITOR=true, ATF4-4); иначе «Terminal is dumb» |
 | `DAY_SPRINT_ACTIVE` при параллели | Не затирать **Focus**; править только **Also open** (ATF4-2 / DAY_SPRINT_REGULATION) |
-| Sibling worktree: junction shared `node_modules` | **Anti-pattern (#725):** ломает Nest11/express resolve. Канон — per-wt `yarn install` + копия `.env`. Не заводить новый bootstrap с junction (#705 = install) |
+| Sibling worktree: junction shared `node_modules` | **Anti-pattern (#725):** ломает Nest11/express resolve и прячет несобранные пакеты. Канон — per-wt `yarn install` + копия `.env`. С 29.07 `yarn worktree:bootstrap` **по умолчанию ставит своё** (#1465 Ф4); junction остался под явным `--junction` с предупреждением, фактический способ пишется в `WORKTREE.md`. Дерево на junction проверять `yarn workspace:links` |
 | `gh issue/pr --body` через bash-heredoc на Windows | PS 5.1 ломает heredoc → **только tempfile + `--body-file`** (#725 A; `yarn task:start` так и делает) |
 | Optional `night:*` нет в `package.json` на ветке | Soft-skip / не звать — hard-fail ритуала запрещён (#725 C). `scripts/lib/optional-yarn-script.mjs` |
 | Карточка background office/media «на память» | Сначала [`docs/BACKGROUND_SERVERS.md`](docs/BACKGROUND_SERVERS.md) / скилл `membrana-background-servers` — офис уже Fastify, не Express (#725 E) |
