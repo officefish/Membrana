@@ -32,7 +32,7 @@
     "scripts/lib/strategic-docs-render-adapter.mjs": "b371d78628326455a90a61c99a38f891caeaf36f",
     "scripts/lib/task-registry.mjs": "2e2117d614ea69448bc132856da35c2f53aca8b4",
     "scripts/lib/tasks-audit.mjs": "e4a22ef66e482168060a3cc7af56b91d757cac47",
-    "scripts/lib/tasks-decompose.mjs": "064d231da40ab7e8e044ca6fcbc40049aaaaa9a2",
+    "scripts/lib/tasks-decompose.mjs": "76db4ed957044028ed543db464cb73cbb086806d",
     "scripts/lib/tasks-readme-engine.mjs": "3a45a41f5e17587bc54b85011eeacbeffa7c264b",
     "scripts/lib/tooling-overview.mjs": "7cb0acb63c37edb3ac6a610653916632cca0238c",
     "scripts/lib/validate-procedure.mjs": "b789e6607dad867b989cc5a0a7d305326e7e9585",
@@ -41,7 +41,7 @@
     "scripts/repo-branches.mjs": "f66c9a34c9419c6ee24ceb2c3ad7972e6c412cef",
     "scripts/scripts-registry.mjs": "cb0c79a03dd8285c21aff3efde697232c29aa870",
     "scripts/tasks-audit.mjs": "3ae13d88825df9f77dab9c0e248de78c96d7864e",
-    "scripts/tasks-decompose.mjs": "ac6642cb882a21cf1cb56697e6c2f93f24150df7",
+    "scripts/tasks-decompose.mjs": "14d5205cd9b4211824b173a04bfd879b6a6586b7",
     "scripts/tooling-overview.mjs": "072fcbbc8c3fd2b1c2b2f0aeeee2ab4752ba9fe5"
   }
 }
