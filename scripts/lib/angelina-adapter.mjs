@@ -39,9 +39,9 @@ export function parseProvenance(content) {
 /**
  * Честная ручная чеканка (#999 / DRU-363) — структурированный заголовок:
  *   `<!-- angelina-manual {"author":"human","mintedAt":"2026-07-23","reason":"…"} -->`
- * Опционально `session`. Fallback: свободные HTML-комментарии утра 23.07
- * («Отчеканено РУКАМИ …» + «Причина ручной чеканки: …»), чтобы уже отчеканенные
- * документы не оставались красными «нет провенанса».
+ * Опционально `session`. Fallback: свободные HTML-комментарии — «Ручная чеканка владельца …»
+ * (owner-choice 25–26.07), «Отчеканено РУКАМИ …» + «Причина ручной чеканки: …» (прецедент 23.07).
+ * Честная ручная чеканка предпочитается машинному `angelina` в `buildSnapshot`.
  *
  * @param {string} content
  * @returns {{author: string, mintedAt: string, reason: string, session?: string}|null}
@@ -68,6 +68,24 @@ export function parseHonestManual(content) {
     };
     if (typeof obj.session === 'string' && obj.session.trim()) out.session = obj.session.trim();
     return out;
+  }
+
+  // Fallback: «Ручная чеканка владельца YYYY-MM-DD: …» (owner-choice, прецедент 25–26.07).
+  const ownerHit = text.match(
+    /Ручная\s+чеканка\s+владельца\s+(\d{4}-\d{2}-\d{2}):\s*([^\n*<]+)/u,
+  );
+  if (ownerHit) {
+    const authorHit = ownerHit[2].match(/\(author=(\w+)\)/u);
+    const reason = ownerHit[2].trim().replace(/\s*-->\s*$/u, '');
+    /** @type {{author: string, mintedAt: string, reason: string, session?: string}} */
+    const ownerManual = {
+      author: authorHit?.[1] ?? 'human',
+      mintedAt: ownerHit[1],
+      reason,
+    };
+    const sessionHit = text.match(/сессия\s+([0-9a-f-]{8,})/iu);
+    if (sessionHit?.[1]) ownerManual.session = sessionHit[1];
+    return ownerManual;
   }
 
   // Fallback: свободная шапка ручной чеканки (прецедент 2026-07-23).
@@ -117,16 +135,14 @@ export function buildSnapshot(cascade, io) {
       continue;
     }
     const digest = contentDigest(content);
-    const parsed = parseProvenance(content);
-    const manual = parsed ? null : parseHonestManual(content);
-    // Машинный заголовок предпочтительнее. Нет его — честная ручная чеканка (#999).
+    const manual = parseHonestManual(content);
+    const parsed = manual ? null : parseProvenance(content);
+    // Честная ручная чеканка предпочтительнее машинного заголовка (#999): иначе
+    // документ с «Ручная чеканка владельца …» + пустым angelina выглядит как машинный ok.
     // Оба отсутствуют → provenance null → ядро блокирует «нет провенанса».
     let provenance = null;
     let readAt = {};
-    if (parsed) {
-      provenance = { ...parsed, kind: 'machine', digest, readAt: parsed.readAt };
-      readAt = parsed.readAt ?? {};
-    } else if (manual) {
+    if (manual) {
       provenance = {
         kind: 'honest-manual',
         author: manual.author,
@@ -137,6 +153,9 @@ export function buildSnapshot(cascade, io) {
         readAt: {},
         ...(manual.session ? { session: manual.session } : {}),
       };
+    } else if (parsed) {
+      provenance = { ...parsed, kind: 'machine', digest, readAt: parsed.readAt };
+      readAt = parsed.readAt ?? {};
     }
     snapshot[node.id] = {
       version: io.version(node.path),
