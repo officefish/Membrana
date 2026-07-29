@@ -1,0 +1,38 @@
+{
+  "$comment": "Профили зондов контейнера network (#1449). Цели — только публичные корневые эндпоинты, БЕЗ ключей и без тел запросов: зонд проверяет достижимость и характер отказа, а не работу аккаунта. control — контрольная точка: если она зелёная, а провайдер красный, дело точно не в сети машины.",
+  "version": 1,
+  "profiles": [
+    {
+      "id": "control",
+      "label": "Контрольная точка (GitHub API)",
+      "url": "https://api.github.com/",
+      "role": "control",
+      "notes": "Замер office 29.07: HTTP 200 и напрямую, и через прокси. Если контроль красный — проблема у машины, а не у провайдера."
+    },
+    {
+      "id": "openrouter",
+      "label": "OpenRouter",
+      "url": "https://openrouter.ai/api/v1/models",
+      "role": "provider",
+      "expectProxy": true,
+      "notes": "Замер office 29.07: напрямую 403 (гео), через ProxyAgent 200. Различие путей — сам по себе вещдок."
+    },
+    {
+      "id": "anthropic",
+      "label": "Anthropic",
+      "url": "https://api.anthropic.com/",
+      "role": "provider",
+      "expectProxy": true,
+      "reachableStatuses": [404],
+      "notes": "Замер office 29.07: напрямую 403, через прокси 404 (корневой путь без метода — ожидаемо, транспорт жив)."
+    },
+    {
+      "id": "deepseek",
+      "label": "DeepSeek",
+      "url": "https://api.deepseek.com/",
+      "role": "provider",
+      "reachableStatuses": [401],
+      "notes": "Замер office 29.07: 401 и напрямую, и через прокси — сервер отвечает, вопрос только в ключе. Зонд ходит без ключа, поэтому 401 здесь = «дошли»."
+    }
+  ]
+}

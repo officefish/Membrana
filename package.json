@@ -409,7 +409,11 @@
     "test:scripts:full": "node scripts/tests-container.mjs --setup full",
     "bridge:lead": "node scripts/bridge-lead-call.mjs",
     "team-memory:report": "node scripts/team-memory-report.mjs",
-    "day:memo": "node scripts/day-memo.mjs"
+    "day:memo": "node scripts/day-memo.mjs",
+    "network:probe": "node scripts/network/probe.mjs",
+    "network:snapshot": "node scripts/network/snapshot.mjs",
+    "network:preflight": "node scripts/network/preflight.mjs",
+    "network:tooth": "node scripts/network/tooth.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

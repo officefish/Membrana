@@ -1,0 +1,115 @@
+# Словарь исходов сетевого вызова — ЕДИНСТВЕННЫЙ закрытый перечень (решение консилиума
+# network-container-form 29.07, Q3). Всё, что классифицируется, обязано попасть в один
+# из id ниже; неизвестное — `unknown_protocol`, а не «сеть».
+#
+# Повод: двое суток диагноз звучал как «на office нет исходящего маршрута к LLM, нужен
+# туннель». Живой замер прода 29.07 показал: прокси на месте, openrouter через
+# ProxyAgent отдаёт HTTP 200, сеть работает. А код метил ЛЮБОЙ неуспех как `net` —
+# устаревшую модель, кончившиеся кредиты, отсутствующий ключ. Отсюда «30/30 net на всех
+# провайдерах» и ложный вывод. Этот файл существует, чтобы такое не повторилось.
+#
+# ГЛАВНОЕ ПРАВИЛО: если сервер ответил HTTP-статусом — транспорт РАБОТАЕТ.
+# Ни один исход с `httpStatus != null` не может быть транспортным.
+
+version: 1
+
+# Транспортное множество: только эти шесть означают «сеть».
+transport:
+  - dns_fail
+  - tcp_fail
+  - tls_fail
+  - timeout_idle
+  - proxy_intercept
+  - provider_unreachable_http
+
+outcomes:
+  - id: ok
+    kind: success
+    meaning: Ответ получен, статус успешный.
+    signals: { httpStatus: '2xx' }
+
+  # ── транспорт: сервер не ответил вовсе ────────────────────────────────────
+  - id: dns_fail
+    kind: transport
+    meaning: Имя не разрешилось — DNS не отдал адрес.
+    signals: { errorCode: [ENOTFOUND, EAI_AGAIN] }
+    remedy: Проверить резолвер и сеть машины; это не ключи и не деньги.
+
+  - id: tcp_fail
+    kind: transport
+    meaning: Соединение не установилось — отказ или недоступность на уровне TCP.
+    signals: { errorCode: [ECONNREFUSED, EHOSTUNREACH, ENETUNREACH, ECONNRESET] }
+    remedy: Проверить маршрут и фильтры; сверить, нужен ли прокси для этой цели.
+
+  - id: tls_fail
+    kind: transport
+    meaning: Рукопожатие TLS не состоялось.
+    signals: { errorCode: [CERT_HAS_EXPIRED, DEPTH_ZERO_SELF_SIGNED_CERT, ERR_TLS_CERT_ALTNAME_INVALID, EPROTO] }
+    remedy: Смотреть перехват TLS и системные корневые сертификаты.
+
+  - id: timeout_idle
+    kind: transport
+    meaning: Ответ не пришёл в отведённое время, статуса нет.
+    signals: { errorCode: [ETIMEDOUT, UND_ERR_CONNECT_TIMEOUT, UND_ERR_HEADERS_TIMEOUT, ABORT_ERR] }
+    remedy: Повторить с большим окном; отличать от медленной модели — у той статус есть.
+
+  - id: proxy_intercept
+    kind: transport
+    meaning: Вместо API вернулась HTML-заглушка — на пути посредник, а не провайдер.
+    signals: { bodyLooksLikeHtml: true }
+    remedy: Прецедент voyage 28.07 — заглушка приходит и напрямую, и через прокси.
+
+  - id: provider_unreachable_http
+    kind: transport
+    meaning: Прокси/шлюз сам сообщает, что не смог дойти до цели.
+    signals: { httpStatus: [502, 503, 504], viaProxy: true }
+    remedy: Отличать от провайдерской 5xx — здесь падает посредник, не провайдер.
+
+  # ── не транспорт: сервер ответил, дело в доступе, деньгах или контракте ────
+  - id: geo_blocked
+    kind: access
+    meaning: Провайдер отказал по географии — соединение прошло, доступ закрыт.
+    signals: { httpStatus: 403, withoutProxy: true }
+    remedy: Прецедент Linear и openrouter 29.07 — напрямую 403, через ProxyAgent 200.
+
+  - id: auth_missing_key
+    kind: access
+    meaning: Ключа нет в окружении — вызов не состоялся по своей вине.
+    signals: { errorText: 'API_KEY missing' }
+    remedy: Прецедент снов 29.07 — DEEPSEEK_API_KEY отсутствовал в контейнере office.
+
+  - id: auth_invalid_key
+    kind: access
+    meaning: Ключ есть, но провайдер его не принял.
+    signals: { httpStatus: [401] }
+    remedy: Отличать от missing: там вызова не было вовсе.
+
+  - id: billing_exhausted
+    kind: budget
+    meaning: Деньги или лимит ключа кончились.
+    signals: { httpStatus: [402], errorText: ['insufficient', 'credits', 'quota'] }
+    remedy: Прецедент 29.07 — «requested up to 4096 tokens, but can only afford 3505».
+
+  - id: rate_limited
+    kind: budget
+    meaning: Слишком часто — провайдер просит подождать.
+    signals: { httpStatus: [429] }
+    remedy: Повтор с отступом; не путать с billing — там пауза не помогает.
+
+  - id: model_removed
+    kind: contract
+    meaning: Запрошенная модель снята с раздачи или переименована.
+    signals: { httpStatus: [404], errorText: ['deprecated', 'No endpoints found', 'not found'] }
+    remedy: Прецедент 29.07 — grok-4-fast deprecated, gemini-2.0-flash-001 без эндпоинтов.
+
+  - id: provider_5xx
+    kind: provider
+    meaning: Провайдер ответил своей ошибкой — его сторона.
+    signals: { httpStatus: [500, 502, 503, 504], viaProxy: false }
+    remedy: Повторить; при устойчивости — смотреть статус-страницу провайдера.
+
+  - id: unknown_protocol
+    kind: unknown
+    meaning: Не опознано. ЧЕСТНОЕ НЕЗНАНИЕ — не выдавать за сеть и не за ok.
+    signals: {}
+    remedy: Расширить словарь по прецеденту, а не молча дописать в transport.

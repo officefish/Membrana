@@ -49,7 +49,7 @@
     {
       "name": "Контейнеры, процедуры и мастерские",
       "patterns": [
-        "^(archivarius-|precedent-container|assets-container|tooling-atlas|procedural-|procedures-corpus|adr-procedure|frame-rails|frames-alive|bridge-room|angelina-codex)"
+        "^(archivarius-|precedent-container|assets-container|network-container|tooling-atlas|procedural-|procedures-corpus|adr-procedure|frame-rails|frames-alive|bridge-room|angelina-codex)"
       ]
     },
     {

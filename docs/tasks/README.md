@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `network-container` | Контейнер network: словарь исходов, зонды обоими путями, предполётная проверка, снимок окружения для агентов | M | [`NETWORK_CONTAINER_PROMPT.md`](../prompts/NETWORK_CONTAINER_PROMPT.md) | [#1449](https://github.com/officefish/Membrana/issues/1449) |
 | `weekly-dead-wire-audit` | Недельная процедура «мёртвые провода»: declared ⇒ файл существует ∨ явный pending | M | [`WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md`](../prompts/WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md) | [#1447](https://github.com/officefish/Membrana/issues/1447) |
 | `night-triage-insight-channel` | Канал «ночной триаж → карточка инсайта»: дома сырья, promote-only PR, стык с магистралью дня | M | [`NIGHT_TRIAGE_INSIGHT_CHANNEL_PROMPT.md`](../prompts/NIGHT_TRIAGE_INSIGHT_CHANNEL_PROMPT.md) | [#1445](https://github.com/officefish/Membrana/issues/1445) |
 | `deps-basket-immediate-2026-07-29` | Корзина deps «СРАЗУ»: 1 critical (tar DoS) + 22 high по порогу M1 | S | [`DEPS_BASKET_IMMEDIATE_2026_07_29_PROMPT.md`](../prompts/DEPS_BASKET_IMMEDIATE_2026_07_29_PROMPT.md) | [#1422](https://github.com/officefish/Membrana/issues/1422) |
