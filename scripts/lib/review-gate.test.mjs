@@ -10,6 +10,7 @@ import {
   renderVerdictMarker,
   reviewGateDecision,
   sameSha,
+  shouldEnsureReview,
   statusFromDecision,
 } from './review-gate.mjs';
 
@@ -74,4 +75,25 @@ test('состояние → commit status: pass=success, block=failure, unknown
   assert.equal(statusFromDecision({ state: 'pass', reason: 'x' }).state, 'success');
   assert.equal(statusFromDecision({ state: 'block', reason: 'x' }).state, 'failure');
   assert.equal(statusFromDecision({ state: 'unknown', reason: 'x' }).state, 'pending');
+});
+
+// --- #1465 Ф2: --ensure догоняет только НЕсказанное ---------------------------------------
+
+test('ВЕЩДОК: unknown догоняется автоматически — ручная пересадка 29.07 (PR #1461, #1464)', () => {
+  assert.equal(shouldEnsureReview('unknown', true), true);
+});
+
+test('BLOCK НЕ переспрашивается: крутить ревью до нужного ответа — не гейт', () => {
+  assert.equal(shouldEnsureReview('block', true), false);
+});
+
+test('pass догонять нечего', () => {
+  assert.equal(shouldEnsureReview('pass', true), false);
+});
+
+test('без флага поведение прежнее для любого исхода', () => {
+  for (const s of ['pass', 'block', 'unknown']) {
+    assert.equal(shouldEnsureReview(s, false), false);
+    assert.equal(shouldEnsureReview(s, undefined), false);
+  }
 });

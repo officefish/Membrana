@@ -11,6 +11,7 @@ import {
   otherWorktreeBranches,
   planBranchStep,
   planMergeTail,
+  reviewGateArgs,
   planPrShip,
   unfinishedMergeProblem,
 } from './pr-ship.mjs';
@@ -366,6 +367,36 @@ test('otherWorktreeBranches: git недоступен → пусто, а не п
     throw new Error('git not found');
   });
   assert.deepEqual(branches, []);
+});
+
+// --- #1465 Ф2: --with-review убирает ручную пересадку между шагами -------------------------
+
+test('без --with-review гейт зовётся как раньше — умолчание не меняется', () => {
+  assert.deepEqual(reviewGateArgs(), ['scripts/review-gate.mjs', '--publish']);
+  assert.deepEqual(reviewGateArgs(false), ['scripts/review-gate.mjs', '--publish']);
+});
+
+test('ВЕЩДОК 29.07: --with-review добавляет --ensure — связка gate→review→merge-only не руками', () => {
+  // PR #1461 и #1464: одна и та же пересадка двумя командами, знак в знак.
+  assert.deepEqual(reviewGateArgs(true), ['scripts/review-gate.mjs', '--publish', '--ensure']);
+});
+
+test('--with-review доезжает до шага хвоста, а не теряется в опциях', () => {
+  const { steps } = planMergeTail({ currentBranch: 'fix/x', withReview: true });
+  const gate = steps.find((s) => s.label === 'review-gate');
+  assert.ok(gate.args.includes('--ensure'));
+});
+
+test('--with-review работает и в --auto: сервер сольёт только после вердикта', () => {
+  const { steps } = planMergeTail({ auto: true, branch: 'feat/x', withReview: true });
+  assert.ok(steps[0].args.includes('--ensure'));
+  assert.equal(steps[1].label, 'merge-auto');
+});
+
+test('--with-review не переставляет шаги: гейт по-прежнему ПОСЛЕ ci-wait и ПЕРЕД merge', () => {
+  const labels = planMergeTail({ currentBranch: 'fix/x', withReview: true }).steps.map((s) => s.label);
+  assert.ok(labels.indexOf('ci-wait') < labels.indexOf('review-gate'));
+  assert.ok(labels.indexOf('review-gate') < labels.indexOf('merge'));
 });
 
 // --- #1261: ship не врёт и не проигрывает гонку --------------------------------------------
