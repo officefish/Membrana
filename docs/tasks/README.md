@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `agent-tooling-friction-2026-07-29` | Трение тулинга 29.07: резолв воркспейса, ревью в шипе, грабли, bootstrap против канона | M | [`AGENT_TOOLING_FRICTION_2026_07_29_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_2026_07_29_PROMPT.md) | [#1465](https://github.com/officefish/Membrana/issues/1465) |
 | `network-container` | Контейнер network: словарь исходов, зонды обоими путями, предполётная проверка, снимок окружения для агентов | M | [`NETWORK_CONTAINER_PROMPT.md`](../prompts/NETWORK_CONTAINER_PROMPT.md) | [#1449](https://github.com/officefish/Membrana/issues/1449) |
 | `weekly-dead-wire-audit` | Недельная процедура «мёртвые провода»: declared ⇒ файл существует ∨ явный pending | M | [`WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md`](../prompts/WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md) | [#1447](https://github.com/officefish/Membrana/issues/1447) |
 | `night-triage-insight-channel` | Канал «ночной триаж → карточка инсайта»: дома сырья, promote-only PR, стык с магистралью дня | M | [`NIGHT_TRIAGE_INSIGHT_CHANNEL_PROMPT.md`](../prompts/NIGHT_TRIAGE_INSIGHT_CHANNEL_PROMPT.md) | [#1445](https://github.com/officefish/Membrana/issues/1445) |
