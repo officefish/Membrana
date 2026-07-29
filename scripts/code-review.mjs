@@ -44,6 +44,20 @@ import { readPersonaMemory } from './lib/persona-memory.mjs';
 import { listActive, loadRegistry } from './lib/task-registry.mjs';
 import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 
+/**
+ * HEAD SHA ветки PR — к нему привязывается вердикт ревью (шип-гейт #924).
+ * null, если gh недоступен: маркер вердикта тогда не пишется, а review:gate честно
+ * скажет unknown вместо ложного pass.
+ */
+function headShaOfPr(pr) {
+  try {
+    const raw = execFileSync("gh", ["pr", "view", String(pr), "--json", "headRefOid"], { encoding: "utf8", timeout: 30000 });
+    return JSON.parse(raw).headRefOid ?? null;
+  } catch {
+    return null;
+  }
+}
+
 let cli;
 try {
   cli = parseCodeReviewCli(process.argv.slice(2));
