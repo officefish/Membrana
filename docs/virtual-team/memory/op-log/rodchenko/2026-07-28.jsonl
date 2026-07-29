@@ -209,3 +209,7 @@
 {"ts":"2026-07-28T12:06:47.881Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:52","origin":"persona-extract"}
 {"ts":"2026-07-28T12:27:07.752Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:52","origin":"persona-extract"}
 {"ts":"2026-07-28T12:27:32.794Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:52","origin":"persona-extract"}
+{"ts":"2026-07-28T15:14:34.356Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-07-28-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-07-28T15:14:34.356Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-07-28-insight-spectrum-tiers","origin":"persona-extract"}
+{"ts":"2026-07-28T15:14:34.356Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-07-22-home-workshop-m4-belonging","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-07-28T15:14:34.356Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:52","origin":"persona-extract"}

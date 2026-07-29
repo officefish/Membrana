@@ -98,3 +98,58 @@
 - всплывало сегодня: контур не поставлен (#1366 ч.2)
 
 **Итог:** записано 253 · вытеснено 169.
+
+---
+<!-- повторный прогон 2026-07-28T15:06:21.182Z -->
+
+# Память команды — 2026-07-28
+
+> Форма — кристалл token 121: записал / утонуло / всплывало. v1: контуры
+> подсознания и всплытия не поставлены (#1366 ч.2, #1368) — вытеснение = потеря, поимённо.
+
+## SYSTEM
+- записал в оперативку: изменений нет
+- утонуло в подсознание: ничего
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## angelina
+- записал в оперативку: изменений нет
+- утонуло в подсознание: ничего
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## dynin
+- записал в оперативку (19): memory-subconscious-m0-order [2026-07-28] · memory-subconscious-m1-subconscious [2026-07-28] · memory-subconscious-m2-priority [2026-07-28] · memory-subconscious-m3-surfacing [2026-07-28] · memory-subconscious-m4-cycle [2026-07-28] · memory-subconscious-m5-metrics [2026-07-28] · memory-subconscious-m6-extractor [2026-07-28] · tasks-workshop-m2-set [2026-07-23] · tasks-workshop-m3-axes [2026-07-23] · tasks-workshop-m4a-inspect [2026-07-23] · tasks-workshop-m4b-validity [2026-07-23] · tasks-workshop-m4c-invariants [2026-07-23] · tasks-workshop-m4d-readme [2026-07-23] · tasks-workshop-m5a-pick [2026-07-23] · tasks-workshop-m5b-chaining [2026-07-23] · home-workshop-m0-order [2026-07-22] · home-workshop-m1-contract [2026-07-22] · home-workshop-m2-vocabulary [2026-07-22] · insight-one-shot-format [2026-07-23]
+- утонуло в подсознание (2, v1 = ПОТЕРЯНО): insight-cast-carrier-contract [2026-07-25] · insight-one-shot-format [2026-07-23]
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## farrell
+- записал в оперативку: изменений нет
+- утонуло в подсознание: ничего
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## kuryokhin
+- записал в оперативку (20): memory-subconscious-m0-order [2026-07-28] · memory-subconscious-m1-subconscious [2026-07-28] · memory-subconscious-m2-priority [2026-07-28] · memory-subconscious-m3-surfacing [2026-07-28] · memory-subconscious-m4-cycle [2026-07-28] · memory-subconscious-m5-metrics [2026-07-28] · memory-subconscious-m6-extractor [2026-07-28] · tasks-workshop-m3-axes [2026-07-23] · tasks-workshop-m4a-inspect [2026-07-23] · tasks-workshop-m4b-validity [2026-07-23] · tasks-workshop-m4c-invariants [2026-07-23] · tasks-workshop-m4d-readme [2026-07-23] · tasks-workshop-m5a-pick [2026-07-23] · tasks-workshop-m5b-chaining [2026-07-23] · home-workshop-m0-order [2026-07-22] · home-workshop-m1-contract [2026-07-22] · home-workshop-m2-vocabulary [2026-07-22] · home-workshop-m3-polymorphism [2026-07-22] · home-workshop-m4-belonging [2026-07-22] · insight-one-shot-format [2026-07-23]
+- утонуло в подсознание (3, v1 = ПОТЕРЯНО): insight-cast-carrier-contract [2026-07-25] · insight-one-shot-format [2026-07-23] · insight-comms-contour-topology [2026-07-05]
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## ozhegov
+- записал в оперативку (19): memory-subconscious-m0-order [2026-07-28] · memory-subconscious-m1-subconscious [2026-07-28] · memory-subconscious-m2-priority [2026-07-28] · memory-subconscious-m3-surfacing [2026-07-28] · memory-subconscious-m4-cycle [2026-07-28] · memory-subconscious-m5-metrics [2026-07-28] · memory-subconscious-m6-extractor [2026-07-28] · tasks-workshop-m2-set [2026-07-23] · tasks-workshop-m3-axes [2026-07-23] · tasks-workshop-m4a-inspect [2026-07-23] · tasks-workshop-m4b-validity [2026-07-23] · tasks-workshop-m4c-invariants [2026-07-23] · tasks-workshop-m4d-readme [2026-07-23] · tasks-workshop-m5a-pick [2026-07-23] · tasks-workshop-m5b-chaining [2026-07-23] · home-workshop-m0-order [2026-07-22] · home-workshop-m1-contract [2026-07-22] · home-workshop-m2-vocabulary [2026-07-22] · insight-one-shot-format [2026-07-23]
+- утонуло в подсознание (2, v1 = ПОТЕРЯНО): insight-cast-carrier-contract [2026-07-25] · insight-one-shot-format [2026-07-23]
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## rodchenko
+- записал в оперативку (19): memory-subconscious-m0-order [2026-07-28] · memory-subconscious-m1-subconscious [2026-07-28] · memory-subconscious-m2-priority [2026-07-28] · memory-subconscious-m3-surfacing [2026-07-28] · memory-subconscious-m4-cycle [2026-07-28] · memory-subconscious-m5-metrics [2026-07-28] · memory-subconscious-m6-extractor [2026-07-28] · tasks-workshop-m4a-inspect [2026-07-23] · tasks-workshop-m4b-validity [2026-07-23] · tasks-workshop-m4c-invariants [2026-07-23] · tasks-workshop-m4d-readme [2026-07-23] · tasks-workshop-m5a-pick [2026-07-23] · tasks-workshop-m5b-chaining [2026-07-23] · home-workshop-m0-order [2026-07-22] · home-workshop-m1-contract [2026-07-22] · home-workshop-m2-vocabulary [2026-07-22] · home-workshop-m3-polymorphism [2026-07-22] · home-workshop-m4-belonging [2026-07-22] · insight-one-shot-format [2026-07-23]
+- утонуло в подсознание (2, v1 = ПОТЕРЯНО): insight-cast-carrier-contract [2026-07-25] · insight-one-shot-format [2026-07-23]
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## tarasov
+- записал в оперативку: изменений нет
+- утонуло в подсознание: ничего
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+## vesnin
+- записал в оперативку (18): memory-subconscious-m0-order [2026-07-28] · memory-subconscious-m1-subconscious [2026-07-28] · memory-subconscious-m2-priority [2026-07-28] · memory-subconscious-m3-surfacing [2026-07-28] · memory-subconscious-m4-cycle [2026-07-28] · memory-subconscious-m5-metrics [2026-07-28] · memory-subconscious-m6-extractor [2026-07-28] · tasks-workshop-m1-adress [2026-07-23] · tasks-workshop-m2-set [2026-07-23] · tasks-workshop-m4a-inspect [2026-07-23] · tasks-workshop-m4b-validity [2026-07-23] · tasks-workshop-m4c-invariants [2026-07-23] · tasks-workshop-m4d-readme [2026-07-23] · tasks-workshop-m5a-pick [2026-07-23] · tasks-workshop-m5b-chaining [2026-07-23] · home-workshop-m0-order [2026-07-22] · home-workshop-m1-contract [2026-07-22] · insight-one-shot-format [2026-07-23]
+- утонуло в подсознание (2, v1 = ПОТЕРЯНО): insight-cast-carrier-contract [2026-07-25] · insight-one-shot-format [2026-07-23]
+- всплывало сегодня: контур не поставлен (#1366 ч.2)
+
+**Итог:** записано 95 · вытеснено 11.
