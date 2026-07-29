@@ -2512,14 +2512,14 @@
       "githubIssue": 924,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-07-29",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1431 (в main 64e76ebb) + включение чека 29.07: мердж в main проходит только через вердикт ревью тимлида по HEAD SHA. review/teamlead — обязательная проверка защиты main (verify:branch-protection зелёный); вердикт протухает при новом коммите; «ревью не прогонялось» = pending, не pass; BLOCK — жёсткий стоп (слово владельца 29.07); громкий обход REVIEW_GATE_OVERRIDE с обязательной причиной. Три исхода доказаны живьём (exit 3/0/1), тесты 63/63.",
       "githubIssueClosedAt": null
     },
     {

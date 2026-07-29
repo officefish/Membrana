@@ -2,16 +2,26 @@
   "$comment": "Полиси защиты main (#1310, магистраль 27.07, owner-choice). ДЕКЛАРАЦИЯ: как ветка ДОЛЖНА быть защищена. Факт сверяет yarn verify:branch-protection — расхождение кричит по имени. Правки здесь — только со словом владельца: это правила его ветки.",
   "branch": "main",
   "requiredStatusChecks": {
-    "contexts": ["scan", "Lint, typecheck, test, build"],
+    "contexts": [
+      "scan",
+      "Lint, typecheck, test, build",
+      "review/teamlead"
+    ],
     "strict": false,
-    "$why": "scan — секрет-гейт; основная сборка обязательна, иначе PR с красным CI мержится (замер 27.07: стояла одна scan). strict=false осознанно: строгая актуальность ветки вернула бы гонку с base (26.07 — шесть заходов на один PR)."
+    "$why": "scan — секрет-гейт; основная сборка обязательна, иначе PR с красным CI мержится (замер 27.07: стояла одна scan); review/teamlead — вердикт ревью тимлида по HEAD SHA (слово владельца 29.07: весь код в main через ревью с тимлидом, BLOCK — жёсткий стоп; механика — yarn review:gate, карточка ship-review-tooth #924). strict=false осознанно: строгая актуальность ветки вернула бы гонку с base (26.07 — шесть заходов на один PR)."
   },
   "allowForcePushes": false,
   "allowDeletions": false,
   "requiredPullRequestReviews": {
     "required": false,
-    "$why": "Легальное «нет» с причиной (норма B10): агентский контур мержит свои PR через pr:ship с ожиданием CI; обязательное человеческое ревью остановило бы все сессии. Качество держат зубы: CI, kits:audit, секрет-гейт, вечерний code-review."
+    "$why": "Человеческий апрув GitHub по-прежнему НЕ обязателен — легальное «нет» с причиной (норма B10): единственный человек-approver стал бы очередью для агентских партий (вчера 8 за день). Ревью при этом ОБЯЗАТЕЛЬНО и машинно: его держит required check review/teamlead — тимлид-персона по HEAD SHA (решение владельца 29.07). Тишина больше не проходит за одобрение."
   },
-  "enforceAdmins": { "required": false, "$why": "Аварийный обход владельца; включение — его отдельное слово." },
-  "requiredLinearHistory": { "required": false, "$why": "pr:ship мержит squash'ем — история линейна по факту." }
+  "enforceAdmins": {
+    "required": false,
+    "$why": "Аварийный обход владельца; включение — его отдельное слово."
+  },
+  "requiredLinearHistory": {
+    "required": false,
+    "$why": "pr:ship мержит squash'ем — история линейна по факту."
+  }
 }

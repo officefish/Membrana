@@ -65,7 +65,6 @@
 | `procedural-workshop` | Процедурная мастерская — три глагола над 2D-домом | M | [`PROCEDURAL_WORKSHOP_PROMPT.md`](../prompts/PROCEDURAL_WORKSHOP_PROMPT.md) | — |
 | `office-stability-emergency` | АВАРИЯ: таймауты office — server-first не выполняется; починка до строительства роутера (T10) | M | [`OFFICE_STABILITY_EMERGENCY_PROMPT.md`](../prompts/OFFICE_STABILITY_EMERGENCY_PROMPT.md) | [#933](https://github.com/officefish/Membrana/issues/933) |
 | `procedural-branch-guard` | Грамматика веток: процедурная ветка — не транспорт; только артефакты процедуры по разрешению (провод Р4 + профиль сессии) | M | [`PROCEDURAL_BRANCH_GUARD_PROMPT.md`](../prompts/PROCEDURAL_BRANCH_GUARD_PROMPT.md) | [#925](https://github.com/officefish/Membrana/issues/925) |
-| `ship-review-tooth` | Шип-гейт: мердж только через ревью-вердикт по HEAD SHA + required check (стена от обхода ревью) | M | [`SHIP_REVIEW_TOOTH_PROMPT.md`](../prompts/SHIP_REVIEW_TOOTH_PROMPT.md) | [#924](https://github.com/officefish/Membrana/issues/924) |
 | `angelina-codex-no-repo-writes` | Кодекс Ангелины: запрет пушить/редактировать, право только на конспект, репо — по явному разрешению | S | [`ANGELINA_CODEX_NO_REPO_WRITES_PROMPT.md`](../prompts/ANGELINA_CODEX_NO_REPO_WRITES_PROMPT.md) | [#922](https://github.com/officefish/Membrana/issues/922) |
 | `swallow-format-frame-fix` | Фрейм форматирования ласточки: полноценное зеркало 5 блоков вместо телеграфных строк (Ожегов) | S | [`SWALLOW_FORMAT_FRAME_FIX_PROMPT.md`](../prompts/SWALLOW_FORMAT_FRAME_FIX_PROMPT.md) | [#918](https://github.com/officefish/Membrana/issues/918) |
 | `code-review-lead-refactor` | Рефакторинг код-ревью: ведущий из пяти + память ведущего + бестиарий антипаттернов (T3/T4/T5) | M | [`CODE_REVIEW_LEAD_REFACTOR_PROMPT.md`](../prompts/CODE_REVIEW_LEAD_REFACTOR_PROMPT.md) | — |
@@ -241,6 +240,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `ship-review-tooth` | Шип-гейт: мердж только через ревью-вердикт по HEAD SHA + required check (стена от обхода ревью) | 2026-07-29 | [`SHIP_REVIEW_TOOTH_PROMPT.md`](../prompts/SHIP_REVIEW_TOOTH_PROMPT.md) | #924 (Issue открыт) | [карточка](./archive/ship-review-tooth.md) |
 | `kits-pins-prepush-strict` | Строгая сверка описей китов на pre-push для затронутых файлов | 2026-07-27 | [`KITS_PINS_PREPUSH_STRICT_PROMPT.md`](../prompts/KITS_PINS_PREPUSH_STRICT_PROMPT.md) | — | [карточка](./archive/kits-pins-prepush-strict.md) |
 | `ship-merge-state-guard` | Гард незавершённого слияния перед пушем: тихий отказ хука не выдаёт себя за успех | 2026-07-27 | [`SHIP_MERGE_STATE_GUARD_PROMPT.md`](../prompts/SHIP_MERGE_STATE_GUARD_PROMPT.md) | #1321 | [карточка](./archive/ship-merge-state-guard.md) |
 | `tw-state-batch-norm` | Состояния задач опрашивать списком, не поштучно — норма мастерской + гард | 2026-07-27 | [`TW_STATE_BATCH_NORM_PROMPT.md`](../prompts/TW_STATE_BATCH_NORM_PROMPT.md) | #1322 | [карточка](./archive/tw-state-batch-norm.md) |
