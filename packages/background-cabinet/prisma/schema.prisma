@@ -238,3 +238,56 @@ model NodeScenarioSelection {
   selectedScenarioId String?
   updatedAt          DateTime @updatedAt
 }
+
+/// S8 плана интеграции тарифной сетки: единственная точка записи смены тарифа
+/// пишет сюда append-only. Журнал не редактируется и не чистится — «кто, когда,
+/// на каком основании» обязано переживать саму смену (вердикт M6).
+model TariffChangeLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  membraneId  String   @db.Uuid
+  fromTariffId String
+  toTariffId   String
+  /// Чем подтверждено право менять: команда администратора или погашенный промокод.
+  proofType   TariffChangeProof
+  /// Ссылка на основание: id администратора или id промокода.
+  proofRef    String
+  /// Кто инициировал: пользователь мембраны или администратор.
+  actorId     String   @db.Uuid
+  at          DateTime @default(now())
+
+  @@index([membraneId])
+  @@index([at])
+}
+
+enum TariffChangeProof {
+  admin
+  promo
+}
+
+/// Промокод: одноразовый носитель права перейти на названный тариф.
+/// Выпускает администратор, гасит пользователь; повторное погашение отвечает
+/// already_redeemed, а не молча меняет тариф ещё раз (вердикт M6).
+model PromoCode {
+  id             String          @id @default(uuid()) @db.Uuid
+  /// Сам код — то, что вводит пользователь. Уникален.
+  code           String          @unique
+  /// На какой тариф переводит. Только вверх по рангу — проверяет домен.
+  targetTariffId String
+  status         PromoCodeStatus @default(active)
+  /// Сколько раз можно погасить. По умолчанию один — это норма, не ограничение.
+  maxRedemptions Int             @default(1)
+  redeemedCount  Int             @default(0)
+  expiresAt      DateTime?
+  createdByAdminId String        @db.Uuid
+  createdAt      DateTime        @default(now())
+  redeemedAt     DateTime?
+  redeemedByMembraneId String?   @db.Uuid
+
+  @@index([status])
+}
+
+enum PromoCodeStatus {
+  active
+  spent
+  revoked
+}
