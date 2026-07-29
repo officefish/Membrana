@@ -27,5 +27,19 @@
     "alwaysReadCursorRules": true,
     "preferEdit": true,
     "askBeforeStructuralChanges": true
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/cold-start-stamps.mjs",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
   }
 }
