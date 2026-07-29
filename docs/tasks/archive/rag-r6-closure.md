@@ -1,19 +1,19 @@
-# Архив: R6: bootstrap --full, docs/RAG.md, AGENTS.md, epic archive
+# Архив: RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive
 
 | Поле | Значение |
 |------|----------|
 | **ID** | `rag-r6-closure` |
 | **Статус** | archived |
 | **Размер** | S |
-| **Создана** | 2026-06-21 |
-| **Архивирована** | 2026-06-22 |
+| **Создана** | 2026-06-27 |
+| **Архивирована** | 2026-07-29 |
 | **GitHub Issue** | — |
 | **Linear** | — |
-| **Промпт** | [`docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../../docs/prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) |
+| **Промпт** | — |
 
 ## Заметки при закрытии
 
-CLOSURE.md + docs/RAG.md
+Архив по слову владельца 29.07: карточка рождена легаси-миграцией 30.06 без промпта и без issue (promptLost). Контур RAG v1 заменён двухпамятной архитектурой (#1366/#1368, экстрактор P6 в main 28.07) — closure старого контура не имеет предмета. Если обязательства всплывут, законный путь — новая карточка от новой архитектуры, не оживление немого носителя.
 
 ---
 
