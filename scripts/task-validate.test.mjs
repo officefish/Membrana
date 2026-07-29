@@ -3,6 +3,7 @@ import { test } from 'node:test';
 
 import {
   GROUP_CHECK_NAMES,
+  isLegalPromptLoss,
   computeReadmeMatchesRegistry,
   emptyTaskLinks,
   extractActiveIdsFromReadme,
@@ -265,4 +266,36 @@ test('parseValidateArgs / CLI exit 0 при blocker (зрение не забо�
     console.log = orig;
   }
   assert.match(stdout, /task:validate/);
+});
+
+// Долг «битые ссылки на промпты» (29.07): легальная утрата легаси-архива.
+const LOST = { reason: "легаси-миграция 3b28ca3e: файл никогда не создавался", since: "2026-06-30" };
+
+test("архивная карточка с promptLost: находка становится warning, не blocker", () => {
+  const card = { id: "x", title: "t", size: "S", status: "archived", archivedAt: "2026-06-30", promptPath: "docs/prompts/GONE.md", promptLost: LOST };
+  const v = validateTask(card, { promptExists: false });
+  const f = v.findings.filter((x) => x.field === "promptPath");
+  assert.equal(f.length, 1);
+  assert.equal(f[0].level, "warning");
+  assert.equal(f[0].code, "link.prompt.legacy-lost");
+  assert.match(f[0].message, /легаси-миграция/u);
+});
+
+test("ЖИВАЯ карточка без промпта — blocker при любой причине (работа без задания)", () => {
+  const card = { id: "y", title: "t", size: "S", status: "active", promptPath: "", promptLost: LOST };
+  const v = validateTask(card, { promptExists: false });
+  assert.ok(v.findings.some((x) => x.level === "blocker" && x.field === "promptPath"));
+  assert.equal(isLegalPromptLoss(card), false);
+});
+
+test("утрата без причины или без даты не легализуется", () => {
+  assert.equal(isLegalPromptLoss({ status: "archived", promptLost: { reason: "", since: "2026-06-30" } }), false);
+  assert.equal(isLegalPromptLoss({ status: "archived", promptLost: { reason: "есть" } }), false);
+  assert.equal(isLegalPromptLoss({ status: "archived", promptLost: LOST }), true);
+});
+
+test("пустой promptPath не порождает второй находки «файл null не найден»", () => {
+  const card = { id: "z", title: "t", size: "S", status: "archived", archivedAt: "2026-06-30", promptPath: "", promptLost: LOST };
+  const f = validateTask(card, { promptExists: false }).findings.filter((x) => x.field === "promptPath");
+  assert.equal(f.length, 1);
 });
