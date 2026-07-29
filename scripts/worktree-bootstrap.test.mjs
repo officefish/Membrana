@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -111,6 +112,33 @@ test('режим вне словаря падает в канонный install,
     const plan = planWorktreeBootstrap({ cwd: wt, primaryRoot: primary, mode: 'нечто' });
     assert.equal(plan.mode, 'install');
     assert.ok(BOOTSTRAP_MODES.includes(plan.mode));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--dry-run НИЧЕГО не делает: ни install, ни ссылки, ни карточки (ревью PR #1472)', () => {
+  // Ревьюер видел только фрагмент main() и не смог убедиться, что short-circuit стоит
+  // ВЫШЕ цикла исполнения. Ответ — не спор, а проверка: гоняем реальный CLI в песочнице.
+  const root = mkdtempSync(join(tmpdir(), 'wt-boot-dry-'));
+  try {
+    const primary = join(root, 'primary');
+    const wt = join(root, 'wt');
+    mkdirSync(join(primary, 'node_modules'), { recursive: true });
+    writeFileSync(join(primary, '.env'), 'X=1\n', 'utf8');
+    mkdirSync(wt, { recursive: true });
+    const cli = join(process.cwd(), 'scripts', 'worktree-bootstrap.mjs');
+
+    for (const extra of [[], ['--junction']]) {
+      const out = execFileSync('node', [cli, '--dry-run', '--from', primary, ...extra], {
+        cwd: wt,
+        encoding: 'utf8',
+      });
+      assert.match(out, /ничего не сделано/u);
+    }
+    assert.equal(existsSync(join(wt, 'node_modules')), false, 'dry-run не ставит зависимости');
+    assert.equal(existsSync(join(wt, '.env')), false, 'dry-run не копирует .env');
+    assert.equal(existsSync(join(wt, 'WORKTREE.md')), false, 'dry-run не пишет карточку');
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
