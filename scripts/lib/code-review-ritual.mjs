@@ -6,6 +6,7 @@ import { dirname, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 import { parseRagCliFlags } from './rag-ritual.mjs';
+import { renderVerdictMarker } from './review-gate.mjs';
 
 export const REGULATION_PATH = 'docs/prompts/CODE_REVIEW_REGULATION.md';
 export const VIRTUAL_TEAM_PATH = 'docs/VIRTUAL_TEAM_PROMPT.md';
@@ -340,8 +341,29 @@ export function writeReviewMarkdown(opts) {
     .filter(Boolean)
     .join(', ');
   const header = `<!-- Сгенерировано: ${stamp} (yarn code-review${flags ? `; ${flags}` : ''}) -->\n\n`;
+  // Шип-гейт (#924): ревью PR несёт МАШИННЫЙ вердикт, привязанный к HEAD SHA той
+  // версии, которую смотрели. Без привязки ревью обходится молча: прогнал на одном
+  // коммите, дописал второй, влил неревьюенное. Вердикт читает `yarn review:gate`.
+  let verdictLine = '';
+  if (opts.meta.mode === 'pr' && opts.meta.headSha) {
+    const verdict = verdictFromBody(opts.body);
+    verdictLine = `${renderVerdictMarker({ sha: opts.meta.headSha, verdict, lead: opts.meta.lead ?? null, at: stamp })}\n\n`;
+  }
   mkdirSync(dirname(opts.path), { recursive: true });
-  writeFileSync(opts.path, header + opts.body, 'utf8');
+  writeFileSync(opts.path, header + verdictLine + opts.body, 'utf8');
+}
+
+/**
+ * Вердикт из тела ревью: BLOCK, если ведущий назвал блокирующее; иначе LGTM.
+ * Консервативно: явный BLOCK/«блокер» весит больше, чем встречное «LGTM» в тексте —
+ * ошибка в сторону остановки дешевле ошибки в сторону мерджа.
+ * @param {string} body
+ * @returns {'LGTM'|'BLOCK'}
+ */
+export function verdictFromBody(body) {
+  const t = String(body ?? '');
+  if (/\bBLOCK\b|\bблокер\b|\bблокирующ/iu.test(t)) return 'BLOCK';
+  return 'LGTM';
 }
 
 export function readRequiredFile(relPath) {

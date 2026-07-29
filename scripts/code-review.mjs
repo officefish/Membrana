@@ -173,6 +173,10 @@ try {
         llmProvider: result.provider,
         llmModel: result.model,
         llmSource: result.source,
+        // Шип-гейт (#924): вердикт ревью PR привязывается к ИМЕННО той версии кода,
+        // которую смотрел ведущий; новый коммит протухает вердикт (yarn review:gate).
+        headSha: cli.mode === 'pr' ? headShaOfPr(cli.pr) : null,
+        lead: lead?.id ?? lead?.persona ?? null,
       },
     });
     console.log(out);

@@ -64,6 +64,7 @@
     "archive:night-hunt": "node scripts/archive-night-hunt-artifacts.mjs",
     "code-review": "node scripts/code-review.mjs",
     "code-review:pr": "node scripts/code-review.mjs --pr",
+    "review:gate": "node scripts/review-gate.mjs",
     "save-code-review": "yarn run archive:daily-review",
     "local-code-review": "node scripts/local-code-review.mjs",
     "local-code-review:full": "node scripts/local-code-review.mjs --full",

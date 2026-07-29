@@ -332,6 +332,10 @@ export function planMergeTail(opts = {}) {
   // сам, как только проверки позеленеют, поэтому ci-wait/verify локально не нужны:
   // подтверждение факта мерджа переносится на следующий заход (норма — смотреть состояние).
   if (auto) {
+    // Шип-гейт и в auto-режиме (#924): сервер сольёт по зелёным проверкам, но ревью
+    // тимлида обязано состояться ДО взвода — иначе PR повиснет с pending-статусом,
+    // которого никто уже не закроет. Гейт падает внятно: «прогони yarn code-review:pr N».
+    steps.push({ label: 'review-gate', cmd: 'node', args: ['scripts/review-gate.mjs', '--publish'] });
     steps.push({ label: 'merge-auto', cmd: 'gh', args: ['pr', 'merge', '--squash', '--auto'] });
     return { steps, skippedSync: 'хвост после merge пропущен: слияние делает сервер по зелёному (--auto)' };
   }
@@ -339,6 +343,11 @@ export function planMergeTail(opts = {}) {
   // различает none/running/green/red; red и none-при-конфликте роняют флоу ДО merge.
   // --no-wait — осознанный обход (например, docs-only при выключенном CI).
   if (wait) steps.push({ label: 'ci-wait', cmd: 'node', args: ['scripts/pr-wait.mjs'] });
+  // Шип-гейт (#924, слово владельца 29.07): весь код, попадающий в main, проходит
+  // ревью тимлида. Вердикт привязан к HEAD SHA; BLOCK и «ревью не было» одинаково
+  // не пускают. Стоит ПЕРЕД merge и ПОСЛЕ ci-wait: ревьюить есть смысл то, что
+  // прошло сборку. Громкий обход — REVIEW_GATE_OVERRIDE=1 с причиной.
+  steps.push({ label: 'review-gate', cmd: 'node', args: ['scripts/review-gate.mjs', '--publish'] });
   // #653 п.1: БЕЗ --delete-branch. Он чекаутит base локально, а base почти всегда
   // держит соседний worktree (8+ деревьев) → прогон «падает» после УЖЕ УСПЕШНОГО
   // merge (ложный красный, #700). Remote-ветка удаляется отдельным шагом; локальная
