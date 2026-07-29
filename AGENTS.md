@@ -235,6 +235,27 @@ Operator skills — wave 2 (`docs/prompts/OPENCODE_OPERATOR_SKILLS_WAVE2_SPRINT_
 - **Deploy debug logs**: Do not save SSH/deploy script output to the repo root (`cabinet-recover*.txt`, `deploy-*.txt`, `prod-check.txt` via `Tee-Object` or shell redirect). Use `%TEMP%` / `$TMPDIR` instead; see `docs/CONTRIBUTING.md` → VPS deploy.
 - **Client / Studio console**: см. [`docs/DESKTOP_APP_LOGGING_POLICY.md`](docs/DESKTOP_APP_LOGGING_POLICY.md). Support: `yarn desktop:support-collect`. Parse: `yarn logs:parse` / `yarn logs:parse:studio`.
 
+### Network environment (read before any external call)
+
+Перед внешним API — `yarn network:preflight` (или `--from-snapshot`, если сеть трогать не
+нужно). Свежая картина мира: [`docs/network/env.snapshot.md`](docs/network/env.snapshot.md),
+словарь исходов: [`docs/network/outcomes.yml`](docs/network/outcomes.yml).
+
+- **Не считай любой отказ сетевым.** Если сервер ответил HTTP-статусом — транспорт
+  работает. Сетью считаются ровно шесть исходов: `dns_fail`, `tcp_fail`, `tls_fail`,
+  `timeout_idle`, `proxy_intercept`, `provider_unreachable_http`. А `403` гео,
+  `404` снятая модель, `402` кончившиеся деньги, `401` непринятый ключ — **не сеть**.
+- **Голый `fetch` в Node не читает `HTTPS_PROXY`** — нужен `undici` + `ProxyAgent`.
+  Иначе вызов уйдёт напрямую и получит гео-`403`, который легко принять за обрыв связи.
+- **Путь решает:** openrouter напрямую отдаёт `403`, через прокси — `200`. Зонд всегда
+  ходит обоими путями.
+- Коды возврата preflight: `0` чисто · `10` транспорт · `20` ключи · `30` доступ/деньги/
+  модель · `40` не опознано · `2` инструментальная. Ветвись по коду, не по тексту.
+
+Цена игнорирования (29.07): классификатор метил `404 deprecated`, `402 no credits` и
+отсутствующий ключ как `net` — двое суток искали несуществующий сетевой фильтр и чуть не
+построили туннель. См. [`docs/network/README.md`](docs/network/README.md).
+
 ### Intern onboarding
 
 Всё что связано со стажёром — только через `docs/intern/`. Точка входа: [`docs/intern/README.md`](docs/intern/README.md).

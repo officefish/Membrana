@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "network-container",
+      "title": "Контейнер network: словарь исходов, зонды обоими путями, предполётная проверка, снимок окружения для агентов",
+      "promptPath": "docs/prompts/NETWORK_CONTAINER_PROMPT.md",
+      "githubIssue": 1449,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-29",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "kuryokhin"
+      ],
+      "notes": "Заведён после ложного диагноза 29.07: двое суток считали, что на office нет исходящего маршрута к LLM (30/30 net), собирались строить туннель через media-VPS NL. Живой замер прода: HTTPS_PROXY в контейнере есть, TCP до прокси OPEN, openrouter через ProxyAgent 200 — сеть работала. Отказы были grok/gemini 404 модель снята, perplexity 402 лимит ключа, deepseek ключ отсутствует; код метил ЛЮБОЙ неуспех как net. Форма спроектирована консилиумом network-container-form (36 реплик): дом docs/network + мастерская scripts/network, закрытый перечень 15 исходов, транспортное множество из 6, зуб на голый fetch и протухший снимок, секция в AGENTS.md.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "weekly-dead-wire-audit",
       "title": "Недельная процедура «мёртвые провода»: declared ⇒ файл существует ∨ явный pending",
       "promptPath": "docs/prompts/WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md",
