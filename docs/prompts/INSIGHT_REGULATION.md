@@ -39,7 +39,7 @@ draft → researched → reviewed → adopted | deferred | rejected → archived
 |--------|--------|
 | `draft` | Идея описана в `INSIGHT.md` |
 | `researched` | `RESEARCH.md` заполнен (Perplexity) |
-| `reviewed` | `REVIEW.md` — пять ролей, оценки /10 |
+| `reviewed` | `REVIEW.md` — шесть ролей, оценки /10 |
 | `adopted` | Teamlead LGTM; вес ≥ порога для `plan:week` |
 | `deferred` | отложено; остаётся в registry |
 | `rejected` | не внедряем; архив допустим |
@@ -84,7 +84,7 @@ draft → researched → reviewed → adopted | deferred | rejected → archived
 
 ## Review — оценка команды
 
-`yarn insight review <id>` — Anthropic API, пять ролей из [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md).
+`yarn insight review <id>` — панельная цепочка (процедура insight-review), шесть ролей из [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md).
 
 Каждая роль обязана дать:
 
@@ -163,7 +163,7 @@ RESEARCH и REVIEW остаются на месте как историческ�
 1. Пользователь или координатор: «инсайт от /ozhegov: …» (или роль формулирует в блоке `[Структурщик]:`).
 2. `yarn insight create <slug> --title "…" --source virtual-team-ozhegov`
 3. Агент дополняет `INSIGHT.md` от лица роли (проблема в зоне ответственности).
-4. `yarn insight research <id>` → `yarn insight review <id>` — **все пять ролей** голосуют (инициатор не получает veto).
+4. `yarn insight research <id>` → `yarn insight review <id>` — **все шесть ролей** голосуют (инициатор не получает veto).
 5. `yarn insight close <id> --status …`
 
 ### Отличие от consilium
