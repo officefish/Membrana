@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
+  renderFreshnessLines,
   claudeProjectSlug,
   memoryPathCandidates,
   renderBrief,
@@ -155,6 +156,68 @@ test('claudeProjectSlug: путь Windows → слаг Claude Code (детерм
     'c--Users-user190825-practice-Membrana',
   );
   assert.equal(claudeProjectSlug('/home/dev/membrana'), '-home-dev-membrana');
+});
+
+// ─── свежесть origin (#1416 Ф1) ──────────────────────────────────────────────────
+
+test('свежесть: state без originFreshness (старые фикстуры) → бриф без секции, не бросает', () => {
+  const md = renderBrief(fixtureState({ commit: 'abc123', generatedAt: 't' }));
+  assert.doesNotMatch(md, /Локальное дерево отстало/);
+  assert.doesNotMatch(md, /Свежесть не сверена/);
+});
+
+test('свежесть: дыра ≥1 день → секция «отстало на N дней, свежий хендоф в origin/main» ДО «Сейчас»', () => {
+  const state = fixtureState({ commit: 'abc123', generatedAt: 't' });
+  state.originFreshness = {
+    ok: true,
+    localDate: '2026-07-26',
+    originDate: '2026-07-28',
+    gap: { days: 2, basis: 'handoff' },
+  };
+  const md = renderBrief(state);
+  assert.match(md, /## ⚠ Локальное дерево отстало/);
+  assert.match(md, /отстало на 2 дня, свежий хендоф в origin\/main \(локальный HANDOFF: 2026-07-26, в origin\/main: 2026-07-28\)/);
+  assert.match(md, /читать `origin\/main:docs\/HANDOFF\.md`/);
+  assert.ok(
+    md.indexOf('Локальное дерево отстало') < md.indexOf('## Сейчас'),
+    'секция свежести стоит выше «Сейчас»',
+  );
+});
+
+test('свежесть: дыры нет → секции нет, дата origin-хендофа в «Метаданные»', () => {
+  const state = fixtureState({ commit: 'abc123', generatedAt: 't' });
+  state.originFreshness = {
+    ok: true,
+    localDate: '2026-07-28',
+    originDate: '2026-07-28',
+    gap: { days: 0, basis: 'handoff' },
+  };
+  const md = renderBrief(state);
+  assert.doesNotMatch(md, /Локальное дерево отстало/);
+  assert.match(md, /- origin\/main:docs\/HANDOFF\.md: 2026-07-28 \(локальный: 2026-07-28\)/);
+});
+
+test('свежесть offline: fetch не прошёл → предупреждение, брифа не ломает', () => {
+  const state = fixtureState({ commit: 'abc123', generatedAt: 't' });
+  state.originFreshness = { ok: false, reason: 'git fetch origin не прошёл (offline) — свежесть origin/main не сверена' };
+  const md = renderBrief(state);
+  assert.match(md, /⚠ \*\*Свежесть не сверена:\*\* git fetch origin не прошёл \(offline\)/);
+  assert.doesNotMatch(md, /Локальное дерево отстало/);
+});
+
+test('renderFreshnessLines: фолбэк по tip-коммитам, когда дат HANDOFF нет', () => {
+  const lines = renderFreshnessLines({
+    ok: true,
+    localDate: null,
+    originDate: null,
+    gap: { days: 3, basis: 'tip' },
+  });
+  assert.match(lines.join('\n'), /отстало на 3 дня, свежий хендоф в origin\/main \(по датам tip-коммитов\)/);
+});
+
+test('renderFreshnessLines: null/undefined → пустой массив (добавка не меняет старый рендер)', () => {
+  assert.deepEqual(renderFreshnessLines(null), []);
+  assert.deepEqual(renderFreshnessLines(undefined), []);
 });
 
 test('memoryPathCandidates: приоритет env → авто-память Claude → legacy корень', () => {
