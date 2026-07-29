@@ -20,6 +20,7 @@ import {
   decomposeByAxis,
   formatTable,
   renderReport,
+  unassignedVerdict,
   resolveAxis,
 } from './lib/tasks-decompose.mjs';
 import { listActive, loadRegistry } from './lib/task-registry.mjs';
@@ -134,6 +135,17 @@ function main() {
   if (result.unassigned.length > 0) {
     console.log(`\n⚠ вне категорий (${result.unassigned.length}) — нет значения по оси / дополни конфиг:`);
     for (const t of result.unassigned) console.log(`  • ${t.id} — ${t.title ?? ''}`);
+  }
+
+  // Отставание конфига — НАХОДКА, не примечание (#1428). Вещдок 29.07: 23% карточек
+  // молча висели «вне категорий», и раскладка, по которой утро выбирает работу, врала
+  // на четверть. Конфиг отстаёт естественно (новые префиксы каждую неделю) — значит
+  // система обязана кричать сама. Порог — в конфиге (axes.<ось>.maxUnassignedShare).
+  const verdict = unassignedVerdict(result, config, axis);
+  if (verdict) {
+    console.error(`\n✗ ${verdict.message}`);
+    console.error(`  ремонт: дополнить scripts/tasks-decompose.config.json (категории/паттерны) — список выше, поимённо`);
+    process.exitCode = 3;
   }
 }
 

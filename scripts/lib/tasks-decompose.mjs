@@ -114,6 +114,37 @@ export function decompose(tasks, categories) {
 }
 
 /**
+ * Вердикт «конфиг отстал» (#1428): доля карточек вне категорий выше порога — находка,
+ * не примечание в таблице. Порог берётся из конфига (`axes.<ось>.maxUnassignedShare`),
+ * не из кода: у разных осей разная терпимость, и менять её должен тот, кто правит
+ * конфиг. Порога нет → правило не применяется (молча не выдумываем строгость).
+ *
+ * Вещдок 29.07: 23% активного реестра висели «вне категорий», раскладка врала на
+ * четверть, и ничто не краснело — примечание в таблице читается как норма.
+ *
+ * @param {{unassigned: object[], total: number}} result
+ * @param {object} config
+ * @param {string} axis
+ * @returns {{message: string, share: number, threshold: number} | null}
+ */
+export function unassignedVerdict(result, config, axis = 'category') {
+  const threshold = config?.axes?.[axis]?.maxUnassignedShare;
+  if (typeof threshold !== 'number' || !Number.isFinite(threshold)) return null;
+  const total = result?.total ?? 0;
+  if (total === 0) return null;
+  const count = result.unassigned?.length ?? 0;
+  const share = count / total;
+  if (share <= threshold) return null;
+  return {
+    share,
+    threshold,
+    message:
+      `конфиг декомпозиции отстал: ${count} из ${total} карточек (${Math.round(share * 100)}%) вне категорий ` +
+      `по оси «${axis}» — порог ${Math.round(threshold * 100)}%. Раскладка врёт на эту долю: доли остальных категорий занижены.`,
+  };
+}
+
+/**
  * @param {unknown} value
  * @param {'githubIssue' | 'linearId' | 'promptPath'} field
  */
