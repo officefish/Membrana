@@ -60,6 +60,24 @@ test('parseHonestManual: structured + fallback свободной шапки', (
   assert.equal(fallback.mintedAt, '2026-07-23');
   assert.match(fallback.reason, /генератор недоступен/u);
   assert.equal(fallback.session, 'abcd1234');
+
+  const ownerChoice = parseHonestManual(`<!-- Ручная чеканка владельца 2026-07-26: генератор уронил слоты (author=human), canon:sign -->
+<!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
+# тело`);
+  assert.equal(ownerChoice.author, 'human');
+  assert.equal(ownerChoice.mintedAt, '2026-07-26');
+  assert.match(ownerChoice.reason, /генератор уронил/u);
+});
+
+test('buildSnapshot: honest-manual beats shallow machine angelina header', () => {
+  const content = `<!-- Ручная чеканка владельца 2026-07-26: usage limits (author=human) -->
+<!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
+# MAIN\n`;
+  const io = { version: () => 'commitM', content: () => content };
+  const snap = buildSnapshot({ nodes: [{ id: 'MAIN_DAY_ISSUE', path: 'docs/MAIN_DAY_ISSUE.md' }] }, io);
+  assert.equal(snap.MAIN_DAY_ISSUE.provenance.kind, 'honest-manual');
+  const report = orchestrateCascade({ nodes: [{ id: 'MAIN_DAY_ISSUE' }], edges: [] }, snap);
+  assert.equal(report.results.MAIN_DAY_ISSUE.provenance, 'honest-manual');
 });
 
 test('buildSnapshot: honest-manual → kind, каскад не блокирует', () => {
