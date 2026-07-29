@@ -16140,13 +16140,17 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-27",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-29",
+      "archiveNotes": "Архив по слову владельца 29.07: карточка рождена легаси-миграцией 30.06 без промпта и без issue (promptLost). Контур RAG v1 заменён двухпамятной архитектурой (#1366/#1368, экстрактор P6 в main 28.07) — closure старого контура не имеет предмета. Если обязательства всплывут, законный путь — новая карточка от новой архитектуры, не оживление немого носителя.",
       "leadPersona": "dynin",
       "epicId": "rag-dual-circuit-v1",
-      "sprintKind": "day-sprint"
+      "sprintKind": "day-sprint",
+      "promptLost": {
+        "reason": "карточка рождена легаси-миграцией архива 30.06 без промпта; файл никогда не создавался (git --diff-filter=A пуст). Контур RAG v1 заменён двухпамятной архитектурой (#1366/#1368) — предмета для задания нет. Архив по слову владельца 29.07.",
+        "since": "2026-07-29"
+      }
     },
     {
       "id": "rag-r7-optional",
@@ -16155,14 +16159,18 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-27",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-07-29",
+      "archiveNotes": "Архив по слову владельца 29.07: карточка без промпта и без issue (promptLost), явно deferred по CRITICAL_RAG_AUDIT §12 с go/no-go после R6 — R6 архивирован тем же решением, условие запуска исчезло. Контур RAG v1 заменён двухпамятной архитектурой (#1366/#1368).",
       "notes": "Deferred per CRITICAL_RAG_AUDIT §12. Go/no-go после R6.",
       "epicId": "rag-dual-circuit-v1",
       "leadPersona": "kuryokhin",
-      "sprintKind": "day-sprint"
+      "sprintKind": "day-sprint",
+      "promptLost": {
+        "reason": "карточка рождена легаси-миграцией архива 30.06 без промпта; файл никогда не создавался (git --diff-filter=A пуст). Контур RAG v1 заменён двухпамятной архитектурой (#1366/#1368) — предмета для задания нет. Архив по слову владельца 29.07.",
+        "since": "2026-07-29"
+      }
     },
     {
       "id": "ci-observability",

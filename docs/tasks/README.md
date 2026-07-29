@@ -198,8 +198,6 @@
 | `neural-tier-1b-contract` | Neural tier 1.B: NeuralDetector контракт + YAMNet/CLAP skeleton | L | [`INTEGRATIONS_STRATEGY.md`](../INTEGRATIONS_STRATEGY.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `neural-free-tier-dataset-report` | Free-tier: датасет + трек → детектор → отчёт (1 ГБ library) | L | [`neural-detectors-strategy-2026-06-26.md`](../seanses/neural-detectors-strategy-2026-06-26.md) | — |
 | `rag-dual-circuit-v1` | RAG Dual-Circuit v1: doc-memory + code-structure (эпик) | L | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
-| `rag-r6-closure` | RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive | S | — | — |
-| `rag-r7-optional` | RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker | S | — | — |
 | `fv1-s2-closeout` | Night Build: fv1-S2 closeout — реестр/worktree reconciliation после merge #217/#218 | S | [`FV1_S2_CLOSEOUT_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/FV1_S2_CLOSEOUT_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `vdr-hard-gate` | Epic: VDR-Hard-Gate — пилот валидации (30–35), плагин микрофона «VDR-валидация», trends benchmark 85/90 (HG1–HG4) | L | [`VDR_HARD_GATE_EPIC_PROMPT.md`](../prompts/VDR_HARD_GATE_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `vdr-hg3-trends-benchmark` | HG3: benchmark trends на пилоте (канон метрик) + сравнение с template-match v0.1; плагин зеркалит числа | M | [`VDR_HARD_GATE_EPIC_PROMPT.md`](../prompts/VDR_HARD_GATE_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
@@ -241,6 +239,8 @@
 |----|----------|--------------|--------|--------|----------|
 | `procedures-corpus` | Ревизия корпуса процедур: ядро · homes · легальное нет (Ф5 #1220) | 2026-07-29 | [`PROCEDURES_CORPUS_PROMPT.md`](../prompts/PROCEDURES_CORPUS_PROMPT.md) | #1284 (Issue открыт) | [карточка](./archive/procedures-corpus.md) |
 | `ship-review-tooth` | Шип-гейт: мердж только через ревью-вердикт по HEAD SHA + required check (стена от обхода ревью) | 2026-07-29 | [`SHIP_REVIEW_TOOTH_PROMPT.md`](../prompts/SHIP_REVIEW_TOOTH_PROMPT.md) | #924 (Issue открыт) | [карточка](./archive/ship-review-tooth.md) |
+| `rag-r6-closure` | RAG R6: closure — bootstrap --full на techies68, docs/RAG.md, AGENTS.md update, task archive | 2026-07-29 | — | — | [карточка](./archive/rag-r6-closure.md) |
+| `rag-r7-optional` | RAG R7: optional overlays — Obsidian adapter, Pinecone/pgvector backend, Voyage benchmark, reranker | 2026-07-29 | — | — | [карточка](./archive/rag-r7-optional.md) |
 | `kits-pins-prepush-strict` | Строгая сверка описей китов на pre-push для затронутых файлов | 2026-07-27 | [`KITS_PINS_PREPUSH_STRICT_PROMPT.md`](../prompts/KITS_PINS_PREPUSH_STRICT_PROMPT.md) | — | [карточка](./archive/kits-pins-prepush-strict.md) |
 | `ship-merge-state-guard` | Гард незавершённого слияния перед пушем: тихий отказ хука не выдаёт себя за успех | 2026-07-27 | [`SHIP_MERGE_STATE_GUARD_PROMPT.md`](../prompts/SHIP_MERGE_STATE_GUARD_PROMPT.md) | #1321 | [карточка](./archive/ship-merge-state-guard.md) |
 | `tw-state-batch-norm` | Состояния задач опрашивать списком, не поштучно — норма мастерской + гард | 2026-07-27 | [`TW_STATE_BATCH_NORM_PROMPT.md`](../prompts/TW_STATE_BATCH_NORM_PROMPT.md) | #1322 | [карточка](./archive/tw-state-batch-norm.md) |
