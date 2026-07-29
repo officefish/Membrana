@@ -5,8 +5,92 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14383/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 200 (причины в op-log) -->
+Записей: 49 · бюджет 14366/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 216 (причины в op-log) -->
+
+### 2026-07-29 · позиция · network-container-form
+
+> Формализую без UI. Пусть запрос R к провайдеру P даёт наблюдение O = (httpStatus?, errno?, bodyCode?, latencyMs, dnsOk, tcpOk, tlsOk). Классификатор `classify(O) → outcome` обязан быть **тотальным** на закрытом множестве исходов и **взаимно исключающим**: один O → ровно один […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/network-container-form-2026-07-29.md#reply-1`
+
+### 2026-07-29 · позиция · night-triage-insight-harvest
+
+> Формализую без UI. Пусть T₁…T₄ — тексты триажей. Предикат «достойна карточки»: `card(x) ⇔ ∃ quantifiable gap ∨ ∃ reversible decision с ценой`. По доступному контуру дня (primary = product-tariffs, RAG MAIN_DAY_ISSUE 29.07) и следам 27–28.07 (memory/bridge) большинство пунктов T […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/night-triage-insight-harvest-2026-07-29.md#reply-1`
+
+### 2026-07-29 · позиция · sprint-honest-m0-order
+
+> Предикат ребра: A→B ⇔ область определения вопроса B содержит переменную, которую фиксирует ответ A. Не runtime скриптов и не «удобно рядом». V={1..9} как в повестке. Уже видно: 1 задаёт переменную «кто исполнитель» почти для всех. Дальше — по одной переменной на кандидата, без […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/sprint-honest-m0-order-2026-07-29.md#reply-1`
+
+### 2026-07-29 · позиция · sprint-honest-m1-performer
+
+> Формализую без UI. Пусть S — идентификатор спринта, P — множество persona id (закрытый алфавит канона). `assigned(S, p) ⇔ ∃ запись плана: (S, p) ∈ Assignments`. `participated(S, p) ⇔ ∃ след e ∈ Evidence(S): subject(e)=p ∧ qualifies(e)`. Исполнитель честный: не синоним assigned. […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/sprint-honest-m1-performer-2026-07-29.md#reply-1`
+
+### 2026-07-29 · позиция · tariff-grid-m0-order
+
+> Предикат ребра фиксирую как в bridge/memory M0: ребро A→B ⇔ область определения вопроса B содержит переменную, которую задаёт ответ A. Не runtime-порядок скриптов и не «удобно обсуждать рядом». Кандидаты V={F, O3, R, P, M2, I, C, T}: F форма; O3 три исхода; R отношение к рельсу; […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/tariff-grid-m0-order-2026-07-29.md#reply-1`
+
+### 2026-07-29 · позиция · tariff-grid-m1-form
+
+> Формализую без UI. Тариф T ∈ {sensor, checkpoint, observatory} — закрытое множество SKU (решение владельца). Право — типизированная запись R с родом kind ∈ K, |K|=5. Сетка G — функция G: T × Id(R) → Entitlement, где Entitlement — размеченное объединение по kind, не «всё number». […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/tariff-grid-m1-form-2026-07-29.md#reply-1`
+
+### 2026-07-29 · позиция · tariff-grid-m2-rail
+
+> Формализую без UI. Пусть G — grid, s — tariffSku мембраны, E_cat ⊂ registry — id с kind=`catalog`. Предикат entitled по каталогу: `entitled(s, id) ⇔ resolve(G,s,id).status = entitled`. Проекция списка SKU карточек: `P(G,s) = { cardSku | ∃ id∈E_cat: payload(id) покрывает cardSku […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/tariff-grid-m2-rail-2026-07-29.md#reply-1`
+
+### 2026-07-29 · позиция · tariff-grid-m3-tri
+
+> Формализую без UI. Из M1: `resolveEntitlement(grid, sku, id) → { status, payload, unmetPreconditions[] }`, status ∈ {entitled, not_entitled}. Третий исход не обязан быть третьим enum-значением status: он уже выразим как `status = entitled ∧ unmetPreconditions ≠ ∅`. Предикат […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/tariff-grid-m3-tri-2026-07-29.md#reply-1`
+
+### 2026-07-29 · позиция · tariff-grid-m4-memories
+
+> Формализую без UI. Пусть \(H\) — occupied hot (байты), \(C\) — occupied cold, \(L_h, L_c\) — limits из сетки. Инварианты: \(0 \le H \le L_h\), \(0 \le C \le L_c\), **независимо**: исчерпание \(H\) не вычитает из \(L_c\) и наоборот. Предикат допуска записи в контур \(x \in \{hot, […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/tariff-grid-m4-memories-2026-07-29.md#reply-1`
+
+### 2026-07-29 · позиция · tariff-grid-m5-produce
+
+> Формализую без UI. Пусть E = resolveEntitlement(sku, produceId) → {enabled, scope?}. Предикат допуска к созданию: `canProduce(ctx) ⇔ E.enabled ∧ scopeAllows(E.scope, kind) ∧ unmetPreconditions(ctx)=∅` (троичность M3). Предикат существования артефакта a: `exists(a) ⇔ a ∈ […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/tariff-grid-m5-produce-2026-07-29.md#reply-1`
+
+### 2026-07-29 · позиция · tariff-grid-m6-switch
+
+> Формализую без UI. Состояние мембраны: `m.tariffId ∈ SKU`. Акт: `apply(m, t', actor, proof) → ok|err`, где `t'` — целевой SKU, `proof ∈ {AdminCommand, PromoRedemption, SelfServiceUpgrade?}`. Инвариант M2: ∀ entitlementId `resolve(m, id) = matrix[m.tariffId][id]` — нет локального […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/tariff-grid-m6-switch-2026-07-29.md#reply-1`
+
+### 2026-07-29 · позиция · tariff-grid-m7-teeth
+
+> Формализую без UI. Зуб Z = тройка `(predicate, locus, effect)`, где `predicate: Ctx → {pass, fail(reason)}`, `locus ∈ {schema, unit_test, precommit, runtime}`, `effect ∈ {reject_op, red_ci, report_finding}`. Инвариант: `fail ⇒ effect ≠ silent`. Кандидаты предикатов из входа M7: […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/tariff-grid-m7-teeth-2026-07-29.md#reply-1`
+
+### 2026-07-29 · позиция · tariff-grid-m8-integration
+
+> Формализую без UI. Пусть G — `TariffGridDocument` (M1). SKU s, entitlement id e → `EntitlementValue`. Проекция P_catalog(G, s) = entitledTariffSkus. Инвариант M2: `wire.entitledTariffSkus ≡ P_catalog(G, membrane.tariffSku)`. Cutover-предикат C: (1) ∀ write entitlement-path […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/tariff-grid-m8-integration-2026-07-29.md#reply-1`
+
+### 2026-07-29 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** Математического ядра (FFT/вейвлеты/спектр) за день не было — day-plan и ревью это фиксируют. **Итоги дня:** Чисто продуктовый день — tariff-grid, network, ship. Для математика вклад: предикаты квот (S4) — исчерпание как fail-closed; предикат готовности […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-29.md#reply-1`
 
 ### 2026-07-28 · позиция · memory-subconscious-m0-order
 
@@ -49,6 +133,12 @@
 > Формализую selectOperational без UI: `selectOperational(candidates, importance, budget) → {retained, transferred, report}`. Инварианты: Σtokens(retained) ≤ budget; pinned ⊆ retained ∨ fail-closed error; transfer сопровождается importanceSnapshot. Предикат erase: отсутствует в […] _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/memory-subconscious-m6-extractor-2026-07-28.md#reply-1`
+
+### 2026-07-28 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** MAIN_DAY_ISSUE честно маркирует отсутствие математического слоя — это правильно. DAILY_CODE_REVIEW отметил, что на видимом diff FFT/NaN/analyzer нет — продуктовая математика не двигалась. **Итоги дня:** Спектральные детекторы не затронуты — вся работа на […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-07-28.md#reply-1`
 
 ### 2026-07-27 · позиция · bridge-command-post-m0-order
 
@@ -211,99 +301,3 @@
 > Формализую, иначе граница останется вкусовой. Кабинет `C = (P, L, T)`, где: **P** — множество разрешённых процедур (замкнутый перечень); **L** — множество лимитов (запросов/день, токенов/запрос, каналов); **T** — текущее состояние счёта (израсходовано). Предикат проверки: […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/request-container-api-k1-cabinet-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · request-container-api-m0-order
-
-> Формализую зависимости. Обозначу вершины: K1 (кабинет), M2 (мастерская), A3 (актор), E4 (экономика), B5 (вдохи). Ищу рёбра в виде «ответ на B требует уже принятого ответа на A». Из штормовых посылок (Т1–Т7) вычитываю: **M2 → K1** (мастерская работает глаголами, полномочия выдаёт […] _(реплик в сеансе: 2)_
-
-— источник: `docs/seanses/request-container-api-m0-order-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · request-container-api-m2-workshop
-
-> Начну с чистого входа: у нас есть дом — контейнер заявок в `docs/audit/llm-calls`, фактура даёт ему семью `audit-family` из атласа. Фаррелл работает **глаголами** мастерской, каждый из которых — операция над содержимым дома. Текущее состояние: `audit` (осмотреть) и `decompose` […] _(реплик в сеансе: 2)_
-
-— источник: `docs/seanses/request-container-api-m2-workshop-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · tasks-workshop-m0-order
-
-> Проверю на циклы и связанность. Кандидаты 7 (README vs registry) и 10 (ошибочная приписка #915) — **разовые долги**, они не порождают контрактов для остальных кандидатов. Парадигма: долг чинится **после** того, как новый инструмент работает, иначе предсказуемо накопится дёрт. […] _(реплик в сеансе: 2)_
-
-— источник: `docs/seanses/tasks-workshop-m0-order-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · tasks-workshop-m1-adress
-
-> Формализую вердикт, иначе режим останется вкусовым. Пусть `W_primary = docs/tasks` (регистрация, истина, `worksOn: docs/tasks/registry.json`), `W_audit = docs/audit/tasks` (разборка, производная, `worksOn: docs/audit/tasks/registry/`). Инвариант: `|{m : m.worksOn = docs/tasks}| […] _(реплик в сеансе: 3)_
-
-— источник: `docs/seanses/tasks-workshop-m1-adress-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · tasks-workshop-m2-set
-
-> Начну с формализации, иначе граница поплывёт. Определю мастерскую как **множество команд, которые изменяют граф зависимостей или категоризацию** внутри `docs/tasks`. Обозначу каждую команду предикатом: `modifies_graph(cmd) → bool`. Обязательные (`audit`, `decompose`) — это […] _(реплик в сеансе: 2)_
-
-— источник: `docs/seanses/tasks-workshop-m2-set-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · tasks-workshop-m3-axes
-
-> Разделю оси по природе входа, иначе получим кашу из разных типов. Первая природа — **поля карточки**: `size`, `sprintKind`, `leadPersona`, `status`. Это готовые дискретные значения, раскладка по ним детерминирована и не требует ничего, кроме реестра. Вторая — **производные от […]
-
-— источник: `docs/seanses/tasks-workshop-m3-axes-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · tasks-workshop-m4a-inspect
-
-> Формализую, чтобы рекурсия не поехала. Паспорт карточки `C` — кортеж `(id, slug, status, owner, parentEpicId?, updatedAt, links[])`. Дочерние карточки возвращаются ТОЛЬКО если `parentEpicId` существует и сама карточка имеет статус live. База рекурсии: `depth ≤ 2` (карточка → […] _(реплик в сеансе: 3)_
-
-— источник: `docs/seanses/tasks-workshop-m4a-inspect-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · tasks-workshop-m4b-validity
-
-> Начну с чистоты, потому что от неё зависит всё остальное. У нас в проекте есть идиом, и он работает: `planPrShip`, `checkBaseFreshness`, `classifyHttpProbe` — чистая логика отделена от исполнения и покрыта тестом. Валидность обязана лечь в тот же ряд, и вот почему это не […]
-
-— источник: `docs/seanses/tasks-workshop-m4b-validity-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · tasks-workshop-m4c-invariants
-
-> Начну с формализации, иначе «инвариант» растворится в предчувствиях. Пусть **карточка** — это кортеж `(taskId, linearId, githubIssueNumber, status, dates)`. Есть три **соглашения о синхронизме**: (1) если `linearId ≠ null`, то должен существовать Linear-тикет с этим ID; (2) если […] _(реплик в сеансе: 3)_
-
-— источник: `docs/seanses/tasks-workshop-m4c-invariants-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · tasks-workshop-m4d-readme
-
-> Про дублирование добавлю предикат, чтобы это не осталось словами. Правило: у проверки один носитель — предикат групповой валидности; `task:sync-readme --check` допустим, но обязан быть **тонкой обёрткой** над ним, а не своей реализацией сравнения. Проверяется это просто: если […]
-
-— источник: `docs/seanses/tasks-workshop-m4d-readme-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · tasks-workshop-m5a-pick
-
-> Формализую разделение, чтобы не было подмены. Пусть `candidates: Card[]` — входные карточки. Функция возвращает `ranking: (card, score, reasoning) []`, где `score ∈ [0, 1]` (1 = идеальный one shot), а `reasoning` — именованный набор условий: `{ sizeCheck, serverImpactClue, […] _(реплик в сеансе: 3)_
-
-— источник: `docs/seanses/tasks-workshop-m5a-pick-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · tasks-workshop-m5b-chaining
-
-> Формализую, иначе «цепочка» останется вкусовой. Пусть `shotHistory(path)` — это множество шотов по пути `path` за окно `W = 7 дней` (посылка о норме). Смежность: два пути считаю смежными, если их наибольший общий префикс (LCP) как кортежа папок имеет длину ≥ 2. Пример: […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/tasks-workshop-m5b-chaining-2026-07-23.md#reply-1`
-
-### 2026-07-22 · позиция · home-workshop-m0-order
-
-> Формализую, иначе «порядок» останется вкусовым. Множество кандидатов V, |V|=5. Строю частичный порядок по отношению «ответ на b предполагает уже принятый ответ на a». Проверяемый предикат фундамента: убери кандидат a — становится ли множество допустимых ответов на остальные […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/home-workshop-m0-order-2026-07-22.md#reply-1`
-
-### 2026-07-22 · позиция · home-workshop-m1-contract
-
-> Формализую, иначе «мастерская» останется вкусовой. Пусть три паттерна — три ортогональные оси в пространстве описания подграфа: `GC` — ось **пространства** (`where`), `PSV` — ось **времени/идентичности** (`when/which`), «Мастерская» — ось **операций** (`what-on`). […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/home-workshop-m1-contract-2026-07-22.md#reply-1`
-
-### 2026-07-22 · позиция · home-workshop-m2-vocabulary
-
-> Формализую, иначе «минимум трёх» останется вкусовым. Мастерская — это множество инструментов `T`, разбитое на три непересекающихся класса: `T = M ⊎ S ⊎ D`, где `M` (mandatory) — фиксированное `|M| = 3`, `S` (stack-like) — рекомендованное подмножество, `D` (domain) — открытое. […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/home-workshop-m2-vocabulary-2026-07-22.md#reply-1`
-
-### 2026-07-23 · рутина · insight-one-shot-format
-
-> внедрять: да, но не запускать без предиката · этап: неделя · оценка: 7/10
-
-— источник: `docs/insights/insight-one-shot-format/REVIEW.md#vote`
