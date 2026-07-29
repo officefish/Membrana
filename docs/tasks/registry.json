@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "deps-basket-immediate-2026-07-29",
+      "title": "Корзина deps «СРАЗУ»: 1 critical (tar DoS) + 22 high по порогу M1",
+      "promptPath": "docs/prompts/DEPS_BASKET_IMMEDIATE_2026_07_29_PROMPT.md",
+      "githubIssue": 1422,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-29",
+      "archivedAt": null,
+      "leadPersona": "tarasov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Вердикт M1 security-posture (19.07): alert → задача реестра, владелец канала Teamlead; порог «рантайм-прод × critical|high → сразу». Дозор 29.07: 69 находок (1 critical tar-DoS, 22 high, 41 moderate, 5 low); рантайм-high — 13 находок в 10 пакетах; dev-high (5) идут планово в апгрейд-спринт, не в эту задачу. Заведено агентом А по строке №4 хендоффа 29.07.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "archivarius-sessions-container",
       "title": "Контейнер сессий Archivarius: Mongo office, адресуемые span, ingest/search с секрет-маской",
       "promptPath": "docs/prompts/ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md",

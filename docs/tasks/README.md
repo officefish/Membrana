@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `deps-basket-immediate-2026-07-29` | Корзина deps «СРАЗУ»: 1 critical (tar DoS) + 22 high по порогу M1 | S | [`DEPS_BASKET_IMMEDIATE_2026_07_29_PROMPT.md`](../prompts/DEPS_BASKET_IMMEDIATE_2026_07_29_PROMPT.md) | [#1422](https://github.com/officefish/Membrana/issues/1422) |
 | `archivarius-sessions-container` | Контейнер сессий Archivarius: Mongo office, адресуемые span, ingest/search с секрет-маской | L | [`ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md`](../prompts/ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md) | [#1330](https://github.com/officefish/Membrana/issues/1330) |
 | `worktree-hygiene-epic` | Эпик: гигиена рабочих деревьев — freshEnough∧clean, гард держателя, инвентарь | L | [`WORKTREE_HYGIENE_EPIC_PROMPT.md`](../prompts/WORKTREE_HYGIENE_EPIC_PROMPT.md) | [#1232](https://github.com/officefish/Membrana/issues/1232) |
 | `adr-procedure-legalize` | Легализовать ADR как процедуру: запись в реестре, ядро trigger/steps/gates, зуб на реестр записей | M | [`ADR_PROCEDURE_LEGALIZE_PROMPT.md`](../prompts/ADR_PROCEDURE_LEGALIZE_PROMPT.md) | [#1296](https://github.com/officefish/Membrana/issues/1296) |
