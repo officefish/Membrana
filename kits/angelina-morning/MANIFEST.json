@@ -65,7 +65,7 @@
     "scripts/lib/strategy-channels.mjs": "72fbd3aa8b8c2d1795bd15c721ea1ee837213f5e",
     "scripts/lib/strategy-horizon.mjs": "d92be708a73158a69b788063e78afeed7eb6b992",
     "scripts/lib/swallow-delivery-ledger.mjs": "bc0466723d3f14fdcc8a8738cf545a38a3632be9",
-    "scripts/lib/swallow-mirror.mjs": "a4f0aad9f1f482881cfc39c76892d6a798e67e99",
+    "scripts/lib/swallow-mirror.mjs": "03a516933aeb65082246f31ca6f630d6e88dc869",
     "scripts/lib/task-registry.mjs": "2e2117d614ea69448bc132856da35c2f53aca8b4",
     "scripts/lib/tasks-readme-engine.mjs": "3a45a41f5e17587bc54b85011eeacbeffa7c264b",
     "scripts/lib/truth-graph.mjs": "54f1c23e0f0449e4adde145aa2d2633030baa22a",

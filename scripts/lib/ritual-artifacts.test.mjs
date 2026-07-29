@@ -53,3 +53,14 @@ test('вчерашние протоколы не забираются сегод
 test('пустой status — пустой план (честный no-op)', () => {
   assert.deepEqual(classifyStatus('', [], '2026-07-28'), { take: [], leave: [] });
 });
+
+// Помеха 29.07: утренняя цепочка спотыкалась о СВОИ артефакты — produces[] утреннего
+// манифеста были пусты, белый список автозабора не брал ничего. Зуб держит наполнение.
+test('утренний манифест даёт непустой белый список с ключевыми артефактами утра', async () => {
+  const { readFileSync } = await import('node:fs');
+  const manifest = JSON.parse(readFileSync(new URL('../../docs/tasks/morning-ritual-steps.json', import.meta.url), 'utf8'));
+  const w = whitelistFromManifest(manifest, '2026-07-29');
+  for (const must of ['docs/STRATEGY_DAY.md', 'docs/DAY_PLAN.md', 'docs/DAILY_STANDUP.md', 'docs/MAIN_DAY_ISSUE.md', 'docs/DAILY_CODE_REVIEW.md', 'docs/security/deps-watch-snapshot.json', 'docs/tasks/morning-gates-state.json']) {
+    assert.ok(w.includes(must), `в белом списке утра нет ${must}`);
+  }
+});

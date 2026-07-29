@@ -3,18 +3,19 @@
   "//kind": "mechanic — фон делает молча (детерминированная механика). gate — несёт ask(owner), фон ЗАСТЫВАЕТ до решения владельца (барьер canAdvance).",
   "//barrier": "canAdvance(step, state) = kind==='mechanic' ∨ (kind==='gate' ∧ hasDecision(step.id, state)). Фон монотонно идёт по steps[], упирается в первый gate без решения (d/dt=0). Тест-инвариант: НИКОГДА не проходит gate без hasDecision.",
   "//criticality": "Ось S (Ф5 #1220 / CORE.md): critical|noncritical. Утро — критичный путь открытия дня; noncritical только с whyNoncritical. Ядро ritual-day читает id/criticality/whyNoncritical через steps.ref.",
-  "version": 1,
+  "//produces": "Белый список автозабора (ritual:artifacts-commit --manifest, помеха 29.07: цепочка спотыкалась о СВОИ артефакты прежнего прогона). Только пути docs/ — что шаг реально пишет; чужое автозабор не берёт никогда.",
+  "version": 2,
   "steps": [
-    { "id": "sync-check", "kind": "mechanic", "criticality": "critical", "label": "Сверка расхождений ДО действий", "verify": "сводка: HANDOFF ↔ цепочка ritual:day ↔ граф правды ↔ опоры дня; расхождения списком", "blocksOn": null },
-    { "id": "generate-horizon", "kind": "mechanic", "criticality": "critical", "label": "morning-care + strategy:day (горизонт-веха)", "verify": "docs/STRATEGY_DAY.md сгенерирован, горизонт из графа", "blocksOn": null },
-    { "id": "standup", "kind": "mechanic", "criticality": "critical", "label": "daily-standup", "verify": "docs/DAILY_STANDUP.md сгенерирован", "blocksOn": null },
-    { "id": "probe-run", "kind": "mechanic", "criticality": "critical", "label": "main-day-probe — проверка посылок дня", "verify": "probe отработал; находки собраны (не разрешены)", "blocksOn": null },
+    { "id": "sync-check", "kind": "mechanic", "criticality": "critical", "label": "Сверка расхождений ДО действий", "verify": "сводка: HANDOFF ↔ цепочка ritual:day ↔ граф правды ↔ опоры дня; расхождения списком", "blocksOn": null, "produces": ["docs/security/deps-watch-snapshot.json", "docs/DAILY_CODE_REVIEW.md"] },
+    { "id": "generate-horizon", "kind": "mechanic", "criticality": "critical", "label": "morning-care + strategy:day (горизонт-веха)", "verify": "docs/STRATEGY_DAY.md сгенерирован, горизонт из графа", "blocksOn": null, "produces": ["docs/STRATEGY_DAY.md", "docs/DAY_PLAN.md"] },
+    { "id": "standup", "kind": "mechanic", "criticality": "critical", "label": "daily-standup", "verify": "docs/DAILY_STANDUP.md сгенерирован", "blocksOn": null, "produces": ["docs/DAILY_STANDUP.md"] },
+    { "id": "probe-run", "kind": "mechanic", "criticality": "critical", "label": "main-day-probe — проверка посылок дня", "verify": "probe отработал; находки собраны (не разрешены)", "blocksOn": null, "produces": ["docs/tasks/main-day-assertions.json"] },
     { "id": "probe-resolve", "kind": "gate", "criticality": "critical", "label": "Разрешение находок probe (закрыть протухший issue / перевыпустить посылки)", "verify": "решение владельца/агента по каждой находке", "blocksOn": "probe-findings" },
-    { "id": "magistral", "kind": "gate", "criticality": "critical", "label": "Магистраль дня — owner-choice (не синтез)", "verify": "sources[0].claim в main-day-assertions задан владельцем", "blocksOn": "owner-choice" },
-    { "id": "main-day-issue", "kind": "mechanic", "criticality": "critical", "label": "main-day-issue — раскрытие магистрали из owner-source", "verify": "docs/MAIN_DAY_ISSUE.md; магистраль из sources[0], не синтез", "blocksOn": null },
+    { "id": "magistral", "kind": "gate", "criticality": "critical", "label": "Магистраль дня — owner-choice (не синтез)", "verify": "sources[0].claim в main-day-assertions задан владельцем", "blocksOn": "owner-choice", "produces": ["docs/tasks/morning-gates-state.json", "docs/DAY_REPORT.md"] },
+    { "id": "main-day-issue", "kind": "mechanic", "criticality": "critical", "label": "main-day-issue — раскрытие магистрали из owner-source", "verify": "docs/MAIN_DAY_ISSUE.md; магистраль из sources[0], не синтез", "blocksOn": null, "produces": ["docs/MAIN_DAY_ISSUE.md", "docs/MAIN_DAY_ISSUE.rejected.md"] },
     { "id": "owner-checklist", "kind": "mechanic", "criticality": "critical", "label": "Чеклист владельцу (1 центр / 2-3 укреп / 2-3 персп / 1-2 риск) из MAIN_DAY_ISSUE + issue", "verify": "черновик чеклиста собран, предъявлен владельцу", "blocksOn": null },
-    { "id": "ally-swallow-draft", "kind": "mechanic", "criticality": "critical", "label": "Ласточка партнёрам — черновик через линзу Ожегова (продуктовый слой)", "verify": "черновик утренней ласточки готов, жаргон отсеян", "blocksOn": null },
-    { "id": "ally-swallow-send", "kind": "gate", "criticality": "critical", "label": "Отправка ласточки — одобрение владельца + telegram:swallow", "verify": "явное одобрение владельца (#569), затем sent=true", "blocksOn": "owner-approval" },
+    { "id": "ally-swallow-draft", "kind": "mechanic", "criticality": "critical", "label": "Ласточка партнёрам — черновик через линзу Ожегова (продуктовый слой)", "verify": "черновик утренней ласточки готов, жаргон отсеян", "blocksOn": null, "produces": ["docs/comms/drafts"] },
+    { "id": "ally-swallow-send", "kind": "gate", "criticality": "critical", "label": "Отправка ласточки — одобрение владельца + telegram:swallow", "verify": "явное одобрение владельца (#569), затем sent=true", "blocksOn": "owner-approval", "produces": ["docs/comms/sent-log.jsonl"] },
     { "id": "day-anchors", "kind": "gate", "criticality": "critical", "label": "Опоры дня (morning_crystallization) — волеизъявление владельца через промежуточные вопросы", "verify": "owner-кристаллы дня с указателями; горизонт вехевой (d/dt=0), magistral/standup суточные", "blocksOn": "owner-utterance" }
   ]
 }

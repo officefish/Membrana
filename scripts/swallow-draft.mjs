@@ -33,7 +33,7 @@ const flag = (n) => {
 export function skeletonFor(kind) {
   const base = buildSwallowSkeleton();
   if (kind === 'evening') {
-    return base.replace(/^Доброе утро![^\n]*/u, 'Добрый вечер! <итоги одной-двумя фразами>');
+    return base.replace(/^.*Доброе утро![^\n]*/u, '🌙 Добрый вечер! <итоги одной-двумя фразами>');
   }
   return base;
 }
