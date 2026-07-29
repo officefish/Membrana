@@ -15,14 +15,16 @@
  * Exit: 0 — pass; 1 — block; 3 — unknown (прогнать ревью); 2 — инструментальная.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { EXTERNAL_CALL_TIMEOUT_MS } from './lib/merge-fact.mjs';
+import { verdictFromBody } from './lib/code-review-ritual.mjs';
 import {
   REVIEW_STATUS_CONTEXT,
   parseVerdict,
+  renderVerdictMarker,
   reviewGateDecision,
   statusFromDecision,
 } from './lib/review-gate.mjs';
@@ -40,12 +42,6 @@ function sh(cmd, args) {
 
 function main() {
   let pr = flag('pr');
-  let headSha = null;
-  try {
-    headSha = sh('git', ['rev-parse', 'HEAD']);
-  } catch {
-    /* решение примет ядро: без SHA — unknown */
-  }
   if (!pr) {
     try {
       pr = String(JSON.parse(sh('gh', ['pr', 'view', '--json', 'number'])).number);
@@ -55,8 +51,34 @@ function main() {
     }
   }
 
+  // SHA берём У САМОГО PR, а не из локального HEAD: проверяя чужой PR, стоишь на своей
+  // ветке — локальный HEAD дал бы вердикт «протух» для любого чужого ревью и «pass»
+  // для собственной ветки без всякой связи с PR. Находка первого массового прогона 29.07.
+  let headSha = null;
+  try {
+    headSha = JSON.parse(sh('gh', ['pr', 'view', String(pr), '--json', 'headRefOid'])).headRefOid ?? null;
+  } catch {
+    try {
+      headSha = sh('git', ['rev-parse', 'HEAD']); // офлайн-путь: только для PR текущей ветки
+      console.error('  ⚠ голова PR не прочиталась через gh — взят локальный HEAD (верно лишь для PR текущей ветки)');
+    } catch {
+      /* решение примет ядро: без SHA — unknown */
+    }
+  }
+
   const reviewPath = join(repoRoot, `docs/discussions/pr-${pr}-code-review.md`);
-  const md = existsSync(reviewPath) ? readFileSync(reviewPath, 'utf8') : '';
+  let md = existsSync(reviewPath) ? readFileSync(reviewPath, 'utf8') : '';
+
+  // --restamp: пересчитать вердикт по УЖЕ полученному телу ревью, не гоняя LLM заново.
+  // Нужен, когда починили извлечение вердикта (29.07: «не BLOCK» в теле читалось как
+  // BLOCK) — тело ведущего неприкосновенно, меняется только машинное чтение.
+  if (argv.includes('--restamp') && md) {
+    const verdict = verdictFromBody(md.replace(/<!--[\s\S]*?-->/gu, ''));
+    const stripped = md.replace(/<!--\s*review-verdict[\s\S]*?-->\n?\n?/u, '');
+    md = `${renderVerdictMarker({ sha: headSha, verdict, lead: parseVerdict(md)?.lead ?? null })}\n\n${stripped}`;
+    writeFileSync(reviewPath, md, 'utf8');
+    console.log(`  маркер пересчитан по телу ревью: ${verdict} на ${String(headSha).slice(0, 8)}`);
+  }
   const decision = reviewGateDecision({
     headSha,
     verdict: parseVerdict(md),

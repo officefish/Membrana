@@ -362,8 +362,25 @@ export function writeReviewMarkdown(opts) {
  */
 export function verdictFromBody(body) {
   const t = String(body ?? '');
-  if (/\bBLOCK\b|\bблокер\b|\bблокирующ/iu.test(t)) return 'BLOCK';
-  return 'LGTM';
+  // 1) Итоговая строка регламента — единственный авторитет. Первый массовый прогон
+  //    29.07 показал, почему: тела ревью полны оборотов «P1 recommend split, НЕ BLOCK»
+  //    и «follow-up, не BLOCK этого фикса» — грубый поиск слова давал ложный стоп
+  //    на PR, которым ведущий поставил LGTM. Ложный красный дороже, чем кажется:
+  //    он учит обходить гейт.
+  const lines = t.split(/\r?\n/u).filter((l) => /вердикт\s*[:—-]/iu.test(l));
+  const last = lines[lines.length - 1];
+  if (last) {
+    if (/\bBLOCK\b/u.test(last)) return 'BLOCK';
+    if (/\bLGTM\b/u.test(last)) return 'LGTM';
+  }
+  // 2) Итоговой строки нет — консервативно: явное блокирующее слово весит больше
+  //    (ошибка в сторону остановки дешевле ошибки в сторону мерджа), но обороты
+  //    отрицания («не BLOCK», «без блокеров») вердиктом не считаются.
+  //    ВНИМАНИЕ: \b в JS не видит кириллицу (грабля канона, карточка
+  //    notes-regex-cyrillic-translit) — границы задаём через \p{L}, не \b.
+  const withoutNegations = t.replace(/(?:не|нет|без)\s+(?:BLOCK|блокер\p{L}*|блокирующ\p{L}*)/giu, ' ');
+  const blocking = /(?:^|[^\p{L}])(?:BLOCK|блокер|блокирующ)/iu;
+  return blocking.test(withoutNegations) ? 'BLOCK' : 'LGTM';
 }
 
 export function readRequiredFile(relPath) {
