@@ -10,6 +10,7 @@ import {
   collectByAxes,
   compileAxis,
   compileCategories,
+  unassignedVerdict,
   decompose,
   decomposeByAxis,
   formatTable,
@@ -242,4 +243,40 @@ test('ось category через compileAxis/decomposeByAxis совпадает 
     legacy.buckets.map((b) => b.tasks.map((t) => t.id)),
   );
   assert.deepEqual(by.unassigned.map((t) => t.id), legacy.unassigned.map((t) => t.id));
+});
+
+// #1428: отставание конфига — находка, не примечание.
+const CFG_WITH_THRESHOLD = { axes: { category: { maxUnassignedShare: 0.05 } } };
+
+test("доля вне категорий выше порога → вердикт с числами и объяснением", () => {
+  const v = unassignedVerdict({ unassigned: new Array(49), total: 214 }, CFG_WITH_THRESHOLD, "category");
+  assert.ok(v);
+  assert.match(v.message, /49 из 214/u);
+  assert.match(v.message, /23%/u);
+  assert.match(v.message, /порог 5%/u);
+  assert.match(v.message, /врёт/u);
+});
+
+test("доля в пределах порога → вердикта нет (ноль вне категорий тоже)", () => {
+  assert.equal(unassignedVerdict({ unassigned: [], total: 214 }, CFG_WITH_THRESHOLD, "category"), null);
+  assert.equal(unassignedVerdict({ unassigned: new Array(10), total: 214 }, CFG_WITH_THRESHOLD, "category"), null);
+});
+
+test("порог живёт в конфиге: без него правило не применяется (строгость не выдумываем)", () => {
+  assert.equal(unassignedVerdict({ unassigned: new Array(99), total: 100 }, {}, "category"), null);
+  assert.equal(unassignedVerdict({ unassigned: new Array(99), total: 100 }, { axes: { size: { maxUnassignedShare: 0.05 } } }, "category"), null);
+});
+
+test("пустой реестр не даёт ложной находки (0/0 — не 100%)", () => {
+  assert.equal(unassignedVerdict({ unassigned: [], total: 0 }, CFG_WITH_THRESHOLD, "category"), null);
+});
+
+test("ЖИВОЙ конфиг: активный реестр разложен полностью (0 вне категорий)", () => {
+  const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+  const cfg = JSON.parse(readFileSync(join(root, "scripts/tasks-decompose.config.json"), "utf8"));
+  const reg = JSON.parse(readFileSync(join(root, "docs/tasks/registry.json"), "utf8"));
+  const active = reg.tasks.filter((x) => x.status === "active");
+  const cats = compileCategories(cfg);
+  const un = active.filter((x) => !cats.some((c) => c.regexps.some((re) => re.test(String(x.id)))));
+  assert.deepEqual(un.map((x) => x.id), [], "новые префиксы обязаны попадать в категории — иначе конфиг снова отстал");
 });
