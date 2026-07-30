@@ -119,4 +119,3 @@ function main() {
 }
 
 if (process.argv[1]?.endsWith('evening-gate.mjs')) main();
-

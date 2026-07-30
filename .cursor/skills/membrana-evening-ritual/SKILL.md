@@ -88,4 +88,3 @@ digest-контур, который проверяет `telegram:swallow`, но 
 Коротко сообщить: полный/частичный прогон, критичные отказы, findings-репортёры,
 путь к `docs/DAILY_CODE_REVIEW.md`, путь к team feedback, состояние
 `partner-swallow` (ждёт draft / ждёт ok / открыт / отправлен).
-

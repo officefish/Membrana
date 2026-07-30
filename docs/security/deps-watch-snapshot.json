@@ -171,27 +171,6 @@
     },
     {
       "pkg": "brace-expansion",
-      "id": "1123896",
-      "severity": "high",
-      "issue": "brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups",
-      "url": "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp"
-    },
-    {
-      "pkg": "brace-expansion",
-      "id": "1123897",
-      "severity": "high",
-      "issue": "brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups",
-      "url": "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp"
-    },
-    {
-      "pkg": "brace-expansion",
-      "id": "1123898",
-      "severity": "high",
-      "issue": "brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups",
-      "url": "https://github.com/advisories/GHSA-3jxr-9vmj-r5cp"
-    },
-    {
-      "pkg": "brace-expansion",
       "id": "1124334",
       "severity": "high",
       "issue": "brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash",
@@ -254,41 +233,6 @@
       "url": ""
     },
     {
-      "pkg": "js-yaml",
-      "id": "1121859",
-      "severity": "moderate",
-      "issue": "JS-YAML: Quadratic-complexity DoS in merge key handling via repeated aliases",
-      "url": "https://github.com/advisories/GHSA-h67p-54hq-rp68"
-    },
-    {
-      "pkg": "js-yaml",
-      "id": "1121860",
-      "severity": "moderate",
-      "issue": "JS-YAML: Quadratic-complexity DoS in merge key handling via repeated aliases",
-      "url": "https://github.com/advisories/GHSA-h67p-54hq-rp68"
-    },
-    {
-      "pkg": "js-yaml",
-      "id": "1123911",
-      "severity": "high",
-      "issue": "js-yaml: YAML merge-key chains can force quadratic CPU consumption",
-      "url": "https://github.com/advisories/GHSA-52cp-r559-cp3m"
-    },
-    {
-      "pkg": "js-yaml",
-      "id": "1123912",
-      "severity": "high",
-      "issue": "js-yaml: YAML merge-key chains can force quadratic CPU consumption",
-      "url": "https://github.com/advisories/GHSA-52cp-r559-cp3m"
-    },
-    {
-      "pkg": "js-yaml",
-      "id": "1124281",
-      "severity": "high",
-      "issue": "js-yaml: Exponential parsing time in flow collections leads to denial of service",
-      "url": "https://github.com/advisories/GHSA-pm4m-ph32-ghv5"
-    },
-    {
       "pkg": "lodash",
       "id": "1115806",
       "severity": "high",
@@ -317,27 +261,6 @@
       "url": ""
     },
     {
-      "pkg": "minimatch",
-      "id": "1113459",
-      "severity": "high",
-      "issue": "minimatch has a ReDoS via repeated wildcards with non-matching literal in pattern",
-      "url": "https://github.com/advisories/GHSA-3ppc-4f35-3m26"
-    },
-    {
-      "pkg": "minimatch",
-      "id": "1113538",
-      "severity": "high",
-      "issue": "minimatch has ReDoS: matchOne() combinatorial backtracking via multiple non-adjacent GLOBSTAR segments",
-      "url": "https://github.com/advisories/GHSA-7r86-cg39-jmmj"
-    },
-    {
-      "pkg": "minimatch",
-      "id": "1113546",
-      "severity": "high",
-      "issue": "minimatch ReDoS: nested *() extglobs generate catastrophically backtracking regular expressions",
-      "url": "https://github.com/advisories/GHSA-23c5-xmqv-rm74"
-    },
-    {
       "pkg": "music-metadata",
       "id": "1114969",
       "severity": "high",
@@ -350,20 +273,6 @@
       "severity": "moderate",
       "issue": "This package is no longer supported.",
       "url": ""
-    },
-    {
-      "pkg": "path-to-regexp",
-      "id": "1115527",
-      "severity": "high",
-      "issue": "path-to-regexp vulnerable to Regular Expression Denial of Service via multiple route parameters",
-      "url": "https://github.com/advisories/GHSA-37ch-88jc-xwx2"
-    },
-    {
-      "pkg": "postcss",
-      "id": "1124288",
-      "severity": "high",
-      "issue": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
-      "url": "https://github.com/advisories/GHSA-r28c-9q8g-f849"
     },
     {
       "pkg": "prebuild-install",
@@ -413,41 +322,6 @@
       "severity": "high",
       "issue": "sharp inherited vulnerabilities in libvips: CVE-2026-33327, CVE-2026-33328, CVE-2026-35590, CVE-2026-35591",
       "url": "https://github.com/advisories/GHSA-f88m-g3jw-g9cj"
-    },
-    {
-      "pkg": "tar",
-      "id": "1120782",
-      "severity": "moderate",
-      "issue": "node-tar applies PAX size override to intermediary GNU long-name/long-link headers, causing tar parser interpretation differential (file smuggling)",
-      "url": "https://github.com/advisories/GHSA-vmf3-w455-68vh"
-    },
-    {
-      "pkg": "tar",
-      "id": "1123939",
-      "severity": "moderate",
-      "issue": "node-tar: Process crash via PAX numeric path type confusion",
-      "url": "https://github.com/advisories/GHSA-w8wr-v893-vjvp"
-    },
-    {
-      "pkg": "tar",
-      "id": "1123940",
-      "severity": "critical",
-      "issue": "node-tar: Decompression/parse DoS via unlimited input",
-      "url": "https://github.com/advisories/GHSA-23hp-3jrh-7fpw"
-    },
-    {
-      "pkg": "tar",
-      "id": "1123941",
-      "severity": "high",
-      "issue": "node-tar: Negative tar entry size causes infinite loop in archive replace",
-      "url": "https://github.com/advisories/GHSA-8x88-c5mf-7j5w"
-    },
-    {
-      "pkg": "tar",
-      "id": "1123942",
-      "severity": "moderate",
-      "issue": "node-tar: Uncaught Exception DoS via NUL byte in PAX path/linkpath records",
-      "url": "https://github.com/advisories/GHSA-gvwx-54wh-qm9j"
     },
     {
       "pkg": "tar",

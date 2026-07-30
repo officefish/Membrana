@@ -14,4 +14,3 @@ description: >-
 
 Run that playbook verbatim. If it is unavailable, STOP; `membrana-developer-rhythm`
 does not replace the evening door.
-
