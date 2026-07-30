@@ -7,14 +7,14 @@
       "githubIssue": 1493,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-30",
-      "archivedAt": null,
+      "archivedAt": "2026-07-30",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "Ф1 PR #1494 (грабли audit/install) · Ф2 PR #1495 (yarn resolutions:check — нашёл три мёртвых пина и вскрыл мою ошибку про пин fastify 4.x) · Ф3 PR #1497 (маршрут после ребейза: force-push запрещён политикой) · Ф4 PR #1498 (yarn ci:triage — моё или вне диффа, вещдок #1487)",
       "githubIssueClosedAt": null
     },
     {
