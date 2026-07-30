@@ -21,8 +21,6 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `cowork-honest-sprint` | Cowork Sprint: механизм спринта с честными исполнителями | L | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-honest-sprint/COWORK_SPRINT_BRIEF.md) | [#1499](https://github.com/officefish/Membrana/issues/1499) |
-| `agent-tooling-friction-2-2026-07-30` | Трение тулинга 30.07: грабли аудита и install, живость resolutions, маршрут после ребейза, разбор красного CI | M | [`AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md) | [#1493](https://github.com/officefish/Membrana/issues/1493) |
-| `tooling-sanitary-pack-3007` | Санитарный пакет тулинга 30.07: пересборка производных снимков, вывод сноса в файл, содержание в строку вопроса, один автор долгов | S | [`TOOLING_SANITARY_PACK_3007_PROMPT.md`](../prompts/TOOLING_SANITARY_PACK_3007_PROMPT.md) | — |
 | `network-container` | Контейнер network: словарь исходов, зонды обоими путями, предполётная проверка, снимок окружения для агентов | M | [`NETWORK_CONTAINER_PROMPT.md`](../prompts/NETWORK_CONTAINER_PROMPT.md) | [#1449](https://github.com/officefish/Membrana/issues/1449) |
 | `weekly-dead-wire-audit` | Недельная процедура «мёртвые провода»: declared ⇒ файл существует ∨ явный pending | M | [`WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md`](../prompts/WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md) | [#1447](https://github.com/officefish/Membrana/issues/1447) |
 | `night-triage-insight-channel` | Канал «ночной триаж → карточка инсайта»: дома сырья, promote-only PR, стык с магистралью дня | M | [`NIGHT_TRIAGE_INSIGHT_CHANNEL_PROMPT.md`](../prompts/NIGHT_TRIAGE_INSIGHT_CHANNEL_PROMPT.md) | [#1445](https://github.com/officefish/Membrana/issues/1445) |
@@ -41,7 +39,6 @@
 | `insight-mandate-for-new` | Решение по инсайту недостижимо для новых инсайтов: мандаты только из зашитой миграции | M | [`INSIGHT_MANDATE_FOR_NEW_PROMPT.md`](../prompts/INSIGHT_MANDATE_FOR_NEW_PROMPT.md) | — |
 | `insight-review-from-file` | insight review принимает готовый REVIEW.md из чата (как консилиум — протокол) | S | [`INSIGHT_REVIEW_FROM_FILE_PROMPT.md`](../prompts/INSIGHT_REVIEW_FROM_FILE_PROMPT.md) | — |
 | `ship-automerge-predicate` | Предикат автослияния спрашивает галку вместо правил защиты ветки | S | [`SHIP_AUTOMERGE_PREDICATE_PROMPT.md`](../prompts/SHIP_AUTOMERGE_PREDICATE_PROMPT.md) | — |
-| `tw-handoff-liveness` | Сверка живости топ-10 хендоффа: строки таблицы против состояний задач | S | [`TW_HANDOFF_LIVENESS_PROMPT.md`](../prompts/TW_HANDOFF_LIVENESS_PROMPT.md) | [#1319](https://github.com/officefish/Membrana/issues/1319) |
 | `tw-declared-verbs-honest-no` | Мастерская задач: три глагола объявлены без движков — строить или объявить declared-not-built | S | [`TW_DECLARED_VERBS_HONEST_NO_PROMPT.md`](../prompts/TW_DECLARED_VERBS_HONEST_NO_PROMPT.md) | — |
 | `friction6-secret-inventory` | yarn secret:inventory — инвентарь засвеченного как вход ротации ключей | S | [`FRICTION6_SECRET_INVENTORY_PROMPT.md`](../prompts/FRICTION6_SECRET_INVENTORY_PROMPT.md) | [#1266](https://github.com/officefish/Membrana/issues/1266) |
 | `friction6-hygiene-notes` | Реестр скриптов не протухает + три грабли окружения в AGENTS.md | S | [`FRICTION6_HYGIENE_NOTES_PROMPT.md`](../prompts/FRICTION6_HYGIENE_NOTES_PROMPT.md) | [#1265](https://github.com/officefish/Membrana/issues/1265) |
@@ -233,6 +230,9 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `agent-tooling-friction-2-2026-07-30` | Трение тулинга 30.07: грабли аудита и install, живость resolutions, маршрут после ребейза, разбор красного CI | 2026-07-30 | [`AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md) | #1493 (Issue открыт) | [карточка](./archive/agent-tooling-friction-2-2026-07-30.md) |
+| `tooling-sanitary-pack-3007` | Санитарный пакет тулинга 30.07: пересборка производных снимков, вывод сноса в файл, содержание в строку вопроса, один автор долгов | 2026-07-30 | [`TOOLING_SANITARY_PACK_3007_PROMPT.md`](../prompts/TOOLING_SANITARY_PACK_3007_PROMPT.md) | — | [карточка](./archive/tooling-sanitary-pack-3007.md) |
+| `tw-handoff-liveness` | Сверка живости топ-10 хендоффа: строки таблицы против состояний задач | 2026-07-30 | [`TW_HANDOFF_LIVENESS_PROMPT.md`](../prompts/TW_HANDOFF_LIVENESS_PROMPT.md) | #1319 (Issue закрыт 2026-07-27) | [карточка](./archive/tw-handoff-liveness.md) |
 | `linear-agent-identity-facts` | Ресёрч: Linear — личность агента, состояние подзадач, блокирующие связи | 2026-07-30 | [`LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md`](../prompts/LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md) | — | [карточка](./archive/linear-agent-identity-facts.md) |
 | `rt-10-review-precision-degradation` | RT-10: честный режим precision — exact vs working-tree | 2026-07-30 | [`RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md`](../prompts/RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md) | — | [карточка](./archive/rt-10-review-precision-degradation.md) |
 | `rt-9-code-review-freshness` | RT-9: гвард свежести code-review — критичный сбой не молчит | 2026-07-30 | [`RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md`](../prompts/RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md) | — | [карточка](./archive/rt-9-code-review-freshness.md) |
