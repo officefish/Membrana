@@ -7,10 +7,10 @@
       "githubIssue": 1499,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "cowork-sprint",
       "createdAt": "2026-07-30",
-      "archivedAt": null,
+      "archivedAt": "2026-07-30",
       "leadPersona": "angelina",
       "supportPersonas": [
         "vesnin"
