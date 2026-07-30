@@ -55,6 +55,12 @@ import {
   insertPremisesSection,
   onlyMissingPremises,
 } from './lib/consilium-premises.mjs';
+import {
+  manifestHasLoss,
+  partOffsets,
+  renderInputManifest,
+  resolveManifest,
+} from './lib/consilium-input-manifest.mjs';
 
 const MAX_PROMPT_SPEC_CHARS = 12_000;
 const MAX_VIRTUAL_TEAM_CHARS = 8_000;
@@ -199,7 +205,11 @@ function meetingSiblingIdsFor(root, meetingId, ownTopicFile) {
   }
 }
 
+/** Последняя обрезка по своему потолку — читает `track()`, чтобы манифест не пересчитывал файлы заново. */
+let lastReadTruncated = false;
+
 function readBounded(absPath, maxChars, optional = false) {
+  lastReadTruncated = false;
   if (!existsSync(absPath)) {
     if (optional) return null;
     console.error(`Файл не найден: ${absPath}`);
@@ -208,6 +218,7 @@ function readBounded(absPath, maxChars, optional = false) {
   let text = readFileSync(absPath, 'utf8');
   if (text.length > maxChars) {
     text = text.slice(0, maxChars) + `\n\n[… обрезано до ${maxChars} символов …]\n`;
+    lastReadTruncated = true;
   }
   return text;
 }
@@ -255,12 +266,39 @@ function formatGhIssue(issue) {
   return text;
 }
 
-function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles, minReplies, ragBlock, withMemory = false, meeting = '' }) {
+/** Экспорт — тестовый шов: манифест обязан совпадать с ЭТОЙ сборкой, а не с пересчётом. */
+export function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles, minReplies, ragBlock, withMemory = false, meeting = '' }) {
   const cwd = process.cwd();
   const parts = [];
 
-  const spec = readBounded(resolve(cwd, CONSILIUM_PROMPT_FILE), MAX_PROMPT_SPEC_CHARS);
-  const virtualTeam = readBounded(resolve(cwd, 'docs/VIRTUAL_TEAM_PROMPT.md'), MAX_VIRTUAL_TEAM_CHARS, true);
+  // Манифест входа (п.5 топ-10 30.07): считает САМА сборка, а не пересчёт следом —
+  // иначе появится второй источник правды о том же, ровно тот дефект, что и лечим.
+  //
+  // Два шага намеренно: обрезку по своему потолку знает ЧТЕНИЕ, а место в сборке — УКЛАДКА.
+  // Сливать их в один нельзя: `spec` и `virtualTeam` читаются до первой укладки, и общий
+  // флаг «последнее чтение обрезано» к моменту push уже относился бы к другому файлу.
+  /** @type {{kind: string, path: string|null, chars: number, partIndex: number, truncatedOwn: boolean}[]} */
+  const inputs = [];
+  /** Прочитать файл и запомнить факт обрезки. Возвращает `{text, rec}` либо null. */
+  const read = (kind, rel, maxChars, optional = false) => {
+    const text = readBounded(resolve(cwd, rel), maxChars, optional);
+    if (text === null) return null;
+    return { text, rec: { kind, path: rel, chars: text.length, partIndex: -1, truncatedOwn: lastReadTruncated } };
+  };
+  /** Не-файловый вход (RAG, issue, память): носителя нет, размер есть. */
+  const inline = (kind, text) => ({ text, rec: { kind, path: null, chars: String(text).length, partIndex: -1, truncatedOwn: false } });
+  /** Отметить, в какую часть сборки вход лёг. Зовётся ВПЛОТНУЮ перед push. */
+  const place = (entry) => {
+    if (!entry) return null;
+    entry.rec.partIndex = parts.length;
+    inputs.push(entry.rec);
+    return entry.text;
+  };
+
+  const specEntry = read('инструкция консилиума', CONSILIUM_PROMPT_FILE, MAX_PROMPT_SPEC_CHARS);
+  const virtualEntry = read('координация ролей', 'docs/VIRTUAL_TEAM_PROMPT.md', MAX_VIRTUAL_TEAM_CHARS, true);
+  const spec = specEntry?.text;
+  const virtualTeam = virtualEntry?.text ?? null;
 
   // Зверь B1 «инструкция-в-хвосте», пойман на себе 27.07 (M0 bridge-command-post):
   // вопрос стоял ТОЛЬКО в хвосте сборки, потолок MAX_ASSEMBLED_CHARS отрезал его первым —
@@ -268,15 +306,12 @@ function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles
   // В ГОЛОВУ: обрезка хвоста больше не уносит повестку; хвостовое эхо сохранено.
   parts.push('## Вопрос на консилиум (полное эхо — в конце сборки)', '', question, '', '---', '');
 
-  parts.push(
-    '## Инструкция консилиума (docs/prompts/CONSILIUM_PROMPT.md)',
-    '',
-    spec,
-    '',
-  );
+  parts.push('## Инструкция консилиума (docs/prompts/CONSILIUM_PROMPT.md)', '');
+  parts.push(place(specEntry), '');
 
   if (virtualTeam) {
-    parts.push('---', '## Координация ролей (выдержка VIRTUAL_TEAM_PROMPT.md)', '', virtualTeam, '');
+    parts.push('---', '## Координация ролей (выдержка VIRTUAL_TEAM_PROMPT.md)', '');
+    parts.push(place(virtualEntry), '');
   }
 
   parts.push(
@@ -347,22 +382,29 @@ function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles
   if (!noContext) {
     parts.push('---', '## Контекст репозитория', '');
     for (const { path, title } of CONTEXT_FILES) {
-      const text = readBounded(resolve(cwd, path), MAX_CONTEXT_CHARS, true);
-      if (text) parts.push(`### ${title} (${path})`, '', text, '');
+      const entry = read(`контекст: ${title}`, path, MAX_CONTEXT_CHARS, true);
+      if (entry) {
+        parts.push(`### ${title} (${path})`, '');
+        parts.push(place(entry), '');
+      }
     }
   }
 
   if (ragBlock) {
-    parts.push('---', '## RAG archive context (useLongTerm)', '', ragBlock, '');
+    parts.push('---', '## RAG archive context (useLongTerm)', '');
+    parts.push(place(inline('архив RAG', ragBlock)), '');
   }
 
   if (ghIssueData) {
-    parts.push('---', '## GitHub Issue', '', formatGhIssue(ghIssueData), '');
+    parts.push('---', '## GitHub Issue', '');
+    parts.push(place(inline(`GitHub Issue #${ghIssueData.number}`, formatGhIssue(ghIssueData))), '');
   }
 
+  // Повестка стоит в ХВОСТЕ — именно её и уносил потолок сборки, пока никто не считал.
   if (topicFile) {
-    const text = readBounded(resolve(cwd, topicFile), MAX_TOPIC_CHARS);
-    parts.push('---', `## Повестка (${topicFile})`, '', text, '');
+    const entry = read('повестка', topicFile, MAX_TOPIC_CHARS);
+    parts.push('---', `## Повестка (${topicFile})`, '');
+    parts.push(place(entry), '');
   }
 
   parts.push(
@@ -406,12 +448,22 @@ function buildPrompt({ question, topicFile, ghIssueData, noContext, orderedRoles
   );
 
   let assembled = parts.join('\n');
-  if (assembled.length > MAX_ASSEMBLED_CHARS) {
+  const assembledChars = assembled.length;
+  if (assembledChars > MAX_ASSEMBLED_CHARS) {
     assembled =
       assembled.slice(0, MAX_ASSEMBLED_CHARS) +
       `\n\n[… общий промпт обрезан до ${MAX_ASSEMBLED_CHARS} символов …]\n`;
   }
-  return assembled;
+
+  // Смещения — по тем же частям и тому же join, что дали `assembled`: манифест говорит
+  // о ЭТОЙ сборке, а не о повторном чтении файлов.
+  const offsets = partOffsets(parts);
+  const manifest = resolveManifest(
+    inputs.map((r) => ({ ...r, start: offsets[r.partIndex] ?? 0 })),
+    { assembledChars, limit: MAX_ASSEMBLED_CHARS },
+  );
+
+  return { prompt: assembled, manifest, assembledChars, limit: MAX_ASSEMBLED_CHARS };
 }
 
 /**
@@ -443,7 +495,7 @@ export function seansePlan({ answeredBy, chainLabel, rejected = false, relPath, 
   };
 }
 
-export function wrapSeanseFile({ body, question, orderedRoles, model, ghIssue, topicFile, relPath }) {
+export function wrapSeanseFile({ body, question, orderedRoles, model, ghIssue, topicFile, relPath, inputManifest }) {
   const stamp = new Date().toISOString();
   const meta = [
     // Пометка канала (#616, A3): по ней аудитор отличает протокол, произведённый
@@ -470,6 +522,10 @@ export function wrapSeanseFile({ body, question, orderedRoles, model, ghIssue, t
   ];
   if (ghIssue) meta.push(`| GitHub Issue | #${ghIssue} |`);
   if (topicFile) meta.push(`| Повестка | \`${topicFile}\` |`);
+  // Манифест входа (п.5 топ-10 30.07): путь в строке «Повестка» отвечал только на «что
+  // назвали», но не на «что доехало». Утверждения комнаты о своём входе теперь сверяются
+  // с таблицей, а не с бойкостью реплик.
+  meta.push('', ...renderInputManifest(inputManifest));
   meta.push(
     '',
     '**Вопрос:**',
@@ -612,12 +668,21 @@ async function main() {
     logRagStatus(rag, 'consilium');
   }
 
-  const promptText = buildPrompt({
+  const { prompt: promptText, manifest: inputManifest } = buildPrompt({
     ...cli,
     ghIssueData,
     orderedRoles,
     ragBlock,
   });
+
+  // Потеря входа объявляется СРАЗУ, до траты прогона: комната, не увидевшая повестку,
+  // всё равно произведёт бойкий протокол — и отличить его будет нечем (29.07).
+  if (manifestHasLoss(inputManifest)) {
+    const lost = inputManifest.filter((r) => r.delivery !== 'полностью');
+    console.error(
+      `⚠ вход сеанса неполон: ${lost.map((r) => `${r.kind} — ${r.delivery}`).join('; ')}`,
+    );
+  }
 
   const relPath = resolveSeansePath({
     cwd,
@@ -760,6 +825,7 @@ async function main() {
       ghIssue: cli.ghIssue,
       topicFile: cli.topicFile,
       relPath,
+      inputManifest,
     });
     // #616 (вариант A): структурный гейт стоит ДО записи. Раньше протокол сохранялся,
     // а проверка печаталась следом предупреждением — отсюда «детектирует, но не
