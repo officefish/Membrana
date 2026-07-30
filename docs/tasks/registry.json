@@ -1,6 +1,23 @@
 {
   "tasks": [
     {
+      "id": "agent-tooling-friction-2-2026-07-30",
+      "title": "Трение тулинга 30.07: грабли аудита и install, живость resolutions, маршрут после ребейза, разбор красного CI",
+      "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md",
+      "githubIssue": 1493,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-30",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "tooling-sanitary-pack-3007",
       "title": "Санитарный пакет тулинга 30.07: пересборка производных снимков, вывод сноса в файл, содержание в строку вопроса, один автор долгов",
       "promptPath": "docs/prompts/TOOLING_SANITARY_PACK_3007_PROMPT.md",
