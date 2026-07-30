@@ -8,12 +8,36 @@
 | **Создана** | 2026-07-22 |
 | **Архивирована** | 2026-07-29 |
 | **GitHub Issue** | #924 |
-| **Linear** | — |
-| **Промпт** | [`docs/prompts/SHIP_REVIEW_TOOTH_PROMPT.md`](../../docs/prompts/SHIP_REVIEW_TOOTH_PROMPT.md) |
+| **Linear** | DRU-321 |
+| **Промпт** | [`docs/prompts/SHIP_REVIEW_TOOTH_PROMPT.md`](../../prompts/SHIP_REVIEW_TOOTH_PROMPT.md) |
 
 ## Заметки при закрытии
 
-PR #1431 (в main 64e76ebb) + включение чека 29.07: мердж в main проходит только через вердикт ревью тимлида по HEAD SHA. review/teamlead — обязательная проверка защиты main (verify:branch-protection зелёный); вердикт протухает при новом коммите; «ревью не прогонялось» = pending, не pass; BLOCK — жёсткий стоп (слово владельца 29.07); громкий обход REVIEW_GATE_OVERRIDE с обязательной причиной. Три исхода доказаны живьём (exit 3/0/1), тесты 63/63.
+Stale local card repaired after code/Linear check.
+
+Evidence:
+
+- `package.json` exposes `task:review:ship`.
+- `scripts/task-review-ship.mjs` orchestrates `task:review:prepare` →
+  `task:review:run` → `task:review:finalize` around the exact squash SHA,
+  fails closed when GitHub does not return `mergeCommit.oid`, derives base from
+  the merge commit parent, and prints the choreography before execution.
+- `scripts/task-review-ship.test.mjs` covers argument parsing, fail-closed
+  squash SHA extraction, detached checkout planning when `main` has moved, and
+  non-detached planning when HEAD equals the squash SHA.
+- Prior branch review:
+  `docs/discussions/branch-feat-agent-tooling-friction-2b-code-review.md` →
+  LGTM; live dry-run on PR #479 reported as correct there.
+
+Verification:
+
+- `node --test scripts/task-review-ship.test.mjs scripts/task-closure-review.test.mjs scripts/task-closure-review-schema.test.mjs` → 45/45 pass.
+
+Linear:
+
+- Live snapshot `2026-07-29T16:09:54.707Z`, `linear-snapshot@1`,
+  `recordCount=300`: `DRU-321` is Done, `githubIssueRefs=[924]`,
+  `completedAt=2026-07-29T07:06:34.915Z`.
 
 ---
 
