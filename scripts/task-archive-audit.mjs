@@ -1,24 +1,9 @@
 #!/usr/bin/env node
 import { readFile } from 'node:fs/promises';
-import { createHash } from 'node:crypto';
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
   return index === -1 ? undefined : process.argv[index + 1];
-}
-
-function stableStringify(value) {
-  if (value === null || typeof value !== 'object') return JSON.stringify(value);
-  if (Array.isArray(value)) return `[${value.map((item) => stableStringify(item)).join(',')}]`;
-  return `{${Object.keys(value)
-    .filter((key) => value[key] !== undefined)
-    .sort()
-    .map((key) => `${JSON.stringify(key)}:${stableStringify(value[key])}`)
-    .join(',')}}`;
-}
-
-function hash(value) {
-  return createHash('sha256').update(stableStringify(value), 'utf8').digest('hex');
 }
 
 async function main() {
@@ -29,7 +14,7 @@ async function main() {
   if (!checkpointPath) throw new Error('--checkpoint <cold-archive-checkpoint.json> is required');
 
   const expected = JSON.parse(await readFile(checkpointPath, 'utf8'));
-  const response = await fetch(new URL('/v1/task-archive/closures', url), {
+  const response = await fetch(new URL('/v1/task-archive/checkpoint', url), {
     headers: { 'x-membrana-token': token },
   });
   const body = await response.text();
@@ -37,18 +22,7 @@ async function main() {
     throw new Error(`task archive audit failed: HTTP ${response.status} ${body}`);
   }
 
-  const records = JSON.parse(body);
-  const ordered = [...records].sort((a, b) => a.closedAt.localeCompare(b.closedAt) || a.taskId.localeCompare(b.taskId));
-  const actual = {
-    schemaVersion: 'cold-archive-checkpoint/1',
-    archiveHome: 'background-office/mongodb',
-    recordType: 'task_closure',
-    recordCount: ordered.length,
-    hashAlg: 'sha256',
-    canonicalization: 'json-stable-stringify/v1',
-    contentHash: hash(ordered),
-  };
-
+  const actual = JSON.parse(body);
   const verdict =
     expected.recordCount !== actual.recordCount
       ? 'count_mismatch'

@@ -3,7 +3,7 @@
 | Поле | Значение |
 |------|----------|
 | **ID** | `insight-task-archive-storage` |
-| **Статус** | ratified / superseded by cold-store procedure |
+| **Статус** | ratified |
 | **Источник** | consilium |
 | **Создан** | 2026-06-28 |
 | **Горизонт** | week |

@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, NotFoundException, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { ApiTokenGuard } from '../../../common/guards/api-token.guard';
@@ -17,8 +17,8 @@ export class TaskArchiveController {
 
   @Post('closures')
   @ApiOperation({ summary: 'Notarize an append-only task closure record' })
-  @ApiResponse({ status: 201, description: 'Record notarized' })
-  @ApiResponse({ status: 200, description: 'Equivalent record already exists' })
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({ status: 200, description: 'Record notarized, or equivalent record already exists' })
   @ApiResponse({ status: 400, description: 'Invalid record shape or insufficient proof' })
   @ApiResponse({ status: 409, description: 'Record conflict for the same task closure' })
   notarize(@Body() raw: unknown) {
@@ -36,7 +36,7 @@ export class TaskArchiveController {
   async get(@Param('taskId') taskId: string) {
     const record = await this.archive.getClosure(taskId);
     if (!record) {
-      throw new BadRequestException({ fieldErrors: { taskId: ['unknown task closure record'] } });
+      throw new NotFoundException({ fieldErrors: { taskId: ['unknown task closure record'] } });
     }
     return record;
   }
