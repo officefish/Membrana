@@ -12,9 +12,9 @@ export function parseTop10Rows(markdown) {
     const n = Number(m[1]);
     if (!(n >= 1 && n <= 10)) continue;
     const work = m[2].trim();
-    const issues = [...work.matchAll(/github\.com\/officefish\/Membrana\/issues\/(\d+)|#(\d+)/gu)]
-      .map((x) => Number(x[1] ?? x[2]))
-      .filter((x) => x > 0);
+    const carriers = extractGithubCarriers(work);
+    const issues = carriers.filter((c) => c.kind === 'issue').map((c) => c.number);
+    const pulls = carriers.filter((c) => c.kind === 'pull').map((c) => c.number);
     const taskIds = [...work.matchAll(/`([a-z0-9][a-z0-9-]*)`/gu)].map((x) => x[1]);
     rows.push({
       n,
@@ -23,11 +23,40 @@ export function parseTop10Rows(markdown) {
       size: m[4].trim(),
       dependency: m[5].trim(),
       occupied: m[6].trim(),
+      carriers,
       issueNumbers: [...new Set(issues)],
+      pullNumbers: [...new Set(pulls)],
       taskIds: [...new Set(taskIds)],
     });
   }
   return rows;
+}
+
+function uniqueCarriers(carriers) {
+  const seen = new Set();
+  return carriers.filter((c) => {
+    const key = `${c.kind}:${c.number}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+export function extractGithubCarriers(markdown) {
+  const carriers = [];
+  let stripped = String(markdown);
+  stripped = stripped.replace(/\[[^\]]*#(\d+)[^\]]*\]\(([^)]*github\.com\/officefish\/Membrana\/(issues|pull)\/(\d+)[^)]*)\)/giu, (_all, _labelNum, _url, kind, urlNum) => {
+    carriers.push({ kind: kind === 'pull' ? 'pull' : 'issue', number: Number(urlNum) });
+    return '';
+  });
+  stripped = stripped.replace(/github\.com\/officefish\/Membrana\/(issues|pull)\/(\d+)/giu, (_all, kind, num) => {
+    carriers.push({ kind: kind === 'pull' ? 'pull' : 'issue', number: Number(num) });
+    return '';
+  });
+  for (const m of stripped.matchAll(/#(\d+)/gu)) {
+    carriers.push({ kind: 'issue', number: Number(m[1]), ambiguous: true });
+  }
+  return uniqueCarriers(carriers.filter((c) => Number.isInteger(c.number) && c.number > 0));
 }
 
 function parseGithubRemote(remote) {
@@ -36,23 +65,31 @@ function parseGithubRemote(remote) {
   return { owner: m[1], repo: m[2] };
 }
 
-export function buildIssueGraphqlQuery({ owner, repo, issueNumbers }) {
-  const fields = issueNumbers
-    .map((n) => `i${n}: issue(number: ${n}) { number state stateReason title url }`)
+export function buildCarrierGraphqlQuery({ owner, repo, numbers }) {
+  const fields = numbers
+    .map((n) => `i${n}: issueOrPullRequest(number: ${n}) {
+      __typename
+      ... on Issue { number state stateReason title url }
+      ... on PullRequest { number state title url merged }
+    }`)
     .join('\n');
-  return `query HandoffLivenessIssues {\n  repository(owner: "${owner}", name: "${repo}") {\n${fields}\n  }\n}`;
+  return `query HandoffLivenessCarriers {\n  repository(owner: "${owner}", name: "${repo}") {\n${fields}\n  }\n}`;
 }
 
-export function fetchIssuesByNumber(repoRoot, issueNumbers) {
-  if (issueNumbers.length === 0) return { ok: true, issues: new Map(), error: null };
+export function buildIssueGraphqlQuery({ owner, repo, issueNumbers }) {
+  return buildCarrierGraphqlQuery({ owner, repo, numbers: issueNumbers });
+}
+
+export function fetchCarriersByNumber(repoRoot, numbers) {
+  if (numbers.length === 0) return { ok: true, issues: new Map(), error: null };
   try {
     const remote = execFileSync('git', ['remote', 'get-url', 'origin'], {
       cwd: repoRoot,
       encoding: 'utf8',
     });
-    const query = buildIssueGraphqlQuery({
+    const query = buildCarrierGraphqlQuery({
       ...parseGithubRemote(remote),
-      issueNumbers: [...new Set(issueNumbers)].sort((a, b) => a - b),
+      numbers: [...new Set(numbers)].sort((a, b) => a - b),
     });
     const raw = execFileSync('gh', ['api', 'graphql', '-f', `query=${query}`], {
       cwd: repoRoot,
@@ -74,37 +111,63 @@ export function fetchIssuesByNumber(repoRoot, issueNumbers) {
   }
 }
 
+export function fetchIssuesByNumber(repoRoot, issueNumbers) {
+  return fetchCarriersByNumber(repoRoot, issueNumbers);
+}
+
+function carrierKindOf(item) {
+  return item?.__typename === 'PullRequest' ? 'pull' : 'issue';
+}
+
+function formatCarrier({ kind, number }) {
+  return kind === 'pull' ? `PR #${number}` : `#${number}`;
+}
+
+function formatCarrierState(number, item) {
+  const prefix = item.__typename === 'PullRequest' ? `PR #${number}` : `#${number}`;
+  return `${prefix} ${item.state}${item.stateReason ? `/${item.stateReason}` : ''}`;
+}
+
 export function evaluateHandoffRows(rows, issueResult) {
   return rows.map((row) => {
     if (!issueResult.ok) {
-      return { ...row, liveness: 'unknown', reason: `issue state unknown: ${issueResult.error}` };
+      return { ...row, liveness: 'unknown', reason: `carrier state unknown: ${issueResult.error}` };
     }
-    if (row.issueNumbers.length === 0) {
+    const carriers = row.carriers ?? row.issueNumbers.map((number) => ({ kind: 'issue', number }));
+    if (carriers.length === 0) {
       return {
         ...row,
         liveness: 'unknown',
         reason: row.taskIds.length
-          ? `no GitHub issue carrier for task ${row.taskIds.join(', ')}`
-          : 'no GitHub issue carrier',
+          ? `no GitHub Issue/PR carrier for task ${row.taskIds.join(', ')}`
+          : 'no GitHub Issue/PR carrier',
       };
     }
-    const states = row.issueNumbers.map((n) => ({ number: n, issue: issueResult.issues.get(n) }));
+    const states = carriers.map((c) => ({ ...c, issue: issueResult.issues.get(c.number) }));
     const missing = states.filter((s) => !s.issue);
     if (missing.length > 0) {
-      return { ...row, liveness: 'unknown', reason: `issue missing from batch query: #${missing.map((s) => s.number).join(', #')}` };
+      return { ...row, liveness: 'unknown', reason: `carrier missing from batch query: ${missing.map(formatCarrier).join(', ')}` };
     }
-    const closed = states.filter((s) => s.issue.state === 'CLOSED');
+    const mismatched = states.filter((s) => !s.ambiguous && s.kind !== carrierKindOf(s.issue));
+    if (mismatched.length > 0) {
+      return {
+        ...row,
+        liveness: 'unknown',
+        reason: `carrier kind mismatch: ${mismatched.map((s) => `${formatCarrier(s)} resolved as ${s.issue.__typename}`).join(', ')}`,
+      };
+    }
+    const closed = states.filter((s) => s.issue.state === 'CLOSED' || s.issue.state === 'MERGED');
     if (closed.length > 0) {
       return {
         ...row,
         liveness: 'dead',
-        reason: closed.map((s) => `#${s.number} CLOSED${s.issue.stateReason ? `/${s.issue.stateReason}` : ''}`).join(', '),
+        reason: closed.map((s) => formatCarrierState(s.number, s.issue)).join(', '),
       };
     }
     return {
       ...row,
       liveness: 'alive',
-      reason: states.map((s) => `#${s.number} ${s.issue.state}`).join(', '),
+      reason: states.map((s) => formatCarrierState(s.number, s.issue)).join(', '),
     };
   });
 }
@@ -115,14 +178,16 @@ export function renderHandoffLivenessReport({ rows, issueResult, generatedAt }) 
     '',
     `Generated: ${generatedAt}`,
     `Source: docs/HANDOFF.md`,
-    `Issue query: ${issueResult.ok ? 'ok (single GraphQL batch)' : `unknown (${issueResult.error})`}`,
+    `Carrier query: ${issueResult.ok ? 'ok (single GraphQL batch)' : `unknown (${issueResult.error})`}`,
     '',
     '| # | liveness | carriers | occupied | evidence |',
     '|---|----------|----------|----------|----------|',
   ];
   for (const row of rows) {
-    const carriers = row.issueNumbers.length
-      ? row.issueNumbers.map((n) => `#${n}`).join(', ')
+    const carriers = row.carriers?.length
+      ? row.carriers.map(formatCarrier).join(', ')
+      : row.issueNumbers.length
+        ? row.issueNumbers.map((n) => `#${n}`).join(', ')
       : row.taskIds.map((id) => `\`${id}\``).join(', ') || '—';
     lines.push(
       `| ${row.n} | ${row.liveness} | ${carriers} | ${row.occupied.replace(/\|/gu, '\\|')} | ${row.reason.replace(/\|/gu, '\\|')} |`,
