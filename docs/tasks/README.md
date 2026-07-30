@@ -20,6 +20,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `cowork-honest-sprint` | Cowork Sprint: механизм спринта с честными исполнителями | L | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-honest-sprint/COWORK_SPRINT_BRIEF.md) | [#1499](https://github.com/officefish/Membrana/issues/1499) |
+| `agent-tooling-friction-2-2026-07-30` | Трение тулинга 30.07: грабли аудита и install, живость resolutions, маршрут после ребейза, разбор красного CI | M | [`AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md) | [#1493](https://github.com/officefish/Membrana/issues/1493) |
 | `tooling-sanitary-pack-3007` | Санитарный пакет тулинга 30.07: пересборка производных снимков, вывод сноса в файл, содержание в строку вопроса, один автор долгов | S | [`TOOLING_SANITARY_PACK_3007_PROMPT.md`](../prompts/TOOLING_SANITARY_PACK_3007_PROMPT.md) | — |
 | `network-container` | Контейнер network: словарь исходов, зонды обоими путями, предполётная проверка, снимок окружения для агентов | M | [`NETWORK_CONTAINER_PROMPT.md`](../prompts/NETWORK_CONTAINER_PROMPT.md) | [#1449](https://github.com/officefish/Membrana/issues/1449) |
 | `weekly-dead-wire-audit` | Недельная процедура «мёртвые провода»: declared ⇒ файл существует ∨ явный pending | M | [`WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md`](../prompts/WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md) | [#1447](https://github.com/officefish/Membrana/issues/1447) |
@@ -231,7 +233,6 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `agent-tooling-friction-2-2026-07-30` | Трение тулинга 30.07: грабли аудита и install, живость resolutions, маршрут после ребейза, разбор красного CI | 2026-07-30 | [`AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md) | #1493 (Issue открыт) | [карточка](./archive/agent-tooling-friction-2-2026-07-30.md) |
 | `linear-agent-identity-facts` | Ресёрч: Linear — личность агента, состояние подзадач, блокирующие связи | 2026-07-30 | [`LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md`](../prompts/LINEAR_AGENT_IDENTITY_FACTS_PROMPT.md) | — | [карточка](./archive/linear-agent-identity-facts.md) |
 | `rt-10-review-precision-degradation` | RT-10: честный режим precision — exact vs working-tree | 2026-07-30 | [`RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md`](../prompts/RT_10_REVIEW_PRECISION_DEGRADATION_PROMPT.md) | — | [карточка](./archive/rt-10-review-precision-degradation.md) |
 | `rt-9-code-review-freshness` | RT-9: гвард свежести code-review — критичный сбой не молчит | 2026-07-30 | [`RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md`](../prompts/RT_9_CODE_REVIEW_FRESHNESS_PROMPT.md) | — | [карточка](./archive/rt-9-code-review-freshness.md) |

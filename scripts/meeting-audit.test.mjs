@@ -9,6 +9,8 @@ import {
   auditMeeting,
   meetingRoomKey,
   ownAgendaIdsForProtocol,
+  protocolsDeclaredInActive,
+  readProtocols,
   readTopics,
 } from './lib/meeting-audit.mjs';
 
@@ -217,4 +219,102 @@ test('#696: readTopics читает M*_AGENDA.md → проверки 1 и 4 Р�
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
+});
+
+// ── Корпус протоколов: слепота маски на соседней оси (#696-r2, 30.07) ──────────
+
+test('корпус: протоколы объявлены в MEETING_ACTIVE — префикс слуга их НЕ находит', () => {
+  // Корень: readProtocols искал `${id}-*.md`, а заседание `sprint-honest-performers`
+  // пишет протоколы `sprint-honest-m0-…` — совпадений ноль, корпус пуст, проверки 2/4/6
+  // не запускались НИ НА ОДНОМ предмете, итог печатал «Нарушений: 0». Тот же класс, что
+  // #696, но слепла маска протоколов, а не повесток.
+  const root = mkdtempSync(join(tmpdir(), 'meeting-audit-corpus-'));
+  try {
+    mkdirSync(join(root, 'docs', 'meeting', 'demo-performers'), { recursive: true });
+    mkdirSync(join(root, 'docs', 'seanses'), { recursive: true });
+    writeFileSync(join(root, 'docs', 'seanses', 'demo-m0-order.md'), goodProtocol('B1'));
+    writeFileSync(join(root, 'docs', 'seanses', 'demo-m1-perf.md'), goodProtocol('B2'));
+    writeFileSync(
+      join(root, 'docs', 'meeting', 'demo-performers', 'MEETING_ACTIVE.md'),
+      '| M0 | [`demo-m0-order.md`](../../seanses/demo-m0-order.md) |\n' +
+        '| M1 | [`demo-m1-perf.md`](../../seanses/demo-m1-perf.md) |\n',
+    );
+
+    // Префикс `demo-performers-` не совпадает ни с одним файлом — спасает объявление.
+    const protocols = readProtocols(root, 'demo-performers');
+    assert.deepEqual(
+      protocols.map((p) => p.file),
+      ['demo-m0-order.md', 'demo-m1-perf.md'],
+      'корпус собран по объявлению контейнера, а не по догадке о префиксе',
+    );
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('корпус: ссылки на rejected/ в корпус НЕ попадают', () => {
+  const declared = protocolsDeclaredInActive(
+    '[принят](../../seanses/demo-m0.md) и [отклонён](../../seanses/rejected/demo-m0-misread.md)\n',
+  );
+  assert.deepEqual(declared, ['demo-m0.md'], 'отклонённый председателем прогон корпусом не считается');
+});
+
+test('корпус: порядок объявления СОХРАНЯЕТСЯ — ратифицированный порядок не лексикографичен', () => {
+  // У `sprint-honest-performers` владелец ратифицировал `… 6 → 8 → 7 → 9`, поэтому M8
+  // датирован раньше M7. Сортировка имён объявляла это «протокол раньше предшественника».
+  const declared = protocolsDeclaredInActive(
+    '[M6](../../seanses/x-m6.md) [M8](../../seanses/x-m8.md) [M7](../../seanses/x-m7.md)\n',
+  );
+  assert.deepEqual(declared, ['x-m6.md', 'x-m8.md', 'x-m7.md'], 'порядок прогона, не алфавит');
+});
+
+test('проверка 3: порядок судится по прогону — M8 раньше M7 при ратифицированном порядке НЕ нарушение', () => {
+  const dated = (iso) => `# Метаданные\n\n${iso}\n\n---\n\n${goodProtocol('B1')}`;
+  const { checks } = auditMeeting(
+    state({
+      protocols: [
+        { file: 'x-m6.md', md: dated('2026-07-30T07:50:08.861Z') },
+        { file: 'x-m8.md', md: dated('2026-07-30T07:56:51.503Z') },
+        { file: 'x-m7.md', md: dated('2026-07-30T08:00:59.041Z') },
+      ],
+    }),
+  );
+  assert.equal(checks.find((c) => c.n === 3).status, 'PASS');
+});
+
+test('проверка 3: настоящий бэкдейтинг ловится и НАЗЫВАЕТ оба файла', () => {
+  const dated = (iso) => `# Метаданные\n\n${iso}\n\n---\n\n${goodProtocol('B1')}`;
+  const { checks } = auditMeeting(
+    state({
+      protocols: [
+        { file: 'x-m1.md', md: dated('2026-07-30T08:00:00.000Z') },
+        { file: 'x-m2.md', md: dated('2026-07-30T07:00:00.000Z') },
+      ],
+    }),
+  );
+  const c3 = checks.find((c) => c.n === 3);
+  assert.equal(c3.status, 'FAIL');
+  assert.match(c3.note, /x-m2\.md/u);
+  assert.match(c3.note, /x-m1\.md/u);
+});
+
+test('проверка 7: пустой корпус — «корпуса нет», а НЕ чистота (ратифицированный M5)', () => {
+  const { checks, corpusEmpty, violations } = auditMeeting(state({ protocols: [] }));
+  const c7 = checks.find((c) => c.n === 7);
+  assert.equal(c7.status, 'НЕЧЕМ', 'заседание в середине пути — не нарушение, но и не чисто');
+  assert.match(c7.note, /корпуса нет/u);
+  assert.match(c7.note, /НИ НА ОДНОМ предмете/u);
+  assert.equal(corpusEmpty, true, 'флаг для итоговой строки: «Нарушений: 0» печатать нельзя');
+  assert.equal(violations, 0, 'НЕЧЕМ кодом не валит — валит ложная чистота, а не отсутствие корпуса');
+  assert.ok(
+    !checks.some((c) => c.n === 2 || c.n === 4 || c.n === 6),
+    'поцикловые проверки при пустом корпусе не дают ни одной строки — это и надо назвать',
+  );
+});
+
+test('проверка 7: непустой корпус называет ЧИСЛО выполненных поцикловых проверок', () => {
+  const c7 = auditMeeting(state()).checks.find((c) => c.n === 7);
+  assert.equal(c7.status, 'PASS');
+  assert.match(c7.note, /1 протокол\(ов\) в корпусе/u);
+  assert.match(c7.note, /поцикловых проверок выполнено/u);
 });
