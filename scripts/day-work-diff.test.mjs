@@ -36,8 +36,15 @@ const fakeGit = (responses) => (args) => {
 test('parseDayCommits: SHA, subject, PR из (#N); делит по ПЕРВОМУ пробелу', () => {
   const commits = parseDayCommits(['abc123 feat(x): a b c (#10)', 'def456 chore: b'].join('\n'));
   assert.deepEqual(commits, [
-    { sha: 'abc123', subject: 'feat(x): a b c (#10)', pr: 10 },
-    { sha: 'def456', subject: 'chore: b', pr: null },
+    { sha: 'abc123', committedAt: null, subject: 'feat(x): a b c (#10)', pr: 10 },
+    { sha: 'def456', committedAt: null, subject: 'chore: b', pr: null },
+  ]);
+});
+
+test('parseDayCommits: новый формат сохраняет committedAt для проверки границы', () => {
+  const commits = parseDayCommits(['abc123', '2026-07-30T00:03:00+03:00', 'feat: near midnight (#10)'].join('\0'));
+  assert.deepEqual(commits, [
+    { sha: 'abc123', committedAt: '2026-07-30T00:03:00+03:00', subject: 'feat: near midnight (#10)', pr: 10 },
   ]);
 });
 
@@ -133,6 +140,45 @@ test('нет коммитов за период → честный режим, �
   assert.equal(result.mode, 'нет коммитов за период');
   assert.equal(result.period, null);
   assert.match(formatDayReviewHeader(result), /коммитов нет — ревьюить нечего/u);
+});
+
+test('git log недоступен → precision working-tree, а не ложный exact-пусто', () => {
+  const result = collectDayWorkDiff({
+    run: (args) => args[0] === 'log' ? { ok: false, stdout: '', error: new Error('git unavailable') } : '',
+  });
+  assert.equal(result.mode, 'рабочее дерево');
+  assert.equal(result.precision, 'working-tree');
+  assert.equal(result.period, null);
+  assert.match(formatDayReviewHeader(result), /дифф недоступен, показано текущее дерево/u);
+  assert.doesNotMatch(formatDayReviewHeader(result), /коммитов нет — ревьюить нечего/u);
+});
+
+test('diff сегмента недоступен → precision working-tree и сегмент помечен', () => {
+  const result = collectDayWorkDiff({
+    run: (args) => {
+      const key = args.join(' ');
+      if (key.includes('log --since')) return 'abc123 feat: a (#1)';
+      if (key.includes('diff --shortstat abc123')) return ' 1 file changed, 5 insertions(+)';
+      if (key.includes('diff abc123^..abc123')) return { ok: false, stdout: '', error: new Error('diff failed') };
+      return '';
+    },
+  });
+  assert.equal(result.precision, 'working-tree');
+  assert.equal(result.segments[0].diffAvailable, false);
+  assert.match(formatDayWorkContext(result), /дифф недоступен/u);
+});
+
+test('коммит рядом с локальной полуночью → precision approximate', () => {
+  const result = collectDayWorkDiff({
+    run: fakeGit([
+      ['log --since', ['abc123', '2026-07-30T00:03:00+03:00', 'feat: boundary (#1)'].join('\0')],
+      ['diff --shortstat abc123', ' 1 file changed, 5 insertions(+)'],
+      ['diff abc123^..abc123', '+boundary'],
+    ]),
+    boundaryWindowMinutes: 10,
+  });
+  assert.equal(result.precision, 'approximate');
+  assert.match(formatDayReviewHeader(result), /граница периода около полуночи/u);
 });
 
 test('шапка честная: режим, precision, период — текстом', () => {

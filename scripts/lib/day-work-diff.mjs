@@ -29,7 +29,7 @@ export const OVERSIZED_CHANGED_LINES = 400;
  * SHA — 40 hex без пробелов, поэтому делим по ПЕРВОМУ пробелу: subject сохраняется.
  *
  * @param {string} logText
- * @returns {readonly {sha: string, subject: string, pr: number|null}[]} oldest-first
+ * @returns {readonly {sha: string, committedAt: string|null, subject: string, pr: number|null}[]} oldest-first
  */
 export function parseDayCommits(logText) {
   const lines = String(logText ?? '')
@@ -37,11 +37,17 @@ export function parseDayCommits(logText) {
     .map((l) => l.trim())
     .filter(Boolean);
   return lines.map((line) => {
+    if (line.includes('\0')) {
+      const [sha, committedAt, ...subjectParts] = line.split('\0');
+      const subject = subjectParts.join('\0');
+      const m = subject.match(/\(#(\d+)\)/u);
+      return { sha, committedAt: committedAt || null, subject, pr: m ? Number(m[1]) : null };
+    }
     const sep = line.indexOf(' ');
     const sha = sep === -1 ? line : line.slice(0, sep);
     const subject = sep === -1 ? '' : line.slice(sep + 1);
     const m = subject.match(/\(#(\d+)\)/u);
-    return { sha, subject, pr: m ? Number(m[1]) : null };
+    return { sha, committedAt: null, subject, pr: m ? Number(m[1]) : null };
   });
 }
 
@@ -77,50 +83,118 @@ export function isSegmentOversized(changedLines) {
 
 const DEFAULT_RUN = (args) => {
   try {
-    return execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-  } catch {
-    return '';
+    return { ok: true, stdout: execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }) };
+  } catch (error) {
+    return { ok: false, stdout: '', error };
   }
 };
+
+function normalizeGitResult(value) {
+  if (value && typeof value === 'object' && Object.hasOwn(value, 'ok')) {
+    return {
+      ok: Boolean(value.ok),
+      stdout: String(value.stdout ?? ''),
+      error: value.error ?? null,
+    };
+  }
+  return { ok: true, stdout: String(value ?? ''), error: null };
+}
+
+function runGit(run, args) {
+  return normalizeGitResult(run(args));
+}
+
+function localMidnightFor(date) {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+function boundaryPrecision(commits, { since, boundaryWindowMinutes }) {
+  if (since !== 'midnight') return { precision: 'exact', note: '' };
+  const windowMs = Math.max(0, Number(boundaryWindowMinutes ?? 10)) * 60_000;
+  if (windowMs === 0) return { precision: 'exact', note: '' };
+  const near = commits.find((commit) => {
+    if (!commit.committedAt) return false;
+    const date = new Date(commit.committedAt);
+    if (Number.isNaN(date.getTime())) return false;
+    return Math.abs(date.getTime() - localMidnightFor(date).getTime()) <= windowMs;
+  });
+  if (!near) return { precision: 'exact', note: '' };
+  return {
+    precision: 'approximate',
+    note: `граница периода около полуночи: ${near.sha.slice(0, 8)} @ ${near.committedAt}`,
+  };
+}
 
 /**
  * Собрать дифф работы дня, сегментированный по коммитам.
  *
- * `run` — шов для тестов (детерминизм без git/сети). Возвращает stdout `git`.
+ * `run` — шов для тестов (детерминизм без git/сети). Возвращает stdout `git`
+ * или `{ ok, stdout }`, когда нужно отличить пустой ответ от отказа git.
  *
- * @param {{ since?: string, run?: (args: string[]) => string }} [opts]
+ * @param {{ since?: string, boundaryWindowMinutes?: number, run?: (args: string[]) => string | { ok: boolean, stdout?: string, error?: unknown } }} [opts]
  * @returns {{
- *   mode: 'работа дня' | 'нет коммитов за период',
- *   precision: 'exact',
+ *   mode: 'работа дня' | 'нет коммитов за период' | 'рабочее дерево',
+ *   precision: 'exact' | 'working-tree' | 'approximate',
+ *   precisionNote?: string,
  *   period: { base: string, head: string, count: number } | null,
- *   commits: readonly {sha: string, subject: string, pr: number|null}[],
+ *   commits: readonly {sha: string, committedAt: string|null, subject: string, pr: number|null}[],
  *   segments: readonly {sha: string, subject: string, pr: number|null,
- *     changedLines: number, oversized: boolean, diff: string}[],
+ *     changedLines: number, oversized: boolean, diff: string, diffAvailable: boolean}[],
  * }}
  */
 export function collectDayWorkDiff(opts = {}) {
   const run = opts.run ?? DEFAULT_RUN;
   const since = opts.since ?? 'midnight';
-  const logText = run(['log', `--since=${since}`, '--reverse', '--format=%H %s']);
-  const commits = parseDayCommits(logText);
+  const logResult = runGit(run, ['log', `--since=${since}`, '--reverse', '--format=%H%x00%cI%x00%s']);
+  if (!logResult.ok) {
+    return {
+      mode: 'рабочее дерево',
+      precision: 'working-tree',
+      period: null,
+      commits: [],
+      segments: [],
+      precisionNote: 'дифф недоступен, показано текущее дерево',
+    };
+  }
+  const commits = parseDayCommits(logResult.stdout);
   const period = dayPeriodRange(commits);
 
   if (period === null) {
     return { mode: 'нет коммитов за период', precision: 'exact', period: null, commits: [], segments: [] };
   }
 
+  let diffAvailable = true;
   const segments = commits.map((c) => {
-    const shortstat = run(['diff', '--shortstat', `${c.sha}^..${c.sha}`]);
-    const changedLines = changedLinesFromShortstat(shortstat);
+    const shortstatResult = runGit(run, ['diff', '--shortstat', `${c.sha}^..${c.sha}`]);
+    if (!shortstatResult.ok) {
+      diffAvailable = false;
+      return { sha: c.sha, subject: c.subject, pr: c.pr, changedLines: 0, oversized: false, diff: '', diffAvailable: false };
+    }
+    const changedLines = changedLinesFromShortstat(shortstatResult.stdout);
     const oversized = isSegmentOversized(changedLines);
     // oversized — помечаем и НЕ тянем гигантский дифф в контекст: обрезка молчаливая
     // (MAX_DIFF_CHARS) — тот же класс тихого сбоя, что и слепота. Пусть ревьюер видит
     // пометку и решит, а не получит обрезок, выглядящий как целое.
-    const diff = oversized ? '' : run(['diff', `${c.sha}^..${c.sha}`]);
-    return { sha: c.sha, subject: c.subject, pr: c.pr, changedLines, oversized, diff };
+    if (oversized) return { sha: c.sha, subject: c.subject, pr: c.pr, changedLines, oversized, diff: '', diffAvailable: true };
+    const diffResult = runGit(run, ['diff', `${c.sha}^..${c.sha}`]);
+    if (!diffResult.ok) diffAvailable = false;
+    return { sha: c.sha, subject: c.subject, pr: c.pr, changedLines, oversized, diff: diffResult.stdout, diffAvailable: diffResult.ok };
   });
 
-  return { mode: 'работа дня', precision: 'exact', period, commits, segments };
+  const boundary = boundaryPrecision(commits, {
+    since,
+    boundaryWindowMinutes: opts.boundaryWindowMinutes,
+  });
+  const precision = diffAvailable ? boundary.precision : 'working-tree';
+  return {
+    mode: 'работа дня',
+    precision,
+    period,
+    commits,
+    segments,
+    ...(precision === 'working-tree' ? { precisionNote: 'дифф недоступен, показано текущее дерево' } : {}),
+    ...(precision === 'approximate' ? { precisionNote: boundary.note } : {}),
+  };
 }
 
 /**
@@ -131,8 +205,16 @@ export function collectDayWorkDiff(opts = {}) {
  */
 export function formatDayReviewHeader(result) {
   const lines = [`Режим: ${result.mode}`, `Precision: ${result.precision}`];
+  if (result.precision === 'working-tree') {
+    lines.push(`⚠ ${result.precisionNote ?? 'дифф недоступен, показано текущее дерево'}`);
+  } else if (result.precision === 'approximate' && result.precisionNote) {
+    lines.push(`⚠ ${result.precisionNote}`);
+  }
   if (result.period === null) {
-    lines.push('Период: — (за сегодня коммитов нет — ревьюить нечего)');
+    const emptyReason = result.precision === 'working-tree'
+      ? 'дифф работы дня недоступен'
+      : 'за сегодня коммитов нет — ревьюить нечего';
+    lines.push(`Период: — (${emptyReason})`);
     return lines.join('\n');
   }
   const { base, head, count } = result.period;
@@ -154,6 +236,8 @@ export function formatDayWorkContext(result) {
     const head = `### ${s.sha.slice(0, 8)}${s.pr ? ` (#${s.pr})` : ''} — ${s.subject} [${s.changedLines} строк]`;
     if (s.oversized) {
       parts.push(head, `(oversized — дифф не развёрнут, ревьюить как отдельный PR)`, '');
+    } else if (!s.diffAvailable) {
+      parts.push(head, `(дифф недоступен — показано текущее дерево в fallback-контексте)`, '');
     } else {
       parts.push(head, '```diff', s.diff.trimEnd(), '```', '');
     }
