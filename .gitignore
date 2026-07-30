@@ -178,3 +178,8 @@ docs/insights/_lifecycle/
 # LPC evidence house — сырой кеш агента (не истина)
 docs/audit/llm-calls/cache/**
 !docs/audit/llm-calls/cache/.gitkeep
+
+# Журнал рода «предсказание ↔ исход» — локальный вывод прогона.
+# Настоящий дом записи — docs/virtual-team/memory/archive/<persona>.jsonl (провод адаптера,
+# пока не построен). Стаб-вывод в репозитории = стаб, доживший до прода.
+docs/sprint/experience/forecast-records.jsonl

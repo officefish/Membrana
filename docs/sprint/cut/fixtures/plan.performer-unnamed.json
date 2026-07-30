@@ -1,0 +1,37 @@
+{
+  "//": "КРИВАЯ 3/6 → performer_unnamed. Поле НЕ пустое: стоит «musician» — ровно то расхождение, которое живёт в реестре задач (leadPersona: \"musician\" против id голоса kuryokhin). Непустоты поля мало: id обязан резолвиться в реестре голосов.",
+  "schema": "sprint-cut/1",
+  "sprintId": "cowork-honest-sprint",
+  "taskId": "cowork-honest-sprint",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "blocks": [
+    {
+      "blockId": "cut-contract",
+      "persona": "musician",
+      "context": "kuryokhin",
+      "zone": [
+        "scripts/lib/sprint-cut/**"
+      ],
+      "estimate": {
+        "changedLines": 260
+      }
+    },
+    {
+      "blockId": "execution-gate",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/execution-trace/**"
+      ],
+      "estimate": {
+        "changedLines": 240
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-30T12:00:00+03:00",
+    "digest": "56482e043b17467b7e8b0681a89073e6f4321db769e237b544ec880cea8ee8ae"
+  }
+}

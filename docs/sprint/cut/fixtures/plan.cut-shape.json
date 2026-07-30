@@ -1,0 +1,12 @@
+{
+  "//": "КРИВАЯ 1/6 → cut_shape. Блоки поданы объектом, а не списком: документ не читается как план. Вердикт unreadable — остальные пять проверок НЕ выполняются, чтобы «ноль находок» на мусоре не выглядело зелёным.",
+  "schema": "sprint-cut/1",
+  "sprintId": "cowork-honest-sprint",
+  "taskId": "cowork-honest-sprint",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "blocks": {
+    "cut-contract": { "persona": "vesnin", "context": "vesnin", "estimate": { "changedLines": 260 } }
+  },
+  "ratification": { "by": "owner", "at": "2026-07-30T12:00:00+03:00", "digest": "неважен: форма сломана раньше" }
+}

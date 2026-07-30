@@ -1,0 +1,49 @@
+{
+  "//": "ВАЛИДНАЯ фикстура плана нарезки: вердикт contract. Отметку ратификации записал инструмент (node scripts/sprint-cut-check.mjs --plan … --ratify --at …) — правка любого поля тела сбрасывает её.",
+  "schema": "sprint-cut/1",
+  "sprintId": "cowork-honest-sprint",
+  "taskId": "cowork-honest-sprint",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "blocks": [
+    {
+      "blockId": "cut-contract",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/sprint-cut/**",
+        "scripts/sprint-cut-check.mjs"
+      ],
+      "estimate": {
+        "changedLines": 260
+      }
+    },
+    {
+      "blockId": "execution-gate",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/execution-trace/**"
+      ],
+      "estimate": {
+        "changedLines": 240
+      }
+    },
+    {
+      "blockId": "experience-loop",
+      "persona": "rodchenko",
+      "context": "kuryokhin",
+      "zone": [
+        "scripts/lib/sprint-experience/**"
+      ],
+      "estimate": {
+        "changedLines": 220
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-30T12:00:00+03:00",
+    "digest": "db3865751d8753f767421bc4530beff5553390df3149beed5bd7e8835a8466c7"
+  }
+}

@@ -1,0 +1,6 @@
+# НАХОДКА eg-order-review-early: review_pass раньше contract_signature — ревью судило непринятый
+# контракт. Порядок нарушен, ответственность подтверждена → вердикт НЕ меняется (код 0).
+# Ожидание: honest_pair × 2 + находка eg-order-review-early у gate-wiring.
+{"traceId":"t-mfcc-run","blockId":"mfcc-core","kind":"context_run","subject":"kuryokhin","at":"2026-07-30T09:15:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-kuryokhin-mfcc.json"}
+{"traceId":"t-gate-review-early","blockId":"gate-wiring","kind":"review_pass","subject":"vesnin","at":"2026-07-30T08:30:00.000Z","ref":"docs/reviews/gate-wiring-teamlead.md"}
+{"traceId":"t-gate-sign","blockId":"gate-wiring","kind":"contract_signature","subject":"vesnin","at":"2026-07-30T09:00:00.000Z","ref":"docs/seanses/sprint-honest-m3-contract-review-2026-07-30.md"}

@@ -1,0 +1,37 @@
+{
+  "//": "КРИВАЯ 5/6 → zones_overlap. Второй блок пишет внутрь зоны первого (scripts/lib/sprint-cut/stubs/** ⊂ scripts/lib/sprint-cut/**). Тогда это не нарезка: параллельная работа коллизит (прецедент 2026-07-09).",
+  "schema": "sprint-cut/1",
+  "sprintId": "cowork-honest-sprint",
+  "taskId": "cowork-honest-sprint",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "blocks": [
+    {
+      "blockId": "cut-contract",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/sprint-cut/**"
+      ],
+      "estimate": {
+        "changedLines": 260
+      }
+    },
+    {
+      "blockId": "execution-gate",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/sprint-cut/stubs/**"
+      ],
+      "estimate": {
+        "changedLines": 240
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-30T12:00:00+03:00",
+    "digest": "19e8f98fe591b3b35908d5b67b95fa46a00f29933022c4e7a494c0709bb4127c"
+  }
+}

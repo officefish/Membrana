@@ -1,0 +1,4 @@
+# Субъект вне docs/virtual-team/voices.registry.json → E_PERSONA_UNKNOWN, код 2.
+# Это ошибка входа, а не «неизвестный исполнитель»: объявленный обязан быть вызываемым.
+{"traceId":"t-mfcc-run","blockId":"mfcc-core","kind":"context_run","subject":"kuryokhin","at":"2026-07-30T09:15:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-kuryokhin-mfcc.json"}
+{"traceId":"t-gate-run-ghost","blockId":"gate-wiring","kind":"context_run","subject":"stakhanov","at":"2026-07-30T10:00:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-vesnin-gate.json"}
