@@ -5,8 +5,8 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 52 · бюджет 14312/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 213 (причины в op-log) -->
+Записей: 51 · бюджет 14243/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 214 (причины в op-log) -->
 
 ### 2026-07-29 · позиция · network-container-form
 
@@ -313,9 +313,3 @@
 > По подаче — что видит пользователь (в логе, на дашборде). Сейчас: вызов `audit` → результат честно выводится; `decompose` → разложение видно; `inspectElement` → молчание. Мой флаг: молчаливый пробел на холсте — это мёртвая дверь. Если элемент не инспектируется, это **видимое […]
 
 — источник: `docs/seanses/request-container-api-m2-workshop-2026-07-23.md#reply-1`
-
-### 2026-07-23 · рутина · insight-one-shot-format
-
-> внедрять: да, с требованием к чек-листу · этап: сейчас · оценка: 7/10
-
-— источник: `docs/insights/insight-one-shot-format/REVIEW.md#vote`

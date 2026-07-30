@@ -5,8 +5,8 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14304/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 216 (причины в op-log) -->
+Записей: 48 · бюджет 14221/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 217 (причины в op-log) -->
 
 ### 2026-07-29 · позиция · network-container-form
 
@@ -295,9 +295,3 @@
 > Must до кода: (1) карточка эпика+фаз в registry / GitHub; (2) EPIC заседания ратифицирован владельцем; (3) отдельный аудитор хотя бы post-hoc на контейнер — желательно, не блокер старта кода если владелец жмёт. DoD v1 продукта: code-review и consilium читают effective chain, […] _(реплик в сеансе: 4)_
 
 — источник: `docs/seanses/llm-procedure-channels-m5-sprint-ready-2026-07-23-2026-07-23.md#reply-1`
-
-### 2026-07-23 · рутина · insight-one-shot-format
-
-> внедрять: да, как процедуру (не строкой `FORMATS.md`) · этап: сейчас · оценка: 8/10
-
-— источник: `docs/insights/insight-one-shot-format/REVIEW.md#vote`

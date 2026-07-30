@@ -1,0 +1,2 @@
+{"ts":"2026-07-30T04:34:37.460Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-07-23-insight-one-shot-format","reason":"expired_ttl","origin":"persona-extract","class":"routine"}
+{"ts":"2026-07-30T04:34:37.460Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:51","origin":"persona-extract"}
