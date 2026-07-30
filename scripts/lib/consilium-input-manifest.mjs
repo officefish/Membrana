@@ -21,6 +21,26 @@
 export const DELIVERY_STATES = ['полностью', 'обрезан', 'не доехал'];
 
 /**
+ * Отпечаток доставленного текста (канон формата хендофа 30.07 требует его в манифесте).
+ *
+ * Отвечает на вопрос, которого не закрывает ни путь, ни размер: доехала ли ТА САМАЯ
+ * версия. Путь совпадает и когда файл переписали между сборкой и чтением протокола.
+ *
+ * @param {(input: string) => string} sha256hex — инъекция, чтобы модуль остался чистым
+ */
+export function fingerprintOf(text, sha256hex) {
+  return sha256hex(String(text)).slice(0, 12);
+}
+
+/** Размер для таблицы: символы, а для повестки — ещё и число пунктов. */
+export function formatSize(record) {
+  const chars = `${record.chars}`;
+  return record.items === null || record.items === undefined
+    ? chars
+    : `${chars} · ${record.items} п.`;
+}
+
+/**
  * Смещения частей в `parts.join('\n')` — по той же арифметике, что и сам join.
  * @param {string[]} parts
  * @returns {number[]} смещение начала каждой части
@@ -78,12 +98,13 @@ export function renderInputManifest(records) {
   const lines = [
     '**Вход сеанса** (что комната действительно получила):',
     '',
-    '| Вход | Носитель | Символов | Доставка |',
-    '|------|----------|---------:|----------|',
+    '| Вход | Носитель | Размер | Отпечаток | Доставка |',
+    '|------|----------|-------:|-----------|----------|',
   ];
   for (const r of records) {
     const mark = r.delivery === 'полностью' ? r.delivery : `**${r.delivery}**`;
-    lines.push(`| ${r.kind} | ${r.path ? `\`${r.path}\`` : '—'} | ${r.chars} | ${mark} |`);
+    const carrier = r.path ? `\`${r.path}\`` : '—';
+    lines.push(`| ${r.kind} | ${carrier} | ${formatSize(r)} | \`${r.fingerprint ?? '—'}\` | ${mark} |`);
   }
   if (manifestHasLoss(records)) {
     lines.push(

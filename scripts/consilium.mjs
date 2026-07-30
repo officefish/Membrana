@@ -55,7 +55,9 @@ import {
   insertPremisesSection,
   onlyMissingPremises,
 } from './lib/consilium-premises.mjs';
+import { createHash } from 'node:crypto';
 import {
+  fingerprintOf,
   manifestHasLoss,
   partOffsets,
   renderInputManifest,
@@ -279,14 +281,37 @@ export function buildPrompt({ question, topicFile, ghIssueData, noContext, order
   // флаг «последнее чтение обрезано» к моменту push уже относился бы к другому файлу.
   /** @type {{kind: string, path: string|null, chars: number, partIndex: number, truncatedOwn: boolean}[]} */
   const inputs = [];
+  const stamp = (text) => fingerprintOf(text, (s) => createHash('sha256').update(s, 'utf8').digest('hex'));
   /** Прочитать файл и запомнить факт обрезки. Возвращает `{text, rec}` либо null. */
   const read = (kind, rel, maxChars, optional = false) => {
     const text = readBounded(resolve(cwd, rel), maxChars, optional);
     if (text === null) return null;
-    return { text, rec: { kind, path: rel, chars: text.length, partIndex: -1, truncatedOwn: lastReadTruncated } };
+    return {
+      text,
+      rec: {
+        kind,
+        path: rel,
+        chars: text.length,
+        items: null,
+        fingerprint: stamp(text),
+        partIndex: -1,
+        truncatedOwn: lastReadTruncated,
+      },
+    };
   };
   /** Не-файловый вход (RAG, issue, память): носителя нет, размер есть. */
-  const inline = (kind, text) => ({ text, rec: { kind, path: null, chars: String(text).length, partIndex: -1, truncatedOwn: false } });
+  const inline = (kind, text) => ({
+    text,
+    rec: {
+      kind,
+      path: null,
+      chars: String(text).length,
+      items: null,
+      fingerprint: stamp(text),
+      partIndex: -1,
+      truncatedOwn: false,
+    },
+  });
   /** Отметить, в какую часть сборки вход лёг. Зовётся ВПЛОТНУЮ перед push. */
   const place = (entry) => {
     if (!entry) return null;
@@ -403,6 +428,9 @@ export function buildPrompt({ question, topicFile, ghIssueData, noContext, order
   // Повестка стоит в ХВОСТЕ — именно её и уносил потолок сборки, пока никто не считал.
   if (topicFile) {
     const entry = read('повестка', topicFile, MAX_TOPIC_CHARS);
+    // Число пунктов — из тех же ID-меток, по которым работает гейт полноты rt-6:
+    // «повестка доехала» и «доехали все её вопросы» — разные утверждения.
+    entry.rec.items = extractAgendaIds(entry.text).length || null;
     parts.push('---', `## Повестка (${topicFile})`, '');
     parts.push(place(entry), '');
   }

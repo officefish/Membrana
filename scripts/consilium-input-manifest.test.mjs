@@ -7,13 +7,16 @@
  * «доехало целиком / обрезано / не доехало вовсе».
  */
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 
 import {
   DELIVERY_STATES,
+  fingerprintOf,
+  formatSize,
   manifestHasLoss,
   partOffsets,
   renderInputManifest,
@@ -144,4 +147,58 @@ test('вход без повестки не выдумывает её в ман�
   });
   assert.equal(manifest.some((r) => r.kind === 'повестка'), false);
   assert.equal(manifest.some((r) => String(r.kind).startsWith('контекст')), false);
+});
+
+// --- Канон формата хендофа 30.07: путь, размер, число пунктов, отпечаток ------------------
+
+test('отпечаток различает разные тексты и совпадает для одинаковых', () => {
+  const sha = (s) => createHash('sha256').update(s, 'utf8').digest('hex');
+  assert.equal(fingerprintOf('повестка A', sha), fingerprintOf('повестка A', sha));
+  assert.notEqual(fingerprintOf('повестка A', sha), fingerprintOf('повестка B', sha));
+  assert.equal(fingerprintOf('x', sha).length, 12, 'короткий, но различающий');
+});
+
+test('размер повестки несёт число пунктов, прочие входы — нет', () => {
+  assert.equal(formatSize({ chars: 4068, items: 5 }), '4068 · 5 п.');
+  assert.equal(formatSize({ chars: 4068, items: null }), '4068');
+  assert.equal(formatSize({ chars: 4068 }), '4068');
+});
+
+test('таблица несёт отпечаток — путь и размер не отвечают «та ли версия»', () => {
+  const md = renderInputManifest([
+    { kind: 'повестка', path: 'a.md', chars: 4068, items: 5, fingerprint: 'ab12cd34ef56', delivery: 'полностью' },
+  ]).join('\n');
+  assert.match(md, /Отпечаток/u);
+  assert.match(md, /`ab12cd34ef56`/u);
+  assert.match(md, /4068 · 5 п\./u);
+});
+
+test('вход без отпечатка не притворяется проверенным', () => {
+  const md = renderInputManifest([{ kind: 'x', path: null, chars: 1, delivery: 'полностью' }]).join('\n');
+  assert.match(md, /`—`/u);
+});
+
+test('ВЕЩДОК 29.07: доставленный бриф 4068 симв. при потолке 12000 — «полностью», значит комната соврала', () => {
+  // Хендоф 30.07 фиксирует цифры: бриф ПЕРЕДАН. Манифест обязан сказать «полностью» —
+  // тогда «бриф не передан» в репликах становится опровержимым, а не спорным.
+  const rec = { start: 40_000, chars: 4068, truncatedOwn: false };
+  assert.equal(resolveDelivery(rec, null), 'полностью');
+  assert.equal(manifestHasLoss([{ ...rec, delivery: resolveDelivery(rec, null) }]), false);
+});
+
+test('проводка счётчика пунктов: на живой повестке заседания items заполняется', async () => {
+  const { buildPrompt } = await import('./consilium.mjs');
+  const { CONSILIUM_ROLES } = await import('./lib/consilium-paths.mjs');
+  const agenda = 'docs/meeting/sprint-honest-performers/M1_AGENDA.md';
+  if (!existsSync(agenda)) return; // повестка могла уехать в архив — зуб не ломаем
+  const { manifest } = buildPrompt({
+    question: 'проводка счётчика?',
+    topicFile: agenda,
+    orderedRoles: CONSILIUM_ROLES,
+    minReplies: 30,
+    noContext: true,
+  });
+  const rec = manifest.find((r) => r.kind === 'повестка');
+  assert.ok(rec.items >= 1, 'ID-метки повестки обязаны попасть в манифест числом');
+  assert.match(formatSize(rec), /п\./u);
 });
