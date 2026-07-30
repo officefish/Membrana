@@ -63,12 +63,48 @@ export function readTopics(repoRoot, id) {
 }
 
 /** Протоколы заседания: `docs/seanses/<id>-*.md` → [{file, md}]. */
+export function protocolsDeclaredInActive(activeMd) {
+  if (!activeMd) return [];
+  const found = [...activeMd.matchAll(/(?:\.\.\/)*(?:docs\/)?seanses\/([A-Za-z0-9._-]+\.md)/gu)].map(
+    (m) => m[1],
+  );
+  // Порядок документа СОХРАНЯЕТСЯ, а не сортируется: таблица «Ход заседания» перечисляет
+  // комнаты в порядке ПРОГОНА, и он не обязан совпадать с лексикографикой имён. Ровно на
+  // этом падала проверка 3: у `sprint-honest-performers` ратифицированный порядок
+  // `… 6 → 8 → 7 → 9`, поэтому M8 (07:56) датирован раньше M7 (08:00) — по именам это
+  // «протокол раньше предшественника», по делу это исполнение приказа владельца. Работа
+  // комнаты M0 и состоит в том, чтобы ратифицировать порядок, лексикографике не подчинённый.
+  // rejected/ живут отдельной папкой и корпусом заседания не считаются: председатель их не принял.
+  return [...new Set(found)];
+}
+
+/**
+ * Корпус протоколов заседания. ДВА источника, объединяются:
+ *   - объявленный: ссылки `docs/seanses/*.md` из `MEETING_ACTIVE.md` контейнера;
+ *   - угаданный: файлы с префиксом `<id>-`.
+ *
+ * Почему объявленный ПЕРВЫМ классом, а не догадка по имени. Префикс врёт ровно так же,
+ * как врала маска повесток (#696): заседание `sprint-honest-performers` пишет протоколы
+ * `sprint-honest-m0-order-…`, префикс `sprint-honest-performers-` не совпадает ни с одним —
+ * корпус выходил пустым, проверки 2/4/6 не запускались НИ НА ОДНОМ предмете, а итог печатал
+ * «Нарушений: 0». Тот же класс, что #696, но на соседней оси: там слепла маска повесток,
+ * здесь — маска протоколов. Ослаблять префикс догадкой (обрезать хвост слуга) значило бы
+ * втянуть протоколы чужих заседаний; контейнер и так знает свой корпус — он его перечисляет.
+ */
 export function readProtocols(repoRoot, id) {
   const dir = join(repoRoot, 'docs', 'seanses');
   if (!existsSync(dir)) return [];
-  return readdirSync(dir)
+  const activePath = join(repoRoot, 'docs', 'meeting', id, 'MEETING_ACTIVE.md');
+  const declared = existsSync(activePath)
+    ? protocolsDeclaredInActive(readFileSync(activePath, 'utf8'))
+    : [];
+  const guessed = readdirSync(dir)
     .filter((f) => f.startsWith(`${id}-`) && f.endsWith('.md'))
-    .sort()
+    .sort();
+  // Объявленные — в порядке прогона (см. выше), угаданные — добором по алфавиту в хвост:
+  // у них порядка прогона нет, и выдумывать его нельзя.
+  return [...new Set([...declared, ...guessed])]
+    .filter((f) => existsSync(join(dir, f)))
     .map((f) => ({ file: f, md: readFileSync(join(dir, f), 'utf8') }));
 }
 
@@ -191,14 +227,23 @@ export function auditMeeting(state) {
     });
   }
 
-  // 3 — порядок: протоколы не датированы вразрез с сортировкой имён.
+  // 3 — порядок: протоколы не датированы вразрез с порядком ПРОГОНА (не с алфавитом имён).
+  // Порядок прогона задаёт корпус: объявленные в `MEETING_ACTIVE.md` идут как перечислены,
+  // угаданные по префиксу — добором. Прежняя формулировка «вразрез с сортировкой имён»
+  // объявляла нарушением любой ратифицированный непоследовательный порядок комнат.
   const dates = state.protocols.map((p) => p.md.match(/\d{4}-\d{2}-\d{2}T[\d:.]+Z/u)?.[0] ?? '');
-  const outOfOrder = dates.some((d, i) => i > 0 && d !== '' && dates[i - 1] !== '' && d < dates[i - 1]);
+  const backdatedAt = dates.findIndex(
+    (d, i) => i > 0 && d !== '' && dates[i - 1] !== '' && d < dates[i - 1],
+  );
+  const outOfOrder = backdatedAt > 0;
   checks.push({
     n: 3,
     subject: 'порядок протоколов',
     status: outOfOrder ? 'FAIL' : 'PASS',
-    note: outOfOrder ? 'протокол датирован раньше предшественника' : `${state.protocols.length} протокол(ов) по возрастанию`,
+    note: outOfOrder
+      ? `«${state.protocols[backdatedAt].file}» датирован раньше предшественника ` +
+        `«${state.protocols[backdatedAt - 1].file}» в порядке прогона`
+      : `${state.protocols.length} протокол(ов) по возрастанию в порядке прогона`,
   });
 
   // 4 — структура вердикта (зубы: вывод-в-посылках, колонизация по ID).
@@ -255,7 +300,29 @@ export function auditMeeting(state) {
         : `вне git: ${state.untracked.join(', ')} — проверка без зубов`,
   });
 
-  return { checks, violations: checks.filter((c) => c.status === 'FAIL').length };
+  // 7 — КОРПУС. Ратифицированный вердикт M5 заседания `sprint-honest-performers` (30.07):
+  // «чисто» при пустом корпусе ЗАПРЕЩЕНО — это «корпуса нет». Проверки 2, 4 и 6 —
+  // поцикловые по протоколам: при нулевом корпусе они не дают ни одной строки, и итог
+  // «Нарушений: 0» читается как «процедура чиста», хотя не проверено ничего.
+  // Статус НЕЧЕМ, а не FAIL: заседание в середине пути (повестки есть, комнаты не прогнаны)
+  // — не нарушение. Нарушением было бы выдать это за чистоту, чем и занимался прежний итог.
+  const perProtocol = checks.filter((c) => c.n === 2 || c.n === 4 || c.n === 6).length;
+  checks.push({
+    n: 7,
+    subject: 'корпус протоколов',
+    status: state.protocols.length > 0 ? 'PASS' : 'НЕЧЕМ',
+    note:
+      state.protocols.length > 0
+        ? `${state.protocols.length} протокол(ов) в корпусе, ${perProtocol} поцикловых проверок выполнено`
+        : `корпуса нет: протоколов 0 при ${state.topics.length} повестке(ах) — ` +
+          'проверки 2, 4 и 6 не выполнялись НИ НА ОДНОМ предмете. Это не «нарушений 0»',
+  });
+
+  return {
+    checks,
+    violations: checks.filter((c) => c.status === 'FAIL').length,
+    corpusEmpty: state.protocols.length === 0,
+  };
 }
 
 /** Полный сбор + аудит (единственная IO-точка). */
