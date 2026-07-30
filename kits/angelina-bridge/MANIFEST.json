@@ -5,7 +5,7 @@
     "scripts/bridge.mjs"
   ],
   "pins": {
-    "scripts/bridge.mjs": "36fbef75a0e1f04887024b6a55f9cedadc1900ff",
+    "scripts/bridge.mjs": "a99ff9b7cc71c2341cac45ab2971815b4139a3af",
     "scripts/lib/bridge-cast.mjs": "8e37e276d8fb9c04d452ae9630a2f5e8f207f74f",
     "scripts/lib/bridge-debt-engine.mjs": "6cbbac6f0ecd3cb7e1d86a42e45c385c838c068e",
     "scripts/lib/bridge-debts-health.mjs": "8d7e4b190738a3c5d1b3e6651969c0cd78943f19",
