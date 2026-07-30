@@ -4,7 +4,7 @@ import { dirname, resolve } from 'node:path';
 
 import {
   evaluateHandoffRows,
-  fetchIssuesByNumber,
+  fetchCarriersByNumber,
   parseTop10Rows,
   renderHandoffLivenessReport,
 } from './lib/handoff-liveness.mjs';
@@ -33,7 +33,7 @@ function parse(argv) {
 function usage() {
   console.log(`Usage: node scripts/handoff-liveness.mjs [--report path] [--json] [--no-report]
 
-Checks docs/HANDOFF.md top-10 rows against GitHub Issue states in one GraphQL batch.
+Checks docs/HANDOFF.md top-10 rows against GitHub Issue/PR states in one GraphQL batch.
 Network unavailable => honest unknown, not alive.`);
 }
 
@@ -54,8 +54,8 @@ function main() {
   const repoRoot = resolve('.');
   const md = readFileSync(resolve(repoRoot, args.handoff), 'utf8');
   const parsedRows = parseTop10Rows(md);
-  const issueNumbers = [...new Set(parsedRows.flatMap((row) => row.issueNumbers))].sort((a, b) => a - b);
-  const issueResult = fetchIssuesByNumber(repoRoot, issueNumbers);
+  const carrierNumbers = [...new Set(parsedRows.flatMap((row) => row.carriers.map((c) => c.number)))].sort((a, b) => a - b);
+  const issueResult = fetchCarriersByNumber(repoRoot, carrierNumbers);
   const rows = evaluateHandoffRows(parsedRows, issueResult);
   const result = { generatedAt: new Date().toISOString(), issueResult, rows };
 
