@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `mfcc-compare-sprint` | MFCC-ядро: обвязка, детекторы и сравнительный прогон против гармонического на FFT | M | [`mfcc-compare-sprint.json`](../sprint/cut/mfcc-compare-sprint.json) | — |
 | `mfcc-lib-choice` | Выбор MFCC-библиотеки: обоснование до нарезки блоков | S | [`MFCC_LIB_CHOICE_PROMPT.md`](../prompts/MFCC_LIB_CHOICE_PROMPT.md) | — |
 | `tooling-sanitary-pack-3007` | Санитарный пакет тулинга 30.07: пересборка производных снимков, вывод сноса в файл, содержание в строку вопроса, один автор долгов | S | [`TOOLING_SANITARY_PACK_3007_PROMPT.md`](../prompts/TOOLING_SANITARY_PACK_3007_PROMPT.md) | — |
 | `network-container` | Контейнер network: словарь исходов, зонды обоими путями, предполётная проверка, снимок окружения для агентов | M | [`NETWORK_CONTAINER_PROMPT.md`](../prompts/NETWORK_CONTAINER_PROMPT.md) | [#1449](https://github.com/officefish/Membrana/issues/1449) |

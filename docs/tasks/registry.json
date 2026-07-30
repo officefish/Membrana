@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "mfcc-compare-sprint",
+      "title": "MFCC-ядро: обвязка, детекторы и сравнительный прогон против гармонического на FFT",
+      "promptPath": "docs/sprint/cut/mfcc-compare-sprint.json",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-30",
+      "archivedAt": null,
+      "leadPersona": "tarasov",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "kuryokhin"
+      ],
+      "notes": "Первый боевой прогон механизма честного спринта (скилл membrana-honest-sprint). План v2 ратифицирован владельцем 30.07 15:55, дайджест 3b5827ab. Частичное окно объявлено ДО старта: два рода следа из четырёх. Критерии теста — mfcc-compare-sprint-TEST-CRITERIA.md, написаны ПОСЛЕ нарезки",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "mfcc-lib-choice",
       "title": "Выбор MFCC-библиотеки: обоснование до нарезки блоков",
       "promptPath": "docs/prompts/MFCC_LIB_CHOICE_PROMPT.md",
