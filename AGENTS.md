@@ -78,6 +78,11 @@ All standard dev commands are documented in the root `README.md` and `package.js
 | `pr:ship --branch` на уже выбранной ветке | С 19.07 **идемпотентен** (не `checkout -b`). Раньше fatal `already exists` и обрыв ship |
 | `pr:ship` при CONFLICTING/DIRTY | **STOP до merge** (ATF4-1): rebase → `yarn git:rebase-continue` → force-with-lease → снова `--merge-only` |
 | `gh pr/issue --body` / heredoc на PS | Только `--body-file` + длинный путь (`scripts/cache/`, ATF4-3); `%TEMP%`/`USER19~1` — ловушка |
+| Вывод инструмента через пайп (`\| tail`, `\| head`) | **Канал портит содержание.** 29.07 текст двух ошибок сноса деревьев исчез в пайпе — причину восстанавливали по состоянию диска; в тот же день шелл съел бэктики в теле комментария к ишью (две строки пропали молча). `repo-clean --execute` теперь **требует** `--report`; правки файлов — инструментом, не `node -e` с шаблонными строками |
+| `bridge debt add` / `debt settle` | **Снято (30.07):** писало только витрину `DEBTS.md` и перетирало её шапку, журнал оставался пуст. Канон один — `yarn bridge:debt birth\|repay` (append-only журнал, витрина производная) |
+| Производный снимок правился, а не пересобирался | **Шесть снимков** в дереве отстают молча: 29.07 трижды отказ (прецеденты, кейсы, вещдоки — последний уже в CI, 8 минут прогона). Пересобирать `yarn snapshots:rebuild`, проверять `--check` |
+| `yarn code-review:pr N` на локальном коммите | Читает PR **с сервера**: фикс без `git push` даёт повторный BLOCK на старом коде |
+| Тест рядом с предметом ≠ тест в прогоне | `vitest` пакетов берёт только `src/**/*.test.ts`, каталог `scripts/` — только `scripts/**/*.test.mjs`. Тест у сида/prisma **не гонялся бы никогда** (поймано 29.07 случайно) |
 | `git rebase --continue` без EDITOR | `yarn git:rebase-continue` (GIT_EDITOR=true, ATF4-4); иначе «Terminal is dumb» |
 | `DAY_SPRINT_ACTIVE` при параллели | Не затирать **Focus**; править только **Also open** (ATF4-2 / DAY_SPRINT_REGULATION) |
 | Sibling worktree: junction shared `node_modules` | **Anti-pattern (#725):** ломает Nest11/express resolve и прячет несобранные пакеты. Канон — per-wt `yarn install` + копия `.env`. С 29.07 `yarn worktree:bootstrap` **по умолчанию ставит своё** (#1465 Ф4); junction остался под явным `--junction` с предупреждением, фактический способ пишется в `WORKTREE.md`. Дерево на junction проверять `yarn workspace:links` |

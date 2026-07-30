@@ -311,17 +311,23 @@ if (cmd === 'close') {
 
 if (cmd === 'debt') {
   const debts = loadDebts();
-  if (sub === 'add') {
-    const next = addDebt(debts, { id: arg('id'), debt: arg('text'), evidence: arg('evidence'), date: today() });
-    saveDebts(next);
-    console.log(`[попугай] запомнил: ${arg('id')}. Не забуду.`);
-    process.exit(0);
-  }
-  if (sub === 'settle') {
-    if (!arg('evidence')) { console.error('settle: нужен --evidence (чем погашен долг)'); process.exit(2); }
-    saveDebts(settleDebt(debts, arg('id')));
-    console.log(`[попугай] погашено: ${arg('id')} (${arg('evidence')}). Запись остаётся.`);
-    process.exit(0);
+
+  // Ф4 санитарного пакета 30.07: у долгов попугая был ВТОРОЙ автор. Эти глаголы
+  // писали только витрину DEBTS.md и перетирали её шапку легаси-текстом, тогда как
+  // канонический путь (`yarn bridge:debt`, M6/#1352) ведёт append-only журнал
+  // debt-ledger.jsonl и пересобирает витрину производной. 29.07 долги дня заведены
+  // здесь — журнал их не получил, ревью дало BLOCK. Ровно то, что заседание по
+  // тарифам запретило вердиктом M2: один автор, двойная запись запрещена.
+  if (sub === 'add' || sub === 'settle') {
+    console.error(
+      `[попугай] Кр-ррр. Глагол «debt ${sub}» снят: он писал только витрину, а журнал оставался без записи.\n` +
+        '  Канонический путь — один автор, журнал источником:\n' +
+        (sub === 'add'
+          ? '    yarn bridge:debt birth --id <slug> --debt "…" --evidence "…" --origin captain_gesture|lead_gesture|detector|carry [--theme "…"]\n'
+          : '    yarn bridge:debt repay --id <slug> --by captain_word | --by fact_ref --fact "<ссылка>"\n') +
+        '  Витрина docs/bridge/DEBTS.md пересобирается сама — руками её не править.',
+    );
+    process.exit(2);
   }
   // Резолвер файла для offline-зубов: путь как есть от корня → scripts/ → scripts/lib/
   // (эвристика до миграции контракта M1 на типизированный ref).

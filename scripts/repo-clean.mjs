@@ -205,6 +205,21 @@ function main() {
     return;
   }
 
+  // Ф2 санитарного пакета 30.07: канал доставки портит содержание. 29.07 текст двух
+  // ошибок сноса потерян пайпом `| tail`, причину восстанавливали по состоянию диска.
+  // Отчёт был необязателен — теперь при реальном сносе он обязателен: консоль
+  // обрезают, файл — нет.
+  if (cli.execute && !cli.report) {
+    console.error(
+      'repo-clean --execute: обязателен --report <файл>.\n' +
+        '  Причина (29.07): вывод сноса ушёл через пайп, текст двух ошибок исчез, причину\n' +
+        '  восстанавливали по состоянию диска. Консоль обрезают — файл нет.\n' +
+        '  Пример: yarn repo:clean --execute --worktrees --report %TEMP%/repo-clean.txt',
+    );
+    process.exitCode = 2;
+    return;
+  }
+
   const out = createReporter();
   out.log('repo-clean · источник истины — состояние PR (squash-мёрж делает git branch --merged слепым)');
   const prs = fetchPrs();
