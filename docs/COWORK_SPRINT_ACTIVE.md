@@ -2,7 +2,7 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` — Phase 2 (Isolated build) закрыта 2026-07-30, 3/3 блока прошли DoD, freeze-теги стоят; Phase 3 (Interface Consilium) — следующая |
+| **status** | `open` — Phase 3 (Interface Consilium) закрыта 2026-07-30, контракт сведён; Phase 4 (Integration) — следующая |
 | sprintId | `cowork-honest-sprint` |
 | Brief | [`docs/cowork-sprint/cowork-honest-sprint/COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-honest-sprint/COWORK_SPRINT_BRIEF.md) |
 | GitHub Issue | [#1499](https://github.com/officefish/Membrana/issues/1499) |
@@ -20,8 +20,8 @@
 | 0 — Brief + open | закрыта 2026-07-30 (BASE_SHA `bb1dfe55`, ратификация резки владельцем) |
 | 1 — Concept (CONCEPT.md + первый EXPECTATIONS.md) | **закрыта 2026-07-30 — 3/3 блока сдали** (см. ниже) |
 | 2 — Isolated build (собственный DoD на стабах) | **закрыта 2026-07-30 — 3/3 прошли DoD, freeze-теги стоят** (см. ниже) |
-| 3 — Interface Consilium → INTERFACE_CONTRACT.md | **следующая** — вскрытие трёх EXPECTATIONS одновременно |
-| 4 — Integration (ветка `cowork/cowork-honest-sprint/integration`) | — |
+| 3 — Interface Consilium → INTERFACE_CONTRACT.md | **закрыта 2026-07-30** — [контракт сведён](./cowork-sprint/cowork-honest-sprint/INTERFACE_CONTRACT.md), шов B→C частично несводим, четыре эскалации закрыты владельцем |
+| 4 — Integration (ветка `cowork/cowork-honest-sprint/integration`) | **следующая** |
 | 5 — Merge + RETROSPECTIVE + archive | — |
 
 ## Изоляция (памятка)
@@ -216,3 +216,24 @@ Freeze-теги поставлены.
   запрет вердикта M1, и тогда это **блокер, а не адаптер**;
 - `refused_with_reason` — единственная оставшаяся дверь мимо честности; счётчик второй двери
   печатается в итоге.
+
+---
+
+## Рецидив внутри одного дня: производная строка дрейфует, ловится глазом
+
+Строка `status` и таблица фаз в этом файле **разошлись с предметом трижды за 30.07** — после
+закрытия Phase 1, Phase 2 и Phase 3. Каждый раз секция о закрытии дописывалась, а шапка
+оставалась на прежней фазе.
+
+**Это не косметика.** Признак `open` читается именно из строки `status` — и `cowork-open.mjs`,
+и новым `cowork-close.mjs`. Тот же класс, из которого родился долг `#cowork-phase5-no-autoclose`:
+производная строка расходится с предметом молча.
+
+**Третий случай поймал не человек, а ревью** (BLOCK на PR #1512, риск P1: «холодный старт
+прочитает „Phase 3 следующая“ при готовом контракте»). Первые два поймал глаз координатора —
+то есть механизма нет.
+
+**Кандидат в предикат:** `cowork:phase <n>` — единственный писатель шапки и таблицы, сверяющий
+их с наличием артефактов фазы (`CONCEPT`/`EXPECTATIONS` → 1, freeze-теги → 2,
+`INTERFACE_CONTRACT` → 3, ветка интеграции → 4, `RETROSPECTIVE` → 5). Регламент такую команду
+уже объявляет; носителя, как и у `cowork:close` до сегодня, нет.
