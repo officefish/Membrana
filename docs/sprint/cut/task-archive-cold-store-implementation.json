@@ -1,0 +1,107 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "task-archive-cold-store-implementation",
+  "taskId": "task-archive-cold-store-implementation",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-07-30T15:05:00Z",
+    "to": "2026-07-30T19:30:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "insight-revision-and-task-cards",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/insights/insight-task-archive-storage/**",
+        "docs/tasks/registry.json",
+        "docs/tasks/prompts/**"
+      ],
+      "revisionAt": "2026-07-30T15:05:00Z",
+      "estimate": {
+        "changedLines": 220
+      }
+    },
+    {
+      "blockId": "cold-record-schema-contract",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/background-office/src/modules/task-archive/contracts/**",
+        "packages/core/src/task-archive/**",
+        "docs/tasks/cold-archive/CONTRACT.md"
+      ],
+      "revisionAt": "2026-07-30T15:05:00Z",
+      "estimate": {
+        "changedLines": 340
+      }
+    },
+    {
+      "blockId": "archive-notary-write-path",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-office/src/modules/task-archive/notary/**",
+        "scripts/task-archive-notary-smoke.mjs",
+        "docs/tasks/cold-archive/NOTARY.md"
+      ],
+      "revisionAt": "2026-07-30T15:05:00Z",
+      "estimate": {
+        "changedLines": 360
+      }
+    },
+    {
+      "blockId": "checkpoint-export-and-audit",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "packages/background-office/src/modules/task-archive/checkpoint/**",
+        "scripts/task-archive-checkpoint.mjs",
+        "scripts/task-archive-audit.mjs",
+        "docs/tasks/cold-archive/CHECKPOINT.md"
+      ],
+      "revisionAt": "2026-07-30T15:05:00Z",
+      "estimate": {
+        "changedLines": 380
+      }
+    },
+    {
+      "blockId": "task-archive-office-wiring",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "packages/background-office/src/app.module.ts",
+        "packages/background-office/src/config/env.schema.ts",
+        "packages/background-office/src/modules/task-archive/index.ts",
+        "packages/background-office/src/modules/task-archive/task-archive.module.ts",
+        "packages/background-office/src/modules/task-archive/README.md"
+      ],
+      "revisionAt": "2026-07-30T15:05:00Z",
+      "estimate": {
+        "changedLines": 180
+      }
+    },
+    {
+      "blockId": "legacy-migration-import-stubs",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "packages/background-office/src/modules/task-archive/migration/**",
+        "scripts/task-archive-migrate-legacy.mjs",
+        "docs/tasks/archive/**",
+        "docs/tasks/cold-archive/MIGRATION.md",
+        "docs/tasks/README.md"
+      ],
+      "revisionAt": "2026-07-30T15:05:00Z",
+      "estimate": {
+        "changedLines": 320
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-30T15:19:47Z",
+    "digest": "660aa29785639b5aa5364cf73fe96c202bd5477bef6753c3a455bde1bed3d428"
+  }
+}
