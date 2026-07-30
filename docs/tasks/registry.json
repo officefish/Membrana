@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "mfcc-lib-choice",
+      "title": "Выбор MFCC-библиотеки: обоснование до нарезки блоков",
+      "promptPath": "docs/prompts/MFCC_LIB_CHOICE_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-30",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "kuryokhin"
+      ],
+      "notes": "Акт исследования по развилке шторма storm-mfcc-as-sprint-test-2026-07-30: выбор библиотеки — отдельный акт ДО нарезки. Кандидат де-факто meyda ^5.6.3 (демо владельца apps/demos/MFCC-Dashboard), но акт обязан рассмотреть альтернативы — иначе это не выбор, а оформление. Вещдок акта — обоснование, а не ссылка",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "cowork-honest-sprint",
       "title": "Cowork Sprint: механизм спринта с честными исполнителями",
       "promptPath": "docs/cowork-sprint/cowork-honest-sprint/COWORK_SPRINT_BRIEF.md",
