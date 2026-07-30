@@ -15,6 +15,8 @@
   "branchGrammar": {
     "form": "[<персона>/]<kind>/<slug>",
     "kinds": ["feat", "fix", "docs", "chore", "test", "tooling", "meeting", "storm", "cowork", "comp", "night", "truth", "research", "sprint"],
+    "proceduralKinds": ["meeting", "storm", "truth", "research"],
+    "proceduralArtifactPrefixes": ["docs/seanses/", "docs/storm/", "docs/meeting/", "docs/procedures/", "docs/discussions/", "docs/truth/", "docs/research/"],
     "personas": ["vesnin", "ozhegov", "dynin", "kuryokhin", "rodchenko", "angelina", "boyarskiy"],
     "formatTags": { "night": "заморозка: ничего в репозиторий из-под ночной ветки до флага «ночь закончилась» (T7)" },
     "notes": [
