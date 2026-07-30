@@ -28,12 +28,25 @@ GitHub-иссью и командный вечерний фидбек. Опер�
 [`TEAM_EVENING_FEEDBACK_REGULATION.md`](../../prompts/TEAM_EVENING_FEEDBACK_REGULATION.md)
 и `.claude/CLAUDE.md` (обязательность `team-evening-feedback`).
 
+## Дверь и отказ
+
+Вход для агента — skill
+[`membrana-evening-ritual`](../../../.cursor/skills/membrana-evening-ritual/SKILL.md).
+`membrana-developer-rhythm` больше не замещает вечерний сценарий: если отдельная
+дверь недоступна, правильное поведение — STOP с явной ошибкой, а не запуск по
+памяти. Исполняемый вызов остаётся тем же: `yarn ritual:evening`.
+
+Ручной гейт партнёрского доклада — `yarn evening:gate partner-swallow`. Он пишет
+тот же digest/ack-контур, который перед отправкой проверяет `telegram:swallow`,
+но подсказки и отказ теперь вечерние, а не утренние.
+
 ## Манифест
 
 [`MANIFEST.json`](./MANIFEST.json) — машиночитаемый: `id`, `leadPersona`,
 `kitVersion` (`null` — вечер без кита; утренний пин — [`ritual-day`](../ritual-day/)
-→ `kits/angelina-morning`), `engines[]`, `precedents[]`, плюс **ядро**
+→ `kits/angelina-morning`), `engines[]`, `precedents[]`, **фреймы**
+(`preflight`/`frames`/`post`) и **ядро**
 ([`CORE.md`](../CORE.md)): `trigger` = `yarn ritual:evening`, `steps` =
 `ref` → [`evening-ritual-steps.json`](../../tasks/evening-ritual-steps.json),
-`gates` = `partner-swallow` (owner). Валидность проверяет `validateProcedure`
-в CI.
+`gates` = `partner-swallow` (owner, `evening:gate`). Валидность проверяет
+`validateProcedure` в CI.

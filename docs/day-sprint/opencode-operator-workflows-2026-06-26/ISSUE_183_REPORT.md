@@ -26,7 +26,7 @@ registry oc-b0..b4       → archived
 |---------|-------|-------|
 | `/standup` | `yarn standup` | membrana-developer-rhythm |
 | `/main-day` | `yarn main-day-issue` | membrana-developer-rhythm |
-| `/ritual-evening` | `yarn ritual:evening` | membrana-developer-rhythm, membrana-code-review |
+| `/ritual-evening` | `yarn ritual:evening` | membrana-evening-ritual, membrana-code-review |
 | `/full-ci` | `yarn turbo run lint typecheck test build --continue` | membrana-full-ci-operator |
 | `/triage-issues` | `yarn issues:audit` | membrana-issue-triage |
 | `/close-task <id>` | `yarn task:archive <id>` + `yarn task:close-github` | membrana-task-lifecycle |

@@ -8,7 +8,9 @@ Project-scoped skills for Cursor Agent and Claude Code (mirror in `.claude/skill
 |-------|-------------------|
 | [`membrana-anthropic-cli`](./membrana-anthropic-cli/SKILL.md) | `yarn anthropic:*`, API smoke, file audit via Anthropic |
 | [`membrana-opencode-proxy`](./membrana-opencode-proxy/SKILL.md) | `yarn opencode:*`, OpenRouter/FreeModel proxy, `.env.llm-proxy` |
-| [`membrana-developer-rhythm`](./membrana-developer-rhythm/SKILL.md) | утро, вечер, `ritual:day`, `ritual:evening`, standup, main-day-issue |
+| [`membrana-developer-rhythm`](./membrana-developer-rhythm/SKILL.md) | ритм дня, порядок чтения перед M/L-кодом; утро/вечер делегирует отдельным дверям |
+| [`membrana-morning-ritual`](./membrana-morning-ritual/SKILL.md) | утро, утренний ритуал, `ritual:day`, standup, main-day-issue |
+| [`membrana-evening-ritual`](./membrana-evening-ritual/SKILL.md) | вечер, вечерний ритуал, `ritual:evening`, `evening:gate`, закрыть день |
 | [`membrana-leveling`](./membrana-leveling/SKILL.md) | leveling, выравнивание, `membrana-leveling:*`, workspace-level, unnamed-trash; soft evening step; mirrored Claude/OpenCode |
 | [`membrana-code-review`](./membrana-code-review/SKILL.md) | code review, `yarn code-review`, PR LGTM, вечернее ревью |
 | [`membrana-task-lifecycle`](./membrana-task-lifecycle/SKILL.md) | M/L task, `task:archive`, closure, day-sprint phases |

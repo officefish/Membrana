@@ -15,7 +15,7 @@ Claude Code skills in `.claude/skills/` are **thin mirrors** — follow the link
   импровизировать). Приветствие владельца — сигнал присутствия, не команда:
   ноль команд до его явного слова (прецедент 22.07).
 <!-- pin:END morning-wiring-claude -->
-- Evening: `yarn ritual:evening` — archive day before code-review; see `membrana-developer-rhythm`
+- Evening: `yarn ritual:evening` — archive day before code-review; see `membrana-evening-ritual`
 - Task close: `yarn task:archive <id>` then evening `yarn task:close-github`
 
 ## Mandatory end-of-session: Team Evening Feedback

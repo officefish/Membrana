@@ -11,6 +11,6 @@ Run the evening ritual in the correct order (archive morning files BEFORE code r
 3. Outputs: `docs/archive/daily-day/<date>/`, `docs/DAILY_CODE_REVIEW.md`.
 4. Summarize the code-review verdict (Tier, LGTM/BLOCK) and any P0/P1 risks.
 
-Skills: `membrana-developer-rhythm`, `membrana-code-review`. For local/no-API: `yarn ritual:evening:local`.
+Skills: `membrana-evening-ritual`, `membrana-code-review`. For local/no-API: `yarn ritual:evening:local`.
 
 $ARGUMENTS

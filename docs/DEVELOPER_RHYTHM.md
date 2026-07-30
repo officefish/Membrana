@@ -50,6 +50,14 @@
 
 ## Вечер (15–25 минут)
 
+> **Вечерний сценарий вычеркнут из этого общего канона** (#1475). Единственный
+> playbook входа — skill
+> [`membrana-evening-ritual`](../.cursor/skills/membrana-evening-ritual/SKILL.md):
+> `docs/procedures/ritual-evening/MANIFEST.json`, фреймы процедуры, запуск
+> `yarn ritual:evening`, owner-gate `yarn evening:gate partner-swallow` и fail-closed
+> отказ. Этот раздел ниже — историческая справка по артефактам и командам, не
+> замена отдельной двери.
+
 Цель: **сохранить утренние артефакты дня**, **сгенерировать code-review** на сегодняшний код, зафиксировать закрытые задачи, сохранить снимок ревью, закрыть Issues батчем.
 
 > **Порядок важен.** Утром `plan:day`, `standup` и `main-day-issue` **перезаписывают** `STRATEGIC_PLAN_DAY.md`, `DAILY_STANDUP.md`, `MAIN_DAY_ISSUE.md`. Вечером их нужно **сначала** уложить в архив, **потом** запускать code-review.

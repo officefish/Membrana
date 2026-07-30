@@ -2,14 +2,13 @@
 name: membrana-developer-rhythm
 status: live
 description: >-
-  Membrana day rhythm and EVENING ritual (archive:daily-day, code-review, team-evening-
-  feedback, ritual:evening) plus the read order before coding M/L work. Use when the user
-  says вечер, вечерний ритуал, ritual:evening, code-review вечером, or asks what to run
-  next in the day rhythm. For the MORNING ritual (утро, ritual:day, standup,
-  main-day-issue) use membrana-morning-ritual — morning is NOT covered here.
+  Membrana day rhythm and read order before coding M/L work. For the MORNING ritual
+  (утро, ritual:day, standup, main-day-issue) use membrana-morning-ritual. For the
+  EVENING ritual (вечер, ritual:evening, закрыть день) use membrana-evening-ritual.
+  Morning and evening are NOT covered here.
 ---
 
-# Membrana developer rhythm (день и вечер)
+# Membrana developer rhythm (день)
 
 Канон: [`docs/DEVELOPER_RHYTHM.md`](../../../docs/DEVELOPER_RHYTHM.md).
 
@@ -23,11 +22,12 @@ description: >-
 
 ## When to use
 
-- Вечерний ритуал, ритм дня, порядок чтения перед M/L-кодом.
+- Ритм дня и порядок чтения перед M/L-кодом.
 
 ## When NOT to use
 
 - **Утро** → `membrana-morning-ritual` (жёсткая граница, см. выше).
+- **Вечер** → `membrana-evening-ritual` (отдельная дверь #1475; недоступен → STOP).
 - Closing a task in registry → `membrana-task-lifecycle`.
 - `night:open` / Night Build → `membrana-night-sprint`.
 
@@ -38,33 +38,12 @@ description: >-
 3. GitHub Issue (triage)
 4. [`docs/CURRENT_TASK.md`](../../../docs/CURRENT_TASK.md) — **только буфер**; при конфликте проигрывает п.1–3
 
-## Evening (`yarn ritual:evening`)
+## Evening
 
-**Гнать через манифест** `docs/tasks/evening-ritual-steps.json`, не по памяти. Порядок
-важен — архив утренних файлов **до** code-review. Манифест включает soft-шаг
-`leveling-workspace` (после `insight-drift`, до `code-review`): отчёт
-`docs/seanses/workspace-level-<date>.md`, finding на STOP, **не** hard-gate и **не**
-авто-`pr:ship`. Ручное выравнивание дерева / ship после «ок» владельца → отдельный
-skill [`membrana-leveling`](../membrana-leveling/SKILL.md).
-
-Ориентиры (не дублировать манифест наизусть):
-
-1. `yarn archive:daily-day` → `docs/archive/daily-day/<YYYY-MM-DD>/`
-2. `yarn rag:index:incremental` (non-blocking)
-3. leveling soft (манифест) → затем `yarn code-review` → `docs/DAILY_CODE_REVIEW.md`
-4. `yarn task:archive <id>` (per accepted tasks)
-5. `yarn save-code-review`
-6. `yarn task:close-github` → `yarn team-evening-feedback` (обязателен, даже при упавшем review)
-7. `yarn audit:evening` → `docs/DAILY_AUDIT.md` (Док 2 вечерней тройки)
-8. **Доклад партнёрам — только руками**: черновик через линзу Ожегова (структура —
-   зеркало утреннего плана, слова чищены) + чек живых ссылок → **явное «ок» владельца** →
-   `yarn telegram:swallow`. Спец-ласточка НЕ заменяет вечерний отчёт; пропуск — только
-   громко. Авто-`telegram:digest` как источник текста запрещён.
-9. `yarn persona-memory:extract --all` — строго **ПОСЛЕ** показа партнёрам.
-
-Team feedback: `membrana-team-evening-feedback` → `docs/seanses/team-evening-feedback-<date>.md`
+Вечер вычеркнут из этого скилла по #1475. Единственный вход:
+[`membrana-evening-ritual`](../membrana-evening-ritual/SKILL.md). Если он
+недоступен — **СТОП с явной ошибкой**; не запускать вечер через эту проходную.
 
 ## Output format
 
-Summarize: which commands ran, which docs to read next, and current `MAIN_DAY_ISSUE`
-focus if present.
+Summarize: which docs to read next and current `MAIN_DAY_ISSUE` focus if present.

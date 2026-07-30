@@ -68,7 +68,7 @@ docs/day-sprint/opencode-operator-workflows-2026-06-26/OPEN.md
 |--------------------------------|------------|-----------------|
 | `standup.md` | `yarn standup` | membrana-developer-rhythm |
 | `main-day.md` | `yarn main-day-issue` | membrana-developer-rhythm |
-| `ritual-evening.md` | `yarn ritual:evening` | membrana-developer-rhythm, membrana-code-review |
+| `ritual-evening.md` | `yarn ritual:evening` | membrana-evening-ritual, membrana-code-review |
 | `full-ci.md` | `yarn turbo run lint typecheck test build --continue` | **membrana-full-ci-operator** |
 | `triage-issues.md` | `yarn issues:audit` | **membrana-issue-triage** |
 | `close-task.md` | `yarn task:archive <id>` + `yarn task:close-github` | membrana-task-lifecycle |

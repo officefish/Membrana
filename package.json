@@ -36,6 +36,7 @@
     "morning-care": "node scripts/morning-care.mjs",
     "main-day-probe": "node scripts/main-day-probe.mjs",
     "morning:gate": "node scripts/morning-gate.mjs",
+    "evening:gate": "node scripts/evening-gate.mjs",
     "canon:sign": "node scripts/canon-sign.mjs",
     "truth": "node scripts/truth.mjs",
     "truth:verify": "node scripts/truth.mjs verify",

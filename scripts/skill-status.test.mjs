@@ -68,7 +68,8 @@ test('живое разбиение утро/день: шаги старого �
 test('morningLeakProblems: live-скилл с утренним маркером ловится; morning-ritual — нет', () => {
   const skills = {
     'membrana-morning-ritual': { fm: { status: 'live' }, body: 'yarn ritual:day' },
-    'membrana-developer-rhythm': { fm: { status: 'live' }, body: 'вечер: yarn ritual:evening; утро → morning-ritual' },
+    'membrana-developer-rhythm': { fm: { status: 'live' }, body: 'день; утро → morning-ritual; вечер → evening-ritual' },
+    'membrana-evening-ritual': { fm: { status: 'live' }, body: 'вечер: yarn ritual:evening' },
     'some-old': { fm: { status: 'live' }, body: 'шаг: yarn standup' },
     'dead-old': { fm: { status: 'deprecated' }, body: 'yarn plan:day' },
   };
@@ -77,9 +78,9 @@ test('morningLeakProblems: live-скилл с утренним маркером 
   assert.match(problems[0], /some-old/u);
 });
 
-test('ЖИВОЙ ГЕЙТ: реальные скиллы утра/ритма в репо — статусы валидны, утечек утра нет', () => {
+test('ЖИВОЙ ГЕЙТ: реальные скиллы утра/дня/вечера в репо — статусы валидны, утечек утра нет', () => {
   const root = join(process.cwd(), '.cursor', 'skills');
-  const wanted = ['membrana-morning-ritual', 'membrana-developer-rhythm'];
+  const wanted = ['membrana-morning-ritual', 'membrana-developer-rhythm', 'membrana-evening-ritual'];
   const skills = {};
   for (const name of wanted) {
     const p = join(root, name, 'SKILL.md');
@@ -89,6 +90,7 @@ test('ЖИВОЙ ГЕЙТ: реальные скиллы утра/ритма в 
   }
   assert.equal(skills['membrana-morning-ritual'].fm.status, 'live');
   assert.equal(skills['membrana-developer-rhythm'].fm.status, 'live');
+  assert.equal(skills['membrana-evening-ritual'].fm.status, 'live');
   assert.deepEqual(skillGraphProblems(
     Object.fromEntries(Object.entries(skills).map(([k, v]) => [k, v.fm])),
   ), []);

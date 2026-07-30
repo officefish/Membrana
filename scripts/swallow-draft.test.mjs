@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { checkSwallowDraft } from './lib/swallow-mirror.mjs';
-import { skeletonFor } from './swallow-draft.mjs';
+import { gateCommandFor, nextStepsFor, skeletonFor } from './swallow-draft.mjs';
 
 test('заготовка day = скелет гейта дословно; evening меняет только интро', () => {
   assert.match(skeletonFor('day'), /^☀️ Доброе утро!/u);
@@ -22,4 +22,17 @@ test('структура заготовки безупречна для гейт
   for (const v of violations) {
     assert.match(v, /плейсхолдером|пуста/u, `неожиданное структурное нарушение: ${v}`);
   }
+});
+
+test('вечерняя заготовка ведёт в evening:gate, дневная — в morning:gate', () => {
+  assert.equal(
+    gateCommandFor('evening', 'docs/comms/drafts/swallow-evening.md'),
+    'yarn evening:gate partner-swallow --draft docs/comms/drafts/swallow-evening.md',
+  );
+  assert.equal(
+    gateCommandFor('day', 'docs/comms/drafts/swallow-day.md'),
+    'yarn morning:gate swallow --draft docs/comms/drafts/swallow-day.md',
+  );
+  assert.match(nextStepsFor('evening', 'draft.md'), /evening:gate partner-swallow --ack/u);
+  assert.doesNotMatch(nextStepsFor('evening', 'draft.md'), /morning:gate/u);
 });

@@ -7,8 +7,8 @@ description: >-
   opens the room explicitly (yarn bridge open) and lets the parrot read live debts.
   Use when the captain says идём на мостик, на мостик, открой мостик, bridge room,
   зови попугая, покажи долги мостика, or asks what the bridge debts are. Do NOT use
-  for the morning ritual (membrana-morning-ritual), evening rhythm
-  (membrana-developer-rhythm), storm (membrana-storm) or заседание (membrana-meeting);
+  for the morning ritual (membrana-morning-ritual), evening ritual
+  (membrana-evening-ritual), storm (membrana-storm) or заседание (membrana-meeting);
   do NOT close the room by hand — closing is the evening ritual's job.
 ---
 
@@ -31,7 +31,7 @@ description: >-
 
 ## When NOT to use
 
-- Утро → `membrana-morning-ritual`; вечер → `membrana-developer-rhythm`.
+- Утро → `membrana-morning-ritual`; вечер → `membrana-evening-ritual`.
 - Дивергентная беседа ради тезисов → `membrana-storm`; вердикт → `membrana-meeting`.
 - Закрывать комнату руками — нельзя: `bridge close` зовёт **вечерний ритуал**.
 
