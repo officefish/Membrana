@@ -31,6 +31,19 @@ const fakeGit = (responses) => (args) => {
   return '';
 };
 
+const localIsoWithOffset = (date) => {
+  const pad = (n) => String(Math.trunc(Math.abs(n))).padStart(2, '0');
+  const offsetMinutes = -date.getTimezoneOffset();
+  const sign = offsetMinutes >= 0 ? '+' : '-';
+  const hours = Math.trunc(Math.abs(offsetMinutes) / 60);
+  const minutes = Math.abs(offsetMinutes) % 60;
+  return [
+    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`,
+    `T${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`,
+    `${sign}${pad(hours)}:${pad(minutes)}`,
+  ].join('');
+};
+
 // ─── чистые хелперы ───────────────────────────────────────────────────────────────
 
 test('parseDayCommits: SHA, subject, PR из (#N); делит по ПЕРВОМУ пробелу', () => {
@@ -169,9 +182,10 @@ test('diff сегмента недоступен → precision working-tree и �
 });
 
 test('коммит рядом с локальной полуночью → precision approximate', () => {
+  const nearLocalMidnight = localIsoWithOffset(new Date(2026, 6, 30, 0, 3, 0));
   const result = collectDayWorkDiff({
     run: fakeGit([
-      ['log --since', ['abc123', '2026-07-30T00:03:00+03:00', 'feat: boundary (#1)'].join('\0')],
+      ['log --since', ['abc123', nearLocalMidnight, 'feat: boundary (#1)'].join('\0')],
       ['diff --shortstat abc123', ' 1 file changed, 5 insertions(+)'],
       ['diff abc123^..abc123', '+boundary'],
     ]),
