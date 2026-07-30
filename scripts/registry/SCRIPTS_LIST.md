@@ -8,7 +8,7 @@
 | Field | Value |
 |-------|-------|
 | Date | 2026-07-30 |
-| Head SHA | 4b47df659cd43a6e99f276b7e0724b2e660b4b8c |
+| Head SHA | 72c2bab0d677a48f48c8108043870b250faa8741 |
 | Source | yarn tooling:overview --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 874 |
-| Yarn scripts (package.json) | 406 |
-| Yarn → `scripts/` | 351 |
+| Code files under `scripts/` | 877 |
+| Yarn scripts (package.json) | 407 |
+| Yarn → `scripts/` | 352 |
 | Yarn без пути `scripts/` | 55 |
 | Yarn → missing file | 15 |
-| Code files without yarn ref | 606 |
+| Code files without yarn ref | 608 |
 
-## Yarn → scripts/ (351)
+## Yarn → scripts/ (352)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -133,6 +133,7 @@
 - `drift:run` → `scripts/drift-anchor-run.mjs`
 - `drift:snapshot` → `scripts/drift-anchor-snapshot.mjs`
 - `ensure-ollama` → `scripts/ensure-ollama.mjs`
+- `evening:gate` → `scripts/evening-gate.mjs`
 - `evidence` → `scripts/evidence.mjs`
 - `git:check-divergence` → `scripts/git-check-divergence.mjs`
 - `git:fresh-branch` → `scripts/git-fresh-branch.mjs`
@@ -377,7 +378,7 @@
 - `worktree:sync` → `scripts/worktree-sync.mjs`
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 
-## Code files without yarn ref (606)
+## Code files without yarn ref (608)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -500,6 +501,7 @@
 - `scripts/drift-anchor-divergence.test.mjs`
 - `scripts/drift-anchor-snapshot.test.mjs`
 - `scripts/drift-digest-section.test.mjs`
+- `scripts/evening-gates.test.mjs`
 - `scripts/evidence-index.test.mjs`
 - `scripts/experimental/llm-proxy-ask.mjs`
 - `scripts/experimental/llm-proxy-parse.mjs`
@@ -611,6 +613,7 @@
 - `scripts/lib/dreams-select.mjs`
 - `scripts/lib/dreams-tick.mjs`
 - `scripts/lib/drift-digest-section.mjs`
+- `scripts/lib/evening-gates.mjs`
 - `scripts/lib/evidence-index.mjs`
 - `scripts/lib/evidence-inventory.mjs`
 - `scripts/lib/evidence-inventory.test.mjs`
@@ -1004,7 +1007,7 @@
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 - `vdr:collection-status` → missing `scripts/vdr-collection-status.mjs`
 
-## All code files (874)
+## All code files (877)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1223,6 +1226,8 @@
 - `scripts/ensure-ollama.mjs`
 - `scripts/evaluate-free-v1-content.mjs`
 - `scripts/evaluate-free-v1-stage-gate.mjs`
+- `scripts/evening-gate.mjs`
+- `scripts/evening-gates.test.mjs`
 - `scripts/evidence-index.test.mjs`
 - `scripts/evidence.mjs`
 - `scripts/experimental/llm-proxy-ask.mjs`
@@ -1361,6 +1366,7 @@
 - `scripts/lib/dreams-select.mjs`
 - `scripts/lib/dreams-tick.mjs`
 - `scripts/lib/drift-digest-section.mjs`
+- `scripts/lib/evening-gates.mjs`
 - `scripts/lib/evidence-index.mjs`
 - `scripts/lib/evidence-inventory.mjs`
 - `scripts/lib/evidence-inventory.test.mjs`

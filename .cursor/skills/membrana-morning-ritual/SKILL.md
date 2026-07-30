@@ -9,8 +9,9 @@ description: >-
   (magistral owner-choice from top-3, swallow-send with explicit «ок»), and the ban on
   accepting a magistral chosen by a script. Use when the user says утро, утренний ритуал,
   ritual:day, standup, main-day-issue, стендап, план дня, or asks to start the morning.
-  Do NOT use for evening/day rhythm (membrana-developer-rhythm), task closure
-  (membrana-task-lifecycle), or Night Build (membrana-night-sprint).
+  Do NOT use for evening ritual (membrana-evening-ritual), day rhythm
+  (membrana-developer-rhythm), task closure (membrana-task-lifecycle), or Night
+  Build (membrana-night-sprint).
 ---
 
 # Membrana — утренний ритуал
@@ -18,8 +19,9 @@ description: >-
 > **Статус: live** — единственный источник истины по утру. Вердикт заседания
 > `angelina-hostess` M1 (21.07, ратифицирован владельцем):
 > [`angelina-hostess-m1-canon-2026-07-21.md`](../../../docs/seanses/angelina-hostess-m1-canon-2026-07-21.md).
-> Утро **вычеркнуто** из `membrana-developer-rhythm` — тот скилл о ритме дня и вечере и
-> лишь ссылается сюда. Прецедент-повод:
+> Утро **вычеркнуто** из `membrana-developer-rhythm` — тот скилл о ритме дня и
+> лишь ссылается сюда. Вечер вычеркнут в `membrana-evening-ritual` (#1475).
+> Прецедент-повод:
 > [`2026-07-21-ritual-old-scenario-lost-sprint.md`](../../../docs/precedents/2026-07-21-ritual-old-scenario-lost-sprint.md).
 
 ## ПЕРЕД ритуалом (обязательный порядок — нарушение = прецедент 21.07)

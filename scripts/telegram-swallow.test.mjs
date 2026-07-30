@@ -12,6 +12,7 @@ import {
 } from './lib/swallow-delivery-ledger.mjs';
 import {
   classifySwallowTransportError,
+  isEveningSwallowSource,
   resolveSwallowText,
   sendSwallow,
 } from './telegram-swallow.mjs';
@@ -47,6 +48,12 @@ test('classifySwallowTransportError: timeout → unknown, иначе failed', ()
   assert.equal(classifySwallowTransportError(Object.assign(new Error('x'), { name: 'TimeoutError' })), 'unknown');
   assert.equal(classifySwallowTransportError(new Error('The operation was aborted due to timeout')), 'unknown');
   assert.equal(classifySwallowTransportError(new Error('ECONNREFUSED')), 'failed');
+});
+
+test('isEveningSwallowSource: распознаёт вечерний draft по имени файла', () => {
+  assert.equal(isEveningSwallowSource('docs/comms/drafts/swallow-evening-2026-07-30.md'), true);
+  assert.equal(isEveningSwallowSource('docs/comms/drafts/swallow-day-2026-07-30.md'), false);
+  assert.equal(isEveningSwallowSource(null), false);
 });
 
 test('sendSwallow: повтор после delivered → skip (не зовёт fetch)', async () => {
@@ -175,5 +182,53 @@ test('sendSwallow: гейт блокирует без ack/day; --force гейт 
   });
   assert.equal(open.outcome, 'delivered');
   assert.equal(fetches, 1);
+  rmSync(dir, { recursive: true, force: true });
+});
+
+test('sendSwallow: вечерний gate marker показывает evening:gate в отказе', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'swallow-evening-gate-'));
+  const ledgerPath = join(dir, 'ledger.jsonl');
+  const blocked = await sendSwallow({
+    text: 'вечерний текст',
+    requireGate: true,
+    today: '2026-07-30',
+    gatesState: {
+      day: '2026-07-30',
+      swallow: { gate: 'evening:partner-swallow', ownerAck: false, draftDigest: 'x' },
+    },
+    ledgerPath,
+    token: 't',
+    fetchImpl: async () => {
+      throw new Error('fetch не должен вызываться');
+    },
+  });
+  assert.equal(blocked.outcome, 'gate-blocked');
+  assert.match(blocked.message, /yarn evening:gate partner-swallow --draft/u);
+  assert.doesNotMatch(blocked.message, /yarn morning:gate/u);
+  rmSync(dir, { recursive: true, force: true });
+});
+
+test('sendSwallow: вечерний файл без evening marker не принимает дневной ack', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'swallow-evening-source-'));
+  const ledgerPath = join(dir, 'ledger.jsonl');
+  const { draftDigestOf } = await import('./lib/morning-gates.mjs');
+  const text = 'вечерний текст';
+  const blocked = await sendSwallow({
+    text,
+    sourceFile: 'docs/comms/drafts/swallow-evening-2026-07-30.md',
+    requireGate: true,
+    today: '2026-07-30',
+    gatesState: {
+      day: '2026-07-30',
+      swallow: { ownerAck: true, draftDigest: draftDigestOf(text), draftFile: 'docs/comms/drafts/swallow-day-2026-07-30.md' },
+    },
+    ledgerPath,
+    token: 't',
+    fetchImpl: async () => {
+      throw new Error('fetch не должен вызываться');
+    },
+  });
+  assert.equal(blocked.outcome, 'gate-blocked');
+  assert.match(blocked.message, /вечерняя ласточка не прошла свою дверь/u);
   rmSync(dir, { recursive: true, force: true });
 });

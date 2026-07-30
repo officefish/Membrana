@@ -4,6 +4,9 @@
   "kitVersion": null,
   "engines": [
     "scripts/ritual-evening-run.mjs",
+    "scripts/evening-gate.mjs",
+    "scripts/swallow-draft.mjs",
+    "scripts/telegram-swallow.mjs",
     "scripts/archive-daily-day-artifacts.mjs",
     "scripts/code-review.mjs",
     "scripts/archive-daily-code-review.mjs",
@@ -14,10 +17,51 @@
     "docs/seanses/team-evening-feedback-2026-07-17.md",
     "docs/seanses/team-evening-feedback-2026-07-18.md"
   ],
+  "preflight": [
+    {
+      "id": "evening-door",
+      "holder": "angelina",
+      "tag": "служебный-провода"
+    }
+  ],
+  "frames": [
+    {
+      "id": "archive-day",
+      "holder": "angelina",
+      "tag": "снимок"
+    },
+    {
+      "id": "truth-memory-index",
+      "holder": "dynin",
+      "tag": "сверка"
+    },
+    {
+      "id": "leveling-workspace",
+      "holder": "ozhegov",
+      "tag": "гигиена"
+    },
+    {
+      "id": "code-review",
+      "holder": "ozhegov",
+      "tag": "ревью"
+    },
+    {
+      "id": "closure-feedback",
+      "holder": "angelina",
+      "tag": "закрытие"
+    }
+  ],
+  "post": [
+    {
+      "id": "partner-swallow",
+      "holder": "angelina",
+      "tag": "owner-gate"
+    }
+  ],
   "trigger": {
     "kind": "captain-word",
     "command": "yarn ritual:evening",
-    "note": "запускает агент или капитан; авторасписания на office пока нет"
+    "note": "вход через skill membrana-evening-ritual; developer-rhythm не замещает дверь вечера"
   },
   "steps": {
     "kind": "ref",
@@ -29,8 +73,8 @@
       {
         "id": "partner-swallow",
         "waitsFor": "owner",
-        "resume": "явное «ок» владельца на черновик ласточки → yarn telegram:swallow",
-        "note": "вне evening-ritual-steps.json; обязательство процесса до машинного canSend на пути (#1233)"
+        "resume": "yarn evening:gate partner-swallow --draft <file> → показать владельцу → yarn evening:gate partner-swallow --ack → yarn telegram:swallow --file <file>",
+        "note": "вне evening-ritual-steps.json; собственный вечерний STOP (#1475). Без skill/CLI evening:gate не импровизировать через morning:gate"
       }
     ]
   },

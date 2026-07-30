@@ -79,7 +79,7 @@
     "scripts/plan-week-if-monday.mjs": "4de9f7e1d42d88c5cd262041c3eb29e918cec194",
     "scripts/repo-clean.mjs": "339b3ed8adebe735cc2608b204f70bddf4709bc2",
     "scripts/strategy-day.mjs": "4e87373353828c2551fe04f740fd6b600a09dfe6",
-    "scripts/telegram-swallow.mjs": "02e6b6247fe4da6fcb7cee3331f56b1adab32d57",
+    "scripts/telegram-swallow.mjs": "8164cfe6d01764034e8e8c162d5e79c6f31b6eb5",
     "scripts/worktree-sync.mjs": "b45d3ca3cdf7d22432bbfefb1daa11f37a45de5f"
   }
 }

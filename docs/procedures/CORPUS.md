@@ -59,7 +59,7 @@ Issue фазы: [#1284](https://github.com/officefish/Membrana/issues/1284). Э�
 | Процедура (built) | Вход (скилл / команда) |
 |-------------------|------------------------|
 | ritual-day | `membrana-morning-ritual` · `yarn ritual:day` |
-| ritual-evening | `membrana-developer-rhythm` · `yarn ritual:evening` |
+| ritual-evening | `membrana-evening-ritual` · `yarn ritual:evening` |
 | ritual-dreams | office DreamsScheduler · `yarn dreams` |
 | bridge | `membrana-bridge` · `yarn bridge` |
 | day-sprint | `membrana-task-lifecycle` |

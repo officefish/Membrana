@@ -65,5 +65,5 @@ Daily one-package: Teamlead + Структурщик only (see regulation).
 ## Related
 
 - Virtual team: `membrana-virtual-team`
-- Evening chain: `membrana-developer-rhythm` → `yarn ritual:evening`
+- Evening chain: `membrana-evening-ritual` → `yarn ritual:evening`
 - RAG: auto unless `--no-rag`; does not replace diff

@@ -14,8 +14,8 @@
  * В отличие от ритуальных хвостов скрипт НЕ graceful: ошибки → exit 1
  * (команда интерактивная, молчаливый пропуск вводил бы в заблуждение).
  *
- * Гейт отправки (#1233): перед транспортом — `canSendAlly` (день ∧ ack ∧ digest).
- * Состояние: docs/tasks/morning-gates-state.json. `--force` обходит только ledger.
+ * Гейт отправки (#1233/#1475): перед транспортом — `canSendAlly` (день ∧ ack ∧ digest).
+ * Утренний и вечерний CLI пишут один state-файл; `--force` обходит только ledger.
  *
  * Идемпотентность (карточка swallow-delivery-idempotency): клиентский ledger
  * `.membrana/swallow-deliveries.jsonl`. Таймаут ≠ недоставка (exit 3 = unknown).
@@ -66,6 +66,10 @@ const force = argv.includes('--force');
 
 export function resolveSwallowText(args, readFile = (p) => readFileSync(p, 'utf8')) {
   return resolveSwallowSource(args, readFile).text;
+}
+
+export function isEveningSwallowSource(file) {
+  return /(?:^|[/\\])swallow-evening-[^/\\]+\.md$/u.test(String(file ?? ''));
 }
 
 /**
@@ -145,8 +149,23 @@ export async function sendSwallow(opts) {
           '[telegram-swallow] гейт закрыт: файл docs/tasks/morning-gates-state.json битый — отправка запрещена',
       };
     }
+    if (isEveningSwallowSource(sourceFile) && !String(state?.swallow?.gate ?? '').startsWith('evening:')) {
+      return {
+        outcome: 'gate-blocked',
+        key: null,
+        exitCode: 3,
+        blockedBy: ['partner-swallow: вечерний черновик не зафиксирован через evening:gate'],
+        message:
+          '[telegram-swallow] гейт закрыт — вечерняя ласточка не прошла свою дверь:\n' +
+          '  · partner-swallow: вечерний черновик не зафиксирован через evening:gate\n' +
+          '  путь: yarn evening:gate partner-swallow --draft <file> → показать владельцу → yarn evening:gate partner-swallow --ack → снова swallow',
+      };
+    }
     const gate = canSendAlly(state, today, text);
     if (!gate.ok) {
+      const gatePath = String(state?.swallow?.gate ?? '').startsWith('evening:')
+        ? 'yarn evening:gate partner-swallow --draft <file> → показать владельцу → yarn evening:gate partner-swallow --ack → снова swallow'
+        : 'yarn morning:gate swallow --draft <file> → показать владельцу → --ack → снова swallow';
       return {
         outcome: 'gate-blocked',
         key: null,
@@ -155,7 +174,7 @@ export async function sendSwallow(opts) {
         message:
           `[telegram-swallow] гейт закрыт — отправка запрещена:\n` +
           gate.blockedBy.map((b) => `  · ${b}`).join('\n') +
-          '\n  путь: yarn morning:gate swallow --draft <file> → показать владельцу → --ack → снова swallow',
+          `\n  путь: ${gatePath}`,
       };
     }
   }

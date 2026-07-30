@@ -66,11 +66,15 @@ async function main() {
   }
 
   // ГЕЙТ ласточки (#1233) — тот же, что у текста: день ∧ ack ∧ digest черновика.
-  const gate = canSendAlly(loadGatesState(repoRoot), todayIso(), caption);
+  const gatesState = loadGatesState(repoRoot);
+  const gate = canSendAlly(gatesState, todayIso(), caption);
   if (!gate.ok) {
+    const gatePath = String(gatesState?.swallow?.gate ?? '').startsWith('evening:')
+      ? 'yarn evening:gate partner-swallow --draft <file> → показать владельцу → yarn evening:gate partner-swallow --ack → снова'
+      : 'yarn morning:gate swallow --draft <file> → показать владельцу → --ack → снова';
     console.error('telegram:file — гейт закрыт, отправка запрещена:');
     for (const b of gate.blockedBy) console.error(`  · ${b}`);
-    console.error('  путь: yarn morning:gate swallow --draft <file> → показать владельцу → --ack → снова');
+    console.error(`  путь: ${gatePath}`);
     return 3;
   }
 

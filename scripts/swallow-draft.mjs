@@ -11,8 +11,8 @@
  * перетирается (написанные слова дороже заготовки). Слова — ведущей через линзу
  * Ожегова: заготовка структурная, не смысловая (урок #768: склейка наследует жаргон).
  *
- * Дальше по цепочке: заполнить <…> словами → yarn morning:gate swallow --draft <файл>
- * → показать капитану → --ack → yarn telegram:swallow --file <файл>.
+ * Дальше по цепочке: заполнить <…> словами → yarn evening:gate partner-swallow
+ * --draft <файл> → показать капитану → --ack → yarn telegram:swallow --file <файл>.
  *
  * Exit: 0 — создан/уже есть; 2 — usage/ФС.
  */
@@ -38,6 +38,19 @@ export function skeletonFor(kind) {
   return base;
 }
 
+export function gateCommandFor(kind, file) {
+  return kind === 'evening'
+    ? `yarn evening:gate partner-swallow --draft ${file}`
+    : `yarn morning:gate swallow --draft ${file}`;
+}
+
+export function nextStepsFor(kind, file) {
+  const ack = kind === 'evening'
+    ? 'yarn evening:gate partner-swallow --ack'
+    : 'yarn morning:gate swallow --ack';
+  return `заполнить <…> словами через линзу Ожегова → ${gateCommandFor(kind, file)} → показать капитану → ${ack} → yarn telegram:swallow --file ${file}`;
+}
+
 function main() {
   const kind = flag('kind') ?? 'evening';
   if (kind !== 'day' && kind !== 'evening') {
@@ -49,13 +62,13 @@ function main() {
   const abs = join(repoRoot, rel);
   if (existsSync(abs)) {
     console.log(`swallow:draft — черновик уже есть: ${rel} (не перетираю — слова дороже заготовки)`);
-    console.log(`  гейт: yarn morning:gate swallow --draft ${rel}`);
+    console.log(`  гейт: ${gateCommandFor(kind, rel)}`);
     return 0;
   }
   mkdirSync(dirname(abs), { recursive: true });
   writeFileSync(abs, `${skeletonFor(kind)}\n`, 'utf8');
   console.log(`swallow:draft — заготовка по скелету гейта: ${rel}`);
-  console.log('  дальше: заполнить <…> словами через линзу Ожегова → yarn morning:gate swallow --draft ' + rel + ' → показать капитану → --ack → yarn telegram:swallow --file ' + rel);
+  console.log(`  дальше: ${nextStepsFor(kind, rel)}`);
   return 0;
 }
 

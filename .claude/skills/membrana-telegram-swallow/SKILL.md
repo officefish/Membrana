@@ -17,5 +17,7 @@ Run that playbook verbatim. Key invariants: owner command only; draft approval b
 
 **Канон ссылок (28.07):** в письме ссылка законна ТОЛЬКО как
 `[#N](https://github.com/officefish/Membrana/pull|issues/N)` — голый код `#N` в
-телеграме просто текст, голый URL приходит статикой. Гейт
-`yarn morning:gate swallow --draft` отказывает машинно и печатает готовую форму.
+телеграме просто текст, голый URL приходит статикой. Гейт для дня:
+`yarn morning:gate swallow --draft`; гейт для вечера:
+`yarn evening:gate partner-swallow --draft`. Оба отказывают машинно и печатают
+готовую форму.
