@@ -2,7 +2,7 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` — Phase 0 закрыта (brief + open, ратификация резки владельцем 2026-07-30); Phase 1 (Concept) — следующая |
+| **status** | `open` — Phase 1 (Concept) закрыта 2026-07-30, 3/3 блока сдали; Phase 2 (Isolated build) — следующая |
 | sprintId | `cowork-honest-sprint` |
 | Brief | [`docs/cowork-sprint/cowork-honest-sprint/COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-honest-sprint/COWORK_SPRINT_BRIEF.md) |
 | GitHub Issue | [#1499](https://github.com/officefish/Membrana/issues/1499) |
