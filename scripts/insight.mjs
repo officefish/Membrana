@@ -126,10 +126,49 @@ function statusReport(store, id) {
   };
 }
 
-function overviewReport(store) {
+function noneAssessment(source) {
+  return { kind: 'None', source };
+}
+
+function legacyArtifactRows(repoRoot) {
+  const diagnostics = [];
+  let registry;
+  try {
+    registry = readRegistry(repoRoot);
+  } catch (error) {
+    diagnostics.push({
+      code: 'LEGACY_ARTIFACT_REGISTRY_UNREADABLE',
+      message: error instanceof Error ? error.message : String(error),
+    });
+    return { rows: [], diagnostics };
+  }
+  const rows = (registry.insights ?? []).map((item) => ({
+    insightId: item.id,
+    revisionId: null,
+    thesis: item.title ?? item.id,
+    visibilityGroup: 'unclassified',
+    D: [noneAssessment('lifecycle-empty')],
+    L: [noneAssessment('lifecycle-empty')],
+    O: [noneAssessment('lifecycle-empty')],
+    V: [noneAssessment('lifecycle-empty')],
+    evidenceGap: ['lifecycle-migration-required'],
+    artifactHint: {
+      source: 'docs/insights/registry.json',
+      status: item.status ?? null,
+      weight: Number.isFinite(item.weight) ? item.weight : null,
+      createdAt: item.createdAt ?? null,
+      sprintPhase: item.sprintPhase ?? null,
+    },
+  })).sort((a, b) => a.insightId.localeCompare(b.insightId));
+  return { rows, diagnostics };
+}
+
+function overviewReport(repoRoot, store) {
   const projection = rebuildProjection(store.baseContext, store.eventLog);
   const objectiveEligible = [];
-  const rows = (store.baseContext.insightRevisions ?? []).map((revision) => {
+  let diagnostics = [];
+  let artifactFallback = null;
+  let rows = (store.baseContext.insightRevisions ?? []).map((revision) => {
     const mandates = (store.baseContext.mandates ?? []).filter((item) => item.insightRevisionRef === revision.id);
     const mandateIds = new Set(mandates.map((item) => item.id));
     const slices = (store.baseContext.slices ?? []).filter((item) => mandateIds.has(item.mandateRef));
@@ -191,6 +230,23 @@ function overviewReport(store) {
       ).map((slice) => slice.id),
     };
   }).sort((a, b) => a.insightId.localeCompare(b.insightId));
+  if (rows.length === 0) {
+    const legacy = legacyArtifactRows(repoRoot);
+    diagnostics = diagnostics.concat(legacy.diagnostics);
+    if (legacy.rows.length > 0) {
+      rows = legacy.rows;
+      artifactFallback = {
+        source: 'docs/insights/registry.json',
+        count: legacy.rows.length,
+        lifecycleTruth: 'D/L/O/V are None; legacy status is artifactHint only',
+      };
+      diagnostics.push({
+        code: 'LIFECYCLE_EMPTY_ARTIFACTS_PRESENT',
+        message: 'Lifecycle store is empty, but docs/insights/registry.json contains artifact records; listing them as unclassified with D/L/O/V=None.',
+        count: legacy.rows.length,
+      });
+    }
+  }
   objectiveEligible.sort((a, b) => {
     if (a.priorityWeight === null && b.priorityWeight !== null) return 1;
     if (a.priorityWeight !== null && b.priorityWeight === null) return -1;
@@ -207,7 +263,8 @@ function overviewReport(store) {
     },
     personalTop3: null,
     objectiveCandidate: objectiveEligible[0] ?? null,
-    diagnostics: [],
+    artifactFallback,
+    diagnostics,
     safety: { writes: false },
     projectionDiff: 'none',
   };
@@ -246,7 +303,7 @@ try {
   }
 
   if (cli.command === 'overview') {
-    printLifecycleReport(overviewReport(loadLifecycleStore(repoRoot)));
+    printLifecycleReport(overviewReport(repoRoot, loadLifecycleStore(repoRoot)));
     process.exitCode = 0;
   }
 
