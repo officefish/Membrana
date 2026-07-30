@@ -1,0 +1,9 @@
+# Две находки в одном прогоне, обе при живом honest_pair (код 0):
+#  eg-duplicate-trace   — у mfcc-core два следа с одной парой (kind, ref): тот же акт мог доехать
+#                         двумя путями, решает человек;
+#  eg-extra-performer   — у gate-wiring поверх честного плана есть след другого субъекта
+#                         (shadow_work), но назначенный свой след имеет.
+{"traceId":"t-mfcc-run-a","blockId":"mfcc-core","kind":"context_run","subject":"kuryokhin","at":"2026-07-30T09:15:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-kuryokhin-mfcc.json"}
+{"traceId":"t-mfcc-run-b","blockId":"mfcc-core","kind":"context_run","subject":"kuryokhin","at":"2026-07-30T09:40:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-kuryokhin-mfcc.json"}
+{"traceId":"t-gate-run","blockId":"gate-wiring","kind":"context_run","subject":"vesnin","at":"2026-07-30T10:00:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-vesnin-gate.json"}
+{"traceId":"t-gate-run-shadow","blockId":"gate-wiring","kind":"context_run","subject":"rodchenko","at":"2026-07-30T12:00:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-rodchenko-gate.json"}

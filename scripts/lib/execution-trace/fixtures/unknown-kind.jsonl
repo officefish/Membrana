@@ -1,0 +1,5 @@
+# Пятый род — ОШИБКА ВХОДА, а не «прочее»: E_TRACE_KIND_UNKNOWN, код 2, вердиктов НЕТ ВОВСЕ.
+# Тихо игнорировать — ложный красный (лента с одним таким следом выглядит как «следа нет»);
+# тихо принять — обход гейта НОВЫМ СЛОВОМ. Оба исхода хуже отказа.
+{"traceId":"t-mfcc-run","blockId":"mfcc-core","kind":"context_run","subject":"kuryokhin","at":"2026-07-30T09:15:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-kuryokhin-mfcc.json"}
+{"traceId":"t-gate-recon","blockId":"gate-wiring","kind":"recon_note","subject":"vesnin","at":"2026-07-30T10:00:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-vesnin-gate.json"}

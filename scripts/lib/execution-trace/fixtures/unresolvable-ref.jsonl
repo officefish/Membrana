@@ -1,0 +1,5 @@
+# Вещдок без адреса — не вещдок. Адрес не разрешается снимком → о НЕИСПОЛНЕНИИ это ничего
+# не говорит: чинить надо ЛЕНТУ. Отдельный диагноз, отдельное лечение.
+# Ожидание: gate-wiring → unresolvable_ref, код 1.
+{"traceId":"t-mfcc-run","blockId":"mfcc-core","kind":"context_run","subject":"kuryokhin","at":"2026-07-30T09:15:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-kuryokhin-mfcc.json"}
+{"traceId":"t-gate-run-broken","blockId":"gate-wiring","kind":"context_run","subject":"vesnin","at":"2026-07-30T10:00:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-vesnin-NO-SUCH.json"}
