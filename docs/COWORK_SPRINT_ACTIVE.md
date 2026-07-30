@@ -2,7 +2,7 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` — Phase 3 (Interface Consilium) закрыта 2026-07-30, контракт сведён; Phase 4 (Integration) — следующая |
+| **status** | `closed` — Phase 5 закрыта 2026-07-30 (`cowork:close`) |
 | sprintId | `cowork-honest-sprint` |
 | Brief | [`docs/cowork-sprint/cowork-honest-sprint/COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-honest-sprint/COWORK_SPRINT_BRIEF.md) |
 | GitHub Issue | [#1499](https://github.com/officefish/Membrana/issues/1499) |
@@ -237,3 +237,16 @@ Freeze-теги поставлены.
 их с наличием артефактов фазы (`CONCEPT`/`EXPECTATIONS` → 1, freeze-теги → 2,
 `INTERFACE_CONTRACT` → 3, ветка интеграции → 4, `RETROSPECTIVE` → 5). Регламент такую команду
 уже объявляет; носителя, как и у `cowork:close` до сегодня, нет.
+
+---
+
+## Закрытие Phase 5 — `cowork:close` 2026-07-30
+
+Спринт **`cowork-honest-sprint`** закрыт предикатом, а не памятью человека: контракт и ретроспектива на месте, блокирующих находок нет.
+
+Неблокирующие находки, оставленные явно (закрытие флага из-за них не роняется):
+
+- `card_not_archived` — карточка `cowork-honest-sprint` в статусе `active` — закрыть флаг можно, но `yarn task:archive` ещё не звали
+- `branches_alive` — ветки блоков живы: cowork/cowork-honest-sprint/cut-contract, cowork/cowork-honest-sprint/execution-gate, cowork/cowork-honest-sprint/experience-loop — снятие отдельной операцией
+
+**Что этот шаг НЕ утверждает:** качество сведения блоков машине недоступно. Пустой список находок означает «признаков незакрытости не найдено», а не «коворк закрыт хорошо».
