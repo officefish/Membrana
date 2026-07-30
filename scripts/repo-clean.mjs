@@ -21,7 +21,6 @@ import { fileURLToPath } from 'node:url';
 
 import { classifyWorktree, parseWorktreeCard } from './lib/classify-worktree.mjs';
 import {
-  newDeletions,
   resolveLinkTarget,
   targetIsOutsideTree,
 } from './lib/junction-safety.mjs';
@@ -32,6 +31,12 @@ import {
   latestPrByBranch,
   rootScratchFiles,
 } from './lib/repo-clean.mjs';
+import {
+  analyzeLiveTreePostCheck,
+  formatPostCheckFinding,
+  frameLine,
+  snapshotFindings,
+} from './lib/worktree-demolition.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const REPO = 'officefish/Membrana';
@@ -303,19 +308,31 @@ function main() {
     // После удалений он опасен: маскирует упавший remove (git забывает worktree,
     // а каталог остаётся). Живой случай на Windows — два осиротевших каталога по 1.5 ГБ.
     git(['worktree', 'prune']);
-    // #1436: снимок удалений main-дерева ДО сносов — пост-чек ловит проход
-    // рекурсивного удаления сквозь связь наружу (инциденты 20.07 и 29.07).
-    const deletionsBefore = mainTreeStatus();
-    for (const w of wtDead) {
+    for (const [index, w] of wtDead.entries()) {
+      out.log(`\nКонтролируемый снос worktree: ${w.path}`);
+      out.log(frameLine('snapshot-live-trees', { index: index + 1, total: wtDead.length, path: w.path }));
+      const liveBefore = liveTreeStatuses(w.path);
+      const precheckFindings = snapshotFindings(liveBefore);
+      if (precheckFindings.length > 0) {
+        out.error(formatDemolitionStop('pre-check живых деревьев не собрался', precheckFindings));
+        failed++;
+        stopWorktreeDemolition({ cli, out, removed, failed, exitCode: 2 });
+        return;
+      }
+
       // #1436: связи, ведущие НАРУЖУ сносимого дерева, снимаются как связи —
       // иначе remove --force удаляет сквозь них чужие файлы (29.07: 2097 в main).
+      out.log(frameLine('neutralize-outbound-links', { index: index + 1, total: wtDead.length, path: w.path }));
       try {
         neutralizeOutboundLinks(w.path, out);
       } catch (e) {
-        out.error(`  worktree ПРОПУЩЕН (скан связей упал): ${w.path} — ${e.message.split('\n')[0]}`);
+        out.error(`  worktree СТОП (скан связей упал): ${w.path} — ${e.message.split('\n')[0]}`);
         failed++;
-        continue;
+        stopWorktreeDemolition({ cli, out, removed, failed, exitCode: 2 });
+        return;
       }
+
+      out.log(frameLine('git-worktree-remove', { index: index + 1, total: wtDead.length, path: w.path }));
       let ok = false;
       for (const args of [['worktree', 'remove', w.path], ['worktree', 'remove', '--force', w.path]]) {
         try {
@@ -326,36 +343,36 @@ function main() {
           /* пробуем --force: на Windows remove падает о блокировки в node_modules */
         }
       }
+      out.log(frameLine('assert-target-absent', { index: index + 1, total: wtDead.length, path: w.path }));
       if (ok && !existsSync(w.path)) {
         out.log(`  worktree removed: ${w.path}`);
         removed++;
-        continue;
+      } else {
+        // Каталог пережил удаление — сказать об этом прямо, а не прятать за prune.
+        out.error(
+          `  worktree ОСТАЛСЯ НА ДИСКЕ: ${w.path}\n` +
+            '      git-запись снята, файлы нет (Windows держит node_modules). Убрать вручную.',
+        );
+        failed++;
+        stopWorktreeDemolition({ cli, out, removed, failed, exitCode: 2 });
+        return;
       }
-      // Каталог пережил удаление — сказать об этом прямо, а не прятать за prune.
-      out.error(
-        `  worktree ОСТАЛСЯ НА ДИСКЕ: ${w.path}\n` +
-          '      git-запись снята, файлы нет (Windows держит node_modules). Убрать вручную.',
-      );
-      failed++;
-    }
-    // #1436: пост-чек — не появились ли в main-дереве НОВЫЕ удаления после сносов.
-    const lost = newDeletions(deletionsBefore, mainTreeStatus());
-    if (lost.length > 0) {
-      out.error(
-        `\n  ██ СТОП #1436: после сноса деревьев в main-дереве ${lost.length} НОВЫХ удалений ` +
-          `(${lost.slice(0, 3).join(', ')}${lost.length > 3 ? '…' : ''})\n` +
-          '     Восстановить НЕМЕДЛЕННО: git restore -- <пути> (tracked вернутся из HEAD).\n' +
-          '     Это проход удаления сквозь связь наружу — вектор инцидентов 20.07/29.07.\n' +
-          '     Дальнейшие сносы ОСТАНОВЛЕНЫ: разрушать дальше поверх находки нельзя.',
-      );
-      failed++;
-      // Hard-stop: код 2 — отличимый сигнал инцидента, и ни одного удаления после
-      // детекта. Хвост main() сюда не доходит, потому exitCode не перетирается.
-      reportRootScratch(out);
-      out.log(`\nОСТАНОВЛЕНО по #1436: убрано ${removed}, ошибок ${failed}.`);
-      writeReport(cli, out);
-      process.exitCode = 2;
-      return;
+
+      out.log(frameLine('postcheck-live-trees', { index: index + 1, total: wtDead.length, path: w.path }));
+      const liveAfter = liveTreeStatuses(w.path);
+      const postcheckFindings = analyzeLiveTreePostCheck(liveBefore, liveAfter);
+      if (postcheckFindings.length > 0) {
+        out.error(formatDemolitionStop('после сноса появились повреждения в живых деревьях', postcheckFindings));
+        failed++;
+        stopWorktreeDemolition({ cli, out, removed, failed, exitCode: 2 });
+        return;
+      }
+      out.log(frameLine('allow-next-tree', {
+        index: index + 1,
+        total: wtDead.length,
+        path: w.path,
+        detail: 'пост-чек чистый',
+      }));
     }
   }
 
@@ -402,6 +419,45 @@ function mainTreeStatus() {
     console.error(`  ⚠ пост-чек #1436: git status main-дерева не собрался (${e.message.split('\n')[0]})`);
     return '';
   }
+}
+
+function liveTreeStatuses(excludePath = null) {
+  const excluded = excludePath ? resolve(excludePath).toLowerCase() : null;
+  return listWorktrees()
+    .filter((wt) => resolve(wt.path).toLowerCase() !== excluded)
+    .map((wt) => {
+      const path = wt.path;
+      if (!existsSync(path)) return { path, state: 'missing', porcelain: '' };
+      try {
+        return {
+          path,
+          state: 'ok',
+          porcelain: execSync('git status --porcelain', {
+            cwd: path,
+            encoding: 'utf8',
+            maxBuffer: 64 * 1024 * 1024,
+          }),
+        };
+      } catch (e) {
+        return { path, state: 'error', porcelain: '', error: e.message.split('\n')[0] };
+      }
+    });
+}
+
+function formatDemolitionStop(reason, findings) {
+  return (
+    `\n  ██ СТОП ADR-0020: ${reason}\n` +
+    findings.map((f) => `     ${formatPostCheckFinding(f)}`).join('\n') + '\n' +
+    '     Восстановить НЕМЕДЛЕННО: git restore -- <пути> в пострадавшем дереве.\n' +
+    '     Дальнейшие сносы ОСТАНОВЛЕНЫ: разрушать дальше поверх находки нельзя.'
+  );
+}
+
+function stopWorktreeDemolition({ cli, out, removed, failed, exitCode }) {
+  reportRootScratch(out);
+  out.log(`\nОСТАНОВЛЕНО по ADR-0020: убрано ${removed}, ошибок ${failed}.`);
+  writeReport(cli, out);
+  process.exitCode = exitCode;
 }
 
 /**
