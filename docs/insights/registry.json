@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-28",
+  "updatedAt": "2026-07-30",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -776,6 +776,17 @@
       "horizon": null,
       "weight": 7.2,
       "createdAt": "2026-07-28",
+      "tags": []
+    },
+    {
+      "id": "insight-persona-recollection-pattern",
+      "title": "Паттерн «Воспоминание» — как персона копит опыт",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-30",
       "tags": []
     }
   ]
