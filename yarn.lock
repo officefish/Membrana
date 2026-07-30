@@ -2630,6 +2630,16 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@membrana/mfcc-analyzer-service@workspace:packages/services/mfcc-analyzer":
+  version: 0.0.0-use.local
+  resolution: "@membrana/mfcc-analyzer-service@workspace:packages/services/mfcc-analyzer"
+  dependencies:
+    rimraf: "npm:^5.0.0"
+    typescript: "npm:^5.4.0"
+    vitest: "npm:^3.2.0"
+  languageName: unknown
+  linkType: soft
+
 "@membrana/panel@workspace:apps/panel":
   version: 0.0.0-use.local
   resolution: "@membrana/panel@workspace:apps/panel"
