@@ -799,6 +799,17 @@
       "weight": null,
       "createdAt": "2026-07-30",
       "tags": []
+    },
+    {
+      "id": "insight-persona-recollection-pattern",
+      "title": "Паттерн «Воспоминание» — как персона копит опыт",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-30",
+      "tags": []
     }
   ]
 }
