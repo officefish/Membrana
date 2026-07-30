@@ -202,3 +202,33 @@ test('проводка счётчика пунктов: на живой пове
   assert.ok(rec.items >= 1, 'ID-метки повестки обязаны попасть в манифест числом');
   assert.match(formatSize(rec), /п\./u);
 });
+
+test('ВЕЩДОК 30.07 (M0 workshop-wires): повестка дублируется В ГОЛОВУ и доезжает', async () => {
+  // Потолок сборки срезал повестку целиком (3630 симв., отпечаток fca72f8bea4c) — комната
+  // честно отказалась ранжировать невиданное. Лечение то же, что для вопроса в 27.07.
+  const { buildPrompt } = await import('./consilium.mjs');
+  const { CONSILIUM_ROLES } = await import('./lib/consilium-paths.mjs');
+  const dir = mkdtempSync(join(tmpdir(), 'agenda-head-'));
+  const f = join(dir, 'AGENDA.md');
+  const marker = 'КАНДИДАТ-ОДИН-3f9b2c';
+  writeFileSync(f, `# Повестка\n\n**P1 —** вопрос?\n\n1) ${marker}\n`, 'utf8');
+  try {
+    const { prompt, manifest } = buildPrompt({
+      question: 'порядок?',
+      topicFile: f,
+      orderedRoles: CONSILIUM_ROLES,
+      minReplies: 30,
+      noContext: true,
+    });
+    const head = manifest.find((r) => r.kind === 'повестка (эхо в голове)');
+    const tail = manifest.find((r) => r.kind === 'повестка');
+    assert.ok(head, 'эхо повестки в голове обязано быть в манифесте');
+    assert.ok(tail, 'хвостовое эхо сохраняется');
+    assert.equal(head.fingerprint, tail.fingerprint, 'одна и та же повестка, один отпечаток');
+    assert.equal(head.delivery, 'полностью');
+    // Голова стоит раньше инструкции — значит обрезка хвоста её не унесёт.
+    assert.ok(prompt.indexOf(marker) < prompt.indexOf('Инструкция консилиума'));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
