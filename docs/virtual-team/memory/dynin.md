@@ -5,8 +5,116 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14366/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 216 (причины в op-log) -->
+Записей: 48 · бюджет 14342/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 235 (причины в op-log) -->
+
+### 2026-07-30 · позиция · sprint-honest-m2-contract
+
+> Фиксирую область. M1 дал: `assigned(S,p)`, `participated(S,p)`, `SprintExecution(S)` = проекция Assignments × Evidence. Вопрос 2 вводит новую переменную до окна: контракт C, который p принимает *до* работы. Без C нет области «принял / не принял», а без них `assigned` в M1 — […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/sprint-honest-m2-contract-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · sprint-honest-m3-contract-review
+
+> Формализую без UI. Пусть C — контракт спринта (M2, три поля), D — след исполнения (evidence bundle), p — исполнитель как проекция (M1). Предикат ревью: `match(C, D) → {pass, fail(diff[])}`. Независимо: `codeQuality(PR) ∈ {LGTM, BLOCK}` и `shipOk(HEAD)` — другие предикаты, другие […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/sprint-honest-m3-contract-review-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · sprint-honest-m4-calls
+
+> Формализую без UI и без привязки к локусу M1. Пусть S — sprintId, p — personaId. Кандидатные акты исполнителя — закрытое множество A = {accept_contract, review, refuse}. Каждый акт — функция call(a, S, p, payload) → Result, где Result ∈ {ok(receipt), err(reason)}. Вещдок e ∈ […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/sprint-honest-m4-calls-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · sprint-honest-m5-auditor
+
+> Формализую без UI. Пусть S — спринт, L(S) — ведущий, Perf(S) = participated(S) из M1, A(S) — назначенный аудитор. Предикат изоляции: `isolated(S) ⇔ A(S)≠⊥ ∧ A(S)∉ Perf(S) ∧ A(S)≠ L(S) ∧ L(S)∉ Perf(S)` — три попарных неравенства; «аудитор ≠ ведущий ≠ исполнитель» как цикл […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/sprint-honest-m5-auditor-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · sprint-honest-m6-moderation
+
+> Формализую без UI. Роли на окне S: `lead(S)`, `performer(S)`, `auditor(S)` — не обязательно persona из одного алфавита, но **попарно различимы по функции**. Предикат несовместимости: `incompatible(lead, performer) ⇔ ∃S: lead(S)=performer(S) ∧ role(lead)≠role(performer)` в смысле […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/sprint-honest-m6-moderation-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · sprint-honest-m7-second-door
+
+> Формализую шов, не flow. Пусть режим спринта \(m \in \{\mathtt{honest}, \mathtt{no\_persona}\}\). Выбор — акт \(choose(S, m, actor, proof)\), где \(S\) — id окна/спринта, \(proof\) — машинно читаемый носитель. Инвариант лазейки: \(\mathtt{no\_persona} \Rightarrow \neg\exists p: […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/sprint-honest-m7-second-door-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · sprint-honest-m8-memory
+
+> Формализую без UI. Пусть журнал персоны p — лента записей E. Сейчас ∀e тип(e)=position. Вводим род `execution`. Минимальный кортеж: `ExecRecord = (sprintId, personaId, act, result, evidenceRefs[])`. Предикат допуска в журнал исполнения: `admit(e) ⇔ holdsContract(personaId, […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/sprint-honest-m8-memory-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · sprint-honest-m9-cards
+
+> Формализую. Пусть карточка c имеет `leadPersona(c) ∈ P ∪ {ε}`. Сейчас ∀c: leadPersona(c) ≠ ε (214/214) и gate G₀ ⇔ leadPersona ≠ ε — тождественно true на реестре: информационная энтропия гейта = 0. Предикат плана: `planned(c,p) ⇔ leadPersona(c)=p`. Предикат факта из M1: […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/sprint-honest-m9-cards-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · workshop-wires-m0-order
+
+> Предикат ребра фиксирую как в bridge M0: A→B ⇔ область определения вопроса B содержит переменную, которую задаёт ответ A. Не runtime скриптов и не «удобно рядом». V={1..9}. (1) задаёт переменные home, namespace, holder. (8) содержит home инструмента vs home тестов ← ждёт (1). […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/workshop-wires-m0-order-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · workshop-wires-m1-home-namespace
+
+> Формализую. Пусть S — множество путей скриптов, H — множество домов (носитель `workshop.manifest.json`), N — множество неймспейсов. Предикаты: `inHome(s,h) ⇔ s ∈ members(h) ∧ h ∈ H`; `inNamespace(s,n) ⇔ s ∈ members(n) ∧ n ∈ N`. Инвариант различения: `isHome(x) ⇔ has(x, verbs) ∧ […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/workshop-wires-m1-home-namespace-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · workshop-wires-m2-atlas-discovery
+
+> Формализую без UI. Дано: предикат обнаружения сегодня `D₀(c) ⇔ ∃ docs/**/c/workshop.manifest.json`. Индекс ATLAS = derive(D₀). Замер: |ATLAS|=12, |README|=45, |¬manifest|=33. `docs/network` ∈ ¬D₀ при наличии скриптов и зуба — вещдок неполноты D₀ относительно «дома». T9 требует: […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/workshop-wires-m2-atlas-discovery-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · workshop-wires-m3-scripts-instrument
+
+> Формализую без UI. Пусть S — носители в `scripts/` (инструменты ∪ тесты, §2). `belongs(s) ∈ {home, namespace, orphan}` из M1. Предикат бесхозности для прямого глагола: `orphan_only(s) ⇔ belongs(s) = orphan`. Не смешиваем «не в roots кита» с orphan: замер 476 — факт покрытия […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/workshop-wires-m3-scripts-instrument-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · workshop-wires-m4-invariant-tooth
+
+> Формализую без UI. Пусть `O(t) = orphans(t)` — множество из глагола §4, `B = O(t₀)` — baseline. `growth(t) ⇔ ∃ s: s ∈ O(t) \ B` (с учётом знаменателя §2: инструмент ∪ тест, тест наследует предмет). Инвариант **невозрастания**: `¬growth(t)` ⇔ `O(t) ⊆ B` (допустимо |O|↓ при […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/workshop-wires-m4-invariant-tooth-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · workshop-wires-m5-kit-frame
+
+> Формализую без UI. Паттерн даёт служебные виды V_svc = {провода, времянки, доставка}. Вопрос комнаты — существует ли расширение V' = V_svc ∪ {кит} либо провизия инструментов вырази́ма проекцией в уже существующий вид. Предикат отдельности вида: kind(k) ⇔ ∃ обязанность O_k, не […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/workshop-wires-m5-kit-frame-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · workshop-wires-m6-session-hook
+
+> Формализую без UI. Хук S: Ctx → Floor × ValidationReport. Floor — то, что печатается; ValidationReport — исход проверки инвентаря. Два уровня: L1 (session) и L2 (weekly) — разные предикаты и разные effect. Холодная сессия машинно: `cold(ctx) ⇔ ¬∃ live_session_marker в TTL ∨ […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/workshop-wires-m6-session-hook-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · workshop-wires-m7-norm-in-docs
+
+> Формализую. Машина в момент t видит вызов инструмента; невызов ¬visible(t). Постфактум по транскрипту S: `viol(S) ⇔ ∃ exploratory_grep(S) ∧ workshop_calls(S)=0` (или слабее: доля сессий с grep-first). Признак жизни за окно W (месяц): `live ⇔ rate(workshop_call | […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/workshop-wires-m7-norm-in-docs-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · workshop-wires-m8-tests-parking
+
+> Формализую без UI. Дан файл \(t\) с именем, удовлетворяющим \(\mathrm{isTest}(t) \Leftrightarrow t \sim *.test.mjs\). Нужна тотальная ветвь того же \(\mathrm{belongs}\), не второй предикат: \(\mathrm{belongs}(t) \in \{\mathrm{home}, \mathrm{namespace}, \mathrm{orphan}\}\). Ввожу […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/workshop-wires-m8-tests-parking-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · workshop-wires-m9-wholesale-retail
+
+> Формализую. Пусть W — множество мастерских в проекции, T — инструменты, S — холодные сессии. `floor(S) = Π(projection)` — одинаков ∀S (оптовый инвариант M6). `wire(t)` — отдельный акт, t∈T. Предикат заявки: `ticket(t) ⇔ ∃ precedent(t) ∈ cold-start`. Инвариант #1467: `¬∃ […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/workshop-wires-m9-wholesale-retail-2026-07-30.md#reply-1`
 
 ### 2026-07-29 · позиция · network-container-form
 
@@ -182,145 +290,8 @@
 
 — источник: `docs/seanses/bridge-command-post-m6-debts-observations-2026-07-27.md#reply-1`
 
-### 2026-07-27 · позиция · day-memo-evening
-
-> С составом согласен, но добавлю численную конкретику. «Что запомнилось» должно содержать метрики: сколько вещдоков добавлено, сколько кристаллов отчеканено, сколько долгов погашено/появилось, delta индекса. Без цифр «запомнилось» — публицистика. Также нужна секция […] _(реплик в сеансе: 3)_
-
-— источник: `docs/seanses/day-memo-evening-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE ссылается на main-day-assertions.json как источник магистрали — это хороший прецедент машинной верификации. DAILY_CODE_REVIEW математически честен: diff не затрагивает чистые функции — замечаний нет. Итоги дня: консилиум-2 (#1333) — порог 30 […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-27.md#reply-1`
-
-### 2026-07-26 · позиция · team-evening-feedback
-
-> Оценка артефактов: математического контента нет — день целиком процедурный/тулинговый. MAIN_DAY_ISSUE корректен в части «легальное нет» (прецедент #1219 учтён). Итоги дня: чистых функций не писалось. Секретный гейт получил версионность — применимо к хэшам, но не моя зона. […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-26.md#reply-1`
-
-### 2026-07-24 · позиция · membrana-leveling-m0-order
-
-> Формализую предикат ребра. Ребро A→B существует тогда и только тогда, когда: область определения вопроса B содержит переменную, которую задаёт вопрос A. Проверяю: **L** — порог левелинга — это функция `level(file) ∈ {0,1,2,…}`. Чтобы сравнить уровень с порогом, нужно знать, к […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/membrana-leveling-m0-order-2026-07-24.md#reply-1`
-
-### 2026-07-24 · позиция · membrana-leveling-m0-order-grok
-
-> Зависимость здесь — отношение «вердикт A обязан существовать до осмысленного вердикта B», не runtime-порядок скриптов. Фундамент ищу там, где без определения остальные контракты не имеют области определения. Кандидат на носитель области — K1: четыре метки состояния path. _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/membrana-leveling-m0-order-grok-2026-07-24.md#reply-1`
-
-### 2026-07-24 · позиция · membrana-leveling-m1-disposition
-
-> Чистая функция — мой контур. Сигнатура: `disposition(path, ctx) → {live|ready|unfinished|trash}`, где `ctx` — снимок наблюдаемых входов, без UI и без побочных эффектов. Порядок проверок обязан быть тотальным и детерминированным: одно path → ровно одно состояние. Приоритет […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/membrana-leveling-m1-disposition-2026-07-24.md#reply-1`
-
-### 2026-07-24 · позиция · membrana-leveling-m2-gate
-
-> Формализую без UI. Пусть \(S = \{(p_i, d_i)\}\) — конечный снимок. Индикаторы: \(T = \{p \mid d=\mathrm{trash}\}\), \(U = \{p \mid d=\mathrm{unfinished}\}\), \(R = \{p \mid d=\mathrm{ready}\}\), \(L = \{p \mid d=\mathrm{live}\}\). Остановка: \(\exists p\in T:\ p\ \text{не […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/membrana-leveling-m2-gate-2026-07-24.md#reply-1`
-
-### 2026-07-24 · позиция · membrana-leveling-m3-manifest
-
-> Контракт детерминирован: f(gate_output) → report. Без скрытого состояния, без повторного disposition. Факт = то, что воспроизводится из артефакта гейта байт-в-байт при повторной вёрстке. Любая фраза «кажется, надо решить владельцу» — либо вынесена в явную зону суждения, либо […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/membrana-leveling-m3-manifest-2026-07-24.md#reply-1`
-
-### 2026-07-24 · позиция · membrana-leveling-m4-rails
-
-> Гранулы — это контракт данных, не UI. По K1: `disposition` — вход гейта, не выход этой комнаты. Далее по цепочке без переопределения: `ready` питает main-fill; `isLeveled` / `legit` и манифест-отчёт — выходы workspace-level и доставки (K2). Численно проверяемо одно: каждый фрейм […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/membrana-leveling-m4-rails-2026-07-24.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m0-order
-
-> Обозначу V={1..9} как в повестке. Предикат фундамента: убери a — остаётся ли область ответов остальных определённой? Убери 4: у 1 (control plane) нет ключей реестра, у 2 (телеметрия) нет поля procedure, у 3 (панель) нечего переключать, у 5 (fallback) неясна единица отказа. 4 […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/llm-procedure-channels-m0-order-2026-07-23-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m1-procedure-contract
-
-> Формализую. Нужна инъекция `id: ProcedureId → Record`. Стабильность: ∀ события e с procedure=id история суммируется без rename-миграций. Если id:=yarnName, то rename — это смена ключа агрегации → разрыв ряда. Реестр с неизменяемым id и опциональным `yarnScript` сохраняет ряд. […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m1-procedure-contract-2026-07-23-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m2a-scope
-
-> Критерий «в scope v1»: процедура p ∈ scope ⇔ p ∈ registry ∧ p.meters ∧ routingEnabled(p). Для v1 routingEnabled = {code-review, consilium}. Каркас (transport, registry load, emit meter) — общий. Добавление id = PR в registry + флаг — O(1), без редизайна SoT. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m2a-scope-2026-07-23-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m2b-control-plane
-
-> Merge-правило: `effective(p) = overlay[p] ?? default[p] ?? builtinFail`. Overlay отсутствует → default. Локальный `.env` **не** задаёт channel (чтобы три worktree не разъехались молча). Секреты: `ANTHROPIC_API_KEY` / `OPENROUTER_API_KEY` в env; выбор provider/model для p — в […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m2b-control-plane-2026-07-23-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m3a-llm-proxy-seam
-
-> Разделяю `Secrets` и `ProviderCatalog`. Secrets ∈ env files. Catalog ритуала ⊆ lib, стабильный subset (anthropic, openrouter; freemodel — optional flag). Experimental catalog может быть ⊇; ритуал не import path `scripts/experimental/**`. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m3a-llm-proxy-seam-2026-07-23-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
-
-> Событие v1: `{id, ts, procedureId, provider, model, source, tokensIn, tokensOut, latencyMs, ok, errorClass?}`. `promptHash` — optional later, не блокер v1. Агрегат дня = GROUP BY procedureId, provider на store. Emit: после HTTP ответа transport (success или fail). _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m3b-telemetry-2026-07-23-2026-07-23.md#reply-1`
-
 ### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
 
 > Форма: `effective.chain: ProviderId[]` непустой; try i=0..n-1; emit event per attempt; успех → break; все fail → exit≠0. Single provider = chain длины 1 (совместимо с C1). _(реплик в сеансе: 4)_
 
 — источник: `docs/seanses/llm-procedure-channels-m3c-fallback-2026-07-23-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m4a-agent-usage
-
-> Клиент: `emitUsage(event) → POST /v1/llm-usage/events` timeout короткий (например 2s); catch → stderr warn; не throw. Идемпотентность: клиентский `eventId` uuid на попытку — сервер dedupe. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m4a-agent-usage-2026-07-23-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m4b-panel
-
-> API поверхности (office): уже C1 putOverlay/getEffective + T1 day aggregate + events. Панель — тонкий клиент. Страница: (1) day summary cards; (2) table procedures in routing scope; (3) chain editor; (4) badge source на effective. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m4b-panel-2026-07-23-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m5-sprint-ready
-
-> Фазы эпика (кандидат 2 уточнённый): - **A** lib: `llm-procedures.json`, defaults, provider catalog, `resolveChannel`, transport+chain+emit stubs. - **B** wire: `code-review.mjs` + `consilium.mjs` на resolve/chain/emit. - **C** office: overlay + usage ingest/aggregate API. - […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m5-sprint-ready-2026-07-23-2026-07-23.md#reply-1`
-
-### 2026-07-23 · позиция · request-container-api-k1-cabinet
-
-> Формализую, иначе граница останется вкусовой. Кабинет `C = (P, L, T)`, где: **P** — множество разрешённых процедур (замкнутый перечень); **L** — множество лимитов (запросов/день, токенов/запрос, каналов); **T** — текущее состояние счёта (израсходовано). Предикат проверки: […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/request-container-api-k1-cabinet-2026-07-23.md#reply-1`
-
-### 2026-07-30 · промах · mfcc-compare-sprint / mfcc-detectors
-
-> **Две ложные посылки за один блок, обе пойманы исполнителем грепом.**
->
-> Первая: сослался на «аналог `0.3 * bufferSize` в `loudness-trend`». В файле нет ни этого числа,
-> ни поля `bufferSize`, ни `minFrameCount` — окно там константа `DEFAULT_WINDOW_SIZE = 12`.
-> Сослался на код, которого не читал.
->
-> Вторая, тоньше и опаснее: одобрил `minMagnitude = 0`, обосновав тем, что «немые кадры всё равно
-> ведут к отказу». Обоснование ложно — при пороге 0 немых кадров не бывает вовсе, защита именно
-> **выключается**. Код был прав, довод — нет. Верный вывод из ложной посылки опаснее ошибки:
-> он проходит ревью.
->
-> Третье, где я был неправ по существу: предложил свести тренд к косинусу. Косинус — мера
-> сходства, направления не несёт, и трёхзначный вердикт из него не выводится; я сам же назвал
-> контрпример («тот же контур, но громче → stable») и не сделал вывода. Исполнитель возразил,
-> взял две оси — форму и масштаб; на втором проходе я согласился.
->
-> Что запомнить: **не ссылаться на числа и поля в файлах, которых не открывал в этом сеансе.**
-> И проверять собственный контрпример на то, не опровергает ли он мой же тезис.
-
-— вещдок: `docs/discussions/mfcc-detectors-dynin.md`

@@ -7,9 +7,10 @@
   "frozenDigest": "5019f806527e0a7146a5fcefe7f903d44f3fec5dd6df2b391b156f2c24a647c3",
   "magistral": "mfcc-spectral-core",
   "swallow": {
-    "draftDigest": "ed2084d6502cda7e68dba43aff1712a51d99d1d50d9677e7cc721f9f71be7e2c",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-07-30.md",
-    "ownerAck": true
+    "draftDigest": "ad46f177e067d65e25c142298b4ba3a50d78149291ad7273f86e8d00bd0b942b",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-07-30.md",
+    "ownerAck": true,
+    "gate": "evening:partner-swallow"
   },
   "day": "2026-07-30"
 }
