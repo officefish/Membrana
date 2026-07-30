@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from '
 import { dirname, resolve } from 'node:path';
 
 import { validateTaskId } from './task-registry.mjs';
+import { checkAcceptance } from './trace-acceptance.mjs';
 
 export const REVIEW_ROOT_REL = 'docs/reviews';
 export const REVIEW_STATES = [
@@ -409,7 +410,7 @@ export function writeReviewArtifact(manifest, body, cwd = process.cwd()) {
 
 export function finalizeReviewManifest(
   manifest,
-  { actualCommitSha, mode, evidence, now = new Date().toISOString() },
+  { actualCommitSha, mode, evidence, acceptanceMode = 'soft', now = new Date().toISOString() },
 ) {
   validateReviewManifest(manifest);
   if (manifest.state === 'archived') return manifest;
@@ -423,10 +424,25 @@ export function finalizeReviewManifest(
   if (typeof evidence !== 'string' || evidence.trim().length === 0) {
     throw new Error('Finalize требует completion evidence');
   }
+  const acceptanceGate = checkAcceptance(
+    { taskId: manifest.taskId, acceptance: manifest.acceptance ?? null },
+    { mode: acceptanceMode, expectedHeadRev: manifest.currentCommitSha },
+  );
+  if (acceptanceGate.verdict === 'hard') {
+    throw new Error(`Finalize запрещён: ${acceptanceGate.reason}`);
+  }
   return validateReviewManifest({
     ...manifest,
     state: mode,
-    completion: { mode, evidence: evidence.trim() },
+    completion: {
+      mode,
+      evidence: evidence.trim(),
+      acceptanceGate: {
+        mode: acceptanceMode,
+        verdict: acceptanceGate.verdict,
+        reason: acceptanceGate.reason,
+      },
+    },
     updatedAt: now,
   });
 }

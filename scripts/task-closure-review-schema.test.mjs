@@ -41,6 +41,15 @@ test('closure review schema is draft 2020-12 and fail-closed', () => {
   assert.ok(schema.allOf.length >= 4);
 });
 
+test('completion schema accepts structured acceptance gate trace', () => {
+  const acceptanceGate = schema.properties.completion.properties.acceptanceGate;
+  assert.equal(acceptanceGate.type, 'object');
+  assert.equal(acceptanceGate.additionalProperties, false);
+  assert.deepEqual(acceptanceGate.required, ['mode', 'verdict', 'reason']);
+  assert.deepEqual(acceptanceGate.properties.mode.enum, ['soft', 'hard']);
+  assert.deepEqual(acceptanceGate.properties.verdict.enum, ['pass', 'soft', 'hard']);
+});
+
 test('review_pending example satisfies core invariants', () => {
   validateCoreInvariants(pending);
   assert.equal(pending.verdict, 'pending');

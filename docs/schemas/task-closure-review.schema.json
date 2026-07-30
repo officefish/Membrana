@@ -99,7 +99,17 @@
       "required": ["mode", "evidence"],
       "properties": {
         "mode": { "enum": ["pending", "merged", "accepted_branch_only"] },
-        "evidence": { "type": ["string", "null"] }
+        "evidence": { "type": ["string", "null"] },
+        "acceptanceGate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["mode", "verdict", "reason"],
+          "properties": {
+            "mode": { "enum": ["soft", "hard"] },
+            "verdict": { "enum": ["pass", "soft", "hard"] },
+            "reason": { "type": "string", "minLength": 1 }
+          }
+        }
       }
     },
     "createdAt": { "type": "string", "format": "date-time" },
