@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `agent-tooling-friction-2-2026-07-30` | Трение тулинга 30.07: грабли аудита и install, живость resolutions, маршрут после ребейза, разбор красного CI | M | [`AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md) | [#1493](https://github.com/officefish/Membrana/issues/1493) |
 | `tooling-sanitary-pack-3007` | Санитарный пакет тулинга 30.07: пересборка производных снимков, вывод сноса в файл, содержание в строку вопроса, один автор долгов | S | [`TOOLING_SANITARY_PACK_3007_PROMPT.md`](../prompts/TOOLING_SANITARY_PACK_3007_PROMPT.md) | — |
 | `network-container` | Контейнер network: словарь исходов, зонды обоими путями, предполётная проверка, снимок окружения для агентов | M | [`NETWORK_CONTAINER_PROMPT.md`](../prompts/NETWORK_CONTAINER_PROMPT.md) | [#1449](https://github.com/officefish/Membrana/issues/1449) |
 | `weekly-dead-wire-audit` | Недельная процедура «мёртвые провода»: declared ⇒ файл существует ∨ явный pending | M | [`WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md`](../prompts/WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md) | [#1447](https://github.com/officefish/Membrana/issues/1447) |
