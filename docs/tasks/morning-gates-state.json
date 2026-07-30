@@ -1,15 +1,11 @@
 {
   "magistralOptions": [
-    "product-tariffs-support",
-    "agent-tooling-night-build",
-    "archivarius-sessions-container"
+    "mfcc-spectral-core",
+    "archivarius-sessions-container",
+    "agent-tooling-night-build"
   ],
-  "frozenDigest": "c0fccbcbff9b8312cce4cc442e9bcf4f7fdcff0fcd136726be48d0041ad63308",
-  "magistral": "product-tariffs-support",
-  "swallow": {
-    "draftDigest": "77b045bc03dd7ac8a63dcb8a87c9b3301aa66f9620db2b302ebbbce171e2b458",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-07-29.md",
-    "ownerAck": true
-  },
-  "day": "2026-07-29"
+  "frozenDigest": "5019f806527e0a7146a5fcefe7f903d44f3fec5dd6df2b391b156f2c24a647c3",
+  "magistral": "mfcc-spectral-core",
+  "swallow": null,
+  "day": "2026-07-30"
 }
