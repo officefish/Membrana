@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "tooling-sanitary-pack-3007",
+      "title": "Санитарный пакет тулинга 30.07: пересборка производных снимков, вывод сноса в файл, содержание в строку вопроса, один автор долгов",
+      "promptPath": "docs/prompts/TOOLING_SANITARY_PACK_3007_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-30",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Четыре фрикции сессии 29.07 из восьми (ретроспектива tooling-needs). Родственная заявка #1465 удостоверяет карточку agent-tooling-friction-2026-07-29 — здесь ссылкой, не дублем. Слово владельца 30.07: выполнить первыми; магистраль дня mfcc-spectral-core остаётся.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "agent-tooling-friction-2026-07-29",
       "title": "Трение тулинга 29.07: резолв воркспейса, ревью в шипе, грабли, bootstrap против канона",
       "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_2026_07_29_PROMPT.md",

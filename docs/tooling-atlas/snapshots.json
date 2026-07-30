@@ -1,0 +1,96 @@
+{
+  "//": "Декларация производных снимков (Ф1 санитарного пакета 30.07). Снимок — файл, ГЕНЕРИРУЕМЫЙ из источника; правка руками теряется при следующей пересборке. Пары объявлены здесь, а не зашиты в скрипт: новый снимок = строка в декларации, не правка кода.",
+  "//provenance": "Эпизод 29.07: трижды отказ за отставший снимок (прецеденты, кейсы, вещдоки — последний уже в CI). Общего пересборщика не было; ретроспектива tooling-needs, фрикция №1.",
+  "//legal-no": "Снимок без команды проверки объявляет это явно (checkCmd: null + checkNote) — иначе зуб молча пропустит его дрейф.",
+  "version": 1,
+  "snapshots": [
+    {
+      "id": "cases",
+      "snapshot": "docs/cases/registry/CASES.md",
+      "source": "docs/cases/*.md",
+      "rebuildCmd": [
+        "node",
+        "scripts/case-register.mjs",
+        "--rebuild"
+      ],
+      "checkCmd": [
+        "node",
+        "scripts/case-register.mjs",
+        "--validate"
+      ],
+      "note": "валидатор ловит и отставший снимок, и неполные подвалы"
+    },
+    {
+      "id": "nominations",
+      "snapshot": "docs/cases/registry/NOMINATIONS.md",
+      "source": "docs/cases/*.md",
+      "rebuildCmd": [
+        "node",
+        "scripts/case-register.mjs",
+        "--rebuild"
+      ],
+      "checkCmd": null,
+      "checkNote": "пересобирается тем же проходом, что CASES.md; отдельной проверки нет — дрейф ловится через cases"
+    },
+    {
+      "id": "evidence",
+      "snapshot": "docs/evidence/INDEX.md",
+      "source": "docs/evidence/registry.jsonl",
+      "rebuildCmd": [
+        "node",
+        "scripts/evidence.mjs",
+        "index"
+      ],
+      "checkCmd": null,
+      "checkNote": "у evidence нет флага проверки; дрейф ловится тестом инвариантов в CI (эпизод 29.07)"
+    },
+    {
+      "id": "precedents",
+      "snapshot": "docs/precedents/registry/PRECEDENTS.md",
+      "source": "docs/precedents/*.md",
+      "rebuildCmd": [
+        "node",
+        "scripts/precedent-register.mjs",
+        "--rebuild"
+      ],
+      "checkCmd": null,
+      "checkNote": "проверки нет: снимок несёт SHA источника, расхождение видно только пересборкой",
+      "rebuildFindingsExit": true,
+      "exitNote": "код возврата = число дефектных записей (scripts/precedent-register.mjs:44), снимок пересобран независимо от него"
+    },
+    {
+      "id": "tasks-readme",
+      "snapshot": "docs/tasks/README.md",
+      "source": "docs/tasks/registry.json",
+      "rebuildCmd": [
+        "node",
+        "scripts/task-list.mjs",
+        "--sync-readme"
+      ],
+      "checkCmd": [
+        "node",
+        "scripts/task-list.mjs",
+        "--sync-readme",
+        "--check"
+      ],
+      "note": "уже стоит зубом в pre-commit"
+    },
+    {
+      "id": "tooling-atlas",
+      "snapshot": "docs/tooling-atlas/registry/ATLAS.md",
+      "source": "scripts/**, package.json",
+      "rebuildCmd": [
+        "node",
+        "scripts/tooling-atlas.mjs",
+        "--render"
+      ],
+      "checkCmd": [
+        "node",
+        "scripts/tooling-atlas.mjs",
+        "--check"
+      ],
+      "note": "уже стоит зубом в проверках ветки"
+    }
+  ],
+  "//exit-semantics": "Часть инструментов возвращает ненулевой код как ЧИСЛО НАХОДОК, а не как отказ (precedent:register --rebuild отдаёт число дефектных записей, снимок при этом пересобран). Такие объявляют rebuildFindingsExit: true — пересборщик тогда печатает «пересобрано с находками», а не «отказ». Скрывать находки при этом запрещено."
+}
