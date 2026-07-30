@@ -1,0 +1,7 @@
+{"traceId":"tr-cut-tarasov","blockId":"mfcc-compare-run","kind":"context_run","subject":"tarasov","at":"2026-07-30T15:45:00Z","ref":"docs/discussions/mfcc-compare-sprint.json.md"}
+{"traceId":"tr-core-ozhegov-design","blockId":"mfcc-core-wrapper","kind":"context_run","subject":"ozhegov","at":"2026-07-30T16:35:00Z","ref":"docs/discussions/mfcc-core-wrapper-ozhegov.md"}
+{"traceId":"tr-core-ozhegov-review","blockId":"mfcc-core-wrapper","kind":"review_pass","subject":"ozhegov","at":"2026-07-30T16:50:00Z","ref":"docs/discussions/mfcc-core-wrapper-ozhegov.md"}
+{"traceId":"tr-det-dynin-design","blockId":"mfcc-detectors","kind":"context_run","subject":"dynin","at":"2026-07-30T18:55:00+03:00","ref":"docs/discussions/mfcc-detectors-dynin.md"}
+{"traceId":"tr-det-dynin-review","blockId":"mfcc-detectors","kind":"review_pass","subject":"dynin","at":"2026-07-30T19:02:00+03:00","ref":"docs/discussions/mfcc-detectors-dynin.md"}
+{"traceId":"tr-cmp-tarasov-design","blockId":"mfcc-compare-run","kind":"context_run","subject":"tarasov","at":"2026-07-30T17:05:00Z","ref":"docs/discussions/mfcc-compare-run-tarasov.md"}
+{"traceId":"tr-cmp-tarasov-review","blockId":"mfcc-compare-run","kind":"review_pass","subject":"tarasov","at":"2026-07-30T18:45:00Z","ref":"docs/discussions/mfcc-compare-run-tarasov.md"}

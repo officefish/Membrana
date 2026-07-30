@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-28",
+  "updatedAt": "2026-07-30",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -776,6 +776,28 @@
       "horizon": null,
       "weight": 7.2,
       "createdAt": "2026-07-28",
+      "tags": []
+    },
+    {
+      "id": "insight-mfcc-timbre-detector",
+      "title": "Тембровый детектор на MFCC: ловить портрет, а не гармонику",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-30",
+      "tags": []
+    },
+    {
+      "id": "insight-mfcc-combined-two-cores",
+      "title": "Комбинированный детектор: гармоника с FFT-ядра, тембр с MFCC",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-07-30",
       "tags": []
     }
   ]
