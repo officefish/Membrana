@@ -2,7 +2,7 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` — Phase 1 (Concept) закрыта 2026-07-30, 3/3 блока сдали; Phase 2 (Isolated build) — следующая |
+| **status** | `open` — Phase 2 (Isolated build) закрыта 2026-07-30, 3/3 блока прошли DoD, freeze-теги стоят; Phase 3 (Interface Consilium) — следующая |
 | sprintId | `cowork-honest-sprint` |
 | Brief | [`docs/cowork-sprint/cowork-honest-sprint/COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-honest-sprint/COWORK_SPRINT_BRIEF.md) |
 | GitHub Issue | [#1499](https://github.com/officefish/Membrana/issues/1499) |
@@ -19,8 +19,8 @@
 |------|--------|
 | 0 — Brief + open | закрыта 2026-07-30 (BASE_SHA `bb1dfe55`, ратификация резки владельцем) |
 | 1 — Concept (CONCEPT.md + первый EXPECTATIONS.md) | **закрыта 2026-07-30 — 3/3 блока сдали** (см. ниже) |
-| 2 — Isolated build (собственный DoD на стабах) | **следующая** — по слову владельца |
-| 3 — Interface Consilium → INTERFACE_CONTRACT.md | — |
+| 2 — Isolated build (собственный DoD на стабах) | **закрыта 2026-07-30 — 3/3 прошли DoD, freeze-теги стоят** (см. ниже) |
+| 3 — Interface Consilium → INTERFACE_CONTRACT.md | **следующая** — вскрытие трёх EXPECTATIONS одновременно |
 | 4 — Integration (ветка `cowork/cowork-honest-sprint/integration`) | — |
 | 5 — Merge + RETROSPECTIVE + archive | — |
 
