@@ -12,6 +12,17 @@
 export const HOLDER_CONFLICT = 'CONFLICT';
 export const HOLDER_MISSING = 'MISSING';
 
+const DEFAULT_PROCEDURAL_KINDS = Object.freeze(['meeting', 'storm', 'truth', 'research']);
+const DEFAULT_PROCEDURAL_ARTIFACT_PREFIXES = Object.freeze([
+  'docs/seanses/',
+  'docs/storm/',
+  'docs/meeting/',
+  'docs/procedures/',
+  'docs/discussions/',
+  'docs/truth/',
+  'docs/research/',
+]);
+
 /**
  * Разбор имени ветки: `[<персона>/]<kind>/<slug>` + формат-теги.
  *
@@ -118,6 +129,50 @@ export function nightFreezeVerdict(parsed, nightOverFlag) {
   return {
     frozen: true,
     reason: 'night-ветка заморожена: ничего в репозиторий до флага «ночь закончилась» (T7)',
+  };
+}
+
+/**
+ * Procedural branch guard (Р4): ветка процедуры несёт артефакты процедуры, а не
+ * транспортный код. Если транспорт всё-таки нужен, это должно быть явное слово
+ * владельца/координатора (`--allow-transport`), а не молчаливый хвост диффа.
+ *
+ * @param {{kind: string|null}} parsed из parseBranchName
+ * @param {string[]} paths changed paths, repo-relative, slash-separated or Windows
+ * @param {{branchGrammar?: {proceduralKinds?: string[], proceduralArtifactPrefixes?: string[]}}} [rules]
+ * @param {{allowTransport?: boolean}} [opts]
+ * @returns {{guarded: boolean, allowed: string[], transport: string[], problems: string[]}}
+ */
+export function proceduralTransportProblems(parsed, paths, rules = {}, opts = {}) {
+  const kinds = rules?.branchGrammar?.proceduralKinds ?? DEFAULT_PROCEDURAL_KINDS;
+  const prefixes =
+    rules?.branchGrammar?.proceduralArtifactPrefixes ?? DEFAULT_PROCEDURAL_ARTIFACT_PREFIXES;
+  const guarded = Boolean(parsed?.kind && kinds.includes(parsed.kind));
+  if (!guarded) return { guarded: false, allowed: [], transport: [], problems: [] };
+
+  const cleanPaths = (paths ?? [])
+    .map((p) => String(p ?? '').replaceAll('\\', '/').replace(/^\.\//u, ''))
+    .filter(Boolean);
+  const allowed = [];
+  const transport = [];
+  for (const p of cleanPaths) {
+    if (prefixes.some((prefix) => p === prefix.slice(0, -1) || p.startsWith(prefix))) {
+      allowed.push(p);
+    } else {
+      transport.push(p);
+    }
+  }
+
+  if (transport.length === 0 || opts.allowTransport) {
+    return { guarded: true, allowed, transport, problems: [] };
+  }
+  return {
+    guarded: true,
+    allowed,
+    transport,
+    problems: [
+      `процедурная ветка kind=${parsed.kind} несёт транспортный дифф (${transport.join(', ')}) — разрешены только артефакты процедуры (${prefixes.join(', ')}); для осознанного исключения нужен --allow-transport`,
+    ],
   };
 }
 

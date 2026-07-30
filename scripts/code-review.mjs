@@ -85,10 +85,13 @@ if (cli.mode === 'daily') {
   const dayWork = collectDayWorkDiff();
   dayWorkHeader = formatDayReviewHeader(dayWork);
   const hygiene = collectRepositoryContext({ full: cli.full });
+  const workingTreeTitle = dayWork.precision === 'working-tree'
+    ? '## Текущее рабочее дерево (fallback: дифф недоступен — предмет ревью менее точен)'
+    : '## Гигиена рабочего дерева (untracked, тест/линт — не предмет ревью)';
   contextBlock =
     '## Работа дня (дифф коммитов, сегментировано по PR — предмет ревью)\n\n' +
     formatDayWorkContext(dayWork) +
-    '\n\n---\n\n## Гигиена рабочего дерева (untracked, тест/линт — не предмет ревью)\n\n' +
+    `\n\n---\n\n${workingTreeTitle}\n\n` +
     hygiene;
 } else {
   const ctx = collectReviewContext(cli);

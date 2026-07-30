@@ -9,6 +9,7 @@ import {
   HOLDER_MISSING,
   nightFreezeVerdict,
   parseBranchName,
+  proceduralTransportProblems,
   refCollisionProblems,
   renderShipHeader,
   resolveHolder,
@@ -70,4 +71,29 @@ test('renderShipHeader: три оси текстом, красный исход 
   assert.match(ok, /✓ rodchenko/u);
   const bad = renderShipHeader(parsed, resolveHolder(null, null), { frozen: false, reason: null });
   assert.match(bad, /✗ MISSING/u);
+});
+
+test('proceduralTransportProblems: storm/meeting ветка не несёт транспортный код молча', () => {
+  const parsed = parseBranchName('storm/branch-taxonomy-2026-07-21', RULES);
+  const r = proceduralTransportProblems(parsed, [
+    'docs/storm/branch-taxonomy-2026-07-21/REPORT.md',
+    'scripts/pr-ship.mjs',
+  ], RULES);
+  assert.equal(r.guarded, true);
+  assert.deepEqual(r.allowed, ['docs/storm/branch-taxonomy-2026-07-21/REPORT.md']);
+  assert.deepEqual(r.transport, ['scripts/pr-ship.mjs']);
+  assert.match(r.problems[0], /процедурная ветка kind=storm/u);
+  assert.match(r.problems[0], /--allow-transport/u);
+});
+
+test('proceduralTransportProblems: обычная feat ветка и явное разрешение не блокируют', () => {
+  const feat = proceduralTransportProblems(parseBranchName('feat/tariff-grid', RULES), ['scripts/x.mjs'], RULES);
+  assert.equal(feat.guarded, false);
+  assert.deepEqual(feat.problems, []);
+
+  const meeting = parseBranchName('meeting/procedural-layer', RULES);
+  const allowed = proceduralTransportProblems(meeting, ['scripts/x.mjs'], RULES, { allowTransport: true });
+  assert.equal(allowed.guarded, true);
+  assert.deepEqual(allowed.transport, ['scripts/x.mjs']);
+  assert.deepEqual(allowed.problems, []);
 });

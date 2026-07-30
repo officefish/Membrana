@@ -371,6 +371,73 @@ test('finalize requires exact reviewed SHA and completion evidence', () => {
   );
 });
 
+test('finalize records acceptance gate result in soft mode', () => {
+  const lgtm = applyTeamleadReview(withEvidence(prepare()), lgtmBody);
+  const merged = finalizeReviewManifest(lgtm, {
+    actualCommitSha: SHA_A,
+    mode: 'merged',
+    evidence: 'PR #42 merged 2026-06-28',
+  });
+  assert.deepEqual(merged.completion.acceptanceGate, {
+    mode: 'soft',
+    verdict: 'pass',
+    reason: `артефакт example-task: приёмка подтверждена (vesnin @ ${SHA_A})`,
+  });
+});
+
+test('finalize soft mode records missing acceptance without blocking closure', () => {
+  const lgtm = {
+    ...applyTeamleadReview(withEvidence(prepare()), lgtmBody),
+    acceptance: null,
+    acceptanceHistory: [],
+  };
+  const merged = finalizeReviewManifest(lgtm, {
+    actualCommitSha: SHA_A,
+    mode: 'merged',
+    evidence: 'PR #42 merged 2026-06-28',
+  });
+  assert.equal(merged.state, 'merged');
+  assert.deepEqual(merged.completion.acceptanceGate, {
+    mode: 'soft',
+    verdict: 'soft',
+    reason: 'артефакт example-task: поле приёмки отсутствует — подтверждение не поставлено',
+  });
+});
+
+test('finalize hard mode refuses missing acceptance', () => {
+  const lgtm = {
+    ...applyTeamleadReview(withEvidence(prepare()), lgtmBody),
+    acceptance: null,
+    acceptanceHistory: [],
+  };
+  assert.throws(
+    () => finalizeReviewManifest(lgtm, {
+      actualCommitSha: SHA_A,
+      mode: 'merged',
+      evidence: 'PR #42 merged 2026-06-28',
+      acceptanceMode: 'hard',
+    }),
+    /поле приёмки отсутствует/,
+  );
+});
+
+test('finalize hard mode refuses stale acceptance head', () => {
+  const lgtm = {
+    ...applyTeamleadReview(withEvidence(prepare()), lgtmBody),
+    acceptance: { acceptedBy: 'vesnin', headRev: SHA_B },
+    acceptanceHistory: [{ acceptedBy: 'vesnin', headRev: SHA_B }],
+  };
+  assert.throws(
+    () => finalizeReviewManifest(lgtm, {
+      actualCommitSha: SHA_A,
+      mode: 'merged',
+      evidence: 'PR #42 merged 2026-06-28',
+      acceptanceMode: 'hard',
+    }),
+    /подтверждение ложно/,
+  );
+});
+
 test('merged review transitions to archived idempotently', () => {
   const lgtm = applyTeamleadReview(withEvidence(prepare()), lgtmBody);
   const merged = finalizeReviewManifest(lgtm, {
