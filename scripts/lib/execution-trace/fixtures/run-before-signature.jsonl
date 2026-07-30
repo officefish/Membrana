@@ -1,0 +1,9 @@
+# ДИСКВАЛИФИКАЦИЯ eg-run-before-signature: прогон через контекст раньше подписи контракта.
+# Старт возможен только при «назначен И принял» (M2); «работавший без назначения API не получает»
+# (M4). Подпись доехала после закрытия окна — в момент прогона согласия ещё не было.
+# След не «слабый», он ДИСКВАЛИФИЦИРОВАН: убран из множества вещдоков, а не переклассифицирован.
+# Ожидание: mfcc-core → honest_pair; gate-wiring → plan_lied (вещдоков после дисквалификации ноль),
+# в отчёте назван toothId дисквалификации + находка eg-late-close на подпись; код 1.
+{"traceId":"t-mfcc-run","blockId":"mfcc-core","kind":"context_run","subject":"kuryokhin","at":"2026-07-30T09:15:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-kuryokhin-mfcc.json"}
+{"traceId":"t-gate-run-early","blockId":"gate-wiring","kind":"context_run","subject":"vesnin","at":"2026-07-30T10:00:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-vesnin-gate.json"}
+{"traceId":"t-gate-sign-late","blockId":"gate-wiring","kind":"contract_signature","subject":"vesnin","at":"2026-07-31T09:00:00.000Z","ref":"docs/seanses/sprint-honest-m2-contract-2026-07-30.md","relatesToSprint":true}

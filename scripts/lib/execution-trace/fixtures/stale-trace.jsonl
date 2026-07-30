@@ -1,0 +1,5 @@
+# Протух = ОТНОСИТЕЛЬНО РЕВИЗИИ ПРЕДМЕТА, не календаря: revisionAt плана = 2026-07-30T08:00Z,
+# след vesnin стоит в 07:00Z — внутри окна, но старше ревизии. Перенос согласия на изменённый
+# контракт запрещён (M2). Ожидание: gate-wiring → stale_trace, код 1.
+{"traceId":"t-mfcc-run","blockId":"mfcc-core","kind":"context_run","subject":"kuryokhin","at":"2026-07-30T09:15:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-kuryokhin-mfcc.json"}
+{"traceId":"t-gate-run-old","blockId":"gate-wiring","kind":"context_run","subject":"vesnin","at":"2026-07-30T07:00:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-vesnin-gate.json"}

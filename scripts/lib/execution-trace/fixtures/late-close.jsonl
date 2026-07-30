@@ -1,0 +1,7 @@
+# НАХОДКА eg-late-close: след вне окна (окно закрылось 2026-07-31T06:00Z) с явной связью со
+# спринтом. Это не порча следа, а ЧУЖОЕ ВРЕМЯ: в participated он не входит, вердикта не меняет.
+# Ожидание с plan-two-blocks (grace = 0): honest_pair × 2 + находка eg-late-close, код 0.
+# Ожидание с plan-grace-2h: тот же след попадает в допуск [to, to+2ч) и находки НЕТ.
+{"traceId":"t-mfcc-run","blockId":"mfcc-core","kind":"context_run","subject":"kuryokhin","at":"2026-07-30T09:15:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-kuryokhin-mfcc.json"}
+{"traceId":"t-gate-run","blockId":"gate-wiring","kind":"context_run","subject":"vesnin","at":"2026-07-30T10:00:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-vesnin-gate.json"}
+{"traceId":"t-gate-review-late","blockId":"gate-wiring","kind":"review_pass","subject":"vesnin","at":"2026-07-31T07:00:00.000Z","ref":"docs/reviews/gate-wiring-teamlead.md","relatesToSprint":true}
