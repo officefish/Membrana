@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "cowork-honest-sprint",
+      "title": "Cowork Sprint: механизм спринта с честными исполнителями",
+      "promptPath": "docs/cowork-sprint/cowork-honest-sprint/COWORK_SPRINT_BRIEF.md",
+      "githubIssue": 1499,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "cowork-sprint",
+      "createdAt": "2026-07-30",
+      "archivedAt": null,
+      "leadPersona": "angelina",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "3 блока cut-contract/execution-gate/experience-loop; изоляция до Interface Consilium; мёрж всех трёх; координатор Ангелина; резка ратифицирована владельцем 30.07; родители — заседание sprint-honest-performers + шторм storm-team-volume-in-work-2026-07-30",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "agent-tooling-friction-2-2026-07-30",
       "title": "Трение тулинга 30.07: грабли аудита и install, живость resolutions, маршрут после ребейза, разбор красного CI",
       "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md",
