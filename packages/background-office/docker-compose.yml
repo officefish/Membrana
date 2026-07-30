@@ -33,6 +33,8 @@ services:
       DREAMS_VOLUME_PATH: ${DREAMS_VOLUME_PATH:-/var/lib/membrana-dreams}
       ARCHIVARIUS_MONGO_URI: ${ARCHIVARIUS_MONGO_URI:-mongodb://archivarius-mongo:27017/membrana_archivarius}
       ARCHIVARIUS_MONGO_DB: ${ARCHIVARIUS_MONGO_DB:-membrana_archivarius}
+      TASK_ARCHIVE_MONGO_URI: ${TASK_ARCHIVE_MONGO_URI:-mongodb://archivarius-mongo:27017/membrana_task_archive}
+      TASK_ARCHIVE_MONGO_DB: ${TASK_ARCHIVE_MONGO_DB:-membrana_task_archive}
     # PU1 (#463, ADR 0005): реестр партнёров панели — единственные
     # невоспроизводимые данные office; без volume пропадут при редеплое.
     # Dreams append-only jsonl (M5): отдельный том, не вложенный в panel-users.

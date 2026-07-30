@@ -22,6 +22,8 @@ const remoteTar = '/tmp/office-src.tgz';
 const tarArgs = [
   '--exclude=packages/background-office/node_modules',
   '--exclude=packages/background-office/dist',
+  '--exclude=packages/background-office/.tsbuildinfo',
+  '--exclude=packages/services/rag/.tsbuildinfo',
   '--exclude=packages/background-office/.env.docker',
   '-czf',
   tarArg,
