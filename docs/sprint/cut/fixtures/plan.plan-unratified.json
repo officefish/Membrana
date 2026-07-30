@@ -1,0 +1,49 @@
+{
+  "//": "КРИВАЯ 6/6 → plan_unratified. Тело = валидная фикстура, но объём первого блока правили ПОСЛЕ согласия (260 → 300), а отметка осталась прежней. Дайджест разъехался с телом: перенос согласия на изменённый контракт запрещён (вердикт M2). Булев ownerRatified: true здесь остался бы зелёным — именно поэтому дайджест.",
+  "schema": "sprint-cut/1",
+  "sprintId": "cowork-honest-sprint",
+  "taskId": "cowork-honest-sprint",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "blocks": [
+    {
+      "blockId": "cut-contract",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/sprint-cut/**",
+        "scripts/sprint-cut-check.mjs"
+      ],
+      "estimate": {
+        "changedLines": 300
+      }
+    },
+    {
+      "blockId": "execution-gate",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/execution-trace/**"
+      ],
+      "estimate": {
+        "changedLines": 240
+      }
+    },
+    {
+      "blockId": "experience-loop",
+      "persona": "rodchenko",
+      "context": "kuryokhin",
+      "zone": [
+        "scripts/lib/sprint-experience/**"
+      ],
+      "estimate": {
+        "changedLines": 220
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-30T12:00:00+03:00",
+    "digest": "db3865751d8753f767421bc4530beff5553390df3149beed5bd7e8835a8466c7"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "//": "СТАБ-снимок закрытого списка id реестра голосов (docs/virtual-team/voices.registry.json, version 1). Тесты берут снимок, чтобы быть детерминированными; CLI по умолчанию читает живой реестр.",
+  "version": 1,
+  "voices": [
+    { "id": "tarasov", "kind": "teamlead" },
+    { "id": "vesnin", "kind": "architect" },
+    { "id": "ozhegov", "kind": "advisor" },
+    { "id": "dynin", "kind": "advisor" },
+    { "id": "kuryokhin", "kind": "advisor" },
+    { "id": "rodchenko", "kind": "advisor" },
+    { "id": "angelina", "kind": "lead" },
+    { "id": "farrell", "kind": "voice" }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "//": "КРИВАЯ 4/6 → context_unnamed. Персона названа, а контекст пуст: «унаследовать» его от персоны нельзя — выведенное значение это тот класс, который заседание запретило. Без адреса контекста сертификации некуда встать.",
+  "schema": "sprint-cut/1",
+  "sprintId": "cowork-honest-sprint",
+  "taskId": "cowork-honest-sprint",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "blocks": [
+    {
+      "blockId": "cut-contract",
+      "persona": "vesnin",
+      "context": "",
+      "zone": [
+        "scripts/lib/sprint-cut/**"
+      ],
+      "estimate": {
+        "changedLines": 260
+      }
+    },
+    {
+      "blockId": "execution-gate",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/execution-trace/**"
+      ],
+      "estimate": {
+        "changedLines": 240
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-30T12:00:00+03:00",
+    "digest": "8c7c5eb7cb45e8b2309499cb88364d24e907f1d71c5d5c4de3a62608db3436a2"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "//": "КРИВАЯ 2/6 → block_oversized. Прогноз 520 изменённых строк против импортированного порога одной проверки ревью. Переполнение — управленческое решение тимлида, поэтому находка несёт адрес и цифры, а не совет «разрежьте мельче».",
+  "schema": "sprint-cut/1",
+  "sprintId": "cowork-honest-sprint",
+  "taskId": "cowork-honest-sprint",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "blocks": [
+    {
+      "blockId": "cut-contract",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/sprint-cut/**"
+      ],
+      "estimate": {
+        "changedLines": 520
+      }
+    },
+    {
+      "blockId": "execution-gate",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/execution-trace/**"
+      ],
+      "estimate": {
+        "changedLines": 240
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-30T12:00:00+03:00",
+    "digest": "1bce45060910c11dceedc32a7bb058fdd06620ea693d17686e02cbadaa03d5d9"
+  }
+}
