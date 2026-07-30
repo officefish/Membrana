@@ -367,6 +367,7 @@
     "strategic-docs:publish": "node scripts/strategic-docs-publish.mjs",
     "research": "node scripts/research.mjs",
     "meeting:status": "node scripts/meeting-status.mjs",
+    "ci:triage": "node scripts/ci-triage.mjs",
     "resolutions:check": "node scripts/resolutions-check.mjs",
     "deps:watch": "node scripts/deps-watch.mjs",
     "meeting:audit": "node scripts/meeting-audit.mjs",
