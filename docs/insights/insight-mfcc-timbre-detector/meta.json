@@ -1,0 +1,13 @@
+{
+  "id": "insight-mfcc-timbre-detector",
+  "title": "Тембровый детектор на MFCC: ловить портрет, а не гармонику",
+  "status": "draft",
+  "source": "user",
+  "horizon": null,
+  "weight": null,
+  "createdAt": "2026-07-30",
+  "researchedAt": null,
+  "reviewedAt": null,
+  "closedAt": null,
+  "tags": []
+}
