@@ -6,6 +6,16 @@ Read first: [`AGENTS.md`](../AGENTS.md), [`.cursorrules`](../.cursorrules).
 
 Claude Code skills in `.claude/skills/` are **thin mirrors** — follow the linked `.cursor/skills/*/SKILL.md` for full playbooks.
 
+## Порядок обращения к инструменту
+
+Сначала `yarn tooling:overview` и/или узкий глагол мастерской (`neighbors`, `orphans`,
+`sets-of`, …); прибор мастерской — **до** разведочного поиска по дереву. Не нашлось ни
+обзором, ни глаголом — греп законен, абсолютного запрета нет.
+
+Источник истины и обоснование: [`AGENTS.md`](../AGENTS.md) → «Порядок обращения к
+инструменту». Здесь — **указатель, не вторая редакция**: расхождение двух копий норму не
+усилит, а сделает непроверяемой.
+
 ## Daily rhythm
 
 <!-- pin:START morning-wiring-claude -->

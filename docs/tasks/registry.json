@@ -1,6 +1,23 @@
 {
   "tasks": [
     {
+      "id": "llm-transport-no-key-class",
+      "title": "llm-транспорт: развести «ключа нет» и «ключ отвергнут»",
+      "promptPath": "docs/prompts/LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md",
+      "githubIssue": 1549,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-31",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "Поймано 31.07 на PR #1548: три прогона code-review читались как испорченный ключ xAI, а X_AI_API_KEY не было в .env вовсе. Пустой ключ отдаёт тот же errorClass auth, что и 401/403. Цена — час диагностики не туда + ложная гипотеза про схему background-office (вызов клиентский). Ключ и кредиты xAI — зона владельца, кодом не решается.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "branch-hygiene-salvage-2026-07-31",
       "title": "Разобрать diverged-ветки и сохранить живые коммиты",
       "promptPath": "docs/prompts/BRANCH_HYGIENE_SALVAGE_2026_07_31_PROMPT.md",

@@ -1,0 +1,82 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "workshop-wires-tranche-3",
+  "taskId": "workshop-wires-tranche-3",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-07-31T08:30:00Z",
+    "to": "2026-07-31T17:00:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "norm-in-agents",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "AGENTS.md",
+        ".cursorrules",
+        ".claude/CLAUDE.md"
+      ],
+      "revisionAt": "2026-07-31T08:30:00Z",
+      "estimate": {
+        "changedLines": 130
+      }
+    },
+    {
+      "blockId": "tool-use-parser",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/tool-use-trace.mjs",
+        "scripts/tool-use-trace.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T08:30:00Z",
+      "estimate": {
+        "changedLines": 300
+      }
+    },
+    {
+      "blockId": "norm-liveness",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "scripts/lib/norm-liveness.mjs",
+        "scripts/norm-liveness.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T08:30:00Z",
+      "estimate": {
+        "changedLines": 250
+      }
+    },
+    {
+      "blockId": "kit-frame",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/patterns/PROCEDURE_FRAMES.md"
+      ],
+      "revisionAt": "2026-07-31T08:30:00Z",
+      "estimate": {
+        "changedLines": 90
+      }
+    },
+    {
+      "blockId": "wholesale-boundary",
+      "persona": "farrell",
+      "context": "farrell",
+      "zone": [
+        "docs/meeting/workshop-wires/BOUNDARY_S7.md"
+      ],
+      "revisionAt": "2026-07-31T08:30:00Z",
+      "estimate": {
+        "changedLines": 80
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-31T11:40:30+03:00",
+    "digest": "ee983836fe65ac62e9938913d5c67f6e597afa17c3a48bf0d3a516fb60085cf7"
+  }
+}

@@ -56,7 +56,7 @@
     {
       "name": "LLM-каналы и провода процедур",
       "patterns": [
-        "^(llm-procedure|lpc-[a-z]|dreams-)"
+        "^(llm-procedure|llm-transport|lpc-[a-z]|dreams-)"
       ]
     }
   ],
