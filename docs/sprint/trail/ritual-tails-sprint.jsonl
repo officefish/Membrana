@@ -1,2 +1,4 @@
 {"traceId":"tr-archive-evidence-ozhegov-context","blockId":"ritual-evening-archive-evidence","kind":"context_run","subject":"ozhegov","at":"2026-07-31T06:16:00Z","ref":"docs/discussions/block-archive-evidence-ozhegov.md"}
 {"traceId":"tr-archive-evidence-ozhegov-review","blockId":"ritual-evening-archive-evidence","kind":"review_pass","subject":"ozhegov","at":"2026-07-31T06:45:00Z","ref":"docs/discussions/block-archive-evidence-ozhegov.md"}
+{"traceId":"tr-manifest-delivery-vesnin-context","blockId":"ritual-evening-manifest-and-delivery","kind":"context_run","subject":"vesnin","at":"2026-07-31T07:00:00Z","ref":"docs/discussions/block-manifest-delivery-vesnin.md"}
+{"traceId":"tr-manifest-delivery-vesnin-review","blockId":"ritual-evening-manifest-and-delivery","kind":"review_pass","subject":"vesnin","at":"2026-07-31T07:30:00Z","ref":"docs/discussions/block-manifest-delivery-vesnin.md"}
