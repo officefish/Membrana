@@ -45,6 +45,23 @@ test('индекс печатает команду в своей колонке'
   assert.match(md, /`yarn scripts:orphans`/u);
 });
 
+test('предметные инструменты мастерской видны в индексе и inspect-модели', () => {
+  const containers = discoverContainers(repoRoot);
+  const git = containers.find((c) => c.home === 'docs/audit/git');
+  assert.deepEqual(
+    git.domainTools.map((item) => item.name),
+    ['reconcile', 'applyRatifiedPlan', 'closeout'],
+  );
+  assert.equal(git.commands.applyRatifiedPlan, 'yarn repo:branches:apply-plan');
+
+  const md = renderAtlasRegistry(containers);
+  assert.match(md, /## Предметные инструменты мастерских/u);
+  assert.match(md, /`applyRatifiedPlan` \| `yarn repo:branches:apply-plan`/u);
+
+  const mdx = renderMintlifyPage(containers);
+  assert.match(mdx, /`closeout` → `yarn repo:branches:closeout`/u);
+});
+
 test('дом без манифеста входного глагола не выдумывает', () => {
   const home = discoverContainers(repoRoot).find((c) => c.kind !== 'workshop');
   assert.ok(home, 'домов без мастерской обязано быть больше нуля');

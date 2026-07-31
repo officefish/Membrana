@@ -96,6 +96,15 @@ export function discoverContainers(repoRoot) {
     const v = rec.hasManifest ? validateWorkshop(manifestPath, repoRoot) : { valid: true, warnings: [], problems: [] };
     const verbs = manifest?.verbs ?? {};
     const present = MANDATORY.filter((k) => typeof verbs[k] === 'string' && verbs[k].trim() !== '');
+    const domainTools = Array.isArray(verbs.domain)
+      ? verbs.domain
+          .filter((item) => item !== null && typeof item === 'object' && !Array.isArray(item))
+          .map((item) => ({
+            name: String(item.name ?? '').trim(),
+            worksOn: String(item.worksOn ?? '').trim(),
+            tool: typeof item.tool === 'string' && item.tool.trim() !== '' ? item.tool.trim() : null,
+          }))
+      : [];
     const missingVerbs = rec.hasManifest ? MANDATORY.filter((k) => !present.includes(k)) : [];
     const home = rec.home;
     const worksOn = typeof manifest?.worksOn === 'string' ? manifest.worksOn : home;
@@ -110,8 +119,16 @@ export function discoverContainers(repoRoot) {
       // Команды, а не имена: `audit` — ключ, `yarn repo:branches` — дверь. Печатать ключ
       // значит предлагать вызов, которого не существует (тот же дефект, что пол сессии
       // поймал у себя 31.07).
-      commands: Object.fromEntries(present.map((k) => [k, String(verbs[k]).trim()])),
+      commands: {
+        ...Object.fromEntries(
+          Object.entries(verbs)
+            .filter(([, command]) => typeof command === 'string' && command.trim() !== '')
+            .map(([name, command]) => [name, command.trim()]),
+        ),
+        ...Object.fromEntries(domainTools.filter((item) => item.tool).map((item) => [item.name, item.tool])),
+      },
       entryCommand: present.length > 0 ? String(verbs[present[0]]).trim() : null,
+      domainTools,
       // `usage` — поле-сосед из поправки Ф1: что даёт вызов и как выглядит вывод. Отдаётся
       // как есть; форму проверяет валидатор, а не справочник — двойная проверка разъехалась
       // бы первой же правкой схемы.
@@ -236,6 +253,21 @@ export function renderAtlasRegistry(containers, opts = {}) {
     lines.push('');
   }
 
+  const domainTools = workshops.flatMap((c) => c.domainTools.map((item) => ({ home: c.home, ...item })));
+  if (domainTools.length > 0) {
+    lines.push('## Предметные инструменты мастерских');
+    lines.push('');
+    lines.push('Команды из `verbs.domain`; это полноправные двери мастерской, а не скрытые примечания к трём общим глаголам.');
+    lines.push('');
+    lines.push('| Контейнер (`home`) | Инструмент | Команда | `worksOn` |');
+    lines.push('|--------------------|------------|---------|-----------|');
+    for (const item of domainTools) {
+      const command = item.tool ? `\`${cell(item.tool)}\`` : '—';
+      lines.push(`| [${cell(item.home)}](../../../${item.home}/README.md) | \`${cell(item.name)}\` | ${command} | \`${cell(item.worksOn)}\` |`);
+    }
+    lines.push('');
+  }
+
   // Проекция реестра — ОТДЕЛЬНОЙ секцией (§3). Атлас потребитель-агрегатор: источник истины
   // о членстве остаётся в REGISTRY.json, здесь только проекция, и «строка ATLAS» истиной
   // не является.
@@ -303,6 +335,10 @@ export function renderMintlifyPage(containers) {
       lines.push(`- **role:** ${mdxSafe(roleMark(c))}`);
       lines.push(`- **worksOn:** \`${mdxSafe(c.worksOn)}\``);
       lines.push(`- **Глаголы мастерской:** ${MANDATORY.map((k) => (c.verbs.includes(k) ? `\`${k}\`` : `~~${k}~~`)).join(', ')}`);
+      if (c.domainTools.length > 0) {
+        const tools = c.domainTools.map((item) => `\`${mdxSafe(item.name)}\` → ${item.tool ? `\`${mdxSafe(item.tool)}\`` : 'команда не объявлена'}`);
+        lines.push(`- **Предметные инструменты:** ${tools.join('; ')}`);
+      }
       lines.push(`- **kit:** \`${mdxSafe(c.kit)}\``);
       lines.push('');
     }

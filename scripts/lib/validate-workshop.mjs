@@ -112,14 +112,28 @@ export function workshopSchemaProblems(m) {
     if (u === null || typeof u !== 'object' || Array.isArray(u)) {
       problems.push('usage — не объект');
     } else {
-      const verbKeys = m.verbs !== null && typeof m.verbs === 'object' && !Array.isArray(m.verbs)
-        ? Object.keys(m.verbs)
+      const verbs = m.verbs !== null && typeof m.verbs === 'object' && !Array.isArray(m.verbs)
+        ? m.verbs
+        : {};
+      const verbKeys = Object.entries(verbs)
+        .filter(([, value]) => value === null || isNonEmptyString(value))
+        .map(([name]) => name);
+      const domainTools = Array.isArray(verbs.domain)
+        ? verbs.domain.filter((item) => item !== null && typeof item === 'object' && !Array.isArray(item))
         : [];
+      const domainByName = new Map(
+        domainTools.filter((item) => isNonEmptyString(item.name)).map((item) => [item.name, item]),
+      );
+      const callableKeys = new Set([...verbKeys, ...domainByName.keys()]);
       for (const [k, rec] of Object.entries(u)) {
-        // Подмножество verbs: пример для несуществующего глагола описывает дверь, которой
-        // нет. Тот же класс, что пойман 31.07 в полу сессии и в атласе.
-        if (!verbKeys.includes(k)) {
-          problems.push(`usage.${k} — глагола нет в verbs: пример описывает дверь, которой не существует`);
+        // Подмножество исполнимых дверей: обычный глагол или именованный доменный
+        // инструмент. Массивы `stackLike`/`domain` сами командами не являются.
+        if (!callableKeys.has(k)) {
+          problems.push(`usage.${k} — глагола или доменного инструмента нет в verbs: пример описывает дверь, которой не существует`);
+          continue;
+        }
+        if (domainByName.has(k) && !isNonEmptyString(domainByName.get(k).tool)) {
+          problems.push(`usage.${k} — доменный инструмент не объявляет tool: пример нечем вызвать`);
           continue;
         }
         if (rec === null || typeof rec !== 'object' || Array.isArray(rec)) {
@@ -187,12 +201,21 @@ export function workshopSchemaProblems(m) {
         if (!Array.isArray(v.domain)) {
           problems.push('verbs.domain — не массив');
         } else {
+          const domainNames = new Set();
           v.domain.forEach((d, i) => {
             if (d === null || typeof d !== 'object' || Array.isArray(d)) {
               problems.push(`verbs.domain[${i}] — не объект`);
             } else {
               if (!isNonEmptyString(d.name)) problems.push(`verbs.domain[${i}].name — не непустая строка`);
+              else if (domainNames.has(d.name)) problems.push(`verbs.domain[${i}].name — повтор: ${d.name}`);
+              else {
+                domainNames.add(d.name);
+                if (vkeys.includes(d.name)) problems.push(`verbs.domain[${i}].name — конфликт с глаголом: ${d.name}`);
+              }
               if (!isNonEmptyString(d.worksOn)) problems.push(`verbs.domain[${i}].worksOn — не непустая строка (каждый доменный инструмент несёт worksOn)`);
+              if (Object.hasOwn(d, 'tool') && !isNonEmptyString(d.tool)) {
+                problems.push(`verbs.domain[${i}].tool — не непустая строка`);
+              }
               for (const dk of Object.keys(d)) {
                 if (!KNOWN_DOMAIN_KEYS.includes(dk)) problems.push(`verbs.domain[${i}] — лишний ключ ${dk}`);
               }
