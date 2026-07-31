@@ -1,0 +1,57 @@
+{
+  "dayKey": "2026-07-31",
+  "archivedAt": "2026-07-31T14:15:49.559Z",
+  "command": "yarn archive:daily-day",
+  "bundleDir": "docs/archive/daily-day/2026-07-31",
+  "role": "archive-snapshot",
+  "note": "Не канон сегодняшнего дня; побочный снимок для ретроспективы и анализа. Актуальные файлы — в docs/.",
+  "canonicalPaths": {
+    "STRATEGY_DAY": "docs/STRATEGY_DAY.md",
+    "DAY_PLAN (канон дня, 5 слотов)": "docs/DAY_PLAN.md",
+    "STRATEGIC_PLAN_DAY (вещдок, устар.)": "docs/STRATEGIC_PLAN_DAY.md",
+    "DAILY_STANDUP": "docs/DAILY_STANDUP.md",
+    "MAIN_DAY_ISSUE": "docs/MAIN_DAY_ISSUE.md"
+  },
+  "files": [
+    {
+      "label": "STRATEGY_DAY",
+      "source": "docs/STRATEGY_DAY.md",
+      "archiveName": "STRATEGY_DAY.md",
+      "bytes": 12964,
+      "archiveRole": "archive-snapshot",
+      "action": "copied"
+    },
+    {
+      "label": "DAY_PLAN (канон дня, 5 слотов)",
+      "source": "docs/DAY_PLAN.md",
+      "archiveName": "DAY_PLAN.md",
+      "bytes": 5917,
+      "archiveRole": "archive-snapshot",
+      "action": "copied"
+    },
+    {
+      "label": "STRATEGIC_PLAN_DAY (вещдок, устар.)",
+      "source": "docs/STRATEGIC_PLAN_DAY.md",
+      "archiveName": "STRATEGIC_PLAN_DAY.md",
+      "bytes": 15674,
+      "archiveRole": "archive-snapshot",
+      "action": "copied"
+    },
+    {
+      "label": "DAILY_STANDUP",
+      "source": "docs/DAILY_STANDUP.md",
+      "archiveName": "DAILY_STANDUP.md",
+      "bytes": 4789,
+      "archiveRole": "archive-snapshot",
+      "action": "copied"
+    },
+    {
+      "label": "MAIN_DAY_ISSUE",
+      "source": "docs/MAIN_DAY_ISSUE.md",
+      "archiveName": "MAIN_DAY_ISSUE.md",
+      "bytes": 23775,
+      "archiveRole": "archive-snapshot",
+      "action": "copied"
+    }
+  ]
+}
