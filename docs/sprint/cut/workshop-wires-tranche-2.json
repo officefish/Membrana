@@ -1,0 +1,82 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "workshop-wires-tranche-2",
+  "taskId": "workshop-wires-tranche-2",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-07-31T07:05:00Z",
+    "to": "2026-07-31T16:00:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "waiver-expiry",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/orphan-waiver.mjs",
+        "scripts/orphan-waiver.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T07:05:00Z",
+      "estimate": {
+        "changedLines": 200
+      }
+    },
+    {
+      "blockId": "invariant-core",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/belongs-invariant.mjs",
+        "scripts/belongs-invariant.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T07:05:00Z",
+      "estimate": {
+        "changedLines": 300
+      }
+    },
+    {
+      "blockId": "invariant-report",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "scripts/belongs-tooth.mjs",
+        "scripts/belongs-tooth.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T07:05:00Z",
+      "estimate": {
+        "changedLines": 220
+      }
+    },
+    {
+      "blockId": "experience-record-seam",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/sprint-experience.mjs",
+        "scripts/sprint-experience-seam.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T07:05:00Z",
+      "estimate": {
+        "changedLines": 200
+      }
+    },
+    {
+      "blockId": "s3-pointer",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/meeting/workshop-wires/CONTRACT.md"
+      ],
+      "revisionAt": "2026-07-31T07:05:00Z",
+      "estimate": {
+        "changedLines": 30
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-31T10:06:09+03:00",
+    "digest": "5c11b3b2b6b1c2ed43f8752163fb14fdc79ff1a7fafbc32338087ae1f37a8b14"
+  }
+}
