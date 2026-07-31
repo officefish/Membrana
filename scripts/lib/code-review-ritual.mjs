@@ -6,7 +6,7 @@ import { dirname, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 import { parseRagCliFlags } from './rag-ritual.mjs';
-import { renderVerdictMarker } from './review-gate.mjs';
+import { renderScopeMarker, renderVerdictMarker } from './review-gate.mjs';
 
 export const REGULATION_PATH = 'docs/prompts/CODE_REVIEW_REGULATION.md';
 export const VIRTUAL_TEAM_PATH = 'docs/VIRTUAL_TEAM_PROMPT.md';
@@ -152,6 +152,27 @@ function runGit(args) {
     throw new Error(res.stderr?.trim() || res.stdout?.trim() || `git ${args.join(' ')} failed`);
   }
   return (res.stdout || '').trimEnd();
+}
+
+/**
+ * Метка обрезки, которую оставляет trimText. Вынесена в предикат, потому что факт
+ * «модель видела не весь дифф» обязан дойти до ВЕРДИКТА, а не только до промпта.
+ *
+ * Живой случай 31.07 (#1550): дифф PR #1551 — 212 879 символов при пороге 120 000.
+ * Ревьюер получил 56% и вынес блокеры о телах файлов, которых ему не показали.
+ * Четыре прогона на одном коде дали ЧЕТЫРЕ непересекающихся набора обвинений при
+ * устойчивом BLOCK — то есть вердикт перестал опираться на содержание, а гейт не мог
+ * отличить «в коде дефект» от «дифф не прочитан».
+ */
+export const DIFF_TRUNCATED_RE = /\[…\s*diff обрезан до (\d+) символов\s*…\]/u;
+
+/**
+ * @param {string} contextText собранный контекст ревью
+ * @returns {{ truncated: boolean, sentChars: number|null }}
+ */
+export function diffTruncation(contextText) {
+  const m = String(contextText ?? '').match(DIFF_TRUNCATED_RE);
+  return m ? { truncated: true, sentChars: Number(m[1]) } : { truncated: false, sentChars: null };
 }
 
 function trimText(text, maxChars, label) {
@@ -344,13 +365,19 @@ export function writeReviewMarkdown(opts) {
   // Шип-гейт (#924): ревью PR несёт МАШИННЫЙ вердикт, привязанный к HEAD SHA той
   // версии, которую смотрели. Без привязки ревью обходится молча: прогнал на одном
   // коммите, дописал второй, влил неревьюенное. Вердикт читает `yarn review:gate`.
+  // #1550: срез диффа — машиночитаемая метка в САМОМ артефакте. Гейт по ней разводит
+  // «в коде дефект» (block) и «дифф не прочитан» (unknown). Слить их нельзя: это тот же
+  // класс, на котором 30.07 был пойман meeting:audit — «нарушений 0» на пустом корпусе.
+  const scopeLine = opts.meta.diffScope?.truncated
+    ? `${renderScopeMarker(opts.meta.diffScope)}\n> ⚠ **СУДИЛ ПО СРЕЗУ:** дифф обрезан до ${opts.meta.diffScope.sentChars} символов — часть файлов ревьюеру не показана. Вердикт не является суждением о непоказанном.\n\n`
+    : '';
   let verdictLine = '';
   if (opts.meta.mode === 'pr' && opts.meta.headSha) {
     const verdict = verdictFromBody(opts.body);
     verdictLine = `${renderVerdictMarker({ sha: opts.meta.headSha, verdict, lead: opts.meta.lead ?? null, at: stamp })}\n\n`;
   }
   mkdirSync(dirname(opts.path), { recursive: true });
-  writeFileSync(opts.path, header + verdictLine + opts.body, 'utf8');
+  writeFileSync(opts.path, header + scopeLine + verdictLine + opts.body, 'utf8');
 }
 
 /**
