@@ -5,8 +5,8 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14360/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 235 (причины в op-log) -->
+Записей: 48 · бюджет 14375/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 243 (причины в op-log) -->
 
 ### 2026-07-30 · позиция · sprint-honest-m2-contract
 
@@ -115,6 +115,54 @@
 > Положение: M6 уже поставил оптовый пол; #1467 запретил опт **проводов**. Матч комнаты — не выбирать «кто победил», а назвать границу, иначе команда снова сыграет тренировку «починим навигацию пачкой». Планка: отношение + признак выбора + судьба прецедентов. Без «зависит» без […] _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/workshop-wires-m9-wholesale-retail-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m0-order
+
+> Планка M0: только порядок и рёбра. Не вердиктим Mongo vs JSONL, поля manifest и судьбу insight по существу. Связка: Математик — предикат ребра; Структурщик — леммы; Архитектор — фундамент/терминал. Матч — направленный граф без обратного ранга. Держим состав семи номеров […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m0-order-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m1-source-of-truth
+
+> Планка матча узкая — выбрать ровно одну модель SoT и назвать append-only / derived / fallback / forbidden. Не лезем в поля checkpoint, evidence, writer, migration, lifecycle insight. Связка: Архитектор — форма дома; Структурщик — леммы границ; Математик — предикат append-only. […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m1-source-of-truth-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m2-evidence-contract
+
+> Планка матча узкая: минимальный evidence contract, required vs optional/derived, forbidden hints, явный отказ выводить L/O. Не лезем в checkpoint shape, writer, recovery, migration, insight lifecycle. Связка: Структурщик — леммы полей; Математик — предикат valid; Архитектор — […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m3-repo-checkpoint
+
+> Планка M3 узкая. M1: Mongo office — канон, repo — carrier. M2: cold-record с `proof` уже закрыт. Сегодня только: что лежит в git как маленький слепок, какие поля, как доказать тождество серверного архива, что — sanity, что checkpoint **не** значит. Q5 writer, Q4 restore, Q6 […] _(реплик в сеансе: 8)_
+
+— источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m4-write-path-idempotency
+
+> Планка матча узкая: writer roles, sequence, idempotency key, partial failure, retry, Git SHA consistency, forbidden, boundary. Не лезем в Q4/Q6/Q7. Связка: Структурщик — леммы homes; Архитектор — порядок notarize; Математик — ключ и предикаты BLOCK vs retry; Музыкант — […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m5-recovery-audit
+
+> Планка матча M5 узкая: audit + recovery без переписывания append-only. M1–M4 закрыты — Mongo канон, repo carrier, checkpoint = `recordCount + contentHash`, partial = retry export без delete. Не лезем в Q6 legacy migration и Q7 insight. Связка: Математик — предикаты схождения и […] _(реплик в сеансе: 8)_
+
+— источник: `docs/seanses/task-archive-cold-store-m5-recovery-audit-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m6-migration-path
+
+> Планка матча M6: путь переноса без rewrite history, без потери ссылок, без подмены hint→proof. Не играем Q7. Связка: Архитектор — граница import; Математик — stop-предикаты; Структурщик — словарь classification; Верстальщик — честность stub/витрин; Музыкант — «не remaster». […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m6-migration-path-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m7-lifecycle-integration
+
+> Планка матча узкая. M1–M6 — вход, обратный ранг запрещён. Здесь не пишем код и не гоняем миграцию. Решение комнаты: что канонизируем в INSIGHT как ревизию, что уходит в backlog task cards, кто ратифицирует до «implementation done», и жёсткое L/O non-proof. Связка на вердикт: […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m7-lifecycle-integration-2026-07-30.md#reply-1`
 
 ### 2026-07-29 · позиция · network-container-form
 
@@ -241,54 +289,6 @@
 > Планка матча: не «улучшить скрипт», а исполнить C1–C5 зубами. Связка: Архитектор — границы модулей; Структурщик — API и homes; Математик — предикаты зубов и selectOperational; Музыкант — слух на recency/вытеснение; Верстальщик — честная пустота проекции для потребителей. Вердикт […] _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/memory-subconscious-m6-extractor-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** STRATEGY_DAY устарел (сгенерирован 17.07 на 18.07) — помечен красным щитом как нерабочий документ. DAILY_STANDUP и MAIN_DAY_ISSUE качественные: магистраль DAY_MEMO чётко обоснована owner-choice, таблица посылок и сознательные «не делаем» снижают риск […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-28.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m0-order
-
-> Положение: M0 только про порядок, не про существо шести кандидатов. Планка — направленный граф, фундамент, терминал, риск обратного ранга. Связка: Математик формализует предикат ребра, Структурщик — леммы, Архитектор — границы формы. Не вердиктим состав, фреймы и пульт по […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/bridge-command-post-m0-order-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m1-cast
-
-> Положение ясно: объявили троих, поднялся один попугай — матч не сыгран. Планка cast-carrier-contract: объявленный обязан быть вызываемым. Не рисуем роли «для красоты». Вопрос комнаты — не фреймы и не пульт (M2/M5), а **кто входит в состав** и **какой носитель у каждого**. […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/bridge-command-post-m1-cast-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m2-frames
-
-> Положение: M1 ратифицирован — cast angelina/farrell/parrot; мостик — свободный режим с повторяемыми открытием и закрытием. Задача комнаты — нарезать фреймы по ядру, не лезть в M3–M6. Решение: идём от trigger к homes, каждый фрейм — с носителем. Связка: Архитектор форму, […] _(реплик в сеансе: 10)_
-
-— источник: `docs/seanses/bridge-command-post-m2-frames-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m3-truth-contract
-
-> Планка ясна: связка lead инициирует `gesture.mint_intent` → эта комната исполняет контракт отбора → mint только если треугольник собран и граница гранит/поток проведена. Не изобретаем экономику маны за владельца. Фаза «до маны» обязана работать сегодня; слот «с маной» — пустой […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m3-truth-contract-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m4-improvisation-cases
-
-> Положение: M1–M3 ратифицированы; эта комната — C3 из M0, раньше пульта. Не проектируем дом кейсов и не трогаем M5/M6. Нужны три закрытия: (1) форма кейса = тело + подвал метаданных; (2) критерий «несущий vs музей»; (3) путь кейс → инструкция с провенансом. Связка: Архитектор — […] _(реплик в сеансе: 8)_
-
-— источник: `docs/seanses/bridge-command-post-m4-improvisation-cases-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m5-console
-
-> Положение: владелец уже сказал «не хочу смотреть инлайн». Это не вкус, а бриф матча. Решение комнаты — контракт пульта с машинным зубом на carrier, не памятка «пожалуйста, запускай субагента». Связка: Архитектор+Структурщик — форма и API; Математик — предикаты гейта; Верстальщик […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/bridge-command-post-m5-console-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m6-debts-observations
-
-> Рамка узкая: M1–M5 не пересматриваем. Попугай = memory, kit-engine, `gate.parrot_live_if_debts` на open, `gesture.debts` — optional. Связка комнаты: Математик — контракт состояний долга; Структурщик — границы API и homes; Верстальщик — честная пустота тетради; Музыкант — слух на […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m6-debts-observations-2026-07-27.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
 

@@ -5,8 +5,8 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14342/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 235 (причины в op-log) -->
+Записей: 48 · бюджет 14360/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 243 (причины в op-log) -->
 
 ### 2026-07-30 · позиция · sprint-honest-m2-contract
 
@@ -115,6 +115,54 @@
 > Формализую. Пусть W — множество мастерских в проекции, T — инструменты, S — холодные сессии. `floor(S) = Π(projection)` — одинаков ∀S (оптовый инвариант M6). `wire(t)` — отдельный акт, t∈T. Предикат заявки: `ticket(t) ⇔ ∃ precedent(t) ∈ cold-start`. Инвариант #1467: `¬∃ […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/workshop-wires-m9-wholesale-retail-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m0-order
+
+> Предикат ребра фиксирую: A→B ⇔ область определения вопроса B содержит переменную, которую задаёт ответ A. Не runtime скриптов и не «удобно рядом». V={1,2,3,4,5,6,7}. Q1 задаёт переменную *canonStore* (и append-only vs derived) — без неё dom(Q2), dom(Q4), dom(Q5), dom(Q6) пусты. […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m0-order-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m1-source-of-truth
+
+> Формализую без UI. Пусть R — множество архивных записей закрытых задач. SoT-модель задаёт функцию author(r): кто имеет право создать канонический r. Append-only: операция A допустима ⇔ A добавляет r с новым id (или идемпотентный повтор того же ключа), не update-in-place полей […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/task-archive-cold-store-m1-source-of-truth-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m2-evidence-contract
+
+> Формализую без UI. Пусть R — cold-record. Предикат допустимости: `valid(R) ⇔ required(R) ⊆ dom(R) ∧ ∀ e ∈ required(R): verifiable(e) ∧ schemaVersion(R) ∈ Supported`. `verifiable(e)` — существует внешний или внутренний якорь (PR number, commit SHA, issue id, actor id), а не […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m3-repo-checkpoint
+
+> Формализую. Пусть A — упорядоченное мультимножество канонических cold-records (M2). Нужна функция `H: Serialize(A) → digest`, и checkpoint C такой, что `verify(C, A) ⇔ H(A) = C.contentHash ∧ |A| = C.recordCount` (и согласованные границы эпохи, если есть). C ≪ A по размеру. C не […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m4-write-path-idempotency
+
+> Формализую без UI. Пусть R — payload cold-record (M2), k — idempotency key. Операция `notarize(k, R) → {created(R*), existing(R*), reject(reason)}`. Инвариант append-only: повтор с тем же k и эквивалентным R даёт `existing`, не второй документ. Эквивалентность: canonical bytes R […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m5-recovery-audit
+
+> Формализую без UI. Пусть \(R\) — упорядоченное множество канонических cold-records из Mongo SoT, \(H = hash(canonicalize(R))\), \(n = |R|\). Checkpoint \(C = (n_C, H_C, \ldots)\). Предикат схождения: `converged(C,R) ⇔ n_C = n ∧ H_C = H`. Audit checks — тотальная функция […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/task-archive-cold-store-m5-recovery-audit-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m6-migration-path
+
+> Формализую. Пусть L — множество legacy-артефактов. Классификация: `candidate(x) ⇔ x ∈ archive_md ∧ ∃ taskId(x) ∧ shape_allows_notary(x)`; `derived(x) ⇔ x ∈ {registry.json, README, index-views}`. Import-предикат: `importable(x) ⇔ candidate(x) ∧ evidence_ok(x per M2) ∧ […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m6-migration-path-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m7-lifecycle-integration
+
+> Формализую без UI. Пусть I — insight, R — revision decision document, T — множество task closures с evidence e ∈ Evidence_task. M2: `proves_closure(e, taskId)` ⇏ `L(I) ∨ O(I)`. Предикат non-proof: `¬(∃ design∨plan∨checkpoint_schema : marks_LO(I))`. L/O требует отдельного […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m7-lifecycle-integration-2026-07-30.md#reply-1`
 
 ### 2026-07-29 · позиция · network-container-form
 
@@ -241,54 +289,6 @@
 > Формализую selectOperational без UI: `selectOperational(candidates, importance, budget) → {retained, transferred, report}`. Инварианты: Σtokens(retained) ≤ budget; pinned ⊆ retained ∨ fail-closed error; transfer сопровождается importanceSnapshot. Предикат erase: отсутствует в […] _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/memory-subconscious-m6-extractor-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** MAIN_DAY_ISSUE честно маркирует отсутствие математического слоя — это правильно. DAILY_CODE_REVIEW отметил, что на видимом diff FFT/NaN/analyzer нет — продуктовая математика не двигалась. **Итоги дня:** Спектральные детекторы не затронуты — вся работа на […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-28.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m0-order
-
-> Предикат ребра фиксирую как в leveling/channels M0: ребро A→B ⇔ область определения вопроса B содержит переменную, которую задаёт ответ A. Не runtime-порядок скриптов и не «удобно обсуждать рядом». Обозначу кандидатов V={C1..C6}: C1 состав/носители, C2 фреймы ядра, C3 […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m0-order-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m1-cast
-
-> Формализую присутствие без UI. Род участника — закрытое множество из cast-carrier: `lead | voice | memory` (память долгов). Предикат резолва носителя: `resolvable(id) ⇔ id ∈ registry ∧ promptOrEngineExists(id) ∧ channelOrCall(id) ≠ ∅`. Для комнаты мостика нужен *отдельный* […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m1-cast-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m2-frames
-
-> Формализую без UI. Пусть сессия S имеет фазу `φ ∈ {idle, open, free, close, sealed}`. Trigger: `idle → open` только по явному слову капитана (не presence). Gate — булев предикат `g(ctx) → pass|wait|stop`, детерминированный по ctx, без «постараться». Homes — инъекция типа […] _(реплик в сеансе: 9)_
-
-— источник: `docs/seanses/bridge-command-post-m2-frames-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m3-truth-contract
-
-> Формализую треугольник без UI. Пусть T — озвученная мысль (цитата+адрес), P1,P2 — два доказательства пользы для продукта. Допуск к кандидату в кристалл: `triangle(T,P1,P2) = defined(T) ∧ benefit(P1) ∧ benefit(P2) ∧ distinct(P1,P2)`. Это необходимое условие формы, не достаточное […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m3-truth-contract-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m4-improvisation-cases
-
-> Формализую объект. Кейс = пара `(body, meta)`, meta — конечный набор меток с закрытыми доменами. Статика: после commit meta и body иммутабельны (append-only история версий — отдельный id, не mute in place). Предикат несущего: `bearing(case) ∈ {bearing, museum, candidate}` — […] _(реплик в сеансе: 8)_
-
-— источник: `docs/seanses/bridge-command-post-m4-improvisation-cases-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m5-console
-
-> Формализую предмет. Пульт — это пара каналов с разными контрактами: `exec_feed` (поток шагов цепочки) и `lead_chat` (дискретные доклады о событиях). Предикат «субагент запущен» обязан быть проверяем до первого шага цепочки: `carrier = subagent | inline | refused`. Инлайн перед […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/bridge-command-post-m5-console-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m6-debts-observations
-
-> Чистая модель долга. Пусть \(D\) — множество активных долгов. События детерминированы: `birth(payload) → d∈D`, `repeat(d) → count++` при предикате повтора (#1208), `repay(d, evidence) → d∉D`. Одно \(d\) в один момент — ровно один status из закрытого enum. Наблюдение \(o\) **не** […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/bridge-command-post-m6-debts-observations-2026-07-27.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
 

@@ -5,8 +5,8 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14388/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 235 (причины в op-log) -->
+Записей: 48 · бюджет 14341/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 243 (причины в op-log) -->
 
 ### 2026-07-30 · позиция · sprint-honest-m2-contract
 
@@ -115,6 +115,54 @@
 > С витрины холодной сессии пол — это оглавление: мастерская, глагол входа, callable, ссылка. Если оглавление врёт «всё уже проведено», а сессия снова пишет разведочный греп (30.07) — фальшь витрины хуже пустоты. Оптовый слой обязан читаться как **карта наличия**, не как бейдж […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/workshop-wires-m9-wholesale-retail-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m0-order
+
+> С витрины следующих комнат вердикт M0 обязан читаться без легенды: семь номеров в ряд и у каждого — «ждёт Q…», не абзац про Mongo. Если порядок спрятать в прозу «сначала про истину, потом про слепок» — капитан и секретарь снова рисуют фальшивую полноту. Предмет — холодный архив […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m0-order-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m1-source-of-truth
+
+> С витрины оператора и агента фальшь такая: бейдж «архив в репо» при том, что правда на Mongo, или наоборот. Нужна одна честная подпись дома: cold SoT = office. Checkpoint в git — не карточка задачи, а индикатор целостности (есть/нет/stale), без притворства, что JSONL — полная […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/task-archive-cold-store-m1-source-of-truth-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m2-evidence-contract
+
+> С витрины аудитора и капитана карточка «закрыто» без PR/SHA/review — фальшивое присутствие, как бейдж «исполнитель» без следа. Требую, чтобы required evidence читались как факты с якорями, а не как проза «сделано». Пустота честная: нет issue — поле отсутствует или `null` с […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m3-repo-checkpoint
+
+> С витрины агента и капитана checkpoint обязан читаться без легенды: одна карточка-манифест, не простыня JSONL. Видны: версия схемы, сколько закрытий учтено, digest, момент слепка. Фальшь витрины: зелёный «архив в repo», когда в git только hash. Пустота честная: нет digest — нет […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m4-write-path-idempotency
+
+> С витрины оператора/агента статус закрытия обязан читаться без легенды: `accepted | duplicate | rejected_proof | retryable | blocked`. Фальшь: зелёный «в архиве», пока Mongo не подтвердил record id. Uncommitted checkpoint в рабочей копии — не бейдж «durable»; максимум […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m5-recovery-audit
+
+> С витрины оператора/аудитора статусы обязаны читаться без легенды. Не один бейдж «ok/fail». Нужен закрытый алфавит: converged, count_mismatch, hash_mismatch, canonicalization_error, missing_checkpoint, office_unavailable, office_corrupt, emergency_repo_sot, restore_in_progress, […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/task-archive-cold-store-m5-recovery-audit-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m6-migration-path
+
+> С витрины читателя старые markdown-пути и ссылки из PR/Issue обязаны остаться честными. Фальшь: «файл удалён, идите в Mongo» без redirect-таблицы. После миграции витрина repo — либо freeze-штамп «archived → cold id», либо тонкий stub с каноническим `taskId`/`recordId`, не […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m6-migration-path-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m7-lifecycle-integration
+
+> С витрины карточки инсайта читатель обязан видеть честный статус, не декоративный «архив готов = L/O». M2 уже сказал: evidence закрывает task, не insight. На карточке `insight-task-archive-storage` после M7 — явная ревизия решения (hybrid SoT, checkpoint в repo), бейдж статуса […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m7-lifecycle-integration-2026-07-30.md#reply-1`
 
 ### 2026-07-29 · позиция · network-container-form
 
@@ -242,56 +290,8 @@
 
 — источник: `docs/seanses/memory-subconscious-m6-extractor-2026-07-28.md#reply-1`
 
-### 2026-07-28 · позиция · team-evening-feedback
+### 2026-07-23 · позиция · llm-procedure-channels-m2a-scope
 
-> **Оценка артефактов:** UI/DESIGN.md/a11y не затронуты. DAILY_CODE_REVIEW отмечает: сгенерированные markdown (DAY_PLAN, STANDUP, MAIN_DAY_ISSUE, HANDOFF) — презентация для агентов, не продукт. **Итоги дня:** Пользовательского интерфейса не касались. `docs/memos/2026-07-28.md` — […]
+> На панели v1 список процедур = filter meters∧routingEnabled, не «весь registry». Иначе владелец видит серые тумблеры. Витрина честная: два ряда. Расширение — новый ряд после PR. _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/team-evening-feedback-2026-07-28.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m0-order
-
-> С витрины потребителя (капитан на мостике, ведущая в чате): без состава непонятно, чьи доклады вообще рисуются; без фреймов пульт — декорация. Рисую узлы, жду рёбра. Не обсуждаю layout ленты — только что должно быть определено раньше, чтобы витрина имела предмет. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m0-order-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m1-cast
-
-> С витрины капитана: если в протоколе написано «Ангелина ведёт», а говорит безымянный агент — это фальшивое присутствие, декор без смысла. Требую в вердикте явный статус носителя: `callable | engine | absent`. Честная пустота видима в том же месте, где состав. Не проектирую ленту […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m1-cast-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m2-frames
-
-> С витрины капитана состояние должно читаться без легенды: idle / на мостике / ждём капитана / закрыт вечером. Пульт (M5) не рисуем, но контракт фреймов обязан дать честные метки фаз — иначе позже лента станет декором. Open/close — видимые скобки; free body не маскировать […] _(реплик в сеансе: 9)_
-
-— источник: `docs/seanses/bridge-command-post-m2-frames-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m3-truth-contract
-
-> С витрины оператору нужна честная таблица состояний кандидата, не метафора «магии кристалла». Строка: мысль (quote+limit) → P1 → P2 → статус {stream | triangle_ready | mint_pending | minted | rejected}. Пустота маны видна: бейдж `mana: n/a (phase-before)`. Фальшивый счётчик […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/bridge-command-post-m3-truth-contract-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m4-improvisation-cases
-
-> С витрины: подвал — не сноска «для разработчиков», а несущая полоса карточки. Оператор и агент видят одни и те же метки: id, дата сессии, статус (candidate|bearing|museum), ссылки на сырьё, вывод одной строкой, provenance→instruction (пусто = ещё не вшит). Честная пустота: нет […] _(реплик в сеансе: 8)_
-
-— источник: `docs/seanses/bridge-command-post-m4-improvisation-cases-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m5-console
-
-> С витрины капитана два блока, не один скролл. (1) **Лента исполнения** — узкая, моноширинная, шаги/статусы, сворачиваема, не главный акцент. (2) **Чат ведущей** — основной столбец: доклады, вопросы к капитану, статус носителя. Конструктивизм: `carrier: refused` виден бейджем в […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/bridge-command-post-m5-console-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m6-debts-observations
-
-> С витрины капитана: «я запутался, когда озвучить свой набор» — это UI-дыра места, не недостаток попугая. Тетрадь должна быть **видимым слотом** в free: не чеклист 1/2/3, не ступень прогресса open→close. Конструктивизм: наблюдение лежит открыто, не гаснет само, не красится как […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m6-debts-observations-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE хорошо структурирован — чёткие DoD, таблица обоснования, раздел «сознательно не делаем». DAILY_CODE_REVIEW не затронул UI/Design — верно. Итоги дня: UI не двигался — ни один коммит не касается React-компонентов или DESIGN.md. Зато рефакторинг […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-27.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m2a-scope-2026-07-23-2026-07-23.md#reply-1`

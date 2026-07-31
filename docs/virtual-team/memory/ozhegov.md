@@ -5,8 +5,8 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14395/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 235 (причины в op-log) -->
+Записей: 48 · бюджет 14397/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 243 (причины в op-log) -->
 
 ### 2026-07-30 · позиция · sprint-honest-m2-contract
 
@@ -115,6 +115,54 @@
 > Леммы, иначе синонимы. **Пол (floor)** — проекция discovery: список мастерских × входной глагол × min-callable × doc-ref; home — генератор из проекции (§6). **Провод (wire)** — адресуемая стыковка *конкретного* инструмента/контейнера к callable-пути и контракту вызова. […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/workshop-wires-m9-wholesale-retail-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m0-order
+
+> Леммы «ждёт» только контрактные: без ответа A у B нет области определения. Имена — как в повестке, без новых ярлыков. **Q1 SoT** — лемма «канон архива». **Q2 checkpoint** — нотариальный слепок. **Q3 evidence** — состав archival record. **Q4 recovery** — проверка/восстановление. […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m0-order-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m1-source-of-truth
+
+> Леммы, иначе синонимы. **Cold archive record** — иммутабельная запись закрытой задачи после архивации, home = collection в `background-office`/MongoDB. **Checkpoint** — проверяемый слепок/hash-носитель в git, не словарь полной истории. **Registry** — горячий/рабочий индекс […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/task-archive-cold-store-m1-source-of-truth-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m2-evidence-contract
+
+> Начинаю со словаря, иначе снова синонимы. **Cold-record** — каноническая append-only запись закрытия задачи в home MongoDB office, не строка registry и не markdown в git. **Closure evidence** — набор адресуемых доказательств, что задача закрыта, а не «помечена done». **Hint** — […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m3-repo-checkpoint
+
+> Леммы, иначе синонимы. **Cold archive** — append-only collection в `background-office` Mongo (M1). **Cold-record** — документ M2 (`task_closure` + sufficient proof). **Repo checkpoint** — файл-слепок инвариантов архива, не SoT и не export-dump. **Identity proof** — […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m4-write-path-idempotency
+
+> Леммы, иначе снова синонимы. **Cold-record writer** — единственный server-side путь в `background-office`, пишущий append-only Mongo-коллекцию канона (M1). **Checkpoint writer** — путь, который *только читает* Mongo SoT и материализует `ColdArchiveCheckpoint` (M3); он не […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m5-recovery-audit
+
+> Леммы, иначе синонимы. **Audit check** — чистая сверка carrier↔SoT, не write-path. **Export material** — полный канонический дамп records + манифест identity (count/hash) + метаданные checkpoint; dirty working tree не material. **Emergency SoT** — явно объявленный режим, не […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/task-archive-cold-store-m5-recovery-audit-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m6-migration-path
+
+> Леммы, иначе синонимы. **Legacy archive card** — markdown в `docs/tasks/archive/*.md`, носитель handoff-текста, не proof. **Hot registry** — `docs/tasks/registry.json`, рабочий индекс, derived относительно cold. **Canonical cold-record candidate** — payload, прошедший evidence […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m6-migration-path-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m7-lifecycle-integration
+
+> Леммы, иначе синонимы. **Insight revision** — словарная статья решения в `INSIGHT.md` / decision log инсайта: SoT, checkpoint, evidence contract, write path, recovery, migration policy. **Task work** — карточки исполнения (Notary, Mongo schema, export/checkpoint job, migration […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m7-lifecycle-integration-2026-07-30.md#reply-1`
 
 ### 2026-07-29 · позиция · network-container-form
 
@@ -242,56 +290,8 @@
 
 — источник: `docs/seanses/memory-subconscious-m6-extractor-2026-07-28.md#reply-1`
 
-### 2026-07-28 · позиция · team-evening-feedback
+### 2026-07-23 · позиция · llm-procedure-channels-m2b-control-plane
 
-> **Оценка артефактов:** Модульная структура дня — чистая. P0–P6 памяти разложены по отдельным PR с чёткими границами (схема ArchiveRecord, дома, append-only архив, политика отбора, проекция, миграция, extractor). DAY_MEMO — три слоя без циклов импортов. Bridge Charter и […]
+> Владелец хочет **переключать канал с панели** — кандидат 1 (только git/PR) делает админа = merge, это не тумблер. Кандидат 3 (только .env) делает панель read-only по маршруту — прямо бьёт BRIEF. Остаются 2 (office SoT) и 4 (гибрид). _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/team-evening-feedback-2026-07-28.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m0-order
-
-> Леммы «зависит» не смешиваем. **Контрактная** — без вердикта a у b нет области определения. **Фактурная** — b ждёт артефакт в main, которого ещё нет. В M0 только контрактные рёбра. Имена кандидатов — словарные статьи брифа, без жирных ID внутри вердикта-порядка, как требует […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m0-order-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m1-cast
-
-> Начинаю со словаря, иначе снова проза без носителя — прецедент 25.07. Три кандидата в состав по брифу и скиллу: **Ангелина** (lead), **Фаррелл** (voice, origin:pet), **попугай** (память долгов, движок в ките angelina-bridge). Реестр `voices.registry.json` — 8 записей, зуб […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/bridge-command-post-m1-cast-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m2-frames
-
-> Леммы, иначе снова синонимы. **Trigger** — событие входа в режим мостика. **Step** — повторяемое действие open/close или опциональный каркас тела. **Gate** — машинно проверяемый предикат «дальше нельзя / ждём». **Home** — канонический путь/контейнер артефакта. **Carrier** — кто […] _(реплик в сеансе: 9)_
-
-— источник: `docs/seanses/bridge-command-post-m2-frames-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m3-truth-contract
-
-> Начинаю со словаря, иначе контракт размоется. Две леммы: **гранит** — запись в графе правды (токен с указателем на высказывание, класс owner/derived, append-only); **поток** — всё, что осталось в конспекте/комнате без минта. Граница — не «важность на слух», а предикат допуска к […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m3-truth-contract-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m4-improvisation-cases
-
-> Словарь до реализации. Леммы: `case` — статическая единица архива импровизации; `body` — narrative + блоки raw/conclusion; `meta` — подвал, публичный контракт идентификации и расчёта; `instruction` — текст/жест в homes процедуры мостика (M2), не новый mandatory-шаг без основания […] _(реплик в сеансе: 8)_
-
-— источник: `docs/seanses/bridge-command-post-m4-improvisation-cases-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m5-console
-
-> Леммы, иначе синонимы-слои. **Носитель пульта** (`carrier`) ≠ **ведущая** (`lead` | `scribe`). **Лента** = append-only журнал шагов с `stepId, verb, status, ts`. **Чат ведущей** = sequence `LeadReport` с типами `event | ask | journal_note | carrier_status`. Журнал ведущей — […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/bridge-command-post-m5-console-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m6-debts-observations
-
-> Фиксирую леммы, иначе граф поплывёт. **Долг** — машинная единица учёта с id, статусом и порогом шума (#1208). **Наблюдение капитана** — свободная запись смысла, без обязательного status-machine. **Мемоизация показанного** — акт изъятия вещдока (sha в […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m6-debts-observations-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · day-memo-evening
-
-> Поддерживаю Математика — цифры обязательны, но структура важнее. DAY_MEMO — не монолит, а контейнер с контрактом. Предлагаю три раздела: (1) **Факты** — машиночитаемый jsonl-блок: какие файлы изменены, какие PR открыты/закрыты, какие issue затронуты, сколько вещдоков, […] _(реплик в сеансе: 3)_
-
-— источник: `docs/seanses/day-memo-evening-2026-07-27.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m2b-control-plane-2026-07-23-2026-07-23.md#reply-1`

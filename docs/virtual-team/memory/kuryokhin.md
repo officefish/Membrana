@@ -5,8 +5,8 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14377/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 236 (причины в op-log) -->
+Записей: 48 · бюджет 14384/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 244 (причины в op-log) -->
 
 ### 2026-07-30 · позиция · sprint-honest-m2-contract
 
@@ -115,6 +115,54 @@
 > На слух это два разных тракта. Пол — count-in и room tone: «какие мастерские в зале». Поштучный провод — тюнинг конкретной струны после того, как take сорвался. Запрет #1467 «не оптовая правка навигации» слышу как запрет **сводить микс одной ручкой на 476 инструментах**, а не […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/workshop-wires-m9-wholesale-retail-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m0-order
+
+> По тракту сигнала: сначала *какая лента master* (SoT), потом *что обязано попасть в take* (evidence), потом *маленький meters/notary в git*, потом *кто жмёт record и как не задвоить*, потом *smoke восстановления*, потом *перенос старых бобин*, и только в конце *почему новый […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m0-order-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m1-source-of-truth
+
+> На слух repo JSONL как единственный master-tape — это лента в чемодане: агент офлайн слышит, сервер молчит, объём registry снова раздувается или JSONL растёт в git-шуме. Office-mongo чистый — master на mmbrn.tech, но без checkpoint в repo нет count-in «что считалось каноном на […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/task-archive-cold-store-m1-source-of-truth-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m2-evidence-contract
+
+> На слух закрытие без take на ленте — mono-фальшь: объявили «готово», а merge-SHA не записан. Evidence — это master-tape закрытия: task id, snapshot статуса, PR, SHA, review, issue state. Hint «вроде влили» — щелчок в пустоту, не proof. Archive лента не доказывает, что инсайт […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m3-repo-checkpoint
+
+> На слух это meters на master-tape, не вторая лента. Mongo — take; repo — VU-метр и footprint сессии: сколько take закрыто, какой hash микса. Если в git кладём весь cold archive — клиппинг репо и ложный SoT. Checkpoint не должен звучать как «задача закрыта, потому что id в […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m4-write-path-idempotency
+
+> На слух это три шины, не один fader «архив». Сначала master-tape на сервере (cold-record), потом meter по Mongo (checkpoint hash/count), потом send в repo — и только как bounce экспорта. Если сначала шлёпаем JSON в git, а Mongo потом — клиппинг: локальный take громче канона. […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m5-recovery-audit
+
+> На слух cold archive — master-tape в office, repo — control-room meters, не вторая лента. Hash mismatch — клиппинг-индикатор, не лицензия «перезаписать take». Missing checkpoint — нет bounce-метки, лента при этом может быть цела. Повреждённый office — тогда и только тогда […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/task-archive-cold-store-m5-recovery-audit-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m6-migration-path
+
+> На слух миграция — это не remaster старых take, а перенос master-tape на серверную шину. Старые `docs/tasks/archive/*.md` звучат как handoff-записи, не как proof. Если мы вложим stale-карточку в cold-record как «доказательство» — клиппинг доверия: legacy hint прикинется […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m6-migration-path-2026-07-30.md#reply-1`
+
+### 2026-07-30 · позиция · task-archive-cold-store-m7-lifecycle-integration
+
+> На слух M1–M6 — уже сведённый master-tape дизайна: Mongo SoT, checkpoint в repo, Notary sole writer, legacy markdown = candidate. Но master-tape партитуры ≠ final bounce продукта. Новый cold archive на бумаге — это count-in, не take на ленте. L/O слышу только когда Notary […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/task-archive-cold-store-m7-lifecycle-integration-2026-07-30.md#reply-1`
 
 ### 2026-07-29 · позиция · network-container-form
 
@@ -241,54 +289,6 @@
 > На слух extractor сейчас — mono-take: перезаписал md, выкинул «лишнее», и тишина. Под C1 архив jsonl — master-tape, md — сведение. Нельзя снова сводить поверх мастера. Backfill из git — как dig по старым take: можно, но с честной меткой «restored», иначе provenance врёт. _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/memory-subconscious-m6-extractor-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** Web Audio / audio-engine / 48 kHz не затронуты ни в одном документе. DAILY_CODE_REVIEW фиксирует «—» по продуктовому аудио. **Итоги дня:** Аудио-контур не двигался. Инсайты (`bearing-tracking`, `night-doc-intern`) — вне домена. Код `feat/keep-branch-cli` — […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-28.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m0-order
-
-> По тракту сигнала: сначала кто на шинах (голоса/носители), потом партитура (фреймы), потом врезки удачных take (кейсы), шина в граф правды (чеканка), пульт сведения, и в конце петля feedback (долги/попугай). Не смешивать исполнительный вечерний ритм с графом *решений* M0 — это […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m0-order-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m1-cast
-
-> По тракту: три шины. Lead — конспект и провенанс (Ангелина), не сирена и не починка. Voice/pet — свободный заход Фаррелла (один take, не партия в каждом такте). Memory — попугай: долги повторяет, не изобретает. Кейс «я детектор, он сирена» — норма разделения: Фаррелл находит, […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m1-cast-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m2-frames
-
-> На слух: trigger — это не playhead автоматом. Прецедент 22.07: приветствие = presence, ноль действий до явного слова. «На мостик» — явный downbeat сессии, не ambient noise. Свободное тело мостика — jam; open/close — count-in и final take. Если смешаем jam с pipeline — получим […] _(реплик в сеансе: 9)_
-
-— источник: `docs/seanses/bridge-command-post-m2-frames-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m3-truth-contract
-
-> На слух это шина с гейтом, а не компрессор на весь микс. Владелец прямо сказал: прогонять абсолютно все мысли по контракту не стоит. Значит `mint_intent` — optional-жест, как solo-send: lead жмёт, когда слышит намерение, а не на каждый take. Иначе комната задохнётся чеканкой […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m3-truth-contract-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m4-improvisation-cases
-
-> На слух кейс — это зафиксированный take, не партитура. Сырьё (скрин, цитата, реплика) — room tone сессии; вывод — «что играть дальше», если take несущий. Четыре кандидата 25.07 слышу сразу: имя Фаррелла; «капитан в диалоге / владелец в механике»; представление попугая; «я […] _(реплик в сеансе: 8)_
-
-— источник: `docs/seanses/bridge-command-post-m4-improvisation-cases-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m5-console
-
-> На слух это как master-bus vs talkback. Цепочка команд — ритм-секция: она играет в мониторах инженера, не в зале. Чат ведущей — talkback капитану: «трек стартовал / гейт красный / take готов». Если субагент не поднялся, а цепочка всё равно орёт в лицо капитану — это клиппинг […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/bridge-command-post-m5-console-2026-07-27.md#reply-1`
-
-### 2026-07-27 · позиция · bridge-command-post-m6-debts-observations
-
-> Слышу разницу как два тракта. Попугай — ритм-секция: kit-engine, такт ровный, без «когда настроение». Ангелина и живые — солисты: выходят по дисциплине сессии, не по метроному долга. Норма контура обязана **не бороться** со словами владельца: детерминированный носитель для […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/bridge-command-post-m6-debts-observations-2026-07-27.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m2a-scope
 
