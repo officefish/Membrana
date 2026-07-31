@@ -8,3 +8,5 @@
 {"traceId":"tr-belongs-dynin-review","blockId":"belongs-core","kind":"review_pass","subject":"dynin","at":"2026-07-31T06:55:00Z","ref":"scripts/belongs.test.mjs"}
 {"traceId":"tr-ns-registry-vesnin-run","blockId":"namespace-registry","kind":"context_run","subject":"vesnin","at":"2026-07-31T07:10:00Z","ref":"docs/namespaces/README.md"}
 {"traceId":"tr-ns-registry-vesnin-review","blockId":"namespace-registry","kind":"review_pass","subject":"vesnin","at":"2026-07-31T07:20:00Z","ref":"scripts/namespace-registry.test.mjs"}
+{"traceId":"tr-verbs-kuryokhin-run","blockId":"scripts-workshop-verbs","kind":"context_run","subject":"kuryokhin","at":"2026-07-31T07:40:00Z","ref":"scripts/workshop.manifest.json"}
+{"traceId":"tr-verbs-kuryokhin-review","blockId":"scripts-workshop-verbs","kind":"review_pass","subject":"kuryokhin","at":"2026-07-31T07:55:00Z","ref":"scripts/scripts-workshop.test.mjs"}
