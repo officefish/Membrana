@@ -1,16 +1,13 @@
 {
   "magistralOptions": [
-    "mfcc-spectral-core",
-    "archivarius-sessions-container",
-    "agent-tooling-night-build"
+    "mfcc-mic-plugins"
   ],
-  "frozenDigest": "5019f806527e0a7146a5fcefe7f903d44f3fec5dd6df2b391b156f2c24a647c3",
-  "magistral": "mfcc-spectral-core",
+  "frozenDigest": "7c0cb66e87edada0e617c738ef8a75493962af6f1a58874c9617d9940772d5dc",
+  "magistral": "mfcc-mic-plugins",
   "swallow": {
-    "draftDigest": "ad46f177e067d65e25c142298b4ba3a50d78149291ad7273f86e8d00bd0b942b",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-07-30.md",
-    "ownerAck": true,
-    "gate": "evening:partner-swallow"
+    "draftDigest": "fda40d89bf7cf8c40de32931f421bdb6805c96a7caefe32253ea62a1d5715511",
+    "draftFile": "docs/comms/drafts/swallow-morning-2026-07-31.md",
+    "ownerAck": true
   },
-  "day": "2026-07-30"
+  "day": "2026-07-31"
 }
