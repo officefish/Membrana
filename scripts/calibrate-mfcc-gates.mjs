@@ -28,6 +28,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { coefficientGate, frames } from './lib/mfcc-gates.mjs';
 import { readWavMono } from './lib/wav-read.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -55,19 +56,6 @@ const argOf = (n, d = null) => {
   const i = argv.indexOf(`--${n}`);
   return i !== -1 && argv[i + 1] ? argv[i + 1] : d;
 };
-
-function percentile(sorted, pct) {
-  if (sorted.length === 0) return Number.NaN;
-  const idx = Math.min(sorted.length - 1, Math.max(0, Math.round(((pct / 100) * (sorted.length - 1)))));
-  return sorted[idx];
-}
-
-/** Кадрирование — предмет вызывающего, ядро им не занимается (граница пакета). */
-function* frames(samples, bufferSize) {
-  for (let i = 0; i + bufferSize <= samples.length; i += bufferSize) {
-    yield samples.subarray(i, i + bufferSize);
-  }
-}
 
 async function main() {
   const Meyda = (await import('meyda')).default;
@@ -134,20 +122,18 @@ async function main() {
     // чем она ниже, тем коэффициент полезнее. Это и есть ответ на «какие брать».
     const coefficients = [];
     for (let c = 0; c < config.numberOfCoefficients; c += 1) {
-      const d = [...drone[c]].sort((a, b) => a - b);
-      const o = other[c];
-      if (d.length === 0) continue;
-      const lo = percentile(d, GATE_LO_PCT);
-      const hi = percentile(d, GATE_HI_PCT);
-      const otherInside = o.length ? o.filter((v) => v >= lo && v <= hi).length / o.length : Number.NaN;
-      const droneInside = d.filter((v) => v >= lo && v <= hi).length / d.length;
+      const g = coefficientGate(drone[c], other[c], { lo: GATE_LO_PCT, hi: GATE_HI_PCT });
+      if (g.gate === null) continue;
+      const r3 = (v) => (v === null ? null : Number(v.toFixed(3)));
       coefficients.push({
         index: c,
-        gate: { lo: Number(lo.toFixed(3)), hi: Number(hi.toFixed(3)) },
-        droneInside: Number(droneInside.toFixed(3)),
-        otherInside: Number.isFinite(otherInside) ? Number(otherInside.toFixed(3)) : null,
-        // Разделение: насколько реже фон попадает в ворота цели. 1.0 — фон не попадает вовсе.
-        separation: Number.isFinite(otherInside) ? Number((droneInside - otherInside).toFixed(3)) : null,
+        gate: { lo: r3(g.gate.lo), hi: r3(g.gate.hi) },
+        droneInside: r3(g.droneInside),
+        // `null`, а не ноль: «фон не попадает ни разу» и «фона не было» — разные вещи,
+        // и слить их значит соврать в пользу коэффициента. Причина печатается в `why`.
+        otherInside: r3(g.otherInside),
+        separation: r3(g.separation),
+        why: g.why,
       });
     }
 
