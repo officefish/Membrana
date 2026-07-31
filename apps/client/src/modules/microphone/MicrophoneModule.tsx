@@ -306,7 +306,10 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
             знает, как считаются коэффициенты. Ссылка устойчива (память по отпечатку), иначе
             каждая отрисовка пересоздавала бы жизненный цикл прибора. */}
         {activeIds.includes(MFCC_ANALYZER_TEST_PLUGIN_ID) && (
-          <MfccTestPanel extract={getMfccExtractor(MFCC_PRESET_FIRST_CUT.configHash)} />
+          <MfccTestPanel
+            extract={getMfccExtractor(MFCC_PRESET_FIRST_CUT.configHash)}
+            moduleId={module.id}
+          />
         )}
 
         {activeIds.includes(MIC_DETECTOR_SCOREBOARD_PLUGIN_ID) && (

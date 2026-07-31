@@ -12,16 +12,23 @@
  */
 import type {
   MfccFrameCount,
+  MfccFrameResult,
+  MfccIntervalMs,
   MfccPluginConfig,
   MfccSeriesResult,
   MfccStrictnessLevel,
 } from './types';
-import { MFCC_FRAME_COUNTS } from './types';
+import { MFCC_FRAME_COUNTS, MFCC_INTERVALS } from './types';
 
-/** Умолчания конфига. Средний уровень и пять кадров — как у порогового детектора. */
+/**
+ * Умолчания конфига — те же, что у порогового детектора: «5×500 мс, normal».
+ * Промежуток взят из образца, а не назначен: принцип замеров через промежуток задан
+ * владельцем в шторме, и расходиться с образцом в числах не на чем.
+ */
 export const DEFAULT_MFCC_CONFIG: MfccPluginConfig = {
   strictness: 'normal',
   frameCount: 5,
+  intervalMs: 500,
   analysisSource: 'microphone',
 };
 
@@ -37,6 +44,14 @@ export interface MfccPluginState {
   /** Последняя серия. `null` — прогонов ещё не было в этой сессии. */
   readonly series: MfccSeriesResult | null;
   /**
+   * Замеры ИДУЩЕЙ серии, по одному по мере взятия. Пусто, когда сбора нет.
+   *
+   * Отдельно от `series` намеренно: серия — это вердикт, она существует только целиком.
+   * Незаконченный набор замеров вердиктом не является, и звать его серией значило бы дать
+   * экрану показать половину как целое.
+   */
+  readonly taken: readonly MfccFrameResult[];
+  /**
    * Замеренный на живом тракте порог немого кадра. `null` — не замерян, и тогда действует
    * `minMagnitude` пресета, а он равен нулю, то есть защиты нет.
    */
@@ -47,6 +62,7 @@ export const INITIAL_MFCC_STATE: MfccPluginState = {
   config: DEFAULT_MFCC_CONFIG,
   collecting: false,
   series: null,
+  taken: [],
   measuredMagnitudeFloor: null,
 };
 
@@ -57,6 +73,10 @@ export function isStrictnessLevel(v: unknown): v is MfccStrictnessLevel {
 
 export function isFrameCount(v: unknown): v is MfccFrameCount {
   return MFCC_FRAME_COUNTS.includes(v as MfccFrameCount);
+}
+
+export function isIntervalMs(v: unknown): v is MfccIntervalMs {
+  return MFCC_INTERVALS.includes(v as MfccIntervalMs);
 }
 
 /**
@@ -76,6 +96,7 @@ export function setStrictness(
     config: { ...state.config, strictness: level },
     collecting: false,
     series: null,
+    taken: [],
   };
 }
 
@@ -86,6 +107,20 @@ export function setFrameCount(state: MfccPluginState, count: MfccFrameCount): Mf
     config: { ...state.config, frameCount: count },
     collecting: false,
     series: null,
+    taken: [],
+  };
+}
+
+export function setIntervalMs(state: MfccPluginState, ms: MfccIntervalMs): MfccPluginState {
+  if (state.config.intervalMs === ms) return state;
+  // Как и прочие настройки, отменяет идущий сбор: серия, у которой часть кадров снята с одним
+  // промежутком, а часть с другим, охватывает неизвестно какое время и устойчивости не меряет.
+  return {
+    ...state,
+    config: { ...state.config, intervalMs: ms },
+    collecting: false,
+    series: null,
+    taken: [],
   };
 }
 
@@ -98,6 +133,7 @@ export function setAnalysisSource(state: MfccPluginState, source: string): MfccP
     config: { ...state.config, analysisSource: source },
     collecting: false,
     series: null,
+    taken: [],
     measuredMagnitudeFloor: null,
   };
 }
@@ -106,7 +142,7 @@ export function startCollecting(state: MfccPluginState): MfccPluginState {
   if (state.collecting) return state;
   // Прошлая серия снимается на старте, а не по приходу первой новой: иначе между нажатием
   // и первым кадром экран показывал бы прошлый вердикт как текущий.
-  return { ...state, collecting: true, series: null };
+  return { ...state, collecting: true, series: null, taken: [] };
 }
 
 export function stopCollecting(state: MfccPluginState): MfccPluginState {
@@ -114,8 +150,17 @@ export function stopCollecting(state: MfccPluginState): MfccPluginState {
   return { ...state, collecting: false };
 }
 
+/**
+ * Взятый замер — в ход серии. Копится только пока идёт сбор: замер, пришедший после отмены,
+ * принадлежит серии, которой уже нет, и приписывать его следующей значило бы смешать две.
+ */
+export function appendTaken(state: MfccPluginState, frame: MfccFrameResult): MfccPluginState {
+  if (!state.collecting) return state;
+  return { ...state, taken: [...state.taken, frame] };
+}
+
 export function applySeries(state: MfccPluginState, series: MfccSeriesResult): MfccPluginState {
-  return { ...state, collecting: false, series };
+  return { ...state, collecting: false, series, taken: [] };
 }
 
 export function applyMagnitudeFloor(state: MfccPluginState, floor: number): MfccPluginState {
