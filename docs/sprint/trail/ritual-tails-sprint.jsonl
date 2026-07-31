@@ -6,3 +6,5 @@
 {"traceId":"tr-feedback-signature-ozhegov-review","blockId":"ritual-evening-feedback-signature","kind":"review_pass","subject":"ozhegov","at":"2026-07-31T07:35:00Z","ref":"docs/prompts/TEAM_EVENING_FEEDBACK.md"}
 {"traceId":"tr-canon-sign-vesnin-context","blockId":"canon-sign-preserves-provenance","kind":"context_run","subject":"vesnin","at":"2026-07-31T07:40:00Z","ref":"docs/discussions/block-canon-sign-vesnin.md"}
 {"traceId":"tr-canon-sign-vesnin-review","blockId":"canon-sign-preserves-provenance","kind":"review_pass","subject":"vesnin","at":"2026-07-31T07:45:00Z","ref":"docs/discussions/block-canon-sign-vesnin.md"}
+{"traceId":"tr-report-frame-ozhegov-context","blockId":"morning-report-format-gate","kind":"context_run","subject":"ozhegov","at":"2026-07-31T07:50:00Z","ref":"docs/discussions/block-report-frame-ozhegov.md"}
+{"traceId":"tr-report-frame-ozhegov-review","blockId":"morning-report-format-gate","kind":"review_pass","subject":"ozhegov","at":"2026-07-31T07:55:00Z","ref":"docs/discussions/block-report-frame-ozhegov.md"}
