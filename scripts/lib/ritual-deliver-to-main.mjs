@@ -1,12 +1,22 @@
 /**
- * ritual-deliver-to-main — финальный кадр утра: утренние документы на origin/main.
- * Канон: frame-rails #1016, MANIFEST ritual-day frames deliver-to-main.
+ * ritual-deliver-to-main — финальный кадр ритуала: его документы на origin/main.
+ * Канон: frame-rails #1016, MANIFEST frames deliver-to-main.
+ *
+ * ПАРАМЕТРИЗОВАН ПО РИТУАЛУ (спринт `ritual-tails-sprint`, блок
+ * `ritual-evening-manifest-and-delivery`, находка Ф2 разбора #1533). Был зашит на утро:
+ * путь к утреннему манифесту, утренний список артефактов, подсказка ветки `ritual-day`.
+ * У вечера кадра не было вовсе, и вечер СТРУКТУРНО заканчивался на ветке — архив дня 29.07
+ * пролежал так двое суток.
+ *
+ * Умолчание — `day`: утренний вызов работает без единой правки своей цепочки. Это условие
+ * перерезки, а не вежливость: чинить вечер ценой утра значит менять один дефект на другой.
  */
 
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { readDated } from './read-dated.mjs';
+import { eveningDeliverArtifacts } from './ritual-evening-artifacts.mjs';
 import {
   MORNING_DELIVER_ARTIFACTS,
   morningDeliverPaths,
@@ -17,16 +27,56 @@ export const DELIVER_FRAME_ID = 'deliver-to-main';
 export { MORNING_DELIVER_ARTIFACTS, morningDeliverPaths };
 
 /**
+ * Закрытый список ритуалов, у которых есть кадр доставки. Открытый список означал бы, что
+ * новый ритуал заводится словом, а не манифестом.
+ *
+ * `artifacts(date)` — функция, а не массив: у вечера пути датированы, у утра нет, и разница
+ * не должна протекать в движок.
+ */
+export const DELIVER_RITUALS = Object.freeze({
+  day: Object.freeze({
+    manifest: 'docs/procedures/ritual-day/MANIFEST.json',
+    artifacts: () => MORNING_DELIVER_ARTIFACTS.map((a) => ({ rel: a.rel, label: a.label })),
+    branchSlug: 'ritual-day',
+    done: 'утренние документы на main',
+    unfinished: 'утро не завершено для соседей, пока документы не в main (#1016)',
+  }),
+  evening: Object.freeze({
+    manifest: 'docs/procedures/ritual-evening/MANIFEST.json',
+    artifacts: (date) => eveningDeliverArtifacts(date),
+    branchSlug: 'ritual-evening',
+    done: 'артефакты вечера на main',
+    unfinished: 'вечер не завершён для соседей, пока артефакты не в main (Ф2 #1533)',
+  }),
+});
+
+/**
+ * @param {string} name
+ * @returns {{ manifest: string, artifacts: (date: string) => {rel: string, label: string}[], branchSlug: string, done: string, unfinished: string }}
+ */
+export function ritualConfig(name = 'day') {
+  const cfg = DELIVER_RITUALS[name];
+  if (!cfg) {
+    // Неизвестный ритуал — ошибка входа, а не тихий откат на утро: молчаливый фолбэк
+    // проверил бы чужие артефакты и назвал бы это «доставлено».
+    throw new Error(`deliver-to-main: неизвестный ритуал «${name}» (есть: ${Object.keys(DELIVER_RITUALS).join(', ')})`);
+  }
+  return cfg;
+}
+
+/**
  * @param {string} repoRoot
+ * @param {string} [ritual]
  * @returns {{ frame: object|null, problems: string[] }}
  */
-export function loadDeliverFrame(repoRoot) {
-  const manifestPath = join(repoRoot, 'docs/procedures/ritual-day/MANIFEST.json');
+export function loadDeliverFrame(repoRoot, ritual = 'day') {
+  const cfg = ritualConfig(ritual);
+  const manifestPath = join(repoRoot, cfg.manifest);
   let manifest;
   try {
     manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
   } catch (e) {
-    return { frame: null, problems: [`MANIFEST ritual-day: ${e instanceof Error ? e.message : String(e)}`] };
+    return { frame: null, problems: [`MANIFEST ${ritual}: ${e instanceof Error ? e.message : String(e)}`] };
   }
   const frames = Array.isArray(manifest.frames) ? manifest.frames : [];
   const frame = frames.find((f) => f && f.id === DELIVER_FRAME_ID) ?? null;
@@ -52,8 +102,8 @@ export function loadDeliverFrame(repoRoot) {
  * @returns {ArtifactDeliverReport}
  */
 export function checkArtifactDeliver(repoRoot, rel, today, deps = {}) {
-  const label =
-    MORNING_DELIVER_ARTIFACTS.find((a) => a.rel === rel)?.label ?? rel;
+  const known = deps.artifacts ?? MORNING_DELIVER_ARTIFACTS;
+  const label = known.find((a) => a.rel === rel)?.label ?? rel;
   const fresh = readDated(rel, { today, maxAgeDays: 0, root: repoRoot, label });
   if (!fresh.ok) {
     const status = fresh.content === null ? 'missing-local' : 'stale';
@@ -94,10 +144,11 @@ export function verifyDeliverOnMain(repoRoot, opts = {}) {
   const today =
     opts.today ??
     new Date().toISOString().slice(0, 10);
+  const artifacts = ritualConfig(opts.ritual ?? 'day').artifacts(today);
   /** @type {ArtifactDeliverReport[]} */
   const reports = [];
-  for (const { rel } of MORNING_DELIVER_ARTIFACTS) {
-    reports.push(checkArtifactDeliver(repoRoot, rel, today, opts));
+  for (const { rel } of artifacts) {
+    reports.push(checkArtifactDeliver(repoRoot, rel, today, { ...opts, artifacts }));
   }
   const pending = reports.filter((r) => r.status !== 'ok').map((r) => r.rel);
   return { ok: pending.length === 0, reports, pending };
@@ -107,7 +158,7 @@ export function verifyDeliverOnMain(repoRoot, opts = {}) {
  * @param {string[]} pending
  * @returns {{ mode: 'noop' | 'pr:ship', paths: string[], branchHint: string }}
  */
-export function planDeliver(pending) {
+export function planDeliver(pending, ritual = 'day') {
   if (!pending.length) {
     return { mode: 'noop', paths: [], branchHint: '' };
   }
@@ -115,7 +166,7 @@ export function planDeliver(pending) {
   return {
     mode: 'pr:ship',
     paths: [...pending],
-    branchHint: `angelina/chore/ritual-day-${date}`,
+    branchHint: `angelina/chore/${ritualConfig(ritual).branchSlug}-${date}`,
   };
 }
 
@@ -126,7 +177,9 @@ export function planDeliver(pending) {
  */
 export function runDeliverGate(repoRoot, opts = {}) {
   const log = opts.log ?? console.log;
-  const { frame, problems } = loadDeliverFrame(repoRoot);
+  const ritual = opts.ritual ?? 'day';
+  const cfg = ritualConfig(ritual);
+  const { frame, problems } = loadDeliverFrame(repoRoot, ritual);
   log(`→ ${DELIVER_FRAME_ID} (frames${frame ? ` · holder ${frame.holder ?? '?'}` : ''})`);
   if (problems.length) {
     for (const p of problems) log(`  ✗ ${p}`);
@@ -142,12 +195,12 @@ export function runDeliverGate(repoRoot, opts = {}) {
     }
   }
   if (v.ok) {
-    log(`✓ ${DELIVER_FRAME_ID}: утренние документы на main`);
+    log(`✓ ${DELIVER_FRAME_ID}: ${cfg.done}`);
     return 0;
   }
-  const plan = planDeliver(v.pending);
+  const plan = planDeliver(v.pending, ritual);
   log(`✗ ${DELIVER_FRAME_ID}: STOP — не на main (${v.pending.join(', ')})`);
   log(`  план: ${plan.mode} paths=[${plan.paths.join(', ')}] branch≈${plan.branchHint}`);
-  log('  утро не завершено для соседей, пока документы не в main (#1016)');
+  log(`  ${cfg.unfinished}`);
   return 2;
 }

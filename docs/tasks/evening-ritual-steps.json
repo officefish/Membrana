@@ -36,10 +36,12 @@
       "criticality": "critical",
       "label": "Снимок утренних артефактов дня",
       "//": "Идёт ДО code-review сознательно: утром артефакты перезапишутся. Потеря снимка = потеря дня.",
+      "//legacy": "Ф5 разбора #1533: здесь стоял docs/STRATEGIC_PLAN_DAY.md — легаси, утро его больше не производит (слово владельца 31.07). Живые документы горизонта рождает шаг generate-horizon утренней цепочки. Скрипт-архиватор правду знал и снимал их всегда; расходился именно манифест, объявленный исполняемым источником истины.",
       "consumes": [
         "docs/MAIN_DAY_ISSUE.md",
         "docs/DAILY_STANDUP.md",
-        "docs/STRATEGIC_PLAN_DAY.md"
+        "docs/STRATEGY_DAY.md",
+        "docs/DAY_PLAN.md"
       ],
       "produces": [
         "docs/archive/daily-day/<date>/"
@@ -189,6 +191,24 @@
       ]
     },
     {
+      "//": "Ф6 разбора #1533. Аудит дня построен, покрыт тестами и принят ADR-0013 daily-audit-is-chronicle (ACCEPTED 18.07, LGTM владельца), но шага в цепочке не было: причина в карточке реестра — «включение в ritual:evening за владельцем». Инструмент не работал ДВЕНАДЦАТЬ дней; последний снимок в архиве — 18.07. Проверен живьём 31.07, отрабатывает корректно. Owner-гейт снят словом владельца 31.07.",
+      "//order": "Место выбрано так, чтобы снять ТРИ условия сразу. Ожегов (контракт шва блока archive-evidence): после day-memo — оба пишут в docs/archive/daily-day/<date>/, сначала вычисления. Веснин (архитектор блока): после archive-daily-day — чтобы каталог существовал; archive-daily-day стоит третьим шагом, условие выполнено здесь автоматически. Сессия: аудит — хроника ВСЕГО дня, считаемая от базы до HEAD; поставить его рано (как предлагал архитектор, сразу за archive-daily-day) значило бы описать день, которого ещё нет — собственные коммиты вечера ложатся на шаге ritual-artifacts, восьмом. Отсюда: сразу за day-memo, предпоследним перед хвостом.",
+      "id": "audit-evening",
+      "script": "scripts/audit-evening.mjs",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "whyNoncritical": "Хронист, не судья: отчёт механический, по трём источникам, без оценок (ADR-0013). Первоисточники не трогает, прогон повторим руками (yarn audit:evening). Сбой теряет снимок дня, но не данные — и не должен ронять хвост вечера, где живёт обязательный team-evening-feedback.",
+      "label": "Хроника дня: что происходило (репозиторий · реестр задач · граф правды)",
+      "consumes": [
+        "docs/tasks/registry.json",
+        "docs/evidence/registry.jsonl"
+      ],
+      "produces": [
+        "docs/DAILY_AUDIT.md",
+        "docs/archive/daily-day/<date>/audit.md"
+      ]
+    },
+    {
       "id": "deps-watch",
       "script": "scripts/deps-watch.mjs --mode evening",
       "kind": "mechanic",
@@ -208,13 +228,33 @@
       "criticality": "critical",
       "//": "Внутри — task:close-github + team-evening-feedback. Второе объявлено обязательством процесса в .claude/CLAUDE.md («не опция»), значит шаг критичен.",
       "label": "Хвост вечера: закрытие Issues + team evening feedback",
+      "//legacy": "Ф5 разбора #1533: то же легаси, второе место — docs/STRATEGIC_PLAN_DAY.md заменён живыми документами горизонта.",
       "consumes": [
         "docs/DAILY_STANDUP.md",
-        "docs/STRATEGIC_PLAN_DAY.md",
+        "docs/STRATEGY_DAY.md",
+        "docs/DAY_PLAN.md",
         "docs/DAILY_CODE_REVIEW.md"
       ],
       "produces": [
         "docs/seanses/team-evening-feedback-<date>.md"
+      ]
+    },
+    {
+      "//": "Ф2 разбора #1533 — кадр доставки, которого у вечера не было. Зеркало утра: там этот же движок стоит последним звеном цепочки ritual:day и 31.07 остановил утро словами «не завершено для соседей». Цена отсутствия у вечера: архив дня 29.07 пролежал на локальной ветке двое суток и доехал руками.",
+      "//critical": "КРИТИЧЕН намеренно, как у утра. Не находка, а ворота: пока артефакты вечера не в стволе, вечер для соседних сессий не состоялся, и цепочка обязана кончиться красным. Мягкий вердикт вернул бы ровно то состояние, из-за которого находка заведена — «показал, но не доставил».",
+      "//last": "СТРОГО последний: проверяет в том числе docs/seanses/team-evening-feedback-<date>.md, который рождает предыдущий шаг evening-tail.",
+      "id": "deliver-to-main",
+      "script": "scripts/ritual-deliver-to-main.mjs --ritual evening",
+      "kind": "gate",
+      "criticality": "critical",
+      "label": "Кадр доставки: артефакты вечера на origin/main",
+      "consumes": [
+        "docs/procedures/ritual-evening/MANIFEST.json",
+        "docs/DAILY_CODE_REVIEW.md",
+        "docs/seanses/team-evening-feedback-<date>.md"
+      ],
+      "produces": [
+        "вердикт кадра в stdout (0 — доставлено · 2 — STOP с планом доставки)"
       ]
     }
   ],

@@ -10,6 +10,7 @@ import { test } from 'node:test';
 import {
   checkArtifactDeliver,
   planDeliver,
+  ritualConfig,
   runDeliverGate,
   verifyDeliverOnMain,
 } from './lib/ritual-deliver-to-main.mjs';
@@ -34,7 +35,47 @@ test('parseDeliverArgs: flags', () => {
     json: true,
     execute: false,
     noFetch: true,
+    // Умолчание ритуала — утро: параметризация кадра доставки (Ф2 #1533) не имеет права
+    // менять утренний вызов. Молчание = `day`, как было до расширения.
+    ritual: 'day',
   });
+});
+
+test('parseDeliverArgs: --ritual выбирает ритуал, умолчание — утро', () => {
+  assert.equal(parseDeliverArgs([]).ritual, 'day');
+  assert.equal(parseDeliverArgs(['--ritual', 'evening']).ritual, 'evening');
+  // Флаг без значения — отказ, а не тихий `day`: молчание проверило бы УТРЕННИЕ артефакты
+  // под именем вечера. Найдено ревью блока 31.07.
+  assert.throws(() => parseDeliverArgs(['--ritual']), /требует значения/u);
+});
+
+test('вечерний путь: даты резолвятся, читается манифест ВЕЧЕРА, не утра', () => {
+  const root = mkdtempSync(join(tmpdir(), 'deliver-evening-'));
+  // Кладём ТОЛЬКО вечерний манифест: если движок полезет за утренним, кадр не найдётся
+  // и тест упадёт — это и есть проверка «не читает чужой дом».
+  const mrel = 'docs/procedures/ritual-evening/MANIFEST.json';
+  mkdirSync(dirname(join(root, mrel)), { recursive: true });
+  writeFileSync(
+    join(root, mrel),
+    JSON.stringify({ frames: [{ id: 'deliver-to-main', holder: 'angelina' }] }),
+    'utf8',
+  );
+  const log = [];
+  const code = runDeliverGate(root, { ritual: 'evening', today: TODAY, log: (s) => log.push(s) });
+  assert.equal(code, 2, 'артефактов вечера нет — кадр обязан встать');
+  const text = log.join('\n');
+  assert.match(text, new RegExp(`docs/memos/${TODAY}\\.md`, 'u'), '<date> в путях обязан резолвиться');
+  assert.match(text, /ritual-evening-/u, 'подсказка ветки — вечерняя, не утренняя');
+  assert.match(text, /вечер не завершён/u, 'формулировка отказа — вечерняя');
+  assert.doesNotMatch(text, /STRATEGY_DAY|DAILY_STANDUP/u, 'утренние артефакты в вечернем кадре не проверяются');
+});
+
+test('ritualConfig: неизвестный ритуал — ошибка входа, не тихий откат на утро', () => {
+  // Молчаливый фолбэк проверил бы ЧУЖИЕ артефакты и назвал бы это «доставлено» —
+  // ровно тот класс ложной зелёнки, ради которого спринт и начат.
+  assert.throws(() => ritualConfig('обед'), /неизвестный ритуал/u);
+  assert.equal(ritualConfig().branchSlug, 'ritual-day');
+  assert.equal(ritualConfig('evening').branchSlug, 'ritual-evening');
 });
 
 test('checkArtifactDeliver: ok when local matches origin/main', () => {

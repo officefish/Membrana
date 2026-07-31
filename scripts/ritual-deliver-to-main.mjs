@@ -17,16 +17,22 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
  * @param {string[]} argv
  */
 export function parseDeliverArgs(argv) {
-  /** @type {{ help: boolean, json: boolean, execute: boolean, noFetch: boolean }} */
-  const out = { help: false, json: false, execute: false, noFetch: false };
+  /** @type {{ help: boolean, json: boolean, execute: boolean, noFetch: boolean, ritual: string }} */
+  const out = { help: false, json: false, execute: false, noFetch: false, ritual: 'day' };
+  let expectRitual = false;
   for (const a of argv) {
-    if (a === '--help' || a === '-h') out.help = true;
+    if (expectRitual) { out.ritual = a; expectRitual = false; }
+    else if (a === '--ritual') expectRitual = true;
+    else if (a === '--help' || a === '-h') out.help = true;
     else if (a === '--json') out.json = true;
     else if (a === '--execute') out.execute = true;
     else if (a === '--no-fetch') out.noFetch = true;
     else if (a.startsWith('-')) throw new Error(`неизвестный флаг: ${a}`);
     else throw new Error(`лишний аргумент: ${a}`);
   }
+  // Флаг без значения — ошибка входа, а не тихий откат на утро: молчание здесь дало бы
+  // проверку УТРЕННИХ артефактов под именем вечера (та же ложная зелёнка, что и внутри движка).
+  if (expectRitual) throw new Error('--ritual требует значения (day | evening)');
   return out;
 }
 
@@ -87,7 +93,7 @@ export function main(argv = process.argv.slice(2), deps = {}) {
   if (args.execute) {
     console.warn('ritual:deliver-to-main: --execute → pr:ship через skill/owner; verify-only');
   }
-  return runDeliverGate(root, { readRemote });
+  return runDeliverGate(root, { readRemote, ritual: args.ritual });
 }
 
 const entry = (process.argv[1] ?? '').replace(/\\/g, '/');
