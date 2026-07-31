@@ -4,3 +4,7 @@
 {"traceId":"tr-parser-dynin-review","blockId":"tool-use-parser","kind":"review_pass","subject":"dynin","at":"2026-07-31T09:10:00Z","ref":"scripts/tool-use-trace.test.mjs"}
 {"traceId":"tr-liveness-kuryokhin-run","blockId":"norm-liveness","kind":"context_run","subject":"kuryokhin","at":"2026-07-31T09:20:00Z","ref":"AGENTS.md"}
 {"traceId":"tr-liveness-kuryokhin-review","blockId":"norm-liveness","kind":"review_pass","subject":"kuryokhin","at":"2026-07-31T09:30:00Z","ref":"scripts/norm-liveness.test.mjs"}
+{"traceId":"tr-kit-vesnin-run","blockId":"kit-frame","kind":"context_run","subject":"vesnin","at":"2026-07-31T09:40:00Z","ref":"docs/seanses/workshop-wires-m5-kit-frame-2026-07-30.md"}
+{"traceId":"tr-kit-vesnin-review","blockId":"kit-frame","kind":"review_pass","subject":"vesnin","at":"2026-07-31T09:45:00Z","ref":"docs/patterns/PROCEDURE_FRAMES.md"}
+{"traceId":"tr-boundary-farrell-run","blockId":"wholesale-boundary","kind":"context_run","subject":"farrell","at":"2026-07-31T09:50:00Z","ref":"docs/meeting/workshop-wires/AUDIT_FARRELL.md"}
+{"traceId":"tr-boundary-farrell-review","blockId":"wholesale-boundary","kind":"review_pass","subject":"farrell","at":"2026-07-31T09:55:00Z","ref":"docs/meeting/workshop-wires/BOUNDARY_S7.md"}
