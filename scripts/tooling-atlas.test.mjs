@@ -73,7 +73,9 @@ test('inspectContainer: по worksOn и по home', () => {
 
 test('renderAtlasRegistry: числа и вычеркнутые глаголы', () => {
   const md = renderAtlasRegistry(discoverContainers(tmp), { date: 'D', sha: 'S' });
-  assert.match(md, /Контейнеров: \*\*2\*\*/);
+  // Счётчик переименован и разведён: домов всего, из них мастерских (§3 — дом без
+  // мастерской законная запись, и «контейнеров» больше не покрывает оба случая).
+  assert.match(md, /Домов: \*\*2\*\*/);
   assert.match(md, /~~inspectElement~~/); // git без него
 });
 
@@ -155,6 +157,8 @@ test('битый манифест не роняет discover целиком', ()
   const dir = join(tmp, 'docs', 'broke');
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, 'workshop.manifest.json'), '{ битый');
+  // README обязателен: обнаружение сменило критерий на README + RootPolicy (§3).
+  writeFileSync(join(dir, 'README.md'), '# broke');
   const cs = discoverContainers(tmp);
   assert.ok(cs.length >= 3);
   const broke = cs.find((c) => c.home === 'docs/broke');

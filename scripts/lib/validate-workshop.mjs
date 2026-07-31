@@ -20,7 +20,13 @@ const REQUIRED_KEYS = ['pattern', 'name', 'worksOn', 'kit', 'verbs'];
  * Опциональные поля иерархии / семантики (tasks-workshop V1).
  * Носитель правил: docs/audit/workshop-semantics.json.
  */
-const OPTIONAL_KEYS = ['role', 'dependentOn', 'mirrorsFrom', 'rulesVersion'];
+const OPTIONAL_KEYS = ['role', 'dependentOn', 'mirrorsFrom', 'rulesVersion', 'usage'];
+
+/** Обязательные поля записи `usage` (поправка Ф1 от 31.07). */
+export const USAGE_RECORD_KEYS = Object.freeze(['what', 'sample', 'measuredAt']);
+
+/** Дата прогона примера: `YYYY-MM-DD`. */
+const MEASURED_AT_RE = /^\d{4}-\d{2}-\d{2}$/u;
 const ALLOWED_KEYS = [...REQUIRED_KEYS, ...OPTIONAL_KEYS];
 /** MUST-ключи инвентаря (вердикт Ф2 + g0): отсутствие ключа — дефект; null — ⚠. */
 const REQUIRED_VERB_KEYS = ['audit', 'decompose'];
@@ -94,6 +100,45 @@ export function workshopSchemaProblems(m) {
   }
   if (keys.includes('rulesVersion') && !isNonEmptyString(m.rulesVersion) && typeof m.rulesVersion !== 'number') {
     problems.push('rulesVersion — непустая строка или число');
+  }
+
+  // `usage` — поле-сосед `verbs` (поправка Ф1, 31.07): что даёт вызов и как выглядит вывод.
+  //
+  // НЕОБЯЗАТЕЛЬНО: отсутствие не делает манифест хуже, и MUST мимо комнаты не вводится.
+  // Но если поле есть — его форма проверяется целиком: половина записи хуже её отсутствия,
+  // потому что выглядит документацией, ею не будучи.
+  if (keys.includes('usage')) {
+    const u = m.usage;
+    if (u === null || typeof u !== 'object' || Array.isArray(u)) {
+      problems.push('usage — не объект');
+    } else {
+      const verbKeys = m.verbs !== null && typeof m.verbs === 'object' && !Array.isArray(m.verbs)
+        ? Object.keys(m.verbs)
+        : [];
+      for (const [k, rec] of Object.entries(u)) {
+        // Подмножество verbs: пример для несуществующего глагола описывает дверь, которой
+        // нет. Тот же класс, что пойман 31.07 в полу сессии и в атласе.
+        if (!verbKeys.includes(k)) {
+          problems.push(`usage.${k} — глагола нет в verbs: пример описывает дверь, которой не существует`);
+          continue;
+        }
+        if (rec === null || typeof rec !== 'object' || Array.isArray(rec)) {
+          problems.push(`usage.${k} — не объект`);
+          continue;
+        }
+        for (const f of USAGE_RECORD_KEYS) {
+          if (!isNonEmptyString(rec[f])) problems.push(`usage.${k}.${f} — не непустая строка`);
+        }
+        // Дата обязательна: сверить вывод с реальностью машинно нельзя, но возраст снимка
+        // показать можно. Без даты пример через полгода читается как факт.
+        if (isNonEmptyString(rec.measuredAt) && !MEASURED_AT_RE.test(rec.measuredAt)) {
+          problems.push(`usage.${k}.measuredAt — не YYYY-MM-DD`);
+        }
+        for (const f of Object.keys(rec)) {
+          if (!USAGE_RECORD_KEYS.includes(f)) problems.push(`usage.${k}: лишнее поле ${f}`);
+        }
+      }
+    }
   }
 
   if (keys.includes('verbs')) {
