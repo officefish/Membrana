@@ -19,6 +19,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 
 import { listWorkshopManifests, validateWorkshop } from './validate-workshop.mjs';
+import { discoverHomes } from './atlas-discovery.mjs';
 
 const MANDATORY = ['audit', 'decompose', 'inspectElement'];
 
@@ -81,23 +82,35 @@ function normalizeRole(role) {
  */
 export function discoverContainers(repoRoot) {
   const out = [];
-  for (const manifestPath of listWorkshopManifests(repoRoot)) {
-    const dir = dirname(manifestPath);
+  // Обнаружение — по README и RootPolicy (§3), а не по манифесту: критерий сменил
+  // `atlas-discovery.mjs`, здесь остаётся сбор полей. Дом без манифеста в индекс ПОПАДАЕТ
+  // третьим видом записи — заводить 33 манифеста «для зелени» §3 запрещает.
+  for (const rec of discoverHomes(repoRoot)) {
+    const dir = join(repoRoot, rec.home);
+    const manifestPath = join(dir, 'workshop.manifest.json');
     let manifest = null;
-    try { manifest = JSON.parse(readFileSync(manifestPath, 'utf8')); } catch { manifest = null; }
-    const v = validateWorkshop(manifestPath, repoRoot);
+    if (rec.hasManifest) {
+      try { manifest = JSON.parse(readFileSync(manifestPath, 'utf8')); } catch { manifest = null; }
+    }
+    const v = rec.hasManifest ? validateWorkshop(manifestPath, repoRoot) : { valid: true, warnings: [], problems: [] };
     const verbs = manifest?.verbs ?? {};
     const present = MANDATORY.filter((k) => typeof verbs[k] === 'string' && verbs[k].trim() !== '');
-    const missingVerbs = MANDATORY.filter((k) => !present.includes(k));
-    const home = relative(repoRoot, dir).replace(/\\/gu, '/');
+    const missingVerbs = rec.hasManifest ? MANDATORY.filter((k) => !present.includes(k)) : [];
+    const home = rec.home;
     const worksOn = typeof manifest?.worksOn === 'string' ? manifest.worksOn : home;
     const { title, summary } = readmeDigest(join(dir, 'README.md'));
     out.push({
       worksOn,
       home,
+      kind: rec.kind,
       name: manifest?.name ?? '—',
       kit: manifest?.kit ?? null,
       verbs: present,
+      // Команды, а не имена: `audit` — ключ, `yarn repo:branches` — дверь. Печатать ключ
+      // значит предлагать вызов, которого не существует (тот же дефект, что пол сессии
+      // поймал у себя 31.07).
+      commands: Object.fromEntries(present.map((k) => [k, String(verbs[k]).trim()])),
+      entryCommand: present.length > 0 ? String(verbs[present[0]]).trim() : null,
       missingVerbs,
       title,
       summary,
@@ -119,11 +132,16 @@ export function discoverContainers(repoRoot) {
 
 /** audit — здоровье контейнеров и их мастерских. @returns {{healthy, warned, broken, rows}} */
 export function auditContainers(repoRoot) {
-  const rows = discoverContainers(repoRoot);
+  const all = discoverContainers(repoRoot);
+  // Здоровье считается ТОЛЬКО по мастерским. Дом без манифеста не «здоров» — у него нечего
+  // проверять, и зачесть его в здоровые значило бы раздуть числитель тридцатью домами,
+  // которых валидатор в глаза не видел. Их место — отдельный счётчик.
+  const rows = all.filter((r) => r.kind === 'workshop');
   return {
     healthy: rows.filter((r) => r.valid && r.warnings.length === 0).length,
     warned: rows.filter((r) => r.valid && r.warnings.length > 0).length,
     broken: rows.filter((r) => !r.valid).length,
+    homesWithoutWorkshop: all.length - rows.length,
     rows,
   };
 }
@@ -162,32 +180,75 @@ const roleMark = (c) => (c.role == null ? '—' : c.role);
  * Ссылки — от `docs/tooling-atlas/registry/` (3 уровня вглубь) → `../../../<home>`.
  * Якорь строки = **home**, не worksOn.
  */
-export function renderAtlasRegistry(containers) {
+export function renderAtlasRegistry(containers, opts = {}) {
+  // Вторым параметром исторически приходила легаси-опция `{date, sha}` (не используется).
+  // Занять эту позицию массивом значило бы уронить всякий старый вызов — поймано своим же
+  // прогоном смежных зубов. Поэтому именованное поле: чужой объект деградирует в пустоту,
+  // а не в исключение.
+  const namespaces = Array.isArray(opts?.namespaces) ? opts.namespaces : [];
   const planes = decomposeContainers(containers, 'plane');
-  const fams = decomposeContainers(containers, 'family');
+  const workshops = containers.filter((c) => c.kind === 'workshop');
+  const homes = containers.filter((c) => c.kind !== 'workshop');
   const lines = [];
   lines.push('# ATLAS — контейнеры проекта (производный индекс, руками не править)');
   lines.push('');
-  lines.push('> Производный · Source: docs/**/workshop.manifest.json + README.md каждого контейнера.');
+  // Шапка называет ИСТИННЫЙ источник обнаружения. Прежняя говорила «docs/**/workshop.manifest.json»
+  // и врала дважды: обнаружение шло по манифесту вопреки §3, а после двухклассовой RootPolicy
+  // область перестала быть только `docs/**`.
+  lines.push('> Производный · Обнаружение: `README.md` + `RootPolicy` (§3). Поля мастерской: `workshop.manifest.json`. Неймспейсы: `docs/namespaces/REGISTRY.json`.');
   lines.push('> Пересобрать: `yarn tooling:atlas --render`. Дрейф ловит `yarn tooling:atlas --check`.');
   lines.push('> Ссылка = `home` каталога. `docs/tasks` (domain) ≠ `docs/audit/tasks` (report, отчёты про задачи).');
+  lines.push('> **Дом без мастерской — законное состояние**, а не дефект: мастерская есть подтип дома.');
   lines.push('');
-  lines.push(`Контейнеров: **${containers.length}** · плоскостей: **${planes.size}** · семей: **${fams.size}** · с полным набором из 3 глаголов: **${containers.filter((c) => c.missingVerbs.length === 0).length}**.`);
+  lines.push(`Домов: **${containers.length}** · из них мастерских: **${workshops.length}** · домов без мастерской: **${homes.length}** · плоскостей: **${planes.size}** · с полным набором из 3 глаголов: **${workshops.filter((c) => c.missingVerbs.length === 0).length}**.`);
   lines.push('');
 
   for (const plane of ['report', 'domain', 'meta']) {
-    const rows = containers.filter((c) => c.plane === plane);
+    const rows = containers.filter((c) => c.plane === plane && c.kind === 'workshop');
     if (rows.length === 0) continue;
     lines.push(`## ${PLANE_HEADING[plane]}`);
     lines.push('');
-    lines.push('| Контейнер (`home`) | role | Мастерская (глаголы) | kit | Про что |');
-    lines.push('|--------------------|------|----------------------|-----|---------|');
+    lines.push('| Контейнер (`home`) | role | Входной глагол | Мастерская (глаголы) | kit | Про что |');
+    lines.push('|--------------------|------|----------------|----------------------|-----|---------|');
     for (const c of rows) {
       const flag = c.valid ? '' : ' ✗';
-      lines.push(`| [${cell(c.home)}](../../../${c.home}/README.md)${flag} | ${roleMark(c)} | ${verbMark(c)} | ${cell(c.kit)} | ${cell(c.summary).slice(0, 90)} |`);
+      const entry = c.entryCommand ? `\`${cell(c.entryCommand)}\`` : '—';
+      lines.push(`| [${cell(c.home)}](../../../${c.home}/README.md)${flag} | ${roleMark(c)} | ${entry} | ${verbMark(c)} | ${cell(c.kit)} | ${cell(c.summary).slice(0, 90)} |`);
     }
     lines.push('');
   }
+
+  if (homes.length > 0) {
+    lines.push('## Дома без мастерской');
+    lines.push('');
+    lines.push('Законное состояние (§3): группа есть, оснастка не заведена. Манифесты «для зелени» не заводятся.');
+    lines.push('');
+    lines.push('| Дом (`home`) | Про что |');
+    lines.push('|--------------|---------|');
+    for (const c of homes) {
+      lines.push(`| [${cell(c.home)}](../../../${c.home}/README.md) | ${cell(c.summary).slice(0, 110)} |`);
+    }
+    lines.push('');
+  }
+
+  // Проекция реестра — ОТДЕЛЬНОЙ секцией (§3). Атлас потребитель-агрегатор: источник истины
+  // о членстве остаётся в REGISTRY.json, здесь только проекция, и «строка ATLAS» истиной
+  // не является.
+  lines.push('## Неймспейсы (проекция реестра)');
+  lines.push('');
+  if (namespaces.length === 0) {
+    // Пусто ≠ «всё припарковано»: §1 объявил сиротство честным исходом.
+    lines.push('Правил членства **ноль**. Это НЕ значит «всё припарковано» — значит, правило ещё не написано.');
+  } else {
+    lines.push('Источник истины — [`docs/namespaces/REGISTRY.json`](../../../docs/namespaces/REGISTRY.json); здесь производная проекция.');
+    lines.push('');
+    lines.push('| `id` | Держатель | Правило членства | Контейнер |');
+    lines.push('|------|-----------|------------------|-----------|');
+    for (const ns of namespaces) {
+      lines.push(`| ${cell(ns.id)} | ${cell(ns.holder)} | ${cell(ns.membership?.kind)}: \`${cell(ns.membership?.value)}\` | ${cell(ns.containerKind)} |`);
+    }
+  }
+  lines.push('');
   return lines.join('\n');
 }
 
@@ -209,13 +270,18 @@ export function renderMintlifyPage(containers) {
   lines.push('');
 
   for (const plane of ['report', 'domain', 'meta']) {
-    const rows = containers.filter((c) => c.plane === plane);
+    // Витрина показывает МАСТЕРСКИЕ: у дома без манифеста нет ни имени, ни глаголов, и
+    // страница из тридцати заголовков «—» была бы шумом, а не документацией. Их счёт даётся
+    // строкой ниже — умолчать о них тоже нельзя.
+    const rows = containers.filter((c) => c.plane === plane && c.kind === 'workshop');
     if (rows.length === 0) continue;
     lines.push(`## ${mdxSafe(PLANE_HEADING[plane])}`);
     lines.push('');
     for (const c of rows) {
       lines.push(`### ${mdxSafe(c.name)} (\`${mdxSafe(c.home)}\`)`);
       lines.push('');
+      if (c.entryCommand) lines.push(`Входной глагол: \`${mdxSafe(c.entryCommand)}\``);
+      if (c.entryCommand) lines.push('');
       if (c.summary) lines.push(mdxSafe(c.summary));
       lines.push('');
       lines.push(`- **Плоскость:** ${mdxSafe(c.plane)}`);
@@ -225,6 +291,13 @@ export function renderMintlifyPage(containers) {
       lines.push(`- **kit:** \`${mdxSafe(c.kit)}\``);
       lines.push('');
     }
+  }
+  const homes = containers.filter((c) => c.kind !== 'workshop');
+  if (homes.length > 0) {
+    lines.push('## Дома без мастерской');
+    lines.push('');
+    lines.push(`Ещё **${homes.length}** домов несут группу, но оснастки не имеют — законное состояние (мастерская есть подтип дома, а не обязанность каждого). Перечень — в \`docs/tooling-atlas/registry/ATLAS.md\`.`);
+    lines.push('');
   }
   return lines.join('\n');
 }
