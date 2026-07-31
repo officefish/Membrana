@@ -59,13 +59,13 @@
 
 [Музыкант]: На тракте audit слышу три прохода meters: (1) checkpoint на месте и парсится; (2) count; (3) contentHash после того же canonicalize, что notary/exporter. Sanity samples — room tone, не proof. Если Mongo недоступен — audit не врёт «converged», он честно `office_unavailable` / `audit_blocked`.
 
-[Математик]: Audit checks (закрытый список):  
-1. `checkpoint_present` — артефакт `ColdArchiveCheckpoint` читаем после commit.  
-2. `schema_valid` — обязательные поля checkpoint (вкл. `recordCount`, `contentHash`).  
-3. `mongo_reachable` — SoT доступен.  
-4. `recompute_count`: \(n \stackrel{?}{=} n_C\).  
-5. `recompute_hash`: \(H(R) \stackrel{?}{=} H_C\) при той же canonicalization, что M3.  
-6. `idempotency_surface` (опц. deep): нет дубликатов ключа `(recordType=task_closure, taskId)` в выборке SoT.  
+[Математик]: Audit checks (закрытый список):
+1. `checkpoint_present` — артефакт `ColdArchiveCheckpoint` читаем после commit.
+2. `schema_valid` — обязательные поля checkpoint (вкл. `recordCount`, `contentHash`).
+3. `mongo_reachable` — SoT доступен.
+4. `recompute_count`: \(n \stackrel{?}{=} n_C\).
+5. `recompute_hash`: \(H(R) \stackrel{?}{=} H_C\) при той же canonicalization, что M3.
+6. `idempotency_surface` (опц. deep): нет дубликатов ключа `(recordType=task_closure, taskId)` в выборке SoT.
 Fail любого → не `converged`. Samples ∉ proof.
 
 [Структурщик]: Homes: checkpoint — repo path carrier (M3); SoT — `background-office` Mongo append-only (M1); canonicalize/hash — чистая функция в контуре notary/exporter (M3/M4), один словарь, без второго хешера «для audit». Export writer и audit reader разделяют контракт identity; audit **не** пишет в Mongo и **не** коммитит repo. Словарь: **restore** ≠ **re-notarize** ≠ **migrate legacy**.
@@ -78,12 +78,12 @@ Fail любого → не `converged`. Samples ∉ proof.
 
 [Музыкант]: Слышу четыре фальстарта, которые люди делают под паникой: (1) подкрутить checkpoint hash под Mongo; (2) подкрутить/удалить Mongo record под checkpoint; (3) дописать «исправленный» task_closure с тем же taskId в обход idempotency; (4) объявить dirty JSONL каноном. Все четыре — overdub master-tape. Разрешённый recovery sound: replay export → Mongo, retry CheckpointExporter, re-audit.
 
-[Математик]: Triage как тотальная функция по наблюдениям:  
-- `¬checkpoint_present` → `missing_checkpoint`: если Mongo ok — derive checkpoint from Mongo (M4 retry), commit/PR; не invent hash.  
-- `n_C ≠ n` → `count_mismatch`: diff идентификаторов ключей; Mongo wins в steady-state; repo не дописывает records.  
-- `n_C = n ∧ H_C ≠ H` → `hash_mismatch`: проверить canonicalization version/byte-identity; при расхождении канона — `canonicalization_error`; иначе расхождение payload — Mongo canonical, re-export.  
-- canonicalize throw → `canonicalization_error`: stop, no heal.  
-- Mongo unreachable/corrupt → ветка emergency (отдельно).  
+[Математик]: Triage как тотальная функция по наблюдениям:
+- `¬checkpoint_present` → `missing_checkpoint`: если Mongo ok — derive checkpoint from Mongo (M4 retry), commit/PR; не invent hash.
+- `n_C ≠ n` → `count_mismatch`: diff идентификаторов ключей; Mongo wins в steady-state; repo не дописывает records.
+- `n_C = n ∧ H_C ≠ H` → `hash_mismatch`: проверить canonicalization version/byte-identity; при расхождении канона — `canonicalization_error`; иначе расхождение payload — Mongo canonical, re-export.
+- canonicalize throw → `canonicalization_error`: stop, no heal.
+- Mongo unreachable/corrupt → ветка emergency (отдельно).
 Никогда: `delete_mongo` / `rewrite_history` как triage action.
 
 [Структурщик]: Лемма **mismatch ≠ mandate to write archive into repo**. Carrier обновляется только через CheckpointExporter from Mongo (M4). При count/hash mismatch permitted actions: diagnose; re-run export from SoT; open PR checkpoint; report status. Forbidden: ручной edit `contentHash`; force-push checkpoint «чтобы зелёный»; prune Mongo. Deep audit может **читать** set of keys для diff-отчёта — это report, не SoT mutation.
@@ -96,30 +96,30 @@ Fail любого → не `converged`. Samples ∉ proof.
 
 [Музыкант]: Ещё раз на слух разрешённое: retry notarize только при отсутствии record и valid proof (M4), не «на всякий случай»; retry export/commit; restore Mongo from backup dump; recompute checkpoint from restored Mongo. Запрещённое: edit past records; delete on mismatch; re-hash in place; склеить legacy markdown в cold как proof (это уже Q6, здесь только запрет как healing).
 
-[Математик]: Forbidden healing (предикаты действий):  
-`¬rewrite_record(r)`, `¬delete_record(r)` ради схождения, `¬mutate_proof`, `¬manual_set_contentHash`, `¬dedupe_by_drop` (drop дубликата переписывает историю — конфликт idempotency решается reject second write at write-path, не audit-delete), `¬promote_non_proof`.  
-Разрешённые: `export_from_mongo`, `commit_checkpoint`, `restore_mongo_from_export`, `declare/revoke_emergency`, `report(status)`.  
+[Математик]: Forbidden healing (предикаты действий):
+`¬rewrite_record(r)`, `¬delete_record(r)` ради схождения, `¬mutate_proof`, `¬manual_set_contentHash`, `¬dedupe_by_drop` (drop дубликата переписывает историю — конфликт idempotency решается reject second write at write-path, не audit-delete), `¬promote_non_proof`.
+Разрешённые: `export_from_mongo`, `commit_checkpoint`, `restore_mongo_from_export`, `declare/revoke_emergency`, `report(status)`.
 Idempotency key остаётся `(task_closure, taskId)` — audit не чеканит второй record.
 
 [Структурщик]: Словарь forbidden vs allowed кладём в одну словарную статью recovery policy, home — контур office+exporter docs/ADR следствия M5, не UI. Export requirements уточняю: backup media держит **full R**; git держит **C** (малый слепок). Восстановление office без full R **невозможно** честно — тогда status `backup_insufficient`, не silent partial rebuild из одних samples.
 
 [Архитектор]: Если dump и checkpoint расходятся между собой (backup internal mismatch) — не угадывать. Приоритет при emergency rebuild: full dump с проверяемым манифестом; checkpoint — ожидаемый H после restore; если dump без манифеста — `backup_insufficient` / ручная эскалация, не авто-SoT. Git checkpoint alone without records dump **не** восстанавливает архив (owner: repo ≠ весь архив). Это цена hybrid SoT — фиксируем в requirements.
 
-[Верстальщик]: Reportable statuses (полный закрытый список для вердикта):  
-`converged`,  
-`missing_checkpoint`,  
-`count_mismatch`,  
-`hash_mismatch`,  
-`canonicalization_error`,  
-`office_unavailable`,  
-`office_corrupt`,  
-`backup_missing`,  
-`backup_insufficient`,  
-`emergency_repo_sot`,  
-`restore_in_progress`,  
-`restore_complete`,  
-`audit_blocked`,  
-`partial_repo_lag` (Mongo ok, checkpoint stale/missing after M4 partial — честное имя лага carrier).  
+[Верстальщик]: Reportable statuses (полный закрытый список для вердикта):
+`converged`,
+`missing_checkpoint`,
+`count_mismatch`,
+`hash_mismatch`,
+`canonicalization_error`,
+`office_unavailable`,
+`office_corrupt`,
+`backup_missing`,
+`backup_insufficient`,
+`emergency_repo_sot`,
+`restore_in_progress`,
+`restore_complete`,
+`audit_blocked`,
+`partial_repo_lag` (Mongo ok, checkpoint stale/missing after M4 partial — честное имя лага carrier).
 Нет статуса `healed_ok` без audit.
 
 [Teamlead]: `partial_repo_lag` — хорошая честность M4. В triage: Mongo canonical → only retry export. Сводим таблицу. Архитектор — emergency one-liner; Математик — audit one-liner; Структурщик — deferred boundary.
@@ -180,19 +180,19 @@ Idempotency key остаётся `(task_closure, taskId)` — audit не чек�
 
 ## Список посылок
 
-1. **норма (M0):** порядок вопросов `Q1 → Q3 → Q2 → Q5 → Q4 → Q6 → Q7`; M5 = Q4 Recovery and audit.  
-2. **норма (M1):** hybrid SoT; canonical records — `background-office` MongoDB append-only; repo — checkpoint/export carrier, не steady-state SoT; repo emergency SoT только при явно объявленном recovery.  
-3. **норма (M2):** cold-record `task_closure` с required fields и `proof`; hints/notes/branch/chat/screenshot/hot-registry/repo JSONL — not proof; archive evidence не доказывает insight L/O.  
-4. **норма (M3):** артефакт `ColdArchiveCheckpoint`; identity = recompute H over canonical Mongo records и compare `recordCount + contentHash`; sanity samples ≠ records/proof/SoT.  
-5. **норма (M4):** writers ArchiveNotary, CheckpointExporter, RepoAgent/Human, Close initiator; sequence valid proof → notarize → derive checkpoint from Mongo → repo commit/PR; idempotency key `(recordType=task_closure, taskId)`; partial Mongo ok + repo fail → Mongo canonical, retry export/commit, no delete.  
-6. **норма (M4/M5 вход):** hash mismatch не лицензия писать cold archive в repo или delete Mongo records.  
-7. **норма (вход M5):** git artifacts durable only after commit/review; local dirty export is not recovery.  
-8. **факт (слово владельца / вход):** repo содержит небольшой проверяемый слепок, не весь архив.  
-9. **норма (граница комнаты):** не решать Q6 migration legacy archive и Q7 insight lifecycle по существу; не фиксировать exact CLI/code.  
-10. **норма (решение M5):** audit = read-only сверка carrier↔SoT теми же canonicalize/hash, что write path.  
-11. **норма (решение M5):** достаточный restore material = full canonical dump \(R\) + identity manifest + committed checkpoint; full \(R\) вне git.  
-12. **норма (решение M5):** steady-state при mismatch — Mongo wins; permitted = diagnose, re-export, report; emergency — узкая дверь (unavailable/corrupt + sufficient backup + explicit declaration).  
-13. **норма (решение M5):** forbidden healing = любые действия, переписывающие append-only историю или подменяющие identity/proof вручную.  
+1. **норма (M0):** порядок вопросов `Q1 → Q3 → Q2 → Q5 → Q4 → Q6 → Q7`; M5 = Q4 Recovery and audit.
+2. **норма (M1):** hybrid SoT; canonical records — `background-office` MongoDB append-only; repo — checkpoint/export carrier, не steady-state SoT; repo emergency SoT только при явно объявленном recovery.
+3. **норма (M2):** cold-record `task_closure` с required fields и `proof`; hints/notes/branch/chat/screenshot/hot-registry/repo JSONL — not proof; archive evidence не доказывает insight L/O.
+4. **норма (M3):** артефакт `ColdArchiveCheckpoint`; identity = recompute H over canonical Mongo records и compare `recordCount + contentHash`; sanity samples ≠ records/proof/SoT.
+5. **норма (M4):** writers ArchiveNotary, CheckpointExporter, RepoAgent/Human, Close initiator; sequence valid proof → notarize → derive checkpoint from Mongo → repo commit/PR; idempotency key `(recordType=task_closure, taskId)`; partial Mongo ok + repo fail → Mongo canonical, retry export/commit, no delete.
+6. **норма (M4/M5 вход):** hash mismatch не лицензия писать cold archive в repo или delete Mongo records.
+7. **норма (вход M5):** git artifacts durable only after commit/review; local dirty export is not recovery.
+8. **факт (слово владельца / вход):** repo содержит небольшой проверяемый слепок, не весь архив.
+9. **норма (граница комнаты):** не решать Q6 migration legacy archive и Q7 insight lifecycle по существу; не фиксировать exact CLI/code.
+10. **норма (решение M5):** audit = read-only сверка carrier↔SoT теми же canonicalize/hash, что write path.
+11. **норма (решение M5):** достаточный restore material = full canonical dump \(R\) + identity manifest + committed checkpoint; full \(R\) вне git.
+12. **норма (решение M5):** steady-state при mismatch — Mongo wins; permitted = diagnose, re-export, report; emergency — узкая дверь (unavailable/corrupt + sufficient backup + explicit declaration).
+13. **норма (решение M5):** forbidden healing = любые действия, переписывающие append-only историю или подменяющие identity/proof вручную.
 14. **норма (решение M5):** закрытый алфавит reportable statuses (таблица выше); `restore_complete` требует повторного audit для `converged`.
 
 ---

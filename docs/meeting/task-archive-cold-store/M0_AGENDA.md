@@ -52,4 +52,3 @@
 - Evidence и idempotency должны быть определены до write path.
 - Lifecycle integration должно идти после технической границы, чтобы не смешать
   стратегическое решение с delivery assertions.
-

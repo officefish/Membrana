@@ -73,10 +73,10 @@
 
 [Музыкант]: Forbidden interpretation на слух хором: «раз cold archive спроектирован — мы уже operationalized»; «checkpoint в repo = SoT records»; «migration planning = Learned»; «partial write policy = можно писать в обход Notary»; «emergency restore без метки = steady-state». Это шумовые overtones — в вердикте режем.
 
-[Математик]: L/O non-proof rule одной формулой:  
-`LO_evidence(I) ∩ {consilium_M1..M7, design_doc, migration_plan, empty_checkpoint_schema, unexecuted_runbook} = ∅`  
-и  
-`task_closure_evidence(e) ⇒ closed(task(e)) ∧ ¬⇒ LO(I)`.  
+[Математик]: L/O non-proof rule одной формулой:
+`LO_evidence(I) ∩ {consilium_M1..M7, design_doc, migration_plan, empty_checkpoint_schema, unexecuted_runbook} = ∅`
+и
+`task_closure_evidence(e) ⇒ closed(task(e)) ∧ ¬⇒ LO(I)`.
 Достаточное (направление, не закрываем здесь полностью): live Notary writes + checkpoint round-trip verify(count,hash) + recovery drill под M5 + N real task archives — минимум класс E_impl, отдельный от E_design.
 
 [Структурщик]: Task work boundary ещё раз словарём. **Внутри boundary (task work):** реализация Notary, индексы/ключ `(task_closure, taskId)`, export checkpoint, import pipeline, audit tools, тесты контракта evidence. **Вне boundary (уже decision / не task этой волны):** пересмотр hybrid SoT, смена sole writer, git history rewrite, объявление L/O, UI продукта архива (если всплывёт — отдельный insight/эпик). **Серая зона запрещена:** «заодно поправим SoT обратно в JSONL» — regression против M1, BLOCK.
@@ -89,10 +89,10 @@
 
 [Музыкант]: Checkpoint round-trip на слух — хороший meter: count/hash совпали = строй, не = «инсайт выучен организацией». Выученность — когда команда без шпаргалки M* снова не кладёт SoT в git как JSONL full dump. Это operational habit; один green export job этого не доказывает. Поддерживаю non-proof rule Математика.
 
-[Математик]: Review predicate для «implementation task done»:  
-`done(t) ⇔ DoD(t) greened ∧ ¬claims(t, LO(I)) ∧ respects(t, D_M1..M6)`.  
-Для «insight revision done»:  
-`rev_done(I) ⇔ INSIGHT reflects D ∧ obsolete(repo_jsonl_sot) ∧ status ≠ LO ∧ links(M1..M7)`.  
+[Математик]: Review predicate для «implementation task done»:
+`done(t) ⇔ DoD(t) greened ∧ ¬claims(t, LO(I)) ∧ respects(t, D_M1..M6)`.
+Для «insight revision done»:
+`rev_done(I) ⇔ INSIGHT reflects D ∧ obsolete(repo_jsonl_sot) ∧ status ≠ LO ∧ links(M1..M7)`.
 Два разных предиката — два разных закрытия. Смешение = false positive на L/O.
 
 [Структурщик]: Homes напоминаю без кода: records — Mongo `background-office`; checkpoint carrier — repo manifest; sole writer module — ArchiveNotary (имя леммы M4); insight home — `docs/insights/insight-task-archive-storage/`. Task cards в registry ссылаются на homes, не плодят второй SoT в markdown task body. Link map/stubs M6 — отдельный артефакт миграции, не замена INSIGHT revision.
@@ -148,17 +148,17 @@
 
 ## Список посылок
 
-1. **Норма (M0):** порядок вопросов Q1→Q3→Q2→Q5→Q4→Q6→Q7; M7 = Q7 Insight/task lifecycle integration.  
-2. **Норма (M1):** hybrid SoT — records в Mongo `background-office`; repo — checkpoint/export carrier, не SoT records.  
-3. **Норма (M2):** cold-record evidence доказывает task closure, **не** insight L/O.  
-4. **Норма (M3):** `ColdArchiveCheckpoint`; repo manifest доказывает identity count/hash, не SoT-записи.  
-5. **Норма (M4):** ArchiveNotary — sole writer; ключ `(task_closure, taskId)`; partial write policy как в M4.  
-6. **Норма (M5):** steady-state Mongo wins; emergency restore только explicit + sufficient backup.  
-7. **Норма (M6):** legacy markdown — candidate/hint, не proof; import only through Notary; stubs/link map; no git history rewrite.  
-8. **Факт (вход повестки):** `docs/insights/insight-task-archive-storage/INSIGHT.md` ранее предлагал repo JSONL как cold SoT.  
-9. **Факт/норма (слово владельца входе):** cold archive может жить server-side; repo держит small hash/checkpoint snapshot.  
-10. **Норма (границы M7_AGENDA):** не решать actual implementation code, migration execution, closing insight L/O without implementation evidence.  
-11. **Норма (форма вердикта M7):** обязательны insight update policy, task work boundary, follow-up tasks, L/O non-proof rule, review/ratification path, forbidden interpretation + Список посылок.  
+1. **Норма (M0):** порядок вопросов Q1→Q3→Q2→Q5→Q4→Q6→Q7; M7 = Q7 Insight/task lifecycle integration.
+2. **Норма (M1):** hybrid SoT — records в Mongo `background-office`; repo — checkpoint/export carrier, не SoT records.
+3. **Норма (M2):** cold-record evidence доказывает task closure, **не** insight L/O.
+4. **Норма (M3):** `ColdArchiveCheckpoint`; repo manifest доказывает identity count/hash, не SoT-записи.
+5. **Норма (M4):** ArchiveNotary — sole writer; ключ `(task_closure, taskId)`; partial write policy как в M4.
+6. **Норма (M5):** steady-state Mongo wins; emergency restore только explicit + sufficient backup.
+7. **Норма (M6):** legacy markdown — candidate/hint, не proof; import only through Notary; stubs/link map; no git history rewrite.
+8. **Факт (вход повестки):** `docs/insights/insight-task-archive-storage/INSIGHT.md` ранее предлагал repo JSONL как cold SoT.
+9. **Факт/норма (слово владельца входе):** cold archive может жить server-side; repo держит small hash/checkpoint snapshot.
+10. **Норма (границы M7_AGENDA):** не решать actual implementation code, migration execution, closing insight L/O without implementation evidence.
+11. **Норма (форма вердикта M7):** обязательны insight update policy, task work boundary, follow-up tasks, L/O non-proof rule, review/ratification path, forbidden interpretation + Список посылок.
 12. **Норма (канон исполнения команды):** LGTM/закрытие — по DoD артефакта; design/consilium ≠ operational proof; молчаливый зелёный / фальшивый badge статуса — дефект приёмки.
 
 ---

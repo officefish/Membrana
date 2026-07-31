@@ -126,13 +126,13 @@
 
 ## Список посылок
 
-1. **[факт/норма M0]** Порядок комнат: `Q1 → Q3 → Q2 → Q5 → Q4 → Q6 → Q7`; текущая комната = Q3 Evidence contract.  
-2. **[норма M1]** SoT model = hybrid: канон records — `background-office` MongoDB append-only; git — checkpoint/export carrier, не steady-state SoT.  
-3. **[норма M1]** Forbidden ранее: cold archive как mutable task table; repo JSONL как штатный SoT; `background-media` как home; silent dual-write как два SoT.  
-4. **[норма владельца]** Cold archive может жить вне git; repo хранит небольшой проверяемый слепок.  
-5. **[норма/вход REVIEW]** Для task-archive-storage отмечались atomic write, `timestamp`, `epic_id` как обязательные аспекты; прежний server API — избыточен (механизм atomic → Q5, поля timestamp/epic_id — предмет evidence).  
-6. **[норма процесса задач]** Закрытие карточек должно быть доказательным: registry/archive, PR/SHA/review/issue state не сводятся к «на память».  
-7. **[норма границ повестки M2]** Не решать по существу Q2 checkpoint shape/hash, Q5 writer/idempotency/API, Q4 recovery, Q6 migration, Q7 insight lifecycle.  
+1. **[факт/норма M0]** Порядок комнат: `Q1 → Q3 → Q2 → Q5 → Q4 → Q6 → Q7`; текущая комната = Q3 Evidence contract.
+2. **[норма M1]** SoT model = hybrid: канон records — `background-office` MongoDB append-only; git — checkpoint/export carrier, не steady-state SoT.
+3. **[норма M1]** Forbidden ранее: cold archive как mutable task table; repo JSONL как штатный SoT; `background-media` как home; silent dual-write как два SoT.
+4. **[норма владельца]** Cold archive может жить вне git; repo хранит небольшой проверяемый слепок.
+5. **[норма/вход REVIEW]** Для task-archive-storage отмечались atomic write, `timestamp`, `epic_id` как обязательные аспекты; прежний server API — избыточен (механизм atomic → Q5, поля timestamp/epic_id — предмет evidence).
+6. **[норма процесса задач]** Закрытие карточек должно быть доказательным: registry/archive, PR/SHA/review/issue state не сводятся к «на память».
+7. **[норма границ повестки M2]** Не решать по существу Q2 checkpoint shape/hash, Q5 writer/idempotency/API, Q4 recovery, Q6 migration, Q7 insight lifecycle.
 8. **[факт повестки]** Входы комнаты перечисляют кандидатов evidence: task snapshot, PR, SHA, review artifact, issue state, actor/requestId/sourceCommit, schemaVersion.
 
 ---

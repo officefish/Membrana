@@ -174,14 +174,14 @@ Checkpoint = **верифицируемый отпечаток** canonical home,
 
 ## Список посылок
 
-1. **[норма]** M0: порядок комнат `Q1 → Q3 → Q2 → Q5 → Q4 → Q6 → Q7`; M3 = Q2 Repo checkpoint; запрет решать Q5/Q4/Q6/Q7 по существу в этой комнате.  
-2. **[норма]** M1: SoT model = **hybrid**; canonical home cold records = `background-office` MongoDB append-only collection; repo = checkpoint/export carrier, **не** steady-state SoT.  
-3. **[норма]** M1 forbidden: cold archive как mutable task table; repo JSONL как штатный SoT; `background-media` как home; silent dual-write как два SoT.  
-4. **[норма]** M2: required cold-record поля и `recordType=task_closure`; `proof` удовлетворяет `sufficient(proof)`; notes/branch/chat LGTM/screenshot/hot-registry/repo JSONL не proof; evidence record не доказывает insight L/O.  
-5. **[норма]** Владелец: в repo допускается только небольшой hash/checkpoint-слепок, не весь cold archive.  
-6. **[норма]** Checkpoint должен сверять архив records контракта M2, а не изобретать другой состав записи.  
-7. **[факт]** Повестка `docs/meeting/task-archive-cold-store/M3_AGENDA.md` требует вердикт-таблицу: Checkpoint artifact, Required fields, Identity proof, Sanity-check only, Forbidden interpretation, Boundary deferred + секцию «Список посылок».  
-8. **[норма]** Тождество набора records доказывается криптографическим digest канонической сериализации, а не наличием выборочных id в git.  
+1. **[норма]** M0: порядок комнат `Q1 → Q3 → Q2 → Q5 → Q4 → Q6 → Q7`; M3 = Q2 Repo checkpoint; запрет решать Q5/Q4/Q6/Q7 по существу в этой комнате.
+2. **[норма]** M1: SoT model = **hybrid**; canonical home cold records = `background-office` MongoDB append-only collection; repo = checkpoint/export carrier, **не** steady-state SoT.
+3. **[норма]** M1 forbidden: cold archive как mutable task table; repo JSONL как штатный SoT; `background-media` как home; silent dual-write как два SoT.
+4. **[норма]** M2: required cold-record поля и `recordType=task_closure`; `proof` удовлетворяет `sufficient(proof)`; notes/branch/chat LGTM/screenshot/hot-registry/repo JSONL не proof; evidence record не доказывает insight L/O.
+5. **[норма]** Владелец: в repo допускается только небольшой hash/checkpoint-слепок, не весь cold archive.
+6. **[норма]** Checkpoint должен сверять архив records контракта M2, а не изобретать другой состав записи.
+7. **[факт]** Повестка `docs/meeting/task-archive-cold-store/M3_AGENDA.md` требует вердикт-таблицу: Checkpoint artifact, Required fields, Identity proof, Sanity-check only, Forbidden interpretation, Boundary deferred + секцию «Список посылок».
+8. **[норма]** Тождество набора records доказывается криптографическим digest канонической сериализации, а не наличием выборочных id в git.
 9. **[норма]** Выборочные id/count-without-hash/notes — sanity-check only; канон records остаётся на server SoT.
 
 ---

@@ -68,4 +68,3 @@ Git-слепок:
    - evidence/recovery contract;
    - migration path от текущих markdown/archive/registry;
    - task/issue/insight lifecycle integration.
-
