@@ -212,27 +212,58 @@ export function validateWorkshop(manifestPath, repoRoot) {
 }
 
 /**
- * Все workshop.manifest.json под docs/ (рекурсивно).
+ * `RootPolicy` — где вообще ищутся дома. Поправка к §3 контракта `workshop-wires`,
+ * ратифицирована владельцем 31.07 ([`AMENDMENT_S3`](../../docs/meeting/workshop-wires/AMENDMENT_S3.md)).
+ *
+ * ДВА КЛАССА, И ЭТО СУЩЕСТВЕННО. Первый — поддерево `docs/`: правило по форме пути, любой
+ * новый дом под ним подхватывается сам. Второй — **поимённый** список контейнеров в корне
+ * репозитория: правила по форме тут быть не может, иначе домом становилась бы любая папка с
+ * README, а §3 это запрещает прямо.
+ *
+ * Почему список именно поимённый, а не «корневые каталоги с манифестом»: обнаружение по
+ * наличию манифеста замкнуло бы круг — кто положил манифест, тот и дом. Тогда `RootPolicy`
+ * перестаёт быть политикой и становится эхом того, что уже лежит в дереве.
+ *
+ * Расширять этот список — вносить строку сюда, и только так: молчаливое расширение
+ * `RootPolicy` §3 запрещает отдельным пунктом.
+ */
+export const ROOT_CONTAINER_ALLOWLIST = Object.freeze(['scripts']);
+
+/** Каталоги, в которые обход не заходит ни при каком классе. */
+const SKIP_DIRS = new Set(['node_modules', 'cache']);
+
+/**
+ * Все `workshop.manifest.json` в области `RootPolicy` (рекурсивно).
+ *
+ * До поправки корень был зашит одной строкой `join(repoRoot, 'docs')`, и этим питались оба
+ * живых потребителя — `validate:workshop` и справочник. Следствие ловилось руками 31.07:
+ * канонически валидный манифест `scripts/workshop.manifest.json` не читал НИКТО, поэтому
+ * §4 опирался на предпосылку, которой в проде не было.
+ *
  * @param {string} repoRoot
  * @returns {string[]} абсолютные пути манифестов
  */
 export function listWorkshopManifests(repoRoot) {
-  const root = join(repoRoot, 'docs');
   const found = [];
-  if (!existsSync(root)) return found;
   const walk = (dir) => {
     for (const e of readdirSync(dir, { withFileTypes: true })) {
       const p = join(dir, e.name);
       if (e.isDirectory()) {
-        if (e.name === 'node_modules' || e.name === 'cache') continue;
+        if (SKIP_DIRS.has(e.name)) continue;
         walk(p);
       } else if (e.name === 'workshop.manifest.json') {
         found.push(p);
       }
     }
   };
-  walk(root);
-  return found;
+  for (const top of ['docs', ...ROOT_CONTAINER_ALLOWLIST]) {
+    const root = join(repoRoot, top);
+    if (existsSync(root)) walk(root);
+  }
+  // Порядок обхода закреплён: `docs` раньше корневых, внутри — как отдаёт readdir. Без
+  // сортировки отчёт и атлас перетасовывались бы от файловой системы, и дрейф справочника
+  // ловил бы перестановку как расхождение.
+  return found.sort();
 }
 
 /** Утилита: имя дома-контейнера мастерской по пути манифеста. */

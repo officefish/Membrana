@@ -5,7 +5,7 @@
 | | |
 |---|---|
 | **Worktree** | `C:\Users\user190825\practice\Membrana-codex` |
-| **Активный спринт** | — (последний: `branch-mintlify-engine` **CLOSED**) |
+| **Активный спринт** | `branch-hygiene-salvage-2026-07-31` · [#1544](https://github.com/officefish/Membrana/issues/1544) · **AUDIT, owner-gate before delete** |
 | **Движок** | **Mintlify** · cookbooks `apps/docs/git/cookbooks/` |
 | **Пин** | `pins/branch-instructions.manifest.json` · `yarn audit:branch-instructions-pin` |
 
@@ -28,6 +28,21 @@
 |------|------:|--------|
 | F0–F4 | #824–#828 | delivered in #835 |
 | F5 | #829 | archive + CLOSURE |
+
+## Спринт `branch-hygiene-salvage-2026-07-31` — ACTIVE
+
+Frozen base: `origin/main@665a605fe612858245c7f774ed07a60fa1367881`.
+
+| Артефакт | Статус |
+|----------|--------|
+| `registry/BRANCHES_DECOMPOSE_LIST-2026-07-31.md` | Scenario A · 186 salvage |
+| `analysis/category-7-attention-2026-07-31.md` | Scenario B · A1 14 / A2 93 / A3 79 |
+| `analysis/category-7-salvage-verdicts-2026-07-31.md` | 184 verdicts + 2 owner exclusions · pending 0 |
+
+Следующий gate: владелец ратифицирует verdict ledger. До этого запрещены
+`repo:clean --execute`, удаление branch refs и тем более worktree. После
+ратификации каждая цель исполняется отдельно с пост-чеком всех живых деревьев
+по ADR-0020.
 
 ## Три измерения контейнера
 

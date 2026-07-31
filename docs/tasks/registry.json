@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "branch-hygiene-salvage-2026-07-31",
+      "title": "Разобрать diverged-ветки и сохранить живые коммиты",
+      "promptPath": "docs/prompts/BRANCH_HYGIENE_SALVAGE_2026_07_31_PROMPT.md",
+      "githubIssue": 1544,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-31",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "Отдельный sanitary sprint: Scenario A + category 7 salvage; ritual/day-2026-07-30 и ritual/evening-2026-07-29 исключены; delete только после owner-gate.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "mfcc-compare-sprint",
       "title": "MFCC-ядро: обвязка, детекторы и сравнительный прогон против гармонического на FFT",
       "promptPath": "docs/sprint/cut/mfcc-compare-sprint.json",
@@ -83,16 +103,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-30",
-      "archivedAt": null,
+      "archivedAt": "2026-07-30",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "Четыре фрикции сессии 29.07 из восьми (ретроспектива tooling-needs). Родственная заявка #1465 удостоверяет карточку agent-tooling-friction-2026-07-29 — здесь ссылкой, не дублем. Слово владельца 30.07: выполнить первыми; магистраль дня mfcc-spectral-core остаётся.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1481 merged 2026-07-30: sanitary tooling package shipped; PR #1500 archived related tooling friction phases; HANDOFF row #4 marks closed.",
       "githubIssueClosedAt": null
     },
     {
@@ -517,15 +537,16 @@
       "githubIssue": 1319,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-07-30",
       "leadPersona": "dynin",
       "supportPersonas": [],
       "notes": "Вещдок 26.07: подъём топ-10 из docs/HANDOFF.md — 3 строки из 10 мертвы (#1220 и #1210 закрыты, #1221 закрыт в этой же сессии), проверял руками. Дом — соседняя зона осмотра мастерской (docs/audit/tasks), рядом с tasks:audit: смотрит наружу, а не в реестр.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "Issue #1319 closed 2026-07-27; PR #1502 merged 2026-07-30: tasks:handoff-liveness handles Issue/PR carriers and reports dead/alive/unknown.",
+      "githubIssueClosedAt": "2026-07-27",
+      "githubIssueStateReason": "COMPLETED"
     },
     {
       "id": "tw-declared-verbs-honest-no",

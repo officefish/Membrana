@@ -1,0 +1,13 @@
+{
+  "sprintId": "workshop-wires-implementation",
+  "note": "факт по каждому блоку — git diff --numstat на момент коммита блока",
+  "segments": [
+    { "blockId": "protocol-body-tail-trim", "changedLines": 123 },
+    { "blockId": "gate-cli-seam", "changedLines": 163 },
+    { "blockId": "home-workshop-reconcile", "changedLines": 132 },
+    { "blockId": "belongs-core", "changedLines": 430 },
+    { "blockId": "namespace-registry", "changedLines": 263 },
+    { "blockId": "scripts-workshop-verbs", "changedLines": 447 },
+    { "blockId": "rootpolicy-two-class", "changedLines": 219 }
+  ]
+}

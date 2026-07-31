@@ -1,0 +1,15 @@
+{"traceId":"tr-protocol-body-dynin-run","blockId":"protocol-body-tail-trim","kind":"context_run","subject":"dynin","at":"2026-07-31T05:40:00Z","ref":"docs/meeting/workshop-wires/AUDIT_FARRELL.md"}
+{"traceId":"tr-protocol-body-dynin-review","blockId":"protocol-body-tail-trim","kind":"review_pass","subject":"dynin","at":"2026-07-31T05:55:00Z","ref":"scripts/protocol-validator.test.mjs"}
+{"traceId":"tr-gate-seam-vesnin-run","blockId":"gate-cli-seam","kind":"context_run","subject":"vesnin","at":"2026-07-31T05:45:00Z","ref":"docs/cowork-sprint/cowork-honest-sprint/INTERFACE_CONTRACT.md"}
+{"traceId":"tr-gate-seam-vesnin-review","blockId":"gate-cli-seam","kind":"review_pass","subject":"vesnin","at":"2026-07-31T05:55:00Z","ref":"scripts/execution-gate.test.mjs"}
+{"traceId":"tr-home-workshop-ozhegov-run","blockId":"home-workshop-reconcile","kind":"context_run","subject":"ozhegov","at":"2026-07-31T06:20:00Z","ref":"docs/patterns/HOME_WORKSHOP.md"}
+{"traceId":"tr-home-workshop-ozhegov-review","blockId":"home-workshop-reconcile","kind":"review_pass","subject":"ozhegov","at":"2026-07-31T06:30:00Z","ref":"docs/meeting/workshop-wires/RECONCILE_M3.md"}
+{"traceId":"tr-belongs-dynin-run","blockId":"belongs-core","kind":"context_run","subject":"dynin","at":"2026-07-31T06:45:00Z","ref":"docs/meeting/workshop-wires/CONTRACT.md"}
+{"traceId":"tr-belongs-dynin-review","blockId":"belongs-core","kind":"review_pass","subject":"dynin","at":"2026-07-31T06:55:00Z","ref":"scripts/belongs.test.mjs"}
+{"traceId":"tr-ns-registry-vesnin-run","blockId":"namespace-registry","kind":"context_run","subject":"vesnin","at":"2026-07-31T07:10:00Z","ref":"docs/namespaces/README.md"}
+{"traceId":"tr-ns-registry-vesnin-review","blockId":"namespace-registry","kind":"review_pass","subject":"vesnin","at":"2026-07-31T07:20:00Z","ref":"scripts/namespace-registry.test.mjs"}
+{"traceId":"tr-verbs-kuryokhin-run","blockId":"scripts-workshop-verbs","kind":"context_run","subject":"kuryokhin","at":"2026-07-31T07:40:00Z","ref":"scripts/workshop.manifest.json"}
+{"traceId":"tr-verbs-kuryokhin-review","blockId":"scripts-workshop-verbs","kind":"review_pass","subject":"kuryokhin","at":"2026-07-31T07:55:00Z","ref":"scripts/scripts-workshop.test.mjs"}
+{"traceId":"tr-rootpolicy-vesnin-run","blockId":"rootpolicy-two-class","kind":"context_run","subject":"vesnin","at":"2026-07-31T06:25:00Z","ref":"docs/meeting/workshop-wires/RECONCILE_M3.md"}
+{"traceId":"tr-rootpolicy-vesnin-review","blockId":"rootpolicy-two-class","kind":"review_pass","subject":"vesnin","at":"2026-07-31T06:35:00Z","ref":"scripts/rootpolicy.test.mjs"}
+{"traceId":"tr-home-workshop-ozhegov-review-2","blockId":"home-workshop-reconcile","kind":"review_pass","subject":"ozhegov","at":"2026-07-31T07:05:00Z","ref":"docs/discussions/pr-1543-code-review.md"}
