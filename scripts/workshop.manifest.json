@@ -1,0 +1,13 @@
+{
+  "pattern": "docs/patterns/HOME_WORKSHOP.md",
+  "name": "мастерская скриптов",
+  "worksOn": "scripts",
+  "kit": null,
+  "verbs": {
+    "audit": "yarn scripts:orphans",
+    "decompose": "yarn scripts:registry",
+    "inspectElement": "yarn scripts:sets-of",
+    "stackLike": [],
+    "domain": []
+  }
+}
