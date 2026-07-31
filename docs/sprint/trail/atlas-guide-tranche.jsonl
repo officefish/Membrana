@@ -13,3 +13,5 @@
 {"traceId":"tr-drift-dynin-review","blockId":"atlas-drift","kind":"review_pass","subject":"dynin","at":"2026-07-31T12:55:00Z","ref":"scripts/atlas-drift.test.mjs"}
 {"traceId":"tr-cli-dynin-run","blockId":"atlas-cli","kind":"context_run","subject":"dynin","at":"2026-07-31T13:00:00Z","ref":"scripts/lib/atlas-drift.mjs"}
 {"traceId":"tr-cli-dynin-review","blockId":"atlas-cli","kind":"review_pass","subject":"dynin","at":"2026-07-31T13:10:00Z","ref":"scripts/atlas-cli.test.mjs"}
+{"traceId":"tr-canon-ozhegov-run","blockId":"atlas-canon","kind":"context_run","subject":"ozhegov","at":"2026-07-31T13:15:00Z","ref":"docs/tooling-atlas/registry/ATLAS.md"}
+{"traceId":"tr-canon-ozhegov-review","blockId":"atlas-canon","kind":"review_pass","subject":"ozhegov","at":"2026-07-31T13:20:00Z","ref":"docs/tooling-atlas/README.md"}
