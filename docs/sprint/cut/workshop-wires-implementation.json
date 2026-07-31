@@ -23,6 +23,19 @@
       }
     },
     {
+      "blockId": "gate-cli-seam",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/execution-gate.mjs",
+        "scripts/execution-gate.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T08:45:00Z",
+      "estimate": {
+        "changedLines": 90
+      }
+    },
+    {
       "blockId": "home-workshop-reconcile",
       "persona": "ozhegov",
       "context": "ozhegov",
@@ -81,7 +94,7 @@
   ],
   "ratification": {
     "by": "owner",
-    "at": "2026-07-31T08:20:26+03:00",
-    "digest": "3df455522f84102dc96b045e2fcaf26e97bff7a0c9ce188cba06e91953143c55"
+    "at": "2026-07-31T08:46:51+03:00",
+    "digest": "3055bed55cadb033b72c73bac6b1e811e6d13a3fb55b1e6e22e5ef67dfc8aa5e"
   }
 }
