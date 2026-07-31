@@ -1,0 +1,87 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "workshop-wires-implementation",
+  "taskId": "workshop-wires-implementation",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-07-31T05:20:00Z",
+    "to": "2026-07-31T15:00:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "protocol-body-tail-trim",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/protocol-validator.mjs",
+        "scripts/protocol-validator.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T05:20:00Z",
+      "estimate": {
+        "changedLines": 140
+      }
+    },
+    {
+      "blockId": "home-workshop-reconcile",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/meeting/workshop-wires/CONTRACT.md",
+        "docs/meeting/workshop-wires/RECONCILE_M3.md",
+        "scripts/workshop.manifest.json"
+      ],
+      "revisionAt": "2026-07-31T05:20:00Z",
+      "estimate": {
+        "changedLines": 170
+      }
+    },
+    {
+      "blockId": "belongs-core",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/belongs.mjs",
+        "scripts/belongs.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T05:20:00Z",
+      "estimate": {
+        "changedLines": 380
+      }
+    },
+    {
+      "blockId": "namespace-registry",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/namespaces/**",
+        "scripts/lib/namespace-registry.mjs",
+        "scripts/namespace-registry.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T05:20:00Z",
+      "estimate": {
+        "changedLines": 240
+      }
+    },
+    {
+      "blockId": "scripts-workshop-verbs",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "scripts/scripts-orphans.mjs",
+        "scripts/scripts-sets-of.mjs",
+        "scripts/lib/scripts-workshop.mjs",
+        "scripts/scripts-workshop.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T05:20:00Z",
+      "estimate": {
+        "changedLines": 390
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-31T08:20:26+03:00",
+    "digest": "3df455522f84102dc96b045e2fcaf26e97bff7a0c9ce188cba06e91953143c55"
+  }
+}

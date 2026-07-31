@@ -1,0 +1,2 @@
+{"traceId":"tr-protocol-body-dynin-run","blockId":"protocol-body-tail-trim","kind":"context_run","subject":"dynin","at":"2026-07-31T05:40:00Z","ref":"docs/meeting/workshop-wires/AUDIT_FARRELL.md"}
+{"traceId":"tr-protocol-body-dynin-review","blockId":"protocol-body-tail-trim","kind":"review_pass","subject":"dynin","at":"2026-07-31T05:55:00Z","ref":"scripts/protocol-validator.test.mjs"}
