@@ -24,7 +24,8 @@
         "vdr-validation",
         "mic-combined-detection",
         "mic-proximity-alarm",
-        "mic-detector-scoreboard"
+        "mic-detector-scoreboard",
+        "mfcc-analyzer-test"
       ],
       "services": [
         "@membrana/audio-engine-service"
@@ -323,6 +324,23 @@
       "relatedTasks": [
         "scoreboard-plugin-shell",
         "detector-scoreboard"
+      ]
+    },
+    {
+      "id": "mfcc-analyzer-test",
+      "kind": "plugin",
+      "name": "Тембровый тест (MFCC)",
+      "status": "draft",
+      "parentModuleId": "microphone",
+      "promptPath": "docs/catalog/client/prompts/plugins/mfcc-analyzer-test.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/mfcc-analyzer-test/mfccAnalyzerTestPlugin.ts"
+      },
+      "services": [
+        "mfcc-analyzer-service"
+      ],
+      "relatedTasks": [
+        "mfcc-plugin-sprint"
       ]
     },
     {
