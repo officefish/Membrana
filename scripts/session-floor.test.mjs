@@ -119,3 +119,17 @@ test('метка второго уровня: нет файла — «неизв
   writeFileSync(join(root, 'docs/procedures/dead-wires/LAST_RUN.json'), '{ не json', 'utf8');
   assert.equal(readSecondLevelStamp(root), null);
 });
+
+test('в полу ТОЛЬКО мастерские — дома без оснастки вытеснили бы двери', () => {
+  // Поймано красным CI 31.07: справочник стал отдавать 43 дома вместо 13, порог сжатия
+  // сработал, и пол молча схлопнулся в счётчик «мастерских 43» вместо списка дверей.
+  const floor = buildFloor(repoRoot);
+  assert.equal(floor.workshopCount, 13, `в полу ${floor.workshopCount} записей`);
+  assert.equal(floor.compact, false, 'тринадцать в порог укладываются — сжатие не нужно');
+  // Прочерк у мастерской законен (§6: «входной глагол ИЛИ честный прочерк») — сегодня такая
+  // одна, docs/containers/strategic-docs со всеми verbs = null. Но тридцать прочерков подряд
+  // означали бы, что в пол попали дома, а не мастерские.
+  const noVerb = floor.workshops.filter((w) => w.entryVerb === null);
+  assert.ok(noVerb.length <= 1, `без входного глагола ${noVerb.length}: ${noVerb.map((w) => w.home).join(', ')}`);
+  assert.ok(floor.callable.calls.length >= 10, 'дверей в полу должно быть много, а не две');
+});
