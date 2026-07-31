@@ -1,0 +1,82 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "atlas-guide-tranche",
+  "taskId": "atlas-guide-tranche",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-07-31T10:20:00Z",
+    "to": "2026-07-31T19:00:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "atlas-discovery",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/atlas-discovery.mjs",
+        "scripts/atlas-discovery.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T10:20:00Z",
+      "estimate": {
+        "changedLines": 300
+      }
+    },
+    {
+      "blockId": "atlas-render",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "scripts/lib/tooling-atlas.mjs",
+        "scripts/atlas-render.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T10:20:00Z",
+      "estimate": {
+        "changedLines": 320
+      }
+    },
+    {
+      "blockId": "atlas-drift",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/atlas-drift.mjs",
+        "scripts/atlas-drift.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T10:20:00Z",
+      "estimate": {
+        "changedLines": 260
+      }
+    },
+    {
+      "blockId": "atlas-cli",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/tooling-atlas.mjs",
+        "scripts/atlas-cli.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T10:20:00Z",
+      "estimate": {
+        "changedLines": 180
+      }
+    },
+    {
+      "blockId": "atlas-canon",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/tooling-atlas/README.md"
+      ],
+      "revisionAt": "2026-07-31T10:20:00Z",
+      "estimate": {
+        "changedLines": 110
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-31T14:45:06+03:00",
+    "digest": "8699c555b340db9e70443748f2ac55953de1cf4f63d71dd3806c6e47334381bd"
+  }
+}

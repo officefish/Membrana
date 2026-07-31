@@ -1,0 +1,2 @@
+{"traceId":"tr-disc-vesnin-run","blockId":"atlas-discovery","kind":"context_run","subject":"vesnin","at":"2026-07-31T11:00:00Z","ref":"docs/meeting/workshop-wires/CONTRACT.md"}
+{"traceId":"tr-disc-vesnin-review","blockId":"atlas-discovery","kind":"review_pass","subject":"vesnin","at":"2026-07-31T11:10:00Z","ref":"scripts/atlas-discovery.test.mjs"}
