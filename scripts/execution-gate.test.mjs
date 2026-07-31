@@ -11,9 +11,10 @@ import { dirname, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { parseArgs } from './execution-gate.mjs';
+import { adaptCutPlan, makeWorkTreeResolver, parseArgs } from './execution-gate.mjs';
 import { runGate } from './lib/execution-trace/gate.mjs';
 import {
+  ALL_INPUT_ERRORS,
   ALL_VERDICTS,
   DISQUALIFICATIONS,
   EXIT_NOT_PERFORMED,
@@ -339,4 +340,61 @@ test('CLI: аргументы разбираются, стаб плана и ф�
   const a = parseArgs(['--plan', 'stub:plan-two-blocks', '--traces', 'fixture:plan-lied', '--now', 'X', '--json']);
   assert.deepEqual(a, { plan: 'stub:plan-two-blocks', traces: 'fixture:plan-lied', now: 'X', json: true });
   assert.deepEqual(parseArgs([]), { plan: null, traces: null, now: null, json: false });
+});
+
+// ── Шов A→B: настоящий план нарезки доезжает до гейта (31.07) ────────────────────────────────
+
+test('шов A→B: план схемы sprint-cut/1 приводится ко входу гейта', () => {
+  const plan = {
+    schema: 'sprint-cut/1',
+    sprintId: 'seam-check',
+    mode: 'explicit-honest',
+    window: { from: '2026-07-31T05:00:00Z', to: '2026-07-31T15:00:00Z' },
+    blocks: [{ blockId: 'one-block', persona: 'dynin', context: 'dynin', revisionAt: '2026-07-31T05:00:00Z' }],
+  };
+  const { planRaw, errors } = adaptCutPlan(plan);
+  assert.deepEqual(errors, [], 'чистый план ошибок шва не рождает');
+  assert.equal(planRaw.planId, 'seam-check', 'sprintId → planId');
+  assert.equal(planRaw.blocks[0].assigned, 'dynin', 'persona → assigned');
+  assert.equal(planRaw.blocks[0].mode, 'explicit_honest', 'литерал режима нормализован');
+  // Ратификации в теле нет → ratified false. Адаптер её НЕ выдумывает.
+  assert.equal(planRaw.ratified, false);
+});
+
+test('шов A→B: файл без схемы — ошибка входа, а не «наверное родной формы»', () => {
+  // Ровно форма стаба Phase 2. Пропусти её CLI молча — и рукописный документ во внутренней
+  // модели гейта стал бы законным входом, включая ratified: true, поставленный рукой.
+  const stubShaped = { planId: 'hand-made', ratified: true, blocks: [{ blockId: 'x', assigned: 'dynin' }] };
+  const { planRaw, errors } = adaptCutPlan(stubShaped);
+  assert.equal(planRaw, null);
+  assert.equal(errors.length, 1);
+  assert.equal(errors[0].code, INPUT_ERRORS.E_PLAN_UNREADABLE);
+  assert.match(errors[0].detail, /schema=\(нет\)/u);
+});
+
+test('шов A→B: находка шва поднимается ошибкой входа — проверка не состоялась', () => {
+  // context ≠ persona: контракт §G5 говорит, что такой план из области гейта выходит.
+  const plan = {
+    schema: 'sprint-cut/1',
+    sprintId: 'seam-context',
+    window: { from: '2026-07-31T05:00:00Z', to: '2026-07-31T15:00:00Z' },
+    blocks: [{ blockId: 'one-block', persona: 'dynin', context: 'ozhegov', revisionAt: '2026-07-31T05:00:00Z' }],
+  };
+  const { errors } = adaptCutPlan(plan);
+  assert.equal(errors.length, 1);
+  assert.equal(errors[0].subject, 'one-block', 'ошибка адресована блоку, а не «плану вообще»');
+  assert.match(errors[0].detail, /ia-context-differs/u, 'имя находки шва не потеряно');
+  assert.ok(ALL_INPUT_ERRORS.includes(errors[0].code), 'код из закрытого списка, свой не заведён');
+});
+
+test('резолвер дерева: файл да, чужой путь и ссылка со схемой — нет', () => {
+  const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+  const resolveRef = makeWorkTreeResolver(root);
+  assert.equal(resolveRef('scripts/execution-gate.mjs'), true);
+  assert.equal(resolveRef('scripts/нет-такого-файла.mjs'), false);
+  assert.equal(resolveRef('../../../etc/passwd'), false, 'наружу дерева не выпускаем');
+  // URL не хуже файла — он просто не проверяем этим резолвером; тихое «да» было бы
+  // ложным зелёным ровно того рода, против которого гейт построен.
+  assert.equal(resolveRef('https://github.com/officefish/Membrana/pull/1467'), false);
+  assert.equal(resolveRef(''), false);
 });

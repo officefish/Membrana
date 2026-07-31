@@ -4,7 +4,7 @@
 > Пересобрать: `yarn tooling:atlas --render`. Дрейф ловит `yarn tooling:atlas --check`.
 > Ссылка = `home` каталога. `docs/tasks` (domain) ≠ `docs/audit/tasks` (report, отчёты про задачи).
 
-Контейнеров: **12** · плоскостей: **3** · семей: **3** · с полным набором из 3 глаголов: **5**.
+Контейнеров: **13** · плоскостей: **3** · семей: **3** · с полным набором из 3 глаголов: **6**.
 
 ## Плоскость отчётов (`docs/audit`)
 
@@ -26,6 +26,7 @@
 | [docs/precedents](../../../docs/precedents/README.md) | — | audit · decompose · ~~inspectElement~~ | — | Дом-контейнер прецедентов: единичных задокументированных случаев (симптом → корень → |
 | [docs/procedures](../../../docs/procedures/README.md) | — | audit · decompose · inspectElement | — | Дом **определений процедур** — спроектированных сущностей, оперирующих категориями |
 | [docs/tasks](../../../docs/tasks/README.md) | primary | ~~audit~~ · ~~decompose~~ · inspectElement | kits/tasks-master | Актуальные **активные** и **архивные** задачи по стандарту |
+| [scripts](../../../scripts/README.md) | — | audit · decompose · inspectElement | — | Единственный дом группы «скрипты и yarn-обвязка ритуала». Реализация паттерна |
 
 ## Meta (атлас)
 
