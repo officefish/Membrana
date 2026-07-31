@@ -57,6 +57,8 @@ const argOf = (n, d = null) => {
   return i !== -1 && argv[i + 1] ? argv[i + 1] : d;
 };
 
+const topSeparation = (cfg) => Math.max(...cfg.coefficients.map((x) => x.separation ?? -1));
+
 async function main() {
   const Meyda = (await import('meyda')).default;
   const manifest = JSON.parse(await readFile(MANIFEST_PATH, 'utf8'));
@@ -147,6 +149,49 @@ async function main() {
       console.log(`    c${String(x.index).padStart(2)} · [${x.gate.lo}, ${x.gate.hi}] · фон ${(x.otherInside * 100).toFixed(0)}% · разделение ${x.separation}`);
     }
   }
+
+  // ПРЕСЕТ ДЕТЕКТОРА. Новой математики не нужно: коридорный детектор уже несёт
+  // judgedCoefficients — «закрытый явный список вместо флага исключить C0». Кладём туда
+  // отобранные коэффициенты, и minInBandRatio снова становится ЗАКРЫТЫМ СЧЁТОМ: при
+  // четырёх судимых 0.25/0.5/0.75 читаются как «один из четырёх / два / три». Прежний
+  // смысл трёх уровней строгости (Т2 шторма) возвращается без правки детектора.
+  const best = report.configs.reduce((a, b) => (topSeparation(b) > topSeparation(a) ? b : a));
+  const picked = best.coefficients
+    .filter((x) => x.separation !== null)
+    .sort((a, b) => b.separation - a.separation)
+    .slice(0, Number(argOf('pick', '4')))
+    .sort((a, b) => a.index - b.index);
+  const n = picked.length;
+  report.preset = {
+    // Отпечаток настроек: коридор, снятый при 26 фильтрах, ничего не говорит о векторе
+    // при 40 — детектор отвергает корпус с чужим отпечатком, и это его право.
+    configHash: `mel${best.config.melBands}-c${best.config.numberOfCoefficients}-buf${best.config.bufferSize}`,
+    judgedCoefficients: picked.map((x) => x.index),
+    // Коридор НА КАЖДЫЙ коэффициент, длиной во весь вектор — так требует контракт трубы
+    // (`boundsProblem` сверяет длину с `coefficientCount`). Отбор делает
+    // `judgedCoefficients`, а НЕ усечение коридоров: усечённый список сместил бы номера,
+    // и коридор c7 применился бы к c3. Поймано чтением контракта до прогона.
+    bounds: best.coefficients.map((x) => ({ min: x.gate.lo, max: x.gate.hi })),
+    // Три уровня строгости. Знаменатель равен числу СУДИМЫХ коэффициентов, поэтому доля
+    // читается закрытым счётом — ровно как «сколько метрик из трёх» у порогового детектора.
+    // Серийный этаж (minPassRate 0.3/0.6/0.9) перенесён без правок: он не зависит от числа
+    // параметров (Т2 шторма).
+    strictness: {
+      easy: { minInBandRatio: Number((1 / n).toFixed(4)), minPassRate: 0.3, means: `1 из ${n} коэффициентов в воротах` },
+      normal: { minInBandRatio: Number((Math.ceil(n / 2) / n).toFixed(4)), minPassRate: 0.6, means: `${Math.ceil(n / 2)} из ${n}` },
+      strict: { minInBandRatio: 1, minPassRate: 0.9, means: `все ${n}` },
+    },
+    // Обстановки владельца (Т5) НЕ откалиброваны: строгий — дрон, средний — модели+ветер,
+    // мягкий — цель под моторами и стрельбой. В корпусе нет смесей, и эти имена пока
+    // держатся на аналогии с прежним детектором, а не на измерении.
+    situationsCalibrated: false,
+    // Труба требует конечное ≥ 0 и трактует 0 как ВЫКЛЮЧЕННУЮ защиту от немого кадра.
+    // Ставим 0 сознательно: калибровкой порог не определяется — он снимается на тишине
+    // СВОЕГО тракта, а корпус её не содержит. Это не «защита не нужна», это «защиты нет».
+    minMagnitude: 0,
+    minMagnitudeWhy:
+      'ЗАЩИТА ВЫКЛЮЧЕНА (0). Порог немого кадра калибровкой НЕ определяется: снимается на тишине своего тракта, которой в корпусе нет. Кадр из одних нулей попадёт в любой коридор, включающий ноль, и труба даст зелёный на тишине. Перед любым живым прогоном значение обязано быть выбрано; до тех пор единственный признак — silentCount в отчёте, и он будет нулевым.',
+  };
 
   const out = argOf('out', DEFAULT_OUT);
   await mkdir(dirname(out), { recursive: true });
