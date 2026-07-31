@@ -30,9 +30,25 @@
         "scripts/execution-gate.mjs",
         "scripts/execution-gate.test.mjs"
       ],
-      "revisionAt": "2026-07-31T08:45:00Z",
+      "revisionAt": "2026-07-31T05:20:00Z",
       "estimate": {
         "changedLines": 90
+      }
+    },
+    {
+      "blockId": "rootpolicy-two-class",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/validate-workshop.mjs",
+        "scripts/lib/tooling-atlas.mjs",
+        "scripts/check-workshops.mjs",
+        "scripts/rootpolicy.test.mjs",
+        "docs/meeting/workshop-wires/AMENDMENT_S3.md"
+      ],
+      "revisionAt": "2026-07-31T06:15:00Z",
+      "estimate": {
+        "changedLines": 200
       }
     },
     {
@@ -94,7 +110,7 @@
   ],
   "ratification": {
     "by": "owner",
-    "at": "2026-07-31T08:46:51+03:00",
-    "digest": "3055bed55cadb033b72c73bac6b1e811e6d13a3fb55b1e6e22e5ef67dfc8aa5e"
+    "at": "2026-07-31T09:17:13+03:00",
+    "digest": "845c41ad192160d133a89b701eda2c35965ea83f93c72b474c4e67ea43870d6c"
   }
 }

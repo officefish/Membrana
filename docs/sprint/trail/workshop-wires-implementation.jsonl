@@ -10,3 +10,5 @@
 {"traceId":"tr-ns-registry-vesnin-review","blockId":"namespace-registry","kind":"review_pass","subject":"vesnin","at":"2026-07-31T07:20:00Z","ref":"scripts/namespace-registry.test.mjs"}
 {"traceId":"tr-verbs-kuryokhin-run","blockId":"scripts-workshop-verbs","kind":"context_run","subject":"kuryokhin","at":"2026-07-31T07:40:00Z","ref":"scripts/workshop.manifest.json"}
 {"traceId":"tr-verbs-kuryokhin-review","blockId":"scripts-workshop-verbs","kind":"review_pass","subject":"kuryokhin","at":"2026-07-31T07:55:00Z","ref":"scripts/scripts-workshop.test.mjs"}
+{"traceId":"tr-rootpolicy-vesnin-run","blockId":"rootpolicy-two-class","kind":"context_run","subject":"vesnin","at":"2026-07-31T06:25:00Z","ref":"docs/meeting/workshop-wires/RECONCILE_M3.md"}
+{"traceId":"tr-rootpolicy-vesnin-review","blockId":"rootpolicy-two-class","kind":"review_pass","subject":"vesnin","at":"2026-07-31T06:35:00Z","ref":"scripts/rootpolicy.test.mjs"}
