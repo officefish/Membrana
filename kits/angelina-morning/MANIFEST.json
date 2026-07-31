@@ -20,7 +20,7 @@
     "scripts/_anthropic-env.mjs": "0adfa9909638f1ca54d092565480351f29fbc13a",
     "scripts/_daily-standup.mjs": "49431a261d2bcb0b70f3f48459a089e265ae02da",
     "scripts/_llm-proxy-env.mjs": "968266cc5076bb569dd3d8181d89f3201a385f6a",
-    "scripts/_main-day-issue.mjs": "51db3975b06b055aea8a98211899386115568fcc",
+    "scripts/_main-day-issue.mjs": "a92cafb49a2f27f9683ef90f9ef7ce158a8590c4",
     "scripts/angelina.mjs": "7958ec8a8aab856ce6acca3c5246ab6bca5d8e37",
     "scripts/daily-standup.mjs": "3450e99f7e63c4544b1cec63c1b59218f41a6084",
     "scripts/deps-watch.mjs": "9cb0714e8f41df23b59edb7c4b6753111103a89b",
