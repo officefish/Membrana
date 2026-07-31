@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `branch-hygiene-salvage-2026-07-31` | Разобрать diverged-ветки и сохранить живые коммиты | L | [`BRANCH_HYGIENE_SALVAGE_2026_07_31_PROMPT.md`](../prompts/BRANCH_HYGIENE_SALVAGE_2026_07_31_PROMPT.md) | [#1544](https://github.com/officefish/Membrana/issues/1544) |
 | `mfcc-compare-sprint` | MFCC-ядро: обвязка, детекторы и сравнительный прогон против гармонического на FFT | M | [`mfcc-compare-sprint.json`](../sprint/cut/mfcc-compare-sprint.json) | — |
 | `mfcc-lib-choice` | Выбор MFCC-библиотеки: обоснование до нарезки блоков | S | [`MFCC_LIB_CHOICE_PROMPT.md`](../prompts/MFCC_LIB_CHOICE_PROMPT.md) | — |
 | `network-container` | Контейнер network: словарь исходов, зонды обоими путями, предполётная проверка, снимок окружения для агентов | M | [`NETWORK_CONTAINER_PROMPT.md`](../prompts/NETWORK_CONTAINER_PROMPT.md) | [#1449](https://github.com/officefish/Membrana/issues/1449) |

@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "branch-hygiene-salvage-2026-07-31",
+      "title": "Разобрать diverged-ветки и сохранить живые коммиты",
+      "promptPath": "docs/prompts/BRANCH_HYGIENE_SALVAGE_2026_07_31_PROMPT.md",
+      "githubIssue": 1544,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-31",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "Отдельный sanitary sprint: Scenario A + category 7 salvage; ritual/day-2026-07-30 и ritual/evening-2026-07-29 исключены; delete только после owner-gate.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "mfcc-compare-sprint",
       "title": "MFCC-ядро: обвязка, детекторы и сравнительный прогон против гармонического на FFT",
       "promptPath": "docs/sprint/cut/mfcc-compare-sprint.json",
