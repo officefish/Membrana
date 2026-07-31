@@ -23,6 +23,12 @@ import {
   HarmonicDetectorVizPanel,
 } from '../../plugins/harmonic-detector-viz';
 import {
+  MFCC_ANALYZER_TEST_PLUGIN_ID,
+  MFCC_PRESET_FIRST_CUT,
+  MfccTestPanel,
+  getMfccExtractor,
+} from '../../plugins/mfcc-analyzer-test';
+import {
   MIC_BUFFER_RECORDER_PLUGIN_ID,
   MicBufferRecorderPanel,
 } from '../../plugins/mic-buffer-recorder';
@@ -294,6 +300,13 @@ export const MicrophoneModule: React.FC<ModuleProps<MicrophoneConfig>> = ({
 
         {activeIds.includes(HARMONIC_DETECTOR_VIZ_PLUGIN_ID) && (
           <HarmonicDetectorVizPanel moduleId={module.id} />
+        )}
+
+        {/* Считалка подаётся пропом — это шов, названный структурщиком до работы: плагин не
+            знает, как считаются коэффициенты. Ссылка устойчива (память по отпечатку), иначе
+            каждая отрисовка пересоздавала бы жизненный цикл прибора. */}
+        {activeIds.includes(MFCC_ANALYZER_TEST_PLUGIN_ID) && (
+          <MfccTestPanel extract={getMfccExtractor(MFCC_PRESET_FIRST_CUT.configHash)} />
         )}
 
         {activeIds.includes(MIC_DETECTOR_SCOREBOARD_PLUGIN_ID) && (
