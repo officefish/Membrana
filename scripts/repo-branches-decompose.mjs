@@ -107,11 +107,14 @@ function main() {
     text = JSON.stringify(
       {
         base: BASE,
+        baseSha: inventory.baseSha,
+        generatedAt: inventory.generatedAt,
         currentBranch: inventory.currentBranch,
         fetched,
         ghAvailable: prResult.ok,
         ghNote: prResult.note || undefined,
         skippedRemoteTwins: decomposition.skippedRemoteTwins,
+        twins: decomposition.twins,
         counts: decomposition.counts,
         rows: decomposition.rows,
         byCategory: Object.fromEntries(
@@ -119,6 +122,8 @@ function main() {
             k,
             list.map((r) => ({
               name: r.name,
+              ref: r.ref,
+              tip: r.tip,
               scope: r.scope,
               ahead: r.ahead,
               behind: r.behind,
@@ -138,6 +143,8 @@ function main() {
   } else {
     text = renderHygieneDecompose({
       base: BASE,
+      baseSha: inventory.baseSha,
+      generatedAt: inventory.generatedAt,
       currentBranch: inventory.currentBranch,
       fetched,
       ghAvailable: prResult.ok,

@@ -137,7 +137,7 @@
 
 | Мастерская | Дом (`worksOn`) | Соответствие |
 |-----------|-----------------|--------------|
-| [`docs/audit/git/`](../audit/git/workshop.manifest.json) | ветки репозитория | `audit`+`decompose` ✅, `inspectElement` ⚠ (нет); `kit: null` |
+| [`docs/audit/git/`](../audit/git/workshop.manifest.json) | ветки репозитория | `audit`+`decompose` ✅; domain `reconcile` / `applyRatifiedPlan` / `closeout` ✅; `inspectElement` ⚠ (нет); `kit: null` |
 | [`docs/tasks/`](../tasks/workshop.manifest.json) | реестр задач (`registry.json`, primary) | decision-verbs ✅ (`inspectElement`/`list`/`board`/`bookkeeping`/`reviewing`); `audit`/`decompose` ⚠=`null` → контур [`docs/audit/tasks/`](../audit/tasks/) + CI · V2 / #1056–#1058; `kit: "kits/tasks-master"` · дверь [`WORKSHOP.md`](../tasks/WORKSHOP.md) · `yarn task:tools` |
 | [`docs/audit/tasks/`](../audit/tasks/workshop.manifest.json) | снимки разборов (`registry/`, derivative) | `audit`+`decompose` ✅; `dependentOn`/`mirrorsFrom`; `inspectElement` ⚠; `kit: null` |
 | [`docs/procedures/`](../procedures/workshop.manifest.json) | процедурный дом | `audit`+`decompose`+`inspectElement` ✅; `kit: null` |

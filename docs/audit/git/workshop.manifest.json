@@ -8,6 +8,22 @@
     "decompose": "yarn repo:branches:decompose",
     "inspectElement": null,
     "stackLike": [],
-    "domain": []
+    "domain": [
+      {
+        "name": "reconcile",
+        "worksOn": "docs/audit/git",
+        "tool": "yarn repo:branches:reconcile"
+      },
+      {
+        "name": "applyRatifiedPlan",
+        "worksOn": "docs/audit/git",
+        "tool": "yarn repo:branches:apply-plan"
+      },
+      {
+        "name": "closeout",
+        "worksOn": "docs/audit/git",
+        "tool": "yarn repo:branches:closeout"
+      }
+    ]
   }
 }
