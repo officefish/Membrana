@@ -120,13 +120,22 @@ function buildLiveRecord(args) {
     problems.push(`план: schema=${plan?.schema === undefined ? '(нет)' : String(plan.schema)} — ожидается «sprint-cut/1»`);
   }
   if (args.traces === null) problems.push('исход не назван: без --traces запись была бы предсказанием без исхода');
+  else if (!existsSync(args.traces)) {
+    // FAIL-CLOSED. Пустая лента при указанном пути делала бы опечатку в имени файла
+    // неотличимой от честного «исполнения не было»: гейт объявил бы plan_lied по всем
+    // блокам, и запись рода зафиксировала бы это как наблюдённый исход. Молчаливый
+    // зелёный наоборот — молчаливый красный, но врёт он ровно так же.
+    problems.push(`лента вещдоков: файла нет — ${args.traces}`);
+  }
   if (problems.length > 0) return { record: null, problems, unattributed: [] };
 
   const forecast = planToForecast(plan);
   const { planRaw } = planToGate(plan);
-  const records = existsSync(args.traces)
-    ? readFileSync(args.traces, 'utf8').split(/\r?\n/).filter((l) => l.trim() !== '').map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean)
-    : [];
+  const traceLines = readFileSync(args.traces, 'utf8').split(/\r?\n/).filter((l) => l.trim() !== '');
+  const records = [];
+  traceLines.forEach((l, i) => {
+    try { records.push(JSON.parse(l)); } catch { problems.push(`лента вещдоков: строка ${i + 1} не разбирается`); }
+  });
   const report = runGate({
     planRaw,
     traceRecords: records,
@@ -136,6 +145,10 @@ function buildLiveRecord(args) {
   });
 
   const segDoc = readJson(args.segments, 'замер объёма');
+  // Второй заслон, а не дубль первого: `readJson` копит дефекты выше по потоку, и без
+  // этой проверки они молча тонули — финальный `return` подменял их вердиктом валидатора.
+  // Битый `--segments` превращался в «замера нет», то есть в честное на вид `not-observed`.
+  if (problems.length > 0) return { record: null, problems, unattributed: [] };
   const segments = (Array.isArray(segDoc?.segments) ? segDoc.segments : [])
     .map((s) => ({ cutBlockId: s.cutBlockId ?? s.blockId, changedLines: s.changedLines }));
   const observed = gateToForecastObserved(report, segments);
@@ -152,14 +165,25 @@ function buildLiveRecord(args) {
   };
   const unattributed = forecast.predicted.blocks.map((b) => b.blockId).filter((id) => !measured.has(id));
 
+  // Исход ЗАПИСИ выводится из исходов по блокам, а не из факта наличия замера. `hit` при
+  // двух промахах внутри был бы агрегатом, который врёт: читатель журнала увидел бы удачное
+  // предсказание там, где два блока из семи переполнились. «Почти» в алфавите нет, поэтому
+  // хоть один промах делает запись `miss` — точную долю считает `computeCutAccuracy`.
+  const missed = predicted.blocks.filter((b) => {
+    const observedLines = measured.has(b.cutBlockId)
+      ? segments.find((s) => s.cutBlockId === b.cutBlockId).changedLines
+      : null;
+    if (observedLines === null) return false;
+    return (observedLines > b.threshold) !== (b.claim === 'does-not-fit');
+  });
+  const recordOutcome = segments.length === 0 ? 'not-observed' : missed.length === 0 ? 'hit' : 'miss';
+
   const record = makeForecastRecord({
     ...forecast,
     predicted,
     observed,
     observedAt: args.now,
-    // Исход записи — сопоставление по КАЖДОМУ блоку делает `computeCutAccuracy`; здесь
-    // фиксируется лишь то, наблюдался ли исход вообще. «Почти» в алфавите нет.
-    outcome: segments.length === 0 ? 'not-observed' : 'hit',
+    outcome: recordOutcome,
     evidence: [
       { type: 'path', value: args.plan },
       { type: 'path', value: args.traces },
@@ -168,7 +192,9 @@ function buildLiveRecord(args) {
   });
 
   const v = validateForecastRecord(record);
-  return { record, problems: v.ok ? [] : v.problems, unattributed };
+  // Дефекты складываются, а не подменяются: накопленное выше по потоку исчезало, когда
+  // валидатор говорил «годно» — и запись уезжала в журнал с потерянной диагностикой.
+  return { record, problems: [...problems, ...(v.ok ? [] : v.problems)], unattributed, outcome: recordOutcome };
 }
 
 function main() {
@@ -219,20 +245,23 @@ function main() {
       return 2;
     }
     const metrics = computeCutAccuracy([built.record]);
-    console.log(`Запись рода собрана из ЖИВЫХ файлов: ${built.record.id}`);
-    console.log(renderMetricLine('точность нарезки', metrics));
+    // При `--json` в stdout идёт ТОЛЬКО запись: машиночитаемая выдача, разбавленная прозой,
+    // машиночитаемой не является. Проза уходит в stderr — она нужна человеку и там же видна.
+    const say = args.json ? (s) => console.error(s) : (s) => console.log(s);
+    say(`Запись рода собрана из ЖИВЫХ файлов: ${built.record.id} · исход записи: ${built.outcome}`);
+    say(renderMetricLine('точность нарезки', metrics));
     if (built.unattributed.length > 0) {
       // Блок без замера объёма — это `no-attribution`, а не «уложился». Печатаем поимённо:
       // иначе доля посчиталась бы по неполному множеству, и причина осталась бы невидимой.
-      console.log(`без замера объёма: ${built.unattributed.join(', ')} — в мерку не входят`);
+      say(`без замера объёма: ${built.unattributed.join(', ')} — в мерку не входят`);
     }
     if (args.json) console.log(JSON.stringify(built.record, null, 2));
-    if (args.dryRun) console.log('\n--dry-run: журнал не тронут');
+    if (args.dryRun) say('\n--dry-run: журнал не тронут');
     else {
       const path = args.out === null ? RECORDS_PATH : args.out;
       mkdirSync(dirname(path), { recursive: true });
       const w = appendRecords(path, [built.record]);
-      console.log(`\nЖурнал: ${path} · добавлено ${w.added}, уже было ${w.skipped}, всего ${w.total}`);
+      say(`\nЖурнал: ${path} · добавлено ${w.added}, уже было ${w.skipped}, всего ${w.total}`);
     }
     return 0;
   }

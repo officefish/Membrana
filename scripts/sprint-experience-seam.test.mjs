@@ -21,7 +21,7 @@ const SEGMENTS = 'docs/sprint/experience/segments-workshop-wires-implementation.
 /** Прогон CLI. Возвращает { status, out } — падение не роняет тест, оно и есть предмет. */
 function run(args) {
   try {
-    return { status: 0, out: execFileSync(process.execPath, [CLI, ...args], { cwd: repoRoot, encoding: 'utf8' }) };
+    return { status: 0, out: execFileSync(process.execPath, [CLI, ...args], { cwd: repoRoot, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }) };
   } catch (e) {
     return { status: e.status ?? 1, out: `${e.stdout ?? ''}${e.stderr ?? ''}` };
   }
@@ -76,4 +76,46 @@ test('стабы не сломаны — старый вход продолжа�
   const r = run(['--record', 'cut-exact', '--dry-run']);
   assert.equal(r.status, 0, r.out);
   assert.match(r.out, /Записей рода/u);
+});
+
+// ── P1 ревью PR #1548: слепой вход закрыт ────────────────────────────────────────────────
+
+test('--traces указан, файла нет — отказ с путём, а не пустая лента', () => {
+  // Пустая лента при указанном пути делала опечатку в имени неотличимой от честного
+  // «исполнения не было»: гейт объявил бы plan_lied по всем блокам, и запись рода
+  // зафиксировала бы это как наблюдённый исход.
+  const r = run(['--plan', PLAN, '--traces', 'docs/sprint/trail/опечатка.jsonl', '--dry-run']);
+  assert.equal(r.status, 2);
+  assert.match(r.out, /лента вещдоков: файла нет — docs\/sprint\/trail\/опечатка\.jsonl/u);
+  assert.doesNotMatch(r.out, /собрана из ЖИВЫХ файлов/u, 'запись НЕ должна собираться');
+});
+
+test('битая строка ленты названа номером, а не проглочена', () => {
+  const root = mkdtempSync(join(tmpdir(), 'exp-seam-'));
+  const bad = join(root, 'trail.jsonl');
+  writeFileSync(bad, '{"traceId":"a","blockId":"x","kind":"context_run","subject":"dynin","at":"2026-07-31T05:40:00Z","ref":"README.md"}\nне json\n', 'utf8');
+  const r = run(['--plan', PLAN, '--traces', bad, '--dry-run']);
+  assert.equal(r.status, 2);
+  assert.match(r.out, /строка 2 не разбирается/u);
+});
+
+test('битый --segments роняет сборку, а не превращается в «замера нет»', () => {
+  const root = mkdtempSync(join(tmpdir(), 'exp-seam-'));
+  const broken = join(root, 'segments.json');
+  writeFileSync(broken, '{ не json', 'utf8');
+  const r = run(['--plan', PLAN, '--traces', TRACES, '--segments', broken, '--dry-run']);
+  assert.equal(r.status, 2);
+  assert.match(r.out, /замер объёма: не разбирается/u, 'диагностика не теряется по дороге');
+  // Отсутствующий файл — тоже отказ, а не молчаливое not-observed.
+  const missing = run(['--plan', PLAN, '--traces', TRACES, '--segments', join(root, 'нет.json'), '--dry-run']);
+  assert.equal(missing.status, 2);
+  assert.match(missing.out, /замер объёма: файла нет/u);
+});
+
+test('исход записи выводится из блоков — агрегат не врёт про промахи', () => {
+  const r = run(['--plan', PLAN, '--traces', TRACES, '--segments', SEGMENTS, '--now', '2026-07-31T10:15:00Z', '--dry-run', '--json']);
+  assert.equal(r.status, 0, r.out);
+  const record = JSON.parse(r.out.slice(r.out.indexOf('{')));
+  // Два блока транша переполнились при заявке «уложится» — запись обязана быть miss.
+  assert.equal(record.outcome, 'miss', 'hit при двух промахах внутри был бы врущим агрегатом');
 });
