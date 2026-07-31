@@ -426,7 +426,8 @@
     "network:tooth": "node scripts/network/tooth.mjs",
     "tariff:grid": "node scripts/tariff-grid-validate.mjs",
     "tariff:cutover": "node scripts/tariff-cutover-check.mjs",
-    "snapshots:rebuild": "node scripts/snapshots-rebuild.mjs"
+    "snapshots:rebuild": "node scripts/snapshots-rebuild.mjs",
+    "calibrate:mfcc": "node scripts/calibrate-mfcc-gates.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
