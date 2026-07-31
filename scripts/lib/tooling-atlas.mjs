@@ -20,6 +20,7 @@ import { dirname, join, relative } from 'node:path';
 
 import { listWorkshopManifests, validateWorkshop } from './validate-workshop.mjs';
 import { discoverHomes } from './atlas-discovery.mjs';
+import { collectUsage, renderUsageSection, workshopsWithoutUsage } from './atlas-usage.mjs';
 
 const MANDATORY = ['audit', 'decompose', 'inspectElement'];
 
@@ -111,6 +112,10 @@ export function discoverContainers(repoRoot) {
       // поймал у себя 31.07).
       commands: Object.fromEntries(present.map((k) => [k, String(verbs[k]).trim()])),
       entryCommand: present.length > 0 ? String(verbs[present[0]]).trim() : null,
+      // `usage` — поле-сосед из поправки Ф1: что даёт вызов и как выглядит вывод. Отдаётся
+      // как есть; форму проверяет валидатор, а не справочник — двойная проверка разъехалась
+      // бы первой же правкой схемы.
+      usage: manifest?.usage ?? null,
       missingVerbs,
       title,
       summary,
@@ -249,6 +254,16 @@ export function renderAtlasRegistry(containers, opts = {}) {
     }
   }
   lines.push('');
+
+  // Примеры вызова — из `usage` манифестов (поправка Ф1). Справочник агрегирует, не сочиняет.
+  lines.push(...renderUsageSection(collectUsage(containers), workshops.length));
+  const without = workshopsWithoutUsage(containers);
+  if (without.length > 0) {
+    // Поимённо, а не долей: заполнение идёт поштучно, и без перечня «почти всё заполнено»
+    // через месяц будет означать что угодно.
+    lines.push(`Без примеров: ${without.map((h) => `\`${h}\``).join(' · ')}`);
+    lines.push('');
+  }
   return lines.join('\n');
 }
 
