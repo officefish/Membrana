@@ -28,6 +28,7 @@ import {
   parseVerdict,
   renderVerdictMarker,
   reviewGateDecision,
+  scopeFromBody,
   shouldEnsureReview,
   statusFromDecision,
 } from './lib/review-gate.mjs';
@@ -86,7 +87,7 @@ function main() {
     enabled: process.env.REVIEW_GATE_OVERRIDE === '1',
     reason: process.env.REVIEW_GATE_OVERRIDE_REASON,
   };
-  let decision = reviewGateDecision({ headSha, verdict: parseVerdict(md), override });
+  let decision = reviewGateDecision({ headSha, verdict: parseVerdict(md), override, scope: scopeFromBody(md) });
 
   // --ensure (#1465 Ф2): «ревью не прогонялось» — не повод останавливать шип и звать
   // человека переставить две команды руками. Последовательность gate → code-review:pr →
@@ -107,7 +108,7 @@ function main() {
       console.error(`  ⚠ ревью не отработало (${String(e.message ?? e).split('\n')[0]}) — вердикта нет, гейт остаётся закрытым`);
     }
     md = existsSync(reviewPath) ? readFileSync(reviewPath, 'utf8') : '';
-    decision = reviewGateDecision({ headSha, verdict: parseVerdict(md), override });
+    decision = reviewGateDecision({ headSha, verdict: parseVerdict(md), override, scope: scopeFromBody(md) });
   }
 
   const mark = decision.state === 'pass' ? '✓' : decision.state === 'block' ? '✗' : '?';

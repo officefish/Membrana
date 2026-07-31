@@ -59,7 +59,7 @@ export function renderVerdictMarker({ sha, verdict, lead, at }) {
  * @param {{headSha: string|null, verdict: ReturnType<typeof parseVerdict>, override?: {enabled: boolean, reason?: string}}} input
  * @returns {{state: 'pass'|'block'|'unknown', reason: string}}
  */
-export function reviewGateDecision({ headSha, verdict, override } = {}) {
+export function reviewGateDecision({ headSha, verdict, override, scope } = {}) {
   if (override?.enabled) {
     const reason = String(override.reason ?? '').trim();
     if (!reason) {
@@ -76,16 +76,76 @@ export function reviewGateDecision({ headSha, verdict, override } = {}) {
   if (!verdict) {
     return { state: 'unknown', reason: `ревью тимлида по этому PR не найдено — прогнать: yarn code-review:pr <N> (вердикт привяжется к ${headSha.slice(0, 8)})` };
   }
+  // ПОРЯДОК ВЕТОК НЕСУЩИЙ (найдено ревью 31.07). «Вердикт не о ЭТОМ коде» строже, чем
+  // «код прочитан не весь»: протухший вердикт — это суждение о ДРУГОЙ версии, и никакая
+  // полнота диффа его не воскрешает. Поэтому проверка SHA стоит ПЕРЕД проверкой среза;
+  // поменять их местами значило бы отпускать протухшее в `unknown`, то есть в путь
+  // «догнать ревью», вместо честного `block`.
   if (!sameSha(verdict.sha, headSha)) {
     return {
       state: 'block',
       reason: `вердикт протух: смотрели ${verdict.sha.slice(0, 8)}, на ветке ${headSha.slice(0, 8)} — после ревью появились коммиты; перепрогнать ревью`,
     };
   }
+  // #1550: вердикт по СРЕЗУ диффа — не вердикт, В ЛЮБУЮ СТОРОНУ.
+  //
+  // Симметрия здесь несущая. Ложный BLOCK стоит круга; ложный LGTM пропускает в ствол
+  // дефект из непоказанной части — а канон прямо ставит «ошибку в сторону остановки»
+  // дешевле «ошибки в сторону мерджа». Пропускать зелёный по срезу значило бы оставить
+  // ровно ту дыру, ради которой гейт и построен.
+  //
+  // Исход `unknown` для этого и есть: «ревью не прогонялось — НЕ pass». Слить его с
+  // `block` нельзя — это тот же класс, на котором 30.07 пойман `meeting:audit`
+  // («нарушений 0» на пустом корпусе), а 31.07 гейт спринта отдавал код 2 вместо
+  // вердиктов. Живой повод: PR #1551 — дифф 212 879 символов при пороге 120 000;
+  // ревьюер получил 56%, четыре прогона на одном коде дали ЧЕТЫРЕ непересекающихся
+  // набора обвинений, и все проверяемые оказались о коде, которого ему не показали.
+  //
+  // Ослабления ворот нет: `unknown` НЕ пропускает. Он требует ревью по диффу, который
+  // влезает, то есть резки PR на части. Это починка, а не поблажка.
+  if (scope?.truncated) {
+    return {
+      state: 'unknown',
+      reason:
+        `вердикт ${verdict.verdict} вынесен ПО СРЕЗУ: ревьюеру ушло ${scope.sentChars ? `${scope.sentChars} символов` : 'неизвестно сколько'} диффа, ` +
+        'остальное он не видел — это не суждение о коде. Резать PR на части, влезающие в порог (#1550)',
+    };
+  }
   if (verdict.verdict === 'BLOCK') {
     return { state: 'block', reason: `тимлид дал BLOCK по ${headSha.slice(0, 8)} — устранить замечания и перепрогнать ревью (жёсткий стоп, слово владельца 29.07)` };
   }
   return { state: 'pass', reason: `LGTM тимлида (${verdict.lead ?? 'lead'}) по ${headSha.slice(0, 8)}` };
+}
+
+/**
+ * Метка среза из артефакта ревью (#1550). Пишет её writeReviewMarkdown, когда дифф
+ * не влез в порог; читает гейт, чтобы не принять непрочитанное за суждение.
+ * @param {string} md тело артефакта ревью
+ * @returns {{ truncated: boolean, sentChars: number|null }}
+ */
+export function scopeFromBody(md) {
+  const m = String(md ?? '').match(SCOPE_MARKER_RE);
+  return m ? { truncated: true, sentChars: Number(m[1]) } : { truncated: false, sentChars: null };
+}
+
+/**
+ * Единственное определение формата метки среза: пишущая и читающая стороны делят ЕГО,
+ * а не совпадающие строки в двух файлах. По образцу пары `renderVerdictMarker` ↔
+ * `parseVerdict` в этом же модуле.
+ *
+ * Найдено ревью 31.07 (P1): исходно метку писал `writeReviewMarkdown` шаблонной строкой,
+ * а читал гейт своим регэкспом. Пока согласованы — работает; правка формата в одном месте
+ * тихо ломает другое. Скрытая связанность через строку — та же болезнь, что весь день:
+ * два потребителя с собственными копиями одного знания.
+ */
+const SCOPE_MARKER_RE = /<!--\s*review-scope:\s*truncated\s+sent=(\d+)\s*-->/u;
+
+/**
+ * @param {{ sentChars: number|null }} scope
+ * @returns {string}
+ */
+export function renderScopeMarker({ sentChars }) {
+  return `<!-- review-scope: truncated sent=${sentChars ?? 0} -->`;
 }
 
 /** Сравнение SHA с учётом коротких форм (7+ hex). */

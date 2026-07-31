@@ -23,6 +23,7 @@ import {
 import {
   buildCodeReviewUserMessage,
   collectReviewContext,
+  diffTruncation,
   defaultOutputPath,
   parseCodeReviewCli,
   printCodeReviewHelp,
@@ -75,6 +76,7 @@ if (cli.help) {
 const regulation = readRequiredFile(REGULATION_PATH);
 const virtualTeam = readRequiredFile(VIRTUAL_TEAM_PATH);
 
+let diffScope = { truncated: false, sentChars: null };
 let contextBlock = '';
 let dayWorkHeader = '';
 if (cli.mode === 'daily') {
@@ -96,6 +98,15 @@ if (cli.mode === 'daily') {
 } else {
   const ctx = collectReviewContext(cli);
   contextBlock = ctx.text;
+  // #1550: факт «модель видела не весь дифф» обязан дойти до вердикта и до гейта,
+  // а не осесть пометкой в промпте. Молчаливый BLOCK по непрочитанному неотличим
+  // от честного, и гейт не может их развести.
+  diffScope = diffTruncation(ctx.text);
+  if (diffScope.truncated) {
+    console.error(
+      `  ⚠ дифф ОБРЕЗАН до ${diffScope.sentChars} символов — ревьюер видит не весь код; вердикт будет помечен как «по срезу»`,
+    );
+  }
 }
 
 let ragBlock = '';
@@ -197,6 +208,7 @@ try {
         // которую смотрел ведущий; новый коммит протухает вердикт (yarn review:gate).
         headSha: cli.mode === 'pr' ? headShaOfPr(cli.pr) : null,
         lead: reviewLeadId,
+        diffScope,
       },
     });
     console.log(out);
