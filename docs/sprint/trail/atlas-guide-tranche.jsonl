@@ -4,3 +4,5 @@
 {"traceId":"tr-render-kuryokhin-review","blockId":"atlas-render","kind":"review_pass","subject":"kuryokhin","at":"2026-07-31T11:35:00Z","ref":"scripts/atlas-render.test.mjs"}
 {"traceId":"tr-f1-ozhegov-run","blockId":"f1-amendment","kind":"context_run","subject":"ozhegov","at":"2026-07-31T12:05:00Z","ref":"docs/patterns/HOME_WORKSHOP.md"}
 {"traceId":"tr-f1-ozhegov-review","blockId":"f1-amendment","kind":"review_pass","subject":"ozhegov","at":"2026-07-31T12:10:00Z","ref":"docs/meeting/home-workshop/AMENDMENT_F1.md"}
+{"traceId":"tr-usage-dynin-run","blockId":"usage-schema","kind":"context_run","subject":"dynin","at":"2026-07-31T12:15:00Z","ref":"docs/meeting/home-workshop/AMENDMENT_F1.md"}
+{"traceId":"tr-usage-dynin-review","blockId":"usage-schema","kind":"review_pass","subject":"dynin","at":"2026-07-31T12:25:00Z","ref":"scripts/usage-schema.test.mjs"}
