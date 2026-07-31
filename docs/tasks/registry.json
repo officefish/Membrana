@@ -7,18 +7,18 @@
       "githubIssue": 1561,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-31",
-      "archivedAt": null,
+      "archivedAt": "2026-07-31",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin",
         "ozhegov"
       ],
       "notes": "Шесть фреймов: freeze → reconcile → ratify → prepare one ref → mutate one ref → post-check/closeout. Batch execute и worktree delete запрещены.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "PR #1564; review LGTM 3ab28362bc58; PR #1564 merged 2026-07-31T13:00:24Z (0b2d22b9b18170b2e321318bf3b40598ddabac4d)",
+      "githubIssueClosedAt": "2026-07-31"
     },
     {
       "id": "llm-transport-no-key-class",
