@@ -62,6 +62,45 @@
       }
     },
     {
+      "blockId": "f1-amendment",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/patterns/HOME_WORKSHOP.md",
+        "docs/meeting/home-workshop/AMENDMENT_F1.md"
+      ],
+      "revisionAt": "2026-07-31T12:00:00Z",
+      "estimate": {
+        "changedLines": 160
+      }
+    },
+    {
+      "blockId": "usage-schema",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/validate-workshop.mjs",
+        "scripts/usage-schema.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T12:00:00Z",
+      "estimate": {
+        "changedLines": 260
+      }
+    },
+    {
+      "blockId": "usage-render",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "scripts/lib/atlas-usage.mjs",
+        "scripts/atlas-usage.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T12:00:00Z",
+      "estimate": {
+        "changedLines": 220
+      }
+    },
+    {
       "blockId": "atlas-canon",
       "persona": "ozhegov",
       "context": "ozhegov",
@@ -76,7 +115,7 @@
   ],
   "ratification": {
     "by": "owner",
-    "at": "2026-07-31T14:45:06+03:00",
-    "digest": "8699c555b340db9e70443748f2ac55953de1cf4f63d71dd3806c6e47334381bd"
+    "at": "2026-07-31T15:03:16+03:00",
+    "digest": "197da044e6f42a0e9ce71d506ccaeb75f39d85e58455ed9bed0ecc9819b75c0d"
   }
 }
