@@ -9,6 +9,7 @@ import {
   classifyHygieneCategory,
   compareHygieneRows,
   decomposeBranches,
+  diagnoseRemoteTwins,
   isExperimentLeftover,
   isRemoteAgentZombie,
   parseDecomposeCli,
@@ -122,14 +123,14 @@ test('decomposeBranches: no double-count remote twin + summary counts', () => {
     currentBranch: 'git-audit',
     local: [
       { name: 'git-audit', ahead: 2, behind: 1, current: true, worktree: false },
-      { name: 'main', ahead: 0, behind: 0, current: false, worktree: true },
+      { name: 'main', tip: 'a'.repeat(40), ahead: 0, behind: 0, current: false, worktree: true },
       { name: 'ozhegov', ahead: 0, behind: 5, current: false, worktree: false },
-      { name: 'feat/orphan', ahead: 3, behind: 1, current: false, worktree: false },
+      { name: 'feat/orphan', tip: 'b'.repeat(40), ahead: 3, behind: 1, current: false, worktree: false },
       { name: 'stale', ahead: 0, behind: 4, current: false, worktree: false },
     ],
     remote: [
-      { name: 'origin/main', ahead: 0, behind: 0, worktree: true },
-      { name: 'origin/feat/orphan', ahead: 3, behind: 1, worktree: false },
+      { name: 'origin/main', tip: 'a'.repeat(40), ahead: 0, behind: 0, worktree: true },
+      { name: 'origin/feat/orphan', tip: 'c'.repeat(40), ahead: 3, behind: 1, worktree: false },
       { name: 'origin/only-remote', ahead: 2, behind: 0, worktree: false },
       { name: 'origin/night-triage/x', ahead: 1, behind: 0, worktree: false },
     ],
@@ -138,6 +139,10 @@ test('decomposeBranches: no double-count remote twin + summary counts', () => {
   const d = decomposeBranches(inventory, { openPrByHead });
 
   assert.equal(d.skippedRemoteTwins, 2, 'main + feat/orphan twins');
+  assert.deepEqual(
+    d.twins.map((row) => [row.shortName, row.status]),
+    [['feat/orphan', 'moved'], ['main', 'exact']],
+  );
   assert.ok(d.rows.every((r) => r.name !== 'origin/feat/orphan'));
   assert.ok(d.rows.some((r) => r.name === 'origin/only-remote'));
   assert.equal(d.byCategory['worktree-active'].length, 2); // git-audit + main (worktree)
@@ -148,6 +153,26 @@ test('decomposeBranches: no double-count remote twin + summary counts', () => {
   assert.equal(d.byCategory.zombie.some((r) => r.name === 'stale'), true);
   assert.equal(d.byCategory.zombie.some((r) => r.name === 'origin/night-triage/x'), true);
   assert.equal(d.counts.salvage.total, 2);
+});
+
+test('diagnoseRemoteTwins: exact / moved / unknown явны', () => {
+  const twins = diagnoseRemoteTwins({
+    local: [
+      { name: 'feat/exact', tip: 'a'.repeat(40) },
+      { name: 'feat/moved', tip: 'b'.repeat(40) },
+      { name: 'feat/unknown' },
+    ],
+    remote: [
+      { name: 'origin/feat/exact', tip: 'a'.repeat(40) },
+      { name: 'origin/feat/moved', tip: 'c'.repeat(40) },
+      { name: 'origin/feat/unknown' },
+      { name: 'origin/remote-only', tip: 'd'.repeat(40) },
+    ],
+  });
+  assert.deepEqual(
+    twins.map((row) => [row.shortName, row.status]),
+    [['feat/exact', 'exact'], ['feat/moved', 'moved'], ['feat/unknown', 'unknown']],
+  );
 });
 
 test('renderHygieneDecompose: summary + 7 category tables + column contract', () => {
@@ -176,8 +201,9 @@ test('renderHygieneDecompose: summary + 7 category tables + column contract', ()
   assert.ok(out.includes('## 1. Worktree-активные'));
   assert.ok(out.includes('## 7. Salvage'));
   assert.ok(
-    out.includes('| Branch | Ahead | Behind | Bucket | Why/Note | Suggested action |'),
+    out.includes('| Branch | Tip | Ahead | Behind | Bucket | Why/Note | Suggested action |'),
   );
+  assert.ok(out.includes('## Twin diagnostics') || decomposition.twins.length === 0);
   assert.ok(out.includes('category 4 empty') || out.includes('Category 4 empty') || out.includes('gh'));
   assert.ok(!out.includes(String.fromCharCode(27)), 'без ANSI');
 });

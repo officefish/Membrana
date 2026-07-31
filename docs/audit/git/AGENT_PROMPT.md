@@ -45,6 +45,9 @@
 | `yarn neighbors` · skill `membrana-worktree` | Соседние worktree; не писать самописный grep веток |
 | `yarn repo:branches` · skill `membrana-branch-audit` | Сырой inventory ahead/behind/bucket |
 | `yarn repo:branches:decompose` · skill `membrana-branch-decompose` | **7 категорий** (first match wins) → markdown/JSON |
+| `yarn repo:branches:reconcile` | Read-only сверка frozen snapshot: unchanged/absent/moved/new + twins |
+| `yarn repo:branches:apply-plan` · skill `membrana-branch-salvage` | Ровно одна операция из ратифицированного exact-tip plan |
+| `yarn repo:branches:closeout` | Fail-closed бухгалтерия journal, refs, protected refs и ADR-0020 checks |
 | `yarn repo:clean` | Dry-run по умолчанию. **`--execute` только после явного ok человека** |
 | `git diff --shortstat origin/main...BRANCH` | Churn для attention-тиров (Scenario B) |
 
@@ -56,7 +59,8 @@
 - **Персоны** (`ozhegov`, `dynin`, `vesnin`, `boyarskiy`): **никогда** не auto-delete.
 - **`--worktrees` у `repo:clean`:** не вызывать casually — только после ok и понимания locked/archived.
 - Worktree занял ветку → смотреть `yarn neighbors`, не самописный grep.
-- Remote twin с локальным тезкой decompose не дублирует.
+- Remote twin с локальным тезкой decompose не дублирует в категориях, но
+  показывает отдельной строкой `exact` / `moved` в Twin diagnostics.
 
 ### 7 категорий (кратко; канон — скилл decompose)
 
@@ -70,7 +74,18 @@
 | 6 | Застой / zombie | ahead==0 **или** remote `night-triage`/`claude*` без open PR |
 | 7 | Salvage | remainder ahead>0 без open PR |
 
-Колонки category-таблиц: `Branch · Ahead · Behind · Bucket · Why/Note · Suggested action`.
+Колонки category-таблиц:
+`Branch · Tip · Ahead · Behind · Bucket · Why/Note · Suggested action`.
+
+### Controlled salvage
+
+Исполнение уже принятых verdict ledger живёт в отдельной процедуре:
+[`CONTROLLED_SALVAGE_PROCEDURE.md`](./CONTROLLED_SALVAGE_PROCEDURE.md).
+
+Последовательность неизменна: freeze → reconcile → owner-ratified exact-tip plan
+→ prepare one ref → mutate one ref → post-check/closeout. Live plan, journal и
+reports писать в `docs/audit/git/cache/`. Не генерировать verdict автоматически,
+не удалять worktree и не обходить один-вызов-одна-ref циклом.
 
 ---
 
@@ -176,6 +191,8 @@
 ## 6. Safety
 
 - Нет deletes без явного ok человека.
+- Controlled salvage execute требует `ownerGate.status=ratified`, полный
+  неизменившийся tip и journal, связанный hash плана.
 - Нет `git push --force` / force на `main` / `master`.
 - Нет `yarn repo:clean --execute` (и особенно `--worktrees`) без ok.
 - Персон-ветки не предлагать к удалению даже в dry-run narrative как «снеси».

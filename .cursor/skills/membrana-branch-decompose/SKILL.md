@@ -34,7 +34,8 @@ description: >-
 
 1. `yarn repo:branches:decompose` — по умолчанию `git fetch origin`, затем markdown.
 2. Опции: `--no-fetch` · `--json` · `--report <file>` · `--help`.
-3. Прочитать: Taxonomy → Summary → семь category-таблиц.
+3. Зафиксировать `baseSha` / `generatedAt`, затем прочитать:
+   Taxonomy → Summary → Twin diagnostics → семь category-таблиц.
 4. Если `gh` недоступен — category 4 пуста (noted); open-PR heads fall through в 5/6/7.
 
 ## 7 категорий (first match wins)
@@ -50,14 +51,16 @@ description: >-
 | 7 | Salvage | remainder ahead>0 без open PR |
 
 Sort: default behind DESC · cat.4 PR# DESC · cat.7 ahead DESC.
-Remote twin с локальным тезкой не дублируется.
+Remote twin с локальным тезкой не дублируется в категориях, но обязан быть
+показан в `Twin diagnostics` как `exact` или `moved`.
 
 ## Контракт таблиц
 
 | Секция | Колонки |
 |--------|---------|
 | Summary | Category · Local · Remote · Total |
-| Category 1–7 | Branch · Ahead · Behind · Bucket · Why/Note · Suggested action |
+| Twin diagnostics | Local · Remote · Local tip · Remote tip · State |
+| Category 1–7 | Branch · Tip · Ahead · Behind · Bucket · Why/Note · Suggested action |
 
 ## Грабли
 
@@ -65,6 +68,8 @@ Remote twin с локальным тезкой не дублируется.
 - **Персоны** никогда не в `repo:clean` execute без явного исключения канона (их там и так берегут).
 - `git branch --merged` врёт при squash (#492) — не использовать.
 - Sibling inventory: `membrana-branch-audit`. Sibling cleanup: `yarn repo:clean`.
+- Ратифицированное exact-tip исполнение: `membrana-branch-salvage`; moved twin
+  нельзя переносить в delete-target без нового plan.
 
 ## Registry / cache
 

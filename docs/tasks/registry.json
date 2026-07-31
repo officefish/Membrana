@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "branch-salvage-controlled-tooling",
+      "title": "Добавить контролируемую процедуру salvage веток",
+      "promptPath": "docs/prompts/BRANCH_SALVAGE_CONTROLLED_TOOLING_PROMPT.md",
+      "githubIssue": 1561,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-07-31",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "Шесть фреймов: freeze → reconcile → ratify → prepare one ref → mutate one ref → post-check/closeout. Batch execute и worktree delete запрещены.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "llm-transport-no-key-class",
       "title": "llm-транспорт: развести «ключа нет» и «ключ отвергнут»",
       "promptPath": "docs/prompts/LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md",

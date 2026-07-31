@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `branch-salvage-controlled-tooling` | Добавить контролируемую процедуру salvage веток | M | [`BRANCH_SALVAGE_CONTROLLED_TOOLING_PROMPT.md`](../prompts/BRANCH_SALVAGE_CONTROLLED_TOOLING_PROMPT.md) | [#1561](https://github.com/officefish/Membrana/issues/1561) |
 | `llm-transport-no-key-class` | llm-транспорт: развести «ключа нет» и «ключ отвергнут» | S | [`LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md`](../prompts/LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md) | [#1549](https://github.com/officefish/Membrana/issues/1549) |
 | `mfcc-compare-sprint` | MFCC-ядро: обвязка, детекторы и сравнительный прогон против гармонического на FFT | M | [`mfcc-compare-sprint.json`](../sprint/cut/mfcc-compare-sprint.json) | — |
 | `mfcc-lib-choice` | Выбор MFCC-библиотеки: обоснование до нарезки блоков | S | [`MFCC_LIB_CHOICE_PROMPT.md`](../prompts/MFCC_LIB_CHOICE_PROMPT.md) | — |
@@ -232,7 +233,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `branch-hygiene-salvage-2026-07-31` | Разобрать diverged-ветки и сохранить живые коммиты | 2026-07-31 | [`BRANCH_HYGIENE_SALVAGE_2026_07_31_PROMPT.md`](../prompts/BRANCH_HYGIENE_SALVAGE_2026_07_31_PROMPT.md) | #1544 (Issue открыт) | [карточка](./archive/branch-hygiene-salvage-2026-07-31.md) |
+| `branch-hygiene-salvage-2026-07-31` | Разобрать diverged-ветки и сохранить живые коммиты | 2026-07-31 | [`BRANCH_HYGIENE_SALVAGE_2026_07_31_PROMPT.md`](../prompts/BRANCH_HYGIENE_SALVAGE_2026_07_31_PROMPT.md) | #1544 | [карточка](./archive/branch-hygiene-salvage-2026-07-31.md) |
 | `cowork-honest-sprint` | Cowork Sprint: механизм спринта с честными исполнителями | 2026-07-30 | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-honest-sprint/COWORK_SPRINT_BRIEF.md) | #1499 | [карточка](./archive/cowork-honest-sprint.md) |
 | `agent-tooling-friction-2-2026-07-30` | Трение тулинга 30.07: грабли аудита и install, живость resolutions, маршрут после ребейза, разбор красного CI | 2026-07-30 | [`AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md`](../prompts/AGENT_TOOLING_FRICTION_2_2026_07_30_PROMPT.md) | #1493 | [карточка](./archive/agent-tooling-friction-2-2026-07-30.md) |
 | `tooling-sanitary-pack-3007` | Санитарный пакет тулинга 30.07: пересборка производных снимков, вывод сноса в файл, содержание в строку вопроса, один автор долгов | 2026-07-30 | [`TOOLING_SANITARY_PACK_3007_PROMPT.md`](../prompts/TOOLING_SANITARY_PACK_3007_PROMPT.md) | — | [карточка](./archive/tooling-sanitary-pack-3007.md) |

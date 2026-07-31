@@ -84,14 +84,18 @@ export function summarizeBuckets(rows) {
 /**
  * @param {object} opts
  * @param {string} [opts.base]
+ * @param {string} [opts.baseSha]
+ * @param {string} [opts.generatedAt]
  * @param {string} [opts.currentBranch]
  * @param {boolean} [opts.fetched]
- * @param {{name:string, ahead:number, behind:number, current?:boolean, worktree?:boolean}[]} opts.local
- * @param {{name:string, ahead:number, behind:number, worktree?:boolean}[]} opts.remote
+ * @param {{name:string, ref?:string, tip?:string, ahead:number, behind:number, current?:boolean, worktree?:boolean}[]} opts.local
+ * @param {{name:string, ref?:string, tip?:string, ahead:number, behind:number, worktree?:boolean}[]} opts.remote
  * @returns {string}
  */
 export function renderBranchAudit({
   base = 'origin/main',
+  baseSha = '',
+  generatedAt = '',
   currentBranch = '',
   fetched = false,
   local = [],
@@ -105,9 +109,10 @@ export function renderBranchAudit({
   const yesNo = (v) => (v ? 'yes' : '');
 
   const localTable = formatMarkdownTable(
-    ['Branch', 'Ahead', 'Behind', 'Bucket', 'Current', 'Worktree'],
+    ['Branch', 'Tip', 'Ahead', 'Behind', 'Bucket', 'Current', 'Worktree'],
     localSorted.map((r) => [
       r.name,
+      r.tip ? r.tip.slice(0, 12) : 'unknown',
       String(r.ahead),
       String(r.behind),
       classifyBucket(r.ahead, r.behind),
@@ -117,9 +122,10 @@ export function renderBranchAudit({
   );
 
   const remoteTable = formatMarkdownTable(
-    ['Branch', 'Ahead', 'Behind', 'Bucket', 'Worktree'],
+    ['Branch', 'Tip', 'Ahead', 'Behind', 'Bucket', 'Worktree'],
     remoteSorted.map((r) => [
       r.name,
+      r.tip ? r.tip.slice(0, 12) : 'unknown',
       String(r.ahead),
       String(r.behind),
       classifyBucket(r.ahead, r.behind),
@@ -135,6 +141,8 @@ export function renderBranchAudit({
 
   const lines = [
     `# repo:branches — inventory vs ${base}`,
+    '',
+    `base SHA: \`${baseSha || 'unknown'}\` · generated: ${generatedAt || 'unknown'}`,
     '',
     `fetch: ${fetched ? 'yes' : 'skipped (--no-fetch)'} · current: ${currentBranch || '(detached)'} · local: ${localSorted.length} · remote: ${remoteSorted.length}`,
     '',

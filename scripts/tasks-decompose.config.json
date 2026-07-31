@@ -32,7 +32,7 @@
       "name": "Агентский тулинг, CI и техдолг",
       "patterns": [
         "^(agent-tooling|nb-at|ci-gate|cg\\d|scripts-boundary|tech-debt|oc-proxy|opencode|rag-|fv1-)",
-        "^(frictiond|friction6-|tooling-friction|tooling-sanitary|branch-hygiene|tw-|tc-|tests-container|ship-|leveling-|notes-|deps-|worktree-|secret-|send-gate|weekly-)"
+        "^(frictiond|friction6-|tooling-friction|tooling-sanitary|branch-hygiene|branch-salvage|tw-|tc-|tests-container|ship-|leveling-|notes-|deps-|worktree-|secret-|send-gate|weekly-)"
       ]
     },
     {
