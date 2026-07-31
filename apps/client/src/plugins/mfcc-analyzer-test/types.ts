@@ -25,6 +25,24 @@ export type MfccFrameCount = 3 | 5 | 7 | 10;
 
 export const MFCC_FRAME_COUNTS: readonly MfccFrameCount[] = [3, 5, 7, 10] as const;
 
+/**
+ * Промежуток между замерами серии, миллисекунды.
+ *
+ * НЕСУЩЕЕ, а не удобство. Слово владельца в шторме (Т1): прежний детектор «делал заданное
+ * число замеров через выбранный пользователем интервал», и задача — «сохранить общий принцип
+ * работы замеров с воротами через интервал». Образец настроен как «5×500 мс».
+ *
+ * Без промежутка серия из пяти кадров при окне 4096 — это ОДИН непрерывный звук длиной
+ * 0.43 секунды, и хлопок двери проходит её целиком. Промежуток — то, чем серия проверяет
+ * УСТОЙЧИВОСТЬ источника во времени: дрон гудит секундами, случайный звук нет.
+ *
+ * `0` — «подряд»: оставлен намеренно, чтобы сравнивать с поведением без промежутка, но это
+ * не умолчание.
+ */
+export type MfccIntervalMs = 0 | 250 | 500 | 1000 | 2000;
+
+export const MFCC_INTERVALS: readonly MfccIntervalMs[] = [0, 250, 500, 1000, 2000] as const;
+
 /** Коридор одного коэффициента. */
 export interface MfccBounds {
   readonly min: number;
@@ -87,6 +105,8 @@ export interface MfccPresetSpec {
 export interface MfccPluginConfig {
   readonly strictness: MfccStrictnessLevel;
   readonly frameCount: MfccFrameCount;
+  /** Промежуток между замерами серии. См. `MfccIntervalMs`: им серия меряет устойчивость. */
+  readonly intervalMs: MfccIntervalMs;
   readonly analysisSource: string;
 }
 

@@ -2362,6 +2362,7 @@ __metadata:
     "@membrana/harmonic-detector-service": "npm:*"
     "@membrana/journal-report-views": "npm:*"
     "@membrana/media-library-service": "npm:*"
+    "@membrana/mfcc-analyzer-service": "npm:*"
     "@membrana/sample-playback-service": "npm:*"
     "@membrana/spectral-flux-detector-service": "npm:*"
     "@membrana/telemetry-journal-service": "npm:*"
@@ -2378,6 +2379,7 @@ __metadata:
     daisyui: "npm:^4.12.10"
     eslint: "npm:^8.57.0"
     fake-indexeddb: "npm:^6.2.5"
+    meyda: "npm:^5.6.3"
     postcss: "npm:^8.4.39"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -2630,7 +2632,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@membrana/mfcc-analyzer-service@workspace:packages/services/mfcc-analyzer":
+"@membrana/mfcc-analyzer-service@npm:*, @membrana/mfcc-analyzer-service@workspace:packages/services/mfcc-analyzer":
   version: 0.0.0-use.local
   resolution: "@membrana/mfcc-analyzer-service@workspace:packages/services/mfcc-analyzer"
   dependencies:
