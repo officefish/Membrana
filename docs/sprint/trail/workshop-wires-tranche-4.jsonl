@@ -1,0 +1,2 @@
+{"traceId":"tr-floor-dynin-run","blockId":"floor-projection","kind":"context_run","subject":"dynin","at":"2026-07-31T09:45:00Z","ref":"docs/meeting/workshop-wires/CONTRACT.md"}
+{"traceId":"tr-floor-dynin-review","blockId":"floor-projection","kind":"review_pass","subject":"dynin","at":"2026-07-31T09:55:00Z","ref":"scripts/session-floor.test.mjs"}
