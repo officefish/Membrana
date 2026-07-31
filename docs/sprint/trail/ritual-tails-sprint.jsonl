@@ -12,3 +12,5 @@
 {"traceId":"tr-day-plan-dynin-review","blockId":"morning-day-plan-sanitizer","kind":"review_pass","subject":"dynin","at":"2026-07-31T08:10:00Z","ref":"docs/discussions/block-day-plan-dynin.md"}
 {"traceId":"tr-ship-recon-tarasov-context","blockId":"ship-chain-investigation","kind":"context_run","subject":"tarasov","at":"2026-07-31T08:20:00Z","ref":"docs/discussions/block-ship-recon-tarasov.md"}
 {"traceId":"tr-ship-recon-tarasov-review","blockId":"ship-chain-investigation","kind":"review_pass","subject":"tarasov","at":"2026-07-31T08:25:00Z","ref":"docs/discussions/block-ship-recon-tarasov.md"}
+{"traceId":"tr-owner-awareness-tarasov-context","blockId":"morning-main-day-issue-owner-awareness","kind":"context_run","subject":"tarasov","at":"2026-07-31T08:35:00Z","ref":"docs/discussions/block-owner-awareness-tarasov.md"}
+{"traceId":"tr-owner-awareness-tarasov-review","blockId":"morning-main-day-issue-owner-awareness","kind":"review_pass","subject":"tarasov","at":"2026-07-31T08:40:00Z","ref":"docs/discussions/block-owner-awareness-tarasov.md"}
