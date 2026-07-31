@@ -41,16 +41,31 @@ export const POLICY_LINE = 'сначала обзор и глагол масте
  * входного глагола нет. Подставить сюда `audit` «по умолчанию» значило бы отправить сессию
  * звать команду, которой у мастерской не существует.
  */
-export function entryVerb(container) {
-  const verbs = container?.verbs;
-  if (Array.isArray(verbs)) return verbs.find((v) => typeof v === 'string' && v.trim() !== '') ?? null;
-  if (verbs !== null && typeof verbs === 'object') {
-    for (const key of ['audit', 'decompose', 'inspectElement']) {
-      const v = verbs[key];
-      if (typeof v === 'string' && v.trim() !== '') return v;
-    }
+export function entryVerb(verbsDict) {
+  if (verbsDict === null || typeof verbsDict !== 'object' || Array.isArray(verbsDict)) return null;
+  for (const key of ['audit', 'decompose', 'inspectElement']) {
+    const v = verbsDict[key];
+    if (typeof v === 'string' && v.trim() !== '') return v.trim();
   }
   return null;
+}
+
+/**
+ * Словарь глаголов ИЗ МАНИФЕСТА, а не из справочника.
+ *
+ * `discoverContainers` отдаёт `verbs` списком **присутствующих ключей** (`['audit',
+ * 'decompose']`), а не строками вызова. Поймано живым прогоном 31.07: пол печатал входным
+ * глаголом слово `audit` — имя ключа вместо команды, то есть предлагал сессии дверь,
+ * которой не существует. Ровно тот дефект, против которого §6 требует «входной глагол или
+ * честный прочерк»: выдуманная команда хуже прочерка, потому что по ней пойдут.
+ */
+function manifestVerbs(repoRoot, home) {
+  try {
+    const doc = JSON.parse(readFileSync(join(repoRoot, home, 'workshop.manifest.json'), 'utf8'));
+    return doc?.verbs ?? null;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -95,7 +110,7 @@ export function buildFloor(repoRoot, ctx = {}) {
       home: c.home,
       name: c.name ?? c.home,
       description: shortDescription(c),
-      entryVerb: entryVerb(c),
+      entryVerb: entryVerb(manifestVerbs(repoRoot, c.home)),
       valid: c.valid !== false,
     }))
     .sort((a, b) => a.home.localeCompare(b.home));

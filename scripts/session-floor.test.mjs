@@ -36,13 +36,16 @@ test('живое дерево: проекция собирается и несё
 });
 
 test('входной глагол — первый непустой из тройки, иначе честный прочерк', () => {
-  assert.equal(entryVerb({ verbs: { audit: 'yarn a', decompose: 'yarn d' } }), 'yarn a');
-  assert.equal(entryVerb({ verbs: { audit: null, decompose: 'yarn d' } }), 'yarn d');
-  assert.equal(entryVerb({ verbs: { audit: '  ', decompose: null, inspectElement: 'yarn i' } }), 'yarn i');
+  assert.equal(entryVerb({ audit: 'yarn a', decompose: 'yarn d' }), 'yarn a');
+  assert.equal(entryVerb({ audit: null, decompose: 'yarn d' }), 'yarn d');
+  assert.equal(entryVerb({ audit: '  ', decompose: null, inspectElement: 'yarn i' }), 'yarn i');
   // Подставить «audit по умолчанию» значило бы отправить сессию звать несуществующую команду.
-  assert.equal(entryVerb({ verbs: { audit: null, decompose: null, inspectElement: null } }), null);
+  assert.equal(entryVerb({ audit: null, decompose: null, inspectElement: null }), null);
   assert.equal(entryVerb({}), null);
-  assert.equal(entryVerb({ verbs: ['yarn x'] }), 'yarn x', 'массивная форма тоже читается');
+  assert.equal(entryVerb(null), null);
+  // Список ключей справочника ('audit','decompose') словарём НЕ является: имя ключа
+  // командой не станет, и печатать его значило бы предложить дверь, которой нет.
+  assert.equal(entryVerb(['audit', 'decompose']), null, 'массив ключей — не словарь вызовов');
 });
 
 test('описание режется по длине, а не по первой точке', () => {
