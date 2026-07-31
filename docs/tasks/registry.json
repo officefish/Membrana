@@ -57,7 +57,7 @@
       ],
       "notes": "3 блока cut-contract/execution-gate/experience-loop; изоляция до Interface Consilium; мёрж всех трёх; координатор Ангелина; резка ратифицирована владельцем 30.07; родители — заседание sprint-honest-performers + шторм storm-team-volume-in-work-2026-07-30",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-30"
     },
     {
       "id": "agent-tooling-friction-2-2026-07-30",
@@ -74,7 +74,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "Ф1 PR #1494 (грабли audit/install) · Ф2 PR #1495 (yarn resolutions:check — нашёл три мёртвых пина и вскрыл мою ошибку про пин fastify 4.x) · Ф3 PR #1497 (маршрут после ребейза: force-push запрещён политикой) · Ф4 PR #1498 (yarn ci:triage — моё или вне диффа, вещдок #1487)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-30"
     },
     {
       "id": "tooling-sanitary-pack-3007",
@@ -110,7 +110,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "Ф1 PR #1466 (yarn workspace:links) · Ф2 PR #1469 (pr:ship --with-review) · Ф3 PR #1470 (грабли AGENTS) · Ф4 PR #1472 (bootstrap под канон #725). Ф4 получил BLOCK по dry-run — снят тестом-песочницей, не спором.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-30"
     },
     {
       "id": "network-container",
@@ -810,7 +810,7 @@
       ],
       "notes": "",
       "archiveNotes": "stale card: secret-cutter уже реализован в дереве; evidence: scripts/lib/secret-redact.mjs экспортирует redactSecrets/redactJsonSensitiveValues/formatRotationManifest, scripts/secret-redact.mjs даёт CLI без in-place записи; node --test scripts/secret-redact.test.mjs = 18/18; Linear live media snapshot 2026-07-29T15:25:21.670Z pullOk=true recordCount=298 found DRU-473 state=Done stateType=completed githubIssueRefs=[1240] completedAt=2026-07-26T11:54:13.648Z; registry linearId repaired to DRU-473",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-30"
     },
     {
       "id": "main-day-issue-channel-diagnosis",
@@ -830,7 +830,7 @@
       ],
       "notes": "",
       "archiveNotes": "implemented in this workspace by restoring missing #1275 code path; evidence: commit 4abec180 exists in history but is not ancestor of current HEAD; scripts/_main-day-issue.mjs now logs ritual-main-day-issue attempts via onAttempt, writes provider/model/source/generations provenance into MAIN_DAY_ISSUE header, refuses skeleton failure without writing file, saves raw failed response only under OS temp; scripts/main-day-issue-channel.test.mjs added and package.json test:scripts registers it; node --test scripts/main-day-issue-channel.test.mjs scripts/branch-grammar.test.mjs = 17/17; code-review artifact docs/tasks/archive/main-day-issue-channel-diagnosis-code-review.md = LGTM; Linear live media snapshot 2026-07-29T15:36:48.212Z pullOk=true recordCount=299 found DRU-472 state=Done stateType=completed githubIssueRefs=[1239] completedAt=2026-07-26T15:30:16.794Z; registry linearId repaired to DRU-472",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-30",
       "parentEpic": "llm-procedure-channels"
     },
     {
@@ -851,7 +851,7 @@
       ],
       "notes": "",
       "archiveNotes": "stale card: TEF channel resolver уже реализован в текущем HEAD; evidence: git merge-base confirms f2d8c1a6 is ancestor; scripts/lib/llm-procedures.json registers team-evening-feedback; scripts/lib/team-evening-feedback-ritual.mjs invokes EVENING_FEEDBACK_PROCEDURE_ID via injected procedure channel, logs attempts, writes provider/model/source provenance, refuses exhausted/empty body without writing protocol; node --test scripts/team-evening-feedback-ritual.test.mjs scripts/llm-procedure-channels.test.mjs = 25/25; Linear live media snapshot 2026-07-29T15:41:48.456Z pullOk=true recordCount=300 found DRU-460 state=Done stateType=completed githubIssueRefs=[1210] completedAt=2026-07-26T07:58:57.748Z; registry linearId repaired to DRU-460",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-30",
       "parentEpic": "llm-procedure-channels"
     },
     {
@@ -2055,7 +2055,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "Implemented in current worktree: finalizeReviewManifest now records completion.acceptanceGate and hard mode blocks missing/stale acceptance; schema updated. Tests: node --test scripts/task-closure-review.test.mjs scripts/trace-acceptance.test.mjs scripts/task-closure-review-schema.test.mjs => 51/51. Review: docs/tasks/archive/closure-acceptance-gate-code-review-targeted.md LGTM. Linear live snapshot 2026-07-29T15:51:52.389Z: DRU-365 still Backlog, code/card repaired locally with evidence.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-30",
       "parentEpic": "frame-rails-2307"
     },
     {
@@ -2109,7 +2109,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "stale card: dreams digest tri-state уже реализован в текущем HEAD; evidence: git merge-base confirms 06043502 is ancestor; scripts/lib/dreams-format.mjs renders three statuses has-winners/ran-empty/never-ran; scripts/lib/dreams-log.mjs classifyDreamDigestState distinguishes missing volume/log/empty log from ran-empty; node --test scripts/dreams-format.test.mjs scripts/dreams-providers.test.mjs scripts/dreams-log.test.mjs scripts/dreams-tick.test.mjs = 16/16; Linear live media snapshot 2026-07-29T15:45:01.996Z pullOk=true recordCount=300 found DRU-362 state=Done stateType=completed githubIssueRefs=[998] completedAt=2026-07-23T11:30:53.524Z",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-07-30",
       "parentEpic": "frame-rails-2307"
     },
     {
@@ -2674,7 +2674,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "код в ветке/workspace, PR по запросу; Linear DRU-322 найден живым media snapshot 2026-07-29T14:28:34Z (pullOk=true, githubIssueRefs=[925], state=Backlog); evidence: procedural branch guard в branch:check блокирует transport diff для meeting/storm/truth/research, --allow-transport оставляет явный след; tests node --test scripts\\branch-grammar.test.mjs = 9/9; smoke: branch:check chore/codex-idle pass, storm/procedural-layer fails without --allow-transport and passes with it",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-30"
     },
     {
       "id": "ship-review-tooth",
@@ -2691,7 +2691,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "Stale local card repaired. Linear live snapshot 2026-07-29T16:09:54.707Z: DRU-321 Done, githubIssueRefs=[924], completedAt=2026-07-29T07:06:34.915Z. Evidence: package.json exposes task:review:ship; scripts/task-review-ship.mjs orchestrates prepare/run/finalize around exact squash SHA and fail-closed mergeCommit; tests node --test scripts/task-review-ship.test.mjs scripts/task-closure-review.test.mjs scripts/task-closure-review-schema.test.mjs => 45/45; prior review docs/discussions/branch-feat-agent-tooling-friction-2b-code-review.md LGTM.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-30"
     },
     {
       "id": "angelina-codex-no-repo-writes",
