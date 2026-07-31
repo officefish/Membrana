@@ -92,12 +92,77 @@ export function buildSlotPrompt(kind, ctx) {
 }
 
 /** Посылки дня — код, не LLM: что реально легло в сборку. */
+/**
+ * Предикат «вчерашний день закрыт» — У2 разбора #1539.
+ *
+ * Санитарный раздел плана 31.07 утверждал «вчерашний день не закрыт, итога нет ни у
+ * партнёров, ни у команды» ПРИ ТОМ, что протокол лежал в стволе, а журнал отправки нёс
+ * `sent=true`. Причина не в незнании: посылка «фидбек: вчерашний протокол прочитан»
+ * стояла в том же документе утвердительно — санитарные строки собирались свободным
+ * текстом, ничем не связанным с вычисленными фактами, и модель противоречила своему входу.
+ *
+ * Здесь факт становится ВЫЧИСЛИМЫМ. Граница проведена сознательно: закрытие дня
+ * разрешимо и потому сочинению не подлежит; хвосты, помехи и ревью-долги остаются
+ * свободными строками — предикатом они не выражаются.
+ *
+ * Журнал читается прямо: `docs/comms/sent-log.jsonl` в зоне блока, а дом предиката
+ * «отправка по роду и дате» математик поместил в `comms-sent-log.mjs` — файл вне зоны.
+ * ДОЛГ НАЗВАН: разбор JSONL здесь дублирует тамошний; свести — отдельным актом.
+ *
+ * @param {string} repoRoot
+ * @param {string} dateIso `YYYY-MM-DD`
+ * @returns {{ closed: boolean, feedback: boolean, swallow: boolean, why: string[] }}
+ */
+export function yesterdayClosure(repoRoot, dateIso) {
+  const feedback = existsSync(join(repoRoot, `docs/seanses/team-evening-feedback-${dateIso}.md`));
+  let swallow = false;
+  const logAbs = join(repoRoot, 'docs/comms/sent-log.jsonl');
+  if (existsSync(logAbs)) {
+    for (const line of readFileSync(logAbs, 'utf8').split(/\n/u)) {
+      if (!line.trim()) continue;
+      let row;
+      try {
+        row = JSON.parse(line);
+      } catch {
+        continue; // битая строка журнала — не факт отправки и не повод врать в обе стороны
+      }
+      // Род у всех ласточек один — `swallow`; утреннюю от вечерней различает только имя
+      // черновика (`swallow-morning-…` / `swallow-evening-…`, плюс разовые вроде
+      // `swallow-denis-algo-…`). День закрывает ВЕЧЕРНЯЯ: утренняя — это план, а не итог.
+      // Найдено на живых данных 31.07: без этого условия сегодняшняя утренняя отправка
+      // засчиталась бы за вчерашний итог.
+      // Сверено с `comms-sent-log.mjs` по ревью: там фильтра «утро/вечер» НЕТ вовсе
+      // (только sha256 и kind ∈ {swallow, digest}) — расходиться не с чем, признак новый.
+      // Сравнение по ИМЕНИ файла, а не по вхождению в путь: каталог с похожим именем
+      // не должен засчитываться за отправку.
+      const isEvening = String(row?.file ?? '').split('/').pop()?.startsWith('swallow-evening-') === true;
+      if (row?.kind === 'swallow' && row?.sent === true && isEvening && String(row?.ts ?? '').startsWith(dateIso)) {
+        swallow = true;
+        break;
+      }
+    }
+  }
+  const why = [];
+  if (!feedback) why.push('протокола команды нет');
+  if (!swallow) why.push('вечерняя ласточка партнёрам не отправлена');
+  return { closed: feedback && swallow, feedback, swallow, why };
+}
+
 export function gatherPremises(sources, top3) {
   const p = [];
   p.push(`реестр задач: кандидатов магистрали ${top3.length} (детерминированный ранг, зоны по разметке)`);
   p.push(sources.horizon ? 'горизонт: docs/STRATEGY_DAY.md прочитан (живой генератор #592)' : 'горизонт: docs/STRATEGY_DAY.md отсутствует — веха не задана');
   p.push(sources.handoff ? 'рука: docs/HANDOFF.md прочитан' : 'рука: docs/HANDOFF.md отсутствует');
   p.push(sources.feedback ? 'фидбек: вчерашний протокол команды прочитан' : 'фидбек: вчерашнего протокола нет');
+  // Факт закрытия вчерашнего дня подаётся ПОСЫЛКОЙ и утверждением, а не намёком: посылки
+  // модель обязана принимать как данность, и противоречить им в санитарном разделе не может.
+  if (sources.closure) {
+    p.push(
+      sources.closure.closed
+        ? 'вчерашний день ЗАКРЫТ (вычислено): протокол команды есть, ласточка отправлена — в санитарные это НЕ писать'
+        : `вчерашний день НЕ закрыт (вычислено): ${sources.closure.why.join('; ')}`,
+    );
+  }
   p.push('магистраль НЕ назначена планом — top-3 кандидатов, выбор словом владельца (Q1 17.07 + гейт утра)');
   return p;
 }
@@ -115,6 +180,7 @@ async function main() {
     handoff: readBounded('docs/HANDOFF.md'),
     horizon: readBounded('docs/STRATEGY_DAY.md'),
     feedback: readBounded(`docs/seanses/team-evening-feedback-${yesterdayIso()}.md`),
+    closure: yesterdayClosure(repoRoot, yesterdayIso()),
   };
   const ctx = buildContext(sources);
 
