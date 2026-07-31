@@ -12,3 +12,4 @@
 {"traceId":"tr-verbs-kuryokhin-review","blockId":"scripts-workshop-verbs","kind":"review_pass","subject":"kuryokhin","at":"2026-07-31T07:55:00Z","ref":"scripts/scripts-workshop.test.mjs"}
 {"traceId":"tr-rootpolicy-vesnin-run","blockId":"rootpolicy-two-class","kind":"context_run","subject":"vesnin","at":"2026-07-31T06:25:00Z","ref":"docs/meeting/workshop-wires/RECONCILE_M3.md"}
 {"traceId":"tr-rootpolicy-vesnin-review","blockId":"rootpolicy-two-class","kind":"review_pass","subject":"vesnin","at":"2026-07-31T06:35:00Z","ref":"scripts/rootpolicy.test.mjs"}
+{"traceId":"tr-home-workshop-ozhegov-review-2","blockId":"home-workshop-reconcile","kind":"review_pass","subject":"ozhegov","at":"2026-07-31T07:05:00Z","ref":"docs/discussions/pr-1543-code-review.md"}
