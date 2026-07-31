@@ -73,6 +73,11 @@ const PERSONAS = {
     promptFile: 'docs/virtual-team/PROMPT_LAYOUT_DEVELOPER.md',
     description: 'Rodchenko — Верстальщик. DESIGN.md, конструктивизм, a11y.',
   },
+  kuryokhin: {
+    role: 'Музыкант',
+    promptFile: 'docs/virtual-team/PROMPT_MUSICIAN.md',
+    description: 'Kuryokhin — Музыкант. Смелые аудио-гипотезы, Web Audio, риск со структурой.',
+  },
 };
 
 const MAX_CONTEXT_CHARS = 90_000;
