@@ -12,7 +12,7 @@
   "ratifiedAt": "2026-07-30",
   "supersedes": ["archive.jsonl-as-cold-source-of-truth"],
   "implementation": {
-    "procedurePr": 1519,
+    "procedurePr": 1521,
     "implementationPr": 1524,
     "module": "packages/background-office/src/modules/task-archive",
     "contract": "docs/tasks/cold-archive/CONTRACT.md"
