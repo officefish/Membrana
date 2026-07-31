@@ -32,6 +32,7 @@
     "@membrana/harmonic-detector-service": "*",
     "@membrana/journal-report-views": "*",
     "@membrana/media-library-service": "*",
+    "@membrana/mfcc-analyzer-service": "*",
     "@membrana/sample-playback-service": "*",
     "@membrana/spectral-flux-detector-service": "*",
     "@membrana/telemetry-journal-service": "*",
@@ -40,6 +41,7 @@
     "@membrana/trends-detector-service": "*",
     "@membrana/usercase-catalog-service": "*",
     "@uiw/react-json-view": "2.0.0-alpha.42",
+    "meyda": "^5.6.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
