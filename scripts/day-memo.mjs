@@ -19,6 +19,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { buildFactsLayer } from './lib/day-memo-facts.mjs';
+import { parseRegistry } from './lib/evidence-index.mjs';
+import { renderIndex } from './lib/evidence-inventory.mjs';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
@@ -120,6 +122,24 @@ async function main() {
       record.about += ` · перегенерация, суперсидит ${priorIds[priorIds.length - 1]} (append-only)`;
     }
     appendFileSync(regAbs, JSON.stringify(record) + '\n', 'utf8');
+  }
+
+  // Источник держит своё производное: индекс вещдоков пересобирается ЗДЕСЬ, сразу
+  // после append в реестр, а не отдельным шагом цепочки. Иначе зуб воспроизводимости
+  // (scripts/lib/evidence-inventory.test.mjs — «индекс воспроизводим») валит сборку на
+  // КАЖДОЙ вечерней ветке: живой случай 31.07 на PR #1535, `not ok 849`. Подпорка шагом
+  // чинила бы следствие; причина в том, что запись в реестр и пересборка описи разъехались.
+  // Находка Ф9 разбора #1533, блок ritual-evening-archive-evidence спринта ritual-tails-sprint.
+  try {
+    writeFileSync(
+      join(repoRoot, 'docs/evidence/INDEX.md'),
+      renderIndex(parseRegistry(readFileSync(regAbs, 'utf8')).records),
+      'utf8',
+    );
+  } catch (e) {
+    // Не роняем мемо: день уже записан, а несобранный индекс — находка, не потеря.
+    console.error(`  ✗ индекс вещдоков не пересобран: ${e instanceof Error ? e.message : String(e)}`);
+    process.exitCode = 3;
   }
 
   const layerStatus = (l, extra = null) =>
