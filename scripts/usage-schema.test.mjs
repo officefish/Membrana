@@ -60,6 +60,35 @@ test('пример для объявленного глагола проходи
   assert.deepEqual(problemsOf(manifest({ usage: { inspectElement: usage() } })), []);
 });
 
+test('пример для доменного инструмента проходит только при объявленной команде', () => {
+  const domain = [{ name: 'reconcile', worksOn: 'docs/x', tool: 'yarn x:reconcile' }];
+  assert.deepEqual(problemsOf(manifest({
+    verbs: { audit: 'yarn x:audit', decompose: 'yarn x:decompose', inspectElement: null, stackLike: [], domain },
+    usage: { reconcile: usage() },
+  })), []);
+
+  const p = problemsOf(manifest({
+    verbs: { audit: 'yarn x:audit', decompose: 'yarn x:decompose', inspectElement: null, stackLike: [], domain: [{ name: 'reconcile', worksOn: 'docs/x' }] },
+    usage: { reconcile: usage() },
+  }));
+  assert.ok(p.some((x) => /доменный инструмент не объявляет tool/u.test(x)));
+});
+
+test('имена доменных инструментов уникальны и не конфликтуют с общими глаголами', () => {
+  const duplicate = problemsOf(manifest({
+    verbs: { audit: 'yarn x:audit', decompose: 'yarn x:decompose', inspectElement: null, stackLike: [], domain: [
+      { name: 'scan', worksOn: 'docs/x' },
+      { name: 'scan', worksOn: 'docs/x' },
+    ] },
+  }));
+  assert.ok(duplicate.some((x) => /повтор: scan/u.test(x)));
+
+  const collision = problemsOf(manifest({
+    verbs: { audit: 'yarn x:audit', decompose: 'yarn x:decompose', inspectElement: null, stackLike: [], domain: [{ name: 'audit', worksOn: 'docs/x' }] },
+  }));
+  assert.ok(collision.some((x) => /конфликт с глаголом: audit/u.test(x)));
+});
+
 // ── Форма записи ──────────────────────────────────────────────────────────────────────────
 
 test('все три поля записи обязательны — половина хуже отсутствия', () => {

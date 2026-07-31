@@ -37,6 +37,18 @@ test('живое дерево: пример мастерской скрипто�
   assert.equal(scripts.measuredAt, '2026-07-31');
 });
 
+test('живое дерево: три salvage-инструмента доезжают с командами и примерами', () => {
+  const entries = collectUsage(discoverContainers(repoRoot))
+    .filter((e) => e.home === 'docs/audit/git');
+  assert.deepEqual(entries.map((e) => e.verb), ['applyRatifiedPlan', 'closeout', 'reconcile']);
+  assert.deepEqual(entries.map((e) => e.command), [
+    'yarn repo:branches:apply-plan',
+    'yarn repo:branches:closeout',
+    'yarn repo:branches:reconcile',
+  ]);
+  assert.ok(entries.every((e) => e.sample.length > 0));
+});
+
 test('команда берётся из verbs, а не из примера', () => {
   // Пример показывает ВЫВОД; вызывать надо то, что объявлено глаголом. Разъехаться они не
   // могут — зуб схемы держит подмножество.

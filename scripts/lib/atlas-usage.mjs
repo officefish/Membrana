@@ -32,8 +32,8 @@ export function collectUsage(containers) {
       out.push({
         home: c.home,
         verb,
-        // Команда берётся из `verbs`, а не из примера: пример показывает ВЫВОД, а вызывать
-        // надо то, что объявлено глаголом. Разъехаться они не могут — зуб держит подмножество.
+        // Команда берётся из объявленной двери (`verbs` или `verbs.domain`), а не из
+        // примера: пример показывает ВЫВОД, а вызывать надо источник истины манифеста.
         command: c.commands?.[verb] ?? null,
         what: String(rec.what ?? ''),
         sample: all.slice(0, SAMPLE_MAX_LINES),

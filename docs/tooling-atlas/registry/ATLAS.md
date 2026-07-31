@@ -72,15 +72,73 @@
 | [docs/replit-tasks](../../../docs/replit-tasks/README.md) | Петля «отправить Replit-агенту задание из репо, вернуть работу в `apps/demos/`». |
 | [docs/seanses/night-hunt](../../../docs/seanses/night-hunt/README.md) | Автоматические weekly-отчёты от `background-office` (OpenRouter proxy) попадают сюда **через GitHub PR** с lab |
 
+## Предметные инструменты мастерских
+
+Команды из `verbs.domain`; это полноправные двери мастерской, а не скрытые примечания к трём общим глаголам.
+
+| Контейнер (`home`) | Инструмент | Команда | `worksOn` |
+|--------------------|------------|---------|-----------|
+| [docs/audit/bestiary](../../../docs/audit/bestiary/README.md) | `issueTrap` | — | `docs/audit/bestiary` |
+| [docs/audit/git](../../../docs/audit/git/README.md) | `reconcile` | `yarn repo:branches:reconcile` | `docs/audit/git` |
+| [docs/audit/git](../../../docs/audit/git/README.md) | `applyRatifiedPlan` | `yarn repo:branches:apply-plan` | `docs/audit/git` |
+| [docs/audit/git](../../../docs/audit/git/README.md) | `closeout` | `yarn repo:branches:closeout` | `docs/audit/git` |
+| [docs/audit/tasks](../../../docs/audit/tasks/README.md) | `handoffLiveness` | `yarn tasks:handoff-liveness` | `docs/audit/tasks/registry/` |
+| [docs/archivarius](../../../docs/archivarius/README.md) | `search` | `yarn archivarius search` | `docs/archivarius` |
+| [docs/archivarius](../../../docs/archivarius/README.md) | `ingest` | `yarn archivarius ingest --from ~/.claude/projects` | `docs/archivarius` |
+| [docs/cases](../../../docs/cases/README.md) | `portfolio` | `yarn case:portfolio` | `docs/cases` |
+| [docs/cases](../../../docs/cases/README.md) | `generalize` | `yarn case:generalize` | `docs/cases` |
+| [docs/containers/strategic-docs](../../../docs/containers/strategic-docs/README.md) | `generate` | — | `docs/containers/strategic-docs` |
+| [docs/containers/strategic-docs](../../../docs/containers/strategic-docs/README.md) | `publish` | — | `docs/containers/strategic-docs` |
+| [docs/containers/strategic-docs](../../../docs/containers/strategic-docs/README.md) | `publishTemplates` | — | `docs/containers/strategic-docs` |
+| [docs/containers/strategic-docs](../../../docs/containers/strategic-docs/README.md) | `publishReleases` | — | `docs/containers/strategic-docs` |
+| [docs/containers/strategic-docs](../../../docs/containers/strategic-docs/README.md) | `discoverWorkspaces` | — | `strategy.mmbrn.tech` |
+
 ## Неймспейсы (проекция реестра)
 
 Правил членства **ноль**. Это НЕ значит «всё припарковано» — значит, правило ещё не написано.
 
 ## Примеры вызова
 
-Заполнено у **1** мастерских из **13**. Источник — `usage` в манифесте; здесь производная выжимка.
+Заполнено у **2** мастерских из **13**. Источник — `usage` в манифесте; здесь производная выжимка.
 
 **Вывод — снимок, а не гарантия.** Рядом с каждым примером дата прогона: сверить его с текущим состоянием машинно нельзя, поэтому показан возраст.
+
+### `yarn repo:branches:apply-plan` — docs/audit/git
+
+dry-run выбирает ровно одну exact-tip цель и подтверждает, что refs, journal и report не изменены
+
+```text
+branch salvage dry-run: refs/heads/example-finished-work -> planned
+dry-run: refs/journal/report were not changed
+```
+
+_замер 2026-07-31_
+
+### `yarn repo:branches:closeout` — docs/audit/git
+
+fail-closed сводит план и journal в воспроизводимый PASS/FAIL с числом мутаций и post-checks
+
+```text
+# Branch salvage closeout — branch-salvage-example
+status: **PASS**
+| Targets | 1 |
+| Completed | 1 |
+```
+
+_замер 2026-07-31_
+
+### `yarn repo:branches:reconcile` — docs/audit/git
+
+сверяет замороженный inventory с текущими refs и отдельно показывает дрейф базы и каждой цели
+
+```text
+# Branch salvage reconciliation
+- snapshot: `docs/audit/git/cache/salvage-snapshot.json`
+- base moved: no
+| `refs/heads/example-finished-work` | `22222222` | `22222222` | unchanged |  |
+```
+
+_замер 2026-07-31_
 
 ### `yarn scripts:orphans` — scripts
 
@@ -105,5 +163,5 @@ scripts:sets-of scripts/bridge.mjs · состоит в одном наборе
 
 _замер 2026-07-31_
 
-Без примеров: `docs/archivarius` · `docs/audit/bestiary` · `docs/audit/git` · `docs/audit/llm-calls` · `docs/audit/tasks` · `docs/cases` · `docs/containers/strategic-docs` · `docs/evidence` · `docs/precedents` · `docs/procedures` · `docs/tasks` · `docs/tooling-atlas`
+Без примеров: `docs/archivarius` · `docs/audit/bestiary` · `docs/audit/llm-calls` · `docs/audit/tasks` · `docs/cases` · `docs/containers/strategic-docs` · `docs/evidence` · `docs/precedents` · `docs/procedures` · `docs/tasks` · `docs/tooling-atlas`
 

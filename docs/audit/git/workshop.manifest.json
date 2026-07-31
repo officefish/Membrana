@@ -25,5 +25,22 @@
         "tool": "yarn repo:branches:closeout"
       }
     ]
+  },
+  "usage": {
+    "reconcile": {
+      "what": "сверяет замороженный inventory с текущими refs и отдельно показывает дрейф базы и каждой цели",
+      "sample": "# Branch salvage reconciliation\n- snapshot: `docs/audit/git/cache/salvage-snapshot.json`\n- base moved: no\n| `refs/heads/example-finished-work` | `22222222` | `22222222` | unchanged |  |",
+      "measuredAt": "2026-07-31"
+    },
+    "applyRatifiedPlan": {
+      "what": "dry-run выбирает ровно одну exact-tip цель и подтверждает, что refs, journal и report не изменены",
+      "sample": "branch salvage dry-run: refs/heads/example-finished-work -> planned\ndry-run: refs/journal/report were not changed",
+      "measuredAt": "2026-07-31"
+    },
+    "closeout": {
+      "what": "fail-closed сводит план и journal в воспроизводимый PASS/FAIL с числом мутаций и post-checks",
+      "sample": "# Branch salvage closeout — branch-salvage-example\nstatus: **PASS**\n| Targets | 1 |\n| Completed | 1 |",
+      "measuredAt": "2026-07-31"
+    }
   }
 }

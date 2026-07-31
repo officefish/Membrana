@@ -139,6 +139,12 @@ function runInspect(home) {
   console.log(`имя: ${c.name} · home: ${c.home} · plane: ${c.plane} · role: ${c.role ?? '—'} · семья: ${c.family}`);
   console.log(`worksOn: ${c.worksOn} · kit: ${c.kit ?? 'null'} · валиден: ${c.valid ? '✓' : '✗'}`);
   console.log(`глаголы: ${c.verbs.join(' + ') || '—'}${c.missingVerbs.length ? ` (нет: ${c.missingVerbs.join(', ')})` : ''}`);
+  if (c.domainTools.length > 0) {
+    console.log('предметные инструменты:');
+    for (const item of c.domainTools) {
+      console.log(`  ${item.name}: ${item.tool ?? 'команда не объявлена'} · worksOn: ${item.worksOn}`);
+    }
+  }
   if (c.title) console.log(`README: ${c.title}`);
   if (c.summary) console.log(`  ${c.summary}`);
   for (const w of c.warnings) console.log(`  ⚠ ${w}`);
