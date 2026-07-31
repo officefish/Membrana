@@ -15,7 +15,8 @@
  * 30.07 был пойман `meeting:audit`.
  */
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
+import { resolve as resolvePath } from 'node:path';
 
 import { runGate } from './lib/execution-trace/gate.mjs';
 import { EXIT_NOT_PERFORMED, INPUT_ERRORS } from './lib/execution-trace/gate-exit-codes.mjs';
@@ -25,6 +26,7 @@ import { stubPlan, STUB_PLAN_NAMES } from './lib/execution-trace/stubs/stub-plan
 import { makeSnapshotResolver } from './lib/execution-trace/stubs/stub-ref-resolver.mjs';
 import { RESPONSIBILITY_WAIVER_REASONS } from './lib/execution-trace/stubs/stub-responsibility-modes.mjs';
 import { FIXTURE_NAMES, loadFixture, loadJsonlFile } from './lib/execution-trace/stubs/stub-trace-corpus.mjs';
+import { planToGate } from './lib/sprint-integration/plan-to-gate.mjs';
 
 /** @param {readonly string[]} argv */
 export function parseArgs(argv) {
@@ -70,6 +72,24 @@ function main() {
     preErrors.push({ code: INPUT_ERRORS.E_PLAN_UNREADABLE, subject: args.plan, detail: String(e.message ?? e) });
   }
 
+  // Шов A→B (INTERFACE_CONTRACT §1, адаптер №1). План нарезки написан в схеме
+  // `sprint-cut/1` — `sprintId`, `persona`/`context`, ратификация ДОКУМЕНТОМ; гейт читает
+  // NormalizedPlan — `planId`, `assigned`, ратификация ПРЕДИКАТОМ. Без этого вызова CLI
+  // отдавал код 2 «проверка не состоялась» на ЛЮБОМ живом плане: адаптер был построен и
+  // покрыт тестами 30.07, но зван только из тестов, а боевой путь читал сырой план (#1545).
+  // Стабы приходят уже в форме гейта — через шов их не гонят.
+  /** @type {{toothId: string, blockId: string|null, reason: string}[]} */
+  let seamFindings = [];
+  if (planRaw !== null && !args.plan.startsWith('stub:')) {
+    try {
+      const adapted = planToGate(planRaw);
+      planRaw = adapted.planRaw;
+      seamFindings = adapted.findings;
+    } catch (e) {
+      preErrors.push({ code: INPUT_ERRORS.E_PLAN_UNREADABLE, subject: args.plan, detail: `шов A→B: ${String(e.message ?? e)}` });
+    }
+  }
+
   /** @type {unknown[]} */
   let records = [];
   try {
@@ -91,12 +111,29 @@ function main() {
     traceRecords: records,
     knownPersonas: loadKnownPersonas(),
     allowedReasons: RESPONSIBILITY_WAIVER_REASONS,
-    resolveRef: makeSnapshotResolver(),
+    // Разрешение адреса — инъектируемая операция, и стаб об этом говорит прямо: «в проде это
+    // файл/запись, здесь — проверка по замороженному снимку». В боевом пути снимок из восьми
+    // фикстурных путей означал `unresolvable_ref` на ЛЮБОМ настоящем вещдоке. Живая лента →
+    // живое разрешение по дереву; фикстура → прежний снимок, чтобы зубы не зависели от
+    // состояния рабочего дерева (#1545, второй провод того же класса, что адаптер шва).
+    resolveRef: args.traces.startsWith('fixture:')
+      ? makeSnapshotResolver()
+      // Именно ФАЙЛ, не просто существующий путь: каталог-указатель дал бы ложный зелёный,
+      // а вещдок — байты с хешем, не место (`docs/evidence/README.md`).
+      : (ref) => {
+        if (typeof ref !== 'string' || ref === '' || ref.includes('://')) return false;
+        try { return statSync(resolvePath(process.cwd(), ref)).isFile(); } catch { return false; }
+      },
     now: args.now,
     preErrors,
   });
 
   process.stdout.write(args.json ? `${JSON.stringify(report, null, 2)}\n` : renderReport(report));
+  // Находки шва печатаются ОТДЕЛЬНО и всегда: они видны только адаптеру, в вердикты блоков
+  // не входят и потому легко тонут. Некритичность не означает, что вывод можно проглотить.
+  for (const f of seamFindings) {
+    process.stderr.write(`  ⚑ шов A→B [${f.toothId}]${f.blockId ? ` · ${f.blockId}` : ''} — ${f.reason}\n`);
+  }
   return report.exitCode;
 }
 
