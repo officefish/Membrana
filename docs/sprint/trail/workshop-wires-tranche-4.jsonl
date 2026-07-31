@@ -1,0 +1,9 @@
+{"traceId":"tr-floor-dynin-run","blockId":"floor-projection","kind":"context_run","subject":"dynin","at":"2026-07-31T09:45:00Z","ref":"docs/meeting/workshop-wires/CONTRACT.md"}
+{"traceId":"tr-floor-dynin-review","blockId":"floor-projection","kind":"review_pass","subject":"dynin","at":"2026-07-31T09:55:00Z","ref":"scripts/session-floor.test.mjs"}
+{"traceId":"tr-validate-vesnin-run","blockId":"floor-validate","kind":"context_run","subject":"vesnin","at":"2026-07-31T10:05:00Z","ref":"scripts/lib/session-floor.mjs"}
+{"traceId":"tr-validate-vesnin-review","blockId":"floor-validate","kind":"review_pass","subject":"vesnin","at":"2026-07-31T10:15:00Z","ref":"scripts/session-floor-validate.test.mjs"}
+{"traceId":"tr-render-kuryokhin-run","blockId":"floor-render","kind":"context_run","subject":"kuryokhin","at":"2026-07-31T10:25:00Z","ref":"docs/meeting/workshop-wires/AUDIT_FARRELL.md"}
+{"traceId":"tr-render-kuryokhin-review","blockId":"floor-render","kind":"review_pass","subject":"kuryokhin","at":"2026-07-31T10:35:00Z","ref":"scripts/session-floor-render.test.mjs"}
+{"traceId":"tr-floor-dynin-review-2","blockId":"floor-projection","kind":"review_pass","subject":"dynin","at":"2026-07-31T10:40:00Z","ref":"scripts/lib/session-floor.mjs"}
+{"traceId":"tr-hook-dynin-run","blockId":"floor-hook-wire","kind":"context_run","subject":"dynin","at":"2026-07-31T10:50:00Z","ref":"scripts/cold-start-stamps.mjs"}
+{"traceId":"tr-hook-dynin-review","blockId":"floor-hook-wire","kind":"review_pass","subject":"dynin","at":"2026-07-31T11:00:00Z","ref":"scripts/cold-start-floor.test.mjs"}

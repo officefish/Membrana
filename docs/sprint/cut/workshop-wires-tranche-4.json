@@ -1,0 +1,70 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "workshop-wires-tranche-4",
+  "taskId": "workshop-wires-tranche-4",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-07-31T09:40:00Z",
+    "to": "2026-07-31T18:00:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "floor-projection",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/session-floor.mjs",
+        "scripts/session-floor.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T09:40:00Z",
+      "estimate": {
+        "changedLines": 300
+      }
+    },
+    {
+      "blockId": "floor-validate",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/session-floor-validate.mjs",
+        "scripts/session-floor-validate.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T09:40:00Z",
+      "estimate": {
+        "changedLines": 220
+      }
+    },
+    {
+      "blockId": "floor-render",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "scripts/lib/session-floor-render.mjs",
+        "scripts/session-floor-render.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T09:40:00Z",
+      "estimate": {
+        "changedLines": 280
+      }
+    },
+    {
+      "blockId": "floor-hook-wire",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/cold-start-stamps.mjs",
+        "scripts/cold-start-floor.test.mjs"
+      ],
+      "revisionAt": "2026-07-31T09:40:00Z",
+      "estimate": {
+        "changedLines": 200
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-31T12:46:19+03:00",
+    "digest": "c58126401e03eeded8896f3a11d4a3d50db0c3025cc4e94f9deb68ea5e43e57e"
+  }
+}
