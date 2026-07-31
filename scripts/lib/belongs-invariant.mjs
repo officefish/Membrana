@@ -128,13 +128,17 @@ export function checkInvariant(input) {
   if (baseline.state !== BASELINE_STATES.OK) {
     problems.push(...(baseline.problems ?? ['baseline недоступен']));
   }
+  const all = [...new Set((orphans ?? []).map(normalizePath))].sort();
+
   if (problems.length > 0) {
-    return { ok: false, phase, growth: [], inherited: [], waived: [], denominator: 0, scoped: scope !== null, problems };
+    // Знаменатель отдаётся ДАЖЕ при отказе: он измерен и правдив, а `denominator: 0` был бы
+    // числом, которого никто не считал. Отчёт печатает его рядом со словами «проверка не
+    // состоялась» — «сирот 42, но вердикта нет» честно, «сирот 0» ложно.
+    return { ok: false, phase, growth: [], inherited: [], waived: [], denominator: all.length, scoped: scope !== null, problems };
   }
 
   const waived = activeWaiverPaths(waivers, now);
   const scopeSet = scope === null ? null : new Set(scope.map(normalizePath));
-  const all = [...new Set((orphans ?? []).map(normalizePath))].sort();
   const inScope = scopeSet === null ? all : all.filter((p) => scopeSet.has(p));
 
   const waivedHere = inScope.filter((p) => waived.has(p));

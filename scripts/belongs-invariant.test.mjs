@@ -173,3 +173,12 @@ test('дубли во входе не удваивают вердикт', () => 
   assert.deepEqual(res.growth, ['scripts/a.mjs']);
   assert.equal(res.denominator, 1);
 });
+
+test('при отказе знаменатель правдив, а не обнулён', () => {
+  // `denominator: 0` было бы числом, которого никто не считал: сирот 42, вердикта нет —
+  // это две разные новости, и вторая не отменяет первую.
+  const res = checkInvariant({ orphans: ['scripts/a.mjs', 'scripts/b.mjs'], now: NOW });
+  assert.equal(res.ok, false);
+  assert.match(res.problems[0], /зуб не включён/u);
+  assert.equal(res.denominator, 2, 'измеренное отдаётся даже когда вердикта нет');
+});
