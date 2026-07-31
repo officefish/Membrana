@@ -27,5 +27,8 @@
     "rimraf": "^5.0.0",
     "typescript": "^5.4.0",
     "vitest": "^3.2.0"
+  },
+  "dependencies": {
+    "meyda": "^5.6.3"
   }
 }
