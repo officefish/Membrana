@@ -35,7 +35,7 @@
       ],
       "notes": "Отдельный sanitary sprint: Scenario A + category 7 salvage; ritual/day-2026-07-30 и ritual/evening-2026-07-29 исключены; delete только после owner-gate.",
       "archiveNotes": "PR #1556; review LGTM 3d1fc8283bb1; PR #1556 merged 2026-07-31T10:03:13Z (0e1ae0012bf3d9c787a02f7b4c7c3afcf2475c4f)",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-07-31"
     },
     {
       "id": "mfcc-compare-sprint",
