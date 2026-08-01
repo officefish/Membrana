@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `forecast-archive-wire` | Провод памяти персоны: запись «предсказание ↔ исход» доезжает в archive/<persona>.jsonl | M | [`FORECAST_ARCHIVE_WIRE_PROMPT.md`](../prompts/FORECAST_ARCHIVE_WIRE_PROMPT.md) | [#1590](https://github.com/officefish/Membrana/issues/1590) |
 | `meeting-gates-teeth` | Зубы заседаний: повестка не доехала, --kind meeting, флаги прогона в метаданных протокола | M | [`MEETING_GATES_TEETH_PROMPT.md`](../prompts/MEETING_GATES_TEETH_PROMPT.md) | — |
 | `evening-steps-m2-transfer` | Перенос вердикта M2 в evening-ritual-steps.json: единая нумерация и критичность | S | [`EVENING_STEPS_M2_TRANSFER_PROMPT.md`](../prompts/EVENING_STEPS_M2_TRANSFER_PROMPT.md) | — |
 | `archivarius-evening-tract` | Тракт архива сессий: scan → extract → ingest как связанная цепочка, а не три точки входа | M | [`ARCHIVARIUS_EVENING_TRACT_PROMPT.md`](../prompts/ARCHIVARIUS_EVENING_TRACT_PROMPT.md) | — |
