@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "forecast-archive-wire",
+      "title": "Провод памяти персоны: запись «предсказание ↔ исход» доезжает в archive/<persona>.jsonl",
+      "promptPath": "docs/prompts/FORECAST_ARCHIVE_WIRE_PROMPT.md",
+      "githubIssue": 1590,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-01",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "meeting-gates-teeth",
       "title": "Зубы заседаний: повестка не доехала, --kind meeting, флаги прогона в метаданных протокола",
       "promptPath": "docs/prompts/MEETING_GATES_TEETH_PROMPT.md",

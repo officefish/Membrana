@@ -1,0 +1,12 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "weekly-dead-wire-audit",
+  "note": "Замер объёма по блокам спринта 01.08, снят git diff --numstat после закрытия окна: insertions + deletions по зоне блока. Не оценка и не пересказ — измерение.",
+  "measuredAt": "2026-08-01T10:06:00+03:00",
+  "segments": [
+    { "cutBlockId": "dead-wire-predicate", "changedLines": 232 },
+    { "cutBlockId": "dead-wire-tooth", "changedLines": 270 },
+    { "cutBlockId": "dead-wire-verdicts", "changedLines": 43 },
+    { "cutBlockId": "dead-wire-weekly-home", "changedLines": 118 }
+  ]
+}
