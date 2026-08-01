@@ -23,6 +23,10 @@
 - **Дом и режим** (`home` · `mode`) — контракт [`HOME.md`](./HOME.md) (Ф2 #1220).
   Кит ≠ дом; объявленный дом обязан существовать; живой дом без декларации —
   находка (`auditProcedureHomes`). Пилот дома: `bridge` → `docs/bridge`.
+- **Интерфейс маршрута разработки** (`EXECUTION_PROCEDURE`) — контракт
+  [`EXECUTION_PROCEDURE.md`](./EXECUTION_PROCEDURE.md). Применяется только к
+  записям реестра с `procedureKind: "разработка"`; для `решение` и `ритм` не
+  срабатывает.
 - Зуб заселённости: `validateProcedure(dir)` — `resolvable` ∧ `readmeNonEmpty` ∧
   `manifestSchemaOk`; гоняется в CI (`scripts/validate-procedure.test.mjs`).
 

@@ -42,6 +42,11 @@
       }
     ]
   },
+  "portfolio": {
+    "status": "missing",
+    "items": [],
+    "note": "у one-shot пока нет отдельного портфолио образцовых прогонов; честное отсутствие нужно мастерской и EXECUTION_PROCEDURE"
+  },
   "mode": "local",
   "home": {
     "kind": "none",

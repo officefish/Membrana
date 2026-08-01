@@ -1,0 +1,65 @@
+{
+  "id": "adr",
+  "leadPersona": "vesnin",
+  "kitVersion": null,
+  "engines": [
+    ".cursor/skills/membrana-adr/SKILL.md"
+  ],
+  "precedents": [
+    "docs/adr/README.md",
+    "docs/adr/ADR_TEMPLATE.md"
+  ],
+  "frames": [
+    { "id": "number", "holder": "vesnin" },
+    { "id": "draft", "holder": "vesnin" },
+    { "id": "grounding", "holder": "dynin" },
+    { "id": "owner-lgtm", "holder": "vesnin" },
+    { "id": "registry", "holder": "vesnin" }
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "membrana-adr / заведи ADR",
+    "note": "лёгкая запись решения ниже consilium-гейта"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "number", "criticality": "critical" },
+      { "id": "draft", "criticality": "critical" },
+      { "id": "grounding", "criticality": "critical" },
+      { "id": "owner-lgtm", "criticality": "critical" },
+      { "id": "registry", "criticality": "critical" }
+    ]
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "owner-lgtm",
+        "waitsFor": "owner",
+        "resume": "LGTM владельца → статус ACCEPTED; без LGTM запись остаётся DRAFT",
+        "note": "merge файла сам по себе не принимает решение"
+      }
+    ]
+  },
+  "portfolio": {
+    "status": "present",
+    "items": [
+      {
+        "id": "adr-catalog",
+        "kind": "catalog",
+        "path": "docs/adr/README.md"
+      },
+      {
+        "id": "adr-template",
+        "kind": "template",
+        "path": "docs/adr/ADR_TEMPLATE.md"
+      }
+    ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "записи ADR живут в docs/adr/; контейнер процедуры описывает процесс, а не хранит прогоны"
+  }
+}

@@ -4,6 +4,7 @@
   "procedures": [
     {
       "id": "ritual-evening",
+      "procedureKind": "ритм",
       "holder": "angelina",
       "homePath": "docs/procedures/ritual-evening",
       "container": {
@@ -21,6 +22,7 @@
     },
     {
       "id": "ritual-day",
+      "procedureKind": "ритм",
       "holder": "angelina",
       "homePath": "docs/procedures/ritual-day",
       "container": {
@@ -38,6 +40,7 @@
     },
     {
       "id": "ritual-dreams",
+      "procedureKind": "ритм",
       "holder": "dynin",
       "homePath": "docs/procedures/ritual-dreams",
       "container": {
@@ -55,6 +58,7 @@
     },
     {
       "id": "attribution",
+      "procedureKind": "ритм",
       "holder": "dynin",
       "homePath": "docs/procedures/attribution",
       "container": {
@@ -72,6 +76,7 @@
     },
     {
       "id": "meeting",
+      "procedureKind": "решение",
       "holder": "vesnin",
       "homePath": "docs/procedures/meeting",
       "container": {
@@ -89,6 +94,7 @@
     },
     {
       "id": "day-sprint",
+      "procedureKind": "разработка",
       "holder": "vesnin",
       "homePath": "docs/procedures/day-sprint",
       "container": {
@@ -106,6 +112,7 @@
     },
     {
       "id": "membrana-local-sprint",
+      "procedureKind": "разработка",
       "holder": "vesnin",
       "homePath": "docs/procedures/membrana-local-sprint",
       "container": {
@@ -123,6 +130,7 @@
     },
     {
       "id": "hackathon",
+      "procedureKind": "разработка",
       "holder": "vesnin",
       "homePath": "docs/procedures/hackathon",
       "container": {
@@ -140,6 +148,7 @@
     },
     {
       "id": "containerization",
+      "procedureKind": "разработка",
       "holder": "ozhegov",
       "homePath": "docs/procedures/containerization",
       "container": {
@@ -157,6 +166,7 @@
     },
     {
       "id": "test-runs",
+      "procedureKind": "ритм",
       "holder": "dynin",
       "homePath": "tests",
       "container": {
@@ -174,6 +184,7 @@
     },
     {
       "id": "storm",
+      "procedureKind": "решение",
       "holder": "angelina",
       "homePath": "docs/procedures/storm",
       "container": {
@@ -191,6 +202,7 @@
     },
     {
       "id": "cowork",
+      "procedureKind": "разработка",
       "holder": "vesnin",
       "homePath": null,
       "container": {
@@ -208,6 +220,7 @@
     },
     {
       "id": "competition",
+      "procedureKind": "разработка",
       "holder": "vesnin",
       "homePath": null,
       "container": {
@@ -225,6 +238,7 @@
     },
     {
       "id": "night-sprint",
+      "procedureKind": "разработка",
       "holder": "vesnin",
       "homePath": null,
       "container": {
@@ -242,6 +256,7 @@
     },
     {
       "id": "ship-gate",
+      "procedureKind": "ритм",
       "holder": "vesnin",
       "homePath": null,
       "container": {
@@ -259,6 +274,7 @@
     },
     {
       "id": "tasks-audit",
+      "procedureKind": "ритм",
       "holder": "dynin",
       "homePath": null,
       "container": {
@@ -276,6 +292,7 @@
     },
     {
       "id": "git-audit",
+      "procedureKind": "ритм",
       "holder": "dynin",
       "homePath": null,
       "container": {
@@ -293,6 +310,7 @@
     },
     {
       "id": "consilium",
+      "procedureKind": "решение",
       "holder": "vesnin",
       "homePath": null,
       "container": {
@@ -309,7 +327,26 @@
       }
     },
     {
+      "id": "adr",
+      "procedureKind": "решение",
+      "holder": "vesnin",
+      "homePath": "docs/procedures/adr",
+      "container": {
+        "value": true,
+        "provenance": "vesnin@execution-procedure-interface-2026-08-01"
+      },
+      "vocabulary": {
+        "value": true,
+        "provenance": "ozhegov@execution-procedure-interface-2026-08-01"
+      },
+      "grammar": {
+        "value": true,
+        "provenance": "vesnin@execution-procedure-interface-2026-08-01"
+      }
+    },
+    {
       "id": "code-review",
+      "procedureKind": "ритм",
       "holder": "vesnin",
       "homePath": "docs/procedures/code-review",
       "container": {
@@ -327,6 +364,7 @@
     },
     {
       "id": "bridge",
+      "procedureKind": "ритм",
       "holder": "angelina",
       "homePath": "docs/procedures/bridge",
       "container": {
@@ -344,6 +382,7 @@
     },
     {
       "id": "one-shot",
+      "procedureKind": "разработка",
       "holder": "vesnin",
       "homePath": "docs/procedures/one-shot",
       "container": {
@@ -361,6 +400,7 @@
     },
     {
       "id": "membrana-leveling",
+      "procedureKind": "ритм",
       "holder": "ozhegov",
       "homePath": "docs/procedures/membrana-leveling",
       "container": {
@@ -378,6 +418,7 @@
     },
     {
       "id": "weekly-dead-wire",
+      "procedureKind": "ритм",
       "holder": "ozhegov",
       "homePath": "docs/procedures/weekly-dead-wire",
       "container": {

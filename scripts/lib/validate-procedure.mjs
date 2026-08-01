@@ -87,6 +87,17 @@ export const MANIFEST_HOME_KEYS = Object.freeze(['home', 'mode']);
 /** Optional портфолио процедуры: видимые мастерской примеры и опорные носители. */
 export const MANIFEST_PORTFOLIO_KEYS = Object.freeze(['portfolio']);
 
+export const DEVELOPMENT_PROCEDURE_REQUIRED_KEYS = Object.freeze([
+  'trigger',
+  'steps',
+  'gates',
+  'frames',
+  'mode',
+  'home',
+  'portfolio',
+  'precedents',
+]);
+
 const TRIGGER_KINDS = Object.freeze(['schedule', 'captain-word', 'procedure-event', 'none']);
 const STEPS_KINDS = Object.freeze(['ref', 'inline', 'none']);
 const GATES_KINDS = Object.freeze(['inline', 'none']);
@@ -571,6 +582,57 @@ export function portfolioProblems(value, repoRoot) {
 }
 
 /**
+ * Род процедуры из реестра. Если реестра/записи нет, дополнительный интерфейс не
+ * применяется: базовая форма остаётся самодостаточной для временных фикстур.
+ * @param {string} id
+ * @param {string} repoRoot
+ * @returns {string|null}
+ */
+export function procedureKindFromRegistry(id, repoRoot) {
+  if (!repoRoot) return null;
+  const registryPath = join(repoRoot, 'docs', 'procedures', 'registry.json');
+  if (!existsSync(registryPath)) return null;
+  try {
+    const reg = JSON.parse(readFileSync(registryPath, 'utf8'));
+    const row = (reg.procedures ?? []).find((p) => p?.id === id);
+    return typeof row?.procedureKind === 'string' ? row.procedureKind : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * EXECUTION_PROCEDURE: дополнительный интерфейс только для рода `разработка`.
+ * @param {Record<string, unknown>} m
+ * @param {string} dirName
+ * @param {string} repoRoot
+ * @returns {string[]}
+ */
+export function executionProcedureProblems(m, dirName, repoRoot) {
+  const kind = procedureKindFromRegistry(dirName, repoRoot);
+  if (kind !== 'разработка') return [];
+
+  const problems = [];
+  const keys = Object.keys(m);
+  for (const k of DEVELOPMENT_PROCEDURE_REQUIRED_KEYS) {
+    if (!keys.includes(k)) problems.push(`EXECUTION_PROCEDURE: нет поля ${k}`);
+  }
+  if (Array.isArray(m.frames) && m.frames.length === 0) {
+    problems.push('EXECUTION_PROCEDURE: frames пуст — маршрут разработки обязан назвать держателей кадров');
+  }
+  if (Array.isArray(m.precedents) && m.precedents.length === 0) {
+    problems.push('EXECUTION_PROCEDURE: precedents пуст — прожитый маршрут без источника формы');
+  }
+  if (m.portfolio && typeof m.portfolio === 'object' && !Array.isArray(m.portfolio)) {
+    const p = /** @type {Record<string, unknown>} */ (m.portfolio);
+    if (p.status === 'missing' && !isHonestWhy(p.note)) {
+      problems.push('EXECUTION_PROCEDURE: portfolio.missing без честной note');
+    }
+  }
+  return problems;
+}
+
+/**
  * Собрать объявленные home.path из всех контейнеров процедур.
  * @param {string} repoRoot
  * @returns {Set<string>}
@@ -723,6 +785,13 @@ export function validateProcedure(dir, repoRoot) {
       manifestSchemaOk = schemaProblems.length === 0;
       problems.push(...schemaProblems);
       if (manifest && typeof manifest === 'object' && !Array.isArray(manifest)) {
+        const executionProblems = executionProcedureProblems(
+          /** @type {Record<string, unknown>} */ (manifest),
+          basename(dir),
+          repoRoot,
+        );
+        if (executionProblems.length > 0) manifestSchemaOk = false;
+        problems.push(...executionProblems);
         core = corePresence(/** @type {Record<string, unknown>} */ (manifest));
         if (core === 'none') {
           findings.push('нет ядра настроек (trigger/steps/gates) — см. docs/procedures/CORE.md');

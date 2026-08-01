@@ -4,14 +4,19 @@ import { basename, dirname, join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { derivedStatus, registryProblems, renderRegistryMd } from './lib/procedures-registry.mjs';
+import {
+  PROCEDURE_KIND_EXPECTED_COUNTS,
+  derivedStatus,
+  registryProblems,
+  renderRegistryMd,
+} from './lib/procedures-registry.mjs';
 import { listProcedureDirs } from './lib/validate-procedure.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const LIVE = JSON.parse(readFileSync(resolve(repoRoot, 'docs/procedures/registry.json'), 'utf8'));
 
 const OK = {
-  id: 'demo', holder: 'dynin', homePath: 'docs/procedures/demo',
+  id: 'demo', procedureKind: 'ритм', holder: 'dynin', homePath: 'docs/procedures/demo',
   container: { value: true, provenance: 'dynin@abc123' },
   vocabulary: { value: false, provenance: null },
   grammar: { value: true, provenance: 'dynin@abc123' },
@@ -61,7 +66,12 @@ test('полнота: контейнер на диске без записи —
 test('ЗУБ CI: боевой реестр валиден; доноры Р5 мигрированы; проекция синхронна', () => {
   const taskIds = (JSON.parse(readFileSync(resolve(repoRoot, 'docs/tasks/registry.json'), 'utf8')).tasks ?? []).map((t) => t.id);
   const containerIds = listProcedureDirs(repoRoot).map((d) => basename(d));
-  const problems = registryProblems(LIVE, { taskIds, containerIds, dirExists: (p) => existsSync(join(repoRoot, p)) });
+  const problems = registryProblems(LIVE, {
+    taskIds,
+    containerIds,
+    dirExists: (p) => existsSync(join(repoRoot, p)),
+    expectedKindCounts: PROCEDURE_KIND_EXPECTED_COUNTS,
+  });
   assert.deepEqual(problems, []);
   const byId = Object.fromEntries(LIVE.procedures.map((p) => [p.id, p]));
   assert.equal(derivedStatus(byId['ritual-evening']), 'migrated', 'донор 1 (Р1+Р5)');

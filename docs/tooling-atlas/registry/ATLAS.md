@@ -5,7 +5,7 @@
 > Ссылка = `home` каталога. `docs/tasks` (domain) ≠ `docs/audit/tasks` (report, отчёты про задачи).
 > **Дом без мастерской — законное состояние**, а не дефект: мастерская есть подтип дома.
 
-Домов: **48** · из них мастерских: **13** · домов без мастерской: **35** · плоскостей: **3** · с полным набором из 3 глаголов: **6**.
+Домов: **49** · из них мастерских: **13** · домов без мастерской: **36** · плоскостей: **3** · с полным набором из 3 глаголов: **6**.
 
 ## Плоскость отчётов (`docs/audit`)
 
@@ -58,6 +58,7 @@
 | [docs/network](../../../docs/network/README.md) | Двое суток диагноз звучал так: «на office-VDS нет исходящего маршрута к LLM, сетевой |
 | [docs/patterns](../../../docs/patterns/README.md) | Каталог именованных **рекомендаций** (уровень SHOULD по RFC 2119): мягче интерфейса, |
 | [docs/procedure-runs](../../../docs/procedure-runs/README.md) | Дом локального следа исполнения процедур. `docs/procedures/` хранит определения, |
+| [docs/procedures/adr](../../../docs/procedures/adr/README.md) | **Определение.** `adr` — процедура фиксации архитектурного решения ниже |
 | [docs/procedures/attribution](../../../docs/procedures/attribution/README.md) | **Определение.** Attribution — процедура вычисления и распределения |
 | [docs/procedures/bridge](../../../docs/procedures/bridge/README.md) | **Держатель:** Ангелина (`leadPersona` манифеста) — ведущая комнаты (конспект и |
 | [docs/procedures/code-review](../../../docs/procedures/code-review/README.md) | Ревью изменений виртуальной командой с **ведущим из пяти** (T3 шторма |

@@ -13,6 +13,7 @@ import {
   collectDeclaredHomePaths,
   coreFieldsProblems,
   corePresence,
+  executionProcedureProblems,
   frameLaneProblems,
   homeFieldsProblems,
   isHonestWhy,
@@ -385,4 +386,71 @@ test('HOME Ф4: форма мостика несёт formVersion; bridge вал�
   const dir = join(repoRoot, 'docs/procedures/bridge');
   const r = validateProcedure(dir, repoRoot);
   assert.equal(r.valid, true, r.problems.join('; '));
+});
+
+test('EXECUTION_PROCEDURE: development procedure требует полный route-интерфейс', () => {
+  const t = mkdtempSync(join(tmpdir(), 'proc-exec-dev-'));
+  after(() => rmSync(t, { recursive: true, force: true }));
+  mkdirSync(join(t, 'scripts'), { recursive: true });
+  mkdirSync(join(t, 'docs', 'procedures', 'dev'), { recursive: true });
+  writeFileSync(join(t, 'scripts', 'dev.mjs'), 'export {};');
+  writeFileSync(join(t, 'docs', 'procedures', 'registry.json'), JSON.stringify({
+    procedures: [{
+      id: 'dev',
+      procedureKind: 'разработка',
+      holder: 'vesnin',
+      homePath: 'docs/procedures/dev',
+      container: { value: true, provenance: 'vesnin@test' },
+      vocabulary: { value: false, provenance: null },
+      grammar: { value: true, provenance: 'vesnin@test' },
+    }],
+  }));
+  writeFileSync(join(t, 'docs', 'procedures', 'dev', 'README.md'), 'Определение.');
+  writeFileSync(join(t, 'docs', 'procedures', 'dev', 'MANIFEST.json'), JSON.stringify({
+    id: 'dev',
+    leadPersona: 'vesnin',
+    kitVersion: null,
+    engines: ['scripts/dev.mjs'],
+    precedents: ['scripts/dev.mjs'],
+  }));
+  const r = validateProcedure(join(t, 'docs', 'procedures', 'dev'), t);
+  assert.equal(r.valid, false);
+  assert.ok(r.problems.some((p) => p.includes('EXECUTION_PROCEDURE: нет поля trigger')));
+  assert.ok(r.problems.some((p) => p.includes('EXECUTION_PROCEDURE: нет поля portfolio')));
+});
+
+test('EXECUTION_PROCEDURE: decision/rhythm не получают development-зуб', () => {
+  const t = mkdtempSync(join(tmpdir(), 'proc-exec-nondev-'));
+  after(() => rmSync(t, { recursive: true, force: true }));
+  mkdirSync(join(t, 'docs', 'procedures', 'decision'), { recursive: true });
+  mkdirSync(join(t, 'docs', 'procedures', 'rhythm'), { recursive: true });
+  mkdirSync(join(t, 'scripts'), { recursive: true });
+  writeFileSync(join(t, 'scripts', 'decision.mjs'), 'export {};');
+  writeFileSync(join(t, 'scripts', 'rhythm.mjs'), 'export {};');
+  writeFileSync(join(t, 'docs', 'procedures', 'registry.json'), JSON.stringify({
+    procedures: [
+      { id: 'decision', procedureKind: 'решение', holder: 'vesnin', homePath: null, container: { value: false }, vocabulary: { value: false }, grammar: { value: false } },
+      { id: 'rhythm', procedureKind: 'ритм', holder: 'angelina', homePath: null, container: { value: false }, vocabulary: { value: false }, grammar: { value: false } },
+    ],
+  }));
+  for (const id of ['decision', 'rhythm']) {
+    writeFileSync(join(t, 'docs', 'procedures', id, 'README.md'), 'Определение.');
+    writeFileSync(join(t, 'docs', 'procedures', id, 'MANIFEST.json'), JSON.stringify({
+      id,
+      leadPersona: id === 'decision' ? 'vesnin' : 'angelina',
+      kitVersion: null,
+      engines: [`scripts/${id}.mjs`],
+      precedents: [],
+    }));
+  }
+  assert.deepEqual(
+    executionProcedureProblems({ id: 'decision', precedents: [] }, 'decision', t),
+    [],
+  );
+  assert.deepEqual(
+    executionProcedureProblems({ id: 'rhythm', precedents: [] }, 'rhythm', t),
+    [],
+  );
+  assert.equal(validateProcedure(join(t, 'docs', 'procedures', 'decision'), t).valid, true);
+  assert.equal(validateProcedure(join(t, 'docs', 'procedures', 'rhythm'), t).valid, true);
 });
