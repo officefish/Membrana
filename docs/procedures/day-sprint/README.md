@@ -36,3 +36,4 @@ CLOSURE через `precedents[]`. Указатели `DAY_SPRINT_ACTIVE.md` /
 | day-sprint (ритм эпика+фаз) | Night Sprint / Cowork / Competition |
 | `docs/procedures/day-sprint/` | `docs/day-sprint/<id>/` (инстансы) |
 | `kitVersion: null` | киты `angelina-morning` / `dream-master` |
+| исторический дневной ритм | новый локальный accountable sprint-kind `membrana-local-sprint` |

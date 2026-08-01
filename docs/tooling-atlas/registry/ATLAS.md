@@ -5,7 +5,7 @@
 > Ссылка = `home` каталога. `docs/tasks` (domain) ≠ `docs/audit/tasks` (report, отчёты про задачи).
 > **Дом без мастерской — законное состояние**, а не дефект: мастерская есть подтип дома.
 
-Домов: **44** · из них мастерских: **13** · домов без мастерской: **31** · плоскостей: **3** · с полным набором из 3 глаголов: **6**.
+Домов: **46** · из них мастерских: **13** · домов без мастерской: **33** · плоскостей: **3** · с полным набором из 3 глаголов: **6**.
 
 ## Плоскость отчётов (`docs/audit`)
 
@@ -57,6 +57,7 @@
 | [docs/namespaces](../../../docs/namespaces/README.md) | Единственный источник истины о членстве в неймспейсе. Заведён 31.07 по |
 | [docs/network](../../../docs/network/README.md) | Двое суток диагноз звучал так: «на office-VDS нет исходящего маршрута к LLM, сетевой |
 | [docs/patterns](../../../docs/patterns/README.md) | Каталог именованных **рекомендаций** (уровень SHOULD по RFC 2119): мягче интерфейса, |
+| [docs/procedure-runs](../../../docs/procedure-runs/README.md) | Дом локального следа исполнения процедур. `docs/procedures/` хранит определения, |
 | [docs/procedures/attribution](../../../docs/procedures/attribution/README.md) | **Определение.** Attribution — процедура вычисления и распределения |
 | [docs/procedures/bridge](../../../docs/procedures/bridge/README.md) | **Держатель:** Ангелина (`leadPersona` манифеста) — ведущая комнаты (конспект и |
 | [docs/procedures/code-review](../../../docs/procedures/code-review/README.md) | Ревью изменений виртуальной командой с **ведущим из пяти** (T3 шторма |
@@ -64,6 +65,7 @@
 | [docs/procedures/day-sprint](../../../docs/procedures/day-sprint/README.md) | **Определение.** Day-sprint — процедура ведения **дневного** эпика разработки: |
 | [docs/procedures/meeting](../../../docs/procedures/meeting/README.md) | **Определение.** Заседание — конвергентная процедура: многовопросная материя, |
 | [docs/procedures/membrana-leveling](../../../docs/procedures/membrana-leveling/README.md) | **Определение.** Зонтичная процедура **детерминированного выравнивания** общего |
+| [docs/procedures/membrana-local-sprint](../../../docs/procedures/membrana-local-sprint/README.md) | **Определение.** `membrana-local-sprint` — каноническая локальная процедура |
 | [docs/procedures/one-shot](../../../docs/procedures/one-shot/README.md) | **Определение.** One-shot — процедура **одного прохода** по подобранной (не |
 | [docs/procedures/ritual-day](../../../docs/procedures/ritual-day/README.md) | **Определение.** Утренний ритуал — процедура открытия рабочего дня: гигиена |
 | [docs/procedures/ritual-dreams](../../../docs/procedures/ritual-dreams/README.md) | **Определение.** Процедура автономного/полуавтономного прогона снов: тик заезда |
