@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-30",
+  "updatedAt": "2026-08-01",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -809,6 +809,17 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-07-30",
+      "tags": []
+    },
+    {
+      "id": "insight-meeting-agenda-as-extract",
+      "title": "Повестка заседания — выписка, а не проза председателя: машинные факты с id и зуб на посылки",
+      "status": "reviewed",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 6.7,
+      "createdAt": "2026-08-01",
       "tags": []
     }
   ]
