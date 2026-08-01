@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `cut-act-trace` | Носитель следа для акта нарезки: лента актов плана, машинный revisionAt, обнуление разбора при перерезке | M | [`CUT_ACT_TRACE_PROMPT.md`](../prompts/CUT_ACT_TRACE_PROMPT.md) | [#1566](https://github.com/officefish/Membrana/issues/1566) |
 | `procedure-run-journal-f1-local-trail` | F1: локальная лента прогона процедур | M | [`PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md) | — |
 | `procedure-run-journal-2026-08-01` | Membrana Local Sprint: журнал прогона процедур | L | [`PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md) | — |
 | `forecast-archive-wire` | Провод памяти персоны: запись «предсказание ↔ исход» доезжает в archive/<persona>.jsonl | M | [`FORECAST_ARCHIVE_WIRE_PROMPT.md`](../prompts/FORECAST_ARCHIVE_WIRE_PROMPT.md) | [#1590](https://github.com/officefish/Membrana/issues/1590) |

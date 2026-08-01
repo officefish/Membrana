@@ -1,0 +1,139 @@
+/**
+ * Зуб ленты актов плана — вторая ось следа (долг `#sprint-cut-act-has-no-trace`, 30.07).
+ *
+ * ВЕЩДОК: план `mfcc-compare-sprint` v1 подписан `cutBy=tarasov` БЕЗ прогона контекста
+ * тимлида. Поймал владелец («не вижу, что ты вызвал спринт через скилл»), не механизм.
+ * Повтор 01.08 в прогоне `meeting-gates-teeth` — та же подпись рукой.
+ *
+ * Здесь проверяется ровно то, чего не хватало: что подпись резчика имеет носитель, а род
+ * вне закрытого списка — ошибка входа, а не «прочее».
+ */
+import assert from 'node:assert/strict';
+import test from 'node:test';
+
+import {
+  ACT_KINDS,
+  ACT_KIND_MOMENT,
+  ACT_KIND_ORDER,
+  E_ACT_KIND_UNKNOWN,
+  cutterRanContext,
+  isKnownActKind,
+  parseAct,
+} from './lib/sprint-cut/act-kinds.mjs';
+import { TOOTH_IDS, cutterFindings } from './lib/sprint-cut/cut-plan.mjs';
+
+const act = (over = {}) => ({
+  kind: ACT_KINDS.CUT_CONTEXT_RUN,
+  sprintId: 'demo',
+  subject: 'tarasov',
+  at: '2026-08-01T10:00:00Z',
+  ...over,
+});
+
+// ── закрытый список ────────────────────────────────────────────────────────────────
+
+test('роды акта плана: ровно три, порядок канонический', () => {
+  assert.deepEqual([...ACT_KIND_ORDER], ['cut_context_run', 'cut_act', 'recut_act']);
+  assert.equal(ACT_KIND_ORDER.length, 3);
+});
+
+test('у каждого рода назван момент плана — зеркало не расходится с enum', () => {
+  for (const kind of ACT_KIND_ORDER) {
+    assert.equal(typeof ACT_KIND_MOMENT[kind], 'string');
+    assert.notEqual(ACT_KIND_MOMENT[kind].trim(), '');
+  }
+  assert.equal(Object.keys(ACT_KIND_MOMENT).length, ACT_KIND_ORDER.length);
+});
+
+test('пятый род в TRACE_KINDS НЕ заводился: ось актов отдельная', async () => {
+  const { TRACE_KIND_ORDER } = await import('./lib/execution-trace/trace-kinds.mjs');
+  assert.equal(TRACE_KIND_ORDER.length, 4, 'роды исполнения закрыты по числу моментов окна');
+  for (const k of ACT_KIND_ORDER) {
+    assert.equal(TRACE_KIND_ORDER.includes(k), false, `${k} не должен просочиться в роды исполнения`);
+  }
+});
+
+test('род вне списка — ошибка входа, а не «прочее»', () => {
+  assert.equal(isKnownActKind('cut_review'), false);
+  const r = parseAct(act({ kind: 'cut_review' }));
+  assert.equal(r.ok, false);
+  assert.equal(r.error, E_ACT_KIND_UNKNOWN);
+  assert.match(r.reason, /вне закрытого списка/u);
+});
+
+// ── разбор записи ──────────────────────────────────────────────────────────────────
+
+test('годная запись разбирается; ref и planDigest необязательны, но честно null', () => {
+  const r = parseAct(act());
+  assert.equal(r.ok, true);
+  assert.equal(r.act.kind, ACT_KINDS.CUT_CONTEXT_RUN);
+  assert.equal(r.act.ref, null);
+  assert.equal(r.act.planDigest, null);
+});
+
+test('пустое несущее поле — отказ С ПРИЧИНОЙ, не молчаливый пропуск', () => {
+  for (const [field, rx] of [
+    ['sprintId', /sprintId/u],
+    ['subject', /subject/u],
+    ['at', /at/u],
+  ]) {
+    const r = parseAct(act({ [field]: '  ' }));
+    assert.equal(r.ok, false, `${field}: пустое поле обязано быть отказом`);
+    assert.match(r.reason, rx);
+  }
+});
+
+test('не-объект отвергается целиком', () => {
+  for (const raw of ['cut_act', 42, null, ['cut_act']]) {
+    assert.equal(parseAct(raw).ok, false);
+  }
+});
+
+// ── предикат прогона резчика ───────────────────────────────────────────────────────
+
+test('прогон резчика найден — предикат истинен', () => {
+  const acts = [{ kind: ACT_KINDS.CUT_CONTEXT_RUN, sprintId: 'demo', subject: 'tarasov' }];
+  assert.equal(cutterRanContext(acts, { sprintId: 'demo', cutBy: 'tarasov' }), true);
+});
+
+test('чужой спринт или чужой субъект не засчитываются', () => {
+  const plan = { sprintId: 'demo', cutBy: 'tarasov' };
+  assert.equal(
+    cutterRanContext([{ kind: ACT_KINDS.CUT_CONTEXT_RUN, sprintId: 'other', subject: 'tarasov' }], plan),
+    false,
+  );
+  assert.equal(
+    cutterRanContext([{ kind: ACT_KINDS.CUT_CONTEXT_RUN, sprintId: 'demo', subject: 'vesnin' }], plan),
+    false,
+  );
+});
+
+test('акт нарезки прогоном контекста не является — подпись не заменяет прогон', () => {
+  const acts = [{ kind: ACT_KINDS.CUT_ACT, sprintId: 'demo', subject: 'tarasov' }];
+  assert.equal(cutterRanContext(acts, { sprintId: 'demo', cutBy: 'tarasov' }), false);
+});
+
+// ── седьмой зуб ────────────────────────────────────────────────────────────────────
+
+test('перечень находок стал из семи и остался закрытым', () => {
+  assert.equal(TOOTH_IDS.length, 7);
+  assert.equal(TOOTH_IDS.includes('cutter_context_missing'), true);
+  assert.equal(Object.isFrozen(TOOTH_IDS), true);
+});
+
+test('ленты нет вовсе → проверка НЕ выполняется (чистое ядро не зеленеет молча)', () => {
+  assert.deepEqual(cutterFindings({ sprintId: 'demo', cutBy: 'tarasov' }, undefined), []);
+});
+
+test('лента пуста → находка: отсутствие вещдока не есть вещдок наоборот', () => {
+  const out = cutterFindings({ sprintId: 'demo', cutBy: 'tarasov' }, []);
+  assert.equal(out.length, 1);
+  assert.equal(out[0].toothId, 'cutter_context_missing');
+  assert.equal(out[0].where, 'cutBy');
+  assert.match(out[0].reason, /tarasov/u);
+});
+
+test('след прогона есть → находки нет', () => {
+  const acts = [{ kind: ACT_KINDS.CUT_CONTEXT_RUN, sprintId: 'demo', subject: 'tarasov' }];
+  assert.deepEqual(cutterFindings({ sprintId: 'demo', cutBy: 'tarasov' }, acts), []);
+});

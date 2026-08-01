@@ -21,6 +21,7 @@ export const FIXTURE_NAMES = Object.freeze([
   'empty-corpus',
   'wrong-performer',
   'stale-trace',
+  'stale-partial',
   'unresolvable-ref',
   'honest-both',
   'unknown-kind',

@@ -23,6 +23,13 @@ const ISO_WITH_OFFSET = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]
 /** @param {unknown} at @returns {boolean} */
 export const isIsoWithOffset = (at) => typeof at === 'string' && ISO_WITH_OFFSET.test(at);
 
+/**
+ * Метка блока годна и в форме `…Z`: ратификация требует смещения (владелец называет момент
+ * явно), а `revisionAt` живёт в планах и в UTC-виде — существующие планы дерева написаны так.
+ * Принимать только «со смещением» значило бы объявить их метку отсутствующей и снести.
+ */
+const isIsoValue = (v) => typeof v === 'string' && (ISO_WITH_OFFSET.test(v) || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(v));
+
 /** Детерминированная канонизация значения: ключи сортированы, `//`-комментарии выброшены. */
 function canonicalJson(value) {
   if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`;
@@ -101,7 +108,57 @@ export function ratifyPlan(plan, { at } = {}) {
   if (!isIsoWithOffset(at)) {
     return { ok: false, reason: `время «${at ?? '—'}» не ISO-8601 со смещением: зуб не подставляет now() за владельца` };
   }
-  const body = { ...plan };
+  const body = { ...plan, blocks: stampRevisions(plan.blocks, at) };
   delete body.ratification;
   return { ok: true, plan: { ...body, ratification: { by: RATIFIED_BY, at, digest: cutDigestOf(body) } } };
+}
+
+/** Дайджест ТЕЛА блока — без полей самой отметки: иначе метка ссылалась бы на себя. */
+export function blockRevisionDigest(block) {
+  const body = { ...block };
+  delete body.revisionAt;
+  delete body.revisionOf;
+  return createHash('sha256').update(canonicalJson(body)).digest('hex');
+}
+
+/**
+ * Машинный `revisionAt`: метку ставит ИНСТРУМЕНТ при ратификации, а не резчик рукой.
+ *
+ * Зачем. `isStale(t, b) => t.at < b.revisionAt` — свежесть считается от ревизии предмета,
+ * и это правильный предикат. Но `revisionAt` писал тот же, кто режет: замок, ключ от
+ * которого у того, кого он запирает. Вещдок 01.08 (`meeting-gates-teeth`): председатель
+ * перерезал план v1→v2 и метку не двинул — ничто не заставило, и следы, написанные после
+ * перерезки, зачлись как свежие.
+ *
+ * Почему не «двигать всем на каждой ратификации». Перерезка одного блока не должна обнулять
+ * вещдоки соседей: это ложное красное, а оно стоит столько же, сколько ложное зелёное.
+ * Поэтому метка двигается ТОЛЬКО у блоков, чьё тело изменилось — сравнением дайджеста тела
+ * с сохранённым `revisionOf`.
+ *
+ * Следствие для #1566, ради которого всё и делается: при перерезке дети получают новую метку,
+ * и разбор родителя становится протухшим САМ СОБОЙ — наследовать нечего, механика сама
+ * исполняет решение владельца «перерезал блок — прогоняй заново по каждому куску».
+ *
+ * @param {unknown} blocks
+ * @param {string} at момент ратификации (ISO со смещением) — приходит параметром, часов здесь нет
+ */
+export function stampRevisions(blocks, at) {
+  if (!Array.isArray(blocks)) return blocks;
+  return blocks.map((b) => {
+    if (!b || typeof b !== 'object') return b;
+    const digest = blockRevisionDigest(b);
+    // Тело не менялось с прошлой отметки — метка остаётся прежней: чужие вещдоки не гасим.
+    if (b.revisionOf === digest && isIsoValue(b.revisionAt)) return b;
+    // ПЕРВАЯ простановка на существующем плане: `revisionOf` ещё нет, потому что прежние
+    // ратификации его не писали. Двигать метку здесь нельзя — иначе внедрение механизма
+    // разом обнулит вещдоки КАЖДОГО плана в дереве, то есть заведёт ложное красное на всей
+    // истории. Вещдок 01.08: на собственном спринте `cut-act-trace` перерезка v4 меняла зону
+    // только третьего блока, а первые два получили новую метку и вышли `stale_trace`.
+    // Цена перехода названа честно: рукописная метка принимается на веру ОДИН раз, дальше
+    // ею владеет инструмент.
+    if (b.revisionOf === undefined && isIsoValue(b.revisionAt)) {
+      return { ...b, revisionOf: digest };
+    }
+    return { ...b, revisionAt: at, revisionOf: digest };
+  });
 }
