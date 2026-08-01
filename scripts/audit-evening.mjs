@@ -19,6 +19,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 import { linesByArea, registryMovement, renderReport, repoMovement, truthMovement } from './lib/audit-evening.mjs';
+import { resolveTrunk, trunkRefFrom, trunkRefusalMessage } from './lib/audit-trunk.mjs';
 
 const repoRoot = process.cwd();
 const argv = process.argv.slice(2);
@@ -72,24 +73,13 @@ function jsonAt(sha, relPath) {
 // Отказ, а не тихий откат. Если ствола нет (нет `origin`, нет сети, свежий клон), аудит
 // ОСТАНАВЛИВАЕТСЯ с названной причиной. Молча вернуться к `HEAD` значило бы вернуть ту же
 // слепоту без предупреждения — отчёт вышел бы бойким и неполным, и отличить его было бы нечем.
-const TRUNK_REF = process.env.AUDIT_TRUNK_REF || 'origin/main';
-export function resolveTrunk(ref, revParse) {
-  try {
-    const sha = revParse(ref);
-    return sha ? { ok: true, ref, sha } : { ok: false, reason: `ссылка «${ref}» не разрешается в коммит` };
-  } catch {
-    return { ok: false, reason: `ссылки «${ref}» нет в этом дереве` };
-  }
-}
-
-const trunk = resolveTrunk(TRUNK_REF, (r) => git('rev-parse', '--verify', '--quiet', r));
+// Предикат живёт в `scripts/lib/audit-trunk.mjs` — чистый, без ФС и без `process.exit`.
+// Держать его здесь значило бы, что тест ради одной функции импортирует ВЕСЬ скрипт и
+// запускает аудит побочным эффектом, а при отсутствии ствола убивает процесс тестов
+// (B6, найдено ревью PR #1612).
+const trunk = resolveTrunk(trunkRefFrom(process.env), (r) => git('rev-parse', '--verify', '--quiet', r));
 if (!trunk.ok) {
-  console.error(
-    `audit-evening: ${trunk.reason}.\n` +
-      '  Диапазон дня считается по стволу, а не по ветке автора: иначе работа соседних\n' +
-      '  сессий выпадает из отчёта и день выглядит меньше, чем был (вещдок 31.07).\n' +
-      '  Что делать: git fetch origin — либо назвать другую ссылку через AUDIT_TRUNK_REF.',
-  );
+  console.error(trunkRefusalMessage(trunk.reason));
   process.exit(2);
 }
 

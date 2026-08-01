@@ -199,27 +199,5 @@ test('пустой день: отчёт собирается и честно г�
   assert.doesNotMatch(md, /NaN|Infinity/u, 'доли не считаются от нуля');
 });
 
-// ── Диапазон дня по СТВОЛУ, а не по ветке автора (пункт №6 хендофа 01.08) ────────────
-// Вещдок 31.07: аудит брал HEAD — голову ветки, в которой запущен. Шесть коммитов соседних
-// сессий лежали в стволе и выпали из диапазона; день соседей не был увиден вовсе.
-
-const { resolveTrunk } = await import('./audit-evening.mjs').catch(() => ({ resolveTrunk: null }));
-
-test('ствол разрешается — аудит получает ref и sha', { skip: !resolveTrunk }, () => {
-  const res = resolveTrunk('origin/main', () => 'deadbeef');
-  assert.deepEqual(res, { ok: true, ref: 'origin/main', sha: 'deadbeef' });
-});
-
-test('ствола нет — ОТКАЗ с причиной, а не тихий откат к HEAD', { skip: !resolveTrunk }, () => {
-  const missing = resolveTrunk('origin/main', () => { throw new Error('unknown revision'); });
-  assert.equal(missing.ok, false);
-  assert.match(missing.reason, /нет в этом дереве/u);
-
-  const empty = resolveTrunk('origin/main', () => '');
-  assert.equal(empty.ok, false);
-  assert.match(empty.reason, /не разрешается в коммит/u);
-});
-
-// Зуб слепоты диапазона вынесен в scripts/audit-evening-trunk.test.mjs — он проверяет
-// сам себя (сперва доказывает, что образец ловит старую форму), и жить ему рядом с
-// предикатами разбора незачем.
+// Зубы ствола живут в scripts/audit-evening-trunk.test.mjs: предикат вынесен в
+// scripts/lib/audit-trunk.mjs, и тесту больше не нужно импортировать скрипт целиком.
