@@ -250,6 +250,17 @@ PR мёржатся **squash** → коммиты ветки не становя
 - **`process.exit()` в скриптах — не использовать, только `process.exitCode`**: обрыв процесса с недописанным pipe-stdout роняет libuv ассертом `UV_HANDLE_CLOSING` и подменяет код возврата на **127** (поймано на `_ssh-panel-smoke`, тот же симптом у `code-review.mjs`).
 - **Файлы для VDS пишутся с CRLF** — bash падает на `$'\r': command not found`. `yarn vds:run` снимает CRLF сам; при ручном scp — `sed -i 's/\r$//'`.
 
+### Недельные процедуры
+
+Идут в выходном такте, не в дневном: фоновая гигиена не конкурирует с магистралью дня.
+
+| процедура | дом | владелец такта | зуб |
+|---|---|---|---|
+| мёртвые провода — объявленное обязано существовать | [`docs/procedures/weekly-dead-wire/README.md`](docs/procedures/weekly-dead-wire/README.md) | `ozhegov` | `yarn dead-wire:check` |
+
+Дом — единственная редакция. Строка выше указатель, а не вторая копия: расхождение двух
+редакций норму не усилит, а сделает непроверяемой.
+
 ### Morning cold-start route
 
 <!-- pin:START morning-wiring-agents -->
