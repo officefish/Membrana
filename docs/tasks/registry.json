@@ -1,6 +1,61 @@
 {
   "tasks": [
     {
+      "id": "meeting-gates-teeth",
+      "title": "Зубы заседаний: повестка не доехала, --kind meeting, флаги прогона в метаданных протокола",
+      "promptPath": "docs/prompts/MEETING_GATES_TEETH_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-01",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "angelina"
+      ],
+      "notes": "Три дыры, вскрытые прогонами заседания evening-review-predicate 01.08. 1) При полном контексте сборщик печатает «повестка — не доехал» и ИДЁТ ДАЛЬШЕ: правило 7 держится дисциплиной председателя, а не гейтом; --meeting обязан падать до прогона. 2) task-register не принимает --kind meeting (day-sprint/epic/night-build/competition-sprint/cowork-sprint), хотя регламент заседания требует sprintKind: meeting; одна карточка в реестре с таким значением заведена мимо инструмента. 3) Флаги прогона (--no-context --no-rag) в метаданные протокола не пишутся — условие правила 7 держится прозой в контейнере. Плюс: VIRTUAL_TEAM_PROMPT.md приходил обрезанным во ВСЕХ шести прогонах.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "evening-steps-m2-transfer",
+      "title": "Перенос вердикта M2 в evening-ritual-steps.json: единая нумерация и критичность",
+      "promptPath": "docs/prompts/EVENING_STEPS_M2_TRANSFER_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-01",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "notes": "Вердикт M2 заседания evening-review-predicate (day-memo → audit-evening → code-review → archive-code-review; мемо и хроника critical) в исполняемый источник НЕ перенесён и дословно неисполним: позиции 14 и 15 заняты живыми deps-watch и evening-tail. Владелец 01.08 отложил перенос до сборки эпика заседания — карточка держит долг, чтобы он не потерялся. Схема шага: поле script, spawnSync('node',[file,...args]); каждый noncritical обязан нести whyNoncritical (validateManifest).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "archivarius-evening-tract",
+      "title": "Тракт архива сессий: scan → extract → ingest как связанная цепочка, а не три точки входа",
+      "promptPath": "docs/prompts/ARCHIVARIUS_EVENING_TRACT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-01",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "Вскрыто аудитом M4' 01.08 по коду: yarn sessions:extract без позиционных аргументов ВСЕГДА даёт exit 2; yarn archivarius без подкоманды — зелёный no-op (printHelp, exit 0); без --out пишет весь корпус спанов в stdout (утечка транскриптов в лог). sessions:extract не читает выход sessions:scan (резолвит цель по позиционному аргументу), archivarius ingest не читает выход extract (сам обходит ~/.claude/projects). Тракта в коде НЕТ — три независимые точки входа. Пока так, ни один из органов не может стоять шагом вечерней цепочки.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "meeting-evening-review-predicate",
       "title": "Заседание: вечерний кадр — предмет ревью, порядок трёх документов, ворота качества",
       "promptPath": "docs/meeting/evening-review-predicate/MEETING_BRIEF.md",

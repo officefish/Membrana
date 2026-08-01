@@ -20,6 +20,9 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `meeting-gates-teeth` | Зубы заседаний: повестка не доехала, --kind meeting, флаги прогона в метаданных протокола | M | [`MEETING_GATES_TEETH_PROMPT.md`](../prompts/MEETING_GATES_TEETH_PROMPT.md) | — |
+| `evening-steps-m2-transfer` | Перенос вердикта M2 в evening-ritual-steps.json: единая нумерация и критичность | S | [`EVENING_STEPS_M2_TRANSFER_PROMPT.md`](../prompts/EVENING_STEPS_M2_TRANSFER_PROMPT.md) | — |
+| `archivarius-evening-tract` | Тракт архива сессий: scan → extract → ingest как связанная цепочка, а не три точки входа | M | [`ARCHIVARIUS_EVENING_TRACT_PROMPT.md`](../prompts/ARCHIVARIUS_EVENING_TRACT_PROMPT.md) | — |
 | `meeting-evening-review-predicate` | Заседание: вечерний кадр — предмет ревью, порядок трёх документов, ворота качества | L | [`MEETING_BRIEF.md`](../meeting/evening-review-predicate/MEETING_BRIEF.md) | — |
 | `evening-chain-review-predicate` | Вечер: предмет ревью, порядок трёх документов, ворота качества (№6 хендофа, M→L по слову владельца 01.08) | L | [`EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md`](../prompts/EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md) | — |
 | `llm-transport-no-key-class` | llm-транспорт: развести «ключа нет» и «ключ отвергнут» | S | [`LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md`](../prompts/LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md) | [#1549](https://github.com/officefish/Membrana/issues/1549) |
