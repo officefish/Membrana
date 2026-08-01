@@ -6,6 +6,9 @@
   ],
   "frozenDigest": "0a299fa72067b3094bea972e9b695af36665f3da545658f3f12b1b3815fd1cb5",
   "magistral": "development-matrix",
-  "swallow": null,
+  "swallow": {
+    "//": "null до черновика — порядок утра: сначала магистраль (owner-choice), затем swallow-draft и явное «ок» владельца; перезаписывается гейтом ally-swallow",
+    "status": "ждёт черновика"
+  },
   "day": "2026-08-01"
 }
