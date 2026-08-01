@@ -24,6 +24,7 @@ import {
   parseAct,
 } from './lib/sprint-cut/act-kinds.mjs';
 import { TOOTH_IDS, cutterFindings } from './lib/sprint-cut/cut-plan.mjs';
+import { readActsTrail } from './sprint-cut-check.mjs';
 
 const act = (over = {}) => ({
   kind: ACT_KINDS.CUT_CONTEXT_RUN,
@@ -168,4 +169,46 @@ test('каждый ref в лентах актов указывает на сущ
     }
   }
   assert.ok(checked > 0, 'проверять было нечего — зуб обязан иметь предмет, иначе он молчалив');
+});
+
+// ── Битая лента — ошибка входа, не молчаливый пропуск (ответ на P1 ревью #1604) ──────
+// Прежняя версия делала `catch { continue }`: строка с опечаткой или родом вне закрытого
+// списка исчезала бесследно. Это ровно тот молчаливый зелёный, который задача обязана
+// закрыть, — и комментарий в коде утверждал обратное тому, что код делал.
+
+const trailIo = (text) => ({ exists: () => true, read: () => text });
+
+test('годная лента разбирается: ok, акты на месте', () => {
+  const line = JSON.stringify({ kind: 'cut_act', sprintId: 'demo', subject: 'tarasov', at: '2026-08-01T10:00:00Z' });
+  const res = readActsTrail('/x.jsonl', trailIo(line));
+  assert.equal(res.ok, true);
+  assert.equal(res.acts.length, 1);
+});
+
+test('битый JSON — ошибка входа с НОМЕРОМ строки, а не пропуск', () => {
+  const res = readActsTrail('/x.jsonl', trailIo('{не json'));
+  assert.equal(res.ok, false);
+  assert.equal(res.problems.length, 1);
+  assert.match(res.problems[0], /строка 1/u);
+});
+
+test('род вне закрытого списка роняет всю ленту: вердиктов по непонятой ленте нет', () => {
+  const good = JSON.stringify({ kind: 'cut_act', sprintId: 'demo', subject: 'tarasov', at: '2026-08-01T10:00:00Z' });
+  const bad = JSON.stringify({ kind: 'cut_review', sprintId: 'demo', subject: 'tarasov', at: '2026-08-01T10:00:00Z' });
+  const res = readActsTrail('/x.jsonl', trailIo(`${good}\n${bad}`));
+  assert.equal(res.ok, false, 'одна чужая строка обязана ронять ленту целиком');
+  assert.match(res.problems[0], /строка 2/u);
+  assert.match(res.problems[0], /вне закрытого списка/u);
+});
+
+test('комментарии и пустые строки законны — они не акты', () => {
+  const line = JSON.stringify({ kind: 'cut_act', sprintId: 'demo', subject: 'tarasov', at: '2026-08-01T10:00:00Z' });
+  const res = readActsTrail('/x.jsonl', trailIo(`# заголовок\n\n${line}\n`));
+  assert.equal(res.ok, true);
+  assert.equal(res.acts.length, 1);
+});
+
+test('файла нет → пустая лента, а не отказ: «ленты нет» = «прогона не было»', () => {
+  const res = readActsTrail('/нет.jsonl', { exists: () => false, read: () => '' });
+  assert.deepEqual(res, { ok: true, acts: [] });
 });

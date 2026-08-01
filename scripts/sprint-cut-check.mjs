@@ -54,26 +54,37 @@ function actsTrailPath(planPath, plan) {
 }
 
 /**
- * Прочитать ленту актов. Файла нет → пустая лента (не «не проверяем»).
- * Битая строка — НЕ молчаливый пропуск: она не попадает в акты, и зуб отработает так,
- * будто следа нет; открытый список родов означал бы обход проверки новым словом.
+ * Прочитать ленту актов. Файла нет → пустая лента (не «не проверяем»): «ленты нет» и
+ * «прогона не было» для CLI одно утверждение.
+ *
+ * Битая строка — ОШИБКА ВХОДА, а не пропуск. Прежняя версия делала `catch { continue }`,
+ * и это ровно тот молчаливый зелёный, который задача обязана закрыть: строка с опечаткой
+ * либо с родом вне закрытого списка исчезала бесследно, а `act-kinds` объявляет такой род
+ * `E_ACT_KIND_UNKNOWN` — то есть «вердиктов по такой ленте нет вовсе». Комментарий здесь
+ * утверждал «НЕ молчаливый пропуск», а код молча пропускал (найдено ревью PR #1604).
+ *
+ * @returns {{ok: true, acts: object[]} | {ok: false, problems: string[]}}
  */
-function readActsTrail(path) {
-  if (!path || !existsSync(path)) return [];
-  const out = [];
-  for (const line of readFileSync(path, 'utf8').split('\n')) {
-    const s = line.trim();
-    if (!s) continue;
+export function readActsTrail(path, io = { exists: existsSync, read: (p) => readFileSync(p, 'utf8') }) {
+  if (!path || !io.exists(path)) return { ok: true, acts: [] };
+  const acts = [];
+  const problems = [];
+  const lines = io.read(path).split('\n');
+  for (let i = 0; i < lines.length; i += 1) {
+    const s = lines[i].trim();
+    if (!s || s.startsWith('#')) continue;
     let raw;
     try {
       raw = JSON.parse(s);
     } catch {
+      problems.push(`строка ${i + 1}: не разбирается как JSON`);
       continue;
     }
     const parsed = parseAct(raw);
-    if (parsed.ok) out.push(parsed.act);
+    if (parsed.ok) acts.push(parsed.act);
+    else problems.push(`строка ${i + 1}: ${parsed.reason}`);
   }
-  return out;
+  return problems.length > 0 ? { ok: false, problems } : { ok: true, acts };
 }
 
 function main(argv) {
@@ -103,8 +114,18 @@ function main(argv) {
   // пустой массив, а не `undefined`: «ленты нет» и «прогона не было» — для CLI одно и то
   // же утверждение, и молчаливая зелёнка здесь как раз и была болезнью. Ядро различает
   // эти случаи (undefined = не проверяем), но живой путь обязан проверять всегда.
-  const acts = readActsTrail(actsTrailPath(planPath, plan));
-  const { verdict, findings } = cutVerdict(plan, { voices, acts });
+  const trail = readActsTrail(actsTrailPath(planPath, plan));
+  if (!trail.ok) {
+    console.error(
+      '\nsprint:cut — лента актов плана нечитаема, вердикт НЕ выносится:\n' +
+        trail.problems.map((p) => `  ✖ ${p}`).join('\n') +
+        '\n  Род вне закрытого списка и битая строка — ошибка входа, а не «прочее»:\n' +
+        '  молча пропустить их значило бы вынести вердикт по ленте, которой не понимаешь.\n' +
+        '  Перечень родов: docs/sprint/cut/ACT_KINDS.md\n',
+    );
+    return 2;
+  }
+  const { verdict, findings } = cutVerdict(plan, { voices, acts: trail.acts });
 
   const blocks = Array.isArray(plan?.blocks) ? plan.blocks.length : 0;
   console.log(
