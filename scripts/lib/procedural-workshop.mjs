@@ -52,6 +52,12 @@ function readManifest(repoRoot, id) {
   }
 }
 
+export function readPortfolio(man) {
+  const items = Array.isArray(man?.portfolio?.items) ? man.portfolio.items : [];
+  const status = man?.portfolio?.status === 'present' && items.length > 0 ? 'present' : 'missing';
+  return { status, count: status === 'present' ? items.length : 0, items };
+}
+
 /**
  * audit — инвентарь процедур: сверка флага container.value с реальностью.
  * @returns {{id, holder, declaredBuilt, dirExists, valid, state, problems}[]}
@@ -62,7 +68,16 @@ export function auditProcedures(repoRoot) {
   const seen = new Set();
   for (const p of reg) {
     if (typeof p?.id !== 'string' || p.id.trim() === '') {
-      rows.push({ id: '(без id)', holder: p?.holder ?? '—', declaredBuilt: false, dirExists: false, valid: false, state: 'invalid-entry', problems: ['запись реестра без строкового id'] });
+      rows.push({
+        id: '(без id)',
+        holder: p?.holder ?? '—',
+        declaredBuilt: false,
+        dirExists: false,
+        valid: false,
+        state: 'invalid-entry',
+        portfolio: { status: 'missing', count: 0, items: [] },
+        problems: ['запись реестра без строкового id'],
+      });
       continue;
     }
     seen.add(p.id);
@@ -70,6 +85,8 @@ export function auditProcedures(repoRoot) {
     const dir = join(repoRoot, ...homePath.split('/'));
     const dirExists = existsSync(dir);
     const declaredBuilt = p.container?.value === true;
+    const man = dirExists && homePath.startsWith('docs/procedures/') ? readManifest(repoRoot, p.id) : null;
+    const portfolio = readPortfolio(man);
     const problems = [];
     let valid = false;
     let state;
@@ -90,13 +107,13 @@ export function auditProcedures(repoRoot) {
     } else {
       state = 'declared-not-built';
     }
-    rows.push({ id: p.id, holder: p.holder ?? '—', declaredBuilt, dirExists, valid, state, problems });
+    rows.push({ id: p.id, holder: p.holder ?? '—', declaredBuilt, dirExists, valid, state, portfolio, problems });
   }
   // Каталог-сирота: физически есть, но в реестре его нет вообще (дрейф в другую сторону).
   for (const dir of listProcedureDirs(repoRoot)) {
     const id = basename(dir);
     if (!seen.has(id)) {
-      rows.push({ id, holder: '—', declaredBuilt: false, dirExists: true, valid: false, state: 'drift-built-undeclared', problems: [`каталог docs/procedures/${id} есть, но в реестре его нет`] });
+      rows.push({ id, holder: '—', declaredBuilt: false, dirExists: true, valid: false, state: 'drift-built-undeclared', portfolio: { status: 'missing', count: 0, items: [] }, problems: [`каталог docs/procedures/${id} есть, но в реестре его нет`] });
     }
   }
   return rows;
@@ -108,6 +125,7 @@ export const FAILING_STATES = new Set(['built-invalid', 'drift-declared-missing'
 const DECOMPOSE_KEYS = {
   holder: (a) => a.holder,
   status: (a) => a.state,
+  portfolio: (a) => a.portfolio?.status === 'present' ? 'portfolio-present' : 'portfolio-missing',
 };
 
 /**
@@ -152,6 +170,7 @@ export function inspectProcedure(repoRoot, id) {
   const engines = Array.isArray(man?.engines) ? man.engines : [];
   const precedents = Array.isArray(man?.precedents) ? man.precedents : [];
   const queue = readQueue(man);
+  const portfolio = readPortfolio(man);
   return {
     id,
     built: true,
@@ -160,6 +179,7 @@ export function inspectProcedure(repoRoot, id) {
     kitVersion: man?.kitVersion ?? null,
     engines,
     precedents,
+    portfolio,
     // Второе измерение процедуры — её ЦЕПОЧКА КАДРОВ (полосы очереди), а не паспорт
     // манифеста: `preflight` (гейт до) → `frames` (автоцепочка) → `post` (ручной хвост).
     // Контракт полос ратифицирован спринтом «фреймы» и живёт в validate-procedure.

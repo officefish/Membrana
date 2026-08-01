@@ -158,18 +158,18 @@
     {
       "id": "storm",
       "holder": "angelina",
-      "homePath": null,
+      "homePath": "docs/procedures/storm",
       "container": {
-        "value": false,
-        "provenance": null
+        "value": true,
+        "provenance": "angelina@storm-portfolio-2026-08-01"
       },
       "vocabulary": {
-        "value": false,
-        "provenance": null
+        "value": true,
+        "provenance": "ozhegov@storm-portfolio-2026-08-01"
       },
       "grammar": {
-        "value": false,
-        "provenance": null
+        "value": true,
+        "provenance": "rodchenko@storm-portfolio-2026-08-01"
       }
     },
     {

@@ -84,6 +84,26 @@
       }
     ]
   },
+  "portfolio": {
+    "status": "present",
+    "items": [
+      {
+        "id": "morning-care-engine",
+        "kind": "engine",
+        "path": "scripts/morning-care.mjs"
+      },
+      {
+        "id": "morning-steps-contract",
+        "kind": "contract",
+        "path": "docs/tasks/morning-ritual-steps.json"
+      },
+      {
+        "id": "live-run-precedent",
+        "kind": "precedent",
+        "path": "docs/precedents/2026-07-21-morning-ritual-live-run-mechanics-pass-value-fail.md"
+      }
+    ]
+  },
   "mode": "local",
   "home": {
     "kind": "none",

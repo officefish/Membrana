@@ -15,7 +15,7 @@
 | [`membrana-local-sprint`](./membrana-local-sprint/README.md) | vesnin | **migrated** | ✅ vesnin@local-sprint-2026-08-01 | ✅ ozhegov@local-sprint-2026-08-01 | ✅ vesnin@local-sprint-2026-08-01 |
 | [`containerization`](./containerization/README.md) | ozhegov | **in-migration** | ✅ ozhegov@kcm-c3 | — | ✅ ozhegov@kcm-c3 |
 | [`test-runs`](../../tests/README.md) | dynin | **in-migration** | ✅ dynin@tc-f1 | — | ✅ dynin@tc-f1 |
-| `storm` | angelina | **legacy** | — | — | — |
+| [`storm`](./storm/README.md) | angelina | **migrated** | ✅ angelina@storm-portfolio-2026-08-01 | ✅ ozhegov@storm-portfolio-2026-08-01 | ✅ rodchenko@storm-portfolio-2026-08-01 |
 | `cowork` | vesnin | **legacy** | — | — | — |
 | `competition` | vesnin | **legacy** | — | — | — |
 | `night-sprint` | vesnin | **legacy** | — | — | — |

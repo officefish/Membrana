@@ -84,6 +84,26 @@
       }
     ]
   },
+  "portfolio": {
+    "status": "present",
+    "items": [
+      {
+        "id": "evening-run-engine",
+        "kind": "engine",
+        "path": "scripts/ritual-evening-run.mjs"
+      },
+      {
+        "id": "evening-steps-contract",
+        "kind": "contract",
+        "path": "docs/tasks/evening-ritual-steps.json"
+      },
+      {
+        "id": "team-feedback-precedent",
+        "kind": "precedent",
+        "path": "docs/seanses/team-evening-feedback-2026-07-18.md"
+      }
+    ]
+  },
   "mode": "local",
   "home": {
     "kind": "none",
