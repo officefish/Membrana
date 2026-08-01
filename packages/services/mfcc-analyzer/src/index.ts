@@ -23,3 +23,40 @@ export {
   snapshot,
   type MfccEngineState,
 } from './core/mfcc-engine.js';
+
+/**
+ * Детекторы — труба и тренд.
+ *
+ * Шов, названный блоком `mfcc-detectors` и не перейдённый им: корневой индекс был зоной
+ * соседнего блока, и дописывать туда значило писать за свою границу. Цена промедления уже
+ * уплачена — прибор 31.07 судил собственной копией счёта, потому что до детектора пакета
+ * было не дотянуться.
+ *
+ * Перечисление поимённо, а не `export *`: наружу выходит объявленный контракт, и новый
+ * экспорт внутри `detectors/` не просачивается в публичное имя пакета сам собой.
+ */
+export {
+  boundsProblem,
+  corpusProblem,
+  cosineOf,
+  evaluatePipe,
+  evaluateTrend,
+  inBounds,
+  judgeRun,
+  magnitudeOf,
+  meanOf,
+  ratioProblem,
+  refuse,
+  type Bounds,
+  type DetectorOutcome,
+  type DetectorRefusal,
+  type MfccTrend,
+  type PipeFrameState,
+  type PipeFrameVerdict,
+  type PipeReport,
+  type PipeSpec,
+  type RunDemand,
+  type TrendReport,
+  type TrendSpec,
+  type VectorRun,
+} from './detectors/index.js';
