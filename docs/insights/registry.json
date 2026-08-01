@@ -821,6 +821,17 @@
       "weight": 6.7,
       "createdAt": "2026-08-01",
       "tags": []
+    },
+    {
+      "id": "insight-procedure-memory-shown-not-asked",
+      "title": "Память процедур: показывается, а не запрашивается; вовлечённость числом, а не подтверждением",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-08-01",
+      "tags": []
     }
   ]
 }
