@@ -189,7 +189,14 @@ export function forecastToArchiveRecord(forecast, { defaultRef = null } = {}) {
   }
   const from = archiveDay(predictedAt);
   const to = archiveDay(observedAt);
-  if (!(String(predictedAt) < String(observedAt))) {
+  // Сравнение моментами, а не строками: у ISO со смещениями «09:00+03:00» и «07:00+00:00»
+  // один момент и разные строки, поэтому лексикографический порядок здесь врёт.
+  const fromMs = Date.parse(predictedAt);
+  const toMs = Date.parse(observedAt);
+  if (!Number.isFinite(fromMs) || !Number.isFinite(toMs)) {
+    throw new Error(`forecast-to-archive: момент не разбирается — ${predictedAt} / ${observedAt}`);
+  }
+  if (!(fromMs < toMs)) {
     throw new Error(
       `forecast-to-archive: порядок моментов нарушен — предсказано ${predictedAt}, исход ${observedAt}`,
     );
