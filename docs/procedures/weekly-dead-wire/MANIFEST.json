@@ -1,0 +1,56 @@
+{
+  "id": "weekly-dead-wire",
+  "leadPersona": "ozhegov",
+  "kitVersion": null,
+  "engines": [
+    "scripts/lib/dead-wire.mjs",
+    "scripts/dead-wire-check.mjs"
+  ],
+  "precedents": [
+    "docs/prompts/WEEKLY_DEAD_WIRE_AUDIT_PROMPT.md",
+    "docs/discussions/block-dead-wire-verdicts.md"
+  ],
+  "frames": [
+    {
+      "id": "measure",
+      "holder": "dynin"
+    },
+    {
+      "id": "verdict",
+      "holder": "ozhegov"
+    },
+    {
+      "id": "record",
+      "holder": "ozhegov"
+    }
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "yarn dead-wire:check",
+    "note": "выходной такт, следующий прогон 09.08; планировщика нет — процедуру поднимает владелец такта, и это записано честно, а не выдано за автоматизм"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "measure", "criticality": "critical" },
+      { "id": "verdict", "criticality": "critical" },
+      { "id": "record", "criticality": "critical" }
+    ]
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "verdict",
+        "waitsFor": "owner",
+        "resume": "владелец назвал вердикт из закрытого перечня implement|pending|remove по каждой находке → запись в перечень",
+        "note": "снятие объявления и срок pending — слово владельца; прочерк вердиктом не считается"
+      }
+    ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "прогон не порождает инстанс: состояние процедуры целиком лежит в единственном перечне docs/tasks/dead-wire-pending.json, который правится на месте, а не копится папками по датам"
+  }
+}

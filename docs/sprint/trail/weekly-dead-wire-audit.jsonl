@@ -1,0 +1,8 @@
+{"traceId":"tr-predicate-dynin-run","blockId":"dead-wire-predicate","kind":"context_run","subject":"dynin","at":"2026-08-01T09:44:00+03:00","ref":"docs/discussions/block-dead-wire-predicate.md"}
+{"traceId":"tr-tooth-dynin-run","blockId":"dead-wire-tooth","kind":"context_run","subject":"dynin","at":"2026-08-01T09:48:00+03:00","ref":"docs/discussions/block-dead-wire-tooth.md"}
+{"traceId":"tr-predicate-dynin-review","blockId":"dead-wire-predicate","kind":"review_pass","subject":"dynin","at":"2026-08-01T09:49:00+03:00","ref":"scripts/dead-wire.test.mjs"}
+{"traceId":"tr-tooth-dynin-review","blockId":"dead-wire-tooth","kind":"review_pass","subject":"dynin","at":"2026-08-01T09:50:00+03:00","ref":"scripts/dead-wire-check.mjs"}
+{"traceId":"tr-verdicts-ozhegov-run","blockId":"dead-wire-verdicts","kind":"context_run","subject":"ozhegov","at":"2026-08-01T09:57:00+03:00","ref":"docs/discussions/block-dead-wire-verdicts.md"}
+{"traceId":"tr-verdicts-ozhegov-review","blockId":"dead-wire-verdicts","kind":"review_pass","subject":"ozhegov","at":"2026-08-01T10:06:00+03:00","ref":"docs/tasks/dead-wire-pending.json"}
+{"traceId":"tr-home-ozhegov-run","blockId":"dead-wire-weekly-home","kind":"context_run","subject":"ozhegov","at":"2026-08-01T10:10:00+03:00","ref":"docs/discussions/block-dead-wire-weekly-home.md"}
+{"traceId":"tr-home-ozhegov-review","blockId":"dead-wire-weekly-home","kind":"review_pass","subject":"ozhegov","at":"2026-08-01T10:14:00+03:00","ref":"docs/procedures/weekly-dead-wire/README.md"}

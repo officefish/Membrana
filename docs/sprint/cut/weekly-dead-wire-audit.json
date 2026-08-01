@@ -1,0 +1,69 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "weekly-dead-wire-audit",
+  "taskId": "weekly-dead-wire-audit",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-01T09:40:00+03:00",
+    "to": "2026-08-01T20:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "dead-wire-predicate",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/dead-wire.mjs"
+      ],
+      "revisionAt": "2026-08-01T09:40:00+03:00",
+      "estimate": {
+        "changedLines": 200
+      }
+    },
+    {
+      "blockId": "dead-wire-tooth",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/dead-wire-check.mjs",
+        "scripts/dead-wire.test.mjs"
+      ],
+      "revisionAt": "2026-08-01T09:40:00+03:00",
+      "estimate": {
+        "changedLines": 180
+      }
+    },
+    {
+      "blockId": "dead-wire-verdicts",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/tasks/dead-wire-pending.json",
+        "package.json"
+      ],
+      "revisionAt": "2026-08-01T09:40:00+03:00",
+      "estimate": {
+        "changedLines": 120
+      }
+    },
+    {
+      "blockId": "dead-wire-weekly-home",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/procedures/weekly-dead-wire/README.md",
+        "AGENTS.md"
+      ],
+      "revisionAt": "2026-08-01T09:40:00+03:00",
+      "estimate": {
+        "changedLines": 150
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-01T09:41:09+03:00",
+    "digest": "c5651e419a84fb4494d4e1543ffff294f3548d519e54eb2ae69d47b6db73bcdc"
+  }
+}
