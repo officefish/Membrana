@@ -14,9 +14,9 @@ import {
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const LIVE = JSON.parse(readFileSync(resolve(repoRoot, 'docs/procedures/vocabulary.json'), 'utf8'));
 
-test('боевой источник словаря валиден: 4 статьи ядра, роды объявлены', () => {
+test('боевой источник словаря валиден: 5 статей ядра, роды объявлены', () => {
   assert.deepEqual(vocabularySchemaProblems(LIVE), []);
-  assert.equal(LIVE.categories.length, 4);
+  assert.equal(LIVE.categories.length, 5);
 });
 
 test('check: слово в прозе БЕЗ маркера — не срабатывает (нет ложных тревог)', () => {

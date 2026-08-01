@@ -14,6 +14,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { auditCatalogs, auditWires, FINDING_KINDS } from './lib/dead-wire.mjs';
 
@@ -49,6 +50,22 @@ export function readPending(root) {
 }
 
 /**
+ * Носитель провода считается доставленным только если он есть и в Git, и на диске.
+ * Игнорируемый локальный WIP не должен превращать pending в ложный pending_orphan.
+ * @param {string} root
+ */
+export function readTrackedFiles(root) {
+  const output = execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' });
+  return new Set(output.split('\0').filter(Boolean).map((file) => file.replaceAll('\\', '/')));
+}
+
+/** @param {string} root @param {Set<string>} tracked @param {string} rel */
+export function trackedCarrierExists(root, tracked, rel) {
+  const normalized = rel.replaceAll('\\', '/');
+  return tracked.has(normalized) && fs.existsSync(path.join(root, rel));
+}
+
+/**
  * Прогон по дереву. Вынесен отдельно, чтобы тест звал его без process.exit.
  * @param {object} [input]
  * @param {string} [input.root]
@@ -61,7 +78,8 @@ export function runCheck({ root = REPO_ROOT, today, extraScripts = {} } = {}) {
   const scripts = { ...(pkg.scripts ?? {}), ...extraScripts };
   const { pending, source } = readPending(root);
 
-  const fileExists = (rel) => fs.existsSync(path.join(root, rel));
+  const tracked = readTrackedFiles(root);
+  const fileExists = (rel) => trackedCarrierExists(root, tracked, rel);
   const stamp = today ?? new Date().toISOString().slice(0, 10);
 
   const report = auditWires({ scripts, fileExists, pending, today: stamp });

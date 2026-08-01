@@ -46,7 +46,7 @@ test('мастерская несёт ВСЕ свои команды, а не о
 test('полнота не стоила ни одной лишней строки', () => {
   const { f, lines } = floorLines();
   // Команды ушли в хвост существующих строк: одна строка на мастерскую как и была.
-  const rows = lines.filter((l) => /^ {2}\S+ · yarn /u.test(l));
+  const rows = lines.filter((l) => /^ {2}\S+(?: ⚠)? · (?!—(?: ·|$))/u.test(l));
   assert.equal(rows.length, f.workshops.filter((w) => w.verbs.length > 0).length);
   const b = checkBudget(lines);
   assert.equal(b.ok, true, `выдача ${b.lines} строк при бюджете ${b.budget}`);

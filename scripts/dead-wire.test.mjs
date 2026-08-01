@@ -1,5 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 import {
   FINDING_KINDS,
@@ -14,7 +17,7 @@ import {
   pendingExpired,
   splitComposite,
 } from './lib/dead-wire.mjs';
-import { runCheck } from './dead-wire-check.mjs';
+import { runCheck, trackedCarrierExists } from './dead-wire-check.mjs';
 
 const TODAY = '2026-08-01';
 const alive = () => true;
@@ -52,6 +55,19 @@ test('путь 1: носитель на месте — находки нет', (
     name: 'live', command: 'node scripts/live.mjs', fileExists: alive, pending: {}, today: TODAY,
   });
   assert.deepEqual(found, []);
+});
+
+test('игнорируемый локальный файл не считается доставленным носителем', () => {
+  const root = mkdtempSync(join(tmpdir(), 'dead-wire-tracked-'));
+  const rel = 'scripts/_ssh-local-wip.mjs';
+  mkdirSync(join(root, 'scripts'));
+  writeFileSync(join(root, rel), 'export {};\n', 'utf8');
+  try {
+    assert.equal(trackedCarrierExists(root, new Set(), rel), false, 'существования на диске недостаточно');
+    assert.equal(trackedCarrierExists(root, new Set([rel]), rel), true, 'tracked + exists — живой носитель');
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
 });
 
 test('путь 2: носителя нет и записи pending нет — dead_wire', () => {
