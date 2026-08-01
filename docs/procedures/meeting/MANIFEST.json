@@ -52,6 +52,26 @@
       }
     ]
   },
+  "portfolio": {
+    "status": "present",
+    "items": [
+      {
+        "id": "procedural-layer-epic",
+        "kind": "run",
+        "path": "docs/meeting/procedural-layer/EPIC.md"
+      },
+      {
+        "id": "m0-order-protocol",
+        "kind": "protocol",
+        "path": "docs/seanses/procedural-layer-m0-order-2026-07-21.md"
+      },
+      {
+        "id": "premises-audit-engine",
+        "kind": "engine",
+        "path": "scripts/meeting-audit.mjs"
+      }
+    ]
+  },
   "mode": "local",
   "home": {
     "kind": "none",

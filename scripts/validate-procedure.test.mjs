@@ -20,6 +20,7 @@ import {
   listProcedureDirs,
   manifestSchemaProblems,
   normalizeFramePins,
+  portfolioProblems,
   validateProcedure,
 } from './lib/validate-procedure.mjs';
 
@@ -88,6 +89,20 @@ test('схема: пустые engines, лишнее поле, id≠катало
   assert.ok(manifestSchemaProblems({ ...GOOD, engines: [] }, 'demo').some((p) => p.includes('без движков')));
   assert.ok(manifestSchemaProblems({ ...GOOD, extra: 1 }, 'demo').some((p) => p.includes('лишнее поле')));
   assert.ok(manifestSchemaProblems(GOOD, 'other').some((p) => p.includes('≠ имени каталога')));
+});
+
+test('portfolio: present требует элементы с резолвящимися путями', () => {
+  const ok = {
+    status: 'present',
+    items: [{ id: 'engine', kind: 'engine', path: 'scripts/demo-engine.mjs' }],
+  };
+  assert.equal(portfolioProblems(ok, tmp).length, 0);
+  assert.ok(portfolioProblems({ status: 'present', items: [] }, tmp).some((p) => p.includes('items пуст')));
+  assert.ok(
+    portfolioProblems({ status: 'present', items: [{ id: 'ghost', kind: 'run', path: 'docs/nope.md' }] }, tmp)
+      .some((p) => p.includes('не резолвится')),
+  );
+  assert.equal(manifestSchemaProblems({ ...GOOD, portfolio: ok }, 'demo', tmp).length, 0);
 });
 
 test('ЗУБ CI: каждый реальный контейнер docs/procedures/ валиден', () => {

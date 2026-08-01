@@ -67,7 +67,7 @@ test('ЗУБ CI: боевой реестр валиден; доноры Р5 ми
   assert.equal(derivedStatus(byId['ritual-evening']), 'migrated', 'донор 1 (Р1+Р5)');
   assert.equal(derivedStatus(byId['meeting']), 'migrated', 'донор 2 (Р5)');
   assert.equal(derivedStatus(byId['test-runs']), 'in-migration', 'контейнер тестов: внешний homePath tests');
-  assert.equal(derivedStatus(byId['storm']), 'legacy');
+  assert.equal(derivedStatus(byId['storm']), 'migrated', 'storm получил контейнер и портфолио');
   const projection = readFileSync(resolve(repoRoot, 'docs/procedures/REGISTRY.md'), 'utf8');
   assert.equal(projection, renderRegistryMd(LIVE), 'проекция не разъехалась');
 });

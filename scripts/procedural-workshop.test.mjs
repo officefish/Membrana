@@ -21,18 +21,25 @@ mkdirSync(procRoot, { recursive: true });
 // Процедура built-valid: dir + README + валидный MANIFEST + резолвящиеся ссылки.
 // Движок живёт СНАРУЖИ контейнера (Т12: код в контейнере запрещён).
 mkdirSync(join(tmp, 'scripts'), { recursive: true });
-function buildProcedure(id, holder, { kitVersion = null } = {}) {
+function buildProcedure(id, holder, { kitVersion = null, portfolio = null } = {}) {
   const dir = join(procRoot, id);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, 'README.md'), 'Определение.');
   const enginePath = `scripts/${id}-engine.mjs`;
   writeFileSync(join(tmp, enginePath), '// engine');
-  writeFileSync(join(dir, 'MANIFEST.json'), JSON.stringify({
+  const manifest = {
     id, leadPersona: holder, kitVersion, engines: [enginePath], precedents: [],
-  }));
+  };
+  if (portfolio) manifest.portfolio = portfolio;
+  writeFileSync(join(dir, 'MANIFEST.json'), JSON.stringify(manifest));
 }
 
-buildProcedure('ritual-day', 'angelina');
+buildProcedure('ritual-day', 'angelina', {
+  portfolio: {
+    status: 'present',
+    items: [{ id: 'engine', kind: 'engine', path: 'scripts/ritual-day-engine.mjs' }],
+  },
+});
 buildProcedure('meeting', 'vesnin');
 
 writeFileSync(join(procRoot, 'registry.json'), JSON.stringify({
@@ -55,6 +62,14 @@ test('audit: built-valid для построенных, declared-not-built дл�
   assert.equal(by['meeting'], 'built-valid');
   assert.equal(by['storm'], 'declared-not-built');
   assert.equal(by['ghost'], 'drift-declared-missing');
+});
+
+test('audit: портфолио видно честно — present только при manifest.portfolio', () => {
+  const rows = auditProcedures(tmp);
+  const by = Object.fromEntries(rows.map((r) => [r.id, r.portfolio.status]));
+  assert.equal(by['ritual-day'], 'present');
+  assert.equal(by['meeting'], 'missing');
+  assert.equal(by['storm'], 'missing');
 });
 
 test('audit: у ghost есть проблема (заявлен, каталога нет)', () => {
@@ -80,12 +95,20 @@ test('decompose by kit — построенные с kitVersion:null, storm «н
   assert.deepEqual(g.get('не построена').sort(), ['ghost', 'storm']);
 });
 
+test('decompose by portfolio — разделяет покрытые и непокрытые процедуры', () => {
+  const g = decomposeProcedures(auditProcedures(tmp), 'portfolio');
+  assert.deepEqual(g.get('portfolio-present'), ['ritual-day']);
+  assert.deepEqual(g.get('portfolio-missing').sort(), ['ghost', 'meeting', 'storm']);
+});
+
 test('inspectProcedure: построенная — второе измерение из манифеста', () => {
   const r = inspectProcedure(tmp, 'ritual-day');
   assert.equal(r.built, true);
   assert.equal(r.readmePresent, true);
   assert.equal(r.secondDimension.enginesCount, 1);
   assert.equal(r.leadPersona, 'angelina');
+  assert.equal(r.portfolio.status, 'present');
+  assert.equal(r.portfolio.count, 1);
 });
 
 test('inspectProcedure: объявленная-не-построенная — built:false с пометкой', () => {

@@ -84,6 +84,9 @@ export const KNOWN_LIVING_HOMES = Object.freeze([
 /** Optional Ф2-ключи (дом + режим). */
 export const MANIFEST_HOME_KEYS = Object.freeze(['home', 'mode']);
 
+/** Optional портфолио процедуры: видимые мастерской примеры и опорные носители. */
+export const MANIFEST_PORTFOLIO_KEYS = Object.freeze(['portfolio']);
+
 const TRIGGER_KINDS = Object.freeze(['schedule', 'captain-word', 'procedure-event', 'none']);
 const STEPS_KINDS = Object.freeze(['ref', 'inline', 'none']);
 const GATES_KINDS = Object.freeze(['inline', 'none']);
@@ -525,6 +528,48 @@ export function homeFieldsProblems(m, repoRoot) {
   return problems;
 }
 
+export function portfolioProblems(value, repoRoot) {
+  const problems = [];
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+    return ['portfolio — не объект'];
+  }
+  const keys = Object.keys(value);
+  const allowed = new Set(['status', 'items', 'note']);
+  for (const k of keys) if (!allowed.has(k)) problems.push(`portfolio: лишнее поле ${k}`);
+
+  if (value.status !== 'present' && value.status !== 'missing') {
+    problems.push('portfolio.status — не present/missing');
+  }
+  if (!Array.isArray(value.items)) {
+    problems.push('portfolio.items — не массив');
+    return problems;
+  }
+  if (value.status === 'present' && value.items.length === 0) {
+    problems.push('portfolio.status=present, но items пуст');
+  }
+  value.items.forEach((item, i) => {
+    if (item === null || typeof item !== 'object' || Array.isArray(item)) {
+      problems.push(`portfolio.items[${i}] — не объект`);
+      return;
+    }
+    const itemKeys = Object.keys(item);
+    const itemAllowed = new Set(['id', 'kind', 'path', 'note']);
+    for (const k of itemKeys) if (!itemAllowed.has(k)) problems.push(`portfolio.items[${i}]: лишнее поле ${k}`);
+    for (const field of ['id', 'kind', 'path']) {
+      if (typeof item[field] !== 'string' || item[field].trim() === '') {
+        problems.push(`portfolio.items[${i}].${field} — не непустая строка`);
+      }
+    }
+    if (typeof item.note !== 'undefined' && typeof item.note !== 'string') {
+      problems.push(`portfolio.items[${i}].note — не строка`);
+    }
+    if (typeof item.path === 'string' && item.path.trim() !== '' && repoRoot && !existsSync(join(repoRoot, item.path))) {
+      problems.push(`portfolio.items[${i}].path не резолвится: ${item.path}`);
+    }
+  });
+  return problems;
+}
+
 /**
  * Собрать объявленные home.path из всех контейнеров процедур.
  * @param {string} repoRoot
@@ -588,6 +633,7 @@ export function manifestSchemaProblems(m, dirName, repoRoot) {
     ...MANIFEST_QUEUE_KEYS,
     ...MANIFEST_CORE_KEYS,
     ...MANIFEST_HOME_KEYS,
+    ...MANIFEST_PORTFOLIO_KEYS,
   ]);
   for (const k of MANIFEST_BASE_KEYS) if (!keys.includes(k)) problems.push(`нет поля ${k}`);
   for (const k of keys) if (!allowed.has(k)) problems.push(`лишнее поле ${k}`);
@@ -633,6 +679,9 @@ export function manifestSchemaProblems(m, dirName, repoRoot) {
   // Ф2 home/mode — каждый ключ валидируется при наличии
   if (keys.includes('home') || keys.includes('mode')) {
     problems.push(...homeFieldsProblems(/** @type {Record<string, unknown>} */ (m), repoRoot));
+  }
+  if (keys.includes('portfolio')) {
+    problems.push(...portfolioProblems(m.portfolio, repoRoot));
   }
 
   return problems;

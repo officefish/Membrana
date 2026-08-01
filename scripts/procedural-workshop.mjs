@@ -3,7 +3,7 @@
  * yarn procedures:workshop — мастерская процедурного дома (три глагола, спринт procedural-workshop).
  *
  *   --audit               инвентарь: сверка реестра с реальностью + validateProcedure (зуб)
- *   --decompose [--by holder|status|kit]   раскладка процедур по правилу
+ *   --decompose [--by holder|status|kit|portfolio]   раскладка процедур по правилу
  *   --inspect <id>        рассмотрение одной процедуры вглубь (второе измерение)
  *
  * Осмотр/декомпозиция/рассмотрение — чтение, идемпотентны. audit роняет прогон (exit 1)
@@ -30,14 +30,17 @@ function runAudit() {
   }
   const failing = rows.filter((r) => FAILING_STATES.has(r.state));
   console.log(`procedures:workshop --audit · процедур: ${rows.length}\n`);
-  const mark = { 'built-valid': '✓', 'declared-not-built': '·', 'built-invalid': '✗', 'drift-declared-missing': '✗', 'drift-built-undeclared': '✗', 'invalid-entry': '✗' };
+  const mark = { 'built-valid': '✓', 'built-external-home': '✓', 'declared-not-built': '·', 'built-invalid': '✗', 'drift-declared-missing': '✗', 'drift-built-undeclared': '✗', 'invalid-entry': '✗' };
   for (const r of rows) {
-    console.log(`${mark[r.state] ?? '?'} ${r.id}  [${r.holder}]  ${r.state}`);
+    const portfolio = r.portfolio?.status === 'present' ? `portfolio:✓ ${r.portfolio.count}` : 'portfolio:—';
+    console.log(`${mark[r.state] ?? '?'} ${r.id}  [${r.holder}]  ${r.state}  ${portfolio}`);
     for (const p of r.problems) console.log(`    ✗ ${p}`);
   }
   const built = rows.filter((r) => r.state === 'built-valid').length;
   const declared = rows.filter((r) => r.state === 'declared-not-built').length;
-  console.log(`\nПостроено-валидно: ${built} · объявлено-не-построено: ${declared} · дефектов: ${failing.length}`);
+  const withPortfolio = rows.filter((r) => r.portfolio?.status === 'present').length;
+  const withoutPortfolio = rows.length - withPortfolio;
+  console.log(`\nПостроено-валидно: ${built} · объявлено-не-построено: ${declared} · портфолио есть: ${withPortfolio} · портфолио нет: ${withoutPortfolio} · дефектов: ${failing.length}`);
   if (failing.length > 0) { console.error(`procedures:workshop: ДЕФЕКТ реестр↔реальность — ${failing.length} (built-invalid/дрейф/битая запись).`); process.exit(1); }
   console.log('procedures:workshop --audit: OK (дефектов нет; объявленные-не-построенные — легальный бэклог).');
 }
@@ -61,12 +64,14 @@ function runInspect(id) {
   console.log(`procedures:workshop --inspect ${id}\n`);
   if (!r.built) { console.log(`· ${r.note}`); return; }
   console.log(`holder: ${r.leadPersona ?? '—'} · README: ${r.readmePresent ? '✓' : '✗'} · kitVersion: ${r.kitVersion ?? 'null'}`);
+  console.log(`portfolio: ${r.portfolio.status === 'present' ? `✓ ${r.portfolio.count}` : '—'}`);
   console.log(`цепочка кадров: ${r.secondDimension.frameCount} · подграф манифеста: engines ${r.secondDimension.enginesCount}, precedents ${r.secondDimension.precedentsCount}\n`);
   renderLane('preflight', 'гейт до цепочки', r.queue.preflight);
   renderLane('frames', 'автоцепочка', r.queue.frames);
   renderLane('post', 'ручной хвост', r.queue.post);
   if (r.engines.length) console.log(`\n  engines:\n${r.engines.map((e) => `    · ${e}`).join('\n')}`);
   if (r.precedents.length) console.log(`  precedents:\n${r.precedents.map((e) => `    · ${e}`).join('\n')}`);
+  if (r.portfolio.status === 'present') console.log(`  portfolio:\n${r.portfolio.items.map((e) => `    · ${e.id} [${e.kind}] ${e.path}`).join('\n')}`);
   if (r.note) console.log(`  ⚠ ${r.note}`);
 }
 
@@ -91,6 +96,6 @@ else if (has('inspect')) {
   if (!id) { console.error('procedures:workshop --inspect требует <id>'); process.exit(2); }
   runInspect(id);
 } else {
-  console.log('Usage: yarn procedures:workshop --audit | --decompose [--by holder|status|kit] | --inspect <id>');
+  console.log('Usage: yarn procedures:workshop --audit | --decompose [--by holder|status|kit|portfolio] | --inspect <id>');
   process.exit(2);
 }

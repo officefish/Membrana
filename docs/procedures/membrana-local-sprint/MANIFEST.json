@@ -75,6 +75,26 @@
       }
     ]
   },
+  "portfolio": {
+    "status": "present",
+    "items": [
+      {
+        "id": "procedure-run-journal-open",
+        "kind": "run",
+        "path": "docs/local-sprint/procedure-run-journal-2026-08-01/OPEN.md"
+      },
+      {
+        "id": "procedure-run-journal-report",
+        "kind": "report",
+        "path": "docs/local-sprint/procedure-run-journal-2026-08-01/F1_REPORT.md"
+      },
+      {
+        "id": "run-ledger-trail",
+        "kind": "journal",
+        "path": "docs/procedure-runs/trail/2026-08-01.jsonl"
+      }
+    ]
+  },
   "mode": "local",
   "home": {
     "kind": "none",

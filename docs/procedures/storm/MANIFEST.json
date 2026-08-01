@@ -1,0 +1,78 @@
+{
+  "id": "storm",
+  "leadPersona": "angelina",
+  "kitVersion": null,
+  "engines": [
+    "scripts/lib/storm-lifecycle.mjs",
+    "scripts/lib/storm-codex.mjs",
+    "scripts/lib/storm-breath.mjs"
+  ],
+  "precedents": [
+    "docs/STORM_REGULATION.md",
+    "docs/virtual-team/angelina/STORM_PROCEDURE.md",
+    "docs/FORMATS.md",
+    "docs/storm/storm-team-volume-in-work-2026-07-30/REPORT.md"
+  ],
+  "frames": [
+    { "id": "subject", "holder": "angelina" },
+    { "id": "theses", "holder": "angelina" },
+    { "id": "participant-signatures", "holder": "vesnin" },
+    { "id": "owner-fork", "holder": "angelina" },
+    { "id": "report", "holder": "angelina" }
+  ],
+  "post": [
+    { "id": "handoff", "holder": "vesnin" }
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "membrana-storm / шторм",
+    "note": "вход через skill membrana-storm; расходящийся формат, не заседание и не задача"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "subject", "criticality": "critical" },
+      { "id": "theses", "criticality": "critical" },
+      { "id": "participant-signatures", "criticality": "noncritical", "whyNoncritical": "реплика может остаться кандидатом; директива требует две подписи" },
+      { "id": "owner-fork", "criticality": "critical" },
+      { "id": "report", "criticality": "critical" },
+      { "id": "handoff", "criticality": "noncritical", "whyNoncritical": "развилка может быть явным «никуда»" }
+    ]
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "owner-fork",
+        "waitsFor": "owner",
+        "resume": "владелец называет, куда едет конспект: заседание, инсайт, задача или явное «никуда»",
+        "note": "выход без развилки не закрывает шторм"
+      }
+    ]
+  },
+  "portfolio": {
+    "status": "present",
+    "items": [
+      {
+        "id": "storm-regulation",
+        "kind": "regulation",
+        "path": "docs/STORM_REGULATION.md"
+      },
+      {
+        "id": "angelina-storm-procedure",
+        "kind": "procedure",
+        "path": "docs/virtual-team/angelina/STORM_PROCEDURE.md"
+      },
+      {
+        "id": "team-volume-report",
+        "kind": "run",
+        "path": "docs/storm/storm-team-volume-in-work-2026-07-30/REPORT.md"
+      }
+    ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "инстансы живут в docs/storm/<id>/ как прогоны, а не как дом определения процедуры"
+  }
+}
