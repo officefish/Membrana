@@ -1,0 +1,17 @@
+{
+  "id": "development-test-double-contract",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Test-double route boundary contract extracted by owner choice C",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/development-test-double-contract/body.md"
+  },
+  "foundations": [
+    { "path": "docs/discussions/development-matrix-ozhegov-review-v14-options.md", "role": "owner choice C prompt" },
+    { "path": "docs/discussions/development-matrix-ozhegov-review-v14.md", "role": "terminology LGTM" }
+  ],
+  "usedBy": [
+    { "templateId": "development-matrix", "placeholder": "{{test_double_contract}}", "pin": "1.0.0" }
+  ]
+}

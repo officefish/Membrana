@@ -1,0 +1,16 @@
+{
+  "id": "development-container-level",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Container-level development route definitions",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/development-container-level/body.md"
+  },
+  "foundations": [
+    { "path": "docs/HANDOFF.md", "role": "owner horizontal route note" }
+  ],
+  "usedBy": [
+    { "templateId": "development-matrix", "placeholder": "{{container_level}}", "pin": "1.0.0" }
+  ]
+}

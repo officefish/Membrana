@@ -1,0 +1,16 @@
+{
+  "id": "development-decision-checklist",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Decision checklist for selecting a development route",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/development-decision-checklist/body.md"
+  },
+  "foundations": [
+    { "path": "docs/discussions/development-matrix-vesnin-review.md", "role": "wiring LGTM" }
+  ],
+  "usedBy": [
+    { "templateId": "development-matrix", "placeholder": "{{decision_checklist}}", "pin": "1.0.0" }
+  ]
+}

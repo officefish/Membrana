@@ -1,0 +1,16 @@
+{
+  "id": "development-route-challenge",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Route rule for challenge development containers",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/development-route-challenge/body.md"
+  },
+  "foundations": [
+    { "path": "docs/sprint/cut/development-matrix-2026-08-01-review.json", "role": "route vocabulary source" }
+  ],
+  "usedBy": [
+    { "templateId": "development-matrix", "placeholder": "{{route_challenge}}", "pin": "1.0.0" }
+  ]
+}

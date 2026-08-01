@@ -1,0 +1,97 @@
+{
+  "releaseId": "development-matrix",
+  "version": "0.1.0",
+  "templateId": "development-matrix",
+  "templateVersion": "0.1.0",
+  "title": "Membrana route matrix for selecting one shot, local sprint, containers or night build",
+  "target": "docs/containers/strategic-docs/releases/development-matrix/README.md",
+  "pins": {
+    "development-matrix-purpose": "1.0.0",
+    "development-route-one-shot": "1.0.0",
+    "development-route-local-sprint": "1.0.0",
+    "development-route-cowork": "1.0.0",
+    "development-route-challenge": "1.0.0",
+    "development-route-hackathon": "1.0.0",
+    "development-route-marathon": "1.0.0",
+    "development-route-night-build": "1.0.0",
+    "development-one-shot-contract": "1.0.0",
+    "development-local-sprint-contract": "1.0.0",
+    "development-container-level": "1.0.0",
+    "development-decision-checklist": "1.0.0",
+    "development-test-double-contract": "1.0.0"
+  },
+  "status": "release",
+  "bodyPath": "./README.md",
+  "generatedAt": "2026-08-01T09:39:38.851Z",
+  "trace": {
+    "templateId": "development-matrix",
+    "templateVersion": "0.1.0",
+    "granules": {
+      "development-matrix-purpose@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "development-route-one-shot@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "development-route-local-sprint@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "development-route-cowork@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "development-route-challenge@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "development-route-hackathon@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "development-route-marathon@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "development-route-night-build@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "development-one-shot-contract@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "development-local-sprint-contract@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "development-container-level@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "development-decision-checklist@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "development-test-double-contract@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      }
+    }
+  }
+}

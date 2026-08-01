@@ -1,0 +1,16 @@
+{
+  "id": "development-route-one-shot",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Route rule for one-shot development work",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/development-route-one-shot/body.md"
+  },
+  "foundations": [
+    { "path": "docs/discussions/development-matrix-ozhegov-review-v14.md", "role": "terminology LGTM" }
+  ],
+  "usedBy": [
+    { "templateId": "development-matrix", "placeholder": "{{route_one_shot}}", "pin": "1.0.0" }
+  ]
+}

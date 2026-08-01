@@ -1,0 +1,16 @@
+{
+  "id": "development-route-marathon",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Route rule for marathon development containers",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/development-route-marathon/body.md"
+  },
+  "foundations": [
+    { "path": "docs/HANDOFF.md", "role": "owner horizontal route note" }
+  ],
+  "usedBy": [
+    { "templateId": "development-matrix", "placeholder": "{{route_marathon}}", "pin": "1.0.0" }
+  ]
+}

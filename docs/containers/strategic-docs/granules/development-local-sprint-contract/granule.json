@@ -1,0 +1,17 @@
+{
+  "id": "development-local-sprint-contract",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Operational contract for membrana-local-sprint route",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/development-local-sprint-contract/body.md"
+  },
+  "foundations": [
+    { "path": "docs/procedures/membrana-local-sprint/README.md", "role": "procedure canon" },
+    { "path": "docs/procedure-runs/README.md", "role": "run journal canon" }
+  ],
+  "usedBy": [
+    { "templateId": "development-matrix", "placeholder": "{{local_sprint_contract}}", "pin": "1.0.0" }
+  ]
+}
