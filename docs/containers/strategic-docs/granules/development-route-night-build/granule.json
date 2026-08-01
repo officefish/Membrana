@@ -1,0 +1,16 @@
+{
+  "id": "development-route-night-build",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Route rule for night build",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/development-route-night-build/body.md"
+  },
+  "foundations": [
+    { "path": "docs/NIGHT_SPRINT_REGULATION.md", "role": "night build procedure" }
+  ],
+  "usedBy": [
+    { "templateId": "development-matrix", "placeholder": "{{route_night_build}}", "pin": "1.0.0" }
+  ]
+}

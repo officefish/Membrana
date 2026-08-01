@@ -1,0 +1,17 @@
+{
+  "id": "development-route-local-sprint",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Route rule for membrana-local-sprint",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/development-route-local-sprint/body.md"
+  },
+  "foundations": [
+    { "path": "docs/procedures/membrana-local-sprint/README.md", "role": "procedure definition" },
+    { "path": ".cursor/skills/membrana-local-sprint/SKILL.md", "role": "operator skill" }
+  ],
+  "usedBy": [
+    { "templateId": "development-matrix", "placeholder": "{{route_local_sprint}}", "pin": "1.0.0" }
+  ]
+}

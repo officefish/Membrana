@@ -1,0 +1,17 @@
+{
+  "id": "development-matrix-purpose",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Purpose, status and generated-source warning for the Membrana development route matrix",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/development-matrix-purpose/body.md"
+  },
+  "foundations": [
+    { "path": "docs/sprint/cut/development-matrix-2026-08-01-review.json", "role": "ratified route review" },
+    { "path": "docs/sprint/cut/development-matrix-strategic-docs-2026-08-01.json", "role": "ratified strategic-docs migration" }
+  ],
+  "usedBy": [
+    { "templateId": "development-matrix", "placeholder": "{{purpose}}", "pin": "1.0.0" }
+  ]
+}

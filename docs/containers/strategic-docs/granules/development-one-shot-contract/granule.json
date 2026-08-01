@@ -1,0 +1,17 @@
+{
+  "id": "development-one-shot-contract",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Operational contract for one-shot route boundaries",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/development-one-shot-contract/body.md"
+  },
+  "foundations": [
+    { "path": "docs/discussions/development-matrix-ozhegov-review-v14.md", "role": "terminology LGTM" },
+    { "path": "docs/discussions/development-matrix-dynin-review-v3.md", "role": "predicate LGTM" }
+  ],
+  "usedBy": [
+    { "templateId": "development-matrix", "placeholder": "{{one_shot_contract}}", "pin": "1.0.0" }
+  ]
+}

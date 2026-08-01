@@ -1,0 +1,78 @@
+{
+  "id": "development-matrix",
+  "version": "0.1.0",
+  "target": "docs/containers/strategic-docs/releases/development-matrix/README.md",
+  "meta": {
+    "description": "Membrana route matrix for selecting one shot, local sprint, containers or night build",
+    "status": "validated",
+    "surface": ["github", "strategy.mmbrn.tech"]
+  },
+  "skeleton": "{{purpose}}\n\n{{route_one_shot}}\n\n{{route_local_sprint}}\n\n{{route_cowork}}\n\n{{route_challenge}}\n\n{{route_hackathon}}\n\n{{route_marathon}}\n\n{{route_night_build}}\n\n{{one_shot_contract}}\n\n{{local_sprint_contract}}\n\n{{container_level}}\n\n{{decision_checklist}}\n\n{{test_double_contract}}",
+  "slots": [
+    {
+      "granuleId": "development-matrix-purpose",
+      "pin": "1.0.0",
+      "placeholder": "{{purpose}}"
+    },
+    {
+      "granuleId": "development-route-one-shot",
+      "pin": "1.0.0",
+      "placeholder": "{{route_one_shot}}"
+    },
+    {
+      "granuleId": "development-route-local-sprint",
+      "pin": "1.0.0",
+      "placeholder": "{{route_local_sprint}}"
+    },
+    {
+      "granuleId": "development-route-cowork",
+      "pin": "1.0.0",
+      "placeholder": "{{route_cowork}}"
+    },
+    {
+      "granuleId": "development-route-challenge",
+      "pin": "1.0.0",
+      "placeholder": "{{route_challenge}}"
+    },
+    {
+      "granuleId": "development-route-hackathon",
+      "pin": "1.0.0",
+      "placeholder": "{{route_hackathon}}"
+    },
+    {
+      "granuleId": "development-route-marathon",
+      "pin": "1.0.0",
+      "placeholder": "{{route_marathon}}"
+    },
+    {
+      "granuleId": "development-route-night-build",
+      "pin": "1.0.0",
+      "placeholder": "{{route_night_build}}"
+    },
+    {
+      "granuleId": "development-one-shot-contract",
+      "pin": "1.0.0",
+      "placeholder": "{{one_shot_contract}}"
+    },
+    {
+      "granuleId": "development-local-sprint-contract",
+      "pin": "1.0.0",
+      "placeholder": "{{local_sprint_contract}}"
+    },
+    {
+      "granuleId": "development-container-level",
+      "pin": "1.0.0",
+      "placeholder": "{{container_level}}"
+    },
+    {
+      "granuleId": "development-decision-checklist",
+      "pin": "1.0.0",
+      "placeholder": "{{decision_checklist}}"
+    },
+    {
+      "granuleId": "development-test-double-contract",
+      "pin": "1.0.0",
+      "placeholder": "{{test_double_contract}}"
+    }
+  ]
+}

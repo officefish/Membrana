@@ -1,0 +1,16 @@
+{
+  "id": "development-route-cowork",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Route rule for cowork development containers",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/development-route-cowork/body.md"
+  },
+  "foundations": [
+    { "path": "docs/cowork-sprint/cowork-honest-sprint/INTERFACE_CONTRACT.md", "role": "interface contract precedent" }
+  ],
+  "usedBy": [
+    { "templateId": "development-matrix", "placeholder": "{{route_cowork}}", "pin": "1.0.0" }
+  ]
+}
