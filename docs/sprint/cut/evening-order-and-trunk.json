@@ -1,0 +1,44 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "evening-order-and-trunk",
+  "taskId": "evening-steps-m2-transfer",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-01T12:30:00Z",
+    "to": "2026-08-01T20:00:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "order-of-three-documents",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/tasks/evening-ritual-steps.json",
+        "scripts/step-status.test.mjs"
+      ],
+      "revisionAt": "2026-08-01T12:30:00Z",
+      "estimate": {
+        "changedLines": 90
+      }
+    },
+    {
+      "blockId": "audit-range-from-trunk",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/audit-evening.mjs",
+        "scripts/audit-evening.test.mjs"
+      ],
+      "revisionAt": "2026-08-01T12:30:00Z",
+      "estimate": {
+        "changedLines": 110
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-01T15:50:37+03:00",
+    "digest": "09b9d788e55ac76442b3aa462b8adc459bd64f38999f20f18a687b3bed0f71d7"
+  }
+}

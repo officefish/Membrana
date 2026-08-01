@@ -5,6 +5,7 @@
  * Канон разреза областей: docs/adr/ADR-0013-daily-audit-is-chronicle.md.
  */
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 import {
@@ -196,4 +197,30 @@ test('пустой день: отчёт собирается и честно г�
   assert.match(md, /Реестр за день не двигался/u);
   assert.match(md, /Граф правды за день не двигался/u);
   assert.doesNotMatch(md, /NaN|Infinity/u, 'доли не считаются от нуля');
+});
+
+// ── Диапазон дня по СТВОЛУ, а не по ветке автора (пункт №6 хендофа 01.08) ────────────
+// Вещдок 31.07: аудит брал HEAD — голову ветки, в которой запущен. Шесть коммитов соседних
+// сессий лежали в стволе и выпали из диапазона; день соседей не был увиден вовсе.
+
+const { resolveTrunk } = await import('./audit-evening.mjs').catch(() => ({ resolveTrunk: null }));
+
+test('ствол разрешается — аудит получает ref и sha', { skip: !resolveTrunk }, () => {
+  const res = resolveTrunk('origin/main', () => 'deadbeef');
+  assert.deepEqual(res, { ok: true, ref: 'origin/main', sha: 'deadbeef' });
+});
+
+test('ствола нет — ОТКАЗ с причиной, а не тихий откат к HEAD', { skip: !resolveTrunk }, () => {
+  const missing = resolveTrunk('origin/main', () => { throw new Error('unknown revision'); });
+  assert.equal(missing.ok, false);
+  assert.match(missing.reason, /нет в этом дереве/u);
+
+  const empty = resolveTrunk('origin/main', () => '');
+  assert.equal(empty.ok, false);
+  assert.match(empty.reason, /не разрешается в коммит/u);
+});
+
+test('в исходнике не осталось отсчёта по HEAD: слепота не возвращается молча', () => {
+  const src = readFileSync(new URL('./audit-evening.mjs', import.meta.url), 'utf8');
+  assert.doesNotMatch(src, /rev-list', '-1', `--before=\$\{[^}]+\}[^`]*`, 'HEAD'/u, 'диапазон обязан считаться от ствола');
 });

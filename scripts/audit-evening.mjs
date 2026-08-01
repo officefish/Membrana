@@ -62,15 +62,46 @@ function jsonAt(sha, relPath) {
   }
 }
 
+// Диапазон дня считается по СТВОЛУ, а не по ветке автора (пункт №6 хендофа 01.08).
+//
+// Вещдок 31.07: аудит брал `HEAD`, то есть голову ветки, в которой его запустили. Все шесть
+// коммитов соседних сессий в тот день лежали в стволе и оказались ВНЕ его диапазона — день
+// соседей не был увиден вовсе, а первая редакция хендофа отчеканена вслепую. Причина не в
+// невнимательности: аудит по построению не мог увидеть параллельную работу.
+//
+// Отказ, а не тихий откат. Если ствола нет (нет `origin`, нет сети, свежий клон), аудит
+// ОСТАНАВЛИВАЕТСЯ с названной причиной. Молча вернуться к `HEAD` значило бы вернуть ту же
+// слепоту без предупреждения — отчёт вышел бы бойким и неполным, и отличить его было бы нечем.
+const TRUNK_REF = process.env.AUDIT_TRUNK_REF || 'origin/main';
+export function resolveTrunk(ref, revParse) {
+  try {
+    const sha = revParse(ref);
+    return sha ? { ok: true, ref, sha } : { ok: false, reason: `ссылка «${ref}» не разрешается в коммит` };
+  } catch {
+    return { ok: false, reason: `ссылки «${ref}» нет в этом дереве` };
+  }
+}
+
+const trunk = resolveTrunk(TRUNK_REF, (r) => git('rev-parse', '--verify', '--quiet', r));
+if (!trunk.ok) {
+  console.error(
+    `audit-evening: ${trunk.reason}.\n` +
+      '  Диапазон дня считается по стволу, а не по ветке автора: иначе работа соседних\n' +
+      '  сессий выпадает из отчёта и день выглядит меньше, чем был (вещдок 31.07).\n' +
+      '  Что делать: git fetch origin — либо назвать другую ссылку через AUDIT_TRUNK_REF.',
+  );
+  process.exit(2);
+}
+
 // База дня: последний коммит ДО 00:00 этой даты. Всё меряется относительно него.
 let base;
 try {
-  base = git('rev-list', '-1', `--before=${date} 00:00`, 'HEAD');
+  base = git('rev-list', '-1', `--before=${date} 00:00`, trunk.ref);
 } catch {
   base = '';
 }
 if (!base) {
-  console.error(`Нет коммитов до ${date} — не от чего отсчитывать день.`);
+  console.error(`Нет коммитов до ${date} в ${trunk.ref} — не от чего отсчитывать день.`);
   process.exit(1);
 }
 
@@ -80,7 +111,7 @@ if (!base) {
 const nextDay = new Date(`${date}T00:00:00Z`);
 nextDay.setUTCDate(nextDay.getUTCDate() + 1);
 const dayAfter = nextDay.toISOString().slice(0, 10);
-const head = git('rev-list', '-1', `--before=${dayAfter} 00:00`, 'HEAD');
+const head = git('rev-list', '-1', `--before=${dayAfter} 00:00`, trunk.ref);
 // Пустой день — ВАЛИДНЫЙ отчёт из нулей, а не отказ (ADR-0013, DoD): день без
 // движения это факт, и он должен быть записан, а не проглочен. Поэтому сообщение
 // информационное и exit остаётся 0 — иначе ритуал спотыкался бы о выходной.
