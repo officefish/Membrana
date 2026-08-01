@@ -16,6 +16,7 @@ import { test } from 'node:test';
 import {
   DELIVERY_STATES,
   fingerprintOf,
+  formatRunConditions,
   formatSize,
   manifestHasLoss,
   partOffsets,
@@ -231,4 +232,48 @@ test('ВЕЩДОК 30.07 (M0 workshop-wires): повестка дублируе�
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+});
+
+// ── Условия прогона в шапке протокола (01.08, карточка meeting-gates-teeth) ──────────
+// Восемь прогонов заседания evening-review-predicate шли с --no-context --no-rag, и ни
+// один протокол этого не нёс: условие правила 7 держалось прозой в контейнере.
+
+test('formatRunConditions: пусто и не-объект → «по умолчанию», а не пустая строка', () => {
+  assert.equal(formatRunConditions(undefined), 'по умолчанию');
+  assert.equal(formatRunConditions(null), 'по умолчанию');
+  assert.equal(formatRunConditions({}), 'по умолчанию');
+  assert.equal(formatRunConditions('--no-rag'), 'по умолчанию');
+});
+
+test('formatRunConditions: печатаются только поднятые флаги', () => {
+  assert.equal(formatRunConditions({ noContext: true, noRag: true }), '--no-context --no-rag');
+  assert.equal(formatRunConditions({ noRag: true }), '--no-rag');
+  assert.equal(formatRunConditions({ noContext: false, noRag: false }), 'по умолчанию');
+});
+
+test('formatRunConditions: числовые параметры несут значение, нечисло не печатается', () => {
+  assert.equal(formatRunConditions({ minReplies: 30, seed: 7 }), '--min-replies 30 --seed 7');
+  assert.equal(formatRunConditions({ minReplies: null, seed: undefined }), 'по умолчанию');
+  assert.equal(formatRunConditions({ seed: 0 }), '--seed 0');
+});
+
+test('renderInputManifest без run: строки условий НЕТ — старый вызов не начинает врать', () => {
+  const out = renderInputManifest([
+    { kind: 'повестка', path: 'a.md', chars: 10, start: 0, delivery: 'полностью' },
+  ]);
+  assert.equal(out.some((l) => l.includes('Условия прогона')), false);
+});
+
+test('renderInputManifest с run: условия попадают в шапку', () => {
+  const out = renderInputManifest(
+    [{ kind: 'повестка', path: 'a.md', chars: 10, start: 0, delivery: 'полностью' }],
+    { noContext: true, noRag: true },
+  );
+  assert.ok(out.some((l) => l.includes('**Условия прогона:**') && l.includes('--no-context --no-rag')));
+});
+
+test('пустой манифест с run: условия печатаются и там — они про прогон, не про входы', () => {
+  const out = renderInputManifest([], { noRag: true });
+  assert.ok(out[0].includes('манифест не собран'));
+  assert.ok(out.some((l) => l.includes('--no-rag')));
 });

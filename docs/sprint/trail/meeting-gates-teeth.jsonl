@@ -1,0 +1,6 @@
+{"traceId":"tr-agenda-dynin-run","blockId":"agenda-delivery-refusal","kind":"context_run","subject":"dynin","at":"2026-08-01T09:35:00Z","ref":"scripts/consilium.mjs"}
+{"traceId":"tr-agenda-dynin-review","blockId":"agenda-delivery-refusal","kind":"review_pass","subject":"dynin","at":"2026-08-01T09:42:00Z","ref":"scripts/consilium-agenda-delivery.test.mjs"}
+{"traceId":"tr-flags-rodchenko-run","blockId":"run-flags-in-input-table","kind":"context_run","subject":"rodchenko","at":"2026-08-01T09:48:00Z","ref":"scripts/lib/consilium-input-manifest.mjs"}
+{"traceId":"tr-flags-rodchenko-review","blockId":"run-flags-in-input-table","kind":"review_pass","subject":"rodchenko","at":"2026-08-01T09:52:00Z","ref":"scripts/consilium-input-manifest.test.mjs"}
+{"traceId":"tr-kind-ozhegov-run","blockId":"register-kind-meeting","kind":"context_run","subject":"ozhegov","at":"2026-08-01T09:56:00Z","ref":"scripts/lib/task-registry.mjs"}
+{"traceId":"tr-kind-ozhegov-review","blockId":"register-kind-meeting","kind":"review_pass","subject":"ozhegov","at":"2026-08-01T09:58:00Z","ref":"scripts/task-register.test.mjs"}

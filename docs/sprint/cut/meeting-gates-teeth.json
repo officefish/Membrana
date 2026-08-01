@@ -1,0 +1,57 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "meeting-gates-teeth",
+  "taskId": "meeting-gates-teeth",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-01T09:00:00Z",
+    "to": "2026-08-01T18:00:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "agenda-delivery-refusal",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/consilium.mjs",
+        "scripts/consilium-agenda-delivery.test.mjs"
+      ],
+      "revisionAt": "2026-08-01T09:00:00Z",
+      "estimate": {
+        "changedLines": 180
+      }
+    },
+    {
+      "blockId": "run-flags-in-input-table",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "scripts/lib/consilium-input-manifest.mjs",
+        "scripts/consilium-input-manifest.test.mjs"
+      ],
+      "revisionAt": "2026-08-01T09:00:00Z",
+      "estimate": {
+        "changedLines": 120
+      }
+    },
+    {
+      "blockId": "register-kind-meeting",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/lib/task-registry.mjs",
+        "scripts/task-register.test.mjs"
+      ],
+      "revisionAt": "2026-08-01T09:00:00Z",
+      "estimate": {
+        "changedLines": 70
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-01T12:43:08+03:00",
+    "digest": "a5d86657d12547e4bebcad19c7e31061b79102243dbf810c98d086eedd71ae6f"
+  }
+}

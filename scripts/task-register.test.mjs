@@ -63,3 +63,32 @@ test('insertTaskAtFront: свежие сверху, вход не мутируе
   assert.equal(reg.tasks.length, 1, 'вход не мутирован');
   assert.throws(() => insertTaskAtFront(next, e), /уже есть/);
 });
+
+// ── kind: meeting (01.08, карточка meeting-gates-teeth) ─────────────────────────────
+// Регламент заседаний требует sprintKind: meeting и id вида meeting-<slug>, но
+// инструмент такого значения не принимал: единственная карточка с ним в реестре
+// заведена МИМО инструмента. Класс Db — «канон описывает тулинг, которого нет».
+
+test('buildTaskEntry: kind meeting принимается — регламент заседаний его требует', () => {
+  const entry = buildTaskEntry(
+    { id: 'meeting-some-slug', title: 'Заседание', size: 'L', kind: 'meeting' },
+    '2026-08-01',
+  );
+  assert.equal(entry.sprintKind, 'meeting');
+});
+
+test('buildTaskEntry: перечень остаётся ЗАКРЫТЫМ — чужое значение по-прежнему падает', () => {
+  assert.throws(
+    () => buildTaskEntry({ id: 'x', title: 't', size: 'M', kind: 'meetings' }, '2026-08-01'),
+    /kind/,
+  );
+  assert.throws(
+    () => buildTaskEntry({ id: 'x', title: 't', size: 'M', kind: 'Meeting' }, '2026-08-01'),
+    /kind/,
+  );
+});
+
+test('buildTaskEntry: умолчание не поехало — без --kind по-прежнему day-sprint', () => {
+  const entry = buildTaskEntry({ id: 'x', title: 't', size: 'M' }, '2026-08-01');
+  assert.equal(entry.sprintKind, 'day-sprint');
+});

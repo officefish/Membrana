@@ -89,6 +89,31 @@ const CONTEXT_FILES = [
   { path: 'docs/SERVICES.md', title: 'Сервисы' },
 ];
 
+/** Как называется вход-повестка в манифесте сеанса. */
+export const AGENDA_INPUT_KIND = 'повестка';
+
+/**
+ * Зуб правила 7: доехала ли повестка до комнаты целиком.
+ *
+ * Предикат, а не побочный эффект — чтобы его можно было проверить без прогона.
+ * Возвращает `null`, когда отказывать не за что:
+ *   - режим не `--meeting` (в обычном консилиуме многовопросность и обрезка законны);
+ *   - записи «повестка» в манифесте нет вовсе — это не предмет ЭТОГО зуба,
+ *     отсутствие повестки ловит S-M1 выше и говорит об этом своими словами;
+ *   - доставка `полностью`.
+ *
+ * @param {Array<{kind: string, delivery: string, path?: string|null}>} records манифест входа
+ * @param {boolean} meeting включён ли режим заседания
+ * @returns {{kind: string, delivery: string, path: string|null}|null}
+ */
+export function agendaDeliveryProblem(records, meeting) {
+  if (!meeting) return null;
+  const agenda = (records ?? []).find((r) => r?.kind === AGENDA_INPUT_KIND);
+  if (!agenda) return null;
+  if (agenda.delivery === 'полностью') return null;
+  return { kind: agenda.kind, delivery: agenda.delivery, path: agenda.path ?? null };
+}
+
 function printHelp() {
   console.log(`Usage: yarn consilium [options] "<question>"
 
@@ -441,7 +466,9 @@ export function buildPrompt({ question, topicFile, ghIssueData, noContext, order
 
   // Повестка стоит в ХВОСТЕ — именно её и уносил потолок сборки, пока никто не считал.
   if (topicFile) {
-    const entry = read('повестка', topicFile, MAX_TOPIC_CHARS);
+    // Имя входа — из константы: зуб доставки ищет запись по нему, и две копии
+    // строки разъехались бы молча (зуб перестал бы срабатывать, ничего не сказав).
+    const entry = read(AGENDA_INPUT_KIND, topicFile, MAX_TOPIC_CHARS);
     // Число пунктов — из тех же ID-меток, по которым работает гейт полноты rt-6:
     // «повестка доехала» и «доехали все её вопросы» — разные утверждения.
     entry.rec.items = extractAgendaIds(entry.text).length || null;
@@ -537,7 +564,7 @@ export function seansePlan({ answeredBy, chainLabel, rejected = false, relPath, 
   };
 }
 
-export function wrapSeanseFile({ body, question, orderedRoles, model, ghIssue, topicFile, relPath, inputManifest }) {
+export function wrapSeanseFile({ body, question, orderedRoles, model, ghIssue, topicFile, relPath, inputManifest, run }) {
   const stamp = new Date().toISOString();
   const meta = [
     // Пометка канала (#616, A3): по ней аудитор отличает протокол, произведённый
@@ -567,7 +594,11 @@ export function wrapSeanseFile({ body, question, orderedRoles, model, ghIssue, t
   // Манифест входа (п.5 топ-10 30.07): путь в строке «Повестка» отвечал только на «что
   // назвали», но не на «что доехало». Утверждения комнаты о своём входе теперь сверяются
   // с таблицей, а не с бойкостью реплик.
-  meta.push('', ...renderInputManifest(inputManifest));
+  // ШОВ блока run-flags-in-input-table (нарезка meeting-gates-teeth, 01.08): сам
+  // рендер живёт в зоне Верстальщика, а точка вызова — здесь. Условия прогона
+  // передаются явно: восемь прогонов 01.08 шли с --no-context --no-rag, и ни один
+  // протокол этого не нёс.
+  meta.push('', ...renderInputManifest(inputManifest, run));
   meta.push(
     '',
     '**Вопрос:**',
@@ -726,6 +757,26 @@ async function main() {
     );
   }
 
+  // Правило 7 регламента заседаний получает зуб (01.08). Предупреждение выше видно
+  // и прогон идёт дальше — то есть механизм печатает и продолжает, а это не гейт.
+  // Заседание evening-review-predicate 01.08: на сухом прогоне повестка «не доехала»
+  // при полном контексте, и только глаз председателя это поймал; прецедент 30.07 —
+  // две побайтово одинаковые повестки дали брак и вердикт, разница была ровно здесь.
+  const agendaProblem = agendaDeliveryProblem(inputManifest, Boolean(cli.meeting));
+  if (agendaProblem) {
+    console.error(
+      `\n✗ повестка не доехала до комнаты — заседание «${cli.meeting}» не созывается.\n` +
+        `  вход «${agendaProblem.kind}»: ${agendaProblem.delivery}` +
+        `${agendaProblem.path ? ` (${agendaProblem.path})` : ''}\n` +
+        '  Отказ ДО вызова API: кредит не тратится, комната без повестки всё равно\n' +
+        '  произведёт бойкий протокол, и отличить его будет нечем.\n' +
+        '  Что делать: снять контекст (--no-context --no-rag), сократить повестку\n' +
+        '  либо перенести несущее в строку вопроса (правило 7).\n' +
+        '  Регламент: docs/MEETING_REGULATION.md\n',
+    );
+    process.exit(2);
+  }
+
   const relPath = resolveSeansePath({
     cwd,
     saveAs: cli.saveAs,
@@ -868,6 +919,14 @@ async function main() {
       topicFile: cli.topicFile,
       relPath,
       inputManifest,
+      // Условия прогона — в артефакт, а не в память председателя (01.08).
+      run: {
+        noContext: cli.noContext,
+        noRag: cli.noRag,
+        noMemory: !cli.withMemory,
+        minReplies: cli.minReplies,
+        seed: cli.seed,
+      },
     });
     // #616 (вариант A): структурный гейт стоит ДО записи. Раньше протокол сохранялся,
     // а проверка печаталась следом предупреждением — отсюда «детектирует, но не
