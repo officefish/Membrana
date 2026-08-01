@@ -38,6 +38,8 @@ export function collectUsage(containers) {
         what: String(rec.what ?? ''),
         sample: all.slice(0, SAMPLE_MAX_LINES),
         measuredAt: String(rec.measuredAt ?? ''),
+        evidenceKind: String(rec.evidenceKind ?? ''),
+        source: String(rec.source ?? ''),
         truncated: Math.max(0, all.length - SAMPLE_MAX_LINES),
       });
     }
@@ -67,12 +69,14 @@ export function renderUsageSection(entries, workshopCount = 0) {
   const homes = new Set(entries.map((e) => e.home));
   lines.push(`Заполнено у **${homes.size}** мастерских из **${workshopCount}**. Источник — \`usage\` в манифесте; здесь производная выжимка.`);
   lines.push('');
-  lines.push('**Вывод — снимок, а не гарантия.** Рядом с каждым примером дата прогона: сверить его с текущим состоянием машинно нельзя, поэтому показан возраст.');
+  lines.push('**Вывод — снимок, а не гарантия.** `run` означает прожитый прогон, `fixture` — воспроизводимую искусственную форму. Рядом указаны источник и дата.');
   lines.push('');
   for (const e of entries) {
     lines.push(`### \`${e.command ?? e.verb}\` — ${e.home}`);
     lines.push('');
     lines.push(e.what);
+    lines.push('');
+    lines.push(`Вид: **${e.evidenceKind}** · источник: \`${e.source}\``);
     lines.push('');
     lines.push('```text');
     for (const l of e.sample) lines.push(l);

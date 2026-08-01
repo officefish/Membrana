@@ -21,6 +21,7 @@ import { dirname, join, relative } from 'node:path';
 import { listWorkshopManifests, validateWorkshop } from './validate-workshop.mjs';
 import { discoverHomes } from './atlas-discovery.mjs';
 import { collectUsage, renderUsageSection, workshopsWithoutUsage } from './atlas-usage.mjs';
+import { readReadmeDigest } from './readme-digest.mjs';
 
 const MANDATORY = ['audit', 'decompose', 'inspectElement'];
 
@@ -30,28 +31,6 @@ const PLANE_HEADING = {
   domain: 'Domain (предметные дома)',
   meta: 'Meta (атлас)',
 };
-
-// Markdown-ссылку → её текст: `[текст](rel)` относителен к README-источнику и ломается
-// при агрегации в другое место (ATLAS.md / mintlify). Оставляем только текст.
-const stripLinks = (s) => s.replace(/\[([^\]]+)\]\([^)]*\)/gu, '$1');
-
-/** Выжимка README: H1 + первый непустой не-заголовочный абзац (ссылки → текст). */
-function readmeDigest(readmePath) {
-  if (!existsSync(readmePath)) return { title: null, summary: null };
-  const lines = readFileSync(readmePath, 'utf8').split(/\r?\n/u);
-  let title = null;
-  let summary = null;
-  for (const raw of lines) {
-    const line = raw.trim();
-    if (!title && line.startsWith('# ')) { title = line.slice(2).trim(); continue; }
-    // summary — первый прозаический абзац, НЕ завязан на наличие H1.
-    if (!summary && line !== '' && !line.startsWith('#') && !line.startsWith('>') && !line.startsWith('<!--')) {
-      summary = stripLinks(line);
-    }
-    if (title && summary) break;
-  }
-  return { title, summary };
-}
 
 /** Семья (совместимость `--decompose --by family`) — по `home`. */
 function familyOf(home) {
@@ -108,7 +87,7 @@ export function discoverContainers(repoRoot) {
     const missingVerbs = rec.hasManifest ? MANDATORY.filter((k) => !present.includes(k)) : [];
     const home = rec.home;
     const worksOn = typeof manifest?.worksOn === 'string' ? manifest.worksOn : home;
-    const { title, summary } = readmeDigest(join(dir, 'README.md'));
+    const { title, summary } = readReadmeDigest(join(dir, 'README.md'));
     out.push({
       worksOn,
       home,

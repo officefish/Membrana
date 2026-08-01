@@ -60,11 +60,17 @@ test('второй класс поимённый: корневая папка в
 });
 
 test('обнаружение не замыкается на само себя: политика — список, а не эхо дерева', () => {
-  assert.deepEqual([...ROOT_CONTAINER_ALLOWLIST], ['scripts']);
+  assert.deepEqual([...ROOT_CONTAINER_ALLOWLIST], ['scripts', 'tests']);
   // Положить манифест в корневой контейнер вне списка недостаточно, чтобы стать домом —
   // иначе кто положил манифест, тот и дом, и RootPolicy перестаёт быть политикой.
   const root = fixture(['apps/self-declared']);
   assert.deepEqual(listWorkshopManifests(root), []);
+});
+
+test('tests — поимённый корневой дом с мастерской', () => {
+  const root = fixture(['tests']);
+  const found = listWorkshopManifests(root).map((p) => p.slice(root.length + 1).replaceAll('\\', '/'));
+  assert.deepEqual(found, ['tests/workshop.manifest.json']);
 });
 
 test('отсутствующий класс не роняет обход', () => {

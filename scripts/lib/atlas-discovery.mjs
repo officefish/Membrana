@@ -55,7 +55,7 @@ export const NOT_HOMES_SUBTREE = Object.freeze(['docs/archive', 'docs/void']);
 export const NOT_HOMES_SELF = Object.freeze(['docs/seanses', 'docs/discussions']);
 
 /** Каталоги, в которые обход не заходит. */
-const SKIP_DIRS = new Set(['node_modules', 'cache', '.git', 'dist', 'coverage']);
+const SKIP_DIRS = new Set(['node_modules', 'cache', '.cache', '.git', 'dist', 'coverage']);
 
 /** Путь к сравнимому виду. */
 const norm = (p) => p.replaceAll('\\', '/');

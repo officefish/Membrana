@@ -23,7 +23,7 @@ const ws = (over = {}) => ({
   home: 'docs/x',
   kind: 'workshop',
   commands: { audit: 'yarn x:audit' },
-  usage: { audit: { what: 'что даёт', sample: 'строка вывода', measuredAt: '2026-07-31' } },
+  usage: { audit: { what: 'что даёт', sample: 'строка вывода', measuredAt: '2026-07-31', evidenceKind: 'run', source: 'docs/x/run.md' } },
   ...over,
 });
 
@@ -52,13 +52,13 @@ test('живое дерево: три salvage-инструмента доезж�
 test('команда берётся из verbs, а не из примера', () => {
   // Пример показывает ВЫВОД; вызывать надо то, что объявлено глаголом. Разъехаться они не
   // могут — зуб схемы держит подмножество.
-  const e = collectUsage([ws({ commands: { audit: 'yarn настоящая' }, usage: { audit: { what: 'w', sample: 'yarn подделка', measuredAt: '2026-07-31' } } })]);
+  const e = collectUsage([ws({ commands: { audit: 'yarn настоящая' }, usage: { audit: { what: 'w', sample: 'yarn подделка', measuredAt: '2026-07-31', evidenceKind: 'fixture', source: 'docs/x/fixture.json' } } })]);
   assert.equal(e[0].command, 'yarn настоящая');
 });
 
 test('длинный вывод режется с честным хвостом, а не молча', () => {
   const long = Array.from({ length: SAMPLE_MAX_LINES + 3 }, (_, i) => `строка ${i}`).join('\n');
-  const e = collectUsage([ws({ usage: { audit: { what: 'w', sample: long, measuredAt: '2026-07-31' } } })]);
+  const e = collectUsage([ws({ usage: { audit: { what: 'w', sample: long, measuredAt: '2026-07-31', evidenceKind: 'run', source: 'docs/x/run.md' } } })]);
   assert.equal(e[0].sample.length, SAMPLE_MAX_LINES);
   assert.equal(e[0].truncated, 3);
   const md = renderUsageSection(e, 1).join('\n');
@@ -85,8 +85,8 @@ test('доля заполненности честная: сколько мас�
   const two = collectUsage([ws({
     commands: { audit: 'yarn a', decompose: 'yarn d' },
     usage: {
-      audit: { what: 'w', sample: 's', measuredAt: '2026-07-31' },
-      decompose: { what: 'w', sample: 's', measuredAt: '2026-07-31' },
+      audit: { what: 'w', sample: 's', measuredAt: '2026-07-31', evidenceKind: 'run', source: 'docs/x/run.md' },
+      decompose: { what: 'w', sample: 's', measuredAt: '2026-07-31', evidenceKind: 'fixture', source: 'docs/x/fixture.json' },
     },
   })]);
   assert.equal(two.length, 2);
@@ -112,6 +112,12 @@ test('дата прогона печатается рядом с примеро�
   // Свежесть не обещается — обещать было бы ложью, сверить машинно нельзя.
   assert.match(md, /снимок, а не гарантия/u);
   assert.doesNotMatch(md, /актуально|проверено сейчас/u);
+});
+
+test('род evidence и источник печатаются рядом с примером', () => {
+  const md = renderUsageSection(collectUsage([ws()]), 1).join('\n');
+  assert.match(md, /Вид: \*\*run\*\*/u);
+  assert.match(md, /source|docs\/x\/run\.md/u);
 });
 
 // ── Интеграция в индекс ───────────────────────────────────────────────────────────────────

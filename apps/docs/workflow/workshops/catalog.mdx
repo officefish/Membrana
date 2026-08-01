@@ -1,0 +1,409 @@
+---
+title: Каталог мастерских
+description: Все живые мастерские Membrana, их предметы, команды и подтверждённые примеры.
+---
+
+{/* Производная страница: `node scripts/mintlify-workflow-docs.mjs --render`. Руками не править. */}
+
+Каталог собран из **14** живых манифестов. Мастерская — это оснастка дома: она помогает осмотреть предмет, разложить его и изучить один элемент. Сам дом может существовать без мастерской.
+
+<Info>
+Источник истины каждой записи — её `README.md` и `workshop.manifest.json`. Здесь находится производная витрина.
+</Info>
+
+## мастерская Archivarius
+
+Archivarius (#1330, эпик #1229) — архивариус прожитых сессий Membrana. Источник байтов — MongoDB в office-стеке; репозиторий — нотариус: держит контракт, мастерскую, снимки и инструкции, но не становится базой полных сессий.
+
+- **Дом:** [`docs/archivarius`](https://github.com/officefish/Membrana/blob/main/docs/archivarius/README.md)
+- **Работает над:** `docs/archivarius`
+- **Плоскость:** domain
+- **Роль:** не объявлена
+- **Кит:** `null` — отдельная поставка не заказана
+- **Состояние:** манифест валиден без предупреждений
+- **Инвентарные глаголы:** `audit`, `decompose`, `inspectElement`
+
+**Двери мастерской**
+
+- **audit:** `yarn archivarius audit`
+- **decompose:** `yarn archivarius decompose`
+- **ingest:** `yarn archivarius ingest --from ~/.claude/projects`
+- **inspectElement:** `yarn archivarius inspect ‹sessionId›`
+- **search:** `yarn archivarius search`
+
+<Warning>
+Для этой мастерской ещё нет проверенного примера вывода. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+## мастерская бестиария
+
+Дом группы **антипаттернов** (звери) и их **бетий** (specimen’ы плохого кода). Реализация `GROUP_CONTAINERIZATION`. Эпик: `bestiary-container` (#878) · **CLOSED** · `CLOSURE` · инсайт: `insight-weekly-antipattern-audit-bestiary`.
+
+- **Дом:** [`docs/audit/bestiary`](https://github.com/officefish/Membrana/blob/main/docs/audit/bestiary/README.md)
+- **Работает над:** `docs/audit/bestiary`
+- **Плоскость:** report
+- **Роль:** не объявлена
+- **Кит:** `kits/witcher`
+- **Состояние:** валиден с предупреждениями: 1
+- **Инвентарные глаголы:** `audit`, `decompose`
+- **Не живут в этой мастерской:** `inspectElement`
+
+**Двери мастерской**
+
+- **audit:** `yarn bestiary:audit`
+- **decompose:** `yarn bestiary:audit`
+
+**Доменные намерения без команды**
+
+- `issueTrap` работает над `docs/audit/bestiary`, но `tool` не объявлен.
+
+<Warning>
+Для этой мастерской ещё нет проверенного примера вывода. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+## мастерская веток
+
+Специальный контейнер, где агент **легально** хранит промпты, реестры веток и глубокие разборы по гигиене git-репозитория Membrana — и **ассортимент** веток для покрытия жанров работы (рефактор спринта, code review). Реализация паттерна `GROUP_CONTAINERIZATION`.
+
+- **Дом:** [`docs/audit/git`](https://github.com/officefish/Membrana/blob/main/docs/audit/git/README.md)
+- **Работает над:** `docs/audit/git`
+- **Плоскость:** report
+- **Роль:** не объявлена
+- **Кит:** `null` — отдельная поставка не заказана
+- **Состояние:** валиден с предупреждениями: 1
+- **Инвентарные глаголы:** `audit`, `decompose`
+- **Не живут в этой мастерской:** `inspectElement`
+
+**Двери мастерской**
+
+- **applyRatifiedPlan:** `yarn repo:branches:apply-plan`
+- **audit:** `yarn repo:branches`
+- **closeout:** `yarn repo:branches:closeout`
+- **decompose:** `yarn repo:branches:decompose`
+- **reconcile:** `yarn repo:branches:reconcile`
+
+**Примеры использования**
+
+**reconcile — fixture — воспроизводимая искусственная форма.** сверяет замороженный inventory с текущими refs и отдельно показывает дрейф базы и каждой цели
+
+Источник: [`docs/audit/git/examples/controlled-salvage-plan.example.json`](https://github.com/officefish/Membrana/blob/main/docs/audit/git/examples/controlled-salvage-plan.example.json)
+
+```text
+# Branch salvage reconciliation
+- snapshot: `docs/audit/git/cache/salvage-snapshot.json`
+- base moved: no
+| `refs/heads/example-finished-work` | `22222222` | `22222222` | unchanged |  |
+```
+Замер: 2026-07-31.
+
+**applyRatifiedPlan — fixture — воспроизводимая искусственная форма.** dry-run выбирает ровно одну exact-tip цель и подтверждает, что refs, journal и report не изменены
+
+Источник: [`docs/audit/git/examples/controlled-salvage-plan.example.json`](https://github.com/officefish/Membrana/blob/main/docs/audit/git/examples/controlled-salvage-plan.example.json)
+
+```text
+branch salvage dry-run: refs/heads/example-finished-work -> planned
+dry-run: refs/journal/report were not changed
+```
+Замер: 2026-07-31.
+
+**closeout — fixture — воспроизводимая искусственная форма.** fail-closed сводит план и journal в воспроизводимый PASS/FAIL с числом мутаций и post-checks
+
+Источник: [`docs/audit/git/examples/controlled-salvage-plan.example.json`](https://github.com/officefish/Membrana/blob/main/docs/audit/git/examples/controlled-salvage-plan.example.json)
+
+```text
+# Branch salvage closeout — branch-salvage-example
+status: **PASS**
+| Targets | 1 |
+| Completed | 1 |
+```
+Замер: 2026-07-31.
+
+
+## мастерская llm-calls
+
+Дом группы **гранул evidence** вызовов LLM-процедур (LPC): подлинность + параметры, без сырых тел prompt/response. Реализация `GROUP_CONTAINERIZATION`. Эпик: `llm-calls-house` (#1033) · инстанс `llm-calls-house-2026-07-23`.
+
+- **Дом:** [`docs/audit/llm-calls`](https://github.com/officefish/Membrana/blob/main/docs/audit/llm-calls/README.md)
+- **Работает над:** `docs/audit/llm-calls`
+- **Плоскость:** report
+- **Роль:** не объявлена
+- **Кит:** `null` — отдельная поставка не заказана
+- **Состояние:** валиден с предупреждениями: 1
+- **Инвентарные глаголы:** `audit`, `decompose`
+- **Не живут в этой мастерской:** `inspectElement`
+
+**Двери мастерской**
+
+- **audit:** `yarn llm-calls:audit`
+- **decompose:** `yarn llm-calls:decompose`
+
+<Warning>
+Для этой мастерской ещё нет проверенного примера вывода. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+## мастерская разборов задач (derivative)
+
+Слот плоскости `docs/audit/`: здесь лежат **отчёты** (снимки декомпозиции, ревизии, analysis) **про** задания. Сами карточки заданий — не здесь, а в предметном доме `docs/tasks/` (`registry.json`, primary). Это не «второй tasks».
+
+- **Дом:** [`docs/audit/tasks`](https://github.com/officefish/Membrana/blob/main/docs/audit/tasks/README.md)
+- **Работает над:** `docs/audit/tasks/registry/`
+- **Плоскость:** report
+- **Роль:** derivative
+- **Кит:** `null` — отдельная поставка не заказана
+- **Состояние:** валиден с предупреждениями: 1
+- **Инвентарные глаголы:** `audit`, `decompose`
+- **Не живут в этой мастерской:** `inspectElement`
+
+**Двери мастерской**
+
+- **audit:** `yarn tasks:audit`
+- **decompose:** `yarn tasks:decompose`
+- **handoffLiveness:** `yarn tasks:handoff-liveness`
+
+<Warning>
+Для этой мастерской ещё нет проверенного примера вывода. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+## мастерская кейсов
+
+Дом-контейнер кейсов: записанных **удачных** импровизаций и прогонов. Кейс — **зеркало прецедента** (`docs/precedents/`): там разбор «что сломалось и почему», здесь — «что сработало и чем доказано». Одна семья: оба про прогон, оба append-only, оба с закрытыми перечнями, оба ссылаются на процедуру. Спека — Issue #1298 (принята капитаном 26.07).
+
+- **Дом:** [`docs/cases`](https://github.com/officefish/Membrana/blob/main/docs/cases/README.md)
+- **Работает над:** `docs/cases`
+- **Плоскость:** domain
+- **Роль:** не объявлена
+- **Кит:** `null` — отдельная поставка не заказана
+- **Состояние:** манифест валиден без предупреждений
+- **Инвентарные глаголы:** `audit`, `decompose`, `inspectElement`
+
+**Двери мастерской**
+
+- **audit:** `yarn case:register --validate`
+- **decompose:** `yarn case:decompose`
+- **generalize:** `yarn case:generalize`
+- **inspectElement:** `yarn case:inspect`
+- **portfolio:** `yarn case:portfolio`
+
+<Warning>
+Для этой мастерской ещё нет проверенного примера вывода. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+## мастерская strategic-docs
+
+Дом генеративных стратегических документов: гранулы и шаблоны собираются в проверяемые релизы, после чего могут быть опубликованы на разрешённую поверхность.
+
+- **Дом:** [`docs/containers/strategic-docs`](https://github.com/officefish/Membrana/blob/main/docs/containers/strategic-docs/README.md)
+- **Работает над:** `docs/containers/strategic-docs`
+- **Плоскость:** domain
+- **Роль:** не объявлена
+- **Кит:** `null` — отдельная поставка не заказана
+- **Состояние:** валиден с предупреждениями: 3
+- **Инвентарные глаголы:** не объявлены
+- **Не живут в этой мастерской:** `audit`, `decompose`, `inspectElement`
+
+**Двери мастерской**
+
+Исполнимые команды пока не объявлены.
+
+**Доменные намерения без команды**
+
+- `generate` работает над `docs/containers/strategic-docs`, но `tool` не объявлен.
+- `publish` работает над `docs/containers/strategic-docs`, но `tool` не объявлен.
+- `publishTemplates` работает над `docs/containers/strategic-docs`, но `tool` не объявлен.
+- `publishReleases` работает над `docs/containers/strategic-docs`, но `tool` не объявлен.
+- `discoverWorkspaces` работает над `strategy.mmbrn.tech`, но `tool` не объявлен.
+
+<Warning>
+Для этой мастерской ещё нет проверенного примера вывода. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+## мастерская вещдоков (primary)
+
+Мастерская индексации вещдоков (#1303, слово капитана 26–27.07): **индекс — суть, склад — сменная деталь.** Байты живут в хранилище (сейчас local/Downloads, целевое — Affine-склад статики), строки — здесь. Индекс переживает склад.
+
+- **Дом:** [`docs/evidence`](https://github.com/officefish/Membrana/blob/main/docs/evidence/README.md)
+- **Работает над:** `docs/evidence/registry.jsonl`
+- **Плоскость:** domain
+- **Роль:** primary
+- **Кит:** `null` — отдельная поставка не заказана
+- **Состояние:** манифест валиден без предупреждений
+- **Инвентарные глаголы:** `audit`, `decompose`, `inspectElement`
+
+**Двери мастерской**
+
+- **audit:** `yarn evidence verify`
+- **decompose:** `yarn evidence decompose --by store|date|source`
+- **inspectElement:** `yarn evidence inspect ‹id›`
+- **list:** `yarn evidence list`
+
+<Warning>
+Для этой мастерской ещё нет проверенного примера вывода. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+## мастерская прецедентов
+
+Дом-контейнер прецедентов: единичных задокументированных случаев (симптом → корень → фикс → профилактика) с классом и счётчиком рецидива. Реализация паттерна `GROUP_CONTAINERIZATION`; оснастка — паттерн `HOME_WORKSHOP` (третий живущий жилец). Родом из инсайта `insight-precedent-container`.
+
+- **Дом:** [`docs/precedents`](https://github.com/officefish/Membrana/blob/main/docs/precedents/README.md)
+- **Работает над:** `docs/precedents`
+- **Плоскость:** domain
+- **Роль:** не объявлена
+- **Кит:** `null` — отдельная поставка не заказана
+- **Состояние:** валиден с предупреждениями: 1
+- **Инвентарные глаголы:** `audit`, `decompose`
+- **Не живут в этой мастерской:** `inspectElement`
+
+**Двери мастерской**
+
+- **audit:** `yarn precedent:register --validate`
+- **decompose:** `yarn precedent:register --rebuild`
+
+<Warning>
+Для этой мастерской ещё нет проверенного примера вывода. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+## мастерская процедур
+
+Дом **определений процедур** — спроектированных сущностей, оперирующих категориями слоя (виртуальная команда, задача, ответственность, стратегическая цель). Канон: эпик заседания `procedural-layer` (Р1–Р5, ратифицирован 2026-07-21); реализация — #781.
+
+- **Дом:** [`docs/procedures`](https://github.com/officefish/Membrana/blob/main/docs/procedures/README.md)
+- **Работает над:** `docs/procedures`
+- **Плоскость:** domain
+- **Роль:** не объявлена
+- **Кит:** `null` — отдельная поставка не заказана
+- **Состояние:** манифест валиден без предупреждений
+- **Инвентарные глаголы:** `audit`, `decompose`, `inspectElement`
+
+**Двери мастерской**
+
+- **audit:** `yarn procedures:workshop --audit`
+- **decompose:** `yarn procedures:workshop --decompose`
+- **inspectElement:** `yarn procedures:workshop --inspect`
+
+<Warning>
+Для этой мастерской ещё нет проверенного примера вывода. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+## мастерская задач (primary)
+
+Актуальные **активные** и **архивные** задачи по стандарту `TASK_PROMPT_WORKFLOW.md`.
+
+- **Дом:** [`docs/tasks`](https://github.com/officefish/Membrana/blob/main/docs/tasks/README.md)
+- **Работает над:** `docs/tasks/registry.json`
+- **Плоскость:** domain
+- **Роль:** primary
+- **Кит:** `kits/tasks-master`
+- **Состояние:** валиден с предупреждениями: 2
+- **Инвентарные глаголы:** `inspectElement`
+- **Не живут в этой мастерской:** `audit`, `decompose`
+
+**Двери мастерской**
+
+- **board:** план, не исполнимая дверь — `yarn task:board (engine missing: scripts/generate-active-tasks-board.mjs)`
+- **bookkeeping:** план, не исполнимая дверь — `yarn tasks:bookkeeping (engine missing: scripts/tasks-bookkeeping.mjs)`
+- **inspectElement:** `yarn task:inspect`
+- **list:** `yarn task:list`
+- **reviewing:** план, не исполнимая дверь — `yarn tasks:reviewing (engine missing: scripts/tasks-reviewing.mjs)`
+
+<Warning>
+Для этой мастерской ещё нет проверенного примера вывода. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+## мастерская атласа контейнеров
+
+**Контейнер контейнеров** (`plane=meta`). Его группа — сами контейнеры проекта вместе с их мастерскими. Он не хранит собственных описаний, а **агрегирует** документацию из каждого контейнера в единый производный индекс. Реализация паттерна `GROUP_CONTAINERIZATION`; оснастка — паттерн `HOME_WORKSHOP`.
+
+- **Дом:** [`docs/tooling-atlas`](https://github.com/officefish/Membrana/blob/main/docs/tooling-atlas/README.md)
+- **Работает над:** `docs/tooling-atlas`
+- **Плоскость:** meta
+- **Роль:** не объявлена
+- **Кит:** `null` — отдельная поставка не заказана
+- **Состояние:** манифест валиден без предупреждений
+- **Инвентарные глаголы:** `audit`, `decompose`, `inspectElement`
+
+**Двери мастерской**
+
+- **audit:** `yarn tooling:atlas --audit`
+- **decompose:** `yarn tooling:atlas --decompose`
+- **inspectElement:** `yarn tooling:atlas --inspect`
+
+<Warning>
+Для этой мастерской ещё нет проверенного примера вывода. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+## мастерская скриптов
+
+Единственный дом группы «скрипты и yarn-обвязка ритуала». Реализация паттерна `GROUP_CONTAINERIZATION` **внутри** уже существующего каталога `scripts/` — **не** заводить второй дом (`docs/audit/scripts/` и т.п.).
+
+- **Дом:** [`scripts`](https://github.com/officefish/Membrana/blob/main/scripts/README.md)
+- **Работает над:** `scripts`
+- **Плоскость:** domain
+- **Роль:** не объявлена
+- **Кит:** `null` — отдельная поставка не заказана
+- **Состояние:** манифест валиден без предупреждений
+- **Инвентарные глаголы:** `audit`, `decompose`, `inspectElement`
+
+**Двери мастерской**
+
+- **audit:** `yarn scripts:orphans`
+- **decompose:** `yarn scripts:registry`
+- **inspectElement:** `yarn scripts:sets-of`
+
+**Примеры использования**
+
+**audit — прожитый run.** прямой ответ: есть ли бесхозные скрипты и сколько — со знаменателем
+
+Источник: [`docs/precedents/2026-07-31-scripts-workshop-lookup-orphans-sets-atlas.md`](https://github.com/officefish/Membrana/blob/main/docs/precedents/2026-07-31-scripts-workshop-lookup-orphans-sets-atlas.md)
+
+```text
+scripts:orphans · знаменатель 966 (инструменты ∪ тесты)
+⚠ правил членства ноль — сиротство ниже означает «правила ещё нет»
+✖ бесхозных 45 из 966
+```
+Замер: 2026-07-31.
+
+**inspectElement — прожитый run.** обратный поиск: в каких наборах лежит файл; различает «набора нет», «набор пуст» и «файл ни в одном»
+
+Источник: [`docs/precedents/2026-07-31-scripts-workshop-lookup-orphans-sets-atlas.md`](https://github.com/officefish/Membrana/blob/main/docs/precedents/2026-07-31-scripts-workshop-lookup-orphans-sets-atlas.md)
+
+```text
+scripts:sets-of scripts/bridge.mjs · состоит в одном наборе
+    кит angelina-bridge
+```
+Замер: 2026-07-31.
+
+
+## мастерская тестового контейнера
+
+Корневой дом тестовой оснастки Membrana: сетапы `smoke` / `gate` / `full`, селектор по графу импортов, отчеты о том, что не гонялось, и данные для `test:scripts`.
+
+- **Дом:** [`tests`](https://github.com/officefish/Membrana/blob/main/tests/README.md)
+- **Работает над:** `tests`
+- **Плоскость:** domain
+- **Роль:** не объявлена
+- **Кит:** `kits/tests-master`
+- **Состояние:** манифест валиден без предупреждений
+- **Инвентарные глаголы:** `audit`, `decompose`, `inspectElement`
+
+**Двери мастерской**
+
+- **audit:** `node scripts/tests-container.mjs --setup gate --list`
+- **decompose:** `node scripts/tests-container.mjs --decompose`
+- **inspectElement:** `node scripts/tests-container.mjs --inspect ‹test-file›`
+- **selectSetup:** `node scripts/tests-container.mjs --setup gate --list`
+
+**Доменные намерения без команды**
+
+- `reportNotRun` работает над `tests`, но `tool` не объявлен.
+
+**Примеры использования**
+
+**selectSetup — прожитый run.** показывает точный тестовый setup для текущей дельты и честный знаменатель run/not run
+
+Источник: [`docs/archive/hackathon/2026-08-01/H2_STAGE_COMPLETION.md`](https://github.com/officefish/Membrana/blob/main/docs/archive/hackathon/2026-08-01/H2_STAGE_COMPLETION.md)
+
+```text
+scripts/mintlify-workflow-docs.test.mjs
+tests:gate: run=32/319, not run=287, skipped=0
+```
+Замер: 2026-08-01.

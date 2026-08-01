@@ -11,12 +11,22 @@
     "domain": [
       {
         "name": "selectSetup",
-        "worksOn": "tests"
+        "worksOn": "tests",
+        "tool": "node scripts/tests-container.mjs --setup gate --list"
       },
       {
         "name": "reportNotRun",
         "worksOn": "tests"
       }
     ]
+  },
+  "usage": {
+    "selectSetup": {
+      "what": "показывает точный тестовый setup для текущей дельты и честный знаменатель run/not run",
+      "sample": "scripts/mintlify-workflow-docs.test.mjs\ntests:gate: run=32/319, not run=287, skipped=0",
+      "measuredAt": "2026-08-01",
+      "evidenceKind": "run",
+      "source": "docs/archive/hackathon/2026-08-01/H2_STAGE_COMPLETION.md"
+    }
   }
 }

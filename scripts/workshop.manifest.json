@@ -14,12 +14,16 @@
     "audit": {
       "what": "прямой ответ: есть ли бесхозные скрипты и сколько — со знаменателем",
       "sample": "scripts:orphans · знаменатель 966 (инструменты ∪ тесты)\n⚠ правил членства ноль — сиротство ниже означает «правила ещё нет»\n✖ бесхозных 45 из 966",
-      "measuredAt": "2026-07-31"
+      "measuredAt": "2026-07-31",
+      "evidenceKind": "run",
+      "source": "docs/precedents/2026-07-31-scripts-workshop-lookup-orphans-sets-atlas.md"
     },
     "inspectElement": {
       "what": "обратный поиск: в каких наборах лежит файл; различает «набора нет», «набор пуст» и «файл ни в одном»",
       "sample": "scripts:sets-of scripts/bridge.mjs · состоит в одном наборе\n    кит angelina-bridge",
-      "measuredAt": "2026-07-31"
+      "measuredAt": "2026-07-31",
+      "evidenceKind": "run",
+      "source": "docs/precedents/2026-07-31-scripts-workshop-lookup-orphans-sets-atlas.md"
     }
   }
 }

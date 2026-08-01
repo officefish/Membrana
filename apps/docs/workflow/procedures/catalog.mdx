@@ -1,0 +1,559 @@
+---
+title: Каталог процедур
+description: Все процедуры Membrana с живым статусом, держателем, кадрами и портфолио.
+---
+
+{/* Производная страница: `node scripts/mintlify-workflow-docs.mjs --render`. Руками не править. */}
+
+Реестр содержит **24** процедуры. Построено **17**, портфолио есть у **7**. Объявленная, но не построенная процедура — законный backlog, а не работающая дверь.
+
+<Info>
+Статусы и держатели приходят из `docs/procedures/registry.json`; форма и примеры — из манифеста контейнера.
+</Info>
+
+## Разработка
+
+### `day-sprint`
+
+**Определение.** Day-sprint — процедура ведения **дневного** эпика разработки: регистрация карточек (`task:start`), фазы с `parentEpic` и `leadPersona`, инстансы в `docs/day-sprint/‹id›/` (OPEN → работа → CLOSURE), архивация реестра и вечернее закрытие GitHub Issues. Оперирует категориями слоя: задачей (карточки M/L), командой (`leadPersona` / виртуальная команда на фазах), ответственностью (принимающий выход фазы) и стратегической целью (эпик дня).
+
+- **Держатель:** vesnin
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `in-migration`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/day-sprint`](https://github.com/officefish/Membrana/blob/main/docs/procedures/day-sprint/README.md)
+
+**Когда входить.** эпик+фазы открывает агент по skill membrana-task-lifecycle; оркестратора day-sprint:open нет
+
+**Кадры**
+
+- `container-open` — держатель **vesnin**
+- `tasks-register` — держатель **vesnin**
+- `billets-attach` — держатель **vesnin**
+- `registry-trace` — держатель **dynin**
+- `phases-run` — держатель **vesnin**
+- `closure-accept` — держатель **vesnin**
+- `countersign` — держатель **vesnin**
+- `archive` — держатель **dynin**
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `membrana-local-sprint`
+
+**Определение.** `membrana-local-sprint` — каноническая локальная процедура разработки для задач Membrana: одна рабочая ветка, один агент-координатор, явная нарезка на фазы через `docs/tasks/registry.json`, и честный след исполнения через `procedure-run-journal`.
+
+- **Держатель:** vesnin
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `migrated`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/membrana-local-sprint`](https://github.com/officefish/Membrana/blob/main/docs/procedures/membrana-local-sprint/README.md)
+
+**Когда входить.** единый локальный sprint-route; старое имя honest-sprint не является новым входом
+
+**Кадры**
+
+- `register` — держатель **vesnin**
+- `open` — держатель **vesnin**
+- `cut` — держатель **vesnin**
+- `ratify` — держатель **vesnin**
+- `execute` — держатель **dynin**
+- `journal` — держатель **dynin**
+- `gate` — держатель **angelina**
+- `experience` — держатель **angelina**
+- `closure` — держатель **vesnin**
+
+**Носители портфолио**
+
+- [procedure-run-journal-open](https://github.com/officefish/Membrana/blob/main/docs/local-sprint/procedure-run-journal-2026-08-01/OPEN.md) — run
+- [procedure-run-journal-report](https://github.com/officefish/Membrana/blob/main/docs/local-sprint/procedure-run-journal-2026-08-01/F1_REPORT.md) — report
+- [run-ledger-trail](https://github.com/officefish/Membrana/blob/main/docs/procedure-runs/trail/2026-08-01.jsonl) — journal
+
+**Прожитые примеры**
+
+- [procedure-run-journal-open](https://github.com/officefish/Membrana/blob/main/docs/local-sprint/procedure-run-journal-2026-08-01/OPEN.md) — run
+- [run-ledger-trail](https://github.com/officefish/Membrana/blob/main/docs/procedure-runs/trail/2026-08-01.jsonl) — journal
+
+### `hackathon`
+
+**Определение.** `hackathon` — маршрут разработки для осевой фичи, которая уже разрезана на последовательную эстафету. Его отличает не календарь сам по себе, а форма передачи: каждый этап H1-H4 оставляет `stage-completion-checklist`, пригодный следующему этапу без пересказа из чата.
+
+- **Держатель:** vesnin
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `migrated`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/hackathon`](https://github.com/officefish/Membrana/blob/main/docs/procedures/hackathon/README.md)
+
+**Когда входить.** вход через route skill; старый docs/HACKATHON_REGULATION.md остаётся прецедентом, не единственной дверью
+
+**Кадры**
+
+- `open` — держатель **vesnin**
+- `h1-foundation` — держатель **vesnin**
+- `h2-runtime` — держатель **ozhegov**
+- `h3-extension` — держатель **ozhegov**
+- `h4-close` — держатель **vesnin**
+- `closure` — держатель **vesnin**
+
+**Носители портфолио**
+
+- [regulation-v01](https://github.com/officefish/Membrana/blob/main/docs/HACKATHON_REGULATION.md) — contract
+- [device-board-hackathon-1](https://github.com/officefish/Membrana/blob/main/docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) — run
+- [development-matrix-route](https://github.com/officefish/Membrana/blob/main/docs/containers/strategic-docs/releases/development-matrix/README.md) — matrix
+- [form-report](https://github.com/officefish/Membrana/blob/main/docs/procedures/hackathon/FORM_REPORT.md) — report
+
+**Прожитые примеры**
+
+- [device-board-hackathon-1](https://github.com/officefish/Membrana/blob/main/docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) — run
+
+### `containerization`
+
+**Определение.** Процедура работы **Мастера контейнеризации**: различить оси пространства (`GROUP_CONTAINERIZATION`) и времени (`PINNED_SUBGRAPH_VERSIONING`), опереться на опыт живых домов, прогнать зубы аудита и собрать/достроить контейнер или кит без смешения слоёв.
+
+- **Держатель:** ozhegov
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `in-migration`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/containerization`](https://github.com/officefish/Membrana/blob/main/docs/procedures/containerization/README.md)
+
+**Когда входить.** крафт по скиллу membrana-containerization-master; единой yarn-команды оркестрации нет
+
+**Кадры**
+
+- `distinguish-axes` — держатель **ozhegov**
+- `audit-teeth` — держатель **dynin**
+- `craft` — держатель **ozhegov**
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `cowork`
+
+- **Держатель:** vesnin
+- **Состояние контейнера:** `declared-not-built`
+- **Миграция:** `legacy`
+- **Режим:** `не объявлен`
+- **Канон:** контейнер ещё не построен.
+
+**Кадры**
+
+Кадры не опубликованы.
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `competition`
+
+- **Держатель:** vesnin
+- **Состояние контейнера:** `declared-not-built`
+- **Миграция:** `legacy`
+- **Режим:** `не объявлен`
+- **Канон:** контейнер ещё не построен.
+
+**Кадры**
+
+Кадры не опубликованы.
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `night-sprint`
+
+- **Держатель:** vesnin
+- **Состояние контейнера:** `declared-not-built`
+- **Миграция:** `legacy`
+- **Режим:** `не объявлен`
+- **Канон:** контейнер ещё не построен.
+
+**Кадры**
+
+Кадры не опубликованы.
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `one-shot`
+
+**Определение.** One-shot — процедура **одного прохода** по подобранной (не заказанной) мелкой находке: агент нашёл сам или всплыло из прецедента. Допуск — двойной гейт (размер **S** и не сервер); исполнение кончается на «весь код дописан». Ревью и мердж в формат **не входят**.
+
+- **Держатель:** vesnin
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `in-migration`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/one-shot`](https://github.com/officefish/Membrana/blob/main/docs/procedures/one-shot/README.md)
+
+**Когда входить.** подобранная S-находка агента; не заказ из бэклога; явной yarn-команды оркестрации нет
+
+**Кадры**
+
+- `first-frame` — держатель **vesnin**
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+## Решение
+
+### `meeting`
+
+**Определение.** Заседание — конвергентная процедура: многовопросная материя, разрезанная на одновопросные комнаты под единым заданием, со своим протоколом контейнера и отдельным read-only аудитором (S-M5). Оперирует категориями слоя: @cat:виртуальная-команда ведёт комнаты (@op:read:@cat:виртуальная-команда — состав ролей читается, не мутируется), @cat:задача рождается из вердиктов (@op:create:@cat:задача — фазы эпика), @cat:ответственность устанавливается вердиктами о держателях (@op:link:@cat:ответственность), @cat:стратегическая-цель — норма сверки повесток (@op:read:@cat:стратегическая-цель).
+
+- **Держатель:** vesnin
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `migrated`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/meeting`](https://github.com/officefish/Membrana/blob/main/docs/procedures/meeting/README.md)
+
+**Когда входить.** заседание/консилиум по слову капитана; скилл membrana-meeting / membrana-consilium
+
+**Кадры**
+
+- `cut` — держатель **vesnin**
+- `rooms` — держатель **vesnin**
+- `premises-gate` — держатель **ozhegov**
+- `audit` — держатель **dynin**
+- `verdicts` — держатель **vesnin**
+
+**Носители портфолио**
+
+- [procedural-layer-epic](https://github.com/officefish/Membrana/blob/main/docs/meeting/procedural-layer/EPIC.md) — run
+- [m0-order-protocol](https://github.com/officefish/Membrana/blob/main/docs/seanses/procedural-layer-m0-order-2026-07-21.md) — protocol
+- [premises-audit-engine](https://github.com/officefish/Membrana/blob/main/scripts/meeting-audit.mjs) — engine
+
+**Прожитые примеры**
+
+- [procedural-layer-epic](https://github.com/officefish/Membrana/blob/main/docs/meeting/procedural-layer/EPIC.md) — run
+- [m0-order-protocol](https://github.com/officefish/Membrana/blob/main/docs/seanses/procedural-layer-m0-order-2026-07-21.md) — protocol
+
+### `storm`
+
+**Определение.** Шторм — дивергентная процедура рождения тезисов: владелец называет ещё не сведённый предмет, Ангелина ведёт живой конспект, участники дают реплики, а выходом становится подтверждённый набор тезисов и явная развилка. Шторм не принимает сходящийся вердикт вместо заседания и не подменяет исполнимую задачу.
+
+- **Держатель:** angelina
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `migrated`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/storm`](https://github.com/officefish/Membrana/blob/main/docs/procedures/storm/README.md)
+
+**Когда входить.** вход через skill membrana-storm; расходящийся формат, не заседание и не задача
+
+**Кадры**
+
+- `subject` — держатель **angelina**
+- `theses` — держатель **angelina**
+- `participant-signatures` — держатель **vesnin**
+- `owner-fork` — держатель **angelina**
+- `report` — держатель **angelina**
+
+**Носители портфолио**
+
+- [storm-regulation](https://github.com/officefish/Membrana/blob/main/docs/STORM_REGULATION.md) — regulation
+- [angelina-storm-procedure](https://github.com/officefish/Membrana/blob/main/docs/virtual-team/angelina/STORM_PROCEDURE.md) — procedure
+- [team-volume-report](https://github.com/officefish/Membrana/blob/main/docs/storm/storm-team-volume-in-work-2026-07-30/REPORT.md) — run
+
+**Прожитые примеры**
+
+- [team-volume-report](https://github.com/officefish/Membrana/blob/main/docs/storm/storm-team-volume-in-work-2026-07-30/REPORT.md) — run
+
+### `consilium`
+
+- **Держатель:** vesnin
+- **Состояние контейнера:** `declared-not-built`
+- **Миграция:** `legacy`
+- **Режим:** `не объявлен`
+- **Канон:** контейнер ещё не построен.
+
+**Кадры**
+
+Кадры не опубликованы.
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `adr`
+
+**Определение.** `adr` — процедура фиксации архитектурного решения ниже консилиум-гейта: когда полный consilium избыточен, но решение должно быть записано, грунтовано наблюдаемым состоянием и принято только после LGTM владельца.
+
+- **Держатель:** vesnin
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `migrated`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/adr`](https://github.com/officefish/Membrana/blob/main/docs/procedures/adr/README.md)
+
+**Когда входить.** лёгкая запись решения ниже consilium-гейта
+
+**Кадры**
+
+- `number` — держатель **vesnin**
+- `draft` — держатель **vesnin**
+- `grounding` — держатель **dynin**
+- `owner-lgtm` — держатель **vesnin**
+- `registry` — держатель **vesnin**
+
+**Носители портфолио**
+
+- [adr-catalog](https://github.com/officefish/Membrana/blob/main/docs/adr/README.md) — catalog
+- [adr-template](https://github.com/officefish/Membrana/blob/main/docs/adr/ADR_TEMPLATE.md) — template
+
+<Warning>
+Портфолио есть, но прожитого примера в нём нет. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+## Ритм
+
+### `ritual-evening`
+
+**Определение.** Вечерний ритуал — процедура закрытия рабочего дня: архивация дневных артефактов, инкрементальная индексация, код-ревью дня, закрытие GitHub-иссью и командный вечерний фидбек. Оперирует категориями слоя: @cat:виртуальная-команда даёт пять голосов фидбека (@op:read:@cat:виртуальная-команда), @cat:задача архивируется и закрывается (@op:archive:@cat:задача), @cat:ответственность читается вердиктами ревью (@op:read:@cat:ответственность), @cat:стратегическая-цель сверяется фокусом завтрашнего дня (@op:read:@cat:стратегическая-цель).
+
+- **Держатель:** angelina
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `migrated`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/ritual-evening`](https://github.com/officefish/Membrana/blob/main/docs/procedures/ritual-evening/README.md)
+
+**Когда входить.** вход через skill membrana-evening-ritual; developer-rhythm не замещает дверь вечера
+
+**Кадры**
+
+- `archive-day` — держатель **angelina**
+- `truth-memory-index` — держатель **dynin**
+- `leveling-workspace` — держатель **ozhegov**
+- `code-review` — держатель **ozhegov**
+- `closure-feedback` — держатель **angelina**
+- `deliver-to-main` — держатель **angelina**
+
+**Носители портфолио**
+
+- [evening-run-engine](https://github.com/officefish/Membrana/blob/main/scripts/ritual-evening-run.mjs) — engine
+- [evening-steps-contract](https://github.com/officefish/Membrana/blob/main/docs/tasks/evening-ritual-steps.json) — contract
+- [team-feedback-precedent](https://github.com/officefish/Membrana/blob/main/docs/seanses/team-evening-feedback-2026-07-18.md) — precedent
+
+**Прожитые примеры**
+
+- [team-feedback-precedent](https://github.com/officefish/Membrana/blob/main/docs/seanses/team-evening-feedback-2026-07-18.md) — precedent
+
+### `ritual-day`
+
+**Определение.** Утренний ритуал — процедура открытия рабочего дня: гигиена репо, план/стратегия, стендап, центральная задача дня и секретарский контур Ангелины. Оперирует категориями слоя: командой (роли в стендапе и фидбеке), задачами (MAIN_DAY / реестр), ответственностью (гейты утра) и стратегической целью (фокус дня).
+
+- **Держатель:** angelina
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `in-migration`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/ritual-day`](https://github.com/officefish/Membrana/blob/main/docs/procedures/ritual-day/README.md)
+
+**Когда входить.** открытие дня по слову капитана / агента; скилл membrana-morning-ritual
+
+**Кадры**
+
+- `night-report` — держатель **angelina**
+- `repo-hygiene` — держатель **ozhegov**
+- `canon-cascade` — держатель **angelina**
+- `magistral-gate` — держатель **angelina**
+- `deliver-to-main` — держатель **angelina**
+
+**Носители портфолио**
+
+- [morning-care-engine](https://github.com/officefish/Membrana/blob/main/scripts/morning-care.mjs) — engine
+- [morning-steps-contract](https://github.com/officefish/Membrana/blob/main/docs/tasks/morning-ritual-steps.json) — contract
+- [live-run-precedent](https://github.com/officefish/Membrana/blob/main/docs/precedents/2026-07-21-morning-ritual-live-run-mechanics-pass-value-fail.md) — precedent
+
+**Прожитые примеры**
+
+- [live-run-precedent](https://github.com/officefish/Membrana/blob/main/docs/precedents/2026-07-21-morning-ritual-live-run-mechanics-pass-value-fail.md) — precedent
+
+### `ritual-dreams`
+
+**Определение.** Процедура автономного/полуавтономного прогона снов: тик заезда (`dreams:tick`), дайджест (`dreams:digest`), синтез текста субагентом «Мастер снов». Оперирует категориями слоя: стратегической целью (пары графа правды), ответственностью (провенанс автора/версии промпта) и командой (потребители дайджеста утром).
+
+- **Держатель:** dynin
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `in-migration`
+- **Режим:** `orchestrated`
+- **Канон:** [`docs/procedures/ritual-dreams`](https://github.com/officefish/Membrana/blob/main/docs/procedures/ritual-dreams/README.md)
+
+**Когда входить.** office DreamsScheduler hourly; DREAMS_ENABLED off → skip
+
+**Кадры**
+
+Кадры не опубликованы.
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `attribution`
+
+**Определение.** Attribution — процедура вычисления и распределения ответственности за изменения: от вывода держателя ветки на шип-гейте до распределения по файлам сложных процедурных коммитов парсером на code-review (T6). Оперирует категорией «ответственность» (род: отношение — устанавливает и разрывает связь «работа ↔ персона», не мутируя её концы).
+
+- **Держатель:** dynin
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `in-migration`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/attribution`](https://github.com/officefish/Membrana/blob/main/docs/procedures/attribution/README.md)
+
+**Когда входить.** адрес домена ответственности (T9); первый движок — направленческий чекер границы
+
+**Кадры**
+
+Кадры не опубликованы.
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `test-runs`
+
+Корневой дом тестовой оснастки Membrana: сетапы `smoke` / `gate` / `full`, селектор по графу импортов, отчеты о том, что не гонялось, и данные для `test:scripts`.
+
+- **Держатель:** dynin
+- **Состояние контейнера:** `built-external-home`
+- **Миграция:** `in-migration`
+- **Режим:** `не объявлен`
+- **Канон:** [`tests`](https://github.com/officefish/Membrana/blob/main/tests/README.md)
+
+**Кадры**
+
+Кадры не опубликованы.
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `ship-gate`
+
+- **Держатель:** vesnin
+- **Состояние контейнера:** `declared-not-built`
+- **Миграция:** `legacy`
+- **Режим:** `не объявлен`
+- **Канон:** контейнер ещё не построен.
+
+**Кадры**
+
+Кадры не опубликованы.
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `tasks-audit`
+
+- **Держатель:** dynin
+- **Состояние контейнера:** `declared-not-built`
+- **Миграция:** `legacy`
+- **Режим:** `не объявлен`
+- **Канон:** контейнер ещё не построен.
+
+**Кадры**
+
+Кадры не опубликованы.
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `git-audit`
+
+- **Держатель:** dynin
+- **Состояние контейнера:** `declared-not-built`
+- **Миграция:** `legacy`
+- **Режим:** `не объявлен`
+- **Канон:** контейнер ещё не построен.
+
+**Кадры**
+
+Кадры не опубликованы.
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `code-review`
+
+Ревью изменений виртуальной командой с **ведущим из пяти** (T3 шторма branch-taxonomy 21.07): ведущий назначается каскадом «явное слово владельца → `leadPersona` карточки, чей id виден в ветке/диффе → скоуп путей диффа → Teamlead + пометка "вне конвенции"»; на ревью работает его персональная память (T4), дифф сверяется с бестиарием антипаттернов (T5), вердикт ведущего — **пропуск или блок**.
+
+- **Держатель:** vesnin
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `in-migration`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/code-review`](https://github.com/officefish/Membrana/blob/main/docs/procedures/code-review/README.md)
+
+**Когда входить.** также шаг вечерней цепочки; режимы --pr / --branch / --uncommitted
+
+**Кадры**
+
+Кадры не опубликованы.
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `bridge`
+
+**Держатель:** Ангелина (`leadPersona` манифеста) — ведущая комнаты (конспект и честный отчёт; кода не пишет, кодекс #922).
+
+- **Держатель:** angelina
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `in-migration`
+- **Режим:** `mirrored`
+- **Канон:** [`docs/procedures/bridge`](https://github.com/officefish/Membrana/blob/main/docs/procedures/bridge/README.md)
+
+**Когда входить.** открытие явное по слову капитана; не обязано быть с утра
+
+**Кадры**
+
+Кадры не опубликованы.
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `membrana-leveling`
+
+**Определение.** Зонтичная процедура **детерминированного выравнивания** общего рабочего пространства: классифицировать dirty-пути (`live` / `ready` / `unfinished` / `trash`), влить `ready` в `main` сериализованным `pr:ship`-поездом, выровнять деревья и выдать манифест-отчёт. Не смешивать живую правку, готовую работу, незавершёнку и мусор.
+
+- **Держатель:** ozhegov
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `in-migration`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/membrana-leveling`](https://github.com/officefish/Membrana/blob/main/docs/procedures/membrana-leveling/README.md)
+
+**Когда входить.** вечернее выравнивание workspace по скиллу membrana-leveling / регламенту §8.1
+
+**Кадры**
+
+- `leveling-main-fill` — держатель **ozhegov**
+- `leveling-workspace` — держатель **ozhegov**
+- `leveling-scratch` — держатель **dynin**
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>
+
+### `weekly-dead-wire`
+
+**Дом процедуры.** Единственная редакция; `AGENTS.md` несёт строку-указатель, а не пересказ.
+
+- **Держатель:** ozhegov
+- **Состояние контейнера:** `built-valid`
+- **Миграция:** `in-migration`
+- **Режим:** `local`
+- **Канон:** [`docs/procedures/weekly-dead-wire`](https://github.com/officefish/Membrana/blob/main/docs/procedures/weekly-dead-wire/README.md)
+
+**Когда входить.** выходной такт, следующий прогон 09.08; планировщика нет — процедуру поднимает владелец такта, и это записано честно, а не выдано за автоматизм
+
+**Кадры**
+
+- `measure` — держатель **dynin**
+- `verdict` — держатель **ozhegov**
+- `record` — держатель **ozhegov**
+
+<Warning>
+Портфолио отсутствует: подтверждённый пример нельзя подменять иллюстрацией. Пробел входит в `workflow-examples-marathon`.
+</Warning>

@@ -10,7 +10,7 @@ import { dirname, join, resolve } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
-import { USAGE_RECORD_KEYS, workshopSchemaProblems } from './lib/validate-workshop.mjs';
+import { USAGE_EVIDENCE_KINDS, USAGE_RECORD_KEYS, workshopSchemaProblems } from './lib/validate-workshop.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -28,6 +28,8 @@ const usage = (over = {}) => ({
   what: 'что даёт вызов',
   sample: 'строка вывода',
   measuredAt: '2026-07-31',
+  evidenceKind: 'run',
+  source: 'docs/precedents/example.md',
   ...over,
 });
 
@@ -92,7 +94,7 @@ test('имена доменных инструментов уникальны и
 // ── Форма записи ──────────────────────────────────────────────────────────────────────────
 
 test('все три поля записи обязательны — половина хуже отсутствия', () => {
-  assert.deepEqual(USAGE_RECORD_KEYS, ['what', 'sample', 'measuredAt']);
+  assert.deepEqual(USAGE_RECORD_KEYS, ['what', 'sample', 'measuredAt', 'evidenceKind', 'source']);
   for (const missing of USAGE_RECORD_KEYS) {
     const rec = usage();
     delete rec[missing];
@@ -100,6 +102,13 @@ test('все три поля записи обязательны — полов�
     // Половина записи выглядит документацией, ею не будучи.
     assert.ok(p.some((x) => x.includes(`usage.audit.${missing}`)), `${missing} обязано ловиться`);
   }
+});
+
+test('род evidence закрыт: run или fixture', () => {
+  assert.deepEqual(USAGE_EVIDENCE_KINDS, ['run', 'fixture']);
+  assert.deepEqual(problemsOf(manifest({ usage: { audit: usage({ evidenceKind: 'fixture' }) } })), []);
+  assert.ok(problemsOf(manifest({ usage: { audit: usage({ evidenceKind: 'demo' }) } }))
+    .some((x) => /evidenceKind/u.test(x)));
 });
 
 test('пустая строка полем не считается', () => {

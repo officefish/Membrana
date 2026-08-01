@@ -2,23 +2,42 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `closed` |
-| **hackathonId** | `device-board-hackathon-1` |
-| **openedAt** | 2026-06-17 |
-| **closedAt** | 2026-06-17 |
-| **closure** | [`docs/archive/hackathon/2026-06-17/CLOSURE.md`](./archive/hackathon/2026-06-17/CLOSURE.md) |
+| **status** | `open` |
+| **hackathonId** | `mintlify-workshops-procedures-2026-08-01` |
+| **openedAt** | 2026-08-01 |
+| **branch** | `codex/mintlify-workshops-procedures-hackathon` |
+| **base** | PR #1613 · `codex/execution-procedure-interface` |
+| **brief** | [`docs/prompts/MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_BRIEF.md`](./prompts/MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_BRIEF.md) |
+| **interview** | [`docs/seanses/hackathon-brief-interview-mintlify-workshops-procedures-2026-08-01.md`](./seanses/hackathon-brief-interview-mintlify-workshops-procedures-2026-08-01.md) |
+| **prompt** | [`docs/prompts/MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_PROMPT.md`](./prompts/MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_PROMPT.md) |
 
-## Итог
+## Замороженный scope
 
-Хакатон device-board 1 завершён. Все эпики DB-H0…H4 + H2a/H2d архивированы в `docs/tasks/archive/`.
+Отрендерить в Mintlify доступную документацию по всем живым мастерским и всем
+записям реестра процедур. Редакционные страницы объясняют систему, а каталоги
+генерируются из первичных источников. Реальные примеры используются там, где
+они существуют; их отсутствие становится явным входом marathon-задачи.
 
-**Дальше:** обычный ритм — эпики в [`docs/tasks/registry.json`](./tasks/registry.json), `yarn ritual:day`, `yarn task:archive` по закрытию задач.
+## Эстафета
 
-## Бывшие эпики (все ✅)
+| Этап | Держатель | Карточка | Выход | Статус |
+|------|-----------|----------|-------|--------|
+| H1 foundation | vesnin | `mwp-h1-foundation` | архитектура проекции и генератор | accepted |
+| H2 runtime | ozhegov | `mwp-h2-workshops` | страницы мастерских | accepted |
+| H3 extension | ozhegov | `mwp-h3-procedures` | страницы процедур | accepted |
+| H4 close | vesnin | `mwp-h4-render-close` | marathon, render, audit, PR | team LGTM; owner gate |
 
-H0, H1a–c, H2a–d, H3a–c, H4 — см. CLOSURE.md.
+## Stop rules
 
-## Ритуалы
+- Не начинать следующий H-этап без принятого stage-completion-checklist.
+- Не поддерживать вручную список, который уже существует в реестре или
+  манифестах.
+- Не придумывать пример для заполнения пустоты.
+- Не строить процедуру marathon внутри этого хакатона.
+- Не публиковать Mintlify в production без отдельного слова владельца.
 
-- `yarn ritual:day`, `yarn ritual:evening` — **снова разрешены**
-- `yarn plan:day`, `yarn standup`, `yarn main-day-issue` — **снова разрешены**
+## Лог
+
+Текущий прогон: [`docs/HACKATHON_LOG_2026_08_01.md`](./HACKATHON_LOG_2026_08_01.md).
+Исторический `device-board-hackathon-1` закрыт и остаётся в архиве
+`docs/archive/hackathon/2026-06-17/`.

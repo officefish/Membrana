@@ -23,7 +23,8 @@ const REQUIRED_KEYS = ['pattern', 'name', 'worksOn', 'kit', 'verbs'];
 const OPTIONAL_KEYS = ['role', 'dependentOn', 'mirrorsFrom', 'rulesVersion', 'usage'];
 
 /** Обязательные поля записи `usage` (поправка Ф1 от 31.07). */
-export const USAGE_RECORD_KEYS = Object.freeze(['what', 'sample', 'measuredAt']);
+export const USAGE_RECORD_KEYS = Object.freeze(['what', 'sample', 'measuredAt', 'evidenceKind', 'source']);
+export const USAGE_EVIDENCE_KINDS = Object.freeze(['run', 'fixture']);
 
 /** Дата прогона примера: `YYYY-MM-DD`. */
 const MEASURED_AT_RE = /^\d{4}-\d{2}-\d{2}$/u;
@@ -148,6 +149,9 @@ export function workshopSchemaProblems(m) {
         if (isNonEmptyString(rec.measuredAt) && !MEASURED_AT_RE.test(rec.measuredAt)) {
           problems.push(`usage.${k}.measuredAt — не YYYY-MM-DD`);
         }
+        if (isNonEmptyString(rec.evidenceKind) && !USAGE_EVIDENCE_KINDS.includes(rec.evidenceKind)) {
+          problems.push(`usage.${k}.evidenceKind — ожидается ${USAGE_EVIDENCE_KINDS.join('|')}`);
+        }
         for (const f of Object.keys(rec)) {
           if (!USAGE_RECORD_KEYS.includes(f)) problems.push(`usage.${k}: лишнее поле ${f}`);
         }
@@ -268,6 +272,12 @@ export function validateWorkshop(manifestPath, repoRoot) {
         resolvable = false;
       }
     }
+    for (const [verb, usage] of Object.entries(manifest.usage ?? {})) {
+      if (isNonEmptyString(usage?.source) && !existsSync(join(repoRoot, usage.source))) {
+        problems.push(`usage.${verb}.source не резолвится: ${usage.source}`);
+        resolvable = false;
+      }
+    }
   }
 
   return {
@@ -295,10 +305,10 @@ export function validateWorkshop(manifestPath, repoRoot) {
  * Расширять этот список — вносить строку сюда, и только так: молчаливое расширение
  * `RootPolicy` §3 запрещает отдельным пунктом.
  */
-export const ROOT_CONTAINER_ALLOWLIST = Object.freeze(['scripts']);
+export const ROOT_CONTAINER_ALLOWLIST = Object.freeze(['scripts', 'tests']);
 
 /** Каталоги, в которые обход не заходит ни при каком классе. */
-const SKIP_DIRS = new Set(['node_modules', 'cache']);
+const SKIP_DIRS = new Set(['node_modules', 'cache', '.cache']);
 
 /**
  * Все `workshop.manifest.json` в области `RootPolicy` (рекурсивно).

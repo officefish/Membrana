@@ -41,7 +41,7 @@ test('§3 назвал четыре дома поимённо — все чет�
   const homes = discoverHomes(repoRoot).map((h) => h.home);
   // «минимум обязан покрывать прямые docs/* с README и де-факто дома вроде docs/procedures/*,
   // docs/seanses/night-hunt — так, чтобы docs/network попал в D_home»
-  for (const named of ['docs/network', 'docs/seanses/night-hunt', 'docs/procedures/ritual-day', 'scripts']) {
+  for (const named of ['docs/network', 'docs/seanses/night-hunt', 'docs/procedures/ritual-day', 'scripts', 'tests']) {
     assert.ok(homes.includes(named), `${named} назван контрактом и обязан быть в индексе`);
   }
 });
@@ -49,7 +49,7 @@ test('§3 назвал четыре дома поимённо — все чет�
 test('обещание «невидимки становятся видны без 33 манифестов» проверяется счётом', () => {
   const homes = discoverHomes(repoRoot);
   const workshops = homes.filter((h) => h.kind === RECORD_KINDS.WORKSHOP);
-  assert.equal(workshops.length, 13, 'манифестов по-прежнему 13 — ни одного не заведено «для зелени»');
+  assert.equal(workshops.length, 14, '14 живых манифестов имеют README-дверь; ни одного не заведено «для зелени»');
   assert.ok(invisibleBefore(homes).length >= 25, `домов без мастерской ${invisibleBefore(homes).length}`);
 });
 
@@ -78,6 +78,11 @@ test('README без RootPolicy домом не делает', () => {
   assert.deepEqual(discoverHomes(root), []);
 });
 
+test('служебный .cache не участвует в обнаружении домов', () => {
+  const root = fixture(['docs/.cache', 'docs/.cache/nested']);
+  assert.deepEqual(discoverHomes(root), []);
+});
+
 test('глубина под docs: первый и второй уровень — дом, третий — нет', () => {
   assert.equal(underRootPolicy('docs/network'), true);
   assert.equal(underRootPolicy('docs/audit/git'), true);
@@ -86,6 +91,7 @@ test('глубина под docs: первый и второй уровень �
 
 test('корневой контейнер — только из allowlist', () => {
   assert.equal(underRootPolicy('scripts'), true);
+  assert.equal(underRootPolicy('tests'), true);
   assert.equal(underRootPolicy('packages'), false);
   assert.equal(underRootPolicy('apps'), false);
 });

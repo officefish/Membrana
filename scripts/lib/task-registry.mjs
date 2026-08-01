@@ -148,6 +148,8 @@ const TASK_SIZES = ['S', 'M', 'L'];
 // `hackathon` добавлен тем же классом дефекта: исторические карточки
 // `device-board-hackathon-1`/`db-h*` уже несли sprintKind=hackathon, а новый
 // route skill обязан уметь завести такую карточку инструментом, не ручным JSON.
+// `marathon` — ратифицированное имя длинного development-route из матрицы.
+// Реестр принимает карточку этого рода, но это не объявляет процедуру построенной.
 // Перечень остаётся закрытым: новое значение — новое слово канона, не «прочее».
 const SPRINT_KINDS = [
   'membrana-local-sprint',
@@ -158,6 +160,7 @@ const SPRINT_KINDS = [
   'cowork-sprint',
   'meeting',
   'hackathon',
+  'marathon',
 ];
 
 /**

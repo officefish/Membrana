@@ -3,7 +3,7 @@
   "name": "Membrana",
   "theme": "mint",
   "colors": {
-    "primary": "#0d9488",
+    "primary": "#0f766e",
     "light": "#14b8a6",
     "dark": "#0f766e"
   },
@@ -28,6 +28,23 @@
           "concepts/reference-model",
           "concepts/variable-store",
           "concepts/streaming-lifecycle"
+        ]
+      },
+      {
+        "group": "Мастерские",
+        "pages": [
+          "workflow/workshops/overview",
+          "workflow/workshops/using",
+          "workflow/workshops/catalog"
+        ]
+      },
+      {
+        "group": "Процедуры",
+        "pages": [
+          "workflow/procedures/overview",
+          "workflow/procedures/choosing",
+          "workflow/procedures/running",
+          "workflow/procedures/catalog"
         ]
       },
       {

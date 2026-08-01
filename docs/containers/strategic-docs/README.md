@@ -1,11 +1,20 @@
-# strategic-docs
+# Контейнер strategic-docs
 
-Статус Affine publish: **frozen** с 2026-07-26; источник — `workshop.catalog.json#surfaceStatus.affinePublish`.
-Публикационные команды (`strategic-docs:publish`, `affine:import`, `affine:sync`) отказывают без `--allow-affine-frozen-publish`.
-Прецедент: [`2026-07-26-affine-editor-paradigm-impedance`](../../precedents/2026-07-26-affine-editor-paradigm-impedance.md); гранулы, паспорта и генераторы продолжают жить в Git.
+Дом генеративных стратегических документов: гранулы и шаблоны собираются в
+проверяемые релизы, после чего могут быть опубликованы на разрешённую поверхность.
 
-Контейнер стратегических документов: гранулы, шаблоны, релизы. Git — SoT; Affine — owner-facing поверхность (Templates / Releases).
+Вход в оснастку дома — [`WORKSHOP.md`](./WORKSHOP.md). Манифест мастерской:
+[`workshop.manifest.json`](./workshop.manifest.json); каталог инструментов:
+[`workshop.catalog.json`](./workshop.catalog.json).
 
-Мастерская: [`WORKSHOP.md`](./WORKSHOP.md) · `yarn strategic-docs:tools` · `yarn strategic-docs:publish`.
+> **Affine publish заморожен с 2026-07-26.** `strategic-docs:publish`,
+> `affine:import` и `affine:sync` отказывают без явного
+> `--allow-affine-frozen-publish`. Канон состояния и причина находятся в
+> [`workshop.catalog.json#surfaceStatus.affinePublish`](./workshop.catalog.json) и
+> [`PUBLISH.md`](./PUBLISH.md). Генерация гранул, шаблонов и релизов не заморожена.
 
-Поверхность Affine: [`SURFACE.md`](./SURFACE.md) · publish: [`PUBLISH.md`](./PUBLISH.md).
+## Граница
+
+Контейнер хранит исходники и релизы документов. Общий обзор контейнеров остаётся
+в [`docs/tooling-atlas`](../../tooling-atlas/README.md), а публикация в Affine
+подчиняется [`PUBLISH.md`](./PUBLISH.md).

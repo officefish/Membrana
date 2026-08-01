@@ -20,6 +20,12 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `workflow-examples-marathon` | Накопить проверяемые примеры мастерских и процедур | L | [`WORKFLOW_EXAMPLES_MARATHON_PROMPT.md`](../prompts/WORKFLOW_EXAMPLES_MARATHON_PROMPT.md) | — |
+| `mwp-h4-render-close` | MWP-H4: marathon, Mintlify render и закрытие | M | [`MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_PROMPT.md`](../prompts/MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_PROMPT.md) | — |
+| `mwp-h3-procedures` | MWP-H3: доступная Mintlify-документация процедур | M | [`MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_PROMPT.md`](../prompts/MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_PROMPT.md) | — |
+| `mwp-h2-workshops` | MWP-H2: доступная Mintlify-документация мастерских | M | [`MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_PROMPT.md`](../prompts/MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_PROMPT.md) | — |
+| `mwp-h1-foundation` | MWP-H1: архитектура проекции и генератор каталогов | M | [`MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_PROMPT.md`](../prompts/MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_PROMPT.md) | — |
+| `mintlify-workshops-procedures-hackathon` | Mintlify: мастерские и процедуры Membrana | L | [`MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_PROMPT.md`](../prompts/MINTLIFY_WORKSHOPS_PROCEDURES_HACKATHON_PROMPT.md) | — |
 | `procedure-run-journal-f1-local-trail` | F1: локальная лента прогона процедур | M | [`PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md) | — |
 | `procedure-run-journal-2026-08-01` | Membrana Local Sprint: журнал прогона процедур | L | [`PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md) | — |
 | `forecast-archive-wire` | Провод памяти персоны: запись «предсказание ↔ исход» доезжает в archive/<persona>.jsonl | M | [`FORECAST_ARCHIVE_WIRE_PROMPT.md`](../prompts/FORECAST_ARCHIVE_WIRE_PROMPT.md) | [#1590](https://github.com/officefish/Membrana/issues/1590) |
