@@ -16,7 +16,11 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { readDated } from './read-dated.mjs';
-import { eveningDeliverArtifacts } from './ritual-evening-artifacts.mjs';
+import {
+  EVENING_DELIVER_ARTIFACTS,
+  eveningConditionOf,
+  eveningDeliverArtifacts,
+} from './ritual-evening-artifacts.mjs';
 import {
   MORNING_DELIVER_ARTIFACTS,
   morningDeliverPaths,
@@ -43,7 +47,27 @@ export const DELIVER_RITUALS = Object.freeze({
   }),
   evening: Object.freeze({
     manifest: 'docs/procedures/ritual-evening/MANIFEST.json',
-    artifacts: (date) => eveningDeliverArtifacts(date),
+    // УСЛОВНОСТЬ ЖИВЁТ ЗДЕСЬ, а не в каталоге артефактов и не в общем движке. Разбор
+    // структурщика и архитектора (блоки `deliver-list-flags`, `deliver-engine-conditional`):
+    // список — каталог фактов без условий, движок — общий и про мостик знать не должен.
+    // Знание «этот артефакт рождается лишь по такому-то условию» принадлежит ПРОЦЕДУРЕ вечера,
+    // и вот её конфигурация.
+    //
+    // Свидетель независимый: `docs/bridge/state.json`, мостик сам говорит, открывали ли его.
+    // Спросить «есть ли файл конспекта» значило бы отменять проверку тем же, чего она
+    // касается — резчик назвал такую условность затвором.
+    //
+    //   мостик не открывали → позиция не спрашивается
+    //   мостик открывали    → позиция спрашивается наравне со всеми
+    //   свидетель нечитаем  → позиция СПРАШИВАЕТСЯ: неизвестность оборачивается проверкой,
+    //                         а не поблажкой, иначе битый файл состояния молча гасил бы её
+    artifacts: (date, ctx = {}) =>
+      eveningDeliverArtifacts(date).filter((a, i) => {
+        const template = EVENING_DELIVER_ARTIFACTS[i]?.rel ?? a.rel;
+        const condition = eveningConditionOf(template);
+        if (condition !== 'bridge-open') return true;
+        return bridgeWasOpen(ctx.repoRoot ?? '.', date);
+      }),
     branchSlug: 'ritual-evening',
     done: 'артефакты вечера на main',
     unfinished: 'вечер не завершён для соседей, пока артефакты не в main (Ф2 #1533)',
@@ -84,6 +108,29 @@ export function loadDeliverFrame(repoRoot, ritual = 'day') {
     return { frame: null, problems: [`frames: нет кадра ${DELIVER_FRAME_ID}`] };
   }
   return { frame, problems: [] };
+}
+
+/**
+ * Открывали ли мостик в этот день — по его СОБСТВЕННОМУ состоянию, а не по наличию конспекта.
+ *
+ * Свидетель отдельный от предмета: `docs/bridge/state.json` пишет сам мостик при открытии и
+ * запечатывании. Нечитаемое состояние трактуется как «открывали»: неизвестность обязана
+ * оборачиваться проверкой, а не поблажкой — иначе битый файл состояния молча отключал бы
+ * позицию, и это был бы тот самый затвор, только спрятанный глубже.
+ *
+ * @param {string} repoRoot
+ * @param {string} today ISO date YYYY-MM-DD
+ * @returns {boolean}
+ */
+export function bridgeWasOpen(repoRoot, today) {
+  const abs = join(repoRoot, 'docs/bridge/state.json');
+  if (!existsSync(abs)) return true;
+  try {
+    const state = JSON.parse(readFileSync(abs, 'utf8'));
+    return String(state?.day ?? '').slice(0, 10) === today;
+  } catch {
+    return true;
+  }
 }
 
 /**
@@ -144,7 +191,7 @@ export function verifyDeliverOnMain(repoRoot, opts = {}) {
   const today =
     opts.today ??
     new Date().toISOString().slice(0, 10);
-  const artifacts = ritualConfig(opts.ritual ?? 'day').artifacts(today);
+  const artifacts = ritualConfig(opts.ritual ?? 'day').artifacts(today, { repoRoot });
   /** @type {ArtifactDeliverReport[]} */
   const reports = [];
   for (const { rel } of artifacts) {
