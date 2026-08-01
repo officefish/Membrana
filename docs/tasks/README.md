@@ -20,6 +20,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `procedure-run-journal-f1-local-trail` | F1: локальная лента прогона процедур | M | [`PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md) | — |
+| `procedure-run-journal-2026-08-01` | Membrana Local Sprint: журнал прогона процедур | L | [`PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md) | — |
 | `forecast-archive-wire` | Провод памяти персоны: запись «предсказание ↔ исход» доезжает в archive/<persona>.jsonl | M | [`FORECAST_ARCHIVE_WIRE_PROMPT.md`](../prompts/FORECAST_ARCHIVE_WIRE_PROMPT.md) | [#1590](https://github.com/officefish/Membrana/issues/1590) |
 | `meeting-gates-teeth` | Зубы заседаний: повестка не доехала, --kind meeting, флаги прогона в метаданных протокола | M | [`MEETING_GATES_TEETH_PROMPT.md`](../prompts/MEETING_GATES_TEETH_PROMPT.md) | — |
 | `evening-steps-m2-transfer` | Перенос вердикта M2 в evening-ritual-steps.json: единая нумерация и критичность | S | [`EVENING_STEPS_M2_TRANSFER_PROMPT.md`](../prompts/EVENING_STEPS_M2_TRANSFER_PROMPT.md) | — |

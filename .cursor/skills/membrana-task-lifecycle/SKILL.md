@@ -2,7 +2,7 @@
 name: membrana-task-lifecycle
 description: >-
   Manages Membrana M/L task prompts: registry active → work → yarn task:archive →
-  task:close-github. Use when starting or closing a task, day-sprint phase, epic phase,
+  task:close-github. Use when starting or closing a task, membrana-local-sprint phase, epic phase,
   or when user mentions task:archive, TASK_CLOSURE_REGULATION, or registry.json.
   Do NOT use for daily standup rhythm (membrana-developer-rhythm).
 ---
@@ -11,16 +11,15 @@ description: >-
 
 Канон: [`docs/prompts/TASK_PROMPT_WORKFLOW.md`](../../../docs/prompts/TASK_PROMPT_WORKFLOW.md), [`docs/prompts/TASK_CLOSURE_REGULATION.md`](../../../docs/prompts/TASK_CLOSURE_REGULATION.md).
 
-**Процедура day-sprint (определение):** [`docs/procedures/day-sprint/`](../../../docs/procedures/day-sprint/) ·
-регламент [`DAY_SPRINT_REGULATION.md`](../../../docs/DAY_SPRINT_REGULATION.md).
-Инстансы — `docs/day-sprint/<id>/` (не путать с определением).
+**Процедура membrana-local-sprint (определение):** [`docs/procedures/membrana-local-sprint/`](../../../docs/procedures/membrana-local-sprint/).
+Инстансы — `docs/local-sprint/<id>/`. `day-sprint` — исторический маршрут, не новый вход.
 
 ## When to use
 
 - New M/L work: verify registry `status: active` + prompt exists.
 - Phase/epic done: archive + optional sprint closure.
 - User asks «закрой задачу», «archive», «DoD».
-- Day-sprint epic/phases: follow procedure + regulation above.
+- Membrana-local-sprint epic/phases: follow procedure above.
 
 ## When NOT to use
 
@@ -63,11 +62,11 @@ yarn task:close-github:dry
 yarn task:close-github    # evening batch
 ```
 
-## Day-sprint / epic
+## membrana-local-sprint / epic
 
 - Child phases: `parentEpic` in registry; archive each phase when done.
-- Sprint epic: archive after all phases; write `docs/day-sprint/<id>/CLOSURE.md`.
-- Update `docs/DAY_SPRINT_ACTIVE.md`, `docs/DAY_SPRINT_LOG.md`, `docs/CURRENT_TASK.md`.
+- Sprint epic: archive after all phases; write `docs/local-sprint/<id>/CLOSURE.md`.
+- Update `docs/LOCAL_SPRINT_ACTIVE.md`, `docs/LOCAL_SPRINT_LOG.md`, `docs/CURRENT_TASK.md`.
 
 ## archiveNotes examples
 

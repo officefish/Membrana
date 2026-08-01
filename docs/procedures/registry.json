@@ -105,6 +105,23 @@
       }
     },
     {
+      "id": "membrana-local-sprint",
+      "holder": "vesnin",
+      "homePath": "docs/procedures/membrana-local-sprint",
+      "container": {
+        "value": true,
+        "provenance": "vesnin@local-sprint-2026-08-01"
+      },
+      "vocabulary": {
+        "value": true,
+        "provenance": "ozhegov@local-sprint-2026-08-01"
+      },
+      "grammar": {
+        "value": true,
+        "provenance": "vesnin@local-sprint-2026-08-01"
+      }
+    },
+    {
       "id": "containerization",
       "holder": "ozhegov",
       "homePath": "docs/procedures/containerization",

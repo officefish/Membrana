@@ -1,24 +1,26 @@
 ---
-name: membrana-honest-sprint
+name: membrana-local-sprint
 description: >-
-  Runs a Membrana sprint with HONEST PERFORMERS: the teamlead cuts the work into blocks
-  (who / through which profile context / which zone / predicted volume), the owner
-  ratifies the cut, the gate checks that the context run actually happened, and both the
-  teamlead and the lead record «my prediction ↔ its outcome». Use when the user says
-  честный спринт, спринт с честными исполнителями, нарезка задачи, план нарезки,
+  Runs Membrana local sprint, the single canonical local sprint procedure for agent tasks:
+  register epic/phases as sprintKind=membrana-local-sprint, cut work into accountable blocks,
+  ratify the cut, gate real context execution, write procedure-run-journal evidence/gaps, and
+  record prediction ↔ outcome. Use when the user says membrana-local-sprint, локальный спринт,
+  честный спринт, honest-sprint, спринт с честными исполнителями, нарезка задачи, план нарезки,
   ратифицируй нарезку, гейт исполнения, yarn sprint:cut / sprint:gate / sprint:experience.
-  Do NOT use for Cowork Sprint (3 isolated blocks of one development — membrana-cowork),
-  Competition Sprint (one task, three answers, a winner) or an ordinary day M/L task
-  (membrana-task-lifecycle).
 ---
 
-# Mirror — спринт с честными исполнителями
+# Mirror — Membrana Local Sprint
 
-**Canonical:** [`.cursor/skills/membrana-honest-sprint/SKILL.md`](../../../.cursor/skills/membrana-honest-sprint/SKILL.md)
+**Canonical:** [`.cursor/skills/membrana-local-sprint/SKILL.md`](../../../.cursor/skills/membrana-local-sprint/SKILL.md)
 
-Run that playbook verbatim. Канон: вердикт заседания `sprint-honest-performers` (10/10,
-ратифицирован 30.07) · `docs/cowork-sprint/cowork-honest-sprint/INTERFACE_CONTRACT.md` ·
-`OWNER_ANSWERS.md`.
+Run that playbook verbatim. Канон: `docs/procedures/membrana-local-sprint` · вердикт
+заседания `sprint-honest-performers` (10/10, ратифицирован 30.07) ·
+`docs/cowork-sprint/cowork-honest-sprint/INTERFACE_CONTRACT.md` · `OWNER_ANSWERS.md`.
+
+Живое имя — `membrana-local-sprint`. Старое `honest-sprint` понимать только как
+alias-триггер и сразу нормализовать. Новые локальные задачи регистрировать с
+`sprintKind: "membrana-local-sprint"` и инстансом в `docs/local-sprint/<id>/`;
+другие локальные sprint-kind не заводить.
 
 Ключевые инварианты:
 

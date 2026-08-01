@@ -30,7 +30,7 @@
     "scripts/lib/strategic-docs-loader.mjs": "0a9a951e2d842f6e9feca9d901e816a3e6be6e8f",
     "scripts/lib/strategic-docs-model.mjs": "46d0f79141539fb11ba0e0d27677fb9c5642e5d4",
     "scripts/lib/strategic-docs-render-adapter.mjs": "b371d78628326455a90a61c99a38f891caeaf36f",
-    "scripts/lib/task-registry.mjs": "75811312989486dc5554e83199f5e49c124529e4",
+    "scripts/lib/task-registry.mjs": "42e96e05e2d980e2ccbe711f55e4afb183bb4892",
     "scripts/lib/tasks-audit.mjs": "e4a22ef66e482168060a3cc7af56b91d757cac47",
     "scripts/lib/tasks-decompose.mjs": "76db4ed957044028ed543db464cb73cbb086806d",
     "scripts/lib/tasks-readme-engine.mjs": "3a45a41f5e17587bc54b85011eeacbeffa7c264b",

@@ -1,0 +1,98 @@
+{
+  "//": "План честного review-прохода поверх уже написанного кода procedure-run-journal. Предыдущий проход был признан неполным: не было pre-work cut, ратификации, подключенной команды и sprint:gate. Этот план не ратифицирует прошлое задним числом: он открывает отдельный локальный review-sprint, где назначенные ответственные обязаны увидеть свои зоны кода и оставить вещдок.",
+  "schema": "sprint-cut/1",
+  "sprintId": "procedure-run-journal-2026-08-01-code-review",
+  "taskId": "procedure-run-journal-2026-08-01",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
+    "reason": "Текущий механизм membrana-local-sprint пока не имеет носителей для contract_signature и session_prep; это объявлено до review-прохода. Реальность ответственности проверяется доступными носителями: context_run через yarn ask и review_pass через сохраненный review-вещдок по каждому блоку."
+  },
+  "window": {
+    "from": "2026-08-01T09:41:12+03:00",
+    "to": "2026-08-01T14:30:00+03:00"
+  },
+  "revisionAt": "2026-08-01T09:41:12+03:00",
+  "blocks": [
+    {
+      "//": "Дынин смотрит вычислимые предикаты журнала: схема записи, hash/sourceHash, проверка jsonl, report, тестовые зубы, и честность статусов pass/blocked/gaps. После BLOCK Дынина v2 исправлена хрупкость summarizeProcedureRunTrail(): вход должен быть массивом, статус — из закрытого набора, coverage.gaps — массив.",
+      "blockId": "journal-predicates-review",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/procedure-run-journal.mjs",
+        "scripts/procedure-run-journal.test.mjs",
+        "docs/procedure-runs/README.md",
+        "docs/procedure-runs/trail/2026-08-01.jsonl"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "revisionAt": "2026-08-01T09:59:25+03:00"
+    },
+    {
+      "//": "Веснин смотрит архитектуру процедуры и перенос имени: один локальный sprint-kind, кроссагентские скиллы, процедура в registry, отсутствие второго локального спринта как альтернативы. После BLOCK Веснина добавлены engine-файлы из MANIFEST: процедура не должна ревьюиться только как описание.",
+      "blockId": "procedure-wiring-review",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/procedures/membrana-local-sprint/**",
+        ".cursor/skills/membrana-local-sprint/SKILL.md",
+        ".agents/skills/membrana-local-sprint/SKILL.md",
+        ".claude/skills/membrana-local-sprint/SKILL.md",
+        ".opencode/skills/membrana-local-sprint/SKILL.md",
+        ".cursor/skills/README.md",
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/local-sprint/procedure-run-journal-2026-08-01/**",
+        "scripts/task-start.mjs",
+        "scripts/task-register.mjs",
+        "scripts/archive-task.mjs",
+        "scripts/task-close-github-issues.mjs",
+        "scripts/sprint-cut-check.mjs",
+        "scripts/execution-gate.mjs",
+        "scripts/sprint-experience.mjs",
+        "scripts/procedure-run-journal.mjs",
+        "scripts/lib/task-registry.mjs"
+      ],
+      "estimate": {
+        "changedLines": 390
+      },
+      "revisionAt": "2026-08-01T09:48:00+03:00"
+    },
+    {
+      "//": "Ожегов смотрит терминологию и реестровую проводку: kind=membrana-local-sprint, package script, prompts, registry/readme, config order, kit manifests.",
+      "blockId": "registry-terminology-review",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/tasks-decompose.config.json",
+        "docs/tasks/registry.json",
+        "docs/tasks/README.md",
+        "package.json",
+        "docs/prompts/PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md",
+        "docs/prompts/PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md",
+        "kits/angelina-morning/MANIFEST.json",
+        "kits/containerization-master/MANIFEST.json",
+        "kits/tasks-master/MANIFEST.json"
+      ],
+      "estimate": {
+        "changedLines": 320
+      },
+      "revisionAt": "2026-08-01T09:41:12+03:00"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-01T10:00:23+03:00",
+    "digest": "1c8915492a87ab9cc634bcff53708332b490ff87ffc2a88a9c0d38a8c3716233"
+  }
+}

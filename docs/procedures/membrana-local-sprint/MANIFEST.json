@@ -1,0 +1,83 @@
+{
+  "id": "membrana-local-sprint",
+  "leadPersona": "vesnin",
+  "kitVersion": null,
+  "engines": [
+    "scripts/task-start.mjs",
+    "scripts/task-register.mjs",
+    "scripts/archive-task.mjs",
+    "scripts/task-close-github-issues.mjs",
+    "scripts/sprint-cut-check.mjs",
+    "scripts/execution-gate.mjs",
+    "scripts/sprint-experience.mjs",
+    "scripts/procedure-run-journal.mjs",
+    "scripts/lib/task-registry.mjs"
+  ],
+  "precedents": [
+    "docs/meeting/sprint-honest-performers/MEETING_VERDICT.md",
+    "docs/storm/storm-team-volume-in-work-2026-07-30/REPORT.md",
+    "docs/cowork-sprint/cowork-honest-sprint/INTERFACE_CONTRACT.md",
+    "docs/cowork-sprint/cowork-honest-sprint/OWNER_ANSWERS.md",
+    "docs/local-sprint/procedure-run-journal-2026-08-01/OPEN.md"
+  ],
+  "preflight": [
+    { "id": "neighbor-scope", "holder": "vesnin" },
+    { "id": "cut-plan", "holder": "vesnin" }
+  ],
+  "frames": [
+    { "id": "register", "holder": "vesnin" },
+    { "id": "open", "holder": "vesnin" },
+    { "id": "cut", "holder": "vesnin" },
+    { "id": "ratify", "holder": "vesnin" },
+    { "id": "execute", "holder": "dynin" },
+    { "id": "journal", "holder": "dynin" },
+    { "id": "gate", "holder": "angelina" },
+    { "id": "experience", "holder": "angelina" },
+    { "id": "closure", "holder": "vesnin" }
+  ],
+  "post": [
+    { "id": "archive", "holder": "dynin" },
+    { "id": "close-github", "holder": "vesnin" }
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "membrana-local-sprint / yarn sprint:cut",
+    "note": "единый локальный sprint-route; старое имя honest-sprint не является новым входом"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "register", "criticality": "critical" },
+      { "id": "open", "criticality": "critical" },
+      { "id": "cut", "criticality": "critical" },
+      { "id": "ratify", "criticality": "critical" },
+      { "id": "execute", "criticality": "critical" },
+      { "id": "journal", "criticality": "critical" },
+      { "id": "gate", "criticality": "critical" },
+      { "id": "experience", "criticality": "noncritical", "whyNoncritical": "петля опыта может честно вернуть defined:false до полного носителя следа" },
+      { "id": "closure", "criticality": "critical" }
+    ]
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "ratify",
+        "waitsFor": "owner",
+        "resume": "явная ратификация владельца плана нарезки → execute",
+        "note": "правка плана после ратификации сбрасывает согласие"
+      },
+      {
+        "id": "gate",
+        "waitsFor": "human",
+        "resume": "sprint:gate code 0 или явный blocked-record в procedure-run-journal",
+        "note": "пустой корпус не бывает зелёным"
+      }
+    ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "инстансы живут в docs/local-sprint/<id>/ как прогоны OPEN/CLOSURE; отдельная форма дома пока не закреплена"
+  }
+}

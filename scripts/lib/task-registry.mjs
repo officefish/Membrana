@@ -147,6 +147,7 @@ const TASK_SIZES = ['S', 'M', 'L'];
 // («канон описывает тулинг, которого нет») из заседания meeting-evening-auditor.
 // Перечень остаётся закрытым: новое значение — новое слово канона, не «прочее».
 const SPRINT_KINDS = [
+  'membrana-local-sprint',
   'day-sprint',
   'epic',
   'night-build',

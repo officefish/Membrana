@@ -1,6 +1,47 @@
 {
   "tasks": [
     {
+      "id": "procedure-run-journal-f1-local-trail",
+      "title": "F1: локальная лента прогона процедур",
+      "promptPath": "docs/prompts/PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-01",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "procedure-run-journal-2026-08-01"
+    },
+    {
+      "id": "procedure-run-journal-2026-08-01",
+      "title": "Membrana Local Sprint: журнал прогона процедур",
+      "promptPath": "docs/prompts/PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-01",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "forecast-archive-wire",
       "title": "Провод памяти персоны: запись «предсказание ↔ исход» доезжает в archive/<persona>.jsonl",
       "promptPath": "docs/prompts/FORECAST_ARCHIVE_WIRE_PROMPT.md",
