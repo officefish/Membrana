@@ -26,6 +26,9 @@ export const FINDING_KINDS = Object.freeze([
   'pending_invalid', // запись pending есть, но не проходит валидацию
   'pending_expired', // запись pending есть и валидна, но срок вышел
   'pending_orphan', // запись pending есть, а провод жив — запись протухла
+  // Пятый род введён актом владельца 01.08: поле `script` каталога мастерской означает
+  // «что запускается», а не «чем сделано», поэтому расхождение с package.json — дефект.
+  'carrier_mismatch', // каталог обещает агенту один носитель, package.json запускает другой
 ]);
 
 /** Раннеры, которые принимают путь к файлу первым позиционным аргументом. */
@@ -229,4 +232,86 @@ export function auditWires({ scripts, fileExists, pending = {}, today }) {
   for (const finding of findings) byKind[finding.kind] += 1;
 
   return { findings, checked: Object.keys(scripts).length, byKind };
+}
+
+/**
+ * Имя команды, которым каталог ключует инструмент: `yarn task:board --flag` → `task:board`.
+ * Прочерк и пустое поле означают доковый вход без команды — не провод.
+ * @param {unknown} yarnField
+ * @returns {string|null}
+ */
+export function commandNameFromYarn(yarnField) {
+  const raw = String(yarnField ?? '').trim();
+  if (raw === '' || raw === '—' || raw === '-') return null;
+  const base = raw.replace(/^yarn\s+/u, '').split(/\s+/u)[0];
+  return base || null;
+}
+
+/**
+ * Аудит объявлений каталогов мастерских.
+ *
+ * Каталог — обещание агенту, а не машине: он называет глагол и файл, которым тот сделан.
+ * Поэтому проверяются два разных утверждения. Первое — носитель существует (тот же предикат
+ * связи, ключ берётся из поля `yarn`, свои ключи перечень pending не заводит). Второе —
+ * каталог и package.json согласны о носителе.
+ *
+ * @param {object} input
+ * @param {Array<{path: string, tools: Array<Record<string, unknown>>}>} input.catalogs
+ * @param {Record<string, string>} input.scripts блок scripts из package.json
+ * @param {(path: string) => boolean} input.fileExists
+ * @param {Record<string, unknown>} [input.pending]
+ * @param {string} input.today
+ * @returns {{findings: Array<object>, checked: number}}
+ */
+export function auditCatalogs({ catalogs, scripts, fileExists, pending = {}, today }) {
+  if (!Array.isArray(catalogs)) {
+    throw new Error('auditCatalogs: catalogs обязан быть массивом разобранных каталогов');
+  }
+  if (typeof today !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(today)) {
+    throw new Error('auditCatalogs: today обязан быть датой YYYY-MM-DD');
+  }
+
+  const findings = [];
+  let checked = 0;
+
+  for (const catalog of catalogs) {
+    for (const tool of catalog.tools ?? []) {
+      const name = commandNameFromYarn(tool.yarn);
+      const declared = typeof tool.script === 'string' ? tool.script.replace(/^\.\//u, '') : null;
+      if (name === null || declared === null) continue;
+      checked += 1;
+
+      const known = Object.prototype.hasOwnProperty.call(scripts, name);
+
+      // Субъект, известный package.json, уже прошёл предикат связи там. Считать его второй
+      // раз значит удвоить одну находку: один провод — одна запись, сколько бы поверхностей
+      // его ни объявляло. Каталог добавляет ровно то, чего package.json не видит.
+      if (!known) {
+        findings.push(
+          ...checkWire({
+            name,
+            command: `node ${declared}`,
+            fileExists,
+            pending,
+            today,
+          }).map((f) => ({ ...f, source: catalog.path, tool: tool.id ?? name })),
+        );
+        continue;
+      }
+
+      const real = extractCarrierPaths(String(scripts[name]));
+      if (real.length === 0 || real.includes(declared)) continue;
+
+      findings.push({
+        kind: 'carrier_mismatch',
+        name,
+        carrier: declared,
+        detail: `каталог обещает ${declared}, а ${name} запускает ${real.join(', ')}`,
+        source: catalog.path,
+        tool: tool.id ?? name,
+      });
+    }
+  }
+
+  return { findings, checked };
 }
