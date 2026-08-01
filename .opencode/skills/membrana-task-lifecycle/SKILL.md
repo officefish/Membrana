@@ -2,7 +2,7 @@
 name: membrana-task-lifecycle
 description: >-
   Manages Membrana M/L task prompts: registry active → work → yarn task:archive →
-  task:close-github. Use when starting or closing a task, day-sprint phase, epic phase,
+  task:close-github. Use when starting or closing a task, membrana-local-sprint phase, epic phase,
   or when user mentions task:archive, TASK_CLOSURE_REGULATION, or registry.json.
   Do NOT use for daily standup rhythm (membrana-developer-rhythm).
 ---
@@ -58,11 +58,11 @@ yarn task:close-github:dry
 yarn task:close-github    # evening batch
 ```
 
-## Day-sprint / epic
+## membrana-local-sprint / epic
 
 - Child phases: `parentEpic` in registry; archive each phase when done.
-- Sprint epic: archive after all phases; write `docs/day-sprint/<id>/CLOSURE.md`.
-- Update `docs/DAY_SPRINT_ACTIVE.md`, `docs/DAY_SPRINT_LOG.md`, `docs/CURRENT_TASK.md`.
+- Sprint epic: archive after all phases; write `docs/local-sprint/<id>/CLOSURE.md`.
+- Update `docs/LOCAL_SPRINT_ACTIVE.md`, `docs/LOCAL_SPRINT_LOG.md`, `docs/CURRENT_TASK.md`.
 
 ## archiveNotes examples
 
