@@ -8,7 +8,11 @@
  */
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
+
+const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 import { blockedInputs, criticalityOf, stepStatus, isBlocking, isFinding, explainStatus, validateManifest } from './lib/step-status.mjs';
 
@@ -229,4 +233,39 @@ test('манифест вечера: consumesFrom ссылается на сущ
       assert.ok(ids.has(producer), `${s.id}: consumesFrom → «${producer}», такого шага нет`);
     }
   }
+});
+
+// ── Порядок трёх документов вечера (вердикт M2, заседание evening-review-predicate) ──
+// Мемо → хроника → ревью → архив ревью. Перенесён в исполняемый источник 01.08.
+// Критичность НЕ менялась: вердикт M2 требовал её сменить, но у audit-evening в
+// whyNoncritical записано «не должен ронять хвост вечера, где живёт обязательный
+// team-evening-feedback» (ADR-0013), и хвост стоит ПОСЛЕ. Решение владельца 01.08:
+// переносим порядок, критичность отдельным предметом.
+
+test('порядок трёх документов: мемо → хроника → ревью → архив ревью', () => {
+  const steps = JSON.parse(readFileSync(resolve(REPO_ROOT, 'docs/tasks/evening-ritual-steps.json'), 'utf8'));
+  const list = Array.isArray(steps) ? steps : (steps.steps ?? steps.items);
+  const at = (id) => list.findIndex((s) => s.id === id);
+  assert.ok(at('day-memo') < at('audit-evening'), 'мемо раньше хроники');
+  assert.ok(at('audit-evening') < at('code-review'), 'хроника раньше ревью — это и есть предмет M2');
+  assert.ok(at('code-review') < at('archive-code-review'), 'архив ревью следует за ревью');
+});
+
+test('потребители DAILY_CODE_REVIEW.md стоят ПОСЛЕ ревью — швов не рвёт', () => {
+  const steps = JSON.parse(readFileSync(resolve(REPO_ROOT, 'docs/tasks/evening-ritual-steps.json'), 'utf8'));
+  const list = Array.isArray(steps) ? steps : (steps.steps ?? steps.items);
+  const reviewAt = list.findIndex((s) => s.id === 'code-review');
+  list.forEach((s, i) => {
+    if (JSON.stringify(s.consumes ?? []).includes('DAILY_CODE_REVIEW')) {
+      assert.ok(i > reviewAt, `${s.id} потребляет отчёт ревью и обязан стоять после него`);
+    }
+  });
+});
+
+test('хвост вечера не двинулся: обязательный team-evening-feedback на своём месте', () => {
+  const steps = JSON.parse(readFileSync(resolve(REPO_ROOT, 'docs/tasks/evening-ritual-steps.json'), 'utf8'));
+  const list = Array.isArray(steps) ? steps : (steps.steps ?? steps.items);
+  const at = (id) => list.findIndex((s) => s.id === id);
+  assert.ok(at('evening-tail') > at('archive-code-review'), 'хвост после четвёрки документов');
+  assert.ok(at('deliver-to-main') > at('evening-tail'), 'доставка последней');
 });

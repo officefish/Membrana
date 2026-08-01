@@ -19,6 +19,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 import { linesByArea, registryMovement, renderReport, repoMovement, truthMovement } from './lib/audit-evening.mjs';
+import { resolveTrunk, trunkRefFrom, trunkRefusalMessage } from './lib/audit-trunk.mjs';
 
 const repoRoot = process.cwd();
 const argv = process.argv.slice(2);
@@ -62,15 +63,35 @@ function jsonAt(sha, relPath) {
   }
 }
 
+// Диапазон дня считается по СТВОЛУ, а не по ветке автора (пункт №6 хендофа 01.08).
+//
+// Вещдок 31.07: аудит брал `HEAD`, то есть голову ветки, в которой его запустили. Все шесть
+// коммитов соседних сессий в тот день лежали в стволе и оказались ВНЕ его диапазона — день
+// соседей не был увиден вовсе, а первая редакция хендофа отчеканена вслепую. Причина не в
+// невнимательности: аудит по построению не мог увидеть параллельную работу.
+//
+// Отказ, а не тихий откат. Если ствола нет (нет `origin`, нет сети, свежий клон), аудит
+// ОСТАНАВЛИВАЕТСЯ с названной причиной. Молча вернуться к `HEAD` значило бы вернуть ту же
+// слепоту без предупреждения — отчёт вышел бы бойким и неполным, и отличить его было бы нечем.
+// Предикат живёт в `scripts/lib/audit-trunk.mjs` — чистый, без ФС и без `process.exit`.
+// Держать его здесь значило бы, что тест ради одной функции импортирует ВЕСЬ скрипт и
+// запускает аудит побочным эффектом, а при отсутствии ствола убивает процесс тестов
+// (B6, найдено ревью PR #1612).
+const trunk = resolveTrunk(trunkRefFrom(process.env), (r) => git('rev-parse', '--verify', '--quiet', r));
+if (!trunk.ok) {
+  console.error(trunkRefusalMessage(trunk.reason));
+  process.exit(2);
+}
+
 // База дня: последний коммит ДО 00:00 этой даты. Всё меряется относительно него.
 let base;
 try {
-  base = git('rev-list', '-1', `--before=${date} 00:00`, 'HEAD');
+  base = git('rev-list', '-1', `--before=${date} 00:00`, trunk.ref);
 } catch {
   base = '';
 }
 if (!base) {
-  console.error(`Нет коммитов до ${date} — не от чего отсчитывать день.`);
+  console.error(`Нет коммитов до ${date} в ${trunk.ref} — не от чего отсчитывать день.`);
   process.exit(1);
 }
 
@@ -80,7 +101,7 @@ if (!base) {
 const nextDay = new Date(`${date}T00:00:00Z`);
 nextDay.setUTCDate(nextDay.getUTCDate() + 1);
 const dayAfter = nextDay.toISOString().slice(0, 10);
-const head = git('rev-list', '-1', `--before=${dayAfter} 00:00`, 'HEAD');
+const head = git('rev-list', '-1', `--before=${dayAfter} 00:00`, trunk.ref);
 // Пустой день — ВАЛИДНЫЙ отчёт из нулей, а не отказ (ADR-0013, DoD): день без
 // движения это факт, и он должен быть записан, а не проглочен. Поэтому сообщение
 // информационное и exit остаётся 0 — иначе ритуал спотыкался бы о выходной.

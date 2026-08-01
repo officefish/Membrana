@@ -142,35 +142,6 @@
       ]
     },
     {
-      "id": "code-review",
-      "script": "scripts/code-review.mjs",
-      "kind": "mechanic",
-      "criticality": "critical",
-      "//incident": "БЫЛ || true. Это и есть инцидент rt-9: 15.07 фолбэк без кредита отдал exit 127, никто не заметил, downstream заархивировал вчерашний отчёт под сегодняшней датой. Ось S возвращает шагу зубы.",
-      "label": "Ревью кода дня",
-      "consumes": [],
-      "produces": [
-        "docs/DAILY_CODE_REVIEW.md"
-      ]
-    },
-    {
-      "id": "archive-code-review",
-      "script": "scripts/archive-daily-code-review.mjs",
-      "kind": "mechanic",
-      "criticality": "critical",
-      "//gate": "НЕСУЩЕЕ РЕБРО S→F. Читает выход code-review. Если code-review не 'ok' — архивировать нечего: заархивированный вчерашний отчёт под сегодняшней меткой и есть инцидент. isFresh обязателен ПЕРЕД копированием.",
-      "label": "Архивация отчёта ревью",
-      "consumes": [
-        "docs/DAILY_CODE_REVIEW.md"
-      ],
-      "consumesFrom": {
-        "docs/DAILY_CODE_REVIEW.md": "code-review"
-      },
-      "produces": [
-        "docs/archive/daily-code-review/"
-      ]
-    },
-    {
       "id": "day-memo",
       "script": "scripts/day-memo.mjs",
       "kind": "mechanic",
@@ -206,6 +177,35 @@
       "produces": [
         "docs/DAILY_AUDIT.md",
         "docs/archive/daily-day/<date>/audit.md"
+      ]
+    },
+    {
+      "id": "code-review",
+      "script": "scripts/code-review.mjs",
+      "kind": "mechanic",
+      "criticality": "critical",
+      "//incident": "БЫЛ || true. Это и есть инцидент rt-9: 15.07 фолбэк без кредита отдал exit 127, никто не заметил, downstream заархивировал вчерашний отчёт под сегодняшней датой. Ось S возвращает шагу зубы.",
+      "label": "Ревью кода дня",
+      "consumes": [],
+      "produces": [
+        "docs/DAILY_CODE_REVIEW.md"
+      ]
+    },
+    {
+      "id": "archive-code-review",
+      "script": "scripts/archive-daily-code-review.mjs",
+      "kind": "mechanic",
+      "criticality": "critical",
+      "//gate": "НЕСУЩЕЕ РЕБРО S→F. Читает выход code-review. Если code-review не 'ok' — архивировать нечего: заархивированный вчерашний отчёт под сегодняшней меткой и есть инцидент. isFresh обязателен ПЕРЕД копированием.",
+      "label": "Архивация отчёта ревью",
+      "consumes": [
+        "docs/DAILY_CODE_REVIEW.md"
+      ],
+      "consumesFrom": {
+        "docs/DAILY_CODE_REVIEW.md": "code-review"
+      },
+      "produces": [
+        "docs/archive/daily-code-review/"
       ]
     },
     {
