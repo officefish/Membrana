@@ -28,11 +28,6 @@
       "reason": "awaits-implementation",
       "until": "2026-08-09",
       "footprint": 8
-    },
-    "cabinet:mp7:prod": {
-      "reason": "awaits-implementation",
-      "until": "2026-08-09",
-      "footprint": 7
     }
   }
 }
