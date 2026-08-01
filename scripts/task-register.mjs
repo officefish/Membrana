@@ -10,7 +10,7 @@
  * (ephemeral regeneration, research Q1 консилиума agent-tooling-friction-2).
  *
  * Usage:
- *   yarn task:register --id <slug> --title "…" --size M [--issue N] [--linear DRU-N]
+ *   yarn task:register --id <slug> --title "…" --size M (--issue N | --no-issue "причина") [--linear DRU-N]
  *                      [--kind day-sprint] [--lead vesnin] [--support a,b] [--insight <id>]
  *                      [--notes "…"] [--prompt docs/prompts/X.md] [--research] [--push]
  *
@@ -29,6 +29,7 @@ import { fileURLToPath } from 'node:url';
 import { researchSectionStub } from './lib/deep-research.mjs';
 import {
   buildTaskEntry,
+  issueLinkProblem,
   loadRegistry,
   renderTaskPromptStub,
   saveRegistry,
@@ -64,7 +65,15 @@ const isMain = process.argv[1]?.endsWith('task-register.mjs');
 if (isMain) {
   const cli = parseRegisterArgs(process.argv.slice(2));
   if (!cli.id || !cli.title || !cli.size) {
-    console.error('Usage: yarn task:register --id <slug> --title "…" --size S|M|L [--issue N] [--kind …] [--lead …] [--support a,b] [--insight …] [--notes …] [--prompt <path>] [--parent-epic <id>] [--push]');
+    console.error('Usage: yarn task:register --id <slug> --title "…" --size S|M|L (--issue N | --no-issue "причина") [--kind …] [--lead …] [--support a,b] [--insight …] [--notes …] [--prompt <path>] [--parent-epic <id>] [--push]');
+    process.exit(1);
+  }
+
+  // Норму сторожит ДВЕРЬ, а не ядро: buildTaskEntry остаётся чистым строителем и зовётся
+  // из тестов и соседей, которым связь с GitHub не предмет. Запрет здесь — и только здесь.
+  const linkProblem = issueLinkProblem(cli);
+  if (linkProblem) {
+    console.error(`task:register — ${linkProblem}`);
     process.exit(1);
   }
 
