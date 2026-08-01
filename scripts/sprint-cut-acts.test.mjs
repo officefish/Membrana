@@ -9,7 +9,10 @@
  * вне закрытого списка — ошибка входа, а не «прочее».
  */
 import assert from 'node:assert/strict';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
 import {
   ACT_KINDS,
@@ -136,4 +139,33 @@ test('лента пуста → находка: отсутствие вещдо�
 test('след прогона есть → находки нет', () => {
   const acts = [{ kind: ACT_KINDS.CUT_CONTEXT_RUN, sprintId: 'demo', subject: 'tarasov' }];
   assert.deepEqual(cutterFindings({ sprintId: 'demo', cutBy: 'tarasov' }, acts), []);
+});
+
+// ── Ссылки лент актов обязаны разрешаться (ответ на P1 ревью PR #1604) ───────────────
+// Ревью заподозрило мёртвую ссылку в фикстуре: `ref` указывал на файл, которого нет в
+// диффе. Проверено предложенной им же командой (`git ls-files`) — файл отслеживается и
+// лежит в стволе, ссылка живая. Но класс реален: мёртвый `ref` в ленте даёт либо ложное
+// зелёное, либо падение на чужом окружении. Закрыт зубом, а не словом.
+
+test('каждый ref в лентах актов указывает на существующий файл', () => {
+  const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+  let checked = 0;
+  for (const dir of ['docs/sprint/cut/trail', 'docs/sprint/cut/fixtures/trail']) {
+    const abs = resolve(root, dir);
+    if (!existsSync(abs)) continue;
+    for (const file of readdirSync(abs).filter((f) => f.endsWith('.jsonl'))) {
+      for (const line of readFileSync(resolve(abs, file), 'utf8').split('\n')) {
+        const s = line.trim();
+        if (!s || s.startsWith('#')) continue;
+        const parsed = parseAct(JSON.parse(s));
+        if (!parsed.ok || !parsed.act.ref) continue;
+        checked += 1;
+        assert.ok(
+          existsSync(resolve(root, parsed.act.ref)),
+          `${dir}/${file}: ref «${parsed.act.ref}» не разрешается — мёртвая ссылка в ленте`,
+        );
+      }
+    }
+  }
+  assert.ok(checked > 0, 'проверять было нечего — зуб обязан иметь предмет, иначе он молчалив');
 });
