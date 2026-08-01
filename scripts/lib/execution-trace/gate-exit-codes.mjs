@@ -24,6 +24,18 @@ export const VERDICTS = Object.freeze({
   PLAN_LIED: 'plan_lied',
   WRONG_PERFORMER: 'wrong_performer',
   STALE_TRACE: 'stale_trace',
+  /**
+   * Часть вещдоков блока судила ДРУГУЮ вещь (акт владельца 01.08, восьмой вердикт).
+   *
+   * До него `stale_trace` выносился, только если протухли ВСЕ следы блока. Уцелел хоть
+   * один — протухшие молча выпадали из `evidenceRefs`, а вердикт оставался `honest_pair`.
+   * Вещдок #1566: родитель разобран, из него нарезаны три ребёнка, прогон контекста остался
+   * один — и все три получили `honest_pair` на разборе вещи, которой в той форме не
+   * существовало. Формулировка issue: «honest_pair слабее, чем читается».
+   *
+   * Список остаётся закрытым — он стал из восьми, а не открылся.
+   */
+  STALE_PARTIAL: 'stale_partial',
   UNRESOLVABLE_REF: 'unresolvable_ref',
   NO_CORPUS: 'no_corpus',
 });
@@ -39,6 +51,7 @@ export const VERDICT_CLASS = Object.freeze({
   [VERDICTS.PLAN_LIED]: 'stop',
   [VERDICTS.WRONG_PERFORMER]: 'stop',
   [VERDICTS.STALE_TRACE]: 'stop',
+  [VERDICTS.STALE_PARTIAL]: 'stop',
   [VERDICTS.UNRESOLVABLE_REF]: 'stop',
   [VERDICTS.NO_CORPUS]: 'stop',
 });

@@ -172,8 +172,8 @@ test('молчание режимом не является: план без mod
 
 // ─── закрытость списков и запрет молчаливого зелёного ──────────────────────────
 
-test('списки закрыты: шесть зубов, три вердикта, два режима, четыре причины', () => {
-  assert.equal(TOOTH_IDS.length, 6);
+test('списки закрыты: семь зубов, три вердикта, два режима, четыре причины', () => {
+  assert.equal(TOOTH_IDS.length, 7);
   assert.deepEqual([...VERDICTS], ['contract', 'findings', 'unreadable']);
   assert.deepEqual([...MODES], ['explicit-honest', 'membrana-flow']);
   assert.deepEqual([...UNASSIGNED_REASONS], ['mechanical', 'no_profile_owner', 'owner_solo', 'urgent_recovery'],
@@ -247,4 +247,77 @@ test('assignedBlocks отдаёт план, а не факт: назначен �
   assert.deepEqual(rows.map((r) => r.context), ['vesnin', 'dynin', 'kuryokhin'],
     'персона и контекст — два поля; у третьего блока они РАЗНЫЕ намеренно');
   assert.ok(rows.every((r) => !('participated' in r)), 'участия в проекции плана нет по построению');
+});
+
+// ── Машинный revisionAt (01.08, карточка cut-act-trace, блок machine-revision-at) ────
+// Замок был, но ключ у того, кого он запирает: isStale считает свежесть от revisionAt,
+// а писал revisionAt резчик рукой. Вещдок 01.08 (meeting-gates-teeth): председатель
+// перерезал план v1→v2 и метку не двинул — ничто не заставило.
+
+const { blockRevisionDigest, stampRevisions } = await import('./lib/sprint-cut/ratification.mjs');
+const AT1 = '2026-08-01T10:00:00+03:00';
+const AT2 = '2026-08-01T12:00:00+03:00';
+const blk = (over = {}) => ({ blockId: 'b1', persona: 'vesnin', context: 'vesnin', zone: ['a.mjs'], estimate: { changedLines: 10 }, ...over });
+
+test('ратификация ставит revisionAt инструментом — резчик его больше не пишет', () => {
+  const res = ratifyPlan({ sprintId: 'x', blocks: [blk()] }, { at: AT1 });
+  assert.equal(res.ok, true);
+  assert.equal(res.plan.blocks[0].revisionAt, AT1);
+  assert.equal(typeof res.plan.blocks[0].revisionOf, 'string');
+});
+
+test('перерезка двигает метку ТОЛЬКО у изменённого блока — чужие вещдоки не гасим', () => {
+  const first = ratifyPlan({ sprintId: 'x', blocks: [blk({ blockId: 'a' }), blk({ blockId: 'b' })] }, { at: AT1 }).plan;
+  // меняется тело только блока «a»
+  const edited = { ...first, blocks: [{ ...first.blocks[0], zone: ['a.mjs', 'c.mjs'] }, first.blocks[1]] };
+  const second = ratifyPlan(edited, { at: AT2 }).plan;
+  assert.equal(second.blocks[0].revisionAt, AT2, 'изменённый блок обязан получить новую метку');
+  assert.equal(second.blocks[1].revisionAt, AT1, 'нетронутый блок метку не меняет — иначе ложное красное');
+});
+
+test('повторная ратификация без правок метку не двигает', () => {
+  const first = ratifyPlan({ sprintId: 'x', blocks: [blk()] }, { at: AT1 }).plan;
+  const second = ratifyPlan(first, { at: AT2 }).plan;
+  assert.equal(second.blocks[0].revisionAt, AT1);
+});
+
+test('дайджест тела блока не зависит от самой метки — иначе она ссылалась бы на себя', () => {
+  const a = blockRevisionDigest(blk());
+  const b = blockRevisionDigest(blk({ revisionAt: AT1, revisionOf: 'что угодно' }));
+  assert.equal(a, b);
+});
+
+test('следствие #1566: после перерезки разбор родителя протухает САМ — метка ушла вперёд', () => {
+  const parent = ratifyPlan({ sprintId: 'x', blocks: [blk({ blockId: 'core' })] }, { at: AT1 }).plan;
+  const traceAt = '2026-08-01T10:30:00+03:00'; // разбор родителя сделан после первой ратификации
+  assert.equal(traceAt < parent.blocks[0].revisionAt, false, 'до перерезки след свежий');
+  const recut = ratifyPlan(
+    { ...parent, blocks: [{ ...parent.blocks[0], blockId: 'core', zone: ['a.mjs', 'split.mjs'] }] },
+    { at: AT2 },
+  ).plan;
+  assert.equal(traceAt < recut.blocks[0].revisionAt, true, 'после перерезки тот же след обязан стать протухшим');
+});
+
+test('stampRevisions не трогает не-массив и не-объекты: мусор не превращается в блоки', () => {
+  assert.equal(stampRevisions(undefined, AT1), undefined);
+  assert.deepEqual(stampRevisions([null, 42], AT1), [null, 42]);
+});
+
+test('первая простановка уважает рукописную метку — внедрение не гасит историю дерева', () => {
+  const legacy = { sprintId: 'x', blocks: [blk({ revisionAt: '2026-08-01T10:00:00Z' })] };
+  const res = ratifyPlan(legacy, { at: AT2 }).plan;
+  assert.equal(res.blocks[0].revisionAt, '2026-08-01T10:00:00Z', 'метка существующего плана не двигается');
+  assert.equal(typeof res.blocks[0].revisionOf, 'string', 'но дайджест записывается — дальше метка машинная');
+});
+
+test('после первой простановки правка тела метку уже двигает', () => {
+  const legacy = { sprintId: 'x', blocks: [blk({ revisionAt: '2026-08-01T10:00:00Z' })] };
+  const migrated = ratifyPlan(legacy, { at: AT1 }).plan;
+  const edited = { ...migrated, blocks: [{ ...migrated.blocks[0], zone: ['a.mjs', 'z.mjs'] }] };
+  assert.equal(ratifyPlan(edited, { at: AT2 }).plan.blocks[0].revisionAt, AT2);
+});
+
+test('блока без метки вовсе первая простановка касается: метка обязана появиться', () => {
+  const res = ratifyPlan({ sprintId: 'x', blocks: [blk()] }, { at: AT1 }).plan;
+  assert.equal(res.blocks[0].revisionAt, AT1);
 });

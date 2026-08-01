@@ -16,11 +16,11 @@
  *
  * Exit: 0 — вердикт `contract`; 1 — `findings` или `unreadable`; 2 — инструментальная ошибка.
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { cutDigestOf, cutVerdict, modeOf, ratifyPlan } from './lib/sprint-cut/index.mjs';
+import { cutDigestOf, cutVerdict, modeOf, parseAct, ratifyPlan } from './lib/sprint-cut/index.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_VOICES = resolve(repoRoot, 'docs/virtual-team/voices.registry.json');
@@ -47,6 +47,35 @@ export function voiceIdsFrom(registry) {
 
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 
+/** Носитель ленты актов плана: рядом с планом, `trail/<sprintId>.jsonl`. */
+function actsTrailPath(planPath, plan) {
+  const id = typeof plan?.sprintId === 'string' && plan.sprintId.trim() ? plan.sprintId : null;
+  return id ? resolve(dirname(planPath), 'trail', `${id}.jsonl`) : null;
+}
+
+/**
+ * Прочитать ленту актов. Файла нет → пустая лента (не «не проверяем»).
+ * Битая строка — НЕ молчаливый пропуск: она не попадает в акты, и зуб отработает так,
+ * будто следа нет; открытый список родов означал бы обход проверки новым словом.
+ */
+function readActsTrail(path) {
+  if (!path || !existsSync(path)) return [];
+  const out = [];
+  for (const line of readFileSync(path, 'utf8').split('\n')) {
+    const s = line.trim();
+    if (!s) continue;
+    let raw;
+    try {
+      raw = JSON.parse(s);
+    } catch {
+      continue;
+    }
+    const parsed = parseAct(raw);
+    if (parsed.ok) out.push(parsed.act);
+  }
+  return out;
+}
+
 function main(argv) {
   const args = parseArgs(argv);
   const planPath = resolve(process.cwd(), args.plan);
@@ -70,7 +99,12 @@ function main(argv) {
   }
 
   const voices = voiceIdsFrom(readJson(resolve(process.cwd(), args.voices)));
-  const { verdict, findings } = cutVerdict(plan, { voices });
+  // Лента актов плана (седьмой зуб, 01.08). Читается ВСЕГДА, и отсутствие файла даёт
+  // пустой массив, а не `undefined`: «ленты нет» и «прогона не было» — для CLI одно и то
+  // же утверждение, и молчаливая зелёнка здесь как раз и была болезнью. Ядро различает
+  // эти случаи (undefined = не проверяем), но живой путь обязан проверять всегда.
+  const acts = readActsTrail(actsTrailPath(planPath, plan));
+  const { verdict, findings } = cutVerdict(plan, { voices, acts });
 
   const blocks = Array.isArray(plan?.blocks) ? plan.blocks.length : 0;
   console.log(
