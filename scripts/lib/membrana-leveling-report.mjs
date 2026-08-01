@@ -5,6 +5,8 @@
  * Три раздела поимённо; счётчики не единственный слой.
  */
 
+import { provenanceLine } from './artifact-freshness.mjs';
+
 /**
  * @typedef {import('./membrana-leveling-gate.mjs').runLevelingGate} RunGate
  * @typedef {Awaited<ReturnType<typeof import('./membrana-leveling-gate.mjs').runLevelingGate>>} GateOutput
@@ -70,6 +72,17 @@ export function buildWorkspaceLevelReport(gateOutput, meta = {}) {
   const reasons = (g.reason ?? []).length ? g.reason.join(', ') : '(нет)';
 
   const markdown = [
+    // Провенанс первой строкой — из УЖЕ ИМЕЮЩЕГОСЯ `builtAt`, ничего не выдумывается: форма
+    // приводится к той, которую читает гейт свежести. До 01.08 отчёт нёс дату полем `builtAt`,
+    // а кадр доставки вечера искал `<!-- Сгенерировано: … -->` и объявлял отчёт `stale` в
+    // любой день — вечер останавливался на документе, родившемся минуту назад.
+    //
+    // Согласие держателя процедуры `membrana-leveling` (ozhegov) получено ДО работы, блок
+    // `provenance-at-source` спринта `evening-deliver-frame-fix`: смена вида артефакта —
+    // изменение контракта между выходом процедуры и проверкой доставки, а не косметика.
+    // Его условие: обе правки атомарно, половинчатое внедрение равно отказу.
+    provenanceLine({ tool: 'yarn leveling:evening', now: builtAt }),
+    '',
     '# workspace-level',
     '',
     `status: **${g.status}**`,

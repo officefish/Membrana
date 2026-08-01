@@ -86,16 +86,72 @@ export function findEpicIssueCollisions(registry) {
 }
 
 /**
+ * Карточки, делящие один Issue БЕЗ родства «эпик ↔ фаза».
+ *
+ * `findEpicIssueCollisions` ловит только пару «фаза несёт Issue своего эпика» — по полю
+ * `parentEpic`. Пять независимых карточек, смотрящих в один номер, родства не имеют и
+ * проходят мимо: закрытие «своего» Issue оборвёт то, на что ссылаются остальные четыре.
+ *
+ * ВЕЩДОК 01.08 (ночной триаж 31.07, bucket ghost): `neural-tier-1b-contract`,
+ * `real-dataset-live-calibration`, `vdr-hard-gate`, `vdr-hg3-trends-benchmark` и
+ * `vdr-hg4-hard-gate-report` все указывают на #47 — «Пересмотр дорожной карты», закрытый
+ * 11 июня. Пять живых карточек утверждают связь с чужим и мёртвым эпиком.
+ *
+ * Это тот же класс, что вердикт H1 заседания `evening-auditor` про зонтичные Issue: одна
+ * Issue на N карточек. Предикат чистый — сети не требует, работает офлайн и в тестах.
+ *
+ * @param {{ version: number, tasks: TaskEntry[] }} registry
+ * @returns {Array<{issue: number, ids: string[]}>} группы, отсортированы по номеру Issue
+ */
+export function findSharedIssueRefs(registry) {
+  const byId = new Map(registry.tasks.map((t) => [t.id, t]));
+  /** @type {Map<number, string[]>} */
+  const byIssue = new Map();
+  for (const t of registry.tasks) {
+    if (t.githubIssue == null) continue;
+    if (!byIssue.has(t.githubIssue)) byIssue.set(t.githubIssue, []);
+    byIssue.get(t.githubIssue).push(t.id);
+  }
+  const out = [];
+  for (const [issue, ids] of byIssue) {
+    if (ids.length < 2) continue;
+    // Родство «эпик ↔ его фазы» — предмет findEpicIssueCollisions; здесь не дублируем.
+    //
+    // Требуется ОДНА семья, а не «у каждого есть партнёр». Первая редакция проверяла
+    // второе — и пропускала группу, где ДВЕ независимые семьи делят номер: у всех четверых
+    // партнёр находится, `kin` истинен, коллизия двух эпиков уходит незамеченной. Найдено
+    // ревью PR #1616; это ровно форма живого случая #47, где семей несколько.
+    //
+    // Корень группы — карточка, чей `parentEpic` не указывает внутрь группы. Семья одна
+    // ⟺ корень ровно один и все остальные — его прямые фазы.
+    const roots = ids.filter((id) => {
+      const parent = byId.get(id)?.parentEpic;
+      return !parent || !ids.includes(parent);
+    });
+    const kin =
+      roots.length === 1 && ids.every((id) => id === roots[0] || byId.get(id)?.parentEpic === roots[0]);
+    if (kin) continue;
+    out.push({ issue, ids: [...ids].sort() });
+  }
+  return out.sort((a, b) => a.issue - b.issue);
+}
+
+/**
  * Архивные задачи с Issue, которые ещё не закрыты на GitHub.
  *
  * Фазы с Issue эпика исключены намеренно (см. findEpicIssueCollisions): молча
  * закрыть чужой эпик хуже, чем не закрыть ничего. task:close-github показывает их
  * отдельным списком, чтобы человек занулил поле или завёл фазе свой Issue.
+ *
+ * По той же причине исключены карточки, делящие Issue без родства
+ * (см. findSharedIssueRefs): закрыть «свой» номер значит оборвать чужие ссылки.
  */
 export function listPendingGithubClose(registry) {
   const collisions = new Set(findEpicIssueCollisions(registry).map((t) => t.id));
+  const shared = new Set(findSharedIssueRefs(registry).flatMap((g) => g.ids));
   return listArchived(registry).filter(
-    (t) => t.githubIssue != null && !t.githubIssueClosedAt && !collisions.has(t.id),
+    (t) =>
+      t.githubIssue != null && !t.githubIssueClosedAt && !collisions.has(t.id) && !shared.has(t.id),
   );
 }
 
@@ -166,6 +222,39 @@ const SPRINT_KINDS = [
  * @param {object} input
  * @returns {TaskEntry}
  */
+/**
+ * Связь карточки с GitHub: либо номер Issue, либо ЯВНАЯ причина, почему его нет.
+ *
+ * Молчание связью не является. На 01.08 157 активных карточек из 211 (74%) не несут
+ * Issue, и цифра растёт: норма объявлена, но нарушение ничем не встречается, а ночной
+ * триаж месяц печатал список из полутора сотен строк с одинаковым действием `relink` —
+ * и ни одна не была перелинкована. Отчёт напоминал, а сиротство рождалось дальше.
+ *
+ * Здесь закрывается РОЖДЕНИЕ, а не прошлое: старые 157 карточек не трогаются, но новая
+ * без Issue обязана назвать причину. Причина — свободный текст намеренно: закрытый
+ * перечень тут потребовал бы владельца перечня, а предмет пока не размечен.
+ *
+ * @param {{issue?: unknown, noIssue?: unknown}} input
+ * @returns {string|null} причина отказа регистрации либо null
+ */
+export function issueLinkProblem(input) {
+  const hasIssue = input?.issue != null && String(input.issue).trim() !== '';
+  // Парсер CLI кладёт --no-issue в ключ `no-issue`; принимаем оба, как уже сделано
+  // для parent-epic/parentEpic — иначе флаг молча игнорился бы.
+  const raw = input?.noIssue ?? input?.['no-issue'];
+  const reason = typeof raw === 'string' ? raw.trim() : '';
+  if (hasIssue && reason) {
+    return 'указаны и --issue, и --no-issue: связь либо есть, либо её нет с причиной';
+  }
+  if (hasIssue || reason) return null;
+  return (
+    'нет связи с GitHub: нужен --issue <N> либо --no-issue "<причина>".\n' +
+    '  Молчание связью не является: на 01.08 157 карточек из 211 без Issue, и список\n' +
+    '  из полутора сотен строк «relink» месяц печатался без единого исправления.\n' +
+    '  Причина пишется словами и остаётся в карточке — её потом видно.'
+  );
+}
+
 export function buildTaskEntry(input, today) {
   validateTaskId(input.id);
   if (!input.title?.trim()) throw new Error('Пустой --title.');
@@ -193,11 +282,16 @@ export function buildTaskEntry(input, today) {
     linearRaw != null && String(linearRaw).trim() && String(linearRaw).trim() !== '—'
       ? String(linearRaw).trim()
       : null;
+  const noIssueRaw = input.noIssue ?? input['no-issue'];
+  const noIssueReason = typeof noIssueRaw === 'string' ? noIssueRaw.trim() : '';
   const entry = {
     id: input.id,
     title: input.title.trim(),
     promptPath,
     githubIssue: input.issue != null ? Number(input.issue) : null,
+    // Причина отсутствия Issue живёт В КАРТОЧКЕ, а не в голове регистратора: иначе через
+    // неделю «почему у неё нет Issue» отвечать некому, и карточка неотличима от сироты.
+    ...(noIssueReason ? { noIssueReason } : {}),
     linearId,
     size: input.size,
     status: 'active',

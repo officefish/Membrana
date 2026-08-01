@@ -27,17 +27,17 @@
       "githubIssue": 1566,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-01",
-      "archivedAt": null,
+      "archivedAt": "2026-08-01",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "angelina"
       ],
       "notes": "Долг #sprint-cut-act-has-no-trace (DEBTS.md, 30.07) + Issue #1566. cutBy — надпись без вещдока: проставляется рукой, прогон контекста резчика не проверяется ничем. Четыре рода следа закрыты по числу моментов ОКНА, а акт нарезки происходит ДО окна и блоку не принадлежит — втиснуть его в ленту значило бы соврать формой. Плюс #1566: перерезка не обнуляет разбор родителя, три блока получили honest_pair на разборе вещи, которой в той форме не существовало — honest_pair слабее, чем читается. Вещдок 01.08: председатель проставил cutBy=tarasov рукой и перерезал v1→v2, не двинув revisionAt ни у одного блока; ничто не заставило.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1604, Issue #1566 закрыт, долг #sprint-cut-act-has-no-trace погашен (bridge:debt repay --by fact_ref). Три блока: (1) лента актов плана как отдельная ось следа — три рода cut_context_run/cut_act/recut_act, список закрыт, род вне списка = ошибка входа с номером строки, роняющая ленту целиком; пятый род в TRACE_KINDS НЕ заводился; (2) машинный revisionAt — метку ставит инструмент при ратификации и только у блоков с изменённым телом (пер-блочный дайджест), первая простановка уважает рукописную метку, иначе внедрение обнулило бы вещдоки всех планов дерева; (3) восьмой вердикт stale_partial — частичное протухание перестало быть молчаливым выпадением из evidenceRefs. Седьмой зуб нарезки cutter_context_missing сработал НА СОБСТВЕННОМ плане спринта и закрыт вещдоком, а не отключением. Четыре перерезки за спринт — все промахи резчика в зоне, не в объёме.",
       "githubIssueClosedAt": null
     },
     {
@@ -108,16 +108,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-01",
-      "archivedAt": null,
+      "archivedAt": "2026-08-01",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "angelina"
       ],
       "notes": "Три дыры, вскрытые прогонами заседания evening-review-predicate 01.08. 1) При полном контексте сборщик печатает «повестка — не доехал» и ИДЁТ ДАЛЬШЕ: правило 7 держится дисциплиной председателя, а не гейтом; --meeting обязан падать до прогона. 2) task-register не принимает --kind meeting (day-sprint/epic/night-build/competition-sprint/cowork-sprint), хотя регламент заседания требует sprintKind: meeting; одна карточка в реестре с таким значением заведена мимо инструмента. 3) Флаги прогона (--no-context --no-rag) в метаданные протокола не пишутся — условие правила 7 держится прозой в контейнере. Плюс: VIRTUAL_TEAM_PROMPT.md приходил обрезанным во ВСЕХ шести прогонах.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1596. Три дыры регламента заседаний закрыты зубами: (1) правило 7 получило зуб — в режиме --meeting повестка, не доехавшая до комнаты, даёт отказ ДО вызова API (раньше сборщик печатал предупреждение и шёл дальше); вещдок — живой прогон, заседание evening-review-predicate с полным контекстом падает кодом 2 на том самом случае, который 01.08 поймал только глаз; (2) условия прогона пишутся в шапку протокола — восемь прогонов 01.08 шли с --no-context --no-rag, и ни один протокол этого не нёс; (3) task-register принимает --kind meeting, перечень остался закрытым. Литерал 'повестка' связан с константой AGENDA_INPUT_KIND — две копии строки разъехались бы молча.",
       "githubIssueClosedAt": null
     },
     {
@@ -127,14 +127,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-01",
-      "archivedAt": null,
+      "archivedAt": "2026-08-01",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "Вердикт M2 заседания evening-review-predicate (day-memo → audit-evening → code-review → archive-code-review; мемо и хроника critical) в исполняемый источник НЕ перенесён и дословно неисполним: позиции 14 и 15 заняты живыми deps-watch и evening-tail. Владелец 01.08 отложил перенос до сборки эпика заседания — карточка держит долг, чтобы он не потерялся. Схема шага: поле script, spawnSync('node',[file,...args]); каждый noncritical обязан нести whyNoncritical (validateManifest).",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1612. Вердикт M2 заседания evening-review-predicate перенесён в исполняемый источник: 10 day-memo, 11 audit-evening, 12 code-review, 13 archive-code-review; хвост 14-16 не двигался. Проверено ДО правки: все потребители DAILY_CODE_REVIEW.md стоят после ревью. КРИТИЧНОСТЬ НЕ МЕНЯЛАСЬ, хотя M2 её требовал: у audit-evening в whyNoncritical записано «не должен ронять хвост вечера, где живёт обязательный team-evening-feedback» (ADR-0013), и хвост стоит после — решение владельца 01.08 вынести это отдельным предметом. Тем же PR закрыта вторая часть пункта №6 хендофа: диапазон аудита считается по origin/main (AUDIT_TRUNK_REF), отсутствие ствола даёт отказ кодом 2, а не тихий откат к HEAD.",
       "githubIssueClosedAt": null
     },
     {
