@@ -1,0 +1,147 @@
+{
+  "//": "План нарезки спринта «плагин тембрового детектора». Нарезка прогнана через профильный контекст тимлида (yarn ask tarasov --with-memory), вещдок — docs/discussions/mfcc-plugin-sprint-cut.md. В ЛЕНТУ акт нарезки не кладётся: у формы следа обязателен blockId, а нарезка блоку не принадлежит.",
+  "//input-method": "УРОК ritual-tails-sprint ПРИМЕНЁН: вход собран ОТ ПРИЧИН И С ДЕРЕВОМ (docs/sprint/cut/INPUT-mfcc-plugin-sprint.md) — тринадцать файлов образца с размерами, что переиспользуется как есть, что готово и писать не нужно, и три места где аналогия НЕ прямая. В том спринте вход состоял из находок-симптомов, и это стоило трёх перерезок подряд.",
+  "//teamlead-verdict": "1) ВЫБРОШЕНО ~280 строк полировки продукта: телеметрия, выгрузка отчёта, история прогонов. Основание тимлида: «прибор разведки просто должен показать СЕЙЧАС — дроны проходят или нет; специалист видит сейчас, не собирает архив». Ложится на рамку владельца (шторм, хвост Х1): плагин нужен, чтобы выявить потенциал метода, оператора в задаче ещё нет. 2) НОРМИРОВАНИЕ ОТКЛОНЕНО: у кепстральных коэффициентов естественной шкалы нет, показываем сырьё с воротами пресета рядом — «специалист сам знает c0 ∈ [311, 573]». Это ответ на второй из трёх открытых вопросов входа. 3) ПОРОГ ТИШИНЫ снимается в плагине на первой секунде молчания — ответ на третий вопрос, единственное чего у образца нет вовсе.",
+  "//transcription-fixes": "Три механические правки при переносе, решений тимлида не меняют. (а) revisionAt: он подставил выдуманные хеши («2b3a11», «3c4d22») — схема требует момент времени, взят момент нарезки. (б) zone: у него пути с аннотациями «(120 строк)» — зона есть путь, размеры перенесены в //estimate-basis. (в) context: он использовал поле как описание блока прозой, а по контракту механизма (§G5) в v1 context ОБЯЗАН равняться persona — гейт сверяет след с одним идентификатором и различать «чей профиль» пока не умеет; описания перенесены в //.",
+  "//known-finding": "Блок mfcc-plugin-ui-screen — 395 строк при пороге прохода ревью 400. Запас четыре строки. Плюс сегодняшняя находка #1550: ревью на диффе больше ~120 000 символов перестаёт опираться на содержание. Если экран переполнится — резать на проходы, а не продавливать.",
+  "schema": "sprint-cut/1",
+  "sprintId": "mfcc-plugin-sprint",
+  "taskId": "mfcc-plugin-sprint",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
+    "reason": "носителей двух родов следа не существует (contract_signature ждёт серверных вызовов исполнителя, session_prep не привязан к блоку); объявлено ДО старта как условие, а не поблажка"
+  },
+  "window": {
+    "from": "2026-07-31T12:00:00Z",
+    "to": "2026-07-31T21:00:00Z"
+  },
+  "revisionAt": "2026-07-31T13:10:00Z",
+  "blocks": [
+    {
+      "//": "Контракт и константы: типы плагина, пресета, результатов кадра и серии + встроенная константа пресета с коридорами на 24 коэффициента. ЗАКРЫТЫЙ АЛФАВИТ, от которого зависят состояние и фабрика; сам не зависит ни от чего. Пресет копией, а не тягой из data/: данные калибровки не идут в клиентскую сборку.",
+      "//estimate-basis": "разбивка тимлида при перерезке 31.07 (вариант Б канона — три прохода ревью); форма переведена в блоки, потому что предикат volumeFindings проходов НЕ ЗНАЕТ — см. //passes-not-implemented",
+      "blockId": "mfcc-plugin-contract",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "apps/client/src/plugins/mfcc-analyzer-test/types.ts",
+        "apps/client/src/plugins/mfcc-analyzer-test/presets.ts"
+      ],
+      "estimate": {
+        "changedLines": 110
+      },
+      "revisionAt": "2026-07-31T12:25:00Z"
+    },
+    {
+      "//": "Состояние и команды: конфиг (уровень строгости и число кадров серии — то, что человек меняет БЕЗ перекалибровки), кэш результатов серии. Зависит от контракта. ШОВ С ЭКРАНОМ, назван до работы: внутрь идут команды setStrictnessLevel и setFrameCount, наружу — текущий уровень, число кадров и результаты серии.",
+      "//estimate-basis": "разбивка тимлида при перерезке 31.07 (вариант Б канона — три прохода ревью); форма переведена в блоки, потому что предикат volumeFindings проходов НЕ ЗНАЕТ — см. //passes-not-implemented",
+      "blockId": "mfcc-plugin-state",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "apps/client/src/plugins/mfcc-analyzer-test/mfccPluginState.ts"
+      ],
+      "estimate": {
+        "changedLines": 150
+      },
+      "revisionAt": "2026-07-31T12:25:00Z"
+    },
+    {
+      "//": "Фабрика, install, подписка на фид кадров, жизненный цикл, teardown. Зависит от контракта и состояния. ШОВ С ЯДРОМ, назван до работы: внутрь AudioFrameFeed, наружу MfccVector[]; экстрактор принадлежит ядру, подписка и жизненный цикл — плагину. Обязан объявить configHash пресета при инициализации: детектор отвергает вектор с чужим отпечатком.",
+      "//estimate-basis": "разбивка тимлида при перерезке 31.07 (вариант Б канона — три прохода ревью); форма переведена в блоки, потому что предикат volumeFindings проходов НЕ ЗНАЕТ — см. //passes-not-implemented",
+      "blockId": "mfcc-plugin-lifecycle",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "apps/client/src/plugins/mfcc-analyzer-test/mfccAnalyzerPlugin.ts"
+      ],
+      "estimate": {
+        "changedLines": 280
+      },
+      "revisionAt": "2026-07-31T12:25:00Z"
+    },
+    {
+      "//": "Основной экран: выбор источника звука (переиспользуем AnalysisSourceSelect), текущий результат, строки судимых коэффициентов с воротами пресета рядом. Нормирования НЕТ по решению тимлида — сырьё.",
+      "//estimate-basis": "тимлид: экран 280-320 против 360 у образца — четыре строки вместо трёх, зато без истории и без нормирования; CoefficientRow 45 вместо NormalizedThresholdRow 52; ReportCard 50-70 против 94",
+      "blockId": "mfcc-plugin-ui-screen",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/client/src/plugins/mfcc-analyzer-test/MfccTestPanel.tsx",
+        "apps/client/src/plugins/mfcc-analyzer-test/components/CoefficientRow.tsx",
+        "apps/client/src/plugins/mfcc-analyzer-test/components/ReportCard.tsx"
+      ],
+      "estimate": {
+        "changedLines": 395
+      },
+      "revisionAt": "2026-07-31T12:11:00Z"
+    },
+    {
+      "//": "Сырой вывод ядра → таблица статусов кадров через пресет трубы; замер порога тишины. ЕДИНСТВЕННОЕ, чего у образца нет вовсе — у порогового детектора защиты от немого кадра не было, потому что три метрики на тишине не давали ложного зелёного, а коридор по коэффициентам даёт.",
+      "//estimate-basis": "тимлид: отчёт 70-90 против 86 у образца (у нас статус за КАЖДЫЙ кадр: прошёл, судимые, сырые значения); замер порога 45 строк новым файлом",
+      "blockId": "mfcc-plugin-math",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "apps/client/src/plugins/mfcc-analyzer-test/buildMfccTestReport.ts",
+        "apps/client/src/plugins/mfcc-analyzer-test/detectMagnitudeThreshold.ts",
+        "apps/client/src/plugins/mfcc-analyzer-test/applyMfccPipeThreshold.ts"
+      ],
+      "estimate": {
+        "changedLines": 155
+      },
+      "revisionAt": "2026-07-31T12:11:00Z"
+    },
+    {
+      "//": "Зубы отчёта и порога тишины, фикстуры кадров. Правило спутника M8: тест наследует дом предмета, поэтому лежит рядом с блоком математика и ведёт его тот же исполнитель.",
+      "//estimate-basis": "тимлид: 200 — по образцу buildFftThresholdTestReport.test 117 плюс зубы порога тишины, которых у образца нет",
+      "blockId": "mfcc-plugin-tests",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "apps/client/src/plugins/mfcc-analyzer-test/__tests__/buildMfccTestReport.test.ts",
+        "apps/client/src/plugins/mfcc-analyzer-test/__tests__/detectMagnitudeThreshold.test.ts",
+        "apps/client/src/plugins/mfcc-analyzer-test/__fixtures__/mfccFrameFixtures.ts"
+      ],
+      "estimate": {
+        "changedLines": 200
+      },
+      "revisionAt": "2026-07-31T12:11:00Z"
+    },
+    {
+      "//": "ВКЛЮЧЕНИЕ прибора: считалка коэффициентов при настройках пресета, фабрика плагина в форме реестра, регистрация и точка отрисовки в модуле микрофона. Первый блок по норме #1565 — вещдок не файл, а ручной прогон на живом микрофоне. Зона НАРОЧНО включает два чужих файла (реестр и модуль): именно их отсутствие в зонах шести блоков сделало долг ничьим.",
+      "//estimate-basis": "разведка 31.07: экстрактор ~70 (настройки свойствами объекта + отказ на чужом отпечатке), фабрика ~90 по образцу createFftIndicesVizPlugin, index ~12, реестр +2, модуль +6, package.json +2",
+      "//norm": "#1565 — спринт на плагин обязан кончаться блоком включения",
+      "blockId": "mfcc-plugin-wiring",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "apps/client/package.json",
+        "apps/client/src/plugins/mfcc-analyzer-test/mfccExtractor.ts",
+        "apps/client/src/plugins/mfcc-analyzer-test/mfccAnalyzerTestPlugin.ts",
+        "apps/client/src/plugins/mfcc-analyzer-test/index.ts",
+        "apps/client/src/modules/registerClientModules.ts",
+        "apps/client/src/modules/microphone/MicrophoneModule.tsx"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "revisionAt": "2026-07-31T13:10:00Z"
+    }
+  ],
+  "//passes-not-implemented": "НАХОДКА 31.07. Канон honest-sprint прямо разрешает вариант Б — один блок, N проходов ревью, при четырёх условиях (закрытый алфавит; фикстура на каждый элемент в DoD; швы названы ДО работы; число проходов ратифицировано тем же актом). Тимлид выбрал Б и подтвердил все четыре поимённо. Но предикат volumeFindings (scripts/lib/sprint-cut/cut-plan.mjs:146) сверяет с порогом ТОЛЬКО block.estimate.changedLines и о поле passes не знает вовсе — вариант Б в коде НЕ РЕАЛИЗОВАН. Правило есть, предиката нет: тот же класс, что #1533/#1539/#1545/#1550. Решение тимлида сохранено целиком — его три прохода переведены в три блока с теми же швами, зонами и числами (110/150/280); изменилась форма, не содержание.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-07-31T16:10:00+03:00",
+    "digest": "fc979c1c8131d81585c33f5e6b6d6b78bdc8fb751ff883538b279adbf6b65d09"
+  }
+}

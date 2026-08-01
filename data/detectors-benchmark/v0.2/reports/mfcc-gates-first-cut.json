@@ -1,0 +1,874 @@
+{
+  "generatedAt": "2026-07-31T12:05:40.310Z",
+  "corpus": {
+    "path": "data/detectors-benchmark/v0.2",
+    "counts": {
+      "drone": 60,
+      "not-drone": 60
+    }
+  },
+  "configs": [
+    {
+      "tag": "mel26-c13-buf2048",
+      "config": {
+        "melBands": 26,
+        "numberOfCoefficients": 13,
+        "bufferSize": 2048
+      },
+      "framesDrone": 7020,
+      "framesOther": 7020,
+      "skipped": 0,
+      "coefficients": [
+        {
+          "index": 0,
+          "gate": {
+            "lo": 155.323,
+            "hi": 328.159
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.461,
+          "separation": 0.439,
+          "why": null
+        },
+        {
+          "index": 1,
+          "gate": {
+            "lo": -9.038,
+            "hi": 71.847
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.583,
+          "separation": 0.317,
+          "why": null
+        },
+        {
+          "index": 2,
+          "gate": {
+            "lo": -47.659,
+            "hi": 6.923
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.573,
+          "separation": 0.327,
+          "why": null
+        },
+        {
+          "index": 3,
+          "gate": {
+            "lo": -4.44,
+            "hi": 27.655
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.675,
+          "separation": 0.225,
+          "why": null
+        },
+        {
+          "index": 4,
+          "gate": {
+            "lo": -16.786,
+            "hi": 19.648
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.811,
+          "separation": 0.089,
+          "why": null
+        },
+        {
+          "index": 5,
+          "gate": {
+            "lo": -7.32,
+            "hi": 18.5
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.846,
+          "separation": 0.054,
+          "why": null
+        },
+        {
+          "index": 6,
+          "gate": {
+            "lo": -13.598,
+            "hi": 13.241
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.858,
+          "separation": 0.042,
+          "why": null
+        },
+        {
+          "index": 7,
+          "gate": {
+            "lo": -8.377,
+            "hi": 12.576
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.811,
+          "separation": 0.089,
+          "why": null
+        },
+        {
+          "index": 8,
+          "gate": {
+            "lo": -9.178,
+            "hi": 14.745
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.898,
+          "separation": 0.002,
+          "why": null
+        },
+        {
+          "index": 9,
+          "gate": {
+            "lo": -14.318,
+            "hi": 9.491
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.928,
+          "separation": -0.028,
+          "why": null
+        },
+        {
+          "index": 10,
+          "gate": {
+            "lo": -10.236,
+            "hi": 15.642
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.937,
+          "separation": -0.037,
+          "why": null
+        },
+        {
+          "index": 11,
+          "gate": {
+            "lo": -11.855,
+            "hi": 8.335
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.913,
+          "separation": -0.013,
+          "why": null
+        },
+        {
+          "index": 12,
+          "gate": {
+            "lo": -6.795,
+            "hi": 12.623
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.906,
+          "separation": -0.006,
+          "why": null
+        }
+      ],
+      "ranked": [
+        0,
+        2,
+        1,
+        3,
+        4,
+        7,
+        5,
+        6,
+        8,
+        12,
+        11,
+        9,
+        10
+      ]
+    },
+    {
+      "tag": "mel32-c20-buf2048",
+      "config": {
+        "melBands": 32,
+        "numberOfCoefficients": 20,
+        "bufferSize": 2048
+      },
+      "framesDrone": 7020,
+      "framesOther": 7020,
+      "skipped": 0,
+      "coefficients": [
+        {
+          "index": 0,
+          "gate": {
+            "lo": 178.854,
+            "hi": 386.882
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.46,
+          "separation": 0.44,
+          "why": null
+        },
+        {
+          "index": 1,
+          "gate": {
+            "lo": -11.38,
+            "hi": 87.365
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.602,
+          "separation": 0.298,
+          "why": null
+        },
+        {
+          "index": 2,
+          "gate": {
+            "lo": -59.713,
+            "hi": 9.219
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.589,
+          "separation": 0.311,
+          "why": null
+        },
+        {
+          "index": 3,
+          "gate": {
+            "lo": -5.93,
+            "hi": 33.682
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.674,
+          "separation": 0.226,
+          "why": null
+        },
+        {
+          "index": 4,
+          "gate": {
+            "lo": -20.158,
+            "hi": 25.608
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.809,
+          "separation": 0.091,
+          "why": null
+        },
+        {
+          "index": 5,
+          "gate": {
+            "lo": -8.487,
+            "hi": 23.679
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.829,
+          "separation": 0.071,
+          "why": null
+        },
+        {
+          "index": 6,
+          "gate": {
+            "lo": -15.972,
+            "hi": 17.458
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.854,
+          "separation": 0.046,
+          "why": null
+        },
+        {
+          "index": 7,
+          "gate": {
+            "lo": -10.161,
+            "hi": 15.637
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.793,
+          "separation": 0.107,
+          "why": null
+        },
+        {
+          "index": 8,
+          "gate": {
+            "lo": -12.203,
+            "hi": 19.011
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.904,
+          "separation": -0.004,
+          "why": null
+        },
+        {
+          "index": 9,
+          "gate": {
+            "lo": -16.968,
+            "hi": 11.913
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.926,
+          "separation": -0.026,
+          "why": null
+        },
+        {
+          "index": 10,
+          "gate": {
+            "lo": -13.495,
+            "hi": 20.078
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.937,
+          "separation": -0.037,
+          "why": null
+        },
+        {
+          "index": 11,
+          "gate": {
+            "lo": -12.997,
+            "hi": 9.577
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.899,
+          "separation": 0.001,
+          "why": null
+        },
+        {
+          "index": 12,
+          "gate": {
+            "lo": -8.842,
+            "hi": 15.991
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.893,
+          "separation": 0.007,
+          "why": null
+        },
+        {
+          "index": 13,
+          "gate": {
+            "lo": -5.963,
+            "hi": 10.627
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.802,
+          "separation": 0.098,
+          "why": null
+        },
+        {
+          "index": 14,
+          "gate": {
+            "lo": -6.638,
+            "hi": 12.016
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.873,
+          "separation": 0.027,
+          "why": null
+        },
+        {
+          "index": 15,
+          "gate": {
+            "lo": -6.04,
+            "hi": 15.921
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.89,
+          "separation": 0.01,
+          "why": null
+        },
+        {
+          "index": 16,
+          "gate": {
+            "lo": -8.519,
+            "hi": 12.03
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.945,
+          "separation": -0.045,
+          "why": null
+        },
+        {
+          "index": 17,
+          "gate": {
+            "lo": -6.097,
+            "hi": 13.268
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.916,
+          "separation": -0.016,
+          "why": null
+        },
+        {
+          "index": 18,
+          "gate": {
+            "lo": -7.895,
+            "hi": 11.912
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.94,
+          "separation": -0.04,
+          "why": null
+        },
+        {
+          "index": 19,
+          "gate": {
+            "lo": -6.501,
+            "hi": 14.555
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.932,
+          "separation": -0.032,
+          "why": null
+        }
+      ],
+      "ranked": [
+        0,
+        2,
+        1,
+        3,
+        7,
+        13,
+        4,
+        5,
+        6,
+        14,
+        15,
+        12,
+        11,
+        8,
+        17,
+        9,
+        19,
+        10,
+        18,
+        16
+      ]
+    },
+    {
+      "tag": "mel40-c24-buf4096",
+      "config": {
+        "melBands": 40,
+        "numberOfCoefficients": 24,
+        "bufferSize": 4096
+      },
+      "framesDrone": 3480,
+      "framesOther": 3480,
+      "skipped": 0,
+      "coefficients": [
+        {
+          "index": 0,
+          "gate": {
+            "lo": 311.455,
+            "hi": 573.051
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.416,
+          "separation": 0.484,
+          "why": null
+        },
+        {
+          "index": 1,
+          "gate": {
+            "lo": -14.551,
+            "hi": 114.848
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.529,
+          "separation": 0.371,
+          "why": null
+        },
+        {
+          "index": 2,
+          "gate": {
+            "lo": -78.629,
+            "hi": 8.713
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.598,
+          "separation": 0.302,
+          "why": null
+        },
+        {
+          "index": 3,
+          "gate": {
+            "lo": -6.079,
+            "hi": 44.944
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.671,
+          "separation": 0.229,
+          "why": null
+        },
+        {
+          "index": 4,
+          "gate": {
+            "lo": -25.811,
+            "hi": 31.991
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.766,
+          "separation": 0.134,
+          "why": null
+        },
+        {
+          "index": 5,
+          "gate": {
+            "lo": -9.758,
+            "hi": 30.216
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.808,
+          "separation": 0.092,
+          "why": null
+        },
+        {
+          "index": 6,
+          "gate": {
+            "lo": -20.113,
+            "hi": 23.176
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.836,
+          "separation": 0.064,
+          "why": null
+        },
+        {
+          "index": 7,
+          "gate": {
+            "lo": -12.134,
+            "hi": 17.642
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.757,
+          "separation": 0.143,
+          "why": null
+        },
+        {
+          "index": 8,
+          "gate": {
+            "lo": -15.047,
+            "hi": 25.973
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.872,
+          "separation": 0.028,
+          "why": null
+        },
+        {
+          "index": 9,
+          "gate": {
+            "lo": -22.068,
+            "hi": 14.127
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.912,
+          "separation": -0.012,
+          "why": null
+        },
+        {
+          "index": 10,
+          "gate": {
+            "lo": -18.356,
+            "hi": 28.529
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.932,
+          "separation": -0.032,
+          "why": null
+        },
+        {
+          "index": 11,
+          "gate": {
+            "lo": -16.367,
+            "hi": 12.478
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.895,
+          "separation": 0.005,
+          "why": null
+        },
+        {
+          "index": 12,
+          "gate": {
+            "lo": -10.528,
+            "hi": 22.827
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.867,
+          "separation": 0.033,
+          "why": null
+        },
+        {
+          "index": 13,
+          "gate": {
+            "lo": -6.331,
+            "hi": 13.955
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.753,
+          "separation": 0.147,
+          "why": null
+        },
+        {
+          "index": 14,
+          "gate": {
+            "lo": -8.527,
+            "hi": 14.902
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.863,
+          "separation": 0.037,
+          "why": null
+        },
+        {
+          "index": 15,
+          "gate": {
+            "lo": -7.585,
+            "hi": 22.199
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.894,
+          "separation": 0.006,
+          "why": null
+        },
+        {
+          "index": 16,
+          "gate": {
+            "lo": -11.223,
+            "hi": 14.995
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.942,
+          "separation": -0.042,
+          "why": null
+        },
+        {
+          "index": 17,
+          "gate": {
+            "lo": -7.259,
+            "hi": 18.49
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.894,
+          "separation": 0.006,
+          "why": null
+        },
+        {
+          "index": 18,
+          "gate": {
+            "lo": -10.22,
+            "hi": 13.937
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.929,
+          "separation": -0.029,
+          "why": null
+        },
+        {
+          "index": 19,
+          "gate": {
+            "lo": -9.221,
+            "hi": 21.48
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.926,
+          "separation": -0.026,
+          "why": null
+        },
+        {
+          "index": 20,
+          "gate": {
+            "lo": -11.008,
+            "hi": 7.343
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.924,
+          "separation": -0.024,
+          "why": null
+        },
+        {
+          "index": 21,
+          "gate": {
+            "lo": -7.55,
+            "hi": 14.985
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.935,
+          "separation": -0.035,
+          "why": null
+        },
+        {
+          "index": 22,
+          "gate": {
+            "lo": -9.742,
+            "hi": 8.18
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.916,
+          "separation": -0.016,
+          "why": null
+        },
+        {
+          "index": 23,
+          "gate": {
+            "lo": -8.961,
+            "hi": 8.302
+          },
+          "droneInside": 0.9,
+          "otherInside": 0.926,
+          "separation": -0.026,
+          "why": null
+        }
+      ],
+      "ranked": [
+        0,
+        1,
+        2,
+        3,
+        13,
+        7,
+        4,
+        5,
+        6,
+        14,
+        12,
+        8,
+        15,
+        17,
+        11,
+        9,
+        22,
+        20,
+        19,
+        23,
+        18,
+        10,
+        21,
+        16
+      ]
+    }
+  ],
+  "preset": {
+    "configHash": "mel40-c24-buf4096",
+    "judgedCoefficients": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "bounds": [
+      {
+        "min": 311.455,
+        "max": 573.051
+      },
+      {
+        "min": -14.551,
+        "max": 114.848
+      },
+      {
+        "min": -78.629,
+        "max": 8.713
+      },
+      {
+        "min": -6.079,
+        "max": 44.944
+      },
+      {
+        "min": -25.811,
+        "max": 31.991
+      },
+      {
+        "min": -9.758,
+        "max": 30.216
+      },
+      {
+        "min": -20.113,
+        "max": 23.176
+      },
+      {
+        "min": -12.134,
+        "max": 17.642
+      },
+      {
+        "min": -15.047,
+        "max": 25.973
+      },
+      {
+        "min": -22.068,
+        "max": 14.127
+      },
+      {
+        "min": -18.356,
+        "max": 28.529
+      },
+      {
+        "min": -16.367,
+        "max": 12.478
+      },
+      {
+        "min": -10.528,
+        "max": 22.827
+      },
+      {
+        "min": -6.331,
+        "max": 13.955
+      },
+      {
+        "min": -8.527,
+        "max": 14.902
+      },
+      {
+        "min": -7.585,
+        "max": 22.199
+      },
+      {
+        "min": -11.223,
+        "max": 14.995
+      },
+      {
+        "min": -7.259,
+        "max": 18.49
+      },
+      {
+        "min": -10.22,
+        "max": 13.937
+      },
+      {
+        "min": -9.221,
+        "max": 21.48
+      },
+      {
+        "min": -11.008,
+        "max": 7.343
+      },
+      {
+        "min": -7.55,
+        "max": 14.985
+      },
+      {
+        "min": -9.742,
+        "max": 8.18
+      },
+      {
+        "min": -8.961,
+        "max": 8.302
+      }
+    ],
+    "strictness": {
+      "easy": {
+        "minInBandRatio": 0.25,
+        "minPassRate": 0.3,
+        "means": "1 из 4 коэффициентов в воротах"
+      },
+      "normal": {
+        "minInBandRatio": 0.5,
+        "minPassRate": 0.6,
+        "means": "2 из 4"
+      },
+      "strict": {
+        "minInBandRatio": 1,
+        "minPassRate": 0.9,
+        "means": "все 4"
+      }
+    },
+    "situationsCalibrated": false,
+    "minMagnitude": 0,
+    "minMagnitudeWhy": "ЗАЩИТА ВЫКЛЮЧЕНА (0). Порог немого кадра калибровкой НЕ определяется: снимается на тишине своего тракта, которой в корпусе нет. Кадр из одних нулей попадёт в любой коридор, включающий ноль, и труба даст зелёный на тишине. Перед любым живым прогоном значение обязано быть выбрано; до тех пор единственный признак — silentCount в отчёте, и он будет нулевым."
+  },
+  "disclaimer": [
+    "ПЕРВАЯ ПРИКИДКА, не окончательные ворота (слово владельца 31.07).",
+    "Корпус 120 записей; цель и фон из РАЗНЫХ чужих датасетов — тракт склеен с меткой класса.",
+    "undecided_corpus_bias первого боевого прогона этой работой НЕ снимается.",
+    "Три уровня строгости владельца НЕ откалиброваны: в корпусе нет смесей цели с помехой."
+  ]
+}

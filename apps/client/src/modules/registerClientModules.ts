@@ -16,6 +16,7 @@ import { createMicStreamVizPlugin } from '../plugins/microphone-stream-viz';
 import { createMicDetectorScoreboardPlugin } from '../plugins/mic-detector-scoreboard';
 import { createTrendsFftAnalyzerPlugin } from '../plugins/trends-fft-analyzer';
 import { createVdrValidationPlugin } from '../plugins/vdr-validation';
+import { createMfccAnalyzerTestPlugin } from '../plugins/mfcc-analyzer-test';
 
 /**
  * Регистрация всех клиентских модулей и плагинов.
@@ -185,6 +186,12 @@ export function registerClientModules(): void {
   MembranaRegistry.registerPlugin('microphone', createMicProximityAlarmPlugin());
   // vdr-hg2: продуктовая поверхность hard-gate экспериментов (требование владельца 2026-07-03).
   MembranaRegistry.registerPlugin('microphone', createVdrValidationPlugin());
+  // Прибор разведки по кепстральным коэффициентам (спринт mfcc-plugin-sprint, блок включения).
+  // Расхождение с соседями названо, а не исправлено: панель берёт считалку пропом и держит
+  // своё состояние, тогда как соседние берут moduleId и тянут конфиг из стора. Инъекция —
+  // осознанный шов (плагин не знает, как считаются коэффициенты); сведение двух образцов к
+  // одному — работа уровня реестра, не этого блока.
+  MembranaRegistry.registerPlugin('microphone', createMfccAnalyzerTestPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryPlayerPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryDroneAnalysisPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryFftThresholdTestPlugin());
