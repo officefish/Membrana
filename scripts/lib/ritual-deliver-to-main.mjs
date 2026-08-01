@@ -61,13 +61,19 @@ export const DELIVER_RITUALS = Object.freeze({
     //   мостик открывали    → позиция спрашивается наравне со всеми
     //   свидетель нечитаем  → позиция СПРАШИВАЕТСЯ: неизвестность оборачивается проверкой,
     //                         а не поблажкой, иначе битый файл состояния молча гасил бы её
-    artifacts: (date, ctx = {}) =>
-      eveningDeliverArtifacts(date).filter((a, i) => {
-        const template = EVENING_DELIVER_ARTIFACTS[i]?.rel ?? a.rel;
-        const condition = eveningConditionOf(template);
-        if (condition !== 'bridge-open') return true;
-        return bridgeWasOpen(ctx.repoRoot ?? '.', date);
-      }),
+    artifacts: (date, ctx = {}) => {
+      // Сопоставление по ЗНАЧЕНИЮ пути, а не по индексу: индексная связь двух списков
+      // разъезжается молча при первом же росте каталога, и условие применилось бы не к тому
+      // артефакту. Замечание ревью PR #1617, P2.
+      const resolve = (t) => (t.dated ? t.rel.replaceAll('<date>', date) : t.rel);
+      const conditionByResolved = new Map(
+        EVENING_DELIVER_ARTIFACTS.map((t) => [resolve(t), eveningConditionOf(t.rel)]),
+      );
+      const bridgeOpen = bridgeWasOpen(ctx.repoRoot ?? '.', date);
+      return eveningDeliverArtifacts(date).filter(
+        (a) => conditionByResolved.get(a.rel) !== 'bridge-open' || bridgeOpen,
+      );
+    },
     branchSlug: 'ritual-evening',
     done: 'артефакты вечера на main',
     unfinished: 'вечер не завершён для соседей, пока артефакты не в main (Ф2 #1533)',
