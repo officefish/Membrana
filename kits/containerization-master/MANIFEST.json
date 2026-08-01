@@ -35,7 +35,7 @@
     "scripts/lib/tasks-decompose.mjs": "76db4ed957044028ed543db464cb73cbb086806d",
     "scripts/lib/tasks-readme-engine.mjs": "3a45a41f5e17587bc54b85011eeacbeffa7c264b",
     "scripts/lib/tooling-overview.mjs": "7cb0acb63c37edb3ac6a610653916632cca0238c",
-    "scripts/lib/validate-procedure.mjs": "b789e6607dad867b989cc5a0a7d305326e7e9585",
+    "scripts/lib/validate-procedure.mjs": "f065f41c068327a8023e503f4496b4c03f7b6c7f",
     "scripts/procedures-registry.mjs": "6d089af37383ce9bb2d568e0239c876e80fd7dcd",
     "scripts/repo-branches-decompose.mjs": "2a74f2b574d30197fe88b7780b70b7a99bb1f5f8",
     "scripts/repo-branches.mjs": "365b290a5864583dd49f1f1dad8b3776e8dfc0c9",
