@@ -86,16 +86,62 @@ export function findEpicIssueCollisions(registry) {
 }
 
 /**
+ * Карточки, делящие один Issue БЕЗ родства «эпик ↔ фаза».
+ *
+ * `findEpicIssueCollisions` ловит только пару «фаза несёт Issue своего эпика» — по полю
+ * `parentEpic`. Пять независимых карточек, смотрящих в один номер, родства не имеют и
+ * проходят мимо: закрытие «своего» Issue оборвёт то, на что ссылаются остальные четыре.
+ *
+ * ВЕЩДОК 01.08 (ночной триаж 31.07, bucket ghost): `neural-tier-1b-contract`,
+ * `real-dataset-live-calibration`, `vdr-hard-gate`, `vdr-hg3-trends-benchmark` и
+ * `vdr-hg4-hard-gate-report` все указывают на #47 — «Пересмотр дорожной карты», закрытый
+ * 11 июня. Пять живых карточек утверждают связь с чужим и мёртвым эпиком.
+ *
+ * Это тот же класс, что вердикт H1 заседания `evening-auditor` про зонтичные Issue: одна
+ * Issue на N карточек. Предикат чистый — сети не требует, работает офлайн и в тестах.
+ *
+ * @param {{ version: number, tasks: TaskEntry[] }} registry
+ * @returns {Array<{issue: number, ids: string[]}>} группы, отсортированы по номеру Issue
+ */
+export function findSharedIssueRefs(registry) {
+  const byId = new Map(registry.tasks.map((t) => [t.id, t]));
+  /** @type {Map<number, string[]>} */
+  const byIssue = new Map();
+  for (const t of registry.tasks) {
+    if (t.githubIssue == null) continue;
+    if (!byIssue.has(t.githubIssue)) byIssue.set(t.githubIssue, []);
+    byIssue.get(t.githubIssue).push(t.id);
+  }
+  const out = [];
+  for (const [issue, ids] of byIssue) {
+    if (ids.length < 2) continue;
+    // Родство «эпик ↔ его фазы» — предмет findEpicIssueCollisions; здесь не дублируем.
+    const kin = ids.every((id) => {
+      const t = byId.get(id);
+      return ids.some((other) => other !== id && (t?.parentEpic === other || byId.get(other)?.parentEpic === id));
+    });
+    if (kin) continue;
+    out.push({ issue, ids: [...ids].sort() });
+  }
+  return out.sort((a, b) => a.issue - b.issue);
+}
+
+/**
  * Архивные задачи с Issue, которые ещё не закрыты на GitHub.
  *
  * Фазы с Issue эпика исключены намеренно (см. findEpicIssueCollisions): молча
  * закрыть чужой эпик хуже, чем не закрыть ничего. task:close-github показывает их
  * отдельным списком, чтобы человек занулил поле или завёл фазе свой Issue.
+ *
+ * По той же причине исключены карточки, делящие Issue без родства
+ * (см. findSharedIssueRefs): закрыть «свой» номер значит оборвать чужие ссылки.
  */
 export function listPendingGithubClose(registry) {
   const collisions = new Set(findEpicIssueCollisions(registry).map((t) => t.id));
+  const shared = new Set(findSharedIssueRefs(registry).flatMap((g) => g.ids));
   return listArchived(registry).filter(
-    (t) => t.githubIssue != null && !t.githubIssueClosedAt && !collisions.has(t.id),
+    (t) =>
+      t.githubIssue != null && !t.githubIssueClosedAt && !collisions.has(t.id) && !shared.has(t.id),
   );
 }
 

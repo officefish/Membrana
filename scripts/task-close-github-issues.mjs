@@ -21,6 +21,7 @@ import {
   archiveCardPath,
   extractGithubIssueReport,
   findEpicIssueCollisions,
+  findSharedIssueRefs,
   listPendingGithubClose,
   loadRegistry,
   saveRegistry,
@@ -100,6 +101,26 @@ if (blocked.length > 0) {
   }
   for (const [epic, ids] of byEpic) {
     console.warn(`    • эпик ${epic} (#${registry.tasks.find((t) => t.id === epic)?.githubIssue}): ${ids.join(', ')}`);
+  }
+  console.warn('');
+}
+
+// Зонтичная Issue без родства: N независимых карточек на один номер. Родство «эпик ↔ фаза»
+// ловит блок выше по parentEpic; здесь — случай, которого он не видит. Вещдок 01.08: пять
+// карточек указывают на #47, закрытый 11 июня.
+const sharedGroups = findSharedIssueRefs(registry).filter((g) =>
+  g.ids.some((id) => {
+    const t = registry.tasks.find((x) => x.id === id);
+    return t?.status === 'archived' && !t.githubIssueClosedAt;
+  }),
+);
+if (sharedGroups.length > 0) {
+  const total = sharedGroups.reduce((n, g) => n + g.ids.length, 0);
+  console.warn(`\n⚠ Не закрываю: ${total} карточек делят Issue без родства «эпик ↔ фаза».`);
+  console.warn('  Закрыть «свой» номер значит оборвать то, на что ссылаются остальные.');
+  console.warn('  Почините поле: githubIssue → свой номер либо null, если своего Issue нет.');
+  for (const g of sharedGroups) {
+    console.warn(`    • #${g.issue}: ${g.ids.join(', ')}`);
   }
   console.warn('');
 }
