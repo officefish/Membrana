@@ -8,7 +8,10 @@
   "magistral": "development-matrix",
   "swallow": {
     "//": "null до черновика — порядок утра: сначала магистраль (owner-choice), затем swallow-draft и явное «ок» владельца; перезаписывается гейтом ally-swallow",
-    "status": "ждёт черновика"
+    "status": "ждёт черновика",
+    "draftDigest": "8d5060e06814357f42d74c93ebafef6cf761a3e58bc54e957b2a6b930168d500",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-08-01.md",
+    "ownerAck": true
   },
   "day": "2026-08-01"
 }
