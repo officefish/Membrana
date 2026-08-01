@@ -222,6 +222,39 @@ const SPRINT_KINDS = [
  * @param {object} input
  * @returns {TaskEntry}
  */
+/**
+ * Связь карточки с GitHub: либо номер Issue, либо ЯВНАЯ причина, почему его нет.
+ *
+ * Молчание связью не является. На 01.08 157 активных карточек из 211 (74%) не несут
+ * Issue, и цифра растёт: норма объявлена, но нарушение ничем не встречается, а ночной
+ * триаж месяц печатал список из полутора сотен строк с одинаковым действием `relink` —
+ * и ни одна не была перелинкована. Отчёт напоминал, а сиротство рождалось дальше.
+ *
+ * Здесь закрывается РОЖДЕНИЕ, а не прошлое: старые 157 карточек не трогаются, но новая
+ * без Issue обязана назвать причину. Причина — свободный текст намеренно: закрытый
+ * перечень тут потребовал бы владельца перечня, а предмет пока не размечен.
+ *
+ * @param {{issue?: unknown, noIssue?: unknown}} input
+ * @returns {string|null} причина отказа регистрации либо null
+ */
+export function issueLinkProblem(input) {
+  const hasIssue = input?.issue != null && String(input.issue).trim() !== '';
+  // Парсер CLI кладёт --no-issue в ключ `no-issue`; принимаем оба, как уже сделано
+  // для parent-epic/parentEpic — иначе флаг молча игнорился бы.
+  const raw = input?.noIssue ?? input?.['no-issue'];
+  const reason = typeof raw === 'string' ? raw.trim() : '';
+  if (hasIssue && reason) {
+    return 'указаны и --issue, и --no-issue: связь либо есть, либо её нет с причиной';
+  }
+  if (hasIssue || reason) return null;
+  return (
+    'нет связи с GitHub: нужен --issue <N> либо --no-issue "<причина>".\n' +
+    '  Молчание связью не является: на 01.08 157 карточек из 211 без Issue, и список\n' +
+    '  из полутора сотен строк «relink» месяц печатался без единого исправления.\n' +
+    '  Причина пишется словами и остаётся в карточке — её потом видно.'
+  );
+}
+
 export function buildTaskEntry(input, today) {
   validateTaskId(input.id);
   if (!input.title?.trim()) throw new Error('Пустой --title.');
@@ -249,11 +282,16 @@ export function buildTaskEntry(input, today) {
     linearRaw != null && String(linearRaw).trim() && String(linearRaw).trim() !== '—'
       ? String(linearRaw).trim()
       : null;
+  const noIssueRaw = input.noIssue ?? input['no-issue'];
+  const noIssueReason = typeof noIssueRaw === 'string' ? noIssueRaw.trim() : '';
   const entry = {
     id: input.id,
     title: input.title.trim(),
     promptPath,
     githubIssue: input.issue != null ? Number(input.issue) : null,
+    // Причина отсутствия Issue живёт В КАРТОЧКЕ, а не в голове регистратора: иначе через
+    // неделю «почему у неё нет Issue» отвечать некому, и карточка неотличима от сироты.
+    ...(noIssueReason ? { noIssueReason } : {}),
     linearId,
     size: input.size,
     status: 'active',

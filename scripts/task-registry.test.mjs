@@ -8,6 +8,7 @@ import {
   buildTaskEntry,
   findEpicIssueCollisions,
   findSharedIssueRefs,
+  issueLinkProblem,
   findTask,
   listPendingGithubClose,
   loadRegistry,
@@ -477,5 +478,49 @@ const reg = (...tasks) => ({ version: 1, tasks });
       t('p2', { githubIssue: 60, parentEpic: 'epic' }),
     );
     assert.deepEqual(findSharedIssueRefs(r), []);
+  });
+});
+
+describe('связь карточки с GitHub при рождении', () => {
+  it('нет ни --issue, ни --no-issue — находка с объяснением', () => {
+    const p = issueLinkProblem({ id: 'x', title: 'T', size: 'M' });
+    assert.ok(p, 'молчание связью не является');
+    assert.match(p, /--issue/u);
+    assert.match(p, /--no-issue/u);
+  });
+
+  it('--issue задан — связь есть', () => {
+    assert.equal(issueLinkProblem({ issue: 1609 }), null);
+    assert.equal(issueLinkProblem({ issue: '1609' }), null);
+  });
+
+  it('--no-issue с причиной — законное «нет»', () => {
+    assert.equal(issueLinkProblem({ 'no-issue': 'предмет ещё не размечен' }), null);
+    assert.equal(issueLinkProblem({ noIssue: 'предмет ещё не размечен' }), null);
+  });
+
+  it('--no-issue без причины связью не является: пустая строка не отказ', () => {
+    assert.ok(issueLinkProblem({ 'no-issue': '   ' }));
+  });
+
+  it('оба сразу — находка: связь либо есть, либо её нет с причиной', () => {
+    assert.ok(issueLinkProblem({ issue: 5, 'no-issue': 'зачем-то' }));
+  });
+
+  it('причина живёт В КАРТОЧКЕ, а не в голове регистратора', () => {
+    const e = buildTaskEntry({ id: 'x', title: 'T', size: 'M', 'no-issue': 'разведка до постановки' }, '2026-08-01');
+    assert.equal(e.noIssueReason, 'разведка до постановки');
+    assert.equal(e.githubIssue, null);
+  });
+
+  it('с --issue поля причины нет вовсе — не пустая строка', () => {
+    const e = buildTaskEntry({ id: 'x', title: 'T', size: 'M', issue: 7 }, '2026-08-01');
+    assert.equal(e.githubIssue, 7);
+    assert.equal('noIssueReason' in e, false);
+  });
+
+  it('ЯДРО остаётся чистым строителем: без связи не бросает — норму сторожит дверь', () => {
+    const e = buildTaskEntry({ id: 'x', title: 'T', size: 'M' }, '2026-08-01');
+    assert.equal(e.githubIssue, null, 'соседи и тесты строят записи без Issue законно');
   });
 });
