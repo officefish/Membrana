@@ -117,9 +117,9 @@ describe('buildMfccTestReport', () => {
   });
 
   it('отпечаток и уровень строгости переносятся из серии без подстановки умолчаний', () => {
-    const s = series({ passed: 3, failed: 0, silent: 0, strictness: 'strict', configHash: 'mel26-c13-buf2048' });
+    const s = series({ passed: 3, failed: 0, silent: 0, strictness: 'strict', configHash: 'mel26-c13-buf2048-sr48000' });
     const r = buildMfccTestReport(s, PRESET_FIRST_CUT, FLOOR);
-    expect(r.configHash).toBe('mel26-c13-buf2048');
+    expect(r.configHash).toBe('mel26-c13-buf2048-sr48000');
     expect(r.strictnessUsed).toBe('strict');
   });
 });
