@@ -1,14 +1,11 @@
 {
   "magistralOptions": [
-    "mfcc-mic-plugins"
+    "development-matrix",
+    "angelina-hostess-impl",
+    "archivarius-sessions-container"
   ],
-  "frozenDigest": "7c0cb66e87edada0e617c738ef8a75493962af6f1a58874c9617d9940772d5dc",
-  "magistral": "mfcc-mic-plugins",
-  "swallow": {
-    "draftDigest": "a6c41c6951ec41f5d594ec0d3d3baa0964d3348bddaa558590671b5f5c09bcfb",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-07-31.md",
-    "ownerAck": true,
-    "gate": "evening:partner-swallow"
-  },
-  "day": "2026-07-31"
+  "frozenDigest": "0a299fa72067b3094bea972e9b695af36665f3da545658f3f12b1b3815fd1cb5",
+  "magistral": "development-matrix",
+  "swallow": null,
+  "day": "2026-08-01"
 }

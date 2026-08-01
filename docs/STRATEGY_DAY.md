@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-07-31T05:10:05.416Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-08-01T05:27:15.906Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -56,7 +56,7 @@ _Кристаллов активно: 117 (owner: 74, derived: 43). Страте
 - ~~**Начитанная виртуальная команда: досье персон + фоновый stack-watch за новинками стека**~~ — `insight:insight-team-stack-watch` _(stale · 2026-07-09)_
 - ~~**QA-раздел в панели офиса: накапливать вопросы союзников и ответы команды**~~ — `insight:insight-office-panel-qa-section` _(stale · 2026-07-14)_
 - ~~**Вечерний ритуал производит три опорных документа — топливо для агентов, симметрично дневному**~~ — `insight:insight-evening-ritual-three-fuel-documents` _(stale · 2026-07-17)_
-- **Нет субъекта действия: команда заявлена, но не исполняет** — `insight:insight-acting-subject-missing`
+- ~~**Нет субъекта действия: команда заявлена, но не исполняет**~~ — `insight:insight-acting-subject-missing` _(stale · 2026-07-18)_
 - ~~**Канонический FSM сессии recorder (anti-L18)**~~ — `insight:insight-kuryokhin-recorder-session-fsm` _(stale · 2026-06-25)_
 - **Роутинг изменений: сессии без push, заявки-патчи, office-очередь, именные гейты** — `insight:insight-change-routing-office`
 - ~~**Акустические характеристики 7 классов звука free-v1: discriminative FFT features**~~ — `insight:insight-free-v1-acoustic-classes` _(stale · 2026-06-30)_
@@ -72,7 +72,7 @@ _Кристаллов активно: 117 (owner: 74, derived: 43). Страте
 - **Паттерн «Воспоминание» — как персона копит опыт** — `insight:insight-persona-recollection-pattern`
 - ~~**Лендинг через челлендж — проба стратегических исходников в бою (Replit как кисть, Ожегов как судья)**~~ — `insight:insight-landing-challenge-sources-in-battle` _(stale · 2026-07-17)_
 - **Формат разработки one shot: подобранная S-проблема за один проход, процедура во фреймах** — `insight:insight-one-shot-format`
-- **Собственный полевой корпус: спецификация трека и ежедневная рутина сбора** — `insight:insight-own-field-corpus-single-spec`
+- ~~**Собственный полевой корпус: спецификация трека и ежедневная рутина сбора**~~ — `insight:insight-own-field-corpus-single-spec` _(stale · 2026-07-18)_
 - ~~**Мост adopted insight → week epic (LGTM gate)**~~ — `insight:insight-vesnin-adopted-epic-bridge` _(stale · 2026-06-25)_
 - ~~**Архивация сессий AI-агентов**~~ — `insight:insight-sessions-archive` _(stale · 2026-06-28)_
 - **Публикация документации туллинга на docs.mmbrn.tech (Mintlify custom domain)** — `insight:insight-docs-custom-domain`

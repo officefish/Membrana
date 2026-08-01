@@ -1,5 +1,5 @@
 {
-  "date": "2026-07-31",
+  "date": "2026-08-01",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -168,13 +168,6 @@
       "severity": "moderate",
       "issue": "Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.",
       "url": ""
-    },
-    {
-      "pkg": "brace-expansion",
-      "id": "1124334",
-      "severity": "high",
-      "issue": "brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash",
-      "url": "https://github.com/advisories/GHSA-mh99-v99m-4gvg"
     },
     {
       "pkg": "builder-util-runtime",
