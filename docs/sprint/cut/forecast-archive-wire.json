@@ -1,0 +1,68 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "forecast-archive-wire",
+  "taskId": "forecast-archive-wire",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-01T11:40:00+03:00",
+    "to": "2026-08-01T20:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "forecast-to-archive-core",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/sprint-experience/forecast-to-archive.mjs"
+      ],
+      "revisionAt": "2026-08-01T11:40:00+03:00",
+      "estimate": {
+        "changedLines": 150
+      }
+    },
+    {
+      "blockId": "forecast-to-archive-tooth",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/sprint-experience/forecast-to-archive.test.mjs"
+      ],
+      "revisionAt": "2026-08-01T11:40:00+03:00",
+      "estimate": {
+        "changedLines": 130
+      }
+    },
+    {
+      "blockId": "forecast-archive-wire",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/sprint-experience.mjs"
+      ],
+      "revisionAt": "2026-08-01T11:40:00+03:00",
+      "estimate": {
+        "changedLines": 90
+      }
+    },
+    {
+      "blockId": "forecast-archive-seed",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/virtual-team/memory/archive/tarasov.jsonl",
+        "docs/virtual-team/memory/archive/angelina.jsonl",
+        "docs/bridge/DEBTS.md"
+      ],
+      "revisionAt": "2026-08-01T11:40:00+03:00",
+      "estimate": {
+        "changedLines": 80
+      }
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-01T11:34:16+03:00",
+    "digest": "911ebaebeac51a4281e01d1a546b78cd2eea67d0efb56cfd9e8fb5650f20ac20"
+  }
+}

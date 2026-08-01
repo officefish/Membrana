@@ -28,6 +28,8 @@ import { makeForecastRecord } from './lib/sprint-experience/forecast-record.mjs'
 import { planToForecast } from './lib/sprint-integration/plan-to-forecast.mjs';
 import { planToGate } from './lib/sprint-integration/plan-to-gate.mjs';
 import { gateToForecastObserved } from './lib/sprint-integration/gate-to-forecast.mjs';
+import { forecastsToArchiveRecords } from './lib/sprint-experience/forecast-to-archive.mjs';
+import { appendArchive } from './persona-memory/lib/archive-append.mjs';
 import { runGate } from './lib/execution-trace/gate.mjs';
 import { loadKnownPersonas } from './lib/execution-trace/personas.mjs';
 import { RESPONSIBILITY_WAIVER_REASONS } from './lib/execution-trace/stubs/stub-responsibility-modes.mjs';
@@ -38,7 +40,7 @@ const RECORDS_PATH = join(ZONE, 'forecast-records.jsonl');
 const SNAPSHOT_PATH = join(ZONE, 'RUN_NOMINATIONS.md');
 
 function parseArgs(argv) {
-  const args = { record: null, nominate: null, now: null, out: null, dryRun: false, listStubs: false, json: false, plan: null, traces: null, segments: null };
+  const args = { record: null, nominate: null, now: null, out: null, dryRun: false, listStubs: false, json: false, plan: null, traces: null, segments: null, noArchive: false };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--record') { args.record = argv[i + 1]; i += 1; }
@@ -49,6 +51,7 @@ function parseArgs(argv) {
     else if (a === '--traces') { args.traces = argv[i + 1]; i += 1; }
     else if (a === '--segments') { args.segments = argv[i + 1]; i += 1; }
     else if (a === '--dry-run') args.dryRun = true;
+    else if (a === '--no-archive') args.noArchive = true;
     else if (a === '--list-stubs') args.listStubs = true;
     else if (a === '--json') args.json = true;
     else throw new Error(`неизвестный аргумент «${a}»`);
@@ -197,6 +200,35 @@ function buildLiveRecord(args) {
   return { record, problems: [...problems, ...(v.ok ? [] : v.problems)], unattributed, outcome: recordOutcome };
 }
 
+/**
+ * Провод в живой архив персоны. Отчёт называет всё тремя числами: сколько доехало,
+ * сколько отклонено с причиной, сколько пропущено как «исход не наступил».
+ * Молчаливого нуля нет — «ноль доехало» и «нечего везти» разные вещи.
+ * @param {Array<Record<string, unknown>>} records
+ * @returns {string}
+ */
+function toArchive(records, defaultRef) {
+  // Архив автора заводится сам: appendArchive делает mkdirSync+appendFileSync, когда файла
+  // нет. Проверено не рассуждением — docs/virtual-team/memory/archive/tarasov.jsonl в этом
+  // же диффе создан этим прогоном, архива тимлида до него не существовало.
+  const { records: mapped, skipped } = forecastsToArchiveRecords(records, { defaultRef });
+  const lines = [];
+  let written = 0;
+  const refused = [];
+  for (const record of mapped) {
+    const r = appendArchive(REPO_ROOT, record);
+    if (r.ok) written += 1;
+    else refused.push(`${record.personaId}/${record.id}: ${r.problems.join('; ')}`);
+  }
+  lines.push(
+    `Архив персон: доехало ${written}, отклонено ${refused.length}, ` +
+      `без исхода ${skipped.length} (из ${records.length})`,
+  );
+  for (const r of refused) lines.push(`  ✖ ${r}`);
+  for (const s of skipped) lines.push(`  · ${s.id} — ${s.why}`);
+  return lines.join('\n');
+}
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const now = args.now === null ? NOW : args.now;
@@ -227,11 +259,16 @@ function main() {
       console.log(metrics.text);
       if (args.dryRun) console.log('\n--dry-run: журнал не тронут');
       else {
-        // Дом журнала в Phase 2 — своя зона. Настоящий дом рода — `archive/<persona>.jsonl`,
-        // и вшивает его адаптер интеграции: провода вне зоны блока не трогаются.
+        // Дом журнала в Phase 2 — своя зона. Настоящий дом рода — `archive/<persona>.jsonl`;
+        // провод туда построен адаптером forecast-to-archive (#1590), долг
+        // `#forecast-record-no-wire-to-archive` закрыт этим шагом.
         const path = args.out === null ? RECORDS_PATH : args.out;
         const w = appendRecords(path, set.records);
         console.log(`\nЖурнал: ${path} · добавлено ${w.added}, уже было ${w.skipped}, всего ${w.total}`);
+        // В архив персоны стабы НЕ едут, и это не забывчивость: у фикстур personaId
+        // настоящие (vesnin, angelina), значит живая память наполнилась бы выдуманными
+        // числами и метрика начала бы учиться на них. Провод — только на живом пути.
+        console.log('Архив персон: фикстуры не переносятся — записи стабов не о живых людях');
       }
     }
     return 0;
@@ -262,6 +299,10 @@ function main() {
       mkdirSync(dirname(path), { recursive: true });
       const w = appendRecords(path, [built.record]);
       say(`\nЖурнал: ${path} · добавлено ${w.added}, уже было ${w.skipped}, всего ${w.total}`);
+      // Живой путь — единственный, чьи записи вправе попасть в архив персоны: у стабов
+      // personaId фикстурный, и архив ими засоряется. Провод здесь, а не на фикстурах.
+      if (args.noArchive) say('Архив персон: пропущен по --no-archive');
+      else say(toArchive([built.record], args.plan));
     }
     return 0;
   }
