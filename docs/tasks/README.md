@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `subconscious-lift-c3` | Лифт всплытия C3: облако подсознания, мультизапрос, акт emerge/reject за персоной | M | [`SUBCONSCIOUS_LIFT_C3_PROMPT.md`](../prompts/SUBCONSCIOUS_LIFT_C3_PROMPT.md) | [#1615](https://github.com/officefish/Membrana/issues/1615) |
 | `cut-act-trace` | Носитель следа для акта нарезки: лента актов плана, машинный revisionAt, обнуление разбора при перерезке | M | [`CUT_ACT_TRACE_PROMPT.md`](../prompts/CUT_ACT_TRACE_PROMPT.md) | [#1566](https://github.com/officefish/Membrana/issues/1566) |
 | `procedure-run-journal-f1-local-trail` | F1: локальная лента прогона процедур | M | [`PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md) | — |
 | `procedure-run-journal-2026-08-01` | Membrana Local Sprint: журнал прогона процедур | L | [`PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md) | — |

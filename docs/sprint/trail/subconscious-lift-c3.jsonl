@@ -1,0 +1,4 @@
+{"traceId":"tr-core-dynin-run","blockId":"lift-cloud-core","kind":"context_run","subject":"dynin","at":"2026-08-01T17:48:00+03:00","ref":"docs/discussions/block-lift-cloud-core-dynin.md"}
+{"traceId":"tr-core-dynin-review","blockId":"lift-cloud-core","kind":"review_pass","subject":"dynin","at":"2026-08-01T17:52:00+03:00","ref":"scripts/persona-memory/lib/subconscious-lift.mjs"}
+{"traceId":"tr-tooth-dynin-run","blockId":"lift-cloud-tooth","kind":"context_run","subject":"dynin","at":"2026-08-01T17:54:00+03:00","ref":"docs/discussions/block-lift-cloud-tooth-dynin.md"}
+{"traceId":"tr-tooth-dynin-review","blockId":"lift-cloud-tooth","kind":"review_pass","subject":"dynin","at":"2026-08-01T17:56:00+03:00","ref":"scripts/persona-memory/lib/subconscious-lift.test.mjs"}
