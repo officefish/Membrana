@@ -1,6 +1,46 @@
 {
   "tasks": [
     {
+      "id": "meeting-evening-review-predicate",
+      "title": "Заседание: вечерний кадр — предмет ревью, порядок трёх документов, ворота качества",
+      "promptPath": "docs/meeting/evening-review-predicate/MEETING_BRIEF.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-01",
+      "archivedAt": null,
+      "leadPersona": "angelina",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ],
+      "notes": "Заседание по карточке evening-chain-review-predicate. M0 = порядок (DAG) шести кандидатов. Обзор #1573 вскрыл коллизию: вердикт M4 заседания meeting-evening-auditor (18.07, ратифицирован) ставит аудит ПОСЛЕ code-review — требование владельца 01.08 его отзывает. sprintKind=meeting выставить нельзя: task-register его не принимает (day-sprint/epic/night-build/competition-sprint/cowork-sprint), хотя регламент заседания его требует — тулинг-дыра класса Db.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "evening-chain-review-predicate",
+      "title": "Вечер: предмет ревью, порядок трёх документов, ворота качества (№6 хендофа, M→L по слову владельца 01.08)",
+      "promptPath": "docs/prompts/EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-01",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "angelina"
+      ],
+      "notes": "Перекатегорировано M→L владельцем 01.08: три из пяти кусков трогают записанные решения (18.07 мемоизация на ласточке, ADR-0013, rt-9), а не код. Вход в работу — только после заседания. Фактура входа собрана в промпте (Ф1-Ф9, проверено в дереве 01.08).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "branch-salvage-controlled-tooling",
       "title": "Добавить контролируемую процедуру salvage веток",
       "promptPath": "docs/prompts/BRANCH_SALVAGE_CONTROLLED_TOOLING_PROMPT.md",

@@ -20,6 +20,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `meeting-evening-review-predicate` | Заседание: вечерний кадр — предмет ревью, порядок трёх документов, ворота качества | L | [`MEETING_BRIEF.md`](../meeting/evening-review-predicate/MEETING_BRIEF.md) | — |
+| `evening-chain-review-predicate` | Вечер: предмет ревью, порядок трёх документов, ворота качества (№6 хендофа, M→L по слову владельца 01.08) | L | [`EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md`](../prompts/EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md) | — |
 | `llm-transport-no-key-class` | llm-транспорт: развести «ключа нет» и «ключ отвергнут» | S | [`LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md`](../prompts/LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md) | [#1549](https://github.com/officefish/Membrana/issues/1549) |
 | `mfcc-compare-sprint` | MFCC-ядро: обвязка, детекторы и сравнительный прогон против гармонического на FFT | M | [`mfcc-compare-sprint.json`](../sprint/cut/mfcc-compare-sprint.json) | — |
 | `mfcc-lib-choice` | Выбор MFCC-библиотеки: обоснование до нарезки блоков | S | [`MFCC_LIB_CHOICE_PROMPT.md`](../prompts/MFCC_LIB_CHOICE_PROMPT.md) | — |
