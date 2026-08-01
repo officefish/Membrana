@@ -48,6 +48,10 @@ function usage() {
   node scripts/procedure-run-journal.mjs report [--trail docs/procedure-runs/trail/YYYY-MM-DD.jsonl]`);
 }
 
+function writeStdout(line = '') {
+  process.stdout.write(`${line}\n`);
+}
+
 function resolveTrail(args) {
   return args.trail || defaultTrailPath(args.date || todayIso());
 }
@@ -75,7 +79,7 @@ function main() {
         { nowIso: new Date().toISOString(), sequence: records.length + 1 },
       );
       appendProcedureRunRecord(repoRoot, trail, record);
-      console.log(`procedure-run:journal append ${trail}#${record.sequence} ${record.status} ${record.runId}`);
+      writeStdout(`procedure-run:journal append ${trail}#${record.sequence} ${record.status} ${record.runId}`);
       return;
     }
 
@@ -89,23 +93,23 @@ function main() {
         process.exitCode = 1;
         return;
       }
-      console.log(`procedure-run:journal ok ${trail} (${records.length} records)`);
+      writeStdout(`procedure-run:journal ok ${trail} (${records.length} records)`);
       return;
     }
 
     if (cmd === 'report') {
       const records = readProcedureRunTrail(repoRoot, trail);
       const summary = summarizeProcedureRunTrail(records);
-      console.log(`# procedure-run journal report`);
-      console.log(`trail: ${trail}`);
-      console.log(`total: ${summary.total}`);
-      console.log(`pass: ${summary.pass}`);
-      console.log(`fail: ${summary.fail}`);
-      console.log(`blocked: ${summary.blocked}`);
-      console.log(`skipped: ${summary.skipped}`);
-      console.log(`gaps:`);
-      if (summary.gaps.length === 0) console.log(`- (empty)`);
-      for (const g of summary.gaps) console.log(`- ${g.procedureId}/${g.runId}: ${g.gap}`);
+      writeStdout(`# procedure-run journal report`);
+      writeStdout(`trail: ${trail}`);
+      writeStdout(`total: ${summary.total}`);
+      writeStdout(`pass: ${summary.pass}`);
+      writeStdout(`fail: ${summary.fail}`);
+      writeStdout(`blocked: ${summary.blocked}`);
+      writeStdout(`skipped: ${summary.skipped}`);
+      writeStdout(`gaps:`);
+      if (summary.gaps.length === 0) writeStdout(`- (empty)`);
+      for (const g of summary.gaps) writeStdout(`- ${g.procedureId}/${g.runId}: ${g.gap}`);
       return;
     }
   } catch (e) {

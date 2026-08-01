@@ -9,8 +9,6 @@
 
 ## Перед входом
 
-Сначала выбрать маршрут по generated-релизу
-[`development-matrix`](../../containers/strategic-docs/releases/development-matrix/README.md).
 `membrana-local-sprint` нужен, когда ценность работы включает accountable-блоки,
 ратификацию владельца, профильное ревью команды и `sprint:gate`. Малое намерение
 с одним исполнителем и одним review-атомом идёт через `one shot`, где честность —
