@@ -13,6 +13,8 @@ import { fileURLToPath } from 'node:url';
 
 import { adaptCutPlan, makeWorkTreeResolver, parseArgs } from './execution-gate.mjs';
 import { runGate } from './lib/execution-trace/gate.mjs';
+import { parseIso } from './lib/execution-trace/plan-reader.mjs';
+import { isStale } from './lib/execution-trace/predicates.mjs';
 import {
   ALL_INPUT_ERRORS,
   ALL_VERDICTS,
@@ -424,4 +426,24 @@ test('stale_partial ≠ stale_trace: «всё протухло» и «часть
 
 test('stale_partial — остановка, а не находка: класс статичен', () => {
   assert.equal(VERDICT_CLASS[VERDICTS.STALE_PARTIAL], 'stop');
+});
+
+// ── Смешанные смещения ISO: гейт сравнивает МОМЕНТЫ, а не строки ──────────────────────
+// Ревью PR #1604 выставило это как P1 «off-by-timezone в isStale». Проверено: дефекта нет —
+// plan-reader.parseIso прогоняет и revisionAt, и at следа через Date.parse, в предикаты
+// приходит эпоха. Тест закрепляет свойство, чтобы оно не пропало при рефакторинге: соседний
+// контур (sprint:experience) на таком же сравнении ЛЕКСИКОГРАФИЧЕСКИ и правда врёт, и разница
+// между двумя контурами держится ровно на этой нормализации.
+
+test('смешанные смещения: след позже ревизии считается свежим, хотя строкой он «меньше»', () => {
+  const rev = '2026-08-01T15:04:23+03:00'; // = 12:04:23Z
+  const at = '2026-08-01T13:00:00Z'; // на 56 минут ПОЗЖЕ ревизии
+  assert.equal(at < rev, true, 'предпосылка теста: строкой сравнение даёт обратный ответ');
+  assert.equal(isStale({ at: parseIso(at) }, { revisionAt: parseIso(rev) }), false, 'гейт обязан сравнивать моменты');
+});
+
+test('смешанные смещения: след раньше ревизии остаётся протухшим', () => {
+  const rev = '2026-08-01T15:04:23+03:00';
+  const at = '2026-08-01T11:00:00Z'; // раньше 12:04:23Z
+  assert.equal(isStale({ at: parseIso(at) }, { revisionAt: parseIso(rev) }), true);
 });
