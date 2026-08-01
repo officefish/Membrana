@@ -5,7 +5,7 @@
 > Ссылка = `home` каталога. `docs/tasks` (domain) ≠ `docs/audit/tasks` (report, отчёты про задачи).
 > **Дом без мастерской — законное состояние**, а не дефект: мастерская есть подтип дома.
 
-Домов: **43** · из них мастерских: **13** · домов без мастерской: **30** · плоскостей: **3** · с полным набором из 3 глаголов: **6**.
+Домов: **44** · из них мастерских: **13** · домов без мастерской: **31** · плоскостей: **3** · с полным набором из 3 глаголов: **6**.
 
 ## Плоскость отчётов (`docs/audit`)
 
@@ -68,6 +68,7 @@
 | [docs/procedures/ritual-day](../../../docs/procedures/ritual-day/README.md) | **Определение.** Утренний ритуал — процедура открытия рабочего дня: гигиена |
 | [docs/procedures/ritual-dreams](../../../docs/procedures/ritual-dreams/README.md) | **Определение.** Процедура автономного/полуавтономного прогона снов: тик заезда |
 | [docs/procedures/ritual-evening](../../../docs/procedures/ritual-evening/README.md) | **Определение.** Вечерний ритуал — процедура закрытия рабочего дня: архивация |
+| [docs/procedures/weekly-dead-wire](../../../docs/procedures/weekly-dead-wire/README.md) | **Дом процедуры.** Единственная редакция; `AGENTS.md` несёт строку-указатель, а не пересказ. |
 | [docs/prompts](../../../docs/prompts/README.md) | **Любая новая крупная задача (M/L)** — сначала процесс: |
 | [docs/replit-tasks](../../../docs/replit-tasks/README.md) | Петля «отправить Replit-агенту задание из репо, вернуть работу в `apps/demos/`». |
 | [docs/seanses/night-hunt](../../../docs/seanses/night-hunt/README.md) | Автоматические weekly-отчёты от `background-office` (OpenRouter proxy) попадают сюда **через GitHub PR** с lab |
