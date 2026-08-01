@@ -140,7 +140,20 @@ export function validateTaskId(id) {
 }
 
 const TASK_SIZES = ['S', 'M', 'L'];
-const SPRINT_KINDS = ['day-sprint', 'epic', 'night-build', 'competition-sprint', 'cowork-sprint'];
+// `meeting` добавлен 01.08 (карточка meeting-gates-teeth): регламент заседаний
+// (docs/MEETING_REGULATION.md § «Реестр и команды») требует `sprintKind: meeting`
+// и `id` вида `meeting-<slug>`, но инструмент такого значения не принимал — и
+// единственная карточка с ним в реестре заведена МИМО инструмента. Класс `Db`
+// («канон описывает тулинг, которого нет») из заседания meeting-evening-auditor.
+// Перечень остаётся закрытым: новое значение — новое слово канона, не «прочее».
+const SPRINT_KINDS = [
+  'day-sprint',
+  'epic',
+  'night-build',
+  'competition-sprint',
+  'cowork-sprint',
+  'meeting',
+];
 
 /**
  * Собрать нормализованную запись карточки из полей CLI (#469 ti-3).

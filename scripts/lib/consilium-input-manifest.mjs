@@ -87,13 +87,49 @@ export function manifestHasLoss(records) {
 }
 
 /**
+ * Условия прогона строкой для шапки протокола (01.08).
+ *
+ * Заседание `evening-review-predicate` прошло восемь прогонов с `--no-context --no-rag`,
+ * и **ни один протокол этого не несёт**: условие правила 7 держалось записью в
+ * контейнере и словом председателя, а не артефактом прогона. Восстановить по протоколу,
+ * на чём комната работала, было нечем.
+ *
+ * Ничего не выдумывает: флаг, о котором не сказали, не печатается. Пустой набор — не
+ * пустая строка, а явное «по умолчанию», потому что отсутствие раздела читается как
+ * «условий не было», а не как «условия обычные».
+ *
+ * @param {{noContext?: boolean, noRag?: boolean, noMemory?: boolean, minReplies?: number|null, seed?: number|null}} [run]
+ * @returns {string} строка для шапки
+ */
+export function formatRunConditions(run) {
+  if (!run || typeof run !== 'object') return 'по умолчанию';
+  const flags = [];
+  if (run.noContext) flags.push('--no-context');
+  if (run.noRag) flags.push('--no-rag');
+  if (run.noMemory) flags.push('--no-memory');
+  if (Number.isFinite(run.minReplies)) flags.push(`--min-replies ${run.minReplies}`);
+  if (Number.isFinite(run.seed)) flags.push(`--seed ${run.seed}`);
+  return flags.length ? flags.join(' ') : 'по умолчанию';
+}
+
+/**
  * Шапка протокола: таблица входа. Пустой манифест — не пустая таблица, а честная строка:
  * «нечем подтвердить» лучше, чем отсутствие раздела (его читают как «входа не было»).
  * @param {Array<{kind: string, path: string|null, chars: number, delivery: string}>} records
+ * @param {{noContext?: boolean, noRag?: boolean, noMemory?: boolean, minReplies?: number|null, seed?: number|null}} [run]
+ *   условия прогона; не передали — строка условий не печатается вовсе (старые вызовы
+ *   не начинают врать «по умолчанию» о том, чего никто не сообщал)
  */
-export function renderInputManifest(records) {
+export function renderInputManifest(records, run) {
+  const conditions =
+    run === undefined
+      ? []
+      : ['', `**Условия прогона:** \`${formatRunConditions(run)}\``];
   if (!records || records.length === 0) {
-    return ['**Вход сеанса:** манифест не собран — по этому протоколу вход не подтверждается.'];
+    return [
+      '**Вход сеанса:** манифест не собран — по этому протоколу вход не подтверждается.',
+      ...conditions,
+    ];
   }
   const lines = [
     '**Вход сеанса** (что комната действительно получила):',
@@ -113,5 +149,6 @@ export function renderInputManifest(records) {
       '> сверять с этой таблицей, а не с текстом реплик.',
     );
   }
+  lines.push(...conditions);
   return lines;
 }
