@@ -5,8 +5,10 @@ import {
   FINDING_KINDS,
   PENDING_REASONS,
   VERDICTS,
+  auditCatalogs,
   auditWires,
   checkWire,
+  commandNameFromYarn,
   extractCarrierPaths,
   pendingEntryProblems,
   pendingExpired,
@@ -128,9 +130,72 @@ test('без today аудит падает, а не считает всё све
 
 test('перечни закрыты', () => {
   assert.deepEqual([...VERDICTS], ['implement', 'pending', 'remove']);
-  assert.equal(FINDING_KINDS.length, 4);
+  assert.equal(FINDING_KINDS.length, 5, 'пятый род введён актом владельца 01.08, шестого нет');
+  assert.ok(FINDING_KINDS.includes('carrier_mismatch'));
   assert.equal(PENDING_REASONS.length, 4);
   assert.ok(Object.isFrozen(VERDICTS) && Object.isFrozen(FINDING_KINDS));
+});
+
+// ── каталоги мастерских ──────────────────────────────────────────────────────
+
+test('ключ инструмента выводится из поля yarn, флаги отбрасываются', () => {
+  assert.equal(commandNameFromYarn('yarn strategic-docs:publish --push'), 'strategic-docs:publish');
+  assert.equal(commandNameFromYarn('yarn task:board'), 'task:board');
+  assert.equal(commandNameFromYarn('—'), null, 'прочерк — доковый вход, не провод');
+  assert.equal(commandNameFromYarn(undefined), null);
+});
+
+test('каталог: объявление только в каталоге, движка нет — dead_wire с указанием источника', () => {
+  const { findings } = auditCatalogs({
+    catalogs: [{ path: 'docs/x/workshop.catalog.json', tools: [{ id: 'board', yarn: 'yarn task:board', script: 'scripts/нет.mjs' }] }],
+    scripts: {},
+    fileExists: dead,
+    today: TODAY,
+  });
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].kind, 'dead_wire');
+  assert.equal(findings[0].source, 'docs/x/workshop.catalog.json');
+  assert.equal(findings[0].tool, 'board');
+});
+
+test('каталог: законный pending гасит находку и здесь — своих ключей перечень не заводит', () => {
+  const { findings } = auditCatalogs({
+    catalogs: [{ path: 'c.json', tools: [{ id: 'board', yarn: 'yarn task:board', script: 'scripts/нет.mjs' }] }],
+    scripts: {},
+    fileExists: dead,
+    pending: { 'task:board': { reason: 'awaits-implementation', until: '2026-09-01' } },
+    today: TODAY,
+  });
+  assert.deepEqual(findings, []);
+});
+
+test('род carrier_mismatch: каталог обещает один носитель, команда запускает другой', () => {
+  const { findings } = auditCatalogs({
+    catalogs: [{ path: 'c.json', tools: [{ id: 'publish-push', yarn: 'yarn pub --push', script: 'scripts/lib/inner.mjs' }] }],
+    scripts: { pub: 'node scripts/outer.mjs' },
+    fileExists: alive,
+    today: TODAY,
+  });
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].kind, 'carrier_mismatch');
+  assert.match(findings[0].detail, /каталог обещает scripts\/lib\/inner\.mjs/u);
+});
+
+test('согласие каталога и package.json находки не даёт', () => {
+  const { findings } = auditCatalogs({
+    catalogs: [{ path: 'c.json', tools: [{ id: 'ok', yarn: 'yarn ok', script: 'scripts/ok.mjs' }] }],
+    scripts: { ok: 'node scripts/ok.mjs --flag' },
+    fileExists: alive,
+    today: TODAY,
+  });
+  assert.deepEqual(findings, []);
+});
+
+test('живые каталоги в дереве: два, инструментов двенадцать, расхождений нет', () => {
+  const report = runCheck({ today: TODAY });
+  assert.equal(report.catalogsChecked, 2);
+  assert.equal(report.toolsChecked, 12);
+  assert.equal(report.findings.filter((f) => f.kind === 'carrier_mismatch').length, 0);
 });
 
 // ── прогон по живому дереву ──────────────────────────────────────────────────

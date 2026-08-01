@@ -15,7 +15,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { auditWires, FINDING_KINDS } from './lib/dead-wire.mjs';
+import { auditCatalogs, auditWires, FINDING_KINDS } from './lib/dead-wire.mjs';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PENDING_PATH = 'docs/tasks/dead-wire-pending.json';
@@ -61,19 +61,54 @@ export function runCheck({ root = REPO_ROOT, today, extraScripts = {} } = {}) {
   const scripts = { ...(pkg.scripts ?? {}), ...extraScripts };
   const { pending, source } = readPending(root);
 
-  const report = auditWires({
-    scripts,
-    fileExists: (rel) => fs.existsSync(path.join(root, rel)),
-    pending,
-    today: today ?? new Date().toISOString().slice(0, 10),
+  const fileExists = (rel) => fs.existsSync(path.join(root, rel));
+  const stamp = today ?? new Date().toISOString().slice(0, 10);
+
+  const report = auditWires({ scripts, fileExists, pending, today: stamp });
+  const catalogs = readCatalogs(root);
+  const fromCatalogs = auditCatalogs({ catalogs, scripts, fileExists, pending, today: stamp });
+
+  return {
+    findings: [...report.findings, ...fromCatalogs.findings],
+    checked: report.checked,
+    byKind: report.byKind,
+    catalogsChecked: catalogs.length,
+    toolsChecked: fromCatalogs.checked,
+    pendingSource: source,
+  };
+}
+
+/**
+ * Собрать каталоги мастерских. Отсутствие каталогов законно; нечитаемый каталог —
+ * ошибка входа, а не пустота (иначе зуб зеленеет на сломанном файле).
+ * @param {string} root
+ * @returns {Array<{path: string, tools: Array<Record<string, unknown>>}>}
+ */
+export function readCatalogs(root) {
+  const found = [];
+  const walk = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name === 'node_modules' || entry.name.startsWith('.')) continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (entry.name === 'workshop.catalog.json') found.push(full);
+    }
+  };
+  walk(path.join(root, 'docs'));
+
+  return found.map((full) => {
+    const parsed = JSON.parse(fs.readFileSync(full, 'utf8'));
+    return {
+      path: path.relative(root, full).split(path.sep).join('/'),
+      tools: Array.isArray(parsed.tools) ? parsed.tools : [],
+    };
   });
-  return { ...report, pendingSource: source };
 }
 
 /** @param {ReturnType<typeof runCheck>} report */
 export function renderReport(report) {
   const lines = [];
-  lines.push(`dead-wire — команд проверено: ${report.checked} · находок: ${report.findings.length}`);
+  lines.push(`dead-wire — команд проверено: ${report.checked} · каталогов: ${report.catalogsChecked} (инструментов ${report.toolsChecked}) · находок: ${report.findings.length}`);
   lines.push(`перечень pending: ${report.pendingSource}`);
   if (report.findings.length === 0) {
     lines.push('связь честная: каждое объявление имеет носитель либо законный pending');
