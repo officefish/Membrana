@@ -448,4 +448,34 @@ const reg = (...tasks) => ({ version: 1, tasks });
   assert.deepEqual(groups[0].ids, ['b', 'y']);
   });
 
+
+  it('ДВЕ семьи на одной Issue ловятся: у каждого есть партнёр, но семья не одна', () => {
+    const r = reg(
+      t('epicA', { githubIssue: 47, size: 'L' }),
+      t('phaseA', { githubIssue: 47, parentEpic: 'epicA' }),
+      t('epicB', { githubIssue: 47, size: 'L' }),
+      t('phaseB', { githubIssue: 47, parentEpic: 'epicB' }),
+    );
+    const groups = findSharedIssueRefs(r);
+    assert.equal(groups.length, 1, 'два независимых эпика на одном номере — коллизия');
+    assert.deepEqual(groups[0].ids, ['epicA', 'epicB', 'phaseA', 'phaseB']);
+  });
+
+  it('внук не считается семьёй: фаза фазы — уже не прямое родство', () => {
+    const r = reg(
+      t('epic', { githubIssue: 50, size: 'L' }),
+      t('phase', { githubIssue: 50, parentEpic: 'epic' }),
+      t('sub', { githubIssue: 50, parentEpic: 'phase' }),
+    );
+    assert.equal(findSharedIssueRefs(r).length, 1, 'цепочка глубже одного уровня — не одна семья');
+  });
+
+  it('одна семья по-прежнему пропускается: эпик и две его фазы', () => {
+    const r = reg(
+      t('epic', { githubIssue: 60, size: 'L' }),
+      t('p1', { githubIssue: 60, parentEpic: 'epic' }),
+      t('p2', { githubIssue: 60, parentEpic: 'epic' }),
+    );
+    assert.deepEqual(findSharedIssueRefs(r), []);
+  });
 });

@@ -116,10 +116,20 @@ export function findSharedIssueRefs(registry) {
   for (const [issue, ids] of byIssue) {
     if (ids.length < 2) continue;
     // Родство «эпик ↔ его фазы» — предмет findEpicIssueCollisions; здесь не дублируем.
-    const kin = ids.every((id) => {
-      const t = byId.get(id);
-      return ids.some((other) => other !== id && (t?.parentEpic === other || byId.get(other)?.parentEpic === id));
+    //
+    // Требуется ОДНА семья, а не «у каждого есть партнёр». Первая редакция проверяла
+    // второе — и пропускала группу, где ДВЕ независимые семьи делят номер: у всех четверых
+    // партнёр находится, `kin` истинен, коллизия двух эпиков уходит незамеченной. Найдено
+    // ревью PR #1616; это ровно форма живого случая #47, где семей несколько.
+    //
+    // Корень группы — карточка, чей `parentEpic` не указывает внутрь группы. Семья одна
+    // ⟺ корень ровно один и все остальные — его прямые фазы.
+    const roots = ids.filter((id) => {
+      const parent = byId.get(id)?.parentEpic;
+      return !parent || !ids.includes(parent);
     });
+    const kin =
+      roots.length === 1 && ids.every((id) => id === roots[0] || byId.get(id)?.parentEpic === roots[0]);
     if (kin) continue;
     out.push({ issue, ids: [...ids].sort() });
   }
