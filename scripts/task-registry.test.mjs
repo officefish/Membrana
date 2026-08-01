@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import {
   buildTaskEntry,
   findEpicIssueCollisions,
+  findSharedIssueRefs,
   findTask,
   listPendingGithubClose,
   loadRegistry,
@@ -362,5 +363,119 @@ describe('renderTaskPromptStub', () => {
       'my-epic',
     );
     assert.ok(!('parentEpic' in buildTaskEntry({ id: 'ph1', title: 'P', size: 'M' }, '2026-07-16')));
+  });
+});
+
+describe('зонтичная Issue без родства', () => {
+// ── Зонтичная Issue без родства (one shot 01.08, вещдок ночного триажа 31.07) ────────
+// findEpicIssueCollisions ловит только пару «фаза несёт Issue своего эпика» по parentEpic.
+// Пять независимых карточек на #47 (закрыт 11 июня) родства не имеют и проходили мимо:
+// закрытие «своего» номера оборвало бы то, на что ссылаются остальные четыре.
+
+const t = (id, over = {}) => ({
+  id,
+  title: id,
+  promptPath: `docs/prompts/${id}.md`,
+  githubIssue: null,
+  linearId: null,
+  size: 'M',
+  status: 'active',
+  createdAt: '2026-08-01',
+  archivedAt: null,
+  archiveNotes: null,
+  ...over,
+  });
+const reg = (...tasks) => ({ version: 1, tasks });
+
+  it('пять независимых карточек на один Issue — находка', () => {
+  const r = reg(
+    t('neural-tier-1b-contract', { githubIssue: 47 }),
+    t('real-dataset-live-calibration', { githubIssue: 47 }),
+    t('vdr-hard-gate', { githubIssue: 47 }),
+  );
+  const groups = findSharedIssueRefs(r);
+  assert.equal(groups.length, 1);
+  assert.equal(groups[0].issue, 47);
+  assert.equal(groups[0].ids.length, 3);
+  });
+
+  it('одна карточка на Issue — не находка', () => {
+  assert.deepEqual(findSharedIssueRefs(reg(t('a', { githubIssue: 10 }))), []);
+  });
+
+  it('карточки без Issue не считаются делящими: null — не номер', () => {
+  assert.deepEqual(findSharedIssueRefs(reg(t('a'), t('b'), t('c'))), []);
+  });
+
+  it('родство «эпик ↔ фаза» здесь НЕ дублируется — это предмет findEpicIssueCollisions', () => {
+  const r = reg(
+    t('epic', { githubIssue: 100, size: 'L' }),
+    t('phase', { githubIssue: 100, parentEpic: 'epic' }),
+  );
+  assert.deepEqual(findSharedIssueRefs(r), [], 'пара эпик+фаза принадлежит соседнему зубу');
+  assert.equal(findEpicIssueCollisions(r).length, 1, 'и он её видит');
+  });
+
+  it('чужак рядом с парой «эпик ↔ фаза» ловится: родство не у всех', () => {
+  const r = reg(
+    t('epic', { githubIssue: 100, size: 'L' }),
+    t('phase', { githubIssue: 100, parentEpic: 'epic' }),
+    t('stranger', { githubIssue: 100 }),
+  );
+  const groups = findSharedIssueRefs(r);
+  assert.equal(groups.length, 1);
+  assert.deepEqual(groups[0].ids, ['epic', 'phase', 'stranger']);
+  });
+
+  it('делящие Issue не попадают в очередь закрытия', () => {
+  const r = reg(
+    t('a', { githubIssue: 47, status: 'archived' }),
+    t('b', { githubIssue: 47, status: 'archived' }),
+    t('own', { githubIssue: 50, status: 'archived' }),
+  );
+  assert.deepEqual(listPendingGithubClose(r).map((x) => x.id), ['own']);
+  });
+
+  it('группы отсортированы по номеру, id внутри — тоже: вывод воспроизводим', () => {
+  const r = reg(
+    t('z', { githubIssue: 9 }),
+    t('a', { githubIssue: 9 }),
+    t('y', { githubIssue: 3 }),
+    t('b', { githubIssue: 3 }),
+  );
+  const groups = findSharedIssueRefs(r);
+  assert.deepEqual(groups.map((g) => g.issue), [3, 9]);
+  assert.deepEqual(groups[0].ids, ['b', 'y']);
+  });
+
+
+  it('ДВЕ семьи на одной Issue ловятся: у каждого есть партнёр, но семья не одна', () => {
+    const r = reg(
+      t('epicA', { githubIssue: 47, size: 'L' }),
+      t('phaseA', { githubIssue: 47, parentEpic: 'epicA' }),
+      t('epicB', { githubIssue: 47, size: 'L' }),
+      t('phaseB', { githubIssue: 47, parentEpic: 'epicB' }),
+    );
+    const groups = findSharedIssueRefs(r);
+    assert.equal(groups.length, 1, 'два независимых эпика на одном номере — коллизия');
+    assert.deepEqual(groups[0].ids, ['epicA', 'epicB', 'phaseA', 'phaseB']);
+  });
+
+  it('внук не считается семьёй: фаза фазы — уже не прямое родство', () => {
+    const r = reg(
+      t('epic', { githubIssue: 50, size: 'L' }),
+      t('phase', { githubIssue: 50, parentEpic: 'epic' }),
+      t('sub', { githubIssue: 50, parentEpic: 'phase' }),
+    );
+    assert.equal(findSharedIssueRefs(r).length, 1, 'цепочка глубже одного уровня — не одна семья');
+  });
+
+  it('одна семья по-прежнему пропускается: эпик и две его фазы', () => {
+    const r = reg(
+      t('epic', { githubIssue: 60, size: 'L' }),
+      t('p1', { githubIssue: 60, parentEpic: 'epic' }),
+      t('p2', { githubIssue: 60, parentEpic: 'epic' }),
+    );
+    assert.deepEqual(findSharedIssueRefs(r), []);
   });
 });
