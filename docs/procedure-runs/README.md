@@ -16,10 +16,17 @@ evidence и gaps оставил прогон.
 - `subject`: предмет, который прогон обещал покрыть
 - `coverage.evidence[]`: named artifacts/facts
 - `coverage.gaps[]`: named gaps, если предмет не покрыт полностью
-- `ledger.leafHash`: `run-ledger` leaf hash записи
+- `ledger.leafHash`: `run-ledger.leafHash@1` leaf hash записи
 
 `pass` без evidence запрещён: журнал должен доказывать покрытие предмета, а не
 только факт запуска механизма.
+
+`run-ledger.leafHash@1` — не заглушка. Носитель алгоритма:
+[`scripts/lib/run-ledger/canonical.mjs`](../../scripts/lib/run-ledger/canonical.mjs),
+экспорт через [`scripts/lib/run-ledger/index.mjs`](../../scripts/lib/run-ledger/index.mjs).
+Журнал пересчитывает hash в
+[`scripts/lib/procedure-run-journal.mjs`](../../scripts/lib/procedure-run-journal.mjs);
+контракт покрыт [`scripts/run-ledger.test.mjs`](../../scripts/run-ledger.test.mjs).
 
 ## CLI
 

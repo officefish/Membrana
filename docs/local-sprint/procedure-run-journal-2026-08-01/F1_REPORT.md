@@ -32,6 +32,9 @@
 
 После procedural BLOCK был открыт отдельный review-sprint:
 [`procedure-run-journal-2026-08-01-code-review`](../../sprint/cut/procedure-run-journal-2026-08-01-code-review.json).
+Его план несёт `mode: "explicit-honest"`: это не молчаливая вторая дверь, а
+отдельный честный review-sprint с объявленным coverage-gap по ещё не построенным
+`contract_signature` / `session_prep` носителям.
 
 - План v1 ратифицирован владельцем, затем Веснин поставил `BLOCK`: в его зоне не
   было engine-файлов из `MANIFEST.json`.
@@ -47,9 +50,9 @@
 
 ## Проверки
 
-- `node --test scripts/procedure-run-journal.test.mjs scripts/run-ledger.test.mjs` — 14/14 pass.
-- `node scripts/procedure-run-journal.mjs check --trail docs/procedure-runs/trail/2026-08-01.jsonl` — ok, 3 records.
-- `node scripts/procedure-run-journal.mjs report --trail docs/procedure-runs/trail/2026-08-01.jsonl` — total 3, pass 2, blocked 1; gaps name missing planning, ratification, team contexts and sprint gate.
+- `node --test scripts/procedure-run-journal.test.mjs scripts/run-ledger.test.mjs` — 15/15 pass.
+- `node scripts/procedure-run-journal.mjs check --trail docs/procedure-runs/trail/2026-08-01.jsonl` — ok, 7 records.
+- `node scripts/procedure-run-journal.mjs report --trail docs/procedure-runs/trail/2026-08-01.jsonl` — total 7, pass 5, blocked 2; gaps name missing planning, ratification, team contexts and sprint gate.
 - `node scripts/test-scripts-run.mjs --group tasks` — 555/555 pass.
 - `node --test scripts/procedure-run-journal.test.mjs` — 6/6 pass after Дынин BLOCK fix.
 - `node scripts/sprint-cut-check.mjs --plan docs/sprint/cut/procedure-run-journal-2026-08-01-code-review.json` — contract.
