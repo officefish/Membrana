@@ -23,7 +23,7 @@
     {
       "name": "Ритуалы и контур достоверности команды",
       "patterns": [
-        "^(ritual|morning-ritual|evening-chain|night-build-format|strategy-day|rt-\\d|main-day-probe|meeting-|mf\\d|truth-graph|drift-anchor|linear-hygiene|angelina-hostess)",
+        "^(ritual|morning-ritual|evening-|night-build-format|strategy-day|rt-\\d|main-day-probe|meeting-|mf\\d|truth-graph|drift-anchor|linear-hygiene|angelina-hostess)",
         "^(insight-mandate|insight-review|closure-acceptance|cascade-honest|morning-report|code-review-lead|tef-|main-day-issue-channel|night-triage-)",
         "^(cowork-honest-sprint|mfcc-compare-sprint|mfcc-lib-choice)$"
       ]
