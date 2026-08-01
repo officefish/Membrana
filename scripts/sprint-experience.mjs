@@ -208,6 +208,9 @@ function buildLiveRecord(args) {
  * @returns {string}
  */
 function toArchive(records, defaultRef) {
+  // Архив автора заводится сам: appendArchive делает mkdirSync+appendFileSync, когда файла
+  // нет. Проверено не рассуждением — docs/virtual-team/memory/archive/tarasov.jsonl в этом
+  // же диффе создан этим прогоном, архива тимлида до него не существовало.
   const { records: mapped, skipped } = forecastsToArchiveRecords(records, { defaultRef });
   const lines = [];
   let written = 0;

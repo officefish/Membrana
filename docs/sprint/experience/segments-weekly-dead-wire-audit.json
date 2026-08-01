@@ -1,6 +1,7 @@
 {
   "schema": "sprint-segments/1",
   "sprintId": "weekly-dead-wire-audit",
+  "forTask": "forecast-archive-wire (#1590) — вход, без которого первая живая запись рода невозможна: без замеров исход остаётся not-observed и провод честно ничего не везёт",
   "note": "Замер объёма по блокам спринта 01.08, снят git diff --numstat после закрытия окна: insertions + deletions по зоне блока. Не оценка и не пересказ — измерение.",
   "measuredAt": "2026-08-01T10:06:00+03:00",
   "segments": [
