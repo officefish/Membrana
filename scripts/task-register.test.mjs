@@ -77,6 +77,23 @@ test('buildTaskEntry: kind meeting принимается — регламент
   assert.equal(entry.sprintKind, 'meeting');
 });
 
+test('buildTaskEntry: kind hackathon + parentHackathonId принимаются для route skill', () => {
+  const entry = buildTaskEntry(
+    {
+      id: 'db-h5-checklist',
+      title: 'DB-H5: test checklist',
+      size: 'M',
+      kind: 'hackathon',
+      parentEpic: 'device-board-hackathon-1',
+      parentHackathonId: 'device-board-hackathon-1',
+    },
+    '2026-08-01',
+  );
+  assert.equal(entry.sprintKind, 'hackathon');
+  assert.equal(entry.parentEpic, 'device-board-hackathon-1');
+  assert.equal(entry.parentHackathonId, 'device-board-hackathon-1');
+});
+
 test('buildTaskEntry: перечень остаётся ЗАКРЫТЫМ — чужое значение по-прежнему падает', () => {
   assert.throws(
     () => buildTaskEntry({ id: 'x', title: 't', size: 'M', kind: 'meetings' }, '2026-08-01'),

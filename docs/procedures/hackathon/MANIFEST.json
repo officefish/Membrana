@@ -1,0 +1,108 @@
+{
+  "id": "hackathon",
+  "leadPersona": "vesnin",
+  "kitVersion": null,
+  "engines": [
+    "scripts/hackathon-close.mjs",
+    "scripts/task-start.mjs",
+    "scripts/task-register.mjs",
+    "scripts/archive-task.mjs",
+    "scripts/task-close-github-issues.mjs",
+    "scripts/lib/task-registry.mjs"
+  ],
+  "precedents": [
+    "docs/HACKATHON_REGULATION.md",
+    "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md",
+    "docs/tasks/registry.json",
+    "docs/containers/strategic-docs/releases/development-matrix/README.md"
+  ],
+  "preflight": [
+    { "id": "brief", "holder": "vesnin" },
+    { "id": "interview", "holder": "angelina" }
+  ],
+  "frames": [
+    { "id": "open", "holder": "vesnin" },
+    { "id": "h1-foundation", "holder": "vesnin" },
+    { "id": "h2-runtime", "holder": "ozhegov" },
+    { "id": "h3-extension", "holder": "ozhegov" },
+    { "id": "h4-close", "holder": "vesnin" },
+    { "id": "closure", "holder": "vesnin" }
+  ],
+  "post": [
+    { "id": "return-to-rhythm", "holder": "angelina" },
+    { "id": "archive-tasks", "holder": "dynin" }
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "hackathon / membrana-hackathon",
+    "note": "вход через route skill; старый docs/HACKATHON_REGULATION.md остаётся прецедентом, не единственной дверью"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "brief", "criticality": "critical" },
+      { "id": "interview", "criticality": "critical" },
+      { "id": "open", "criticality": "critical" },
+      { "id": "h1-foundation", "criticality": "critical" },
+      { "id": "h2-runtime", "criticality": "critical" },
+      { "id": "h3-extension", "criticality": "critical" },
+      { "id": "h4-close", "criticality": "critical" },
+      { "id": "closure", "criticality": "critical" },
+      { "id": "return-to-rhythm", "criticality": "noncritical", "whyNoncritical": "возврат к обычному ритму может быть отдельным утренним действием после закрытия хакатона" },
+      { "id": "archive-tasks", "criticality": "critical" }
+    ]
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "owner-brief",
+        "waitsFor": "owner",
+        "resume": "утверждённый brief + interview protocol → open",
+        "note": "без этого HACKATHON_ACTIVE.md не открывается"
+      },
+      {
+        "id": "stage-handoff",
+        "waitsFor": "human",
+        "resume": "stage-completion-checklist предыдущего H-этапа принят держателем следующего этапа",
+        "note": "проверяется для H1→H2, H2→H3, H3→H4"
+      },
+      {
+        "id": "final-audit",
+        "waitsFor": "owner",
+        "resume": "финальный smoke, known gaps и CLOSURE приняты владельцем",
+        "note": "H4 закрывает хакатон, а не просто последний эпик"
+      }
+    ]
+  },
+  "portfolio": {
+    "status": "present",
+    "items": [
+      {
+        "id": "regulation-v01",
+        "kind": "contract",
+        "path": "docs/HACKATHON_REGULATION.md"
+      },
+      {
+        "id": "device-board-hackathon-1",
+        "kind": "run",
+        "path": "docs/prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md"
+      },
+      {
+        "id": "development-matrix-route",
+        "kind": "matrix",
+        "path": "docs/containers/strategic-docs/releases/development-matrix/README.md"
+      },
+      {
+        "id": "form-report",
+        "kind": "report",
+        "path": "docs/procedures/hackathon/FORM_REPORT.md"
+      }
+    ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "прогоны хакатона живут в active/log/archive и task registry; отдельная форма живого дома не закреплена"
+  }
+}

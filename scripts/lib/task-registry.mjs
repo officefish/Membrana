@@ -145,6 +145,9 @@ const TASK_SIZES = ['S', 'M', 'L'];
 // и `id` вида `meeting-<slug>`, но инструмент такого значения не принимал — и
 // единственная карточка с ним в реестре заведена МИМО инструмента. Класс `Db`
 // («канон описывает тулинг, которого нет») из заседания meeting-evening-auditor.
+// `hackathon` добавлен тем же классом дефекта: исторические карточки
+// `device-board-hackathon-1`/`db-h*` уже несли sprintKind=hackathon, а новый
+// route skill обязан уметь завести такую карточку инструментом, не ручным JSON.
 // Перечень остаётся закрытым: новое значение — новое слово канона, не «прочее».
 const SPRINT_KINDS = [
   'membrana-local-sprint',
@@ -154,6 +157,7 @@ const SPRINT_KINDS = [
   'competition-sprint',
   'cowork-sprint',
   'meeting',
+  'hackathon',
 ];
 
 /**
@@ -182,6 +186,8 @@ export function buildTaskEntry(input, today) {
   // T1: --parent-epic / --parent → parentEpic (раньше не поддерживалось вовсе →
   // фазы приходилось хэнд-фиксить node-скриптом).
   const parentEpic = input.parentEpic ?? input['parent-epic'] ?? input.parent ?? null;
+  const parentHackathonId =
+    input.parentHackathonId ?? input['parent-hackathon-id'] ?? input.parentHackathon ?? null;
   const linearRaw = input.linearId ?? input.linear ?? null;
   const linearId =
     linearRaw != null && String(linearRaw).trim() && String(linearRaw).trim() !== '—'
@@ -209,6 +215,7 @@ export function buildTaskEntry(input, today) {
     githubIssueClosedAt: null,
   };
   if (parentEpic) entry.parentEpic = parentEpic;
+  if (parentHackathonId) entry.parentHackathonId = parentHackathonId;
   if (input.insight) entry.insightId = input.insight;
   return entry;
 }
