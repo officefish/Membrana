@@ -13,14 +13,10 @@ description: >-
 
 This skill is an operator doorway, not a second copy of the procedure.
 
-1. Before work, verify that the generated
-   [`development-matrix`](../../../docs/containers/strategic-docs/releases/development-matrix/README.md)
-   exists in this worktree, then choose the route from it. If the release is
-   absent, stop and deliver the matrix first.
-2. If the route is `membrana-local-sprint`, run the canonical procedure from
+1. Run the canonical procedure from
    [`docs/procedures/membrana-local-sprint`](../../../docs/procedures/membrana-local-sprint/README.md).
-3. Normalize old `honest-sprint` wording to `membrana-local-sprint`.
-4. New local sprint tasks use `sprintKind: "membrana-local-sprint"` and instances in
+2. Normalize old `honest-sprint` wording to `membrana-local-sprint`.
+3. New local sprint tasks use `sprintKind: "membrana-local-sprint"` and instances in
    `docs/local-sprint/<id>/`.
 
 Do not duplicate roles, lifecycle, findings, gates, or commands here. Edit the
