@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `subconscious-lift-c3` | Лифт всплытия C3: облако подсознания, мультизапрос, акт emerge/reject за персоной | M | [`SUBCONSCIOUS_LIFT_C3_PROMPT.md`](../prompts/SUBCONSCIOUS_LIFT_C3_PROMPT.md) | [#1615](https://github.com/officefish/Membrana/issues/1615) |
 | `procedure-run-journal-f1-local-trail` | F1: локальная лента прогона процедур | M | [`PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md) | — |
 | `procedure-run-journal-2026-08-01` | Membrana Local Sprint: журнал прогона процедур | L | [`PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md) | — |
 | `forecast-archive-wire` | Провод памяти персоны: запись «предсказание ↔ исход» доезжает в archive/<persona>.jsonl | M | [`FORECAST_ARCHIVE_WIRE_PROMPT.md`](../prompts/FORECAST_ARCHIVE_WIRE_PROMPT.md) | [#1590](https://github.com/officefish/Membrana/issues/1590) |

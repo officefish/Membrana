@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "subconscious-lift-c3",
+      "title": "Лифт всплытия C3: облако подсознания, мультизапрос, акт emerge/reject за персоной",
+      "promptPath": "docs/prompts/SUBCONSCIOUS_LIFT_C3_PROMPT.md",
+      "githubIssue": 1615,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-01",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "cut-act-trace",
       "title": "Носитель следа для акта нарезки: лента актов плана, машинный revisionAt, обнуление разбора при перерезке",
       "promptPath": "docs/prompts/CUT_ACT_TRACE_PROMPT.md",

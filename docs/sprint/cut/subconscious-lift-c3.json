@@ -1,0 +1,71 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "subconscious-lift-c3",
+  "taskId": "subconscious-lift-c3",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-01T17:30:00+03:00",
+    "to": "2026-08-01T23:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "lift-cloud-core",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/persona-memory/lib/subconscious-lift.mjs"
+      ],
+      "revisionAt": "2026-08-01T17:30:00+03:00",
+      "estimate": {
+        "changedLines": 240
+      },
+      "revisionOf": "f35cf05c5df63de6115936cbb1d64c8d6de12aa042c19d08d4b6488711d6dd7a"
+    },
+    {
+      "blockId": "lift-cloud-tooth",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/persona-memory/lib/subconscious-lift.test.mjs"
+      ],
+      "revisionAt": "2026-08-01T17:30:00+03:00",
+      "estimate": {
+        "changedLines": 200
+      },
+      "revisionOf": "d2ec49868a801fd8e5973184eb8010a6bbbad4705f9afd4010137accca3b5c6c"
+    },
+    {
+      "blockId": "lift-retrieval-port",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/persona-memory/lib/subconscious-retrieval.mjs"
+      ],
+      "revisionAt": "2026-08-01T17:30:00+03:00",
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionOf": "6828f27b55914a607c61e5a6a9952803e646f2df2887d375c4abedf80511a98b"
+    },
+    {
+      "blockId": "lift-persona-act",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/ask-persona.mjs",
+        "scripts/persona-memory/lib/emerge-act.mjs"
+      ],
+      "revisionAt": "2026-08-01T17:30:00+03:00",
+      "estimate": {
+        "changedLines": 270
+      },
+      "revisionOf": "7bcea92821fe3b6d58dc25f31bb98d4b905976a98eb0b4c3675472da61b29898"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-01T17:43:45+03:00",
+    "digest": "1ca346d351f6d8a55869f9b4c7dc56551970cece8e55377585711e971fd94ee1"
+  }
+}
