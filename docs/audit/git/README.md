@@ -6,7 +6,13 @@
 
 **Мастерская дома** ([`HOME_WORKSHOP`](../../patterns/HOME_WORKSHOP.md), ось операций):
 [`workshop.manifest.json`](./workshop.manifest.json) — осмотр `repo:branches`,
-декомпозиция `repo:branches:decompose`; `inspectElement` — ⚠ пока нет; `kit: null`.
+декомпозиция `repo:branches:decompose` и доменная controlled-salvage процедура
+`reconcile → apply-plan → closeout`; `inspectElement` — ⚠ пока нет; `kit: null`.
+
+Контролируемое исполнение ратифицированного ledger:
+[`CONTROLLED_SALVAGE_PROCEDURE.md`](./CONTROLLED_SALVAGE_PROCEDURE.md) · skill
+`membrana-branch-salvage`. Это отдельный exact-tip контур, не расширение
+`repo:clean`: одна ref-мутация за запуск, без удаления worktree.
 
 ### Движок (server-first)
 
@@ -63,7 +69,7 @@ Markdown-каталог случаев (без MDX): [`analysis/branch-cases-cat
 5. ✅ `yarn repo:branches:decompose --report` пишет реестр сам; источник истины назван: сам git (`origin/main`, worktree, gh PR).
 6. ✅ `AGENT_PROMPT.md`, Scenario B с HARD GATE.
 7. ✅ Никаких delete/force без явного ok; `repo:clean --execute` только по слову владельца; персоны — никогда.
-8. ✅ Провода: `AGENTS.md`, `docs/audit/README.md`, `docs/CONTRIBUTING.md` («Гигиена веток»), скиллы `membrana-branch-audit` / `membrana-branch-decompose`.
+8. ✅ Провода: `AGENTS.md`, `docs/audit/README.md`, `docs/CONTRIBUTING.md` («Гигиена веток»), скиллы `membrana-branch-audit` / `membrana-branch-decompose` / `membrana-branch-salvage`.
 
 ## Layout
 
@@ -73,6 +79,7 @@ docs/audit/git/
   AGENT_PROMPT.md     — setup агента (канон)
   registry/           — снимки декомпозиции веток (коммитим markdown)
   analysis/           — глубокие разборы категорий (коммитим markdown)
+  examples/           — tracked схемы восстанавливаемых операторских артефактов
   cache/              — сырой JSON / промежуточные дампы (gitignore)
 ```
 
@@ -90,13 +97,16 @@ docs/audit/git/
 | `pins/branch-instructions.manifest.json` | PINNED_SUBGRAPH path→SHA инструкций Mintlify | да |
 | `analysis/branch-push-history-YYYY-MM-DD.md` | Снимок осей имён / истории пушей | да |
 | `analysis/*-review-lens-*.md` | Линза для CR / ship | да |
+| `CONTROLLED_SALVAGE_PROCEDURE.md`, `examples/*.json` | Процедура и схема plan | да |
 | `cache/**` | Сырые JSON, churn dumps, временные артефакты | **нет** (gitignore) |
 
 ## Retention
 
 - Markdown-снимки `registry/` и `analysis/` — **коммитим**: полезны как история аудита (как `docs/reports/night-triage/`).
 - Старые dated-файлы не удалять автоматически; при разрастании — архивировать по решению владельца.
-- `cache/` — локальный scratch; не считать источником истины.
+- `cache/` — локальный scratch; live plan/journal/report controlled-salvage
+  лежат здесь и не коммитятся. Их hash-bound journal является evidence
+  конкретного прогона, но не новым tracked источником истины.
 
 ## Как вызвать агента
 
@@ -108,6 +118,10 @@ docs/audit/git/
    - **Assortment:** «карта покрытия» / «ассортимент веток» → по актуальному registry строит/обновляет `analysis/branch-assortment-coverage-YYYY-MM-DD.md` (жанры kind/формат/держатель/доставка). Не удаляет ветки. Не путать с B.
 
 Связанный tooling: `yarn repo:branches:decompose`, скилл `membrana-branch-decompose`.
+Исполнение ратифицированных решений:
+[`CONTROLLED_SALVAGE_PROCEDURE.md`](./CONTROLLED_SALVAGE_PROCEDURE.md),
+`yarn repo:branches:reconcile`, `yarn repo:branches:apply-plan`,
+`yarn repo:branches:closeout`, skill `membrana-branch-salvage`.
 Ассортимент-орган: `branch-assortment-sprint` (#801, закрыт).
 Движок инструкций: `branch-mintlify-engine` (#823).
 Указатель в процессе: [`docs/CONTRIBUTING.md`](../../CONTRIBUTING.md) → «Гигиена веток».

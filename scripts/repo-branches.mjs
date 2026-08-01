@@ -39,6 +39,16 @@ function gitLines(args, cwd = repoRoot) {
   return out ? out.split(/\r?\n/).map((s) => s.trim()).filter(Boolean) : [];
 }
 
+function refRows(namespace, cwd = repoRoot) {
+  return gitLines(
+    ['for-each-ref', namespace, '--format=%(refname:short)%00%(objectname)'],
+    cwd,
+  ).map((line) => {
+    const [name, tip] = line.split('\0');
+    return { name, tip };
+  });
+}
+
 /** Ветки, занятые worktree (локальные имена без refs/heads/). */
 export function worktreeBranches(porcelainText) {
   const branches = new Set();
@@ -63,7 +73,10 @@ function aheadBehind(ref, cwd = repoRoot) {
 /**
  * Собрать срез (тестируется косвенно через render; I/O здесь).
  */
-export function collectInventory({ cwd = repoRoot } = {}) {
+export function collectInventory({
+  cwd = repoRoot,
+  now = () => new Date().toISOString(),
+} = {}) {
   const currentBranch = (() => {
     try {
       return git(['branch', '--show-current'], cwd);
@@ -79,11 +92,13 @@ export function collectInventory({ cwd = repoRoot } = {}) {
     wtSet = new Set();
   }
 
-  const locals = gitLines(['for-each-ref', 'refs/heads', '--format=%(refname:short)'], cwd);
-  const local = locals.map((name) => {
+  const locals = refRows('refs/heads', cwd);
+  const local = locals.map(({ name, tip }) => {
     const { ahead, behind } = aheadBehind(name, cwd);
     return {
       name,
+      ref: `refs/heads/${name}`,
+      tip,
       ahead,
       behind,
       bucket: classifyBucket(ahead, behind),
@@ -93,16 +108,16 @@ export function collectInventory({ cwd = repoRoot } = {}) {
   });
 
   // Remote refs: origin/<name> only (see isOriginTrackingRef). Keep origin/main.
-  const remotes = gitLines(
-    ['for-each-ref', 'refs/remotes/origin', '--format=%(refname:short)'],
-    cwd,
-  ).filter(isOriginTrackingRef);
+  const remotes = refRows('refs/remotes/origin', cwd)
+    .filter((row) => isOriginTrackingRef(row.name));
 
-  const remote = remotes.map((full) => {
+  const remote = remotes.map(({ name: full, tip }) => {
     const short = full.replace(/^origin\//, '');
     const { ahead, behind } = aheadBehind(full, cwd);
     return {
       name: full,
+      ref: `refs/remotes/${full}`,
+      tip,
       ahead,
       behind,
       bucket: classifyBucket(ahead, behind),
@@ -112,6 +127,8 @@ export function collectInventory({ cwd = repoRoot } = {}) {
 
   return {
     base: BASE,
+    baseSha: git(['rev-parse', BASE], cwd),
+    generatedAt: now(),
     currentBranch,
     local,
     remote,
@@ -157,6 +174,8 @@ function main() {
   } else {
     text = renderBranchAudit({
       base: inventory.base,
+      baseSha: inventory.baseSha,
+      generatedAt: inventory.generatedAt,
       currentBranch: inventory.currentBranch,
       fetched,
       local: inventory.local,

@@ -1,8 +1,8 @@
 ---
 name: membrana-branch-audit
 description: >-
-  Inventory local + origin/* branches vs origin/main as markdown tables (ahead/behind,
-  buckets sync/ahead-only/behind-only/diverged, current + worktree marks). Use when user
+  Inventory local + origin/* branches vs origin/main as markdown tables (full tip SHA,
+  base SHA, generatedAt, ahead/behind, buckets, current + worktree marks). Use when user
   says аудит веток, inventory branches, ahead/behind vs main, какие ветки отстали,
   repo:branches, branch audit. Do NOT use for deleting dead branches (yarn repo:clean /
   membrana-worktree teardown) or single-branch freshness before PR (yarn branch:check-base).
@@ -31,7 +31,8 @@ description: >-
 
 1. `yarn repo:branches` — по умолчанию `git fetch origin`, затем таблицы в stdout.
 2. Опции: `--no-fetch` · `--json` · `--report <file>` · `--help`.
-3. Прочитать три секции: Local branches · Remote origin/* · Buckets summary.
+3. Зафиксировать `baseSha` / `generatedAt`, затем прочитать три секции:
+   Local branches · Remote origin/* · Buckets summary.
 4. Не изобретать обход: `git worktree list` уже внутри скрипта; самописный grep
    про worktree **запрещён** (грабля AGENTS — соврал 16.07).
 
@@ -39,8 +40,8 @@ description: >-
 
 | Секция | Колонки |
 |--------|---------|
-| Local branches | Branch · Ahead · Behind · Bucket · Current · Worktree |
-| Remote origin/* | Branch · Ahead · Behind · Bucket · Worktree |
+| Local branches | Branch · Tip · Ahead · Behind · Bucket · Current · Worktree |
+| Remote origin/* | Branch · Tip · Ahead · Behind · Bucket · Worktree |
 | Buckets summary | Bucket · Local · Remote |
 
 - `ahead` = `rev-list --count origin/main..BRANCH`
@@ -56,3 +57,4 @@ description: >-
   авто-удалять — канон TASKS_MANAGEMENT §7а; `repo:clean` их бережёт.
 - Чистка ≠ инвентарь: этот скилл только показывает; удаление — `repo:clean`.
 - Гигиена-декомпозиция (7 категорий) — соседний скилл `membrana-branch-decompose`, не этот.
+- Исполнение уже ратифицированного ledger — `membrana-branch-salvage`, не этот скилл.

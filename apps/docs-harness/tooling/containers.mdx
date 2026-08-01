@@ -11,15 +11,20 @@ description: Общая документация по туллингу — вс�
 
 ### мастерская бестиария (`docs/audit/bestiary`)
 
+Входной глагол: `yarn bestiary:audit`
+
 Дом группы **антипаттернов** (звери) и их **бетий** (specimen’ы плохого кода).
 
 - **Плоскость:** report
 - **role:** —
 - **worksOn:** `docs/audit/bestiary`
 - **Глаголы мастерской:** `audit`, `decompose`, ~~inspectElement~~
+- **Предметные инструменты:** `issueTrap` → команда не объявлена
 - **kit:** `kits/witcher`
 
 ### мастерская веток (`docs/audit/git`)
+
+Входной глагол: `yarn repo:branches`
 
 Специальный контейнер, где агент **легально** хранит промпты, реестры веток и глубокие разборы по гигиене git-репозитория Membrana — и **ассортимент** веток для покрытия жанров работы (рефактор спринта, code review). Реализация паттерна `GROUP_CONTAINERIZATION`.
 
@@ -27,9 +32,12 @@ description: Общая документация по туллингу — вс�
 - **role:** —
 - **worksOn:** `docs/audit/git`
 - **Глаголы мастерской:** `audit`, `decompose`, ~~inspectElement~~
+- **Предметные инструменты:** `reconcile` → `yarn repo:branches:reconcile`; `applyRatifiedPlan` → `yarn repo:branches:apply-plan`; `closeout` → `yarn repo:branches:closeout`
 - **kit:** `—`
 
 ### мастерская llm-calls (`docs/audit/llm-calls`)
+
+Входной глагол: `yarn llm-calls:audit`
 
 Дом группы **гранул evidence** вызовов LLM-процедур (LPC): подлинность + параметры,
 
@@ -41,17 +49,22 @@ description: Общая документация по туллингу — вс�
 
 ### мастерская разборов задач (derivative) (`docs/audit/tasks`)
 
+Входной глагол: `yarn tasks:audit`
+
 Слот плоскости `docs/audit/`: здесь лежат **отчёты** (снимки
 
 - **Плоскость:** report
 - **role:** derivative
 - **worksOn:** `docs/audit/tasks/registry/`
 - **Глаголы мастерской:** `audit`, `decompose`, ~~inspectElement~~
+- **Предметные инструменты:** `handoffLiveness` → `yarn tasks:handoff-liveness`
 - **kit:** `—`
 
 ## Domain (предметные дома)
 
 ### мастерская Archivarius (`docs/archivarius`)
+
+Входной глагол: `yarn archivarius audit`
 
 Archivarius (#1330, эпик #1229) — архивариус прожитых сессий Membrana. Источник
 
@@ -59,9 +72,12 @@ Archivarius (#1330, эпик #1229) — архивариус прожитых с
 - **role:** —
 - **worksOn:** `docs/archivarius`
 - **Глаголы мастерской:** `audit`, `decompose`, `inspectElement`
+- **Предметные инструменты:** `search` → `yarn archivarius search`; `ingest` → `yarn archivarius ingest --from ~/.claude/projects`
 - **kit:** `—`
 
 ### мастерская кейсов (`docs/cases`)
+
+Входной глагол: `yarn case:register --validate`
 
 Дом-контейнер кейсов: записанных **удачных** импровизаций и прогонов. Кейс — **зеркало
 
@@ -69,6 +85,7 @@ Archivarius (#1330, эпик #1229) — архивариус прожитых с
 - **role:** —
 - **worksOn:** `docs/cases`
 - **Глаголы мастерской:** `audit`, `decompose`, `inspectElement`
+- **Предметные инструменты:** `portfolio` → `yarn case:portfolio`; `generalize` → `yarn case:generalize`
 - **kit:** `—`
 
 ### мастерская strategic-docs (`docs/containers/strategic-docs`)
@@ -79,9 +96,12 @@ Archivarius (#1330, эпик #1229) — архивариус прожитых с
 - **role:** —
 - **worksOn:** `docs/containers/strategic-docs`
 - **Глаголы мастерской:** ~~audit~~, ~~decompose~~, ~~inspectElement~~
+- **Предметные инструменты:** `generate` → команда не объявлена; `publish` → команда не объявлена; `publishTemplates` → команда не объявлена; `publishReleases` → команда не объявлена; `discoverWorkspaces` → команда не объявлена
 - **kit:** `—`
 
 ### мастерская вещдоков (primary) (`docs/evidence`)
+
+Входной глагол: `yarn evidence verify`
 
 Мастерская индексации вещдоков (#1303, слово капитана 26–27.07): **индекс — суть,
 
@@ -93,6 +113,8 @@ Archivarius (#1330, эпик #1229) — архивариус прожитых с
 
 ### мастерская прецедентов (`docs/precedents`)
 
+Входной глагол: `yarn precedent:register --validate`
+
 Дом-контейнер прецедентов: единичных задокументированных случаев (симптом → корень →
 
 - **Плоскость:** domain
@@ -102,6 +124,8 @@ Archivarius (#1330, эпик #1229) — архивариус прожитых с
 - **kit:** `—`
 
 ### мастерская процедур (`docs/procedures`)
+
+Входной глагол: `yarn procedures:workshop --audit`
 
 Дом **определений процедур** — спроектированных сущностей, оперирующих категориями
 
@@ -113,6 +137,8 @@ Archivarius (#1330, эпик #1229) — архивариус прожитых с
 
 ### мастерская задач (primary) (`docs/tasks`)
 
+Входной глагол: `yarn task:inspect`
+
 Актуальные **активные** и **архивные** задачи по стандарту
 
 - **Плоскость:** domain
@@ -122,6 +148,8 @@ Archivarius (#1330, эпик #1229) — архивариус прожитых с
 - **kit:** `kits/tasks-master`
 
 ### мастерская скриптов (`scripts`)
+
+Входной глагол: `yarn scripts:orphans`
 
 Единственный дом группы «скрипты и yarn-обвязка ритуала». Реализация паттерна
 
@@ -135,6 +163,8 @@ Archivarius (#1330, эпик #1229) — архивариус прожитых с
 
 ### мастерская атласа контейнеров (`docs/tooling-atlas`)
 
+Входной глагол: `yarn tooling:atlas --audit`
+
 **Контейнер контейнеров** (`plane=meta`). Его группа — сами контейнеры проекта вместе
 
 - **Плоскость:** meta
@@ -142,4 +172,8 @@ Archivarius (#1330, эпик #1229) — архивариус прожитых с
 - **worksOn:** `docs/tooling-atlas`
 - **Глаголы мастерской:** `audit`, `decompose`, `inspectElement`
 - **kit:** `—`
+
+## Дома без мастерской
+
+Ещё **31** домов несут группу, но оснастки не имеют — законное состояние (мастерская есть подтип дома, а не обязанность каждого). Перечень — в `docs/tooling-atlas/registry/ATLAS.md`.
 

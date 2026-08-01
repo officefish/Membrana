@@ -53,6 +53,20 @@
 | `worksOn` | дом, над содержимым которого работает | **ровно 1** (иначе не мастерская) |
 | `verbs` | словарь инструментов (см. ниже) | 1 |
 | `kit` | заказанный кит (`kits/<id>`) или `null` | 1 (значение опционально) |
+| `usage` | что даёт вызов и как выглядит вывод — по общей или доменной двери (поправка 31.07) | 0..1, **необязательно** |
+
+**Поправка 31.07 — [`AMENDMENT_F1`](../meeting/home-workshop/AMENDMENT_F1.md), ратифицирована
+владельцем.** Поле `usage` — сосед `verbs`, не его замена. Ключ указывает либо на общий
+исполняемый глагол, либо на `name` записи `verbs.domain`; во втором случае запись обязана
+объявить `tool`. Пример несёт `what` (что даёт вызов), `sample` (живой кусок вывода) и
+`measuredAt` (дата прогона, `YYYY-MM-DD`).
+
+Строка `verbs` отвечает «как позвать» и молчит о том, «что получишь»; узнать назначение
+глагола можно было единственным способом — запустив его, а для пишущих глаголов эта цена
+неприемлема. `measuredAt` обязателен внутри записи: сверить `sample` с реальностью машинно
+нельзя, но **возраст снимка** показать можно — без даты пример через полгода читается как
+факт. Мутировать `verbs` со строки на объект запрещено: `typeof verbs[k] === 'string'` читают
+четыре живых потребителя, и это уронило бы тринадцать манифестов разом.
 
 Стрелки: `контейнер-скриптов —поставляет→ кит —заказывает← мастерская —worksOn→ дом`.
 `worksOn` и `kit` — наши; `supplies`/`contains` — ссылки на `GROUP_CONTAINERIZATION` /
@@ -92,7 +106,9 @@
   глаголом, её не переписывают через `reduce`.
 - **Класс `domain` открыт**: специализированные инструменты сверх инвентарного
   минимума (в т.ч. decision-verbs вроде `list` / `board` / `bookkeeping` / `reviewing`),
-  каждый несёт `worksOn`.
+  каждый несёт `worksOn`. Имена внутри `verbs.domain` уникальны и не пересекаются с
+  общими ключами `verbs`; `tool` необязателен для декларации, но обязателен, если для
+  инструмента публикуется `usage`.
 
 ### Полиморфизм и рекурсия в двумерном доме (Ф3)
 
@@ -137,7 +153,7 @@
 
 | Мастерская | Дом (`worksOn`) | Соответствие |
 |-----------|-----------------|--------------|
-| [`docs/audit/git/`](../audit/git/workshop.manifest.json) | ветки репозитория | `audit`+`decompose` ✅, `inspectElement` ⚠ (нет); `kit: null` |
+| [`docs/audit/git/`](../audit/git/workshop.manifest.json) | ветки репозитория | `audit`+`decompose` ✅; domain `reconcile` / `applyRatifiedPlan` / `closeout` ✅; `inspectElement` ⚠ (нет); `kit: null` |
 | [`docs/tasks/`](../tasks/workshop.manifest.json) | реестр задач (`registry.json`, primary) | decision-verbs ✅ (`inspectElement`/`list`/`board`/`bookkeeping`/`reviewing`); `audit`/`decompose` ⚠=`null` → контур [`docs/audit/tasks/`](../audit/tasks/) + CI · V2 / #1056–#1058; `kit: "kits/tasks-master"` · дверь [`WORKSHOP.md`](../tasks/WORKSHOP.md) · `yarn task:tools` |
 | [`docs/audit/tasks/`](../audit/tasks/workshop.manifest.json) | снимки разборов (`registry/`, derivative) | `audit`+`decompose` ✅; `dependentOn`/`mirrorsFrom`; `inspectElement` ⚠; `kit: null` |
 | [`docs/procedures/`](../procedures/workshop.manifest.json) | процедурный дом | `audit`+`decompose`+`inspectElement` ✅; `kit: null` |

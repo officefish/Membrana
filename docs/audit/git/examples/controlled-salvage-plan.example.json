@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "branch-salvage-example",
+  "baseSha": "1111111111111111111111111111111111111111",
+  "ownerGate": {
+    "status": "draft",
+    "ratifiedBy": null,
+    "ratifiedAt": null
+  },
+  "protectedRefs": [
+    {
+      "ref": "refs/remotes/origin/main",
+      "expectedTip": "1111111111111111111111111111111111111111"
+    }
+  ],
+  "targets": [
+    {
+      "ref": "refs/heads/example-finished-work",
+      "expectedTip": "2222222222222222222222222222222222222222",
+      "action": "delete-local-ref",
+      "verdict": "already-in-main",
+      "evidence": "https://github.com/officefish/Membrana/pull/0000"
+    }
+  ]
+}

@@ -56,9 +56,9 @@
       "verb": null,
       "zone": "workshop",
       "yarn": "yarn strategic-docs:publish --push",
-      "script": "scripts/lib/affine-push.mjs",
+      "script": "scripts/strategic-docs-publish.mjs",
       "doc": "docs/containers/strategic-docs/PUBLISH.md",
-      "summary": "FROZEN: Programmatic push via affine-cli (W3)"
+      "summary": "FROZEN: Programmatic push via affine-cli (W3); внутренний движок — scripts/lib/affine-push.mjs"
     },
     {
       "id": "publish-templates",

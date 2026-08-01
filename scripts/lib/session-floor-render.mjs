@@ -79,9 +79,12 @@ export function renderFloor(floor, health, opts = {}) {
   } else {
     lines.push(`мастерские (${floor.workshopCount}):`);
     for (const w of floor.workshops) {
-      const verb = w.entryVerb ?? '—';
+      // ВСЕ команды мастерской в строке, а не одна входная. Холодная сессия 31.07 дважды
+      // ходила грепать package.json за именами не-входных глаголов: пол давал дверь в дом и
+      // не давал ключей от комнат. Строка одна на мастерскую — число строк не растёт.
+      const verbs = Array.isArray(w.verbs) && w.verbs.length > 0 ? w.verbs : [w.entryVerb ?? '—'];
       const mark = w.valid === false ? ' ⚠' : '';
-      lines.push(`  ${w.home}${mark} · ${verb}${w.description ? ` · ${w.description}` : ''}`);
+      lines.push(`  ${w.home}${mark} · ${verbs.join(' · ')}${w.description ? ` · ${w.description}` : ''}`);
     }
   }
 

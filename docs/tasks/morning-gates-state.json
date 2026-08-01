@@ -1,13 +1,17 @@
 {
   "magistralOptions": [
-    "mfcc-mic-plugins"
+    "development-matrix",
+    "angelina-hostess-impl",
+    "archivarius-sessions-container"
   ],
-  "frozenDigest": "7c0cb66e87edada0e617c738ef8a75493962af6f1a58874c9617d9940772d5dc",
-  "magistral": "mfcc-mic-plugins",
+  "frozenDigest": "0a299fa72067b3094bea972e9b695af36665f3da545658f3f12b1b3815fd1cb5",
+  "magistral": "development-matrix",
   "swallow": {
-    "draftDigest": "fda40d89bf7cf8c40de32931f421bdb6805c96a7caefe32253ea62a1d5715511",
-    "draftFile": "docs/comms/drafts/swallow-morning-2026-07-31.md",
+    "//": "null до черновика — порядок утра: сначала магистраль (owner-choice), затем swallow-draft и явное «ок» владельца; перезаписывается гейтом ally-swallow",
+    "status": "ждёт черновика",
+    "draftDigest": "8d5060e06814357f42d74c93ebafef6cf761a3e58bc54e957b2a6b930168d500",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-08-01.md",
     "ownerAck": true
   },
-  "day": "2026-07-31"
+  "day": "2026-08-01"
 }

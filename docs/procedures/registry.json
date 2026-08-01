@@ -341,6 +341,23 @@
         "value": true,
         "provenance": "ozhegov@ml-81"
       }
+    },
+    {
+      "id": "weekly-dead-wire",
+      "holder": "ozhegov",
+      "homePath": "docs/procedures/weekly-dead-wire",
+      "container": {
+        "value": true,
+        "provenance": "ozhegov@c195e4bb"
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": false,
+        "provenance": null
+      }
     }
   ]
 }

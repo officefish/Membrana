@@ -69,6 +69,37 @@ export function shortBranchName(name) {
 }
 
 /**
+ * Local/remote пары не входят в category rows дважды, но больше не скрываются.
+ * @param {object} inventory
+ */
+export function diagnoseRemoteTwins(inventory) {
+  const localByName = new Map(
+    (inventory.local ?? []).map((row) => [shortBranchName(row.name), row]),
+  );
+  const twins = [];
+  for (const remote of inventory.remote ?? []) {
+    const shortName = shortBranchName(remote.name);
+    const local = localByName.get(shortName);
+    if (!local) continue;
+    const status =
+      local.tip && remote.tip
+        ? local.tip === remote.tip
+          ? 'exact'
+          : 'moved'
+        : 'unknown';
+    twins.push({
+      shortName,
+      localRef: local.ref ?? `refs/heads/${shortName}`,
+      remoteRef: remote.ref ?? `refs/remotes/origin/${shortName}`,
+      localTip: local.tip ?? '',
+      remoteTip: remote.tip ?? '',
+      status,
+    });
+  }
+  return twins.sort((a, b) => a.shortName.localeCompare(b.shortName));
+}
+
+/**
  * @param {string} shortName
  */
 export function isExperimentLeftover(shortName) {
@@ -254,6 +285,7 @@ export function compareHygieneRows(a, b, category) {
  *   byCategory: Record<HygieneCategory, object[]>,
  *   counts: Record<HygieneCategory, {local: number, remote: number, total: number}>,
  *   skippedRemoteTwins: number,
+ *   twins: ReturnType<typeof diagnoseRemoteTwins>,
  * }}
  */
 export function decomposeBranches(inventory, opts = {}) {
@@ -322,12 +354,20 @@ export function decomposeBranches(inventory, opts = {}) {
     counts[cat] = { local, remote, total: list.length };
   }
 
-  return { rows, byCategory, counts, skippedRemoteTwins };
+  return {
+    rows,
+    byCategory,
+    counts,
+    skippedRemoteTwins,
+    twins: diagnoseRemoteTwins(inventory),
+  };
 }
 
 /**
  * @param {object} opts
  * @param {string} [opts.base]
+ * @param {string} [opts.baseSha]
+ * @param {string} [opts.generatedAt]
  * @param {string} [opts.currentBranch]
  * @param {boolean} [opts.fetched]
  * @param {boolean} [opts.ghAvailable]
@@ -336,16 +376,20 @@ export function decomposeBranches(inventory, opts = {}) {
  */
 export function renderHygieneDecompose({
   base = 'origin/main',
+  baseSha = '',
+  generatedAt = '',
   currentBranch = '',
   fetched = false,
   ghAvailable = true,
   ghNote = '',
   decomposition,
 } = {}) {
-  const { byCategory, counts, skippedRemoteTwins } = decomposition;
+  const { byCategory, counts, skippedRemoteTwins, twins = [] } = decomposition;
 
   const taxonomyLines = [
     '# repo:branches:decompose — 7 hygiene categories',
+    '',
+    `base SHA: \`${baseSha || 'unknown'}\` · generated: ${generatedAt || 'unknown'}`,
     '',
     `base: ${base} · fetch: ${fetched ? 'yes' : 'skipped (--no-fetch)'} · current: ${currentBranch || '(detached)'} · gh open-PR: ${ghAvailable ? 'yes' : 'unavailable'}`,
     '',
@@ -359,7 +403,7 @@ export function renderHygieneDecompose({
     }),
     '',
     'Sort: default behind DESC · cat.4 PR# DESC · cat.7 ahead DESC.',
-    'Remote twin skipped when local exists (no double-count).',
+    'Remote twin stays outside category rows when local exists; every pair is listed below.',
     'Not for auto-delete. Personas never auto-delete. Use `yarn repo:clean` only after human ok.',
     '',
   ];
@@ -373,7 +417,17 @@ export function renderHygieneDecompose({
 
   if (skippedRemoteTwins > 0) {
     taxonomyLines.push(
-      `_Skipped remote twins with local counterpart: ${skippedRemoteTwins}_`,
+      '## Twin diagnostics',
+      '',
+      formatMarkdownTable(
+        ['Branch', 'Local tip', 'Remote tip', 'Status'],
+        twins.map((row) => [
+          row.shortName,
+          row.localTip ? row.localTip.slice(0, 12) : 'unknown',
+          row.remoteTip ? row.remoteTip.slice(0, 12) : 'unknown',
+          row.status,
+        ]),
+      ),
       '',
     );
   }
@@ -402,9 +456,10 @@ export function renderHygieneDecompose({
       continue;
     }
     const table = formatMarkdownTable(
-      ['Branch', 'Ahead', 'Behind', 'Bucket', 'Why/Note', 'Suggested action'],
+      ['Branch', 'Tip', 'Ahead', 'Behind', 'Bucket', 'Why/Note', 'Suggested action'],
       list.map((r) => [
         r.name,
+        r.tip ? r.tip.slice(0, 12) : 'unknown',
         String(r.ahead),
         String(r.behind),
         r.bucket,

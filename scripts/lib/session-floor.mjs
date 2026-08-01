@@ -51,6 +51,22 @@ export function entryVerb(verbsDict) {
 }
 
 /**
+ * Все непустые команды мастерской, в каноническом порядке тройки.
+ *
+ * Дубли схлопываются: одна и та же команда под двумя ключами — одна дверь, и печатать её
+ * дважды значит делать выдачу длиннее, не делая её полнее.
+ */
+export function allVerbs(verbsDict) {
+  if (verbsDict === null || typeof verbsDict !== 'object' || Array.isArray(verbsDict)) return [];
+  const out = [];
+  for (const key of ['audit', 'decompose', 'inspectElement']) {
+    const v = verbsDict[key];
+    if (typeof v === 'string' && v.trim() !== '' && !out.includes(v.trim())) out.push(v.trim());
+  }
+  return out;
+}
+
+/**
  * Словарь глаголов ИЗ МАНИФЕСТА, а не из справочника.
  *
  * `discoverContainers` отдаёт `verbs` списком **присутствующих ключей** (`['audit',
@@ -104,13 +120,26 @@ export function callableSet(workshops, max = MAX_CALLABLE) {
  *   НЕ пересчитывает и не подменяет: два независимых счёта одной свежести разъедутся.
  */
 export function buildFloor(repoRoot, ctx = {}) {
-  const containers = discoverContainers(repoRoot);
+  // ТОЛЬКО МАСТЕРСКИЕ. §6 велит нести «список мастерских с входным глаголом», а справочник
+  // с 31.07 отдаёт три вида записи, включая дома без оснастки. Дом без мастерской в полу
+  // бесполезен вдвойне: у него нет глагола, которым сессия могла бы войти, и он вытесняет
+  // из выдачи те тринадцать, ради которых пол существует.
+  //
+  // Поймано красным CI, а не вычиткой: обнаружение стало давать 43 дома вместо 13, порог
+  // сжатия (15) сработал, и пол молча схлопнулся в счётчик — вместо списка дверей сессия
+  // получала бы строку «мастерских 43».
+  const containers = discoverContainers(repoRoot).filter((c) => c.kind === 'workshop');
   const workshops = containers
     .map((c) => ({
       home: c.home,
       name: c.name ?? c.home,
       description: shortDescription(c),
       entryVerb: entryVerb(manifestVerbs(repoRoot, c.home)),
+      // ВСЕ присутствующие глаголы, а не один входной. Замер холодной сессии 31.07: входной
+      // глагол она позвала прямо из пола, а за именами двух других дважды ходила грепать
+      // package.json. Пол давал дверь в дом и не давал ключей от комнат — две разведки из
+      // пяти были прямым следствием этого решения.
+      verbs: allVerbs(manifestVerbs(repoRoot, c.home)),
       valid: c.valid !== false,
     }))
     .sort((a, b) => a.home.localeCompare(b.home));

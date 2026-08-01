@@ -52,24 +52,27 @@ test('formatMarkdownTable: заголовки и экранирование |', 
 test('renderBranchAudit: три markdown-таблицы и контракт колонок', () => {
   const out = renderBranchAudit({
     base: 'origin/main',
+    baseSha: 'a'.repeat(40),
+    generatedAt: '2026-07-31T00:00:00.000Z',
     currentBranch: 'feat/x',
     fetched: true,
     local: [
-      { name: 'feat/x', ahead: 2, behind: 1, current: true, worktree: false },
-      { name: 'main', ahead: 0, behind: 0, current: false, worktree: true },
+      { name: 'feat/x', tip: 'b'.repeat(40), ahead: 2, behind: 1, current: true, worktree: false },
+      { name: 'main', tip: 'a'.repeat(40), ahead: 0, behind: 0, current: false, worktree: true },
     ],
     remote: [
-      { name: 'origin/main', ahead: 0, behind: 0, worktree: true },
-      { name: 'origin/feat/x', ahead: 2, behind: 1, worktree: false },
+      { name: 'origin/main', tip: 'a'.repeat(40), ahead: 0, behind: 0, worktree: true },
+      { name: 'origin/feat/x', tip: 'b'.repeat(40), ahead: 2, behind: 1, worktree: false },
     ],
   });
   assert.ok(out.includes('## Local branches'));
   assert.ok(out.includes('## Remote origin/*'));
   assert.ok(out.includes('## Buckets summary'));
-  assert.ok(out.includes('| Branch | Ahead | Behind | Bucket | Current | Worktree |'));
-  assert.ok(out.includes('| Branch | Ahead | Behind | Bucket | Worktree |'));
+  assert.ok(out.includes('| Branch | Tip | Ahead | Behind | Bucket | Current | Worktree |'));
+  assert.ok(out.includes('| Branch | Tip | Ahead | Behind | Bucket | Worktree |'));
   assert.ok(out.includes('| Bucket | Local | Remote |'));
-  assert.ok(out.includes('| feat/x | 2 | 1 | diverged | yes |  |'));
+  assert.ok(out.includes('| feat/x | bbbbbbbbbbbb | 2 | 1 | diverged | yes |  |'));
+  assert.ok(out.includes('base SHA: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`'));
   assert.ok(out.includes('squash lies') || out.includes('git branch --merged'));
   assert.ok(!out.includes(String.fromCharCode(27)), 'без ANSI');
 });
