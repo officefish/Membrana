@@ -5,8 +5,56 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14360/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 243 (причины в op-log) -->
+Записей: 48 · бюджет 14386/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 251 (причины в op-log) -->
+
+### 2026-08-01 · позиция · evening-review-predicate-m0-order
+
+> Формализую предикат ребра строго. Пусть V = {1,2,3,4,5,6}. Ребро (A→B) ∈ E тогда и только тогда, когда существует переменная v такая, что: answer(A) defines(v) AND question(B) requires(v). Проверю (1)→(2): вопрос (2) спрашивает «чем доказывается, что документ покрыл свой день» — […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m0-order-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m1-subject
+
+> Начну с предиката различия. Потактовое ревью судит diff(t, t+1) — коммит или uncommitted на шине задачи. Вечер обязан судить нечто иное по структуре, а не по размеру. Утверждение «тот же прибор на большем диффе» — формально верное описание текущего кода, но не основание оставить […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m1-subject-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m2-order-of-three
+
+> Зафиксирую область как предикат. Три объекта: `day-memo` (шаг 12), `audit-evening` (шаг 13), `code-review` (шаг 10). Текущий порядок в источнике: code-review(10) < day-memo(12) < audit-evening(13). Требование владельца 01.08 задаёт порядок: day-memo < audit-evening < […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m2-order-of-three-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m3-volume-measure
+
+> Начну с области определения. Вечер работает на множестве карточек дня, не на одной карточке — это посылка M1, не моя. Значит, если мы вводим мерку объёма на высоте вечера, её область — отношения между карточками, а не сумма строк. Агрегат `sum(changed_lines)` по дню — скаляр без […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m3-volume-measure-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m4-memoization
+
+> Формализую предикат конфликта. Требование 3 из #569 задаёт инвариант: `admit(e) ⇔ shown_to_partners(content(e))`. Слово владельца 01.08 задаёт другой предикат для головы вечера: `in_head(e) ⇔ occurred_today(e)`. Эти два предиката несовместимы ровно для одного органа — […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m4-memoization-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m4s-existing-organs
+
+> Формализую область. У нас три кандидата до day-memo: Archivarius, sessions:scan, sessions:extract. team-memory-report уже стоит на шаге 6 — он читатель журналов персон, не сессий. Его место в цепочке установлено. Вопрос о голове — это вопрос о тех органах, которые работают с […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m4s-existing-organs-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m4x-session-archive
+
+> Формализую. Пусть `HEAD(day-memo)` — множество входных артефактов шага `day-memo`. Предикат попадания: `∃ artifact: source(artifact) ∈ {sessions:scan, sessions:extract, archivarius} ∧ readable(artifact) ∧ routed(artifact, day-memo)`. Сейчас: `sessions:scan` → stdout, не […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m4x-session-archive-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m6-quality-gates
+
+> Формализую без UI. Пусть `C_day` — множество карточек, активных за день (из реестра). Пусть `J_doc` — множество суждений документа с типизированными полями `boundary`, `checks`, `safety`. Предикат покрытия: `covered(doc) ⇔ ∀c ∈ C_day: ∃j ∈ J_doc: j.cardId = c.id ∧ j.boundary ≠ ε […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m6-quality-gates-2026-08-01.md#reply-1`
 
 ### 2026-07-30 · позиция · sprint-honest-m2-contract
 
@@ -241,54 +289,6 @@
 > Формализую без UI. Пусть G — `TariffGridDocument` (M1). SKU s, entitlement id e → `EntitlementValue`. Проекция P_catalog(G, s) = entitledTariffSkus. Инвариант M2: `wire.entitledTariffSkus ≡ P_catalog(G, membrane.tariffSku)`. Cutover-предикат C: (1) ∀ write entitlement-path […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/tariff-grid-m8-integration-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** Математического ядра (FFT/вейвлеты/спектр) за день не было — day-plan и ревью это фиксируют. **Итоги дня:** Чисто продуктовый день — tariff-grid, network, ship. Для математика вклад: предикаты квот (S4) — исчерпание как fail-closed; предикат готовности […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-29.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m0-order
-
-> Предикат ребра фиксирую как в bridge/leveling M0: ребро A→B ⇔ область определения вопроса B содержит переменную, которую задаёт ответ A. Не runtime-порядок скриптов и не «удобно обсуждать рядом». Кандидаты V={C1..C6}: C1 подсознание (структура/переток), C2 приоритизация […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/memory-subconscious-m0-order-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m1-subconscious
-
-> Формализую без UI. Пусть O — множество записей оперативной проекции, |serialize(O)| ≤ B (бюджет ~5K токенов — факт регрессии). A — append-only множество архивных записей. Переток τ: o ↦ a сохраняет `id`/`provenance` и даёт `fullRef` на полное тело. Предикат «ничто не умирает»: […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/memory-subconscious-m1-subconscious-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m2-priority
-
-> Формализую без UI. Пусть кандидаты K — множество записей с meta. Бюджет: `|serialize(O)| ≤ B`. Человек-флаг: `imp(p) ∈ importance.json` по ключу provenance. Предикат pinned: `pinned(k) ⇔ imp(prov(k)) = pinned ∨ class(k) ∈ NonEvictable`. Инвариант: pinned ⊈ бюджетного конкурса — […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/memory-subconscious-m2-priority-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m3-surfacing
-
-> Формализую без UI. Пусть архив A_p персоны p — адресуемая лента (C1). Запрос q → embedding e(q). Наивный top-K(sim(e(q), e(a))) даёт ~45% ложных привязок (research #1366) — MMR обязателен. MMR: итеративно argmax [λ·sim(a,q) − (1−λ)·max_{b∈S} sim(a,b)]. Serendipity: 1–2 записи из […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/memory-subconscious-m3-surfacing-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m4-cycle
-
-> Формализую без UI. Пусть сутки D имеют два обязательных такта: E (evening-compress), M (morning-warmup), и множество вызовов всплытия Σ = {σ_agenda, σ_morning?, σ_gesture}. Предикат состоявшегося вечера: `done(E) ⇔ ∃ receipt_E ∧ transfer_ran ∧ rebuild_report ∈ […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/memory-subconscious-m4-cycle-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m5-metrics
-
-> Формализую предмет без UI. C5 — не новый контур, а измерительная обвязка над C1–C4. Вход: события с носителей (архив, operational, cloud, receipts). Выход: (1) append-only лог операций, (2) счётные агрегаты v1, (3) предикат сигнала sunk_unsurfaced, (4) наполнение третьей строки […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/memory-subconscious-m5-metrics-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m6-extractor
-
-> Формализую selectOperational без UI: `selectOperational(candidates, importance, budget) → {retained, transferred, report}`. Инварианты: Σtokens(retained) ≤ budget; pinned ⊆ retained ∨ fail-closed error; transfer сопровождается importanceSnapshot. Предикат erase: отсутствует в […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/memory-subconscious-m6-extractor-2026-07-28.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
 
