@@ -1,0 +1,91 @@
+{
+  "//": "План локального спринта по PR #1601: процедура hackathon как первый образец формы после DEVELOPMENT_MATRIX. До ратификации владельца исполнение не начинается.",
+  "schema": "sprint-cut/1",
+  "sprintId": "hackathon-procedure-2026-08-01",
+  "taskId": "hackathon-procedure-2026-08-01",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
+    "reason": "Носители contract_signature/session_prep ещё не являются обязательным машинным корпусом membrana-local-sprint; реальность ответственности проверяется планом, видимыми зонами, контекстными следами, review-вещдоками и procedure-run-journal."
+  },
+  "window": {
+    "from": "2026-08-01T15:03:07+03:00",
+    "to": "2026-08-01T20:30:00+03:00"
+  },
+  "revisionAt": "2026-08-01T15:03:07+03:00",
+  "blocks": [
+    {
+      "blockId": "hackathon-procedure-container",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/procedures/hackathon/README.md",
+        "docs/procedures/hackathon/MANIFEST.json",
+        "docs/procedures/registry.json"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-08-01T15:03:07+03:00"
+    },
+    {
+      "blockId": "hackathon-route-skill",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        ".cursor/skills/membrana-hackathon/SKILL.md",
+        ".agents/skills/membrana-hackathon/SKILL.md",
+        ".claude/skills/membrana-hackathon/SKILL.md",
+        ".opencode/skills/membrana-hackathon/SKILL.md",
+        ".cursor/skills/README.md"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionAt": "2026-08-01T15:03:07+03:00"
+    },
+    {
+      "blockId": "hackathon-lineage-form-report",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/procedures/hackathon/FORM_REPORT.md",
+        "docs/containers/strategic-docs/granules/development-route-hackathon/body.md",
+        "docs/containers/strategic-docs/releases/development-matrix/README.md",
+        "docs/containers/strategic-docs/releases/development-matrix/release.json"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "revisionAt": "2026-08-01T15:03:07+03:00"
+    },
+    {
+      "blockId": "hackathon-validation-journal",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "docs/local-sprint/hackathon-procedure-2026-08-01/**",
+        "docs/sprint/cut/hackathon-procedure-2026-08-01.json",
+        "docs/sprint/trail/hackathon-procedure-2026-08-01.jsonl",
+        "docs/procedure-runs/trail/2026-08-01.jsonl"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionAt": "2026-08-01T15:03:07+03:00"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-01T15:05:09+03:00",
+    "digest": "7116a024361a1494a97e5139275d7789940d4ff84def1ce64d64828a48a8d9d3"
+  }
+}

@@ -122,6 +122,23 @@
       }
     },
     {
+      "id": "hackathon",
+      "holder": "vesnin",
+      "homePath": "docs/procedures/hackathon",
+      "container": {
+        "value": true,
+        "provenance": "vesnin@hackathon-procedure-2026-08-01"
+      },
+      "vocabulary": {
+        "value": true,
+        "provenance": "ozhegov@hackathon-procedure-2026-08-01"
+      },
+      "grammar": {
+        "value": true,
+        "provenance": "vesnin@hackathon-procedure-2026-08-01"
+      }
+    },
+    {
       "id": "containerization",
       "holder": "ozhegov",
       "homePath": "docs/procedures/containerization",

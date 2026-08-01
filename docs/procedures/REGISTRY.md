@@ -13,6 +13,7 @@
 | [`meeting`](./meeting/README.md) | vesnin | **migrated** | ✅ vesnin@pl-r5 | ✅ vesnin@pl-r5 | ✅ vesnin@4f3388ed |
 | [`day-sprint`](./day-sprint/README.md) | vesnin | **in-migration** | ✅ ozhegov@dsp-f2 | — | ✅ vesnin@dsp-f2 |
 | [`membrana-local-sprint`](./membrana-local-sprint/README.md) | vesnin | **migrated** | ✅ vesnin@local-sprint-2026-08-01 | ✅ ozhegov@local-sprint-2026-08-01 | ✅ vesnin@local-sprint-2026-08-01 |
+| [`hackathon`](./hackathon/README.md) | vesnin | **migrated** | ✅ vesnin@hackathon-procedure-2026-08-01 | ✅ ozhegov@hackathon-procedure-2026-08-01 | ✅ vesnin@hackathon-procedure-2026-08-01 |
 | [`containerization`](./containerization/README.md) | ozhegov | **in-migration** | ✅ ozhegov@kcm-c3 | — | ✅ ozhegov@kcm-c3 |
 | [`test-runs`](../../tests/README.md) | dynin | **in-migration** | ✅ dynin@tc-f1 | — | ✅ dynin@tc-f1 |
 | [`storm`](./storm/README.md) | angelina | **migrated** | ✅ angelina@storm-portfolio-2026-08-01 | ✅ ozhegov@storm-portfolio-2026-08-01 | ✅ rodchenko@storm-portfolio-2026-08-01 |
