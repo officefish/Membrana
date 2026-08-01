@@ -16,11 +16,11 @@
  *
  * Exit: 0 — вердикт `contract`; 1 — `findings` или `unreadable`; 2 — инструментальная ошибка.
  */
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { cutDigestOf, cutVerdict, modeOf, ratifyPlan } from './lib/sprint-cut/index.mjs';
+import { cutDigestOf, cutVerdict, modeOf, parseAct, ratifyPlan } from './lib/sprint-cut/index.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_VOICES = resolve(repoRoot, 'docs/virtual-team/voices.registry.json');
@@ -47,6 +47,46 @@ export function voiceIdsFrom(registry) {
 
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 
+/** Носитель ленты актов плана: рядом с планом, `trail/<sprintId>.jsonl`. */
+function actsTrailPath(planPath, plan) {
+  const id = typeof plan?.sprintId === 'string' && plan.sprintId.trim() ? plan.sprintId : null;
+  return id ? resolve(dirname(planPath), 'trail', `${id}.jsonl`) : null;
+}
+
+/**
+ * Прочитать ленту актов. Файла нет → пустая лента (не «не проверяем»): «ленты нет» и
+ * «прогона не было» для CLI одно утверждение.
+ *
+ * Битая строка — ОШИБКА ВХОДА, а не пропуск. Прежняя версия делала `catch { continue }`,
+ * и это ровно тот молчаливый зелёный, который задача обязана закрыть: строка с опечаткой
+ * либо с родом вне закрытого списка исчезала бесследно, а `act-kinds` объявляет такой род
+ * `E_ACT_KIND_UNKNOWN` — то есть «вердиктов по такой ленте нет вовсе». Комментарий здесь
+ * утверждал «НЕ молчаливый пропуск», а код молча пропускал (найдено ревью PR #1604).
+ *
+ * @returns {{ok: true, acts: object[]} | {ok: false, problems: string[]}}
+ */
+export function readActsTrail(path, io = { exists: existsSync, read: (p) => readFileSync(p, 'utf8') }) {
+  if (!path || !io.exists(path)) return { ok: true, acts: [] };
+  const acts = [];
+  const problems = [];
+  const lines = io.read(path).split('\n');
+  for (let i = 0; i < lines.length; i += 1) {
+    const s = lines[i].trim();
+    if (!s || s.startsWith('#')) continue;
+    let raw;
+    try {
+      raw = JSON.parse(s);
+    } catch {
+      problems.push(`строка ${i + 1}: не разбирается как JSON`);
+      continue;
+    }
+    const parsed = parseAct(raw);
+    if (parsed.ok) acts.push(parsed.act);
+    else problems.push(`строка ${i + 1}: ${parsed.reason}`);
+  }
+  return problems.length > 0 ? { ok: false, problems } : { ok: true, acts };
+}
+
 function main(argv) {
   const args = parseArgs(argv);
   const planPath = resolve(process.cwd(), args.plan);
@@ -70,7 +110,22 @@ function main(argv) {
   }
 
   const voices = voiceIdsFrom(readJson(resolve(process.cwd(), args.voices)));
-  const { verdict, findings } = cutVerdict(plan, { voices });
+  // Лента актов плана (седьмой зуб, 01.08). Читается ВСЕГДА, и отсутствие файла даёт
+  // пустой массив, а не `undefined`: «ленты нет» и «прогона не было» — для CLI одно и то
+  // же утверждение, и молчаливая зелёнка здесь как раз и была болезнью. Ядро различает
+  // эти случаи (undefined = не проверяем), но живой путь обязан проверять всегда.
+  const trail = readActsTrail(actsTrailPath(planPath, plan));
+  if (!trail.ok) {
+    console.error(
+      '\nsprint:cut — лента актов плана нечитаема, вердикт НЕ выносится:\n' +
+        trail.problems.map((p) => `  ✖ ${p}`).join('\n') +
+        '\n  Род вне закрытого списка и битая строка — ошибка входа, а не «прочее»:\n' +
+        '  молча пропустить их значило бы вынести вердикт по ленте, которой не понимаешь.\n' +
+        '  Перечень родов: docs/sprint/cut/ACT_KINDS.md\n',
+    );
+    return 2;
+  }
+  const { verdict, findings } = cutVerdict(plan, { voices, acts: trail.acts });
 
   const blocks = Array.isArray(plan?.blocks) ? plan.blocks.length : 0;
   console.log(

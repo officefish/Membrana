@@ -13,6 +13,7 @@
  * строк был бы зелёным здесь и красным там.
  */
 import { OVERSIZED_CHANGED_LINES, isSegmentOversized } from '../day-work-diff.mjs';
+import { ACT_KINDS, cutterRanContext } from './act-kinds.mjs';
 
 export { OVERSIZED_CHANGED_LINES, isSegmentOversized };
 
@@ -38,7 +39,18 @@ export const UNASSIGNED_REASONS = Object.freeze([
   'urgent_recovery',
 ]);
 
-/** Закрытый список находок — ровно шесть способов документу перестать быть контрактом. */
+/**
+ * Закрытый список находок — способы документу перестать быть контрактом.
+ *
+ * `cutter_context_missing` добавлен **актом владельца 01.08** (седьмой зуб). Основание —
+ * долг `#sprint-cut-act-has-no-trace`: `cutBy` проставляется именем, и что резчик прогнал
+ * свой профильный контекст, не проверялось ничем. Вещдок 30.07: план `mfcc-compare-sprint`
+ * v1 подписан `cutBy=tarasov` без прогона контекста тимлида — поймал владелец, не механизм.
+ * Повтор 01.08 в прогоне `meeting-gates-teeth`: та же подпись рукой.
+ *
+ * Ни один из шести прежних не подходил: `performer_unnamed` про исполнителя БЛОКА,
+ * `cut_shape` про форму документа. Список остаётся закрытым — он стал из семи, а не открылся.
+ */
 export const TOOTH_IDS = Object.freeze([
   'cut_shape',
   'block_oversized',
@@ -46,6 +58,7 @@ export const TOOTH_IDS = Object.freeze([
   'context_unnamed',
   'zones_overlap',
   'plan_unratified',
+  'cutter_context_missing',
 ]);
 
 /** Закрытый список вердиктов. `unreadable` существует, чтобы «ноль находок» на мусоре не зеленело. */
@@ -229,6 +242,30 @@ const zonePrefix = (zone) => {
  * литерального префикса в другой. Экзотические глобы (`{a,b}`, `..`) сознательно
  * не раскрываются — это признанный предел зуба, а не обещание полноты.
  */
+/**
+ * Находка седьмого зуба: резчик подписался, но своего контекста не прогонял.
+ *
+ * `acts === undefined` — проверка НЕ выполняется вовсе (не «прошла»): чистые вызовы ядра
+ * без ленты не начинают врать зелёным. Пустая лента `[]` — это уже «не прогонял»: отсутствие
+ * вещдока не есть вещдок отсутствия наоборот, и именно так болезнь и выглядела — надпись без
+ * следа.
+ *
+ * @param {{sprintId?: string, cutBy?: string}} plan
+ * @param {Array<{kind: string, sprintId: string, subject: string}>|undefined} acts разобранная лента актов плана
+ */
+export function cutterFindings(plan, acts) {
+  if (acts === undefined) return [];
+  if (cutterRanContext(acts, plan)) return [];
+  return [
+    finding(
+      'cutter_context_missing',
+      'cutBy',
+      `резчик «${plan?.cutBy ?? '—'}» подписал план, но следа его прогона контекста нет: ` +
+        `в ленте актов не найден ${ACT_KINDS.CUT_CONTEXT_RUN} для этого спринта`,
+    ),
+  ];
+}
+
 export function zoneFindings(plan) {
   const out = [];
   const blocks = plan.blocks;

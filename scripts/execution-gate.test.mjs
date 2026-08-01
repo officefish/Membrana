@@ -13,6 +13,8 @@ import { fileURLToPath } from 'node:url';
 
 import { adaptCutPlan, makeWorkTreeResolver, parseArgs } from './execution-gate.mjs';
 import { runGate } from './lib/execution-trace/gate.mjs';
+import { parseIso } from './lib/execution-trace/plan-reader.mjs';
+import { isStale } from './lib/execution-trace/predicates.mjs';
 import {
   ALL_INPUT_ERRORS,
   ALL_VERDICTS,
@@ -147,14 +149,14 @@ test('инвариант: code = 0 ⟺ нет остановок ∧ нет ош
   }
 });
 
-test('класс вердикта статичен: у каждого из семи есть класс, остановок ровно пять', () => {
-  assert.equal(ALL_VERDICTS.length, 7);
+test('класс вердикта статичен: у каждого из восьми есть класс, остановок ровно шесть', () => {
+  assert.equal(ALL_VERDICTS.length, 8);
   for (const v of ALL_VERDICTS) assert.ok(VERDICT_CLASS[v] !== undefined, v);
-  assert.deepEqual([...STOP_VERDICTS].sort(), ['no_corpus', 'plan_lied', 'stale_trace', 'unresolvable_ref', 'wrong_performer']);
+  assert.deepEqual([...STOP_VERDICTS].sort(), ['no_corpus', 'plan_lied', 'stale_partial', 'stale_trace', 'unresolvable_ref', 'wrong_performer']);
   assert.equal(VERDICT_CLASS[VERDICTS.REFUSED_WITH_REASON], 'pass_not_green', 'вторая дверь — не зелёный блок');
 });
 
-// ── Вердикты по фикстурам: каждый из семи достижим ───────────────────────────────────────────
+// ── Вердикты по фикстурам: каждый из восьми достижим ───────────────────────────────────────────
 
 test('«не тот исполнитель» ≠ «следа нет»: три разных вердикта на трёх фикстурах', () => {
   assert.equal(verdictOf(run('plan-two-blocks', 'wrong-performer').report, 'gate-wiring'), VERDICTS.WRONG_PERFORMER);
@@ -169,7 +171,7 @@ test('honest-both: единственная зелёная фикстура, к�
   assert.equal(report.exitCode, EXIT_YES);
 });
 
-test('покрытие: все семь закрытых вердиктов достижимы на фикстурах зоны', () => {
+test('покрытие: все восемь закрытых вердиктов достижимы на фикстурах зоны', () => {
   const seen = new Set();
   for (const fixture of FIXTURE_NAMES) {
     for (const plan of ['plan-two-blocks', 'plan-refused']) {
@@ -397,4 +399,51 @@ test('резолвер дерева: файл да, чужой путь и сс�
   // ложным зелёным ровно того рода, против которого гейт построен.
   assert.equal(resolveRef('https://github.com/officefish/Membrana/pull/1467'), false);
   assert.equal(resolveRef(''), false);
+});
+
+// ── Восьмой вердикт: частичное протухание (акт владельца 01.08, Issue #1566) ──────────
+// До него stale_trace ловил только «протухли ВСЕ»; уцелел хоть один след — протухшие молча
+// выпадали из evidenceRefs, а блок выходил honest_pair. Так три ребёнка перерезки получили
+// зелёное на разборе вещи, которой в той форме не существовало.
+
+test('частичное протухание: блок с одним старым и одним свежим следом → stale_partial', () => {
+  const { report } = run('plan-two-blocks', 'stale-partial');
+  const gate = report.blocks.find((b) => b.blockId === 'gate-wiring');
+  assert.equal(gate.verdict, 'stale_partial');
+  assert.match(gate.reason, /судили другую вещь/u);
+  assert.match(gate.reason, /1 из 2/u, 'причина обязана назвать, сколько вещдоков протухло из скольких');
+});
+
+test('частичное протухание соседа не красит: чистый блок остаётся honest_pair', () => {
+  const { report } = run('plan-two-blocks', 'stale-partial');
+  assert.equal(report.blocks.find((b) => b.blockId === 'mfcc-core').verdict, 'honest_pair');
+});
+
+test('stale_partial ≠ stale_trace: «всё протухло» и «часть» — разные состояния', () => {
+  assert.equal(run('plan-two-blocks', 'stale-trace').report.blocks.find((b) => b.blockId === 'gate-wiring').verdict, 'stale_trace');
+  assert.equal(run('plan-two-blocks', 'stale-partial').report.blocks.find((b) => b.blockId === 'gate-wiring').verdict, 'stale_partial');
+});
+
+test('stale_partial — остановка, а не находка: класс статичен', () => {
+  assert.equal(VERDICT_CLASS[VERDICTS.STALE_PARTIAL], 'stop');
+});
+
+// ── Смешанные смещения ISO: гейт сравнивает МОМЕНТЫ, а не строки ──────────────────────
+// Ревью PR #1604 выставило это как P1 «off-by-timezone в isStale». Проверено: дефекта нет —
+// plan-reader.parseIso прогоняет и revisionAt, и at следа через Date.parse, в предикаты
+// приходит эпоха. Тест закрепляет свойство, чтобы оно не пропало при рефакторинге: соседний
+// контур (sprint:experience) на таком же сравнении ЛЕКСИКОГРАФИЧЕСКИ и правда врёт, и разница
+// между двумя контурами держится ровно на этой нормализации.
+
+test('смешанные смещения: след позже ревизии считается свежим, хотя строкой он «меньше»', () => {
+  const rev = '2026-08-01T15:04:23+03:00'; // = 12:04:23Z
+  const at = '2026-08-01T13:00:00Z'; // на 56 минут ПОЗЖЕ ревизии
+  assert.equal(at < rev, true, 'предпосылка теста: строкой сравнение даёт обратный ответ');
+  assert.equal(isStale({ at: parseIso(at) }, { revisionAt: parseIso(rev) }), false, 'гейт обязан сравнивать моменты');
+});
+
+test('смешанные смещения: след раньше ревизии остаётся протухшим', () => {
+  const rev = '2026-08-01T15:04:23+03:00';
+  const at = '2026-08-01T11:00:00Z'; // раньше 12:04:23Z
+  assert.equal(isStale({ at: parseIso(at) }, { revisionAt: parseIso(rev) }), true);
 });
