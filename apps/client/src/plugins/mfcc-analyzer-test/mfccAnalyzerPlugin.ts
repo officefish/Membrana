@@ -63,13 +63,20 @@ export function configFromHash(configHash: string): {
   melBands: number;
   numberOfCoefficients: number;
   bufferSize: number;
+  sampleRate: number;
 } | null {
-  const m = /^mel(\d+)-c(\d+)-buf(\d+)$/u.exec(configHash);
+  // Частота — несущая настройка, а не подробность: банк мел-фильтров строится ОТ НЕЁ, и
+  // вектор, снятый на 44 100, несравним с воротами, снятыми на 48 000. Пока отпечаток её не
+  // нёс, подмена не ловилась ничем — длина вектора совпадала, и вердикт выносился о другом.
+  // Отпечаток без `-sr` отвергается намеренно: «не знаем частоту» и «частота такая-то» суть
+  // разные состояния, и первое не должно молча притворяться вторым.
+  const m = /^mel(\d+)-c(\d+)-buf(\d+)-sr(\d+)$/u.exec(configHash);
   if (!m) return null;
   return {
     melBands: Number(m[1]),
     numberOfCoefficients: Number(m[2]),
     bufferSize: Number(m[3]),
+    sampleRate: Number(m[4]),
   };
 }
 
@@ -215,7 +222,7 @@ export function toSourceKind(value: string): AnalysisSourceKind {
 }
 
 export function installMfccAnalyzerTest(deps: {
-  readonly extract: (samples: Float32Array) => readonly number[] | null;
+  readonly extract: (samples: Float32Array, sampleRate: number) => readonly number[] | null;
   readonly onState: (state: MfccPluginState) => void;
   /** Модуль-хозяин: живой микрофонный тракт адресуется по нему, без него кадров не будет. */
   readonly moduleId: string;
@@ -260,7 +267,9 @@ export function installMfccAnalyzerTest(deps: {
     // с воротами пресета. Молча подогнать длину значило бы судить не то, что слышно.
     const samples = frame.samples;
     if (samples.length !== parsed.bufferSize) return;
-    const vector = deps.extract(samples);
+    // Частота кадра доходит сюда настоящей и передаётся дальше: раньше её выбрасывали, и
+    // считалка работала на умолчании библиотеки, а не на том, что реально слышно.
+    const vector = deps.extract(samples, frame.sampleRate);
     if (vector === null) return;
     // Отсчёт промежутка ведётся от ВЗЯТОГО замера, а не от пришедшего кадра: иначе кадры
     // чужой длины или несосчитанные сдвигали бы шаг, и серия охватывала бы не то время.
@@ -317,7 +326,7 @@ export function installMfccAnalyzerTest(deps: {
       });
       const off = own.subscribe((frame) => {
         if (frame.samples.length !== parsed.bufferSize) return;
-        const vector = deps.extract(frame.samples);
+        const vector = deps.extract(frame.samples, frame.sampleRate);
         if (vector !== null) collected.push(vector);
       });
       await own.start();

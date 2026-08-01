@@ -58,7 +58,7 @@ export interface MfccTestPanelProps {
    * Считалка коэффициентов. Приходит извне: плагин не знает, как они считаются, и не должен
    * — этот шов назван структурщиком до работы.
    */
-  readonly extract: (samples: Float32Array) => readonly number[] | null;
+  readonly extract: (samples: Float32Array, sampleRate: number) => readonly number[] | null;
   /** Модуль-хозяин: по нему адресуется живой микрофонный тракт. Без него кадров не будет. */
   readonly moduleId: string;
 }

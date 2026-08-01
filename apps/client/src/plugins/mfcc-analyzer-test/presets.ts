@@ -55,7 +55,7 @@ const BOUNDS: readonly MfccBounds[] = [
 ];
 
 export const MFCC_PRESET_FIRST_CUT: MfccPresetSpec = {
-  configHash: 'mel40-c24-buf4096',
+  configHash: 'mel40-c24-buf4096-sr48000',
   bounds: BOUNDS,
   judgedCoefficients: [0, 1, 2, 3],
   strictness: {
