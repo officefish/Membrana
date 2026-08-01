@@ -147,8 +147,11 @@ test('пачка: пропущенные считаны поимённо, мол
 
 test('результат ложится в архив: parseArchive читает, appendMonotonic принимает', () => {
   const r = forecastToArchiveRecord(CUT);
-  const line = JSON.stringify(r);
-  const parsed = parseArchive(line);
-  assert.ok(parsed, 'parseArchive вернул пусто');
+  const parsed = parseArchive(JSON.stringify(r));
+  // assert.ok(parsed) был бы молчаливым зелёным (B6): parseArchive всегда отдаёт объект
+  // {records, problems}, и проверка истинности прошла бы даже на битой строке.
+  assert.equal(parsed.records.length, 1, `разобрано ${parsed.records.length}`);
+  assert.deepEqual(parsed.problems, [], 'разбор дал проблемы');
+  assert.equal(parsed.records[0].class, 'forecast');
   assert.doesNotThrow(() => appendMonotonic([], r));
 });
