@@ -80,8 +80,12 @@ export function surfacingLine(summary) {
   if (state === 'not-invoked') return '- всплывало сегодня: лифт не звали';
   if (state === 'empty-cloud') return '- всплывало сегодня: облако пустое — архив кандидатов не дал';
   if (state === 'rejected') {
-    const why = acts.find((a) => a.outcome === 'reject')?.reason;
-    return `- всплывало сегодня: облако отвергнуто${why ? ` (${why})` : ''}`;
+    // Счёт называется и здесь — иначе день с одним отказом и день с пятью читались бы
+    // одинаково, тогда как строка всплытия уже считает всплывшее.
+    const rejects = acts.filter((a) => a.outcome === 'reject');
+    const count = rejects.length > 1 ? ` (${rejects.length})` : '';
+    const why = rejects[0]?.reason;
+    return `- всплывало сегодня: облако отвергнуто${count}${why ? ` (${clipReason(why)}${rejects.length > 1 ? '; причина первого' : ''})` : ''}`;
   }
   const emerged = acts.filter((a) => a.outcome === 'emerge');
   const named = emerged

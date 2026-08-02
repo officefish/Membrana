@@ -156,3 +156,18 @@ test('короткое объяснение не трогается', () => {
   assert.match(line, /\(к делу\)/u);
   assert.doesNotMatch(line, /…/u);
 });
+
+test('несколько отказов за день считаются, а не сводятся к одному', () => {
+  const one = surfacingLine({ cloudQueries: 1, invocations: [{ outcome: 'reject', reason: 'мимо' }] });
+  const many = surfacingLine({
+    cloudQueries: 3,
+    invocations: [
+      { outcome: 'reject', reason: 'мимо' },
+      { outcome: 'reject', reason: 'тоже мимо' },
+      { outcome: 'reject', reason: 'и это' },
+    ],
+  });
+  assert.doesNotMatch(one, /\(1\)/u, 'единственный отказ счётом не украшается');
+  assert.match(many, /отвергнуто \(3\)/u);
+  assert.match(many, /причина первого/u, 'показана одна причина из трёх — сказано, какая');
+});
