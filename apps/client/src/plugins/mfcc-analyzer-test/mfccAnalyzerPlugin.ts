@@ -17,6 +17,12 @@
  * побайтово одинаковый выход — настройки задаются свойствами объекта.
  */
 import type { AudioSampleFrame } from '@membrana/audio-engine-service';
+import {
+  evaluatePipe,
+  magnitudeOf,
+  type MfccVector,
+  type PipeSpec,
+} from '@membrana/mfcc-analyzer-service';
 
 import {
   createAnalysisFrameFeed,
@@ -80,11 +86,54 @@ export function configFromHash(configHash: string): {
   };
 }
 
-/** Норма вектора — по ней кадр признаётся немым. */
+/**
+ * Норма вектора — по ней кадр признаётся немым. Счёт УШЁЛ В ПАКЕТ (`magnitudeOf`); здесь
+ * остался мост через контейнер:
+ * meyda отдаёт `number[]`, судья ждёт `Float32Array`. Это ABI, а не семантика — норма √Σx²
+ * от контейнера не зависит (обзор `docs/discussions/mfcc-judge-semantics.md`, §2).
+ */
 export function vectorMagnitude(vector: readonly number[]): number {
-  let sum = 0;
-  for (const v of vector) sum += v * v;
-  return Math.sqrt(sum);
+  return magnitudeOf(Float32Array.from(vector));
+}
+
+/**
+ * Пресет клиента → спека судьи. Разворот делает КЛИЕНТ, и это по праву, а не по недоделке:
+ * `strictness` у прибора есть выбор пары порогов внутри пресета, а у пакета такого понятия
+ * нет вовсе — в спеке уже лежат числа. Судья не обязан знать, из какого набора взяты его
+ * пороги.
+ */
+function specOf(
+  preset: MfccPresetSpec,
+  strictness: MfccSeriesResult['strictness'],
+  magnitudeFloor: number,
+): PipeSpec {
+  const pair = preset.strictness[strictness];
+  return {
+    bounds: preset.bounds,
+    configHash: preset.configHash,
+    minInBandRatio: pair.minInBandRatio,
+    minPassRate: pair.minPassRate,
+    minMagnitude: magnitudeFloor,
+    judgedCoefficients: preset.judgedCoefficients,
+  };
+}
+
+/** Вектор клиента → вектор судьи. `windowStartIndex` порядковый: серия равномерна. */
+function vectorsOf(raw: readonly (readonly number[])[], configHash: string): MfccVector[] {
+  return raw.map((v, i) => ({
+    coefficients: Float32Array.from(v),
+    windowStartIndex: i,
+    configHash,
+  }));
+}
+
+/**
+ * Слепок отсуженных коэффициентов — забота КЛИЕНТА, а не судьи. Пакет его не хранит
+ * принципиально: приговор кадра не есть архив его входа. Панели слепок нужен для показа,
+ * поэтому собирается здесь, рядом с вызовом, из тех же чисел.
+ */
+function judgedValuesOf(vector: readonly number[], preset: MfccPresetSpec): number[] {
+  return preset.judgedCoefficients.map((c) => vector[c] ?? Number.NaN);
 }
 
 /**
@@ -102,13 +151,24 @@ export function judgeFrame(
   magnitudeFloor: number,
 ): MfccFrameResult {
   const judged = preset.judgedCoefficients;
-  const magnitude = vectorMagnitude(vector);
-  const judgedValues = judged.map((c) => vector[c] ?? Number.NaN);
+  const judgedValues = judgedValuesOf(vector, preset);
+  const spec: PipeSpec = {
+    ...specOf(preset, 'normal', magnitudeFloor),
+    // Кадр судится долей коэффициентов в коридоре; доля прошедших КАДРОВ к одному кадру
+    // отношения не имеет, и подставлять сюда порог серии значило бы смешать два предмета.
+    minInBandRatio,
+    minPassRate: 0,
+  };
+  const outcome = evaluatePipe(vectorsOf([vector], preset.configHash), spec);
 
-  if (magnitude < magnitudeFloor) {
+  if (!outcome.ok) {
+    // Приговор неизвестен — и это НЕ «прошёл» и не «провалил». В словаре прибора кадр, о
+    // котором судья ничего не сказал, называется немым: он выходит из знаменателя серии, а
+    // причина отказа доедет до панели строкой серии. Выдумать здесь состояние значило бы
+    // написать приговор за судью.
     return {
       index,
-      magnitude,
+      magnitude: vectorMagnitude(vector),
       judgedValues,
       inBandCount: 0,
       judgedCount: judged.length,
@@ -116,21 +176,14 @@ export function judgeFrame(
     };
   }
 
-  let inBand = 0;
-  for (const c of judged) {
-    const value = vector[c];
-    const bounds = preset.bounds[c];
-    if (value === undefined || bounds === undefined || !Number.isFinite(value)) continue;
-    if (value >= bounds.min && value <= bounds.max) inBand += 1;
-  }
-  const ratio = judged.length === 0 ? 0 : inBand / judged.length;
+  const verdict = outcome.report.frames[0]!;
   return {
     index,
-    magnitude,
+    magnitude: verdict.magnitude,
     judgedValues,
-    inBandCount: inBand,
-    judgedCount: judged.length,
-    state: ratio >= minInBandRatio ? 'passed' : 'failed',
+    inBandCount: verdict.inBandCount,
+    judgedCount: verdict.judgedCoefficientCount,
+    state: verdict.state,
   };
 }
 
@@ -139,30 +192,59 @@ export function judgeFrame(
  * было нечем» разные вещи, и слить их значит соврать в пользу прибора.
  */
 export function judgeSeries(
-  frames: readonly MfccFrameResult[],
+  vectors: readonly (readonly number[])[],
   preset: MfccPresetSpec,
   strictness: MfccSeriesResult['strictness'],
+  magnitudeFloor: number,
 ): MfccSeriesResult {
-  const pair = preset.strictness[strictness];
-  const silentCount = frames.filter((f) => f.state === 'silent').length;
-  const judgedCount = frames.length - silentCount;
-  const passedCount = frames.filter((f) => f.state === 'passed').length;
-  const passRate = judgedCount === 0 ? 0 : passedCount / judgedCount;
-
-  let refusal: string | null = null;
-  if (frames.length === 0) refusal = 'серия пуста — кадров не пришло';
-  else if (judgedCount === 0) refusal = `все ${frames.length} кадров немые — судить нечем`;
-
-  return {
+  const empty = {
     configHash: preset.configHash,
     strictness,
+    frames: [] as readonly MfccFrameResult[],
+    judgedCount: 0,
+    silentCount: 0,
+    passedCount: 0,
+    passRate: 0,
+    detected: false,
+  };
+  if (vectors.length === 0) return { ...empty, refusal: 'серия пуста — кадров не пришло' };
+
+  const outcome = evaluatePipe(
+    vectorsOf(vectors, preset.configHash),
+    specOf(preset, strictness, magnitudeFloor),
+  );
+
+  // Отказ у судьи — ОТДЕЛЬНАЯ ветвь типа, у панели — поле рядом с `detected`. Разворот
+  // ветви в поле делается здесь, на границе, и только в эту сторону: превратить ветвь в
+  // поле внутри пакета значило бы откатиться к менее честной конструкции, где `passRate: 0`
+  // читается как «серия провалилась», хотя серия не судилась вовсе.
+  if (!outcome.ok) return { ...empty, refusal: outcome.reason };
+
+  const report = outcome.report;
+  const frames: MfccFrameResult[] = report.frames.map((f, i) => ({
+    index: i,
+    magnitude: f.magnitude,
+    judgedValues: judgedValuesOf(vectors[i]!, preset),
+    inBandCount: f.inBandCount,
+    judgedCount: f.judgedCoefficientCount,
+    state: f.state,
+  }));
+
+  const mute = report.judgedCount === 0;
+  return {
+    configHash: report.configHash,
+    strictness,
     frames,
-    judgedCount,
-    silentCount,
-    passedCount,
-    passRate,
-    detected: refusal === null && passRate >= pair.minPassRate,
-    refusal,
+    judgedCount: report.judgedCount,
+    silentCount: report.silentCount,
+    passedCount: report.passedCount,
+    passRate: report.passRate,
+    // Отказ и обнаружение несовместны: инвариант прибора, а не судьи.
+    detected: !mute && report.detected,
+    // «Все кадры немые» судья отказом не считает — он честно отдаёт отчёт с judgedCount 0.
+    // Прибору же это отказ: «цели нет» и «судить было нечем» разные вещи, и различие
+    // принадлежит прибору, а не судье.
+    refusal: mute ? `все ${report.frames.length} кадров немые — судить нечем` : null,
   };
 }
 
@@ -179,7 +261,9 @@ export function createSeriesCollector(
   frameCount: number,
   magnitudeFloor: number,
 ) {
-  const collected: MfccFrameResult[] = [];
+  // Копятся ВЕКТОРЫ, а не приговоры: судью серии зовут по исходным числам, и приговор кадра
+  // архивом входа не является.
+  const collected: (readonly number[])[] = [];
   const pair = preset.strictness[strictness];
   return {
     /**
@@ -191,10 +275,13 @@ export function createSeriesCollector(
      */
     accept(vector: readonly number[]): { frame: MfccFrameResult; series: MfccSeriesResult | null } {
       const frame = judgeFrame(vector, collected.length, preset, pair.minInBandRatio, magnitudeFloor);
-      collected.push(frame);
+      collected.push(vector);
       return {
         frame,
-        series: collected.length < frameCount ? null : judgeSeries(collected, preset, strictness),
+        series:
+          collected.length < frameCount
+            ? null
+            : judgeSeries(collected, preset, strictness, magnitudeFloor),
       };
     },
     get size(): number {

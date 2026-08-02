@@ -1,2 +1,6 @@
 {"traceId":"tr-deadwire-ozhegov-run","blockId":"dead-wire-trigger","kind":"context_run","subject":"ozhegov","at":"2026-08-02T16:40:00+03:00","ref":"docs/discussions/block-dead-wire-trigger-ozhegov.md"}
 {"traceId":"tr-deadwire-ozhegov-review","blockId":"dead-wire-trigger","kind":"review_pass","subject":"ozhegov","at":"2026-08-02T17:20:00+03:00","ref":"docs/procedures/weekly-dead-wire/MANIFEST.json"}
+{"traceId":"tr-survey-dynin-run","blockId":"mfcc-judge-survey","kind":"context_run","subject":"dynin","at":"2026-08-02T17:35:00+03:00","ref":"docs/discussions/block-mfcc-judge-survey-dynin.md"}
+{"traceId":"tr-survey-dynin-review","blockId":"mfcc-judge-survey","kind":"review_pass","subject":"dynin","at":"2026-08-02T17:50:00+03:00","ref":"docs/discussions/mfcc-judge-semantics.md"}
+{"traceId":"tr-judge-ozhegov-run","blockId":"mfcc-judge-by-package","kind":"context_run","subject":"ozhegov","at":"2026-08-02T18:05:00+03:00","ref":"docs/discussions/mfcc-judge-semantics.md"}
+{"traceId":"tr-judge-ozhegov-review","blockId":"mfcc-judge-by-package","kind":"review_pass","subject":"ozhegov","at":"2026-08-02T18:40:00+03:00","ref":"apps/client/src/plugins/mfcc-analyzer-test/mfccAnalyzerPlugin.ts"}
