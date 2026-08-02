@@ -1,0 +1,12 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "product-mintlify-container-2026-08-02",
+  "note": "Changed-line measurement by ratified block zone after implementation, profile reviews, gate and procedure journal. Tracked files use git diff --numstat; untracked files use full line count.",
+  "measuredAt": "2026-08-02T14:18:00+03:00",
+  "segments": [
+    { "cutBlockId": "product-surface", "changedLines": 186 },
+    { "cutBlockId": "tariff-projection", "changedLines": 515 },
+    { "cutBlockId": "task-contract", "changedLines": 303 },
+    { "cutBlockId": "execution-and-gates", "changedLines": 565 }
+  ]
+}

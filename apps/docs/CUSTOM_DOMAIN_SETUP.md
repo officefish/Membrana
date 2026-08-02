@@ -1,6 +1,6 @@
-# Публикация product docs на custom-домене (docs.mmbrn.tech)
+# Публикация Product docs на custom-домене (product.mmbrn.tech)
 
-Чек-лист подключения mintlify-сайта `@membrana/docs` (Device Board) к `docs.mmbrn.tech`.
+Чек-лист подключения mintlify-сайта `@membrana/docs` (Device Board, узлы, тарифы) к `product.mmbrn.tech`.
 Родом из инсайта [`insight-docs-custom-domain`](../../docs/insights/insight-docs-custom-domain/INSIGHT.md).
 
 Harness (tooling / bestiary / llm-calls / git) — **отдельный** Mintlify-проект:
@@ -19,27 +19,27 @@ Harness (tooling / bestiary / llm-calls / git) — **отдельный** Mintli
 ## Шаг 1 — Mintlify dashboard
 
 1. Settings → **Custom Domain** (или Domain Setup).
-2. Добавить `docs.mmbrn.tech`.
+2. Добавить `product.mmbrn.tech`.
 3. Дашборд покажет **целевой CNAME** (обычно вида `cname.mintlify-dns.com`) и **TXT-записи
-   верификации** (обычно `_acme-challenge.docs...` и `_cf-custom-hostname.docs...`).
+   верификации** (обычно `_acme-challenge.product...` и `_cf-custom-hostname.product...`).
    **Записать точные значения из дашборда** — они могут отличаться от примеров.
 
 ## Шаг 2 — DNS в зоне `mmbrn.tech`
 
 Добавить **ровно то, что показал дашборд**:
 
-- [ ] `CNAME  docs  →  <цель из дашборда>` (напр. `cname.mintlify-dns.com`).
-- [ ] `TXT  _acme-challenge.docs  →  <значение из дашборда>` (SSL/ACME).
-- [ ] `TXT  _cf-custom-hostname.docs  →  <значение>` (если дашборд просит).
+- [ ] `CNAME  product  →  <цель из дашборда>` (напр. `cname.mintlify-dns.com`).
+- [ ] `TXT  _acme-challenge.product  →  <значение из дашборда>` (SSL/ACME).
+- [ ] `TXT  _cf-custom-hostname.product  →  <значение>` (если дашборд просит).
 
-**Не трогать** существующие записи `office.mmbrn.tech`, `harness.mmbrn.tech` (когда
-появится) и корень `mmbrn.tech`.
+**Не трогать** существующие записи `office.mmbrn.tech`, `harness.mmbrn.tech` и
+корень `mmbrn.tech`.
 
 ## Шаг 3 — Верификация
 
 - [ ] Дождаться DNS-propagation (5 мин – 24 ч, зависит от провайдера).
 - [ ] В дашборде — **Retry validation**; дождаться авто-выпуска TLS (Mintlify сам).
-- [ ] Открыть `https://docs.mmbrn.tech` — product Device Board по HTTPS.
+- [ ] Открыть `https://product.mmbrn.tech` — Product docs по HTTPS.
 - [ ] Убедиться, что `/tooling/containers` **не** ожидается на product (это harness).
 - [ ] Проверить, что нет «полу-подключено» (домен резолвит, но проект не привязан → 404/чужой
   сертификат): статус в дашборде должен быть «connected/verified».

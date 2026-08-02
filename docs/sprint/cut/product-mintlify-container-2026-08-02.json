@@ -1,0 +1,113 @@
+{
+  "//": "Нарезка Sprint 1 эпика #1622. Владелец ратифицировал границу Product/Harness: сначала существующий apps/docs как Product с Board, узлами и тарифами, затем отдельный Harness sprint. Эта версия не нарезает Harness заранее.",
+  "schema": "sprint-cut/1",
+  "sprintId": "product-mintlify-container-2026-08-02",
+  "taskId": "product-mintlify-container",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
+    "reason": "Текущий sprint engine не имеет отдельных носителей contract_signature/session_prep. Owner-ratification хранится digest плана; реальная работа и просмотр кода проверяются context_run и review_pass по каждому accountable block."
+  },
+  "window": {
+    "from": "2026-08-02T12:25:15+03:00",
+    "to": "2026-08-02T19:00:00+03:00"
+  },
+  "revisionAt": "2026-08-02T13:05:33+03:00",
+  "blocks": [
+    {
+      "//": "Rodchenko отвечает за понятную продуктовую поверхность: существующий apps/docs, навигация, доменный контракт и визуальная проверка. Он не правит генератор тарифов.",
+      "blockId": "product-surface",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/docs/README.md",
+        "apps/docs/CUSTOM_DOMAIN_SETUP.md",
+        "apps/docs/package.json",
+        "apps/docs/docs.json",
+        "apps/docs/index.mdx",
+        "apps/docs/product/overview.mdx",
+        "apps/docs/workflow/**",
+        "docs/DOCUMENTATION_WORKFLOW.md",
+        "docs/deploy/DNS_DOMAIN_POLICY.md",
+        "docs/deploy/STRATEGY_AFFINE_DEPLOY.md",
+        "docs/containers/strategic-docs/SURFACE.md"
+      ],
+      "estimate": {
+        "changedLines": 330
+      },
+      "revisionAt": "2026-08-02T13:08:43+03:00",
+      "revisionOf": "ab36807a33e440566a3775aaaed53f9dfa43642c8b7d05cf23a15ddcde405a62"
+    },
+    {
+      "//": "Dynin отвечает за вычислимую проекцию тарифов. tariff-grid.json и tariff-scalars.json — read-only входы и намеренно не входят в write-zone. Generated MDX входит в его зону, но структура apps/docs и навигация остаются у Rodchenko. Review artifacts: unit test, deterministic --check и diff generated MDX.",
+      "blockId": "tariff-projection",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/product-docs-tariffs.mjs",
+        "scripts/product-docs-tariffs.mjs",
+        "scripts/product-docs-tariffs.test.mjs",
+        "apps/docs/product/tariffs.mdx",
+        "package.json"
+      ],
+      "estimate": {
+        "changedLines": 360
+      },
+      "revisionAt": "2026-08-02T12:25:15+03:00",
+      "revisionOf": "22c3676f7fd4ff3d5b8c71c1607d8fe443a0a28214e4517948e5b12f5718727f"
+    },
+    {
+      "//": "Vesnin держит границу эпика и регистрационный контракт. Блок отделён от исполнения после machine finding block_oversized; объединять их обратно без новой оценки нельзя.",
+      "blockId": "task-contract",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/prompts/DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md",
+        "docs/prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md",
+        "docs/prompts/HARNESS_WORKFLOW_PAGES_PROMPT.md",
+        "docs/tasks/registry.json",
+        "docs/tasks/README.md",
+        "scripts/tasks-decompose.config.json"
+      ],
+      "estimate": {
+        "changedLines": 300
+      },
+      "revisionAt": "2026-08-02T12:34:00+03:00",
+      "revisionOf": "dc32bc5637831264884bfe657b94bac0efd1d4a1c2d49cf65a32151685cc3f05"
+    },
+    {
+      "//": "Vesnin отдельно отвечает за операторские указатели, evidence, machine gates и exact-SHA closure. Это второй review-атом, а не хвост task-contract.",
+      "blockId": "execution-and-gates",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/local-sprint/product-mintlify-container-2026-08-02/**",
+        "docs/sprint/cut/product-mintlify-container-2026-08-02.json",
+        "docs/sprint/trail/product-mintlify-container-2026-08-02.jsonl",
+        "docs/procedure-runs/trail/2026-08-02.jsonl",
+        "docs/discussions/cut-product-mintlify-container-tarasov.md",
+        "docs/sprint/cut/trail/product-mintlify-container-2026-08-02.jsonl"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-08-02T12:34:00+03:00",
+      "revisionOf": "a29db14f729beec4f1cfaaa51858abe300dce9c7391851614f7d6d2f4e74b6ce"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-02T13:08:43+03:00",
+    "digest": "edd22a90f804c659c5502961f93233dba80ee9327a99bcfdb22c9ad82dc622e2"
+  }
+}

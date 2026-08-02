@@ -33,7 +33,8 @@ Harness остаётся атласом **контейнеров** и ops-док
 | **Affine · Релизы** | **https://strategy.mmbrn.tech** (workspace **Releases**) | **Опубликованные snapshots** для чтения | docs в namespace `strategic-docs/` |
 | **GitHub** | корень репо | Пока ручной `README.md` (не generated) | корневой `README.md` **не трогаем** в v1 |
 
-Product Mintlify (`docs.mmbrn.tech` / `apps/docs`) — device-board; strategic-docs туда **не** кладём.
+Product Mintlify (`product.mmbrn.tech` / `apps/docs`) — Device Board, узлы и тарифы;
+strategic-docs туда **не** кладём.
 
 ---
 

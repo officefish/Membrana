@@ -1,15 +1,17 @@
 # @membrana/docs
 
-Публичная **product**-документация Membrana на [Mintlify](https://mintlify.com) —
-только Device Board. Отдельное приложение монорепо — **не** часть `apps/client`.
+Публичная **Product**-документация Membrana на [Mintlify](https://mintlify.com):
+Device Board, каталог узлов и тарифы. Отдельное приложение монорепо — **не**
+часть `apps/client` и не содержит документацию рабочего контура.
 
 Harness (tooling / bestiary / llm-calls / git) живёт в
 [`@membrana/docs-harness`](../docs-harness/README.md) → `apps/docs-harness`.
 
 ## Что делает
 
-- Операторская и developer-документация по **device-board MVP v0.4**
+- Доступное введение в продукт и **device-board MVP v0.4**
 - Node reference, concepts, cookbooks
+- Тарифная страница из `docs/tariffs/tariff-grid.json` и `tariff-scalars.json`
 - Источник правды для onboarding; agent-truth остаётся в `docs/catalog/`
 
 ## Установка
@@ -39,12 +41,13 @@ Harness preview: `yarn docs-harness:dev` → http://localhost:3334
 ```bash
 yarn workspace @membrana/docs build   # CI-safe verify (без Mintlify CLI)
 yarn workspace @membrana/docs lint      # + проверка внутренних ссылок (--links)
+yarn docs:product:tariffs:check          # generated MDX ↔ тарифный канон
 yarn docs:verify:all                  # оба корня: apps/docs + apps/docs-harness (CI)
 ```
 
 Полный Mintlify preview — только Node 20–24 (`yarn docs:dev`). UI-примеры в MDX должны соответствовать [`DESIGN.md`](../../docs/DESIGN.md); полный visual parity — Phase 1+ эпика `db-doc-v04-mvp`.
 
-Custom domain (owner): [`CUSTOM_DOMAIN_SETUP.md`](./CUSTOM_DOMAIN_SETUP.md) → `docs.mmbrn.tech`.
+Custom domain (owner): [`CUSTOM_DOMAIN_SETUP.md`](./CUSTOM_DOMAIN_SETUP.md) → `product.mmbrn.tech`.
 
 ## Workflow с MCP
 

@@ -2,7 +2,9 @@
 
 > Канон разделения доменов. Заведён по слову владельца 2026-07-15 (office/panel
 > переехали на `mmbrn.tech`; product-домен `membrana.space`). Грунтует консилиум
-> по хостингу документации (`membrana.space/scenarios/docs`).
+> по хостингу документации (`membrana.space/scenarios/docs`). Решение владельца
+> 2026-08-01 развело актуальные Mintlify-поверхности на `product.mmbrn.tech` и
+> `harness.mmbrn.tech`; прежний subpath остаётся историей топологии.
 
 ## Принцип разделения
 
@@ -11,10 +13,12 @@
 | **`membrana.space`** | **Продукт** — всё, что видит пользователь/клиент | публичный |
 | **`mmbrn.tech`** | **Команда / фоновая инфра** — сервисы разработки и бэкенда, не для конечного пользователя | внутренний |
 
-Правило: **user-facing → `membrana.space`; background/team → `mmbrn.tech`.** При
-развилке «где разместить сервис» — по тому, кому он адресован, а не по удобству.
+Правило сервисов: **user-facing → `membrana.space`; background/team →
+`mmbrn.tech`.** Документация — явное исключение владельца: Product живёт на
+`product.mmbrn.tech`, рабочий контур — на `harness.mmbrn.tech`. При остальных
+развилках «где разместить сервис» решает адресат, а не удобство.
 
-## Карта поддоменов (состояние 2026-07-25)
+## Карта поддоменов (состояние 2026-08-02)
 
 ### `mmbrn.tech` — команда / фон
 | Поддомен | Сервис | Статус |
@@ -23,13 +27,13 @@
 | `panel.mmbrn.tech` | office panel (эпик #438) | ✅ актуален — **не переназначать** |
 | `harness.mmbrn.tech` | Mintlify harness (tooling docs) | ✅ live — **не переназначать** |
 | `strategy.mmbrn.tech` | Affine self-host на office VDS `176.124.218.4` (эпик #1156, scope B) | 🟡 DNS owner + install W2 — канон/runbook: [`STRATEGY_AFFINE_DEPLOY.md`](./STRATEGY_AFFINE_DEPLOY.md) |
-| `docs.mmbrn.tech` | product Mintlify (`apps/docs`) | ⏸ residual dual-mintlify — **вне scope B**, не трогать в Affine-спринте |
+| `product.mmbrn.tech` | Product Mintlify (`apps/docs`: Device Board, узлы, тарифы) | ⏸ owner DNS + Mintlify dashboard; репозиторный контракт готов |
 | `other.mmbrn.tech` | (уточнить назначение) | ❓ |
 
 **Карта имён (docs / harness / strategy):**
 
 ```text
-docs.mmbrn.tech      → Mintlify product (apps/docs)     — later / residual
+product.mmbrn.tech   → Mintlify Product (apps/docs)     — owner publish step
 harness.mmbrn.tech   → Mintlify harness                 — already live
 strategy.mmbrn.tech  → Affine self-host (office VDS)    — strategy-affine-routing
 ```
@@ -44,7 +48,7 @@ Owner DNS для strategy (Timeweb): A `strategy` → `176.124.218.4`. Аген�
 | `cabinet-api.membrana.space` | cabinet API | ✅ |
 | `media.membrana.space` | `@membrana/background-media` — медиафайлы, в т.ч. **пользовательские треки** | ✅ **остаётся** (решение владельца 2026-07-15: media = реально media, user-facing; НЕ фон) |
 | `membrana.space` (apex, `@`) + `www` | root-Caddy: минимальная страница + `/downloads`; `www` → 301 на apex | ✅ **живёт с 2026-07-16** (`deploy/Caddyfile.root.membrana.space`, TLS/LE выпущен) |
-| `membrana.space/scenarios/docs` | документация (Mintlify subpath-proxy, ADR-0008) | ⏸ **ждёт owner-действия**: base path `/scenarios/docs` в дашборде Mintlify. Блок proxy написан и закомментирован; egress к Mintlify с VPS проверен 2026-07-16 (200 за 0.12s) — плана B не требуется. До настройки страница ведёт на доки прямой ссылкой (`membrana.mintlify.app/device-board/overview`) |
+| `membrana.space/scenarios/docs` | прежний маршрут документации (ADR-0008) | ⛔ **не настраивать**: заменён отдельным Product-доменом `product.mmbrn.tech` |
 | `membrana.space/downloads` | инсталляторы клиентов (десктоп Studio) — статика | ✅ **живёт с 2026-07-16**: `/var/www/membrana/downloads`, `Membrana-Studio-Setup-0.1.0.exe` (131.4 МБ), range-запросы работают |
 | `membrana.space/scenarios/` | community-маркет сценариев | 🔮 будущее |
 
@@ -82,17 +86,11 @@ Owner DNS для strategy (Timeweb): A `strategy` → `176.124.218.4`. Аген�
    поднят (`deploy/Caddyfile.root.membrana.space`, установка —
    `node scripts/_ssh-root-site-setup.mjs --execute`). Отдаёт минимальную страницу
    (загрузки / документация борда / регистрация в кабинете) и `/downloads`.
-   Полный лендинг — карточка `product-landing`. Остаток по докам: base path в
-   дашборде Mintlify (owner), затем раскомментировать proxy-блок.
-3. **Хостинг документации** на `membrana.space/scenarios/docs` — **консилиум по
-   топологии корня**. Research (2026-07-15) поправил ранний пессимизм: Mintlify
-   **штатно поддерживает subpath** (дашборд «Host at» + base path), через
-   reverse-proxy: Caddy `handle_path /scenarios/docs/* { reverse_proxy
-   <subdomain>.mintlify.site }` (set `Origin`, strip `Host`, POST разрешить,
-   docs-пути `no-cache`). **Миграция НЕ нужна.** Условие: доки остаются
-   ПУБЛИЧНЫМИ (subpath несовместим с Mintlify-auth). Только Nginx-пример у
-   Mintlify → выверить Caddy-заголовки. Консилиум решает не «можно ли доки», а
-   топологию корня (лендинг + `/scenarios` shell + docs + порядок).
+   Полный лендинг — карточка `product-landing`. Документация опубликована отдельной
+   поверхностью и не требует base path или proxy на продуктовом VPS.
+3. ~~**Хостинг документации** на `membrana.space/scenarios/docs`~~ **РЕШЕНО
+   2026-08-01:** прежний subpath не настраивать. Product Mintlify получает
+   `product.mmbrn.tech`, Harness остаётся на `harness.mmbrn.tech`.
 4. **`other.mmbrn.tech`** — уточнить, что это.
 
 ## Ловушки (из истории)
