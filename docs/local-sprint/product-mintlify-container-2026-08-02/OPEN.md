@@ -67,9 +67,10 @@ active, но её исполнение заморожено до закрыти�
 - checklist Product surface уже записан в секции **Definition of Done**
   [`PRODUCT_MINTLIFY_CONTAINER_PROMPT.md`](../../prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md):
   `docs.json`/навигация, link checks и скриншоты desktop/mobile;
-- `node scripts/product-docs-tariffs.mjs --check` **ещё не существует**: это
-  выход блока `tariff-projection`, а не предрабочий зелёный факт. Контракт выхода:
-  бинарный exit `0/1`, рендер без времени, random и сетевого ввода;
+- На момент ратификации `node scripts/product-docs-tariffs.mjs --check` ещё не
+  существовал: это был выход блока `tariff-projection`, а не предрабочий зелёный
+  факт. Теперь CLI реализован и проходит; его контракт — бинарный exit `0/1`,
+  рендер без времени, random и сетевого ввода;
 - источник истины карточек — `docs/tasks/registry.json`; из него генерируется
   `docs/tasks/README.md`, а `task-list --sync-readme --check` проверяет проекцию.
   `tasks-decompose` читает тот же registry и отдельный
