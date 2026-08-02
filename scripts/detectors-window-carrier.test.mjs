@@ -18,7 +18,7 @@
  */
 
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
@@ -27,6 +27,9 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 /** Единственный законный носитель. */
 const CARRIER = 'packages/services/detectors/base/src/sample-window.ts';
+
+/** Сам зуб — не носитель: искомые строки лежат в нём литералами. */
+const SELF = 'scripts/detectors-window-carrier.test.mjs';
 
 const SKIP_DIRS = new Set(['node_modules', 'dist', '.turbo', 'coverage', '.git']);
 
@@ -42,9 +45,16 @@ function listPackageSources() {
       }
     }
   };
-  const root = join(repoRoot, 'packages');
-  if (statSync(root).isDirectory()) walk(root);
-  return out.filter((p) => p.includes('/src/'));
+  // Обход шире пакетов: копия обхода кадров в scripts/ или apps/ так же тиха и так же
+  // разойдётся с носителем (замечание ревью PR #1648, P2). Фильтр по /src/ снят вместе с
+  // сужением: у корневых скриптов такого каталога нет.
+  for (const top of ['packages', 'scripts', 'apps']) {
+    const root = join(repoRoot, top);
+    if (existsSync(root) && statSync(root).isDirectory()) walk(root);
+  }
+  // Сам зуб из обхода исключён: он держит искомые строки литералами и после расширения
+  // обхода на scripts/ немедленно поймал себя — ложное красное на собственном тексте.
+  return out.filter((rel) => rel !== SELF);
 }
 
 const sources = listPackageSources();
