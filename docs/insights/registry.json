@@ -843,6 +843,28 @@
       "weight": null,
       "createdAt": "2026-08-02",
       "tags": []
+    },
+    {
+      "id": "insight-owner-intervention-ledger",
+      "title": "Счёт вмешательств владельца: суверенные против компенсирующих",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-08-02",
+      "tags": []
+    },
+    {
+      "id": "insight-server-only-ritual-run",
+      "title": "Server-only прогон двух ритуалов через панель как показательный опыт автономии",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-08-02",
+      "tags": []
     }
   ]
 }
