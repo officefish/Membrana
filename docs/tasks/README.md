@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `workflow-examples-marathon` | Накопить проверяемые примеры мастерских и процедур | L | [`WORKFLOW_EXAMPLES_MARATHON_PROMPT.md`](../prompts/WORKFLOW_EXAMPLES_MARATHON_PROMPT.md) | — |
 | `harness-workflow-pages` | Harness Mintlify: страницы мастерских и процедур | L | [`HARNESS_WORKFLOW_PAGES_PROMPT.md`](../prompts/HARNESS_WORKFLOW_PAGES_PROMPT.md) | — |
 | `dual-mintlify-product-harness` | Product и Harness Mintlify в двух спринтах | L | [`DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md`](../prompts/DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md) | [#1622](https://github.com/officefish/Membrana/issues/1622) |
 | `review-oversized-queue` | Очередь oversized на точечное ревью считается прибором, а не глазом | S | [`REVIEW_OVERSIZED_QUEUE_PROMPT.md`](../prompts/REVIEW_OVERSIZED_QUEUE_PROMPT.md) | — |
