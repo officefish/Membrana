@@ -89,5 +89,16 @@ export function buildReferencedStatesBlock(text, fetchStates, opts = {}) {
   if (typeof fetchStates !== 'function') {
     throw new Error('review-referenced-states: fetchStates обязателен — состояния не выдумываются');
   }
-  return { numbers, block: renderStatesBlock(numbers, fetchStates(numbers)) };
+  const result = fetchStates(numbers);
+  // Контракт синхронный намеренно. Если снятие однажды станет асинхронным, необёрнутый
+  // Promise прошёл бы дальше молча: `result.unknown` неопределён, `states` пуст — и таблица
+  // наполнилась бы строками «не запрошен», то есть соврала бы тем же способом, от которого
+  // этот модуль и заведён. Поэтому подмена ловится здесь, а не проявляется в промпте.
+  if (result !== null && typeof result?.then === 'function') {
+    throw new Error(
+      'review-referenced-states: fetchStates вернул Promise — контракт синхронный; ' +
+        'неразрешённое обещание дало бы таблицу «не запрошен» вместо состояний',
+    );
+  }
+  return { numbers, block: renderStatesBlock(numbers, result) };
 }
