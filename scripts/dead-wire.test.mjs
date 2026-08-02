@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 
 import {
   FINDING_KINDS,
@@ -226,4 +227,76 @@ test('подложенный фальшивый провод роняет зуб
   });
   assert.equal(after.findings.length, before + 1);
   assert.ok(after.findings.some((f) => f.name === 'fake:wire' && f.kind === 'dead_wire'));
+});
+
+// ── сторож в утренней цепочке ────────────────────────────────────────────────
+
+test('09.08 доказывается БЕЗ ожидания 09.08: дата приходит параметром', () => {
+  // Системное время не подделывается: ядро берёт день прогона аргументом, и это
+  // единственный честный способ проверить будущее.
+  const before = runCheck({ today: '2026-08-08' });
+  const onDay = runCheck({ today: '2026-08-09' });
+  const after = runCheck({ today: '2026-08-10' });
+
+  const expired = (r) => r.findings.filter((f) => f.kind === 'pending_expired');
+  assert.equal(expired(before).length, 0, 'накануне срок ещё в силе');
+  assert.equal(expired(onDay).length, 0, 'в САМ день срок ещё не вышел — сравнение строгое');
+  assert.ok(expired(after).length > 0, 'назавтра прибор кричит');
+});
+
+test('сегодня сторож молчит: шума от ежедневного звонка нет', () => {
+  const today = runCheck({ today: '2026-08-02' });
+  assert.deepEqual(today.findings, [], 'pending в силе — находок ноль');
+});
+
+test('сторож ВПАЯН в утреннюю цепочку, а не только объявлен глаголом', () => {
+  // Ловушка, ради которой зуб и стоит: глагол dead-wire:check существовал в package.json
+  // и в этом файле — и не звался ниоткуда. Объявление без вызова прибором не является.
+  const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  const chain = String(pkg.scripts['ritual:day']);
+  assert.ok(chain.includes('dead-wire-check.mjs'), 'вызова нет — сторож снова спит');
+
+  const at = chain.indexOf('dead-wire-check.mjs');
+  const week = chain.indexOf('plan-week-if-monday.mjs');
+  assert.ok(at < week, 'документы дня не чеканятся поверх невыявленных мёртвых проводов');
+});
+
+test('сторож НЕ обёрнут в «|| true»: гашеный отказ — не сторож', () => {
+  const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  const chain = String(pkg.scripts['ritual:day']);
+  const at = chain.indexOf('dead-wire-check.mjs');
+  const tail = chain.slice(at, at + 60);
+  assert.doesNotMatch(tail, /\|\|\s*true/u, 'обёртка вернула бы ровно ту болезнь, что лечится');
+});
+
+test('манифест называет ОБА источника и различает их словами', () => {
+  const m = JSON.parse(
+    readFileSync(new URL('../docs/procedures/weekly-dead-wire/MANIFEST.json', import.meta.url), 'utf8'),
+  );
+  assert.equal(m.trigger.kind, 'captain-word', 'процедуру по-прежнему поднимает владелец такта');
+  assert.equal(m.trigger.watchdog.role, 'gate');
+  assert.match(m.trigger.watchdog.note, /ПОДНИМАЕТ процедуру/u);
+  assert.match(m.trigger.watchdog.note, /ЗВОНИТ В ЗВОНОК/u);
+});
+
+test('манифест и цепочка не разъедутся молча: сверка ведётся ПО манифесту', () => {
+  // Прежние зубы проверяли цепочку по строкам, вписанным в сам зуб, — то есть сверяли дело
+  // с зубом, а не с объявлением. Через полгода кто-нибудь припишет `|| true` в цепочку либо
+  // сменит место в манифесте, и словарь разойдётся с делом беззвучно. Здесь ожидание берётся
+  // ИЗ манифеста, поэтому расхождение любой из двух сторон даёт красное.
+  const root = new URL('../', import.meta.url);
+  const m = JSON.parse(readFileSync(new URL('docs/procedures/weekly-dead-wire/MANIFEST.json', root), 'utf8'));
+  const pkg = JSON.parse(readFileSync(new URL('package.json', root), 'utf8'));
+
+  const w = m.trigger.watchdog;
+  const chain = String(pkg.scripts[w.host]);
+  const at = chain.indexOf(w.command);
+
+  assert.ok(at >= 0, `манифест объявляет «${w.command}» в цепочке ${w.host}, а её там нет`);
+
+  assert.ok(at < chain.indexOf(w.before), `манифест обещает вызов перед «${w.before}» — цепочка этого не держит`);
+
+  if (w.role === 'gate') {
+    assert.doesNotMatch(chain.slice(at, at + 60), /\|\|\s*true/u, 'роль gate объявлена, а отказ гасится');
+  }
 });
