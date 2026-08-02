@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-08-01T05:27:15.906Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-08-02T05:21:04.761Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -13,7 +13,7 @@
 
 ## Посылки горизонта (граф правды)
 
-_Кристаллов активно: 117 (owner: 74, derived: 43). Стратегия читает граф правды (S7)._
+_Кристаллов активно: 124 (owner: 78, derived: 46). Стратегия читает граф правды (S7)._
 
 - 🪨 `research-night-sensemaking-morning` — Внешние исследования проводятся ночью и осмысливаются утром; дневная стратегия делается утром. Вечер — подведение итогов…
 - 🪨 `weekly-strategy-frozen` — Недельная стратегия пока замораживается — уровень планирования слишком серьёзный, пока не разобрана дневная рутина.
@@ -23,7 +23,7 @@ _Кристаллов активно: 117 (owner: 74, derived: 43). Страте
 - 🪨 `credential-rotation-biweekly` — Ключи доступа перевыпускаются раз в две недели везде, где это возможно.
 - 🪨 `alex-sparring-answered` — Ответ Алексу на спарринг про «паспорт детектора» отправлен.
 - 🪨 `graph-first-step-572-dropped` — Первое в контуре доверия — пять вопросов, уронённых консилиумом 16.07 (#572): C1 гейты приходят позже факта, C2 должен л…
-- …ещё 66 owner-кристаллов
+- …ещё 70 owner-кристаллов
 
 ## Акценты (highlights)
 
@@ -44,13 +44,15 @@ _Кристаллов активно: 117 (owner: 74, derived: 43). Страте
 - ~~**Сопряжение с внешним эффектором C-UAS (ВИЗОР-МПВС, запрос Дениса)**~~ — `insight:insight-effector-cue-integration` _(stale · 2026-07-17)_
 - **Серверные генераторы: конверты → чистые функции office, git-роутер с очередями** — `insight:insight-server-generators-office`
 - ~~**Issue closure must account for every active registry child**~~ — `insight:insight-ghost-task-closure-invariant` _(stale · 2026-06-29)_
-- **Версионируемые тулинг-киты: наборы умений агента под задачу** — `insight:insight-tooling-kits`
+- ~~**Версионируемые тулинг-киты: наборы умений агента под задачу**~~ — `insight:insight-tooling-kits` _(stale · 2026-07-19)_
 - ~~**Server forwarding — серверные функции сценария**~~ — `insight:insight-server-forwarding` _(stale · 2026-06-25)_
 - **Ночные сны → процедура во фреймах с настраиваемым через панель провайдером** — `insight:insight-dreams-procedure-frames`
+- **Память процедур: показывается, а не запрашивается; вовлечённость числом, а не подтверждением** — `insight:insight-procedure-memory-shown-not-asked`
 - **Оркестрация процедур через n8n: кожух и производный рендер поверх git как единственного источника правды** — `insight:insight-procedures-orchestration-n8n`
 - ~~**Токены правды: владельческие факты как источник истины для ритуала**~~ — `insight:insight-truth-tokens-owner-facts` _(stale · 2026-07-16)_
 - **Контейнер прецедентов + мастерская к нему** — `insight:insight-precedent-container`
 - **Второй тариф: MFCC-спектр + нейроанализ спектрограмм машинным зрением, разделение продукта по тарифам** — `insight:insight-spectrum-tiers`
+- **Повестка заседания — выписка, а не проза председателя: машинные факты с id и зуб на посылки** — `insight:insight-meeting-agenda-as-extract`
 - ~~**Dual-density UI: operator vs engineer mode**~~ — `insight:insight-rodchenko-operator-density-mode` _(stale · 2026-06-25)_
 - **Tier2: 5 канонических рабочих деревьев (main/tooling/product/codex/cursor), спринт всегда уходит в свою ветку** — `insight:insight-tier2-worktree-topology`
 - ~~**Начитанная виртуальная команда: досье персон + фоновый stack-watch за новинками стека**~~ — `insight:insight-team-stack-watch` _(stale · 2026-07-09)_
@@ -85,7 +87,7 @@ _Кристаллов активно: 117 (owner: 74, derived: 43). Страте
 
 ## Provenance каналов
 
-- ✅ `insight` — жив, элементов: 50
+- ✅ `insight` — жив, элементов: 52
 - ✅ `research` — жив, элементов: 2
 
 > Стратегия описывает акцент (`highlight`), но не назначает исполнителей и не пишет DoD:

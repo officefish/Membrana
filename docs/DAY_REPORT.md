@@ -1,6 +1,6 @@
-<!-- Сгенерировано: 2026-08-01T05:35:36.132Z (yarn day:report; vesnin) -->
+<!-- Сгенерировано: 2026-08-02T05:26:37.447Z (yarn day:report; vesnin) -->
 
-# Доклад по задачам — 2026-08-01
+# Доклад по задачам — 2026-08-02
 
 Автор: Тимлид (vesnin) · зеркало 5-блочного плана дня.
 
@@ -11,12 +11,15 @@
 ## Подкрепление
 
 - `archivarius-sessions-container` — ведёт dynin
-- #592 — OPEN
+- `angelina-hostess-impl` — ведёт ozhegov
 
 ## Перспективные
 
 - `archivarius-sessions-container` — ведёт dynin
 - `angelina-hostess-impl` — ведёт ozhegov
+- `mfcc-lib-choice` — ведёт dynin
+- #1584 — MERGED
+- #1562 — MERGED
 
 ## Экспериментальные
 
@@ -24,4 +27,4 @@
 
 ## Санитарные
 
-- #1543 — MERGED
+- #1584 — MERGED
