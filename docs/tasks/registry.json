@@ -1,6 +1,106 @@
 {
   "tasks": [
     {
+      "id": "review-oversized-queue",
+      "title": "Очередь oversized на точечное ревью считается прибором, а не глазом",
+      "promptPath": "docs/prompts/REVIEW_OVERSIZED_QUEUE_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "строка 2 топ-10 хендофа 02.08; GH-иссью заводится при отгрузке PR",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-02",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "замер 02.08: 185 oversized с 20.07, с артефактом ревью 17, без — 168; по природе: 60 только docs, 6 только код, 119 смешанные. В хендофе значилось 16",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "ritual-magistral-source-freshness",
+      "title": "Расхождение вещдока дня с гейтом меряется предикатом, а не поручается генератору",
+      "promptPath": "docs/prompts/RITUAL_MAGISTRAL_SOURCE_FRESHNESS_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "строка 5 топ-10 хендофа 02.08; GH-иссью заводится при отгрузке PR",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-02",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "У1 (31.07) велит называть расхождение, но живёт инструкцией в промпте генератора; sources[0] в main-day-assertions.json несёт заявку 30.07, гейт — subconscious-lift-c3 от 02.08",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "deps-watch-disappearance-named",
+      "title": "Исчезновение advisory называется поимённо и без выдуманной причины",
+      "promptPath": "docs/prompts/DEPS_WATCH_DISAPPEARANCE_NAMED_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "строка 6 топ-10 хендофа 02.08; GH-иссью заводится при отгрузке PR",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-02",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "brace-expansion пропал из снимка в ec0b9d33 (утренний ритуал 01.08) — режим morning перезаписывает снимок без сравнения; вечерний печатает 'закрыто за день: N' без имён и без замера причины",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "detectors-judge-whole-record",
+      "title": "Кепстральный и flux-детекторы судят запись целиком, а не первые 85 мс",
+      "promptPath": "docs/prompts/DETECTORS_JUDGE_WHOLE_RECORD_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "строка 8 топ-10 хендофа 02.08; дом задачи #1572 — свод к одной механике серии, здесь только размножение уже влитого лечения",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-02",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "harmonic вылечен 01.08 (#1611); cepstral и spectral-flux несут обрезающий prepareFftSamples строка в строку",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "tooling-truth-orphans-diagnosis",
+      "title": "Приборы говорят о себе замеренное: диагноз scripts:orphans и прецедент предела ревью",
+      "promptPath": "docs/prompts/TOOLING_TRUTH_ORPHANS_DIAGNOSIS_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "строки 3 и 4 топ-10 хендофа 02.08; GH-иссью заводится при отгрузке PR",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-02",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "51 сирота из 1000, tally subject_unresolved=51, no_rule=0 (замер 02.08 на 9dc167d0)",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "subconscious-lift-c3",
       "title": "Лифт всплытия C3: облако подсознания, мультизапрос, акт emerge/reject за персоной",
       "promptPath": "docs/prompts/SUBCONSCIOUS_LIFT_C3_PROMPT.md",

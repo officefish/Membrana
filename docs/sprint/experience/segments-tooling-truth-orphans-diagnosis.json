@@ -1,0 +1,13 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "tooling-truth-orphans-diagnosis",
+  "forTask": "tooling-truth-orphans-diagnosis — правда прибора о себе: строки 3 и 4 топ-10 хендофа 02.08",
+  "note": "Замер объёма по блокам, снят git diff --numstat от базы 9dc167d0 после закрытия окна: insertions + deletions по зоне блока. Не оценка и не пересказ — измерение.",
+  "measuredAt": "2026-08-02T12:48:00+03:00",
+  "segments": [
+    { "cutBlockId": "orphans-reason-carried", "changedLines": 29 },
+    { "cutBlockId": "orphans-reason-tooth", "changedLines": 156 },
+    { "cutBlockId": "orphans-warning-verdict", "changedLines": 246 },
+    { "cutBlockId": "review-blindness-precedent", "changedLines": 95 }
+  ]
+}
