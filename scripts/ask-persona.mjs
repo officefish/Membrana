@@ -38,6 +38,21 @@ import {
   shouldUsePersonaRag,
 } from './lib/rag-ritual.mjs';
 import { readPersonaMemory, personaMemoryPath } from './lib/persona-memory.mjs';
+import { HOMES } from './persona-memory/lib/archive-schema.mjs';
+import {
+  LIFT_LAMBDA_V1,
+  actOpEvents,
+  formatCloudForPersona,
+  parseAct,
+  shouldLift,
+  validateAct,
+} from './persona-memory/lib/emerge-act.mjs';
+import { emitOp } from './persona-memory/lib/op-log.mjs';
+import { buildSubconsciousCloud } from './persona-memory/lib/subconscious-lift.mjs';
+import {
+  createArchiveRetrieve,
+  similarityBetween,
+} from './persona-memory/lib/subconscious-retrieval.mjs';
 
 // ---------------------------------------------------------------------------
 // Персонажи. Чтобы добавить нового — пиши сюда + создавай PROMPT_*.md.
@@ -114,6 +129,9 @@ Options:
   --no-save                 Принудительно не сохранять (по умолчанию сохраняется при --gh-issue / --ticket-file / --save-as).
   --no-context              Не подгружать WHITE_PAPER / ARCHITECTURE / SERVICES.
   --rag                     Подмешать RAG (operative) по вопросу.
+  --lift                    Поднять облако подсознания принудительно (в т.ч. для angelina).
+  --no-lift                 Не поднимать облако (по умолчанию поднимается тем, у кого есть
+                            архив docs/virtual-team/memory/archive/<persona>.jsonl).
   --no-rag                  Отключить RAG (в т.ч. для vesnin/ozhegov).
   --with-memory             Подмешать журнал субъектного опыта персоны
                             (docs/virtual-team/memory/<persona>.md), по умолчанию ВЫКЛ.
@@ -143,6 +161,9 @@ function parseArgs(argv) {
   let noContext = false;
   let noRag = false;
   let enableRag = false;
+  // Лифт всплытия: по умолчанию поднимается тем, у кого архив есть (см. shouldLift).
+  let noLift = false;
+  let enableLift = false;
   // Инъекция журнала персоны — строго opt-in (флаг или env), review 2026-07-12.
   let withMemory = process.env.PERSONA_MEMORY_INJECT === '1';
 
@@ -161,6 +182,8 @@ function parseArgs(argv) {
     if (arg === '--no-context') { noContext = true; continue; }
     if (arg === '--no-rag') { noRag = true; continue; }
     if (arg === '--rag') { enableRag = true; continue; }
+    if (arg === '--no-lift') { noLift = true; continue; }
+    if (arg === '--lift') { enableLift = true; continue; }
     rest.push(arg);
   }
 
@@ -185,7 +208,7 @@ function parseArgs(argv) {
     process.exit(1);
   }
 
-  return { persona, question, task, ticketFile, ghIssue, saveAs, noSave, noContext, noRag, enableRag, withMemory };
+  return { persona, question, task, ticketFile, ghIssue, saveAs, noSave, noContext, noRag, enableRag, noLift, enableLift, withMemory };
 }
 
 // ---------------------------------------------------------------------------
@@ -273,7 +296,7 @@ function formatGhIssueAsTicket(issue) {
 // ---------------------------------------------------------------------------
 // Сборка промпта
 
-function buildPrompt({ persona, question, task, ticketFile, noContext, ghIssueData, ragBlock = '', withMemory = false }) {
+function buildPrompt({ persona, question, task, ticketFile, noContext, ghIssueData, ragBlock = '', liftBlock = '', withMemory = false }) {
   const cwd = process.cwd();
   const personaCfg = PERSONAS[persona];
 
@@ -341,6 +364,11 @@ function buildPrompt({ persona, question, task, ticketFile, noContext, ghIssueDa
     }
   }
 
+  // Всплытие идёт ПЕРЕД RAG нарочно: RAG — чужие документы по запросу, лифт — собственная
+  // память персоны. Своё она должна увидеть раньше, чем справку.
+  if (liftBlock) {
+    parts.push('---', liftBlock, '');
+  }
   if (ragBlock) {
     parts.push('---', '## RAG context', '', ragBlock, '');
   }
@@ -434,7 +462,43 @@ async function main() {
     logRagStatus(rag, `ask:${cli.persona}`);
   }
 
-  const { text: bodyText, ticketSourceLabel } = buildPrompt({ ...cli, ghIssueData, ragBlock });
+  // ── Лифт всплытия (C3, включение по норме #1565) ──────────────────────────
+  // Ядро без вызова повторило бы ровно тот дефект, из-за которого контур и стоял
+  // непоставленным: комнату спроектировали и не запланировали к постройке.
+  let liftBlock = '';
+  let cloud = null;
+  const archiveAbs = resolve(process.cwd(), HOMES.archive(cli.persona));
+  if (shouldLift({ persona: cli.persona, hasArchive: existsSync(archiveAbs), noLift: cli.noLift, enableLift: cli.enableLift })) {
+    try {
+      cloud = await buildSubconsciousCloud({
+        personaId: cli.persona,
+        topic: cli.question,
+        retrieve: createArchiveRetrieve({
+          personaId: cli.persona,
+          now: new Date().toISOString().slice(0, 10),
+        }),
+        // Оперативная проекция — это то, что персона и так помнит. Всплывать ему незачем:
+        // иначе «подсознание» окажется эхом свежего стека.
+        notAlreadyOperational: (id) => !readPersonaMemory(cli.persona).includes(id),
+        similarityBetween,
+        lambda: LIFT_LAMBDA_V1,
+        tauOut: null,
+        cloudId: `${cli.persona}-${new Date().toISOString()}`,
+      });
+      liftBlock = formatCloudForPersona(cloud);
+      if (process.stderr.isTTY) {
+        console.error(`→ всплытие [${cli.persona}]: ${cloud.items.length} из архива · план ${cloud.queryPlan.health}`);
+      }
+    } catch (e) {
+      // Лифт необязателен для ответа на вопрос: уронить `yarn ask` — инструмент всей
+      // команды — из-за своей памяти было бы хуже, чем спросить без неё. Но молчать
+      // нельзя: непоказанное облако должно быть видно оператору.
+      cloud = null;
+      console.error(`→ всплытие [${cli.persona}]: НЕ поднялось — ${e?.message ?? e}`);
+    }
+  }
+
+  const { text: bodyText, ticketSourceLabel } = buildPrompt({ ...cli, ghIssueData, ragBlock, liftBlock });
 
   if (process.stderr.isTTY) {
     console.error(`→ ${cli.persona} (${PERSONAS[cli.persona].role})`);
@@ -470,6 +534,23 @@ async function main() {
   }
 
   console.log(answer);
+
+  // ── Акт персоны над облаком ───────────────────────────────────────────────
+  // Разбирается ТОЛЬКО сказанное персоной. Не нашлось акта — это не отказ и не пустота,
+  // а третье состояние: облако показали, суждения не получили. Оно называется вслух.
+  if (cloud !== null) {
+    const act = validateAct(parseAct(answer), cloud);
+    for (const problem of act.problems) console.error(`→ акт [${cli.persona}]: ${problem}`);
+    if (act.outcome === 'silent' && cloud.items.length > 0) {
+      console.error(`→ акт [${cli.persona}]: облако показано, акт не совершён — ни всплытия, ни отказа`);
+    }
+    for (const ev of actOpEvents(act, { persona: cli.persona, cloud })) {
+      emitOp(process.cwd(), ev);
+    }
+    if (process.stderr.isTTY) {
+      console.error(`→ акт [${cli.persona}]: ${act.outcome} · всплыло ${act.emerged.length}`);
+    }
+  }
 
   // Сохраняем, если есть имя обсуждения и не отключено явно --no-save.
   const discussionName = deriveDiscussionName(cli);

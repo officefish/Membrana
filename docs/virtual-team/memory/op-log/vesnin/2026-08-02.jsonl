@@ -1,1 +1,14 @@
 {"ts":"2026-08-02T06:01:50.062Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:47","origin":"persona-extract"}
+{"ts":"2026-08-02T10:32:37.580Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-02T10:32:25.543Z","origin":"ask-persona"}
+{"ts":"2026-08-02T10:32:37.584Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-02T10:32:25.543Z","origin":"ask-persona"}
+{"ts":"2026-08-02T10:46:14.288Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-02T10:46:06.751Z","origin":"ask-persona"}
+{"ts":"2026-08-02T10:46:14.296Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-02T10:46:06.751Z","origin":"ask-persona"}
+{"ts":"2026-08-02T10:47:21.162Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-02T10:47:14.925Z","origin":"ask-persona"}
+{"ts":"2026-08-02T10:47:21.164Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-02T10:47:14.925Z","origin":"ask-persona"}
+{"ts":"2026-08-02T10:47:21.165Z","persona":"vesnin","verb":"reject","ref":"vesnin-2026-08-02T10:47:14.925Z","reason":"облако поднято по темам \"позиции + граница\", но ни один сеанс не касается границ зон БЛОКОВ спринта. Сеансы говорят о: честности закрытия (performer vs assigned), рамках аудитора, валидности задач, состояниях инсайтов, процедурных слоях. Спринт-блоки и их зоны не рассматривались.","origin":"ask-persona"}
+{"ts":"2026-08-02T10:48:11.287Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-02T10:47:59.910Z","origin":"ask-persona"}
+{"ts":"2026-08-02T10:48:11.288Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-02T10:47:59.910Z","origin":"ask-persona"}
+{"ts":"2026-08-02T10:48:59.861Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-02T10:48:55.415Z","origin":"ask-persona"}
+{"ts":"2026-08-02T10:48:59.863Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-02T10:48:55.415Z","origin":"ask-persona"}
+{"ts":"2026-08-02T10:48:59.865Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-29-sprint-honest-m1-performer","reason":"Зафиксировано контрастом: исполнитель (assigned в Linear) vs участник (participated в PR). Задача закрыта, если участвовал хотя бы раз; \"исполнен\" = assigned + получил квитанцию закрытия. Матч проигрывается, когда в брифе стоит имя, а квитанции нет.","origin":"ask-persona"}
+{"ts":"2026-08-02T10:48:59.867Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-30-sprint-honest-m5-auditor","reason":"Уточняю слой: аудитор спринта — отдельный проверяемый объект. Не исполнитель (M1), не владелец. Живой аудитор > машина на этапе валидации расхождений.","origin":"ask-persona"}
