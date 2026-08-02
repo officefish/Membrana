@@ -9,7 +9,7 @@
 | **Архивирована** | 2026-08-02 |
 | **GitHub Issue** | — |
 | **Linear** | — |
-| **Промпт** | [`docs/prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md`](../../docs/prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md) |
+| **Промпт** | [`docs/prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md`](../../prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md) |
 
 ## Заметки при закрытии
 
