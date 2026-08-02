@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 import {
   checkWorkflowDocs,
+  isProcedurePublished,
   loadWorkflowDocsModel,
   readDigest,
   renderProcedurePage,
@@ -29,6 +30,37 @@ test('every live workshop and procedure gets one Harness page', () => {
 
 test('generated workflow pages and navigation are in sync', () => {
   assert.deepEqual(checkWorkflowDocs(repoRoot), []);
+});
+
+test('every generated page has JSON-quoted YAML frontmatter scalars', () => {
+  const outputs = renderWorkflowDocs(repoRoot);
+  for (const [path, body] of Object.entries(outputs)) {
+    if (!path.endsWith('.mdx')) continue;
+    const match = body.match(/^---\n([\s\S]*?)\n---/u);
+    assert.ok(match, `${path}: frontmatter is missing`);
+    for (const line of match[1].split('\n')) {
+      const separator = line.indexOf(':');
+      assert.notEqual(separator, -1, `${path}: invalid frontmatter line`);
+      assert.doesNotThrow(() => JSON.parse(line.slice(separator + 1).trim()), `${path}: scalar is not quoted`);
+    }
+  }
+});
+
+test('primary procedure navigation contains only substantive procedures', () => {
+  const model = loadWorkflowDocsModel(repoRoot);
+  const config = JSON.parse(renderWorkflowDocs(repoRoot)['apps/docs-harness/docs.json']);
+  const group = config.navigation.groups.find((item) => item.group === 'Процедуры');
+  const expected = model.procedures.filter(isProcedurePublished).map((item) => `procedures/${item.slug}`);
+  assert.deepEqual(group.pages.slice(1), expected);
+  for (const procedure of model.procedures.filter(isProcedurePublished)) {
+    assert.ok(procedure.summary, `${procedure.id}: published without purpose`);
+    assert.notEqual(procedure.buildState, 'declared-not-built');
+  }
+  const index = renderWorkflowDocs(repoRoot)['apps/docs-harness/procedures/index.mdx'];
+  for (const procedure of model.procedures.filter((item) => !isProcedurePublished(item))) {
+    assert.ok(index.includes(procedure.id), `${procedure.id}: missing declaration`);
+    assert.doesNotMatch(index, new RegExp(`href="/procedures/${procedure.slug}"`, 'u'));
+  }
 });
 
 test('README digest reads a whole prose paragraph', () => {

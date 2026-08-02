@@ -47,7 +47,15 @@ function readProcedureManifest(repoRoot, procedure) {
 export function loadWorkflowDocsModel(repoRoot) {
   const workshops = discoverContainers(repoRoot)
     .filter((item) => item.kind === 'workshop')
-    .map((item) => ({ ...item, slug: workshopSlug(item.home) }))
+    .map((item) => {
+      const digest = readReadmeDigest(join(repoRoot, item.home, 'README.md'));
+      return {
+        ...item,
+        slug: workshopSlug(item.home),
+        title: digest.title ?? item.name,
+        summary: digest.summary ?? item.summary,
+      };
+    })
     .sort((a, b) => a.home.localeCompare(b.home));
   const registry = readJson(join(repoRoot, 'docs', 'procedures', 'registry.json')).procedures;
   const auditById = new Map(auditProcedures(repoRoot).map((item) => [item.id, item]));
@@ -71,7 +79,15 @@ export function loadWorkflowDocsModel(repoRoot) {
 }
 
 function frontmatter(title, description) {
-  return ['---', `title: ${mdx(title)}`, `description: ${mdx(description)}`, '---', '', GENERATED_NOTICE, ''];
+  return [
+    '---',
+    `title: ${JSON.stringify(mdx(title))}`,
+    `description: ${JSON.stringify(mdx(description))}`,
+    '---',
+    '',
+    GENERATED_NOTICE,
+    '',
+  ];
 }
 
 function workshopCommands(workshop) {
@@ -98,7 +114,7 @@ function workshopExamples(workshop) {
 }
 
 export function renderWorkshopPage(workshop) {
-  const lines = frontmatter(workshop.name, workshop.summary ?? `Мастерская ${workshop.home}`);
+  const lines = frontmatter(workshop.title ?? workshop.name, workshop.summary ?? `Мастерская ${workshop.home}`);
   lines.push(
     workshop.summary ? mdx(workshop.summary) : 'Краткое назначение пока не опубликовано.',
     '',
@@ -190,6 +206,20 @@ export function renderProcedurePage(procedure) {
   return `${lines.join('\n').trim()}\n`;
 }
 
+export function isProcedurePublished(procedure) {
+  const manifest = procedure.manifest;
+  const hasOperationalEvidence = Boolean(
+    manifest?.trigger?.note
+    || manifest?.trigger?.command
+    || manifest?.frames?.length
+    || manifest?.gates?.items?.length
+    || procedure.portfolio?.items?.length,
+  );
+  return procedure.buildState !== 'declared-not-built'
+    && Boolean(procedure.summary)
+    && hasOperationalEvidence;
+}
+
 function renderIndex(kind, items) {
   const noun = kind === 'workshops' ? 'мастерских' : 'процедур';
   const lines = frontmatter(kind === 'workshops' ? 'Мастерские' : 'Процедуры', `Живой индекс ${noun} Membrana.`);
@@ -205,6 +235,38 @@ function renderIndex(kind, items) {
   return `${lines.join('\n').trim()}\n`;
 }
 
+function renderProcedureIndex(procedures) {
+  const published = procedures.filter(isProcedurePublished);
+  const declared = procedures.filter((item) => !isProcedurePublished(item));
+  const lines = frontmatter('Процедуры', 'Живой индекс процедур Membrana.');
+  lines.push(
+    `Здесь ${published.length} содержательно описанных процедур. Каждая карточка ведёт на отдельную страницу, собранную из живого канона.`,
+    '',
+    '<CardGroup cols={2}>',
+  );
+  for (const item of published) {
+    lines.push(
+      `<Card title="${mdx(item.title)}" href="/procedures/${item.slug}">`,
+      mdx(item.summary),
+      '</Card>',
+    );
+  }
+  lines.push('</CardGroup>');
+  if (declared.length > 0) {
+    lines.push(
+      '',
+      '## Ещё не готовы к основной навигации',
+      '',
+      `У этих ${declared.length} записей пока нет достаточного набора: назначения и хотя бы одного входа, этапа, гейта или прожитого выхода. Отдельные страницы сохранены как честные карточки состояния, а пробел копит \`${EXAMPLE_TASK}\`.`,
+      '',
+      '| ID | Держатель | Состояние |',
+      '|---|---|---|',
+      ...declared.map((item) => `| ${mdx(item.id)} | ${mdx(item.holder)} | ${mdx(item.buildState)} |`),
+    );
+  }
+  return `${lines.join('\n').trim()}\n`;
+}
+
 function renderDocsJson(repoRoot, model) {
   const path = join(repoRoot, 'apps', 'docs-harness', 'docs.json');
   const config = readJson(path);
@@ -212,7 +274,10 @@ function renderDocsJson(repoRoot, model) {
   const groups = config.navigation.groups.filter((group) => !generatedNames.has(group.group));
   groups.unshift(
     { group: 'Мастерские', pages: ['workshops/index', ...model.workshops.map((item) => `workshops/${item.slug}`)] },
-    { group: 'Процедуры', pages: ['procedures/index', ...model.procedures.map((item) => `procedures/${item.slug}`)] },
+    {
+      group: 'Процедуры',
+      pages: ['procedures/index', ...model.procedures.filter(isProcedurePublished).map((item) => `procedures/${item.slug}`)],
+    },
   );
   return `${JSON.stringify({ ...config, navigation: { ...config.navigation, groups } }, null, 2)}\n`;
 }
@@ -221,7 +286,7 @@ export function renderWorkflowDocs(repoRoot) {
   const model = loadWorkflowDocsModel(repoRoot);
   const outputs = {
     'apps/docs-harness/workshops/index.mdx': renderIndex('workshops', model.workshops),
-    'apps/docs-harness/procedures/index.mdx': renderIndex('procedures', model.procedures),
+    'apps/docs-harness/procedures/index.mdx': renderProcedureIndex(model.procedures),
     'apps/docs-harness/docs.json': renderDocsJson(repoRoot, model),
   };
   for (const workshop of model.workshops) outputs[`apps/docs-harness/workshops/${workshop.slug}.mdx`] = renderWorkshopPage(workshop);
