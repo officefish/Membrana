@@ -1,0 +1,2 @@
+{"traceId":"tr-deadwire-ozhegov-run","blockId":"dead-wire-trigger","kind":"context_run","subject":"ozhegov","at":"2026-08-02T16:40:00+03:00","ref":"docs/discussions/block-dead-wire-trigger-ozhegov.md"}
+{"traceId":"tr-deadwire-ozhegov-review","blockId":"dead-wire-trigger","kind":"review_pass","subject":"ozhegov","at":"2026-08-02T17:20:00+03:00","ref":"docs/procedures/weekly-dead-wire/MANIFEST.json"}
