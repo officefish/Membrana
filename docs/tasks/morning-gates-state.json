@@ -1,18 +1,15 @@
 {
   "magistralOptions": [
-    "development-matrix",
-    "angelina-hostess-impl",
-    "archivarius-sessions-container"
+    "subconscious-lift-c3",
+    "mfcc-detector-copies",
+    "review-sanitary"
   ],
-  "frozenDigest": "0a299fa72067b3094bea972e9b695af36665f3da545658f3f12b1b3815fd1cb5",
-  "magistral": "development-matrix",
+  "frozenDigest": "375ddb3e464dd9bcdc06111760e56c877e66580b2a826408946fe54f167ca11f",
+  "magistral": "subconscious-lift-c3",
   "swallow": {
-    "//": "null до черновика — порядок утра: сначала магистраль (owner-choice), затем swallow-draft и явное «ок» владельца; перезаписывается гейтом ally-swallow",
-    "status": "ждёт черновика",
-    "draftDigest": "ecd9e556497b848d3f80741b3a2b2bba3590301e691ffe568483af3be4385904",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-01.md",
-    "ownerAck": true,
-    "gate": "evening:partner-swallow"
+    "draftDigest": "7c2395b0fc444f1c7ab2b0abdff9416a86aaf4b5aeafebdf6f5f27b8ff4337a1",
+    "draftFile": "docs/comms/drafts/swallow-2026-08-02-morning.md",
+    "ownerAck": true
   },
-  "day": "2026-08-01"
+  "day": "2026-08-02"
 }

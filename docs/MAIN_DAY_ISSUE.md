@@ -1,80 +1,65 @@
-<!-- Сгенерировано: 2026-08-01T05:29:53.931Z (yarn main-day-issue@350e2d9d) -->
+<!-- Сгенерировано: 2026-08-02T05:28:16.296Z (yarn main-day-issue@f8acff60) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
-<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"b7c364d63c689576f634820736533bc5feb371f8","digest":"5ef0baa89299206e5c392c7fb8a353a613b4e8cb02a812b76a14ae73eed42500"},"DAILY_STANDUP":{"version":"b7c364d63c689576f634820736533bc5feb371f8","digest":"6c404a873fc8ee2f2d350b89189c614278348169a30d152de8249cd187071b2c"}}} -->
+<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"ec0b9d339e4b4841bf536083877384e90c865136","digest":"a0a9e401d0c4e2513422e61210f23216f06ebefd4a6186fde7dbc95d39edc3ac"},"DAILY_STANDUP":{"version":"ec0b9d339e4b4841bf536083877384e90c865136","digest":"2d5f1d71b587f71e03430467ee851305cc0da3346550b0569019370f26d135d0"}}} -->
 <!-- Звено канала: provider=anthropic model=claude-sonnet-4-6 source=overlay generations=1 -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
-<!-- active в реестре: llm-transport-no-key-class, mfcc-compare-sprint, mfcc-lib-choice, network-container, weekly-dead-wire-audit, night-triage-insight-channel, deps-basket-immediate-2026-07-29, archivarius-sessions-container, worktree-hygiene-epic, adr-procedure-legalize, send-gate-on-path, tc-nightly-frame, tc-setups-selector, tc-home-workshop, tests-container, tooling-friction-2607, notes-regex-cyrillic-translit, leveling-snapshot-out-path, insight-mandate-for-new, insight-review-from-file, ship-automerge-predicate, tw-declared-verbs-honest-no, friction6-secret-inventory, friction6-hygiene-notes, friction6-scripts-lint, friction6-test-scripts-groups, agent-tooling-friction-6, cascade-honest-manual, dreams-deploy-office, frame-rails-2307, lpc-d-panel, lpc-c-office, lpc-b-wire, lpc-a-lib, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, angelina-codex-no-repo-writes, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-spectral-ladder, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, agent-tooling-friction-3, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, media-library-a3-mic-recorder, media-library-a4-sample-player, trends-fft-template-editor, live-parallel-detection-sprint, lp1-mic-drone-stream-modes, lp1b-drone-detailed-report-server, lp2-fft-plugins-journal-sink, lp3-track-import-backpressure, lp4-parallel-detection-smoke, lp5-journal-report-renderers, device-board-hackathon-1, db-h1b-board-shell, db-h1c-graph-serialize, db-h2a-json-import, db-h2b-scenario-runtime, db-h2c-mic-journal, db-h2d-cabinet-sync, db-h3a-trigger-stop, db-h3b-trigger-disconnect, db-h3c-subgraph, db-h4-alarm-close, membrane-node-runtime-remote, mp7b-rt0-contract, mp7b-rt1-gateway, mp7b-rt2-client-runtime, mp7b-rt3-mode, mp7b-rt4-multinode-schema, mp7b-rt5-cabinet-nodes, mp7b-rt6-board-ux, mp7b-rt7-prod-hardening, db-doc-v04-mvp, db-post-usercase-roadmap, usercase-mvp-v2-groups-async, ucv2-0-spec-lgtm, ucv2-1-graph-collapse, ucv2-2-freeze-async-tracks, ucv2-3-pack-verify, ucv2-4-operator-signoff, device-board-phase-3, db-p3-a1-usercase-catalog-service, db-p3-a2-runtime-validators, db-p3-a3-competition-restrictions, opencode-proxy-sprint-2026-06-25, oc-proxy-s0-research-isolation, oc-proxy-s1-opencode-install, oc-proxy-s2-freemodel-keys, oc-proxy-s3-llm-proxy-script, oc-proxy-s4-opencode-config, comp-packaging-catalog-2026-06-25, device-board-three-hosts-2026-06-26, ci-gate-stabilization, cg2-two-tier-test-gate, cg3-flaky-metrics-week, cg4-ci-testing-docs, db3h-s2-cabinet-host, db3h-s5-desktop-logging, db3h-s4-microphone-detectors, device-board-server-first, db-sf-0-canon, db-sf-1-core-contracts, db-sf-2-gateway-board, db-sf-3-cabinet-lease-api, db-sf-4-client-follower, db-sf-5-board-flags-ui, db-sf-6-nodes-runtime, db-sf-7-last-track-preview, db-sf-8-tests-smoke, db-sf-9-docs-sync, neural-tier-1b-contract, neural-free-tier-dataset-report, rag-dual-circuit-v1, fv1-s2-closeout, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, vdr-label-roundtrip-night-build, nb-vlr-0-gate, nb-vlr-1-labels-export-ui, nb-vlr-2-labels-merge-script, nb-vlr-3-library-label-filter, nb-vlr-4-docs, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, tech-debt-2026-07, cabinet-scenario-picker-system, agent-tooling-night-build, nb-at-0-gate, nb-at-1-gitignore-review, nb-at-2-pr-ship, nb-at-3-build-affected, nb-at-4-verify-wire-sync, nb-at-6-helpers, nb-at-8-docs-skills, detection-alarm-loop-refactor, batch-collection-run-contour -->
+<!-- active в реестре: subconscious-lift-c3, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, forecast-archive-wire, archivarius-evening-tract, meeting-evening-review-predicate, evening-chain-review-predicate, llm-transport-no-key-class, mfcc-compare-sprint, mfcc-lib-choice, network-container, weekly-dead-wire-audit, night-triage-insight-channel, deps-basket-immediate-2026-07-29, archivarius-sessions-container, worktree-hygiene-epic, adr-procedure-legalize, send-gate-on-path, tc-nightly-frame, tc-setups-selector, tc-home-workshop, tests-container, tooling-friction-2607, notes-regex-cyrillic-translit, leveling-snapshot-out-path, insight-mandate-for-new, insight-review-from-file, ship-automerge-predicate, tw-declared-verbs-honest-no, friction6-secret-inventory, friction6-hygiene-notes, friction6-scripts-lint, friction6-test-scripts-groups, agent-tooling-friction-6, cascade-honest-manual, dreams-deploy-office, frame-rails-2307, lpc-d-panel, lpc-c-office, lpc-b-wire, lpc-a-lib, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, angelina-codex-no-repo-writes, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-spectral-ladder, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, agent-tooling-friction-3, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, media-library-a3-mic-recorder, media-library-a4-sample-player, trends-fft-template-editor, live-parallel-detection-sprint, lp1-mic-drone-stream-modes, lp1b-drone-detailed-report-server, lp2-fft-plugins-journal-sink, lp3-track-import-backpressure, lp4-parallel-detection-smoke, lp5-journal-report-renderers, device-board-hackathon-1, db-h1b-board-shell, db-h1c-graph-serialize, db-h2a-json-import, db-h2b-scenario-runtime, db-h2c-mic-journal, db-h2d-cabinet-sync, db-h3a-trigger-stop, db-h3b-trigger-disconnect, db-h3c-subgraph, db-h4-alarm-close, membrane-node-runtime-remote, mp7b-rt0-contract, mp7b-rt1-gateway, mp7b-rt2-client-runtime, mp7b-rt3-mode, mp7b-rt4-multinode-schema, mp7b-rt5-cabinet-nodes, mp7b-rt6-board-ux, mp7b-rt7-prod-hardening, db-doc-v04-mvp, db-post-usercase-roadmap, usercase-mvp-v2-groups-async, ucv2-0-spec-lgtm, ucv2-1-graph-collapse, ucv2-2-freeze-async-tracks, ucv2-3-pack-verify, ucv2-4-operator-signoff, device-board-phase-3, db-p3-a1-usercase-catalog-service, db-p3-a2-runtime-validators, db-p3-a3-competition-restrictions, opencode-proxy-sprint-2026-06-25, oc-proxy-s0-research-isolation, oc-proxy-s1-opencode-install, oc-proxy-s2-freemodel-keys, oc-proxy-s3-llm-proxy-script, oc-proxy-s4-opencode-config, comp-packaging-catalog-2026-06-25, device-board-three-hosts-2026-06-26, ci-gate-stabilization, cg2-two-tier-test-gate, cg3-flaky-metrics-week, cg4-ci-testing-docs, db3h-s2-cabinet-host, db3h-s5-desktop-logging, db3h-s4-microphone-detectors, device-board-server-first, db-sf-0-canon, db-sf-1-core-contracts, db-sf-2-gateway-board, db-sf-3-cabinet-lease-api, db-sf-4-client-follower, db-sf-5-board-flags-ui, db-sf-6-nodes-runtime, db-sf-7-last-track-preview, db-sf-8-tests-smoke, db-sf-9-docs-sync, neural-tier-1b-contract, neural-free-tier-dataset-report, rag-dual-circuit-v1, fv1-s2-closeout, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, vdr-label-roundtrip-night-build, nb-vlr-0-gate, nb-vlr-1-labels-export-ui, nb-vlr-2-labels-merge-script, nb-vlr-3-library-label-filter, nb-vlr-4-docs, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, tech-debt-2026-07, cabinet-scenario-picker-system, agent-tooling-night-build, nb-at-0-gate, nb-at-1-gitignore-review, nb-at-2-pr-ship, nb-at-3-build-affected, nb-at-4-verify-wire-sync, nb-at-6-helpers, nb-at-8-docs-skills, detection-alarm-loop-refactor, batch-collection-run-contour -->
 
-# MAIN_DAY_ISSUE — 2026-08-01
+# MAIN_DAY_ISSUE — 2026-08-02
 
 ## Метаданные
 
 | Поле | Значение |
 |------|----------|
-| `primaryFocusId` | `development-matrix` |
-| `primaryTitle` | DEVELOPMENT_MATRIX — назвать класс контейнеров разработки и лестницу масштаба |
+| `primaryFocusId` | `subconscious-lift-c3` |
+| `primaryTitle` | Subconscious lift C3 — магистраль из гейта утра |
 | `githubIssue` | — |
-| `size` | M |
+| `size` | L |
 | `promptPath` | — |
-| `сгенерировано` | 2026-08-01 · магистраль перечеканена вручную, `author=human` |
+| `сгенерировано` | 2026-08-02 |
 
 ---
 
 ## Магистраль
 
-**`DEVELOPMENT_MATRIX`** — назвать класс контейнеров разработки и лестницу масштаба, каноном за подписью структурщика.
+**Расхождение зафиксировано открыто:** `docs/tasks/main-day-assertions.json` несёт `sources[0].claim` с датой **2026-07-30** (MFCC-ядро для спектрального анализа). `docs/tasks/morning-gates-state.json` несёт `magistral: "subconscious-lift-c3"` с `day: "2026-08-02"` — это волеизъявление владельца **позднее**, сделанное непосредственно сегодня. По правилу разрешения расхождения (У1, 31.07): гейт свежее, магистраль берётся с гейта. `main-day-assertions.json` при этом **не перечеканен** — это само по себе находка: расхождение не замолчано, перечеканка assertions под новую магистраль предписана каноном и не сделана.
 
-> **Перечеканка, названная прямо.** Генератор взял магистраль из `morning-gates-state.json` с `day: "2026-07-31"` — вчерашний гейт — и обосновал выбор свежестью относительно `main-day-assertions.json` от 30.07. Работа честная, вход устаревший: он не знал сегодняшнего слова владельца. Снимок топ-3 перезаморожен на 01.08, магистраль выбрана владельцем, `mfcc-mic-plugins` снят.
->
-> Что генератор при этом **не знал** и потому весь его план был ложным: он вёл работу к ветке `storm/mfcc-sprint-test-3007`, тогда как прибор живёт на `feat/mfcc-analyzer-to-main` (PR #1562, ребазирован и отревьюирован); пять раз назвал пакет `@membrana/fft-analyzer` там, где речь о `@membrana/mfcc-analyzer-service`; считал сегодня третьим днём трёхдневки с задачей «влить ветку», хотя ядро в стволе с 31.07, прибор собран, включён в реестр и прогнан владельцем руками.
+Магистраль дня — **`subconscious-lift-c3`** — задача, выбранная владельцем из замороженного топ-3 (`subconscious-lift-c3 · mfcc-detector-copies · review-sanitary`) через утренний гейт 02.08.
 
-**Предмет.** У проекта уже есть форматы организации работы — коворк, челендж, хакатон, марафон — заведённые по отдельным поводам, без общего контракта. Поэтому хакатон в прошлый заход «оказался сырым»: его не с чем было сверить, и он не оставил артефакта. Матрица называет класс и разводит членов по различающим полям.
-
-**Матрица, а не иерархия.** Вертикаль `one shot` → спринт → контейнер без горизонтали теряет главное — чем коворк отличается от хакатона и марафона на одном уровне.
-
-**Два условия, без которых документ повторит судьбу прежнего хакатона:**
-
-1. **Канон подписывает структурщик** — термины назначает он актом, а не сессия по вкусу.
-2. **Одна редакция, зеркала указателями** — по образцу нормы порядка обращения к инструменту: живёт в `AGENTS.md`, а `.cursorrules` и `.claude/CLAUDE.md` несут строки-ссылки. Две копии норму не усилят, а сделают непроверяемой.
-
-**Почему до работы по рамке, а не после.** Матрица касается трёх пунктов рамки из четырёх: портфолио (что вообще описываем), знакомство до прогона (чему учим агента), разбор фреймов с ответственностью (на каком уровне она назначается). План дня предложил две реализации — `angelina-hostess-impl` и `archivarius-sessions-container`; обе без матрицы будут строиться на неназванных понятиях.
+**Критерий успеха к вечеру:** задача `subconscious-lift-c3` продвинута до проверяемого артефакта (код / схема / зафиксированный результат прохода); прогресс зафиксирован в реестре или вещдоке.
 
 ---
 
 ## Подкрепление
 
-- **Журнал прогона процедур** (топ-10 хендофа, №1) — по образцу ленты спринта, а не с нуля. Прогон сейчас не оставляет записи о себе: вечером 31.07 находки двух репортёров пропали вместе с временным файлом, пришлось прогонять заново. Это динамическая половина портфолио; без неё матрица описывает то, чего нельзя предъявить.
-- **Опись процедур — портфолио** (№5) — **обобщением механики атласа, не второй постройкой**. У тулинг-сессии уже есть 43 дома, обнаружение по README и RootPolicy, реестр неймспейсов, проекция. Писать вторую значит нарушить норму #1573 в первый же день её действия; обзор «что уже есть» обязан начинаться с `docs/meeting/workshop-wires/` и `yarn tooling:atlas`.
+- **Написать минимальный резак секретов в `night-triage-secret-scan.mjs`** — скрипт сейчас является только детектором (0 вхождений redact/mask/replace), гейт `secret-parser-built` не пройти без резака; кристалл `session-backup-requires-secret-redaction` блокирует бэкап сессий; без прохода гейта амнистия на правку архива не снимается.
+- **Перечеканить `main-day-assertions.json`** с актуальной магистралью (`subconscious-lift-c3`) — текущие `sources[0]` и `assertions` отстают от гейта утра, расхождение открыто выше; без перечеканки probe завтра снова поймает сигнал расхождения вместо содержательной проверки.
 
 ---
 
 ## Перспективные
 
-- **Аудит перед ревью, аудит идёт по стволу, а не по ветке автора** (№6). Открывает то, чего сейчас нет ни у одного механизма: возможность спросить «а это ты смотрел?». 31.07 все шесть коммитов соседей оказались вне диапазона аудита — он берёт от базы до своего HEAD.
-- **Провод памяти персоны «предсказание против исхода»** (№8). Открывает накопление опыта тимлида. Сейчас память пишется и не читается: 31.07 записано 90, вытеснено 99, у всех персон «контур не поставлен».
-- **Ратификация поимённого сноса веток** откроет финальный проход гигиены и закроет долг branch-salvage: разбор Codex дал 186 вердиктов со свидетельствами, удалений не произведено.
+- Прохождение `secret-parser-built` откроет амнистию на правку архива и разблокирует безопасный бэкап сессий — субстрат для `archivarius-sessions-container` и `angelina-hostess-impl`.
+- Закрытие 16 oversized PR (старт с #1584, 1718 строк) откроет полноценную архитектурную проверку C4-границ и очистит санитарную полосу; merge-уверенность по ним сейчас отсутствует.
+- MFCC-прибор (#1562) **влит в main 01.08** (коммит `ff5b73d5`) — smoke-тест на живом микрофоне открыт, вердикт по `mfcc-lib-choice` разблокирован. Утверждение «ждёт силового push» протухло: оно пришло из вечернего фидбека 01.08, который писался до мерджа.
 
 ---
 
 ## Экспериментальные
 
-- **Проба: журнал прогона одной строкой.** Взять любую сегодняшнюю процедуру, дописать в конец одного файла строку — дата, процедура, исход. Проверяем: достаточно ли строки, чтобы прогон оставил след, или нужна структура.
-- **Проба: пол холодной сессии для процедур по образцу мастерских.** Взять готовый пол тулинг-сессии (13 мастерских, 22 строки из бюджета 40), заменить мастерские на 3–4 процедуры. Проверяем: ложится ли та же механика на процедуры без переизобретения.
-- **Замер: расхождение частоты дискретизации** (№2). Калибратор ставит частоту 48 кГц, живая считалка не ставит вовсе. Банк мел-фильтров строится от частоты — векторы могут быть несравнимы, а отпечаток `mel40-c24-buf4096` частоту не несёт и этого не ловит. Исход неизвестен: либо ворота перестают значить обещанное, либо расхождение безобидно. Это замер, а не починка.
+- **Замер расхождения дискретизации:** запустить калибратор (48 кГц) и живую считалку подряд на одном сигнале, сравнить векторы — узнать, опасно ли расхождение для сравнимости отпечатков MFCC.
+- **Зонд ложного предупреждения `scripts:orphans`:** запустить команду вручную, сверить вывод с реальным числом сирот по `subject_unresolved` — проверить, врёт ли инструмент системно.
+- **Проба `readCatalogs` в изоляции:** вызвать с минимальным фиктивным каталогом без контекста `dead-wire-check` — узнать, тестируема ли функция отдельно или намертво сцеплена с окружением (P2-находка из вчерашнего ревью).
 
 ---
 
 ## Санитарные
 
-- **Починить кадр доставки вечера** (№3). Первый настоящий прогон 31.07 встал на собственном дефекте: конспект мостика требуется безусловно, а рождается лишь в дни с мостиком; у трёх файлов нет метки о генерации. Из шести позиций доставкой лечатся две.
-- **PR #1562** (№4) — прибор тембрового теста. Ревью прогнано, условный BLOCK снят ответом по библиотеке. Мердж требует силового push после ребазы — ждёт слова владельца.
-- **Реэкспорт детекторов из `src/index.ts` пакета MFCC** (№9, XS). Цена уже уплачена: плагин судит собственной копией счёта, потому что до детектора пакета не дотянуться.
-- **`harmonic.detect()` слышит 43 мс вместо пяти секунд** (№10). `prepareFftSamples` обрезает вход до первых `fftSize` сэмплов; в harness обойдено, в пакете дефект остался.
-- **Закрыть #1567 формально** — включение прибора в реестр фактически выполнено блоком включения 31.07.
-- **Точечное ревью PR #1543** (workshop-wires, около 1929 строк) — крупнейший необработанный oversized. **Проверить сначала:** по отчёту утра он числится MERGED.
-- **Ложное предупреждение `scripts:orphans`** — печатает «правил членства ноль», тогда как все 48 сирот пришли по `subject_unresolved`. Прецедент в стволе поправлен (#1574), инструмент врёт по-прежнему.
-- **Перечеканить `main-day-assertions.json`** — внести сегодняшний owner-choice `development-matrix`. Канон предписывает; находка генератора остаётся в силе, только магистраль другая.
+- Точечный ревью PR #1584 (meeting/M-протоколы, 1718 строк) — первый из 16 oversized без развёрнутого диффа; `yarn code-review:pr 1584`
+- Проверить намеренность удаления `brace-expansion` из `deps-watch-snapshot.json` — вчерашнее ревью пометило severity: high; убедиться, что это осознанный resolve, а не потеря мониторинга
+- Исправить ложное предупреждение `scripts:orphans` — печатает «членства ноль» вместо корректного статуса 48 сирот по `subject_unresolved`
+- Перечеканить `main-day-assertions.json` — `sources[0]` содержит магистраль 30.07 (MFCC), гейт утра выбрал `subconscious-lift-c3`; расхождение не закомментировано, канон предписывает перечеканку
 
 ---
 
@@ -82,71 +67,83 @@
 
 | Утверждение | Происхождение | Первоисточник | Свежесть |
 |---|---|---|---|
-| Магистраль равна `development-matrix` | **владелец, ручная чеканка** | слово в чате 31.07 вечером, подтверждено утром 01.08 | 2026-08-01 |
-| Начинать с матрицы до работы по рамке | владелец | `docs/HANDOFF.md`, раздел «С чего начать» (#1579) | 2026-07-31 |
-| Класс контейнеров существует, контракта нет | разбор владельца и сессии | `docs/HANDOFF.md`, «Лестница масштаба» (#1578) | 2026-07-31 |
-| Прежний хакатон оказался сырым и не оставил артефакта | проверка дерева | канонического документа хакатона в `docs/` нет; упоминания только в архивных дневных файлах с июня | 2026-07-31 |
-| Два кандидата плана дня обслуживаются матрицей | план дня | `docs/DAY_PLAN.md`: `angelina-hostess-impl` обоснован пунктом 2 рамки, `archivarius-sessions-container` — журналом прогона | 2026-08-01 |
-| Строить портфолио с нуля значит нарушить норму первого дня | норма | [#1573](https://github.com/officefish/Membrana/issues/1573) | 2026-07-31 |
-
-> **Счёт голосов.** Владельческих источников два и они согласованы: слово в чате и хендоф в стволе. План дня — третий независимый источник, и он не спорит: два его кандидата матрицей обслуживаются, а не отменяются. Стендап производен от тех же входов, отдельным голосом не считается.
+| Магистраль дня — `subconscious-lift-c3` | гейт | `docs/tasks/morning-gates-state.json`, `magistral: "subconscious-lift-c3"`, `day: "2026-08-02"` | **2026-08-02** (сегодня) |
+| Топ-3 заморожен: `subconscious-lift-c3 · mfcc-detector-copies · review-sanitary` | гейт | `docs/tasks/morning-gates-state.json`, `frozenDigest`, `magistralOptions[]` | **2026-08-02** (сегодня) |
+| `sources[0].claim` называет магистралью MFCC-ядро | снимок | `docs/tasks/main-day-assertions.json`, `sources[0].date: "2026-07-30"` | 2026-07-30 (3 дня назад) |
+| **Расхождение: магистраль взята с гейта, assertions не перечеканены** | расхождение двух владельческих источников | гейт свежее (02.08 > 30.07) → по правилу У1 31.07 побеждает гейт; перечеканка assertions предписана и не сделана — это находка | — |
+| `DAY_PLAN.md` предлагает трёх кандидатов магистрали (agent-tooling-night-build · angelina-hostess-impl · archivarius-sessions-container) | план | `docs/DAY_PLAN.md`, генератор #592 | 2026-08-02 |
+| Кандидаты плана НЕ совпадают с выбором гейта — синтезировать запрещено | расхождение | гейт — свежее и владельческое; план — контекст, не источник магистрали | — |
+| Стендап называет фокусом `secret-parser-built` | сессия | `docs/DAILY_STANDUP.md` (llm, 2026-08-02T05:22) | 2026-08-02 |
+| Стендап — контекст, не источник магистрали (1 источник, 1 отражение) | план/сессия | стендап производен от горизонта #592 и граф-правды | 2026-08-02 |
 
 ---
 
-## Посылки
+## Посылки (обязательно, если фокус строится на «работы ещё нет»)
+
+Задача `subconscious-lift-c3` выбрана волеизъявлением владельца через гейт утра, не через утверждение «работы ещё нет». Содержание задачи из реестра при данных входах не раскрыто полностью.
 
 | Посылка | Маркер | Вердикт |
 |---|---|---|
-| Канонического документа хакатона в дереве нет | поиск по `docs/**` на «хакатон» вне архивных дневных файлов | holds — найдены только упоминания в `docs/archive/daily-day/**` с июня |
-| Механика контейнера существует только у коворка | `docs/cowork-sprint/**` | holds — четыре коворка с брифом, координатором, фазами 0 до 5, контрактом и ретроспективой; у челенджа и марафона нет ни брифа, ни ретроспективы |
-| У коворка нет предиката фазы | `cowork:phase` в `package.json` | holds — глагола нет; долг числится, «дрейф случился трижды за один день» |
-| Механика обнаружения контейнеров уже есть у тулинга | `yarn tooling:atlas --check` | holds — зелёный по трём разницам, 43 дома и 13 мастерских |
+| `main-day-assertions.json` не перечеканен под магистраль гейта | `file:docs/tasks/main-day-assertions.json` → `sources[0].date = "2026-07-30"`, `magistral` в файле отсутствует | `holds` — расхождение реально, перечеканка не сделана |
+| `night-triage-secret-scan.mjs` является только детектором, не резаком | `symbol:redact` / `symbol:mask` / `symbol:replace` в `scripts/night-triage-secret-scan.mjs` → 0 вхождений (зафиксировано в кристалле `session-backup-requires-secret-redaction`) | `holds` — резака нет, гейт `secret-parser-built` не пройден |
 
 ---
 
 ## Сегодня делаем
 
-1. Прогон через структурщика: **назвать класс** контейнеров разработки и развести членов по полям — топология, где договариваются о швах, число этапов, гарантия, кто судит, чем кончается.
-2. Отдельно решить слово **«хакатон»** как вид контейнера и **четвёрку как классификатор**, а не квоту: не влезло в четыре — значит это другой вид.
-3. Записать `one shot` как атом лестницы и **четыреста строк как его определение** с родословной (гугловский стайл, ревью, `OVERSIZED_CHANGED_LINES`), а не как порог-ограничитель.
-4. Свести в `DEVELOPMENT_MATRIX` одной редакцией; зеркала в `.cursorrules` и `.claude/CLAUDE.md` — строками-указателями.
-5. Подписать каноном за структурщиком.
-6. Довезти в ствол; проверить, что документ читается холодной сессией.
+1. Взять `subconscious-lift-c3` в работу: прочитать карточку реестра, зафиксировать конкретный артефакт-цель на сегодня.
+2. Перечеканить `docs/tasks/main-day-assertions.json`: внести `subconscious-lift-c3` как актуальную магистраль, убрать расхождение с гейтом.
+3. Написать минимальный резак секретов в `scripts/night-triage-secret-scan.mjs`: принимает транскрипт → возвращает редактированную копию + манифест засвеченных ключей.
+4. Провести один датированный проход резака, зафиксировать манифест ротации (гейт `secret-parser-built`).
+5. Запустить `yarn code-review:pr 1584` — первый из 16 oversized PR; результат в санитарный лог.
+6. Проверить удаление `brace-expansion` из `deps-watch-snapshot.json` — осознанный resolve или потеря мониторинга.
+7. Запустить `yarn turbo run lint typecheck test --filter=@membrana/scripts` и `yarn dead-wire-check` — базовая зелёная полоса.
 
 ---
 
 ## Definition of Done (фокус)
 
-- [ ] `DEVELOPMENT_MATRIX` существует одной редакцией и назван актом структурщика, а не сессией
-- [ ] Три уровня лестницы описаны: `one shot`, спринт, контейнер
-- [ ] Четыре члена класса разведены по различающим полям, различия проверяемы
-- [ ] Сказано, чего у каждого члена **нет**: у челенджа и марафона — брифа и ретроспективы, у коворка — предиката фазы
-- [ ] Четыреста строк записаны определением `one shot` с родословной, а не порогом
-- [ ] Зеркала — строки-указатели, вторых редакций не заведено
-- [ ] Документ в стволе
+- [ ] Карточка `subconscious-lift-c3` прочитана, артефакт-цель дня зафиксирован
+- [ ] Конкретный проверяемый результат по `subconscious-lift-c3` получен и задокументирован (код / схема / вещдок)
+- [ ] `docs/tasks/main-day-assertions.json` перечеканен: магистраль = `subconscious-lift-c3`, расхождение с гейтом устранено
+- [ ] `scripts/night-triage-secret-scan.mjs` имеет резак (не только детектор): входной транскрипт → редактированная копия + манифест
+- [ ] Один датированный проход выполнен, манифест засвеченных ключей зафиксирован — гейт `secret-parser-built` пройден
+- [ ] `yarn turbo run lint typecheck test --filter=@membrana/scripts` — зелёный
+- [ ] `yarn dead-wire-check` — 0 carrier_mismatch
 
 ---
 
 ## Сознательно не делаем сегодня
 
-- **Не строим портфолио процедур с нуля** — только обобщением механики атласа (норма #1573).
-- **Не режем прибор на транши задним числом** — вчерашний спринт закрыт, переигрывать нечего.
-- **Не трогаем PR #1562 без слова владельца** — мердж требует силового push, вчера он не был разрешён.
-- **Не сносим ветки** — семь «списать» ждут поимённой ратификации по ADR-0020, одна цель и пост-чек после каждой.
-- **Не чиним `subjectOf` у 48 сирот** — список локусов закрыт, третий локус это вердикт владельца, а не правка кода; прежде вердикта нужен замер.
+- ~~Не мерджим PR #1562~~ — **снято фактом**: PR влит 01.08 в 10:02, `ff5b73d5` в стволе. Строка унаследована от вчерашнего фидбека и проверена сегодня.
+- **Не трогаем benchmark harmonic/cepstral/flux на free-v1** — потолок зафиксирован (§6 FFT_METRICS_POTENTIAL_AND_LIMITS.md)
+- **Не строим портфолио процедур с нуля** — только через обобщение механики тулинг-атласа
+- **Не запускаем `yarn code-review` утром** — только читаем вчерашний DAILY_CODE_REVIEW.md; вечерний ритуал на своём месте
+- **Не закрываем все 16 oversized PR за день** — точечный ревью #1584, остальные в очередь
 
 ---
 
 ## Вторично (если останется время)
 
-- Замер расхождения частоты дискретизации (см. «Экспериментальные»).
-- Уточнить у владельца статус `RECONCILE_M3` и `BOUNDARY_S7` — разборы тулинга без вердикта, тормозят ратификацию сноса.
-- Посмотреть PR #1580 «Night triage 2026-07-31» — появился ночью, в открытых висит, не разобран.
+- Зонд `scripts:orphans`: запустить вручную, сравнить с реальным числом по `subject_unresolved`, задокументировать расхождение
+- Проба `readCatalogs` в изоляции: минимальный фиктивный каталог без контекста `dead-wire-check`
 
 ---
 
 ## Зависимости и риски
 
-- **P1 — терминологическое решение нельзя принять сессией.** Термины назначает структурщик актом. Если прогон через него не состоится, документ будет «по вкусу автора» и повторит судьбу сырого хакатона. Вещдоки к прогону собраны: четыре коворка в дереве, четыре транша тулинга с числами (1610, 950, 850, 1000), контрпример на 1470 строк в одну нарезку.
-- **P2 — соблазн описать желаемое вместо существующего.** У челенджа и марафона тела нет, и матрица должна это назвать, а не дорисовать. Пустая клетка — законное состояние; заполнить её сочинением значит завести вторую заглушку следом за `usage`, заполненным у одной мастерской из тринадцати.
-- **P2 — слово «хакатон» подразумевает вспышку.** Под корпус на 600 звуков (весь август) оно не ляжет — там марафон. Если класс назвать через один вид, длинные работы окажутся вне описания.
+- **Блокер:** содержание задачи `subconscious-lift-c3` не раскрыто во входных документах — первый шаг дня: прочитать карточку реестра и уточнить артефакт-цель
+- **Риск P1:** 16 oversized PR без ревью накапливают merge-неопределённость; каждый день без точечного ревью увеличивает долг
+- **Риск P2:** `main-day-assertions.json` не перечеканен — probe завтра утром снова поймает расхождение вместо содержательной проверки; перечеканка — малая работа, высокая польза
+- **Риск P2:** `swallow.status = "ждёт черновика"` в morning-gates-state.json — временная заглушка до гейта `ally-swallow`; не блокирует сегодня, но требует закрытия
+
+---
+
+## Ссылки
+
+- [DAILY_STANDUP.md](docs/DAILY_STANDUP.md) — стендап 2026-08-02
+- [DAY_PLAN.md](docs/DAY_PLAN.md) — план дня, слоты, кандидаты магистрали
+- [morning-gates-state.json](docs/tasks/morning-gates-state.json) — источник магистрали (гейт, 2026-08-02)
+- [main-day-assertions.json](docs/tasks/main-day-assertions.json) — требует перечеканки
+- [DAILY_CODE_REVIEW.md](docs/DAILY_CODE_REVIEW.md) — вчерашнее ревью (16 oversized PR, P1)
+- [STRATEGY_DAY.md](docs/STRATEGY_DAY.md) — горизонт дня, гейт `secret-parser-built`
