@@ -4,12 +4,16 @@
 
 ## Focus
 
-- **harness-product-deploy-2026-08-02** · OPEN [`docs/local-sprint/harness-product-deploy-2026-08-02/OPEN.md`](./local-sprint/harness-product-deploy-2026-08-02/OPEN.md) · Sprint 2 эпика #1622: Harness pages + production deploy двух Mintlify-проектов · owner ratified · ветка `codex/harness-product-deploy`
+- Активного локального спринта нет. Standing marathon `workflow-examples-marathon`
+  остаётся отдельным маршрутом накопления evidence.
 
 ## Предыдущий спринт
 
+- **harness-product-deploy-2026-08-02** · CLOSED
+  [`CLOSURE.md`](./local-sprint/harness-product-deploy-2026-08-02/CLOSURE.md) ·
+  Harness PR #1650 и production deploy двух Mintlify-проектов.
 - **product-mintlify-container-2026-08-02** · код и task closure доставлены PR
-  #1640/#1646; production custom domain закрывается текущим спринтом.
+  #1640/#1646; production custom domain закрыт Harness-спринтом.
 
 ## Ранее
 

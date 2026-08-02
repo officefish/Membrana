@@ -30,10 +30,10 @@
       "noIssueReason": "дочерний спринт эпика #1622; отдельный Issue не создаём",
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-02",
-      "archivedAt": null,
+      "archivedAt": "2026-08-02",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
@@ -41,7 +41,7 @@
         "dynin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1650 merged 2026-08-02 (40468d1d); Dynin/Rodchenko/Vesnin LGTM; Mintlify deployment 5715569116; product.mmbrn.tech and harness.mmbrn.tech production smoke PASS",
       "githubIssueClosedAt": null,
       "parentEpic": "dual-mintlify-product-harness"
     },
@@ -74,17 +74,17 @@
       "githubIssue": 1622,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "createdAt": "2026-08-02",
-      "archivedAt": null,
+      "archivedAt": "2026-08-02",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "rodchenko",
         "dynin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "Issue #1622; Product PR #1640 merged (e6c04420); Harness PR #1650 merged (40468d1d); both Mintlify domains Connected and production smoke PASS; workflow-examples-marathon remains an independent standing follow-up",
       "githubIssueClosedAt": null
     },
     {
