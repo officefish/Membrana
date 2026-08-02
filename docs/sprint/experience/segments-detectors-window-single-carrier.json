@@ -1,0 +1,17 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "detectors-window-single-carrier",
+  "forTask": "detectors-window-single-carrier — у подготовки окна один носитель: строка 8 топ-10 хендофа 02.08",
+  "note": "Замер объёма по блокам, снят git diff --numstat против origin/main после закрытия окна. Блоки удаления копий несут и минусы удалённых файлов — цена свода видна числом, а не описанием.",
+  "measuredAt": "2026-08-02T18:20:00+03:00",
+  "segments": [
+    { "cutBlockId": "base-window-carrier", "changedLines": 157 },
+    { "cutBlockId": "base-window-tooth", "changedLines": 210 },
+    { "cutBlockId": "analyze-sample-golden", "changedLines": 141 },
+    { "cutBlockId": "analyze-sample-rewire", "changedLines": 54 },
+    { "cutBlockId": "harmonic-drop-copy", "changedLines": 152 },
+    { "cutBlockId": "cepstral-drop-copy", "changedLines": 313 },
+    { "cutBlockId": "flux-drop-copy", "changedLines": 169 },
+    { "cutBlockId": "window-carrier-invariant", "changedLines": 145 }
+  ]
+}

@@ -5,7 +5,7 @@ import type { AudioWindow, DetectionResult, DroneDetector } from '@membrana/dete
 import { FftCore } from '@membrana/fft-analyzer-service';
 import { classifySpectrum, DEFAULT_HARMONIC_DETECTOR_CONFIG } from '../math/classifier.js';
 import type { HarmonicDetectorConfig } from '../types.js';
-import { averageMagnitudes, prepareFftSamples } from './sample-window.js';
+import { averageMagnitudes, prepareFftSamples } from '@membrana/detector-base';
 
 export class HarmonicDetector implements DroneDetector {
   readonly name = 'harmonic';

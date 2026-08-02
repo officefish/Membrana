@@ -2,7 +2,7 @@ import type { AudioWindow, DetectionResult, DroneDetector } from '@membrana/dete
 import { FftCore } from '@membrana/fft-analyzer-service';
 
 import { DEFAULT_FFT_SIZE } from '../constants.js';
-import { geometricMeanMagnitudes, prepareFftSamples } from '../core/sample-window.js';
+import { geometricMeanMagnitudes, prepareFftSamples } from '@membrana/detector-base';
 import {
   classifyCepstrum,
   DEFAULT_CEPSTRAL_DETECTOR_CONFIG,

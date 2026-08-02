@@ -1,0 +1,16 @@
+{"traceId":"tr-carrier-vesnin-run","blockId":"base-window-carrier","kind":"context_run","subject":"vesnin","at":"2026-08-02T17:02:00+03:00","ref":"docs/discussions/block-base-window-carrier-vesnin.md"}
+{"traceId":"tr-carrier-vesnin-review","blockId":"base-window-carrier","kind":"review_pass","subject":"vesnin","at":"2026-08-02T17:08:00+03:00","ref":"packages/services/detectors/base/src/sample-window.ts"}
+{"traceId":"tr-carrier-tooth-dynin-run","blockId":"base-window-tooth","kind":"context_run","subject":"dynin","at":"2026-08-02T17:26:00+03:00","ref":"docs/discussions/block-base-window-tooth-dynin.md"}
+{"traceId":"tr-carrier-tooth-dynin-review","blockId":"base-window-tooth","kind":"review_pass","subject":"dynin","at":"2026-08-02T17:34:00+03:00","ref":"packages/services/detectors/base/src/sample-window.test.ts"}
+{"traceId":"tr-golden-dynin-run","blockId":"analyze-sample-golden","kind":"context_run","subject":"dynin","at":"2026-08-02T17:40:00+03:00","ref":"docs/discussions/block-analyze-sample-golden-dynin.md"}
+{"traceId":"tr-golden-dynin-review","blockId":"analyze-sample-golden","kind":"review_pass","subject":"dynin","at":"2026-08-02T17:48:00+03:00","ref":"packages/services/detectors/base/src/analyze-sample.test.ts"}
+{"traceId":"tr-rewire-vesnin-run","blockId":"analyze-sample-rewire","kind":"context_run","subject":"vesnin","at":"2026-08-02T17:16:00+03:00","ref":"docs/discussions/block-analyze-sample-rewire-vesnin.md"}
+{"traceId":"tr-rewire-vesnin-review","blockId":"analyze-sample-rewire","kind":"review_pass","subject":"vesnin","at":"2026-08-02T17:22:00+03:00","ref":"packages/services/detectors/base/src/analyze-sample.ts"}
+{"traceId":"tr-harmonic-dynin-run","blockId":"harmonic-drop-copy","kind":"context_run","subject":"dynin","at":"2026-08-02T17:52:00+03:00","ref":"docs/discussions/block-harmonic-drop-copy-dynin.md"}
+{"traceId":"tr-harmonic-dynin-review","blockId":"harmonic-drop-copy","kind":"review_pass","subject":"dynin","at":"2026-08-02T17:54:00+03:00","ref":"packages/services/detectors/harmonic/src/core/harmonic-detector.ts"}
+{"traceId":"tr-cepstral-dynin-run","blockId":"cepstral-drop-copy","kind":"context_run","subject":"dynin","at":"2026-08-02T17:58:00+03:00","ref":"docs/discussions/block-cepstral-drop-copy-dynin.md"}
+{"traceId":"tr-cepstral-dynin-review","blockId":"cepstral-drop-copy","kind":"review_pass","subject":"dynin","at":"2026-08-02T18:00:00+03:00","ref":"packages/services/detectors/cepstral/src/core/cepstral-detector.test.ts"}
+{"traceId":"tr-flux-dynin-run","blockId":"flux-drop-copy","kind":"context_run","subject":"dynin","at":"2026-08-02T18:04:00+03:00","ref":"docs/discussions/block-flux-drop-copy-dynin.md"}
+{"traceId":"tr-flux-dynin-review","blockId":"flux-drop-copy","kind":"review_pass","subject":"dynin","at":"2026-08-02T18:06:00+03:00","ref":"packages/services/detectors/spectral-flux/src/core/spectral-flux-detector.ts"}
+{"traceId":"tr-invariant-dynin-run","blockId":"window-carrier-invariant","kind":"context_run","subject":"dynin","at":"2026-08-02T18:10:00+03:00","ref":"docs/discussions/block-window-carrier-invariant-dynin.md"}
+{"traceId":"tr-invariant-dynin-review","blockId":"window-carrier-invariant","kind":"review_pass","subject":"dynin","at":"2026-08-02T18:16:00+03:00","ref":"scripts/detectors-window-carrier.test.mjs"}

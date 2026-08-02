@@ -6,7 +6,7 @@ import {
 } from '@membrana/fft-analyzer-service';
 
 import { DEFAULT_FFT_SIZE } from '../constants.js';
-import { fftFrames, prepareFftSamples } from '../core/sample-window.js';
+import { fftFrames, prepareFftSamples } from '@membrana/detector-base';
 import {
   classifySpectralFluxFrame,
   DEFAULT_SPECTRAL_FLUX_DETECTOR_CONFIG,
