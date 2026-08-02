@@ -1,3 +1,4 @@
 # one-shot-trail.jsonl — события one-shot (не реестр задач). M5B / #1065
 # Fields: {timestamp, path, slug, headRev, status: "merged"|"cancelled"}
 {"timestamp":"2026-08-01T08:09:55.116Z","path":"scripts/lib/dead-wire.mjs","slug":"dead-wire-catalogs","headRev":"102547a7","status":"merged"}
+{"timestamp":"2026-08-02T13:26:32.465Z","path":"scripts/lib/persona-memory.mjs","slug":"persona-roster-stale","headRev":"4388f415a970295a9fc7bc2d0e53fdd18b149f81","status":"merged"}
