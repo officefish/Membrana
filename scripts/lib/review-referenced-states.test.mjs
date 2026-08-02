@@ -7,6 +7,7 @@ import {
   referencedNumbers,
   renderStatesBlock,
 } from './review-referenced-states.mjs';
+import { fetchStatesBatch } from './task-states-batch.mjs';
 
 // ── выемка номеров ───────────────────────────────────────────────────────────
 
@@ -97,6 +98,19 @@ test('Promise вместо состояний — отказ, а не табли
     () => buildReferencedStatesBlock('правим #1562', async () => ({ unknown: false, states: {}, missing: [] })),
     /контракт синхронный/u,
   );
+});
+
+test('реальный источник состояний синхронен — факт в зубе, а не в рассуждении', () => {
+  // Сеть не трогаем: подставной запуск отдаёт готовый ответ GraphQL. Проверяется ровно
+  // одно — что прибор возвращает разрешённый объект, а не обещание. Без этого зуба
+  // синхронность контракта держалась бы на чтении чужого файла глазами.
+  const run = (cmd, args) => {
+    if (args?.includes('nameWithOwner')) return JSON.stringify({ nameWithOwner: 'officefish/Membrana' });
+    return JSON.stringify({ data: { repository: { i0: { number: 10, state: 'MERGED' } } } });
+  };
+  const result = fetchStatesBatch([10], { run });
+  assert.equal(typeof result?.then, 'undefined', 'прибор вернул обещание — контракт сломан');
+  assert.equal(result.unknown, false);
 });
 
 test('синхронный источник проходит — контракт не сломан лишней строгостью', () => {
