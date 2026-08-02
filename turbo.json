@@ -1,10 +1,18 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["tsconfig.base.json", ".env"],
+  "globalDependencies": [
+    "tsconfig.base.json",
+    ".env"
+  ],
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".tsbuildinfo"],
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        ".tsbuildinfo"
+      ],
       "inputs": [
         "src/**",
         "tsconfig*.json",
@@ -21,25 +29,55 @@
     },
     "lint": {
       "outputs": [],
-      "inputs": ["src/**", ".eslintrc*", "eslint.config.*", "package.json"]
+      "inputs": [
+        "src/**",
+        ".eslintrc*",
+        "eslint.config.*",
+        "package.json"
+      ]
     },
     "typecheck": {
-      "dependsOn": ["^build"],
-      "outputs": [".tsbuildinfo"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".tsbuildinfo"
+      ]
     },
     "test": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [],
-      "inputs": ["src/**", "test/**", "tests/**"]
+      "inputs": [
+        "src/**",
+        "test/**",
+        "tests/**"
+      ]
     },
     "test:integration": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [],
-      "inputs": ["src/**", "test/**", "tests/**"]
+      "inputs": [
+        "src/**",
+        "test/**",
+        "tests/**"
+      ]
     },
     "clean": {
       "cache": false,
       "outputs": []
+    },
+    "prisma:generate": {
+      "outputs": [
+        "generated/prisma/**"
+      ],
+      "inputs": [
+        "prisma/schema.prisma",
+        "package.json"
+      ]
     }
   }
 }

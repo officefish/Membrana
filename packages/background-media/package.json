@@ -8,13 +8,13 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
     "prisma:migrate:dev": "prisma migrate dev",
-    "build": "prisma generate && tsc -b",
+    "build": "tsc -b",
     "dev": "node --watch -r ts-node/register ./src/main.ts",
     "start": "node ./dist/main.js",
     "clean": "rimraf dist .turbo .tsbuildinfo",
     "lint": "eslint src --ext .ts",
-    "typecheck": "prisma generate && tsc --noEmit",
-    "test": "prisma generate && vitest run",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "verify:swagger": "yarn build && node scripts/verify-swagger.mjs"
   },
   "dependencies": {
