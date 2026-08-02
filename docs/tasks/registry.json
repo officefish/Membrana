@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "ritual-magistral-source-freshness",
+      "title": "Расхождение вещдока дня с гейтом меряется предикатом, а не поручается генератору",
+      "promptPath": "docs/prompts/RITUAL_MAGISTRAL_SOURCE_FRESHNESS_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "строка 5 топ-10 хендофа 02.08; GH-иссью заводится при отгрузке PR",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-02",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "У1 (31.07) велит называть расхождение, но живёт инструкцией в промпте генератора; sources[0] в main-day-assertions.json несёт заявку 30.07, гейт — subconscious-lift-c3 от 02.08",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "deps-watch-disappearance-named",
       "title": "Исчезновение advisory называется поимённо и без выдуманной причины",
       "promptPath": "docs/prompts/DEPS_WATCH_DISAPPEARANCE_NAMED_PROMPT.md",

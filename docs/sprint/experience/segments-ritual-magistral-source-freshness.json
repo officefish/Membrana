@@ -1,0 +1,13 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "ritual-magistral-source-freshness",
+  "forTask": "ritual-magistral-source-freshness — расхождение вещдока дня с гейтом меряется предикатом: строка 5 топ-10 хендофа 02.08",
+  "note": "Замер объёма по блокам, снят git diff --numstat от базы 9dc167d0 после закрытия окна: insertions + deletions по зоне блока. Не оценка и не пересказ — измерение.",
+  "measuredAt": "2026-08-02T16:10:00+03:00",
+  "segments": [
+    { "cutBlockId": "freshness-core", "changedLines": 168 },
+    { "cutBlockId": "freshness-tooth", "changedLines": 175 },
+    { "cutBlockId": "probe-freshness-wire", "changedLines": 58 },
+    { "cutBlockId": "assertions-recut", "changedLines": 6 }
+  ]
+}

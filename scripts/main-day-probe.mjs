@@ -25,6 +25,12 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import {
+  blocksDay,
+  FRESHNESS,
+  formatFreshness,
+  magistralFreshness,
+} from './lib/main-day-magistral-freshness.mjs';
+import {
   dedupeByOrigin,
   formatOriginSummary,
   formatProbeReport,
@@ -33,6 +39,22 @@ import {
 } from './lib/main-day-probe.mjs';
 
 export const DEFAULT_ASSERTIONS_REL = 'docs/tasks/main-day-assertions.json';
+
+/** Состояние утреннего гейта. Нет файла либо порча → `null`: «гейта нет» — законный исход. */
+const GATES_STATE_REL = 'docs/tasks/morning-gates-state.json';
+
+function readGatesState(cwd) {
+  const p = resolve(cwd, GATES_STATE_REL);
+  if (!existsSync(p)) return null;
+  try {
+    return JSON.parse(readFileSync(p, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+/** День прогона. Часы живут здесь, в ядро свежести они приходят параметром. */
+const todayOf = () => new Date().toISOString().slice(0, 10);
 
 /** @param {string[]} argv */
 export function parseMainDayProbeArgs(argv) {
@@ -165,13 +187,26 @@ function main() {
   // снимок от 06.07, и план счёл это консенсусом).
   const sources = Array.isArray(parsedManifest?.sources) ? parsedManifest.sources : [];
 
+  // Свежесть владельческого источника против утреннего гейта. До 02.08 расхождение
+  // предъявлялось ИНСТРУКЦИЕЙ в задании генератора (норма У1, 31.07) — то есть исполнялось
+  // языковой моделью, и ничто не заметило бы пропуска строки. Гейт теперь меряет его сам и
+  // печатает ВСЕГДА, включая совпадение: молчание на совпадении неотличимо от «не сверяли».
+  const freshness = magistralFreshness(parsedManifest, readGatesState(cwd), todayOf());
+
   if (cli.json) {
-    console.log(JSON.stringify({ sha, results, sources: dedupeByOrigin(sources) }, null, 2));
+    console.log(JSON.stringify({ sha, results, sources: dedupeByOrigin(sources), freshness }, null, 2));
   } else {
     console.log('\n--- посылки MAIN_DAY_ISSUE ---\n');
     console.log(formatProbeReport(results));
     if (sources.length > 0) {
       console.log(`\n--- источники обоснования ---\n\n${formatOriginSummary(sources)}`);
+    }
+    console.log(`\n${formatFreshness(freshness)}`);
+    if (freshness.verdict === FRESHNESS.GATE_NEWER) {
+      console.log(
+        '  Это НАХОДКА, а не поломка: магистраль дня берётся с гейта по норме У1, гейт зелёный.' +
+          '\n  Гейт не перечеканивает sources[] — это делает владелец манифеста.',
+      );
     }
     const stale = results.filter((r) => r.staleRegistry);
     if (stale.length > 0) {
@@ -194,6 +229,27 @@ function main() {
       console.error(
         '\n--force: гейт продавлен. Обязательно: пометка «посылки не проверены» в теле' +
           '\nMAIN_DAY_ISSUE и запись в резюме дня. Без следа обход считается нарушением нормы.',
+      );
+      return 0;
+    }
+    return 2;
+  }
+
+  // Порча ВЕЩДОКА ДНЯ роняет гейт наравне с нарушенной посылкой: список не список, дата не
+  // дата, дата из будущего — это нарушение, а не наблюдение. Расхождение с гейтом (gate_newer)
+  // и отсутствие источников (no_sources) остаются зелёными: их разрешает норма У1, и красное на
+  // законном состоянии учило бы команду не верить коду 2 (слово структурщика 02.08).
+  if (blocksDay(freshness.verdict)) {
+    console.error(
+      `\nВЕЩДОК ДНЯ ИСПОРЧЕН: ${freshness.reason}` +
+        '\nЭто структурное нарушение sources[], а не расхождение с гейтом — сверка не выносится.',
+    );
+    // `--force` работает и здесь, симметрично нарушенной посылке (слово структурщика 02.08):
+    // одна опечатка в дате не должна вставать поперёк утра у всех, но обход остаётся со следом.
+    if (cli.force) {
+      console.error(
+        '\n--force: гейт продавлен на порче вещдока. Обязательно: пометка «источники не сверены»' +
+          '\nв теле MAIN_DAY_ISSUE и запись в резюме дня.',
       );
       return 0;
     }
