@@ -1,0 +1,6 @@
+{"traceId":"tr-reason-carried-dynin-run","blockId":"orphans-reason-carried","kind":"context_run","subject":"dynin","at":"2026-08-02T12:09:00+03:00","ref":"docs/discussions/block-orphans-reason-carried-dynin.md"}
+{"traceId":"tr-reason-carried-dynin-review","blockId":"orphans-reason-carried","kind":"review_pass","subject":"dynin","at":"2026-08-02T12:10:00+03:00","ref":"scripts/lib/scripts-workshop.mjs"}
+{"traceId":"tr-reason-tooth-dynin-run","blockId":"orphans-reason-tooth","kind":"context_run","subject":"dynin","at":"2026-08-02T12:16:00+03:00","ref":"docs/discussions/block-orphans-reason-tooth-dynin.md"}
+{"traceId":"tr-reason-tooth-dynin-review","blockId":"orphans-reason-tooth","kind":"review_pass","subject":"dynin","at":"2026-08-02T12:18:00+03:00","ref":"scripts/lib/scripts-workshop.test.mjs"}
+{"traceId":"tr-warning-verdict-ozhegov-run","blockId":"orphans-warning-verdict","kind":"context_run","subject":"ozhegov","at":"2026-08-02T12:26:00+03:00","ref":"docs/discussions/block-orphans-warning-verdict-ozhegov.md"}
+{"traceId":"tr-warning-verdict-ozhegov-review","blockId":"orphans-warning-verdict","kind":"review_pass","subject":"ozhegov","at":"2026-08-02T12:30:00+03:00","ref":"scripts/scripts-orphans.mjs"}
