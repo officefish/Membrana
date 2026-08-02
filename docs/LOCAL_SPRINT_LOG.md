@@ -5,6 +5,17 @@
 
 ---
 
+## 2026-08-02 — `product-mintlify-container-2026-08-02` — **OPEN**
+
+- **Goal:** формальный Product Mintlify на базе `apps/docs`: Device Board, узлы,
+  тарифная проекция и контракт `product.mmbrn.tech`
+- **Issue:** [#1622](https://github.com/officefish/Membrana/issues/1622)
+- **OPEN:** [`local-sprint/product-mintlify-container-2026-08-02/OPEN.md`](./local-sprint/product-mintlify-container-2026-08-02/OPEN.md)
+- **Prompt:** [`prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md`](./prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md)
+- **Next:** `harness-workflow-pages` получает свежий cut после закрытия Product
+
+---
+
 ## 2026-08-01 — `procedure-run-journal-2026-08-01` — **OPEN**
 
 - **Goal:** журнал прогона процедур: local trail с subject/evidence/gaps, чтобы прогон доказывал покрытие предмета, а не только факт запуска

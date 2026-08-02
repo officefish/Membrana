@@ -2,7 +2,7 @@
 
 > Runbook эпика [`strategy-affine-routing`](../prompts/STRATEGY_AFFINE_ROUTING_SPRINT_PROMPT.md)
 > (#1156). Scope **B**: только strategy + Affine.  
-> **Не трогать:** `docs.mmbrn.tech` (product Mintlify), `harness.mmbrn.tech`,
+> **Не трогать:** `product.mmbrn.tech` (Product Mintlify), `harness.mmbrn.tech`,
 > `office.mmbrn.tech`, `panel.mmbrn.tech`, path `apps/docs`.  
 > DNS-канон: [`DNS_DOMAIN_POLICY.md`](./DNS_DOMAIN_POLICY.md).
 

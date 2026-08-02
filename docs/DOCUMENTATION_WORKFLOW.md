@@ -1,4 +1,4 @@
-# Documentation workflow (device-board MVP)
+# Documentation workflow (Product + Harness)
 
 Регламент публикации документации Membrana: **Mintlify** + **ChatPRD** + **Atlan** + **Cursor Docs Canvas**.
 
@@ -10,7 +10,7 @@
 | Agent truth | `docs/catalog/client/prompts/modules/device-board.md` | ручной sync |
 | Спецификация эпика | `docs/prompts/DEVICE_BOARD_DOC_V04_PROMPT.md` | git |
 | PRD (sync) | `prd/device-board-mvp-docs.md` | ChatPRD MCP |
-| Публикация (product) | `apps/docs` → `docs.mmbrn.tech` | Mintlify |
+| Публикация (Product) | `apps/docs` → `product.mmbrn.tech` | Mintlify |
 | Публикация (harness) | `apps/docs-harness` → `harness.mmbrn.tech` | Mintlify (2-й project) |
 | Корп. glossary | Atlan tenant | Atlan MCP |
 | Интерактивные схемы | Cursor Canvas | Docs Canvas Skill |

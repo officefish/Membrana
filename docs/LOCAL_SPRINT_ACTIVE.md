@@ -4,7 +4,17 @@
 
 ## Focus
 
-- **procedure-run-journal-2026-08-01** · OPEN [`docs/local-sprint/procedure-run-journal-2026-08-01/OPEN.md`](./local-sprint/procedure-run-journal-2026-08-01/OPEN.md) · F1 code pass + review-sprint gate pass: Дынин/Веснин/Ожегов увидели свои зоны кода и дали LGTM после исправлений · F2/F3 не заведены · ветка `codex/procedure-run-journal`
+- **product-mintlify-container-2026-08-02** · OPEN [`docs/local-sprint/product-mintlify-container-2026-08-02/OPEN.md`](./local-sprint/product-mintlify-container-2026-08-02/OPEN.md) · Sprint 1 эпика #1622: Product container, Board, узлы и тарифы · owner ratified · ветка `codex/product-docs-container`
+
+## Следующий спринт
+
+- **harness-workflow-pages** зарегистрирован, но не открыт. Свежая нарезка и
+  отдельная ратификация выполняются после закрытия Product.
+
+## Предыдущий прогон
+
+- **procedure-run-journal-2026-08-01** · F1 code pass + review-sprint gate pass ·
+  F2/F3 не заведены.
 
 ## Правило
 

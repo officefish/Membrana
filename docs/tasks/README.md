@@ -20,6 +20,9 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `harness-workflow-pages` | Harness Mintlify: страницы мастерских и процедур | L | [`HARNESS_WORKFLOW_PAGES_PROMPT.md`](../prompts/HARNESS_WORKFLOW_PAGES_PROMPT.md) | — |
+| `product-mintlify-container` | Product Mintlify: Board, узлы и тарифы | M | [`PRODUCT_MINTLIFY_CONTAINER_PROMPT.md`](../prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md) | — |
+| `dual-mintlify-product-harness` | Product и Harness Mintlify в двух спринтах | L | [`DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md`](../prompts/DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md) | [#1622](https://github.com/officefish/Membrana/issues/1622) |
 | `review-oversized-queue` | Очередь oversized на точечное ревью считается прибором, а не глазом | S | [`REVIEW_OVERSIZED_QUEUE_PROMPT.md`](../prompts/REVIEW_OVERSIZED_QUEUE_PROMPT.md) | — |
 | `ritual-magistral-source-freshness` | Расхождение вещдока дня с гейтом меряется предикатом, а не поручается генератору | S | [`RITUAL_MAGISTRAL_SOURCE_FRESHNESS_PROMPT.md`](../prompts/RITUAL_MAGISTRAL_SOURCE_FRESHNESS_PROMPT.md) | — |
 | `deps-watch-disappearance-named` | Исчезновение advisory называется поимённо и без выдуманной причины | S | [`DEPS_WATCH_DISAPPEARANCE_NAMED_PROMPT.md`](../prompts/DEPS_WATCH_DISAPPEARANCE_NAMED_PROMPT.md) | — |

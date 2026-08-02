@@ -1,6 +1,71 @@
 {
   "tasks": [
     {
+      "id": "harness-workflow-pages",
+      "title": "Harness Mintlify: страницы мастерских и процедур",
+      "promptPath": "docs/prompts/HARNESS_WORKFLOW_PAGES_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "дочерний спринт эпика #1622; отдельный Issue не создаём",
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-02",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko",
+        "dynin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "dual-mintlify-product-harness"
+    },
+    {
+      "id": "product-mintlify-container",
+      "title": "Product Mintlify: Board, узлы и тарифы",
+      "promptPath": "docs/prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "дочерний спринт эпика #1622; отдельный Issue не создаём",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-02",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "dual-mintlify-product-harness"
+    },
+    {
+      "id": "dual-mintlify-product-harness",
+      "title": "Product и Harness Mintlify в двух спринтах",
+      "promptPath": "docs/prompts/DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md",
+      "githubIssue": 1622,
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "epic",
+      "createdAt": "2026-08-02",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "rodchenko",
+        "dynin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "review-oversized-queue",
       "title": "Очередь oversized на точечное ревью считается прибором, а не глазом",
       "promptPath": "docs/prompts/REVIEW_OVERSIZED_QUEUE_PROMPT.md",
