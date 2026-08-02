@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14381/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 251 (причины в op-log) -->
+Записей: 48 · бюджет 14397/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 252 (причины в op-log) -->
+
+### 2026-08-02 · позиция · team-evening-feedback
+
+> Ожегов. Оценка артефактов: `MAIN_DAY_ISSUE` содержит колонку «Посылки» с маркерами `file:` и `symbol:` — это правильная форма проверяемых утверждений, но применена только к двум пунктам из семи в «Сегодня делаем». Форма верная, охват — половинчатый. Итоги дня: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-02.md#reply-1`
 
 ### 2026-08-01 · позиция · evening-review-predicate-m0-order
 
@@ -284,14 +290,8 @@
 
 — источник: `docs/seanses/tariff-grid-m7-teeth-2026-07-29.md#reply-1`
 
-### 2026-07-29 · позиция · tariff-grid-m8-integration
+### 2026-07-23 · позиция · llm-procedure-channels-m2b-control-plane
 
-> Леммы, иначе синонимы-слои. **Grid-home** — серверный документ G + loader. **Wire DTO** — исходящий контракт прав без снимка в мембране. **Projection writer** — единственный server-side путь, пишущий `entitledTariffSkus` из G. **Gate locus** — точка reject_op (load/clone/start, […] _(реплик в сеансе: 5)_
+> Владелец хочет **переключать канал с панели** — кандидат 1 (только git/PR) делает админа = merge, это не тумблер. Кандидат 3 (только .env) делает панель read-only по маршруту — прямо бьёт BRIEF. Остаются 2 (office SoT) и 4 (гибрид). _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/tariff-grid-m8-integration-2026-07-29.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m4b-panel
-
-> BRIEF: админ **управляет** каналом — кандидат 3 (read-only v1) прямо противоречит. Кандидат 2 (новый SPA) — лишний host. Кандидат 1: раздел в `apps/panel` на panel.mmbrn.tech. _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/llm-procedure-channels-m4b-panel-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m2b-control-plane-2026-07-23-2026-07-23.md#reply-1`

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14368/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 251 (причины в op-log) -->
+Записей: 48 · бюджет 14360/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 252 (причины в op-log) -->
+
+### 2026-08-02 · позиция · team-evening-feedback
+
+> Родченко. Оценка артефактов: UI не затронут, `docs/` — только markdown, a11y не применимо. Появились две витрины (`apps/docs`, `apps/docs-harness`) — Product и Harness Mintlify — но презентационный слой ещё пустой (mdx-скелеты). Итоги дня: Product Mintlify (#1640) и Harness […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-02.md#reply-1`
 
 ### 2026-08-01 · позиция · evening-review-predicate-m0-order
 
@@ -283,12 +289,6 @@
 > С витрины оператора отказ обязан читаться без легенды. Soft на UI (M3): притемнение + жёлтое предупреждение, не `display:none`. Hard fail-closed на борде и сервере — отдельная честная полоса: «отказано: <reason-code>», не пустой экран. Фальшивый зелёный бейдж при fail зуба — […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/tariff-grid-m7-teeth-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m8-integration
-
-> С витрины потребителя (кабинет, борд, клиент) план обязан читаться без легенды: что видит оператор до cutover, что — после, где soft-притемнение, где hard-блок. Не рисую layout дашборда набора — он вне контура. Требую в каждом шаге врезки честный UI-контракт: […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/tariff-grid-m8-integration-2026-07-29.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m2a-scope
 

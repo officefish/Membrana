@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14370/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 252 (причины в op-log) -->
+Записей: 48 · бюджет 14384/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 253 (причины в op-log) -->
+
+### 2026-08-02 · позиция · team-evening-feedback
+
+> Курёхин. Оценка артефактов: аудио-путь сегодня не затронут, но `mfccAnalyzerPlugin.ts` и `judgeByPackage.test.ts` появились в диффе (#1645) — «прибор, судящий пакетом» относится к моей зоне, я это не сопровождал. Итоги дня: MFCC-прибор (#1562) влит вчера, smoke-тест на живом […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-02.md#reply-1`
 
 ### 2026-08-01 · позиция · evening-review-predicate-m0-order
 
@@ -284,14 +290,8 @@
 
 — источник: `docs/seanses/tariff-grid-m7-teeth-2026-07-29.md#reply-1`
 
-### 2026-07-29 · позиция · tariff-grid-m8-integration
+### 2026-07-23 · позиция · llm-procedure-channels-m2a-scope
 
-> На слух это врезка новой шины прав в уже звучащий микс, не перезапись партитуры. Сначала master-tape (G на сервере) и meters (зубы), потом send на wire, потом гейты на load/clone как hard mute, витрина — soft pad (притемнение), cabinet — fader смены тарифа. Если cutover раньше […] _(реплик в сеансе: 5)_
+> Флаг кандидата 3: подключим всё — получим пульт с тумблерами на процедуры, которые ещё не умеют читать overlay. Мёртвые двери. Лучше два живых канала, чем десять тёмных. Кандидат 2 это держит. _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/tariff-grid-m8-integration-2026-07-29.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
-
-> Флаг: без `source` (overlay|default) снова тихая ложь канала — C1 уже требует. tokens неизвестны (некоторые API) → null, не ноль. Ноль врёт об экономике. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m3b-telemetry-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m2a-scope-2026-07-23-2026-07-23.md#reply-1`

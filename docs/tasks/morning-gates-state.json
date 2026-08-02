@@ -7,9 +7,10 @@
   "frozenDigest": "375ddb3e464dd9bcdc06111760e56c877e66580b2a826408946fe54f167ca11f",
   "magistral": "subconscious-lift-c3",
   "swallow": {
-    "draftDigest": "7c2395b0fc444f1c7ab2b0abdff9416a86aaf4b5aeafebdf6f5f27b8ff4337a1",
-    "draftFile": "docs/comms/drafts/swallow-2026-08-02-morning.md",
-    "ownerAck": true
+    "draftDigest": "f60775e8957b9770145287353cc6577422ff42eef577a6eab2065c5e22bc4897",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-02.md",
+    "ownerAck": true,
+    "gate": "evening:partner-swallow"
   },
   "day": "2026-08-02"
 }
