@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "review-oversized-queue",
+      "title": "Очередь oversized на точечное ревью считается прибором, а не глазом",
+      "promptPath": "docs/prompts/REVIEW_OVERSIZED_QUEUE_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "строка 2 топ-10 хендофа 02.08; GH-иссью заводится при отгрузке PR",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-02",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "замер 02.08: 185 oversized с 20.07, с артефактом ревью 17, без — 168; по природе: 60 только docs, 6 только код, 119 смешанные. В хендофе значилось 16",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "ritual-magistral-source-freshness",
       "title": "Расхождение вещдока дня с гейтом меряется предикатом, а не поручается генератору",
       "promptPath": "docs/prompts/RITUAL_MAGISTRAL_SOURCE_FRESHNESS_PROMPT.md",

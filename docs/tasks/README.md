@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `review-oversized-queue` | Очередь oversized на точечное ревью считается прибором, а не глазом | S | [`REVIEW_OVERSIZED_QUEUE_PROMPT.md`](../prompts/REVIEW_OVERSIZED_QUEUE_PROMPT.md) | — |
 | `ritual-magistral-source-freshness` | Расхождение вещдока дня с гейтом меряется предикатом, а не поручается генератору | S | [`RITUAL_MAGISTRAL_SOURCE_FRESHNESS_PROMPT.md`](../prompts/RITUAL_MAGISTRAL_SOURCE_FRESHNESS_PROMPT.md) | — |
 | `deps-watch-disappearance-named` | Исчезновение advisory называется поимённо и без выдуманной причины | S | [`DEPS_WATCH_DISAPPEARANCE_NAMED_PROMPT.md`](../prompts/DEPS_WATCH_DISAPPEARANCE_NAMED_PROMPT.md) | — |
 | `detectors-judge-whole-record` | Кепстральный и flux-детекторы судят запись целиком, а не первые 85 мс | S | [`DETECTORS_JUDGE_WHOLE_RECORD_PROMPT.md`](../prompts/DETECTORS_JUDGE_WHOLE_RECORD_PROMPT.md) | — |

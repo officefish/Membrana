@@ -1,0 +1,13 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "review-oversized-queue",
+  "forTask": "review-oversized-queue — очередь oversized на точечное ревью: строка 2 топ-10 хендофа 02.08",
+  "note": "Замер объёма по блокам, снят git diff --numstat от базы 9dc167d0 после закрытия окна. Блок oversized-first-review замерен подсчётом строк файла: артефакт ревью попадает под правило .gitignore (docs/discussions/pr-*-code-review.md, TF-3 #554) и в diff не виден — это находка спринта, а не особенность замера.",
+  "measuredAt": "2026-08-02T16:30:00+03:00",
+  "segments": [
+    { "cutBlockId": "oversized-queue-core", "changedLines": 200 },
+    { "cutBlockId": "oversized-queue-tooth", "changedLines": 258 },
+    { "cutBlockId": "oversized-queue-verb", "changedLines": 134 },
+    { "cutBlockId": "oversized-first-review", "changedLines": 117 }
+  ]
+}
