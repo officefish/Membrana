@@ -1,1 +1,5 @@
 {"ts":"2026-08-02T06:01:49.499Z","persona":"dynin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-02T17:02:49.803Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-02-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-02T17:02:49.803Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-tariff-grid-m8-integration","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-02T17:02:49.803Z","persona":"dynin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-02T17:04:21.982Z","persona":"dynin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}

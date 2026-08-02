@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14386/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 251 (причины в op-log) -->
+Записей: 48 · бюджет 14363/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 252 (причины в op-log) -->
+
+### 2026-08-02 · позиция · team-evening-feedback
+
+> Дынин. Оценка артефактов: два зуба (`persona-memory-roster.test.mjs`, `review-referenced-states.test.mjs`) — правильная форма верификации. `DAILY_AUDIT` — механическая выжимка без оценочных суждений, инвариант «длина не коррелирует с объёмом DoD» соблюдён. Итоги дня: regex […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-02.md#reply-1`
 
 ### 2026-08-01 · позиция · evening-review-predicate-m0-order
 
@@ -283,12 +289,6 @@
 > Формализую без UI. Зуб Z = тройка `(predicate, locus, effect)`, где `predicate: Ctx → {pass, fail(reason)}`, `locus ∈ {schema, unit_test, precommit, runtime}`, `effect ∈ {reject_op, red_ci, report_finding}`. Инвариант: `fail ⇒ effect ≠ silent`. Кандидаты предикатов из входа M7: […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/tariff-grid-m7-teeth-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m8-integration
-
-> Формализую без UI. Пусть G — `TariffGridDocument` (M1). SKU s, entitlement id e → `EntitlementValue`. Проекция P_catalog(G, s) = entitledTariffSkus. Инвариант M2: `wire.entitledTariffSkus ≡ P_catalog(G, membrane.tariffSku)`. Cutover-предикат C: (1) ∀ write entitlement-path […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/tariff-grid-m8-integration-2026-07-29.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
 
