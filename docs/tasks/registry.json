@@ -1,6 +1,28 @@
 {
   "tasks": [
     {
+      "id": "workflow-examples-marathon",
+      "title": "Накопить проверяемые примеры мастерских и процедур",
+      "promptPath": "docs/prompts/WORKFLOW_EXAMPLES_MARATHON_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "standing marathon backlog; GitHub Issue создаётся при открытии первой исполнимой стадии",
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "marathon",
+      "createdAt": "2026-08-02",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "rodchenko"
+      ],
+      "notes": "Baseline 2026-08-02: 13 workshops, 23 procedures; counts recomputed from live registries.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "harness-workflow-pages"
+    },
+    {
       "id": "harness-workflow-pages",
       "title": "Harness Mintlify: страницы мастерских и процедур",
       "promptPath": "docs/prompts/HARNESS_WORKFLOW_PAGES_PROMPT.md",

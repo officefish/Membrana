@@ -10,8 +10,64 @@
   "navigation": {
     "groups": [
       {
+        "group": "Мастерские",
+        "pages": [
+          "workshops/index",
+          "workshops/archivarius",
+          "workshops/audit-bestiary",
+          "workshops/audit-git",
+          "workshops/audit-llm-calls",
+          "workshops/audit-tasks",
+          "workshops/cases",
+          "workshops/containers-strategic-docs",
+          "workshops/evidence",
+          "workshops/precedents",
+          "workshops/procedures",
+          "workshops/tasks",
+          "workshops/tooling-atlas",
+          "workshops/scripts"
+        ]
+      },
+      {
+        "group": "Процедуры",
+        "pages": [
+          "procedures/index",
+          "procedures/ritual-evening",
+          "procedures/ritual-day",
+          "procedures/ritual-dreams",
+          "procedures/attribution",
+          "procedures/meeting",
+          "procedures/day-sprint",
+          "procedures/membrana-local-sprint",
+          "procedures/hackathon",
+          "procedures/containerization",
+          "procedures/test-runs",
+          "procedures/storm",
+          "procedures/cowork",
+          "procedures/competition",
+          "procedures/night-sprint",
+          "procedures/ship-gate",
+          "procedures/tasks-audit",
+          "procedures/git-audit",
+          "procedures/consilium",
+          "procedures/code-review",
+          "procedures/bridge",
+          "procedures/one-shot",
+          "procedures/membrana-leveling",
+          "procedures/weekly-dead-wire"
+        ]
+      },
+      {
+        "group": "Начало",
+        "pages": [
+          "index"
+        ]
+      },
+      {
         "group": "Tooling",
-        "pages": ["tooling/containers"]
+        "pages": [
+          "tooling/containers"
+        ]
       },
       {
         "group": "Bestiary — workshop",

@@ -94,6 +94,14 @@ test('buildTaskEntry: kind hackathon + parentHackathonId принимаются 
   assert.equal(entry.parentHackathonId, 'device-board-hackathon-1');
 });
 
+test('buildTaskEntry: kind marathon принимается для долгого маршрута накопления', () => {
+  const entry = buildTaskEntry(
+    { id: 'workflow-examples-marathon', title: 'Примеры процедур', size: 'L', kind: 'marathon' },
+    '2026-08-02',
+  );
+  assert.equal(entry.sprintKind, 'marathon');
+});
+
 test('buildTaskEntry: перечень остаётся ЗАКРЫТЫМ — чужое значение по-прежнему падает', () => {
   assert.throws(
     () => buildTaskEntry({ id: 'x', title: 't', size: 'M', kind: 'meetings' }, '2026-08-01'),
