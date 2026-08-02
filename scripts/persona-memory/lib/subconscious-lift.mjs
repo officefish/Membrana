@@ -31,6 +31,17 @@ export const CLASS_RANK = Object.freeze({ insight: 2, precedent: 2, position: 1,
 export const AXIS_STATUS = Object.freeze(['ran', 'failed', 'skipped']);
 
 /**
+ * Полнота прогона оси. Ось, собранная лексиконом отрицаний вместо LLM-порта, БЕЖАЛА —
+ * статус у неё честный `ran`, — но покрыла предмет урезанно. Без этой оси различения
+ * «оси хватило» и «оси хватило, насколько смогли» выглядят в плане одинаково.
+ *
+ * Список заморожен отдельно от `AXIS_STATUS` и независимо от него: статус отвечает на
+ * вопрос «прогон состоялся?», режим — на вопрос «прогон покрыл предмет?». Смешать их
+ * значило бы завести четвёртый статус и потерять оба ответа сразу.
+ */
+export const AXIS_MODES = Object.freeze(['full', 'reduced']);
+
+/**
  * Ординальные флаги кандидата. Наблюдаемые факты, а не оценки: поле есть — единица.
  * @param {Record<string, any>} record
  * @returns {{isPinned: number, hasOwnerQuote: number, hasConflict: number}}
@@ -123,9 +134,47 @@ export function mmrSelect(pool, limit, { lambda, similarityBetween }) {
   return chosen;
 }
 
+/**
+ * Нормализовать ответ порта. Законны две формы: голый массив попаданий (прежний контракт,
+ * зубы блоков 1–2 стоят на нём) и `{hits, mode, modeReason}` — когда порт хочет сообщить,
+ * что бежал урезанно.
+ *
+ * Неизвестное значение режима НЕ становится `full`: заявить полное покрытие из-за поломки
+ * порта значило бы соврать в пользу зелёного. Непонятый режим честно считается урезанным,
+ * и причина называет само непонятое значение.
+ *
+ * @param {Array<object>|{hits?: Array<object>, mode?: string, modeReason?: string}} result
+ * @returns {{hits: Array<object>, mode: 'full'|'reduced', modeReason: string|undefined}}
+ */
+export function normalizeRetrieval(result) {
+  if (Array.isArray(result)) return { hits: result, mode: 'full', modeReason: undefined };
+  const hits = Array.isArray(result?.hits) ? result.hits : [];
+  const declared = result?.mode;
+  if (declared !== undefined && !AXIS_MODES.includes(declared)) {
+    return { hits, mode: 'reduced', modeReason: `режим «${String(declared)}» вне закрытого списка` };
+  }
+  const mode = declared ?? 'full';
+  const given = typeof result?.modeReason === 'string' ? result.modeReason.trim() : '';
+  if (mode === 'full') return { hits, mode, modeReason: undefined };
+  // Пометка без содержания — та же молчаливая пустота, только с ярлыком. Пункт DoD требует
+  // не флага, а различимости: читатель обязан узнать, ЧЕМ прогон был урезан.
+  return { hits, mode, modeReason: given === '' ? 'порт не назвал причину урезания' : given };
+}
+
 /** Запись оси в план запроса. Несущие поля пустыми не бывают. */
-function axisEntry(axis, status, hitCount, reason) {
-  return { axis, status, hitCount, ...(reason === undefined ? {} : { reason }) };
+function axisEntry(axis, status, hitCount, reason, mode, modeReason) {
+  return {
+    axis,
+    status,
+    hitCount,
+    ...(reason === undefined ? {} : { reason }),
+    // Режим описывает полноту ПРОГОНА, поэтому существует только у оси, которая бежала.
+    // У `failed` и `skipped` прогона не было вовсе: написать им `full` значило бы заявить
+    // полное покрытие того, чего не происходило. Здесь я отступаю от совета держателя
+    // «mode пишется всегда» — «всегда» верно внутри `ran`, но не за его границей.
+    ...(status === 'ran' && mode !== undefined ? { mode } : {}),
+    ...(status === 'ran' && modeReason !== undefined ? { modeReason } : {}),
+  };
 }
 
 /**
@@ -134,7 +183,7 @@ function axisEntry(axis, status, hitCount, reason) {
  * @param {object} input
  * @param {string} input.personaId
  * @param {string} input.topic
- * @param {(axis: string, query: string) => Promise<Array<object>>} input.retrieve — порт (соседний блок)
+ * @param {(axis: string, query: string) => Promise<Array<object>|{hits: Array<object>, mode?: string, modeReason?: string}>} input.retrieve — порт (соседний блок); вторая форма нужна порту, чтобы объявить урезанный прогон
  * @param {(id: string) => boolean} input.notAlreadyOperational — вычитание эха оперативной проекции
  * @param {(a: object, b: object) => number} input.similarityBetween
  * @param {number} input.lambda — из C5
@@ -173,8 +222,8 @@ export async function buildSubconsciousCloud({
       axes.push(axisEntry(axis, 'failed', 0, String(error?.message ?? error)));
       continue;
     }
-    const list = Array.isArray(hits) ? hits : [];
-    axes.push(axisEntry(axis, 'ran', list.length));
+    const { hits: list, mode, modeReason } = normalizeRetrieval(hits);
+    axes.push(axisEntry(axis, 'ran', list.length, undefined, mode, modeReason));
     for (const hit of list) {
       if (hit?.id === undefined) continue;
       if (typeof notAlreadyOperational === 'function' && !notAlreadyOperational(hit.id)) {
@@ -236,6 +285,12 @@ export async function buildSubconsciousCloud({
 /**
  * Различить «архив пуст» и «мультизапрос сломан». Обе ситуации дают ноль кандидатов, и
  * без этого различения отказ инфраструктуры неотличим от честной пустоты.
+ *
+ * Режим оси сюда НЕ входит намеренно: здоровье отвечает на «прогон состоялся?», режим — на
+ * «прогон покрыл предмет?». Урезанный прогон — это исправная работа в худших условиях, а не
+ * поломка; смешать их значило бы объявлять `retrieval-broken` там, где всё цело, и потерять
+ * оба ответа сразу.
+ *
  * @param {{axes: Array<{status: string}>}} queryPlan
  * @returns {'ok'|'empty-archive'|'retrieval-broken'}
  */

@@ -9,6 +9,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  AXIS_MODES,
   AXIS_STATUS,
   CLASS_RANK,
   CLOUD_MAX,
@@ -19,6 +20,7 @@ import {
   buildSubconsciousCloud,
   compareCandidates,
   mmrSelect,
+  normalizeRetrieval,
   ordinalFlags,
   planHealth,
   simBucket,
@@ -100,6 +102,122 @@ test('сломанная ось несёт причину: «не смог» б�
   });
   const failed = broken.queryPlan.axes.find((a) => a.status === 'failed');
   assert.match(failed.reason, /порт лёг/u);
+});
+
+// ── полнота прогона: урезанная ось против пустой ─────────────────────────────
+
+const axisOf = (cloud, axis) => cloud.queryPlan.axes.find((a) => a.axis === axis);
+
+test('пустая ось при ПОЛНОМ прогоне не помечается урезанной', async () => {
+  const cloud = await build({ retrieve: async () => ({ hits: [], mode: 'full' }) });
+  const topic = axisOf(cloud, 'topic');
+
+  assert.equal(topic.status, 'ran');
+  assert.equal(topic.hitCount, 0);
+  assert.equal(topic.mode, 'full', 'ноль попаданий — это про архив, а не про способ спрашивать');
+  assert.equal(topic.modeReason, undefined);
+  assert.equal(planHealth(cloud.queryPlan), 'empty-archive');
+});
+
+test('урезанная ось помечается ДАЖЕ с непустой выдачей — иначе пометка ловит не то', async () => {
+  const cloud = await build({
+    retrieve: async (axis) =>
+      axis === 'contrast'
+        ? { hits: [cand('a', 0.9)], mode: 'reduced', modeReason: 'лексикон отрицаний вместо LLM' }
+        : [cand('b', 0.8)],
+  });
+  const contrast = axisOf(cloud, 'contrast');
+
+  assert.equal(contrast.status, 'ran', 'ось бежала — статус не понижается');
+  assert.ok(contrast.hitCount > 0, 'выдача непустая: пометка стоит НЕ на пустоте');
+  assert.equal(contrast.mode, 'reduced');
+  assert.match(contrast.modeReason, /лексикон/u);
+});
+
+test('пустая-полная и непустая-урезанная различаются по плану, а не по догадке', async () => {
+  const emptyFull = await build({ retrieve: async () => ({ hits: [], mode: 'full' }) });
+  const fullReduced = await build({
+    retrieve: async () => ({ hits: [cand('a', 0.9)], mode: 'reduced', modeReason: 'урезан' }),
+  });
+
+  const l = axisOf(emptyFull, 'topic');
+  const r = axisOf(fullReduced, 'topic');
+
+  assert.notEqual(l.mode, r.mode, 'режим различает их напрямую');
+  // Ни один из прежних признаков этого не умел: статус одинаков, а счёт попаданий даже
+  // обратен ожиданию — урезанная ось нашла больше, чем полная.
+  assert.equal(l.status, r.status);
+  assert.ok(l.hitCount < r.hitCount);
+});
+
+test('здоровье плана и режим ортогональны: урезанность — не поломка', async () => {
+  const cloud = await build({
+    retrieve: async () => ({ hits: [cand('a', 0.9)], mode: 'reduced', modeReason: 'урезан' }),
+  });
+  assert.equal(planHealth(cloud.queryPlan), 'ok', 'исправная работа в худших условиях');
+  const ran = cloud.queryPlan.axes.filter((a) => a.status === 'ran');
+  assert.equal(ran.length, QUERY_AXES.length);
+  assert.ok(ran.every((a) => a.mode === 'reduced'));
+});
+
+test('прежняя форма возврата порта жива: голый массив — полный прогон', async () => {
+  const cloud = await build({ retrieve: async () => [cand('a', 0.9)] });
+  const topic = axisOf(cloud, 'topic');
+  assert.equal(topic.mode, 'full');
+  assert.equal('modeReason' in topic, false, 'полному прогону объясняться не в чем');
+});
+
+test('режим существует только у бежавшей оси', async () => {
+  const cloud = await build({
+    retrieve: async () => {
+      throw new Error('порт лёг');
+    },
+  });
+  for (const a of cloud.queryPlan.axes) {
+    if (a.status === 'ran') continue;
+    assert.equal('mode' in a, false, `${a.status} не бежал — полноте покрытия неоткуда взяться`);
+  }
+});
+
+test('пометка без содержания не проходит: урезанность обязана назвать причину', () => {
+  const { mode, modeReason } = normalizeRetrieval({ hits: [], mode: 'reduced' });
+  assert.equal(mode, 'reduced');
+  assert.ok(modeReason && modeReason.trim() !== '', 'флаг без причины — та же немота, но с ярлыком');
+});
+
+test('непонятый режим считается урезанным, а не полным', () => {
+  const { mode, modeReason } = normalizeRetrieval({ hits: [cand('a', 0.9)], mode: 'partial-llm' });
+  assert.equal(mode, 'reduced', 'поломка порта не даёт права заявить полное покрытие');
+  assert.match(modeReason, /partial-llm/u, 'причина называет само непонятое значение');
+});
+
+test('причина из одних пробелов — это отсутствие причины, а не причина', () => {
+  const { modeReason } = normalizeRetrieval({ hits: [cand('a', 0.9)], mode: 'reduced', modeReason: '   ' });
+  assert.match(modeReason, /не назвал причину/u);
+});
+
+test('null режимом не считается: пустое место — не значение', () => {
+  const { mode, modeReason } = normalizeRetrieval({ hits: [], mode: null });
+  assert.equal(mode, 'reduced');
+  assert.match(modeReason, /вне закрытого списка/u);
+});
+
+test('hitCount считает выдачу ПОРТА, до вычитания эха оперативной проекции', async () => {
+  // Иначе режим и счёт отвечали бы на разные вопросы в одной строке плана: режим — про то,
+  // как спросили, а счёт — про то, сколько уцелело после de-dup. Читатель принял бы падение
+  // счёта за скудость архива, хотя порт нашёл всё.
+  const cloud = await build({
+    retrieve: async () => ({
+      hits: [cand('a', 0.9), cand('b', 0.8), cand('c', 0.7)],
+      mode: 'reduced',
+      modeReason: 'лексикон',
+    }),
+    notAlreadyOperational: (id) => id === 'a',
+  });
+
+  assert.equal(axisOf(cloud, 'topic').hitCount, 3, 'порт вернул три');
+  assert.equal(cloud.queryPlan.deduped, 6, 'вычтенное живёт в своём поле, а не в счёте оси');
+  assert.deepEqual(cloud.items.map((i) => i.id), ['a'], 'в облако дошёл один');
 });
 
 // ── квоты, слоты, отсутствие padding ─────────────────────────────────────────
@@ -209,6 +327,8 @@ test('перечни закрыты и заморожены', () => {
   assert.deepEqual([...QUERY_AXES], ['topic', 'contrast', 'dispute'], 'analogy — слот v2');
   assert.deepEqual([...SLOT_KINDS], ['similar', 'contrast', 'outsider']);
   assert.deepEqual([...AXIS_STATUS], ['ran', 'failed', 'skipped']);
+  assert.deepEqual([...AXIS_MODES], ['full', 'reduced']);
+  assert.ok(Object.isFrozen(AXIS_MODES));
   assert.deepEqual(SLOT_QUOTAS, { similar: 5, contrast: 3, outsider: 2 });
   assert.equal(CLOUD_MAX, 10);
   assert.deepEqual([...FLAG_ORDER], ['isPinned', 'hasOwnerQuote', 'hasConflict']);
