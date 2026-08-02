@@ -1,0 +1,59 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "detectors-judge-whole-record",
+  "taskId": "detectors-judge-whole-record",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-02T10:00:00+03:00",
+    "to": "2026-08-02T18:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "cepstral-whole-record",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/services/detectors/cepstral/src/core"
+      ],
+      "estimate": {
+        "changedLines": 140
+      },
+      "revisionAt": "2026-08-02T12:07:43+03:00",
+      "revisionOf": "277830e3851f9c1db1e85be7753fbae46bc1c5425f5579878e12390e8d8708dd"
+    },
+    {
+      "blockId": "flux-window-aggregate",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/services/detectors/spectral-flux/src/core/sample-window.ts",
+        "packages/services/detectors/spectral-flux/src/core/sample-window.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 95
+      },
+      "revisionAt": "2026-08-02T12:07:43+03:00",
+      "revisionOf": "c0dd973667d30ca566bc5d53995a3eebbd817f8566253d06e1d456b23f87d6cb"
+    },
+    {
+      "blockId": "flux-tracker-streaming",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/services/detectors/spectral-flux/src/core/spectral-flux-detector.ts",
+        "packages/services/detectors/spectral-flux/src/core/spectral-flux-detector.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 140
+      },
+      "revisionAt": "2026-08-02T12:07:43+03:00",
+      "revisionOf": "ee3acd759b52019220e693a228fd17ad7d3c60367fe1dbbfba1f01520b241dfc"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-02T12:07:43+03:00",
+    "digest": "96c12d39cf26fedc3613b55f2994afa1510d21e9ad8588715ac0fc7bf935a81c"
+  }
+}

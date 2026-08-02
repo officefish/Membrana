@@ -1,0 +1,70 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "ritual-magistral-source-freshness",
+  "taskId": "ritual-magistral-source-freshness",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-02T15:00:00+03:00",
+    "to": "2026-08-02T19:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "freshness-core",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/main-day-magistral-freshness.mjs"
+      ],
+      "estimate": {
+        "changedLines": 90
+      },
+      "revisionAt": "2026-08-02T14:18:32+03:00",
+      "revisionOf": "6dd17ed8d5d874dde49304aee3e6ed065c8949a1ad5a7961797d71014b14dfdb"
+    },
+    {
+      "blockId": "freshness-tooth",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/main-day-magistral-freshness.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 130
+      },
+      "revisionAt": "2026-08-02T14:18:32+03:00",
+      "revisionOf": "2a2411df6628917678647e9f2cb25d78e1c35d1c158110656c9d44c8d7699ae7"
+    },
+    {
+      "blockId": "probe-freshness-wire",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/main-day-probe.mjs"
+      ],
+      "estimate": {
+        "changedLines": 50
+      },
+      "revisionAt": "2026-08-02T14:18:32+03:00",
+      "revisionOf": "2e6399f0c871df73f90461257cb6adcbca9ffa4b5101941fe59bca242588d00e"
+    },
+    {
+      "blockId": "assertions-recut",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/tasks/main-day-assertions.json"
+      ],
+      "estimate": {
+        "changedLines": 20
+      },
+      "revisionAt": "2026-08-02T14:18:32+03:00",
+      "revisionOf": "97a4463f2643ca326bde4e25e3622df5245a8c3fb068c0fc43e00f04c0a8bce1"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-02T14:18:32+03:00",
+    "digest": "1ee90999ebce81d24941bd12b3fd006d9be666c1a3d0004a384da0d0858afb94"
+  }
+}

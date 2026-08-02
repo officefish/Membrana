@@ -97,17 +97,36 @@ export function listHomes(repoRoot) {
  * Пустой ответ ВСЕГДА со статусом и знаменателем. Молчаливый пустой список — запрет §4:
  * он читается как «чисто», хотя может значить «обход не нашёл ни одного носителя».
  *
- * @returns {{status:string, orphans:string[], counted:number, denominator:number}}
+ * ПРИЧИНА ДОНОСИТСЯ ДО ВЫЗЫВАЮЩЕГО. Предикат называет причину исхода (`ORPHAN_REASONS`)
+ * ровно затем, чтобы «сирота» не была неотличима от «предикат не справился», — а этот глагол
+ * до 02.08 её выбрасывал фильтром по `kind` и отдавал голый список путей. Цена молчания
+ * замерена: 51 сирота из 1000, все до единой по `subject_unresolved`, по `no_rule` — ноль,
+ * и отчёт при этом три дня подряд называл причиной отсутствие правил членства. Читатель шёл
+ * чинить реестр вместо резолвера предмета.
+ *
+ * `orphans` остаётся списком СТРОК: на него смотрят соседи и `--json`. Вердикты и сводка
+ * добавлены рядом, а не вместо, — расширение формы, не смена.
+ *
+ * @returns {{status:string, orphans:string[], verdicts:{path:string, reason:string}[],
+ *   byReason:Record<string, number>, counted:number, denominator:number}}
  */
 export function orphans(repoRoot, ctx = {}) {
   const { includeTests = true, homes = listHomes(repoRoot), namespaces = [] } = ctx;
   const carriers = listCarriers(repoRoot, { includeTests });
   const exists = (p) => existsSync(join(repoRoot, p));
-  const found = carriers.filter((c) => belongs(c, { homes, namespaces, exists }).kind === 'orphan');
+  const verdicts = [];
+  for (const path of carriers) {
+    const v = belongs(path, { homes, namespaces, exists });
+    if (v.kind === 'orphan') verdicts.push({ path, reason: v.reason });
+  }
+  const byReason = {};
+  for (const { reason } of verdicts) byReason[reason] = (byReason[reason] ?? 0) + 1;
   return {
-    status: found.length === 0 ? ORPHANS_STATUS.CLEAN : ORPHANS_STATUS.HAS_ORPHANS,
-    orphans: found,
-    counted: found.length,
+    status: verdicts.length === 0 ? ORPHANS_STATUS.CLEAN : ORPHANS_STATUS.HAS_ORPHANS,
+    orphans: verdicts.map((v) => v.path),
+    verdicts,
+    byReason,
+    counted: verdicts.length,
     denominator: carriers.length,
   };
 }
