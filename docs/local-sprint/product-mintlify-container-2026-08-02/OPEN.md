@@ -11,7 +11,7 @@
 | Branch | `codex/product-docs-container` |
 | Lead | vesnin |
 | Support | dynin · rodchenko |
-| Status | implementation reviewed · sprint gate pass · exact-SHA closure pending |
+| Status | implementation and visual preview reviewed · sprint gate pass · exact-SHA closure pending |
 
 Experience record: `miss`, cut accuracy `2/4` (`50%`). Product surface and task
 contract stayed within tolerance; tariff projection and execution evidence
@@ -81,13 +81,18 @@ active, но её исполнение заморожено до закрыти�
   `task:register`; дочерние карточки пришлось регистрировать прямой командой с
   явным `noIssueReason`. Это пробел инструмента, не scope этого спринта.
 - DNS и Mintlify dashboard нельзя подтвердить из репозиторного diff.
-- Официальный Mintlify CLI не скачал framework `0.0.3389`: повторный
-  `ECONNRESET`; поэтому desktop/mobile screenshots не предъявлены и не
-  подменены статическим verifier.
 - Корневой `README.md` всё ещё описывает `apps/docs` только как Device Board.
   Rodchenko оценил это как P2; файл не входил в ратифицированную write-zone и
   должен быть согласован в Harness sprint вместе с общей картой двух поверхностей.
 - Детальная нарезка Harness сознательно отложена, чтобы не протухнуть до второго PR.
+
+## Visual evidence after publication
+
+Локальный Mintlify CLI не смог скачать framework `0.0.3389` из-за повторного
+`ECONNRESET`. После публикации PR #1640 облачный `Mintlify Deployment` прошёл,
+и preview был проверен в desktop `1440×900` и mobile `390×844`. Четыре снимка и
+наблюдения сохранены в [`VISUAL_REPORT.md`](./VISUAL_REPORT.md); первоначальный
+локальный сбой остаётся в journal как исторический gap, но visual DoD закрыт.
 
 ## Не делаем
 
