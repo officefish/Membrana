@@ -479,7 +479,12 @@ async function main() {
         }),
         // Оперативная проекция — это то, что персона и так помнит. Всплывать ему незачем:
         // иначе «подсознание» окажется эхом свежего стека.
-        notAlreadyOperational: (id) => !readPersonaMemory(cli.persona).includes(id),
+        // `?? ''` — не косметика: `readPersonaMemory` отдаёт `null` для персоны вне
+        // `PERSONA_ROLE_LABELS` и для пустого журнала, и прямой `.includes` на нём роняет весь
+        // лифт в `catch` (02.08: «всплытие НЕ поднялось — Cannot read properties of null»).
+        // Пустая оперативная память означает «ничего не вытеснено, всплывать можно всему» —
+        // это законный вход, а не сбой.
+        notAlreadyOperational: (id) => !(readPersonaMemory(cli.persona) ?? '').includes(id),
         similarityBetween,
         lambda: LIFT_LAMBDA_V1,
         tauOut: null,
