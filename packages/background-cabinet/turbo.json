@@ -1,0 +1,27 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": [
+    "//"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": [
+        "^build",
+        "prisma:generate"
+      ]
+    },
+    "typecheck": {
+      "dependsOn": [
+        "^build",
+        "prisma:generate"
+      ]
+    },
+    "test": {
+      "dependsOn": [
+        "^build",
+        "prisma:generate"
+      ]
+    }
+  },
+  "//": "Генерация клиента Prisma — ОТДЕЛЬНАЯ задача, а не инлайн в build/typecheck/test. Причина: 02.08 CI падал с «Unexpected end of JSON input» — три скрипта пакета звали prisma generate в один каталог одновременно (typecheck и build стартовали с разницей 54 мс), и один процесс читал JSON, который другой дописывал. Выходы generated/prisma/** сверены со schema.prisma: output = \"../generated/prisma\" относительно prisma/, то есть пакетно-относительный generated/prisma."
+}

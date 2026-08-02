@@ -9,13 +9,13 @@
     "prisma:migrate": "prisma migrate deploy",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:seed": "prisma db seed",
-    "build": "prisma generate && tsc -b",
+    "build": "tsc -b",
     "dev": "node --watch -r ts-node/register ./src/main.ts",
     "start": "node ./dist/main.js",
     "clean": "rimraf dist .turbo .tsbuildinfo",
     "lint": "eslint src --ext .ts",
-    "typecheck": "prisma generate && tsc --noEmit",
-    "test": "prisma generate && vitest run"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.0",
