@@ -23,6 +23,11 @@
 | `harness-workflow-pages` | Harness Mintlify: страницы мастерских и процедур | L | [`HARNESS_WORKFLOW_PAGES_PROMPT.md`](../prompts/HARNESS_WORKFLOW_PAGES_PROMPT.md) | — |
 | `product-mintlify-container` | Product Mintlify: Board, узлы и тарифы | M | [`PRODUCT_MINTLIFY_CONTAINER_PROMPT.md`](../prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md) | — |
 | `dual-mintlify-product-harness` | Product и Harness Mintlify в двух спринтах | L | [`DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md`](../prompts/DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md) | [#1622](https://github.com/officefish/Membrana/issues/1622) |
+| `review-oversized-queue` | Очередь oversized на точечное ревью считается прибором, а не глазом | S | [`REVIEW_OVERSIZED_QUEUE_PROMPT.md`](../prompts/REVIEW_OVERSIZED_QUEUE_PROMPT.md) | — |
+| `ritual-magistral-source-freshness` | Расхождение вещдока дня с гейтом меряется предикатом, а не поручается генератору | S | [`RITUAL_MAGISTRAL_SOURCE_FRESHNESS_PROMPT.md`](../prompts/RITUAL_MAGISTRAL_SOURCE_FRESHNESS_PROMPT.md) | — |
+| `deps-watch-disappearance-named` | Исчезновение advisory называется поимённо и без выдуманной причины | S | [`DEPS_WATCH_DISAPPEARANCE_NAMED_PROMPT.md`](../prompts/DEPS_WATCH_DISAPPEARANCE_NAMED_PROMPT.md) | — |
+| `detectors-judge-whole-record` | Кепстральный и flux-детекторы судят запись целиком, а не первые 85 мс | S | [`DETECTORS_JUDGE_WHOLE_RECORD_PROMPT.md`](../prompts/DETECTORS_JUDGE_WHOLE_RECORD_PROMPT.md) | — |
+| `tooling-truth-orphans-diagnosis` | Приборы говорят о себе замеренное: диагноз scripts:orphans и прецедент предела ревью | S | [`TOOLING_TRUTH_ORPHANS_DIAGNOSIS_PROMPT.md`](../prompts/TOOLING_TRUTH_ORPHANS_DIAGNOSIS_PROMPT.md) | — |
 | `subconscious-lift-c3` | Лифт всплытия C3: облако подсознания, мультизапрос, акт emerge/reject за персоной | M | [`SUBCONSCIOUS_LIFT_C3_PROMPT.md`](../prompts/SUBCONSCIOUS_LIFT_C3_PROMPT.md) | [#1615](https://github.com/officefish/Membrana/issues/1615) |
 | `procedure-run-journal-f1-local-trail` | F1: локальная лента прогона процедур | M | [`PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md) | — |
 | `procedure-run-journal-2026-08-01` | Membrana Local Sprint: журнал прогона процедур | L | [`PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md) | — |
