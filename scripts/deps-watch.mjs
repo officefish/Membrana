@@ -18,6 +18,9 @@ import { execSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
+import { AUDIT_STATES, auditState, comparable, snapshotWritable } from './lib/deps-watch-audit-state.mjs';
+import { diffFindings, formatDiffReport } from './lib/deps-watch-diff.mjs';
+
 const SNAPSHOT = join(process.cwd(), 'docs', 'security', 'deps-watch-snapshot.json');
 
 // Dev-тулинг: пакеты без сетевой поверхности прода (основание — вердикт M1).
@@ -122,41 +125,62 @@ function printSummary(findings) {
   }
 }
 
+/**
+ * Прежний снимок значением. Нет файла либо файл испорчен → `null`, а не пустой список:
+ * «снимка нет» и «в снимке ноль записей» — разные факты, и второй разрешает сравнение,
+ * а первый нет.
+ */
+function readSnapshot() {
+  if (!existsSync(SNAPSHOT)) return null;
+  try {
+    const doc = JSON.parse(readFileSync(SNAPSHOT, 'utf8'));
+    return Array.isArray(doc?.findings) ? doc.findings : null;
+  } catch {
+    return null;
+  }
+}
+
 function main() {
-  let findings;
+  // Прежний снимок читается ПЕРЕД аудитом: он нужен и стражу состояния (сколько записей было),
+  // и сравнению — в обоих режимах, а не только вечером.
+  const previous = readSnapshot();
+
+  let findings = [];
+  let ran = true;
   try {
     findings = runAudit();
   } catch (err) {
+    ran = false;
     console.log(`deps:watch: аудит не отработал (${err.message?.split('\n')[0] ?? err}) — пропуск, не блокирую ритуал.`);
-    return;
   }
 
-  if (mode === 'evening') {
-    if (!existsSync(SNAPSHOT)) {
-      console.log('deps:watch(evening): снапшота нет (утренний шаг не бегал) — полная сводка вместо diff.');
-      printSummary(findings);
-      return;
-    }
-    const prev = JSON.parse(readFileSync(SNAPSHOT, 'utf8'));
-    const prevIds = new Set(prev.findings.map((f) => `${f.pkg}:${f.id}`));
-    const currIds = new Set(findings.map((f) => `${f.pkg}:${f.id}`));
-    const fresh = findings.filter((f) => !prevIds.has(`${f.pkg}:${f.id}`));
-    const gone = prev.findings.filter((f) => !currIds.has(`${f.pkg}:${f.id}`));
-    if (fresh.length === 0 && gone.length === 0) {
-      console.log(`deps:watch(evening): новых advisories за день нет (всего ${findings.length}).`);
-      return;
-    }
-    if (fresh.length > 0) {
-      console.log(`deps:watch(evening): НОВЫЕ advisories за день (${fresh.length}):`);
-      for (const f of fresh) console.log(`  ${label(f.severity)} ${f.pkg} — ${f.issue} ${f.url}`);
-    }
-    if (gone.length > 0) console.log(`deps:watch(evening): закрыто за день: ${gone.length}.`);
+  const { state, reason } = auditState({ ran, findings, previousCount: previous?.length ?? 0 });
+
+  // Сравнивать и перезаписывать снимок вправе только состоявшийся прогон. Прежде этой развилки
+  // не было вовсе, и один пустой ответ реестра объявил бы исчезнувшими все записи разом.
+  if (!comparable(state)) {
+    if (state !== AUDIT_STATES.NOT_RUN) console.log(`deps:watch: ${reason}`);
     return;
   }
 
   printSummary(findings);
 
-  if (mode === 'morning') {
+  // Разница печатается в обоих режимах С ИСТОРИЕЙ. До 02.08 утренний шаг перезаписывал снимок
+  // молча — и запись brace-expansion (high) исчезла из него ровно так: коммит ec0b9d33, утро
+  // 01.08. Режим `plain` разницы НЕ печатает по разбору Ожегова: он статический отчёт
+  // здесь-и-сейчас, снимка не пишет и истории не держит; сравнение принадлежит тем двум шагам,
+  // которые в этой истории и живут.
+  if (mode === 'morning' || mode === 'evening') {
+    if (previous === null) {
+      console.log(`deps:watch(${mode}): прежнего снимка нет — сравнивать не с чем, это первый замер.`);
+    } else {
+      for (const line of formatDiffReport(diffFindings(previous, findings), { mode })) {
+        console.log(line);
+      }
+    }
+  }
+
+  if (mode === 'morning' && snapshotWritable(state)) {
     mkdirSync(dirname(SNAPSHOT), { recursive: true });
     writeFileSync(
       SNAPSHOT,

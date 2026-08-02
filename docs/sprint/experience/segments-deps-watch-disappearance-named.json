@@ -1,0 +1,13 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "deps-watch-disappearance-named",
+  "forTask": "deps-watch-disappearance-named — исчезновение advisory называется поимённо: строка 6 топ-10 хендофа 02.08",
+  "note": "Замер объёма по блокам, снят git diff --numstat от базы 9dc167d0 после закрытия окна: insertions + deletions по зоне блока. Не оценка и не пересказ — измерение.",
+  "measuredAt": "2026-08-02T14:50:00+03:00",
+  "segments": [
+    { "cutBlockId": "deps-diff-core", "changedLines": 135 },
+    { "cutBlockId": "deps-audit-state", "changedLines": 67 },
+    { "cutBlockId": "deps-diff-tooth", "changedLines": 237 },
+    { "cutBlockId": "deps-watch-words", "changedLines": 70 }
+  ]
+}

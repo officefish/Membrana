@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "deps-watch-disappearance-named",
+      "title": "Исчезновение advisory называется поимённо и без выдуманной причины",
+      "promptPath": "docs/prompts/DEPS_WATCH_DISAPPEARANCE_NAMED_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "строка 6 топ-10 хендофа 02.08; GH-иссью заводится при отгрузке PR",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-02",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "brace-expansion пропал из снимка в ec0b9d33 (утренний ритуал 01.08) — режим morning перезаписывает снимок без сравнения; вечерний печатает 'закрыто за день: N' без имён и без замера причины",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "detectors-judge-whole-record",
       "title": "Кепстральный и flux-детекторы судят запись целиком, а не первые 85 мс",
       "promptPath": "docs/prompts/DETECTORS_JUDGE_WHOLE_RECORD_PROMPT.md",

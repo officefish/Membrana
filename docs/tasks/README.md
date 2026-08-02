@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `deps-watch-disappearance-named` | Исчезновение advisory называется поимённо и без выдуманной причины | S | [`DEPS_WATCH_DISAPPEARANCE_NAMED_PROMPT.md`](../prompts/DEPS_WATCH_DISAPPEARANCE_NAMED_PROMPT.md) | — |
 | `detectors-judge-whole-record` | Кепстральный и flux-детекторы судят запись целиком, а не первые 85 мс | S | [`DETECTORS_JUDGE_WHOLE_RECORD_PROMPT.md`](../prompts/DETECTORS_JUDGE_WHOLE_RECORD_PROMPT.md) | — |
 | `tooling-truth-orphans-diagnosis` | Приборы говорят о себе замеренное: диагноз scripts:orphans и прецедент предела ревью | S | [`TOOLING_TRUTH_ORPHANS_DIAGNOSIS_PROMPT.md`](../prompts/TOOLING_TRUTH_ORPHANS_DIAGNOSIS_PROMPT.md) | — |
 | `subconscious-lift-c3` | Лифт всплытия C3: облако подсознания, мультизапрос, акт emerge/reject за персоной | M | [`SUBCONSCIOUS_LIFT_C3_PROMPT.md`](../prompts/SUBCONSCIOUS_LIFT_C3_PROMPT.md) | [#1615](https://github.com/officefish/Membrana/issues/1615) |
