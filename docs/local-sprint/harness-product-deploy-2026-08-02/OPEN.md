@@ -9,7 +9,7 @@
 | Branch | `codex/harness-product-deploy` |
 | Lead | vesnin |
 | Support | dynin · rodchenko · tarasov |
-| Status | implementation verified · exact-SHA reviews and production deploy pending |
+| Status | CLOSED · PR #1650 merged · production domains verified |
 
 ## Предмет
 

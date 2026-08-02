@@ -1,0 +1,15 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "harness-product-deploy-2026-08-02",
+  "note": "Changed-line measurement from the PR #1650 squash merge, grouped by the ratified block zones. The production-deploy block changed no repository lines; its outcome is external DNS, Mintlify and HTTPS evidence.",
+  "measuredAt": "2026-08-02T20:24:30+03:00",
+  "segments": [
+    { "cutBlockId": "harness-generator", "changedLines": 496 },
+    { "cutBlockId": "harness-workshop-pages", "changedLines": 600 },
+    { "cutBlockId": "harness-procedure-pages-a", "changedLines": 478 },
+    { "cutBlockId": "harness-procedure-pages-b", "changedLines": 460 },
+    { "cutBlockId": "harness-editorial", "changedLines": 174 },
+    { "cutBlockId": "production-deploy", "changedLines": 0 },
+    { "cutBlockId": "execution-and-gates", "changedLines": 394 }
+  ]
+}
