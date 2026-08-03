@@ -36,6 +36,7 @@ import {
   syncTasksReadme,
 } from './lib/task-registry.mjs';
 import { registerOrLinkTask } from './lib/task-start-links.mjs';
+import { compileCategories, decompose } from './lib/tasks-decompose.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -97,6 +98,27 @@ if (isMain) {
   } catch (e) {
     console.error(e.message);
     process.exit(1);
+  }
+
+  // Категория декомпозиции — СРАЗУ при регистрации, а не красным CI потом (шот C, 03.08).
+  // Ловушка срабатывала дважды за два дня: префикс вносился для первой карточки, зуб
+  // «активный реестр разложен полностью» краснел на следующем прогоне после третьей.
+  // Предупреждение, НЕ блок: exit не меняется, регистрация состоялась. Матчер одной
+  // карточки — существующий decompose([entry]) по существующему конфигу, не второе правило.
+  try {
+    const config = JSON.parse(readFileSync(resolve(root, 'scripts/tasks-decompose.config.json'), 'utf8'));
+    const { unassigned } = decompose([entry], compileCategories(config));
+    if (unassigned.length > 0) {
+      console.warn(
+        `⚠ карточка «${entry.id}» ВНЕ КАТЕГОРИЙ декомпозиции — дополни паттерн в ` +
+          'scripts/tasks-decompose.config.json, иначе CI-зуб «активный реестр разложен полностью» ' +
+          'покраснеет на следующем прогоне. Проверка: yarn tasks:decompose',
+      );
+    }
+  } catch (e) {
+    // Сторож не вправе уронить регистрацию своей осечкой; но и молчать нельзя — конфиг,
+    // который не читается, сам по себе находка.
+    console.warn(`⚠ проверка категории не состоялась: ${e?.message ?? e}`);
   }
 
   const link =

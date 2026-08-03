@@ -524,3 +524,16 @@ describe('связь карточки с GitHub при рождении', () => 
     assert.equal(e.githubIssue, null, 'соседи и тесты строят записи без Issue законно');
   });
 });
+
+// ── Шот C (03.08): категория декомпозиции при регистрации ─────────────────────────────────
+
+it('шот C: матчер одной карточки — существующий decompose, не второе правило', async () => {
+  const { compileCategories, decompose } = await import('./lib/tasks-decompose.mjs');
+  const { readFileSync } = await import('node:fs');
+  const config = JSON.parse(readFileSync(new URL('./tasks-decompose.config.json', import.meta.url), 'utf8'));
+  const cats = compileCategories(config);
+  // Карточка с покрытым префиксом — в категории; выдуманный префикс — вне.
+  assert.equal(decompose([{ id: 'gate-honest-pair-completeness' }], cats).unassigned.length, 0);
+  assert.equal(decompose([{ id: 'zzz-никогда-не-был-префиксом' }], cats).unassigned.length, 1);
+});
+
