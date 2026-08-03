@@ -119,7 +119,48 @@ export function pathsAreAdjacent(a, b) {
  *   },
  * }}
  */
+/**
+ * Моменты прогона предиката (вердикт M3 заседания one-shot-manifest, 03.08).
+ * Прибор ОДИН и бежит дважды: `forecast` при штампе — гейт входа, `fact` при
+ * «код дописан» — стоп. Список закрыт и заморожен.
+ */
+export const EVALUATION_MOMENTS = Object.freeze(['forecast', 'fact']);
+
+/**
+ * Измеримое основание тематической однородности (вердикт M4) — агрегат поверх
+ * `pathFamily`. Основание ПОД суждением тимлида, а не вместо него: поля
+ * `isHomogeneous` здесь нет и быть не может (BLOCK заседания M4).
+ *
+ * Слепота названа полем: классификация идёт по форме пути, не по семантической
+ * связности — модуль в пакете, его зуб в скриптах и потребитель в третьем месте
+ * дадут три семейства при одном предмете.
+ *
+ * TODO(graph): когда появится граф зависимостей уровня «путь к пути» — заменить
+ * вычислитель внутри ЭТОЙ функции на предикат связности; интерфейс возврата не
+ * меняется, `basis` станет 'dependency-graph', поле `blind` уйдёт.
+ *
+ * @param {string[]} paths
+ * @returns {{families: string[], familyCount: number, basis: 'pathFamily-v1', blind: 'no-graph'}}
+ */
+export function shotThematicBasis(paths) {
+  const families = [...new Set((paths ?? []).map(normalizeRepoPath).filter(Boolean).map(pathFamily))].sort();
+  return { families, familyCount: families.length, basis: 'pathFamily-v1', blind: 'no-graph' };
+}
+
+/**
+ * @param {object} input
+ * @param {'forecast'|'fact'} input.evaluationMoment момент прогона — ЯВНЫЙ, без умолчания (M3)
+ * @throws {Error} если момент не назван или вне закрытого списка
+ */
 export function evaluateOneShotS(input = {}) {
+  // Момент — ЯВНЫЙ, умолчания нет (приговор держателя): тихий «forecast по
+  // умолчанию» лгал бы о моменте на каждом факте, где параметр забыли, — ровно
+  // тот класс, ради которого M3 и вводился. Бросок виден сразу; ложь — никогда.
+  if (!EVALUATION_MOMENTS.includes(input.evaluationMoment)) {
+    throw new Error(
+      `evaluationMoment «${String(input.evaluationMoment)}» вне {${EVALUATION_MOMENTS.join('|')}} — момент прогона называется явно (M3)`,
+    );
+  }
   const limits = {
     ...ONE_SHOT_S_DEFAULTS,
     ...(input.limits ?? {}),
@@ -181,6 +222,10 @@ export function evaluateOneShotS(input = {}) {
         'capability_chaining',
       ].includes(r),
     ),
+    // Момент — корнем результата, не деталью: это входной параметр записи, а не
+    // вычисленное. В reasons момент НЕ просачивается (никаких `@fact`-суффиксов):
+    // закрытый набор строк остаётся закрытым, корреляции строит потребитель.
+    evaluationMoment: input.evaluationMoment,
     reasons,
     details: {
       fileCount,
@@ -190,6 +235,8 @@ export function evaluateOneShotS(input = {}) {
       chainFiles,
       chainLines,
       limits,
+      // M4: основание бежит В прогоне предиката, без отдельного запуска.
+      thematicBasis: shotThematicBasis(paths),
     },
   };
 }
