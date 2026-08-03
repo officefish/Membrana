@@ -18,3 +18,14 @@
 {"ts":"2026-08-03T16:13:22.930Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-03T16:12:57.899Z","origin":"ask-persona"}
 {"ts":"2026-08-03T16:13:22.934Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-30-sprint-honest-m3-contract-review","reason":"там я формализовал предикат ревью как match(C, D) → {pass, fail(diff[])} с явным различением независимых предикатов. Тут та же задача: три предиката (before-run, before-sign, disqual-run-before-sig) — независимы по смыслу, но делят одну решающую операцию сравнения t.at ? sig.at. Всплыло, потому что зуб на «строгое <» — это именно фиксация того, что предикаты разные, а операция сравнения — одна.","origin":"ask-persona"}
 {"ts":"2026-08-03T16:13:22.935Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-18-evening-auditor-m1-boundary","reason":"там граница аудитора задана областью определения чистой функции. Здесь та же логика: граница «нарушение / не нарушение» должна быть выводима из входа, а не из вкуса ревьюера через полгода.","origin":"ask-persona"}
+{"ts":"2026-08-03T17:54:34.341Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-03-one-shot-manifest-m0-order","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.341Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-03-one-shot-manifest-m1-frames","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.341Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-03-one-shot-manifest-m2-assignment","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.341Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-03-one-shot-manifest-m3-volume","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.341Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-03-one-shot-manifest-m4-homogeneity","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.341Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-tariff-grid-m3-tri","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.341Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-tariff-grid-m4-memories","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.341Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-tariff-grid-m5-produce","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.341Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-tariff-grid-m6-switch","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.341Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-tariff-grid-m7-teeth","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.341Z","persona":"dynin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}

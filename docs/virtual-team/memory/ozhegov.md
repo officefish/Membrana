@@ -5,8 +5,38 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14397/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 252 (причины в op-log) -->
+Записей: 48 · бюджет 14391/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 257 (причины в op-log) -->
+
+### 2026-08-03 · позиция · one-shot-manifest-m0-order
+
+> Начну с лемм, иначе разойдёмся в терминах. Четыре вопроса — это четыре переменные: (1) фреймы и держатели, (2) основание однородности, (3) предикат объёма, (4) форма назначения. Ребро A→B в DAG означает одно: ответ на A определяет переменную, без которой вопрос B не имеет […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/one-shot-manifest-m0-order-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · one-shot-manifest-m1-frames
+
+> Уточняю термины, иначе поедем на синонимах. **Фрейм процедуры** — именованная запись в манифесте с полями `id`, `owner`, семантикой артефакта, который кадр производит или принимает. **Шаг чек-листа** — безымянный пункт внутри фазы без держателя и без собственной записи в ленте. […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/one-shot-manifest-m1-frames-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · one-shot-manifest-m2-assignment
+
+> Уточню лемму «акт». Акт — это запись с адресом, не реплика в чате. Если назначение тимлида живёт только в диалоге — это дисциплина, не механизм. Нам нужна запись с тремя обязательными полями минимум: `assignedPersona` (кто назначен), `shotId` (на какой шот), `assignedBy` […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/one-shot-manifest-m2-assignment-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · one-shot-manifest-m3-volume
+
+> Уточняю лемму по записи прогона. M1 даёт три точки: старт `first-frame`, `owner-ratify`, закрытие `execute`. Запись прогона предиката S должна быть привязана к точке момента: первый прогон фиксируется в `first-frame` (прогноз), второй — в `execute` (факт). `owner-ratify` — […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/one-shot-manifest-m3-volume-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · one-shot-manifest-m4-homogeneity
+
+> Зафиксирую термины до начала. В повестке три кандидата, но только один существует в коде прямо сейчас — `pathFamily` из `scripts/lib/one-shot-s-predicate.mjs`. Граф зависимостей уровня путь-к-пути — факт отсутствия, не кандидат для выбора. Голос Фаррелла — вне гейта, в основания […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/one-shot-manifest-m4-homogeneity-2026-08-03.md#reply-1`
 
 ### 2026-08-02 · позиция · team-evening-feedback
 
@@ -259,36 +289,6 @@
 > Леммы, иначе синонимы. **Рельс** — замкнутый путь носителей: Prisma-поле → node-realtime → wire DTO → `device-board-module-config.entitledTariffSkus` → `ClientUserCaseCatalogService` → gate бейджей. **Сетка** — `TariffGridDocument` (registry + matrix), home на сервере. […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/tariff-grid-m2-rail-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m3-tri
-
-> Леммы, иначе синонимы. **Entitlement** — право в реестре (id + kind). **Gated value** — `kind: gated` + `enabled` + `preconditionId` (M1). **Precondition** — именованный предикат вне сетки; сетка хранит только id-ссылку, не тело вычисления. **PreconditionReport** — снимок `{ id, […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/tariff-grid-m3-tri-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m4-memories
-
-> Начинаю со словаря, иначе снова синонимы. **Горячая память** — квота области, из которой детекторы и пользовательские задачи читают/пишет рабочий объём. **Холодная память** — квота хранилища треков (media/library). **Ячейка quota** (M1) — `EntitlementValue` kind `quota{limit, […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m4-memories-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m5-produce
-
-> Леммы, иначе снова синонимы. **produce** — entitlement рода capability (M1), author — матрица (M2). **Артефакт производства** — сущность user-owned: own dataset index, own detection, user scenario на своих детекциях. **Create-path** — write-path создания/материализации нового […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m5-produce-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m6-switch
-
-> Леммы, иначе синонимы. **TariffTransition** — атомарный акт смены `membrane.tariffId` (ссылка на SKU), не снимок матрицы прав в мембране. **PromoCode** — отдельная сущность-носитель права *инициировать* переход на целевой SKU при погашении. **Issuer** — admin (роль, не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m6-switch-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m7-teeth
-
-> Леммы, иначе синонимы. **Зуб** — именованный машинный предикат с home (файл/хук/схема) и закрытым effect. **Locus** — место стояния, не «слой ощущений». **SoT** — sole author сетки (M2); клиент — инсталлятор, не автор. Homes: матрица G на сервере; проекция `entitledTariffSkus` — […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m7-teeth-2026-07-29.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m2b-control-plane
 

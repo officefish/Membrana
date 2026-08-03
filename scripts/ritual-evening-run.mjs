@@ -88,6 +88,23 @@ function main() {
   const statuses = {};
   const report = [];
 
+  // ── журнал прогона (спринт run-journal-producer 03.08, ADR-0022) ──────────────
+  // open/close пишет РАННЕР, не шаги манифеста: шаги независимы, и close-шаг
+  // написал бы pass при упавшем критичном — ложь статусом. Только раннер видит итог.
+  // Частичный (--only) и сухой (--dry) прогоны в журнал не пишутся: это не вечер.
+  // Отказ журнала громкий, но шаги не заложники записи — вечер продолжается.
+  const fullRun = !dry && !only;
+  const journal = { open: null, close: null };
+  const journalCall = (args) =>
+    spawnSync('node', ['scripts/procedure-run-record.mjs', ...args], { cwd: root, stdio: 'inherit', env: process.env }).status ?? 1;
+  if (fullRun) {
+    console.error('\n=== ritual:evening → журнал: open прогона ===');
+    journal.open = journalCall(['open', '--procedure', 'ritual-evening', '--evidence', 'docs/MAIN_DAY_ISSUE.md']);
+    if (journal.open !== 0) {
+      console.error('✗ журнал: open не записан — close в конце откажет так же громко; шаги вечера идут дальше');
+    }
+  }
+
   for (const step of steps) {
     if (only && !only.has(step.id)) {
       // Статус НЕ выставляем: «не выбран» — это не «ok». Иначе частичный прогон
@@ -157,8 +174,22 @@ function main() {
   const failed = report.filter((r) => isBlocking(r.status));
   const findings = report.filter((r) => r.finding);
 
+  if (fullRun) {
+    // Статус close — ПО ФАКТУ прогона; gaps называют упавшие критичные шаги.
+    const closeStatus = failed.length > 0 ? 'fail' : 'pass';
+    console.error(`\n=== ritual:evening → журнал: close прогона (${closeStatus}) ===`);
+    journal.close = journalCall([
+      'close', '--procedure', 'ritual-evening', '--status', closeStatus,
+      '--evidence', 'docs/HANDOFF.md',
+      ...failed.flatMap((f) => ['--gap', f.id]),
+    ]);
+    if (journal.close !== 0) {
+      console.error('✗ журнал: close не записан — прогон останется открытым, его закроет fail/orphaned следующий open');
+    }
+  }
+
   if (asJson) {
-    console.log(JSON.stringify({ chain: manifest.chain, dry, steps: report, failedCritical: failed.map((f) => f.id) }, null, 2));
+    console.log(JSON.stringify({ chain: manifest.chain, dry, steps: report, failedCritical: failed.map((f) => f.id), journal }, null, 2));
   } else {
     console.error('\n──── итог вечерней цепочки ────');
     for (const r of report) console.error(`  ${(r.status ?? 'не выбран').padEnd(20)} ${r.id}`);
@@ -176,9 +207,13 @@ function main() {
     }
   }
 
-  // Прогон честен: не-ноль, если упал критичный. Но упал он ПОСЛЕ того, как
-  // независимые шаги отработали — в этом вся разница с `&&`-цепочкой.
-  process.exit(failed.length > 0 ? 1 : 0);
+  // Прогон честен: не-ноль, если упал критичный ИЛИ журнал не записался. Но упало
+  // это ПОСЛЕ того, как независимые шаги отработали — в этом вся разница с `&&`-цепочкой.
+  const journalBroken = fullRun && (journal.open !== 0 || journal.close !== 0);
+  if (journalBroken && failed.length === 0) {
+    console.error('\n✗ журнал прогона не записан (см. выше) — вечер отработал, но след не оставлен');
+  }
+  process.exit(failed.length > 0 || journalBroken ? 1 : 0);
 }
 
 main();

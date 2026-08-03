@@ -23,6 +23,17 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const kitsRoot = join(repoRoot, 'kits');
 const TAG = 'pre-push [kits-strict]';
 
+/**
+ * Шаблон коммита ремонта — вторая половина рецепта (шот H, 03.08). Первая (команда) живёт в
+ * ядре (`repinHint`); шаблон — процедура отгрузки, его место в CLI (граница Ожегова:
+ * ядро = команда, CLI = процедура). Форма ратифицирована владельцем по трём влитым коммитам
+ * ремонта (PR #1642, #1644, #1666): трижды за два дня ремонт делался руками одинаково —
+ * рецепт в момент боли дешевле воспоминания. Живое имя кита подставляет CLI из broken;
+ * <предмет> остаётся плейсхолдером — предмет догона знает только человек.
+ */
+const repairCommitHint = (id) =>
+  `  влить отдельным ревьюируемым коммитом: chore(kits): опись ${id} догнала <предмет> — пре-пуш зуб, ремонт инструментом`;
+
 /** Тот же приём, что prepush-typecheck-scope: диапазон пуша ≈ origin/main...HEAD. */
 function changedVsMain() {
   try {
@@ -81,6 +92,7 @@ function main() {
   if (broken.length > 0) {
     console.error(`${TAG}: дрейф описи — ${broken.join(', ')}. Push остановлен ДО CI.`);
     console.error(repinHint(broken));
+    for (const id of broken) console.error(repairCommitHint(id));
     return 1;
   }
   console.log(`${TAG}: OK — описи затронутых китов совпадают (${affected.map((a) => a.id).join(', ')})`);
