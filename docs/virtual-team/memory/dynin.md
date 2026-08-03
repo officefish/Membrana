@@ -6,7 +6,37 @@
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
 Записей: 48 · бюджет 14363/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 252 (причины в op-log) -->
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 257 (причины в op-log) -->
+
+### 2026-08-03 · позиция · one-shot-manifest-m0-order
+
+> Формализую предикат ребра строго. Ребро (A→B) существует тогда и только тогда, когда: answer(A) defines(v) AND question(B) requires(v) для некоторой переменной v. Проверяю (1)→(3): вопрос (3) — двойной прогон предиката объёма при штампе и при стопе. «Штамп» и «стоп» — события […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/one-shot-manifest-m0-order-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · one-shot-manifest-m1-frames
+
+> Формализую предикат фрейма строго. Пусть шаг `s` является фреймом тогда и только тогда, когда выполняется хотя бы одно из двух условий: (A) `owner(s) ≠ owner(prev(s))` — смена держателя относительно предыдущего шага; (B) `artifact(s) ∈ ProcedureRunLedger` — шаг производит запись […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/one-shot-manifest-m1-frames-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · one-shot-manifest-m2-assignment
+
+> Формализую предикат строго. Пусть `R` — запись прогона шота в `docs/procedure-runs/`. Предикат корректного назначения: `valid_assign(R) ⇔ R.executor ∈ KnownPersonas ∧ R.assignedBy = "teamlead" ∧ R.shotId ≠ ∅`. Предикат прогона контекста: `context_run_ok(R) ⇔ ∃ trail ∈ […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/one-shot-manifest-m2-assignment-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · one-shot-manifest-m3-volume
+
+> Формализую без разночтений. Пусть `D_forecast` — ожидаемый дифф при штампе, `D_fact` — реальный дифф при «код дописан». Предикат: `evaluateOneShotS(D) → {pass, fail(reason)}`, где `reason ∈ {lines_exceeded, files_exceeded, anti_chain}`. Порог: 200 строк / 8 файлов. Анти-цепочка: […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/one-shot-manifest-m3-volume-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · one-shot-manifest-m4-homogeneity
+
+> Формализую область. Пусть `shot` — упорядоченный список путей `[p₁, p₂, …, pₙ]`. Предикат `pathFamily(p)` — функция `path → familyId`, реализованная в `scripts/lib/one-shot-s-predicate.mjs`. Индикатор однородности по текущему основанию: `families(shot) = { pathFamily(pᵢ) | pᵢ ∈ […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/one-shot-manifest-m4-homogeneity-2026-08-03.md#reply-1`
 
 ### 2026-08-02 · позиция · team-evening-feedback
 
@@ -259,36 +289,6 @@
 > Формализую без UI. Пусть G — grid, s — tariffSku мембраны, E_cat ⊂ registry — id с kind=`catalog`. Предикат entitled по каталогу: `entitled(s, id) ⇔ resolve(G,s,id).status = entitled`. Проекция списка SKU карточек: `P(G,s) = { cardSku | ∃ id∈E_cat: payload(id) покрывает cardSku […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/tariff-grid-m2-rail-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m3-tri
-
-> Формализую без UI. Из M1: `resolveEntitlement(grid, sku, id) → { status, payload, unmetPreconditions[] }`, status ∈ {entitled, not_entitled}. Третий исход не обязан быть третьим enum-значением status: он уже выразим как `status = entitled ∧ unmetPreconditions ≠ ∅`. Предикат […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m3-tri-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m4-memories
-
-> Формализую без UI. Пусть \(H\) — occupied hot (байты), \(C\) — occupied cold, \(L_h, L_c\) — limits из сетки. Инварианты: \(0 \le H \le L_h\), \(0 \le C \le L_c\), **независимо**: исчерпание \(H\) не вычитает из \(L_c\) и наоборот. Предикат допуска записи в контур \(x \in \{hot, […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m4-memories-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m5-produce
-
-> Формализую без UI. Пусть E = resolveEntitlement(sku, produceId) → {enabled, scope?}. Предикат допуска к созданию: `canProduce(ctx) ⇔ E.enabled ∧ scopeAllows(E.scope, kind) ∧ unmetPreconditions(ctx)=∅` (троичность M3). Предикат существования артефакта a: `exists(a) ⇔ a ∈ […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m5-produce-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m6-switch
-
-> Формализую без UI. Состояние мембраны: `m.tariffId ∈ SKU`. Акт: `apply(m, t', actor, proof) → ok|err`, где `t'` — целевой SKU, `proof ∈ {AdminCommand, PromoRedemption, SelfServiceUpgrade?}`. Инвариант M2: ∀ entitlementId `resolve(m, id) = matrix[m.tariffId][id]` — нет локального […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m6-switch-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m7-teeth
-
-> Формализую без UI. Зуб Z = тройка `(predicate, locus, effect)`, где `predicate: Ctx → {pass, fail(reason)}`, `locus ∈ {schema, unit_test, precommit, runtime}`, `effect ∈ {reject_op, red_ci, report_finding}`. Инвариант: `fail ⇒ effect ≠ silent`. Кандидаты предикатов из входа M7: […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m7-teeth-2026-07-29.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
 
