@@ -15,11 +15,12 @@
  *  - находка расхождения ≠ ненулевой exit; пороги — scripts/worktree-sync.config.json.
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { classifyWorktree, parseWorktreeCard } from './lib/classify-worktree.mjs';
+import { classifyResolution, formatResolution } from './lib/worktree-resolution.mjs';
 import {
   canAutoFastForward,
   checkWorktreeSync,
@@ -45,6 +46,28 @@ function listWorktrees() {
     }
   }
   if (current) out.push(current);
+  return out;
+}
+
+/**
+ * Пакеты воркспейса дерева с РЕАЛЬНЫМИ путями (#1647). Симлинки разыменовываются здесь,
+ * в проводе, — ядро (`worktree-resolution.mjs`) получает готовые значения и остаётся чистым
+ * (граница Веснина на разборе нарезки). Битый симлинк отдаётся `realPath: null`, а не
+ * выбрасывается: предикат называет его отдельным числом.
+ */
+function listWorkspacePackages(wtPath) {
+  const dir = join(wtPath, 'node_modules', '@membrana');
+  if (!existsSync(dir)) return [];
+  const out = [];
+  for (const name of readdirSync(dir)) {
+    let realPath = null;
+    try {
+      realPath = realpathSync(join(dir, name));
+    } catch {
+      /* битый симлинк — realPath остаётся null */
+    }
+    out.push({ name, realPath });
+  }
   return out;
 }
 
@@ -151,6 +174,9 @@ origin/main. Авто — только --ff-only в canon-дереве; diverged
 
     const line = formatSyncLine(name, check);
     console.log(`  ${line.text}`);
+    // #1647: резолюция пакетов дерева — вслух и с числами. Находка ≠ exit-код (правило дома):
+    // прибор снимает молчание, а не роняет утро.
+    console.log(`    ${formatResolution(classifyResolution(realpathSync(wt.path), listWorkspacePackages(wt.path)))}`);
 
     // Р3: мутация — только перемотка указателя, только canon, только ff-able.
     if (canAutoFastForward(check) && wt.card.kind === 'canon' && !dryRun) {
