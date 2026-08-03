@@ -16,7 +16,7 @@
  */
 
 import { existsSync, readFileSync } from 'node:fs';
-import { resolve, sep } from 'node:path';
+import { relative, resolve, sep } from 'node:path';
 
 import { runGate } from './lib/execution-trace/gate.mjs';
 import { EXIT_NOT_PERFORMED, INPUT_ERRORS } from './lib/execution-trace/gate-exit-codes.mjs';
@@ -30,6 +30,12 @@ import { planToGate } from './lib/sprint-integration/plan-to-gate.mjs';
 import { readActsTrail } from './lib/sprint-cut/acts-trail-reader.mjs';
 import { ACT_KINDS } from './lib/sprint-cut/act-kinds.mjs';
 import { parseIso } from './lib/execution-trace/plan-reader.mjs';
+import { closeProcedureRun, findUnclosedRuns, readProcedureRunTrail } from './lib/procedure-run-journal.mjs';
+// Словарь прогона спринта (SPRINT_PROCEDURE_ID, лента из ratification.at) живёт у
+// носителя ratify: open и close обязаны выводить ОДИН путь из ОДНОГО поля. Импорт
+// скрипт-к-скрипту — долг класса acts-trail-reader, карточка #1681: переезд в lib
+// требует плана, чья зона включает lib; у этого блока её нет.
+import { SPRINT_PROCEDURE_ID, sprintTrailRelPath } from './sprint-cut-check.mjs';
 
 /**
  * Схема плана нарезки — ЕДИНСТВЕННАЯ форма, которую шов умеет приводить ко входу гейта.
@@ -108,6 +114,51 @@ export function makeWorkTreeResolver(root) {
   };
 }
 
+/**
+ * Закрыть прогон спринта в журнале процедур вердиктом гейта (блок sprint-producer, 03.08).
+ *
+ * Закрывается ТОЛЬКО существующая open-запись и только при состоявшейся проверке
+ * (exit 0/1): exit 2 — «проверка не состоялась», утверждать в журнале нечего.
+ * Маппинг: exit 0 → pass; exit 1 → fail, gaps = уникальные имена вердиктов
+ * остановленных блоков — читатель ленты видит РОД лжи без открытия отчёта.
+ * Отсутствие open-записи — не ошибка: mid-sprint прогоны гейта — рабочие замеры;
+ * прогон спринта один, его открывает ратификация (`sprint:cut --ratify`).
+ *
+ * @param {string} repoRoot
+ * @param {{plan: object, planRelPath: string, tracesRelPath: string, report: {exitCode: number, checkedBlocks: number, blocks: {verdict: string, stopped: boolean}[]}, nowIso: string}} input
+ * @returns {{closed: boolean, reason: string, record?: object}}
+ */
+export function closeSprintRunFromReport(repoRoot, { plan, planRelPath, tracesRelPath, report, nowIso }) {
+  const sprintId = plan?.sprintId;
+  if (typeof sprintId !== 'string' || sprintId.trim() === '') {
+    return { closed: false, reason: 'план без sprintId — закрывать нечем' };
+  }
+  if (report.exitCode !== 0 && report.exitCode !== 1) {
+    return { closed: false, reason: `exit ${report.exitCode} — проверка не состоялась, вердикта для журнала нет` };
+  }
+  const trailRel = sprintTrailRelPath(plan);
+  const records = readProcedureRunTrail(repoRoot, trailRel);
+  if (records.some((r) => r?.runPhase === 'close' && r.runId === sprintId)) {
+    return { closed: false, reason: 'прогон уже закрыт — второе закрытие было бы второй правдой' };
+  }
+  if (!findUnclosedRuns(records, SPRINT_PROCEDURE_ID).some((r) => r.runId === sprintId)) {
+    return { closed: false, reason: 'open-записи нет — прогон открывает sprint:cut --ratify, гейт без неё лишь замер' };
+  }
+  const stops = report.blocks.filter((b) => b.stopped);
+  const record = closeProcedureRun(repoRoot, trailRel, {
+    runId: sprintId,
+    status: report.exitCode === 0 ? 'pass' : 'fail',
+    subject:
+      report.exitCode === 0
+        ? `спринт ${sprintId}: гейт зелёный — блоков ${report.checkedBlocks}, все пары честны`
+        : `спринт ${sprintId}: гейт остановил — ${stops.length} из ${report.checkedBlocks} блоков без честной пары`,
+    at: nowIso,
+    evidence: [tracesRelPath, planRelPath],
+    gaps: [...new Set(stops.map((b) => b.verdict))],
+  });
+  return { closed: true, reason: `close-запись ${record.status} в ${trailRel}`, record };
+}
+
 /** @param {readonly string[]} argv */
 export function parseArgs(argv) {
   /** @type {{plan: string|null, traces: string|null, now: string|null, json: boolean}} */
@@ -127,7 +178,7 @@ const USAGE = [
   '',
   `  --plan   stub:<имя> | путь к .json    ратифицированный план нарезки (схема ${CUT_PLAN_SCHEMA})`,
   '  --traces fixture:<имя> | путь к .jsonl  лента вещдоков окна',
-  '  --now    ISO-8601                     только шапка отчёта, в предикаты не попадает',
+  '  --now    ISO-8601                     шапка отчёта и время close-записи журнала; в предикаты не попадает',
   '  --json                                вывести GateReport как JSON',
   '',
   `  стабы плана:  ${STUB_PLAN_NAMES.join(', ')}`,
@@ -144,11 +195,15 @@ function main() {
   /** @type {{code:string,subject:string,detail:string}[]} */
   const preErrors = [];
   let planRaw = null;
+  /** Сырой файл плана: закрытие прогона в журнале читает sprintId и ratification из НЕГО —
+   * адаптированная модель гейта их не несёт. */
+  let cutPlanFile = null;
   try {
     if (args.plan.startsWith('stub:')) {
       planRaw = stubPlan(args.plan.slice('stub:'.length));
     } else {
-      const adapted = adaptCutPlan(JSON.parse(readFileSync(args.plan, 'utf8')));
+      cutPlanFile = JSON.parse(readFileSync(args.plan, 'utf8'));
+      const adapted = adaptCutPlan(cutPlanFile);
       planRaw = adapted.planRaw;
       preErrors.push(...adapted.errors);
     }
@@ -221,6 +276,25 @@ function main() {
   });
 
   process.stdout.write(args.json ? `${JSON.stringify(report, null, 2)}\n` : renderReport(report));
+
+  // Вердикт по настоящему плану и настоящей ленте отпечатывается в журнале процедур.
+  // Стабы и фикстуры мимо: их вердикты — про зубы, не про жизнь.
+  if (cutPlanFile !== null && !args.traces.startsWith('fixture:')) {
+    try {
+      const repoRoot = process.cwd();
+      const closed = closeSprintRunFromReport(repoRoot, {
+        plan: cutPlanFile,
+        planRelPath: relative(repoRoot, resolve(args.plan)).split(sep).join('/'),
+        tracesRelPath: relative(repoRoot, resolve(args.traces)).split(sep).join('/'),
+        report,
+        // --now гейта расширен: он же — время close-записи; иначе системное время CLI.
+        nowIso: args.now ?? new Date().toISOString(),
+      });
+      process.stdout.write(`журнал: ${closed.closed ? 'прогон спринта закрыт — ' : ''}${closed.reason}\n`);
+    } catch (e) {
+      process.stderr.write(`журнал: close-запись не написана: ${String(e.message ?? e)}\n`);
+    }
+  }
   return report.exitCode;
 }
 

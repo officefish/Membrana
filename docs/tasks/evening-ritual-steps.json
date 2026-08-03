@@ -258,5 +258,6 @@
       ]
     }
   ],
+  "//journal": "Прогон вечера пишется в журнал процедур НЕ шагами манифеста, а самим раннером ritual-evening-run.mjs: open до первого шага, close после итога со статусом ПО ФАКТУ (pass/fail + gaps из упавших критичных). Шагом манифеста close был бы ложью: шаги независимы, close-шаг написал бы pass и при упавшем критичном. Обрыв самого раннера оставляет сироту — её закроет fail/orphaned следующий open (ленивое закрытие, ADR-0022 Р4).",
   "//rollback": "Ручной откат (ДАННЫЕ, не исполняемый дубль — исполняемая копия старой цепочки протухла бы и вернула || true на критичный code-review, что и поймал гард 18.07). Прежняя шелл-цепочка была: node scripts/archive-night-hunt-artifacts.mjs && node scripts/archive-daily-day-artifacts.mjs && node scripts/truth.mjs cool && node scripts/rag-evening-index.mjs && (node scripts/persona-memory-extract.mjs --all || true) && (node scripts/insight-drift.mjs || true) && (node scripts/code-review.mjs || true) && (node scripts/archive-daily-code-review.mjs || true) && node scripts/ritual-evening-tail.mjs && (node scripts/telegram-ritual-digest.mjs --kind evening || true) — но возвращать её как есть НЕЛЬЗЯ: || true на code-review и есть инцидент. При отказе раннера запускать шаги поимённо по steps[] ниже."
 }
