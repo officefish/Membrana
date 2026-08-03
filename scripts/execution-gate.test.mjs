@@ -692,3 +692,33 @@ test('шот A: вчерашний рецидив воспроизводится
   ], { resolveRef: () => true });
   assert.ok(j.findings.some((f) => f.toothId === FINDINGS.WINDOW_AFTER_FIRST_TRACE));
 });
+
+// ── Шот E (03.08): граница строгого < при равных метках ───────────────────────────────────────
+
+test('шот E: одновременные метки НЕ нарушение — один зуб на инвариант, три кейса поверх', () => {
+  // ЗАМОК ГРАНИЦЫ (довод Дынина, шот E). Порядок событий определяется СТРОГИМ `<` по `at`.
+  // Равенство не является нарушением: метки в лентах имеют дискретизацию до минуты, и `==`
+  // статистически чаще отражает совпадение записи, чем истинную одновременность. Асимметрия
+  // ошибок названа явно: ложный минус (пропустить настоящее нарушение при равных at) дешевле
+  // ложного плюса (обвинить по артефакту квантования). Смена на `≤` требует (а) точности
+  // меток до секунд И (б) обоснования, что ложный плюс стал дороже ложного минуса — без
+  // обоих условий граница не двигается. Оговорка Дынина (warn-находка suspicious_tie при
+  // равных метках РАЗНЫХ источников) — расширение закрытого списка находок, идёт долгом.
+  const mk = (kind, traceId, at) => ({ traceId, blockId: 'b', kind, subject: 'vesnin', at, ref: traceId, relatesToSprint: false });
+  const block = { blockId: 'b', assigned: 'vesnin', mode: 'explicit_honest', from: 0, to: 1000, graceMs: 0, revisionAt: 0 };
+
+  // Кейс 1: review одновременно с ПЕРВЫМ context_run — before-run НЕ выносится.
+  const tie1 = judgeBlock(block, [mk('context_run', 't-run', 100), mk('review_pass', 't-rev', 100)], { resolveRef: () => true });
+  assert.equal(tie1.verdict, VERDICTS.HONEST_PAIR);
+  assert.deepEqual(tie1.findings.filter((f) => f.toothId === FINDINGS.ORDER_REVIEW_BEFORE_RUN), []);
+
+  // Кейс 2: review одновременно с подписью — before-sign НЕ выносится.
+  const tie2 = judgeBlock(block, [mk('contract_signature', 't-sig', 50), mk('review_pass', 't-rev', 50), mk('context_run', 't-run', 60)], { resolveRef: () => true });
+  assert.deepEqual(tie2.findings.filter((f) => f.toothId === FINDINGS.ORDER_REVIEW_BEFORE_SIGN), []);
+
+  // Кейс 3: context_run одновременно с подписью — дисквалификация run-before-signature
+  // НЕ выносится, след остаётся вещдоком.
+  const tie3 = judgeBlock(block, [mk('contract_signature', 't-sig', 50), mk('context_run', 't-run', 50), mk('review_pass', 't-rev', 60)], { resolveRef: () => true });
+  assert.deepEqual(tie3.disqualified, []);
+  assert.equal(tie3.verdict, VERDICTS.HONEST_PAIR);
+});

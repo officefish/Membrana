@@ -10,3 +10,4 @@
 {"timestamp":"2026-08-03T14:00:14.000Z","path":"docs/security/rotation-manifest-2026-08-03.md","slug":"rotation-manifest","headRev":"953004c3","status":"merged"}
 {"timestamp":"2026-08-03T14:03:27.637Z","path":"scripts/lib/review-oversized-queue.mjs","slug":"oversized-hostlocal-voice","headRev":"e44828cab8185d1ebc064e0889e7b354cdb4cbbd","status":"merged"}
 {"timestamp":"2026-08-03T16:01:59.413Z","path":"docs/procedures/weekly-dead-wire/MANIFEST.json","slug":"deadwire-weekday-fact","headRev":"860f30e35d360ad796f67e3b7f44fd9bdd65cba3","status":"merged"}
+{"timestamp":"2026-08-03T16:14:26.661Z","path":"scripts/execution-gate.test.mjs","slug":"simultaneous-at-boundary","headRev":"8aa5344fdfa8ec02089b5405731745b7c4742608","status":"merged"}
