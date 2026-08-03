@@ -1,0 +1,8 @@
+{"traceId":"tr-repaint-dynin-run","blockId":"history-repaint-measure","kind":"context_run","subject":"dynin","at":"2026-08-03T12:40:00+03:00","ref":"docs/discussions/cut-honest-pair-tarasov.md"}
+{"traceId":"tr-repaint-dynin-review","blockId":"history-repaint-measure","kind":"review_pass","subject":"dynin","at":"2026-08-03T12:50:00+03:00","ref":"docs/discussions/honest-pair-repaint-measure.md"}
+{"traceId":"tr-core-dynin-run","blockId":"completeness-core","kind":"context_run","subject":"dynin","at":"2026-08-03T13:40:00+03:00","ref":"docs/discussions/block-completeness-core-dynin.md"}
+{"traceId":"tr-core-dynin-review","blockId":"completeness-core","kind":"review_pass","subject":"dynin","at":"2026-08-03T13:46:00+03:00","ref":"scripts/lib/execution-trace/predicates.mjs"}
+{"traceId":"tr-tooth-dynin-run","blockId":"completeness-tooth","kind":"context_run","subject":"dynin","at":"2026-08-03T13:52:00+03:00","ref":"docs/discussions/block-completeness-tooth-dynin.md"}
+{"traceId":"tr-tooth-dynin-review","blockId":"completeness-tooth","kind":"review_pass","subject":"dynin","at":"2026-08-03T14:05:00+03:00","ref":"scripts/execution-gate.test.mjs"}
+{"traceId":"tr-rerun-ozhegov-run","blockId":"evidence-rerun","kind":"context_run","subject":"ozhegov","at":"2026-08-03T14:10:00+03:00","ref":"docs/discussions/honest-pair-evidence-rerun.md"}
+{"traceId":"tr-rerun-ozhegov-review","blockId":"evidence-rerun","kind":"review_pass","subject":"ozhegov","at":"2026-08-03T14:14:00+03:00","ref":"docs/discussions/honest-pair-evidence-rerun.md"}
