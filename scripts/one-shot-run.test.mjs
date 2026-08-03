@@ -203,3 +203,8 @@ test('каждая причина из закрытого перечня дос�
   }
   assert.equal(seen.size, NOT_READY_REASONS.length, 'каждая причина достигнута ровно своим случаем');
 });
+
+test('ранний возврат при неверном числе точек несёт счёт, а не молчит', () => {
+  assert.deepEqual(shotRunProblems([point()]), ['точек 1 из 3']);
+  assert.deepEqual(shotRunProblems('не массив'), ['точек 0 из 3']);
+});

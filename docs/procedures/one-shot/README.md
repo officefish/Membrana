@@ -166,7 +166,12 @@ One-shot чек-лист
 2. resume гейта `owner-ratify`;
 3. закрытие `execute` (здесь же — факт предиката S, `evaluationMoment: fact`).
 
-Производитель — `one-shot-run.mjs` (#1649: прогон создаётся вызовом, не рукой).
+Сборку и валидацию записей несёт `one-shot-run.mjs` (чистый: `buildShotRunRecord`,
+`readyToExecute`, `shotRunProblems`); **append в ленту делает `appendProcedureRunRecord`
+журнала** — машинерия доказана сквозным прогоном build → append → read → validate.
+Оркестрация, зовущая эту связку на живом шоте, — **вне спринта `one-shot-recut`**: она
+приходит с первым настоящим прогоном и производителем журнала по #1649. До неё записи в
+живой ленте нет — и это честнее, чем вымышленный шот в журнале.
 Запись прогона несёт четыре обязательных поля назначения — `shotId · executor ·
 assignedBy: "teamlead" · contextRunRef` (вердикт M2; отсутствие любого — невалидная
 запись). Портфолио — агрегат по `procedureId: "one-shot"` над лентой.
