@@ -12,6 +12,12 @@
  *
  * Детерминизм: `Date.now()` и `Math.random()` отсутствуют. `--now` — ПАРАМЕТР; без него берётся
  * фикстурный литерал, и об этом сказано в выводе, а не умолчано.
+ *
+ * Exit: 0 — сделано либо справка · 1 — род собран, но исход не наблюдаем · 2 — ошибка входа.
+ * Коды объявлены здесь по находке P2 точечного ревью PR #1515 (02.08): соседние глаголы той же
+ * поставки свои коды документировали, этот — нет, и на ошибке входа отдавал 1 там, где сосед
+ * отдаёт 2. Для контура, где вердикт и код несут смысл, такое расхождение разъезжается при
+ * первой же попытке поставить глагол в цепочку.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -39,8 +45,29 @@ const ZONE = join(REPO_ROOT, 'docs', 'sprint', 'experience');
 const RECORDS_PATH = join(ZONE, 'forecast-records.jsonl');
 const SNAPSHOT_PATH = join(ZONE, 'RUN_NOMINATIONS.md');
 
+/** Текст справки — один источник для `--help` и для строки отказа. */
+const USAGE = [
+  'Usage: yarn sprint:experience <режим> [опции]',
+  '',
+  'Режимы:',
+  '  --record <набор>        записать род из стабового набора (см. --list-stubs)',
+  '  --nominate [rich|thin]  снимок номинаций прогонов',
+  '  --list-stubs            перечислить стабовые наборы',
+  '  --plan <p> --traces <t> --segments <s>   собрать род из ЖИВЫХ файлов спринта',
+  '',
+  'Опции:',
+  '  --now <ISO>   момент параметром; без него берётся фикстурный литерал, и это сказано в выводе',
+  '  --out <path>  куда писать снимок номинаций',
+  '  --dry-run     не писать, только показать',
+  '  --no-archive  не отправлять род в архив персоны',
+  '  --json        машиночитаемый вывод',
+  '  --help, -h    эта справка',
+  '',
+  'Exit: 0 — сделано либо справка · 1 — род собран, но исход не наблюдаем · 2 — ошибка входа',
+].join('\n');
+
 function parseArgs(argv) {
-  const args = { record: null, nominate: null, now: null, out: null, dryRun: false, listStubs: false, json: false, plan: null, traces: null, segments: null, noArchive: false };
+  const args = { record: null, nominate: null, now: null, out: null, dryRun: false, listStubs: false, json: false, plan: null, traces: null, segments: null, noArchive: false, help: false };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--record') { args.record = argv[i + 1]; i += 1; }
@@ -54,6 +81,7 @@ function parseArgs(argv) {
     else if (a === '--no-archive') args.noArchive = true;
     else if (a === '--list-stubs') args.listStubs = true;
     else if (a === '--json') args.json = true;
+    else if (a === '--help' || a === '-h') args.help = true;
     else throw new Error(`неизвестный аргумент «${a}»`);
   }
   return args;
@@ -230,7 +258,25 @@ function toArchive(records, defaultRef) {
 }
 
 function main() {
-  const args = parseArgs(process.argv.slice(2));
+  // Разбор аргументов ВНУТРИ обработчика. Прежде исключение из `parseArgs` уходило наружу, и
+  // оператор получал путь к файлу, номер строки и трассу вызовов вместо сообщения — тогда как
+  // два соседних глагола той же поставки отвечали по-человечески (находка P1 точечного ревью
+  // PR #1515, 02.08). Асимметрия внутри одной поставки хуже общего отсутствия справки: два
+  // глагола научили ожидать ответа, третий отвечал стеком.
+  let args;
+  try {
+    args = parseArgs(process.argv.slice(2));
+  } catch (e) {
+    console.error(`sprint:experience — ошибка входа: ${e?.message ?? e}`);
+    console.error(USAGE);
+    return 2;
+  }
+
+  if (args.help) {
+    console.log(USAGE);
+    return 0;
+  }
+
   const now = args.now === null ? NOW : args.now;
   const nowNote = args.now === null ? ' (фикстурный литерал: --now не задан)' : '';
 

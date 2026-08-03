@@ -1,0 +1,8 @@
+{"traceId":"tr-res-core-ozhegov-run","blockId":"resolution-core","kind":"context_run","subject":"ozhegov","at":"2026-08-03T18:10:00+03:00","ref":"docs/discussions/block-resolution-core-ozhegov.md"}
+{"traceId":"tr-res-core-ozhegov-review","blockId":"resolution-core","kind":"review_pass","subject":"ozhegov","at":"2026-08-03T18:20:00+03:00","ref":"scripts/lib/worktree-resolution.mjs"}
+{"traceId":"tr-res-tooth-dynin-run","blockId":"resolution-tooth","kind":"context_run","subject":"dynin","at":"2026-08-03T18:25:00+03:00","ref":"docs/discussions/block-resolution-tooth-dynin.md"}
+{"traceId":"tr-res-tooth-dynin-review","blockId":"resolution-tooth","kind":"review_pass","subject":"dynin","at":"2026-08-03T18:35:00+03:00","ref":"scripts/lib/worktree-resolution.test.mjs"}
+{"traceId":"tr-res-wire-ozhegov-run","blockId":"resolution-wire","kind":"context_run","subject":"ozhegov","at":"2026-08-03T18:40:00+03:00","ref":"docs/discussions/block-resolution-core-ozhegov.md"}
+{"traceId":"tr-res-wire-ozhegov-review","blockId":"resolution-wire","kind":"review_pass","subject":"ozhegov","at":"2026-08-03T18:45:00+03:00","ref":"scripts/worktree-sync.mjs"}
+{"traceId":"tr-res-prepush-ozhegov-run","blockId":"prepush-resolution-wire","kind":"context_run","subject":"ozhegov","at":"2026-08-03T18:50:00+03:00","ref":"docs/discussions/block-resolution-core-ozhegov.md"}
+{"traceId":"tr-res-prepush-ozhegov-review","blockId":"prepush-resolution-wire","kind":"review_pass","subject":"ozhegov","at":"2026-08-03T18:55:00+03:00","ref":"scripts/prepush-typecheck-scope.mjs"}

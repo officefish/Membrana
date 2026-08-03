@@ -1,0 +1,13 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "gate-stale-supersede-by-recut",
+  "forTask": "gate-stale-supersede-by-recut (#1638) — протухший след отзывается актом перерезки: строка 9 топ-10 хендофа 03.08",
+  "note": "Замер объёма по блокам, снят git diff --numstat от HEAD (01669b4e) после закрытия окна: insertions + deletions по зоне блока. Не оценка и не пересказ — измерение.",
+  "measuredAt": "2026-08-03T17:15:00+03:00",
+  "segments": [
+    { "cutBlockId": "supersede-core", "changedLines": 74 },
+    { "cutBlockId": "supersede-wire", "changedLines": 137 },
+    { "cutBlockId": "supersede-tooth", "changedLines": 88 },
+    { "cutBlockId": "evidence-note", "changedLines": 64 }
+  ]
+}

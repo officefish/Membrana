@@ -31,6 +31,7 @@ import { readTraceCorpus } from './trace-corpus.mjs';
  *   knownPersonas: readonly string[],
  *   allowedReasons: readonly string[],
  *   resolveRef: (ref: string) => boolean,
+ *   recutActs?: readonly {kind:string, at:number}[],
  *   now?: string|null,
  *   preErrors?: readonly {code:string,subject:string,detail:string}[],
  * }} o
@@ -42,6 +43,9 @@ export function runGate({
   knownPersonas,
   allowedReasons,
   resolveRef,
+  // Акты перерезки ЭТОГО спринта значением, `at` в epoch ms (#1638). Ядро лент не читает:
+  // пустой список — законное «актов нет», дверь отзыва закрыта, поведение прежнее.
+  recutActs = [],
   now = null,
   preErrors = [],
 }) {
@@ -84,7 +88,7 @@ export function runGate({
       disqualified: [],
     }));
   } else {
-    blocks = plan.blocks.map((b) => judgeBlock(b, traces, { resolveRef }));
+    blocks = plan.blocks.map((b) => judgeBlock(b, traces, { resolveRef, recutActs }));
   }
   for (const b of blocks) b.stopped = VERDICT_CLASS[b.verdict] === 'stop';
 
