@@ -7,9 +7,10 @@
   "frozenDigest": "33633985ca337a68c4bc218c8ad24034723b9d3afc5de09965d5c97b9da4d233",
   "magistral": "deploy-procedure-survey",
   "swallow": {
-    "draftDigest": "7c791c2d18660c134b59afab3de9525b502cb0f3a960812dda1569f96b3de58d",
-    "draftFile": "docs/comms/drafts/swallow-morning-2026-08-03.md",
-    "ownerAck": true
+    "draftDigest": "fd00d1afca4ae92bbd4ef56de41e9b424af17d710b85da0a115ef118a8654a78",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-03.md",
+    "ownerAck": true,
+    "gate": "evening:partner-swallow"
   },
   "day": "2026-08-03"
 }

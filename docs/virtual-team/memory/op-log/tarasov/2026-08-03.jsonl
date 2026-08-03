@@ -17,3 +17,14 @@
 {"ts":"2026-08-03T14:31:14.138Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T14:30:52.680Z","origin":"ask-persona"}
 {"ts":"2026-08-03T14:31:14.147Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T14:30:52.680Z","origin":"ask-persona"}
 {"ts":"2026-08-03T14:31:14.148Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-29-night-triage-insight-harvest","reason":"прямой прецедент: «четыре draft-PR разом = сыграна тренировка, не матч». Тот же соблазн взять веер в одну сессию вместо связки на одном.","origin":"ask-persona"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-03-one-shot-manifest-m0-order","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-03-one-shot-manifest-m1-frames","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-03-one-shot-manifest-m2-assignment","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-03-one-shot-manifest-m3-volume","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-03-one-shot-manifest-m4-homogeneity","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-29-tariff-grid-m4-memories","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-29-tariff-grid-m5-produce","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-29-tariff-grid-m6-switch","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-29-tariff-grid-m7-teeth","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-23-llm-procedure-channels-m3b-telemetry","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
