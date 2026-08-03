@@ -9,13 +9,13 @@
 | аудитор | **Codex S-M5 Read-Only Auditor, static-mmbrn-container, 2026-08-03** (agent `019fc720-8fec-7c63-8d9f-28a52e2fb5c2`), отдельный от председателя |
 | предаудит | [`AUDIT_READ_ONLY.md`](AUDIT_READ_ONLY.md) — PASS до запуска M0 |
 | задание | [`MEETING_BRIEF.md`](MEETING_BRIEF.md) |
-| состояние | четыре прогона M0 отклонены аудитором; пятый прогон подготовлен |
+| состояние | пять прогонов M0 отклонены аудитором; шестой прогон подготовлен |
 
 ## Ход заседания
 
 | Комната | Вопрос | Состояние | Протокол |
 |---|---|---|---|
-| **M0** | порядок семи вопросов | прогоны 1–4 BLOCK; пятый прогон подготовлен | [`run1`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run1-false-dag.md) · [`run2`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run2-missing-affine-edge.md) · [`run3`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run3-premature-ratification.md) · [`run4`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run4-second-carrier.md) |
+| **M0** | порядок семи вопросов | прогоны 1–5 BLOCK; шестой прогон подготовлен | [`run1`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run1-false-dag.md) · [`run2`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run2-missing-affine-edge.md) · [`run3`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run3-premature-ratification.md) · [`run4`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run4-second-carrier.md) · [`run5`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run5-access-granularity.md) |
 | **M1..M7** | по одному вопросу в порядке M0 | не созывались | — |
 
 ## Гейт M0
