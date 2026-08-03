@@ -8,3 +8,6 @@
 {"ts":"2026-08-03T11:44:49.727Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T11:44:14.209Z","origin":"ask-persona"}
 {"ts":"2026-08-03T11:44:49.736Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T11:44:14.209Z","origin":"ask-persona"}
 {"ts":"2026-08-03T11:44:49.738Z","persona":"tarasov","verb":"emerge","ref":"tarasov-ritual-magistral-source-freshness-cut-1","reason":"предсказания по нарезке систематически недооценивали объём (freshness-core +87%, tooth +35%). Три блока по 90/120/80 — это тот же ряд; надо закладывать поправку, особенно на зуб (реально ждать 160–170).","origin":"ask-persona"}
+{"ts":"2026-08-03T12:35:27.682Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T12:35:10.463Z","origin":"ask-persona"}
+{"ts":"2026-08-03T12:35:27.685Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T12:35:10.463Z","origin":"ask-persona"}
+{"ts":"2026-08-03T12:35:27.689Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-29-tariff-grid-m4-memories","reason":"та же дисциплина «планка матча узкая, не лезем в соседние M»: здесь ровно так же — свойство 5 закрыто композицией, не тащим его в вердикт; свойство 1 — канал находки, не эскалация без замера.","origin":"ask-persona"}
