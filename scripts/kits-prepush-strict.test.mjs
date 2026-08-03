@@ -44,3 +44,17 @@ test('подсказка ремонта называет точную коман
   assert.match(hint, /yarn kits:pins --id witcher --write/u);
   assert.match(hint, /yarn kits:pins --id angelina-morning --write/u);
 });
+
+// ── Шот H (03.08): полный рецепт ремонта в момент падения ─────────────────────────────────────
+
+test('шот H: у падения дрейфа — обе половины рецепта, шаблон коммита с живым именем кита', async () => {
+  // Трижды за два дня ремонт делался руками одинаково; форма шаблона ратифицирована
+  // владельцем по трём влитым коммитам. Ядро несёт команду, CLI — процедуру.
+  const { readFileSync } = await import('node:fs');
+  const src = readFileSync(new URL('./kits-prepush-strict.mjs', import.meta.url), 'utf8');
+  assert.ok(src.includes('влить отдельным ревьюируемым коммитом: chore(kits): опись ${id} догнала <предмет>'), 'шаблон-константа в CLI');
+  assert.ok(src.includes('for (const id of broken) console.error(repairCommitHint(id))'), 'печать за командой ремонта');
+  // Граница: шаблона коммита в ЯДРЕ нет — там только команда.
+  const core = readFileSync(new URL('./lib/kits-prepush-strict.mjs', import.meta.url), 'utf8');
+  assert.ok(!core.includes('chore(kits)'), 'ядро не знает процедуры отгрузки');
+});
