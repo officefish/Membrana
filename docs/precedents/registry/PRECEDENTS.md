@@ -1,16 +1,16 @@
 # PRECEDENTS — снимок-реестр (производный, руками не править)
 
-> Meta · Date: 2026-07-31 · SHA: 25dd1364 · Source: docs/precedents/*.md
+> Meta · Date: 2026-08-03 · SHA: dce2beeb · Source: docs/precedents/*.md
 > Пересобрать: `yarn precedent:register --rebuild`. Источник истины — файлы прецедентов.
 
-Всего прецедентов: **22** · различных классов: **6** · доля рецидива: **73%** (ориентир ≤15%).
+Всего прецедентов: **24** · различных классов: **6** · доля рецидива: **75%** (ориентир ≤15%).
 
 ## Рецидив по классам
 
 | Класс | Прецедентов |
 |-------|-------------|
-| session-report | 6 ⚠ рецидив |
-| tooling-gap | 6 ⚠ рецидив |
+| session-report | 7 ⚠ рецидив |
+| tooling-gap | 7 ⚠ рецидив |
 | ritual-mechanics-vs-value | 4 ⚠ рецидив |
 | cold-start | 3 ⚠ рецидив |
 | reporting-gap | 2 ⚠ рецидив |
@@ -42,4 +42,6 @@
 | 2026-07-29 | cold-start | [2026-07-29-greeting-stale-picture-from-memory-cache](../2026-07-29-greeting-stale-picture-from-memory-cache.md) | Холодная сессия озвучивает картину состояния из кеша (память + локальный git-сни |
 | 2026-07-31 | session-report | [2026-07-31-orphan-tests-subject-unresolved-not-missing-rule](../2026-07-31-orphan-tests-subject-unresolved-not-missing-rule.md) | Предупреждение прибора называет причину остатка, которая в этом прогоне не задей |
 | 2026-07-31 | session-report | [2026-07-31-scripts-workshop-lookup-orphans-sets-atlas](../2026-07-31-scripts-workshop-lookup-orphans-sets-atlas.md) | Приоритет между протоколом хука SessionStart и каноном проекта не зафиксирован — |
+| 2026-08-02 | tooling-gap | [2026-08-02-review-blindness-scales-with-diff](../2026-08-02-review-blindness-scales-with-diff.md) | Механизм проверяет, что шаг отработал, но не что утверждение шага истинно |
+| 2026-08-03 | session-report | [2026-08-03-static-mmbrn-m2-twenty-consilium-calls](../2026-08-03-static-mmbrn-m2-twenty-consilium-calls.md) | Не классифицировано до отдельного разбора корпуса двадцати вызовов консилиума |
 
