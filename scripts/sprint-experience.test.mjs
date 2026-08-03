@@ -10,7 +10,7 @@
  * детерминизм отбора и честное «корпус тонкий» без добора.
  */
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -370,4 +370,49 @@ test('стабы: записи остановок собираются из жу
   assert.equal(recs[0].observed.useful, true);
   assert.equal(recs[2].observedAt, null);
   assert.ok(isLegalNo(recs[2].observed));
+});
+
+// ── Разговор с оператором: справка и ошибка входа ─────────────────────────────────────────
+//
+// Находки P1/P2 точечного ревью PR #1515 (02.08): `--help` выбрасывал необработанное исключение
+// и оператор получал трассу вызовов, а коды возврата не были объявлены и расходились с
+// соседними глаголами той же поставки. Зубы бьют по ПОВЕДЕНИЮ процесса, а не по разбору строки:
+// именно наружу, в лицо оператору, дефект и выходил.
+
+/** Прогон CLI с полным исходом: код возврата и оба потока, без исключения на ненулевом коде. */
+function run(args) {
+  const r = spawnSync(process.execPath, [CLI, ...args], { encoding: 'utf8' });
+  return { code: r.status, out: r.stdout ?? '', err: r.stderr ?? '' };
+}
+
+test('--help печатает справку и уходит нулём, а не стеком', () => {
+  const r = run(['--help']);
+  assert.equal(r.code, 0);
+  assert.match(r.out, /Usage: yarn sprint:experience/u);
+  assert.doesNotMatch(r.err, /at .*sprint-experience\.mjs:\d+/u, 'трассы вызовов в выводе нет');
+});
+
+test('-h равносилен --help — оператор ищет справку обоими', () => {
+  const short = run(['-h']);
+  const long = run(['--help']);
+  assert.equal(short.code, 0);
+  assert.equal(short.out, long.out);
+});
+
+test('неизвестный аргумент: одна строка причины, справка и код 2 — без исключения', () => {
+  const r = run(['--такого-нет']);
+  assert.equal(r.code, 2, 'ошибка входа — код 2, как у соседних глаголов поставки');
+  assert.match(r.err, /ошибка входа: неизвестный аргумент/u);
+  assert.match(r.err, /Usage: yarn sprint:experience/u, 'вместе с причиной показано, как звать верно');
+  assert.doesNotMatch(r.err, /^\s+at .*:\d+:\d+/mu, 'стек наружу не выходит');
+});
+
+test('справка перечисляет коды возврата — они объявлены, а не подразумеваются', () => {
+  const { out } = run(['--help']);
+  assert.match(out, /Exit:.*0.*1.*2/su);
+});
+
+test('вызов без режима — тоже код 2, а не тихий ноль', () => {
+  const r = run([]);
+  assert.equal(r.code, 2);
 });
