@@ -1,0 +1,7 @@
+# ДЕВЯТЫЙ ВЕРДИКТ incomplete_trace (#1641): след валиден и свеж, но состав родов неполон.
+# Ровно вещдок 02.08 (report-surfacing-wire): у gate-wiring один review_pass, прогона контекста
+# до работы не было. До 03.08 такой блок получал honest_pair и был неотличим от честного.
+# Ожидание: mfcc-core → honest_pair (пара полна), gate-wiring → incomplete_trace, код 1.
+{"traceId":"t-mfcc-run","blockId":"mfcc-core","kind":"context_run","subject":"kuryokhin","at":"2026-07-30T09:15:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-kuryokhin-mfcc.json"}
+{"traceId":"t-mfcc-review","blockId":"mfcc-core","kind":"review_pass","subject":"kuryokhin","at":"2026-07-30T17:00:00.000Z","ref":"docs/reviews/mfcc-core-teamlead.md"}
+{"traceId":"t-gate-review-only","blockId":"gate-wiring","kind":"review_pass","subject":"vesnin","at":"2026-07-30T18:00:00.000Z","ref":"docs/reviews/gate-wiring-teamlead.md"}

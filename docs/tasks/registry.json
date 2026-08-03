@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "gate-honest-pair-completeness",
+      "title": "honest_pair перестаёт обещать пару, которой не проверяет",
+      "promptPath": "docs/prompts/GATE_HONEST_PAIR_COMPLETENESS_PROMPT.md",
+      "githubIssue": 1641,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-03",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "предикат выносит honest_pair при resolvable.length > 0 без проверки состава родов; вещдок 02.08 — блок с одним review_pass неотличим в итоге от полностью честного; развилка из трёх решений в иссью, выбор за резчиком",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "deploy-procedure-survey",
       "title": "Обзор узла разворачивания: карта 41 глагола деплоя при нуле процедур",
       "promptPath": "docs/prompts/DEPLOY_PROCEDURE_SURVEY_PROMPT.md",

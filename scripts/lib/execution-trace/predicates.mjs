@@ -9,7 +9,29 @@
 
 import { DISQUALIFICATIONS, FINDINGS, VERDICTS } from './gate-exit-codes.mjs';
 import { MODES } from './plan-reader.mjs';
-import { TRACE_KINDS } from './trace-kinds.mjs';
+import { TRACE_KIND_CARRIER_EXISTS, TRACE_KINDS } from './trace-kinds.mjs';
+
+/**
+ * Рода, ОБЯЗАТЕЛЬНЫЕ для `honest_pair` (#1641): пара «прогон контекста + ревью» — то, что имя
+ * вердикта обещало всегда и что до 03.08 не проверялось вовсе.
+ *
+ * Список ЯВНЫЙ, а не выведенный из `TRACE_KIND_CARRIER_EXISTS`: появление носителя у
+ * `contract_signature` не должно молча ужесточить требование и перекрасить историю — такое
+ * расширение делается актом, как и любое движение закрытого списка. Зуб же держит обратное
+ * включение: каждый ТРЕБУЕМЫЙ род обязан иметь носитель сегодня — требовать неисполнимое
+ * запрещено.
+ */
+export const REQUIRED_PAIR_KINDS = Object.freeze([TRACE_KINDS.CONTEXT_RUN, TRACE_KINDS.REVIEW_PASS]);
+
+/**
+ * Каких родов пары не хватает в наборе следов. Пустой список ⟺ пара полна.
+ * @param {readonly NormalizedTrace[]} traces
+ * @returns {string[]}
+ */
+export function missingPairKinds(traces) {
+  const present = new Set(traces.map((t) => t.kind));
+  return REQUIRED_PAIR_KINDS.filter((k) => TRACE_KIND_CARRIER_EXISTS[k] && !present.has(k));
+}
 
 /**
  * @typedef {import('./plan-reader.mjs').NormalizedBlock} NormalizedBlock
@@ -75,8 +97,12 @@ export function disqualifiedByOrder(candidates, signatureSource = candidates) {
 
 /**
  * Вердикт по одному блоку плана. Лестница вердиктов ФИКСИРОВАНА и проверяется в этом порядке:
- * refused_with_reason → plan_lied → wrong_performer → stale_trace → unresolvable_ref → honest_pair.
+ * refused_with_reason → plan_lied → wrong_performer → stale_trace → stale_partial →
+ * unresolvable_ref → incomplete_trace → honest_pair.
  * Пустой корпус до сюда не доходит: `no_corpus` выносится выше, на уровне прогона (M5).
+ * Состав родов проверяется ПОСЛЕДНИМ из stop-исходов: сначала «след есть и настоящий»
+ * (исполнитель, свежесть, разрешимость), лишь затем «след полон» — иначе один протухший
+ * context_run читался бы как «пары нет», хотя на деле «пара была, но судила другую вещь».
  *
  * @param {NormalizedBlock} block
  * @param {readonly NormalizedTrace[]} corpus     вся лента (сопоставление — ТОЛЬКО по blockId)
@@ -219,6 +245,21 @@ export function judgeBlock(block, corpus, ctx) {
       `все ${fresh.length} следов ${block.assigned} несут неразрешимый адрес; починить ленту — о неисполнении это ничего не говорит`,
     );
   }
+  // Состав родов — ДЕВЯТЫЙ вердикт (#1641). До 03.08 сюда доходил любой непустой
+  // `resolvable`, и блок с одним `review_pass` получал `honest_pair`: имя обещало пару,
+  // условие проверяло «хотя бы один». Пропуск 02.08 (`report-surfacing-wire`) был виден в
+  // самом тексте вердикта — «1 вещдоков рода review_pass» — но вердикта не менял, и в
+  // итоговой строке блок был неотличим от полностью честного.
+  const missing = missingPairKinds(resolvable);
+  if (missing.length > 0) {
+    return done(
+      VERDICTS.INCOMPLETE_TRACE,
+      `след ${block.assigned} валиден и свеж, но пары нет: отсутствует ${missing.join(' и ')} ` +
+        `(есть только ${[...new Set(resolvable.map((t) => t.kind))].join('/')}, ${denom}); ` +
+        'добыть недостающий род или признать, что работа шла без него',
+      resolvable.map((t) => t.ref),
+    );
+  }
   if (others.length > 0) {
     findings.push({
       toothId: FINDINGS.EXTRA_PERFORMER,
@@ -226,9 +267,13 @@ export function judgeBlock(block, corpus, ctx) {
       reason: `поверх честного плана есть следы: ${[...new Set(others.map((t) => t.subject))].join(', ')}`,
     });
   }
+  // Слова вердикта утверждают ПРОВЕРЕННОЕ: «полная пара» здесь гарантирована предикатом
+  // выше, а не дисциплиной докладчика. Прежний текст печатал найденные рода как достижение,
+  // даже когда род был один.
   return done(
     VERDICTS.HONEST_PAIR,
-    `${block.assigned} назначен и участвовал: ${resolvable.length} вещдоков рода ${[...new Set(resolvable.map((t) => t.kind))].join('/')} (${denom})`,
+    `${block.assigned} назначен и участвовал, пара полна (${REQUIRED_PAIR_KINDS.join(' + ')}): ` +
+      `${resolvable.length} вещдоков (${denom})`,
     resolvable.map((t) => t.ref),
   );
 }

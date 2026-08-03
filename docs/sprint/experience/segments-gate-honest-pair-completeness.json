@@ -1,0 +1,13 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "gate-honest-pair-completeness",
+  "forTask": "gate-honest-pair-completeness (#1641) — honest_pair перестаёт обещать пару, которой не проверяет: строка 4 топ-10 хендофа 03.08",
+  "note": "Замер объёма по блокам, снят git diff --numstat от HEAD (b7ca2756) после закрытия окна: insertions + deletions по зоне блока. Не оценка и не пересказ — измерение.",
+  "measuredAt": "2026-08-03T15:00:00+03:00",
+  "segments": [
+    { "cutBlockId": "history-repaint-measure", "changedLines": 69 },
+    { "cutBlockId": "completeness-core", "changedLines": 71 },
+    { "cutBlockId": "completeness-tooth", "changedLines": 100 },
+    { "cutBlockId": "evidence-rerun", "changedLines": 53 }
+  ]
+}

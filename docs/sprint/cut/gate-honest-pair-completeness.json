@@ -1,0 +1,73 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "gate-honest-pair-completeness",
+  "taskId": "gate-honest-pair-completeness",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-03T12:30:00+03:00",
+    "to": "2026-08-03T18:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "history-repaint-measure",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "docs/discussions/honest-pair-repaint-measure.md"
+      ],
+      "estimate": {
+        "changedLines": 50
+      },
+      "revisionAt": "2026-08-03T12:36:10+03:00",
+      "revisionOf": "c24019bf0f97aecbb780a31570fee3c31a73dffb634bad0e7f4a9aae65ff267f"
+    },
+    {
+      "blockId": "completeness-core",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/execution-trace/predicates.mjs",
+        "scripts/lib/execution-trace/gate-exit-codes.mjs"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionAt": "2026-08-03T12:36:10+03:00",
+      "revisionOf": "b1c3c639e34fe72b5856f6727e7dab0b5726656a4b5c417df87147b248333be4"
+    },
+    {
+      "blockId": "completeness-tooth",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/execution-gate.test.mjs",
+        "scripts/lib/execution-trace/fixtures",
+        "scripts/lib/execution-trace/stubs/stub-trace-corpus.mjs"
+      ],
+      "estimate": {
+        "changedLines": 190
+      },
+      "revisionAt": "2026-08-03T12:49:46+03:00",
+      "revisionOf": "fb19d9cdc4cf2148efb4c08c1cb3c485cbbf744dc7f6927acf9429544ec1db18"
+    },
+    {
+      "blockId": "evidence-rerun",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/discussions/honest-pair-evidence-rerun.md"
+      ],
+      "estimate": {
+        "changedLines": 40
+      },
+      "revisionAt": "2026-08-03T12:36:10+03:00",
+      "revisionOf": "0b9090a428b8d9a75dcef6ab0c3f979c524840c53ca372a5c4fe69bc0dd172d8"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-03T12:52:19+03:00",
+    "digest": "c9107d5a0e980b33bb75dd4c7a593f15da6606374b89bd273df07f61d414c972"
+  }
+}

@@ -38,6 +38,25 @@ export const VERDICTS = Object.freeze({
   STALE_PARTIAL: 'stale_partial',
   UNRESOLVABLE_REF: 'unresolvable_ref',
   NO_CORPUS: 'no_corpus',
+  /**
+   * След валиден и свеж, но состав родов неполон (#1641, девятый вердикт — решение резчика
+   * 03.08 из развилки иссью).
+   *
+   * До него `honest_pair` выносился при ЛЮБОМ числе валидных следов, включая один: условие
+   * было `resolvable.length > 0`, состав родов не проверялся вообще. Вещдок 02.08 — блок
+   * `report-surfacing-wire` с одним `review_pass`, без прогона контекста, прошёл зелёным и в
+   * итоговой строке был неотличим от полностью честного. Фактическая парность держалась на
+   * дисциплине докладчика, а не на предикате: замер 03.08 дал 124 полных пары из 125 блоков,
+   * и перекрашивается этим вердиктом ровно один — сам вещдок.
+   *
+   * Класс `stop`, не `pass_not_green`: неполный след — «несыгранный матч при сданной
+   * тренировке», и мягкий класс был бы той же ложью тоном ниже (слово резчика). Имя не
+   * `partial_evidence`: слово «partial» занято семантикой `stale_partial`, где частична
+   * СВЕЖЕСТЬ, а здесь — СОСТАВ.
+   *
+   * Список остаётся закрытым — он стал из девяти, а не открылся.
+   */
+  INCOMPLETE_TRACE: 'incomplete_trace',
 });
 
 /**
@@ -54,6 +73,7 @@ export const VERDICT_CLASS = Object.freeze({
   [VERDICTS.STALE_PARTIAL]: 'stop',
   [VERDICTS.UNRESOLVABLE_REF]: 'stop',
   [VERDICTS.NO_CORPUS]: 'stop',
+  [VERDICTS.INCOMPLETE_TRACE]: 'stop',
 });
 
 /** @type {readonly string[]} */
