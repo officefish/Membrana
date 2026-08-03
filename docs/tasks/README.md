@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `deploy-procedure-survey` | Обзор узла разворачивания: карта 41 глагола деплоя при нуле процедур | L | [`DEPLOY_PROCEDURE_SURVEY_PROMPT.md`](../prompts/DEPLOY_PROCEDURE_SURVEY_PROMPT.md) | — |
 | `workflow-examples-marathon` | Накопить проверяемые примеры мастерских и процедур | L | [`WORKFLOW_EXAMPLES_MARATHON_PROMPT.md`](../prompts/WORKFLOW_EXAMPLES_MARATHON_PROMPT.md) | — |
 | `review-oversized-queue` | Очередь oversized на точечное ревью считается прибором, а не глазом | S | [`REVIEW_OVERSIZED_QUEUE_PROMPT.md`](../prompts/REVIEW_OVERSIZED_QUEUE_PROMPT.md) | — |
 | `ritual-magistral-source-freshness` | Расхождение вещдока дня с гейтом меряется предикатом, а не поручается генератору | S | [`RITUAL_MAGISTRAL_SOURCE_FRESHNESS_PROMPT.md`](../prompts/RITUAL_MAGISTRAL_SOURCE_FRESHNESS_PROMPT.md) | — |

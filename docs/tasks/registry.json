@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "deploy-procedure-survey",
+      "title": "Обзор узла разворачивания: карта 41 глагола деплоя при нуле процедур",
+      "promptPath": "docs/prompts/DEPLOY_PROCEDURE_SURVEY_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "магистраль дня 03.08, выбрана владельцем через утренний гейт (frozenDigest 33633985…); продукт дня — обзор с вердиктом, иссью заводится по его итогу, а не до него",
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-03",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "workflow-examples-marathon",
       "title": "Накопить проверяемые примеры мастерских и процедур",
       "promptPath": "docs/prompts/WORKFLOW_EXAMPLES_MARATHON_PROMPT.md",
