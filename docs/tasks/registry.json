@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "worktree-foreign-resolution-probe",
+      "title": "Резолюция пакетов вне дерева говорится вслух, а не обнаруживается постфактум",
+      "promptPath": "docs/prompts/WORKTREE_FOREIGN_RESOLUTION_PROBE_PROMPT.md",
+      "githubIssue": 1647,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-03",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "направление 3 иссью: прибор-сторож; замер 03.08 на Membrana-tooling — своих 1, чужих 36 из 37; дом назван иссью: worktree-sync.mjs в утренней цепочке",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "gate-stale-supersede-by-recut",
       "title": "Протухший след отзывается актом перерезки, а не изъятием строки",
       "promptPath": "docs/prompts/GATE_STALE_SUPERSEDE_BY_RECUT_PROMPT.md",

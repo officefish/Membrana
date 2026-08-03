@@ -15,8 +15,10 @@
  * Exit: 0 — typecheck прошёл / пропущен обоснованно; иначе — код turbo/yarn (реальный провал типов).
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
+
+import { classifyResolution, formatResolution, RESOLUTION_STATES } from './lib/worktree-resolution.mjs';
 
 const DOCS_RE = /\.(md|mdx)$/iu;
 /**
@@ -92,6 +94,27 @@ function changedVsMain() {
 }
 
 export function main() {
+  // #1647: перед вердиктом — строка резолюции пакетов. Красный typecheck при чужой
+  // резолюции — возможно, ложный (tsc читает чужой dist), и оператор обязан это видеть
+  // ДО того, как пойдёт чинить ошибку, которой нет. Exit этой строкой не меняется.
+  try {
+    const root = realpathSync(process.cwd());
+    const dir = join(root, 'node_modules', '@membrana');
+    const packages = existsSync(dir)
+      ? readdirSync(dir).map((name) => {
+          try {
+            return { name, realPath: realpathSync(join(dir, name)) };
+          } catch {
+            return { name, realPath: null };
+          }
+        })
+      : [];
+    const res = classifyResolution(root, packages);
+    if (res.state !== RESOLUTION_STATES.OWN) console.log(`pre-push [#1647]: ${formatResolution(res)}`);
+  } catch {
+    /* сторож не вправе уронить push своей осечкой — его предмет чужая резолюция, не собственная живучесть */
+  }
+
   const changed = changedVsMain();
   if (changed === null) {
     console.log('pre-push: origin/main недоступен → полный typecheck');

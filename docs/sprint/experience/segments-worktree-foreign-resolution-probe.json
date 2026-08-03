@@ -1,0 +1,13 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "worktree-foreign-resolution-probe",
+  "forTask": "worktree-foreign-resolution-probe (#1647) — резолюция пакетов вне дерева говорится вслух: строка 7 топ-10 хендофа 03.08",
+  "note": "Замер объёма по блокам, снят git diff --numstat от HEAD (641581ab) после закрытия окна: insertions + deletions по зоне блока. Не оценка и не пересказ — измерение.",
+  "measuredAt": "2026-08-03T19:00:00+03:00",
+  "segments": [
+    { "cutBlockId": "resolution-core", "changedLines": 121 },
+    { "cutBlockId": "resolution-tooth", "changedLines": 145 },
+    { "cutBlockId": "resolution-wire", "changedLines": 28 },
+    { "cutBlockId": "prepush-resolution-wire", "changedLines": 25 }
+  ]
+}

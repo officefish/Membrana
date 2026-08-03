@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `worktree-foreign-resolution-probe` | Резолюция пакетов вне дерева говорится вслух, а не обнаруживается постфактум | S | [`WORKTREE_FOREIGN_RESOLUTION_PROBE_PROMPT.md`](../prompts/WORKTREE_FOREIGN_RESOLUTION_PROBE_PROMPT.md) | [#1647](https://github.com/officefish/Membrana/issues/1647) |
 | `gate-stale-supersede-by-recut` | Протухший след отзывается актом перерезки, а не изъятием строки | S | [`GATE_STALE_SUPERSEDE_BY_RECUT_PROMPT.md`](../prompts/GATE_STALE_SUPERSEDE_BY_RECUT_PROMPT.md) | [#1638](https://github.com/officefish/Membrana/issues/1638) |
 | `gate-honest-pair-completeness` | honest_pair перестаёт обещать пару, которой не проверяет | S | [`GATE_HONEST_PAIR_COMPLETENESS_PROMPT.md`](../prompts/GATE_HONEST_PAIR_COMPLETENESS_PROMPT.md) | [#1641](https://github.com/officefish/Membrana/issues/1641) |
 | `deploy-procedure-survey` | Обзор узла разворачивания: карта 41 глагола деплоя при нуле процедур | L | [`DEPLOY_PROCEDURE_SURVEY_PROMPT.md`](../prompts/DEPLOY_PROCEDURE_SURVEY_PROMPT.md) | — |
