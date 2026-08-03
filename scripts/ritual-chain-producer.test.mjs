@@ -32,26 +32,25 @@ for (const [verb, procedure, lastStep] of [
   });
 
   test(`${verb}: close — после ${lastStep}, статус pass законен только доведённой цепочке`, () => {
-    const chain = scripts[verb];
-    const closeAt = chain.indexOf(CLOSE(procedure));
-    assert.ok(closeAt > -1, `close --procedure ${procedure} --status pass в цепочке есть`);
+    // Разбор по шагам &&, не indexOf по сырой строке (P2 ревью #1680): позиция
+    // подстроки не доказывает позицию ШАГА.
+    const steps = scripts[verb].split('&&').map((s) => s.trim());
+    assert.ok(steps.at(-1).startsWith(CLOSE(procedure)), 'close — ПОСЛЕДНИЙ шаг цепочки');
     assert.ok(
-      closeAt > chain.indexOf(lastStep),
-      `close стоит ПОСЛЕ ${lastStep} — запись о доставленном, не о начатом`,
+      steps.at(-2).includes(lastStep),
+      `предпоследний шаг — ${lastStep}: close пишет о доставленном, не о начатом`,
     );
     assert.equal(
-      chain.split('procedure-run-record.mjs close').length - 1,
+      steps.filter((s) => s.includes('procedure-run-record.mjs close')).length,
       1,
       'close один — вторая запись была бы второй правдой',
     );
   });
 
   test(`${verb}: сторожа не глушат — open и close без || true`, () => {
-    const chain = scripts[verb];
-    for (const call of [OPEN(procedure), CLOSE(procedure)]) {
-      const idx = chain.indexOf(call);
-      const tail = chain.slice(idx, chain.indexOf('&&', idx) === -1 ? chain.length : chain.indexOf('&&', idx));
-      assert.ok(!tail.includes('|| true'), `«${call.slice(0, 50)}…» не глушится: глушёный open ломает пару, молчаливый пропуск записи — болезнь спринта`);
+    const steps = scripts[verb].split('&&').map((s) => s.trim());
+    for (const step of [steps.at(0), steps.at(-1)]) {
+      assert.ok(!step.includes('|| true'), `шаг «${step.slice(0, 60)}…» не глушится: глушёный open ломает пару, молчаливый пропуск записи — болезнь спринта`);
     }
   });
 
