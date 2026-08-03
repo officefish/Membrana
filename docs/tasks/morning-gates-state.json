@@ -1,16 +1,15 @@
 {
   "magistralOptions": [
-    "subconscious-lift-c3",
-    "mfcc-detector-copies",
-    "review-sanitary"
+    "secret-redactor",
+    "run-journal-producer",
+    "deploy-procedure-survey"
   ],
-  "frozenDigest": "375ddb3e464dd9bcdc06111760e56c877e66580b2a826408946fe54f167ca11f",
-  "magistral": "subconscious-lift-c3",
+  "frozenDigest": "33633985ca337a68c4bc218c8ad24034723b9d3afc5de09965d5c97b9da4d233",
+  "magistral": "deploy-procedure-survey",
   "swallow": {
-    "draftDigest": "f60775e8957b9770145287353cc6577422ff42eef577a6eab2065c5e22bc4897",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-02.md",
-    "ownerAck": true,
-    "gate": "evening:partner-swallow"
+    "draftDigest": "7c791c2d18660c134b59afab3de9525b502cb0f3a960812dda1569f96b3de58d",
+    "draftFile": "docs/comms/drafts/swallow-morning-2026-08-03.md",
+    "ownerAck": true
   },
-  "day": "2026-08-02"
+  "day": "2026-08-03"
 }

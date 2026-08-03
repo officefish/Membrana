@@ -1,25 +1,21 @@
-<!-- Сгенерировано: 2026-08-02T05:26:37.447Z (yarn day:report; vesnin) -->
+<!-- Сгенерировано: 2026-08-03T06:37:15.741Z (yarn day:report; vesnin) -->
 
-# Доклад по задачам — 2026-08-02
+# Доклад по задачам — 2026-08-03
 
 Автор: Тимлид (vesnin) · зеркало 5-блочного плана дня.
 
 ## Магистраль
 
-— задач со ссылками нет (темы блока — в каноне дня) —
+- `subconscious-lift-c3` — ведёт ozhegov
 
 ## Подкрепление
 
 - `archivarius-sessions-container` — ведёт dynin
-- `angelina-hostess-impl` — ведёт ozhegov
 
 ## Перспективные
 
-- `archivarius-sessions-container` — ведёт dynin
-- `angelina-hostess-impl` — ведёт ozhegov
-- `mfcc-lib-choice` — ведёт dynin
+- #1649 — OPEN
 - #1584 — MERGED
-- #1562 — MERGED
 
 ## Экспериментальные
 
@@ -27,4 +23,7 @@
 
 ## Санитарные
 
+- `subconscious-lift-c3` — ведёт ozhegov
+- #1590 — OPEN
+- #1595 — OPEN
 - #1584 — MERGED
