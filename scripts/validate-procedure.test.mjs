@@ -386,3 +386,15 @@ test('HOME Ф4: форма мостика несёт formVersion; bridge вал�
   const r = validateProcedure(dir, repoRoot);
   assert.equal(r.valid, true, r.problems.join('; '));
 });
+
+test('ростер держателей кадров несёт СЕМЬ персон — тимлид не выпадает второй раз', async () => {
+  // Вещдок 03.08: список был отчеканен 26.07, за день до ротации ролей 27.07, и валидатор
+  // отвергал tarasov держателем кадра execute шота — второй экземпляр дефекта класса #1644
+  // («шесть дней тимлид вне ростера»). Зуб держит список ДОСЛОВНО: молчаливое выпадение
+  // персоны из копии ростера — ровно то, что случилось дважды.
+  const { PROCEDURE_PERSONAS } = await import('./lib/validate-procedure.mjs');
+  assert.deepEqual(
+    [...PROCEDURE_PERSONAS].sort(),
+    ['angelina', 'dynin', 'kuryokhin', 'ozhegov', 'rodchenko', 'tarasov', 'vesnin'],
+  );
+});

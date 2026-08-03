@@ -1,0 +1,6 @@
+{"traceId":"tr-b1-ozhegov-run-v2","blockId":"shot-manifest-recut","kind":"context_run","subject":"ozhegov","at":"2026-08-03T14:18:58+03:00","ref":"docs/discussions/block-shot-manifest-recut-ozhegov.md"}
+{"traceId":"tr-b1-ozhegov-review-v2","blockId":"shot-manifest-recut","kind":"review_pass","subject":"ozhegov","at":"2026-08-03T14:20:58+03:00","ref":"docs/procedures/one-shot/MANIFEST.json"}
+{"traceId":"tr-b2-vesnin-run","blockId":"shot-run-contract","kind":"context_run","subject":"vesnin","at":"2026-08-03T14:25:00+03:00","ref":"docs/discussions/block-shot-run-contract-vesnin.md"}
+{"traceId":"tr-b2-vesnin-review","blockId":"shot-run-contract","kind":"review_pass","subject":"vesnin","at":"2026-08-03T14:25:09+03:00","ref":"scripts/lib/one-shot-run.mjs"}
+{"traceId":"tr-b3-dynin-run","blockId":"shot-predicate-moments","kind":"context_run","subject":"dynin","at":"2026-08-03T14:45:00+03:00","ref":"docs/discussions/block-shot-predicate-moments-dynin.md"}
+{"traceId":"tr-b3-dynin-review","blockId":"shot-predicate-moments","kind":"review_pass","subject":"dynin","at":"2026-08-03T14:33:33+03:00","ref":"scripts/lib/one-shot-s-predicate.mjs"}
