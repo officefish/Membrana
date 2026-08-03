@@ -175,6 +175,21 @@ export function judgeBlock(block, corpus, ctx) {
     }
   }
 
+  // Окно против первого следа (шот A, 03.08): сверка по MINE, не counted — ранний след
+  // по определению вне окна, и предикат по counted был бы тавтологией «в окне нет следов
+  // раньше окна» (слово Дынина). Одна находка на блок: лечение — перерезка окна.
+  const earliest = Math.min(...mine.map((t) => t.at), Number.POSITIVE_INFINITY);
+  if (Number.isFinite(earliest) && earliest < block.from) {
+    const countBefore = mine.filter((t) => t.at < block.from).length;
+    findings.push({
+      toothId: FINDINGS.WINDOW_AFTER_FIRST_TRACE,
+      blockId: block.blockId,
+      reason:
+        `окно назначено позже начала работ: первый след раньше window.from, ` +
+        `до окна ${countBefore} след(ов) — перерезать ОКНО, не следы`,
+    });
+  }
+
   const dq = disqualifiedByOrder(counted, mine);
   for (const t of counted) {
     if (!dq.has(t.traceId)) continue;

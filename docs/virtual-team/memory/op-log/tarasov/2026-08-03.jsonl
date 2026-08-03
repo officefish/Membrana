@@ -11,3 +11,6 @@
 {"ts":"2026-08-03T12:35:27.682Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T12:35:10.463Z","origin":"ask-persona"}
 {"ts":"2026-08-03T12:35:27.685Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T12:35:10.463Z","origin":"ask-persona"}
 {"ts":"2026-08-03T12:35:27.689Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-29-tariff-grid-m4-memories","reason":"та же дисциплина «планка матча узкая, не лезем в соседние M»: здесь ровно так же — свойство 5 закрыто композицией, не тащим его в вердикт; свойство 1 — канал находки, не эскалация без замера.","origin":"ask-persona"}
+{"ts":"2026-08-03T12:57:03.420Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T12:56:44.779Z","origin":"ask-persona"}
+{"ts":"2026-08-03T12:57:03.426Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T12:56:44.779Z","origin":"ask-persona"}
+{"ts":"2026-08-03T12:57:03.428Z","persona":"tarasov","verb":"emerge","ref":"tarasov-review-oversized-queue-cut-1","reason":"прошлый прогноз по нарезке oversized-queue дал +27% факта над предсказанием; это прямо касается ШОТА B (та же очередь review:oversized) и оценки ~60 строк — держу коэффициент и не удивлюсь выходу к 75–80.","origin":"ask-persona"}
