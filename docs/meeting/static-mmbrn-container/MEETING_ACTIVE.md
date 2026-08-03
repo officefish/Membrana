@@ -9,14 +9,14 @@
 | аудитор | **Codex S-M5 Read-Only Auditor, static-mmbrn-container, 2026-08-03** (agent `019fc720-8fec-7c63-8d9f-28a52e2fb5c2`), отдельный от председателя |
 | предаудит | [`AUDIT_READ_ONLY.md`](AUDIT_READ_ONLY.md) — PASS до запуска M0 |
 | задание | [`MEETING_BRIEF.md`](MEETING_BRIEF.md) |
-| состояние | пять прогонов M1 отклонены; готовится шестой предаудит |
+| состояние | шесть прогонов M1 отклонены; готовится седьмой предаудит |
 
 ## Ход заседания
 
 | Комната | Вопрос | Состояние | Протокол |
 |---|---|---|---|
 | **M0** | порядок семи вопросов | **PASS; РАТИФИЦИРОВАНО владельцем 2026-08-03** | [`протокол`](../../seanses/static-mmbrn-container-m0-order-2026-08-03.md) · [`run1`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run1-false-dag.md) · [`run2`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run2-missing-affine-edge.md) · [`run3`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run3-premature-ratification.md) · [`run4`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run4-second-carrier.md) · [`run5`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run5-access-granularity.md) · [`run6`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run6-access-identity-dependency.md) |
-| **M1** | граница контейнера | run1–5 **BLOCK**; готовится run6 | [`повестка`](M1_AGENDA.md) · [`run1`](../../seanses/rejected/static-mmbrn-container-m1-boundary-2026-08-03-run1-carrier-identity-provenance.md) · [`run2`](../../seanses/rejected/static-mmbrn-container-m1-boundary-2026-08-03-run2-short-index-provenance.md) · [`run3`](../../seanses/rejected/static-mmbrn-container-m1-boundary-2026-08-03-run3-identity-unfinished-dod.md) · [`run4`](../../seanses/rejected/static-mmbrn-container-m1-boundary-2026-08-03-run4-negative-identity-intake.md) · [`run5`](../../seanses/rejected/static-mmbrn-container-m1-boundary-2026-08-03-run5-false-role-count.md) |
+| **M1** | граница контейнера | run1–6 **BLOCK**; готовится run7 | [`повестка`](M1_AGENDA.md) · [`run1`](../../seanses/rejected/static-mmbrn-container-m1-boundary-2026-08-03-run1-carrier-identity-provenance.md) · [`run2`](../../seanses/rejected/static-mmbrn-container-m1-boundary-2026-08-03-run2-short-index-provenance.md) · [`run3`](../../seanses/rejected/static-mmbrn-container-m1-boundary-2026-08-03-run3-identity-unfinished-dod.md) · [`run4`](../../seanses/rejected/static-mmbrn-container-m1-boundary-2026-08-03-run4-negative-identity-intake.md) · [`run5`](../../seanses/rejected/static-mmbrn-container-m1-boundary-2026-08-03-run5-false-role-count.md) · [`run6`](../../seanses/rejected/static-mmbrn-container-m1-boundary-2026-08-03-run6-false-exact-count.md) |
 | **M2..M7** | по одному вопросу в порядке M0 | не созывались | — |
 
 ## Гейт M0
