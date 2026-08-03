@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "sprint-cut-teeth-to-live-modules",
+      "title": "Зубы формы cut-плана переходят на живые execution-gate/experience-loop, дублёры сносятся",
+      "promptPath": "docs/prompts/SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "долг по вердикту Веснина (шот stubs-verdict 03.08), срок — стабильный контракт живой петли опыта; иссью заведётся при взятии в работу",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-03",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "ДОЛГ. P2 ревью #1515: стабы sprint-cut/stubs/* — контракт границы для зубов, легализованы как промежуточная форма; постоянной опорой не назначены. Переход свяжет тест формы с лестницей вердиктов гейта — делать по выходу петли опыта на стабильный контракт.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "worktree-foreign-resolution-probe",
       "title": "Резолюция пакетов вне дерева говорится вслух, а не обнаруживается постфактум",
       "promptPath": "docs/prompts/WORKTREE_FOREIGN_RESOLUTION_PROBE_PROMPT.md",

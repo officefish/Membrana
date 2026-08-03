@@ -12,3 +12,4 @@
 {"timestamp":"2026-08-03T16:01:59.413Z","path":"docs/procedures/weekly-dead-wire/MANIFEST.json","slug":"deadwire-weekday-fact","headRev":"860f30e35d360ad796f67e3b7f44fd9bdd65cba3","status":"merged"}
 {"timestamp":"2026-08-03T16:14:26.661Z","path":"scripts/execution-gate.test.mjs","slug":"simultaneous-at-boundary","headRev":"8aa5344fdfa8ec02089b5405731745b7c4742608","status":"merged"}
 {"timestamp":"2026-08-03T16:31:29.160Z","path":"scripts/kits-prepush-strict.mjs","slug":"kits-repair-recipe","headRev":"3481ff66bbddd64d10dbaaad1f4b791d81c2534c","status":"merged"}
+{"timestamp":"2026-08-03T18:16:03.561Z","path":"scripts/lib/sprint-cut/stubs/evidence-trail.stub.mjs","slug":"stubs-verdict","headRev":"090b2695591c0e00d81c29bd9d9f607f77025138","status":"merged"}
