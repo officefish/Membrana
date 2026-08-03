@@ -316,7 +316,10 @@ test('находки не повышаются до остановки: late-clo
   assert.equal(late.report.exitCode, EXIT_YES);
 
   const order = run('plan-two-blocks', 'order-review-early');
-  assert.deepEqual(toothIds(order.report), [FINDINGS.ORDER_REVIEW_EARLY]);
+  // Обе опорные точки: ревью (08:30) раньше и подписи (09:00), и первого прогона (09:30) —
+  // находок ДВЕ, по одной на точку (словарная пара шота pair-props 03.08). Одна ситуация,
+  // два именованных нарушения порядка — и обе остаются находками, не остановкой.
+  assert.deepEqual(toothIds(order.report).sort(), [FINDINGS.ORDER_REVIEW_BEFORE_RUN, FINDINGS.ORDER_REVIEW_BEFORE_SIGN].sort());
   assert.equal(order.report.exitCode, EXIT_YES);
 
   const mixed = run('plan-two-blocks', 'duplicate-and-extra');
@@ -608,4 +611,46 @@ test('#1638: интеграция через runGate — recutActs доезжа�
   // Свежий след в фикстуре один (review_pass) — после отзыва состав неполон: НЕ зелёный.
   assert.equal(gw.verdict, VERDICTS.INCOMPLETE_TRACE);
   assert.equal(gw.disqualified?.[0]?.toothId ?? report.blocks.find((b) => b.blockId === 'gate-wiring').disqualified[0].toothId, DISQUALIFICATIONS.SUPERSEDED_BY_RECUT);
+});
+
+// ── Шот pair-props (03.08): два свойства пары ─────────────────────────────────────────────────
+
+test('свойство 1: ревью раньше ПЕРВОГО прогона контекста — находка before-run, вердикт жив', () => {
+  const block = { blockId: 'b', assigned: 'vesnin', mode: 'explicit_honest', from: 0, to: 1000, graceMs: 0, revisionAt: 0 };
+  const j = judgeBlock(block, [
+    { traceId: 't-rev', blockId: 'b', kind: 'review_pass', subject: 'vesnin', at: 100, ref: 'x', relatesToSprint: false },
+    { traceId: 't-run', blockId: 'b', kind: 'context_run', subject: 'vesnin', at: 500, ref: 'y', relatesToSprint: false },
+  ], { resolveRef: () => true });
+  assert.equal(j.verdict, VERDICTS.HONEST_PAIR, 'канал находки: вердикт не меняется');
+  assert.deepEqual(j.findings.map((f) => f.toothId), [FINDINGS.ORDER_REVIEW_BEFORE_RUN]);
+  assert.match(j.findings[0].reason, /опорной точки run/iu);
+});
+
+test('свойство 1, семантика ПЕРВОГО: run → review → run даёт честный порядок, находки нет', () => {
+  // «Раньше последнего до ревью» тихо разрешал бы этот случай как нарушение — а это другое
+  // свойство (ревизия между следами), закрытое композицией ниже. Не смешивать (слово Ожегова).
+  const block = { blockId: 'b', assigned: 'vesnin', mode: 'explicit_honest', from: 0, to: 1000, graceMs: 0, revisionAt: 0 };
+  const j = judgeBlock(block, [
+    { traceId: 't-run1', blockId: 'b', kind: 'context_run', subject: 'vesnin', at: 100, ref: 'x', relatesToSprint: false },
+    { traceId: 't-rev', blockId: 'b', kind: 'review_pass', subject: 'vesnin', at: 200, ref: 'y', relatesToSprint: false },
+    { traceId: 't-run2', blockId: 'b', kind: 'context_run', subject: 'vesnin', at: 300, ref: 'z', relatesToSprint: false },
+  ], { resolveRef: () => true });
+  assert.equal(j.verdict, VERDICTS.HONEST_PAIR);
+  assert.deepEqual(j.findings.filter((f) => f.toothId === FINDINGS.ORDER_REVIEW_BEFORE_RUN), []);
+});
+
+test('свойство 5 ЗАКРЫТО композицией #1641+#1638: run → перерезка → review ≠ honest_pair никакой дорогой', () => {
+  // Зуб-сценарий, закрепляющий снятие свойства из списка пределов: прогон до сдвига ревизии
+  // протухает; без акта — stale_partial, с актом — дисквалификация и incomplete_trace
+  // (нужен НОВЫЙ прогон). Ни одна дорога не ведёт в зелёный.
+  const block = { blockId: 'b', assigned: 'vesnin', mode: 'explicit_honest', from: 0, to: 1000, graceMs: 0, revisionAt: 500 };
+  const traces = [
+    { traceId: 't-run-old', blockId: 'b', kind: 'context_run', subject: 'vesnin', at: 100, ref: 'x', relatesToSprint: false },
+    { traceId: 't-rev-new', blockId: 'b', kind: 'review_pass', subject: 'vesnin', at: 700, ref: 'y', relatesToSprint: false },
+  ];
+  const noAct = judgeBlock(block, traces, { resolveRef: () => true });
+  assert.equal(noAct.verdict, VERDICTS.STALE_PARTIAL, 'без акта — прежняя остановка');
+  const withAct = judgeBlock(block, traces, { resolveRef: () => true, recutActs: [{ kind: 'recut_act', at: 300 }] });
+  assert.equal(withAct.verdict, VERDICTS.INCOMPLETE_TRACE, 'с актом — отзыв и требование нового прогона');
+  assert.equal(withAct.disqualified[0]?.toothId, DISQUALIFICATIONS.SUPERSEDED_BY_RECUT);
 });

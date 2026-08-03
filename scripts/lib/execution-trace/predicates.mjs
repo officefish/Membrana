@@ -197,9 +197,31 @@ export function judgeBlock(block, corpus, ctx) {
   for (const t of Number.isFinite(firstSig) ? counted : []) {
     if (t.kind === TRACE_KINDS.REVIEW_PASS && t.at < firstSig) {
       findings.push({
-        toothId: FINDINGS.ORDER_REVIEW_EARLY,
+        toothId: FINDINGS.ORDER_REVIEW_BEFORE_SIGN,
         blockId: block.blockId,
-        reason: `${t.traceId}: review_pass раньше contract_signature — ревью судило непринятый контракт`,
+        reason: `${t.traceId}: ревью зафиксировано раньше ОПОРНОЙ ТОЧКИ sign (подпись субъекта) — судило непринятый контракт`,
+      });
+    }
+  }
+
+  // Находка порядка ВНУТРИ ПАРЫ (#1641, свойство 1): ревью раньше ПЕРВОГО прогона контекста
+  // того же субъекта. Вердикт не меняется — канал находки; поднятие до вердикта — отдельное
+  // решение владельца по числу замера (шот pair-props 03.08).
+  /** @type {Map<string, number>} */
+  const firstRunBySubject = new Map();
+  for (const t of counted) {
+    if (t.kind !== TRACE_KINDS.CONTEXT_RUN) continue;
+    const prev = firstRunBySubject.get(t.subject);
+    if (prev === undefined || t.at < prev) firstRunBySubject.set(t.subject, t.at);
+  }
+  for (const t of counted) {
+    if (t.kind !== TRACE_KINDS.REVIEW_PASS) continue;
+    const firstRun = firstRunBySubject.get(t.subject);
+    if (firstRun !== undefined && t.at < firstRun) {
+      findings.push({
+        toothId: FINDINGS.ORDER_REVIEW_BEFORE_RUN,
+        blockId: block.blockId,
+        reason: `${t.traceId}: ревью зафиксировано раньше ОПОРНОЙ ТОЧКИ run (первый прогон контекста ${t.subject})`,
       });
     }
   }
