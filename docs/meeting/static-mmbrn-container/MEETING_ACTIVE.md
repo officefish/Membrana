@@ -9,13 +9,13 @@
 | аудитор | **Codex S-M5 Read-Only Auditor, static-mmbrn-container, 2026-08-03** (agent `019fc720-8fec-7c63-8d9f-28a52e2fb5c2`), отдельный от председателя |
 | предаудит | [`AUDIT_READ_ONLY.md`](AUDIT_READ_ONLY.md) — PASS до запуска M0 |
 | задание | [`MEETING_BRIEF.md`](MEETING_BRIEF.md) |
-| состояние | первый прогон M0 отклонён аудитором; повторный M0 подготовлен |
+| состояние | два прогона M0 отклонены аудитором; третий прогон подготовлен |
 
 ## Ход заседания
 
 | Комната | Вопрос | Состояние | Протокол |
 |---|---|---|---|
-| **M0** | порядок семи вопросов | прогон 1 BLOCK: транзитивное ребро и ложный tie-break; повторный прогон подготовлен | [`rejected/…run1-false-dag.md`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run1-false-dag.md) |
+| **M0** | порядок семи вопросов | прогоны 1–2 BLOCK; третий прогон подготовлен | [`run1`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run1-false-dag.md) · [`run2`](../../seanses/rejected/static-mmbrn-container-m0-order-2026-08-03-run2-missing-affine-edge.md) |
 | **M1..M7** | по одному вопросу в порядке M0 | не созывались | — |
 
 ## Гейт M0
