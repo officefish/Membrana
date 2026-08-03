@@ -136,3 +136,12 @@ test('parseArgs: закрытый список команд и флагов, п�
   assert.throws(() => parseArgs(['upsert']), /вне \{open\|close\|amend\}/u);
   assert.throws(() => parseArgs(['open', '--force', '1']), /неизвестный флаг/u);
 });
+
+test('days с NaN не молчит пустым промётом — throw', () => {
+  assert.throws(() => datesBack('2026-08-03', Number('семь')), /non-negative integer/u);
+  const dir = tempRepo();
+  assert.throws(
+    () => cmdOpen(dir, { procedureId: 'p', at: AT_D1, evidence: ['e'], days: Number('x') }),
+    /non-negative integer/u,
+  );
+});

@@ -48,6 +48,8 @@ export const DEFAULT_SWEEP_DAYS = 7;
 /** Даты назад от dateIso (сама дата не входит), формой YYYY-MM-DD. */
 export function datesBack(dateIso, days) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateIso)) throw new Error(`dateIso must be YYYY-MM-DD: ${dateIso}`);
+  // NaN молчал бы пустым промётом (Array.from({length: NaN}) → []) — обрыв не был бы найден.
+  if (!Number.isSafeInteger(days) || days < 0) throw new Error(`days must be a non-negative integer: ${days}`);
   const t = Date.UTC(+dateIso.slice(0, 4), +dateIso.slice(5, 7) - 1, +dateIso.slice(8, 10));
   return Array.from({ length: days }, (_, k) => new Date(t - (k + 1) * 86_400_000).toISOString().slice(0, 10));
 }

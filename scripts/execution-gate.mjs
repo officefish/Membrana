@@ -33,7 +33,7 @@ import { parseIso } from './lib/execution-trace/plan-reader.mjs';
 import { closeProcedureRun, findUnclosedRuns, readProcedureRunTrail } from './lib/procedure-run-journal.mjs';
 // Словарь прогона спринта (SPRINT_PROCEDURE_ID, лента из ratification.at) живёт у
 // носителя ratify: open и close обязаны выводить ОДИН путь из ОДНОГО поля. Импорт
-// скрипт-к-скрипту — названный долг класса acts-trail-reader (#1638): переезд в lib
+// скрипт-к-скрипту — долг класса acts-trail-reader, карточка #1681: переезд в lib
 // требует плана, чья зона включает lib; у этого блока её нет.
 import { SPRINT_PROCEDURE_ID, sprintTrailRelPath } from './sprint-cut-check.mjs';
 
