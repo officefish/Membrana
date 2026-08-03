@@ -8,3 +8,4 @@
 {"timestamp":"2026-08-03T13:04:34.709Z","path":"scripts/lib/execution-trace/predicates.mjs","slug":"window-after-first-trace","headRev":"65226cba155850ffa9a37e9465f03c34017273d3","status":"merged"}
 {"timestamp":"2026-08-03T13:45:08.253Z","path":"scripts/task-register.mjs","slug":"register-category-warning","headRev":"7c98e78fc009fb34d0cee132b659c091739694c4","status":"merged"}
 {"timestamp":"2026-08-03T14:00:14.000Z","path":"docs/security/rotation-manifest-2026-08-03.md","slug":"rotation-manifest","headRev":"953004c3","status":"merged"}
+{"timestamp":"2026-08-03T14:03:27.637Z","path":"scripts/lib/review-oversized-queue.mjs","slug":"oversized-hostlocal-voice","headRev":"e44828cab8185d1ebc064e0889e7b354cdb4cbbd","status":"merged"}

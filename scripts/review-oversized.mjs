@@ -103,7 +103,21 @@ function main(argv) {
     existsSync(join(repoRoot, reviewArtifactRel(pr))),
   );
 
-  const result = buildQueue(commits, { reviewed, includeDocs: cli.includeDocs });
+  // Порт ствола (шот B): какие артефакты ревью отслеживаются git. Ядро получает Set
+  // значением и о VCS не знает. Сбой git не роняет очередь — порт остаётся null, и прибор
+  // о слепоте честно НЕ судит, вместо того чтобы соврать «слепоты нет».
+  let trackedReviewed = null;
+  try {
+    const tracked = git(['ls-files', '--', 'docs/discussions/pr-*-code-review.md']);
+    const trackedPrs = new Set(
+      tracked.split('\n').map((f) => /pr-(\d+)-code-review\.md$/u.exec(f)?.[1]).filter(Boolean),
+    );
+    trackedReviewed = reviewed.filter((pr) => trackedPrs.has(String(pr)));
+  } catch {
+    /* порт не подключился — hostLocalReviewed останется null */
+  }
+
+  const result = buildQueue(commits, { reviewed, includeDocs: cli.includeDocs, trackedReviewed });
 
   if (cli.json) {
     process.stdout.write(`${JSON.stringify({ ...result, withoutPr, since: cli.since }, null, 2)}\n`);
