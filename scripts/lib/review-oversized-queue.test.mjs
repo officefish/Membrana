@@ -256,3 +256,30 @@ test('при равном риске И равной доле порядок д�
   assert.deepEqual(a, ['520', '530']);
   assert.deepEqual(a, b);
 });
+
+// ── Шот B (03.08): предел снятия — вслух ──────────────────────────────────────────────────
+
+test('шот B: снятые без следа в стволе посчитаны, слова — «голова очереди иная»', () => {
+  const r = buildQueue([bigCode(70, 700), bigCode(80, 700), bigCode(90, 700)], {
+    reviewed: ['70', '80'],
+    trackedReviewed: ['80'],
+  });
+  assert.equal(r.hostLocalReviewed, 1, 'один из двух снятых держится на host-local файле');
+  const joined = formatQueue(r).join('\n');
+  assert.ok(joined.includes('снятие host-local: 1/2'));
+  assert.ok(joined.includes('голова очереди иная'), 'не «длиннее»: чужого прибор не считает');
+  assert.ok(!joined.includes('длиннее'));
+});
+
+test('шот B: порт не подключён (null) — о слепоте НЕ судим, строки нет', () => {
+  // «Слепоты нет» и «о слепоте не знаем» — разные утверждения; сбой git не делает первое.
+  const r = buildQueue([bigCode(70, 700)], { reviewed: ['70'] });
+  assert.equal(r.hostLocalReviewed, null);
+  assert.ok(!formatQueue(r).join('\n').includes('host-local'));
+});
+
+test('шот B: все снятые в стволе — ноль, строки-тревоги нет, счёт есть', () => {
+  const r = buildQueue([bigCode(70, 700)], { reviewed: ['70'], trackedReviewed: ['70'] });
+  assert.equal(r.hostLocalReviewed, 0);
+  assert.ok(!formatQueue(r).join('\n').includes('host-local'));
+});

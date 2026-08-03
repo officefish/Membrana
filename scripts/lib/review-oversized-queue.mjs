@@ -125,10 +125,14 @@ export function describeCommit(commit) {
  *   denominator: number}}
  */
 export function buildQueue(commits, ctx = {}) {
-  const { reviewed = [], includeDocs = false } = ctx;
+  // trackedReviewed — номера PR, чей артефакт ревью ОТСЛЕЖИВАЕТСЯ стволом (шот B, 03.08).
+  // Источник списка — порт глагола (git ls-files), ядро о VCS не знает (граница Ожегова).
+  const { reviewed = [], includeDocs = false, trackedReviewed = null } = ctx;
   const done = new Set(reviewed.map(String));
   const dropped = { notOversized: 0, reviewed: 0, docs: 0 };
   const queue = [];
+  /** PR, ФАКТИЧЕСКИ снятые с очереди — не все артефакты ФС: дробь обязана быть об одном множестве. */
+  const removedPrs = new Set();
 
   for (const raw of Array.isArray(commits) ? commits : []) {
     const c = describeCommit(raw);
@@ -138,6 +142,7 @@ export function buildQueue(commits, ctx = {}) {
     }
     if (c.pr !== null && done.has(String(c.pr))) {
       dropped.reviewed += 1;
+      removedPrs.add(String(c.pr));
       continue;
     }
     if (c.nature === NATURES.DOCS && !includeDocs) {
@@ -164,7 +169,15 @@ export function buildQueue(commits, ctx = {}) {
       String(a.sha ?? '').localeCompare(String(b.sha ?? '')),
   );
 
-  return { queue, dropped, denominator: Array.isArray(commits) ? commits.length : 0 };
+  // Своя слепота счётом: сколько ФАКТИЧЕСКИХ снятий держится на файлах вне ствола.
+  // Первый живой прогон дал «65/29» — числитель шёл по всем артефактам ФС, знаменатель по
+  // снятым элементам очереди: дробь о двух разных множествах. Числитель приведён к removedPrs.
+  // null — порт не подключён (зубы ядра без git): о слепоте не судим, а не «слепоты нет».
+  const tracked = trackedReviewed === null ? null : new Set([...trackedReviewed].map(String));
+  const hostLocalReviewed =
+    tracked === null ? null : [...removedPrs].filter((pr) => !tracked.has(pr)).length;
+
+  return { queue, dropped, hostLocalReviewed, denominator: Array.isArray(commits) ? commits.length : 0 };
 }
 
 /**
@@ -182,6 +195,17 @@ export function formatQueue(result, opts = {}) {
     `отброшено: ${dropped.notOversized ?? 0} не oversized · ${dropped.reviewed ?? 0} с готовым артефактом ревью · ` +
       `${dropped.docs ?? 0} без изменённых строк исходного кода`,
   );
+  // Предел прибора — вслух (шот B, 03.08): снятие читает рабочее дерево, а артефакты ревью
+  // в .gitignore (TF-3, #554). Слова выверены исполнителем: «голова очереди ИНАЯ», не
+  // «длиннее» — у чужого клона свои host-local вещдоки, невидимые здесь; прибор говорит о
+  // СВОЕЙ слепоте, чужого не считает.
+  const hl = result?.hostLocalReviewed;
+  if (typeof hl === 'number' && hl > 0) {
+    lines.push(
+      `⚠ снятие host-local: ${hl}/${dropped.reviewed ?? 0} снятых артефактов вне ствола — ` +
+        'на клоне без них голова очереди иная',
+    );
+  }
 
   if (queue.length === 0) {
     lines.push('✓ очередь пуста — точечно ревьюить нечего.');
