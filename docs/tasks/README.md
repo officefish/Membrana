@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `gate-stale-supersede-by-recut` | Протухший след отзывается актом перерезки, а не изъятием строки | S | [`GATE_STALE_SUPERSEDE_BY_RECUT_PROMPT.md`](../prompts/GATE_STALE_SUPERSEDE_BY_RECUT_PROMPT.md) | [#1638](https://github.com/officefish/Membrana/issues/1638) |
 | `gate-honest-pair-completeness` | honest_pair перестаёт обещать пару, которой не проверяет | S | [`GATE_HONEST_PAIR_COMPLETENESS_PROMPT.md`](../prompts/GATE_HONEST_PAIR_COMPLETENESS_PROMPT.md) | [#1641](https://github.com/officefish/Membrana/issues/1641) |
 | `deploy-procedure-survey` | Обзор узла разворачивания: карта 41 глагола деплоя при нуле процедур | L | [`DEPLOY_PROCEDURE_SURVEY_PROMPT.md`](../prompts/DEPLOY_PROCEDURE_SURVEY_PROMPT.md) | — |
 | `workflow-examples-marathon` | Накопить проверяемые примеры мастерских и процедур | L | [`WORKFLOW_EXAMPLES_MARATHON_PROMPT.md`](../prompts/WORKFLOW_EXAMPLES_MARATHON_PROMPT.md) | — |

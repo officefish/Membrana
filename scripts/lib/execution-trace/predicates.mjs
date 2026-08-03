@@ -34,6 +34,34 @@ export function missingPairKinds(traces) {
 }
 
 /**
+ * Отозван ли протухший след актом перерезки (#1638).
+ *
+ * УСЛОВИЕ ВРЕМЕННОЕ, и это несущее (слово резчика 03.08): голый факт «в ленте актов есть
+ * `recut_act` этого спринта» легализовал бы старый акт, случайно лежащий в ленте, — дверь
+ * распахнулась бы на весь спринт, и отзыв стал бы неотличим от изъятия.
+ *
+ * Формула: `t_stale.at ≤ act.at ≤ revisionAt` — акт лежит МЕЖДУ протухшим следом и ревизией
+ * предмета, то есть судит именно тот контракт, который след успел застать. Требование «свежий
+ * след после акта» отдельной проверки не требует: свежесть определена как `t.at ≥ revisionAt`,
+ * а `revisionAt ≥ act.at` уже входит в формулу.
+ *
+ * Направление неравенства НЕ как в черновике резчика (`act.at ≥ revisionAt`): акт перерезки
+ * пишется ДО ратификации, а ратификация и проставляет `revisionAt` — при обратной сверке дверь
+ * не открылась бы никогда. Довод записан в акте нарезки v1.
+ *
+ * Допуск ε = 0 сознательно: старые ленты с грязными метками (Z-суффикс на местном времени)
+ * дверь не откроют — и не должны. Дверь для будущих перерезок с честными метками.
+ *
+ * @param {NormalizedTrace} staleTrace протухший след (`t.at < revisionAt` уже установлено)
+ * @param {NormalizedBlock} block
+ * @param {readonly {kind:string, at:number}[]} recutActs акты перерезки ЭТОГО спринта, `at` в epoch ms
+ * @returns {boolean}
+ */
+export function supersededByRecut(staleTrace, block, recutActs) {
+  return (recutActs ?? []).some((a) => staleTrace.at <= a.at && a.at <= block.revisionAt);
+}
+
+/**
  * @typedef {import('./plan-reader.mjs').NormalizedBlock} NormalizedBlock
  * @typedef {import('./trace-corpus.mjs').NormalizedTrace} NormalizedTrace
  *
@@ -180,7 +208,7 @@ export function judgeBlock(block, corpus, ctx) {
   /** @type {Map<string, string[]>} */
   const pairs = new Map();
   for (const t of counted) {
-    const key = `${t.kind} ${t.ref}`;
+    const key = `${t.kind}${t.ref}`;
     pairs.set(key, [...(pairs.get(key) ?? []), t.traceId]);
   }
   for (const [key, ids] of pairs) {
@@ -188,7 +216,7 @@ export function judgeBlock(block, corpus, ctx) {
     findings.push({
       toothId: FINDINGS.DUPLICATE_TRACE,
       blockId: block.blockId,
-      reason: `пара (${key.split(' ')[0]}, ${key.split(' ')[1]}) встречается ${ids.length} раза: ${ids.join(', ')}`,
+      reason: `пара (${key.split('')[0]}, ${key.split('')[1]}) встречается ${ids.length} раза: ${ids.join(', ')}`,
     });
   }
 
@@ -213,11 +241,34 @@ export function judgeBlock(block, corpus, ctx) {
   }
   const fresh = own.filter((t) => !isStale(t, block));
   if (fresh.length === 0) {
+    // Свежих нет — отзыв НЕ работает и при записанном акте: «перерезал и не перепрогнал»
+    // остаётся красным. Дверь #1638 открывается только сделанным перепрогоном.
     return done(
       VERDICTS.STALE_TRACE,
       `все ${own.length} следов ${block.assigned} старше ревизии предмета блока; перенос согласия на изменённый контракт запрещён`,
     );
   }
+
+  // Отзыв протухшего следа актом перерезки (#1638): свежие следы ЕСТЬ (проверено выше), и
+  // если протухание объяснено законным актом — след дисквалифицируется поимённо, а не
+  // отравляет вердикт. Лента неприкосновенна; изъятие строки становится ненужным и потому
+  // подозрительным. Протухшие БЕЗ акта идут прежней дорогой в stale_partial — вещдок #1566.
+  const recutActs = ctx.recutActs ?? [];
+  const superseded = new Set();
+  for (const t of own) {
+    if (!isStale(t, block)) continue;
+    if (!supersededByRecut(t, block, recutActs)) continue;
+    superseded.add(t.traceId);
+    disqualified.push({
+      toothId: DISQUALIFICATIONS.SUPERSEDED_BY_RECUT,
+      blockId: block.blockId,
+      traceId: t.traceId,
+      reason:
+        `след ${t.traceId} (${t.kind}) судил контракт до перерезки: акт recut_act лежит между ` +
+        'ним и ревизией предмета — дисквалифицирован актом перерезки (не изъят)',
+    });
+  }
+  const ownCounted = own.filter((t) => !superseded.has(t.traceId));
   // Частичное протухание — восьмой вердикт (акт владельца 01.08).
   //
   // Раньше здесь была дыра: `stale_trace` выше ловит только «протухли ВСЕ», а если уцелел
@@ -229,11 +280,11 @@ export function judgeBlock(block, corpus, ctx) {
   // Отбрасывать молча нельзя, и «понижать до stale_trace» тоже: «всё протухло» и «часть
   // протухла» — разные состояния, и слить их значило бы потерять различие, ради которого
   // предикат свежести вообще есть.
-  const staleOwn = own.filter((t) => isStale(t, block));
+  const staleOwn = ownCounted.filter((t) => isStale(t, block));
   if (staleOwn.length > 0) {
     return done(
       VERDICTS.STALE_PARTIAL,
-      `${staleOwn.length} из ${own.length} вещдоков ${block.assigned} старше ревизии предмета блока: ` +
+      `${staleOwn.length} из ${ownCounted.length} вещдоков ${block.assigned} старше ревизии предмета блока: ` +
         `они судили другую вещь. Свежих ${fresh.length} — пара не полна`,
       fresh.filter((t) => ctx.resolveRef(t.ref)).map((t) => t.ref),
     );

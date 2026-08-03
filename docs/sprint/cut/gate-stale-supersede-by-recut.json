@@ -1,0 +1,75 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "gate-stale-supersede-by-recut",
+  "taskId": "gate-stale-supersede-by-recut",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-03T16:00:00+03:00",
+    "to": "2026-08-03T21:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "supersede-core",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/execution-trace/predicates.mjs",
+        "scripts/lib/execution-trace/gate-exit-codes.mjs"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionAt": "2026-08-03T13:13:27+03:00",
+      "revisionOf": "d0db239ead26172e1ce55c0bbb741ee117c32acf56ac4c52e7e693a6c9cb073b"
+    },
+    {
+      "blockId": "supersede-wire",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/execution-gate.mjs",
+        "scripts/lib/sprint-cut/acts-trail-reader.mjs",
+        "scripts/sprint-cut-check.mjs"
+      ],
+      "estimate": {
+        "changedLines": 160
+      },
+      "revisionAt": "2026-08-03T14:18:00+03:00",
+      "revisionOf": "3f1ad1fd47c7b20b50f32b9e3989d6c7f0999718e096f81b7eedbd89dbf76576"
+    },
+    {
+      "blockId": "supersede-tooth",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/execution-gate.test.mjs",
+        "scripts/lib/execution-trace/fixtures",
+        "scripts/lib/execution-trace/stubs"
+      ],
+      "estimate": {
+        "changedLines": 240
+      },
+      "revisionAt": "2026-08-03T13:13:27+03:00",
+      "revisionOf": "24d93b85e10f0a5a2e9275b63a3d11582d6bc5c3a16f638be48b1adc646d35f8"
+    },
+    {
+      "blockId": "evidence-note",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/discussions/trace-supersede-evidence.md"
+      ],
+      "estimate": {
+        "changedLines": 45
+      },
+      "revisionAt": "2026-08-03T13:13:27+03:00",
+      "revisionOf": "896d6d16c750971624d9bb20af98c9893597c2c8cedc58794a05f03bb9b54943"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-03T14:18:00+03:00",
+    "digest": "773150c0d7f2e1a68b6d34385b40582198678f519886ebc7869f0658b851febe"
+  }
+}

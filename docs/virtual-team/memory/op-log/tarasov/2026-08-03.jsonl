@@ -1,3 +1,7 @@
 {"ts":"2026-08-03T06:52:18.445Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
 {"ts":"2026-08-03T09:32:34.797Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T09:32:11.596Z","origin":"ask-persona"}
 {"ts":"2026-08-03T09:32:34.798Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T09:32:11.596Z","origin":"ask-persona"}
+{"ts":"2026-08-03T10:09:47.683Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T10:09:18.909Z","origin":"ask-persona"}
+{"ts":"2026-08-03T10:09:47.686Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T10:09:18.909Z","origin":"ask-persona"}
+{"ts":"2026-08-03T10:09:47.688Z","persona":"tarasov","verb":"emerge","ref":"tarasov-ritual-magistral-source-freshness-cut-1","reason":"прошлая нарезка того же класса (freshness) промахнулась по объёмам на +40% суммой; здесь у тебя блок tooth 160 строк на четыре исхода — тот же профиль риска, скажу отдельно ниже.","origin":"ask-persona"}
+{"ts":"2026-08-03T10:09:47.691Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-20-linear-egress-gear-wiring-m3-snapshot-dod","reason":"там же держал рамку «одна комната — одна функция»; здесь та же логика границ core/wire/tooth.","origin":"ask-persona"}
