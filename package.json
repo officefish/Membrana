@@ -140,7 +140,7 @@
     "mint:intent": "node scripts/mint-intent.mjs",
     "archivarius": "node scripts/archivarius.mjs",
     "report:check": "node scripts/report-check.mjs",
-    "ritual:evening": "node scripts/procedure-run-record.mjs open --procedure ritual-evening --evidence docs/MAIN_DAY_ISSUE.md && node scripts/ritual-evening-run.mjs && node scripts/procedure-run-record.mjs close --procedure ritual-evening --status pass --evidence docs/HANDOFF.md",
+    "ritual:evening": "node scripts/ritual-evening-run.mjs",
     "ritual:evening:local": "yarn archive:daily-day && yarn ensure-ollama && yarn local-code-review && yarn save-code-review && yarn task:close-github",
     "night:open": "node scripts/night-build-open.mjs",
     "night:run": "node scripts/night-build-run-phase.mjs",
