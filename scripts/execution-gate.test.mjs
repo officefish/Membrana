@@ -320,6 +320,10 @@ test('находки не повышаются до остановки: late-clo
   assert.equal(order.report.exitCode, EXIT_YES);
 
   const mixed = run('plan-two-blocks', 'duplicate-and-extra');
+  // Текст находки дубля читаем, а не посимвольная каша: ревью PR #1664 поймало регрессию
+  // split(' ') → split('') от скриптовой замены — зуб проверял toothId и промолчал.
+  const dup = mixed.report.findings.find((f) => f.toothId === FINDINGS.DUPLICATE_TRACE);
+  assert.match(dup.reason, /пара \(context_run, docs\//u, 'род и начало ref названы словами');
   assert.deepEqual(toothIds(mixed.report).sort(), [FINDINGS.DUPLICATE_TRACE, FINDINGS.EXTRA_PERFORMER].sort());
   assert.equal(mixed.report.exitCode, EXIT_YES);
   for (const f of mixed.report.findings) assert.ok(f.toothId.startsWith('eg-') && f.reason !== '');

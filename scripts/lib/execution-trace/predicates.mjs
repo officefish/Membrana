@@ -208,7 +208,7 @@ export function judgeBlock(block, corpus, ctx) {
   /** @type {Map<string, string[]>} */
   const pairs = new Map();
   for (const t of counted) {
-    const key = `${t.kind}${t.ref}`;
+    const key = `${t.kind} ${t.ref}`;
     pairs.set(key, [...(pairs.get(key) ?? []), t.traceId]);
   }
   for (const [key, ids] of pairs) {
@@ -216,7 +216,7 @@ export function judgeBlock(block, corpus, ctx) {
     findings.push({
       toothId: FINDINGS.DUPLICATE_TRACE,
       blockId: block.blockId,
-      reason: `пара (${key.split('')[0]}, ${key.split('')[1]}) встречается ${ids.length} раза: ${ids.join(', ')}`,
+      reason: `пара (${key.split(' ')[0]}, ${key.split(' ')[1]}) встречается ${ids.length} раза: ${ids.join(', ')}`,
     });
   }
 
