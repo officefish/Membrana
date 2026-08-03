@@ -654,3 +654,41 @@ test('свойство 5 ЗАКРЫТО композицией #1641+#1638: run 
   assert.equal(withAct.verdict, VERDICTS.INCOMPLETE_TRACE, 'с актом — отзыв и требование нового прогона');
   assert.equal(withAct.disqualified[0]?.toothId, DISQUALIFICATIONS.SUPERSEDED_BY_RECUT);
 });
+
+// ── Шот A (03.08): окно против первого следа ──────────────────────────────────────────────────
+
+test('шот A: след раньше window.from — находка на БЛОК, вердикт жив, лечение названо', () => {
+  const block = { blockId: 'b', assigned: 'vesnin', mode: 'explicit_honest', from: 500, to: 1000, graceMs: 0, revisionAt: 0 };
+  const j = judgeBlock(block, [
+    { traceId: 't-early-run', blockId: 'b', kind: 'context_run', subject: 'vesnin', at: 100, ref: 'x', relatesToSprint: false },
+    { traceId: 't-early-rev', blockId: 'b', kind: 'review_pass', subject: 'vesnin', at: 200, ref: 'y', relatesToSprint: false },
+    { traceId: 't-run', blockId: 'b', kind: 'context_run', subject: 'vesnin', at: 600, ref: 'z', relatesToSprint: false },
+    { traceId: 't-rev', blockId: 'b', kind: 'review_pass', subject: 'vesnin', at: 700, ref: 'w', relatesToSprint: false },
+  ], { resolveRef: () => true });
+  assert.equal(j.verdict, VERDICTS.HONEST_PAIR, 'канал находки: вердикт не меняется');
+  const wf = j.findings.filter((f) => f.toothId === FINDINGS.WINDOW_AFTER_FIRST_TRACE);
+  assert.equal(wf.length, 1, 'ДВА ранних следа — ОДНА находка: объект лечения — окно');
+  assert.match(wf[0].reason, /до окна 2 след/u, 'доказательная база числом');
+  assert.match(wf[0].reason, /перерезать ОКНО, не следы/u);
+});
+
+test('шот A: все следы в окне или позже from — тишина; ровно from — тоже тишина (строгое <)', () => {
+  const block = { blockId: 'b', assigned: 'vesnin', mode: 'explicit_honest', from: 500, to: 1000, graceMs: 0, revisionAt: 0 };
+  const j = judgeBlock(block, [
+    { traceId: 't-run', blockId: 'b', kind: 'context_run', subject: 'vesnin', at: 500, ref: 'x', relatesToSprint: false },
+    { traceId: 't-rev', blockId: 'b', kind: 'review_pass', subject: 'vesnin', at: 700, ref: 'y', relatesToSprint: false },
+  ], { resolveRef: () => true });
+  assert.deepEqual(j.findings.filter((f) => f.toothId === FINDINGS.WINDOW_AFTER_FIRST_TRACE), []);
+});
+
+test('шот A: вчерашний рецидив воспроизводится — окно 17:00 при работе с 15:00 даёт находку', () => {
+  // Ровно перерезка v3 спринта review-oversized-queue 02.08: работа шла 15:00–16:08, окно
+  // резчик назначил 17:00–21:00 по привычке вечернего спринта, гейт дал plan_lied по всем
+  // блокам. Теперь причина называется находкой ДО того, как боль дойдёт до перерезки.
+  const from = Date.parse('2026-08-02T17:00:00+03:00');
+  const block = { blockId: 'b', assigned: 'dynin', mode: 'explicit_honest', from, to: Date.parse('2026-08-02T21:00:00+03:00'), graceMs: 0, revisionAt: 0 };
+  const j = judgeBlock(block, [
+    { traceId: 't-run', blockId: 'b', kind: 'context_run', subject: 'dynin', at: Date.parse('2026-08-02T15:05:00+03:00'), ref: 'x', relatesToSprint: false },
+  ], { resolveRef: () => true });
+  assert.ok(j.findings.some((f) => f.toothId === FINDINGS.WINDOW_AFTER_FIRST_TRACE));
+});
