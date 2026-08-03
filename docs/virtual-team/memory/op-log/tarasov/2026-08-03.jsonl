@@ -14,3 +14,6 @@
 {"ts":"2026-08-03T12:57:03.420Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T12:56:44.779Z","origin":"ask-persona"}
 {"ts":"2026-08-03T12:57:03.426Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T12:56:44.779Z","origin":"ask-persona"}
 {"ts":"2026-08-03T12:57:03.428Z","persona":"tarasov","verb":"emerge","ref":"tarasov-review-oversized-queue-cut-1","reason":"прошлый прогноз по нарезке oversized-queue дал +27% факта над предсказанием; это прямо касается ШОТА B (та же очередь review:oversized) и оценки ~60 строк — держу коэффициент и не удивлюсь выходу к 75–80.","origin":"ask-persona"}
+{"ts":"2026-08-03T14:31:14.138Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T14:30:52.680Z","origin":"ask-persona"}
+{"ts":"2026-08-03T14:31:14.147Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T14:30:52.680Z","origin":"ask-persona"}
+{"ts":"2026-08-03T14:31:14.148Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-29-night-triage-insight-harvest","reason":"прямой прецедент: «четыре draft-PR разом = сыграна тренировка, не матч». Тот же соблазн взять веер в одну сессию вместо связки на одном.","origin":"ask-persona"}
