@@ -124,11 +124,15 @@ export function makeWorkTreeResolver(root) {
  * Отсутствие open-записи — не ошибка: mid-sprint прогоны гейта — рабочие замеры;
  * прогон спринта один, его открывает ратификация (`sprint:cut --ratify`).
  *
+ * Шероховатости свода едут в close-запись как friction[] (симптомами; корень —
+ * nullable-долг, дозаписываемый амандментом) — иначе единственная точка, где спринт
+ * пишется в журнал, глотала бы трение молча.
+ *
  * @param {string} repoRoot
- * @param {{plan: object, planRelPath: string, tracesRelPath: string, report: {exitCode: number, checkedBlocks: number, blocks: {verdict: string, stopped: boolean}[]}, nowIso: string}} input
+ * @param {{plan: object, planRelPath: string, tracesRelPath: string, report: {exitCode: number, checkedBlocks: number, blocks: {verdict: string, stopped: boolean}[]}, nowIso: string, frictionSymptoms?: string[]}} input
  * @returns {{closed: boolean, reason: string, record?: object}}
  */
-export function closeSprintRunFromReport(repoRoot, { plan, planRelPath, tracesRelPath, report, nowIso }) {
+export function closeSprintRunFromReport(repoRoot, { plan, planRelPath, tracesRelPath, report, nowIso, frictionSymptoms }) {
   const sprintId = plan?.sprintId;
   if (typeof sprintId !== 'string' || sprintId.trim() === '') {
     return { closed: false, reason: 'план без sprintId — закрывать нечем' };
@@ -155,19 +159,21 @@ export function closeSprintRunFromReport(repoRoot, { plan, planRelPath, tracesRe
     at: nowIso,
     evidence: [tracesRelPath, planRelPath],
     gaps: [...new Set(stops.map((b) => b.verdict))],
+    friction: frictionSymptoms?.length ? frictionSymptoms.map((symptom) => ({ symptom })) : undefined,
   });
   return { closed: true, reason: `close-запись ${record.status} в ${trailRel}`, record };
 }
 
 /** @param {readonly string[]} argv */
 export function parseArgs(argv) {
-  /** @type {{plan: string|null, traces: string|null, now: string|null, json: boolean}} */
-  const out = { plan: null, traces: null, now: null, json: false };
+  /** @type {{plan: string|null, traces: string|null, now: string|null, json: boolean, friction: string[]}} */
+  const out = { plan: null, traces: null, now: null, json: false, friction: [] };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--plan') out.plan = argv[++i] ?? null;
     else if (a === '--traces') out.traces = argv[++i] ?? null;
     else if (a === '--now') out.now = argv[++i] ?? null;
+    else if (a === '--friction') { const v = argv[++i]; if (v != null) out.friction.push(v); }
     else if (a === '--json') out.json = true;
   }
   return out;
@@ -179,6 +185,8 @@ const USAGE = [
   `  --plan   stub:<имя> | путь к .json    ратифицированный план нарезки (схема ${CUT_PLAN_SCHEMA})`,
   '  --traces fixture:<имя> | путь к .jsonl  лента вещдоков окна',
   '  --now    ISO-8601                     шапка отчёта и время close-записи журнала; в предикаты не попадает',
+  '  --friction <симптом>                  шероховатость свода в close-запись журнала (повторяем; только симптом,',
+  '                                        корень дозаписывается амандментом: procedure-run-record amend)',
   '  --json                                вывести GateReport как JSON',
   '',
   `  стабы плана:  ${STUB_PLAN_NAMES.join(', ')}`,
@@ -289,6 +297,7 @@ function main() {
         report,
         // --now гейта расширен: он же — время close-записи; иначе системное время CLI.
         nowIso: args.now ?? new Date().toISOString(),
+        frictionSymptoms: args.friction,
       });
       process.stdout.write(`журнал: ${closed.closed ? 'прогон спринта закрыт — ' : ''}${closed.reason}\n`);
     } catch (e) {

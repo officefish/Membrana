@@ -10,6 +10,7 @@ import {
   buildProcedureRunRecord,
   closeProcedureRun,
   findUnclosedRuns,
+  nextSequenceOf,
   openProcedureRun,
   readProcedureRunTrail,
   summarizeProcedureRunTrail,
@@ -288,4 +289,9 @@ test('амандмент без evidence — понятный throw, не generi
     }),
     /доказывается разбором, не словом/u,
   );
+});
+
+test('nextSequenceOf выдерживает ленту, на которой spread лёг бы стеком', () => {
+  const big = Array.from({ length: 200_000 }, (_, i) => ({ runId: 'r', sequence: i + 1 }));
+  assert.equal(nextSequenceOf(big, 'r'), 200_001);
 });

@@ -134,3 +134,28 @@ test('после close: повторный гейт не пишет вторую
   assert.equal(reopen.opened, false);
   assert.match(reopen.reason, /спринт прожит/u);
 });
+
+test('шероховатости свода едут в close-запись симптомами, корень — nullable-долг', () => {
+  const dir = tempRepo();
+  ensureSprintRunOpen(dir, PLAN, PLAN_REL);
+  const res = closeSprintRunFromReport(dir, {
+    plan: PLAN, planRelPath: PLAN_REL, tracesRelPath: TRACES_REL,
+    report: reportOf(0, ['honest_pair']), nowIso: '2026-08-04T18:00:00Z',
+    frictionSymptoms: ['ревью приняло смешение форм времени за нарушение монотонности'],
+  });
+  assert.deepEqual(res.record.friction, [{
+    symptom: 'ревью приняло смешение форм времени за нарушение монотонности',
+    root: null, fix: null, prevention: null,
+  }]);
+});
+
+test('без шероховатостей close-запись поля friction не несёт вовсе', () => {
+  const dir = tempRepo();
+  ensureSprintRunOpen(dir, PLAN, PLAN_REL);
+  const res = closeSprintRunFromReport(dir, {
+    plan: PLAN, planRelPath: PLAN_REL, tracesRelPath: TRACES_REL,
+    report: reportOf(0, ['honest_pair']), nowIso: '2026-08-04T18:00:00Z',
+    frictionSymptoms: [],
+  });
+  assert.equal(res.record.friction, undefined, 'пустой friction: [] был бы шумом формы');
+});

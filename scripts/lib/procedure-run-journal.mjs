@@ -242,10 +242,16 @@ export function findUnclosedRuns(records, procedureId) {
   );
 }
 
-/** Следующий sequence внутри runId: счёт прогона продолжается, не обнуляется. */
+/** Следующий sequence внутри runId: счёт прогона продолжается, не обнуляется.
+ * Один проход без spread: Math.max(...длинная лента) упирался бы в стек аргументов. */
 export function nextSequenceOf(records, runId) {
-  const seqs = records.filter((r) => r?.runId === runId).map((r) => Number(r.sequence) || 0);
-  return (seqs.length === 0 ? 0 : Math.max(...seqs)) + 1;
+  let max = 0;
+  for (const r of records) {
+    if (r?.runId !== runId) continue;
+    const s = Number(r.sequence) || 0;
+    if (s > max) max = s;
+  }
+  return max + 1;
 }
 
 /**
@@ -264,17 +270,29 @@ export function openProcedureRun(repoRoot, trailRelPath, input) {
   const records = readProcedureRunTrail(repoRoot, trailRelPath);
   const orphans = findUnclosedRuns(records, input.procedureId);
   const orphansClosed = [];
+  // Счёт по runId собирается ОДНИМ проходом: nextSequenceOf на каждую сироту делал бы
+  // O(n·m) по ленте (P2 ревью #1680).
+  const maxSeq = new Map();
+  for (const r of records) {
+    const s = Number(r?.sequence) || 0;
+    if (s > (maxSeq.get(r?.runId) ?? 0)) maxSeq.set(r?.runId, s);
+  }
+  const takeSeq = (runId) => {
+    const next = (maxSeq.get(runId) ?? 0) + 1;
+    maxSeq.set(runId, next);
+    return next;
+  };
   // Закрытия сирот допишутся ДО open-записи; если среди сирот тот же runId (переоткрытие
   // оборванного прогона), их close-записи сдвинут его счёт — учитываем сдвиг заранее,
   // чтобы ссылка orphanedBy указывала на настоящий номер open-записи.
   const sameRunOrphans = orphans.filter((o) => o.runId === input.runId).length;
-  const openSeq = nextSequenceOf(records, input.runId) + sameRunOrphans;
+  const openSeq = (maxSeq.get(input.runId) ?? 0) + sameRunOrphans + 1;
 
   for (const orphan of orphans) {
     const closeRec = buildProcedureRunRecord({
       procedureId: orphan.procedureId,
       runId: orphan.runId,
-      sequence: nextSequenceOf(records, orphan.runId),
+      sequence: takeSeq(orphan.runId),
       status: 'fail',
       runPhase: 'close',
       subject: `прогон оборван: open ${orphan.at} не был закрыт — закрыт лениво следующим прогоном процедуры`,

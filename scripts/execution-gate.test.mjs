@@ -416,9 +416,9 @@ test('отчёт всегда со знаменателем: corpusSize и check
 });
 
 test('CLI: аргументы разбираются, стаб плана и фикстура выбираются префиксом', () => {
-  const a = parseArgs(['--plan', 'stub:plan-two-blocks', '--traces', 'fixture:plan-lied', '--now', 'X', '--json']);
-  assert.deepEqual(a, { plan: 'stub:plan-two-blocks', traces: 'fixture:plan-lied', now: 'X', json: true });
-  assert.deepEqual(parseArgs([]), { plan: null, traces: null, now: null, json: false });
+  const a = parseArgs(['--plan', 'stub:plan-two-blocks', '--traces', 'fixture:plan-lied', '--now', 'X', '--json', '--friction', 'f1']);
+  assert.deepEqual(a, { plan: 'stub:plan-two-blocks', traces: 'fixture:plan-lied', now: 'X', json: true, friction: ['f1'] });
+  assert.deepEqual(parseArgs([]), { plan: null, traces: null, now: null, json: false, friction: [] });
 });
 
 // ── Шов A→B: настоящий план нарезки доезжает до гейта (31.07) ────────────────────────────────
