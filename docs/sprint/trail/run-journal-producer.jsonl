@@ -1,0 +1,2 @@
+{"traceId":"tr-b1-vesnin-run","blockId":"journal-friction-fail","kind":"context_run","subject":"vesnin","at":"2026-08-03T17:33:04+03:00","ref":"docs/discussions/block-journal-friction-fail-vesnin.md"}
+{"traceId":"tr-b1-vesnin-review","blockId":"journal-friction-fail","kind":"review_pass","subject":"vesnin","at":"2026-08-03T19:12:22+03:00","ref":"scripts/lib/procedure-run-journal.mjs","note":"дифф 433 строки против оценки 220 — перерасход назван: API дозаписи и ленивое закрытие с переоткрытием потянули шире; зона выдержана точно, 16+20 зубов зелёные"}
