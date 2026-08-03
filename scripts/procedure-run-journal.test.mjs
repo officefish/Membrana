@@ -279,3 +279,13 @@ test('переоткрытие ТОГО ЖЕ runId после обрыва: но
   assert.equal(record.sequence, 3, 'open переоткрытия — третий');
   assert.deepEqual(orphansClosed[0].orphanedBy, { runId: 'r-1', sequence: 3 }, 'ссылка на настоящий номер');
 });
+
+test('амандмент без evidence — понятный throw, не generic pass-without-evidence', () => {
+  assert.throws(
+    () => buildProcedureRunRecord({
+      ...BASE, status: 'pass', runPhase: 'friction-amend', evidence: [],
+      amends: { runId: 'r', sequence: 1, frictionIndex: 0 }, root: 'найденный корень',
+    }),
+    /доказывается разбором, не словом/u,
+  );
+});

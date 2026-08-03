@@ -97,7 +97,12 @@ export function buildProcedureRunRecord(input, opts = {}) {
   const evidence = asArray(input.evidence, 'evidence');
   const gaps = asArray(input.gaps, 'gaps');
   if (status === 'pass' && evidence.length === 0) {
-    throw new Error('pass record must name at least one evidence item');
+    // У амандмента своя формулировка того же закона: вызывающий должен понять, ЧЕГО не хватает.
+    throw new Error(
+      input.runPhase === 'friction-amend'
+        ? 'friction-amend без evidence — дозаписанный корень доказывается разбором, не словом'
+        : 'pass record must name at least one evidence item',
+    );
   }
 
   const record = {
@@ -159,6 +164,9 @@ export function buildProcedureRunRecord(input, opts = {}) {
     }
     if (Object.keys(patch).length === 0) {
       throw new Error('friction-amend без содержания — хотя бы одно из root/fix/prevention');
+    }
+    if (evidence.length === 0) {
+      throw new Error('friction-amend без evidence — дозаписанный корень доказывается разбором, не словом');
     }
     record.amends = { runId: a.runId, sequence: a.sequence, frictionIndex: a.frictionIndex };
     Object.assign(record, patch);
