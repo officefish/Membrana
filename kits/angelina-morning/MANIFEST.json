@@ -74,6 +74,7 @@
     "scripts/lib/tasks-readme-engine.mjs": "3a45a41f5e17587bc54b85011eeacbeffa7c264b",
     "scripts/lib/truth-graph.mjs": "54f1c23e0f0449e4adde145aa2d2633030baa22a",
     "scripts/lib/worktree-demolition.mjs": "f5ae3efad3607f7a049dc7a644ef6b562616c5db",
+    "scripts/lib/worktree-resolution.mjs": "731827bf01744a3f3a5ed4fc136bfb8206916c88",
     "scripts/lib/worktree-sync-check.mjs": "a86b1b518c06699535552e05a773bd0fc4b8658f",
     "scripts/main-day-issue.mjs": "2fedf0afde710809d4ab06a9069f76c80a3b27f6",
     "scripts/main-day-probe.mjs": "c9d62cc28a34babcf792ad115d172aca674a8bd4",
@@ -83,6 +84,6 @@
     "scripts/repo-clean.mjs": "339b3ed8adebe735cc2608b204f70bddf4709bc2",
     "scripts/strategy-day.mjs": "4e87373353828c2551fe04f740fd6b600a09dfe6",
     "scripts/telegram-swallow.mjs": "8164cfe6d01764034e8e8c162d5e79c6f31b6eb5",
-    "scripts/worktree-sync.mjs": "b45d3ca3cdf7d22432bbfefb1daa11f37a45de5f"
+    "scripts/worktree-sync.mjs": "1c727649ab55edf61a96e9fc8722a0708ab0cf92"
   }
 }
