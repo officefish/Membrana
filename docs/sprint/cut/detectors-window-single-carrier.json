@@ -1,0 +1,124 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "detectors-window-single-carrier",
+  "taskId": "detectors-window-single-carrier",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-02T16:30:00+03:00",
+    "to": "2026-08-02T21:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "base-window-carrier",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/services/detectors/base/src/sample-window.ts"
+      ],
+      "estimate": {
+        "changedLines": 130
+      },
+      "revisionAt": "2026-08-02T16:59:44+03:00",
+      "revisionOf": "5cca750232ac305a61c67679d4c711e5644899d86228ce8bf172f84aef2d27d6"
+    },
+    {
+      "blockId": "base-window-tooth",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/services/detectors/base/src/sample-window.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 170
+      },
+      "revisionAt": "2026-08-02T16:59:44+03:00",
+      "revisionOf": "e02ed3bb485e40e459bc18d83492d8be86afa03c2545437764100edf7eac3335"
+    },
+    {
+      "blockId": "analyze-sample-golden",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/services/detectors/base/src/analyze-sample.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 90
+      },
+      "revisionAt": "2026-08-02T16:59:44+03:00",
+      "revisionOf": "2f3b4c21cc9d20ad3e4d86060d6462b3f9f70775b76324d484970ace9109b48f"
+    },
+    {
+      "blockId": "analyze-sample-rewire",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/services/detectors/base/src/analyze-sample.ts",
+        "packages/services/detectors/base/src/index.ts",
+        "packages/services/detectors/base/README.md"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionAt": "2026-08-02T16:59:44+03:00",
+      "revisionOf": "1f0ba3566d7ad3baaea0aede48ea41e210c229da8bb212d41db630c0f0bf78b2"
+    },
+    {
+      "blockId": "harmonic-drop-copy",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/services/detectors/harmonic/src/core"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionAt": "2026-08-02T16:59:44+03:00",
+      "revisionOf": "1d61d4f13eda6a96c88a9c3db3cc04edf2714cd5405f0f58179280a94ce7fc93"
+    },
+    {
+      "blockId": "cepstral-drop-copy",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/services/detectors/cepstral/src/core"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionAt": "2026-08-02T16:59:44+03:00",
+      "revisionOf": "c75b1ed750ea593a888a6337499d1c8f5ce9cbdf18188b24120b909999bbf9c1"
+    },
+    {
+      "blockId": "flux-drop-copy",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/services/detectors/spectral-flux/src/core"
+      ],
+      "estimate": {
+        "changedLines": 70
+      },
+      "revisionAt": "2026-08-02T16:59:44+03:00",
+      "revisionOf": "4bec698b887733cd2489bcbd1e0cdb9bceba2fa6e4a0d924d5f67468c95e50d6"
+    },
+    {
+      "blockId": "window-carrier-invariant",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/detectors-window-carrier.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionAt": "2026-08-02T16:59:44+03:00",
+      "revisionOf": "2c479d2d183aea4d9bc9f37893021391b73f6b42f1a39ec33181b8144458da87"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-02T16:59:44+03:00",
+    "digest": "e62cf3a48355a303829236bde1c9a457b40a77897b22b0e442d0719bacd998d8"
+  }
+}

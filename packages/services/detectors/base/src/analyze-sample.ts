@@ -1,3 +1,4 @@
+import { fftFrames } from './sample-window.js';
 import type { AudioWindow, DetectionResult, DetectorFamily, DroneDetector } from './types.js';
 
 /** Default FFT window for 5 s sample analysis (matches harmonic v0.1). */
@@ -60,17 +61,6 @@ export interface AnalyzeSampleResult {
   readonly frameVerdicts?: readonly SampleFrameVerdict[];
 }
 
-function* iterWindows(
-  samples: Float32Array,
-  fftSize: number,
-  hop: number,
-): Generator<Float32Array> {
-  if (samples.length < fftSize) return;
-  for (let start = 0; start + fftSize <= samples.length; start += hop) {
-    yield samples.subarray(start, start + fftSize);
-  }
-}
-
 function pickFundamentalsHz(results: readonly DetectionResult[]): readonly number[] | undefined {
   let best: DetectionResult | null = null;
   for (const r of results) {
@@ -100,7 +90,10 @@ export async function analyzeSample(
   let timestampMs = 0;
   let frameIndex = 0;
 
-  for (const chunk of iterWindows(samples, fftSize, hop)) {
+  // Обход кадров — ОБЩИЙ носитель (sample-window.ts), а не приватная копия. До 02.08 здесь
+  // жила своя iterWindows, телом совпадавшая с fftFrames детекторов до символа: четвёртая из
+  // четырёх копий в дереве. Поведение сохранено точь-в-точь — держит золотой зуб числа кадров.
+  for (const chunk of fftFrames(samples, fftSize, hop)) {
     const durationSec = chunk.length / sampleRate;
     const window: AudioWindow = {
       samples: chunk,
