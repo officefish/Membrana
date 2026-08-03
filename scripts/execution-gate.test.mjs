@@ -320,6 +320,10 @@ test('находки не повышаются до остановки: late-clo
   assert.equal(order.report.exitCode, EXIT_YES);
 
   const mixed = run('plan-two-blocks', 'duplicate-and-extra');
+  // Текст находки дубля читаем, а не посимвольная каша: ревью PR #1664 поймало регрессию
+  // split(' ') → split('') от скриптовой замены — зуб проверял toothId и промолчал.
+  const dup = mixed.report.findings.find((f) => f.toothId === FINDINGS.DUPLICATE_TRACE);
+  assert.match(dup.reason, /пара \(context_run, docs\//u, 'род и начало ref названы словами');
   assert.deepEqual(toothIds(mixed.report).sort(), [FINDINGS.DUPLICATE_TRACE, FINDINGS.EXTRA_PERFORMER].sort());
   assert.equal(mixed.report.exitCode, EXIT_YES);
   for (const f of mixed.report.findings) assert.ok(f.toothId.startsWith('eg-') && f.reason !== '');
@@ -516,4 +520,92 @@ test('смешанные смещения: след раньше ревизии 
   const rev = '2026-08-01T15:04:23+03:00';
   const at = '2026-08-01T11:00:00Z'; // раньше 12:04:23Z
   assert.equal(isStale({ at: parseIso(at) }, { revisionAt: parseIso(rev) }), true);
+});
+
+// ── #1638: отзыв протухшего следа актом перерезки ─────────────────────────────────────────────
+//
+// Тупик: revisionAt сдвинут перерезкой (правильно) → старый след протух (правильно) → контекст
+// прогнан заново, свежая пара полна — а stale_partial вставал всё равно, и очистить его можно
+// было только изъятием строки руками. Вещдок разведки 03.08: изъятая строка v1 не существует
+// даже в git-истории — ленту почистили до коммита. Дверь: дисквалификация поимённо, не изъятие.
+
+const REV = Date.parse('2026-07-30T08:00:00.000Z');
+const supersedeBlock = { blockId: 'b', assigned: 'vesnin', mode: 'explicit_honest', from: Date.parse('2026-07-30T06:00:00.000Z'), to: Date.parse('2026-07-31T06:00:00.000Z'), graceMs: 0, revisionAt: REV };
+const tr = (traceId, kind, atIso) => ({ traceId, blockId: 'b', kind, subject: 'vesnin', at: Date.parse(atIso), ref: 'x', relatesToSprint: false });
+const STALE_RUN = tr('t-old-run', 'context_run', '2026-07-30T07:00:00.000Z');
+const FRESH_RUN = tr('t-new-run', 'context_run', '2026-07-30T09:00:00.000Z');
+const FRESH_REVIEW = tr('t-new-review', 'review_pass', '2026-07-30T09:30:00.000Z');
+const ACT_BETWEEN = { kind: 'recut_act', at: Date.parse('2026-07-30T07:30:00.000Z') }; // след ≤ акт ≤ ревизия
+
+test('DoD #1638: тупик закрыт — акт между следом и ревизией + свежая пара → honest_pair', () => {
+  const j = judgeBlock(supersedeBlock, [STALE_RUN, FRESH_RUN, FRESH_REVIEW], { resolveRef: () => true, recutActs: [ACT_BETWEEN] });
+  assert.equal(j.verdict, VERDICTS.HONEST_PAIR);
+  assert.equal(j.disqualified.length, 1, 'отзыв поимённый, а не молчаливый');
+  assert.equal(j.disqualified[0].toothId, DISQUALIFICATIONS.SUPERSEDED_BY_RECUT);
+  assert.equal(j.disqualified[0].traceId, 't-old-run');
+  assert.match(j.disqualified[0].reason, /дисквалифицирован актом перерезки \(не изъят\)/u);
+});
+
+test('#1638: без акта — прежний stale_partial, вещдок #1566 не ослаблен', () => {
+  const j = judgeBlock(supersedeBlock, [STALE_RUN, FRESH_RUN, FRESH_REVIEW], { resolveRef: () => true, recutActs: [] });
+  assert.equal(j.verdict, VERDICTS.STALE_PARTIAL);
+  // И ctx без поля recutActs вовсе — то же самое: дверь по умолчанию закрыта.
+  const noCtx = judgeBlock(supersedeBlock, [STALE_RUN, FRESH_RUN, FRESH_REVIEW], { resolveRef: () => true });
+  assert.equal(noCtx.verdict, VERDICTS.STALE_PARTIAL);
+});
+
+test('#1638: перерезал и НЕ перепрогнал — прежний stale_trace, дверь открывает только перепрогон', () => {
+  const j = judgeBlock(supersedeBlock, [STALE_RUN], { resolveRef: () => true, recutActs: [ACT_BETWEEN] });
+  assert.equal(j.verdict, VERDICTS.STALE_TRACE);
+  assert.equal(j.disqualified.length, 0, 'без свежих следов отзыв не срабатывает вовсе');
+});
+
+test('#1638: после отзыва состав судится полной строгостью — свежий один род → incomplete_trace', () => {
+  // Дверь не лазейка мимо вчерашнего #1641: отозвали протухший, но свежий след один — пары нет.
+  const j = judgeBlock(supersedeBlock, [STALE_RUN, FRESH_REVIEW], { resolveRef: () => true, recutActs: [ACT_BETWEEN] });
+  assert.equal(j.verdict, VERDICTS.INCOMPLETE_TRACE);
+  assert.equal(j.disqualified[0]?.toothId, DISQUALIFICATIONS.SUPERSEDED_BY_RECUT);
+});
+
+test('#1638: временнАя граница — акт ДО протухшего следа или ПОСЛЕ ревизии не отзывает', () => {
+  // Требование резчика: голый факт «в ленте есть recut_act» легализовал бы старый акт на весь
+  // спринт. Акт обязан лежать между следом и ревизией — судить именно тот контракт.
+  const actBefore = { kind: 'recut_act', at: Date.parse('2026-07-30T06:30:00.000Z') }; // раньше следа 07:00
+  const actAfter = { kind: 'recut_act', at: Date.parse('2026-07-30T09:45:00.000Z') }; // позже ревизии 08:00
+  for (const act of [actBefore, actAfter]) {
+    const j = judgeBlock(supersedeBlock, [STALE_RUN, FRESH_RUN, FRESH_REVIEW], { resolveRef: () => true, recutActs: [act] });
+    assert.equal(j.verdict, VERDICTS.STALE_PARTIAL, `акт at=${act.at} не в окне [след, ревизия]`);
+    assert.equal(j.disqualified.length, 0);
+  }
+});
+
+test('#1638: чужой блок — акт вне временнОго окна ЕГО следа и ревизии дверь не открывает', () => {
+  // Акты не несут blockId (они про план целиком) — блочность держит временнАя сверка: у блока
+  // с прежней ревизией и давним протуханием окно [след, ревизия] другое, и акт свежей
+  // перерезки соседа в него не попадает.
+  const otherBlock = { ...supersedeBlock, blockId: 'y', revisionAt: Date.parse('2026-07-30T06:30:00.000Z') };
+  const oldStale = { ...tr('t-y-old', 'context_run', '2026-07-30T06:10:00.000Z'), blockId: 'y' };
+  const yFreshRun = { ...tr('t-y-run', 'context_run', '2026-07-30T09:00:00.000Z'), blockId: 'y' };
+  const yFreshReview = { ...tr('t-y-review', 'review_pass', '2026-07-30T09:30:00.000Z'), blockId: 'y' };
+  const j = judgeBlock(otherBlock, [oldStale, yFreshRun, yFreshReview], { resolveRef: () => true, recutActs: [ACT_BETWEEN] });
+  assert.equal(j.verdict, VERDICTS.STALE_PARTIAL, 'акт соседа (07:30) позже ревизии y (06:30) — не отзывает');
+});
+
+test('#1638: интеграция через runGate — recutActs доезжает до вердикта', () => {
+  const { records } = loadFixture('stale-partial');
+  const report = runGate({
+    planRaw: stubPlan('plan-two-blocks'),
+    traceRecords: records,
+    knownPersonas: KNOWN_PERSONAS,
+    allowedReasons: RESPONSIBILITY_WAIVER_REASONS,
+    resolveRef: makeSnapshotResolver(),
+    // Протухший след gate-wiring в фикстуре — 07:00Z, ревизия 08:00Z: акт 07:30 между ними.
+    recutActs: [{ kind: 'recut_act', at: Date.parse('2026-07-30T07:30:00.000Z') }],
+    now: '2026-07-31T12:00:00.000Z',
+    preErrors: [],
+  });
+  const gw = report.blocks.find((b) => b.blockId === 'gate-wiring');
+  // Свежий след в фикстуре один (review_pass) — после отзыва состав неполон: НЕ зелёный.
+  assert.equal(gw.verdict, VERDICTS.INCOMPLETE_TRACE);
+  assert.equal(gw.disqualified?.[0]?.toothId ?? report.blocks.find((b) => b.blockId === 'gate-wiring').disqualified[0].toothId, DISQUALIFICATIONS.SUPERSEDED_BY_RECUT);
 });

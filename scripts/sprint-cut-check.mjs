@@ -21,6 +21,9 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { cutDigestOf, cutVerdict, modeOf, parseAct, ratifyPlan } from './lib/sprint-cut/index.mjs';
+import { actsTrailPath, readActsTrail } from './lib/sprint-cut/acts-trail-reader.mjs';
+
+export { readActsTrail };
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_VOICES = resolve(repoRoot, 'docs/virtual-team/voices.registry.json');
@@ -47,46 +50,9 @@ export function voiceIdsFrom(registry) {
 
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
 
-/** Носитель ленты актов плана: рядом с планом, `trail/<sprintId>.jsonl`. */
-function actsTrailPath(planPath, plan) {
-  const id = typeof plan?.sprintId === 'string' && plan.sprintId.trim() ? plan.sprintId : null;
-  return id ? resolve(dirname(planPath), 'trail', `${id}.jsonl`) : null;
-}
-
-/**
- * Прочитать ленту актов. Файла нет → пустая лента (не «не проверяем»): «ленты нет» и
- * «прогона не было» для CLI одно утверждение.
- *
- * Битая строка — ОШИБКА ВХОДА, а не пропуск. Прежняя версия делала `catch { continue }`,
- * и это ровно тот молчаливый зелёный, который задача обязана закрыть: строка с опечаткой
- * либо с родом вне закрытого списка исчезала бесследно, а `act-kinds` объявляет такой род
- * `E_ACT_KIND_UNKNOWN` — то есть «вердиктов по такой ленте нет вовсе». Комментарий здесь
- * утверждал «НЕ молчаливый пропуск», а код молча пропускал (найдено ревью PR #1604).
- *
- * @returns {{ok: true, acts: object[]} | {ok: false, problems: string[]}}
- */
-export function readActsTrail(path, io = { exists: existsSync, read: (p) => readFileSync(p, 'utf8') }) {
-  if (!path || !io.exists(path)) return { ok: true, acts: [] };
-  const acts = [];
-  const problems = [];
-  const lines = io.read(path).split('\n');
-  for (let i = 0; i < lines.length; i += 1) {
-    const s = lines[i].trim();
-    if (!s || s.startsWith('#')) continue;
-    let raw;
-    try {
-      raw = JSON.parse(s);
-    } catch {
-      problems.push(`строка ${i + 1}: не разбирается как JSON`);
-      continue;
-    }
-    const parsed = parseAct(raw);
-    if (parsed.ok) acts.push(parsed.act);
-    else problems.push(`строка ${i + 1}: ${parsed.reason}`);
-  }
-  return problems.length > 0 ? { ok: false, problems } : { ok: true, acts };
-}
-
+// Читатель ленты актов ПЕРЕЕХАЛ в lib/sprint-cut/acts-trail-reader.mjs (разбор Ожегова
+// 03.08, #1638): второй скрипт-потребитель сделал бы связь скрипт-к-скрипту «тайным API».
+// Реэкспорт сохранён — зубы sprint-cut-acts.test.mjs импортируют отсюда.
 function main(argv) {
   const args = parseArgs(argv);
   const planPath = resolve(process.cwd(), args.plan);

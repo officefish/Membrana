@@ -27,6 +27,9 @@ import { makeSnapshotResolver } from './lib/execution-trace/stubs/stub-ref-resol
 import { RESPONSIBILITY_WAIVER_REASONS } from './lib/execution-trace/stubs/stub-responsibility-modes.mjs';
 import { FIXTURE_NAMES, loadFixture, loadJsonlFile } from './lib/execution-trace/stubs/stub-trace-corpus.mjs';
 import { planToGate } from './lib/sprint-integration/plan-to-gate.mjs';
+import { readActsTrail } from './lib/sprint-cut/acts-trail-reader.mjs';
+import { ACT_KINDS } from './lib/sprint-cut/act-kinds.mjs';
+import { parseIso } from './lib/execution-trace/plan-reader.mjs';
 
 /**
  * Схема плана нарезки — ЕДИНСТВЕННАЯ форма, которую шов умеет приводить ко входу гейта.
@@ -153,6 +156,39 @@ function main() {
     preErrors.push({ code: INPUT_ERRORS.E_PLAN_UNREADABLE, subject: args.plan, detail: String(e.message ?? e) });
   }
 
+  // Акты перерезки спринта (#1638): лента живёт рядом с планом — trail/<sprintId>.jsonl.
+  // Читается ПЕРЕИСПОЛЬЗОВАНИЕМ readActsTrail носителя (sprint-cut-check), не второй копией.
+  // Стабовый план ленты актов не имеет — дверь отзыва закрыта, и это законно: без акта
+  // протухание идёт прежней дорогой. Битая лента — ошибка входа, не молчаливый пропуск.
+  /** @type {{kind:string, at:number}[]} */
+  const recutActs = [];
+  if (planRaw !== null && !args.plan.startsWith('stub:')) {
+    const sprintId = /** @type {any} */ (planRaw)?.sprintId;
+    if (typeof sprintId === 'string' && sprintId.trim() !== '') {
+      const trailPath = resolve(args.plan, '..', 'trail', `${sprintId}.jsonl`);
+      const acts = readActsTrail(trailPath);
+      if (!acts.ok) {
+        for (const problem of acts.problems) {
+          preErrors.push({ code: INPUT_ERRORS.E_TRACE_FIELDS_MISSING, subject: trailPath, detail: `лента актов: ${problem}` });
+        }
+      } else {
+        for (const a of acts.acts) {
+          if (a.kind !== ACT_KINDS.RECUT_ACT) continue;
+          // Сверка спринта ЗАПИСИ, а не только имени файла (вопрос Дынина на разборе ядра):
+          // лента названа по спринту, но чужая запись внутри файла — скопированная или
+          // приблудная — без этой строки открыла бы дверь отзыва чужим актом.
+          if (a.sprintId !== sprintId) continue;
+          const at = parseIso(a.at);
+          if (at === null) {
+            preErrors.push({ code: INPUT_ERRORS.E_TRACE_TIME_INVALID, subject: trailPath, detail: `recut_act с нечитаемым at «${a.at}» — отзыв на нём строиться не может` });
+            continue;
+          }
+          recutActs.push({ kind: a.kind, at });
+        }
+      }
+    }
+  }
+
   /** @type {unknown[]} */
   let records = [];
   try {
@@ -179,6 +215,7 @@ function main() {
     resolveRef: args.traces.startsWith('fixture:')
       ? makeSnapshotResolver()
       : makeWorkTreeResolver(process.cwd()),
+    recutActs,
     now: args.now,
     preErrors,
   });
