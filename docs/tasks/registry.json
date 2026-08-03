@@ -180,7 +180,7 @@
       ],
       "notes": "",
       "archiveNotes": "Issue #1622; Product PR #1640 merged (e6c04420); Harness PR #1650 merged (40468d1d); both Mintlify domains Connected and production smoke PASS; workflow-examples-marathon remains an independent standing follow-up",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-03"
     },
     {
       "id": "review-oversized-queue",
