@@ -341,15 +341,17 @@ export function buildOperationalJournal(slug, { repoRoot = REPO_ROOT, nowIso = n
 
   // 1) Подсознание: новые кандидаты — в архив; дубль id — молчаливый skip легален
   //    (append-only не значит дважды), невалидное — в problems отчёта.
+  // Счёт по глаголам ЭТОГО прогона: отчёт CLI производен от событий op-log,
+  // а не от состояния политики отбора (#1659) — разойтись им не из чего.
   const known = new Set(readArchive(repoRoot, slug).records.map((r) => r.id));
-  let events = 0;
+  const ops = { write_operational: 0, transfer_to_archive: 0, rebuild_report: 0 };
   for (const c of candidates) {
     const rec = candidateToRecord(c, slug);
     if (known.has(rec.id)) continue;
     const r = appendArchive(repoRoot, rec);
     if (r.ok) {
       emitOp(repoRoot, { ts: nowIso, persona: slug, verb: 'write_operational', ref: rec.id, origin: 'persona-extract' });
-      events += 1;
+      ops.write_operational += 1;
       known.add(rec.id);
     }
   }
@@ -374,10 +376,10 @@ export function buildOperationalJournal(slug, { repoRoot = REPO_ROOT, nowIso = n
       ts: nowIso, persona: slug, verb: 'transfer_to_archive',
       ref: t.record.id, reason: t.reason, class: t.record.class, origin: 'persona-extract',
     });
-    events += 1;
+    ops.transfer_to_archive += 1;
   }
   emitOp(repoRoot, { ts: nowIso, persona: slug, verb: 'rebuild_report', ref: `retained:${retained.length}`, origin: 'persona-extract' });
-  events += 1;
+  ops.rebuild_report += 1;
 
   const pinnedSet = new Set(report.pinned);
   const journal = projectMarkdown({
@@ -387,7 +389,19 @@ export function buildOperationalJournal(slug, { repoRoot = REPO_ROOT, nowIso = n
     report,
     archiveRel: `docs/virtual-team/memory/archive/${slug}.jsonl`,
   });
-  return { journal, report, events };
+  return { journal, report, ops, events: ops.write_operational + ops.transfer_to_archive + ops.rebuild_report };
+}
+
+/**
+ * Строка отчёта CLI (#1659): дельта — по глаголам событий ЭТОГО прогона,
+ * состояние — явно названо состоянием. «transferred 252» при нуле переносов
+ * было правдой о состоянии и ложью об отчёте — форма разводит их именами.
+ */
+export function renderReportLine(outRel, ops, report) {
+  const delta = ops.write_operational + ops.transfer_to_archive > 0
+    ? `сегодня: +${ops.write_operational} в архив · переток ${ops.transfer_to_archive}`
+    : 'сегодня: изменений нет';
+  return `persona-memory → ${outRel} · ${delta} · оперативных ${report.retainedCount} · мимо проекции ${report.transferred.length} · ${report.status}`;
 }
 
 // ─── CLI ─────────────────────────────────────────────────────────────────────────
@@ -414,7 +428,7 @@ function runForSlug(slug, flags) {
   }
 
   // Оркестратор контура (P6): архив → политика → op-log → проекция.
-  const { journal, report } = buildOperationalJournal(slug);
+  const { journal, report, ops } = buildOperationalJournal(slug);
   const overflow = report.status === 'pinned_overflow';
   if (overflow) {
     console.error(`✗ ${slug}: pinned_overflow — закреплённого больше бюджета (${report.pinned.length} записей); pinned НЕ усечён, разбор — слово владельца.`);
@@ -435,7 +449,7 @@ function runForSlug(slug, flags) {
   }
   mkdirSync(path.dirname(outAbs), { recursive: true });
   writeFileSync(outAbs, journal, 'utf8');
-  console.log(`persona-memory → ${outRel} · retained ${report.retainedCount} · transferred ${report.transferred.length} · ${report.status}`);
+  console.log(renderReportLine(outRel, ops, report));
   return overflow ? 3 : 0;
 }
 
