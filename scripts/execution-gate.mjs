@@ -31,11 +31,10 @@ import { readActsTrail } from './lib/sprint-cut/acts-trail-reader.mjs';
 import { ACT_KINDS } from './lib/sprint-cut/act-kinds.mjs';
 import { parseIso } from './lib/execution-trace/plan-reader.mjs';
 import { closeProcedureRun, findUnclosedRuns, readProcedureRunTrail } from './lib/procedure-run-journal.mjs';
-// Словарь прогона спринта (SPRINT_PROCEDURE_ID, лента из ratification.at) живёт у
-// носителя ratify: open и close обязаны выводить ОДИН путь из ОДНОГО поля. Импорт
-// скрипт-к-скрипту — долг класса acts-trail-reader, карточка #1681: переезд в lib
-// требует плана, чья зона включает lib; у этого блока её нет.
-import { SPRINT_PROCEDURE_ID, sprintTrailRelPath } from './sprint-cut-check.mjs';
+// Словарь прогона спринта (SPRINT_PROCEDURE_ID, лента из ratification.at) живёт в lib:
+// open при ратификации и close вердиктом гейта выводят ОДИН путь из ОДНОГО поля.
+// Долг скрипт-к-скрипту закрыт блоком a1 спринта sprint-dictionary-to-lib (#1681).
+import { SPRINT_PROCEDURE_ID, sprintTrailRelPath } from './lib/sprint-cut/sprint-run.mjs';
 
 /**
  * Схема плана нарезки — ЕДИНСТВЕННАЯ форма, которую шов умеет приводить ко входу гейта.

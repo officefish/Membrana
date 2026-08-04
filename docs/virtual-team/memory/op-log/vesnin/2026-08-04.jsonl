@@ -9,3 +9,5 @@
 {"ts":"2026-08-04T13:06:12.561Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-04T13:05:53.597Z","origin":"ask-persona"}
 {"ts":"2026-08-04T13:06:12.578Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-04T13:05:53.597Z","origin":"ask-persona"}
 {"ts":"2026-08-04T13:06:12.580Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-30-sprint-honest-m3-contract-review","reason":"честное закрытие спринта: ревью контракта обязательно после заявления done и до пометки accepted. Именно этот вопрос — такой момент.","origin":"ask-persona"}
+{"ts":"2026-08-04T12:26:03.963Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-04T12:25:56.303Z","origin":"ask-persona"}
+{"ts":"2026-08-04T12:26:03.966Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-04T12:25:56.303Z","origin":"ask-persona"}

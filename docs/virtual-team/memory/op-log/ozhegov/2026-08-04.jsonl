@@ -11,3 +11,7 @@
 {"ts":"2026-08-04T12:47:25.599Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-04T12:47:10.574Z","origin":"ask-persona"}
 {"ts":"2026-08-04T12:47:25.605Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-04T12:47:10.574Z","origin":"ask-persona"}
 {"ts":"2026-08-04T12:47:25.607Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-30-task-archive-cold-store-m4-write-path-idempotency","reason":"«тихий успех» как антипаттерн упоминается именно там: write-path должен сигнализировать, а не молчать при коллизии. Здесь то же правило применено к env-генерации — явный stdout вместо тихого skip.","origin":"ask-persona"}
+{"ts":"2026-08-04T12:22:31.331Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-04T12:22:24.184Z","origin":"ask-persona"}
+{"ts":"2026-08-04T12:22:31.334Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-04T12:22:24.184Z","origin":"ask-persona"}
+{"ts":"2026-08-04T12:28:02.263Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-04T12:27:56.749Z","origin":"ask-persona"}
+{"ts":"2026-08-04T12:28:02.264Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-04T12:27:56.749Z","origin":"ask-persona"}
