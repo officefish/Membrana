@@ -42,6 +42,27 @@
       "insightId": "insight-own-field-corpus-single-spec"
     },
     {
+      "id": "one-shot-trail-forecast-fact",
+      "title": "Портфель шотов: расширение следа (executor/форкаст/факт), глагол trail brief, дисциплина всплытия",
+      "promptPath": "docs/prompts/ONE_SHOT_TRAIL_FORECAST_FACT_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "переход adopted-инсайта в работу; иссью при взятии по TASK_PROMPT_WORKFLOW",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-04",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "Следующий шаг ревью 7.2: (1) поля executor+forecast+actual в one-shot-trail.jsonl (trail check остаётся рабочим, факт из диффа мердж-коммита); (2) глагол one-shot:trail brief 3-5 строк консистентного формата; (3) всплытие руками в акт Тарасова и предложение кандидатов — НЕ в утро/хендоф. Формат brief согласовать актом Тарасова до вкладывания. Запрещено: автоматика отправки, UI, правка формата шота T1-T8.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "insightId": "insight-one-shot-portfolio-surfacing"
+    },
+    {
       "id": "sprint-cut-teeth-to-live-modules",
       "title": "Зубы формы cut-плана переходят на живые execution-gate/experience-loop, дублёры сносятся",
       "promptPath": "docs/prompts/SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md",
