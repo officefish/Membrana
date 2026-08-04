@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-02",
+  "updatedAt": "2026-08-03",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -864,6 +864,17 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-08-02",
+      "tags": []
+    },
+    {
+      "id": "insight-one-shot-portfolio-surfacing",
+      "title": "Портфель шотов всплывает в момент решения: акт Тарасова, выбор кандидатов, форкаст↔факт после мерджа",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-08-03",
       "tags": []
     }
   ]
