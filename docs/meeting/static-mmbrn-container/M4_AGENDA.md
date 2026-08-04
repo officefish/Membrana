@@ -70,6 +70,39 @@ vendor-neutral topology, дать таблицы классов хранения
    production ingest и до миграции: capacity, write/read/hash, backup, restore, auth bypass,
    inventory/reconciliation. «Backup включён» без успешного restore — не PASS.
 
+## Поправки run1
+
+- **Одна topology до конца.** Нельзя оставить registry metadata как «Git или append-only
+  FS». Выбрать один конкретный vendor-neutral носитель FD-3 и одну связь его checkpoint с
+  backup bytes. Primary/backup могут быть S3-compatible pattern, но конкретный продукт,
+  провайдер и bucket не называются.
+- **Только поля M2.** Storage key строится только из реально существующих M2 значений.
+  `container_id`, `lineage_id`, `revision_seq` отсутствуют и запрещены. Если используется
+  content addressing, discriminator — полный `sha256`, не 8-символьный префикс.
+  Dedup физических bytes не сливает отдельные record/lineage identities: разные M2 records
+  могут ссылаться на один immutable bytes-object, оставаясь разными записями и линиями.
+- **Не мутировать M2 record.** `status`, `hold`, `deleted_at`, lifecycle reason не объявлять
+  полями существующей schema и не переписывать строку. Operational hold/retention/tombstone
+  живут в отдельном append-only lifecycle ledger, привязанном к immutable record `id`, либо
+  выражаются новой полной M2 record по правилам M2; выбрать один вариант. Registry history
+  остаётся неизменной и отличимой от storage lifecycle.
+- **Integrity:** post-write/read, periodic reconciliation, backup и restore проверяют вместе
+  полный `sha256` **и** `bytes`. Несовпадение любого значения fail-closed.
+- **Один capacity predicate:** readiness и cases используют одну формулу, одновременно
+  учитывающую измеренный абсолютный минимум свободного места 12 GiB и выбранный ratio
+  watermark. Значения `0.95` и `1.0` нельзя применять к одной метрике без определения.
+- **Retention:** назначить исполнимый срок/правило для active и superseded originals,
+  отдельно от 30-дневной retention backup. Hold имеет явный приоритет; authorized deletion
+  и dangling различаются через выбранный lifecycle ledger.
+- **Consistent restore point:** backup checkpoint атомарно связывает bytes manifest и
+  snapshot registry/lifecycle metadata. Drill восстанавливает именно одну checkpoint-пару,
+  а не сравнивает старые bytes с текущим FD-3.
+- **Граница M6:** M4 задаёт invariants, thresholds и требуемые вещдоки, но не назначает HTTP
+  codes, endpoint/scrape protocol, upload proxy, последовательность hash pipeline или форму
+  API. Cases описываются на уровне admission allow/deny и storage evidence.
+- **Форма:** `Список посылок` стоит до Definition of Done; DoD — последняя секция и
+  последняя непустая строка. После неё нет разделителя, эха или футера.
+
 ## Обязательные случаи
 
 Таблица содержит отдельные колонки `Случай`, `Ожидаемое решение`, `Где проверяется`,

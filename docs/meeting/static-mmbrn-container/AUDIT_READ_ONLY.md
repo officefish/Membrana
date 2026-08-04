@@ -1469,3 +1469,47 @@ binding, отсутствие статического Affine mapping, полн�
 
 Машинный аудит также подтвердил один `S1` и отсутствие структурных нарушений. Внешних
 попыток M4 использовано 0 из 5. Первый созыв ждёт отдельного разрешения владельца.
+
+## Постаудит M4 — run1
+
+Вердикт независимого аудитора: **BLOCK**. Использована попытка 1 из 5.
+
+Carrier произведён через `openrouter/anthropic/claude-sonnet-4.6`; повестка доставлена
+полностью, машинный аудит не нашёл структурных нарушений, записано 42 ролевые реплики — по
+семь от каждой роли. Сырой результат сохранён в
+`docs/seanses/rejected/static-mmbrn-container-m4-storage-2026-08-04-run1-m2-retention-restore-boundaries.md`.
+
+Дефекты:
+
+- FD-3 оставлен альтернативой «Git или append-only FS», поэтому topology не одна;
+- object key использует отсутствующие в M2 `container_id/lineage_id/revision_seq` и только
+  32-битный префикс hash;
+- dedup сливает physical key разных records, не объясняя сохранность разных lineages;
+- придуманные `status/hold/tombstone` мутируют immutable M2 record и не соответствуют schema;
+- integrity проверяет `sha256`, но не обязательное `bytes`;
+- абсолютный минимум 12 GiB расходится с ratio-only RG-1, hard threshold записан двумя
+  несовместимыми числами;
+- срок retention superseded originals не назначен;
+- restore не восстанавливает согласованную checkpoint-пару registry + bytes;
+- HTTP-коды, proxy ingest/hash pipeline и scrape endpoint предрешают M6;
+- `Список посылок` расположен после DoD.
+
+Failure domains, sensitive/direct-access и 10 случаев дали полезный материал. Повестка run2
+добавляет десять точных поправок; до нового внешнего вызова нужны независимый предаудит и
+отдельное разрешение владельца.
+
+## Предаудит M4 — run2
+
+Вердикт независимого аудитора: **PASS**.
+
+- все десять дефектов run1 покрыты непротиворечивыми поправками;
+- будущий carrier обязан выбрать одну topology, один FD-3 и один lifecycle mechanism;
+- key ограничен реальными M2-полями и полным `sha256`, dedup не сливает identities;
+- lifecycle ledger не мутирует M2 record; integrity проверяет `sha256 + bytes`;
+- capacity predicate, retention и checkpoint-pair restore обязаны быть едиными;
+- HTTP-коды, endpoints, scrape protocol и hash pipeline M6 прямо запрещены;
+- один `S1`, объём 9 750 символов, canonical carrier отсутствует;
+- run1 сохранён в rejected, счётчик 1 из 5, M5–M7 открыты.
+
+Run2 ожидает отдельного разрешения владельца на отправку обновлённой повестки во внешний
+LLM API.

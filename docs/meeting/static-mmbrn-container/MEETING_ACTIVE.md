@@ -9,7 +9,7 @@
 | аудитор | **Codex S-M5 Read-Only Auditor, static-mmbrn-container, 2026-08-03** (agent `019fc720-8fec-7c63-8d9f-28a52e2fb5c2`), отдельный от председателя |
 | предаудит | [`AUDIT_READ_ONLY.md`](AUDIT_READ_ONLY.md) — PASS до запуска M0 |
 | задание | [`MEETING_BRIEF.md`](MEETING_BRIEF.md) |
-| состояние | M3 ратифицирована; предаудит M4 PASS, ожидается внешнее разрешение |
+| состояние | M3 ратифицирована; M4 run1 BLOCK, предаудит run2 PASS, ожидается разрешение |
 
 ## Ход заседания
 
@@ -19,7 +19,7 @@
 | **M1** | граница контейнера | **PASS; ЗАКРЫТА** | [`протокол`](../../seanses/static-mmbrn-container-m1-boundary-2026-08-03.md) · [`повестка`](M1_AGENDA.md) · восемь отклонённых прогонов перечислены в аудите |
 | **M2** | тождество и источник истины | **PASS; РАТИФИЦИРОВАНО владельцем 2026-08-03** | [`carrier`](../../seanses/static-mmbrn-container-m2-identity-2026-08-03.md) · [`повестка`](M2_AGENDA.md) · [`прецедент`](../../precedents/2026-08-03-static-mmbrn-m2-twenty-consilium-calls.md) |
 | **M3** | доступ | **PASS; РАТИФИЦИРОВАНО владельцем 2026-08-04**; внешний бюджет закрыт **5/5** | [`carrier`](../../seanses/static-mmbrn-container-m3-access-2026-08-04.md) · [`повестка`](M3_AGENDA.md) · [`run1`](../../seanses/rejected/static-mmbrn-container-m3-access-2026-08-04-run1-seven-contract-defects.md) · [`run2`](../../seanses/rejected/static-mmbrn-container-m3-access-2026-08-04-run2-grant-revocation-threshold.md) · [`run3`](../../seanses/rejected/static-mmbrn-container-m3-access-2026-08-04-run3-inheritance-revocation-affine.md) · [`run5`](../../seanses/rejected/static-mmbrn-container-m3-access-2026-08-04-run5-final-external.md) · [`run4-прецедент`](../../precedents/2026-08-04-static-mmbrn-m3-run4-overlay-chain-exhausted.md) |
-| **M4** | хранение и живучесть | предаудит **PASS**; внешних попыток **0/5**; ожидается разрешение | [`повестка`](M4_AGENDA.md) |
+| **M4** | хранение и живучесть | run1 **BLOCK**; использовано **1/5**; предаудит run2 **PASS**, ожидается разрешение | [`повестка`](M4_AGENDA.md) · [`run1`](../../seanses/rejected/static-mmbrn-container-m4-storage-2026-08-04-run1-m2-retention-restore-boundaries.md) |
 | **M5..M7** | по одному вопросу в порядке M0 | не созывались | — |
 
 ## Гейт M0
