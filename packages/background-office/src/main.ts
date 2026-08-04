@@ -14,12 +14,21 @@ async function bootstrap(): Promise<void> {
   loadDotenvFiles();
   // Без @fastify/cors: прежний Express-office CORS не включал — open origin+credentials
   // расширил бы поверхность panel cookies (Teamlead review 20.07).
+  // bodyLimit МАРШРУТНЫЙ, не глобальный (P1 ревью #1711: scope-утечка запрещена).
+  // Дефолт адаптера остаётся 1 МиБ для всех маршрутов office; только батч-ингест
+  // архивариуса получает 25 МиБ: одна реплика-гигант транскрипта (tool-вывод) больше
+  // 1 МиБ при контракте до 10000 спанов за батч — рассинхрон контракта и транспорта,
+  // найден живой заливкой 04.08 (recut-1 нарезки). bodyLimit — штатная опция маршрута
+  // Fastify; onRoute-хук — канонический способ задать её поверх Nest-контроллера.
+  const adapter = new FastifyAdapter();
+  adapter.getInstance().addHook('onRoute', (route) => {
+    if (route.method === 'POST' && route.url === '/v1/archivarius/ingest') {
+      route.bodyLimit = 25 * 1024 * 1024;
+    }
+  });
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    // bodyLimit: дефолтный 1 МиБ меньше ОДНОЙ реплики-гиганта транскрипта (tool-вывод),
-    // при том что ingest архивариуса по контракту принимает до 10000 спанов за батч —
-    // рассинхрон контракта и транспорта, найден живой заливкой 04.08 (recut-1 нарезки).
-    new FastifyAdapter({ bodyLimit: 25 * 1024 * 1024 }),
+    adapter,
     { bufferLogs: true, rawBody: true },
   );
 
