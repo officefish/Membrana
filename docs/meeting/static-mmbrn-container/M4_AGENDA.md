@@ -103,6 +103,30 @@ vendor-neutral topology, дать таблицы классов хранения
 - **Форма:** `Список посылок` стоит до Definition of Done; DoD — последняя секция и
   последняя непустая строка. После неё нет разделителя, эха или футера.
 
+## Поправки run2
+
+- **Один физический key.** Выбрать одну непротиворечивую модель. При physical dedup bytes
+  живут по одному content-addressed key `objects/{sha256_64hex}`, а отдельные M2 records
+  сохраняют разные `id`, registry rows и opaque `location.ref`, разрешаемые в тот же blob.
+  Если key включает `record_id`, physical dedup запрещено заявлять. Два key для одних bytes,
+  directory-prefix вместо объекта и неописанные alias недопустимы.
+- **Одна capacity formula буквально везде.** Обсуждение, итог, Cases и readiness используют
+  одну и ту же строгую границу: `ALLOW` только если `free_after >= 12 GiB` **и**
+  `used_after / total < 0.90`. Soft watermark `0.85` только предупреждает и не становится
+  отдельным admission/readiness условием. Не заменять `< 0.90` эквивалентом с `>= 0.10`,
+  который расходится на границе.
+- **Исполнимый consistent cut.** Назвать один механизм согласованного checkpoint: общий
+  `checkpoint_id` и write fence/high-water mark либо транзакционный snapshot, чтобы manifest
+  bytes и snapshot registry/lifecycle описывали одно множество records. Явно сказать, как
+  сами immutable bytes, перечисленные manifest, появляются в FD-2; архив одного manifest
+  без bytes backup не является.
+- **RPO проверяется возрастом.** Backup/readiness gate требует последний успешный checkpoint
+  не старше 24 часов. Неудачный ежедневный запуск оставляет предыдущий checkpoint для
+  восстановления, но переводит readiness в FAIL, как только его age превышает RPO.
+- **Не проектировать download M6.** M4 фиксирует только invariant: Panel/proxy применяет
+  ратифицированное M3-решение к каждому действию, прямой storage bypass запрещён. Не
+  назначать signed URL, TTL, download workflow, endpoint или иной transport mechanism.
+
 ## Обязательные случаи
 
 Таблица содержит отдельные колонки `Случай`, `Ожидаемое решение`, `Где проверяется`,

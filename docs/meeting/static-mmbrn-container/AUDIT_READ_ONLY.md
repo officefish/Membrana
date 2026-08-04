@@ -1513,3 +1513,46 @@ Failure domains, sensitive/direct-access и 10 случаев дали поле�
 
 Run2 ожидает отдельного разрешения владельца на отправку обновлённой повестки во внешний
 LLM API.
+
+## Постаудит M4 — run2
+
+Вердикт независимого аудитора: **BLOCK**. Использована попытка 2 из 5.
+
+Carrier произведён после владельческого разрешения, машинно прошёл структурный аудит и
+содержит 43 ролевые реплики: по семь у пяти ролей и восемь у Teamlead. `Список посылок`
+стоит до последней секции DoD. Сырой результат без редакторских исправлений сохранён в
+`docs/seanses/rejected/static-mmbrn-container-m4-storage-2026-08-04-run2-dedup-capacity-checkpoint-rpo-m6.md`.
+
+Пять содержательных дефектов:
+
+- declared key `objects/{sha256}/{record_id}` создаёт разные objects, но dedup одновременно
+  объявляет один физический `objects/{sha256}/`; реальный bytes key и семантика ref расходятся;
+- capacity formula допускает ingest до `< 0.90`, а Case 1 и readiness G1 требуют `< 0.85`;
+  реплика с `free_after / total >= 0.10` расходится с `< 0.90` на точной границе;
+- manifest FD-1 и snapshot FD-3 снимаются последовательно без write fence, high-water mark
+  или общего checkpoint id; перенос самих перечисленных bytes в FD-2 не определён;
+- RPO 24 часа не защищён возрастом последнего успешного checkpoint: G3 проверяет лишь его
+  наличие, поэтому старый checkpoint может ложно дать PASS;
+- temporary signed URL с конкретным TTL проектирует download-механизм M6 и позволяет
+  storage-действие после единственного решения вместо per-action enforcement M3.
+
+Run2 дал пригодные topology, FD-3, lifecycle ledger, integrity и retention, но storage
+contract остаётся внутренне противоречивым. Повестка run3 добавляет пять узких поправок;
+до нового внешнего вызова обязательны независимый предаудит и отдельное разрешение владельца.
+
+## Предаудит M4 — run3
+
+Вердикт независимого аудитора: **PASS**.
+
+- пять дефектов run2 закрыты однозначными требованиями к physical key/dedup, единой
+  capacity formula, consistent cut, возрасту checkpoint и границе M6;
+- поправки run2 не отменяют ограничения run1 и ратифицированные M2/M3;
+- agenda оставляет носителю выбор key-модели и checkpoint mechanism, поэтому не подменяет
+  заседание готовым storage-контрактом;
+- signed URL, TTL, endpoint, transport и download workflow запрещены, остаётся только
+  per-action invariant M3;
+- один `S1`, объём 11 499 символов, canonical carrier отсутствует;
+- rejected run2 существует, счётчик 2 из 5, M5–M7 открыты.
+
+Машинный `meeting:audit` также подтвердил один `S1` и отсутствие структурных нарушений.
+Run3 ждёт отдельного разрешения владельца на внешний LLM-вызов.
