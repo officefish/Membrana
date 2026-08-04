@@ -1,0 +1,66 @@
+{
+  "id": "deploy-office-vds",
+  "leadPersona": "vesnin",
+  "kitVersion": null,
+  "engines": [
+    "scripts/deploy-run.mjs",
+    "scripts/procedure-run-record.mjs",
+    "scripts/_ssh-office-exec.mjs"
+  ],
+  "precedents": [
+    "docs/deploy-survey-2026-08-03.md",
+    "docs/adr/ADR-0023-deploy-node-form-one-procedure-per-echelon.md"
+  ],
+  "frames": [
+    {
+      "id": "build",
+      "holder": "vesnin",
+      "note": "Сборка артефактов сервера (office:build, office:docker:prod:build). Существующие глаголы — исполнители шага, процедура — рамка поверх них (Р1 ADR-0023)."
+    },
+    {
+      "id": "rollout",
+      "holder": "tarasov",
+      "note": "Выкладка на office-VDS (office.mmbrn.tech: office + panel; хост — getOfficeSshConfig, вход vds:run). Кадр несёт гейт owner-rollout: deploy:when-green ПЕЧАТАЕТ команду, запускает владелец (Р2 ADR-0023). Боевые ловушки VDS — скилл membrana-office-vds-deploy."
+    },
+    {
+      "id": "smoke",
+      "holder": "dynin",
+      "note": "Проверка развёрнутого: smoke-скрипты офиса, дрейф прод↔ствол (office-drift-code-cron — образец Р5 ADR-0023). «Что сейчас в проде» — замер, не вера."
+    },
+    {
+      "id": "record",
+      "holder": "angelina",
+      "note": "Запись прогона в общую ленту docs/procedure-runs/ через deploy-run (procedureId = deploy-office-vds, subject = сервис + ревизия). Секреты и env-значения в журнал не пишутся никогда (граница Р3 ADR-0023)."
+    }
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "yarn vds:run",
+    "note": "деплой — рука владельца; автозапуск прод-выкладки запрещён конструкцией манифеста"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "build", "criticality": "critical" },
+      { "id": "rollout", "criticality": "critical" },
+      { "id": "smoke", "criticality": "critical" },
+      { "id": "record", "criticality": "critical" }
+    ]
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "owner-rollout",
+        "waitsFor": "owner",
+        "resume": "владелец сам запускает напечатанную команду выкладки (deploy:when-green печатает, не запускает)",
+        "note": "Р2 ADR-0023: механика «печатает — владелец запускает» объявлена каноном процедуры, а не привычкой. Локальные/dev-подъёмы гейтом не обкладываются."
+      }
+    ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "след процедуры — прогоны в общей ленте docs/procedure-runs/ (Р3 ADR-0023), не пространство имён; серверная специфика (хост, конфиг) живёт в ssh-конфиге кода (getOfficeSshConfig), декларация не дублирует её (граница d1/d2 — разбор Веснина 04.08)"
+  }
+}

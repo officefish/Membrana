@@ -1,0 +1,67 @@
+{
+  "id": "deploy-media-vps",
+  "leadPersona": "vesnin",
+  "kitVersion": null,
+  "engines": [
+    "scripts/deploy-run.mjs",
+    "scripts/procedure-run-record.mjs",
+    "scripts/_ssh-cabinet-deploy.mjs",
+    "scripts/_ssh-media-deploy.mjs"
+  ],
+  "precedents": [
+    "docs/deploy-survey-2026-08-03.md",
+    "docs/adr/ADR-0023-deploy-node-form-one-procedure-per-echelon.md"
+  ],
+  "frames": [
+    {
+      "id": "build",
+      "holder": "vesnin",
+      "note": "Сборка артефактов сервисов сервера (media:docker:build, cabinet:docker:build, *:docker:prod:build). Существующие глаголы — исполнители шага, процедура — рамка (Р1 ADR-0023)."
+    },
+    {
+      "id": "rollout",
+      "holder": "tarasov",
+      "note": "Выкладка на media-VPS (BACKGROUND_MEDIA_IPV4: media, cabinet, device-board, root-site; входы _ssh-{media,cabinet,device-board}-deploy, root-site:deploy). Кадр несёт гейт owner-rollout (Р2 ADR-0023). Сервис — параметр прогона, не пятая копия связки."
+    },
+    {
+      "id": "smoke",
+      "holder": "dynin",
+      "note": "Проверка развёрнутого: cabinet:smoke:prod, _ssh-*-smoke. Дрейф прод↔ствол — распространение office-механики на этот сервер (Р5 ADR-0023, после первого прогона)."
+    },
+    {
+      "id": "record",
+      "holder": "angelina",
+      "note": "Запись прогона в общую ленту docs/procedure-runs/ через deploy-run (procedureId = deploy-media-vps, subject = сервис + ревизия). Секреты и env-значения в журнал не пишутся никогда (Р3 ADR-0023)."
+    }
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "yarn cabinet:deploy:prod",
+    "note": "деплой — рука владельца; автозапуск прод-выкладки запрещён конструкцией манифеста"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "build", "criticality": "critical" },
+      { "id": "rollout", "criticality": "critical" },
+      { "id": "smoke", "criticality": "critical" },
+      { "id": "record", "criticality": "critical" }
+    ]
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "owner-rollout",
+        "waitsFor": "owner",
+        "resume": "владелец сам запускает напечатанную команду выкладки (deploy:when-green печатает, не запускает)",
+        "note": "Р2 ADR-0023. Локальные/dev-подъёмы (*:docker:up, *:db:up) гейтом не обкладываются."
+      }
+    ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "след процедуры — прогоны в общей ленте docs/procedure-runs/ (Р3 ADR-0023); серверная специфика живёт в env/ssh-скриптах кода (BACKGROUND_MEDIA_IPV4), декларация не дублирует её (граница d1/d2 — разбор Веснина 04.08)"
+  }
+}
