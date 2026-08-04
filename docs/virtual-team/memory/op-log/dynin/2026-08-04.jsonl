@@ -10,3 +10,5 @@
 {"ts":"2026-08-04T13:58:11.569Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-04T13:57:52.122Z","origin":"ask-persona"}
 {"ts":"2026-08-04T12:49:52.646Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-04T12:49:39.448Z","origin":"ask-persona"}
 {"ts":"2026-08-04T12:49:52.650Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-04T12:49:39.448Z","origin":"ask-persona"}
+{"ts":"2026-08-04T23:52:06.637Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-04-insight-one-shot-portfolio-surfacing","origin":"persona-extract"}
+{"ts":"2026-08-04T23:52:06.637Z","persona":"dynin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}

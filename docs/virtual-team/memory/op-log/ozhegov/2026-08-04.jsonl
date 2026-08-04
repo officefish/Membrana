@@ -17,3 +17,5 @@
 {"ts":"2026-08-04T12:28:02.264Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-04T12:27:56.749Z","origin":"ask-persona"}
 {"ts":"2026-08-04T16:33:19.865Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-04T16:33:04.859Z","origin":"ask-persona"}
 {"ts":"2026-08-04T16:33:19.873Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-04T16:33:04.859Z","origin":"ask-persona"}
+{"ts":"2026-08-04T23:52:07.234Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-04-insight-one-shot-portfolio-surfacing","origin":"persona-extract"}
+{"ts":"2026-08-04T23:52:07.234Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
