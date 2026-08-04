@@ -1,17 +1,23 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import {
+  buildOperationalJournal,
   byCodePoint,
   dateFromFilename,
   topicSlug,
   excerpt,
   parseRoleReplies,
   parseReviewVote,
+  renderReportLine,
   selectEntries,
   renderJournal,
   TOKEN_BUDGET,
   CHARS_PER_TOKEN,
 } from './persona-memory-extract.mjs';
+import { PERSONA_ROLE_LABELS } from './lib/persona-memory.mjs';
 
 // ─── фикстуры ──────────────────────────────────────────────────────────────────
 
@@ -168,4 +174,25 @@ test('renderJournal: одинаковый вход → побайтово оди
 
 test('byCodePoint: детерминированный порядок без локали', () => {
   assert.deepEqual(['б', 'а', 'e', 'E'].sort(byCodePoint), ['E', 'e', 'а', 'б']);
+});
+
+// ─── отчёт прогона (#1659) ─────────────────────────────────────────────────────
+
+test('buildOperationalJournal: ops считает глаголы этого прогона; пустой прогон — без действий', () => {
+  const slug = Object.keys(PERSONA_ROLE_LABELS).sort(byCodePoint)[0];
+  const root = mkdtempSync(join(tmpdir(), 'pm-extract-'));
+  const { ops, events } = buildOperationalJournal(slug, { repoRoot: root, nowIso: '2026-08-04T10:00:00.000Z' });
+  assert.deepEqual(ops, { write_operational: 0, transfer_to_archive: 0, rebuild_report: 1 });
+  assert.equal(events, 1);
+});
+
+test('renderReportLine: дельта из событий прогона, состояние названо состоянием', () => {
+  const report = { retainedCount: 48, transferred: new Array(252).fill({ id: 'x', reason: 'class_routine' }), status: 'ok' };
+  const idle = renderReportLine('docs/m.md', { write_operational: 0, transfer_to_archive: 0, rebuild_report: 1 }, report);
+  assert.ok(idle.includes('сегодня: изменений нет'), idle);
+  assert.ok(idle.includes('мимо проекции 252'), idle);
+  assert.ok(!idle.includes('transferred'), 'состояние не должно читаться как действие');
+  const acted = renderReportLine('docs/m.md', { write_operational: 3, transfer_to_archive: 1, rebuild_report: 1 }, report);
+  assert.ok(acted.includes('сегодня: +3 в архив · переток 1'), acted);
+  assert.ok(acted.includes('оперативных 48'), acted);
 });
