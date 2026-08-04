@@ -26,17 +26,17 @@
       "noIssueReason": "фаза эпика #1330-продолжение; вещдоки в нарезке",
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-04",
-      "archivedAt": null,
+      "archivedAt": "2026-08-04",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin",
         "ozhegov"
       ],
       "notes": "По карте обзора 04.08: контейнер построен 27.07 (#1335, #1357, доведён #1407) — дом+контракт span, CLI с резаком в ingest, office-модуль 6 маршрутов, Mongo в compose. Остаток эпика: (а) клиент CLI→office и первичная заливка ~1500 сессий; (б) service читает listSpans() целиком в память — перевести на Mongo-запросы по уже созданным индексам, search отдаёт мету, не полные bytes, курсор; (в) прод-контур: generate-office-env.sh не пишет ARCHIVARIUS_*, бэкапа тома нет, smoke нет; (г) тракт scan→extract→ingest (закрывает archivarius-evening-tract); (д) зубы Mongo-store. Вне скоупа: retention/TTL, панель, amnestyLifted (рука владельца), продовая миграция данных.",
-      "archiveNotes": null,
+      "archiveNotes": "Спринт закрыт 04.08, PR #1711 MERGED (da157e1b). 4 блока с честными парами (context+review) в ленте следов; нарезка ратифицирована владельцем, перерезка recut-1 (bodyLimit) — тоже. Живые вещдоки: заливка 106884/106884 спанов (214 батчей) в office+dev-Mongo; audit ok:true (105899 спанов, 69 сессий); search мета+курсор по индексам; bodyLimit маршрутный (2МиБ→200 в ingest, 413 в другом POST); office 231/231, скрипты 13/13. Прогон спринта в журнале открыт ратификацией и закрыт гейтом (pass). Долги дня: #1710 (дверь recut в гейте мертва), #1714 (B8 archivarius-mongo), P2 замер размеров спанов. Смежно закрыта archivarius-evening-tract. Смоук-приёмка dev — доложена владельцу; прод-выкладка за owner-gate.",
       "githubIssueClosedAt": null,
       "parentEpic": "archivarius-sessions-container"
     },
