@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-08-03T06:02:41.291Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-08-04T04:45:43.695Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -42,7 +42,7 @@ _Кристаллов активно: 126 (owner: 80, derived: 46). Страте
 - ~~**Недельный аудит антипаттернов — бестиарий, детекторы, охотник-который-сам-не-молчун**~~ — `insight:insight-weekly-antipattern-audit-bestiary` _(stale · 2026-07-17)_
 - ~~**Явные palette-узлы перехода лупов main↔alarm (vs рантайм-контракт)**~~ — `insight:insight-explicit-loop-switch-nodes` _(stale · 2026-07-12)_
 - ~~**Сопряжение с внешним эффектором C-UAS (ВИЗОР-МПВС, запрос Дениса)**~~ — `insight:insight-effector-cue-integration` _(stale · 2026-07-17)_
-- **Серверные генераторы: конверты → чистые функции office, git-роутер с очередями** — `insight:insight-server-generators-office`
+- ~~**Серверные генераторы: конверты → чистые функции office, git-роутер с очередями**~~ — `insight:insight-server-generators-office` _(stale · 2026-07-21)_
 - **Депо: комната недельного охвата — глубокие аудиты и санитарные работы отдельным контуром** — `insight:insight-depot-weekly-room`
 - ~~**Issue closure must account for every active registry child**~~ — `insight:insight-ghost-task-closure-invariant` _(stale · 2026-06-29)_
 - ~~**Версионируемые тулинг-киты: наборы умений агента под задачу**~~ — `insight:insight-tooling-kits` _(stale · 2026-07-19)_

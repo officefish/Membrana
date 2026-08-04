@@ -1,16 +1,11 @@
 {
   "magistralOptions": [
-    "secret-redactor",
-    "run-journal-producer",
-    "deploy-procedure-survey"
+    "agent-tooling-night-build",
+    "angelina-hostess-impl",
+    "archivarius-sessions-container"
   ],
-  "frozenDigest": "33633985ca337a68c4bc218c8ad24034723b9d3afc5de09965d5c97b9da4d233",
-  "magistral": "deploy-procedure-survey",
-  "swallow": {
-    "draftDigest": "fd00d1afca4ae92bbd4ef56de41e9b424af17d710b85da0a115ef118a8654a78",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-03.md",
-    "ownerAck": true,
-    "gate": "evening:partner-swallow"
-  },
-  "day": "2026-08-03"
+  "frozenDigest": "4f800c4486c1809dbde87cd90db3a45f73d2046ea27ad6080d128d13919bc033",
+  "magistral": "archivarius-sessions-container",
+  "swallow": null,
+  "day": "2026-08-04"
 }
