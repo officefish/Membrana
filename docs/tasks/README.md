@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `one-shot-trail-forecast-fact` | Портфель шотов: расширение следа (executor/форкаст/факт), глагол trail brief, дисциплина всплытия | M | [`ONE_SHOT_TRAIL_FORECAST_FACT_PROMPT.md`](../prompts/ONE_SHOT_TRAIL_FORECAST_FACT_PROMPT.md) | — |
 | `sprint-cut-teeth-to-live-modules` | Зубы формы cut-плана переходят на живые execution-gate/experience-loop, дублёры сносятся | M | [`SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md`](../prompts/SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md) | — |
 | `worktree-foreign-resolution-probe` | Резолюция пакетов вне дерева говорится вслух, а не обнаруживается постфактум | S | [`WORKTREE_FOREIGN_RESOLUTION_PROBE_PROMPT.md`](../prompts/WORKTREE_FOREIGN_RESOLUTION_PROBE_PROMPT.md) | [#1647](https://github.com/officefish/Membrana/issues/1647) |
 | `gate-stale-supersede-by-recut` | Протухший след отзывается актом перерезки, а не изъятием строки | S | [`GATE_STALE_SUPERSEDE_BY_RECUT_PROMPT.md`](../prompts/GATE_STALE_SUPERSEDE_BY_RECUT_PROMPT.md) | [#1638](https://github.com/officefish/Membrana/issues/1638) |
@@ -253,7 +254,7 @@
 |----|----------|--------------|--------|--------|----------|
 | `harness-workflow-pages` | Harness Mintlify: страницы мастерских и процедур | 2026-08-02 | [`HARNESS_WORKFLOW_PAGES_PROMPT.md`](../prompts/HARNESS_WORKFLOW_PAGES_PROMPT.md) | — | [карточка](./archive/harness-workflow-pages.md) |
 | `product-mintlify-container` | Product Mintlify: Board, узлы и тарифы | 2026-08-02 | [`PRODUCT_MINTLIFY_CONTAINER_PROMPT.md`](../prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md) | — | [карточка](./archive/product-mintlify-container.md) |
-| `dual-mintlify-product-harness` | Product и Harness Mintlify в двух спринтах | 2026-08-02 | [`DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md`](../prompts/DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md) | #1622 (Issue открыт) | [карточка](./archive/dual-mintlify-product-harness.md) |
+| `dual-mintlify-product-harness` | Product и Harness Mintlify в двух спринтах | 2026-08-02 | [`DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md`](../prompts/DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md) | #1622 | [карточка](./archive/dual-mintlify-product-harness.md) |
 | `cut-act-trace` | Носитель следа для акта нарезки: лента актов плана, машинный revisionAt, обнуление разбора при перерезке | 2026-08-01 | [`CUT_ACT_TRACE_PROMPT.md`](../prompts/CUT_ACT_TRACE_PROMPT.md) | #1566 | [карточка](./archive/cut-act-trace.md) |
 | `meeting-gates-teeth` | Зубы заседаний: повестка не доехала, --kind meeting, флаги прогона в метаданных протокола | 2026-08-01 | [`MEETING_GATES_TEETH_PROMPT.md`](../prompts/MEETING_GATES_TEETH_PROMPT.md) | — | [карточка](./archive/meeting-gates-teeth.md) |
 | `evening-steps-m2-transfer` | Перенос вердикта M2 в evening-ritual-steps.json: единая нумерация и критичность | 2026-08-01 | [`EVENING_STEPS_M2_TRANSFER_PROMPT.md`](../prompts/EVENING_STEPS_M2_TRANSFER_PROMPT.md) | — | [карточка](./archive/evening-steps-m2-transfer.md) |
