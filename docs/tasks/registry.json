@@ -8,14 +8,14 @@
       "noIssueReason": "спринт второй задачи дня, слово владельца 04.08; носитель — план нарезки и ADR-0023",
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-04",
-      "archivedAt": null,
+      "archivedAt": "2026-08-04",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "Слово владельца 04.08: два сервера — две процедуры, пока две, посервисная конкретизация позже. Строка 3 хендофа (П2 обзора 03.08: деплой не пишет прогон). План: docs/sprint/cut/deploy-procedures.json. ADR-0023 Р1 амандмент по слову владельца.",
-      "archiveNotes": null,
+      "archiveNotes": "Спринт membrana-local-sprint, ратифицирован владельцем 04.08 16:26Z. PR #1717 merged: две процедуры по серверам (deploy-office-vds: office+panel; deploy-media-vps: media/cabinet/device-board/root-site) в реестре процедур (23→25), validateProcedure 27/27; обёртка deploy:run (open→exec→close, exit прозрачен, секреты не текут); врезка в cabinet:deploy:prod и vds:run, deploy:when-green не тронут; ADR-0023 ACCEPTED с амандментом Р1 (слово владельца: процедура на сервер). Гейт 3/3 honest_pair; журнальный прогон закрыт производителем. Первый живой прогон — при первой выкладке рукой владельца.",
       "githubIssueClosedAt": null
     },
     {
