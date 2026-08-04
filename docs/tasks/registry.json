@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "procedure-run-journal-panel-reader",
+      "title": "Витрина пяти опор в panel.mmbrn.tech — первый читатель ленты журнала прогонов",
+      "promptPath": "docs/prompts/PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "кандидат из горизонта HANDOFF 03.08 и #1626 п.1; issue заведём при взятии",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-04",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Читатель ленты docs/procedure-runs/trail/ — недостающая половина #1626: производители построены и с 04.08 реально пишут (утро pass, первый прогон шота), но ленту не открывает ни один автомат. Витрина = агрегат по пяти опорам (local-sprint, ritual-day, ritual-evening, meeting, one-shot): счёт прогонов, исходы pass/fail/blocked, сироты, трения. Предусловие развёртывания — узел деплоя (survey 03.08 П1). До витрины допустим дешёвый первый читатель: блок в вечерней хронике/хендофе. Кристалл reader-before-next-carrier.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "corpus-track-acceptance-predicate",
       "title": "Приёмный предикат корпуса «один тракт — два класса»: чистая функция годности трека по спеке инсайта",
       "promptPath": "docs/prompts/CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md",
