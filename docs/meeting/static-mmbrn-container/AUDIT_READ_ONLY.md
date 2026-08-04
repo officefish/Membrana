@@ -1556,3 +1556,49 @@ contract остаётся внутренне противоречивым. По�
 
 Машинный `meeting:audit` также подтвердил один `S1` и отсутствие структурных нарушений.
 Run3 ждёт отдельного разрешения владельца на внешний LLM-вызов.
+
+## Постаудит M4 — run3
+
+Вердикт независимого аудитора: **BLOCK**. Использована попытка 3 из 5.
+
+Внешний вызов завершился без транспортной ошибки; машинный аудит не нашёл структурных
+нарушений. Сырой carrier сохранён без редакторских исправлений в
+`docs/seanses/rejected/static-mmbrn-container-m4-storage-2026-08-04-run3-count-location-dedup-checkpoint-quota-m6.md`.
+
+Подтверждены девять дефектов:
+
+- записано 34 ролевые реплики вместо требуемых 36; Архитектор и Музыкант дали по пять;
+- для новой topology не выбран допустимый M2 `location.kind`, поэтому `{kind, ref}` неполна;
+- global physical dedup одного hash конфликтует с отдельными sensitive credential/encryption;
+- удаление blob по authorization одной record не защищает другие records того же hash;
+- FD-2 bundle не несёт собственного complete marker: snapshot сделан до live complete-event;
+- write fence не drain-ит in-flight writes и не закрывает lifecycle/registry mutations;
+- RPO age считается от completion, а не от более ранней точки фактического cut;
+- container/collection quota не имеет числа или алгоритма, Case 2 проверяет только FD-1;
+- обсуждение снова назначает запрещённый HTTP-код `403`, хотя итог его уже не повторяет.
+
+Run3 исправил topology/FD-3, полный hash, immutable M2, двойную integrity, глобальную
+capacity formula, перенос bytes в FD-2, age-gate, retention, signed URL/TTL и форму конца.
+Повестка run4 сводит ограничения run1-run3 в один непротиворечивый раздел и дополнительно
+требует доказуемый RTO. До внешнего run4 обязательны независимый предаудит и новое
+разрешение владельца.
+
+## Предаудит M4 — run4
+
+Вердикт независимого аудитора: **PASS**.
+
+- все 24 дефекта run1-run3 покрыты единым разделом без взаимных коллизий;
+- M2 требует допустимые `location.kind/ref`, immutable rows и только реальные поля;
+- standard/sensitive dedup разделён по policy class, shared blob quarantine/deletion
+  учитывают все refs;
+- capacity, container budget, collection quota, logical dedup charge и G1 должны стать
+  вычислимыми;
+- checkpoint требует drain всех writers, high-water/cut_at, bytes copy, FD-2 complete marker
+  и снятие fence после двух commit-свидетельств;
+- RPO считается от cut, RTO доказывается throughput и bound корпуса;
+- M6 запрещена даже HTTP-кодами, ролевой порог закреплён как 36 и минимум шесть на роль;
+- один `S1`, объём 10 333 символа, canonical carrier отсутствует, счётчик 3 из 5;
+- rejected run3 существует, M5-M7 остаются открытыми.
+
+Машинный аудит также подтвердил один `S1` и отсутствие структурных нарушений. Run4 ждёт
+отдельного разрешения владельца на внешний LLM-вызов.

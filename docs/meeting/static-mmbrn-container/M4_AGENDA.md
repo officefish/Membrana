@@ -70,62 +70,44 @@ vendor-neutral topology, дать таблицы классов хранения
    production ingest и до миграции: capacity, write/read/hash, backup, restore, auth bypass,
    inventory/reconciliation. «Backup включён» без успешного restore — не PASS.
 
-## Поправки run1
+## Обязательные поправки run1-run3
 
-- **Одна topology до конца.** Нельзя оставить registry metadata как «Git или append-only
-  FS». Выбрать один конкретный vendor-neutral носитель FD-3 и одну связь его checkpoint с
-  backup bytes. Primary/backup могут быть S3-compatible pattern, но конкретный продукт,
-  провайдер и bucket не называются.
-- **Только поля M2.** Storage key строится только из реально существующих M2 значений.
-  `container_id`, `lineage_id`, `revision_seq` отсутствуют и запрещены. Если используется
-  content addressing, discriminator — полный `sha256`, не 8-символьный префикс.
-  Dedup физических bytes не сливает отдельные record/lineage identities: разные M2 records
-  могут ссылаться на один immutable bytes-object, оставаясь разными записями и линиями.
-- **Не мутировать M2 record.** `status`, `hold`, `deleted_at`, lifecycle reason не объявлять
-  полями существующей schema и не переписывать строку. Operational hold/retention/tombstone
-  живут в отдельном append-only lifecycle ledger, привязанном к immutable record `id`, либо
-  выражаются новой полной M2 record по правилам M2; выбрать один вариант. Registry history
-  остаётся неизменной и отличимой от storage lifecycle.
-- **Integrity:** post-write/read, periodic reconciliation, backup и restore проверяют вместе
-  полный `sha256` **и** `bytes`. Несовпадение любого значения fail-closed.
-- **Один capacity predicate:** readiness и cases используют одну формулу, одновременно
-  учитывающую измеренный абсолютный минимум свободного места 12 GiB и выбранный ratio
-  watermark. Значения `0.95` и `1.0` нельзя применять к одной метрике без определения.
-- **Retention:** назначить исполнимый срок/правило для active и superseded originals,
-  отдельно от 30-дневной retention backup. Hold имеет явный приоритет; authorized deletion
-  и dangling различаются через выбранный lifecycle ledger.
-- **Consistent restore point:** backup checkpoint атомарно связывает bytes manifest и
-  snapshot registry/lifecycle metadata. Drill восстанавливает именно одну checkpoint-пару,
-  а не сравнивает старые bytes с текущим FD-3.
-- **Граница M6:** M4 задаёт invariants, thresholds и требуемые вещдоки, но не назначает HTTP
-  codes, endpoint/scrape protocol, upload proxy, последовательность hash pipeline или форму
-  API. Cases описываются на уровне admission allow/deny и storage evidence.
-- **Форма:** `Список посылок` стоит до Definition of Done; DoD — последняя секция и
-  последняя непустая строка. После неё нет разделителя, эха или футера.
-
-## Поправки run2
-
-- **Один физический key.** Выбрать одну непротиворечивую модель. При physical dedup bytes
-  живут по одному content-addressed key `objects/{sha256_64hex}`, а отдельные M2 records
-  сохраняют разные `id`, registry rows и opaque `location.ref`, разрешаемые в тот же blob.
-  Если key включает `record_id`, physical dedup запрещено заявлять. Два key для одних bytes,
-  directory-prefix вместо объекта и неописанные alias недопустимы.
-- **Одна capacity formula буквально везде.** Обсуждение, итог, Cases и readiness используют
-  одну и ту же строгую границу: `ALLOW` только если `free_after >= 12 GiB` **и**
-  `used_after / total < 0.90`. Soft watermark `0.85` только предупреждает и не становится
-  отдельным admission/readiness условием. Не заменять `< 0.90` эквивалентом с `>= 0.10`,
-  который расходится на границе.
-- **Исполнимый consistent cut.** Назвать один механизм согласованного checkpoint: общий
-  `checkpoint_id` и write fence/high-water mark либо транзакционный snapshot, чтобы manifest
-  bytes и snapshot registry/lifecycle описывали одно множество records. Явно сказать, как
-  сами immutable bytes, перечисленные manifest, появляются в FD-2; архив одного manifest
-  без bytes backup не является.
-- **RPO проверяется возрастом.** Backup/readiness gate требует последний успешный checkpoint
-  не старше 24 часов. Неудачный ежедневный запуск оставляет предыдущий checkpoint для
-  восстановления, но переводит readiness в FAIL, как только его age превышает RPO.
-- **Не проектировать download M6.** M4 фиксирует только invariant: Panel/proxy применяет
-  ратифицированное M3-решение к каждому действию, прямой storage bypass запрещён. Не
-  назначать signed URL, TTL, download workflow, endpoint или иной transport mechanism.
+- **Одна topology и schema M2.** Выбрать один vendor-neutral primary pattern, один носитель
+  FD-3 и один lifecycle mechanism. Для нового storage назначить ровно один допустимый M2
+  `location.kind` из `local|affine|url|archivarius` и точный непустой `location.ref`.
+  `canonicalRef` не становится URL/key; отсутствующие `container_id`, `lineage_id`,
+  `revision_seq` запрещены. Registry rows immutable; lifecycle живёт отдельно.
+- **Key, class и dedup.** Выбрать один physical key. При dedup он content-addressed полным
+  `sha256`, но scoped по storage-policy class, вычисленной из реального M2
+  `sensitive.reason`: standard и sensitive не делят ciphertext/credential namespace.
+  Dedup допустим только внутри одного class. Records/lineages остаются разными identities.
+  Quarantine общего blob закрывает все его refs. Физическое удаление blob допустимо только
+  когда **все** ссылающиеся records прошли retention, имеют authorization и не имеют hold;
+  одна record не может оборвать bytes другой.
+- **Integrity и retention.** Post-write/read, reconciliation, backup и restore проверяют
+  полный `sha256` **и** `bytes`; mismatch fail-closed. Active, superseded и backup получают
+  отдельные исполнимые сроки/правила. Hold приоритетнее tombstone/deletion; authorized
+  deletion, expected absence, dangling и orphan различаются машинно.
+- **Одна capacity и вычислимая quota.** Обсуждение, итог, Cases и readiness используют
+  `ALLOW <=> free_after >= 12 GiB AND used_after/total < 0.90`; soft `0.85` только алерт.
+  Определить container budget и алгоритм collection quota, а не обещать назначить позже.
+  При dedup назвать logical charge: общий blob учитывается в каждой collection, которая на
+  него ссылается, без quota bypass. G1 использует явно заданный размер (например zero-size
+  baseline), production admission — фактический размер объекта.
+- **Самодостаточный consistent cut.** Fence охватывает ingest и все registry/lifecycle
+  mutations, дожидается in-flight writers и фиксирует `checkpoint_id`, high-water marks и
+  `cut_at`. Snapshot и manifest описывают этот cut; сами bytes копируются FD-1 -> FD-2 и
+  проверяются. В FD-2 последним пишется immutable complete marker с hashes snapshot/manifest;
+  restore доказывает bundle без живого FD-3. Fence снимается только после commit marker и
+  live complete-event. RPO age считается от `cut_at`, не от позднего completion timestamp.
+- **RPO/RTO доказуемы.** Gate требует `now-cut_at <= 24h`. RTO 4h подтверждается измеренным
+  restore throughput/overhead и ограничением protected bytes; обещание partial restore в M7
+  не заменяет PASS.
+- **Граница M6 и форма.** Никаких HTTP-кодов (включая `403`), signed URL, TTL, endpoints,
+  upload/download workflow, scrape protocol, hash pipeline или API. Остаются storage deny и
+  per-action invariant M3. `Список посылок` до DoD; DoD — последняя секция и строка.
+  Требуется не менее 36 предметных реплик и не менее шести от каждой из шести ролей; без
+  эха, self-count и meta. M5-M7 открыты.
 
 ## Обязательные случаи
 
@@ -159,8 +141,8 @@ vendor-neutral topology, дать таблицы классов хранения
 - список реально использованных посылок с маркировкой **факт** / **норма**.
 
 Carrier заканчивается после ненумерического Definition of Done. Самосчёт, эхо повестки,
-обсуждение carrier/guards и заявления о полноте собственного ответа запрещены. Не менее 30
-фактических ролевых реплик; считает внешний аудитор.
+обсуждение carrier/guards и заявления о полноте собственного ответа запрещены. Требуется не
+менее 36 фактических ролевых реплик и не менее шести от каждой роли; считает внешний аудитор.
 
 ## Границы комнаты
 
