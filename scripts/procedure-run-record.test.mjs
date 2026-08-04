@@ -67,8 +67,24 @@ test('обрыв ловится ЧЕРЕЗ границу файлов: open з�
   assert.deepEqual(orphansClosed[0].coverage.gaps, ['orphaned']);
   const d1 = readProcedureRunTrail(dir, defaultTrailPath('2026-08-03'));
   assert.equal(d1.at(-1).runPhase, 'close', 'close-сирота живёт в файле своего open');
-  assert.match(d1.at(-1).coverage.evidence[0], /ritual-day-2026-08-04/u, 'ссылка на вытеснившую — строкой в evidence (названный долг)');
+  assert.match(d1.at(-1).coverage.evidence[0], /ritual-day-2026-08-04/u, 'строка в evidence — человекочитаемый дубль');
+  // Структурная ссылка (#1681, блок a2): кросс-файловая сирота несёт trail вытеснившей
+  // записи — {runId, sequence} другого файла без пути машиной неразрешимы.
+  assert.deepEqual(
+    d1.at(-1).orphanedBy,
+    { runId: 'ritual-day-2026-08-04', sequence: 1, trail: defaultTrailPath('2026-08-04') },
+    'кросс-файловый orphanedBy — поле с фактическим sequence open-записи и путём её ленты',
+  );
   assert.equal(findOpenRunsAround(dir, 'ritual-day', '2026-08-04').length, 1, 'открыт только новый');
+});
+
+test('внутрифайловая сирота несёт orphanedBy БЕЗ trail — лента одна, путь избыточен', () => {
+  const dir = tempRepo();
+  cmdOpen(dir, { procedureId: 'ritual-day', at: AT_D1, evidence: ['e'] });
+  const { orphansClosed } = cmdOpen(dir, { procedureId: 'ritual-day', at: '2026-08-03T09:00:00.000Z', evidence: ['e'] });
+  assert.equal(orphansClosed.length, 1);
+  assert.equal(orphansClosed[0].orphanedBy.trail, undefined);
+  assert.equal(typeof orphansClosed[0].orphanedBy.sequence, 'number');
 });
 
 test('чужая процедура через границу файлов сироту НЕ закрывает', () => {

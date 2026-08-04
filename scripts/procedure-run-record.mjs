@@ -20,9 +20,9 @@
  * уже в ДРУГОМ файле, и внутрифайловое ленивое закрытие его не увидит. Поэтому open
  * прометает ленты за --days (7) суток назад: незакрытые прогоны той же процедуры
  * закрываются fail/orphaned В СВОЁМ файле (день файла — день открытия прогона,
- * событие закрытия датировано честно). Названный долг: структурного orphanedBy у
- * кросс-файлового закрытия нет (`closeProcedureRun` поле не проносит, библиотека вне
- * зоны блока) — ссылка на вытеснившую запись едет строкой в evidence; кандидат в ADR.
+ * событие закрытия датировано честно) со структурной ссылкой orphanedBy
+ * {runId, sequence, trail} на вытеснившую запись (#1681, блок a2); строка в
+ * evidence остаётся человекочитаемым дублем.
  *
  * close ищет открытый прогон ПО ПРОЦЕДУРЕ (цепочка вечера не обязана помнить
  * утренний runId) с даты события назад; несколько открытых — отказ с перечнем,
@@ -100,21 +100,12 @@ export function cmdOpen(root, input) {
   const date = input.at.slice(0, 10);
   const targetRel = defaultTrailPath(date);
   const runId = input.runId ?? uniqueDayRunId(root, targetRel, input.procedureId, date);
-  // Кросс-файловая часть ленивого закрытия; сирот ТЕКУЩЕГО файла закроет openProcedureRun.
-  const crossFileOrphans = [];
-  for (const { trailRel, open } of findOpenRunsAround(root, input.procedureId, date, input.days)) {
-    if (trailRel === targetRel) continue;
-    crossFileOrphans.push(
-      closeProcedureRun(root, trailRel, {
-        runId: open.runId,
-        status: 'fail',
-        subject: `прогон оборван: open ${open.at} не был закрыт — закрыт лениво следующим прогоном процедуры`,
-        at: input.at,
-        evidence: [`вытеснившая запись: ${runId} (${targetRel})`],
-        gaps: ['orphaned'],
-      }),
-    );
-  }
+  // Кросс-файловые сироты снимаются ДО open (их адреса известны), а закрываются ПОСЛЕ:
+  // структурная ссылка orphanedBy должна нести ФАКТИЧЕСКИЙ sequence open-записи, а не
+  // вычисленный заранее (#1681, блок a2). Сирот ТЕКУЩЕГО файла закроет openProcedureRun.
+  const crossFile = findOpenRunsAround(root, input.procedureId, date, input.days).filter(
+    ({ trailRel }) => trailRel !== targetRel,
+  );
   const { record, orphansClosed } = openProcedureRun(root, targetRel, {
     procedureId: input.procedureId,
     runId,
@@ -123,6 +114,17 @@ export function cmdOpen(root, input) {
     evidence: input.evidence,
     note: input.note,
   });
+  const crossFileOrphans = crossFile.map(({ trailRel, open }) =>
+    closeProcedureRun(root, trailRel, {
+      runId: open.runId,
+      status: 'fail',
+      subject: `прогон оборван: open ${open.at} не был закрыт — закрыт лениво следующим прогоном процедуры`,
+      at: input.at,
+      evidence: [`вытеснившая запись: ${record.runId}#${record.sequence} (${targetRel})`],
+      gaps: ['orphaned'],
+      orphanedBy: { runId: record.runId, sequence: record.sequence, trail: targetRel },
+    }),
+  );
   return { record, trailRel: targetRel, orphansClosed: [...crossFileOrphans, ...orphansClosed] };
 }
 

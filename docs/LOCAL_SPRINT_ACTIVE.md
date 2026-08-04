@@ -4,8 +4,13 @@
 
 ## Focus
 
-- Активного локального спринта нет. Standing marathon `workflow-examples-marathon`
-  остаётся отдельным маршрутом накопления evidence.
+- **sprint-dictionary-to-lib** (#1681) · gate pass ·
+  [`OPEN.md`](./local-sprint/sprint-dictionary-to-lib/OPEN.md) — словарь прогона
+  спринта в lib + структурный `orphanedBy`.
+- **run-journal-sequence-validator** (#1683) · ратифицирован, стартует после мерджа
+  соседа (общий файл журнала).
+- Standing marathon `workflow-examples-marathon` остаётся отдельным маршрутом
+  накопления evidence.
 
 ## Предыдущий спринт
 

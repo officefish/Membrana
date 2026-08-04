@@ -177,7 +177,13 @@ export function buildProcedureRunRecord(input, opts = {}) {
     if (!o || typeof o.runId !== 'string' || !Number.isSafeInteger(o.sequence)) {
       throw new Error('orphanedBy требует {runId, sequence} вытеснившей записи');
     }
-    record.orphanedBy = { runId: o.runId, sequence: o.sequence };
+    // `trail` — только у КРОСС-файловой сироты (#1681, блок a2): вытеснившая запись живёт
+    // в другой ленте, и без её пути ссылка {runId, sequence} неразрешима машиной.
+    // Внутрифайловая ссылка поля не несёт — лента одна, путь избыточен.
+    if (o.trail !== undefined && (typeof o.trail !== 'string' || o.trail.trim() === '')) {
+      throw new Error('orphanedBy.trail — непустой относительный путь ленты либо отсутствие поля');
+    }
+    record.orphanedBy = { runId: o.runId, sequence: o.sequence, ...(o.trail !== undefined ? { trail: o.trail } : {}) };
   }
 
   record.ledger = {
@@ -336,9 +342,13 @@ export function openProcedureRun(repoRoot, trailRelPath, input) {
  * Закрыть прогон. Open-запись обязана существовать и быть незакрытой — закрыть то, что не
  * открывалось, значит выдумать прогон.
  *
+ * `orphanedBy` проносится в запись как есть (#1681, блок a2): кросс-файловое ленивое
+ * закрытие ссылается на вытеснившую запись полем, а не только строкой в evidence.
+ * Сама функция ссылку не выдумывает — её приносит вызывающий, который знает соседа.
+ *
  * @param {string} repoRoot
  * @param {string} trailRelPath
- * @param {{runId: string, status: 'pass'|'fail'|'blocked'|'skipped', subject: string, at: string, evidence?: string[], gaps?: string[], friction?: Array<object>}} input
+ * @param {{runId: string, status: 'pass'|'fail'|'blocked'|'skipped', subject: string, at: string, evidence?: string[], gaps?: string[], friction?: Array<object>, orphanedBy?: {runId: string, sequence: number, trail?: string}}} input
  * @returns {object}
  */
 export function closeProcedureRun(repoRoot, trailRelPath, input) {
@@ -367,6 +377,7 @@ export function closeProcedureRun(repoRoot, trailRelPath, input) {
     evidence: input.evidence,
     gaps: input.gaps,
     friction: input.friction,
+    orphanedBy: input.orphanedBy,
   });
   appendProcedureRunRecord(repoRoot, trailRelPath, record);
   return record;
