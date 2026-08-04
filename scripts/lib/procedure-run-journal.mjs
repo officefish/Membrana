@@ -222,7 +222,10 @@ export function validateProcedureRunRecord(record) {
 }
 
 /**
- * Незакрытые прогоны в ленте: open-запись, у чьего runId нет close-записи.
+ * Незакрытые прогоны в ленте: open-запись, ПОСЛЕ которой (по sequence внутри runId)
+ * нет close-записи. Матчинг порядковый, не множеством (#1693): close закрывает только
+ * то, что открыто ДО него — open, дописанный после close (переоткрытие при коллизии
+ * runId), остаётся видимым незакрытым, а не исчезает за чужим закрытием.
  * Записи без runPhase — история и точечные записи шотов — читаются как ЗАКРЫТЫЕ:
  * кандидатами в сироты не становятся (обратная совместимость чтения).
  *
@@ -231,13 +234,16 @@ export function validateProcedureRunRecord(record) {
  * @returns {Array<Record<string, any>>} open-записи незакрытых прогонов
  */
 export function findUnclosedRuns(records, procedureId) {
-  const closed = new Set(
-    records.filter((r) => r?.runPhase === 'close').map((r) => r.runId),
-  );
+  const lastClose = new Map();
+  for (const r of records) {
+    if (r?.runPhase !== 'close') continue;
+    const s = Number(r.sequence) || 0;
+    if (s > (lastClose.get(r.runId) ?? 0)) lastClose.set(r.runId, s);
+  }
   return records.filter(
     (r) =>
       r?.runPhase === 'open' &&
-      !closed.has(r.runId) &&
+      (Number(r.sequence) || 0) > (lastClose.get(r.runId) ?? 0) &&
       (procedureId === undefined || r.procedureId === procedureId),
   );
 }
@@ -268,7 +274,12 @@ export function nextSequenceOf(records, runId) {
  */
 export function openProcedureRun(repoRoot, trailRelPath, input) {
   const records = readProcedureRunTrail(repoRoot, trailRelPath);
-  const orphans = findUnclosedRuns(records, input.procedureId);
+  // Сироты группируются по runId: закрытие — событие над прогоном, и при коллидировавшей
+  // истории (несколько open на один runId, #1693) один close закрывает семью целиком —
+  // повторный close того же runId был бы второй правдой.
+  const orphansByRun = new Map();
+  for (const o of findUnclosedRuns(records, input.procedureId)) orphansByRun.set(o.runId, o);
+  const orphans = [...orphansByRun.values()];
   const orphansClosed = [];
   // Счёт по runId собирается ОДНИМ проходом: nextSequenceOf на каждую сироту делал бы
   // O(n·m) по ленте (P2 ревью #1680).
@@ -332,11 +343,19 @@ export function openProcedureRun(repoRoot, trailRelPath, input) {
  */
 export function closeProcedureRun(repoRoot, trailRelPath, input) {
   const records = readProcedureRunTrail(repoRoot, trailRelPath);
-  const open = records.find((r) => r?.runPhase === 'open' && r.runId === input.runId);
-  if (!open) throw new Error(`закрыть нечего: open-записи прогона «${input.runId}» в ленте нет`);
-  if (records.some((r) => r?.runPhase === 'close' && r.runId === input.runId)) {
-    throw new Error(`прогон «${input.runId}» уже закрыт — второе закрытие было бы второй правдой`);
+  // Порядковый матчинг (#1693): закрывается незакрытый open, а не «runId без close в
+  // истории» — иначе переоткрытый после обрыва runId был бы незакрываем навсегда.
+  // При коллидировавшей истории close закрывает все висящие open этого runId разом
+  // (sequence растёт монотонно): прогон читается как «с перезапусками, финал таков».
+  const unclosed = findUnclosedRuns(records).filter((r) => r.runId === input.runId);
+  if (unclosed.length === 0) {
+    const everOpened = records.some((r) => r?.runPhase === 'open' && r.runId === input.runId);
+    if (everOpened) {
+      throw new Error(`прогон «${input.runId}» уже закрыт — второе закрытие было бы второй правдой`);
+    }
+    throw new Error(`закрыть нечего: open-записи прогона «${input.runId}» в ленте нет`);
   }
+  const open = unclosed[unclosed.length - 1];
   const record = buildProcedureRunRecord({
     procedureId: open.procedureId,
     runId: input.runId,

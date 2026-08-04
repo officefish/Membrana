@@ -18,7 +18,13 @@ import {
   parseArgs,
   RefusalError,
 } from './procedure-run-record.mjs';
-import { defaultTrailPath, openProcedureRun, readProcedureRunTrail } from './lib/procedure-run-journal.mjs';
+import {
+  appendProcedureRunRecord,
+  buildProcedureRunRecord,
+  defaultTrailPath,
+  openProcedureRun,
+  readProcedureRunTrail,
+} from './lib/procedure-run-journal.mjs';
 
 const tempRepo = () => mkdtempSync(join(tmpdir(), 'run-record-cli-'));
 const AT_D1 = '2026-08-03T06:00:00.000Z';
@@ -144,4 +150,40 @@ test('days с NaN не молчит пустым промётом — throw', ()
     () => cmdOpen(dir, { procedureId: 'p', at: AT_D1, evidence: ['e'], days: Number('x') }),
     /non-negative integer/u,
   );
+});
+
+test('повторный open дня получает свой runId «-r2» и лениво закрывает первую попытку (#1693)', () => {
+  const dir = tempRepo();
+  const a = cmdOpen(dir, { procedureId: 'ritual-day', at: AT_D1, evidence: ['e'] });
+  const b = cmdOpen(dir, { procedureId: 'ritual-day', at: '2026-08-03T07:00:00.000Z', evidence: ['e'] });
+  assert.equal(a.record.runId, 'ritual-day-2026-08-03', 'первый прогон дня — без суффикса');
+  assert.equal(b.record.runId, 'ritual-day-2026-08-03-r2', 'повтор — своя личность прогона');
+  assert.equal(b.orphansClosed.length, 1, 'первая попытка закрыта fail/orphaned');
+  assert.equal(b.orphansClosed[0].runId, 'ritual-day-2026-08-03');
+
+  const { record } = cmdClose(dir, {
+    procedureId: 'ritual-day', status: 'pass', at: '2026-08-03T18:00:00.000Z', evidence: ['ok'],
+  });
+  assert.equal(record.runId, 'ritual-day-2026-08-03-r2', 'close находит живую попытку');
+
+  const c = cmdOpen(dir, { procedureId: 'ritual-day', at: '2026-08-03T20:00:00.000Z', evidence: ['e'] });
+  assert.equal(c.record.runId, 'ritual-day-2026-08-03-r3', 'счёт попыток — факт истории, закрытие его не обнуляет');
+});
+
+test('коллидировавшая история: close закрывает семью одним событием, без отказа «несколько» (#1693)', () => {
+  const dir = tempRepo();
+  const rel = defaultTrailPath('2026-08-03');
+  const put = (over) => appendProcedureRunRecord(dir, rel, buildProcedureRunRecord({
+    procedureId: 'ritual-day', runId: 'ritual-day-2026-08-03', subject: 's', evidence: ['e'], ...over,
+  }));
+  put({ sequence: 1, status: 'started', runPhase: 'open', at: '2026-08-03T05:00:00.000Z' });
+  put({ sequence: 2, status: 'fail', runPhase: 'close', gaps: ['orphaned'], at: '2026-08-03T05:10:00.000Z' });
+  put({ sequence: 3, status: 'started', runPhase: 'open', at: '2026-08-03T06:00:00.000Z' });
+  put({ sequence: 4, status: 'started', runPhase: 'open', at: '2026-08-03T06:30:00.000Z' });
+
+  const { record } = cmdClose(dir, {
+    procedureId: 'ritual-day', status: 'pass', at: '2026-08-03T18:00:00.000Z', evidence: ['ok'],
+  });
+  assert.equal(record.sequence, 5, 'семья закрыта одним событием');
+  assert.equal(record.status, 'pass', 'состоявшийся день получает pass, а не вечное started');
 });
