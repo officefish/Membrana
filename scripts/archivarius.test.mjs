@@ -113,3 +113,103 @@ test('archivarius CLI ingest writes span JSONL', async () => {
     rmSync(dir, { recursive: true, force: true });
   }
 });
+
+// ── Тракт scan → extract → ingest (блок cli-office-client-and-tract, 04.08) ─────
+import { batchSpans, buildPushReport, withRetry } from './lib/archivarius.mjs';
+import { extractStep, ingestStep, runTract, scanStep } from './archivarius-push.mjs';
+
+test('batchSpans режет под потолок API и отвергает кривой размер', () => {
+  const spans = Array.from({ length: 5 }, (_, i) => ({ i }));
+  assert.deepEqual(batchSpans(spans, 2).map((b) => b.length), [2, 2, 1]);
+  assert.deepEqual(batchSpans([], 10), []);
+  assert.throws(() => batchSpans(spans, 0), /вне 1\.\.10000/u);
+  assert.throws(() => batchSpans(spans, 10_001), /вне 1\.\.10000/u);
+});
+
+test('withRetry повторяет с бэкофом и отдаёт последнюю ошибку честно', async () => {
+  const delays = [];
+  let calls = 0;
+  const ok = await withRetry(
+    async () => {
+      calls += 1;
+      if (calls < 3) throw new Error('transient');
+      return 'ok';
+    },
+    { attempts: 3, backoffMs: 10, sleep: async (ms) => void delays.push(ms) },
+  );
+  assert.equal(ok, 'ok');
+  assert.deepEqual(delays, [10, 20], 'бэкоф растёт по номеру попытки');
+  await assert.rejects(
+    withRetry(async () => { throw new Error('dead'); }, { attempts: 2, sleep: async () => {} }),
+    /dead/u,
+  );
+});
+
+test('тракт: scan читает источники, extract читает выход scan, ingest шлёт батчами выход extract', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'archivarius-tract-'));
+  const line = (uuid, text) => JSON.stringify({ uuid, timestamp: '2026-08-04T10:00:00.000Z', type: 'user', message: { content: text } });
+  writeFileSync(join(dir, 'aaa-session.jsonl'), `${line('u1', 'hello')}\n${line('u2', 'world')}\n`, 'utf8');
+  writeFileSync(join(dir, 'bbb-session.jsonl'), `${line('u3', 'third')}\n`, 'utf8');
+  writeFileSync(join(dir, 'note.txt'), 'не jsonl — в scan не попадает', 'utf8');
+
+  const files = await scanStep([dir]);
+  assert.equal(files.length, 2, 'scan берёт только .jsonl');
+
+  const { spans } = extractStep(files);
+  assert.equal(spans.length, 3, 'extract читает ровно список scan');
+
+  const posted = [];
+  const fakeFetch = async (url, init) => {
+    posted.push({ url, spans: JSON.parse(init.body).spans.length, token: init.headers['x-membrana-token'] });
+    return { ok: true, json: async () => ({ accepted: JSON.parse(init.body).spans.length, maskedLines: 0 }) };
+  };
+  const report = await runTract({
+    sources: [dir],
+    batchSize: 2,
+    dryRun: false,
+    baseUrl: 'https://office.test/',
+    token: 'tkn',
+    fetchImpl: fakeFetch,
+    sleep: async () => {},
+  });
+  assert.deepEqual(posted.map((p) => p.spans), [2, 1], 'батчи по потолку --batch');
+  assert.ok(posted.every((p) => p.url === 'https://office.test/v1/archivarius/ingest' && p.token === 'tkn'));
+  assert.deepEqual(report, { files: 2, spans: 3, maskedLines: 0, batches: 2, accepted: 3, dryRun: false });
+  rmSync(dir, { recursive: true, force: true });
+});
+
+test('тракт --dry-run не касается сети; отчёт не несёт bytes', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'archivarius-dry-'));
+  writeFileSync(join(dir, 's.jsonl'), `${JSON.stringify({ uuid: 'u1', timestamp: '2026-08-04T10:00:00.000Z', type: 'user', message: { content: 'secret text' } })}\n`, 'utf8');
+  const report = await runTract({
+    sources: [dir],
+    batchSize: 100,
+    dryRun: true,
+    baseUrl: 'https://office.test',
+    token: null,
+    fetchImpl: async () => { throw new Error('сеть в dry-run запрещена'); },
+  });
+  assert.deepEqual(report, { files: 1, spans: 1, maskedLines: 0, batches: 0, accepted: 0, dryRun: true });
+  assert.ok(!JSON.stringify(report).includes('secret text'), 'отчёт — счётчики, не содержимое');
+  rmSync(dir, { recursive: true, force: true });
+});
+
+test('ingestStep: отказ office после повторов — честная ошибка с номером батча', async () => {
+  await assert.rejects(
+    ingestStep([{ a: 1 }], {
+      baseUrl: 'https://office.test',
+      token: 't',
+      batchSize: 1,
+      fetchImpl: async () => ({ ok: false, status: 503 }),
+      sleep: async () => {},
+    }),
+    /HTTP 503 на батче 1\/1/u,
+  );
+});
+
+test('buildPushReport нормализует счётчики и не выдумывает полей', () => {
+  assert.deepEqual(
+    buildPushReport({ files: '2', spans: 3, maskedLines: null, batches: 1, accepted: 3, dryRun: 0 }),
+    { files: 2, spans: 3, maskedLines: 0, batches: 1, accepted: 3, dryRun: false },
+  );
+});
