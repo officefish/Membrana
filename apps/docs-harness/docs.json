@@ -46,7 +46,9 @@
           "procedures/bridge",
           "procedures/one-shot",
           "procedures/membrana-leveling",
-          "procedures/weekly-dead-wire"
+          "procedures/weekly-dead-wire",
+          "procedures/deploy-office-vds",
+          "procedures/deploy-media-vps"
         ]
       },
       {
