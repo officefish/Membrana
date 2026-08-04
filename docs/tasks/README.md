@@ -20,8 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `deploy-procedures` | Деплой как процедура с прогонами: две процедуры по серверам (office-VDS, media-VPS) + врезка журнала в боевые глаголы | M | [`DEPLOY_PROCEDURES_PROMPT.md`](../prompts/DEPLOY_PROCEDURES_PROMPT.md) | — |
-| `archivarius-live-wiring` | Archivarius: соединить контейнер с жизнью — заливка сессий, Mongo-запросы, тракт, прод-контур | M | [`ARCHIVARIUS_LIVE_WIRING_PROMPT.md`](../prompts/ARCHIVARIUS_LIVE_WIRING_PROMPT.md) | — |
 | `recreate-execution-procedure-interface` | Пересборка PR #1613: контракт EXECUTION_PROCEDURE + procedureKind поверх свежего main (pr:recreate) | M | [`RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md`](../prompts/RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md) | — |
 | `procedure-run-journal-panel-reader` | Витрина пяти опор в panel.mmbrn.tech — первый читатель ленты журнала прогонов | M | [`PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md) | — |
 | `corpus-track-acceptance-predicate` | Приёмный предикат корпуса «один тракт — два класса»: чистая функция годности трека по спеке инсайта | S | [`CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md`](../prompts/CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md) | — |
@@ -256,6 +254,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `deploy-procedures` | Деплой как процедура с прогонами: две процедуры по серверам (office-VDS, media-VPS) + врезка журнала в боевые глаголы | 2026-08-04 | [`DEPLOY_PROCEDURES_PROMPT.md`](../prompts/DEPLOY_PROCEDURES_PROMPT.md) | — | [карточка](./archive/deploy-procedures.md) |
+| `archivarius-live-wiring` | Archivarius: соединить контейнер с жизнью — заливка сессий, Mongo-запросы, тракт, прод-контур | 2026-08-04 | [`ARCHIVARIUS_LIVE_WIRING_PROMPT.md`](../prompts/ARCHIVARIUS_LIVE_WIRING_PROMPT.md) | — | [карточка](./archive/archivarius-live-wiring.md) |
 | `run-journal-sequence-validator` | Валидатор монотонности sequence внутри runId — проверка уровня ленты журнала | 2026-08-04 | [`RUN_JOURNAL_SEQUENCE_VALIDATOR_PROMPT.md`](../prompts/RUN_JOURNAL_SEQUENCE_VALIDATOR_PROMPT.md) | #1683 (Issue открыт) | [карточка](./archive/run-journal-sequence-validator.md) |
 | `sprint-dictionary-to-lib` | Переезд словаря спринта в scripts/lib + структурный orphanedBy через closeProcedureRun | 2026-08-04 | [`SPRINT_DICTIONARY_TO_LIB_PROMPT.md`](../prompts/SPRINT_DICTIONARY_TO_LIB_PROMPT.md) | #1681 (Issue открыт) | [карточка](./archive/sprint-dictionary-to-lib.md) |
 | `archivarius-evening-tract` | Тракт архива сессий: scan → extract → ingest как связанная цепочка, а не три точки входа | 2026-08-04 | [`ARCHIVARIUS_EVENING_TRACT_PROMPT.md`](../prompts/ARCHIVARIUS_EVENING_TRACT_PROMPT.md) | — | [карточка](./archive/archivarius-evening-tract.md) |
