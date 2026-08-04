@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "deploy-procedures",
+      "title": "Деплой как процедура с прогонами: две процедуры по серверам (office-VDS, media-VPS) + врезка журнала в боевые глаголы",
+      "promptPath": "docs/prompts/DEPLOY_PROCEDURES_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "спринт второй задачи дня, слово владельца 04.08; носитель — план нарезки и ADR-0023",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-04",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "Слово владельца 04.08: два сервера — две процедуры, пока две, посервисная конкретизация позже. Строка 3 хендофа (П2 обзора 03.08: деплой не пишет прогон). План: docs/sprint/cut/deploy-procedures.json. ADR-0023 Р1 амандмент по слову владельца.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "recreate-execution-procedure-interface",
       "title": "Пересборка PR #1613: контракт EXECUTION_PROCEDURE + procedureKind поверх свежего main (pr:recreate)",
       "promptPath": "docs/prompts/RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md",

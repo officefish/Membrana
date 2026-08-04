@@ -9,6 +9,11 @@
 
 ## Предыдущий спринт
 
+- **deploy-procedures** · gate pass 3/3 honest_pair · журнал закрыт производителем ·
+  [`OPEN.md`](./local-sprint/deploy-procedures/OPEN.md) — две процедуры деплоя по
+  серверам (`deploy-office-vds`, `deploy-media-vps`), обёртка `deploy:run`, врезка в
+  `cabinet:deploy:prod` и `vds:run`; ADR-0023 ACCEPTED.
+
 - **sprint-dictionary-to-lib** (#1681) · gate pass 2/2 honest_pair · PR #1706 merged ·
   [`OPEN.md`](./local-sprint/sprint-dictionary-to-lib/OPEN.md) — словарь прогона
   спринта в lib + структурный `orphanedBy`; журнальный close невозможен (ложный

@@ -29,3 +29,5 @@
 | [`one-shot`](./one-shot/README.md) | vesnin | **in-migration** | ✅ vesnin@oneshot-ff | — | ✅ vesnin@oneshot-ff |
 | [`membrana-leveling`](./membrana-leveling/README.md) | ozhegov | **in-migration** | ✅ ozhegov@ml-81 | — | ✅ ozhegov@ml-81 |
 | [`weekly-dead-wire`](./weekly-dead-wire/README.md) | ozhegov | **in-migration** | ✅ ozhegov@c195e4bb | — | — |
+| [`deploy-office-vds`](./deploy-office-vds/README.md) | vesnin | **in-migration** | ✅ vesnin@aef12828 | — | — |
+| [`deploy-media-vps`](./deploy-media-vps/README.md) | vesnin | **in-migration** | ✅ vesnin@aef12828 | — | — |
