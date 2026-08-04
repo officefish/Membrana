@@ -74,38 +74,36 @@
    решения; обязательные поля audit-события allow/deny и изменения политики. Конкретное
    хранилище журнала остаётся реализации.
 
-## Консолидированные поправки run1-run2
+## Консолидированные поправки run1-run3
 
-- **Principal:** назвать поле stable subject, его канонический источник или mapping,
-  anonymous sentinel и credential как отдельный носитель, не identity. Формат stable id —
-  норма M3, если он не доказан текущей реализацией; session id principal не является.
-- **Грант:** выбрать один тип. Role elevation означает `effectiveRole = max(baselineRole,
-  grantedRole)` при отдельном `requiredRole`; object-threshold override означает неизменный
-  subject role и отдельный `effectiveRequiredRole`. Смешивать `grant.minRole` с ролью
-  субъекта запрещено. Case 3 обязан алгебраически следовать из выбранной функции.
-  Контейнерный grant и `manage-access` не могут одновременно быть разрешены и запрещены;
-  конфликт наследования обязан быть вычислимым без несуществующего deny-grant.
-- **Отзыв:** партнёрская сессия `sub=user:*` несёт snapshot `grants/pv`, обычная —
-  `kind/role/sub/exp`; живой gate сейчас store не читает. Будущая сверка — **норма M3**,
-  не текущий факт. Для партнёрского cookie и полномочия выбранного Affine-механизма определить проверку
-  актуального `permVersion`. Для обычной сессии без `pv` отдельно дать честный механизм
-  отзыва роли или верхнюю границу staleness. Изменение объектной политики требует
-  отдельной version/invalidation semantics, а не только subject `permVersion`.
-- **Affine:** выбранная граница исполнения связывает principal, `canonicalRef`, Affine doc
-  id, action и актуальную permission/policy version. Native role не может дать больше
-  решения авторизатора. Если выбрана delegation, токен несёт actions/version/expiry; если
-  proxy — каждый запрос сверяет action/version; если mapping или иной механизм — он обязан
-  доказать те же свойства. Связь `canonicalRef <-> affineDocId` проверяется. Проверка
-  устаревшего полномочия в case 4 применяется к выбранному механизму, а не предполагает
-  delegation/proxy заранее.
-- **Таблица и случаи:** case 1 не может разрешать public `read-metadata`, если таблица его
-  запрещает. Case 5 одновременно доказывает allow metadata и deny manage-access с тем же
-  `requiredRole`, который записан в таблице. Case 4 проверяет старый partner cookie и
-  устаревшее полномочие выбранного Affine-механизма; токен проверяется только при выборе delegation.
-- **Эпистемика и форма:** M1/M2 — нормы; registry-истина принадлежит M2. Panel-код — факт,
-  A1 и будущая store-проверка — нормы. Секция буквально **«Список посылок»**. После DoD
-  конец; эхо, самосчёт и реплики о комплектности/carrier запрещены. Фактических ролевых
-  реплик не менее 30: run2 с 28 является BLOCK.
+- **Principal:** stable subject, его канонический источник/mapping, anonymous sentinel и
+  credential должны быть разными сущностями. Недоказанный stable id маркируется нормой M3;
+  session id principal не является.
+- **Одна математика:** использовать только role elevation. Для применимых грантов по цепочке
+  `effectiveRole = max(baselineRole, grantedRole...)`. Политика действия берётся с наиболее
+  специфичного уровня, где она определена; `min` политик разных уровней запрещён.
+  `requiredRole = max(actionFloor, selectedPolicy)`; затем единственная функция
+  `access = effectiveRole >= requiredRole`. `manage-access` исключён из grant-scope и имеет
+  `actionFloor = owner`. Таблица, Cases 1, 3, 5 и текст обязаны дословно следовать этой
+  функции: если public metadata запрещены таблицей, более узкая public-политика не проходит
+  floor, а Case 3 получает явный `grantedRole = ally`, не снижение threshold.
+- **Отзыв:** partner cookie `sub=user:*` со snapshot `grants/pv_subject` по норме M3
+  сверяется с актуальной subject version. Обычная сессия `kind/role/sub/exp` без `pv`
+  сохраняет stale authority до `exp`; обещать немедленный deny текущему gate запрещено.
+  Добавление `pv` обычной сессии — отдельная норма M3. Object version — составной вектор
+  версий container/collection/lineage, а не subject `permVersion`.
+- **Affine:** выбрать proxy как единственную границу. Каждый запрос проверяет requested
+  action, `canonicalRef <-> affineDocId`, актуальные `pv_subject` и object-version vector.
+  Прямой доступ сетево закрыт. Статическая таблица `Panel role -> Affine role` запрещена:
+  native role может быть только производным техническим enforcement и понижается, если
+  содержит хотя бы одно denied действие. Старое Affine-состояние после отзыва subject
+  grant обязано блокироваться по `pv_subject`, после policy change — по object vector.
+- **Таблица и случаи:** Case 4 одновременно предъявляет старый partner cookie и старое
+  Affine-состояние; оба отвергаются названными version checks. Case 5 одной функцией даёт
+  metadata allow и `manage-access` deny. Sensitive ref и bytes остаются разными actions.
+- **Эпистемика и форма:** M1/M2 — нормы; Panel-код — факт; новый контракт и store checks —
+  нормы. Секция буквально **«Список посылок»**. После DoD конец; эхо, самосчёт, слова о
+  carrier/комплектности/переходе к итогу запрещены. Фактических ролевых реплик не менее 30.
 
 ## Обязательные случаи для доказательства
 
