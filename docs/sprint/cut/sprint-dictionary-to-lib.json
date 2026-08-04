@@ -1,0 +1,54 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "sprint-dictionary-to-lib",
+  "taskId": "sprint-dictionary-to-lib",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-04T12:20:00+00:00",
+    "to": "2026-08-04T20:00:00+00:00"
+  },
+  "//recut": "v2 12:35Z: окно from 12:30 → 12:20 — работа стартовала раньше назначенного окна (первый контекст-прогон Ожегова 12:23), предикат window_after_first_trace прописывает перерезать окно, не следы. Блоки/зоны/держатели не тронуты; recut_act в ленте актов, новая ратификация владельца.",
+  "blocks": [
+    {
+      "blockId": "a1-dictionary-move",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/lib/sprint-cut/sprint-run.mjs",
+        "scripts/sprint-cut-check.mjs",
+        "scripts/execution-gate.mjs"
+      ],
+      "revisionAt": "2026-08-04T12:15:00+00:00",
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionOf": "7b3d27f5a70bc0a6ecfcf04866ff80973574912dccc12be614fe0a179c75d25e"
+    },
+    {
+      "blockId": "a2-orphaned-by",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/procedure-run-journal.mjs",
+        "scripts/procedure-run-record.mjs",
+        "scripts/procedure-run-record.test.mjs"
+      ],
+      "revisionAt": "2026-08-04T12:15:00+00:00",
+      "estimate": {
+        "changedLines": 100
+      },
+      "revisionOf": "85c61c41aa5a9e0a736a6ffcdf522c612a1b49304b25d4d90ff835c48689b0b4"
+    }
+  ],
+  "//why": "Карточка sprint-dictionary-to-lib (#1681), маршрут выбран владельцем 04.08 («делаем их тогда спринтами») после честного отказа предиката S шоту (capability_chaining: семья scripts/lib, 8 выстрелов/306 строк при порогах 3/200; прецедент docs/precedents/drafts/2026-08-04-oneshot-1681-refusal-chain.md). Долг класса acts-trail-reader #1638: execution-gate.mjs импортирует SPRINT_PROCEDURE_ID и sprintTrailRelPath из sprint-cut-check.mjs — скрипт-к-скрипту; плюс кросс-файловое ленивое закрытие несёт ссылку строкой в evidence вместо поля.",
+  "//cutter": "Решение резчика (tarasov, конспект docs/discussions/cut-run-journal-node-tarasov.md, прогон 1): каждую карточку — отдельным спринтом с отдельным PR и ревью; блоки черновика LGTM; DoD по TASK_CLOSURE_REGULATION; срок asap вечер 04.08. FRICTION честно: второй прогон резчика уплыл из материала («путь пресета», «нужен консилиум» — вопросы не из этого спринта) — дорезка блоков транскрибирована координатором из первого прогона, не выдумана; симптом дозаписан в close-запись прогона.",
+  "//order": "Блоки a1 и a2 — зоны не пересекаются, законна параллель; фактически последовательно одной сессией: a1 (Ожегов — границы, словарь в lib/sprint-cut/ рядом с acts-trail-reader), затем a2 (Веснин — контракт журнала, пронос orphanedBy через closeProcedureRun). Спринт B (run-journal-sequence-validator) стартует ПОСЛЕ мерджа этого спринта: его зона включает scripts/lib/procedure-run-journal.mjs — общий файл с a2, параллель коллизила бы (прецедент 2026-07-09).",
+  "//dod": "a1: SPRINT_PROCEDURE_ID и sprintTrailRelPath живут в scripts/lib/sprint-cut/sprint-run.mjs; sprint-cut-check.mjs и execution-gate.mjs импортируют из lib; импорт скрипт-к-скрипту execution-gate → sprint-cut-check мёртв; реэкспорты для существующих зубов сохранены; node --test существующих семей зелёный. a2: closeProcedureRun принимает структурный orphanedBy {runId, sequence}; кросс-файловое ленивое закрытие в procedure-run-record.mjs передаёт его полем (строка в evidence остаётся человекочитаемым дублем); зуб на поле в кросс-файловом случае.",
+  "//out-of-scope": "Валидатор монотонности sequence (#1683) — спринт B. Содержательный ADR схемы @1.1 — по слову владельца. Кросс-файловый счёт при явном --run через границу дней — не здесь.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-04T12:33:21+00:00",
+    "digest": "db89787fb23e61fc373edefbd343fc806f5081d34e7a2784d2e5b3d010dbb1b4"
+  }
+}
