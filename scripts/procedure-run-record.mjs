@@ -56,17 +56,40 @@ export function datesBack(dateIso, days) {
 
 /**
  * Открытые прогоны процедуры в лентах [дата события .. days суток назад].
+ * Один элемент на (лента, runId): закрытие — событие над прогоном, и коллидировавшая
+ * история (несколько незакрытых open одного runId, #1693) закрывается одним close —
+ * поштучный перебор давал бы «второе закрытие» на второй записи той же семьи.
+ * Из семьи берётся ПОСЛЕДНИЙ open — его evidence и время ближе всего к финалу прогона.
  * @returns {Array<{trailRel: string, open: Record<string, any>}>}
  */
 export function findOpenRunsAround(root, procedureId, dateIso, days = DEFAULT_SWEEP_DAYS) {
   const found = [];
   for (const d of [dateIso, ...datesBack(dateIso, days)]) {
     const trailRel = defaultTrailPath(d);
+    const byRun = new Map();
     for (const open of findUnclosedRuns(readProcedureRunTrail(root, trailRel), procedureId)) {
-      found.push({ trailRel, open });
+      byRun.set(open.runId, open);
     }
+    for (const open of byRun.values()) found.push({ trailRel, open });
   }
   return found;
+}
+
+/**
+ * Дефолтный runId прогона: `<процедура>-<дата>` у первого прогона дня, `-r2`, `-r3`… у
+ * повторных (#1693). Без суффикса все прогоны дня делили один runId, и после первого же
+ * закрытия семья становилась невидимой для close и сборщика сирот — обрыв → перезапуск
+ * (штатный сценарий холодного утра) навсегда оставлял состоявшийся день без pass.
+ * Счёт попыток — по open-записям ленты дня, закрытым и незакрытым: номер попытки —
+ * факт истории, а не текущего состояния.
+ */
+export function uniqueDayRunId(root, targetRel, procedureId, date) {
+  const base = `${procedureId}-${date}`;
+  const attemptRe = new RegExp(`^${base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:-r\\d+)?$`, 'u');
+  const attempts = readProcedureRunTrail(root, targetRel).filter(
+    (r) => r?.runPhase === 'open' && attemptRe.test(String(r.runId ?? '')),
+  ).length;
+  return attempts === 0 ? base : `${base}-r${attempts + 1}`;
 }
 
 /**
@@ -76,7 +99,7 @@ export function findOpenRunsAround(root, procedureId, dateIso, days = DEFAULT_SW
 export function cmdOpen(root, input) {
   const date = input.at.slice(0, 10);
   const targetRel = defaultTrailPath(date);
-  const runId = input.runId ?? `${input.procedureId}-${date}`;
+  const runId = input.runId ?? uniqueDayRunId(root, targetRel, input.procedureId, date);
   // Кросс-файловая часть ленивого закрытия; сирот ТЕКУЩЕГО файла закроет openProcedureRun.
   const crossFileOrphans = [];
   for (const { trailRel, open } of findOpenRunsAround(root, input.procedureId, date, input.days)) {

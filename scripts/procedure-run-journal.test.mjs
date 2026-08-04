@@ -295,3 +295,49 @@ test('nextSequenceOf выдерживает ленту, на которой spre
   const big = Array.from({ length: 200_000 }, (_, i) => ({ runId: 'r', sequence: i + 1 }));
   assert.equal(nextSequenceOf(big, 'r'), 200_001);
 });
+
+test('коллизия runId (#1693): open ПОСЛЕ close виден незакрытым, close закрывает семью разом', () => {
+  const dir = tempRepo();
+  const rel = 'trail/t.jsonl';
+  const put = (over) => appendProcedureRunRecord(dir, rel, buildProcedureRunRecord({
+    procedureId: 'p', runId: 'p-2026-08-04', subject: 's', evidence: ['e'], ...over,
+  }));
+  put({ sequence: 1, status: 'started', runPhase: 'open', at: '2026-08-04T05:00:00.000Z' });
+  put({ sequence: 2, status: 'fail', runPhase: 'close', gaps: ['orphaned'], at: '2026-08-04T05:10:00.000Z' });
+  put({ sequence: 3, status: 'started', runPhase: 'open', at: '2026-08-04T06:00:00.000Z' });
+  put({ sequence: 4, status: 'started', runPhase: 'open', at: '2026-08-04T06:30:00.000Z' });
+
+  const unclosed = findUnclosedRuns(readProcedureRunTrail(dir, rel), 'p');
+  assert.equal(unclosed.length, 2, 'open seq 3 и 4 живы: close seq 2 их не хоронит');
+
+  const close = closeProcedureRun(dir, rel, {
+    runId: 'p-2026-08-04', status: 'pass', subject: 'финал состоявшегося прогона',
+    at: '2026-08-04T07:00:00.000Z', evidence: ['docs/MAIN_DAY_ISSUE.md'],
+  });
+  assert.equal(close.sequence, 5, 'закрытие — одно событие поверх семьи');
+  assert.equal(findUnclosedRuns(readProcedureRunTrail(dir, rel), 'p').length, 0, 'семья закрыта целиком');
+  assert.throws(
+    () => closeProcedureRun(dir, rel, {
+      runId: 'p-2026-08-04', status: 'pass', subject: 'x',
+      at: '2026-08-04T08:00:00.000Z', evidence: ['e'],
+    }),
+    /уже закрыт/u,
+  );
+});
+
+test('ленивое закрытие коллидировавшей семьи — ОДНА close-запись, не по числу open (#1693)', () => {
+  const dir = tempRepo();
+  const rel = 'trail/t.jsonl';
+  const put = (over) => appendProcedureRunRecord(dir, rel, buildProcedureRunRecord({
+    procedureId: 'p', runId: 'p-2026-08-04', subject: 's', evidence: ['e'], ...over,
+  }));
+  put({ sequence: 1, status: 'started', runPhase: 'open', at: '2026-08-04T05:00:00.000Z' });
+  put({ sequence: 2, status: 'started', runPhase: 'open', at: '2026-08-04T06:00:00.000Z' });
+
+  const { orphansClosed } = openProcedureRun(dir, rel, {
+    procedureId: 'p', runId: 'p-2026-08-04-r3', subject: 'новая попытка',
+    at: '2026-08-04T07:00:00.000Z', evidence: ['e'],
+  });
+  assert.equal(orphansClosed.length, 1, 'одна fail/orphaned на семью — второй close был бы второй правдой');
+  assert.equal(orphansClosed[0].runId, 'p-2026-08-04');
+});
