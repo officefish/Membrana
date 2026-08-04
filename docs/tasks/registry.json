@@ -23,6 +23,24 @@
       "parentEpic": "archivarius-sessions-container"
     },
     {
+      "id": "recreate-execution-procedure-interface",
+      "title": "Пересборка PR #1613: контракт EXECUTION_PROCEDURE + procedureKind поверх свежего main (pr:recreate)",
+      "promptPath": "docs/prompts/RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "пересборка существующего PR #1613, свой номер у PR",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-04",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "Ревизия PR 04.08 (membrana-pr-audit, слово владельца — весь пакет): контент #1613 живой и непокрытый — недостающее звено ADR-0021 (ACCEPTED 01.08): procedureKind в docs/procedures/registry.json (0 вхождений при 23 записях), контракт docs/procedures/EXECUTION_PROCEDURE.md, контейнер процедуры adr, зуб validateProcedure. Ствол уже свесил провод: mintlify-workflow-docs рендерит procedureKind, которого нет. Ветка мертва: база влита сквошем (#1607), 82 позади, 10 конфликтов (в т.ч. append-only лента 2026-08-01 — переносить НЕЛЬЗЯ, дописывать новой записью). Маршрут: yarn pr:recreate 1613 от свежего main; procedureKind применить ко ВСЕМ актуальным записям реестра, проекции (REGISTRY.md, ATLAS.md, containers.mdx) регенерить скриптами; ревью-свидетельства v1→v2 из PR переносимы. Старый PR закрыть superseded после мерджа пересборки.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "run-journal-sequence-validator",
       "title": "Валидатор монотонности sequence внутри runId — проверка уровня ленты журнала",
       "promptPath": "docs/prompts/RUN_JOURNAL_SEQUENCE_VALIDATOR_PROMPT.md",
