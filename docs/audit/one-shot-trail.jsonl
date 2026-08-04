@@ -13,3 +13,4 @@
 {"timestamp":"2026-08-03T16:14:26.661Z","path":"scripts/execution-gate.test.mjs","slug":"simultaneous-at-boundary","headRev":"8aa5344fdfa8ec02089b5405731745b7c4742608","status":"merged"}
 {"timestamp":"2026-08-03T16:31:29.160Z","path":"scripts/kits-prepush-strict.mjs","slug":"kits-repair-recipe","headRev":"3481ff66bbddd64d10dbaaad1f4b791d81c2534c","status":"merged"}
 {"timestamp":"2026-08-03T18:16:03.561Z","path":"scripts/lib/sprint-cut/stubs/evidence-trail.stub.mjs","slug":"stubs-verdict","headRev":"090b2695591c0e00d81c29bd9d9f607f77025138","status":"merged"}
+{"timestamp":"2026-08-04T11:44:44.544Z","path":"scripts/persona-memory-extract.mjs","slug":"report-from-events","headRev":"1dee0702b997e60f5e4fcbf165a790f49f40ed4d","status":"merged"}
