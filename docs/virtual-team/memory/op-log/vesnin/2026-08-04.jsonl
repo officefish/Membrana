@@ -1,4 +1,14 @@
 {"ts":"2026-08-04T05:07:00.716Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-04T12:31:01.123Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-04T12:30:36.936Z","origin":"ask-persona"}
+{"ts":"2026-08-04T12:31:01.125Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-04T12:30:36.936Z","origin":"ask-persona"}
+{"ts":"2026-08-04T12:31:01.127Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-23-llm-procedure-channels-m4a-agent-usage","reason":"тот же контур: POST с токеном через resolveOfficeToken, батч, транзиентный таймаут с ретраями, opt-out флаг. Архитектурная форма ingest-запроса там уже решалась — сейчас тот же шов.","origin":"ask-persona"}
+{"ts":"2026-08-04T12:31:01.130Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-08-01-evening-review-predicate-m4s-existing-organs","reason":"вопрос «куда именно встают scan/extract/archivarius» уже ставился. Решение: три шага — одна цепочка с явным ownership каждого выхода, не три independent CLI-точки.","origin":"ask-persona"}
+{"ts":"2026-08-04T12:35:53.231Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-04T12:35:34.089Z","origin":"ask-persona"}
+{"ts":"2026-08-04T12:35:53.234Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-04T12:35:34.089Z","origin":"ask-persona"}
+{"ts":"2026-08-04T12:35:53.237Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-17-scripts-boundary-m0-order","reason":"прямой прецедент: инцидент про «шаг упал молча» и «следующий читает протухший вход». Именно это я проверяю сейчас в runTract — цепочка scanStep→extractStep→ingestStep и что происходит при ошибке на середине.","origin":"ask-persona"}
+{"ts":"2026-08-04T13:06:12.561Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-04T13:05:53.597Z","origin":"ask-persona"}
+{"ts":"2026-08-04T13:06:12.578Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-04T13:05:53.597Z","origin":"ask-persona"}
+{"ts":"2026-08-04T13:06:12.580Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-30-sprint-honest-m3-contract-review","reason":"честное закрытие спринта: ревью контракта обязательно после заявления done и до пометки accepted. Именно этот вопрос — такой момент.","origin":"ask-persona"}
 {"ts":"2026-08-04T12:26:03.963Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-04T12:25:56.303Z","origin":"ask-persona"}
 {"ts":"2026-08-04T12:26:03.966Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-04T12:25:56.303Z","origin":"ask-persona"}
 {"ts":"2026-08-04T16:27:07.213Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-04T16:26:54.969Z","origin":"ask-persona"}

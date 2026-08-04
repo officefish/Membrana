@@ -58,6 +58,7 @@ const searchQuerySchema = z.object({
     .transform((v) => Number(v))
     .refine((n) => n >= 1 && n <= 500, { message: 'вне диапазона 1..500' })
     .optional(),
+  cursor: z.string().trim().min(1).optional(),
 });
 
 @ApiTags('archivarius')
@@ -110,7 +111,8 @@ export class ArchivariusController {
   }
 
   @Get('search')
-  @ApiOperation({ summary: 'Search full text and filters by actor/time/reply type' })
+  @ApiOperation({ summary: 'Search page: span meta + nextCursor (полные bytes — только span-маршрутом)' })
+  @ApiResponse({ status: 200, description: '{ items: ArchivariusSpanMeta[], nextCursor: string | null }' })
   @ApiResponse({ status: 400, description: 'Кривой параметр назван по имени (limit не число, from/to не дата)' })
   async search(
     @Query('text') text?: string,
@@ -119,12 +121,13 @@ export class ArchivariusController {
     @Query('from') from?: string,
     @Query('to') to?: string,
     @Query('limit') limitRaw?: string,
+    @Query('cursor') cursor?: string,
   ) {
-    const parsed = searchQuerySchema.safeParse({ text, actor, replyType, from, to, limit: limitRaw });
+    const parsed = searchQuerySchema.safeParse({ text, actor, replyType, from, to, limit: limitRaw, cursor });
     if (!parsed.success) {
       const fieldErrors = parsed.error.flatten().fieldErrors;
       const named = Object.entries(fieldErrors)
-        .map(([field, errs]) => `${field}=«${String({ text, actor, replyType, from, to, limit: limitRaw }[field as keyof typeof fieldErrors] ?? '')}»: ${(errs ?? []).join('; ')}`)
+        .map(([field, errs]) => `${field}=«${String({ text, actor, replyType, from, to, limit: limitRaw, cursor }[field as keyof typeof fieldErrors] ?? '')}»: ${(errs ?? []).join('; ')}`)
         .join(' · ');
       throw new BadRequestException({
         message: `кривые параметры — ${named}. Пустой ответ 200 на мусорный параметр отменён (долг 28.07: «ничего не найдено» ≠ «спросили неправильно»)`,

@@ -21,6 +21,7 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `deploy-procedures` | Деплой как процедура с прогонами: две процедуры по серверам (office-VDS, media-VPS) + врезка журнала в боевые глаголы | M | [`DEPLOY_PROCEDURES_PROMPT.md`](../prompts/DEPLOY_PROCEDURES_PROMPT.md) | — |
+| `archivarius-live-wiring` | Archivarius: соединить контейнер с жизнью — заливка сессий, Mongo-запросы, тракт, прод-контур | M | [`ARCHIVARIUS_LIVE_WIRING_PROMPT.md`](../prompts/ARCHIVARIUS_LIVE_WIRING_PROMPT.md) | — |
 | `recreate-execution-procedure-interface` | Пересборка PR #1613: контракт EXECUTION_PROCEDURE + procedureKind поверх свежего main (pr:recreate) | M | [`RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md`](../prompts/RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md) | — |
 | `procedure-run-journal-panel-reader` | Витрина пяти опор в panel.mmbrn.tech — первый читатель ленты журнала прогонов | M | [`PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md) | — |
 | `corpus-track-acceptance-predicate` | Приёмный предикат корпуса «один тракт — два класса»: чистая функция годности трека по спеке инсайта | S | [`CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md`](../prompts/CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md) | — |
@@ -41,7 +42,6 @@
 | `procedure-run-journal-f1-local-trail` | F1: локальная лента прогона процедур | M | [`PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md) | — |
 | `procedure-run-journal-2026-08-01` | Membrana Local Sprint: журнал прогона процедур | L | [`PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md) | — |
 | `forecast-archive-wire` | Провод памяти персоны: запись «предсказание ↔ исход» доезжает в archive/<persona>.jsonl | M | [`FORECAST_ARCHIVE_WIRE_PROMPT.md`](../prompts/FORECAST_ARCHIVE_WIRE_PROMPT.md) | [#1590](https://github.com/officefish/Membrana/issues/1590) |
-| `archivarius-evening-tract` | Тракт архива сессий: scan → extract → ingest как связанная цепочка, а не три точки входа | M | [`ARCHIVARIUS_EVENING_TRACT_PROMPT.md`](../prompts/ARCHIVARIUS_EVENING_TRACT_PROMPT.md) | — |
 | `meeting-evening-review-predicate` | Заседание: вечерний кадр — предмет ревью, порядок трёх документов, ворота качества | L | [`MEETING_BRIEF.md`](../meeting/evening-review-predicate/MEETING_BRIEF.md) | — |
 | `evening-chain-review-predicate` | Вечер: предмет ревью, порядок трёх документов, ворота качества (№6 хендофа, M→L по слову владельца 01.08) | L | [`EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md`](../prompts/EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md) | — |
 | `llm-transport-no-key-class` | llm-транспорт: развести «ключа нет» и «ключ отвергнут» | S | [`LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md`](../prompts/LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md) | [#1549](https://github.com/officefish/Membrana/issues/1549) |
@@ -258,6 +258,7 @@
 |----|----------|--------------|--------|--------|----------|
 | `run-journal-sequence-validator` | Валидатор монотонности sequence внутри runId — проверка уровня ленты журнала | 2026-08-04 | [`RUN_JOURNAL_SEQUENCE_VALIDATOR_PROMPT.md`](../prompts/RUN_JOURNAL_SEQUENCE_VALIDATOR_PROMPT.md) | #1683 (Issue открыт) | [карточка](./archive/run-journal-sequence-validator.md) |
 | `sprint-dictionary-to-lib` | Переезд словаря спринта в scripts/lib + структурный orphanedBy через closeProcedureRun | 2026-08-04 | [`SPRINT_DICTIONARY_TO_LIB_PROMPT.md`](../prompts/SPRINT_DICTIONARY_TO_LIB_PROMPT.md) | #1681 (Issue открыт) | [карточка](./archive/sprint-dictionary-to-lib.md) |
+| `archivarius-evening-tract` | Тракт архива сессий: scan → extract → ingest как связанная цепочка, а не три точки входа | 2026-08-04 | [`ARCHIVARIUS_EVENING_TRACT_PROMPT.md`](../prompts/ARCHIVARIUS_EVENING_TRACT_PROMPT.md) | — | [карточка](./archive/archivarius-evening-tract.md) |
 | `harness-workflow-pages` | Harness Mintlify: страницы мастерских и процедур | 2026-08-02 | [`HARNESS_WORKFLOW_PAGES_PROMPT.md`](../prompts/HARNESS_WORKFLOW_PAGES_PROMPT.md) | — | [карточка](./archive/harness-workflow-pages.md) |
 | `product-mintlify-container` | Product Mintlify: Board, узлы и тарифы | 2026-08-02 | [`PRODUCT_MINTLIFY_CONTAINER_PROMPT.md`](../prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md) | — | [карточка](./archive/product-mintlify-container.md) |
 | `dual-mintlify-product-harness` | Product и Harness Mintlify в двух спринтах | 2026-08-02 | [`DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md`](../prompts/DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md) | #1622 | [карточка](./archive/dual-mintlify-product-harness.md) |

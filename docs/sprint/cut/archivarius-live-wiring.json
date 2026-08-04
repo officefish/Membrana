@@ -1,0 +1,91 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "archivarius-live-wiring",
+  "taskId": "archivarius-live-wiring",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-04T14:30:00+03:00",
+    "to": "2026-08-04T20:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "mongo-native-queries",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-office/src/modules/archivarius/archivarius.service.ts",
+        "packages/background-office/src/modules/archivarius/archivarius.mongo-store.ts",
+        "packages/background-office/src/modules/archivarius/archivarius.controller.ts",
+        "packages/background-office/src/modules/archivarius/archivarius.service.test.ts",
+        "packages/background-office/src/main.ts"
+      ],
+      "revisionAt": "2026-08-04T13:42:49+00:00",
+      "estimate": {
+        "changedLines": 260
+      },
+      "revisionOf": "172557cdf7700fdf2fa6376cadc750410636ed457ac50eb3765f45a38d12fe00"
+    },
+    {
+      "blockId": "cli-office-client-and-tract",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/archivarius-push.mjs",
+        "scripts/lib/archivarius.mjs",
+        "scripts/archivarius.mjs",
+        "scripts/archivarius.test.mjs",
+        "package.json"
+      ],
+      "revisionAt": "2026-08-04T14:25:00+03:00",
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionOf": "fcb8fc7ec2ffc1d80922434f02bfe6746f317e0ef6aef7b2cbf8b85bc0e7bb24"
+    },
+    {
+      "blockId": "mongo-store-teeth",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/background-office/src/modules/archivarius/archivarius.mongo-store.test.ts"
+      ],
+      "revisionAt": "2026-08-04T14:25:00+03:00",
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionOf": "830f0502a41322731b4d2aa6c60bca33cf4950325539dbff82dccd3ab51b1122"
+    },
+    {
+      "blockId": "prod-env-smoke",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "deploy/generate-office-env.sh",
+        "deploy/office-stack.sh"
+      ],
+      "revisionAt": "2026-08-04T14:25:00+03:00",
+      "estimate": {
+        "changedLines": 90
+      },
+      "revisionOf": "aef230e83a10069ac347e5e0b43962e1c30faca8fd69a14f9a47e580172697c1"
+    }
+  ],
+  "//why": "Магистраль 04.08 (owner-choice из замороженного топ-3, frozenDigest 4f800c44…). Карта обзора 04.08: контейнер построен 27.07 двумя PR (#1335, #1357, доведён #1407) — дом+контракт span, CLI с резаком в ingest-пути, office-модуль с шестью маршрутами и Mongo в compose. Болезнь не «контейнера нет», а «контейнер не соединён с жизнью»: POST /v1/archivarius/ingest не зовётся ниоткуда (grep по репо — 0 вызовов), ~1500 сессий лежат без адресуемого дома, service во всех глаголах вычитывает listSpans() целиком в память (созданные индексы не участвуют ни в одном запросе), search по HTTP отдаёт до 500 полных транскриптов за запрос, generate-office-env.sh не пишет ARCHIVARIUS_* (прод держится на дефолте compose), тракт scan→extract→ingest не существует как код (карточка archivarius-evening-tract активна).",
+  "//block-1": "mongo-native-queries (Дынин): audit/decompose/inspect/search переходят с listSpans()-в-память на запросы Mongo по уже созданным индексам ({sessionId,uuid} unique, ts, actor+ts, replyType+ts, text bytes); search отдаёт мету+адрес span (не полные bytes — полные байты только маршрутом GET span/:sessionId/:uuid), курсорная пагинация; memory-store сохраняет тот же контракт (фильтры в JS — законный fallback dev).",
+  "//block-2": "cli-office-client-and-tract (Веснин): клиент CLI→office (POST ingest батчами ≤10000, токен из env, office недоступен → честный отказ с повтором) + глагол тракта: scan → extract → ingest одной цепочкой, где каждый шаг читает выход предыдущего; первичная заливка ~1500 сессий локальным прогоном — вещдок в отчёте команды. Закрывает дефекты карточки archivarius-evening-tract (без --out транскрипты в stdout больше не льются: push не печатает bytes).",
+  "//block-3": "mongo-store-teeth (Ожегов): MongoArchivariusStore без единого зуба — контрактные тесты store (upsert-идемпотентность по {sessionId,uuid}, 503 при отсутствии драйвера, соответствие memory-store тому же контракту); фейк драйвера, без живой Mongo в CI.",
+  "//block-4": "prod-env-smoke (Ожегов): generate-office-env.sh пишет ARCHIVARIUS_MONGO_URI/DB; office-stack.sh получает smoke-шаг архивариуса (GET audit по внутренней сети). ГРАНИЦА: прод-выкладка НЕ выполняется — owner-gate (ADR-0023 Р2, DRAFT: механика deploy:when-green); бэкап тома и аутентификация Mongo — named out-of-scope, кандидаты в issues.",
+  "//order": "Блоки 1 и 2 параллельны (сервер vs scripts, зоны не пересекаются). Блок 3 после блока 1 (контракт store устоялся). Блок 4 независим. Интеграционный вещдок — прогон тракта на dev-Mongo (docker compose up archivarius-mongo) в конце.",
+  "//sync-point": "Правка резчика №1 (BLOCK 04.08): тракт Веснина потребляет search Дынина. Sync-point: Дынин фиксирует контракт search(meta+cursor) в module index ДО первого прогона тракта — даже с черновыми индексами; Веснин обходных путей не пишет, при неготовом контракте тракт ждёт, а не имитирует.",
+  "//block-3-status": "Правка резчика №2: блок 3 = ТОЛЬКО контрактные unit-зубы store (тренировочный прогон, не матч). Он НЕ заменяет smoke и НЕ является гейтом блока 4 — их критерии и персоны независимы.",
+  "//block-4-gate": "Правка резчика №3: решение «smoke зелёный → блок принят» — слово ВЛАДЕЛЬЦА (owner-gate, созвучно ADR-0023 Р2 DRAFT: выкладка и её приёмка — суверенное слово). Тимлид готовит вердикт-справку, не принимает.",
+  "//dod": "К вечеру: (1) yarn archivarius:push прогнан локально на dev-Mongo, ~1500 сессий залиты, отчёт несёт счёт спанов и maskedLines; (2) GET search ходит Mongo-запросом с курсором и отдаёт мету (полные bytes только span-маршрутом), audit/decompose/inspect — тоже запросами; (3) зубы mongo-store зелёные без живой Mongo; (4) /etc/membrana/office.env после генератора несёт ARCHIVARIus_*-пару, smoke-шаг существует; (5) тесты зелёные: node --test scripts/archivarius.test.mjs + turbo test --filter=@membrana/background-office; (6) карточка archivarius-evening-tract закрыта вещдоком тракта; (7) прогон спринта в журнале: sprint:cut --ratify открыл, sprint:gate закрыл.",
+  "//out-of-scope": "Retention/TTL и DELETE-маршруты; панель-витрина; предикат amnestyLifted (рука владельца); продовая миграция данных (README архивариуса: отложена явно); аутентификация Mongo (внутренняя сеть compose; кандидат в issue при прод-выкладке); сама прод-выкладка office (owner-gate).",
+  "//recut-1": "Перерезка 04.08 (живой прогон заливки): одиночный спан-гигант (реплика с tool-выводом >1 МиБ) превышает дефолтный bodyLimit Fastify — деление батча честно дошло до единицы и отказало. Зона блока 1 расширена на packages/background-office/src/main.ts: bodyLimit адаптера поднимается для батч-ингеста (потолок API 10000 спанов недостижим при лимите 1 МиБ — рассинхрон контракта и транспорта). Прежнее согласие снято, ратификация новая.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-04T13:42:49+00:00",
+    "digest": "57fe8585b44de2dc3f7f3c840003cf396b6cf3e6331b2dda79c3cf3d6a2bf1f8"
+  }
+}

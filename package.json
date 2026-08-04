@@ -140,6 +140,7 @@
     "bridge:shown": "node scripts/bridge-shown.mjs",
     "mint:intent": "node scripts/mint-intent.mjs",
     "archivarius": "node scripts/archivarius.mjs",
+    "archivarius:push": "node scripts/archivarius-push.mjs",
     "report:check": "node scripts/report-check.mjs",
     "ritual:evening": "node scripts/ritual-evening-run.mjs",
     "ritual:evening:local": "yarn archive:daily-day && yarn ensure-ollama && yarn local-code-review && yarn save-code-review && yarn task:close-github",

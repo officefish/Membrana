@@ -2,6 +2,10 @@
 {"ts":"2026-08-04T05:46:06.984Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-04T05:45:54.998Z","origin":"ask-persona"}
 {"ts":"2026-08-04T05:46:06.985Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-04T05:45:54.998Z","origin":"ask-persona"}
 {"ts":"2026-08-04T05:46:06.986Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-08-03-one-shot-manifest-m2-assignment","reason":"прямое попадание: акт назначения шота, обязательные поля записи прогона, executor и assignedBy — ровно тот механизм, через который штамп S идёт в журнал.","origin":"ask-persona"}
+{"ts":"2026-08-04T12:10:47.483Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-04T12:10:21.010Z","origin":"ask-persona"}
+{"ts":"2026-08-04T12:10:47.487Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-04T12:10:21.010Z","origin":"ask-persona"}
+{"ts":"2026-08-04T12:10:47.489Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-08-03-one-shot-manifest-m1-frames","reason":"шесть анонимных шагов без держателя = шот не запускается; здесь аналогично: четыре блока без явного владельца интеграционного шва между 1 и 2 — риск того же.","origin":"ask-persona"}
+{"ts":"2026-08-04T12:10:47.490Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-29-night-triage-insight-harvest","reason":"«матч инсайта не сыгран, сыграна тренировка»; блок 3 (зубы без живой Mongo) — это тренировка, не матч; важно зафиксировать, что он не заменяет smoke.","origin":"ask-persona"}
 {"ts":"2026-08-04T12:15:54.656Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-04T12:15:29.228Z","origin":"ask-persona"}
 {"ts":"2026-08-04T12:15:54.671Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-04T12:15:29.228Z","origin":"ask-persona"}
 {"ts":"2026-08-04T12:16:30.280Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-04T12:16:21.874Z","origin":"ask-persona"}
