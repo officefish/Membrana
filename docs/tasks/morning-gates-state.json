@@ -6,6 +6,10 @@
   ],
   "frozenDigest": "4f800c4486c1809dbde87cd90db3a45f73d2046ea27ad6080d128d13919bc033",
   "magistral": "archivarius-sessions-container",
-  "swallow": null,
+  "swallow": {
+    "draftDigest": "d5c1bfe0b2a247e00b9751527ae4e32872e3ecb3942838a2d3b9fd4f34ea34b5",
+    "draftFile": "docs/comms/drafts/swallow-morning-2026-08-04.md",
+    "ownerAck": true
+  },
   "day": "2026-08-04"
 }
