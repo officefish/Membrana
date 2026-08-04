@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "corpus-track-acceptance-predicate",
+      "title": "Приёмный предикат корпуса «один тракт — два класса»: чистая функция годности трека по спеке инсайта",
+      "promptPath": "docs/prompts/CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "кандидат из горизонта HANDOFF 03.08; issue заведём при взятии в работу",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-04",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "kuryokhin"
+      ],
+      "notes": "Кристалл reader-before-next-carrier: предикат ДО записи корпуса, не после. Спека — 7 полей трека из инсайта (adopted 7.0): id записи-источника, сцена/погода/ветер, дистанция/высота/модель, парный негатив той же сцены, микрофон и тракт, длительность/частота, подтверждение оператора. Шот 04.08 отказан предикатом S честно: capability_chaining (третий смежный выстрел в scripts/ за окно, 376 строк цепочки при потолке 200) — потому карточка, не шот. Форма: acceptTrack(track) → {ok, problems} + батч-проверки один-тракт/парность/два класса.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "insightId": "insight-own-field-corpus-single-spec"
+    },
+    {
       "id": "sprint-cut-teeth-to-live-modules",
       "title": "Зубы формы cut-плана переходят на живые execution-gate/experience-loop, дублёры сносятся",
       "promptPath": "docs/prompts/SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md",
