@@ -7,14 +7,14 @@
       "githubIssue": 1683,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-04",
-      "archivedAt": null,
+      "archivedAt": "2026-08-04",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "Маршрут выбран владельцем 04.08 после отказа one-shot (capability_chaining: 8 выстрелов/236 строк в семье scripts/lib) — прецедент docs/precedents/drafts/2026-08-04-oneshot-1683-refusal-chain.md. Вести вместе с sprint-dictionary-to-lib (#1681) одним спринтом узла журнала, на свежем контракте после #1694. Вещдок: дубль sequence:1 в ленте 03.08.",
-      "archiveNotes": null,
+      "archiveNotes": "Спринт membrana-local-sprint, ратифицирован владельцем 04.08 (v2). PR #1707 merged: validateProcedureRunTrail — суд ленты (монотонность sequence внутри runId, append-порядок, находки с адресами строк), врезка в procedure-run:journal check. Гейт 1/1 honest_pair; журнальный прогон закрыт производителем (close pass). Зубы 25/25. Вещдок-дубль ревью #1682 в стволе не воспроизводится — класс покрыт синтетикой.",
       "githubIssueClosedAt": null
     },
     {
