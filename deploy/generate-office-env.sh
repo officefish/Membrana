@@ -9,6 +9,11 @@ OUT="${1:-/etc/membrana/office.env}"
 
 if [[ -f "$OUT" ]]; then
   echo "Refusing to overwrite existing $OUT" >&2
+  echo "" >&2
+  echo "ВНИМАНИЕ (04.08): новые пары ARCHIVARIUS_* сами в существующий env не появятся." >&2
+  echo "Если их там нет — дописать вручную (решение владельца, не скрипта):" >&2
+  echo "  echo 'ARCHIVARIUS_MONGO_URI=mongodb://archivarius-mongo:27017/membrana_archivarius' >> $OUT" >&2
+  echo "  echo 'ARCHIVARIUS_MONGO_DB=membrana_archivarius' >> $OUT" >&2
   exit 1
 fi
 
@@ -31,6 +36,10 @@ GITHUB_OWNER=officefish
 GITHUB_REPO=Membrana
 DREAMS_ENABLED=true
 DREAMS_VOLUME_PATH=/var/lib/membrana-dreams
+# Archivarius (контейнер сессий, #1330): ровно дефолты compose — явной строкой,
+# чтобы прод не держался на неявном дефолте (обзор 04.08, П3).
+ARCHIVARIUS_MONGO_URI=mongodb://archivarius-mongo:27017/membrana_archivarius
+ARCHIVARIUS_MONGO_DB=membrana_archivarius
 EOF
 
 chmod 600 "$OUT"

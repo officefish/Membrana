@@ -24,14 +24,14 @@ function has(argv, name) {
   return argv.includes(`--${name}`);
 }
 
-function expandHome(p) {
+export function expandHome(p) {
   if (!p) return p;
   if (p === '~') return homedir();
   if (p.startsWith('~/') || p.startsWith('~\\')) return join(homedir(), p.slice(2));
   return p;
 }
 
-async function collectJsonlFiles(root) {
+export async function collectJsonlFiles(root) {
   const abs = resolve(process.cwd(), expandHome(root));
   const out = [];
   async function walk(dir) {

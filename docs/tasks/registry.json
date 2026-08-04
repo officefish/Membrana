@@ -1,6 +1,28 @@
 {
   "tasks": [
     {
+      "id": "archivarius-live-wiring",
+      "title": "Archivarius: соединить контейнер с жизнью — заливка сессий, Mongo-запросы, тракт, прод-контур",
+      "promptPath": "docs/prompts/ARCHIVARIUS_LIVE_WIRING_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "фаза эпика #1330-продолжение; вещдоки в нарезке",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-04",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ],
+      "notes": "По карте обзора 04.08: контейнер построен 27.07 (#1335, #1357, доведён #1407) — дом+контракт span, CLI с резаком в ingest, office-модуль 6 маршрутов, Mongo в compose. Остаток эпика: (а) клиент CLI→office и первичная заливка ~1500 сессий; (б) service читает listSpans() целиком в память — перевести на Mongo-запросы по уже созданным индексам, search отдаёт мету, не полные bytes, курсор; (в) прод-контур: generate-office-env.sh не пишет ARCHIVARIUS_*, бэкапа тома нет, smoke нет; (г) тракт scan→extract→ingest (закрывает archivarius-evening-tract); (д) зубы Mongo-store. Вне скоупа: retention/TTL, панель, amnestyLifted (рука владельца), продовая миграция данных.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "archivarius-sessions-container"
+    },
+    {
       "id": "recreate-execution-procedure-interface",
       "title": "Пересборка PR #1613: контракт EXECUTION_PROCEDURE + procedureKind поверх свежего main (pr:recreate)",
       "promptPath": "docs/prompts/RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md",
@@ -558,16 +580,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-01",
-      "archivedAt": null,
+      "archivedAt": "2026-08-04",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "Вскрыто аудитом M4' 01.08 по коду: yarn sessions:extract без позиционных аргументов ВСЕГДА даёт exit 2; yarn archivarius без подкоманды — зелёный no-op (printHelp, exit 0); без --out пишет весь корпус спанов в stdout (утечка транскриптов в лог). sessions:extract не читает выход sessions:scan (резолвит цель по позиционному аргументу), archivarius ingest не читает выход extract (сам обходит ~/.claude/projects). Тракта в коде НЕТ — три независимые точки входа. Пока так, ни один из органов не может стоять шагом вечерней цепочки.",
-      "archiveNotes": null,
+      "archiveNotes": "Закрыто спринтом archivarius-live-wiring 04.08 (блок cli-office-client-and-tract, Веснин): тракт scan→extract→ingest существует как код — yarn archivarius:push (scripts/archivarius-push.mjs), шаги читают выход друг друга, транскрипты в stdout неповторимы по построению. Дефекты карточки сняты: «без --out весь корпус в stdout» — исключено формой отчёта (только счётчики); три независимые точки входа — связаны композицией runTract. Живой вещдок: заливка 106884/106884 спанов 214 батчами в office+Mongo (dev), отчёт {files:170, spans:106884, maskedLines:64, accepted:106884}. Зубы 13/13. PR спринта — следом.",
       "githubIssueClosedAt": null
     },
     {
