@@ -24,14 +24,14 @@
       "githubIssue": 1681,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-04",
-      "archivedAt": null,
+      "archivedAt": "2026-08-04",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "Маршрут выбран владельцем 04.08 после отказа one-shot (capability_chaining: 8 выстрелов/306 строк в семье scripts/lib, пороги 3/200) — прецедент docs/precedents/drafts/2026-08-04-oneshot-1681-refusal-chain.md. Вести вместе с sequence-validator (#1683) одним спринтом узла журнала; естественное место — с ADR схемы @1.1 (ждёт слова владельца). Ревьюер #1685 просил ближайший спринт.",
-      "archiveNotes": null,
+      "archiveNotes": "Спринт membrana-local-sprint, ратифицирован владельцем 04.08 (v2). PR #1706 merged: словарь прогона спринта (SPRINT_PROCEDURE_ID, sprintTrailRelPath, ensureSprintRunOpen) в scripts/lib/sprint-cut/sprint-run.mjs, импорт скрипт-к-скрипту execution-gate→sprint-cut-check мёртв; closeProcedureRun проносит структурный orphanedBy, кросс-файловая сирота несёт {runId, sequence, trail}. Гейт: 2/2 honest_pair, 0 находок. Зубы 88/88 + 33/33.",
       "githubIssueClosedAt": null
     },
     {

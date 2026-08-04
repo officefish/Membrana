@@ -12,6 +12,7 @@ import {
   readProcedureRunTrail,
   summarizeProcedureRunTrail,
   validateProcedureRunRecord,
+  validateProcedureRunTrail,
 } from './lib/procedure-run-journal.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -88,6 +89,13 @@ function main() {
       const problems = records.flatMap((record, index) =>
         validateProcedureRunRecord(record).map((p) => `${trail}:${index + 1}: ${p}`),
       );
+      // Суд ленты (#1683): монотонность sequence внутри runId — уровень, которого
+      // не видит по-записный валидатор.
+      for (const f of validateProcedureRunTrail(records)) {
+        problems.push(
+          `${trail}:${f.line}: ${f.problem} — runId ${f.runId}: sequence ${f.sequence} после ${f.prevSequence} (строка ${f.prevLine})`,
+        );
+      }
       if (problems.length > 0) {
         for (const p of problems) console.error(`✖ ${p}`);
         process.exitCode = 1;

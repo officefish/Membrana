@@ -21,7 +21,6 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `run-journal-sequence-validator` | Валидатор монотонности sequence внутри runId — проверка уровня ленты журнала | S | [`RUN_JOURNAL_SEQUENCE_VALIDATOR_PROMPT.md`](../prompts/RUN_JOURNAL_SEQUENCE_VALIDATOR_PROMPT.md) | [#1683](https://github.com/officefish/Membrana/issues/1683) |
-| `sprint-dictionary-to-lib` | Переезд словаря спринта в scripts/lib + структурный orphanedBy через closeProcedureRun | S | [`SPRINT_DICTIONARY_TO_LIB_PROMPT.md`](../prompts/SPRINT_DICTIONARY_TO_LIB_PROMPT.md) | [#1681](https://github.com/officefish/Membrana/issues/1681) |
 | `procedure-run-journal-panel-reader` | Витрина пяти опор в panel.mmbrn.tech — первый читатель ленты журнала прогонов | M | [`PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md) | — |
 | `corpus-track-acceptance-predicate` | Приёмный предикат корпуса «один тракт — два класса»: чистая функция годности трека по спеке инсайта | S | [`CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md`](../prompts/CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md) | — |
 | `one-shot-trail-forecast-fact` | Портфель шотов: расширение следа (executor/форкаст/факт), глагол trail brief, дисциплина всплытия | M | [`ONE_SHOT_TRAIL_FORECAST_FACT_PROMPT.md`](../prompts/ONE_SHOT_TRAIL_FORECAST_FACT_PROMPT.md) | — |
@@ -256,6 +255,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `sprint-dictionary-to-lib` | Переезд словаря спринта в scripts/lib + структурный orphanedBy через closeProcedureRun | 2026-08-04 | [`SPRINT_DICTIONARY_TO_LIB_PROMPT.md`](../prompts/SPRINT_DICTIONARY_TO_LIB_PROMPT.md) | #1681 (Issue открыт) | [карточка](./archive/sprint-dictionary-to-lib.md) |
 | `harness-workflow-pages` | Harness Mintlify: страницы мастерских и процедур | 2026-08-02 | [`HARNESS_WORKFLOW_PAGES_PROMPT.md`](../prompts/HARNESS_WORKFLOW_PAGES_PROMPT.md) | — | [карточка](./archive/harness-workflow-pages.md) |
 | `product-mintlify-container` | Product Mintlify: Board, узлы и тарифы | 2026-08-02 | [`PRODUCT_MINTLIFY_CONTAINER_PROMPT.md`](../prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md) | — | [карточка](./archive/product-mintlify-container.md) |
 | `dual-mintlify-product-harness` | Product и Harness Mintlify в двух спринтах | 2026-08-02 | [`DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md`](../prompts/DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md) | #1622 | [карточка](./archive/dual-mintlify-product-harness.md) |

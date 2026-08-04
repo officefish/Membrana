@@ -15,6 +15,7 @@ import {
   readProcedureRunTrail,
   summarizeProcedureRunTrail,
   validateProcedureRunRecord,
+  validateProcedureRunTrail,
 } from './lib/procedure-run-journal.mjs';
 
 function tempRepo() {
@@ -340,4 +341,43 @@ test('ленивое закрытие коллидировавшей семьи 
   });
   assert.equal(orphansClosed.length, 1, 'одна fail/orphaned на семью — второй close был бы второй правдой');
   assert.equal(orphansClosed[0].runId, 'p-2026-08-04');
+});
+
+// ─── суд ленты: монотонность sequence внутри runId (#1683) ─────────────────────
+
+const seqRec = (runId, sequence) => ({ runId, sequence });
+
+test('validateProcedureRunTrail: дубль sequence внутри runId — находка с адресами обеих строк (вещдок 03.08: 1,1,2)', () => {
+  const findings = validateProcedureRunTrail([seqRec('shot-x', 1), seqRec('shot-x', 1), seqRec('shot-x', 2)]);
+  assert.equal(findings.length, 1);
+  assert.deepEqual(findings[0], {
+    runId: 'shot-x', problem: 'sequence_duplicate', sequence: 1, prevSequence: 1, line: 2, prevLine: 1,
+  });
+});
+
+test('validateProcedureRunTrail: убывание — sequence_regression; судится append-порядок, не сортировка', () => {
+  const findings = validateProcedureRunTrail([seqRec('r', 3), seqRec('r', 1), seqRec('r', 2)]);
+  assert.equal(findings.length, 1, 'соседние пары: (3,1) — находка; (1,2) — рост');
+  assert.equal(findings[0].problem, 'sequence_regression');
+  assert.equal(findings[0].prevSequence, 3);
+});
+
+test('validateProcedureRunTrail: корректная лента и несколько независимых runId — пусто', () => {
+  assert.deepEqual(
+    validateProcedureRunTrail([seqRec('a', 1), seqRec('b', 1), seqRec('a', 2), seqRec('b', 2)]),
+    [],
+  );
+  assert.deepEqual(validateProcedureRunTrail([]), []);
+});
+
+test('validateProcedureRunTrail: нечитаемые runId/sequence не судятся здесь — их класс у validateProcedureRunRecord', () => {
+  assert.deepEqual(validateProcedureRunTrail([{ runId: '', sequence: 1 }, { sequence: 2 }, { runId: 'a' }]), []);
+  assert.throws(() => validateProcedureRunTrail('не лента'), /records must be an array/u);
+});
+
+test('validateProcedureRunTrail: лента не мутируется — валидатор судит, не чинит', () => {
+  const trail = [seqRec('r', 2), seqRec('r', 1)];
+  const before = JSON.stringify(trail);
+  validateProcedureRunTrail(trail);
+  assert.equal(JSON.stringify(trail), before);
 });
