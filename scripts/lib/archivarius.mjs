@@ -313,19 +313,23 @@ export function batchSpans(spans, size) {
  * в одном теле, границы тестируются порознь). Таймер инъектируется ради зубов.
  * @template T
  * @param {() => Promise<T>} fn
- * @param {{attempts?: number, backoffMs?: number, sleep?: (ms: number) => Promise<void>}} [opts]
+ * @param {{attempts?: number, backoffMs?: number, sleep?: (ms: number) => Promise<void>, shouldRetry?: (error: unknown) => boolean}} [opts]
  * @returns {Promise<T>}
  */
 export async function withRetry(fn, opts = {}) {
   const attempts = opts.attempts ?? 3;
   const backoffMs = opts.backoffMs ?? 1000;
   const sleep = opts.sleep ?? ((ms) => new Promise((r) => setTimeout(r, ms)));
+  const shouldRetry = opts.shouldRetry ?? (() => true);
   let lastError;
   for (let i = 1; i <= attempts; i += 1) {
     try {
       return await fn();
     } catch (error) {
       lastError = error;
+      // Детерминированные отказы (413: тело больше лимита) повторять бессмысленно —
+      // вызывающий отключает ретрай предикатом, не ловлей после трёх попыток.
+      if (!shouldRetry(error)) throw error;
       if (i < attempts) await sleep(backoffMs * i);
     }
   }

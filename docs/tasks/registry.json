@@ -528,16 +528,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-01",
-      "archivedAt": null,
+      "archivedAt": "2026-08-04",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "Вскрыто аудитом M4' 01.08 по коду: yarn sessions:extract без позиционных аргументов ВСЕГДА даёт exit 2; yarn archivarius без подкоманды — зелёный no-op (printHelp, exit 0); без --out пишет весь корпус спанов в stdout (утечка транскриптов в лог). sessions:extract не читает выход sessions:scan (резолвит цель по позиционному аргументу), archivarius ingest не читает выход extract (сам обходит ~/.claude/projects). Тракта в коде НЕТ — три независимые точки входа. Пока так, ни один из органов не может стоять шагом вечерней цепочки.",
-      "archiveNotes": null,
+      "archiveNotes": "Закрыто спринтом archivarius-live-wiring 04.08 (блок cli-office-client-and-tract, Веснин): тракт scan→extract→ingest существует как код — yarn archivarius:push (scripts/archivarius-push.mjs), шаги читают выход друг друга, транскрипты в stdout неповторимы по построению. Дефекты карточки сняты: «без --out весь корпус в stdout» — исключено формой отчёта (только счётчики); три независимые точки входа — связаны композицией runTract. Живой вещдок: заливка 106884/106884 спанов 214 батчами в office+Mongo (dev), отчёт {files:170, spans:106884, maskedLines:64, accepted:106884}. Зубы 13/13. PR спринта — следом.",
       "githubIssueClosedAt": null
     },
     {

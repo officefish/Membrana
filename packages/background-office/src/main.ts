@@ -16,7 +16,10 @@ async function bootstrap(): Promise<void> {
   // расширил бы поверхность panel cookies (Teamlead review 20.07).
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    // bodyLimit: дефолтный 1 МиБ меньше ОДНОЙ реплики-гиганта транскрипта (tool-вывод),
+    // при том что ingest архивариуса по контракту принимает до 10000 спанов за батч —
+    // рассинхрон контракта и транспорта, найден живой заливкой 04.08 (recut-1 нарезки).
+    new FastifyAdapter({ bodyLimit: 25 * 1024 * 1024 }),
     { bufferLogs: true, rawBody: true },
   );
 

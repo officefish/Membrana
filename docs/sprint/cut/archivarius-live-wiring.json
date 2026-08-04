@@ -17,13 +17,14 @@
         "packages/background-office/src/modules/archivarius/archivarius.service.ts",
         "packages/background-office/src/modules/archivarius/archivarius.mongo-store.ts",
         "packages/background-office/src/modules/archivarius/archivarius.controller.ts",
-        "packages/background-office/src/modules/archivarius/archivarius.service.test.ts"
+        "packages/background-office/src/modules/archivarius/archivarius.service.test.ts",
+        "packages/background-office/src/main.ts"
       ],
-      "revisionAt": "2026-08-04T14:25:00+03:00",
+      "revisionAt": "2026-08-04T13:42:49+00:00",
       "estimate": {
         "changedLines": 260
       },
-      "revisionOf": "11be469f62a43a6af80ca737d6c443833033cb8d8123e4294939c981019cca43"
+      "revisionOf": "172557cdf7700fdf2fa6376cadc750410636ed457ac50eb3765f45a38d12fe00"
     },
     {
       "blockId": "cli-office-client-and-tract",
@@ -81,9 +82,10 @@
   "//block-4-gate": "Правка резчика №3: решение «smoke зелёный → блок принят» — слово ВЛАДЕЛЬЦА (owner-gate, созвучно ADR-0023 Р2 DRAFT: выкладка и её приёмка — суверенное слово). Тимлид готовит вердикт-справку, не принимает.",
   "//dod": "К вечеру: (1) yarn archivarius:push прогнан локально на dev-Mongo, ~1500 сессий залиты, отчёт несёт счёт спанов и maskedLines; (2) GET search ходит Mongo-запросом с курсором и отдаёт мету (полные bytes только span-маршрутом), audit/decompose/inspect — тоже запросами; (3) зубы mongo-store зелёные без живой Mongo; (4) /etc/membrana/office.env после генератора несёт ARCHIVARIus_*-пару, smoke-шаг существует; (5) тесты зелёные: node --test scripts/archivarius.test.mjs + turbo test --filter=@membrana/background-office; (6) карточка archivarius-evening-tract закрыта вещдоком тракта; (7) прогон спринта в журнале: sprint:cut --ratify открыл, sprint:gate закрыл.",
   "//out-of-scope": "Retention/TTL и DELETE-маршруты; панель-витрина; предикат amnestyLifted (рука владельца); продовая миграция данных (README архивариуса: отложена явно); аутентификация Mongo (внутренняя сеть compose; кандидат в issue при прод-выкладке); сама прод-выкладка office (owner-gate).",
+  "//recut-1": "Перерезка 04.08 (живой прогон заливки): одиночный спан-гигант (реплика с tool-выводом >1 МиБ) превышает дефолтный bodyLimit Fastify — деление батча честно дошло до единицы и отказало. Зона блока 1 расширена на packages/background-office/src/main.ts: bodyLimit адаптера поднимается для батч-ингеста (потолок API 10000 спанов недостижим при лимите 1 МиБ — рассинхрон контракта и транспорта). Прежнее согласие снято, ратификация новая.",
   "ratification": {
     "by": "owner",
-    "at": "2026-08-04T12:12:23+00:00",
-    "digest": "98b6ce8c516407496831b1ae86b8893ffc174df44b78733f6f76a65fbc434ac2"
+    "at": "2026-08-04T13:42:49+00:00",
+    "digest": "57fe8585b44de2dc3f7f3c840003cf396b6cf3e6331b2dda79c3cf3d6a2bf1f8"
   }
 }

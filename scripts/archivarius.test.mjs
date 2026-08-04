@@ -213,3 +213,33 @@ test('buildPushReport нормализует счётчики и не выдум
     { files: 2, spans: 3, maskedLines: 0, batches: 1, accepted: 3, dryRun: false },
   );
 });
+
+test('ingestStep: 413 делит батч пополам рекурсивно; одиночный 413 — честный отказ без ретрая', async () => {
+  const sizes = [];
+  let failFirst = true;
+  const fakeFetch = async (_url, init) => {
+    const n = JSON.parse(init.body).spans.length;
+    sizes.push(n);
+    if (n > 2) return { ok: false, status: 413 };
+    return { ok: true, json: async () => ({ accepted: n }) };
+  };
+  const spans = Array.from({ length: 5 }, (_, i) => ({ i }));
+  const { batches, accepted } = await ingestStep(spans, {
+    baseUrl: 'https://office.test', token: 't', batchSize: 5,
+    fetchImpl: fakeFetch, sleep: async () => {},
+  });
+  assert.equal(accepted, 5, 'все спаны доехали после делений');
+  assert.deepEqual(sizes, [5, 3, 2, 1, 2], '5 → 413 → 3(413) → 2+1, затем хвост 2');
+  assert.ok(batches >= 3);
+
+  let calls = 0;
+  await assert.rejects(
+    ingestStep([{ big: true }], {
+      baseUrl: 'https://office.test', token: 't', batchSize: 1,
+      fetchImpl: async () => { calls += 1; return { ok: false, status: 413 }; },
+      sleep: async () => {},
+    }),
+    /HTTP 413/u,
+  );
+  assert.equal(calls, 1, '413 детерминирован — без трёх повторов');
+});

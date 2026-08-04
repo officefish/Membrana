@@ -40,7 +40,6 @@
 | `procedure-run-journal-f1-local-trail` | F1: локальная лента прогона процедур | M | [`PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_F1_LOCAL_TRAIL_PROMPT.md) | — |
 | `procedure-run-journal-2026-08-01` | Membrana Local Sprint: журнал прогона процедур | L | [`PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_SPRINT_PROMPT.md) | — |
 | `forecast-archive-wire` | Провод памяти персоны: запись «предсказание ↔ исход» доезжает в archive/<persona>.jsonl | M | [`FORECAST_ARCHIVE_WIRE_PROMPT.md`](../prompts/FORECAST_ARCHIVE_WIRE_PROMPT.md) | [#1590](https://github.com/officefish/Membrana/issues/1590) |
-| `archivarius-evening-tract` | Тракт архива сессий: scan → extract → ingest как связанная цепочка, а не три точки входа | M | [`ARCHIVARIUS_EVENING_TRACT_PROMPT.md`](../prompts/ARCHIVARIUS_EVENING_TRACT_PROMPT.md) | — |
 | `meeting-evening-review-predicate` | Заседание: вечерний кадр — предмет ревью, порядок трёх документов, ворота качества | L | [`MEETING_BRIEF.md`](../meeting/evening-review-predicate/MEETING_BRIEF.md) | — |
 | `evening-chain-review-predicate` | Вечер: предмет ревью, порядок трёх документов, ворота качества (№6 хендофа, M→L по слову владельца 01.08) | L | [`EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md`](../prompts/EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md) | — |
 | `llm-transport-no-key-class` | llm-транспорт: развести «ключа нет» и «ключ отвергнут» | S | [`LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md`](../prompts/LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md) | [#1549](https://github.com/officefish/Membrana/issues/1549) |
@@ -255,6 +254,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `archivarius-evening-tract` | Тракт архива сессий: scan → extract → ingest как связанная цепочка, а не три точки входа | 2026-08-04 | [`ARCHIVARIUS_EVENING_TRACT_PROMPT.md`](../prompts/ARCHIVARIUS_EVENING_TRACT_PROMPT.md) | — | [карточка](./archive/archivarius-evening-tract.md) |
 | `harness-workflow-pages` | Harness Mintlify: страницы мастерских и процедур | 2026-08-02 | [`HARNESS_WORKFLOW_PAGES_PROMPT.md`](../prompts/HARNESS_WORKFLOW_PAGES_PROMPT.md) | — | [карточка](./archive/harness-workflow-pages.md) |
 | `product-mintlify-container` | Product Mintlify: Board, узлы и тарифы | 2026-08-02 | [`PRODUCT_MINTLIFY_CONTAINER_PROMPT.md`](../prompts/PRODUCT_MINTLIFY_CONTAINER_PROMPT.md) | — | [карточка](./archive/product-mintlify-container.md) |
 | `dual-mintlify-product-harness` | Product и Harness Mintlify в двух спринтах | 2026-08-02 | [`DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md`](../prompts/DUAL_MINTLIFY_PRODUCT_HARNESS_PROMPT.md) | #1622 | [карточка](./archive/dual-mintlify-product-harness.md) |

@@ -55,29 +55,59 @@ export function extractStep(files, { readFile = (p) => readFileSync(p, 'utf8') }
   return { spans, maskedLines };
 }
 
-/** Шаг ingest: спаны из extract → office батчами. Возвращает счёт принятого. */
+/**
+ * Шаг ingest: спаны из extract → office батчами. Возвращает счёт принятого.
+ * HTTP 413 (тело больше лимита сервера — счёт спанов не равен счёту байтов: реплики
+ * разной длины, находка живого прогона 04.08) лечится ДЕЛЕНИЕМ батча пополам
+ * рекурсивно; одиночный спан с 413 — честный отказ, не бесконечное деление.
+ */
 export async function ingestStep(spans, { baseUrl, token, batchSize, fetchImpl = fetch, sleep, log = () => {} }) {
   const base = baseUrl.replace(/\/+$/u, '');
-  const batches = batchSpans(spans, batchSize);
-  let accepted = 0;
-  for (const [i, batch] of batches.entries()) {
-    const body = await withRetry(
-      async () => {
-        const res = await fetchImpl(`${base}/v1/archivarius/ingest`, {
-          method: 'POST',
-          headers: { 'content-type': 'application/json', 'x-membrana-token': token },
-          body: JSON.stringify({ spans: batch }),
-          signal: AbortSignal.timeout(30_000),
-        });
-        if (!res.ok) throw new Error(`office HTTP ${res.status} на батче ${i + 1}/${batches.length}`);
-        return res.json();
-      },
-      { attempts: 3, sleep },
-    );
-    accepted += Number(body?.accepted ?? 0);
-    log(`archivarius:push — батч ${i + 1}/${batches.length}: принято ${body?.accepted ?? '?'}`);
+  const state = { sent: 0, accepted: 0 };
+
+  async function postOnce(batch, label) {
+    const res = await fetchImpl(`${base}/v1/archivarius/ingest`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-membrana-token': token },
+      body: JSON.stringify({ spans: batch }),
+      signal: AbortSignal.timeout(30_000),
+    });
+    if (!res.ok) {
+      const err = new Error(`office HTTP ${res.status} на батче ${label}`);
+      err.status = res.status;
+      throw err;
+    }
+    return res.json();
   }
-  return { batches: batches.length, accepted };
+
+  async function pushBatch(batch, label) {
+    try {
+      const body = await withRetry(() => postOnce(batch, label), {
+        attempts: 3,
+        sleep,
+        // 413 детерминирован размером тела — повторять его без деления бессмысленно.
+        shouldRetry: (error) => error?.status !== 413,
+      });
+      state.sent += 1;
+      state.accepted += Number(body?.accepted ?? 0);
+      log(`archivarius:push — батч ${label} (${batch.length} spans): принято ${body?.accepted ?? '?'}`);
+    } catch (error) {
+      if (error?.status === 413 && batch.length > 1) {
+        const mid = Math.ceil(batch.length / 2);
+        log(`archivarius:push — батч ${label}: 413, делю ${batch.length} → ${mid}+${batch.length - mid}`);
+        await pushBatch(batch.slice(0, mid), `${label}a`);
+        await pushBatch(batch.slice(mid), `${label}b`);
+        return;
+      }
+      throw error;
+    }
+  }
+
+  const batches = batchSpans(spans, batchSize);
+  for (const [i, batch] of batches.entries()) {
+    await pushBatch(batch, `${i + 1}/${batches.length}`);
+  }
+  return { batches: state.sent, accepted: state.accepted };
 }
 
 /** Тракт целиком — композиция трёх шагов; каждый читает выход предыдущего. */
