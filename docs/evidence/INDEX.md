@@ -16,6 +16,7 @@
 | day-memo-2026-08-02 | изъятие | DAY_MEMO 2026-08-02: факты={"commits":16,"evidence":0,"crystals":2,"d… | `local:docs/memos/2026-08-02.md` | `9e0f369948e5…` | 4462 |
 | day-memo-2026-08-03 | изъятие | DAY_MEMO 2026-08-03: факты={"commits":26,"evidence":0,"crystals":0,"d… | `local:docs/memos/2026-08-03.md` | `b6df8eae8e07…` | 19464 |
 | day-memo-2026-08-04 | изъятие | DAY_MEMO 2026-08-04: факты={"commits":22,"evidence":0,"crystals":1,"d… | `local:docs/memos/2026-08-04.md` | `ad8ba8ee69df…` | 6411 |
+| day-memo-2026-08-05 | изъятие | DAY_MEMO 2026-08-05: факты={"commits":9,"evidence":0,"crystals":0,"de… | `local:docs/memos/2026-08-05.md` | `13e063076bb6…` | 3443 |
 | ozon-receipt-3765-field-kit-r2 | поступление | Поправка P2 (ревью 27.07): суперсидит ozon-receipt-3765-field-kit — т… | `local:docs/evidence/store/ozon-receipt-3765.pdf` | `73942c47fa6e…` | 46551 |
 
 **Исправлено новыми записями:** `ozon-receipt-3765-field-kit` → `ozon-receipt-3765-field-kit-r2` · `day-memo-2026-07-28` → `day-memo-2026-07-28-r2` · `bpla-guidance-methodology-partner` → `bpla-guidance-methodology-partner-r3` · `bpla-guidance-methodology-partner-r2` → `bpla-guidance-methodology-partner-r3`
