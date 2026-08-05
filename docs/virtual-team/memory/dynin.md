@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14363/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 258 (причины в op-log) -->
+Записей: 48 · бюджет 14341/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 259 (причины в op-log) -->
+
+### 2026-08-05 · позиция · team-evening-feedback
+
+> — Оценка артефактов: MAIN_DAY_ISSUE в §Санитарные корректно опирается на измеренные числа (`dads-lab-report-2026-07-18.md`) и явно запрещает лишние DSP-бенчмарки — инвариант «не удорожать вход без новых данных» соблюдён. Итоги дня: чистых функций сегодня не двигали; данных новых […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
 
 ### 2026-08-03 · позиция · one-shot-manifest-m0-order
 
@@ -283,12 +289,6 @@
 > Формализую без UI. Тариф T ∈ {sensor, checkpoint, observatory} — закрытое множество SKU (решение владельца). Право — типизированная запись R с родом kind ∈ K, |K|=5. Сетка G — функция G: T × Id(R) → Entitlement, где Entitlement — размеченное объединение по kind, не «всё number». […] _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/tariff-grid-m1-form-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m2-rail
-
-> Формализую без UI. Пусть G — grid, s — tariffSku мембраны, E_cat ⊂ registry — id с kind=`catalog`. Предикат entitled по каталогу: `entitled(s, id) ⇔ resolve(G,s,id).status = entitled`. Проекция списка SKU карточек: `P(G,s) = { cardSku | ∃ id∈E_cat: payload(id) покрывает cardSku […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/tariff-grid-m2-rail-2026-07-29.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
 

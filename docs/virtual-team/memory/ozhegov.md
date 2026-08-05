@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14391/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 258 (причины в op-log) -->
+Записей: 48 · бюджет 14394/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 259 (причины в op-log) -->
+
+### 2026-08-05 · позиция · team-evening-feedback
+
+> Три точки хранения факта архивации (registry.json → README → archive/*.md) обновлены атомарно одним коммитом #1732 — слабая связанность соблюдена, B2-риск файла-перекрёстка не сработал. Скрипты `execution-gate`, `llm-procedure-transport`, `llm-probe`, `prepush-typecheck-scope` […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
 
 ### 2026-08-03 · позиция · one-shot-manifest-m0-order
 
@@ -284,14 +290,8 @@
 
 — источник: `docs/seanses/tariff-grid-m1-form-2026-07-29.md#reply-1`
 
-### 2026-07-29 · позиция · tariff-grid-m2-rail
+### 2026-07-29 · позиция · team-evening-feedback
 
-> Леммы, иначе синонимы. **Рельс** — замкнутый путь носителей: Prisma-поле → node-realtime → wire DTO → `device-board-module-config.entitledTariffSkus` → `ClientUserCaseCatalogService` → gate бейджей. **Сетка** — `TariffGridDocument` (registry + matrix), home на сервере. […] _(реплик в сеансе: 5)_
+> **Оценка артефактов:** Модульная структура tariff-grid — отличная: S0 (декларация) → S1 (матрица) → S2–S3 (read/write split) → S4 (квоты) → S5–S6 (гейты) → S7 (витрина) → S8 (смена) → S9 (предикат). Каждый S — отдельный файл/модуль, нет пересечений. network-container — […]
 
-— источник: `docs/seanses/tariff-grid-m2-rail-2026-07-29.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m2b-control-plane
-
-> Владелец хочет **переключать канал с панели** — кандидат 1 (только git/PR) делает админа = merge, это не тумблер. Кандидат 3 (только .env) делает панель read-only по маршруту — прямо бьёт BRIEF. Остаются 2 (office SoT) и 4 (гибрид). _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/llm-procedure-channels-m2b-control-plane-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-07-29.md#reply-1`

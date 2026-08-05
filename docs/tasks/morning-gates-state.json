@@ -7,9 +7,10 @@
   "frozenDigest": "74f6d21618545bee82979de1a1589920bba96469768d0d1dd8a48820ae3dc005",
   "magistral": "agent-tooling-night-build",
   "swallow": {
-    "draftDigest": "f1316a3fb90a98f3df98239cfdd3d2c68161b2bfe71b0843798ad7aafbe78f87",
-    "draftFile": "docs/comms/drafts/swallow-morning-2026-08-05.md",
-    "ownerAck": true
+    "draftDigest": "e016edf16d726e69ddb985062350b3b12d86bc4e452d2657118af392b02732f2",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-05.md",
+    "ownerAck": true,
+    "gate": "evening:partner-swallow"
   },
   "day": "2026-08-05"
 }
