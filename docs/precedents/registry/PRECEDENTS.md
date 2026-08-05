@@ -1,15 +1,15 @@
 # PRECEDENTS — снимок-реестр (производный, руками не править)
 
-> Meta · Date: 2026-08-04 · SHA: 211b6c0b · Source: docs/precedents/*.md
+> Meta · Date: 2026-08-05 · SHA: b7a038be · Source: docs/precedents/*.md
 > Пересобрать: `yarn precedent:register --rebuild`. Источник истины — файлы прецедентов.
 
-Всего прецедентов: **25** · различных классов: **6** · доля рецидива: **76%** (ориентир ≤15%).
+Всего прецедентов: **26** · различных классов: **6** · доля рецидива: **77%** (ориентир ≤15%).
 
 ## Рецидив по классам
 
 | Класс | Прецедентов |
 |-------|-------------|
-| session-report | 8 ⚠ рецидив |
+| session-report | 9 ⚠ рецидив |
 | tooling-gap | 7 ⚠ рецидив |
 | ritual-mechanics-vs-value | 4 ⚠ рецидив |
 | cold-start | 3 ⚠ рецидив |
@@ -45,4 +45,5 @@
 | 2026-08-02 | tooling-gap | [2026-08-02-review-blindness-scales-with-diff](../2026-08-02-review-blindness-scales-with-diff.md) | Механизм проверяет, что шаг отработал, но не что утверждение шага истинно |
 | 2026-08-03 | session-report | [2026-08-03-static-mmbrn-m2-twenty-consilium-calls](../2026-08-03-static-mmbrn-m2-twenty-consilium-calls.md) | Не классифицировано до отдельного разбора корпуса двадцати вызовов консилиума |
 | 2026-08-04 | session-report | [2026-08-04-static-mmbrn-m3-run4-overlay-chain-exhausted](../2026-08-04-static-mmbrn-m3-run4-overlay-chain-exhausted.md) | Consilium panel overlay exhausted without content; provider-level cause remains  |
+| 2026-08-05 | session-report | [2026-08-05-static-mmbrn-m4-run4-overlay-chain-rate-limit](../2026-08-05-static-mmbrn-m4-run4-overlay-chain-rate-limit.md) | Все три настроенных overlay-звена вернули rate_limit; default-звено deepseek не  |
 

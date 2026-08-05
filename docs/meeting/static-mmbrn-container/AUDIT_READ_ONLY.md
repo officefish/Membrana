@@ -1602,3 +1602,20 @@ capacity formula, перенос bytes в FD-2, age-gate, retention, signed URL/
 
 Машинный аудит также подтвердил один `S1` и отсутствие структурных нарушений. Run4 ждёт
 отдельного разрешения владельца на внешний LLM-вызов.
+
+## Внешний M4 — run4: транспортный BLOCK
+
+После отдельного разрешения владельца run4 запущен через panel overlay с `--min-replies 42`
+и `--seed 137`. Все три звена завершились `rate_limit`:
+`anthropic/claude-sonnet-4-6`, `xai/grok-4.5`,
+`openrouter/anthropic/claude-sonnet-4.6`. Инструмент вернул `chain exhausted`; canonical
+carrier не создан.
+
+Попытка 4 из 5 использована. Автоматический fallback в непробованный default
+`deepseek/deepseek-chat` не запускался. Повестка содержательно не менялась и сохраняет
+предаудит PASS. Событие записано штатным генератором в прецедент
+[`2026-08-05-static-mmbrn-m4-run4-overlay-chain-rate-limit`](../../precedents/2026-08-05-static-mmbrn-m4-run4-overlay-chain-rate-limit.md).
+
+Run5 является последней внешней попыткой M4. Он требует отдельного владельческого выбора:
+исправленный panel overlay либо разовое `LLM_NO_OVERLAY=1`. После пятого BLOCK/no-carrier
+run6 запрещён, следующий носитель может быть только локальной сборкой с новым постаудитом.
