@@ -1757,3 +1757,46 @@ authority; portable annotations разведены с disposable navigation/cach
 
 Внешний бюджет остаётся 1 из 5. Run2 можно созывать только после отдельного разрешения
 владельца.
+
+## Постаудит M5 — run2
+
+После отдельного разрешения владельца run2 произведён `anthropic/claude-sonnet-4-6` и
+прошёл встроенные premise/verdict gates. Машинный аудит подтвердил один F1, 36 реплик 6x6,
+посылки до последней секции DoD и структурный PASS. Независимый смысловой аудит дал
+**BLOCK** по 15 пунктам; использована попытка 2 из 5.
+
+Сырой carrier без исправлений перенесён в
+[`run2-m3-semantics-m6-fd3-annotations`](../../seanses/rejected/static-mmbrn-container-m5-affine-role-2026-08-05-run2-m3-semantics-m6-fd3-annotations.md).
+
+Основные дефекты:
+
+- VIEW склеивает разные floors `read-metadata`/`read-ref`; ANNOTATE/REVIEW изобретают
+  policy object, MANAGE-PROJECTION переопределяет `upload-revision`;
+- Case 8 изобретает strategic class/M2 record, хотя strategic docs вне контейнера;
+- вернулись bytes-through-Proxy, response codes, API evidence и готовый
+  export/import/deploy/rebuild workflow M6–M7; projection rebuild решает preview/rendering;
+- binding потребован для всего registry вместо `requiredProjectionSet`, обратная
+  уникальность engine object отсутствует;
+- reducer противоречив при conflict, а evidence смешивает immutable events со status output;
+- `binding.jsonl`/`annotations.jsonl` назначены FD-3 stores без M4 backup/retention/restore;
+- annotation schema не имеет stable version, canonical serialization и Panel principal;
+  engine-neutral anchor не доказан, а no-loss допускает operator waiver;
+- readiness labels расходятся с state table и не доказывают post-replacement binding
+  coverage; API evidence запрещён;
+- meta/self-count вернулись, часть DoD `[x]` содержательно ложна.
+
+Полезное ядро сохранено: точный M3-словарь, правильные FD, append-only намерение,
+per-lineage version, fail-closed binding, service allowlist, portable/disposable split,
+десять cases и set-based readiness. Повестка run3 консолидирует ограничения run1–run2;
+внешний запуск запрещён до независимого предаудита и нового разрешения владельца.
+
+## Предаудит M5 — run3
+
+Вердикт независимого аудитора: **PASS**. Полный проход дважды превысил окно ожидания без
+вердикта; председатель прервал дальнейшее чтение и запросил конечный ответ только по уже
+собранному материалу. Аудитор подтвердил, что оставшихся blocking contradictions нет.
+
+Механическая сверка до этого акта подтвердила: 11 684 символа, один F1, canonical carrier
+отсутствует, run1/run2 находятся только в rejected, внешний счётчик 2 из 5, M6–M7 открыты,
+machine `meeting:audit` не нашёл структурных нарушений. Run3 допускается только после
+отдельного разрешения владельца.

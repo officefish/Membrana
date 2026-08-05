@@ -86,29 +86,34 @@
    состояния, экспорт переносимого состояния, rehydration drill, access-bypass test и
    доказательство отсутствия пользовательских native credentials.
 
-## Обязательные поправки run1
+## Обязательные поправки run1–run2
 
-- Колонка `M3 action` использует только `discover`, `read-metadata`, `read-ref`,
-  `read-bytes`, `download`, `write-metadata`, `upload-revision`, `manage-access`.
-  Capability может иметь своё имя, но не создаёт новый action; неизвестный action даёт deny.
-- Запрещены `IMPORT` и любые file picker, bytes ingest, queue, API, URL/route, response body,
-  upload/download flow или transport. Получение/выдача bytes остаются M6; M5 описывает лишь
-  человеческую способность и её соответствие уже существующему M3 action.
-- `canonicalRef` остаётся lineage URN, не пользовательским URL или адресом. Точная M4
-  topology: primary bytes — FD-1, complete backup — FD-2, registry/lifecycle — FD-3.
-- Если binding append-only, старые строки не мутируют: выбрать event/reducer semantics,
-  область версии, закрытый словарь событий/состояний, правило stale и вещдок reconciliation.
-  Если выбрана иная модель, её история и неизменяемость также должны быть однозначны.
-- Binding readiness проверяет равенство множеств, не counts: требуемые projections покрыты
-  ровно, `canonicalRef` и engine object уникальны, оба конца существуют. Native member set
-  равен полному allowlist внутренних service identities, а не только не пересекается с
-  Panel users.
-- Для переносимых annotations нужен engine-neutral identity/version contract и gate
-  `portable store = canonical engine export = rehydrated state` с нулевым unresolved diff.
-- `## Список посылок` обязан появиться в основном verdict и содержать только входные нормы
-  и факты, не выводы M5. Успешный машинный premise gate обязателен.
-- Self-count и meta запрещены в репликах и DoD. После последней строки DoD нет footer,
-  повторного carrier path или любого иного содержательного текста.
+- Capability использует только восемь дословных M3 actions и сохраняет их предмет. Каждый
+  action проверяется отдельно: `read-metadata` не включает `read-ref`. Запрещено применять
+  action к новому policy object (например annotation) или превращать `upload-revision` в
+  обновление проекции. Неразрешимая способность остаётся disabled, неизвестный action — deny.
+- Стратегический документ находится вне контейнера: Case 8 даёт unknown/out-of-container
+  object → deny, без вымышленных strategic class или M2 record.
+- Запрещены IMPORT, file/bytes flow, codes, API, URL/route, response body, transport и
+  пошаговые export/import/deploy/rebuild pipelines. M5 задаёт predicates и свойства
+  evidence, не M6/M7 workflow. `canonicalRef` — URN, не URL; bytes FD-1, backup FD-2,
+  registry/lifecycle FD-3. Судьбу preview/rendering M5 не решает.
+- Назначить `requiredProjectionSet`, не весь registry, и доказать биекцию с active engine
+  objects: оба конца существуют, уникальны в обе стороны, лишних/unbound объектов нет.
+- Для event ledger дать полный reducer transition contract, scope версии, stale и
+  reconciliation. Evidence различает immutable events и reducer output; старые строки не
+  «получают» status. Иная модель обязана дать столь же однозначную историю.
+- Binding и значимые annotations живут вне движка, но M5 не объявляет их новыми FD-3 stores
+  без доказанных backup, retention и restore. Назвать durable ownership boundary и gate
+  живучести, совместимый с M4, не меняя M4 topology.
+- Annotation contract содержит stable id/version, Panel principal автора, canonical
+  serialization/content hash и engine-neutral anchor. Gate требует точное равенство
+  portable store, engine export и rehydrated state; unresolved diff не снимается waiver.
+- State-table labels согласованы с predicate; rehydration доказывает annotations и биекцию
+  bindings/projections нового движка. Native identities равны полному service allowlist;
+  evidence задано свойством, не API.
+- `## Список посылок` содержит только входные нормы/факты. Meta/self-count запрещены;
+  ролевой пункт DoD оставляется внешнему аудиту. После DoD текста нет.
 
 ## Обязательные случаи
 
