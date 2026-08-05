@@ -1,32 +1,26 @@
-<!-- Сгенерировано: 2026-08-04T04:50:39.585Z (yarn day:report; vesnin) -->
+<!-- Сгенерировано: 2026-08-05T08:15:38.004Z (yarn day:report; vesnin) -->
 
-# Доклад по задачам — 2026-08-04
+# Доклад по задачам — 2026-08-05
 
 Автор: Тимлид (vesnin) · зеркало 5-блочного плана дня.
 
 ## Магистраль
 
-- `archivarius-sessions-container` — ведёт dynin
-- #1252 — MERGED
+- `detector-scoreboard` — ведёт vesnin
 
 ## Подкрепление
 
-— задач со ссылками нет (темы блока — в каноне дня) —
+- `detector-scoreboard` — ведёт vesnin
 
 ## Перспективные
 
-- `archivarius-sessions-container` — ведёт dynin
-- `detectors-window-single-carrier` — ведёт vesnin
-- #1648 — MERGED
+- `detector-scoreboard` — ведёт vesnin
 
 ## Экспериментальные
 
-- `gate-honest-pair-completeness` — ведёт dynin
-- `deploy-procedure-survey` — ведёт ozhegov
-- #1661 — MERGED
+- `procedure-run-journal-panel-reader` — ведёт rodchenko
+- `detector-scoreboard` — ведёт vesnin
 
 ## Санитарные
 
-- #1648 — MERGED
-- #1661 — MERGED
-- #1662 — MERGED
+- #1613 — OPEN
