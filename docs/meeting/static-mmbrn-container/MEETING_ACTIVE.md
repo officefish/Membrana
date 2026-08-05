@@ -9,7 +9,7 @@
 | аудитор | **Codex S-M5 Read-Only Auditor, static-mmbrn-container, 2026-08-03** (agent `019fc720-8fec-7c63-8d9f-28a52e2fb5c2`), отдельный от председателя |
 | предаудит | [`AUDIT_READ_ONLY.md`](AUDIT_READ_ONLY.md) — PASS до запуска M0 |
 | задание | [`MEETING_BRIEF.md`](MEETING_BRIEF.md) |
-| состояние | M4 ратифицирована; предаудит M5 PASS, ожидается отдельное разрешение на run1 |
+| состояние | M5 run1 BLOCK; внешний бюджет 1/5; предаудит run2 PASS, ожидается отдельное разрешение |
 
 ## Ход заседания
 
@@ -20,7 +20,7 @@
 | **M2** | тождество и источник истины | **PASS; РАТИФИЦИРОВАНО владельцем 2026-08-03** | [`carrier`](../../seanses/static-mmbrn-container-m2-identity-2026-08-03.md) · [`повестка`](M2_AGENDA.md) · [`прецедент`](../../precedents/2026-08-03-static-mmbrn-m2-twenty-consilium-calls.md) |
 | **M3** | доступ | **PASS; РАТИФИЦИРОВАНО владельцем 2026-08-04**; внешний бюджет закрыт **5/5** | [`carrier`](../../seanses/static-mmbrn-container-m3-access-2026-08-04.md) · [`повестка`](M3_AGENDA.md) · [`run1`](../../seanses/rejected/static-mmbrn-container-m3-access-2026-08-04-run1-seven-contract-defects.md) · [`run2`](../../seanses/rejected/static-mmbrn-container-m3-access-2026-08-04-run2-grant-revocation-threshold.md) · [`run3`](../../seanses/rejected/static-mmbrn-container-m3-access-2026-08-04-run3-inheritance-revocation-affine.md) · [`run5`](../../seanses/rejected/static-mmbrn-container-m3-access-2026-08-04-run5-final-external.md) · [`run4-прецедент`](../../precedents/2026-08-04-static-mmbrn-m3-run4-overlay-chain-exhausted.md) |
 | **M4** | хранение и живучесть | **PASS local-synthesis; РАТИФИЦИРОВАНО владельцем 2026-08-05**; внешний бюджет закрыт **5/5** | [`carrier`](../../seanses/static-mmbrn-container-m4-storage-2026-08-04.md) · [`повестка`](M4_AGENDA.md) · [`run1`](../../seanses/rejected/static-mmbrn-container-m4-storage-2026-08-04-run1-m2-retention-restore-boundaries.md) · [`run2`](../../seanses/rejected/static-mmbrn-container-m4-storage-2026-08-04-run2-dedup-capacity-checkpoint-rpo-m6.md) · [`run3`](../../seanses/rejected/static-mmbrn-container-m4-storage-2026-08-04-run3-count-location-dedup-checkpoint-quota-m6.md) · [`run5`](../../seanses/rejected/static-mmbrn-container-m4-storage-2026-08-05-run5-final-external.md) · [`run4-прецедент`](../../precedents/2026-08-05-static-mmbrn-m4-run4-overlay-chain-rate-limit.md) |
-| **M5** | роль Affine | **предаудит PASS**; внешний бюджет **0/5**; ожидается отдельное разрешение на run1 | [`повестка`](M5_AGENDA.md) |
+| **M5** | роль Affine | **run1 BLOCK**; внешний бюджет **1/5**; **предаудит run2 PASS**, ожидается отдельное разрешение | [`повестка`](M5_AGENDA.md) · [`run1`](../../seanses/rejected/static-mmbrn-container-m5-affine-role-2026-08-05-run1-m3-actions-m6-binding-readiness.md) |
 | **M6..M7** | по одному вопросу в порядке M0 | не созывались | — |
 
 ## Гейт M0

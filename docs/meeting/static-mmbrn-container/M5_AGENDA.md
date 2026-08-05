@@ -86,6 +86,30 @@
    состояния, экспорт переносимого состояния, rehydration drill, access-bypass test и
    доказательство отсутствия пользовательских native credentials.
 
+## Обязательные поправки run1
+
+- Колонка `M3 action` использует только `discover`, `read-metadata`, `read-ref`,
+  `read-bytes`, `download`, `write-metadata`, `upload-revision`, `manage-access`.
+  Capability может иметь своё имя, но не создаёт новый action; неизвестный action даёт deny.
+- Запрещены `IMPORT` и любые file picker, bytes ingest, queue, API, URL/route, response body,
+  upload/download flow или transport. Получение/выдача bytes остаются M6; M5 описывает лишь
+  человеческую способность и её соответствие уже существующему M3 action.
+- `canonicalRef` остаётся lineage URN, не пользовательским URL или адресом. Точная M4
+  topology: primary bytes — FD-1, complete backup — FD-2, registry/lifecycle — FD-3.
+- Если binding append-only, старые строки не мутируют: выбрать event/reducer semantics,
+  область версии, закрытый словарь событий/состояний, правило stale и вещдок reconciliation.
+  Если выбрана иная модель, её история и неизменяемость также должны быть однозначны.
+- Binding readiness проверяет равенство множеств, не counts: требуемые projections покрыты
+  ровно, `canonicalRef` и engine object уникальны, оба конца существуют. Native member set
+  равен полному allowlist внутренних service identities, а не только не пересекается с
+  Panel users.
+- Для переносимых annotations нужен engine-neutral identity/version contract и gate
+  `portable store = canonical engine export = rehydrated state` с нулевым unresolved diff.
+- `## Список посылок` обязан появиться в основном verdict и содержать только входные нормы
+  и факты, не выводы M5. Успешный машинный premise gate обязателен.
+- Self-count и meta запрещены в репликах и DoD. После последней строки DoD нет footer,
+  повторного carrier path или любого иного содержательного текста.
+
 ## Обязательные случаи
 
 Итоговая таблица имеет колонки `Случай`, `Ожидаемое решение`, `Источник истины`,

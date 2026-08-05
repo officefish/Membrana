@@ -1703,3 +1703,57 @@ PASS внешний запуск остаётся запрещён.
 
 Внешний бюджет M5 остаётся 0 из 5. Run1 допускается только после отдельного разрешения
 владельца; автоматического запуска по акту ратификации M4 нет.
+
+## Постаудит M5 — run1
+
+Владелец отдельно разрешил run1. Повестка F1 доставлена полностью; координация ролей
+обрезана. Panel-chain ответила через `anthropic/claude-sonnet-4-6`; после premise follow-up
+и единственного verdict retry инструмент всё равно дал **BLOCK** «нет секции “Список
+посылок”» и сохранил результат только в rejected. Внешняя попытка 1 из 5 использована.
+
+Сырой файл без редакторских исправлений переименован в
+[`run1-m3-actions-m6-binding-readiness`](../../seanses/rejected/static-mmbrn-container-m5-affine-role-2026-08-05-run1-m3-actions-m6-binding-readiness.md).
+В нём 36 реплик, ровно по шесть каждой роли, один F1, пять требуемых таблиц и визуально
+присутствующая секция посылок; процедурный BLOCK от этого не превращается в PASS.
+
+Независимый постаудит подтвердил 14 дефектов:
+
+- четыре capabilities и Case 8 используют вымышленные M3 actions вместо закрытого словаря;
+- `IMPORT`, ingest queue, file/bytes flow, JSON response и Affine API колонизируют M6;
+- `canonicalRef` ошибочно превращён в пользовательский URL;
+- M4 topology искажена: bytes приписаны FD-3, где живут registry/lifecycle;
+- absent binding оставляет IMPORT, обходя M3 fail-closed;
+- append-only binding одновременно мутирует старые status/`supersededBy`; version scope,
+  stale и reducer semantics не определены;
+- readiness по counts допускает пропуски, не проверяет уникальность обоих концов binding и
+  не доказывает отсутствие native-only пользователей;
+- annotation gate не сравнивает живой engine export с portable store, использует
+  неопределённое `author_panel_id` и не задаёт engine-neutral identity/version;
+- собственные выводы M5 циркулярно внесены в посылки;
+- после DoD оставлен meta-footer с self-count и carrier path.
+
+Полезное ядро run1 сохранено как материал: Affine отделён от M2 identity, M4 storage и M3
+authority; portable annotations разведены с disposable navigation/cache; есть десять cases,
+намерение binding history и rehydration/access gates. Повестка run2 получила точечные
+ограничения для закрытия всех дефектов, но внешний run2 запрещён до повторного независимого
+предаудита и отдельного разрешения владельца.
+
+## Предаудит M5 — run2
+
+Вердикт независимого аудитора: **PASS**.
+
+- все 14 дефектов run1 покрыты единым непротиворечивым разделом;
+- capability может иметь своё имя, но M3 action берётся только из закрытого словаря;
+- IMPORT, ingest/API/URL/response/transport M6 запрещены; `canonicalRef` не URL;
+- распределение M4 сохранено: bytes FD-1, complete backup FD-2, registry/lifecycle FD-3;
+- binding обязан иметь однозначные history/version/stale/reconciliation semantics, но
+  конкретная append-only либо иная модель остаётся выбором комнаты;
+- readiness проверяет множества, оба конца binding, двустороннюю уникальность и полный
+  allowlist service identities;
+- annotations требуют engine-neutral identity/version и triple-equality без unresolved diff;
+- посылки не содержат выводов M5, DoD заканчивает carrier без meta/self-count;
+- один F1, canonical carrier отсутствует, run1 только в rejected, объём 11 277 символов;
+- M6–M7 и стратегический редактор открыты; машинный аудит не нашёл структурных нарушений.
+
+Внешний бюджет остаётся 1 из 5. Run2 можно созывать только после отдельного разрешения
+владельца.
