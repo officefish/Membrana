@@ -87,6 +87,36 @@ export function adaptCutPlan(raw) {
 }
 
 /**
+ * Ключ плана: `sprintId` сырого cut-плана ЛИБО `planId` адаптированного
+ * (спринт instruments-honest-verdict, блок 4; #1710).
+ *
+ * ПОЧЕМУ ПРЕДИКАТ, А НЕ ИМЯ ПОЛЯ. Гейт читал `planRaw.sprintId`, тогда как адаптер
+ * `plan-to-gate` отдаёт нормализованное `planId`, а поля `sprintId` в адаптированном
+ * плане НЕТ ВОВСЕ — значит `recutActs` оставался пустым ВСЕГДА, и дверь отзыва
+ * протухшего следа (#1638) не срабатывала НИ РАЗУ ни на одном настоящем cut-плане.
+ * Стабовые планы несут `sprintId` нативно — потому зубы были зелёные, а дыра жила.
+ *
+ * Вещдок 04.08 (спринт `archivarius-live-wiring`): законная перерезка с актом
+ * `recut_act`, свежая пара следов после ревизии — вердикт `stale_partial` и НОЛЬ
+ * дисквалификаций; при этом прямой вызов `supersededByRecut` на тех же данных даёт
+ * `true`. Логика была цела, мёртв провод.
+ *
+ * Чинится здесь, а не в адаптере (приговор математика): `planId` — публичный контракт
+ * адаптера, менять его форму ради удобства одного потребителя значит подчинить целое
+ * части. Гейт же не обязан знать, сырой план ему пришёл или адаптированный.
+ *
+ * @param {unknown} plan
+ * @returns {string|null}
+ */
+export function planKey(plan) {
+  const p = /** @type {any} */ (plan);
+  for (const v of [p?.sprintId, p?.planId]) {
+    if (typeof v === 'string' && v.trim() !== '') return v;
+  }
+  return null;
+}
+
+/**
  * Разрешение адреса вещдока в ПРОДЕ — файл рабочего дерева.
  *
  * Снимок-резолвер (`makeSnapshotResolver`) детерминирует зубы Phase 2 и обязан остаться на
@@ -225,7 +255,7 @@ function main() {
   /** @type {{kind:string, at:number}[]} */
   const recutActs = [];
   if (planRaw !== null && !args.plan.startsWith('stub:')) {
-    const sprintId = /** @type {any} */ (planRaw)?.sprintId;
+    const sprintId = planKey(planRaw);
     if (typeof sprintId === 'string' && sprintId.trim() !== '') {
       const trailPath = resolve(args.plan, '..', 'trail', `${sprintId}.jsonl`);
       const acts = readActsTrail(trailPath);

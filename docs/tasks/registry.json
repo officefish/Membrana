@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "instruments-honest-verdict",
+      "title": "Приборы выносят вердикт, которому можно верить: ложные красные, свалка auth, слепой зонд",
+      "promptPath": "docs/prompts/INSTRUMENTS_HONEST_VERDICT_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "тема ратифицирована владельцем 05.08; предметы уже имеют иссью #1725, #1549, #1710",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-05",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Тема ратифицирована владельцем 05.08 после отказа от точечных хот-фиксов. Общая форма пяти находок дня: прибор ЗНАЕТ о своей ненадёжности и всё равно выносит приговор, а платит за это рука владельца (три вмешательства за день). Предметы: (1) пре-пуш судит межпакетным typecheck при чужой резолюции — своих пакетов 2 из 37, #1725; (2) errorClass auth — свалка ≥4 состояний, вещдок: валидный неизменный ключ дал auth в 13:00 и 200 в 18:18, #1549; (3) llm:probe не знает xai вовсе — «все зелёные» неполная правда; (4) имена ключа расходятся: infra-probe знает два, каталог одно, согласия никто не проверяет; (5) дверь отзыва recut_act мертва — sprintId против planId, #1710. Вне скоупа: разнородность overlay ревью (рука владельца), пополнение квот (сделано).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "deploy-procedures",
       "title": "Деплой как процедура с прогонами: две процедуры по серверам (office-VDS, media-VPS) + врезка журнала в боевые глаголы",
       "promptPath": "docs/prompts/DEPLOY_PROCEDURES_PROMPT.md",

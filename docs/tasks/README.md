@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `instruments-honest-verdict` | Приборы выносят вердикт, которому можно верить: ложные красные, свалка auth, слепой зонд | M | [`INSTRUMENTS_HONEST_VERDICT_PROMPT.md`](../prompts/INSTRUMENTS_HONEST_VERDICT_PROMPT.md) | — |
 | `recreate-execution-procedure-interface` | Пересборка PR #1613: контракт EXECUTION_PROCEDURE + procedureKind поверх свежего main (pr:recreate) | M | [`RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md`](../prompts/RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md) | — |
 | `procedure-run-journal-panel-reader` | Витрина пяти опор в panel.mmbrn.tech — первый читатель ленты журнала прогонов | M | [`PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md) | — |
 | `corpus-track-acceptance-predicate` | Приёмный предикат корпуса «один тракт — два класса»: чистая функция годности трека по спеке инсайта | S | [`CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md`](../prompts/CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md) | — |

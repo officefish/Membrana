@@ -48,7 +48,7 @@
     "scripts/lib/llm-procedure-registry.mjs": "2cc3d8558ef58ec55a783dd7e5beee5a4e342c8f",
     "scripts/lib/llm-procedure-resolve.mjs": "36128afcc625bd137d584f3a4d047abb9f081a57",
     "scripts/lib/llm-procedure-ritual.mjs": "aa4c116c3c66e91bb89934cabfd402cc628f2650",
-    "scripts/lib/llm-procedure-transport.mjs": "dd4c7855358089954a4ab211cfbcd512aef1209d",
+    "scripts/lib/llm-procedure-transport.mjs": "c5fca67ef504fae4767637a437af876fdf7a2926",
     "scripts/lib/main-day-issue-paths.mjs": "57ecbd9568cbe18572500744d6aa5d41416122d0",
     "scripts/lib/main-day-magistral-freshness.mjs": "67bb1b52e63c5ad35c136177ea700e8ae6ac2765",
     "scripts/lib/main-day-probe.mjs": "1a32d350dfe6e06e54b8c032a6a689c4ec37a8d0",

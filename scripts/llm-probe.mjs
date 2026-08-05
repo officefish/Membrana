@@ -21,38 +21,124 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
+import { loadProviderCatalog } from './lib/llm-procedure-registry.mjs';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..');
 
 const TIMEOUT_MS = 20_000;
 
-/** Спецификации зондов: лёгкий запрос каждому провайдеру. */
-export const PROVIDERS = {
+/**
+ * Тело пробы — знание ЗОНДА, не каталога (приговор архитектора 05.08: каталог есть
+ * реестр каналов, а не тест-план; вторую копию знания не заводим — join по id).
+ *
+ * Каталог даёт `baseUrl · path · apiKeyEnv · apiFormat`; зонд даёт тело запроса и
+ * форму заголовка. `outsideCatalog` объясняет, почему провайдер вне каталога —
+ * без ярлыка симметричное сравнение множеств врало бы в обе стороны.
+ *
+ * ПОВОД (#1725-соседний): у зонда была СВОЯ копия списка, и в ней не было `xai` —
+ * при том что `xai` стоит живым звеном в цепочках `ask` и `code-review`. 05.08 зонд
+ * ответил «все зелёные», не проверив одно из звеньев, и агент доложил владельцу
+ * живость каналов, которой не мерил. Неполная правда хуже молчания.
+ */
+/**
+ * Причины, по которым проба живёт ВНЕ каталога. Замкнутый словарь, а не свободная
+ * строка (finding ревью 05.08): ярлык строкой по месту через полгода даст второй
+ * ярлык и дрейф. Новая причина заводится здесь, иначе исключение не признаётся.
+ */
+export const PROBE_OUTSIDE_REASONS = Object.freeze({
+  EMBEDDINGS: 'embeddings — не чат-канал процедур, в каталоге ему места нет',
+});
+
+export const PROBE_SPECS = {
   deepseek: {
-    keyEnv: ['DEEPSEEK_API_KEY'],
-    url: 'https://api.deepseek.com/chat/completions',
     body: (model = 'deepseek-chat') => ({ model, max_tokens: 1, messages: [{ role: 'user', content: 'ping' }] }),
     authHeader: (key) => ({ authorization: `Bearer ${key}` }),
   },
+  anthropic: {
+    body: (model = 'claude-haiku-4-5-20251001') => ({ model, max_tokens: 1, messages: [{ role: 'user', content: 'ping' }] }),
+    authHeader: (key) => ({ 'x-api-key': key, 'anthropic-version': '2023-06-01' }),
+  },
+  openrouter: {
+    body: (model = 'anthropic/claude-haiku-4.5') => ({ model, max_tokens: 1, messages: [{ role: 'user', content: 'ping' }] }),
+    authHeader: (key) => ({ authorization: `Bearer ${key}` }),
+  },
+  openai: {
+    body: (model = 'gpt-4o-mini') => ({ model, max_tokens: 1, messages: [{ role: 'user', content: 'ping' }] }),
+    authHeader: (key) => ({ authorization: `Bearer ${key}` }),
+  },
+  perplexity: {
+    body: (model = 'sonar') => ({ model, max_tokens: 1, messages: [{ role: 'user', content: 'ping' }] }),
+    authHeader: (key) => ({ authorization: `Bearer ${key}` }),
+  },
+  xai: {
+    body: (model = 'grok-4.5') => ({ model, max_tokens: 1, messages: [{ role: 'user', content: 'ping' }] }),
+    authHeader: (key) => ({ authorization: `Bearer ${key}` }),
+  },
   voyage: {
+    // Вне каталога ОСОЗНАННО, причина — из замкнутого словаря, не строкой по месту.
+    outsideCatalog: PROBE_OUTSIDE_REASONS.EMBEDDINGS,
     keyEnv: ['VOYAGE_API_KEY', 'VOYAGEAI_API_KEY'],
     url: 'https://api.voyageai.com/v1/embeddings',
     body: () => ({ model: 'voyage-3.5-lite', input: ['ping'] }),
     authHeader: (key) => ({ Authorization: `Bearer ${key}` }),
   },
-  anthropic: {
-    keyEnv: ['ANTHROPIC_API_KEY'],
-    url: 'https://api.anthropic.com/v1/messages',
-    body: (model = 'claude-haiku-4-5-20251001') => ({ model, max_tokens: 1, messages: [{ role: 'user', content: 'ping' }] }),
-    authHeader: (key) => ({ 'x-api-key': key, 'anthropic-version': '2023-06-01' }),
-  },
-  openrouter: {
-    keyEnv: ['OPENROUTER_API_KEY'],
-    url: 'https://openrouter.ai/api/v1/chat/completions',
-    body: (model = 'anthropic/claude-haiku-4.5') => ({ model, max_tokens: 1, messages: [{ role: 'user', content: 'ping' }] }),
-    authHeader: (key) => ({ authorization: `Bearer ${key}` }),
-  },
 };
+
+/**
+ * Покрытие каталога зондом — ДВА НЕСИММЕТРИЧНЫХ множества (приговор архитектора):
+ * канал каталога без пробы — находка (пробел покрытия); проба вне каталога — не
+ * находка, а помеченная категория, и ярлык обязан объяснять причину.
+ *
+ * @param {Record<string, {defaultBaseUrl?: string, apiKeyEnv?: string}>} catalogProviders
+ * @param {Record<string, {outsideCatalog?: string}>} probeSpecs
+ * @returns {{ok: boolean, uncovered: string[], outsideCatalog: Array<{id: string, why: string}>, unlabeled: string[]}}
+ */
+export function auditProbeCoverage(catalogProviders, probeSpecs) {
+  const catalogIds = Object.keys(catalogProviders ?? {});
+  const probeIds = Object.keys(probeSpecs ?? {});
+  const uncovered = catalogIds.filter((id) => !probeIds.includes(id)).sort();
+  const outside = probeIds.filter((id) => !catalogIds.includes(id));
+  const known = new Set(Object.values(PROBE_OUTSIDE_REASONS));
+  const outsideCatalog = outside
+    .filter((id) => known.has(probeSpecs[id]?.outsideCatalog))
+    .map((id) => ({ id, why: String(probeSpecs[id].outsideCatalog) }))
+    .sort((a, b) => a.id.localeCompare(b.id));
+  // Проба вне каталога БЕЗ причины ИЗ СЛОВАРЯ — находка: молчаливое исключение
+  // неотличимо от забытого канала, а самодельный ярлык — от молчания.
+  const unlabeled = outside.filter((id) => !known.has(probeSpecs[id]?.outsideCatalog)).sort();
+  return { ok: uncovered.length === 0 && unlabeled.length === 0, uncovered, outsideCatalog, unlabeled };
+}
+
+/**
+ * Спецификации зондов = каталог ∘ тела проб. Одна копия знания на ось, join по id.
+ * @param {{providers?: Record<string, any>}} catalog
+ * @param {Record<string, any>} [probeSpecs]
+ */
+export function buildProviders(catalog, probeSpecs = PROBE_SPECS) {
+  const out = {};
+  for (const [id, spec] of Object.entries(probeSpecs)) {
+    const entry = catalog?.providers?.[id];
+    if (entry) {
+      const base = String(entry.defaultBaseUrl ?? '').replace(/\/$/u, '');
+      out[id] = {
+        // Имя ключа — ТОЛЬКО из каталога: он источник истины (приговор архитектора).
+        // Алиасы вроде XAI_API_KEY — миграционный долг инфры, зонду о них знать нечего.
+        keyEnv: [entry.apiKeyEnv],
+        url: `${base}${entry.path ?? ''}`,
+        body: spec.body,
+        authHeader: spec.authHeader,
+      };
+      continue;
+    }
+    // Вне каталога — своя пара url/keyEnv в самой пробе (и ярлык почему).
+    if (spec.url && spec.keyEnv) out[id] = { keyEnv: spec.keyEnv, url: spec.url, body: spec.body, authHeader: spec.authHeader };
+  }
+  return out;
+}
+
+/** Спецификации зондов: лёгкий запрос каждому провайдеру (каталог ∘ тела проб). */
+export const PROVIDERS = buildProviders(loadProviderCatalog());
 
 // ─── чистые функции (экспортируются для тестов) ──────────────────────────────────
 

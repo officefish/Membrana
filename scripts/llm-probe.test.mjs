@@ -75,3 +75,53 @@ test('PROVIDERS: у всех минимальный запрос (max_tokens 1 /
     assert.ok(spec.keyEnv.length >= 1, name);
   }
 });
+
+// ── Блок probe-covers-catalog (спринт instruments-honest-verdict) ──────────────
+// Предмет: зонд не отвечает «все зелёные», не проверив звено. 05.08 у него была
+// СВОЯ копия списка без xai — и «зелёный» доклад владельцу оказался неполной правдой.
+import { auditProbeCoverage, buildProviders, PROBE_OUTSIDE_REASONS, PROBE_SPECS } from './llm-probe.mjs';
+import { loadProviderCatalog } from './lib/llm-procedure-registry.mjs';
+
+test('живой каталог покрыт зондом полностью; исключения помечены причиной', () => {
+  const catalog = loadProviderCatalog();
+  const res = auditProbeCoverage(catalog.providers, PROBE_SPECS);
+  assert.deepEqual(res.uncovered, [], 'канал каталога без пробы — пробел покрытия');
+  assert.deepEqual(res.unlabeled, [], 'проба вне каталога без объяснения неотличима от забытого канала');
+  assert.ok(res.ok);
+  assert.ok(res.outsideCatalog.some((x) => x.id === 'voyage' && /embeddings/u.test(x.why)), 'voyage помечен причиной');
+});
+
+test('канал каталога без пробы — НАХОДКА (именно это молчало 05.08 про xai)', () => {
+  const res = auditProbeCoverage({ xai: { apiKeyEnv: 'X_AI_API_KEY' }, anthropic: {} }, { anthropic: {} });
+  assert.equal(res.ok, false);
+  assert.deepEqual(res.uncovered, ['xai']);
+});
+
+test('проба вне каталога: с ярлыком — категория, без ярлыка — находка (зуб не врёт в обе стороны)', () => {
+  const labeled = auditProbeCoverage({}, { voyage: { outsideCatalog: PROBE_OUTSIDE_REASONS.EMBEDDINGS } });
+  assert.equal(labeled.ok, true, 'помеченное исключение находкой не считается');
+  assert.deepEqual(labeled.outsideCatalog, [{ id: 'voyage', why: PROBE_OUTSIDE_REASONS.EMBEDDINGS }]);
+
+  const homemade = auditProbeCoverage({}, { rogue: { outsideCatalog: 'просто так' } });
+  assert.equal(homemade.ok, false, 'самодельный ярлык вне словаря — находка, как и молчание');
+  assert.deepEqual(homemade.unlabeled, ['rogue']);
+
+  const silent = auditProbeCoverage({}, { mystery: {} });
+  assert.equal(silent.ok, false, 'молчаливое исключение — находка');
+  assert.deepEqual(silent.unlabeled, ['mystery']);
+});
+
+test('имя ключа берётся ТОЛЬКО из каталога — алиасы инфры зонду неизвестны', () => {
+  const built = buildProviders(
+    { providers: { xai: { defaultBaseUrl: 'https://api.x.ai/', path: '/v1/chat/completions', apiKeyEnv: 'X_AI_API_KEY' } } },
+    { xai: { body: () => ({}), authHeader: () => ({}) } },
+  );
+  assert.deepEqual(built.xai.keyEnv, ['X_AI_API_KEY'], 'источник истины — каталог, не список алиасов');
+  assert.equal(built.xai.url, 'https://api.x.ai/v1/chat/completions', 'хвостовой слэш базы не удваивается');
+});
+
+test('вне каталога проба живёт своей парой url/keyEnv, а не выпадает молча', () => {
+  const built = buildProviders({ providers: {} }, PROBE_SPECS);
+  assert.ok(built.voyage, 'voyage остаётся проверяемым');
+  assert.equal(built.voyage.url, 'https://api.voyageai.com/v1/embeddings');
+});
