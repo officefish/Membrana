@@ -29,9 +29,15 @@ test('живая декларация честна: форма полна, у к
   assert.deepEqual(declarationFindings(LIVE), []);
 });
 
-test('объявлены все шесть снимков, найденных в дереве 30.07', () => {
-  const ids = LIVE.snapshots.map((s) => s.id).sort();
-  assert.deepEqual(ids, ['cases', 'evidence', 'nominations', 'precedents', 'tasks-readme', 'tooling-atlas']);
+// Проверяется НЕ-ПОТЕРЯ шести исторических, а не «ровно шесть»: декларация заведена
+// затем, чтобы новый снимок был строкой в ней, а не правкой кода, — и равенство
+// списков делало бы каждое законное пополнение красным зубом (поймано 05.08, когда
+// пара `workflow-pages` вошла седьмой). Что список не пуст и форма честна — соседние зубы.
+test('шесть снимков, найденных в дереве 30.07, из декларации не пропали', () => {
+  const ids = new Set(LIVE.snapshots.map((s) => s.id));
+  for (const id of ['cases', 'evidence', 'nominations', 'precedents', 'tasks-readme', 'tooling-atlas']) {
+    assert.ok(ids.has(id), `снимок «${id}» пропал из декларации — пары не удаляют молча`);
+  }
 });
 
 test('снимки, у которых проверки нет, названы поимённо и с причиной', () => {
@@ -46,7 +52,7 @@ test('кейсы и номинации схлопнуты в один прохо
   const plan = rebuildPlan(LIVE);
   const step = plan.find((p) => p.ids.includes('cases'));
   assert.ok(step.ids.includes('nominations'), 'номинации пересобираются тем же проходом');
-  assert.equal(plan.length, 5, 'шесть снимков, пять проходов');
+  assert.equal(plan.length, LIVE.snapshots.length - 1, 'кейсы и номинации делят проход — проходов на один меньше, чем снимков');
 });
 
 // ─── форма декларации ───────────────────────────────────────────────────────────
