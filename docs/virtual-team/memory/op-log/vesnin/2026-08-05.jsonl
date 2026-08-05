@@ -1,1 +1,4 @@
 {"ts":"2026-08-05T08:19:37.837Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-05T21:06:16.801Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-05T21:05:55.065Z","origin":"ask-persona"}
+{"ts":"2026-08-05T21:06:16.805Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-05T21:05:55.065Z","origin":"ask-persona"}
+{"ts":"2026-08-05T21:06:16.809Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-23-llm-procedure-channels-m5-sprint-ready","reason":"оттуда правило «DoD v1: code-review и consilium читают effective chain». Для e1-verdict-diagnosis это прямая аналогия: гейт обязан читать вердикт как трёхзначный, а не бинарный — иначе honest-pair из [4] RAG обещает пару, которой не проверяет.","origin":"ask-persona"}

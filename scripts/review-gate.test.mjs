@@ -127,3 +127,40 @@ test('renderScopeMarker ↔ scopeFromBody: писатель и читатель 
   assert.deepEqual(scopeFromBody(marker), { truncated: true, sentChars: 120_000 });
   assert.deepEqual(scopeFromBody(renderScopeMarker({ sentChars: null })), { truncated: true, sentChars: 0 });
 });
+
+// ─── диагноз «нет вердикта»: два разных случая (блок e1, вещдок PR #1713) ────────
+
+test('артефакта нет — прежний текст «ревью не найдено»', () => {
+  const d = reviewGateDecision({ headSha: SHA, verdict: null, artifact: { exists: false, path: 'docs/discussions/pr-1-code-review.md' } });
+  assert.equal(d.state, 'unknown');
+  assert.match(d.reason, /ревью тимлида по этому PR не найдено/u);
+});
+
+test('артефакт есть, маркера нет — диагноз называет ЭТО, а не «не найдено» (PR #1713)', () => {
+  const path = 'docs/discussions/pr-1713-code-review.md';
+  const d = reviewGateDecision({ headSha: SHA, verdict: null, artifact: { exists: true, path } });
+  assert.equal(d.state, 'unknown', 'исход прежний: закрытый список состояний не расширяется');
+  assert.match(d.reason, /маркер вердикта в нём не записан/u);
+  assert.match(d.reason, /перепрогнать/u);
+  assert.ok(d.reason.includes(path), 'путь артефакта назван — искать не надо');
+  assert.doesNotMatch(d.reason, /не найдено/u, 'старый текст лгал: файл лежит на диске');
+});
+
+test('без признака artifact поведение прежнее — старые вызовы не ломаются', () => {
+  const d = reviewGateDecision({ headSha: SHA, verdict: null });
+  assert.equal(d.state, 'unknown');
+  assert.match(d.reason, /ревью тимлида по этому PR не найдено/u);
+});
+
+test('признак artifact на вердикт НЕ влияет: есть вердикт — судит он', () => {
+  const withArtifact = { exists: true, path: 'docs/discussions/pr-2-code-review.md' };
+  assert.equal(reviewGateDecision({ headSha: SHA, verdict: verdict('LGTM'), artifact: withArtifact }).state, 'pass');
+  assert.equal(reviewGateDecision({ headSha: SHA, verdict: verdict('BLOCK'), artifact: withArtifact }).state, 'block');
+});
+
+test('--ensure догоняет оба случая: исход unknown, значит повтор законен', () => {
+  const noFile = reviewGateDecision({ headSha: SHA, verdict: null, artifact: { exists: false } });
+  const noMarker = reviewGateDecision({ headSha: SHA, verdict: null, artifact: { exists: true, path: 'p.md' } });
+  assert.ok(shouldEnsureReview(noFile.state, true) && shouldEnsureReview(noMarker.state, true));
+  assert.ok(!shouldEnsureReview(reviewGateDecision({ headSha: SHA, verdict: verdict('BLOCK') }).state, true), 'BLOCK не переспрашивается');
+});

@@ -1,3 +1,10 @@
 {"ts":"2026-08-05T08:19:37.764Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
 {"ts":"2026-08-05T12:55:15.610Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-05T12:55:07.025Z","origin":"ask-persona"}
 {"ts":"2026-08-05T12:55:15.614Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-05T12:55:07.025Z","origin":"ask-persona"}
+{"ts":"2026-08-05T16:23:30.864Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-05T16:23:11.938Z","origin":"ask-persona"}
+{"ts":"2026-08-05T16:23:30.901Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-05T16:23:11.938Z","origin":"ask-persona"}
+{"ts":"2026-08-05T16:23:30.964Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-08-03-one-shot-manifest-m3-volume","reason":"прямо про разницу «гейт vs стоп»: предикат S отказал на входе, значит не штампуем шот и не спорим — переводим в спринт с честной рамкой. Это и есть режим работы сейчас.","origin":"ask-persona"}
+{"ts":"2026-08-05T16:23:30.986Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-19-registry-relocation-m3-cold-storage","reason":"«сначала посылка, потом носитель»: два пункта ретро надо назвать посылками до того, как я назначу связку, иначе спринт растечётся.","origin":"ask-persona"}
+{"ts":"2026-08-05T16:24:21.910Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-05T16:24:11.602Z","origin":"ask-persona"}
+{"ts":"2026-08-05T16:24:21.916Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-05T16:24:11.602Z","origin":"ask-persona"}
+{"ts":"2026-08-05T16:24:21.920Z","persona":"tarasov","verb":"reject","ref":"tarasov-2026-08-05T16:24:11.602Z","reason":"облако — всё про рамки прошлых консилиумов, а здесь у меня на руках нет ни самих двух вопросов, ни брифа, ни ссылки на сеанс; всплывшие рамки не к чему прикладывать","origin":"ask-persona"}

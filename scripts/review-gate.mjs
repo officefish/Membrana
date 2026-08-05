@@ -87,7 +87,10 @@ function main() {
     enabled: process.env.REVIEW_GATE_OVERRIDE === '1',
     reason: process.env.REVIEW_GATE_OVERRIDE_REASON,
   };
-  let decision = reviewGateDecision({ headSha, verdict: parseVerdict(md), override, scope: scopeFromBody(md) });
+  // Признак артефакта — от скрипта: ядро в ФС не ходит, а «файла нет» и «файл есть без
+  // маркера» лечатся по-разному (блок e1 спринта review-honesty).
+  const artifactOf = () => ({ exists: existsSync(reviewPath), path: `docs/discussions/pr-${pr}-code-review.md` });
+  let decision = reviewGateDecision({ headSha, verdict: parseVerdict(md), override, scope: scopeFromBody(md), artifact: artifactOf() });
 
   // --ensure (#1465 Ф2): «ревью не прогонялось» — не повод останавливать шип и звать
   // человека переставить две команды руками. Последовательность gate → code-review:pr →
@@ -108,7 +111,7 @@ function main() {
       console.error(`  ⚠ ревью не отработало (${String(e.message ?? e).split('\n')[0]}) — вердикта нет, гейт остаётся закрытым`);
     }
     md = existsSync(reviewPath) ? readFileSync(reviewPath, 'utf8') : '';
-    decision = reviewGateDecision({ headSha, verdict: parseVerdict(md), override, scope: scopeFromBody(md) });
+    decision = reviewGateDecision({ headSha, verdict: parseVerdict(md), override, scope: scopeFromBody(md), artifact: artifactOf() });
   }
 
   const mark = decision.state === 'pass' ? '✓' : decision.state === 'block' ? '✗' : '?';
