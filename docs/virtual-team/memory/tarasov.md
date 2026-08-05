@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14396/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 271 (причины в op-log) -->
+Записей: 48 · бюджет 14366/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 272 (причины в op-log) -->
+
+### 2026-08-05 · позиция · team-evening-feedback
+
+> Магистраль дня — `agent-tooling-night-build` (owner-choice из замороженного топ-3). Артефакты дня согласованы между собой: STRATEGY_DAY, DAILY_STANDUP, MAIN_DAY_ISSUE, DAILY_CODE_REVIEW ссылаются на одну и ту же ось «санитария CI + класс болезни ночного билда», при этом […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
 
 ### 2026-08-03 · позиция · one-shot-manifest-m0-order
 
@@ -289,9 +295,3 @@
 > Планка матча узкая. M1 закрыт: сетка — versioned контракт, home истины — сервер, рельс `entitledTariffSkus` «не ломается», стыковка — наша. Три кандидата: поглощение, надстройка, проекция. Запрет двух источников истины — не предмет спора, а правило задания. Связка: Архитектор — […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/tariff-grid-m2-rail-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m3-tri
-
-> Положение: M1 дал wire и `unmetPreconditions[]`, M2 запретил dual-write; сегодня третьего исхода в рантайме нет — бейджи сценариев бинарны, у узлов палитры прав нет. Матч M3 — закрыть модель исхода и стык, не строить T7-сеть. Связка: Математик — предикаты и инварианты resolve; […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/tariff-grid-m3-tri-2026-07-29.md#reply-1`
