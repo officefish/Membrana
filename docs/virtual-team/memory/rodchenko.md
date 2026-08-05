@@ -6,7 +6,7 @@
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
 Записей: 48 · бюджет 14362/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 257 (причины в op-log) -->
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 258 (причины в op-log) -->
 
 ### 2026-08-03 · позиция · one-shot-manifest-m0-order
 
