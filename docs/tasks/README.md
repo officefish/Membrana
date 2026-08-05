@@ -43,7 +43,6 @@
 | `forecast-archive-wire` | Провод памяти персоны: запись «предсказание ↔ исход» доезжает в archive/<persona>.jsonl | M | [`FORECAST_ARCHIVE_WIRE_PROMPT.md`](../prompts/FORECAST_ARCHIVE_WIRE_PROMPT.md) | [#1590](https://github.com/officefish/Membrana/issues/1590) |
 | `meeting-evening-review-predicate` | Заседание: вечерний кадр — предмет ревью, порядок трёх документов, ворота качества | L | [`MEETING_BRIEF.md`](../meeting/evening-review-predicate/MEETING_BRIEF.md) | — |
 | `evening-chain-review-predicate` | Вечер: предмет ревью, порядок трёх документов, ворота качества (№6 хендофа, M→L по слову владельца 01.08) | L | [`EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md`](../prompts/EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md) | — |
-| `llm-transport-no-key-class` | llm-транспорт: развести «ключа нет» и «ключ отвергнут» | S | [`LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md`](../prompts/LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md) | [#1549](https://github.com/officefish/Membrana/issues/1549) |
 | `mfcc-compare-sprint` | MFCC-ядро: обвязка, детекторы и сравнительный прогон против гармонического на FFT | M | [`mfcc-compare-sprint.json`](../sprint/cut/mfcc-compare-sprint.json) | — |
 | `mfcc-lib-choice` | Выбор MFCC-библиотеки: обоснование до нарезки блоков | S | [`MFCC_LIB_CHOICE_PROMPT.md`](../prompts/MFCC_LIB_CHOICE_PROMPT.md) | — |
 | `network-container` | Контейнер network: словарь исходов, зонды обоими путями, предполётная проверка, снимок окружения для агентов | M | [`NETWORK_CONTAINER_PROMPT.md`](../prompts/NETWORK_CONTAINER_PROMPT.md) | [#1449](https://github.com/officefish/Membrana/issues/1449) |
@@ -255,6 +254,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `instruments-honest-verdict` | Приборы выносят вердикт, которому можно верить: ложные красные, свалка auth, слепой зонд | 2026-08-05 | [`INSTRUMENTS_HONEST_VERDICT_PROMPT.md`](../prompts/INSTRUMENTS_HONEST_VERDICT_PROMPT.md) | — | [карточка](./archive/instruments-honest-verdict.md) |
+| `llm-transport-no-key-class` | llm-транспорт: развести «ключа нет» и «ключ отвергнут» | 2026-08-05 | [`LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md`](../prompts/LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md) | #1549 (Issue открыт) | [карточка](./archive/llm-transport-no-key-class.md) |
 | `deploy-procedures` | Деплой как процедура с прогонами: две процедуры по серверам (office-VDS, media-VPS) + врезка журнала в боевые глаголы | 2026-08-04 | [`DEPLOY_PROCEDURES_PROMPT.md`](../prompts/DEPLOY_PROCEDURES_PROMPT.md) | — | [карточка](./archive/deploy-procedures.md) |
 | `archivarius-live-wiring` | Archivarius: соединить контейнер с жизнью — заливка сессий, Mongo-запросы, тракт, прод-контур | 2026-08-04 | [`ARCHIVARIUS_LIVE_WIRING_PROMPT.md`](../prompts/ARCHIVARIUS_LIVE_WIRING_PROMPT.md) | — | [карточка](./archive/archivarius-live-wiring.md) |
 | `run-journal-sequence-validator` | Валидатор монотонности sequence внутри runId — проверка уровня ленты журнала | 2026-08-04 | [`RUN_JOURNAL_SEQUENCE_VALIDATOR_PROMPT.md`](../prompts/RUN_JOURNAL_SEQUENCE_VALIDATOR_PROMPT.md) | #1683 | [карточка](./archive/run-journal-sequence-validator.md) |

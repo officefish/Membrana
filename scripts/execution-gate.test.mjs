@@ -722,3 +722,69 @@ test('шот E: одновременные метки НЕ нарушение �
   assert.deepEqual(tie3.disqualified, []);
   assert.equal(tie3.verdict, VERDICTS.HONEST_PAIR);
 });
+
+// ── Блок recut-door-alive (спринт instruments-honest-verdict, #1710) ──────────
+// Зуб на ПРОВОД, а не на предикат: прежние зубы двери звали judgeBlock напрямую с
+// готовым recutActs — они проверяли логику, а путь её наполнения не проверял никто,
+// и дверь не срабатывала ни разу на настоящем cut-плане (стабы несут sprintId нативно).
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+import { planKey } from './execution-gate.mjs';
+import { readActsTrail } from './lib/sprint-cut/acts-trail-reader.mjs';
+
+test('#1710 planKey: сырой cut-план читается по sprintId, адаптированный — по planId', () => {
+  assert.equal(planKey({ sprintId: 'my-sprint' }), 'my-sprint');
+  assert.equal(planKey({ planId: 'my-sprint' }), 'my-sprint', 'ИМЕННО этого не умел гейт — recutActs был пуст всегда');
+  assert.equal(planKey({ sprintId: 'raw', planId: 'adapted' }), 'raw', 'сырое имя приоритетнее');
+  assert.equal(planKey({ planId: '   ' }), null, 'пробелы именем не считаются');
+  assert.equal(planKey(null), null);
+});
+
+test('#1710 адаптер отдаёт planId и НЕ отдаёт sprintId — вот почему провод был мёртв', () => {
+  const raw = {
+    schema: 'sprint-cut/1',
+    sprintId: 'door-check',
+    mode: 'explicit-honest',
+    ratification: { by: 'owner', at: '2026-08-05T10:00:00+00:00', digest: 'd' },
+    window: { from: '2026-08-05T09:00:00+00:00', to: '2026-08-05T20:00:00+00:00' },
+    blocks: [{ blockId: 'b1', persona: 'dynin', context: 'dynin', revisionAt: '2026-08-05T09:30:00+00:00' }],
+  };
+  const { planRaw } = adaptCutPlan(raw);
+  assert.equal(planRaw.sprintId, undefined, 'поля sprintId в адаптированном плане нет вовсе');
+  assert.equal(planRaw.planId, 'door-check');
+  assert.equal(planKey(planRaw), 'door-check', 'предикат достаёт ключ там, где чтение по имени поля молчало');
+});
+
+test('#1710 лента актов ищется по ключу плана — путь наполнения recutActs жив', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'recut-door-'));
+  try {
+    mkdirSync(join(dir, 'trail'), { recursive: true });
+    const planPath = join(dir, 'door-check.json');
+    writeFileSync(planPath, '{}', 'utf8');
+    const act = { kind: 'recut_act', sprintId: 'door-check', subject: 'tarasov', at: '2026-08-05T10:30:00+00:00', ref: 'x', planDigest: null };
+    writeFileSync(join(dir, 'trail', 'door-check.jsonl'), `${JSON.stringify(act)}\n`, 'utf8');
+
+    // Ровно тот путь, которым идёт CLI: ключ плана → trail/<ключ>.jsonl
+    const key = planKey({ planId: 'door-check' });
+    const trailPath = resolve(planPath, '..', 'trail', `${key}.jsonl`);
+    const acts = readActsTrail(trailPath);
+    assert.equal(acts.ok, true);
+    const recuts = acts.acts.filter((a) => a.kind === 'recut_act' && a.sprintId === key);
+    assert.equal(recuts.length, 1, 'до правки ключ был undefined → лента не читалась → дверь мертва');
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test('#1710 fail-closed: третья форма плана не даёт trail/undefined.jsonl', () => {
+  // Замечание ревью: если появится форма без sprintId и без planId, ключ обязан быть
+  // ПУСТЫМ, а не «undefined» строкой — иначе гейт молча полезет в несуществующую ленту
+  // и вернёт «актов нет», что неотличимо от «перерезки не было».
+  for (const shape of [{ id: 'третья-форма' }, { name: 'x' }, {}, null, undefined, 'строка']) {
+    const key = planKey(shape);
+    assert.equal(key, null, `форма ${JSON.stringify(shape)} обязана дать null, а не имя ленты`);
+    assert.ok(!(typeof key === 'string' && key.trim() !== ''), 'страж CLI на таком ключе ленту не читает');
+  }
+});
