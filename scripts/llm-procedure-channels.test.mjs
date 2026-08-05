@@ -118,10 +118,16 @@ test('resolveEffective: builtin-fail when no chain', () => {
   );
 });
 
-test('classifyTransportError: rate_limit / auth', () => {
+test('classifyTransportError: rate_limit / подозрение вместо приговора (#1549)', () => {
   assert.equal(classifyTransportError(429), 'rate_limit');
-  assert.equal(classifyTransportError(401), 'auth');
   assert.equal(classifyTransportError(400, 'usage limit reached'), 'rate_limit');
+  // КОНТРАКТ СМЕНЁН спринтом instruments-honest-verdict (перерезка 05.08, ратифицирована):
+  // одиночный 401/403 при наличии ключа больше НЕ «auth». Вещдок: тот же неизменный ключ
+  // дал 401/403 в 13:00 и 200 в 18:18 — приговор по одному ответу был ложным фактом.
+  assert.equal(classifyTransportError(401, '', { hasKey: true }), 'transient');
+  assert.equal(classifyTransportError(403, '', { hasKey: true }), 'transient');
+  // Единственное состояние, наблюдаемое на 100%, — ключа нет в окружении.
+  assert.equal(classifyTransportError(0, '', { hasKey: false }), 'no_key');
 });
 
 test('buildProviderRequest: anthropic + openrouter + openai-compat shapes', () => {

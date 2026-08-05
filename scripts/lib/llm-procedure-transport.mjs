@@ -17,12 +17,71 @@ import { loadProviderCatalog } from './llm-procedure-registry.mjs';
  */
 
 /**
- * @param {number} status
- * @param {string} [bodyText]
+ * Внутренний словарь классов отказа (спринт instruments-honest-verdict, блок 2; #1549).
+ *
+ * ПОВОД. Прежний `auth` покрывал ДВА разных состояния — «ключа нет в окружении» и
+ * «провайдер сказал 401/403» — и агент 05.08 прочитал второе как первое: записал в
+ * HANDOFF «у звена нет ключа вовсе», тогда как ключ был на месте и валиден. Поймано
+ * словом владельца.
+ *
+ * ГЛАВНОЕ (приговор математика 05.08): **одиночный 401/403 — не факт отказа, а
+ * гипотеза с p<1**, и вещдок того же дня её опровергает: тот же неизменный ключ дал
+ * 401/403 в 13:00 и 200 в 18:18 без всякого вмешательства. Различить «ключ отвергнут»
+ * и «провайдер/посредник моргнул» ИЗНУТРИ ОДНОГО ОТВЕТА нельзя — потому одиночный
+ * 401/403 при наличии ключа классифицируется как `transient`, а класс подозрения
+ * `auth_denied_unstable` выносит только `confirmAuthDenial` по истории попыток.
+ * Вводить «rejected» по одному ответу значило бы ту же ложную точность, за которую
+ * этот спринт и взялся.
+ *
+ * @typedef {'no_key'|'auth_denied_unstable'|'transient'|'rate_limit'|'timeout'|'protocol'|'unknown'} TransportErrorClass
+ */
+export const TRANSPORT_ERROR_CLASSES = Object.freeze([
+  'no_key',
+  'auth_denied_unstable',
+  'transient',
+  'rate_limit',
+  'timeout',
+  'protocol',
+  'unknown',
+]);
+
+/**
+ * Отображение внутреннего класса в замороженный enum эмиссии
+ * (`ERROR_CLASSES` в `llm-procedure-emit.mjs` — контракт эмиттера, чужая зона:
+ * расширять его молча значит сломать инвариант «эмиттер отвергает вне-enum»).
+ * Названный долг: расширение enum до v2 — отдельный ход со словом владельца,
+ * после него адаптер снимается.
+ *
+ * @param {TransportErrorClass} internal
  * @returns {'auth'|'rate_limit'|'timeout'|'protocol'|'unknown'}
  */
-export function classifyTransportError(status, bodyText = '') {
-  if (status === 401 || status === 403) return 'auth';
+export function toEmitClass(internal) {
+  switch (internal) {
+    case 'no_key':
+    case 'auth_denied_unstable':
+      return 'auth';
+    case 'transient':
+      return 'protocol';
+    case 'rate_limit':
+    case 'timeout':
+    case 'protocol':
+      return internal;
+    default:
+      return 'unknown';
+  }
+}
+
+/**
+ * Класс отказа по ОДНОМУ ответу. Факт выносится только там, где он наблюдаем:
+ * отсутствие ключа видно до вызова (100%), остальное — по статусу и телу.
+ *
+ * @param {number} status
+ * @param {string} [bodyText]
+ * @param {{hasKey?: boolean}} [ctx] `hasKey:false` → ключа нет в окружении (наблюдаемо)
+ * @returns {TransportErrorClass}
+ */
+export function classifyTransportError(status, bodyText = '', ctx = {}) {
+  if (ctx.hasKey === false) return 'no_key';
   if (status === 429) return 'rate_limit';
   if (status === 408 || status === 504) return 'timeout';
   const lower = bodyText.toLowerCase();
@@ -30,9 +89,66 @@ export function classifyTransportError(status, bodyText = '') {
   if (lower.includes('credit') || lower.includes('usage limit') || lower.includes('quota')) {
     return 'rate_limit';
   }
+  // 401/403 при наличии ключа — ПОДОЗРЕНИЕ, не приговор: см. шапку словаря.
+  if (status === 401 || status === 403) return 'transient';
+  // Сеть, таймаут-исключение (status 0) и 5xx — сторона провайдера, не наша.
+  if (status === 0 || status >= 500) return 'transient';
   if (status >= 400 && status < 500) return 'protocol';
-  if (status >= 500) return 'protocol';
   return 'unknown';
+}
+
+/** Одна попытка звена для предиката подтверждения. */
+/** @typedef {{status: number, at?: number, keyFingerprint?: string}} TransportAttempt */
+
+/** Окно подтверждения отказа — ВРЕМЯ, не счётчик вызовов. Час. */
+export const DEFAULT_DENIAL_WINDOW_MS = 60 * 60 * 1000;
+/** Сколько отказов подряд делают подозрение подтверждённым. Порог вкуса, см. TODO. */
+export const DEFAULT_MIN_DENIALS = 2;
+
+/**
+ * Подтверждение отказа авторизации по ИСТОРИИ, а не по одному ответу.
+ *
+ * Приговор математика: класс подозрения выносится, когда N≥2 отказов 401/403 за окно T
+ * на ОДНОМ ключе И между ними не было успеха. Промежуточный 200 обнуляет подозрение —
+ * ровно случай 05.08, где между двумя наблюдениями ключ ответил успехом.
+ *
+ * ПРЕДИКАТ НАЗВАН ЧИСЛАМИ, не «скорее всего» (finding-1 ревью): окно измеряется ВРЕМЕНЕМ,
+ * умолчание `DEFAULT_DENIAL_WINDOW_MS` = 1 час; попытка — один вызов провайдера со своим
+ * `at` (epoch ms). Попытка без `at` считается лежащей в окне: история без времени —
+ * не повод молча выбрасывать наблюдение.
+ *
+ * TODO(асимметрия, finding-2 ревью): ложный плюс (объявили мёртвым живой ключ) дороже
+ * ложного минуса (лишний повтор на мёртвом) — сегодняшний день это и оплатил. Порог
+ * `DEFAULT_MIN_DENIALS = 2` пока ВКУС, а не расчёт; пересчитать по корпусу инцидентов
+ * вместе с расширением enum эмиссии до v2.
+ *
+ * @param {TransportAttempt[]} attempts попытки в порядке времени
+ * @param {{minDenials?: number, windowMs?: number, now?: number}} [opts]
+ * @returns {{confirmed: boolean, denials: number, reason: string, windowMs: number, minDenials: number}}
+ */
+export function confirmAuthDenial(attempts, opts = {}) {
+  const minDenials = opts.minDenials ?? DEFAULT_MIN_DENIALS;
+  const windowMs = opts.windowMs ?? DEFAULT_DENIAL_WINDOW_MS;
+  const now = opts.now ?? 0;
+  const inWindow = (attempts ?? []).filter((a) => (a?.at == null ? true : now - a.at <= windowMs));
+  let denials = 0;
+  for (const a of inWindow) {
+    if (a?.status === 401 || a?.status === 403) denials += 1;
+    else if (a?.status >= 200 && a?.status < 300) denials = 0; // успех гасит подозрение
+  }
+  if (denials >= minDenials) {
+    return { confirmed: true, denials, minDenials, windowMs, reason: `${denials} отказа 401/403 подряд без успеха в окне ${windowMs} мс` };
+  }
+  return {
+    confirmed: false,
+    denials,
+    minDenials,
+    windowMs,
+    reason:
+      denials === 0
+        ? 'отказов авторизации в окне нет'
+        : `отказов ${denials} из ${minDenials} — одиночный 401/403 фактом не считается (вещдок 05.08: тот же ключ ответил 200 через пять часов)`,
+  };
 }
 
 /**
@@ -226,7 +342,12 @@ export async function callProvider(args) {
       text: '',
       tokensIn: null,
       tokensOut: null,
-      errorClass: 'auth',
+      // Единственное состояние, наблюдаемое на 100%: ключа НЕТ в окружении. Прежде оно
+      // называлось `auth` наравне с отказом провайдера — и агент 05.08 прочитал одно
+      // как другое (#1549). Имя переменной названо в теле: искать было нечего.
+      errorClass: classifyTransportError(0, '', { hasKey: false }),
+      keyEnvName: entry.apiKeyEnv,
+      reason: `ключа нет в окружении: переменная ${entry.apiKeyEnv} пуста`,
       latencyMs: Math.max(0, now() - t0),
     };
   }
@@ -268,7 +389,7 @@ export async function callProvider(args) {
         text,
         tokensIn: null,
         tokensOut: null,
-        errorClass: classifyTransportError(status, text),
+        errorClass: classifyTransportError(status, text, { hasKey: true }),
         latencyMs,
         apiFormat: req.apiFormat,
       };
