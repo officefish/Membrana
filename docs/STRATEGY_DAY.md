@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-08-04T04:45:43.695Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-08-05T08:11:10.929Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -13,7 +13,7 @@
 
 ## Посылки горизонта (граф правды)
 
-_Кристаллов активно: 126 (owner: 80, derived: 46). Стратегия читает граф правды (S7)._
+_Кристаллов активно: 127 (owner: 81, derived: 46). Стратегия читает граф правды (S7)._
 
 - 🪨 `research-night-sensemaking-morning` — Внешние исследования проводятся ночью и осмысливаются утром; дневная стратегия делается утром. Вечер — подведение итогов…
 - 🪨 `weekly-strategy-frozen` — Недельная стратегия пока замораживается — уровень планирования слишком серьёзный, пока не разобрана дневная рутина.
@@ -23,7 +23,7 @@ _Кристаллов активно: 126 (owner: 80, derived: 46). Страте
 - 🪨 `credential-rotation-biweekly` — Ключи доступа перевыпускаются раз в две недели везде, где это возможно.
 - 🪨 `alex-sparring-answered` — Ответ Алексу на спарринг про «паспорт детектора» отправлен.
 - 🪨 `graph-first-step-572-dropped` — Первое в контуре доверия — пять вопросов, уронённых консилиумом 16.07 (#572): C1 гейты приходят позже факта, C2 должен л…
-- …ещё 72 owner-кристаллов
+- …ещё 73 owner-кристаллов
 
 ## Акценты (highlights)
 
@@ -43,6 +43,7 @@ _Кристаллов активно: 126 (owner: 80, derived: 46). Страте
 - ~~**Явные palette-узлы перехода лупов main↔alarm (vs рантайм-контракт)**~~ — `insight:insight-explicit-loop-switch-nodes` _(stale · 2026-07-12)_
 - ~~**Сопряжение с внешним эффектором C-UAS (ВИЗОР-МПВС, запрос Дениса)**~~ — `insight:insight-effector-cue-integration` _(stale · 2026-07-17)_
 - ~~**Серверные генераторы: конверты → чистые функции office, git-роутер с очередями**~~ — `insight:insight-server-generators-office` _(stale · 2026-07-21)_
+- **Портфель шотов всплывает в момент решения: акт Тарасова, выбор кандидатов, форкаст↔факт после мерджа** — `insight:insight-one-shot-portfolio-surfacing`
 - **Депо: комната недельного охвата — глубокие аудиты и санитарные работы отдельным контуром** — `insight:insight-depot-weekly-room`
 - ~~**Issue closure must account for every active registry child**~~ — `insight:insight-ghost-task-closure-invariant` _(stale · 2026-06-29)_
 - ~~**Версионируемые тулинг-киты: наборы умений агента под задачу**~~ — `insight:insight-tooling-kits` _(stale · 2026-07-19)_
@@ -51,7 +52,7 @@ _Кристаллов активно: 126 (owner: 80, derived: 46). Страте
 - **Память процедур: показывается, а не запрашивается; вовлечённость числом, а не подтверждением** — `insight:insight-procedure-memory-shown-not-asked`
 - **Оркестрация процедур через n8n: кожух и производный рендер поверх git как единственного источника правды** — `insight:insight-procedures-orchestration-n8n`
 - ~~**Токены правды: владельческие факты как источник истины для ритуала**~~ — `insight:insight-truth-tokens-owner-facts` _(stale · 2026-07-16)_
-- **Контейнер прецедентов + мастерская к нему** — `insight:insight-precedent-container`
+- ~~**Контейнер прецедентов + мастерская к нему**~~ — `insight:insight-precedent-container` _(stale · 2026-07-22)_
 - **Второй тариф: MFCC-спектр + нейроанализ спектрограмм машинным зрением, разделение продукта по тарифам** — `insight:insight-spectrum-tiers`
 - **Повестка заседания — выписка, а не проза председателя: машинные факты с id и зуб на посылки** — `insight:insight-meeting-agenda-as-extract`
 - ~~**Dual-density UI: operator vs engineer mode**~~ — `insight:insight-rodchenko-operator-density-mode` _(stale · 2026-06-25)_
@@ -61,7 +62,7 @@ _Кристаллов активно: 126 (owner: 80, derived: 46). Страте
 - ~~**Вечерний ритуал производит три опорных документа — топливо для агентов, симметрично дневному**~~ — `insight:insight-evening-ritual-three-fuel-documents` _(stale · 2026-07-17)_
 - ~~**Нет субъекта действия: команда заявлена, но не исполняет**~~ — `insight:insight-acting-subject-missing` _(stale · 2026-07-18)_
 - ~~**Канонический FSM сессии recorder (anti-L18)**~~ — `insight:insight-kuryokhin-recorder-session-fsm` _(stale · 2026-06-25)_
-- **Роутинг изменений: сессии без push, заявки-патчи, office-очередь, именные гейты** — `insight:insight-change-routing-office`
+- ~~**Роутинг изменений: сессии без push, заявки-патчи, office-очередь, именные гейты**~~ — `insight:insight-change-routing-office` _(stale · 2026-07-22)_
 - ~~**Акустические характеристики 7 классов звука free-v1: discriminative FFT features**~~ — `insight:insight-free-v1-acoustic-classes` _(stale · 2026-06-30)_
 - **Счёт вмешательств владельца: суверенные против компенсирующих** — `insight:insight-owner-intervention-ledger`
 - ~~**Линза Ожегова — кроссагентский скилл верификации ЧИСТОТЫ РЕЧИ (не грамотности)**~~ — `insight:insight-ozhegov-lens-speech-purity-skill` _(stale · 2026-07-17)_
@@ -79,7 +80,7 @@ _Кристаллов активно: 126 (owner: 80, derived: 46). Страте
 - ~~**Собственный полевой корпус: спецификация трека и ежедневная рутина сбора**~~ — `insight:insight-own-field-corpus-single-spec` _(stale · 2026-07-18)_
 - ~~**Мост adopted insight → week epic (LGTM gate)**~~ — `insight:insight-vesnin-adopted-epic-bridge` _(stale · 2026-06-25)_
 - ~~**Архивация сессий AI-агентов**~~ — `insight:insight-sessions-archive` _(stale · 2026-06-28)_
-- **Публикация документации туллинга на docs.mmbrn.tech (Mintlify custom domain)** — `insight:insight-docs-custom-domain`
+- ~~**Публикация документации туллинга на docs.mmbrn.tech (Mintlify custom domain)**~~ — `insight:insight-docs-custom-domain` _(stale · 2026-07-22)_
 - ~~**Hindsight — обучающаяся память агента между сессиями**~~ — `insight:insight-mcp-hindsight-agent-memory` _(stale · 2026-06-27)_
 - ~~**ServerFunctionRegistry в @membrana/core**~~ — `insight:insight-ozhegov-server-function-registry` _(stale · 2026-06-25)_
 - **Контракт намерения: граф правды ↔ мостик, треугольник + мана + твёрдость** — `insight:insight-intent-contract-graph-bridge`
@@ -90,7 +91,7 @@ _Кристаллов активно: 126 (owner: 80, derived: 46). Страте
 
 ## Provenance каналов
 
-- ✅ `insight` — жив, элементов: 55
+- ✅ `insight` — жив, элементов: 56
 - ✅ `research` — жив, элементов: 2
 
 > Стратегия описывает акцент (`highlight`), но не назначает исполнителей и не пишет DoD:

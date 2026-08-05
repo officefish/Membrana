@@ -1,16 +1,15 @@
 {
   "magistralOptions": [
+    "detector-scoreboard",
     "agent-tooling-night-build",
-    "angelina-hostess-impl",
     "archivarius-sessions-container"
   ],
-  "frozenDigest": "4f800c4486c1809dbde87cd90db3a45f73d2046ea27ad6080d128d13919bc033",
-  "magistral": "archivarius-sessions-container",
+  "frozenDigest": "74f6d21618545bee82979de1a1589920bba96469768d0d1dd8a48820ae3dc005",
+  "magistral": "agent-tooling-night-build",
   "swallow": {
-    "draftDigest": "3bf4a84976b1e3cf93611d52b4f8984b819cdd71673a30de18ce0329522460bd",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-04.md",
-    "ownerAck": true,
-    "gate": "evening:partner-swallow"
+    "draftDigest": "f1316a3fb90a98f3df98239cfdd3d2c68161b2bfe71b0843798ad7aafbe78f87",
+    "draftFile": "docs/comms/drafts/swallow-morning-2026-08-05.md",
+    "ownerAck": true
   },
-  "day": "2026-08-04"
+  "day": "2026-08-05"
 }
