@@ -59,6 +59,60 @@ export function planPrepushTypecheck(changedFiles, opts = {}) {
   return { mode: 'scoped', dirs };
 }
 
+/** Режимы, выносящие МЕЖПАКЕТНЫЙ вердикт — только они понижаются при чужой резолюции. */
+export const DOWNGRADABLE_MODES = Object.freeze(['full', 'scoped']);
+
+/** Судья по типам, когда локальный вердикт недостоверен. Литерал, не строка по месту. */
+export const TYPES_JUDGE = 'CI';
+
+/**
+ * Понижение плана под недостоверную резолюцию (спринт instruments-honest-verdict, блок 1; #1725).
+ *
+ * ЗАКОН СПРИНТА: вердикт, опирающийся на недостоверный вход, не выносится — он
+ * отказывается, называя причину. Хук УЖЕ мерил чужую резолюцию и печатал «межпакетный
+ * typecheck локально недостоверен» — и всё равно судил: 05.08 это свалило отгрузку
+ * ложным красным (протухший `dist` соседнего дерева; своих пакетов 2 из 37).
+ *
+ * ДВА ПРЕДМЕТА НЕ СМЕШИВАЮТСЯ (приговор структурщика): `planPrepushTypecheck` знает
+ * ЧТО проверять (docs-триггер, скоуп) и о резолюции не подозревает; этот слой знает
+ * ДОВЕРИЕ к артефактам и о docs-триггере не подозревает. Композит — `planPrepushEffective`.
+ *
+ * «Свежий чужой dist» от «протухшего» СОЗНАТЕЛЬНО не различается: у хука нет способа
+ * доказать свежесть без пересборки соседа, а пересборка соседа — уже не pre-push.
+ * Различение было бы ложной точностью.
+ *
+ * СЛОВАРЬ (оговорка структурщика 05.08 — термин не должен поплыть у потребителей):
+ * `planPrepushTypecheck` — **план по коду** (что проверять: docs-триггер, скоуп);
+ * `scopeUnderResolution` — **накладка резолюции** (можно ли этому вердикту верить);
+ * `planPrepushEffective` — **итоговый план** (композиция первых двух).
+ *
+ * @typedef {'full'|'scoped'} DowngradableMode режимы, выносящие межпакетный вердикт
+ * @param {{mode: 'skip'|'full'|'scoped', reason?: string, dirs?: string[]}} plan
+ * @param {{state?: string, detail?: string}} [resolution]
+ * @returns {{mode: 'skip'|'full'|'scoped', reason?: string, dirs?: string[], downgradedFrom?: DowngradableMode}}
+ */
+export function scopeUnderResolution(plan, resolution = {}) {
+  if (resolution.state !== RESOLUTION_STATES.FOREIGN) return plan;
+  if (!DOWNGRADABLE_MODES.includes(plan.mode)) return plan;
+  const detail = resolution.detail ? ` (${resolution.detail})` : '';
+  return {
+    mode: 'skip',
+    downgradedFrom: plan.mode,
+    reason:
+      `резолюция пакетов чужая${detail} — межпакетный вердикт недостоверен по построению ` +
+      `и потому НЕ выносится (#1725). Судья по типам — ${TYPES_JUDGE} на чистом дереве`,
+  };
+}
+
+/**
+ * Полный план pre-push: что проверять ∘ можно ли этому верить.
+ * @param {string[]} changedFiles
+ * @param {{ packageDirs?: string[], globalConfigs?: string[], resolution?: {state?: string, detail?: string} }} [opts]
+ */
+export function planPrepushEffective(changedFiles, opts = {}) {
+  return scopeUnderResolution(planPrepushTypecheck(changedFiles, opts), opts.resolution ?? {});
+}
+
 const WORKSPACE_GLOBS = ['packages', 'packages/libs', 'packages/services', 'packages/services/detectors', 'apps'];
 
 function discoverPackageDirs(root = process.cwd()) {
@@ -94,9 +148,11 @@ function changedVsMain() {
 }
 
 export function main() {
-  // #1647: перед вердиктом — строка резолюции пакетов. Красный typecheck при чужой
-  // резолюции — возможно, ложный (tsc читает чужой dist), и оператор обязан это видеть
-  // ДО того, как пойдёт чинить ошибку, которой нет. Exit этой строкой не меняется.
+  // #1647 дал строку-предупреждение, #1725 — следствие: при чужой резолюции межпакетный
+  // вердикт больше не выносится вовсе (см. scopeUnderResolution). Раньше хук печатал
+  // «локально недостоверен» и всё равно судил — предупреждение без последствия.
+  /** @type {{state?: string, detail?: string}} */
+  let resolution = {};
   try {
     const root = realpathSync(process.cwd());
     const dir = join(root, 'node_modules', '@membrana');
@@ -111,6 +167,7 @@ export function main() {
       : [];
     const res = classifyResolution(root, packages);
     if (res.state !== RESOLUTION_STATES.OWN) console.log(`pre-push [#1647]: ${formatResolution(res)}`);
+    resolution = { state: res.state, detail: `своих ${res.own} из ${res.total}` };
   } catch {
     /* сторож не вправе уронить push своей осечкой — его предмет чужая резолюция, не собственная живучесть */
   }
@@ -121,9 +178,10 @@ export function main() {
     execYarn(['typecheck']);
     return 0;
   }
-  const plan = planPrepushTypecheck(changed, { packageDirs: discoverPackageDirs() });
+  const plan = planPrepushEffective(changed, { packageDirs: discoverPackageDirs(), resolution });
   if (plan.mode === 'skip') {
-    console.log(`pre-push [cg6/NB5]: typecheck пропущен — ${plan.reason}`);
+    const tag = plan.downgradedFrom ? '#1725' : 'cg6/NB5';
+    console.log(`pre-push [${tag}]: typecheck пропущен — ${plan.reason}`);
     return 0;
   }
   if (plan.mode === 'full') {
