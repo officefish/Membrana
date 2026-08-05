@@ -90,6 +90,22 @@
         "--check"
       ],
       "note": "уже стоит зубом в проверках ветки"
+    },
+    {
+      "id": "workflow-pages",
+      "snapshot": "apps/docs-harness/procedures/*.mdx + apps/docs-harness/docs.json (навигация)",
+      "source": "docs/procedures/registry.json, docs/procedures/*/MANIFEST.json",
+      "rebuildCmd": [
+        "node",
+        "scripts/mintlify-workflow-docs.mjs",
+        "--render"
+      ],
+      "checkCmd": [
+        "node",
+        "scripts/mintlify-workflow-docs.mjs",
+        "--check"
+      ],
+      "note": "новая процедура в реестре рождает страницу и строку навигации; 04.08 отсутствие пары стоило круга красного CI на PR #1717 — зуб «generated workflow pages and navigation are in sync» ловил дрейф только на сервере"
     }
   ],
   "//exit-semantics": "Часть инструментов возвращает ненулевой код как ЧИСЛО НАХОДОК, а не как отказ (precedent:register --rebuild отдаёт число дефектных записей, снимок при этом пересобран). Такие объявляют rebuildFindingsExit: true — пересборщик тогда печатает «пересобрано с находками», а не «отказ». Скрывать находки при этом запрещено."
