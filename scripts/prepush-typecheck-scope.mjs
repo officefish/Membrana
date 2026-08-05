@@ -86,7 +86,9 @@ export const TYPES_JUDGE = 'CI';
  * `scopeUnderResolution` — **накладка резолюции** (можно ли этому вердикту верить);
  * `planPrepushEffective` — **итоговый план** (композиция первых двух).
  *
- * @typedef {'full'|'scoped'} DowngradableMode режимы, выносящие межпакетный вердикт
+ * @typedef {'full'|'scoped'} DowngradableMode режимы, выносящие межпакетный вердикт;
+ *   инвариант: значения DowngradableMode = DOWNGRADABLE_MODES, и `downgradedFrom` может
+ *   быть ТОЛЬКО одним из них — читается по типу, без чтения тела функции
  * @param {{mode: 'skip'|'full'|'scoped', reason?: string, dirs?: string[]}} plan
  * @param {{state?: string, detail?: string}} [resolution]
  * @returns {{mode: 'skip'|'full'|'scoped', reason?: string, dirs?: string[], downgradedFrom?: DowngradableMode}}
