@@ -3,3 +3,8 @@
 {"ts":"2026-08-06T07:07:35.097Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-06T07:07:02.212Z","origin":"ask-persona"}
 {"ts":"2026-08-06T07:07:35.098Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-05-16-single-node-detection-first","reason":"там я ровно про это спрашивал: «что внутри контракта, приходящего в чистую функцию» — та же болезнь может воспроизвестись в state, приходящем в planTree.","origin":"ask-persona"}
 {"ts":"2026-08-06T07:07:35.099Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-03-one-shot-manifest-m4-homogeneity","reason":"предикат-функция как единственный источник классификации (там pathFamily, здесь isDirty/isBehind/…); тот же паттерн: исполнитель не «решает», он читает.","origin":"ask-persona"}
+{"ts":"2026-08-06T09:13:50.283Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-06T09:13:26.025Z","origin":"ask-persona"}
+{"ts":"2026-08-06T09:13:50.289Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-06T09:13:26.025Z","origin":"ask-persona"}
+{"ts":"2026-08-06T09:27:11.697Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-06T09:26:46.377Z","origin":"ask-persona"}
+{"ts":"2026-08-06T09:27:11.711Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-06T09:26:46.377Z","origin":"ask-persona"}
+{"ts":"2026-08-06T09:27:11.719Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-15-alex-critics-detector-characterization","reason":"там я настаивал, что ROC-AUC считается честно только на размеченном корпусе с score∈[0,1] и что перекрытие интервалов = отсутствие эффекта; ровно эта рамка применяется здесь к вопросу «растёт ли качество с объёмом».","origin":"ask-persona"}
