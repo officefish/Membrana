@@ -104,7 +104,6 @@
 | `angelina-orchestrator-prompt` | Ресёрч: промпт агента-оркестратора (процедура оркестрации) | S | [`ANGELINA_ORCHESTRATOR_PROMPT_PROMPT.md`](../prompts/ANGELINA_ORCHESTRATOR_PROMPT_PROMPT.md) | — |
 | `research-query-hygiene` | Гигиена research-запроса: ярлык рубрики уезжает в текст вопроса | S | [`RESEARCH_QUERY_HYGIENE_PROMPT.md`](../prompts/RESEARCH_QUERY_HYGIENE_PROMPT.md) | — |
 | `detector-scoreboard` | Витрина качества детекции: плагин модуля микрофона + панель | L | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
-| `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `scoreboard-dataset-ladder` | Ф3: четыре набора из внешнего массива с дедупом обеих сторон | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `scoreboard-neural-ladder` | Ф4: лестница нейросети на четырёх наборах | M | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
 | `scoreboard-panel-publish` | Ф5: публикация таблицы на панель mmbrn.tech | S | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — |
@@ -247,6 +246,7 @@
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
 | `review-honesty` | Честность ревью: гейт различает три исхода вердикта, oversized читает снятие по commit-status | 2026-08-06 | [`REVIEW_HONESTY_PROMPT.md`](../prompts/REVIEW_HONESTY_PROMPT.md) | — | [карточка](./archive/review-honesty.md) |
+| `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | 2026-08-06 | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — | [карточка](./archive/scoreboard-spectral-ladder.md) |
 | `agent-tooling-night-build` | Night Build: инструменты агента — pr:ship, build:affected, wire-sync, хуки, хелперы, скиллы | 2026-08-06 | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/agent-tooling-night-build.md) |
 | `nb-at-0-gate` | NB0: gate — scoped CI baseline + заморозка конвенций (кода нет) | 2026-08-06 | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/nb-at-0-gate.md) |
 | `nb-at-1-gitignore-review` | NB1: .gitignore ревью-артефакта uncommitted-code-review.md | 2026-08-06 | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/nb-at-1-gitignore-review.md) |

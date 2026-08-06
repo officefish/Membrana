@@ -5371,10 +5371,10 @@
       "promptPath": "docs/prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md",
       "githubIssue": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-18",
-      "archivedAt": null,
+      "archivedAt": "2026-08-06",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "dynin",
@@ -5382,7 +5382,7 @@
       ],
       "insightId": "insight-dads-detector-integration",
       "notes": "Наборы разного объёма из своих 253; тест неподвижен и по группам записи; параметры шаблонов подбираются только на обучающей части (механика в scripts/lab-learning-curve.mjs). В таблице видно, разваливаются ли цифры с ростом выборки. ПАУЗА: лестница спектрального видна в витрине.",
-      "archiveNotes": null,
+      "archiveNotes": "Ф2 эпика detector-scoreboard прожита спринтом membrana-local-sprint (ратифицирован владельцем 06.08 09:12Z), PR #1749 merged после устранения BLOCK ревью. g1: scripts/lib/ladder-report.mjs — версионируемый отчёт spectral-ladder-report@1.0.0 (штуки, знаменатели обоих классов, интервал с методом wilson@0.95, params.threshold, оба метода сборки, selection судит по train, rocAucCi=null честно); знаменатели теста сверяются броском. g2: витрина читает отчёт импортом, лестница отдельной секцией, перекрытие интервалов соседних ступеней ТОГО ЖЕ метода считается кодом, вырожденная ступень помечена, вердикт вынесен словом; 25/25 зубов, typecheck строгий чист. g3: живой прогон на v0.2 — 8 ступеней в отчёте. ВЕРДИКТ ПАУЗЫ Ф2 (Дынин): замер НЕ различает ступени — precision 52-57%, recall 96-100%, AUC 0.75-0.83 без монотонности, интервалы Уилсона перекрываются на всех соседних; envelope@10 вырожден (сработал на всё). Ступени промпта 40/60 недостижимы: в обучающем пуле 38 дронов из 63 — лестница 10/20/30/38. Для вывода о росте нужен пул >=60 дронов либо кросс-валидация по группам — вход в Ф3. Гейт 3/3 honest_pair. ПЕРЕМЕР: строка 3 хендофа просила Ф1, но Ф1 закрыта 18.07.",
       "githubIssueClosedAt": null,
       "parentEpic": "detector-scoreboard"
     },
