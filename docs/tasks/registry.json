@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "archivarius-mongo-backup",
+      "title": "Бэкап тома archivarius-mongo-data: восстановимость проверяемая, а не объявленная",
+      "promptPath": "docs/prompts/ARCHIVARIUS_MONGO_BACKUP_PROMPT.md",
+      "githubIssue": 1714,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-06",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "dynin"
+      ],
+      "notes": "Остаток #1714 после объявления сервиса в манифесте (PR #1747, 06.08). Обзор «что уже есть»: бэкапа нет никакого — ноль глаголов backup/dump/restore по репозиторию. Пять развилок нарезки в промпте. Аутентификация Mongo вне предмета — отдельная иссью. Серверная зона: шотом нельзя, исполнение под owner-гейтом.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "worktrees-align",
       "title": "worktrees:align — WIP-снимок грязных, merge вместо ff-only, авто-abort конфликта, отчёт",
       "promptPath": "docs/prompts/WORKTREES_ALIGN_PROMPT.md",
