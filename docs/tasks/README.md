@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `pr-ship-post-merge-landing` | pr:ship после мерджа: дерево на своей ветке вровень со стволом, а не на main | M | [`PR_SHIP_POST_MERGE_LANDING_PROMPT.md`](../prompts/PR_SHIP_POST_MERGE_LANDING_PROMPT.md) | [#1759](https://github.com/officefish/Membrana/issues/1759) |
 | `lazy-close-scope` | Ленивое закрытие журнала получает явную область: параллельные спринты не топят друг друга (#1705) | S | [`LAZY_CLOSE_SCOPE_PROMPT.md`](../prompts/LAZY_CLOSE_SCOPE_PROMPT.md) | [#1705](https://github.com/officefish/Membrana/issues/1705) |
 | `archivarius-mongo-backup` | Бэкап тома archivarius-mongo-data: восстановимость проверяемая, а не объявленная | M | [`ARCHIVARIUS_MONGO_BACKUP_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_BACKUP_PROMPT.md) | [#1714](https://github.com/officefish/Membrana/issues/1714) |
 | `worktrees-align` | worktrees:align — WIP-снимок грязных, merge вместо ff-only, авто-abort конфликта, отчёт | M | [`WORKTREES_ALIGN_PROMPT.md`](../prompts/WORKTREES_ALIGN_PROMPT.md) | [#1738](https://github.com/officefish/Membrana/issues/1738) |

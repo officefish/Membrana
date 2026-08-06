@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14341/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 259 (причины в op-log) -->
+Записей: 48 · бюджет 14399/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 260 (причины в op-log) -->
+
+### 2026-08-06 · позиция · team-evening-feedback
+
+> — Оценка артефактов: Ф2 витрины закрыта плагином `apps/client/src/plugins/mic-detector-scoreboard/` (`DetectorScoreboardPanel.tsx` + `ladderData.ts` + тест) — это моя ткань, форма изделия соблюдена (плагин, не стенд), таблица на измеренном. DAILY_CODE_REVIEW правильно отметил […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
 
 ### 2026-08-05 · позиция · team-evening-feedback
 
@@ -284,14 +290,8 @@
 
 — источник: `docs/seanses/tariff-grid-m0-order-2026-07-29.md#reply-1`
 
-### 2026-07-29 · позиция · tariff-grid-m1-form
+### 2026-07-29 · позиция · team-evening-feedback
 
-> С витрины кабинета/борда потребитель читает итог: «есть / нет / число / каталог», не внутренний kind. Но форма данных обязана не врать витрине: квота — число с единицей, инструмент — on/locked, возможность — «нужна сеть», не серый бейдж без reason. Не рисую layout. Требую в […] _(реплик в сеансе: 7)_
+> **Оценка артефактов:** S7 (витрина с затемнением) — UI-коммит, остальное models/logic. tariffVitrineViewModel — React+TS по DESIGN.md? Не видно дизайн-контракта. **Итоги дня:** tariffVitrineViewModel — экран витрины тарифов: затемнение с предупреждением (S7), а не сокрытие — […]
 
-— источник: `docs/seanses/tariff-grid-m1-form-2026-07-29.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m2a-scope
-
-> На панели v1 список процедур = filter meters∧routingEnabled, не «весь registry». Иначе владелец видит серые тумблеры. Витрина честная: два ряда. Расширение — новый ряд после PR. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m2a-scope-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-07-29.md#reply-1`

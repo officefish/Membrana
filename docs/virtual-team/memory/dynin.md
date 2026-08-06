@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14341/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 259 (причины в op-log) -->
+Записей: 48 · бюджет 14399/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 260 (причины в op-log) -->
+
+### 2026-08-06 · позиция · team-evening-feedback
+
+> — Оценка артефактов: Ф2 витрины (`scoreboard-spectral-ladder`, #1749) закрыта на измеренных числах из `dads-lab-report-2026-07-18.md` и `latest.json` — без новых замеров. Регрессионный зуб flux (#1750) вышел с известной дельтой спектра, а не «величиной нужного порядка» — это […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
 
 ### 2026-08-05 · позиция · team-evening-feedback
 
@@ -284,14 +290,8 @@
 
 — источник: `docs/seanses/tariff-grid-m0-order-2026-07-29.md#reply-1`
 
-### 2026-07-29 · позиция · tariff-grid-m1-form
+### 2026-07-29 · позиция · team-evening-feedback
 
-> Формализую без UI. Тариф T ∈ {sensor, checkpoint, observatory} — закрытое множество SKU (решение владельца). Право — типизированная запись R с родом kind ∈ K, |K|=5. Сетка G — функция G: T × Id(R) → Entitlement, где Entitlement — размеченное объединение по kind, не «всё number». […] _(реплик в сеансе: 7)_
+> **Оценка артефактов:** Математического ядра (FFT/вейвлеты/спектр) за день не было — day-plan и ревью это фиксируют. **Итоги дня:** Чисто продуктовый день — tariff-grid, network, ship. Для математика вклад: предикаты квот (S4) — исчерпание как fail-closed; предикат готовности […]
 
-— источник: `docs/seanses/tariff-grid-m1-form-2026-07-29.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
-
-> Форма: `effective.chain: ProviderId[]` непустой; try i=0..n-1; emit event per attempt; успех → break; все fail → exit≠0. Single provider = chain длины 1 (совместимо с C1). _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m3c-fallback-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-07-29.md#reply-1`

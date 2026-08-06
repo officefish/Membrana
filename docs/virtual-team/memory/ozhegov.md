@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14394/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 259 (причины в op-log) -->
+Записей: 48 · бюджет 14393/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 260 (причины в op-log) -->
+
+### 2026-08-06 · позиция · team-evening-feedback
+
+> Три спринта закрылись в один день (`instruments-honest-verdict`, `review-honesty`, `scoreboard-spectral-ladder`) — это редкая плотность, и все три коснулись общей ткани: приборы, гейты, витрина. `worktrees:align` (#1740) добавил защитный контур: WIP-снимок грязных, merge вместо […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
 
 ### 2026-08-05 · позиция · team-evening-feedback
 
@@ -284,14 +290,8 @@
 
 — источник: `docs/seanses/tariff-grid-m0-order-2026-07-29.md#reply-1`
 
-### 2026-07-29 · позиция · tariff-grid-m1-form
+### 2026-07-29 · позиция · tariff-grid-m2-rail
 
-> Леммы, иначе синонимы. **Тарифная сетка** — декларативный носитель entitlements, не UI-таблица и не разрозненные поля `User`/`Membrane`. **Entitlement** — одна словарная статья: id + kind + payload + (опц.) preconditionRef. **Источник истины** — серверный артефакт (конфиг/модуль […] _(реплик в сеансе: 7)_
+> Леммы, иначе синонимы. **Рельс** — замкнутый путь носителей: Prisma-поле → node-realtime → wire DTO → `device-board-module-config.entitledTariffSkus` → `ClientUserCaseCatalogService` → gate бейджей. **Сетка** — `TariffGridDocument` (registry + matrix), home на сервере. […] _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/tariff-grid-m1-form-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** Модульная структура tariff-grid — отличная: S0 (декларация) → S1 (матрица) → S2–S3 (read/write split) → S4 (квоты) → S5–S6 (гейты) → S7 (витрина) → S8 (смена) → S9 (предикат). Каждый S — отдельный файл/модуль, нет пересечений. network-container — […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-29.md#reply-1`
+— источник: `docs/seanses/tariff-grid-m2-rail-2026-07-29.md#reply-1`
