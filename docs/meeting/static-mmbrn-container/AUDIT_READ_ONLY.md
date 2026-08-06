@@ -1878,3 +1878,59 @@ Run5 — последняя внешняя попытка M5. Она запре�
 
 Машинный `meeting:audit` также имеет структурный PASS. Run5 допускается только после
 отдельного разрешения владельца. При его BLOCK внешний run6 не допускается.
+
+## Постаудит M5 — run5
+
+После отдельного разрешения владельца последняя внешняя попытка произведена
+`anthropic/claude-sonnet-4-6`. Carrier содержит 43 ролевые реплики: Верстальщик 8,
+остальные роли по 7. DoD оставлен внешнему аудиту, footer после него отсутствует.
+
+Машинный `meeting:audit` дал **BLOCK**: визуальный heading `Список посылок` оказался перед
+вложенными bold-heading и не образовал принимаемого телом валидатора списка. Независимый
+смысловой постаудит также дал **BLOCK** по 11 группам:
+
+- `read-ref` возвращает `canonicalRef`, а не только `location.ref`;
+- engine fetch, downloadable package, Panel/M4 write flow, native API и пошаговый drill
+  проектируют M6;
+- canonical originals ошибочно приписаны одновременно FD-1/FD-2/FD-3;
+- event stream и create/replace/stale semantics неполны, conflict не согласован с key;
+- Case 3 смешивает replace/stale/create без однозначной immutable последовательности;
+- set equalities не доказывают обратную уникальность engine id;
+- annotation hash не покрывает version/author/anchor, grammar anchor не ограничена;
+- triple equality не связана одним snapshot;
+- нет отдельного readiness gate `Panel deny -> no-forward`;
+- Case 2 не доказывает неизменность policy versions и audit history.
+
+Полезное ядро: owner-only `manage-access`, annotation-write deny, fail-closed binding,
+strategic out-of-container deny, независимый `requiredProjectionSet`, Panel-owned durable
+boundary, численные thresholds с честным NO-GO без evidence, state split и portable
+annotation model.
+
+Внешний бюджет M5 закрыт: 5 из 5. Внешний run6 запрещён. По правилу владельца следующий
+carrier собирается локально из run1–run5 и всех постаудитов, затем проходит новый
+независимый смысловой и машинный аудит.
+
+## Постаудит M5 — local synthesis 1
+
+Председатель локально собрал canonical carrier из ратифицированных M2-M4, повестки M5,
+run1-run5 и всех независимых постаудитов. Нового внешнего вызова не было. Сырой run5
+сохранён отдельно в rejected; внешний бюджет остаётся закрытым 5 из 5.
+
+Механический результат: один carrier, ровно 36 предметных реплик по 6 каждой роли, один
+heading посылок, DoD заканчивает файл. Машинный `meeting:audit` не нашёл структурных
+нарушений.
+
+Вердикт независимого смыслового аудитора: **PASS**.
+
+- точная семантика M3 сохранена: `read-ref -> location.ref`, `manage-access` owner-only;
+- M6-M7 не спроектированы, результаты остаются логическими;
+- FD-1/FD-2/FD-3 разведены, portable-state boundary не выдан за FD-3;
+- численные durability requirements имеют честный NO-GO без measured evidence;
+- immutable reducer задаёт seq, cause/group links и fail-closed invalid state;
+- same-snapshot равенства и уникальность обоих концов доказывают биекцию;
+- annotation hash покрывает всю record, anchor ограничен, triple equality связано snapshot;
+- десять cases и отдельные no-forward/service-allowlist gates присутствуют;
+- посылки не содержат выводов M5, DoD последний, ролевой пункт оставлен внешнему аудиту.
+
+Смысловых BLOCK не найдено. M5 допускается к владельческой ратификации; M6 до этого акта
+остаётся закрыта.
