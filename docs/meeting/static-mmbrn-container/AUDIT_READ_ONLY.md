@@ -2130,3 +2130,50 @@ redaction. Повестка run5 получила единый раздел по
 
 `meeting:audit` без carrier имеет structural PASS. Run5 допускается только после отдельного
 разрешения владельца; при её BLOCK внешний бюджет закрывается и M6 верстается локально.
+
+## Постаудит M6 — run5
+
+После отдельного разрешения владельца run5 произведён `anthropic/claude-sonnet-4-6`.
+Механика PASS: 42 реплики, ровно 7 каждой из шести ролей; `meeting:audit` structural PASS.
+Внешняя попытка 5 из 5 использована, бюджет комнаты закрыт. Сырой carrier сохранён без
+исправлений как
+[`run5-final-external-surface-fingerprint-readiness`](../../seanses/rejected/static-mmbrn-container-m6-intake-delivery-2026-08-06-run5-final-external-surface-fingerprint-readiness.md).
+
+Независимый смысловой аудит дал **BLOCK** по восьми группам:
+
+- operation surface не имел authority object и операции управления доступом;
+- metadata correction была спрятана в content revision;
+- fingerprint не покрывал все влияющие поля;
+- write inputs не требовали positive integer `bytes`;
+- verify dimensions были сопоставлены неверным M3 actions;
+- archive constants не повторялись во всех проверяемых carriers;
+- readiness hash/size проверял sample вместо полного корпуса;
+- authorization/durability evidence и текущий NO-GO не образовывали замкнутый контракт.
+
+Пятая внешняя попытка не принята. По правилу владельца шестой внешний вызов запрещён;
+председатель собрал canonical carrier локально из M2-M5, повестки M6 и полезного материала
+run1-run5.
+
+## Локальная сборка M6
+
+Canonical carrier:
+[`static-mmbrn-container-m6-intake-delivery-2026-08-06.md`](../../seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md).
+Он содержит 36 предметных реплик, ровно 6 каждой роли, один E1, закрытые operations,
+outcomes, cases и full-corpus readiness. Машинный `meeting:audit` дал structural PASS;
+`git diff --check` чист.
+
+Независимый смысловой аудит прошёл четыре последовательных проверки без внешнего
+consilium-вызова:
+
+- первый BLOCK: ослабленный FD-2 RPO, неполный crash corpus, неразведённые metadata/address/
+  class transitions и лишняя посылка;
+- второй BLOCK: FAILED выпадал из `L_proposed`, stale reachable FD-2 не имел outcome,
+  `move-address` допускал разрушительный move;
+- третий BLOCK: orphan без M2 row ошибочно подчинялся deletion chain зарегистрированной
+  записи, которая требует существующий recordId;
+- после исправлений final verdict — **PASS**: all-state state-indexed reconciliation,
+  безусловный RPO, copy-only address/class transitions, раздельные orphan cleanup и
+  registered deletion, точные M3 action/object и M4 predicates согласованы.
+
+M6 допускается к ратификации владельцем. M7 не созывалась и остаётся закрыта до этой
+ратификации и отдельного разрешения.
