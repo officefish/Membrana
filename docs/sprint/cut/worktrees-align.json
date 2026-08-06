@@ -1,0 +1,79 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "worktrees-align",
+  "taskId": "worktrees-align",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "//why": "Нарезка ведёт нож по границе «чистое ядро ↔ мутация чужого дерева». b1 не знает ни git, ни fs — только план по снимку, и потому единственный блок, зубимый на фикстурах без живых деревьев (риск №1 в #1738: живых деревьев для проверки нет, одно из грязных держит отложенную владельцем правку детекторов). b2–b3 мутируют и потому режутся ПОСЛЕ ядра, а не рядом с ним. b4 замыкает провод и отчёт. Зоны не пересекаются: у каждого блока свой файл, общий index.mjs рождается в b1 и дальше только дополняется своими модулями.",
+  "//vesnin": "Прогон контекста тимлида-держателя ДО нарезки (акт cut_context_run, вещдок — docs/virtual-team/memory/op-log/vesnin/2026-08-06.jsonl). Вердикт формы: границы держатся, движок рождается в b1 до всех, кто его использует, ADR не нужен. Три замечания приняты и вошли в предмет b1: (1) ядро экспортирует не только plan(), но и закрытый тип AlignAction (wipSnapshot | mergeFromOrigin | abortMerge | report) и предикаты состояния дерева (isDirty, hasMergeHead, isBehind) — иначе b2 и b3 изобретут свои словари и движок объявится в трёх местах; (2) порт git/fs — интерфейс в b1, реализации в b2/b3/b4, ядро видит только порт; (3) чтение MERGE_HEAD принадлежит предикатам ядра, НЕ блоку merge — иначе b3 начнёт знать про git больше, чем ему положено. Вопрос Веснина «где живёт запись конфликтного дерева — отчётная сущность b4 или доменное состояние b1» решён в пользу b1: plan() возвращает готовый AlignReport, b4 его только печатает. Так b4 не тянет обратную зависимость к предикатам ядра, и порядок «форма → материал → сборка» остаётся однонаправленным.",
+  "//window": "Окно поставлено ПО ФАКТУ старта 09:55, не круглым числом: ловушка 05.08 — объявленное «18:40» при старте 18:33 дало plan_lied при живых вещдоках. Верхняя граница — конец рабочего дня; DoD дня по #1738 закрывается зелёным --dry-run, мутирующая часть уходит под owner-гейт и в окно не обязана уместиться.",
+  "//revisionAt": "Метки revisionAt поставлены ИНСТРУМЕНТОМ в момент ратификации (10:02), а не рукой задним числом — то есть ДО начала работ по блокам, как велит канон. Рукописных меток в плане нет сознательно: ловушка, проверенная боем 05.08, — своя метка позже фактического старта даёт stale_partial при живой работе, и чинить это задним числом канон запрещает.",
+  "window": {
+    "from": "2026-08-06T09:55:06+03:00",
+    "to": "2026-08-06T19:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "align-plan-core",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/worktree-align/align-plan.mjs",
+        "scripts/lib/worktree-align/align-plan.test.mjs",
+        "scripts/lib/worktree-align/index.mjs"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-08-06T10:02:00+03:00",
+      "revisionOf": "d705604231d8dc2574957a04a9a11b2530b907c0f83d252d65edc1299121cbb1"
+    },
+    {
+      "blockId": "dirty-wip-snapshot",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/lib/worktree-align/wip-snapshot.mjs",
+        "scripts/lib/worktree-align/wip-snapshot.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 150
+      },
+      "revisionAt": "2026-08-06T10:02:00+03:00",
+      "revisionOf": "2959bce7df6526138cb36fdd8d5088bc0b280e4344ea7f29b72e93f7c4d86284"
+    },
+    {
+      "blockId": "merge-abort-guard",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/lib/worktree-align/merge-step.mjs",
+        "scripts/lib/worktree-align/merge-step.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 170
+      },
+      "revisionAt": "2026-08-06T10:02:00+03:00",
+      "revisionOf": "ad11b7e6167be97ecb5572c42dfce21142bb38e29d37b18f51438fa62d4c4d64"
+    },
+    {
+      "blockId": "align-cli-report",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/worktrees-align.mjs",
+        "scripts/worktrees-align.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 190
+      },
+      "revisionAt": "2026-08-06T10:02:00+03:00",
+      "revisionOf": "0085bc3d3ee29756260b2babc15a94bd2ecdaafb29d2b2bb033a8e513c5308c1"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-06T10:02:00+03:00",
+    "digest": "10971aafd1fae813aa3ba0cb82f0650b321e86c580f76c633db9dcd3c88e7b76"
+  }
+}
