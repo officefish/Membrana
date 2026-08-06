@@ -1,0 +1,3 @@
+{"traceId":"tr-render-ozhegov-run","blockId":"report-surfacing-render","kind":"context_run","subject":"ozhegov","at":"2026-08-02T16:20:00+03:00","ref":"docs/discussions/block-report-surfacing-render-ozhegov.md"}
+{"traceId":"tr-render-ozhegov-review","blockId":"report-surfacing-render","kind":"review_pass","subject":"ozhegov","at":"2026-08-02T17:40:00+03:00","ref":"scripts/lib/team-memory-report.mjs"}
+{"traceId":"tr-wire-ozhegov-review","blockId":"report-surfacing-wire","kind":"review_pass","subject":"ozhegov","at":"2026-08-02T17:40:00+03:00","ref":"scripts/team-memory-report.mjs"}

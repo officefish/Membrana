@@ -29,8 +29,18 @@ import Meyda from 'meyda';
 
 import { configFromHash } from './mfccAnalyzerPlugin';
 
-/** Считалка одного кадра. `null` — кадр не сосчитан, и это НЕ ноль коэффициентов. */
-export type MfccFrameExtractor = (samples: Float32Array) => readonly number[] | null;
+/**
+ * Считалка одного кадра. `null` — кадр не сосчитан, и это НЕ ноль коэффициентов.
+ *
+ * Частота кадра обязательна вторым доводом: банк мел-фильтров строится от неё, поэтому
+ * кадр с чужой частотой так же несравним с воротами, как кадр чужой длины, — и отвергается
+ * тем же способом. Умолчания здесь нет намеренно: подставленная частота молча превратила бы
+ * «не знаем» в «совпало».
+ */
+export type MfccFrameExtractor = (
+  samples: Float32Array,
+  sampleRate: number,
+) => readonly number[] | null;
 
 /**
  * Считалка при настройках, разобранных из отпечатка пресета.
@@ -53,11 +63,20 @@ export function createMfccExtractor(configHash: string): MfccFrameExtractor {
     bufferSize: config.bufferSize,
     melBands: config.melBands,
     numberOfMFCCCoefficients: config.numberOfCoefficients,
+    // Частота ставится ЯВНО. До 01.08 её здесь не было вовсе: экземпляр наследовал умолчание
+    // библиотеки со спреда, тогда как калибратор снимал ворота на 48 000 (`Meyda.sampleRate`
+    // в calibrate-mfcc-gates.mjs). Банк мел-фильтров строится от частоты — значит прибор
+    // считал одно, а судил воротами, снятыми о другом.
+    sampleRate: config.sampleRate,
   };
 
-  return (samples: Float32Array): readonly number[] | null => {
+  return (samples: Float32Array, sampleRate: number): readonly number[] | null => {
     // Кадр чужой длины не подгоняется: коэффициенты при другом окне несравнимы с воротами.
     if (samples.length !== config.bufferSize) return null;
+    // Кадр чужой частоты — тот же случай, и он реален: движок создаёт AudioContext без явной
+    // частоты (`new Ctor()`), то есть берёт устройство, а оно бывает и 44 100. Пересчитать
+    // вектор под чужие ворота нельзя, поэтому кадр не считается, а не подгоняется.
+    if (sampleRate !== config.sampleRate) return null;
     const vector = instance.extract('mfcc', samples);
     if (!Array.isArray(vector) || vector.length !== config.numberOfCoefficients) return null;
     return vector as readonly number[];

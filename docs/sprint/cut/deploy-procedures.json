@@ -1,0 +1,70 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "deploy-procedures",
+  "taskId": "deploy-procedures",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-04T16:20:00+00:00",
+    "to": "2026-08-04T21:30:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "d1-procedures",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/procedures/deploy-office-vds/MANIFEST.json",
+        "docs/procedures/deploy-office-vds/README.md",
+        "docs/procedures/deploy-media-vps/MANIFEST.json",
+        "docs/procedures/deploy-media-vps/README.md",
+        "docs/procedures/registry.json",
+        "docs/procedures/REGISTRY.md",
+        "docs/adr/ADR-0023-deploy-node-form-one-procedure-per-echelon.md"
+      ],
+      "revisionAt": "2026-08-04T16:20:00+00:00",
+      "estimate": {
+        "changedLines": 240
+      },
+      "revisionOf": "19281e48d28a22ee01bed2c8937920b2316bc76e2c343911148338e1d094aded"
+    },
+    {
+      "blockId": "d2-run-wrapper",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/deploy-run.mjs",
+        "scripts/deploy-run.test.mjs"
+      ],
+      "revisionAt": "2026-08-04T16:20:00+00:00",
+      "estimate": {
+        "changedLines": 140
+      },
+      "revisionOf": "8412199e468b913eebd0cf77149ec0955a59f4ecad5be0fd242c1caa9439fe01"
+    },
+    {
+      "blockId": "d3-verb-wiring",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "package.json",
+        "scripts/deploy-wiring.test.mjs"
+      ],
+      "revisionAt": "2026-08-04T16:20:00+00:00",
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionOf": "99e291543cd5bfe0849dbc02eb38205ed72a718c31e691bce626e93342f3ec4e"
+    }
+  ],
+  "//why": "Слово владельца 04.08 (вторая важная задача дня): «Деплой как процедура с прогонами. Два сервера — значит и процедуры будет две. Пока две. Некоторые деплои со временем ещё конкретизируем». Грунт: обзор деплоя 03.08 (П1 — процедуры нет, П2 — деплой не пишет прогон), ADR-0023 DRAFT. Серверы подтверждены кодом: office-VDS (getOfficeSshConfig: office+panel), media-VPS (BACKGROUND_MEDIA_IPV4: media, cabinet, device-board, root-site).",
+  "//cutter": "Решение резчика (tarasov, конспект docs/discussions/cut-deploy-procedures-tarasov.md): «слово владельца даёт ровно две процедуры — два сервера, никакой абстракции 'деплой вообще'»; спринт принят второй задачей дня. FRICTION честно: остальной ответ резчика уплыл из материала (prod-ритмы, opencode — не наш предмет) — блоки транскрибированы координатором из черновика, вопросы имён и первых глаголов вынесены владельцу на ратификацию; симптом дозаписан в close-запись прогона.",
+  "//order": "d1 → d2 → d3 одной сессией: манифесты дают procedureId для обёртки, обёртка даёт форму провода. Зоны трёх блоков не пересекаются. Спринты соседей закрыты — коллизия ратификаций (#1705) не грозит: этот спринт единственный открытый.",
+  "//dod": "d1: оба MANIFEST.json валидны validateProcedure (frames build → rollout с gate owner-rollout → smoke → record); registry.json несёт обе записи (holder vesnin), REGISTRY.md перегенерён yarn procedures:registry; ADR-0023 Р1 переписан по слову владельца (процедура на сервер, пока две; посервисная конкретизация — специализациями позже), статус ADR — по слову владельца на ратификации. d2: deploy-run.mjs открывает прогон (procedureId сервера, subject сервис+ревизия head), исполняет переданную команду, закрывает pass/fail с evidence ревизии; секреты и env-значения в журнал не пишутся (граница Р3 ADR); обрыв — ловится ленивым закрытием (#1694, поведение унаследовано); зубы на open/close/fail-путь без реального ssh (команда-заглушка). d3: cabinet:deploy:prod идёт через deploy-run (deploy-media-vps), vds:run — через deploy-run (deploy-office-vds, subject = имя скрипта); зуб сверяет провод ПО ФАКТУ package.json; owner-gate не трогается — deploy:when-green как печатал, так и печатает.",
+  "//out-of-scope": "Разбор осадка 56 ssh-скриптов (Р4 — вперёд); дрейф-smoke для всех сервисов (Р5 — после первого прогона); env/ротация (П5 — amnestyLifted); cron/алёрты/панель; посервисные специализации процедур («со временем конкретизируем» — слово владельца).",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-04T16:26:08+00:00",
+    "digest": "1122a0be43cb91f9adc77b715b401964c6194d412997f36e32c5f23e42524d8c"
+  }
+}

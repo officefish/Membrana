@@ -1,0 +1,23 @@
+{"ts":"2026-08-05T08:19:37.764Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-05T12:55:15.610Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-05T12:55:07.025Z","origin":"ask-persona"}
+{"ts":"2026-08-05T12:55:15.614Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-05T12:55:07.025Z","origin":"ask-persona"}
+{"ts":"2026-08-05T16:23:30.864Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-05T16:23:11.938Z","origin":"ask-persona"}
+{"ts":"2026-08-05T16:23:30.901Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-05T16:23:11.938Z","origin":"ask-persona"}
+{"ts":"2026-08-05T16:23:30.964Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-08-03-one-shot-manifest-m3-volume","reason":"прямо про разницу «гейт vs стоп»: предикат S отказал на входе, значит не штампуем шот и не спорим — переводим в спринт с честной рамкой. Это и есть режим работы сейчас.","origin":"ask-persona"}
+{"ts":"2026-08-05T16:23:30.986Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-19-registry-relocation-m3-cold-storage","reason":"«сначала посылка, потом носитель»: два пункта ретро надо назвать посылками до того, как я назначу связку, иначе спринт растечётся.","origin":"ask-persona"}
+{"ts":"2026-08-05T16:24:21.910Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-05T16:24:11.602Z","origin":"ask-persona"}
+{"ts":"2026-08-05T16:24:21.916Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-05T16:24:11.602Z","origin":"ask-persona"}
+{"ts":"2026-08-05T16:24:21.920Z","persona":"tarasov","verb":"reject","ref":"tarasov-2026-08-05T16:24:11.602Z","reason":"облако — всё про рамки прошлых консилиумов, а здесь у меня на руках нет ни самих двух вопросов, ни брифа, ни ссылки на сеанс; всплывшие рамки не к чему прикладывать","origin":"ask-persona"}
+{"ts":"2026-08-05T14:56:05.800Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-05T14:55:59.717Z","origin":"ask-persona"}
+{"ts":"2026-08-05T14:56:05.805Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-05T14:55:59.717Z","origin":"ask-persona"}
+{"ts":"2026-08-05T14:56:05.807Z","persona":"tarasov","verb":"reject","ref":"tarasov-2026-08-05T14:55:59.717Z","reason":"всплывший фрагмент про control-plane каналы LLM — не про то; вопрос об аудио-канале/связи узла, контекста для однословного ответа нет","origin":"ask-persona"}
+{"ts":"2026-08-05T14:56:25.383Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-05T14:56:17.511Z","origin":"ask-persona"}
+{"ts":"2026-08-05T14:56:25.384Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-05T14:56:17.511Z","origin":"ask-persona"}
+{"ts":"2026-08-05T14:56:25.385Z","persona":"tarasov","verb":"reject","ref":"tarasov-2026-08-05T14:56:17.511Z","reason":"всплыло про LLM procedure channels / office SoT, но вопрос \"канал жив?\" без указания какого — привязать честно не могу, это была бы натяжка","origin":"ask-persona"}
+{"ts":"2026-08-05T15:26:10.231Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-05T15:25:47.387Z","origin":"ask-persona"}
+{"ts":"2026-08-05T15:26:10.233Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-05T15:25:47.387Z","origin":"ask-persona"}
+{"ts":"2026-08-05T15:26:10.233Z","persona":"tarasov","verb":"emerge","ref":"tarasov-ritual-magistral-source-freshness-cut-1","reason":"прямой прецедент моей же нарезки: систематическая недооценка объёма на 40% суммой при 4 блоках. Ставит вопрос к оценкам этого спринта до ратификации.","origin":"ask-persona"}
+{"ts":"2026-08-05T15:26:10.235Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-08-01-evening-review-predicate-m1-subject","reason":"карточка судится по коммитам; блок 2 при закрытии #1549 требует явной сшивки коммитов со спринт-темой, иначе вечер её не увидит.","origin":"ask-persona"}
+{"ts":"2026-08-05T21:44:10.444Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-05-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-05T21:44:10.444Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-29-tariff-grid-m3-tri","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-05T21:44:10.444Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}

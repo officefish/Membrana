@@ -1,0 +1,39 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "run-journal-sequence-validator",
+  "taskId": "run-journal-sequence-validator",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-04T12:20:00+00:00",
+    "to": "2026-08-04T21:00:00+00:00"
+  },
+  "//recut": "v2 12:35Z: окно from 14:00 → 12:20 — исполнение стартует сразу после мерджа спринта A (порядок A→B сохранён по общему файлу), жёсткая привязка старта к 14:00 была календарной догадкой. Блок/зона/держатель не тронуты; recut_act в ленте актов, новая ратификация владельца.",
+  "blocks": [
+    {
+      "blockId": "b1-sequence-validator",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/procedure-run-journal.mjs",
+        "scripts/procedure-run-journal.mjs",
+        "scripts/procedure-run-journal.test.mjs"
+      ],
+      "revisionAt": "2026-08-04T12:15:00+00:00",
+      "estimate": {
+        "changedLines": 110
+      },
+      "revisionOf": "5be8a1d7bd30c1686cc456a1027fa11cc22c714fc090831e3a2bbe2d9b1792bc"
+    }
+  ],
+  "//why": "Карточка run-journal-sequence-validator (#1683), маршрут выбран владельцем 04.08 («делаем их тогда спринтами») после честного отказа предиката S шоту (capability_chaining: семья scripts/lib, 8 выстрелов/236 строк; прецедент docs/precedents/drafts/2026-08-04-oneshot-1683-refusal-chain.md). Follow-up P1 ревью 03.08 (PR #1682): библиотека валидирует запись, но не ленту — дубль sequence внутри runId (вещдок 1,1,2 в ленте 03.08) не ловится ничем.",
+  "//cutter": "Решение резчика (tarasov, конспект docs/discussions/cut-run-journal-node-tarasov.md, прогон 1): отдельный спринт, отдельный PR и ревью; DoD по TASK_CLOSURE_REGULATION. Один блок на спринт — осознанно: один долг, один держатель (Дынин — судить ленту предикатом), одна review-единица. FRICTION честно: второй прогон резчика уплыл из материала — дорезка транскрибирована координатором из первого прогона; симптом дозаписан в close-запись прогона.",
+  "//order": "Старт ПОСЛЕ мерджа спринта sprint-dictionary-to-lib: зона включает scripts/lib/procedure-run-journal.mjs — общий файл с его блоком a2-orphaned-by; работа идёт на свежем контракте (после проноса orphanedBy валидатору есть что судить и в кросс-файловом случае).",
+  "//dod": "Проверка уровня ленты рядом с summarizeProcedureRunTrail: sequence внутри runId строго возрастает; дубль номера — находка с адресом (runId, номера, строки), как ledger.leafHash; врезка в procedure-run:journal check — красный на ленте с дублем; вещдок-лента 03.08 судится; node --test scripts/procedure-run-journal.test.mjs зелёный; лента НЕ переписывается (валидатор судит, не чинит).",
+  "//out-of-scope": "Кросс-файловый счёт при явном --run через границу дней (конспект Веснина) — та же семья, отдельный блок вне спринта. Переезд словаря — спринт A.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-04T12:33:21+00:00",
+    "digest": "e962b3bb2d213d22f474de57efd81dd30f1264761f39a2dd8daa08efe704dece"
+  }
+}

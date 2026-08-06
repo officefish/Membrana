@@ -108,7 +108,15 @@ const GATE_WAITS = Object.freeze(['owner', 'human']);
 const STUB_WHY_RE = /^(todo|n\/?a|tbd|none|null|-|—|\.+)$/iu;
 const KEBAB_RE = /^[a-z0-9][a-z0-9-]*$/u;
 
-/** Канон персон (m1 + VIRTUAL_TEAM_PROMPT), нижний регистр. */
+/**
+ * Канон персон (m1 + VIRTUAL_TEAM_PROMPT), нижний регистр.
+ *
+ * `tarasov` дописан 03.08: список был отчеканен 26.07 — ЗА ДЕНЬ до ротации ролей 27.07,
+ * когда Тарасов стал тимлидом, — и с тех пор был устаревшей копией ростера. Тот же класс,
+ * что дефект PERSONA_ROLE_LABELS (#1644, «шесть дней тимлид вне ростера»), второй
+ * экземпляр. Всплыло прогоном: кадр `execute` шота держит тимлид (назначение, Т4 шторма
+ * 03.08), и валидатор отвергал держателя, которого канон команды числит седьмой персоной.
+ */
 export const PROCEDURE_PERSONAS = Object.freeze([
   'vesnin',
   'ozhegov',
@@ -116,6 +124,7 @@ export const PROCEDURE_PERSONAS = Object.freeze([
   'kuryokhin',
   'rodchenko',
   'angelina',
+  'tarasov',
 ]);
 
 /** Закрытый словарь якорей пина отрезка (вердикт m2). */

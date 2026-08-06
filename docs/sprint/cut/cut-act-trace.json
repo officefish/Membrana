@@ -1,0 +1,67 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "cut-act-trace",
+  "taskId": "cut-act-trace",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-01T10:00:00Z",
+    "to": "2026-08-01T20:00:00Z"
+  },
+  "blocks": [
+    {
+      "blockId": "cut-acts-closed-list",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/lib/sprint-cut/act-kinds.mjs",
+        "scripts/lib/sprint-cut/cut-plan.mjs",
+        "scripts/lib/sprint-cut/index.mjs",
+        "scripts/sprint-cut-check.mjs",
+        "docs/sprint/cut/ACT_KINDS.md",
+        "scripts/sprint-cut-acts.test.mjs"
+      ],
+      "revisionAt": "2026-08-01T10:00:00Z",
+      "estimate": {
+        "changedLines": 230
+      },
+      "revisionOf": "834a29c12a07a9a3d5f259dcd203735680794f325d104fc8669d06a24a5267bf"
+    },
+    {
+      "blockId": "machine-revision-at",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/sprint-cut/ratification.mjs",
+        "scripts/sprint-cut-check.test.mjs"
+      ],
+      "revisionAt": "2026-08-01T10:00:00Z",
+      "estimate": {
+        "changedLines": 140
+      },
+      "revisionOf": "d5746036c5fee9ef92ee6b4a4bbffb3257b67a070229ac63e88211061f2870d0"
+    },
+    {
+      "blockId": "partial-stale-lowers-verdict",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "scripts/lib/execution-trace/predicates.mjs",
+        "scripts/execution-gate.test.mjs",
+        "scripts/lib/execution-trace/gate-exit-codes.mjs",
+        "scripts/lib/execution-trace/fixtures/stale-partial.jsonl",
+        "scripts/lib/execution-trace/stubs/stub-trace-corpus.mjs"
+      ],
+      "revisionAt": "2026-08-01T10:00:00Z",
+      "estimate": {
+        "changedLines": 180
+      },
+      "revisionOf": "3c9d0124d2505593174921d8b8cfc180cf4d022c0c3c1e2c15101de0ebcec977"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-01T15:11:57+03:00",
+    "digest": "3d55d880daa593d50f954decb5bdd5cf7fc8624e7a68e291a83826b67c4db4ee"
+  }
+}

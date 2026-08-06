@@ -3,17 +3,27 @@
   "leadPersona": "vesnin",
   "kitVersion": null,
   "engines": [
-    "scripts/lib/one-shot-s-predicate.mjs"
+    "scripts/lib/one-shot-s-predicate.mjs",
+    "scripts/lib/one-shot-run.mjs"
   ],
   "precedents": [
     "docs/storm/storm-one-shot-format-2026-07-23/REPORT.md",
+    "docs/storm/storm-one-shot-performer-2026-08-03/REPORT.md",
+    "docs/meeting/one-shot-manifest/MEETING_VERDICT.md",
     "docs/insights/insight-one-shot-format/REVIEW.md",
     "docs/precedents/2026-07-23-oneshot-issue-closed-without-procedure.md"
   ],
   "frames": [
     {
       "id": "first-frame",
-      "holder": "vesnin"
+      "holder": "vesnin",
+      "note": "Кадру принадлежат шаги find · stamp-s · predicate-s · checklist (см. steps ядра — единственная копия, здесь не дублируется). Шаги — чек-лист кадра БЕЗ держателей (Т7 шторма 03.08): машинерия только у шота целиком. Прогноз предиката S бежит здесь (evaluationMoment: forecast) гейтом входа — вердикт M3. Старт кадра — первая точка записи прогона."
+    },
+    {
+      "id": "execute",
+      "holder": "tarasov",
+      "assigns": "executor",
+      "note": "Держатель кадра — НАЗНАЧЕНИЕ, не исполнение: тимлид актом называния назначает исполнителя прогона (Т4 шторма 03.08). Сам исполнитель — поле executor ЗАПИСИ ПРОГОНА (вердикт M2: shotId · executor · assignedBy · contextRunRef); в манифесте его нет и быть не может — исполнитель производен от природы находки. Готовность к исполнению — предикат ready_to_execute (scripts/lib/one-shot-run.mjs): назначение валидно И след профильного контекста исполнителя СТРОГО РАНЬШЕ открытия кадра. Факт предиката S бежит при «код дописан» (evaluationMoment: fact) стопом: красный факт даёт failed_oversize, код и запись сохраняются, маршрут дальше называет владелец (M3). Закрытие кадра — третья точка записи прогона."
     }
   ],
   "trigger": {
@@ -38,7 +48,7 @@
         "id": "owner-ratify",
         "waitsFor": "owner",
         "resume": "явное «да» владельца на чек-лист → исполнение до «весь код дописан»",
-        "note": "T10 one-shot; ревью/мердж снаружи формата"
+        "note": "T10 one-shot; ревью/мердж снаружи формата. Гейт, а НЕ кадр — сознательное отступление от буквы вердикта M1 (он звал owner-ratify третьим фреймом): владелец не входит в PROCEDURE_PERSONAS валидатора, и это правильно — акт утверждения есть условие перехода, не работа персоны. Существо M1 сохранено: resume этого гейта — вторая из трёх точек записи прогона. Носитель журнала и все три точки — README, раздел «Журнал прогонов»."
       }
     ]
   },
@@ -50,6 +60,6 @@
   "mode": "local",
   "home": {
     "kind": "none",
-    "why": "одноразовый проход без пространства имён; артефакты — ветка/дифф, не дом процедуры"
+    "why": "одноразовый проход без пространства имён; артефакты — ветка/дифф, не дом процедуры. Накопление при этом ЕСТЬ: прогоны в общей ленте docs/procedure-runs/ (Т8 шторма 03.08) — home: none про имена, не про след"
   }
 }

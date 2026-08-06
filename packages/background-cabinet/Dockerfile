@@ -12,8 +12,12 @@ COPY tsconfig.base.json ./
 COPY packages/core packages/core
 COPY packages/background-cabinet packages/background-cabinet
 
+# prisma generate ЗДЕСЬ, а не в build-скрипте: #1632 (02.08) вынес его в отдельную
+# turbo-задачу против гонки трёх скриптов — верно, но docker через turbo не ходит,
+# а `generated/` закрыт .gitignore. Без этой строки клиента в образе нет (#1724).
 RUN yarn workspaces focus @membrana/background-cabinet @membrana/core --all \
   && yarn workspace @membrana/core build \
+  && yarn workspace @membrana/background-cabinet prisma:generate \
   && yarn workspace @membrana/background-cabinet build
 
 FROM node:20-alpine AS runtime

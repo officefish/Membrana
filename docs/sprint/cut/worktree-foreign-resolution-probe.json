@@ -1,0 +1,70 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "worktree-foreign-resolution-probe",
+  "taskId": "worktree-foreign-resolution-probe",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-03T18:00:00+03:00",
+    "to": "2026-08-03T22:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "resolution-core",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/lib/worktree-resolution.mjs"
+      ],
+      "estimate": {
+        "changedLines": 110
+      },
+      "revisionAt": "2026-08-03T14:50:16+03:00",
+      "revisionOf": "71b57053811b82b16be8294db51cb69c2228b47c96f1f5072e6e761809daf311"
+    },
+    {
+      "blockId": "resolution-tooth",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/worktree-resolution.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 160
+      },
+      "revisionAt": "2026-08-03T14:50:16+03:00",
+      "revisionOf": "33b2709f9ce86fd4cbeea834b46052714bf017d56d5258b54b3e2273edda9a11"
+    },
+    {
+      "blockId": "resolution-wire",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/worktree-sync.mjs"
+      ],
+      "estimate": {
+        "changedLines": 100
+      },
+      "revisionAt": "2026-08-03T14:50:16+03:00",
+      "revisionOf": "1d40d44e98875aae805a316ab205ee4b4d8f950f211b292d833a9b5d8a1ed623"
+    },
+    {
+      "blockId": "prepush-resolution-wire",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/prepush-typecheck-scope.mjs"
+      ],
+      "estimate": {
+        "changedLines": 45
+      },
+      "revisionAt": "2026-08-03T14:50:16+03:00",
+      "revisionOf": "29596ebf89e26e8e332dc9daf02f9eca24758da80872d338d0d76810dad2165a"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-03T14:50:16+03:00",
+    "digest": "87b6a08090ff14bdf0d9b5826df1eb3a1fe2c3c1377bb0eced0e1f3efe22ed00"
+  }
+}

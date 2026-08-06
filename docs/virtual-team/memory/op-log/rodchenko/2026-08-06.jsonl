@@ -1,0 +1,6 @@
+{"ts":"2026-08-06T05:42:32.020Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-06T09:17:34.664Z","persona":"rodchenko","verb":"cloud_query","ref":"rodchenko-2026-08-06T09:17:07.870Z","origin":"ask-persona"}
+{"ts":"2026-08-06T09:17:34.672Z","persona":"rodchenko","verb":"surface_invoke","ref":"rodchenko-2026-08-06T09:17:07.870Z","origin":"ask-persona"}
+{"ts":"2026-08-06T09:17:34.674Z","persona":"rodchenko","verb":"emerge","ref":"rodchenko-2026-07-30-workshop-wires-m3-scripts-instrument","reason":"там я закрепил норму «молчания разные»: пустая ступень / нет данных / малая выборка обязаны читаться разным статусом, а не одним прочерком. Прямо ложится на п.3 (перекрытие интервалов, малая выборка).","origin":"ask-persona"}
+{"ts":"2026-08-06T09:17:34.676Z","persona":"rodchenko","verb":"emerge","ref":"rodchenko-2026-07-15-team-evening-feedback","reason":"«имя узла = что он делает, без иллюзий». Отвечает на п.2: не прятать второй метод под «combined», обе сборки — факт отчёта.","origin":"ask-persona"}
+{"ts":"2026-08-06T09:17:34.677Z","persona":"rodchenko","verb":"emerge","ref":"rodchenko-2026-07-17-strategy-day-q4b-topics-and-barren","reason":"про «молчаливую дверь» артефактов исследования: витрина обязана открыть отчёт, а не оставить JSON в data/. Ложится на п.4.","origin":"ask-persona"}

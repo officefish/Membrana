@@ -13,7 +13,7 @@
   ],
   "pins": {
     "scripts/lib/one-shot-rank.mjs": "90d0f97cb5426a7a11d44d1a693a5324944a7b94",
-    "scripts/lib/one-shot-s-predicate.mjs": "f5c70329612603b3a912361b1b60ea022a8b8989",
+    "scripts/lib/one-shot-s-predicate.mjs": "fe4b4eb5f60fa4d479be0e55af534c3335e29cd3",
     "scripts/lib/one-shot-trail.mjs": "dfdac88d26976310a2a26819f2ea634917419d0a",
     "scripts/lib/snapshot-contract.mjs": "e8b8df7bf7eb0f7f759a5a5be41096ee0ac13680",
     "scripts/lib/standup-routing.mjs": "15d4a3750bfdb75be8eb56fa43d628a4122ae052",
@@ -27,6 +27,7 @@
     "scripts/lib/task-invariants.mjs": "1813edbb3f75fbf02bf67973e13fedf60643c668",
     "scripts/lib/task-readme-check.mjs": "07490f7c3ed2d4fab0fef88b1b7c503ddf37c464",
     "scripts/lib/task-registry.mjs": "7ec561cf505a79ee18d6c562eb77ddf8b3f32e7a",
+    "scripts/lib/task-registry.mjs": "d4cd907e832d3f27146204ff3ac10730256db32f",
     "scripts/lib/task-tools.mjs": "e0d70928fe4be4018549221f8dfd4229d8f1024f",
     "scripts/lib/task-validity-links.mjs": "73c2463a78c7c43f1adfec88fcc006d630a9b5fe",
     "scripts/lib/task-validity.mjs": "624a2812312966b3727c76e9ede90a05bfd2311a",

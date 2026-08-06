@@ -1,0 +1,6 @@
+{"traceId":"tr-acts-ozhegov-run","blockId":"cut-acts-closed-list","kind":"context_run","subject":"ozhegov","at":"2026-08-01T11:25:00Z","ref":"scripts/lib/sprint-cut/act-kinds.mjs"}
+{"traceId":"tr-acts-ozhegov-review","blockId":"cut-acts-closed-list","kind":"review_pass","subject":"ozhegov","at":"2026-08-01T11:58:00Z","ref":"scripts/sprint-cut-acts.test.mjs"}
+{"traceId":"tr-rev-dynin-run","blockId":"machine-revision-at","kind":"context_run","subject":"dynin","at":"2026-08-01T12:00:00Z","ref":"scripts/lib/sprint-cut/ratification.mjs"}
+{"traceId":"tr-rev-dynin-review","blockId":"machine-revision-at","kind":"review_pass","subject":"dynin","at":"2026-08-01T12:03:00Z","ref":"scripts/sprint-cut-check.test.mjs"}
+{"traceId":"tr-stale-kuryokhin-run","blockId":"partial-stale-lowers-verdict","kind":"context_run","subject":"kuryokhin","at":"2026-08-01T12:08:00Z","ref":"scripts/lib/execution-trace/predicates.mjs"}
+{"traceId":"tr-stale-kuryokhin-review","blockId":"partial-stale-lowers-verdict","kind":"review_pass","subject":"kuryokhin","at":"2026-08-01T12:14:00Z","ref":"scripts/execution-gate.test.mjs"}

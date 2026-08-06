@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-01",
+  "updatedAt": "2026-08-04",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -820,6 +820,61 @@
       "horizon": null,
       "weight": 6.7,
       "createdAt": "2026-08-01",
+      "tags": []
+    },
+    {
+      "id": "insight-procedure-memory-shown-not-asked",
+      "title": "Память процедур: показывается, а не запрашивается; вовлечённость числом, а не подтверждением",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-08-01",
+      "tags": []
+    },
+    {
+      "id": "insight-depot-weekly-room",
+      "title": "Депо: комната недельного охвата — глубокие аудиты и санитарные работы отдельным контуром",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-08-02",
+      "tags": []
+    },
+    {
+      "id": "insight-owner-intervention-ledger",
+      "title": "Счёт вмешательств владельца: суверенные против компенсирующих",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-08-02",
+      "tags": []
+    },
+    {
+      "id": "insight-server-only-ritual-run",
+      "title": "Server-only прогон двух ритуалов через панель как показательный опыт автономии",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-08-02",
+      "tags": []
+    },
+    {
+      "id": "insight-one-shot-portfolio-surfacing",
+      "title": "Портфель шотов всплывает в момент решения: акт Тарасова, выбор кандидатов, форкаст↔факт после мерджа",
+      "status": "adopted",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": 7.2,
+      "createdAt": "2026-08-03",
       "tags": []
     }
   ]

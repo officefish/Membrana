@@ -1,0 +1,8 @@
+{"traceId":"tr-deps-core-dynin-run","blockId":"deps-diff-core","kind":"context_run","subject":"dynin","at":"2026-08-02T14:12:00+03:00","ref":"docs/discussions/block-deps-diff-core-dynin.md"}
+{"traceId":"tr-deps-core-dynin-review","blockId":"deps-diff-core","kind":"review_pass","subject":"dynin","at":"2026-08-02T14:20:00+03:00","ref":"scripts/lib/deps-watch-diff.mjs"}
+{"traceId":"tr-deps-state-dynin-run","blockId":"deps-audit-state","kind":"context_run","subject":"dynin","at":"2026-08-02T14:24:00+03:00","ref":"docs/discussions/block-deps-audit-state-dynin.md"}
+{"traceId":"tr-deps-state-dynin-review","blockId":"deps-audit-state","kind":"review_pass","subject":"dynin","at":"2026-08-02T14:26:00+03:00","ref":"scripts/lib/deps-watch-audit-state.mjs"}
+{"traceId":"tr-deps-tooth-dynin-run","blockId":"deps-diff-tooth","kind":"context_run","subject":"dynin","at":"2026-08-02T14:30:00+03:00","ref":"docs/discussions/block-deps-diff-tooth-dynin.md"}
+{"traceId":"tr-deps-tooth-dynin-review","blockId":"deps-diff-tooth","kind":"review_pass","subject":"dynin","at":"2026-08-02T14:36:00+03:00","ref":"scripts/lib/deps-watch-diff.test.mjs"}
+{"traceId":"tr-deps-words-ozhegov-run","blockId":"deps-watch-words","kind":"context_run","subject":"ozhegov","at":"2026-08-02T14:40:00+03:00","ref":"docs/discussions/block-deps-watch-words-ozhegov.md"}
+{"traceId":"tr-deps-words-ozhegov-review","blockId":"deps-watch-words","kind":"review_pass","subject":"ozhegov","at":"2026-08-02T14:46:00+03:00","ref":"scripts/deps-watch.mjs"}

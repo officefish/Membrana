@@ -42,6 +42,8 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { formatLeadBlock, resolveReviewLead } from './lib/review-lead.mjs';
 import { readPersonaMemory } from './lib/persona-memory.mjs';
+import { buildReferencedStatesBlock } from './lib/review-referenced-states.mjs';
+import { fetchStatesBatch } from './lib/task-states-batch.mjs';
 import { listActive, loadRegistry } from './lib/task-registry.mjs';
 import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 
@@ -151,12 +153,29 @@ try {
   console.error(`[review-lead] ⚠ назначение не собралось (${e?.message?.split('\n')[0] ?? e}) — ревью идёт без блока ведущего`);
 }
 
+// Живые состояния упомянутых PR и иссью — ФАКТОМ, а не прозой диффа.
+// Повод замерен 01–02.08: ревьюер трижды заблокировал по ложной посылке о состоянии
+// (#1562 и #1584 объявлены невлитыми, хотя влиты). Корень — обращения к `gh` за
+// состояниями не было вовсе, и на входе оставалась проза документов, писавшаяся раньше.
+// Сеть недоступна — блок честно говорит «не знаю» и прямо запрещает судить, а не молчит.
+let statesBlock = '';
+try {
+  const built = buildReferencedStatesBlock(contextBlock, (numbers) => fetchStatesBatch(numbers));
+  statesBlock = built.block;
+  if (built.numbers.length > 0) {
+    console.error(`[review-states] упомянуто номеров: ${built.numbers.length} — состояния сняты у GitHub`);
+  }
+} catch (e) {
+  // Усилитель, не гейт запуска: без состояний ревью идёт, но об этом сказано вслух.
+  console.error(`[review-states] ⚠ состояния не сняты (${e?.message ?? e}) — ревью идёт без блока фактов`);
+}
+
 const bodyText = buildCodeReviewUserMessage({
   mode: cli.mode,
   focusQuestion: cli.focusQuestion,
   regulation,
   virtualTeam,
-  contextBlock,
+  contextBlock: statesBlock ? `${statesBlock}\n\n---\n\n${contextBlock}` : contextBlock,
   ragBlock,
   leadBlock,
 });

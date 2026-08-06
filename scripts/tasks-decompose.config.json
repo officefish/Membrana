@@ -4,7 +4,7 @@
     {
       "name": "Детекция и качество распознавания",
       "patterns": [
-        "^(scoreboard|detector|dads-|vdr-|nb-vlr|neural-|real-dataset|live-parallel|lp\\d|detection-alarm|batch-collection|trends-fft|sample-library|sld\\d)"
+        "^(scoreboard|detector|dads-|vdr-|nb-vlr|neural-|real-dataset|live-parallel|lp\\d|detection-alarm|batch-collection|trends-fft|sample-library|sld\\d|corpus-track)"
       ]
     },
     {
@@ -24,15 +24,17 @@
       "name": "Ритуалы и контур достоверности команды",
       "patterns": [
         "^(ritual|morning-ritual|evening-|night-build-format|strategy-day|rt-\\d|main-day-probe|meeting-|mf\\d|truth-graph|drift-anchor|linear-hygiene|angelina-hostess)",
-        "^(insight-mandate|insight-review|closure-acceptance|cascade-honest|morning-report|code-review-lead|tef-|main-day-issue-channel|night-triage-|forecast-)",
-        "^(cowork-honest-sprint|mfcc-compare-sprint|mfcc-lib-choice)$"
+        "^(insight-mandate|insight-review|closure-acceptance|cascade-honest|morning-report|code-review-lead|tef-|main-day-issue-channel|night-triage-|forecast-|subconscious-)",
+        "^(cowork-honest-sprint|mfcc-compare-sprint|mfcc-lib-choice|cut-act-trace)$",
+        "^gate-"
       ]
     },
     {
       "name": "Агентский тулинг, CI и техдолг",
       "patterns": [
         "^(agent-tooling|nb-at|ci-gate|cg\\d|scripts-boundary|tech-debt|oc-proxy|opencode|rag-|fv1-)",
-        "^(frictiond|friction6-|tooling-friction|tooling-sanitary|branch-hygiene|branch-salvage|tw-|tc-|tests-container|ship-|leveling-|notes-|deps-|worktree-|secret-|send-gate|weekly-)"
+        "^(frictiond|friction6-|tooling-friction|tooling-sanitary|tooling-truth|branch-hygiene|branch-salvage|tw-|tc-|tests-container|ship-|leveling-|notes-|deps-|worktrees?-|secret-|send-gate|weekly-|review-)",
+        "^(sprint-cut-|one-shot-|instruments-honest-verdict)"
       ]
     },
     {
@@ -50,7 +52,7 @@
     {
       "name": "Контейнеры, процедуры и мастерские",
       "patterns": [
-        "^(archivarius-|precedent-container|assets-container|network-container|tooling-atlas|procedural-|procedures-corpus|procedure-run-journal|adr-procedure|frame-rails|frames-alive|bridge-room|angelina-codex)"
+        "^(deploy-procedure-survey|deploy-procedures|archivarius-|precedent-container|assets-container|network-container|tooling-atlas|procedural-|procedures-corpus|procedure-run-journal|adr-procedure|frame-rails|frames-alive|bridge-room|angelina-codex|dual-mintlify-product-harness|product-mintlify-container|harness-workflow-pages|workflow-examples-marathon|sprint-dictionary-to-lib|run-journal-|recreate-execution-procedure-interface)"
       ]
     },
     {
@@ -104,6 +106,7 @@
         "night-build",
         "epic",
         "hackathon",
+        "marathon",
         "competition-packaging",
         "oneshot"
       ]

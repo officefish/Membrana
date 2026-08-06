@@ -1,3 +1,21 @@
 # one-shot-trail.jsonl — события one-shot (не реестр задач). M5B / #1065
 # Fields: {timestamp, path, slug, headRev, status: "merged"|"cancelled"}
 {"timestamp":"2026-08-01T08:09:55.116Z","path":"scripts/lib/dead-wire.mjs","slug":"dead-wire-catalogs","headRev":"102547a7","status":"merged"}
+{"timestamp":"2026-08-02T13:26:32.465Z","path":"scripts/lib/persona-memory.mjs","slug":"persona-roster-stale","headRev":"4388f415a970295a9fc7bc2d0e53fdd18b149f81","status":"merged"}
+{"timestamp":"2026-08-03T08:39:52.595Z","path":"scripts/sprint-experience.mjs","slug":"verb-hygiene-help-and-teeth","headRev":"49611daf788e52e78aff8910d4e63f041235f899","status":"merged"}
+{"timestamp":"2026-08-03T12:42:03.744Z","path":"scripts/lib/execution-trace/predicates.mjs","slug":"pair-props-order-and-composition","headRev":"0e5e386f05df26e77d3f58c424ff587135353861","status":"merged"}
+{"timestamp":"2026-08-03T12:56:40.000Z","path":"docs/procedure-runs/trail/2026-08-03.jsonl","slug":"close-stale-issues","headRev":"29612042","status":"merged"}
+{"timestamp":"2026-08-03T13:04:34.709Z","path":"scripts/lib/execution-trace/predicates.mjs","slug":"window-after-first-trace","headRev":"65226cba155850ffa9a37e9465f03c34017273d3","status":"merged"}
+{"timestamp":"2026-08-03T13:45:08.253Z","path":"scripts/task-register.mjs","slug":"register-category-warning","headRev":"7c98e78fc009fb34d0cee132b659c091739694c4","status":"merged"}
+{"timestamp":"2026-08-03T14:00:14.000Z","path":"docs/security/rotation-manifest-2026-08-03.md","slug":"rotation-manifest","headRev":"953004c3","status":"merged"}
+{"timestamp":"2026-08-03T14:03:27.637Z","path":"scripts/lib/review-oversized-queue.mjs","slug":"oversized-hostlocal-voice","headRev":"e44828cab8185d1ebc064e0889e7b354cdb4cbbd","status":"merged"}
+{"timestamp":"2026-08-03T16:01:59.413Z","path":"docs/procedures/weekly-dead-wire/MANIFEST.json","slug":"deadwire-weekday-fact","headRev":"860f30e35d360ad796f67e3b7f44fd9bdd65cba3","status":"merged"}
+{"timestamp":"2026-08-03T16:14:26.661Z","path":"scripts/execution-gate.test.mjs","slug":"simultaneous-at-boundary","headRev":"8aa5344fdfa8ec02089b5405731745b7c4742608","status":"merged"}
+{"timestamp":"2026-08-03T16:31:29.160Z","path":"scripts/kits-prepush-strict.mjs","slug":"kits-repair-recipe","headRev":"3481ff66bbddd64d10dbaaad1f4b791d81c2534c","status":"merged"}
+{"timestamp":"2026-08-03T18:16:03.561Z","path":"scripts/lib/sprint-cut/stubs/evidence-trail.stub.mjs","slug":"stubs-verdict","headRev":"090b2695591c0e00d81c29bd9d9f607f77025138","status":"merged"}
+{"timestamp":"2026-08-04T11:44:44.544Z","path":"scripts/persona-memory-extract.mjs","slug":"report-from-events","headRev":"1dee0702b997e60f5e4fcbf165a790f49f40ed4d","status":"merged"}
+{"timestamp":"2026-08-04T14:04:16.048Z","path":"docs/discussions/pr-1021-code-review.md","slug":"oversized-queue-head-1021","headRev":"9df6c83663c676250c63be91007e62c4b1f699c3","status":"merged"}
+{"timestamp":"2026-08-04T16:03:53.417Z","path":"docs/precedents/drafts/2026-08-04-oneshot-pr-audit-five-stalled.md","slug":"pr-audit-five-stalled","headRev":"6d1295aca1aeab28d89c93af093e79c67442f5b6","status":"merged"}
+{"timestamp":"2026-08-05T21:00:47.390Z","path":"docs/tooling-atlas/snapshots.json","slug":"snapshots-declaration-cut-norm","headRev":"6e0c821687f7c710d8e391a96dbf02116a910e69","status":"merged"}
+{"timestamp":"2026-08-06T09:41:23.997Z","path":"docs/LIVE_SERVICES.md","slug":"archivarius-mongo-live-services","headRev":"25d8670edb5b2c1bbc8b10aafc2897a629fc12d5","status":"merged"}
+{"timestamp":"2026-08-06T10:58:02.645Z","path":"packages/services/detectors/base/src/sample-window.test.ts","slug":"quadratic-stride-tooth","headRev":"c1faf5058538d5dab1d28d2e794178e322ff0543","status":"merged"}

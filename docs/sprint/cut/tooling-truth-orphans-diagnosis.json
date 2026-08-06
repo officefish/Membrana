@@ -1,0 +1,71 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "tooling-truth-orphans-diagnosis",
+  "taskId": "tooling-truth-orphans-diagnosis",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-02T10:00:00+03:00",
+    "to": "2026-08-02T16:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "orphans-reason-carried",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/scripts-workshop.mjs"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionAt": "2026-08-02T12:07:43+03:00",
+      "revisionOf": "aa8a8a962308a5db33b66f05bea0dc8b0e93589a446349bfb4f9ecfbc5e6e7fd"
+    },
+    {
+      "blockId": "orphans-reason-tooth",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/scripts-workshop.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionAt": "2026-08-02T12:07:43+03:00",
+      "revisionOf": "d9bc0d31e8f5a5b1699950ba189c95875a77480c6be2ec09c08494c51d7cc899"
+    },
+    {
+      "blockId": "orphans-warning-verdict",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/scripts-orphans.mjs",
+        "scripts/scripts-orphans.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 150
+      },
+      "revisionAt": "2026-08-02T12:07:43+03:00",
+      "revisionOf": "16718d42337d517ddb9047075fcbb82dba5a6d2b828deaff18c546812b10c959"
+    },
+    {
+      "blockId": "review-blindness-precedent",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/precedents/2026-08-02-review-blindness-scales-with-diff.md"
+      ],
+      "estimate": {
+        "changedLines": 110
+      },
+      "revisionAt": "2026-08-02T12:07:43+03:00",
+      "revisionOf": "8fccbc6180e9f5afe2c6b26921f8efab9813dcbd4c4052cbe531a4e97abaa346"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-02T12:07:43+03:00",
+    "digest": "c06421833b6b3c5d296c08274e4d79ac03302e2ece01c964028d3f8ebcc70854"
+  }
+}

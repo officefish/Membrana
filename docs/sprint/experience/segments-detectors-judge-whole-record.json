@@ -1,0 +1,12 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "detectors-judge-whole-record",
+  "forTask": "detectors-judge-whole-record — кепстральный и flux-детекторы судят запись целиком: строка 8 топ-10 хендофа 02.08",
+  "note": "Замер объёма по блокам, снят git diff --numstat от базы 9dc167d0 после закрытия окна: insertions + deletions по зоне блока. Не оценка и не пересказ — измерение.",
+  "measuredAt": "2026-08-02T13:10:00+03:00",
+  "segments": [
+    { "cutBlockId": "cepstral-whole-record", "changedLines": 263 },
+    { "cutBlockId": "flux-window-aggregate", "changedLines": 158 },
+    { "cutBlockId": "flux-tracker-streaming", "changedLines": 235 }
+  ]
+}

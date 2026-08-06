@@ -5,6 +5,7 @@
  * Канон разреза областей: docs/adr/ADR-0013-daily-audit-is-chronicle.md.
  */
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import test from 'node:test';
 
 import {
@@ -197,3 +198,6 @@ test('пустой день: отчёт собирается и честно г�
   assert.match(md, /Граф правды за день не двигался/u);
   assert.doesNotMatch(md, /NaN|Infinity/u, 'доли не считаются от нуля');
 });
+
+// Зубы ствола живут в scripts/audit-evening-trunk.test.mjs: предикат вынесен в
+// scripts/lib/audit-trunk.mjs, и тесту больше не нужно импортировать скрипт целиком.

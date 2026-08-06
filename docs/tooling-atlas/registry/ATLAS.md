@@ -5,7 +5,7 @@
 > Ссылка = `home` каталога. `docs/tasks` (domain) ≠ `docs/audit/tasks` (report, отчёты про задачи).
 > **Дом без мастерской — законное состояние**, а не дефект: мастерская есть подтип дома.
 
-Домов: **49** · из них мастерских: **13** · домов без мастерской: **36** · плоскостей: **3** · с полным набором из 3 глаголов: **6**.
+Домов: **51** · из них мастерских: **13** · домов без мастерской: **38** · плоскостей: **3** · с полным набором из 3 глаголов: **6**.
 
 ## Плоскость отчётов (`docs/audit`)
 
@@ -64,6 +64,8 @@
 | [docs/procedures/code-review](../../../docs/procedures/code-review/README.md) | Ревью изменений виртуальной командой с **ведущим из пяти** (T3 шторма |
 | [docs/procedures/containerization](../../../docs/procedures/containerization/README.md) | **Определение.** Процедура работы **Мастера контейнеризации**: различить оси |
 | [docs/procedures/day-sprint](../../../docs/procedures/day-sprint/README.md) | **Определение.** Day-sprint — процедура ведения **дневного** эпика разработки: |
+| [docs/procedures/deploy-media-vps](../../../docs/procedures/deploy-media-vps/README.md) | **Определение.** `deploy-media-vps` — процедура разворачивания на media-VPS |
+| [docs/procedures/deploy-office-vds](../../../docs/procedures/deploy-office-vds/README.md) | **Определение.** `deploy-office-vds` — процедура разворачивания на выделенный |
 | [docs/procedures/hackathon](../../../docs/procedures/hackathon/README.md) | **Определение.** `hackathon` — маршрут разработки для осевой фичи, которая |
 | [docs/procedures/meeting](../../../docs/procedures/meeting/README.md) | **Определение.** Заседание — конвергентная процедура: многовопросная материя, |
 | [docs/procedures/membrana-leveling](../../../docs/procedures/membrana-leveling/README.md) | **Определение.** Зонтичная процедура **детерминированного выравнивания** общего |

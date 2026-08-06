@@ -10,7 +10,7 @@
  * (ephemeral regeneration, research Q1 консилиума agent-tooling-friction-2).
  *
  * Usage:
- *   yarn task:register --id <slug> --title "…" --size M [--issue N] [--linear DRU-N]
+ *   yarn task:register --id <slug> --title "…" --size M (--issue N | --no-issue "причина") [--linear DRU-N]
  *                      [--kind day-sprint] [--lead vesnin] [--support a,b] [--insight <id>]
  *                      [--notes "…"] [--prompt docs/prompts/X.md] [--research] [--push]
  *
@@ -29,12 +29,14 @@ import { fileURLToPath } from 'node:url';
 import { researchSectionStub } from './lib/deep-research.mjs';
 import {
   buildTaskEntry,
+  issueLinkProblem,
   loadRegistry,
   renderTaskPromptStub,
   saveRegistry,
   syncTasksReadme,
 } from './lib/task-registry.mjs';
 import { registerOrLinkTask } from './lib/task-start-links.mjs';
+import { compileCategories, decompose } from './lib/tasks-decompose.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -64,7 +66,15 @@ const isMain = process.argv[1]?.endsWith('task-register.mjs');
 if (isMain) {
   const cli = parseRegisterArgs(process.argv.slice(2));
   if (!cli.id || !cli.title || !cli.size) {
-    console.error('Usage: yarn task:register --id <slug> --title "…" --size S|M|L [--issue N] [--kind …] [--lead …] [--support a,b] [--insight …] [--notes …] [--prompt <path>] [--parent-epic <id>] [--push]');
+    console.error('Usage: yarn task:register --id <slug> --title "…" --size S|M|L (--issue N | --no-issue "причина") [--kind …] [--lead …] [--support a,b] [--insight …] [--notes …] [--prompt <path>] [--parent-epic <id>] [--push]');
+    process.exit(1);
+  }
+
+  // Норму сторожит ДВЕРЬ, а не ядро: buildTaskEntry остаётся чистым строителем и зовётся
+  // из тестов и соседей, которым связь с GitHub не предмет. Запрет здесь — и только здесь.
+  const linkProblem = issueLinkProblem(cli);
+  if (linkProblem) {
+    console.error(`task:register — ${linkProblem}`);
     process.exit(1);
   }
 
@@ -88,6 +98,27 @@ if (isMain) {
   } catch (e) {
     console.error(e.message);
     process.exit(1);
+  }
+
+  // Категория декомпозиции — СРАЗУ при регистрации, а не красным CI потом (шот C, 03.08).
+  // Ловушка срабатывала дважды за два дня: префикс вносился для первой карточки, зуб
+  // «активный реестр разложен полностью» краснел на следующем прогоне после третьей.
+  // Предупреждение, НЕ блок: exit не меняется, регистрация состоялась. Матчер одной
+  // карточки — существующий decompose([entry]) по существующему конфигу, не второе правило.
+  try {
+    const config = JSON.parse(readFileSync(resolve(root, 'scripts/tasks-decompose.config.json'), 'utf8'));
+    const { unassigned } = decompose([entry], compileCategories(config));
+    if (unassigned.length > 0) {
+      console.warn(
+        `⚠ карточка «${entry.id}» ВНЕ КАТЕГОРИЙ декомпозиции — дополни паттерн в ` +
+          'scripts/tasks-decompose.config.json, иначе CI-зуб «активный реестр разложен полностью» ' +
+          'покраснеет на следующем прогоне. Проверка: yarn tasks:decompose',
+      );
+    }
+  } catch (e) {
+    // Сторож не вправе уронить регистрацию своей осечкой; но и молчать нельзя — конфиг,
+    // который не читается, сам по себе находка.
+    console.warn(`⚠ проверка категории не состоялась: ${e?.message ?? e}`);
   }
 
   const link =

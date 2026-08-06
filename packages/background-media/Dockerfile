@@ -14,9 +14,13 @@ COPY packages/libs packages/libs
 COPY packages/services packages/services
 COPY packages/background-media packages/background-media
 
+# prisma generate ЗДЕСЬ (#1724): #1632 вынес его в turbo-задачу, docker через turbo
+# не ходит, `generated/` в .gitignore. У media образ не собирается ни одним workflow —
+# провал был бы виден только при ручной выкладке, поэтому чиним до выстрела.
 RUN yarn workspaces focus @membrana/background-media --all \
   && yarn workspace @membrana/core build \
   && yarn workspace @membrana/drone-detection-orchestrator-service build \
+  && yarn workspace @membrana/background-media prisma:generate \
   && yarn workspace @membrana/background-media build
 
 FROM node:20-alpine AS runtime

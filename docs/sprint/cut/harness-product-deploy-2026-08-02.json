@@ -1,0 +1,181 @@
+{
+  "//": "Sprint 2 эпика #1622. Product-контейнер уже в main. Этот cut переносит полезную Harness-дельту PR #1620 в правильный контейнер, не принимает смешанную ветку целиком и завершает production-публикацию обоих независимых Mintlify-проектов.",
+  "schema": "sprint-cut/1",
+  "sprintId": "harness-product-deploy-2026-08-02",
+  "taskId": "harness-workflow-pages",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
+    "reason": "Owner-ratification хранится digest плана; каждый блок обязан оставить отдельные context_run и review_pass, а production-деплой дополнительно подтверждается DNS, HTTPS и визуальным evidence."
+  },
+  "window": {
+    "from": "2026-08-02T17:41:45+03:00",
+    "to": "2026-08-02T23:30:00+03:00"
+  },
+  "blocks": [
+    {
+      "//": "Dynin отвечает за вычислимый двигатель Harness: живые реестры на входе, check-mode и corpus tests. Полезная дельта PR #1620 переносится выборочно; Product-генератор не меняется.",
+      "blockId": "harness-generator",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/mintlify-workflow-docs.mjs",
+        "scripts/lib/readme-digest.mjs",
+        "scripts/mintlify-workflow-docs.mjs",
+        "scripts/mintlify-workflow-docs.test.mjs",
+        "package.json"
+      ],
+      "estimate": {
+        "changedLines": 330
+      },
+      "revisionAt": "2026-08-02T17:57:00+03:00",
+      "revisionOf": "186952129c63fd0522e5fed3405efb38f2126418271cfa893bd4edf0548ae3ee"
+    },
+    {
+      "//": "Dynin отдельно отвечает за 13 детерминированных страниц мастерских и их индекс. Product-навигация остаётся неизменной.",
+      "blockId": "harness-workshop-pages",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "apps/docs-harness/docs.json",
+        "apps/docs-harness/workshops/**"
+      ],
+      "estimate": {
+        "changedLines": 360
+      },
+      "revisionAt": "2026-08-02T17:57:00+03:00",
+      "revisionOf": "bedbdab7e8e7937f0317f9dcaf12a4b564f21c2a4a68eeb8a76df2c3def3de13"
+    },
+    {
+      "//": "Dynin отвечает за первую половину процедурного корпуса: 12 отдельных страниц от ritual-evening до cowork.",
+      "blockId": "harness-procedure-pages-a",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "apps/docs-harness/procedures/ritual-evening.mdx",
+        "apps/docs-harness/procedures/ritual-day.mdx",
+        "apps/docs-harness/procedures/ritual-dreams.mdx",
+        "apps/docs-harness/procedures/attribution.mdx",
+        "apps/docs-harness/procedures/meeting.mdx",
+        "apps/docs-harness/procedures/day-sprint.mdx",
+        "apps/docs-harness/procedures/membrana-local-sprint.mdx",
+        "apps/docs-harness/procedures/hackathon.mdx",
+        "apps/docs-harness/procedures/containerization.mdx",
+        "apps/docs-harness/procedures/test-runs.mdx",
+        "apps/docs-harness/procedures/storm.mdx",
+        "apps/docs-harness/procedures/cowork.mdx"
+      ],
+      "estimate": {
+        "changedLines": 360
+      },
+      "revisionAt": "2026-08-02T17:57:00+03:00",
+      "revisionOf": "eb824dd9ed6d884501a5f0b64ea30d7446f1d45a475afdc73c002575f5cea2f5"
+    },
+    {
+      "//": "Dynin отвечает за вторую половину процедурного корпуса: 11 отдельных страниц от competition до weekly-dead-wire и общий индекс процедур.",
+      "blockId": "harness-procedure-pages-b",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "apps/docs-harness/procedures/index.mdx",
+        "apps/docs-harness/procedures/competition.mdx",
+        "apps/docs-harness/procedures/night-sprint.mdx",
+        "apps/docs-harness/procedures/ship-gate.mdx",
+        "apps/docs-harness/procedures/tasks-audit.mdx",
+        "apps/docs-harness/procedures/git-audit.mdx",
+        "apps/docs-harness/procedures/consilium.mdx",
+        "apps/docs-harness/procedures/code-review.mdx",
+        "apps/docs-harness/procedures/bridge.mdx",
+        "apps/docs-harness/procedures/one-shot.mdx",
+        "apps/docs-harness/procedures/membrana-leveling.mdx",
+        "apps/docs-harness/procedures/weekly-dead-wire.mdx"
+      ],
+      "estimate": {
+        "changedLines": 360
+      },
+      "revisionAt": "2026-08-02T17:57:00+03:00",
+      "revisionOf": "c24cff7ed9678b65ce87c2650657763894e2596e05cf0eb14cd0f4bee6c780d1"
+    },
+    {
+      "//": "Rodchenko отвечает за доступность и честность Harness: индексы, объяснение входов/гейтов/артефактов, реальный пример или явный пробел, портфолио и чистую границу с Product.",
+      "blockId": "harness-editorial",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/docs-harness/README.md",
+        "apps/docs-harness/index.mdx",
+        "apps/docs-harness/CUSTOM_DOMAIN_SETUP.md",
+        "docs/prompts/WORKFLOW_EXAMPLES_MARATHON_PROMPT.md",
+        "docs/prompts/HARNESS_WORKFLOW_PAGES_PROMPT.md",
+        "docs/tasks/registry.json",
+        "docs/tasks/README.md",
+        "scripts/lib/task-registry.mjs",
+        "scripts/task-register.test.mjs",
+        "scripts/tasks-decompose.config.json",
+        "kits/angelina-morning/MANIFEST.json",
+        "kits/containerization-master/MANIFEST.json",
+        "kits/tasks-master/MANIFEST.json",
+        "README.md"
+      ],
+      "estimate": {
+        "changedLines": 400
+      },
+      "revisionAt": "2026-08-02T18:27:00+03:00",
+      "revisionOf": "e75ddc90e8212a7a408d433ae45086ed40afc39e200612d847d87c2ec1871e9c"
+    },
+    {
+      "//": "Vesnin отвечает за два production-проекта: GitHub/Mintlify root, точный CNAME из dashboard, отсутствие office-привязки у Product, TLS, canonical URL и desktop/mobile smoke. Секреты читаются только из корневого .env и не попадают в артефакты.",
+      "blockId": "production-deploy",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "apps/docs/CUSTOM_DOMAIN_SETUP.md",
+        "apps/docs/README.md",
+        "docs/DOCUMENTATION_WORKFLOW.md",
+        "docs/deploy/DNS_DOMAIN_POLICY.md",
+        "docs/deploy/evidence/harness-product-deploy-2026-08-02/**"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "revisionAt": "2026-08-02T17:48:00+03:00",
+      "revisionOf": "3c543e421f02e361863aae964a751d3f8734e21ff8c9dc690299c9dc1501bd0f"
+    },
+    {
+      "//": "Vesnin отдельно держит процедурный след, machine gates, code review назначенных ответственных, exact-SHA closure и доставку через PR.",
+      "blockId": "execution-and-gates",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/local-sprint/harness-product-deploy-2026-08-02/OPEN.md",
+        "docs/local-sprint/harness-product-deploy-2026-08-02/CLOSURE.md",
+        "docs/local-sprint/harness-product-deploy-2026-08-02/VISUAL_REPORT.md",
+        "docs/sprint/cut/harness-product-deploy-2026-08-02.json",
+        "docs/sprint/cut/trail/harness-product-deploy-2026-08-02.jsonl",
+        "docs/sprint/trail/harness-product-deploy-2026-08-02.jsonl",
+        "docs/procedure-runs/trail/2026-08-02.jsonl",
+        "docs/discussions/cut-harness-product-deploy-tarasov.md"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-08-02T17:48:00+03:00",
+      "revisionOf": "90b95aca64f319be3f1297af9adcc4701397440b9cdca7e0811a3044dd4d7e6d"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-02T18:27:00+03:00",
+    "digest": "5515d529189988c999788da410641d68367f3cf77b66e14d7810ef86d17d36ef"
+  }
+}

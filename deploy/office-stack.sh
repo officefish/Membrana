@@ -35,8 +35,27 @@ case "$cmd" in
   down) "${COMPOSE[@]}" down "$@" ;;
   ps) "${COMPOSE[@]}" ps "$@" ;;
   logs) "${COMPOSE[@]}" logs -f office-api "$@" ;;
+  smoke)
+    # Smoke архивариуса (спринт archivarius-live-wiring, блок 4): audit по локальному
+    # порту с токеном из того же ENV_FILE, что и stack. Зелёный только при ok:true.
+    # Приёмка «smoke зелёный → блок принят» — слово владельца (правка резчика №3).
+    token="$(grep -E '^API_INTERNAL_TOKEN=' "$ENV_FILE" | head -1 | cut -d= -f2-)"
+    port="$(grep -E '^OFFICE_PORT=' "$ENV_FILE" | head -1 | cut -d= -f2-)"
+    if [[ -z "$token" ]]; then
+      echo "smoke: API_INTERNAL_TOKEN не найден в $ENV_FILE" >&2
+      exit 1
+    fi
+    body="$(curl -fsS -H "x-membrana-token: ${token}" "http://127.0.0.1:${port:-3000}/v1/archivarius/audit")"
+    echo "$body"
+    if echo "$body" | grep -q '"ok":true'; then
+      echo "smoke: archivarius audit ok" >&2
+    else
+      echo "smoke: audit НЕ ok — findings выше" >&2
+      exit 1
+    fi
+    ;;
   *)
-    echo "Usage: $0 {build|up|down|ps|logs}" >&2
+    echo "Usage: $0 {build|up|down|ps|logs|smoke}" >&2
     exit 1
     ;;
 esac

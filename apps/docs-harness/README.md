@@ -1,12 +1,14 @@
 # @membrana/docs-harness
 
-Публичная **harness**-документация Membrana на [Mintlify](https://mintlify.com): tooling /
-containers, bestiary, llm-calls, git cookbooks. Отдельный Mintlify-проект от product
-`@membrana/docs` (Device Board).
+Публичная **Harness**-документация Membrana на [Mintlify](https://mintlify.com):
+процедуры, мастерские и инженерные справочники. Это отдельный проект от Product
+`@membrana/docs`, где живут Device Board, узлы и тарифы.
 
 ## Что делает
 
 - Атлас контейнеров (`tooling/containers` — производная `yarn tooling:atlas --render`)
+- Отдельная страница каждой живой мастерской и процедуры
+- Честный статус портфолио и примеров, вычисленный из канона
 - Bestiary workshop (антипаттерны)
 - LLM calls — evidence specimens
 - Git branch cookbooks
@@ -41,6 +43,7 @@ yarn docs-harness:dev
 yarn workspace @membrana/docs-harness build
 yarn workspace @membrana/docs-harness lint
 yarn docs:verify:all                  # оба Mintlify-корня (CI)
+yarn docs:workflow:check              # страницы процедур/мастерских без drift
 yarn tooling:atlas --check            # производная containers.mdx свежа
 ```
 
@@ -51,4 +54,4 @@ yarn tooling:atlas --check            # производная containers.mdx с
 | [`CUSTOM_DOMAIN_SETUP.md`](./CUSTOM_DOMAIN_SETUP.md) | Owner DNS / 2-й Mintlify project |
 | [`docs/day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md`](../../docs/day-sprint/dual-mintlify-docs-2026-07-24/OPEN.md) | Спринт dual Mintlify |
 | [`docs/tooling-atlas/README.md`](../../docs/tooling-atlas/README.md) | Канон атласа контейнеров |
-| [`apps/docs/README.md`](../docs/README.md) | Product Device Board docs |
+| [`apps/docs/README.md`](../docs/README.md) | Product: Board, узлы и тарифы |

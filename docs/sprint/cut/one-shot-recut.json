@@ -1,0 +1,69 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "one-shot-recut",
+  "taskId": "one-shot-recut",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-03T13:15:00+03:00",
+    "to": "2026-08-03T20:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "shot-manifest-recut",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/procedures/one-shot/MANIFEST.json",
+        "docs/procedures/one-shot/README.md",
+        "scripts/lib/validate-procedure.mjs",
+        "scripts/validate-procedure.test.mjs"
+      ],
+      "revisionAt": "2026-08-03T14:11:42+03:00",
+      "estimate": {
+        "changedLines": 230
+      },
+      "revisionOf": "9c3b9b3ac583f2cfc69c7c5c39ac85d44ad2704ddcc16389c20170dbb2547a72"
+    },
+    {
+      "blockId": "shot-run-contract",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/one-shot-run.mjs",
+        "scripts/one-shot-run.test.mjs"
+      ],
+      "revisionAt": "2026-08-03T13:10:00+03:00",
+      "estimate": {
+        "changedLines": 320
+      },
+      "revisionOf": "99dd0c32550db419927133f22aee28e90fbf7ca439a1d1395e4950d97ae242f4"
+    },
+    {
+      "blockId": "shot-predicate-moments",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/one-shot-s-predicate.mjs",
+        "scripts/one-shot-s-predicate.test.mjs"
+      ],
+      "revisionAt": "2026-08-03T13:10:00+03:00",
+      "estimate": {
+        "changedLines": 240
+      },
+      "revisionOf": "da4f843395ea33f9cc87e5b96f98dba0f9e0be339fbe6785b2ad8ec47a945e8f"
+    }
+  ],
+  "//why": "Исполнение четырёх вердиктов заседания one-shot-manifest (03.08, порядок ратифицирован владельцем, машинный аудит — нарушений 0). Закрывает #1651. Вход заседания — шторм 03.08 (Т1–Т8, слово владельца). Формат выбран владельцем: «идем в спринт».",
+  "//blocks-map": "Блок 1 (Ожегов) — вердикт M1: манифест на три фрейма (first-frame Веснин с чек-листом четырёх шагов без держателей · owner-ratify владелец · execute назначается тимлидом), home: none сохраняется; README описывает роль каждого фрейма. Блок 2 (Веснин) — вердикт M2 и часть M3: новый scripts/lib/one-shot-run.mjs — контракт записи прогона (shotId · executor · assignedBy: teamlead · contextRunRef), ready_to_execute = valid_assign ∧ context_run_ok со СТРОГИМ временным предшествованием следа контекста, различение missing_assign / missing_context_run. Блок 3 (Дынин) — вердикты M3 и M4: evaluationMoment ∈ {forecast, fact} в предикате S (прогноз — гейт, факт — стоп, failed_oversize) и чистая shotThematicBasis(paths) поверх существующего pathFamily → {families, familyCount, basis: 'pathFamily-v1', blind: 'no-graph'}.",
+  "//seam-trail": "Шов, разведённый резчиком: one-shot-trail.jsonl — ИСТОРИЯ шотов для анти-цепочки (пишется при merge/cancel), запись прогона M2 — жизненный цикл одного исполнения манифеста в docs/procedure-runs/. Правило блоку 2: one-shot-run.mjs НЕ импортирует one-shot-trail.mjs и не пишет в его журнал; связь односторонняя и не в этом спринте.",
+  "//seam-journal": "Запись прогона шота — запись СУЩЕСТВУЮЩЕГО журнала procedure-run-journal@1, три точки M1 = три append; свой носитель не заводится. Поля M2 — расширение корня в рамках схемы; если валидатор строг — минорный bump с обратной совместимостью, решает Веснин. Сходится с #1649: one-shot-run.mjs становится ПРОИЗВОДИТЕЛЕМ журнала для шота.",
+  "//dod": "Блок 1: манифест валиден, три фрейма именованы, first-frame несёт чек-лист четырёх шагов без держателей, home: none явно, README описывает роль каждого фрейма и точку назначения исполнителя. Блок 2: ready_to_execute true ТОЛЬКО при valid_assign ∧ context_run_ok; зубы порознь на missing_assign и missing_context_run с причинами; зуб на НЕстрогое предшествование (след не раньше открытия execute → false); запись прогона проходит валидатор procedure-run-journal@1; три append дают frames.length 3 и outcome. Блок 3: shotThematicBasis чистая и детерминированная, возврат ровно {families, familyCount, basis, blind}; зуб утверждает ОТСУТСТВИЕ поля isHomogeneous (BLOCK заседания M4 — предикат подаёт основание, судит тимлид); evaluateOneShotS бежит с обоими evaluationMoment, зуб на оба; TODO(graph) помечен. Общий: интеграционный прогон спринта оставляет запись прогона процедуры — по #1649, и это будет ПЕРВОЕ свидетельство запуска шот-машинерии.",
+  "//estimate-note": "Оценки подняты резчиком против черновика председателя (140→170, 280→320, 220→240): три занижения 02.08 учтены, по нижней границе не резано.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-03T14:11:42+03:00",
+    "digest": "a42f55dd2971c63a93567f81b4eaf7f249ab09599809fbacf4aca7e2793d559a"
+  },
+  "//recut-b1": "Перерезка блока 1 по слову владельца 03.08 («ратифицирую»). Прогон валидатора до работы дал четыре находки; несущая — PROCEDURE_PERSONAS не содержит tarasov: список написан 26.07, ЗА ДЕНЬ до ротации ролей 27.07, когда Тарасов стал тимлидом. Второй экземпляр дефекта класса #1644 (устаревшая копия ростера). Без правки ростера держатель кадра execute врал бы против Т4 любым из шести имён. В зону добавлены валидатор и его зуб; оценка 170 → 230. Следов у блока не было — перерезка ничего не гасит. Остальные находки лечатся в прежней зоне: run-journal уходит в README (закрытые корневые ключи), корневой steps возвращается (ядро «все три или ни одного»), engines-ссылка на one-shot-run.mjs законна — файл родится блоком 2, PR один."
+}

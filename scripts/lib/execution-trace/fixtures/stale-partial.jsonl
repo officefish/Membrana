@@ -1,0 +1,10 @@
+# ЧАСТИЧНОЕ протухание — восьмой вердикт (акт владельца 01.08, Issue #1566).
+# revisionAt плана = 2026-07-30T08:00Z. У блока gate-wiring ДВА следа: один старше ревизии
+# (07:00Z — судил другую вещь), другой свежий (09:30Z). До восьмого вердикта протухший молча
+# выпадал из evidenceRefs, а блок выходил honest_pair на неполном основании: ровно так три
+# ребёнка перерезки получили зелёное на разборе родителя. Ожидание: gate-wiring →
+# stale_partial, код 1; mfcc-core остаётся honest_pair — чужая беда соседа не красит.
+{"traceId":"t-mfcc-run","blockId":"mfcc-core","kind":"context_run","subject":"kuryokhin","at":"2026-07-30T09:15:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-kuryokhin-mfcc.json"}
+{"traceId":"t-mfcc-review","blockId":"mfcc-core","kind":"review_pass","subject":"kuryokhin","at":"2026-07-30T09:40:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-kuryokhin-mfcc.json"}
+{"traceId":"t-gate-run-old","blockId":"gate-wiring","kind":"context_run","subject":"vesnin","at":"2026-07-30T07:00:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-vesnin-gate.json"}
+{"traceId":"t-gate-review-fresh","blockId":"gate-wiring","kind":"review_pass","subject":"vesnin","at":"2026-07-30T09:30:00.000Z","ref":"docs/audit/llm-calls/2026-07-30-vesnin-gate.json"}

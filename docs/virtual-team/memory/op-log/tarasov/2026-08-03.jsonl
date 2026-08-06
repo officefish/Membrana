@@ -1,0 +1,30 @@
+{"ts":"2026-08-03T06:52:18.445Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-03T09:32:34.797Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T09:32:11.596Z","origin":"ask-persona"}
+{"ts":"2026-08-03T09:32:34.798Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T09:32:11.596Z","origin":"ask-persona"}
+{"ts":"2026-08-03T10:09:47.683Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T10:09:18.909Z","origin":"ask-persona"}
+{"ts":"2026-08-03T10:09:47.686Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T10:09:18.909Z","origin":"ask-persona"}
+{"ts":"2026-08-03T10:09:47.688Z","persona":"tarasov","verb":"emerge","ref":"tarasov-ritual-magistral-source-freshness-cut-1","reason":"прошлая нарезка того же класса (freshness) промахнулась по объёмам на +40% суммой; здесь у тебя блок tooth 160 строк на четыре исхода — тот же профиль риска, скажу отдельно ниже.","origin":"ask-persona"}
+{"ts":"2026-08-03T10:09:47.691Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-20-linear-egress-gear-wiring-m3-snapshot-dod","reason":"там же держал рамку «одна комната — одна функция»; здесь та же логика границ core/wire/tooth.","origin":"ask-persona"}
+{"ts":"2026-08-03T11:44:49.727Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T11:44:14.209Z","origin":"ask-persona"}
+{"ts":"2026-08-03T11:44:49.736Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T11:44:14.209Z","origin":"ask-persona"}
+{"ts":"2026-08-03T11:44:49.738Z","persona":"tarasov","verb":"emerge","ref":"tarasov-ritual-magistral-source-freshness-cut-1","reason":"предсказания по нарезке систематически недооценивали объём (freshness-core +87%, tooth +35%). Три блока по 90/120/80 — это тот же ряд; надо закладывать поправку, особенно на зуб (реально ждать 160–170).","origin":"ask-persona"}
+{"ts":"2026-08-03T12:35:27.682Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T12:35:10.463Z","origin":"ask-persona"}
+{"ts":"2026-08-03T12:35:27.685Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T12:35:10.463Z","origin":"ask-persona"}
+{"ts":"2026-08-03T12:35:27.689Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-29-tariff-grid-m4-memories","reason":"та же дисциплина «планка матча узкая, не лезем в соседние M»: здесь ровно так же — свойство 5 закрыто композицией, не тащим его в вердикт; свойство 1 — канал находки, не эскалация без замера.","origin":"ask-persona"}
+{"ts":"2026-08-03T12:57:03.420Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T12:56:44.779Z","origin":"ask-persona"}
+{"ts":"2026-08-03T12:57:03.426Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T12:56:44.779Z","origin":"ask-persona"}
+{"ts":"2026-08-03T12:57:03.428Z","persona":"tarasov","verb":"emerge","ref":"tarasov-review-oversized-queue-cut-1","reason":"прошлый прогноз по нарезке oversized-queue дал +27% факта над предсказанием; это прямо касается ШОТА B (та же очередь review:oversized) и оценки ~60 строк — держу коэффициент и не удивлюсь выходу к 75–80.","origin":"ask-persona"}
+{"ts":"2026-08-03T14:31:14.138Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-03T14:30:52.680Z","origin":"ask-persona"}
+{"ts":"2026-08-03T14:31:14.147Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-03T14:30:52.680Z","origin":"ask-persona"}
+{"ts":"2026-08-03T14:31:14.148Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-29-night-triage-insight-harvest","reason":"прямой прецедент: «четыре draft-PR разом = сыграна тренировка, не матч». Тот же соблазн взять веер в одну сессию вместо связки на одном.","origin":"ask-persona"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-03-one-shot-manifest-m0-order","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-03-one-shot-manifest-m1-frames","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-03-one-shot-manifest-m2-assignment","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-03-one-shot-manifest-m3-volume","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-03-one-shot-manifest-m4-homogeneity","origin":"persona-extract"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-29-tariff-grid-m4-memories","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-29-tariff-grid-m5-produce","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-29-tariff-grid-m6-switch","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-29-tariff-grid-m7-teeth","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-23-llm-procedure-channels-m3b-telemetry","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-03T17:54:34.934Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}

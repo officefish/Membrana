@@ -286,3 +286,68 @@ export function searchSpans(spans, query = {}) {
 export function spanAddress(span) {
   return `span://${span.sessionId}/${span.uuid}`;
 }
+
+// ── Тракт scan → extract → ingest (спринт archivarius-live-wiring, блок 2) ──────
+// Чистые формы трёх шагов зафиксированы здесь (правка Веснина: типы шагов — явные
+// экспортируемые интерфейсы, чтобы CLI-склейка и зубы не разошлись). ФС и сеть
+// живут в CLI (scripts/archivarius-push.mjs) — ядро остаётся без побочек.
+
+/**
+ * Разбить спаны на батчи под потолок API ingest (контроллер: ≤10000 за запрос).
+ * @param {Array<object>} spans
+ * @param {number} size
+ * @returns {Array<Array<object>>}
+ */
+export function batchSpans(spans, size) {
+  const n = Number(size);
+  if (!Number.isSafeInteger(n) || n < 1 || n > 10_000) {
+    throw new Error(`batchSpans: size вне 1..10000: ${size}`);
+  }
+  const out = [];
+  for (let i = 0; i < spans.length; i += n) out.push(spans.slice(i, i + n));
+  return out;
+}
+
+/**
+ * Повтор с бэкофом — отдельной функцией (правка Веснина: ретрай не смешивается с HTTP
+ * в одном теле, границы тестируются порознь). Таймер инъектируется ради зубов.
+ * @template T
+ * @param {() => Promise<T>} fn
+ * @param {{attempts?: number, backoffMs?: number, sleep?: (ms: number) => Promise<void>, shouldRetry?: (error: unknown) => boolean}} [opts]
+ * @returns {Promise<T>}
+ */
+export async function withRetry(fn, opts = {}) {
+  const attempts = opts.attempts ?? 3;
+  const backoffMs = opts.backoffMs ?? 1000;
+  const sleep = opts.sleep ?? ((ms) => new Promise((r) => setTimeout(r, ms)));
+  const shouldRetry = opts.shouldRetry ?? (() => true);
+  let lastError;
+  for (let i = 1; i <= attempts; i += 1) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      // Детерминированные отказы (413: тело больше лимита) повторять бессмысленно —
+      // вызывающий отключает ретрай предикатом, не ловлей после трёх попыток.
+      if (!shouldRetry(error)) throw error;
+      if (i < attempts) await sleep(backoffMs * i);
+    }
+  }
+  throw lastError;
+}
+
+/**
+ * Итоговый отчёт тракта — счётчики, НИКОГДА не bytes (дефект archivarius-evening-tract:
+ * «без --out весь корпус спанов в stdout» тут неповторим по построению).
+ * @param {{files: number, spans: number, maskedLines: number, batches: number, accepted: number, dryRun: boolean}} input
+ */
+export function buildPushReport(input) {
+  return {
+    files: Number(input.files) || 0,
+    spans: Number(input.spans) || 0,
+    maskedLines: Number(input.maskedLines) || 0,
+    batches: Number(input.batches) || 0,
+    accepted: Number(input.accepted) || 0,
+    dryRun: Boolean(input.dryRun),
+  };
+}

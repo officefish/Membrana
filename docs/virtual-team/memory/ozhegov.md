@@ -5,8 +5,98 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14397/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 243 (причины в op-log) -->
+Записей: 48 · бюджет 14394/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 259 (причины в op-log) -->
+
+### 2026-08-05 · позиция · team-evening-feedback
+
+> Три точки хранения факта архивации (registry.json → README → archive/*.md) обновлены атомарно одним коммитом #1732 — слабая связанность соблюдена, B2-риск файла-перекрёстка не сработал. Скрипты `execution-gate`, `llm-procedure-transport`, `llm-probe`, `prepush-typecheck-scope` […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
+
+### 2026-08-03 · позиция · one-shot-manifest-m0-order
+
+> Начну с лемм, иначе разойдёмся в терминах. Четыре вопроса — это четыре переменные: (1) фреймы и держатели, (2) основание однородности, (3) предикат объёма, (4) форма назначения. Ребро A→B в DAG означает одно: ответ на A определяет переменную, без которой вопрос B не имеет […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/one-shot-manifest-m0-order-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · one-shot-manifest-m1-frames
+
+> Уточняю термины, иначе поедем на синонимах. **Фрейм процедуры** — именованная запись в манифесте с полями `id`, `owner`, семантикой артефакта, который кадр производит или принимает. **Шаг чек-листа** — безымянный пункт внутри фазы без держателя и без собственной записи в ленте. […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/one-shot-manifest-m1-frames-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · one-shot-manifest-m2-assignment
+
+> Уточню лемму «акт». Акт — это запись с адресом, не реплика в чате. Если назначение тимлида живёт только в диалоге — это дисциплина, не механизм. Нам нужна запись с тремя обязательными полями минимум: `assignedPersona` (кто назначен), `shotId` (на какой шот), `assignedBy` […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/one-shot-manifest-m2-assignment-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · one-shot-manifest-m3-volume
+
+> Уточняю лемму по записи прогона. M1 даёт три точки: старт `first-frame`, `owner-ratify`, закрытие `execute`. Запись прогона предиката S должна быть привязана к точке момента: первый прогон фиксируется в `first-frame` (прогноз), второй — в `execute` (факт). `owner-ratify` — […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/one-shot-manifest-m3-volume-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · one-shot-manifest-m4-homogeneity
+
+> Зафиксирую термины до начала. В повестке три кандидата, но только один существует в коде прямо сейчас — `pathFamily` из `scripts/lib/one-shot-s-predicate.mjs`. Граф зависимостей уровня путь-к-пути — факт отсутствия, не кандидат для выбора. Голос Фаррелла — вне гейта, в основания […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/one-shot-manifest-m4-homogeneity-2026-08-03.md#reply-1`
+
+### 2026-08-02 · позиция · team-evening-feedback
+
+> Ожегов. Оценка артефактов: `MAIN_DAY_ISSUE` содержит колонку «Посылки» с маркерами `file:` и `symbol:` — это правильная форма проверяемых утверждений, но применена только к двум пунктам из семи в «Сегодня делаем». Форма верная, охват — половинчатый. Итоги дня: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-02.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m0-order
+
+> Уточняю леммы, чтобы не плодить синонимы. Кандидат (3) — это не просто «порядок документов», это ещё и «судьба вердикта M4 от 18.07». Это двусоставная переменная. Вопрос (5) про опору аудита на память сессий — в нём заложено, что аудит уже существует как шаг и занимает известное […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m0-order-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m1-subject
+
+> Уточняю лемму единицы. «Разработка, прожитая тремя-четырьмя сессиями» — слово владельца, но для машинного опознания нужна однозначная статья. Предлагаю: единица суждения вечера — **активная карточка реестра** (`docs/tasks/registry.json`), затронутая в течение дня. Карточка — это […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m1-subject-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m2-order-of-three
+
+> Леммы, иначе путаница. **Строка Lifecycle M4** — одна именованная норма внутри вердикта M4: «вечерняя цепочка после `truth.mjs cool` и `code-review`». **Форма генератора M4** — отдельная часть вердикта: как формируется документ хроники (генератор, тернарный вердикт, двухфазный […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m2-order-of-three-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m3-volume-measure
+
+> Уточняю термины, иначе будем спорить о разных вещах. «Мерка объёма» — это функция card → ℕ, применённая к одной карточке: осмысленна. «Агрегат по дню» — это функция {card₁…cardₙ} → ℕ, потерявшая структуру множества: теряет информацию о распределении. «Реляционный предикат […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m3-volume-measure-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m4-memoization
+
+> Разведу термины, чтобы не ехать на синонимах. «Мемоизация в голове вечера» — это не тип операции, это временно́й слот: то, что происходит ДО `day-memo`. Орган `team-memory-report` (шаг 6) — читатель, не писатель; он не мемоизирует, он отчитывается о состоянии памяти. Орган […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m4-memoization-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m4s-existing-organs
+
+> Леммы. archive-night-hunt и archive-daily-day — имена шагов 2 и 3 по фактическому источнику evening-ritual-steps.json. Их функция из имён читается как архивирование ночных и дневных артефактов — не транскриптов сессий. sessions:scan и sessions:extract — отдельные скрипты с […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m4s-existing-organs-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m4x-session-archive
+
+> Леммы. **Голова вечера** — входной корпус для `day-memo`. **Тракт** — связанная цепочка вызовов, где выход одного органа становится входом следующего. **Тракта нет** — факт о связях между органами, не о существовании органов. Из трёх органов на вход `day-memo` сегодня может […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m4x-session-archive-2026-08-01.md#reply-1`
+
+### 2026-08-01 · позиция · evening-review-predicate-m6-quality-gates
+
+> Лемма про разделение ответственности. Три документа вечера имеют разную природу входа: `day-memo` суммирует день целиком (вход: `C_day`), `audit-evening` отражает ход цепочки (вход: артефакты прогона), `code-review` судит код (вход: коммиты и контракты). Один предикат покрытия […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/evening-review-predicate-m6-quality-gates-2026-08-01.md#reply-1`
 
 ### 2026-07-30 · позиция · sprint-honest-m2-contract
 
@@ -200,98 +290,8 @@
 
 — источник: `docs/seanses/tariff-grid-m1-form-2026-07-29.md#reply-1`
 
-### 2026-07-29 · позиция · tariff-grid-m2-rail
-
-> Леммы, иначе синонимы. **Рельс** — замкнутый путь носителей: Prisma-поле → node-realtime → wire DTO → `device-board-module-config.entitledTariffSkus` → `ClientUserCaseCatalogService` → gate бейджей. **Сетка** — `TariffGridDocument` (registry + matrix), home на сервере. […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/tariff-grid-m2-rail-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m3-tri
-
-> Леммы, иначе синонимы. **Entitlement** — право в реестре (id + kind). **Gated value** — `kind: gated` + `enabled` + `preconditionId` (M1). **Precondition** — именованный предикат вне сетки; сетка хранит только id-ссылку, не тело вычисления. **PreconditionReport** — снимок `{ id, […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/tariff-grid-m3-tri-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m4-memories
-
-> Начинаю со словаря, иначе снова синонимы. **Горячая память** — квота области, из которой детекторы и пользовательские задачи читают/пишет рабочий объём. **Холодная память** — квота хранилища треков (media/library). **Ячейка quota** (M1) — `EntitlementValue` kind `quota{limit, […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m4-memories-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m5-produce
-
-> Леммы, иначе снова синонимы. **produce** — entitlement рода capability (M1), author — матрица (M2). **Артефакт производства** — сущность user-owned: own dataset index, own detection, user scenario на своих детекциях. **Create-path** — write-path создания/материализации нового […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m5-produce-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m6-switch
-
-> Леммы, иначе синонимы. **TariffTransition** — атомарный акт смены `membrane.tariffId` (ссылка на SKU), не снимок матрицы прав в мембране. **PromoCode** — отдельная сущность-носитель права *инициировать* переход на целевой SKU при погашении. **Issuer** — admin (роль, не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m6-switch-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m7-teeth
-
-> Леммы, иначе синонимы. **Зуб** — именованный машинный предикат с home (файл/хук/схема) и закрытым effect. **Locus** — место стояния, не «слой ощущений». **SoT** — sole author сетки (M2); клиент — инсталлятор, не автор. Homes: матрица G на сервере; проекция `entitledTariffSkus` — […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m7-teeth-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m8-integration
-
-> Леммы, иначе синонимы-слои. **Grid-home** — серверный документ G + loader. **Wire DTO** — исходящий контракт прав без снимка в мембране. **Projection writer** — единственный server-side путь, пишущий `entitledTariffSkus` из G. **Gate locus** — точка reject_op (load/clone/start, […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/tariff-grid-m8-integration-2026-07-29.md#reply-1`
-
 ### 2026-07-29 · позиция · team-evening-feedback
 
 > **Оценка артефактов:** Модульная структура tariff-grid — отличная: S0 (декларация) → S1 (матрица) → S2–S3 (read/write split) → S4 (квоты) → S5–S6 (гейты) → S7 (витрина) → S8 (смена) → S9 (предикат). Каждый S — отдельный файл/модуль, нет пересечений. network-container — […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-07-29.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m0-order
-
-> Леммы «зависит» не смешиваем. **Контрактная** — без вердикта a у b нет области определения. **Фактурная** — b ждёт файл/PR в main. В M0 только контрактные. Имена — словарные статьи брифа (подсознание, приоритизация оперативной, всплытие, активный цикл, метрики/логирование, […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/memory-subconscious-m0-order-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m1-subconscious
-
-> Леммы, иначе синонимы. **Оперативная** — проекция (view), файл `docs/virtual-team/memory/<id>.md`, пересборка целиком легитимна. **Подсознание** — home архива, не второй md «вручную». **Запись архива** — иммутабельный unit с meta+body. **Переток** — событие, не молчаливый […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/memory-subconscious-m1-subconscious-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m2-priority
-
-> Леммы, иначе синонимы. **Класс записи** — закрытый enum в meta, не свободный тег. **Pinned** — удержание вне бюджетного вытеснения (человек-флаг или класс-норма). **Budgeted** — участвует в отборе под B'. **TTL** — опциональный срок в meta класса «временных». **importance.json** […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/memory-subconscious-m2-priority-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m3-surfacing
-
-> Начинаю со словаря, иначе снова синонимы-слои. **Лифт** — детерминированный retrieval-контур: на входе тема/повестка, на выходе конечное **облако** кандидатов с id/provenance из архива C1. **Акт всплытия** — суждение персоны: из облака выбирает 0..N записей и обязана назвать […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/memory-subconscious-m3-surfacing-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m4-cycle
-
-> Леммы, иначе синонимы-слои. **Такт** — именованный шаг цикла с home квитанции. **Сжатие (compress)** — пересборка live через selectOperational (C2) + transfer уходящих в архив (C1). **Прогрев (warmup)** — инъекция релевантного из архива/облака в оперативный контур или […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/memory-subconscious-m4-cycle-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m5-metrics
-
-> Леммы, иначе синонимы. **Op-log** — append-only журнал операций памяти с закрытым enum verb. **Metric v1** — счётчик/гистограмма без threshold-констант в контракте. **Signal** — булев/счётный предикат над логами, не «ощущение». **Emitter** — именованный шаг/скрипт-лемма, […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/memory-subconscious-m5-metrics-2026-07-28.md#reply-1`
-
-### 2026-07-28 · позиция · memory-subconscious-m6-extractor
-
-> Леммы. **Extractor** — оркестратор такта: collect → rank/select → append archive → project md → emit op-log. **Archive** — per-persona append-only jsonl (C1). **Projection** — md, производная. **importance.json** — вход selectOperational (C2), сейчас объявлен и не читается — это […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/memory-subconscious-m6-extractor-2026-07-28.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m2b-control-plane
-
-> Владелец хочет **переключать канал с панели** — кандидат 1 (только git/PR) делает админа = merge, это не тумблер. Кандидат 3 (только .env) делает панель read-only по маршруту — прямо бьёт BRIEF. Остаются 2 (office SoT) и 4 (гибрид). _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/llm-procedure-channels-m2b-control-plane-2026-07-23-2026-07-23.md#reply-1`

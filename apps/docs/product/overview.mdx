@@ -1,0 +1,38 @@
+---
+title: Membrana Product
+description: Device Board, узлы сценария и тарифные возможности Membrana.
+---
+
+# Membrana Product
+
+Membrana превращает устройство с микрофоном в управляемый сценарий наблюдения.
+В **Device Board** вы соединяете узлы получения сигнала, анализа, ветвления и
+публикации отчёта, а затем запускаете один и тот же сценарий на выбранном устройстве.
+
+<CardGroup cols={3}>
+  <Card title="Device Board" icon="diagram-project" href="/device-board/mvp-overview">
+    Как устроен редактор и что входит в текущий продукт.
+  </Card>
+  <Card title="Каталог узлов" icon="grid-2" href="/device-board/nodes/index">
+    Входы, выходы, ограничения и минимальные графы каждого узла.
+  </Card>
+  <Card title="Тарифы" icon="table-columns" href="/product/tariffs">
+    Устройства, память и инструменты анализа без выдуманных цен.
+  </Card>
+</CardGroup>
+
+## Первый сценарий
+
+1. Откройте [обзор редактора](/device-board/editor/overview).
+2. Соберите поток `GetMicrophone → StartStreaming → GetSample`.
+3. Добавьте анализ и [ветвление по детекции](/device-board/nodes/branch-on-detection).
+4. Сохраните сценарий и запустите его на связанном устройстве.
+
+Готовые последовательности собраны в cookbooks. Для первого запуска подойдёт
+[On start → Main](/device-board/cookbooks/on-start-to-main), а для полного
+цикла наблюдения — [Detection + alarm](/device-board/cookbooks/detection-alarm-chain).
+
+## Где документация рабочего контура
+
+Процедуры, мастерские и инструменты команды не входят в Product. Они публикуются
+отдельно на [harness.mmbrn.tech](https://harness.mmbrn.tech).

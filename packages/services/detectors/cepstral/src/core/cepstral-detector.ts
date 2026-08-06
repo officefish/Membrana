@@ -2,7 +2,7 @@ import type { AudioWindow, DetectionResult, DroneDetector } from '@membrana/dete
 import { FftCore } from '@membrana/fft-analyzer-service';
 
 import { DEFAULT_FFT_SIZE } from '../constants.js';
-import { prepareFftSamples } from '../core/sample-window.js';
+import { geometricMeanMagnitudes, prepareFftSamples } from '@membrana/detector-base';
 import {
   classifyCepstrum,
   DEFAULT_CEPSTRAL_DETECTOR_CONFIG,
@@ -24,8 +24,21 @@ export class CepstralDetector implements DroneDetector {
   detect(window: AudioWindow): Promise<DetectionResult> {
     const t0 = performance.now();
     const fftSize = this.config.fftSize;
-    const prepared = prepareFftSamples(window.samples, fftSize);
-    const magnitudes = this.fft.computeMagnitudes(prepared);
+    // Запись длиннее окна судится ЦЕЛИКОМ: спектры кадров сводятся СРЕДНИМ ГЕОМЕТРИЧЕСКИМ,
+    // что тождественно усреднению кепстров кадров — IFFT линеен, а среднее логарифмов есть
+    // логарифм среднего геометрического. Арифметическое среднее (которым вылечен гармонический
+    // детектор) здесь размыло бы пик квефренции: log(среднего) ≠ среднее(log), разбор Дынина
+    // 02.08. До 02.08 брались первые fftSize сэмплов — при 2048 и 48 кГц это 43 мс, то есть
+    // сотая доля пятисекундной записи, и детектор об этом не сообщал.
+    //
+    // Путь `analyzeSample` не затронут: он подаёт куски ровно fftSize, и для них работает
+    // прежняя быстрая ветка — числа бенчмарка не сдвигаются.
+    const magnitudes =
+      window.samples.length > fftSize
+        ? (geometricMeanMagnitudes(window.samples, fftSize, (frame) =>
+            this.fft.computeMagnitudes(frame),
+          ) ?? this.fft.computeMagnitudes(prepareFftSamples(window.samples, fftSize)))
+        : this.fft.computeMagnitudes(prepareFftSamples(window.samples, fftSize));
     const spectrum = classifyCepstrum(magnitudes, window.sampleRate, fftSize, {
       ...this.config,
       sampleRate: window.sampleRate,

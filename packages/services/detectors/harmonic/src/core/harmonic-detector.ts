@@ -5,7 +5,7 @@ import type { AudioWindow, DetectionResult, DroneDetector } from '@membrana/dete
 import { FftCore } from '@membrana/fft-analyzer-service';
 import { classifySpectrum, DEFAULT_HARMONIC_DETECTOR_CONFIG } from '../math/classifier.js';
 import type { HarmonicDetectorConfig } from '../types.js';
-import { prepareFftSamples } from './sample-window.js';
+import { averageMagnitudes, prepareFftSamples } from '@membrana/detector-base';
 
 export class HarmonicDetector implements DroneDetector {
   readonly name = 'harmonic';
@@ -24,8 +24,18 @@ export class HarmonicDetector implements DroneDetector {
     const sampleRate = window.sampleRate;
     const fftSize = this.config.fftSize;
 
-    const prepared = prepareFftSamples(window.samples, fftSize);
-    const magnitudes = this.fft.computeMagnitudes(prepared);
+    // Запись длиннее окна судится ЦЕЛИКОМ: спектры кадров усредняются. До 01.08 здесь
+    // молча брались первые fftSize сэмплов — при 4096 и 48 кГц это 85 мс, то есть сотая
+    // доля пятисекундной записи, и детектор об этом не сообщал.
+    //
+    // Путь `analyzeSample` не затронут: он подаёт куски ровно fftSize, и для них работает
+    // прежняя быстрая ветка — числа бенчмарка не сдвигаются.
+    const magnitudes =
+      window.samples.length > fftSize
+        ? (averageMagnitudes(window.samples, fftSize, (frame) =>
+            this.fft.computeMagnitudes(frame),
+          ) ?? this.fft.computeMagnitudes(prepareFftSamples(window.samples, fftSize)))
+        : this.fft.computeMagnitudes(prepareFftSamples(window.samples, fftSize));
     const spectrum = classifySpectrum(magnitudes, sampleRate, fftSize, {
       ...this.config,
       sampleRate,

@@ -4,7 +4,35 @@
 
 ## Focus
 
-- **procedure-run-journal-2026-08-01** · OPEN [`docs/local-sprint/procedure-run-journal-2026-08-01/OPEN.md`](./local-sprint/procedure-run-journal-2026-08-01/OPEN.md) · F1 code pass + review-sprint gate pass: Дынин/Веснин/Ожегов увидели свои зоны кода и дали LGTM после исправлений · F2/F3 не заведены · ветка `codex/procedure-run-journal`
+- Активного локального спринта нет. Standing marathon `workflow-examples-marathon`
+  остаётся отдельным маршрутом накопления evidence.
+
+## Предыдущий спринт
+
+- **deploy-procedures** · gate pass 3/3 honest_pair · журнал закрыт производителем ·
+  [`OPEN.md`](./local-sprint/deploy-procedures/OPEN.md) — две процедуры деплоя по
+  серверам (`deploy-office-vds`, `deploy-media-vps`), обёртка `deploy:run`, врезка в
+  `cabinet:deploy:prod` и `vds:run`; ADR-0023 ACCEPTED.
+
+- **sprint-dictionary-to-lib** (#1681) · gate pass 2/2 honest_pair · PR #1706 merged ·
+  [`OPEN.md`](./local-sprint/sprint-dictionary-to-lib/OPEN.md) — словарь прогона
+  спринта в lib + структурный `orphanedBy`; журнальный close невозможен (ложный
+  fail от коллизии ратификаций, #1705).
+- **run-journal-sequence-validator** (#1683) · gate pass 1/1 · журнал закрыт
+  производителем (close pass) ·
+  [`OPEN.md`](./local-sprint/run-journal-sequence-validator/OPEN.md) — валидатор
+  монотонности sequence уровня ленты.
+
+- **harness-product-deploy-2026-08-02** · CLOSED
+  [`CLOSURE.md`](./local-sprint/harness-product-deploy-2026-08-02/CLOSURE.md) ·
+  Harness PR #1650 и production deploy двух Mintlify-проектов.
+- **product-mintlify-container-2026-08-02** · код и task closure доставлены PR
+  #1640/#1646; production custom domain закрыт Harness-спринтом.
+
+## Ранее
+
+- **procedure-run-journal-2026-08-01** · F1 code pass + review-sprint gate pass ·
+  F2/F3 не заведены.
 
 ## Правило
 

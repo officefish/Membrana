@@ -433,6 +433,42 @@
         "value": false,
         "provenance": null
       }
+    },
+    {
+      "id": "deploy-office-vds",
+      "holder": "vesnin",
+      "homePath": "docs/procedures/deploy-office-vds",
+      "container": {
+        "value": true,
+        "provenance": "vesnin@aef12828"
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": false,
+        "provenance": null
+      },
+      "procedureKind": "ритм"
+    },
+    {
+      "id": "deploy-media-vps",
+      "holder": "vesnin",
+      "homePath": "docs/procedures/deploy-media-vps",
+      "container": {
+        "value": true,
+        "provenance": "vesnin@aef12828"
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": false,
+        "provenance": null
+      },
+      "procedureKind": "ритм"
     }
   ]
 }

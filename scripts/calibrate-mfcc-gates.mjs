@@ -31,6 +31,14 @@ import { fileURLToPath } from 'node:url';
 import { coefficientGate, frames } from './lib/mfcc-gates.mjs';
 import { readWavMono } from './lib/wav-read.mjs';
 
+/**
+ * Частота, на которой снимаются ворота. Названа константой и ВЫВОДИТСЯ В ОТПЕЧАТОК: до 01.08
+ * она стояла числом в одной строке, отпечаток её не нёс, а живой прибор считал на умолчании
+ * библиотеки. Банк мел-фильтров строится от частоты — значит векторы были несравнимы с
+ * воротами, и поймать это было нечем.
+ */
+const SAMPLE_RATE = 48_000;
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DATASET_DIR = join(ROOT, 'data', 'detectors-benchmark', 'v0.2');
 const MANIFEST_PATH = join(DATASET_DIR, 'manifest.json');
@@ -71,7 +79,7 @@ async function main() {
   const report = { generatedAt: null, corpus: { path: 'data/detectors-benchmark/v0.2', counts: byLabel }, configs: [] };
 
   for (const config of CONFIGS) {
-    const tag = `mel${config.melBands}-c${config.numberOfCoefficients}-buf${config.bufferSize}`;
+    const tag = `mel${config.melBands}-c${config.numberOfCoefficients}-buf${config.bufferSize}-sr${SAMPLE_RATE}`;
     /** @type {number[][]} по коэффициенту → значения кадров */
     const drone = Array.from({ length: config.numberOfCoefficients }, () => []);
     const other = Array.from({ length: config.numberOfCoefficients }, () => []);
@@ -90,7 +98,7 @@ async function main() {
     //
     // Первый прогон калибратора это и показал: две точки сетки вернули идентичные ворота.
     // Ложная зелёнка того же класса, что ловили весь день: число есть, а различия нет.
-    Meyda.sampleRate = 48_000;
+    Meyda.sampleRate = SAMPLE_RATE;
     Meyda.bufferSize = config.bufferSize;
     Meyda.melBands = config.melBands;
     Meyda.numberOfMFCCCoefficients = config.numberOfCoefficients;
@@ -165,7 +173,7 @@ async function main() {
   report.preset = {
     // Отпечаток настроек: коридор, снятый при 26 фильтрах, ничего не говорит о векторе
     // при 40 — детектор отвергает корпус с чужим отпечатком, и это его право.
-    configHash: `mel${best.config.melBands}-c${best.config.numberOfCoefficients}-buf${best.config.bufferSize}`,
+    configHash: `mel${best.config.melBands}-c${best.config.numberOfCoefficients}-buf${best.config.bufferSize}-sr${SAMPLE_RATE}`,
     judgedCoefficients: picked.map((x) => x.index),
     // Коридор НА КАЖДЫЙ коэффициент, длиной во весь вектор — так требует контракт трубы
     // (`boundsProblem` сверяет длину с `coefficientCount`). Отбор делает

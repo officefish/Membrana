@@ -4,6 +4,7 @@
  */
 import {
   OVERSIZED_CHANGED_LINES,
+  cutterFindings,
   modeOf,
   performerFindings,
   shapeFindings,
@@ -12,6 +13,7 @@ import {
 } from './cut-plan.mjs';
 import { ratificationFindings } from './ratification.mjs';
 
+export * from './act-kinds.mjs';
 export * from './cut-plan.mjs';
 export * from './ratification.mjs';
 
@@ -20,10 +22,13 @@ export * from './ratification.mjs';
  * остальные проверки не выполняются: пять зубов на мусоре сообщали бы чепуху.
  *
  * @param {unknown} plan
- * @param {{voices: readonly string[]}} ctx закрытый список id реестра голосов — значением
+ * @param {{voices: readonly string[], acts?: Array<{kind: string, sprintId: string, subject: string}>}} ctx
+ *   `voices` — закрытый список id реестра голосов значением; `acts` — разобранная лента актов
+ *   плана. `acts` не передан → седьмой зуб НЕ выполняется (не «прошёл»): чистые вызовы ядра
+ *   без ленты не начинают зеленеть молча.
  * @returns {{verdict: 'contract'|'findings'|'unreadable', findings: ReadonlyArray<{toothId: string, where: string, reason: string}>}}
  */
-export function cutVerdict(plan, { voices } = {}) {
+export function cutVerdict(plan, { voices, acts } = {}) {
   const shape = shapeFindings(plan, voices);
   if (shape.length > 0) return { verdict: 'unreadable', findings: Object.freeze(shape) };
 
@@ -32,6 +37,7 @@ export function cutVerdict(plan, { voices } = {}) {
     ...performerFindings(plan, voices),
     ...zoneFindings(plan),
     ...ratificationFindings(plan),
+    ...cutterFindings(plan, acts),
   ];
   return { verdict: findings.length === 0 ? 'contract' : 'findings', findings: Object.freeze(findings) };
 }

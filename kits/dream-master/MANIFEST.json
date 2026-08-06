@@ -11,9 +11,10 @@
     "scripts/lib/dreams-log.mjs": "6bff7ead174587a5fc73732f915fd476186a68b2",
     "scripts/lib/dreams-select.mjs": "79b8636f666a33333fd0cf82e391a521ac18ddd9",
     "scripts/lib/dreams-tick.mjs": "30700116b25ff8fe34dab02ae6aba1fbfaf38b58",
+    "scripts/lib/llm-procedure-registry.mjs": "2cc3d8558ef58ec55a783dd7e5beee5a4e342c8f",
     "scripts/lib/night-research.mjs": "3306d9d254dd08c8e996212d6ac7e5a7d814a6ef",
     "scripts/lib/strategy-horizon.mjs": "d92be708a73158a69b788063e78afeed7eb6b992",
     "scripts/lib/truth-graph.mjs": "54f1c23e0f0449e4adde145aa2d2633030baa22a",
-    "scripts/llm-probe.mjs": "8449d2751ca2a834cb8433bee6ede4adef57d61e"
+    "scripts/llm-probe.mjs": "72869c87b5b47c8f7bb841fc2ca7aa68cca199cf"
   }
 }

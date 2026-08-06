@@ -23,7 +23,8 @@ membrana/
     ├── client/               # Vite + React — полевой клиент (:5173)
     ├── cabinet/              # SPA личного кабинета
     ├── membrana-studio/      # Electron: расширенный desktop-клиент
-    └── docs/                 # Mintlify-документация (публикация отдельно)
+    ├── docs/                 # Product Mintlify: Board, узлы, тарифы
+    └── docs-harness/         # Harness Mintlify: процедуры и мастерские
 ```
 
 **Границы:** `packages/services/*` — чистая бизнес-логика + React-хуки; `background-*` — NestJS data-plane и интеграции, **не** входят в граф сервисов. Канон: [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md), [`docs/BACKGROUND_SERVERS.md`](./docs/BACKGROUND_SERVERS.md), [`docs/SERVICES.md`](./docs/SERVICES.md).
@@ -133,7 +134,10 @@ yarn workspaces foreach -A run build
 
 ## Документация
 
-Два слоя: **нормативные** документы в `docs/` (архитектура, ритм, agent catalog) и **продуктовый** сайт Mintlify в `apps/docs/` (операторская и developer-документация; сейчас в основном **device-board** MVP — узлы, редактор, cookbooks, concepts). Регламент sync: [`docs/DOCUMENTATION_WORKFLOW.md`](./docs/DOCUMENTATION_WORKFLOW.md).
+Три слоя: нормативные документы в `docs/`, Product Mintlify в `apps/docs/`
+(Device Board, узлы, тарифы) и Harness Mintlify в `apps/docs-harness/`
+(процедуры, мастерские, инженерные справочники). Регламент sync:
+[`docs/DOCUMENTATION_WORKFLOW.md`](./docs/DOCUMENTATION_WORKFLOW.md).
 
 | Куда                                                           | Что                                                                                                                  |
 | -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -141,5 +145,6 @@ yarn workspaces foreach -A run build
 | [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)               | Границы пакетов, плагины, аудио-слои                                                                                 |
 | [`docs/MEMBRANE_PLATFORM.md`](./docs/MEMBRANE_PLATFORM.md)     | Кабинет, pairing, SKU (web / Studio / Device)                                                                        |
 | [`packages/services/README.md`](./packages/services/README.md) | Каталог сервисов и детекторов                                                                                        |
-| [`apps/docs/`](./apps/docs/README.md)                          | **Mintlify** — device-board (node reference, editor UX, cookbooks); preview: `yarn docs:dev` → http://localhost:3333 |
+| [`apps/docs/`](./apps/docs/README.md)                          | **Product Mintlify** — Board, узлы и тарифы; `product.mmbrn.tech` |
+| [`apps/docs-harness/`](./apps/docs-harness/README.md)          | **Harness Mintlify** — процедуры и мастерские; `harness.mmbrn.tech` |
 | Каждый пакет                                                   | Свой `README.md` с API и примерами                                                                                   |

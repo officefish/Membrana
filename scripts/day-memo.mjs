@@ -18,6 +18,7 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } fr
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { provenanceLine } from './lib/artifact-freshness.mjs';
 import { buildFactsLayer } from './lib/day-memo-facts.mjs';
 import { parseRegistry } from './lib/evidence-index.mjs';
 import { renderIndex } from './lib/evidence-inventory.mjs';
@@ -80,6 +81,11 @@ async function main() {
   ];
 
   const doc = [
+    // Провенанс первой строкой: кадр доставки вечера читает свежесть именно по нему, и без
+    // него мемо объявлялось `stale` в любой день — гейт останавливал вечер на документе,
+    // родившемся минуту назад. Найдено первым настоящим прогоном кадра 01.08.
+    provenanceLine({ tool: 'yarn day:memo', now: new Date(`${date}T00:00:00.000Z`) }),
+    '',
     `# DAY_MEMO — ${date}`,
     '',
     '<!-- канал: код — yarn day:memo (сборщик фазы 2); слои: факты=код, инсайты=цитатный v1, след=журналы персон -->',
