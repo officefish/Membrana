@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-08-05T08:11:10.929Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-08-06T05:28:06.824Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -76,7 +76,7 @@ _Кристаллов активно: 127 (owner: 81, derived: 46). Страте
 - **Борд состояния сети в харнес-панели (здоровье N серверов)** — `insight:insight-network-status-board`
 - **Паттерн «Воспоминание» — как персона копит опыт** — `insight:insight-persona-recollection-pattern`
 - ~~**Лендинг через челлендж — проба стратегических исходников в бою (Replit как кисть, Ожегов как судья)**~~ — `insight:insight-landing-challenge-sources-in-battle` _(stale · 2026-07-17)_
-- **Формат разработки one shot: подобранная S-проблема за один проход, процедура во фреймах** — `insight:insight-one-shot-format`
+- ~~**Формат разработки one shot: подобранная S-проблема за один проход, процедура во фреймах**~~ — `insight:insight-one-shot-format` _(stale · 2026-07-23)_
 - ~~**Собственный полевой корпус: спецификация трека и ежедневная рутина сбора**~~ — `insight:insight-own-field-corpus-single-spec` _(stale · 2026-07-18)_
 - ~~**Мост adopted insight → week epic (LGTM gate)**~~ — `insight:insight-vesnin-adopted-epic-bridge` _(stale · 2026-06-25)_
 - ~~**Архивация сессий AI-агентов**~~ — `insight:insight-sessions-archive` _(stale · 2026-06-28)_
