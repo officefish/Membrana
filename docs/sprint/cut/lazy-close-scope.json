@@ -1,0 +1,52 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "lazy-close-scope",
+  "taskId": "lazy-close-scope",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-06T13:25:00+00:00",
+    "to": "2026-08-06T20:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "h1-scope-contract",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/procedure-run-journal.mjs",
+        "scripts/procedure-run-journal.test.mjs"
+      ],
+      "revisionAt": "2026-08-06T13:20:00+00:00",
+      "estimate": {
+        "changedLines": 110
+      },
+      "revisionOf": "1b792ee801b62d66471069c6b704138b7fd6ff50720cafc2fc3c2a110b7a4fc6"
+    },
+    {
+      "blockId": "h2-consumers-declare",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/sprint-cut/sprint-run.mjs",
+        "scripts/procedure-run-record.mjs",
+        "scripts/procedure-run-record.test.mjs"
+      ],
+      "revisionAt": "2026-08-06T13:20:00+00:00",
+      "estimate": {
+        "changedLines": 70
+      },
+      "revisionOf": "83abb38cc55fccf5459e970ce8a2c7fb76bcca7c41925ab0dedc9f7249acfeb1"
+    }
+  ],
+  "//why": "Строка 9 десятки 06.08 — иссью #1705, отдана владельцем. Шотом не проходит: предикат S отказал честно (capability_chaining, 7 выстрелов в семье scripts/lib при пороге 3).",
+  "//defect": "Вещдок 04.08, воспроизведён: openProcedureRun перед новой open-записью закрывает ВСЕ незакрытые прогоны той же процедуры как сирот (fail + gap orphaned). Для ritual-day это верно — обрыв утра ловится следующим утром, runId разные. Для membrana-local-sprint это ЛОЖЬ: два спринта живут параллельно законно, и ратификация второго (run-journal-sequence-validator) закрыла open первого (sprint-dictionary-to-lib) как сироту — спринт ещё не начинался, а в журнале уже fail.",
+  "//cutter": "Решение резчика (tarasov, конспект docs/discussions/cut-lazy-close-scope-tarasov.md): LGTM на форму с тремя уточнениями. (1) ДВА блока, ОДИН PR: «иначе первый merge оставит контракт без вызывающих, а второй — вызывающих без контракта». (2) Держатель — Веснин на обоих: семантика lazy-close меняется в ядре, это контракт журнала; Дынин — ревьюер по своей линии. (3) Умолчания НЕТ: обратная совместимость закрывается миграцией всех текущих вызовов в этом же PR, а не default-ом — «тихий выбор есть тот же зверь с другим лицом».",
+  "//dod": "h1: openProcedureRun принимает ЯВНУЮ область ленивого закрытия — `procedure` (закрывать любые незакрытые прогоны процедуры: ритуалы, где живой прогон один по построению) или `run` (закрывать только сирот с ТЕМ ЖЕ runId: спринты и всё, где несколько прогонов законно живут разом); вызов без области — бросок на месте, не тихий выбор; зубы на оба сценария, включая воспроизведение случая 04.08 (два спринта разом не топят друг друга). h2: все существующие потребители объявляют область явно — sprint-run.mjs (`run`), procedure-run-record.mjs (`procedure`, включая кросс-файловый путь); зубы потребителей зелёные, поведение ритуалов не меняется.",
+  "//out-of-scope": "Форма записи orphanedBy (сделана 04.08), валидатор монотонности sequence (сделан 04.08), поведение шотов — они не ходят через openProcedureRun и дефектом не затронуты.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-06T13:42:34+00:00",
+    "digest": "748ac29051e102b66543f0d8dc7944ca483fa18f26b68eed5deaaf04c724263a"
+  }
+}
