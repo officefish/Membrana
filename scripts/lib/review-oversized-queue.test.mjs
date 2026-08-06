@@ -125,7 +125,7 @@ test('доки можно вернуть в очередь явным флаго
 
 test('не oversized отброшены отдельной причиной, а не свалены с доками', () => {
   const r = buildQueue([bigCode(120, 10), bigDocs(130, 20)]);
-  assert.deepEqual(r.dropped, { notOversized: 2, reviewed: 0, docs: 0 });
+  assert.deepEqual(r.dropped, { notOversized: 2, reviewed: 0, docs: 0, byStatus: 0 });
   assert.equal(r.denominator, 2);
 });
 
@@ -141,7 +141,7 @@ test('отброшенное названо числом и причиной в 
   const joined = formatQueue(buildQueue([bigDocs(140, 3000), bigCode(150, 10), bigCode(160, 700)])).join('\n');
   assert.ok(joined.includes('1 не oversized'));
   assert.ok(joined.includes('1 без изменённых строк исходного кода'));
-  assert.ok(joined.includes('0 с готовым артефактом'), 'ноль печатается тоже — иначе строка врёт умолчанием');
+  assert.ok(joined.includes('0 с готовым ревью'), 'ноль печатается тоже — иначе строка врёт умолчанием');
 });
 
 test('в строке очереди есть и код, и общий объём — читатель видит долю сам', () => {
@@ -218,7 +218,7 @@ test('знаменатель равен очереди плюс всё отбр�
 
   const sum = r.queue.length + r.dropped.notOversized + r.dropped.reviewed + r.dropped.docs;
   assert.equal(sum, r.denominator, 'ни один вход не потерян и ни один не посчитан дважды');
-  assert.deepEqual(r.dropped, { notOversized: 2, reviewed: 1, docs: 1 });
+  assert.deepEqual(r.dropped, { notOversized: 2, reviewed: 1, docs: 1, byStatus: 0 });
   assert.equal(r.queue.length, 2);
 });
 
@@ -282,4 +282,69 @@ test('шот B: все снятые в стволе — ноль, строки-�
   const r = buildQueue([bigCode(70, 700)], { reviewed: ['70'], trackedReviewed: ['70'] });
   assert.equal(r.hostLocalReviewed, 0);
   assert.ok(!formatQueue(r).join('\n').includes('host-local'));
+});
+
+// ── Снятие по общему следу: commit-status review/teamlead (блок e2, 05.08) ─────────────
+//
+// Фикстуры свои: у соседних зубов файла форма коммита задаётся хелперами выше, здесь
+// нужен явный контроль номера PR и объёма кода.
+const e2commit = (pr, code, { docs = 0 } = {}) => ({
+  pr: String(pr),
+  sha: `sha-${pr}`,
+  subject: `feat: работа (#${pr})`,
+  date: '2026-08-05',
+  files: [
+    { path: 'scripts/thing.mjs', changedLines: code },
+    ...(docs > 0 ? [{ path: 'docs/thing.md', changedLines: docs }] : []),
+  ],
+});
+
+test('снятие по commit-status убирает PR из очереди наравне с артефактом', () => {
+  const commits = [e2commit(101, 900), e2commit(102, 900), e2commit(103, 900)];
+  const r = buildQueue(commits, { reviewed: ['101'], statusReviewed: ['102'] });
+  assert.deepEqual(r.queue.map((c) => c.pr), ['103'], 'сняты и по артефакту, и по общему следу');
+  assert.equal(r.dropped.reviewed, 2, 'снятых всего — двое');
+  assert.equal(r.dropped.byStatus, 1, 'на общем следе держится один');
+});
+
+test('снятие по статусу НЕ считается host-local слепотой — след виден любому клону', () => {
+  const commits = [e2commit(201, 900), e2commit(202, 900)];
+  // Оба сняты, но артефакт в стволе не отслеживается ни у одного (trackedReviewed пуст).
+  const r = buildQueue(commits, { reviewed: ['201'], statusReviewed: ['202'], trackedReviewed: [] });
+  assert.equal(r.hostLocalReviewed, 1, 'слеп только тот, что держится на host-local артефакте');
+});
+
+test('порт не подключён (trackedReviewed=null) — о слепоте прибор НЕ судит', () => {
+  const r = buildQueue([e2commit(301, 900)], { reviewed: ['301'] });
+  assert.equal(r.hostLocalReviewed, null, 'null ≠ 0: «не знаю» и «слепоты нет» — разные утверждения');
+});
+
+test('офлайн-путь: пустые списки статусов оставляют поведение прежним', () => {
+  const commits = [e2commit(401, 900), e2commit(402, 900)];
+  const withStatus = buildQueue(commits, { reviewed: ['401'], statusReviewed: [], statusFailure: [] });
+  const without = buildQueue(commits, { reviewed: ['401'] });
+  assert.deepEqual(withStatus.queue.map((c) => c.pr), without.queue.map((c) => c.pr));
+  assert.equal(withStatus.dropped.byStatus, 0);
+});
+
+test('failure НЕ снимает с очереди: вердикт не зачтён — предмет не рассмотрен', () => {
+  const r = buildQueue([e2commit(501, 900)], { reviewed: [], statusReviewed: [], statusFailure: ['501'] });
+  assert.deepEqual(r.queue.map((c) => c.pr), ['501'], 'PR остаётся в очереди');
+  assert.deepEqual(r.statusFailurePrs, ['501'], 'но прибор о нём знает и назовёт вслух');
+});
+
+test('отчёт называет общий след и failure-PR отдельными строками', () => {
+  const commits = [e2commit(601, 900), e2commit(602, 900), e2commit(603, 900)];
+  const r = buildQueue(commits, { reviewed: ['601'], statusReviewed: ['602'], statusFailure: ['603'], trackedReviewed: [] });
+  const text = formatQueue(r).join('\n');
+  assert.match(text, /по общему следу — commit-status/u);
+  assert.match(text, /review\/teamlead=failure/u);
+  assert.ok(text.includes('#603'), 'требующий руки назван поимённо');
+});
+
+test('дробь host-local считает ОДНО множество: числитель не больше снятых', () => {
+  const commits = [e2commit(701, 900), e2commit(702, 900)];
+  const r = buildQueue(commits, { reviewed: ['701', '702', '999'], trackedReviewed: [] });
+  assert.equal(r.dropped.reviewed, 2, '999 в выборке коммитов нет — снятыми числятся двое');
+  assert.ok(r.hostLocalReviewed <= r.dropped.reviewed, 'числитель приведён к фактически снятым');
 });
