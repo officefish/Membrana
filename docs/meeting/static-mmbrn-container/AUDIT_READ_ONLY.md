@@ -1831,3 +1831,50 @@ retry получил процедурный **BLOCK** «нет секции “�
 подстановки готового вердикта. Один F1, 11 395 символов, canonical carrier отсутствует,
 run1–run3 находятся только в rejected, внешний бюджет 3 из 5; машинный аудит имеет
 структурный PASS. Run4 допускается только после отдельного разрешения владельца.
+
+## Постаудит M5 — run4
+
+После отдельного разрешения владельца run4 произведён
+`anthropic/claude-sonnet-4-6`. Встроенный premise gate и машинный структурный аудит дали
+PASS, но независимый смысловой аудит дал **BLOCK**. Использована попытка 4 из 5. Сырой
+carrier без исправлений сохранён как
+[`run4-m3-owner-stale-m6-durability`](../../seanses/rejected/static-mmbrn-container-m5-affine-role-2026-08-06-run4-m3-owner-stale-m6-durability.md).
+
+Фактически carrier содержит 36 предметных реплик, ровно 6x6; сообщение инструмента о
+«35» было ложным. Это не снимает дефекты:
+
+- carrier сам закрыл внешний ролевой DoD и оставил meta-footer после DoD;
+- `manage-access` допускает grants вместо owner-only baseline;
+- absent/stale binding не fail-closed: разрешены Panel read/read-only paths;
+- спроектированы M6: bytes-through-Proxy, download-file, storage flow, UI и network trace;
+- новый durable boundary не исполним: нет численных retention/RPO/RTO и доказанного restore;
+- immutable event rows одновременно меняют status, нет `eventType`, а delete/conflict не
+  задают точные engine ids и однозначный seq;
+- inventory не доказывает равенство independently required refs, active ledger и live
+  engine objects в обе стороны;
+- annotation contract не задаёт canonical serialization/version/anchor полностью, а gate
+  не доказывает тройное двустороннее set+hash equality;
+- cases/readiness наследуют эти разрывы и содержат ложные `[x]`.
+
+Полезное ядро сохранено: точный M3 action/object vocabulary, annotation write disabled,
+независимый `requiredProjectionSet`, правильный deny стратегических документов, отдельные
+no-forward/service-allowlist gates и portable/disposable state. Повестка run5 получила
+точечные требования ко всем дефектам run1–run4.
+
+Run5 — последняя внешняя попытка M5. Она запрещена до независимого предаудита и отдельного
+разрешения владельца. После пятого BLOCK внешний run6 запрещён; следующий carrier может
+быть только локальной сборкой из накопленного корпуса с новым постаудитом.
+
+## Предаудит M5 — run5
+
+Вердикт независимого аудитора: **PASS**.
+
+- все смысловые дефекты run1–run4 покрыты непротиворечивыми требованиями;
+- один F1, 11 987 символов; canonical carrier отсутствует, runs1–run4 только в rejected;
+- внешний бюджет корректен: 4 из 5, run5 явно последняя внешняя попытка;
+- M6–M7 не решены, готовый verdict не предписан;
+- role-count и соответствующий DoD оставлены внешнему аудиту, footer после DoD запрещён;
+- `MEETING_ACTIVE`, повестка, аудит и сырой run4 согласованы.
+
+Машинный `meeting:audit` также имеет структурный PASS. Run5 допускается только после
+отдельного разрешения владельца. При его BLOCK внешний run6 не допускается.

@@ -45,10 +45,9 @@ readiness gates. Carrier —
 
 ## Измеренная фактура
 
-- Живой Affine: 82 страницы в private Strategy/Templates/Releases, один участник, повторные
-  imports и 57 PNG/SVG; корпуса оригиналов чеков/PDF нет. Это снимок, не таксономия M5.
-- Strategic publish заморожен; редактор строится в Panel. Native roles Affine существуют,
-  но передачи Panel identity/grants/revocation нет.
+- Живой Affine: 82 страницы в private Strategy/Templates/Releases, один участник, повторы
+  и 57 PNG/SVG; корпуса оригиналов чеков/PDF нет. Это снимок, не таксономия M5.
+- Strategic publish заморожен; редактор строится в Panel. Передачи Panel authority нет.
 - M3 требует binding `canonicalRef <-> affineDocId`, но не назначил его владельца, форму,
   историю и переносимость.
 
@@ -67,11 +66,10 @@ readiness gates. Carrier —
    его владельца и минимальную engine-neutral запись, связывающую `canonicalRef` с
    конкретным engine object. `affineDocId` не становится `canonicalRef`, `location.ref` или
    M2 record field. Создание, изменение, удаление и reconciliation binding оставляют
-   историю и не мутируют M2 identity.
+   историю, не мутируя M2 identity.
 4. **Authority.** Сохранить M3 per-action check, version vector и fail-closed путь. Native
-   Affine roles доступны только service identity, не пользователю. Panel deny сильнее
-   возможности Affine; техническое native deny не может быть обойдёно выдачей пользователю
-   отдельного credential.
+   Affine roles доступны только service identity. Panel deny сильнее Affine; пользователю
+   нельзя выдать обходной credential.
 5. **Заменяемость.** Точно назвать, что rehydrate-ится из M2/M4/binding/portable state, что
    строится заново, а что является честно disposable. Замена движка не меняет
    `canonicalRef`, M2 storage address, grants, policy versions или audit history.
@@ -83,35 +81,43 @@ readiness gates. Carrier —
    состояния, экспорт переносимого состояния, rehydration drill, access-bypass test и
    доказательство отсутствия пользовательских native credentials.
 
-## Обязательные поправки run1–run3
+## Обязательные поправки run1–run4
 
-- Capability использует только восемь actions из F1 над container/collection/lineage и
-  сохраняет предмет: `read-metadata` без ref, `read-ref` только ref, `write-metadata` только
-  lineage metadata, `upload-revision` только canonical revision. Новые actions/objects,
-  включая `check-policy`/annotation, запрещены; annotation write остаётся disabled.
-- Стратегический документ находится вне контейнера: Case 8 даёт unknown/out-of-container
-  object → deny, без вымышленных strategic class или M2 record.
-- Запрещены IMPORT, file/bytes flow, codes, API, URL/route, response body, transport и
-  пошаговые export/import/deploy/rebuild pipelines. M5 задаёт predicates и свойства
-  evidence, не M6/M7 workflow. `canonicalRef` — URN, не URL; bytes FD-1, backup FD-2,
-  registry/lifecycle FD-3. Судьбу preview/rendering M5 не решает.
-- `requiredProjectionSet` независимо назначает Panel intent, не active bindings. Полный
-  engine inventory и set дают биекцию: оба конца существуют, уникальны в обе стороны,
-  лишних/unbound объектов нет.
-- Для event ledger key включает `(canonicalRef, engineKind, engineObjectId)`, `seq` уникален
-  в названном scope; полный reducer задаёт conflict/delete/stale/reconcile transitions.
-  Evidence различает immutable events и output. Иная модель даёт равную однозначность.
-- Binding и значимые annotations живут вне движка, но M5 не объявляет их новыми FD-3 stores
-  без доказанных backup, retention и restore. Назвать durable ownership boundary и gate
-  живучести, совместимый с M4, не меняя M4 topology.
-- Annotation contract содержит stable id/version, Panel principal автора, canonical
-  serialization/content hash и engine-neutral anchor. Gate требует точное равенство
-  portable store, engine export и rehydrated state; unresolved diff не снимается waiver.
-- State labels согласованы с predicate; rehydration доказывает annotations и новую биекцию.
-  Раздельные gates доказывают Panel-deny → no-forward и native identities = service
-  allowlist; evidence задано свойством, не API.
-- `## Список посылок` содержит только входные нормы/факты. Meta/self-count запрещены;
-  ролевой пункт DoD оставляется внешнему аудиту. После DoD текста нет.
+- Capability использует ровно восемь actions F1 над container/collection/lineage. Семантика
+  M3 неизменна: `read-metadata` не возвращает ref, `read-ref` возвращает только ref,
+  `write-metadata` создаёт новую immutable M2 record в той же lineage, `upload-revision`
+  означает canonical revision. `manage-access` только owner-only: grants для него запрещены.
+  Новые actions/objects запрещены; annotation write остаётся disabled.
+- Любое обращение к Affine требует единственного актуального binding. Его отсутствие,
+  неоднозначность или stale дают deny всех Affine actions. Прямое non-Affine чтение Panel
+  вне M5 и не является исключением. Panel deny означает no-forward; native principals
+  должны точно равняться service allowlist.
+- Стратегический документ вне контейнера: Case 8 даёт unknown/out-of-container → deny без
+  вымышленных class/M2 record. Запрещены file/bytes-through-Proxy, storage pipeline, UI,
+  codes, API/route/endpoint, network trace и пошаговые export/import/deploy/rebuild flows.
+  Таблица может назвать лишь логическое действие и класс результата. Preview M5 не решает.
+- `requiredProjectionSet` независимо задаёт Panel intent. Обязательна тройная проверка:
+  `refs(activeLedger) = requiredProjectionSet`,
+  `engineIds(activeLedger) = liveEngineObjectSet`; mapping биективен. Deleted/stale/conflict
+  rows и связанные только с ними objects не active.
+- Binding — immutable event ledger. Event key содержит `(canonicalRef, engineKind,
+  engineObjectId)`, `seq` уникален в объявленном stream, `eventType` обязателен. Полностью
+  заданы create/replace/delete/stale/conflict/reconcile events; delete/conflict называют
+  точные engine ids и seq. Status — reducer output; stored row не мутирует.
+- Binding и значимые annotations живут вне движка, но не наследуют FD-3 автоматически.
+  Назвать durable owner и численные backup/RPO, retention, restore/RTO thresholds с полями
+  evidence. При отсутствии измеренного доказательства readiness честно даёт NO-GO; M4
+  topology не меняется и недоказанная живучесть не отмечается выполненной.
+- Annotation contract задаёт stable id и version scope, Panel principal автора, canonical
+  JSON serialization (UTF-8, порядок ключей/элементов, newline/body normalization), content
+  hash и engine-neutral anchor к canonical revision hash и byte/structural span без
+  предположения о preview segmentation. Gate требует двустороннее set+hash equality:
+  portable store = engine export = rehydrated state; waiver запрещён.
+- State labels совпадают с predicates; rehydration заново доказывает annotations и
+  биекцию. Cases/readiness наследуют все deny и NO-GO выше, а не объявляют успех по counts.
+- `## Список посылок` содержит только входные нормы/факты. Meta, self-count и заявления
+  аудитора запрещены. Ролевой пункт DoD остаётся `[ ]` для внешнего аудита; carrier не
+  закрывает его сам. DoD — последняя секция, после неё нет текста или footer.
 
 ## Обязательные случаи
 
