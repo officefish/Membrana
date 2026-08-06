@@ -10,13 +10,14 @@
 ## Вопрос заседания
 
 **F1 — назначьте один минимальный исполнимый контракт Affine как необязательной,
-заменяемой человеческой поверхности под `static.mmbrn.tech`: какие способности он даёт,
-какое состояние вправе хранить, где живёт переносимая привязка материала к состоянию
-движка и какими инвариантами и вещдоками доказывается замена Affine без потери адресов,
-прав и значимого пользовательского состояния. Вердикт должен выбрать одну модель
-переносимости, дать таблицу способностей и классов состояния, доказать обязательные случаи
-и назвать измеримые readiness gates. Carrier —
-`docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-05.md`; второй носитель
+заменяемой человеческой поверхности под `static.mmbrn.tech`. Несущий вход M3 дословно:
+`discover`, `read-metadata`, `read-ref`, `read-bytes`, `download`, `write-metadata`,
+`upload-revision`, `manage-access`; объекты только container/collection/lineage, annotation
+write disabled. Определите способности, классы состояния, независимо назначенный
+`requiredProjectionSet`, переносимый binding и доказательство замены без потери адресов,
+прав и значимого состояния. Выберите одну модель, дайте обязательные таблицы/cases и
+readiness gates. Carrier —
+`docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md`; второй носитель
 запрещён. Список посылок обязателен. M6–M7 не решаются.**
 
 ## Закрытые посылки M1–M4
@@ -44,16 +45,12 @@
 
 ## Измеренная фактура
 
-- Живой Affine содержит 82 страницы в трёх private workspaces: Strategy, Templates и
-  Releases; участник один. Это снимок текущего дома, а не желаемая таксономия M5.
-- В Affine есть повторные imports и 57 PNG/SVG, но нет доказанного корпуса оригиналов чеков
-  и внешних PDF. Наличие страницы не доказывает регистрацию материала.
-- Публикация стратегических документов в Affine заморожена машинным гейтом. Собственный
-  редактор стратегических документов строится в Panel и остаётся вне `static.mmbrn.tech`.
-- Affine умеет native workspace/document roles `owner`, `manager`, `editor`, `commenter`,
-  `reader`, но передачи Panel identity, grants и revocation в текущем доме нет.
-- Ратифицированный M3 уже требует binding `canonicalRef <-> affineDocId` перед forward, но
-  ещё не назначил владельца, форму, историю и переносимость binding.
+- Живой Affine: 82 страницы в private Strategy/Templates/Releases, один участник, повторные
+  imports и 57 PNG/SVG; корпуса оригиналов чеков/PDF нет. Это снимок, не таксономия M5.
+- Strategic publish заморожен; редактор строится в Panel. Native roles Affine существуют,
+  но передачи Panel identity/grants/revocation нет.
+- M3 требует binding `canonicalRef <-> affineDocId`, но не назначил его владельца, форму,
+  историю и переносимость.
 
 ## Обязательные решения
 
@@ -86,32 +83,33 @@
    состояния, экспорт переносимого состояния, rehydration drill, access-bypass test и
    доказательство отсутствия пользовательских native credentials.
 
-## Обязательные поправки run1–run2
+## Обязательные поправки run1–run3
 
-- Capability использует только восемь дословных M3 actions и сохраняет их предмет. Каждый
-  action проверяется отдельно: `read-metadata` не включает `read-ref`. Запрещено применять
-  action к новому policy object (например annotation) или превращать `upload-revision` в
-  обновление проекции. Неразрешимая способность остаётся disabled, неизвестный action — deny.
+- Capability использует только восемь actions из F1 над container/collection/lineage и
+  сохраняет предмет: `read-metadata` без ref, `read-ref` только ref, `write-metadata` только
+  lineage metadata, `upload-revision` только canonical revision. Новые actions/objects,
+  включая `check-policy`/annotation, запрещены; annotation write остаётся disabled.
 - Стратегический документ находится вне контейнера: Case 8 даёт unknown/out-of-container
   object → deny, без вымышленных strategic class или M2 record.
 - Запрещены IMPORT, file/bytes flow, codes, API, URL/route, response body, transport и
   пошаговые export/import/deploy/rebuild pipelines. M5 задаёт predicates и свойства
   evidence, не M6/M7 workflow. `canonicalRef` — URN, не URL; bytes FD-1, backup FD-2,
   registry/lifecycle FD-3. Судьбу preview/rendering M5 не решает.
-- Назначить `requiredProjectionSet`, не весь registry, и доказать биекцию с active engine
-  objects: оба конца существуют, уникальны в обе стороны, лишних/unbound объектов нет.
-- Для event ledger дать полный reducer transition contract, scope версии, stale и
-  reconciliation. Evidence различает immutable events и reducer output; старые строки не
-  «получают» status. Иная модель обязана дать столь же однозначную историю.
+- `requiredProjectionSet` независимо назначает Panel intent, не active bindings. Полный
+  engine inventory и set дают биекцию: оба конца существуют, уникальны в обе стороны,
+  лишних/unbound объектов нет.
+- Для event ledger key включает `(canonicalRef, engineKind, engineObjectId)`, `seq` уникален
+  в названном scope; полный reducer задаёт conflict/delete/stale/reconcile transitions.
+  Evidence различает immutable events и output. Иная модель даёт равную однозначность.
 - Binding и значимые annotations живут вне движка, но M5 не объявляет их новыми FD-3 stores
   без доказанных backup, retention и restore. Назвать durable ownership boundary и gate
   живучести, совместимый с M4, не меняя M4 topology.
 - Annotation contract содержит stable id/version, Panel principal автора, canonical
   serialization/content hash и engine-neutral anchor. Gate требует точное равенство
   portable store, engine export и rehydrated state; unresolved diff не снимается waiver.
-- State-table labels согласованы с predicate; rehydration доказывает annotations и биекцию
-  bindings/projections нового движка. Native identities равны полному service allowlist;
-  evidence задано свойством, не API.
+- State labels согласованы с predicate; rehydration доказывает annotations и новую биекцию.
+  Раздельные gates доказывают Panel-deny → no-forward и native identities = service
+  allowlist; evidence задано свойством, не API.
 - `## Список посылок` содержит только входные нормы/факты. Meta/self-count запрещены;
   ролевой пункт DoD оставляется внешнему аудиту. После DoD текста нет.
 

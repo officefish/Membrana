@@ -1800,3 +1800,34 @@ per-lineage version, fail-closed binding, service allowlist, portable/disposable
 отсутствует, run1/run2 находятся только в rejected, внешний счётчик 2 из 5, M6–M7 открыты,
 machine `meeting:audit` не нашёл структурных нарушений. Run3 допускается только после
 отдельного разрешения владельца.
+
+## Intake M5 — run3 после смены даты
+
+Владелец отдельно разрешил run3 уже 2026-08-06 Europe/Moscow. До внешнего вызова ожидаемый
+carrier механически переназван с даты подготовки `2026-08-05` на фактическую дату созыва
+`2026-08-06`. Предмет F1, ограничения, предаудит PASS и внешний счётчик 2 из 5 не менялись.
+
+## Постаудит M5 — run3
+
+Run3 произведён через `anthropic/claude-sonnet-4-6`, но после premise follow-up и verdict
+retry получил процедурный **BLOCK** «нет секции “Список посылок”» и остался rejected.
+Фактически 38 реплик: Teamlead/Музыкант по семь, остальные по шесть. Использована попытка
+3 из 5. Сырой файл сохранён как
+[`run3-false-m3-circular-set-fd3`](../../seanses/rejected/static-mmbrn-container-m5-affine-role-2026-08-06-run3-false-m3-circular-set-fd3.md).
+
+Независимый постаудит подтвердил: вымышленный набор M3 с `delete-ref`, `grant-access`,
+`revoke-access`, `list-refs`, `check-policy`; annotation write на новом policy object;
+циркулярный `requiredProjectionSet`; reducer без `engineDocId` в key и уникального `seq`;
+ложное покрытие новых FD-3 stores гарантиями M4; неполный annotation contract и no-loss;
+смешанные access gates, M6/M7 детали и самозакрытый ролевой DoD.
+
+Полезны явная биекция, переходный граф reducer, stable annotation intent и no-waiver.
+Повестка run4 несёт точный словарь M3 прямо в F1, независимо назначает projection set и
+консолидирует проверки run1–run3. Внешний run4 запрещён до предаудита и нового разрешения.
+
+## Предаудит M5 — run4
+
+Вердикт независимого аудитора: **PASS**. Повестка покрывает дефекты run1–run3 без
+подстановки готового вердикта. Один F1, 11 395 символов, canonical carrier отсутствует,
+run1–run3 находятся только в rejected, внешний бюджет 3 из 5; машинный аудит имеет
+структурный PASS. Run4 допускается только после отдельного разрешения владельца.
