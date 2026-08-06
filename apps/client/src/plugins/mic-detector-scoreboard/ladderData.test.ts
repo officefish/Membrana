@@ -130,3 +130,21 @@ describe('пределы замера названы витриной', () => {
     expect(ladderVerdict(LADDER.steps)).toBeTruthy();
   });
 });
+
+describe('контракт схемы отчёта проверяется в сборке (P1 ревью PR #1749)', () => {
+  it('мажор ЖИВОГО отчёта совпадает с тем, что читает витрина', async () => {
+    // Косвенной проверки `available === true` мало: она объясняет симптом, но не
+    // называет причину. Здесь сверяется сам контракт — иначе рассинхрон схемы даст
+    // зелёный UI при мёртвой функции (замечание тимлида 06.08).
+    const report = (await import('../../../../../data/detectors-benchmark/v0.2/reports/spectral-ladder.json')).default as {
+      schema?: string;
+    };
+    expect(report.schema).toBeTruthy();
+    expect(report.schema?.startsWith(LADDER_SCHEMA_MAJOR)).toBe(true);
+  });
+
+  it('живой отчёт не оказывается «недоступным» молча', () => {
+    expect(LADDER.unavailableReason).toBeNull();
+    expect(LADDER.available).toBe(true);
+  });
+});
