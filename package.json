@@ -392,6 +392,7 @@
     "worktree:bootstrap": "node scripts/worktree-bootstrap.mjs",
     "worktree:sync": "node scripts/worktree-sync.mjs",
     "worktree:sync:dry": "node scripts/worktree-sync.mjs --dry-run",
+    "worktrees:align": "node scripts/worktrees-align.mjs",
     "movement:lift": "node scripts/movement-mode-lift.mjs",
     "movement:status": "node scripts/movement-mode-status.mjs",
     "linear:movement-audit": "node scripts/linear-movement-audit.mjs",

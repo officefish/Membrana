@@ -1,0 +1,9 @@
+{"traceId":"tr-align-core-dynin-run","blockId":"align-plan-core","kind":"context_run","subject":"dynin","at":"2026-08-06T10:12:00+03:00","ref":"docs/virtual-team/memory/op-log/dynin/2026-08-06.jsonl"}
+{"traceId":"tr-align-core-dynin-review","blockId":"align-plan-core","kind":"review_pass","subject":"dynin","at":"2026-08-06T10:18:00+03:00","ref":"scripts/lib/worktree-align/align-plan.test.mjs"}
+{"traceId":"tr-wip-ozhegov-run","blockId":"dirty-wip-snapshot","kind":"context_run","subject":"ozhegov","at":"2026-08-06T10:25:00+03:00","ref":"docs/virtual-team/memory/op-log/ozhegov/2026-08-06.jsonl"}
+{"traceId":"tr-wip-ozhegov-review","blockId":"dirty-wip-snapshot","kind":"review_pass","subject":"ozhegov","at":"2026-08-06T10:34:00+03:00","ref":"scripts/lib/worktree-align/wip-snapshot.test.mjs"}
+{"traceId":"tr-merge-ozhegov-run","blockId":"merge-abort-guard","kind":"context_run","subject":"ozhegov","at":"2026-08-06T10:40:00+03:00","ref":"docs/virtual-team/memory/op-log/ozhegov/2026-08-06.jsonl"}
+{"traceId":"tr-merge-ozhegov-review","blockId":"merge-abort-guard","kind":"review_pass","subject":"ozhegov","at":"2026-08-06T10:52:00+03:00","ref":"scripts/lib/worktree-align/merge-step.test.mjs"}
+{"traceId":"tr-align-core-dynin-review-2","blockId":"align-plan-core","kind":"review_pass","subject":"dynin","at":"2026-08-06T10:46:00+03:00","ref":"scripts/lib/worktree-align/align-plan.mjs"}
+{"traceId":"tr-cli-vesnin-run","blockId":"align-cli-report","kind":"context_run","subject":"vesnin","at":"2026-08-06T11:05:00+03:00","ref":"docs/virtual-team/memory/op-log/vesnin/2026-08-06.jsonl"}
+{"traceId":"tr-cli-vesnin-review","blockId":"align-cli-report","kind":"review_pass","subject":"vesnin","at":"2026-08-06T11:20:00+03:00","ref":"scripts/worktrees-align.test.mjs"}
