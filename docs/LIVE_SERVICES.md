@@ -29,6 +29,7 @@
 | Адрес | Назначение | Что дёргает | Держатель | Вещдок |
 |-------|------------|-------------|-----------|--------|
 | `procedures.mmbrn.tech` | оркестратор процедур (n8n): запускает шаги, вызывая методы серверного API офиса | не подтверждено — со стороны репозитория вызовов нет | не подтверждено | Issue [#1221](https://github.com/officefish/Membrana/issues/1221), вещдок 1: развёрнут и работает, в `docs/`, `scripts/` и пакетах — ни одного упоминания, кроме внешнего референса в исследовании инсайта `insight-procedures-orchestration-n8n`; известно **со слов владельца** 25–26.07 |
+| `archivarius-mongo` (сервис compose-стека `background-office`, протокол Mongo, `mongo:7`; том `archivarius-mongo-data`) | контейнер сессий Archivarius: хранит спаны `{sessionId, uuid, ts}` — с 04.08 несёт ~106К записей | `packages/background-office/src/modules/archivarius/archivarius.mongo-store.ts` и `config/env.schema.ts` через `ARCHIVARIUS_MONGO_URI`; office объявляет его в `depends_on` | `background-office` (стек, в чьём compose сервис объявлен и чей healthcheck его сторожит) | `packages/background-office/docker-compose.yml:59` (образ, том, healthcheck `mongosh`), P1/B8 ревью PR [#1711](https://github.com/officefish/Membrana/pull/1711), долг [#1714](https://github.com/officefish/Membrana/issues/1714). **Вне этой записи:** бэкап тома `archivarius-mongo-data` и аутентификация Mongo — работа по compose и деплою, остаётся открытой в [#1714](https://github.com/officefish/Membrana/issues/1714) |
 
 ## Не внесено (найдено грепом, ждёт вещдока)
 
