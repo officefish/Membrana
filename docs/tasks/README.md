@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `archivarius-mongo-backup` | Бэкап тома archivarius-mongo-data: восстановимость проверяемая, а не объявленная | M | [`ARCHIVARIUS_MONGO_BACKUP_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_BACKUP_PROMPT.md) | [#1714](https://github.com/officefish/Membrana/issues/1714) |
 | `worktrees-align` | worktrees:align — WIP-снимок грязных, merge вместо ff-only, авто-abort конфликта, отчёт | M | [`WORKTREES_ALIGN_PROMPT.md`](../prompts/WORKTREES_ALIGN_PROMPT.md) | [#1738](https://github.com/officefish/Membrana/issues/1738) |
 | `recreate-execution-procedure-interface` | Пересборка PR #1613: контракт EXECUTION_PROCEDURE + procedureKind поверх свежего main (pr:recreate) | M | [`RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md`](../prompts/RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md) | — |
 | `procedure-run-journal-panel-reader` | Витрина пяти опор в panel.mmbrn.tech — первый читатель ленты журнала прогонов | M | [`PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md) | — |
