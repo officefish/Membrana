@@ -91,44 +91,41 @@ readiness gates. Сохраните M2 identity, M3 per-action authority, M4 sto
     hash/size, class/quota, registry/storage reconciliation, M3 bypass, preview isolation,
     archive safety и degraded mode. Неизмеренное состояние даёт NO-GO.
 
-## Обязательные поправки run1-run3
+## Обязательные поправки run1-run4
 
-Внешний бюджет M6: **3/5 использовано**.
+Внешний бюджет M6: **4/5 использовано; run5 последний внешний**.
 
-- Carrier: 36+ реплик, 6+ каждой роли; self-count не evidence.
-- Operations — закрытая таблица; вне неё операций нет. Включить
-  intake/revision, list, metadata/ref/bytes/download, preview, access и каждую доступную
-  verify dimension. Для каждой строки: ровно один M3 action, authority object
-  container/collection/lineage, input/result/mutation/audit. До gate `recordId` разрешается
-  в `canonicalRef`, tip и policy/object version; preview — `read-bytes`;
-  `read-ref` возвращает только `location.ref`. Составной archive flow — связанные
-  отдельные operations, не два actions в одной.
-- M2 буквально: `bytes` positive integer; `source` и `about` строки. Revision имеет
-  новый `id`, прежние root/canonicalRef и `supersedes=expectedCurrentTip`; CAS по
-  tip запрещает fork. Component получает record до выдачи.
-- Attempt states отделены от immutable rows и append-only lifecycle events; registry rows
-  не мутируют и не удаляются. Address/metadata — новая record через `write-metadata`;
-  revision — `upload-revision`; `manage-access` M2/state не меняет.
-- До write: hash/size, malware/format, затем class standard либо sensitive с reason, затем
-  collection quota. Unknown — hold/fail; quota заранее не считается.
-- Commit = verified FD-1 + safe registry append + durable binding. До append ledger durable
-  связывает intent/fingerprint с proposed recordId; G6-success/G7-fail восстанавливает
-  binding по этой связи и не удаляет referenced bytes. Предикат доказывает
-  `(principal,intentId) -> <=1 fingerprint AND <=1 recordId`; conflict/history immutable.
-- Cleanup: exact class-aware ref, ownership marker, M4 live refs; shared blob не удаляется,
+- Carrier: 36+ реплик, 6+ каждой роли; ролевой DoD остаётся `[ ]` внешнему аудиту.
+- Operations — одна закрытая таблица: intake/revision, list, metadata/ref/bytes/download,
+  preview, две archive operations, все verify dimensions. В каждой строке ровно один M3
+  action/object + input/result/mutation/audit; container/lineage access — разные строки.
+  До gate: `recordId -> canonicalRef + tip + policy/object version`.
+- Verify audit: `operation=verify-*`, а `action` равен M3 action колонки; выдуманных
+  actions нет. Preview=`read-bytes`; `read-ref` возвращает только `location.ref`.
+- M2: payload=`content`; `bytes` — positive integer size, `bytes_size` запрещён;
+  `source/about` строки; kinds=`local|affine|url|archivarius`; metadata включает
+  `sensitive.reason`. Revision/metadata: новый id, прежние root/canonicalRef,
+  `supersedes=expectedCurrentTip`; CAS запрещает fork. Rows/events append-only.
+- До write: hash/size, malware/format, class standard/sensitive+reason, collection quota;
+  unknown — hold/fail. Attempt, M2 row и lifecycle event не смешиваются.
+- Ledger до append хранит intent/fingerprint/proposedRecordId. Commit=verified FD-1 + safe
+  append + durable COMMITTED binding; recovery не удаляет referenced bytes. Инвариант:
+  `(principal,intentId) -> <=1 fingerprint AND <=1 recordId`.
+- Cleanup: exact class-aware ref + ownership marker + M4 live refs; shared blob не удаляется,
   class namespaces не склеиваются, registry row не входит в deletion chain.
-- Readiness использует M4 scopes: `U_c`, collection quota, logical bytes,
-  distinct live `(class,sha256)`, physical delta, capacity/watermarks; lifecycle join явно
-  определяет live/committed scope. Predicate и evidence проверяют один и тот же полный corpus.
-- FD-2 — последующий complete checkpoint. При unavailable intake разрешён только пока
-  `now-cut_at <= 24h`; просроченный RPO — NO-GO, reads через FD-1 допустимы.
-- Archive contract выбирает фиксированные numeric bytes/ratio/entries/depth constants без
-  «например»; extraction/path traversal fail-closed. Provenance — строка `source`; optional
-  `about` тоже строка.
-- Audit на записи уже redacted: raw ref/path/key/bytes никогда не хранит. Он несёт точные M3
-  decision fields и M4 evidence; not-found не создаёт existence leak.
-- После `## Список посылок` сразу идёт обычный текст/список, не heading; DoD — последняя
-  секция.
+- M4 буквально: `U_c + logical_delta <= Q_c`; после physical delta
+  `free_after >= 12 GiB AND utilisation_after < 0.90`; резерва 1GiB нет. Live scope —
+  lifecycle join. Predicate/evidence проверяют один объявленный corpus.
+- Reconciliation — exact bidirectional join recordId/fingerprint/ref, не counts. Legacy rows
+  без ledger evidence дают uncovered/NO-GO, не fake binding.
+- FD-2 unavailable: intake лишь при `now-cut_at<=24h`, иначе NO-GO; FD-1 reads допустимы.
+- Archive: extraction=`read-bytes` archive-lineage, component intake=`upload-revision`
+  collection. Выбрать fixed bytes/ratio/entries/depth и повторить все четыре в operation,
+  case, readiness. Fail-closed; component record со строками source/about до выдачи.
+- Audit redacted при записи: raw ref/path/key/bytes не хранит; action exact M3, M3 decision
+  и M4 evidence явны; not-found без leak.
+- Посылки: только M1-M5, фактура и agenda constraints, без выбранных M6 constants/state/
+  retention/решений; сразу обычный текст/список. DoD последний.
 
 ## Обязательные случаи
 

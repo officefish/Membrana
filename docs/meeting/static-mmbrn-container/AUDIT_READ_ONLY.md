@@ -2094,3 +2094,39 @@ quota, хотя M4 определяет collection quota `U_c/Q_c`, а class о�
 
 `meeting:audit` без canonical carrier имеет structural PASS. Run4 допускается только после
 отдельного разрешения владельца.
+
+## Постаудит M6 — run4
+
+Run4 произведён после отдельного разрешения. Механика PASS: 46 реплик, у ролей 8/8/8/8/7/7;
+`meeting:audit` structural PASS. Внешняя попытка 4 из 5 использована. Сырой carrier:
+[`run4-m2-bytes-m3-audit-m4-capacity-reconcile`](../../seanses/rejected/static-mmbrn-container-m6-intake-delivery-2026-08-06-run4-m2-bytes-m3-audit-m4-capacity-reconcile.md).
+
+Независимый смысловой аудит дал **BLOCK**:
+
+- M2 size `bytes` использован как payload, а размер назван запрещённым `bytes_size`;
+- `manage-access` имеет два authority objects в одной operation;
+- verify audit пишет `verify-*` как action вместо точного M3 action;
+- M4 capacity `free_after>=12GiB && utilisation<0.90` заменена новым резервом 1GiB;
+- reconciliation доказывает только равенство counts, не exact recordId join;
+- archive component flow отсутствует в closed surface, а max bytes выпал из case/readiness;
+- список посылок содержит выбранные самой M6 constants/state/retention/CAS.
+
+Полезное ядро: durable proposedRecordId до append, recoverable idempotent commit, tip CAS,
+immutable history, shared-safe cleanup, exact RPO, fixed archive intent и write-time
+redaction. Повестка run5 получила единый раздел поправок run1-run4. Бюджет 4 из 5; run5 —
+последняя внешняя попытка, запрещённая до независимого предаудита и отдельного разрешения.
+
+## Предаудит M6 — run5
+
+Независимый аудитор дал **PASS** повестке последней внешней попытки:
+
+- один E1, 11 894 символа, canonical M6 отсутствует;
+- бюджет 4 из 5, run5 прямо названа последней внешней;
+- все BLOCK run1-run4 перенесены: M2 content/bytes, split authority objects, exact M3
+  audit actions, M4 capacity, exact reconciliation, archive flow и чистые premises;
+- legacy ledger gap обязан давать uncovered/NO-GO;
+- M2-M5 не переопределены, M7 запрещена;
+- ролевой DoD оставлен внешнему аудиту.
+
+`meeting:audit` без carrier имеет structural PASS. Run5 допускается только после отдельного
+разрешения владельца; при её BLOCK внешний бюджет закрывается и M6 верстается локально.
