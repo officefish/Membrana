@@ -1967,3 +1967,47 @@ carrier. Внешний запуск M6 запрещён до независим
 
 Машинный `meeting:audit` также имеет структурный PASS. Внешний бюджет M6 остаётся 0 из 5;
 run1 допускается только после отдельного разрешения владельца.
+
+## Постаудит M6 — run1
+
+После отдельного разрешения владельца run1 произведён
+`anthropic/claude-sonnet-4-6`. `meeting:audit` дал structural PASS, но фактически carrier
+содержит только 30 реплик, ровно по 5 каждой роли, вместо 36/6x6. Внешняя попытка 1 из 5
+использована. Сырой carrier сохранён как
+[`run1-30-replies-m3-preview-idempotency`](../../seanses/rejected/static-mmbrn-container-m6-intake-delivery-2026-08-06-run1-30-replies-m3-preview-idempotency.md).
+
+Независимый смысловой аудит дал **BLOCK** по 12 группам:
+
+- operations не замкнуты на существующие M3 actions/objects; status/verify обходят gate;
+- `GetRef` возвращает лишний canonicalRef, а recordId не разрешается до policy lineage;
+- preview одновременно использует `read-metadata` и требует `read-bytes`;
+- state machine смешивает address/record lifecycle с `manage-access`;
+- sensitivity unknown/resolution и malware/format gate неисполнимы;
+- commit ложно требует FD-2 до M4 checkpoint и не защищает JSONL append;
+- idempotency key конфликтует с failed retry и не доказывает one intent/one record;
+- cleanup может удалить shared blob и склеивает class namespaces по одному hash;
+- historical unreachable одновременно назван нормой и нарушает universal atomicity;
+- quota readiness сравнивает record counts вместо M4 byte predicates;
+- archive component выдаётся до обязательной record, provenance положен в `about`;
+- audit/readiness теряют M3/M4 поля, допускают leaks и spot-check как universal proof.
+
+Полезное ядро: quarantine/staged intent, раздельные delivery operations, six-dimensional
+verification, explicit outcomes, 16 cases, archive safety intent и честный M7 запрет.
+Повестка run2 получила единый раздел обязательных поправок. Внешний run2 запрещён до
+повторного независимого предаудита и отдельного разрешения владельца.
+
+## Предаудит M6 — run2
+
+Вердикт независимого аудитора: **PASS**.
+
+- один E1, 11 636 символов, canonical carrier отсутствует, run1 только в rejected;
+- внешний бюджет корректен: 1 из 5; машинный `meeting:audit` имеет structural PASS;
+- operation/action/object, recordId resolution, exact ref и preview bytes gate покрыты;
+- attempt state отделён от record/access lifecycle;
+- pre-write class, malware/format и authorised resolution исполнимы;
+- commit/FD-2, durable fingerprint/CAS idempotency согласованы с M4;
+- cleanup class-aware/shared-safe, quota выражена byte predicates;
+- archive provenance, audit redaction и full-corpus readiness обязательны;
+- 36/6x6 оставлены внешнему аудиту, готовый verdict и M7 не предписаны.
+
+Run2 допускается только после отдельного разрешения владельца.

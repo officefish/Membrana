@@ -91,6 +91,38 @@ readiness gates. Сохраните M2 identity, M3 per-action authority, M4 sto
     hash/size, class/quota, registry/storage reconciliation, M3 bypass, preview isolation,
     archive safety и degraded mode. Неизмеренное состояние даёт NO-GO.
 
+## Обязательные поправки run1
+
+- Carrier содержит не меньше 36 реплик и 6 каждой роли; self-count не считается evidence.
+- Каждая public operation имеет ровно один существующий M3 action и authority object
+  container/collection/lineage. Новый intake — `upload-revision` на явной target collection;
+  `recordId` до gate разрешается в `canonicalRef` и current policy/version vector.
+  Status/verify также fail-closed; без action операции нет.
+- `read-ref` возвращает только `location.ref`. Preview требует `read-bytes`, не
+  `read-metadata`; derived result не ослабляет bytes gate.
+- Attempt states отделены от M2/lifecycle. Address move и metadata correction создают новую
+  record через `write-metadata`; revision — `upload-revision`; `manage-access` не меняет
+  record/state. Closed surface не ссылается на безымянный path.
+- До durable write authority выдаёт class: standard либо sensitive с непустым
+  `sensitive.reason`; unknown остаётся resumable hold либо terminal fail с новым intent.
+  Malware/format gate и точный authorised resolution обязательны.
+- Commit = verified FD-1 object + torn-write/concurrency-safe immutable registry append +
+  durable intent binding. FD-2 появляется только последующим complete M4 checkpoint;
+  started backup не evidence.
+- Idempotency ledger key `(principal,intentId)` хранит immutable request fingerprint и CAS
+  `intent -> <=1 record`. Другие bytes/metadata дают conflict; retry failed intent не
+  стирает историю. Добавить outcome/case idempotency conflict.
+- Cleanup/reconciliation используют exact class-aware `location.ref`, ownership marker и
+  M4 live refs. Нельзя удалить dedup/shared blob; standard/sensitive одинакового hash не
+  склеиваются. Исторический object отсутствует лишь после complete deletion chain.
+- Quota readiness использует M4 `U_c`, logical bytes, distinct live `(class,sha256)`,
+  physical delta и watermarks, не record counts.
+- Component сначала получает отдельную M2 record, где `source` несёт archive provenance,
+  и только затем выдаётся. Archive limits имеют численные byte/ratio/entry/depth bounds.
+- Audit буквально несёт M3 decision fields и M4 evidence с redaction: raw ref/attempted
+  path не пишутся. Not-found не создаёт existence leak. Readiness проверяет весь corpus,
+  intent uniqueness и текущий evidence; spot-check не доказывает universal predicate.
+
 ## Обязательные случаи
 
 Таблица `Случай | Ожидаемое решение | Источник истины | Вещдок` включает не меньше 14 строк:
@@ -100,7 +132,8 @@ readiness gates. Сохраните M2 identity, M3 per-action authority, M4 sto
 unknown; 8. quota/capacity deny; 9. crash до registry commit; 10. timeout с неизвестным
 commit outcome; 11. hash mismatch; 12. unreachable historical row и reachable live tip;
 13. metadata allow при ref/bytes/download deny; 14. preview failure; 15. archive component;
-16. direct storage или Affine bypass.
+16. direct storage или Affine bypass; 17. тот же intent с другим fingerprint;
+18. failed intent retry без стирания истории; 19. shared blob при cleanup.
 
 ## Обязательные таблицы
 
