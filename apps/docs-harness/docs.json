@@ -42,6 +42,7 @@
           "procedures/hackathon",
           "procedures/containerization",
           "procedures/storm",
+          "procedures/adr",
           "procedures/code-review",
           "procedures/bridge",
           "procedures/one-shot",

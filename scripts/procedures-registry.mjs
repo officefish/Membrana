@@ -9,7 +9,11 @@ import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { registryProblems, renderRegistryMd } from './lib/procedures-registry.mjs';
+import {
+  PROCEDURE_KIND_EXPECTED_COUNTS,
+  registryProblems,
+  renderRegistryMd,
+} from './lib/procedures-registry.mjs';
 import { listProcedureDirs } from './lib/validate-procedure.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -32,6 +36,7 @@ const problems = registryProblems(reg, {
   taskIds,
   containerIds,
   dirExists: (p) => existsSync(join(repoRoot, p)),
+  expectedKindCounts: PROCEDURE_KIND_EXPECTED_COUNTS,
 });
 if (problems.length > 0) {
   console.error(`✖ реестр процедур: дефекты (${problems.length}):`);

@@ -14,3 +14,5 @@
 {"ts":"2026-08-06T13:47:43.863Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-06T13:47:23.346Z","origin":"ask-persona"}
 {"ts":"2026-08-06T13:47:43.865Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-06T13:47:23.346Z","origin":"ask-persona"}
 {"ts":"2026-08-06T13:47:43.866Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-21-procedural-layer-m3-boundary-manual","reason":"тогда мы уже проводили ту же линию: контейнер процедуры без собственного кода, границы оправданы ролью, а не удобством вызова. lazyCloseScope — продолжение той же оси: область закрытия — атрибут роли процедуры в системе, а не деталь реализации записи.","origin":"ask-persona"}
+{"ts":"2026-08-06T13:02:55.873Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-06T13:02:48.039Z","origin":"ask-persona"}
+{"ts":"2026-08-06T13:02:55.875Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-06T13:02:48.039Z","origin":"ask-persona"}
