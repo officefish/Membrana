@@ -61,6 +61,11 @@
       }
     ]
   },
+  "portfolio": {
+    "status": "missing",
+    "items": [],
+    "note": "исторические CLOSURE перечислены в precedents; отдельное портфолио маршрута ещё не собрано"
+  },
   "mode": "local",
   "home": {
     "kind": "none",

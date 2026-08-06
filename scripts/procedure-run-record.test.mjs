@@ -104,10 +104,10 @@ test('close: нечего закрывать и «открытых нескол�
   // первого лениво) — ветка защищает от ленты, написанной МИМО CLI: кладём два open
   // библиотекой в разные дневные файлы.
   openProcedureRun(dir, defaultTrailPath('2026-08-03'), {
-    procedureId: 'ritual-day', runId: 'r-a', subject: 's', at: AT_D1, evidence: ['e'],
+    procedureId: 'ritual-day', runId: 'r-a', subject: 's', at: AT_D1, evidence: ['e'], lazyCloseScope: 'procedure',
   });
   openProcedureRun(dir, defaultTrailPath('2026-08-04'), {
-    procedureId: 'ritual-day', runId: 'r-b', subject: 's', at: AT_D2, evidence: ['e'],
+    procedureId: 'ritual-day', runId: 'r-b', subject: 's', at: AT_D2, evidence: ['e'], lazyCloseScope: 'procedure',
   });
   assert.throws(
     () => cmdClose(dir, { procedureId: 'ritual-day', status: 'pass', at: '2026-08-04T18:00:00.000Z', evidence: ['e'] }),

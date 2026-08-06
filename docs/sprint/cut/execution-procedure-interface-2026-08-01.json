@@ -1,0 +1,93 @@
+{
+  "//": "План локального спринта по prompt EXECUTION_PROCEDURE_INTERFACE_2026_08_01_PROMPT.md. До ратификации владельца исполнение не начинается.",
+  "schema": "sprint-cut/1",
+  "sprintId": "execution-procedure-interface-2026-08-01",
+  "taskId": "execution-procedure-interface-2026-08-01",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
+    "reason": "Носители contract_signature/session_prep ещё не являются обязательным машинным корпусом membrana-local-sprint; реальность ответственности проверяется планом, следами контекста, review-вещдоками, sprint:gate и procedure-run-journal."
+  },
+  "window": {
+    "from": "2026-08-01T16:09:39+03:00",
+    "to": "2026-08-01T22:30:00+03:00"
+  },
+  "revisionAt": "2026-08-01T16:09:39+03:00",
+  "blocks": [
+    {
+      "blockId": "execution-interface-derivation",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/procedures/EXECUTION_PROCEDURE.md",
+        "docs/procedures/EXECUTION_PROCEDURE_DERIVATION_REPORT.md",
+        "docs/procedures/README.md",
+        "docs/containers/strategic-docs/**"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "revisionAt": "2026-08-01T16:09:39+03:00"
+    },
+    {
+      "blockId": "procedure-kind-registry-adr",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/procedures/registry.json",
+        "docs/procedures/REGISTRY.md",
+        "docs/procedures/vocabulary.json",
+        "docs/procedures/VOCABULARY.md",
+        "docs/procedures/adr/README.md",
+        "docs/procedures/adr/MANIFEST.json"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-08-01T16:09:39+03:00"
+    },
+    {
+      "blockId": "validate-procedure-execution-tooth",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/validate-procedure.mjs",
+        "scripts/validate-procedure.test.mjs",
+        "scripts/procedures-registry.test.mjs",
+        "scripts/procedural-workshop.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "revisionAt": "2026-08-01T16:09:39+03:00"
+    },
+    {
+      "blockId": "execution-interface-gate-journal-review",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "docs/local-sprint/execution-procedure-interface-2026-08-01/**",
+        "docs/sprint/cut/execution-procedure-interface-2026-08-01.json",
+        "docs/sprint/trail/execution-procedure-interface-2026-08-01.jsonl",
+        "docs/procedure-runs/trail/2026-08-01.jsonl"
+      ],
+      "estimate": {
+        "changedLines": 140
+      },
+      "revisionAt": "2026-08-01T16:09:39+03:00"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-01T16:12:17+03:00",
+    "digest": "5b4f72767c12cdc146d2431b3aca19142e85ec1e406ae10d263c81af9323e99d"
+  }
+}

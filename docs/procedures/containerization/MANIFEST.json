@@ -29,6 +29,16 @@
     "kind": "none",
     "why": "крафт в интерактивной сессии Мастера; паузы на LGTM — вне машинного resume ядра (зубы kits:audit / layer-direction сами стопят)"
   },
+  "frames": [
+    { "id": "distinguish-axes", "holder": "ozhegov" },
+    { "id": "audit-teeth", "holder": "dynin" },
+    { "id": "craft", "holder": "ozhegov" }
+  ],
+  "portfolio": {
+    "status": "missing",
+    "items": [],
+    "note": "портфолио контейнерного крафта ещё не собрано; процедура не должна молчать об этом"
+  },
   "mode": "local",
   "home": {
     "kind": "none",

@@ -1,6 +1,23 @@
 {
   "tasks": [
     {
+      "id": "lazy-close-scope",
+      "title": "Ленивое закрытие журнала получает явную область: параллельные спринты не топят друг друга (#1705)",
+      "promptPath": "docs/prompts/LAZY_CLOSE_SCOPE_PROMPT.md",
+      "githubIssue": 1705,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-06",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "Строка 9 десятки 06.08. Шотом не прошло (capability_chaining), спринт ратифицирован владельцем 13:42Z.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "archivarius-mongo-backup",
       "title": "Бэкап тома archivarius-mongo-data: восстановимость проверяемая, а не объявленная",
       "promptPath": "docs/prompts/ARCHIVARIUS_MONGO_BACKUP_PROMPT.md",

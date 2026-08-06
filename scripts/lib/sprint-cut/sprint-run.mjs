@@ -57,6 +57,10 @@ export function ensureSprintRunOpen(repoRoot, plan, planRelPath) {
     return { opened: false, reason: 'open-запись уже в ленте — вторая была бы второй правдой' };
   }
   const { record, orphansClosed } = openProcedureRun(repoRoot, trailRel, {
+    // Область `run` (#1705): спринты живут параллельно законно, и ратификация нового
+    // НЕ должна хоронить соседний живой прогон. Свой оборванный прогон при этом
+    // по-прежнему закрывается — область сужает круг сирот, а не отменяет их.
+    lazyCloseScope: 'run',
     procedureId: SPRINT_PROCEDURE_ID,
     runId: sprintId,
     subject: `спринт ${sprintId}: ратифицирован владельцем (${plan.ratification.by}), блоков ${Array.isArray(plan.blocks) ? plan.blocks.length : 0}`,

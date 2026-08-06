@@ -113,6 +113,10 @@ export function cmdOpen(root, input) {
     at: input.at,
     evidence: input.evidence,
     note: input.note,
+    // Область `procedure` (#1705): CLI обслуживает ритуалы и разовые процедуры, где
+    // живой прогон один по построению — обрыв утра обязан ловиться следующим утром,
+    // даже если runId сменился (`-rN`). Спринты ходят своим путём и объявляют `run`.
+    lazyCloseScope: 'procedure',
   });
   const crossFileOrphans = crossFile.map(({ trailRel, open }) =>
     closeProcedureRun(root, trailRel, {

@@ -14,9 +14,16 @@ import {
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const LIVE = JSON.parse(readFileSync(resolve(repoRoot, 'docs/procedures/vocabulary.json'), 'utf8'));
 
-test('боевой источник словаря валиден: 4 статьи ядра, роды объявлены', () => {
+test('боевой источник словаря валиден: 5 статей ядра, роды объявлены', () => {
   assert.deepEqual(vocabularySchemaProblems(LIVE), []);
-  assert.equal(LIVE.categories.length, 4);
+  // Число намеренное: статья не должна появляться и исчезать молча. 06.08 их стало
+  // пять — вместе с обязательным `procedureKind` (ADR-0021) в словарь вошла статья
+  // «род-процедуры»; движение числа осознанное, а не подгонка под красный зуб.
+  assert.equal(LIVE.categories.length, 5);
+  assert.ok(
+    LIVE.categories.some((c) => c.name === 'род-процедуры'),
+    'пятая статья названа поимённо — иначе зуб пропустит подмену одной статьи другой',
+  );
 });
 
 test('check: слово в прозе БЕЗ маркера — не срабатывает (нет ложных тревог)', () => {
