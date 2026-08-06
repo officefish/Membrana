@@ -2011,3 +2011,44 @@ verification, explicit outcomes, 16 cases, archive safety intent и честны
 - 36/6x6 оставлены внешнему аудиту, готовый verdict и M7 не предписаны.
 
 Run2 допускается только после отдельного разрешения владельца.
+
+## Постаудит M6 — run2
+
+После отдельного разрешения владельца run2 произведён внешним провайдером
+`anthropic/claude-sonnet-4-6`. Механика прошла: 37 предметных реплик, у каждой из шести
+ролей не меньше шести; `meeting:audit` дал structural PASS. Внешняя попытка 2 из 5
+использована. Сырой carrier без исправлений сохранён как
+[`run2-m2-source-canonicalref-m3-atomicity-rpo`](../../seanses/rejected/static-mmbrn-container-m6-intake-delivery-2026-08-06-run2-m2-source-canonicalref-m3-atomicity-rpo.md).
+
+Первый независимый аудитор не вернул вердикт за ограниченное окно и был остановлен; это
+отказ канала аудита, не PASS и не дополнительный consilium run. Повторный независимый
+аудитор дал **BLOCK** по семи группам:
+
+- M2 `source`-строка заменена объектом, а `bytes` местами назван `bytes_size`;
+- revision ошибочно получает новый `canonicalRef`, хотя продолжает прежнюю lineage;
+- `archive-extract-component` объединяет два M3 actions в одной public operation;
+- `verify` под `read-metadata` проверяет ref/bytes dimensions и превышает authority;
+- G6-success/G7-fail ведёт к удалению уже referenced FD-1 object вместо восстановления
+  durable intent binding;
+- degraded FD-2 разрешает intake без проверки обязательного M4 RPO `now-cut_at <= 24h`;
+- lifecycle описан мутационными состояниями без обязательных append-only events.
+
+Полезное ядро сохранено: durable idempotency fingerprint/CAS, class-aware quota и cleanup,
+preview через `read-bytes`, численные archive bounds, full-corpus readiness и запрет решать
+M7. Повестка run3 получила единый раздел поправок run1-run2. Внешний бюджет M6 — 2 из 5;
+run3 запрещён до нового независимого предаудита и отдельного разрешения владельца.
+
+## Предаудит M6 — run3
+
+Первый проход предаудита дал **BLOCK** по одному формальному пробелу: расход бюджета 2/5
+был в активном протоколе и журнале, но отсутствовал в самой повестке. После добавления
+этой строки тот же независимый аудитор дал **PASS**:
+
+- один E1, 11 957 символов, canonical M6 отсутствует;
+- внешний бюджет прямо зафиксирован как 2 из 5;
+- все семь BLOCK run2 и обязательства run1 перенесены без готового verdict;
+- M2-M5 не переопределены, M7 запрещена;
+- 36/6x6 оставлено внешнему постаудиту.
+
+Машинный `meeting:audit` также имеет structural PASS. Run3 допускается только после
+отдельного разрешения владельца.

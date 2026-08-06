@@ -91,37 +91,41 @@ readiness gates. Сохраните M2 identity, M3 per-action authority, M4 sto
     hash/size, class/quota, registry/storage reconciliation, M3 bypass, preview isolation,
     archive safety и degraded mode. Неизмеренное состояние даёт NO-GO.
 
-## Обязательные поправки run1
+## Обязательные поправки run1-run2
 
-- Carrier содержит не меньше 36 реплик и 6 каждой роли; self-count не считается evidence.
-- Каждая public operation имеет ровно один существующий M3 action и authority object
-  container/collection/lineage. Новый intake — `upload-revision` на явной target collection;
-  `recordId` до gate разрешается в `canonicalRef` и current policy/version vector.
-  Status/verify также fail-closed; без action операции нет.
-- `read-ref` возвращает только `location.ref`. Preview требует `read-bytes`, не
-  `read-metadata`; derived result не ослабляет bytes gate.
-- Attempt states отделены от M2/lifecycle. Address move и metadata correction создают новую
-  record через `write-metadata`; revision — `upload-revision`; `manage-access` не меняет
-  record/state. Closed surface не ссылается на безымянный path.
-- До durable write authority выдаёт class: standard либо sensitive с непустым
-  `sensitive.reason`; unknown остаётся resumable hold либо terminal fail с новым intent.
-  Malware/format gate и точный authorised resolution обязательны.
-- Commit = verified FD-1 object + torn-write/concurrency-safe immutable registry append +
-  durable intent binding. FD-2 появляется только последующим complete M4 checkpoint;
-  started backup не evidence.
-- Idempotency ledger key `(principal,intentId)` хранит immutable request fingerprint и CAS
-  `intent -> <=1 record`. Другие bytes/metadata дают conflict; retry failed intent не
-  стирает историю. Добавить outcome/case idempotency conflict.
-- Cleanup/reconciliation используют exact class-aware `location.ref`, ownership marker и
-  M4 live refs. Нельзя удалить dedup/shared blob; standard/sensitive одинакового hash не
-  склеиваются. Исторический object отсутствует лишь после complete deletion chain.
-- Quota readiness использует M4 `U_c`, logical bytes, distinct live `(class,sha256)`,
-  physical delta и watermarks, не record counts.
-- Component сначала получает отдельную M2 record, где `source` несёт archive provenance,
-  и только затем выдаётся. Archive limits имеют численные byte/ratio/entry/depth bounds.
-- Audit буквально несёт M3 decision fields и M4 evidence с redaction: raw ref/attempted
-  path не пишутся. Not-found не создаёт existence leak. Readiness проверяет весь corpus,
-  intent uniqueness и текущий evidence; spot-check не доказывает universal predicate.
+Внешний бюджет M6: **2/5 использовано**.
+
+- Carrier содержит не меньше 36 реплик и 6 каждой роли; self-count не evidence.
+- Каждая public operation имеет ровно один M3 action и один authority object. Если выдача
+  archive component требует `read-bytes` и новый intake через `upload-revision`, это две
+  явные операции, связанные intent, а не одна операция с двумя actions. Status/verify не
+  обходят отдельные ref/bytes gates через `read-metadata`; каждая dimension получает точный
+  action. `recordId` разрешается в `canonicalRef` и current policy/version vector до gate.
+- M2 соблюдается буквально: поле называется `bytes`, `source` остаётся строкой; archive
+  provenance кодируется строкой `source` и при нужде structured `about`. Revision получает
+  новый `id`, но сохраняет root/canonicalRef линии. Component регистрируется до выдачи.
+- `read-ref` возвращает только `location.ref`; preview требует `read-bytes`, а derived
+  result не ослабляет bytes gate.
+- Attempt states отделены от immutable M2 rows и append-only lifecycle events. Переходы не
+  мутируют и не удаляют registry rows. Address move/metadata correction — новая record через
+  `write-metadata`, revision — `upload-revision`, `manage-access` record/state не меняет.
+- До durable write authority выдаёт class standard либо sensitive с непустым reason;
+  unknown — hold или terminal fail. Malware/format gate обязателен; quota для неизвестного
+  class заранее не вычисляется.
+- Commit = verified FD-1 + torn-write-safe registry append + durable intent binding, без
+  фиктивной cross-domain transaction. После успешного append и сбоя binding recovery
+  восстанавливает binding и не удаляет уже referenced bytes. FD-2 — последующий complete
+  checkpoint; started backup не evidence.
+- Ledger `(principal,intentId)` хранит immutable fingerprint и CAS `intent -> <=1 record`;
+  conflict/failed retry не стирают историю. Recovery имеет durable связь intent-record.
+- Cleanup использует exact class-aware ref, ownership marker и M4 live refs; shared blob не
+  удаляется, class namespaces не склеиваются, registry row не входит в deletion chain.
+- Quota использует `U_c`, logical bytes, distinct live `(class,sha256)`, physical delta и
+  watermarks. При FD-2 unavailable intake разрешён лишь пока последний complete
+  `now-cut_at <= 24h`; просроченный RPO даёт NO-GO, даже если FD-1 доступен для чтения.
+- Archive limits численные: bytes/ratio/entries/depth; extraction fail-closed.
+- Audit несёт M3 decision fields и M4 evidence с redaction; not-found не создаёт existence
+  leak. Readiness проверяет весь corpus и intent uniqueness; spot-check не universal proof.
 
 ## Обязательные случаи
 
