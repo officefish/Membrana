@@ -28,14 +28,14 @@
       "noIssueReason": "спринт по двум пунктам ретроспективы тулинга 05.08; носитель — план нарезки",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-05",
-      "archivedAt": null,
+      "archivedAt": "2026-08-06",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "Слово владельца 05.08 «Поддерживаю все предложения» по ретроспективе тулинга. Шотом не проходят: предикат S отказал (capability_chaining, семья scripts/lib). План: docs/sprint/cut/review-honesty.json. Вещдоки: PR #1713 (маркер вердикта), PR #1021 (обход host-local снятия).",
-      "archiveNotes": null,
+      "archiveNotes": "Спринт membrana-local-sprint, ратифицирован владельцем (v2 после перерезки окна 06.08). PR #1731 (e1): review:gate различает «артефакта нет» и «артефакт есть без маркера вердикта» — вещдок PR #1713; закрытый список исходов не расширен, различается причина; 16/16 зубов. PR #1741 (e2): review:oversized снимает с очереди по commit-status review/teamlead=success (только success — слово владельца), failure называет отдельной строкой; порт спрашивает голову очереди, офлайн прибор не роняет; 39/39 зубов. Живой прогон: 3 PR сняты по общему следу, слепота host-local 35→32. Гейт 2/2 honest_pair, прогон закрыт pass. Поправка: утверждение нарезки «зубов у прибора нет» ошибочно — они были в scripts/lib/.",
       "githubIssueClosedAt": null
     },
     {

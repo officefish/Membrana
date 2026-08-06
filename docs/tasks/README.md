@@ -21,7 +21,6 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `worktrees-align` | worktrees:align — WIP-снимок грязных, merge вместо ff-only, авто-abort конфликта, отчёт | M | [`WORKTREES_ALIGN_PROMPT.md`](../prompts/WORKTREES_ALIGN_PROMPT.md) | [#1738](https://github.com/officefish/Membrana/issues/1738) |
-| `review-honesty` | Честность ревью: гейт различает три исхода вердикта, oversized читает снятие по commit-status | S | [`REVIEW_HONESTY_PROMPT.md`](../prompts/REVIEW_HONESTY_PROMPT.md) | — |
 | `recreate-execution-procedure-interface` | Пересборка PR #1613: контракт EXECUTION_PROCEDURE + procedureKind поверх свежего main (pr:recreate) | M | [`RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md`](../prompts/RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md) | — |
 | `procedure-run-journal-panel-reader` | Витрина пяти опор в panel.mmbrn.tech — первый читатель ленты журнала прогонов | M | [`PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md) | — |
 | `corpus-track-acceptance-predicate` | Приёмный предикат корпуса «один тракт — два класса»: чистая функция годности трека по спеке инсайта | S | [`CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md`](../prompts/CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md) | — |
@@ -255,6 +254,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `review-honesty` | Честность ревью: гейт различает три исхода вердикта, oversized читает снятие по commit-status | 2026-08-06 | [`REVIEW_HONESTY_PROMPT.md`](../prompts/REVIEW_HONESTY_PROMPT.md) | — | [карточка](./archive/review-honesty.md) |
 | `instruments-honest-verdict` | Приборы выносят вердикт, которому можно верить: ложные красные, свалка auth, слепой зонд | 2026-08-05 | [`INSTRUMENTS_HONEST_VERDICT_PROMPT.md`](../prompts/INSTRUMENTS_HONEST_VERDICT_PROMPT.md) | — | [карточка](./archive/instruments-honest-verdict.md) |
 | `llm-transport-no-key-class` | llm-транспорт: развести «ключа нет» и «ключ отвергнут» | 2026-08-05 | [`LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md`](../prompts/LLM_TRANSPORT_NO_KEY_CLASS_PROMPT.md) | #1549 | [карточка](./archive/llm-transport-no-key-class.md) |
 | `deploy-procedures` | Деплой как процедура с прогонами: две процедуры по серверам (office-VDS, media-VPS) + врезка журнала в боевые глаголы | 2026-08-04 | [`DEPLOY_PROCEDURES_PROMPT.md`](../prompts/DEPLOY_PROCEDURES_PROMPT.md) | — | [карточка](./archive/deploy-procedures.md) |
