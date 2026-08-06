@@ -1934,3 +1934,36 @@ heading посылок, DoD заканчивает файл. Машинный `m
 
 Смысловых BLOCK не найдено. M5 допускается к владельческой ратификации; M6 до этого акта
 остаётся закрыта.
+
+## Ратификация M5 и открытие подготовки M6
+
+Владелец ратифицировал M5 сообщением «ратифицирую» 2026-08-06. Акт относится к canonical
+local-synthesis carrier после независимого PASS. Он закрывает комнату M5, но не обнуляет
+её внешний бюджет 5 из 5 и не превращает rejected runs в канон.
+
+По ратифицированному порядку M0 следующая комната — M6 «Приём и выдача». До подготовки
+повестки штатный прибор мастерской вещдоков показал 12 строк реестра, все с текущим
+`location.kind=local`; `verify` дал 3 расхождения и отдельно два класса content duplicates.
+Это измеренный вход M6, не приговор отдельным legacy rows.
+
+Подготовлена одна повестка `M6_AGENDA.md` с одним вопросом E1 и одним отсутствующим
+carrier. Внешний запуск M6 запрещён до независимого предаудита повестки и отдельного
+разрешения владельца.
+
+## Предаудит M6 — редакция 1
+
+Вердикт независимого аудитора: **PASS**.
+
+- M5 корректно открывает M6, Affine остаётся сменной projection;
+- один E1, 9 179 символов, canonical carrier отсутствует;
+- immutable M2 identity и разделение record/bytes/lineage сохранены;
+- M3 metadata/ref/bytes/download и Panel authority разведены;
+- M4 FD-1/FD-2/FD-3, class/quota/integrity gates не изменены;
+- commit, atomicity, idempotency, recovery, sensitivity, verification, preview и archive
+  safety обязательны, но готовые authority/state/verdict не подставлены;
+- M7 DNS/migration/rollout запрещены, текущие 12 rows остаются evidence;
+- classification не противоречит M4: M6 выбирает authority, но carrier обязан получить
+  fail-closed class decision до durable write.
+
+Машинный `meeting:audit` также имеет структурный PASS. Внешний бюджет M6 остаётся 0 из 5;
+run1 допускается только после отдельного разрешения владельца.
