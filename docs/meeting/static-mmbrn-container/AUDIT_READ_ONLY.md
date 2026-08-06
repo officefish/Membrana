@@ -2052,3 +2052,45 @@ run3 запрещён до нового независимого предауд�
 
 Машинный `meeting:audit` также имеет structural PASS. Run3 допускается только после
 отдельного разрешения владельца.
+
+## Постаудит M6 — run3
+
+После отдельного разрешения run3 произведён `anthropic/claude-sonnet-4-6`. Ролевой корпус
+полон: 42 реплики, ровно 7 каждой из шести ролей. Внешняя попытка 3 из 5 использована.
+Сырой carrier сохранён как
+[`run3-surface-authority-m2-recovery-readiness`](../../seanses/rejected/static-mmbrn-container-m6-intake-delivery-2026-08-06-run3-surface-authority-m2-recovery-readiness.md).
+
+`meeting:audit` дал structural BLOCK: заголовок посылок существует, но следующая жирная
+строка распознана как новый heading, поэтому тело секции для валидатора пусто. Независимый
+смысловой аудит также дал **BLOCK**:
+
+- operation table не имеет authority object/resolution и оставляет list/preview/verify вне
+  закрытого surface;
+- verify dimensions не имеют полного exact action/object mapping;
+- M2 `about` ошибочно стал object, revision не защищена expected-tip CAS от fork;
+- recovery после append не имеет durable pre-append связи intent с proposed recordId, а
+  uniqueness не запрещает два recordId одному fingerprint;
+- readiness смешивает registry/lifecycle scopes и ослабляет M4 quota/capacity predicates;
+- archive numbers даны как примеры, а не выбранные constants;
+- audit хранит raw sensitive ref и предлагает redaction только при чтении вопреки M4.
+
+Полезное ядро: точные `source/bytes/canonicalRef`, RPO NO-GO, append-only lifecycle,
+class-aware cleanup, preview `read-bytes`, 19 cases и честный запрет M7. Повестка run4
+получила единый раздел поправок run1-run3. Бюджет M6 — 3 из 5; run4 запрещён до нового
+независимого предаудита и отдельного разрешения владельца.
+
+## Предаудит M6 — run4
+
+Первый проход дал **BLOCK** по одной внутренней коллизии: ранняя строка требовала class
+quota, хотя M4 определяет collection quota `U_c/Q_c`, а class относится к storage key.
+После замены на collection quota при сохранённом предшествующем class resolution тот же
+независимый аудитор дал **PASS**:
+
+- один E1, 11 993 символа, canonical M6 отсутствует;
+- бюджет прямо зафиксирован как 3 из 5;
+- closed action/object surface, exact M2 fields/CAS и durable recovery обязательны;
+- M4 readiness/RPO, fixed archive constants и write-time redaction сохранены;
+- M2-M5 не переопределены, M7 запрещена, 36/6x6 оставлено внешнему аудиту.
+
+`meeting:audit` без canonical carrier имеет structural PASS. Run4 допускается только после
+отдельного разрешения владельца.
