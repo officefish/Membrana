@@ -16,6 +16,10 @@
 {"ts":"2026-08-05T16:12:16.529Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-05T16:11:54.673Z","origin":"ask-persona"}
 {"ts":"2026-08-05T16:12:16.533Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-05T16:11:54.673Z","origin":"ask-persona"}
 {"ts":"2026-08-05T16:12:16.538Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-23-llm-procedure-channels-m3b-telemetry","reason":"тот же контур каналов процедур, где я фиксировал форму события транспорта; сегодняшний словарь ошибок — прямое расширение той телеметрии, и errorClass из v1-события теперь получает конечное множество значений.","origin":"ask-persona"}
+{"ts":"2026-08-05T21:13:29.243Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-05T21:13:05.726Z","origin":"ask-persona"}
+{"ts":"2026-08-05T21:13:29.250Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-05T21:13:05.726Z","origin":"ask-persona"}
+{"ts":"2026-08-05T21:13:29.253Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-03-one-shot-manifest-m4-homogeneity","reason":"там я формализовал предикат pathFamily(p) и однородность families(shot) над списком путей; ровно тот же жанр — предикат-функция над множеством файлов очереди. Переиспользую форму.","origin":"ask-persona"}
+{"ts":"2026-08-05T21:13:29.303Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-01-evening-review-predicate-m4-memoization","reason":"там разводил два несовместимых предиката над одним органом. Для oversized-очереди тот же риск: «снят» может значить и «удалён из файла-источника», и «покрыт ревью». Разводим явно.","origin":"ask-persona"}
 {"ts":"2026-08-05T21:44:09.614Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-05-team-evening-feedback","origin":"persona-extract"}
 {"ts":"2026-08-05T21:44:09.614Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-tariff-grid-m2-rail","reason":"budget_evict","origin":"persona-extract","class":"position"}
 {"ts":"2026-08-05T21:44:09.614Z","persona":"dynin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}

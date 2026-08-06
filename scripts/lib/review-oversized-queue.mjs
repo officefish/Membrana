@@ -127,9 +127,19 @@ export function describeCommit(commit) {
 export function buildQueue(commits, ctx = {}) {
   // trackedReviewed — номера PR, чей артефакт ревью ОТСЛЕЖИВАЕТСЯ стволом (шот B, 03.08).
   // Источник списка — порт глагола (git ls-files), ядро о VCS не знает (граница Ожегова).
-  const { reviewed = [], includeDocs = false, trackedReviewed = null } = ctx;
-  const done = new Set(reviewed.map(String));
-  const dropped = { notOversized: 0, reviewed: 0, docs: 0 };
+  // statusReviewed — номера PR, снятых по commit-status `review/teamlead=success`
+  // (блок e2, 05.08). Машинный след живёт в ОБЩЕМ поле: его ставит сам шип-гейт, и он
+  // виден любому клону — в отличие от артефакта ревью, который в .gitignore. Слово
+  // владельца: снимает ТОЛЬКО success. `failure` гейт ставит и при вердикте BLOCK, и при
+  // протухшем вердикте — снаружи неразличимо, и считать такие «рассмотренными» значило бы
+  // выдать непроверенное за проверенное. Признак приносит скрипт: ядро в сеть не ходит.
+  const { reviewed = [], statusReviewed = [], includeDocs = false, trackedReviewed = null } = ctx;
+  const byArtifact = new Set(reviewed.map(String));
+  const byStatus = new Set(statusReviewed.map(String));
+  const done = new Set([...byArtifact, ...byStatus]);
+  // Роды снятия различимы: `reviewed` — что сняли (всего), `byStatus` — на чём держится
+  // общий след. Дробь остаётся об одном множестве: оба счётчика считают removedPrs.
+  const dropped = { notOversized: 0, reviewed: 0, docs: 0, byStatus: 0 };
   const queue = [];
   /** PR, ФАКТИЧЕСКИ снятые с очереди — не все артефакты ФС: дробь обязана быть об одном множестве. */
   const removedPrs = new Set();
@@ -142,6 +152,7 @@ export function buildQueue(commits, ctx = {}) {
     }
     if (c.pr !== null && done.has(String(c.pr))) {
       dropped.reviewed += 1;
+      if (byStatus.has(String(c.pr))) dropped.byStatus += 1;
       removedPrs.add(String(c.pr));
       continue;
     }
@@ -173,11 +184,23 @@ export function buildQueue(commits, ctx = {}) {
   // Первый живой прогон дал «65/29» — числитель шёл по всем артефактам ФС, знаменатель по
   // снятым элементам очереди: дробь о двух разных множествах. Числитель приведён к removedPrs.
   // null — порт не подключён (зубы ядра без git): о слепоте не судим, а не «слепоты нет».
+  // Снятие по commit-status слепотой НЕ является: след общий, на клоне он тот же. Поэтому
+  // из host-local вычитаются и отслеживаемые стволом артефакты, и подтверждённые статусом —
+  // иначе прибор пугал бы слепотой там, где вещдок виден всем (блок e2).
   const tracked = trackedReviewed === null ? null : new Set([...trackedReviewed].map(String));
   const hostLocalReviewed =
-    tracked === null ? null : [...removedPrs].filter((pr) => !tracked.has(pr)).length;
+    tracked === null
+      ? null
+      : [...removedPrs].filter((pr) => !tracked.has(pr) && !byStatus.has(pr)).length;
 
-  return { queue, dropped, hostLocalReviewed, denominator: Array.isArray(commits) ? commits.length : 0 };
+  return {
+    queue,
+    dropped,
+    hostLocalReviewed,
+    // Пробрасывается как есть: прибор о них ЗНАЕТ, но снятыми не считает (слово владельца).
+    statusFailurePrs: [...new Set((ctx.statusFailure ?? []).map(String))],
+    denominator: Array.isArray(commits) ? commits.length : 0,
+  };
 }
 
 /**
@@ -191,10 +214,22 @@ export function formatQueue(result, opts = {}) {
     `review:oversized · рассмотрено коммитов ${denominator} · порог ${OVERSIZED_CHANGED_LINES} строк`,
   ];
 
+  const byStatus = dropped.byStatus ?? 0;
   lines.push(
-    `отброшено: ${dropped.notOversized ?? 0} не oversized · ${dropped.reviewed ?? 0} с готовым артефактом ревью · ` +
-      `${dropped.docs ?? 0} без изменённых строк исходного кода`,
+    `отброшено: ${dropped.notOversized ?? 0} не oversized · ${dropped.reviewed ?? 0} с готовым ревью` +
+      (byStatus > 0 ? ` (из них ${byStatus} по общему следу — commit-status)` : '') +
+      ` · ${dropped.docs ?? 0} без изменённых строк исходного кода`,
   );
+  // PR со статусом `failure` — НЕ снятые: ревью могло быть, но вердикт не зачтён (BLOCK
+  // либо протухание — снаружи неразличимо). Прибор называет их отдельно, вместо того
+  // чтобы молча оставить в общей куче: разбирать их надо рукой, а не «когда-нибудь».
+  const needHand = result?.statusFailurePrs ?? [];
+  if (needHand.length > 0) {
+    lines.push(
+      `⚠ ${needHand.length} PR со статусом review/teamlead=failure — ревью было, вердикт не зачтён ` +
+        `(BLOCK либо протух): ${needHand.slice(0, 8).map((p) => `#${p}`).join(', ')}${needHand.length > 8 ? ' …' : ''}`,
+    );
+  }
   // Предел прибора — вслух (шот B, 03.08): снятие читает рабочее дерево, а артефакты ревью
   // в .gitignore (TF-3, #554). Слова выверены исполнителем: «голова очереди ИНАЯ», не
   // «длиннее» — у чужого клона свои host-local вещдоки, невидимые здесь; прибор говорит о
