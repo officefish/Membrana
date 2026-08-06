@@ -9,7 +9,7 @@
   "swallow": {
     "draftDigest": "d7adfa03a1f96685ac2c58b6c7cabd276643b3d6d35cadb60dbf24167230e375",
     "draftFile": "docs/comms/drafts/swallow-morning-2026-08-06.md",
-    "ownerAck": false
+    "ownerAck": true
   },
   "day": "2026-08-06"
 }
