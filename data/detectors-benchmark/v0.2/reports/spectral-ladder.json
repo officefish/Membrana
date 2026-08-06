@@ -1,0 +1,230 @@
+{
+  "schema": "spectral-ladder-report@1.0.0",
+  "generatedAt": "2026-08-06T09:19:59.838Z",
+  "corpus": {
+    "path": "data/detectors-benchmark/v0.2",
+    "droneCount": 63,
+    "cleanCount": 74,
+    "manifestSha256": "614b8eff1f7aceaf1736e248a97b44a58b9b57ec2d32adb908577c10c594e3ea"
+  },
+  "test": {
+    "size": 48,
+    "drones": 25,
+    "groups": 33
+  },
+  "selection": {
+    "by": "f1",
+    "split": "train",
+    "note": "оба метода сборки остаются в steps"
+  },
+  "steps": [
+    {
+      "nTrainDrones": 10,
+      "nTrainTotal": 16,
+      "method": "envelope",
+      "params": {
+        "threshold": 30,
+        "withCompetitors": false
+      },
+      "test": {
+        "detected": 25,
+        "dronesTotal": 25,
+        "falseAlarms": 23,
+        "cleanTotal": 23,
+        "pdInterval": [
+          0.8668035060468213,
+          1
+        ],
+        "pfaInterval": [
+          0.8568788745827374,
+          1
+        ],
+        "intervalMethod": "wilson@0.95",
+        "rocAuc": 0.6826086956521739,
+        "rocAucCi": null
+      }
+    },
+    {
+      "nTrainDrones": 10,
+      "nTrainTotal": 16,
+      "method": "percentile",
+      "params": {
+        "threshold": 70,
+        "withCompetitors": true
+      },
+      "test": {
+        "detected": 24,
+        "dronesTotal": 25,
+        "falseAlarms": 18,
+        "cleanTotal": 23,
+        "pdInterval": [
+          0.8045552759497747,
+          0.9929039496133008
+        ],
+        "pfaInterval": [
+          0.5809611981726508,
+          0.9033616439828094
+        ],
+        "intervalMethod": "wilson@0.95",
+        "rocAuc": 0.7991304347826087,
+        "rocAucCi": null
+      }
+    },
+    {
+      "nTrainDrones": 20,
+      "nTrainTotal": 38,
+      "method": "envelope",
+      "params": {
+        "threshold": 70,
+        "withCompetitors": false
+      },
+      "test": {
+        "detected": 24,
+        "dronesTotal": 25,
+        "falseAlarms": 21,
+        "cleanTotal": 23,
+        "pdInterval": [
+          0.8045552759497747,
+          0.9929039496133008
+        ],
+        "pfaInterval": [
+          0.7320359570190598,
+          0.9758205045927666
+        ],
+        "intervalMethod": "wilson@0.95",
+        "rocAuc": 0.6826086956521739,
+        "rocAucCi": null
+      }
+    },
+    {
+      "nTrainDrones": 20,
+      "nTrainTotal": 38,
+      "method": "percentile",
+      "params": {
+        "threshold": 50,
+        "withCompetitors": false
+      },
+      "test": {
+        "detected": 24,
+        "dronesTotal": 25,
+        "falseAlarms": 18,
+        "cleanTotal": 23,
+        "pdInterval": [
+          0.8045552759497747,
+          0.9929039496133008
+        ],
+        "pfaInterval": [
+          0.5809611981726508,
+          0.9033616439828094
+        ],
+        "intervalMethod": "wilson@0.95",
+        "rocAuc": 0.8278260869565217,
+        "rocAucCi": null
+      }
+    },
+    {
+      "nTrainDrones": 30,
+      "nTrainTotal": 65,
+      "method": "envelope",
+      "params": {
+        "threshold": 70,
+        "withCompetitors": true
+      },
+      "test": {
+        "detected": 24,
+        "dronesTotal": 25,
+        "falseAlarms": 22,
+        "cleanTotal": 23,
+        "pdInterval": [
+          0.8045552759497747,
+          0.9929039496133008
+        ],
+        "pfaInterval": [
+          0.7900841350594088,
+          0.9922835330378734
+        ],
+        "intervalMethod": "wilson@0.95",
+        "rocAuc": 0.6652173913043479,
+        "rocAucCi": null
+      }
+    },
+    {
+      "nTrainDrones": 30,
+      "nTrainTotal": 65,
+      "method": "percentile",
+      "params": {
+        "threshold": 70,
+        "withCompetitors": true
+      },
+      "test": {
+        "detected": 24,
+        "dronesTotal": 25,
+        "falseAlarms": 18,
+        "cleanTotal": 23,
+        "pdInterval": [
+          0.8045552759497747,
+          0.9929039496133008
+        ],
+        "pfaInterval": [
+          0.5809611981726508,
+          0.9033616439828094
+        ],
+        "intervalMethod": "wilson@0.95",
+        "rocAuc": 0.7782608695652173,
+        "rocAucCi": null
+      }
+    },
+    {
+      "nTrainDrones": 38,
+      "nTrainTotal": 88,
+      "method": "envelope",
+      "params": {
+        "threshold": 50,
+        "withCompetitors": false
+      },
+      "test": {
+        "detected": 25,
+        "dronesTotal": 25,
+        "falseAlarms": 23,
+        "cleanTotal": 23,
+        "pdInterval": [
+          0.8668035060468213,
+          1
+        ],
+        "pfaInterval": [
+          0.8568788745827374,
+          1
+        ],
+        "intervalMethod": "wilson@0.95",
+        "rocAuc": 0.6330434782608696,
+        "rocAucCi": null
+      }
+    },
+    {
+      "nTrainDrones": 38,
+      "nTrainTotal": 88,
+      "method": "percentile",
+      "params": {
+        "threshold": 70,
+        "withCompetitors": true
+      },
+      "test": {
+        "detected": 24,
+        "dronesTotal": 25,
+        "falseAlarms": 19,
+        "cleanTotal": 23,
+        "pdInterval": [
+          0.8045552759497747,
+          0.9929039496133008
+        ],
+        "pfaInterval": [
+          0.6286194521470433,
+          0.9302145964938723
+        ],
+        "intervalMethod": "wilson@0.95",
+        "rocAuc": 0.7521739130434782,
+        "rocAucCi": null
+      }
+    }
+  ]
+}

@@ -14,11 +14,13 @@
  *
  * Запуск: node scripts/lab-learning-curve.mjs [--ladder 30,60,90]
  */
-import { readdir, readFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { detectorMetrics } from './lib/benchmark-metrics.mjs';
+import { buildLadderReport, canonicalJson, ladderStep } from './lib/ladder-report.mjs';
 import { buildClassTemplate, templateWidth } from './lib/percentile-template.mjs';
 import { readWavMono } from './lib/wav-read.mjs';
 
@@ -112,9 +114,24 @@ async function main() {
   console.log('--------|--------------|--------|--------------------------------|----------------------');
 
   const poolShuffled = seededShuffle(pool, 11);
-  for (const n of LADDER) {
-    if (n > pool.length) continue;
-    const train = poolShuffled.slice(0, n);
+  const poolDrones = poolShuffled.filter((s) => s.truthDrone).length;
+  /** @type {object[]} */
+  const reportSteps = [];
+
+  // Ступень считается в записях МЕНЬШЕГО класса — дронов (решение резчика 06.08).
+  // Прежний счёт по СУММЕ классов молча смещал состав обучающей части: при 63 дронах
+  // ступень «80» недостижима, и лестница показывала бы рост объёма вместо роста дронов.
+  for (const n of [...LADDER, poolDrones]) {
+    if (n > poolDrones) continue;
+    // Берём подряд из перемешанного пула, пока не наберём n дронов: чистые едут с ними,
+    // их фактическое число попадёт в отчёт как nTrainTotal — асимметрия видна, не спрятана.
+    const train = [];
+    let got = 0;
+    for (const s of poolShuffled) {
+      train.push(s);
+      if (s.truthDrone) got += 1;
+      if (got >= n) break;
+    }
     const trainDrones = train.filter((s) => s.truthDrone);
     if (trainDrones.length < 3) continue;
 
@@ -137,6 +154,16 @@ async function main() {
       }
 
       const t = evalTrends(best.templates, best.minC, test);
+      // Ступень едет в версионируемый отчёт — печать доказательством не является (Ф2).
+      reportSteps.push(
+        ladderStep({
+          nTrainDrones: trainDrones.length,
+          nTrainTotal: train.length,
+          method,
+          params: { minConfidence: best.minC, withCompetitors: best.withCompetitors },
+          metrics: t,
+        }),
+      );
       const pctFmt = (v) => (v == null ? '  —  ' : `${(v * 100).toFixed(1)}%`);
       console.log(
         `${String(n).padStart(7)} | ${method.padEnd(12)} | ${String(templateWidth(droneTemplate)?.toFixed(0) ?? '—').padStart(6)} ` +
@@ -150,6 +177,26 @@ async function main() {
     '\nТест один и тот же во всех строках. Параметры (порог, набор шаблонов) подобраны\n' +
       'ТОЛЬКО на обучающей части шага — тест в подборе не участвовал.',
   );
+
+  // --- Отчёт в репозиторий: витрина читает JSON, а не консоль (Ф2, блок g1) ---
+  const report = buildLadderReport({
+    generatedAt: new Date().toISOString(),
+    corpus: {
+      path: 'data/detectors-benchmark/v0.2',
+      droneCount: items.filter((i) => i.truthDrone).length,
+      cleanCount: items.filter((i) => !i.truthDrone).length,
+      manifestSha256: createHash('sha256').update(canonicalJson(upstream)).digest('hex'),
+    },
+    test: {
+      size: test.length,
+      drones: test.filter((i) => i.truthDrone).length,
+      groups: testGroups.size,
+    },
+    steps: reportSteps,
+  });
+  const outPath = join(DATASET, 'reports', 'spectral-ladder.json');
+  await writeFile(outPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+  console.log(`\nОтчёт лестницы: ${outPath} (ступеней ${reportSteps.length})`);
 }
 
 await main();
