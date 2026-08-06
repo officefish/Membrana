@@ -56,10 +56,14 @@ export function renderVerdictMarker({ sha, verdict, lead, at }) {
 
 /**
  * Решение гейта.
- * @param {{headSha: string|null, verdict: ReturnType<typeof parseVerdict>, override?: {enabled: boolean, reason?: string}}} input
+ * `artifact` — необязательный признак файла ревью от вызывающего: `{exists, path}`.
+ * Ядро в ФС не ходит, поэтому существование артефакта приносят ему значением; без
+ * признака ядро ведёт себя как прежде.
+ *
+ * @param {{headSha: string|null, verdict: ReturnType<typeof parseVerdict>, override?: {enabled: boolean, reason?: string}, artifact?: {exists: boolean, path?: string}}} input
  * @returns {{state: 'pass'|'block'|'unknown', reason: string}}
  */
-export function reviewGateDecision({ headSha, verdict, override, scope } = {}) {
+export function reviewGateDecision({ headSha, verdict, override, scope, artifact } = {}) {
   if (override?.enabled) {
     const reason = String(override.reason ?? '').trim();
     if (!reason) {
@@ -74,6 +78,23 @@ export function reviewGateDecision({ headSha, verdict, override, scope } = {}) {
     return { state: 'unknown', reason: 'HEAD SHA не определился — к чему привязывать вердикт, неизвестно (git недоступен?)' };
   }
   if (!verdict) {
+    // ДВА РАЗНЫХ «нет вердикта», и они требуют разных действий (вещдок 04.08, PR #1713):
+    // артефакта нет вовсе — ревью не прогонялось; артефакт лежит, а маркера в нём нет —
+    // ревью ОТРАБОТАЛО и вердикта не проставило. Раньше обе ситуации давали один текст
+    // «ревью не найдено», и он советовал прогнать то, что уже прогонялось: диагноз лгал,
+    // а лечение выглядело одинаковым. Исход в обоих случаях остаётся `unknown` — закрытый
+    // список состояний не расширяется (решение владельца 05.08), различается ПРИЧИНА.
+    //
+    // Признак приносит вызывающий: ядро в ФС не ходит. Без признака (старые вызовы и зубы
+    // ядра) поведение прежнее — «не найдено».
+    if (artifact?.exists) {
+      return {
+        state: 'unknown',
+        reason:
+          `артефакт ревью есть (${artifact.path ?? 'путь не назван'}), но маркер вердикта в нём не записан — ` +
+          `ревью отработало и вердикта не проставило; перепрогнать: yarn code-review:pr <N> (привяжется к ${headSha.slice(0, 8)})`,
+      };
+    }
     return { state: 'unknown', reason: `ревью тимлида по этому PR не найдено — прогнать: yarn code-review:pr <N> (вердикт привяжется к ${headSha.slice(0, 8)})` };
   }
   // ПОРЯДОК ВЕТОК НЕСУЩИЙ (найдено ревью 31.07). «Вердикт не о ЭТОМ коде» строже, чем

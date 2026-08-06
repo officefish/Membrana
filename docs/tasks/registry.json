@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "review-honesty",
+      "title": "Честность ревью: гейт различает три исхода вердикта, oversized читает снятие по commit-status",
+      "promptPath": "docs/prompts/REVIEW_HONESTY_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "спринт по двум пунктам ретроспективы тулинга 05.08; носитель — план нарезки",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-05",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "Слово владельца 05.08 «Поддерживаю все предложения» по ретроспективе тулинга. Шотом не проходят: предикат S отказал (capability_chaining, семья scripts/lib). План: docs/sprint/cut/review-honesty.json. Вещдоки: PR #1713 (маркер вердикта), PR #1021 (обход host-local снятия).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "instruments-honest-verdict",
       "title": "Приборы выносят вердикт, которому можно верить: ложные красные, свалка auth, слепой зонд",
       "promptPath": "docs/prompts/INSTRUMENTS_HONEST_VERDICT_PROMPT.md",
