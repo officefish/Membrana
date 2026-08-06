@@ -89,8 +89,11 @@ export function ladderVerdict(steps: readonly LadderStepRow[]): string {
 
 /** Предыдущая ступень того же метода — сравнивать envelope с percentile бессмысленно. */
 export function previousOfSameMethod(steps: readonly LadderStepRow[], index: number): LadderStepRow | null {
+  const current = steps[index];
+  if (!current) return null;
   for (let i = index - 1; i >= 0; i -= 1) {
-    if (steps[i].method === steps[index].method) return steps[i];
+    const candidate = steps[i];
+    if (candidate && candidate.method === current.method) return candidate;
   }
   return null;
 }
