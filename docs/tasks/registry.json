@@ -19553,11 +19553,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-06",
+      "archiveNotes": "Эпик выполнен ночью 2026-07-08. Все девять фаз доставлены в origin/main и проверены пофайлово 06.08: NB1 строка .gitignore:149; NB2 pr-ship.mjs+зуб; NB3 build-affected.mjs+зуб; NB4 verify-wire-sync.mjs+зуб и шаг pre-push; NB5 .githooks/commit-msg (архивирована ранее); NB6 deploy-when-green.mjs и prisma-migration-new.mjs+зубы; NB7 tasks-archive-closed.mjs и lib/git-day-context.mjs (архивирована ранее); NB8 скиллы membrana-ship и membrana-tooling-doctor. Строить нечего. ВАЖНО: карточка два дня подряд (05.08, 06.08) выбиралась магистралью дня, и оба дня магистраль не двигалась — двигать было нечего. Намерение тех выборов (что зубит ночной прогон, кто судья зелёного, где живёт журнал) относится к СОСЕДНЕЙ живой карточке night-build-format-v2, а не к этому эпику.",
       "notes": "По итогам сессии 2026-07-08 (~26 PR). Инвариант: night-ветка, dry-run опасных скриптов, НЕ мёрж/деплой ночью, HANDOFF утром.",
       "leadPersona": "vesnin",
       "supportPersonas": [
@@ -19571,13 +19571,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "agent-tooling-night-build",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-06",
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "sprintKind": "night-build"
+      "sprintKind": "night-build",
+      "archiveNotes": "Гейт фазы: кода не предполагал (baseline scoped CI + заморозка конвенций). Снят вместе с эпиком: все фазы NB1-NB8 доставлены и проверены пофайлово 06.08, конвенции ночи (night-ветка, dry-run опасных глаголов, не мёржить и не деплоить ночью) живут в промпте эпика и в AGENTS.md."
     },
     {
       "id": "nb-at-1-gitignore-review",
@@ -19586,13 +19587,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "agent-tooling-night-build",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-06",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "sprintKind": "night-build"
+      "sprintKind": "night-build",
+      "archiveNotes": "Доставлено ночью 08.07. Вещдок в origin/main: строка 149 .gitignore — docs/discussions/uncommitted-code-review.md. Проверено пофайлово 06.08."
     },
     {
       "id": "nb-at-2-pr-ship",
@@ -19601,13 +19603,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "agent-tooling-night-build",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-06",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "sprintKind": "night-build"
+      "sprintKind": "night-build",
+      "archiveNotes": "Доставлено ночью 08.07. Вещдок в origin/main: scripts/pr-ship.mjs + scripts/pr-ship.test.mjs, глагол yarn pr:ship в package.json. Живая проверка 06.08: восемь прогонов ship/merge-only за день. Проверено пофайлово 06.08."
     },
     {
       "id": "nb-at-3-build-affected",
@@ -19616,13 +19619,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "agent-tooling-night-build",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-06",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "sprintKind": "night-build"
+      "sprintKind": "night-build",
+      "archiveNotes": "Доставлено ночью 08.07. Вещдок в origin/main: scripts/build-affected.mjs + scripts/build-affected.test.mjs, глагол yarn build:affected. Проверено пофайлово 06.08."
     },
     {
       "id": "nb-at-4-verify-wire-sync",
@@ -19631,13 +19635,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "agent-tooling-night-build",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-06",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "sprintKind": "night-build"
+      "sprintKind": "night-build",
+      "archiveNotes": "Доставлено ночью 08.07. Вещдок в origin/main: scripts/verify-wire-sync.mjs + зуб, глагол yarn verify:wire-sync, шаг в .githooks/pre-push. Живая проверка 06.08: pre-push [NB4] печатал OK при каждом пуше. Проверено пофайлово 06.08."
     },
     {
       "id": "nb-at-5-hooks",
@@ -19662,13 +19667,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "agent-tooling-night-build",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-06",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
-      "sprintKind": "night-build"
+      "sprintKind": "night-build",
+      "archiveNotes": "Доставлено ночью 08.07. Вещдок в origin/main: scripts/deploy-when-green.mjs и scripts/prisma-migration-new.mjs с зубами, глаголы deploy:when-green и prisma:migration. Проверено пофайлово 06.08."
     },
     {
       "id": "nb-at-7-bookkeeping-gitctx",
@@ -19693,13 +19699,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "agent-tooling-night-build",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-06",
       "leadPersona": "vesnin",
       "supportPersonas": [],
-      "sprintKind": "night-build"
+      "sprintKind": "night-build",
+      "archiveNotes": "Доставлено ночью 08.07. Вещдок в origin/main: .cursor/skills/membrana-ship/SKILL.md и .cursor/skills/membrana-tooling-doctor/SKILL.md, оба скилла живут и перечислены в каталоге. Проверено пофайлово 06.08."
     },
     {
       "id": "hermes-brief",
