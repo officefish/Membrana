@@ -273,18 +273,40 @@ export function nextSequenceOf(records, runId) {
  * Побочный эффект честный: первый обрыв виден только на втором запуске — журнал не
  * ясновидящий.
  *
+ * `lazyCloseScope` — ОБЯЗАТЕЛЕН и умолчания не имеет (#1705): `procedure` закрывает
+ * любые незакрытые прогоны процедуры (ритуалы — живой прогон один по построению),
+ * `run` закрывает только сирот с тем же `runId` (спринты и всё, где несколько прогонов
+ * живут разом законно). Умолчание здесь было бы тем же тихим выбором, который и породил
+ * дефект: молчаливая область соврала бы про чужой прогон, и снова не в первый раз.
+ *
  * @param {string} repoRoot
  * @param {string} trailRelPath
- * @param {{procedureId: string, runId: string, subject: string, at: string, evidence: string[], note?: string}} input
+ * @param {{procedureId: string, runId: string, subject: string, at: string, evidence: string[], note?: string, lazyCloseScope: 'procedure'|'run'}} input
  * @returns {{record: object, orphansClosed: object[]}}
  */
 export function openProcedureRun(repoRoot, trailRelPath, input) {
+  const scope = input?.lazyCloseScope;
+  if (scope !== 'procedure' && scope !== 'run') {
+    throw new Error(
+      `lazyCloseScope «${String(scope)}» вне {procedure|run} — область ленивого закрытия ` +
+        'называется явно: молчаливый выбор закрывает чужой живой прогон как сироту (#1705)',
+    );
+  }
   const records = readProcedureRunTrail(repoRoot, trailRelPath);
   // Сироты группируются по runId: закрытие — событие над прогоном, и при коллидировавшей
   // истории (несколько open на один runId, #1693) один close закрывает семью целиком —
   // повторный close того же runId был бы второй правдой.
   const orphansByRun = new Map();
-  for (const o of findUnclosedRuns(records, input.procedureId)) orphansByRun.set(o.runId, o);
+  for (const o of findUnclosedRuns(records, input.procedureId)) {
+    // ОБЛАСТЬ ленивого закрытия (#1705): «незакрытый прогон той же процедуры» и «мой
+    // оборванный прогон» — разные вещи, и до 06.08 они были слиты. Для ритуалов слияние
+    // верно: живой прогон один по построению, и обрыв утра ловится следующим утром.
+    // Для спринтов оно ЛОЖЬ: два спринта живут разом законно — 04.08 ратификация второго
+    // закрыла open первого как сироту, и в журнале появился fail у спринта, который ещё
+    // не начинался. Область называет вызывающий; тихого выбора здесь быть не может.
+    if (scope === 'run' && o.runId !== input.runId) continue;
+    orphansByRun.set(o.runId, o);
+  }
   const orphans = [...orphansByRun.values()];
   const orphansClosed = [];
   // Счёт по runId собирается ОДНИМ проходом: nextSequenceOf на каждую сироту делал бы

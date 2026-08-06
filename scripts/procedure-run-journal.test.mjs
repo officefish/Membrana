@@ -166,10 +166,12 @@ test('ленивое закрытие: следующий open той же пр�
   openProcedureRun(dir, rel, {
     procedureId: 'ritual-day', runId: 'day-1', subject: 'утро началось',
     at: '2026-08-03T06:00:00.000Z', evidence: ['docs/MAIN_DAY_ISSUE.md'],
+    lazyCloseScope: 'procedure',
   });
   const { orphansClosed } = openProcedureRun(dir, rel, {
     procedureId: 'ritual-day', runId: 'day-2', subject: 'утро следующего дня',
     at: '2026-08-04T06:00:00.000Z', evidence: ['docs/MAIN_DAY_ISSUE.md'],
+    lazyCloseScope: 'procedure',
   });
   assert.equal(orphansClosed.length, 1);
   const orphan = orphansClosed[0];
@@ -187,10 +189,12 @@ test('чужая процедура сироту НЕ закрывает: обр
   openProcedureRun(dir, rel, {
     procedureId: 'ritual-day', runId: 'day-1', subject: 'утро',
     at: '2026-08-03T06:00:00.000Z', evidence: ['e'],
+    lazyCloseScope: 'procedure',
   });
   const { orphansClosed } = openProcedureRun(dir, rel, {
     procedureId: 'ritual-evening', runId: 'eve-1', subject: 'вечер',
     at: '2026-08-03T18:00:00.000Z', evidence: ['e'],
+    lazyCloseScope: 'procedure',
   });
   assert.deepEqual(orphansClosed, []);
   assert.equal(findUnclosedRuns(readProcedureRunTrail(dir, rel), 'ritual-day').length, 1);
@@ -206,6 +210,7 @@ test('close закрывает открытое; закрыть неоткрыт
   openProcedureRun(dir, rel, {
     procedureId: 'ritual-day', runId: 'day-1', subject: 'утро',
     at: '2026-08-03T06:00:00.000Z', evidence: ['e'],
+    lazyCloseScope: 'procedure',
   });
   const close = closeProcedureRun(dir, rel, {
     runId: 'day-1', status: 'pass', subject: 'утро довезено',
@@ -227,6 +232,7 @@ test('амандмент дописывает корень отдельной з
   openProcedureRun(dir, rel, {
     procedureId: 'ritual-day', runId: 'day-1', subject: 'утро',
     at: '2026-08-03T06:00:00.000Z', evidence: ['e'],
+    lazyCloseScope: 'procedure',
   });
   closeProcedureRun(dir, rel, {
     runId: 'day-1', status: 'pass', subject: 'закрыт',
@@ -250,6 +256,7 @@ test('амандмент в пустоту — throw: на запись, на и
   const rel = 'trail/t.jsonl';
   openProcedureRun(dir, rel, {
     procedureId: 'p', runId: 'r-1', subject: 's', at: '2026-08-03T06:00:00.000Z', evidence: ['e'],
+    lazyCloseScope: 'procedure',
   });
   assert.throws(() => appendFrictionAmend(dir, rel, {
     runId: 'ghost', sequence: 1, frictionIndex: 0, root: 'x', at: '2026-08-03T07:00:00.000Z', evidence: ['e'],
@@ -272,10 +279,12 @@ test('переоткрытие ТОГО ЖЕ runId после обрыва: но
   openProcedureRun(dir, rel, {
     procedureId: 'p', runId: 'r-1', subject: 'первый заход',
     at: '2026-08-03T06:00:00.000Z', evidence: ['e'],
+    lazyCloseScope: 'procedure',
   });
   const { record, orphansClosed } = openProcedureRun(dir, rel, {
     procedureId: 'p', runId: 'r-1', subject: 'переоткрытие',
     at: '2026-08-03T08:00:00.000Z', evidence: ['e'],
+    lazyCloseScope: 'procedure',
   });
   assert.equal(orphansClosed[0].sequence, 2, 'close-сирота заняла второй номер');
   assert.equal(record.sequence, 3, 'open переоткрытия — третий');
@@ -338,6 +347,7 @@ test('ленивое закрытие коллидировавшей семьи 
   const { orphansClosed } = openProcedureRun(dir, rel, {
     procedureId: 'p', runId: 'p-2026-08-04-r3', subject: 'новая попытка',
     at: '2026-08-04T07:00:00.000Z', evidence: ['e'],
+    lazyCloseScope: 'procedure',
   });
   assert.equal(orphansClosed.length, 1, 'одна fail/orphaned на семью — второй close был бы второй правдой');
   assert.equal(orphansClosed[0].runId, 'p-2026-08-04');
@@ -380,4 +390,64 @@ test('validateProcedureRunTrail: лента не мутируется — вал
   const before = JSON.stringify(trail);
   validateProcedureRunTrail(trail);
   assert.equal(JSON.stringify(trail), before);
+});
+
+// ─── область ленивого закрытия (#1705) ──────────────────────────────────────────
+
+test('область обязательна: вызов без неё — бросок, а не тихий выбор', () => {
+  const dir = tempRepo();
+  assert.throws(
+    () => openProcedureRun(dir, 'trail/t.jsonl', {
+      procedureId: 'ritual-day', runId: 'day-1', subject: 'утро', at: '2026-08-06T06:00:00.000Z', evidence: ['e'],
+    }),
+    /lazyCloseScope .* вне \{procedure\|run\}/u,
+  );
+});
+
+test('scope procedure: обрыв ритуала ловится следующим прогоном — поведение прежнее', () => {
+  const dir = tempRepo();
+  const rel = 'trail/t.jsonl';
+  openProcedureRun(dir, rel, {
+    procedureId: 'ritual-day', runId: 'day-1', subject: 'утро', at: '2026-08-06T06:00:00.000Z',
+    evidence: ['e'], lazyCloseScope: 'procedure',
+  });
+  const { orphansClosed } = openProcedureRun(dir, rel, {
+    procedureId: 'ritual-day', runId: 'day-2', subject: 'утро следующего дня', at: '2026-08-07T06:00:00.000Z',
+    evidence: ['e'], lazyCloseScope: 'procedure',
+  });
+  assert.equal(orphansClosed.length, 1, 'сирота вчерашнего утра закрыта');
+  assert.equal(orphansClosed[0].runId, 'day-1');
+});
+
+test('scope run: ДВА СПРИНТА РАЗОМ не топят друг друга (вещдок 04.08)', () => {
+  const dir = tempRepo();
+  const rel = 'trail/t.jsonl';
+  // Ратификация первого спринта.
+  openProcedureRun(dir, rel, {
+    procedureId: 'membrana-local-sprint', runId: 'sprint-dictionary-to-lib', subject: 'спринт A',
+    at: '2026-08-04T12:19:00.000Z', evidence: ['plan-a.json'], lazyCloseScope: 'run',
+  });
+  // Ратификация второго — раньше она закрывала первый как сироту.
+  const { orphansClosed } = openProcedureRun(dir, rel, {
+    procedureId: 'membrana-local-sprint', runId: 'run-journal-sequence-validator', subject: 'спринт B',
+    at: '2026-08-04T12:19:30.000Z', evidence: ['plan-b.json'], lazyCloseScope: 'run',
+  });
+  assert.deepEqual(orphansClosed, [], 'соседний спринт живой — сиротой он не является');
+  const open = findUnclosedRuns(readProcedureRunTrail(dir, rel), 'membrana-local-sprint');
+  assert.equal(open.length, 2, 'оба спринта открыты — так и было на самом деле');
+});
+
+test('scope run: СВОЙ оборванный прогон всё равно закрывается', () => {
+  const dir = tempRepo();
+  const rel = 'trail/t.jsonl';
+  openProcedureRun(dir, rel, {
+    procedureId: 'membrana-local-sprint', runId: 'same-sprint', subject: 'первая попытка',
+    at: '2026-08-06T09:00:00.000Z', evidence: ['plan.json'], lazyCloseScope: 'run',
+  });
+  const { orphansClosed } = openProcedureRun(dir, rel, {
+    procedureId: 'membrana-local-sprint', runId: 'same-sprint', subject: 'переоткрытие после обрыва',
+    at: '2026-08-06T10:00:00.000Z', evidence: ['plan.json'], lazyCloseScope: 'run',
+  });
+  assert.equal(orphansClosed.length, 1, 'свой обрыв область run не прячет');
+  assert.deepEqual(orphansClosed[0].coverage.gaps, ['orphaned']);
 });
