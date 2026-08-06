@@ -1,1 +1,5 @@
 {"ts":"2026-08-06T05:42:31.584Z","persona":"dynin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-06T07:07:35.095Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-06T07:07:02.212Z","origin":"ask-persona"}
+{"ts":"2026-08-06T07:07:35.097Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-06T07:07:02.212Z","origin":"ask-persona"}
+{"ts":"2026-08-06T07:07:35.098Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-05-16-single-node-detection-first","reason":"там я ровно про это спрашивал: «что внутри контракта, приходящего в чистую функцию» — та же болезнь может воспроизвестись в state, приходящем в planTree.","origin":"ask-persona"}
+{"ts":"2026-08-06T07:07:35.099Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-03-one-shot-manifest-m4-homogeneity","reason":"предикат-функция как единственный источник классификации (там pathFamily, здесь isDirty/isBehind/…); тот же паттерн: исполнитель не «решает», он читает.","origin":"ask-persona"}

@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "worktrees-align",
+      "title": "worktrees:align — WIP-снимок грязных, merge вместо ff-only, авто-abort конфликта, отчёт",
+      "promptPath": "docs/prompts/WORKTREES_ALIGN_PROMPT.md",
+      "githubIssue": 1738,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-06",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ],
+      "notes": "Action item прецедента 2026-07-24-align-all-worktrees-to-main. Обзор «что уже есть» — в теле #1738. Вне предмета: авто-разрешение конфликтов.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "review-honesty",
       "title": "Честность ревью: гейт различает три исхода вердикта, oversized читает снятие по commit-status",
       "promptPath": "docs/prompts/REVIEW_HONESTY_PROMPT.md",
