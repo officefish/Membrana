@@ -20,6 +20,9 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { buildQueue, formatQueue } from './lib/review-oversized-queue.mjs';
+// Имя контекста статуса — из единственного источника (гейт его и ставит): вторая копия
+// строки разошлась бы молча, как это уже было с меткой среза в review-gate.
+import { REVIEW_STATUS_CONTEXT } from './lib/review-gate.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -27,7 +30,12 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const reviewArtifactRel = (pr) => `docs/discussions/pr-${pr}-code-review.md`;
 
 function parseArgs(argv) {
-  const out = { since: '2026-07-20', limit: 10, includeDocs: false, json: false, ref: 'origin/main' };
+  const out = {
+    since: '2026-07-20', limit: 10, includeDocs: false, json: false, ref: 'origin/main',
+    // Голова очереди, у которой спрашиваются commit-статусы. Не вся очередь: 133 запроса к
+    // gh сделали бы прибор дороже пользы, а ревьюится «по одному в день» — важна голова.
+    statusProbe: 20,
+  };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--since') out.since = argv[++i] ?? out.since;
@@ -35,6 +43,8 @@ function parseArgs(argv) {
     else if (a === '--ref') out.ref = argv[++i] ?? out.ref;
     else if (a === '--include-docs') out.includeDocs = true;
     else if (a === '--json') out.json = true;
+    else if (a === '--status-probe') out.statusProbe = Math.max(0, Number(argv[++i]) || 0);
+    else if (a === '--no-status') out.statusProbe = 0;
     else throw new Error(`неизвестный аргумент «${a}»`);
   }
   return out;
@@ -93,6 +103,44 @@ function collectCommits({ since, ref }) {
   return { commits, withoutPr };
 }
 
+/**
+ * Commit-статусы `review/teamlead` у первых `limit` PR очереди.
+ *
+ * Снимает с очереди ТОЛЬКО `SUCCESS` (слово владельца 05.08): `FAILURE` гейт ставит и при
+ * вердикте BLOCK, и при протухшем вердикте — снаружи они неразличимы, и считать такие
+ * «рассмотренными» значило бы выдать непроверенное за проверенное. Их прибор называет
+ * отдельной строкой как требующие руки.
+ *
+ * @param {string[]} prs номера PR в порядке очереди
+ * @param {number} limit сколько голов опросить (0 — не ходить в сеть вовсе)
+ * @returns {{statusReviewed: string[], statusFailure: string[]}}
+ */
+export function probeStatuses(prs, limit) {
+  const out = { statusReviewed: [], statusFailure: [] };
+  if (!Number.isFinite(limit) || limit <= 0) return out;
+  for (const pr of prs.slice(0, limit)) {
+    let roll;
+    try {
+      // stderr дочернего процесса ГЛУШИТСЯ намеренно: неразрешимый номер PR (форк, чужой
+      // репозиторий, удалённый PR) — штатный случай опроса, а не событие прибора. Иначе
+      // «Could not resolve to a PullRequest» печатается ПЕРЕД отчётом и читается как
+      // сбой самой очереди (живой прогон 06.08, PR #1561).
+      const raw = execFileSync('gh', ['pr', 'view', String(pr), '--json', 'statusCheckRollup'], {
+        cwd: repoRoot, encoding: 'utf8', timeout: 20_000, stdio: ['ignore', 'pipe', 'ignore'],
+      });
+      roll = JSON.parse(raw).statusCheckRollup ?? [];
+    } catch {
+      continue; // сеть/доступ/удалённый PR — молчим о снятии, а не выдумываем его
+    }
+    const st = roll.find((c) => (c.context ?? c.name) === REVIEW_STATUS_CONTEXT);
+    if (!st) continue;
+    const state = String(st.state ?? st.conclusion ?? '').toUpperCase();
+    if (state === 'SUCCESS') out.statusReviewed.push(String(pr));
+    else if (state === 'FAILURE' || state === 'ERROR') out.statusFailure.push(String(pr));
+  }
+  return out;
+}
+
 function main(argv) {
   const cli = parseArgs(argv);
   const { commits, withoutPr } = collectCommits(cli);
@@ -117,7 +165,23 @@ function main(argv) {
     /* порт не подключился — hostLocalReviewed останется null */
   }
 
-  const result = buildQueue(commits, { reviewed, includeDocs: cli.includeDocs, trackedReviewed });
+  // Порт общего следа (блок e2): commit-status `review/teamlead` ставит сам шип-гейт, и он
+  // виден на любом клоне — в отличие от артефакта ревью (.gitignore). Спрашиваем ГОЛОВУ
+  // очереди, посчитанной по артефактам: у хвоста цена запросов выше пользы. Сбой сети/gh
+  // прибор не роняет — списки остаются пустыми, и о снятии по статусу он честно не судит.
+  const firstPass = buildQueue(commits, { reviewed, includeDocs: cli.includeDocs, trackedReviewed });
+  const { statusReviewed, statusFailure } = probeStatuses(
+    firstPass.queue.map((c) => c.pr).filter(Boolean),
+    cli.statusProbe,
+  );
+
+  const result = buildQueue(commits, {
+    reviewed,
+    statusReviewed,
+    statusFailure,
+    includeDocs: cli.includeDocs,
+    trackedReviewed,
+  });
 
   if (cli.json) {
     process.stdout.write(`${JSON.stringify({ ...result, withoutPr, since: cli.since }, null, 2)}\n`);
