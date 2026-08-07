@@ -8,14 +8,23 @@ import { GithubService } from '../github/github.service';
 import {
   buildTriageSnapshot,
   DEFAULT_STALE_THRESHOLD_DAYS,
+  snapshotFingerprint,
   type RegistryTask,
   type TriageSnapshot,
 } from './night-triage-core';
 import { buildNarrativePrompt, insertNarrative } from './night-triage-narrative';
-import { renderTriageReport } from './night-triage-report';
+import { extractFingerprint, renderTriageReport } from './night-triage-report';
 import { findSecrets } from './night-triage-secret-guard';
 
 const REGISTRY_PATH = 'docs/tasks/registry.json';
+const REPORT_DIR = 'docs/reports/night-triage';
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Ночей молчания после отвергнутого выхода. Семь — неделя: достаточно, чтобы «закрыл руками»
+ * не превращалось в ежесуточный такт, и мало, чтобы механизм не забыли.
+ */
+const DEFAULT_REJECT_COOLDOWN_NIGHTS = 7;
 
 export interface NightTriageResult {
   ok: boolean;
@@ -80,6 +89,64 @@ export class NightTriageService {
     return Number.isFinite(raw) && raw > 0 ? raw : DEFAULT_STALE_THRESHOLD_DAYS;
   }
 
+  rejectCooldownNights(): number {
+    const raw = Number.parseInt(this.config.NIGHT_TRIAGE_REJECT_COOLDOWN_NIGHTS ?? '', 10);
+    return Number.isFinite(raw) && raw >= 0 ? raw : DEFAULT_REJECT_COOLDOWN_NIGHTS;
+  }
+
+  /**
+   * Отпечаток последнего отчёта, КОТОРЫЙ ПОЛУЧИЛ СТВОЛ.
+   *
+   * Именно ствол, а не последний открытый PR: механизм судится по доставленному, иначе он
+   * сравнивал бы себя со своим же непрочитанным черновиком и всегда находил новизну.
+   *
+   * `null` — сравнивать не с чем (каталога нет, он пуст, или отчёт посажен до появления
+   * маркера 07.08). На `null` порог обязан ПРОПУСКАТЬ: «основания нет» ≠ «дельта нулевая».
+   */
+  private async lastLandedFingerprint(): Promise<string | null> {
+    const files = await this.github.listDirectoryFiles(REPORT_DIR);
+    if (!files || files.length === 0) return null;
+    // Имена вида NIGHT_TRIAGE_YYYY-MM-DD.md — лексикографический максимум и есть свежайший.
+    const newest = files.filter((f) => f.startsWith('NIGHT_TRIAGE_') && f.endsWith('.md')).sort().pop();
+    if (!newest) return null;
+    const text = await this.github.fetchTextFile(`${REPORT_DIR}/${newest}`);
+    return text ? extractFingerprint(text) : null;
+  }
+
+  /**
+   * Отвергнут ли предыдущий выход механизма, и не истыл ли ещё карантин.
+   *
+   * Вещдок 29.07 (`docs/reports/night-triage/CLOSURE_MEMO_2026-07-29.md`): комната закрыла
+   * четыре прогона подряд вердиктом `close_no_card`, `insight_yield(25–28.07)=0` — и
+   * механизм открыл ещё семь. Вердикт применили к артефактам, а не к механизму; шесть из
+   * семи потом закрывали руками по одному. Карантин переносит вердикт на механизм: PR
+   * закрыт без мерджа — значит выход отвергнут, и следующие N ночей механизм молчит.
+   *
+   * Карантин временной, а не «до первого мерджа», СОЗНАТЕЛЬНО: правило «молчать, пока не
+   * влит предыдущий» само себя запирает — молчащий механизм не открывает PR, влить нечего,
+   * и он не разомкнётся никогда. Время размыкает карантин само.
+   */
+  private async rejectionCooldown(now: Date): Promise<{ quiet: true; reason: string } | null> {
+    const nights = this.rejectCooldownNights();
+    if (nights === 0) return null;
+
+    const recent = await this.github.listRecentPullRequestsByLabel('night-triage', 5);
+    const previous = recent.find((pr) => pr.state !== 'open');
+    if (!previous || previous.merged || !previous.closedAt) return null;
+
+    const closedAt = Date.parse(previous.closedAt);
+    if (!Number.isFinite(closedAt)) return null;
+    const nightsSince = Math.floor((now.getTime() - closedAt) / DAY_MS);
+    if (nightsSince >= nights) return null;
+
+    return {
+      quiet: true,
+      reason:
+        `предыдущий отчёт отвергнут (PR #${previous.number} закрыт без мерджа ${nightsSince} ноч. назад): ` +
+        `карантин ${nights} ноч. — механизм молчит, пока его выход не читают`,
+    };
+  }
+
   private parseRegistry(text: string): RegistryTask[] {
     const parsed = JSON.parse(text) as { tasks?: RegistryTask[] };
     if (!Array.isArray(parsed.tasks)) {
@@ -106,6 +173,24 @@ export class NightTriageService {
 
       // Детекция детерминирована; git-активность не собираем (budget-safe) — dwell от дат реестра.
       const snapshot = buildTriageSnapshot(tasks, new Map(), now, this.staleThresholdDays());
+
+      // ── Порог публикации (`#night-triage-yield-zero`) ─────────────────────────────
+      // Обе заслонки стоят ДО нарратива: молчать надо и от LLM тоже, иначе механизм
+      // продолжает жечь провайдера ради отчёта, который никто не откроет.
+      const cooldown = await this.rejectionCooldown(now);
+      if (cooldown) {
+        this.logger.log({ reason: cooldown.reason, counts: snapshot.counts }, 'night-triage quiet (rejected)');
+        return { ok: true, skipped: true, reason: cooldown.reason, filePath, counts: snapshot.counts };
+      }
+
+      const fingerprint = snapshotFingerprint(snapshot);
+      const landed = await this.lastLandedFingerprint();
+      if (landed !== null && landed === fingerprint) {
+        const reason = 'состав среза не изменился с последнего доставленного отчёта — сказать нечего';
+        this.logger.log({ reason, counts: snapshot.counts }, 'night-triage skipped (nil delta)');
+        return { ok: true, skipped: true, reason, filePath, counts: snapshot.counts };
+      }
+
       let report = renderTriageReport(snapshot, { date });
 
       // Нарратив опционален и graceful — таблицы неизменны. Цепочка ADR 0005.

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { TriageSnapshot } from './night-triage-core';
-import { renderTriageReport } from './night-triage-report';
+import { buildTriageSnapshot, snapshotFingerprint, type TriageSnapshot } from './night-triage-core';
+import { extractFingerprint, renderTriageReport } from './night-triage-report';
 
 const base: TriageSnapshot = {
   generatedAt: '2026-07-12T00:00:00.000Z',
@@ -70,5 +70,41 @@ describe('renderTriageReport', () => {
   it('кастомный repoSlug в ссылках', () => {
     const m = renderTriageReport(base, { date: '2026-07-12', repoSlug: 'acme/repo' });
     expect(m).toContain('https://github.com/acme/repo/issues/47');
+  });
+});
+
+/**
+ * Маркер отпечатка (`#night-triage-yield-zero`): порог публикации сравнивает срез с тем,
+ * что ПОЛУЧИЛ СТВОЛ, поэтому основание сравнения обязано ехать внутри самого отчёта.
+ */
+describe('маркер отпечатка', () => {
+  const snapshot = buildTriageSnapshot(
+    [
+      { id: 'ghost-x', status: 'active', githubIssue: 47, createdAt: '2026-06-01T00:00:00Z' },
+      { id: 'arch', status: 'archived', githubIssue: 47 },
+    ],
+    new Map(),
+    new Date('2026-07-12T00:00:00Z'),
+    14,
+  );
+
+  it('отчёт несёт отпечаток, и он читается обратно', () => {
+    const report = renderTriageReport(snapshot, { date: '2026-07-12' });
+    expect(extractFingerprint(report)).toEqual(snapshotFingerprint(snapshot));
+  });
+
+  it('маркер — html-комментарий: читателю отчёта в глаза не лезет', () => {
+    const report = renderTriageReport(snapshot, { date: '2026-07-12' });
+    const marked = report.split('\n').find((l) => l.includes('night-triage:fingerprint'));
+    expect(marked?.startsWith('<!--')).toBe(true);
+    expect(marked?.endsWith('-->')).toBe(true);
+  });
+
+  it('отчёт без маркера → null, а не пустая строка: «основания нет» отличимо', () => {
+    expect(extractFingerprint('# Night Triage 2026-07-01\n\nстарый отчёт\n')).toBeNull();
+  });
+
+  it('битый маркер отпечатком не считается', () => {
+    expect(extractFingerprint('<!-- night-triage:fingerprint не-хеш -->')).toBeNull();
   });
 });

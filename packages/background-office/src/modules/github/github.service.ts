@@ -6,6 +6,35 @@ import { proxyAwareFetch, proxyUrlFrom } from '../../lib/proxy-fetch';
 
 const MAX_TICKET_CHARS = 20_000;
 
+/**
+ * Ключ дедупа открытых PR — ПРЕФИКС ВЕТКИ, не заголовок.
+ *
+ * Прежний ключ был заголовочным: `title.includes(title.split(' (')[0])`. Он написан под
+ * форму заголовка night-hunt («<job> (<week>)»), где переменная часть лежит в скобках и
+ * срезается сплитом. Ночной триаж назвался «Night triage <дата>» — переменная часть в самом
+ * заголовке, скобок нет, сплит не срезает ничего, и совпадения с прошлой ночью не бывает
+ * НИКОГДА. Заслонка была мертва структурно: 13 PR за 13 ночей с 25.07, три висели разом
+ * (#1720, #1734, #1760). Долг `#night-triage-yield-zero`.
+ *
+ * Префикс ветки от формы заголовка не зависит: ветку строит сам `createPullRequestWithFile`
+ * как `${branchPrefix}-${Date.now()}`. Отсюда и форма сравнения — префикс, дефис и ДАЛЬШЕ
+ * ТОЛЬКО ЦИФРЫ. Одного `startsWith` мало: `night-hunt/deps-watch-` — начало и для ветки
+ * задания `deps-watch-extra`, так что сосед считался бы дублем и глушил бы чужую работу.
+ *
+ * Чистый предикат: проверяется без Octokit.
+ */
+export function findDuplicateByBranchPrefix<T extends { number: number; headRef: string }>(
+  openPrs: readonly T[],
+  branchPrefix: string,
+): T | undefined {
+  const head = `${branchPrefix}-`;
+  return openPrs.find((pr) => {
+    if (!pr.headRef.startsWith(head)) return false;
+    const stamp = pr.headRef.slice(head.length);
+    return stamp.length > 0 && /^\d+$/.test(stamp);
+  });
+}
+
 export interface GhIssueShape {
   number: number;
   title: string;
@@ -130,6 +159,59 @@ export class GithubService {
   }
 
   /**
+   * Недавние PR с меткой, включая закрытые и влитые — читатель для порога публикации
+   * (`#night-triage-yield-zero`): «предыдущий отчёт доставлен или отвергнут?».
+   *
+   * `merged` отличает влитое от закрытого-без-мерджа, и это отличие несущее: закрытый
+   * без мерджа PR значит «выход механизма отвергнут», а не «работа принята».
+   */
+  async listRecentPullRequestsByLabel(
+    label: string,
+    limit = 10,
+  ): Promise<{ number: number; title: string; state: string; merged: boolean; closedAt: string | null }[]> {
+    const octokit = await this.getOctokit();
+    const res = await octokit.rest.pulls.list({
+      owner: this.owner,
+      repo: this.repo,
+      state: 'all',
+      sort: 'created',
+      direction: 'desc',
+      per_page: 50,
+    });
+    return res.data
+      .filter((pr) => (pr.labels ?? []).some((l) => (typeof l === 'string' ? l : l.name) === label))
+      .slice(0, limit)
+      .map((pr) => ({
+        number: pr.number,
+        title: pr.title ?? '',
+        state: pr.state ?? 'unknown',
+        merged: pr.merged_at !== null && pr.merged_at !== undefined,
+        closedAt: pr.closed_at ?? null,
+      }));
+  }
+
+  /**
+   * Имена файлов каталога в стволе — читатель «что ствол ПОЛУЧИЛ».
+   * `null` — каталога нет (404): отличать «пусто» от «нет вовсе» обязан вызывающий.
+   */
+  async listDirectoryFiles(path: string, ref?: string): Promise<string[] | null> {
+    const octokit = await this.getOctokit();
+    try {
+      const res = await octokit.rest.repos.getContent({
+        owner: this.owner,
+        repo: this.repo,
+        path,
+        ...(ref ? { ref } : {}),
+      });
+      if (!Array.isArray(res.data)) return null;
+      return res.data.filter((e) => e.type === 'file').map((e) => e.name);
+    } catch (err) {
+      if ((err as { status?: number })?.status === 404) return null;
+      throw err;
+    }
+  }
+
+  /**
    * Create branch + commit one file + open PR. Skips if an open PR exists for same branch prefix.
    */
   async createPullRequestWithFile(opts: {
@@ -150,18 +232,12 @@ export class GithubService {
     const octokit = await this.getOctokit();
     const branch = `${opts.branchPrefix}-${Date.now()}`;
 
-    const openByLabel = await octokit.rest.issues.listForRepo({
-      owner: this.owner,
-      repo: this.repo,
-      state: 'open',
-      labels: opts.dedupLabel ?? 'night-hunt',
-      per_page: 20,
-    });
-    const dup = openByLabel.data.find(
-      (issue) => issue.title?.includes(opts.title.split(' (')[0] ?? opts.title),
-    );
+    // Дедуп по префиксу ветки — как и обещает докблок выше; правило и его цена
+    // объяснены у `findDuplicateByBranchPrefix`.
+    const openSameKind = await this.listOpenPullRequestsByLabel(opts.dedupLabel ?? 'night-hunt');
+    const dup = findDuplicateByBranchPrefix(openSameKind, opts.branchPrefix);
     if (dup) {
-      return { skipped: true, reason: `open night-hunt PR/issue: #${dup.number}` };
+      return { skipped: true, reason: `открыт PR #${dup.number} с префиксом ${opts.branchPrefix}` };
     }
 
     const baseRef = await octokit.rest.git.getRef({

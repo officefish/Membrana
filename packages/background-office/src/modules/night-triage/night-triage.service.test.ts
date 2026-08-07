@@ -11,6 +11,8 @@ const REGISTRY = JSON.stringify({
   ],
 });
 
+type RecentPr = { number: number; title: string; state: string; merged: boolean; closedAt: string | null };
+
 function makeService(over: {
   enabled?: boolean;
   registry?: string | null;
@@ -19,11 +21,19 @@ function makeService(over: {
   deepseekConfigured?: boolean;
   deepseekChat?: () => Promise<string>;
   createPR?: ReturnType<typeof vi.fn>;
+  cooldownNights?: string;
+  /** История PR механизма; по умолчанию пусто — свежий механизм обязан публиковать. */
+  recentPrs?: RecentPr[];
+  /** Файлы каталога отчётов в стволе; `null` — каталога нет. */
+  landedFiles?: string[] | null;
+  /** Содержимое посаженного отчёта (для отпечатка). */
+  landedReport?: string;
 }) {
   const config = {
     NIGHT_TRIAGE_ENABLED: over.enabled ?? true,
     NIGHT_TRIAGE_BASE_BRANCH: 'main',
     NIGHT_TRIAGE_STALE_DAYS: '14',
+    NIGHT_TRIAGE_REJECT_COOLDOWN_NIGHTS: over.cooldownNights,
     // ANTHROPIC_API_KEY присутствует только когда включён нарратив
     ANTHROPIC_API_KEY: over.llm ? 'sk-ant-test' : undefined,
   } as unknown as AppConfig;
@@ -31,7 +41,12 @@ function makeService(over: {
     over.createPR ??
     vi.fn(async () => ({ prUrl: 'https://gh/pr/1', branch: 'claude/night-triage-1', created: true }));
   const github = {
-    fetchTextFile: vi.fn(async () => (over.registry === undefined ? REGISTRY : over.registry)),
+    fetchTextFile: vi.fn(async (path: string) => {
+      if (path.startsWith('docs/reports/night-triage/')) return over.landedReport ?? null;
+      return over.registry === undefined ? REGISTRY : over.registry;
+    }),
+    listDirectoryFiles: vi.fn(async () => over.landedFiles ?? null),
+    listRecentPullRequestsByLabel: vi.fn(async () => over.recentPrs ?? []),
     createPullRequestWithFile: createPR,
   } as never;
   const chatFn = over.chat ?? (async () => 'нарратив');
@@ -140,5 +155,109 @@ describe('NightTriageService.run', () => {
     const r = await svc.run(NOW);
     expect(r.skipped).toBe(true);
     expect(createPR).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * Порог публикации — долг `#night-triage-yield-zero`.
+ *
+ * Вещдок: с 25.07 механизм открыл 13 PR за 13 ночей, ствол не получил ни одного отчёта
+ * (последний посаженный — `NIGHT_TRIAGE_2026-07-24.md`); вердикт комнаты 29.07
+ * `close_no_card` применили к артефактам, и механизм открыл ещё семь.
+ */
+describe('NightTriageService.run — порог публикации', () => {
+  /** Отчёт с тем же составом, что даст срез на REGISTRY: собирается через сам рендер. */
+  const landedSameAs = async () => {
+    const { svc, createPR } = makeService({});
+    await svc.run(NOW);
+    return createPR.mock.calls[0][0].content as string;
+  };
+
+  it('состав не изменился с посаженного отчёта → молчит, PR не создаётся', async () => {
+    const landedReport = await landedSameAs();
+    const { svc, createPR } = makeService({
+      landedFiles: ['NIGHT_TRIAGE_2026-07-11.md'],
+      landedReport,
+    });
+    const r = await svc.run(NOW);
+    expect(r.skipped).toBe(true);
+    expect(r.reason).toContain('не изменился');
+    expect(createPR).not.toHaveBeenCalled();
+  });
+
+  it('состав изменился → публикует', async () => {
+    const landedReport = (await landedSameAs()).replace(/night-triage:fingerprint [0-9a-f]{64}/, `night-triage:fingerprint ${'a'.repeat(64)}`);
+    const { svc, createPR } = makeService({
+      landedFiles: ['NIGHT_TRIAGE_2026-07-11.md'],
+      landedReport,
+    });
+    const r = await svc.run(NOW);
+    expect(r.prUrl).toBe('https://gh/pr/1');
+    expect(createPR).toHaveBeenCalled();
+  });
+
+  it('посаженного отчёта нет вовсе → публикует: «основания нет» ≠ «дельта нулевая»', async () => {
+    const { svc, createPR } = makeService({ landedFiles: null });
+    const r = await svc.run(NOW);
+    expect(r.prUrl).toBe('https://gh/pr/1');
+    expect(createPR).toHaveBeenCalled();
+  });
+
+  it('посаженный отчёт старее маркера (без отпечатка) → публикует, а не немеет', async () => {
+    const { svc, createPR } = makeService({
+      landedFiles: ['NIGHT_TRIAGE_2026-07-11.md'],
+      landedReport: '# Night Triage 2026-07-11\n\nстарый отчёт без маркера\n',
+    });
+    const r = await svc.run(NOW);
+    expect(createPR).toHaveBeenCalled();
+    expect(r.prUrl).toBe('https://gh/pr/1');
+  });
+
+  it('предыдущий PR закрыт без мерджа → карантин, PR не создаётся и LLM не жжётся', async () => {
+    const { svc, createPR, claudeAsk } = makeService({
+      llm: true,
+      recentPrs: [{ number: 1720, title: 'Night triage', state: 'closed', merged: false, closedAt: '2026-07-10T00:00:00Z' }],
+    });
+    const r = await svc.run(NOW);
+    expect(r.skipped).toBe(true);
+    expect(r.reason).toContain('карантин');
+    expect(r.reason).toContain('#1720');
+    expect(createPR).not.toHaveBeenCalled();
+    expect(claudeAsk).not.toHaveBeenCalled();
+  });
+
+  it('предыдущий PR влит → карантина нет, публикует', async () => {
+    const { svc, createPR } = makeService({
+      recentPrs: [{ number: 1152, title: 'Night triage', state: 'closed', merged: true, closedAt: '2026-07-10T00:00:00Z' }],
+    });
+    const r = await svc.run(NOW);
+    expect(r.prUrl).toBe('https://gh/pr/1');
+    expect(createPR).toHaveBeenCalled();
+  });
+
+  it('карантин истёк по времени → механизм размыкается сам, без ручного мерджа', async () => {
+    const { svc, createPR } = makeService({
+      recentPrs: [{ number: 1720, title: 'Night triage', state: 'closed', merged: false, closedAt: '2026-07-01T00:00:00Z' }],
+    });
+    const r = await svc.run(NOW); // 11 ночей спустя при карантине 7
+    expect(createPR).toHaveBeenCalled();
+    expect(r.prUrl).toBe('https://gh/pr/1');
+  });
+
+  it('карантин 0 снимает заслонку явно', async () => {
+    const { svc, createPR } = makeService({
+      cooldownNights: '0',
+      recentPrs: [{ number: 1720, title: 'Night triage', state: 'closed', merged: false, closedAt: '2026-07-11T00:00:00Z' }],
+    });
+    await svc.run(NOW);
+    expect(createPR).toHaveBeenCalled();
+  });
+
+  it('открытый PR карантина не заводит — это дело дедупа', async () => {
+    const { svc, createPR } = makeService({
+      recentPrs: [{ number: 1760, title: 'Night triage', state: 'open', merged: false, closedAt: null }],
+    });
+    await svc.run(NOW);
+    expect(createPR).toHaveBeenCalled();
   });
 });
