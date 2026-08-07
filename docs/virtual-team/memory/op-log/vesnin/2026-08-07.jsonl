@@ -5,3 +5,11 @@
 {"ts":"2026-08-07T09:09:27.991Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-08-03-one-shot-manifest-m0-order","reason":"единица шота определяется фреймами: границы блоков A/B/C оправданы, если у каждого своя единица (множество / момент / порядок).","origin":"ask-persona"}
 {"ts":"2026-08-07T11:57:55.393Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-07T11:57:36.375Z","origin":"ask-persona"}
 {"ts":"2026-08-07T11:57:55.403Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-07T11:57:36.375Z","origin":"ask-persona"}
+{"ts":"2026-08-07T12:44:30.268Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-07T12:44:07.282Z","origin":"ask-persona"}
+{"ts":"2026-08-07T12:44:30.273Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-07T12:44:07.282Z","origin":"ask-persona"}
+{"ts":"2026-08-07T12:44:30.274Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-29-tariff-grid-m6-switch","reason":"там уже разложено: в main есть Membrane.tariffId → Tariff, сид free-v1, UserRole.admin + AdminGuard; нет эндпоинта смены и нет промокода. Это ровно фундамент под #1761, и он диктует порядок шагов.","origin":"ask-persona"}
+{"ts":"2026-08-07T12:44:30.276Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-29-tariff-grid-m1-form","reason":"там ратифицирована форма сетки как фундамент, интеграция — терминал. Тот же принцип здесь: сначала носитель перехода, потом промокод как один из инициаторов.","origin":"ask-persona"}
+{"ts":"2026-08-07T12:55:10.562Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-07T12:54:47.859Z","origin":"ask-persona"}
+{"ts":"2026-08-07T12:55:10.566Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-07T12:54:47.859Z","origin":"ask-persona"}
+{"ts":"2026-08-07T12:55:10.567Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-30-sprint-honest-m7-second-door","reason":"там я ставил дверь честности «до assign» на плечи открывающего окно; ровно та же развилка сейчас: кто и когда нарезает блоки в короткое окно.","origin":"ask-persona"}
+{"ts":"2026-08-07T12:55:10.567Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-18-morning-ritual-regulation-background-agent","reason":"оттуда правило одновопросности: границы блоков — да, «сколько» и «нужен ли sprintKind» — не сюда.","origin":"ask-persona"}

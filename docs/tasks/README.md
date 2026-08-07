@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `dreams-net-label-lies` | Сны метят HTTP-404 и отсутствие ключа как сетевой отказ: подключить классификатор контейнера network | S | [`DREAMS_NET_LABEL_LIES_PROMPT.md`](../prompts/DREAMS_NET_LABEL_LIES_PROMPT.md) | [#1425](https://github.com/officefish/Membrana/issues/1425) |
 | `swallow-own-moment` | Ласточка получает свой момент: развести state.day с evening-gate | S | [`SWALLOW_OWN_MOMENT_PROMPT.md`](../prompts/SWALLOW_OWN_MOMENT_PROMPT.md) | — |
 | `morning-gates-two-moments` | Гейты утра: два момента вместо одного day — реализация ADR-0024 | S | [`MORNING_GATES_TWO_MOMENTS_PROMPT.md`](../prompts/MORNING_GATES_TWO_MOMENTS_PROMPT.md) | — |
 | `delivery-predicates-honest` | Три предиката контура доставки: ролап против объявленного, момент выбора магистрали, порядок шагов pr-land | M | [`DELIVERY_PREDICATES_HONEST_PROMPT.md`](../prompts/DELIVERY_PREDICATES_HONEST_PROMPT.md) | [#1764](https://github.com/officefish/Membrana/issues/1764) |
@@ -253,6 +252,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `dreams-net-label-lies` | Сны метят HTTP-404 и отсутствие ключа как сетевой отказ: подключить классификатор контейнера network | 2026-08-07 | [`DREAMS_NET_LABEL_LIES_PROMPT.md`](../prompts/DREAMS_NET_LABEL_LIES_PROMPT.md) | #1425 (Issue открыт) | [карточка](./archive/dreams-net-label-lies.md) |
 | `review-honesty` | Честность ревью: гейт различает три исхода вердикта, oversized читает снятие по commit-status | 2026-08-06 | [`REVIEW_HONESTY_PROMPT.md`](../prompts/REVIEW_HONESTY_PROMPT.md) | — | [карточка](./archive/review-honesty.md) |
 | `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | 2026-08-06 | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — | [карточка](./archive/scoreboard-spectral-ladder.md) |
 | `agent-tooling-night-build` | Night Build: инструменты агента — pr:ship, build:affected, wire-sync, хуки, хелперы, скиллы | 2026-08-06 | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/agent-tooling-night-build.md) |

@@ -1,0 +1,55 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "tariff-transition-wiring",
+  "taskId": "tariff-promo-server-wiring",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "//why": "decideTransition (packages/background-cabinet/src/domain/tariff-transition.ts, 16 зубов) не вызывает никто. Таблицы PromoCode и TariffChangeLog мигрированы 29.07 (20260729170000_tariff_transition_and_promo) и не имеют ни читателя, ни писателя. Магистраль #1761 — прямой выбор владельца: выбор тарифа на сервере и открытие тарифа по промокоду.",
+  "//declared-price": "Мостик 07.08 установил: decideTransition — лишь ОДНА из четырёх сирот плана интеграции сетки (заседание 29.07). quota-ledger (S4), produce-gate (S5), board-gate (S6) тоже по нулю потребителей. Владелец выбрал начать с перехода, зная цену: после этого спринта старший тариф прав НЕ откроет — гейты остаются неподключёнными. Это объявленная граница, а не провал поставки. Зубы при этом будут зелёные все, то есть инструменты разницы не покажут — сказано вслух именно поэтому.",
+  "//single-use-belongs-to-domain": "Решение владельца «maxRedemptions всегда 1» исполняется В ДОМЕНЕ, а не в сервисе, и это не вкус: причины отказа у домена закрытым списком (TransitionDenyReason), а ответ пользователю обязан нести причину ИЗ НЕГО. Проверка в сервисе завела бы одну причину вне списка — второй словарь рядом с закрытым перечнем. Ровно от этой болезни отказались дважды за 07.08 (спринт dreams-net-label-lies: третий и четвёртый словари исходов предложены и отвергнуты).",
+  "//atomicity-is-not-taste": "Блок B закрывает гонку УСЛОВНЫМ ОБНОВЛЕНИЕМ, а не голой транзакцией. Prisma $transaction при уровне Read Committed (умолчание Postgres) двух одновременных погашений НЕ разводит: обе попытки прочитают redeemedCount=0 и обе спишут. Единственный примитив, закрывающий гонку без serializable — updateMany({where:{id, redeemedCount:N, status:'active'}}) с проверкой count===1, внутри транзакции вместе с записью журнала и сменой тарифа. Цена ошибки денежная: гонка = бесплатный тариф.",
+  "//audit-correction": "На мостике ведущая доложила, что аудит погашений теряется при maxRedemptions>1 (одиночные redeemedAt/redeemedByMembraneId). Поправлено при разведке под нарезку: TariffChangeLog в схеме ЕСТЬ, append-only, поле в поле с TariffChangeLogEntry домена, с proofRef на промокод — след «кто, когда, каким кодом» целый и не зависит от строки кода. Решение владельца об одноразовости остаётся в силе, но держится на замысле модели («одноразовый носитель права»), а не на спасении аудита. Ошибка ведущей названа, а не замазана.",
+  "//block-c-out-of-scope": "Блок C (эндпойнт погашения под SessionGuard, DTO, регистрация модуля) в спринт НЕ входит, и это не забывчивость. Две причины: окно 2ч05м до вечернего ритуала, и инвариант процедуры — блок, объявляющий движок, не режется раньше блока, рождающего его. Эндпойнту нечего звать, пока нет сервиса блока B. Следствие честно: после этого спринта провод НЕ доходит до пользователя, вызвать переход можно только из кода и зубов.",
+  "//cutter": "Прогон контекста резчика ДО нарезки, вещдок — docs/virtual-team/memory/op-log/vesnin/2026-08-07.jsonl. Вклад по существу оказался тонким: резчик гипотезировал модули (packages/agenda, apps/client, @membrana/core), хотя background-cabinet назван в вопросе прямо, и на три заданных вопроса (домен или сервис · транзакция или условное обновление · честно ли резать без блока C) не ответил. Принята лишь его общая форма «два блока последовательно, шов фиксируется контрактом». Ответы на три вопроса выведены из кода и семантики Postgres — записаны выше отдельными ключами, чтобы вошли в дайджест ратификации.",
+  "//window": "Окно от фактического момента написания плана (15:56), не круглым числом — ловушка 05.08.",
+  "window": {
+    "from": "2026-08-07T15:56:00+03:00",
+    "to": "2026-08-07T19:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "promo-single-use",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-cabinet/src/domain/tariff-transition.ts",
+        "packages/background-cabinet/src/domain/tariff-transition.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionAt": "2026-08-07T15:58:03+03:00",
+      "revisionOf": "b64695143193862dbda565540812ce651dada250d30eb7123afc8be683af2113"
+    },
+    {
+      "blockId": "transition-service",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "packages/background-cabinet/src/modules/tariff/tariff-transition.service.ts",
+        "packages/background-cabinet/src/modules/tariff/tariff-transition.service.test.ts",
+        "packages/background-cabinet/src/modules/tariff/tariff.module.ts"
+      ],
+      "estimate": {
+        "changedLines": 240
+      },
+      "revisionAt": "2026-08-07T15:58:03+03:00",
+      "revisionOf": "ec363a73e0576b9b4da703f924840d6892c56891f6e139bb706dbc00b7828664"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-07T15:58:03+03:00",
+    "digest": "37d69def60c9a3a3d425db1658373b1dcf365f5181eb757056cdd9dc966713ee"
+  }
+}
