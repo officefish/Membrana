@@ -7,10 +7,10 @@
       "githubIssue": 1425,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-07",
-      "archivedAt": null,
+      "archivedAt": "2026-08-07",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin"
