@@ -211,3 +211,89 @@ test('ghBackoffMs: экспонента от интервала с потолк�
   assert.equal(ghBackoffMs(99, 10), 120_000, 'потолок обязателен, иначе ожидание уходит в часы');
   assert.equal(ghBackoffMs(1, 0), 1000, 'нулевой интервал не должен давать нулевую паузу');
 });
+
+// ─── сверка ролапа с ОБЪЯВЛЕННЫМ множеством (долг #ci-wait-sees-unregistered-checks, #1764) ───
+//
+// Дефект: ролап несёт то, что GitHub УЖЕ зарегистрировал, а задания появляются асинхронно.
+// Замер 07.08 — `checks=1/1 state=green` при четырёх фактических проверках. Втроём за утро.
+// Таблица случаев по разбору Дынина: пусто · частично · полно · красный · только-self · дубль.
+
+const REQUIRED = ['scan', 'Lint, typecheck, test, build', 'review/teamlead'];
+const ok = (name) => ({ name, status: 'COMPLETED', conclusion: 'SUCCESS' });
+
+test('неполный ролап при отсутствии красного и ждущих — incomplete, а НЕ green', () => {
+  const r = classifyChecks([ok('scan')], REQUIRED);
+  assert.equal(r.state, 'incomplete', 'зелёный по неполному множеству — чинимый дефект');
+  assert.deepEqual(r.missing, ['Lint, typecheck, test, build']);
+  assert.equal(r.verified, true);
+});
+
+test('incomplete — отдельный род, не running: «идёт» и «неизвестно, стартовало ли» различны', () => {
+  const incomplete = classifyChecks([ok('scan')], REQUIRED);
+  const running = classifyChecks([{ name: 'scan', status: 'IN_PROGRESS' }, ok('Lint, typecheck, test, build')], REQUIRED);
+  assert.equal(incomplete.state, 'incomplete');
+  assert.equal(running.state, 'running');
+  assert.notEqual(incomplete.state, running.state);
+});
+
+test('полный ролап — green', () => {
+  const r = classifyChecks([ok('scan'), ok('Lint, typecheck, test, build')], REQUIRED);
+  assert.equal(r.state, 'green');
+  assert.deepEqual(r.missing, []);
+});
+
+test('самоуправляемый вычитается из ОЖИДАЕМОГО, иначе вечный incomplete вместо ложного green', () => {
+  // review/teamlead стоит в обязательных И отсекается из наблюдаемых — ловушка Дынина.
+  const r = classifyChecks([ok('scan'), ok('Lint, typecheck, test, build')], REQUIRED);
+  assert.equal(r.state, 'green', 'review/teamlead ставит гейт ПОСЛЕ этого ожидания');
+  assert.ok(!r.missing.includes('review/teamlead'));
+});
+
+test('красный побеждает неполноту — порядок родов несущий', () => {
+  const r = classifyChecks([{ name: 'scan', status: 'COMPLETED', conclusion: 'FAILURE' }], REQUIRED);
+  assert.equal(r.state, 'red');
+});
+
+test('ждущие побеждают неполноту: сперва дождаться того, что уже идёт', () => {
+  const r = classifyChecks([{ name: 'scan', status: 'IN_PROGRESS' }], REQUIRED);
+  assert.equal(r.state, 'running');
+});
+
+test('только самоуправляемый в ролапе — не green: обязательных не видно вовсе', () => {
+  const r = classifyChecks([ok('review/teamlead')], REQUIRED);
+  assert.equal(r.state, 'none', 'после отсечения self-managed элементов не осталось');
+  assert.deepEqual(r.missing, ['scan', 'Lint, typecheck, test, build']);
+});
+
+test('имя берётся и из name, и из context: check-runs и statuses кладут его по-разному', () => {
+  const r = classifyChecks(
+    [{ context: 'scan', state: 'SUCCESS' }, { name: 'Lint, typecheck, test, build', state: 'SUCCESS' }],
+    REQUIRED,
+  );
+  assert.equal(r.state, 'green', 'statuses кладут имя в context — иначе ложный incomplete');
+});
+
+test('сравнение строгое по регистру: GitHub регистрозависим для имён проверок', () => {
+  const r = classifyChecks([ok('SCAN'), ok('Lint, typecheck, test, build')], REQUIRED);
+  assert.equal(r.state, 'incomplete', 'мягкое сравнение зачло бы чужое задание за обязательное');
+  assert.deepEqual(r.missing, ['scan']);
+});
+
+test('запятые и пробелы в имени значимы — «Lint, typecheck, test, build» сверяется целиком', () => {
+  const r = classifyChecks([ok('scan'), ok('Lint typecheck test build')], REQUIRED);
+  assert.equal(r.state, 'incomplete');
+  assert.deepEqual(r.missing, ['Lint, typecheck, test, build']);
+});
+
+test('без объявленного множества сверка НЕ состоялась — verified=false, поведение прежнее', () => {
+  const r = classifyChecks([ok('scan')]);
+  assert.equal(r.state, 'green', 'обратная совместимость: без ожидаемого ведём себя как раньше');
+  assert.equal(r.verified, false, 'но об этом обязаны сказать вслух, а не деградировать молча');
+  assert.deepEqual(r.missing, []);
+});
+
+test('classifyPrWait пробрасывает ожидаемое множество, а не теряет его', () => {
+  const r = classifyPrWait({ rollup: [ok('scan')], reviewDecision: 'APPROVED', expected: REQUIRED });
+  assert.equal(r.state, 'incomplete', 'approval не маскирует неполноту CI');
+  assert.deepEqual(r.missing, ['Lint, typecheck, test, build']);
+});

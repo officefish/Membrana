@@ -5,6 +5,55 @@
  * Серверный CONFLICTING/DIRTY на registry.json часто ложный: локально merge чист.
  */
 
+import { sameSha } from './review-gate.mjs';
+
+/**
+ * Свежесть вердикта ревью после локального merge (долг `#pr-land-invalidates-own-review`, #1764).
+ *
+ * ДЕФЕКТ, КОТОРЫЙ ЧИНИТСЯ. `pr-land` делает `merge origin/main → push → pr:ship --merge-only`.
+ * Шаг merge двигает HEAD, а вердикт ревью привязан к SHA — и следующий же шаг падает
+ * «вердикт протух». Инструмент подрывал собственный следующий шаг.
+ *
+ * ПРЕДИКАТ, А НЕ ФЛАГ (разбор Ожегова 07.08). Спрашивается не «был ли merge», а
+ * `reviewedSha === headShaAfterMerge`. Флаг вида `--no-review-needed` сюда не заводится
+ * сознательно: он подменял бы предикат намерением, а намерению здесь верить нельзя —
+ * ровно от этого правило привязки к SHA и защищает.
+ *
+ * ГРАНИЦА (там же). `pr-land` — оркестратор доставки, НЕ ревьюер: он не зовёт
+ * `code-review:pr` сам. Инструмент, выписывающий себе вердикт, ломает несущее правило через
+ * чёрный ход. Дело этого предиката — сказать «протух» и назвать команду человеку.
+ *
+ * @param {{reviewedSha?: string|null, headSha?: string|null}} input
+ * @returns {{fresh: boolean, reason: 'fresh'|'no_verdict'|'stale'|'no_head'}}
+ */
+export function verdictFreshness({ reviewedSha, headSha } = {}) {
+  if (!headSha) return { fresh: false, reason: 'no_head' };
+  if (!reviewedSha) return { fresh: false, reason: 'no_verdict' };
+  return sameSha(reviewedSha, headSha) ? { fresh: true, reason: 'fresh' } : { fresh: false, reason: 'stale' };
+}
+
+/**
+ * Отказ ГРОМКИЙ и с resume (разбор Ожегова): молчаливый перепрогон означал бы, что инструмент
+ * сам решает, чей вердикт годится. Показываем оба SHA, диапазон и точные команды.
+ *
+ * @returns {string[]} строки для stderr
+ */
+export function formatVerdictRefusal({ prNumber, reviewedSha, headSha, reason }) {
+  const short = (s) => String(s ?? '—').slice(0, 8);
+  const head = [
+    reason === 'no_verdict'
+      ? `task:pr-land: вердикта ревью по PR #${prNumber} нет — мержить нельзя.`
+      : `task:pr-land: вердикт протух — смотрели ${short(reviewedSha)}, на ветке ${short(headSha)}.`,
+  ];
+  if (reason === 'stale') {
+    head.push(`  Что изменилось: git diff ${short(reviewedSha)}..${short(headSha)}`);
+    head.push('  Причина: локальный merge origin/main сдвинул HEAD — прежний вердикт про другое дерево.');
+  }
+  head.push(`  resume: yarn code-review:pr ${prNumber}  →  yarn pr:ship --merge-only --execute`);
+  head.push('  Ревью НЕ запускается автоматически: pr-land доставляет, вердикт выносит ревьюер.');
+  return head;
+}
+
 export const REGISTRY_JSON = 'docs/tasks/registry.json';
 export const REGISTRY_README = 'docs/tasks/README.md';
 
@@ -139,6 +188,11 @@ export function planPrLand(opts) {
       note: 'без -m: commit-msg хук пропускает Merge branch …; union-драйвер сливает registry',
     },
     { label: 'push', cmd: 'git', args: ['push'] },
+    {
+      label: 'verdict-freshness',
+      kind: 'gate',
+      note: 'вердикт ревью обязан относиться к HEAD ПОСЛЕ merge; протух — стоп с resume, ревью не зовём сами',
+    },
     shipMergeStep({ wait, execute: opts.execute, nodeBin: opts.nodeBin }),
   ];
   return {
