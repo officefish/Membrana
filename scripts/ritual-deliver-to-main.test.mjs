@@ -8,11 +8,16 @@ import { tmpdir } from 'node:os';
 import { test } from 'node:test';
 
 import {
+  DELIVERABLE_STATUSES,
   DELIVER_RITUALS,
   checkArtifactDeliver,
+  guardDeliver,
   planDeliver,
+  planExecute,
   ritualConfig,
   runDeliverGate,
+  shipArgsFor,
+  splitDeliverable,
   verifyDeliverOnMain,
 } from './lib/ritual-deliver-to-main.mjs';
 import { eveningDeliverArtifacts } from './lib/ritual-evening-artifacts.mjs';
@@ -67,8 +72,12 @@ test('вечерний путь: даты резолвятся, читается
   assert.equal(code, 2, 'артефактов вечера нет — кадр обязан встать');
   const text = log.join('\n');
   assert.match(text, new RegExp(`docs/memos/${TODAY}\\.md`, 'u'), '<date> в путях обязан резолвиться');
-  assert.match(text, /ritual-evening-/u, 'подсказка ветки — вечерняя, не утренняя');
   assert.match(text, /вечер не завершён/u, 'формулировка отказа — вечерняя');
+  // Подсказки ветки здесь быть НЕ должно: файлов нет вовсе, доставке не подлежит ничего,
+  // и печатать план `pr:ship` по отсутствующим путям значило бы вернуть неисполнимый план.
+  // Вечерность самой подсказки покрыта зубом `ritualConfig`.
+  assert.doesNotMatch(text, /доставить: pr:ship/u, 'нечего доставлять — плана доставки нет');
+  assert.match(text, /вне доставки/u, 'непроизведённое обязано называться отдельно от недоставленного');
   assert.doesNotMatch(text, /STRATEGY_DAY|DAILY_STANDUP/u, 'утренние артефакты в вечернем кадре не проверяются');
 });
 
@@ -241,4 +250,135 @@ test('резолвер отдаёт РОВНО три поля — служеб�
 test('опись снимка дня вынута из списка: вторая форма провенанса не заводится', () => {
   const resolved = eveningDeliverArtifacts(TODAY);
   assert.ok(!resolved.some((a) => a.rel.includes('manifest.json')));
+});
+
+// ─── долг `#shown-is-not-delivered`: разделение статусов и исполнитель ─────────
+//
+// Замер 07.08: детектор был и был строгим, а вот исполнителя не было — `--execute`
+// печатал «pr:ship через skill/owner; verify-only», и каждый стоп доводился руками
+// (утро 07.08 и вечер 06.08 подряд). Отдельно: план валил все негодные статусы в один
+// список путей, поэтому предлагал доставить три файла, которых на диске нет.
+
+const report = (rel, status) => ({ rel, label: rel, status });
+
+test('доставкой лечатся ровно два статуса: ствол не получил свежий файл', () => {
+  assert.deepEqual([...DELIVERABLE_STATUSES], ['missing-on-main', 'drift-from-main']);
+});
+
+test('splitDeliverable: непроизведённое отделено от недоставленного', () => {
+  const s = splitDeliverable([
+    report('a.md', 'ok'),
+    report('b.md', 'missing-on-main'),
+    report('c.md', 'drift-from-main'),
+    report('d.md', 'missing-local'),
+    report('e.md', 'stale'),
+  ]);
+  assert.deepEqual(s.deliverable.map((r) => r.rel), ['b.md', 'c.md']);
+  assert.deepEqual(s.blocked.map((r) => r.rel), ['d.md', 'e.md']);
+});
+
+test('planExecute: всё на main — noop, доставлять нечего', () => {
+  const p = planExecute([report('a.md', 'ok')]);
+  assert.equal(p.action, 'noop');
+  assert.deepEqual(p.paths, []);
+});
+
+test('planExecute: только непроизведённое — доставка НЕ запускается', () => {
+  const p = planExecute([report('d.md', 'missing-local'), report('e.md', 'stale')]);
+  assert.equal(p.action, 'nothing-to-deliver');
+  assert.deepEqual(p.paths, []);
+  assert.match(p.reason, /не лечится/u);
+});
+
+test('planExecute: готовое доставляется, даже если соседнее не произведено', () => {
+  // Несущее решение: отказ ронять готовое из-за чужого пропуска сохранил бы ровно тот
+  // дефект, против которого долг. Ложной зелёнки нет — вердикт считается заново.
+  const p = planExecute([report('b.md', 'missing-on-main'), report('d.md', 'missing-local')], 'evening');
+  assert.equal(p.action, 'deliver');
+  assert.deepEqual(p.paths, ['b.md']);
+  assert.deepEqual(p.blocked.map((r) => r.rel), ['d.md']);
+  assert.match(p.branchHint, /ritual-evening-/u, 'подсказка ветки — вечерняя');
+});
+
+test('planExecute: подсказка ветки берётся по ритуалу, не по умолчанию', () => {
+  assert.match(planExecute([report('b.md', 'missing-on-main')], 'day').branchHint, /ritual-day-/u);
+});
+
+test('гейт печатает ИСПОЛНИМЫЙ план: путь к доставке и команду исполнителя', () => {
+  const root = mkdtempSync(join(tmpdir(), 'deliver-exec-'));
+  const mrel = 'docs/procedures/ritual-evening/MANIFEST.json';
+  mkdirSync(dirname(join(root, mrel)), { recursive: true });
+  writeFileSync(join(root, mrel), JSON.stringify({ frames: [{ id: 'deliver-to-main', holder: 'angelina' }] }), 'utf8');
+  // Один артефакт есть локально и свеж, ствол его не получил → доставке подлежит.
+  writeFresh(root, `docs/memos/${TODAY}.md`);
+
+  const log = [];
+  const code = runDeliverGate(root, {
+    ritual: 'evening',
+    today: TODAY,
+    readRemote: () => null,
+    log: (s) => log.push(s),
+  });
+  const text = log.join('\n');
+  assert.equal(code, 2, 'остальные артефакты не произведены — кадр всё равно красный');
+  assert.match(text, /доставить: pr:ship paths=\[docs\/memos\//u, 'готовое обязано попасть в план доставки');
+  assert.match(text, /ritual-evening-/u, 'подсказка ветки — вечерняя');
+  assert.match(text, /исполнить: yarn ritual:deliver-to-main --ritual evening --execute/u,
+    'план обязан называть команду, которая его доводит');
+  assert.match(text, /вне доставки/u, 'непроизведённое названо отдельно');
+});
+
+test('--json несёт ритуал: вечерний запрос не отвечает утренними артефактами', () => {
+  // Без передачи ritual сюда `--json --ritual evening` проверял утренние документы и звал
+  // это вердиктом вечера — ложная зелёнка ровно того класса, что и молчаливый фолбэк.
+  const root = mkdtempSync(join(tmpdir(), 'deliver-json-'));
+  const v = verifyDeliverOnMain(root, { ritual: 'evening', today: TODAY, readRemote: () => null });
+  const rels = v.reports.map((r) => r.rel).join(' ');
+  assert.doesNotMatch(rels, /STRATEGY_DAY|DAILY_STANDUP/u);
+  assert.match(rels, new RegExp(`docs/memos/${TODAY}\.md`, 'u'));
+});
+
+test('guardDeliver: путь вне манифеста ритуала — отказ, а не «по построению не бывает»', () => {
+  const g = guardDeliver({ paths: ['docs/memos/x.md', 'packages/core/src/index.ts'], declared: ['docs/memos/x.md'], staged: [] });
+  assert.equal(g.ok, false);
+  assert.match(g.refusal, /вне манифеста/u);
+  assert.deepEqual(g.offenders, ['packages/core/src/index.ts']);
+});
+
+test('guardDeliver: чужое в индексе — отказ: git commit берёт индекс, а не наши пути', () => {
+  const g = guardDeliver({
+    paths: ['docs/memos/x.md'],
+    declared: ['docs/memos/x.md'],
+    staged: ['docs/memos/x.md', 'packages/core/src/secret.ts'],
+  });
+  assert.equal(g.ok, false);
+  assert.match(g.refusal, /в индексе чужое/u);
+  assert.deepEqual(g.offenders, ['packages/core/src/secret.ts']);
+});
+
+test('guardDeliver: свои пути в индексе доставке не мешают', () => {
+  const g = guardDeliver({ paths: ['a.md', 'b.md'], declared: ['a.md', 'b.md', 'c.md'], staged: ['a.md'] });
+  assert.equal(g.ok, true);
+});
+
+test('guardDeliver: пустой индекс законен — артефакты могли быть уже закоммичены локально', () => {
+  assert.equal(guardDeliver({ paths: ['a.md'], declared: ['a.md'], staged: [] }).ok, true);
+});
+
+test('shipArgsFor: ревью прогоняется гейтом, а не обходится', () => {
+  const a = shipArgsFor({ ritual: 'evening', today: TODAY, branch: 'b', hasStaged: true });
+  assert.ok(a.includes('--with-review'), 'без флага исполнитель встал бы на ревью-гейте, как человек');
+  assert.ok(a.includes('--execute'));
+  assert.ok(!a.includes('--no-commit'), 'индекс не пуст — коммит нужен');
+  assert.deepEqual([a[a.indexOf('--type') + 1], a[a.indexOf('--scope') + 1]], ['chore', 'ritual']);
+  assert.match(a[a.indexOf('--message') + 1], new RegExp(`вечер ${TODAY}`, 'u'));
+});
+
+test('shipArgsFor: пустой индекс → --no-commit (артефакты уже закоммичены локально)', () => {
+  // Самый частый случай долга: файлы лежат в коммите на ветке, но ствол их не получил.
+  // Без этого флага pr:ship падает на «nothing to commit», то есть исполнитель ломался бы
+  // именно там, где долг живёт.
+  const a = shipArgsFor({ ritual: 'day', today: TODAY, branch: 'b', hasStaged: false });
+  assert.ok(a.includes('--no-commit'));
+  assert.match(a[a.indexOf('--message') + 1], new RegExp(`утро ${TODAY}`, 'u'));
 });

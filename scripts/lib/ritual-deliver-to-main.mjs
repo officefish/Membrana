@@ -208,6 +208,125 @@ export function verifyDeliverOnMain(repoRoot, opts = {}) {
 }
 
 /**
+ * Статусы, которые ЛЕЧАТСЯ доставкой: файл есть, он сегодняшний, ствол его не получил.
+ *
+ * `missing-local` и `stale` сюда не входят, и это несущее различие. Артефакт, которого нет,
+ * или вчерашний — не «недоставлен», а не произведён: лечит его шаг-производитель, а не
+ * доставка. Пока разницы не было, план кадра печатал `pr:ship paths=[…]` со всеми четырьмя
+ * позициями подряд, включая три отсутствующих файла, — то есть план был неисполним по
+ * построению, и каждый стоп доводился руками. Вещдок 07.08: вечерний гейт предлагал
+ * доставить `team-evening-feedback`, `workspace-level` и `DAY_MEMO`, которых на диске нет.
+ */
+export const DELIVERABLE_STATUSES = Object.freeze(['missing-on-main', 'drift-from-main']);
+
+/**
+ * Разделить негодные позиции на «доставке подлежит» и «доставкой не лечится».
+ *
+ * @param {ArtifactDeliverReport[]} reports
+ * @returns {{ deliverable: ArtifactDeliverReport[], blocked: ArtifactDeliverReport[] }}
+ */
+export function splitDeliverable(reports) {
+  const bad = (reports ?? []).filter((r) => r && r.status !== 'ok');
+  return {
+    deliverable: bad.filter((r) => DELIVERABLE_STATUSES.includes(r.status)),
+    blocked: bad.filter((r) => !DELIVERABLE_STATUSES.includes(r.status)),
+  };
+}
+
+/**
+ * Что вправе сделать исполнитель по вердикту гейта. Чистое решение; сами команды — в скрипте.
+ *
+ * `deliver` при непустом `blocked` — СОЗНАТЕЛЬНО. Отказ доставлять готовое из-за того, что
+ * соседний артефакт не произведён, сохранил бы ровно тот дефект, против которого заведён долг
+ * `#shown-is-not-delivered`: готовое продолжало бы лежать вне ствола. Ложной зелёнки это не
+ * даёт — вердикт кадра считается ЗАНОВО после доставки и остаётся красным, пока `blocked`
+ * не пуст.
+ *
+ * @param {ArtifactDeliverReport[]} reports
+ * @param {string} [ritual]
+ * @returns {{ action: 'noop'|'deliver'|'nothing-to-deliver', paths: string[], blocked: ArtifactDeliverReport[], branchHint: string, reason: string }}
+ */
+export function planExecute(reports, ritual = 'day') {
+  const { deliverable, blocked } = splitDeliverable(reports);
+  const branchHint = planDeliver(deliverable.map((r) => r.rel), ritual).branchHint;
+  if (!deliverable.length && !blocked.length) {
+    return { action: 'noop', paths: [], blocked: [], branchHint: '', reason: 'всё на origin/main — доставлять нечего' };
+  }
+  if (!deliverable.length) {
+    return {
+      action: 'nothing-to-deliver',
+      paths: [],
+      blocked,
+      branchHint: '',
+      reason: 'доставкой не лечится: артефакты не произведены (нет файла) или не сегодняшние',
+    };
+  }
+  return {
+    action: 'deliver',
+    paths: deliverable.map((r) => r.rel),
+    blocked,
+    branchHint,
+    reason: `доставить ${deliverable.length}${blocked.length ? `, вне доставки ${blocked.length}` : ''}`,
+  };
+}
+
+/**
+ * Вызов `pr:ship`, которым исполнитель доводит доставку. Чистая сборка — проверяется без сети.
+ *
+ * `--with-review` (а не обход ревью-гейта): гейт `pr:ship` требует вердикт, привязанный к PR, и
+ * без этого флага исполнитель встал бы на нём ровно так же, как встаёт человек. Вердикт
+ * по-прежнему выносит ревьюер, BLOCK по-прежнему останавливает — автоматизируется прогон, не
+ * решение.
+ *
+ * `--no-commit` при пустом индексе — НЕ оптимизация. Артефакты могли быть уже закоммичены
+ * локально и лежать на ветке: это и есть «показал, но не доставил» в чистом виде. Без флага
+ * `pr:ship` падает на «nothing to commit» вхолостую, то есть самый частый случай долга ломал бы
+ * исполнителя.
+ *
+ * @param {{ritual: string, today: string, branch: string, hasStaged: boolean}} input
+ * @returns {string[]} аргументы к `scripts/pr-ship.mjs`
+ */
+export function shipArgsFor({ ritual, today, branch, hasStaged }) {
+  const args = [
+    'scripts/pr-ship.mjs',
+    '--type', 'chore',
+    '--scope', 'ritual',
+    '--message', `${ritual === 'evening' ? 'вечер' : 'утро'} ${today}: артефакты ритуала в ствол`,
+    '--branch', branch,
+    '--with-review',
+    '--execute',
+  ];
+  if (!hasStaged) args.push('--no-commit');
+  return args;
+}
+
+/**
+ * Решение исполнителя ПЕРЕД записью: обе защиты одним предикатом, без git.
+ *
+ * 1. Путь вне манифеста ритуала. По построению такого быть не должно — пути приходят из
+ *    `ritualConfig().artifacts()`. Защита стоит потому, что исполнитель кладёт в СТВОЛ:
+ *    «по построению не бывает» — рассуждение, а на стволе нужен отказ.
+ * 2. Чужое в индексе. `git commit` берёт весь индекс, а не наши пути, поэтому уже
+ *    проиндексированная чужая работа уехала бы в ствол под именем артефакта ритуала —
+ *    молча и с чужим авторством смысла.
+ *
+ * @param {{paths: string[], declared: Iterable<string>, staged: string[]}} input
+ * @returns {{ok: true} | {ok: false, refusal: string, offenders: string[]}}
+ */
+export function guardDeliver({ paths, declared, staged }) {
+  const declaredSet = new Set(declared);
+  const outside = (paths ?? []).filter((p) => !declaredSet.has(p));
+  if (outside.length) {
+    return { ok: false, refusal: 'путь вне манифеста ритуала', offenders: outside };
+  }
+  const foreign = (staged ?? []).filter((p) => !(paths ?? []).includes(p));
+  if (foreign.length) {
+    return { ok: false, refusal: 'в индексе чужое — исполнитель не метёт чужую работу', offenders: foreign };
+  }
+  return { ok: true };
+}
+
+/**
  * @param {string[]} pending
  * @returns {{ mode: 'noop' | 'pr:ship', paths: string[], branchHint: string }}
  */
@@ -251,9 +370,19 @@ export function runDeliverGate(repoRoot, opts = {}) {
     log(`✓ ${DELIVER_FRAME_ID}: ${cfg.done}`);
     return 0;
   }
-  const plan = planDeliver(v.pending, ritual);
   log(`✗ ${DELIVER_FRAME_ID}: STOP — не на main (${v.pending.join(', ')})`);
-  log(`  план: ${plan.mode} paths=[${plan.paths.join(', ')}] branch≈${plan.branchHint}`);
+
+  // План печатается РАЗДЕЛЁННЫМ: доставке подлежит одно, доставкой не лечится другое.
+  // Единый список путей делал план неисполнимым — он предлагал `pr:ship` по файлам, которых
+  // на диске нет, и потому каждый стоп доводился руками вместо одной команды.
+  const plan = planExecute(v.reports, ritual);
+  if (plan.paths.length) {
+    log(`  доставить: pr:ship paths=[${plan.paths.join(', ')}] branch≈${plan.branchHint}`);
+    log(`  исполнить: yarn ritual:deliver-to-main --ritual ${ritual} --execute`);
+  }
+  for (const b of plan.blocked) {
+    log(`  вне доставки: ${b.label} — ${b.status}: лечит шаг-производитель, не доставка`);
+  }
   log(`  ${cfg.unfinished}`);
   return 2;
 }
