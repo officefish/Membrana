@@ -19,7 +19,7 @@ M3-M6 readiness, перенести только законные состоян
 старые ссылки без обхода authority, доказать cutover и rollback, объявить сервис в
 `LIVE_SERVICES` и разрезать #1303/#1305 на зависимые поставки. Выберите один rollout DAG,
 одну migration ledger/state machine, одну route/access matrix и один набор machine gates.
-Carrier — `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-06.md`; второй
+Carrier — `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-07.md`; второй
 носитель запрещён. Список посылок обязателен. Код, DNS, Caddy, Panel и production в этой
 комнате не изменяются.**
 
@@ -64,51 +64,55 @@ Carrier — `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-0
 
 ## Обязательные решения
 
-1. **Inventory truth.** Назначить доказательный snapshot Affine: DB/workspace/page/asset
-   inventory, content/attachment hashes, parent relations, visibility/native grants и
-   timestamps. Указать bounded consistency cut/fence и почему CLI `0` не может заменить
-   DB/export reconciliation.
-2. **Disposition.** Дать закрытый словарь судьбы каждого page/asset: например discard,
-   retain-as-export-evidence, rebuild-projection, register-original-through-M6,
-   migrate-portable-state, manual-review. Названия выбирает carrier; каждое решение имеет
-   основание M1/M2/M5, actor и evidence. Blind copy всех 82 pages запрещён.
-3. **Migration identity.** Задать append-only migration ledger и state machine от observed
-   source object до terminal disposition. Engine ids не становятся M2 ids/canonicalRef;
-   duplicate content не сливает records; fake M6 ledger/binding запрещены. Retry/crash/
-   resume и exact reconciliation обязательны.
-4. **Preconditions.** Назвать machine predicates, которые должны PASS до первого write,
-   projection rebuild, route canary и final cutover. M3 bypass, M4 G1-G10, M5 G1-G10 и M6
-   full-corpus readiness не заменяются словами «готово»; unknown = NO-GO.
-5. **Portable/engine state.** Развести originals/registry, projection intent, binding,
-   annotations, engine projection, layout/cache/session и strategic documents. Для каждой
-   категории выбрать source, destination, migration/rebuild/discard rule и loss policy.
-6. **Routes и authority.** Выбрать конечную route/access matrix для `static`, старого
-   `strategy`, deep links, API/download/preview/WebSocket и direct backend. Для каждого
-   маршрута указать public hostname, internal target, M3 action/object gate, redirect/proxy/
-   deny outcome и запрет native credential leakage.
-7. **Rollout DAG.** Выбрать один порядок provision -> dry inventory -> export/snapshot ->
-   migrate/rebuild -> reconcile -> canary -> cutover -> observe -> retire либо более строгий
-   эквивалент. Для каждого шага задать entry gate, mutation, exit evidence, owner и stop rule;
-   параллельность разрешена только при явной независимости.
-8. **No-downtime и consistency.** Выбрать write/freeze/fence strategy между source snapshot и
-   cutover, обработку in-flight sessions/links и критерий отсутствия lost/duplicated state.
-   Нельзя обещать no downtime без измеримой availability и error-budget метрики.
-9. **Rollback.** Задать rollback point и direction для каждой мутационной фазы, предельное
-   окно, неизменяемые evidence и запрет отката M2/M4/M5 append-only history. Старый route не
-   может возвращать direct Affine bypass или становиться второй authority.
-10. **Redirect и retirement.** Выбрать статус/срок старого hostname и deep-link mapping,
-    поведение неизвестной ссылки, certificate/DNS/Caddy observability и критерии удаления
-    старого route/runtime/data. Retirement запрещён до restore/parity/traffic evidence.
-11. **Panel и реестры.** Назвать точные классы обновлений Panel navigation/section grants,
-    `LIVE_SERVICES`, operator runbook, monitoring/alerts и публичной документации. Эти edits
-    являются outputs реализации, не выполняются carrier M7.
-12. **Delivery slicing.** Разрезать #1303/#1305 на зависимый delivery plan с для каждого slice:
-    issue-home, scope, prerequisites, artifacts, acceptance evidence, rollback и review gate.
-    Нельзя закрыть umbrella по DNS alone или смешать storage, authority и migration в один
-    недоказуемый шаг.
-13. **Readiness и финальный verdict.** Дать one-page go/no-go matrix, current measured state,
-    responsible evidence producer и правило cutover authorization. Текущий verdict обязан
-    оставаться NO-GO, пока хотя бы один required gate unknown/FAIL.
+1. **Inventory:** один fenced DB/export snapshot с pages/assets, hashes, relations, grants и
+   timestamps; CLI `0` не заменяет reconciliation.
+2. **Disposition:** закрытая судьба каждого source object с M1/M2/M5 основанием, actor и
+   evidence; blind copy 82 pages запрещён.
+3. **Ledger:** append-only state machine до resolved outcome; engine id не M2 identity,
+   duplicates не сливаются, fake M6 binding запрещён; retry/crash/reconcile обязательны.
+4. **Preconditions:** stage-specific machine gates M3, M4 G1-G10, M5 G1-G10 и полного M6;
+   unknown = NO-GO.
+5. **State classes:** развести originals/registry, projection intent, binding, annotations,
+   engine projection, layout/cache/session и strategic docs; назначить source/destination,
+   migrate/rebuild/discard и loss policy.
+6. **Routes:** одна matrix для static/strategy/deep links/API/download/preview/WS/backend:
+   target, exact M3 action/object либо network deny, outcome и credential-leak ban.
+7. **Rollout:** один DAG provision/inventory/export/migrate/reconcile/canary/cutover/observe/
+   retire или строгий эквивалент; у шага deps, entry, mutation, exit evidence, owner, stop.
+8. **Consistency:** freeze/fence, in-flight sessions/links и exact no-loss/no-duplicate proof;
+   no-downtime требует availability/error predicate.
+9. **Rollback:** point/direction/window каждой mutation без отката append-only history и без
+   возврата Affine bypass/второй authority.
+10. **Redirect/retirement:** один old-host/deep-link contract, observability и machine
+    deletion gates; restore/parity/traffic evidence обязательны.
+11. **Panel/реестры:** классы будущих edits navigation/grants, `LIVE_SERVICES`, runbook,
+    monitoring и docs; сама M7 их не выполняет.
+12. **Slicing:** зависимые reviewable slices #1303/#1305 со scope, prerequisites, artifacts,
+    acceptance, rollback и review; DNS alone не закрывает umbrella.
+13. **Readiness:** go/no-go matrix с corpus, predicate, producer, current state и cutover
+    authorization; любой required unknown/FAIL сохраняет NO-GO.
+
+## Обязательные поправки run1
+
+Бюджет **1/5**. Run1 только в `rejected`; его MDC-v1/constants/verdict не посылки run2.
+
+1. **M3:** только `discover|read-metadata|read-ref|read-bytes|download|write-metadata|
+   upload-revision|manage-access`; у каждого route ровно один action/object либо pre-action
+   network deny. Canary/rollback сохраняют Panel gate и current versions; `static.*` нельзя.
+2. **Без циклов:** freeze/fence до единственного proof snapshot/disposition/export. M5
+   replacement/rehydration gates — после результата; у каждого M4-M6 gate указан первый шаг,
+   где evidence уже существует.
+3. **Exact sets:** corpus выводится из fence snapshot; `82/57` лишь baseline drift. DB/export/
+   ledger равны двусторонне по stable `SourceObjectRef`+hash, не counts. M6 буквально сохраняет
+   `C_all,C_live,L_proposed,C_managed,C_legacy`, state cardinalities и full three-way diff.
+4. **Retirement:** manual/blocked/failed unresolved не terminal; каждый source object требует
+   resolved outcome+complete evidence, неопределённый `critical set` запрещён.
+5. **Constants:** выбрать по одному redirect/unmapped status, canary window+error predicate,
+   rollback window, redirect lifetime, observation interval и zero-traffic predicate;
+   `301/302`, `404/410`, `default/proposed/long/≈0` запрещены и значения повторяются во всех
+   проверяющих route/case/readiness/rollback rows.
+
+Ролевой DoD остаётся `[ ]`; поправки не выбирают за run2 routes/constants/state/DAG.
 
 ## Обязательные случаи
 

@@ -2207,3 +2207,52 @@ D1 и отсутствие структурных нарушений; объём
 - ролевой критерий 36/6x6 оставлен внешнему постаудиту.
 
 M7 run1 допускается только после отдельного разрешения владельца.
+
+## Постаудит M7 — run1
+
+Первый запуск после разрешения отказал **до API**: input manifest показал, что повестка не
+доехала из-за общего context/RAG/persona budget. Кредит не потрачен. Dry-run с
+`--no-context --no-rag --no-memory` подтвердил полную доставку повестки; после этого тем же
+разрешением произведён единственный внешний run1 через `anthropic/claude-sonnet-4-6`.
+
+Механика run1 PASS: 42 предметные реплики, ровно 7 каждой из шести ролей; один D1, DoD
+заканчивает файл, `meeting:audit` structural PASS. Внешняя попытка 1 из 5 использована.
+Сырой carrier без исправлений сохранён как
+[`run1-m3-actions-rollout-cycles-inventory-retirement-predicates`](../../seanses/rejected/static-mmbrn-container-m7-migration-delivery-2026-08-06-run1-m3-actions-rollout-cycles-inventory-retirement-predicates.md).
+
+Независимый смысловой аудит дал **BLOCK** по пяти группам:
+
+- route matrix изобрела `static.*` actions и оставила legacy routes без exact M3 action/object;
+- rollout поставил freeze после snapshot и потребовал M5 rehydration parity до rebuild;
+- inventory сравнивал counts вместо exact sets, зафиксировал baseline 82/57 как вечный
+  corpus и усёк M6 state-indexed reconciliation;
+- unresolved `manual_review` мог считаться terminal и не блокировать retirement;
+- redirect/canary/rollback/retirement оставили альтернативы и слова `default/proposed/long`
+  вместо одного machine-checkable набора constants.
+
+M1/M2 boundary, engine identity separation, текущий NO-GO, чистые посылки, семь таблиц и
+отсутствие production-изменений прошли. Повестка run2 получила единый раздел обязательных
+поправок. Из-за перехода календарной даты отсутствующий canonical carrier перенесён с
+`2026-08-06` на `2026-08-07`; rejected run1 остаётся под фактической датой создания.
+Внешний run2 запрещён до повторного независимого предаудита и отдельного разрешения.
+
+## Предаудит M7 — run2
+
+Первый dry-run исправленной повестки отказал до API: после добавления пяти поправок её
+13 962 символа не доехали целиком. Кредит не потрачен. Повторяющиеся формулировки сжаты без
+удаления требований; новая редакция имеет 11 120 символов.
+
+Повторный dry-run с `--no-context --no-rag --no-memory` завершился успешно: один D1,
+повестка доставлена полностью, canonical carrier назначен на фактическую дату
+`2026-08-07` и отсутствует. Обрезан только дополнительный блок координации ролей, не agenda.
+
+Независимый read-only аудитор дал **PASS**:
+
+- бюджет 1/5 и rejected-only статус run1 записаны;
+- exact M3 surface, ацикличные stage gates, fence-derived set equality, полный M6 corpus,
+  запрет unresolved retirement и требование одного набора constants перенесены;
+- поправки не выбирают готовые routes, constants, states или rollout DAG;
+- M1-M6, current NO-GO, production ban, 36/6x6 и последняя секция DoD сохранены.
+
+Машинный `meeting:audit` также имеет structural PASS. Внешний run2 допускается только после
+отдельного разрешения владельца.
