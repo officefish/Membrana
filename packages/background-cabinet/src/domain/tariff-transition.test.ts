@@ -136,11 +136,44 @@ describe('промокод', () => {
     expect(after.status).toBe('spent');
   });
 
-  it('многоразовый код остаётся активным, пока не исчерпан', () => {
+  // `spendPromo` остаётся ТОТАЛЬНОЙ и общей: это чистое описание состояния после
+  // погашения, и калечить её незачем. Но с 07.08 этот путь НЕДОСТИЖИМ через
+  // decideTransition — многоразовый код отвергается раньше. Зуб оставлен и
+  // переименован вслух: молча зелёный зуб на недостижимом состоянии — тот самый
+  // класс, на который в тот же день заведён долг #office-dreams-test-stubs-own-models.
+  it('spendPromo сама по себе многоразовый код считает верно (путь недостижим через decideTransition)', () => {
     const multi = { ...activePromo, maxRedemptions: 3 };
     const once = spendPromo(multi);
     expect(once.status).toBe('active');
     expect(spendPromo(spendPromo(once)).status).toBe('spent');
+    // И тут же — доказательство недостижимости, чтобы утверждение не разъехалось с доменом.
+    expect(decideTransition(LIVE, promoUp, multi, NOW).reason).toBe('promo_not_single_use');
+  });
+
+  // ─── одноразовость кода (решение владельца, мостик 07.08) ───
+
+  it('код на два и более погашений отвергается — виноват выпуск, не пользователь', () => {
+    const multi = { ...activePromo, maxRedemptions: 2 };
+    const d = decideTransition(LIVE, promoUp, multi, NOW);
+    expect(d.allowed).toBe(false);
+    expect(d.reason).toBe('promo_not_single_use');
+    expect(d.spendPromo).toBe(false);
+  });
+
+  it('код с нулём погашений — тоже не одноразовый, отказ тот же', () => {
+    const zero = { ...activePromo, maxRedemptions: 0 };
+    expect(decideTransition(LIVE, promoUp, zero, NOW).reason).toBe('promo_not_single_use');
+  });
+
+  it('целостность проверяется ПЕРВОЙ: отозванный многоразовый код зовётся по своему дефекту', () => {
+    // Порядок несущий: сказать «отозван» про код, который вообще не должен был
+    // существовать, значит описать состояние, которого нет в замысле.
+    const broken = { ...activePromo, maxRedemptions: 5, status: 'revoked' as const };
+    expect(decideTransition(LIVE, promoUp, broken, NOW).reason).toBe('promo_not_single_use');
+  });
+
+  it('одноразовый код проходит — норма не задета', () => {
+    expect(decideTransition(LIVE, promoUp, activePromo, NOW).allowed).toBe(true);
   });
 });
 

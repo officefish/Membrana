@@ -1,0 +1,11 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "tariff-transition-wiring",
+  "forTask": "tariff-promo-server-wiring — провод перехода тарифа до жизни, магистраль #1761",
+  "note": "Замер снят git diff --numstat HEAD по зонам блоков: insertions + deletions. Не оценка и не пересказ — измерение.",
+  "measuredAt": "2026-08-07T18:20:00+03:00",
+  "segments": [
+    { "cutBlockId": "promo-single-use", "changedLines": 53 },
+    { "cutBlockId": "transition-service", "changedLines": 376 }
+  ]
+}

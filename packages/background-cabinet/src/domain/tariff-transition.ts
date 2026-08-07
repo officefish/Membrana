@@ -59,7 +59,18 @@ export type TransitionDenyReason =
   | 'promo_already_redeemed'
   | 'promo_revoked'
   | 'promo_expired'
-  | 'promo_target_mismatch';
+  | 'promo_target_mismatch'
+  /**
+   * Код выпущен более чем на одно погашение — состояние, которого по норме не
+   * существует (решение владельца, мостик 07.08): промокод одноразов, так и
+   * сказано в комментарии модели. Виноват здесь администратор, выпустивший код,
+   * а НЕ пользователь, поэтому подарок не списывается.
+   *
+   * Причина живёт в закрытом списке, а не броском исключения и не проверкой в
+   * сервисе: ответ пользователю обязан нести причину ИЗ ЭТОГО списка, и второй
+   * источник отказов рядом с ним — та же болезнь, что «net» у снов (#1425).
+   */
+  | 'promo_not_single_use';
 
 /** Запись в журнал смен — append-only, пишется только при успехе. */
 export interface TariffChangeLogEntry {
@@ -111,6 +122,11 @@ export function decideTransition(
 
   if (request.proofType === 'promo') {
     if (!promo) return deny('promo_target_mismatch');
+    // ЦЕЛОСТНОСТЬ КОДА — ПЕРВОЙ в промо-группе. Если код выпущен не по норме,
+    // ни один следующий вердикт о нём не осмыслен: «просрочен» или «уже погашен»
+    // сказанные про многоразовый код описывали бы состояние, которого нет в
+    // замысле. Порядок несущий, а не косметический.
+    if (promo.maxRedemptions !== 1) return deny('promo_not_single_use');
     if (promo.status === 'revoked') return deny('promo_revoked');
     if (promo.status === 'spent' || promo.redeemedCount >= promo.maxRedemptions) {
       return deny('promo_already_redeemed');
