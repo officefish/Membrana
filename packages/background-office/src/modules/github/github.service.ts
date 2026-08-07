@@ -23,16 +23,18 @@ const MAX_TICKET_CHARS = 20_000;
  *
  * Чистый предикат: проверяется без Octokit.
  */
+export function isMechanismBranch(headRef: string, branchPrefix: string): boolean {
+  const head = `${branchPrefix}-`;
+  if (!headRef.startsWith(head)) return false;
+  const stamp = headRef.slice(head.length);
+  return stamp.length > 0 && /^\d+$/.test(stamp);
+}
+
 export function findDuplicateByBranchPrefix<T extends { number: number; headRef: string }>(
   openPrs: readonly T[],
   branchPrefix: string,
 ): T | undefined {
-  const head = `${branchPrefix}-`;
-  return openPrs.find((pr) => {
-    if (!pr.headRef.startsWith(head)) return false;
-    const stamp = pr.headRef.slice(head.length);
-    return stamp.length > 0 && /^\d+$/.test(stamp);
-  });
+  return openPrs.find((pr) => isMechanismBranch(pr.headRef, branchPrefix));
 }
 
 export interface GhIssueShape {
@@ -168,7 +170,9 @@ export class GithubService {
   async listRecentPullRequestsByLabel(
     label: string,
     limit = 10,
-  ): Promise<{ number: number; title: string; state: string; merged: boolean; closedAt: string | null }[]> {
+  ): Promise<
+    { number: number; title: string; state: string; merged: boolean; closedAt: string | null; headRef: string }[]
+  > {
     const octokit = await this.getOctokit();
     const res = await octokit.rest.pulls.list({
       owner: this.owner,
@@ -187,6 +191,7 @@ export class GithubService {
         state: pr.state ?? 'unknown',
         merged: pr.merged_at !== null && pr.merged_at !== undefined,
         closedAt: pr.closed_at ?? null,
+        headRef: pr.head.ref,
       }));
   }
 

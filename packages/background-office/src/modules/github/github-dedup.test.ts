@@ -7,9 +7,26 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { findDuplicateByBranchPrefix } from './github.service';
+import { findDuplicateByBranchPrefix, isMechanismBranch } from './github.service';
 
 const pr = (number: number, headRef: string) => ({ number, headRef });
+
+/**
+ * Тот же предикат держит и карантин ночного триажа: метки для отбора «своих» PR не хватает —
+ * её может нести чужой PR (хоть ручной разбор механизма), и его закрытие поставило бы
+ * механизму ложный карантин.
+ */
+describe('isMechanismBranch', () => {
+  it('своя ветка механизма — префикс, дефис, метка времени', () => {
+    expect(isMechanismBranch('claude/night-triage-1785886201230', 'claude/night-triage')).toBe(true);
+  });
+
+  it('ручная ветка про тот же предмет своей не считается', () => {
+    expect(isMechanismBranch('fix/night-triage-publication-threshold', 'claude/night-triage')).toBe(false);
+    expect(isMechanismBranch('claude/night-triage-manual', 'claude/night-triage')).toBe(false);
+    expect(isMechanismBranch('claude/night-triage', 'claude/night-triage')).toBe(false);
+  });
+});
 
 describe('findDuplicateByBranchPrefix', () => {
   it('ловит открытый PR ночного триажа, хотя заголовки ночей разные', () => {

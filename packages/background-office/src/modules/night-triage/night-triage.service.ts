@@ -4,7 +4,7 @@ import { APP_CONFIG } from '../../config/config.tokens';
 import type { AppConfig } from '../../config/env.schema';
 import { ClaudeService } from '../claude/claude.service';
 import { DeepSeekService } from '../deepseek/deepseek.service';
-import { GithubService } from '../github/github.service';
+import { GithubService, isMechanismBranch } from '../github/github.service';
 import {
   buildTriageSnapshot,
   DEFAULT_STALE_THRESHOLD_DAYS,
@@ -19,6 +19,12 @@ import { findSecrets } from './night-triage-secret-guard';
 const REGISTRY_PATH = 'docs/tasks/registry.json';
 /** Экспортирован ради зубов: путь не должен жить копией в стабе — иначе переезд каталога тихо разъедется с проверкой. */
 export const REPORT_DIR = 'docs/reports/night-triage';
+/**
+ * Префикс ветки механизма — ОДИН на обе заслонки: дедуп открытых PR и карантин после
+ * отвергнутого выхода. Две копии этого литерала разъехались бы, и одна из заслонок начала
+ * бы судить не о своём механизме.
+ */
+const BRANCH_PREFIX = 'claude/night-triage';
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
@@ -105,13 +111,24 @@ export class NightTriageService {
    * маркера 07.08). На `null` порог обязан ПРОПУСКАТЬ: «основания нет» ≠ «дельта нулевая».
    */
   private async lastLandedFingerprint(): Promise<string | null> {
-    const files = await this.github.listDirectoryFiles(REPORT_DIR);
-    if (!files || files.length === 0) return null;
-    // Имена вида NIGHT_TRIAGE_YYYY-MM-DD.md — лексикографический максимум и есть свежайший.
-    const newest = files.filter((f) => f.startsWith('NIGHT_TRIAGE_') && f.endsWith('.md')).sort().pop();
-    if (!newest) return null;
-    const text = await this.github.fetchTextFile(`${REPORT_DIR}/${newest}`);
-    return text ? extractFingerprint(text) : null;
+    // Сетевой сбой здесь — тоже «основания для сравнения нет»: порог обязан пропускать, а
+    // не валить прогон. Иначе транзиентный таймаут GitHub становился бы отказом публикации,
+    // то есть заслонка отвечала бы на помеху связи, а не на отсутствие новизны.
+    try {
+      const files = await this.github.listDirectoryFiles(REPORT_DIR);
+      if (!files || files.length === 0) return null;
+      // Имена вида NIGHT_TRIAGE_YYYY-MM-DD.md — лексикографический максимум и есть свежайший.
+      const newest = files.filter((f) => f.startsWith('NIGHT_TRIAGE_') && f.endsWith('.md')).sort().pop();
+      if (!newest) return null;
+      const text = await this.github.fetchTextFile(`${REPORT_DIR}/${newest}`);
+      return text ? extractFingerprint(text) : null;
+    } catch (err) {
+      this.logger.warn(
+        { reason: err instanceof Error ? err.message : String(err) },
+        'night-triage: последний доставленный отчёт не прочитан — порог нулевой дельты пропускает',
+      );
+      return null;
+    }
   }
 
   /**
@@ -131,8 +148,12 @@ export class NightTriageService {
     const nights = this.rejectCooldownNights();
     if (nights === 0) return null;
 
-    const recent = await this.github.listRecentPullRequestsByLabel('night-triage', 5);
-    const previous = recent.find((pr) => pr.state !== 'open');
+    // Метки НЕ достаточно: `night-triage` может нести и чужой PR — хоть ручной разбор
+    // самого механизма, — и его закрытие поставило бы механизму ложный карантин. Отбор
+    // идёт по тому же ключу, что и дедуп: ветка, которую механизм строит сам.
+    const recent = await this.github.listRecentPullRequestsByLabel('night-triage', 10);
+    const own = recent.filter((pr) => isMechanismBranch(pr.headRef, BRANCH_PREFIX));
+    const previous = own.find((pr) => pr.state !== 'open');
     if (!previous || previous.merged || !previous.closedAt) return null;
 
     const closedAt = Date.parse(previous.closedAt);
@@ -208,7 +229,7 @@ export class NightTriageService {
       }
 
       const prResult = await this.github.createPullRequestWithFile({
-        branchPrefix: 'claude/night-triage',
+        branchPrefix: BRANCH_PREFIX,
         baseBranch: this.baseBranch(),
         title: `Night triage ${date}`,
         body: [

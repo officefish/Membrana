@@ -11,7 +11,17 @@ const REGISTRY = JSON.stringify({
   ],
 });
 
-type RecentPr = { number: number; title: string; state: string; merged: boolean; closedAt: string | null };
+type RecentPr = {
+  number: number;
+  title: string;
+  state: string;
+  merged: boolean;
+  closedAt: string | null;
+  headRef: string;
+};
+
+/** Ветка, которую механизм строит сам: префикс, дефис, метка времени. */
+const ownBranch = (stamp = '1785886201230') => `claude/night-triage-${stamp}`;
 
 function makeService(over: {
   enabled?: boolean;
@@ -216,7 +226,7 @@ describe('NightTriageService.run — порог публикации', () => {
   it('предыдущий PR закрыт без мерджа → карантин, PR не создаётся и LLM не жжётся', async () => {
     const { svc, createPR, claudeAsk } = makeService({
       llm: true,
-      recentPrs: [{ number: 1720, title: 'Night triage', state: 'closed', merged: false, closedAt: '2026-07-10T00:00:00Z' }],
+      recentPrs: [{ number: 1720, title: 'Night triage', state: 'closed', merged: false, closedAt: '2026-07-10T00:00:00Z', headRef: ownBranch() }],
     });
     const r = await svc.run(NOW);
     expect(r.skipped).toBe(true);
@@ -228,7 +238,7 @@ describe('NightTriageService.run — порог публикации', () => {
 
   it('предыдущий PR влит → карантина нет, публикует', async () => {
     const { svc, createPR } = makeService({
-      recentPrs: [{ number: 1152, title: 'Night triage', state: 'closed', merged: true, closedAt: '2026-07-10T00:00:00Z' }],
+      recentPrs: [{ number: 1152, title: 'Night triage', state: 'closed', merged: true, closedAt: '2026-07-10T00:00:00Z', headRef: ownBranch() }],
     });
     const r = await svc.run(NOW);
     expect(r.prUrl).toBe('https://gh/pr/1');
@@ -237,7 +247,7 @@ describe('NightTriageService.run — порог публикации', () => {
 
   it('карантин истёк по времени → механизм размыкается сам, без ручного мерджа', async () => {
     const { svc, createPR } = makeService({
-      recentPrs: [{ number: 1720, title: 'Night triage', state: 'closed', merged: false, closedAt: '2026-07-01T00:00:00Z' }],
+      recentPrs: [{ number: 1720, title: 'Night triage', state: 'closed', merged: false, closedAt: '2026-07-01T00:00:00Z', headRef: ownBranch() }],
     });
     const r = await svc.run(NOW); // 11 ночей спустя при карантине 7
     expect(createPR).toHaveBeenCalled();
@@ -247,15 +257,52 @@ describe('NightTriageService.run — порог публикации', () => {
   it('карантин 0 снимает заслонку явно', async () => {
     const { svc, createPR } = makeService({
       cooldownNights: '0',
-      recentPrs: [{ number: 1720, title: 'Night triage', state: 'closed', merged: false, closedAt: '2026-07-11T00:00:00Z' }],
+      recentPrs: [{ number: 1720, title: 'Night triage', state: 'closed', merged: false, closedAt: '2026-07-11T00:00:00Z', headRef: ownBranch() }],
     });
     await svc.run(NOW);
     expect(createPR).toHaveBeenCalled();
   });
 
+  it('чужой закрытый PR с той же меткой карантина НЕ заводит: судится только своя ветка', async () => {
+    const { svc, createPR } = makeService({
+      recentPrs: [
+        // Ручной разбор самого механизма: метка та же, ветка чужая. Закрытие такого PR
+        // прежде поставило бы механизму карантин ни за что.
+        { number: 1768, title: 'разбор триажа', state: 'closed', merged: false, closedAt: '2026-07-11T00:00:00Z', headRef: 'fix/night-triage-publication-threshold' },
+      ],
+    });
+    const r = await svc.run(NOW);
+    expect(createPR).toHaveBeenCalled();
+    expect(r.prUrl).toBe('https://gh/pr/1');
+  });
+
+  it('свой отвергнутый PR находится и за чужими: отбор по ветке, не по позиции в списке', async () => {
+    const { svc, createPR } = makeService({
+      recentPrs: [
+        { number: 1768, title: 'разбор', state: 'closed', merged: false, closedAt: '2026-07-11T00:00:00Z', headRef: 'fix/night-triage-x' },
+        { number: 1720, title: 'Night triage', state: 'closed', merged: false, closedAt: '2026-07-11T00:00:00Z', headRef: ownBranch() },
+      ],
+    });
+    const r = await svc.run(NOW);
+    expect(r.skipped).toBe(true);
+    expect(r.reason).toContain('#1720');
+    expect(createPR).not.toHaveBeenCalled();
+  });
+
+  it('чтение доставленного отчёта упало → порог пропускает, прогон не валится', async () => {
+    const { svc, createPR } = makeService({});
+    // Каталог отчётов отвечает ошибкой сети — это «основания нет», а не «дельта нулевая».
+    (svc as unknown as { github: { listDirectoryFiles: unknown } }).github.listDirectoryFiles = async () => {
+      throw new Error('502 bad gateway');
+    };
+    const r = await svc.run(NOW);
+    expect(r.ok).toBe(true);
+    expect(createPR).toHaveBeenCalled();
+  });
+
   it('открытый PR карантина не заводит — это дело дедупа', async () => {
     const { svc, createPR } = makeService({
-      recentPrs: [{ number: 1760, title: 'Night triage', state: 'open', merged: false, closedAt: null }],
+      recentPrs: [{ number: 1760, title: 'Night triage', state: 'open', merged: false, closedAt: null, headRef: ownBranch() }],
     });
     await svc.run(NOW);
     expect(createPR).toHaveBeenCalled();
