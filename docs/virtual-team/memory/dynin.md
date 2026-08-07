@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14399/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 260 (причины в op-log) -->
+Записей: 48 · бюджет 14398/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 261 (причины в op-log) -->
+
+### 2026-08-07 · позиция · team-evening-feedback
+
+> Дынин. Оценка артефактов: в `DAILY_CODE_REVIEW` мой блок «—» — честно, чистых функций дня не касались; `MAIN_DAY_ISSUE` корректно вынес посылки в таблицу holds/маркер — предикатная форма соблюдена. Итоги дня: по моей зоне (FFT/вейвлеты/детекторы) — движения ноль; красный CI трёх […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-07.md#reply-1`
 
 ### 2026-08-06 · позиция · team-evening-feedback
 
@@ -284,14 +290,8 @@
 
 — источник: `docs/seanses/sprint-honest-m1-performer-2026-07-29.md#reply-1`
 
-### 2026-07-29 · позиция · tariff-grid-m0-order
+### 2026-07-29 · позиция · tariff-grid-m3-tri
 
-> Предикат ребра фиксирую как в bridge/memory M0: ребро A→B ⇔ область определения вопроса B содержит переменную, которую задаёт ответ A. Не runtime-порядок скриптов и не «удобно обсуждать рядом». Кандидаты V={F, O3, R, P, M2, I, C, T}: F форма; O3 три исхода; R отношение к рельсу; […] _(реплик в сеансе: 6)_
+> Формализую без UI. Из M1: `resolveEntitlement(grid, sku, id) → { status, payload, unmetPreconditions[] }`, status ∈ {entitled, not_entitled}. Третий исход не обязан быть третьим enum-значением status: он уже выразим как `status = entitled ∧ unmetPreconditions ≠ ∅`. Предикат […] _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/tariff-grid-m0-order-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** Математического ядра (FFT/вейвлеты/спектр) за день не было — day-plan и ревью это фиксируют. **Итоги дня:** Чисто продуктовый день — tariff-grid, network, ship. Для математика вклад: предикаты квот (S4) — исчерпание как fail-closed; предикат готовности […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-29.md#reply-1`
+— источник: `docs/seanses/tariff-grid-m3-tri-2026-07-29.md#reply-1`

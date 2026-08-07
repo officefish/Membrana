@@ -12,3 +12,7 @@
 {"ts":"2026-08-07T12:58:57.148Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-07T12:58:35.552Z","origin":"ask-persona"}
 {"ts":"2026-08-07T12:58:57.149Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-22-ritual-day-frames-m2-wiring-rank","reason":"там я формализовал «переход между шагами очереди» через предикат-гейт wired(env) → {pass, block, evidence} как чистую проверку окружения. Форма ровно та же: смена тарифа — это гейт-функция без побочек, с явным evidence.","origin":"ask-persona"}
 {"ts":"2026-08-07T12:58:57.150Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-19-registry-relocation-m0-order","reason":"там ребро гейта фиксировалось как чистая функция без сети с детерминированным входом-снимком. Для tariff-transition это прямая аналогия: вход — снимок состояния кабинета на момент решения, не «живые» запросы.","origin":"ask-persona"}
+{"ts":"2026-08-07T16:25:04.850Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-07-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-07T16:25:04.850Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-tariff-grid-m0-order","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-07T16:25:04.850Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-07T16:25:04.850Z","persona":"dynin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
