@@ -1,23 +1,21 @@
-<!-- Сгенерировано: 2026-08-06T05:33:02.791Z (yarn day:report; vesnin) -->
+<!-- Сгенерировано: 2026-08-07T06:46:20.498Z (yarn day:report; vesnin) -->
 
-# Доклад по задачам — 2026-08-06
+# Доклад по задачам — 2026-08-07
 
 Автор: Тимлид (vesnin) · зеркало 5-блочного плана дня.
 
 ## Магистраль
 
-- `agent-tooling-night-build` — ведёт vesnin
 - `detector-scoreboard` — ведёт vesnin
-- `archivarius-sessions-container` — ведёт dynin
+- #1647 — OPEN
 
 ## Подкрепление
 
-- `agent-tooling-night-build` — ведёт vesnin
+- #1647 — OPEN
 
 ## Перспективные
 
-- `agent-tooling-night-build` — ведёт vesnin
-- `detector-scoreboard` — ведёт vesnin
+- `media-library-a3-mic-recorder` — ведёт kuryokhin
 
 ## Экспериментальные
 
@@ -25,11 +23,6 @@
 
 ## Санитарные
 
-- #1 — MERGED
-- #8 — OPEN
-- #1613 — OPEN
-- #7 — OPEN
+- #1647 — OPEN
+- #1729 — MERGED
 - #1549 — CLOSED
-- #10 — OPEN
-- #3 — MERGED
-- #6 — MERGED

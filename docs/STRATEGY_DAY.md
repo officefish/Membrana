@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-08-06T05:28:06.824Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-08-07T06:25:09.035Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -73,7 +73,7 @@ _Кристаллов активно: 127 (owner: 81, derived: 46). Страте
 - ~~**Полная чистка реестра: 189 фаз носят githubIssue своего эпика**~~ — `insight:insight-registry-epic-issue-full-cleanup` _(stale · 2026-07-15)_
 - ~~**Research-tree как sprite-landscape (техника Bear 71, MIT)**~~ — `insight:insight-research-tree-sprite-landscape` _(stale · 2026-07-17)_
 - ~~**SearXNG — приватный keyless веб-поиск для агентов**~~ — `insight:insight-mcp-searxng-private-search` _(stale · 2026-06-27)_
-- **Борд состояния сети в харнес-панели (здоровье N серверов)** — `insight:insight-network-status-board`
+- ~~**Борд состояния сети в харнес-панели (здоровье N серверов)**~~ — `insight:insight-network-status-board` _(stale · 2026-07-24)_
 - **Паттерн «Воспоминание» — как персона копит опыт** — `insight:insight-persona-recollection-pattern`
 - ~~**Лендинг через челлендж — проба стратегических исходников в бою (Replit как кисть, Ожегов как судья)**~~ — `insight:insight-landing-challenge-sources-in-battle` _(stale · 2026-07-17)_
 - ~~**Формат разработки one shot: подобранная S-проблема за один проход, процедура во фреймах**~~ — `insight:insight-one-shot-format` _(stale · 2026-07-23)_
