@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-08-07T06:46:20.498Z (yarn day:report; vesnin) -->
+<!-- Сгенерировано: 2026-08-07T10:28:10.621Z (yarn day:report; vesnin) -->
 
 # Доклад по задачам — 2026-08-07
 
@@ -6,16 +6,18 @@
 
 ## Магистраль
 
-- `detector-scoreboard` — ведёт vesnin
-- #1647 — OPEN
+- `tariff-promo-server-wiring` — ведёт vesnin
 
 ## Подкрепление
 
-- #1647 — OPEN
+— задач со ссылками нет (темы блока — в каноне дня) —
 
 ## Перспективные
 
 - `media-library-a3-mic-recorder` — ведёт kuryokhin
+- `archivarius-sessions-container` — ведёт dynin
+- #1647 — OPEN
+- #1714 — OPEN
 
 ## Экспериментальные
 
