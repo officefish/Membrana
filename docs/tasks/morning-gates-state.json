@@ -1,16 +1,9 @@
 {
   "magistralOptions": [
-    "detectors-ci-red-verdict",
-    "agent-tooling-night-build",
-    "detector-scoreboard"
+    "tariff-promo-server-wiring"
   ],
-  "frozenDigest": "c8e335a567af662d6b9d4b3c6bca946edb4bdd6cb881d5955b4d81f1390dedc3",
-  "magistral": "agent-tooling-night-build",
-  "swallow": {
-    "draftDigest": "ed4628ff61b49eda4f1b3c6da571ebcc73645b799ecd7add2c09bcc191ed38bc",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-06.md",
-    "ownerAck": true,
-    "gate": "evening:partner-swallow"
-  },
-  "day": "2026-08-06"
+  "frozenDigest": "cde961305573025d91d02e5808dc470fd06fc552baac4332e6ab9a90ba3ed761",
+  "magistral": "tariff-promo-server-wiring",
+  "swallow": null,
+  "day": "2026-08-07"
 }

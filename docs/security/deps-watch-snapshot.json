@@ -1,5 +1,5 @@
 {
-  "date": "2026-08-06",
+  "date": "2026-08-07",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -280,6 +280,20 @@
       "severity": "moderate",
       "issue": "ip-address: misclassification of IPv4-mapped/NAT64 IPv6 addresses can bypass SSRF and trust-boundary checks",
       "url": "https://github.com/advisories/GHSA-22jq-vg5j-6vgg"
+    },
+    {
+      "pkg": "js-yaml",
+      "id": "1138114",
+      "severity": "high",
+      "issue": "JS-YAML: Quadratic CPU consumption in !!omap resolution (3.x and 4.x) — CVE-2026-59870 fix not backported",
+      "url": "https://github.com/advisories/GHSA-5p4m-2wfm-xmqj"
+    },
+    {
+      "pkg": "js-yaml",
+      "id": "1138115",
+      "severity": "high",
+      "issue": "JS-YAML: Quadratic CPU consumption in !!omap resolution (3.x and 4.x) — CVE-2026-59870 fix not backported",
+      "url": "https://github.com/advisories/GHSA-5p4m-2wfm-xmqj"
     },
     {
       "pkg": "lodash",
