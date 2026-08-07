@@ -55,8 +55,11 @@ export function parseRestampArgs(argv) {
  * @returns {string[]}
  */
 function planFiles(dir) {
-  return readdirSync(dir)
-    .filter((f) => f.endsWith('.json'))
+  // `withFileTypes` — чтобы каталог с именем на `.json` не уехал в список планов молча
+  // и не свалил прогон на `readFileSync` от каталога.
+  return readdirSync(dir, { withFileTypes: true })
+    .filter((e) => e.isFile() && e.name.endsWith('.json'))
+    .map((e) => e.name)
     .sort();
 }
 
