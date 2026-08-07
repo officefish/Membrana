@@ -20,6 +20,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `swallow-own-moment` | Ласточка получает свой момент: развести state.day с evening-gate | S | [`SWALLOW_OWN_MOMENT_PROMPT.md`](../prompts/SWALLOW_OWN_MOMENT_PROMPT.md) | — |
+| `morning-gates-two-moments` | Гейты утра: два момента вместо одного day — реализация ADR-0024 | S | [`MORNING_GATES_TWO_MOMENTS_PROMPT.md`](../prompts/MORNING_GATES_TWO_MOMENTS_PROMPT.md) | — |
 | `delivery-predicates-honest` | Три предиката контура доставки: ролап против объявленного, момент выбора магистрали, порядок шагов pr-land | M | [`DELIVERY_PREDICATES_HONEST_PROMPT.md`](../prompts/DELIVERY_PREDICATES_HONEST_PROMPT.md) | [#1764](https://github.com/officefish/Membrana/issues/1764) |
 | `tariff-promo-server-wiring` | Выбор тарифа на сервере и открытие по промокоду: провести готовый домен до сервера и клиента | M | [`TARIFF_PROMO_SERVER_WIRING_PROMPT.md`](../prompts/TARIFF_PROMO_SERVER_WIRING_PROMPT.md) | [#1761](https://github.com/officefish/Membrana/issues/1761) |
 | `pr-ship-post-merge-landing` | pr:ship после мерджа: дерево на своей ветке вровень со стволом, а не на main | M | [`PR_SHIP_POST_MERGE_LANDING_PROMPT.md`](../prompts/PR_SHIP_POST_MERGE_LANDING_PROMPT.md) | [#1759](https://github.com/officefish/Membrana/issues/1759) |

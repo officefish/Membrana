@@ -1,0 +1,2 @@
+{"traceId":"tr-moments-ozhegov-run","blockId":"magistral-own-moment","kind":"context_run","subject":"ozhegov","at":"2026-08-07T14:02:00+03:00","ref":"docs/virtual-team/memory/op-log/ozhegov/2026-08-07.jsonl"}
+{"traceId":"tr-moments-ozhegov-review","blockId":"magistral-own-moment","kind":"review_pass","subject":"ozhegov","at":"2026-08-07T14:18:00+03:00","ref":"scripts/morning-gates.test.mjs"}

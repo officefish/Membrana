@@ -21,6 +21,8 @@ import {
   draftDigestOf,
   freezeTopThree,
   magistralChosen,
+  magistralMoment,
+  setMagistralMoment,
   swallowApproved,
   todayIso,
 } from './lib/morning-gates.mjs';
@@ -48,7 +50,10 @@ const state = load();
 if (cmd === 'status' || !cmd) {
   const gate = canSend(state, today);
   console.log(`day:      ${state.day ?? '—'} (сегодня ${today}${state.day && state.day !== today ? ' — ПРОТУХЛО' : ''})`);
-  console.log(`magistral: ${magistralChosen(state, today) ? `выбран «${state.magistral}»` : 'ждёт owner-choice'}`);
+  // Момент магистрали печатается ОТДЕЛЬНО от дня ласточки (ADR-0024): раньше status
+  // докладывал вчерашний выбор как сегодняшний, потому что смотрел на общий state.day.
+  const mAt = magistralMoment(state);
+  console.log(`magistral: ${magistralChosen(state, today) ? `выбран «${state.magistral}»` : mAt ? `ПРОТУХ — выбор от ${mAt}, сегодня нужен заново` : 'ждёт owner-choice'}${mAt ? ` (момент ${mAt})` : ''}`);
   console.log(`swallow:   ${swallowApproved(state, today) ? 'ок владельца получен' : 'ждёт (черновик + «ок»)'}`);
   console.log(gate.ok ? 'canSend: TRUE — отправка разрешена' : `canSend: false — ${gate.blockedBy.join(' · ')}`);
   process.exitCode = gate.ok ? 0 : 3;
@@ -69,8 +74,10 @@ if (cmd === 'status' || !cmd) {
     process.exitCode = 2;
   } else {
     state.magistral = choice;
-    // day мог отсутствовать у старого файла — без сегодняшнего дня выбор не «живой»
-    if (!state.day) state.day = today;
+    // Р1/Р3 ADR-0024: выбор магистрали ставит СВОЙ момент и не трогает день ласточки.
+    // Прежняя строка поднимала общий `state.day`, если его не было, — то есть писала
+    // в чужой субъект ради своей свежести.
+    setMagistralMoment(state, today);
     if (!magistralChosen(state, today)) {
       console.error(
         `✖ «${choice}» ∉ замороженного снимка сегодня (${(state.magistralOptions ?? []).join(', ') || 'снимка нет — сначала freeze'}) — гейт закрыт`,
@@ -107,6 +114,8 @@ if (cmd === 'status' || !cmd) {
         console.error('Шаблон: yarn morning:gate swallow --skeleton');
         process.exitCode = 3;
       } else {
+        // TODO(ADR-0024): swallowMoment на state.day до разведения с evening-gate
+        // (scripts/evening-gate.mjs:64 читает то же поле). Наследник — swallow-own-moment.
         state.day = today; // новый черновик = сегодняшний след (#1233)
         state.swallow = {
           ...(state.swallow ?? {}),

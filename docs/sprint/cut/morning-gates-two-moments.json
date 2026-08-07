@@ -1,0 +1,37 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "morning-gates-two-moments",
+  "taskId": "morning-gates-two-moments",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "//why": "Реализация ADR-0024 (ACCEPTED 07.08, LGTM владельца). Долг #gates-state-magistral-carryover: одно поле day обслуживает два гейта с независимыми жизнями, и swallow --draft делает вчерашний owner-choice сегодняшним. Один блок: предмет узкий, дробить нечего — предикат, писатель момента и зубы лежат в одной паре файлов.",
+  "//form-correction": "ПОПРАВКА К ЗАМЫСЛУ ADR, найденная при обзоре кода. ADR предполагал два новых момента (magistral.chosenAt и swallow.day) взамен общего state.day. Обзор показал связь, которой решение не предвидело: scripts/evening-gate.mjs:64 ЧИТАЕТ тот же state.day — файл состояния docs/tasks/morning-gates-state.json общий у утра и вечера (EVENING_GATES_STATE_REL). Вечерний гейт ADR объявил вне границ, значит ломать его нельзя. Форма уточняется: swallow ОСТАЁТСЯ на state.day (его читает вечер), магистраль получает СОБСТВЕННЫЙ момент magistralChosenAt. Дефект это чинит полностью — предикат магистрали перестаёт зависеть от общего дня, — а радиус правки минимален. Решения Р1-Р4 соблюдены по существу: моментов два, каждый предикат сверяет свой, ни один шаг не поднимает чужой, старое состояние без magistralChosenAt читается как «момент магистрали неизвестен» и требует сегодняшнего выбора.",
+  "//not-touched": "scripts/evening-gate.mjs и вечерний контур — вне границ по ADR-0024. Гейт «магистраль-кандидат уже в архиве?» и вещдок согласия владельца (ownerAck литералом) — соседние предметы, названы в out of scope самого ADR.",
+  "//window": "Окно по факту старта 13:40, не круглым числом (ловушка 05.08: объявленное «18:40» при старте 18:33 дало plan_lied).",
+  "window": {
+    "from": "2026-08-07T13:40:00+03:00",
+    "to": "2026-08-07T19:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "magistral-own-moment",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/lib/morning-gates.mjs",
+        "scripts/morning-gate.mjs",
+        "scripts/morning-gates.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionAt": "2026-08-07T13:25:34+03:00",
+      "revisionOf": "44cdb3a1d8f313e665a3a4dad3a7e63bbaf446d1efcee0529410f1c12fe8e738"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-07T13:25:34+03:00",
+    "digest": "18e7c889bfb5dc02a97a894e14470d8808cddb5139d470e4cd28625c8687e3e4"
+  }
+}
