@@ -29,6 +29,15 @@ COPY scripts/lib/llm-procedures.json \
      scripts/lib/strategy-horizon.mjs \
      scripts/lib/truth-graph.mjs \
      scripts/lib/
+# Классификатор исхода контейнера network (#1449) — с 07.08 его импортирует
+# dreams-tick.mjs вместо llm-probe. Чист и самодостаточен: ни одного импорта,
+# поэтому одного файла довольно. Без этой строки образ соберётся, а сны на проде
+# умрут на MODULE_NOT_FOUND — 12 синтезов из 12 стали бы нулём.
+COPY scripts/network/lib/classify.mjs scripts/network/lib/classify.mjs
+# llm-probe.mjs больше не импортируется ничем из копируемого выше; строка
+# оставлена сознательно — снятие необратимо и проверяется только сборкой образа.
+# Корень (поимённый манифест дублирует граф импортов и молча с ним расходится)
+# назван Тарасовым при прогоне контекста и записан долгом #dockerfile-copy-manifest-drifts.
 COPY scripts/llm-probe.mjs scripts/llm-probe.mjs
 
 RUN yarn workspaces focus @membrana/background-office --all \

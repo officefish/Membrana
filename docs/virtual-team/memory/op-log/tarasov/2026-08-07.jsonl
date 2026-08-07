@@ -1,1 +1,4 @@
 {"ts":"2026-08-07T07:01:50.633Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-07T12:05:25.018Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-07T12:05:05.636Z","origin":"ask-persona"}
+{"ts":"2026-08-07T12:05:25.021Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-07T12:05:05.636Z","origin":"ask-persona"}
+{"ts":"2026-08-07T12:05:25.021Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-06-18-deploy-process-mp7b-postmortem","reason":"там ровно эта болезнь: расхождение источников истины между «что в репе» и «что в образе». Поимённый COPY — та же природа: локально работает, в контейнере нет, потому что список файлов ведётся руками.","origin":"ask-persona"}

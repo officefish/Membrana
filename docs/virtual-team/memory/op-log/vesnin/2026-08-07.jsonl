@@ -3,3 +3,5 @@
 {"ts":"2026-08-07T09:09:27.989Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-07T09:09:04.043Z","origin":"ask-persona"}
 {"ts":"2026-08-07T09:09:27.990Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-30-sprint-honest-m3-contract-review","reason":"тот же вопрос: предикат должен смотреть на объявленное множество и в правильный момент, а не на удобный. Здесь трижды одна и та же ошибка формы.","origin":"ask-persona"}
 {"ts":"2026-08-07T09:09:27.991Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-08-03-one-shot-manifest-m0-order","reason":"единица шота определяется фреймами: границы блоков A/B/C оправданы, если у каждого своя единица (множество / момент / порядок).","origin":"ask-persona"}
+{"ts":"2026-08-07T11:57:55.393Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-07T11:57:36.375Z","origin":"ask-persona"}
+{"ts":"2026-08-07T11:57:55.403Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-07T11:57:36.375Z","origin":"ask-persona"}
