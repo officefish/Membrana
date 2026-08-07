@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `dreams-net-label-lies` | Сны метят HTTP-404 и отсутствие ключа как сетевой отказ: подключить классификатор контейнера network | S | [`DREAMS_NET_LABEL_LIES_PROMPT.md`](../prompts/DREAMS_NET_LABEL_LIES_PROMPT.md) | [#1425](https://github.com/officefish/Membrana/issues/1425) |
 | `swallow-own-moment` | Ласточка получает свой момент: развести state.day с evening-gate | S | [`SWALLOW_OWN_MOMENT_PROMPT.md`](../prompts/SWALLOW_OWN_MOMENT_PROMPT.md) | — |
 | `morning-gates-two-moments` | Гейты утра: два момента вместо одного day — реализация ADR-0024 | S | [`MORNING_GATES_TWO_MOMENTS_PROMPT.md`](../prompts/MORNING_GATES_TWO_MOMENTS_PROMPT.md) | — |
 | `delivery-predicates-honest` | Три предиката контура доставки: ролап против объявленного, момент выбора магистрали, порядок шагов pr-land | M | [`DELIVERY_PREDICATES_HONEST_PROMPT.md`](../prompts/DELIVERY_PREDICATES_HONEST_PROMPT.md) | [#1764](https://github.com/officefish/Membrana/issues/1764) |

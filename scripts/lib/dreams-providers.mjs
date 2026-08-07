@@ -8,8 +8,12 @@
 export const DREAM_PROVIDER_ROUTES = Object.freeze({
   deepseek: { channel: 'deepseek' },
   perplexity: { channel: 'openrouter', model: 'perplexity/sonar' },
-  grok: { channel: 'openrouter', model: 'x-ai/grok-4-fast' },
-  gemini: { channel: 'openrouter', model: 'google/gemini-2.0-flash-001' },
+  // Обе модели заменены 07.08 по ответу самого OpenRouter на проде:
+  // `x-ai/grok-4-fast` → HTTP 404 «Grok 4 Fast is deprecated» (xAI назвал преемником
+  // grok-4.3); `google/gemini-2.0-flash-001` → HTTP 404 «No endpoints found».
+  // Живость новых id сверена с https://openrouter.ai/api/v1/models в тот же день.
+  grok: { channel: 'openrouter', model: 'x-ai/grok-4.3' },
+  gemini: { channel: 'openrouter', model: 'google/gemini-3.5-flash' },
 });
 
 /**

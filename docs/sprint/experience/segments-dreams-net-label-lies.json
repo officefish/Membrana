@@ -1,0 +1,11 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "dreams-net-label-lies",
+  "forTask": "dreams-net-label-lies — сны метили три разных рода отказа одним «net»: строка 10 десятки 07.08",
+  "note": "Замер снят git diff --numstat HEAD по зонам блоков: insertions + deletions. Не оценка и не пересказ — измерение.",
+  "measuredAt": "2026-08-07T15:32:00+03:00",
+  "segments": [
+    { "cutBlockId": "classifier-swap", "changedLines": 191 },
+    { "cutBlockId": "image-delivery", "changedLines": 9 }
+  ]
+}

@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "dreams-net-label-lies",
+      "title": "Сны метят HTTP-404 и отсутствие ключа как сетевой отказ: подключить классификатор контейнера network",
+      "promptPath": "docs/prompts/DREAMS_NET_LABEL_LIES_PROMPT.md",
+      "githubIssue": 1425,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-07",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Шот 07.08 остановлен собственным гейтом: доставка требует строки COPY в packages/background-office/Dockerfile (серверный путь). Код по scripts/ дописан и зелёный до перевода в спринт.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "insightId": "Исходящий маршрут к LLM жив с 05.08 (24/24 синтеза 06.08, 12/12 07.08). Три провайдера падают не по сети: deepseek — DEEPSEEK_API_KEY missing, grok — HTTP 404 модель снята, gemini — HTTP 404 нет эндпоинтов. classifyOutcome (llm-probe.mjs:163) имеет catch-all return 'net' для любой строки ошибки и склеивает три рода в один. Верный классификатор построен под #1449 (scripts/network/lib/classify.mjs, инвариант «ответил статусом — транспорт работает»), но подключён только внутри своего контейнера; dreams-tick.mjs:7 импортирует старый"
+    },
+    {
       "id": "swallow-own-moment",
       "title": "Ласточка получает свой момент: развести state.day с evening-gate",
       "promptPath": "docs/prompts/SWALLOW_OWN_MOMENT_PROMPT.md",
