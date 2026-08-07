@@ -16,3 +16,6 @@
 {"ts":"2026-08-06T13:47:43.866Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-21-procedural-layer-m3-boundary-manual","reason":"тогда мы уже проводили ту же линию: контейнер процедуры без собственного кода, границы оправданы ролью, а не удобством вызова. lazyCloseScope — продолжение той же оси: область закрытия — атрибут роли процедуры в системе, а не деталь реализации записи.","origin":"ask-persona"}
 {"ts":"2026-08-06T13:02:55.873Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-06T13:02:48.039Z","origin":"ask-persona"}
 {"ts":"2026-08-06T13:02:55.875Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-06T13:02:48.039Z","origin":"ask-persona"}
+{"ts":"2026-08-06T15:37:40.374Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-06-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-06T15:37:40.374Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-29-tariff-grid-m1-form","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-06T15:37:40.374Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}

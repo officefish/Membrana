@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "pr-ship-post-merge-landing",
+      "title": "pr:ship после мерджа: дерево на своей ветке вровень со стволом, а не на main",
+      "promptPath": "docs/prompts/PR_SHIP_POST_MERGE_LANDING_PROMPT.md",
+      "githubIssue": 1759,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-06",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Девять срабатываний класса за 10 дней: пять укусов 28.07 (повод флага --keep-branch) + четыре 06.08. Умолчание pr:ship противоречит норме утра (держатель main = находка, #1232). Три слоя лечения в теле #1759; третий (спросить состояние одной командой) — самый дешёвый и недооценённый.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "lazy-close-scope",
       "title": "Ленивое закрытие журнала получает явную область: параллельные спринты не топят друг друга (#1705)",
       "promptPath": "docs/prompts/LAZY_CLOSE_SCOPE_PROMPT.md",
