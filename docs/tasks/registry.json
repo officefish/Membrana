@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "delivery-predicates-honest",
+      "title": "Три предиката контура доставки: ролап против объявленного, момент выбора магистрали, порядок шагов pr-land",
+      "promptPath": "docs/prompts/DELIVERY_PREDICATES_HONEST_PROMPT.md",
+      "githubIssue": 1764,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-07",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "dynin"
+      ],
+      "notes": "Строки 2,3,4 десятки 07.08 — один класс: предикат смотрит не на то множество/момент. Обзор в #1764: ожидаемые контексты УЖЕ объявлены в branch-protection-policy.json; одно поле day на два гейта; pr-land протухает свой же вердикт шагом merge+push. Правило «вердикт привязан к SHA» НЕ трогать — оно несущее.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "tariff-promo-server-wiring",
       "title": "Выбор тарифа на сервере и открытие по промокоду: провести готовый домен до сервера и клиента",
       "promptPath": "docs/prompts/TARIFF_PROMO_SERVER_WIRING_PROMPT.md",

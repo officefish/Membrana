@@ -1,1 +1,5 @@
 {"ts":"2026-08-07T07:01:50.474Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-07T09:25:50.710Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-07T09:25:30.730Z","origin":"ask-persona"}
+{"ts":"2026-08-07T09:25:50.713Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-07T09:25:30.730Z","origin":"ask-persona"}
+{"ts":"2026-08-07T09:25:50.714Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-14-agent-tooling-friction-2","reason":"там ровно тот же жанр: инструмент как обёртка над существующим, границы scripts/, запрет тянуть чужую работу внутрь; прямо ложится на вопрос «что pr-land делает сам, а что отдаёт».","origin":"ask-persona"}
+{"ts":"2026-08-07T09:25:50.714Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-08-01-evening-review-predicate-m3-volume-measure","reason":"там я разводил «мерку» и «агрегат»: та же операция нужна здесь для (2) — состояние выражается предикатом над SHA, а не булевым флагом «был ли merge».","origin":"ask-persona"}

@@ -11,6 +11,7 @@
  *   yarn task:pr-land <N> --execute --no-wait
  */
 import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -21,9 +22,16 @@ import {
   readPrChangedPaths,
   readPrHeadBranch,
   REGISTRY_JSON,
+  verdictFreshness,
+  formatVerdictRefusal,
 } from './lib/task-pr-land.mjs';
+import { parseVerdict } from './lib/review-gate.mjs';
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
+
+function gitHeadSha() {
+  return execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoRoot, encoding: 'utf8' }).trim();
+}
 
 function gitCurrentBranch() {
   return execFileSync('git', ['branch', '--show-current'], { cwd: repoRoot, encoding: 'utf8' }).trim();
@@ -86,12 +94,34 @@ export function main(argv = process.argv.slice(2)) {
   }
 
   for (const s of plan.steps) {
-    const printable = `${s.cmd} ${s.args.join(' ')}`;
+    const printable = s.kind === 'gate' ? '(предикат свежести вердикта)' : `${s.cmd} ${s.args.join(' ')}`;
     if (!args.execute) {
       console.log(`  · ${s.label}: ${printable}${s.note ? `  # ${s.note}` : ''}`);
       continue;
     }
     console.log(`  → ${s.label}`);
+
+    // Гейт свежести — не команда, а предикат: сравниваем SHA вердикта с HEAD ПОСЛЕ merge.
+    if (s.kind === 'gate') {
+      const headSha = gitHeadSha();
+      const reviewPath = join(repoRoot, `docs/discussions/pr-${args.prNumber}-code-review.md`);
+      const verdict = existsSync(reviewPath) ? parseVerdict(readFileSync(reviewPath, 'utf8')) : null;
+      const fresh = verdictFreshness({ reviewedSha: verdict?.sha, headSha });
+      if (!fresh.fresh) {
+        console.error('');
+        for (const line of formatVerdictRefusal({
+          prNumber: args.prNumber,
+          reviewedSha: verdict?.sha,
+          headSha,
+          reason: fresh.reason,
+        })) {
+          console.error(line);
+        }
+        return 1;
+      }
+      console.log(`     вердикт свеж: ${String(verdict.sha).slice(0, 8)} == HEAD ${headSha.slice(0, 8)}`);
+      continue;
+    }
     try {
       execFileSync(s.cmd, s.args, { cwd: repoRoot, stdio: 'inherit' });
     } catch (e) {

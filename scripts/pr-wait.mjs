@@ -78,7 +78,58 @@ export function resolveCheckpointDir(root = ROOT) {
  * @returns {{state: 'none'|'running'|'green'|'red', total: number, ok: number,
  *            failing: string[], pending: string[]}}
  */
-export function classifyChecks(rollup) {
+/**
+ * Объявленные обязательные контексты — из полиси защиты ветки, а не из головы.
+ *
+ * ЗАЧЕМ (долг `#ci-wait-sees-unregistered-checks`, #1764). `statusCheckRollup` несёт то,
+ * что GitHub УЖЕ зарегистрировал; задания появляются асинхронно после пуша. Классификация
+ * по одному лишь ролапу объявляет зелёным неполное множество: замер 07.08 —
+ * `checks=1/1 state=green` при четырёх фактических проверках, одна из которых `pending`.
+ * За одно утро наблюдалось трижды.
+ *
+ * Ожидаемое множество ОБЪЯВЛЕНО машиночитаемо (#1310, магистраль 27.07), поэтому здесь
+ * не изобретается список, а читается готовый. Полиси только ЧИТАЕТСЯ: правки в ней — словом
+ * владельца, это правила его ветки.
+ *
+ * Полиси недоступна → возвращаем `null`, и это НЕ «требований нет»: вызывающий обязан
+ * сказать вслух, что сверка не состоялась. Молчаливая деградация здесь равна прежнему дефекту.
+ *
+ * @returns {string[]|null}
+ */
+export function readRequiredContexts(root = ROOT) {
+  try {
+    const raw = readFileSync(join(root, 'docs/security/branch-protection-policy.json'), 'utf8');
+    const contexts = JSON.parse(raw)?.requiredStatusChecks?.contexts;
+    return Array.isArray(contexts) ? contexts.map((c) => String(c).trim()).filter(Boolean) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Имя элемента ролапа: check-runs кладут его в `name`, statuses — в `context` (#1764, ловушка Дынина). */
+const labelOf = (item) => String(item?.name || item?.context || item?.workflowName || '').trim();
+
+/**
+ * Классифицировать statusCheckRollup из `gh pr view --json statusCheckRollup`.
+ *
+ * СВЕРКА С ОБЪЯВЛЕННЫМ (разбор Дынина, #1764). Порядок операций несущий: вычитать
+ * самоуправляемые надо из ОЖИДАЕМОГО множества, а не только из наблюдаемого, иначе
+ * `review/teamlead` уйдёт из наблюдаемых, останется в требуемых — и получится вечный
+ * `incomplete` вместо прежнего ложного `green`. Обмен был бы плохой.
+ *
+ *   expected := required \ selfManaged
+ *   seen     := rollup   \ selfManaged
+ *   missing  := expected \ seen
+ *
+ * Сравнение имён — СТРОГОЕ, с учётом регистра (решение владельца 07.08): GitHub
+ * регистрозависим для имён проверок, а мягкое сравнение по префиксу зачло бы чужое задание
+ * с совпавшим началом имени за обязательное. Цена строгости названа: первый матричный job
+ * (`build (node-20)`) сломает гейт, пока полиси не поправят — отказ громкий, не молчаливый.
+ *
+ * @param {Array<object> | null | undefined} rollup
+ * @param {string[]|null} [expected] объявленные обязательные контексты; `null` — сверка не состоялась
+ */
+export function classifyChecks(rollup, expected = null) {
   const all = Array.isArray(rollup) ? rollup : [];
   // Самоссылку отсекаем ДО подсчёта: иначе `pending`, оставленный собственным гейтом,
   // навсегда держит state=running (см. SELF_MANAGED_CONTEXTS). Отсечённые не исчезают
@@ -90,8 +141,16 @@ export function classifyChecks(rollup) {
     if (SELF_MANAGED_CONTEXTS.has(label)) selfManaged.push(label);
     else items.push(item);
   }
+  // Ожидаемое чистим от самоуправляемых ДО сверки — см. шапку функции.
+  const expectedEffective = Array.isArray(expected)
+    ? expected.map((c) => String(c).trim()).filter((c) => c && !SELF_MANAGED_CONTEXTS.has(c))
+    : null;
+  const seen = new Set(items.map((i) => labelOf(i)).filter(Boolean));
+  const missing = expectedEffective ? expectedEffective.filter((c) => !seen.has(c)) : [];
+  const verified = expectedEffective !== null;
+
   if (items.length === 0) {
-    return { state: 'none', total: 0, ok: 0, failing: [], pending: [], selfManaged };
+    return { state: 'none', total: 0, ok: 0, failing: [], pending: [], selfManaged, missing, verified };
   }
 
   const failing = [];
@@ -124,8 +183,19 @@ export function classifyChecks(rollup) {
     }
   }
 
-  const state = failing.length > 0 ? 'red' : pending.length > 0 ? 'running' : 'green';
-  return { state, total: items.length, ok, failing, pending, selfManaged };
+  // Порядок родов несущий: red ≻ running ≻ incomplete ≻ green.
+  // `incomplete` — ОТДЕЛЬНЫЙ род, не `running` (разбор Дынина): `running` разрешается сам,
+  // а незарегистрированное задание может не появиться вовсе. Смешать их — потерять
+  // различие «идёт» и «неизвестно, стартовало ли».
+  const state =
+    failing.length > 0
+      ? 'red'
+      : pending.length > 0
+        ? 'running'
+        : missing.length > 0
+          ? 'incomplete'
+          : 'green';
+  return { state, total: items.length, ok, failing, pending, selfManaged, missing, verified };
 }
 
 /**
@@ -134,8 +204,8 @@ export function classifyChecks(rollup) {
  *
  * @param {{rollup?: Array<object>|null, reviewDecision?: string|null}} input
  */
-export function classifyPrWait({ rollup, reviewDecision } = {}) {
-  const checks = classifyChecks(rollup);
+export function classifyPrWait({ rollup, reviewDecision, expected = null } = {}) {
+  const checks = classifyChecks(rollup, expected);
   const rd = (reviewDecision || '').toUpperCase();
   if (checks.state === 'green' && APPROVAL_DECISIONS.has(rd)) {
     return { ...checks, state: 'approval', reviewDecision: rd };
@@ -254,6 +324,14 @@ function report(pr, checks) {
   for (const s of checks.selfManaged ?? []) {
     console.log(`  ○ ${s} — ставит шип-гейт после этого ожидания, здесь не ждём`);
   }
+  // Недостающие называются поимённо: «зелёный по неполному множеству» — тот самый дефект,
+  // ради которого сверка и заведена, и молчать о нём нельзя (#1764).
+  for (const m of checks.missing ?? []) {
+    console.log(`  ◌ ${m} — обязательный контекст ещё не зарегистрирован в ролапе`);
+  }
+  if (checks.verified === false) {
+    console.log('  ⚠ сверка с объявленным множеством НЕ состоялась: полиси защиты не прочитана');
+  }
   if (checks.state === 'approval') {
     console.log('  ⏳ CI не red, но PR ждёт review/approval — не считать зелёным merge-ready.');
   }
@@ -347,6 +425,12 @@ async function main() {
   }
   let { number, once, timeoutMin, intervalSec, resume } = parsed.args;
 
+  // Читаем объявленное множество ОДИН раз за прогон: полиси — файл репозитория, не сеть.
+  const requiredContexts = readRequiredContexts();
+  if (requiredContexts === null) {
+    console.error('[pr:wait] ⚠ полиси защиты ветки не прочитана — сверка с объявленным множеством не состоится');
+  }
+
   let deadline = Date.now() + timeoutMin * 60_000;
   if (resume) {
     const cp = readCheckpoint(number);
@@ -418,6 +502,7 @@ async function main() {
       const checks = classifyPrWait({
         rollup: pr.statusCheckRollup,
         reviewDecision: pr.reviewDecision,
+        expected: requiredContexts,
       });
       report(pr, checks);
       writeCheckpoint({ number: String(pr.number), deadlineMs: deadline, timeoutMin, intervalSec });
@@ -447,6 +532,14 @@ async function main() {
         } else if (checks.state === 'approval') {
           console.error('[pr:wait] CI ок, но нужен review/approval (exit 5). Повтор: yarn pr:wait --resume ' + (number ?? pr.number));
           process.exitCode = 5;
+        } else if (checks.state === 'incomplete') {
+          // Решение владельца 07.08: ждём, а по истечении срока — КРАСНЫЙ, не «таймаут».
+          // «Не появилось» ≠ «идёт»: молчаливый пропуск здесь и есть чинимый дефект.
+          console.error(
+            `[pr:wait] обязательные проверки так и не зарегистрированы за ${timeoutMin} мин: ` +
+              `${checks.missing.join(', ')} — мержить нельзя`,
+          );
+          process.exitCode = 1;
         } else {
           if (!once) console.error(`[pr:wait] таймаут ${timeoutMin} мин — проверки ещё идут.`);
           process.exitCode = 3;

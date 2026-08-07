@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `delivery-predicates-honest` | Три предиката контура доставки: ролап против объявленного, момент выбора магистрали, порядок шагов pr-land | M | [`DELIVERY_PREDICATES_HONEST_PROMPT.md`](../prompts/DELIVERY_PREDICATES_HONEST_PROMPT.md) | [#1764](https://github.com/officefish/Membrana/issues/1764) |
 | `tariff-promo-server-wiring` | Выбор тарифа на сервере и открытие по промокоду: провести готовый домен до сервера и клиента | M | [`TARIFF_PROMO_SERVER_WIRING_PROMPT.md`](../prompts/TARIFF_PROMO_SERVER_WIRING_PROMPT.md) | [#1761](https://github.com/officefish/Membrana/issues/1761) |
 | `pr-ship-post-merge-landing` | pr:ship после мерджа: дерево на своей ветке вровень со стволом, а не на main | M | [`PR_SHIP_POST_MERGE_LANDING_PROMPT.md`](../prompts/PR_SHIP_POST_MERGE_LANDING_PROMPT.md) | [#1759](https://github.com/officefish/Membrana/issues/1759) |
 | `lazy-close-scope` | Ленивое закрытие журнала получает явную область: параллельные спринты не топят друг друга (#1705) | S | [`LAZY_CLOSE_SCOPE_PROMPT.md`](../prompts/LAZY_CLOSE_SCOPE_PROMPT.md) | [#1705](https://github.com/officefish/Membrana/issues/1705) |
