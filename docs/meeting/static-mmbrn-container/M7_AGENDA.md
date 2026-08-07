@@ -92,27 +92,35 @@ Carrier — `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-0
 13. **Readiness:** go/no-go matrix с corpus, predicate, producer, current state и cutover
     authorization; любой required unknown/FAIL сохраняет NO-GO.
 
-## Обязательные поправки run1
+## Обязательные поправки run1-run2
 
-Бюджет **1/5**. Run1 только в `rejected`; его MDC-v1/constants/verdict не посылки run2.
+Бюджет **2/5**. Run1-run2 только в `rejected`; их models/constants/verdict не посылки run3.
 
 1. **M3:** только `discover|read-metadata|read-ref|read-bytes|download|write-metadata|
-   upload-revision|manage-access`; у каждого route ровно один action/object либо pre-action
-   network deny. Canary/rollback сохраняют Panel gate и current versions; `static.*` нельзя.
-2. **Без циклов:** freeze/fence до единственного proof snapshot/disposition/export. M5
-   replacement/rehydration gates — после результата; у каждого M4-M6 gate указан первый шаг,
-   где evidence уже существует.
-3. **Exact sets:** corpus выводится из fence snapshot; `82/57` лишь baseline drift. DB/export/
-   ledger равны двусторонне по stable `SourceObjectRef`+hash, не counts. M6 буквально сохраняет
-   `C_all,C_live,L_proposed,C_managed,C_legacy`, state cardinalities и full three-way diff.
-4. **Retirement:** manual/blocked/failed unresolved не terminal; каждый source object требует
-   resolved outcome+complete evidence, неопределённый `critical set` запрещён.
-5. **Constants:** выбрать по одному redirect/unmapped status, canary window+error predicate,
-   rollback window, redirect lifetime, observation interval и zero-traffic predicate;
-   `301/302`, `404/410`, `default/proposed/long/≈0` запрещены и значения повторяются во всех
-   проверяющих route/case/readiness/rollback rows.
+   upload-revision|manage-access`; object только container=`static.mmbrn.tech`, collectionId
+   или lineage=`canonicalRef`. Иные object names и `static.*` запрещены. У route один exact
+   action/object либо pre-action network deny; canary/rollback сохраняют Panel/current versions.
+2. **Без циклов:** provision создаёт target, поэтому его entry не требует его же M4 PASS;
+   M4 gates следуют после измеримого target. Freeze/fence до единственного proof snapshot.
+   M5 replacement/export/rehydration/parity gates стоят только после производящего шага;
+   pre-rebuild проверяет лишь существующие input/authority/backup predicates.
+3. **Разные корпуса:** source migration sets получают имена, отличные от M6. `82/57` — baseline
+   drift; fenced DB/export/ledger равны двусторонне по `SourceObjectRef`+hash, не counts.
+   M6 неизменно означает `C_all,C_live,L_proposed,C_managed,C_legacy`, включает FAILED/
+   reconciliation, state-indexed row/object/binding cardinalities и full three-way diff.
+4. **Rollback:** control-plane rollback не удаляет M2 rows, bindings или referenced bytes и не
+   вводит состояние вне объявленной machine. До M6 commit orphan cleanup следует M6/M4; после
+   commit любое deletion требует zero live refs, ≥365d, no hold и complete authorization chain.
+5. **Qualification:** Affine page/asset остаётся engine state. Ref-count или parent migration
+   недостаточны: static original возможен только после M1 qualification и отдельного M6 intent.
+   Legacy reconciliation не append-ит synthetic registry rows/bindings.
+6. **Retirement/constants:** manual/blocked/failed unresolved блокирует deletion каждого source.
+   Cutover и retirement — разные gates; retirement только после redirect lifetime, restore/
+   parity, all-resolved и выбранного exact zero-traffic interval. Выбрать по одному redirect/
+   unmapped status, canary predicate, rollback window, lifetime, observation и zero-traffic;
+   никаких `301/302`, `404/410`, `default/proposed/long/≈0`; значения повторить во всех tables.
 
-Ролевой DoD остаётся `[ ]`; поправки не выбирают за run2 routes/constants/state/DAG.
+Ролевой DoD остаётся `[ ]`; поправки не выбирают за run3 routes/constants/state/DAG.
 
 ## Обязательные случаи
 

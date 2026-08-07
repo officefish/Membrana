@@ -2256,3 +2256,51 @@ M1/M2 boundary, engine identity separation, текущий NO-GO, чистые �
 
 Машинный `meeting:audit` также имеет structural PASS. Внешний run2 допускается только после
 отдельного разрешения владельца.
+
+## Постаудит M7 — run2
+
+Первая эскалация run2 была остановлена до API политикой внешней передачи: повестка содержит
+внутренние сведения о routes/access/storage/migration, а chain включает Anthropic, xAI и
+OpenRouter. Владелец был явно уведомлён о payload и destinations и после этого повторно дал
+разрешение. Этот отказ не потратил кредит. Фактический run2 произведён
+`anthropic/claude-sonnet-4-6`; внешний бюджет стал 2 из 5.
+
+Механика PASS: 37 реплик (Teamlead 7, остальные роли по 6), семь таблиц, один D1,
+`meeting:audit` structural PASS. Все DoD boxes оставлены `[ ]`; аудитор признал это честной
+позой до внешней проверки, но заявленный verdict содержательно не прошёл. Сырой carrier
+сохранён без исправлений как
+[`run2-m3-objects-gate-cycles-m6-corpus-rollback-retirement`](../../seanses/rejected/static-mmbrn-container-m7-migration-delivery-2026-08-07-run2-m3-objects-gate-cycles-m6-corpus-rollback-retirement.md).
+
+Независимый смысловой аудит дал **BLOCK** по шести группам:
+
+- actions исправлены, но authority objects снова вымышлены вместо container/collection/lineage;
+- provision требует M4 PASS собственного ещё не созданного target, а M5 parity — до rebuild;
+- source corpus присвоил имена M6 и выкинул FAILED/reconciliation/state cardinalities;
+- rollback purge нарушает retention/append-only и вводит необъявленное состояние ROLLBACK;
+- assets проходят по ref-count без M1 qualification/M6 intent, legacy slice предлагает
+  synthetic registry rows;
+- constants расходятся между tables, а cutover/retirement объединены до окончания redirect.
+
+Повестка run3 получила объединённые обязательные поправки run1-run2. Внешний run3 запрещён
+до нового независимого предаудита и отдельного разрешения владельца.
+
+## Предаудит M7 — run3
+
+Повестка run3 имеет один D1, бюджет 2/5 и отсутствующий carrier
+`static-mmbrn-container-m7-migration-delivery-2026-08-07.md`; run1-run2 находятся только в
+`rejected`. Dry-run с `--no-context --no-rag --no-memory` подтвердил полную доставку.
+
+Независимый read-only аудитор дал **PASS**:
+
+- exact M3 actions и только container/collection/lineage objects обязательны;
+- provision/M4 и rebuild/M5 gates разведены без причинных циклов;
+- source sets отделены по именам от полного неизменённого M6 corpus;
+- rollback не удаляет committed bytes и не вводит необъявленные states;
+- pages/assets требуют M1 qualification и отдельного M6 intent; synthetic registry rows
+  запрещены;
+- unresolved блокирует retirement, а cutover/retirement и единичные constants разведены;
+- M1-M6, current NO-GO, production ban и внешний ролевой аудит сохранены.
+
+Машинный `meeting:audit` имеет structural PASS. Неблокирующий риск: повестка занимает
+11 965 из лимита 12 000 символов; любое изменение требует нового dry-run. Текущая неизменная
+редакция доставляется. Внешний run3 допускается только после отдельного разрешения владельца.
