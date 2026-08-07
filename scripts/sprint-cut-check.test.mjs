@@ -23,6 +23,7 @@ import {
   MODES,
   plannedVolume,
   planRatified,
+  ratificationFindings,
   ratifyPlan,
   TOOTH_IDS,
   UNASSIGNED_REASONS,
@@ -112,11 +113,44 @@ test('правка тела после согласия сбрасывает р�
   assert.equal(planRatified(plan), false, 'дайджест обязан разъехаться — булев флаг перенёсся бы сам');
 });
 
-test('дайджест не зависит от порядка ключей и от `//`-комментариев', () => {
+test('дайджест не зависит от порядка ключей', () => {
   const plan = load('plan.valid.json');
-  const shuffled = { blocks: plan.blocks, cutBy: plan.cutBy, mode: plan.mode, sprintId: plan.sprintId,
-    taskId: plan.taskId, schema: plan.schema, '//': 'другой комментарий' };
-  assert.equal(cutDigestOf(shuffled), cutDigestOf(plan));
+  // Перестановка собирается из ВСЕХ ключей плана, а не по белому списку: список молча
+  // терял бы `//`-ключи, и зуб мерил бы не порядок, а их отсутствие.
+  const reversed = Object.fromEntries(Object.entries(plan).reverse());
+  assert.deepEqual(Object.keys(reversed).sort(), Object.keys(plan).sort(), 'перестановка обязана быть полной');
+  assert.notDeepEqual(Object.keys(reversed), Object.keys(plan), 'и обязана менять порядок');
+  assert.equal(cutDigestOf(reversed), cutDigestOf(plan));
+});
+
+/**
+ * Долг `#plan-comment-keys-outside-digest`. Прежде этот зуб утверждал ОБРАТНОЕ — что
+ * дайджест `//`-ключей не видит, — и потому охранял дефект вместо контракта.
+ *
+ * Вещдок 07.08: в ратифицированном `archivarius-live-wiring.json` `//dod` (семь пунктов
+ * приёмки) подменялся на «условий приёмки нет, границы сняты», дайджест не менялся,
+ * `planRatified` оставался `true`. По дереву: `//dod` в 13 планах, `//out-of-scope` в 10 —
+ * несущее условие жило вне согласия владельца.
+ */
+test('правка `//`-ключа сбрасывает ратификацию: комментарий по имени, контракт по смыслу', () => {
+  const plan = load('plan.valid.json');
+  assert.equal(planRatified(plan), true, 'фикстура обязана входить ратифицированной');
+
+  const withComment = { ...plan, '//': 'другой комментарий' };
+  assert.notEqual(cutDigestOf(withComment), cutDigestOf(plan), '`//`-ключ обязан входить в дайджест');
+  assert.equal(planRatified(withComment), false);
+});
+
+test('подмена несущего условия в `//dod` снимает согласие владельца', () => {
+  const plan = load('plan.valid.json');
+  const tampered = { ...plan, '//dod': 'ПОДМЕНЕНО: условий приёмки нет, границы сняты' };
+  assert.equal(planRatified(tampered), false,
+    'перенос согласия на изменённое условие приёмки запрещён — вердикт M2');
+  assert.deepEqual(
+    ratificationFindings(tampered).map((f) => f.toothId),
+    ['plan_unratified'],
+    'причина обязана быть названа находкой, а не молчаливым false',
+  );
 });
 
 test('ратифицировать вправе только владелец, и только со временем ISO-8601 со смещением', () => {

@@ -44,7 +44,7 @@
         "changedLines": 330
       },
       "revisionAt": "2026-08-02T13:08:43+03:00",
-      "revisionOf": "ab36807a33e440566a3775aaaed53f9dfa43642c8b7d05cf23a15ddcde405a62"
+      "revisionOf": "87d49d51c91d95f196aeca32179e3491b870c6ac221e3e62a8d6427c5831f3ae"
     },
     {
       "//": "Dynin отвечает за вычислимую проекцию тарифов. tariff-grid.json и tariff-scalars.json — read-only входы и намеренно не входят в write-zone. Generated MDX входит в его зону, но структура apps/docs и навигация остаются у Rodchenko. Review artifacts: unit test, deterministic --check и diff generated MDX.",
@@ -62,7 +62,7 @@
         "changedLines": 360
       },
       "revisionAt": "2026-08-02T12:25:15+03:00",
-      "revisionOf": "22c3676f7fd4ff3d5b8c71c1607d8fe443a0a28214e4517948e5b12f5718727f"
+      "revisionOf": "5df1a511d63bf719224b107b95a550f594e72dd56bfe4880258b92a35315b348"
     },
     {
       "//": "Vesnin держит границу эпика и регистрационный контракт. Блок отделён от исполнения после machine finding block_oversized; объединять их обратно без новой оценки нельзя.",
@@ -81,7 +81,7 @@
         "changedLines": 300
       },
       "revisionAt": "2026-08-02T12:34:00+03:00",
-      "revisionOf": "dc32bc5637831264884bfe657b94bac0efd1d4a1c2d49cf65a32151685cc3f05"
+      "revisionOf": "80e991e0b528b99571bbb1ccf16b75fc2a67d4897e8a75d77fcb1bc5e42eb800"
     },
     {
       "//": "Vesnin отдельно отвечает за операторские указатели, evidence, machine gates и exact-SHA closure. Это второй review-атом, а не хвост task-contract.",
@@ -102,12 +102,12 @@
         "changedLines": 220
       },
       "revisionAt": "2026-08-02T12:34:00+03:00",
-      "revisionOf": "a29db14f729beec4f1cfaaa51858abe300dce9c7391851614f7d6d2f4e74b6ce"
+      "revisionOf": "8eab209b88f38870c1f4ecc9783169cb5ea1da34529a63e3c61d2686cd89c100"
     }
   ],
   "ratification": {
     "by": "owner",
     "at": "2026-08-02T13:08:43+03:00",
-    "digest": "edd22a90f804c659c5502961f93233dba80ee9327a99bcfdb22c9ad82dc622e2"
+    "digest": "384ced4f3f4e6ec9536f5125b7cb2ff3bac11aa0d8a7e92b459c2f26dc2f4d23"
   }
 }

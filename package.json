@@ -52,6 +52,7 @@
     "comp:open": "node scripts/comp-open.mjs",
     "cowork:open": "node scripts/cowork-open.mjs",
     "sprint:cut": "node scripts/sprint-cut-check.mjs",
+    "sprint:cut:restamp": "node scripts/sprint-cut-restamp.mjs",
     "sprint:gate": "node scripts/execution-gate.mjs",
     "sprint:experience": "node scripts/sprint-experience.mjs",
     "cowork:close": "node scripts/cowork-close.mjs",
