@@ -37,7 +37,7 @@
         "changedLines": 330
       },
       "revisionAt": "2026-08-02T17:57:00+03:00",
-      "revisionOf": "186952129c63fd0522e5fed3405efb38f2126418271cfa893bd4edf0548ae3ee"
+      "revisionOf": "ecc575e25612425e5ee413302aff36e770a85b687212ee5642d8ead03e1c5580"
     },
     {
       "//": "Dynin отдельно отвечает за 13 детерминированных страниц мастерских и их индекс. Product-навигация остаётся неизменной.",
@@ -52,7 +52,7 @@
         "changedLines": 360
       },
       "revisionAt": "2026-08-02T17:57:00+03:00",
-      "revisionOf": "bedbdab7e8e7937f0317f9dcaf12a4b564f21c2a4a68eeb8a76df2c3def3de13"
+      "revisionOf": "d2f4471d73a447025ee2bb4ed065ecdf674212d0e3ccca2a67f779e8bc0cec3a"
     },
     {
       "//": "Dynin отвечает за первую половину процедурного корпуса: 12 отдельных страниц от ritual-evening до cowork.",
@@ -77,7 +77,7 @@
         "changedLines": 360
       },
       "revisionAt": "2026-08-02T17:57:00+03:00",
-      "revisionOf": "eb824dd9ed6d884501a5f0b64ea30d7446f1d45a475afdc73c002575f5cea2f5"
+      "revisionOf": "dafeea7062adca1efac5d4f9fc5b6e63f6b14f48ab865a753d6324897a1bee25"
     },
     {
       "//": "Dynin отвечает за вторую половину процедурного корпуса: 11 отдельных страниц от competition до weekly-dead-wire и общий индекс процедур.",
@@ -102,7 +102,7 @@
         "changedLines": 360
       },
       "revisionAt": "2026-08-02T17:57:00+03:00",
-      "revisionOf": "c24cff7ed9678b65ce87c2650657763894e2596e05cf0eb14cd0f4bee6c780d1"
+      "revisionOf": "8f381b6ee9456a70bb551b61acc7baa865935080c73dbf85b35e7193f72aeea6"
     },
     {
       "//": "Rodchenko отвечает за доступность и честность Harness: индексы, объяснение входов/гейтов/артефактов, реальный пример или явный пробел, портфолио и чистую границу с Product.",
@@ -129,7 +129,7 @@
         "changedLines": 400
       },
       "revisionAt": "2026-08-02T18:27:00+03:00",
-      "revisionOf": "e75ddc90e8212a7a408d433ae45086ed40afc39e200612d847d87c2ec1871e9c"
+      "revisionOf": "5edcba852ec3c11795b9adee6b00ac63ba8805ec0349c984d862839dc112443f"
     },
     {
       "//": "Vesnin отвечает за два production-проекта: GitHub/Mintlify root, точный CNAME из dashboard, отсутствие office-привязки у Product, TLS, canonical URL и desktop/mobile smoke. Секреты читаются только из корневого .env и не попадают в артефакты.",
@@ -147,7 +147,7 @@
         "changedLines": 260
       },
       "revisionAt": "2026-08-02T17:48:00+03:00",
-      "revisionOf": "3c543e421f02e361863aae964a751d3f8734e21ff8c9dc690299c9dc1501bd0f"
+      "revisionOf": "5811ada7c6d0f53612a3dd80c0f73f91b2d64e5aae9c9e11664314d243540234"
     },
     {
       "//": "Vesnin отдельно держит процедурный след, machine gates, code review назначенных ответственных, exact-SHA closure и доставку через PR.",
@@ -170,12 +170,12 @@
         "changedLines": 220
       },
       "revisionAt": "2026-08-02T17:48:00+03:00",
-      "revisionOf": "90b95aca64f319be3f1297af9adcc4701397440b9cdca7e0811a3044dd4d7e6d"
+      "revisionOf": "116619997317cfcdbc9e101fdf720e9113fa3351691260197f15bbc914136888"
     }
   ],
   "ratification": {
     "by": "owner",
     "at": "2026-08-02T18:27:00+03:00",
-    "digest": "5515d529189988c999788da410641d68367f3cf77b66e14d7810ef86d17d36ef"
+    "digest": "7edc784d4941839a59ba38c36b311b1fbda973b28dc56f8aea74efb476130e69"
   }
 }

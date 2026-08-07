@@ -30,12 +30,30 @@ export const isIsoWithOffset = (at) => typeof at === 'string' && ISO_WITH_OFFSET
  */
 const isIsoValue = (v) => typeof v === 'string' && (ISO_WITH_OFFSET.test(v) || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/.test(v));
 
-/** Детерминированная канонизация значения: ключи сортированы, `//`-комментарии выброшены. */
+/**
+ * Детерминированная канонизация значения: ключи сортированы, В ДАЙДЖЕСТ ВХОДЯТ ВСЕ.
+ *
+ * `//`-ключи прежде выбрасывались как «комментарии» — и это делало согласие владельца
+ * подменяемым. Вещдок 07.08: в `archivarius-live-wiring.json` (ратифицирован) `//dod`
+ * заменён на «условий приёмки нет, границы сняты» — дайджест `57fe8585…` не дрогнул,
+ * `planRatified` остался `true`. Замер по дереву: `//dod` в 13 планах, `//out-of-scope`
+ * в 10, `//estimate-basis` в 18; 16 из 45 ратифицированных планов держат в таких ключах
+ * НЕСУЩЕЕ условие — приёмку, границы, вердикт тимлида. Комментарий по имени, контракт
+ * по смыслу: вырезать его из хеша значит оставить в контракте поле, которое можно
+ * переписать после согласия.
+ *
+ * Родня в дереве: `lib/ladder-report.mjs` и `lib/insight-lifecycle-store.mjs`
+ * канонизируют БЕЗ такого исключения. Правка не вводит новое правило, а снимает
+ * местное отступление от общего.
+ *
+ * Цена перехода названа в `scripts/sprint-cut-restamp.mjs`: дайджесты 45 живых планов
+ * пересчитаны ОДИН раз механически, тела и `by`/`at` не тронуты.
+ */
 function canonicalJson(value) {
   if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`;
   if (value !== null && typeof value === 'object') {
     const keys = Object.keys(value)
-      .filter((k) => !k.startsWith('//') && value[k] !== undefined)
+      .filter((k) => value[k] !== undefined)
       .sort();
     return `{${keys.map((k) => `${JSON.stringify(k)}:${canonicalJson(value[k])}`).join(',')}}`;
   }
