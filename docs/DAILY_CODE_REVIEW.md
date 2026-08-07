@@ -1,31 +1,53 @@
-<!-- Сгенерировано: 2026-08-06T15:19:50.707Z (yarn code-review; daily, llm-anthropic) -->
+<!-- Сгенерировано: 2026-08-07T16:13:22.484Z (yarn code-review; daily, llm-anthropic) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: 43d0d09a5a2aad2f9f54bc0349cfff05c0c9e8c4^..684860c415ec719dd2b39eb779a3b1a75ef79747 (21 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 43d0d09a #1729 (1076), 4ca27048 #1733 (1807), aa17d73c #1737 (632), 0558598e #1740 (1916), 254c395b #1749 (1221), 684860c4 (604)
+> Период: 89c16b04d44a319610e8f1d3eca49921ab1ad059^..85e0eff1750527f77c7eb2b69d84eff31c4af1fb (14 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 89c16b04 #1758 (1445), f03d309e #1763 (497), 9abf5084 #1765 (599), dd7b9eea #1767 (563), 858d37d5 #1766 (442), 3b9f1af9 #1768 (660), e44bed1c #1769 (804), e3c0fb59 #1773 (490), 85e0eff1 #1776 (657)
 
 ---
 
 Tier: T1
 
-**Ведущий: vesnin**
-Дифф: 8 путей — `docs/tasks/`, `docs/procedure-runs/`, `docs/security/`, `docs/tasks/main-day-assertions.json`, `docs/tasks/morning-gates-state.json`, `docs/comms/drafts/`, `docs/DAILY_STANDUP.md`, `docs/DAY_PLAN.md`, `docs/DAY_REPORT.md`, `docs/MAIN_DAY_ISSUE.md`, `docs/STRATEGY_DAY.md` — только docs и config без runtime.
-Бестиарий: B3 — Definition of Done в `MAIN_DAY_ISSUE.md` проверяет «файл существует / CI зелёный», не продуктовый результат. Это наблюдение P2, не блок — предмет ревью ritual/docs. B4 — посылки дня ссылаются на `docs/adr/agent-tooling-night-build-draft.md` и `docs/ci-verdicts/cepstral-2026-08-06.md`, которых нет; вердикт посылок `holds` (явно написан как «не создан»), ожидаемое поведение — что маркер будет опровергнут созданием файла, это не нарушение в данном документе. B8, B9, B10 — не обнаружено. **Вердикт ведущего: пропуск** — антипаттерны без блокеров.
+---
+
+**[Teamlead — Vesnin]:**
+PR size: oversized (9 из 14 коммитов >400 строк; к ревью сегодня — только развёрнутые диффы). День закрыт честно: магистраль `agent-tooling-night-build` снята как фантом (эпик архивирован 06.08), `tariff-promo-server-wiring` поставлена новой осью с обоснованием по норме #1573 — домен готов, потребителя нет. `main-day-assertions.json` перечеканен под новую магистраль (07.08), `morning-gates-state.json` синхронизирован, реестр обновлён, промпт-указатель создан без дублирования тела Issue — архитектурно опрятно. Новый вещдок `//retired-night-build-phantom-07-08` добавлен append-only — урок «архивация эпика обязана снимать его из sources[]» зафиксирован корректно.
+
+Риски на утро:
+- **P1** — 9 PR oversized остаются без развёрнутого ревью; очередь `review-oversized-queue` не сокращается третий день. Завтра: `yarn code-review:pr 1765`, `yarn code-review:pr 1767`, `yarn code-review:pr 1768` — по одному проходу с вердиктом.
+- **P1** — `ritual-day-2026-08-07-r2` открыт и не закрыт (trail/2026-08-07.jsonl, sequence=1, status=started). Перед первой работой: `yarn ritual:close-orphan ritual-day-2026-08-07-r2` или ручная закрывающая запись в trail.
+- **P2** — дубль записи `js-yaml` в `deps-watch-snapshot.json` (id 1138114 и 1138115, идентичный issue/url). Не блокирует, но снимок становится ненадёжным счётчиком.
+
+Утренние команды:
+```bash
+# Перед любой работой — закрыть незакрытый ритуальный прогон
+yarn procedure:close ritual-day-2026-08-07-r2 --status fail --gaps orphaned
+
+# Typecheck затронутых пакетов
+yarn turbo run typecheck --filter=@membrana/background-cabinet --filter=@membrana/background-office
+
+# Первый oversized из очереди
+yarn code-review:pr 1765
+```
 
 ---
 
-[Teamlead]: PR size: OK. Tier T1 (docs-only, конфиг без runtime). День закрыт двумя PR: #1732 (архив карточек, 56 строк) и #1735 (утренние артефакты, 275 строк) — оба в рамках политики. Oversized-PR #1729, #1733, #1737, #1740, #1749 и HEAD-коммит 684860c4 в очереди, не развёрнуты — это хвост, который хендоф #8 явно называет. Главный риск на завтра: `ritual-day-2026-08-05` закрыт `orphanedBy` следующим прогоном (trail 2026-08-05.jsonl, sequence=2) — это норма «ленивого закрытия», но паттерн повторяется второй раз; если `ritual-evening-2026-08-05` тоже закрыт `fail` (gaps: deliver-to-main), вечерняя цепочка неполна. ADR-набросок `agent-tooling-night-build` не создан второй день подряд — завтра без него код магистрали не стартует.
-Утром: `yarn code-review:pr 1729` (хендоф #8, первый в очереди); затем `yarn main-day-probe` (проверить `main-day-assertions.json` 06.08 под нормой У1); при первом касании `registry.json` закрыть `githubIssueClosedAt` для `llm-transport-no-key-class` (#1549 CLOSED — таблица живых состояний подтверждает).
+**[Структурщик — Ozhegov]:**
+`ritual-deliver-to-main.mjs` — разбиение на `splitDeliverable` / `planExecute` / `shipArgsFor` корректно выносит решение в чистые функции без побочных эффектов; граница «доставке подлежит vs не лечится доставкой» зафиксирована константой `DELIVERABLE_STATUSES` — слабая связанность соблюдена. `tasks-decompose.config.json`: добавление паттерна `tariff-` в группу «Платформа» — правка минимальная, соответствует структуре. `registry.json`: новая карточка `tariff-promo-server-wiring` с корректными полями `leadPersona`/`supportPersonas`/`sprintKind`; `githubIssueClosedAt: null` — норма для активной задачи. Отдельное замечание (P2, opportunity): `shipArgsFor` принимает сырые строки вместо типизированного объекта — при росте числа ритуалов рискует стать source of truth для строковых констант без схемы.
 
-[Структурщик]: C1 — границы пакетов не затронуты, только `docs/`. C7 — `procedure-run-journal@1` в trail 2026-08-05.jsonl содержит запись с `sequence=2` дважды: первый раз для `ritual-evening` (status: fail), второй — `orphanedBy ritual-day-2026-08-06`. Дублирование sequence=2 внутри разных `runId` допустимо по схеме (монотонность — внутри одного runId), замечание снято. `morning-gates-state.json`: поле `swallow.ownerAck` выставлено в `false` — черновик утренней ласточки не подтверждён; если это штатное состояние на момент коммита, ок; если ownerAck должен быть `true` до merge — P2-нит. C4 — сервисов нет, C7 — тестов нет, оба не применимы к docs-диффу.
+---
 
-[Математик]: —
+**[Математик — Dynin]:** —
 
-[Музыкант]: —
+---
 
-[Верстальщик]: —
+**[Музыкант — Kuryokhin]:** —
+
+---
+
+**[Верстальщик — Rodchenko]:** —
 
 ---
 
@@ -33,14 +55,12 @@ Tier: T1
 
 **Definition of Done (утро):**
 ```bash
-yarn code-review:pr 1729          # oversized-очередь, хендоф #8
-yarn main-day-probe               # сверка assertions 06.08, норма У1
-# при касании registry.json:
-#   закрыть githubIssueClosedAt llm-transport-no-key-class (#1549)
+yarn procedure:close ritual-day-2026-08-07-r2 --status fail --gaps orphaned
+yarn turbo run typecheck --filter=@membrana/background-cabinet --filter=@membrana/background-office
+yarn code-review:pr 1765
 ```
 
 **Риски:**
-- P1 — ADR-набросок `agent-tooling-night-build` не создан второй день; без трёх полей (что зубит / кто судья / где журнал) код магистрали не стартует по явной договорённости с Архитектором.
-- P1 — `ritual-evening-2026-08-05` закрыт `fail` (gaps: deliver-to-main): вечерняя цепочка неполна, `deliver-to-main` не выполнен.
-- P2 — `swallow.ownerAck: false` в `morning-gates-state.json` — ласточка утра 06.08 не подтверждена владельцем на момент коммита.
-- P2 — oversized-очередь (#1729 1076, #1733 1807, #1737 632, #1740 1916, #1749 1221, HEAD 604) не разобрана; `review-oversized-queue` числится активной задачей.
+- P1 — orphaned run `ritual-day-2026-08-07-r2` не закрыт; читать trail утром, закрыть до старта
+- P1 — oversized-очередь (9 PR) не сокращается; завтра минимум один проход
+- P2 — дубль `js-yaml` (id 1138114/1138115) в `deps-watch-snapshot.json` — дедуп при следующем касании файла
