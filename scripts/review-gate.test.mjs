@@ -9,6 +9,11 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import {
+  PUBLISH_ATTEMPTS,
+  PUBLISH_PAUSE_MS,
+  REVIEW_STATUS_CONTEXT,
+  publishReviewStatus,
+  statusPublishArgs,
   parseVerdict,
   renderScopeMarker,
   reviewGateDecision,
@@ -163,4 +168,81 @@ test('--ensure догоняет оба случая: исход unknown, зна�
   const noMarker = reviewGateDecision({ headSha: SHA, verdict: null, artifact: { exists: true, path: 'p.md' } });
   assert.ok(shouldEnsureReview(noFile.state, true) && shouldEnsureReview(noMarker.state, true));
   assert.ok(!shouldEnsureReview(reviewGateDecision({ headSha: SHA, verdict: verdict('BLOCK') }).state, true), 'BLOCK не переспрашивается');
+});
+
+// ─── публикация статуса с повторами ───────────────────────────────────────────
+//
+// Вещдок 07.08 (PR #1774): вердикт `pass` (LGTM тимлида по 7e12fd4c), публикация статуса
+// упала ОДНИМ таймаутом, гейт вернул 2, и pr:ship встал до мерджа — при exit code 0 у всей
+// цепочки. Тот же вызов руками прошёл с первой попытки. Гейт сам печатал «вердикт в силе,
+// но защита его не увидит», то есть знал, что дело не в вердикте.
+
+test('statusPublishArgs: форма вызова фиксирована и содержит контекст гейта', () => {
+  const a = statusPublishArgs('abc123', { state: 'success', description: 'LGTM (vesnin)' });
+  assert.equal(a[0], 'api');
+  assert.ok(a.includes('repos/{owner}/{repo}/statuses/abc123'));
+  assert.ok(a.includes(`context=${REVIEW_STATUS_CONTEXT}`));
+  assert.ok(a.includes('state=success'));
+  assert.ok(a.includes('description=LGTM (vesnin)'));
+});
+
+test('публикация с первой попытки — повторов нет, паузы нет', () => {
+  let calls = 0;
+  let slept = 0;
+  const r = publishReviewStatus({
+    run: () => { calls += 1; },
+    sleep: () => { slept += 1; },
+    headSha: 'abc',
+    status: { state: 'success', description: 'ok' },
+  });
+  assert.deepEqual(r, { ok: true, attempt: 1 });
+  assert.equal(calls, 1);
+  assert.equal(slept, 0, 'успех не должен стоить паузы');
+});
+
+test('транзиентный таймаут переживается повтором — зелёный вердикт не роняется', () => {
+  let calls = 0;
+  const r = publishReviewStatus({
+    run: () => {
+      calls += 1;
+      if (calls === 1) throw new Error('ETIMEDOUT');
+    },
+    sleep: () => {},
+    headSha: 'abc',
+    status: { state: 'success', description: 'ok' },
+  });
+  assert.equal(r.ok, true);
+  assert.equal(r.attempt, 2, 'вторая попытка обязана считаться успехом, а не отказом');
+});
+
+test('отказ ПОСЛЕ повторов остаётся отказом: защита без статуса всё равно не пустит', () => {
+  let calls = 0;
+  const r = publishReviewStatus({
+    run: () => { calls += 1; throw new Error('403 forbidden'); },
+    sleep: () => {},
+    headSha: 'abc',
+    status: { state: 'success', description: 'ok' },
+  });
+  assert.equal(r.ok, false);
+  assert.equal(calls, 3, 'три попытки — не одна');
+  assert.equal(r.attempts, 3);
+  assert.match(r.lastError, /403/u, 'причина обязана доехать до человека');
+});
+
+test('пауза стоит МЕЖДУ попытками, а не после последней', () => {
+  const pauses = [];
+  publishReviewStatus({
+    run: () => { throw new Error('boom'); },
+    sleep: (ms) => pauses.push(ms),
+    headSha: 'abc',
+    status: { state: 'success', description: 'ok' },
+    attempts: 3,
+    pauseMs: 50,
+  });
+  assert.deepEqual(pauses, [50, 50], 'после последней попытки ждать нечего');
+});
+
+test('число попыток и пауза — из библиотеки, а не из головы вызывающего', () => {
+  assert.equal(PUBLISH_ATTEMPTS, 3);
+  assert.equal(PUBLISH_PAUSE_MS, 2_000);
 });

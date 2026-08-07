@@ -184,3 +184,71 @@ export function statusFromDecision(decision) {
   if (decision.state === 'block') return { state: 'failure', description: decision.reason.slice(0, 140) };
   return { state: 'pending', description: decision.reason.slice(0, 140) };
 }
+
+/** Попыток публикации статуса и пауза между ними. Три и две секунды — против одиночного таймаута. */
+export const PUBLISH_ATTEMPTS = 3;
+export const PUBLISH_PAUSE_MS = 2_000;
+
+/**
+ * Аргументы публикации статуса — чистой функцией, чтобы форма вызова проверялась без сети.
+ * @param {string} headSha
+ * @param {{state: string, description: string}} status
+ * @returns {string[]}
+ */
+export function statusPublishArgs(headSha, status) {
+  return [
+    'api', '-X', 'POST', `repos/{owner}/{repo}/statuses/${headSha}`,
+    '-f', `state=${status.state}`,
+    '-f', `context=${REVIEW_STATUS_CONTEXT}`,
+    '-f', `description=${status.description}`,
+  ];
+}
+
+/**
+ * Опубликовать статус ревью с ПОВТОРАМИ: помеха связи — не отказ по существу.
+ *
+ * Вещдок 07.08 (PR #1774): вердикт был `pass` — LGTM тимлида по 7e12fd4c, — а публикация
+ * статуса упала одним таймаутом внешнего вызова, и гейт вернул 2. `pr:ship` встал ДО мерджа,
+ * при exit code 0 у всей цепочки: код возврата относился к хвостовой уборке, не к мерджу.
+ * Тот же вызов с той же строкой прошёл руками с первой попытки. Гейт при этом сам печатал
+ * «вердикт выше в силе, но защита его не увидит» — то есть знал, что дело не в вердикте, и
+ * всё равно ронял проход. Ровно тот класс, что ловят другие зубы контура: транзиентная помеха
+ * выдаётся за отказ по существу.
+ *
+ * Повтор безопасен: POST statuses аддитивен по контексту — повторная публикация того же
+ * состояния ничего не меняет, последняя запись побеждает. Значит цена лишней попытки — только
+ * время, а цена её отсутствия — ложный стоп на зелёном вердикте.
+ *
+ * Отказ ПОСЛЕ повторов остаётся отказом, и это не мягкость наоборот: если защита ветки требует
+ * контекст `review/teamlead`, ненапечатанный статус всё равно не даст смерджить, и честнее
+ * встать здесь с внятной причиной, чем в `gh pr merge` невнятной.
+ *
+ * Контракт файла «ни ФС, ни сети» не нарушен: и вызов, и пауза приходят ПАРАМЕТРАМИ —
+ * адаптеры по-прежнему снаружи, здесь только политика повторов.
+ *
+ * @param {{run: (cmd: string, args: string[]) => unknown, sleep?: (ms: number) => void,
+ *          headSha: string, status: {state: string, description: string},
+ *          attempts?: number, pauseMs?: number}} input
+ * @returns {{ok: true, attempt: number} | {ok: false, attempts: number, lastError: string}}
+ */
+export function publishReviewStatus({
+  run,
+  sleep = () => {},
+  headSha,
+  status,
+  attempts = PUBLISH_ATTEMPTS,
+  pauseMs = PUBLISH_PAUSE_MS,
+}) {
+  const args = statusPublishArgs(headSha, status);
+  let lastError = '';
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      run('gh', args);
+      return { ok: true, attempt };
+    } catch (e) {
+      lastError = String(e?.message ?? e).split('\n')[0];
+      if (attempt < attempts) sleep(pauseMs);
+    }
+  }
+  return { ok: false, attempts, lastError };
+}

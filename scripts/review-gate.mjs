@@ -26,6 +26,7 @@ import { verdictFromBody } from './lib/code-review-ritual.mjs';
 import {
   REVIEW_STATUS_CONTEXT,
   parseVerdict,
+  publishReviewStatus,
   renderVerdictMarker,
   reviewGateDecision,
   scopeFromBody,
@@ -42,6 +43,15 @@ const flag = (n) => {
 
 function sh(cmd, args) {
   return String(execFileSync(cmd, args, { cwd: repoRoot, encoding: 'utf8', timeout: EXTERNAL_CALL_TIMEOUT_MS })).trim();
+}
+
+/**
+ * Синхронная пауза между попытками. Гейт весь синхронный (`execFileSync`), и заводить здесь
+ * `async` ради двух секунд значило бы перекрасить весь путь ради паузы.
+ * @param {number} ms
+ */
+function sleepSync(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
 function main() {
@@ -119,16 +129,17 @@ function main() {
 
   if (argv.includes('--publish')) {
     const status = statusFromDecision(decision);
-    try {
-      sh('gh', [
-        'api', '-X', 'POST', `repos/{owner}/{repo}/statuses/${headSha}`,
-        '-f', `state=${status.state}`,
-        '-f', `context=${REVIEW_STATUS_CONTEXT}`,
-        '-f', `description=${status.description}`,
-      ]);
-      console.log(`  статус опубликован: ${REVIEW_STATUS_CONTEXT}=${status.state} на ${String(headSha).slice(0, 8)}`);
-    } catch (e) {
-      console.error(`  ⚠ статус не опубликован (${String(e.message ?? e).split('\n')[0]}) — вердикт выше в силе, но защита его не увидит`);
+    const published = publishReviewStatus({ run: sh, sleep: sleepSync, headSha, status });
+    if (published.ok) {
+      const retried = published.attempt > 1 ? ` (с ${published.attempt}-й попытки)` : '';
+      console.log(
+        `  статус опубликован: ${REVIEW_STATUS_CONTEXT}=${status.state} на ${String(headSha).slice(0, 8)}${retried}`,
+      );
+    } else {
+      console.error(
+        `  ⚠ статус не опубликован за ${published.attempts} попыт. (${published.lastError})` +
+          ' — вердикт выше в силе, но защита его не увидит',
+      );
       return 2;
     }
   }
