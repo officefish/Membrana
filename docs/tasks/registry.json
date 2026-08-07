@@ -1,6 +1,46 @@
 {
   "tasks": [
     {
+      "id": "swallow-own-moment",
+      "title": "Ласточка получает свой момент: развести state.day с evening-gate",
+      "promptPath": "docs/prompts/SWALLOW_OWN_MOMENT_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "наследник ADR-0024; иссью #1764 занята карточкой delivery-predicates-honest",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-07",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "angelina"
+      ],
+      "notes": "Долг, названный вслух при реализации ADR-0024 по требованию Ожегова: state.day несёт ДВА значения — момент ласточки для утра и носитель для вечера (scripts/evening-gate.mjs:64 читает то же поле). TODO(ADR-0024) стоят у обоих читателей: scripts/lib/morning-gates.mjs (swallowApproved) и scripts/morning-gate.mjs (swallow --draft). Без разведения это тихий синоним, а не компромисс.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "morning-gates-two-moments",
+      "title": "Гейты утра: два момента вместо одного day — реализация ADR-0024",
+      "promptPath": "docs/prompts/MORNING_GATES_TWO_MOMENTS_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "удостоверение — ADR-0024 (ACCEPTED 07.08); иссью #1764 уже привязана к карточке delivery-predicates-honest, дублировать нельзя",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-07",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Реализация ADR-0024. Блок B спринта delivery-predicates-honest, вынутый сознательно до решения. Р1 два момента · Р2 предикат сверяет свой · Р3 шаг не поднимает чужой · Р4 старое состояние = оба момента неизвестны, без наследования.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "delivery-predicates-honest",
       "title": "Три предиката контура доставки: ролап против объявленного, момент выбора магистрали, порядок шагов pr-land",
       "promptPath": "docs/prompts/DELIVERY_PREDICATES_HONEST_PROMPT.md",
