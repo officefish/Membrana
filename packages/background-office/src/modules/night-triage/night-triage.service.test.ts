@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { AppConfig } from '../../config/env.schema';
-import { NightTriageService } from './night-triage.service';
+import { NightTriageService, REPORT_DIR } from './night-triage.service';
 
 const REGISTRY = JSON.stringify({
   tasks: [
@@ -42,7 +42,7 @@ function makeService(over: {
     vi.fn(async () => ({ prUrl: 'https://gh/pr/1', branch: 'claude/night-triage-1', created: true }));
   const github = {
     fetchTextFile: vi.fn(async (path: string) => {
-      if (path.startsWith('docs/reports/night-triage/')) return over.landedReport ?? null;
+      if (path.startsWith(`${REPORT_DIR}/`)) return over.landedReport ?? null;
       return over.registry === undefined ? REGISTRY : over.registry;
     }),
     listDirectoryFiles: vi.fn(async () => over.landedFiles ?? null),

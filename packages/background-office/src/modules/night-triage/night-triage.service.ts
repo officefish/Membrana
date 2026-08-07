@@ -17,7 +17,8 @@ import { extractFingerprint, renderTriageReport } from './night-triage-report';
 import { findSecrets } from './night-triage-secret-guard';
 
 const REGISTRY_PATH = 'docs/tasks/registry.json';
-const REPORT_DIR = 'docs/reports/night-triage';
+/** Экспортирован ради зубов: путь не должен жить копией в стабе — иначе переезд каталога тихо разъедется с проверкой. */
+export const REPORT_DIR = 'docs/reports/night-triage';
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /**
