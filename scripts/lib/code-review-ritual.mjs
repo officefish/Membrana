@@ -164,6 +164,22 @@ function runGit(args) {
  * устойчивом BLOCK — то есть вердикт перестал опираться на содержание, а гейт не мог
  * отличить «в коде дефект» от «дифф не прочитан».
  */
+/**
+ * Диапазоны ветки для ревью: `diff` — трёхточечный, `log` — ДВУХТОЧЕЧНЫЙ.
+ *
+ * Один и тот же знак значит у двух команд разное. `git diff A...B` считает от merge-base —
+ * ровно то, что ветка добавила. `git log A...B` означает симметрическую разницу, то есть
+ * включает и коммиты, которых у ветки нет: у отставшей от ствола ветки это чужая влитая
+ * работа, поданная ревьюеру как своя.
+ *
+ * @param {string} base
+ * @param {string} branch
+ * @returns {{diffRange: string, logRange: string}}
+ */
+export function branchRanges(base, branch) {
+  return { diffRange: `${base}...${branch}`, logRange: `${base}..${branch}` };
+}
+
 export const DIFF_TRUNCATED_RE = /\[…\s*diff обрезан до (\d+) символов\s*…\]/u;
 
 /**
@@ -246,10 +262,22 @@ export function collectReviewContext(opts) {
   if (opts.mode === 'branch') {
     const base = opts.base ?? 'origin/main';
     const branch = opts.branch ?? '';
-    const range = `${base}...${branch}`;
-    const diff = runGit(['diff', range]);
-    const stat = runGit(['diff', '--stat', range]);
-    const log = runGit(['log', '--oneline', '-15', range]);
+    // Три точки у `diff` и ДВЕ у `log` — не рассинхрон, а разная семантика одного знака.
+    //
+    // `git diff A...B` считает от merge-base: ровно то, что ветка добавила. `git log A...B`
+    // означает СИММЕТРИЧЕСКУЮ РАЗНИЦУ — коммиты, достижимые из одного, но не из обоих, — то
+    // есть тащит в раздел «Commits» ещё и коммиты ствола, которых у ветки нет. У отставшей от
+    // ствола ветки это чужая влитая работа, поданная как своя.
+    //
+    // Вещдок 07.08: пока ветка стояла на `f03d309e`, а ствол ушёл на `9abf5084`, ревью назвало
+    // среди изменений ветки «pr-land/pr:wait» — предмет соседнего PR #1765, которого в ветке нет
+    // ни строкой. Замер на живой ветке: `log origin/main...codex/procedure-run-journal` даёт
+    // 146 коммитов, и ВСЕ 146 — ствольные, при нуле своих. Ревьюер судил чужую работу.
+    const { diffRange, logRange } = branchRanges(base, branch);
+    const diff = runGit(['diff', diffRange]);
+    const stat = runGit(['diff', '--stat', diffRange]);
+    const log = runGit(['log', '--oneline', '-15', logRange]);
+    const range = diffRange;
     const lines = estimateChangedLines(stat);
     const taskBlock = appendTaskContext('branch');
     return {

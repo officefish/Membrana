@@ -3,6 +3,7 @@ import test from 'node:test';
 
 import {
   appendTaskContext,
+  branchRanges,
   buildCodeReviewUserMessage,
   defaultOutputPath,
   estimateChangedLines,
@@ -146,4 +147,28 @@ test('бестиарий: живёт, у каждого зверя графа в
     const cells = b.split('|').map((s) => s.trim()).filter(Boolean);
     assert.ok(cells[cells.length - 1].length > 5, `у зверя ${cells[1]} есть вещдок`);
   }
+});
+
+// Дефект 07.08: `log` шёл тем же трёхточечным диапазоном, что и `diff`, а у `log` три точки
+// значат симметрическую разницу. Ревью получало в раздел «Commits» чужие ствольные коммиты и
+// судило их как изменения ветки: пока ветка стояла на f03d309e, а ствол ушёл на 9abf5084, в
+// вердикт попал предмет соседнего PR #1765. Замер: log origin/main...<отставшая> — 146
+// коммитов, все ствольные, своих ноль.
+test('branchRanges: diff трёхточечный (от merge-base), log двухточечный (только своё)', () => {
+  const r = branchRanges('origin/main', 'feat/x');
+  assert.equal(r.diffRange, 'origin/main...feat/x');
+  assert.equal(r.logRange, 'origin/main..feat/x');
+});
+
+test('branchRanges: log НИКОГДА не трёхточечный — иначе чужие коммиты станут своими', () => {
+  const r = branchRanges('origin/main', 'feat/x');
+  assert.ok(!r.logRange.includes('...'), 'симметрическая разница в log — источник ложных находок');
+  assert.ok(r.diffRange.includes('...'), 'diff обязан считать от merge-base');
+});
+
+test('branchRanges: чужая база уважается (--base)', () => {
+  assert.deepEqual(branchRanges('origin/release', 'fix/y'), {
+    diffRange: 'origin/release...fix/y',
+    logRange: 'origin/release..fix/y',
+  });
 });
