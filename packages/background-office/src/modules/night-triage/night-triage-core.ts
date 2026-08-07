@@ -7,7 +7,11 @@
  *
  * Чистые функции: весь I/O (чтение registry.json, git-активность, состояние
  * GitHub Issues) собирает сервис и передаёт сюда готовыми структурами.
+ *
+ * `node:crypto` — единственный внешний модуль здесь, и он не нарушает чистоты:
+ * хеш детерминирован, это не ФС, не сеть и не часы.
  */
+import { createHash } from 'node:crypto';
 
 export type TriageCategory = 'ghost' | 'orphan' | 'stale';
 export type TriageAction = 'close' | 'relink' | 're-scope';
@@ -51,6 +55,24 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 /** Изменения младше 24ч — переходные состояния, не классифицируем (бриф §7). */
 export const TRANSITIONAL_WINDOW_MS = DAY_MS;
 export const DEFAULT_STALE_THRESHOLD_DAYS = 14;
+
+/**
+ * Отпечаток среза: что именно триаж УТВЕРЖДАЕТ, без времени прогона.
+ *
+ * Нужен порогу публикации (долг `#night-triage-yield-zero`): чтобы отличить «есть что
+ * сказать» от «та же перепись другой ночью», сравнивать надо не `counts` — они колеблются
+ * на единицы, ничего нового не сообщая (замер 04–06.08: ghost плоские 5, orphan
+ * 166→170→161, stale 155→159→161), — а СОСТАВ утверждений.
+ *
+ * В отпечаток входят id, категория и предписанное действие; `generatedAt` и `dwellDays`
+ * НЕ входят: время прогона и счётчик простоя меняются каждую ночь сами по себе, и,
+ * попав в ключ, сделали бы порог всегда открытым — то есть отсутствующим.
+ */
+export function snapshotFingerprint(snapshot: TriageSnapshot): string {
+  const line = (f: TriageFinding) => `${f.category}:${f.id}:${f.action}:${f.issue ?? '—'}`;
+  const body = [...snapshot.ghosts, ...snapshot.orphans, ...snapshot.stale].map(line).sort().join('\n');
+  return createHash('sha256').update(body).digest('hex');
+}
 
 /** Детерминированная сортировка по id: по кодовым точкам, НЕ localeCompare (локаль-зависима). */
 export function byCodePointId(a: { id: string }, b: { id: string }): number {

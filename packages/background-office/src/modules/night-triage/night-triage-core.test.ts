@@ -7,6 +7,7 @@ import {
   detectOrphans,
   detectStale,
   isTransitional,
+  snapshotFingerprint,
   type RegistryTask,
 } from './night-triage-core';
 
@@ -119,5 +120,50 @@ describe('гетерогенные поля', () => {
     const tasks: RegistryTask[] = [{ id: 'legacy', status: 'active', opened: iso(40) }];
     const s = detectStale(tasks, new Map(), NOW, 14);
     expect(s[0]?.dwellDays).toBe(40);
+  });
+});
+
+/**
+ * Отпечаток состава — основание порога публикации (`#night-triage-yield-zero`).
+ *
+ * Охраняемое свойство: отпечаток обязан молчать о том, что меняется каждую ночь само
+ * (время прогона, счётчик простоя), и говорить о том, что составляет утверждение отчёта.
+ * Отпечаток, чувствительный к времени, был бы порогом, всегда открытым — то есть никаким.
+ */
+describe('snapshotFingerprint', () => {
+  const tasks: RegistryTask[] = [
+    { id: 'ghost-x', status: 'active', githubIssue: 47, createdAt: iso(30) },
+    { id: 'arch', status: 'archived', githubIssue: 47 },
+    { id: 'orphan-a', status: 'active', createdAt: iso(30) },
+  ];
+
+  it('один состав — один отпечаток', () => {
+    const a = buildTriageSnapshot(tasks, new Map(), NOW, 14);
+    const b = buildTriageSnapshot(tasks, new Map(), NOW, 14);
+    expect(snapshotFingerprint(a)).toEqual(snapshotFingerprint(b));
+  });
+
+  it('время прогона в отпечаток НЕ входит: сутки спустя тот же реестр даёт тот же отпечаток', () => {
+    const today = buildTriageSnapshot(tasks, new Map(), NOW, 14);
+    const tomorrow = buildTriageSnapshot(tasks, new Map(), new Date(NOW.getTime() + 24 * 60 * 60 * 1000), 14);
+    expect(tomorrow.generatedAt).not.toEqual(today.generatedAt);
+    expect(snapshotFingerprint(tomorrow)).toEqual(snapshotFingerprint(today));
+  });
+
+  it('новая карточка в составе меняет отпечаток', () => {
+    const before = buildTriageSnapshot(tasks, new Map(), NOW, 14);
+    const after = buildTriageSnapshot(
+      [...tasks, { id: 'orphan-new', status: 'active', createdAt: iso(30) }],
+      new Map(),
+      NOW,
+      14,
+    );
+    expect(snapshotFingerprint(after)).not.toEqual(snapshotFingerprint(before));
+  });
+
+  it('отпечаток от порядка задач в реестре не зависит', () => {
+    const straight = buildTriageSnapshot(tasks, new Map(), NOW, 14);
+    const reversed = buildTriageSnapshot([...tasks].reverse(), new Map(), NOW, 14);
+    expect(snapshotFingerprint(reversed)).toEqual(snapshotFingerprint(straight));
   });
 });

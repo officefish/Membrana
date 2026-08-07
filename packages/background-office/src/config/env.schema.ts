@@ -62,6 +62,11 @@ export const envSchema = z.object({
     .transform((v) => v === 'true' || v === '1'),
   NIGHT_TRIAGE_BASE_BRANCH: z.string().optional(),
   NIGHT_TRIAGE_STALE_DAYS: z.string().optional(),
+  /**
+   * Ночей молчания после PR, закрытого без мерджа (порог публикации,
+   * `#night-triage-yield-zero`). По умолчанию 7; `0` снимает карантин.
+   */
+  NIGHT_TRIAGE_REJECT_COOLDOWN_NIGHTS: z.string().optional(),
   /** Сны v2 (M5): почасовой cron + append-only volume */
   DREAMS_ENABLED: z
     .string()

@@ -8,7 +8,7 @@
  * Чистая функция от TriageSnapshot — без Date.now/IO, два прогона совпадают.
  */
 
-import type { TriageFinding, TriageSnapshot } from './night-triage-core';
+import { snapshotFingerprint, type TriageFinding, type TriageSnapshot } from './night-triage-core';
 
 export interface RenderOptions {
   /** Дата среза YYYY-MM-DD (для заголовка). */
@@ -18,6 +18,19 @@ export interface RenderOptions {
 }
 
 const DEFAULT_REPO = 'officefish/Membrana';
+
+/** Начало маркера отпечатка. Отдельной константой: его читает порог публикации. */
+export const FINGERPRINT_MARKER = '<!-- night-triage:fingerprint';
+
+/**
+ * Достать отпечаток из посаженного отчёта. `null` — отчёт старее маркера (посажен до
+ * 07.08) либо маркера в нём нет: это «основания для сравнения нет», а НЕ «дельта нулевая».
+ * Разница несущая — на `null` порог обязан пропускать, иначе первый же прогон онемеет.
+ */
+export function extractFingerprint(report: string): string | null {
+  const m = new RegExp(`${FINGERPRINT_MARKER} ([0-9a-f]{64}) -->`).exec(report);
+  return m?.[1] ?? null;
+}
 
 function issueLink(issue: number | null, repoSlug: string): string {
   return issue === null ? '—' : `[#${issue}](https://github.com/${repoSlug}/issues/${issue})`;
@@ -79,6 +92,12 @@ export function renderTriageReport(snapshot: TriageSnapshot, opts: RenderOptions
 
   const lines: string[] = [
     `# Night Triage ${opts.date}`,
+    '',
+    // Отпечаток состава — основание порога публикации (`#night-triage-yield-zero`).
+    // Живёт в ПОСАЖЕННОМ отчёте, потому что сравнивать надо с тем, что ствол получил,
+    // а не с тем, что механизм когда-то предлагал. Комментарий, а не таблица: он для
+    // машины, и читателю отчёта в глаза не лезет.
+    `${FINGERPRINT_MARKER} ${snapshotFingerprint(snapshot)} -->`,
     '',
     clean
       ? '**Сводка:** реестр чист — расхождений не найдено.'
