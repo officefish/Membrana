@@ -1,0 +1,11 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "static-mmbrn-inventory-export",
+  "note": "Changed-line measurement by ratified block zone after implementation, two review rounds, gate and procedure journal. Tracked files use git diff --numstat additions; untracked files use full line count. The cli-and-evidence total includes this measurement and the one-line generated experience record; later delivery-status bookkeeping is reported separately and does not retroactively rewrite the forecast observation.",
+  "measuredAt": "2026-08-08T18:05:02+03:00",
+  "segments": [
+    { "cutBlockId": "snapshot-contract", "changedLines": 232 },
+    { "cutBlockId": "offline-extractor", "changedLines": 227 },
+    { "cutBlockId": "cli-and-evidence", "changedLines": 393 }
+  ]
+}

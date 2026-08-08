@@ -183,6 +183,7 @@
     "panel:invite": "node scripts/panel-invite.mjs",
     "panel:dns-gate": "node scripts/panel-dns-gate.mjs",
     "affine:capacity-gate": "node scripts/affine-capacity-gate.mjs",
+    "affine:inventory": "node scripts/affine-inventory.mjs",
     "affine:install": "node scripts/_ssh-affine-install.mjs",
     "affine:workspace:list": "node scripts/affine-workspace-list.mjs",
     "affine:import": "node scripts/affine-import-markdown.mjs",
