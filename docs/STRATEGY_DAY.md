@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-08-07T06:25:09.035Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-08-08T07:59:14.986Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -36,7 +36,7 @@ _Кристаллов активно: 127 (owner: 81, derived: 46). Страте
 - **Оркестрация хендофф: разрез дня на изолированные брифы с асимметрией знания** — `insight:insight-handoff-orchestration`
 - **Ночной интерн документации: слепой проход → глубокий → дельта-патчи докам** — `insight:insight-night-doc-intern`
 - **Комбинированный детектор: гармоника с FFT-ядра, тембр с MFCC** — `insight:insight-mfcc-combined-two-cores`
-- **Контракт носителя: объявленный участник процедуры обязан быть вызываемым** — `insight:insight-cast-carrier-contract`
+- ~~**Контракт носителя: объявленный участник процедуры обязан быть вызываемым**~~ — `insight:insight-cast-carrier-contract` _(stale · 2026-07-25)_
 - ~~**AI-агент построения UserCase по описанию пользователя**~~ — `insight:insight-agent-scenario-builder` _(stale · 2026-06-25)_
 - ~~**Loop engineering: соревновательное тестирование с точками останова**~~ — `insight:insight-loop-engineering-competition-test` _(stale · 2026-06-25)_
 - ~~**Недельный аудит антипаттернов — бестиарий, детекторы, охотник-который-сам-не-молчун**~~ — `insight:insight-weekly-antipattern-audit-bestiary` _(stale · 2026-07-17)_
@@ -48,7 +48,7 @@ _Кристаллов активно: 127 (owner: 81, derived: 46). Страте
 - ~~**Issue closure must account for every active registry child**~~ — `insight:insight-ghost-task-closure-invariant` _(stale · 2026-06-29)_
 - ~~**Версионируемые тулинг-киты: наборы умений агента под задачу**~~ — `insight:insight-tooling-kits` _(stale · 2026-07-19)_
 - ~~**Server forwarding — серверные функции сценария**~~ — `insight:insight-server-forwarding` _(stale · 2026-06-25)_
-- **Ночные сны → процедура во фреймах с настраиваемым через панель провайдером** — `insight:insight-dreams-procedure-frames`
+- ~~**Ночные сны → процедура во фреймах с настраиваемым через панель провайдером**~~ — `insight:insight-dreams-procedure-frames` _(stale · 2026-07-25)_
 - **Память процедур: показывается, а не запрашивается; вовлечённость числом, а не подтверждением** — `insight:insight-procedure-memory-shown-not-asked`
 - **Оркестрация процедур через n8n: кожух и производный рендер поверх git как единственного источника правды** — `insight:insight-procedures-orchestration-n8n`
 - ~~**Токены правды: владельческие факты как источник истины для ритуала**~~ — `insight:insight-truth-tokens-owner-facts` _(stale · 2026-07-16)_
