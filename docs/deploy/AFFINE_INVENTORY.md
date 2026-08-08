@@ -55,4 +55,3 @@ This task proves the offline tool with synthetic fixtures. A live read-only sour
 snapshot is a separate owner/ops-authorized act. Migration export, disposition,
 rehydration and copying bytes belong to later phases; live INV-1 therefore remains
 `NOT_PERFORMED` until that act is completed.
-

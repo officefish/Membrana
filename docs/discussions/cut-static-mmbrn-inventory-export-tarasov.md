@@ -1,7 +1,9 @@
 # Нарезка static-mmbrn-inventory-export
 
-Дата: 2026-08-08  
-Резчик: `tarasov`  
+Дата: 2026-08-08
+
+Резчик: `tarasov`
+
 Карточка: `static-mmbrn-inventory-export` (#1305-A)
 
 ## Решение резчика
@@ -55,4 +57,3 @@ read-only source snapshot.
 - Реализация и fixture evidence доказывают воспроизводимость без обращения к
   production; живой read-only snapshot требует отдельного разрешения.
 - Exact-SHA Teamlead review и обычная task closure обязательны до доставки.
-

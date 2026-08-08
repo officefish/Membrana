@@ -1,7 +1,9 @@
 # Review: snapshot-contract
 
-Reviewer: `ozhegov`  
-Block: `snapshot-contract`  
+Reviewer: `ozhegov`
+
+Block: `snapshot-contract`
+
 Final verdict: **LGTM**
 
 ## Initial BLOCK

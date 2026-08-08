@@ -1,7 +1,9 @@
 # Review: cli-and-evidence
 
-Reviewer: `vesnin`  
-Block: `cli-and-evidence`  
+Reviewer: `vesnin`
+
+Block: `cli-and-evidence`
+
 Final verdict: **LGTM**
 
 ## Initial BLOCK

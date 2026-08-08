@@ -1,7 +1,9 @@
 # Review: offline-extractor
 
-Reviewer: `dynin`  
-Block: `offline-extractor`  
+Reviewer: `dynin`
+
+Block: `offline-extractor`
+
 Final verdict: **LGTM**
 
 ## Initial BLOCK
