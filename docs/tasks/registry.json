@@ -56,7 +56,7 @@
       ],
       "notes": "Замер 08.08: catch-all на llm-probe.mjs:163 подтверждён; у llm-probe 11 зелёных зубов, у infra-probe ноль; словарей исходов ТРИ (llm-probe, infra-policy, network/lib/classify #1449) и они не согласованы.",
       "archiveNotes": "Спринт 08.08: classifyOutcome стал обёрткой над classify.mjs (#1449), probeOnce отдаёт errorCode, infra-probe получил первые зубы, infra-policy назван таблицей представления. PR #1805. Живой прогон: 13 звеньев, ни одного ложного net.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-08"
     },
     {
       "id": "feedback-claims-code-probe",
@@ -76,7 +76,7 @@
       ],
       "notes": "Долг попугая #team-feedback-claims-code-unverified. План нарезки ратифицирован владельцем 08.08. Охват v1 честный: 2 hard-вещдока, 1 находка «реестр протух», утверждение о слое — v1.1 (decideTransition используется вне определения, счётом вхождений не ловится).",
       "archiveNotes": "Работа доставлена сессией 08.08 (#1795 CLOSED): прибор feedback:claims построен и подключён третьим шагом вечернего хвоста, 59 зубов. Проверено прогоном на протоколе 07.08.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-08"
     },
     {
       "id": "dockerfile-copy-manifest-drifts",
@@ -95,7 +95,7 @@
       ],
       "notes": "Замер 08.08: расхождения сейчас 0, балласт 1 (llm-probe.mjs). Цена директорного COPY названа: scripts/lib = 330 файлов / 3.5 MB против 12 файлов / 109 KB нужного. Приёмка по условию исполнителя — smoke dreams-tick внутри контейнера в CI.",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-08"
     },
     {
       "id": "static-mmbrn-retirement",
@@ -520,7 +520,7 @@
       ],
       "notes": "Девять срабатываний класса за 10 дней: пять укусов 28.07 (повод флага --keep-branch) + четыре 06.08. Умолчание pr:ship противоречит норме утра (держатель main = находка, #1232). Три слоя лечения в теле #1759; третий (спросить состояние одной командой) — самый дешёвый и недооценённый.",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-08"
     },
     {
       "id": "lazy-close-scope",
@@ -807,7 +807,7 @@
       ],
       "notes": "направление 3 иссью: прибор-сторож; замер 03.08 на Membrana-tooling — своих 1, чужих 36 из 37; дом назван иссью: worktree-sync.mjs в утренней цепочке",
       "archiveNotes": "Спринт 08.08: провод к ядру 03.08 — глагол yarn worktree:resolve (own/foreign/absent, exit 0/1/2) + ядро worktree-identity (чужое дерево названо по имени и ветке, префиксная ловушка закрыта). PR #1810. 31 зуб. Живой замер: главный чекаут читает 37 пакетов из соседнего дерева.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-08"
     },
     {
       "id": "gate-stale-supersede-by-recut",

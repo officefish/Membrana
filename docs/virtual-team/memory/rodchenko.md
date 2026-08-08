@@ -5,8 +5,20 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14398/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 261 (причины в op-log) -->
+Записей: 49 · бюджет 14308/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 269 (причины в op-log) -->
+
+### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
+
+> Начинаю с пользовательского контура ссылок. Старые deep link на `strategy.mmbrn.tech` после cutover не должны «тихо» открывать чужой UI: либо явный mapped redirect на static/Panel-маршрут, либо честный unmapped. Никакого pass-through «как было» — это обход authority и ломает […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-08.md#reply-1`
+
+### 2026-08-08 · позиция · team-evening-feedback
+
+> Родченко, презентационный UI. Оценка артефактов: по моей зоне артефакты дня прямо не касаются, но `MAIN_DAY_ISSUE` содержит требование «клиент получает типизированный ответ с различимой причиной из закрытого списка» — это косвенно моя граница (форма ошибки в UI). Итоги дня: UI […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-08.md#reply-1`
 
 ### 2026-08-07 · позиция · team-evening-feedback
 
@@ -20,11 +32,35 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
 
+### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
+
+> Пользователь видит контейнерные identities и разрешённые результаты, а не нативные роли и ids Affine. Исчезновение движка может убрать browsing и layout, но не должно изменить адрес, права или историю материала. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
+
+### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
+
+> Metadata, ref, bytes и download — четыре разных результата. Metadata включает разрешённые M2 поля и `sensitive.reason`, но никогда `location.ref`; ref-операция возвращает только `location.ref`. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
+
 ### 2026-08-05 · позиция · team-evening-feedback
 
 > — Оценка артефактов: MAIN_DAY_ISSUE удерживает запрет «не берём `detector-scoreboard` Ф1 в код до зелёного CI» — это защищает будущую витрину от посадки на слепой merge; для UI это правильная дисциплина. Итоги дня: витрин не появилось; таблицы качества детекции нет; панели […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
+
+### 2026-08-04 · позиция · static-mmbrn-container-m3-access
+
+> Видимость полей разнесена до ответа API: `sensitive.reason` и `location.kind` входят в metadata, `location.ref` выдаётся только действием `read-ref`, байты — только `read-bytes`. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
+
+### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
+
+> M4 назначает наблюдаемые значения и вещдоки, но не UI, цвет, текст статуса, endpoint или download flow. Любое представление этих метрик остаётся предметом M5-M6. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
 
 ### 2026-08-03 · позиция · one-shot-manifest-m0-order
 
@@ -55,6 +91,24 @@
 > С витрины тимлида: если основание непрозрачно — это фальшивый индикатор. Тимлид должен видеть не булевый «однородно / нет», а что именно вернул предикат: список семейств, их число, перечень путей в каждом. Форма выдачи тимлиду — структурированная запись, не проза. Иначе […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/one-shot-manifest-m4-homogeneity-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m0-order
+
+> Визуально проверю структуру: у нас намечается граф с одним источником (1) и одним стоком (7). Промежуточный слой — 2, 4, 5 — питается от 1. Затем 3 должен откуда-то получить вход. Подождите: от кого зависит 3 (доступ)? От 1 (граница контейнера задаёт предмет управления […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m0-order-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m1-boundary
+
+> Прежде чем рисовать что-либо, я хочу зафиксировать: контейнер — это граница предмета, не граница отображения. Моя задача здесь — убедиться, что классы примеров названы чётко: что я могу считать «данными для отображения» (оригиналы, записи управления), а что — состоянием […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/static-mmbrn-container-m1-boundary-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m2-identity
+
+> Для меня важно понять единицу регистрации с точки зрения того, что именно попадает в реестр. PDF — это один объект целиком, один `sha256` на весь файл, одна запись. Архив тоже регистрируется целиком — один `sha256` на весь архив. Компонент архива — отдельный разговор: он может […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/static-mmbrn-container-m2-identity-2026-08-03.md#reply-1`
 
 ### 2026-08-02 · позиция · team-evening-feedback
 
@@ -247,51 +301,3 @@
 > С витрины оператора/агента статус закрытия обязан читаться без легенды: `accepted | duplicate | rejected_proof | retryable | blocked`. Фальшь: зелёный «в архиве», пока Mongo не подтвердил record id. Uncommitted checkpoint в рабочей копии — не бейдж «durable»; максимум […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m5-recovery-audit
-
-> С витрины оператора/аудитора статусы обязаны читаться без легенды. Не один бейдж «ok/fail». Нужен закрытый алфавит: converged, count_mismatch, hash_mismatch, canonicalization_error, missing_checkpoint, office_unavailable, office_corrupt, emergency_repo_sot, restore_in_progress, […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/task-archive-cold-store-m5-recovery-audit-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m6-migration-path
-
-> С витрины читателя старые markdown-пути и ссылки из PR/Issue обязаны остаться честными. Фальшь: «файл удалён, идите в Mongo» без redirect-таблицы. После миграции витрина repo — либо freeze-штамп «archived → cold id», либо тонкий stub с каноническим `taskId`/`recordId`, не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m6-migration-path-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m7-lifecycle-integration
-
-> С витрины карточки инсайта читатель обязан видеть честный статус, не декоративный «архив готов = L/O». M2 уже сказал: evidence закрывает task, не insight. На карточке `insight-task-archive-storage` после M7 — явная ревизия решения (hybrid SoT, checkpoint в repo), бейдж статуса […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m7-lifecycle-integration-2026-07-30.md#reply-1`
-
-### 2026-07-29 · позиция · network-container-form
-
-> С витрины агента и капитана отказ обязан читаться без легенды. Не «Error: fetch failed» серой прозой, а карточка: `outcome` + одна строка «что это» + «что не делать». Честная пустота: если снимок окружения старше SLA — бейдж `stale`, не зелёный «ок». UI продукта не рисуем; […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/network-container-form-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · night-triage-insight-harvest
-
-> С витрины читателя четырёх ночных отчётов вижу одну повторяющуюся ложь формы: «инсайт» рисуется как полный абзац-список без статуса карточки. Выбираю **альтернативу**, не идею. Вместо натянутого инсайта из триажей — единый шаблон строки отчёта: `статус ∈ {candidate | […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/night-triage-insight-harvest-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · sprint-honest-m0-order
-
-> С витрины капитана и агента в PR: если бейдж «исполнитель» = просто имя в карточке, а след участия — другой — это фальшивое присутствие. Порядок обязан сначала дать честный предикат (1), иначе все девять карточек спринта рисуют один и тот же декор. 213 карточек с формальным […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m0-order-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · sprint-honest-m1-performer
-
-> С витрины капитана: «Исполнитель: Ozhegov» при пустом следе — фальшивое присутствие, как на мостике без callable. Требую два честных индикатора рядом, не один бейдж: *назначен* / *участвовал*. Пустота участия видна: `participated: none`, не прочерк «—» без смысла. Layout не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m1-performer-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m1-form
-
-> С витрины кабинета/борда потребитель читает итог: «есть / нет / число / каталог», не внутренний kind. Но форма данных обязана не врать витрине: квота — число с единицей, инструмент — on/locked, возможность — «нужна сеть», не серый бейдж без reason. Не рисую layout. Требую в […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/tariff-grid-m1-form-2026-07-29.md#reply-1`
