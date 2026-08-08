@@ -156,7 +156,18 @@ async function main(argv) {
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
-  main(process.argv.slice(2)).then((code) => process.exit(code));
+  // `process.exit(code)` здесь СЪЕДАЕТ вывод: в CI stdout — пайп, console.log для пайпа
+  // асинхронен, и немедленный выход рвёт несброшенный буфер. Первый прогон в CI 08.08
+  // так и прошёл: зелёный шаг без единой строки вердикта — то есть «проверено» стало
+  // неотличимо от «ничего не проверил», ровно та болезнь, против которой прибор. Код
+  // возврата ставим полем, а Node выходит сам, дописав поток.
+  main(process.argv.slice(2)).then(
+    (code) => { process.exitCode = code; },
+    (e) => {
+      console.error(`office:image:smoke — прогон НЕ состоялся: ${e?.message ?? e}`);
+      process.exitCode = 2;
+    },
+  );
 }
 
 export { main };

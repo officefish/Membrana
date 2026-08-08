@@ -76,8 +76,15 @@ jobs:
       - name: Зубы прибора
         run: node --test scripts/office-image-smoke.test.mjs
 
+      # Вердикт обязан быть НАПЕЧАТАН: первый прогон 08.08 дал зелёный шаг без единой
+      # строки вывода (process.exit съел буфер пайпа), и «проверено» стало неотличимо от
+      # «ничего не проверил». Молчаливое зелёное здесь запрещено явной проверкой.
       - name: Smoke внутри контейнера
-        run: node scripts/office-image-smoke.mjs --tag membrana-office:smoke
+        run: |
+          set -o pipefail
+          node scripts/office-image-smoke.mjs --tag membrana-office:smoke | tee smoke.out
+          grep -q 'office:image:smoke — ' smoke.out \
+            || { echo '::error::прибор не напечатал вердикт — зелёное без вердикта не считается проверкой'; exit 1; }
 
       - name: Job summary
         if: always()
