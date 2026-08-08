@@ -21,7 +21,17 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `feedback-claims-code-probe` | Гейт проверки утверждений вечернего протокола против кода (строка 5 хендофа 08.08) | M | [`FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md`](../prompts/FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md) | [#1795](https://github.com/officefish/Membrana/issues/1795) |
-| `meeting-static-mmbrn-container` | Заседание: контракт static.mmbrn.tech и роль Affine | M | [`MEETING_BRIEF.md`](../meeting/static-mmbrn-container/MEETING_BRIEF.md) | [#1305](https://github.com/officefish/Membrana/issues/1305) |
+| `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
+| `static-mmbrn-live-services` | #1303-C: LIVE_SERVICES, документация и monitoring | S | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
+| `static-mmbrn-cutover` | #1305-D: cutover, canary и rollback | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
+| `static-mmbrn-m6-alignment` | M6 registry-ledger-storage alignment | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
+| `static-mmbrn-rehydrate-parity` | #1305-C: Affine rehydrate и parity jobs | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
+| `static-mmbrn-ingress-auth` | #1303-B: static ingress и Panel forward-auth | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
+| `static-mmbrn-target-provision` | Target provision для static.mmbrn.tech | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
+| `static-mmbrn-disposition-ledger` | #1305-B: disposition ledger | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
+| `static-mmbrn-inventory-export` | #1305-A: read-only inventory и Affine export | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
+| `static-mmbrn-registry-read-api` | #1303-A: registry/index read API и canonicalRef resolve | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
+| `static-mmbrn-container` | static.mmbrn.tech: контейнер оригиналов и заменяемый Affine | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `morning-journal-close-step` | Шаг закрытия журнала у утра: статус по факту, а не константой в хвосте цепочки | M | [`MORNING_JOURNAL_CLOSE_STEP_PROMPT.md`](../prompts/MORNING_JOURNAL_CLOSE_STEP_PROMPT.md) | [#1782](https://github.com/officefish/Membrana/issues/1782) |
 | `frame-holders-reassign-twenty` | Переназначение двадцати фреймов: у каждого явный держатель, модератор назван отдельно (Р3 ADR-0025) | M | [`FRAME_HOLDERS_REASSIGN_TWENTY_PROMPT.md`](../prompts/FRAME_HOLDERS_REASSIGN_TWENTY_PROMPT.md) | [#1787](https://github.com/officefish/Membrana/issues/1787) |
 | `frame-holder-moderator-split` | ADR-0025 в коде: развести holder и moderator у фрейма | M | [`FRAME_HOLDER_MODERATOR_SPLIT_PROMPT.md`](../prompts/FRAME_HOLDER_MODERATOR_SPLIT_PROMPT.md) | [#1781](https://github.com/officefish/Membrana/issues/1781) |
@@ -257,6 +267,7 @@
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
 | `pr-ship-post-merge-landing` | pr:ship после мерджа: дерево на своей ветке вровень со стволом, а не на main | 2026-08-08 | [`PR_SHIP_POST_MERGE_LANDING_PROMPT.md`](../prompts/PR_SHIP_POST_MERGE_LANDING_PROMPT.md) | #1759 (Issue открыт) | [карточка](./archive/pr-ship-post-merge-landing.md) |
+| `meeting-static-mmbrn-container` | Заседание: контракт static.mmbrn.tech и роль Affine | 2026-08-08 | [`MEETING_BRIEF.md`](../meeting/static-mmbrn-container/MEETING_BRIEF.md) | — | [карточка](./archive/meeting-static-mmbrn-container.md) |
 | `dreams-net-label-lies` | Сны метят HTTP-404 и отсутствие ключа как сетевой отказ: подключить классификатор контейнера network | 2026-08-07 | [`DREAMS_NET_LABEL_LIES_PROMPT.md`](../prompts/DREAMS_NET_LABEL_LIES_PROMPT.md) | #1425 | [карточка](./archive/dreams-net-label-lies.md) |
 | `review-honesty` | Честность ревью: гейт различает три исхода вердикта, oversized читает снятие по commit-status | 2026-08-06 | [`REVIEW_HONESTY_PROMPT.md`](../prompts/REVIEW_HONESTY_PROMPT.md) | — | [карточка](./archive/review-honesty.md) |
 | `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | 2026-08-06 | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — | [карточка](./archive/scoreboard-spectral-ladder.md) |
