@@ -183,6 +183,7 @@
     "panel:invite": "node scripts/panel-invite.mjs",
     "panel:dns-gate": "node scripts/panel-dns-gate.mjs",
     "affine:capacity-gate": "node scripts/affine-capacity-gate.mjs",
+    "affine:inventory": "node scripts/affine-inventory.mjs",
     "affine:install": "node scripts/_ssh-affine-install.mjs",
     "affine:workspace:list": "node scripts/affine-workspace-list.mjs",
     "affine:import": "node scripts/affine-import-markdown.mjs",
@@ -441,7 +442,8 @@
     "tariff:cutover": "node scripts/tariff-cutover-check.mjs",
     "snapshots:rebuild": "node scripts/snapshots-rebuild.mjs",
     "calibrate:mfcc": "node scripts/calibrate-mfcc-gates.mjs",
-    "branch:status": "node scripts/branch-status.mjs"
+    "branch:status": "node scripts/branch-status.mjs",
+    "worktree:resolve": "node scripts/worktree-resolution.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

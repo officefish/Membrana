@@ -1,0 +1,78 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "static-mmbrn-inventory-export",
+  "taskId": "static-mmbrn-inventory-export",
+  "mode": "explicit-honest",
+  "cutBy": "tarasov",
+  "window": {
+    "from": "2026-08-08T17:26:08+03:00",
+    "to": "2026-08-08T22:30:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "snapshot-contract",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/lib/affine-inventory.mjs",
+        "scripts/affine-inventory-lib.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "revisionAt": "2026-08-08T17:28:25.9047701+03:00",
+      "revisionOf": "a68ed091e01f2d68f6665f1259cbb7bcc381eafd5fabb5f80246646ab54ad38b"
+    },
+    {
+      "blockId": "offline-extractor",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/affine-inventory-extractor.mjs",
+        "scripts/affine-inventory-extractor.test.mjs",
+        "scripts/fixtures/affine-inventory/**"
+      ],
+      "estimate": {
+        "changedLines": 360
+      },
+      "revisionAt": "2026-08-08T17:28:25.9047701+03:00",
+      "revisionOf": "b85d4091f3ff521b04388a7d8aa4468d4e68bb87b916f678555bdb24a602db48"
+    },
+    {
+      "blockId": "cli-and-evidence",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/affine-inventory.mjs",
+        "scripts/affine-inventory.test.mjs",
+        "package.json",
+        "docs/deploy/AFFINE_INVENTORY.md",
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/local-sprint/static-mmbrn-inventory-export/**",
+        "docs/sprint/cut/static-mmbrn-inventory-export.json",
+        "docs/sprint/cut/trail/static-mmbrn-inventory-export.jsonl",
+        "docs/sprint/trail/static-mmbrn-inventory-export.jsonl",
+        "docs/sprint/experience/forecast-records.jsonl",
+        "docs/procedure-runs/trail/2026-08-08.jsonl",
+        "docs/virtual-team/memory/archive/tarasov.jsonl",
+        "docs/discussions/cut-static-mmbrn-inventory-export-tarasov.md"
+      ],
+      "estimate": {
+        "changedLines": 330
+      },
+      "revisionAt": "2026-08-08T17:59:42.4871480+03:00",
+      "revisionOf": "886b0a8202b0d21211560367ef5cb2902b3dcdf6a69e3b9f1a5acd934aa988d4"
+    }
+  ],
+  "//scope": "Карточка #1305-A сужена до read-only source snapshot extraction. Инструмент работает на явно переданных офлайн-входах; live production snapshot требует отдельного owner/ops-разрешения. Миграционный export и rehydrate принадлежат #1305-C/S5.",
+  "//dod": "Одинаковый fenced fixture дважды даёт byte-identical canonical manifest и SHA-256 seal; каждая page/asset row имеет id, kind, hash, ts, rels, grants; exact sets сходятся между DB/export descriptors; CLI=0 при DB>0 не доказывает пустоту; duplicate/missing/hash/fence/dangling relation/missing grants дают fail; output не содержит секретов, raw content или private refs; focused tests, context/review pairs, sprint gate, journal, experience и exact-SHA closure обязательны.",
+  "//out-of-scope": "Production mutation и даже live read без отдельного разрешения; Affine import/sync/publish/freeze bypass; disposition ledger; canonical binding; registry records; target provision; DNS/Caddy/Panel; migration copy; rehydrate; S5. Baseline 82/57 не является fenced proof.",
+  "//recut": "v2 17:48+03: canonical sprint:experience revealed two write carriers omitted from the first cut: ignored global forecast journal and tracked tarasov archive. Only these paths are added to cli-and-evidence. Scope, holders, implementation zones and original 330-line forecast remain unchanged; overflow is preserved rather than retroactively hidden.",
+  "//cutter": "Тарасов принял один sprint/PR и три review-атома. Дынин дал GO инструменту и NO-GO эксплуатационному экспорту. Ожегов дал BLOCK широкой формулировке и LGTM после сужения до source snapshot extraction. Вещдок: docs/discussions/cut-static-mmbrn-inventory-export-tarasov.md.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-08T17:59:42.4871480+03:00",
+    "digest": "d9fe7b9b34de8221f574c08b41879278472c755fe5a9585b5d7f99bd0dc81440"
+  }
+}
