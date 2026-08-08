@@ -1,15 +1,15 @@
 # PRECEDENTS — снимок-реестр (производный, руками не править)
 
-> Meta · Date: 2026-08-06 · SHA: 4cfe557e · Source: docs/precedents/*.md
+> Meta · Date: 2026-08-08 · SHA: 1447cea1 · Source: docs/precedents/*.md
 > Пересобрать: `yarn precedent:register --rebuild`. Источник истины — файлы прецедентов.
 
-Всего прецедентов: **24** · различных классов: **6** · доля рецидива: **75%** (ориентир ≤15%).
+Всего прецедентов: **29** · различных классов: **6** · доля рецидива: **79%** (ориентир ≤15%).
 
 ## Рецидив по классам
 
 | Класс | Прецедентов |
 |-------|-------------|
-| session-report | 7 ⚠ рецидив |
+| session-report | 12 ⚠ рецидив |
 | tooling-gap | 7 ⚠ рецидив |
 | ritual-mechanics-vs-value | 4 ⚠ рецидив |
 | cold-start | 3 ⚠ рецидив |
@@ -43,5 +43,10 @@
 | 2026-07-31 | session-report | [2026-07-31-orphan-tests-subject-unresolved-not-missing-rule](../2026-07-31-orphan-tests-subject-unresolved-not-missing-rule.md) | Предупреждение прибора называет причину остатка, которая в этом прогоне не задей |
 | 2026-07-31 | session-report | [2026-07-31-scripts-workshop-lookup-orphans-sets-atlas](../2026-07-31-scripts-workshop-lookup-orphans-sets-atlas.md) | Приоритет между протоколом хука SessionStart и каноном проекта не зафиксирован — |
 | 2026-08-02 | tooling-gap | [2026-08-02-review-blindness-scales-with-diff](../2026-08-02-review-blindness-scales-with-diff.md) | Механизм проверяет, что шаг отработал, но не что утверждение шага истинно |
+| 2026-08-03 | session-report | [2026-08-03-static-mmbrn-m2-twenty-consilium-calls](../2026-08-03-static-mmbrn-m2-twenty-consilium-calls.md) | Не классифицировано до отдельного разбора корпуса двадцати вызовов консилиума |
+| 2026-08-04 | session-report | [2026-08-04-static-mmbrn-m3-run4-overlay-chain-exhausted](../2026-08-04-static-mmbrn-m3-run4-overlay-chain-exhausted.md) | Consilium panel overlay exhausted without content; provider-level cause remains  |
+| 2026-08-05 | session-report | [2026-08-05-static-mmbrn-m4-run4-overlay-chain-rate-limit](../2026-08-05-static-mmbrn-m4-run4-overlay-chain-rate-limit.md) | Все три настроенных overlay-звена вернули rate_limit; default-звено deepseek не  |
 | 2026-08-06 | session-report | [2026-08-06-worktree-remove-bypassed-controlled-demolition](../2026-08-06-worktree-remove-bypassed-controlled-demolition.md) | Агент выполнил радикальную операцию raw-командой, имея санкционированный глагол  |
+| 2026-08-08 | session-report | [2026-08-08-static-mmbrn-epic-review-five-agent-hangs](../2026-08-08-static-mmbrn-epic-review-five-agent-hangs.md) | Все пять agent runtime не завершили review до timeout и были остановлены; инфрас |
+| 2026-08-08 | session-report | [2026-08-08-static-mmbrn-m7-five-external-runs-local-synthesis](../2026-08-08-static-mmbrn-m7-five-external-runs-local-synthesis.md) | Структурно полные ответы повторно подменяли точные M3-M6 predicates метками, вво |
 
