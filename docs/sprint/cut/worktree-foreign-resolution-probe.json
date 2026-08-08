@@ -3,68 +3,52 @@
   "sprintId": "worktree-foreign-resolution-probe",
   "taskId": "worktree-foreign-resolution-probe",
   "mode": "explicit-honest",
-  "cutBy": "tarasov",
+  "cutBy": "ozhegov",
   "window": {
-    "from": "2026-08-03T18:00:00+03:00",
-    "to": "2026-08-03T22:00:00+03:00"
+    "from": "2026-08-08T19:00:00+00:00",
+    "to": "2026-08-09T01:00:00+00:00"
   },
   "blocks": [
     {
-      "blockId": "resolution-core",
+      "blockId": "resolve-port",
       "persona": "ozhegov",
       "context": "ozhegov",
       "zone": [
-        "scripts/lib/worktree-resolution.mjs"
+        "scripts/worktree-resolution.mjs",
+        "scripts/worktree-resolution.test.mjs",
+        "package.json"
       ],
+      "revisionAt": "2026-08-08T18:55:00+00:00",
       "estimate": {
-        "changedLines": 110
+        "changedLines": 150
       },
-      "revisionAt": "2026-08-03T14:50:16+03:00",
-      "revisionOf": "71b57053811b82b16be8294db51cb69c2228b47c96f1f5072e6e761809daf311"
+      "revisionOf": "2094bfc20933b845cc9c84ee68c0cf22571f3acf30445ab1deba20e03f4a9905"
     },
     {
-      "blockId": "resolution-tooth",
-      "persona": "dynin",
-      "context": "dynin",
+      "blockId": "foreign-tree-identity",
+      "persona": "vesnin",
+      "context": "vesnin",
       "zone": [
-        "scripts/lib/worktree-resolution.test.mjs"
+        "scripts/lib/worktree-identity.mjs",
+        "scripts/lib/worktree-identity.test.mjs"
       ],
+      "revisionAt": "2026-08-08T18:55:00+00:00",
       "estimate": {
-        "changedLines": 160
+        "changedLines": 130
       },
-      "revisionAt": "2026-08-03T14:50:16+03:00",
-      "revisionOf": "33b2709f9ce86fd4cbeea834b46052714bf017d56d5258b54b3e2273edda9a11"
-    },
-    {
-      "blockId": "resolution-wire",
-      "persona": "ozhegov",
-      "context": "ozhegov",
-      "zone": [
-        "scripts/worktree-sync.mjs"
-      ],
-      "estimate": {
-        "changedLines": 100
-      },
-      "revisionAt": "2026-08-03T14:50:16+03:00",
-      "revisionOf": "1d40d44e98875aae805a316ab205ee4b4d8f950f211b292d833a9b5d8a1ed623"
-    },
-    {
-      "blockId": "prepush-resolution-wire",
-      "persona": "ozhegov",
-      "context": "ozhegov",
-      "zone": [
-        "scripts/prepush-typecheck-scope.mjs"
-      ],
-      "estimate": {
-        "changedLines": 45
-      },
-      "revisionAt": "2026-08-03T14:50:16+03:00",
-      "revisionOf": "29596ebf89e26e8e332dc9daf02f9eca24758da80872d338d0d76810dad2165a"
+      "revisionOf": "4241ccab73ee4d6448a5809667d9248ecd54af52972e4c1a9bf1761e7bf27b00"
     }
   ],
+  "//why": "Строка 10 хендофа 08.08, иссью #1647, отдана владельцем. Ядро прибора построено 03.08 и цело (classifyResolution: закрытый список own/foreign/absent, сегментная проверка вложенности, 17 зелёных зубов) — но ПРОВОДА НЕТ: файла scripts/worktree-resolution.mjs не существует, глагола в package.json нет. Прибор нельзя позвать ни агенту, ни человеку. Тот же класс, что --keep-branch (#1759) и три манифеста COPY (#1797): способность есть, воспользоваться нечем.",
+  "//measure": "Живой замер шести деревьев 08.08: Membrana (главный чекаут) — своих 0, В ЧУЖОЕ ДЕРЕВО 37 из 37 (все ведут в Membrana-tooling); Membrana-tooling — 37 своих, node_modules СИМЛИНК на главный чекаут; claims/codex/archivarius — свои каталоги, чужих ноль. Уточнение к иссью: страдает не worktree, а тот, чей yarn install был не последним; сейчас это главный чекаут, читающий пакеты из моего дерева. Состояние динамическое, ролями меняются молча.",
+  "//evidence-of-cost": "Вещдок цены получен сегодня же: замеряя строку 10, исполнитель написал ОДНОРАЗОВУЮ проверку вместо вызова прибора (звать было нечем). Она сравнивала realpath.startsWith(base) и объявила …/Membrana-tooling/packages/core «своим» для дерева …/Membrana — потому что одно имя префикс другого. Вышло «чужих 0» там, где чужих все 37. В ядре эта ловушка ЗАКРЫТА (isInside сравнивает по сегменту). Класс сработал на том, кто пришёл его чинить.",
+  "//cutter": "Решение резчика (ozhegov, конспект docs/discussions/cut-worktree-resolve-port-ozhegov.md). BLOCK-условие: порт НЕ заводит второй копии предиката — всё суждение в classifyResolution, порт собирает наблюдение и печатает. Нарушение воспроизвело бы сегодняшнюю ошибку с префиксом внутри самого прибора. Ядро worktree-resolution.mjs и его 17 зубов не правятся: они целы, правка была бы работой сверх нужной.",
+  "//order": "Порядок 1 → 2: блок 2 обогащает вывод, которого до блока 1 не существует. Зоны не пересекаются.",
+  "//dod": "Блок 1: глагол yarn worktree:resolve отвечает на вопрос «достоверен ли здесь МЕЖПАКЕТНЫЙ typecheck» — own | foreign | absent словами ядра; корень дерева берётся у git, симлинки разыменовываются портом; вывод печатается ВСЕГДА, включая own (молчание на «всё своё» неотличимо от «не мерили»); недоступный порт (нет git, нет node_modules) даёт «замер не состоялся», а не «всё своё»; зубы на разбор наблюдения и на отказ порта. Блок 2: чужое дерево названо по ИМЕНИ и ВЕТКЕ (иссью просит знать, в какое дерево и на какой ветке уходит резолюция); сопоставление realPath → дерево — чистое ядро со своими зубами, перечень деревьев и ветки приносит порт (git worktree list); дерево, которого нет в перечне, называется неизвестным, а не приписывается ближайшему по имени — префиксная ловушка та же самая.",
+  "//out-of-scope": "Починка резолюции (свой node_modules каждому дереву) — цена диска и установки, владелец сегодня выбрал глагол-сторож. Подключение к утреннему ритуалу — чужая земля со своим каноном. Ядро worktree-resolution.mjs не правится.",
   "ratification": {
     "by": "owner",
-    "at": "2026-08-03T14:50:16+03:00",
-    "digest": "87b6a08090ff14bdf0d9b5826df1eb3a1fe2c3c1377bb0eced0e1f3efe22ed00"
+    "at": "2026-08-08T19:05:00+00:00",
+    "digest": "d2e0e10e9fecc057cdae1a8b6f634a7e48e8ef1b0a5bf0ceee7964f42680ca30"
   }
 }
