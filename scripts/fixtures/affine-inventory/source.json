@@ -1,0 +1,53 @@
+{
+  "schema": "affine-inventory-source/1",
+  "snapshotId": "fixture-snapshot-1",
+  "capturedAt": "2026-08-08T12:00:00Z",
+  "source": {
+    "databaseId": "fixture-affine-postgres",
+    "workspaceIds": ["strategy-fixture"]
+  },
+  "fences": {
+    "database": { "snapshotId": "fixture-snapshot-1", "marker": "tx-fixture-1" },
+    "export": { "snapshotId": "fixture-snapshot-1", "marker": "export-fixture-1" }
+  },
+  "databaseObjects": [
+    {
+      "id": "page-a",
+      "kind": "page",
+      "hash": "dad34e52340ad973a624e54f7606a7f20af7760d28e53dce95721b72e70772cd",
+      "ts": { "createdAt": "2026-08-08T10:00:00Z", "updatedAt": "2026-08-08T11:00:00Z" },
+      "rels": ["asset:asset-a"],
+      "grants": ["workspace:strategy-fixture:reader"]
+    },
+    {
+      "id": "asset-a",
+      "kind": "asset",
+      "hash": "142364926be9e1b93c726d4c95a029ae18cebe765c849e3b233d439a3b2e635c",
+      "ts": { "createdAt": "2026-08-08T10:30:00Z", "updatedAt": "2026-08-08T10:30:00Z" },
+      "rels": ["page:page-a"],
+      "grants": ["workspace:strategy-fixture:reader"]
+    }
+  ],
+  "exportObjects": [
+    {
+      "id": "asset-a",
+      "kind": "asset",
+      "hash": "142364926be9e1b93c726d4c95a029ae18cebe765c849e3b233d439a3b2e635c",
+      "ts": { "createdAt": "2026-08-08T10:30:00Z", "updatedAt": "2026-08-08T10:30:00Z" },
+      "rels": ["page:page-a"],
+      "grants": ["workspace:strategy-fixture:reader"],
+      "byteSize": 17,
+      "contentPath": "asset-a.txt"
+    },
+    {
+      "id": "page-a",
+      "kind": "page",
+      "hash": "dad34e52340ad973a624e54f7606a7f20af7760d28e53dce95721b72e70772cd",
+      "ts": { "createdAt": "2026-08-08T10:00:00Z", "updatedAt": "2026-08-08T11:00:00Z" },
+      "rels": ["asset:asset-a"],
+      "grants": ["workspace:strategy-fixture:reader"],
+      "byteSize": 32,
+      "contentPath": "page-a.md"
+    }
+  ]
+}

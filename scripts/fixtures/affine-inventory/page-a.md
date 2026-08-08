@@ -1,0 +1,2 @@
+Synthetic Affine page fixture.
+
