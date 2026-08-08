@@ -27,10 +27,10 @@
       "githubIssue": 1797,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-08",
       "leadPersona": "tarasov",
       "supportPersonas": [
         "vesnin"
@@ -266,6 +266,24 @@
       ],
       "notes": "Ратифицированный EPIC; production cutover NO-GO до M4/M5/M6 evidence gates",
       "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "meeting-static-mmbrn-container",
+      "title": "Заседание: контракт static.mmbrn.tech и роль Affine",
+      "promptPath": "docs/meeting/static-mmbrn-container/MEETING_BRIEF.md",
+      "githubIssue": null,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "meeting",
+      "parentEpic": "static-mmbrn-container",
+      "createdAt": "2026-08-03",
+      "archivedAt": "2026-08-08",
+      "leadPersona": "angelina",
+      "supportPersonas": [],
+      "notes": "Архитектурный предшественник реализации #1305; M0 определяет DAG семи вопросов, код и прод вне scope",
+      "archiveNotes": "PR #1798; review LGTM a12b88dfd774; PR #1798 merged 2026-08-08T12:57:54Z (6fec85a8fdee6dae500254da46b192c947d178bd); related umbrella #1305 remains open for implementation",
       "githubIssueClosedAt": null
     },
     {
@@ -750,24 +768,6 @@
       ],
       "notes": "маршрут строки 9 хендофа: recut_act в закрытом списке актов + категория дисквалификации в гейте; разведка усилила вещдок — изъятая строка v1 не существует даже в git-истории, ленту почистили до коммита, и акта перерезки в ленте актов тоже нет",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
-    },
-    {
-      "id": "meeting-static-mmbrn-container",
-      "title": "Заседание: контракт static.mmbrn.tech и роль Affine",
-      "promptPath": "docs/meeting/static-mmbrn-container/MEETING_BRIEF.md",
-      "githubIssue": null,
-      "linearId": null,
-      "size": "M",
-      "status": "archived",
-      "sprintKind": "meeting",
-      "parentEpic": "static-mmbrn-container",
-      "createdAt": "2026-08-03",
-      "archivedAt": "2026-08-08",
-      "leadPersona": "angelina",
-      "supportPersonas": [],
-      "notes": "Архитектурный предшественник реализации #1305; M0 определяет DAG семи вопросов, код и прод вне scope",
-      "archiveNotes": "PR #1798; review LGTM a12b88dfd774; PR #1798 merged 2026-08-08T12:57:54Z (6fec85a8fdee6dae500254da46b192c947d178bd); related umbrella #1305 remains open for implementation",
       "githubIssueClosedAt": null
     },
     {
