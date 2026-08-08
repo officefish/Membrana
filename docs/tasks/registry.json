@@ -233,16 +233,16 @@
       "noIssueReason": "Фаза существующего umbrella #1305; отдельный Issue не создаётся и зонтик фазой не закрывается",
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-08",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "angelina"
       ],
       "notes": "Holder #1305; INV-1 воспроизводим; DB/export fenced; CLI не считается proof",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1806; review LGTM 0b559221bff1; PR #1806 merged 2026-08-08T16:28:03Z (741a403360497f4d62c427757e807ad00e94cd6a)",
       "githubIssueClosedAt": null,
       "parentEpic": "static-mmbrn-container"
     },

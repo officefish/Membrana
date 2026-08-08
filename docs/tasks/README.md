@@ -29,7 +29,6 @@
 | `static-mmbrn-ingress-auth` | #1303-B: static ingress и Panel forward-auth | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-target-provision` | Target provision для static.mmbrn.tech | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-disposition-ledger` | #1305-B: disposition ledger | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
-| `static-mmbrn-inventory-export` | #1305-A: read-only inventory и Affine export | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-registry-read-api` | #1303-A: registry/index read API и canonicalRef resolve | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-container` | static.mmbrn.tech: контейнер оригиналов и заменяемый Affine | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `morning-journal-close-step` | Шаг закрытия журнала у утра: статус по факту, а не константой в хвосте цепочки | M | [`MORNING_JOURNAL_CLOSE_STEP_PROMPT.md`](../prompts/MORNING_JOURNAL_CLOSE_STEP_PROMPT.md) | [#1782](https://github.com/officefish/Membrana/issues/1782) |
@@ -268,6 +267,7 @@
 |----|----------|--------------|--------|--------|----------|
 | `llm-probe-still-lies-net` | llm-probe зовёт сетью что попало: catch-all 'net' и три несогласованных словаря исходов | 2026-08-08 | [`LLM_PROBE_STILL_LIES_NET_PROMPT.md`](../prompts/LLM_PROBE_STILL_LIES_NET_PROMPT.md) | #1804 (Issue открыт) | [карточка](./archive/llm-probe-still-lies-net.md) |
 | `dockerfile-copy-manifest-drifts` | Dockerfile офиса: поимённый COPY дублирует граф импортов — сделать расхождение невозможным или видимым | 2026-08-08 | [`DOCKERFILE_COPY_MANIFEST_DRIFTS_PROMPT.md`](../prompts/DOCKERFILE_COPY_MANIFEST_DRIFTS_PROMPT.md) | #1797 (Issue открыт) | [карточка](./archive/dockerfile-copy-manifest-drifts.md) |
+| `static-mmbrn-inventory-export` | #1305-A: read-only inventory и Affine export | 2026-08-08 | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — | [карточка](./archive/static-mmbrn-inventory-export.md) |
 | `meeting-static-mmbrn-container` | Заседание: контракт static.mmbrn.tech и роль Affine | 2026-08-08 | [`MEETING_BRIEF.md`](../meeting/static-mmbrn-container/MEETING_BRIEF.md) | — | [карточка](./archive/meeting-static-mmbrn-container.md) |
 | `pr-ship-post-merge-landing` | pr:ship после мерджа: дерево на своей ветке вровень со стволом, а не на main | 2026-08-08 | [`PR_SHIP_POST_MERGE_LANDING_PROMPT.md`](../prompts/PR_SHIP_POST_MERGE_LANDING_PROMPT.md) | #1759 (Issue открыт) | [карточка](./archive/pr-ship-post-merge-landing.md) |
 | `dreams-net-label-lies` | Сны метят HTTP-404 и отсутствие ключа как сетевой отказ: подключить классификатор контейнера network | 2026-08-07 | [`DREAMS_NET_LABEL_LIES_PROMPT.md`](../prompts/DREAMS_NET_LABEL_LIES_PROMPT.md) | #1425 | [карточка](./archive/dreams-net-label-lies.md) |
