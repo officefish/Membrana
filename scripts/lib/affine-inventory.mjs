@@ -7,7 +7,7 @@ export const INVENTORY_KINDS = Object.freeze(['asset', 'page']);
 
 const HEX_SHA256 = /^[a-f0-9]{64}$/u;
 const GIT_SHA = /^[a-f0-9]{40}$/u;
-const ISO_WITH_OFFSET = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/u;
+const ISO_WITH_OFFSET = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(Z|[+-]\d{2}:\d{2})$/u;
 const SAFE_IDENTIFIER = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/u;
 const SAFE_REFERENCE = /^[A-Za-z0-9][A-Za-z0-9._-]*(?::[A-Za-z0-9][A-Za-z0-9._-]*)*$/u;
 const isObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -39,8 +39,28 @@ export function assertExactKeys(value, allowed, where) {
 }
 
 export function assertIso(value, where) {
-  if (typeof value !== 'string' || !ISO_WITH_OFFSET.test(value) || !Number.isFinite(Date.parse(value))) {
+  const match = typeof value === 'string' ? ISO_WITH_OFFSET.exec(value) : null;
+  if (!match || !Number.isFinite(Date.parse(value))) {
     throw new Error(`${where}: expected ISO timestamp with offset`);
+  }
+  const [, yearText, monthText, dayText, hourText, minuteText, secondText, offset] = match;
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const day = Number(dayText);
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+  const second = Number(secondText);
+  const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const monthLengths = [31, leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  const daysInMonth = month >= 1 && month <= 12 ? monthLengths[month - 1] : 0;
+  const offsetHour = offset === 'Z' ? 0 : Number(offset.slice(1, 3));
+  const offsetMinute = offset === 'Z' ? 0 : Number(offset.slice(4, 6));
+  const validOffset = offsetHour < 14 || (offsetHour === 14 && offsetMinute === 0);
+  if (
+    day < 1 || day > daysInMonth || hour > 23 || minute > 59 || second > 59 ||
+    offsetHour > 14 || offsetMinute > 59 || !validOffset
+  ) {
+    throw new Error(`${where}: invalid ISO calendar or offset`);
   }
 }
 

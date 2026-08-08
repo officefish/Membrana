@@ -21,6 +21,10 @@ test('logical exact sets produce the same evidence regardless of row order', () 
   const reordered = mutatedFixture((input) => {
     input.databaseObjects.reverse();
     input.exportObjects.reverse();
+    for (const row of [...input.databaseObjects, ...input.exportObjects]) {
+      row.rels.reverse();
+      row.grants.reverse();
+    }
   });
   const first = extractAffineInventory({ inputPath: FIXTURE, gitSha: GIT });
   const second = extractAffineInventory({ inputPath: reordered, gitSha: GIT });

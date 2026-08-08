@@ -59,6 +59,10 @@ test('seal rejects schema bypasses and non-offset timestamps', () => {
   assert.throws(() => sealInventoryManifest({ ...manifest, disposition: 'copy' }), /extra=\[disposition\]/u);
   assert.throws(() => buildInventoryManifest({ ...input(), capturedAt: '2026-08-08' }), /with offset/u);
   assert.throws(() => buildInventoryManifest({ ...input(), capturedAt: 'August 8, 2026' }), /with offset/u);
+  assert.throws(() => buildInventoryManifest({ ...input(), capturedAt: '2026-02-31T12:00:00Z' }), /invalid ISO calendar/u);
+  assert.throws(() => buildInventoryManifest({ ...input(), capturedAt: '2026-08-08T12:00:00+14:01' }), /invalid ISO calendar/u);
+  assert.doesNotThrow(() => buildInventoryManifest({ ...input(), capturedAt: '0000-02-29T00:00:00Z' }));
+  assert.throws(() => buildInventoryManifest({ ...input(), capturedAt: '1900-02-29T00:00:00Z' }), /invalid ISO calendar/u);
 });
 
 test('object order uses deterministic code-unit ordering, not host locale', () => {

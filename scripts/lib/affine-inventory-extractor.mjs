@@ -52,7 +52,7 @@ function sortedRows(rows) {
     const a = objectKey(left);
     const b = objectKey(right);
     return a < b ? -1 : a > b ? 1 : 0;
-  });
+  }).map((row) => ({ ...row, rels: [...row.rels].sort(), grants: [...row.grants].sort() }));
 }
 
 export function extractAffineInventory({ inputPath, gitSha }) {

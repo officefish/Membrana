@@ -22,3 +22,12 @@ Final focused test:
 `node --test scripts/affine-inventory-lib.test.mjs scripts/affine-inventory-extractor.test.mjs`
 — 11 pass, 0 fail.
 
+## Exact-SHA BLOCK follow-up
+
+Teamlead review SHA `200cfc7a` выявил order-sensitive nested `rels/grants` в
+evidence hash. Первый fix получил профильный BLOCK, потому что relation fixture
+был одноместным и `reverse()` ничего не проверял. Fixture теперь несёт по два
+валидных relations и grants; перестановка обоих наборов сохраняет manifest/seal,
+а exact-set и metadata comparison не ослаблены.
+
+Follow-up verdict: **LGTM**; focused extractor test 6/6.

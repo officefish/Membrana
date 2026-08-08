@@ -21,3 +21,11 @@ Final verdict: **LGTM**
 Final focused test:
 `node --test scripts/affine-inventory-lib.test.mjs` — 6 pass, 0 fail.
 
+## Exact-SHA BLOCK follow-up
+
+Teamlead review SHA `200cfc7a` выявил permissive calendar validation. Первый fix
+через `Date.UTC` получил профильный BLOCK: годы 0000–0099 трактовались как
+1900–1999. Итоговая реализация считает Gregorian leap year арифметикой и держит
+зубы `0000-02-29` valid / `1900-02-29` invalid / offset выше `+14:00` invalid.
+
+Follow-up verdict: **LGTM**; focused test 6/6.

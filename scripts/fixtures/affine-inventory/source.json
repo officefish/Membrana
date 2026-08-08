@@ -16,16 +16,16 @@
       "kind": "page",
       "hash": "dad34e52340ad973a624e54f7606a7f20af7760d28e53dce95721b72e70772cd",
       "ts": { "createdAt": "2026-08-08T10:00:00Z", "updatedAt": "2026-08-08T11:00:00Z" },
-      "rels": ["asset:asset-a"],
-      "grants": ["workspace:strategy-fixture:reader"]
+      "rels": ["asset:asset-a", "page:page-a"],
+      "grants": ["workspace:strategy-fixture:reader", "workspace:strategy-fixture:editor"]
     },
     {
       "id": "asset-a",
       "kind": "asset",
       "hash": "142364926be9e1b93c726d4c95a029ae18cebe765c849e3b233d439a3b2e635c",
       "ts": { "createdAt": "2026-08-08T10:30:00Z", "updatedAt": "2026-08-08T10:30:00Z" },
-      "rels": ["page:page-a"],
-      "grants": ["workspace:strategy-fixture:reader"]
+      "rels": ["page:page-a", "asset:asset-a"],
+      "grants": ["workspace:strategy-fixture:reader", "workspace:strategy-fixture:editor"]
     }
   ],
   "exportObjects": [
@@ -34,8 +34,8 @@
       "kind": "asset",
       "hash": "142364926be9e1b93c726d4c95a029ae18cebe765c849e3b233d439a3b2e635c",
       "ts": { "createdAt": "2026-08-08T10:30:00Z", "updatedAt": "2026-08-08T10:30:00Z" },
-      "rels": ["page:page-a"],
-      "grants": ["workspace:strategy-fixture:reader"],
+      "rels": ["page:page-a", "asset:asset-a"],
+      "grants": ["workspace:strategy-fixture:reader", "workspace:strategy-fixture:editor"],
       "byteSize": 17,
       "contentPath": "asset-a.txt"
     },
@@ -44,8 +44,8 @@
       "kind": "page",
       "hash": "dad34e52340ad973a624e54f7606a7f20af7760d28e53dce95721b72e70772cd",
       "ts": { "createdAt": "2026-08-08T10:00:00Z", "updatedAt": "2026-08-08T11:00:00Z" },
-      "rels": ["asset:asset-a"],
-      "grants": ["workspace:strategy-fixture:reader"],
+      "rels": ["asset:asset-a", "page:page-a"],
+      "grants": ["workspace:strategy-fixture:reader", "workspace:strategy-fixture:editor"],
       "byteSize": 32,
       "contentPath": "page-a.md"
     }
