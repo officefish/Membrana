@@ -1,53 +1,38 @@
-<!-- Сгенерировано: 2026-08-07T16:13:22.484Z (yarn code-review; daily, llm-anthropic) -->
+<!-- Сгенерировано: 2026-08-08T17:45:33.493Z (yarn code-review; daily, llm-anthropic) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: 89c16b04d44a319610e8f1d3eca49921ab1ad059^..85e0eff1750527f77c7eb2b69d84eff31c4af1fb (14 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 89c16b04 #1758 (1445), f03d309e #1763 (497), 9abf5084 #1765 (599), dd7b9eea #1767 (563), 858d37d5 #1766 (442), 3b9f1af9 #1768 (660), e44bed1c #1769 (804), e3c0fb59 #1773 (490), 85e0eff1 #1776 (657)
+> Период: 293568ed6d7391dce9ccf99f29c7738ca329cd33^..fb7559d43224a1546fa839c24ac9f93c796e925a (23 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 293568ed #1779 (1384), 17d8bf1c #1785 (649), 6be069dc #1789 (698), 6fec85a8 #1798 (22181), 2e6d4f89 #1799 (1126), fc02367c #1801 (2566), 0a426ccc #1805 (821), 741a4033 #1806 (1113), ece1d5d5 #1810 (805), 68ba1d32 #1807 (1699), fb7559d4 (856)
 
 ---
 
 Tier: T1
 
+**Ведущий ревью: Vesnin (Архитектор)**
+Бестиарий: B9 (Проза) — под наблюдением: промпты задач создаются, машинные носители появятся после реализации (#1781, #1787, #1782). Дефект не новый, признак не усиливается в диффе. Остальные B1–B10 — не обнаружены.
+**Вердикт ведущего: пропуск.**
+
 ---
 
-**[Teamlead — Vesnin]:**
-PR size: oversized (9 из 14 коммитов >400 строк; к ревью сегодня — только развёрнутые диффы). День закрыт честно: магистраль `agent-tooling-night-build` снята как фантом (эпик архивирован 06.08), `tariff-promo-server-wiring` поставлена новой осью с обоснованием по норме #1573 — домен готов, потребителя нет. `main-day-assertions.json` перечеканен под новую магистраль (07.08), `morning-gates-state.json` синхронизирован, реестр обновлён, промпт-указатель создан без дублирования тела Issue — архитектурно опрятно. Новый вещдок `//retired-night-build-phantom-07-08` добавлен append-only — урок «архивация эпика обязана снимать его из sources[]» зафиксирован корректно.
+[Teamlead]: День структурно чистый: ADR-0025 принят владельцем, нарезка `frame-holder-moderator-split` оформлена канонически (sprint-cut + ratification + window по факту старта — ловушка 05.08 не повторилась). Orphaned run `ritual-day-2026-08-07-r2` закрыт вручную до генерации артефактов — долг утра исполнен. Три карточки по Р3 ADR-0025 добавлены в реестр: `frame-holder-moderator-split`, `frame-holders-reassign-twenty`, `morning-journal-close-step`; зависимости между ними явно описаны в промптах (не молчаливы). Главная ось дня `tariff-promo-server-wiring` по диффу не двинулась — серверного роута, вызывающего `decideTransition`, в диффе нет; магистраль формально остаётся открытой. Риск на завтра: очередь oversized не сокращается (9 PR), первая строка утра — `yarn code-review:pr 1785` (649 строк, в диффе дня, без вердикта).
 
-Риски на утро:
-- **P1** — 9 PR oversized остаются без развёрнутого ревью; очередь `review-oversized-queue` не сокращается третий день. Завтра: `yarn code-review:pr 1765`, `yarn code-review:pr 1767`, `yarn code-review:pr 1768` — по одному проходу с вердиктом.
-- **P1** — `ritual-day-2026-08-07-r2` открыт и не закрыт (trail/2026-08-07.jsonl, sequence=1, status=started). Перед первой работой: `yarn ritual:close-orphan ritual-day-2026-08-07-r2` или ручная закрывающая запись в trail.
-- **P2** — дубль записи `js-yaml` в `deps-watch-snapshot.json` (id 1138114 и 1138115, идентичный issue/url). Не блокирует, но снимок становится ненадёжным счётчиком.
-
-Утренние команды:
+Утро:
 ```bash
-# Перед любой работой — закрыть незакрытый ритуальный прогон
-yarn procedure:close ritual-day-2026-08-07-r2 --status fail --gaps orphaned
-
-# Typecheck затронутых пакетов
+yarn procedure:close ritual-day-2026-08-08 --status pass   # если цепочка не закрыла сама
 yarn turbo run typecheck --filter=@membrana/background-cabinet --filter=@membrana/background-office
-
-# Первый oversized из очереди
-yarn code-review:pr 1765
+yarn code-review:pr 1785
+yarn code-review:pr 1789
 ```
 
----
+[Структурщик]: Нарезка `frame-holder-moderator-split.json` грамотно разводит зоны по роли: b1 (`procedure-personas.mjs`) — Dynin, b2 (`validate-procedure.mjs`) — Ozhegov, b3 (тесты) — Dynin, b4 (docs) — Vesnin; нет пересечений зон между блоками. `tasks-decompose.config.json` расширен паттерном `morning-journal`, новая карточка не выбивается из существующей группы. `C7`: зубы описаны в DoD (`validate-procedure.test.mjs`), но файла в диффе ещё нет — это ожидаемо для стадии «sprint open», не дефект. `C8`: `console.log` в диффе — нет.
 
-**[Структурщик — Ozhegov]:**
-`ritual-deliver-to-main.mjs` — разбиение на `splitDeliverable` / `planExecute` / `shipArgsFor` корректно выносит решение в чистые функции без побочных эффектов; граница «доставке подлежит vs не лечится доставкой» зафиксирована константой `DELIVERABLE_STATUSES` — слабая связанность соблюдена. `tasks-decompose.config.json`: добавление паттерна `tariff-` в группу «Платформа» — правка минимальная, соответствует структуре. `registry.json`: новая карточка `tariff-promo-server-wiring` с корректными полями `leadPersona`/`supportPersonas`/`sprintKind`; `githubIssueClosedAt: null` — норма для активной задачи. Отдельное замечание (P2, opportunity): `shipArgsFor` принимает сырые строки вместо типизированного объекта — при росте числа ритуалов рискует стать source of truth для строковых констант без схемы.
+[Математик]: —
 
----
+[Музыкант]: —
 
-**[Математик — Dynin]:** —
-
----
-
-**[Музыкант — Kuryokhin]:** —
-
----
-
-**[Верстальщик — Rodchenko]:** —
+[Верстальщик]: —
 
 ---
 
@@ -55,12 +40,12 @@ yarn code-review:pr 1765
 
 **Definition of Done (утро):**
 ```bash
-yarn procedure:close ritual-day-2026-08-07-r2 --status fail --gaps orphaned
 yarn turbo run typecheck --filter=@membrana/background-cabinet --filter=@membrana/background-office
-yarn code-review:pr 1765
+yarn code-review:pr 1785
+yarn code-review:pr 1789
 ```
 
 **Риски:**
-- P1 — orphaned run `ritual-day-2026-08-07-r2` не закрыт; читать trail утром, закрыть до старта
-- P1 — oversized-очередь (9 PR) не сокращается; завтра минимум один проход
-- P2 — дубль `js-yaml` (id 1138114/1138115) в `deps-watch-snapshot.json` — дедуп при следующем касании файла
+- P1 — магистраль `tariff-promo-server-wiring` не замкнута: `decideTransition` не вызывается ни одним роутом, `spendPromo` не протестирована под двойным вызовом; третий день без движения по серверному проводу.
+- P2 — oversized-очередь: 9 PR без вердикта; `1785`, `1789`, `1801` — в диффе дня, ни один не проверен.
+- P2 — `sequence: 1` у второй записи в `2026-08-08.jsonl` (`ritual-day-2026-08-08 open`) — обе записи файла несут `sequence: 1`; монотонность нарушена на уровне файла (первая запись — закрытие `r2`, вторая — открытие нового прогона; разные `runId`, но счётчик должен быть независимым на `runId`, не на файле — уточнить схему при первом касании журнала).
