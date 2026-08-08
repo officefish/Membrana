@@ -2304,3 +2304,50 @@ OpenRouter. Владелец был явно уведомлён о payload и de
 Машинный `meeting:audit` имеет structural PASS. Неблокирующий риск: повестка занимает
 11 965 из лимита 12 000 символов; любое изменение требует нового dry-run. Текущая неизменная
 редакция доставляется. Внешний run3 допускается только после отдельного разрешения владельца.
+
+## Постаудит M7 — run3
+
+Первый вызов был остановлен до API: внутренний payload routes/access/storage/migration требовал
+явного согласия на destinations. После уведомления владелец разрешил цепочку Anthropic Claude
+Sonnet 4.6 → xAI Grok 4.5 → OpenRouter/Claude Sonnet 4.6. Отказ не потратил кредит. Run3
+произведён `anthropic/claude-sonnet-4-6`; внешний бюджет стал 3 из 5.
+
+Механика PASS: 36 реплик, ровно шесть от каждой роли, семь таблиц, 20 cases, один D1/carrier,
+DoD — последняя секция; `meeting:audit` structural PASS. Сырой carrier без исправлений сохранён
+как [`run3-cyclic-dag-readiness-ledger-inventory-routes-retirement`](../../seanses/rejected/static-mmbrn-container-m7-migration-delivery-2026-08-07-run3-cyclic-dag-readiness-ledger-inventory-routes-retirement.md).
+
+Независимый смысловой аудит дал **BLOCK** по семи группам:
+
+- S1 требует уже provisioned FD-1/2/3, а S4 — результаты M5, производимые лишь S5: DAG цикличен;
+- вместо exact M4 G1-G10 и M5 G1-G10 даны 6+3 иных gates; полный M6 corpus и reconciliation
+  отсутствуют, а rule без evidence получил PASS;
+- ledger использует необъявленные discard/parity/canary/cutover/rollback states и обратные
+  transitions, хотя объявлена append-only machine;
+- validation требует будущий M6 commit до S6, который только создаёт bytes/row/binding;
+- representative classes не дают per-object disposition 82+57, а page-based id не покрывает
+  самостоятельные assets; baseline 139 выдан за доказанную cardinality;
+- route matrix вводит `pass-through`, multi-action API и WS без exact M3 action/object;
+- engine copies удаляются post-cutover до retirement; 14-day observation обещает rollback при
+  окне 72h.
+
+Повестка run4 требует точные M4/M5 gates, полный M6 contract, причинный DAG, закрытый ledger,
+честный per-object NO-GO, точный M3 route classification и совместимые rollback/retirement.
+Внешний run4 запрещён до нового dry-run, независимого предаудита и отдельного разрешения.
+
+## Предаудит M7 — run4
+
+После возобновления 2026-08-08 независимый read-only аудитор дал **PASS**. Предыдущая попытка
+предаудита не состоялась из-за лимита агента и не является внешним прогоном M7.
+
+- canonical carrier отсутствует; run1-run3 находятся только в `rejected`; бюджет 3/5;
+- один D1/carrier, повестка занимает 11 931 из 12 000 символов;
+- все семь групп BLOCK run3 перенесены без обнаруженной коллизии;
+- точные M3 actions/objects, M4 G1-G10, M5 G1-G10 и полный M6 сохранены;
+- закрытая append-only machine, причинный DAG, M6 commit order и per-object page/asset evidence
+  обязательны;
+- rollback, observation, cutover и retirement разведены;
+- 36/6x6 и последняя секция DoD сохранены; готовый verdict не подставлен.
+
+Dry-run с `--no-context --no-rag --no-memory` доставил повестку полностью. Машинный
+`meeting:audit` имеет structural PASS. Внешний run4 допускается только после отдельного
+разрешения владельца с явным согласием на передачу внутреннего payload указанной LLM-chain.

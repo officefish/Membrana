@@ -45,13 +45,11 @@ Carrier — `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-0
 
 ## Измеренная фактура переезда
 
-- Live Affine: `affine_server` + PostgreSQL + Redis на office VDS, loopback
-  `127.0.0.1:3010`, Caddy route `strategy.mmbrn.tech`.
-- В БД три private workspaces: Strategy, Templates, Releases; один participant; 82 pages.
-  Наблюдаются дубли импортированных документов и 57 служебных PNG/SVG. Оригиналов чеков и
-  внешних PDF в Affine не найдено.
-- `affine-cli doc list` показал ноль документов, но read-only DB inventory опроверг его.
-  CLI-листинг не является доказательством пустоты или полноты корпуса.
+- Live Affine: `affine_server`, PostgreSQL и Redis на office VDS; `127.0.0.1:3010`; Caddy
+  route `strategy.mmbrn.tech`.
+- БД: private Strategy/Templates/Releases, один participant, 82 pages, дубли и 57 service
+  PNG/SVG; оригиналов чеков/внешних PDF не найдено.
+- `affine-cli doc list` = 0, DB inventory = 82; CLI не доказывает пустоту или полноту.
 - Стратегическая публикация в Affine заморожена машинным gate; Git/гранулы/генераторы
   остаются truth стратегических документов.
 - `docs/evidence/registry.jsonl` содержит 12 legacy rows; один PDF-чек лежит в публичном Git,
@@ -92,35 +90,39 @@ Carrier — `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-0
 13. **Readiness:** go/no-go matrix с corpus, predicate, producer, current state и cutover
     authorization; любой required unknown/FAIL сохраняет NO-GO.
 
-## Обязательные поправки run1-run2
+## Обязательные поправки run1-run3
 
-Бюджет **2/5**. Run1-run2 только в `rejected`; их models/constants/verdict не посылки run3.
+Бюджет **3/5**. Run1-run3 в `rejected`; их решения не посылки run4.
 
-1. **M3:** только `discover|read-metadata|read-ref|read-bytes|download|write-metadata|
+1. **M3 routes:** только `discover|read-metadata|read-ref|read-bytes|download|write-metadata|
    upload-revision|manage-access`; object только container=`static.mmbrn.tech`, collectionId
-   или lineage=`canonicalRef`. Иные object names и `static.*` запрещены. У route один exact
-   action/object либо pre-action network deny; canary/rollback сохраняют Panel/current versions.
-2. **Без циклов:** provision создаёт target, поэтому его entry не требует его же M4 PASS;
-   M4 gates следуют после измеримого target. Freeze/fence до единственного proof snapshot.
-   M5 replacement/export/rehydration/parity gates стоят только после производящего шага;
-   pre-rebuild проверяет лишь существующие input/authority/backup predicates.
-3. **Разные корпуса:** source migration sets получают имена, отличные от M6. `82/57` — baseline
-   drift; fenced DB/export/ledger равны двусторонне по `SourceObjectRef`+hash, не counts.
-   M6 неизменно означает `C_all,C_live,L_proposed,C_managed,C_legacy`, включает FAILED/
-   reconciliation, state-indexed row/object/binding cardinalities и full three-way diff.
-4. **Rollback:** control-plane rollback не удаляет M2 rows, bindings или referenced bytes и не
-   вводит состояние вне объявленной machine. До M6 commit orphan cleanup следует M6/M4; после
-   commit любое deletion требует zero live refs, ≥365d, no hold и complete authorization chain.
-5. **Qualification:** Affine page/asset остаётся engine state. Ref-count или parent migration
-   недостаточны: static original возможен только после M1 qualification и отдельного M6 intent.
-   Legacy reconciliation не append-ит synthetic registry rows/bindings.
-6. **Retirement/constants:** manual/blocked/failed unresolved блокирует deletion каждого source.
-   Cutover и retirement — разные gates; retirement только после redirect lifetime, restore/
-   parity, all-resolved и выбранного exact zero-traffic interval. Выбрать по одному redirect/
-   unmapped status, canary predicate, rollback window, lifetime, observation и zero-traffic;
-   никаких `301/302`, `404/410`, `default/proposed/long/≈0`; значения повторить во всех tables.
+   или lineage=`canonicalRef`. Каждый forward имеет один action/object либо pre-action deny;
+   `pass-through`, multi-action API и неклассифицированный WS запрещены.
+2. **Причинный DAG:** provision создаёт target и не требует его M4 PASS. M4 следует после
+   target; M5 export/rehydration/parity — после производящего шага. Pre-step проверяет только
+   существующие input/authority/backup.
+3. **Exact readiness:** M4 сохраняет G1 Capacity+quota, G2 Write/read/hash, G3 Complete backup,
+   G4 Restore drill, G5 Auth bypass, G6 Reconciliation, G7 RPO, G8 RTO, G9 FD-3, G10 Sensitive.
+   M5 сохраняет G1 Reducer, G2 Ref coverage, G3 Engine coverage, G4 Annotation parity,
+   G5 Rehydration, G6 Panel authority, G7 Native principals, G8 Durable backup,
+   G9 Durable restore, G10 Retention. Норма без evidence не PASS.
+4. **M6 и commit:** неизменны `C_all,C_live,L_proposed,C_managed,C_legacy`, FAILED,
+   reconciliation, state-indexed cardinalities и full ledger/registry/FD-1 diff. Validation до
+   write не требует будущих row/binding; commit следует `STORED_PENDING_REGISTRY -> COMMITTED`.
+5. **Одна ledger machine:** заранее объявить все states/transitions; case/DAG не вводит state.
+   Обратных переходов нет: retry/recovery — новые append events.
+   Control-plane rollback не удаляет M2 rows, bindings, referenced bytes или history.
+6. **Per-object evidence:** source id различает page и asset; `82/57` — baseline, не fenced
+   cardinality. До manifest с каждой row+hash+disposition статус `NOT PERFORMED/NO-GO`;
+   типовые classes не заменяют корпус.
+   Page/asset требует M1 qualification и отдельного M6 intent; ref-count недостаточен.
+7. **Retirement:** source/engine copy не удаляется post-cutover. Cutover, rollback и retirement
+   разные gates; deletion лишь после redirect lifetime, restore/parity, all-resolved и exact
+   zero-traffic interval. Observation вне rollback window не обещает rollback. Выбрать один
+   redirect/unmapped status, canary predicate, rollback window, lifetime, observation и
+   zero-traffic; значения едины во всех tables.
 
-Ролевой DoD остаётся `[ ]`; поправки не выбирают за run3 routes/constants/state/DAG.
+Ролевой DoD остаётся `[ ]`; поправки не выбирают за run4 constants, states или DAG.
 
 ## Обязательные случаи
 
