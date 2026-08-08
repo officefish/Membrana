@@ -1,0 +1,3 @@
+{"kind":"cut_context_run","sprintId":"static-mmbrn-inventory-export","subject":"tarasov","at":"2026-08-08T17:26:08+03:00","ref":"docs/discussions/cut-static-mmbrn-inventory-export-tarasov.md","planDigest":null}
+{"kind":"cut_act","sprintId":"static-mmbrn-inventory-export","subject":"tarasov","at":"2026-08-08T17:26:08+03:00","ref":"docs/sprint/cut/static-mmbrn-inventory-export.json","planDigest":null}
+{"kind":"recut_act","sprintId":"static-mmbrn-inventory-export","subject":"tarasov","at":"2026-08-08T17:48:59+03:00","ref":"docs/sprint/cut/static-mmbrn-inventory-export.json","planDigest":null}

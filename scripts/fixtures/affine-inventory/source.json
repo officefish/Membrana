@@ -1,0 +1,53 @@
+{
+  "schema": "affine-inventory-source/1",
+  "snapshotId": "fixture-snapshot-1",
+  "capturedAt": "2026-08-08T12:00:00Z",
+  "source": {
+    "databaseId": "fixture-affine-postgres",
+    "workspaceIds": ["strategy-fixture"]
+  },
+  "fences": {
+    "database": { "snapshotId": "fixture-snapshot-1", "marker": "tx-fixture-1" },
+    "export": { "snapshotId": "fixture-snapshot-1", "marker": "export-fixture-1" }
+  },
+  "databaseObjects": [
+    {
+      "id": "page-a",
+      "kind": "page",
+      "hash": "0cadb303ddca46a6ba956dfbb425abd9cafb129efe51c4729bc3963d93d9dc37",
+      "ts": { "createdAt": "2026-08-08T10:00:00Z", "updatedAt": "2026-08-08T11:00:00Z" },
+      "rels": ["asset:asset-a", "page:page-a"],
+      "grants": ["workspace:strategy-fixture:reader", "workspace:strategy-fixture:editor"]
+    },
+    {
+      "id": "asset-a",
+      "kind": "asset",
+      "hash": "ec12004ea076639b38e250a99eebcccb1fdd9eca3fb732f767ba1528776b631d",
+      "ts": { "createdAt": "2026-08-08T10:30:00Z", "updatedAt": "2026-08-08T10:30:00Z" },
+      "rels": ["page:page-a", "asset:asset-a"],
+      "grants": ["workspace:strategy-fixture:reader", "workspace:strategy-fixture:editor"]
+    }
+  ],
+  "exportObjects": [
+    {
+      "id": "asset-a",
+      "kind": "asset",
+      "hash": "ec12004ea076639b38e250a99eebcccb1fdd9eca3fb732f767ba1528776b631d",
+      "ts": { "createdAt": "2026-08-08T10:30:00Z", "updatedAt": "2026-08-08T10:30:00Z" },
+      "rels": ["page:page-a", "asset:asset-a"],
+      "grants": ["workspace:strategy-fixture:reader", "workspace:strategy-fixture:editor"],
+      "byteSize": 16,
+      "contentPath": "asset-a.txt"
+    },
+    {
+      "id": "page-a",
+      "kind": "page",
+      "hash": "0cadb303ddca46a6ba956dfbb425abd9cafb129efe51c4729bc3963d93d9dc37",
+      "ts": { "createdAt": "2026-08-08T10:00:00Z", "updatedAt": "2026-08-08T11:00:00Z" },
+      "rels": ["asset:asset-a", "page:page-a"],
+      "grants": ["workspace:strategy-fixture:reader", "workspace:strategy-fixture:editor"],
+      "byteSize": 31,
+      "contentPath": "page-a.md"
+    }
+  ]
+}
