@@ -20,6 +20,26 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "feedback-claims-code-probe",
+      "title": "Гейт проверки утверждений вечернего протокола против кода (строка 5 хендофа 08.08)",
+      "promptPath": "docs/prompts/FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md",
+      "githubIssue": 1795,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-08",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Долг попугая #team-feedback-claims-code-unverified. План нарезки ратифицирован владельцем 08.08. Охват v1 честный: 2 hard-вещдока, 1 находка «реестр протух», утверждение о слое — v1.1 (decideTransition используется вне определения, счётом вхождений не ловится).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "dockerfile-copy-manifest-drifts",
       "title": "Dockerfile офиса: поимённый COPY дублирует граф импортов — сделать расхождение невозможным или видимым",
       "promptPath": "docs/prompts/DOCKERFILE_COPY_MANIFEST_DRIFTS_PROMPT.md",
