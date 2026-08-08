@@ -1,6 +1,45 @@
 {
   "tasks": [
     {
+      "id": "morning-journal-close-step",
+      "title": "Шаг закрытия журнала у утра: статус по факту, а не константой в хвосте цепочки",
+      "promptPath": "docs/prompts/MORNING_JOURNAL_CLOSE_STEP_PROMPT.md",
+      "githubIssue": 1782,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-08",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Проверено 08.08 своим прогоном. Вечер чинил это место: ritual-evening-run.mjs:178 считает closeStatus по факту (failed.length>0 ? fail : pass) и называет gaps. Утро: хвост && -цепочки ritual:day с зашитым --status pass — двойной дефект (при обрыве закрытия нет вовсе; если случилось — всегда pass). ADR-0025 out-of-scope: заводится ПОСЛЕ появления держателя у фреймов утра, иначе у шага не будет исполнителя. Вне предмета: два раннера утра (отдельный предмет по ADR).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "frame-holders-reassign-twenty",
+      "title": "Переназначение двадцати фреймов: у каждого явный держатель, модератор назван отдельно (Р3 ADR-0025)",
+      "promptPath": "docs/prompts/FRAME_HOLDERS_REASSIGN_TWENTY_PROMPT.md",
+      "githubIssue": 1787,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-08",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ],
+      "notes": "Р3 ADR-0025: отдельная задача с отдельной ратификацией, не побочный эффект контракта. Замер 08.08 своим прогоном: 87 фреймов, 20 за модератором. Семь — моменты с владельцем, тринадцать — инженерная работа без исполнителя. Блокируется карточкой frame-holder-moderator-split (#1781).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "frame-holder-moderator-split",
       "title": "ADR-0025 в коде: развести holder и moderator у фрейма",
       "promptPath": "docs/prompts/FRAME_HOLDER_MODERATOR_SPLIT_PROMPT.md",
@@ -8,7 +47,7 @@
       "linearId": null,
       "size": "M",
       "status": "active",
-      "sprintKind": "day-sprint",
+      "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-08",
       "archivedAt": null,
       "leadPersona": "dynin",
