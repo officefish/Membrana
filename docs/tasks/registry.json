@@ -26,17 +26,17 @@
       "githubIssue": 1795,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-08",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin",
         "vesnin"
       ],
       "notes": "Долг попугая #team-feedback-claims-code-unverified. План нарезки ратифицирован владельцем 08.08. Охват v1 честный: 2 hard-вещдока, 1 находка «реестр протух», утверждение о слое — v1.1 (decideTransition используется вне определения, счётом вхождений не ловится).",
-      "archiveNotes": null,
+      "archiveNotes": "Работа доставлена сессией 08.08 (#1795 CLOSED): прибор feedback:claims построен и подключён третьим шагом вечернего хвоста, 59 зубов. Проверено прогоном на протоколе 07.08.",
       "githubIssueClosedAt": null
     },
     {
@@ -758,16 +758,16 @@
       "githubIssue": 1647,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-03",
-      "archivedAt": null,
+      "archivedAt": "2026-08-08",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "направление 3 иссью: прибор-сторож; замер 03.08 на Membrana-tooling — своих 1, чужих 36 из 37; дом назван иссью: worktree-sync.mjs в утренней цепочке",
-      "archiveNotes": null,
+      "archiveNotes": "Спринт 08.08: провод к ядру 03.08 — глагол yarn worktree:resolve (own/foreign/absent, exit 0/1/2) + ядро worktree-identity (чужое дерево названо по имени и ветке, префиксная ловушка закрыта). PR #1810. 31 зуб. Живой замер: главный чекаут читает 37 пакетов из соседнего дерева.",
       "githubIssueClosedAt": null
     },
     {
