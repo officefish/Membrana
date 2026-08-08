@@ -64,9 +64,16 @@ export function reconcileEnv(policy, presentEnvKeys) {
 }
 
 /**
- * Статус звена по итогу зонда. knownBlocked гасит красный ДО решения части —
- * но это отдельный статус, НЕ ok.
- * @param {object} link @param {string|null} outcome — ok|no-key|auth/geo|balance|dpi-block|net|http-*|skipped|null
+ * Статус звена по итогу зонда — ТАБЛИЦА ПРЕДСТАВЛЕНИЯ, а не словарь исходов (#1804).
+ * Здесь не судят, что случилось: причину именует единственный классификатор
+ * (`scripts/network/lib/classify.mjs`, #1449), а эта функция лишь окрашивает его вердикт.
+ * Прежний JSDoc перечислял СВОИ слова (`no-key`, `auth/geo`, `balance`, `dpi-block`, `net`)
+ * и читался как третий словарь репозитория, хотя код их никогда не разбирал.
+ *
+ * knownBlocked гасит красный ДО решения части — но это отдельный статус, НЕ ok.
+ *
+ * @param {object} link
+ * @param {string|null} outcome id исхода из закрытого перечня #1449, либо `skipped`/null
  */
 export function linkStatus(link, outcome) {
   if (link?.knownBlocked) {

@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `llm-probe-still-lies-net` | llm-probe зовёт сетью что попало: catch-all 'net' и три несогласованных словаря исходов | M | [`LLM_PROBE_STILL_LIES_NET_PROMPT.md`](../prompts/LLM_PROBE_STILL_LIES_NET_PROMPT.md) | [#1804](https://github.com/officefish/Membrana/issues/1804) |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-live-services` | #1303-C: LIVE_SERVICES, документация и monitoring | S | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-cutover` | #1305-D: cutover, canary и rollback | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
