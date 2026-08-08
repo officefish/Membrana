@@ -1,6 +1,6 @@
 # PRECEDENTS — снимок-реестр (производный, руками не править)
 
-> Meta · Date: 2026-08-08 · SHA: c506243c · Source: docs/precedents/*.md
+> Meta · Date: 2026-08-08 · SHA: dc1cde93 · Source: docs/precedents/*.md
 > Пересобрать: `yarn precedent:register --rebuild`. Источник истины — файлы прецедентов.
 
 Всего прецедентов: **29** · различных классов: **6** · доля рецидива: **79%** (ориентир ≤15%).
