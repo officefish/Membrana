@@ -10,7 +10,7 @@
 | Prompt | [`docs/meeting/static-mmbrn-container/EPIC.md`](../../meeting/static-mmbrn-container/EPIC.md) |
 | Cutter | tarasov ([конспект](../../discussions/cut-static-mmbrn-inventory-export-tarasov.md)) |
 | Team | ozhegov · dynin · vesnin |
-| Status | recut v2 owner-ratified · gate pass 3/3 honest_pair · exact-SHA closure review pending |
+| Status | CLOSED · gate pass 3/3 honest_pair · PR #1806 merged |
 
 ## Предмет
 
@@ -44,7 +44,7 @@ sealed manifest и доказывает INV-1 на fixtures. Реальный pr
 - Не provision-им `static.mmbrn.tech` и не меняем DNS/Caddy/Panel.
 - Не считаем baseline `82 pages / 57 assets` доказательством полноты.
 
-## Результат до доставки
+## Результат и доставка
 
 - Контракт, offline extractor и fail-closed CLI реализованы; focused suite 16/16.
 - Два независимых smoke-прогона дали byte-identical manifest и seal.
@@ -56,3 +56,7 @@ sealed manifest и доказывает INV-1 на fixtures. Реальный pr
   cut-act trail и потому видит `stale_partial`; прямой gate остаётся pass. Это gap
   sprint tooling, не зелёный факт INV-1.
 - Live source snapshot и INV-1: **NOT_PERFORMED** до отдельного owner/ops-акта.
+- Exact-SHA `0b559221` получил внутренний closure LGTM и канонический
+  `review/teamlead=success`; GitHub CI прошёл полностью.
+- PR #1806 смёржен в `main` как `741a403360497f4d62c427757e807ad00e94cd6a`.
+- Итоговый акт: [`CLOSURE.md`](./CLOSURE.md).

@@ -5,14 +5,15 @@
 
 ---
 
-## 2026-08-08 — `static-mmbrn-inventory-export` — **DELIVERY PENDING**
+## 2026-08-08 — `static-mmbrn-inventory-export` — **CLOSED**
 
 - **Goal:** offline, read-only Affine source snapshot extractor with sealed exact-set manifest
 - **Task:** `static-mmbrn-inventory-export` (#1305-A), parent `static-mmbrn-container`
 - **OPEN:** [`local-sprint/static-mmbrn-inventory-export/OPEN.md`](./local-sprint/static-mmbrn-inventory-export/OPEN.md)
+- **CLOSURE:** [`local-sprint/static-mmbrn-inventory-export/CLOSURE.md`](./local-sprint/static-mmbrn-inventory-export/CLOSURE.md)
 - **Gate:** recut v2 · 3/3 `honest_pair` · 0 findings · focused tests 16/16
 - **Boundary:** live source snapshot and INV-1 remain `NOT_PERFORMED`; S5 excluded
-- **Next:** commit/push → exact-SHA Teamlead review → PR merge → task finalize
+- **Delivery:** exact-SHA `0b559221` LGTM · PR #1806 merged as `741a4033` · task archived
 
 ---
 
