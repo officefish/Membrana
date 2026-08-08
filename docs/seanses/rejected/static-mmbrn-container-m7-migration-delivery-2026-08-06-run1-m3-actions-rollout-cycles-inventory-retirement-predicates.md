@@ -129,7 +129,7 @@ Consistency cut: no writes accepted on source after fence flag; if write sneaks 
 
 [Teamlead]: Go/no-go authorization: cutover только при all required gates PASS и письменном ack owner+Teamlead. Сейчас measured: M4 capacity FAIL, M6 legacy uncovered, static ingress absent, LIVE_SERVICES silent, CLI/DB contrast — **NO-GO**. Комната не поднимает лопату. LGTM на **контракт**; BLOCK на любое production-действие из M7 carrier.
 
-[Математик]: Readiness gates (machine): 
+[Математик]: Readiness gates (machine):
 - INV-1 snapshot fence complete
 - INV-2 CLI≠DB documented, DB=export
 - DISP-1 100% objects terminal-assigned (pre-migrate draft ack)
@@ -222,9 +222,9 @@ Blind copy all pages ≡ нарушение контракта.
 
 ### 3. Migration ledger / state machine
 
-**Identity:** `SourceObjectRef = {snapshotId, workspaceId, engineKind, engineId, contentHash}`  
-Engine ids **не** становятся `canonicalRef` / M2 ids.  
-Duplicate content → shared `duplicate_group`, separate rows.  
+**Identity:** `SourceObjectRef = {snapshotId, workspaceId, engineKind, engineId, contentHash}`
+Engine ids **не** становятся `canonicalRef` / M2 ids.
+Duplicate content → shared `duplicate_group`, separate rows.
 Fake M6 ledger/binding **запрещены**.
 
 | State | Entry predicate | Allowed transition | Durable evidence | Retry/recovery | Terminal |
@@ -403,7 +403,7 @@ Native credential leakage anywhere → gate FAIL. Old route **не** second auth
 | 11. Sensitive local ref | offline policy; not Git; not Affine original claim | M4 sensitive, M6 | location class evidence | STOP if exposed |
 | 12. Office VDS capacity FAIL | no migrate writes on office | M4 capacity | 9.46 GiB free measure | STOP P0/P5 on office |
 | 13. Backup exists, restore drill FAIL/unknown | NO-GO migrate/cutover | M4 restore | drill report missing/FAIL | STOP |
-| 14. Panel deny vs native Affine capability | Panel wins; user deny UI | M3-ALL | auth test vector | FAIL if Affine allows | 
+| 14. Panel deny vs native Affine capability | Panel wins; user deny UI | M3-ALL | auth test vector | FAIL if Affine allows |
 | 15. Old deep link mapped | 301/302 → static canonical + gate | RTE-1 | map entry+probe | revert map |
 | 16. Unknown old path | 404/410 + log | RTE-1 | probe | n/a |
 | 17. WS or direct backend bypass | deny public; no user WS after cutover | M3/Caddy | probe 101/port | STOP if open |
@@ -451,7 +451,7 @@ Native credential leakage anywhere → gate FAIL. Old route **не** second auth
 | LIVE_SERVICES | static declared | docs | docs PR | **absent** Affine/strategy | declare before retire |
 | #1303/#1305 | slices reviewable | issues | delivery plan | **open, texts incomplete** | no umbrella close |
 
-**Current verdict: NO-GO.**  
+**Current verdict: NO-GO.**
 **Cutover authorization rule:** all required gates PASS + Teamlead written ack + owner ack; else forbidden.
 
 ---

@@ -199,7 +199,7 @@ ALLOW ⟺ (free_after ≥ 12 GiB) AND (used_after / total < 0.90)
 
 Если любой шаг не завершён — checkpoint FAIL, предыдущий checkpoint не удаляется, алерт.
 
-**RPO:** 24 часа.  
+**RPO:** 24 часа.
 **RTO:** 4 часа.
 
 **Backup retention:** 30 дней rolling. Последний успешный drill checkpoint хранится до следующего успешного drill.
