@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `dockerfile-copy-manifest-drifts` | Dockerfile офиса: поимённый COPY дублирует граф импортов — сделать расхождение невозможным или видимым | M | [`DOCKERFILE_COPY_MANIFEST_DRIFTS_PROMPT.md`](../prompts/DOCKERFILE_COPY_MANIFEST_DRIFTS_PROMPT.md) | [#1797](https://github.com/officefish/Membrana/issues/1797) |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-live-services` | #1303-C: LIVE_SERVICES, документация и monitoring | S | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-cutover` | #1305-D: cutover, canary и rollback | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
@@ -265,8 +266,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `pr-ship-post-merge-landing` | pr:ship после мерджа: дерево на своей ветке вровень со стволом, а не на main | 2026-08-08 | [`PR_SHIP_POST_MERGE_LANDING_PROMPT.md`](../prompts/PR_SHIP_POST_MERGE_LANDING_PROMPT.md) | #1759 (Issue открыт) | [карточка](./archive/pr-ship-post-merge-landing.md) |
 | `meeting-static-mmbrn-container` | Заседание: контракт static.mmbrn.tech и роль Affine | 2026-08-08 | [`MEETING_BRIEF.md`](../meeting/static-mmbrn-container/MEETING_BRIEF.md) | — | [карточка](./archive/meeting-static-mmbrn-container.md) |
+| `pr-ship-post-merge-landing` | pr:ship после мерджа: дерево на своей ветке вровень со стволом, а не на main | 2026-08-08 | [`PR_SHIP_POST_MERGE_LANDING_PROMPT.md`](../prompts/PR_SHIP_POST_MERGE_LANDING_PROMPT.md) | #1759 (Issue открыт) | [карточка](./archive/pr-ship-post-merge-landing.md) |
 | `dreams-net-label-lies` | Сны метят HTTP-404 и отсутствие ключа как сетевой отказ: подключить классификатор контейнера network | 2026-08-07 | [`DREAMS_NET_LABEL_LIES_PROMPT.md`](../prompts/DREAMS_NET_LABEL_LIES_PROMPT.md) | #1425 | [карточка](./archive/dreams-net-label-lies.md) |
 | `review-honesty` | Честность ревью: гейт различает три исхода вердикта, oversized читает снятие по commit-status | 2026-08-06 | [`REVIEW_HONESTY_PROMPT.md`](../prompts/REVIEW_HONESTY_PROMPT.md) | — | [карточка](./archive/review-honesty.md) |
 | `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | 2026-08-06 | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — | [карточка](./archive/scoreboard-spectral-ladder.md) |
