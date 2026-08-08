@@ -34,6 +34,7 @@ import {
   HOLDER_PERSONAS,
   MODERATOR_PERSONAS,
   holderProblem,
+  isAdr0025Debt,
   isModeratorPersona,
 } from './procedure-personas.mjs';
 
@@ -943,7 +944,7 @@ export function auditProcedureCorpus(repoRoot) {
     // посчитан и ждёт отдельной задачи #1787. Считать его находкой значило бы дублировать
     // один и тот же долг двадцатью строками ревизии и утопить в них настоящие дефекты.
     // Посторонние дефекты по-прежнему находки.
-    const foreignProblems = r.problems.filter((p) => !/модератор: ведёт момент/u.test(p));
+    const foreignProblems = r.problems.filter((p) => !isAdr0025Debt(p));
     if (foreignProblems.length > 0) {
       findings.push(`${id}: контейнер невалиден — ${foreignProblems.join('; ')}`);
       continue;

@@ -12,7 +12,9 @@ import { test } from 'node:test';
 import {
   HOLDER_PERSONAS,
   MODERATOR_PERSONAS,
+  MODERATOR_IN_HOLDER_MARK,
   holderProblem,
+  isAdr0025Debt,
   isHolderPersona,
   isModeratorPersona,
 } from './lib/procedure-personas.mjs';
@@ -87,4 +89,14 @@ test('holderProblem детерминирована: одна персона — 
   for (const p of ['angelina', 'нектоиз', 42, null]) {
     assert.equal(holderProblem(p), holderProblem(p));
   }
+});
+
+test('опознание долга связано с самой причиной — фильтр не отвяжется от текста', () => {
+  // Предмет #1792: до этого метка и формулировка были двумя независимыми строками,
+  // и правка текста молча ломала фильтр в ревизии корпуса.
+  const why = holderProblem('angelina');
+  assert.ok(isAdr0025Debt(why), 'причина модератора обязана опознаваться как долг');
+  assert.ok(why.includes(MODERATOR_IN_HOLDER_MARK), 'метка вшита в причину, а не продублирована');
+  assert.equal(isAdr0025Debt(holderProblem('нектоиз')), false, 'посторонний дефект долгом не считается');
+  assert.equal(isAdr0025Debt(null), false);
 });

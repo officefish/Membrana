@@ -24,6 +24,7 @@ import {
   portfolioProblems,
   validateProcedure,
 } from './lib/validate-procedure.mjs';
+import { isAdr0025Debt } from './lib/procedure-personas.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -128,7 +129,7 @@ test('portfolio: present требует элементы с резолвящим
  * дефект по-прежнему роняет.
  */
 function assertValidExceptAdr0025Debt(r, label) {
-  const foreign = r.problems.filter((x) => !/модератор: ведёт момент/.test(x));
+  const foreign = r.problems.filter((x) => !isAdr0025Debt(x));
   assert.deepEqual(foreign, [], `${label}: посторонний дефект сверх долга ADR-0025`);
 }
 
@@ -140,7 +141,7 @@ test('ЗУБ CI: корпус валиден везде, кроме назван
   for (const dir of dirs) {
     const r = validateProcedure(dir, repoRoot);
     debt += r.moderatorInHolder.length;
-    const foreign = r.problems.filter((x) => !/модератор: ведёт момент/.test(x));
+    const foreign = r.problems.filter((x) => !isAdr0025Debt(x));
     assert.deepEqual(foreign, [], `${dir}: посторонний дефект сверх долга ADR-0025`);
 
     // Независимый счёт ПО МАНИФЕСТУ, не через валидатор: две дороги к одному числу.

@@ -42,6 +42,26 @@ export const HOLDER_PERSONAS = Object.freeze([
  */
 export const MODERATOR_PERSONAS = Object.freeze([...HOLDER_PERSONAS, 'angelina']);
 
+/**
+ * Опознать проблему как НАЗВАННЫЙ долг ADR-0025 (модератор в держателях).
+ *
+ * Единственное место, где живёт это опознание. До 08.08 та же регулярка стояла двумя
+ * копиями — в ревизии корпуса и в зубах, — и ревью справедливо дало P2: «при смене текста
+ * `holderProblem` фильтр молча сломается» (#1792). Копия рядом с производителем причины
+ * ломается вместе с ним и потому чинится вместе с ним.
+ *
+ * Долг ≠ дефект: он назван, посчитан и ждёт отдельной задачи #1787. Пока он не закрыт,
+ * потребители имеют право отличать его от постороннего дефекта — но НЕ прятать.
+ *
+ * @param {unknown} problem строка проблемы валидатора
+ */
+export function isAdr0025Debt(problem) {
+  return typeof problem === 'string' && problem.includes(MODERATOR_IN_HOLDER_MARK);
+}
+
+/** Опорная подстрока причины. Меняется только вместе с текстом в `holderProblem`. */
+export const MODERATOR_IN_HOLDER_MARK = 'модератор: ведёт момент';
+
 /** @param {unknown} p */
 export function isHolderPersona(p) {
   return typeof p === 'string' && HOLDER_PERSONAS.includes(p);
@@ -65,7 +85,10 @@ export function isModeratorPersona(p) {
 export function holderProblem(p) {
   if (isHolderPersona(p)) return null;
   if (typeof p === 'string' && p === 'angelina') {
-    return `holder «${p}» — модератор: ведёт момент, но кода не пишет (кодекс #922), у фрейма не будет исполнителя. Модератора называть полем moderator`;
+    // Метка вшита В САМУ причину, а не продублирована рядом: опознание долга и его
+    // формулировка обязаны меняться вместе. Иначе правка текста молча ломает фильтр —
+    // ровно то, что назвало ревью PR #1793 и что записано предметом в #1792.
+    return `holder «${p}» — ${MODERATOR_IN_HOLDER_MARK}, но кода не пишет (кодекс #922), у фрейма не будет исполнителя. Модератора называть полем moderator`;
   }
   return `holder ∉ HOLDER_PERSONAS (${HOLDER_PERSONAS.join('/')})`;
 }
