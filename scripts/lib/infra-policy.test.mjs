@@ -9,6 +9,7 @@ import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import { expiringSummary, linkStatus, policyProblems, reconcileEnv } from './infra-policy.mjs';
+import { OUTCOME_IDS } from '../network/lib/classify.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const LIVE = JSON.parse(readFileSync(join(repoRoot, 'docs/security/infra-policy.json'), 'utf8'));
@@ -46,12 +47,24 @@ test('сверка: «в полиси есть — ключа нет» И «кл
 
 test('known-blocked ≠ ok: отдельный статус с причиной и сроком, красный погашен', () => {
   const link = { id: 'voyage', knownBlocked: { reason: 'сетевой фильтр отдаёт HTML', until: '#1393 часть 3' } };
-  const s = linkStatus(link, 'dpi-block');
+  const s = linkStatus(link, 'proxy_intercept');
   assert.equal(s.status, 'known-blocked');
   assert.notEqual(s.status, 'ok');
   assert.match(s.note, /часть 3/u);
   assert.equal(linkStatus({ id: 'x' }, 'ok').status, 'ok');
-  assert.equal(linkStatus({ id: 'x' }, 'net').status, 'red');
+  assert.equal(linkStatus({ id: 'x' }, 'dns_fail').status, 'red');
+});
+
+test('#1804: таблица представления ПОЛНА по закрытому перечню исходов', () => {
+  // linkStatus не судит причину — он окрашивает вердикт классификатора. Полнота значит:
+  // каждый исход #1449 получает определённый цвет, и ни один не проваливается в «не знаю».
+  // Раньше JSDoc перечислял свои слова и читался как третий словарь репозитория.
+  for (const id of OUTCOME_IDS) {
+    const got = linkStatus({ id: 'x' }, id).status;
+    assert.equal(got, id === 'ok' ? 'ok' : 'red', `исход ${id} окрашен как «${got}»`);
+  }
+  assert.equal(linkStatus({ id: 'x' }, 'skipped').status, 'skipped');
+  assert.equal(linkStatus({ id: 'x' }, null).status, 'skipped');
 });
 
 test('сводка: датное событие близко → finding; «не отдаёт» — словом, не нулём', () => {

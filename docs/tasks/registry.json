@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "llm-probe-still-lies-net",
+      "title": "llm-probe зовёт сетью что попало: catch-all 'net' и три несогласованных словаря исходов",
+      "promptPath": "docs/prompts/LLM_PROBE_STILL_LIES_NET_PROMPT.md",
+      "githubIssue": 1804,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-08",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Замер 08.08: catch-all на llm-probe.mjs:163 подтверждён; у llm-probe 11 зелёных зубов, у infra-probe ноль; словарей исходов ТРИ (llm-probe, infra-policy, network/lib/classify #1449) и они не согласованы.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "feedback-claims-code-probe",
       "title": "Гейт проверки утверждений вечернего протокола против кода (строка 5 хендофа 08.08)",
       "promptPath": "docs/prompts/FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md",

@@ -49,13 +49,21 @@ const EXTRA_SPECS = {
   },
 };
 
+/**
+ * TCP-зонд звена. Исходы — словарь #1449 (`docs/network/outcomes.yml`).
+ *
+ * Раньше все три отказа звались одним словом `net` (#1804): битый URL, молчание в срок и
+ * отказ сокета читались одинаково, хотя чинятся по-разному — первое правкой полиси, второе
+ * ожиданием, третье сетью. Одно слово на три причины и есть та ложь, которую снимает спринт.
+ */
 function tcpProbe(urlStr, timeoutMs = 4000) {
   return new Promise((res) => {
     let u;
     try {
       u = new URL(urlStr);
     } catch {
-      return res('net');
+      // Строка вообще не URL — сеть тут ни при чём, зонд даже не начинался.
+      return res('unknown_protocol');
     }
     const socket = net.connect({ host: u.hostname, port: Number(u.port || 80) }, () => {
       socket.destroy();
@@ -63,9 +71,13 @@ function tcpProbe(urlStr, timeoutMs = 4000) {
     });
     socket.setTimeout(timeoutMs, () => {
       socket.destroy();
-      res('net');
+      res('timeout_idle');
     });
-    socket.on('error', () => res('net'));
+    socket.on('error', (e) => {
+      const code = String(e?.code ?? '').toUpperCase();
+      // Имя разрешить не удалось — это DNS, а не «сеть вообще».
+      res(code === 'ENOTFOUND' || code === 'EAI_AGAIN' ? 'dns_fail' : 'tcp_fail');
+    });
   });
 }
 
@@ -118,27 +130,30 @@ async function probeLink(link, env) {
   if (method.startsWith('infra-probe:')) {
     const spec = EXTRA_SPECS[method.slice('infra-probe:'.length)];
     const keyName = spec.keyEnv.find((k) => env[k]?.trim());
-    if (!keyName) return linkStatus(link, 'no-key');
+    if (!keyName) return linkStatus(link, 'auth_missing_key');
     const direct = classifyOutcome(await probeOnce(spec, env[keyName].trim()));
     let viaProxy = null;
     const proxyUrl = env.HTTPS_PROXY?.trim() || env.HTTP_PROXY?.trim();
     if (proxyUrl && direct !== 'ok') {
       const { ProxyAgent } = await import('undici');
-      viaProxy = classifyOutcome(await probeOnce(spec, env[keyName].trim(), { dispatcher: new ProxyAgent(proxyUrl) }));
+      viaProxy = classifyOutcome({ ...(await probeOnce(spec, env[keyName].trim(), { dispatcher: new ProxyAgent(proxyUrl) })), viaProxy: true });
     }
     return linkStatus(link, direct === 'ok' || viaProxy === 'ok' ? 'ok' : diagnosePair(direct, viaProxy));
   }
   if (method.startsWith('http-health:')) {
     try {
       const r = await fetch(method.slice('http-health:'.length), { signal: TIMEOUT(15_000) });
-      return linkStatus(link, r.ok ? 'ok' : `http-${r.status}`);
+      // Статус пришёл ⇒ транспорт работает: классификатор назовёт причину точнее «http-N».
+      return linkStatus(link, r.ok ? 'ok' : classifyOutcome({ status: r.status, bodyText: await r.text().catch(() => '') }));
     } catch (e) {
-      return linkStatus(link, `net (${String(e?.message ?? e).split('\n')[0]})`);
+      // Ответа не было — судим по КОДУ, а не по строке: прежнее `net (…)` метило одним
+      // словом и DNS, и таймаут, и отказ соединения (#1804).
+      return linkStatus(link, classifyOutcome({ error: String(e?.message ?? e), errorCode: e?.cause?.code ?? e?.code ?? null }));
     }
   }
   if (method === 'proxy-tcp') {
     const proxyUrl = env.HTTPS_PROXY?.trim() || env.HTTP_PROXY?.trim();
-    if (!proxyUrl) return linkStatus(link, 'no-key');
+    if (!proxyUrl) return linkStatus(link, 'auth_missing_key');
     return linkStatus(link, await tcpProbe(proxyUrl));
   }
   if (method.startsWith('gh-api')) {
@@ -146,7 +161,9 @@ async function probeLink(link, env) {
       execFileSync('gh', ['api', 'rate_limit'], { stdio: 'ignore', timeout: 30_000 });
       return linkStatus(link, 'ok');
     } catch {
-      return linkStatus(link, 'net (gh api не ответил)');
+      // `gh` не ответил — это отказ ИНСТРУМЕНТА (нет авторизации, нет бинаря, лимит), а не
+      // доказанная сеть. Звать это сетью было прямой ложью: сеть тут никто не мерил.
+      return linkStatus(link, 'unknown_protocol');
     }
   }
   return linkStatus(link, 'skipped');
