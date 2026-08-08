@@ -20,6 +20,9 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `morning-journal-close-step` | Шаг закрытия журнала у утра: статус по факту, а не константой в хвосте цепочки | M | [`MORNING_JOURNAL_CLOSE_STEP_PROMPT.md`](../prompts/MORNING_JOURNAL_CLOSE_STEP_PROMPT.md) | [#1782](https://github.com/officefish/Membrana/issues/1782) |
+| `frame-holders-reassign-twenty` | Переназначение двадцати фреймов: у каждого явный держатель, модератор назван отдельно (Р3 ADR-0025) | M | [`FRAME_HOLDERS_REASSIGN_TWENTY_PROMPT.md`](../prompts/FRAME_HOLDERS_REASSIGN_TWENTY_PROMPT.md) | [#1787](https://github.com/officefish/Membrana/issues/1787) |
+| `frame-holder-moderator-split` | ADR-0025 в коде: развести holder и moderator у фрейма | M | [`FRAME_HOLDER_MODERATOR_SPLIT_PROMPT.md`](../prompts/FRAME_HOLDER_MODERATOR_SPLIT_PROMPT.md) | [#1781](https://github.com/officefish/Membrana/issues/1781) |
 | `swallow-own-moment` | Ласточка получает свой момент: развести state.day с evening-gate | S | [`SWALLOW_OWN_MOMENT_PROMPT.md`](../prompts/SWALLOW_OWN_MOMENT_PROMPT.md) | — |
 | `morning-gates-two-moments` | Гейты утра: два момента вместо одного day — реализация ADR-0024 | S | [`MORNING_GATES_TWO_MOMENTS_PROMPT.md`](../prompts/MORNING_GATES_TWO_MOMENTS_PROMPT.md) | — |
 | `delivery-predicates-honest` | Три предиката контура доставки: ролап против объявленного, момент выбора магистрали, порядок шагов pr-land | M | [`DELIVERY_PREDICATES_HONEST_PROMPT.md`](../prompts/DELIVERY_PREDICATES_HONEST_PROMPT.md) | [#1764](https://github.com/officefish/Membrana/issues/1764) |
@@ -252,7 +255,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `dreams-net-label-lies` | Сны метят HTTP-404 и отсутствие ключа как сетевой отказ: подключить классификатор контейнера network | 2026-08-07 | [`DREAMS_NET_LABEL_LIES_PROMPT.md`](../prompts/DREAMS_NET_LABEL_LIES_PROMPT.md) | #1425 (Issue открыт) | [карточка](./archive/dreams-net-label-lies.md) |
+| `dreams-net-label-lies` | Сны метят HTTP-404 и отсутствие ключа как сетевой отказ: подключить классификатор контейнера network | 2026-08-07 | [`DREAMS_NET_LABEL_LIES_PROMPT.md`](../prompts/DREAMS_NET_LABEL_LIES_PROMPT.md) | #1425 | [карточка](./archive/dreams-net-label-lies.md) |
 | `review-honesty` | Честность ревью: гейт различает три исхода вердикта, oversized читает снятие по commit-status | 2026-08-06 | [`REVIEW_HONESTY_PROMPT.md`](../prompts/REVIEW_HONESTY_PROMPT.md) | — | [карточка](./archive/review-honesty.md) |
 | `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | 2026-08-06 | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — | [карточка](./archive/scoreboard-spectral-ladder.md) |
 | `agent-tooling-night-build` | Night Build: инструменты агента — pr:ship, build:affected, wire-sync, хуки, хелперы, скиллы | 2026-08-06 | [`AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/AGENT_TOOLING_NIGHT_BUILD_EPIC_PROMPT.md) | — | [карточка](./archive/agent-tooling-night-build.md) |

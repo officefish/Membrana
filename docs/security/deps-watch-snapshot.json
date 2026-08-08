@@ -1,5 +1,5 @@
 {
-  "date": "2026-08-07",
+  "date": "2026-08-08",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -94,13 +94,6 @@
     },
     {
       "pkg": "axios",
-      "id": "1123884",
-      "severity": "moderate",
-      "issue": "Axios: Prototype pollution auth subfields can inject Basic auth",
-      "url": "https://github.com/advisories/GHSA-xj6q-8x83-jv6g"
-    },
-    {
-      "pkg": "axios",
       "id": "1123885",
       "severity": "moderate",
       "issue": "Axios: Deep formToJSON Key Recursion Can Cause Denial of Service",
@@ -154,6 +147,13 @@
       "severity": "moderate",
       "issue": "Axios: HTTP/2 streamed uploads bypass `maxBodyLength`",
       "url": "https://github.com/advisories/GHSA-mwf2-3pr3-8698"
+    },
+    {
+      "pkg": "axios",
+      "id": "1138749",
+      "severity": "moderate",
+      "issue": "Axios: Prototype pollution auth subfields can inject Basic auth",
+      "url": "https://github.com/advisories/GHSA-xj6q-8x83-jv6g"
     },
     {
       "pkg": "body-parser",
@@ -329,6 +329,13 @@
       "severity": "high",
       "issue": "music-metadata has an infinite loop vulnerability in ASF parser",
       "url": "https://github.com/advisories/GHSA-v6c2-xwv6-8xf7"
+    },
+    {
+      "pkg": "nanoid",
+      "id": "1138813",
+      "severity": "high",
+      "issue": "nanoid: custom generators can loop indefinitely when size is zero",
+      "url": "https://github.com/advisories/GHSA-2v37-7h3g-55p8"
     },
     {
       "pkg": "npmlog",
