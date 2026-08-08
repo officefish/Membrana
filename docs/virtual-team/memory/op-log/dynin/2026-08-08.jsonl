@@ -1,1 +1,5 @@
 {"ts":"2026-08-08T08:09:49.409Z","persona":"dynin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-08T11:25:19.437Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-08T11:24:34.711Z","origin":"ask-persona"}
+{"ts":"2026-08-08T11:25:19.440Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T11:24:34.711Z","origin":"ask-persona"}
+{"ts":"2026-08-08T11:25:19.440Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-18-evening-auditor-doc2-report-generator","reason":"тот же паттерн: аудит как чистая функция audit(dayState) → {passed, failed, evidence}, детерминированный вход, вердикт с адресом. Прямой шаблон для verdict(token, classes, facts).","origin":"ask-persona"}
+{"ts":"2026-08-08T11:25:19.441Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-01-evening-review-predicate-m4-memoization","reason":"про формализацию предиката, чтобы не поехал: здесь тот же ход — holds ⇔ ∃ адрес, где токен встречается в классе, и подмена класса ломает предикат (прецедент 03.08).","origin":"ask-persona"}

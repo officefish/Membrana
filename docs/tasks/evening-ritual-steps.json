@@ -226,8 +226,9 @@
       "script": "scripts/ritual-evening-tail.mjs",
       "kind": "mechanic",
       "criticality": "critical",
-      "//": "Внутри — task:close-github + team-evening-feedback. Второе объявлено обязательством процесса в .claude/CLAUDE.md («не опция»), значит шаг критичен.",
-      "label": "Хвост вечера: закрытие Issues + team evening feedback",
+      "//": "Внутри — task:close-github + team-evening-feedback + feedback:claims. Второе объявлено обязательством процесса в .claude/CLAUDE.md («не опция»), значит шаг критичен.",
+      "//claims": "Третье звено (feedback:claims --append --state) заведено карточкой feedback-claims-code-probe (#1795, долг #team-feedback-claims-code-unverified): протокол вечера утверждает о коде, и до 08.08 эти утверждения не сверял никто — 07.08 четыре из них оказались ложными, а на протоколе строится доклад союзникам. Звено НЕ роняет хвост на находке (exit 0 без --strict): протокол обязателен по CLAUDE.md, и красная сверка его не отменяет. Отправку держит предикат вечернего гейта (claimsProbeBlocker в scripts/lib/evening-gates.mjs) — только на hard, проходимо квитанцией владельца под то же дерево. Отказ самого инструмента (нет протокола, битый реестр) — exit 2 и честный красный.",
+      "label": "Хвост вечера: закрытие Issues + team evening feedback + сверка утверждений",
       "//legacy": "Ф5 разбора #1533: то же легаси, второе место — docs/STRATEGIC_PLAN_DAY.md заменён живыми документами горизонта.",
       "consumes": [
         "docs/DAILY_STANDUP.md",
@@ -236,7 +237,9 @@
         "docs/DAILY_CODE_REVIEW.md"
       ],
       "produces": [
-        "docs/seanses/team-evening-feedback-<date>.md"
+        "docs/seanses/team-evening-feedback-<date>.md",
+        "docs/seanses/team-evening-feedback-<date>.md — секция «Проверка утверждений»",
+        "docs/tasks/morning-gates-state.json — swallow.claimsProbe"
       ]
     },
     {

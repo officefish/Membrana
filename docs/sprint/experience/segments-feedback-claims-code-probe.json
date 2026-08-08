@@ -1,0 +1,12 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "feedback-claims-code-probe",
+  "forTask": "feedback-claims-code-probe — гейт сверки утверждений вечернего протокола с деревом, #1795 (долг попугая #team-feedback-claims-code-unverified, строка 5 хендофа 08.08)",
+  "note": "Замер снят по зонам блоков: для новых файлов — wc -l, для правленых — git diff --numstat HEAD (insertions + deletions). Не оценка и не пересказ — измерение. Оценка плана: b1 280 · b2 220 · b3 150; факт вдвое больше на b1/b2 из-за корпуса зубов (58 на четыре семьи) и четырёх поправок, каждая из которых пришла живым прогоном, а не рассуждением.",
+  "measuredAt": "2026-08-08T13:10:00+00:00",
+  "segments": [
+    { "cutBlockId": "b1-claims-core", "changedLines": 988 },
+    { "cutBlockId": "b2-claims-probe", "changedLines": 785 },
+    { "cutBlockId": "b3-claims-wire", "changedLines": 133 }
+  ]
+}

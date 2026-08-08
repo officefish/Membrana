@@ -1,0 +1,74 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "feedback-claims-code-probe",
+  "taskId": "feedback-claims-code-probe",
+  "mode": "explicit-honest",
+  "cutBy": "ozhegov",
+  "window": {
+    "from": "2026-08-08T11:10:00+00:00",
+    "to": "2026-08-08T19:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-claims-core",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/feedback-claims/atoms.mjs",
+        "scripts/lib/feedback-claims/verdict.mjs",
+        "scripts/lib/feedback-claims/atoms.test.mjs",
+        "scripts/lib/feedback-claims/verdict.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 280
+      },
+      "revisionAt": "2026-08-08T11:25:00+00:00",
+      "revisionOf": "17771692121bd106ec273d958d5fe86544c2bb943cf4cabbf75e584545e49505"
+    },
+    {
+      "blockId": "b2-claims-probe",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/feedback-claims-probe.mjs",
+        "scripts/feedback-claims-probe.test.mjs",
+        "package.json"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionAt": "2026-08-08T11:25:00+00:00",
+      "revisionOf": "7f2694ec6ce98e6db5a8e9d68f58aa71f581c7d2bad0001dfefc231591dd8002"
+    },
+    {
+      "blockId": "b3-claims-wire",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/ritual-evening-tail.mjs",
+        "scripts/lib/evening-gates.mjs",
+        "scripts/lib/evening-gates.test.mjs",
+        "docs/tasks/evening-ritual-steps.json"
+      ],
+      "estimate": {
+        "changedLines": 150
+      },
+      "revisionAt": "2026-08-08T11:25:00+00:00",
+      "revisionOf": "57eef99eb376a4f3fc3669c636e409c940711e75209c6c22a3ca02fffb7136c5"
+    }
+  ],
+  "//why": "Долг попугая #team-feedback-claims-code-unverified (birth 07.08), строка 5 хендофа 08.08. yarn team-evening-feedback утверждает о коде то, чего в коде нет, и на этом протоколе строится доклад союзникам. Вещдоки 07.08 перепроверены по дереву 08.08: PromoDeclineReason — 0 вхождений в packages/apps (закрытый список зовётся TransitionDenyReason); PR #1776 не несёт ни одного клиентского файла (сквош 85e0eff1, 21 файл, ни apps/**, ни client); PR #1766 (ADR-0024) влит 07.08 10:52Z — до генерации протокола в 16:15Z. Промпт: docs/prompts/FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md",
+  "//cutter": "Резчик ozhegov, прогон контекста 08.08 11:11Z (конспект docs/discussions/cut-feedback-claims-ozhegov.md, след docs/virtual-team/memory/op-log/ozhegov/2026-08-08.jsonl). Его решения приняты: классы v1 оффлайн (symbol / path / card / doc / verb), неоднозначный токен прогоняется по двум адресам и любой holds побеждает, вердикт трёхзначный с мягким подклассом, секция в протокол — всегда, блокировка ласточки — только на hard, probe цепочку не роняет и возвращает 0 всегда, soft/hard живёт в ЯДРЕ (b1), иначе граница словаря протекает в b3.",
+  "//cutter-amend": "Два уточнения координатора к решению резчика, оба на вещдоке, а не на вкусе. (1) Класс pr БЕРЁТСЯ в v1 и остаётся ОФФЛАЙН: содержимое влитого PR читается из сквош-коммита (git log --grep '(#N)' → git show --name-only), сеть и gh не нужны, флап офиса не при чём — проверено на #1776. PR без сквоша либо не влитый → unknown. (2) Подкласс symbol.used-outside-def в v1 НЕ берётся: резчик ставил его ради вещдока «decideTransition вызван из серверного роута», но decideTransition ИСПОЛЬЗУЕТСЯ вне определения (tariff-transition.service.ts:108) — подкласс этот вещдок не ловит, а ложные тревоги плодит (экспортированный API без внутренних потребителей — норма, не дефект). Ложным было утверждение о СЛОЕ (роут/контроллер), а это семантика слоя, не счёт вхождений.",
+  "//risk": "Главный риск — адресация маркера, а не объём. Прецедент 03.08 (вещдок в docs/tasks/main-day-assertions.json, ключ //retired-redact-wrong-address-03-08): маркер проверял НЕ ТОТ файл, три дня давал holds и рождал ложное «резак не написан». Здесь цена зеркальна: ложная тревога на гейте правдивости учит команду не верить гейтам. Отсюда предикат приёмки b2 — ноль ложных тревог на пяти живых протоколах 03.08-07.08.",
+  "//verdicts": "Четыре исхода. holds — сущность есть по адресу класса. violates.hard — класс опознан, сущности по его адресу нет (PromoDeclineReason; клиентские файлы в #1776). violates.soft — утверждение расходится с состоянием, но сущность существует: жёлтый, ласточку не держит. unknown — класс не опознан либо факт не добыт: НЕ красный, по эталону drift-anchor-divergence #413. Отдельно НАХОДКА «реестр протух» — карточка active при влитом PR (morning-gates-two-moments active, PR #1766 merged 07.08): печатается как находка, не как нарушение — прямой канон утреннего probe (staleRegistry).",
+  "//coverage": "Честный охват v1 по четырём вещдокам 07.08, без округления в свою пользу: (1) «decideTransition вызван из серверного роута» — НЕ ЛОВИТСЯ, утверждение о слое, вынесено за границы явно; (2) PromoDeclineReason — hard; (3) клиентская часть #1776 — hard оффлайн; (4) «реализовать ADR-0024» — unknown + находка «реестр протух» (ADR ACCEPTED 07.08, карточка morning-gates-two-moments до сих пор active). Итого 2 hard, 1 находка, 1 вне границ. Ценность гейта не сводится к четырём строкам: класс symbol работает на любом протоколе.",
+  "//order": "b1 → b2 (обвязка импортирует ядро; блок, объявляющий движок, не режется раньше блока, рождающего его — инвариант процедуры) → b3. Зоны не пересекаются. Про соседа: карточка swallow-own-moment (active, S, Ожегов) тоже трогает вечерний гейт, но её предмет — поле state.day; b3 к state.day НЕ прикасается, только добавляет blocker в approveEveningPartnerDraft. Если swallow-own-moment стартует параллельно — b3 идёт после него: файл общий (прецедент 2026-07-09).",
+  "//dod": "b1: извлечение атомов из markdown-протокола и классификатор (symbol / path / card / doc / verb / pr / opaque) — чистые тотальные функции без I/O; вердикт четырёх исходов, soft/hard решается здесь; неоднозначный токен несёт оба класса, любой holds побеждает; зубы на каждом классе, включая opaque → unknown. b2: yarn feedback:claims --protocol <path> [--json] собирает факты ПО АДРЕСУ КЛАССА (symbol — git grep по packages/**/src/** и apps/**/src/**; path/doc — existsSync; card — docs/tasks/registry.json; verb — package.json scripts; pr — сквош-коммит через git log --grep) — каждая строка вердикта несёт адрес проверки и SHA; exit 0 всегда; прогон на docs/seanses/team-evening-feedback-2026-08-0{3,4,5,6,7}.md ловит оба hard-вещдока 07.08 при НУЛЕ ложных тревог на всех пяти. b3: probe идёт шагом ПОСЛЕ team-evening-feedback в ritual-evening-tail.mjs и цепочку не роняет (шаг обязателен по CLAUDE.md; красный probe не отменяет протокол); секция «Проверка утверждений» ДОПИСЫВАЕТСЯ в тело протокола (append, ничего не стирает — по образцу ручной поправки ведущей 07.08); approveEveningPartnerDraft получает blocker на hard-нарушениях (soft и unknown ласточку НЕ держат — иначе гейт врёт про враньё); шаг заведён в docs/tasks/evening-ritual-steps.json.",
+  "//out-of-scope": "Правка промпта/регламента team-evening-feedback под «не утверждай о коде» — инструкция исполняется языковой моделью, и ничто не заметит её пропуска (норма У1, довод утреннего гейта 02.08). Утверждение о СЛОЕ («вызван из серверного роута») и подкласс symbol.used-outside-def — v1.1, по вещдоку выше. Ложная атрибуция риска между карточками (MAIN_DAY_ISSUE.md:44, 08.08: 106К спанов приписаны archivarius-sessions-container вместо archivarius-mongo-backup #1714) — тот же класс, другой адрес, отдельным долгом. Проверка утверждений вне кода («очередь ревью не сокращается третий день»). Граф вызовов как таковой.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-08T11:25:00+00:00",
+    "digest": "377f819f98a554a72b23a2648ed559ac6e6f5d5fcf5287f3c757ea6d0c6d42e9"
+  }
+}
