@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "frame-holder-moderator-split",
+      "title": "ADR-0025 в коде: развести holder и moderator у фрейма",
+      "promptPath": "docs/prompts/FRAME_HOLDER_MODERATOR_SPLIT_PROMPT.md",
+      "githubIssue": 1781,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-08",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "insightId": "20 фреймов из 87 (23%) числятся за модератором, который по кодексу #922 кода не пишет — у их дефектов нет исполнителя по построению"
+    },
+    {
       "id": "dreams-net-label-lies",
       "title": "Сны метят HTTP-404 и отсутствие ключа как сетевой отказ: подключить классификатор контейнера network",
       "promptPath": "docs/prompts/DREAMS_NET_LABEL_LIES_PROMPT.md",
