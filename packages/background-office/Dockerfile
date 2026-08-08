@@ -64,11 +64,9 @@ COPY --from=build /app/packages/services/rag/dist /app/packages/services/rag/dis
 COPY --from=build /app/packages/services/rag/package.json /app/packages/services/rag/package.json
 COPY --from=build /app/scripts/lib /app/scripts/lib
 # scripts/network/lib: classify.mjs — СТАТИЧЕСКИЙ импорт dreams-tick.mjs:19 с 07.08.
-# ДЫРА, найденная 08.08 (#1797): правка 07.08 добавила его только в build-стадию (строка 36),
-# а сюда не перенесла — в прод-образе файла не было, и первый же вызов снов упал бы
-# ERR_MODULE_NOT_FOUND. Не сработало лишь потому, что офис после 07.08 не пересобирался:
-# живой контейнер (uptime ~8.8 суток на 08.08) несёт код, где classify ещё не импортировался.
-# То есть дефект был ЗАРЯЖЕН и ждал ближайшего деплоя. Ровно этот класс и ловит смоук ниже.
+# Сюда правка 07.08 не дошла: она тронула только build-стадию. Дефект второй ступени —
+# первым падал сам build, потому что файл не пускал .dockerignore (третий манифест).
+# Оба чинятся вместе, иначе образ соберётся и умрёт на первом вызове снов.
 COPY --from=build /app/scripts/network/lib /app/scripts/network/lib
 COPY --from=build /app/docs/truth/registry.json /app/docs/truth/registry.json
 COPY --from=build /app/docs/prompts/DREAM_MASTER_PROMPT.md /app/docs/prompts/DREAM_MASTER_PROMPT.md
