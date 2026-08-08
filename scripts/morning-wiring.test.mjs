@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 
 import { auditMorningWiring, loadMorningWiringFrame } from './lib/morning-wiring.mjs';
+import { isAdr0025Debt } from './lib/procedure-personas.mjs';
 import { validateProcedure } from './lib/validate-procedure.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -16,10 +17,16 @@ test('F3: morning-wiring в preflight ritual-day, holder ozhegov, 3 pins', () =>
   assert.equal(frame.pins.length, 3);
 });
 
-test('F3: validateProcedure(ritual-day) зелёный с preflight', () => {
+test('F3: validateProcedure(ritual-day) без посторонних дефектов — долг ADR-0025 не в счёт', () => {
+  // До ADR-0025 зуб утверждал `valid === true` и был прав. После Р2 у пяти фреймов утра в
+  // holder стоит модератор — это НАЗВАННЫЙ долг, ждущий отдельной задачи #1787 (так велит
+  // Р3: переназначение — своя задача со своей ратификацией). Зуб меняет утверждение, а не
+  // ослабляется: любой ДРУГОЙ дефект утра по-прежнему роняет.
   const dir = resolve(repoRoot, 'docs/procedures/ritual-day');
   const r = validateProcedure(dir, repoRoot);
-  assert.equal(r.valid, true, r.problems.join('; '));
+  const foreign = r.problems.filter((p) => !isAdr0025Debt(p));
+  assert.deepEqual(foreign, [], 'посторонний дефект утра сверх долга ADR-0025');
+  assert.ok(r.moderatorInHolder.length > 0, 'долг утра существует — иначе #1787 беспредметна');
 });
 
 test('F3: auditMorningWiring — двери matched (живой репо)', () => {

@@ -6,6 +6,8 @@
 {"ts":"2026-08-08T09:07:15.382Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-08T09:06:52.001Z","origin":"ask-persona"}
 {"ts":"2026-08-08T09:07:15.390Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-22-procedure-frames-m1-frames-contract","reason":"тот же класс задачи: контракт схемы фрейма, где я держал рамку «не сползать в следующую фазу». Прямая аналогия для второго вопроса: контракт остаётся одним блоком, переназначение — отдельная фаза.","origin":"ask-persona"}
 {"ts":"2026-08-08T09:07:15.406Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-08-03-one-shot-manifest-m1-frames","reason":"там я разводил «фрейм уровня процедуры» и «пункт чек-листа»; здесь тот же приём — держатель на элементе не наследуется от процедуры, это норма конструкции, а не декор.","origin":"ask-persona"}
+{"ts":"2026-08-08T10:00:56.828Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-08T10:00:38.947Z","origin":"ask-persona"}
+{"ts":"2026-08-08T10:00:56.833Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-08T10:00:38.947Z","origin":"ask-persona"}
 {"ts":"2026-08-08T12:29:11.987Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-08T12:28:37.388Z","origin":"ask-persona"}
 {"ts":"2026-08-08T12:29:11.991Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-08T12:28:37.388Z","origin":"ask-persona"}
 {"ts":"2026-08-08T12:29:11.992Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-19-security-posture-m3-response","reason":"тот же класс: «гейт как норма поведения», встаёт поперёк действия (там — реакции, здесь — отправки ласточки), не чинит, только выносит вердикт с адресом.","origin":"ask-persona"}
