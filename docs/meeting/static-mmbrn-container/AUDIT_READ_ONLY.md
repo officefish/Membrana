@@ -2396,3 +2396,42 @@ Dry-run с `--no-context --no-rag --no-memory` доставил повестку
 Машинный `meeting:audit` имеет structural PASS. Внешний run5 — последняя попытка 5/5 —
 допускается только после отдельного разрешения владельца на передачу внутреннего payload
 внешней LLM-chain.
+
+## Постаудит M7 — run5 и local synthesis
+
+После отдельного разрешения run5 произведён `xai/grok-4.5`; внешний бюджет исчерпан 5/5.
+Механика впервые прошла полностью: 42 реплики, ровно семь каждой роли, семь обязательных
+Markdown tables, exact carrier/date и последняя секция DoD. Structural `meeting:audit` PASS.
+Сырой carrier сохранён как
+[`run5-ledger-routes-m5-m6`](../../seanses/rejected/static-mmbrn-container-m7-migration-delivery-2026-08-08-run5-ledger-routes-m5-m6.md).
+
+Независимый смысловой аудит дал **BLOCK**:
+
+- `PARITY_FAILED -> PROJECTION_EXPORTED` был reverse edge;
+- route rows содержали `one of 8`, aggregate auth и `download/read-bytes`;
+- readiness сворачивал M5 G1-G10 в одну ссылочную строку;
+- M6 был одной строкой без полного корпуса и predicates.
+
+По owner rule шестого внешнего вызова нет. Canonical собран локально из run5 и помечен
+`local synthesis`; исходник неизменён в `rejected`. Первый local audit подтвердил исправление
+четырёх дефектов, но дал BLOCK по трём остаткам: неполная M4 G1 formula, stale pre-write M4 G6
+и M6 без `A_all`/state-linked cardinalities. Они исправлены: G1 буквальный, G6 повторяется после
+S8, M6 связывает состояния с `0/0`, `0/1`, `1/1/1` и full bidirectional diff.
+
+Финальный независимый recheck завис без вердикта; повторный короткий dispatch не стартовал.
+Это не semantic PASS. Локальная сверка подтверждает устранение всех семи перечисленных BLOCK,
+а machine audit до последних точечных правок имел structural PASS. Canonical остаётся
+**local-synthesis candidate** до машинной перепроверки и owner ratification. Пять внешних
+вызовов и отказ финального аудитора сохранены в
+[`прецеденте`](../../precedents/2026-08-08-static-mmbrn-m7-five-external-runs-local-synthesis.md).
+
+## Ратификация M7 local synthesis
+
+Владелец ответил «ратифицирую» 2026-08-08 после явного доклада об ограничении: финальный
+независимый recheck не дал вердикта из-за зависания. Ратификация принимает canonical local
+synthesis и весь сохранённый audit trail; зависший вызов не переименовывается в PASS.
+
+Definition of Done carrier отмечен `[x]` по owner-act и проверенной механике 42/7x6/7 tables.
+Состояние комнаты — **PASS local-synthesis; РАТИФИЦИРОВАНО**. Machine recheck и git delivery
+остаются отдельными действиями; отсутствие shell не отменяет акт, но запрещает докладывать
+коммит или доставку до их фактического выполнения.
