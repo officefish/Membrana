@@ -335,7 +335,7 @@ export function reviewGateArgs(withReview = false) {
 }
 
 export function planMergeTail(opts = {}) {
-  const { base = 'main', wait = true, branch, currentBranch, worktreeBranches, auto = false, keepBranch = false, withReview = false } = opts;
+  const { base = 'main', wait = true, branch, currentBranch, worktreeBranches, auto = false, keepBranch = false, withReview = false, landOnBase = false } = opts;
   /** @type {{label:string,cmd:string,args:string[],optional?:boolean,guard?:string}[]} */
   const steps = [];
   let skippedSync;
@@ -389,7 +389,11 @@ export function planMergeTail(opts = {}) {
     // origin/<base>, чтобы локальные сверки видели свежий main; своё дерево не трогаем.
     steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
     skippedSync = `ff-sync пропущен: ветку ${base} держит другой worktree (параллельная сессия)`;
-  } else {
+  } else if (landOnBase) {
+    // ОПЦИЯ, а не умолчание (#1759). Прежний путь оставлен для тех, кому нужен свежий
+    // ЛОКАЛЬНЫЙ base в дереве; цена названа: дерево становится держателем main, и утро
+    // считает это находкой (#1232).
+    //
     // guard:'base-free' — предикат ПЕРЕПРОВЕРЯЕТСЯ перед исполнением шага, а не только
     // здесь. План строится один раз, а между планом и хвостом стоит ci-wait на минуты:
     // 26.07 (#1261) соседняя сессия заняла main ЗА ЭТО ВРЕМЯ, и уже успешный ship
@@ -397,6 +401,33 @@ export function planMergeTail(opts = {}) {
     steps.push({ label: 'sync-checkout', cmd: 'git', args: ['checkout', base], guard: 'base-free' });
     steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
     steps.push({ label: 'sync-ff', cmd: 'git', args: ['merge', '--ff-only', `origin/${base}`], guard: 'base-free' });
+  } else {
+    // УМОЛЧАНИЕ с 08.08 (#1759): дерево остаётся на СВОЕЙ ветке и встаёт вровень со
+    // свежим стволом. Прежнее умолчание сажало его на base — состояние, которое утренний
+    // ритуал объявляет находкой (#1232): штатный инструмент штатно приводил дерево в
+    // нарушение. Лечили это опциональным `--keep-branch` с 28.07 — не помогло ни разу
+    // (ноль вызовов в репозитории, девять срабатываний класса за 10 дней): опциональный
+    // флаг не побеждает рефлекс, значит неверно было выбрано умолчание.
+    //
+    // Оставить дерево на прежней голове тоже нельзя: после squash ветка расходится со
+    // стволом, и следующая работа поедет от протухшей базы (вещдок 07.08 — дважды
+    // упёрлись в CONFLICTING на собственной доставке).
+    const landBranch = branch ?? currentBranch;
+    steps.push({ label: 'sync-fetch', cmd: 'git', args: ['fetch', 'origin', base] });
+    // Отказ ДО действия, а не откат после: голову ветки нельзя двигать, пока на ней живой
+    // PR или пока в ней есть незапушенное/неслитое. Предикат НЕ дублируется здесь — зовём
+    // единственный носитель, глагол `branch:status` (условие резчика 08.08).
+    steps.push({
+      label: 'land-guard',
+      cmd: 'node',
+      args: ['scripts/branch-status.mjs', ...(landBranch ? ['--branch', landBranch] : []), '--base', `origin/${base}`],
+    });
+    steps.push({
+      label: 'land-rebase',
+      cmd: 'git',
+      args: ['checkout', '-B', landBranch ?? currentBranch ?? base, `origin/${base}`],
+    });
+    skippedSync = `дерево осталось на «${landBranch ?? 'рабочей ветке'}» вровень с origin/${base}; ${base} никто не держит (умолчание #1759, «сесть на base» — флаг --land-on-base)`;
   }
   return { steps, skippedSync };
 }
@@ -415,7 +446,7 @@ export function planPrShip(opts) {
   if (mergeOnly) {
     if (branch) throw new Error('pr:ship: --merge-only несовместим с --branch (PR уже открыт на текущей ветке)');
     if (!merge) throw new Error('pr:ship: --merge-only и --no-merge взаимоисключают друг друга');
-    const { steps, skippedSync } = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto, keepBranch: opts.keepBranch, withReview: opts.withReview });
+    const { steps, skippedSync } = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto, keepBranch: opts.keepBranch, withReview: opts.withReview, landOnBase: opts.landOnBase });
     return { title: '', commitBody: '', steps, skippedSync };
   }
 
@@ -474,7 +505,7 @@ export function planPrShip(opts) {
   });
   let skippedSync;
   if (merge) {
-    const tail = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto, keepBranch: opts.keepBranch, withReview: opts.withReview });
+    const tail = planMergeTail({ base, wait, branch, currentBranch: opts.currentBranch, worktreeBranches: opts.worktreeBranches, auto, keepBranch: opts.keepBranch, withReview: opts.withReview, landOnBase: opts.landOnBase });
     steps.push(...tail.steps);
     skippedSync = tail.skippedSync;
   }
@@ -500,6 +531,7 @@ function parseArgs(argv) {
     // --keep-branch (28.07): не переключать дерево на base после мерджа — пять укусов
     // за день, когда следующий коммит ловил гейт «HEAD == main» (#1232).
     else if (a === '--keep-branch') o.keepBranch = true;
+    else if (a === '--land-on-base') o.landOnBase = true;
     else if (a === '--with-review') o.withReview = true;
     else if (a === '--allow-mention') o.allowMentionWithoutClose = true;
     else if (a === '--issue-mention') o.issueMention = next();

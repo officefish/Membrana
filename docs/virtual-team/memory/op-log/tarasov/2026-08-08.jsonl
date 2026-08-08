@@ -1,0 +1,3 @@
+{"ts":"2026-08-08T08:48:15.095Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-08T08:47:49.991Z","origin":"ask-persona"}
+{"ts":"2026-08-08T08:48:15.097Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-08T08:47:49.991Z","origin":"ask-persona"}
+{"ts":"2026-08-08T08:48:15.098Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-08-03-one-shot-manifest-m3-volume","reason":"про разницу «гейт на входе» vs «стоп в процессе»: ровно та же логика здесь — отказ ДО действия (слой 2) сильнее отката после; поэтому гвард обязан быть предваряющим, а не компенсирующим.","origin":"ask-persona"}
