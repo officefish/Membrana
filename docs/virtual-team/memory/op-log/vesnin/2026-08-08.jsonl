@@ -1,4 +1,7 @@
 {"ts":"2026-08-08T08:09:49.882Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-08T08:51:58.931Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-08T08:51:28.779Z","origin":"ask-persona"}
+{"ts":"2026-08-08T08:51:58.934Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-08T08:51:28.779Z","origin":"ask-persona"}
+{"ts":"2026-08-08T08:51:58.935Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-19-insight-archive-lifecycle-c2-state-axes-r4","reason":"тот же приём «форма следует функции, декор без конструкции не существует» прикладывается к ответу глагола: если причин несколько, единственная строка blocked:<одна> — декор ради краткости, скрывающий конструкцию.","origin":"ask-persona"}
 {"ts":"2026-08-08T09:07:15.375Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-08T09:06:52.001Z","origin":"ask-persona"}
 {"ts":"2026-08-08T09:07:15.382Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-08T09:06:52.001Z","origin":"ask-persona"}
 {"ts":"2026-08-08T09:07:15.390Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-22-procedure-frames-m1-frames-contract","reason":"тот же класс задачи: контракт схемы фрейма, где я держал рамку «не сползать в следующую фазу». Прямая аналогия для второго вопроса: контракт остаётся одним блоком, переназначение — отдельная фаза.","origin":"ask-persona"}

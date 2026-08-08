@@ -44,7 +44,7 @@ test('planPrShip: title + trailer + Closes + порядок шагов', () => {
   assert.match(commitBody, /Co-Authored-By: Claude Opus 4\.8/);
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['branch', 'commit', 'push', 'pr-create', 'ci-wait', 'review-gate', 'merge', 'verify', 'branch-cleanup', 'sync-checkout', 'sync-fetch', 'sync-ff'],
+    ['branch', 'commit', 'push', 'pr-create', 'ci-wait', 'review-gate', 'merge', 'verify', 'branch-cleanup', 'sync-fetch', 'land-guard', 'land-rebase'],
   );
   assert.deepEqual(steps[0].args, ['checkout', '-b', 'feat/x']);
 });
@@ -92,7 +92,7 @@ test('#700: --merge-only даёт ТОЛЬКО merge-хвост, без branch/c
   const { steps, title, commitBody } = planPrShip({ mergeOnly: true, currentBranch: 'fix/x' });
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['ci-wait', 'review-gate', 'merge', 'verify', 'branch-cleanup', 'sync-checkout', 'sync-fetch', 'sync-ff'],
+    ['ci-wait', 'review-gate', 'merge', 'verify', 'branch-cleanup', 'sync-fetch', 'land-guard', 'land-rebase'],
   );
   assert.equal(title, '', 'merge-only не строит заголовок (PR уже открыт)');
   assert.equal(commitBody, '', 'merge-only ничего не коммитит');
@@ -184,8 +184,8 @@ test('planPrShip: требует type и message', () => {
   assert.throws(() => planPrShip({ type: 'feat' }), /type.*message/);
 });
 
-test('planPrShip: ff-sync через origin/base, не голый pull', () => {
-  const { steps } = planPrShip({ type: 'feat', message: 'x', base: 'main' });
+test('planPrShip --land-on-base: ff-sync через origin/base, не голый pull', () => {
+  const { steps } = planPrShip({ type: 'feat', message: 'x', base: 'main', landOnBase: true });
   const ff = steps.find((s) => s.label === 'sync-ff');
   assert.deepEqual(ff.args, ['merge', '--ff-only', 'origin/main']);
 });
@@ -250,7 +250,7 @@ test('base занят другим worktree → sync-checkout не планир�
   assert.match(skippedSync, /другой worktree/);
 });
 
-test('base свободен → полный ff-sync как раньше', () => {
+test('base свободен → дерево садится на СВОЮ ветку вровень со стволом (умолчание #1759)', () => {
   const { steps, skippedSync } = planPrShip({
     type: 'feat',
     message: 'x',
@@ -258,14 +258,16 @@ test('base свободен → полный ff-sync как раньше', () =>
   });
   assert.deepEqual(
     steps.map((s) => s.label),
-    ['commit', 'push', 'pr-create', 'ci-wait', 'review-gate', 'merge', 'verify', 'sync-checkout', 'sync-fetch', 'sync-ff'],
+    ['commit', 'push', 'pr-create', 'ci-wait', 'review-gate', 'merge', 'verify', 'sync-fetch', 'land-guard', 'land-rebase'],
   );
-  assert.equal(skippedSync, undefined);
+  assert.match(skippedSync ?? '', /вровень с origin\/main/u, 'хвост объясняет конечное состояние дерева, а не молчит');
 });
 
-test('без сведений о worktree поведение прежнее (обратная совместимость)', () => {
+test('без сведений о worktree: хвост перецеливает ветку, а не садится на base (#1759)', () => {
   const { steps } = planPrShip({ type: 'feat', message: 'x' });
-  assert.ok(steps.map((s) => s.label).includes('sync-checkout'));
+  const labels = steps.map((s) => s.label);
+  assert.ok(labels.includes('land-rebase'), 'умолчание — своя ветка вровень со стволом');
+  assert.ok(!labels.includes('sync-checkout'), 'на base по умолчанию не садимся: утро считает держателя main находкой (#1232)');
 });
 
 test('isBaseHeldElsewhere — предикат по списку чужих веток', () => {
@@ -420,7 +422,7 @@ test('--auto не отменяет обычный путь: без флага х
 });
 
 test('sync-шаги несут guard base-free — предикат перепроверяется в момент исполнения', () => {
-  const { steps } = planMergeTail({ branch: 'feat/x', worktreeBranches: [] });
+  const { steps } = planMergeTail({ branch: 'feat/x', worktreeBranches: [], landOnBase: true });
   const guarded = steps.filter((s) => s.guard === 'base-free').map((s) => s.label);
   // План строится ДО ci-wait (минуты), за это время сосед может занять base — 26.07 так и
   // случилось: PR #1256 смёржен, ветка снесена, ship упал на checkout main.
@@ -545,15 +547,70 @@ test('--keep-branch: хвост не переключает дерево на ba
   assert.ok(labels.includes('sync-fetch'), 'origin/base всё равно обновляется');
   assert.match(withFlag.skippedSync ?? '', /keep-branch/u, 'причина пропуска названа вслух');
 
+  // С 08.08 (#1759) умолчание тоже не садится на base — различие в другом: --keep-branch
+  // оставляет дерево на ПРЕЖНЕЙ голове, умолчание перецеливает ветку на свежий ствол.
   const without = planPrShip({
     type: 'fix', scope: 'x', message: 'm', commit: false, wait: false,
     currentBranch: 'fix/my-work',
   });
-  assert.ok(without.steps.map((s) => s.label).includes('sync-checkout'), 'без флага поведение прежнее');
+  const labels2 = without.steps.map((s) => s.label);
+  assert.ok(!labels2.includes('sync-checkout'), 'умолчание на base не садится');
+  assert.ok(labels2.includes('land-rebase'), 'умолчание перецеливает ветку вровень со стволом');
+  assert.ok(!labels.includes('land-rebase'), '--keep-branch голову НЕ двигает — в этом и разница');
 });
 
 test('--keep-branch: флаг ДОХОДИТ из CLI (28.07 — правка легла мимо парсера, план молчал)', async () => {
   const { readFileSync } = await import('node:fs');
   const src = readFileSync(new URL('./pr-ship.mjs', import.meta.url), 'utf8');
   assert.match(src, /a === '--keep-branch'\) o\.keepBranch = true/u, 'парсер обязан знать флаг');
+});
+
+// ─── #1759: хвост больше не сажает дерево на base ────────────────────────────────
+
+test('#1759 (а): после мерджа дерево на СВОЕЙ ветке вровень со стволом, base не удерживается', () => {
+  const { steps, skippedSync } = planMergeTail({ branch: 'sprint/x', worktreeBranches: [] });
+  const labels = steps.map((s) => s.label);
+  assert.ok(!labels.includes('sync-checkout'), 'checkout в base — вот что делало дерево держателем');
+  const rebase = steps.find((s) => s.label === 'land-rebase');
+  assert.deepEqual(rebase.args, ['checkout', '-B', 'sprint/x', 'origin/main']);
+  assert.match(skippedSync ?? '', /никто не держит/u, 'конечное состояние названо вслух');
+});
+
+test('#1759 (б): движение ветки прикрыто гвардом ДО действия, а не откатом после', () => {
+  const { steps } = planMergeTail({ branch: 'sprint/x', worktreeBranches: [] });
+  const labels = steps.map((s) => s.label);
+  const guardAt = labels.indexOf('land-guard');
+  const rebaseAt = labels.indexOf('land-rebase');
+  assert.ok(guardAt > -1, 'гвард есть');
+  assert.ok(guardAt < rebaseAt, 'отказ ДО перецеливания: откат после — уже потеря');
+});
+
+test('#1759: гвард ЗОВЁТ единственный носитель предиката, а не заводит вторую копию', () => {
+  const { steps } = planMergeTail({ branch: 'sprint/x', worktreeBranches: [] });
+  const guard = steps.find((s) => s.label === 'land-guard');
+  assert.equal(guard.cmd, 'node');
+  assert.ok(guard.args.includes('scripts/branch-status.mjs'), 'условие резчика: один предикат — один носитель');
+  assert.ok(guard.args.includes('--branch') && guard.args.includes('sprint/x'), 'ветка названа явно, а не берётся из HEAD после мерджа');
+});
+
+test('#1759: «сесть на base» осталось возможным — но флагом, не умолчанием', () => {
+  const { steps } = planMergeTail({ branch: 'sprint/x', worktreeBranches: [], landOnBase: true });
+  const labels = steps.map((s) => s.label);
+  assert.ok(labels.includes('sync-checkout') && labels.includes('sync-ff'));
+  assert.ok(!labels.includes('land-rebase'));
+});
+
+test('#1759: флаг --land-on-base ДОХОДИТ из CLI (урок 28.07: правка легла мимо парсера)', async () => {
+  const { readFileSync } = await import('node:fs');
+  const src = readFileSync(new URL('./pr-ship.mjs', import.meta.url), 'utf8');
+  assert.match(src, /a === '--land-on-base'\) o\.landOnBase = true/u, 'парсер обязан знать флаг');
+  assert.match(src, /landOnBase: opts\.landOnBase/u, 'флаг обязан доехать до планировщика');
+});
+
+test('#1759: base занят соседом — по-прежнему только fetch, чужое дерево не трогаем', () => {
+  const { steps, skippedSync } = planMergeTail({ branch: 'sprint/x', worktreeBranches: ['main'] });
+  const labels = steps.map((s) => s.label);
+  assert.deepEqual(labels.filter((l) => l.startsWith('land-')), [], 'при занятой базе перецеливание не планируется');
+  assert.ok(labels.includes('sync-fetch'));
+  assert.match(skippedSync, /другой worktree/u);
 });

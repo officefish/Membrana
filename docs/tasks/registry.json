@@ -166,10 +166,10 @@
       "githubIssue": 1759,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-06",
-      "archivedAt": null,
+      "archivedAt": "2026-08-08",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"

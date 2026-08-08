@@ -20,3 +20,4 @@
 {"timestamp":"2026-08-06T09:41:23.997Z","path":"docs/LIVE_SERVICES.md","slug":"archivarius-mongo-live-services","headRev":"25d8670edb5b2c1bbc8b10aafc2897a629fc12d5","status":"merged"}
 {"timestamp":"2026-08-06T10:58:02.645Z","path":"packages/services/detectors/base/src/sample-window.test.ts","slug":"quadratic-stride-tooth","headRev":"c1faf5058538d5dab1d28d2e794178e322ff0543","status":"merged"}
 {"timestamp":"2026-08-06T12:23:23.590Z","path":"packages/services/fft-analyzer/src/math/metrics-flux.test.ts","slug":"flux-regression-tooth","headRev":"32cf5a11e7732b67fb767cc7814e369581008476","status":"merged"}
+{"timestamp":"2026-08-08T10:00:22.853Z","path":"scripts/lib/branch-status.mjs","slug":"branch-status-merged-evidence","headRev":"d22e691a142b7f652073ce82a8c73ddd58ba8b04","status":"merged"}

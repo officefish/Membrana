@@ -438,7 +438,8 @@
     "tariff:grid": "node scripts/tariff-grid-validate.mjs",
     "tariff:cutover": "node scripts/tariff-cutover-check.mjs",
     "snapshots:rebuild": "node scripts/snapshots-rebuild.mjs",
-    "calibrate:mfcc": "node scripts/calibrate-mfcc-gates.mjs"
+    "calibrate:mfcc": "node scripts/calibrate-mfcc-gates.mjs",
+    "branch:status": "node scripts/branch-status.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
