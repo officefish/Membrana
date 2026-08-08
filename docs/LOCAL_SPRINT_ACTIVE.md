@@ -4,8 +4,13 @@
 
 ## Focus
 
-- Активного локального спринта нет. Standing marathon `workflow-examples-marathon`
-  остаётся отдельным маршрутом накопления evidence.
+- **feedback-claims-code-probe** ([#1795](https://github.com/officefish/Membrana/issues/1795)) ·
+  gate pass 3/3 honest_pair · [`OPEN.md`](./local-sprint/feedback-claims-code-probe/OPEN.md) —
+  сверка утверждений вечернего протокола с деревом (`yarn feedback:claims`), врезка третьим
+  звеном в хвост вечера, предикат ласточки на `hard`. Долг попугая
+  `#team-feedback-claims-code-unverified`, строка 5 хендофа 08.08.
+- Standing marathon `workflow-examples-marathon` остаётся отдельным маршрутом накопления
+  evidence.
 
 ## Предыдущий спринт
 

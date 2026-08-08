@@ -4,10 +4,20 @@ import { test } from 'node:test';
 import {
   approveEveningPartnerDraft,
   canSendEveningPartnerSwallow,
+  claimsProbeBlocker,
   recordEveningPartnerDraft,
 } from './lib/evening-gates.mjs';
 
 const DAY = '2026-07-30';
+
+/** Готовое к отправке состояние вечера: день, вечерняя дверь, ack владельца, digest текста. */
+const readyState = (draft, extra = {}) => {
+  const base = approveEveningPartnerDraft(
+    recordEveningPartnerDraft({}, { draftText: draft, draftFile: 'draft.md', today: DAY }),
+    DAY,
+  ).state;
+  return { ...base, swallow: { ...base.swallow, ...extra } };
+};
 
 test('recordEveningPartnerDraft: пишет вечерний gate marker, digest и сбрасывает старый ack', () => {
   const state = recordEveningPartnerDraft(
@@ -47,6 +57,54 @@ test('canSendEveningPartnerSwallow: день + ack + digest; без magistral', 
   const mismatch = canSendEveningPartnerSwallow(state, DAY, 'другой текст');
   assert.equal(mismatch.ok, false);
   assert.match(mismatch.blockedBy.join(' '), /evening:gate partner-swallow/u);
+});
+
+test('сверка утверждений: hard держит ласточку, soft и unknown — нет', () => {
+  const draft = 'готовый вечерний текст';
+  const probe = (verdict) => ({
+    claimsProbe: { verdict, sha: 'abcdef123456', protocol: 'docs/seanses/team-evening-feedback-2026-07-30.md' },
+  });
+
+  const hard = canSendEveningPartnerSwallow(readyState(draft, probe('hard')), DAY, draft);
+  assert.equal(hard.ok, false);
+  assert.match(hard.blockedBy.join(' '), /НЕ ПОДТВЕРЖДЁННОЕ деревом/u);
+  assert.match(hard.blockedBy.join(' '), /feedback:claims --ack/u);
+
+  for (const verdict of ['soft', 'unknown', 'ok']) {
+    assert.equal(canSendEveningPartnerSwallow(readyState(draft, probe(verdict)), DAY, draft).ok, true);
+  }
+});
+
+test('сверка утверждений: квитанция владельца проходит гейт только под ТО ЖЕ дерево', () => {
+  const draft = 'готовый вечерний текст';
+  const sameTree = {
+    claimsProbe: { verdict: 'hard', sha: 'abcdef123456', override: { by: 'owner', sha: 'abcdef123456', note: 'ложная тревога' } },
+  };
+  assert.equal(canSendEveningPartnerSwallow(readyState(draft, sameTree), DAY, draft).ok, true);
+
+  const otherTree = {
+    claimsProbe: { verdict: 'hard', sha: 'newnewnew999', override: { by: 'owner', sha: 'abcdef123456', note: 'вчерашнее «ок»' } },
+  };
+  const gate = canSendEveningPartnerSwallow(readyState(draft, otherTree), DAY, draft);
+  assert.equal(gate.ok, false);
+  assert.match(gate.blockedBy.join(' '), /НЕ ПОДТВЕРЖДЁННОЕ деревом/u);
+});
+
+test('claimsProbeBlocker: отсутствие сверки ничего не держит — гейта нет, а не «красный»', () => {
+  assert.equal(claimsProbeBlocker(undefined), null);
+  assert.equal(claimsProbeBlocker({}), null);
+  assert.equal(claimsProbeBlocker({ swallow: {} }), null);
+  assert.equal(claimsProbeBlocker({ swallow: { claimsProbe: { verdict: 'ok' } } }), null);
+});
+
+test('сверка утверждений не читает и не трогает state.day — он предмет соседней карточки', () => {
+  const draft = 'текст';
+  const state = readyState(draft, { claimsProbe: { verdict: 'hard', sha: 'aaa' } });
+  const before = state.day;
+  canSendEveningPartnerSwallow(state, DAY, draft);
+  assert.equal(state.day, before);
+  // Блокировка выносится по одному лишь своему полю: день из решения не участвует.
+  assert.ok(claimsProbeBlocker({ swallow: { claimsProbe: { verdict: 'hard', sha: 'aaa' } } }));
 });
 
 test('canSendEveningPartnerSwallow: свежий утренний ack не открывает вечер', () => {
