@@ -427,7 +427,17 @@ export function planMergeTail(opts = {}) {
       cmd: 'git',
       args: ['checkout', '-B', landBranch ?? currentBranch ?? base, `origin/${base}`],
     });
-    skippedSync = `дерево осталось на «${landBranch ?? 'рабочей ветке'}» вровень с origin/${base}; ${base} никто не держит (умолчание #1759, «сесть на base» — флаг --land-on-base)`;
+    // `checkout -B` печатает «upstream is gone» по СТАРОМУ upstream — по ветке, которую
+    // мерджем только что удалили, — и лишь ПОСЛЕ этого настраивает новый. Предупреждение
+    // о прошлом состоянии стоит последним и читается как текущее: 08.08 на нём попались
+    // и пошли чинить целое состояние. Явный шаг утверждает итог своей строкой и снимает
+    // зависимость от того, перенастроит ли checkout: команда идемпотентна.
+    steps.push({
+      label: 'land-upstream',
+      cmd: 'git',
+      args: ['branch', `--set-upstream-to=origin/${base}`, landBranch ?? currentBranch ?? base],
+    });
+    skippedSync = `дерево осталось на «${landBranch ?? 'рабочей ветке'}» вровень с origin/${base}, upstream ветки → origin/${base}; ${base} никто не держит (умолчание #1759, «сесть на base» — флаг --land-on-base)`;
   }
   return { steps, skippedSync };
 }
