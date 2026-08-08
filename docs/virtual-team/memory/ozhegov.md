@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14393/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 260 (причины в op-log) -->
+Записей: 48 · бюджет 14379/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 261 (причины в op-log) -->
+
+### 2026-08-07 · позиция · team-evening-feedback
+
+> Ожегов. Оценка артефактов: `DAILY_CODE_REVIEW` называет конкретно: `splitDeliverable` / `planExecute` / `shipArgsFor` в `ritual-deliver-to-main.mjs`, константа `DELIVERABLE_STATUSES` — граница «доставке подлежит vs не лечится доставкой» зафиксирована; замечание про сырые строки […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-07.md#reply-1`
 
 ### 2026-08-06 · позиция · team-evening-feedback
 
@@ -289,9 +295,3 @@
 > Леммы «зависит» не смешиваем. **Контрактная** — без вердикта a у b нет области определения. **Фактурная** — b ждёт файл/PR в main. В M0 только контрактные. Имена — словарные статьи брифа, без жирных ID внутри вердикта-порядка: форма сетки; три исхода; отношение к рельсу […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/tariff-grid-m0-order-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m2-rail
-
-> Леммы, иначе синонимы. **Рельс** — замкнутый путь носителей: Prisma-поле → node-realtime → wire DTO → `device-board-module-config.entitledTariffSkus` → `ClientUserCaseCatalogService` → gate бейджей. **Сетка** — `TariffGridDocument` (registry + matrix), home на сервере. […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/tariff-grid-m2-rail-2026-07-29.md#reply-1`

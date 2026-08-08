@@ -5,3 +5,6 @@
 {"ts":"2026-08-07T12:59:23.537Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-07T12:59:08.442Z","origin":"ask-persona"}
 {"ts":"2026-08-07T12:59:23.539Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-07T12:59:08.442Z","origin":"ask-persona"}
 {"ts":"2026-08-07T12:59:23.540Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-29-tariff-grid-m6-switch","reason":"это ровно предыстория магистрали: M1–M5 закрыли модель, Tariff, AdminGuard; M6 — точка смены тарифа (кабинет + промокод). Твой transition-service — реализация того самого switch, поэтому атомарность разбираем в его рамке.","origin":"ask-persona"}
+{"ts":"2026-08-07T16:25:05.411Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-07-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-07T16:25:05.411Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-29-tariff-grid-m1-form","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-07T16:25:05.411Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
