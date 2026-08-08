@@ -10,9 +10,18 @@
  * Гарантии (проголосованы консилиумом):
  *   • значения ключей НЕ печатаются (маска sk-...abcd), .env только читается;
  *   • минимальный запрос (max_tokens: 1 / лёгкий embeddings) — баланс не жжём;
- *   • классификация словом: ok | no-key | auth/geo (401/403) | balance (402/429quota)
- *     | dpi-block (TLS/HTML fail direct + ok via-proxy) | net | http-<code>;
+ *   • классификация словом — исходы контейнера network (#1449, docs/network/outcomes.yml);
  *   • вывод — выровненная таблица, статус словом, без ANSI-цветов.
+ *
+ * СЛОВАРЬ ИСХОДОВ СМЕНЁН 08.08 (#1804). Здесь жил СВОЙ классификатор, и его ветка
+ * ошибки кончалась catch-all `return 'net'`: любая незнакомая строка объявлялась
+ * сетевой. Цена уже платилась — сны девять дней писали `deepseek:net · grok:net ·
+ * gemini:net`, и диагностика двое суток искала несуществующий сетевой фильтр.
+ * Теперь предикат ОДИН на репозиторий — `scripts/network/lib/classify.mjs` с
+ * инвариантом «ответил статусом ⇒ транспорт работает» и честным `unknown_protocol`
+ * вместо выдуманной сети. Старые слова (`net`, `tls-fail`, `blocked-html`, `auth/geo`)
+ * наружу больше не выходят: отобразить новый исход обратно в `net` значило бы сохранить
+ * ту же ложь под новым двигателем.
  *
  *   yarn llm:probe                 # все провайдеры: deepseek voyage anthropic openrouter
  *   yarn llm:probe voyage deepseek # выборочно
@@ -22,6 +31,7 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 import { loadProviderCatalog } from './lib/llm-procedure-registry.mjs';
+import { TRANSPORT_OUTCOMES, classifyOutcome as classifyCanonical } from './network/lib/classify.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -151,27 +161,34 @@ export function maskKey(key) {
 }
 
 /**
- * Классификация исхода ОДНОГО запроса.
- * @param {{status?:number, bodyText?:string, error?:string}} outcome
- * @returns {string} слово-класс
+ * Статусы, которыми API отвечает на ЗАВЕДОМО минимальное тело зонда. Это не суждение о
+ * сети, а знание собственного запроса: мы намеренно шлём `max_tokens: 1` и куцый JSON,
+ * поэтому «ругань на форму» означает «API жив». Общий классификатор такого знать не может
+ * и не должен — он судит наблюдение, а контекст вызова принадлежит вызывающему.
+ */
+const PROBE_SHAPE_STATUSES = new Set([400, 411, 422]);
+
+/**
+ * Классификация исхода ОДНОГО запроса — тонкая обёртка над единственным предикатом
+ * репозитория (`scripts/network/lib/classify.mjs`, #1449). Своего разбора здесь БОЛЬШЕ НЕТ:
+ * вторая копия предиката и была причиной #1804.
+ *
+ * @param {{status?:number, bodyText?:string, error?:string, errorCode?:string, viaProxy?:boolean}} outcome
+ * @returns {string} id исхода из закрытого перечня #1449
  */
 export function classifyOutcome(outcome) {
-  if (outcome.error) {
-    if (/ENOTFOUND|ECONNREFUSED|EAI_AGAIN/i.test(outcome.error)) return 'net';
-    if (/timeout|aborted/i.test(outcome.error)) return 'timeout';
-    if (/certificate|TLS|SSL|socket|ECONNRESET/i.test(outcome.error)) return 'tls-fail';
-    return 'net';
-  }
-  const { status = 0, bodyText = '' } = outcome;
-  const looksHtml = /^\s*<!doctype|^\s*<html/i.test(bodyText);
-  if (status >= 200 && status < 300) return 'ok';
-  if (status === 400 || status === 411 || status === 422) return 'ok'; // API жив, ругается на форму зонда
-  if (status === 402) return 'balance';
-  if (status === 429 && /quota|billing|balance|payment/i.test(bodyText)) return 'balance';
-  if (status === 429) return 'rate-limit';
-  if ((status === 403 || status === 401) && looksHtml) return 'blocked-html'; // WAF/DPI-страница
-  if (status === 401 || status === 403) return 'auth/geo';
-  return `http-${status}`;
+  const status = outcome.status ?? null;
+  if (status !== null && PROBE_SHAPE_STATUSES.has(status)) return 'ok';
+  const { outcome: id } = classifyCanonical({
+    httpStatus: status,
+    errorCode: outcome.errorCode ?? null,
+    // Текст ошибки транспорта и тело ответа — разные поля источника, но для распознавания
+    // причины годится то, что есть: при ошибке тела нет, при ответе нет ошибки.
+    errorText: outcome.error ?? outcome.bodyText ?? null,
+    body: outcome.bodyText ?? null,
+    viaProxy: outcome.viaProxy === true,
+  });
+  return id;
 }
 
 /**
@@ -179,14 +196,21 @@ export function classifyOutcome(outcome) {
  * прямой путь мёртв/HTML, через прокси API отвечает по-настоящему.
  */
 export function diagnosePair(direct, viaProxy) {
-  const dead = new Set(['tls-fail', 'blocked-html', 'net', 'timeout']);
-  const alive = new Set(['ok', 'balance', 'rate-limit', 'auth/geo']);
-  if (viaProxy !== null && dead.has(direct) && alive.has(viaProxy)) return 'dpi-block (только через прокси)';
+  // «Мёртв» = транспорт не состоялся. Список НЕ переписывается здесь руками: он берётся
+  // у классификатора (TRANSPORT_OUTCOMES), иначе появится четвёртый словарь — та самая
+  // болезнь, которую чинит #1804. `proxy_intercept` добавлен отдельно: статус пришёл, но
+  // от посредника, и для DPI-паттерна это признак мёртвого прямого пути.
+  const dead = new Set([...TRANSPORT_OUTCOMES, 'proxy_intercept']);
+  // «Жив» = провайдер ответил ПО СУЩЕСТВУ, каким бы отказом это ни было: деньги, лимит,
+  // ключ, гео. Ответ по существу доказывает, что канал до API работает.
+  const alive = new Set(['ok', 'billing_exhausted', 'rate_limited', 'auth_invalid_key', 'geo_blocked', 'model_removed']);
+  if (viaProxy !== null && dead.has(direct) && alive.has(viaProxy)) return 'proxy_intercept (только через прокси)';
   if (direct === 'ok') return 'ok (прямой путь)';
   if (viaProxy === 'ok') return 'ok (через прокси)';
-  if (direct === 'balance' || viaProxy === 'balance') return 'balance (пополнить счёт)';
-  if (direct === 'rate-limit' || viaProxy === 'rate-limit') return 'rate-limit (лимиты тарифа)';
-  if (direct === 'no-key') return 'no-key (нет ключа в .env)';
+  if (direct === 'billing_exhausted' || viaProxy === 'billing_exhausted') return 'billing_exhausted (пополнить счёт)';
+  if (direct === 'rate_limited' || viaProxy === 'rate_limited') return 'rate_limited (лимиты тарифа)';
+  if (direct === 'auth_missing_key') return 'auth_missing_key (нет ключа в .env)';
+  if (direct === 'model_removed' || viaProxy === 'model_removed') return 'model_removed (модель снята — не сеть)';
   return direct;
 }
 
@@ -238,7 +262,15 @@ export async function probeOnce(spec, key, { dispatcher } = {}) {
     }
     return { status: res.status, bodyText: (await res.text()).slice(0, 400) };
   } catch (e) {
-    return { error: e?.cause?.message ?? e?.message ?? String(e) };
+    // Код ошибки отдаётся ОТДЕЛЬНЫМ полем (#1804). Раньше наружу шёл только текст, и
+    // классификатору приходилось гадать по строке регулярками — отсюда и брался catch-all
+    // «сеть». Классификатор #1449 судит по коду (`err.cause.code`), а текст читает лишь
+    // как вспомогательный признак; без этого поля перевод дал бы `unknown_protocol` на
+    // каждом отказе, то есть заменил бы одну ложь другой, менее заметной.
+    return {
+      error: e?.cause?.message ?? e?.message ?? String(e),
+      errorCode: e?.cause?.code ?? e?.code ?? null,
+    };
   }
 }
 
@@ -247,7 +279,10 @@ export async function probeProvider(name, env) {
   const keyName = spec.keyEnv.find((k) => env[k]?.trim());
   const key = keyName ? env[keyName].trim() : null;
   if (!key) {
-    return { provider: name, key: '(нет)', direct: 'no-key', viaProxy: null, diagnosis: 'no-key (нет ключа в .env)' };
+    // Ключа нет — запрос не отправлялся; исход именуется словарём #1449, а не своим
+    // «no-key» в обход классификатора (одно из четырёх мест старого словаря, #1804).
+    const direct = 'auth_missing_key';
+    return { provider: name, key: '(нет)', direct, viaProxy: null, diagnosis: diagnosePair(direct, null) };
   }
   const proxyUrl = env.HTTPS_PROXY?.trim() || env.HTTP_PROXY?.trim() || null;
 
@@ -255,7 +290,9 @@ export async function probeProvider(name, env) {
   let viaProxy = null;
   if (proxyUrl) {
     const { ProxyAgent } = await import('undici');
-    viaProxy = classifyOutcome(await probeOnce(spec, key, { dispatcher: new ProxyAgent(proxyUrl) }));
+    // viaProxy: true — классификатор отличает «посредник не дошёл до цели» (5xx через
+    // прокси) от собственной ошибки провайдера, и не зовёт гео-блоком отказ через прокси.
+    viaProxy = classifyOutcome({ ...(await probeOnce(spec, key, { dispatcher: new ProxyAgent(proxyUrl) })), viaProxy: true });
   }
   return { provider: name, key: maskKey(key), direct, viaProxy, diagnosis: diagnosePair(direct, viaProxy) };
 }

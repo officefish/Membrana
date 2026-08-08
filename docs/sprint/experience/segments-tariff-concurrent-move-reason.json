@@ -1,0 +1,10 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "tariff-concurrent-move-reason",
+  "forTask": "tariff-concurrent-move-reason — параллельная смена тарифа отвечает своей причиной (#1777, строка 4 хендофа 08.08)",
+  "note": "Замер git diff --numstat HEAD по зоне блока: insertions + deletions. Оценка резчика — 40 строк, факт 34: единственный за день блок, уложившийся в оценку.",
+  "measuredAt": "2026-08-08T16:25:00+00:00",
+  "segments": [
+    { "cutBlockId": "a1-concurrent-move-reason", "changedLines": 34 }
+  ]
+}

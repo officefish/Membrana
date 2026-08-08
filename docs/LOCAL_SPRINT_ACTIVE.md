@@ -4,10 +4,25 @@
 
 ## Focus
 
-- Активного локального спринта нет. Standing marathon `workflow-examples-marathon`
-  остаётся отдельным маршрутом накопления evidence.
+- **tariff-concurrent-move-reason** ([#1777](https://github.com/officefish/Membrana/issues/1777)) ·
+  gate pass 1/1 honest_pair · [`OPEN.md`](./local-sprint/tariff-concurrent-move-reason/OPEN.md) —
+  параллельная смена тарифа отвечает своей причиной `tariff_moved_concurrently`, а не
+  `same_tariff`. Строка 4 хендофа 08.08; шоту предикат отказал (touches_server).
+
+- **feedback-claims-code-probe** ([#1795](https://github.com/officefish/Membrana/issues/1795)) ·
+  gate pass 3/3 honest_pair · [`OPEN.md`](./local-sprint/feedback-claims-code-probe/OPEN.md) —
+  сверка утверждений вечернего протокола с деревом (`yarn feedback:claims`), врезка третьим
+  звеном в хвост вечера, предикат ласточки на `hard`. Долг попугая
+  `#team-feedback-claims-code-unverified`, строка 5 хендофа 08.08.
+- Standing marathon `workflow-examples-marathon` остаётся отдельным маршрутом накопления
+  evidence.
 
 ## Предыдущий спринт
+
+- **static-mmbrn-inventory-export** (#1305-A) · CLOSED · gate pass 3/3
+  `honest_pair` · PR #1806 merged ·
+  [`CLOSURE.md`](./local-sprint/static-mmbrn-inventory-export/CLOSURE.md). Live
+  production read и S5 остаются за пределами этого спринта.
 
 - **deploy-procedures** · gate pass 3/3 honest_pair · журнал закрыт производителем ·
   [`OPEN.md`](./local-sprint/deploy-procedures/OPEN.md) — две процедуры деплоя по

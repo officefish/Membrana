@@ -52,6 +52,15 @@ packages/background-office
 !packages/background-office/**
 docs
 # LPC defaults + dreams runtime libs must enter office image; keep rest of scripts out
+#
+# ЭТО ТРЕТИЙ рукописный манифест тех же файлов (#1797). Их три, и все ведутся руками:
+#   1) здесь — что вообще попадает в build-контекст;
+#   2) build-стадия Dockerfile — что копируется в сборку;
+#   3) runtime-стадия Dockerfile — что доезжает до финального образа.
+# Правка 07.08 (#1773) обновила только (2): classify.mjs добавили в Dockerfile, но не сюда —
+# и сборка образа офиса СЛОМАЛАСЬ («/scripts/network/lib/classify.mjs»: not found). Не
+# заметили 32 часа, потому что образ с тех пор не собирали. Согласованность всех трёх
+# проверяет CI-смоук `office-image-smoke.yml`: он собирает образ и поднимает контейнер.
 scripts/**
 !scripts/lib/
 !scripts/lib/llm-procedures.json
@@ -65,7 +74,11 @@ scripts/**
 !scripts/lib/night-research.mjs
 !scripts/lib/strategy-horizon.mjs
 !scripts/lib/truth-graph.mjs
-!scripts/llm-probe.mjs
+# classify.mjs — статический импорт dreams-tick.mjs:19 с 07.08. Родительские каталоги
+# разрешаются явно: без них правило на файл не сработает.
+!scripts/network/
+!scripts/network/lib/
+!scripts/network/lib/classify.mjs
 node_modules
 *.md
 !packages/background-media/README.md

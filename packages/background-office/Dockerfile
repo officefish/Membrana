@@ -34,11 +34,16 @@ COPY scripts/lib/llm-procedures.json \
 # поэтому одного файла довольно. Без этой строки образ соберётся, а сны на проде
 # умрут на MODULE_NOT_FOUND — 12 синтезов из 12 стали бы нулём.
 COPY scripts/network/lib/classify.mjs scripts/network/lib/classify.mjs
-# llm-probe.mjs больше не импортируется ничем из копируемого выше; строка
-# оставлена сознательно — снятие необратимо и проверяется только сборкой образа.
-# Корень (поимённый манифест дублирует граф импортов и молча с ним расходится)
-# назван Тарасовым при прогоне контекста и записан долгом #dockerfile-copy-manifest-drifts.
-COPY scripts/llm-probe.mjs scripts/llm-probe.mjs
+# llm-probe.mjs СНЯТ 08.08 (#1797): замер графа импортов офиса показал его единственным
+# балластом списка — ни один копируемый выше модуль его не импортирует с 07.08, когда
+# dreams-tick перешёл на classify.mjs. Раньше снятие блокировалось тем, что проверялось
+# только сборкой образа; теперь его проверяет прибор `yarn office:image:smoke`.
+#
+# ПОЛНОТА ЭТОГО СПИСКА проверяется не глазами, а исполнением: CI поднимает образ и просит
+# у офиса дайджест снов (workflow office-image-smoke.yml). Путь дайджеста грузит рантайм-
+# модули офиса, поэтому забытая строка COPY даёт красный с ИМЕНЕМ файла — а не тишину до
+# первого MODULE_NOT_FOUND на проде (срабатывание 07.08 стоило бы 12 синтезов из 12).
+# Добавляя здесь модуль, ничего больше делать не нужно; удаляя — дождись зелёного смоука.
 
 RUN yarn workspaces focus @membrana/background-office --all \
   && yarn workspace @membrana/background-office build
@@ -58,7 +63,11 @@ COPY --from=build /app/packages/background-office/package.json ./package.json
 COPY --from=build /app/packages/services/rag/dist /app/packages/services/rag/dist
 COPY --from=build /app/packages/services/rag/package.json /app/packages/services/rag/package.json
 COPY --from=build /app/scripts/lib /app/scripts/lib
-COPY --from=build /app/scripts/llm-probe.mjs /app/scripts/llm-probe.mjs
+# scripts/network/lib: classify.mjs — СТАТИЧЕСКИЙ импорт dreams-tick.mjs:19 с 07.08.
+# Сюда правка 07.08 не дошла: она тронула только build-стадию. Дефект второй ступени —
+# первым падал сам build, потому что файл не пускал .dockerignore (третий манифест).
+# Оба чинятся вместе, иначе образ соберётся и умрёт на первом вызове снов.
+COPY --from=build /app/scripts/network/lib /app/scripts/network/lib
 COPY --from=build /app/docs/truth/registry.json /app/docs/truth/registry.json
 COPY --from=build /app/docs/prompts/DREAM_MASTER_PROMPT.md /app/docs/prompts/DREAM_MASTER_PROMPT.md
 COPY packages/background-office/docker/entrypoint.sh /entrypoint.sh

@@ -47,7 +47,8 @@ export type TransitionOutcome =
         | TransitionDenyReason
         | 'promo_unknown'
         | 'membrane_unknown'
-        | 'grid_unavailable';
+        | 'grid_unavailable'
+        | 'tariff_moved_concurrently';
     };
 
 /**
@@ -59,6 +60,15 @@ export type TransitionOutcome =
  * `grid_unavailable` — отказ FAIL-CLOSED: без сетки не вычислить ранг, значит
  * нельзя ни разрешить переход, ни честно назвать причину отказа. Пропустить
  * такой случай «на всякий случай вверх» означало бы открывать тарифы вслепую.
+ *
+ * `tariff_moved_concurrently` — ТОГО ЖЕ РОДА: субъект не домен, а состояние базы
+ * между вердиктом домена и записью сервиса. Домен о параллельной смене не знает и
+ * знать не должен, поэтому причина живёт здесь, а не в `TransitionDenyReason`.
+ *
+ * Заведена по #1777: раньше этот случай отвечал `same_tariff`, а тот означает
+ * «цель совпадает с текущим тарифом» — пользователю читается как «вы уже на нём».
+ * Но тариф мембраны сменил кто-то параллельно, и пользователь может быть на ином
+ * тарифе: ответ был бы просто неправдой. Один род покрывал чужой субъект.
  */
 @Injectable()
 export class TariffTransitionService {
@@ -203,7 +213,10 @@ export class TariffTransitionService {
     } catch (err) {
       if (err instanceof ConcurrentTariffMove) {
         this.logger.warn(`переход отменён — тариф мембраны ${err.membraneId} сменили параллельно`);
-        return { ok: false, reason: 'same_tariff' };
+        // Своя причина, а не `same_tariff` (#1777): произошло не «цель равна текущему
+        // тарифу», а смена тарифа кем-то между вердиктом и записью. Текст лога был
+        // правдив и до правки — теперь с ним совпадает и причина, уезжающая наружу.
+        return { ok: false, reason: 'tariff_moved_concurrently' };
       }
       throw err;
     }
