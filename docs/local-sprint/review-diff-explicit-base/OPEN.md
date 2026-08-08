@@ -45,6 +45,24 @@
 `head_match=false` названо), legacy-артефакт #1801 (проходит как прежде), сквозной прогон
 ревью — маркер получил `base:1a092353`, артефакт получил блок `review-source`.
 
+## Кто передаёт `currentBase` — доказательство грепом
+
+Ревью PR #1807 просило подтвердить, что «все три потребителя» передают базу. Потребителей
+решения **два**, и оба в одном файле:
+
+```
+$ git grep -n "reviewGateDecision({" -- 'scripts/**' | grep -v test
+scripts/review-gate.mjs:154:  … reviewGateDecision({ headSha, currentBase, verdict: … })
+scripts/review-gate.mjs:175:  … reviewGateDecision({ headSha, currentBase, verdict: … })
+
+$ git grep -n "reviewGateDecision({" -- 'scripts/**' | grep -v currentBase | grep -v test
+(пусто)
+```
+
+Трёх потребителей нет: `task-pr-land.mjs` и `code-review-ritual.mjs` импортируют из ядра
+`parseVerdict` и `renderVerdictMarker`, а не само решение. Вызовы без `currentBase`
+остались только в зубах — намеренно: они держат контракт «без базы поведение прежнее».
+
 ## Спор, решённый владельцем
 
 Исполнитель b1 (Ожегов) требовал: legacy-вердикт без базы → `unknown`, «иначе legacy
