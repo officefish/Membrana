@@ -27,7 +27,6 @@
 | `morning-gates-two-moments` | Гейты утра: два момента вместо одного day — реализация ADR-0024 | S | [`MORNING_GATES_TWO_MOMENTS_PROMPT.md`](../prompts/MORNING_GATES_TWO_MOMENTS_PROMPT.md) | — |
 | `delivery-predicates-honest` | Три предиката контура доставки: ролап против объявленного, момент выбора магистрали, порядок шагов pr-land | M | [`DELIVERY_PREDICATES_HONEST_PROMPT.md`](../prompts/DELIVERY_PREDICATES_HONEST_PROMPT.md) | [#1764](https://github.com/officefish/Membrana/issues/1764) |
 | `tariff-promo-server-wiring` | Выбор тарифа на сервере и открытие по промокоду: провести готовый домен до сервера и клиента | M | [`TARIFF_PROMO_SERVER_WIRING_PROMPT.md`](../prompts/TARIFF_PROMO_SERVER_WIRING_PROMPT.md) | [#1761](https://github.com/officefish/Membrana/issues/1761) |
-| `pr-ship-post-merge-landing` | pr:ship после мерджа: дерево на своей ветке вровень со стволом, а не на main | M | [`PR_SHIP_POST_MERGE_LANDING_PROMPT.md`](../prompts/PR_SHIP_POST_MERGE_LANDING_PROMPT.md) | [#1759](https://github.com/officefish/Membrana/issues/1759) |
 | `lazy-close-scope` | Ленивое закрытие журнала получает явную область: параллельные спринты не топят друг друга (#1705) | S | [`LAZY_CLOSE_SCOPE_PROMPT.md`](../prompts/LAZY_CLOSE_SCOPE_PROMPT.md) | [#1705](https://github.com/officefish/Membrana/issues/1705) |
 | `archivarius-mongo-backup` | Бэкап тома archivarius-mongo-data: восстановимость проверяемая, а не объявленная | M | [`ARCHIVARIUS_MONGO_BACKUP_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_BACKUP_PROMPT.md) | [#1714](https://github.com/officefish/Membrana/issues/1714) |
 | `worktrees-align` | worktrees:align — WIP-снимок грязных, merge вместо ff-only, авто-abort конфликта, отчёт | M | [`WORKTREES_ALIGN_PROMPT.md`](../prompts/WORKTREES_ALIGN_PROMPT.md) | [#1738](https://github.com/officefish/Membrana/issues/1738) |
@@ -255,6 +254,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `pr-ship-post-merge-landing` | pr:ship после мерджа: дерево на своей ветке вровень со стволом, а не на main | 2026-08-08 | [`PR_SHIP_POST_MERGE_LANDING_PROMPT.md`](../prompts/PR_SHIP_POST_MERGE_LANDING_PROMPT.md) | #1759 (Issue открыт) | [карточка](./archive/pr-ship-post-merge-landing.md) |
 | `dreams-net-label-lies` | Сны метят HTTP-404 и отсутствие ключа как сетевой отказ: подключить классификатор контейнера network | 2026-08-07 | [`DREAMS_NET_LABEL_LIES_PROMPT.md`](../prompts/DREAMS_NET_LABEL_LIES_PROMPT.md) | #1425 | [карточка](./archive/dreams-net-label-lies.md) |
 | `review-honesty` | Честность ревью: гейт различает три исхода вердикта, oversized читает снятие по commit-status | 2026-08-06 | [`REVIEW_HONESTY_PROMPT.md`](../prompts/REVIEW_HONESTY_PROMPT.md) | — | [карточка](./archive/review-honesty.md) |
 | `scoreboard-spectral-ladder` | Ф2: лестница спектрального детектора из наших 253 звуков | 2026-08-06 | [`DETECTOR_SCOREBOARD_EPIC_PROMPT.md`](../prompts/DETECTOR_SCOREBOARD_EPIC_PROMPT.md) | — | [карточка](./archive/scoreboard-spectral-ladder.md) |
