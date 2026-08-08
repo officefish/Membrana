@@ -25,6 +25,21 @@ Options:
   --help, -h              Справка`);
 }
 
+/**
+ * Роняет ли хвост ненулевой код шага.
+ *
+ * Вынесено отдельной функцией по вопросу ревью PR #1801: у третьего звена два разных
+ * ненулевых исхода, и путать их нельзя. `feedback:claims` без `--strict` возвращает 0 даже
+ * на найденном hard-нарушении — находка не роняет вечер. Но exit 2 (нет протокола, битый
+ * реестр, git недоступен) — это ОТКАЗ ИНСТРУМЕНТА, и он обязан быть виден красным: молчаливый
+ * зелёный на неработающем приборе и есть тот класс, против которого звено заведено.
+ *
+ * @param {number|null|undefined} status
+ */
+export function abortsOn(status) {
+  return status !== 0;
+}
+
 function runStep(label, script, args = []) {
   console.error(`\n=== ritual-evening-tail: ${label} ===\n`);
   const res = spawnSync('yarn', [script, ...args], {
@@ -33,36 +48,44 @@ function runStep(label, script, args = []) {
     shell: true,
     env: process.env,
   });
-  if (res.status !== 0) {
+  if (abortsOn(res.status)) {
     process.exit(res.status ?? 1);
   }
 }
 
-const argv = process.argv.slice(2);
-if (argv.includes('--help') || argv.includes('-h')) {
-  printHelp();
-  process.exit(0);
+function main() {
+  const argv = process.argv.slice(2);
+  if (argv.includes('--help') || argv.includes('-h')) {
+    printHelp();
+    process.exit(0);
+  }
+
+  const skipClose = argv.includes('--skip-close-github');
+  const skipFeedback = argv.includes('--skip-team-feedback');
+  const skipClaims = argv.includes('--skip-claims-probe');
+
+  if (!skipClose) {
+    runStep('task:close-github', 'task:close-github');
+  }
+
+  if (!skipFeedback) {
+    runStep('team-evening-feedback', 'team-evening-feedback');
+  }
+
+  if (!skipClaims) {
+    // Находка хвост НЕ роняет: `feedback:claims` без `--strict` возвращает 0 даже на найденном
+    // hard-нарушении. Красная сверка не отменяет протокол — он обязателен по CLAUDE.md; она
+    // вписывает секцию в его тело и держит ОТПРАВКУ через предикат вечернего гейта.
+    // Это не `|| true` на критичном шаге (инцидент 18.07): отказ самого инструмента —
+    // нет протокола, битый реестр, недоступный git — остаётся exit 2 и роняет хвост честно
+    // через `abortsOn`. Зуб на оба исхода: scripts/ritual-evening-tail.test.mjs.
+    runStep('feedback:claims', 'feedback:claims', ['--append', '--state']);
+  }
+
+  console.error('\nritual-evening-tail: готово.');
 }
 
-const skipClose = argv.includes('--skip-close-github');
-const skipFeedback = argv.includes('--skip-team-feedback');
-const skipClaims = argv.includes('--skip-claims-probe');
-
-if (!skipClose) {
-  runStep('task:close-github', 'task:close-github');
+// Импорт из зубов не должен запускать вечернюю цепочку — исполняется только прямой вызов.
+if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('ritual-evening-tail.mjs')) {
+  main();
 }
-
-if (!skipFeedback) {
-  runStep('team-evening-feedback', 'team-evening-feedback');
-}
-
-if (!skipClaims) {
-  // Шаг НЕ роняет хвост: `feedback:claims` без `--strict` возвращает 0 даже на найденном
-  // hard-нарушении. Красная сверка не отменяет протокол — он обязателен по CLAUDE.md; она
-  // вписывает секцию в его тело и держит ОТПРАВКУ через предикат вечернего гейта.
-  // Это не `|| true` на критичном шаге (инцидент 18.07): отказ самого инструмента —
-  // нет протокола, битый реестр — остаётся exit 2 и роняет хвост честно.
-  runStep('feedback:claims', 'feedback:claims', ['--append', '--state']);
-}
-
-console.error('\nritual-evening-tail: готово.');
