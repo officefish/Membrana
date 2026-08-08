@@ -16,11 +16,18 @@ import { BRANCH_STATUS_LIMITS, branchStatus, formatBranchStatus } from './lib/br
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
-const git = (args, fallback = null) => {
+const git = (args, fallback = null, opts = {}) => {
   try {
-    return String(execFileSync('git', args, { cwd: repoRoot, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 })).trim();
+    // stderr глушится: отсутствие upstream у влитой и удалённой ветки — ожидаемое
+    // состояние, а не сбой; `fatal:` в выводе читался бы как поломка глагола. Настоящая
+    // недоступность порта ловится ниже по `null` и печатается как «проверка НЕ состоялась».
+    const out = String(execFileSync('git', args, {
+      cwd: repoRoot, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024, stdio: ['ignore', 'pipe', 'ignore'],
+    })).trim();
+    // `probe` — команды, у которых ответ в коде возврата, а не в выводе (`--is-ancestor`).
+    return opts.probe ? true : out;
   } catch {
-    return fallback;
+    return opts.probe ? false : fallback;
   }
 };
 
@@ -68,13 +75,36 @@ function unpushedCommits(branch) {
 /** PR по имени ветки. Сеть недоступна — возвращаем null: «не знаю» ≠ «их нет». */
 function pullRequestsOf(branch) {
   try {
-    const raw = execFileSync('gh', ['pr', 'list', '--head', branch, '--state', 'all', '--json', 'number,state'], {
-      cwd: repoRoot, encoding: 'utf8', timeout: 20_000, stdio: ['ignore', 'pipe', 'ignore'],
-    });
+    const raw = execFileSync(
+      'gh',
+      ['pr', 'list', '--head', branch, '--state', 'all', '--json', 'number,state,mergeCommit,commits'],
+      { cwd: repoRoot, encoding: 'utf8', timeout: 20_000, stdio: ['ignore', 'pipe', 'ignore'] },
+    );
     return JSON.parse(raw);
   } catch {
     return null;
   }
+}
+
+/**
+ * Влитые PR ветки, чей merge-коммит ДЕЙСТВИТЕЛЬНО лежит в стволе. Состояния `MERGED` мало:
+ * GitHub помнит мердж и в чужую базу, а прощать коммиты можно только против той базы,
+ * относительно которой мы судим.
+ */
+function deliveredPullRequests(base, pullRequests) {
+  const out = [];
+  for (const pr of pullRequests ?? []) {
+    if (String(pr?.state).toUpperCase() !== 'MERGED') continue;
+    const mergeCommit = pr?.mergeCommit?.oid;
+    if (!mergeCommit) continue;
+    const inBase = git(['merge-base', '--is-ancestor', mergeCommit, base], null, { probe: true });
+    out.push({
+      number: pr.number,
+      commits: (pr.commits ?? []).map((c) => c.oid).filter(Boolean),
+      mergeCommitInBase: inBase === true,
+    });
+  }
+  return out;
 }
 
 function main(argv) {
@@ -113,7 +143,13 @@ function main(argv) {
     return 2;
   }
 
-  const verdict = branchStatus({ branch, pullRequests, unpushed, unmergedContent });
+  const verdict = branchStatus({
+    branch,
+    pullRequests,
+    unpushed,
+    unmergedContent,
+    mergedPullRequests: deliveredPullRequests(cli.base, pullRequests),
+  });
 
   if (cli.json) {
     process.stdout.write(`${JSON.stringify({ ...verdict, limits: BRANCH_STATUS_LIMITS }, null, 2)}\n`);
