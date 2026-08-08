@@ -88,12 +88,23 @@ async function probe(url) {
   }
 }
 
-/** Ждём health, пока контейнер жив. Мёртвый контейнер — не «ещё не прогрелся». */
+/**
+ * Ждём health, пока контейнер жив. Мёртвый контейнер — не «ещё не прогрелся».
+ *
+ * Каждая попытка ЗВУЧИТ. Прогон 08.08 обрывался ровно здесь: лог кончался на «→ health»,
+ * а процесс возвращал 0 — то есть зелёное без единого доказательства. Немой цикл нельзя
+ * отличить от цикла, который не начинался, поэтому здесь он говорит.
+ */
 async function waitHealthy(attempts = 30) {
   for (let i = 0; i < attempts; i += 1) {
     const alive = docker(['inspect', '-f', '{{.State.Running}}', CONTAINER], { timeout: 20_000 });
-    if (String(alive.stdout).trim() !== 'true') return null;
+    const running = String(alive.stdout).trim();
+    if (running !== 'true') {
+      say(`     health #${i + 1}: контейнер не жив (inspect → «${running || '—'}»)`);
+      return null;
+    }
     const r = await probe(`http://127.0.0.1:${PORT}/health`);
+    say(`     health #${i + 1}: ${r.ok ? 'ok' : `нет (${r.status ?? r.body?.slice(0, 60) ?? '—'})`}`);
     if (r.ok) return r;
     await new Promise((done) => setTimeout(done, 2000));
   }
@@ -184,11 +195,16 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
   // так и прошёл: зелёный шаг без единой строки вердикта — то есть «проверено» стало
   // неотличимо от «ничего не проверил», ровно та болезнь, против которой прибор. Код
   // возврата ставим полем, а Node выходит сам, дописав поток.
+  // Явный keep-alive: если event loop опустеет раньше, чем разрешится промис `main`,
+  // Node выходит с кодом 0 — молча и «успешно». Для прибора это худший из отказов:
+  // зелёное без проверки. Таймер держит процесс живым до настоящего вердикта.
+  const keepAlive = setInterval(() => {}, 1000);
   main(process.argv.slice(2)).then(
-    (code) => { process.exitCode = code; },
+    (code) => { process.exitCode = code; clearInterval(keepAlive); },
     (e) => {
       sayErr(`office:image:smoke — прогон НЕ состоялся: ${e?.message ?? e}`);
       process.exitCode = 2;
+      clearInterval(keepAlive);
     },
   );
 }
