@@ -5,8 +5,20 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14382/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 262 (причины в op-log) -->
+Записей: 49 · бюджет 14369/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 270 (причины в op-log) -->
+
+### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
+
+> Согласен по честности сигнала. Affine у нас optional projection, как disposable engine chain: layout/cache/session можно сбросить, а portable annotations и binding events — сохранить как партитуру. Blind copy 82 pages звучит как «скопировать весь bus» — это шум, не миграция. _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-08.md#reply-1`
+
+### 2026-08-08 · позиция · team-evening-feedback
+
+> Курёхин, аудио-контур. Оценка артефактов: `DAILY_CODE_REVIEW` честно поставил прочерк по моей зоне — сегодня Web Audio / детекторы не трогались. `MAIN_DAY_ISSUE` в санитарных задачах фиксирует красный CI трёх детекторов (`cepstral` / `harmonic` / `spectral-flux`) — но вердиктов […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-08.md#reply-1`
 
 ### 2026-08-07 · позиция · team-evening-feedback
 
@@ -20,11 +32,35 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
 
+### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
+
+> Значимые annotations нельзя смешать с удобствами интерфейса. Они получают engine-neutral identity, version scope и anchor; navigation, layout и session state заранее объявляются disposable и не маскируются словом «значимое». _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
+
+### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
+
+> Preview остаётся производной поверхностью. Он получает original только после `read-bytes` allow, сохраняет class и при любой ошибке возвращает `preview_unavailable`, не меняя original, registry или tip. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
+
 ### 2026-08-05 · позиция · team-evening-feedback
 
 > — Оценка артефактов: DAILY_STANDUP правильно поставил пробу 3 — проверить, связан ли красный `media-library#test` с аудиопутём. Без этого не понять, `media-library-a3` в приоритет или нет. Итоги дня: аудио-путь не трогали; проба 3 не проведена; `media-library-a3-mic-recorder` не […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
+
+### 2026-08-04 · позиция · static-mmbrn-container-m3-access
+
+> Affine остаётся сменным человеческим движком под контейнером. Его нативные роли не определяют, что пользователь Membrana вправе сделать с материалом. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
+
+### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
+
+> Storage-policy classes две: `standard` и `sensitive`. Sensitive bytes шифруются at rest отдельным key namespace; standard также шифруется at rest, но другим namespace. Между классами нет общего ciphertext или credential. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
 
 ### 2026-08-03 · позиция · one-shot-manifest-m0-order
 
@@ -55,6 +91,24 @@
 > На слух: у нас есть прибор, который играет, и прибор, который правильнее, но которого нет. Первый правил: берём то, что есть. Главное — не молчать о том, что прибор слышит тембр, а не гармонию. Сигнал тимлиду должен честно говорить: «это классификация по именам путей, не по […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/one-shot-manifest-m4-homogeneity-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m0-order
+
+> Прежде чем мы тронемся, замечу очевидное: мы не трогаем содержание вопросов, только их порядок. Мне как человеку, привыкшему выстраивать цепочки обработки сигнала, очевидно: нельзя настроить ingest (вопрос 6), не зная, что считать оригиналом (вопрос 1). И нельзя ничего […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m0-order-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m1-boundary
+
+> Добавлю про нецели: стратегический редактор — Panel, отдельный продукт. `static.mmbrn.tech` — не редактор, не рабочее пространство. Affine может быть движком удобной работы под контейнером, но его страницы — это состояние движка, не канонические материалы контейнера. Нельзя […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/static-mmbrn-container-m1-boundary-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m2-identity
+
+> Подхвачу: `about` и `measured` — опциональные поля, но изменение любого из них тоже создаёт новый `id`. Они не меняют байтовое тождество — `sha256` остаётся тем же — и не меняют lineage-тождество — root и `canonicalRef` сохраняются. Но record identity всегда меняется при любой […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m2-identity-2026-08-03.md#reply-1`
 
 ### 2026-08-02 · позиция · team-evening-feedback
 
@@ -247,51 +301,3 @@
 > На слух это три шины, не один fader «архив». Сначала master-tape на сервере (cold-record), потом meter по Mongo (checkpoint hash/count), потом send в repo — и только как bounce экспорта. Если сначала шлёпаем JSON в git, а Mongo потом — клиппинг: локальный take громче канона. […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m5-recovery-audit
-
-> На слух cold archive — master-tape в office, repo — control-room meters, не вторая лента. Hash mismatch — клиппинг-индикатор, не лицензия «перезаписать take». Missing checkpoint — нет bounce-метки, лента при этом может быть цела. Повреждённый office — тогда и только тогда […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/task-archive-cold-store-m5-recovery-audit-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m6-migration-path
-
-> На слух миграция — это не remaster старых take, а перенос master-tape на серверную шину. Старые `docs/tasks/archive/*.md` звучат как handoff-записи, не как proof. Если мы вложим stale-карточку в cold-record как «доказательство» — клиппинг доверия: legacy hint прикинется […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m6-migration-path-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m7-lifecycle-integration
-
-> На слух M1–M6 — уже сведённый master-tape дизайна: Mongo SoT, checkpoint в repo, Notary sole writer, legacy markdown = candidate. Но master-tape партитуры ≠ final bounce продукта. Новый cold archive на бумаге — это count-in, не take на ленте. L/O слышу только когда Notary […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m7-lifecycle-integration-2026-07-30.md#reply-1`
-
-### 2026-07-29 · позиция · network-container-form
-
-> На слух боль владельца — два дня «ищу обрыв», а играла другая струна: ключ, бан, модель снята. Туннель не строим — тракт живой. Нужен **count-in до соло**: агент слышит room tone сети *до* первого API-take. Мастерская = тюнер и meters, не новый эффект в цепи продукта. Если meter […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/network-container-form-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · night-triage-insight-harvest
-
-> На слух четыре ночи — четыре take без final bounce. Ищу одну несущую фразу, не хит-парад. Беру **идею**: ночной триаж не должен сам чеканить insight-PR; он только кладёт raw take с меткой «слышит ухо / не слышит». Иначе клиппинг смысла: шум протокола громче сигнала продукта. […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/night-triage-insight-harvest-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · sprint-honest-m0-order
-
-> По тракту: сначала *кто на шине исполнения* (1), потом *партитура до входа* (2), *прослушивание партитуры исполнителем* (3), *что реально жмётся и что остаётся на ленте* (4). Аудитор и ведущая — отдельные шины, не соло исполнителя. Память — только с take исполнения, не с […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m0-order-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · sprint-honest-m1-performer
-
-> На слух вопрос не про «кто в титрах», а про take: кто реально сыграл партию спринта. Назначенный — это имя на пюпитре; участвовавший — тот, чей звук есть на ленте. Машинно нужен носитель следа исполнения, не label в карточке. Иначе снова mono-take: объявили Курёхина — а в миксе […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/sprint-honest-m1-performer-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** Аудио-движок не затронут. **Итоги дня:** Для музыканта — фон: tariff-grid не затрагивает Web Audio, но MFCC/нейро-спектрограммы (инструменты тарифа 2) — зона пересечения Калмыка и математика. Пока только инвентаризация в issue #1404. **На завтра:** […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-29.md#reply-1`

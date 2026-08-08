@@ -9,3 +9,21 @@
 {"ts":"2026-08-08T16:16:37.336Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T16:16:12.512Z","origin":"ask-persona"}
 {"ts":"2026-08-08T16:16:37.337Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-19-insight-archive-lifecycle-c2-state-axes-r5","reason":"та же форма: закрытый enum + внешние причины как отдельный род. Здесь ровно тот случай — четвёртая внешняя причина не должна размывать закрытый список домена, а комментарий обязан назвать род явно, иначе enum «поплывёт».","origin":"ask-persona"}
 {"ts":"2026-08-08T16:16:37.337Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-05-16-single-node-detection-first","reason":"привычка требовать точный контракт причины, а не «ok/не ok»: зуб без имени причины — это самоотчёт, а не предикат.","origin":"ask-persona"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-03-static-mmbrn-container-m0-order","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-03-static-mmbrn-container-m1-boundary","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-03-static-mmbrn-container-m2-identity","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-04-static-mmbrn-container-m3-access","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-04-static-mmbrn-container-m4-storage","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-06-static-mmbrn-container-m5-affine-role","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-06-static-mmbrn-container-m6-intake-delivery","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-08-static-mmbrn-container-m7-migration-delivery","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-08-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-task-archive-cold-store-m5-recovery-audit","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-task-archive-cold-store-m6-migration-path","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-task-archive-cold-store-m7-lifecycle-integration","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-network-container-form","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-night-triage-insight-harvest","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-sprint-honest-m0-order","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-sprint-honest-m1-performer","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-tariff-grid-m3-tri","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
