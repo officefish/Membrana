@@ -1,0 +1,38 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "tariff-concurrent-move-reason",
+  "taskId": "tariff-concurrent-move-reason",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-08-08T16:10:00+00:00",
+    "to": "2026-08-08T21:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "a1-concurrent-move-reason",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-cabinet/src/modules/tariff/tariff-transition.service.ts",
+        "packages/background-cabinet/src/modules/tariff/tariff-transition.service.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 40
+      },
+      "revisionAt": "2026-08-08T16:15:46+00:00",
+      "revisionOf": "fd55c57c9b5889789d123609dcb9f2d5d80bd9aaa9e8877c48263fb09f3aff08"
+    }
+  ],
+  "//why": "Иссью #1777, строка 4 десятки хендофа 08.08. TariffTransitionService.applyAtomically при параллельной смене тарифа возвращает reason 'same_tariff' (tariff-transition.service.ts:206), а это утверждение о ДРУГОМ субъекте: same_tariff означает «цель совпадает с текущим тарифом», тогда как произошла смена тарифа кем-то параллельно между вердиктом домена и записью. Пользователь может быть на ином тарифе, и ответ окажется неправдой. Класс — один род покрывает чужой субъект, тот же, что 07.08 чинился трижды (net в снах #1425, одно поле day на два гейта в ADR-0024, running/incomplete одним родом в ci-wait #1765). Промпт: docs/prompts/TARIFF_CONCURRENT_MOVE_REASON_PROMPT.md",
+  "//route": "Маршрут — спринт, хотя размер S просился в one shot. Предикат допуска отказал ВЕЩДОКОМ: evaluateOneShotS({paths:[tariff-transition.service.ts, …test.ts], linesChanged:30}) → {ok:false, reasons:['touches_server']}, потому что packages/background-cabinet/ стоит в forbiddenPrefixes (второй гейт допуска — «не сервер»). Прецедент 04.08 (sprint-dictionary-to-lib) прописывает именно это: честный отказ предиката шоту → спринт, а не продавливание размера. Карточка в реестре заведена, потому что one shot её как раз НЕ заводит (ONE_SHOT_TRAIL.md) — маршрут другой.",
+  "//cutter": "Резчик vesnin, прогон контекста 08.08 16:13:40Z (конспект docs/discussions/cut-tariff-concurrent-move-vesnin.md). Решения приняты целиком: (1) имя tariff_moved_concurrently — соседи *_unknown/*_unavailable описывают СОСТОЯНИЕ окружения, здесь же СОБЫТИЕ, и без «concurrently» теряется единственное, ради чего причина заводится — «между вердиктом и записью»; (2) четвёртым литералом, без именованного типа: четыре литерала — ещё не тип, выделять его при третьем сервисе с той же структурой, а не «раз их стало четыре»; (3) logger.warn не трогать — текст уже правдив, менять под совпавшую причину значит декорировать; (4) существующий зуб ужесточить до точной причины — проверка ok===false этот баг пропустила и пропустит следующий такой же.",
+  "//order": "Один блок — решение резчика. Правка и зуб суть одна лемма («причина называет свой субъект»), разъединять их на ≈40 строках значит плодить сущности. Зона одна, пересечений с соседями нет: файлы тарифного модуля никем сегодня не заняты.",
+  "//dod": "Параллельная смена тарифа отвечает СВОЕЙ причиной tariff_moved_concurrently, а не same_tariff; закрытый список домена TransitionDenyReason НЕ тронут; существующий зуб «тариф увели между вердиктом и записью» ужесточён до точной причины (сейчас он проверяет лишь ok===false и отсутствие записи в журнал); same_tariff продолжает возвращаться там, где верен по смыслу — цель равна текущему тарифу; yarn turbo run typecheck test --filter=@membrana/background-cabinet зелёный.",
+  "//out-of-scope": "Блок C — эндпойнт погашения (#1761): предпосылка стоит здесь, но сам эндпойнт не наш. Пересмотр закрытого списка TransitionDenyReason — домен не наш субъект. Именованный тип ServiceOutcomeReason — преждевременная абстракция, запрет резчика. Клиентское отображение причин — UI её не увидит, пока нет эндпойнта. Текст logger.warn.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-08T16:15:46+00:00",
+    "digest": "8f6c4b1b420f1b25347875799e526a8bd260817999a431dc6e3a7c5f9c7d2d31"
+  }
+}

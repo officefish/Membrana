@@ -104,13 +104,28 @@ describe('погашение промокода', () => {
     expect(tx.tariffChangeLog.create).not.toHaveBeenCalled();
   });
 
-  it('тариф увели между вердиктом и записью → транзакция откатывается, подарок остаётся', async () => {
+  it('тариф увели между вердиктом и записью → СВОЯ причина, транзакция откатывается, подарок остаётся', async () => {
     const { prisma, tx } = prismaStub({ movedCount: 0 });
     const out = await svc(prisma).redeemPromo({ membraneId: 'm-1', code: 'BLOCKPOST2026', actorId: 'u-1' });
 
     expect(out.ok).toBe(false);
+    // Причина названа ТОЧНО (#1777): до правки здесь отвечал `same_tariff` — «цель равна
+    // текущему тарифу», то есть утверждение о другом субъекте. Проверка одного лишь
+    // `ok === false` эту подмену пропустила и пропустила бы следующую такую же.
+    if (!out.ok) expect(out.reason).toBe('tariff_moved_concurrently');
     // Журнал не пишется: транзакция брошена ДО него, и списание отменяется вместе с ней.
     expect(tx.tariffChangeLog.create).not.toHaveBeenCalled();
+  });
+
+  it('same_tariff остаётся живым в СВОЕЙ зоне: цель равна текущему тарифу', async () => {
+    // Вторая половина той же леммы: заведя новую причину, нельзя отобрать у старой её
+    // законный случай. Проверяется в зубах СЕРВИСА, а не домена: подмена рода произошла
+    // здесь, значит здесь же и сторожим (решение исполнителя блока).
+    const { prisma } = prismaStub({ promo: { ...PROMO, targetTariffId: MEMBRANE.tariffId } });
+    const out = await svc(prisma).redeemPromo({ membraneId: 'm-1', code: 'BLOCKPOST2026', actorId: 'u-1' });
+
+    expect(out).toEqual({ ok: false, reason: 'same_tariff' });
+    expect(prisma.$transaction).not.toHaveBeenCalled();
   });
 });
 

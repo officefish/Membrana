@@ -4,6 +4,11 @@
 
 ## Focus
 
+- **tariff-concurrent-move-reason** ([#1777](https://github.com/officefish/Membrana/issues/1777)) ·
+  gate pass 1/1 honest_pair · [`OPEN.md`](./local-sprint/tariff-concurrent-move-reason/OPEN.md) —
+  параллельная смена тарифа отвечает своей причиной `tariff_moved_concurrently`, а не
+  `same_tariff`. Строка 4 хендофа 08.08; шоту предикат отказал (touches_server).
+
 - **feedback-claims-code-probe** ([#1795](https://github.com/officefish/Membrana/issues/1795)) ·
   gate pass 3/3 honest_pair · [`OPEN.md`](./local-sprint/feedback-claims-code-probe/OPEN.md) —
   сверка утверждений вечернего протокола с деревом (`yarn feedback:claims`), врезка третьим
