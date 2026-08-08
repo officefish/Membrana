@@ -9,6 +9,11 @@
   сверка утверждений вечернего протокола с деревом (`yarn feedback:claims`), врезка третьим
   звеном в хвост вечера, предикат ласточки на `hard`. Долг попугая
   `#team-feedback-claims-code-unverified`, строка 5 хендофа 08.08.
+- **static-mmbrn-inventory-export** (#1305-A) · recut v2 owner-ratified · gate
+  pass 3/3 honest_pair · exact-SHA closure review and delivery pending ·
+  [`OPEN.md`](./local-sprint/static-mmbrn-inventory-export/OPEN.md). Scope сужен
+  до read-only source snapshot extraction; live production read и S5 запрещены
+  без отдельного акта.
 - Standing marathon `workflow-examples-marathon` остаётся отдельным маршрутом накопления
   evidence.
 
