@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "tariff-concurrent-move-reason",
+      "title": "Параллельная смена тарифа отвечает своей причиной: tariff_moved_concurrently вместо same_tariff (строка 4 хендофа 08.08)",
+      "promptPath": "docs/prompts/TARIFF_CONCURRENT_MOVE_REASON_PROMPT.md",
+      "githubIssue": 1777,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-08",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Маршрут спринт, не one shot: предикат допуска отказал вещдоком reasons=['touches_server'] — packages/background-cabinet в forbiddenPrefixes. Прецедент 04.08: честный отказ предиката → спринт.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "llm-probe-still-lies-net",
       "title": "llm-probe зовёт сетью что попало: catch-all 'net' и три несогласованных словаря исходов",
       "promptPath": "docs/prompts/LLM_PROBE_STILL_LIES_NET_PROMPT.md",
