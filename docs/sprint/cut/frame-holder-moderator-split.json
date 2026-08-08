@@ -1,0 +1,77 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "frame-holder-moderator-split",
+  "taskId": "frame-holder-moderator-split",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "//why": "Предмет задан DoD самого ADR-0025 — изобретать нечего, нарезка лишь разводит его по ответственным. Нож идёт по границе «словарь ↔ контракт данных ↔ зубы ↔ канон». b1 отдельным блоком не ради дробности: PROCEDURE_PERSONAS УЖЕ импортируют scripts/lib/one-shot-run.mjs и два зуба — словарь давно перерос файл валидатора, и вынос в свой модуль чинит уже случившееся расхождение. Формально b1 и b2 могли бы жить в одном validate-procedure.mjs (912 строк), но тогда две разные по частоте изменений сущности делили бы одну зону, а гейт нарезки такое зовёт zones_overlap.",
+  "//vesnin": "Прогон контекста резчика ДО нарезки (вещдок — docs/virtual-team/memory/op-log/vesnin/2026-08-08.jsonl). Три ответа держателя процедуры. (1) Красный validateProcedure на 20 legacy-манифестах после b2 — ОСОЗНАННАЯ цена ADR, не регрессия: новое правило корректно срабатывает на старых данных, чинить их здесь запрещает Р3. НО добавлено требование, которого в DoD ADR нет: «красный не должен быть немым — валидатор обязан выдать список из 20 конкретных фреймов с указанием причины; это входной артефакт следующей задачи, без списка красный слепой». Требование вошло в зону b2. (2) Блоки разные: словарь персон переиспользуется дальше (аудит, отчёты, будущий назначатель), схема с moderator? — контракт данных; разные уровни и разная частота изменений. (3) Переходный режим warn ОТКЛОНЁН: «декор без конструкции, размывает stage-gate между контрактом и переназначением». Красный и есть тикающий счётчик до второй задачи.",
+  "//risk": "PROCEDURE_PERSONAS обязан остаться живым как объединение: scripts/lib/one-shot-run.mjs берёт его для держателя кадра execute шота (там тимлид tarasov). Молчаливое сужение списка сломает шот. Зуб на это — в b3.",
+  "//scope": "ВНЕ предмета сознательно: переназначение двадцати фреймов (Р3 — отдельная карточка frame-holders-reassign-twenty, #1787) и шаг закрытия журнала утра (#1782, заводится после появления держателей). Два раннера утра вынесены за границу самим ADR.",
+  "//window": "Окно поставлено ПО ФАКТУ старта 12:11, не круглым числом: ловушка 05.08 — объявленное «18:40» при старте 18:33 дало plan_lied при живых вещдоках.",
+  "window": {
+    "from": "2026-08-08T12:11:24+03:00",
+    "to": "2026-08-08T19:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "personas-dictionary",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/procedure-personas.mjs",
+        "scripts/procedure-personas.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 130
+      },
+      "revisionAt": "2026-08-08T12:14:29+03:00",
+      "revisionOf": "a38bdb8a1f428adc4248dbaf7af7fdf45fe650339771b3c54b1177150df2bf12"
+    },
+    {
+      "blockId": "validator-two-roles",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/lib/validate-procedure.mjs"
+      ],
+      "estimate": {
+        "changedLines": 150
+      },
+      "revisionAt": "2026-08-08T12:14:29+03:00",
+      "revisionOf": "0ed8c2de7e48992d766db2961998a2b91783e42138c791f08f125c2369dc564e"
+    },
+    {
+      "blockId": "teeth-roles-and-inherit",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/validate-procedure.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 160
+      },
+      "revisionAt": "2026-08-08T12:14:29+03:00",
+      "revisionOf": "e6e6607fb186b8086fe367c208da9aa8a27077c6e545e18c6c62ad332c54f6f8"
+    },
+    {
+      "blockId": "adr-canon-refresh",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/adr/README.md",
+        "docs/adr/ADR-0015-frame-pins-array-shape.md"
+      ],
+      "estimate": {
+        "changedLines": 40
+      },
+      "revisionAt": "2026-08-08T12:14:29+03:00",
+      "revisionOf": "c339b914b35ba085675eed24d77f89562ab52d68ac22529846b11693dc950bdf"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-08T12:14:29+03:00",
+    "digest": "0dd893cf4901fc65f9d6884c746d18763c5e95631e3ee1c99b5cb7fe793845b0"
+  }
+}
