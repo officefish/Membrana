@@ -1,0 +1,11 @@
+{
+  "//": "Замер объёма ПО ФАКТУ, git diff --numstat против HEAD на момент сборки рода. Не округлён и не подогнан под прогноз: расхождение — это то, ради чего род и собирается.",
+  "sprintId": "archivarius-mongo-dump",
+  "measuredAt": "2026-08-08T20:22:00+03:00",
+  "segments": [
+    { "blockId": "dump-policy", "changedLines": 501 },
+    { "blockId": "dump-executor", "changedLines": 606 },
+    { "blockId": "local-proof", "changedLines": 206 },
+    { "blockId": "prod-runbook-owner-gate", "changedLines": 96 }
+  ]
+}

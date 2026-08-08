@@ -2,3 +2,11 @@
 {"ts":"2026-08-08T08:48:15.097Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-08T08:47:49.991Z","origin":"ask-persona"}
 {"ts":"2026-08-08T08:48:15.098Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-08-03-one-shot-manifest-m3-volume","reason":"про разницу «гейт на входе» vs «стоп в процессе»: ровно та же логика здесь — отказ ДО действия (слой 2) сильнее отката после; поэтому гвард обязан быть предваряющим, а не компенсирующим.","origin":"ask-persona"}
 {"ts":"2026-08-08T08:09:49.801Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-08T16:34:15.875Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-08T16:33:32.829Z","origin":"ask-persona"}
+{"ts":"2026-08-08T16:34:15.922Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-08T16:33:32.829Z","origin":"ask-persona"}
+{"ts":"2026-08-08T16:34:15.924Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-08-03-one-shot-manifest-m2-assignment","reason":"там же ставил разделение «акт vs. вещдок прогона»; здесь та же линия: манифест как предикат (вещдок) отдельно от акта запуска (скрипт), скрипт не решает пригодность.","origin":"ask-persona"}
+{"ts":"2026-08-08T16:46:10.713Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-08T16:45:42.821Z","origin":"ask-persona"}
+{"ts":"2026-08-08T16:46:10.811Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-08T16:45:42.821Z","origin":"ask-persona"}
+{"ts":"2026-08-08T16:46:10.816Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-07-30-task-archive-cold-store-m3-repo-checkpoint","reason":"там я уже требовал доказать тождество серверного архива и отделять sanity от checkpoint; тот же вопрос сейчас: что стенд реально доказывает, а что имитирует.","origin":"ask-persona"}
+{"ts":"2026-08-08T17:10:42.111Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-08T17:10:20.252Z","origin":"ask-persona"}
+{"ts":"2026-08-08T17:10:42.113Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-08T17:10:20.252Z","origin":"ask-persona"}

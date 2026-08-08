@@ -1,0 +1,8 @@
+{"traceId":"tr-policy-dynin-run","blockId":"dump-policy","kind":"context_run","subject":"dynin","at":"2026-08-08T19:17:11+03:00","ref":"docs/virtual-team/memory/op-log/dynin/2026-08-08.jsonl"}
+{"traceId":"tr-policy-dynin-review","blockId":"dump-policy","kind":"review_pass","subject":"dynin","at":"2026-08-08T19:31:00+03:00","ref":"scripts/mongo-dump-policy.test.mjs"}
+{"traceId":"tr-proof-tarasov-run","blockId":"local-proof","kind":"context_run","subject":"tarasov","at":"2026-08-08T19:46:00+03:00","ref":"docs/virtual-team/memory/op-log/tarasov/2026-08-08.jsonl"}
+{"traceId":"tr-proof-tarasov-review","blockId":"local-proof","kind":"review_pass","subject":"tarasov","at":"2026-08-08T19:48:30+03:00","ref":"deploy/archivarius-backup/README.md"}
+{"traceId":"tr-runbook-ozhegov-run","blockId":"prod-runbook-owner-gate","kind":"context_run","subject":"ozhegov","at":"2026-08-08T19:49:00+03:00","ref":"docs/virtual-team/memory/op-log/ozhegov/2026-08-08.jsonl"}
+{"traceId":"tr-runbook-ozhegov-review","blockId":"prod-runbook-owner-gate","kind":"review_pass","subject":"ozhegov","at":"2026-08-08T19:50:57+03:00","ref":"docs/deploy/ARCHIVARIUS_DUMP_RUNBOOK.md"}
+{"traceId":"tr-exec-tarasov-run-v2","blockId":"dump-executor","kind":"context_run","subject":"tarasov","at":"2026-08-08T20:11:00+03:00","ref":"docs/virtual-team/memory/op-log/tarasov/2026-08-08.jsonl"}
+{"traceId":"tr-exec-tarasov-review-v2","blockId":"dump-executor","kind":"review_pass","subject":"tarasov","at":"2026-08-08T20:13:53+03:00","ref":"scripts/archivarius-dump.test.mjs"}
