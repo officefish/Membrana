@@ -33,7 +33,9 @@ export const REASON_LABEL = Object.freeze({
  * @param {Array<{number: number, state: string}>} [snapshot.pullRequests] PR по этой ветке
  * @param {string[]} [snapshot.unpushed] коммиты, которых нет в origin (sha)
  * @param {string[]} [snapshot.unmergedContent] коммиты ветки, чьего СОДЕРЖАНИЯ нет в стволе
- * @returns {{safe: boolean, branch: string, reasons: Array<{kind: string, detail: string}>}}
+ * @param {Array<{number: number, commits: string[], mergeCommitInBase: boolean}>} [snapshot.mergedPullRequests]
+ *        влитые PR этой ветки: их коммиты — ДОСТАВЛЕННАЯ работа
+ * @returns {{safe: boolean, branch: string, reasons: Array<{kind: string, detail: string}>, evidence: string[]}}
  */
 export function branchStatus(snapshot = {}) {
   const branch = String(snapshot.branch ?? '');
@@ -41,6 +43,21 @@ export function branchStatus(snapshot = {}) {
     throw new Error('branchStatus: имя ветки пусто — судить нечего');
   }
   const reasons = [];
+  const evidence = [];
+
+  // Доставленное — ИМЕННОЕ доказательство, а не общая амнистия. После squash-мерджа оба
+  // низкоуровневых сигнала честны по букве и ложны по смыслу: `@{upstream}` исчез вместе с
+  // удалённой веткой, а `git cherry` видит другой patch-id, потому что сквош склеил коммиты.
+  // Замер #492 работает и в обратную сторону — расхождение по patch-id ПОСЛЕ сквоша не
+  // означает потери. Поэтому прощаются ровно те sha, что перечислены во влитом PR:
+  // локальный коммит, дописанный после мерджа, в списке PR не значится и блокирует дальше.
+  const delivered = new Set();
+  for (const pr of snapshot.mergedPullRequests ?? []) {
+    if (pr?.mergeCommitInBase !== true) continue;
+    for (const sha of pr.commits ?? []) delivered.add(String(sha));
+    evidence.push(`доставлено PR #${pr.number}: ${(pr.commits ?? []).length} коммит(ов) в стволе сквошем`);
+  }
+  const undelivered = (list) => (list ?? []).filter((sha) => !delivered.has(String(sha)));
 
   // Порядок причин — от самой дорогой ошибки к самой дешёвой: сдвинуть ветку под живым
   // PR хуже, чем потерять локальный коммит, а тот хуже, чем недослитое содержание.
@@ -52,7 +69,7 @@ export function branchStatus(snapshot = {}) {
     });
   }
 
-  const unpushed = snapshot.unpushed ?? [];
+  const unpushed = undelivered(snapshot.unpushed);
   if (unpushed.length > 0) {
     reasons.push({
       kind: 'unpushed-commits',
@@ -60,7 +77,7 @@ export function branchStatus(snapshot = {}) {
     });
   }
 
-  const unmerged = snapshot.unmergedContent ?? [];
+  const unmerged = undelivered(snapshot.unmergedContent);
   if (unmerged.length > 0) {
     reasons.push({
       kind: 'unmerged-content',
@@ -68,7 +85,7 @@ export function branchStatus(snapshot = {}) {
     });
   }
 
-  return { safe: reasons.length === 0, branch, reasons };
+  return { safe: reasons.length === 0, branch, reasons, evidence };
 }
 
 /**
@@ -83,10 +100,12 @@ export function formatBranchStatus(verdict) {
   if (verdict.safe) {
     lines.push(`branch:status — ${verdict.branch}: safe · двигать голову можно`);
     lines.push('  проверено: живых PR нет · незапушенного нет · содержание ветки в стволе (patch-id)');
-    return lines;
+  } else {
+    lines.push(`branch:status — ${verdict.branch}: blocked: ${verdict.reasons.map((r) => r.kind).join(', ')}`);
+    for (const r of verdict.reasons) lines.push(`  ✖ ${r.detail}`);
   }
-  lines.push(`branch:status — ${verdict.branch}: blocked: ${verdict.reasons.map((r) => r.kind).join(', ')}`);
-  for (const r of verdict.reasons) lines.push(`  ✖ ${r.detail}`);
+  // Снятая причина называется вслух: молчаливое прощение неотличимо от «не посмотрел».
+  for (const e of verdict.evidence ?? []) lines.push(`  ✓ ${e}`);
   return lines;
 }
 

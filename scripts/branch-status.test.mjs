@@ -82,6 +82,51 @@ test('пустое имя ветки — бросок: судить нечего
   assert.throws(() => branchStatus({}), /имя ветки пусто/u);
 });
 
+test('после сквоша влитый PR снимает ОБЕ ложные причины — живой прогон 08.08, PR #1789', () => {
+  // Ровно тот отказ, который моки спринта пропустили: ветка удалена на remote (upstream
+  // исчез), `git cherry` видит другой patch-id — и глагол объявил доставленную работу
+  // потерянной, посадив хвост pr:ship в ложный красный.
+  const v = branchStatus(snap({
+    branch: 'sprint/ship-tail-lands-on-branch',
+    unpushed: ['d7b08097', '0a84b649'],
+    unmergedContent: ['d7b08097'],
+    mergedPullRequests: [{ number: 1789, commits: ['d7b08097', '0a84b649'], mergeCommitInBase: true }],
+  }));
+  assert.equal(v.safe, true);
+  assert.deepEqual(v.reasons, []);
+  assert.match(formatBranchStatus(v).join('\n'), /✓ доставлено PR #1789/u, 'снятая причина названа, а не прощена молча');
+});
+
+test('доказательство ИМЕННОЕ: коммит, дописанный после мерджа, всё равно блокирует', () => {
+  const v = branchStatus(snap({
+    unpushed: ['d7b08097', 'f'.repeat(40)],
+    mergedPullRequests: [{ number: 1789, commits: ['d7b08097'], mergeCommitInBase: true }],
+  }));
+  assert.equal(v.safe, false);
+  assert.deepEqual(v.reasons.map((r) => r.kind), ['unpushed-commits']);
+  assert.match(v.reasons[0].detail, /1 шт\./u, 'прощён ровно один — общей амнистии нет');
+});
+
+test('MERGED в чужую базу не прощает: судим против ТОЙ базы, с которой сравниваем', () => {
+  const v = branchStatus(snap({
+    unpushed: ['d7b08097'],
+    mergedPullRequests: [{ number: 1789, commits: ['d7b08097'], mergeCommitInBase: false }],
+  }));
+  assert.equal(v.safe, false);
+  assert.deepEqual(v.reasons.map((r) => r.kind), ['unpushed-commits']);
+  assert.deepEqual(v.evidence, [], 'недоказанный мердж доказательством не считается');
+});
+
+test('живой PR влитым соседом не прощается — open-pr вне действия доказательства', () => {
+  const v = branchStatus(snap({
+    pullRequests: [{ number: 1790, state: 'OPEN' }],
+    unpushed: ['d7b08097'],
+    mergedPullRequests: [{ number: 1789, commits: ['d7b08097'], mergeCommitInBase: true }],
+  }));
+  assert.equal(v.safe, false);
+  assert.deepEqual(v.reasons.map((r) => r.kind), ['open-pr']);
+});
+
 test('список причин закрыт, пределы глагола объявлены вслух', () => {
   assert.deepEqual([...BLOCK_REASONS], ['open-pr', 'unpushed-commits', 'unmerged-content']);
   assert.ok(BRANCH_STATUS_LIMITS.length >= 4);
