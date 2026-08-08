@@ -1,7 +1,7 @@
+{"ts":"2026-08-08T08:09:49.882Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
 {"ts":"2026-08-08T08:51:58.931Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-08T08:51:28.779Z","origin":"ask-persona"}
 {"ts":"2026-08-08T08:51:58.934Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-08T08:51:28.779Z","origin":"ask-persona"}
 {"ts":"2026-08-08T08:51:58.935Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-19-insight-archive-lifecycle-c2-state-axes-r4","reason":"тот же приём «форма следует функции, декор без конструкции не существует» прикладывается к ответу глагола: если причин несколько, единственная строка blocked:<одна> — декор ради краткости, скрывающий конструкцию.","origin":"ask-persona"}
-{"ts":"2026-08-08T08:09:49.882Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
 {"ts":"2026-08-08T09:07:15.375Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-08T09:06:52.001Z","origin":"ask-persona"}
 {"ts":"2026-08-08T09:07:15.382Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-08T09:06:52.001Z","origin":"ask-persona"}
 {"ts":"2026-08-08T09:07:15.390Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-22-procedure-frames-m1-frames-contract","reason":"тот же класс задачи: контракт схемы фрейма, где я держал рамку «не сползать в следующую фазу». Прямая аналогия для второго вопроса: контракт остаётся одним блоком, переназначение — отдельная фаза.","origin":"ask-persona"}
@@ -16,3 +16,7 @@
 {"ts":"2026-08-08T15:14:04.546Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-08T15:13:34.771Z","origin":"ask-persona"}
 {"ts":"2026-08-08T15:14:04.547Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-08-07-team-evening-feedback","reason":"прецедент «маркер + провенанс с holds на трёх маркерах»: тот же паттерн — вердикт обязан нести источники, по которым его можно перепроверить. Здесь b1/b2 уже кладут base в маркер, CLI должен эту дисциплину замкнуть.","origin":"ask-persona"}
 {"ts":"2026-08-08T15:14:04.549Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-08-hermes-liaison-agent","reason":"канон «декора без смысла не существует»: не изобретаем новый источник правды для base, берём тот, что уже есть у pr-recreate и compare-ручки.","origin":"ask-persona"}
+{"ts":"2026-08-08T16:13:40.587Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-08T16:13:15.599Z","origin":"ask-persona"}
+{"ts":"2026-08-08T16:13:40.589Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-08T16:13:15.599Z","origin":"ask-persona"}
+{"ts":"2026-08-08T16:13:40.599Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-25-insight-cast-carrier-contract","reason":"прямой перенос принципа: «каждая деталь оправдана конструкцией, декора без смысла не существует» + предостережение от преждевременной абстракции. Ровно то, что решает развилку (2): четыре литерала — ещё не тип.","origin":"ask-persona"}
+{"ts":"2026-08-08T16:13:40.601Z","persona":"vesnin","verb":"emerge","ref":"vesnin-0000-00-00-angelina-hostess-m1-canon-secretary","reason":"«один скилл — одна лемма — одна зона ответственности». Здесь: одна причина — один субъект. same_tariff про домен, tariff_moved_concurrently про окружение — леммы разные.","origin":"ask-persona"}

@@ -5,3 +5,7 @@
 {"ts":"2026-08-08T11:25:19.441Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-01-evening-review-predicate-m4-memoization","reason":"про формализацию предиката, чтобы не поехал: здесь тот же ход — holds ⇔ ∃ адрес, где токен встречается в классе, и подмена класса ломает предикат (прецедент 03.08).","origin":"ask-persona"}
 {"ts":"2026-08-08T15:05:31.544Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-08T15:04:52.807Z","origin":"ask-persona"}
 {"ts":"2026-08-08T15:05:31.551Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T15:04:52.807Z","origin":"ask-persona"}
+{"ts":"2026-08-08T16:16:37.258Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-08T16:16:12.512Z","origin":"ask-persona"}
+{"ts":"2026-08-08T16:16:37.336Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T16:16:12.512Z","origin":"ask-persona"}
+{"ts":"2026-08-08T16:16:37.337Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-19-insight-archive-lifecycle-c2-state-axes-r5","reason":"та же форма: закрытый enum + внешние причины как отдельный род. Здесь ровно тот случай — четвёртая внешняя причина не должна размывать закрытый список домена, а комментарий обязан назвать род явно, иначе enum «поплывёт».","origin":"ask-persona"}
+{"ts":"2026-08-08T16:16:37.337Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-05-16-single-node-detection-first","reason":"привычка требовать точный контракт причины, а не «ok/не ok»: зуб без имени причины — это самоотчёт, а не предикат.","origin":"ask-persona"}
