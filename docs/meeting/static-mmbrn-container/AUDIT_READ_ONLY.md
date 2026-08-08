@@ -2351,3 +2351,48 @@ DoD — последняя секция; `meeting:audit` structural PASS. Сыр
 Dry-run с `--no-context --no-rag --no-memory` доставил повестку полностью. Машинный
 `meeting:audit` имеет structural PASS. Внешний run4 допускается только после отдельного
 разрешения владельца с явным согласием на передачу внутреннего payload указанной LLM-chain.
+
+## Постаудит M7 — run4
+
+После явного разрешения run4 произведён `anthropic/claude-sonnet-4-6`; внешний бюджет стал
+4 из 5. Инструмент записал `2026-08-08`, хотя agenda и итог модели продолжили называть carrier
+с датой `2026-08-07`. Сырой файл без исправлений сохранён как
+[`run4-carrier-replies-cyclic-gates-m6-ledger-tables`](../../seanses/rejected/static-mmbrn-container-m7-migration-delivery-2026-08-08-run4-carrier-replies-cyclic-gates-m6-ledger-tables.md).
+
+Механический **BLOCK**: фактически 29 реплик — роли 5/5/5/5/5/4 вместо 36 и 6x6. DoD последняя,
+20 cases и structural `meeting:audit` PASS этого не исправляют. Независимый смысловой аудит
+подтвердил ещё пять групп:
+
+- S2 требует M4 до manifest/post-import evidence, S7 — M5 до rehydration: DAG цикличен;
+- M4/M5 predicates переопределены: random sample вместо full restore, RPO 1h вместо 24h,
+  сокращённые M5 predicates и потерян семилетний retention;
+- M6 сведён к одной строке без canonical sets/FAILED/cardinalities/full diff; `COMMITTED` не
+  требует verified FD-1 и durable binding;
+- ledger использует необъявленные `HOLD`/`ANNOTATION_PARITY_FAIL`, а asset снова проходит по
+  ref-count/parent без отдельного M6 intent;
+- inventory/disposition и rollout DAG даны prose, а не двумя из семи обязательных tables.
+
+Повестка run5 назначает фактический carrier `2026-08-08`, буквально несёт predicates M4/M5,
+полный M6 commit, запрет циклов/необъявленных states, семь реальных tables и ролевой минимум.
+Это последняя внешняя попытка 5/5; до dry-run, независимого предаудита и нового разрешения она
+запрещена.
+
+## Предаудит M7 — run5
+
+Первый независимый проход дал **BLOCK до созыва** по двум пробелам: M4 G1 был назван без
+формулы `free_after/utilisation/quota`, а M6 sets — без определений и crash-cardinalities.
+Внешний кредит не потрачен. Повестка дополнена буквальными predicates и снова сжата.
+
+Повторный read-only предаудит дал **PASS**:
+
+- carrier `2026-08-08` отсутствует; run1-run4 только в `rejected`; бюджет 4/5;
+- один D1/carrier, размер 11 825 из 12 000, dry-run доставил topic полностью;
+- M4 G1 formula, M4 G1-G10, M5 G1-G10 и полный M6 sets/cardinalities/diff сохранены;
+- причинный DAG, closed append-only ledger и отдельный intent для каждого page/asset обязательны;
+- cutover/rollback/observation/retention/retirement разведены;
+- требуются >=36 реплик, минимум шесть каждой роли и семь реальных Markdown tables;
+- DoD последняя, production ban сохранён, готовый states/constants/DAG/verdict не подставлен.
+
+Машинный `meeting:audit` имеет structural PASS. Внешний run5 — последняя попытка 5/5 —
+допускается только после отдельного разрешения владельца на передачу внутреннего payload
+внешней LLM-chain.
