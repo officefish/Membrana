@@ -7,16 +7,16 @@
       "githubIssue": 1804,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-08",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "Замер 08.08: catch-all на llm-probe.mjs:163 подтверждён; у llm-probe 11 зелёных зубов, у infra-probe ноль; словарей исходов ТРИ (llm-probe, infra-policy, network/lib/classify #1449) и они не согласованы.",
-      "archiveNotes": null,
+      "archiveNotes": "Спринт 08.08: classifyOutcome стал обёрткой над classify.mjs (#1449), probeOnce отдаёт errorCode, infra-probe получил первые зубы, infra-policy назван таблицей представления. PR #1805. Живой прогон: 13 звеньев, ни одного ложного net.",
       "githubIssueClosedAt": null
     },
     {

@@ -20,7 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `llm-probe-still-lies-net` | llm-probe зовёт сетью что попало: catch-all 'net' и три несогласованных словаря исходов | M | [`LLM_PROBE_STILL_LIES_NET_PROMPT.md`](../prompts/LLM_PROBE_STILL_LIES_NET_PROMPT.md) | [#1804](https://github.com/officefish/Membrana/issues/1804) |
+| `feedback-claims-code-probe` | Гейт проверки утверждений вечернего протокола против кода (строка 5 хендофа 08.08) | M | [`FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md`](../prompts/FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md) | [#1795](https://github.com/officefish/Membrana/issues/1795) |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-live-services` | #1303-C: LIVE_SERVICES, документация и monitoring | S | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-cutover` | #1305-D: cutover, canary и rollback | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
@@ -266,6 +266,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `llm-probe-still-lies-net` | llm-probe зовёт сетью что попало: catch-all 'net' и три несогласованных словаря исходов | 2026-08-08 | [`LLM_PROBE_STILL_LIES_NET_PROMPT.md`](../prompts/LLM_PROBE_STILL_LIES_NET_PROMPT.md) | #1804 (Issue открыт) | [карточка](./archive/llm-probe-still-lies-net.md) |
 | `dockerfile-copy-manifest-drifts` | Dockerfile офиса: поимённый COPY дублирует граф импортов — сделать расхождение невозможным или видимым | 2026-08-08 | [`DOCKERFILE_COPY_MANIFEST_DRIFTS_PROMPT.md`](../prompts/DOCKERFILE_COPY_MANIFEST_DRIFTS_PROMPT.md) | #1797 (Issue открыт) | [карточка](./archive/dockerfile-copy-manifest-drifts.md) |
 | `meeting-static-mmbrn-container` | Заседание: контракт static.mmbrn.tech и роль Affine | 2026-08-08 | [`MEETING_BRIEF.md`](../meeting/static-mmbrn-container/MEETING_BRIEF.md) | — | [карточка](./archive/meeting-static-mmbrn-container.md) |
 | `pr-ship-post-merge-landing` | pr:ship после мерджа: дерево на своей ветке вровень со стволом, а не на main | 2026-08-08 | [`PR_SHIP_POST_MERGE_LANDING_PROMPT.md`](../prompts/PR_SHIP_POST_MERGE_LANDING_PROMPT.md) | #1759 (Issue открыт) | [карточка](./archive/pr-ship-post-merge-landing.md) |
