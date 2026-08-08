@@ -1,0 +1,100 @@
+# Блок 1 спринта dockerfile-copy-manifest-drifts (#1797): образ офиса обязан ИСПОЛНЯТЬ
+# свой рантайм, а не просто собираться.
+#
+# Dockerfile офиса перечисляет файлы из scripts/ поимённо, и список обязан следовать за
+# графом импортов вручную. Зелёная сборка этого не доказывает: расхождение всплывает на
+# проде первым MODULE_NOT_FOUND (срабатывание 07.08 — перевод dreams-tick на classify.mjs).
+# Здесь контейнер поднимается и его просят отдать дайджест снов — единственный публичный
+# путь, который грузит рантайм-модули офиса. Прибор не несёт списка модулей: список живёт
+# в коде офиса, CI проверяет его исполнением.
+#
+# Секреты не нужны — обязательные env заполняются заведомо нерабочими значениями, путь
+# дайджеста в сеть не ходит. Поэтому прогон идёт и на PR из форка.
+#
+# Триггер сужен по путям: сборка образа — минуты, вешать её на каждый PR незачем.
+
+name: Office image smoke
+
+on:
+  pull_request:
+    paths:
+      - 'packages/background-office/**'
+      - 'packages/services/rag/**'
+      - 'scripts/lib/**'
+      - 'scripts/network/lib/**'
+      - 'scripts/office-image-smoke.mjs'
+      - 'scripts/lib/office-image-smoke.mjs'
+      - '.github/workflows/office-image-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'packages/background-office/**'
+      - 'packages/services/rag/**'
+      - 'scripts/lib/**'
+      - 'scripts/network/lib/**'
+  workflow_dispatch:
+
+concurrency:
+  group: office-image-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Образ офиса исполняет свой рантайм
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Кэш слоёв gha — как в cabinet-images.yml. Образ остаётся локальным (load,
+      # без push): прибор судит полноту, публикация здесь ни при чём.
+      - name: Build office image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packages/background-office/Dockerfile
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: membrana-office:smoke
+          cache-from: type=gha,scope=office-smoke
+          cache-to: type=gha,mode=max,scope=office-smoke
+
+      - name: Зубы прибора
+        run: node --test scripts/office-image-smoke.test.mjs
+
+      # Вердикт обязан быть НАПЕЧАТАН: первый прогон 08.08 дал зелёный шаг без единой
+      # строки вывода (process.exit съел буфер пайпа), и «проверено» стало неотличимо от
+      # «ничего не проверил». Молчаливое зелёное здесь запрещено явной проверкой.
+      - name: Smoke внутри контейнера
+        run: |
+          set -o pipefail
+          node scripts/office-image-smoke.mjs --tag membrana-office:smoke | tee smoke.out
+          grep -q 'office:image:smoke — ' smoke.out \
+            || { echo '::error::прибор не напечатал вердикт — зелёное без вердикта не считается проверкой'; exit 1; }
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## Office image smoke"
+            echo ""
+            echo "Проверено ИСПОЛНЕНИЕМ, а не списком: контейнер поднят, \`GET /v1/dreams/digest/:day\`"
+            echo "грузит рантайм-модули офиса внутри образа."
+            echo ""
+            echo "Красный \`missing-module\` называет файл, которому нужна строка \`COPY\` в"
+            echo "\`packages/background-office/Dockerfile\`."
+          } >> "$GITHUB_STEP_SUMMARY"

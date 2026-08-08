@@ -21,6 +21,7 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `feedback-claims-code-probe` | Гейт проверки утверждений вечернего протокола против кода (строка 5 хендофа 08.08) | M | [`FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md`](../prompts/FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md) | [#1795](https://github.com/officefish/Membrana/issues/1795) |
+| `dockerfile-copy-manifest-drifts` | Dockerfile офиса: поимённый COPY дублирует граф импортов — сделать расхождение невозможным или видимым | M | [`DOCKERFILE_COPY_MANIFEST_DRIFTS_PROMPT.md`](../prompts/DOCKERFILE_COPY_MANIFEST_DRIFTS_PROMPT.md) | [#1797](https://github.com/officefish/Membrana/issues/1797) |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-live-services` | #1303-C: LIVE_SERVICES, документация и monitoring | S | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-cutover` | #1305-D: cutover, canary и rollback | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
