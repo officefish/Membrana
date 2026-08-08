@@ -485,6 +485,23 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "meeting-static-mmbrn-container",
+      "title": "Заседание: контракт static.mmbrn.tech и роль Affine",
+      "promptPath": "docs/meeting/static-mmbrn-container/MEETING_BRIEF.md",
+      "githubIssue": 1305,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "meeting",
+      "createdAt": "2026-08-03",
+      "archivedAt": null,
+      "leadPersona": "angelina",
+      "supportPersonas": [],
+      "notes": "Архитектурный предшественник реализации #1305; M0 определяет DAG семи вопросов, код и прод вне scope",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "gate-honest-pair-completeness",
       "title": "honest_pair перестаёт обещать пару, которой не проверяет",
       "promptPath": "docs/prompts/GATE_HONEST_PAIR_COMPLETENESS_PROMPT.md",
