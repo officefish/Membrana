@@ -1,0 +1,55 @@
+{
+  "id": "static-mmbrn-container",
+  "note": "Только рёбра ратифицированного исполнительного графа. Статусы, лиды и promptPath живут в docs/tasks/registry.json; progress вычисляет yarn meeting:status.",
+  "source": {
+    "kind": "ratified-epic",
+    "protocol": "docs/meeting/static-mmbrn-container/EPIC.md",
+    "form": "R7 causal rollout DAG with two explicit derived nodes"
+  },
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-08",
+    "verbatim": "ратифицирую",
+    "scope": "Исполнительный граф и нарезка поставок EPIC, включая производные Target provision и M6 alignment; production mutation и cutover не разрешены."
+  },
+  "edges": {
+    "meeting-static-mmbrn-container": [],
+    "static-mmbrn-registry-read-api": [
+      "meeting-static-mmbrn-container"
+    ],
+    "static-mmbrn-inventory-export": [
+      "meeting-static-mmbrn-container"
+    ],
+    "static-mmbrn-disposition-ledger": [
+      "static-mmbrn-inventory-export"
+    ],
+    "static-mmbrn-target-provision": [
+      "static-mmbrn-disposition-ledger"
+    ],
+    "static-mmbrn-ingress-auth": [
+      "static-mmbrn-registry-read-api",
+      "static-mmbrn-target-provision"
+    ],
+    "static-mmbrn-rehydrate-parity": [
+      "static-mmbrn-inventory-export",
+      "static-mmbrn-disposition-ledger",
+      "static-mmbrn-target-provision"
+    ],
+    "static-mmbrn-m6-alignment": [
+      "static-mmbrn-disposition-ledger",
+      "static-mmbrn-rehydrate-parity"
+    ],
+    "static-mmbrn-cutover": [
+      "static-mmbrn-ingress-auth",
+      "static-mmbrn-rehydrate-parity",
+      "static-mmbrn-m6-alignment"
+    ],
+    "static-mmbrn-live-services": [
+      "static-mmbrn-cutover"
+    ],
+    "static-mmbrn-retirement": [
+      "static-mmbrn-cutover",
+      "static-mmbrn-live-services"
+    ]
+  }
+}
