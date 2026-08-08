@@ -18,7 +18,7 @@ import {
   shotRunProblems,
 } from './lib/one-shot-run.mjs';
 import { validateProcedureRunRecord } from './lib/procedure-run-journal.mjs';
-import { PROCEDURE_PERSONAS } from './lib/validate-procedure.mjs';
+import { HOLDER_PERSONAS } from './lib/procedure-personas.mjs';
 
 const ASSIGN = Object.freeze({
   shotId: 'shot-fix-orphan-warning',
@@ -58,7 +58,7 @@ test('назначает только тимлид: PersonaId вместо ли�
 test('ростер импортирован, а не отчеканен третьей копией', () => {
   // 03.08 вычинен ВТОРОЙ экземпляр устаревшего ростера (класс #1644). Зуб держит:
   // ростер здесь — тот же объект, что в валидаторе процедур, и тимлид в нём есть.
-  assert.ok(PROCEDURE_PERSONAS.includes('tarasov'));
+  assert.ok(HOLDER_PERSONAS.includes('tarasov'));
   const p = assignProblems({ ...ASSIGN, executor: 'tarasov' });
   assert.deepEqual(p, [], 'тимлид — законный исполнитель, если его назначили');
 });

@@ -30,6 +30,12 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { basename, join } from 'node:path';
 
 import { homeFormProblems, migrateHomeForm } from './procedure-home-form.mjs';
+import {
+  HOLDER_PERSONAS,
+  MODERATOR_PERSONAS,
+  holderProblem,
+  isModeratorPersona,
+} from './procedure-personas.mjs';
 
 /** Расширения, запрещённые в контейнере (Т12: код и тесты живут в scripts/). */
 const CODE_EXT_RE = /\.(mjs|cjs|js|ts|tsx|jsx|py|sh|ps1)$/iu;
@@ -117,15 +123,20 @@ const KEBAB_RE = /^[a-z0-9][a-z0-9-]*$/u;
  * экземпляр. Всплыло прогоном: кадр `execute` шота держит тимлид (назначение, Т4 шторма
  * 03.08), и валидатор отвергал держателя, которого канон команды числит седьмой персоной.
  */
-export const PROCEDURE_PERSONAS = Object.freeze([
-  'vesnin',
-  'ozhegov',
-  'dynin',
-  'kuryokhin',
-  'rodchenko',
-  'angelina',
-  'tarasov',
-]);
+/**
+ * @deprecated Использовать `HOLDER_PERSONAS` или `MODERATOR_PERSONAS` из
+ * `./procedure-personas.mjs` — ADR-0025 Р2 развёл роли, и общий ростер больше не отвечает
+ * ни на один вопрос целиком: «кто чинит» и «кто ведёт» — разные множества.
+ *
+ * Алиас указывает на МОДЕРАТОРОВ, а не на держателей: прежний список был `{шесть
+ * разработчиков} ∪ {angelina}`, то есть тождествен именно `MODERATOR_PERSONAS`. Алиас на
+ * `HOLDER_PERSONAS` тихо сузил бы значение — ровно тот класс молчаливой подмены, против
+ * которого ADR и написан.
+ *
+ * Снимается блоком `teeth-roles-and-inherit` вместе с последним потребителем
+ * (`scripts/validate-procedure.test.mjs`): синоним убирают там, где убирают потребителя.
+ */
+export const PROCEDURE_PERSONAS = MODERATOR_PERSONAS;
 
 /** Закрытый словарь якорей пина отрезка (вердикт m2). */
 export const PIN_ANCHOR_KINDS = Object.freeze(['heading', 'marker', 'signature']);
@@ -197,7 +208,7 @@ export function pinStructureProblems(pin, label) {
  * @param {Set<string>} alreadySeen ids из других полос
  * @returns {string[]}
  */
-export function frameLaneProblems(lane, laneName, alreadySeen = new Set()) {
+export function frameLaneProblems(lane, laneName, alreadySeen = new Set(), moderatorInHolder = []) {
   const problems = [];
   if (lane === undefined) return problems;
   if (!Array.isArray(lane)) {
@@ -222,10 +233,38 @@ export function frameLaneProblems(lane, laneName, alreadySeen = new Set()) {
       alreadySeen.add(frame.id);
     }
 
-    if (typeof frame.holder !== 'string' || !PROCEDURE_PERSONAS.includes(frame.holder)) {
-      problems.push(
-        `${prefix}: holder ∉ Persona (${PROCEDURE_PERSONAS.join('/')})`,
-      );
+    // Роль ДЕРЖАТЕЛЯ (ADR-0025 Р2). Модератор здесь — не «имя вне списка», а отдельный род
+    // ошибки: у такого фрейма исполнителя нет ПО ПОСТРОЕНИЮ. Причину даёт holderProblem.
+    //
+    // Р4: отсутствие holder читается как «неизвестен» и НЕ наследуется от процедуры —
+    // наследование воспроизвело бы дефект при самой починке.
+    const holderWhy = holderProblem(frame.holder);
+    if (holderWhy) {
+      problems.push(`${prefix}: ${holderWhy}`);
+      if (frame.holder === 'angelina' && typeof frame.id === 'string') {
+        // Машинный вход следующей задачи (#1787): красный обязан быть говорящим, иначе
+        // переназначение начнётся с повторного ручного обхода манифестов.
+        moderatorInHolder.push({
+          lane: laneName,
+          index: i,
+          frameId: frame.id,
+          holder: frame.holder,
+          reason: holderWhy,
+        });
+      }
+    }
+
+    // Роль МОДЕРАТОРА — необязательна. Форма и роль разведены намеренно (разбор Ожегова):
+    // «поле есть и оно строка» — схема, «значение ∈ MODERATOR_PERSONAS» — роли. Смешать их
+    // в один код ошибки значит размыть границу между валидатором формы и валидатором ролей.
+    if (Object.prototype.hasOwnProperty.call(frame, 'moderator')) {
+      if (typeof frame.moderator !== 'string' || frame.moderator.trim() === '') {
+        problems.push(`${prefix}: moderator — не непустая строка (форма)`);
+      } else if (!isModeratorPersona(frame.moderator)) {
+        problems.push(
+          `${prefix}: moderator «${frame.moderator}» ∉ MODERATOR_PERSONAS (${MODERATOR_PERSONAS.join('/')})`,
+        );
+      }
     }
 
     if (Object.prototype.hasOwnProperty.call(frame, 'pins')) {
@@ -693,7 +732,7 @@ export function auditProcedureHomes(repoRoot) {
  * @param {string} [repoRoot] для резолва steps.ref / home
  * @returns {string[]} дефекты схемы
  */
-export function manifestSchemaProblems(m, dirName, repoRoot) {
+export function manifestSchemaProblems(m, dirName, repoRoot, moderatorInHolder = []) {
   const problems = [];
   if (m === null || typeof m !== 'object' || Array.isArray(m)) {
     return ['MANIFEST.json — не объект'];
@@ -734,7 +773,7 @@ export function manifestSchemaProblems(m, dirName, repoRoot) {
   const seenIds = new Set();
   for (const lane of MANIFEST_QUEUE_KEYS) {
     if (keys.includes(lane)) {
-      problems.push(...frameLaneProblems(m[lane], lane, seenIds));
+      problems.push(...frameLaneProblems(m[lane], lane, seenIds, moderatorInHolder));
     }
   }
 
@@ -770,6 +809,9 @@ export function manifestSchemaProblems(m, dirName, repoRoot) {
 export function validateProcedure(dir, repoRoot) {
   const problems = [];
   const findings = [];
+  // Машинный вход задачи переназначения (#1787). Требование тимлида сверх DoD ADR-0025:
+  // «красный не должен быть немым — без списка красный слепой».
+  const moderatorInHolder = [];
 
   // readmeNonEmpty
   let readmeNonEmpty = false;
@@ -790,7 +832,7 @@ export function validateProcedure(dir, repoRoot) {
   } else {
     try {
       manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-      const schemaProblems = manifestSchemaProblems(manifest, basename(dir), repoRoot);
+      const schemaProblems = manifestSchemaProblems(manifest, basename(dir), repoRoot, moderatorInHolder);
       manifestSchemaOk = schemaProblems.length === 0;
       problems.push(...schemaProblems);
       if (manifest && typeof manifest === 'object' && !Array.isArray(manifest)) {
@@ -853,6 +895,11 @@ export function validateProcedure(dir, repoRoot) {
     problems,
     findings,
     core,
+    /**
+     * Фреймы, у которых в `holder` стоит модератор. Поле, а не строка отчёта: следующая
+     * задача (#1787) читает его как данные, а не парсит текст. Пусто ⇔ таких фреймов нет.
+     */
+    moderatorInHolder,
   };
 }
 
@@ -892,8 +939,13 @@ export function auditProcedureCorpus(repoRoot) {
   for (const id of listBuiltProcedureIds(repoRoot)) {
     const dir = join(repoRoot, 'docs', 'procedures', id);
     const r = validateProcedure(dir, repoRoot);
-    if (!r.valid) {
-      findings.push(`${id}: контейнер невалиден — ${r.problems.join('; ')}`);
+    // Долг ADR-0025 Р3 (модератор в holder) находкой корпуса НЕ считается: он назван,
+    // посчитан и ждёт отдельной задачи #1787. Считать его находкой значило бы дублировать
+    // один и тот же долг двадцатью строками ревизии и утопить в них настоящие дефекты.
+    // Посторонние дефекты по-прежнему находки.
+    const foreignProblems = r.problems.filter((p) => !/модератор: ведёт момент/u.test(p));
+    if (foreignProblems.length > 0) {
+      findings.push(`${id}: контейнер невалиден — ${foreignProblems.join('; ')}`);
       continue;
     }
     if (r.core !== 'full') {
