@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `review-diff-explicit-base` | Ревью читает дифф с явной базой; вердикт несёт базу рядом с head (строка 7 хендофа 08.08) | M | [`REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md`](../prompts/REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md) | [#1771](https://github.com/officefish/Membrana/issues/1771) |
 | `tariff-concurrent-move-reason` | Параллельная смена тарифа отвечает своей причиной: tariff_moved_concurrently вместо same_tariff (строка 4 хендофа 08.08) | S | [`TARIFF_CONCURRENT_MOVE_REASON_PROMPT.md`](../prompts/TARIFF_CONCURRENT_MOVE_REASON_PROMPT.md) | [#1777](https://github.com/officefish/Membrana/issues/1777) |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-live-services` | #1303-C: LIVE_SERVICES, документация и monitoring | S | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
