@@ -18,12 +18,34 @@
  * Exit: 0 — pass · 1 — образ неполон либо контейнер нездоров · 2 — прогон не состоялся.
  */
 import { execFileSync, spawnSync } from 'node:child_process';
+import { writeSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { SMOKE_LIMITS, formatSmokeVerdict, smokeVerdict } from './lib/office-image-smoke.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
+/**
+ * Вывод СИНХРОННЫЙ, минуя буфер. В CI stdout — пайп, и `console.log` для пайпа асинхронен:
+ * прогон 08.08 дал зелёный шаг, где после «→ health» не напечаталось НИЧЕГО, включая
+ * вердикт. Прибор, который молчит, ничего не доказывает, поэтому здесь writeSync: строка
+ * либо на экране, либо прибор упал — третьего состояния нет.
+ */
+const say = (s) => {
+  try {
+    writeSync(1, `${s}\n`);
+  } catch {
+    console.log(s);
+  }
+};
+const sayErr = (s) => {
+  try {
+    writeSync(2, `${s}\n`);
+  } catch {
+    console.error(s);
+  }
+};
 const DEFAULT_TAG = 'membrana-office:smoke';
 const CONTAINER = 'membrana-office-smoke';
 const PORT = 3199;
@@ -87,52 +109,53 @@ async function main(argv) {
   try {
     cli = parseArgs(argv);
   } catch (e) {
-    console.error(`office:image:smoke — ошибка входа: ${e.message}`);
+    sayErr(`office:image:smoke — ошибка входа: ${e.message}`);
     return 2;
   }
   if (cli.help) {
-    console.log('Usage: yarn office:image:smoke [--build] [--tag <t>] [--keep]');
-    console.log('\nОтвечает: pass | missing-module | unhealthy | broken. Предел прибора:');
-    for (const l of SMOKE_LIMITS) console.log(`  · ${l}`);
+    say('Usage: yarn office:image:smoke [--build] [--tag <t>] [--keep]');
+    say('\nОтвечает: pass | missing-module | unhealthy | broken. Предел прибора:');
+    for (const l of SMOKE_LIMITS) say(`  · ${l}`);
     return 0;
   }
 
   try {
     execFileSync('docker', ['version'], { stdio: 'ignore', timeout: 30_000 });
   } catch {
-    console.error('office:image:smoke — прогон НЕ состоялся: docker недоступен. «Не знаю» не значит «образ полон»');
+    sayErr('office:image:smoke — прогон НЕ состоялся: docker недоступен. «Не знаю» не значит «образ полон»');
     return 2;
   }
 
   if (cli.build) {
-    console.log(`  → build ${cli.tag}`);
+    say(`  → build ${cli.tag}`);
     const built = docker(['build', '-f', 'packages/background-office/Dockerfile', '-t', cli.tag, '.']);
     if (built.status !== 0) {
-      console.error('office:image:smoke — прогон НЕ состоялся: образ не собрался');
-      console.error(String(built.stderr ?? '').slice(-4000));
+      sayErr('office:image:smoke — прогон НЕ состоялся: образ не собрался');
+      sayErr(String(built.stderr ?? '').slice(-4000));
       return 2;
     }
   }
 
   removeContainer();
-  console.log('  → run');
+  say('  → run');
   const envArgs = SMOKE_ENV.flatMap((e) => ['-e', e]);
   const run = docker(['run', '-d', '--name', CONTAINER, '-p', `${PORT}:3000`, ...envArgs, cli.tag], { timeout: 120_000 });
   if (run.status !== 0) {
-    console.error('office:image:smoke — прогон НЕ состоялся: контейнер не запустился');
-    console.error(String(run.stderr ?? '').slice(-4000));
+    sayErr('office:image:smoke — прогон НЕ состоялся: контейнер не запустился');
+    sayErr(String(run.stderr ?? '').slice(-4000));
     return 2;
   }
 
   let health = null;
   let digest = null;
   try {
-    console.log('  → health');
+    say('  → health');
     health = await waitHealthy();
+    say(`  → health: ${health === null ? 'контейнер не жив' : health.ok ? 'ok' : 'не ответил'}`);
     if (health?.ok) {
       // Дата фиксированная и заведомо без журнала: прибор судит ПОЛНОТУ образа, а не
       // содержимое тома. Пустой дайджест — законный pass.
-      console.log('  → digest (грузит рантайм-модули офиса внутри образа)');
+      say('  → digest (грузит рантайм-модули офиса внутри образа)');
       digest = await probe(`http://127.0.0.1:${PORT}/v1/dreams/digest/2026-01-01`);
     }
     const logs = docker(['logs', CONTAINER], { timeout: 60_000 });
@@ -141,12 +164,12 @@ async function main(argv) {
       digest,
       logs: `${String(logs.stdout ?? '')}\n${String(logs.stderr ?? '')}`,
     });
-    for (const line of formatSmokeVerdict(verdict)) console.log(line);
+    for (const line of formatSmokeVerdict(verdict)) say(line);
     if (verdict.outcome === 'pass') return 0;
     if (verdict.outcome === 'broken') {
-      console.error('\n--- логи контейнера (хвост) ---');
-      console.error(String(logs.stdout ?? '').slice(-4000));
-      console.error(String(logs.stderr ?? '').slice(-4000));
+      sayErr('\n--- логи контейнера (хвост) ---');
+      sayErr(String(logs.stdout ?? '').slice(-4000));
+      sayErr(String(logs.stderr ?? '').slice(-4000));
       return 2;
     }
     return 1;
@@ -164,7 +187,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1
   main(process.argv.slice(2)).then(
     (code) => { process.exitCode = code; },
     (e) => {
-      console.error(`office:image:smoke — прогон НЕ состоялся: ${e?.message ?? e}`);
+      sayErr(`office:image:smoke — прогон НЕ состоялся: ${e?.message ?? e}`);
       process.exitCode = 2;
     },
   );
