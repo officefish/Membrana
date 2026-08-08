@@ -21,6 +21,7 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `feedback-claims-code-probe` | Гейт проверки утверждений вечернего протокола против кода (строка 5 хендофа 08.08) | M | [`FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md`](../prompts/FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md) | [#1795](https://github.com/officefish/Membrana/issues/1795) |
+| `meeting-static-mmbrn-container` | Заседание: контракт static.mmbrn.tech и роль Affine | M | [`MEETING_BRIEF.md`](../meeting/static-mmbrn-container/MEETING_BRIEF.md) | [#1305](https://github.com/officefish/Membrana/issues/1305) |
 | `morning-journal-close-step` | Шаг закрытия журнала у утра: статус по факту, а не константой в хвосте цепочки | M | [`MORNING_JOURNAL_CLOSE_STEP_PROMPT.md`](../prompts/MORNING_JOURNAL_CLOSE_STEP_PROMPT.md) | [#1782](https://github.com/officefish/Membrana/issues/1782) |
 | `frame-holders-reassign-twenty` | Переназначение двадцати фреймов: у каждого явный держатель, модератор назван отдельно (Р3 ADR-0025) | M | [`FRAME_HOLDERS_REASSIGN_TWENTY_PROMPT.md`](../prompts/FRAME_HOLDERS_REASSIGN_TWENTY_PROMPT.md) | [#1787](https://github.com/officefish/Membrana/issues/1787) |
 | `frame-holder-moderator-split` | ADR-0025 в коде: развести holder и moderator у фрейма | M | [`FRAME_HOLDER_MODERATOR_SPLIT_PROMPT.md`](../prompts/FRAME_HOLDER_MODERATOR_SPLIT_PROMPT.md) | [#1781](https://github.com/officefish/Membrana/issues/1781) |

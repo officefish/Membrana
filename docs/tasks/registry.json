@@ -21,6 +21,23 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "meeting-static-mmbrn-container",
+      "title": "Заседание: контракт static.mmbrn.tech и роль Affine",
+      "promptPath": "docs/meeting/static-mmbrn-container/MEETING_BRIEF.md",
+      "githubIssue": 1305,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "meeting",
+      "createdAt": "2026-08-03",
+      "archivedAt": null,
+      "leadPersona": "angelina",
+      "supportPersonas": [],
+      "notes": "Архитектурный предшественник реализации #1305; M0 определяет DAG семи вопросов, код и прод вне scope",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "morning-journal-close-step",
       "title": "Шаг закрытия журнала у утра: статус по факту, а не константой в хвосте цепочки",
       "promptPath": "docs/prompts/MORNING_JOURNAL_CLOSE_STEP_PROMPT.md",
