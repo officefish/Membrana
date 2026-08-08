@@ -266,6 +266,7 @@
     "office:dev": "yarn workspace @membrana/background-office dev",
     "office:build": "yarn workspace @membrana/background-office build",
     "office:self-check": "yarn workspace @membrana/background-office self-check",
+    "office:image:smoke": "node scripts/office-image-smoke.mjs",
     "office:research-digest": "node scripts/office-research-digest.mjs",
     "office:verify-swagger": "yarn workspace @membrana/background-office verify:swagger",
     "office:docker:build": "docker compose -f packages/background-office/docker-compose.yml build",

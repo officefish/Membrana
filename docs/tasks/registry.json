@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "dockerfile-copy-manifest-drifts",
+      "title": "Dockerfile офиса: поимённый COPY дублирует граф импортов — сделать расхождение невозможным или видимым",
+      "promptPath": "docs/prompts/DOCKERFILE_COPY_MANIFEST_DRIFTS_PROMPT.md",
+      "githubIssue": 1797,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-08",
+      "archivedAt": null,
+      "leadPersona": "tarasov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Замер 08.08: расхождения сейчас 0, балласт 1 (llm-probe.mjs). Цена директорного COPY названа: scripts/lib = 330 файлов / 3.5 MB против 12 файлов / 109 KB нужного. Приёмка по условию исполнителя — smoke dreams-tick внутри контейнера в CI.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "morning-journal-close-step",
       "title": "Шаг закрытия журнала у утра: статус по факту, а не константой в хвосте цепочки",
       "promptPath": "docs/prompts/MORNING_JOURNAL_CLOSE_STEP_PROMPT.md",
