@@ -4,6 +4,11 @@
 
 ## Focus
 
+- **review-diff-explicit-base** ([#1771](https://github.com/officefish/Membrana/issues/1771)) ·
+  gate pass 3/3 honest_pair · [`OPEN.md`](./local-sprint/review-diff-explicit-base/OPEN.md) —
+  ревью читает дифф с ЯВНОЙ базой (`gh pr diff` из тракта убран), вердикт несёт `base:`
+  рядом с head, гейт сверяет базу исходом `unknown`. Строка 7 хендофа 08.08.
+
 - **feedback-claims-code-probe** ([#1795](https://github.com/officefish/Membrana/issues/1795)) ·
   gate pass 3/3 honest_pair · [`OPEN.md`](./local-sprint/feedback-claims-code-probe/OPEN.md) —
   сверка утверждений вечернего протокола с деревом (`yarn feedback:claims`), врезка третьим

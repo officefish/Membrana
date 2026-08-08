@@ -16,6 +16,7 @@ import {
   statusPublishArgs,
   parseVerdict,
   renderScopeMarker,
+  renderVerdictMarker,
   reviewGateDecision,
   scopeFromBody,
   shouldEnsureReview,
@@ -245,4 +246,73 @@ test('пауза стоит МЕЖДУ попытками, а не после п
 test('число попыток и пауза — из библиотеки, а не из головы вызывающего', () => {
   assert.equal(PUBLISH_ATTEMPTS, 3);
   assert.equal(PUBLISH_PAUSE_MS, 2_000);
+});
+
+// --- база вердикта в CLI (#1771, блок b3) -------------------------------------------------
+//
+// CLI считает ТЕКУЩУЮ merge-base и отдаёт её ядру. Здесь проверяется договор гейта целиком:
+// какие тексты видит человек и чем `stale-base` отличается от протухания по head. Сам
+// расчёт базы (сеть, git) живёт в `currentMergeBase` и проверяется живым прогоном —
+// дублировать его фикстурой значило бы тестировать мок.
+
+test('CLI: база разошлась → unknown, и причина отличима от протухания по head', () => {
+  const stale = reviewGateDecision({
+    headSha: 'a'.repeat(40),
+    currentBase: 'd'.repeat(40),
+    verdict: { sha: 'a'.repeat(40), base: 'c'.repeat(40), verdict: 'LGTM', lead: 'vesnin' },
+  });
+  assert.equal(stale.state, 'unknown');
+  assert.match(stale.reason, /база разошлась/u);
+  assert.equal(statusFromDecision(stale).state, 'pending');
+
+  const staleHead = reviewGateDecision({
+    headSha: 'b'.repeat(40),
+    currentBase: 'c'.repeat(40),
+    verdict: { sha: 'a'.repeat(40), base: 'c'.repeat(40), verdict: 'LGTM', lead: 'vesnin' },
+  });
+  assert.equal(staleHead.state, 'block');
+  assert.match(staleHead.reason, /вердикт протух/u);
+  // Два разных диагноза — два разных commit status: pending зовёт перепрогнать, failure стоит.
+  assert.notEqual(statusFromDecision(stale).state, statusFromDecision(staleHead).state);
+});
+
+test('CLI: база не посчиталась → unknown, мердж не открывается молча', () => {
+  const d = reviewGateDecision({
+    headSha: 'a'.repeat(40),
+    currentBase: null,
+    verdict: { sha: 'a'.repeat(40), base: 'c'.repeat(40), verdict: 'LGTM', lead: 'vesnin' },
+  });
+  assert.equal(d.state, 'unknown');
+  assert.notEqual(d.state, 'pass');
+});
+
+test('CLI: legacy-вердикт без базы проходит и при неизвестной текущей базе', () => {
+  // Так ратифицировано владельцем 08.08 (дважды): ломать мердж уже отревьюенных PR нельзя.
+  const d = reviewGateDecision({
+    headSha: 'a'.repeat(40),
+    currentBase: null,
+    verdict: { sha: 'a'.repeat(40), base: null, verdict: 'LGTM', lead: 'tarasov' },
+  });
+  assert.equal(d.state, 'pass');
+});
+
+test('CLI: --restamp сохраняет базу вердикта, а не подставляет сегодняшнюю', () => {
+  // Перештамповка чинит МАШИННОЕ ЧТЕНИЕ тела, а не предмет осмотра: приписать ревьюеру
+  // сегодняшнюю базу значило бы задним числом сказать, что он смотрел другой код.
+  const old = renderVerdictMarker({
+    sha: 'a'.repeat(40),
+    base: 'c'.repeat(40),
+    verdict: 'BLOCK',
+    lead: 'vesnin',
+    at: '2026-08-08T10:00:00.000Z',
+  });
+  const prev = parseVerdict(`# Ревью\n\n${old}\n\nтело`);
+  const restamped = renderVerdictMarker({ sha: 'a'.repeat(40), base: prev.base, verdict: 'LGTM', lead: prev.lead });
+  assert.equal(parseVerdict(restamped).base, 'c'.repeat(40));
+  assert.equal(parseVerdict(restamped).verdict, 'LGTM');
+
+  const legacy = `<!-- review-verdict sha:${'a'.repeat(40)} verdict:BLOCK lead:tarasov -->`;
+  const legacyPrev = parseVerdict(legacy);
+  const legacyRestamped = renderVerdictMarker({ sha: 'a'.repeat(40), base: legacyPrev.base, verdict: 'LGTM', lead: legacyPrev.lead });
+  assert.equal(legacyRestamped.includes('base:'), false, 'база не выдумывается из воздуха');
 });

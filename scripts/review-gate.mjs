@@ -54,6 +54,43 @@ function sleepSync(ms) {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
+/**
+ * Текущая merge-base ветки PR со своей базой (#1771).
+ *
+ * `null` — «посчитать не удалось», и ядро гейта обязано прочесть это как `unknown`, а не
+ * как совпадение: гейт без приборов мердж не открывает. Молчание здесь недопустимо —
+ * причина печатается вызывающему.
+ *
+ * @param {string|number} pr
+ * @param {string} headSha
+ * @returns {string|null}
+ */
+export function currentMergeBase(pr, headSha) {
+  let baseRef = null;
+  try {
+    baseRef = JSON.parse(sh('gh', ['pr', 'view', String(pr), '--json', 'baseRefName'])).baseRefName ?? null;
+  } catch {
+    baseRef = null;
+  }
+  if (baseRef) {
+    try {
+      const slug = sh('gh', ['repo', 'view', '--json', 'nameWithOwner', '--jq', '.nameWithOwner']);
+      const cmp = JSON.parse(sh('gh', ['api', `repos/${slug}/compare/${baseRef}...${headSha}`]));
+      const sha = cmp?.merge_base_commit?.sha ?? null;
+      if (sha) return sha;
+    } catch {
+      /* ручка отказала — пробуем локально */
+    }
+    try {
+      return sh('git', ['merge-base', headSha, `origin/${baseRef}`]) || null;
+    } catch {
+      /* ветки нет локально */
+    }
+  }
+  console.error('  ⚠ текущая merge-base не посчиталась (нет сети либо ветки локально) — база вердикта не проверена');
+  return null;
+}
+
 function main() {
   let pr = flag('pr');
   if (!pr) {
@@ -83,15 +120,29 @@ function main() {
   const reviewPath = join(repoRoot, `docs/discussions/pr-${pr}-code-review.md`);
   let md = existsSync(reviewPath) ? readFileSync(reviewPath, 'utf8') : '';
 
+  // ТЕКУЩАЯ merge-base (#1771) — тем же источником, что и тракт диффа: `compare` отдаёт
+  // базу и голову согласованно и работает для ЧУЖОГО PR, чья ветка не выкачана. Локальный
+  // `git merge-base` — фолбэк, и считается от headRefOid PR, а не от локального HEAD:
+  // взять HEAD значило бы повторить ловушку 29.07 в другом поле.
+  const currentBase = headSha ? currentMergeBase(pr, headSha) : null;
+
   // --restamp: пересчитать вердикт по УЖЕ полученному телу ревью, не гоняя LLM заново.
   // Нужен, когда починили извлечение вердикта (29.07: «не BLOCK» в теле читалось как
   // BLOCK) — тело ведущего неприкосновенно, меняется только машинное чтение.
+  //
+  // Базу перештамповка СОХРАНЯЕТ, а не пересчитывает (решение исполнителя блока): вердикт
+  // выносился по диффу от прежней базы, и подставить сегодняшнюю значило бы задним числом
+  // приписать ревьюеру осмотр другого кода. Нет базы в старом маркере — так и остаётся.
   if (argv.includes('--restamp') && md) {
+    const prev = parseVerdict(md);
     const verdict = verdictFromBody(md.replace(/<!--[\s\S]*?-->/gu, ''));
     const stripped = md.replace(/<!--\s*review-verdict[\s\S]*?-->\n?\n?/u, '');
-    md = `${renderVerdictMarker({ sha: headSha, verdict, lead: parseVerdict(md)?.lead ?? null })}\n\n${stripped}`;
+    md = `${renderVerdictMarker({ sha: headSha, base: prev?.base ?? null, verdict, lead: prev?.lead ?? null })}\n\n${stripped}`;
     writeFileSync(reviewPath, md, 'utf8');
-    console.log(`  маркер пересчитан по телу ревью: ${verdict} на ${String(headSha).slice(0, 8)}`);
+    console.log(
+      `  маркер пересчитан по телу ревью: ${verdict} на ${String(headSha).slice(0, 8)}` +
+        `${prev?.base ? ` (база вердикта сохранена: ${prev.base.slice(0, 8)})` : ' (база в вердикте не названа — legacy)'}`,
+    );
   }
   const override = {
     enabled: process.env.REVIEW_GATE_OVERRIDE === '1',
@@ -100,7 +151,7 @@ function main() {
   // Признак артефакта — от скрипта: ядро в ФС не ходит, а «файла нет» и «файл есть без
   // маркера» лечатся по-разному (блок e1 спринта review-honesty).
   const artifactOf = () => ({ exists: existsSync(reviewPath), path: `docs/discussions/pr-${pr}-code-review.md` });
-  let decision = reviewGateDecision({ headSha, verdict: parseVerdict(md), override, scope: scopeFromBody(md), artifact: artifactOf() });
+  let decision = reviewGateDecision({ headSha, currentBase, verdict: parseVerdict(md), override, scope: scopeFromBody(md), artifact: artifactOf() });
 
   // --ensure (#1465 Ф2): «ревью не прогонялось» — не повод останавливать шип и звать
   // человека переставить две команды руками. Последовательность gate → code-review:pr →
@@ -121,7 +172,7 @@ function main() {
       console.error(`  ⚠ ревью не отработало (${String(e.message ?? e).split('\n')[0]}) — вердикта нет, гейт остаётся закрытым`);
     }
     md = existsSync(reviewPath) ? readFileSync(reviewPath, 'utf8') : '';
-    decision = reviewGateDecision({ headSha, verdict: parseVerdict(md), override, scope: scopeFromBody(md), artifact: artifactOf() });
+    decision = reviewGateDecision({ headSha, currentBase, verdict: parseVerdict(md), override, scope: scopeFromBody(md), artifact: artifactOf() });
   }
 
   const mark = decision.state === 'pass' ? '✓' : decision.state === 'block' ? '✗' : '?';

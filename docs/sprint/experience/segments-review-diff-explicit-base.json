@@ -1,0 +1,12 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "review-diff-explicit-base",
+  "forTask": "review-diff-explicit-base — ревью читает дифф с явной базой, вердикт несёт базу рядом с head (#1771, строка 7 хендофа 08.08)",
+  "note": "Замер по зонам блоков: новые файлы — wc -l, правленые — git diff --numstat HEAD (insertions + deletions). Оценка плана: b1 160 · b2 240 · b3 140. Факт b2 включает 105 строк врезки в code-review-ritual.mjs и code-review.mjs, из них 3 строки — объявленный выход за зону (call site провенанса).",
+  "measuredAt": "2026-08-08T15:25:00+00:00",
+  "segments": [
+    { "cutBlockId": "b1-verdict-base-field", "changedLines": 195 },
+    { "cutBlockId": "b2-diff-explicit-base", "changedLines": 466 },
+    { "cutBlockId": "b3-gate-stale-base", "changedLines": 129 }
+  ]
+}

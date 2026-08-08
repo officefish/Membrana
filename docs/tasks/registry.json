@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "review-diff-explicit-base",
+      "title": "Ревью читает дифф с явной базой; вердикт несёт базу рядом с head (строка 7 хендофа 08.08)",
+      "promptPath": "docs/prompts/REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md",
+      "githubIssue": 1771,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-08",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ],
+      "notes": "План ратифицирован владельцем 08.08. Дефект B (в вердикте нет базы) воспроизводится всегда, дефект A (кэш gh pr diff) 08.08 не воспроизвёлся на трёх PR — приёмка A синтетикой, не живым прогоном.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "feedback-claims-code-probe",
       "title": "Гейт проверки утверждений вечернего протокола против кода (строка 5 хендофа 08.08)",
       "promptPath": "docs/prompts/FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md",
