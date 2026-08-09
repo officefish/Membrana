@@ -14665,11 +14665,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "createdAt": "2026-06-23",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Umbrella перепланирован 2026-06-25: техчасть ушла в device-board-async-pipeline-v1 (Issue #176 CLOSED, archived 2026-07-01, все db-ap-r0..r12 archived). DoD закрыт: bundled usercase-mvp-microphone v2.0-async стал default (golden usercase-mvp-microphone-v20-async.document.json), sign-off docs/actions/device-board/sign-offs/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md (SHA 823057e7). Последний живой ребёнок ucv2-2 отменён владельцем 09.08 — эпик разблокирован.",
       "dependsOn": [
         "db-usercase-mvp-microphone-lgtm"
       ],
@@ -14735,12 +14735,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "usercase-mvp-v2-groups-async",
       "createdAt": "2026-06-23",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "ОТМЕНЕНО, не сделано (слово владельца 09.08): минимальный shim «async MakeTrack на паузе» не строился — 2026-06-25 карточка superseded полным эпиком device-board-async-pipeline-v1 (AsyncJobStore, latent Sequence, detached on-async-resolved; SHA 823057e7, Issue #176, archived 2026-07-01), который закрыл ту же потребность архитектурно. Переоткрыть, если понадобится отдельный pause-shim вне контракта async pipeline.",
       "dependsOn": [
         "ucv2-1-graph-collapse"
       ],
@@ -16549,12 +16549,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "ci-gate-stabilization",
       "createdAt": "2026-07-02",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "ОТМЕНЕНО, не сделано (слово владельца 09.08): ни логирования (test-run-id/attempt/seed), ни артефакта — каталога docs/ci-metrics/ в main нет вовсе. Решение, ради которого нужна была неделя метрик, принято 26.07 иначе — ADR-0018 (выборочный мердж-гейт + ночной full, критерий стоимость прогона, а не % флейки), источники флейки закрыты PR #247 (rag timeout) и #297 (detector-base build-order). Переоткрыть, если мердж снова начнёт блокироваться флейками — тогда мерить поверх отчёта «что не гонялось» из контейнера тестов.",
       "notes": "test-run-id/attempt/seed/duration → docs/ci-metrics/flaky-report-<дата>.md. Условие эскалации scoped-gate: flaky > 10%. Lead Dynin.",
       "leadPersona": "dynin",
       "supportPersonas": [],
@@ -17009,11 +17009,11 @@
       "githubIssue": 47,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W5",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "ОТМЕНЕНО, не сделано (слово владельца 09.08): контракт NeuralDetector в detector-base так и не заведён — в packages/services/detectors/base/src/types.ts только DetectorFamily 'neural', skeleton yamnet/clap создан 34089bd2 ещё до появления карточки. Цель эшелона 1.B закрыта другим маршрутом: YamnetDetector 9a7ca7fd (PR #266), yamnet в benchmark 8a53826d (PR #268), плагин neural-drone-analyzer, живой fusion 5e42c937 (PR #417); консилиум 2026-06-26 переопределил нейродетектор как family=neural поверх DroneDetector. Переоткрыть, если понадобится второй нейро-детектор (CLAP zero-shot всё ещё scaffold) и общий контракт predict/InferenceContext станет обязательным.",
       "dependsOn": [
         "db3h-s4-microphone-detectors"
       ],
@@ -17026,7 +17026,8 @@
         "rodchenko",
         "ozhegov"
       ],
-      "sprintKind": "epic"
+      "sprintKind": "epic",
+      "githubIssueClosedAt": null
     },
     {
       "id": "neural-free-tier-dataset-report",
