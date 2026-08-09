@@ -1,0 +1,3 @@
+{"kind":"cut_context_run","sprintId":"archivarius-mongo-dump","subject":"ozhegov","at":"2026-08-08T18:48:33+03:00","ref":"docs/virtual-team/memory/op-log/ozhegov/2026-08-08.jsonl","planDigest":"04bdb07e1a399541da19273bea3d18033b7cb5c85e78ce67ec914e8e3954897e"}
+{"kind":"recut_act","sprintId":"archivarius-mongo-dump","subject":"ozhegov","at":"2026-08-08T19:40:58+03:00","ref":"docs/sprint/cut/archivarius-mongo-dump.json","planDigest":"1ecd9bc9219f6efb848c2739ea95df4af6a6957c4b2329921ee7ec2dda33fb91"}
+{"kind":"recut_act","sprintId":"archivarius-mongo-dump","subject":"ozhegov","at":"2026-08-08T20:19:34+03:00","ref":"docs/sprint/cut/archivarius-mongo-dump.json","planDigest":"e13e1942cb3ad0d8791faf71cc41f9479a02c8419990198db9f7162768be32ed"}

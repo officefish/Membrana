@@ -1,6 +1,46 @@
 {
   "tasks": [
     {
+      "id": "archivarius-mongo-restore-drill",
+      "title": "Прогон восстановления архивариуса: откат дампа проверяется предикатом, а не размером файла",
+      "promptPath": "docs/prompts/ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md",
+      "githubIssue": 1809,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-08",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Выделено из #1714 08.08 по разбору Ожегова: бэкап = дамп + верифицированное восстановление; без второго это mongo-dump-artifact. Блокируется карточкой archivarius-mongo-dump: проверять нечего, пока нечего восстанавливать. До закрытия ЭТОЙ карточки страховки нет — есть артефакт неизвестной пригодности.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "archivarius-mongo-dump",
+      "title": "Дамп тома archivarius-mongo-data: снятие, хранение, ротация, манифест",
+      "promptPath": "docs/prompts/ARCHIVARIUS_MONGO_DUMP_PROMPT.md",
+      "githubIssue": 1714,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-06",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "dynin"
+      ],
+      "notes": "Остаток #1714 после объявления сервиса в манифесте (PR #1747, 06.08). Обзор «что уже есть»: бэкапа нет никакого — ноль глаголов backup/dump/restore по репозиторию. Пять развилок нарезки в промпте. Аутентификация Mongo вне предмета — отдельная иссью. Серверная зона: шотом нельзя, исполнение под owner-гейтом. ПЕРЕИМЕНОВАНА 08.08 по разбору Ожегова: «бэкап = дамп + верифицированное восстановление; без второго это mongo-dump-artifact, а не backup». Имя не должно обещать страховку, когда вещь даёт артефакт. Проверка восстановления — отдельная карточка archivarius-mongo-restore-drill.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "review-diff-explicit-base",
       "title": "Ревью читает дифф с явной базой; вердикт несёт базу рядом с head (строка 7 хендофа 08.08)",
       "promptPath": "docs/prompts/REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md",
@@ -536,26 +576,6 @@
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "Строка 9 десятки 06.08. Шотом не прошло (capability_chaining), спринт ратифицирован владельцем 13:42Z.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
-    },
-    {
-      "id": "archivarius-mongo-backup",
-      "title": "Бэкап тома archivarius-mongo-data: восстановимость проверяемая, а не объявленная",
-      "promptPath": "docs/prompts/ARCHIVARIUS_MONGO_BACKUP_PROMPT.md",
-      "githubIssue": 1714,
-      "linearId": null,
-      "size": "M",
-      "status": "active",
-      "sprintKind": "membrana-local-sprint",
-      "createdAt": "2026-08-06",
-      "archivedAt": null,
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "vesnin",
-        "dynin"
-      ],
-      "notes": "Остаток #1714 после объявления сервиса в манифесте (PR #1747, 06.08). Обзор «что уже есть»: бэкапа нет никакого — ноль глаголов backup/dump/restore по репозиторию. Пять развилок нарезки в промпте. Аутентификация Mongo вне предмета — отдельная иссью. Серверная зона: шотом нельзя, исполнение под owner-гейтом.",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },

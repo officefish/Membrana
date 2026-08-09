@@ -1,6 +1,10 @@
+{"ts":"2026-08-08T08:09:49.647Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
 {"ts":"2026-08-08T08:59:28.533Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-08T08:59:04.687Z","origin":"ask-persona"}
 {"ts":"2026-08-08T08:59:28.534Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-08T08:59:04.687Z","origin":"ask-persona"}
-{"ts":"2026-08-08T08:09:49.647Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
+{"ts":"2026-08-08T09:39:33.817Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-08T09:39:09.731Z","origin":"ask-persona"}
+{"ts":"2026-08-08T09:39:33.822Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-08T09:39:09.731Z","origin":"ask-persona"}
+{"ts":"2026-08-08T09:39:33.824Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-06-25-insight-ozhegov-server-function-registry","reason":"про единый термин и слабую связанность; тот же вопрос: один экспорт — один смысл, не тянуть старое имя, если появилось точное.","origin":"ask-persona"}
+{"ts":"2026-08-08T09:39:33.825Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-23-tasks-workshop-m4b-validity","reason":"граница «элемент vs группа»: наследование holder от процедуры и список-двадцати — это про валидность группы, а не одной карточки; отсюда ответ на (3).","origin":"ask-persona"}
 {"ts":"2026-08-08T12:06:52.899Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-08T12:06:18.270Z","origin":"ask-persona"}
 {"ts":"2026-08-08T12:06:52.902Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-08T12:06:18.270Z","origin":"ask-persona"}
 {"ts":"2026-08-08T12:06:52.910Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-18-evening-auditor-doc2-report-generator","reason":"там я уже разводил омонимию «вечернего аудитора» на три леммы и настаивал на probe с exit-кодами по инвариантам; b2 — прямое продолжение той линии для вечера.","origin":"ask-persona"}
@@ -11,6 +15,13 @@
 {"ts":"2026-08-08T15:03:30.556Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-08T15:03:08.163Z","origin":"ask-persona"}
 {"ts":"2026-08-08T15:03:30.563Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-08T15:03:08.163Z","origin":"ask-persona"}
 {"ts":"2026-08-08T15:03:30.564Z","persona":"ozhegov","verb":"reject","ref":"ozhegov-2026-08-08T15:03:08.163Z","reason":"облако тянет к вечерним ревью и долгам мостика — здесь предметная проверка формы маркера, ни одна из всплывших статей не даёт термина/прецедента для base в verdict-marker","origin":"ask-persona"}
+{"ts":"2026-08-08T15:48:33.228Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-08T15:48:00.234Z","origin":"ask-persona"}
+{"ts":"2026-08-08T15:48:33.241Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-08T15:48:00.234Z","origin":"ask-persona"}
+{"ts":"2026-08-08T15:48:33.242Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-29-night-triage-insight-harvest","reason":"там я уже требовал разводить транспорт и статус смысла; здесь то же: «снятие копии» (транспорт) ≠ «страховка» (восстановленное состояние). Одно слово — одно значение.","origin":"ask-persona"}
+{"ts":"2026-08-08T15:48:33.243Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-08-01-evening-review-predicate-m3-volume-measure","reason":"про мерку и агрегат: без предиката проверки восстановления «бэкап есть» — это мерка объёма файла, а не предикат страховки.","origin":"ask-persona"}
+{"ts":"2026-08-08T16:50:04.148Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-08T16:49:34.039Z","origin":"ask-persona"}
+{"ts":"2026-08-08T16:50:04.155Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-08T16:49:34.039Z","origin":"ask-persona"}
+{"ts":"2026-08-08T16:50:04.160Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-20-linear-egress-gear-wiring-m4-stub-lift","reason":"прямая аналогия: «снятие stub» = омоним двух лемм (снятие фикции vs. гарантия стабильности). Здесь тот же узел — «готовый рунбук» омонимичен «написан» и «прогнан на живом стенде». Нельзя называть одним словом.","origin":"ask-persona"}
 {"ts":"2026-08-08T18:07:33.711Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-03-static-mmbrn-container-m0-order","origin":"persona-extract"}
 {"ts":"2026-08-08T18:07:33.711Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-03-static-mmbrn-container-m1-boundary","origin":"persona-extract"}
 {"ts":"2026-08-08T18:07:33.711Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-03-static-mmbrn-container-m2-identity","origin":"persona-extract"}

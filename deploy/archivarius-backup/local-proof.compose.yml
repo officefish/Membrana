@@ -1,0 +1,65 @@
+# Локальный стенд доказательства: тот же образ mongo:7, синтетический том.
+#
+# Зачем отдельный файл, а не прогон на живом окружении: требование резчика при нарезке
+# спринта `archivarius-mongo-dump` — «всё, что предшествует прод-развёртыванию, должно быть
+# проверяемо на локальном compose с тем же образом mongo:7 и синтетическим томом». Тогда
+# агент доводит до зелёного локально, а владелец делает на проде один и тот же жест по
+# чек-листу, а не первый в истории.
+#
+# Знание о дампах живёт ЗДЕСЬ, а не в packages/background-office/docker-compose.yml. Риск
+# связанности назван резчиком отдельно: сервер не должен знать, что его копируют.
+#
+# Имя сервиса НАРОЧНО отличается от боевого. Первая редакция звала его `archivarius-mongo` —
+# «чтобы стенд проверял ту же команду, что пойдёт на прод». Вердикт исполнителя блока: BLOCK.
+# Оператор с поднятым background-office по привычке дёрнет знакомое имя и попадёт в живой
+# контейнер. Совпадение с боем достигается переменной `ARCHIVARIUS_MONGO_SERVICE`, а не
+# одинаковым хардкодом — и заодно стенд проверяет ветку переопределения, а не только дефолт.
+# Портов не публикуем: стенд не должен столкнуться с живым архивариусом на той же машине.
+name: archivarius-dump-proof
+
+services:
+  archivarius-mongo-proof:
+    image: mongo:7
+    restart: 'no'
+    volumes:
+      - archivarius-mongo-proof-data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  # Синтетика. Профиль `seed` — чтобы `up -d` поднимал только базу, а засев был отдельным
+  # осознанным шагом: молча засеянный стенд однажды выдадут за живой прогон.
+  synthetic-seed:
+    image: mongo:7
+    profiles: ['seed']
+    restart: 'no'
+    depends_on:
+      archivarius-mongo-proof:
+        condition: service_healthy
+    entrypoint:
+      - mongosh
+      - mongodb://archivarius-mongo-proof:27017/membrana_archivarius
+      - --quiet
+      - --eval
+      # Шаблонных строк здесь нет НАРОЧНО: compose разбирает `${…}` как свою интерполяцию
+      # и падает на `invalid interpolation format` раньше, чем mongosh увидит скрипт.
+      # Экранирование через `$$` работает, но делает засев нечитаемым; конкатенация честнее.
+      - |
+        const n = Number(process.env.SEED_DOCS || 5000);
+        db.spans.drop();
+        const batch = [];
+        for (let i = 0; i < n; i++) {
+          batch.push({ sessionId: 'synthetic-' + (i % 97), seq: i, at: new Date(1767225600000 + i * 1000), payload: 'x'.repeat(64) });
+        }
+        db.spans.insertMany(batch);
+        db.runs.insertOne({ kind: 'synthetic', createdAt: new Date(1767225600000) });
+        print('seeded spans=' + db.spans.countDocuments() + ' runs=' + db.runs.countDocuments());
+    environment:
+      SEED_DOCS: ${SEED_DOCS:-5000}
+
+volumes:
+  # Свой том, не боевой. Стенд, который трогает archivarius-mongo-data, — это не проверка
+  # страховки, а второй способ потерять данные.
+  archivarius-mongo-proof-data:
