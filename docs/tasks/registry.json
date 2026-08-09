@@ -16114,11 +16114,13 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "day-sprint",
       "parentEpic": "opencode-proxy-sprint-2026-06-25",
-      "leadPersona": "ozhegov"
+      "leadPersona": "ozhegov",
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "OC0 закрыт в main: промпт с ресёрч-обзором провайдеров, сеанс docs/seanses/opencode-proxy-processes-2026-06-25.md, .env.llm-proxy.example (c85942ff) и gitignore-правило .env.llm-proxy (.gitignore:126-128) — все четыре пункта DoD на месте."
     },
     {
       "id": "oc-proxy-s1-opencode-install",
@@ -16167,11 +16169,13 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "day-sprint",
       "parentEpic": "opencode-proxy-sprint-2026-06-25",
-      "leadPersona": "ozhegov"
+      "leadPersona": "ozhegov",
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "OC4 закрыт: шаблон docs/experiments/opencode.json.example и полный opencode.membrana.example.json в main (4fc37d90), корневой opencode.json + .opencode/** (02f975a3), живой прогон контура подтверждён CLOSURE операторского спринта opencode-operator-workflows-2026-06-26. Хвост общий с OC3: yarn opencode:membrana в package.json не заведён."
     },
     {
       "id": "night-hunt-sprint-2026-06-25",

@@ -171,11 +171,9 @@
 | `usercase-mvp-v2-groups-async` | UserCase MVP v2: groups, functions, async tracks on freeze | L | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-2-freeze-async-tracks` | UCV2-2: async MakeTrack + reports while runtime paused | M | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `opencode-proxy-sprint-2026-06-25` | Day sprint: OpenCode + LLM proxy providers (freemodel.dev) | M | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
-| `oc-proxy-s0-research-isolation` | OC0: research + env isolation for LLM proxy | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `oc-proxy-s1-opencode-install` | OC1: install OpenCode CLI | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `oc-proxy-s2-freemodel-keys` | OC2: freemodel.dev keys + smoke | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `oc-proxy-s3-llm-proxy-script` | OC3: llm-proxy-ask.mjs CLI | M | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
-| `oc-proxy-s4-opencode-config` | OC4: OpenCode config template | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `device-board-three-hosts-2026-06-26` | Device-board UserCase: стабильность на cabinet + Studio + Device (эпик) | L | [`neural-detectors-strategy-2026-06-26.md`](../seanses/neural-detectors-strategy-2026-06-26.md) | — |
 | `ci-gate-stabilization` | Epic: CI-gate stabilization — флейки rag-service, двухуровневый test gate, flaky-метрики | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
 | `cg2-two-tier-test-gate` | CG2: двухуровневый test gate — smoke (hard) + full (опциональный) на vitest | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
@@ -242,6 +240,8 @@
 | `db-p3-a1-usercase-catalog-service` | DB-P3-A1: migrate usercase-catalog-service package | 2026-08-09 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/db-p3-a1-usercase-catalog-service.md) |
 | `db-p3-a2-runtime-validators` | DB-P3-A2: runtime validators + live UI | 2026-08-09 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/db-p3-a2-runtime-validators.md) |
 | `db-p3-a3-competition-restrictions` | DB-P3-A3: competition executionPolicy + restrictions | 2026-08-09 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/db-p3-a3-competition-restrictions.md) |
+| `oc-proxy-s0-research-isolation` | OC0: research + env isolation for LLM proxy | 2026-08-09 | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — | [карточка](./archive/oc-proxy-s0-research-isolation.md) |
+| `oc-proxy-s4-opencode-config` | OC4: OpenCode config template | 2026-08-09 | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — | [карточка](./archive/oc-proxy-s4-opencode-config.md) |
 | `comp-packaging-catalog-2026-06-25` | Competition packaging: async-v2 catalog publish + operator debug | 2026-08-09 | [`COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md`](../prompts/COMPETITION_PACKAGING_CATALOG_SPRINT_PROMPT.md) | — | [карточка](./archive/comp-packaging-catalog-2026-06-25.md) |
 | `db3h-s2-cabinet-host` | DB3H-S2: device_board на сервере в кабинете пользователя | 2026-08-09 | [`DEVICE_BOARD_POST_USERCASE_ROADMAP.md`](../prompts/DEVICE_BOARD_POST_USERCASE_ROADMAP.md) | — | [карточка](./archive/db3h-s2-cabinet-host.md) |
 | `db3h-s5-desktop-logging` | DB3H-S5: политика логов Studio + Device (support feedback) | 2026-08-09 | [`DB3H_S5_DESKTOP_LOGGING_SPRINT_PROMPT.md`](../prompts/DB3H_S5_DESKTOP_LOGGING_SPRINT_PROMPT.md) | — | [карточка](./archive/db3h-s5-desktop-logging.md) |
