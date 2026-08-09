@@ -42,3 +42,17 @@ encode them with local stubs until Interface Consilium defines adapters.
 
 All stubs are owned by this block, executable only in this block's tests and excluded from
 the future production graph. They do not import or inspect another block's code.
+
+## Phase 2 one-sided delta
+
+Implementation made these local offers concrete without reading a neighboring design:
+
+| Delta | Concrete local shape | Invariant now proved by this block |
+|-------|----------------------|------------------------------------|
+| Construction | `createStaticRegistryIndex(records)` and `createStaticRegistryIndexFromLines(lines, decodeLine)` | The complete iterable is materialized before validation; a source or decoder failure yields no index |
+| Reads | `lookupById`, `resolveCanonicalRef`, `lineage`, `tip` on `StaticRegistryIndex` | Reads return frozen snapshots; lineage order is root to tip; exact keys are never coerced |
+| Failure surface | `RegistryIndexError` with stable `code`, sorted `ids`, and optional one-based `lineNumber` | Malformed, unknown and ambiguous outcomes remain distinguishable without transport status or source location |
+| Record boundary | The local input projection carries a JSON-only `record` payload | Construction deep-copies and freezes payloads, so caller mutation cannot alter index behavior |
+
+The executable stubs now live at the three planned package-local paths. They remain test-only
+and express no claim about a neighbor's eventual exported names or TypeScript signatures.
