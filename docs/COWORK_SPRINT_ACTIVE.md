@@ -2,7 +2,7 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` |
+| **status** | `closed` — Phase 5 закрыта 2026-08-09 (`cowork:close`) |
 | sprintId | `cowork-static-registry-read-api` |
 | brief | [`COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-static-registry-read-api/COWORK_SPRINT_BRIEF.md) |
 | task carrier | `cowork-static-registry-read-api` |
@@ -13,7 +13,7 @@
 | owner cut ratification | 2026-08-09 — «ратифицирую» |
 | preparation delivery | PR #1827, merged as `322501ef` |
 | preparation review | T2 LGTM, reviewed SHA `8c82c5031c42ef2e4087fccfc11d8776a2894d70` |
-| current phase | **4 — Integration** |
+| current phase | **5 — Merge + archive (closed)** |
 | integration deadline | 2026-08-14 fallback |
 
 ## Blocks
@@ -35,8 +35,8 @@ Integration-ветка: `cowork/cowork-static-registry-read-api/integration` в
 | 1 — Concept | **closed** | 3/3: `bfb1dcd5`, `099255c0`, `44536a48`; изоляция заявлена всеми командами, блокеров нет |
 | 2 — Isolated build | **closed** | `ready(A) && ready(B) && ready(C)`; три freeze-тега отправлены на exact SHA |
 | 3 — Interface Consilium | **closed** | 3/3 `ACCEPT-WITH-ADAPTERS`; `INTERFACE_CONTRACT.md`; S-C2 не наступил |
-| 4 — Integration | **open** | review SHA `0852fdad` дал BLOCK; CI SHA `d039833e` затем поймал промежуточный `tsc`-выход static-registry в образе; исправлен порядок runtime-сборки, новый SHA ждёт проверки |
-| 5 — Merge + archive | pending | PR #1828 открыт; retrospective готова; повторный exact-SHA review, CI, merge и archive ещё не подтверждены |
+| 4 — Integration | **closed** | после BLOCK на `0852fdad` и CI BLOCK на `d039833e` exact SHA `c8b298c4` получил closure LGTM и `review/teamlead=success`; обязательные CI-проверки зелёные |
+| 5 — Merge + archive | **closed** | PR #1828 merged как `9baa7f61`; target и carrier архивированы; `cowork:close` выполнен 2026-08-09 |
 
 ## Isolation Guard
 
@@ -59,3 +59,15 @@ Integration-ветка: `cowork/cowork-static-registry-read-api/integration` в
 `static-mmbrn-live-inventory` остаётся отдельной active ops-задачей и не исполняется этим
 коворком. Остальные узлы EPIC остаются в `docs/meeting/static-mmbrn-container/DEPS.json`.
 Проверка: `node scripts/meeting-status.mjs --id static-mmbrn-container`.
+
+---
+
+## Закрытие Phase 5 — `cowork:close` 2026-08-09
+
+Спринт **`cowork-static-registry-read-api`** закрыт предикатом, а не памятью человека: контракт и ретроспектива на месте, блокирующих находок нет.
+
+Неблокирующие находки, оставленные явно (закрытие флага из-за них не роняется):
+
+- находок незакрытости нет
+
+**Что этот шаг НЕ утверждает:** качество сведения блоков машине недоступно. Пустой список находок означает «признаков незакрытости не найдено», а не «коворк закрыт хорошо».

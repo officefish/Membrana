@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `cowork-static-registry-read-api` | Cowork Sprint: static registry truth and canonicalRef read API | L | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-static-registry-read-api/COWORK_SPRINT_BRIEF.md) | — |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
 | `review-diff-explicit-base` | Ревью читает дифф с явной базой; вердикт несёт базу рядом с head (строка 7 хендофа 08.08) | M | [`REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md`](../prompts/REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md) | [#1771](https://github.com/officefish/Membrana/issues/1771) |
 | `tariff-concurrent-move-reason` | Параллельная смена тарифа отвечает своей причиной: tariff_moved_concurrently вместо same_tariff (строка 4 хендофа 08.08) | S | [`TARIFF_CONCURRENT_MOVE_REASON_PROMPT.md`](../prompts/TARIFF_CONCURRENT_MOVE_REASON_PROMPT.md) | [#1777](https://github.com/officefish/Membrana/issues/1777) |
@@ -32,7 +31,6 @@
 | `static-mmbrn-ingress-auth` | #1303-B: static ingress и Panel forward-auth | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-target-provision` | Target provision для static.mmbrn.tech | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-disposition-ledger` | #1305-B: disposition ledger | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
-| `static-mmbrn-registry-read-api` | #1303-A: registry/index read API и canonicalRef resolve | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-container` | static.mmbrn.tech: контейнер оригиналов и заменяемый Affine | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `morning-journal-close-step` | Шаг закрытия журнала у утра: статус по факту, а не константой в хвосте цепочки | M | [`MORNING_JOURNAL_CLOSE_STEP_PROMPT.md`](../prompts/MORNING_JOURNAL_CLOSE_STEP_PROMPT.md) | [#1782](https://github.com/officefish/Membrana/issues/1782) |
 | `frame-holders-reassign-twenty` | Переназначение двадцати фреймов: у каждого явный держатель, модератор назван отдельно (Р3 ADR-0025) | M | [`FRAME_HOLDERS_REASSIGN_TWENTY_PROMPT.md`](../prompts/FRAME_HOLDERS_REASSIGN_TWENTY_PROMPT.md) | [#1787](https://github.com/officefish/Membrana/issues/1787) |
@@ -198,8 +196,10 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `cowork-static-registry-read-api` | Cowork Sprint: static registry truth and canonicalRef read API | 2026-08-09 | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-static-registry-read-api/COWORK_SPRINT_BRIEF.md) | — | [карточка](./archive/cowork-static-registry-read-api.md) |
 | `archivarius-mongo-restore-drill` | Прогон восстановления архивариуса: откат дампа проверяется предикатом, а не размером файла | 2026-08-09 | [`ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md) | #1809 (Issue открыт) | [карточка](./archive/archivarius-mongo-restore-drill.md) |
 | `archivarius-mongo-dump` | Дамп тома archivarius-mongo-data: снятие, хранение, ротация, манифест | 2026-08-09 | [`ARCHIVARIUS_MONGO_DUMP_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_DUMP_PROMPT.md) | #1714 (Issue открыт) | [карточка](./archive/archivarius-mongo-dump.md) |
+| `static-mmbrn-registry-read-api` | #1303-A: registry/index read API и canonicalRef resolve | 2026-08-09 | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — | [карточка](./archive/static-mmbrn-registry-read-api.md) |
 | `media-library-a3-mic-recorder` | Media library A3: mic buffer recorder plugin | 2026-08-09 | [`MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md`](../prompts/MEDIA_LIBRARY_A3_MIC_RECORDER_PROMPT.md) | — | [карточка](./archive/media-library-a3-mic-recorder.md) |
 | `media-library-a4-sample-player` | Media library A4: sample playback, export, and waveform player plugin | 2026-08-09 | [`MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md`](../prompts/MEDIA_LIBRARY_A4_SAMPLE_PLAYER_PROMPT.md) | — | [карточка](./archive/media-library-a4-sample-player.md) |
 | `trends-fft-template-editor` | Редактор пользовательских шаблонов trends-fft | 2026-08-09 | [`TRENDS_FFT_TEMPLATE_EDITOR_PROMPT.md`](../prompts/TRENDS_FFT_TEMPLATE_EDITOR_PROMPT.md) | #57 (Issue открыт) | [карточка](./archive/trends-fft-template-editor.md) |
