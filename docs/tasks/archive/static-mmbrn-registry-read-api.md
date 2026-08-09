@@ -13,8 +13,8 @@
 
 ## Заметки при закрытии
 
-PR #1828 merged 2026-08-09 as 9baa7f61; exact-SHA c8b298c4 LGTM; CI 6/6 including Node 20 image smoke; P2 follow-ups preserved in review.
+PR #1828 merged 2026-08-09 as 9baa7f61; closure LGTM c8b298c4 and review/teamlead=success; required CI, Turbo unit tests, gitleaks and Node 20 image smoke run 31325287329 passed; optional review and Mintlify skipped; P2 follow-ups preserved in review.
 
 ---
 
-*Карточка сгенерирована `yarn task:archive`. Спецификация остаётся в `docs/prompts/`.*
+*Карточка сгенерирована `yarn task:archive`. Спецификация остаётся по ссылке выше.*

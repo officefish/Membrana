@@ -13,8 +13,8 @@
 
 ## Заметки при закрытии
 
-PR #1828 merged 2026-08-09 as 9baa7f61; cowork phases 1-5 completed; exact-SHA c8b298c4 reviewed by three independent reviewers and Vesnin; CI 6/6.
+PR #1828 merged 2026-08-09 as 9baa7f61; cowork phases 1-5 completed; closure LGTM c8b298c4 and review/teamlead=success; required CI, Turbo unit tests, Office image smoke and gitleaks passed; optional review and Mintlify skipped.
 
 ---
 
-*Карточка сгенерирована `yarn task:archive`. Спецификация остаётся в `docs/prompts/`.*
+*Карточка сгенерирована `yarn task:archive`. Спецификация остаётся по ссылке выше.*

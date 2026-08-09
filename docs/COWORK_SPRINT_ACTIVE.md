@@ -13,7 +13,7 @@
 | owner cut ratification | 2026-08-09 — «ратифицирую» |
 | preparation delivery | PR #1827, merged as `322501ef` |
 | preparation review | T2 LGTM, reviewed SHA `8c82c5031c42ef2e4087fccfc11d8776a2894d70` |
-| current phase | **4 — Integration** |
+| current phase | **5 — Merge + archive (closed)** |
 | integration deadline | 2026-08-14 fallback |
 
 ## Blocks
@@ -35,8 +35,8 @@ Integration-ветка: `cowork/cowork-static-registry-read-api/integration` в
 | 1 — Concept | **closed** | 3/3: `bfb1dcd5`, `099255c0`, `44536a48`; изоляция заявлена всеми командами, блокеров нет |
 | 2 — Isolated build | **closed** | `ready(A) && ready(B) && ready(C)`; три freeze-тега отправлены на exact SHA |
 | 3 — Interface Consilium | **closed** | 3/3 `ACCEPT-WITH-ADAPTERS`; `INTERFACE_CONTRACT.md`; S-C2 не наступил |
-| 4 — Integration | **open** | review SHA `0852fdad` дал BLOCK; CI SHA `d039833e` затем поймал промежуточный `tsc`-выход static-registry в образе; исправлен порядок runtime-сборки, новый SHA ждёт проверки |
-| 5 — Merge + archive | pending | PR #1828 открыт; retrospective готова; повторный exact-SHA review, CI, merge и archive ещё не подтверждены |
+| 4 — Integration | **closed** | после BLOCK на `0852fdad` и CI BLOCK на `d039833e` exact SHA `c8b298c4` получил closure LGTM и `review/teamlead=success`; обязательные CI-проверки зелёные |
+| 5 — Merge + archive | **closed** | PR #1828 merged как `9baa7f61`; target и carrier архивированы; `cowork:close` выполнен 2026-08-09 |
 
 ## Isolation Guard
 
