@@ -12,6 +12,14 @@
     "verbatim": "ратифицирую",
     "scope": "Исполнительный граф и нарезка поставок EPIC, включая производные Target provision и M6 alignment; production mutation и cutover не разрешены."
   },
+  "amendments": [
+    {
+      "by": "owner",
+      "at": "2026-08-09",
+      "verbatim": "делаем registry-задачу и потом идем в коворк",
+      "scope": "Live read-only inventory выделен из завершённой tool-фазы в самостоятельный evidence-узел; production mutation по-прежнему не разрешена."
+    }
+  ],
   "edges": {
     "meeting-static-mmbrn-container": [],
     "static-mmbrn-registry-read-api": [
@@ -20,8 +28,11 @@
     "static-mmbrn-inventory-export": [
       "meeting-static-mmbrn-container"
     ],
-    "static-mmbrn-disposition-ledger": [
+    "static-mmbrn-live-inventory": [
       "static-mmbrn-inventory-export"
+    ],
+    "static-mmbrn-disposition-ledger": [
+      "static-mmbrn-live-inventory"
     ],
     "static-mmbrn-target-provision": [
       "static-mmbrn-disposition-ledger"
@@ -31,7 +42,7 @@
       "static-mmbrn-target-provision"
     ],
     "static-mmbrn-rehydrate-parity": [
-      "static-mmbrn-inventory-export",
+      "static-mmbrn-live-inventory",
       "static-mmbrn-disposition-ledger",
       "static-mmbrn-target-provision"
     ],

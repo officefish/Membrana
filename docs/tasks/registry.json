@@ -1,6 +1,50 @@
 {
   "tasks": [
     {
+      "id": "cowork-static-registry-read-api",
+      "title": "Cowork Sprint: static registry truth and canonicalRef read API",
+      "promptPath": "docs/cowork-sprint/cowork-static-registry-read-api/COWORK_SPRINT_BRIEF.md",
+      "githubIssue": null,
+      "noIssueReason": "Execution carrier фазы #1303-A под существующим umbrella #1303; отдельная Issue и третий umbrella не создаются",
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "cowork-sprint",
+      "createdAt": "2026-08-09",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "3 блока registry-contract/registry-index/read-api; изоляция до Interface Consilium; мёржатся все три; закрывает static-mmbrn-registry-read-api только после integration DoD",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "static-mmbrn-registry-read-api"
+    },
+    {
+      "id": "static-mmbrn-live-inventory",
+      "title": "#1305-A2: live read-only sealed inventory Affine",
+      "promptPath": "docs/prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "Операционный акт существующего umbrella #1305; отдельная Issue не создаётся и зонтик не закрывается",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-09",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ],
+      "notes": "Holder #1305; только owner/ops-authorized read-only snapshot; production mutation запрещена; выход — sealed DB/export inventory",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "static-mmbrn-container"
+    },
+    {
       "id": "archivarius-mongo-restore-drill",
       "title": "Прогон восстановления архивариуса: откат дампа проверяется предикатом, а не размером файла",
       "promptPath": "docs/prompts/ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md",
