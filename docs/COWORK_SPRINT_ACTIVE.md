@@ -13,16 +13,16 @@
 | owner cut ratification | 2026-08-09 — «ратифицирую» |
 | preparation delivery | PR #1827, merged as `322501ef` |
 | preparation review | T2 LGTM, reviewed SHA `8c82c5031c42ef2e4087fccfc11d8776a2894d70` |
-| current phase | **2 — Isolated build** |
+| current phase | **3 — Interface Consilium** |
 | integration deadline | 2026-08-14 fallback |
 
 ## Blocks
 
 | Блок | Ветка | Worktree | Фаза | Готовность |
 |------|-------|----------|------|------------|
-| `registry-contract` | `cowork/cowork-static-registry-read-api/registry-contract` | `.worktrees/Membrana-registry-contract` | 2 | concept `bfb1dcd5`; isolated build до собственного DoD |
-| `registry-index` | `cowork/cowork-static-registry-read-api/registry-index` | `.worktrees/Membrana-registry-index` | 2 | concept `099255c0`; isolated build до собственного DoD |
-| `read-api` | `cowork/cowork-static-registry-read-api/read-api` | `.worktrees/Membrana-read-api` | 2 | concept `44536a48`; isolated build до собственного DoD |
+| `registry-contract` | `cowork/cowork-static-registry-read-api/registry-contract` | `.worktrees/Membrana-registry-contract` | freeze | `cbba747e`; 24/24 tests + lint + typecheck |
+| `registry-index` | `cowork/cowork-static-registry-read-api/registry-index` | `.worktrees/Membrana-registry-index` | freeze | `d09dc34a`; 14/14 tests + build + typecheck |
+| `read-api` | `cowork/cowork-static-registry-read-api/read-api` | `.worktrees/Membrana-read-api` | freeze | `44630395`; 8/8 tests + lint + typecheck |
 
 Integration-ветка: `cowork/cowork-static-registry-read-api/integration` в
 `.worktrees/static-container-meeting-delivery`.
@@ -33,8 +33,8 @@ Integration-ветка: `cowork/cowork-static-registry-read-api/integration` в
 |------|--------|----------|
 | 0 — Brief + open | **closed** | brief ратифицирован; PR #1827 merged; четыре ветки и три worktree созданы от одного BASE_SHA |
 | 1 — Concept | **closed** | 3/3: `bfb1dcd5`, `099255c0`, `44536a48`; изоляция заявлена всеми командами, блокеров нет |
-| 2 — Isolated build | **open** | каждый блок проходит собственный DoD на исполняемых стабах; scoped CI обязателен |
-| 3 — Interface Consilium | pending | только после `ready(A) && ready(B) && ready(C)` либо deadline |
+| 2 — Isolated build | **closed** | `ready(A) && ready(B) && ready(C)`; три freeze-тега отправлены на exact SHA |
+| 3 — Interface Consilium | **open** | одновременное вскрытие EXPECTATIONS, контракт швов и integration smoke; production-код не пишется |
 | 4 — Integration | pending | coordinator, adapters, без переписывания блоков |
 | 5 — Merge + archive | pending | один integration PR, exact-SHA review, merge, retrospective |
 
@@ -45,6 +45,14 @@ Integration-ветка: `cowork/cowork-static-registry-read-api/integration` в
 - Общие wiring-файлы и task registry меняет только coordinator в Phase 4.
 - Стабы живут в файловой зоне блока и не входят в production graph.
 - Нарушение фиксируется как `compromised`, а не скрывается и не выбрасывает блок.
+
+### Process breach для первого разбора Phase 3
+
+После сдачи Phase 1 координатор одновременно прочитал три первых `EXPECTATIONS.md`, хотя
+регламент назначает их первое вскрытие только Interface Consilium после Phase 2. Команды не
+читали чужие материалы и не получили сведений о соседях, поэтому их реализации остались
+изолированными; нарушен момент вскрытия у координатора. Факт идёт первым вопросом консилиума и
+обязательной строкой `RETROSPECTIVE.md`.
 
 ## Central Task Guard
 
