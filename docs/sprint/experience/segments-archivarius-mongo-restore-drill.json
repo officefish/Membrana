@@ -1,0 +1,12 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "archivarius-mongo-restore-drill",
+  "forTask": "archivarius-mongo-restore-drill — прогон восстановления: откат проверяется предикатом, а не размером файла (#1809, магистраль дня 09.08)",
+  "note": "Замер: новые файлы — wc -l, правленые — git diff --numstat HEAD. Оценка плана: b1 260 · b2 300 · b3 90. Резчик сам предупредил о недооценке на соседней карточке (+90% суммой) и заложил поправку — она сработала: b1 и b2 в пределах оценки, b3 вдвое меньше, потому что второй compose-файл оказался не нужен.",
+  "measuredAt": "2026-08-09T08:10:00+00:00",
+  "segments": [
+    { "cutBlockId": "b1-restore-policy", "changedLines": 363 },
+    { "cutBlockId": "b2-restore-drill", "changedLines": 431 },
+    { "cutBlockId": "b3-failure-wire", "changedLines": 53 }
+  ]
+}

@@ -141,6 +141,7 @@
     "backup:dump": "node scripts/archivarius-dump.mjs dump",
     "backup:list": "node scripts/archivarius-dump.mjs list",
     "backup:prune": "node scripts/archivarius-dump.mjs prune",
+    "backup:restore-drill": "node scripts/archivarius-restore-drill.mjs",
     "bridge:notebook": "node scripts/bridge-notebook.mjs",
     "bridge:shown": "node scripts/bridge-shown.mjs",
     "mint:intent": "node scripts/mint-intent.mjs",
