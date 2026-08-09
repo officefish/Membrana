@@ -176,17 +176,6 @@
 | `lp3-track-import-backpressure` | LP3: track-import режим, очередь и regression DDR | M | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
 | `lp4-parallel-detection-smoke` | LP4: SLO-тесты, docs, paired smoke | S | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
 | `lp5-journal-report-renderers` | LP5: журнальные рендеры FFT-порог/тенденции (client+cabinet) + фикс live-дрона | M | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
-| `device-board-hackathon-1` | Device-board хакатон 1: visual scripting, alarm loop, journal | L | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
-| `db-h1b-board-shell` | DB-H1b: device-board XYFlow shell + board mode UI | M | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
-| `db-h1c-graph-serialize` | DB-H1c: isValidConnection, export JSON, pre-run validation | M | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
-| `db-h2a-json-import` | DB-H2a: JSON import + round-trip (stretch) | S | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
-| `db-h2b-scenario-runtime` | DB-H2b: scenario runtime v1 — initial + main loop | L | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
-| `db-h2c-mic-journal` | DB-H2c: mic stream → chunks → trends FFT → LiveJournal | L | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
-| `db-h2d-cabinet-sync` | DB-H2d: cabinet board edit + bidirectional scenario sync | L | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
-| `db-h3a-trigger-stop` | DB-H3a: trigger onStop — UI button + system event | S | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
-| `db-h3b-trigger-disconnect` | DB-H3b: trigger onDisconnect — stop; reconnect via initial | S | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
-| `db-h3c-subgraph` | DB-H3c: subgraph/functions v1 (depth ≤ 1) | M | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
-| `db-h4-alarm-close` | DB-H4: alarm loop (mandatory) + hackathon close + smoke | L | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — |
 | `membrane-node-runtime-remote` | MP7b: Device Board Realtime Runtime — WS run/stop, режим, live-мониторинг (RT0–RT7) | L | [`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md) | — |
 | `mp7b-rt0-contract` | RT0: runtime.* wire-контракт в @membrana/core | S | [`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md) | — |
 | `mp7b-rt1-gateway` | RT1: канал runtime в NodeRealtimeGateway (fan-out по nodeId) | M | [`DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_REALTIME_RUNTIME_EPIC_PROMPT.md) | — |
@@ -204,10 +193,6 @@
 | `ucv2-2-freeze-async-tracks` | UCV2-2: async MakeTrack + reports while runtime paused | M | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-3-pack-verify` | UCV2-3: usercase:build + verify-pack + smoke | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
 | `ucv2-4-operator-signoff` | UCV2-4: operator LGTM doc + epic close | S | [`USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md`](../prompts/USERCASE_MVP_V2_GROUPS_ASYNC_EPIC_PROMPT.md) | — |
-| `device-board-phase-3` | Device-board Phase 3: catalog service, validators, competition | L | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
-| `db-p3-a1-usercase-catalog-service` | DB-P3-A1: migrate usercase-catalog-service package | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
-| `db-p3-a2-runtime-validators` | DB-P3-A2: runtime validators + live UI | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
-| `db-p3-a3-competition-restrictions` | DB-P3-A3: competition executionPolicy + restrictions | M | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — |
 | `opencode-proxy-sprint-2026-06-25` | Day sprint: OpenCode + LLM proxy providers (freemodel.dev) | M | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `oc-proxy-s0-research-isolation` | OC0: research + env isolation for LLM proxy | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `oc-proxy-s1-opencode-install` | OC1: install OpenCode CLI | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
@@ -236,7 +221,6 @@
 | `db-sf-9-docs-sync` | SF9: docs sync CONCEPT/catalog/ARCHITECTURE | S | [`DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md`](../prompts/DEVICE_BOARD_SERVER_FIRST_SPRINT_PROMPT.md) | — |
 | `neural-tier-1b-contract` | Neural tier 1.B: NeuralDetector контракт + YAMNet/CLAP skeleton | L | [`INTEGRATIONS_STRATEGY.md`](../INTEGRATIONS_STRATEGY.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `neural-free-tier-dataset-report` | Free-tier: датасет + трек → детектор → отчёт (1 ГБ library) | L | [`neural-detectors-strategy-2026-06-26.md`](../seanses/neural-detectors-strategy-2026-06-26.md) | — |
-| `rag-dual-circuit-v1` | RAG Dual-Circuit v1: doc-memory + code-structure (эпик) | L | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — |
 | `fv1-s2-closeout` | Night Build: fv1-S2 closeout — реестр/worktree reconciliation после merge #217/#218 | S | [`FV1_S2_CLOSEOUT_NIGHT_BUILD_EPIC_PROMPT.md`](../prompts/FV1_S2_CLOSEOUT_NIGHT_BUILD_EPIC_PROMPT.md) | — |
 | `vdr-hard-gate` | Epic: VDR-Hard-Gate — пилот валидации (30–35), плагин микрофона «VDR-валидация», trends benchmark 85/90 (HG1–HG4) | L | [`VDR_HARD_GATE_EPIC_PROMPT.md`](../prompts/VDR_HARD_GATE_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
 | `vdr-hg3-trends-benchmark` | HG3: benchmark trends на пилоте (канон метрик) + сравнение с template-match v0.1; плагин зеркалит числа | M | [`VDR_HARD_GATE_EPIC_PROMPT.md`](../prompts/VDR_HARD_GATE_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
@@ -266,6 +250,22 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `device-board-hackathon-1` | Device-board хакатон 1: visual scripting, alarm loop, journal | 2026-08-09 | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — | [карточка](./archive/device-board-hackathon-1.md) |
+| `db-h1b-board-shell` | DB-H1b: device-board XYFlow shell + board mode UI | 2026-08-09 | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — | [карточка](./archive/db-h1b-board-shell.md) |
+| `db-h1c-graph-serialize` | DB-H1c: isValidConnection, export JSON, pre-run validation | 2026-08-09 | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — | [карточка](./archive/db-h1c-graph-serialize.md) |
+| `db-h2a-json-import` | DB-H2a: JSON import + round-trip (stretch) | 2026-08-09 | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — | [карточка](./archive/db-h2a-json-import.md) |
+| `db-h2b-scenario-runtime` | DB-H2b: scenario runtime v1 — initial + main loop | 2026-08-09 | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — | [карточка](./archive/db-h2b-scenario-runtime.md) |
+| `db-h2c-mic-journal` | DB-H2c: mic stream → chunks → trends FFT → LiveJournal | 2026-08-09 | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — | [карточка](./archive/db-h2c-mic-journal.md) |
+| `db-h2d-cabinet-sync` | DB-H2d: cabinet board edit + bidirectional scenario sync | 2026-08-09 | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — | [карточка](./archive/db-h2d-cabinet-sync.md) |
+| `db-h3a-trigger-stop` | DB-H3a: trigger onStop — UI button + system event | 2026-08-09 | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — | [карточка](./archive/db-h3a-trigger-stop.md) |
+| `db-h3b-trigger-disconnect` | DB-H3b: trigger onDisconnect — stop; reconnect via initial | 2026-08-09 | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — | [карточка](./archive/db-h3b-trigger-disconnect.md) |
+| `db-h3c-subgraph` | DB-H3c: subgraph/functions v1 (depth ≤ 1) | 2026-08-09 | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — | [карточка](./archive/db-h3c-subgraph.md) |
+| `db-h4-alarm-close` | DB-H4: alarm loop (mandatory) + hackathon close + smoke | 2026-08-09 | [`DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_HACKATHON_1_EPIC_PROMPT.md) | — | [карточка](./archive/db-h4-alarm-close.md) |
+| `device-board-phase-3` | Device-board Phase 3: catalog service, validators, competition | 2026-08-09 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/device-board-phase-3.md) |
+| `db-p3-a1-usercase-catalog-service` | DB-P3-A1: migrate usercase-catalog-service package | 2026-08-09 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/db-p3-a1-usercase-catalog-service.md) |
+| `db-p3-a2-runtime-validators` | DB-P3-A2: runtime validators + live UI | 2026-08-09 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/db-p3-a2-runtime-validators.md) |
+| `db-p3-a3-competition-restrictions` | DB-P3-A3: competition executionPolicy + restrictions | 2026-08-09 | [`DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md`](../prompts/DEVICE_BOARD_PHASE_3_EPIC_PROMPT.md) | — | [карточка](./archive/db-p3-a3-competition-restrictions.md) |
+| `rag-dual-circuit-v1` | RAG Dual-Circuit v1: doc-memory + code-structure (эпик) | 2026-08-09 | [`RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md`](../prompts/RAG_DUAL_CIRCUIT_V1_EPIC_PROMPT.md) | — | [карточка](./archive/rag-dual-circuit-v1.md) |
 | `llm-probe-still-lies-net` | llm-probe зовёт сетью что попало: catch-all 'net' и три несогласованных словаря исходов | 2026-08-08 | [`LLM_PROBE_STILL_LIES_NET_PROMPT.md`](../prompts/LLM_PROBE_STILL_LIES_NET_PROMPT.md) | #1804 | [карточка](./archive/llm-probe-still-lies-net.md) |
 | `feedback-claims-code-probe` | Гейт проверки утверждений вечернего протокола против кода (строка 5 хендофа 08.08) | 2026-08-08 | [`FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md`](../prompts/FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md) | #1795 | [карточка](./archive/feedback-claims-code-probe.md) |
 | `dockerfile-copy-manifest-drifts` | Dockerfile офиса: поимённый COPY дублирует граф импортов — сделать расхождение невозможным или видимым | 2026-08-08 | [`DOCKERFILE_COPY_MANIFEST_DRIFTS_PROMPT.md`](../prompts/DOCKERFILE_COPY_MANIFEST_DRIFTS_PROMPT.md) | #1797 | [карточка](./archive/dockerfile-copy-manifest-drifts.md) |
