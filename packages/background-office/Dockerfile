@@ -48,8 +48,11 @@ COPY scripts/network/lib/classify.mjs scripts/network/lib/classify.mjs
 # первого MODULE_NOT_FOUND на проде (срабатывание 07.08 стоило бы 12 синтезов из 12).
 # Добавляя здесь модуль, дождись зелёного смоука; для нового источника образа добавь path trigger workflow.
 
+# Office's tsc -b emits referenced projects as intermediate files. Rebuild the
+# registry package last so runtime receives its Node-loadable Vite bundle.
 RUN yarn workspaces focus @membrana/background-office --all \
-  && yarn workspace @membrana/background-office build
+  && yarn workspace @membrana/background-office build \
+  && yarn workspace @membrana/static-registry-service build
 
 FROM node:20-alpine AS runtime
 RUN corepack enable

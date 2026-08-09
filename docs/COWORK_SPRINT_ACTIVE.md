@@ -35,7 +35,7 @@ Integration-ветка: `cowork/cowork-static-registry-read-api/integration` в
 | 1 — Concept | **closed** | 3/3: `bfb1dcd5`, `099255c0`, `44536a48`; изоляция заявлена всеми командами, блокеров нет |
 | 2 — Isolated build | **closed** | `ready(A) && ready(B) && ready(C)`; три freeze-тега отправлены на exact SHA |
 | 3 — Interface Consilium | **closed** | 3/3 `ACCEPT-WITH-ADAPTERS`; `INTERFACE_CONTRACT.md`; S-C2 не наступил |
-| 4 — Integration | **open** | первый review SHA `0852fdad` дал BLOCK: prototype-safe JSON, Atlas drift и неполный image probe; исправления собраны, новый SHA ждёт проверки |
+| 4 — Integration | **open** | review SHA `0852fdad` дал BLOCK; CI SHA `d039833e` затем поймал промежуточный `tsc`-выход static-registry в образе; исправлен порядок runtime-сборки, новый SHA ждёт проверки |
 | 5 — Merge + archive | pending | PR #1828 открыт; retrospective готова; повторный exact-SHA review, CI, merge и archive ещё не подтверждены |
 
 ## Isolation Guard

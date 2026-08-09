@@ -43,7 +43,10 @@ composition-ready и намеренно не монтируется в productio
 - integrated smoke: real parser/index/port/controller, malformed 400, unknown 404, no address leak;
 - pre-push affected graph: 54/54;
 - current registry: 18 records / 14 lineages;
-- Docker image smoke: **unknown locally**, daemon unavailable; PR CI must supply evidence.
+- Docker image smoke: локальный daemon недоступен; первый расширенный PR-прогон честно
+  поймал промежуточный многофайловый `tsc`-выход static-registry в runtime-образе.
+  Docker build теперь последним создаёт Node-loadable Vite bundle; повторный PR CI
+  обязан подтвердить исправление исполнением внутри контейнера.
 
 ## Process incident
 
