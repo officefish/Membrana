@@ -48,7 +48,7 @@ read-only transport. Он не выполняет live-инвентаризац�
 
 - `packages/core/src/contracts/index.ts`;
 - `packages/background-office/src/app.module.ts`;
-- `package.json`, workspace manifests и dependency wiring;
+- root/shared `package.json`, manifests других workspaces и cross-package dependency wiring;
 - `docs/tasks/registry.json`, `docs/tasks/README.md`, `docs/COWORK_SPRINT_ACTIVE.md`;
 - runtime-адаптер чтения канонического `registry.jsonl`.
 
@@ -123,7 +123,8 @@ parent epic остаётся active, а `meeting:status` показывает с
 ## Порядок фаз
 
 1. После ратификации brief и merge подготовительного PR координатор фиксирует свежий BASE_SHA.
-2. `cowork:open` создаёт три ветки/worktree от одного SHA и обновляет ACTIVE.
+2. `cowork:open` валидирует brief, фиксирует BASE_SHA и печатает команды. Координатор
+   выполняет их, создаёт три ветки/worktree от этого SHA и обновляет ACTIVE.
 3. Каждая команда сдаёт `CONCEPT.md`, затем собственный DoD на стабах.
 4. Гейт `ready(A) && ready(B) && ready(C)` либо deadline открывает Interface Consilium.
 5. Координатор собирает integration-ветку адаптерами, отдаёт один PR на ревью и только после
