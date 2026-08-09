@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `archivarius-mongo-restore-drill` | Прогон восстановления архивариуса: откат дампа проверяется предикатом, а не размером файла | M | [`ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md) | [#1809](https://github.com/officefish/Membrana/issues/1809) |
 | `review-diff-explicit-base` | Ревью читает дифф с явной базой; вердикт несёт базу рядом с head (строка 7 хендофа 08.08) | M | [`REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md`](../prompts/REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md) | [#1771](https://github.com/officefish/Membrana/issues/1771) |
 | `tariff-concurrent-move-reason` | Параллельная смена тарифа отвечает своей причиной: tariff_moved_concurrently вместо same_tariff (строка 4 хендофа 08.08) | S | [`TARIFF_CONCURRENT_MOVE_REASON_PROMPT.md`](../prompts/TARIFF_CONCURRENT_MOVE_REASON_PROMPT.md) | [#1777](https://github.com/officefish/Membrana/issues/1777) |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
@@ -265,6 +264,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `archivarius-mongo-restore-drill` | Прогон восстановления архивариуса: откат дампа проверяется предикатом, а не размером файла | 2026-08-09 | [`ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md) | #1809 (Issue открыт) | [карточка](./archive/archivarius-mongo-restore-drill.md) |
 | `archivarius-mongo-dump` | Дамп тома archivarius-mongo-data: снятие, хранение, ротация, манифест | 2026-08-09 | [`ARCHIVARIUS_MONGO_DUMP_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_DUMP_PROMPT.md) | #1714 (Issue открыт) | [карточка](./archive/archivarius-mongo-dump.md) |
 | `llm-probe-still-lies-net` | llm-probe зовёт сетью что попало: catch-all 'net' и три несогласованных словаря исходов | 2026-08-08 | [`LLM_PROBE_STILL_LIES_NET_PROMPT.md`](../prompts/LLM_PROBE_STILL_LIES_NET_PROMPT.md) | #1804 | [карточка](./archive/llm-probe-still-lies-net.md) |
 | `feedback-claims-code-probe` | Гейт проверки утверждений вечернего протокола против кода (строка 5 хендофа 08.08) | 2026-08-08 | [`FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md`](../prompts/FEEDBACK_CLAIMS_CODE_PROBE_PROMPT.md) | #1795 | [карточка](./archive/feedback-claims-code-probe.md) |
