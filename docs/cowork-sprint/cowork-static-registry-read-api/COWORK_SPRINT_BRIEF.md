@@ -8,12 +8,12 @@
 | execution parent | `static-mmbrn-registry-read-api` |
 | root epic | `static-mmbrn-container` |
 | baseBranch | `main` |
-| BASE_SHA | назначается после merge подготовительного PR |
+| BASE_SHA | `322501efb24854a848d9cf726d57c99cdc271a1a` |
 | blocks | `registry-contract`, `registry-index`, `read-api` |
 | integration deadline | 2026-08-14 (fallback; гейт 2->3 событийный) |
 | координатор | Codex; ведёт фазы, Interface Consilium и integration-ветку |
 | ратификация резки владельцем | **owner, 2026-08-09** — «ратифицирую» |
-| LGTM координатора | **PENDING** |
+| LGTM координатора | **Codex, 2026-08-09** — brief/open принят после T2 LGTM и merge PR #1827 |
 
 ## Problem
 
@@ -138,5 +138,5 @@ parent epic остаётся active, а `meeting:status` показывает с
 - [x] Интеграционный smoke и stop boundaries названы.
 - [x] Все узлы центрального DAG перечислены с явным состоянием.
 - [x] Владелец ратифицировал эту резку 2026-08-09 словом «ратифицирую».
-- [ ] Подготовительный PR получил LGTM и merged.
-- [ ] Три worktree созданы от одного свежего BASE_SHA.
+- [x] Подготовительный PR #1827 получил T2 LGTM и merged как `322501ef`.
+- [x] Три worktree созданы от одного свежего BASE_SHA `322501ef`.
