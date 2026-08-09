@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-08-08T07:59:14.986Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-08-09T06:46:26.857Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -50,7 +50,7 @@ _Кристаллов активно: 127 (owner: 81, derived: 46). Страте
 - ~~**Server forwarding — серверные функции сценария**~~ — `insight:insight-server-forwarding` _(stale · 2026-06-25)_
 - ~~**Ночные сны → процедура во фреймах с настраиваемым через панель провайдером**~~ — `insight:insight-dreams-procedure-frames` _(stale · 2026-07-25)_
 - **Память процедур: показывается, а не запрашивается; вовлечённость числом, а не подтверждением** — `insight:insight-procedure-memory-shown-not-asked`
-- **Оркестрация процедур через n8n: кожух и производный рендер поверх git как единственного источника правды** — `insight:insight-procedures-orchestration-n8n`
+- ~~**Оркестрация процедур через n8n: кожух и производный рендер поверх git как единственного источника правды**~~ — `insight:insight-procedures-orchestration-n8n` _(stale · 2026-07-26)_
 - ~~**Токены правды: владельческие факты как источник истины для ритуала**~~ — `insight:insight-truth-tokens-owner-facts` _(stale · 2026-07-16)_
 - ~~**Контейнер прецедентов + мастерская к нему**~~ — `insight:insight-precedent-container` _(stale · 2026-07-22)_
 - **Второй тариф: MFCC-спектр + нейроанализ спектрограмм машинным зрением, разделение продукта по тарифам** — `insight:insight-spectrum-tiers`
@@ -83,7 +83,7 @@ _Кристаллов активно: 127 (owner: 81, derived: 46). Страте
 - ~~**Публикация документации туллинга на docs.mmbrn.tech (Mintlify custom domain)**~~ — `insight:insight-docs-custom-domain` _(stale · 2026-07-22)_
 - ~~**Hindsight — обучающаяся память агента между сессиями**~~ — `insight:insight-mcp-hindsight-agent-memory` _(stale · 2026-06-27)_
 - ~~**ServerFunctionRegistry в @membrana/core**~~ — `insight:insight-ozhegov-server-function-registry` _(stale · 2026-06-25)_
-- **Контракт намерения: граф правды ↔ мостик, треугольник + мана + твёрдость** — `insight:insight-intent-contract-graph-bridge`
+- ~~**Контракт намерения: граф правды ↔ мостик, треугольник + мана + твёрдость**~~ — `insight:insight-intent-contract-graph-bridge` _(stale · 2026-07-26)_
 - ~~**Живой нейро-combined детектор (эшелон-2-live): yamnet в combinedScore**~~ — `insight:insight-live-neural-combined-detector` _(stale · 2026-07-12)_
 - **Server-only прогон двух ритуалов через панель как показательный опыт автономии** — `insight:insight-server-only-ritual-run`
 - ~~**Хранилище архива закрытых задач: append-only log vs Postgres**~~ — `insight:insight-task-archive-storage` _(stale · 2026-06-28)_

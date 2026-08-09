@@ -20,3 +20,21 @@
 {"ts":"2026-08-08T16:13:40.589Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-08T16:13:15.599Z","origin":"ask-persona"}
 {"ts":"2026-08-08T16:13:40.599Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-25-insight-cast-carrier-contract","reason":"прямой перенос принципа: «каждая деталь оправдана конструкцией, декора без смысла не существует» + предостережение от преждевременной абстракции. Ровно то, что решает развилку (2): четыре литерала — ещё не тип.","origin":"ask-persona"}
 {"ts":"2026-08-08T16:13:40.601Z","persona":"vesnin","verb":"emerge","ref":"vesnin-0000-00-00-angelina-hostess-m1-canon-secretary","reason":"«один скилл — одна лемма — одна зона ответственности». Здесь: одна причина — один субъект. same_tariff про домен, tariff_moved_concurrently про окружение — леммы разные.","origin":"ask-persona"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-03-static-mmbrn-container-m0-order","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-03-static-mmbrn-container-m1-boundary","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-03-static-mmbrn-container-m2-identity","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-04-static-mmbrn-container-m3-access","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-04-static-mmbrn-container-m4-storage","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-06-static-mmbrn-container-m5-affine-role","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-06-static-mmbrn-container-m6-intake-delivery","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-08-static-mmbrn-container-m7-migration-delivery","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-08-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-task-archive-cold-store-m4-write-path-idempotency","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-task-archive-cold-store-m5-recovery-audit","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-task-archive-cold-store-m6-migration-path","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-task-archive-cold-store-m7-lifecycle-integration","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-29-network-container-form","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-29-night-triage-insight-harvest","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-29-sprint-honest-m0-order","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-29-sprint-honest-m1-performer","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:34.113Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

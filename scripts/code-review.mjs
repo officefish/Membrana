@@ -79,6 +79,7 @@ const regulation = readRequiredFile(REGULATION_PATH);
 const virtualTeam = readRequiredFile(VIRTUAL_TEAM_PATH);
 
 let diffScope = { truncated: false, sentChars: null };
+let diffSource = null;
 let contextBlock = '';
 let dayWorkHeader = '';
 if (cli.mode === 'daily') {
@@ -100,6 +101,8 @@ if (cli.mode === 'daily') {
 } else {
   const ctx = collectReviewContext(cli);
   contextBlock = ctx.text;
+  // Провенанс источника (#1771) едет из сборщика контекста в артефакт ревью.
+  diffSource = ctx.diffSource ?? null;
   // #1550: факт «модель видела не весь дифф» обязан дойти до вердикта и до гейта,
   // а не осесть пометкой в промпте. Молчаливый BLOCK по непрочитанному неотличим
   // от честного, и гейт не может их развести.
@@ -226,6 +229,9 @@ try {
         // Шип-гейт (#924): вердикт ревью PR привязывается к ИМЕННО той версии кода,
         // которую смотрел ведущий; новый коммит протухает вердикт (yarn review:gate).
         headSha: cli.mode === 'pr' ? headShaOfPr(cli.pr) : null,
+        // Провенанс источника диффа (#1771): база и способ добычи доходят до артефакта и
+        // до маркера вердикта. Без них вердикт заявляет «осмотрено», не называя ЧТО.
+        diffSource,
         lead: reviewLeadId,
         diffScope,
       },

@@ -1,6 +1,66 @@
 {
   "tasks": [
     {
+      "id": "archivarius-mongo-restore-drill",
+      "title": "Прогон восстановления архивариуса: откат дампа проверяется предикатом, а не размером файла",
+      "promptPath": "docs/prompts/ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md",
+      "githubIssue": 1809,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-08",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin"
+      ],
+      "notes": "Выделено из #1714 08.08 по разбору Ожегова: бэкап = дамп + верифицированное восстановление; без второго это mongo-dump-artifact. Блокируется карточкой archivarius-mongo-dump: проверять нечего, пока нечего восстанавливать. До закрытия ЭТОЙ карточки страховки нет — есть артефакт неизвестной пригодности.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "archivarius-mongo-dump",
+      "title": "Дамп тома archivarius-mongo-data: снятие, хранение, ротация, манифест",
+      "promptPath": "docs/prompts/ARCHIVARIUS_MONGO_DUMP_PROMPT.md",
+      "githubIssue": 1714,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-06",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "dynin"
+      ],
+      "notes": "Остаток #1714 после объявления сервиса в манифесте (PR #1747, 06.08). Обзор «что уже есть»: бэкапа нет никакого — ноль глаголов backup/dump/restore по репозиторию. Пять развилок нарезки в промпте. Аутентификация Mongo вне предмета — отдельная иссью. Серверная зона: шотом нельзя, исполнение под owner-гейтом. ПЕРЕИМЕНОВАНА 08.08 по разбору Ожегова: «бэкап = дамп + верифицированное восстановление; без второго это mongo-dump-artifact, а не backup». Имя не должно обещать страховку, когда вещь даёт артефакт. Проверка восстановления — отдельная карточка archivarius-mongo-restore-drill.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "review-diff-explicit-base",
+      "title": "Ревью читает дифф с явной базой; вердикт несёт базу рядом с head (строка 7 хендофа 08.08)",
+      "promptPath": "docs/prompts/REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md",
+      "githubIssue": 1771,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-08",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ],
+      "notes": "План ратифицирован владельцем 08.08. Дефект B (в вердикте нет базы) воспроизводится всегда, дефект A (кэш gh pr diff) 08.08 не воспроизвёлся на трёх PR — приёмка A синтетикой, не живым прогоном.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "tariff-concurrent-move-reason",
       "title": "Параллельная смена тарифа отвечает своей причиной: tariff_moved_concurrently вместо same_tariff (строка 4 хендофа 08.08)",
       "promptPath": "docs/prompts/TARIFF_CONCURRENT_MOVE_REASON_PROMPT.md",
@@ -36,7 +96,7 @@
       ],
       "notes": "Замер 08.08: catch-all на llm-probe.mjs:163 подтверждён; у llm-probe 11 зелёных зубов, у infra-probe ноль; словарей исходов ТРИ (llm-probe, infra-policy, network/lib/classify #1449) и они не согласованы.",
       "archiveNotes": "Спринт 08.08: classifyOutcome стал обёрткой над classify.mjs (#1449), probeOnce отдаёт errorCode, infra-probe получил первые зубы, infra-policy назван таблицей представления. PR #1805. Живой прогон: 13 звеньев, ни одного ложного net.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-08"
     },
     {
       "id": "feedback-claims-code-probe",
@@ -56,7 +116,7 @@
       ],
       "notes": "Долг попугая #team-feedback-claims-code-unverified. План нарезки ратифицирован владельцем 08.08. Охват v1 честный: 2 hard-вещдока, 1 находка «реестр протух», утверждение о слое — v1.1 (decideTransition используется вне определения, счётом вхождений не ловится).",
       "archiveNotes": "Работа доставлена сессией 08.08 (#1795 CLOSED): прибор feedback:claims построен и подключён третьим шагом вечернего хвоста, 59 зубов. Проверено прогоном на протоколе 07.08.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-08"
     },
     {
       "id": "dockerfile-copy-manifest-drifts",
@@ -75,7 +135,7 @@
       ],
       "notes": "Замер 08.08: расхождения сейчас 0, балласт 1 (llm-probe.mjs). Цена директорного COPY названа: scripts/lib = 330 файлов / 3.5 MB против 12 файлов / 109 KB нужного. Приёмка по условию исполнителя — smoke dreams-tick внутри контейнера в CI.",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-08"
     },
     {
       "id": "static-mmbrn-retirement",
@@ -325,46 +385,6 @@
       "githubIssueClosedAt": null
     },
     {
-      "id": "archivarius-mongo-restore-drill",
-      "title": "Прогон восстановления архивариуса: откат дампа проверяется предикатом, а не размером файла",
-      "promptPath": "docs/prompts/ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md",
-      "githubIssue": 1809,
-      "linearId": null,
-      "size": "M",
-      "status": "active",
-      "sprintKind": "membrana-local-sprint",
-      "createdAt": "2026-08-08",
-      "archivedAt": null,
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "dynin",
-        "vesnin"
-      ],
-      "notes": "Выделено из #1714 08.08 по разбору Ожегова: бэкап = дамп + верифицированное восстановление; без второго это mongo-dump-artifact. Блокируется карточкой archivarius-mongo-dump: проверять нечего, пока нечего восстанавливать. До закрытия ЭТОЙ карточки страховки нет — есть артефакт неизвестной пригодности.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
-    },
-    {
-      "id": "archivarius-mongo-dump",
-      "title": "Дамп тома archivarius-mongo-data: снятие, хранение, ротация, манифест",
-      "promptPath": "docs/prompts/ARCHIVARIUS_MONGO_DUMP_PROMPT.md",
-      "githubIssue": 1714,
-      "linearId": null,
-      "size": "M",
-      "status": "active",
-      "sprintKind": "membrana-local-sprint",
-      "createdAt": "2026-08-06",
-      "archivedAt": null,
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "vesnin",
-        "dynin"
-      ],
-      "notes": "Остаток #1714 после объявления сервиса в манифесте (PR #1747, 06.08). Обзор «что уже есть»: бэкапа нет никакого — ноль глаголов backup/dump/restore по репозиторию. Пять развилок нарезки в промпте. Аутентификация Mongo вне предмета — отдельная иссью. Серверная зона: шотом нельзя, исполнение под owner-гейтом. ПЕРЕИМЕНОВАНА 08.08 по разбору Ожегова: «бэкап = дамп + верифицированное восстановление; без второго это mongo-dump-artifact, а не backup». Имя не должно обещать страховку, когда вещь даёт артефакт. Проверка восстановления — отдельная карточка archivarius-mongo-restore-drill.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
-    },
-    {
       "id": "morning-journal-close-step",
       "title": "Шаг закрытия журнала у утра: статус по факту, а не константой в хвосте цепочки",
       "promptPath": "docs/prompts/MORNING_JOURNAL_CLOSE_STEP_PROMPT.md",
@@ -540,7 +560,7 @@
       ],
       "notes": "Девять срабатываний класса за 10 дней: пять укусов 28.07 (повод флага --keep-branch) + четыре 06.08. Умолчание pr:ship противоречит норме утра (держатель main = находка, #1232). Три слоя лечения в теле #1759; третий (спросить состояние одной командой) — самый дешёвый и недооценённый.",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-08"
     },
     {
       "id": "lazy-close-scope",
@@ -807,7 +827,7 @@
       ],
       "notes": "направление 3 иссью: прибор-сторож; замер 03.08 на Membrana-tooling — своих 1, чужих 36 из 37; дом назван иссью: worktree-sync.mjs в утренней цепочке",
       "archiveNotes": "Спринт 08.08: провод к ядру 03.08 — глагол yarn worktree:resolve (own/foreign/absent, exit 0/1/2) + ядро worktree-identity (чужое дерево названо по имени и ветке, префиксная ловушка закрыта). PR #1810. 31 зуб. Живой замер: главный чекаут читает 37 пакетов из соседнего дерева.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-08"
     },
     {
       "id": "gate-stale-supersede-by-recut",

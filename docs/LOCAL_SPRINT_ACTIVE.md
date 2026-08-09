@@ -4,8 +4,13 @@
 
 ## Focus
 
+- **review-diff-explicit-base** ([#1771](https://github.com/officefish/Membrana/issues/1771)) ·
+  gate pass 3/3 honest_pair · [`OPEN.md`](./local-sprint/review-diff-explicit-base/OPEN.md) —
+  ревью читает дифф с ЯВНОЙ базой (`gh pr diff` из тракта убран), вердикт несёт `base:`
+  рядом с head, гейт сверяет базу исходом `unknown`. Строка 7 хендофа 08.08.
 - **tariff-concurrent-move-reason** ([#1777](https://github.com/officefish/Membrana/issues/1777)) ·
-  gate pass 1/1 honest_pair · [`OPEN.md`](./local-sprint/tariff-concurrent-move-reason/OPEN.md) —
+  gate pass 1/1 honest_pair · PR #1813 merged (`ff13a0bd`) ·
+  [`OPEN.md`](./local-sprint/tariff-concurrent-move-reason/OPEN.md) —
   параллельная смена тарифа отвечает своей причиной `tariff_moved_concurrently`, а не
   `same_tariff`. Строка 4 хендофа 08.08; шоту предикат отказал (touches_server).
 

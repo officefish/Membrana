@@ -1,14 +1,4 @@
 {"ts":"2026-08-08T08:09:49.409Z","persona":"dynin","verb":"rebuild_report","ref":"retained:48","origin":"persona-extract"}
-{"ts":"2026-08-08T11:25:19.437Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-08T11:24:34.711Z","origin":"ask-persona"}
-{"ts":"2026-08-08T11:25:19.440Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T11:24:34.711Z","origin":"ask-persona"}
-{"ts":"2026-08-08T11:25:19.440Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-18-evening-auditor-doc2-report-generator","reason":"тот же паттерн: аудит как чистая функция audit(dayState) → {passed, failed, evidence}, детерминированный вход, вердикт с адресом. Прямой шаблон для verdict(token, classes, facts).","origin":"ask-persona"}
-{"ts":"2026-08-08T11:25:19.441Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-01-evening-review-predicate-m4-memoization","reason":"про формализацию предиката, чтобы не поехал: здесь тот же ход — holds ⇔ ∃ адрес, где токен встречается в классе, и подмена класса ломает предикат (прецедент 03.08).","origin":"ask-persona"}
-{"ts":"2026-08-08T15:05:31.544Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-08T15:04:52.807Z","origin":"ask-persona"}
-{"ts":"2026-08-08T15:05:31.551Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T15:04:52.807Z","origin":"ask-persona"}
-{"ts":"2026-08-08T16:16:37.258Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-08T16:16:12.512Z","origin":"ask-persona"}
-{"ts":"2026-08-08T16:16:37.336Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T16:16:12.512Z","origin":"ask-persona"}
-{"ts":"2026-08-08T16:16:37.337Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-19-insight-archive-lifecycle-c2-state-axes-r5","reason":"та же форма: закрытый enum + внешние причины как отдельный род. Здесь ровно тот случай — четвёртая внешняя причина не должна размывать закрытый список домена, а комментарий обязан назвать род явно, иначе enum «поплывёт».","origin":"ask-persona"}
-{"ts":"2026-08-08T16:16:37.337Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-05-16-single-node-detection-first","reason":"привычка требовать точный контракт причины, а не «ok/не ok»: зуб без имени причины — это самоотчёт, а не предикат.","origin":"ask-persona"}
 {"ts":"2026-08-08T09:20:24.211Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-08T09:20:01.087Z","origin":"ask-persona"}
 {"ts":"2026-08-08T09:20:24.223Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T09:20:01.087Z","origin":"ask-persona"}
 {"ts":"2026-08-08T09:20:24.226Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-03-one-shot-manifest-m4-homogeneity","reason":"там я уже разбирал ровно этот класс задач: как формализовать множество через предикат принадлежности семейству, чтобы состав был виден и проверяем, а не размазан по вызовам.","origin":"ask-persona"}
@@ -16,10 +6,38 @@
 {"ts":"2026-08-08T10:00:31.180Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T10:00:03.069Z","origin":"ask-persona"}
 {"ts":"2026-08-08T10:00:31.183Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-01-evening-review-predicate-m4-memoization","reason":"там я формализовал совместимость двух предикатов над одной областью; здесь ровно тот же паттерн: HOLDER_PERSONAS и MODERATOR_PERSONAS — два предиката над Persona, и вопрос ребра — совместимы ли они с корпусом на границе.","origin":"ask-persona"}
 {"ts":"2026-08-08T10:00:31.188Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-22-ritual-day-frames-m3-holders","reason":"там я требовал тотальности holder: Q → Persona и двух предикатов сразу; сейчас ADR-0025 Р2 фиксирует шестёрку, и зуб «MODERATOR ⊇ HOLDER, |MOD| = |HOLD|+1» — это ровно проверка тотальности и минимальности расширения.","origin":"ask-persona"}
+{"ts":"2026-08-08T11:25:19.437Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-08T11:24:34.711Z","origin":"ask-persona"}
+{"ts":"2026-08-08T11:25:19.440Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T11:24:34.711Z","origin":"ask-persona"}
+{"ts":"2026-08-08T11:25:19.440Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-18-evening-auditor-doc2-report-generator","reason":"тот же паттерн: аудит как чистая функция audit(dayState) → {passed, failed, evidence}, детерминированный вход, вердикт с адресом. Прямой шаблон для verdict(token, classes, facts).","origin":"ask-persona"}
+{"ts":"2026-08-08T11:25:19.441Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-01-evening-review-predicate-m4-memoization","reason":"про формализацию предиката, чтобы не поехал: здесь тот же ход — holds ⇔ ∃ адрес, где токен встречается в классе, и подмена класса ломает предикат (прецедент 03.08).","origin":"ask-persona"}
+{"ts":"2026-08-08T15:05:31.544Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-08T15:04:52.807Z","origin":"ask-persona"}
+{"ts":"2026-08-08T15:05:31.551Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T15:04:52.807Z","origin":"ask-persona"}
 {"ts":"2026-08-08T16:16:04.478Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-08T16:15:50.872Z","origin":"ask-persona"}
 {"ts":"2026-08-08T16:16:04.634Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T16:15:50.872Z","origin":"ask-persona"}
 {"ts":"2026-08-08T16:16:04.639Z","persona":"dynin","verb":"reject","ref":"dynin-2026-08-08T16:15:50.872Z","reason":"облако — это оценки инсайтов и ретро процесса; вопрос про политику по файлу, содержимого которого мне не показали","origin":"ask-persona"}
+{"ts":"2026-08-08T16:16:37.258Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-08T16:16:12.512Z","origin":"ask-persona"}
+{"ts":"2026-08-08T16:16:37.336Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T16:16:12.512Z","origin":"ask-persona"}
+{"ts":"2026-08-08T16:16:37.337Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-19-insight-archive-lifecycle-c2-state-axes-r5","reason":"та же форма: закрытый enum + внешние причины как отдельный род. Здесь ровно тот случай — четвёртая внешняя причина не должна размывать закрытый список домена, а комментарий обязан назвать род явно, иначе enum «поплывёт».","origin":"ask-persona"}
+{"ts":"2026-08-08T16:16:37.337Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-05-16-single-node-detection-first","reason":"привычка требовать точный контракт причины, а не «ok/не ok»: зуб без имени причины — это самоотчёт, а не предикат.","origin":"ask-persona"}
 {"ts":"2026-08-08T16:17:11.656Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-08T16:16:31.775Z","origin":"ask-persona"}
 {"ts":"2026-08-08T16:17:11.665Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-08T16:16:31.775Z","origin":"ask-persona"}
 {"ts":"2026-08-08T16:17:11.666Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-03-one-shot-manifest-m2-assignment","reason":"там я уже формулировал предикаты через явные множества и assignedBy; здесь нужна та же дисциплина: манифест как предикат, а не опись.","origin":"ask-persona"}
 {"ts":"2026-08-08T16:17:11.667Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-30-sprint-honest-m7-second-door","reason":"инвариант «machine-readable proof» прямо переносится на манифест дампа: без sha256 над телом и без подписи артефакта завтрашняя проверка опирается на воздух.","origin":"ask-persona"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-03-static-mmbrn-container-m0-order","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-03-static-mmbrn-container-m1-boundary","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-03-static-mmbrn-container-m2-identity","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-04-static-mmbrn-container-m3-access","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-04-static-mmbrn-container-m4-storage","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-06-static-mmbrn-container-m5-affine-role","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-06-static-mmbrn-container-m6-intake-delivery","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-08-static-mmbrn-container-m7-migration-delivery","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-08-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-task-archive-cold-store-m5-recovery-audit","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-task-archive-cold-store-m6-migration-path","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-task-archive-cold-store-m7-lifecycle-integration","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-network-container-form","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-night-triage-insight-harvest","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-sprint-honest-m0-order","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-sprint-honest-m1-performer","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-29-tariff-grid-m3-tri","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-08T18:07:33.356Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

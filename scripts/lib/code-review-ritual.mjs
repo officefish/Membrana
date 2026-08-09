@@ -7,6 +7,7 @@ import { spawnSync } from 'node:child_process';
 
 import { parseRagCliFlags } from './rag-ritual.mjs';
 import { renderScopeMarker, renderVerdictMarker } from './review-gate.mjs';
+import { renderSourceProvenance, resolveReviewDiff } from './review-diff-source.mjs';
 
 export const REGULATION_PATH = 'docs/prompts/CODE_REVIEW_REGULATION.md';
 export const VIRTUAL_TEAM_PATH = 'docs/VIRTUAL_TEAM_PROMPT.md';
@@ -295,39 +296,81 @@ export function collectReviewContext(opts) {
     throw new Error('Не удалось определить GitHub slug репозитория.');
   }
   const prNum = String(opts.pr);
-  const viewRes = spawnSync(
-    'gh',
-    ['pr', 'view', prNum, '--repo', slug, '--json', 'number,title,body,state,baseRefName,headRefName,files,commits'],
-    { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 },
-  );
-  if (viewRes.status !== 0) {
-    throw new Error(viewRes.stderr?.trim() || `gh pr view ${prNum} failed`);
+  // Дифф — из источника с ЯВНОЙ базой (#1771). `gh pr diff` здесь больше не участвует:
+  // его список файлов кэшируется на стороне GitHub, и 07.08 на PR #1769 он дал 23 файла
+  // против 13 фактических — ревью разбирало код соседнего, уже влитого PR. Порядок
+  // источников и условия падения живут в `review-diff-source.mjs`.
+  const resolved = resolveReviewDiff({ pr: prNum, slug, ports: ghPorts(slug) });
+  if (!resolved.ok) {
+    throw new Error(`ревью PR ${prNum}: дифф с явной базой не добыт — ${resolved.reason}`);
   }
-  const meta = JSON.parse(viewRes.stdout);
-  const diffRes = spawnSync('gh', ['pr', 'diff', prNum, '--repo', slug], {
-    encoding: 'utf8',
-    maxBuffer: 16 * 1024 * 1024,
-  });
-  const diff = diffRes.status === 0 ? diffRes.stdout : `(gh pr diff failed: ${diffRes.stderr})`;
-  const diffStatRes = spawnSync('gh', ['pr', 'diff', prNum, '--repo', slug, '--stat'], {
-    encoding: 'utf8',
-    maxBuffer: 4 * 1024 * 1024,
-  });
-  const diffStat = diffStatRes.status === 0 ? diffStatRes.stdout : '';
+  const meta = resolved.meta ?? {};
+  const diff = resolved.diff || '(нет изменений)';
+  const diffStat = resolved.stat || '';
   const lines = estimateChangedLines(diffStat);
   const taskBlock = appendTaskContext('pr');
   const files =
     Array.isArray(meta.files) && meta.files.length
       ? meta.files.map((f) => `- ${f.path} (+${f.additions}/-${f.deletions})`).join('\n')
       : '(files list unavailable)';
+  // Расхождение локального дерева с head PR НАЗЫВАЕТСЯ ревьюеру, а не проглатывается:
+  // иначе он судит одно, а вердикт привязывается к другому.
+  const headNote =
+    resolved.headMatch === false
+      ? `\n\n> ⚠ Локальное дерево не на head PR — осмотрен head PR \`${String(resolved.headSha).slice(0, 8)}\`, не рабочая копия.`
+      : '';
 
   return {
     kind: 'pr',
+    diffSource: {
+      source: resolved.source,
+      baseRef: resolved.baseRef,
+      mergeBase: resolved.mergeBase,
+      headSha: resolved.headSha,
+      headMatch: resolved.headMatch,
+      files: resolved.files,
+      truncated: resolved.truncated,
+    },
     text: trimText(
-      `${taskBlock}## PR #${meta.number}: ${meta.title}\n\n- State: ${meta.state}\n- Base: \`${meta.baseRefName}\` ← Head: \`${meta.headRefName}\`\n- Changed lines: ~${lines} (target ≤400)\n\n## Body\n\n${meta.body || '(empty)'}\n\n## Files\n\n${files}\n\n## Diff stat\n\n${diffStat || '(n/a)'}\n\n## Diff\n\n${diff}`,
+      `${taskBlock}## PR #${meta.number}: ${meta.title}\n\n- State: ${meta.state}\n- Base: \`${meta.baseRefName}\` ← Head: \`${meta.headRefName}\`\n- Merge-base: \`${String(resolved.mergeBase ?? '—').slice(0, 12)}\` (источник: ${resolved.source})\n- Changed lines: ~${lines} (target ≤400)${headNote}\n\n## Body\n\n${meta.body || '(empty)'}\n\n## Files\n\n${files}\n\n## Diff stat\n\n${diffStat || '(n/a)'}\n\n## Diff\n\n${diff}`,
       MAX_DIFF_CHARS,
       'PR diff',
     ),
+  };
+}
+
+/**
+ * Адаптеры процесса для `review-diff-source`: `gh`/`git` живут здесь, ядро остаётся чистым.
+ * Каждый порт возвращает `{ok, value|reason}` — «не удалось» и «пусто» не смешиваются.
+ */
+export function ghPorts(slug) {
+  const run = (cmd, args, max = 16 * 1024 * 1024) => {
+    const res = spawnSync(cmd, args, { encoding: 'utf8', maxBuffer: max });
+    return res.status === 0
+      ? { ok: true, value: res.stdout }
+      : { ok: false, reason: (res.stderr || '').trim() || `${cmd} exit ${res.status}` };
+  };
+  return {
+    ghJson: (args) => {
+      const r = run('gh', args, 8 * 1024 * 1024);
+      if (!r.ok) return r;
+      try {
+        return { ok: true, value: JSON.parse(r.value) };
+      } catch (e) {
+        return { ok: false, reason: `ответ gh не разбирается: ${e.message}` };
+      }
+    },
+    ghApi: (pathArgs) => {
+      const r = run('gh', ['api', ...pathArgs], 32 * 1024 * 1024);
+      if (!r.ok) return r;
+      try {
+        return { ok: true, value: JSON.parse(r.value) };
+      } catch (e) {
+        return { ok: false, reason: `ответ compare не разбирается: ${e.message}` };
+      }
+    },
+    git: (args) => run('git', args),
+    slug,
   };
 }
 
@@ -400,12 +443,26 @@ export function writeReviewMarkdown(opts) {
     ? `${renderScopeMarker(opts.meta.diffScope)}\n> ⚠ **СУДИЛ ПО СРЕЗУ:** дифф обрезан до ${opts.meta.diffScope.sentChars} символов — часть файлов ревьюеру не показана. Вердикт не является суждением о непоказанном.\n\n`
     : '';
   let verdictLine = '';
+  // Провенанс источника (#1771): чем именно был осмотренный код. До 08.08 вердикт нёс
+  // только head — и по артефакту нельзя было проверить, от какой базы считался дифф.
+  // База идёт ДВАЖДЫ и с разными ролями: полем `base:` в маркере (машинный вход гейта)
+  // и блоком `review-source` (человеку и для постфактум-воспроизведения).
+  let sourceLine = '';
   if (opts.meta.mode === 'pr' && opts.meta.headSha) {
     const verdict = verdictFromBody(opts.body);
-    verdictLine = `${renderVerdictMarker({ sha: opts.meta.headSha, verdict, lead: opts.meta.lead ?? null, at: stamp })}\n\n`;
+    verdictLine = `${renderVerdictMarker({
+      sha: opts.meta.headSha,
+      base: opts.meta.diffSource?.mergeBase ?? null,
+      verdict,
+      lead: opts.meta.lead ?? null,
+      at: stamp,
+    })}\n\n`;
+    if (opts.meta.diffSource) {
+      sourceLine = `${renderSourceProvenance(opts.meta.diffSource)}\n\n`;
+    }
   }
   mkdirSync(dirname(opts.path), { recursive: true });
-  writeFileSync(opts.path, header + scopeLine + verdictLine + opts.body, 'utf8');
+  writeFileSync(opts.path, header + scopeLine + verdictLine + sourceLine + opts.body, 'utf8');
 }
 
 /**

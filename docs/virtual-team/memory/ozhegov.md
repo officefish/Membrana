@@ -5,8 +5,20 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14379/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 261 (причины в op-log) -->
+Записей: 49 · бюджет 14360/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 270 (причины в op-log) -->
+
+### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
+
+> Граница пакетов: source Affine (office VDS, `:3010`) не становится origin static. Destination — container `static.mmbrn.tech` + Panel authorizer + registry.jsonl. Strategic docs остаются Panel/Git; копировать их в static originals без M6 intent владельца — `нарушена слабая […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-08.md#reply-1`
+
+### 2026-08-08 · позиция · team-evening-feedback
+
+> Ожегов, слабая связанность и точность. Оценка артефактов: `DAILY_CODE_REVIEW` точно указал: `decideTransition` живёт только в собственном тесте — это класс «производитель есть, провод отсутствует», названо своим именем. Реестр за день корректно двинул 2 карточки в архив с […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-08.md#reply-1`
 
 ### 2026-08-07 · позиция · team-evening-feedback
 
@@ -20,11 +32,35 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
 
+### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
+
+> Закрытый словарь M3 сохраняется дословно: `discover`, `read-metadata`, `read-ref`, `read-bytes`, `download`, `write-metadata`, `upload-revision`, `manage-access`. Объекты только container, collection и lineage; annotation write не добавляется. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
+
+### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
+
+> Operation surface является одной закрытой таблицей. Вне неё нет скрытых CLI-команд, server endpoints или операций из примечаний; у каждой строки ровно один M3 action и ровно один authority object. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
+
 ### 2026-08-05 · позиция · team-evening-feedback
 
 > Три точки хранения факта архивации (registry.json → README → archive/*.md) обновлены атомарно одним коммитом #1732 — слабая связанность соблюдена, B2-риск файла-перекрёстка не сработал. Скрипты `execution-gate`, `llm-procedure-transport`, `llm-probe`, `prepush-typecheck-scope` […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
+
+### 2026-08-04 · позиция · static-mmbrn-container-m3-access
+
+> Stable principal — `userId` канонической записи пользователя Panel; credential только отображается в него. Для анонимного запроса используется sentinel `anon` с baseline ролью `public`. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
+
+### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
+
+> Для storage records выбирается существующий M2 `location.kind=local`. Непустой `location.ref` имеет форму `static:{class}:{sha256_64hex}`; это адрес внутри storage backend, не URL и не `canonicalRef`. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
 
 ### 2026-08-03 · позиция · one-shot-manifest-m0-order
 
@@ -55,6 +91,24 @@
 > Зафиксирую термины до начала. В повестке три кандидата, но только один существует в коде прямо сейчас — `pathFamily` из `scripts/lib/one-shot-s-predicate.mjs`. Граф зависимостей уровня путь-к-пути — факт отсутствия, не кандидат для выбора. Голос Фаррелла — вне гейта, в основания […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/one-shot-manifest-m4-homogeneity-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m0-order
+
+> Разберём по словарю. Вопрос 2 — это хеш, адрес и провенанс; вопрос 3 — источник решений по доступу, Panel grants, Affine roles, серверный гейт. Я смотрю: является ли тождество (2) необходимым условием доступа (3) при любом допустимом ответе на вопрос 3? Нет. Разделовый или […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m0-order-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m1-boundary
+
+> Терминологическая точность критична. «Оригинал» — не синоним «файла»: архив исходных данных содержит несколько членов, и M1 не вправе называть ни архив, ни его членов единицей чего-либо. PDF содержит встроенные объекты — M1 не вправе называть PDF единым объектом относительно […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/static-mmbrn-container-m1-boundary-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m2-identity
+
+> Правильно. Добавлю точность по терминам. Единица регистрации — конкретные байты, принятые как единое целое. У PDF — весь PDF. У архива — весь архив. Поле `bytes` фиксирует размер именно этих байтов: положительное целое, верифицируемое при доступе. Изменение любого поля записи, […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/static-mmbrn-container-m2-identity-2026-08-03.md#reply-1`
 
 ### 2026-08-02 · позиция · team-evening-feedback
 
@@ -247,51 +301,3 @@
 > Леммы, иначе снова синонимы. **Cold-record writer** — единственный server-side путь в `background-office`, пишущий append-only Mongo-коллекцию канона (M1). **Checkpoint writer** — путь, который *только читает* Mongo SoT и материализует `ColdArchiveCheckpoint` (M3); он не […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m5-recovery-audit
-
-> Леммы, иначе синонимы. **Audit check** — чистая сверка carrier↔SoT, не write-path. **Export material** — полный канонический дамп records + манифест identity (count/hash) + метаданные checkpoint; dirty working tree не material. **Emergency SoT** — явно объявленный режим, не […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/task-archive-cold-store-m5-recovery-audit-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m6-migration-path
-
-> Леммы, иначе синонимы. **Legacy archive card** — markdown в `docs/tasks/archive/*.md`, носитель handoff-текста, не proof. **Hot registry** — `docs/tasks/registry.json`, рабочий индекс, derived относительно cold. **Canonical cold-record candidate** — payload, прошедший evidence […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m6-migration-path-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m7-lifecycle-integration
-
-> Леммы, иначе синонимы. **Insight revision** — словарная статья решения в `INSIGHT.md` / decision log инсайта: SoT, checkpoint, evidence contract, write path, recovery, migration policy. **Task work** — карточки исполнения (Notary, Mongo schema, export/checkpoint job, migration […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m7-lifecycle-integration-2026-07-30.md#reply-1`
-
-### 2026-07-29 · позиция · network-container-form
-
-> Начинаю со словаря, иначе снова синонимы. **Контейнер network** — не туннель и не VPN-пакет, а home артефактов сетевого окружения и диагностики исходящих вызовов (LLM/API/git). **Орган** — именованный файл/команда с одной словарной ролью. **Исход (outcome)** — закрытый enum […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/network-container-form-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · night-triage-insight-harvest
-
-> Леммы, иначе снова синонимы. **Триаж** — проход сканера, не поставка. **Инсайт-карточка** — словарная статья с входом/выходом/ценой. **Черновик PR** — транспорт, не статус смысла. В четырёх ночах вижу смешение лемм. **Альтернатива:** один PR-ритуал закрытия пачки: файл-реестр […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/night-triage-insight-harvest-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · sprint-honest-m0-order
-
-> Леммы «ждёт» только контрактные: без ответа A у B нет области определения. Имена — как в повестке, без новых ярлыков. Фундамент области — (1): «назначенный ≠ участвовавший». Без этого «принял» в (2), «ревью исполнителем» в (3), «вызовы исполнителя» в (4), «аудитор≠исполнитель» в […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m0-order-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · sprint-honest-m1-performer
-
-> Леммы, иначе синонимы. **Назначение (assignment)** — запись связи sprintId → personaId (или agent-slot) до/на старте окна. **Участие (participation)** — наличие адресуемого следа исполнения, привязанного к тому же sprintId. **Исполнитель спринта** — не роль и не leadPersona […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m1-performer-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m0-order
-
-> Леммы «зависит» не смешиваем. **Контрактная** — без вердикта a у b нет области определения. **Фактурная** — b ждёт файл/PR в main. В M0 только контрактные. Имена — словарные статьи брифа, без жирных ID внутри вердикта-порядка: форма сетки; три исхода; отношение к рельсу […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m0-order-2026-07-29.md#reply-1`

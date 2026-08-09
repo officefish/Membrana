@@ -38,20 +38,35 @@ export function shouldEnsureReview(state, ensure) {
 }
 
 /**
- * Разбор вердикта из markdown ревью: маркер несёт SHA и решение.
- * Форма: `<!-- review-verdict sha:<40hex> verdict:LGTM|BLOCK lead:<id> at:<iso> -->`
+ * Разбор вердикта из markdown ревью: маркер несёт SHA, БАЗУ и решение.
+ *
+ * Форма: `<!-- review-verdict sha:<hex> base:<hex> verdict:LGTM|BLOCK lead:<id> at:<iso> -->`
+ *
+ * Поле `base` появилось по иссью #1771 (карточка `review-diff-explicit-base`) и
+ * ОПЦИОНАЛЬНО — той же техникой, что `lead` и `at`. Вердикт привязывался к одному лишь
+ * head, то есть заявлял «осмотрено на этой ревизии», не называя, ЧЕМ был осмотренный код:
+ * из артефакта `pr-1801-code-review.md` (08.08) базу не восстановить в принципе. Головы
+ * мало: один и тот же head несёт разный набор изменений, если merge-base сдвинулась.
+ *
+ * Маркер без `base` — легитимный legacy, а не порча формата: такими написаны десятки
+ * артефактов в `docs/discussions/` и в архиве, и читать их гейт обязан по-прежнему.
+ *
  * @param {string} md
- * @returns {{sha: string, verdict: 'LGTM'|'BLOCK', lead: string|null, at: string|null} | null}
+ * @returns {{sha: string, base: string|null, verdict: 'LGTM'|'BLOCK', lead: string|null, at: string|null} | null}
  */
 export function parseVerdict(md) {
-  const m = /<!--\s*review-verdict\s+sha:([0-9a-f]{7,40})\s+verdict:(LGTM|BLOCK)(?:\s+lead:(\S+))?(?:\s+at:(\S+))?\s*-->/u.exec(String(md ?? ''));
+  const m =
+    /<!--\s*review-verdict\s+sha:([0-9a-f]{7,40})(?:\s+base:([0-9a-f]{7,40}))?\s+verdict:(LGTM|BLOCK)(?:\s+lead:(\S+))?(?:\s+at:(\S+))?\s*-->/u.exec(
+      String(md ?? ''),
+    );
   if (!m) return null;
-  return { sha: m[1], verdict: m[2], lead: m[3] ?? null, at: m[4] ?? null };
+  return { sha: m[1], base: m[2] ?? null, verdict: m[3], lead: m[4] ?? null, at: m[5] ?? null };
 }
 
 /** Маркер для записи в файл ревью (обвязка подставляет факты). */
-export function renderVerdictMarker({ sha, verdict, lead, at }) {
-  return `<!-- review-verdict sha:${sha} verdict:${verdict} lead:${lead ?? 'unknown'} at:${at ?? new Date().toISOString()} -->`;
+export function renderVerdictMarker({ sha, base, verdict, lead, at }) {
+  const baseField = base ? ` base:${base}` : '';
+  return `<!-- review-verdict sha:${sha}${baseField} verdict:${verdict} lead:${lead ?? 'unknown'} at:${at ?? new Date().toISOString()} -->`;
 }
 
 /**
@@ -60,10 +75,14 @@ export function renderVerdictMarker({ sha, verdict, lead, at }) {
  * Ядро в ФС не ходит, поэтому существование артефакта приносят ему значением; без
  * признака ядро ведёт себя как прежде.
  *
- * @param {{headSha: string|null, verdict: ReturnType<typeof parseVerdict>, override?: {enabled: boolean, reason?: string}, artifact?: {exists: boolean, path?: string}}} input
+ * `currentBase` — текущая merge-base ветки с базой PR, посчитанная вызывающим (#1771).
+ * Ядро её не добывает: ни git, ни сети здесь нет. Без неё поведение прежнее для legacy-
+ * вердиктов и честный `unknown` для вердиктов, которые базу назвали.
+ *
+ * @param {{headSha: string|null, currentBase?: string|null, verdict: ReturnType<typeof parseVerdict>, override?: {enabled: boolean, reason?: string}, artifact?: {exists: boolean, path?: string}}} input
  * @returns {{state: 'pass'|'block'|'unknown', reason: string}}
  */
-export function reviewGateDecision({ headSha, verdict, override, scope, artifact } = {}) {
+export function reviewGateDecision({ headSha, currentBase, verdict, override, scope, artifact } = {}) {
   if (override?.enabled) {
     const reason = String(override.reason ?? '').trim();
     if (!reason) {
@@ -107,6 +126,39 @@ export function reviewGateDecision({ headSha, verdict, override, scope, artifact
       state: 'block',
       reason: `вердикт протух: смотрели ${verdict.sha.slice(0, 8)}, на ветке ${headSha.slice(0, 8)} — после ревью появились коммиты; перепрогнать ревью`,
     };
+  }
+  // БАЗА (#1771). Место в порядке несущее и выбрано исполнителем блока: сначала «вердикт о
+  // ЭТОМ head?», затем «о ЭТОМ диффе?», и только потом «весь ли код прочитан?». Смена
+  // merge-base меняет ГРАНИЦЫ изменения при том же head: код формально тот, а осмотрен был
+  // другой набор файлов. Поставить эту ветку после `truncated` значило бы дать срезу
+  // проглотить смену базы.
+  //
+  // Исход — `unknown`, а не `block`: код не отвергнут, он не осмотрен на текущей границе,
+  // и правильное лечение — пере-ревью, то есть ровно тот путь, который `unknown` и
+  // открывает (`shouldEnsureReview`). Закрытый список состояний не расширяется (решение
+  // владельца 05.08) — различается ПРИЧИНА.
+  //
+  // Legacy без `base` проходит как прежде — так ратифицирован план 08.08. Исполнитель
+  // блока возражал («legacy становится дырой навсегда») и возражение записано долгом в
+  // OPEN.md спринта: сегодняшний мердж соседних PR ломать не будем, срок жизни legacy —
+  // отдельное решение владельца.
+  if (verdict.base) {
+    if (!currentBase) {
+      return {
+        state: 'unknown',
+        reason:
+          `вердикт назвал базу ${verdict.base.slice(0, 8)}, а текущую merge-base посчитать не удалось — ` +
+          'гейт без приборов мердж не открывает; проверить доступность git/сети и перепрогнать',
+      };
+    }
+    if (!sameSha(verdict.base, currentBase)) {
+      return {
+        state: 'unknown',
+        reason:
+          `база разошлась: вердикт смотрел дифф от ${verdict.base.slice(0, 8)}, сейчас merge-base ${currentBase.slice(0, 8)} — ` +
+          'при том же head осмотрен ДРУГОЙ набор изменений (в ветку влит ствол); перепрогнать ревью',
+      };
+    }
   }
   // #1550: вердикт по СРЕЗУ диффа — не вердикт, В ЛЮБУЮ СТОРОНУ.
   //

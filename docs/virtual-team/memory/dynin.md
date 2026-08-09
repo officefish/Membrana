@@ -5,8 +5,20 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14398/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 261 (причины в op-log) -->
+Записей: 49 · бюджет 14380/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 269 (причины в op-log) -->
+
+### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
+
+> Фиксирую численный baseline, не cardinality proof: pages=82, assets=57, CLI `doc list`=0. Inventory gate = fenced DB/export snapshot с per-object `sourceId`, `kind∈{page,asset}`, `sha256`, relations, grants, timestamps. До manifest+hash+disposition статус корпуса = `NOT […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-08.md#reply-1`
+
+### 2026-08-08 · позиция · team-evening-feedback
+
+> Дынин, чистые функции и провенанс. Оценка артефактов: `MAIN_DAY_ISSUE` содержит критерий успеха, различимый механически (`grep decideTransition` вне `*.test.*`) — это годный предикат, не декларация. Таблица посылок несёт маркеры `holds` с явным источником — правильная форма. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-08.md#reply-1`
 
 ### 2026-08-07 · позиция · team-evening-feedback
 
@@ -20,11 +32,35 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
 
+### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
+
+> `requiredProjectionSet` должен быть независим от фактических страниц движка. Panel назначает множество требуемых `canonicalRef`, а readiness сравнивает его с reducer output binding ledger и полным inventory живых engine objects на одном snapshot. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
+
+### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
+
+> Сначала фиксирую два множества, которые нельзя смешивать: M2 records и attempts. Идемпотентность живёт на ключе `(principal,intentId)`, а независимое поступление тех же bytes с новым intent создаёт новый record и новую lineage. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
+
 ### 2026-08-05 · позиция · team-evening-feedback
 
 > — Оценка артефактов: MAIN_DAY_ISSUE в §Санитарные корректно опирается на измеренные числа (`dads-lab-report-2026-07-18.md`) и явно запрещает лишние DSP-бенчмарки — инвариант «не удорожать вход без новых данных» соблюдён. Итоги дня: чистых функций сегодня не двигали; данных новых […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
+
+### 2026-08-04 · позиция · static-mmbrn-container-m3-access
+
+> Порядок ролей полный: `public < ally < operator < owner`. Решение строится одной функцией сравнения ролей, без permission-grant и без снижения роли субъекта. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
+
+### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
+
+> Единственный physical admission predicate: `free_after >= 12 GiB AND used_after / provisioned_capacity < 0.90`. Soft watermark `0.85` только создаёт наблюдаемый alert и не меняет ALLOW. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
 
 ### 2026-08-03 · позиция · one-shot-manifest-m0-order
 
@@ -55,6 +91,24 @@
 > Формализую область. Пусть `shot` — упорядоченный список путей `[p₁, p₂, …, pₙ]`. Предикат `pathFamily(p)` — функция `path → familyId`, реализованная в `scripts/lib/one-shot-s-predicate.mjs`. Индикатор однородности по текущему основанию: `families(shot) = { pathFamily(pᵢ) | pᵢ ∈ […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/one-shot-manifest-m4-homogeneity-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m0-order
+
+> Проверю численно, то есть структурно. Зависимости, которые я вижу как необходимые: - `1→2`: не определить хеш и адрес, не зная, что является единицей контейнера. - `1→4`: физический склад держит объекты контейнера; capacity quota определяется классами оригиналов. - `1→5`: […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m0-order-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m1-boundary
+
+> Контракт должен быть верифицируемым. Это значит: каждый класс должен иметь чёткий предикат принадлежности, не зависящий от движка. Оригинал — то, чьё содержание не мутирует после принятия. Производное — функция от оригинала, получаемая детерминированно или недетерминированно. […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/static-mmbrn-container-m1-boundary-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m2-identity
+
+> Формализую `ep`. Определяем функцию `ep: R → Id(R) ∪ {⊥}`. Она возвращает `id` predecessor либо `⊥` — не объект записи, только идентификатор. Root линии — запись `r`, для которой `ep(r) = ⊥`. Tip линии — `id`, отсутствующий среди всех значений `ep(r)` по всем `r ∈ R`, включая […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m2-identity-2026-08-03.md#reply-1`
 
 ### 2026-08-02 · позиция · team-evening-feedback
 
@@ -247,51 +301,3 @@
 > Формализую без UI. Пусть R — payload cold-record (M2), k — idempotency key. Операция `notarize(k, R) → {created(R*), existing(R*), reject(reason)}`. Инвариант append-only: повтор с тем же k и эквивалентным R даёт `existing`, не второй документ. Эквивалентность: canonical bytes R […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m5-recovery-audit
-
-> Формализую без UI. Пусть \(R\) — упорядоченное множество канонических cold-records из Mongo SoT, \(H = hash(canonicalize(R))\), \(n = |R|\). Checkpoint \(C = (n_C, H_C, \ldots)\). Предикат схождения: `converged(C,R) ⇔ n_C = n ∧ H_C = H`. Audit checks — тотальная функция […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/task-archive-cold-store-m5-recovery-audit-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m6-migration-path
-
-> Формализую. Пусть L — множество legacy-артефактов. Классификация: `candidate(x) ⇔ x ∈ archive_md ∧ ∃ taskId(x) ∧ shape_allows_notary(x)`; `derived(x) ⇔ x ∈ {registry.json, README, index-views}`. Import-предикат: `importable(x) ⇔ candidate(x) ∧ evidence_ok(x per M2) ∧ […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m6-migration-path-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m7-lifecycle-integration
-
-> Формализую без UI. Пусть I — insight, R — revision decision document, T — множество task closures с evidence e ∈ Evidence_task. M2: `proves_closure(e, taskId)` ⇏ `L(I) ∨ O(I)`. Предикат non-proof: `¬(∃ design∨plan∨checkpoint_schema : marks_LO(I))`. L/O требует отдельного […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m7-lifecycle-integration-2026-07-30.md#reply-1`
-
-### 2026-07-29 · позиция · network-container-form
-
-> Формализую без UI. Пусть запрос R к провайдеру P даёт наблюдение O = (httpStatus?, errno?, bodyCode?, latencyMs, dnsOk, tcpOk, tlsOk). Классификатор `classify(O) → outcome` обязан быть **тотальным** на закрытом множестве исходов и **взаимно исключающим**: один O → ровно один […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/network-container-form-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · night-triage-insight-harvest
-
-> Формализую без UI. Пусть T₁…T₄ — тексты триажей. Предикат «достойна карточки»: `card(x) ⇔ ∃ quantifiable gap ∨ ∃ reversible decision с ценой`. По доступному контуру дня (primary = product-tariffs, RAG MAIN_DAY_ISSUE 29.07) и следам 27–28.07 (memory/bridge) большинство пунктов T […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/night-triage-insight-harvest-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · sprint-honest-m0-order
-
-> Предикат ребра: A→B ⇔ область определения вопроса B содержит переменную, которую фиксирует ответ A. Не runtime скриптов и не «удобно рядом». V={1..9} как в повестке. Уже видно: 1 задаёт переменную «кто исполнитель» почти для всех. Дальше — по одной переменной на кандидата, без […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m0-order-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · sprint-honest-m1-performer
-
-> Формализую без UI. Пусть S — идентификатор спринта, P — множество persona id (закрытый алфавит канона). `assigned(S, p) ⇔ ∃ запись плана: (S, p) ∈ Assignments`. `participated(S, p) ⇔ ∃ след e ∈ Evidence(S): subject(e)=p ∧ qualifies(e)`. Исполнитель честный: не синоним assigned. […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m1-performer-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · tariff-grid-m3-tri
-
-> Формализую без UI. Из M1: `resolveEntitlement(grid, sku, id) → { status, payload, unmetPreconditions[] }`, status ∈ {entitled, not_entitled}. Третий исход не обязан быть третьим enum-значением status: он уже выразим как `status = entitled ∧ unmetPreconditions ≠ ∅`. Предикат […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/tariff-grid-m3-tri-2026-07-29.md#reply-1`

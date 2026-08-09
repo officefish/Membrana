@@ -5,8 +5,20 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 48 · бюджет 14313/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 263 (причины в op-log) -->
+Записей: 49 · бюджет 14330/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 273 (причины в op-log) -->
+
+### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
+
+> Конструкция D1: **Migration Delivery Contract (MDC-1)** — append-only migration ledger + per-object disposition manifest + causal rollout DAG (provision→M4→M5→M6-align→routes→canary→cutover→observe→retire) + M3 route matrix. Affine page ≠ original; engine id ≠ canonicalRef; […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-08.md#reply-1`
+
+### 2026-08-08 · позиция · team-evening-feedback
+
+> Веснин, границы и контракты. Оценка артефактов: `MAIN_DAY_ISSUE` образцово честен — таблица посылок с маркерами `holds`, явно названное расхождение с `morning-gates-state.json` (норма У1), закрытый список причин отказа. ADR-0025 принят и нарезан по канону Р3 без ловушки 05.08. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-08.md#reply-1`
 
 ### 2026-08-07 · позиция · team-evening-feedback
 
@@ -20,11 +32,35 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
 
+### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
+
+> Выбираю одну модель: Affine является только сменной человеческой проекцией. Канонические originals, identity, authority, binding и переносимые annotations остаются вне движка. Контракт Affine не становится новым интерфейсом контейнера. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
+
+### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
+
+> До object gate `recordId` разрешается в `canonicalRef`, current tip, policy version и object-version vector. Неизвестный record, binding, action или version даёт fail-closed, а не fallback. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
+
 ### 2026-08-05 · позиция · team-evening-feedback
 
 > Спринт `instruments-honest-verdict` пришёл с четырьмя ревью-контекстами (Dynin b2/b4, Ozhegov recut, Vesnin) — норма нарезки по ролям соблюдена, `revisionAt` виден в trail. ADR-контракта ночного билда сегодня не заведено, что для L-задачи риск: без ADR легко расщепить работу по […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
+
+### 2026-08-04 · позиция · static-mmbrn-container-m3-access
+
+> Единственный источник решений доступа — Panel. `registry.jsonl` остаётся источником тождества и истории материала по M2, но не становится авторизатором. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
+
+### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
+
+> Выбираю одну topology: FD-1 — выделенный primary storage host/volume для bytes; FD-2 — независимый backup host/volume; FD-3 — отдельный management host/volume для immutable `registry.jsonl` и append-only lifecycle ledger. Office VDS не входит ни в один storage failure domain. _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
 
 ### 2026-08-03 · позиция · one-shot-manifest-m0-order
 
@@ -55,6 +91,24 @@
 > Слепота предиката зафиксирована в повестке не как упрёк, а как архитектурный факт, который надо записать честно. Три семейства при одном предмете — это не ошибка `pathFamily`, это ограничение метода: он классифицирует по форме пути, не по семантической связности. Форма должна […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/one-shot-manifest-m4-homogeneity-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m0-order
+
+> Согласен с общим направлением, но нужна точность. Граница контейнера (1) — это несущая конструкция: без неё не определить, что вообще является предметом тождества (2), хранения (4), доступа (3) и роли Affine (5). Поэтому 1 — источник, от него идут рёбра. Теперь про `2→3`: шестой […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/static-mmbrn-container-m0-order-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m1-boundary
+
+> Форма контракта: три блока. Первый — положительная граница: что принимает контейнер. Второй — отрицательная граница: что контейнер не принимает или не решает. Третий — инварианты смены движка: что остаётся в контейнере при замене Affine на любой другой движок. `docs/evidence` — […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/static-mmbrn-container-m1-boundary-2026-08-03.md#reply-1`
+
+### 2026-08-03 · позиция · static-mmbrn-container-m2-identity
+
+> Начну с конструкции. У нас три уровня тождества, и путать их — значит сломать систему с первого же дня. Первый — байтовое тождество: `sha256` при принятом предположении о коллизионной устойчивости SHA-256 говорит, что байты те же. Второй — record identity: неизменяемый `id` […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/static-mmbrn-container-m2-identity-2026-08-03.md#reply-1`
 
 ### 2026-08-02 · позиция · team-evening-feedback
 
@@ -241,54 +295,6 @@
 > Планка M3 узкая. M1: Mongo office — канон, repo — carrier. M2: cold-record с `proof` уже закрыт. Сегодня только: что лежит в git как маленький слепок, какие поля, как доказать тождество серверного архива, что — sanity, что checkpoint **не** значит. Q5 writer, Q4 restore, Q6 […] _(реплик в сеансе: 8)_
 
 — источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m4-write-path-idempotency
-
-> Планка матча узкая: writer roles, sequence, idempotency key, partial failure, retry, Git SHA consistency, forbidden, boundary. Не лезем в Q4/Q6/Q7. Связка: Структурщик — леммы homes; Архитектор — порядок notarize; Математик — ключ и предикаты BLOCK vs retry; Музыкант — […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m5-recovery-audit
-
-> Планка матча M5 узкая: audit + recovery без переписывания append-only. M1–M4 закрыты — Mongo канон, repo carrier, checkpoint = `recordCount + contentHash`, partial = retry export без delete. Не лезем в Q6 legacy migration и Q7 insight. Связка: Математик — предикаты схождения и […] _(реплик в сеансе: 8)_
-
-— источник: `docs/seanses/task-archive-cold-store-m5-recovery-audit-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m6-migration-path
-
-> Планка матча M6: путь переноса без rewrite history, без потери ссылок, без подмены hint→proof. Не играем Q7. Связка: Архитектор — граница import; Математик — stop-предикаты; Структурщик — словарь classification; Верстальщик — честность stub/витрин; Музыкант — «не remaster». […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m6-migration-path-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m7-lifecycle-integration
-
-> Планка матча узкая. M1–M6 — вход, обратный ранг запрещён. Здесь не пишем код и не гоняем миграцию. Решение комнаты: что канонизируем в INSIGHT как ревизию, что уходит в backlog task cards, кто ратифицирует до «implementation done», и жёсткое L/O non-proof. Связка на вердикт: […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m7-lifecycle-integration-2026-07-30.md#reply-1`
-
-### 2026-07-29 · позиция · network-container-form
-
-> Положение: сеть работает, матч проигран на классификации и на незнании окружения заранее. Планка владельца — две: скорость верного outcome и preflight для агента. Связка: Структурщик — homes/леммы; Математик — enum и предикаты classify; Архитектор — граница ops-контейнера; […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/network-container-form-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · night-triage-insight-harvest
-
-> Положение: четыре черновика лежат — матч инсайта не сыгран, сыграна тренировка «написать отчёт». Слово владельца 29.07 — одна идея, не веер. Primary focus дня — тарифы, не night-build. **Альтернатива:** стоп на генерации пятого draft-PR; сегодня связка «секретарь + один ревьюер» […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/night-triage-insight-harvest-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · sprint-honest-m0-order
-
-> Планка M0: только порядок и рёбра. Не вердиктим текст контракта, API вызовов и судьбу полей карточек по существу. Связка: Математик — предикат ребра; Структурщик — леммы зависимости; Архитектор — что фундамент/терминал. Матч — направленный граф без обратного ранга. Держим состав […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m0-order-2026-07-29.md#reply-1`
-
-### 2026-07-29 · позиция · sprint-honest-m1-performer
-
-> Положение: матч проигрывается, когда «исполнитель» = строка в брифе, а связка не оставила квитанции. Не про зоны и не про код — про честность закрытия спринта. Решение комнаты: зафиксировать *что считается исполнителем* как проверяемый объект и предикат assigned vs participated. […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/sprint-honest-m1-performer-2026-07-29.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
 
