@@ -7939,10 +7939,10 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-10",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Сделано и в main: плагин mic-buffer-recorder (manual/auto запись, WAV/WebM/MP4, блок памяти) зарегистрирован на модуле «Микрофон», hub→bridge→importBlob(__buffer__) — SHA 533c2656; apps/client/src/plugins/mic-buffer-recorder/, apps/client/src/lib/mediaLibraryHubBridge.ts, регистрация registerClientModules.ts:180.",
       "leadPersona": "kuryokhin",
       "supportPersonas": [
         "rodchenko"
@@ -7956,10 +7956,10 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-10",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Сделано и в main: A4-плеер (play/pause, seek по осциллограмме, export исходного blob, общий sampleLibraryPlaybackHub) — SHA 03d206dc; getSampleBlob в media-library-service, offset/seek в audio-engine BufferPlayer, плагин sample-library-player зарегистрирован (registerClientModules.ts:195).",
       "leadPersona": "kuryokhin",
       "supportPersonas": [
         "rodchenko",
@@ -8068,10 +8068,10 @@
       "githubIssue": 57,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-11",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Сделано и в main: редактор пользовательских шаблонов trends-fft (три вкладки, CRUD, копия системного, persist, prefill из последнего анализа) + thresholds.frameHitRatio в scoring/breakdown с unit-тестами — SHA d996182f (#57). Коммит f0be432f был регистрацией, не исполнением.",
       "dependsOn": [
         "trends-fft-microphone-plugin"
       ],
@@ -8079,7 +8079,8 @@
       "supportPersonas": [
         "dynin"
       ],
-      "sprintKind": "epic"
+      "sprintKind": "epic",
+      "githubIssueClosedAt": null
     },
     {
       "id": "background-media-v1",
@@ -9105,7 +9106,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-16",
       "notes": "Teamlead: LP1 first; stream 3s+2s; brief default; detailed=LP1b server",
       "leadPersona": "vesnin",
@@ -9117,7 +9118,9 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "sprintKind": "epic"
+      "sprintKind": "epic",
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Эпик LP1-LP5 полностью в main (c64f6186, 4f198ee6, 2be64687, dcad6229, 5bdb35be, 500c5dab, b34ce714): три режима mic-live-drone, brief-отчёты по умолчанию, FFT/trends в live-журнал (opt-in сохранён), серверный DDR, SLO-тест и paired-smoke чеклист в docs/LIVE_PARALLEL_DETECTION.md."
     },
     {
       "id": "lp1-mic-drone-stream-modes",
@@ -9126,7 +9129,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "live-parallel-detection-sprint",
       "createdAt": "2026-06-16",
       "leadPersona": "kuryokhin",
@@ -9137,7 +9140,9 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "sprintKind": "epic"
+      "sprintKind": "epic",
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "LP1 в main (c64f6186): stream-manual/stream-auto/track-import с окном 3с и паузой 2с, быстрый brief drone-detection-brief/v1 в журнал, stub requestDetailedDroneReport; hot-path без полного analyzeSampleDetectors."
     },
     {
       "id": "lp1b-drone-detailed-report-server",
@@ -9146,7 +9151,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "live-parallel-detection-sprint",
       "createdAt": "2026-06-16",
       "dependsOn": [
@@ -9161,7 +9166,9 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "sprintKind": "epic"
+      "sprintKind": "epic",
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "LP1b в main (4f198ee6): пакет @membrana/drone-detection-orchestrator, эндпоинт background-media POST /v1/devices/:deviceId/samples/:sampleId/drone-detection-report (WAV-only, Node PCM16 decode) и клиентский requestDetailedDroneReport → журнал; тесты оркестратора и wav-decode в main."
     },
     {
       "id": "lp2-fft-plugins-journal-sink",
@@ -9170,7 +9177,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "live-parallel-detection-sprint",
       "createdAt": "2026-06-16",
       "dependsOn": [
@@ -9185,7 +9192,9 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "sprintKind": "epic"
+      "sprintKind": "epic",
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "LP2 в main (2be64687): no-op телеметрия FFT-порога и трендов заменена на запись в live-журнал (fft-threshold-test/v0.2, trends-fft/v0.1) с адаптерами и тестами; плагины остались opt-in (active: false)."
     },
     {
       "id": "lp3-track-import-backpressure",
@@ -9194,7 +9203,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "live-parallel-detection-sprint",
       "createdAt": "2026-06-16",
       "dependsOn": [
@@ -9208,7 +9217,9 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "sprintKind": "epic"
+      "sprintKind": "epic",
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "LP3 в main (dcad6229): режим track-import с backpressure (один анализ в полёте + одна очередь, latest wins), счётчик пропущенных клипов в панели и регресс-тесты micLiveDroneAnalysisPlugin.test.ts."
     },
     {
       "id": "lp4-parallel-detection-smoke",
@@ -9217,7 +9228,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "live-parallel-detection-sprint",
       "createdAt": "2026-06-16",
       "dependsOn": [
@@ -9234,7 +9245,9 @@
       "freezeReason": "Product wave W0-W4 first. See docs/FROZEN_DETECTION_BACKLOG.md",
       "freezeAt": "2026-06-23",
       "strategicWave": "W5",
-      "sprintKind": "epic"
+      "sprintKind": "epic",
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "LP4 в main (5bdb35be): SLO-тест streamWindowCollector.test.ts, docs/LIVE_PARALLEL_DETECTION.md с разделами SLO и «Paired smoke (ручная проверка)»; stream-auto интеграционные кейсы в micLiveDroneAnalysisPlugin.test.ts."
     },
     {
       "id": "lp5-journal-report-renderers",
@@ -9243,7 +9256,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "live-parallel-detection-sprint",
       "createdAt": "2026-06-16",
       "dependsOn": [
@@ -9255,7 +9268,9 @@
         "ozhegov"
       ],
       "strategicWave": "W2",
-      "sprintKind": "epic"
+      "sprintKind": "epic",
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "LP5 закрыт в main: клиентские рендеры + фикс persistence live-дрона (500c5dab), TODO «паритет кабинета» снят пакетом @membrana/journal-report-views (b34ce714) — CabinetLiveJournalReportCard рендерит FFT-порог и тенденции; хотфикс журнала кабинета 6b074f30."
     },
     {
       "id": "fft-last-chance-calibration",
@@ -10504,11 +10519,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-runtime-remote",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "RT0 закрыт коммитом 92d53dad: контракт runtime.command/state/log в @membrana/core (contracts/node-realtime/events.ts) с parse-тестами в node-realtime.test.ts; контракт жив и с тех пор расширен (deviceId, authority) последующими эпиками.",
       "dependsOn": [
         "membrane-node-runtime-remote"
       ],
@@ -10526,11 +10541,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-runtime-remote",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "RT1 закрыт коммитом 2f36f4f5: канал runtime в NodeRealtimeGateway (cabinet→node команда, fan-out state/log) с тестами node-realtime.gateway.test.ts; маршрутизация жива и позже усилена CT2-гейтом захвата и тарифным whitelist.",
       "dependsOn": [
         "mp7b-rt0-contract"
       ],
@@ -10548,11 +10563,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-runtime-remote",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "RT2 закрыт коммитом 78d5c35d: headless deviceBoardRuntimeController (ScenarioRuntime поверх реального audio-host) + runtimeRealtimeBridge, run/stop/setMode из канала runtime, тесты runtimeRealtimeBridge.test.ts; мост жив и позже развит эпиками SF/CT.",
       "dependsOn": [
         "mp7b-rt1-gateway"
       ],
@@ -10570,11 +10585,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-runtime-remote",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "RT3 закрыт коммитом 02b932bc: ручной override normal/alarm в ScenarioRuntime (alarm форсит alarm-loop, авто detection-front только в normal), покрыт двумя тестами в scenario-runtime.test.ts.",
       "dependsOn": [
         "mp7b-rt2-client-runtime"
       ],
@@ -10592,11 +10607,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-runtime-remote",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "RT4 закрыт коммитом aca18fe7: @unique с Node.membraneId снят (в актуальной schema.prisma остался только @@index([membraneId])), добавлены Tariff.maxNodesPerMembrane, миграция 20260618120000_mp7b_multinode и node-limit с тестами; миграция применена на проде (постмортем MP7b).",
       "dependsOn": [
         "mp7b-rt1-gateway"
       ],
@@ -10614,11 +10629,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-runtime-remote",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "RT5 закрыт коммитом 86d93bc2: страница «Узлы» со списком multi-node, run/stop, переключателем режима и ссылками журнал/доска + отдельная KeysPage; разделение стало дефолтом в CabinetShell (объединение осталось только под legacy VITE_CABINET_NODES_KEYS_COMBINED).",
       "dependsOn": [
         "mp7b-rt3-mode",
         "mp7b-rt4-multinode-schema"
@@ -10637,11 +10652,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "membrane-node-runtime-remote",
       "createdAt": "2026-06-18",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "RT6 закрыт коммитом fc3482d4: верхние табы сняты, шапка run/stop + normal/alarm с aria-live, левый сайдбар секций и правый инспектор/палитра, clear+rebuild, Signal за VITE_DEVICE_BOARD_SIGNAL_ADVANCED; тесты board-ui.test.ts и board-node-factory.test.ts.",
       "dependsOn": [
         "mp7b-rt0-contract"
       ],
@@ -11520,10 +11535,10 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-19",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Эпик исчерпан: все 12 детей (DV1-DV10 + два day-sprint) архивированы 2026-06-22, живых нет. Mintlify apps/docs/device-board (nodes+cookbooks+editor), docs/canvas/DEVICE_BOARD_CANVAS_INDEX.md и PRD_ALIGNMENT_DB_DOC_V04.md в main (ee9b9485, aa8d5ac7, #140), каталог device-board.md = stable; отдельного LGTM-файла нет, публикация вынесена в root-domain-scenarios-docs.",
       "notes": "Phase 0–3 complete; LGTM pending. Canvas index: docs/canvas/",
       "leadPersona": "vesnin",
       "supportPersonas": [
@@ -12431,7 +12446,7 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-21",
       "dependsOn": [
         "db-usercase-mvp-microphone-lgtm"
@@ -12443,7 +12458,9 @@
         "ozhegov"
       ],
       "strategicWave": "W0",
-      "sprintKind": "epic"
+      "sprintKind": "epic",
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Эпик-дорожная карта исчерпан: все 6 детей (pure-getters, canvas-groups, node-align, usercases-catalog U9, user-workspace U10/U11) в архиве, живых нет. U — пикер UserCase (#314, 44f81518), D — Mintlify apps/docs + catalog device-board.md = stable, S — device-scenarios API в background-media + persist-адаптеры client/cabinet."
     },
     {
       "id": "db-user-workspace-u10",
@@ -14671,12 +14688,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "usercase-mvp-v2-groups-async",
       "createdAt": "2026-06-23",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Spec-фаза исполнена как db-ap-r0-consilium-spec (archived 2026-06-25): консилиум docs/discussions/device-board-async-pipeline-consilium-2026-06-25.md с LGTM + ADR AD1-AD7, карта групп/функций зафиксирована в docs/actions/device-board/specs/USERCASE_MVP_MICROPHONE.md.",
       "dependsOn": [
         "usercase-mvp-v2-groups-async"
       ],
@@ -14694,12 +14711,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "usercase-mvp-v2-groups-async",
       "createdAt": "2026-06-23",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Groups/marquee + collapse-to-function в main (packages/device-board/src/graph/collapse-to-function.ts, SHA 87369d85 U8, хотфиксы 8a1a104b/fdb8197a/6cb04b70), mic-граф свёрнут в user-функции fn-1/fn-3 в bundled golden v2.0-async. Фаза merged в db-ap-r9 (archived).",
       "dependsOn": [
         "ucv2-0-spec-lgtm",
         "device-board-ux-ports-header"
@@ -14741,12 +14758,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "usercase-mvp-v2-groups-async",
       "createdAt": "2026-06-23",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Пак-тулинг живёт в main: yarn usercase:build / usercase:build-mvp-microphone (package.json), node scripts/usercase.mjs verify-pack <id> (layout+prerun) и smoke-секция «smoke v2.0-async» в yarn logs:parse (R11 PASS в DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md). Фаза поглощена device-board-async-pipeline-v1 (archived 2026-07-01).",
       "dependsOn": [
         "ucv2-2-freeze-async-tracks"
       ],
@@ -14762,12 +14779,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "usercase-mvp-v2-groups-async",
       "createdAt": "2026-06-23",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Sign-off закрыт разрешённой DoD-альтернативой: docs/actions/device-board/sign-offs/DEVICE_BOARD_ASYNC_PIPELINE_LGTM.md (SHA 823057e7) + CLOSURE спринта 2026-06-25, Issue #176 CLOSED, эпик archived 2026-07-01. Хвост, не блокирующий закрытие: критерий A5 (upload-ok ≥2 на живом browser-run ≥60с) помечен «pending operator».",
       "dependsOn": [
         "ucv2-3-pack-verify"
       ],
@@ -16257,12 +16274,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "competition-packaging",
       "parentEpic": "comp-mvp-async-v2-2026-06-25",
       "leadPersona": "vesnin",
-      "notes": "Phase A LGTM — picker ×3, comp:publish-catalog, skill. Open: synthesis + operator smoke."
+      "notes": "Phase A LGTM — picker ×3, comp:publish-catalog, skill. Open: synthesis + operator smoke.",
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Закрыто: Phase A 55fe27d9 (picker ×3 + comp:publish-catalog + skill + регламент), Phase B синтез af0ab474, PITCH_LOG a196e545; docs/competition-sprint/comp-packaging-catalog-2026-06-25/GATE.md — LGTM Vesnin, обязательные пункты закрыты. Остаётся только optional-хвост Phase C (operator F7 smoke, ручной), карточку не держит."
     },
     {
       "id": "insight-process-registration-2026-06-25",
@@ -16647,12 +16666,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "device-board-three-hosts-2026-06-26",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Кабинет-хост device-board доставлен: apps/cabinet/src/pages/DeviceBoardPage.tsx + cabinetDeviceScenario.ts (4f69a7c9), server-side background-cabinet/node-realtime + background-media/device-scenarios; сквозной путь борд→сценарий→журнал подтверждён на cabinet.membrana.space при проверке трёх хостов, вёрстка добита PR #224 (e97ec809, 2026-07-02). Развитие вынесено в db-h2d-cabinet-sync / db-sf-3-cabinet-lease-api / cabinet-scenario-picker-system.",
       "dependsOn": [
         "db3h-s1-tech-debt"
       ],
@@ -16693,12 +16712,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "device-board-three-hosts-2026-06-26",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Закрыто: политика docs/DESKTOP_APP_LOGGING_POLICY.md v1.0 + DL-DOC матрица §10, yarn desktop:support-collect (scripts/desktop-support-collect.mjs), DL-1 electron-log shell-log (apps/membrana-studio/src/logging/shell-log.ts, 4fc37d90), DL-2 auto-flush — по OPEN.md в main DL-0/DL-DOC/DL-tools/DL-1/DL-2 = сделаны. Не закрыт только optional DL-3 (in-app UX) и формальный CLOSURE.md. Заметка карточки «DL-1..3 backlog» устарела относительно main.",
       "dependsOn": [
         "db3h-s3-studio-host"
       ],
@@ -16741,11 +16760,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Эпик закрыт кодом в 4fc37d90 (SF0-SF9, docs/day-sprint/db-server-first-2026-06-26/CLOSURE.md 2026-06-26); незакрытый хвост DoD «prod smoke signed» утратил предмет — семантика v1 заменена каноном DEVICE_BOARD_SERVER_FIRST.md v2.0, спринт-наследник device-board-capture-tariff-v2 архивирован 2026-07-03 со своим prod-гейтом.",
       "dependsOn": [
         "membrane-node-realtime-gateway"
       ],
@@ -16764,11 +16783,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-server-first",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Выполнено 4fc37d90: консилиум docs/seanses/device-board-server-first-2026-06-26.md и канон docs/DEVICE_BOARD_SERVER_FIRST.md v1.0 (в main поднят до v2.0, v1-модель сохранена в шапке канона).",
       "dependsOn": [
         "device-board-server-first"
       ],
@@ -16786,11 +16805,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-server-first",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Выполнено 4fc37d90: в @membrana/core заведены board-events.ts (BoardEditLease/BoardCaptureState), расширены RuntimeCommand/RuntimeState (pause, authority, followerMode, isPaused), validate-payloads.ts и тест server-first-payloads.test.ts — всё живо в main.",
       "dependsOn": [
         "db-sf-0-canon"
       ],
@@ -16809,11 +16828,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-server-first",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Выполнено 4fc37d90: gateway маршрутизирует канал board (edit-lease, capture-state) по deviceId с ролями cabinet/node; покрыто describe «NodeRealtimeGateway board channel (server-first SF2)» в node-realtime.gateway.test.ts.",
       "dependsOn": [
         "db-sf-1-core-contracts"
       ],
@@ -16831,11 +16850,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-server-first",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Выполнено 4fc37d90: REST scenario-edit-lease (controller/service/dto + тест), Prisma-модель NodeScenarioEditLease и acquire/release в DeviceBoardPage; UI-часть кабинета сознательно снята позже CT7 «v1 cleanup» (PR #232, 32a5b80a) как перенесённая в тариф v3 — серверный модуль и миграция в main остались.",
       "dependsOn": [
         "db-sf-2-gateway-board"
       ],
@@ -16853,11 +16872,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-server-first",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Выполнено 4fc37d90: на поле заведены boardLeaseBridge (+тест), serverFirstStore, follower-энфорсмент в runtimeRealtimeBridge/deviceBoardRuntimeController (authority=cabinet блокирует локальный старт, pause применяется); семантика позже уточнена тарифом v2 (CT4).",
       "dependsOn": [
         "db-sf-2-gateway-board"
       ],
@@ -16875,11 +16894,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-server-first",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Выполнено 4fc37d90: resolveServerFirstFlags (cabinetEditLease/followerSoft/followerStrict), badges и run-gating в @membrana/device-board с юнит-тестами и экспортом из index.ts; в main дожили и расширены осью capture (CT5). Файл назван server-first-flags.ts, а не scenario-edit-flags.ts из спеки.",
       "dependsOn": [
         "db-sf-4-client-follower"
       ],
@@ -16897,11 +16916,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-server-first",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Выполнено 4fc37d90: NodesPage получил run/pause/resume/stop + followerMode, useCabinetNodeRuntime — pause/resume, ScenarioRuntime.pause() на поле (тест cabinetNodeRuntimeCommands.test.ts); pause/resume/setMode позже сняты решением CT7 (PR #232, 32a5b80a, «тариф v3»), run/stop остались.",
       "dependsOn": [
         "db-sf-1-core-contracts"
       ],
@@ -16919,11 +16938,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-server-first",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Выполнено 4fc37d90: карточка узла проигрывает последний журнальный трек — NodeLastTrackPreview + findLastJournalTrack (с тестом) + useCabinetNodesJournalPreview, подключено в NodesPage.tsx:458; с тех пор доросло до waveform-скраббера.",
       "dependsOn": [
         "db-sf-6-nodes-runtime"
       ],
@@ -16941,11 +16960,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-server-first",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Выполнено 4fc37d90: юнит-тесты контрактов, gateway-мок канала board, тесты follower/flags/last-track плюс ранбук docs/actions/device-board/smoke/DEVICE_BOARD_SERVER_FIRST_SMOKE.md; prod-чеклист остался неподписанным (prod-only) и утратил предмет после перехода на канон v2.0. Находка: ранбук лежит в main в двух копиях (docs/actions/... и docs/device-board-scripts/...) — дубль-долг.",
       "dependsOn": [
         "db-sf-5-board-flags-ui",
         "db-sf-7-last-track-preview"
@@ -16964,11 +16983,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "parentEpic": "device-board-server-first",
       "createdAt": "2026-06-26",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Выполнено 4fc37d90: ARCHITECTURE §1g + канал board в списке WS-каналов, канон DEVICE_BOARD_SERVER_FIRST.md, строка эпика в docs/tasks/README.md, OPEN/CLOSURE/DEPLOY спринта; отдельного docs/CONCEPT.md в репозитории нет — пункт спеки закрыт ARCHITECTURE-разделом.",
       "dependsOn": [
         "db-sf-8-tests-smoke"
       ],
@@ -17750,12 +17769,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "night-build",
       "strategicWave": "W1",
       "createdAt": "2026-07-01",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Закрыто коммитом 5a1948c0 (PR #223): NB1 fv1-s2-content → archived, NB2 эпик free-v1-sound-catalog → archived (Issue #205 CLOSED), NB3 stale-worktrees удалены, HANDOFF в docs/archive/night-build/2026-07-01/, test:scripts 102/102. Карточка осталась active только из-за непереключённого статуса самой себя.",
       "notes": "Фазы NB0-NB3: gate, S2 registry reconcile, epic archive, worktree cleanup. База main (техотклонение — techies68 отстал). См. epic-промпт.",
       "leadPersona": "vesnin",
       "supportPersonas": [
@@ -18347,10 +18366,10 @@
       "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-03",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Ночь 2026-07-03→04 закрыта и влита: PR #241 смержен в main как aaf4d119 («экспорт меток + vdr:labels-merge + фильтр разметки»), HANDOFF docs/archive/night-build/2026-07-03/HANDOFF.md фиксирует NB0-NB4 done, CI client 21/21 и test:scripts 118/0. Утренний шаг «merge → task:archive» был выполнен наполовину: merge был, архивация — нет.",
       "id": "vdr-label-roundtrip-night-build",
       "title": "Night Build: VDR label round-trip — разметка пилота через клиентскую библиотеку (NB0–NB4)",
       "size": "M",
@@ -18371,10 +18390,10 @@
       "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-03",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Гейт закрыт в ночь 2026-07-03: baseline scoped CI снят (client FULL TURBO, test:scripts 113/0), модель хранения зафиксирована как MediaSample.title (имя файла) ↔ manifest id. Свидетельство: docs/archive/night-build/2026-07-03/HANDOFF.md, влито aaf4d119 (PR #241).",
       "id": "nb-vlr-0-gate",
       "title": "NB0: gate — baseline scoped CI + фиксация модели хранения библиотеки",
       "size": "S",
@@ -18393,10 +18412,10 @@
       "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-03",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Кнопка «Экспорт меток (JSON)» у коллекции живёт в main: apps/client/src/modules/SampleLibraryModule.tsx, handleExportLabels (L178) + кнопка L397-399, выгрузка fileName/label/notes как вход для vdr:labels-merge. Влито aaf4d119 (PR #241).",
       "id": "nb-vlr-1-labels-export-ui",
       "title": "NB1: кнопка «Экспорт меток (JSON)» коллекции в SampleLibraryModule",
       "size": "S",
@@ -18415,10 +18434,10 @@
       "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-03",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "yarn vdr:labels-merge зарегистрирован в package.json (L86) и реализован в scripts/vdr-labels-merge.mjs: матч по имени файла без расширения, отчёт applied/same/untouched/unmatched, --dry-run и --labels-only для intra-rater; тесты scripts/vdr-labels-merge.test.mjs. Влито aaf4d119 (PR #241).",
       "id": "nb-vlr-2-labels-merge-script",
       "title": "NB2: yarn vdr:labels-merge — merge меток в манифест пилота + --labels-only для intra-rater",
       "size": "S",
@@ -18437,10 +18456,10 @@
       "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-03",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Порт HG1-UX в клиентскую библиотеку выполнен: SampleLibraryModule.tsx — toggle-фильтр по метке с aria-pressed (L412-415) и счётчик «размечено N из M» с aria-live (L421-422). Влито aaf4d119 (PR #241).",
       "id": "nb-vlr-3-library-label-filter",
       "title": "NB3: фильтр по метке + счётчик прогресса в клиентской библиотеке (порт HG1-UX)",
       "size": "S",
@@ -18459,10 +18478,10 @@
       "promptPath": "docs/prompts/VDR_LABEL_ROUNDTRIP_NIGHT_BUILD_EPIC_PROMPT.md",
       "githubIssue": null,
       "linearId": null,
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-07-03",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Секция проверена текстом: docs/DATASET_CURATION.md §«Пилот hard-gate» (L84) описывает операторский путь — импорт WAV → разметка → «Экспорт меток (JSON)» → yarn vdr:labels-merge (L108-110) → intra-rater через --labels-only + validate:vdr (L115-119). Влито aaf4d119 (PR #241).",
       "id": "nb-vlr-4-docs",
       "title": "NB4: DATASET_CURATION §Пилот — операторский путь разметки через библиотеку + round-trip",
       "size": "S",
@@ -19808,11 +19827,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Эпик закрыт: все дети archived — TD2 td-scenario-registry-persistence (#293/PR #299) и td-node-lastseen-reconnect (#294/PR #300), TD3 td-singleton-eslint-guard (#295/PR #301), CI-часть cg5-cg7 (#290-#292, PR #297/#298); TD4/TD5 закрыты как фоновый backlog 2026-07-25. Живых детей нет — cg2-cg4 принадлежат эпику ci-gate-stabilization и этот эпик не держат.",
       "notes": "Из разбора код-ревью 06–08.07. CI/сборка (TD1) — в ci-gate-stabilization (cg5–cg7). Этот эпик = персистентность узла (TD2) + singleton-enforcement (TD3); чистка TD4/TD5 = deferred бэклог. Combined-продюсер — продукт (S2), вне долга.",
       "leadPersona": "vesnin",
       "supportPersonas": [
@@ -20000,11 +20019,11 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "createdAt": "2026-07-08",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-09",
+      "archiveNotes": "Эпик закрыт: csp-1…csp-6 archived 2026-07-21 (Issues #302-#307, PR #309-#314); в main шареная user-case-card-view.tsx (device-board) и её потребитель apps/cabinet/src/components/CabinetScenarioPicker.tsx, G1 закрыт через entitledTariffSkus в node-realtime-wire.ts / tariff-projection.ts. Живых детей нет.",
       "notes": "Запрос владельца 2026-07-08. Вариант A (узел объявляет user+system), шареная карточка из BoardUserCasePickerModal. Крит.зависимость G1 (тариф→узел, снять стаб entitlement). Selection persistence уже есть (TD2).",
       "leadPersona": "vesnin",
       "supportPersonas": [
