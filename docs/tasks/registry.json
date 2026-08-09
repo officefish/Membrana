@@ -8,17 +8,17 @@
       "noIssueReason": "Execution carrier фазы #1303-A под существующим umbrella #1303; отдельная Issue и третий umbrella не создаются",
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "cowork-sprint",
       "createdAt": "2026-08-09",
-      "archivedAt": null,
+      "archivedAt": "2026-08-09",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin",
         "ozhegov"
       ],
       "notes": "3 блока registry-contract/registry-index/read-api; изоляция до Interface Consilium; мёржатся все три; закрывает static-mmbrn-registry-read-api только после integration DoD",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1828 merged 2026-08-09 as 9baa7f61; cowork phases 1-5 completed; exact-SHA c8b298c4 reviewed by three independent reviewers and Vesnin; CI 6/6.",
       "githubIssueClosedAt": null,
       "parentEpic": "static-mmbrn-registry-read-api"
     },
@@ -377,16 +377,16 @@
       "noIssueReason": "Фаза существующего umbrella #1303; отдельный Issue не создаётся и зонтик фазой не закрывается",
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-09",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "Holder #1303; resolve читает только registry truth; affineDocId не канон",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1828 merged 2026-08-09 as 9baa7f61; exact-SHA c8b298c4 LGTM; CI 6/6 including Node 20 image smoke; P2 follow-ups preserved in review.",
       "githubIssueClosedAt": null,
       "parentEpic": "static-mmbrn-container"
     },

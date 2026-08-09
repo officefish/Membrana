@@ -2,7 +2,7 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` |
+| **status** | `closed` — Phase 5 закрыта 2026-08-09 (`cowork:close`) |
 | sprintId | `cowork-static-registry-read-api` |
 | brief | [`COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-static-registry-read-api/COWORK_SPRINT_BRIEF.md) |
 | task carrier | `cowork-static-registry-read-api` |
@@ -59,3 +59,15 @@ Integration-ветка: `cowork/cowork-static-registry-read-api/integration` в
 `static-mmbrn-live-inventory` остаётся отдельной active ops-задачей и не исполняется этим
 коворком. Остальные узлы EPIC остаются в `docs/meeting/static-mmbrn-container/DEPS.json`.
 Проверка: `node scripts/meeting-status.mjs --id static-mmbrn-container`.
+
+---
+
+## Закрытие Phase 5 — `cowork:close` 2026-08-09
+
+Спринт **`cowork-static-registry-read-api`** закрыт предикатом, а не памятью человека: контракт и ретроспектива на месте, блокирующих находок нет.
+
+Неблокирующие находки, оставленные явно (закрытие флага из-за них не роняется):
+
+- находок незакрытости нет
+
+**Что этот шаг НЕ утверждает:** качество сведения блоков машине недоступно. Пустой список находок означает «признаков незакрытости не найдено», а не «коворк закрыт хорошо».
