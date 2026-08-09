@@ -76,7 +76,7 @@ export class StaticRegistryController {
     schema: {
       type: 'string',
       maxLength: STATIC_REGISTRY_CANONICAL_REF_MAX_LENGTH,
-      pattern: '^urn:mmbrn:static:[a-z0-9][a-z0-9._-]{0,127}$',
+      pattern: '^urn:mmbrn:static:[a-z0-9][a-z0-9-]{2,63}$',
     },
   })
   @ApiOkResponse({ type: StaticRegistryLineageResponseDto })

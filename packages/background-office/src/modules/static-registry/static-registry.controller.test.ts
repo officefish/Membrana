@@ -142,6 +142,10 @@ describe('StaticRegistryController', () => {
       method: 'GET',
       url: '/static-registry/records/AFFINE-DOC-ID',
     });
+    const legacyBroadRecord = await app.getHttpAdapter().getInstance().inject({
+      method: 'GET',
+      url: '/static-registry/records/bad_id',
+    });
     const missingCanonicalRef = await app.getHttpAdapter().getInstance().inject({
       method: 'GET',
       url: '/static-registry/resolve',
@@ -152,6 +156,7 @@ describe('StaticRegistryController', () => {
     });
 
     expect(malformedRecord.statusCode).toBe(400);
+    expect(legacyBroadRecord.statusCode).toBe(400);
     expect(missingCanonicalRef.statusCode).toBe(400);
     expect(affineAlias.statusCode).toBe(400);
     expect(stub.recordRequests).toEqual([]);

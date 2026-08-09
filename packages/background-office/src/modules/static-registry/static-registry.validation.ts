@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 
-export const STATIC_REGISTRY_RECORD_ID_PATTERN = /^[a-z0-9][a-z0-9._-]{0,127}$/;
-export const STATIC_REGISTRY_RECORD_ID_MAX_LENGTH = 128;
+export const STATIC_REGISTRY_RECORD_ID_PATTERN = /^[a-z0-9][a-z0-9-]{2,63}$/;
+export const STATIC_REGISTRY_RECORD_ID_MAX_LENGTH = 64;
 export const STATIC_REGISTRY_CANONICAL_REF_PREFIX = 'urn:mmbrn:static:';
 export const STATIC_REGISTRY_CANONICAL_REF_MAX_LENGTH =
   STATIC_REGISTRY_CANONICAL_REF_PREFIX.length + STATIC_REGISTRY_RECORD_ID_MAX_LENGTH;

@@ -23,7 +23,7 @@ composition-ready и намеренно не монтируется в productio
 |---|---|
 | contract -> index | `recordId` переведён в `id`; validated record явно скопирован в JSON payload |
 | index -> read API | sync domain exceptions переведены в async `found/not-found`; остальные ошибки fail-closed |
-| identity grammar | ведущей назначена строгая M2 grammar; adapter режет более широкий local input до lookup |
+| identity grammar | ведущей назначена строгая M2 grammar; HTTP/OpenAPI и adapter одинаково режут более широкий local input до lookup |
 | CJS office -> ESM packages | runtime composition использует dynamic import и local read shape |
 | registry date -> OpenAPI | `addedAt` объявлен string без ложного обязательного `date-time`; значение не нормализуется |
 | workspace/image | добавлены package graph, lock, Docker context/build/runtime COPY |
@@ -65,4 +65,3 @@ compromised, но embargo координатора нарушено.
 не между доменными типами, а между delivery-средами: CJS/ESM и три ручных Docker-манифеста.
 Следующий cowork brief для server foundation должен называть runtime/package/image seam уже в
 начальной оценке integration cost.
-
