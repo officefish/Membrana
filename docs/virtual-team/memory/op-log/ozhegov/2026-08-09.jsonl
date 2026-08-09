@@ -1,0 +1,7 @@
+{"ts":"2026-08-09T07:24:20.950Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-09T07:32:21.068Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-09T07:31:50.395Z","origin":"ask-persona"}
+{"ts":"2026-08-09T07:32:21.069Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-09T07:31:50.395Z","origin":"ask-persona"}
+{"ts":"2026-08-09T07:32:21.069Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-archivarius-mongo-dump-cut-1","reason":"там я уже предсказал недооценку блоков (+90% суммой) на соседней карточке #1714; беру поправку в нарезку restore-drill, чтобы не повторить.","origin":"ask-persona"}
+{"ts":"2026-08-09T07:32:21.077Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-17-insight-dads-detector-integration","reason":"тот же принцип: версионируемый манифест как источник истины, не ручная сверка. Мерка восстановления должна опираться на манифест дампа, а не на «глазами посмотреть».","origin":"ask-persona"}
+{"ts":"2026-08-09T07:45:10.137Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-09T07:44:33.481Z","origin":"ask-persona"}
+{"ts":"2026-08-09T07:45:10.140Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-09T07:44:33.481Z","origin":"ask-persona"}

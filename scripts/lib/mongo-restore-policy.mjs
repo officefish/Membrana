@@ -1,0 +1,228 @@
+/**
+ * Политика ПРОВЕРКИ ВОССТАНОВЛЕНИЯ архивариуса: сравнение двух описей как предикат тождества.
+ *
+ * Блок b1 плана `docs/sprint/cut/archivarius-mongo-restore-drill.json` (карточка
+ * `archivarius-mongo-restore-drill`, иссью #1809, магистраль дня 09.08).
+ *
+ * ПОВОД — разбор Ожегова 08.08, дословно: «бэкап = дамп + верифицированное восстановление
+ * на изолированном окружении; без второго это `mongo-dump-artifact`, а не `backup`». Дамп
+ * влит 09.08 (PR #1815), и с этого момента у нас есть артефакт, о котором никто не знает,
+ * восстановится он или нет. Правило приёмки задачи прямое: **«файл создан, размер ненулевой»
+ * проверкой не является** — мерка обязана быть о восстановленном СОСТОЯНИИ.
+ *
+ * МОДУЛЬ ЧИСТЫЙ по построению — ни файловой системы, ни докера, ни сети, ни `Date.now()`.
+ * Та же граница, что у соседа `mongo-dump-policy.mjs`, и по той же причине: политика не
+ * знает про пути и хосты, исполнитель не принимает решений. Обратный порядок даёт io-ком,
+ * у которого нельзя спросить ни одного проверяемого утверждения.
+ *
+ * ТРИ СЛОЯ МЕРКИ, и все три обязательны (решение резчика, ратифицировано владельцем 09.08):
+ *   · `count`      — мощность множества: ловит потерю или лишний документ, стоит дёшево;
+ *   · `sha256`     — побитовое равенство содержимого, отсортированного по `_id`: ловит
+ *                    ТИХУЮ ПОРЧУ, когда число документов сошлось, а один из них другой;
+ *   · `invariants` — семантика ключевых сущностей: версия схемы, индексы, поле ключа.
+ *
+ * Выборочные контрольные суммы отклонены резчиком осознанно: они дают вероятностную
+ * гарантию там, где детерминированная исполнима.
+ */
+
+/** Слои мерки в порядке обхода. Порядок несущий — см. `verifyRestore`. */
+export const LAYERS = Object.freeze(['count', 'sha', 'invariant']);
+
+/**
+ * Закрытый список причин расхождения.
+ *
+ * Роды разделены не для красоты отчёта. `COUNT_MISMATCH` — арифметика мощности: документ
+ * пропал или появился лишний. `CONTENT_MISMATCH` — мощность СОШЛАСЬ, а содержимое нет:
+ * порченое поле, потерянное поле, переставленный порядок в массиве. Второе опаснее первого
+ * и обязано иметь своё имя: восстановление, где «число документов совпало», выглядит
+ * успешным ровно до того дня, когда данные понадобятся.
+ */
+export const MISMATCH_REASONS = Object.freeze([
+  'COLLECTION_MISSING',
+  'COLLECTION_EXTRA',
+  'COUNT_MISMATCH',
+  'CONTENT_MISMATCH',
+  'SCHEMA_VERSION_MISMATCH',
+  'REQUIRED_INDEX_MISSING',
+  'PK_FIELD_MISMATCH',
+  'EXTRA_INVARIANT_MISMATCH',
+]);
+
+/** Что именно хешируется в слое `sha`. Субъект объявлен, как и у дампа: смена станет видимой. */
+export const RESTORE_SHA256_SUBJECT = 'collection-bson-sorted-by-id';
+
+const HEX64 = /^[0-9a-f]{64}$/u;
+
+/**
+ * Порча ВХОДА, а не свойство состояния базы.
+ *
+ * Решение исполнителя блока и единственно честный исход: если слой не посчитан, ядро не
+ * имеет права ни на `ok: false` (ложный минус — обвинили восстановление в том, чего не
+ * мерили), ни на `ok: true` (ложный плюс — пропустили непроверенное). Это дефект пайплайна
+ * снятия описи, и он обязан быть слышен отдельным родом.
+ */
+export class InvalidInventoryError extends Error {
+  constructor(message, details = {}) {
+    super(message);
+    this.name = 'InvalidInventoryError';
+    Object.assign(this, details);
+  }
+}
+
+/**
+ * Проверить пригодность описи ДО сравнения.
+ *
+ * Толерантной сортировки внутри нет намеренно (решение исполнителя): молча отсортировав
+ * чужой вход, ядро скрыло бы дефект сборщика описи, а вместе с ним — возможность заметить,
+ * что две стороны собираются по разным правилам.
+ *
+ * @param {object} inv опись
+ * @param {string} side имя стороны для сообщения об отказе
+ */
+export function assertInventory(inv, side = 'inventory') {
+  if (!inv || typeof inv !== 'object') {
+    throw new InvalidInventoryError(`${side}: опись не объект`, { side });
+  }
+  if (!Array.isArray(inv.collections)) {
+    throw new InvalidInventoryError(`${side}: collections не массив`, { side });
+  }
+  const names = inv.collections.map((c) => c?.name);
+  for (const [i, c] of inv.collections.entries()) {
+    const at = `${side}.collections[${i}]`;
+    if (!c || typeof c.name !== 'string' || !c.name) {
+      throw new InvalidInventoryError(`${at}: имя коллекции пусто`, { side, index: i });
+    }
+    if (!Number.isSafeInteger(c.count) || c.count < 0) {
+      throw new InvalidInventoryError(`${at} (${c.name}): count не целое ≥ 0`, {
+        side,
+        collection: c.name,
+        missingLayer: 'count',
+      });
+    }
+    if (typeof c.sha256 !== 'string' || !HEX64.test(c.sha256)) {
+      throw new InvalidInventoryError(`${at} (${c.name}): sha256 не 64 шестнадцатеричных знака`, {
+        side,
+        collection: c.name,
+        missingLayer: 'sha',
+      });
+    }
+    if (!c.invariants || typeof c.invariants !== 'object') {
+      throw new InvalidInventoryError(`${at} (${c.name}): слой invariants отсутствует`, {
+        side,
+        collection: c.name,
+        missingLayer: 'invariant',
+      });
+    }
+  }
+  // Сравнение ПОЭЛЕМЕНТНОЕ, без склейки через разделитель: разделитель — лишнее
+  // допущение о том, каких символов не бывает в именах коллекций. Первая редакция на
+  // этом споткнулась — в склейку попал нулевой байт, git счёл файл бинарным и показал
+  // ревью ПУСТОЙ дифф при 224 строках содержимого (находка ревью PR #1821).
+  const sorted = [...names].sort((a, b) => String(a).localeCompare(String(b)));
+  if (names.some((n, i) => n !== sorted[i])) {
+    throw new InvalidInventoryError(`${side}: collections не отсортированы по имени`, { side });
+  }
+  if (new Set(names).size !== names.length) {
+    throw new InvalidInventoryError(`${side}: имена коллекций повторяются`, { side });
+  }
+  return inv;
+}
+
+/** Отказ-объект одного вида — чтобы вызывающий читал причину, а не собирал её сам. */
+function mismatch(reason, at, expected, actual) {
+  return { ok: false, reason, at, expected, actual };
+}
+
+/**
+ * Сравнить инварианты одной коллекции. Порядок полей внутри слоя тоже фиксирован.
+ */
+function compareInvariants(name, want, got) {
+  const at = (field) => ({ collection: name, layer: 'invariant', field });
+  if (want.schemaVersion !== got.schemaVersion) {
+    return mismatch('SCHEMA_VERSION_MISMATCH', at('schemaVersion'), want.schemaVersion, got.schemaVersion);
+  }
+  if (want.pkField !== got.pkField) {
+    return mismatch('PK_FIELD_MISMATCH', at('pkField'), want.pkField, got.pkField);
+  }
+  const wantIdx = [...(want.requiredIndexes ?? [])].sort();
+  const gotIdx = new Set(got.requiredIndexes ?? []);
+  for (const idx of wantIdx) {
+    if (!gotIdx.has(idx)) {
+      return mismatch('REQUIRED_INDEX_MISSING', at(`requiredIndexes.${idx}`), idx, null);
+    }
+  }
+  const wantExtras = want.extras ?? {};
+  for (const key of Object.keys(wantExtras).sort()) {
+    const got2 = (got.extras ?? {})[key];
+    if (got2 !== wantExtras[key]) {
+      return mismatch('EXTRA_INVARIANT_MISMATCH', at(`extras.${key}`), wantExtras[key], got2 ?? null);
+    }
+  }
+  return { ok: true };
+}
+
+/**
+ * Предикат тождества двух описей: восстановлено ↔ не восстановлено.
+ *
+ * Возвращается ПЕРВОЕ расхождение, а не все, и это решение исполнителя блока: сравнение —
+ * предикат для гейта, а не отчёт аудитора. Порядок обхода фиксирован (коллекции по имени,
+ * слои `count → sha → invariant`), поэтому точка отказа воспроизводима: два прогона на
+ * одном входе дают тот же вердикт побитово. Полный дифф — работа отдельной функции над тем
+ * же входом; ядро её не совмещает, иначе предикат превратится в отчёт и перестанет быть
+ * дешёвым.
+ *
+ * @param {{collections: readonly object[]}} source опись ИСТОЧНИКА (что дампили)
+ * @param {{collections: readonly object[]}} restored опись ВОССТАНОВЛЕННОГО
+ * @returns {{ok: true} | {ok: false, reason: string, at: object, expected: unknown, actual: unknown}}
+ */
+export function verifyRestore(source, restored) {
+  assertInventory(source, 'source');
+  assertInventory(restored, 'restored');
+
+  const got = new Map(restored.collections.map((c) => [c.name, c]));
+  const seen = new Set();
+
+  for (const want of source.collections) {
+    const have = got.get(want.name);
+    if (!have) {
+      return mismatch('COLLECTION_MISSING', { collection: want.name, layer: 'count' }, want.count, null);
+    }
+    seen.add(want.name);
+
+    // Порядок слоёв несущий. Сначала мощность — она дешева и объясняет расхождение проще
+    // всего. Только если мощность сошлась, спрашиваем содержимое: иначе `CONTENT_MISMATCH`
+    // сообщал бы «содержимое разное» там, где просто пропал документ, и диагноз лгал бы.
+    if (want.count !== have.count) {
+      return mismatch('COUNT_MISMATCH', { collection: want.name, layer: 'count' }, want.count, have.count);
+    }
+    if (want.sha256 !== have.sha256) {
+      // ТИХАЯ ПОРЧА: число документов совпало, содержимое — нет. Ради этого случая слой sha
+      // и заведён; без него трёхслойность декоративна.
+      return mismatch('CONTENT_MISMATCH', { collection: want.name, layer: 'sha' }, want.sha256, have.sha256);
+    }
+    const inv = compareInvariants(want.name, want.invariants, have.invariants);
+    if (!inv.ok) return inv;
+  }
+
+  for (const c of restored.collections) {
+    if (!seen.has(c.name)) {
+      return mismatch('COLLECTION_EXTRA', { collection: c.name, layer: 'count' }, null, c.count);
+    }
+  }
+
+  return { ok: true };
+}
+
+/**
+ * Человекочитаемая строка вердикта. Отдельно от предиката: гейт читает поля, человек — текст.
+ */
+export function formatRestoreVerdict(v) {
+  if (v?.ok) return 'восстановление подтверждено: все коллекции сошлись по счёту, содержимому и инвариантам';
+  const at = v?.at ?? {};
+  const where = `${at.collection ?? '—'}${at.field ? `.${at.field}` : ''} (слой ${at.layer ?? '—'})`;
+  const hint =
+    v?.reason === 'CONTENT_MISMATCH'
+      ? ' — число документов совпало, содержимое нет: тихая порча, самый опасный род'
+      : '';
+  return `восстановление НЕ подтверждено: ${v?.reason ?? 'причина не названа'} на ${where}${hint}; ожидалось ${JSON.stringify(v?.expected ?? null)}, получено ${JSON.stringify(v?.actual ?? null)}`;
+}

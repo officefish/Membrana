@@ -1,0 +1,5 @@
+{"ts":"2026-08-09T07:24:20.715Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-09T07:40:42.533Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-09T07:40:02.403Z","origin":"ask-persona"}
+{"ts":"2026-08-09T07:40:42.536Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-09T07:40:02.403Z","origin":"ask-persona"}
+{"ts":"2026-08-09T07:40:42.537Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-20-linear-egress-gear-wiring-m4b-closure-gate","reason":"там я уже формулировал гейт как чистый предикат без Date.now() и с параметром времени; здесь ровно тот же класс: restorePolicy — детерминированная функция от двух описей, время (если и понадобится) — параметром.","origin":"ask-persona"}
+{"ts":"2026-08-09T07:40:42.538Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-23-tasks-workshop-m4a-inspect","reason":"паспорт карточки как кортеж с закрытым набором полей — прямой шаблон для формы записи об одной коллекции: кортеж, не мешок опциональных ключей.","origin":"ask-persona"}

@@ -6,7 +6,7 @@
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
 Записей: 49 · бюджет 14360/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 270 (причины в op-log) -->
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 271 (причины в op-log) -->
 
 ### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
 
