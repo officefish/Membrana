@@ -36,7 +36,7 @@ Integration-ветка: `cowork/cowork-static-registry-read-api/integration` в
 | 2 — Isolated build | **closed** | `ready(A) && ready(B) && ready(C)`; три freeze-тега отправлены на exact SHA |
 | 3 — Interface Consilium | **closed** | 3/3 `ACCEPT-WITH-ADAPTERS`; `INTERFACE_CONTRACT.md`; S-C2 не наступил |
 | 4 — Integration | **open** | блоки merged; adapters/smoke зелёные; Docker image smoke честно `unknown` без daemon и ждёт CI |
-| 5 — Merge + archive | pending | один integration PR, exact-SHA review, merge, retrospective |
+| 5 — Merge + archive | pending | PR #1828 открыт; retrospective готова; exact-SHA review, CI, merge и archive ещё не подтверждены |
 
 ## Isolation Guard
 
