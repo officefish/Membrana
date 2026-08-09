@@ -15,5 +15,9 @@
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"],
-  "references": [{ "path": "../services/rag" }]
+  "references": [
+    { "path": "../core" },
+    { "path": "../services/rag" },
+    { "path": "../services/static-registry" }
+  ]
 }

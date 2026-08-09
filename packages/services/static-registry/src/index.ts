@@ -19,3 +19,9 @@ export type {
   RegistryRecordPayload,
   RegistryValue,
 } from './types';
+export {
+  createIndexFromSnapshot,
+  toRegistryIndexInput,
+  toRegistryIndexInputs,
+  type IntegratedEvidencePayload,
+} from './adapters/core-static-registry.adapter';

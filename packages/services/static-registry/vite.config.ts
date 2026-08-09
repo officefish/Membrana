@@ -15,6 +15,9 @@ export default defineConfig({
       formats: ['es'],
       fileName: 'index',
     },
+    rollupOptions: {
+      external: ['@membrana/core'],
+    },
     sourcemap: true,
     target: 'es2022',
   },

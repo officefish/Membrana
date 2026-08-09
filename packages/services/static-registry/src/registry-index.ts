@@ -12,6 +12,7 @@ import type {
 export const STATIC_REGISTRY_CANONICAL_PREFIX = 'urn:mmbrn:static:';
 
 const MAX_ID_LENGTH = 512;
+// eslint-disable-next-line no-control-regex -- registry ids explicitly reject ASCII controls.
 const SAFE_ID = /^[^\s\x00-\x1f\x7f]+$/u;
 const INDEX_CONSTRUCTION_TOKEN = Symbol('StaticRegistryIndex construction');
 

@@ -83,6 +83,12 @@ describe('Static registry OpenAPI contract', () => {
     expect(schemaPropertyNames(document, 'StaticRegistryErrorResponseDto')).toEqual(
       ['error', 'message', 'statusCode'].sort(),
     );
+    const recordSchema = document.components?.schemas?.StaticRegistryRecordResponseDto;
+    const addedAt = recordSchema && 'properties' in recordSchema
+      ? recordSchema.properties?.addedAt
+      : undefined;
+    expect(addedAt).toMatchObject({ type: 'string' });
+    expect(JSON.stringify(addedAt)).not.toContain('"format":"date-time"');
 
     for (const path of Object.values(document.paths)) {
       expect(path?.get?.responses).toHaveProperty('400');

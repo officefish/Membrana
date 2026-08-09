@@ -138,12 +138,12 @@ Docker image smoke, and a production-import scan proving no test stub enters the
 
 ## Integration acceptance
 
-- [ ] all three frozen block commits merged without replacement;
-- [ ] adapters implement the signatures and invariants above;
-- [ ] current registry parses and indexes atomically;
-- [ ] integration smoke and all block tests pass;
-- [ ] OpenAPI reflects calendar-date `addedAt` without normalization;
-- [ ] package and Docker wiring are complete;
-- [ ] module remains unmounted until R3 ingress/auth;
+- [x] all three frozen block commits merged without replacement;
+- [x] adapters implement the signatures and invariants above;
+- [x] current registry parses and indexes atomically: 18 records / 14 lineages;
+- [x] integration smoke and all block tests pass;
+- [x] OpenAPI reflects calendar-date `addedAt` without normalization;
+- [ ] package/Docker wiring is written and statically checked; image smoke is honest `unknown`
+  because the local Docker daemon is unavailable, so CI must prove the image;
+- [x] module remains unmounted until R3 ingress/auth;
 - [ ] coordinator embargo incident is carried into retrospective.
-

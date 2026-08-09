@@ -2254,7 +2254,9 @@ __metadata:
   resolution: "@membrana/background-office@workspace:packages/background-office"
   dependencies:
     "@fastify/static": "npm:^8.0.0"
+    "@membrana/core": "npm:*"
     "@membrana/rag-service": "workspace:*"
+    "@membrana/static-registry-service": "npm:*"
     "@nestjs/common": "npm:^11.0.0"
     "@nestjs/core": "npm:^11.0.0"
     "@nestjs/platform-fastify": "npm:^11.0.0"
@@ -2730,6 +2732,20 @@ __metadata:
     "@membrana/core": "npm:*"
     "@membrana/detector-base": "npm:*"
     "@membrana/fft-analyzer-service": "npm:*"
+    eslint: "npm:^8.57.0"
+    rimraf: "npm:^5.0.0"
+    typescript: "npm:^5.4.0"
+    vite: "npm:^7.0.0"
+    vite-plugin-dts: "npm:^3.9.1"
+    vitest: "npm:^3.2.0"
+  languageName: unknown
+  linkType: soft
+
+"@membrana/static-registry-service@npm:*, @membrana/static-registry-service@workspace:packages/services/static-registry":
+  version: 0.0.0-use.local
+  resolution: "@membrana/static-registry-service@workspace:packages/services/static-registry"
+  dependencies:
+    "@membrana/core": "npm:*"
     eslint: "npm:^8.57.0"
     rimraf: "npm:^5.0.0"
     typescript: "npm:^5.4.0"

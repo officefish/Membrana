@@ -1,0 +1,39 @@
+{
+  "name": "@membrana/static-registry-service",
+  "version": "0.1.0",
+  "description": "Immutable deterministic index over Membrana static evidence registry truth.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b && vite build",
+    "clean": "rimraf dist .turbo .tsbuildinfo",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@membrana/core": "*"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.4.0",
+    "vite": "^7.0.0",
+    "vite-plugin-dts": "^3.9.1",
+    "vitest": "^3.2.0"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

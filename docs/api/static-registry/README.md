@@ -2,10 +2,10 @@
 
 ## Status and boundary
 
-This module is the read-only transport from Cowork Sprint block `read-api`. It is not a
-public ingress and is not wired into `packages/background-office/src/app.module.ts` by the
-block. Application wiring and the adapter to registry/index truth belong to the integration
-phase.
+This module is the composition-ready read-only transport from Cowork Sprint
+`cowork-static-registry-read-api`. It is not a public ingress and remains deliberately
+unmounted from `packages/background-office/src/app.module.ts` until dependent phase
+`static-mmbrn-ingress-auth` supplies the ratified Panel forward-auth boundary.
 
 The module is registered with an injected `StaticRegistryReadPort`; it does not read files,
 construct an index, mutate registry truth, authorize a caller, or locate material bytes.
@@ -21,8 +21,7 @@ There are exactly two operations. `POST`, `PUT`, `PATCH`, and `DELETE` are not i
 
 ## Request and error contract
 
-- `recordId` is a lowercase registry slug of at most 128 characters, beginning with an
-  alphanumeric character and then containing only lowercase alphanumerics, `.`, `_`, or `-`.
+- `recordId` follows the M2 grammar `^[a-z0-9][a-z0-9-]{2,63}$`.
 - `canonicalRef` has the exact form `urn:mmbrn:static:<rootId>` and is lineage identity, not
   a URL.
 - A malformed or missing value returns `400` before the read port is called.
@@ -60,5 +59,6 @@ StaticRegistryModule.register({
 });
 ```
 
-The symbols in this example are placeholders for the Phase 3 contract and Phase 4 adapter;
-they are not declarations about another block's implementation.
+The integrated implementation uses `StaticRegistryIndexReadAdapter` and
+`createStaticRegistryReadPortFromText`. Production mounting remains a separate R3-gated act;
+the existence of handlers does not assert that a live protected route exists.

@@ -13,7 +13,7 @@
 | owner cut ratification | 2026-08-09 — «ратифицирую» |
 | preparation delivery | PR #1827, merged as `322501ef` |
 | preparation review | T2 LGTM, reviewed SHA `8c82c5031c42ef2e4087fccfc11d8776a2894d70` |
-| current phase | **3 — Interface Consilium** |
+| current phase | **4 — Integration** |
 | integration deadline | 2026-08-14 fallback |
 
 ## Blocks
@@ -34,8 +34,8 @@ Integration-ветка: `cowork/cowork-static-registry-read-api/integration` в
 | 0 — Brief + open | **closed** | brief ратифицирован; PR #1827 merged; четыре ветки и три worktree созданы от одного BASE_SHA |
 | 1 — Concept | **closed** | 3/3: `bfb1dcd5`, `099255c0`, `44536a48`; изоляция заявлена всеми командами, блокеров нет |
 | 2 — Isolated build | **closed** | `ready(A) && ready(B) && ready(C)`; три freeze-тега отправлены на exact SHA |
-| 3 — Interface Consilium | **open** | одновременное вскрытие EXPECTATIONS, контракт швов и integration smoke; production-код не пишется |
-| 4 — Integration | pending | coordinator, adapters, без переписывания блоков |
+| 3 — Interface Consilium | **closed** | 3/3 `ACCEPT-WITH-ADAPTERS`; `INTERFACE_CONTRACT.md`; S-C2 не наступил |
+| 4 — Integration | **open** | блоки merged; adapters/smoke зелёные; Docker image smoke честно `unknown` без daemon и ждёт CI |
 | 5 — Merge + archive | pending | один integration PR, exact-SHA review, merge, retrospective |
 
 ## Isolation Guard

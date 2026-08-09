@@ -31,6 +31,8 @@ packages/libs
 packages/services
 !packages/services/rag
 !packages/services/rag/**
+!packages/services/static-registry
+!packages/services/static-registry/**
 !packages/services/media-library
 !packages/services/media-library/**
 !packages/services/audio-engine
@@ -90,5 +92,7 @@ docs/**
 !docs/virtual-team
 !docs/truth/
 !docs/truth/registry.json
+!docs/evidence/
+!docs/evidence/registry.jsonl
 !docs/prompts/
 !docs/prompts/DREAM_MASTER_PROMPT.md

@@ -15,7 +15,11 @@ export class StaticRegistryRecordResponseDto {
   @ApiProperty({ example: 4096, minimum: 1, type: Number })
   bytes!: number;
 
-  @ApiProperty({ example: '2026-07-28T12:00:00.000Z', format: 'date-time', type: String })
+  @ApiProperty({
+    example: '2026-07-28',
+    description: 'Registry calendar date or ISO 8601 timestamp',
+    type: String,
+  })
   addedAt!: string;
 
   @ApiProperty({ example: 'urn:mmbrn:static:day-memo-2026-07-28', type: String })
