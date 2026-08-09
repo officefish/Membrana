@@ -13,16 +13,16 @@
 | owner cut ratification | 2026-08-09 — «ратифицирую» |
 | preparation delivery | PR #1827, merged as `322501ef` |
 | preparation review | T2 LGTM, reviewed SHA `8c82c5031c42ef2e4087fccfc11d8776a2894d70` |
-| current phase | **1 — Concept** |
+| current phase | **2 — Isolated build** |
 | integration deadline | 2026-08-14 fallback |
 
 ## Blocks
 
 | Блок | Ветка | Worktree | Фаза | Готовность |
 |------|-------|----------|------|------------|
-| `registry-contract` | `cowork/cowork-static-registry-read-api/registry-contract` | `.worktrees/Membrana-registry-contract` | 1 | ждёт `CONCEPT.md` + первый `EXPECTATIONS.md` |
-| `registry-index` | `cowork/cowork-static-registry-read-api/registry-index` | `.worktrees/Membrana-registry-index` | 1 | ждёт `CONCEPT.md` + первый `EXPECTATIONS.md` |
-| `read-api` | `cowork/cowork-static-registry-read-api/read-api` | `.worktrees/Membrana-read-api` | 1 | ждёт `CONCEPT.md` + первый `EXPECTATIONS.md` |
+| `registry-contract` | `cowork/cowork-static-registry-read-api/registry-contract` | `.worktrees/Membrana-registry-contract` | 2 | concept `bfb1dcd5`; isolated build до собственного DoD |
+| `registry-index` | `cowork/cowork-static-registry-read-api/registry-index` | `.worktrees/Membrana-registry-index` | 2 | concept `099255c0`; isolated build до собственного DoD |
+| `read-api` | `cowork/cowork-static-registry-read-api/read-api` | `.worktrees/Membrana-read-api` | 2 | concept `44536a48`; isolated build до собственного DoD |
 
 Integration-ветка: `cowork/cowork-static-registry-read-api/integration` в
 `.worktrees/static-container-meeting-delivery`.
@@ -32,8 +32,8 @@ Integration-ветка: `cowork/cowork-static-registry-read-api/integration` в
 | Фаза | Статус | Evidence |
 |------|--------|----------|
 | 0 — Brief + open | **closed** | brief ратифицирован; PR #1827 merged; четыре ветки и три worktree созданы от одного BASE_SHA |
-| 1 — Concept | **open** | три команды изолированно пишут собственные `CONCEPT.md` и `EXPECTATIONS.md` |
-| 2 — Isolated build | pending | открывается после Phase 1 у каждого блока |
+| 1 — Concept | **closed** | 3/3: `bfb1dcd5`, `099255c0`, `44536a48`; изоляция заявлена всеми командами, блокеров нет |
+| 2 — Isolated build | **open** | каждый блок проходит собственный DoD на исполняемых стабах; scoped CI обязателен |
 | 3 — Interface Consilium | pending | только после `ready(A) && ready(B) && ready(C)` либо deadline |
 | 4 — Integration | pending | coordinator, adapters, без переписывания блоков |
 | 5 — Merge + archive | pending | один integration PR, exact-SHA review, merge, retrospective |
