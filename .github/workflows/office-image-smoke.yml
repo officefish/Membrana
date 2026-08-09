@@ -4,9 +4,9 @@
 # Dockerfile офиса перечисляет файлы из scripts/ поимённо, и список обязан следовать за
 # графом импортов вручную. Зелёная сборка этого не доказывает: расхождение всплывает на
 # проде первым MODULE_NOT_FOUND (срабатывание 07.08 — перевод dreams-tick на classify.mjs).
-# Здесь контейнер поднимается и его просят отдать дайджест снов — единственный публичный
-# путь, который грузит рантайм-модули офиса. Прибор не несёт списка модулей: список живёт
-# в коде офиса, CI проверяет его исполнением.
+# Здесь контейнер поднимается, отдаёт дайджест снов и отдельным внутренним probe читает
+# static registry, создаёт индекс и выполняет lookup. Прибор не несёт списка модулей:
+# зависимости живут в коде офиса, CI проверяет их исполнением.
 #
 # Секреты не нужны — обязательные env заполняются заведомо нерабочими значениями, путь
 # дайджеста в сеть не ходит. Поэтому прогон идёт и на PR из форка.
@@ -19,7 +19,11 @@ on:
   pull_request:
     paths:
       - 'packages/background-office/**'
+      - 'packages/core/**'
       - 'packages/services/rag/**'
+      - 'packages/services/static-registry/**'
+      - 'docs/evidence/registry.jsonl'
+      - '.dockerignore'
       - 'scripts/lib/**'
       - 'scripts/network/lib/**'
       - 'scripts/office-image-smoke.mjs'
@@ -29,7 +33,11 @@ on:
     branches: [main]
     paths:
       - 'packages/background-office/**'
+      - 'packages/core/**'
       - 'packages/services/rag/**'
+      - 'packages/services/static-registry/**'
+      - 'docs/evidence/registry.jsonl'
+      - '.dockerignore'
       - 'scripts/lib/**'
       - 'scripts/network/lib/**'
   workflow_dispatch:
@@ -93,7 +101,8 @@ jobs:
             echo "## Office image smoke"
             echo ""
             echo "Проверено ИСПОЛНЕНИЕМ, а не списком: контейнер поднят, \`GET /v1/dreams/digest/:day\`"
-            echo "грузит рантайм-модули офиса внутри образа."
+            echo "грузит рантайм-модули офиса, а static-registry probe читает упакованный JSONL,"
+            echo "создаёт индекс и выполняет lookup внутри образа."
             echo ""
             echo "Красный \`missing-module\` называет файл, которому нужна строка \`COPY\` в"
             echo "\`packages/background-office/Dockerfile\`."

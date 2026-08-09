@@ -49,6 +49,7 @@ export {
 
 export * from './device-board/index.js';
 export * from './node-realtime/index.js';
+export * from './static-registry/index.js';
 export * from './runtime-version.js';
 export {
   buildAnchorRecord,

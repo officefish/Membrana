@@ -14,9 +14,15 @@ import {
 // ответы контейнера приходят значением, docker и сеть не нужны.
 
 const ok = { ok: true, status: 200, body: '{"projection":{}}' };
+const staticRegistryOk = { ok: true, status: 0, body: '{"kind":"found"}' };
 
 test('образ полон — pass, и это УТВЕРЖДЕНИЕ о проверенном', () => {
-  const v = smokeVerdict({ health: { ok: true, status: 200 }, digest: ok, logs: 'Nest application successfully started' });
+  const v = smokeVerdict({
+    health: { ok: true, status: 200 },
+    digest: ok,
+    staticRegistry: staticRegistryOk,
+    logs: 'Nest application successfully started',
+  });
   assert.equal(v.outcome, 'pass');
   assert.equal(v.missingModule, null);
   const text = formatSmokeVerdict(v).join('\n');
@@ -68,6 +74,30 @@ test('дайджест упал без имени модуля — прибор 
   assert.match(v.detail, /диагноз прибора здесь кончается/u);
 });
 
+test('static registry probe обязан состояться и называет отсутствующий runtime-модуль', () => {
+  const missing = smokeVerdict({
+    health: { ok: true, status: 200 },
+    digest: ok,
+    staticRegistry: {
+      ok: false,
+      status: 1,
+      body: "Cannot find module '/app/packages/services/static-registry/dist/index.js'",
+    },
+    logs: '',
+  });
+  assert.equal(missing.outcome, 'missing-module');
+  assert.equal(missing.missingModule, '/app/packages/services/static-registry/dist/index.js');
+
+  const absent = smokeVerdict({
+    health: { ok: true, status: 200 },
+    digest: ok,
+    staticRegistry: null,
+    logs: '',
+  });
+  assert.equal(absent.outcome, 'broken');
+  assert.match(absent.detail, /runtime не опрошен/u);
+});
+
 test('имя модуля читается во всех трёх формах, которыми Node сообщает о пропаже', () => {
   assert.equal(missingModuleFrom("Cannot find module '/app/x.mjs'"), '/app/x.mjs');
   assert.equal(missingModuleFrom('Cannot find module \\"/app/y.mjs\\"'), '/app/y.mjs');
@@ -94,5 +124,8 @@ test('исходы и пределы объявлены вслух, список
     SMOKE_LIMITS.some((l) => /json-данные/u.test(l)),
     'слепота к лениво читаемым json признана, а не скрыта',
   );
-  assert.ok(SMOKE_LIMITS.some((l) => /путь снов/u.test(l)), 'область прибора названа: он не покрывает весь офис');
+  assert.ok(
+    SMOKE_LIMITS.some((l) => /путь снов/u.test(l) && /static registry/u.test(l)),
+    'область двух probe названа',
+  );
 });

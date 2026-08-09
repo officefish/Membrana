@@ -7,9 +7,10 @@
  * все решения в чистом ядре `scripts/lib/office-image-smoke.mjs`, поэтому вердикт
  * проверяется зубами без образа.
  *
- * Прибор НЕ несёт списка модулей (условие резчика): он поднимает контейнер и дёргает
- * `GET /v1/dreams/digest/:day` — путь, который сам грузит рантайм-модули офиса. Список
- * живёт в коде офиса, прибор проверяет его исполнением.
+ * Прибор НЕ несёт списка модулей (условие резчика): он поднимает контейнер, дёргает
+ * `GET /v1/dreams/digest/:day`, затем внутренним probe запускает static registry
+ * JSONL → parser → index → lookup. Зависимости живут в коде офиса, прибор проверяет их
+ * исполнением.
  *
  * Секреты не нужны: обязательные env заполняются заведомо нерабочими значениями —
  * проверяется резолв модулей, а не синтез, и в сеть этот путь не ходит. Поэтому прогон
@@ -88,6 +89,30 @@ async function probe(url) {
   }
 }
 
+function probeStaticRegistryRuntime() {
+  const source = [
+    "const { createStaticRegistryReadPortFromRepository } = await import('./dist/modules/static-registry/integration/static-registry-runtime.provider.js');",
+    "const { readFileSync } = await import('node:fs');",
+    "const line = readFileSync('/app/docs/evidence/registry.jsonl', 'utf8').split(/\\r?\\n/u).find(Boolean);",
+    "if (!line) throw new Error('static registry JSONL is empty');",
+    'const recordId = JSON.parse(line).id;',
+    "if (typeof recordId !== 'string') throw new Error('first static registry row has no id');",
+    "const port = await createStaticRegistryReadPortFromRepository('/app');",
+    'const result = await port.getRecordById(recordId);',
+    "if (result.kind !== 'found' || result.value.id !== recordId) throw new Error(`static registry lookup failed for ${recordId}`);",
+    "process.stdout.write(JSON.stringify({ kind: result.kind, recordId }));",
+  ].join('\n');
+  const result = docker(
+    ['exec', CONTAINER, 'node', '--input-type=module', '-e', source],
+    { timeout: 60_000 },
+  );
+  return {
+    ok: result.status === 0,
+    status: result.status,
+    body: `${String(result.stdout ?? '')}\n${String(result.stderr ?? '')}`,
+  };
+}
+
 /**
  * Ждём health, пока контейнер жив. Мёртвый контейнер — не «ещё не прогрелся».
  *
@@ -159,6 +184,7 @@ async function main(argv) {
 
   let health = null;
   let digest = null;
+  let staticRegistry = null;
   try {
     say('  → health');
     health = await waitHealthy();
@@ -168,11 +194,17 @@ async function main(argv) {
       // содержимое тома. Пустой дайджест — законный pass.
       say('  → digest (грузит рантайм-модули офиса внутри образа)');
       digest = await probe(`http://127.0.0.1:${PORT}/v1/dreams/digest/2026-01-01`);
+      if (digest.ok) {
+        say('  → static registry (JSONL → parser → index → lookup внутри образа)');
+        staticRegistry = probeStaticRegistryRuntime();
+        say(`  → static registry: ${staticRegistry.ok ? 'ok' : `нет (code ${staticRegistry.status ?? '—'})`}`);
+      }
     }
     const logs = docker(['logs', CONTAINER], { timeout: 60_000 });
     const verdict = smokeVerdict({
       health,
       digest,
+      staticRegistry,
       logs: `${String(logs.stdout ?? '')}\n${String(logs.stderr ?? '')}`,
     });
     for (const line of formatSmokeVerdict(verdict)) say(line);

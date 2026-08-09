@@ -12,9 +12,12 @@ COPY docs/virtual-team docs/virtual-team
 COPY docs/WHITE_PAPER.md docs/ARCHITECTURE.md docs/SERVICES.md docs/
 # Dreams tick: pairs from truth registry + master prompt (runtime read via RAG_REPO_ROOT)
 COPY docs/truth/registry.json docs/truth/registry.json
+COPY docs/evidence/registry.jsonl docs/evidence/registry.jsonl
 COPY docs/prompts/DREAM_MASTER_PROMPT.md docs/prompts/DREAM_MASTER_PROMPT.md
 # @membrana/rag-service — workspace-зависимость office (dynamic import RAG API).
 COPY packages/services/rag packages/services/rag
+COPY packages/services/static-registry packages/services/static-registry
+COPY packages/core packages/core
 COPY packages/background-office packages/background-office
 # LPC defaults + dreams pure libs (dynamic import from DreamsService)
 COPY scripts/lib/llm-procedures.json \
@@ -39,14 +42,17 @@ COPY scripts/network/lib/classify.mjs scripts/network/lib/classify.mjs
 # dreams-tick перешёл на classify.mjs. Раньше снятие блокировалось тем, что проверялось
 # только сборкой образа; теперь его проверяет прибор `yarn office:image:smoke`.
 #
-# ПОЛНОТА ЭТОГО СПИСКА проверяется не глазами, а исполнением: CI поднимает образ и просит
-# у офиса дайджест снов (workflow office-image-smoke.yml). Путь дайджеста грузит рантайм-
-# модули офиса, поэтому забытая строка COPY даёт красный с ИМЕНЕМ файла — а не тишину до
+# ПОЛНОТА ЭТОГО СПИСКА проверяется не глазами, а исполнением: CI поднимает образ, просит
+# у офиса дайджест снов и запускает static-registry probe (workflow office-image-smoke.yml).
+# Исполняемые пути грузят зависимости, поэтому забытая строка COPY даёт красный с ИМЕНЕМ файла — а не тишину до
 # первого MODULE_NOT_FOUND на проде (срабатывание 07.08 стоило бы 12 синтезов из 12).
-# Добавляя здесь модуль, ничего больше делать не нужно; удаляя — дождись зелёного смоука.
+# Добавляя здесь модуль, дождись зелёного смоука; для нового источника образа добавь path trigger workflow.
 
+# Office's tsc -b emits referenced projects as intermediate files. Rebuild the
+# registry package last so runtime receives its Node-loadable Vite bundle.
 RUN yarn workspaces focus @membrana/background-office --all \
-  && yarn workspace @membrana/background-office build
+  && yarn workspace @membrana/background-office build \
+  && yarn workspace @membrana/static-registry-service build
 
 FROM node:20-alpine AS runtime
 RUN corepack enable
@@ -62,6 +68,10 @@ COPY --from=build /app/packages/background-office/package.json ./package.json
 # rag-service dist + package.json: цель workspace-симлинка node_modules/@membrana/rag-service
 COPY --from=build /app/packages/services/rag/dist /app/packages/services/rag/dist
 COPY --from=build /app/packages/services/rag/package.json /app/packages/services/rag/package.json
+COPY --from=build /app/packages/services/static-registry/dist /app/packages/services/static-registry/dist
+COPY --from=build /app/packages/services/static-registry/package.json /app/packages/services/static-registry/package.json
+COPY --from=build /app/packages/core/dist /app/packages/core/dist
+COPY --from=build /app/packages/core/package.json /app/packages/core/package.json
 COPY --from=build /app/scripts/lib /app/scripts/lib
 # scripts/network/lib: classify.mjs — СТАТИЧЕСКИЙ импорт dreams-tick.mjs:19 с 07.08.
 # Сюда правка 07.08 не дошла: она тронула только build-стадию. Дефект второй ступени —
@@ -69,6 +79,7 @@ COPY --from=build /app/scripts/lib /app/scripts/lib
 # Оба чинятся вместе, иначе образ соберётся и умрёт на первом вызове снов.
 COPY --from=build /app/scripts/network/lib /app/scripts/network/lib
 COPY --from=build /app/docs/truth/registry.json /app/docs/truth/registry.json
+COPY --from=build /app/docs/evidence/registry.jsonl /app/docs/evidence/registry.jsonl
 COPY --from=build /app/docs/prompts/DREAM_MASTER_PROMPT.md /app/docs/prompts/DREAM_MASTER_PROMPT.md
 COPY packages/background-office/docker/entrypoint.sh /entrypoint.sh
 # Windows checkouts may ship CRLF; strip before exec.
