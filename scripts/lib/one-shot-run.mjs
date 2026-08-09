@@ -25,7 +25,7 @@
  */
 import { leafHash } from './run-ledger/index.mjs';
 import { buildProcedureRunRecord } from './procedure-run-journal.mjs';
-import { PROCEDURE_PERSONAS } from './validate-procedure.mjs';
+import { HOLDER_PERSONAS } from './procedure-personas.mjs';
 
 /** Единственный законный автор назначения (Т4 шторма 03.08): литерал роли, не PersonaId. */
 export const ASSIGNED_BY = 'teamlead';
@@ -43,8 +43,13 @@ export const SHOT_RUN_POINTS = Object.freeze(['first-frame', 'owner-ratify', 'ex
 /**
  * Проблемы акта назначения. Пусто = назначение валидно.
  *
- * `executor` сверяется с ЕДИНСТВЕННЫМ ростером (`PROCEDURE_PERSONAS`), `assignedBy` —
+ * `executor` сверяется с ростером ДЕРЖАТЕЛЕЙ (`HOLDER_PERSONAS`), `assignedBy` —
  * строго литерал роли: PersonaId тимлида здесь был бы второй правдой о том же факте.
+ *
+ * Почему держатели, а не общий ростер (ADR-0025 Р2, 08.08): исполнитель шота ПИШЕТ КОД,
+ * значит его список — тот же, что у держателя фрейма. Прежний общий `PROCEDURE_PERSONAS`
+ * допускал сюда модератора, который кода не пишет (кодекс #922). Тимлид остаётся валидным:
+ * `tarasov ∈ HOLDER_PERSONAS` по ADR-0025 Р2.
  *
  * @param {{shotId?: unknown, executor?: unknown, assignedBy?: unknown, contextRunRef?: unknown}} r
  * @returns {string[]}
@@ -52,8 +57,8 @@ export const SHOT_RUN_POINTS = Object.freeze(['first-frame', 'owner-ratify', 'ex
 export function assignProblems(r) {
   const problems = [];
   if (typeof r?.shotId !== 'string' || r.shotId.trim() === '') problems.push('shotId пуст');
-  if (typeof r?.executor !== 'string' || !PROCEDURE_PERSONAS.includes(r.executor)) {
-    problems.push(`executor «${String(r?.executor)}» вне ростера (${PROCEDURE_PERSONAS.join('/')})`);
+  if (typeof r?.executor !== 'string' || !HOLDER_PERSONAS.includes(r.executor)) {
+    problems.push(`executor «${String(r?.executor)}» вне ростера держателей (${HOLDER_PERSONAS.join('/')})`);
   }
   if (r?.assignedBy !== ASSIGNED_BY) {
     problems.push(`assignedBy «${String(r?.assignedBy)}» — назначает только ${ASSIGNED_BY} (Т4)`);

@@ -24,6 +24,7 @@ import {
   portfolioProblems,
   validateProcedure,
 } from './lib/validate-procedure.mjs';
+import { isAdr0025Debt } from './lib/procedure-personas.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -106,13 +107,58 @@ test('portfolio: present требует элементы с резолвящим
   assert.equal(manifestSchemaProblems({ ...GOOD, portfolio: ok }, 'demo', tmp).length, 0);
 });
 
-test('ЗУБ CI: каждый реальный контейнер docs/procedures/ валиден', () => {
+/**
+ * ЗУБ CI после ADR-0025 Р2: корпус валиден ВЕЗДЕ, КРОМЕ названного долга.
+ *
+ * Прежде зуб утверждал «каждый контейнер валиден» — и был прав, пока валидатор не различал
+ * ролей. После Р2 двадцать legacy-фреймов законно невалидны: у них в holder модератор,
+ * который кода не пишет. Чинить их здесь запрещает Р3 (переназначение — отдельная задача
+ * с отдельной ратификацией, #1787).
+ *
+ * Поэтому зуб меняет утверждение, а не ослабляется: единственный допустимый дефект корпуса —
+ * модератор в holder, и его размер ЗАКРЕПЛЁН числом. Появится двадцать первый или посторонний
+ * дефект — зуб покраснеет. Уедет долг — зуб покраснеет тоже и потребует снизить число.
+ */
+
+/**
+ * Валиден ли РЕАЛЬНЫЙ контейнер с поправкой на долг ADR-0025 Р3.
+ *
+ * До Р2 зубы утверждали  — и были правы. После Р2 двадцать legacy-фреймов
+ * законно невалидны (модератор в holder), чинить их здесь запрещает Р3. Помощник отделяет
+ * названный долг от постороннего дефекта: долг терпим и посчитан корпусным зубом, посторонний
+ * дефект по-прежнему роняет.
+ */
+function assertValidExceptAdr0025Debt(r, label) {
+  const foreign = r.problems.filter((x) => !isAdr0025Debt(x));
+  assert.deepEqual(foreign, [], `${label}: посторонний дефект сверх долга ADR-0025`);
+}
+
+test('ЗУБ CI: корпус валиден везде, кроме названного долга модератор-в-holder', () => {
   const dirs = listProcedureDirs(repoRoot);
   assert.ok(dirs.length >= 1, 'дом слоя не пуст — первый жилец заселён (Р1)');
+  let debt = 0;
+  let independent = 0;
   for (const dir of dirs) {
     const r = validateProcedure(dir, repoRoot);
-    assert.equal(r.valid, true, `${dir}: ${r.problems.join('; ')}`);
+    debt += r.moderatorInHolder.length;
+    const foreign = r.problems.filter((x) => !isAdr0025Debt(x));
+    assert.deepEqual(foreign, [], `${dir}: посторонний дефект сверх долга ADR-0025`);
+
+    // Независимый счёт ПО МАНИФЕСТУ, не через валидатор: две дороги к одному числу.
+    // Приговор Дынина по этому зубу: литерал `=== 20` — «хрупкая константа, замаскированная
+    // под инвариант»: краснеет при любой законной правке манифеста и НЕ краснеет, если долг
+    // переехал с сохранением числа. Инвариант — совпадение двух независимых счётчиков;
+    // литерал остаётся только якорем момента.
+    const m = JSON.parse(readFileSync(join(dir, 'MANIFEST.json'), 'utf8'));
+    for (const lane of ['preflight', 'frames', 'post']) {
+      for (const fr of m[lane] ?? []) if (fr?.holder === 'angelina') independent += 1;
+    }
   }
+  assert.equal(debt, independent, 'валидатор и прямой обход манифестов обязаны сойтись — иначе врёт один из них');
+  assert.ok(debt > 0, 'долг ADR-0025 Р3 существует, иначе задача #1787 беспредметна');
+  // Якорь момента, не инвариант: снимок на 2026-08-08. Разойдётся с реальностью — сверить
+  // с #1787 и подвинуть осознанно, а не «починить зуб».
+  assert.equal(debt, 20, 'снимок 08.08: долг ровно 20 фреймов');
 });
 
 test('kitVersion на несуществующий кит → resolvable=false', () => {
@@ -127,7 +173,7 @@ test('kitVersion на несуществующий кит → resolvable=false',
 test('ритуал утра ritual-day: kitVersion → kits/angelina-morning', () => {
   const day = join(repoRoot, 'docs', 'procedures', 'ritual-day');
   const r = validateProcedure(day, repoRoot);
-  assert.equal(r.valid, true, r.problems.join('; '));
+  assertValidExceptAdr0025Debt(r, 'ritual-day');
   const m = JSON.parse(readFileSync(join(day, 'MANIFEST.json'), 'utf8'));
   assert.equal(m.kitVersion, 'kits/angelina-morning');
   assert.equal(m.engines.length, 1, 'engines не дублируют весь кит');
@@ -167,7 +213,7 @@ test('F1: preflight + frames + post — три полосы; дубль id ме�
     ...GOOD,
     preflight: [{ id: 'morning-wiring', holder: 'ozhegov', pins: [GOOD_PIN] }],
     frames: [{ id: 'strategy-day', holder: 'vesnin' }],
-    post: [{ id: 'swallow-send', holder: 'angelina' }],
+    post: [{ id: 'swallow-send', holder: 'ozhegov', moderator: 'angelina' }],
   };
   assert.equal(manifestSchemaProblems(m, 'demo').length, 0, manifestSchemaProblems(m, 'demo').join('; '));
   const dup = {
@@ -208,7 +254,7 @@ test('F1: validateProcedure принимает контейнер с frames', ()
     manifest: {
       ...GOOD,
       id: 'framed',
-      frames: [{ id: 'step-one', holder: 'angelina', pins: [GOOD_PIN] }],
+      frames: [{ id: 'step-one', holder: 'dynin', pins: [GOOD_PIN] }],
     },
   });
   const r = validateProcedure(dir, tmp);
@@ -288,7 +334,7 @@ test('CORE Ф1: пилоты ritual-evening / bridge / ritual-dreams несут 
   for (const id of PROCEDURE_CORE_PILOTS) {
     const dir = join(repoRoot, 'docs', 'procedures', id);
     const r = validateProcedure(dir, repoRoot);
-    assert.equal(r.valid, true, `${id}: ${r.problems.join('; ')}`);
+    assertValidExceptAdr0025Debt(r, id);
     assert.equal(r.core, 'full', `${id}: ядро неполное`);
     assert.equal(r.findings.length, 0, `${id}: ${r.findings.join('; ')}`);
   }
@@ -300,7 +346,7 @@ test('CORPUS Ф5: все built несут полное ядро + home+mode; aud
   for (const id of built) {
     const dir = join(repoRoot, 'docs', 'procedures', id);
     const r = validateProcedure(dir, repoRoot);
-    assert.equal(r.valid, true, `${id}: ${r.problems.join('; ')}`);
+    assertValidExceptAdr0025Debt(r, id);
     assert.equal(r.core, 'full', `${id}: ядро неполное`);
     const m = JSON.parse(readFileSync(join(dir, 'MANIFEST.json'), 'utf8'));
     assert.ok(m.home && m.mode, `${id}: нет home/mode`);
@@ -354,7 +400,7 @@ test('HOME Ф2: пилоты несут home+mode; bridge объявляет doc
   for (const id of PROCEDURE_HOME_PILOTS) {
     const dir = join(repoRoot, 'docs', 'procedures', id);
     const r = validateProcedure(dir, repoRoot);
-    assert.equal(r.valid, true, `${id}: ${r.problems.join('; ')}`);
+    assertValidExceptAdr0025Debt(r, id);
     const m = JSON.parse(readFileSync(join(dir, 'MANIFEST.json'), 'utf8'));
     assert.ok(m.home && m.mode, `${id}: нет home/mode`);
   }
@@ -467,4 +513,66 @@ test('EXECUTION_PROCEDURE: decision/rhythm не получают development-з�
   );
   assert.equal(validateProcedure(join(t, 'docs', 'procedures', 'decision'), t).valid, true);
   assert.equal(validateProcedure(join(t, 'docs', 'procedures', 'rhythm'), t).valid, true);
+});
+
+// ─── ADR-0025: две роли у фрейма ─────────────────────────────────────────────────
+
+test('ADR-0025: модератор в holder — красный, и причина названа словами', () => {
+  const m = {
+    ...GOOD,
+    id: 'roles-bad',
+    frames: [{ id: 'lead-moment', holder: 'angelina' }],
+  };
+  const problems = manifestSchemaProblems(m, 'roles-bad');
+  assert.equal(problems.length, 1, problems.join('; '));
+  assert.match(problems[0], /модератор/);
+  assert.match(problems[0], /кода не пишет/);
+  assert.match(problems[0], /moderator/, 'отказ обязан назвать, куда переложить роль');
+});
+
+test('ADR-0025: держатель-разработчик + модератор-ведущая — зелёный', () => {
+  const m = {
+    ...GOOD,
+    id: 'roles-good',
+    frames: [{ id: 'lead-moment', holder: 'dynin', moderator: 'angelina' }],
+  };
+  assert.deepEqual(manifestSchemaProblems(m, 'roles-good'), []);
+});
+
+test('ADR-0025: moderator вне ростера — красный; форма и роль — разные отказы', () => {
+  const unknown = manifestSchemaProblems(
+    { ...GOOD, id: 'mod-unknown', frames: [{ id: 'f', holder: 'dynin', moderator: 'нектоиз' }] },
+    'mod-unknown',
+  );
+  assert.equal(unknown.length, 1);
+  assert.match(unknown[0], /MODERATOR_PERSONAS/);
+
+  const badForm = manifestSchemaProblems(
+    { ...GOOD, id: 'mod-form', frames: [{ id: 'f', holder: 'dynin', moderator: 42 }] },
+    'mod-form',
+  );
+  assert.equal(badForm.length, 1);
+  assert.match(badForm[0], /форма/, 'нестрока — дефект формы, не роли');
+});
+
+test('ADR-0025 Р4: элемент без holder читается как неизвестный и НЕ наследует его от процедуры', () => {
+  // leadPersona процедуры — vesnin (см. GOOD). Наследование воспроизвело бы дефект при
+  // самой починке: фрейм молча получил бы держателя, которого никто не назначал.
+  const m = { ...GOOD, id: 'no-holder', leadPersona: 'vesnin', frames: [{ id: 'orphan' }] };
+  const problems = manifestSchemaProblems(m, 'no-holder');
+  assert.equal(problems.length, 1, problems.join('; '));
+  assert.match(problems[0], /holder ∉ HOLDER_PERSONAS/);
+  assert.ok(!/vesnin»/.test(problems[0]), 'держатель процедуры не подставляется молча');
+});
+
+test('ADR-0025: список модератор-в-holder машинно читаем — вход задачи переназначения', () => {
+  const day = join(repoRoot, 'docs', 'procedures', 'ritual-day');
+  const r = validateProcedure(day, repoRoot);
+  assert.ok(r.moderatorInHolder.length > 0, 'у утра долг есть — иначе задача #1787 беспредметна');
+  for (const row of r.moderatorInHolder) {
+    assert.ok(['preflight', 'frames', 'post'].includes(row.lane), 'полоса названа');
+    assert.equal(typeof row.frameId, 'string');
+    assert.equal(row.holder, 'angelina');
+    assert.match(row.reason, /модератор/);
+  }
 });

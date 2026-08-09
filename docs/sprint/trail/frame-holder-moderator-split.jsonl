@@ -1,0 +1,10 @@
+{"traceId":"tr-dict-dynin-run","blockId":"personas-dictionary","kind":"context_run","subject":"dynin","at":"2026-08-08T12:18:00+03:00","ref":"docs/virtual-team/memory/op-log/dynin/2026-08-08.jsonl"}
+{"traceId":"tr-teeth-dynin-run","blockId":"teeth-roles-and-inherit","kind":"context_run","subject":"dynin","at":"2026-08-08T12:18:00+03:00","ref":"docs/virtual-team/memory/op-log/dynin/2026-08-08.jsonl"}
+{"traceId":"tr-dict-dynin-review","blockId":"personas-dictionary","kind":"review_pass","subject":"dynin","at":"2026-08-08T12:34:00+03:00","ref":"scripts/procedure-personas.test.mjs"}
+{"traceId":"tr-val-ozhegov-run","blockId":"validator-two-roles","kind":"context_run","subject":"ozhegov","at":"2026-08-08T12:40:00+03:00","ref":"docs/virtual-team/memory/op-log/ozhegov/2026-08-08.jsonl"}
+{"traceId":"tr-val-ozhegov-review","blockId":"validator-two-roles","kind":"review_pass","subject":"ozhegov","at":"2026-08-08T12:52:00+03:00","ref":"scripts/lib/validate-procedure.mjs"}
+{"traceId":"tr-dict-dynin-run-v2","blockId":"personas-dictionary","kind":"context_run","subject":"dynin","at":"2026-08-08T13:00:31+03:00","ref":"docs/virtual-team/memory/op-log/dynin/2026-08-08.jsonl"}
+{"traceId":"tr-teeth-dynin-run-v2","blockId":"teeth-roles-and-inherit","kind":"context_run","subject":"dynin","at":"2026-08-08T13:00:31+03:00","ref":"docs/virtual-team/memory/op-log/dynin/2026-08-08.jsonl"}
+{"traceId":"tr-adr-vesnin-run","blockId":"adr-canon-refresh","kind":"context_run","subject":"vesnin","at":"2026-08-08T13:00:56+03:00","ref":"docs/virtual-team/memory/op-log/vesnin/2026-08-08.jsonl"}
+{"traceId":"tr-teeth-dynin-review","blockId":"teeth-roles-and-inherit","kind":"review_pass","subject":"dynin","at":"2026-08-08T13:02:00+03:00","ref":"scripts/validate-procedure.test.mjs"}
+{"traceId":"tr-adr-vesnin-review","blockId":"adr-canon-refresh","kind":"review_pass","subject":"vesnin","at":"2026-08-08T13:06:00+03:00","ref":"docs/adr/README.md"}
