@@ -37,8 +37,8 @@ composition-ready и намеренно не монтируется в productio
 
 ## Verification
 
-- core: 162/162 tests, lint, build;
-- static registry service: 14/14 tests, lint, typecheck, build;
+- core: 163/163 tests, lint, build;
+- static registry service: 15/15 tests, lint, typecheck, build;
 - background office: 270/270 tests, lint, typecheck, build;
 - integrated smoke: real parser/index/port/controller, malformed 400, unknown 404, no address leak;
 - pre-push affected graph: 54/54;

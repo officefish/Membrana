@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { parseStaticRegistryJsonl } from '@membrana/core';
 import {
+  createIndexFromSnapshot,
   createStaticRegistryIndex,
   createStaticRegistryIndexFromLines,
   RegistryIndexError,
@@ -51,6 +53,29 @@ function snapshot(
 }
 
 describe('StaticRegistryIndex', () => {
+  it('preserves __proto__ as frozen JSON data from parser through index', () => {
+    const measured = JSON.parse('{"__proto__":{"polluted":true}}') as Record<string, unknown>;
+    const parsed = parseStaticRegistryJsonl(JSON.stringify({
+      id: 'prototype-safe-record',
+      sha256: 'a'.repeat(64),
+      bytes: 1,
+      addedAt: '2026-08-09',
+      source: 'prototype safety fixture',
+      location: { kind: 'local', ref: 'fixtures/prototype-safe-record.bin' },
+      measured,
+    }));
+
+    expect(parsed.ok).toBe(true);
+    if (!parsed.ok) return;
+    const indexedMeasured = createIndexFromSnapshot(parsed.value)
+      .lookupById('prototype-safe-record').record.measured;
+    expect(indexedMeasured).toBeDefined();
+    expect(Object.hasOwn(indexedMeasured ?? {}, '__proto__')).toBe(true);
+    expect(Reflect.get(indexedMeasured ?? {}, '__proto__')).toEqual({ polluted: true });
+    expect(Object.getPrototypeOf(indexedMeasured)).toBe(Object.prototype);
+    expect(Object.isFrozen(indexedMeasured)).toBe(true);
+  });
+
   it('rebuilds deterministically from records and injected lines', () => {
     const records = [
       ...contractLineStub('alpha-1', ['alpha-1', 'alpha-2', 'alpha-3']),

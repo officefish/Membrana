@@ -127,17 +127,17 @@ function cloneJsonValue(value: unknown, ancestors: WeakSet<object>): JsonCloneRe
     ancestors.delete(value);
     return { ok: false };
   }
-  const cloned: Record<string, JsonValue> = {};
+  const entries: Array<readonly [string, JsonValue]> = [];
   for (const [key, item] of Object.entries(value)) {
     const result = cloneJsonValue(item, ancestors);
     if (!result.ok) {
       ancestors.delete(value);
       return result;
     }
-    cloned[key] = result.value;
+    entries.push([key, result.value]);
   }
   ancestors.delete(value);
-  return { ok: true, value: cloned };
+  return { ok: true, value: Object.fromEntries(entries) };
 }
 
 function deepFreeze<T>(value: T): T {
@@ -337,7 +337,10 @@ export function parseEvidenceRecord(raw: unknown): ParseResult<EvidenceRecord> {
 }
 
 function effectivePredecessor(record: EvidenceRecord): string | null {
-  return record.supersedes ?? LEGACY_EFFECTIVE_PREDECESSORS[record.id] ?? null;
+  if (record.supersedes !== undefined) return record.supersedes;
+  return Object.hasOwn(LEGACY_EFFECTIVE_PREDECESSORS, record.id)
+    ? LEGACY_EFFECTIVE_PREDECESSORS[record.id] ?? null
+    : null;
 }
 
 function withLine(errors: readonly StaticRegistryError[], line: number): StaticRegistryError[] {

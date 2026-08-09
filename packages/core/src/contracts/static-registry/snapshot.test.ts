@@ -101,6 +101,15 @@ describe('static registry lineage snapshot', () => {
     expect(arbitrary?.canonicalRef).toBe('urn:mmbrn:static:ordinary-record-r9');
   });
 
+  it('does not treat inherited object property names as legacy fallbacks', () => {
+    const result = parseStaticRegistryJsonl(jsonl(record('constructor')));
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.records[0]?.effectivePredecessor).toBeNull();
+    expect(result.value.records[0]?.canonicalRef).toBe('urn:mmbrn:static:constructor');
+  });
+
   it('keeps equal hashes as separate record and lineage identities', () => {
     const result = parseStaticRegistryJsonl(jsonl(
       record('same-bytes-one'),

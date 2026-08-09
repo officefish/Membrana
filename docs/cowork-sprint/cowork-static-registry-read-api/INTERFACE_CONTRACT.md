@@ -146,4 +146,4 @@ Docker image smoke, and a production-import scan proving no test stub enters the
 - [ ] package/Docker wiring is written and statically checked; image smoke is honest `unknown`
   because the local Docker daemon is unavailable, so CI must prove the image;
 - [x] module remains unmounted until R3 ingress/auth;
-- [ ] coordinator embargo incident is carried into retrospective.
+- [x] coordinator embargo incident is carried into [`RETROSPECTIVE.md`](./RETROSPECTIVE.md).

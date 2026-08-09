@@ -52,10 +52,11 @@ Before the dependent ingress/auth phase, responses never expose:
 The dynamic module accepts a factory for the block-local read port:
 
 ```ts
+import { StaticRegistryModule } from './static-registry.module';
+import { createStaticRegistryReadPortFromRepository } from './integration/static-registry-runtime.provider';
+
 StaticRegistryModule.register({
-  imports: [IntegratedRegistryIndexModule],
-  inject: [INTEGRATED_REGISTRY_INDEX],
-  useFactory: (index) => createStaticRegistryReadAdapter(index),
+  useFactory: () => createStaticRegistryReadPortFromRepository(repositoryRoot),
 });
 ```
 

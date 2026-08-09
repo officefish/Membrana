@@ -75,4 +75,3 @@ manifests/dependencies и согласованные `.dockerignore` + Dockerfil
 [`INTERFACE_CONTRACT.md`](../cowork-sprint/cowork-static-registry-read-api/INTERFACE_CONTRACT.md),
 не заменяя блоки новой реализацией. После integration smoke открывается Phase 5 с одним PR и
 exact-SHA Teamlead review.
-
