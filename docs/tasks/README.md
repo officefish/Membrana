@@ -175,9 +175,6 @@
 | `oc-proxy-s2-freemodel-keys` | OC2: freemodel.dev keys + smoke | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `oc-proxy-s3-llm-proxy-script` | OC3: llm-proxy-ask.mjs CLI | M | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `device-board-three-hosts-2026-06-26` | Device-board UserCase: стабильность на cabinet + Studio + Device (эпик) | L | [`neural-detectors-strategy-2026-06-26.md`](../seanses/neural-detectors-strategy-2026-06-26.md) | — |
-| `ci-gate-stabilization` | Epic: CI-gate stabilization — флейки rag-service, двухуровневый test gate, flaky-метрики | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
-| `cg2-two-tier-test-gate` | CG2: двухуровневый test gate — smoke (hard) + full (опциональный) на vitest | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
-| `cg4-ci-testing-docs` | CG4: CONTRIBUTING § CI & Testing — таблица smoke vs full, классификация тестов | S | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
 | `db3h-s4-microphone-detectors` | DB3H-S4: рефакторинг микрофона + audit детекторов (async) | L | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
 | `neural-free-tier-dataset-report` | Free-tier: датасет + трек → детектор → отчёт (1 ГБ library) | L | [`neural-detectors-strategy-2026-06-26.md`](../seanses/neural-detectors-strategy-2026-06-26.md) | — |
 | `vdr-hard-gate` | Epic: VDR-Hard-Gate — пилот валидации (30–35), плагин микрофона «VDR-валидация», trends benchmark 85/90 (HG1–HG4) | L | [`VDR_HARD_GATE_EPIC_PROMPT.md`](../prompts/VDR_HARD_GATE_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
@@ -200,6 +197,9 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `ci-gate-stabilization` | Epic: CI-gate stabilization — флейки rag-service, двухуровневый test gate, flaky-метрики | 2026-08-10 | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — | [карточка](./archive/ci-gate-stabilization.md) |
+| `cg2-two-tier-test-gate` | CG2: двухуровневый test gate — smoke (hard) + full (опциональный) на vitest | 2026-08-10 | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cg2-two-tier-test-gate.md) |
+| `cg4-ci-testing-docs` | CG4: CONTRIBUTING § CI & Testing — таблица smoke vs full, классификация тестов | 2026-08-10 | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cg4-ci-testing-docs.md) |
 | `cowork-static-registry-read-api` | Cowork Sprint: static registry truth and canonicalRef read API | 2026-08-09 | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-static-registry-read-api/COWORK_SPRINT_BRIEF.md) | — | [карточка](./archive/cowork-static-registry-read-api.md) |
 | `archivarius-mongo-restore-drill` | Прогон восстановления архивариуса: откат дампа проверяется предикатом, а не размером файла | 2026-08-09 | [`ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md) | #1809 (Issue открыт) | [карточка](./archive/archivarius-mongo-restore-drill.md) |
 | `archivarius-mongo-dump` | Дамп тома archivarius-mongo-data: снятие, хранение, ротация, манифест | 2026-08-09 | [`ARCHIVARIUS_MONGO_DUMP_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_DUMP_PROMPT.md) | #1714 (Issue открыт) | [карточка](./archive/archivarius-mongo-dump.md) |
