@@ -788,3 +788,135 @@ test('#1710 fail-closed: третья форма плана не даёт trail/
     assert.ok(!(typeof key === 'string' && key.trim() !== ''), 'страж CLI на таком ключе ленту не читает');
   }
 });
+
+// ── ADR-0026: обязательность записи «предсказание ↔ исход» при закрытии прогона ─────────────
+// Блок b3 спринта s-queue-tail-2026-08-10; долг мостика #forecast-record-step-optional.
+// node:fs / node:os / node:path уже импортированы секцией recut-двери выше.
+
+import { closeSprintRunFromReport } from './execution-gate.mjs';
+import {
+  JOURNAL_SCHEMA, JOURNAL_SCHEMA_V2, buildProcedureRunRecord, forecastRequiredOf,
+  validateProcedureRunRecord,
+} from './lib/procedure-run-journal.mjs';
+import {
+  FORECAST_GATE_REASONS, FORECAST_RECORDS_REL_PATH, checkForecastRequirement,
+} from './lib/sprint-integration/forecast-record-gate.mjs';
+
+const openV2 = (over = {}) =>
+  buildProcedureRunRecord({
+    procedureId: 'membrana-local-sprint',
+    runId: 'sprint-x',
+    sequence: 1,
+    status: 'started',
+    runPhase: 'open',
+    subject: 'спринт sprint-x: ратифицирован владельцем (owner), блоков 1',
+    at: '2026-08-10T12:00:00+00:00',
+    evidence: ['docs/sprint/cut/sprint-x.json'],
+    forecastRequired: true,
+    ...over,
+  });
+
+const validForecast = (over = {}) => ({
+  id: 'vesnin-sprint-x-cut-1',
+  class: 'forecast',
+  subject: 'cut',
+  personaId: 'vesnin',
+  sprintId: 'sprint-x',
+  predicted: { blocks: [{ blockId: 'b1', cutBlockId: 'b1', contextPersonaId: 'dynin', claim: 'fits', predictedChangedLines: 40, threshold: 400 }] },
+  predictedAt: '2026-08-10T12:01:00+00:00',
+  ratifiedBy: 'owner',
+  observed: { none: 'исход придёт после гейта — прогноз фиксируется до' },
+  observedAt: null,
+  outcome: 'not-observed',
+  evidence: [{ type: 'path', value: 'docs/sprint/cut/sprint-x.json' }],
+  provenance: { planRef: 'docs/sprint/cut/sprint-x.json' },
+  ...over,
+});
+
+test('ADR-0026: open-запись @2 несёт forecastRequired, валидна вместе с leafHash', () => {
+  const rec = openV2();
+  assert.equal(rec.schema, JOURNAL_SCHEMA_V2);
+  assert.equal(rec.forecastRequired, true);
+  assert.deepEqual(validateProcedureRunRecord(rec), []);
+  assert.equal(forecastRequiredOf(rec), true);
+});
+
+test('ADR-0026: амнистия @1 по построению — записи без поля читаются как «прогноз не требуется»', () => {
+  const legacy = buildProcedureRunRecord({
+    procedureId: 'membrana-local-sprint', runId: 'old', sequence: 1, status: 'started',
+    runPhase: 'open', subject: 'старый прогон', at: '2026-08-01T10:00:00+00:00', evidence: ['x'],
+  });
+  assert.equal(legacy.schema, JOURNAL_SCHEMA);
+  assert.deepEqual(validateProcedureRunRecord(legacy), []);
+  assert.equal(forecastRequiredOf(legacy), false);
+});
+
+test('ADR-0026: полуверсии — дефект схемы, не толерантность (@1 с полем; @2 не-open; поле у close)', () => {
+  assert.throws(() => openV2({ runPhase: 'close', status: 'pass' }), /forecastRequired законен только у open/u);
+  const forged1 = { ...openV2(), schema: JOURNAL_SCHEMA };
+  assert.ok(validateProcedureRunRecord(forged1).includes('forecastRequired-on-v1'));
+  const forged2 = { ...openV2(), forecastRequired: undefined };
+  assert.ok(validateProcedureRunRecord(forged2).includes('forecastRequired'));
+});
+
+test('ADR-0026: checkForecastRequirement — закрытое множество причин, все ветки различимы', () => {
+  const ids = ['b1'];
+  // не требуется — удовлетворено пустотой
+  assert.deepEqual(checkForecastRequirement({ required: false, runId: 'sprint-x', planBlockIds: ids, forecastRecords: [] }),
+    { required: false, satisfied: true, matching: 0, reasons: [] });
+  // требуется, записей нет
+  assert.deepEqual(checkForecastRequirement({ required: true, runId: 'sprint-x', planBlockIds: ids, forecastRecords: [] }).reasons,
+    [FORECAST_GATE_REASONS.MISSING_FORECAST]);
+  // запись есть, но невалидна
+  assert.deepEqual(checkForecastRequirement({ required: true, runId: 'sprint-x', planBlockIds: ids, forecastRecords: [{ sprintId: 'sprint-x' }] }).reasons,
+    [FORECAST_GATE_REASONS.INVALID_FORECAST_RECORD]);
+  // запись валидна, но состав блоков — от другой нарезки
+  assert.deepEqual(checkForecastRequirement({ required: true, runId: 'sprint-x', planBlockIds: ['b1', 'b2'], forecastRecords: [validForecast()] }).reasons,
+    [FORECAST_GATE_REASONS.PLAN_BLOCKS_MISMATCH]);
+  // полное совпадение
+  const ok = checkForecastRequirement({ required: true, runId: 'sprint-x', planBlockIds: ids, forecastRecords: [validForecast()] });
+  assert.deepEqual([ok.satisfied, ok.matching], [true, 1]);
+});
+
+/** Мини-дерево для сквозного закрытия: план + лента журнала (+ опционально лента прогнозов). */
+function tmpRepoWithRun({ forecast } = {}) {
+  const root = mkdtempSync(join(tmpdir(), 'adr0026-'));
+  const plan = {
+    schema: 'sprint-cut/1', sprintId: 'sprint-x', taskId: 'sprint-x', mode: 'explicit-honest', cutBy: 'vesnin',
+    window: { from: '2026-08-10T10:00:00+00:00', to: '2026-08-10T20:00:00+00:00' },
+    blocks: [{ blockId: 'b1', persona: 'dynin', context: 'dynin', zone: ['x.mjs'], estimate: { changedLines: 40 } }],
+    ratification: { by: 'owner', at: '2026-08-10T12:00:00+00:00', digest: 'd' },
+  };
+  mkdirSync(join(root, 'docs/sprint/cut'), { recursive: true });
+  writeFileSync(join(root, 'docs/sprint/cut/sprint-x.json'), JSON.stringify(plan));
+  mkdirSync(join(root, 'docs/procedure-runs/trail'), { recursive: true });
+  writeFileSync(join(root, 'docs/procedure-runs/trail/2026-08-10.jsonl'), `${JSON.stringify(openV2())}\n`);
+  if (forecast) {
+    mkdirSync(join(root, 'docs/sprint/experience'), { recursive: true });
+    writeFileSync(join(root, FORECAST_RECORDS_REL_PATH), `${JSON.stringify(forecast)}\n`);
+  }
+  const report = { exitCode: 0, checkedBlocks: 1, blocks: [{ verdict: 'honest_pair', stopped: false }] };
+  return { root, plan, report };
+}
+
+test('ADR-0026: @2 без записи прогноза — СТОП: close-запись не пишется, причина названа', () => {
+  const { root, plan, report } = tmpRepoWithRun();
+  const res = closeSprintRunFromReport(root, {
+    plan, planRelPath: 'docs/sprint/cut/sprint-x.json', tracesRelPath: 'docs/sprint/trail/sprint-x.jsonl',
+    report, nowIso: '2026-08-10T13:00:00+00:00',
+  });
+  assert.equal(res.closed, false);
+  assert.equal(res.stopped, true);
+  assert.match(res.reason, /missing_forecast/u);
+  assert.match(res.reason, /sprint:experience/u);
+});
+
+test('ADR-0026: @2 с валидным прогнозом по СВОЕЙ нарезке — закрытие проходит', () => {
+  const { root, plan, report } = tmpRepoWithRun({ forecast: validForecast() });
+  const res = closeSprintRunFromReport(root, {
+    plan, planRelPath: 'docs/sprint/cut/sprint-x.json', tracesRelPath: 'docs/sprint/trail/sprint-x.jsonl',
+    report, nowIso: '2026-08-10T13:00:00+00:00',
+  });
+  assert.equal(res.closed, true);
+  assert.equal(res.record.status, 'pass');
+});

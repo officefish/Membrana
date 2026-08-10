@@ -66,6 +66,10 @@ export function ensureSprintRunOpen(repoRoot, plan, planRelPath) {
     subject: `спринт ${sprintId}: ратифицирован владельцем (${plan.ratification.by}), блоков ${Array.isArray(plan.blocks) ? plan.blocks.length : 0}`,
     at: plan.ratification.at,
     evidence: [planRelPath],
+    // ADR-0026: держатель прогона спринта объявляет обязательность записи «предсказание ↔
+    // исход» ЗДЕСЬ, при open (@2). Гейт закрытия флаг только читает; @1-прогоны прошлого
+    // амнистированы версией схемы по построению.
+    forecastRequired: true,
   });
   return { opened: true, reason: 'open-запись создана инструментом', record, orphansClosed };
 }

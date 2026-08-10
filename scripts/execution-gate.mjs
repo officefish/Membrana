@@ -30,7 +30,10 @@ import { planToGate } from './lib/sprint-integration/plan-to-gate.mjs';
 import { readActsTrail } from './lib/sprint-cut/acts-trail-reader.mjs';
 import { ACT_KINDS } from './lib/sprint-cut/act-kinds.mjs';
 import { parseIso } from './lib/execution-trace/plan-reader.mjs';
-import { closeProcedureRun, findUnclosedRuns, readProcedureRunTrail } from './lib/procedure-run-journal.mjs';
+import { closeProcedureRun, findUnclosedRuns, forecastRequiredOf, readProcedureRunTrail } from './lib/procedure-run-journal.mjs';
+// ADR-0026: обязательность записи «предсказание ↔ исход» при закрытии прогона спринта.
+// Гейт флаг ЧИТАЕТ (ставит его держатель прогона при open); @1-прогоны амнистированы схемой.
+import { FORECAST_RECORDS_REL_PATH, checkForecastRequirement, loadForecastRecords } from './lib/sprint-integration/forecast-record-gate.mjs';
 // Словарь прогона спринта (SPRINT_PROCEDURE_ID, лента из ratification.at) живёт в lib:
 // open при ратификации и close вердиктом гейта выводят ОДИН путь из ОДНОГО поля.
 // Долг скрипт-к-скрипту закрыт блоком a1 спринта sprint-dictionary-to-lib (#1681).
@@ -171,11 +174,37 @@ export function closeSprintRunFromReport(repoRoot, { plan, planRelPath, tracesRe
   }
   const trailRel = sprintTrailRelPath(plan);
   const records = readProcedureRunTrail(repoRoot, trailRel);
-  if (records.some((r) => r?.runPhase === 'close' && r.runId === sprintId)) {
-    return { closed: false, reason: 'прогон уже закрыт — второе закрытие было бы второй правдой' };
-  }
-  if (!findUnclosedRuns(records, SPRINT_PROCEDURE_ID).some((r) => r.runId === sprintId)) {
+  // Порядковый матчинг, как у closeProcedureRun (#1693): «закрыт» — это «нет живой open»,
+  // а не «в истории когда-то был close». Переоткрытый после ложного закрытия прогон
+  // (ADR-0022: событие, не мутация) обязан закрываться снова — грубый .some(close) по всей
+  // истории делал переоткрытие незакрываемым навсегда (поймано прогоном s-queue-tail 10.08).
+  const unclosed = findUnclosedRuns(records, SPRINT_PROCEDURE_ID).filter((r) => r.runId === sprintId);
+  if (unclosed.length === 0) {
+    if (records.some((r) => r?.runPhase === 'close' && r.runId === sprintId)) {
+      return { closed: false, reason: 'прогон уже закрыт — второе закрытие было бы второй правдой' };
+    }
     return { closed: false, reason: 'open-записи нет — прогон открывает sprint:cut --ratify, гейт без неё лишь замер' };
+  }
+  // ADR-0026: флаг читается с ПОСЛЕДНЕЙ незакрытой open-записи — тот же инвариант выбора,
+  // что у closeProcedureRun (переоткрытый прогон судится своей живой open, не историей).
+  const openRecord = unclosed[unclosed.length - 1];
+  const forecastGate = checkForecastRequirement({
+    required: forecastRequiredOf(openRecord),
+    runId: sprintId,
+    planBlockIds: (Array.isArray(plan?.blocks) ? plan.blocks : []).map((b) => b?.blockId).filter(Boolean),
+    forecastRecords: loadForecastRecords(repoRoot).records,
+  });
+  if (!forecastGate.satisfied) {
+    // Стоп, не жалоба (долг #forecast-record-step-optional читается дословно): close-запись
+    // НЕ пишется, вызывающий обязан отдать non-zero exit. Починка — записать род:
+    return {
+      closed: false,
+      stopped: true,
+      reason:
+        `стоп ADR-0026 [${forecastGate.reasons.join(', ')}]: open-запись требует прогноза, ` +
+        `валидной записи «предсказание ↔ исход» для «${sprintId}» (состав блоков плана) в ` +
+        `${FORECAST_RECORDS_REL_PATH} нет — запиши род: yarn sprint:experience`,
+    };
   }
   const stops = report.blocks.filter((b) => b.stopped);
   const record = closeProcedureRun(repoRoot, trailRel, {
@@ -329,6 +358,10 @@ function main() {
         frictionSymptoms: args.friction,
       });
       process.stdout.write(`журнал: ${closed.closed ? 'прогон спринта закрыт — ' : ''}${closed.reason}\n`);
+      // Стоп ADR-0026 — не жалоба: вердикт по следам может быть зелёным, но закрытие без
+      // записи прогноза невозможно, и выход обязан быть красным. max — чтобы стоп не
+      // ПОНИЖАЛ реальный красный отчёта до единицы.
+      if (closed.stopped) return Math.max(report.exitCode, 1);
     } catch (e) {
       process.stderr.write(`журнал: close-запись не написана: ${String(e.message ?? e)}\n`);
     }

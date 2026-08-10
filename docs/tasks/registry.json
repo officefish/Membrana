@@ -1,6 +1,47 @@
 {
   "tasks": [
     {
+      "id": "fix-node-modules-links-1647",
+      "title": "Резолюция node_modules/@membrana/* в чужое дерево Membrana-grok: инвентарь симлинков и переустановка на своё дерево",
+      "promptPath": "docs/prompts/FIX_NODE_MODULES_LINKS_1647_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "класс #1647; условие tarasov при штампе шота 10.08 — карточка вместо немедленной починки; вещдоки в docs/audit/typecheck-verdict-2026-08-10.md и прецеденте детекторов 10.08",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-10",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "s-queue-tail-2026-08-10",
+      "title": "Хвост очереди S хендофа 09.08: вердикт долга typecheck + обязательность записи «предсказание ↔ исход»",
+      "promptPath": "docs/prompts/S_QUEUE_TAIL_2026_08_10_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "S-очередь дня по слову владельца; маршрут спринт — честный отказ предиката шота (capability_chaining, вещдок в прецеденте отказа); прецедент маршрута 04.08 sprint-dictionary-to-lib",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-10",
+      "archivedAt": null,
+      "leadPersona": "tarasov",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "cowork-static-registry-read-api",
       "title": "Cowork Sprint: static registry truth and canonicalRef read API",
       "promptPath": "docs/cowork-sprint/cowork-static-registry-read-api/COWORK_SPRINT_BRIEF.md",
