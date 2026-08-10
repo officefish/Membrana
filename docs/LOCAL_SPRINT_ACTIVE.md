@@ -4,6 +4,14 @@
 
 ## Focus
 
+- **dump-inventory-from-archive** ([#1814](https://github.com/officefish/Membrana/issues/1814)) ·
+  gate pass 4/4 honest_pair (закрыт первым заходом) · прогноз↔исход **hit** ·
+  [`OPEN.md`](./local-sprint/dump-inventory-from-archive/OPEN.md) —
+  опись дампа читается из содержимого артефакта (манифест v2, конвейер
+  lib/archive-inventory), живая приёмка на proof-стенде, дрилл подтвердил откат.
+  Строка 2 хендофа 09.08. Первый прогон, где обязательность записи прогноза (ADR-0026)
+  сработала по построению.
+
 - **s-queue-tail-2026-08-10** (без Issue: S-очередь дня) ·
   gate pass 3/3 honest_pair · прогноз↔исход записан (`miss`, b3 406>400) ·
   [`OPEN.md`](./local-sprint/s-queue-tail-2026-08-10/OPEN.md) —
