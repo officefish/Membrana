@@ -17,7 +17,12 @@ export class OpenRouterService {
   }
 
   defaultModel(): string {
-    return this.config.OPENROUTER_MODEL?.trim() || 'anthropic/claude-haiku-4.5';
+    // Третий носитель id моделей: живёт прямо в коде, вне реестра, на живость не
+    // проверяется. Найден гардом `scripts/dreams-model-ids.test.mjs` 10.08 и признан
+    // ДОЛГОМ (карточка `openrouter-default-model-unverified`), а не нормой. Ход — либо
+    // дефолт переезжает в реестр и попадает под `yarn dreams:probe-models`, либо пустой
+    // OPENROUTER_MODEL становится явным отказом конфигурации вместо тихой подстановки.
+    return this.config.OPENROUTER_MODEL?.trim() || 'anthropic/claude-haiku-4.5'; // dreams-model-ids:allow openrouter-default-model-unverified
   }
 
   private proxyUrl(): string {

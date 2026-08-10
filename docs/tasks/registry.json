@@ -1,6 +1,47 @@
 {
   "tasks": [
     {
+      "id": "dreams-models-liveness",
+      "title": "Зуб снов читает настоящий реестр; живость моделей проверяется ночью, а не руками",
+      "promptPath": "docs/prompts/DREAMS_MODELS_LIVENESS_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "локальный спринт по строке 8 десятки 09.08; долг #office-dreams-test-stubs-own-models",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-10",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov",
+        "vesnin"
+      ],
+      "notes": "Долг #office-dreams-test-stubs-own-models. Два предиката под одной формулировкой: (1) зуб офиса держал свою таблицу маршрутов и не читал scripts/lib/dreams-providers.mjs — окно расхождения 07.08-10.08, 91 зелёный прогон на main при двух мёртвых id; (2) живость id у провайдера не проверял никто — сверяли руками 07.08. План docs/sprint/cut/dreams-models-liveness.json, ратифицирован 10.08 15:35Z.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "openrouter-default-model-unverified",
+      "title": "Дефолтная модель офиса живёт литералом в коде и никем не проверяется на живость",
+      "promptPath": "docs/prompts/OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "найдено гардом по ходу спринта dreams-models-liveness; иссью при взятии в работу",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-10",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Найдено 10.08 гардом scripts/dreams-model-ids.test.mjs, не человеком. packages/background-office/src/modules/openrouter/openrouter.service.ts:20 — defaultModel() возвращает 'anthropic/claude-haiku-4.5' при пустом OPENROUTER_MODEL. Это ТРЕТИЙ носитель id моделей (первые два: реестр снов scripts/lib/dreams-providers.mjs и каталог каналов scripts/lib/llm-provider-catalog.json), и он единственный живёт прямо в прод-коде вне всякого реестра. Тот же класс, что долг #office-dreams-test-stubs-own-models: 07.08 два id реестра снов оказались мертвы (HTTP 404), и нашёл это прод, а не проверка. Если claude-haiku-4.5 снимут, офис молча уйдёт на мёртвый дефолт при любом пустом OPENROUTER_MODEL. Ход: либо дефолт переезжает в реестр и попадает под yarn dreams:probe-models, либо пустой OPENROUTER_MODEL становится явным отказом конфигурации, а не тихой подстановкой. Сегодня закрыт оговоркой dreams-model-ids:allow с ссылкой на эту карточку.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "fix-sprint-experience-dead-ends",
       "title": "Провод sprint:experience: живой путь записи не растит seq (дедуп молча глотает новый прогноз после перерезки) + дубль константы пути ленты",
       "promptPath": "docs/prompts/FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md",
