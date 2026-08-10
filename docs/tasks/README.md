@@ -20,6 +20,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `dreams-models-liveness` | Зуб снов читает настоящий реестр; живость моделей проверяется ночью, а не руками | M | [`DREAMS_MODELS_LIVENESS_PROMPT.md`](../prompts/DREAMS_MODELS_LIVENESS_PROMPT.md) | — |
+| `openrouter-default-model-unverified` | Дефолтная модель офиса живёт литералом в коде и никем не проверяется на живость | S | [`OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md`](../prompts/OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md) | — |
 | `tests-container-cross-package-imports` | Контейнер тестов: resolveImport слеп к @membrana/* и .tsx — gate-ярус scripts недобирает зависимости | S | [`TESTS_CONTAINER_CROSS_PACKAGE_IMPORTS_PROMPT.md`](../prompts/TESTS_CONTAINER_CROSS_PACKAGE_IMPORTS_PROMPT.md) | — |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
 | `review-diff-explicit-base` | Ревью читает дифф с явной базой; вердикт несёт базу рядом с head (строка 7 хендофа 08.08) | M | [`REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md`](../prompts/REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md) | [#1771](https://github.com/officefish/Membrana/issues/1771) |

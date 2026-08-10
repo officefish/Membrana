@@ -1,0 +1,10 @@
+{
+  "sprintId": "dreams-models-liveness",
+  "//method": "git diff --cached --numstat 10.08 ~16:20Z, добавления+удаления. Объявленное расширение зоны приписано своему блоку: b2 — оговорка в openrouter.service.ts (7 строк), найденная его же гардом. Бумага спринта (план, ленты, конспект резчика, реестр, две промпт-заготовки — 421 строка) ни к какому блоку не приписана: она не предмет нарезки.",
+  "segments": [
+    { "cutBlockId": "b1-test-reads-registry", "changedLines": 97, "//files": "dreams.service.test.ts 97" },
+    { "cutBlockId": "b2-no-second-table-guard", "changedLines": 173, "//files": "dreams-model-ids.test.mjs 166 · openrouter.service.ts 7 (оговорка)" },
+    { "cutBlockId": "b3-liveness-verb", "changedLines": 414, "//files": "dreams-probe-models.mjs 278 · test 136" },
+    { "cutBlockId": "b4-nightly-cadence", "changedLines": 20, "//files": "vitest-nightly.yml 18 · package.json 2" }
+  ]
+}
