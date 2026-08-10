@@ -10,7 +10,7 @@
 | Cutter | vesnin ([конспект](../../discussions/cut-dump-inventory-vesnin.md)) |
 | Blocks | b1-archive-inventory-lib (dynin) · b2-drill-on-facade (ozhegov) · b3-dump-archive-source (tarasov) · b4-acceptance-live-run (tarasov) |
 | Forecast | `vesnin-dump-inventory-from-archive-cut-1` записан ДО исполнения (гейт ADR-0026 прожит штатно: open-запись `@2`, `forecastRequired: true` — первый прогон, где обязательность сработала по построению) |
-| Status | b1–b3 исполнены; b4 — живой прогон |
+| Status | **gate pass** (4/4 honest_pair, 0 находок, закрыт первым заходом) · прогноз↔исход: **hit** (все блоки под порогом 400; b1 150→266, b2 40→146, b3 180→220, b4 50→57) |
 
 ## Зачем
 
@@ -40,7 +40,7 @@
   `schemaVersion`, манифесты v1 от 09.08 вечно читаемы ретенцией (зуб совместимости);
   стенд недоступен → стоп `DUMP_INVENTORY_UNAVAILABLE`, манифеста нет, tmp — след.
   Зубы 53/53 четырёх сьютов.
-- **b4** — живой прогон: см. вещдок
+- **b4** — живой прогон принят держателем (LGTM, «матч сыгран»): манифест v2 живого артефакта с inventorySource archive-contents, две независимые правды сошлись, дрилл через фасад подтвердил восстановление. Вещдок:
   [`docs/audit/dump-inventory-acceptance-2026-08-10.md`](../../audit/dump-inventory-acceptance-2026-08-10.md).
 
 ## Шероховатости
