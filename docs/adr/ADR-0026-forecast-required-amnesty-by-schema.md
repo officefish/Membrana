@@ -1,6 +1,7 @@
 # ADR-0026 — Amnesty-by-schema для forecastRequired: @1 = амнистия, @2 = явный флаг у open
 
-> **Статус:** DRAFT · 2026-08-10 (блок b2 спринта `s-queue-tail-2026-08-10`; рамка —
+> **Статус:** ACCEPTED · 2026-08-10 (LGTM владельца в сессии 10.08: «LGTM — ACCEPTED»;
+> блок b2 спринта `s-queue-tail-2026-08-10`; рамка —
 > вердикт tarasov 10.08, конспект [`../discussions/cut-s-queue-tail-vesnin.md`](../discussions/cut-s-queue-tail-vesnin.md);
 > автор формы — vesnin, [`../discussions/block-b2-adr-vesnin.md`](../discussions/block-b2-adr-vesnin.md))
 

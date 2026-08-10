@@ -25,8 +25,8 @@
   cabinet — долг закрыт (локально + CI); office — закрыт условно по CI-наблюдению
   `273f936d`, локальная краснота — дефект среды класса #1647, карточка
   `fix-node-modules-links-1647` (S, lead dynin) с заполненным промптом.
-- **b2** — [`ADR-0026`](../../adr/ADR-0026-forecast-required-amnesty-by-schema.md) (DRAFT
-  до LGTM владельца): amnesty-by-schema — `procedure-run-journal@2`, `forecastRequired`
+- **b2** — [`ADR-0026`](../../adr/ADR-0026-forecast-required-amnesty-by-schema.md)
+  (ACCEPTED, LGTM владельца 10.08): amnesty-by-schema — `procedure-run-journal@2`, `forecastRequired`
   только у open и ставит держатель прогона, `@1` амнистирован по построению, гейт читает.
 - **b3** — гейт обязательности записи «предсказание ↔ исход»: журнал принимает `{@1,@2}`,
   `ensureSprintRunOpen` ставит флаг, новый провод `forecast-record-gate` (закрытое
