@@ -37,6 +37,9 @@ import { CATALOG_REL, computeSelection } from './lib/vitest-workspace.mjs';
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const yarnBin = process.platform === 'win32' ? 'yarn.cmd' : 'yarn';
 
+/** Куда отступать, когда названная база не разрешается (первый пуш ветки, мелкая выкачка). */
+const FALLBACK_BASE = 'origin/main';
+
 function parse(argv) {
   const out = { base: 'origin/main', changed: null, list: false };
   for (let i = 0; i < argv.length; i += 1) {
@@ -56,11 +59,23 @@ function parse(argv) {
  */
 function changedFromGit(base) {
   const git = (args) => execFileSync('git', args, { cwd: repoRoot, encoding: 'utf8' }).trim();
-  let mergeBase;
-  try {
-    mergeBase = git(['merge-base', base, 'HEAD']);
-  } catch {
-    throw new Error(`база «${base}» не разрешается — гейт не состоялся, а не «изменений нет»`);
+  const resolve1 = (ref) => {
+    try {
+      return git(['merge-base', ref, 'HEAD']);
+    } catch {
+      return null;
+    }
+  };
+  // Нулевой SHA — это `github.event.before` на ПЕРВОМ пуше ветки: «предыдущего состояния
+  // не было». Не ошибка входа и не «изменений нет»; отступаем на ствол и говорим об этом.
+  const zero = /^0{7,40}$/u.test(String(base));
+  let mergeBase = zero ? null : resolve1(base);
+  if (!mergeBase) {
+    mergeBase = resolve1(FALLBACK_BASE);
+    if (!mergeBase) {
+      throw new Error(`ни «${base}», ни «${FALLBACK_BASE}» не разрешаются — гейт НЕ состоялся, а не «изменений нет»`);
+    }
+    console.error(`vitest-gate: база «${base}» не разрешилась — считаю от ${FALLBACK_BASE}`);
   }
   return git(['diff', '--name-only', mergeBase, 'HEAD']).split('\n').filter(Boolean);
 }
@@ -82,7 +97,14 @@ function turboWillRun(filters) {
     throw new Error('turbo --dry вернул неразбираемый JSON — план прогона неизвестен');
   }
   if (Array.isArray(dry.packages)) return dry.packages;
-  if (Array.isArray(dry.tasks)) return [...new Set(dry.tasks.map((t) => t.package).filter(Boolean))];
+  // Фолбэк обязан отобрать задачу `test`. Без отбора в «прогнано» попадут пакеты, которые
+  // turbo взял лишь ради зависимости `^build`: замер 10.08 на `...@membrana/detector-base`
+  // дал `packages` = 12 против 27 уникальных `tasks[].package`. Сегодня ветка мёртвая
+  // (turbo 2.9.12 отдаёт `packages`), но в день её оживания отчёт честности завысил бы
+  // прогон вдвое — то есть соврал бы ровно в ту сторону, против которой написан.
+  if (Array.isArray(dry.tasks)) {
+    return [...new Set(dry.tasks.filter((t) => t.task === 'test').map((t) => t.package).filter(Boolean))];
+  }
   throw new Error('в ответе turbo --dry нет ни packages, ни tasks');
 }
 
@@ -131,6 +153,17 @@ function main() {
   const corpus = workspace.selection.corpus;
   const plan = planVitestGate({ changedFiles, packages: workspace.packages, smoke: catalog.smoke });
 
+  // Пустой список фильтров turbo читает как «гонять всё», и отчёт вышел бы с шапкой
+  // «mode=floor · прогнано 40 из 38» — враньё в сторону, обратную обычной. Останавливаемся.
+  if (plan.runsEverything) {
+    console.error(
+      `vitest-gate: ярус smoke пуст и затронутых пакетов нет — фильтров ноль, turbo прогнал бы ВЕСЬ корпус ` +
+        `под видом выборки. Гейт НЕ состоялся: проверьте ${CATALOG_REL} («yarn vitest:smoke-list --write»)`,
+    );
+    process.exitCode = 2;
+    return;
+  }
+
   let ran;
   try {
     ran = plan.mode === 'full' ? corpus : turboWillRun(plan.filters);
@@ -154,6 +187,14 @@ function main() {
 
   const args = ['turbo', 'run', 'test', ...plan.filters, '--continue'];
   const run = spawnSync(yarnBin, args, { cwd: repoRoot, stdio: 'inherit', shell: process.platform === 'win32' });
+  // `status === null` — процесс не завершился сам: не запустился либо убит сигналом.
+  // Это «проверки не было» (код 2), а не «проверка сказала нет» (код 1); шапка файла
+  // запрещает сливать эти два, и молчаливая единица здесь была бы ровно тем сливом.
+  if (run.status === null) {
+    console.error(`vitest-gate: прогон не состоялся — ${run.error?.message ?? `убит сигналом ${run.signal}`}`);
+    process.exitCode = 2;
+    return;
+  }
   process.exitCode = run.status === 0 ? 0 : 1;
 }
 

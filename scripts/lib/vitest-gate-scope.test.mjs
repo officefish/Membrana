@@ -72,15 +72,41 @@ test('граница сегмента: core-extras не принадлежит c
   assert.deepEqual(directPackages(['packages/core/src/a.ts'], PACKAGES), ['@m/core']);
 });
 
-test('пакет без скрипта test в скоуп не попадает', () => {
+test('пакет БЕЗ скрипта test остаётся в скоупе — тесты его зависимых обязаны пойти', () => {
+  // Ревью 10.08 поймало обратное живым замером: правка packages/libs/audioDataViz давала
+  // «mode=floor, прогнано 3 из 38», а зависящий от неё @membrana/client со своими тестами
+  // уходил в «не гонялось». Своих тестов нет — но сломать чужие он может.
   const p = plan(['apps/docs/src/page.tsx']);
+  assert.equal(p.mode, 'scoped');
+  assert.deepEqual(p.scope, ['@m/docs']);
+  assert.ok(p.filters.includes('--filter=...@m/docs'), 'зависимые обязаны попасть в прогон');
+  assert.match(p.reason, /своих тестов нет у: @m\/docs/u, 'и это сказано вслух, а не спрятано');
+});
+
+test('пустой ярус smoke без затронутых пакетов — объявленная опасность, а не «прогон всего»', () => {
+  // Ноль фильтров turbo читает как «гонять всё», и отчёт вышел бы с шапкой
+  // «mode=floor · прогнано 40 из 38» — враньё в сторону, обратную обычной.
+  const p = planVitestGate({ changedFiles: ['README.md'], packages: PACKAGES, smoke: [] });
   assert.equal(p.mode, 'floor');
-  assert.deepEqual(p.scope, []);
+  assert.deepEqual(p.filters, []);
+  assert.equal(p.runsEverything, true, 'потребитель обязан остановиться на этом поле');
+});
+
+test('runsEverything не поднимается там, где фильтров нет законно', () => {
+  assert.equal(plan(['turbo.json']).runsEverything, false, 'режим full и есть прогон всего — по решению, а не молча');
+  assert.equal(plan(['README.md']).runsEverything, false);
+  assert.equal(plan(['apps/panel/src/a.ts']).runsEverything, false);
 });
 
 test('смешанное изменение: код + доки — доки не расширяют скоуп', () => {
   const p = plan(['apps/panel/src/app.tsx', 'packages/core/README.md']);
   assert.deepEqual(p.scope, ['@m/panel'], 'core затронут только докой — в скоуп не идёт');
+});
+
+test('корпус для отчёта считается по пакетам со скриптом test, скоуп — по всем', () => {
+  const p = plan(['apps/docs/src/a.ts', 'apps/panel/src/b.ts']);
+  assert.deepEqual(p.scope, ['@m/docs', '@m/panel']);
+  assert.deepEqual(notRunPackages(['@m/core', '@m/panel'], ['@m/panel']), ['@m/core'], 'корпус без @m/docs — тестов у него нет');
 });
 
 test('режим всегда из закрытого списка', () => {

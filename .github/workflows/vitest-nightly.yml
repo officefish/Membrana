@@ -45,7 +45,12 @@ jobs:
           node-version: 20
 
       - name: Enable Corepack (Yarn 4)
-        run: corepack enable
+        # Пин активируется явно, как в ci.yml: две проверки одного дерева не должны
+        # расходиться версией менеджера пакетов — иначе ночной красный будет объясняться
+        # не кодом, а обвязкой.
+        run: |
+          corepack enable
+          corepack prepare yarn@4.5.0 --activate
 
       - name: Install dependencies
         run: yarn install --immutable

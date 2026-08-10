@@ -67,25 +67,28 @@ export function planVitestGate({ changedFiles, packages, smoke, globalConfigs = 
   const nonDocs = nonDocsFiles(changedFiles ?? []);
 
   if (touchesGlobalConfig(nonDocs, globalConfigs)) {
-    return {
+    return withHazard({
       mode: 'full',
       reason: `изменён корневой конфиг (${globalConfigs.join(' · ')}) — затронут весь воркспейс`,
       scope: testable.map((p) => p.name).sort(),
       filters: [],
-    };
+    });
   }
 
-  // Пакеты без скрипта `test` из скоупа выпадают: гонять нечего. Но они и не «прошли» —
-  // в отчёт «что не гонялось» они не попадут тоже, потому что их нет в корпусе вовсе.
-  const testableNames = new Set(testable.map((p) => p.name));
-  const scope = directPackages(nonDocs, packages).filter((n) => testableNames.has(n));
+  // Пакет БЕЗ скрипта `test` из скоупа НЕ выпадает. Своих тестов у него нет, но у его
+  // зависимых они есть, и сломать их он может ровно так же. Ревью 10.08 поймало обратное
+  // поведение живым замером: правка `packages/libs/audioDataViz/**` давала `mode=floor,
+  // прогнано 3 из 38`, а зависящий от неё `@membrana/client` со своими тестами уходил в
+  // «не гонялось». Фильтр `...<name>` на пакете без задачи `test` законен: turbo прогонит
+  // зависимых, а сам пакет пропустит.
+  const scope = directPackages(nonDocs, packages);
 
   if (scope.length === 0) {
     const reason =
       nonDocs.length === 0
         ? 'изменения только в .md/.mdx — код не затронут, идёт пол smoke'
         : 'изменения вне пакетов воркспейса (корневые скрипты, доки, CI) — идёт пол smoke';
-    return { mode: 'floor', reason, scope: [], filters: floor.map((n) => `--filter=${n}`) };
+    return withHazard({ mode: 'floor', reason, scope: [], filters: floor.map((n) => `--filter=${n}`) });
   }
 
   // `...<name>` — пакет И его зависимые; раскрывает turbo по своему графу.
@@ -101,12 +104,26 @@ export function planVitestGate({ changedFiles, packages, smoke, globalConfigs = 
     ...floor.filter((n) => !scoped.has(n)).map((n) => `--filter=${n}`),
     ...scope.map((n) => `--filter=...${n}`),
   ];
-  return {
+  const silent = scope.filter((n) => !testable.some((p) => p.name === n));
+  const tail = silent.length ? ` · своих тестов нет у: ${silent.join(', ')} — идут зависимые` : '';
+  return withHazard({
     mode: 'scoped',
-    reason: `затронуто пакетов: ${scope.length} (плюс их зависимые и пол smoke)`,
+    reason: `затронуто пакетов: ${scope.length} (плюс их зависимые и пол smoke)${tail}`,
     scope,
     filters,
-  };
+  });
+}
+
+/**
+ * ПУСТОЙ СПИСОК ФИЛЬТРОВ ЧИТАЕТСЯ turbo КАК «ГОНЯТЬ ВСЁ» — и это опаснее, чем кажется:
+ * прогон всего корпуса приехал бы в отчёт под шапкой `mode=floor · прогнано 40 из 38`,
+ * то есть отчёт о выборке соврал бы в сторону, обратную обычной. Такое бывает ровно при
+ * пустом ярусе smoke — случай, который шапка `vitest-workspace.mjs` прямо допускает
+ * (обрыв в графе может исчезнуть). Поэтому опасность объявляется полем, а потребитель
+ * обязан на ней остановиться, а не «просто прогнать больше».
+ */
+function withHazard(plan) {
+  return { ...plan, runsEverything: plan.mode !== 'full' && plan.filters.length === 0 };
 }
 
 /**
