@@ -16,3 +16,14 @@
 - Гигиена: `yarn worktree:sync` (синхрон баз, авто только ff), `yarn repo:clean`
   (снос только класса `sprint-closed`, руками). Словарь классов:
   [`docs/WORKTREE_CLASSES.md`](./docs/WORKTREE_CLASSES.md).
+
+## CI & Testing
+
+**Зелёный мердж-гейт не означает, что прогнан весь набор.** Мердж блокирует выборочный
+прогон, полный корпус идёт ночью ([ADR-0018](./docs/adr/ADR-0018-tests-container-selective-gate-nightly-full.md)).
+Корпусов два — `scripts-gate` (файлы `scripts/**/*.test.mjs`) и `vitest-gate` (пакеты
+`packages/*`, `apps/*`), и «test gate» без уточнения означает разное.
+
+Таблица ярусов, признак яруса smoke и адрес отчёта «что не гонялось» — в
+[`docs/CONTRIBUTING.md` → «CI & Testing: два яруса, два корпуса»](./docs/CONTRIBUTING.md#ci--testing-два-яруса-два-корпуса).
+Здесь только указатель: вторая редакция расхождением норму бы не усилила.
