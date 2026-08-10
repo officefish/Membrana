@@ -1,38 +1,72 @@
-<!-- Сгенерировано: 2026-08-08T17:45:33.493Z (yarn code-review; daily, llm-anthropic) -->
+<!-- Сгенерировано: 2026-08-10T20:15:02.311Z (yarn code-review; daily, llm-anthropic) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: 293568ed6d7391dce9ccf99f29c7738ca329cd33^..fb7559d43224a1546fa839c24ac9f93c796e925a (23 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 293568ed #1779 (1384), 17d8bf1c #1785 (649), 6be069dc #1789 (698), 6fec85a8 #1798 (22181), 2e6d4f89 #1799 (1126), fc02367c #1801 (2566), 0a426ccc #1805 (821), 741a4033 #1806 (1113), ece1d5d5 #1810 (805), 68ba1d32 #1807 (1699), fb7559d4 (856)
+> Период: 35fbe76300a349a21e9755dfffbf8bf0fe8071cd^..40aa97933e61b9366f1d2a04c4241867dbde4cda (7 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 35fbe763 #1832 (1712), 018c9e75 #1833 (1445), 80b1129d #1835 (1347), 8a48db0b #1814 (1232)
 
 ---
 
 Tier: T1
 
-**Ведущий ревью: Vesnin (Архитектор)**
-Бестиарий: B9 (Проза) — под наблюдением: промпты задач создаются, машинные носители появятся после реализации (#1781, #1787, #1782). Дефект не новый, признак не усиливается в диффе. Остальные B1–B10 — не обнаружены.
-**Вердикт ведущего: пропуск.**
+---
+
+**[Vesnin (Ведущий ревью — Архитектор)]:**
+Скоуп дня: 7 коммитов, 4 PR (из них 4 oversized вне развёрнутого диффа), 2 chore-карточки. Все затронутые пути — `docs/` и `scripts/` (dreams-tick, debt-ledger, env-snapshot, tasks-registry, night-hunt-archive). Ни один путь не входит в авто-T2 (`packages/core`, `MembranaRegistry`, `audio-engine` и т.д.) — Tier понижен до T1.
+
+Бестиарий: **B4** — в `cg2`-карточке (`archiveNotes`) упомянуто «предусловие ADR-0018, ход владельца» как условие снятия ночного красного: это посылка, за которой нет зафиксированного машинного носителя (нет `morning-gates-state.json` / entry в `LIVE_SERVICES`). Риск: холодная сессия прочитает заметку как факт — блокировки нет, P2, opportunity. Остальные звери (B1–B10) в развёрнутых диффах не пойманы.
+
+`docs/bridge/DEBTS.md` — статус `llm-probe-still-lies-net` корректно переведён в `settled`; `debt-ledger.jsonl` — `verb:repay` прибавлен корректно, append-only не нарушен. Новый зуб `sprint-experience-dead-ends-after-recut` рождён с `origin:detector` — это живой долг, не проза, вещдок указан.
+
+`dreams-tick.mjs` / `dreams-tick.test.mjs`: комментарий убрал хрупкую ссылку на номер строки (`llm-probe.mjs:163`) — правильно, адрес пережил бы предмет (вещдок в тексте коммита). `kits/dream-master/MANIFEST.json` — хеш `dreams-tick.mjs` обновлён синхронно. Рассинхрон манифеста ≠ проблема.
+
+`env.snapshot.json` / `env.snapshot.md` — производный артефакт, заголовок «руками не править» соблюдён (пишется `yarn network:snapshot`). Latency-дельты (444→918 ms для прямого пути) — возможная деградация прямого канала; `geo_blocked` прямой + `ok` proxy — паттерн стабильный, не новый. Это не P0 сети: `dominant:ok`, `networkAtFault:false`. Фиксировать как риск завтра.
+
+`tasks/registry.json` — три перехода `active→archived` (ci-gate-stabilization, cg2, cg4) и два (dump-inventory, s-queue-tail) корректны; `archivedAt` проставлен, `archiveNotes` заполнены содержательно (не B10-заглушки). README синхронизирован.
+
+Night-hunt-архив (2026-08-10): пять файлов недель 28/30/32. Содержание — внешние аналитические отчёты без машинных носителей (checklists, рекомендации), не промты агентов — B9 не применим (не SKILL.md). P2-opportunity: `graph-drift` рекомендует CI hash-diff двух `curated-drone-templates.json` — зуб не заведён, существует только в prose.
+
+C8: `console.log` в развёрнутых диффах не обнаружен. C9: секреты в диффе не замечены; `.env` не затронут. C10: изменений device-board catalog нет.
+
+**PR size (oversized):** #1832 (1712 л.), #1833 (1445 л.), #1835 (1347 л.), #1814 (1232 л.) — все oversized, ревьюились отдельно и уже MERGED согласно таблице состояний. P1 «recommend split» не выносится ретроспективно.
 
 ---
 
-[Teamlead]: День структурно чистый: ADR-0025 принят владельцем, нарезка `frame-holder-moderator-split` оформлена канонически (sprint-cut + ratification + window по факту старта — ловушка 05.08 не повторилась). Orphaned run `ritual-day-2026-08-07-r2` закрыт вручную до генерации артефактов — долг утра исполнен. Три карточки по Р3 ADR-0025 добавлены в реестр: `frame-holder-moderator-split`, `frame-holders-reassign-twenty`, `morning-journal-close-step`; зависимости между ними явно описаны в промптах (не молчаливы). Главная ось дня `tariff-promo-server-wiring` по диффу не двинулась — серверного роута, вызывающего `decideTransition`, в диффе нет; магистраль формально остаётся открытой. Риск на завтра: очередь oversized не сокращается (9 PR), первая строка утра — `yarn code-review:pr 1785` (649 строк, в диффе дня, без вердикта).
+**[Tarasov (Teamlead)]:**
+Сводка дня: пять MERGED PR (1832, 1833, 1834, 1835, 1837, 1839). Эпик `ci-gate-stabilization` закрыт последними двумя детьми — реестр чист. Долг `llm-probe-still-lies-net` погашен с зубами и живым прогоном (7 провайдеров, нет `net`). Новый зуб `sprint-experience-dead-ends-after-recut` рождён, в реестре не зафиксирован как задача — риск потери. Latency прямого пути к Anthropic выросла вдвое (444→918 ms) — завтра мониторим.
 
-Утро:
+Риски на завтра: (1) зуб `sprint-experience-dead-ends-after-recut` существует только в `debt-ledger.jsonl`, задача в реестре не заведена; (2) `dreams-models-liveness` остаётся активной; (3) `dockerfile-copy-manifest-drifts` — BLOCK-статус в долге, открыт.
+
+Утренние команды:
+
 ```bash
-yarn procedure:close ritual-day-2026-08-08 --status pass   # если цепочка не закрыла сама
-yarn turbo run typecheck --filter=@membrana/background-cabinet --filter=@membrana/background-office
-yarn code-review:pr 1785
-yarn code-review:pr 1789
+# Проверить зелёность после мёрджей дня (smoke-ярус)
+yarn turbo run lint typecheck --filter=@membrana/background-office --filter=@membrana/core
+
+# Верифицировать каталог (device-board не трогали, но гигиена)
+yarn catalog:verify-client
+
+# Создать задачу по новому зубу из debt-ledger
+yarn task:create --id sprint-experience-dead-ends-after-recut --size S
+
+# Проверить latency прямого канала
+yarn network:snapshot
 ```
 
-[Структурщик]: Нарезка `frame-holder-moderator-split.json` грамотно разводит зоны по роли: b1 (`procedure-personas.mjs`) — Dynin, b2 (`validate-procedure.mjs`) — Ozhegov, b3 (тесты) — Dynin, b4 (docs) — Vesnin; нет пересечений зон между блоками. `tasks-decompose.config.json` расширен паттерном `morning-journal`, новая карточка не выбивается из существующей группы. `C7`: зубы описаны в DoD (`validate-procedure.test.mjs`), но файла в диффе ещё нет — это ожидаемо для стадии «sprint open», не дефект. `C8`: `console.log` в диффе — нет.
+---
 
-[Математик]: —
+**[Ozhegov (Структурщик)]:**
+`tasks/registry.json` — шесть переходов состояний атомарны, `archiveNotes` содержательны, B10 не пойман. `README.md` реестра синхронизирован с `registry.json` без расхождений. `debt-ledger.jsonl` — append-only, три verb: `repay` + один `birth` — структура корректна. `dreams-tick.test.mjs`: удаление хрупкой ссылки на номер строки — правильная практика; тест по-прежнему проверяет поведение, а не адрес кода.
 
-[Музыкант]: —
+**[Dynin (Математик)]:**
+— (чистых функций и алгоритмов в развёрнутых диффах нет; `dreams-tick.mjs` — routing-логика, не математика).
 
-[Верстальщик]: —
+**[Kuryokhin (Музыкант)]:**
+— (Web Audio, audio-engine, DSP-пути не затронуты).
+
+**[Rodchenko (Верстальщик)]:**
+— (UI-компоненты не затронуты; night-hunt-отчёт упоминает дрейф `--color-*` ↔ DaisyUI — это архивный аналитический артефакт, не новый код).
 
 ---
 
@@ -40,12 +74,14 @@ yarn code-review:pr 1789
 
 **Definition of Done (утро):**
 ```bash
-yarn turbo run typecheck --filter=@membrana/background-cabinet --filter=@membrana/background-office
-yarn code-review:pr 1785
-yarn code-review:pr 1789
+yarn turbo run lint typecheck --filter=@membrana/background-office --filter=@membrana/core
+yarn catalog:verify-client
+yarn network:snapshot
+yarn task:create --id sprint-experience-dead-ends-after-recut --size S
 ```
 
 **Риски:**
-- P1 — магистраль `tariff-promo-server-wiring` не замкнута: `decideTransition` не вызывается ни одним роутом, `spendPromo` не протестирована под двойным вызовом; третий день без движения по серверному проводу.
-- P2 — oversized-очередь: 9 PR без вердикта; `1785`, `1789`, `1801` — в диффе дня, ни один не проверен.
-- P2 — `sequence: 1` у второй записи в `2026-08-08.jsonl` (`ritual-day-2026-08-08 open`) — обе записи файла несут `sequence: 1`; монотонность нарушена на уровне файла (первая запись — закрытие `r2`, вторая — открытие нового прогона; разные `runId`, но счётчик должен быть независимым на `runId`, не на файле — уточнить схему при первом касании журнала).
+- P2: зуб `sprint-experience-dead-ends-after-recut` рождён в `debt-ledger.jsonl`, задача в `tasks/registry.json` не заведена — риск потери при смене контекста.
+- P2: latency прямого пути Anthropic 444→918 ms (снимок 10.08); `networkAtFault:false`, но тренд требует наблюдения.
+- P2 (B4-opportunity): `archiveNotes` cg2 ссылается на «предусловие ADR-0018, ход владельца» без машинного носителя состояния — при холодном чтении может быть принято за факт.
+- P2: рекомендации night-hunt (`graph-drift` → CI hash-diff `curated-drone-templates.json`) существуют только в prose, зуб не заведён.
