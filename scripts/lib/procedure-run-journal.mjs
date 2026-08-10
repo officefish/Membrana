@@ -12,6 +12,31 @@ import { leafHash } from './run-ledger/index.mjs';
 export const JOURNAL_SCHEMA = 'procedure-run-journal@1';
 
 /**
+ * Вторая версия схемы (ADR-0026, amnesty-by-schema): open-запись `@2` ОБЯЗАНА нести
+ * `forecastRequired: boolean` — явный флаг «закрытие требует записи прогноза».
+ * Запись `@1` поля не имеет и читается как `forecastRequired = false`: старые прогоны
+ * амнистированы самим фактом версии схемы — ни дат, ни списков исключений.
+ * Версию поднимает ТОЛЬКО наличие поля (ставит держатель прогона при open);
+ * close/friction-amend поле не таскают — рассинхрон open↔close исключён по построению.
+ */
+export const JOURNAL_SCHEMA_V2 = 'procedure-run-journal@2';
+export const JOURNAL_SCHEMAS = Object.freeze([JOURNAL_SCHEMA, JOURNAL_SCHEMA_V2]);
+
+/**
+ * Читатель флага по формуле ADR-0026: `@2 ∧ open ∧ true`, всё прочее — false (амнистия).
+ * Гейт закрытия пользуется ЭТОЙ функцией, а не полем напрямую — амнистия живёт в одном месте.
+ * @param {any} record
+ * @returns {boolean}
+ */
+export function forecastRequiredOf(record) {
+  return (
+    record?.schema === JOURNAL_SCHEMA_V2 &&
+    record?.runPhase === 'open' &&
+    record?.forecastRequired === true
+  );
+}
+
+/**
  * `started` добавлен 03.08 (спринт `run-journal-producer`, блок 1): статус open-записи
  * прогона. НЕ `pass` — сознательно: pass означает «шаг отработал», а «прогон стартовал» —
  * другое семантическое поле, и подмена ради экономии значения была бы ложью статусом.
@@ -105,8 +130,18 @@ export function buildProcedureRunRecord(input, opts = {}) {
     );
   }
 
+  // Версию схемы поднимает наличие forecastRequired (ADR-0026): поле законно только у
+  // open-записи — у прочих фаз оно было бы второй правдой рядом с open.
+  if (input.forecastRequired !== undefined) {
+    if (typeof input.forecastRequired !== 'boolean') {
+      throw new Error('forecastRequired — boolean: флаг обязательности прогноза не бывает «отчасти»');
+    }
+    if (input.runPhase !== 'open') {
+      throw new Error('forecastRequired законен только у open-записи — прочие фазы читают флаг из open (ADR-0026)');
+    }
+  }
   const record = {
-    schema: JOURNAL_SCHEMA,
+    schema: input.forecastRequired !== undefined ? JOURNAL_SCHEMA_V2 : JOURNAL_SCHEMA,
     sequence,
     at,
     runId,
@@ -118,6 +153,7 @@ export function buildProcedureRunRecord(input, opts = {}) {
       gaps,
     },
   };
+  if (input.forecastRequired !== undefined) record.forecastRequired = input.forecastRequired;
 
   if (input.frameId) record.frameId = String(input.frameId).trim();
   if (input.stepId) record.stepId = String(input.stepId).trim();
@@ -195,7 +231,15 @@ export function buildProcedureRunRecord(input, opts = {}) {
 
 export function validateProcedureRunRecord(record) {
   const problems = [];
-  if (record?.schema !== JOURNAL_SCHEMA) problems.push('schema');
+  // Закрытый список версий {@1, @2} (ADR-0026): @2 ⇔ open-запись с boolean forecastRequired,
+  // @1 ⇔ поля нет. Полуверсии — «@2 без поля», «@1 с полем» — дефект схемы, не толерантность.
+  if (!JOURNAL_SCHEMAS.includes(record?.schema)) problems.push('schema');
+  else if (record.schema === JOURNAL_SCHEMA_V2) {
+    if (record?.runPhase !== 'open') problems.push('forecastRequired-not-open');
+    if (typeof record?.forecastRequired !== 'boolean') problems.push('forecastRequired');
+  } else if (record?.forecastRequired !== undefined) {
+    problems.push('forecastRequired-on-v1');
+  }
   if (!Number.isSafeInteger(record?.sequence) || record.sequence < 1) problems.push('sequence');
   for (const field of ['at', 'runId', 'procedureId', 'status', 'subject']) {
     if (typeof record?.[field] !== 'string' || record[field].trim() === '') problems.push(field);
@@ -355,6 +399,8 @@ export function openProcedureRun(repoRoot, trailRelPath, input) {
     at: input.at,
     evidence: input.evidence,
     note: input.note,
+    // ADR-0026: флаг ставит держатель прогона при open; журнал его лишь проносит.
+    forecastRequired: input.forecastRequired,
   });
   appendProcedureRunRecord(repoRoot, trailRelPath, record);
   return { record, orphansClosed };

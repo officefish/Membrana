@@ -37,8 +37,10 @@ test('FAILOVER_OUTCOMES = OUTCOME_IDS \\ {ok} — новый род требуе
 //
 // Вещдок — GET office.mmbrn.tech/v1/dreams/digest/2026-08-07: 12 тиков, 12 синтезов
 // через perplexity, и на каждом три отказа с detail'ами ниже. Старый классификатор
-// (llm-probe.mjs:163, catch-all `return 'net'`) метил все три транспортом, и диагноз
-// девять дней читался как «у office-VDS нет исходящего маршрута к LLM».
+// (catch-all `return 'net'` в ветке ошибки llm-probe) метил все три транспортом, и диагноз
+// девять дней читался как «у office-VDS нет исходящего маршрута к LLM». Адрес строки не
+// приводится нарочно: сам catch-all снят 08.08 (`0a426ccc`, PR #1805), и ссылка на номер
+// пережила бы предмет — как это и случилось между 08.08 и 10.08.
 
 test('ключа нет в окружении → auth_missing_key, а НЕ транспорт', () => {
   assert.equal(outcomeFor({ error: 'DEEPSEEK_API_KEY missing' }), 'auth_missing_key');

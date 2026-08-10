@@ -22,6 +22,9 @@
 |----|----------|--------|--------|--------|
 | `dreams-models-liveness` | Зуб снов читает настоящий реестр; живость моделей проверяется ночью, а не руками | M | [`DREAMS_MODELS_LIVENESS_PROMPT.md`](../prompts/DREAMS_MODELS_LIVENESS_PROMPT.md) | — |
 | `openrouter-default-model-unverified` | Дефолтная модель офиса живёт литералом в коде и никем не проверяется на живость | S | [`OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md`](../prompts/OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md) | — |
+| `fix-sprint-experience-dead-ends` | Провод sprint:experience: живой путь записи не растит seq (дедуп молча глотает новый прогноз после перерезки) + дубль константы пути ленты | S | [`FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md`](../prompts/FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md) | — |
+| `fix-node-modules-links-1647` | Резолюция node_modules/@membrana/* в чужое дерево Membrana-grok: инвентарь симлинков и переустановка на своё дерево | S | [`FIX_NODE_MODULES_LINKS_1647_PROMPT.md`](../prompts/FIX_NODE_MODULES_LINKS_1647_PROMPT.md) | — |
+| `s-queue-tail-2026-08-10` | Хвост очереди S хендофа 09.08: вердикт долга typecheck + обязательность записи «предсказание ↔ исход» | S | [`S_QUEUE_TAIL_2026_08_10_PROMPT.md`](../prompts/S_QUEUE_TAIL_2026_08_10_PROMPT.md) | — |
 | `tests-container-cross-package-imports` | Контейнер тестов: resolveImport слеп к @membrana/* и .tsx — gate-ярус scripts недобирает зависимости | S | [`TESTS_CONTAINER_CROSS_PACKAGE_IMPORTS_PROMPT.md`](../prompts/TESTS_CONTAINER_CROSS_PACKAGE_IMPORTS_PROMPT.md) | — |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
 | `review-diff-explicit-base` | Ревью читает дифф с явной базой; вердикт несёт базу рядом с head (строка 7 хендофа 08.08) | M | [`REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md`](../prompts/REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md) | [#1771](https://github.com/officefish/Membrana/issues/1771) |
@@ -174,9 +177,6 @@
 | `oc-proxy-s2-freemodel-keys` | OC2: freemodel.dev keys + smoke | S | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `oc-proxy-s3-llm-proxy-script` | OC3: llm-proxy-ask.mjs CLI | M | [`OPENCODE_PROXY_SPRINT_PROMPT.md`](../prompts/OPENCODE_PROXY_SPRINT_PROMPT.md) | — |
 | `device-board-three-hosts-2026-06-26` | Device-board UserCase: стабильность на cabinet + Studio + Device (эпик) | L | [`neural-detectors-strategy-2026-06-26.md`](../seanses/neural-detectors-strategy-2026-06-26.md) | — |
-| `ci-gate-stabilization` | Epic: CI-gate stabilization — флейки rag-service, двухуровневый test gate, flaky-метрики | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
-| `cg2-two-tier-test-gate` | CG2: двухуровневый test gate — smoke (hard) + full (опциональный) на vitest | M | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
-| `cg4-ci-testing-docs` | CG4: CONTRIBUTING § CI & Testing — таблица smoke vs full, классификация тестов | S | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — |
 | `db3h-s4-microphone-detectors` | DB3H-S4: рефакторинг микрофона + audit детекторов (async) | L | [`LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md`](../prompts/LIVE_PARALLEL_DETECTION_SPRINT_EPIC_PROMPT.md) | — |
 | `neural-free-tier-dataset-report` | Free-tier: датасет + трек → детектор → отчёт (1 ГБ library) | L | [`neural-detectors-strategy-2026-06-26.md`](../seanses/neural-detectors-strategy-2026-06-26.md) | — |
 | `vdr-hard-gate` | Epic: VDR-Hard-Gate — пилот валидации (30–35), плагин микрофона «VDR-валидация», trends benchmark 85/90 (HG1–HG4) | L | [`VDR_HARD_GATE_EPIC_PROMPT.md`](../prompts/VDR_HARD_GATE_EPIC_PROMPT.md) | [#47](https://github.com/officefish/Membrana/issues/47) |
@@ -199,6 +199,9 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `ci-gate-stabilization` | Epic: CI-gate stabilization — флейки rag-service, двухуровневый test gate, flaky-метрики | 2026-08-10 | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — | [карточка](./archive/ci-gate-stabilization.md) |
+| `cg2-two-tier-test-gate` | CG2: двухуровневый test gate — smoke (hard) + full (опциональный) на vitest | 2026-08-10 | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cg2-two-tier-test-gate.md) |
+| `cg4-ci-testing-docs` | CG4: CONTRIBUTING § CI & Testing — таблица smoke vs full, классификация тестов | 2026-08-10 | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cg4-ci-testing-docs.md) |
 | `cowork-static-registry-read-api` | Cowork Sprint: static registry truth and canonicalRef read API | 2026-08-09 | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-static-registry-read-api/COWORK_SPRINT_BRIEF.md) | — | [карточка](./archive/cowork-static-registry-read-api.md) |
 | `archivarius-mongo-restore-drill` | Прогон восстановления архивариуса: откат дампа проверяется предикатом, а не размером файла | 2026-08-09 | [`ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_RESTORE_DRILL_PROMPT.md) | #1809 (Issue открыт) | [карточка](./archive/archivarius-mongo-restore-drill.md) |
 | `archivarius-mongo-dump` | Дамп тома archivarius-mongo-data: снятие, хранение, ротация, манифест | 2026-08-09 | [`ARCHIVARIUS_MONGO_DUMP_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_DUMP_PROMPT.md) | #1714 (Issue открыт) | [карточка](./archive/archivarius-mongo-dump.md) |

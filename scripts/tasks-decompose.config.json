@@ -34,7 +34,7 @@
       "patterns": [
         "^(agent-tooling|nb-at|ci-gate|cg\\d|scripts-boundary|tech-debt|oc-proxy|opencode|rag-|fv1-)",
         "^(frictiond|friction6-|tooling-friction|delivery-predicates|tooling-sanitary|tooling-truth|branch-hygiene|branch-salvage|tw-|tc-|tests-container|ship-|pr-ship|leveling-|notes-|deps-|worktrees?-|secret-|send-gate|weekly-|review-)",
-        "^(sprint-cut-|one-shot-|instruments-honest-verdict)"
+        "^(sprint-cut-|one-shot-|instruments-honest-verdict|s-queue-|fix-node-modules-|fix-sprint-experience-)"
       ]
     },
     {
