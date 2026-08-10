@@ -232,3 +232,64 @@ test('переоткрытый прогон закрывается снова: c
   assert.equal(again.record.status, 'pass');
   assert.ok(again.record.sequence > records.length, 'sequence растёт — событие, не мутация');
 });
+
+test('ADR-0026, лазейка переоткрытия закрыта: reopen БЕЗ флага не гасит требование прогноза', () => {
+  const dir = tempRepo();
+  ensureSprintRunOpen(dir, PLAN, PLAN_REL); // @2, forecastRequired: true
+  const args = {
+    plan: PLAN, planRelPath: PLAN_REL, tracesRelPath: TRACES_REL,
+    report: reportOf(1, ['plan_lied']), nowIso: '2026-08-04T18:00:00+03:00',
+  };
+  // Ложно-красное закрытие проходит стоп прогноза? Нет: стоп раньше — прогноза ещё нет.
+  const stopped = closeSprintRunFromReport(dir, args);
+  assert.equal(stopped.stopped, true);
+  writeForecast(dir);
+  closeSprintRunFromReport(dir, args); // теперь fail-закрытие пишется
+  const trailRel = sprintTrailRelPath(PLAN);
+  // Переоткрытие БЕЗ forecastRequired — @1-open (документированный путь восстановления).
+  openProcedureRun(dir, trailRel, {
+    lazyCloseScope: 'run', procedureId: SPRINT_PROCEDURE_ID, runId: PLAN.sprintId,
+    subject: 'переоткрыт после ложно-красного закрытия', at: '2026-08-04T19:00:00+03:00',
+    evidence: [PLAN_REL],
+  });
+  // Сотри бы кто ленту прогнозов — закрытие обязано СНОВА стопиться: флаг объявлен раз.
+  writeFileSync(join(dir, 'docs/sprint/experience/forecast-records.jsonl'), '', 'utf8');
+  const res = closeSprintRunFromReport(dir, {
+    ...args, report: reportOf(0, ['honest_pair']), nowIso: '2026-08-04T20:00:00+03:00',
+  });
+  assert.equal(res.stopped, true, 'флаг из первой @2-open жив: переоткрытие @1 гейт не обходит');
+  assert.match(res.reason, /missing_forecast/u);
+});
+
+test('ensureSprintRunOpen говорит правду о переоткрытом прогоне: «уже в ленте», не «прожит»', () => {
+  const dir = tempRepo();
+  ensureSprintRunOpen(dir, PLAN, PLAN_REL);
+  writeForecast(dir);
+  closeSprintRunFromReport(dir, {
+    plan: PLAN, planRelPath: PLAN_REL, tracesRelPath: TRACES_REL,
+    report: reportOf(1, ['plan_lied']), nowIso: '2026-08-04T18:00:00+03:00',
+  });
+  const trailRel = sprintTrailRelPath(PLAN);
+  openProcedureRun(dir, trailRel, {
+    lazyCloseScope: 'run', procedureId: SPRINT_PROCEDURE_ID, runId: PLAN.sprintId,
+    subject: 'переоткрыт', at: '2026-08-04T19:00:00+03:00', evidence: [PLAN_REL],
+  });
+  const res = ensureSprintRunOpen(dir, PLAN, PLAN_REL);
+  assert.equal(res.opened, false);
+  assert.match(res.reason, /уже в ленте/u, 'живая open видна, история close её не заслоняет');
+});
+
+test('стоп называет настоящую причину: запись от другой нарезки — «перерезка требует нового прогноза»', () => {
+  const dir = tempRepo();
+  ensureSprintRunOpen(dir, PLAN, PLAN_REL);
+  writeForecast(dir);
+  const recutPlan = { ...PLAN, blocks: [...PLAN.blocks, { blockId: 'b3' }] };
+  const res = closeSprintRunFromReport(dir, {
+    plan: recutPlan, planRelPath: PLAN_REL, tracesRelPath: TRACES_REL,
+    report: reportOf(0, ['honest_pair']), nowIso: '2026-08-04T20:00:00+03:00',
+  });
+  assert.equal(res.stopped, true);
+  assert.match(res.reason, /plan_blocks_mismatch/u);
+  assert.match(res.reason, /от другой нарезки/u);
+  assert.doesNotMatch(res.reason, /записи «предсказание ↔ исход» для «demo-sprint» в/u, 'текст не врёт «записи нет»');
+});

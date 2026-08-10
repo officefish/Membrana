@@ -50,11 +50,16 @@ export function ensureSprintRunOpen(repoRoot, plan, planRelPath) {
   }
   const trailRel = sprintTrailRelPath(plan);
   const records = readProcedureRunTrail(repoRoot, trailRel);
-  if (records.some((r) => r?.runPhase === 'close' && r.runId === sprintId)) {
-    return { opened: false, reason: 'прогон уже закрыт — спринт прожит, запись стоит' };
-  }
+  // Порядок предикатов — как у closeSprintRunFromReport после ревью 10.08: сперва «есть ли
+  // живая open» (переоткрытый после ложно-красного закрытия прогон — законное состояние,
+  // ADR-0022), и только при её отсутствии история close читается как «спринт прожит».
+  // Прежний .some(close) по всей истории делал ветку «уже в ленте» недостижимой после
+  // любого close и врал о состоянии переоткрытого прогона.
   if (findUnclosedRuns(records, SPRINT_PROCEDURE_ID).some((r) => r.runId === sprintId)) {
     return { opened: false, reason: 'open-запись уже в ленте — вторая была бы второй правдой' };
+  }
+  if (records.some((r) => r?.runPhase === 'close' && r.runId === sprintId)) {
+    return { opened: false, reason: 'прогон уже закрыт — спринт прожит, запись стоит' };
   }
   const { record, orphansClosed } = openProcedureRun(repoRoot, trailRel, {
     // Область `run` (#1705): спринты живут параллельно законно, и ратификация нового

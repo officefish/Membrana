@@ -185,26 +185,42 @@ export function closeSprintRunFromReport(repoRoot, { plan, planRelPath, tracesRe
     }
     return { closed: false, reason: 'open-записи нет — прогон открывает sprint:cut --ratify, гейт без неё лишь замер' };
   }
-  // ADR-0026: флаг читается с ПОСЛЕДНЕЙ незакрытой open-записи — тот же инвариант выбора,
-  // что у closeProcedureRun (переоткрытый прогон судится своей живой open, не историей).
-  const openRecord = unclosed[unclosed.length - 1];
+  // ADR-0026 (уточнение по ревью 10.08): флаг, однажды объявленный держателем, переоткрытием
+  // НЕ гасится — required смотрит на ЛЮБУЮ open-запись прогона, не только на последнюю.
+  // Иначе документированный путь восстановления (reopen после ложно-красного закрытия)
+  // писал бы @1-open и обходил гейт амнистией — лазейка ровно в той двери, которую строим.
+  const forecastRequired = records.some(
+    (r) => r?.runPhase === 'open' && r.runId === sprintId && forecastRequiredOf(r),
+  );
+  const forecastLedger = loadForecastRecords(repoRoot);
   const forecastGate = checkForecastRequirement({
-    required: forecastRequiredOf(openRecord),
+    required: forecastRequired,
     runId: sprintId,
     planBlockIds: (Array.isArray(plan?.blocks) ? plan.blocks : []).map((b) => b?.blockId).filter(Boolean),
-    forecastRecords: loadForecastRecords(repoRoot).records,
+    forecastRecords: forecastLedger.records,
   });
   if (!forecastGate.satisfied) {
     // Стоп, не жалоба (долг #forecast-record-step-optional читается дословно): close-запись
-    // НЕ пишется, вызывающий обязан отдать non-zero exit. Починка — записать род:
+    // НЕ пишется, вызывающий обязан отдать non-zero exit. Текст называет НАСТОЯЩУЮ причину —
+    // «записи нет» и «запись есть, но от другой нарезки» требуют разной починки.
+    const why = forecastGate.reasons.includes('missing_forecast')
+      ? `записи «предсказание ↔ исход» для «${sprintId}» в ${FORECAST_RECORDS_REL_PATH} нет — запиши род: yarn sprint:experience`
+      : forecastGate.reasons.includes('plan_blocks_mismatch')
+        ? `запись для «${sprintId}» есть, но состав её блоков — от другой нарезки: перерезка требует нового прогноза`
+        : `запись для «${sprintId}» есть, но невалидна (validateForecastRecord) — починить запись, не переписывать историю`;
+    const ledgerNote = forecastLedger.problems.length
+      ? `; битых строк ленты: ${forecastLedger.problems.length} (${forecastLedger.problems[0]})`
+      : '';
     return {
       closed: false,
       stopped: true,
-      reason:
-        `стоп ADR-0026 [${forecastGate.reasons.join(', ')}]: open-запись требует прогноза, ` +
-        `валидной записи «предсказание ↔ исход» для «${sprintId}» (состав блоков плана) в ` +
-        `${FORECAST_RECORDS_REL_PATH} нет — запиши род: yarn sprint:experience`,
+      reason: `стоп ADR-0026 [${forecastGate.reasons.join(', ')}]: ${why}${ledgerNote}`,
     };
+  }
+  if (forecastLedger.problems.length > 0) {
+    // Лента прочиталась с битыми строками, но валидная запись нашлась: не молчать —
+    // контракт загрузчика «битая строка — проблема входа, а не молчаливый пропуск».
+    process.stderr.write(`журнал прогнозов: битых строк ${forecastLedger.problems.length} — ${forecastLedger.problems[0]}\n`);
   }
   const stops = report.blocks.filter((b) => b.stopped);
   const record = closeProcedureRun(repoRoot, trailRel, {
