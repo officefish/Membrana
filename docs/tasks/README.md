@@ -20,12 +20,10 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `dump-inventory-from-archive` | Опись дампа читается с диска: inventorySource archive-contents вместо разбора stderr mongodump | M | [`DUMP_INVENTORY_FROM_ARCHIVE_PROMPT.md`](../prompts/DUMP_INVENTORY_FROM_ARCHIVE_PROMPT.md) | [#1814](https://github.com/officefish/Membrana/issues/1814) |
 | `dreams-models-liveness` | Зуб снов читает настоящий реестр; живость моделей проверяется ночью, а не руками | M | [`DREAMS_MODELS_LIVENESS_PROMPT.md`](../prompts/DREAMS_MODELS_LIVENESS_PROMPT.md) | — |
 | `openrouter-default-model-unverified` | Дефолтная модель офиса живёт литералом в коде и никем не проверяется на живость | S | [`OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md`](../prompts/OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md) | — |
 | `fix-sprint-experience-dead-ends` | Провод sprint:experience: живой путь записи не растит seq (дедуп молча глотает новый прогноз после перерезки) + дубль константы пути ленты | S | [`FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md`](../prompts/FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md) | — |
 | `fix-node-modules-links-1647` | Резолюция node_modules/@membrana/* в чужое дерево Membrana-grok: инвентарь симлинков и переустановка на своё дерево | S | [`FIX_NODE_MODULES_LINKS_1647_PROMPT.md`](../prompts/FIX_NODE_MODULES_LINKS_1647_PROMPT.md) | — |
-| `s-queue-tail-2026-08-10` | Хвост очереди S хендофа 09.08: вердикт долга typecheck + обязательность записи «предсказание ↔ исход» | S | [`S_QUEUE_TAIL_2026_08_10_PROMPT.md`](../prompts/S_QUEUE_TAIL_2026_08_10_PROMPT.md) | — |
 | `tests-container-cross-package-imports` | Контейнер тестов: resolveImport слеп к @membrana/* и .tsx — gate-ярус scripts недобирает зависимости | S | [`TESTS_CONTAINER_CROSS_PACKAGE_IMPORTS_PROMPT.md`](../prompts/TESTS_CONTAINER_CROSS_PACKAGE_IMPORTS_PROMPT.md) | — |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
 | `review-diff-explicit-base` | Ревью читает дифф с явной базой; вердикт несёт базу рядом с head (строка 7 хендофа 08.08) | M | [`REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md`](../prompts/REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md) | [#1771](https://github.com/officefish/Membrana/issues/1771) |
@@ -200,6 +198,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `dump-inventory-from-archive` | Опись дампа читается с диска: inventorySource archive-contents вместо разбора stderr mongodump | 2026-08-10 | [`DUMP_INVENTORY_FROM_ARCHIVE_PROMPT.md`](../prompts/DUMP_INVENTORY_FROM_ARCHIVE_PROMPT.md) | #1814 (Issue открыт) | [карточка](./archive/dump-inventory-from-archive.md) |
+| `s-queue-tail-2026-08-10` | Хвост очереди S хендофа 09.08: вердикт долга typecheck + обязательность записи «предсказание ↔ исход» | 2026-08-10 | [`S_QUEUE_TAIL_2026_08_10_PROMPT.md`](../prompts/S_QUEUE_TAIL_2026_08_10_PROMPT.md) | — | [карточка](./archive/s-queue-tail-2026-08-10.md) |
 | `ci-gate-stabilization` | Epic: CI-gate stabilization — флейки rag-service, двухуровневый test gate, flaky-метрики | 2026-08-10 | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — | [карточка](./archive/ci-gate-stabilization.md) |
 | `cg2-two-tier-test-gate` | CG2: двухуровневый test gate — smoke (hard) + full (опциональный) на vitest | 2026-08-10 | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cg2-two-tier-test-gate.md) |
 | `cg4-ci-testing-docs` | CG4: CONTRIBUTING § CI & Testing — таблица smoke vs full, классификация тестов | 2026-08-10 | [`CI_GATE_STABILIZATION_SPRINT_PROMPT.md`](../prompts/CI_GATE_STABILIZATION_SPRINT_PROMPT.md) | — | [карточка](./archive/cg4-ci-testing-docs.md) |

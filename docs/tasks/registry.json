@@ -7,17 +7,17 @@
       "githubIssue": 1814,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-10",
-      "archivedAt": null,
+      "archivedAt": "2026-08-10",
       "leadPersona": "tarasov",
       "supportPersonas": [
         "dynin",
         "ozhegov"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "Спринт прожит целиком: PR #1837 merged (8a48db0b), #1814 закрыт. Манифест v2, опись из содержимого артефакта единым конвейером lib/archive-inventory; живая приёмка на proof-стенде (LGTM tarasov), дрилл подтвердил откат. Гейт 4/4 honest_pair, прогноз↔исход hit. OPEN.md: docs/local-sprint/dump-inventory-from-archive/",
       "githubIssueClosedAt": null
     },
     {
@@ -109,17 +109,17 @@
       "noIssueReason": "S-очередь дня по слову владельца; маршрут спринт — честный отказ предиката шота (capability_chaining, вещдок в прецеденте отказа); прецедент маршрута 04.08 sprint-dictionary-to-lib",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-10",
-      "archivedAt": null,
+      "archivedAt": "2026-08-10",
       "leadPersona": "tarasov",
       "supportPersonas": [
         "dynin",
         "ozhegov"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "Спринт прожит: PR #1833 merged (018c9e75). Вердикт долга typecheck (docs/audit/typecheck-verdict-2026-08-10.md), ADR-0026 ACCEPTED, гейт обязательности записи прогноза в execution-gate; долг мостика forecast-record-step-optional repaid. Гейт 3/3 honest_pair, исход miss (b3 406>400). OPEN.md: docs/local-sprint/s-queue-tail-2026-08-10/",
       "githubIssueClosedAt": null
     },
     {
