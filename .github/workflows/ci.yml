@@ -36,6 +36,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Мердж-гейт корпуса vitest считает изменённые файлы через merge-base.
+          # На мелкой выкачке (depth 1) базы просто нет, и гейт отказал бы кодом 2
+          # («проверки не было») — что честно, но бесполезно.
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -78,8 +83,27 @@ jobs:
       - name: Catalog — verify client module/plugin prompts
         run: yarn catalog:verify-client
 
-      - name: Turbo — lint, typecheck, test, build
-        run: yarn turbo run lint typecheck test build --continue
+      - name: Turbo — lint, typecheck, build
+        run: yarn turbo run lint typecheck build --continue
+
+      # Ярус smoke — вычисляемый список, а не рукопись: каталог обязан совпадать с графом
+      # воркспейса, иначе гейт опирается на устаревшую опись.
+      - name: Vitest — каталог smoke согласован с графом воркспейса
+        run: yarn vitest:smoke-list --check
+
+      # Мердж-гейт корпуса vitest (cg2): затронутые пакеты с зависимыми плюс ярус smoke.
+      # Полный корпус — ночью (vitest-nightly.yml) и в недельном scheduled-ci.
+      #
+      # Шаг ОБЯЗАН печатать «что не гонялось» — это условие честности ADR-0018, а не
+      # удобство: без отчёта выборочный гейт узаконивает молчаливое сужение набора
+      # (26.07: 11 тестов в scripts/lib/** — 81 проверка — не гонялись недели, и зелёный
+      # выглядел полным). Отчёт уходит в job summary.
+      - name: Vitest — мердж-гейт (затронутое + smoke) и отчёт «что не гонялось»
+        # База: у PR — точная база сравнения; у push — состояние ДО пуша (`event.before`),
+        # а не `HEAD^1`: «Rebase and merge» и любой многокоммитный пуш сузили бы гейт до
+        # верхнего коммита молча. Нулевой `before` (первый пуш ветки) скрипт распознаёт
+        # и отступает на origin/main, говоря об этом вслух.
+        run: yarn vitest:gate --base ${{ github.event.pull_request.base.sha || github.event.before }}
 
       - name: RAG — acceptance tests (keyword corpus I/O, timeout 30 s/тест)
         if: always()
@@ -101,7 +125,10 @@ jobs:
             echo "## CI (Membrana)"
             echo ""
             echo "- Менеджер пакетов: **Yarn 4** (\`packageManager\` в корневом \`package.json\`)."
-            echo "- Команда: \`yarn turbo run lint typecheck test build\`."
+            echo "- Команда: \`yarn turbo run lint typecheck build\` + \`yarn vitest:gate\` (тесты выборочно)."
+            echo "- **Зелёный НЕ означает полный прогон тестов:** мердж-гейт корпуса vitest гоняет"
+            echo "  затронутое и ярус smoke; остаток назван выше шагом «что не гонялось»."
+            echo "  Полный корпус — ночью (\`vitest-nightly.yml\`) и в недельном \`scheduled-ci.yml\`."
             echo ""
             echo "Перед PR локально выполните то же самое (см. \`docs/CONTRIBUTING.md\`)."
             echo ""

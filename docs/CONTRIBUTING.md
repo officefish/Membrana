@@ -156,7 +156,7 @@ PR с базой `main` → **squash-merge**. Отдельной архитек�
 
 ## CI (ежедневный цикл)
 
-- **Обязательный прогон**: `.github/workflows/ci.yml` — на каждый push и pull request в ветки `main`, `master`, `develop`, `vesnin` и согласованные deploy/hotfix-ветки выполняется `yarn install --immutable` и `yarn turbo run lint typecheck test build`. `techies68` не входит в default branch allowlist после DR5; новые PR целятся в `main`. Локально перед коммитом имеет смысл запускать то же самое.
+- **Обязательный прогон**: `.github/workflows/ci.yml` — на каждый push и pull request в ветки `main`, `master`, `develop`, `vesnin` и согласованные deploy/hotfix-ветки выполняется `yarn install --immutable`, затем `yarn turbo run lint typecheck build` полностью и **тесты выборочно** — см. [«CI & Testing: два яруса, два корпуса»](#ci--testing-два-яруса-два-корпуса) ниже. `techies68` не входит в default branch allowlist после DR5; новые PR целятся в `main`. Локально перед коммитом имеет смысл запускать то же самое.
 - **По расписанию**: `.github/workflows/scheduled-ci.yml` — раз в неделю плюс ручной запуск; включает `node scripts/usercase.mjs verify-competition` (alpha/beta/gamma layout + pre-run).
 - **UserCase pack/collapse (PR)**: `.github/workflows/usercase-competition.yml` — при изменениях pack/collapse или sprint forks; `yarn usercase:verify-competition` локально.
 - **RAG (`@membrana/rag-service`)**: локально `yarn workspace @membrana/rag-service typecheck test` + `node --test scripts/rag-ritual.test.mjs`. Operative circuit в ритуалах работает без `OPENAI_API_KEY`; archive — после `yarn rag:index --full`. Оператор: [`docs/RAG.md`](./RAG.md), closure: [`docs/rag-dual-circuit-v1/CLOSURE.md`](./rag-dual-circuit-v1/CLOSURE.md).
@@ -178,6 +178,69 @@ PR с базой `main` → **squash-merge**. Отдельной архитек�
 
 - **Обязательная проверка скриптов**: `yarn test:scripts` — Node built-in test для всех root-скриптов (политика путей, инварианты task-registry, usercase-manifest, и др.). Шаг выполняется в CI (после `yarn install`) и **обязателен локально** перед PR.
 - **Деплой**: `.github/workflows/deploy-stub.yml` — заготовка под ваши шаги деплоя (по умолчанию без публикации наружу).
+
+### CI & Testing: два яруса, два корпуса
+
+**Зелёный мердж-гейт НЕ означает, что прогнан весь набор.** Это не оговорка мелким шрифтом,
+а устройство: мердж блокирует выборочный прогон, полный набор идёт ночью (ADR-0018).
+Поэтому каждый выборочный шаг обязан печатать, **что он не гонял** — иначе набор сужается
+молча, и зелёный перестаёт быть утверждением.
+
+Корпусов тестов два, и их легко перепутать: слово «test gate» означает разное.
+
+| | **scripts-gate** | **vitest-gate** |
+|---|---|---|
+| Корпус | `scripts/**/*.test.mjs` (367 файлов) | `packages/*`, `apps/*` — vitest (38 пакетов) |
+| Единица отбора | файл | пакет |
+| Граф | относительные импорты | зависимости воркспейса (держит turbo) |
+| Ярус smoke | явный список из 5 файлов — предикаты ритуалов дня | вычисляемый: транзитивный фан-ин ≥ 10 |
+| Ярус gate | `mode: imports` от изменённых файлов | затронутые пакеты + их зависимые (`...<name>`) |
+| Ярус full | `yarn tests:full` | `yarn turbo run test` |
+| Опись | `tests/test-scripts.catalog.json` | `tests/vitest-smoke.catalog.json` |
+| Глаголы | `yarn tests:smoke` · `tests:gate` · `tests:full` | `yarn vitest:gate` · `vitest:smoke-list` |
+| Канон | [ADR-0018](./adr/ADR-0018-tests-container-selective-gate-nightly-full.md) | тот же ADR, второй ярус (cg2) |
+
+#### Ярус smoke корпуса vitest — признак, а не список
+
+В smoke входит пакет, от которого зависит **10 или больше** пакетов воркспейса
+(транзитивно, по `dependencies` + `peerDependencies`). Порог — место обрыва в графе:
+`@membrana/core` 27 · `@membrana/audio-engine-service` 16 · `@membrana/detector-base` 11 ·
+дальше пологий хвост (`fft-analyzer` 9). Список не пишется руками: его считает
+`yarn vitest:smoke-list --write`, а CI проверяет `--check`, что опись не разошлась с графом.
+
+Смысл яруса — страховка от **системного** слома, а не «важные пакеты». Сужает не он,
+а affected-селекция: на 25 последних мерджах медиана затронутых пакетов равна **одному**,
+и десять мерджей из двадцати пяти не трогают пакеты вовсе.
+
+#### Где смотреть «что не гонялось»
+
+Шаг «Vitest — мердж-гейт» печатает отчёт в лог и в **job summary** прогона:
+
+```text
+vitest merge gate: mode=scoped · прогнано 14 из 38 · затронуто пакетов: 1
+not run in merge gate: @membrana/panel — reason: вне скоупа изменений и вне яруса smoke
+```
+
+Пустой остаток тоже строка — `not run in merge gate: — (прогнан весь корпус)`. Тихо пустой
+результат запрещён: немой отказ оснастки неотличим от чистого прогона.
+
+Режимов три: `full` (задет корневой конфиг из `tsconfig.base.json` / `turbo.json` / `.env` —
+идёт весь корпус), `scoped` (затронутые пакеты с зависимыми плюс пол smoke), `floor`
+(изменения только в `.md`/`.mdx` либо вне пакетов — идёт один пол smoke).
+
+Правка `.md` пакет **не метит**: это дефект #1168, где markdown тянул зависимых и ронял
+push на `vite` exit 127. Фильтр — общий с pre-push хуком
+([`scripts/lib/changed-files-scope.mjs`](../scripts/lib/changed-files-scope.mjs)), носитель
+мерки один на оба потребителя.
+
+#### Полный корпус
+
+- **Ночью** — [`vitest-nightly.yml`](../.github/workflows/vitest-nightly.yml), `0 2 * * *`,
+  плюс `workflow_dispatch` для живой ветки. **Красный сегодня не блокирует мердж:** ночь
+  станет обязательной проверкой после защиты `main` с required-checks — это ход владельца,
+  а не скрипта (предусловие ADR-0018).
+- **Раз в неделю** — [`scheduled-ci.yml`](../.github/workflows/scheduled-ci.yml), полный
+  `lint typecheck test build` плюс проверка UserCase-компетиции.
 
 ### Результаты тестов в CI
 
