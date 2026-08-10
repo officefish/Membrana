@@ -10,6 +10,7 @@ import test from 'node:test';
 
 import {
   DB_NAME,
+  DUMP_INVENTORY_PROJECT,
   HASH_SCRIPT,
   INVENTORY_SCRIPT,
   TARGET_PROJECT,
@@ -44,14 +45,16 @@ function fakeAdapter({ listing, failRestore = false, healthy = true } = {}) {
   };
 }
 
-test('buildInventoryFromArchive: полный жизненный цикл в порядке up → healthy → restore → чтение → down', () => {
+test('buildInventoryFromArchive: жизненный цикл — ПРЕ-КЛИН, up, healthy, restore, чтение, down', () => {
   const adapter = fakeAdapter({});
   const { inventory, listing } = buildInventoryFromArchive({ archivePath: '/tmp/a.gz', adapter });
+  // Пре-клин первым (ревью 10.08): --drop не роняет коллекции, которых нет в архиве, —
+  // остатки прошлой сессии досыпали бы в опись чужое.
   assert.deepEqual(
     adapter.calls.map((x) => x[0]),
-    ['up', 'waitHealthy', 'restore', 'mongosh', 'mongosh', 'mongosh', 'down'],
+    ['down', 'up', 'waitHealthy', 'restore', 'mongosh', 'mongosh', 'mongosh', 'down'],
   );
-  assert.equal(adapter.calls[2][2], '/tmp/a.gz');
+  assert.equal(adapter.calls[3][2], '/tmp/a.gz');
   assert.equal(inventory.source, 'archive-contents');
   assert.equal(inventory.subject, 'collection-bson-sorted-by-id');
   // Листинг — сырьё потребителя: та же длина, форма {name, count, indexes}.
@@ -66,27 +69,43 @@ test('умолчания: цель — изолированный проект �
   assert.equal(DB_NAME, 'membrana_archivarius');
 });
 
-test('down зовётся ровно один раз и при падении наката; ошибка проброшена', () => {
+test('падение наката: пре-клин + финальный down (стенд не течёт), ошибка проброшена', () => {
   const adapter = fakeAdapter({ failRestore: true });
   assert.throws(() => buildInventoryFromArchive({ archivePath: '/tmp/a.gz', adapter }), /mongorestore упал/u);
-  assert.equal(adapter.calls.filter(([v]) => v === 'down').length, 1);
+  assert.deepEqual(adapter.calls.filter(([v]) => v === 'down').length, 2, 'пре-клин до up и уборка в finally');
 });
 
-test('keepUp: true — down не зовётся ни в happy-, ни в error-пути (escape-хатч разбора)', () => {
+test('keepUp: true — цель НЕ гасится после прогона (escape-хатч), пре-клин остаётся', () => {
   const ok = fakeAdapter({});
   buildInventoryFromArchive({ archivePath: '/tmp/a.gz', adapter: ok, keepUp: true });
-  assert.equal(ok.calls.filter(([v]) => v === 'down').length, 0);
+  assert.deepEqual(ok.calls.map((x) => x[0]).filter((v) => v === 'down'), ['down'], 'ровно пре-клин, финального down нет');
+  assert.equal(ok.calls[0][0], 'down', 'единственный down — ДО up');
 
   const bad = fakeAdapter({ failRestore: true });
   assert.throws(() => buildInventoryFromArchive({ archivePath: '/tmp/a.gz', adapter: bad, keepUp: true }));
-  assert.equal(bad.calls.filter(([v]) => v === 'down').length, 0);
+  assert.equal(bad.calls.filter(([v]) => v === 'down').length, 1, 'и в error-пути цель остаётся для разбора');
 });
 
-test('нездоровая цель — прогон не состоялся, down всё равно вызван (стенд не течёт)', () => {
+test('нездоровая цель — прогон не состоялся, накат запрещён, уборка состоялась', () => {
   const adapter = fakeAdapter({ healthy: false });
   assert.throws(() => buildInventoryFromArchive({ archivePath: '/tmp/a.gz', adapter }), /не стала healthy/u);
   assert.equal(adapter.calls.filter(([v]) => v === 'restore').length, 0, 'накат в нездоровую цель запрещён');
-  assert.equal(adapter.calls.filter(([v]) => v === 'down').length, 1);
+  assert.equal(adapter.calls.filter(([v]) => v === 'down').length, 2, 'пре-клин + finally');
+});
+
+test('withHashes: false — listing-only: один mongosh, канонизация не оплачивается, inventory честно null', () => {
+  const adapter = fakeAdapter({});
+  const { inventory, listing } = buildInventoryFromArchive({ archivePath: '/tmp/a.gz', adapter, withHashes: false });
+  assert.equal(inventory, null, 'опись без хешей — не «опись с дырками», её нет');
+  assert.equal(listing.length, 2);
+  assert.equal(adapter.calls.filter(([v]) => v === 'mongosh').length, 1, 'только листинг, ни одного HASH_SCRIPT');
+});
+
+test('цель дампа — СВОЙ проект, не цель дрилла: два глагола не сносят друг друга', () => {
+  assert.notEqual(DUMP_INVENTORY_PROJECT, TARGET_PROJECT);
+  const adapter = fakeAdapter({});
+  buildInventoryFromArchive({ archivePath: '/tmp/a.gz', adapter, project: DUMP_INVENTORY_PROJECT, withHashes: false });
+  assert.ok(adapter.calls.every(([, p]) => p === DUMP_INVENTORY_PROJECT));
 });
 
 test('readProjectInventory: коллекции отсортированы, хеш и инварианты сняты тем же адаптером', () => {

@@ -20,6 +20,13 @@ import { execFileSync } from 'node:child_process';
 export const COMPOSE_FILE = 'deploy/archivarius-backup/local-proof.compose.yml';
 export const SOURCE_PROJECT = 'archivarius-dump-proof';
 export const TARGET_PROJECT = 'archivarius-restore-drill';
+/**
+ * Своя цель для описи ДАМПА (ревью 10.08): дамп и дрилл — два глагола на одном стенде, и
+ * общая цель означала бы, что `down -v` одного сносит `--keep-up`-сессию другого, а их
+ * гонка даёт ложный CONTENT_MISMATCH. Тот же приём, что SOURCE/TARGET у дрилла: изоляция
+ * именем проекта.
+ */
+export const DUMP_INVENTORY_PROJECT = 'archivarius-dump-inventory';
 export const MONGO_SERVICE = 'archivarius-mongo-proof';
 export const DB_NAME = 'membrana_archivarius';
 
@@ -78,11 +85,19 @@ export function invariantsOfCollection(c) {
 
 /**
  * Опись проекта (бывший `readSide` дрилла): листинг + канонизация одним заходом.
- * @param {{adapter: {mongosh: Function}, project: string}} input
- * @returns {{inventory: object, listing: Array<{name: string, count: number, indexes: string[]}>}}
+ *
+ * `withHashes: false` (ревью 10.08) — режим потребителя, которому канонизация не нужна:
+ * дамп берёт только `listing` (имя+счёт), и сериализовать всю базу через mongosh ради
+ * sha256, который никто не сравнит, значит платить дороже самого mongodump. Дрилл хеширует
+ * по-настоящему — он и сравнивает; `inventory` без хешей честно равен null, а не «опись с
+ * дырками».
+ *
+ * @param {{adapter: {mongosh: Function}, project: string, withHashes?: boolean}} input
+ * @returns {{inventory: object | null, listing: Array<{name: string, count: number, indexes: string[]}>}}
  */
-export function readProjectInventory({ adapter, project }) {
+export function readProjectInventory({ adapter, project, withHashes = true }) {
   const listing = JSON.parse(String(adapter.mongosh(project, INVENTORY_SCRIPT)).trim());
+  if (!withHashes) return { inventory: null, listing };
   const inventory = buildInventory(
     listing,
     (name) => String(adapter.mongosh(project, HASH_SCRIPT(name))).trim(),
@@ -106,14 +121,19 @@ export function readProjectInventory({ adapter, project }) {
  * @param {{archivePath: string, adapter: object, project?: string, keepUp?: boolean}} input
  * @returns {{inventory: object, listing: object[]}}
  */
-export function buildInventoryFromArchive({ archivePath, adapter, project = TARGET_PROJECT, keepUp = false }) {
+export function buildInventoryFromArchive({ archivePath, adapter, project = TARGET_PROJECT, keepUp = false, withHashes = true }) {
+  // Пре-клин ДО подъёма (ревью 10.08): `mongorestore --drop` роняет только namespace'ы,
+  // присутствующие в архиве, — уцелевший том прошлой сессии (--keep-up, SIGKILL мимо
+  // finally) досыпал бы в опись коллекции, которых в ЭТОМ артефакте нет. Пустой дамп с
+  // остатками читался бы как полный — ровно класс «пустой неотличим от полного».
+  adapter.down(project);
   adapter.up(project);
   try {
     if (!adapter.waitHealthy(project)) {
       throw new Error(`цель ${project} не стала healthy — опись из артефакта не снята`);
     }
     adapter.restore(project, archivePath);
-    return readProjectInventory({ adapter, project });
+    return readProjectInventory({ adapter, project, withHashes });
   } finally {
     if (!keepUp) adapter.down(project);
   }
@@ -135,7 +155,10 @@ export function dockerAdapter({ repoRoot }) {
       // Healthcheck объявлен в стенде; ждём его, а не «sleep на всякий случай».
       for (let i = 0; i < 60; i += 1) {
         const out = compose(project, ['ps', '--format', '{{.Health}}']).trim();
-        if (out.includes('healthy')) return true;
+        // Точное слово, не подстрока (ревью 10.08): `includes('healthy')` истинно и для
+        // «unhealthy» — гейт пропускал бы мёртвую цель, а зуб «накат в нездоровую цель
+        // запрещён» обещал бы то, чего адаптер не держит.
+        if (out.split('\n').some((s) => s.trim() === 'healthy')) return true;
         try {
           execFileSync('node', ['-e', 'Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,2000)']);
         } catch {
@@ -146,6 +169,10 @@ export function dockerAdapter({ repoRoot }) {
     },
     mongosh: (project, script) =>
       compose(project, ['exec', '-T', MONGO_SERVICE, 'mongosh', '--quiet', DB_NAME, '--eval', script]),
+    // ИЗВЕСТНЫЙ ПРЕДЕЛ (ревью 10.08, долг #archive-restore-buffers-whole-file): архив
+    // читается в память целиком (`readFileSync` → stdin), потолок ~2 ГиБ и RSS-пик размером
+    // с артефакт. Сегодняшние архивы — десятки МиБ; стена придёт с ростом данных. Лечение —
+    // spawn + createReadStream + pipeline, зеркально писателю дампа.
     restore: (project, archivePath) =>
       sh(
         'docker',

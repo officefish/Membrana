@@ -34,7 +34,6 @@ import { formatRestoreVerdict, verifyRestore } from './lib/mongo-restore-policy.
 // разные леммы (решение держателя b2), их слияние было бы синонимией фасадов.
 import {
   COMPOSE_FILE,
-  DB_NAME,
   MONGO_SERVICE,
   SOURCE_PROJECT,
   TARGET_PROJECT,
@@ -45,9 +44,10 @@ import {
 } from './lib/archive-inventory.mjs';
 
 // Реэкспорты — живые ссылки на дом после переезда (прецедент sprint-cut-check, #1681):
-// зубы и соседи ходят по старым адресам. Мост ВРЕМЕННЫЙ: следующий XS — переключение
-// потребителей на дом и снятие реэкспортов.
-export { COMPOSE_FILE, DB_NAME, MONGO_SERVICE, SOURCE_PROJECT, TARGET_PROJECT, buildInventory, invariantsOfCollection };
+// потребители моста сегодня — зубы этого же скрипта. Мост ВРЕМЕННЫЙ, срок жизни записан
+// долгом мостика #drill-reexport-bridge-outlives-sprint: следующий XS — переключение зубов
+// на дом и снятие реэкспортов. DB_NAME не реэкспортируется — потребителей у него тут нет.
+export { COMPOSE_FILE, MONGO_SERVICE, SOURCE_PROJECT, TARGET_PROJECT, buildInventory, invariantsOfCollection };
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -74,7 +74,7 @@ export function latestArchive(dir) {
   return files.length ? resolve(dir, files[files.length - 1]) : null;
 }
 
-/** Адаптер окружения — из дома, с корнем этого дерева. Форма не изменилась, зубы дрилла её и проверяют. */
+/** Адаптер окружения — из дома, с корнем этого дерева. Обёртка однострочная: свои зубы держит дом, здесь проверять нечего. */
 export function dockerAdapter() {
   return libDockerAdapter({ repoRoot });
 }

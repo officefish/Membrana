@@ -201,23 +201,29 @@ export function manifestProblems(m, opts = {}) {
   // v1 — верхний уровень (история 09.08 остаётся валидной для ретенции как есть);
   // v2 — protocolChecks.incompleteCollections (гард протокола mongodump отделён от описи,
   // которая теперь берётся из содержимого артефакта, — источники не смешиваются).
+  // Неизвестная версия уже отбракована выше — судить её форму по правилам v1 или v2 было
+  // бы второй жалобой мимо предмета (ревью 10.08). Единое место гарда: только адрес поля
+  // различается по версии, текст один.
+  const incompleteAt =
+    m.schemaVersion === 2
+      ? [isPlainObject(m.protocolChecks) ? m.protocolChecks.incompleteCollections : undefined, 'protocolChecks.incompleteCollections']
+      : m.schemaVersion === 1
+        ? [m.incompleteCollections, 'incompleteCollections']
+        : null;
+  if (incompleteAt) {
+    const [value, where] = incompleteAt;
+    if (!Array.isArray(value)) out.push(`${where} не массив — неполнота не проверена`);
+    else if (value.length > 0) out.push(`коллекции начаты и не дописаны: ${value.join(', ')}`);
+  }
   if (m.schemaVersion === 2) {
-    if (m.inventorySource !== 'archive-contents') {
-      out.push(`inventorySource у схемы v2 обязан быть 'archive-contents' — долг #1814 закрыт формой: ${String(m.inventorySource)}`);
-    }
-    const pc = m.protocolChecks;
-    if (!isPlainObject(pc) || !Array.isArray(pc.incompleteCollections)) {
-      out.push('protocolChecks.incompleteCollections не массив — неполнота протокола не проверена');
-    } else if (pc.incompleteCollections.length > 0) {
-      out.push(`коллекции начаты и не дописаны: ${pc.incompleteCollections.join(', ')}`);
+    // Значение легально по закрытому списку, но у v2 законен только настоящий источник —
+    // вторая жалоба на значение ВНЕ списка не плодится (его уже назвала проверка выше).
+    if (m.inventorySource === 'mongodump-stderr') {
+      out.push("inventorySource 'mongodump-stderr' у схемы v2 — возврат долга #1814 через чёрный ход");
     }
     if (m.incompleteCollections !== undefined) {
       out.push('incompleteCollections на верхнем уровне — поле схемы v1; у v2 гард живёт в protocolChecks');
     }
-  } else if (!Array.isArray(m.incompleteCollections)) {
-    out.push('incompleteCollections не массив — неполнота не проверена');
-  } else if (m.incompleteCollections.length > 0) {
-    out.push(`коллекции начаты и не дописаны: ${m.incompleteCollections.join(', ')}`);
   }
   if (!Array.isArray(m.dbInventory) || m.dbInventory.length === 0) {
     out.push('dbInventory пуст — пустой дамп неотличим от полного');

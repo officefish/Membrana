@@ -38,7 +38,7 @@ import {
 // Опись — из СОДЕРЖИМОГО артефакта, конвейером дома (#1814, блок b3): восстановление в
 // изолированную цель и чтение той же дисциплиной, что у дрилла. Двух правд об одном
 // архиве больше нет — parseDbInventory демонтирован.
-import { DB_NAME, buildInventoryFromArchive, dockerAdapter } from './lib/archive-inventory.mjs';
+import { DB_NAME, DUMP_INVENTORY_PROJECT, buildInventoryFromArchive, dockerAdapter } from './lib/archive-inventory.mjs';
 
 const repoRoot = resolve(import.meta.dirname, '..');
 
@@ -215,9 +215,13 @@ async function dump(cfg, argv) {
 
   // Однопроходно: тот же поток одновременно считается, хешируется и пишется на диск.
   // Второй проход по многогигабайтному архиву ради sha256 — плата ни за что.
+  // Скоуп дампа = скоуп описи = скоуп отката (ревью 10.08): без `--db` mongodump снимал
+  // весь инстанс, а опись и nsInclude отката держали только DB_NAME — манифест конструктивно
+  // недоописывал артефакт (соседняя база уехала бы в архив невидимой для описи). Три скоупа
+  // сведены к одному имени из дома; предмет бэкапа — база архивариуса, не инстанс.
   const child = spawn(
     'docker',
-    ['compose', ...composeArgs(cfg), 'exec', '-T', cfg.service, 'sh', '-c', 'mongodump --archive --gzip'],
+    ['compose', ...composeArgs(cfg), 'exec', '-T', cfg.service, 'sh', '-c', `mongodump --archive --gzip --db ${DB_NAME}`],
     { stdio: ['ignore', 'pipe', 'pipe'] },
   );
   let stderr = '';
@@ -242,14 +246,29 @@ async function dump(cfg, argv) {
   let dbInventory = [];
   if (!transportProblem && exitCode === 0) {
     try {
-      const { listing } = buildInventoryFromArchive({ archivePath: tmp, adapter: dockerAdapter({ repoRoot }) });
+      const { listing } = buildInventoryFromArchive({
+        archivePath: tmp,
+        adapter: dockerAdapter({ repoRoot }),
+        // Своя цель и listing-only (ревью 10.08): дамп не делит проект с --keep-up-сессией
+        // дрилла и не платит за канонизацию sha256, которую здесь никто не сравнивает.
+        project: DUMP_INVENTORY_PROJECT,
+        withHashes: false,
+      });
       dbInventory = inventoryFromListing(listing);
     } catch (e) {
       // Стенд описи недоступен → дампа НЕТ (решение резчика: фолбэк на stderr — возврат
-      // к двум правдам через чёрный ход). Манифест не пишется, tmp остаётся in-progress
-      // следом; финального имени не будет.
+      // к двум правдам через чёрный ход). Манифеста нет; байты дампа НЕ прячутся под
+      // in-progress-именем (ревью 10.08: невидимый для list/prune полноразмерный файл —
+      // течь диска), а получают видимый след partial-- вне схемы имён — как у прочих
+      // неудачных попыток: ротация его не тронет, человек увидит.
       console.error(`backup:dump — ${DUMP_INVENTORY_UNAVAILABLE}: опись из артефакта не снята (${String(e?.message ?? e).split('\n')[0]})`);
-      console.error('backup:dump — дамп без честной описи не дамп; временный файл оставлен как есть');
+      const trace = `partial--${startedAt.replace(/[:.]/gu, '')}.archive.gz`;
+      try {
+        await rename(tmp, join(cfg.dir, trace));
+        console.error(`backup:dump — дамп без честной описи не дамп; байты оставлены следом: ${trace}`);
+      } catch {
+        console.error('backup:dump — дамп без честной описи не дамп; временный файл оставлен как есть');
+      }
       return 1;
     }
   }

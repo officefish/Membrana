@@ -9,8 +9,8 @@
 | Шаг | Команда | Результат |
 |---|---|---|
 | стенд | `docker compose -f local-proof.compose.yml up -d` | `archivarius-dump-proof` healthy |
-| сев | `--profile seed run --rm synthetic-seed` | `seeded spans=5000 runs=2` |
-| дамп | `yarn backup:dump` (env: `ARCHIVARIUS_COMPOSE_FILES/MONGO_SERVICE/DUMP_DIR` на стенд) | exit 0, `mongo-dump--20260810T164532660Z--7.0.39--d6ca5b9b.archive.gz` · 48.5 КиБ · **5002 документа** |
+| сев | `--profile seed run --rm synthetic-seed` | `seeded spans=5000 runs=1` (перепрогон) |
+| дамп | `yarn backup:dump` (env: `ARCHIVARIUS_COMPOSE_FILES/MONGO_SERVICE/DUMP_DIR` на стенд) | exit 0, `mongo-dump--20260810T182250954Z--7.0.39--e964400d.archive.gz` · 48.3 КиБ · **5001 документ** (перепрогон после ревью-фиксов: скоуп --db, свой проект цели archivarius-dump-inventory, listing-only) |
 | опись | `yarn backup:list` | ✔ пригоден |
 | дрилл | `yarn backup:restore-drill` (через фасад дома, b2) | **«восстановление подтверждено: все коллекции сошлись по счёту, содержимому и инвариантам»**, exit 0 |
 | уборка | `down -v` оба проекта | стенды и тома сняты, машина чиста |
@@ -22,10 +22,10 @@
   "schemaVersion": 2,
   "mongoVersion": "7.0.39",
   "mongodumpExitCode": 0,
-  "sha256": "d6ca5b9b9af10f5df8a457f6619f5e9d5ae19c186c7614de75f6b12c4d3ee3ba",
+  "sha256": "e964400d… (перепрогон 18:22Z)",
   "inventorySource": "archive-contents",
   "dbInventory": [
-    { "db": "membrana_archivarius", "collection": "runs", "documentCount": 2 },
+    { "db": "membrana_archivarius", "collection": "runs", "documentCount": 1 },
     { "db": "membrana_archivarius", "collection": "spans", "documentCount": 5000 }
   ],
   "protocolChecks": { "incompleteCollections": [] }
@@ -34,16 +34,17 @@
 
 ## Почему это закрывает долг
 
-- **Источник — артефакт.** По пути описи видно сам механизм: тракт дампа поднял
-  изолированную цель (`archivarius-restore-drill`, свой том), накатил в неё **свежезакрытый
-  tmp-архив** (`5002 document(s) restored successfully`), снял листинг конвейером дома и
-  погасил цель с томом. Регулярок по stderr в тракте описи нет.
+- **Источник — артефакт.** По пути описи виден сам механизм: тракт дампа с пре-клином
+  поднял СВОЮ изолированную цель (`archivarius-dump-inventory`, свой том — не цель дрилла,
+  ревью-фикс 10.08), накатил в неё **свежезакрытый tmp-архив**
+  (`5001 document(s) restored successfully`), снял листинг конвейером дома (listing-only,
+  без оплаты канонизации) и погасил цель с томом. Регулярок по stderr в тракте описи нет.
 - **Две независимые правды сошлись.** stderr mongodump (гард протокола) говорит
-  `runs (2 documents)`, `spans (5000 documents)`; опись из содержимого архива — те же
+  `runs (1 document)`, `spans (5000 documents)`; опись из содержимого архива — те же
   числа. Раньше вторая правда отсутствовала: опись БЫЛА пересказом первой.
-- **Фильтр дисциплины работает.** `admin.system.version` есть в архиве (виден в stderr),
-  но в опись не входит: конвейер снимает `membrana_archivarius` (`nsInclude DB_NAME.*`) —
-  опись описывает предмет бэкапа, а не побочку утилиты.
+- **Скоупы сведены к одному имени.** `mongodump --db membrana_archivarius` (ревью-фикс):
+  дамп, опись и nsInclude отката держат один предмет — база архивариуса, не инстанс;
+  манифест конструктивно не может недоописать артефакт.
 - **Гард протокола жив отдельным полем**: `protocolChecks.incompleteCollections: []` —
   все начатые коллекции дописаны.
 - **Откат подтверждён тем же конвейером** (дрилл через фасад b2): счёт, sha256 содержимого
