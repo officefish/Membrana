@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "dump-inventory-from-archive",
+      "title": "Опись дампа читается с диска: inventorySource archive-contents вместо разбора stderr mongodump",
+      "promptPath": "docs/prompts/DUMP_INVENTORY_FROM_ARCHIVE_PROMPT.md",
+      "githubIssue": 1814,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-10",
+      "archivedAt": null,
+      "leadPersona": "tarasov",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "fix-sprint-experience-dead-ends",
       "title": "Провод sprint:experience: живой путь записи не растит seq (дедуп молча глотает новый прогноз после перерезки) + дубль константы пути ленты",
       "promptPath": "docs/prompts/FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md",

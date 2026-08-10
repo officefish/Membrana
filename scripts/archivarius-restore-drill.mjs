@@ -21,53 +21,35 @@
  *        2 — прогон не состоялся (нет docker, нет архива, отказ инструмента).
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { formatRestoreVerdict, verifyRestore } from './lib/mongo-restore-policy.mjs';
+// Приборы снятия описи ПЕРЕЕХАЛИ в дом scripts/lib/archive-inventory.mjs (блок b1 спринта
+// dump-inventory-from-archive, #1814): дамп — второй потребитель конвейера, а импорт
+// скрипт-к-скрипту запрещён (класс #1638/#1681). Дрилл берёт из дома ПРИБОРЫ (константы
+// стенда, скрипты, buildInventory, readProjectInventory, dockerAdapter); оркестровка цели
+// остаётся здесь — «прогнать restore и сверить предикатом» и «снять опись из архива» суть
+// разные леммы (решение держателя b2), их слияние было бы синонимией фасадов.
+import {
+  COMPOSE_FILE,
+  DB_NAME,
+  MONGO_SERVICE,
+  SOURCE_PROJECT,
+  TARGET_PROJECT,
+  buildInventory,
+  dockerAdapter as libDockerAdapter,
+  invariantsOfCollection,
+  readProjectInventory,
+} from './lib/archive-inventory.mjs';
+
+// Реэкспорты — живые ссылки на дом после переезда (прецедент sprint-cut-check, #1681):
+// зубы и соседи ходят по старым адресам. Мост ВРЕМЕННЫЙ: следующий XS — переключение
+// потребителей на дом и снятие реэкспортов.
+export { COMPOSE_FILE, DB_NAME, MONGO_SERVICE, SOURCE_PROJECT, TARGET_PROJECT, buildInventory, invariantsOfCollection };
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-
-/** Стенд ПЕРЕИСПОЛЬЗУЕТСЯ, второй файл не заводится. */
-export const COMPOSE_FILE = 'deploy/archivarius-backup/local-proof.compose.yml';
-
-/**
- * Изоляция цели от источника — РАЗНЫМИ ИМЕНАМИ ПРОЕКТА, а не вторым compose-файлом.
- *
- * Проверено фактом 09.08: `docker compose -p archivarius-restore-drill config` даёт том
- * `archivarius-restore-drill_archivarius-mongo-proof-data`, тогда как источник живёт в
- * `archivarius-dump-proof_…`. Тома разные, контейнеры разные — ровно та изоляция, которую
- * требует #1809, и достигнута она без копии стенда. Исполнитель блока предлагал завести
- * второй compose-файл; факт показал, что работы там нет.
- */
-export const SOURCE_PROJECT = 'archivarius-dump-proof';
-export const TARGET_PROJECT = 'archivarius-restore-drill';
-export const MONGO_SERVICE = 'archivarius-mongo-proof';
-export const DB_NAME = 'membrana_archivarius';
-
-/**
- * Канонизация коллекции для слоя `sha`.
- *
- * Документы сортируются по `_id` и печатаются каноническим EJSON — форма, сохраняющая типы
- * BSON (в отличие от обычного JSON, где `NumberLong` и `Date` теряются). Сортировка
- * обязательна: природный порядок (`$natural`) у источника и восстановленного разный по
- * построению, и хеш без сортировки плавал бы, обвиняя исправное восстановление.
- *
- * Отклонено предложение исполнителя блока считать хеш через `$out` во временную коллекцию:
- * `$out` ПИШЕТ в ту самую базу, которую мы меряем. Мерка не имеет права менять предмет.
- */
-const HASH_SCRIPT = (coll) =>
-  `const c=db.getCollection(${JSON.stringify(coll)});` +
-  `const h=require('crypto').createHash('sha256');` +
-  `c.find().sort({_id:1}).forEach(d=>h.update(EJSON.stringify(d,{relaxed:false})));` +
-  `print(h.digest('hex'));`;
-
-const INVENTORY_SCRIPT =
-  `const out=db.getCollectionNames().filter(n=>!n.startsWith('system.')).sort().map(n=>({` +
-  `name:n,count:db.getCollection(n).countDocuments(),` +
-  `indexes:db.getCollection(n).getIndexes().map(i=>i.name).sort()}));` +
-  `print(JSON.stringify(out));`;
 
 /** @param {string[]} argv */
 export function parseArgs(argv) {
@@ -92,76 +74,9 @@ export function latestArchive(dir) {
   return files.length ? resolve(dir, files[files.length - 1]) : null;
 }
 
-/**
- * Собрать опись стороны в форме, которую понимает ядро.
- *
- * Обе стороны снимаются ОДНИМ конвейером — иначе `verifyRestore` сравнивал бы описи,
- * собранные по разным правилам, и находил расхождение там, где его нет.
- */
-export function buildInventory(rawCollections, hashOf, invariantsOf) {
-  return {
-    subject: 'collection-bson-sorted-by-id',
-    source: 'archive-contents',
-    takenAt: 0,
-    collections: [...rawCollections]
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((c) => ({
-        name: c.name,
-        count: c.count,
-        sha256: hashOf(c.name),
-        invariants: invariantsOf(c),
-      })),
-  };
-}
-
-/** Инварианты коллекции: версия схемы, поле ключа, обязательные индексы. */
-export function invariantsOfCollection(c) {
-  return {
-    schemaVersion: 1,
-    pkField: '_id',
-    requiredIndexes: (c.indexes ?? []).filter((i) => i !== '_id_').sort(),
-    extras: {},
-  };
-}
-
-const sh = (cmd, args, opts = {}) =>
-  String(
-    execFileSync(cmd, args, {
-      cwd: repoRoot,
-      encoding: 'utf8',
-      maxBuffer: 64 * 1024 * 1024,
-      ...opts,
-    }),
-  );
-
-/** Адаптер окружения. Вынесен, чтобы зубы проверяли оркестрацию без docker. */
+/** Адаптер окружения — из дома, с корнем этого дерева. Форма не изменилась, зубы дрилла её и проверяют. */
 export function dockerAdapter() {
-  const compose = (project, args) => sh('docker', ['compose', '-f', COMPOSE_FILE, '-p', project, ...args]);
-  return {
-    up: (project) => compose(project, ['up', '-d', MONGO_SERVICE]),
-    down: (project) => compose(project, ['down', '-v']),
-    waitHealthy: (project) => {
-      // Healthcheck объявлен в стенде; ждём его, а не «sleep на всякий случай».
-      for (let i = 0; i < 60; i += 1) {
-        const out = compose(project, ['ps', '--format', '{{.Health}}']).trim();
-        if (out.includes('healthy')) return true;
-        try {
-          execFileSync('node', ['-e', 'Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,2000)']);
-        } catch {
-          /* пауза не критична */
-        }
-      }
-      return false;
-    },
-    mongosh: (project, script) =>
-      compose(project, ['exec', '-T', MONGO_SERVICE, 'mongosh', '--quiet', DB_NAME, '--eval', script]),
-    restore: (project, archivePath) =>
-      sh('docker', [
-        'compose', '-f', COMPOSE_FILE, '-p', project,
-        'exec', '-T', MONGO_SERVICE,
-        'sh', '-c', `mongorestore --archive --gzip --nsInclude='${DB_NAME}.*' --drop`,
-      ], { input: readFileSync(archivePath) }),
-  };
+  return libDockerAdapter({ repoRoot });
 }
 
 /**
@@ -170,14 +85,9 @@ export function dockerAdapter() {
  * @param {{adapter: object, archive: string, log?: Function}} input
  */
 export function runDrill({ adapter, archive, log = () => {} }) {
-  const readSide = (project) => {
-    const raw = JSON.parse(adapter.mongosh(project, INVENTORY_SCRIPT).trim());
-    return buildInventory(
-      raw,
-      (name) => adapter.mongosh(project, HASH_SCRIPT(name)).trim(),
-      invariantsOfCollection,
-    );
-  };
+  // Обе стороны — ОДНИМ конвейером дома (иначе verifyRestore сравнивал бы описи,
+  // собранные по разным правилам). Дрилл берёт каноническую форму, листинг ему не нужен.
+  const readSide = (project) => readProjectInventory({ adapter, project }).inventory;
 
   log(`опись источника (${SOURCE_PROJECT})…`);
   const source = readSide(SOURCE_PROJECT);
