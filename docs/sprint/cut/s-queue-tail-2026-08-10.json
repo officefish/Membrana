@@ -1,0 +1,74 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "s-queue-tail-2026-08-10",
+  "taskId": "s-queue-tail-2026-08-10",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-08-10T12:10:00+00:00",
+    "to": "2026-08-10T21:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-typecheck-verdict",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/audit/typecheck-verdict-2026-08-10.md",
+        "docs/tasks/registry.json",
+        "docs/prompts/FIX_NODE_MODULES_LINKS_1647_PROMPT.md"
+      ],
+      "estimate": {
+        "changedLines": 100
+      },
+      "revisionAt": "2026-08-10T12:22:13+00:00",
+      "revisionOf": "49822ce29ec66d1245fb00e7af649d5361323dee0f76e55e5a68dab93d58d05d"
+    },
+    {
+      "blockId": "b2-adr-forecast-amnesty",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/adr/ADR-0026-forecast-required-amnesty-by-schema.md",
+        "docs/adr/README.md"
+      ],
+      "estimate": {
+        "changedLines": 70
+      },
+      "revisionAt": "2026-08-10T12:22:13+00:00",
+      "revisionOf": "0ef054859fbddd673e9a6f6f25c6061dae01238b4a8839513a2789474b5373d5"
+    },
+    {
+      "blockId": "b3-forecast-gate",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/procedure-run-journal.mjs",
+        "scripts/lib/sprint-cut/sprint-run.mjs",
+        "scripts/lib/sprint-integration/forecast-record-gate.mjs",
+        "scripts/execution-gate.mjs",
+        "scripts/execution-gate.test.mjs",
+        "scripts/sprint-producer.test.mjs",
+        "docs/bridge/debt-ledger.jsonl",
+        "docs/bridge/DEBTS.md"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "revisionAt": "2026-08-10T12:51:51+00:00",
+      "revisionOf": "2c8d74e171b12f8afeecbf009d2819a1290b170e89672b1cac7c2d8b73703216"
+    }
+  ],
+  "//why": "Хвост очереди S десятки хендофа 09.08 по слову владельца 10.08 («делаем s-ки по очереди шотами или спринтами»). Две строки закрыты шотами (e387e2ba, 1ada87e4); третий шот получил честный отказ предиката evaluateOneShotS: capability_chaining (4 выстрела/9 файлов/229 строк в окне 7 суток — смежность собрали процедурные файлы drafts/§5). Промпт: docs/prompts/S_QUEUE_TAIL_2026_08_10_PROMPT.md",
+  "//route": "Маршрут — спринт по прецеденту 04.08 (sprint-dictionary-to-lib): честный отказ предиката шоту → спринт, не продавливание. Штамп маршрута — tarasov 10.08 (конспект docs/discussions/cut-s-queue-tail-vesnin.md): «прогонять S ради предсказуемого красного = церемония». Карточка s-queue-tail-2026-08-10 в реестре (--no-issue: след — реестр + спринт-прогон).",
+  "//cutter": "Резчик vesnin, прогон контекста 10.08 (конспект docs/discussions/cut-s-queue-tail-vesnin.md). Решения: (1) гейт живёт в execution-gate.mjs при closeProcedureRun и ТОЛЬКО для procedureId=membrana-local-sprint — третий провод жгута sprint-integration, не новый орган (прецедент 01.08 «новые проверки — в существующие органы»); (2) стоп, не предупреждение — долг мостика читается дословно, exit non-zero + подсказка команды починки; (3) амнистия старых прогонов — по версии схемы, не по дате и не по спискам; уточнение tarasov (BLOCK локальному комментарию): ключ канонизируется ADR архитектора — procedure-run-journal@2, поле forecastRequired ставит держатель прогона при open, гейт только читает; (4) дом вердикта b1 — docs/audit/typecheck-verdict-2026-08-10.md (вещдок переживает закрытие прогона, в OPEN.md — ссылка); карточка починки линков — fix-node-modules-links-1647.",
+  "//order": "b2 (ADR) режется раньше b3 (кода): текст гейта ссылается на ADR — то же правило, что «блок engines[] не раньше блока-родителя движка». b1 независим и может идти параллельно.",
+  "//dod": "b1: вердикт долга typecheck записан вещдоком (cabinet зелёный живьём; office зелёный в CI ствола 273f936d, локальная краснота изолирована классом #1647), карточка fix-node-modules-links-1647 заведена с промптом. b2: ADR-0026 фиксирует amnesty-by-schema (@2, forecastRequired at open, gate reads only), внесён в docs/adr/README.md. b3: закрытие прогона membrana-local-sprint с forecastRequired=true без записи рода «предсказание ↔ исход» — стоп (exit non-zero), не жалоба; прогоны @1 без поля амнистированы; зубы на оба исхода; yarn test:scripts зелёный; долг forecast-record-step-optional переведён в settled со ссылкой на гейт.",
+  "//out-of-scope": "Сама починка симлинков node_modules (карточка fix-node-modules-links-1647, отдельная работа). Правки packages/background-* и вообще packages/* — сервера в спринте нет. Обязательность прогноза для других процедур (one-shot, ритуалы) — только membrana-local-sprint. Правка запечатанных записей журнала (append-only: только новые записи).",
+  "//recut": "v2, 10.08: в зону b3 добавлен scripts/lib/sprint-cut/sprint-run.mjs — сеттер forecastRequired при open (ensureSprintRunOpen). Дыра нарезки v1 поймана исполнением: без сеттера гейт вечно спит на @1-записях — ровно долг, который чиним. Оценка b3 200→240. v3, 10.08: в зону b3 добавлен scripts/sprint-producer.test.mjs — зубы соседа симулируют закрытие прогона и обязаны выучить новый контракт (закрытие без записи прогноза — стоп); фикстуры дополняются валидной записью рода. Оценка b3 240→260. v4, 10.08: окно from 13:50→12:10 — работа началась в 12:15 (первый след), окно было назначено наперёд и гейт дал plan_lied по всем блокам (находка eg-window-after-first-trace: перерезать ОКНО, не следы). Тела блоков не тронуты, ревизии стоят.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-10T13:22:30+00:00",
+    "digest": "a4fd5e1c4f5c10c2c44a83ecdce4b41253cd180a86c767f3852dffb8c6aedd02"
+  }
+}

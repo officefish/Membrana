@@ -20,6 +20,9 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `fix-sprint-experience-dead-ends` | Провод sprint:experience: живой путь записи не растит seq (дедуп молча глотает новый прогноз после перерезки) + дубль константы пути ленты | S | [`FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md`](../prompts/FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md) | — |
+| `fix-node-modules-links-1647` | Резолюция node_modules/@membrana/* в чужое дерево Membrana-grok: инвентарь симлинков и переустановка на своё дерево | S | [`FIX_NODE_MODULES_LINKS_1647_PROMPT.md`](../prompts/FIX_NODE_MODULES_LINKS_1647_PROMPT.md) | — |
+| `s-queue-tail-2026-08-10` | Хвост очереди S хендофа 09.08: вердикт долга typecheck + обязательность записи «предсказание ↔ исход» | S | [`S_QUEUE_TAIL_2026_08_10_PROMPT.md`](../prompts/S_QUEUE_TAIL_2026_08_10_PROMPT.md) | — |
 | `tests-container-cross-package-imports` | Контейнер тестов: resolveImport слеп к @membrana/* и .tsx — gate-ярус scripts недобирает зависимости | S | [`TESTS_CONTAINER_CROSS_PACKAGE_IMPORTS_PROMPT.md`](../prompts/TESTS_CONTAINER_CROSS_PACKAGE_IMPORTS_PROMPT.md) | — |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
 | `review-diff-explicit-base` | Ревью читает дифф с явной базой; вердикт несёт базу рядом с head (строка 7 хендофа 08.08) | M | [`REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md`](../prompts/REVIEW_DIFF_EXPLICIT_BASE_PROMPT.md) | [#1771](https://github.com/officefish/Membrana/issues/1771) |
