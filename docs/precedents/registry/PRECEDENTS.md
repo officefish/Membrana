@@ -1,15 +1,15 @@
 # PRECEDENTS — снимок-реестр (производный, руками не править)
 
-> Meta · Date: 2026-08-08 · SHA: 1447cea1 · Source: docs/precedents/*.md
+> Meta · Date: 2026-08-10 · SHA: 273f936d · Source: docs/precedents/*.md
 > Пересобрать: `yarn precedent:register --rebuild`. Источник истины — файлы прецедентов.
 
-Всего прецедентов: **29** · различных классов: **6** · доля рецидива: **79%** (ориентир ≤15%).
+Всего прецедентов: **30** · различных классов: **6** · доля рецидива: **80%** (ориентир ≤15%).
 
 ## Рецидив по классам
 
 | Класс | Прецедентов |
 |-------|-------------|
-| session-report | 12 ⚠ рецидив |
+| session-report | 13 ⚠ рецидив |
 | tooling-gap | 7 ⚠ рецидив |
 | ritual-mechanics-vs-value | 4 ⚠ рецидив |
 | cold-start | 3 ⚠ рецидив |
@@ -49,4 +49,5 @@
 | 2026-08-06 | session-report | [2026-08-06-worktree-remove-bypassed-controlled-demolition](../2026-08-06-worktree-remove-bypassed-controlled-demolition.md) | Агент выполнил радикальную операцию raw-командой, имея санкционированный глагол  |
 | 2026-08-08 | session-report | [2026-08-08-static-mmbrn-epic-review-five-agent-hangs](../2026-08-08-static-mmbrn-epic-review-five-agent-hangs.md) | Все пять agent runtime не завершили review до timeout и были остановлены; инфрас |
 | 2026-08-08 | session-report | [2026-08-08-static-mmbrn-m7-five-external-runs-local-synthesis](../2026-08-08-static-mmbrn-m7-five-external-runs-local-synthesis.md) | Структурно полные ответы повторно подменяли точные M3-M6 predicates метками, вво |
+| 2026-08-10 | session-report | [2026-08-10-detectors-red-ci-verdict-foreign-tree](../2026-08-10-detectors-red-ci-verdict-foreign-tree.md) | Проверка врёт о предмете: красный локальный прогон говорил не о детекторах, а о  |
 
