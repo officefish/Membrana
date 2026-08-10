@@ -4,6 +4,13 @@
 
 ## Focus
 
+- **s-queue-tail-2026-08-10** (без Issue: S-очередь дня) ·
+  gate pass 3/3 honest_pair · прогноз↔исход записан (`miss`, b3 406>400) ·
+  [`OPEN.md`](./local-sprint/s-queue-tail-2026-08-10/OPEN.md) —
+  хвост очереди S хендофа 09.08: вердикт долга typecheck (карточка
+  `fix-node-modules-links-1647`), ADR-0026 amnesty-by-schema, гейт обязательности записи
+  «предсказание ↔ исход» в execution-gate; долг мостика `forecast-record-step-optional`
+  repaid. Шоту предикат отказал (capability_chaining).
 - **review-diff-explicit-base** ([#1771](https://github.com/officefish/Membrana/issues/1771)) ·
   gate pass 3/3 honest_pair · [`OPEN.md`](./local-sprint/review-diff-explicit-base/OPEN.md) —
   ревью читает дифф с ЯВНОЙ базой (`gh pr diff` из тракта убран), вердикт несёт `base:`
