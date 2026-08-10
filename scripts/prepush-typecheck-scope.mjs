@@ -20,14 +20,13 @@ import { join } from 'node:path';
 
 import { classifyResolution, formatResolution, RESOLUTION_STATES } from './lib/worktree-resolution.mjs';
 
-const DOCS_RE = /\.(md|mdx)$/iu;
-/**
- * Корневые файлы, реально инвалидирующие ВСЕ типы → полный typecheck.
- * Ровно turbo `globalDependencies` (turbo.json) + сам граф задач. Корневой `package.json`
- * СЮДА НЕ входит: turbo его глобальной зависимостью не считает, а правка скриптов в нём
- * (напр. этот спринт) типы не трогает — иначе over-trigger полного билда (vite 127).
- */
-const GLOBAL_CONFIGS = ['tsconfig.base.json', 'turbo.json', '.env'];
+// Обе мерки переехали в `lib/changed-files-scope.mjs` (блок b2 спринта `vitest-two-tier-gate`):
+// мердж-гейт vitest фильтрует изменения ровно так же, и второй копии у мерки быть не должно —
+// разъехаться на единицу означало бы воспроизвести #1168 на соседнем ярусе. Публичное имя
+// `nonDocsFiles` реэкспортируется с прежнего адреса: старые импорты не переписываются.
+import { GLOBAL_CONFIGS, nonDocsFiles } from './lib/changed-files-scope.mjs';
+
+export { nonDocsFiles };
 
 export function yarnBin(platform = process.platform) {
   return platform === 'win32' ? 'yarn.cmd' : 'yarn';
@@ -35,11 +34,6 @@ export function yarnBin(platform = process.platform) {
 
 function execYarn(args) {
   execFileSync(yarnBin(), args, { stdio: 'inherit', shell: process.platform === 'win32' });
-}
-
-/** @param {string[]} files */
-export function nonDocsFiles(files) {
-  return files.filter((f) => f && !DOCS_RE.test(f));
 }
 
 /**

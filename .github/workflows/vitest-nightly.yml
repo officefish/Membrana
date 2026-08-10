@@ -1,0 +1,78 @@
+# Полный прогон корпуса vitest — ночью, не на каждый коммит.
+#
+# ADR-0018: мердж-гейт выборочный, полный набор ночной. Слово владельца 26.07 —
+# «из-за каждого коммита гонять 2000 тестов это не дело; полные прогоны будут, но они
+# будут ночными».
+#
+# ЧТО ЭТОТ WORKFLOW НЕ ДЕЛАЕТ. Он НЕ является обязательной проверкой: красный здесь
+# сегодня ничего не блокирует. Ночь становится гейтом только после защиты `main` с
+# required-checks — это ход владельца, а не скрипта (предусловие ADR-0018). Пока защиты
+# нет, ценность прогона в том, что расхождение видно НАУТРО, а не через недели.
+#
+# Соседняя статья: `scheduled-ci.yml` — недельный полный lint+typecheck+test+build.
+# Не сливается с этим намеренно: там другая каденция и другой предмет.
+name: Vitest nightly (full corpus)
+
+on:
+  schedule:
+    # 02:00 UTC ежедневно. Живые ветки полный набор по расписанию НЕ гоняют —
+    # при 12 рабочих деревьях ночь распухла бы; для ветки есть workflow_dispatch.
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: vitest-nightly-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  full:
+    name: Vitest — весь корпус
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      # ЗАГЛУШКА ДЛЯ `prisma generate`, НЕ АДРЕС ЖИВОЙ БАЗЫ — ровно как в ci.yml:33.
+      # Секции `services:` нет ни здесь, ни там: ни один пакет не поднимает базу в тестах,
+      # и полный `turbo run test` зеленел на этой же заглушке, пока стоял мердж-гейтом.
+      # Появится DB-зависимый тест — service container заводится СРАЗУ в обоих файлах,
+      # иначе ночь начнёт зеленеть по остатку (ревью PR #1832, P1: проверено фактом —
+      # догадка о service container в ci.yml не подтвердилась, он там отсутствует).
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Enable Corepack (Yarn 4)
+        # Пин активируется явно, как в ci.yml: две проверки одного дерева не должны
+        # расходиться версией менеджера пакетов — иначе ночной красный будет объясняться
+        # не кодом, а обвязкой.
+        run: |
+          corepack enable
+          corepack prepare yarn@4.5.0 --activate
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Vitest — весь корпус без выборки
+        run: yarn turbo run test --continue
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## Vitest nightly"
+            echo ""
+            echo "Полный корпус, без выборки. Мердж-гейт (\`ci.yml\`) гоняет только"
+            echo "затронутое и ярус smoke — расхождение между ними ищут здесь."
+            echo ""
+            echo "Красный НЕ блокирует мердж: ночь станет гейтом после защиты \`main\`"
+            echo "с required-checks (предусловие ADR-0018, ход владельца)."
+          } >> "$GITHUB_STEP_SUMMARY"

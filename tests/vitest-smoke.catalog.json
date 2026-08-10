@@ -1,0 +1,111 @@
+{
+  "$schema": "vitest-smoke/1",
+  "generatedBy": "scripts/vitest-smoke-list.mjs",
+  "criterion": "транзитивный фан-ин >= 10 по dependencies+peerDependencies воркспейса",
+  "threshold": 10,
+  "smoke": [
+    "@membrana/audio-engine-service",
+    "@membrana/core",
+    "@membrana/detector-base"
+  ],
+  "withoutTests": [],
+  "corpusSize": 38,
+  "ranking": [
+    {
+      "name": "@membrana/core",
+      "fanIn": 27
+    },
+    {
+      "name": "@membrana/audio-engine-service",
+      "fanIn": 16
+    },
+    {
+      "name": "@membrana/detector-base",
+      "fanIn": 11
+    },
+    {
+      "name": "@membrana/fft-analyzer-service",
+      "fanIn": 9
+    },
+    {
+      "name": "@membrana/trends-detector-service",
+      "fanIn": 6
+    },
+    {
+      "name": "@membrana/detector-report",
+      "fanIn": 5
+    },
+    {
+      "name": "@membrana/cepstral-detector-service",
+      "fanIn": 3
+    },
+    {
+      "name": "@membrana/harmonic-detector-service",
+      "fanIn": 3
+    },
+    {
+      "name": "@membrana/spectral-flux-detector-service",
+      "fanIn": 3
+    },
+    {
+      "name": "@membrana/telemetry-journal-service",
+      "fanIn": 3
+    },
+    {
+      "name": "@membrana/template-match-detector-service",
+      "fanIn": 3
+    },
+    {
+      "name": "@membrana/device-board",
+      "fanIn": 2
+    },
+    {
+      "name": "@membrana/drone-detection-orchestrator-service",
+      "fanIn": 2
+    },
+    {
+      "name": "@membrana/journal-report-views",
+      "fanIn": 2
+    },
+    {
+      "name": "@membrana/media-library-service",
+      "fanIn": 2
+    },
+    {
+      "name": "@membrana/sample-playback-service",
+      "fanIn": 2
+    },
+    {
+      "name": "@membrana/agenda",
+      "fanIn": 1
+    },
+    {
+      "name": "@membrana/audio-data-viz",
+      "fanIn": 1
+    },
+    {
+      "name": "@membrana/detection-ensemble-service",
+      "fanIn": 1
+    },
+    {
+      "name": "@membrana/mfcc-analyzer-service",
+      "fanIn": 1
+    },
+    {
+      "name": "@membrana/rag-service",
+      "fanIn": 1
+    },
+    {
+      "name": "@membrana/static-registry-service",
+      "fanIn": 1
+    },
+    {
+      "name": "@membrana/telemetry-service",
+      "fanIn": 1
+    },
+    {
+      "name": "@membrana/usercase-catalog-service",
+      "fanIn": 1
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "vitest-two-tier-gate",
+  "taskId": "cg2-two-tier-test-gate",
+  "mode": "explicit-honest",
+  "cutBy": "ozhegov",
+  "window": {
+    "from": "2026-08-10T11:40:00+00:00",
+    "to": "2026-08-10T18:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-smoke-catalog",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/vitest-smoke-list.mjs",
+        "scripts/vitest-smoke-list.test.mjs",
+        "tests/vitest-smoke.catalog.json"
+      ],
+      "estimate": {
+        "changedLines": 300
+      },
+      "revisionAt": "2026-08-10T11:51:00+00:00",
+      "revisionOf": "e42800380692259932a59c190d8d0edf9e8a32e45e80eea0cdadd42f0541cbd1"
+    },
+    {
+      "blockId": "b2-affected-scope",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/lib/vitest-gate-scope.mjs",
+        "scripts/lib/vitest-gate-scope.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 280
+      },
+      "revisionAt": "2026-08-10T11:51:00+00:00",
+      "revisionOf": "a41a6af69c3d65e9a4ea1829649614da958e1959bbfd42facdb53d0d74608fbb"
+    },
+    {
+      "blockId": "b3-ci-wire",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        ".github/workflows/ci.yml",
+        ".github/workflows/vitest-nightly.yml",
+        "package.json"
+      ],
+      "estimate": {
+        "changedLines": 170
+      },
+      "revisionAt": "2026-08-10T11:51:00+00:00",
+      "revisionOf": "96ae24812ea23f6e0941a67c1b947864db0e88034faaefbc2daae4e3702f1587"
+    },
+    {
+      "blockId": "b4-contributing",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "CONTRIBUTING.md"
+      ],
+      "estimate": {
+        "changedLines": 95
+      },
+      "revisionAt": "2026-08-10T11:51:00+00:00",
+      "revisionOf": "c8d07997f73d2b6f1279ed5dac0d8e25615db1fd5baa218c058a43bef1405c65"
+    }
+  ],
+  "//why": "Карточки cg2-two-tier-test-gate (M) и cg4-ci-testing-docs (S) заведены 2026-07-02 и не двигались 39 дней; эпик ci-gate-stabilization держится только на них — пять из семи детей архивированы. Ревизия реестра 09.08 оставила их в корзине «остаются active» с формулировкой «двухуровневого гейта нет — ci.yml гоняет полный turbo run test; раздела CI & Testing в CONTRIBUTING (18 строк) нет». Предмет — vitest-корпус (430 файлов, 38 пакетов со скриптом test), а НЕ корпус scripts, закрытый ADR-0018.",
+  "//lemma": "Разбор резчика начинается с термина, и это принято в нарезку. «Test gate» сейчас омоним: контейнер ADR-0018 стоит над корпусом scripts (discovery.root='scripts', suffix='.test.mjs'), новый ярус — над vitest (packages/*, apps/*). Это не расширение одного контейнера, а вторая словарная статья с той же леммой. Поэтому всё новое зовётся vitest-* (vitest-smoke-list, vitest-gate-scope, vitest-nightly), существующее не переименовывается, а b4 описывает ОБЕ статьи раздельно. Переименования в коде нет — омоним снимается именами нового, а не правкой старого.",
+  "//cutter": "Резчик ozhegov (lead обеих карточек), прогон контекста 10.08 11:36Z, конспект docs/discussions/cut-vitest-two-tier-gate-ozhegov.md. Принято три его вердикта. (1) Гранулярность мердж-гейта пакетная через turbo, файловый import-граф на 430 файлах отклонён как самостоятельный M–L; ADR-0018 файловой точности от мердж-гейта не требует. (2) Резчик ПОПРАВИЛ координатора по существу: звать turbo напрямую нельзя — `--filter='...[base]'` повторит дефект #1168 (markdown-правка метит пакет affected, тянет зависимых, падает на vite exit 127; сессия 24.07 форсила --no-verify, минуя заодно gitleaks). Гейт обязан идти через обёртку с тем же фильтром .md/GLOBAL_CONFIGS, что prepush-typecheck-scope.mjs. Поправка принята целиком и стала блоком b2. (3) Отчёт «что не гонялось» — обязательный артефакт джоба, без него ярус нелегален по условию честности ADR-0018. (4) Ночь — отдельный workflow, а не переезд scheduled-ci.yml: недельный lint+typecheck+build это другая статья, его не трогаем.",
+  "//cutter-amend": "Одна посылка резчика ОТКЛОНЕНА замером, и это меняет b1. Резчик предложил признак smoke: объединение dependencies+peerDependencies от apps/client и packages/background-*. Посчитано по дереву 10.08: замыкание даёт 30 пакетов, из них 27 со скриптом test — 71% корпуса. Такой «ярус» не сужает ничего, и мердж продолжит ждать почти полный прогон, то есть цель карточки не достигается. Замерена альтернатива на 25 последних merge-коммитах: медиана affected-пакетов = 1, десять мерджей из двадцати пяти не трогают пакеты вовсе (docs/scripts-only), 23 из 25 остаются меньше половины корпуса; выбросов два — 6ab04582 (467 файлов, задет корневой конфиг → весь корпус, законно) и 1ff09f7c (11 файлов → 28 через core). Вывод: сужает не статический список, а affected-селекция, и статический smoke нужен лишь как систематическая страховка. Признак smoke заменён на проверяемый порог транзитивного фан-ина ≥ 10: @membrana/core (27 зависимых), @membrana/audio-engine-service (16), @membrana/detector-base (11); обрыв ниже пологий (fft-analyzer 9, trends 6). Три пакета вместо двадцати семи. Признак остаётся вычисляемым скриптом, а не списком из головы — требование резчика «граф решил, не Ожегов решил» соблюдено.",
+  "//order": "b1 → b2 → b3 → b4, порядок обязателен инвариантом процедуры. b3 объявляет движки, которые рождают b1 (каталог smoke) и b2 (обёртка скоупа): манифест со ссылкой на несуществующий движок красный у validateProcedure — вещдок 04.08, спринт deploy-procedures, блок d1. b4 документирует состоявшийся факт, а не намерение, поэтому идёт последним; в реестре это уже зафиксировано полем dependsOn у cg4. Зоны не пересекаются: b1 и b2 живут в разных файлах scripts/, b3 держит .github/workflows/* и package.json единолично.",
+  "//dod": "b1: scripts/vitest-smoke-list.mjs — ЧИСТОЕ вычисление (ни сети, ни Date.now(); корень дерева параметром), читает только package.json-ы воркспейса и НЕ импортирует packages/* — риск связанности назван резчиком: гейт не должен зависеть от того, что гейтит. Считает транзитивный фан-ин, порог именован константой, выдаёт tests/vitest-smoke.catalog.json (коммитится, ревьюится в PR); зубы на порог, на обрыв и на пакет без скрипта test. b2: scripts/lib/vitest-gate-scope.mjs — по списку изменённых файлов (значением, не из git) отдаёт список пакетов для прогона: .md/.mdx исключены, попадание в GLOBAL_CONFIGS (tsconfig.base.json, turbo.json, .env) означает весь корпус, изменение вне пакетов означает пустой скоуп; отдельно возвращает список НЕ прогоняемых пакетов — это носитель отчёта честности. Зубы на все четыре случая, включая docs-only → пусто и global → всё. b3: ci.yml зовёт vitest по скоупу b2 вместо полного turbo run test, шаг job summary печатает «not run in merge gate: <package>» из второго списка b2 (тихо пустой результат запрещён — дефект №3 HOME_WORKSHOP); vitest-nightly.yml с cron '0 2 * * *' и workflow_dispatch гоняет весь корпус; глаголы yarn в package.json. b4: раздел «CI & Testing» в CONTRIBUTING — таблица двух статей (scripts-gate ADR-0018 и vitest-gate), признак smoke числом, адрес отчёта «что не гонялось», явная фраза о том, что зелёный мердж-гейт НЕ означает полный прогон.",
+  "//out-of-scope": "Настройка branch protection на main — ход владельца, не скрипта (предусловие ADR-0018 дословно). Пока её нет, vitest-nightly.yml ходит по расписанию, но красный не блокирует ничего: ночь СТАНОВИТСЯ гейтом отдельным жестом владельца, и спринт этого не обещает. Миграция scheduled-ci.yml на ночную каденцию — не трогаем, другая статья. Файловый import-граф для vitest — отдельная карточка, если пакетная гранулярность окажется мала; сегодня доказательств нужды нет. Правка resolveImport в scripts/lib/tests-container.mjs (слеп к @membrana/*, .tsx без кандидата) — дефект соседнего контейнера, заводится карточкой, в этот спринт не входит. Эпик ci-gate-stabilization архивируется САМ после cg2 и cg4 — отдельной работы не содержит.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-10T11:51:00+00:00",
+    "digest": "dc4c8e065be18ecebf6b1e98c4e7e5ff60deb31c6271d10c7f97f72b087dc814"
+  }
+}

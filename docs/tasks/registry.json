@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "tests-container-cross-package-imports",
+      "title": "Контейнер тестов: resolveImport слеп к @membrana/* и .tsx — gate-ярус scripts недобирает зависимости",
+      "promptPath": "docs/prompts/TESTS_CONTAINER_CROSS_PACKAGE_IMPORTS_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "дефект найден по ходу спринта vitest-two-tier-gate; иссью заводится при взятии в работу",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-10",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "Найдено 10.08 при разборе соседнего корпуса. scripts/lib/tests-container.mjs:66 — resolveImport выходит на первом же НЕ-относительном спеке (if (!spec.startsWith('.')) return null), поэтому рёбра @membrana/* между пакетами графу невидимы. Плюс .tsx попадает в exts у discoverSourceFiles, но кандидата на резолв не имеет (есть .mjs/.js/.ts и index.*, .tsx нет). Следствие: setup gate корпуса scripts недобирает зависимости через границу пакета и через .tsx — молча, ровно тот класс, против которого написано условие честности ADR-0018. На vitest-ярусе обойдено иначе: там граф держит turbo (lib/vitest-gate-scope.mjs), своего второго графа нет.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "tests-container"
+    },
+    {
       "id": "cowork-static-registry-read-api",
       "title": "Cowork Sprint: static registry truth and canonicalRef read API",
       "promptPath": "docs/cowork-sprint/cowork-static-registry-read-api/COWORK_SPRINT_BRIEF.md",

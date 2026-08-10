@@ -205,6 +205,8 @@
     "tests:smoke": "node scripts/tests-container.mjs --setup smoke",
     "tests:gate": "node scripts/tests-container.mjs --setup gate",
     "tests:full": "node scripts/tests-container.mjs --setup full",
+    "vitest:smoke-list": "node scripts/vitest-smoke-list.mjs",
+    "vitest:gate": "node scripts/vitest-gate.mjs",
     "bridge": "node scripts/bridge.mjs",
     "task:list": "node scripts/task-list.mjs",
     "task:inspect": "node scripts/task-inspect.mjs",

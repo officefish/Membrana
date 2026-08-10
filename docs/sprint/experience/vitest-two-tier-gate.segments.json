@@ -1,0 +1,26 @@
+{
+  "sprintId": "vitest-two-tier-gate",
+  "//method": "Замер по `git diff --cached --numstat` на 10.08 12:20Z, добавления+удаления. Объявленные расширения зон приписаны своим блокам, а не списаны в накладные: b1 — lib/vitest-workspace.mjs (ядро уехало в lib по идиоме соседа tests-container), b2 — lib/changed-files-scope.mjs и правка prepush-typecheck-scope.mjs (общий носитель мерки), b3 — scripts/vitest-gate.mjs (движок под глагол, которого нарезка не выделила), b4 — docs/CONTRIBUTING.md (дом раздела CI). Бумага спринта (план, OPEN, ленты, конспект резчика — 201 строка) ни к какому блоку не приписана: она не предмет нарезки.",
+  "segments": [
+    {
+      "cutBlockId": "b1-smoke-catalog",
+      "changedLines": 564,
+      "//files": "vitest-smoke-list.mjs 92 · test 147 · catalog 111 · lib/vitest-workspace.mjs 214"
+    },
+    {
+      "cutBlockId": "b2-affected-scope",
+      "changedLines": 317,
+      "//files": "lib/vitest-gate-scope.mjs 133 · test 122 · lib/changed-files-scope.mjs 42 · prepush-typecheck-scope.mjs 20"
+    },
+    {
+      "cutBlockId": "b3-ci-wire",
+      "changedLines": 253,
+      "//files": "vitest-gate.mjs 160 · vitest-nightly.yml 67 · ci.yml 24 · package.json 2"
+    },
+    {
+      "cutBlockId": "b4-contributing",
+      "changedLines": 76,
+      "//files": "docs/CONTRIBUTING.md 65 · CONTRIBUTING.md 11"
+    }
+  ]
+}
