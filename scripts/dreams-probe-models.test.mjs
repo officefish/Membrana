@@ -128,6 +128,19 @@ test('отчёт при незнании говорит, что проверки
   assert.match(third, /систематика, красный/u);
 });
 
+test('засеянная лента из одних комментариев читается как ПУСТАЯ, а не как «всё живо»', async () => {
+  // Файл заведён в дереве пустым, чтобы носитель не был невидим до первого прогона
+  // (замечание ревью PR #1835). Шапка не должна проехать в правило троекратности.
+  const { readFileSync } = await import('node:fs');
+  const seeded = readLedger('docs/truth/dreams-liveness.jsonl', {
+    exists: () => true,
+    read: () => readFileSync('docs/truth/dreams-liveness.jsonl', 'utf8'),
+  });
+  assert.deepEqual(seeded, [], 'строки-комментарии в ленту событий не попадают');
+  assert.equal(consecutiveInconclusive(seeded, '2026-08-10T12:00:00Z'), 0);
+  assert.equal(exitCodeOf('inconclusive', 0 + 1), 2, 'первый inconclusive на пустой ленте — «не знаем», не «ок»');
+});
+
 test('запись ленты создаёт каталог ДО записи — холодный старт не падает', () => {
   // Находка ревью PR #1835 говорила «на чистой машине appendFileSync упадёт ENOENT».
   // Буква не подтвердилась (mkdirSync стоял, docs/truth/ лежит в git), но путь записи
