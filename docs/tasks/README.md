@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `dump-inventory-from-archive` | Опись дампа читается с диска: inventorySource archive-contents вместо разбора stderr mongodump | M | [`DUMP_INVENTORY_FROM_ARCHIVE_PROMPT.md`](../prompts/DUMP_INVENTORY_FROM_ARCHIVE_PROMPT.md) | [#1814](https://github.com/officefish/Membrana/issues/1814) |
 | `dreams-models-liveness` | Зуб снов читает настоящий реестр; живость моделей проверяется ночью, а не руками | M | [`DREAMS_MODELS_LIVENESS_PROMPT.md`](../prompts/DREAMS_MODELS_LIVENESS_PROMPT.md) | — |
 | `openrouter-default-model-unverified` | Дефолтная модель офиса живёт литералом в коде и никем не проверяется на живость | S | [`OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md`](../prompts/OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md) | — |
 | `fix-sprint-experience-dead-ends` | Провод sprint:experience: живой путь записи не растит seq (дедуп молча глотает новый прогноз после перерезки) + дубль константы пути ленты | S | [`FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md`](../prompts/FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md) | — |

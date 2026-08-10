@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "dump-inventory-from-archive",
+      "title": "Опись дампа читается с диска: inventorySource archive-contents вместо разбора stderr mongodump",
+      "promptPath": "docs/prompts/DUMP_INVENTORY_FROM_ARCHIVE_PROMPT.md",
+      "githubIssue": 1814,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-10",
+      "archivedAt": null,
+      "leadPersona": "tarasov",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "dreams-models-liveness",
       "title": "Зуб снов читает настоящий реестр; живость моделей проверяется ночью, а не руками",
       "promptPath": "docs/prompts/DREAMS_MODELS_LIVENESS_PROMPT.md",

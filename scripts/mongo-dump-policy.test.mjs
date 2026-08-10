@@ -19,7 +19,7 @@ import {
 const SHA = 'a'.repeat(64);
 const SHA2 = 'b'.repeat(64);
 
-/** Пригодный манифест. Зубы портят ОДНО поле за раз — иначе непонятно, что именно поймал зуб. */
+/** Пригодный манифест (форма v2, #1814). Зубы портят ОДНО поле за раз — иначе непонятно, что именно поймал зуб. */
 const manifest = (over = {}) => ({
   schemaVersion: MANIFEST_SCHEMA_VERSION,
   startedAt: '2026-08-08T16:16:31.042Z',
@@ -29,12 +29,18 @@ const manifest = (over = {}) => ({
   mongodumpExitCode: 0,
   sha256: SHA,
   sha256Of: 'gzip-stream',
-  inventorySource: 'mongodump-stderr',
-  incompleteCollections: [],
+  inventorySource: 'archive-contents',
+  protocolChecks: { incompleteCollections: [] },
   sizeBytes: 4_194_304,
   dbInventory: [{ db: 'membrana_archivarius', collection: 'spans', documentCount: 106_233 }],
   ...over,
 });
+
+/** Манифест ФОРМЫ v1 — дословная форма живых манифестов 09.08: ретенция обязана читать их вечно. */
+const manifestV1 = (over = {}) => {
+  const { protocolChecks: _drop, ...v2 } = manifest();
+  return { ...v2, schemaVersion: 1, inventorySource: 'mongodump-stderr', incompleteCollections: [], ...over };
+};
 
 const artifact = (startedAt, over = {}, sha = SHA) => ({
   name: formatArtifactName({ startedAt, mongoVersion: '7.0.14', sha256: sha }),
@@ -100,13 +106,24 @@ test('манифест — предикат: «файл создан, разме
     [{ dbInventory: [{ db: 'x', collection: 'y' }] }, 'опись без documentCount'],
     [{ inventorySource: 'на глазок' }, 'источник описи вне закрытого списка'],
     [{ inventorySource: undefined }, 'источник описи не назван вовсе'],
-    [{ incompleteCollections: ['membrana_archivarius.spans'] }, 'начата и не дописана — неполный дамп при нулевом коде возврата'],
-    [{ incompleteCollections: 'нет' }, 'неполнота не проверена'],
+    [{ inventorySource: 'mongodump-stderr' }, 'v2 со stderr-источником — возврат долга #1814 через чёрный ход'],
+    [{ protocolChecks: { incompleteCollections: ['membrana_archivarius.spans'] } }, 'начата и не дописана — неполный дамп при нулевом коде возврата'],
+    [{ protocolChecks: { incompleteCollections: 'нет' } }, 'неполнота протокола не проверена'],
+    [{ protocolChecks: undefined }, 'гарда протокола нет вовсе'],
+    [{ incompleteCollections: [] }, 'поле v1 на верхнем уровне v2 — оси форм не смешиваются'],
   ];
   for (const [over, why] of cases) {
     assert.ok(manifestProblems(manifest(over)).length > 0, why);
   }
   assert.deepEqual(manifestProblems(null), ['манифест не объект — читать нечего']);
+});
+
+test('совместимость: манифест ФОРМЫ v1 (живые 09.08) остаётся пригодным для ретенции вечно', () => {
+  assert.deepEqual(manifestProblems(manifestV1()), []);
+  assert.equal(isFitForRetention(manifestV1()), true, 'ветка валидации по schemaVersion, история не краснеет');
+  // И его собственный гард продолжает работать по-старому.
+  assert.ok(manifestProblems(manifestV1({ incompleteCollections: ['membrana_archivarius.spans'] })).length > 0);
+  assert.ok(manifestProblems(manifestV1({ incompleteCollections: 'нет' })).length > 0);
 });
 
 test('ретенция детерминирована: now параметром, а не Date.now() внутри', () => {

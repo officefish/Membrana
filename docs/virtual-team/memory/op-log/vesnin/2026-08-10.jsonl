@@ -5,3 +5,5 @@
 {"ts":"2026-08-10T12:32:27.335Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-10T12:32:02.056Z","origin":"ask-persona"}
 {"ts":"2026-08-10T12:32:27.345Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-10T12:32:02.056Z","origin":"ask-persona"}
 {"ts":"2026-08-10T12:32:27.351Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-08-03-static-mmbrn-container-m1-boundary","reason":"образец «форма контракта = положительная граница + отрицательная граница + инвариант смены версии»; ровно этот каркас нужен для amnesty-by-schema, чтобы @1/@2 держались в одной ленте без течей.","origin":"ask-persona"}
+{"ts":"2026-08-10T15:41:53.585Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-10T15:41:20.886Z","origin":"ask-persona"}
+{"ts":"2026-08-10T15:41:53.606Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-10T15:41:20.886Z","origin":"ask-persona"}
