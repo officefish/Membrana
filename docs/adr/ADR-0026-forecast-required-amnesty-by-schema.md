@@ -86,6 +86,6 @@
 
 ## DoD
 
-- [ ] `procedure-run-journal.mjs` принимает `{@1, @2}`; `@2`+open требует boolean `forecastRequired`.
-- [ ] `execution-gate` реализует Р4; зубы на оба исхода (амнистия `@1`; стоп `@2` без прогноза).
-- [ ] Долг `#forecast-record-step-optional` переведён в settled со ссылкой на гейт.
+- [x] `procedure-run-journal.mjs` принимает `{@1, @2}`; `@2`+open требует boolean `forecastRequired`.
+- [x] `execution-gate` реализует Р4; зубы на оба исхода (амнистия `@1`; стоп `@2` без прогноза).
+- [x] Долг `#forecast-record-step-optional` переведён в repaid со ссылкой на гейт (fact_ref, 10.08).
