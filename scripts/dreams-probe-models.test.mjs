@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  appendLedgerRecord,
   classifyModels,
   consecutiveInconclusive,
   exitCodeOf,
@@ -125,6 +126,24 @@ test('отчёт при незнании говорит, что проверки
 
   const third = renderReport({ verdict: 'inconclusive', alive: [], dead: [], skipped: [], strikeRun: 3, detail: 'HTTP 502' });
   assert.match(third, /систематика, красный/u);
+});
+
+test('запись ленты создаёт каталог ДО записи — холодный старт не падает', () => {
+  // Находка ревью PR #1835 говорила «на чистой машине appendFileSync упадёт ENOENT».
+  // Буква не подтвердилась (mkdirSync стоял, docs/truth/ лежит в git), но путь записи
+  // и правда был непокрыт — теперь покрыт, и порядок вызовов проверяется, а не верится.
+  const calls = [];
+  const io = {
+    mkdir: (dir, opts) => calls.push({ op: 'mkdir', dir, recursive: opts?.recursive }),
+    append: (path, body) => calls.push({ op: 'append', path, body }),
+  };
+  appendLedgerRecord('/нет/такого/каталога/lente.jsonl', { at: 'T', verdict: 'alive' }, io);
+
+  assert.equal(calls[0].op, 'mkdir', 'каталог создаётся ПЕРВЫМ, иначе холодный старт падает');
+  assert.equal(calls[0].recursive, true, 'без recursive промежуточных каталогов не будет');
+  assert.equal(calls[1].op, 'append');
+  assert.match(calls[1].body, /"verdict":"alive"/u);
+  assert.ok(calls[1].body.endsWith('\n'), 'append-only лента ломается без перевода строки');
 });
 
 test('живой реестр раскладывается глаголом без правки', async () => {

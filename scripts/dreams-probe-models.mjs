@@ -190,6 +190,23 @@ export function readLedger(path, io = { exists: existsSync, read: (p) => readFil
  * (`infra-probe.mjs:88-93`, `llm-probe.mjs:287-295`): 403 на прямом пути → повтор через
  * прокси, если он задан.
  */
+/**
+ * Дописать исход в ленту, создав каталог, если его нет.
+ *
+ * Вынесено из `main()` с подменяемым `io` по замечанию ревью PR #1835: сама запись
+ * зубом не покрывалась, и «на холодной машине упадёт» проверить было нечем. Буква
+ * находки не подтвердилась — `mkdirSync` стоял, а `docs/truth/` лежит в git, — но
+ * дух верен: непокрытый путь записи это непокрытый путь записи.
+ *
+ * @param {string} path абсолютный путь ленты
+ * @param {object} record запись
+ */
+export function appendLedgerRecord(path, record, io = { mkdir: mkdirSync, append: appendFileSync }) {
+  io.mkdir(dirname(path), { recursive: true });
+  io.append(path, `${JSON.stringify(record)}\n`, 'utf8');
+  return record;
+}
+
 async function fetchOnce(url, timeoutMs, dispatcher) {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), timeoutMs);
@@ -253,19 +270,15 @@ async function main() {
   }
 
   if (!dryRun) {
-    mkdirSync(dirname(ledgerPath), { recursive: true });
-    appendFileSync(
-      ledgerPath,
-      `${JSON.stringify({
-        at: nowIso,
-        verdict,
-        alive: alive.map((a) => a.model),
-        dead: dead.map((d) => ({ provider: d.provider, model: d.model, why: d.why })),
-        catalogSize: catalog.count ?? null,
-        detail: catalog.detail ?? null,
-      })}\n`,
-      'utf8',
-    );
+    appendLedgerRecord(ledgerPath, {
+      at: nowIso,
+      verdict,
+      via: catalog.via ?? null,
+      alive: alive.map((a) => a.model),
+      dead: dead.map((d) => ({ provider: d.provider, model: d.model, why: d.why })),
+      catalogSize: catalog.count ?? null,
+      detail: catalog.detail ?? null,
+    });
   }
 
   const code = exitCodeOf(verdict, strikeRun);
