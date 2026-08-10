@@ -16551,12 +16551,12 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "strategicWave": "W1",
       "createdAt": "2026-07-02",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-10",
+      "archiveNotes": "Закрыт последними двумя детьми: cg2 и cg4 влиты PR #1832 (35fbe763, 10.08). Остальные пять архивированы ранее (cg1 флейки rag-service, cg3 flaky-метрики, cg5 detector-base build-order, cg6 stale-dist гейт, cg7 catalog:verify-client в pre-push). Собственной работы эпик не содержал — закрылся сам, как и предсказывала ревизия реестра 09.08.",
       "notes": "Из консилиума ci-gate-friction-2026-07-02: сначала стабилизировать флейки (rag-service retrieveContext timeout) + метрики, scoped-gate деплоя отложен до недели данных. DR5 prod-гейты не трогаем.",
       "leadPersona": "dynin",
       "supportPersonas": [
@@ -16591,15 +16591,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "ci-gate-stabilization",
       "dependsOn": [
         "cg1-flaky-rag-service"
       ],
       "createdAt": "2026-07-02",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-10",
+      "archiveNotes": "Влито PR #1832 (35fbe763, 10.08). Мердж-гейт корпуса vitest выборочный: затронутые пакеты с зависимыми (--filter=...<name>) плюс ярус smoke; ярус вычисляется из графа воркспейса порогом транзитивного фан-ина >= 10 (core 27, audio-engine 16, detector-base 11), опись tests/vitest-smoke.catalog.json, CI сверяет --check. turbo не зовётся напрямую — фильтр .md/GLOBAL_CONFIGS общий с pre-push (lib/changed-files-scope.mjs), иначе повтор #1168. Отчёт «что не гонялось» считается от факта прогона (turbo --dry) и печатается в job summary. Ночь — vitest-nightly.yml 0 2 * * *, красный НЕ блокирует до защиты main (предусловие ADR-0018, ход владельца). Живой CI прогона #1832: mode=floor, прогнано 3 из 38, остаток назван поимённо.",
       "notes": "vitest projects/теги (НЕ jest — консилиум ошибся). smoke < ~2 мин в CI, full опционально/ночью. Lead Ozhegov.",
       "leadPersona": "ozhegov",
       "supportPersonas": [
@@ -16632,15 +16632,15 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "strategicWave": "W1",
       "parentEpic": "ci-gate-stabilization",
       "dependsOn": [
         "cg2-two-tier-test-gate"
       ],
       "createdAt": "2026-07-02",
-      "archivedAt": null,
-      "archiveNotes": null,
+      "archivedAt": "2026-08-10",
+      "archiveNotes": "Влито PR #1832 (35fbe763, 10.08). Раздел «CI & Testing: два яруса, два корпуса» в docs/CONTRIBUTING.md — таблица двух статей (scripts-gate ADR-0018 и vitest-gate), признак smoke числом с обоснованием порога, адрес отчёта «что не гонялось», три режима (full/scoped/floor) и явная фраза «зелёный мердж-гейт НЕ означает прогон всего набора». Указатель в корневом CONTRIBUTING.md без второй редакции. Попутно снята неправда: docs/CONTRIBUTING.md:159 объявлял обязательным прогоном полный turbo run lint typecheck test build — после b3 это перестало быть верным.",
       "notes": "Документирование двухуровневого gate. Lead Ozhegov+Rodchenko.",
       "leadPersona": "ozhegov",
       "supportPersonas": [
