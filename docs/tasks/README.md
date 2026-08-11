@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `sprint-cut-teeth-live-2026-08-11` | Зубы формы cut-плана на живых модулях: переход с дублёров, снос stubs/ | M | [`SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md`](../prompts/SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md) | [#1855](https://github.com/officefish/Membrana/issues/1855) |
 | `dreams-models-liveness` | Зуб снов читает настоящий реестр; живость моделей проверяется ночью, а не руками | M | [`DREAMS_MODELS_LIVENESS_PROMPT.md`](../prompts/DREAMS_MODELS_LIVENESS_PROMPT.md) | — |
 | `openrouter-default-model-unverified` | Дефолтная модель офиса живёт литералом в коде и никем не проверяется на живость | S | [`OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md`](../prompts/OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md) | — |
 | `fix-node-modules-links-1647` | Резолюция node_modules/@membrana/* в чужое дерево Membrana-grok: инвентарь симлинков и переустановка на своё дерево | S | [`FIX_NODE_MODULES_LINKS_1647_PROMPT.md`](../prompts/FIX_NODE_MODULES_LINKS_1647_PROMPT.md) | — |
