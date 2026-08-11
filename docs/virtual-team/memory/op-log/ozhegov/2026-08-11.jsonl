@@ -1,0 +1,5 @@
+{"ts":"2026-08-11T07:39:31.865Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-11T09:08:40.236Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-11T09:08:20.912Z","origin":"ask-persona"}
+{"ts":"2026-08-11T09:08:40.271Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-11T09:08:20.912Z","origin":"ask-persona"}
+{"ts":"2026-08-11T09:08:40.335Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-30-workshop-wires-m7-norm-in-docs","reason":"прямо про природу «граблей» в AGENTS.md как рукописных статей «врёт или кусает»; задаёт мне формат строки (лемма → как кусает), а не регламент.","origin":"ask-persona"}
+{"ts":"2026-08-11T09:08:40.361Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-10-comp-findings-fixes","reason":"мой же принцип «один термин — один смысл»: \\w/\\b в JS перегружены (обещают «слово», дают ASCII) — ровно та же болезнь, что с invalid-ref.","origin":"ask-persona"}

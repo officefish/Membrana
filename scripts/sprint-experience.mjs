@@ -30,7 +30,7 @@ import { checkAppendOnly, validateForecastRecord } from './lib/sprint-experience
 import { NOW, STUB_SETS, resolveStubSet, runsFixture } from './lib/sprint-experience/fixtures.mjs';
 import { nominateRuns } from './lib/sprint-experience/nominate.mjs';
 import { renderNominations } from './lib/sprint-experience/render-nominations.mjs';
-import { makeForecastRecord } from './lib/sprint-experience/forecast-record.mjs';
+import { FORECAST_RECORDS_REL_PATH, makeForecastRecord, nextForecastSeq } from './lib/sprint-experience/forecast-record.mjs';
 import { planToForecast } from './lib/sprint-integration/plan-to-forecast.mjs';
 import { planToGate } from './lib/sprint-integration/plan-to-gate.mjs';
 import { gateToForecastObserved } from './lib/sprint-integration/gate-to-forecast.mjs';
@@ -42,7 +42,9 @@ import { RESPONSIBILITY_WAIVER_REASONS } from './lib/execution-trace/stubs/stub-
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const ZONE = join(REPO_ROOT, 'docs', 'sprint', 'experience');
-const RECORDS_PATH = join(ZONE, 'forecast-records.jsonl');
+// Путь ленты — константа рода (b2 s-queue-2026-08-11): своей копии пути у
+// писателя больше нет, вторая правда снята.
+const RECORDS_PATH = join(REPO_ROOT, FORECAST_RECORDS_REL_PATH);
 const SNAPSHOT_PATH = join(ZONE, 'RUN_NOMINATIONS.md');
 
 /** Текст справки — один источник для `--help` и для строки отказа. */
@@ -209,8 +211,12 @@ function buildLiveRecord(args) {
   });
   const recordOutcome = segments.length === 0 ? 'not-observed' : missed.length === 0 ? 'hit' : 'miss';
 
+  // seq — по ленте, не дефолт (b2 s-queue-2026-08-11): при дефолте 1 вторая
+  // запись окна получала id первой, и append-дедуп молча глотал исход.
+  const seq = nextForecastSeq(readRecords(RECORDS_PATH), forecast);
   const record = makeForecastRecord({
     ...forecast,
+    seq,
     predicted,
     observed,
     observedAt: args.now,

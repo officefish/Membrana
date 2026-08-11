@@ -112,6 +112,19 @@
       ]
     },
     {
+      "id": "scripts-registry",
+      "script": "scripts/scripts-registry.mjs --report",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "label": "Регенерация реестра скриптов",
+      "//": "b4 s-queue-2026-08-11 (#1265): снимок SCRIPTS_LIST.md регенерировался только руками и дрейфовал (30.07: 407 глаголов против 439 живых). Шаг стоит ДО ritual-artifacts: автозабор берёт produces[], и свежий снимок уезжает в коммит артефактов вечера, а не остаётся грязью в дереве.",
+      "consumes": [],
+      "produces": [
+        "scripts/registry/SCRIPTS_LIST.md"
+      ],
+      "whyNoncritical": "Дрейф снимка не теряет данных дня и догоняется следующим прогоном; падение регенерации не должно ронять вечер."
+    },
+    {
       "id": "ritual-artifacts",
       "script": "scripts/ritual-artifacts-commit.mjs",
       "kind": "mechanic",

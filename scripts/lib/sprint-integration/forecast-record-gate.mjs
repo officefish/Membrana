@@ -21,10 +21,14 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-import { validateForecastRecord } from '../sprint-experience/forecast-record.mjs';
+import { FORECAST_RECORDS_REL_PATH, validateForecastRecord } from '../sprint-experience/forecast-record.mjs';
 
-/** Носитель записей рода — единственная лента прогнозов (см. sprint-experience.mjs). */
-export const FORECAST_RECORDS_REL_PATH = 'docs/sprint/experience/forecast-records.jsonl';
+/**
+ * Носитель записей рода — константа переехала К РОДУ (b2 s-queue-2026-08-11):
+ * вторая правда пути здесь расходилась с писателем молча. Реэкспорт держит
+ * живых потребителей (execution-gate.mjs).
+ */
+export { FORECAST_RECORDS_REL_PATH };
 
 /** Закрытое множество причин отказа. Род вне списка — ошибка кода, не «прочее». */
 export const FORECAST_GATE_REASONS = Object.freeze({

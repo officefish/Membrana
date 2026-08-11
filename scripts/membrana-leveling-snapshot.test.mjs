@@ -73,3 +73,49 @@ describe('membrana-leveling-snapshot', () => {
     assert.ok(snap.namedTrash['scratchpad/x.tmp']);
   });
 });
+
+// ── b6 s-queue-2026-08-11: абсолютный --out/--snapshot не клеится к cwd ──────
+
+import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname as pathDirname, join as pathJoin } from 'node:path';
+import { fileURLToPath as toPath } from 'node:url';
+
+describe('leveling: абсолютные пути CLI', () => {
+  it('snapshot --out <абсолютный> пишет по названному пути, а не по склейке с cwd', () => {
+    // Дефект 26.07: join(cwd, 'C:\…') давал 'C:\repo\C:\…' и ENOENT.
+    const scripts = pathDirname(toPath(import.meta.url));
+    const out = pathJoin(mkdtempSync(pathJoin(tmpdir(), 'lvl-abs-')), 'deep', 'snap.json');
+    execFileSync(process.execPath, [pathJoin(scripts, 'membrana-leveling-snapshot.mjs'), '--out', out], {
+      encoding: 'utf8', cwd: pathJoin(scripts, '..'),
+    });
+    assert.ok(existsSync(out), `снимок не появился по абсолютному пути: ${out}`);
+    const snap = JSON.parse(readFileSync(out, 'utf8'));
+    assert.ok(Array.isArray(snap.items));
+  });
+
+  it('workspace-level --snapshot <абсолютный> читает по названному пути', () => {
+    const scripts = pathDirname(toPath(import.meta.url));
+    const dir = mkdtempSync(pathJoin(tmpdir(), 'lvl-abs2-'));
+    const snapPath = pathJoin(dir, 'snap.json');
+    writeFileSync(snapPath, JSON.stringify({ items: [], namedTrash: {} }));
+    // Достаточно того, что файл ПРОЧИТАН по абсолютному пути: ошибка чтения
+    // дала бы код 2 с «ENOENT …склейка…»; пустой снимок — валидный вход.
+    const r = execFileSync(process.execPath, [pathJoin(scripts, 'membrana-leveling-workspace-level.mjs'), '--snapshot', snapPath], {
+      encoding: 'utf8', cwd: pathJoin(scripts, '..'),
+    });
+    assert.ok(typeof r === 'string');
+  });
+});
+
+describe('leveling: пути с .. в середине', () => {
+  it('snapshot --out с ..-сегментом нормализуется resolve-ом', () => {
+    const scripts = pathDirname(toPath(import.meta.url));
+    const base = mkdtempSync(pathJoin(tmpdir(), 'lvl-dots-'));
+    const out = pathJoin(base, 'a', '..', 'snap.json'); // resolve → base/snap.json
+    execFileSync(process.execPath, [pathJoin(scripts, 'membrana-leveling-snapshot.mjs'), '--out', out], {
+      encoding: 'utf8', cwd: pathJoin(scripts, '..'),
+    });
+    assert.ok(existsSync(pathJoin(base, 'snap.json')), '..-сегмент не нормализован');
+  });
+});

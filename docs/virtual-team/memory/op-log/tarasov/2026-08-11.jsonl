@@ -1,3 +1,4 @@
+{"ts":"2026-08-11T07:39:32.373Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
 {"ts":"2026-08-11T08:05:26.333Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-11T08:05:01.238Z","origin":"ask-persona"}
 {"ts":"2026-08-11T08:05:26.336Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-11T08:05:01.238Z","origin":"ask-persona"}
 {"ts":"2026-08-11T08:05:26.337Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-08-04-insight-one-shot-portfolio-surfacing","reason":"это ровно тот инсайт (portfolio-surfacing), под который сейчас конструируется brief; вещдоки «T1 на памяти» и «S-форкасты не сверяемы» — прямые основания для строк (3) исполнители и (4) форкасты.","origin":"ask-persona"}
