@@ -2160,16 +2160,16 @@
       "githubIssue": 1264,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1848 (squash 54e394c8 в main), review LGTM; 1105 файлов под парсером, 133 находки названы (63 unused-vars/55 useless-escape/6 irregular-ws/5 regex-spaces/2 constant-condition/2 control-regex), порог warn+храповик --max-warnings=133 (число живёт ТОЛЬКО в package.json lint:scripts, в ci.yml — проза), гашение долга — продолжение #1264",
       "githubIssueClosedAt": null,
       "parentEpic": "agent-tooling-friction-6"
     },
