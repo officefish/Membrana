@@ -1892,17 +1892,17 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin",
         "ozhegov"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "Эпик закрыт по образцу ci-gate-stabilization: собственной работы не содержал — дом tests/, кит tests-master, мастерская, сетапы smoke/gate/full (PR #1315, ADR-0018), ночной полный прогон PR #1832. Дети повердиктно: tc-home-workshop и tc-setups-selector PR #1315 (аудит 11.08), tc-nightly-frame PR #1851 (83582c19: cron 03:00 UTC, blocksMorningWhen получил потребителя в morning-care), tests-container-cross-package-imports — спринт s-queue-2026-08-11 b3 PR #1849 (граф видит @membrana/* и .tsx).",
       "githubIssueClosedAt": null
     },
     {
@@ -2261,17 +2261,17 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin",
         "ozhegov"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "Зонтик собственной работы не содержал, закрыт последним ребёнком 11.08. Дети повердиктно: ship-детерминизм PR #1269 (#1276), паритет секрет-гейта PR #1278/#1279, предикат автослияния PR #1279 (аудит 11.08), гард слияния #1321, строгая сверка китов 9bbdefe8 (#1316), группы test:scripts PR #1285 (аудит 11.08), гигиена реестра скриптов + инвентарь секретов — спринт s-queue-2026-08-11 PR #1849, линт scripts/ PR #1848 (54e394c8, 1105 файлов/133 находки/храповик).",
       "githubIssueClosedAt": null
     },
     {
