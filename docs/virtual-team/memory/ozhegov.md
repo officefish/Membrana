@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14360/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 271 (причины в op-log) -->
+Записей: 49 · бюджет 14338/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 274 (причины в op-log) -->
+
+### 2026-08-10 · позиция · team-evening-feedback
+
+> `tasks/registry.json` — шесть переходов состояний атомарны, `archiveNotes` содержательны (не B10-заглушки), README реестра синхронизирован. Оценка артефактов: `debt-ledger.jsonl` — append-only соблюдён, verb `repay`+`birth` корректны; регламенты и промпт вечернего фидбека […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
 
 ### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
 
@@ -295,9 +301,3 @@
 > Леммы, иначе синонимы. **Cold archive** — append-only collection в `background-office` Mongo (M1). **Cold-record** — документ M2 (`task_closure` + sufficient proof). **Repo checkpoint** — файл-слепок инвариантов архива, не SoT и не export-dump. **Identity proof** — […] _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m4-write-path-idempotency
-
-> Леммы, иначе снова синонимы. **Cold-record writer** — единственный server-side путь в `background-office`, пишущий append-only Mongo-коллекцию канона (M1). **Checkpoint writer** — путь, который *только читает* Mongo SoT и материализует `ColdArchiveCheckpoint` (M3); он не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`

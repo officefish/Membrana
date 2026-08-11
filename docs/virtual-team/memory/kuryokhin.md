@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14369/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 270 (причины в op-log) -->
+Записей: 49 · бюджет 14335/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 271 (причины в op-log) -->
+
+### 2026-08-10 · позиция · team-evening-feedback
+
+> Web Audio, audio-engine, DSP-пути не затронуты — тишина. Оценка артефактов: night-hunt-архив содержит внешние аналитические отчёты по недельным окнам (28/30/32); прямого касания к аудио-контуру нет. Итоги дня: — (по содержанию); процесс и документы дня оцениваю по […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
 
 ### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
 
@@ -295,9 +301,3 @@
 > На слух это meters на master-tape, не вторая лента. Mongo — take; repo — VU-метр и footprint сессии: сколько take закрыто, какой hash микса. Если в git кладём весь cold archive — клиппинг репо и ложный SoT. Checkpoint не должен звучать как «задача закрыта, потому что id в […] _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m4-write-path-idempotency
-
-> На слух это три шины, не один fader «архив». Сначала master-tape на сервере (cold-record), потом meter по Mongo (checkpoint hash/count), потом send в repo — и только как bounce экспорта. Если сначала шлёпаем JSON в git, а Mongo потом — клиппинг: локальный take громче канона. […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`

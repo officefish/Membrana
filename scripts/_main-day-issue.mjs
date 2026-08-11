@@ -421,7 +421,9 @@ export async function runMainDayIssue(options) {
       const r = await invokeProcedureLlm({
         procedureId: 'ritual-main-day-issue',
         prompt: promptText,
-        maxTokens: 4096,
+        // 8192: на 4096 документ дважды обрезался внутри последнего слота (11.08),
+        // гейт скелета обрыв внутри слота не ловит — слово владельца 11.08.
+        maxTokens: 8192,
         // #1239: каждое звено называет себя — иначе диагноз канала невозможен.
         onAttempt: (a) => console.error(attemptLogLine(a)),
       });

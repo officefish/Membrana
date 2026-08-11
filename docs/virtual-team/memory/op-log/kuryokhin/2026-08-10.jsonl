@@ -1,0 +1,3 @@
+{"ts":"2026-08-10T20:30:36.849Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-08-10-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-10T20:30:36.849Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-07-30-task-archive-cold-store-m4-write-path-idempotency","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-10T20:30:36.849Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

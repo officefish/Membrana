@@ -21,6 +21,19 @@ const TODAY = '2026-08-01';
 const alive = () => true;
 const dead = () => false;
 
+// Срок pending ратифицируется владельцем и продлевается (01.08 → 11.08: 09.08 → 16.08);
+// живые прогоны ниже читают его из перечня, а не из пришпиленной даты — пришпиленный
+// пин падал при каждой легальной перечеканке, ничего не ловя.
+const LIVE_PENDING = JSON.parse(
+  readFileSync(new URL('../docs/tasks/dead-wire-pending.json', import.meta.url), 'utf8'),
+);
+const LIVE_UNTIL = Object.values(LIVE_PENDING.pending)
+  .map((p) => p.until)
+  .sort()
+  .at(-1);
+const shiftDay = (iso, days) =>
+  new Date(Date.parse(`${iso}T00:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10);
+
 // ── извлечение носителя ──────────────────────────────────────────────────────
 
 test('составная команда отдаёт все носители, а не первый', () => {
@@ -214,7 +227,7 @@ test('перечень pending покрывает ровно шесть пров
   const report = runCheck({ today: TODAY });
   assert.equal(report.findings.length, 0);
   // Сдвинем «сегодня» за срок — все шесть обязаны проявиться как просроченные.
-  const after = runCheck({ today: '2026-08-10' });
+  const after = runCheck({ today: shiftDay(LIVE_UNTIL, 1) });
   assert.equal(after.findings.length, 6, 'за сроком должны проявиться все шесть');
   assert.ok(after.findings.every((f) => f.kind === 'pending_expired'));
 });
@@ -231,12 +244,12 @@ test('подложенный фальшивый провод роняет зуб
 
 // ── сторож в утренней цепочке ────────────────────────────────────────────────
 
-test('09.08 доказывается БЕЗ ожидания 09.08: дата приходит параметром', () => {
+test('срок доказывается БЕЗ его ожидания: дата приходит параметром', () => {
   // Системное время не подделывается: ядро берёт день прогона аргументом, и это
   // единственный честный способ проверить будущее.
-  const before = runCheck({ today: '2026-08-08' });
-  const onDay = runCheck({ today: '2026-08-09' });
-  const after = runCheck({ today: '2026-08-10' });
+  const before = runCheck({ today: shiftDay(LIVE_UNTIL, -1) });
+  const onDay = runCheck({ today: LIVE_UNTIL });
+  const after = runCheck({ today: shiftDay(LIVE_UNTIL, 1) });
 
   const expired = (r) => r.findings.filter((f) => f.kind === 'pending_expired');
   assert.equal(expired(before).length, 0, 'накануне срок ещё в силе');

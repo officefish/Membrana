@@ -13,3 +13,6 @@
 {"ts":"2026-08-10T15:48:48.994Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-10T15:48:20.681Z","origin":"ask-persona"}
 {"ts":"2026-08-10T15:48:49.004Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-10T15:48:20.681Z","origin":"ask-persona"}
 {"ts":"2026-08-10T15:48:49.007Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-08-static-mmbrn-container-m7-migration-delivery","reason":"там я уже фиксировал: inventory-gate это не «прогнали и хорошо», а fenced snapshot с per-object предикатами. Ровно этот контракт сейчас переезжает в lib — субъект «collection-bson-sorted-by-id», источник «archive-contents» и есть тот самый fence. Полезно как якорь: lib не отдаёт «инвентарь вообще», она отдаёт инвентарь под конкретную дисциплину.","origin":"ask-persona"}
+{"ts":"2026-08-10T20:30:35.778Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-10-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-10T20:30:35.778Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-task-archive-cold-store-m4-write-path-idempotency","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-10T20:30:35.778Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
