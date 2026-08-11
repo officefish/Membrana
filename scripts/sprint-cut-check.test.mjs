@@ -10,7 +10,7 @@
  */
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
@@ -29,8 +29,9 @@ import {
   UNASSIGNED_REASONS,
   VERDICTS,
 } from './lib/sprint-cut/index.mjs';
-import { makeEvidenceTrailStub } from './lib/sprint-cut/stubs/evidence-trail.stub.mjs';
-import { makeOutcomeSinkStub } from './lib/sprint-cut/stubs/outcome-sink.stub.mjs';
+import {
+  TRACE_KINDS, liveActualChangedLines, liveOutcome, liveTrail,
+} from './lib/sprint-cut/test-support/live-fixtures.mjs';
 import { voiceIdsFrom } from './sprint-cut-check.mjs';
 
 const FIXTURES = new URL('../docs/sprint/cut/fixtures/', import.meta.url);
@@ -242,34 +243,106 @@ test('чистое ядро: ни fs, ни сети, ни часов в его �
   }
 });
 
-// ─── стабы соседей: своя зона, форма односторонняя ─────────────────────────────
+// ─── соседи ЖИВЬЁМ: форма читает живые модули через узкий мост ─────────────────
+// До 11.08 здесь стояли тестовые дублёры sprint-cut/stubs/* — зелёный зуб на
+// дублёре молчит о расхождении с живым исполнением (вердикт Веснина 03.08,
+// карточка #1855). Перевод на живые readTraceCorpus / verdictFor семантику НЕ
+// ослабляет: те же четыре инварианта проверяются, но против настоящих модулей.
 
-test('стаб ленты вещдоков: пустой ответ = «вещдоков нет», null = «факта нет»', () => {
-  const trail = makeEvidenceTrailStub({
-    acts: [
-      { blockId: 'cut-contract', personaId: 'vesnin', kind: 'contract_signed', at: '2026-07-30T13:00:00+03:00' },
-      { blockId: 'cut-contract', personaId: 'vesnin', kind: 'profile_run', at: '2026-07-30T11:00:00+03:00' },
-    ],
-    actual: { 'cut-contract': 612 },
-  });
-  assert.deepEqual(trail.actsForBlock('cut-contract').map((a) => a.kind), ['profile_run', 'contract_signed']);
-  assert.deepEqual([...trail.actsForBlock('execution-gate')], []);
-  assert.equal(trail.actualChangedLines('execution-gate'), null);
-  assert.equal(trail.actualChangedLines('cut-contract'), 612);
+test('лента вещдоков живьём: порядок по времени, пусто = «вещдоков нет», null = «факта нет»', () => {
+  const trail = liveTrail([
+    { traceId: 't-late', blockId: 'cut-contract', subject: 'vesnin', kind: TRACE_KINDS.CONTRACT_SIGNATURE, at: '2026-07-30T13:00:00+03:00', ref: 'docs/sprint/cut/plan.valid.json' },
+    { traceId: 't-early', blockId: 'cut-contract', subject: 'vesnin', kind: TRACE_KINDS.CONTEXT_RUN, at: '2026-07-30T11:00:00+03:00', ref: 'docs/sprint/cut/plan.valid.json' },
+  ]);
+  assert.deepEqual(
+    trail.actsForBlock('cut-contract').map((a) => a.traceId),
+    ['t-early', 't-late'],
+    'акты блока идут по времени, а не по порядку строк ленты',
+  );
+  assert.deepEqual([...trail.actsForBlock('execution-gate')], [], 'чужой блок: пусто = вещдоков нет');
+  assert.deepEqual([...trail.errors], [], 'здоровая лента ошибок входа не даёт');
+
+  const facts = { 'cut-contract': 612, 'zero-block': 0 };
+  assert.equal(liveActualChangedLines(facts, 'execution-gate'), null, 'факта нет — null, не ноль');
+  assert.equal(liveActualChangedLines(facts, 'zero-block'), 0, 'ноль строк — законное наблюдение, не отсутствие');
+  assert.equal(liveActualChangedLines(facts, 'cut-contract'), 612);
 });
 
-test('стаб приёмника исходов: сигнал бинарен, порог назван числом, времени исхода нет', () => {
+test('лента живьём: битая строка называется ошибкой входа и не прячет здоровые акты', () => {
+  // Частичный успех — свойство живого корпуса; дублёр его не проверял вовсе.
+  const trail = liveTrail([
+    { traceId: 'ok', blockId: 'cut-contract', subject: 'vesnin', kind: TRACE_KINDS.CONTEXT_RUN, at: '2026-07-30T11:00:00+03:00', ref: 'plan.json' },
+    { traceId: 'broken', blockId: 'cut-contract', subject: 'vesnin', kind: TRACE_KINDS.CONTEXT_RUN, ref: 'plan.json' },
+  ]);
+  assert.equal(trail.actsForBlock('cut-contract').length, 1, 'здоровый акт остался виден');
+  assert.equal(trail.errors.length, 1);
+  assert.equal(trail.errors[0].code, 'E_TRACE_FIELDS_MISSING');
+});
+
+test('приёмник исходов живьём: сигнал бинарен, порог назван числом, времени исхода нет', () => {
   const plan = load('plan.valid.json');
-  const sink = makeOutcomeSinkStub();
   const predicted = plannedVolume(plan, 'cut-contract').changedLines;
-  const res = sink.accept({ sprintId: plan.sprintId, blockId: 'cut-contract', personaId: 'vesnin',
-    predictedChangedLines: predicted, actualChangedLines: 612 });
+  const res = liveOutcome({
+    sprintId: plan.sprintId, blockId: 'cut-contract', personaId: 'vesnin',
+    predictedChangedLines: predicted, actualChangedLines: 612,
+  });
   assert.equal(res.ok, true);
   assert.equal(res.record.fit, 'overflowed');
   assert.equal(res.record.threshold, OVERSIZED_CHANGED_LINES);
-  assert.ok(!('at' in res.record), 'время исхода — не моё поле');
-  assert.equal(sink.accept({ blockId: 'x', actualChangedLines: null }).ok, false);
-  assert.equal(sink.records.length, 1);
+  assert.ok(!('at' in res.record), 'время исхода — не поле приёмника');
+
+  // Граница — ИНВАРИАНТ, а не иллюстрация: правка на «>=» обязана уронить зуб.
+  // Порог целый (day-work-diff), поэтому равенство точное и tolerance не нужен.
+  assert.ok(Number.isInteger(OVERSIZED_CHANGED_LINES), 'порог целый — точное равенство законно');
+  assert.equal(
+    liveOutcome({ blockId: 'cut-contract', actualChangedLines: OVERSIZED_CHANGED_LINES }).record.fit,
+    'fitted',
+    'РОВНО порог — влез (сравнение строгое)',
+  );
+  assert.equal(
+    liveOutcome({ blockId: 'cut-contract', actualChangedLines: OVERSIZED_CHANGED_LINES + 1 }).record.fit,
+    'overflowed',
+    'порог+1 — переполнился: пара границ держит направление сравнения',
+  );
+  assert.equal(liveOutcome({ blockId: 'x', actualChangedLines: null }).ok, false, 'факта нет — исход не наступил');
+  assert.equal(
+    liveOutcome({ blockId: 'x', actualChangedLines: 10, threshold: null }).record.threshold,
+    OVERSIZED_CHANGED_LINES,
+    'порог по умолчанию канонический, а не undefined',
+  );
+});
+
+test('дублёров соседей больше нет: ни каталога (география), ни импортов (топология)', () => {
+  // Судьба пары одна (шапки снесённых дублёров): переход зубов и снос каталога
+  // одним заходом. Зуб держит снос — иначе слой вернётся тихо.
+  const stubsDir = new URL('./lib/sprint-cut/stubs/', import.meta.url);
+  assert.equal(existsSync(stubsDir), false, 'каталог дублёров воскрес — два источника истины вернулись');
+
+  // Отсутствие каталога — география; отсутствие ССЫЛОК на него — топология
+  // (разбор Дынина 11.08). Каталог можно вернуть под другим именем, поэтому
+  // зуб смотрит на импорты по всему дереву скриптов, а не только на путь.
+  // git grep без находок отдаёт код 1 — это ОЖИДАЕМЫЙ успех зуба, поэтому
+  // отсутствие находок читается из перехвата, а не из нулевого кода.
+  let importers = '';
+  try {
+    // Ищем ИМПОРТЫ (`from '…/sprint-cut/stubs…'`), а не любое упоминание:
+    // текст в комментариях и производный снимок SCRIPTS_LIST.md ссылками кода
+    // не являются — иначе зуб красит память о снесённом слое в дефект.
+    // Свой файл исключён из поиска и проверяется НИЖЕ построчно: сам этот
+    // предикат содержит искомую строку и иначе ловил бы себя.
+    importers = execFileSync('git', ['grep', '-l', '-E', "from ['\"][^'\"]*sprint-cut/stubs", '--', 'scripts/', ':(exclude)scripts/sprint-cut-check.test.mjs'], {
+      cwd: fileURLToPath(new URL('..', import.meta.url)), encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    importers = '';
+  }
+  assert.equal(importers, '', `ссылки на дублёров живы: ${importers}`);
+
+  // Свой файл — построчно: импортом считается строка, НАЧИНАЮЩАЯСЯ с import.
+  const selfImports = readFileSync(fileURLToPath(import.meta.url), 'utf8')
+    .split(/\r?\n/u)
+    .filter((line) => /^import\b/u.test(line) && line.includes('sprint-cut/stubs'));
+  assert.deepEqual(selfImports, [], 'зуб формы сам импортирует дублёров');
 });
 
 // ─── проекция «назначен» ───────────────────────────────────────────────────────

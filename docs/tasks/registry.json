@@ -1,6 +1,25 @@
 {
   "tasks": [
     {
+      "id": "sprint-cut-teeth-live-2026-08-11",
+      "title": "Зубы формы cut-плана на живых модулях: переход с дублёров, снос stubs/",
+      "promptPath": "docs/prompts/SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md",
+      "githubIssue": 1855,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-11",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Взято 11.08 по слову владельца «с конца делаем по очереди» — строка 4 остатка тулинга. Условие долга признано наступившим: первый полный чистый прогон живой петли опыта 11.08 (прогноз cut-1 → гейт 7/7 → исход cut-2 → архив персоны, PR #1849). Исполняет карточку-долг sprint-cut-teeth-to-live-modules.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "s-queue-2026-08-11",
       "title": "S-очередь дня 11.08: семь S-строк живого остатка тулинг-ревизии",
       "promptPath": "docs/prompts/S_QUEUE_2026_08_11_PROMPT.md",
