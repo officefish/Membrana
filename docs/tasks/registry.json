@@ -4273,15 +4273,15 @@
       "githubIssue": 922,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "исполнено 22.07 (промпт карточки сам несёт статус): docs/virtual-team/PROMPT_ANGELINA.md §Запрещено:77 — конспект-only:94, явное разрешение:99, «нужно чинить»=заказ:102, отказ-чинить в формате ответа:130; Issue #922 закрыт 2026-07-22",
+      "githubIssueClosedAt": "2026-07-22T08:12:27Z"
     },
     {
       "id": "swallow-format-frame-fix",
