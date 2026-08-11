@@ -30,13 +30,14 @@
         "scripts/sprint-experience.mjs",
         "scripts/lib/sprint-experience/forecast-record.mjs",
         "scripts/lib/sprint-integration/forecast-record-gate.mjs",
-        "scripts/sprint-experience.test.mjs"
+        "scripts/sprint-experience.test.mjs",
+        "scripts/sprint-smoke.test.mjs"
       ],
       "estimate": {
         "changedLines": 120
       },
-      "revisionAt": "2026-08-11T08:03:20+00:00",
-      "revisionOf": "3953b0ec9f8fa77825fef44c309956433569d3da3f7d655b1871b5ae5dbee9c6"
+      "revisionAt": "2026-08-11T10:18:17+00:00",
+      "revisionOf": "f9ce2e1841314a9dc3e94b3a1234648e890d381bf729fbc6cfe3787fdf86ee45"
     },
     {
       "blockId": "b3-tests-container-imports",
@@ -58,13 +59,14 @@
       "context": "dynin",
       "zone": [
         "scripts/registry/SCRIPTS_LIST.md",
-        "docs/tasks/evening-ritual-steps.json"
+        "docs/tasks/evening-ritual-steps.json",
+        "docs/tasks/ritual-exit-codes.json"
       ],
       "estimate": {
         "changedLines": 60
       },
-      "revisionAt": "2026-08-11T08:03:20+00:00",
-      "revisionOf": "fbd3e2c26270f422e473110ec9aea7bc4fe9865dc5b97cef64da20c9c714c583"
+      "revisionAt": "2026-08-11T10:18:17+00:00",
+      "revisionOf": "9020337cbc97ab47a09bb28123ac9be46befba17fac54cdf4c9a31bc65714d8d"
     },
     {
       "blockId": "b5-secret-inventory",
@@ -118,7 +120,7 @@
   "//out-of-scope": "Сервера нет ни в одном блоке (packages/background-*, deploy/ не трогаются). Магистраль angelina-hostess-impl — после очереди. tw-declared-verbs-honest-no — развилка владельца, не здесь. Чужие деревья (Membrana-grok) не правятся — b1 чинит симлинки СВОЕГО node_modules. Архивация карточек строк — закрытием спринта (task:archive со свидетельствами), не внутри блоков.",
   "ratification": {
     "by": "owner",
-    "at": "2026-08-11T08:03:20+00:00",
-    "digest": "fcbfcb9b8ca02d37221e2557c61631f0c9b4e0b5f60bfc65f40fac37fe0a0eff"
+    "at": "2026-08-11T10:18:17+00:00",
+    "digest": "b30dfc8c087d2e677423de99cba4c42fc19ea8d7797f656cac479ed321d77e80"
   }
 }

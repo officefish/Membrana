@@ -151,6 +151,8 @@ test('шаг 5: привязки сегментов нет → cutAccuracy не 
   const observed = gateToForecastObserved(report); // N1 отсутствует — сегментов нет
   const record = makeForecastRecord({
     ...forecast,
+    seq: 1, // b2 s-queue-2026-08-11: дефолт снят, смоук называет seq явно
+
     observed,
     observedAt: '2026-07-31T10:00:00Z',
     outcome: 'miss',
