@@ -965,16 +965,16 @@
       "noIssueReason": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-04",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "Читатель ленты docs/procedure-runs/trail/ — недостающая половина #1626: производители построены и с 04.08 реально пишут (утро pass, первый прогон шота), но ленту не открывает ни один автомат. Витрина = агрегат по пяти опорам (local-sprint, ritual-day, ritual-evening, meeting, one-shot): счёт прогонов, исходы pass/fail/blocked, сироты, трения. Предусловие развёртывания — узел деплоя (survey 03.08 П1). До витрины допустим дешёвый первый читатель: блок в вечерней хронике/хендофе. Кристалл reader-before-next-carrier.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1863 (squash d56094d1 в main), review LGTM; ядро+CLI procedure-runs-digest, первый автомат — шаг вечерней цепочки (карта exit-кодов дописана, зуб #622); живая сводка показала 10 fail/10 сирот у ritual-day за 11 дней; п.1 #1626 закрыт читателем; панель — вторым PR (узел деплоя), Issue #1861 закрыт",
       "githubIssueClosedAt": null
     },
     {
