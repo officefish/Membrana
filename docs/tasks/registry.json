@@ -1167,7 +1167,7 @@
         "dynin",
         "rodchenko"
       ],
-      "notes": "Baseline 2026-08-02: 13 workshops, 23 procedures; counts recomputed from live registries.",
+      "notes": "Baseline 2026-08-02: 13 workshops, 23 procedures; counts recomputed from live registries. · Стадия 1 (11.08): дом docs/workflows/ + прибор workflow:examples (baseline живой: 13 workshops / 26 procedures) + 9 seed-записей; coverage 1/13 и 1/26, нули видимы. Марафон продолжается.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "harness-workflow-pages"
