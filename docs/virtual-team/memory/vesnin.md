@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14330/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 273 (причины в op-log) -->
+Записей: 49 · бюджет 14399/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 274 (причины в op-log) -->
+
+### 2026-08-10 · позиция · team-evening-feedback
+
+> Скоуп — тулинг и бизнес-процессы, ни один путь не входит в авто-T2, Tier корректно понижен до T1. Оценка артефактов: регламент Team Evening Feedback и промпт согласованы; MAIN_DAY_ISSUE устарел на день (магистраль архивариуса уже закрыта PR #1815 по данным реестра карточек […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
 
 ### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
 
@@ -290,14 +296,8 @@
 
 — источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`
 
-### 2026-07-30 · позиция · task-archive-cold-store-m3-repo-checkpoint
+### 2026-07-28 · позиция · team-evening-feedback
 
-> Планка M3 узкая. M1: Mongo office — канон, repo — carrier. M2: cold-record с `proof` уже закрыт. Сегодня только: что лежит в git как маленький слепок, какие поля, как доказать тождество серверного архива, что — sanity, что checkpoint **не** значит. Q5 writer, Q4 restore, Q6 […] _(реплик в сеансе: 8)_
+> **Оценка артефактов:** STRATEGY_DAY устарел (сгенерирован 17.07 на 18.07) — помечен красным щитом как нерабочий документ. DAILY_STANDUP и MAIN_DAY_ISSUE качественные: магистраль DAY_MEMO чётко обоснована owner-choice, таблица посылок и сознательные «не делаем» снижают риск […]
 
-— источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
-
-> Беру поля кандидата 1 + `promptHash` опционально из 2 без хранения тела. Retention: 30 дней для v1 (кандидат 1); 90 — later. Сырой промпт/ключ — никогда в store. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m3b-telemetry-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-07-28.md#reply-1`

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14231/14400 · статус ok
+Записей: 50 · бюджет 14382/14400 · статус ok
 <!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 283 (причины в op-log) -->
+
+### 2026-08-10 · позиция · team-evening-feedback
+
+> День с ясной осью — «S-очередь дня» отработана, эпик `ci-gate-stabilization` закрыт двумя последними детьми (cg2, cg4), долг `llm-probe-still-lies-net` погашен с зубами и живым прогоном. Оценка артефактов: `STRATEGIC_PLAN_DAY` — вещдок 17.07, читать нельзя (помечено); […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
 
 ### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
 
@@ -296,8 +302,8 @@
 
 — источник: `docs/seanses/workshop-wires-m5-kit-frame-2026-07-30.md#reply-1`
 
-### 2026-07-30 · позиция · workshop-wires-m6-session-hook
+### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
 
-> Планка матча узкая. §1–§5 не пересматриваем: предикат belongs, знаменатель, D_home, глаголы, зуб — вход. Сегодня только: что сессия видит в первую секунду и чем это проверено. Вещдоки ясные — рукописный AGENTS.md (11/253), молчаливый network:tooth, сессия 30.07 без мастерских и […] _(реплик в сеансе: 8)_
+> Беру поля кандидата 1 + `promptHash` опционально из 2 без хранения тела. Retention: 30 дней для v1 (кандидат 1); 90 — later. Сырой промпт/ключ — никогда в store. _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/workshop-wires-m6-session-hook-2026-07-30.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m3b-telemetry-2026-07-23-2026-07-23.md#reply-1`

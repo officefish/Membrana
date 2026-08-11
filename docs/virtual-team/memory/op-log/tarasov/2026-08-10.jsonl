@@ -18,3 +18,6 @@
 {"ts":"2026-08-10T16:52:29.966Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-10T16:52:14.625Z","origin":"ask-persona"}
 {"ts":"2026-08-10T16:52:29.969Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-10T16:52:14.625Z","origin":"ask-persona"}
 {"ts":"2026-08-10T16:52:29.971Z","persona":"tarasov","verb":"emerge","ref":"tarasov-evening-order-and-trunk-cut-1","reason":"напоминание: замер без прогона в мерку не входит. Здесь прогон есть, манифест приложен дословно — приёмка засчитывается, в отличие от тех несделанных нарезок.","origin":"ask-persona"}
+{"ts":"2026-08-10T20:30:39.027Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-10-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-10T20:30:39.027Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-30-workshop-wires-m6-session-hook","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-10T20:30:39.027Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

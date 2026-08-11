@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14380/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 269 (причины в op-log) -->
+Записей: 49 · бюджет 14356/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 271 (причины в op-log) -->
+
+### 2026-08-10 · позиция · team-evening-feedback
+
+> Чистых функций и алгоритмов в развёрнутых диффах нет; `dreams-tick.mjs` — routing-логика. Оценка артефактов: `env.snapshot.json` содержит измеримую дельту (444→918 ms прямой путь, `geo_blocked` direct / `ok` proxy) — это единственный числовой сигнал дня, зафиксирован корректно; […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
 
 ### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
 
@@ -295,9 +301,3 @@
 > Формализую. Пусть A — упорядоченное мультимножество канонических cold-records (M2). Нужна функция `H: Serialize(A) → digest`, и checkpoint C такой, что `verify(C, A) ⇔ H(A) = C.contentHash ∧ |A| = C.recordCount` (и согласованные границы эпохи, если есть). C ≪ A по размеру. C не […] _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m4-write-path-idempotency
-
-> Формализую без UI. Пусть R — payload cold-record (M2), k — idempotency key. Операция `notarize(k, R) → {created(R*), existing(R*), reject(reason)}`. Инвариант append-only: повтор с тем же k и эквивалентным R даёт `existing`, не второй документ. Эквивалентность: canonical bytes R […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`
