@@ -105,6 +105,20 @@
             3
           ]
         },
+        "scripts-registry": {
+          "script": "scripts/scripts-registry.mjs --report",
+          "codes": {
+            "0": {
+              "bucket": "ok",
+              "meaning": "реестр перегенерирован, снимок записан"
+            },
+            "1": {
+              "bucket": "failure",
+              "meaning": "регенерация не состоялась (ошибка чтения ФС/package.json) — noncritical, вечер едет дальше, дрейф догоняется следующим прогоном"
+            }
+          },
+          "notes": "b4 s-queue-2026-08-11 (#1265): шаг встал до ritual-artifacts, produces уезжает автозабором"
+        },
         "ritual-artifacts": {
           "script": "scripts/ritual-artifacts-commit.mjs",
           "codes": {

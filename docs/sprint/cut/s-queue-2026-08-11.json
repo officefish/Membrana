@@ -1,0 +1,126 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "s-queue-2026-08-11",
+  "taskId": "s-queue-2026-08-11",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-08-11T08:00:00+00:00",
+    "to": "2026-08-11T19:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-node-links-env",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "docs/CONTRIBUTING.md"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionAt": "2026-08-11T08:03:20+00:00",
+      "revisionOf": "47dbd251043664d4ba96aeae80dd9c72f33ba3e4517a752e9a02c103f7870c36"
+    },
+    {
+      "blockId": "b2-sprint-experience-seam",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/sprint-experience.mjs",
+        "scripts/lib/sprint-experience/forecast-record.mjs",
+        "scripts/lib/sprint-integration/forecast-record-gate.mjs",
+        "scripts/sprint-experience.test.mjs",
+        "scripts/sprint-smoke.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionAt": "2026-08-11T10:18:17+00:00",
+      "revisionOf": "f9ce2e1841314a9dc3e94b3a1234648e890d381bf729fbc6cfe3787fdf86ee45"
+    },
+    {
+      "blockId": "b3-tests-container-imports",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/tests-container.mjs",
+        "scripts/tests-container.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 90
+      },
+      "revisionAt": "2026-08-11T08:03:20+00:00",
+      "revisionOf": "e728016646f8e6e3572e6e6311b90dce3c78395abd90eefab3459fc822c7ce41"
+    },
+    {
+      "blockId": "b4-scripts-registry-wire",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/registry/SCRIPTS_LIST.md",
+        "docs/tasks/evening-ritual-steps.json",
+        "docs/tasks/ritual-exit-codes.json"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionAt": "2026-08-11T10:18:17+00:00",
+      "revisionOf": "9020337cbc97ab47a09bb28123ac9be46befba17fac54cdf4c9a31bc65714d8d"
+    },
+    {
+      "blockId": "b5-secret-inventory",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/secret-inventory.mjs",
+        "scripts/secret-inventory.test.mjs",
+        "package.json"
+      ],
+      "estimate": {
+        "changedLines": 170
+      },
+      "revisionAt": "2026-08-11T08:03:20+00:00",
+      "revisionOf": "0237dbaffd03f9496609703773ca600e44f36254f298a1ae16fb0aa0163ba2bc"
+    },
+    {
+      "blockId": "b6-leveling-out-path",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/membrana-leveling-snapshot.mjs",
+        "scripts/membrana-leveling-workspace-level.mjs",
+        "scripts/membrana-leveling-snapshot.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 50
+      },
+      "revisionAt": "2026-08-11T08:03:20+00:00",
+      "revisionOf": "fdeba216640cc5dd9b42c9a65626e2fe5d2ba03fef4215825a645081adf8bfc6"
+    },
+    {
+      "blockId": "b7-agents-grabli",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "AGENTS.md"
+      ],
+      "estimate": {
+        "changedLines": 50
+      },
+      "revisionAt": "2026-08-11T08:03:20+00:00",
+      "revisionOf": "dd69ff5a6cfd752da79b7d9854b31a171cb7d45b1162daf4ab20e35d28a3a44d"
+    }
+  ],
+  "//why": "Слово владельца 11.08 «делаем сначала s»: семь S-строк живого остатка тулинг-ревизии 11.08 (34→15, отчёт docs/audit/tasks/analysis/registry-audit-2026-08-11.md). Промпт: docs/prompts/S_QUEUE_2026_08_11_PROMPT.md",
+  "//route": "Спринт, не шоты: семь строк через one-shot — предсказуемый красный анти-цепочки evaluateOneShotS (≤3 выстрела/≤8 файлов/≤200 строк за 7 суток). Штамп 10.08 применён дословно: «прогонять S ради предсказуемого красного = церемония» (docs/discussions/cut-s-queue-tail-vesnin.md). Карточка s-queue-2026-08-11 в реестре (--no-issue: след — реестр + спринт-прогон).",
+  "//cutter": "Резчик vesnin, конспект docs/discussions/cut-s-queue-20260811-vesnin.md, прогон контекста docs/discussions/cut-s-queue-20260811-vesnin-run.md. Решения: (1) блок = строка очереди, семь блоков — слияние размыло бы honest_pair; (2) b1 — самостоятельный вердикт среды с явным контрактом (вход: инвентарь симлинков; выход: honest_pair на вещдоке; инвариант: node_modules в дифф не входит), первым по цене ошибки, НЕ гейтом — зубы b2–b6 это node --test по корневым скриптам, резолюция @membrana/* им не нужна; (3) исполнители по природе — код dynin, слова/нормы ozhegov (обе грабли b7 лексической природы, смешанного контекста нет); (4) b5 остаётся S как обёртка над готовым ядром secret-redact.mjs, guard в //dod; (5) b4 — провод, не грабля; потребитель снимка назван (tooling:overview-контур и дрейф #1265); (6) зона b1 — только коммитуемые файлы.",
+  "//order": "b1 первым по цене ошибки (среда врёт всем), жёстких зависимостей нет: b2, b3, b5, b6 независимы между собой и от b1; b4 и b7 документно-проводные, порядок безразличен. package.json только у b5.",
+  "//dod": "b1: симлинки @membrana/* смотрят внутрь Membrana-weave, однопакетный typecheck office/harmonic зелёный живьём, политика «yarn install после мерджа / не линковать чужое дерево» в CONTRIBUTING. b2: путь записи один (константа гейта), seq растёт по ленте, дедуп не глотает новый прогноз после перерезки, зубы на оба. b3: resolveImport резолвит @membrana/* по workspaces и .tsx/index.tsx, замер «сужает ли ещё» записан числом в теле блока. b4: scripts:registry зовётся вечерней цепочкой, снимок догнал 439, грабля sleep в AGENTS.md (строка в зону b7 не входит — провод здесь, слова там). b5: yarn secret:inventory даёт таблицу файл×класс×вхождений и --json, значения не печатаются ни в одном режиме, три зуба (детерминизм, синтетика всех классов, отсутствие значений в выводе); GUARD: любая правка ядра secret-redact.mjs = стоп и перерезка, блок S только как обёртка. b6: абсолютный --out/--snapshot работает, зуб на абсолютный путь. b7: обе грабли в разделе граблей AGENTS.md рукописно (TF-7).",
+  "//out-of-scope": "Сервера нет ни в одном блоке (packages/background-*, deploy/ не трогаются). Магистраль angelina-hostess-impl — после очереди. tw-declared-verbs-honest-no — развилка владельца, не здесь. Чужие деревья (Membrana-grok) не правятся — b1 чинит симлинки СВОЕГО node_modules. Архивация карточек строк — закрытием спринта (task:archive со свидетельствами), не внутри блоков.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-11T10:18:17+00:00",
+    "digest": "b30dfc8c087d2e677423de99cba4c42fc19ea8d7797f656cac479ed321d77e80"
+  }
+}

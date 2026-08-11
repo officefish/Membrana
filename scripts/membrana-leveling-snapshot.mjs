@@ -5,7 +5,7 @@
  * @see scripts/lib/membrana-leveling-snapshot.mjs
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { snapshotWorkspace } from './lib/membrana-leveling-snapshot.mjs';
@@ -105,7 +105,9 @@ export function runSnapshotCli(argv, deps = {}) {
 
   const json = `${JSON.stringify(snap, null, 2)}\n`;
   if (args.out) {
-    const abs = join(cwd, args.out);
+    // resolve, не join (b6 s-queue-2026-08-11): join(cwd, 'C:\\…') клеил
+    // абсолютный --out к cwd и падал ENOENT на несуществующем склеенном пути.
+    const abs = resolve(cwd, args.out);
     mkdirSync(dirname(abs), { recursive: true });
     writeFileSync(abs, json, 'utf8');
     console.error(`snapshot: wrote ${args.out} (${snap.items.length} items)`);

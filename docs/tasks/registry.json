@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "s-queue-2026-08-11",
+      "title": "S-очередь дня 11.08: семь S-строк живого остатка тулинг-ревизии",
+      "promptPath": "docs/prompts/S_QUEUE_2026_08_11_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "очередь S-хвостов хендофа 11.08; след — реестр + спринт-прогон (прецедент s-queue-tail-2026-08-10)",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-11",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "Слово владельца 11.08 «делаем сначала s». Маршрут — спринт по прецеденту 10.08: 7 строк через шоты = предсказуемый красный анти-цепочки (≤3 выстрела/8 файлов/200 строк за 7 суток), церемония не прогоняется. Строки: fix-node-modules-links-1647, fix-sprint-experience-dead-ends, tests-container-cross-package-imports, friction6-hygiene-notes, friction6-secret-inventory, leveling-snapshot-out-path, notes-regex-cyrillic-translit",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "dump-inventory-from-archive",
       "title": "Опись дампа читается с диска: inventorySource archive-contents вместо разбора stderr mongodump",
       "promptPath": "docs/prompts/DUMP_INVENTORY_FROM_ARCHIVE_PROMPT.md",
@@ -97,7 +118,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "notes": "",
+      "notes": "[machine] blocked-by-env: docs/evidence/env-symlink-probe-2026-08-11.json (env-symlink-probe/1, решение владельца 11.08, условие переоткрытия внутри).",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },

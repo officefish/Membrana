@@ -268,6 +268,7 @@
     "issues:audit": "node scripts/github-issues-audit.mjs",
     "night-triage:secret-scan": "node scripts/night-triage-secret-scan.mjs",
     "secret:redact": "node scripts/secret-redact.mjs",
+    "secret:inventory": "node scripts/secret-inventory.mjs",
     "secret:redact:dry": "node scripts/secret-redact.mjs --dry-run",
     "issues:audit:apply": "node scripts/github-issues-audit.mjs --apply",
     "test:detectors": "turbo run test --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service --filter=@membrana/cepstral-detector-service --filter=@membrana/spectral-flux-detector-service --filter=@membrana/template-match-detector-service --filter=@membrana/yamnet-detector-service --filter=@membrana/clap-detector-service --filter=@membrana/agentic-detector-service",
