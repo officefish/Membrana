@@ -804,7 +804,7 @@
       "supportPersonas": [],
       "notes": "Строка 9 десятки 06.08. Шотом не прошло (capability_chaining), спринт ратифицирован владельцем 13:42Z.",
       "archiveNotes": "сделана 06.08 тем же днём: lazyCloseScope обязателен без умолчания (scripts/lib/procedure-run-journal.mjs:320-335), канон области в docs/procedure-runs/README.md §«Ленивое закрытие и его ОБЛАСТЬ», прогон docs/local-sprint/lazy-close-scope/OPEN.md; промпт сам несёт «Статус: исполнено спринтом в день постановки»",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-06T15:13:04Z"
     },
     {
       "id": "worktrees-align",
