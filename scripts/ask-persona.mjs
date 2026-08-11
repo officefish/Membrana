@@ -21,20 +21,14 @@
  *   4) Контекст задачи: GitHub Issue (--gh-issue), файл (--ticket-file) или строка (--task).
  *   5) Вопрос пользователя.
  *
- * Требуется ANTHROPIC_API_KEY в .env. Опционально ANTHROPIC_MODEL.
+ * LLM-канал: процедура `ask` (реестр каналов) — цепочка панели с фолбэками.
  * Для --gh-issue нужен установленный и авторизованный `gh` CLI.
  */
 import { existsSync, mkdirSync, readFileSync, appendFileSync } from 'node:fs';
 import { resolve, basename } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
-import {
-  anthropicPost,
-  defaultModel,
-  getAnthropicKey,
-  loadDotEnv,
-  printAnthropicHttpError,
-} from './_anthropic-env.mjs';
+import { invokeProcedureLlm, loadRitualLlmEnv } from './lib/llm-procedure-ritual.mjs';
 import {
   formatRagContextBlock,
   logRagStatus,
@@ -88,6 +82,7 @@ const MAX_TASK_TEXT_CHARS = 8_000;
 const MAX_MEMORY_CHARS = 20_000; // страховка поверх токен-бюджета extractor'а (<5K токенов)
 
 const DISCUSSIONS_DIR = 'docs/discussions';
+export const ASK_PROCEDURE_ID = 'ask';
 
 // ---------------------------------------------------------------------------
 // CLI
@@ -120,8 +115,9 @@ Options:
   --help, -h                Эта справка.
 
 Среда:
-  ANTHROPIC_API_KEY (обязательно)   — в .env или окружении.
-  ANTHROPIC_MODEL   (опционально)   — переопределение модели.
+  LLM procedure chain: ${ASK_PROCEDURE_ID} (см. scripts/lib/llm-procedure-defaults.json
+  и overlay панели). Ключи провайдеров: ANTHROPIC_API_KEY, X_AI_API_KEY,
+  DEEPSEEK_API_KEY.
   Для --gh-issue: gh CLI установлен и авторизован для текущего репо.
 `);
 }
@@ -413,19 +409,51 @@ function saveExchange({ name, persona, question, answer, ticketSourceLabel }) {
 // ---------------------------------------------------------------------------
 // Запуск
 
+export async function runAskPersonaLlm({
+  prompt,
+  invoke = invokeProcedureLlm,
+  log = (line) => console.error(line),
+  maxTokens = 4096,
+}) {
+  const result = await invoke({
+    procedureId: ASK_PROCEDURE_ID,
+    prompt,
+    maxTokens,
+    onAttempt: ({ provider, model, attemptIndex, ok, errorClass }) => {
+      log(
+        ok
+          ? `[llm] ${ASK_PROCEDURE_ID} → ${provider}/${model} (attempt ${attemptIndex + 1})`
+          : `[llm] ${ASK_PROCEDURE_ID} attempt ${attemptIndex + 1} ${provider}/${model} failed: ${errorClass ?? 'unknown'}`,
+      );
+    },
+  });
+
+  if (!result.ok) {
+    log(
+      `[llm] цепочка исчерпана для ${ASK_PROCEDURE_ID}: ${result.attempts ?? 0} попыт(ки) (${result.errorClass ?? 'unknown'})`,
+    );
+    return { exitCode: 1, answer: '', provider: result.provider, model: result.model, source: result.source };
+  }
+
+  const answer = typeof result.text === 'string' ? result.text : '';
+  if (!answer.trim()) {
+    log(`[llm] ${result.provider ?? '?'}/${result.model ?? '?'} ответил пустым телом`);
+    return { exitCode: 1, answer: '', provider: result.provider, model: result.model, source: result.source };
+  }
+
+  return {
+    exitCode: 0,
+    answer,
+    provider: result.provider,
+    model: result.model,
+    source: result.source,
+  };
+}
+
 async function main() {
-  loadDotEnv();
+  loadRitualLlmEnv();
 
   const cli = parseArgs(process.argv.slice(2));
-
-  let key;
-  try {
-    key = getAnthropicKey();
-  } catch (e) {
-    console.error(e.message);
-    console.error('См. .env.example.');
-    process.exit(1);
-  }
 
   // Сначала подтягиваем gh-issue (если попросили) — чтобы при ошибке не дёргать API.
   let ghIssueData = null;
@@ -442,55 +470,17 @@ async function main() {
   }
 
   const { text: bodyText, ticketSourceLabel } = buildPrompt({ ...cli, ghIssueData, ragBlock });
-  const model = defaultModel();
 
   if (process.stderr.isTTY) {
-    console.error(`→ ${cli.persona} (${PERSONAS[cli.persona].role}) · model: ${model}`);
+    console.error(`→ ${cli.persona} (${PERSONAS[cli.persona].role}) · procedure: ${ASK_PROCEDURE_ID}`);
   }
 
-  const bodyJson = {
-    model,
-    max_tokens: 4096,
-    messages: [{ role: 'user', content: [{ type: 'text', text: bodyText }] }],
-  };
-
-  let answer = '';
-  try {
-    const { ok, status, text } = await anthropicPost(
-      'https://api.anthropic.com/v1/messages',
-      {
-        headers: {
-          'content-type': 'application/json',
-          'x-api-key': key,
-          'anthropic-version': '2023-06-01',
-        },
-        bodyJson,
-      },
-    );
-
-    if (!ok) {
-      printAnthropicHttpError(status, text);
-      // exitCode + return, а не process.exit(): сокеты HTTP-вызова ещё живы, и обрыв
-      // процесса роняет libuv на Windows ассертом UV_HANDLE_CLOSING → 127 вместо 1
-      // (тот же класс, что чинился в code-review.mjs). Это штатный путь «нет кредита».
-      process.exitCode = 1;
-      return;
-    }
-
-    try {
-      const json = JSON.parse(text);
-      const parts = json?.content ?? [];
-      answer = parts.filter((b) => b?.type === 'text').map((b) => b.text).join('\n');
-      if (!answer) answer = JSON.stringify(parts, null, 2);
-    } catch {
-      answer = text;
-    }
-  } catch (e) {
-    console.error(e);
-    // См. коммент выше: сокеты живы → exitCode + return вместо обрыва процесса.
+  const llm = await runAskPersonaLlm({ prompt: bodyText });
+  if (llm.exitCode !== 0) {
     process.exitCode = 1;
     return;
   }
+  const answer = llm.answer;
 
   console.log(answer);
 
@@ -511,4 +501,6 @@ async function main() {
 
 }
 
-main();
+if (process.argv[1]?.endsWith('ask-persona.mjs')) {
+  main();
+}

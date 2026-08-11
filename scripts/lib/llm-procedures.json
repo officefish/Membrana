@@ -53,6 +53,14 @@
       "title": "Ритуал · вечерний фидбек команды",
       "meters": true,
       "group": "ritual"
+    },
+    {
+      "id": "ask",
+      "entryMjs": "scripts/ask-persona.mjs",
+      "yarnScript": "ask",
+      "title": "Виртуальная команда · ask persona",
+      "meters": true,
+      "group": "persona"
     }
   ]
 }

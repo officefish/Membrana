@@ -41,6 +41,8 @@ test('git registry: v1 ids + entryMjs exist', () => {
   for (const id of V1_PROCEDURE_IDS) {
     assert.ok(reg.procedures.some((p) => p.id === id && p.meters === true));
   }
+  assert.ok(reg.procedures.some((p) => p.id === 'ask' && p.entryMjs === 'scripts/ask-persona.mjs'));
+  assert.ok(reg.procedures.some((p) => p.id === 'team-evening-feedback' && p.entryMjs === 'scripts/team-evening-feedback.mjs'));
 });
 
 test('defaults + catalog: clean for ritual enum', () => {
@@ -63,6 +65,13 @@ test('defaults + catalog: clean for ritual enum', () => {
       p.models.some((m) => m.id === p.defaultModel),
       `${id} defaultModel in models`,
     );
+  }
+  for (const id of ['ask', 'team-evening-feedback']) {
+    assert.deepEqual(defaults[id].chain.map((step) => step.provider), [
+      'anthropic',
+      'xai',
+      'deepseek',
+    ]);
   }
 });
 
