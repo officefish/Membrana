@@ -249,6 +249,7 @@
     "case:generalize": "node scripts/case-generalize.mjs",
     "procedures:registry": "node scripts/procedures-registry.mjs",
     "procedure-run:journal": "node scripts/procedure-run-journal.mjs",
+    "procedure-runs:digest": "node scripts/procedure-runs-digest.mjs",
     "skills:verify-mirrors": "node scripts/verify-skill-mirrors.mjs",
     "procedures:license": "node scripts/procedures-license.mjs",
     "procedures:workshop": "node scripts/procedural-workshop.mjs",
