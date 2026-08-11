@@ -62,13 +62,26 @@ function splitCommand(script) {
 function main() {
   const argv = process.argv.slice(2);
   if (argv.includes('--help') || argv.includes('-h')) {
-    console.log('Usage: node scripts/ritual-evening-run.mjs [--dry] [--json]');
+    console.log('Usage: node scripts/ritual-evening-run.mjs [--dry] [--json] [--only a,b]');
     process.exit(0);
+  }
+  // Неизвестный флаг = отказ ДО открытия журнала и любого шага. Инцидент 11.08:
+  // `--dry-run` (нет такого флага) молча игнорировался, и вместо плана цепочка
+  // пошла живьём — коммит автозабора и сирота в журнале от прогона, которого
+  // никто не заказывал. Молчаливое «не понял → исполняю всё» — худший дефолт
+  // для процедуры с побочными эффектами.
+  const KNOWN_FLAGS = new Set(['--dry', '--json', '--only']);
+  const onlyIdx = argv.indexOf('--only');
+  const onlyValueIdx = onlyIdx >= 0 ? onlyIdx + 1 : -1;
+  const unknownArgs = argv.filter((a, i) => !KNOWN_FLAGS.has(a) && i !== onlyValueIdx);
+  if (unknownArgs.length > 0) {
+    console.error(`✗ неизвестные аргументы: ${unknownArgs.join(', ')}`);
+    console.error('Usage: node scripts/ritual-evening-run.mjs [--dry] [--json] [--only a,b]');
+    process.exit(2);
   }
   const dry = argv.includes('--dry');
   const asJson = argv.includes('--json');
 
-  const onlyIdx = argv.indexOf('--only');
   const only = onlyIdx >= 0 ? new Set(String(argv[onlyIdx + 1] ?? '').split(',').map((s) => s.trim()).filter(Boolean)) : null;
 
   const manifest = readManifest();
