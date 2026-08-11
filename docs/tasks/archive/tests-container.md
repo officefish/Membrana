@@ -13,7 +13,7 @@
 
 ## Заметки при закрытии
 
-эпик: все 4 фазы в архиве — tc-setups-selector, tc-home-workshop, tc-nightly-frame (PR #1851, 11.08), tests-container-cross-package-imports (PR #1849, 11.08); своя работа эпика в main (ADR-0018)
+Эпик закрыт по образцу ci-gate-stabilization: собственной работы не содержал — дом tests/, кит tests-master, мастерская, сетапы smoke/gate/full (PR #1315, ADR-0018), ночной полный прогон PR #1832. Дети повердиктно: tc-home-workshop и tc-setups-selector PR #1315 (аудит 11.08), tc-nightly-frame PR #1851 (83582c19: cron 03:00 UTC, blocksMorningWhen получил потребителя в morning-care), tests-container-cross-package-imports — спринт s-queue-2026-08-11 b3 PR #1849 (граф видит @membrana/* и .tsx).
 
 ---
 
