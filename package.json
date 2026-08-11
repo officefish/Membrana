@@ -250,6 +250,7 @@
     "skills:verify-mirrors": "node scripts/verify-skill-mirrors.mjs",
     "procedures:license": "node scripts/procedures-license.mjs",
     "procedures:workshop": "node scripts/procedural-workshop.mjs",
+    "workflow:examples": "node scripts/workflow-examples.mjs",
     "audit:concentrate": "node scripts/audit-concentrate.mjs",
     "audit:evening": "node scripts/audit-evening.mjs",
     "audit:evening:stdout": "node scripts/audit-evening.mjs --stdout",
