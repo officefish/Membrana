@@ -8,7 +8,7 @@
 | Field | Value |
 |-------|-------|
 | Date | 2026-08-11 |
-| Head SHA | bca76eaf8da473d9c67c6aa654e2c8391cebaa83 |
+| Head SHA | 1a42e21dcb3c9c0d2e98c72917afc5df63241f26 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,12 +16,12 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1106 |
+| Code files under `scripts/` | 1110 |
 | Yarn scripts (package.json) | 439 |
 | Yarn → `scripts/` | 384 |
 | Yarn без пути `scripts/` | 55 |
-| Yarn → missing file | 11 |
-| Code files without yarn ref | 804 |
+| Yarn → missing file | 9 |
+| Code files without yarn ref | 806 |
 
 ## Yarn → scripts/ (384)
 
@@ -169,6 +169,7 @@
 - `kits:audit` → `scripts/kits-audit.mjs`
 - `kits:pins` → `scripts/kits-pins.mjs`
 - `linear:movement-audit` → `scripts/linear-movement-audit.mjs`
+- `lint:scripts` → `scripts/**/*.mjs` ⚠ missing: `scripts/**/*.mjs`
 - `live-links` → `scripts/live-links.mjs`
 - `llm-calls:audit` → `scripts/llm-calls-audit.mjs`
 - `llm-calls:decompose` → `scripts/llm-calls-audit.mjs`
@@ -215,6 +216,7 @@
 - `network:snapshot` → `scripts/network/snapshot.mjs`
 - `network:tooth` → `scripts/network/tooth.mjs`
 - `night-hunt:pr-review` → `scripts/night-hunt-pr-review.mjs`
+- `night-report:gate` → `scripts/night-report-gate.mjs`
 - `night-triage:secret-scan` → `scripts/night-triage-secret-scan.mjs`
 - `night:checkpoint` → `scripts/night-build-checkpoint.mjs`
 - `night:close` → `scripts/night-build-close.mjs`
@@ -278,6 +280,7 @@
 - `scripts:registry` → `scripts/scripts-registry.mjs`
 - `scripts:sets-of` → `scripts/scripts-sets-of.mjs`
 - `secret:gate` → `scripts/secret-gate-push.mjs`
+- `secret:inventory` → `scripts/secret-inventory.mjs`
 - `secret:redact` → `scripts/secret-redact.mjs`
 - `secret:redact:dry` → `scripts/secret-redact.mjs`
 - `sessions:extract` → `scripts/session-extract.mjs`
@@ -307,7 +310,6 @@
 - `tariff:cutover` → `scripts/tariff-cutover-check.mjs`
 - `tariff:grid` → `scripts/tariff-grid-validate.mjs`
 - `task:archive` → `scripts/archive-task.mjs`
-- `task:board` → `scripts/generate-active-tasks-board.mjs` ⚠ missing: `scripts/generate-active-tasks-board.mjs`
 - `task:close-github` → `scripts/task-close-github-issues.mjs`
 - `task:close-github:dry` → `scripts/task-close-github-issues.mjs`
 - `task:inspect` → `scripts/task-inspect.mjs`
@@ -329,10 +331,8 @@
 - `tasks:archive-closed` → `scripts/tasks-archive-closed.mjs`
 - `tasks:audit` → `scripts/tasks-audit.mjs`
 - `tasks:audit:offline` → `scripts/tasks-audit.mjs`
-- `tasks:bookkeeping` → `scripts/tasks-bookkeeping.mjs` ⚠ missing: `scripts/tasks-bookkeeping.mjs`
 - `tasks:decompose` → `scripts/tasks-decompose.mjs`
 - `tasks:handoff-liveness` → `scripts/handoff-liveness.mjs`
-- `tasks:reviewing` → `scripts/tasks-reviewing.mjs` ⚠ missing: `scripts/tasks-reviewing.mjs`
 - `tasks:sync-check` → `scripts/task-invariants.mjs`
 - `tasks:sync-issues` → `scripts/tasks-sync-issue-state.mjs`
 - `tasks:sync-issues:dry` → `scripts/tasks-sync-issue-state.mjs`
@@ -410,7 +410,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (804)
+## Code files without yarn ref (806)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -802,6 +802,7 @@
 - `scripts/lib/net-diag.mjs`
 - `scripts/lib/night-build.mjs`
 - `scripts/lib/night-land-reports.mjs`
+- `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
 - `scripts/lib/norm-liveness.mjs`
 - `scripts/lib/office-image-smoke.mjs`
@@ -884,8 +885,7 @@
 - `scripts/lib/sprint-cut/ratification.mjs`
 - `scripts/lib/sprint-cut/restamp.mjs`
 - `scripts/lib/sprint-cut/sprint-run.mjs`
-- `scripts/lib/sprint-cut/stubs/evidence-trail.stub.mjs`
-- `scripts/lib/sprint-cut/stubs/outcome-sink.stub.mjs`
+- `scripts/lib/sprint-cut/test-support/live-fixtures.mjs`
 - `scripts/lib/sprint-experience/absence.mjs`
 - `scripts/lib/sprint-experience/cut-accuracy.mjs`
 - `scripts/lib/sprint-experience/false-stop-rate.mjs`
@@ -1037,6 +1037,7 @@
 - `scripts/network/tooth.test.mjs`
 - `scripts/night-build-handoff.test.mjs`
 - `scripts/night-land-reports.test.mjs`
+- `scripts/night-report-gate.test.mjs`
 - `scripts/night-research.test.mjs`
 - `scripts/night-triage-secret-scan.test.mjs`
 - `scripts/node-link-probe.test.mjs`
@@ -1125,6 +1126,7 @@
 - `scripts/scripts-orphans.test.mjs`
 - `scripts/scripts-workshop.test.mjs`
 - `scripts/secret-gate-push.test.mjs`
+- `scripts/secret-inventory.test.mjs`
 - `scripts/secret-redact.test.mjs`
 - `scripts/session-floor-render.test.mjs`
 - `scripts/session-floor-validate.test.mjs`
@@ -1217,21 +1219,19 @@
 - `scripts/worktree-sync-check.test.mjs`
 - `scripts/worktrees-align.test.mjs`
 
-## Yarn → missing file (11)
+## Yarn → missing file (9)
 
 - `apply:lead-persona` → missing `scripts/apply-lead-persona-defaults.mjs`
 - `cabinet:mp7:prod` → missing `scripts/_ssh-cabinet-mp7-prod.mjs`
+- `lint:scripts` → missing `scripts/**/*.mjs`
 - `night:run` → missing `scripts/night-build-run-phase.mjs`
-- `task:board` → missing `scripts/generate-active-tasks-board.mjs`
-- `tasks:bookkeeping` → missing `scripts/tasks-bookkeeping.mjs`
-- `tasks:reviewing` → missing `scripts/tasks-reviewing.mjs`
 - `templates:content:real:birds` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:machine-hum` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:silence` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1106)
+## All code files (1110)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1760,6 +1760,7 @@
 - `scripts/lib/net-diag.mjs`
 - `scripts/lib/night-build.mjs`
 - `scripts/lib/night-land-reports.mjs`
+- `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
 - `scripts/lib/norm-liveness.mjs`
 - `scripts/lib/office-image-smoke.mjs`
@@ -1842,8 +1843,7 @@
 - `scripts/lib/sprint-cut/ratification.mjs`
 - `scripts/lib/sprint-cut/restamp.mjs`
 - `scripts/lib/sprint-cut/sprint-run.mjs`
-- `scripts/lib/sprint-cut/stubs/evidence-trail.stub.mjs`
-- `scripts/lib/sprint-cut/stubs/outcome-sink.stub.mjs`
+- `scripts/lib/sprint-cut/test-support/live-fixtures.mjs`
 - `scripts/lib/sprint-experience/absence.mjs`
 - `scripts/lib/sprint-experience/cut-accuracy.mjs`
 - `scripts/lib/sprint-experience/false-stop-rate.mjs`
@@ -2034,6 +2034,8 @@
 - `scripts/night-hunt-pr-review.mjs`
 - `scripts/night-land-reports.mjs`
 - `scripts/night-land-reports.test.mjs`
+- `scripts/night-report-gate.mjs`
+- `scripts/night-report-gate.test.mjs`
 - `scripts/night-research.mjs`
 - `scripts/night-research.test.mjs`
 - `scripts/night-triage-secret-scan.mjs`
@@ -2173,6 +2175,8 @@
 - `scripts/scripts-workshop.test.mjs`
 - `scripts/secret-gate-push.mjs`
 - `scripts/secret-gate-push.test.mjs`
+- `scripts/secret-inventory.mjs`
+- `scripts/secret-inventory.test.mjs`
 - `scripts/secret-redact.mjs`
 - `scripts/secret-redact.test.mjs`
 - `scripts/session-extract.mjs`

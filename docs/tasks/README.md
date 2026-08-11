@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `sprint-cut-teeth-live-2026-08-11` | Зубы формы cut-плана на живых модулях: переход с дублёров, снос stubs/ | M | [`SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md`](../prompts/SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md) | [#1855](https://github.com/officefish/Membrana/issues/1855) |
 | `dreams-models-liveness` | Зуб снов читает настоящий реестр; живость моделей проверяется ночью, а не руками | M | [`DREAMS_MODELS_LIVENESS_PROMPT.md`](../prompts/DREAMS_MODELS_LIVENESS_PROMPT.md) | — |
 | `openrouter-default-model-unverified` | Дефолтная модель офиса живёт литералом в коде и никем не проверяется на живость | S | [`OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md`](../prompts/OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md) | — |
 | `fix-node-modules-links-1647` | Резолюция node_modules/@membrana/* в чужое дерево Membrana-grok: инвентарь симлинков и переустановка на своё дерево | S | [`FIX_NODE_MODULES_LINKS_1647_PROMPT.md`](../prompts/FIX_NODE_MODULES_LINKS_1647_PROMPT.md) | — |
@@ -45,7 +44,6 @@
 | `recreate-execution-procedure-interface` | Пересборка PR #1613: контракт EXECUTION_PROCEDURE + procedureKind поверх свежего main (pr:recreate) | M | [`RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md`](../prompts/RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md) | — |
 | `procedure-run-journal-panel-reader` | Витрина пяти опор в panel.mmbrn.tech — первый читатель ленты журнала прогонов | M | [`PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md`](../prompts/PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md) | — |
 | `corpus-track-acceptance-predicate` | Приёмный предикат корпуса «один тракт — два класса»: чистая функция годности трека по спеке инсайта | S | [`CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md`](../prompts/CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md) | — |
-| `sprint-cut-teeth-to-live-modules` | Зубы формы cut-плана переходят на живые execution-gate/experience-loop, дублёры сносятся | M | [`SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md`](../prompts/SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md) | — |
 | `gate-stale-supersede-by-recut` | Протухший след отзывается актом перерезки, а не изъятием строки | S | [`GATE_STALE_SUPERSEDE_BY_RECUT_PROMPT.md`](../prompts/GATE_STALE_SUPERSEDE_BY_RECUT_PROMPT.md) | [#1638](https://github.com/officefish/Membrana/issues/1638) |
 | `gate-honest-pair-completeness` | honest_pair перестаёт обещать пару, которой не проверяет | S | [`GATE_HONEST_PAIR_COMPLETENESS_PROMPT.md`](../prompts/GATE_HONEST_PAIR_COMPLETENESS_PROMPT.md) | [#1641](https://github.com/officefish/Membrana/issues/1641) |
 | `deploy-procedure-survey` | Обзор узла разворачивания: карта 41 глагола деплоя при нуле процедур | L | [`DEPLOY_PROCEDURE_SURVEY_PROMPT.md`](../prompts/DEPLOY_PROCEDURE_SURVEY_PROMPT.md) | — |
@@ -167,6 +165,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `sprint-cut-teeth-live-2026-08-11` | Зубы формы cut-плана на живых модулях: переход с дублёров, снос stubs/ | 2026-08-11 | [`SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md`](../prompts/SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md) | #1855 (Issue открыт) | [карточка](./archive/sprint-cut-teeth-live-2026-08-11.md) |
 | `s-queue-2026-08-11` | S-очередь дня 11.08: семь S-строк живого остатка тулинг-ревизии | 2026-08-11 | [`S_QUEUE_2026_08_11_PROMPT.md`](../prompts/S_QUEUE_2026_08_11_PROMPT.md) | — | [карточка](./archive/s-queue-2026-08-11.md) |
 | `fix-sprint-experience-dead-ends` | Провод sprint:experience: живой путь записи не растит seq (дедуп молча глотает новый прогноз после перерезки) + дубль константы пути ленты | 2026-08-11 | [`FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md`](../prompts/FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md) | — | [карточка](./archive/fix-sprint-experience-dead-ends.md) |
 | `tests-container-cross-package-imports` | Контейнер тестов: resolveImport слеп к @membrana/* и .tsx — gate-ярус scripts недобирает зависимости | 2026-08-11 | [`TESTS_CONTAINER_CROSS_PACKAGE_IMPORTS_PROMPT.md`](../prompts/TESTS_CONTAINER_CROSS_PACKAGE_IMPORTS_PROMPT.md) | — | [карточка](./archive/tests-container-cross-package-imports.md) |
@@ -174,6 +173,7 @@
 | `delivery-predicates-honest` | Три предиката контура доставки: ролап против объявленного, момент выбора магистрали, порядок шагов pr-land | 2026-08-11 | [`DELIVERY_PREDICATES_HONEST_PROMPT.md`](../prompts/DELIVERY_PREDICATES_HONEST_PROMPT.md) | #1764 (Issue открыт) | [карточка](./archive/delivery-predicates-honest.md) |
 | `lazy-close-scope` | Ленивое закрытие журнала получает явную область: параллельные спринты не топят друг друга (#1705) | 2026-08-11 | [`LAZY_CLOSE_SCOPE_PROMPT.md`](../prompts/LAZY_CLOSE_SCOPE_PROMPT.md) | #1705 | [карточка](./archive/lazy-close-scope.md) |
 | `one-shot-trail-forecast-fact` | Портфель шотов: расширение следа (executor/форкаст/факт), глагол trail brief, дисциплина всплытия | 2026-08-11 | [`ONE_SHOT_TRAIL_FORECAST_FACT_PROMPT.md`](../prompts/ONE_SHOT_TRAIL_FORECAST_FACT_PROMPT.md) | #1844 (Issue открыт) | [карточка](./archive/one-shot-trail-forecast-fact.md) |
+| `sprint-cut-teeth-to-live-modules` | Зубы формы cut-плана переходят на живые execution-gate/experience-loop, дублёры сносятся | 2026-08-11 | [`SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md`](../prompts/SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md) | — | [карточка](./archive/sprint-cut-teeth-to-live-modules.md) |
 | `review-oversized-queue` | Очередь oversized на точечное ревью считается прибором, а не глазом | 2026-08-11 | [`REVIEW_OVERSIZED_QUEUE_PROMPT.md`](../prompts/REVIEW_OVERSIZED_QUEUE_PROMPT.md) | — | [карточка](./archive/review-oversized-queue.md) |
 | `deps-watch-disappearance-named` | Исчезновение advisory называется поимённо и без выдуманной причины | 2026-08-11 | [`DEPS_WATCH_DISAPPEARANCE_NAMED_PROMPT.md`](../prompts/DEPS_WATCH_DISAPPEARANCE_NAMED_PROMPT.md) | — | [карточка](./archive/deps-watch-disappearance-named.md) |
 | `tooling-truth-orphans-diagnosis` | Приборы говорят о себе замеренное: диагноз scripts:orphans и прецедент предела ревью | 2026-08-11 | [`TOOLING_TRUTH_ORPHANS_DIAGNOSIS_PROMPT.md`](../prompts/TOOLING_TRUTH_ORPHANS_DIAGNOSIS_PROMPT.md) | — | [карточка](./archive/tooling-truth-orphans-diagnosis.md) |

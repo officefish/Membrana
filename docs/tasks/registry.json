@@ -7,16 +7,16 @@
       "githubIssue": 1855,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-11",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "Взято 11.08 по слову владельца «с конца делаем по очереди» — строка 4 остатка тулинга. Условие долга признано наступившим: первый полный чистый прогон живой петли опыта 11.08 (прогноз cut-1 → гейт 7/7 → исход cut-2 → архив персоны, PR #1849). Исполняет карточку-долг sprint-cut-teeth-to-live-modules.",
-      "archiveNotes": null,
+      "archiveNotes": "Спринт прожит: PR #1857 merged (1a42e21d), иссью #1855 закрыто мерджем. Два блока по ратифицированной нарезке (перерезка до ратификации по zones_overlap), gate 2/2 honest_pair, находок 0. OPEN-паспорт не заводился (S-объём, два блока) — след: docs/sprint/cut/ + trail.",
       "githubIssueClosedAt": null
     },
     {
@@ -1027,14 +1027,14 @@
       "noIssueReason": "долг по вердикту Веснина (шот stubs-verdict 03.08), срок — стабильный контракт живой петли опыта; иссью заведётся при взятии в работу",
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-03",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "ДОЛГ. P2 ревью #1515: стабы sprint-cut/stubs/* — контракт границы для зубов, легализованы как промежуточная форма; постоянной опорой не назначены. Переход свяжет тест формы с лестницей вердиктов гейта — делать по выходу петли опыта на стабильный контракт.",
-      "archiveNotes": null,
+      "archiveNotes": "Долг погашен спринтом sprint-cut-teeth-live-2026-08-11, PR #1857 (1a42e21d): условие снятия («живая петля опыта на стабильном контракте») наступило — первый полный чистый прогон 11.08 (PR #1849), решение о взятии — слово владельца «с конца делаем по очереди». Зубы формы читают живые readTraceCorpus/verdictFor через мост test-support/live-fixtures.mjs, каталог sprint-cut/stubs снесён тем же PR. Семантика усилена: зуб частичного успеха корпуса, пара границ порога, двухслойный зуб сноса (география+топология). Закрывает P2 ревью #1515.",
       "githubIssueClosedAt": null
     },
     {

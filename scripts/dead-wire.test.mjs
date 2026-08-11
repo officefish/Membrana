@@ -205,11 +205,29 @@ test('согласие каталога и package.json находки не да
   assert.deepEqual(findings, []);
 });
 
-test('живые каталоги в дереве: два, инструментов двенадцать, расхождений нет', () => {
+test('живые каталоги в дереве: снятые глаголы не считаются проводами и не дают находок', () => {
+  // Число ЖИВЫХ проводов пришпиливать нельзя: оно законно меняется, когда
+  // владелец снимает глагол (11.08: три declined-записи мастерской задач).
+  // Пин на «двенадцать» падал бы при каждом честном «нет», ничего не поймав.
+  // Арифметику прибора зуб не повторяет (это было бы вторым источником) —
+  // проверяется ИНВАРИАНТ: считаются только пары «глагол + носитель», а
+  // снятые записи не попадают ни в счёт, ни в находки.
   const report = runCheck({ today: TODAY });
   assert.equal(report.catalogsChecked, 2);
-  assert.equal(report.toolsChecked, 12);
+  assert.ok(report.toolsChecked > 0, 'каталоги перестали давать проводов вовсе — прибор ослеп');
   assert.equal(report.findings.filter((f) => f.kind === 'carrier_mismatch').length, 0);
+
+  const declined = JSON.parse(readFileSync(new URL('../docs/tasks/workshop.catalog.json', import.meta.url), 'utf8'))
+    .tools.filter((t) => t.state === 'declined');
+  assert.ok(declined.length > 0, 'фикстура смысла: в дереве есть снятые глаголы');
+  for (const t of declined) {
+    assert.equal(t.yarn, null, `снятый глагол ${t.id} снова зовётся`);
+    assert.equal(
+      report.findings.some((f) => f.tool === t.id),
+      false,
+      `снятый глагол ${t.id} дал находку — отказ читается как дефект`,
+    );
+  }
 });
 
 // ── прогон по живому дереву ──────────────────────────────────────────────────
@@ -223,12 +241,15 @@ test('живой package.json: после разбора связь честна
   assert.ok(report.checked > 400, `команд проверено: ${report.checked}`);
 });
 
-test('перечень pending покрывает ровно шесть проводов и все с причиной и датой', () => {
+test('перечень pending: за сроком проявляются ВСЕ его записи, сколько бы их ни было', () => {
   const report = runCheck({ today: TODAY });
   assert.equal(report.findings.length, 0);
-  // Сдвинем «сегодня» за срок — все шесть обязаны проявиться как просроченные.
+  // Сдвинем «сегодня» за срок — все записи перечня обязаны проявиться. Число
+  // берём из перечня, а не из памяти: 11.08 три записи законно вынесены
+  // (глаголы сняты владельцем, они больше не «ждут реализации»).
+  const pendingCount = Object.keys(LIVE_PENDING.pending).length;
   const after = runCheck({ today: shiftDay(LIVE_UNTIL, 1) });
-  assert.equal(after.findings.length, 6, 'за сроком должны проявиться все шесть');
+  assert.equal(after.findings.length, pendingCount, 'за сроком должны проявиться все записи перечня');
   assert.ok(after.findings.every((f) => f.kind === 'pending_expired'));
 });
 
