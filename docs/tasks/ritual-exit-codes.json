@@ -85,6 +85,24 @@
             3
           ]
         },
+        "procedure-runs-digest": {
+          "script": "scripts/procedure-runs-digest.mjs --days 7 --daily",
+          "codes": {
+            "0": {
+              "bucket": "ok",
+              "meaning": "сводка пяти опор напечатана, датированный артефакт в docs/seanses/ записан"
+            },
+            "1": {
+              "bucket": "failure",
+              "meaning": "исключение чтения лент/записи артефакта (фс)"
+            },
+            "2": {
+              "bucket": "failure",
+              "meaning": "кривые аргументы шага — дефект манифеста, не данных"
+            }
+          },
+          "notes": "#1861 (п.1 #1626): читатель ленты журнала прогонов; ленты не мутирует, проблемы чтения печатает в сводке, а не кодом"
+        },
         "insight-drift": {
           "script": "scripts/insight-drift.mjs",
           "codes": {
