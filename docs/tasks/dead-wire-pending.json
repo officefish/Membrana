@@ -14,21 +14,6 @@
       "until": "2026-08-16",
       "footprint": 3
     },
-    "task:board": {
-      "reason": "awaits-implementation",
-      "until": "2026-08-16",
-      "footprint": 8
-    },
-    "tasks:bookkeeping": {
-      "reason": "awaits-implementation",
-      "until": "2026-08-16",
-      "footprint": 10
-    },
-    "tasks:reviewing": {
-      "reason": "awaits-implementation",
-      "until": "2026-08-16",
-      "footprint": 8
-    },
     "cabinet:mp7:prod": {
       "reason": "awaits-implementation",
       "until": "2026-08-16",

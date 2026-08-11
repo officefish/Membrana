@@ -24,28 +24,34 @@
       "id": "board",
       "verb": "board",
       "zone": "workshop",
-      "yarn": "yarn task:board",
-      "script": "scripts/generate-active-tasks-board.mjs",
+      "yarn": null,
+      "script": null,
       "doc": "docs/tasks/WORKSHOP.md",
-      "summary": "Снимок доски активных задач (⚠ движок отсутствует в дереве)"
+      "summary": "Снимок доски активных задач — решение владельца 11.08: движок не строим (declined)",
+      "state": "declined",
+      "declinedRef": "docs/tasks/declined-verbs.json"
     },
     {
       "id": "bookkeeping",
       "verb": "bookkeeping",
       "zone": "workshop",
-      "yarn": "yarn tasks:bookkeeping",
-      "script": "scripts/tasks-bookkeeping.mjs",
+      "yarn": null,
+      "script": null,
       "doc": "docs/tasks/WORKSHOP.md",
-      "summary": "Бухгалтерия реестра (⚠ движок отсутствует в дереве)"
+      "summary": "Бухгалтерия реестра — решение владельца 11.08: движок не строим (declined)",
+      "state": "declined",
+      "declinedRef": "docs/tasks/declined-verbs.json"
     },
     {
       "id": "reviewing",
       "verb": "reviewing",
       "zone": "workshop",
-      "yarn": "yarn tasks:reviewing",
-      "script": "scripts/tasks-reviewing.mjs",
+      "yarn": null,
+      "script": null,
       "doc": "docs/tasks/WORKSHOP.md",
-      "summary": "Обзор эпиков/сводок (⚠ движок отсутствует в дереве)"
+      "summary": "Обзор эпиков/сводок — решение владельца 11.08: движок не строим (declined)",
+      "state": "declined",
+      "declinedRef": "docs/tasks/declined-verbs.json"
     },
     {
       "id": "validate",
@@ -111,5 +117,6 @@
       "doc": "docs/audit/tasks/README.md",
       "summary": "Вне primary: раскладка по осям --by (docs/audit/tasks)"
     }
-  ]
+  ],
+  "//declined": "Записи снятых глаголов НЕ удаляются (разбор Ожегова 11.08): пустой каталог читается как приглашение завести заново. Карточка остаётся с state declined и без движка — отказ виден там же, где искали бы инструмент."
 }
