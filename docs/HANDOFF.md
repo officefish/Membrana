@@ -1,53 +1,77 @@
-# HANDOFF → 2026-08-11 · **реестр тулинга выверен: из 34 карточек живых 15; ось дня ждёт owner-choice**
+# HANDOFF → 2026-08-11 (вечер) · **ось «M с конца» и S-очередь сыграны: из десятки утра живы 3 строки; реестр за день 171 → 141**
 
-**Точка входа новой сессии.** Хендоф 09.08 снят (архив —
-[`docs/handoff/HANDOFF-2026-08-09.md`](handoff/HANDOFF-2026-08-09.md)).
+**Точка входа новой сессии.** Утренняя редакция этого хендофа (ревизия 34 карточек,
+десятка живого остатка) перечеканена вечером: день закрыл 7 строк десятки и обе
+вне-десятки, зонтики `tests-container` и `agent-tooling-friction-6` опустели и
+заархивированы. Владелец выбрал ось «M с конца» — сыграна полностью, докуда
+пускают гейты.
 
-Утро 11.08 прошло ревизией категории «Агентский тулинг, CI и техдолг»: все 34 карточки
-проверены на свежесть по `origin/main` (@ `e77919dc`) четырьмя параллельными read-only
-аудиторами. **19 оказались сделаны и забыты в реестре** — заархивированы с
-индивидуальными свидетельствами (PR/SHA в notes каждой), отчёт —
-[`docs/audit/tasks/analysis/registry-audit-2026-08-11.md`](audit/tasks/analysis/registry-audit-2026-08-11.md).
-Реестр: active 171 → 152. Отменённых нет. Десятка ниже — **живой остаток категории**,
-слово владельца 11.08: «актуальные — сегодняшний хендоф».
+> **Заголовок этого файла читают генераторы.** Он обязан нести магистраль
+> СЕГОДНЯШНЕГО дня (прецедент 05–07.08: фантом возвращался три утра подряд).
 
-**Ось дня НЕ назначена.** Магистраль, выбранная генератором без owner-choice, не
-принимается (рецидивы 16.07, 17.07, 21.07) — таблица ниже это поле выбора, а не приговор.
+## ⚠ Утру 12.08 — новое, прочесть до ритуала
 
-> **Заголовок этого файла читают генераторы.** Он обязан нести магистраль СЕГОДНЯШНЕГО
-> дня. Прецедент 05–07.08: тело поправили, заголовок оставили — фантом возвращался три
-> утра подряд.
+**Гейт ночи включён** (PR [#1851](https://github.com/officefish/Membrana/pull/1851), #1293):
+`morning-care` теперь исполняет `blocksMorningWhen` кадра `night-report` **до** тела
+утра. Первая ночь пойдёт по cron 03:00 UTC; утром сперва `yarn night-report:gate
+--pull` (подтянуть артефакт с main), иначе честный STOP «ночь не отработала» — это
+ожидаемое поведение прибора, не поломка. Красный ночи = разбор до продолжения утра.
 
 ## Как читать этот список
 
-Каждая строка несёт **проверяемый маркер**, а не утверждение о состоянии (норма #1744).
-Все вещдоки сверены с `origin/main` @ `e77919dc` аудиторами 11.08 утром — командой/файлом,
-приведённым рядом, а не по памяти.
+Каждая строка несёт **проверяемый маркер** (норма #1744). Вещдоки строк 1–3 сверены
+утром 11.08 по `origin/main` @ `e77919dc` и не менялись днём; статусы «сделано» несут
+PR/SHA сегодняшнего дня.
+
+## Живой остаток категории «Агентский тулинг, CI и техдолг»
 
 | # | Задача | Почему живая — вещдок | Размер | Занято |
 |---|---|---|---|---|
-| 1 | **`fix-node-modules-links-1647`** — резолюция `@membrana/*` в чужое дерево | `ls node_modules/@membrana` — ~20 симлинков от 29.07 смотрят в `Membrana-grok` (`core`, `background-office`, `detector-base`, …); typecheck office/harmonic ходит по чужому коду. #1810 дал диагностику (`worktree:resolve`), лечения и политики в CONTRIBUTING нет | S | свободно |
-| 2 | **`fix-sprint-experience-dead-ends`** — живой путь записи опыта не растит seq | Шов: `sprint-experience.mjs:45` держит свой `RECORDS_PATH` против `FORECAST_RECORDS_REL_PATH` из `forecast-record-gate.mjs:27`; `seq` нигде не вычисляется (`forecast-record.mjs:75` — дефолт 1). После #1833 правок нет | S | свободно |
-| 3 | **`tests-container-cross-package-imports`** — граф тестов слеп к `@membrana/*` и `.tsx` | `origin/main:scripts/lib/tests-container.mjs` — `resolveImport` открывается `if (!spec.startsWith('.')) return null`, `.tsx` в кандидатах нет. Держит эпик `tests-container` (его собственная работа сдана — ADR-0018) | S | свободно |
-| 4 | **`tc-nightly-frame`** — ночной прогон не блокирует утро | Ложное срабатывание механики: иссью #1293 закрыта, но `blocksMorningWhen` в `ritual-day/MANIFEST.json` — единственное вхождение по дереву (потребителя нет), `tests:nightly-full` не вшит ни в `ritual:day`, ни в workflow | M | свободно |
-| 5 | **`worktrees-align`** ([#1738](https://github.com/officefish/Membrana/issues/1738), REOPENED владельцем) | Сухой прогон на 10 деревьях доказан (PR #1740), мутирующий `--apply` под owner-гейтом не запускался; замера `sprint:experience` нет (`docs/sprint/experience/worktrees-align.*` отсутствует в main) | M | свободно |
-| 6 | **`friction6-scripts-lint`** ([#1264](https://github.com/officefish/Membrana/issues/1264)) — `scripts/**/*.mjs` вне линтера | `.eslintrc.cjs` — ни одного override для `scripts/**/*.mjs`, «Parsing error: The keyword 'import' is reserved» воспроизводится; flat-config в репо нет | M | свободно |
-| 7 | **`friction6-hygiene-notes`** ([#1265](https://github.com/officefish/Membrana/issues/1265)) — реестр скриптов дрейфует | `scripts/registry/SCRIPTS_LIST.md` несёт `2026-07-30, 407 скриптов` — в main их 439; регенерацию (`scripts:registry`) не зовёт ни вечер, ни ночь, ни CI. Грабли-часть уже в AGENTS.md (PR #1280) | S | свободно |
-| 8 | **`friction6-secret-inventory`** ([#1266](https://github.com/officefish/Membrana/issues/1266)) — не начата | `secret:inventory` в `package.json` main нет (439 скриптов, grep пуст); ядро `secret-redact.mjs` для обёртки существует | S | свободно |
-| 9 | **`tw-declared-verbs-honest-no`** — развилка владельца | `docs/tasks/workshop.manifest.json:13-15` в main: три `planned:`-глагола без движков (`task:board` — падает живьём, поймано этим утром; `bookkeeping`, `reviewing`). Решение: строить или объявить `declared-not-built` | S | **ждёт слова** |
-| 10 | **`one-shot-trail-forecast-fact`** — след шота без прогноза и факта | `origin/main:scripts/one-shot-trail.mjs` — команды только `check\|record\|ensure`, слов `brief`/`executor`/`forecast` в файле ноль; лента несёт `{timestamp, path, slug, headRev, status}` | M | свободно |
+| 1 | **`fix-node-modules-links-1647`** — резолюция `@membrana/*` в чужое дерево | `[machine] blocked-by-env`: `docs/evidence/env-symlink-probe-2026-08-11.json` (env-symlink-probe/1, решение владельца 11.08, условие переоткрытия внутри) | S | **blocked-by-env** |
+| 2 | **`worktrees-align`** ([#1738](https://github.com/officefish/Membrana/issues/1738), REOPENED владельцем) | Сухой прогон на 10 деревьях доказан (PR #1740); мутирующий `--apply` — строго под owner-гейтом, не запускался; замера `sprint:experience` нет | M | **ждёт слова** |
+| 3 | **`tw-declared-verbs-honest-no`** — развилка владельца | `docs/tasks/workshop.manifest.json:13-15`: три `planned:`-глагола без движков (`task:board` падает живьём; `bookkeeping`, `reviewing`). Решение: строить или объявить `declared-not-built` | S | **ждёт слова** |
 
-## Остаток категории вне десятки (живые, меньший приоритет)
+Все три строки упираются в слово владельца или условие среды — свободной работы в
+категории не осталось.
 
-- **`leveling-snapshot-out-path`** — дефект воспроизводится: `membrana-leveling-snapshot.mjs:108`
-  `join(cwd, args.out)` без `isAbsolute`; та же болезнь в `workspace-level.mjs:96`. Тривиальный S.
-- **`notes-regex-cyrillic-translit`** — обе грабли (`\w`/`\b` ASCII; транслит при сверке
-  латинских имён с русскими) до AGENTS.md не доехали, промпт-шаблон пуст. S.
-- **`sprint-cut-teeth-to-live-modules`** — корректный отложенный долг: условие
-  («стабильный контракт живой петли опыта») не наступило, брать после строки 2.
-- **`tests-container`** (эпик, L) — держится только строкой 3; своя работа в main.
-- **`agent-tooling-friction-6`** (зонтик, M) — жив строками 6–8; своей работы нет.
-  Оба зонтика закрываются автоматически при закрытии детей.
+## Отложенный долг (условие, не очередь)
+
+- **`sprint-cut-teeth-to-live-modules`** — переход стабов `sprint-cut/stubs/*` на
+  постоянную опору «по выходу петли опыта на стабильный контракт». Шов
+  `fix-sprint-experience-dead-ends` закрыт сегодня (PR #1849) — **наступление условия
+  перепроверить утром**, решение о взятии — владельцу.
+
+## Сделано 11.08 — свидетельства
+
+**Утро** — ревизия категории: 34 карточки, 19 в архив
+([отчёт](audit/tasks/analysis/registry-audit-2026-08-11.md), PR #1842); active 171 → 152.
+
+**День, ось «M с конца»** (owner-choice):
+
+- Строка 10 **`one-shot-trail-forecast-fact`** — след шотов несёт
+  `executor`/`forecast`/`actual` (факт только из диффа мерджа), глагол
+  `one-shot:trail brief` (5 строк, формат согласован актом Тарасова —
+  [артефакт](discussions/oneshot-trail-brief-format-tarasov.md)), дисциплина всплытия
+  словом в [`ONE_SHOT_TRAIL.md`](tasks/ONE_SHOT_TRAIL.md). PR #1845 + #1847, Issue #1844 закрыт.
+- Строка 6 **`friction6-scripts-lint`** — 1105 ESM-скриптов под ESLint; шум назван:
+  **133 находки в 66 файлах**; порог warn + храповик `lint:scripts
+  --max-warnings=133` в CI, `off` не использован. PR #1848 + #1850, Issue #1264 закрыт.
+  Прибор окупился в тот же день: поймал ошибку в новом коде строки 4 до коммита.
+- Строка 4 **`tc-nightly-frame`** — кадр `night-report` перестал быть «Прозой»:
+  workflow `tests-nightly-full.yml` (cron 03:00 UTC, защита `main` проверена фактом),
+  потребитель `blocksMorningWhen` в `morning-care`, три различимых блокера, пины
+  кадра под `auditPins` (дрейф доказан падением), `gates.items[night-report]`
+  (`waitsFor: night` в словаре валидатора с доводом). PR #1851 + #1852.
+- Строка 5 — **не тронута сознательно**: `--apply` под owner-гейтом.
+
+**Параллельная сессия, S-очередь** (PR #1849 + #1853, паспорт —
+`docs/local-sprint/s-queue-2026-08-11/OPEN.md`): строки 2, 3, 7, 8 десятки + обе
+вне-десятки (`leveling-snapshot-out-path`, `notes-regex-cyrillic-translit`) +
+карточка спринта; gate pass 7/7, прогноз↔исход записан.
+
+**Вечер, бухгалтерия**: зонтики **`tests-container`** (4/4 фазы в архиве) и
+**`agent-tooling-friction-6`** (9/9 детей) опустели — заархивированы со
+свидетельствами в notes. Реестр active — **141**.
 
 ## Попутные находки аудита 11.08 (кандидаты в карточки, не заведены)
 
@@ -59,17 +83,22 @@
    `opencode:membrana` (хвост записан в архивах OC3/OC4).
 4. **Системное**: `githubIssueClosedAt` пуст у active-карточек с иссью — чинится
    `yarn tasks:sync-issues`; зонтики в схеме не помечены (`umbrella: true` напрашивается).
+5. **Свежее (день 11.08)**: дубль-ключ в `kits/tasks-master/MANIFEST.json` жил в main
+   с невалидным для строгих парсеров JSON — вычинен попутно PR #1845 (kits:pins --write);
+   класс «опись расходится молча» — довод к зубу на дубль-ключи в описях.
 
 ## Зеркальные мёртвые души — иссью, ждущие вечернего `task:close-github`
 
-У пяти заархивированных карточек иссью ещё **открыты**:
 [#1764](https://github.com/officefish/Membrana/issues/1764),
 [#1447](https://github.com/officefish/Membrana/issues/1447),
 [#1422](https://github.com/officefish/Membrana/issues/1422),
 [#1272](https://github.com/officefish/Membrana/issues/1272),
-[#554](https://github.com/officefish/Membrana/issues/554) — работа в main, бумага открыта.
+[#554](https://github.com/officefish/Membrana/issues/554) — работа в main, бумага
+открыта (проверено вечером 11.08: все пять OPEN).
 
-## Ловушки 08–09.08 — перенесены без изменений, не наступать снова
+## Ловушки — не наступать снова
+
+Перенос 08–09.08 без изменений:
 
 - **Запечатанную запись журнала прогонов править нельзя** — чинится порядком строк
   (`append`/`amend`), не рукой: `ledger.leafHash` ломается.
@@ -78,3 +107,12 @@
 - **Переключение ветки теряет owner-choice** — состояние гейтов лежит файлом в репо.
 - **Нулевой байт делает файл бинарным для git** — 224 строки, невидимые ревьюеру.
 - **Отметки следов брать из источника** (`op-log`, `date -u`), не из головы.
+
+Свежие 11.08:
+
+- **После `pr:ship` (сквош) `task:review:finalize` требует `--ref <reviewed SHA>`** —
+  ветка уже сброшена на main, HEAD ≠ отревьюенный SHA.
+- **`pr:ship --execute` коммитит сам** — на уже закоммиченной ветке падает
+  («nothing to commit»); тогда push + `gh pr create` + `pr:ship --merge-only --execute`.
+- **Merge-гейт требует вердикта `yarn code-review:pr <N>`** даже для бумажных PR
+  закрытия — LGTM привязывается к SHA.
