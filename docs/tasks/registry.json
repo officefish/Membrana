@@ -1830,17 +1830,17 @@
       "githubIssue": 1293,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "dynin",
       "supportPersonas": [
         "angelina",
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1851 (squash 83582c19 в main), review LGTM; ночь по cron 03:00 UTC (защита main проверена фактом), blocksMorningWhen исполняется потребителем в morning-care, три блокера различимы, пины кадра под auditPins (дрейф доказан падением), gates.items[night-report] с waitsFor:night; иссью #1293 была закрыта раньше времени — доведено здесь",
       "githubIssueClosedAt": null,
       "parentEpic": "tests-container"
     },
