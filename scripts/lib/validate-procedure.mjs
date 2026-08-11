@@ -104,7 +104,9 @@ const GATES_KINDS = Object.freeze(['inline', 'none']);
 const HOME_KINDS = Object.freeze(['path', 'none']);
 const MODE_KINDS = Object.freeze(['orchestrated', 'mirrored', 'local']);
 const CRITICALITY = Object.freeze(['critical', 'noncritical']);
-const GATE_WAITS = Object.freeze(['owner', 'human']);
+// 'night' — машинный гейт ночного прогона (#1293): ждёт не человека, а зелёный
+// свежий носитель кадра night-report; resume называет команду подтяжки.
+const GATE_WAITS = Object.freeze(['owner', 'human', 'night']);
 const STUB_WHY_RE = /^(todo|n\/?a|tbd|none|null|-|—|\.+)$/iu;
 const KEBAB_RE = /^[a-z0-9][a-z0-9-]*$/u;
 
