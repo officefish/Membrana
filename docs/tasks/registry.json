@@ -118,7 +118,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "notes": "",
+      "notes": "[machine] blocked-by-env: docs/evidence/env-symlink-probe-2026-08-11.json (env-symlink-probe/1, решение владельца 11.08, условие переоткрытия внутри).",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },

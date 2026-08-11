@@ -1,0 +1,30 @@
+{
+  "schema": "env-symlink-probe/1",
+  "sprintId": "s-queue-2026-08-11",
+  "blockId": "b1-node-links-env",
+  "decidedBy": "owner",
+  "decidedAt": "2026-08-11",
+  "decision": "typecheck-dod=blocked-by-env",
+  "reopenWhen": "терминал с привилегией reparse points: пробы ниже дают ok",
+  "probes": [
+    {
+      "kind": "fs.symlink dir",
+      "result": "EPERM"
+    },
+    {
+      "kind": "fs.symlink junction",
+      "result": "EPERM"
+    },
+    {
+      "kind": "cmd mklink /J",
+      "result": "access denied"
+    }
+  ],
+  "developerMode": true,
+  "inventory": {
+    "foreignLinks": 35,
+    "ownLinks": 2,
+    "foreignTarget": "Membrana-grok",
+    "takenAt": "2026-08-11"
+  }
+}

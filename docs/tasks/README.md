@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `s-queue-2026-08-11` | S-очередь дня 11.08: семь S-строк живого остатка тулинг-ревизии | S | [`S_QUEUE_2026_08_11_PROMPT.md`](../prompts/S_QUEUE_2026_08_11_PROMPT.md) | — |
 | `dreams-models-liveness` | Зуб снов читает настоящий реестр; живость моделей проверяется ночью, а не руками | M | [`DREAMS_MODELS_LIVENESS_PROMPT.md`](../prompts/DREAMS_MODELS_LIVENESS_PROMPT.md) | — |
 | `openrouter-default-model-unverified` | Дефолтная модель офиса живёт литералом в коде и никем не проверяется на живость | S | [`OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md`](../prompts/OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md) | — |
 | `fix-sprint-experience-dead-ends` | Провод sprint:experience: живой путь записи не растит seq (дедуп молча глотает новый прогноз после перерезки) + дубль константы пути ленты | S | [`FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md`](../prompts/FIX_SPRINT_EXPERIENCE_DEAD_ENDS_PROMPT.md) | — |
