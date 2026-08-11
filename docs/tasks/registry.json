@@ -786,7 +786,7 @@
       ],
       "notes": "Строки 2,3,4 десятки 07.08 — один класс: предикат смотрит не на то множество/момент. Обзор в #1764: ожидаемые контексты УЖЕ объявлены в branch-protection-policy.json; одно поле day на два гейта; pr-land протухает свой же вердикт шагом merge+push. Правило «вердикт привязан к SHA» НЕ трогать — оно несущее.",
       "archiveNotes": "Блоки A (rollup-vs-declared) и C (pr-land-order) доставлены PR #1765 (9abf5084): pr:wait сверяет ролап с объявленным в branch-protection-policy.json (род incomplete отдельно от running), pr-land не подрывает свой вердикт (гейт свежести в lib/task-pr-land.mjs). Блок B вынут ратифицированной нарезкой в ADR-0024 (ACCEPTED 07.08) и несётся карточками morning-gates-two-moments / swallow-own-moment. Иссью #1764 закрыть при вечернем task:close-github.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "tariff-promo-server-wiring",
@@ -1759,7 +1759,7 @@
       ],
       "notes": "Находка 29.07: из 398 команд package.json десять ведут в несуществующие файлы; ни один из десяти НИКОГДА не существовал в истории (git log --diff-filter=A пуст) — объявлены авансом, четыре пачками из фич-коммитов 72b6eee6/714ae379 (18-23.06). scripts:registry идёт от файлов к списку, обратного направления нет. Слово владельца 29.07: недельная процедура, реализация и прогон — выходные 1-2.08, не в дневную трёхдневку тарифов. Родитель класса — зверь «Мёртвый провод» #1411.",
       "archiveNotes": "Процедура доставлена PR #1585 (b1bb89db) + охват каталогов мастерских PR #1588 (4693f480) + поправка такта PR #1676 (8aa5344f): зуб dead-wire:check в ritual:day, ядро scripts/lib/dead-wire.mjs, дом docs/procedures/weekly-dead-wire (владелец ozhegov), перечень docs/tasks/dead-wire-pending.json ратифицирован владельцем 01.08. Иссью #1447 закрыть при task:close-github. Побочный долг: у 6 записей pending истёк until 2026-08-09 — находка аудита 11.08.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "night-triage-insight-channel",
@@ -1798,7 +1798,7 @@
       ],
       "notes": "Вердикт M1 security-posture (19.07): alert → задача реестра, владелец канала Teamlead; порог «рантайм-прод × critical|high → сразу». Дозор 29.07: 69 находок (1 critical tar-DoS, 22 high, 41 moderate, 5 low); рантайм-high — 13 находок в 10 пакетах; dev-high (5) идут планово в апгрейд-спринт, не в эту задачу. Заведено агентом А по строке №4 хендоффа 29.07.",
       "archiveNotes": "Корзина разобрана PR #1490 (39da90f8): critical tar-DoS (GHSA-23hp-3jrh-7fpw) закрыт пинами tar→7.5.20 в resolutions, high 22→10, остаток назван причинами в docs/security/deps-basket-2026-07-30-reconcile.md. Иссью #1422 закрыть при task:close-github.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "archivarius-sessions-container",
@@ -1979,7 +1979,7 @@
       ],
       "notes": "",
       "archiveNotes": "Все пять фрикций (Ф1–Ф5) сняты PR #1280 (4e6e659c): скан заявки по base..HEAD, branch:check-base видит чужой коммит в базе (exit 2 с именем автора), worktree-merge для слияния в изоляции, честный pre-push в свежем дереве, task:register не затирает ответственного; 31 тест. Иссью #1272 закрыть при task:close-github. Регрессия Ф3: глагол worktree:merge позже снят PR #1285, скрипт остался сиротой — отдельная находка аудита 11.08.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "notes-regex-cyrillic-translit",
@@ -6711,7 +6711,7 @@
       ],
       "notes": "Третья итерация после #433/#469. Ретро тулинга сессии 16.07, только evidence-эпизоды. Корневая находка: AGENTS.md §Agent tooling датирован 08.07 и содержит 11 команд из 253 живых — я читал устаревший снимок и 5 раз писал заново существующее (вместо yarn neighbors написал ручной grep, он соврал). Та же болезнь, что у MAIN_DAY_ISSUE — рукописный снимок как факт; родня rt-7 (#539). Состав: TF-1 снять ЛОЖНОЕ «хук ломает merge» (мой баг в 3 местах, хук освобождает Merge*, проверено) — первым, иначе rt-5 чинит несуществующее; TF-2 валидация --pr (паттерн есть в task-closure-review); TF-3 gitignore pr-*-code-review; TF-4 archive-task --dry-run (молча заархивировал rt-8); TF-5 consilium warn до траты рана при повестке без ID (дыра в моём же rt-6); TF-6 инвентарь на ГЕНЕРАЦИЮ из package.json/skills/lib/githooks; TF-7 норма в скилл tooling-needs — обновлять грабли-раздел. Раскол TF-6/TF-7: генерируется инвентарь (253 рукой не удержать), пишется руками+обязательство только грабли (инсайт не генерится). Консилиум не нужен — канон готов, прецедент #433/#469.",
       "archiveNotes": "Все семь позиций доставлены: TF-2..TF-6 — PR #555 (748e81a0), TF-1 и TF-7 — PR #556 (a672384e). Инвентарь переведён на генерацию из источника (scripts/tooling-overview.mjs, yarn tooling:overview; позже --report→SCRIPTS_LIST в PR #812), archive-task получил --dry-run и отказ на неизвестный флаг, раздел рукописных граблей закреплён в AGENTS.md. Иссью #554 закрыть при task:close-github.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "membrana-device-build-profile",
