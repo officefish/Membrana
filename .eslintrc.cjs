@@ -89,5 +89,34 @@ module.exports = {
       files: ['**/lib/deviceBoardRuntimeController.ts', '**/lib/nodeRealtimeClient.ts'],
       rules: { 'no-restricted-syntax': 'off' },
     },
+    {
+      // Агентский тулинг: ESM-скрипты (#1264). До этого override любой
+      // `scripts/*.mjs` падал парсером («The keyword 'import' is reserved») —
+      // самая правимая часть репозитория не линтилась вообще.
+      files: ['scripts/**/*.mjs'],
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
+      env: { node: true, es2024: true },
+      extends: ['eslint:recommended'],
+      // Порог #1264: замер 2026-08-11 дал 133 находки в 66 файлах из 1105.
+      // Шесть накопивших долг правил переведены в warn (НЕ off: шум виден в
+      // каждом прогоне), рост запрещён храповиком `lint:scripts`
+      // (--max-warnings). Остальной recommended — error: чистые сегодня классы
+      // заперты. Долг гасится в #1264: warn → 0 → вернуть в error.
+      rules: {
+        // Та же конвенция, что в TS-оверрайдах выше: `_`-префикс — осознанно неиспользуемое.
+        'no-unused-vars': [
+          'warn', // 63
+          { argsIgnorePattern: '^_', caughtErrors: 'none', varsIgnorePattern: '^_' },
+        ],
+        'no-useless-escape': 'warn', // 55
+        'no-irregular-whitespace': 'warn', // 6
+        'no-regex-spaces': 'warn', // 5
+        'no-constant-condition': 'warn', // 2
+        'no-control-regex': 'warn', // 2
+      },
+    },
   ],
 };
