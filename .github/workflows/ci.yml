@@ -68,6 +68,11 @@ jobs:
       - name: Root scripts — политика путей и инварианты скриптов
         run: yarn test:scripts
 
+      # #1264: ESM-скрипты агентского тулинга под линтером. Ошибки блокируют;
+      # 133 замеренных находки (2026-08-11) держатся warn-храповиком — расти нельзя.
+      - name: Root scripts — ESLint (ratchet 133 warnings)
+        run: yarn lint:scripts
+
       - name: Мастерские — контракт, принадлежность, свежесть атласа (HOME_WORKSHOP)
         run: yarn validate:workshop && yarn check:workshop-ownership && yarn check:workshop-dependencies && yarn tooling:atlas --check
 
