@@ -27,7 +27,7 @@
     "scripts/lib/task-invariants.mjs": "1813edbb3f75fbf02bf67973e13fedf60643c668",
     "scripts/lib/task-readme-check.mjs": "07490f7c3ed2d4fab0fef88b1b7c503ddf37c464",
     "scripts/lib/task-registry.mjs": "d4cd907e832d3f27146204ff3ac10730256db32f",
-    "scripts/lib/task-tools.mjs": "e0d70928fe4be4018549221f8dfd4229d8f1024f",
+    "scripts/lib/task-tools.mjs": "387e8dbd9ade0a7db3b74db138d6a4e126650cb7",
     "scripts/lib/task-validity-links.mjs": "73c2463a78c7c43f1adfec88fcc006d630a9b5fe",
     "scripts/lib/task-validity.mjs": "624a2812312966b3727c76e9ede90a05bfd2311a",
     "scripts/lib/tasks-readme-engine.mjs": "3a45a41f5e17587bc54b85011eeacbeffa7c264b",
