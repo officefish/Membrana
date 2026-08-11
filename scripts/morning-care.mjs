@@ -17,6 +17,7 @@ import { loadDotEnv } from './_anthropic-env.mjs';
 // цепочка с фолбэком anthropic→openrouter→deepseek). Switch провайдера — через панель.
 import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 import { runMorningWiringGate } from './lib/morning-wiring.mjs';
+import { runNightReportGate } from './lib/night-report-gate.mjs';
 import {
   DEFAULT_BASE_REF,
   DEFAULT_MAX_BEHIND,
@@ -299,7 +300,19 @@ if (isMain) {
       console.log('[fail] morning-wiring STOP — остальная профилактика не запущена.');
       process.exitCode = 2;
     } else {
-      await runMorningCareBody({ cwd, noAnthropic });
+      // <!-- pin:START night-report-care -->
+      // #1293: ночной красный — блокер дня, не письмо. Кадр night-report
+      // (MANIFEST ritual-day, blocksMorningWhen) исполняется ЗДЕСЬ; отрезок
+      // запинен кадром — дрейф ловит auditPins.
+      const nightCode = runNightReportGate(cwd);
+      if (nightCode === 2) {
+        console.log('\n=== итог ===');
+        console.log('[fail] night-report STOP — утро не идёт дальше без разбора ночи.');
+        process.exitCode = 2;
+      } else {
+        await runMorningCareBody({ cwd, noAnthropic });
+      }
+      // <!-- pin:END night-report-care -->
     }
   }
 }
