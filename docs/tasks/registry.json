@@ -966,16 +966,16 @@
       "noIssueReason": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-04",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "Следующий шаг ревью 7.2: (1) поля executor+forecast+actual в one-shot-trail.jsonl (trail check остаётся рабочим, факт из диффа мердж-коммита); (2) глагол one-shot:trail brief 3-5 строк консистентного формата; (3) всплытие руками в акт Тарасова и предложение кандидатов — НЕ в утро/хендоф. Формат brief согласовать актом Тарасова до вкладывания. Запрещено: автоматика отправки, UI, правка формата шота T1-T8.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1845 (squash в main), review LGTM dd41045343dd; executor/forecast/actual в ленте, trail brief по акту Тарасова, дисциплина всплытия в ONE_SHOT_TRAIL.md",
       "githubIssueClosedAt": null,
       "insightId": "insight-one-shot-portfolio-surfacing"
     },
