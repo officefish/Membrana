@@ -1,0 +1,33 @@
+{
+  "sprintId": "s-queue-2026-08-11",
+  "segments": [
+    {
+      "cutBlockId": "b1-node-links-env",
+      "changedLines": 28
+    },
+    {
+      "cutBlockId": "b2-sprint-experience-seam",
+      "changedLines": 113
+    },
+    {
+      "cutBlockId": "b3-tests-container-imports",
+      "changedLines": 182
+    },
+    {
+      "cutBlockId": "b4-scripts-registry-wire",
+      "changedLines": 514
+    },
+    {
+      "cutBlockId": "b5-secret-inventory",
+      "changedLines": 248
+    },
+    {
+      "cutBlockId": "b6-leveling-out-path",
+      "changedLines": 59
+    },
+    {
+      "cutBlockId": "b7-agents-grabli",
+      "changedLines": 3
+    }
+  ]
+}
