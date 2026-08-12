@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `eslint-ratchet-single-source` | Порог ESLint-храповика живёт одним источником (package.json), ci.yml без копии числа | S | [`ESLINT_RATCHET_SINGLE_SOURCE_PROMPT.md`](../prompts/ESLINT_RATCHET_SINGLE_SOURCE_PROMPT.md) | [#1896](https://github.com/officefish/Membrana/issues/1896) |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-live-services` | #1303-C: LIVE_SERVICES, документация и monitoring | S | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
@@ -141,6 +140,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `eslint-ratchet-single-source` | Порог ESLint-храповика живёт одним источником (package.json), ci.yml без копии числа | 2026-08-12 | [`ESLINT_RATCHET_SINGLE_SOURCE_PROMPT.md`](../prompts/ESLINT_RATCHET_SINGLE_SOURCE_PROMPT.md) | #1896 (Issue открыт) | [карточка](./archive/eslint-ratchet-single-source.md) |
 | `worktrees-align-snapshot-guard` | worktrees:align: гард охвата до мутации и продолжение обхода после отказа | 2026-08-12 | [`WORKTREES_ALIGN_SNAPSHOT_GUARD_PROMPT.md`](../prompts/WORKTREES_ALIGN_SNAPSHOT_GUARD_PROMPT.md) | #1864 (Issue открыт) | [карточка](./archive/worktrees-align-snapshot-guard.md) |
 | `openrouter-default-model-unverified` | Дефолтная модель офиса живёт литералом в коде и никем не проверяется на живость | 2026-08-12 | [`OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md`](../prompts/OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md) | — | [карточка](./archive/openrouter-default-model-unverified.md) |
 | `fix-node-modules-links-1647` | Резолюция node_modules/@membrana/* в чужое дерево Membrana-grok: инвентарь симлинков и переустановка на своё дерево | 2026-08-12 | [`FIX_NODE_MODULES_LINKS_1647_PROMPT.md`](../prompts/FIX_NODE_MODULES_LINKS_1647_PROMPT.md) | — | [карточка](./archive/fix-node-modules-links-1647.md) |
