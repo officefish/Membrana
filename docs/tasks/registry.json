@@ -814,17 +814,17 @@
       "githubIssue": 1761,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-07",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
         "dynin"
       ],
       "notes": "Магистраль 07.08, прямой выбор владельца вне снимка (author=human). Обзор: decideTransition + 16 зубов + model PromoCode готовы, но домен не вызывает НИКТО — все 16 упоминаний из его же теста. Предмет — провод, не логика. Четыре развилки нарезки в #1761.",
-      "archiveNotes": null,
+      "archiveNotes": "Магистраль 12.08 отгружена: PR #1900 (сквош) — эндпойнт POST v1/membranes/me/tariff/promo-redemptions (b1, Ожегов: мембрана из сессии, TransitionOutcome дословно как публичный HTTP-контракт, 25 зубов, 12 причин различимо) + форма промокода в карточке тарифа кабинета (b2, Родченко: успех после ответа сервера + рефетч, словарь promoDenyText follower 1:1 с зубом полноты и fallback). Спринт membrana-local-sprint: план ратифицирован владельцем, гейт pass 2/2 honest_pair, прогноз↔исход hit 2/2 (100%). Долг вне спринта: rate-limit эндпойнта. DoD #1761 полный, Closes в PR.",
       "githubIssueClosedAt": null
     },
     {
