@@ -24,7 +24,10 @@ test('recordEveningPartnerDraft: пишет вечерний gate marker, digest
     { day: DAY, swallow: { ownerAck: true, draftDigest: 'old' } },
     { draftText: 'вечерний текст', draftFile: 'docs/comms/drafts/swallow-evening.md', today: DAY },
   );
-  assert.equal(state.day, DAY);
+  // ADR-0024 (swallow-own-moment): момент черновика — СВОЙ (swallow.day); state.day
+  // черновик больше не переписывает (входной унаследован спредом как день заморозки).
+  assert.equal(state.swallow.day, DAY);
+  assert.equal(state.day, DAY, 'входной state.day не переписан, а унаследован спредом');
   assert.equal(state.swallow.gate, 'evening:partner-swallow');
   assert.equal(state.swallow.draftFile, 'docs/comms/drafts/swallow-evening.md');
   assert.equal(state.swallow.ownerAck, false);
@@ -32,15 +35,20 @@ test('recordEveningPartnerDraft: пишет вечерний gate marker, digest
 });
 
 test('approveEveningPartnerDraft: без свежего draft даёт STOP-причины', () => {
-  const stale = approveEveningPartnerDraft({ day: '2026-07-29', swallow: { draftDigest: 'x' } }, DAY);
+  // ADR-0024 (swallow-own-moment): свежесть черновика читается из СВОЕГО момента swallow.day.
+  const stale = approveEveningPartnerDraft({ swallow: { day: '2026-07-29', draftDigest: 'x' } }, DAY);
   assert.equal(stale.ok, false);
-  assert.match(stale.blockedBy.join(' '), /day:/u);
+  assert.match(stale.blockedBy.join(' '), /черновик протух/u);
 
-  const missing = approveEveningPartnerDraft({ day: DAY, swallow: {} }, DAY);
+  const missing = approveEveningPartnerDraft({ swallow: { day: DAY } }, DAY);
   assert.equal(missing.ok, false);
   assert.match(missing.blockedBy.join(' '), /partner-swallow/u);
 
-  const borrowedMorning = approveEveningPartnerDraft({ day: DAY, swallow: { draftDigest: 'x' } }, DAY);
+  const legacyDayOnly = approveEveningPartnerDraft({ day: DAY, swallow: { draftDigest: 'x' } }, DAY);
+  assert.equal(legacyDayOnly.ok, false, 'Р4: общий day моментом ласточки не наследуется');
+  assert.match(legacyDayOnly.blockedBy.join(' '), /черновик протух/u);
+
+  const borrowedMorning = approveEveningPartnerDraft({ swallow: { day: DAY, draftDigest: 'x' } }, DAY);
   assert.equal(borrowedMorning.ok, false);
   assert.match(borrowedMorning.blockedBy.join(' '), /вечернюю дверь/u);
 });

@@ -85,6 +85,24 @@
             3
           ]
         },
+        "procedure-runs-digest": {
+          "script": "scripts/procedure-runs-digest.mjs --days 7 --daily",
+          "codes": {
+            "0": {
+              "bucket": "ok",
+              "meaning": "сводка пяти опор напечатана, датированный артефакт в docs/seanses/ записан"
+            },
+            "1": {
+              "bucket": "failure",
+              "meaning": "исключение чтения лент/записи артефакта (фс)"
+            },
+            "2": {
+              "bucket": "failure",
+              "meaning": "кривые аргументы шага — дефект манифеста, не данных"
+            }
+          },
+          "notes": "#1861 (п.1 #1626): читатель ленты журнала прогонов; ленты не мутирует, проблемы чтения печатает в сводке, а не кодом"
+        },
         "insight-drift": {
           "script": "scripts/insight-drift.mjs",
           "codes": {
@@ -104,6 +122,20 @@
           "findingExitCodes": [
             3
           ]
+        },
+        "scripts-registry": {
+          "script": "scripts/scripts-registry.mjs --report",
+          "codes": {
+            "0": {
+              "bucket": "ok",
+              "meaning": "реестр перегенерирован, снимок записан"
+            },
+            "1": {
+              "bucket": "failure",
+              "meaning": "регенерация не состоялась (ошибка чтения ФС/package.json) — noncritical, вечер едет дальше, дрейф догоняется следующим прогоном"
+            }
+          },
+          "notes": "b4 s-queue-2026-08-11 (#1265): шаг встал до ritual-artifacts, produces уезжает автозабором"
         },
         "ritual-artifacts": {
           "script": "scripts/ritual-artifacts-commit.mjs",

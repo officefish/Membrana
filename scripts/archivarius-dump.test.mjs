@@ -9,11 +9,12 @@ import {
   buildManifest,
   incompleteCollections,
   isArtifactCandidate,
-  parseDbInventory,
+  inventoryFromListing,
   parseMongodVersion,
   resolveConfig,
   tailLines,
 } from './archivarius-dump.mjs';
+import { DB_NAME } from './lib/archive-inventory.mjs';
 import {
   DEFAULT_RETENTION_POLICY,
   INVENTORY_SOURCES,
@@ -51,6 +52,8 @@ const seam = (over = {}) =>
     stderr: STDERR_OK,
     sha256: 'a'.repeat(64),
     sizeBytes: 4_194_304,
+    // Опись с v2 приносит вызывающий — из конвейера дома, не из stderr.
+    dbInventory: inventoryFromListing([{ name: 'runs', count: 1 }, { name: 'spans', count: 5000 }]),
     ...over,
   });
 
@@ -66,26 +69,15 @@ test('версия не прочиталась — это null, а не дога
   }
 });
 
-test('опись берётся из stderr самого дампа — она описывает ЭТОТ артефакт', () => {
-  assert.deepEqual(parseDbInventory(STDERR_OK), [
-    { db: 'admin', collection: 'system.version', documentCount: 1 },
-    { db: 'membrana_archivarius', collection: 'runs', documentCount: 1 },
-    { db: 'membrana_archivarius', collection: 'spans', documentCount: 5000 },
+test('опись — из содержимого артефакта: маппинг листинга конвейера, db константой дома', () => {
+  // Разбора stderr больше нет (#1814 закрыт): обратные кавычки mongodump и точки в именах —
+  // не наша забота, форма листинга — контракт НАШЕГО скрипта снятия (lib/archive-inventory).
+  assert.deepEqual(inventoryFromListing([{ name: 'spans', count: 5000 }, { name: 'runs', count: 1 }]), [
+    { db: DB_NAME, collection: 'spans', documentCount: 5000 },
+    { db: DB_NAME, collection: 'runs', documentCount: 1 },
   ]);
-  assert.equal(parseDbInventory('единственный документ: done dumping db.c (1 document)')[0].documentCount, 1);
-  assert.deepEqual(parseDbInventory('ничего не выгружено'), [], 'пустая опись — это состояние, а не сбой разбора');
-});
-
-test('обратные кавычки mongodump не попадают в имена — их поймал живой прогон, не воображение', () => {
-  const [row] = parseDbInventory('done dumping `membrana_archivarius.spans` (5000 documents)');
-  assert.equal(row.db, 'membrana_archivarius', 'кавычка в имени базы делает опись нечитаемой машиной');
-  assert.equal(row.collection, 'spans');
-  // Форма без кавычек (старые mongodump) обязана остаться читаемой: разбор расширен, а не заменён.
-  const [plain] = parseDbInventory('done dumping membrana_archivarius.spans (5000 documents)');
-  assert.deepEqual(plain, { db: 'membrana_archivarius', collection: 'spans', documentCount: 5000 });
-  // Точка внутри имени коллекции — не разделитель: база кончается на ПЕРВОЙ точке.
-  const [dotted] = parseDbInventory('done dumping `admin.system.version` (1 document)');
-  assert.deepEqual(dotted, { db: 'admin', collection: 'system.version', documentCount: 1 });
+  assert.deepEqual(inventoryFromListing([]), [], 'пустой листинг — состояние, а не сбой');
+  assert.deepEqual(inventoryFromListing(null), [], 'отсутствие листинга не валит маппинг — пригодность судит политика');
 });
 
 test('четвёртый дефект: начатая и не дописанная коллекция видна, хотя код возврата нулевой', () => {
@@ -98,15 +90,19 @@ test('четвёртый дефект: начатая и не дописанна
   assert.deepEqual(incompleteCollections(STDERR_OK), [], 'полный дамп неполноты не заявляет');
 
   // Именно тот случай, который выглядит успехом: exit=0, опись непуста, а копия неполна.
+  // Гард протокола с v2 живёт отдельным полем — источник описи он не подменяет.
   const m = seam({ stderr: oborvan });
   assert.equal(m.mongodumpExitCode, 0);
   assert.ok(m.dbInventory.length > 0);
+  assert.deepEqual(m.protocolChecks.incompleteCollections, ['membrana_archivarius.spans']);
   assert.equal(isFitForRetention(m), false, 'частичная неполнота обязана отбраковывать артефакт');
 });
 
-test('источник описи назван полем — временный, но не подразумеваемый', () => {
-  assert.equal(seam().inventorySource, 'mongodump-stderr');
+test('источник описи назван полем — с v2 это содержимое артефакта, и только оно', () => {
+  assert.equal(seam().inventorySource, 'archive-contents');
   assert.ok(INVENTORY_SOURCES.includes(seam().inventorySource), 'источник вне закрытого списка политика не примет');
+  const forged = { ...seam(), inventorySource: 'mongodump-stderr' };
+  assert.equal(isFitForRetention(forged), false, 'v2 со stderr-источником — возврат долга, политика отвергает');
 });
 
 test('шов исполнителя и политики сходится: собранный манифест политика принимает', () => {
@@ -122,14 +118,16 @@ test('шов исполнителя и политики сходится: соб
 });
 
 test('упавший mongodump политика отбраковывает — но манифест всё равно собирается', () => {
-  const m = seam({ exitCode: 1, stderr: `${STDERR_OK}\nFailed: error dumping metadata: connection refused` });
+  // Упавший артефакт в стенд не накатывается — описи нет, и манифест честно несёт пустую:
+  // след с причиной, а не тишина и не выдумка из лога.
+  const m = seam({ exitCode: 1, stderr: `${STDERR_OK}\nFailed: error dumping metadata: connection refused`, dbInventory: [] });
   assert.equal(isFitForRetention(m), false, 'exitCode≠0 не может считаться копией');
   assert.match(m.mongodumpStderrTail, /connection refused/u, 'причина обязана сохраниться для человека');
-  assert.ok(m.dbInventory.length > 0, 'частично выгруженное остаётся описанным — след, а не тишина');
+  assert.deepEqual(m.dbInventory, [], 'опись упавшего дампа не снимается — пустота названа, не подделана');
 });
 
 test('пустой дамп живой базы отличим от полного — иначе «копия есть» ничего не значит', () => {
-  const m = seam({ stderr: 'writing... \nno collections to dump' });
+  const m = seam({ dbInventory: inventoryFromListing([]) });
   assert.deepEqual(m.dbInventory, []);
   assert.equal(isFitForRetention(m), false);
 });

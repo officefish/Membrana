@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, realpathSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 
 import { groupOf, normalizeCatalog, planTestRun } from './test-scripts-plan.mjs';
@@ -63,23 +63,120 @@ export function readImportSpecs(source) {
   return specs;
 }
 
-function resolveImport(repoRoot, importerRel, spec) {
-  if (!spec.startsWith('.')) return null;
-  const importerDir = dirname(join(repoRoot, importerRel));
-  const base = resolve(importerDir, spec);
-  const candidates = [
+/** Кандидаты файла для базового пути: сам путь, расширения, index.* — один список правды. */
+const RESOLVE_EXTS = ['.mjs', '.js', '.ts', '.tsx'];
+function fileCandidates(base) {
+  return [
     base,
-    `${base}.mjs`,
-    `${base}.js`,
-    `${base}.ts`,
-    join(base, 'index.mjs'),
-    join(base, 'index.js'),
-    join(base, 'index.ts'),
+    ...RESOLVE_EXTS.map((ext) => `${base}${ext}`),
+    ...RESOLVE_EXTS.map((ext) => join(base, `index${ext}`)),
   ];
+}
+
+/**
+ * Кандидат засчитывается только ФАЙЛОМ (b3): existsSync на голом base отдавал
+ * каталог, когда `./ui` совпадал с директорией, — ребро вело в каталог, и граф
+ * нёс невозможный узел. Дефект жил и до b3, всплыл зубом на index.tsx.
+ */
+function firstFileOf(candidates) {
   for (const c of candidates) {
-    if (existsSync(c)) return slash(relative(repoRoot, c));
+    if (existsSync(c) && statSync(c).isFile()) return c;
   }
   return null;
+}
+
+/**
+ * Карта воркспейсов `@membrana/<имя> → каталог пакета` по globs из корневого
+ * package.json (b3 s-queue-2026-08-11): до неё resolveImport был слеп ко ВСЕМ
+ * не-относительным спекам — рёбра `@membrana/*` в граф не попадали, и селектор
+ * «по изменившимся» молча недобирал зависимые тесты. Кэш на repoRoot: карта
+ * строится один раз на прогон.
+ */
+/**
+ * КОНТРАКТ (названные ограничения, разбор Дынина 11.08): поддержаны формы глоба
+ * «dir/*» и буквальный путь — иных в дереве нет; поле `exports` пакета
+ * игнорируется (граф про ИСХОДНИКИ, не про рантайм-резолюцию); dist-layout не
+ * перебирается. Кандидаты в развитие: предупреждение на неподдержанный глоб,
+ * мемоизация (fromDir, spec).
+ */
+const workspaceMapCache = new Map();
+export function workspacePackageDirs(repoRoot) {
+  // Ключ кэша каноничен: realpath снимает двойной кэш на одно репо при запуске
+  // через симлинк/из подкаталога.
+  try {
+    repoRoot = realpathSync(repoRoot);
+  } catch {
+    // каталога нет — пусть дальше упадёт естественно на чтении package.json
+  }
+  const cached = workspaceMapCache.get(repoRoot);
+  if (cached) return cached;
+  const map = new Map();
+  let globs = [];
+  try {
+    globs = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8')).workspaces ?? [];
+  } catch {
+    globs = [];
+  }
+  for (const glob of globs) {
+    // Формы в дереве: «dir/*» и буквальный путь. Иных (glob внутри сегмента) нет.
+    const dirs = glob.endsWith('/*')
+      ? (() => {
+          const parent = join(repoRoot, glob.slice(0, -2));
+          if (!existsSync(parent)) return [];
+          return readdirSync(parent, { withFileTypes: true })
+            .filter((e) => e.isDirectory())
+            .map((e) => join(parent, e.name));
+        })()
+      : [join(repoRoot, glob)];
+    for (const dir of dirs) {
+      const pkgFile = join(dir, 'package.json');
+      if (!existsSync(pkgFile)) continue;
+      try {
+        const name = JSON.parse(readFileSync(pkgFile, 'utf8')).name;
+        if (typeof name === 'string' && name.length > 0 && !map.has(name)) map.set(name, dir);
+      } catch {
+        // битый package.json пакета — не наша находка, пакет просто не резолвится
+      }
+    }
+  }
+  workspaceMapCache.set(repoRoot, map);
+  return map;
+}
+
+function resolveImport(repoRoot, importerRel, spec) {
+  let base = null;
+  if (spec.startsWith('.')) {
+    base = resolve(dirname(join(repoRoot, importerRel)), spec);
+  } else {
+    // Воркспейс-спек: `@scope/pkg` или `@scope/pkg/подпуть` (b3). Прочие голые
+    // спеки (node:*, сторонние пакеты) графу по-прежнему не рёбра.
+    const m = spec.match(/^(@[^/]+\/[^/]+)(?:\/(.*))?$/u);
+    const pkgDir = m ? workspacePackageDirs(repoRoot).get(m[1]) : undefined;
+    if (pkgDir === undefined) return null;
+    if (m[2]) {
+      base = join(pkgDir, m[2]);
+    } else {
+      // Голое имя пакета: main из package.json, иначе src/index.* / index.*.
+      let main = null;
+      try {
+        main = JSON.parse(readFileSync(join(pkgDir, 'package.json'), 'utf8')).main ?? null;
+      } catch {
+        main = null;
+      }
+      const bases = [
+        ...(typeof main === 'string' && main.length > 0 ? [join(pkgDir, main)] : []),
+        join(pkgDir, 'src', 'index'),
+        join(pkgDir, 'index'),
+      ];
+      for (const b of bases) {
+        const hit = firstFileOf(fileCandidates(b));
+        if (hit !== null) return slash(relative(repoRoot, hit));
+      }
+      return null;
+    }
+  }
+  const hit = firstFileOf(fileCandidates(base));
+  return hit === null ? null : slash(relative(repoRoot, hit));
 }
 
 export function buildImportGraph(repoRoot, files = discoverSourceFiles(repoRoot)) {

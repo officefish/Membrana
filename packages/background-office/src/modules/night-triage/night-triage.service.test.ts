@@ -38,6 +38,11 @@ function makeService(over: {
   landedFiles?: string[] | null;
   /** Содержимое посаженного отчёта (для отпечатка). */
   landedReport?: string;
+  /**
+   * Гейт утра (#1445 п.5). По умолчанию магистраль = ghost-a: срез REGISTRY несёт её
+   * ghost'ом → промоут-гейт даёт кандидата, и старые тесты PR-пути остаются про своё.
+   */
+  gatesState?: string | null;
 }) {
   const config = {
     NIGHT_TRIAGE_ENABLED: over.enabled ?? true,
@@ -53,6 +58,11 @@ function makeService(over: {
   const github = {
     fetchTextFile: vi.fn(async (path: string) => {
       if (path.startsWith(`${REPORT_DIR}/`)) return over.landedReport ?? null;
+      if (path === 'docs/tasks/morning-gates-state.json') {
+        return over.gatesState === undefined
+          ? JSON.stringify({ magistral: 'ghost-a', day: '2026-07-12' })
+          : over.gatesState;
+      }
       return over.registry === undefined ? REGISTRY : over.registry;
     }),
     listDirectoryFiles: vi.fn(async () => over.landedFiles ?? null),
@@ -306,5 +316,64 @@ describe('NightTriageService.run — порог публикации', () => {
     });
     await svc.run(NOW);
     expect(createPR).toHaveBeenCalled();
+  });
+
+  // ── Промоут-гейт (#1445 п.2): PR ⇔ есть кандидат ────────────────────────────────
+
+  it('кандидатов нет → PR НЕ создан, причина названа в отчёте прогона (норма B10)', async () => {
+    // Магистраль дня не пересекает срез, orphan-доля ниже системной (1 из 3 активных).
+    const registry = JSON.stringify({
+      tasks: [
+        { id: 'ghost-a', status: 'active', githubIssue: 47, createdAt: '2026-05-01' },
+        { id: 'arch-sib', status: 'archived', githubIssue: 47 },
+        { id: 'orphan-b', status: 'active', githubIssue: null, linearId: null, createdAt: '2026-05-01' },
+        { id: 'tracked-c', status: 'active', githubIssue: 9, createdAt: '2026-05-01' },
+      ],
+    });
+    const { svc, createPR, claudeAsk } = makeService({
+      registry,
+      llm: true,
+      gatesState: JSON.stringify({ magistral: 'вне-среза' }),
+    });
+    const r = await svc.run(NOW);
+    expect(r.skipped).toBe(true);
+    expect(r.reason).toContain('cards: 0');
+    expect(r.reason).toContain('PR не открывается');
+    expect(r.reason).toContain('стык с магистралью');
+    expect(createPR).not.toHaveBeenCalled();
+    // Гейт стоит ДО нарратива: LLM не жжётся ради отчёта, который не поедет.
+    expect(claudeAsk).not.toHaveBeenCalled();
+  });
+
+  it('подложенный кандидат (магистраль дня в срезе) → PR открыт, отчёт несёт витрину', async () => {
+    const { svc, createPR } = makeService({}); // дефолтный гейт: magistral = ghost-a
+    const r = await svc.run(NOW);
+    expect(r.ok).toBe(true);
+    expect(createPR).toHaveBeenCalledTimes(1);
+    const call = createPR.mock.calls[0][0] as { content: string; body: string };
+    expect(call.body).toContain('Cards: 1');
+    expect(call.content).toContain('## Кандидаты в карточку инсайта');
+    expect(call.content).toContain('magistral-in-triage-ghost-a');
+    expect(call.content).toContain('## Стык с магистралью дня');
+    expect(call.content).toContain('insight_yield = 1/1');
+    expect(call.content).toContain('cards: 1 · drafts_closed: 0');
+  });
+
+  it('гейт утра не прочитан → стык «не проверен» словом, кандидат только по системной доле', async () => {
+    // 3 orphan из 4 активных (75%) — системная находка даёт кандидата и без магистрали.
+    const registry = JSON.stringify({
+      tasks: [
+        { id: 'o-1', status: 'active', createdAt: '2026-05-01' },
+        { id: 'o-2', status: 'active', createdAt: '2026-05-01' },
+        { id: 'o-3', status: 'active', createdAt: '2026-05-01' },
+        { id: 'tracked-c', status: 'active', githubIssue: 9, createdAt: '2026-05-01' },
+      ],
+    });
+    const { svc, createPR } = makeService({ registry, gatesState: null });
+    const r = await svc.run(NOW);
+    expect(r.ok).toBe(true);
+    const call = createPR.mock.calls[0][0] as { content: string };
+    expect(call.content).toContain('orphan-share-systemic');
+    expect(call.content).toContain('стык не проверен');
   });
 });

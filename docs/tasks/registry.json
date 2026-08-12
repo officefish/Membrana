@@ -1,6 +1,104 @@
 {
   "tasks": [
     {
+      "id": "ritual-runner-unknown-flags",
+      "title": "Раннер вечерней цепочки: неизвестный флаг = отказ, не живой прогон",
+      "promptPath": "docs/prompts/RITUAL_RUNNER_UNKNOWN_FLAGS_PROMPT.md",
+      "githubIssue": 1867,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-11",
+      "archivedAt": "2026-08-11",
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "",
+      "archiveNotes": "PR #1869 (squash 83f57490 в main, через task:pr-land после конфликта registry), review LGTM; гард KNOWN_FLAGS до открытия журнала, exit 2 + usage; регрессионный тест 2/2; Issue #1867 закрыт Closes",
+      "githubIssueClosedAt": "2026-08-11"
+    },
+    {
+      "id": "worktrees-align-snapshot-guard",
+      "title": "worktrees:align: гард охвата до мутации и продолжение обхода после отказа",
+      "promptPath": "docs/prompts/WORKTREES_ALIGN_SNAPSHOT_GUARD_PROMPT.md",
+      "githubIssue": 1864,
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-11",
+      "archivedAt": "2026-08-12",
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin"
+      ],
+      "notes": "Заведена по слову владельца 11.08 из живого прогона --apply (карточка worktrees-align, #1738): выровнялось 1 дерево из 10. Два дефекта: (1) wip-snapshot коммитит, потом сверяет охват — в главном чекауте остался коммит f798b4d9; список согласования показывает каталоги, git add раскрывает содержимое; (2) исключение рвёт обход — остальные деревья не обрабатываются. Вещдоки в иссью.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "sprint-cut-teeth-live-2026-08-11",
+      "title": "Зубы формы cut-плана на живых модулях: переход с дублёров, снос stubs/",
+      "promptPath": "docs/prompts/SPRINT_CUT_TEETH_TO_LIVE_MODULES_PROMPT.md",
+      "githubIssue": 1855,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-11",
+      "archivedAt": "2026-08-11",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin"
+      ],
+      "notes": "Взято 11.08 по слову владельца «с конца делаем по очереди» — строка 4 остатка тулинга. Условие долга признано наступившим: первый полный чистый прогон живой петли опыта 11.08 (прогноз cut-1 → гейт 7/7 → исход cut-2 → архив персоны, PR #1849). Исполняет карточку-долг sprint-cut-teeth-to-live-modules.",
+      "archiveNotes": "Спринт прожит: PR #1857 merged (1a42e21d), иссью #1855 закрыто мерджем. Два блока по ратифицированной нарезке (перерезка до ратификации по zones_overlap), gate 2/2 honest_pair, находок 0. OPEN-паспорт не заводился (S-объём, два блока) — след: docs/sprint/cut/ + trail.",
+      "githubIssueClosedAt": "2026-08-11"
+    },
+    {
+      "id": "s-queue-2026-08-11",
+      "title": "S-очередь дня 11.08: семь S-строк живого остатка тулинг-ревизии",
+      "promptPath": "docs/prompts/S_QUEUE_2026_08_11_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "очередь S-хвостов хендофа 11.08; след — реестр + спринт-прогон (прецедент s-queue-tail-2026-08-10)",
+      "linearId": null,
+      "size": "S",
+      "status": "archived",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-11",
+      "archivedAt": "2026-08-11",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "Слово владельца 11.08 «делаем сначала s». Маршрут — спринт по прецеденту 10.08: 7 строк через шоты = предсказуемый красный анти-цепочки (≤3 выстрела/8 файлов/200 строк за 7 суток), церемония не прогоняется. Строки: fix-node-modules-links-1647, fix-sprint-experience-dead-ends, tests-container-cross-package-imports, friction6-hygiene-notes, friction6-secret-inventory, leveling-snapshot-out-path, notes-regex-cyrillic-translit",
+      "archiveNotes": "Спринт прожит: PR #1849 merged (6e4e1d84). Семь блоков по ратифицированной нарезке (v1+v2 с recut-актами), gate pass 7/7 honest_pair, прогноз↔исход miss честно (6/7, b4 раздут снимком — класс 10.08), запись рода cut-2 живым путём (первый боевой прогон фикса b2). Шесть карточек строк закрыты архивом со свидетельствами; fix-node-modules-links-1647 остаётся active с машинным blocked-by-env. OPEN.md: docs/local-sprint/s-queue-2026-08-11/",
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "dump-inventory-from-archive",
+      "title": "Опись дампа читается с диска: inventorySource archive-contents вместо разбора stderr mongodump",
+      "promptPath": "docs/prompts/DUMP_INVENTORY_FROM_ARCHIVE_PROMPT.md",
+      "githubIssue": 1814,
+      "linearId": null,
+      "size": "M",
+      "status": "archived",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-10",
+      "archivedAt": "2026-08-10",
+      "leadPersona": "tarasov",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": "Спринт прожит целиком: PR #1837 merged (8a48db0b), #1814 закрыт. Манифест v2, опись из содержимого артефакта единым конвейером lib/archive-inventory; живая приёмка на proof-стенде (LGTM tarasov), дрилл подтвердил откат. Гейт 4/4 honest_pair, прогноз↔исход hit. OPEN.md: docs/local-sprint/dump-inventory-from-archive/",
+      "githubIssueClosedAt": "2026-08-10"
+    },
+    {
       "id": "dreams-models-liveness",
       "title": "Зуб снов читает настоящий реестр; живость моделей проверяется ночью, а не руками",
       "promptPath": "docs/prompts/DREAMS_MODELS_LIVENESS_PROMPT.md",
@@ -49,16 +147,16 @@
       "noIssueReason": "условие LGTM тимлида по PR #1833; долг мостика sprint-experience-dead-ends-after-recut (detector, 10.08); файл был вне зоны спринта s-queue-tail",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-10",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "Закрыто спринтом s-queue-2026-08-11 b2, PR #1849 (6e4e1d84): константа пути ленты у рода (гейт реэкспортирует), nextForecastSeq по ленте на живом пути, дефолт seq=1 снят по разбору Дынина; фикс сработал первым боевым прогоном — исход cut-2 записан вместо молчаливого проглатывания. Зубы: реэкспорт ===, рост seq, изоляция окон, бросок без seq.",
       "githubIssueClosedAt": null
     },
     {
@@ -69,15 +167,15 @@
       "noIssueReason": "класс #1647; условие tarasov при штампе шота 10.08 — карточка вместо немедленной починки; вещдоки в docs/audit/typecheck-verdict-2026-08-10.md и прецеденте детекторов 10.08",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-10",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
       ],
-      "notes": "",
+      "notes": "[machine] blocked-by-env: docs/evidence/env-symlink-probe-2026-08-11.json (env-symlink-probe/1, решение владельца 11.08, условие переоткрытия внутри).",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
@@ -89,17 +187,17 @@
       "noIssueReason": "S-очередь дня по слову владельца; маршрут спринт — честный отказ предиката шота (capability_chaining, вещдок в прецеденте отказа); прецедент маршрута 04.08 sprint-dictionary-to-lib",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-10",
-      "archivedAt": null,
+      "archivedAt": "2026-08-10",
       "leadPersona": "tarasov",
       "supportPersonas": [
         "dynin",
         "ozhegov"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "Спринт прожит: PR #1833 merged (018c9e75). Вердикт долга typecheck (docs/audit/typecheck-verdict-2026-08-10.md), ADR-0026 ACCEPTED, гейт обязательности записи прогноза в execution-gate; долг мостика forecast-record-step-optional repaid. Гейт 3/3 honest_pair, исход miss (b3 406>400). OPEN.md: docs/local-sprint/s-queue-tail-2026-08-10/",
       "githubIssueClosedAt": null
     },
     {
@@ -110,16 +208,16 @@
       "noIssueReason": "дефект найден по ходу спринта vitest-two-tier-gate; иссью заводится при взятии в работу",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-10",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "Найдено 10.08 при разборе соседнего корпуса. scripts/lib/tests-container.mjs:66 — resolveImport выходит на первом же НЕ-относительном спеке (if (!spec.startsWith('.')) return null), поэтому рёбра @membrana/* между пакетами графу невидимы. Плюс .tsx попадает в exts у discoverSourceFiles, но кандидата на резолв не имеет (есть .mjs/.js/.ts и index.*, .tsx нет). Следствие: setup gate корпуса scripts недобирает зависимости через границу пакета и через .tsx — молча, ровно тот класс, против которого написано условие честности ADR-0018. На vitest-ярусе обойдено иначе: там граф держит turbo (lib/vitest-gate-scope.mjs), своего второго графа нет.",
-      "archiveNotes": null,
+      "archiveNotes": "Закрыто спринтом s-queue-2026-08-11 b3, PR #1849 (6e4e1d84): workspacePackageDirs по глобам (40 пакетов, realpath-ключ), resolveImport видит @scope/pkg[/подпуть] и .tsx/index.tsx, попутно снят дефект «ребро в каталог» (firstFileOf). Замер: рёбра scripts→пакеты 0→11, всего 1490; зубы 8.",
       "githubIssueClosedAt": null,
       "parentEpic": "tests-container"
     },
@@ -185,7 +283,7 @@
       ],
       "notes": "Выделено из #1714 08.08 по разбору Ожегова: бэкап = дамп + верифицированное восстановление; без второго это mongo-dump-artifact. Блокируется карточкой archivarius-mongo-dump: проверять нечего, пока нечего восстанавливать. До закрытия ЭТОЙ карточки страховки нет — есть артефакт неизвестной пригодности.",
       "archiveNotes": "Влито PR #1821 (c41637df, 09.08), иссью #1809 закрыто мерджем. Живой прогон подтвердил восстановление (5002 документа), обратная проверка — порча одного документа при неизменном счёте даёт CONTENT_MISMATCH и exit 1. Пара «дамп + верифицированный откат» полна: страховка есть. Ревью нашло P0 — ядро уходило в git бинарным из-за нулевого байта, 224 строки были не видны; починено поэлементным сравнением.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-10"
     },
     {
       "id": "archivarius-mongo-dump",
@@ -205,7 +303,7 @@
       ],
       "notes": "Остаток #1714 после объявления сервиса в манифесте (PR #1747, 06.08). Обзор «что уже есть»: бэкапа нет никакого — ноль глаголов backup/dump/restore по репозиторию. Пять развилок нарезки в промпте. Аутентификация Mongo вне предмета — отдельная иссью. Серверная зона: шотом нельзя, исполнение под owner-гейтом. ПЕРЕИМЕНОВАНА 08.08 по разбору Ожегова: «бэкап = дамп + верифицированное восстановление; без второго это mongo-dump-artifact, а не backup». Имя не должно обещать страховку, когда вещь даёт артефакт. Проверка восстановления — отдельная карточка archivarius-mongo-restore-drill.",
       "archiveNotes": "Влито PR #1815 (f30c4372, 09.08): политика отдельно от исполнителя, живой прогон нашёл четыре дефекта. Иссью #1714 закрыто мерджем. Страховки ещё НЕТ: восстановление — отдельная карточка archivarius-mongo-restore-drill (#1809), пара «дамп + верифицированный откат» пока неполна.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-10"
     },
     {
       "id": "review-diff-explicit-base",
@@ -214,18 +312,18 @@
       "githubIssue": 1771,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
         "dynin"
       ],
       "notes": "План ратифицирован владельцем 08.08. Дефект B (в вердикте нет базы) воспроизводится всегда, дефект A (кэш gh pr diff) 08.08 не воспроизвёлся на трёх PR — приёмка A синтетикой, не живым прогоном.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "Закрыто PR #1807 (68ba1d32): дифф в режиме --pr берётся из источника с явной базой (scripts/lib/review-diff-source.mjs), merge-base попал в артефакт ревью и в маркер вердикта полем base:, старые маркеры без базы гейт по-прежнему читает. Иссью #1771 закрыта 08.08.",
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "tariff-concurrent-move-reason",
@@ -638,10 +736,10 @@
       "noIssueReason": "наследник ADR-0024; иссью #1764 занята карточкой delivery-predicates-honest",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-07",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "angelina"
@@ -658,10 +756,10 @@
       "noIssueReason": "удостоверение — ADR-0024 (ACCEPTED 07.08); иссью #1764 уже привязана к карточке delivery-predicates-honest, дублировать нельзя",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-07",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
@@ -677,18 +775,18 @@
       "githubIssue": 1764,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-07",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin",
         "dynin"
       ],
       "notes": "Строки 2,3,4 десятки 07.08 — один класс: предикат смотрит не на то множество/момент. Обзор в #1764: ожидаемые контексты УЖЕ объявлены в branch-protection-policy.json; одно поле day на два гейта; pr-land протухает свой же вердикт шагом merge+push. Правило «вердикт привязан к SHA» НЕ трогать — оно несущее.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "Блоки A (rollup-vs-declared) и C (pr-land-order) доставлены PR #1765 (9abf5084): pr:wait сверяет ролап с объявленным в branch-protection-policy.json (род incomplete отдельно от running), pr-land не подрывает свой вердикт (гейт свежести в lib/task-pr-land.mjs). Блок B вынут ратифицированной нарезкой в ADR-0024 (ACCEPTED 07.08) и несётся карточками morning-gates-two-moments / swallow-own-moment. Иссью #1764 закрыть при вечернем task:close-github.",
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "tariff-promo-server-wiring",
@@ -736,15 +834,15 @@
       "githubIssue": 1705,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-06",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "Строка 9 десятки 06.08. Шотом не прошло (capability_chaining), спринт ратифицирован владельцем 13:42Z.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "сделана 06.08 тем же днём: lazyCloseScope обязателен без умолчания (scripts/lib/procedure-run-journal.mjs:320-335), канон области в docs/procedure-runs/README.md §«Ленивое закрытие и его ОБЛАСТЬ», прогон docs/local-sprint/lazy-close-scope/OPEN.md; промпт сам несёт «Статус: исполнено спринтом в день постановки»",
+      "githubIssueClosedAt": "2026-08-06T15:13:04Z"
     },
     {
       "id": "worktrees-align",
@@ -753,18 +851,18 @@
       "githubIssue": 1738,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-06",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
         "dynin"
       ],
       "notes": "Action item прецедента 2026-07-24-align-all-worktrees-to-main. Обзор «что уже есть» — в теле #1738. Вне предмета: авто-разрешение конфликтов.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "Живой мутирующий прогон --apply прожит 11.08 под owner-гейтом (слово владельца) — поведение прибора доказано по существу: Membrana-archivarius выровнено ff на 168 коммитов, registry-merge-driver слил реестр союзом (1096 карточек) и назвал два неслияемых случая словами, четыре конфликтных дерева получили ОТКАТ merge с поимённым списком файлов — чужая работа не потеряна нигде. Массовая задача не решена: выровнялось 1 дерево из 10 из-за двух дефектов прибора — гард охвата стоит после коммита (в главном чекауте остался f798b4d9, по слову владельца оставлен) и исключение рвёт обход. Дефекты вынесены отдельной карточкой worktrees-align-snapshot-guard (#1864) по слову владельца. Иссью #1738 закрыть при task:close-github.",
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "review-honesty",
@@ -853,14 +951,14 @@
       "noIssueReason": "пересборка существующего PR #1613, свой номер у PR",
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-04",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "Ревизия PR 04.08 (membrana-pr-audit, слово владельца — весь пакет): контент #1613 живой и непокрытый — недостающее звено ADR-0021 (ACCEPTED 01.08): procedureKind в docs/procedures/registry.json (0 вхождений при 23 записях), контракт docs/procedures/EXECUTION_PROCEDURE.md, контейнер процедуры adr, зуб validateProcedure. Ствол уже свесил провод: mintlify-workflow-docs рендерит procedureKind, которого нет. Ветка мертва: база влита сквошем (#1607), 82 позади, 10 конфликтов (в т.ч. append-only лента 2026-08-01 — переносить НЕЛЬЗЯ, дописывать новой записью). Маршрут: yarn pr:recreate 1613 от свежего main; procedureKind применить ко ВСЕМ актуальным записям реестра, проекции (REGISTRY.md, ATLAS.md, containers.mdx) регенерить скриптами; ревью-свидетельства v1→v2 из PR переносимы. Старый PR закрыть superseded после мерджа пересборки.",
-      "archiveNotes": null,
+      "archiveNotes": "перекрыта PR #1756 (squash 6847255c): «контракт EXECUTION_PROCEDURE + procedureKind — пересборка #1613 на свежем стволе» — дословно предмет карточки; docs/procedures/EXECUTION_PROCEDURE.md в стволе, procedureKind живёт в procedures/registry.json; маркер хендофа 12.08 «контракт отсутствует» опровергнут фактом",
       "githubIssueClosedAt": null
     },
     {
@@ -901,40 +999,40 @@
       "id": "procedure-run-journal-panel-reader",
       "title": "Витрина пяти опор в panel.mmbrn.tech — первый читатель ленты журнала прогонов",
       "promptPath": "docs/prompts/PROCEDURE_RUN_JOURNAL_PANEL_READER_PROMPT.md",
-      "githubIssue": null,
-      "noIssueReason": "кандидат из горизонта HANDOFF 03.08 и #1626 п.1; issue заведём при взятии",
+      "githubIssue": 1861,
+      "noIssueReason": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-04",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "rodchenko",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "Читатель ленты docs/procedure-runs/trail/ — недостающая половина #1626: производители построены и с 04.08 реально пишут (утро pass, первый прогон шота), но ленту не открывает ни один автомат. Витрина = агрегат по пяти опорам (local-sprint, ritual-day, ritual-evening, meeting, one-shot): счёт прогонов, исходы pass/fail/blocked, сироты, трения. Предусловие развёртывания — узел деплоя (survey 03.08 П1). До витрины допустим дешёвый первый читатель: блок в вечерней хронике/хендофе. Кристалл reader-before-next-carrier.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "PR #1863 (squash d56094d1 в main), review LGTM; ядро+CLI procedure-runs-digest, первый автомат — шаг вечерней цепочки (карта exit-кодов дописана, зуб #622); живая сводка показала 10 fail/10 сирот у ritual-day за 11 дней; п.1 #1626 закрыт читателем; панель — вторым PR (узел деплоя), Issue #1861 закрыт",
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "corpus-track-acceptance-predicate",
       "title": "Приёмный предикат корпуса «один тракт — два класса»: чистая функция годности трека по спеке инсайта",
       "promptPath": "docs/prompts/CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md",
-      "githubIssue": null,
-      "noIssueReason": "кандидат из горизонта HANDOFF 03.08; issue заведём при взятии в работу",
+      "githubIssue": 1884,
+      "noIssueReason": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-04",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "dynin",
       "supportPersonas": [
         "kuryokhin"
       ],
       "notes": "Кристалл reader-before-next-carrier: предикат ДО записи корпуса, не после. Спека — 7 полей трека из инсайта (adopted 7.0): id записи-источника, сцена/погода/ветер, дистанция/высота/модель, парный негатив той же сцены, микрофон и тракт, длительность/частота, подтверждение оператора. Шот 04.08 отказан предикатом S честно: capability_chaining (третий смежный выстрел в scripts/ за окно, 376 строк цепочки при потолке 200) — потому карточка, не шот. Форма: acceptTrack(track) → {ok, problems} + батч-проверки один-тракт/парность/два класса.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1885 (squash a1810ce3 в main), review LGTM; предикат семи полей + батч-инварианты по спеке инсайта, слепота полем, 7/7 тестов; Issue #1884 закрыт",
       "githubIssueClosedAt": null,
       "insightId": "insight-own-field-corpus-single-spec"
     },
@@ -942,21 +1040,21 @@
       "id": "one-shot-trail-forecast-fact",
       "title": "Портфель шотов: расширение следа (executor/форкаст/факт), глагол trail brief, дисциплина всплытия",
       "promptPath": "docs/prompts/ONE_SHOT_TRAIL_FORECAST_FACT_PROMPT.md",
-      "githubIssue": null,
-      "noIssueReason": "переход adopted-инсайта в работу; иссью при взятии по TASK_PROMPT_WORKFLOW",
+      "githubIssue": 1844,
+      "noIssueReason": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-04",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "Следующий шаг ревью 7.2: (1) поля executor+forecast+actual в one-shot-trail.jsonl (trail check остаётся рабочим, факт из диффа мердж-коммита); (2) глагол one-shot:trail brief 3-5 строк консистентного формата; (3) всплытие руками в акт Тарасова и предложение кандидатов — НЕ в утро/хендоф. Формат brief согласовать актом Тарасова до вкладывания. Запрещено: автоматика отправки, UI, правка формата шота T1-T8.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
+      "archiveNotes": "PR #1845 (squash в main), review LGTM dd41045343dd; executor/forecast/actual в ленте, trail brief по акту Тарасова, дисциплина всплытия в ONE_SHOT_TRAIL.md",
+      "githubIssueClosedAt": "2026-08-11",
       "insightId": "insight-one-shot-portfolio-surfacing"
     },
     {
@@ -967,14 +1065,14 @@
       "noIssueReason": "долг по вердикту Веснина (шот stubs-verdict 03.08), срок — стабильный контракт живой петли опыта; иссью заведётся при взятии в работу",
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-03",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "ДОЛГ. P2 ревью #1515: стабы sprint-cut/stubs/* — контракт границы для зубов, легализованы как промежуточная форма; постоянной опорой не назначены. Переход свяжет тест формы с лестницей вердиктов гейта — делать по выходу петли опыта на стабильный контракт.",
-      "archiveNotes": null,
+      "archiveNotes": "Долг погашен спринтом sprint-cut-teeth-live-2026-08-11, PR #1857 (1a42e21d): условие снятия («живая петля опыта на стабильном контракте») наступило — первый полный чистый прогон 11.08 (PR #1849), решение о взятии — слово владельца «с конца делаем по очереди». Зубы формы читают живые readTraceCorpus/verdictFor через мост test-support/live-fixtures.mjs, каталог sprint-cut/stubs снесён тем же PR. Семантика усилена: зуб частичного успеха корпуса, пара границ порога, двухслойный зуб сноса (география+топология). Закрывает P2 ревью #1515.",
       "githubIssueClosedAt": null
     },
     {
@@ -1042,14 +1140,14 @@
       "noIssueReason": "магистраль дня 03.08, выбрана владельцем через утренний гейт (frozenDigest 33633985…); продукт дня — обзор с вердиктом, иссью заводится по его итогу, а не до него",
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-03",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "исполнена магистралью 03.08: обзор docs/deploy-survey-2026-08-03.md (замер 52 глагола + 56 ssh-скриптов против «41», прогонами по стволу 953004c3); породила ADR-0023 (ACCEPTED 04.08, эшелоны) и спринт deploy-procedures — процедуры deploy-office-vds и deploy-media-vps в реестре, deploy-run.mjs/deploy-when-green.mjs живут; «нуль процедур» из заголовка карточки закрыт",
       "githubIssueClosedAt": null
     },
     {
@@ -1069,7 +1167,7 @@
         "dynin",
         "rodchenko"
       ],
-      "notes": "Baseline 2026-08-02: 13 workshops, 23 procedures; counts recomputed from live registries.",
+      "notes": "Baseline 2026-08-02: 13 workshops, 23 procedures; counts recomputed from live registries. · Стадия 1 (11.08): дом docs/workflows/ + прибор workflow:examples (baseline живой: 13 workshops / 26 procedures) + 9 seed-записей; coverage 1/13 и 1/26, нули видимы. Марафон продолжается.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "harness-workflow-pages"
@@ -1167,16 +1265,16 @@
       "noIssueReason": "строка 2 топ-10 хендофа 02.08; GH-иссью заводится при отгрузке PR",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-02",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "замер 02.08: 185 oversized с 20.07, с артефактом ревью 17, без — 168; по природе: 60 только docs, 6 только код, 119 смешанные. В хендофе значилось 16",
-      "archiveNotes": null,
+      "archiveNotes": "Сделано в PR #1642 (4388f415, 02.08): прибор очереди — scripts/lib/review-oversized-queue.mjs + глагол yarn review:oversized, порог импортируется из day-work-diff, отброшенные docs названы числом и причиной; первое точечное ревью головы #1515 проведено (block-oversized-first-review-ozhegov.md). Доработано PR #1674 (860f30e3, host-local предел) и #1741 (d76b6092, снятие по commit-status review/teamlead), живой прогон 04.08 — PR #1709 (9df6c836, голова #1021).",
       "githubIssueClosedAt": null
     },
     {
@@ -1187,16 +1285,16 @@
       "noIssueReason": "строка 5 топ-10 хендофа 02.08; GH-иссью заводится при отгрузке PR",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-02",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "У1 (31.07) велит называть расхождение, но живёт инструкцией в промпте генератора; sources[0] в main-day-assertions.json несёт заявку 30.07, гейт — subconscious-lift-c3 от 02.08",
-      "archiveNotes": null,
+      "archiveNotes": "исполнена собственным спринтом 02.08 (вещдок //recut-02-08 в main-day-assertions.json): предикат scripts/lib/main-day-magistral-freshness.mjs с тестами, main-day-probe печатает вердикт ВСЕГДА — живой прогон 12.08 даёт gate_newer с обеими датами по норме У1 (это находка прибора, не незакрытость карточки); перечеканка 02.08 сделана, sources[] append-only цел",
       "githubIssueClosedAt": null
     },
     {
@@ -1207,16 +1305,16 @@
       "noIssueReason": "строка 6 топ-10 хендофа 02.08; GH-иссью заводится при отгрузке PR",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-02",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "brace-expansion пропал из снимка в ec0b9d33 (утренний ритуал 01.08) — режим morning перезаписывает снимок без сравнения; вечерний печатает 'закрыто за день: N' без имён и без замера причины",
-      "archiveNotes": null,
+      "archiveNotes": "Сделано в PR #1642 (4388f415, 02.08): ядро сравнения scripts/lib/deps-watch-diff.mjs + страж scripts/lib/deps-watch-audit-state.mjs, оба режима deps-watch.mjs сравнивают до перезаписи снимка, исчезнувшие advisory названы поимённо (severity/id/ссылка), слово «закрыто» изъято и держится зубом, пустой аудит блокирует и сравнение, и затирание. Ответ по brace-expansion дан замером (block-deps-watch-words-ozhegov.md).",
       "githubIssueClosedAt": null
     },
     {
@@ -1247,16 +1345,16 @@
       "noIssueReason": "строки 3 и 4 топ-10 хендофа 02.08; GH-иссью заводится при отгрузке PR",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-02",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "51 сирота из 1000, tally subject_unresolved=51, no_rule=0 (замер 02.08 на 9dc167d0)",
-      "archiveNotes": null,
+      "archiveNotes": "Сделано в PR #1642 (4388f415, 02.08): scripts:orphans доносит замеренную причину — verdicts[{path,reason}] и сводка byReason, diagnosisLine/reportLines вынуты из main и покрыты зубами, предупреждение о нулевых правилах печатается только при непустом no_rule (живой прогон: 51 из 1002, все subject_unresolved). Прецедент tooling-gap записан: docs/precedents/2026-08-02-review-blindness-scales-with-diff.md.",
       "githubIssueClosedAt": null
     },
     {
@@ -1651,17 +1749,17 @@
       "githubIssue": 1447,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-29",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "Находка 29.07: из 398 команд package.json десять ведут в несуществующие файлы; ни один из десяти НИКОГДА не существовал в истории (git log --diff-filter=A пуст) — объявлены авансом, четыре пачками из фич-коммитов 72b6eee6/714ae379 (18-23.06). scripts:registry идёт от файлов к списку, обратного направления нет. Слово владельца 29.07: недельная процедура, реализация и прогон — выходные 1-2.08, не в дневную трёхдневку тарифов. Родитель класса — зверь «Мёртвый провод» #1411.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "Процедура доставлена PR #1585 (b1bb89db) + охват каталогов мастерских PR #1588 (4693f480) + поправка такта PR #1676 (8aa5344f): зуб dead-wire:check в ritual:day, ядро scripts/lib/dead-wire.mjs, дом docs/procedures/weekly-dead-wire (владелец ozhegov), перечень docs/tasks/dead-wire-pending.json ратифицирован владельцем 01.08. Иссью #1447 закрыть при task:close-github. Побочный долг: у 6 записей pending истёк until 2026-08-09 — находка аудита 11.08.",
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "night-triage-insight-channel",
@@ -1670,17 +1768,17 @@
       "githubIssue": 1445,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-29",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin",
         "kuryokhin"
       ],
       "notes": "Консилиум 29.07: четыре ночных триажа (25-28.07) легли черновиками PR #1215/#1309/#1369/#1415, insight_yield=0, все шестеро выбрали альтернативу вместо натянутой идеи. Отчёт отдаёт сырьё (158 orphan с одним словом relink, 106 stale с re-scope, dwell +1 в сутки) вместо наблюдения; носитель есть, читателя нет — зверь B8. Черновики закрыты вердиктом close_no_card.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1889 (squash в main), review LGTM; шесть пунктов комнаты 29.07 кодом (промоут-гейт PR⇔кандидат, scorecard/вердикты закрытыми enum, стык с магистралью, витрина cards:0, insight_yield), такт закрытия: #1780/#1818/#1830/#1841 закрыты close_no_card, инвариант 0 открытых draft подтверждён; Issue #1445 закрыт",
       "githubIssueClosedAt": null
     },
     {
@@ -1690,17 +1788,17 @@
       "githubIssue": 1422,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-29",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "tarasov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "Вердикт M1 security-posture (19.07): alert → задача реестра, владелец канала Teamlead; порог «рантайм-прод × critical|high → сразу». Дозор 29.07: 69 находок (1 critical tar-DoS, 22 high, 41 moderate, 5 low); рантайм-high — 13 находок в 10 пакетах; dev-high (5) идут планово в апгрейд-спринт, не в эту задачу. Заведено агентом А по строке №4 хендоффа 29.07.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "Корзина разобрана PR #1490 (39da90f8): critical tar-DoS (GHSA-23hp-3jrh-7fpw) закрыт пинами tar→7.5.20 в resolutions, high 22→10, остаток назван причинами в docs/security/deps-basket-2026-07-30-reconcile.md. Иссью #1422 закрыть при task:close-github.",
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "archivarius-sessions-container",
@@ -1729,18 +1827,18 @@
       "githubIssue": 1232,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin",
         "ozhegov"
       ],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "Ф1–Ф3 эпика закрыты PR #1289 (975a8cd5): ritual-tree-hygiene.mjs + morning-care без checkout main, гард ALLOW_MAIN_COMMIT в .githooks/commit-msg и pre-push, норма в AGENTS.md и скилле утра, зуб ritual-tree-hygiene.test.mjs; Ф4-инвентарь закрыт отдельным путём — classify-worktree.mjs и WORKTREE_CLASSES.md (c5d2e966, #743).",
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "adr-procedure-legalize",
@@ -1769,18 +1867,18 @@
       "githubIssue": 1233,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "Закрыто PR #1295 (10e13eff): предикаты morning-gates знают день (причина «day: состояние протухло»), telegram:swallow зовёт canSendAlly перед транспортом и падает exit 3 при закрытом гейте, --force обходит только ledger; вечерний контур — evening-gates.mjs. Зубы morning-gates.test.mjs и telegram-swallow.test.mjs.",
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "tc-nightly-frame",
@@ -1789,18 +1887,18 @@
       "githubIssue": 1293,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "dynin",
       "supportPersonas": [
         "angelina",
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
+      "archiveNotes": "PR #1851 (squash 83582c19 в main), review LGTM; ночь по cron 03:00 UTC (защита main проверена фактом), blocksMorningWhen исполняется потребителем в morning-care, три блокера различимы, пины кадра под auditPins (дрейф доказан падением), gates.items[night-report] с waitsFor:night; иссью #1293 была закрыта раньше времени — доведено здесь",
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "tests-container"
     },
     {
@@ -1810,17 +1908,17 @@
       "githubIssue": 1292,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
+      "archiveNotes": "Закрыто PR #1315 (4354c83a): сетапы smoke/gate/full и селектор по каталогу/графу в scripts/lib/tests-container.mjs + CLI scripts/tests-container.mjs, ярлыки test:scripts:smoke|gate|full, отчёт «что не гонялось» через formatSetupReport; каноническое решение — ADR-0018.",
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "tests-container"
     },
     {
@@ -1830,18 +1928,18 @@
       "githubIssue": 1291,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
+      "archiveNotes": "Закрыто PR #1315 (4354c83a): дом контейнера — корневой tests/ (README + каталог со схемой), кит kits/tests-master, мастерская tests/workshop.manifest.json; homePath заработал — запись test-runs с homePath tests в docs/procedures/registry.json и поддержка в procedures-registry.mjs с зубом.",
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "tests-container"
     },
     {
@@ -1851,17 +1949,17 @@
       "githubIssue": null,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin",
         "ozhegov"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "Эпик закрыт по образцу ci-gate-stabilization: собственной работы не содержал — дом tests/, кит tests-master, мастерская, сетапы smoke/gate/full (PR #1315, ADR-0018), ночной полный прогон PR #1832. Дети повердиктно: tc-home-workshop и tc-setups-selector PR #1315 (аудит 11.08), tc-nightly-frame PR #1851 (83582c19: cron 03:00 UTC, blocksMorningWhen получил потребителя в morning-care), tests-container-cross-package-imports — спринт s-queue-2026-08-11 b3 PR #1849 (граф видит @membrana/* и .tsx).",
       "githubIssueClosedAt": null
     },
     {
@@ -1871,17 +1969,17 @@
       "githubIssue": 1272,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "Все пять фрикций (Ф1–Ф5) сняты PR #1280 (4e6e659c): скан заявки по base..HEAD, branch:check-base видит чужой коммит в базе (exit 2 с именем автора), worktree-merge для слияния в изоляции, честный pre-push в свежем дереве, task:register не затирает ответственного; 31 тест. Иссью #1272 закрыть при task:close-github. Регрессия Ф3: глагол worktree:merge позже снят PR #1285, скрипт остался сиротой — отдельная находка аудита 11.08.",
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "notes-regex-cyrillic-translit",
@@ -1890,14 +1988,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "Две грабли сессии 26.07, обе стоили заходов. (1) В JS \\w и \\b остаются ASCII даже с флагом u — русские имена не матчатся вовсе; детектор prose давал 0 находок на собственном образце. (2) В машинных домах имена латиницей (ozhegov), в текстах русские и склоняемые: сверка без транслита дала 39 ложных находок на трёх файлах против 8 после починки. Дом — раздел граблей AGENTS.md (norma TF-7), не код.",
-      "archiveNotes": null,
+      "archiveNotes": "Закрыто спринтом s-queue-2026-08-11 b7, PR #1849 (6e4e1d84): обе грабли в доме AGENTS.md рукописно (TF-7) смежной парой с названной леммой — ASCII-семантика w/b в JS-регулярках (вещдок 26.07) и сверка латинских id со склоняемой кириллицей только словарём/транслитом (39 ложных/8 настоящих). Формулировки прогоном контекста Ожегова; \\w успел укусить ленту следов спринта — дословность вещдока.",
       "githubIssueClosedAt": null
     },
     {
@@ -1907,14 +2005,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "dynin",
       "supportPersonas": [],
       "notes": "Вещдок 26.07: yarn membrana-leveling:snapshot --out C:/...  → ENOENT mkdir 'C:\\Users\\...\\Membrana-tooling\\C:\\Users\\...'. Обошёл относительным именем с игнорируемым расширением .tmp.",
-      "archiveNotes": null,
+      "archiveNotes": "Закрыто спринтом s-queue-2026-08-11 b6, PR #1849 (6e4e1d84): resolve вместо join(cwd,·) в трёх точках (snapshot --out, workspace-level --snapshot/--out), три зуба живьём (абсолютный путь во вложенный каталог, абсолютный snapshot, ..-сегмент). Симлинк-зуб честно отложен: нужен терминал с привилегией reparse points (вещдок env-symlink-probe-2026-08-11).",
       "githubIssueClosedAt": null
     },
     {
@@ -1938,18 +2036,19 @@
       "id": "insight-review-from-file",
       "title": "insight review принимает готовый REVIEW.md из чата (как консилиум — протокол)",
       "promptPath": "docs/prompts/INSIGHT_REVIEW_FROM_FILE_PROMPT.md",
-      "githubIssue": null,
+      "githubIssue": 1882,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "Вещдок 26.07: yarn insight review упал (Anthropic лимит до 01.08). Канон сам объявляет фолбэк 'ревью в чате, REVIEW.md руками' (CREDIT_FALLBACKS), но принять готовый файл нечем: у консилиума есть --secretary-file, у task:review:run --review-file, у insight review — ничего; статусы meta.json и реестра переставлял однострочником. Плюс мелочь: детектор исчерпания ищет 'credit balance is too low', а лимит пришёл как 'specified API usage limits' — подсказка фолбэка не напечаталась.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "PR #1883 (squash a1824022 в main), review LGTM (артефакт docs/reviews); --review-file одной дорогой с панельным путём (applyReviewText), детектор лимита узнаёт месячную строку; Issue #1882 закрыт",
+      "githubIssueClosedAt": null,
+      "noIssueReason": null
     },
     {
       "id": "kits-pins-prepush-strict",
@@ -1976,14 +2075,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "Вещдок 26.07: allow_auto_merge=true, readAutoMergeAllowed отвечает 'можно', gh pr merge --auto падает: 'Protected branch rules not configured for this branch (enablePullRequestAutoMerge)'. #1269 закрыл случай выключенной галки, случай ненастроенных правил защиты — нет. Плюс: --merge-only не пушит локальные коммиты ('has diverged from local branch').",
-      "archiveNotes": null,
+      "archiveNotes": "Закрыто PR #1279 (41017c8c): предикат автослияния спрашивает правила защиты base (readRequiredChecks + autoMergeDecision), а не галку allow_auto_merge; ненастроенная защита даёт честный откат на обычный хвост, --merge-only отказывается громко через headSyncProblem вместо мерджа чужого содержания из origin. Кейс «Protected branch rules not configured» зафиксирован в pr-ship.test.mjs.",
       "githubIssueClosedAt": null,
       "parentEpic": "agent-tooling-friction-6"
     },
@@ -2047,14 +2146,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "Опись мастерской (docs/tasks/workshop.manifest.json) объявляет board/bookkeeping/reviewing как planned, движков нет: yarn task:tools печатает три предупреждения. Развилка владельца: строить или честно объявить отсутствующими по норме зверя B10 (легальное «нет» — не дефект). Вещдок 26.07: сверка инструментария мастерской в сессии мостика.",
-      "archiveNotes": null,
+      "archiveNotes": "Закрыто PR #1859 (6cd624a4) по слову владельца 11.08 «честное нет»: три глагола мастерской задач сняты как род declined, не как молчание. Пять мест: package.json (строки сняты), workshop.manifest.json (форма declined вместо null — null значит «глагол не свойственен»), workshop.catalog.json (записи остаются с state=declined без движка — пустой каталог читается как приглашение завести заново), dead-wire-pending.json (три записи вынесены), новый docs/tasks/declined-verbs.json (реестр снятых: кто/когда/почему/условие переоткрытия, основания проверяемыми маркерами по B4 из ревью). Валидатор описи выучил род declined (4 зуба), зубы dead-wire отвязаны от пришпиленных чисел. Follow-up на ложные missing прибора — #1862.",
       "githubIssueClosedAt": null
     },
     {
@@ -2100,17 +2199,17 @@
       "githubIssue": 1266,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
+      "archiveNotes": "Закрыто спринтом s-queue-2026-08-11 b5, PR #1849 (6e4e1d84): yarn secret:inventory — обёртка над нетронутым ядром secret-redact.mjs (guard нарезки цел), таблица файл×класс×вхождений и --json, значения не печатаются ни в одном режиме, честная оговорка «верхняя граница»; 6 зубов включая контрольную подсадку. Живой прогон: docs/comms/drafts, 55 файлов. Иссью #1266 закрыть при task:close-github.",
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "agent-tooling-friction-6"
     },
     {
@@ -2120,17 +2219,17 @@
       "githubIssue": 1265,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
+      "archiveNotes": "Закрыто спринтом s-queue-2026-08-11 b4+b7, PR #1849 (6e4e1d84): шаг scripts-registry в манифесте вечерней цепочки до ritual-artifacts (produces уезжает автозабором), снимок догнал 407→439, шаг внесён в карту exit-кодов #622; грабля foreground sleep — строкой в AGENTS.md соседкой к «фоновый bash». Иссью #1265 закрыть при task:close-github.",
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "agent-tooling-friction-6"
     },
     {
@@ -2140,17 +2239,17 @@
       "githubIssue": 1264,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
+      "archiveNotes": "PR #1848 (squash 54e394c8 в main), review LGTM; 1105 файлов под парсером, 133 находки названы (63 unused-vars/55 useless-escape/6 irregular-ws/5 regex-spaces/2 constant-condition/2 control-regex), порог warn+храповик --max-warnings=133 (число живёт ТОЛЬКО в package.json lint:scripts, в ci.yml — проза), гашение долга — продолжение #1264",
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "agent-tooling-friction-6"
     },
     {
@@ -2160,17 +2259,17 @@
       "githubIssue": 1263,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "Вещдок сессии мостика 26.07: три конфликта подряд в этой строке за вечер (main-day-issue-channel против procedure-contract-license, затем secret-gate-push + procedure-home-form). Каждый стоил цикла влить-развести-пуш-ждать CI; содержательно конфликты пустые — стороны дописывают разные имена в один перечень.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
+      "archiveNotes": "Закрыто PR #1285 (7386df0a, доработка PR #1315 / 4354c83a): набор берётся открытием по дереву — scripts/lib/test-scripts-plan.mjs + scripts/test-scripts-run.mjs, в package.json test:scripts без путей и ярлыки групп security/rituals/tasks/repo/domain, гвард test-list-coverage переписан под инвариант «run ∪ skipped = диск».",
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "agent-tooling-friction-6"
     },
     {
@@ -2220,17 +2319,17 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "epic",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin",
         "ozhegov"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "Зонтик собственной работы не содержал, закрыт последним ребёнком 11.08. Дети повердиктно: ship-детерминизм PR #1269 (#1276), паритет секрет-гейта PR #1278/#1279, предикат автослияния PR #1279 (аудит 11.08), гард слияния #1321, строгая сверка китов 9bbdefe8 (#1316), группы test:scripts PR #1285 (аудит 11.08), гигиена реестра скриптов + инвентарь секретов — спринт s-queue-2026-08-11 PR #1849, линт scripts/ PR #1848 (54e394c8, 1105 файлов/133 находки/храповик).",
       "githubIssueClosedAt": null
     },
     {
@@ -4213,15 +4312,15 @@
       "githubIssue": 922,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-22",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "исполнено 22.07 (промпт карточки сам несёт статус): docs/virtual-team/PROMPT_ANGELINA.md §Запрещено:77 — конспект-only:94, явное разрешение:99, «нужно чинить»=заказ:102, отказ-чинить в формате ответа:130; Issue #922 закрыт 2026-07-22",
+      "githubIssueClosedAt": "2026-07-22T08:12:27Z"
     },
     {
       "id": "swallow-format-frame-fix",
@@ -6602,18 +6701,18 @@
       "promptPath": "docs/prompts/AGENT_TOOLING_FRICTION_3_PROMPT.md",
       "githubIssue": 554,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-16",
-      "archivedAt": null,
+      "archivedAt": "2026-08-11",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin",
         "vesnin"
       ],
       "notes": "Третья итерация после #433/#469. Ретро тулинга сессии 16.07, только evidence-эпизоды. Корневая находка: AGENTS.md §Agent tooling датирован 08.07 и содержит 11 команд из 253 живых — я читал устаревший снимок и 5 раз писал заново существующее (вместо yarn neighbors написал ручной grep, он соврал). Та же болезнь, что у MAIN_DAY_ISSUE — рукописный снимок как факт; родня rt-7 (#539). Состав: TF-1 снять ЛОЖНОЕ «хук ломает merge» (мой баг в 3 местах, хук освобождает Merge*, проверено) — первым, иначе rt-5 чинит несуществующее; TF-2 валидация --pr (паттерн есть в task-closure-review); TF-3 gitignore pr-*-code-review; TF-4 archive-task --dry-run (молча заархивировал rt-8); TF-5 consilium warn до траты рана при повестке без ID (дыра в моём же rt-6); TF-6 инвентарь на ГЕНЕРАЦИЮ из package.json/skills/lib/githooks; TF-7 норма в скилл tooling-needs — обновлять грабли-раздел. Раскол TF-6/TF-7: генерируется инвентарь (253 рукой не удержать), пишется руками+обязательство только грабли (инсайт не генерится). Консилиум не нужен — канон готов, прецедент #433/#469.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "Все семь позиций доставлены: TF-2..TF-6 — PR #555 (748e81a0), TF-1 и TF-7 — PR #556 (a672384e). Инвентарь переведён на генерацию из источника (scripts/tooling-overview.mjs, yarn tooling:overview; позже --report→SCRIPTS_LIST в PR #812), archive-task получил --dry-run и отказ на неизвестный флаг, раздел рукописных граблей закреплён в AGENTS.md. Иссью #554 закрыть при task:close-github.",
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "membrana-device-build-profile",
@@ -8247,7 +8346,7 @@
         "dynin"
       ],
       "sprintKind": "epic",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-10"
     },
     {
       "id": "background-media-v1",
@@ -16265,14 +16364,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "day-sprint",
       "notes": "Experimental llm-proxy CLI; isolated .env.llm-proxy; OpenCode optional",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin"
-      ]
+      ],
+      "archivedAt": "2026-08-11",
+      "archiveNotes": "Спринт сдан целиком: OC0/OC4 в архиве ранее (09.08), OC1–OC3 заархивированы аудитом 11.08 по свидетельствам в main (4fc37d90 — llm-proxy-ask/parse/smoke + OPENCODE_PROXY_SETUP.md, c85942ff — .env.llm-proxy.example, 02f975a3 — opencode.json и .opencode/**); контур жил дальше в операторских спринтах 26.06 и шве-консилиуме 23.07 (experimental отдельно, .env.llm-proxy — канон имён ключей). Хвост: yarn-алиасы llm-proxy:ask/smoke и opencode:membrana не заведены — документация зовёт несуществующие команды."
     },
     {
       "id": "oc-proxy-s0-research-isolation",
@@ -16296,11 +16397,13 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "day-sprint",
       "parentEpic": "opencode-proxy-sprint-2026-06-25",
-      "leadPersona": "ozhegov"
+      "leadPersona": "ozhegov",
+      "archivedAt": "2026-08-11",
+      "archiveNotes": "OC1 закрыт: инструкция установки OpenCode CLI в docs/experiments/OPENCODE_PROXY_SETUP.md §3–4 (4fc37d90), след контура в репозитории — opencode.json и .opencode/** (02f975a3), живой прогон TUI зафиксирован CLOSURE операторского спринта opencode-operator-workflows-2026-06-26."
     },
     {
       "id": "oc-proxy-s2-freemodel-keys",
@@ -16309,12 +16412,14 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "day-sprint",
       "parentEpic": "opencode-proxy-sprint-2026-06-25",
       "leadPersona": "ozhegov",
-      "notes": "User adds FREEMODEL_DEV_API_KEY to .env.llm-proxy"
+      "notes": "User adds FREEMODEL_DEV_API_KEY to .env.llm-proxy",
+      "archivedAt": "2026-08-11",
+      "archiveNotes": "OC2 закрыт: провайдер freemodel-dev с двумя base URL описан в scripts/experimental/llm-providers.json, ключи разведены в .env.llm-proxy.example (c85942ff), smoke-движок llm-proxy-smoke.mjs в main; различение cc./api.freemodel.dev и 403 для неофициальных клиентов зафиксировано по живому прогону (_llm-proxy-env.mjs). Сам ключ остаётся на стороне владельца, в репозиторий не попадает по D-OC-1."
     },
     {
       "id": "oc-proxy-s3-llm-proxy-script",
@@ -16323,11 +16428,13 @@
       "githubIssue": null,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "createdAt": "2026-06-25",
       "sprintKind": "day-sprint",
       "parentEpic": "opencode-proxy-sprint-2026-06-25",
-      "leadPersona": "ozhegov"
+      "leadPersona": "ozhegov",
+      "archivedAt": "2026-08-11",
+      "archiveNotes": "OC3 закрыт: llm-proxy-ask.mjs, llm-proxy-parse.mjs с parse-тестами, llm-providers.json и загрузчик _llm-proxy-env.mjs в main (4fc37d90), изоляция от ритуального ANTHROPIC_API_KEY соблюдена (подтверждена консилиумом-швом 23.07). Хвост общий с OC4: yarn-алиасы llm-proxy:ask/smoke не заведены — попутная находка аудита 11.08."
     },
     {
       "id": "oc-proxy-s4-opencode-config",

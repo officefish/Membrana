@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14308/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 269 (причины в op-log) -->
+Записей: 49 · бюджет 14290/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 270 (причины в op-log) -->
+
+### 2026-08-10 · позиция · team-evening-feedback
+
+> UI-компоненты не затронуты; night-hunt упоминает дрейф `--color-*` ↔ DaisyUI — архивный аналитический артефакт, не новый код. Оценка артефактов: регламент и промпт вечернего фидбека — читабельны, формат таблиц не сломан; markdown-структура MAIN_DAY_ISSUE плотная, но раздел […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
 
 ### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
 
@@ -295,9 +301,3 @@
 > С витрины агента и капитана checkpoint обязан читаться без легенды: одна карточка-манифест, не простыня JSONL. Видны: версия схемы, сколько закрытий учтено, digest, момент слепка. Фальшь витрины: зелёный «архив в repo», когда в git только hash. Пустота честная: нет digest — нет […] _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m4-write-path-idempotency
-
-> С витрины оператора/агента статус закрытия обязан читаться без легенды: `accepted | duplicate | rejected_proof | retryable | blocked`. Фальшь: зелёный «в архиве», пока Mongo не подтвердил record id. Uncommitted checkpoint в рабочей копии — не бейдж «durable»; максимум […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m4-write-path-idempotency-2026-07-30.md#reply-1`

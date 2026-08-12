@@ -7,7 +7,7 @@
  * yarn insight research insight-my-idea
  * yarn insight review insight-my-idea
  */
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 import {
@@ -20,6 +20,7 @@ import {
 import {
   REVIEW_PROMPT_PATH,
   VIRTUAL_TEAM_PATH,
+  applyReviewText,
   createInsight,
   formatInsightList,
   insightDir,
@@ -28,7 +29,6 @@ import {
   printInsightHelp,
   readRegistry,
   runInsightResearch,
-  writeRegistry,
 } from './lib/insight-ritual.mjs';
 import { verifyInsightLifecycle } from './lib/insight-lifecycle.mjs';
 import {
@@ -419,7 +419,7 @@ try {
 
   if (cli.command === 'review') {
     if (!cli.id) {
-      console.error('Usage: yarn insight review <id> [--dry-run]');
+      console.error('Usage: yarn insight review <id> [--review-file <md>] [--dry-run]');
       process.exit(1);
     }
     const id = normalizeInsightId(cli.id);
@@ -429,6 +429,28 @@ try {
     if (!existsSync(insightPath)) {
       throw new Error(`Insight not found: ${id}`);
     }
+
+    // Оффлайн-канал (insight-review-from-file, симметрия consilium --secretary-file
+    // и task:review --review-file): REVIEW.md написан в IDE-чате по канону
+    // CREDIT_FALLBACKS — принять файл и переставить статусы той же дорогой,
+    // что и панельная цепочка. Состав ролей и формат REVIEW.md не трогаем.
+    if (cli.reviewFile) {
+      const reviewAbs = resolve(repoRoot, cli.reviewFile);
+      if (!existsSync(reviewAbs)) {
+        throw new Error(`--review-file: файла нет: ${cli.reviewFile}`);
+      }
+      const text = readFileSync(reviewAbs, 'utf8');
+      if (cli.dryRun) {
+        console.log(`dry-run: принял бы ${cli.reviewFile} (${text.trim().length} симв.) → REVIEW.md + статусы reviewed`);
+      } else {
+        const { reviewPath, weight } = applyReviewText(repoRoot, id, text);
+        if (weight === null) {
+          console.error('⚠ «Средний балл:» в файле не найден — weight не переставлен; формат ревью проверь глазами');
+        }
+        console.log(`REVIEW.md записан из файла: ${reviewPath}`);
+      }
+      process.exitCode = 0;
+    } else {
     const insightMd = readFileSync(insightPath, 'utf8');
     const researchMd = existsSync(researchPath) ? readFileSync(researchPath, 'utf8') : '';
     const reviewPrompt = readFileSync(join(repoRoot, REVIEW_PROMPT_PATH), 'utf8');
@@ -468,30 +490,13 @@ try {
     if (!text.trim()) {
       throw new Error('Empty review from chain');
     }
-    writeFileSync(join(dir, 'REVIEW.md'), `${text.trim()}\n`, 'utf8');
-
-    const meta = JSON.parse(readFileSync(join(dir, 'meta.json'), 'utf8'));
-    meta.status = 'reviewed';
-    meta.reviewedAt = new Date().toISOString().slice(0, 10);
-    const avgMatch = text.match(/\*\*Средний балл:\*\*\s*([\d.]+)/);
-    if (avgMatch) {
-      meta.weight = Number(avgMatch[1]);
-    }
-    writeFileSync(join(dir, 'meta.json'), `${JSON.stringify(meta, null, 2)}\n`, 'utf8');
-
-    const registry = readRegistry(repoRoot);
-    const entry = registry.insights.find((item) => item.id === id);
-    if (entry) {
-      entry.status = 'reviewed';
-      if (meta.weight !== undefined) {
-        entry.weight = meta.weight;
-      }
-    }
-    writeRegistry(repoRoot, registry);
-    console.log(`REVIEW.md записан: ${join(dir, 'REVIEW.md')}`);
+    // Одна дорога применения с --review-file: REVIEW.md + meta + registry.
+    const { reviewPath } = applyReviewText(repoRoot, id, text);
+    console.log(`REVIEW.md записан: ${reviewPath}`);
     // NB5: exitCode вместо process.exit(0) — не ронять libuv гонкой с закрытием
     // сокета после прямого поста Anthropic — UV_HANDLE_CLOSING на Windows). См. коммент research.
     process.exitCode = 0;
+    }
   }
 
   if (cli.command === 'close') {

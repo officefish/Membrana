@@ -112,6 +112,26 @@ export function makeWipSnapshot(io) {
 
     // `--` отделяет пути от флагов: без него файл с именем вроде `-x` стал бы флагом.
     io.git(worktreeDir, ['add', '--', ...files]);
+
+    // Гард охвата стоит ДО коммита (#1864, дефект 1). Прогон 11.08: сверка после коммита
+    // оставляла уже сделанный коммит с расширенным охватом — мутацию, которую сама же
+    // признала незаконной. Индекс — откатываемая точка: при расхождении снимаются ТОЛЬКО
+    // переданные пути (индекс вне списка исполнитель не трогает), дерево остаётся как было.
+    const allowed = new Set(files.map((f) => f.replace(/\\/g, '/')));
+    const staged = io
+      .git(worktreeDir, ['diff', '--cached', '--name-only'])
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean);
+    const extraStaged = staged.filter((f) => !allowed.has(f.replace(/\\/g, '/')));
+    if (extraStaged.length > 0) {
+      io.git(worktreeDir, ['reset', '--', ...files]);
+      fail(
+        `в индекс попало сверх списка: ${extraStaged.join(', ')} — охват расширять запрещено; ` +
+          'коммит не создавался, названные пути сняты с индекса',
+      );
+    }
+
     io.git(worktreeDir, ['commit', '--no-verify', '-m', message]);
 
     const commitSha = io.git(worktreeDir, ['rev-parse', 'HEAD']).trim();
@@ -128,7 +148,8 @@ export function makeWipSnapshot(io) {
       .map((l) => l.trim())
       .filter(Boolean);
 
-    const allowed = new Set(files.map((f) => f.replace(/\\/g, '/')));
+    // Пост-проверка остаётся инвариантом (гарантия 3 из списка Ожегова): при работающем
+    // гарде до коммита сюда не попадает никогда, но её снятие сделало бы гарантию устной.
     const extra = committedPaths.filter((f) => !allowed.has(f.replace(/\\/g, '/')));
     if (extra.length > 0) {
       fail(`в коммит попало сверх списка: ${extra.join(', ')} — охват расширять запрещено`);

@@ -18,6 +18,15 @@
 /** Дискриминатор рода в живом архиве `docs/virtual-team/memory/archive/<persona>.jsonl`. */
 export const FORECAST_CLASS = 'forecast';
 
+/**
+ * Носитель ленты рода — ЕДИНСТВЕННАЯ константа пути (b2 s-queue-2026-08-11).
+ * До 11.08 путь жил дважды: здесь рядом с родом его не было вовсе, писатель
+ * (`sprint-experience.mjs`) клеил свой `RECORDS_PATH`, гейт держал свою копию —
+ * две правды об одном файле расходятся молча. Дом константы — у рода; писатель
+ * и гейт импортируют отсюда.
+ */
+export const FORECAST_RECORDS_REL_PATH = 'docs/sprint/experience/forecast-records.jsonl';
+
 /** Подвиды: один подвид — один автор — одна мерка. */
 export const SUBJECTS = Object.freeze(['cut', 'stop']);
 
@@ -61,6 +70,26 @@ export function forecastRecordId({ personaId, sprintId, subject, seq }) {
   return `${personaId}-${sprintId}-${subject}-${seq}`;
 }
 
+/**
+ * Следующий `seq` по ленте (b2 s-queue-2026-08-11). До 11.08 живой путь seq не
+ * вычислял нигде — `makeForecastRecord` брал дефолт 1, вторая запись того же
+ * окна получала тот же id, и append-дедуп молча её глотал: исход не доезжал до
+ * журнала (вещдок — dead end после перерезки 10.08). Лента — вход параметром:
+ * функция чистая, файлов не читает.
+ */
+export function nextForecastSeq(records, { personaId, sprintId, subject }) {
+  const prefix = `${personaId}-${sprintId}-${subject}-`;
+  let max = 0;
+  for (const r of Array.isArray(records) ? records : []) {
+    const id = typeof r?.id === 'string' ? r.id : '';
+    if (!id.startsWith(prefix)) continue;
+    const tail = id.slice(prefix.length);
+    if (!/^\d+$/u.test(tail)) continue;
+    max = Math.max(max, Number(tail));
+  }
+  return max + 1;
+}
+
 function deepFreeze(value) {
   if (value === null || typeof value !== 'object' || Object.isFrozen(value)) return value;
   for (const v of Object.values(value)) deepFreeze(v);
@@ -72,9 +101,11 @@ function deepFreeze(value) {
  * после фиксации падает в strict-режиме модуля, а не «просто не рекомендуется».
  */
 export function makeForecastRecord(input) {
-  const seq = Number.isInteger(input.seq) ? input.seq : 1;
+  // Дефолта seq НЕТ (разбор Дынина, b2 s-queue-2026-08-11): «1» здесь — не
+  // значение, а надежда, что хвост ленты пуст; надежда — не предикат. Без
+  // явного id seq обязателен — forecastRecordId падает с причиной.
   const record = {
-    id: isStr(input.id) ? input.id : forecastRecordId({ ...input, seq }),
+    id: isStr(input.id) ? input.id : forecastRecordId(input),
     class: FORECAST_CLASS,
     subject: input.subject,
     personaId: input.personaId,

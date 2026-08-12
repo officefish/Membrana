@@ -188,3 +188,7 @@ docs/sprint/experience/forecast-records.jsonl
 # Это данные пользователей, а не артефакт сборки — правило стоит здесь, а зуб на него
 # в scripts/archivarius-dump.test.mjs, чтобы смена каталога не отменила правило молча.
 var/backups/
+
+# Носитель кадра night-report (#1293): локальная подтяжка артефакта ночи,
+# свежесть по generatedAt — файл не коммитится, утро тянет его заново.
+tests/reports/nightly-full/

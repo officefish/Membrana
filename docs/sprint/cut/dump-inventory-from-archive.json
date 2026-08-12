@@ -1,0 +1,81 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "dump-inventory-from-archive",
+  "taskId": "dump-inventory-from-archive",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-08-10T15:30:00+00:00",
+    "to": "2026-08-10T22:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-archive-inventory-lib",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/archive-inventory.mjs",
+        "scripts/archive-inventory.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 150
+      },
+      "revisionAt": "2026-08-10T15:46:33+00:00",
+      "revisionOf": "c9a1a7c5e69d4f4713a2387eb586b0e54426f61caa5d6dd68435b5a2891cbc1a"
+    },
+    {
+      "blockId": "b2-drill-on-facade",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/archivarius-restore-drill.mjs",
+        "scripts/archivarius-restore-drill.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 40
+      },
+      "revisionAt": "2026-08-10T15:46:33+00:00",
+      "revisionOf": "84a7c6de837613b21530e11fa9fe73273d529f11f60bbb6d402be30bb41fa2f9"
+    },
+    {
+      "blockId": "b3-dump-archive-source",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "scripts/archivarius-dump.mjs",
+        "scripts/archivarius-dump.test.mjs",
+        "scripts/lib/mongo-dump-policy.mjs",
+        "scripts/mongo-dump-policy.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "revisionAt": "2026-08-10T15:46:33+00:00",
+      "revisionOf": "d8fe47dbd4c04b90e46c998d05ca8f9369a574178602509db4627d98a42dc4a2"
+    },
+    {
+      "blockId": "b4-acceptance-live-run",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "docs/audit/dump-inventory-acceptance-2026-08-10.md"
+      ],
+      "estimate": {
+        "changedLines": 50
+      },
+      "revisionAt": "2026-08-10T15:46:33+00:00",
+      "revisionOf": "a4cf138f243237be813174434e399fdf256b5b6c1e8a4e535b4112a0fc29acce"
+    }
+  ],
+  "//why": "Строка 2 десятки хендофа 09.08, выбор владельца 10.08 («Берем опись дампа»). Иссью #1814 (BLOCK Тарасова 08.08): опись дампа (dbInventory) читается разбором человекочитаемого stderr mongodump 7.0.39 — формат не контракт, живой прогон уже ловил обратные кавычки в имени БД. Предпосылка снята: откат влит (#1809, c41637df) — читать содержимое архива теперь можно, не разводя две правды. Приёмка иссью: manifest.inventorySource==='archive-contents' и зуб сравнивает опись с фактическим содержимым артефакта.",
+  "//route": "M + карточка dump-inventory-from-archive (GH #1814) в реестре → membrana-local-sprint по канону. Прогноз по нарезке пишется ДО исполнения — обязательность записи «предсказание ↔ исход» теперь гейт (ADR-0026, вчера же построен).",
+  "//cutter": "Резчик vesnin, прогон контекста 10.08 15:41Z (конспект docs/discussions/cut-dump-inventory-vesnin.md). Решения: (а) общий конвейер «опись-из-артефакта» — дом scripts/lib/archive-inventory.mjs, контракт buildInventoryFromArchive({archivePath, adapter}); дрилл и дамп потребляют его, импорт скрипт-к-скрипту запрещён (класс #1638/#1681); subject тот же collection-bson-sorted-by-id; (б) parseDbInventory демонтировать; incompleteCollections(stderr) ОСТАВИТЬ как гард протокола, в манифесте разнести поля: inventorySource='archive-contents' и protocolChecks.incompleteCollections — не смешивать; (в) деградация без докера — ПАДАТЬ (non-zero, код DUMP_INVENTORY_UNAVAILABLE): дамп без честной описи не дамп, мягкий фолбэк на stderr — возврат к двум правдам через чёрный ход; уточнение резчика снято фактом: mongodump уже ходит через docker compose exec, докер давно жёсткая зависимость тракта; (г) зубы — инъекция адаптера как у дрилла, фикстуры — дословные снимки реального артефакта, не сочинённые.",
+  "//order": "b1 (дом конвейера) → b2 (дрилл на фасад) → b3 (дамп на archive-contents) → b4 (живая приёмка). b2 раньше b3: сначала существующий потребитель доказывает фасад, потом на него встаёт новый.",
+  "//dod": "b1: buildInventoryFromArchive в lib с зубами на fake-adapter. b2: дрилл читает опись через фасад, свои зубы зелёные, поведение не изменилось. b3: манифест несёт inventorySource='archive-contents' и protocolChecks.incompleteCollections; parseDbInventory демонтирован; политика валидирует новое поле; без докера — стоп DUMP_INVENTORY_UNAVAILABLE; зуб сравнивает опись с фактическим содержимым артефакта, не с текстом лога. b4: живой прогон yarn backup:dump — манифест с archive-contents, вещдок-документ с командами и выводом; иссью #1814 готова к закрытию. Все затронутые сьюты зелёные.",
+  "//out-of-scope": "packages/background-* и deploy/ — стенды переиспользуются как есть, ни строчки. Ротация/ретенция дампов, расписание бэкапов. Формат трёхслойной мерки verifyRestore (ядро lib/mongo-restore-policy.mjs не трогаем). Перенос ленты прогнозов в трекаемый носитель (граница ADR-0026).",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-10T15:46:33+00:00",
+    "digest": "5e620ae9867dc3eedbe92aeee3c7c4f0ddb79dcf98173936916f4c9b216e85c7"
+  }
+}

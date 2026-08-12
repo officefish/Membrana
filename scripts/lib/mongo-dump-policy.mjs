@@ -16,11 +16,19 @@
  * как предикат, а не опись; `sha256Of` отдельным полем — см. комментарии по месту.
  */
 
-/** Версия схемы манифеста. Без неё первый же рефактор поля ломает ретенцию задним числом. */
-export const MANIFEST_SCHEMA_VERSION = 1;
+/**
+ * Версия схемы манифеста. Без неё первый же рефактор поля ломает ретенцию задним числом.
+ *
+ * v2 (#1814, блок b3): опись — из содержимого артефакта (`inventorySource:
+ * 'archive-contents'` обязателен), гард протокола mongodump переехал в
+ * `protocolChecks.incompleteCollections`. Ось версии — ФОРМА манифеста; ось
+ * inventorySource — откуда взяты данные; решение держателя блока: оси не смешивать,
+ * валидация ветвится по schemaVersion, старые манифесты v1 остаются читаемыми ретенцией.
+ */
+export const MANIFEST_SCHEMA_VERSION = 2;
 
 /** Читаемые версии. Закрытый список: неизвестная версия — непригодность, а не «наверное сойдёт». */
-export const KNOWN_SCHEMA_VERSIONS = Object.freeze([1]);
+export const KNOWN_SCHEMA_VERSIONS = Object.freeze([1, 2]);
 
 /**
  * Что именно хешировано. Отдельное поле, а не «просто sha256».
@@ -34,11 +42,11 @@ export const SHA256_SUBJECTS = Object.freeze(['mongodump-archive-body', 'gzip-st
 /**
  * Откуда взята опись. Тоже объявляется полем, и по той же причине.
  *
- * `mongodump-stderr` — временный источник: опись читается из человекочитаемого лога чужой
- * утилиты, а не с диска. Настоящий источник требует прочесть содержимое архива, то есть
- * восстановить его, — это соседний предмет (#1809), и долг на замену заведён отдельно
- * (#1814). Пока источник временный, он ИМЕНОВАН: смена станет сменой значения поля, а не
- * молчаливым расхождением, и закрытый список сделает её видимой зубом.
+ * `mongodump-stderr` — исторический источник схемы v1: опись читалась из человекочитаемого
+ * лога чужой утилиты. С v2 (#1814 закрыт) живой источник один — `archive-contents`: опись
+ * снимается из содержимого артефакта конвейером `lib/archive-inventory.mjs` (восстановление
+ * в изолированную цель — машинерия #1809). Значение v1 остаётся в списке ради чтения
+ * старых манифестов; у v2 оно отвергается веткой валидации.
  */
 export const INVENTORY_SOURCES = Object.freeze(['mongodump-stderr', 'archive-contents']);
 
@@ -188,9 +196,34 @@ export function manifestProblems(m, opts = {}) {
   // Начатая и не дописанная коллекция — неполный дамп, что бы ни говорил код возврата.
   // Отдельная проверка, а не следствие пустой описи: неполнота бывает ЧАСТИЧНОЙ, и тогда
   // dbInventory непуст, exitCode нулевой, а копия — не копия.
-  if (!Array.isArray(m.incompleteCollections)) out.push('incompleteCollections не массив — неполнота не проверена');
-  else if (m.incompleteCollections.length > 0) {
-    out.push(`коллекции начаты и не дописаны: ${m.incompleteCollections.join(', ')}`);
+  //
+  // ГДЕ живёт гард — вопрос ФОРМЫ манифеста, ветка по schemaVersion (#1814, b3):
+  // v1 — верхний уровень (история 09.08 остаётся валидной для ретенции как есть);
+  // v2 — protocolChecks.incompleteCollections (гард протокола mongodump отделён от описи,
+  // которая теперь берётся из содержимого артефакта, — источники не смешиваются).
+  // Неизвестная версия уже отбракована выше — судить её форму по правилам v1 или v2 было
+  // бы второй жалобой мимо предмета (ревью 10.08). Единое место гарда: только адрес поля
+  // различается по версии, текст один.
+  const incompleteAt =
+    m.schemaVersion === 2
+      ? [isPlainObject(m.protocolChecks) ? m.protocolChecks.incompleteCollections : undefined, 'protocolChecks.incompleteCollections']
+      : m.schemaVersion === 1
+        ? [m.incompleteCollections, 'incompleteCollections']
+        : null;
+  if (incompleteAt) {
+    const [value, where] = incompleteAt;
+    if (!Array.isArray(value)) out.push(`${where} не массив — неполнота не проверена`);
+    else if (value.length > 0) out.push(`коллекции начаты и не дописаны: ${value.join(', ')}`);
+  }
+  if (m.schemaVersion === 2) {
+    // Значение легально по закрытому списку, но у v2 законен только настоящий источник —
+    // вторая жалоба на значение ВНЕ списка не плодится (его уже назвала проверка выше).
+    if (m.inventorySource === 'mongodump-stderr') {
+      out.push("inventorySource 'mongodump-stderr' у схемы v2 — возврат долга #1814 через чёрный ход");
+    }
+    if (m.incompleteCollections !== undefined) {
+      out.push('incompleteCollections на верхнем уровне — поле схемы v1; у v2 гард живёт в protocolChecks');
+    }
   }
   if (!Array.isArray(m.dbInventory) || m.dbInventory.length === 0) {
     out.push('dbInventory пуст — пустой дамп неотличим от полного');

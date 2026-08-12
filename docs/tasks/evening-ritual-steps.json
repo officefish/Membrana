@@ -93,6 +93,19 @@
       ]
     },
     {
+      "id": "procedure-runs-digest",
+      "script": "scripts/procedure-runs-digest.mjs --days 7 --daily",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "whyNoncritical": "Читатель поверх лент журнала прогонов (первый автомат витрины пяти опор, #1861 / п.1 #1626): ленты не мутирует, сбой не теряет данные, прогон повторим руками (yarn procedure-runs:digest). Кристалл reader-before-next-carrier: носитель обрёл читателя.",
+      "label": "Витрина пяти опор — сводка журнала прогонов за 7 дней",
+      "consumes": [],
+      "produces": [
+        "docs/seanses/procedure-runs-digest-<date>.md"
+      ],
+      "//consumes": "Ленты docs/procedure-runs/trail/*.jsonl читаются напрямую; в consumes[] не объявлены сознательно — freshness-гейт датированных входов сравнивал бы имя файла с today, а окно читателя 7 дней и вчерашние ленты для него законны."
+    },
+    {
       "id": "insight-drift",
       "script": "scripts/insight-drift.mjs",
       "kind": "mechanic",
@@ -110,6 +123,19 @@
       "produces": [
         "отчёт в stdout"
       ]
+    },
+    {
+      "id": "scripts-registry",
+      "script": "scripts/scripts-registry.mjs --report",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "label": "Регенерация реестра скриптов",
+      "//": "b4 s-queue-2026-08-11 (#1265): снимок SCRIPTS_LIST.md регенерировался только руками и дрейфовал (30.07: 407 глаголов против 439 живых). Шаг стоит ДО ritual-artifacts: автозабор берёт produces[], и свежий снимок уезжает в коммит артефактов вечера, а не остаётся грязью в дереве.",
+      "consumes": [],
+      "produces": [
+        "scripts/registry/SCRIPTS_LIST.md"
+      ],
+      "whyNoncritical": "Дрейф снимка не теряет данных дня и догоняется следующим прогоном; падение регенерации не должно ронять вечер."
     },
     {
       "id": "ritual-artifacts",

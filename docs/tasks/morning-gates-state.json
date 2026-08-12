@@ -1,23 +1,16 @@
 {
   "magistralOptions": [
-    "archivarius-mongo-backup",
     "tariff-promo-server-wiring",
-    "frame-holder-moderator-split"
+    "angelina-hostess-impl",
+    "archivarius-sessions-container"
   ],
-  "frozenDigest": "2bfd3d27efd6bc77bb05044d2ffc9fa48fd75d3eff8d509d1a0a4155334bca55",
-  "magistral": "archivarius-mongo-backup",
+  "frozenDigest": "8bcc7405df2f5a8c6876fe7315d2da789a9151d52d5a759dfe674b56012bf553",
+  "magistral": "tariff-promo-server-wiring",
   "swallow": {
-    "draftDigest": "7563abe5dc72625205a336ae917b8aadd60576bdbca3953caf4107f816809e9b",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-08-09.md",
-    "ownerAck": true,
-    "claimsProbe": {
-      "verdict": "soft",
-      "protocol": "docs/seanses/team-evening-feedback-2026-08-08.md",
-      "sha": "fb7559d43224",
-      "at": "2026-08-08T17:47:29.183Z"
-    },
-    "gate": "evening:partner-swallow"
+    "draftDigest": "46490ea55063b954bc62ce0eb8ecbe46b37cbf1272427acc0a9c3b936f941cba",
+    "draftFile": "docs/comms/drafts/swallow-morning-2026-08-12.md",
+    "ownerAck": true
   },
-  "day": "2026-08-09",
-  "magistralChosenAt": "2026-08-09"
+  "day": "2026-08-12",
+  "magistralChosenAt": "2026-08-12"
 }

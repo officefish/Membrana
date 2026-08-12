@@ -2,36 +2,21 @@
   "schema": "dead-wire-pending/1",
   "tact": "выходной, недельный",
   "ratifiedBy": "owner",
-  "ratifiedAt": "2026-08-01",
+  "ratifiedAt": "2026-08-11",
   "pending": {
     "night:run": {
       "reason": "awaits-implementation",
-      "until": "2026-08-09",
+      "until": "2026-08-16",
       "footprint": 4
     },
     "apply:lead-persona": {
       "reason": "awaits-implementation",
-      "until": "2026-08-09",
+      "until": "2026-08-16",
       "footprint": 3
-    },
-    "task:board": {
-      "reason": "awaits-implementation",
-      "until": "2026-08-09",
-      "footprint": 8
-    },
-    "tasks:bookkeeping": {
-      "reason": "awaits-implementation",
-      "until": "2026-08-09",
-      "footprint": 10
-    },
-    "tasks:reviewing": {
-      "reason": "awaits-implementation",
-      "until": "2026-08-09",
-      "footprint": 8
     },
     "cabinet:mp7:prod": {
       "reason": "awaits-implementation",
-      "until": "2026-08-09",
+      "until": "2026-08-16",
       "footprint": 7
     }
   }

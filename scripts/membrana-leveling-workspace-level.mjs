@@ -8,7 +8,7 @@
  * @see docs/prompts/MEMBRANA_LEVELING_SCRIPTS_PROMPT.md
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { runLevelingGate } from './lib/membrana-leveling-gate.mjs';
@@ -93,7 +93,7 @@ export function runWorkspaceLevelCli(argv, deps = {}) {
 
   let snap;
   try {
-    snap = JSON.parse(readFileSync(join(cwd, args.snapshot), 'utf8'));
+    snap = JSON.parse(readFileSync(resolve(cwd, args.snapshot), 'utf8'));
   } catch (err) {
     console.error(`workspace-level: ${err instanceof Error ? err.message : err}`);
     return 2;
@@ -144,7 +144,8 @@ export function runWorkspaceLevelCli(argv, deps = {}) {
     });
 
     if (args.out) {
-      const abs = join(cwd, args.out);
+      // resolve, не join (b6 s-queue-2026-08-11): абсолютный путь не клеится к cwd.
+      const abs = resolve(cwd, args.out);
       mkdirSync(dirname(abs), { recursive: true });
       writeFileSync(abs, report.markdown, 'utf8');
     }

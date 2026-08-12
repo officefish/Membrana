@@ -1,37 +1,34 @@
-<!-- Сгенерировано: 2026-08-09T07:24:06.246Z (yarn day:report; vesnin) -->
+<!-- Сгенерировано: 2026-08-12T12:02:35.420Z (yarn day:report; vesnin) -->
 
-# Доклад по задачам — 2026-08-09
+# Доклад по задачам — 2026-08-12
 
 Автор: Тимлид (vesnin) · зеркало 5-блочного плана дня.
 
 ## Магистраль
 
-- #1815 — OPEN
-- #1809 — OPEN
+- `angelina-hostess-impl` — ведёт ozhegov
 
 ## Подкрепление
 
-— задач со ссылками нет (темы блока — в каноне дня) —
+- `ritual-magistral-source-freshness` — ведёт ozhegov
+- `morning-gates-two-moments` — ведёт ozhegov
 
 ## Перспективные
 
-- `frame-holder-moderator-split` — ведёт dynin
-- `frame-holders-reassign-twenty` — ведёт vesnin
-- `morning-journal-close-step` — ведёт ozhegov
-- `archivarius-sessions-container` — ведёт dynin
-- `assets-container` — ведёт vesnin
-- #1815 — OPEN
-- #1809 — OPEN
-- #1793 — OPEN
-- #1787 — OPEN
-- #1782 — OPEN
+- `worktrees-align-snapshot-guard` — ведёт dynin
+- #1864 — OPEN
 
 ## Экспериментальные
 
-- #1807 — MERGED
+— задач со ссылками нет (темы блока — в каноне дня) —
 
 ## Санитарные
 
-- `frame-holder-moderator-split` — ведёт dynin
-- #1815 — OPEN
-- #1793 — OPEN
+- #1785 — MERGED
+- #1789 — MERGED
+- #1801 — MERGED
+- #1764 — CLOSED
+- #1447 — CLOSED
+- #1422 — CLOSED
+- #1272 — CLOSED
+- #554 — CLOSED

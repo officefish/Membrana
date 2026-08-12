@@ -35,8 +35,30 @@ import {
   parseArtifactName,
   planRetention,
 } from './lib/mongo-dump-policy.mjs';
+// Опись — из СОДЕРЖИМОГО артефакта, конвейером дома (#1814, блок b3): восстановление в
+// изолированную цель и чтение той же дисциплиной, что у дрилла. Двух правд об одном
+// архиве больше нет — parseDbInventory демонтирован.
+import { DB_NAME, DUMP_INVENTORY_PROJECT, buildInventoryFromArchive, dockerAdapter } from './lib/archive-inventory.mjs';
 
 const repoRoot = resolve(import.meta.dirname, '..');
+
+/**
+ * Код стопа: стенд описи недоступен → дампа НЕТ (решение резчика 10.08). Мягкий фолбэк на
+ * stderr был бы возвратом к двум правдам через чёрный ход; докер и так жёсткая зависимость
+ * тракта — сам mongodump ходит через `docker compose exec`.
+ */
+export const DUMP_INVENTORY_UNAVAILABLE = 'DUMP_INVENTORY_UNAVAILABLE';
+
+/**
+ * Маппинг листинга конвейера в форму описи манифеста. `db` — константой дома, не разбором
+ * имени коллекции: архив режется `nsInclude DB_NAME.*`, второй источник истины на пустом
+ * месте запрещён (решение держателя b3).
+ * @param {Array<{name: string, count: number}>} listing
+ * @returns {Array<{db: string, collection: string, documentCount: number}>}
+ */
+export function inventoryFromListing(listing) {
+  return (listing ?? []).map((c) => ({ db: DB_NAME, collection: c.name, documentCount: c.count }));
+}
 
 /**
  * Настройка из окружения.
@@ -77,27 +99,10 @@ export function parseMongodVersion(text) {
   return m ? m[1] : null;
 }
 
-/**
- * Опись содержимого из stderr `mongodump`.
- *
- * Источник выбран сознательно: mongodump и так печатает, сколько документов он выгрузил из
- * каждой коллекции. Второе подключение к базе ради пересчёта считало бы ДРУГОЙ момент
- * времени — и опись перестала бы описывать этот артефакт.
- */
-export function parseDbInventory(stderr) {
-  const out = [];
-  // Обратные кавычки вокруг имени — реальная форма вывода mongodump 7.0.39:
-  //   done dumping `membrana_archivarius.spans` (5000 documents)
-  // Первая редакция их не знала, потому что зубы писались против ВЫДУМАННОГО мной вывода,
-  // и опись уезжала в манифест как db="`membrana_archivarius", collection="spans`".
-  // Поймал первый живой прогон стенда 08.08 — тот самый, ради которого блок local-proof и
-  // существует. Зубы с тех пор кормятся дословно захваченным stderr, а не сочинённым.
-  const re = /done dumping `?([^\s.`]+)\.([^\s`]+)`?\s+\((\d+) documents?\)/gu;
-  for (const m of String(stderr ?? '').matchAll(re)) {
-    out.push({ db: m[1], collection: m[2], documentCount: Number(m[3]) });
-  }
-  return out;
-}
+// parseDbInventory ДЕМОНТИРОВАН (#1814, b3): опись из stderr была разбором человекочитаемого
+// лога чужой утилиты — формат не контракт, зуб вернулся бы на 7.1 (BLOCK Тарасова 08.08).
+// Опись теперь снимается из содержимого артефакта (см. inventoryFromListing + дом
+// lib/archive-inventory.mjs); от разбора stderr остался только гард протокола ниже.
 
 /**
  * Коллекции, которые mongodump НАЧАЛ писать и не объявил законченными.
@@ -137,7 +142,7 @@ export const tailLines = (text, n = 12) => String(text ?? '').trim().split('\n')
  * докером, то есть на практике не проверяем вовсе — и рассогласование «исполнитель пишет
  * одно, политика ждёт другого» всплыло бы на проде.
  */
-export function buildManifest({ startedAt, finishedAt, mongoVersion, sourceHost, exitCode, stderr, sha256, sizeBytes }) {
+export function buildManifest({ startedAt, finishedAt, mongoVersion, sourceHost, exitCode, stderr, sha256, sizeBytes, dbInventory }) {
   return {
     schemaVersion: MANIFEST_SCHEMA_VERSION,
     startedAt,
@@ -151,18 +156,16 @@ export function buildManifest({ startedAt, finishedAt, mongoVersion, sourceHost,
     sha256,
     sha256Of: 'gzip-stream',
     sizeBytes,
-    // Источник описи объявлен ПОЛЕМ, как и субъект хеша. Разбор исполнителя блока дословно:
-    // «регулярка по обратным кавычкам — это всё ещё парсинг человекочитаемого stderr чужой
-    // утилиты; причина глубже — контракт "что выгружено" берётся из логов, а не из факта на
-    // диске». Он прав, и лечится это чтением содержимого архива, то есть восстановлением —
-    // предмет соседней карточки (#1809), сюда не влезающий по границе спринта. Пока источник
-    // временный, он НАЗВАН: смена формата вывода станет сменой значения поля, а не тихим
-    // расхождением. Долг на настоящий источник — #1814.
-    inventorySource: 'mongodump-stderr',
-    dbInventory: parseDbInventory(stderr),
-    // Пусто — значит все начатые коллекции дописаны. Непусто — дамп неполон, что бы ни
-    // говорил код возврата.
-    incompleteCollections: incompleteCollections(stderr),
+    // Источник описи объявлен ПОЛЕМ, как и субъект хеша. С v2 (#1814 закрыт) источник —
+    // содержимое самого артефакта: листинг снят конвейером дома после восстановления в
+    // изолированную цель, а не выужен регулярками из лога чужой утилиты. Опись приносит
+    // ВЫЗЫВАЮЩИЙ (inventoryFromListing над listing конвейера): сборка манифеста остаётся
+    // чистой функцией — шов политика/исполнитель проверяем без докера, как и был.
+    inventorySource: 'archive-contents',
+    dbInventory: dbInventory ?? [],
+    // Гард протокола mongodump (v2 — отдельным полем, не смешивается с описью): «writing X»
+    // без парного «done dumping X» — дамп неполон, что бы ни говорил код возврата.
+    protocolChecks: { incompleteCollections: incompleteCollections(stderr) },
   };
 }
 
@@ -212,9 +215,13 @@ async function dump(cfg, argv) {
 
   // Однопроходно: тот же поток одновременно считается, хешируется и пишется на диск.
   // Второй проход по многогигабайтному архиву ради sha256 — плата ни за что.
+  // Скоуп дампа = скоуп описи = скоуп отката (ревью 10.08): без `--db` mongodump снимал
+  // весь инстанс, а опись и nsInclude отката держали только DB_NAME — манифест конструктивно
+  // недоописывал артефакт (соседняя база уехала бы в архив невидимой для описи). Три скоупа
+  // сведены к одному имени из дома; предмет бэкапа — база архивариуса, не инстанс.
   const child = spawn(
     'docker',
-    ['compose', ...composeArgs(cfg), 'exec', '-T', cfg.service, 'sh', '-c', 'mongodump --archive --gzip'],
+    ['compose', ...composeArgs(cfg), 'exec', '-T', cfg.service, 'sh', '-c', `mongodump --archive --gzip --db ${DB_NAME}`],
     { stdio: ['ignore', 'pipe', 'pipe'] },
   );
   let stderr = '';
@@ -230,6 +237,42 @@ async function dump(cfg, argv) {
 
   const finishedAt = new Date().toISOString();
   const sha256 = state.hash.digest('hex');
+
+  // Опись — read-back с ЗАКРЫТОГО tmp, до rename (уточнение держателя b3 к инварианту
+  // «манифест раньше переименования»): это те же байты, которые атомарный rename получит
+  // под финальным именем; описывается файл на диске, а не состояние потока. Читать есть
+  // смысл только у состоявшегося дампа — упавший транспорт/ненулевой код описывать нечего,
+  // пустая опись честно уронит пригодность ниже.
+  let dbInventory = [];
+  if (!transportProblem && exitCode === 0) {
+    try {
+      const { listing } = buildInventoryFromArchive({
+        archivePath: tmp,
+        adapter: dockerAdapter({ repoRoot }),
+        // Своя цель и listing-only (ревью 10.08): дамп не делит проект с --keep-up-сессией
+        // дрилла и не платит за канонизацию sha256, которую здесь никто не сравнивает.
+        project: DUMP_INVENTORY_PROJECT,
+        withHashes: false,
+      });
+      dbInventory = inventoryFromListing(listing);
+    } catch (e) {
+      // Стенд описи недоступен → дампа НЕТ (решение резчика: фолбэк на stderr — возврат
+      // к двум правдам через чёрный ход). Манифеста нет; байты дампа НЕ прячутся под
+      // in-progress-именем (ревью 10.08: невидимый для list/prune полноразмерный файл —
+      // течь диска), а получают видимый след partial-- вне схемы имён — как у прочих
+      // неудачных попыток: ротация его не тронет, человек увидит.
+      console.error(`backup:dump — ${DUMP_INVENTORY_UNAVAILABLE}: опись из артефакта не снята (${String(e?.message ?? e).split('\n')[0]})`);
+      const trace = `partial--${startedAt.replace(/[:.]/gu, '')}.archive.gz`;
+      try {
+        await rename(tmp, join(cfg.dir, trace));
+        console.error(`backup:dump — дамп без честной описи не дамп; байты оставлены следом: ${trace}`);
+      } catch {
+        console.error('backup:dump — дамп без честной описи не дамп; временный файл оставлен как есть');
+      }
+      return 1;
+    }
+  }
+
   const manifest = buildManifest({
     startedAt,
     finishedAt,
@@ -239,6 +282,7 @@ async function dump(cfg, argv) {
     stderr: transportProblem ? `${stderr}\n${transportProblem}` : stderr,
     sha256,
     sizeBytes: state.bytes,
+    dbInventory,
   });
 
   const ok = isFitForRetention(manifest, cfg.policy);
@@ -250,7 +294,10 @@ async function dump(cfg, argv) {
     : `partial--${startedAt.replace(/[:.]/gu, '')}.archive.gz`;
 
   // Манифест ложится РАНЬШЕ переименования: увидев финальное имя, читатель обязан уже иметь
-  // возможность прочесть, чем этот файл является.
+  // возможность прочесть, чем этот файл является. Опись — read-back с закрытого tmp, до
+  // rename (см. выше): порядок манифест/rename этим не ломается, существо «опись описывает
+  // файл на диске» соблюдено. Крэш между записью манифеста и rename оставляет пару
+  // «манифест под финальным именем + tmp» — сироту обязан снести уборщик ротации парой.
   //
   // Отказ записи ловится отдельно и говорит по-человечески. Найдено веткой отказа «каталог
   // только для чтения», названной исполнителем блока local-proof: без этого перехвата скрипт

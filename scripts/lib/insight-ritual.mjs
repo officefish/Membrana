@@ -45,6 +45,47 @@ export function writeRegistry(repoRoot, registry) {
   writeFileSync(path, `${JSON.stringify(registry, null, 2)}\n`, 'utf8');
 }
 
+/**
+ * Применить текст ревью к дому инсайта (insight-review-from-file):
+ * REVIEW.md + meta.status=reviewed (+weight из «Средний балл») + registry.
+ * ОДНА дорога для обоих входов — панельной цепочки и готового файла
+ * (--review-file): статусы больше не переставляются однострочником
+ * (вещдок 26.07, insight-cast-carrier-contract).
+ *
+ * @param {string} repoRoot
+ * @param {string} id нормализованный id инсайта
+ * @param {string} text содержимое REVIEW.md
+ * @param {{ now?: Date }} [opts]
+ * @returns {{ reviewPath: string, weight: number | null }}
+ */
+export function applyReviewText(repoRoot, id, text, opts = {}) {
+  const body = String(text ?? '').trim();
+  if (!body) throw new Error('пустое ревью: REVIEW.md без содержания статусы не двигает');
+  const dir = insightDir(repoRoot, id);
+  const metaPath = join(dir, 'meta.json');
+  if (!existsSync(metaPath)) throw new Error(`Insight not found: ${id} (нет meta.json)`);
+
+  const reviewPath = join(dir, 'REVIEW.md');
+  writeFileSync(reviewPath, `${body}\n`, 'utf8');
+
+  const meta = JSON.parse(readFileSync(metaPath, 'utf8'));
+  meta.status = 'reviewed';
+  meta.reviewedAt = (opts.now ?? new Date()).toISOString().slice(0, 10);
+  const avgMatch = body.match(/\*\*Средний балл:\*\*\s*([\d.]+)/u);
+  const weight = avgMatch ? Number(avgMatch[1]) : null;
+  if (weight !== null) meta.weight = weight;
+  writeFileSync(metaPath, `${JSON.stringify(meta, null, 2)}\n`, 'utf8');
+
+  const registry = readRegistry(repoRoot);
+  const entry = registry.insights.find((item) => item.id === id);
+  if (entry) {
+    entry.status = 'reviewed';
+    if (weight !== null) entry.weight = weight;
+  }
+  writeRegistry(repoRoot, registry);
+  return { reviewPath, weight };
+}
+
 /** @param {string} template @param {Record<string, string>} vars */
 export function fillTemplate(template, vars) {
   let out = template;
@@ -420,6 +461,7 @@ export function parseInsightCli(argv) {
   let set = '';
   let successor = '';
   let json = false;
+  let reviewFile = '';
   const taskIds = [];
 
   for (let i = 1; i < argv.length; i++) {
@@ -480,6 +522,10 @@ export function parseInsightCli(argv) {
       weight = Number(argv[++i]);
     } else if (arg.startsWith('--weight=')) {
       weight = Number(arg.slice(9));
+    } else if (arg === '--review-file') {
+      reviewFile = argv[++i] ?? '';
+    } else if (arg.startsWith('--review-file=')) {
+      reviewFile = arg.slice('--review-file='.length);
     } else if (!arg.startsWith('--') && !id) {
       id = arg;
     }
@@ -490,5 +536,5 @@ export function parseInsightCli(argv) {
     statusFilter = argv[si + 1];
   }
 
-  return { command, id, title, source, status, weight, statusFilter, dryRun, execute, taskIds, result, reason, request, requestKey, authority, set, successor, json };
+  return { command, id, title, source, status, weight, statusFilter, dryRun, execute, taskIds, result, reason, request, requestKey, authority, set, successor, json, reviewFile };
 }

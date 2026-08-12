@@ -21,6 +21,19 @@ const TODAY = '2026-08-01';
 const alive = () => true;
 const dead = () => false;
 
+// Срок pending ратифицируется владельцем и продлевается (01.08 → 11.08: 09.08 → 16.08);
+// живые прогоны ниже читают его из перечня, а не из пришпиленной даты — пришпиленный
+// пин падал при каждой легальной перечеканке, ничего не ловя.
+const LIVE_PENDING = JSON.parse(
+  readFileSync(new URL('../docs/tasks/dead-wire-pending.json', import.meta.url), 'utf8'),
+);
+const LIVE_UNTIL = Object.values(LIVE_PENDING.pending)
+  .map((p) => p.until)
+  .sort()
+  .at(-1);
+const shiftDay = (iso, days) =>
+  new Date(Date.parse(`${iso}T00:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10);
+
 // ── извлечение носителя ──────────────────────────────────────────────────────
 
 test('составная команда отдаёт все носители, а не первый', () => {
@@ -192,11 +205,29 @@ test('согласие каталога и package.json находки не да
   assert.deepEqual(findings, []);
 });
 
-test('живые каталоги в дереве: два, инструментов двенадцать, расхождений нет', () => {
+test('живые каталоги в дереве: снятые глаголы не считаются проводами и не дают находок', () => {
+  // Число ЖИВЫХ проводов пришпиливать нельзя: оно законно меняется, когда
+  // владелец снимает глагол (11.08: три declined-записи мастерской задач).
+  // Пин на «двенадцать» падал бы при каждом честном «нет», ничего не поймав.
+  // Арифметику прибора зуб не повторяет (это было бы вторым источником) —
+  // проверяется ИНВАРИАНТ: считаются только пары «глагол + носитель», а
+  // снятые записи не попадают ни в счёт, ни в находки.
   const report = runCheck({ today: TODAY });
   assert.equal(report.catalogsChecked, 2);
-  assert.equal(report.toolsChecked, 12);
+  assert.ok(report.toolsChecked > 0, 'каталоги перестали давать проводов вовсе — прибор ослеп');
   assert.equal(report.findings.filter((f) => f.kind === 'carrier_mismatch').length, 0);
+
+  const declined = JSON.parse(readFileSync(new URL('../docs/tasks/workshop.catalog.json', import.meta.url), 'utf8'))
+    .tools.filter((t) => t.state === 'declined');
+  assert.ok(declined.length > 0, 'фикстура смысла: в дереве есть снятые глаголы');
+  for (const t of declined) {
+    assert.equal(t.yarn, null, `снятый глагол ${t.id} снова зовётся`);
+    assert.equal(
+      report.findings.some((f) => f.tool === t.id),
+      false,
+      `снятый глагол ${t.id} дал находку — отказ читается как дефект`,
+    );
+  }
 });
 
 // ── прогон по живому дереву ──────────────────────────────────────────────────
@@ -210,12 +241,15 @@ test('живой package.json: после разбора связь честна
   assert.ok(report.checked > 400, `команд проверено: ${report.checked}`);
 });
 
-test('перечень pending покрывает ровно шесть проводов и все с причиной и датой', () => {
+test('перечень pending: за сроком проявляются ВСЕ его записи, сколько бы их ни было', () => {
   const report = runCheck({ today: TODAY });
   assert.equal(report.findings.length, 0);
-  // Сдвинем «сегодня» за срок — все шесть обязаны проявиться как просроченные.
-  const after = runCheck({ today: '2026-08-10' });
-  assert.equal(after.findings.length, 6, 'за сроком должны проявиться все шесть');
+  // Сдвинем «сегодня» за срок — все записи перечня обязаны проявиться. Число
+  // берём из перечня, а не из памяти: 11.08 три записи законно вынесены
+  // (глаголы сняты владельцем, они больше не «ждут реализации»).
+  const pendingCount = Object.keys(LIVE_PENDING.pending).length;
+  const after = runCheck({ today: shiftDay(LIVE_UNTIL, 1) });
+  assert.equal(after.findings.length, pendingCount, 'за сроком должны проявиться все записи перечня');
   assert.ok(after.findings.every((f) => f.kind === 'pending_expired'));
 });
 
@@ -231,12 +265,12 @@ test('подложенный фальшивый провод роняет зуб
 
 // ── сторож в утренней цепочке ────────────────────────────────────────────────
 
-test('09.08 доказывается БЕЗ ожидания 09.08: дата приходит параметром', () => {
+test('срок доказывается БЕЗ его ожидания: дата приходит параметром', () => {
   // Системное время не подделывается: ядро берёт день прогона аргументом, и это
   // единственный честный способ проверить будущее.
-  const before = runCheck({ today: '2026-08-08' });
-  const onDay = runCheck({ today: '2026-08-09' });
-  const after = runCheck({ today: '2026-08-10' });
+  const before = runCheck({ today: shiftDay(LIVE_UNTIL, -1) });
+  const onDay = runCheck({ today: LIVE_UNTIL });
+  const after = runCheck({ today: shiftDay(LIVE_UNTIL, 1) });
 
   const expired = (r) => r.findings.filter((f) => f.kind === 'pending_expired');
   assert.equal(expired(before).length, 0, 'накануне срок ещё в силе');

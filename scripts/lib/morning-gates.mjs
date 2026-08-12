@@ -5,9 +5,10 @@
  * swallow-send (одобрение доклада). send — терминальное действие: вызывается тогда и только тогда, когда
  * canSend(state, today) === true; пути мимо предикатов нет — «забыть» невозможно.
  *
- * #1233: согласие и снимок живут только в границах `state.day` (YYYY-MM-DD). День
- * подаётся снаружи (детерминизм — как у ключа идемпотентности). Состояние без day
- * или со вчерашним day — гейт закрыт («протухло»). Отправитель (`telegram:swallow`)
+ * #1233 + ADR-0024: согласие живёт в границах СВОЕГО момента субъекта — у магистрали
+ * `magistralChosenAt`, у ласточки `swallow.day`; `state.day` остался дню заморозки.
+ * День подаётся снаружи (детерминизм — как у ключа идемпотентности). Состояние без
+ * момента или со вчерашним — гейт закрыт («протухло»). Отправитель (`telegram:swallow`)
  * зовёт `canSendAlly` и сверяет payload с `draftDigest`.
  *
  * Вечер: тот же swallow-контур (день + ack + digest); magistral — только утренний
@@ -52,10 +53,9 @@ export function dayFresh(state, today) {
  * получало сегодняшнюю дату при ВЧЕРАШНЕМ выборе: `status` докладывал ложный owner-choice,
  * а `canSend` считал предикат выполненным. Наблюдалось трижды, 05.08–07.08.
  *
- * ПОЧЕМУ ЛАСТОЧКА ОСТАЛАСЬ НА `state.day` (поправка формы при реализации, см. `//form-correction`
- * нарезки). Тот же файл состояния читает вечерний гейт (`scripts/evening-gate.mjs:64`,
- * `EVENING_GATES_STATE_REL`), а вечер ADR-0024 объявил вне границ. Переносить его момент
- * значило бы сломать соседа ради симметрии имён.
+ * ЛАСТОЧКА: сперва оставалась на `state.day` (поправка формы 07.08 — тот же файл читал
+ * вечерний гейт, объявленный вне границ ADR), долг снят карточкой `swallow-own-moment`:
+ * у неё теперь собственный момент `swallow.day` со своими фасадами ниже.
  *
  * ОТСУТСТВИЕ ПОЛЯ — НЕ «СЕГОДНЯ» (Р4). Состояние, записанное до ADR-0024, момента магистрали
  * не несёт, и он читается как НЕИЗВЕСТНЫЙ: гейт закрыт, выбор требуется заново. Наследовать
@@ -107,6 +107,56 @@ export function clearMagistralMoment(state) {
 }
 
 /**
+ * Момент черновика ласточки — СОБСТВЕННЫЙ, отдельный от `state.day` (ADR-0024 Р1,
+ * карточка-наследник `swallow-own-moment`).
+ *
+ * ЧЕМ БЫЛ ДОЛГ. Реализация 07.08 развела только магистраль; ласточка осталась на
+ * `state.day`, потому что то же поле читал вечерний гейт. `state.day` нёс два значения —
+ * «момент черновика» для утра и «день состояния» для вечера: один термин, два смысла
+ * в разных домах, ровно то, что ADR-0024 запрещал (разбор Ожегова 07.08).
+ *
+ * ТЕПЕРЬ. Носитель момента — приватное поле `swallow.day`; оба пути ласточки (утренний
+ * `morning:gate swallow` и вечерний `evening:gate partner-swallow`) пишут его через эти
+ * фасады: субъект «черновик дня» один, дверей две. `state.day` остаётся дню заморозки.
+ *
+ * ОТСУТСТВИЕ ПОЛЯ — НЕ «СЕГОДНЯ» (Р4): состояние, записанное до миграции, момента не несёт,
+ * гейт закрыт, черновик требуется заново.
+ *
+ * @param {{swallow?: {day?: string|null}}} state
+ * @returns {string|null} YYYY-MM-DD либо null, если момент неизвестен
+ */
+export function swallowMoment(state) {
+  const at = state?.swallow?.day;
+  return typeof at === 'string' && at.trim() ? at.trim() : null;
+}
+
+/**
+ * Свеж ли СВОЙ момент ласточки (Р2).
+ * @param {{swallow?: {day?: string|null}}} state
+ * @param {string} today YYYY-MM-DD
+ */
+export function swallowMomentFresh(state, today) {
+  return Boolean(today) && swallowMoment(state) === today;
+}
+
+/**
+ * Поставить момент черновика ласточки. Писатель живёт рядом с читателем (тот же довод,
+ * что у магистрали): имя носителя приватно, CLI его не знает.
+ * @param {object} state мутируется на месте
+ * @param {string} at YYYY-MM-DD
+ */
+export function setSwallowMoment(state, at) {
+  state.swallow = { ...(state.swallow ?? {}), day: at };
+  return state;
+}
+
+/** Снять момент черновика ласточки. */
+export function clearSwallowMoment(state) {
+  if (state.swallow) state.swallow = { ...state.swallow, day: null };
+  return state;
+}
+
+/**
  * Гейт magistral: выбор владельца принадлежит замороженному снимку топ-3 И день свеж.
  * Если состояние несёт `frozenDigest` — снимок сверяется с ним (P2 ревью #762).
  * @param {{day?: string|null, magistral?: {id?: string}|string|null, magistralOptions?: Array<{id: string}|string>, frozenDigest?: string|null}} state
@@ -135,11 +185,9 @@ export function magistralChosen(state, today) {
  * @returns {boolean}
  */
 export function swallowApproved(state, today) {
-  // TODO(ADR-0024): swallowMoment на state.day до разведения с evening-gate.
-  // Ласточка НЕ мигрирована на свой момент: тот же файл состояния читает
-  // scripts/evening-gate.mjs:64, а вечер объявлен вне границ ADR. Наследник — карточка
-  // swallow-own-moment. До неё state.day несёт два значения и это названо вслух.
-  if (!dayFresh(state, today)) return false;
+  // Р2 ADR-0024 (долг swallow-own-moment снят): сверяется СВОЙ момент ласточки,
+  // не общий `state.day` — тот остался дню заморозки.
+  if (!swallowMomentFresh(state, today)) return false;
   return state?.swallow?.ownerAck === true && Boolean(state?.swallow?.draftDigest);
 }
 
@@ -176,8 +224,13 @@ export function canSend(state, today) {
   } else if (!magistralChosen(state, today)) {
     blockedBy.push('magistral: ждёт owner-choice из топ-3');
   }
-  if (!dayFresh(state, today)) {
-    blockedBy.push('swallow-send: черновик не сегодняшний — нужен свежий draft + «ок»');
+  const sMoment = swallowMoment(state);
+  if (!swallowMomentFresh(state, today)) {
+    blockedBy.push(
+      sMoment
+        ? `swallow-send: черновик не сегодняшний (зафиксирован ${sMoment}) — нужен свежий draft + «ок»`
+        : 'swallow-send: момент черновика неизвестен — нужен свежий draft + «ок»',
+    );
   } else if (!swallowApproved(state, today)) {
     blockedBy.push('swallow-send: ждёт явного «ок» владельца по черновику');
   }
@@ -194,8 +247,10 @@ export function canSend(state, today) {
  */
 export function canSendAlly(state, today, payload) {
   const blockedBy = [];
-  if (!dayFresh(state, today)) {
-    blockedBy.push('day: состояние протухло — согласие не на сегодня');
+  // Р2 ADR-0024: отправитель сверяет момент ЛАСТОЧКИ — субъект «черновик дня» один
+  // у утренней и вечерней двери, и согласие живёт в его границах, не в дне заморозки.
+  if (!swallowMomentFresh(state, today)) {
+    blockedBy.push('swallow-send: момент черновика не сегодняшний — согласие не на сегодня');
   } else if (!(state?.swallow?.ownerAck === true && Boolean(state?.swallow?.draftDigest))) {
     blockedBy.push('swallow-send: ждёт явного «ок» владельца по черновику');
   } else if (!payloadMatchesDraft(state, payload)) {

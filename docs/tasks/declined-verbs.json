@@ -1,0 +1,125 @@
+{
+  "schema": "declined-verbs/1",
+  "//": "Словарь СНЯТЫХ глаголов: были объявлены, решено не строить. Первое место, куда смотрит тот, кто хочет «вернуть» глагол. Не путать с dead-wire-pending (ждут реализации в срок) и с null в манифесте мастерской (глагол этой мастерской не свойственен).",
+  "declined": [
+    {
+      "name": "task:board",
+      "verb": "board",
+      "workshop": "docs/tasks/workshop.manifest.json",
+      "declaredEngine": "scripts/generate-active-tasks-board.mjs",
+      "declaredAt": "2026-06-24",
+      "declinedAt": "2026-08-11",
+      "decidedBy": "owner",
+      "reason": "Объявление без движка полтора месяца (2026-06-24 → 2026-08-11): потребность не подтверждена ни одним прогоном за окно, объявление держалось записью dead-wire pending. Владелец 11.08 выбрал честное «нет» вместо стройки.",
+      "artifacts": [
+        "package.json: строка глагола снята",
+        "docs/tasks/workshop.manifest.json: verbs.board = declined-форма",
+        "docs/tasks/workshop.catalog.json: запись state=declined, script/yarn = null",
+        "docs/tasks/dead-wire-pending.json: запись вынесена (не ждёт реализации)"
+      ],
+      "reopenWhen": "потребность подтверждена живым прогоном (кто и зачем звал) — тогда карточка на движок, а не строка-объявление",
+      "evidence": [
+        {
+          "kind": "file-absent",
+          "value": "scripts/generate-active-tasks-board.mjs",
+          "check": "existsSync(declaredEngine) === false — движок в дереве отсутствует, проверяемо на любом коммите"
+        },
+        {
+          "kind": "registry-line",
+          "value": "scripts/registry/SCRIPTS_LIST.md",
+          "check": "до 11.08 глагол числился в разделе «Yarn → missing file»"
+        },
+        {
+          "kind": "pending-record",
+          "value": "docs/tasks/dead-wire-pending.json@2026-08-09",
+          "check": "запись awaits-implementation держала объявление законным до продления 11.08; в текущей ревизии вынесена"
+        },
+        {
+          "kind": "audit-report",
+          "value": "docs/audit/tasks/analysis/registry-audit-2026-08-11.md",
+          "check": "ревизия 11.08 назвала три глагола развилкой владельца (строка tw-declared-verbs-honest-no)"
+        }
+      ]
+    },
+    {
+      "name": "tasks:bookkeeping",
+      "verb": "bookkeeping",
+      "workshop": "docs/tasks/workshop.manifest.json",
+      "declaredEngine": "scripts/tasks-bookkeeping.mjs",
+      "declaredAt": "2026-06-24",
+      "declinedAt": "2026-08-11",
+      "decidedBy": "owner",
+      "reason": "Объявление без движка полтора месяца (2026-06-24 → 2026-08-11): потребность не подтверждена ни одним прогоном за окно, объявление держалось записью dead-wire pending. Владелец 11.08 выбрал честное «нет» вместо стройки.",
+      "artifacts": [
+        "package.json: строка глагола снята",
+        "docs/tasks/workshop.manifest.json: verbs.bookkeeping = declined-форма",
+        "docs/tasks/workshop.catalog.json: запись state=declined, script/yarn = null",
+        "docs/tasks/dead-wire-pending.json: запись вынесена (не ждёт реализации)"
+      ],
+      "reopenWhen": "потребность подтверждена живым прогоном (кто и зачем звал) — тогда карточка на движок, а не строка-объявление",
+      "evidence": [
+        {
+          "kind": "file-absent",
+          "value": "scripts/tasks-bookkeeping.mjs",
+          "check": "existsSync(declaredEngine) === false — движок в дереве отсутствует, проверяемо на любом коммите"
+        },
+        {
+          "kind": "registry-line",
+          "value": "scripts/registry/SCRIPTS_LIST.md",
+          "check": "до 11.08 глагол числился в разделе «Yarn → missing file»"
+        },
+        {
+          "kind": "pending-record",
+          "value": "docs/tasks/dead-wire-pending.json@2026-08-09",
+          "check": "запись awaits-implementation держала объявление законным до продления 11.08; в текущей ревизии вынесена"
+        },
+        {
+          "kind": "audit-report",
+          "value": "docs/audit/tasks/analysis/registry-audit-2026-08-11.md",
+          "check": "ревизия 11.08 назвала три глагола развилкой владельца (строка tw-declared-verbs-honest-no)"
+        }
+      ]
+    },
+    {
+      "name": "tasks:reviewing",
+      "verb": "reviewing",
+      "workshop": "docs/tasks/workshop.manifest.json",
+      "declaredEngine": "scripts/tasks-reviewing.mjs",
+      "declaredAt": "2026-06-24",
+      "declinedAt": "2026-08-11",
+      "decidedBy": "owner",
+      "reason": "Объявление без движка полтора месяца (2026-06-24 → 2026-08-11): потребность не подтверждена ни одним прогоном за окно, объявление держалось записью dead-wire pending. Владелец 11.08 выбрал честное «нет» вместо стройки.",
+      "artifacts": [
+        "package.json: строка глагола снята",
+        "docs/tasks/workshop.manifest.json: verbs.reviewing = declined-форма",
+        "docs/tasks/workshop.catalog.json: запись state=declined, script/yarn = null",
+        "docs/tasks/dead-wire-pending.json: запись вынесена (не ждёт реализации)"
+      ],
+      "reopenWhen": "потребность подтверждена живым прогоном (кто и зачем звал) — тогда карточка на движок, а не строка-объявление",
+      "evidence": [
+        {
+          "kind": "file-absent",
+          "value": "scripts/tasks-reviewing.mjs",
+          "check": "existsSync(declaredEngine) === false — движок в дереве отсутствует, проверяемо на любом коммите"
+        },
+        {
+          "kind": "registry-line",
+          "value": "scripts/registry/SCRIPTS_LIST.md",
+          "check": "до 11.08 глагол числился в разделе «Yarn → missing file»"
+        },
+        {
+          "kind": "pending-record",
+          "value": "docs/tasks/dead-wire-pending.json@2026-08-09",
+          "check": "запись awaits-implementation держала объявление законным до продления 11.08; в текущей ревизии вынесена"
+        },
+        {
+          "kind": "audit-report",
+          "value": "docs/audit/tasks/analysis/registry-audit-2026-08-11.md",
+          "check": "ревизия 11.08 назвала три глагола развилкой владельца (строка tw-declared-verbs-honest-no)"
+        }
+      ]
+    }
+  ],
+  "//form": "Форма «declined: …» отличается от null сознательно (разбор Ожегова 11.08): null у audit/decompose значит «глагол мастерской этой не свойственен», declined — «был объявлен, решено не строить». Смешение двух значений в одном символе и есть та молчаливая дыра, которой глаголы жили полтора месяца. Реестр снятых: docs/tasks/declined-verbs.json. Пояснение живёт ЗДЕСЬ, а не в манифесте мастерской: схема манифеста закрыта, произвольные //-ключи аудит атласа называет лишним полем (поймано прогоном 11.08) — дом пояснения у реестра снятых.",
+  "//evidence": "Поле reason НЕ несёт кинетических фактов («падал живьём») — такое утверждение холодная сессия прочтёт как подтверждённое, а опровергнуть нечем: носителя нет (находка ревью PR #1859, класс B4). Основания вынесены в evidence[] проверяемыми маркерами: отсутствие файла-движка, строка производного снимка, запись перечня pending, отчёт ревизии."
+}

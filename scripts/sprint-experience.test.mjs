@@ -24,8 +24,10 @@ import {
 import { changedLines, computeCutAccuracy, verdictFor } from './lib/sprint-experience/cut-accuracy.mjs';
 import { computeFalseStopRate } from './lib/sprint-experience/false-stop-rate.mjs';
 import {
-  checkAppendOnly, isLegalNo, makeForecastRecord, validateForecastRecord,
+  FORECAST_RECORDS_REL_PATH,
+  checkAppendOnly, isLegalNo, makeForecastRecord, nextForecastSeq, validateForecastRecord,
 } from './lib/sprint-experience/forecast-record.mjs';
+import { FORECAST_RECORDS_REL_PATH as GATE_RECORDS_REL_PATH } from './lib/sprint-integration/forecast-record-gate.mjs';
 import {
   CHANGE_FEEDS, CUT_PLANS, LEADS, REVIEW_SEGMENTS, STOP_JOURNALS, STUB_SETS,
   cutRecordFrom, resolveStubSet, resolverBroken, runsFixture, stopRecordsFrom,
@@ -415,4 +417,58 @@ test('справка перечисляет коды возврата — они
 test('вызов без режима — тоже код 2, а не тихий ноль', () => {
   const r = run([]);
   assert.equal(r.code, 2);
+});
+
+// ── b2 s-queue-2026-08-11: один путь ленты, seq по ленте ─────────────────────
+
+test('путь ленты один: константа рода и реэкспорт гейта — одно значение', () => {
+  // Две правды пути расходятся молча (вещдок 10.08: RECORDS_PATH писателя против
+  // копии гейта). Реэкспорт обязан быть тем же значением, не совпадающей строкой
+  // по случайности — сверяем идентичность.
+  assert.equal(GATE_RECORDS_REL_PATH, FORECAST_RECORDS_REL_PATH);
+  assert.equal(FORECAST_RECORDS_REL_PATH, 'docs/sprint/experience/forecast-records.jsonl');
+});
+
+test('seq растёт по ленте: вторая запись окна не получает id первой', () => {
+  const key = { personaId: 'vesnin', sprintId: 's-x', subject: 'cut' };
+  assert.equal(nextForecastSeq([], key), 1, 'пустая лента — первый seq');
+  const ledger = [{ id: 'vesnin-s-x-cut-1' }, { id: 'vesnin-s-x-cut-2' }];
+  assert.equal(nextForecastSeq(ledger, key), 3, 'после cut-2 приходит cut-3');
+  // Дефолт seq=1 в makeForecastRecord дал бы id «vesnin-s-x-cut-1» — ровно ту
+  // запись, которую append-дедуп молча съест. Живой путь обязан считать по ленте.
+  const rec = makeForecastRecord({
+    ...key,
+    seq: nextForecastSeq(ledger, key),
+    predicted: { blocks: [{ cutBlockId: 'b1', contextPersonaId: 'dynin', claim: 'fits' }] },
+    predictedAt: '2026-08-11T08:00:00+00:00',
+    ratifiedBy: 'owner',
+    observed: { none: 'исход не наступил' },
+    outcome: 'not-observed',
+    provenance: { planRef: 'docs/sprint/cut/s-x.json' },
+  });
+  assert.equal(rec.id, 'vesnin-s-x-cut-3');
+});
+
+test('seq: чужие окна и нечисловые хвосты ленты не влияют', () => {
+  const ledger = [
+    { id: 'vesnin-s-x-cut-9' },        // другой спринт
+    { id: 'dynin-s-y-cut-4' },         // другая персона
+    { id: 'vesnin-s-y-stop-2' },       // другой subject
+    { id: 'vesnin-s-y-cut-не-число' }, // мусорный хвост
+    { id: 'vesnin-s-y-cut-2' },
+  ];
+  assert.equal(nextForecastSeq(ledger, { personaId: 'vesnin', sprintId: 's-y', subject: 'cut' }), 3);
+});
+
+test('seq без дефолта: запись без id и без seq падает с причиной, а не берёт 1', () => {
+  assert.throws(
+    () => makeForecastRecord({
+      personaId: 'vesnin', sprintId: 's-x', subject: 'cut',
+      predicted: { blocks: [{ cutBlockId: 'b1', contextPersonaId: 'dynin', claim: 'fits' }] },
+      predictedAt: '2026-08-11T08:00:00+00:00', ratifiedBy: 'owner',
+      observed: { none: 'исход не наступил' }, outcome: 'not-observed',
+      provenance: { planRef: 'p' },
+    }),
+    /seq — целое ≥ 1/u,
+  );
 });

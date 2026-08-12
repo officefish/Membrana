@@ -69,7 +69,24 @@ export function validateWorkshopCatalog(catalog, manifest, repoRoot) {
     else byId.set(t.id, t);
 
     if (!ZONES.has(t.zone)) problems.push(`tool ${t.id}: zone «${t.zone}» вне workshop|contract|neighbor`);
-    if (typeof t.yarn !== 'string' || !t.yarn.trim()) problems.push(`tool ${t.id}: нет yarn`);
+
+    // РОД declined (слово владельца 11.08, карточка tw-declared-verbs-honest-no):
+    // глагол был объявлен и СНЯТ — движка нет и не будет. Такая запись живёт в
+    // каталоге намеренно (пустой каталог читается как приглашение завести
+    // заново), поэтому требовать у неё yarn/script нельзя: иначе честный отказ
+    // сам становится дефектом описи. Требуется обратное — чтобы движка НЕ было
+    // и чтобы отказ был адресуем.
+    const declined = t.state === 'declined';
+    if (declined) {
+      if (t.yarn != null || t.script != null) {
+        problems.push(`tool ${t.id}: declined, но движок объявлен — снятый глагол не зовут`);
+      }
+      if (typeof t.declinedRef !== 'string' || !t.declinedRef.trim()) {
+        problems.push(`tool ${t.id}: declined без declinedRef — отказ обязан быть адресуем (docs/tasks/declined-verbs.json)`);
+      }
+    } else if (typeof t.yarn !== 'string' || !t.yarn.trim()) {
+      problems.push(`tool ${t.id}: нет yarn`);
+    }
     if (typeof t.doc !== 'string' || !t.doc.trim()) problems.push(`tool ${t.id}: нет doc`);
     if (typeof t.summary !== 'string' || !t.summary.trim()) problems.push(`tool ${t.id}: нет summary`);
 
