@@ -1,0 +1,54 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "tariff-promo-server-wiring",
+  "taskId": "tariff-promo-server-wiring",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-08-12T16:30:00+00:00",
+    "to": "2026-08-12T20:30:00+00:00"
+  },
+  "//forks": "Четыре развилки #1761 разрешены обзором ДО нарезки: (1) эндпойнт в background-cabinet — решено фактом, сервис и домен уже там, транзакцией владеет cabinet; (2) атомарность — решена в стволе условным updateMany + транзакцией (разбор в шапке tariff-transition.service.ts, гонка = денежная цена); (3) пользователь видит ПОЛНУЮ причину из закрытого списка — это предписывает DoD «каждая причина доходит различимо», словарь человеческих текстов 1:1 в UI; (4) аудит уже пишется (tariffChangeLog в той же транзакции) — новой модели не требуется.",
+  "//order": "b1 СТРОГО до b2 (прогон контекста Веснина 12.08): контракт запроса/ответа и закрытый union причин рождаются в b1; зубы серверного пути — приёмный предикат b2; до регистрации TariffModule домен недостижим. Дом истины о причинах — сервер (TransitionOutcome сервиса); фронт кабинета бэкенд-пакет не импортирует (конвенция follower-типов, образец TariffView), поэтому UI-словарь — follower с обязательной fallback-веткой «неизвестная причина: <код>»: рассинхрон показывается, а не молчит. Долг вне спринта, названный вслух: rate-limit/anti-brute на эндпойнт погашения.",
+  "blocks": [
+    {
+      "blockId": "b1-redeem-endpoint",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/background-cabinet/src/modules/tariff/tariff.controller.ts",
+        "packages/background-cabinet/src/modules/tariff/tariff.controller.test.ts",
+        "packages/background-cabinet/src/modules/tariff/tariff.module.ts",
+        "packages/background-cabinet/src/app.module.ts"
+      ],
+      "estimate": {
+        "changedLines": 170
+      },
+      "//": "Блок C, вынесенный из tariff-transition-wiring: POST-эндпойнт погашения по образцу MembraneController (v1, гвард авторизации, actor из сессии), регистрация TariffModule в AppModule. Правила НЕ дублируются — контроллер зовёт сервис, сервис зовёт домен. Зубы серверного пути: ok-переход; КАЖДАЯ причина отказа уезжает различимо; promo_unknown и promo_already_redeemed — раздельными зубами (иначе UI склеит и потеряет диагностику); повторное гашение того же кода = promo_already_redeemed явным зубом (идемпотентности-как-ok нет — решение нарезки).",
+      "revisionAt": "2026-08-12T17:11:23+00:00",
+      "revisionOf": "3c175481fbf23d4f1807f5268c5e765d961872f4c6158ed5bf8de8c8118870c3"
+    },
+    {
+      "blockId": "b2-cabinet-promo-ui",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/cabinet/src/api/tariff.ts",
+        "apps/cabinet/src/lib/promoDenyText.ts",
+        "apps/cabinet/src/lib/promoDenyText.test.ts",
+        "apps/cabinet/src/pages/MembranePage.tsx"
+      ],
+      "estimate": {
+        "changedLines": 190
+      },
+      "//": "Выбор тарифа из интерфейса: форма ввода промокода на странице мембраны (тариф уже показывается там), вызов эндпойнта b1, отображение исхода. Словарь причин отказа — follower закрытого списка сервера, 1:1, с зубом полноты по известному списку И обязательной fallback-веткой «неизвестная причина: <код>» (рассинхрон с сервером показывается, не молчит). Стартует ПОСЛЕ контракта b1 — на моках не параллелится (моки = второй источник истины о причинах).",
+      "revisionAt": "2026-08-12T17:11:23+00:00",
+      "revisionOf": "746e7004111601f7e31dece5ca3a51f29f14339c4aec6167e1ef03716641111a"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-12T17:11:23+00:00",
+    "digest": "d9e5fea6b9952603d8629d9a2e171572df262680da71977999cf0022a119d22d"
+  }
+}
