@@ -1,0 +1,8 @@
+{
+  "sprintId": "tariff-promo-server-wiring",
+  "//method": "git diff --numstat HEAD + wc -l новых файлов, 12.08 ~17:45Z, добавления+удаления. Бумага спринта (план, ленты, конспекты, реестр) ни к какому блоку не приписана: не предмет нарезки.",
+  "segments": [
+    { "cutBlockId": "b1-redeem-endpoint", "changedLines": 190, "//files": "tariff.controller.ts 70 · tariff.controller.test.ts 103 · tariff.module.ts 14 · app.module.ts 3" },
+    { "cutBlockId": "b2-cabinet-promo-ui", "changedLines": 218, "//files": "MembranePage.tsx 84 · api/tariff.ts 63 · promoDenyText.ts 36 · promoDenyText.test.ts 35" }
+  ]
+}

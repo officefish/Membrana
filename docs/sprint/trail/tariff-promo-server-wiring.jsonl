@@ -1,0 +1,4 @@
+{"traceId":"tr-b1-ozhegov-run","blockId":"b1-redeem-endpoint","kind":"context_run","subject":"ozhegov","at":"2026-08-12T17:18:30+00:00","ref":"docs/discussions/block-b1-redeem-endpoint-ozhegov.md"}
+{"traceId":"tr-b1-ozhegov-review","blockId":"b1-redeem-endpoint","kind":"review_pass","subject":"ozhegov","at":"2026-08-12T17:28:40+00:00","ref":"packages/background-cabinet/src/modules/tariff/tariff.controller.ts"}
+{"traceId":"tr-b2-rodchenko-run","blockId":"b2-cabinet-promo-ui","kind":"context_run","subject":"rodchenko","at":"2026-08-12T17:33:20+00:00","ref":"docs/discussions/block-b2-cabinet-promo-ui-rodchenko.md"}
+{"traceId":"tr-b2-rodchenko-review","blockId":"b2-cabinet-promo-ui","kind":"review_pass","subject":"rodchenko","at":"2026-08-12T17:41:30+00:00","ref":"apps/cabinet/src/lib/promoDenyText.ts"}
