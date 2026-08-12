@@ -125,7 +125,11 @@ export function makeIo(repoRoot) {
       }
     },
     readState(wtPath) {
-      const porcelain = safe(() => git(wtPath, ['status', '--porcelain']), '');
+      // -uall обязателен (#1864, дефект 1): без него porcelain сворачивает неотслеживаемый
+      // каталог в одну строку `dir/`, план показывает владельцу каталог, а `git add`
+      // раскрывает содержимое — согласованный список и фактический охват снимка расходятся
+      // по построению (прогон 11.08: docs/archive/daily-day/<date>/).
+      const porcelain = safe(() => git(wtPath, ['status', '--porcelain', '-uall']), '');
       // Удаления считаются отдельно от грязи: по инциденту 06.08 они означают не «работу
       // в процессе», а поломанное дерево, и ядро на них останавливается без порога.
       const deletedCount = porcelain
@@ -201,23 +205,32 @@ export function runAlign({ io, apply = false }) {
   for (const t of report.planned) {
     const state = states.find((s) => s.tree === t.tree);
     let receipt = {};
-    if (t.actions.includes(ALIGN_ACTIONS.WIP_SNAPSHOT)) {
-      receipt = snapshot(t.tree, state.dirtyFiles ?? []);
-      report = recordSnapshot(report, { tree: t.tree, files: receipt.committedPaths, commit: receipt.commitSha });
-      lines.push(`▣ снимок ${t.tree} → ${receipt.commitSha}`, `    откат: ${undoCommandFor(receipt)}`);
-    }
-    const result = merge(t.tree, state, receipt);
-    if (isTerminal(result)) {
-      const notice = formatAbortFailedNotice(result);
-      report = { ...report, leftDirty: [...report.leftDirty, result] };
-      lines.push(...notice.lines);
-      break; // терминальный класс: по этому дереву и дальше — стоп, повторов не бывает
-    }
-    if (result.kind === MERGE_RESULTS.CONFLICT) {
-      report = recordConflict(report, { tree: t.tree, files: result.unmergedPaths, reason: 'merge откачен' });
-      lines.push(`✖ конфликт ${t.tree} — merge откачен, разбор человеку`);
-    } else {
-      lines.push(`↻ ${t.tree} → ${result.kind}`);
+    // Отказ одного дерева не рвёт обход (#1864, дефект 2): прогон 11.08 оборвался на
+    // исключении снимка, и хвост парка остался невыровненным молча. Проблемное дерево
+    // пропускается с причиной в отчёте; ненулевой код выхода решает decideExitCode по итогу.
+    try {
+      if (t.actions.includes(ALIGN_ACTIONS.WIP_SNAPSHOT)) {
+        receipt = snapshot(t.tree, state.dirtyFiles ?? []);
+        report = recordSnapshot(report, { tree: t.tree, files: receipt.committedPaths, commit: receipt.commitSha });
+        lines.push(`▣ снимок ${t.tree} → ${receipt.commitSha}`, `    откат: ${undoCommandFor(receipt)}`);
+      }
+      const result = merge(t.tree, state, receipt);
+      if (isTerminal(result)) {
+        const notice = formatAbortFailedNotice(result);
+        report = { ...report, leftDirty: [...report.leftDirty, result] };
+        lines.push(...notice.lines);
+        continue; // терминальный класс: стоп ПО ЭТОМУ дереву (повторов не бывает), остальные обходятся
+      }
+      if (result.kind === MERGE_RESULTS.CONFLICT) {
+        report = recordConflict(report, { tree: t.tree, files: result.unmergedPaths, reason: 'merge откачен' });
+        lines.push(`✖ конфликт ${t.tree} — merge откачен, разбор человеку`);
+      } else {
+        lines.push(`↻ ${t.tree} → ${result.kind}`);
+      }
+    } catch (err) {
+      const why = err?.message ?? String(err);
+      report = recordConflict(report, { tree: t.tree, files: [], reason: `шаг не выполнен: ${why}` });
+      lines.push(`✖ ${t.tree} — шаг не выполнен, дерево пропущено: ${why}`);
     }
   }
 
