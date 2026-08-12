@@ -1768,17 +1768,17 @@
       "githubIssue": 1445,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-29",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin",
         "kuryokhin"
       ],
       "notes": "Консилиум 29.07: четыре ночных триажа (25-28.07) легли черновиками PR #1215/#1309/#1369/#1415, insight_yield=0, все шестеро выбрали альтернативу вместо натянутой идеи. Отчёт отдаёт сырьё (158 orphan с одним словом relink, 106 stale с re-scope, dwell +1 в сутки) вместо наблюдения; носитель есть, читателя нет — зверь B8. Черновики закрыты вердиктом close_no_card.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1889 (squash в main), review LGTM; шесть пунктов комнаты 29.07 кодом (промоут-гейт PR⇔кандидат, scorecard/вердикты закрытыми enum, стык с магистралью, витрина cards:0, insight_yield), такт закрытия: #1780/#1818/#1830/#1841 закрыты close_no_card, инвариант 0 открытых draft подтверждён; Issue #1445 закрыт",
       "githubIssueClosedAt": null
     },
     {
