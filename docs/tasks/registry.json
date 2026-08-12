@@ -17,7 +17,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1897 (squash 7fcfa630 в main), review LGTM; порог живёт только в package.json, шаг CI без копии числа; Issue #1896 закрыт",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-12"
     },
     {
       "id": "ritual-runner-unknown-flags",
@@ -55,7 +55,7 @@
       ],
       "notes": "Заведена по слову владельца 11.08 из живого прогона --apply (карточка worktrees-align, #1738): выровнялось 1 дерево из 10. Два дефекта: (1) wip-snapshot коммитит, потом сверяет охват — в главном чекауте остался коммит f798b4d9; список согласования показывает каталоги, git add раскрывает содержимое; (2) исключение рвёт обход — остальные деревья не обрабатываются. Вещдоки в иссью.",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-12"
     },
     {
       "id": "sprint-cut-teeth-live-2026-08-11",
@@ -825,7 +825,7 @@
       ],
       "notes": "Магистраль 07.08, прямой выбор владельца вне снимка (author=human). Обзор: decideTransition + 16 зубов + model PromoCode готовы, но домен не вызывает НИКТО — все 16 упоминаний из его же теста. Предмет — провод, не логика. Четыре развилки нарезки в #1761.",
       "archiveNotes": "Магистраль 12.08 отгружена: PR #1900 (сквош) — эндпойнт POST v1/membranes/me/tariff/promo-redemptions (b1, Ожегов: мембрана из сессии, TransitionOutcome дословно как публичный HTTP-контракт, 25 зубов, 12 причин различимо) + форма промокода в карточке тарифа кабинета (b2, Родченко: успех после ответа сервера + рефетч, словарь promoDenyText follower 1:1 с зубом полноты и fallback). Спринт membrana-local-sprint: план ратифицирован владельцем, гейт pass 2/2 honest_pair, прогноз↔исход hit 2/2 (100%). Долг вне спринта: rate-limit эндпойнта. DoD #1761 полный, Closes в PR.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-12"
     },
     {
       "id": "pr-ship-post-merge-landing",
@@ -1052,7 +1052,7 @@
       ],
       "notes": "Кристалл reader-before-next-carrier: предикат ДО записи корпуса, не после. Спека — 7 полей трека из инсайта (adopted 7.0): id записи-источника, сцена/погода/ветер, дистанция/высота/модель, парный негатив той же сцены, микрофон и тракт, длительность/частота, подтверждение оператора. Шот 04.08 отказан предикатом S честно: capability_chaining (третий смежный выстрел в scripts/ за окно, 376 строк цепочки при потолке 200) — потому карточка, не шот. Форма: acceptTrack(track) → {ok, problems} + батч-проверки один-тракт/парность/два класса.",
       "archiveNotes": "PR #1885 (squash a1810ce3 в main), review LGTM; предикат семи полей + батч-инварианты по спеке инсайта, слепота полем, 7/7 тестов; Issue #1884 закрыт",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-12",
       "insightId": "insight-own-field-corpus-single-spec"
     },
     {
@@ -1798,7 +1798,7 @@
       ],
       "notes": "Консилиум 29.07: четыре ночных триажа (25-28.07) легли черновиками PR #1215/#1309/#1369/#1415, insight_yield=0, все шестеро выбрали альтернативу вместо натянутой идеи. Отчёт отдаёт сырьё (158 orphan с одним словом relink, 106 stale с re-scope, dwell +1 в сутки) вместо наблюдения; носитель есть, читателя нет — зверь B8. Черновики закрыты вердиктом close_no_card.",
       "archiveNotes": "PR #1889 (squash в main), review LGTM; шесть пунктов комнаты 29.07 кодом (промоут-гейт PR⇔кандидат, scorecard/вердикты закрытыми enum, стык с магистралью, витрина cards:0, insight_yield), такт закрытия: #1780/#1818/#1830/#1841 закрыты close_no_card, инвариант 0 открытых draft подтверждён; Issue #1445 закрыт",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-12"
     },
     {
       "id": "deps-basket-immediate-2026-07-29",
@@ -2066,7 +2066,7 @@
       "supportPersonas": [],
       "notes": "Вещдок 26.07: yarn insight review упал (Anthropic лимит до 01.08). Канон сам объявляет фолбэк 'ревью в чате, REVIEW.md руками' (CREDIT_FALLBACKS), но принять готовый файл нечем: у консилиума есть --secretary-file, у task:review:run --review-file, у insight review — ничего; статусы meta.json и реестра переставлял однострочником. Плюс мелочь: детектор исчерпания ищет 'credit balance is too low', а лимит пришёл как 'specified API usage limits' — подсказка фолбэка не напечаталась.",
       "archiveNotes": "PR #1883 (squash a1824022 в main), review LGTM (артефакт docs/reviews); --review-file одной дорогой с панельным путём (applyReviewText), детектор лимита узнаёт месячную строку; Issue #1882 закрыт",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-12",
       "noIssueReason": null
     },
     {

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14338/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 274 (причины в op-log) -->
+Записей: 49 · бюджет 14328/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 275 (причины в op-log) -->
+
+### 2026-08-12 · позиция · team-evening-feedback
+
+> Ожегов Оценка артефактов: MAIN_DAY_ISSUE и стендап дали разные магистрали — это норма (гейт свежее), но `docs/tasks/README.md` был синхронизирован с реестром отдельным коммитом (`c7af8e74`) уже после закрытий соседа — типичный дрейф бухгалтерии, санитарная норма #1744 сработала […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
 
 ### 2026-08-10 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Начинаю со словаря, иначе снова синонимы. **Cold-record** — каноническая append-only запись закрытия задачи в home MongoDB office, не строка registry и не markdown в git. **Closure evidence** — набор адресуемых доказательств, что задача закрыта, а не «помечена done». **Hint** — […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m3-repo-checkpoint
-
-> Леммы, иначе синонимы. **Cold archive** — append-only collection в `background-office` Mongo (M1). **Cold-record** — документ M2 (`task_closure` + sufficient proof). **Repo checkpoint** — файл-слепок инвариантов архива, не SoT и не export-dump. **Identity proof** — […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`

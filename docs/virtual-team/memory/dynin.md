@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14356/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 271 (причины в op-log) -->
+Записей: 49 · бюджет 14331/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 272 (причины в op-log) -->
+
+### 2026-08-12 · позиция · team-evening-feedback
+
+> Дынин Оценка артефактов: STRATEGY_DAY §0 честно признаёт устаревание снимка 06.07 — методологически корректно, но 26 дней спустя это перестало работать как честность и стало пассивом. MAIN_DAY_ISSUE несёт таблицу посылок с маркером и вердиктом `unknown` — правильная форма, но […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
 
 ### 2026-08-10 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Формализую без UI. Пусть R — cold-record. Предикат допустимости: `valid(R) ⇔ required(R) ⊆ dom(R) ∧ ∀ e ∈ required(R): verifiable(e) ∧ schemaVersion(R) ∈ Supported`. `verifiable(e)` — существует внешний или внутренний якорь (PR number, commit SHA, issue id, actor id), а не […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m3-repo-checkpoint
-
-> Формализую. Пусть A — упорядоченное мультимножество канонических cold-records (M2). Нужна функция `H: Serialize(A) → digest`, и checkpoint C такой, что `verify(C, A) ⇔ H(A) = C.contentHash ∧ |A| = C.recordCount` (и согласованные границы эпохи, если есть). C ≪ A по размеру. C не […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
