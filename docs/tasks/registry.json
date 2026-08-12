@@ -951,14 +951,14 @@
       "noIssueReason": "пересборка существующего PR #1613, свой номер у PR",
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-04",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "Ревизия PR 04.08 (membrana-pr-audit, слово владельца — весь пакет): контент #1613 живой и непокрытый — недостающее звено ADR-0021 (ACCEPTED 01.08): procedureKind в docs/procedures/registry.json (0 вхождений при 23 записях), контракт docs/procedures/EXECUTION_PROCEDURE.md, контейнер процедуры adr, зуб validateProcedure. Ствол уже свесил провод: mintlify-workflow-docs рендерит procedureKind, которого нет. Ветка мертва: база влита сквошем (#1607), 82 позади, 10 конфликтов (в т.ч. append-only лента 2026-08-01 — переносить НЕЛЬЗЯ, дописывать новой записью). Маршрут: yarn pr:recreate 1613 от свежего main; procedureKind применить ко ВСЕМ актуальным записям реестра, проекции (REGISTRY.md, ATLAS.md, containers.mdx) регенерить скриптами; ревью-свидетельства v1→v2 из PR переносимы. Старый PR закрыть superseded после мерджа пересборки.",
-      "archiveNotes": null,
+      "archiveNotes": "перекрыта PR #1756 (squash 6847255c): «контракт EXECUTION_PROCEDURE + procedureKind — пересборка #1613 на свежем стволе» — дословно предмет карточки; docs/procedures/EXECUTION_PROCEDURE.md в стволе, procedureKind живёт в procedures/registry.json; маркер хендофа 12.08 «контракт отсутствует» опровергнут фактом",
       "githubIssueClosedAt": null
     },
     {
@@ -1285,16 +1285,16 @@
       "noIssueReason": "строка 5 топ-10 хендофа 02.08; GH-иссью заводится при отгрузке PR",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-02",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "У1 (31.07) велит называть расхождение, но живёт инструкцией в промпте генератора; sources[0] в main-day-assertions.json несёт заявку 30.07, гейт — subconscious-lift-c3 от 02.08",
-      "archiveNotes": null,
+      "archiveNotes": "исполнена собственным спринтом 02.08 (вещдок //recut-02-08 в main-day-assertions.json): предикат scripts/lib/main-day-magistral-freshness.mjs с тестами, main-day-probe печатает вердикт ВСЕГДА — живой прогон 12.08 даёт gate_newer с обеими датами по норме У1 (это находка прибора, не незакрытость карточки); перечеканка 02.08 сделана, sources[] append-only цел",
       "githubIssueClosedAt": null
     },
     {
