@@ -164,6 +164,28 @@ test('--apply делает снимок ПЕРЕД merge и показывает
   assert.match(lines.join('\n'), /откат: git -C C:\/w\/a reset --soft h0/);
 });
 
+test('отказ снимка на одном дереве не рвёт обход — хвост парка обрабатывается (#1864 дефект 2)', () => {
+  // Класс прогона 11.08: исключение исполнителя обрывало цикл, невыровненные деревья молчали.
+  const io = fakeIo([
+    { tree: 'C:/w/a', branch: 'feat/a', card: sprint, behind: 6, ahead: 0, dirtyFiles: ['docs/A.md'] },
+    { tree: 'C:/w/b', branch: 'feat/b', card: sprint, behind: 3, ahead: 0, dirtyFiles: [] },
+  ]);
+  const base = io.git;
+  io.git = (cwd, args) => {
+    if (cwd === 'C:/w/a' && args[0] === 'add') throw new Error('индекс занят');
+    return base(cwd, args);
+  };
+  const { report, exitCode, lines } = runAlign({ io, apply: true });
+  assert.ok(
+    io.mutations.some((m) => m.startsWith('C:/w/b: merge')),
+    'дерево после отказавшего обязано быть обработано',
+  );
+  assert.equal(report.conflicts.length, 1, 'отказ копится находкой в отчёт');
+  assert.match(report.conflicts[0].reason, /шаг не выполнен/);
+  assert.equal(exitCode, EXIT.NEEDS_HUMAN, 'ненулевой код — по итогу, не по первому исключению');
+  assert.match(lines.join('\n'), /дерево пропущено/);
+});
+
 test('renderDryRun не притворяется успехом на пустом входе', () => {
   const text = renderDryRun({ planned: [], skipped: [], conflicts: [], snapshots: [] }).join('\n');
   assert.match(text, /деревьев на входе нет/);

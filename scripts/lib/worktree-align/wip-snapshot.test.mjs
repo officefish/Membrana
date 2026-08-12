@@ -37,6 +37,9 @@ function fakeGit(scenario = {}) {
       return v;
     }
     if (cmd === 'show') return (scenario.committed ?? []).join('\n');
+    // Гард охвата до коммита (#1864): staged по умолчанию = committed, чтобы прежние
+    // сценарии «коммит совпал со списком» не требовали дублировать перечень дважды.
+    if (cmd === 'diff') return (scenario.staged ?? scenario.committed ?? []).join('\n');
     return '';
   };
   return { git, calls, now: () => scenario.at ?? '2026-08-06T10:30:00+03:00' };
@@ -138,11 +141,24 @@ test('родитель ≠ прежний HEAD — снимок сел не ту
   );
 });
 
-test('в коммит попало сверх списка — отказ: охват расширять запрещено', () => {
-  const io = fakeGit(okScenario(['docs/A.md', 'чужая/работа.mjs']));
+test('в индекс попало сверх списка — отказ ДО коммита, мутации нет (#1864 дефект 1)', () => {
+  // Класс прогона 11.08: план нёс каталог, add раскрыл его содержимое.
+  const io = fakeGit({ ...okScenario(['docs/A.md']), staged: ['docs/A.md', 'docs/archive/2026-08-11/audit.md'] });
   assert.throws(
     () => makeWipSnapshot(io)('C:/w/x', ['docs/A.md']),
-    (e) => e.code === E_SNAPSHOT_NOT_TAKEN && /сверх списка/.test(e.message),
+    (e) => e.code === E_SNAPSHOT_NOT_TAKEN && /сверх списка/.test(e.message) && /не создавался/.test(e.message),
+  );
+  const verbs = io.calls.map((c) => c.args[0]);
+  assert.ok(!verbs.includes('commit'), 'коммит не должен создаваться при расширенном охвате');
+  const reset = io.calls.find((c) => c.args[0] === 'reset');
+  assert.deepEqual(reset.args, ['reset', '--', 'docs/A.md'], 'с индекса снимаются ТОЛЬКО переданные пути');
+});
+
+test('пост-проверка коммита остаётся инвариантом: чистый индекс, но расширенный коммит — отказ', () => {
+  const io = fakeGit({ ...okScenario(['docs/A.md', 'чужая/работа.mjs']), staged: ['docs/A.md'] });
+  assert.throws(
+    () => makeWipSnapshot(io)('C:/w/x', ['docs/A.md']),
+    (e) => e.code === E_SNAPSHOT_NOT_TAKEN && /в коммит попало сверх списка/.test(e.message),
   );
 });
 
