@@ -17,12 +17,21 @@ export class OpenRouterService {
   }
 
   defaultModel(): string {
-    // Третий носитель id моделей: живёт прямо в коде, вне реестра, на живость не
-    // проверяется. Найден гардом `scripts/dreams-model-ids.test.mjs` 10.08 и признан
-    // ДОЛГОМ (карточка `openrouter-default-model-unverified`), а не нормой. Ход — либо
-    // дефолт переезжает в реестр и попадает под `yarn dreams:probe-models`, либо пустой
-    // OPENROUTER_MODEL становится явным отказом конфигурации вместо тихой подстановки.
-    return this.config.OPENROUTER_MODEL?.trim() || 'anthropic/claude-haiku-4.5'; // dreams-model-ids:allow openrouter-default-model-unverified
+    // Пустой OPENROUTER_MODEL — ЯВНЫЙ отказ конфигурации, не тихая подстановка (решение
+    // карточки `openrouter-default-model-unverified`: из двух объявленных путей выбран
+    // «отказ», не «дефолт в реестр»). Захардкоженный дефолт был третьим носителем id
+    // моделей — вне обоих реестров и вне `yarn dreams:probe-models`: сними провайдер
+    // модель, офис молча ушёл бы на мёртвый id (класс инцидента 07.08 — два мёртвых id
+    // реестра снов нашёл прод, а не проверка). Единственный штатный вызыватель (dreams)
+    // передаёт модель явно из своего проверяемого реестра.
+    const model = this.config.OPENROUTER_MODEL?.trim();
+    if (!model) {
+      throw new Error(
+        'OPENROUTER_MODEL is not configured: тихого дефолта больше нет — задайте модель ' +
+          'в конфиге либо передайте её явно в вызов (карточка openrouter-default-model-unverified)',
+      );
+    }
+    return model;
   }
 
   private proxyUrl(): string {
