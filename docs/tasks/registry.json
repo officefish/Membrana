@@ -106,17 +106,17 @@
       "noIssueReason": "локальный спринт по строке 8 десятки 09.08; долг #office-dreams-test-stubs-own-models",
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-10",
-      "archivedAt": null,
+      "archivedAt": "2026-08-10",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov",
         "vesnin"
       ],
       "notes": "Долг #office-dreams-test-stubs-own-models. Два предиката под одной формулировкой: (1) зуб офиса держал свою таблицу маршрутов и не читал scripts/lib/dreams-providers.mjs — окно расхождения 07.08-10.08, 91 зелёный прогон на main при двух мёртвых id; (2) живость id у провайдера не проверял никто — сверяли руками 07.08. План docs/sprint/cut/dreams-models-liveness.json, ратифицирован 10.08 15:35Z.",
-      "archiveNotes": null,
+      "archiveNotes": "Влито PR #1835 (80b1129d, 10.08). Зуб офиса читает настоящий scripts/lib/dreams-providers.mjs тем же динамическим импортом по file-URL, что и прод; ожидания считаны из реестра, не выписаны литералами. Гард scripts/dreams-model-ids.test.mjs не даёт завести третью копию и живёт в корпусе scripts (мердж-гейт vitest выборочный — гард обязан стоять и когда правят соседа). yarn dreams:probe-models проверяет живость id у провайдера: три исхода alive/dead/inconclusive, коды 0/1/2 по прецеденту execution-gate, правило троекратности читает ленту docs/truth/dreams-liveness.jsonl. Каденция — ночь (vitest-nightly.yml, if: always()); в мердж-гейт не ставили по вердикту резчика. Замер, изменивший обоснование: окно расхождения зуба с реестром — 3 дня (07.08 e3c0fb59 → 10.08), 38 коммитов и 91 зелёный прогон на main при двух мёртвых id. Гард по ходу нашёл третий носитель (openrouter.service.ts:20) — заведена карточка openrouter-default-model-unverified. Живой прогон нашёл geo-блок: без прокси глагол вечно отвечал бы inconclusive с машины из РФ. sprint:gate 4/4 honest_pair, точность нарезки 75%.",
       "githubIssueClosedAt": null
     },
     {
