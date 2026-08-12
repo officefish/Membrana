@@ -1,26 +1,22 @@
-<!-- Сгенерировано: 2026-08-11T06:57:16.351Z (yarn day:report; vesnin) -->
+<!-- Сгенерировано: 2026-08-12T12:02:35.420Z (yarn day:report; vesnin) -->
 
-# Доклад по задачам — 2026-08-11
+# Доклад по задачам — 2026-08-12
 
 Автор: Тимлид (vesnin) · зеркало 5-блочного плана дня.
 
 ## Магистраль
 
-- #1714 — CLOSED
+- `angelina-hostess-impl` — ведёт ozhegov
 
 ## Подкрепление
 
-- `friction6-secret-inventory` — ведёт dynin
-- `fix-sprint-experience-dead-ends` — ведёт dynin
-- #1266 — OPEN
+- `ritual-magistral-source-freshness` — ведёт ozhegov
+- `morning-gates-two-moments` — ведёт ozhegov
 
 ## Перспективные
 
-- `archivarius-sessions-container` — ведёт dynin
-- #1330 — CLOSED
-- #1785 — MERGED
-- #1789 — MERGED
-- #1801 — MERGED
+- `worktrees-align-snapshot-guard` — ведёт dynin
+- #1864 — OPEN
 
 ## Экспериментальные
 
@@ -31,8 +27,8 @@
 - #1785 — MERGED
 - #1789 — MERGED
 - #1801 — MERGED
-- #1764 — OPEN
-- #1447 — OPEN
-- #1422 — OPEN
-- #1272 — OPEN
-- #554 — OPEN
+- #1764 — CLOSED
+- #1447 — CLOSED
+- #1422 — CLOSED
+- #1272 — CLOSED
+- #554 — CLOSED
