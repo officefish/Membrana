@@ -13,10 +13,18 @@ import {
   type TriageSnapshot,
 } from './night-triage-core';
 import { buildNarrativePrompt, insertNarrative } from './night-triage-narrative';
+import {
+  answerPrimaryFocus,
+  insightYield,
+  promoteCandidates,
+  type PromoteCandidate,
+} from './night-triage-promote';
 import { extractFingerprint, renderTriageReport } from './night-triage-report';
 import { findSecrets } from './night-triage-secret-guard';
 
 const REGISTRY_PATH = 'docs/tasks/registry.json';
+/** Гейт утра: несёт магистраль дня (owner-choice) — вопрос, на который отчёт обязан отвечать (#1445 п.5). */
+const GATES_STATE_PATH = 'docs/tasks/morning-gates-state.json';
 /** Экспортирован ради зубов: путь не должен жить копией в стабе — иначе переезд каталога тихо разъедется с проверкой. */
 export const REPORT_DIR = 'docs/reports/night-triage';
 /**
@@ -177,6 +185,27 @@ export class NightTriageService {
     return parsed.tasks;
   }
 
+  /**
+   * Магистраль дня из гейта утра (#1445 п.5). Любой сбой — честный null:
+   * «стык не проверен» печатается словом, а не выдаётся за «пересечения нет».
+   */
+  private async readMagistral(): Promise<string | null> {
+    try {
+      const text = await this.github.fetchTextFile(GATES_STATE_PATH);
+      if (!text) return null;
+      const parsed = JSON.parse(text) as { magistral?: unknown };
+      return typeof parsed.magistral === 'string' && parsed.magistral.trim() !== ''
+        ? parsed.magistral
+        : null;
+    } catch (err) {
+      this.logger.warn(
+        { reason: err instanceof Error ? err.message : String(err) },
+        'night-triage: morning-gates-state не прочитан — стык с магистралью не проверен',
+      );
+      return null;
+    }
+  }
+
   /** Один ран триажа: срез → отчёт (+нарратив) → секрет-гейт → draft PR. */
   async run(now: Date = new Date()): Promise<NightTriageResult> {
     if (!this.isEnabled()) {
@@ -213,7 +242,30 @@ export class NightTriageService {
         return { ok: true, skipped: true, reason, filePath, counts: snapshot.counts };
       }
 
-      let report = renderTriageReport(snapshot, { date });
+      // ── Промоут-гейт (#1445 п.2): PR открывается ТОГДА И ТОЛЬКО ТОГДА, когда есть
+      // кандидат в карточку инсайта. Стоит ДО нарратива: жечь LLM ради отчёта,
+      // который не поедет, незачем. Молчание легально и называет причину (B10).
+      const magistral = await this.readMagistral();
+      const activeTotal = tasks.filter((t) => t.status === 'active').length;
+      const cards: PromoteCandidate[] = promoteCandidates(snapshot, { magistral, activeTotal });
+      const focus = answerPrimaryFocus(snapshot, magistral);
+      if (cards.length === 0) {
+        const reason =
+          'кандидатов в карточку инсайта нет (cards: 0) — PR не открывается; ' +
+          `стык с магистралью: ${focus.join(' · ')}`;
+        this.logger.log({ reason, counts: snapshot.counts }, 'night-triage quiet (no promote)');
+        return { ok: true, skipped: true, reason, filePath, counts: snapshot.counts };
+      }
+
+      let report = renderTriageReport(snapshot, {
+        date,
+        promote: {
+          cards,
+          focus,
+          yieldText: insightYield(cards.length, 1).text + ' (эта ночь; база 25–28.07 = 0)',
+          draftsClosed: 0,
+        },
+      });
 
       // Нарратив опционален и graceful — таблицы неизменны. Цепочка ADR 0005.
       const narrative = await this.generateNarrative(buildNarrativePrompt(snapshot));
@@ -238,6 +290,7 @@ export class NightTriageService {
           'Ночной триаж реестра задач (#380). **sink not source**: рекомендации, не действия — исполняет человек.',
           '',
           `- Ghost: ${snapshot.counts.ghost} · Orphan: ${snapshot.counts.orphan} · Stale: ${snapshot.counts.stale}`,
+          `- Cards: ${cards.length} (промоут-гейт #1445: без кандидата PR не открывается)`,
           `- Порог stale: ${snapshot.staleThresholdDays} дн · File: \`${filePath}\``,
           '',
           'Детекция — детерминированный TS (`night-triage-core`); нарратив — LLM поверх среза, таблицы неизменны.',
