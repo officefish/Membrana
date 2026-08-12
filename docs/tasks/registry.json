@@ -17,7 +17,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1869 (squash 83f57490 в main, через task:pr-land после конфликта registry), review LGTM; гард KNOWN_FLAGS до открытия журнала, exit 2 + usage; регрессионный тест 2/2; Issue #1867 закрыт Closes",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "worktrees-align-snapshot-guard",
@@ -55,7 +55,7 @@
       ],
       "notes": "Взято 11.08 по слову владельца «с конца делаем по очереди» — строка 4 остатка тулинга. Условие долга признано наступившим: первый полный чистый прогон живой петли опыта 11.08 (прогноз cut-1 → гейт 7/7 → исход cut-2 → архив персоны, PR #1849). Исполняет карточку-долг sprint-cut-teeth-to-live-modules.",
       "archiveNotes": "Спринт прожит: PR #1857 merged (1a42e21d), иссью #1855 закрыто мерджем. Два блока по ратифицированной нарезке (перерезка до ратификации по zones_overlap), gate 2/2 honest_pair, находок 0. OPEN-паспорт не заводился (S-объём, два блока) — след: docs/sprint/cut/ + trail.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "s-queue-2026-08-11",
@@ -167,10 +167,10 @@
       "noIssueReason": "класс #1647; условие tarasov при штампе шота 10.08 — карточка вместо немедленной починки; вещдоки в docs/audit/typecheck-verdict-2026-08-10.md и прецеденте детекторов 10.08",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-10",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
@@ -323,7 +323,7 @@
       ],
       "notes": "План ратифицирован владельцем 08.08. Дефект B (в вердикте нет базы) воспроизводится всегда, дефект A (кэш gh pr diff) 08.08 не воспроизвёлся на трёх PR — приёмка A синтетикой, не живым прогоном.",
       "archiveNotes": "Закрыто PR #1807 (68ba1d32): дифф в режиме --pr берётся из источника с явной базой (scripts/lib/review-diff-source.mjs), merge-base попал в артефакт ревью и в маркер вердикта полем base:, старые маркеры без базы гейт по-прежнему читает. Иссью #1771 закрыта 08.08.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "tariff-concurrent-move-reason",
@@ -862,7 +862,7 @@
       ],
       "notes": "Action item прецедента 2026-07-24-align-all-worktrees-to-main. Обзор «что уже есть» — в теле #1738. Вне предмета: авто-разрешение конфликтов.",
       "archiveNotes": "Живой мутирующий прогон --apply прожит 11.08 под owner-гейтом (слово владельца) — поведение прибора доказано по существу: Membrana-archivarius выровнено ff на 168 коммитов, registry-merge-driver слил реестр союзом (1096 карточек) и назвал два неслияемых случая словами, четыре конфликтных дерева получили ОТКАТ merge с поимённым списком файлов — чужая работа не потеряна нигде. Массовая задача не решена: выровнялось 1 дерево из 10 из-за двух дефектов прибора — гард охвата стоит после коммита (в главном чекауте остался f798b4d9, по слову владельца оставлен) и исключение рвёт обход. Дефекты вынесены отдельной карточкой worktrees-align-snapshot-guard (#1864) по слову владельца. Иссью #1738 закрыть при task:close-github.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "review-honesty",
@@ -1013,7 +1013,7 @@
       ],
       "notes": "Читатель ленты docs/procedure-runs/trail/ — недостающая половина #1626: производители построены и с 04.08 реально пишут (утро pass, первый прогон шота), но ленту не открывает ни один автомат. Витрина = агрегат по пяти опорам (local-sprint, ritual-day, ritual-evening, meeting, one-shot): счёт прогонов, исходы pass/fail/blocked, сироты, трения. Предусловие развёртывания — узел деплоя (survey 03.08 П1). До витрины допустим дешёвый первый читатель: блок в вечерней хронике/хендофе. Кристалл reader-before-next-carrier.",
       "archiveNotes": "PR #1863 (squash d56094d1 в main), review LGTM; ядро+CLI procedure-runs-digest, первый автомат — шаг вечерней цепочки (карта exit-кодов дописана, зуб #622); живая сводка показала 10 fail/10 сирот у ritual-day за 11 дней; п.1 #1626 закрыт читателем; панель — вторым PR (узел деплоя), Issue #1861 закрыт",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "corpus-track-acceptance-predicate",
@@ -1054,7 +1054,7 @@
       ],
       "notes": "Следующий шаг ревью 7.2: (1) поля executor+forecast+actual в one-shot-trail.jsonl (trail check остаётся рабочим, факт из диффа мердж-коммита); (2) глагол one-shot:trail brief 3-5 строк консистентного формата; (3) всплытие руками в акт Тарасова и предложение кандидатов — НЕ в утро/хендоф. Формат brief согласовать актом Тарасова до вкладывания. Запрещено: автоматика отправки, UI, правка формата шота T1-T8.",
       "archiveNotes": "PR #1845 (squash в main), review LGTM dd41045343dd; executor/forecast/actual в ленте, trail brief по акту Тарасова, дисциплина всплытия в ONE_SHOT_TRAIL.md",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-11",
       "insightId": "insight-one-shot-portfolio-surfacing"
     },
     {
@@ -1838,7 +1838,7 @@
       ],
       "notes": "",
       "archiveNotes": "Ф1–Ф3 эпика закрыты PR #1289 (975a8cd5): ritual-tree-hygiene.mjs + morning-care без checkout main, гард ALLOW_MAIN_COMMIT в .githooks/commit-msg и pre-push, норма в AGENTS.md и скилле утра, зуб ritual-tree-hygiene.test.mjs; Ф4-инвентарь закрыт отдельным путём — classify-worktree.mjs и WORKTREE_CLASSES.md (c5d2e966, #743).",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "adr-procedure-legalize",
@@ -1878,7 +1878,7 @@
       ],
       "notes": "",
       "archiveNotes": "Закрыто PR #1295 (10e13eff): предикаты morning-gates знают день (причина «day: состояние протухло»), telegram:swallow зовёт canSendAlly перед транспортом и падает exit 3 при закрытом гейте, --force обходит только ledger; вечерний контур — evening-gates.mjs. Зубы morning-gates.test.mjs и telegram-swallow.test.mjs.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-11"
     },
     {
       "id": "tc-nightly-frame",
@@ -1898,7 +1898,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1851 (squash 83582c19 в main), review LGTM; ночь по cron 03:00 UTC (защита main проверена фактом), blocksMorningWhen исполняется потребителем в morning-care, три блокера различимы, пины кадра под auditPins (дрейф доказан падением), gates.items[night-report] с waitsFor:night; иссью #1293 была закрыта раньше времени — доведено здесь",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "tests-container"
     },
     {
@@ -1918,7 +1918,7 @@
       ],
       "notes": "",
       "archiveNotes": "Закрыто PR #1315 (4354c83a): сетапы smoke/gate/full и селектор по каталогу/графу в scripts/lib/tests-container.mjs + CLI scripts/tests-container.mjs, ярлыки test:scripts:smoke|gate|full, отчёт «что не гонялось» через formatSetupReport; каноническое решение — ADR-0018.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "tests-container"
     },
     {
@@ -1939,7 +1939,7 @@
       ],
       "notes": "",
       "archiveNotes": "Закрыто PR #1315 (4354c83a): дом контейнера — корневой tests/ (README + каталог со схемой), кит kits/tests-master, мастерская tests/workshop.manifest.json; homePath заработал — запись test-runs с homePath tests в docs/procedures/registry.json и поддержка в procedures-registry.mjs с зубом.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "tests-container"
     },
     {
@@ -2208,7 +2208,7 @@
       ],
       "notes": "",
       "archiveNotes": "Закрыто спринтом s-queue-2026-08-11 b5, PR #1849 (6e4e1d84): yarn secret:inventory — обёртка над нетронутым ядром secret-redact.mjs (guard нарезки цел), таблица файл×класс×вхождений и --json, значения не печатаются ни в одном режиме, честная оговорка «верхняя граница»; 6 зубов включая контрольную подсадку. Живой прогон: docs/comms/drafts, 55 файлов. Иссью #1266 закрыть при task:close-github.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "agent-tooling-friction-6"
     },
     {
@@ -2228,7 +2228,7 @@
       ],
       "notes": "",
       "archiveNotes": "Закрыто спринтом s-queue-2026-08-11 b4+b7, PR #1849 (6e4e1d84): шаг scripts-registry в манифесте вечерней цепочки до ritual-artifacts (produces уезжает автозабором), снимок догнал 407→439, шаг внесён в карту exit-кодов #622; грабля foreground sleep — строкой в AGENTS.md соседкой к «фоновый bash». Иссью #1265 закрыть при task:close-github.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "agent-tooling-friction-6"
     },
     {
@@ -2248,7 +2248,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1848 (squash 54e394c8 в main), review LGTM; 1105 файлов под парсером, 133 находки названы (63 unused-vars/55 useless-escape/6 irregular-ws/5 regex-spaces/2 constant-condition/2 control-regex), порог warn+храповик --max-warnings=133 (число живёт ТОЛЬКО в package.json lint:scripts, в ci.yml — проза), гашение долга — продолжение #1264",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "agent-tooling-friction-6"
     },
     {
@@ -2268,7 +2268,7 @@
       ],
       "notes": "Вещдок сессии мостика 26.07: три конфликта подряд в этой строке за вечер (main-day-issue-channel против procedure-contract-license, затем secret-gate-push + procedure-home-form). Каждый стоил цикла влить-развести-пуш-ждать CI; содержательно конфликты пустые — стороны дописывают разные имена в один перечень.",
       "archiveNotes": "Закрыто PR #1285 (7386df0a, доработка PR #1315 / 4354c83a): набор берётся открытием по дереву — scripts/lib/test-scripts-plan.mjs + scripts/test-scripts-run.mjs, в package.json test:scripts без путей и ярлыки групп security/rituals/tasks/repo/domain, гвард test-list-coverage переписан под инвариант «run ∪ skipped = диск».",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-11",
       "parentEpic": "agent-tooling-friction-6"
     },
     {

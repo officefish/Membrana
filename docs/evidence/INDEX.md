@@ -21,6 +21,7 @@
 | day-memo-2026-08-07 | изъятие | DAY_MEMO 2026-08-07: факты={"commits":14,"evidence":0,"crystals":0,"d… | `local:docs/memos/2026-08-07.md` | `037fc01982c3…` | 6407 |
 | day-memo-2026-08-08 | изъятие | DAY_MEMO 2026-08-08: факты={"commits":23,"evidence":0,"crystals":0,"d… | `local:docs/memos/2026-08-08.md` | `d1dc6cb5f2b9…` | 9104 |
 | day-memo-2026-08-10 | изъятие | DAY_MEMO 2026-08-10: факты={"commits":7,"evidence":0,"crystals":0,"de… | `local:docs/memos/2026-08-10.md` | `0a8cacd421b2…` | 3456 |
+| day-memo-2026-08-11 | изъятие | DAY_MEMO 2026-08-11: факты={"commits":24,"evidence":1,"crystals":0,"d… | `local:docs/memos/2026-08-11.md` | `8d4ac76e378a…` | 6461 |
 | env-symlink-probe-2026-08-11 | поступление | Решение владельца 11.08: DoD-пункт typecheck карточки fix-node-module… | `local:docs/evidence/env-symlink-probe-2026-08-11.json` | `33ee29b44e38…` | 710 |
 | ozon-receipt-3765-field-kit-r2 | поступление | Поправка P2 (ревью 27.07): суперсидит ozon-receipt-3765-field-kit — т… | `local:docs/evidence/store/ozon-receipt-3765.pdf` | `73942c47fa6e…` | 46551 |
 

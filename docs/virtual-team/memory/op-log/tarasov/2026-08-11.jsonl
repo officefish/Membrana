@@ -3,3 +3,4 @@
 {"ts":"2026-08-11T08:05:26.336Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-11T08:05:01.238Z","origin":"ask-persona"}
 {"ts":"2026-08-11T08:05:26.337Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-08-04-insight-one-shot-portfolio-surfacing","reason":"это ровно тот инсайт (portfolio-surfacing), под который сейчас конструируется brief; вещдоки «T1 на памяти» и «S-форкасты не сверяемы» — прямые основания для строк (3) исполнители и (4) форкасты.","origin":"ask-persona"}
 {"ts":"2026-08-11T08:05:26.340Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-08-03-one-shot-manifest-m2-assignment","reason":"там зафиксировано, что executor = personaId в записи прогона; строка (3) и покрытие executor N/M в (5) опираются на это поле как канон.","origin":"ask-persona"}
+{"ts":"2026-08-11T18:03:47.183Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

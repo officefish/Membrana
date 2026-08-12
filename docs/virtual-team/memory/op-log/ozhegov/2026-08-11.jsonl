@@ -5,3 +5,4 @@
 {"ts":"2026-08-11T09:08:40.361Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-10-comp-findings-fixes","reason":"мой же принцип «один термин — один смысл»: \\w/\\b в JS перегружены (обещают «слово», дают ASCII) — ровно та же болезнь, что с invalid-ref.","origin":"ask-persona"}
 {"ts":"2026-08-11T12:23:45.141Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-11T12:23:22.455Z","origin":"ask-persona"}
 {"ts":"2026-08-11T12:23:45.145Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-11T12:23:22.455Z","origin":"ask-persona"}
+{"ts":"2026-08-11T18:03:46.364Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
