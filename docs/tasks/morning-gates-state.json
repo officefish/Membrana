@@ -6,7 +6,11 @@
   ],
   "frozenDigest": "8bcc7405df2f5a8c6876fe7315d2da789a9151d52d5a759dfe674b56012bf553",
   "magistral": "tariff-promo-server-wiring",
-  "swallow": null,
+  "swallow": {
+    "draftDigest": "46490ea55063b954bc62ce0eb8ecbe46b37cbf1272427acc0a9c3b936f941cba",
+    "draftFile": "docs/comms/drafts/swallow-morning-2026-08-12.md",
+    "ownerAck": true
+  },
   "day": "2026-08-12",
   "magistralChosenAt": "2026-08-12"
 }
