@@ -5,7 +5,7 @@
     "scripts/dreams.mjs"
   ],
   "pins": {
-    "scripts/_anthropic-env.mjs": "0adfa9909638f1ca54d092565480351f29fbc13a",
+    "scripts/_anthropic-env.mjs": "4ef1e74840851e38047bf40122be826b97940029",
     "scripts/dreams.mjs": "043da7e2ea5f375b0c346cf532ea57af80c7810f",
     "scripts/lib/dreams-format.mjs": "8fa0c77a6b403a768dbac940f63989a760a3652c",
     "scripts/lib/dreams-log.mjs": "6bff7ead174587a5fc73732f915fd476186a68b2",
