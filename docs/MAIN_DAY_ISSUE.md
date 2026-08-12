@@ -1,128 +1,147 @@
-<!-- Сгенерировано: 2026-08-11T07:25:21.394Z (yarn main-day-issue@38fdc2c3) -->
+<!-- Сгенерировано: 2026-08-12T12:08:12.462Z (yarn main-day-issue@bffa7d15) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
-<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"ffc67620548e5c86eeabbae79d142d26077d5fb4","digest":"f3f3868ecbfbb7eed6501cc0d6f36ec09538cb3218a4e71f932f0dd591cfea6c"},"DAILY_STANDUP":{"version":"ffc67620548e5c86eeabbae79d142d26077d5fb4","digest":"249f114032c17df4bbacd5bfe1b0ccab1a154b40e328e9e65fbc1ef2eea98c40"}}} -->
+<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"bffa7d15010cdc0ea9c011b22d274dd1d954ad56","digest":"5c36430867a9153edb1e8e493db90731eb6104cee25daf5ba9382b72442c9c4a"},"DAILY_STANDUP":{"version":"bffa7d15010cdc0ea9c011b22d274dd1d954ad56","digest":"67ed797e47083ab35078b5489a3f7fdb9f1a228dfef0c1f9aa08074baecfd0d5"}}} -->
 <!-- Звено канала: provider=anthropic model=claude-sonnet-4-6 source=overlay generations=1 -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
-<!-- active в реестре: dreams-models-liveness, openrouter-default-model-unverified, fix-sprint-experience-dead-ends, fix-node-modules-links-1647, tests-container-cross-package-imports, static-mmbrn-live-inventory, tariff-concurrent-move-reason, static-mmbrn-retirement, static-mmbrn-live-services, static-mmbrn-cutover, static-mmbrn-m6-alignment, static-mmbrn-rehydrate-parity, static-mmbrn-ingress-auth, static-mmbrn-target-provision, static-mmbrn-disposition-ledger, static-mmbrn-container, morning-journal-close-step, frame-holders-reassign-twenty, frame-holder-moderator-split, swallow-own-moment, morning-gates-two-moments, tariff-promo-server-wiring, lazy-close-scope, worktrees-align, recreate-execution-procedure-interface, procedure-run-journal-panel-reader, corpus-track-acceptance-predicate, one-shot-trail-forecast-fact, sprint-cut-teeth-to-live-modules, gate-stale-supersede-by-recut, gate-honest-pair-completeness, deploy-procedure-survey, workflow-examples-marathon, detectors-window-single-carrier, ritual-magistral-source-freshness, detectors-judge-whole-record, subconscious-lift-c3, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, forecast-archive-wire, meeting-evening-review-predicate, evening-chain-review-predicate, mfcc-compare-sprint, mfcc-lib-choice, network-container, night-triage-insight-channel, archivarius-sessions-container, adr-procedure-legalize, tc-nightly-frame, tests-container, notes-regex-cyrillic-translit, leveling-snapshot-out-path, insight-mandate-for-new, insight-review-from-file, tw-declared-verbs-honest-no, friction6-secret-inventory, friction6-hygiene-notes, friction6-scripts-lint, agent-tooling-friction-6, cascade-honest-manual, dreams-deploy-office, frame-rails-2307, lpc-d-panel, lpc-c-office, lpc-b-wire, lpc-a-lib, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, angelina-codex-no-repo-writes, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, membrane-node-runtime-remote, mp7b-rt7-prod-hardening, device-board-three-hosts-2026-06-26, db3h-s4-microphone-detectors, neural-free-tier-dataset-report, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, detection-alarm-loop-refactor, batch-collection-run-contour -->
+<!-- active в реестре: worktrees-align-snapshot-guard, dreams-models-liveness, openrouter-default-model-unverified, static-mmbrn-live-inventory, tariff-concurrent-move-reason, static-mmbrn-retirement, static-mmbrn-live-services, static-mmbrn-cutover, static-mmbrn-m6-alignment, static-mmbrn-rehydrate-parity, static-mmbrn-ingress-auth, static-mmbrn-target-provision, static-mmbrn-disposition-ledger, static-mmbrn-container, morning-journal-close-step, frame-holders-reassign-twenty, frame-holder-moderator-split, swallow-own-moment, morning-gates-two-moments, tariff-promo-server-wiring, recreate-execution-procedure-interface, corpus-track-acceptance-predicate, gate-stale-supersede-by-recut, gate-honest-pair-completeness, workflow-examples-marathon, detectors-window-single-carrier, ritual-magistral-source-freshness, detectors-judge-whole-record, subconscious-lift-c3, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, forecast-archive-wire, meeting-evening-review-predicate, evening-chain-review-predicate, mfcc-compare-sprint, mfcc-lib-choice, network-container, night-triage-insight-channel, archivarius-sessions-container, adr-procedure-legalize, insight-mandate-for-new, insight-review-from-file, cascade-honest-manual, dreams-deploy-office, frame-rails-2307, lpc-d-panel, lpc-c-office, lpc-b-wire, lpc-a-lib, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, membrane-node-runtime-remote, mp7b-rt7-prod-hardening, device-board-three-hosts-2026-06-26, db3h-s4-microphone-detectors, neural-free-tier-dataset-report, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, detection-alarm-loop-refactor, batch-collection-run-contour -->
 
-# MAIN_DAY_ISSUE — 2026-08-11
+# MAIN_DAY_ISSUE — 2026-08-12
 
 ## Метаданные
 
 | Поле | Значение |
 |------|----------|
-| `primaryFocusId` | `angelina-hostess-impl` |
-| `primaryTitle` | Ангелина — живой вызываемый агент: hostess-контракт с телом |
+| `primaryFocusId` | `tariff-promo-server-wiring` |
+| `primaryTitle` | Подключить серверный провод тарифной промо-логики |
 | `githubIssue` | — |
-| `size` | L |
+| `size` | M |
 | `promptPath` | — |
-| `сгенерировано` | 2026-08-11 |
+| `сгенерировано` | 2026-08-12 |
+
+---
 
 ## Магистраль
 
-**`angelina-hostess-impl` (L) — превратить Ангелину из декларации в живой вызываемый агент.**
+**`tariff-promo-server-wiring`** — подключить серверную сторону тарифной промо-логики (провод `decideTransition` / тарифного сервиса к серверным функциям).
 
-Ангелина объявлена ведущей контура исполнения, её роль описана в промпте и реестре, но вызываемого тела нет: ритуал дня по-прежнему оркеструется вручную, а любой server-only прогон (`insight:insight-server-only-ritual-run`) упирается в то же отсутствие контракта. Задача — реализовать hostess-контракт: Ангелина принимает вызов, сопровождает владельца по дню, оркеструет фоновых субагентов и ведёт журнал памяти — всё согласно промпту `PROMPT_ANGELINA.md`. Работа L-размера: полный день, результат бинарен.
+Магистраль взята с гейта (`docs/tasks/morning-gates-state.json`, `"magistral": "tariff-promo-server-wiring"`, `"day": "2026-08-12"`). Это волеизъявление владельца, более позднее, чем `sources[0]` в `main-day-assertions.json` (там — `angelina-hostess-impl`, выбор 11.08). Расхождение фиксируется открыто (см. таблицу обоснования): **магистраль взята с гейта, assertions не перечеканены** — это находка, не замалчивание; перечеканка `main-day-assertions.json` каноном предписана и на момент генерации не сделана.
 
-**Критерий успеха к вечеру:** Ангелина отвечает на явный вызов (hostess) — не «написан код», а проверяемый отклик живого агента на стандартное приветствие утреннего ритуала.
+Критерий успеха к вечеру: серверная функция тарифного провода вызывается из клиентского контура без ручного обхода; вечерний протокол команды содержит живой trace вызова `decideTransition` (или эквивалентного точки входа) — не заглушку, не статический ответ.
+
+---
 
 ## Подкрепление
 
-- **`friction6-secret-inventory` (#1266) → собрать инвентарь секретов** — S, карточка свободна; `secret:inventory` отсутствует в `package.json`, ядро `secret-redact.mjs` уже есть; прямой питатель вехи `secret-parser-built` (gate: approaching): без инвентаря резак режет вслепую. Начать после фиксации магистрали, не до.
-- **`fix-sprint-experience-dead-ends` → починить шов `RECORDS_PATH` / `FORECAST_RECORDS_REL_PATH` и вычисление `seq`** — S, карточка свободна; живой провод `sprint:experience` нужен для замера датированного прохода ротации ключей, который требует веха; без провода `seq` молча глотает новые прогнозы после перерезки.
+- **`ritual-magistral-source-freshness`** — перечеканить `main-day-assertions.json` под гейт 12.08 (`tariff-promo-server-wiring`); без этого завтра генератор снова прочитает `angelina-hostess-impl` (assertions от 11.08) и подкормит фантомный выбор вместо сегодняшней магистрали — тот же класс поломки, что уронил фокус трижды за неделю.
+- **`morning-gates-two-moments`** — зафиксировать два момента утреннего гейта по ADR-0024: сначала заморозка снимка, затем выбор владельца; без честного gate-момента `morning-gates-state.json` будет снова расходиться с `assertions` молча, а расхождение обнаруживаться только в MAIN_DAY_ISSUE постфактум.
+
+---
 
 ## Перспективные
 
-- Как только `angelina-hostess-impl` закрыта, открывается `insight:insight-server-only-ritual-run` — server-only прогон двух ритуалов через панель как показательный опыт автономии становится выполнимым без ручного оркестрирования.
-- Закрытие `fix-sprint-experience-dead-ends` разблокирует честный рост `seq` в ленте опыта и даст датированный проход с манифестом ротации ключей — прямой шаг к прохождению вехи `secret-parser-built`.
-- Разбор oversized-очереди PR (#1785, #1789, #1801) откроет следующие спринты без накопленного долга ревью; третий день без вердикта — долг растёт, но разрыв контекста магистрали дороже.
+- Закрытие `angelina-hostess-impl`: превратить hostess-контракт Ангелины в вызываемый модуль — задача остаётся P1 и переходит магистралью следующего дня после закрытия сегодняшней.
+- Продвижение `archivarius-sessions-container` (L): цепочка «резак → бэкап → хранилище» не замкнута; кристалл `session-backup-requires-secret-redaction` требует этого контейнера, веха `secret-parser-built` стоит.
+- Trends `DRONE_TIGHT` → curated-продвижение (`trends-drone-tight-curated-promotion`): результат 95%/30% готов, внедрение в каталог template-match не начато; снять после разблокировки продуктовой полосы.
+
+---
 
 ## Экспериментальные
 
-- **Запустить `secret-parser` в режиме `--dry-run` на одном архивном файле сессии** — узнаем, режет ли он реально или только детектирует (разрыв между кристаллом `secret-parser-cuts-aggressively` и фактическим поведением кода, зафиксированный в эпизоде #537).
-- **Прогнать `yarn network:snapshot` дважды с интервалом 2 ч** — узнаем, флайк ли дельта latency 444→918 ms (Vesnin, code-review 10.08) или устойчивый сигнал; одна точка не тренд.
-- **Добавить в `night-triage-secret-scan.mjs` одну строку вызова резака** без подключения к CI — замер времени минимального шага от детектора к резаку на живом файле, ценность — не артефакт, а оценка трудоёмкости.
+- **Парсер секретов как резак — smoke-тест на фикстуре**: создать файл с тремя паттернами ключей, прогнать `night-triage-secret-scan.mjs` + `secret-redact.mjs`, убедиться, что режет, а не только детектирует — закроет остаток гейта `secret-parser-built` (предикат `amnestyLifted`).
+- **Память процедур «показывается, не запрашивается»**: в одном фрейме ритуала подставить последние 3 записи журнала без запроса подтверждения — проверить, достаточно ли контекста для осмысленного продолжения без явного ввода (`insight:insight-procedure-memory-shown-not-asked`).
+- **Портфель шотов всплывает в момент решения**: при следующем owner-choice отобразить форкаст↔факт предыдущих выборов рядом со снимком кандидатов — проверить, меняет ли это скорость выбора (`insight:insight-one-shot-portfolio-surfacing`).
+
+---
 
 ## Санитарные
 
-- PR #1785, #1789, #1801 — третий день без вердикта; разобрать oversized-очередь (P2 из ревью 10.08, Vesnin).
-- Завести карточку `sprint-experience-dead-ends-after-recut` в реестр — зуб рождён в `debt-ledger.jsonl` с `origin:detector` (ревью 10.08), карточки нет, риск потери.
-- Закрыть пять GitHub-иссью заархивированных карточек: #1764, #1447, #1422, #1272, #554.
-- `docs/tasks/dead-wire-pending.json` — все 6 записей с `until: 2026-08-09` просрочены; проверить зуб `dead-wire:check`.
-- `yarn turbo run lint typecheck --filter=@membrana/background-office --filter=@membrana/core` — из утренних команд code-review, не выполнено вчера.
-- `yarn catalog:verify-client` — из утренних команд code-review, не выполнено вчера.
-- B4 (ревью 10.08, Vesnin): `archiveNotes` карточки `cg2` несёт «предусловие ADR-0018, ход владельца» без машинного носителя — добавить запись в `morning-gates-state.json` или `LIVE_SERVICES`, иначе холодная сессия читает как факт.
+- Перечеканить `main-day-assertions.json` под гейт 12.08 (`tariff-promo-server-wiring`) — расхождение живёт открыто с момента генерации этого файла.
+- Вынести порог `133` в единый источник: убрать дублирование между `package.json` и `ci.yml` (P2-наблюдение Vesnin из ревью 11.08).
+- Проверить факт закрытия GitHub-issues #1764, #1447, #1422, #1272, #554, отмеченных `githubIssueClosedAt` в реестре.
+- Повердиктить 9 мёртвых душ и отправить в `task:archive` со свидетельством (в т.ч. `detectors-window-single-carrier`, commit `07928a67`).
+- Завести карточку `sprint-experience-dead-ends-after-recut` (`yarn task:create --id sprint-experience-dead-ends-after-recut --size S`) — зуб в `debt-ledger.jsonl` есть, реестра нет.
+
+---
 
 ## Почему это магистраль (таблица обоснования)
 
 | Утверждение | Происхождение | Первоисточник | Свежесть |
 |---|---|---|---|
-| Магистраль дня — `angelina-hostess-impl`; выбор владельца, зафиксированный в `morning-gates-state.json` поле `magistral`, `day: 2026-08-11` | снимок | `docs/tasks/morning-gates-state.json` (выбор владельца, `magistralChosenAt: 2026-08-11`) | 2026-08-11 |
-| `sources[0].claim` в `main-day-assertions.json` называет `archivarius-mongo-backup` (08.08) — расхождение с гейтом | снимок | `docs/tasks/main-day-assertions.json`, `date: 2026-08-08` | 2026-08-08 |
-| **Расхождение**: магистраль взята с гейта (`morning-gates-state.json`, 11.08), assertions не перечеканены (несут выбор 08.08 — `archivarius-mongo-backup`). Гейт свежее на 3 дня — норма У1: оба источника владельческие, спор решается свежестью. Перечеканка `main-day-assertions.json` каноном предписана и не сделана — это находка, не замолчана. | снимок | `docs/tasks/morning-gates-state.json` vs `docs/tasks/main-day-assertions.json` | 2026-08-11 / 2026-08-08 |
-| Стендап 11.08 называет `angelina-hostess-impl` первым кандидатом с наибольшим операционным весом | план | `docs/DAILY_STANDUP.md` (генератор `bca76eaf`, 11.08) | 2026-08-11 |
-| DAY_PLAN 11.08 выставляет `angelina-hostess-impl` первым в тройке кандидатов с формулировкой «закрывает боль `персона без тела`» | план | `docs/DAY_PLAN.md` (canon-digest `e70334ec`, 11.08) | 2026-08-11 |
-| Стендап и план — 1 источник, 2 отражения одного утреннего прогона; их суммарный вес = 1 голос | — | — | — |
-| Кристалл `insight:insight-server-only-ritual-run` активен: server-only прогон ритуалов через панель упирается в отсутствие hostess-тела | граф правды | `docs/truth/registry.json`, `docs/STRATEGY_DAY.md` | живой |
+| Магистраль дня — `tariff-promo-server-wiring` | гейт | `docs/tasks/morning-gates-state.json` (`"magistral"`, `"day": "2026-08-12"`) | 2026-08-12 |
+| `sources[0]` в assertions несёт `angelina-hostess-impl` (выбор 11.08) | снимок-хардкод | `docs/tasks/main-day-assertions.json`, поле `sources[0].date` | 2026-08-11 |
+| **Расхождение**: магистраль взята с гейта, assertions не перечеканены | — | Сравнение двух владельческих источников; спор решается свежестью (гейт 12.08 > assertions 11.08) | 2026-08-12 |
+| `tariff-promo-server-wiring` присутствует в `frozenOptions` гейта | гейт | `docs/tasks/morning-gates-state.json`, `magistralOptions[]` | 2026-08-12 |
+| `decideTransition` упоминается в ревью 11.08 как провод, который «сделан и влит» — но примечание `//corrections-08-08` в assertions фиксирует прецедент ошибочного «уже влито»; требует проверки маркером до старта | код / ревью | `docs/DAILY_CODE_REVIEW.md` 11.08 + `main-day-assertions.json //corrections-08-08` | 2026-08-11 |
+| Форсайт продуктовой полосы: S2→S3→S4→S5; тарифный провод лежит на пути S3/S4 | план | `docs/STRATEGY_DAY.md`, горизонт #592 | 2026-08-12 |
 
-**Итог:** 2 независимых источника — гейт утра (владелец, 11.08) и граф правды (активный инсайт). Стендап + план = 1 отражение прогона. Гейт свежее `assertions` на 3 дня → магистраль берётся с гейта.
+> 1 источник (гейт 12.08) — владельческое, самое свежее. Assertions (11.08) — тоже владельческое, но на сутки старше. Синтез запрещён; расхождение — находка, не ошибка генератора.
+
+---
 
 ## Посылки (обязательно, если фокус строится на «работы ещё нет»)
 
 | Посылка | Маркер | Вердикт |
 |---|---|---|
-| `angelina-hostess-impl`: вызываемый hostess-контракт Ангелины не реализован — нет тела агента | `symbol:angelinaHostess` в `packages/**` и `apps/**` | `unknown` — символ не проверен кодом в этой сессии; проверить `yarn main-day-probe` перед стартом работы |
-| Ритуал дня оркеструется вручную — автоматического вызова Ангелины нет | `file:packages/background-office/src/angelina/hostess.ts` (или аналог) | `unknown` — путь предполагаемый; верифицировать до начала реализации |
+| Серверная функция тарифного провода не вызывается из клиентского контура штатно (проход требует ручного обхода) | `symbol:tariffPromoServerWiring` в `packages/**/src/**` | **unknown** — маркер не прогонялся; первый шаг дня: `yarn main-day-probe`, зафиксировать вердикт письменно до первой строки кода |
 
-> ⚠ Обе посылки помечены `unknown`: символы и файлы не проверены кодом в этой сессии. **Обязательный первый шаг дня:** `yarn main-day-probe` — если маркеры вернут `violated` (символ/файл уже есть), пометить «ПОСЫЛКА НАРУШЕНА» и пересмотреть DoD до реализации, не после.
+> Если `yarn main-day-probe` вернёт `violated` (символ уже существует) — остановиться, выдать диагноз, поднять расхождение реестра как находку, не начинать работу вслепую.
+
+---
 
 ## Сегодня делаем
 
-1. Запустить `yarn main-day-probe` — проверить посылки по маркерам; при `violated` — зафиксировать находку и скорректировать DoD.
-2. Реализовать hostess-контракт Ангелины: принять вызов, вернуть живой отклик согласно `PROMPT_ANGELINA.md`; тело агента — не заглушка, а рабочий вызов.
-3. Проверить отклик вручную: Ангелина отвечает на стандартное приветствие утреннего ритуала — результат бинарен (да/нет).
-4. Запустить `yarn turbo run lint typecheck --filter=@membrana/background-office --filter=@membrana/core` — из утренних команд, не выполнено вчера.
-5. Завести карточку `sprint-experience-dead-ends-after-recut` в реестр (`yarn task:create --id sprint-experience-dead-ends-after-recut --size S`).
-6. Начать `friction6-secret-inventory` (#1266) после фиксации отклика Ангелины — не до.
-7. Перечеканить `docs/tasks/main-day-assertions.json`: обновить `sources[0]` под магистраль 11.08 (`angelina-hostess-impl`) — расхождение с гейтом зафиксировано как находка, перечеканка предписана каноном.
+1. Запустить `yarn main-day-probe` до первой строки кода; зафиксировать вердикт по маркеру `tariff-promo-server-wiring` письменно (holds / violated / unknown).
+2. Если `holds` — реализовать серверную функцию тарифного провода (`decideTransition` или эквивалент точки входа); подключить к клиентскому контуру.
+3. Если `violated` — выдать письменный диагноз: что уже существует, где живёт, почему реестр не обновлён; поднять расхождение как P1-находку.
+4. Перечеканить `main-day-assertions.json` под гейт 12.08 (`tariff-promo-server-wiring`) — закрыть расхождение с `morning-gates-state.json`.
+5. Зафиксировать live trace вызова в вечернем протоколе команды (не заглушку).
+6. Повердиктить 9 мёртвых душ → `task:archive` (санитарный, параллельно).
+
+---
 
 ## Definition of Done (фокус)
 
-- [ ] `yarn main-day-probe` прогнан, результат посылок зафиксирован (holds / violated / unknown устранён).
-- [ ] Hostess-контракт Ангелины реализован: модуль существует, символ вызываемый, не заглушка.
-- [ ] Ангелина возвращает живой отклик на стандартное приветствие утреннего ритуала — проверено вручную.
-- [ ] `yarn turbo run lint typecheck` по `background-office` и `core` — зелёный.
-- [ ] Карточка `sprint-experience-dead-ends-after-recut` заведена в реестр.
-- [ ] `docs/tasks/main-day-assertions.json` перечеканен под магистраль 11.08 (расхождение гейт/assertions устранено).
-- [ ] Вечерний фидбек содержит бинарный ответ: «Ангелина отвечает» или «не отвечает + причина».
+- [ ] `yarn main-day-probe` прогнан до старта; вердикт зафиксирован письменно.
+- [ ] Серверная функция тарифного провода вызывается из клиентского контура без ручного обхода (или выдан письменный диагноз блокера при `violated`).
+- [ ] Вечерний протокол содержит живой trace вызова `decideTransition` (или эквивалентной точки входа) — не статический текст.
+- [ ] `main-day-assertions.json` перечеканен под гейт 12.08; расхождение с `morning-gates-state.json` закрыто.
+- [ ] PR открыт, CI зелёный (или письменная причина, почему CI красный и это ожидаемо).
+- [ ] `docs/tasks/README.md` синхронизирован с `registry.json` (если статус карточки изменился).
+
+---
 
 ## Сознательно не делаем сегодня
 
-- `archivarius-sessions-container` (L) — второй L в один день без явного owner-choice расщепляет фокус; кандидат следующего дня.
-- `assets-container` (L) — третий кандидат тройки; откладывается до закрытия магистрали.
-- Oversized PR-очередь (#1785, #1789, #1801) — разбор после закрытия hostess-контракта; разрыв контекста магистрали дороже третьего дня долга.
-- DSP-бенчмарки (`harmonic` / `cepstral` / `spectral-flux`) — потолок эшелона 0 зафиксирован (`FFT_METRICS` §6); повтор без смены датасета или fusion не даёт новой информации.
-- Нейро-эшелон 2 / `mfcc-compare-sprint` — YAMNet в prod-бенчмарке (F1 0.803); разведка без нового датасета — повтор.
+- **`angelina-hostess-impl`** — была `sources[0]`, но гейт 12.08 сделан позже (11.08 → 12.08); переходит магистралью следующего дня.
+- **`archivarius-sessions-container` (L)** — второй L-блок в один день без owner-choice; кандидат завтра.
+- **Точечное ревью 9 oversized PR** (#1785, #1789, #1801 + шесть из ревью 11.08) — P1-риск зафиксирован, разрыв контекста магистрали дороже; очередь после закрытия провода.
+- **`worktrees-align` (#1864), мутирующий `--apply`** — ждёт owner-гейта.
+- **DSP/FFT-бенчмарки на free-v1** — потолок эшелона 0 зафиксирован (`FFT_METRICS` §6), повтор без смены датасета или fusion не даёт новой информации.
+- **Trends DRONE_TIGHT → curated-продвижение** — перспективный вектор, не сегодня.
+
+---
 
 ## Вторично (если останется время)
 
-- `fix-sprint-experience-dead-ends` — починить шов `RECORDS_PATH` / `FORECAST_RECORDS_REL_PATH`; разблокирует датированный проход вехи.
-- Закрыть пять GitHub-иссью заархивированных карточек: #1764, #1447, #1422, #1272, #554.
+- Smoke-тест парсера секретов на фикстуре (три паттерна ключей → `secret-redact.mjs`) — закрыть остаток гейта `secret-parser-built`.
+- Завести карточку `sprint-experience-dead-ends-after-recut` (`yarn task:create --id sprint-experience-dead-ends-after-recut --size S`).
+
+---
 
 ## Зависимости и риски
 
-- **Блокер:** посылки по `angelina-hostess-impl` помечены `unknown` — если `yarn main-day-probe` вернёт `violated` (hostess уже реализован), DoD дня нужно пересмотреть до начала работы, иначе повторяем антипаттерн 16.07 (написать уже написанное).
-- **Риск L-расползания:** нечёткий DoD при L-задаче — к вечеру без бинарного критерия «отвечает / не отвечает» работа не закрыта. Критерий зафиксирован явно в DoD.
-- **Расхождение assertions/гейт:** `main-day-assertions.json` не перечеканен под 11.08 — если не исправить сегодня, завтрашний генератор снова прочитает `archivarius-mongo-backup` как магистраль (прецедент 07.08, вещдок `//retired-night-build-phantom-07-08`).
-- **B4 (ревью 10.08):** `archiveNotes` карточки `cg2` несёт «ADR-0018, ход владельца» без машинного носителя; холодная сессия читает как факт — добавить запись в `morning-gates-state.json`.
+- **Блокер**: `yarn main-day-probe` может вернуть `violated` — тогда вместо реализации нужен диагноз и подъём расхождения реестра; день уходит на audit, а не на провод.
+- **Риск расхождения assertions**: `main-day-assertions.json` несёт `angelina-hostess-impl` (11.08), гейт несёт `tariff-promo-server-wiring` (12.08); если перечеканка не сделана до вечера, завтра генератор снова прочитает фантомную магистраль.
+- **Ночной гейт (cron 03:00 UTC)**: первый боевой прогон зафиксирован в ревью 11.08 как живой риск — мониторить утром 13.08.
+- **Oversized PR-хвост**: 9 из 24 коммитов ревью 11.08 не развёрнуты; могут нести скрытые P1 — не блокируют сегодня, но риск накапливается.
+
+---
 
 ## Ссылки
 
-- [DAILY_STANDUP — 2026-08-11](../docs/DAILY_STANDUP.md)
-- [DAY_PLAN — 2026-08-11](../docs/DAY_PLAN.md)
-- [morning-gates-state.json](../docs/tasks/morning-gates-state.json)
-- [main-day-assertions.json](../docs/tasks/main-day-assertions.json)
-- [PROMPT_ANGELINA.md](../docs/virtual-team/PROMPT_ANGELINA.md)
-- [FFT_METRICS_POTENTIAL_AND_LIMITS.md §6](../docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md)
-- [DAILY_CODE_REVIEW — 2026-08-10](../docs/DAILY_CODE_REVIEW.md)
+- [DAILY_STANDUP.md](docs/DAILY_STANDUP.md) — стендап 2026-08-12
+- [morning-gates-state.json](docs/tasks/morning-gates-state.json) — источник магистрали (гейт 12.08)
+- [main-day-assertions.json](docs/tasks/main-day-assertions.json) — assertions (sources[0]: angelina-hostess-impl, 11.08; расхождение открыто)
+- [DAILY_CODE_REVIEW.md](docs/DAILY_CODE_REVIEW.md) — ревью 11.08
+- [FFT_METRICS_POTENTIAL_AND_LIMITS.md](docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) — потолок эшелона 0, §6
