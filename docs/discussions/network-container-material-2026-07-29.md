@@ -116,3 +116,51 @@ falsely green-light a forbidden path.»*
   образец запретного списка уже есть у `llm-calls:audit`).
 - Как контейнер относится к **исходящим правилам**: `K1` (office не ходит в Linear) —
   это архитектурное решение, которое должно где-то жить как проверяемое правило.
+
+---
+
+## Дополнение сырья 12.08 (пробелы 1 и 3 такта 1; агент, read-only)
+
+> Прод не трогался (hard deny): всё ниже — из кода и деплой-доков ствола @ 12.08.
+
+### Пробел 3 — инвентарь исходящих по всему репозиторию (не только office)
+
+Греп `fetch(/undici/ProxyAgent/https.request` по `packages/*/src` и `scripts/`:
+
+| Вызыватель | Куда ходит | Proxy-aware |
+|---|---|---|
+| office: `openrouter` / `claude` / `telegram` / `outbound-self-check` / `proxy-fetch` | LLM/Telegram | **да** (материал 29.07) |
+| office: `deepseek.service` | api.deepseek.com | **нет** (известное расхождение) |
+| office: `linear-snapshot/media-snapshot.client` | media-VPS NL | транзит K1 — по построению |
+| cabinet: `pair/media-bridge.service` | media | **нет** — голый fetch |
+| media: `linear-snapshot.service` | Linear | **нет** — и легально: NL-машина без фильтра, прокси не нужен; но это решение НИГДЕ не записано словом |
+| media-library: `server-storage-backend`, `bundled-catalog` | сторадж/каталог | **нет** |
+| rag: `openai-embedder`, `voyage-embedder` | OpenAI/Voyage | **да** — единственные proxy-aware вне office |
+| scripts (dev-машина): `net-http`, `infra-probe`, `network/probe`, `affine-import`, `cabinet-catalog-client`, `media-samples-client`, `dataset-audio`, `fetch-real-dataset-collection`, `office-image-smoke`, `telegram-swallow` (push-ingest) | GitHub/office/media/cabinet/Affine/датасеты | смешанно; dev-машина за локальным прокси из `.env` |
+
+**Наблюдение к заседанию:** «deepseek красный» — не единичный пропуск, а класс:
+proxy-awareness сегодня — свойство ФАЙЛА, а не машины или политики. Правило вида
+«с какой машины какой выход легален» нигде не живёт как проверяемое (K1 — единственный
+записанный прецедент, и тот прозой).
+
+### Пробел 1 — карта маршрутов (из кода, не из замера)
+
+```
+dev-машина (RF)   → локальный прокси (.env HTTPS_PROXY) → LLM/GitHub/Affine
+office (RF VDS)   → HTTPS_PROXY (если доставлен компоузом! — дыра из находки 29.07) → LLM
+office            → media-VPS NL (транзит K1) → Linear
+media (VPS NL)    → Linear / сторадж напрямую (фильтра нет)
+cabinet           → media (media-bridge)
+CI (GitHub)       → registry.npmjs/провайдеры напрямую
+```
+
+Замер С office (пробел 2) и история рядов (пробел 4) — по-прежнему за владельцем
+и за заседанием: зонды все снимковые, ленты нет (кандидат формы — по образцу
+`docs/audit/llm-calls`).
+
+### Готовность к такту 2
+
+Сырьё по пробелам 1 и 3 добрано; повестка заседания в #1449 остаётся узкой:
+форма контейнера, не починка сети. Новый пункт в повестку от инвентаря:
+**proxy-awareness как политика машины, а не свойство файла** — где живёт правило
+и чем проверяется (зуб?).
