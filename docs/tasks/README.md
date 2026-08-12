@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `worktrees-align-snapshot-guard` | worktrees:align: гард охвата до мутации и продолжение обхода после отказа | S | [`WORKTREES_ALIGN_SNAPSHOT_GUARD_PROMPT.md`](../prompts/WORKTREES_ALIGN_SNAPSHOT_GUARD_PROMPT.md) | [#1864](https://github.com/officefish/Membrana/issues/1864) |
 | `dreams-models-liveness` | Зуб снов читает настоящий реестр; живость моделей проверяется ночью, а не руками | M | [`DREAMS_MODELS_LIVENESS_PROMPT.md`](../prompts/DREAMS_MODELS_LIVENESS_PROMPT.md) | — |
 | `openrouter-default-model-unverified` | Дефолтная модель офиса живёт литералом в коде и никем не проверяется на живость | S | [`OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md`](../prompts/OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md) | — |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
@@ -37,8 +36,6 @@
 | `morning-journal-close-step` | Шаг закрытия журнала у утра: статус по факту, а не константой в хвосте цепочки | M | [`MORNING_JOURNAL_CLOSE_STEP_PROMPT.md`](../prompts/MORNING_JOURNAL_CLOSE_STEP_PROMPT.md) | [#1782](https://github.com/officefish/Membrana/issues/1782) |
 | `frame-holders-reassign-twenty` | Переназначение двадцати фреймов: у каждого явный держатель, модератор назван отдельно (Р3 ADR-0025) | M | [`FRAME_HOLDERS_REASSIGN_TWENTY_PROMPT.md`](../prompts/FRAME_HOLDERS_REASSIGN_TWENTY_PROMPT.md) | [#1787](https://github.com/officefish/Membrana/issues/1787) |
 | `frame-holder-moderator-split` | ADR-0025 в коде: развести holder и moderator у фрейма | M | [`FRAME_HOLDER_MODERATOR_SPLIT_PROMPT.md`](../prompts/FRAME_HOLDER_MODERATOR_SPLIT_PROMPT.md) | [#1781](https://github.com/officefish/Membrana/issues/1781) |
-| `swallow-own-moment` | Ласточка получает свой момент: развести state.day с evening-gate | S | [`SWALLOW_OWN_MOMENT_PROMPT.md`](../prompts/SWALLOW_OWN_MOMENT_PROMPT.md) | — |
-| `morning-gates-two-moments` | Гейты утра: два момента вместо одного day — реализация ADR-0024 | S | [`MORNING_GATES_TWO_MOMENTS_PROMPT.md`](../prompts/MORNING_GATES_TWO_MOMENTS_PROMPT.md) | — |
 | `tariff-promo-server-wiring` | Выбор тарифа на сервере и открытие по промокоду: провести готовый домен до сервера и клиента | M | [`TARIFF_PROMO_SERVER_WIRING_PROMPT.md`](../prompts/TARIFF_PROMO_SERVER_WIRING_PROMPT.md) | [#1761](https://github.com/officefish/Membrana/issues/1761) |
 | `corpus-track-acceptance-predicate` | Приёмный предикат корпуса «один тракт — два класса»: чистая функция годности трека по спеке инсайта | S | [`CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md`](../prompts/CORPUS_TRACK_ACCEPTANCE_PREDICATE_PROMPT.md) | — |
 | `gate-stale-supersede-by-recut` | Протухший след отзывается актом перерезки, а не изъятием строки | S | [`GATE_STALE_SUPERSEDE_BY_RECUT_PROMPT.md`](../prompts/GATE_STALE_SUPERSEDE_BY_RECUT_PROMPT.md) | [#1638](https://github.com/officefish/Membrana/issues/1638) |
@@ -159,7 +156,10 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `worktrees-align-snapshot-guard` | worktrees:align: гард охвата до мутации и продолжение обхода после отказа | 2026-08-12 | [`WORKTREES_ALIGN_SNAPSHOT_GUARD_PROMPT.md`](../prompts/WORKTREES_ALIGN_SNAPSHOT_GUARD_PROMPT.md) | #1864 (Issue открыт) | [карточка](./archive/worktrees-align-snapshot-guard.md) |
 | `fix-node-modules-links-1647` | Резолюция node_modules/@membrana/* в чужое дерево Membrana-grok: инвентарь симлинков и переустановка на своё дерево | 2026-08-12 | [`FIX_NODE_MODULES_LINKS_1647_PROMPT.md`](../prompts/FIX_NODE_MODULES_LINKS_1647_PROMPT.md) | — | [карточка](./archive/fix-node-modules-links-1647.md) |
+| `swallow-own-moment` | Ласточка получает свой момент: развести state.day с evening-gate | 2026-08-12 | [`SWALLOW_OWN_MOMENT_PROMPT.md`](../prompts/SWALLOW_OWN_MOMENT_PROMPT.md) | — | [карточка](./archive/swallow-own-moment.md) |
+| `morning-gates-two-moments` | Гейты утра: два момента вместо одного day — реализация ADR-0024 | 2026-08-12 | [`MORNING_GATES_TWO_MOMENTS_PROMPT.md`](../prompts/MORNING_GATES_TWO_MOMENTS_PROMPT.md) | — | [карточка](./archive/morning-gates-two-moments.md) |
 | `recreate-execution-procedure-interface` | Пересборка PR #1613: контракт EXECUTION_PROCEDURE + procedureKind поверх свежего main (pr:recreate) | 2026-08-12 | [`RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md`](../prompts/RECREATE_EXECUTION_PROCEDURE_INTERFACE_PROMPT.md) | — | [карточка](./archive/recreate-execution-procedure-interface.md) |
 | `ritual-magistral-source-freshness` | Расхождение вещдока дня с гейтом меряется предикатом, а не поручается генератору | 2026-08-12 | [`RITUAL_MAGISTRAL_SOURCE_FRESHNESS_PROMPT.md`](../prompts/RITUAL_MAGISTRAL_SOURCE_FRESHNESS_PROMPT.md) | — | [карточка](./archive/ritual-magistral-source-freshness.md) |
 | `ritual-runner-unknown-flags` | Раннер вечерней цепочки: неизвестный флаг = отказ, не живой прогон | 2026-08-11 | [`RITUAL_RUNNER_UNKNOWN_FLAGS_PROMPT.md`](../prompts/RITUAL_RUNNER_UNKNOWN_FLAGS_PROMPT.md) | #1867 | [карточка](./archive/ritual-runner-unknown-flags.md) |
