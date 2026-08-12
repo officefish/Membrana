@@ -127,10 +127,10 @@
       "noIssueReason": "найдено гардом по ходу спринта dreams-models-liveness; иссью при взятии в работу",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-10",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin"
@@ -1325,16 +1325,16 @@
       "noIssueReason": "строка 8 топ-10 хендофа 02.08; дом задачи #1572 — свод к одной механике серии, здесь только размножение уже влитого лечения",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-02",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin"
       ],
       "notes": "harmonic вылечен 01.08 (#1611); cepstral и spectral-flux несут обрезающий prepareFftSamples строка в строку",
-      "archiveNotes": null,
+      "archiveNotes": "Мёртвая душа: работа уже в стволе. Кепстральный сведён средним геометрическим (тождественно усреднению кепстров, разбор Дынина 02.08), flux — покадровый runRecord с усреднением спектров и флакса; вещдоки: коммит 4388f415 (#1642, пять локальных спринтов 02.08) + консолидация носителя окна 07928a67 (#1648, 11.08). Комментарии в обоих детекторах датируют починку «До 02.08 брались первые fftSize сэмплов». Тесты обоих пакетов зелёные 12.08. Маркер строки 15 хендофа 12.08 был ошибочен (fallback-ветка принята за основной путь) — поправлен этим архивом.",
       "githubIssueClosedAt": null
     },
     {
@@ -1638,16 +1638,16 @@
       "githubIssue": null,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-30",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "dynin",
       "supportPersonas": [
         "kuryokhin"
       ],
       "notes": "Акт исследования по развилке шторма storm-mfcc-as-sprint-test-2026-07-30: выбор библиотеки — отдельный акт ДО нарезки. Кандидат де-факто meyda ^5.6.3 (демо владельца apps/demos/MFCC-Dashboard), но акт обязан рассмотреть альтернативы — иначе это не выбор, а оформление. Вещдок акта — обоснование, а не ссылка",
-      "archiveNotes": null,
+      "archiveNotes": "Акт закрыт вердиктом 12.08: Meyda ^5.6.3 выбрана по живому предикату настраиваемости (3 пробы вызовом на пакете из дерева); essentia.js исключена лицензией AGPLv3 (акт 30.07); запасные пути записаны. Вещдок: docs/tasks/research/mfcc-lib-choice-DECISION.md + выжимка Perplexity 30.07.",
       "githubIssueClosedAt": null
     },
     {
