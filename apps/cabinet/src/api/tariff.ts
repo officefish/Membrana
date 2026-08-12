@@ -30,7 +30,7 @@ export type PromoDenyReason = (typeof PROMO_DENY_REASONS)[number];
 export type RedeemPromoOutcome =
   | { ok: true; fromTariffId: string; toTariffId: string }
   /** `reason` типизирован строкой сознательно: рассинхрон с сервером — не наш краш. */
-  | { ok: false; reason: PromoDenyReason | (string & {}) };
+  | { ok: false; reason: PromoDenyReason | (string & Record<never, never>) };
 
 async function authFetch(path: string, init: RequestInit = {}): Promise<Response> {
   const token = sessionStorage.getItem('membrana.cabinet.sessionToken');
