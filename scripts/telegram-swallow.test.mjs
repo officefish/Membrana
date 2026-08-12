@@ -170,8 +170,8 @@ test('sendSwallow: гейт блокирует без ack/day; --force гейт 
     requireGate: true,
     today: '2026-07-26',
     gatesState: {
-      day: '2026-07-26',
-      swallow: { ownerAck: true, draftDigest: draftDigestOf(body) },
+      // ADR-0024 (swallow-own-moment): свежесть согласия несёт СВОЙ момент swallow.day.
+      swallow: { day: '2026-07-26', ownerAck: true, draftDigest: draftDigestOf(body) },
     },
     ledgerPath,
     token: 't',

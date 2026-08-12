@@ -17,7 +17,7 @@ import {
   canSendEveningPartnerSwallow,
   recordEveningPartnerDraft,
 } from './lib/evening-gates.mjs';
-import { todayIso } from './lib/morning-gates.mjs';
+import { swallowMoment, todayIso } from './lib/morning-gates.mjs';
 import { checkSwallowDraft } from './lib/swallow-mirror.mjs';
 
 export const EVENING_GATES_STATE_REL = 'docs/tasks/morning-gates-state.json';
@@ -61,7 +61,9 @@ function main() {
       ? readFileSync(resolve(process.cwd(), state.swallow.draftFile), 'utf8')
       : '';
     const gate = canSendEveningPartnerSwallow(state, today, payload);
-    console.log(`evening: ${state.day ?? '—'} (сегодня ${today}${state.day && state.day !== today ? ' — ПРОТУХЛО' : ''})`);
+    // ADR-0024: статус вечера докладывает момент ЛАСТОЧКИ, не общий день заморозки.
+    const sAt = swallowMoment(state);
+    console.log(`evening: ${sAt ?? '—'} (сегодня ${today}${sAt && sAt !== today ? ' — ПРОТУХЛО' : ''})`);
     console.log(`partner-swallow: ${gate.ok ? 'ок владельца + digest свежие' : gate.blockedBy.join(' · ')}`);
     console.log(`resume: ${gate.ok ? 'yarn telegram:swallow --file ' + state.swallow.draftFile : gatePath()}`);
     process.exitCode = gate.ok ? 0 : 3;
