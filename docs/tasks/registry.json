@@ -260,7 +260,7 @@
         "vesnin",
         "ozhegov"
       ],
-      "notes": "Holder #1305; только owner/ops-authorized read-only snapshot; production mutation запрещена; выход — sealed DB/export inventory",
+      "notes": "Holder #1305; только owner/ops-authorized read-only snapshot; production mutation запрещена; выход — sealed DB/export inventory · [verdict 12.08] агентская часть исчерпана: подготовка+dry-run на fixtures сданы PR #1806; остаток целиком за отдельным owner/ops-словом (read-only source bundle) — промпт прямо запрещает live-действия до него.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "static-mmbrn-container"
@@ -440,7 +440,7 @@
       "supportPersonas": [
         "vesnin"
       ],
-      "notes": "Holder #1303; static не LIVE до proof; strategy retirement отражён честно",
+      "notes": "Holder #1303; static не LIVE до proof; strategy retirement отражён честно · [machine] blocked-by-dag 12.08: DEPS.json ребро static-mmbrn-cutover → live-services (cutover не исполнен); живой замер 12.08: https://static.mmbrn.tech TLS fail (curl exit 35, http 000) — сервис не поднят, доказывать нечего. Маркер хендофа 12.08 «самодостаточная S-фаза» опровергнут ратифицированным графом.",
       "archiveNotes": null,
       "githubIssueClosedAt": null,
       "parentEpic": "static-mmbrn-container"
