@@ -1,10 +1,11 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, rmSync, mkdirSync, writeFileSync, existsSync } from 'node:fs';
+import { mkdtempSync, rmSync, mkdirSync, writeFileSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import {
+  applyReviewText,
   buildResearchQueries,
   collectInsightsForWeeklyPlan,
   createInsight,
@@ -109,6 +110,53 @@ describe('insight-ritual', () => {
     assert.equal(cli.command, 'archive');
     assert.deepEqual(cli.taskIds, ['done-task']);
     assert.equal(cli.execute, false);
+  });
+
+  it('parses --review-file (insight-review-from-file, симметрия consilium --secretary-file)', () => {
+    const cli = parseInsightCli(['review', 'my-idea', '--review-file', 'docs/tmp/REVIEW.md']);
+    assert.equal(cli.command, 'review');
+    assert.equal(cli.id, 'my-idea');
+    assert.equal(cli.reviewFile, 'docs/tmp/REVIEW.md');
+    assert.equal(parseInsightCli(['review', 'my-idea']).reviewFile, '');
+  });
+
+  it('applyReviewText: REVIEW.md + meta reviewed + weight из «Средний балл» + registry', () => {
+    const root = mkdtempSync(join(tmpdir(), 'membrana-insight-review-'));
+    try {
+      const id = 'insight-from-file';
+      const dir = join(root, 'docs/insights', id);
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(join(dir, 'meta.json'), JSON.stringify({ id, status: 'researched' }), 'utf8');
+      mkdirSync(join(root, 'docs/insights'), { recursive: true });
+      writeFileSync(
+        join(root, 'docs/insights/registry.json'),
+        JSON.stringify({ version: 1, insights: [{ id, status: 'researched' }] }),
+        'utf8',
+      );
+
+      const review = '# REVIEW\n…шесть ролей…\n**Средний балл:** 7.2\n';
+      const { reviewPath, weight } = applyReviewText(root, id, review, { now: new Date('2026-08-12T10:00:00Z') });
+      assert.equal(weight, 7.2);
+      assert.ok(existsSync(reviewPath));
+
+      const meta = JSON.parse(readFileSync(join(dir, 'meta.json'), 'utf8'));
+      assert.equal(meta.status, 'reviewed');
+      assert.equal(meta.reviewedAt, '2026-08-12');
+      assert.equal(meta.weight, 7.2);
+      const registry = readRegistry(root);
+      assert.equal(registry.insights[0].status, 'reviewed');
+      assert.equal(registry.insights[0].weight, 7.2);
+
+      // без «Средний балл» — статусы двигаются, weight нет
+      const second = applyReviewText(root, id, '# REVIEW\nбез баллов\n');
+      assert.equal(second.weight, null);
+      assert.equal(JSON.parse(readFileSync(join(dir, 'meta.json'), 'utf8')).weight, 7.2);
+
+      // пустой файл — отказ, не тихий сдвиг статусов
+      assert.throws(() => applyReviewText(root, id, '  \n'), /пустое ревью/u);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 
   it('parses exact lifecycle request and authority flags', () => {

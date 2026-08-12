@@ -17,7 +17,7 @@
     "scripts/hermes-brief.mjs"
   ],
   "pins": {
-    "scripts/_anthropic-env.mjs": "0adfa9909638f1ca54d092565480351f29fbc13a",
+    "scripts/_anthropic-env.mjs": "4ef1e74840851e38047bf40122be826b97940029",
     "scripts/_daily-standup.mjs": "49431a261d2bcb0b70f3f48459a089e265ae02da",
     "scripts/_llm-proxy-env.mjs": "968266cc5076bb569dd3d8181d89f3201a385f6a",
     "scripts/_main-day-issue.mjs": "988c6c5d583d16fe1247c204cf5f12c2b4c68e72",
