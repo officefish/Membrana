@@ -2,134 +2,73 @@
 
 > **Task-промпт для агента-разработчика** (Cursor IDE / Claude / другой LLM).
 > Процесс постановки: [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md).
-> Скопируй блок **«Промпт целиком»** в начало диалога. Размер задачи: **S**.
-> Ожидаемый артефакт: **1 PR — insight review принимает готовый REVIEW.md и переставляет статусы сам**.
+> Размер задачи: **S**. Ожидаемый артефакт: **1 PR — insight review принимает готовый REVIEW.md и переставляет статусы сам**.
 > Реестр: `id` = `insight-review-from-file` в [`docs/tasks/registry.json`](../tasks/registry.json).
 
 ---
 
 ## Контекст
 
-yarn insight review жёстко ходит в Anthropic; при исчерпанном лимите канон сам объявляет фолбэк «ревью в чате по INSIGHT_REVIEW_PROMPT, REVIEW.md руками» (CREDIT_FALLBACKS), но принять готовый файл нечем. У консилиума есть --secretary-file, у task:review:run --review-file, у insight review — ничего: статусы meta.json и registry переставлялись однострочником (вещдок 26.07, insight-cast-carrier-contract).
+`yarn insight review` жёстко ходит в панельную LLM-цепочку; при исчерпанном лимите канон
+сам объявляет фолбэк «ревью в чате по INSIGHT_REVIEW_PROMPT, REVIEW.md руками»
+(CREDIT_FALLBACKS), но принять готовый файл нечем. У консилиума есть `--secretary-file`,
+у `task:review:run` — `--review-file`, у insight review — ничего: статусы meta.json и
+registry переставлялись однострочником (вещдок 26.07, insight-cast-carrier-contract).
 
-Попутно: детектор исчерпания ищет «credit balance is too low», а лимит пришёл как «specified API usage limits» — подсказка фолбэка не напечаталась ровно там, где написана.
+Попутно: детектор исчерпания ищет «credit balance is too low», а месячный лимит пришёл
+строкой «specified API usage limits» — подсказка фолбэка не напечаталась ровно там,
+где написана.
 
 Не трогаем: состав ролей ревью и формат REVIEW.md.
 
-**Связанные документы:**
-
-| Документ | Зачем |
-|----------|--------|
-| [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) | Роли, порядок работы |
-| [`ARCHITECTURE.md`](../ARCHITECTURE.md) | Границы модулей |
-| [`DESIGN.md`](../DESIGN.md) | UI (если есть) |
-| [`TASKS_MANAGEMENT.md`](../TASKS_MANAGEMENT.md) | Issue / PR |
-
-
-**Референс (только идеи UX, не копировать код):** `packages/temp/...` — если есть.
-
-**GitHub Issue:** — (не заведён)
+**GitHub Issue:** заведён при отгрузке PR (см. карточку реестра).
 
 ---
 
-## Промпт целиком (для вставки агенту)
+## Что построено
 
-> Всё ниже до раздела **«Заметки для человека-постановщика»** — текст задания для агента.
+1. **`yarn insight review <id> --review-file <md>`** — принимает готовый REVIEW.md:
+   кладёт его в дом инсайта и переставляет статусы (meta.status=reviewed, reviewedAt,
+   weight из «**Средний балл:**», запись в insights/registry) — **той же дорогой**, что
+   и панельный путь: общий хелпер `applyReviewText` в `scripts/lib/insight-ritual.mjs`,
+   однострочники больше не нужны. `--dry-run` показывает, что было бы принято.
+   Пустой файл — отказ, не тихий сдвиг статусов; без «Средний балл» — статусы двигаются,
+   weight нет, предупреждение словом.
+2. **Детектор исчерпания** (`isCreditExhausted`) распознаёт и «specified API usage
+   limits»; строка фолбэка insight review называет новый флаг.
 
----
-
-### Кто ты
-
-Ты — **координатор виртуальной команды Membrana** под руководством **Vesnin** (Teamlead). Перед кодом — краткий план (1–2 абзаца + список файлов). Соблюдай [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) и [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md).
-
----
-
-### Что построить (продуктовое описание)
-
-1. …
-2. …
-
----
-
-### Архитектура / контракт
-
-| Слой | Путь | Ответственность |
-|------|------|-----------------|
-| … | … | … |
-
-**Запрещено:**
-
-- …
-
----
-
-### Визуальный дизайн (если есть UI)
-
-- …
-
----
+**Запрещено:** менять состав ролей и формат REVIEW.md; сочинять weight при отсутствии
+балла.
 
 ### Тесты
 
 | Область | Минимум |
 |---------|---------|
-| … | … |
-
----
+| парсер | `--review-file` читается; без флага — пустая строка |
+| applyReviewText | статусы+weight по файлу; без балла weight не трогается; пустой файл — throw |
+| детектор | «specified API usage limits» распознаётся |
 
 ### Definition of Done
 
-- [ ] …
-- [ ] `yarn turbo run lint typecheck test build --continue` — зелёный (или указать scope).
-- [ ] LGTM Teamlead.
-
----
+- [x] `yarn insight review <id> --review-file <md>` работает; dry-run показывает приём.
+- [x] Обе дороги (LLM и файл) применяют ревью одной функцией.
+- [x] Детектор лимита узнаёт месячную строку; подсказка называет флаг.
+- [x] Тесты зелёные (insight-ritual 15, credit-hint 3).
 
 ### Out of scope
 
-- …
-
----
-
-### Порядок работы ролей
-
-1. **Teamlead** — …
-2. **Структурщик** — …
-3. **Математик** — …
-4. **Музыкант** — …
-5. **Верстальщик** — …
-
----
-
-### Формат ответа координатора (планирование)
-
-```text
-[Teamlead]: …
-[Структурщик]: …
-[Математик]: …
-[Музыкант]: …
-[Верстальщик]: …
-
-Итоговый артефакт: …
-Definition of Done: …
-```
+- Валидация структуры REVIEW.md по ролям (формат не трогаем).
+- Оффлайн-каналы research/create.
 
 ---
 
 ## Заметки для человека-постановщика
 
-1. GitHub Issue (`wish` / `bug` / `imperfection`) + ссылка на этот файл.
-2. Запись в `docs/tasks/registry.json` (`status: active`).
-3. После merge: отчёт в Issue → `yarn task:archive <slug> --notes "…"`.
+1. После merge: `yarn task:archive insight-review-from-file --notes "…"`.
 
 ### Проверка после PR
 
 ```bash
-# команды проверки
+node --test scripts/insight-ritual.test.mjs scripts/anthropic-credit-hint.test.mjs
+yarn insight review <id> --review-file <md> --dry-run
 ```
-
----
-
-## Связь с дорожной картой
-
-- …

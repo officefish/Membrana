@@ -2036,7 +2036,7 @@
       "id": "insight-review-from-file",
       "title": "insight review принимает готовый REVIEW.md из чата (как консилиум — протокол)",
       "promptPath": "docs/prompts/INSIGHT_REVIEW_FROM_FILE_PROMPT.md",
-      "githubIssue": null,
+      "githubIssue": 1882,
       "linearId": null,
       "size": "S",
       "status": "active",
@@ -2047,7 +2047,8 @@
       "supportPersonas": [],
       "notes": "Вещдок 26.07: yarn insight review упал (Anthropic лимит до 01.08). Канон сам объявляет фолбэк 'ревью в чате, REVIEW.md руками' (CREDIT_FALLBACKS), но принять готовый файл нечем: у консилиума есть --secretary-file, у task:review:run --review-file, у insight review — ничего; статусы meta.json и реестра переставлял однострочником. Плюс мелочь: детектор исчерпания ищет 'credit balance is too low', а лимит пришёл как 'specified API usage limits' — подсказка фолбэка не напечаталась.",
       "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": null,
+      "noIssueReason": null
     },
     {
       "id": "kits-pins-prepush-strict",

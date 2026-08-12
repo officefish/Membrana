@@ -172,10 +172,12 @@ export function defaultModel() {
 
 /**
  * Кредит исчерпан? (#469 ti-7) Распознаём по телу ответа — Anthropic шлёт 400
- * с «credit balance is too low». Экспорт ради тестов.
+ * с «credit balance is too low»; месячный лимит приходит другой строкой —
+ * «specified API usage limits» (вещдок insight-review-from-file: 26.07 подсказка
+ * фолбэка не напечаталась ровно там, где написана). Экспорт ради тестов.
  */
 export function isCreditExhausted(bodyText) {
-  return /credit balance is too low/i.test(String(bodyText ?? ''));
+  return /credit balance is too low|specified API usage limits/i.test(String(bodyText ?? ''));
 }
 
 /**
@@ -185,7 +187,7 @@ export function isCreditExhausted(bodyText) {
 export const CREDIT_FALLBACKS = [
   'Anthropic без кредита — работаем фолбэками (пополнение: console.anthropic.com → Plans & Billing):',
   '  consilium            → протокол в IDE-чате, затем yarn consilium --secretary-file <md>  (ti-2 #469)',
-  '  insight review       → ревью в IDE-чате по INSIGHT_REVIEW_PROMPT, REVIEW.md руками',
+  '  insight review       → ревью в IDE-чате по INSIGHT_REVIEW_PROMPT, затем yarn insight review <id> --review-file <md>',
   '  code-review          → node scripts/code-review.mjs заменить ревью в IDE-чате (формат membrana-code-review)',
   '  task:review:run      → --review-file <md> (ревью по TASK_CLOSURE_REVIEW_PROMPT, checks остаются)',
   '  team-evening-feedback→ yarn team-evening-feedback:dry (контекст без LLM-оценок)',

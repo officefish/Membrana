@@ -11,6 +11,14 @@ test('isCreditExhausted: живое тело ошибки 2026-07-14 распо�
   assert.equal(isCreditExhausted(null), false);
 });
 
+test('isCreditExhausted: месячный лимит («specified API usage limits») — тоже исчерпание', () => {
+  // Вещдок insight-review-from-file (26.07): лимит пришёл этой строкой, детектор
+  // молчал, и подсказка CREDIT_FALLBACKS не напечаталась там, где написана.
+  const monthly =
+    '{"type":"error","error":{"type":"rate_limit_error","message":"This request would exceed your specified API usage limits."}}';
+  assert.equal(isCreditExhausted(monthly), true);
+});
+
 test('CREDIT_FALLBACKS: единая подсказка перечисляет фолбэк каждого инструмента', () => {
   for (const tool of ['consilium', 'insight review', 'code-review', 'task:review:run', 'team-evening-feedback']) {
     assert.ok(CREDIT_FALLBACKS.includes(tool), tool);
