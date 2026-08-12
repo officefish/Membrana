@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14382/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 283 (причины в op-log) -->
+Записей: 50 · бюджет 14355/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 284 (причины в op-log) -->
+
+### 2026-08-12 · позиция · team-evening-feedback
+
+> Тарасов Оценка артефактов: STRATEGY_DAY устарел на 26 дней (17.07), но MAIN_DAY_ISSUE честно поднял магистраль с гейта 12.08 (`tariff-promo-server-wiring`) вместо `angelina-hostess-impl` из assertions 11.08 — расхождение источников зафиксировано открыто, это работает. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
 
 ### 2026-08-10 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > Планка матча: не покрасить дерево и не выключить зуб. Ранний `orphans==0` как block — сдача тренировки: либо вечный красный, либо mute. Связка ясна: Математик — предикаты baseline/δ; Структурщик — home и врезка; Архитектор — граница «не назначаем мастерские». Мой вердикт по […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/workshop-wires-m4-invariant-tooth-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m5-kit-frame
-
-> Планка матча узкая. Не заводим киты, не назначаем leadPersona конкретных наборов, не переписываем контракт MANIFEST. Решаем одно: появляется ли в контракте процедуры четвёртый служебный вид. Вход владельца прям: дополнительные инструменты — через вызов процедур; это фрейм […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m5-kit-frame-2026-07-30.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
 

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14335/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 271 (причины в op-log) -->
+Записей: 49 · бюджет 14296/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 272 (причины в op-log) -->
+
+### 2026-08-12 · позиция · team-evening-feedback
+
+> Курёхин Оценка артефактов: аудио-магистраль сегодня не в фокусе — стратегия и канон дня об этом не говорят, и это честно (тариф + санитария). MAIN_DAY_ISSUE не обещал ничего про DSP — согласовано. Итоги дня: по моему профилю — «—» на содержании. Но: закрыт […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
 
 ### 2026-08-10 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > На слух закрытие без take на ленте — mono-фальшь: объявили «готово», а merge-SHA не записан. Evidence — это master-tape закрытия: task id, snapshot статуса, PR, SHA, review, issue state. Hint «вроде влили» — щелчок в пустоту, не proof. Archive лента не доказывает, что инсайт […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m3-repo-checkpoint
-
-> На слух это meters на master-tape, не вторая лента. Mongo — take; repo — VU-метр и footprint сессии: сколько take закрыто, какой hash микса. Если в git кладём весь cold archive — клиппинг репо и ложный SoT. Checkpoint не должен звучать как «задача закрыта, потому что id в […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`

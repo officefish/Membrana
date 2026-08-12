@@ -4,3 +4,6 @@
 {"ts":"2026-08-12T17:18:42.088Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-06-25-insight-server-forwarding","reason":"потому что там уже канон для серверных путей: async-v2 / StartAsyncJob, JSON-манифест функций, тарифные флаги. Погашение промокода ложится в тот же контур: одна ручка, а не N ad-hoc, actor/tariff — из сессии, не из тела.","origin":"ask-persona"}
 {"ts":"2026-08-12T17:32:04.490Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-12T17:31:40.520Z","origin":"ask-persona"}
 {"ts":"2026-08-12T17:32:04.492Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-12T17:31:40.520Z","origin":"ask-persona"}
+{"ts":"2026-08-12T20:54:40.624Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-12-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-12T20:54:40.624Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-30-task-archive-cold-store-m3-repo-checkpoint","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-12T20:54:40.624Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

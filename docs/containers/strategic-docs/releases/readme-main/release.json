@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "templateId": "readme-main",
   "templateVersion": "0.1.0",
-  "title": "Membrana README",
+  "title": "Корневой README проекта — композиция стратегических гранул",
   "target": "README.md",
   "pins": {
     "readme-title-tagline": "1.0.0",
@@ -21,7 +21,7 @@
   },
   "status": "release",
   "bodyPath": "./README.md",
-  "generatedAt": "2026-07-25T12:38:34.591Z",
+  "generatedAt": "2026-08-12T19:28:34.202Z",
   "trace": {
     "templateId": "readme-main",
     "templateVersion": "0.1.0",

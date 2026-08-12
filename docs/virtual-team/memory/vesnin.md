@@ -6,7 +6,13 @@
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
 Записей: 49 · бюджет 14399/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 275 (причины в op-log) -->
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 277 (причины в op-log) -->
+
+### 2026-08-12 · позиция · team-evening-feedback
+
+> Веснин Оценка артефактов: STRATEGY_DAY — вещдок, а не рабочий документ (помечено сверху) — на нём никто и не строил план, что честно. MAIN_DAY_ISSUE как контракт дня отработал: маркер `symbol:tariffPromoServerWiring`, таблица посылок, явное расхождение с assertions — форма […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
 
 ### 2026-08-10 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Планка матча узкая: минимальный evidence contract, required vs optional/derived, forbidden hints, явный отказ выводить L/O. Не лезем в checkpoint shape, writer, recovery, migration, insight lifecycle. Связка: Структурщик — леммы полей; Математик — предикат valid; Архитектор — […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`
-
-### 2026-07-28 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** STRATEGY_DAY устарел (сгенерирован 17.07 на 18.07) — помечен красным щитом как нерабочий документ. DAILY_STANDUP и MAIN_DAY_ISSUE качественные: магистраль DAY_MEMO чётко обоснована owner-choice, таблица посылок и сознательные «не делаем» снижают риск […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-28.md#reply-1`

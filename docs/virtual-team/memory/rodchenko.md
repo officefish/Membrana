@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14290/14400 · статус ok
+Записей: 50 · бюджет 14382/14400 · статус ok
 <!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 270 (причины в op-log) -->
+
+### 2026-08-12 · позиция · team-evening-feedback
+
+> Родченко Оценка артефактов: MAIN_DAY_ISSUE не обещал UI-работы, но по факту сегодня в кабинете появилась форма промокода (`apps/cabinet/src/pages/MembranePage.tsx` + `promoDenyText.ts/test.ts`) — это моя зона, и это не отражено в стендапе. Артефакты дня не увидели UI-часть […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
 
 ### 2026-08-10 · позиция · team-evening-feedback
 
@@ -296,8 +302,8 @@
 
 — источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`
 
-### 2026-07-30 · позиция · task-archive-cold-store-m3-repo-checkpoint
+### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
 
-> С витрины агента и капитана checkpoint обязан читаться без легенды: одна карточка-манифест, не простыня JSONL. Видны: версия схемы, сколько закрытий учтено, digest, момент слепка. Фальшь витрины: зелёный «архив в repo», когда в git только hash. Пустота честная: нет digest — нет […] _(реплик в сеансе: 7)_
+> На панели цепочка видна как список, не скрытый magic. Бейдж attempt/provider в usage (T1 events). _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m3c-fallback-2026-07-23-2026-07-23.md#reply-1`

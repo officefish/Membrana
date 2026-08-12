@@ -4,3 +4,6 @@
 {"ts":"2026-08-12T17:47:47.827Z","persona":"rodchenko","verb":"cloud_query","ref":"rodchenko-2026-08-12T17:47:24.028Z","origin":"ask-persona"}
 {"ts":"2026-08-12T17:47:47.834Z","persona":"rodchenko","verb":"surface_invoke","ref":"rodchenko-2026-08-12T17:47:24.028Z","origin":"ask-persona"}
 {"ts":"2026-08-12T17:47:47.840Z","persona":"rodchenko","verb":"emerge","ref":"rodchenko-2026-07-29-tariff-grid-m6-switch","reason":"та же карточка тарифа, тот же контракт меток applied|rejected|promo_invalid|promo_spent; b2 — прямое продолжение той позиции «фальшивого переключения до ответа сервера не показываем».","origin":"ask-persona"}
+{"ts":"2026-08-12T20:54:40.747Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-08-12-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-12T20:54:40.747Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-07-30-task-archive-cold-store-m3-repo-checkpoint","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-12T20:54:40.747Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
