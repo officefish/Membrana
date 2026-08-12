@@ -1,1 +1,5 @@
 {"ts":"2026-08-12T13:03:48.589Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-12T17:04:08.309Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-12T17:03:26.395Z","origin":"ask-persona"}
+{"ts":"2026-08-12T17:04:08.320Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-12T17:03:26.395Z","origin":"ask-persona"}
+{"ts":"2026-08-12T17:04:08.321Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-29-tariff-grid-m8-integration","reason":"тот же контур тарифов, где я фиксировал разделение слоёв и cutover: сервер как home истины, клиент как follower. Порядок b1→b2 и запрет мутировать до регистрации модуля — прямое продолжение той рамки.","origin":"ask-persona"}
+{"ts":"2026-08-12T17:04:08.324Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-06-26-device-board-server-first","reason":"принцип server-first: клиент не мутирует, пока сервер не держит authority. Здесь то же: UI кабинета имеет смысл только после того, как endpoint отвечает и словарь причин фиксирован.","origin":"ask-persona"}
