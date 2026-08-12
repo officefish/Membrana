@@ -332,17 +332,17 @@
       "githubIssue": 1777,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-08",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "Маршрут спринт, не one shot: предикат допуска отказал вещдоком reasons=['touches_server'] — packages/background-cabinet в forbiddenPrefixes. Прецедент 04.08: честный отказ предиката → спринт.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "мёртвая душа (бухгалтерия хендофа 12.08): Issue #1777 закрыт 08.08 — работа в стволе",
+      "githubIssueClosedAt": "2026-08-08T17:12:01Z"
     },
     {
       "id": "llm-probe-still-lies-net",
@@ -1101,17 +1101,17 @@
       "githubIssue": 1638,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-03",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "маршрут строки 9 хендофа: recut_act в закрытом списке актов + категория дисквалификации в гейте; разведка усилила вещдок — изъятая строка v1 не существует даже в git-истории, ленту почистили до коммита, и акта перерезки в ленте актов тоже нет",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "мёртвая душа: Issue #1638 закрыт 03.08 (нарезка v2 супersede прошла спринтом one-shot-recut)",
+      "githubIssueClosedAt": "2026-08-03T11:38:06Z"
     },
     {
       "id": "gate-honest-pair-completeness",
@@ -1120,17 +1120,17 @@
       "githubIssue": 1641,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-03",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "dynin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "предикат выносит honest_pair при resolvable.length > 0 без проверки состава родов; вещдок 02.08 — блок с одним review_pass неотличим в итоге от полностью честного; развилка из трёх решений в иссью, выбор за резчиком",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "мёртвая душа: Issue #1641 закрыт 03.08 (полнота честной пары — перерезка v3, следы в execution-trace)",
+      "githubIssueClosedAt": "2026-08-03T10:03:17Z"
     },
     {
       "id": "deploy-procedure-survey",
@@ -1180,16 +1180,16 @@
       "noIssueReason": "строка 8 топ-10 хендофа 02.08; дом задачи #1572; GH-иссью заводится при отгрузке PR",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-02",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "копий не три, а четыре: base/analyze-sample.ts:69 (приватная iterWindows), harmonic:36, cepstral:41, spectral-flux:53; все три детектора уже зависят от @membrana/detector-base",
-      "archiveNotes": null,
+      "archiveNotes": "мёртвая душа: сделано в стволе — commit 07928a67 «у подготовки окна один носитель — четыре копии сведены в базу (#1648)»",
       "githubIssueClosedAt": null
     },
     {
@@ -1364,18 +1364,18 @@
       "githubIssue": 1615,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-01",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin",
         "vesnin"
       ],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "мёртвая душа: Issue #1615 закрыт 03.08; магистраль 02.08 subconscious-lift-c3 сыграна (вещдок sources[] main-day-assertions)",
+      "githubIssueClosedAt": "2026-08-03T12:36:32Z"
     },
     {
       "id": "cut-act-trace",
@@ -1445,18 +1445,18 @@
       "githubIssue": 1590,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-01",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin",
         "ozhegov"
       ],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "мёртвая душа: Issue #1590 закрыт 03.08; провод прогноза в архив живёт (forecast-record-gate)",
+      "githubIssueClosedAt": "2026-08-03T12:36:53Z"
     },
     {
       "id": "meeting-gates-teeth",
@@ -1847,18 +1847,18 @@
       "githubIssue": 1296,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "vesnin",
         "dynin"
       ],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
+      "archiveNotes": "мёртвая душа (подтверждена дважды: мной 11.08 и сборкой двадцатки): Issue #1296 закрыт 26.07; docs/procedures/adr/ существует с полным ядром trigger/steps/gates",
+      "githubIssueClosedAt": "2026-07-26T17:05:52Z"
     },
     {
       "id": "send-gate-on-path",
@@ -3695,15 +3695,15 @@
       "githubIssue": 999,
       "linearId": "DRU-363",
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-23",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
+      "archiveNotes": "мёртвая душа: Issue #999 закрыт 23.07; честный каскад канона — ручной, вшит в утренний фрейм canon-cascade",
+      "githubIssueClosedAt": "2026-07-23T12:11:31Z",
       "parentEpic": "frame-rails-2307"
     },
     {
@@ -3731,15 +3731,15 @@
       "githubIssue": 997,
       "linearId": "DRU-361",
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-23",
-      "archivedAt": null,
+      "archivedAt": "2026-08-12",
       "leadPersona": "dynin",
       "supportPersonas": [],
       "notes": "",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null,
+      "archiveNotes": "мёртвая душа: Issue #997 закрыт 23.07; сны на office задеплоены (vitest-nightly несёт dreams:probe-models)",
+      "githubIssueClosedAt": "2026-07-23T11:15:53Z",
       "parentEpic": "frame-rails-2307"
     },
     {
