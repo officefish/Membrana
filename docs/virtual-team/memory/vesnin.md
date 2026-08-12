@@ -6,7 +6,7 @@
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
 Записей: 49 · бюджет 14399/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 274 (причины в op-log) -->
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 275 (причины в op-log) -->
 
 ### 2026-08-10 · позиция · team-evening-feedback
 

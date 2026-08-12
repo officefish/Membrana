@@ -8,7 +8,7 @@
 | Field | Value |
 |-------|-------|
 | Date | 2026-08-11 |
-| Head SHA | 1a42e21dcb3c9c0d2e98c72917afc5df63241f26 |
+| Head SHA | 3be51dc6c9a38f6ff3a2fd3206a451fd064c0d46 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1110 |
-| Yarn scripts (package.json) | 439 |
-| Yarn → `scripts/` | 384 |
+| Code files under `scripts/` | 1117 |
+| Yarn scripts (package.json) | 441 |
+| Yarn → `scripts/` | 386 |
 | Yarn без пути `scripts/` | 55 |
 | Yarn → missing file | 9 |
-| Code files without yarn ref | 806 |
+| Code files without yarn ref | 811 |
 
-## Yarn → scripts/ (384)
+## Yarn → scripts/ (386)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -247,6 +247,7 @@
 - `prisma:migration` → `scripts/prisma-migration-new.mjs`
 - `probe:node-link` → `scripts/node-link-probe.mjs`
 - `procedure-run:journal` → `scripts/procedure-run-journal.mjs`
+- `procedure-runs:digest` → `scripts/procedure-runs-digest.mjs`
 - `procedures:license` → `scripts/procedures-license.mjs`
 - `procedures:registry` → `scripts/procedures-registry.mjs`
 - `procedures:workshop` → `scripts/procedural-workshop.mjs`
@@ -403,6 +404,7 @@
 - `vitest:smoke-list` → `scripts/vitest-smoke-list.mjs`
 - `vocabulary:generate` → `scripts/vocabulary-generate.mjs`
 - `wire:generate` → `scripts/generate-wire-contract.mjs`
+- `workflow:examples` → `scripts/workflow-examples.mjs`
 - `workspace:links` → `scripts/workspace-links.mjs`
 - `worktree:bootstrap` → `scripts/worktree-bootstrap.mjs`
 - `worktree:resolve` → `scripts/worktree-resolution.mjs`
@@ -410,7 +412,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (806)
+## Code files without yarn ref (811)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -824,6 +826,7 @@
 - `scripts/lib/procedure-contract-stamp.mjs`
 - `scripts/lib/procedure-home-form.mjs`
 - `scripts/lib/procedure-run-journal.mjs`
+- `scripts/lib/procedure-runs-digest.mjs`
 - `scripts/lib/procedures-registry.mjs`
 - `scripts/lib/product-docs-tariffs.mjs`
 - `scripts/lib/protocol-validator.mjs`
@@ -973,6 +976,7 @@
 - `scripts/lib/vitest-workspace.mjs`
 - `scripts/lib/vocabulary-check.mjs`
 - `scripts/lib/wav-read.mjs`
+- `scripts/lib/workflow-examples.mjs`
 - `scripts/lib/workshop-dependencies.mjs`
 - `scripts/lib/workshop-ownership.mjs`
 - `scripts/lib/workspace-links.mjs`
@@ -1094,6 +1098,7 @@
 - `scripts/procedure-home-form.test.mjs`
 - `scripts/procedure-run-journal.test.mjs`
 - `scripts/procedure-run-record.test.mjs`
+- `scripts/procedure-runs-digest.test.mjs`
 - `scripts/procedures-registry.test.mjs`
 - `scripts/product-docs-tariffs.test.mjs`
 - `scripts/protocol-validator.test.mjs`
@@ -1114,6 +1119,7 @@
 - `scripts/review-gate.test.mjs`
 - `scripts/ritual-chain-producer.test.mjs`
 - `scripts/ritual-deliver-to-main.test.mjs`
+- `scripts/ritual-evening-run.args.test.mjs`
 - `scripts/ritual-evening-tail.mjs`
 - `scripts/ritual-evening-tail.test.mjs`
 - `scripts/ritual-exit-codes.test.mjs`
@@ -1210,6 +1216,7 @@
 - `scripts/vitest-smoke-list.test.mjs`
 - `scripts/vocabulary-check.test.mjs`
 - `scripts/voices-registry.test.mjs`
+- `scripts/workflow-examples.test.mjs`
 - `scripts/workshop-dependencies.test.mjs`
 - `scripts/workshop-ownership.test.mjs`
 - `scripts/workspace-links.test.mjs`
@@ -1231,7 +1238,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1110)
+## All code files (1117)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1782,6 +1789,7 @@
 - `scripts/lib/procedure-contract-stamp.mjs`
 - `scripts/lib/procedure-home-form.mjs`
 - `scripts/lib/procedure-run-journal.mjs`
+- `scripts/lib/procedure-runs-digest.mjs`
 - `scripts/lib/procedures-registry.mjs`
 - `scripts/lib/product-docs-tariffs.mjs`
 - `scripts/lib/protocol-validator.mjs`
@@ -1931,6 +1939,7 @@
 - `scripts/lib/vitest-workspace.mjs`
 - `scripts/lib/vocabulary-check.mjs`
 - `scripts/lib/wav-read.mjs`
+- `scripts/lib/workflow-examples.mjs`
 - `scripts/lib/workshop-dependencies.mjs`
 - `scripts/lib/workshop-ownership.mjs`
 - `scripts/lib/workspace-links.mjs`
@@ -2114,6 +2123,8 @@
 - `scripts/procedure-run-journal.test.mjs`
 - `scripts/procedure-run-record.mjs`
 - `scripts/procedure-run-record.test.mjs`
+- `scripts/procedure-runs-digest.mjs`
+- `scripts/procedure-runs-digest.test.mjs`
 - `scripts/procedures-license.mjs`
 - `scripts/procedures-registry.mjs`
 - `scripts/procedures-registry.test.mjs`
@@ -2157,6 +2168,7 @@
 - `scripts/ritual-chain-producer.test.mjs`
 - `scripts/ritual-deliver-to-main.mjs`
 - `scripts/ritual-deliver-to-main.test.mjs`
+- `scripts/ritual-evening-run.args.test.mjs`
 - `scripts/ritual-evening-run.mjs`
 - `scripts/ritual-evening-tail.mjs`
 - `scripts/ritual-evening-tail.test.mjs`
@@ -2330,6 +2342,8 @@
 - `scripts/vocabulary-check.test.mjs`
 - `scripts/vocabulary-generate.mjs`
 - `scripts/voices-registry.test.mjs`
+- `scripts/workflow-examples.mjs`
+- `scripts/workflow-examples.test.mjs`
 - `scripts/workshop-dependencies.test.mjs`
 - `scripts/workshop-ownership.test.mjs`
 - `scripts/workspace-links.mjs`
