@@ -4,7 +4,14 @@
  * но путь подготовки больше не ссылается на утренний `morning:gate`.
  */
 
-import { canSendAlly, draftDigestOf, todayIso } from './morning-gates.mjs';
+import {
+  canSendAlly,
+  draftDigestOf,
+  setSwallowMoment,
+  swallowMoment,
+  swallowMomentFresh,
+  todayIso,
+} from './morning-gates.mjs';
 
 export const EVENING_GATE_NAME = 'partner-swallow';
 export const EVENING_GATE_MARKER = `evening:${EVENING_GATE_NAME}`;
@@ -28,8 +35,8 @@ export function hasEveningPartnerGateMarker(state) {
  * Проходимость — квитанцией владельца под ТО ЖЕ дерево (`yarn feedback:claims --ack --note`).
  * Сменилось дерево — квитанция сгорела: иначе одно «ок» разрешало бы любые будущие вердикты.
  *
- * Читается ровно одно своё поле `swallow.claimsProbe`. `state.day` не трогается ни на чтение
- * как ключ решения, ни на запись — он предмет соседней активной карточки `swallow-own-moment`.
+ * Читается ровно одно своё поле `swallow.claimsProbe`; моменты субъектов (ADR-0024,
+ * долг `swallow-own-moment` снят) этот блокер не читает и не пишет.
  */
 export function claimsProbeBlocker(state) {
   const probe = state?.swallow?.claimsProbe;
@@ -50,9 +57,10 @@ export function claimsProbeBlocker(state) {
  * @returns {object}
  */
 export function recordEveningPartnerDraft(state = {}, { draftText, draftFile, today = todayIso() }) {
-  return {
+  // ADR-0024 Р3 (долг swallow-own-moment снят): вечерний черновик ставит ТОЛЬКО момент
+  // ласточки через фасад леммы — `state.day` (день заморозки утра) больше не трогается.
+  const next = {
     ...state,
-    day: today,
     swallow: {
       ...(state?.swallow ?? {}),
       gate: EVENING_GATE_MARKER,
@@ -61,6 +69,7 @@ export function recordEveningPartnerDraft(state = {}, { draftText, draftFile, to
       ownerAck: false,
     },
   };
+  return setSwallowMoment(next, today);
 }
 
 /**
@@ -71,8 +80,11 @@ export function recordEveningPartnerDraft(state = {}, { draftText, draftFile, to
  */
 export function approveEveningPartnerDraft(state = {}, today = todayIso()) {
   const blockedBy = [];
-  if (state?.day !== today) {
-    blockedBy.push(`day: состояние протухло или не заведено (day=${state?.day ?? '—'}, сегодня ${today})`);
+  // Р2 ADR-0024: «ок» сверяет момент ЛАСТОЧКИ, не общий `state.day`.
+  if (!swallowMomentFresh(state, today)) {
+    blockedBy.push(
+      `partner-swallow: черновик протух или не заведён (момент ${swallowMoment(state) ?? '—'}, сегодня ${today})`,
+    );
   }
   if (!state?.swallow?.draftDigest) {
     blockedBy.push('partner-swallow: нет зафиксированного черновика');

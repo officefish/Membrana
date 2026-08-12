@@ -9,17 +9,19 @@ import {
   sendIdempotencyKey, freezeTopThree, terminalSend,
   dayFresh, draftDigestOf, payloadMatchesDraft, todayIso,
   magistralMoment, magistralMomentFresh,
+  swallowMoment, swallowMomentFresh, setSwallowMoment,
 } from './lib/morning-gates.mjs';
 
 const DAY = '2026-07-26';
 
 const okState = () => ({
   day: DAY,
-  // ADR-0024: у магистрали СВОЙ момент. Прежде свежесть выбора бралась из общего `day`.
+  // ADR-0024: у КАЖДОГО субъекта свой момент. Прежде свежесть обоих бралась из общего `day`;
+  // после swallow-own-moment ласточка несёт момент в swallow.day.
   magistralChosenAt: DAY,
   magistral: 'task-b',
   magistralOptions: ['task-a', 'task-b', 'task-c'],
-  swallow: { ownerAck: true, draftDigest: draftDigestOf('approved body') },
+  swallow: { day: DAY, ownerAck: true, draftDigest: draftDigestOf('approved body') },
 });
 
 test('dayFresh: совпадение day/today; без day или чужой день — false', () => {
@@ -47,18 +49,24 @@ test('magistralChosen: требует сегодня; выбор ∈ снимо�
   assert.equal(magistralChosen({}, DAY), false);
 });
 
-test('swallowApproved: ack + digest + сегодня; вчерашний ack — false', () => {
+test('swallowApproved: ack + digest + СВОЙ сегодняшний момент; вчерашний ack — false', () => {
   assert.equal(swallowApproved(okState(), DAY), true);
-  assert.equal(swallowApproved({ ...okState(), day: '2026-07-22' }, DAY), false, 'ок от 22.07 не живёт 26.07');
-  assert.equal(swallowApproved({ day: DAY, swallow: { ownerAck: true } }, DAY), false);
-  assert.equal(swallowApproved({ day: DAY, swallow: { ownerAck: false, draftDigest: 'd' } }, DAY), false);
+  const stale = okState();
+  stale.swallow.day = '2026-07-22';
+  assert.equal(swallowApproved(stale, DAY), false, 'ок от 22.07 не живёт 26.07');
+  // Чужой `state.day` ласточку больше не трогает ни в какую сторону (swallow-own-moment).
+  assert.equal(swallowApproved({ ...okState(), day: '2026-07-22' }, DAY), true, 'день заморозки — не момент ласточки');
+  assert.equal(swallowApproved({ day: DAY, swallow: { day: DAY, ownerAck: true } }, DAY), false);
+  assert.equal(swallowApproved({ day: DAY, swallow: { day: DAY, ownerAck: false, draftDigest: 'd' } }, DAY), false);
 });
 
 test('canSend: причина называется ПО СУБЪЕКТУ, а не одной строкой про общий день', () => {
   // ADR-0024 сменил контракт: прежде ранний выход по общему `day` давал ОДНУ причину
   // «состояние протухло» и скрывал, КОТОРЫЙ из двух гейтов виноват. Теперь каждый
   // сомножитель отвечает за себя.
-  const stale = canSend({ ...okState(), day: '2026-07-22' }, DAY);
+  const staleState = okState();
+  staleState.swallow.day = '2026-07-22';
+  const stale = canSend(staleState, DAY);
   assert.equal(stale.ok, false);
   assert.equal(stale.blockedBy.length, 1, 'протух только черновик — магистраль не при чём');
   assert.match(stale.blockedBy[0], /swallow-send/u);
@@ -87,15 +95,15 @@ test('payloadMatchesDraft / canSendAlly: чужой файл не уходит',
   assert.equal(mismatch.ok, false);
   assert.match(mismatch.blockedBy.join(' '), /digest/u);
 
-  const stale = canSendAlly({ ...state, day: '2026-07-22' }, DAY, 'approved body');
+  const staleState = { ...state, swallow: { ...state.swallow, day: '2026-07-22' } };
+  const stale = canSendAlly(staleState, DAY, 'approved body');
   assert.equal(stale.ok, false);
-  assert.match(stale.blockedBy[0], /day:/u);
+  assert.match(stale.blockedBy[0], /swallow-send: момент черновика/u);
 });
 
 test('canSendAlly: без magistral — ок (вечерний контур)', () => {
   const evening = {
-    day: DAY,
-    swallow: { ownerAck: true, draftDigest: draftDigestOf('evening note') },
+    swallow: { day: DAY, ownerAck: true, draftDigest: draftDigestOf('evening note') },
   };
   assert.equal(canSend(evening, DAY).ok, false, 'утренний canSend всё ещё требует magistral');
   assert.equal(canSendAlly(evening, DAY, 'evening note').ok, true);
@@ -166,8 +174,7 @@ test('ГЛАВНЫЙ случай: свежий черновик НЕ делае
     ...snapshot(['a', 'b']),
     magistral: 'a',
     magistralChosenAt: YESTERDAY, // выбор был вчера
-    day: TODAY, // а черновик ласточки — сегодняшний
-    swallow: { draftDigest: 'd', ownerAck: true },
+    swallow: { day: TODAY, draftDigest: 'd', ownerAck: true }, // а черновик — сегодняшний
   };
   assert.equal(magistralChosen(state, TODAY), false, 'ложный owner-choice — ровно чинимый дефект');
   assert.equal(swallowApproved(state, TODAY), true, 'ласточка при этом законно сегодняшняя');
@@ -195,8 +202,7 @@ test('оба момента сегодняшние — гейт открыт', (
     ...snapshot(['a', 'b']),
     magistral: 'a',
     magistralChosenAt: TODAY,
-    day: TODAY,
-    swallow: { draftDigest: 'd', ownerAck: true },
+    swallow: { day: TODAY, draftDigest: 'd', ownerAck: true },
   };
   assert.equal(magistralChosen(state, TODAY), true);
   assert.equal(canSend(state, TODAY).ok, true);
@@ -207,8 +213,7 @@ test('обратный случай: выбор сегодняшний, а че�
     ...snapshot(['a']),
     magistral: 'a',
     magistralChosenAt: TODAY,
-    day: YESTERDAY,
-    swallow: { draftDigest: 'd', ownerAck: true },
+    swallow: { day: YESTERDAY, draftDigest: 'd', ownerAck: true },
   };
   const gate = canSend(state, TODAY);
   assert.equal(gate.ok, false);
@@ -227,4 +232,36 @@ test('canSend называет ОБА гейта раздельно, а не «�
   assert.equal(gate.blockedBy.length, 2, 'прежний ранний выход скрывал, КОТОРЫЙ из двух протух');
   assert.match(gate.blockedBy.join(' '), /magistral/);
   assert.match(gate.blockedBy.join(' '), /swallow-send/);
+});
+
+// ─── свой момент ласточки (ADR-0024, карточка-наследник swallow-own-moment) ─────────
+//
+// Долг 07.08: ласточка осталась на state.day, потому что то же поле читал вечерний гейт —
+// один термин нёс два смысла в разных домах. Теперь subject «черновик дня» несёт момент
+// в swallow.day, оба пути (утренний и вечерний) пишут его фасадами леммы.
+
+test('момент ласточки читается из СВОЕГО поля; общий день моментом не является', () => {
+  assert.equal(swallowMoment({ swallow: { day: TODAY } }), TODAY);
+  assert.equal(swallowMoment({ day: TODAY }), null, 'день заморозки — не момент ласточки');
+  assert.equal(swallowMoment({}), null);
+  assert.equal(swallowMoment({ swallow: { day: '  ' } }), null, 'пустая строка — не момент');
+});
+
+test('Р4 ласточки: старое состояние с одним day читается как НЕИЗВЕСТНЫЙ момент', () => {
+  const legacy = { day: TODAY, swallow: { draftDigest: 'd', ownerAck: true } };
+  assert.equal(swallowMomentFresh(legacy, TODAY), false, 'наследование дня воспроизвело бы дефект');
+  assert.equal(swallowApproved(legacy, TODAY), false);
+  const ally = canSendAlly(legacy, TODAY, 'x');
+  assert.equal(ally.ok, false);
+  assert.match(ally.blockedBy[0], /момент черновика/);
+});
+
+test('моменты двигаются независимо: draft не трогает магистраль, freeze не трогает ласточку', () => {
+  const state = { magistralChosenAt: YESTERDAY, swallow: { draftDigest: 'd' } };
+  setSwallowMoment(state, TODAY);
+  assert.equal(magistralMoment(state), YESTERDAY, 'момент ласточки не поднимает чужой');
+  assert.equal(swallowMoment(state), TODAY);
+  const frozen = freezeTopThree(['x'], TODAY);
+  assert.equal('swallow' in frozen, false, 'заморозка магистрали ласточку не сбрасывает и не заводит');
+  assert.equal(frozen.magistralChosenAt, null);
 });

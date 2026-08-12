@@ -23,7 +23,10 @@ import {
   magistralChosen,
   magistralMoment,
   setMagistralMoment,
+  setSwallowMoment,
   swallowApproved,
+  swallowMoment,
+  swallowMomentFresh,
   todayIso,
 } from './lib/morning-gates.mjs';
 import { buildSwallowSkeleton, checkSwallowDraft } from './lib/swallow-mirror.mjs';
@@ -54,7 +57,9 @@ if (cmd === 'status' || !cmd) {
   // докладывал вчерашний выбор как сегодняшний, потому что смотрел на общий state.day.
   const mAt = magistralMoment(state);
   console.log(`magistral: ${magistralChosen(state, today) ? `выбран «${state.magistral}»` : mAt ? `ПРОТУХ — выбор от ${mAt}, сегодня нужен заново` : 'ждёт owner-choice'}${mAt ? ` (момент ${mAt})` : ''}`);
-  console.log(`swallow:   ${swallowApproved(state, today) ? 'ок владельца получен' : 'ждёт (черновик + «ок»)'}`);
+  // Момент ласточки — тоже свой (ADR-0024, долг swallow-own-moment снят).
+  const sAt = swallowMoment(state);
+  console.log(`swallow:   ${swallowApproved(state, today) ? 'ок владельца получен' : sAt && sAt !== today ? `ПРОТУХ — черновик от ${sAt}, сегодня нужен заново` : 'ждёт (черновик + «ок»)'}${sAt ? ` (момент ${sAt})` : ''}`);
   console.log(gate.ok ? 'canSend: TRUE — отправка разрешена' : `canSend: false — ${gate.blockedBy.join(' · ')}`);
   process.exitCode = gate.ok ? 0 : 3;
 } else if (cmd === 'freeze') {
@@ -114,15 +119,15 @@ if (cmd === 'status' || !cmd) {
         console.error('Шаблон: yarn morning:gate swallow --skeleton');
         process.exitCode = 3;
       } else {
-        // TODO(ADR-0024): swallowMoment на state.day до разведения с evening-gate
-        // (scripts/evening-gate.mjs:64 читает то же поле). Наследник — swallow-own-moment.
-        state.day = today; // новый черновик = сегодняшний след (#1233)
+        // ADR-0024 Р3 (долг swallow-own-moment снят): черновик ставит ТОЛЬКО свой момент —
+        // через фасад леммы; `state.day` (день заморозки) и момент магистрали не трогаются.
         state.swallow = {
           ...(state.swallow ?? {}),
           draftDigest: draftDigestOf(draftText),
           draftFile: arg('draft'),
           ownerAck: false, // новый черновик сбрасывает старое «ок» — ок даётся на показанное
         };
+        setSwallowMoment(state, today); // новый черновик = сегодняшний след (#1233)
         save(state);
         console.log(
           `черновик зафиксирован на ${today} (digest ${state.swallow.draftDigest.slice(0, 8)}…); ждёт «ок» владельца`,
@@ -133,9 +138,9 @@ if (cmd === 'status' || !cmd) {
     if (!state.swallow?.draftDigest) {
       console.error('✖ «ок» без зафиксированного черновика не принимается (черновик обязан быть показан целиком ДО)');
       process.exitCode = 3;
-    } else if (!dayFreshOrRepair(state, today)) {
+    } else if (!swallowMomentFresh(state, today)) {
       console.error(
-        `✖ «ок» на протухшем состоянии (day=${state.day ?? '—'}, сегодня ${today}) — сначала --draft сегодняшнего черновика`,
+        `✖ «ок» на протухшем черновике (момент ${swallowMoment(state) ?? '—'}, сегодня ${today}) — сначала --draft сегодняшнего черновика`,
       );
       process.exitCode = 3;
     } else {
@@ -150,9 +155,4 @@ if (cmd === 'status' || !cmd) {
 } else {
   console.error(`неизвестная команда «${cmd}» (status | freeze | magistral | swallow)`);
   process.exitCode = 2;
-}
-
-/** Ack не продлевает чужой день: day обязан уже быть сегодня (ставится на --draft/--freeze). */
-function dayFreshOrRepair(state, today) {
-  return state?.day === today;
 }
