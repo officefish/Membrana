@@ -1,0 +1,32 @@
+{
+  "schema": "env-symlink-probe/1",
+  "sprintId": "fix-node-modules-links-1647",
+  "blockId": "b1-node-links-env",
+  "supersedes": "docs/evidence/env-symlink-probe-2026-08-11.json",
+  "takenAt": "2026-08-12",
+  "probes": [
+    {
+      "kind": "fs.symlink dir",
+      "result": "EPERM"
+    },
+    {
+      "kind": "fs.symlink junction",
+      "result": "EPERM"
+    },
+    {
+      "kind": "cmd mklink /J",
+      "result": "access denied"
+    },
+    {
+      "kind": "powershell New-Item -ItemType Junction",
+      "result": "access denied"
+    }
+  ],
+  "elevated": true,
+  "developerMode": true,
+  "sandboxDisabledTried": true,
+  "rootCause": "минифильтры 360Box64/360FsFlt (360 Total Security) блокируют создание reparse points на уровне ФС: отказ воспроизводится под повышенным токеном, вне песочницы, из node/cmd/powershell, в любом каталоге. Гипотеза «нужен терминал с привилегией» вчерашнего вещдока опровергнута: junction привилегии не требует вовсе, а повышение (12.08) исход не изменило.",
+  "reopenWhen": "в 360 Total Security снята блокировка reparse points (исключение на каталог практики или отключение фильтра) — пробы выше дают ok; повышение токена условием НЕ является",
+  "decidedBy": null,
+  "note": "решение по 360 (исключение / отключение / замена) — за владельцем; до него карточка остаётся blocked-by-env"
+}
