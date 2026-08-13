@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-08-12T12:04:54.500Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-08-13T10:15:01.311Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -35,7 +35,7 @@ _Кристаллов активно: 127 (owner: 81, derived: 46). Страте
 - ~~**Наземная пеленгация цели: угловой трек без дальности + временная фильтрация детекций**~~ — `insight:insight-bearing-tracking` _(stale · 2026-07-28)_
 - ~~**Оркестрация хендофф: разрез дня на изолированные брифы с асимметрией знания**~~ — `insight:insight-handoff-orchestration` _(stale · 2026-07-27)_
 - ~~**Ночной интерн документации: слепой проход → глубокий → дельта-патчи докам**~~ — `insight:insight-night-doc-intern` _(stale · 2026-07-28)_
-- **Комбинированный детектор: гармоника с FFT-ядра, тембр с MFCC** — `insight:insight-mfcc-combined-two-cores`
+- ~~**Комбинированный детектор: гармоника с FFT-ядра, тембр с MFCC**~~ — `insight:insight-mfcc-combined-two-cores` _(stale · 2026-07-30)_
 - ~~**Контракт носителя: объявленный участник процедуры обязан быть вызываемым**~~ — `insight:insight-cast-carrier-contract` _(stale · 2026-07-25)_
 - ~~**AI-агент построения UserCase по описанию пользователя**~~ — `insight:insight-agent-scenario-builder` _(stale · 2026-06-25)_
 - ~~**Loop engineering: соревновательное тестирование с точками останова**~~ — `insight:insight-loop-engineering-competition-test` _(stale · 2026-06-25)_
@@ -68,13 +68,13 @@ _Кристаллов активно: 127 (owner: 81, derived: 46). Страте
 - ~~**Линза Ожегова — кроссагентский скилл верификации ЧИСТОТЫ РЕЧИ (не грамотности)**~~ — `insight:insight-ozhegov-lens-speech-purity-skill` _(stale · 2026-07-17)_
 - ~~**Интеграция внешнего датасета DADS (Антон) в контур детекторов**~~ — `insight:insight-dads-detector-integration` _(stale · 2026-07-17)_
 - ~~**Объект Slide и fullscreen-режим презентации сценария**~~ — `insight:insight-slide-fullscreen-presentation` _(stale · 2026-06-25)_
-- **Тембровый детектор на MFCC: ловить портрет, а не гармонику** — `insight:insight-mfcc-timbre-detector`
+- ~~**Тембровый детектор на MFCC: ловить портрет, а не гармонику**~~ — `insight:insight-mfcc-timbre-detector` _(stale · 2026-07-30)_
 - ~~**Sunrise flashes — утренний тематический flash (RAG + news)**~~ — `insight:insight-sunrise-flash` _(stale · 2026-06-25)_
 - ~~**Полная чистка реестра: 189 фаз носят githubIssue своего эпика**~~ — `insight:insight-registry-epic-issue-full-cleanup` _(stale · 2026-07-15)_
 - ~~**Research-tree как sprite-landscape (техника Bear 71, MIT)**~~ — `insight:insight-research-tree-sprite-landscape` _(stale · 2026-07-17)_
 - ~~**SearXNG — приватный keyless веб-поиск для агентов**~~ — `insight:insight-mcp-searxng-private-search` _(stale · 2026-06-27)_
 - ~~**Борд состояния сети в харнес-панели (здоровье N серверов)**~~ — `insight:insight-network-status-board` _(stale · 2026-07-24)_
-- **Паттерн «Воспоминание» — как персона копит опыт** — `insight:insight-persona-recollection-pattern`
+- ~~**Паттерн «Воспоминание» — как персона копит опыт**~~ — `insight:insight-persona-recollection-pattern` _(stale · 2026-07-30)_
 - ~~**Лендинг через челлендж — проба стратегических исходников в бою (Replit как кисть, Ожегов как судья)**~~ — `insight:insight-landing-challenge-sources-in-battle` _(stale · 2026-07-17)_
 - ~~**Формат разработки one shot: подобранная S-проблема за один проход, процедура во фреймах**~~ — `insight:insight-one-shot-format` _(stale · 2026-07-23)_
 - ~~**Собственный полевой корпус: спецификация трека и ежедневная рутина сбора**~~ — `insight:insight-own-field-corpus-single-spec` _(stale · 2026-07-18)_
