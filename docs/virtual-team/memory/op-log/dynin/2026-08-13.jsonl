@@ -3,3 +3,22 @@
 {"ts":"2026-08-13T12:47:30.921Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-13T12:47:02.648Z","origin":"ask-persona"}
 {"ts":"2026-08-13T12:47:30.927Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-01-evening-review-predicate-m3-volume-measure","reason":"там я настаивал: область определения предиката задаётся до самой формулы. Ровно та же ошибка здесь возможна с «сессии ДНЯ» — если не зафиксировать таймзону и границу, mtime >= day_start станет вкусовым.","origin":"ask-persona"}
 {"ts":"2026-08-13T12:47:30.937Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-18-evening-auditor-doc2-report-generator","reason":"оттуда контракт: step(input) → {passed, failed, evidence} с детерминированным входом. Мой словарь исходов должен быть его сужением, а не параллельной вселенной.","origin":"ask-persona"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-13-network-container-m0-order","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-13-network-container-m1-home-record","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-13-network-container-m2-infra-border","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-13-network-container-m3-status-vocab","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-13-network-container-m4-owner-rhythm","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-13-network-container-m5-storage","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-13-network-container-m6-k1-rules","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-13-network-container-m7-machine-policy","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-13-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-workshop-wires-m4-invariant-tooth","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-workshop-wires-m5-kit-frame","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-workshop-wires-m6-session-hook","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-workshop-wires-m7-norm-in-docs","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-workshop-wires-m8-tests-parking","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-workshop-wires-m9-wholesale-retail","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-task-archive-cold-store-m0-order","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-task-archive-cold-store-m1-source-of-truth","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-task-archive-cold-store-m2-evidence-contract","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:25.924Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

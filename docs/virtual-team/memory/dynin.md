@@ -5,8 +5,62 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14331/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 272 (причины в op-log) -->
+Записей: 49 · бюджет 14330/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 281 (причины в op-log) -->
+
+### 2026-08-13 · позиция · network-container-m0-order
+
+> Формализую предикат ребра, как делал в прошлых комнатах: ребро A→B существует тогда и только тогда, когда answer(A) defines(v) AND question(B) requires(v). Проверяю 4→5: вопрос 4 производит переменную «ритм аудита»; вопрос 5 требует эту переменную, потому что форма хранения […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/network-container-m0-order-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m1-home-record
+
+> Формализую кандидат единицы. Пусть запись `r` = результат одного акта зонда: `(organ, target_ref, observed_at, outcome_class, metrics_subset)`. Это функция наблюдения, не объект конфигурации. Маршрут и правило — либо поля/проекции, либо сущности других комнат; если сделать […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/network-container-m1-home-record-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m2-infra-border
+
+> Формализую предикат шва строго. Пусть `F_p` — множество полей записи `infra-policy`, `F_s` — множество полей зонд-снимка. Дубль существует тогда и только тогда, когда `∃ f: f ∈ F_p ∩ F_s AND sem(f, policy) = sem(f, snapshot)`, где `sem` — семантический статус поля (норма vs. […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/network-container-m2-infra-border-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m3-status-vocab
+
+> Смотрю на пять состояний `net:diag`: `ok`, `degraded`, `down`, `unknown`, `partial`. Это измеримое множество с тестом — посылка комнаты говорит прямо. Класс кода 2 у зонда — это не наблюдение состояния сети, это результат самого акта зондирования: зонд не выполнился. Смешивать […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/network-container-m3-status-vocab-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m4-owner-rhythm
+
+> Не возражаю по кандидату, но добавлю числовой аргумент к ритму. У нас два ночных ствола: 02:00 и 03:00. Аудит сети — не тест в смысле unit/vitest: он делает живой зонд. Запускать его параллельно с тестовыми прогонами — риск ложного сигнала (сеть под нагрузкой CI). Предлагаю […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/network-container-m4-owner-rhythm-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m5-storage
+
+> Поставлю предикат строго. Пусть лента `L` — множество записей вида `{probe_id, date, state, outcome, ...}`. Тогда: текущее состояние зонда — это `max_{date}(L | probe_id = p)`. Этот агрегат вычисляется детерминированно из ленты. Производная `registry/` — просто материализация […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/network-container-m5-storage-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m6-k1-rules
+
+> Формализую. Пусть R — множество правил, S — множество снимков ленты (наблюдения). Предикат нарушения: ∃s∈S, ∃r∈R: matches(s,r) ∧ verdict(r)∈{forbidden} ∨ (verdict(r)=via ∧ actual_path(s)≠via_path(r)). Правило не элемент S (M1, M2). Носитель R — отдельная структура данных. Зуб = […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/network-container-m6-k1-rules-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m7-machine-policy
+
+> Формализую предикат зуба. Голый `fetch` в серверном пакете — это: вызов `fetch(` (или `node-fetch`, `axios` без обвязки) в файле, путь которого соответствует `packages/*/src/**/*.ts` или `apps/*/src/server/**/*.ts`, при отсутствии импорта из `@membrana/proxy-client` (или иного […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/network-container-m7-machine-policy-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · team-evening-feedback
+
+> Дынин. Оценка артефактов: STRATEGY_DAY-вещдок не участвовал, MAIN_DAY_ISSUE выписал таблицу «Почему это магистраль» с provenance и пометкой «1 первоисточник, 3 строки — следствия одного выбора» — это правильная работа с независимостью голосов, не подсчёт строк. Итоги дня: DAG в […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-13.md#reply-1`
 
 ### 2026-08-12 · позиция · team-evening-feedback
 
@@ -247,57 +301,3 @@
 > Формализую без UI. Пусть S — носители в `scripts/` (инструменты ∪ тесты, §2). `belongs(s) ∈ {home, namespace, orphan}` из M1. Предикат бесхозности для прямого глагола: `orphan_only(s) ⇔ belongs(s) = orphan`. Не смешиваем «не в roots кита» с orphan: замер 476 — факт покрытия […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/workshop-wires-m3-scripts-instrument-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m4-invariant-tooth
-
-> Формализую без UI. Пусть `O(t) = orphans(t)` — множество из глагола §4, `B = O(t₀)` — baseline. `growth(t) ⇔ ∃ s: s ∈ O(t) \ B` (с учётом знаменателя §2: инструмент ∪ тест, тест наследует предмет). Инвариант **невозрастания**: `¬growth(t)` ⇔ `O(t) ⊆ B` (допустимо |O|↓ при […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m4-invariant-tooth-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m5-kit-frame
-
-> Формализую без UI. Паттерн даёт служебные виды V_svc = {провода, времянки, доставка}. Вопрос комнаты — существует ли расширение V' = V_svc ∪ {кит} либо провизия инструментов вырази́ма проекцией в уже существующий вид. Предикат отдельности вида: kind(k) ⇔ ∃ обязанность O_k, не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m5-kit-frame-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m6-session-hook
-
-> Формализую без UI. Хук S: Ctx → Floor × ValidationReport. Floor — то, что печатается; ValidationReport — исход проверки инвентаря. Два уровня: L1 (session) и L2 (weekly) — разные предикаты и разные effect. Холодная сессия машинно: `cold(ctx) ⇔ ¬∃ live_session_marker в TTL ∨ […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/workshop-wires-m6-session-hook-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m7-norm-in-docs
-
-> Формализую. Машина в момент t видит вызов инструмента; невызов ¬visible(t). Постфактум по транскрипту S: `viol(S) ⇔ ∃ exploratory_grep(S) ∧ workshop_calls(S)=0` (или слабее: доля сессий с grep-first). Признак жизни за окно W (месяц): `live ⇔ rate(workshop_call | […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/workshop-wires-m7-norm-in-docs-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m8-tests-parking
-
-> Формализую без UI. Дан файл \(t\) с именем, удовлетворяющим \(\mathrm{isTest}(t) \Leftrightarrow t \sim *.test.mjs\). Нужна тотальная ветвь того же \(\mathrm{belongs}\), не второй предикат: \(\mathrm{belongs}(t) \in \{\mathrm{home}, \mathrm{namespace}, \mathrm{orphan}\}\). Ввожу […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m8-tests-parking-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m9-wholesale-retail
-
-> Формализую. Пусть W — множество мастерских в проекции, T — инструменты, S — холодные сессии. `floor(S) = Π(projection)` — одинаков ∀S (оптовый инвариант M6). `wire(t)` — отдельный акт, t∈T. Предикат заявки: `ticket(t) ⇔ ∃ precedent(t) ∈ cold-start`. Инвариант #1467: `¬∃ […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m9-wholesale-retail-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m0-order
-
-> Предикат ребра фиксирую: A→B ⇔ область определения вопроса B содержит переменную, которую задаёт ответ A. Не runtime скриптов и не «удобно рядом». V={1,2,3,4,5,6,7}. Q1 задаёт переменную *canonStore* (и append-only vs derived) — без неё dom(Q2), dom(Q4), dom(Q5), dom(Q6) пусты. […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m0-order-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m1-source-of-truth
-
-> Формализую без UI. Пусть R — множество архивных записей закрытых задач. SoT-модель задаёт функцию author(r): кто имеет право создать канонический r. Append-only: операция A допустима ⇔ A добавляет r с новым id (или идемпотентный повтор того же ключа), не update-in-place полей […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/task-archive-cold-store-m1-source-of-truth-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m2-evidence-contract
-
-> Формализую без UI. Пусть R — cold-record. Предикат допустимости: `valid(R) ⇔ required(R) ⊆ dom(R) ∧ ∀ e ∈ required(R): verifiable(e) ∧ schemaVersion(R) ∈ Supported`. `verifiable(e)` — существует внешний или внутренний якорь (PR number, commit SHA, issue id, actor id), а не […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`

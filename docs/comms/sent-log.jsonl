@@ -49,3 +49,4 @@
 {"ts":"2026-08-12T13:03:47.759Z","kind":"swallow","file":"docs/comms/drafts/swallow-morning-2026-08-12.md","sha256":"46490ea55063b954bc62ce0eb8ecbe46b37cbf1272427acc0a9c3b936f941cba","sent":true,"office_response":{"sent":true}}
 {"ts":"2026-08-12T20:54:38.346Z","kind":"swallow","file":"docs/comms/drafts/swallow-evening-2026-08-12.md","sha256":"6b0f7b5883ea76da8fd19432864d8e1419bdc9197439e7f5dfdcea76b9910edc","sent":true,"office_response":{"sent":true}}
 {"ts":"2026-08-13T11:00:23.104Z","kind":"swallow","file":"docs/comms/drafts/swallow-day-2026-08-13.md","sha256":"8d65277b39e1dd7e271095bf8f1cb78a051898c5b372835099b66b6d17957859","sent":true,"office_response":{"sent":true}}
+{"ts":"2026-08-13T19:16:24.492Z","kind":"swallow","file":"docs/comms/drafts/swallow-evening-2026-08-13.md","sha256":"790a9fdd891c5e7ada342b9dfde457fafca555689482a4001d14241633006bc0","sent":true,"office_response":{"sent":true}}

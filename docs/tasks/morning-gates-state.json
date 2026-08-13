@@ -7,8 +7,8 @@
   "frozenDigest": "c4f5c0b384343867be979b583bcceeddcde2d5efb75d06279ac5834a1f33690c",
   "magistral": "archivarius-sessions-container",
   "swallow": {
-    "draftDigest": "8d65277b39e1dd7e271095bf8f1cb78a051898c5b372835099b66b6d17957859",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-08-13.md",
+    "draftDigest": "790a9fdd891c5e7ada342b9dfde457fafca555689482a4001d14241633006bc0",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-13.md",
     "ownerAck": true,
     "day": "2026-08-13",
     "claimsProbe": {
@@ -16,7 +16,8 @@
       "protocol": "docs/seanses/team-evening-feedback-2026-08-13.md",
       "sha": "b8ecda1026aa",
       "at": "2026-08-13T18:31:21.218Z"
-    }
+    },
+    "gate": "evening:partner-swallow"
   },
   "day": "2026-08-13",
   "magistralChosenAt": "2026-08-13"

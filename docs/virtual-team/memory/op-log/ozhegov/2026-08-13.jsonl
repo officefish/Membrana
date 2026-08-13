@@ -3,3 +3,22 @@
 {"ts":"2026-08-13T12:55:07.079Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-13T12:54:41.698Z","origin":"ask-persona"}
 {"ts":"2026-08-13T12:55:07.087Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-08-06-static-mmbrn-container-m5-affine-role","reason":"прямой прецедент закрытого словаря глаголов дома (discover, read-, write-); тот же принцип: не расширяем словарь под триггер/шаг цепочки.","origin":"ask-persona"}
 {"ts":"2026-08-13T12:55:07.094Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-30-workshop-wires-m3-scripts-instrument","reason":"разведение слоёв «дом / мастерская / набор» и роль workshop.manifest.json; здесь ровно про то, что относится к манифесту мастерской, а что — к соседнему слою (цепочка).","origin":"ask-persona"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-13-network-container-m0-order","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-13-network-container-m1-home-record","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-13-network-container-m2-infra-border","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-13-network-container-m3-status-vocab","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-13-network-container-m4-owner-rhythm","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-13-network-container-m5-storage","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-13-network-container-m6-k1-rules","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-13-network-container-m7-machine-policy","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-13-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-30-workshop-wires-m4-invariant-tooth","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-30-workshop-wires-m5-kit-frame","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-30-workshop-wires-m6-session-hook","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-30-workshop-wires-m7-norm-in-docs","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-30-workshop-wires-m8-tests-parking","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-30-workshop-wires-m9-wholesale-retail","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-30-task-archive-cold-store-m0-order","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-30-task-archive-cold-store-m1-source-of-truth","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-30-task-archive-cold-store-m2-evidence-contract","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:27.638Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

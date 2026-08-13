@@ -6,3 +6,22 @@
 {"ts":"2026-08-13T12:51:04.909Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-13T12:50:34.605Z","origin":"ask-persona"}
 {"ts":"2026-08-13T12:51:04.921Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-23-llm-procedure-channels-m1-procedure-contract","reason":"прецедент реестра шагов через git-PR, тот же паттерн, что evening-ritual-steps.json; вопрос стабильного ключа и границы «кто владелец записи» тут прямо релевантен.","origin":"ask-persona"}
 {"ts":"2026-08-13T12:51:04.923Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-16-rt8-loose-ends","reason":"про контур доверия ритуала: молчаливый сбой на критичном шаге подрывает всё; отсюда моя настороженность к noncritical при exit=3.","origin":"ask-persona"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-13-network-container-m0-order","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-13-network-container-m1-home-record","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-13-network-container-m2-infra-border","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-13-network-container-m3-status-vocab","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-13-network-container-m4-owner-rhythm","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-13-network-container-m5-storage","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-13-network-container-m6-k1-rules","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-13-network-container-m7-machine-policy","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-13-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-workshop-wires-m4-invariant-tooth","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-workshop-wires-m5-kit-frame","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-workshop-wires-m6-session-hook","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-workshop-wires-m7-norm-in-docs","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-workshop-wires-m8-tests-parking","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-workshop-wires-m9-wholesale-retail","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-task-archive-cold-store-m0-order","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-task-archive-cold-store-m1-source-of-truth","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-task-archive-cold-store-m2-evidence-contract","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-13T19:16:29.171Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
