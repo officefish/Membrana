@@ -8,17 +8,17 @@
       "noIssueReason": "фаза эпика archivarius-sessions-container (#1330); свой номер при взятии — залежь номеров фаз шумит в close-github",
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-13",
-      "archivedAt": null,
+      "archivedAt": "2026-08-13",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin",
         "ozhegov"
       ],
       "notes": "Живой зазор 13.08: тракт готов кодом (runTract, вещдок 106884 спанов 04.08), но в evening-ritual-steps.json шага нет — сессии едут в Mongo руками. Продукт: вечерняя цепочка сама заливает сессии дня с маскировкой; office недоступен → именованный skip, не молчок.",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1907 MERGED (ствол 95f1b4b5): шаг archivarius-evening в вечерней цепочке, движок + карта exit-кодов + доки; гейт 3/3 honest_pair; боевой прогон files=2 spans=2823 maskedLines=2 accepted=2823; CLOSURE: docs/local-sprint/archivarius-evening-step/CLOSURE.md",
       "githubIssueClosedAt": null,
       "parentEpic": "archivarius-sessions-container"
     },

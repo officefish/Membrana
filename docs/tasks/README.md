@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `archivarius-evening-step` | Шаг архива сессий в вечерней цепочке: тракт scan→extract→ingest→push едет сам, отказ office честный | M | [`ARCHIVARIUS_EVENING_STEP_PROMPT.md`](../prompts/ARCHIVARIUS_EVENING_STEP_PROMPT.md) | — |
 | `dead-wire-local-only-carrier` | Dead-wire: класс носителя вне git (gitignored) невыразим словарём pending — новая причина local-only-carrier | S | [`DEAD_WIRE_LOCAL_ONLY_CARRIER_PROMPT.md`](../prompts/DEAD_WIRE_LOCAL_ONLY_CARRIER_PROMPT.md) | — |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
@@ -141,6 +140,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `archivarius-evening-step` | Шаг архива сессий в вечерней цепочке: тракт scan→extract→ingest→push едет сам, отказ office честный | 2026-08-13 | [`ARCHIVARIUS_EVENING_STEP_PROMPT.md`](../prompts/ARCHIVARIUS_EVENING_STEP_PROMPT.md) | — | [карточка](./archive/archivarius-evening-step.md) |
 | `eslint-ratchet-single-source` | Порог ESLint-храповика живёт одним источником (package.json), ci.yml без копии числа | 2026-08-12 | [`ESLINT_RATCHET_SINGLE_SOURCE_PROMPT.md`](../prompts/ESLINT_RATCHET_SINGLE_SOURCE_PROMPT.md) | #1896 | [карточка](./archive/eslint-ratchet-single-source.md) |
 | `worktrees-align-snapshot-guard` | worktrees:align: гард охвата до мутации и продолжение обхода после отказа | 2026-08-12 | [`WORKTREES_ALIGN_SNAPSHOT_GUARD_PROMPT.md`](../prompts/WORKTREES_ALIGN_SNAPSHOT_GUARD_PROMPT.md) | #1864 | [карточка](./archive/worktrees-align-snapshot-guard.md) |
 | `openrouter-default-model-unverified` | Дефолтная модель офиса живёт литералом в коде и никем не проверяется на живость | 2026-08-12 | [`OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md`](../prompts/OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md) | — | [карточка](./archive/openrouter-default-model-unverified.md) |
