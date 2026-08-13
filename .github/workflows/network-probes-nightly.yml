@@ -1,0 +1,71 @@
+# Ночной такт контейнера network (#1913; В4/В5 заседания network-container,
+# ратифицированы владельцем 13.08).
+#
+# 01:00 UTC — ДО vitest-nightly (02:00) и tests-nightly-full (03:00): сеть не под
+# нагрузкой CI, сигнал чистый (вердикт В4). Зонды — read-only GET по плану
+# docs/audit/network/registry/probes-plan.json; ничего не чинится (#1425).
+#
+# Носитель уезжает артефактом `network-probes` и при красном (if: always) —
+# транспорт по образцу tests-nightly-full: утро тянет
+# `yarn network:probes pull [--commit]` и пересчитывает overwrite-проекции
+# registry; рукописные нормы пересчёт не трогает (контракт README дома).
+#
+# Голый node — install не нужен: сборщик без зависимостей (ProxyAgent грузится
+# только при HTTPS_PROXY, которого на раннере нет).
+name: Network probes nightly
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: network-probes-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  # read СОЗНАТЕЛЬНО: workflow только собирает и грузит артефакт; «--commit» у pull —
+  # локальный сценарий утра на dev-машине, из CI коммит невозможен по построению (P1 #1923).
+  contents: read
+
+jobs:
+  probes:
+    name: network:probes collect — план зондов с CI-машины
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Сбор зонд-снимков по плану (голый node)
+        run: node scripts/network-probes.mjs collect --out docs/audit/network/cache/probes.jsonl
+
+      # Красный не должен прятать носитель: down-снимки — тоже наблюдение,
+      # ради которого такт существует.
+      - name: Носитель ночного такта — артефакт
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: network-probes
+          path: docs/audit/network/cache/probes.jsonl
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Job summary
+        if: always()
+        run: |
+          {
+            echo "## Network probes nightly"
+            echo ""
+            echo '```'
+            cat docs/audit/network/cache/probes.jsonl
+            echo '```'
+            echo ""
+            echo "Утро: \`yarn network:probes pull --commit\` — лента в analysis/<дата>/ + пересчёт registry."
+          } >> "$GITHUB_STEP_SUMMARY"

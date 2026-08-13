@@ -1,0 +1,17 @@
+{
+  "meta": {
+    "generated_at": "2026-08-13T00:00:00.000Z"
+  },
+  "records": 4,
+  "probes": 4,
+  "statuses": {
+    "ok": 3,
+    "degraded": 0,
+    "down": 1,
+    "unknown": 0,
+    "partial": 0
+  },
+  "failed": 0,
+  "blind": "машинная классификация целей по dest_class отсутствует — сверка снимков с egress-rules по направлениям ждёт классификатора (хвост T_night)",
+  "findings": []
+}
