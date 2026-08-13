@@ -4,31 +4,42 @@
   "machines": [
     {
       "machine": "dev",
-      "allowedExits": ["proxy-local"],
+      "allowedExits": [
+        "proxy-local"
+      ],
       "proxy": "env:HTTPS_PROXY (.env)",
       "comment": "dev-машина РФ за локальным прокси"
     },
     {
       "machine": "office",
-      "allowedExits": ["proxy", "via:media-vps-nl"],
+      "allowedExits": [
+        "proxy",
+        "via:media-vps-nl"
+      ],
       "proxy": "env:HTTPS_PROXY (доставка компоузом — находка 29.07)",
       "comment": "RF VDS за фильтром; прямой выход нелегален"
     },
     {
       "machine": "media-vps-nl",
-      "allowedExits": ["direct"],
+      "allowedExits": [
+        "direct"
+      ],
       "proxy": null,
       "comment": "NL без фильтра — прямой выход легален"
     },
     {
       "machine": "cabinet",
-      "allowedExits": ["via:media-vps-nl"],
+      "allowedExits": [
+        "via:media-vps-nl"
+      ],
       "proxy": null,
       "comment": "ходит через media (media-bridge)"
     },
     {
       "machine": "ci",
-      "allowedExits": ["direct"],
+      "allowedExits": [
+        "direct"
+      ],
       "proxy": null,
       "comment": "GitHub-раннеры — прямой выход"
     }
@@ -38,6 +49,16 @@
       "type": "permanent",
       "package": "packages/background-media/src/linear-snapshot",
       "reason": "NL direct exit is legal, no filter — прямой fetch с media-VPS легален по построению (машина без фильтра)"
+    },
+    {
+      "type": "permanent",
+      "package": "packages/background-office/src/linear-snapshot",
+      "reason": "транзит K1 office→media-VPS по правилу via (egress-rules: K1-office-linear) — назначение внутреннее, прокси фильтра не касается"
+    },
+    {
+      "type": "permanent",
+      "package": "packages/services/media-library/src/bundled-catalog",
+      "reason": "browser-side загрузка манифеста самплов относительными URL — исполняется в клиенте, серверная proxy-среда не применима"
     }
   ],
   "//exceptions": "Исключение — ТОЛЬКО записью здесь: type permanent|amnesty, package, reason (обязателен), amnesty дополнительно несёт expiresAt. Комментарий в коде (// allow:) исключением НЕ является."

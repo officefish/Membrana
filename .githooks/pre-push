@@ -75,6 +75,16 @@ node scripts/kits-prepush-strict.mjs
 echo "pre-push [#1449]: node scripts/network/tooth.mjs"
 node scripts/network/tooth.mjs
 
+# Зуб политики машин (#1912, В7 заседания network-container, ратифицирован 13.08):
+# голый fetch в серверной зоне без proxy-обвязки и без записи-исключения в
+# docs/audit/network/registry/machine-policy.json. Warn-храповик: легаси в бюджете
+# зелёные и названы, новое сверх бюджета — красный. Исключения ТОЛЬКО данными
+# (метка в коде не считается — В7). Голый node. Старый bare-подблок tooth.mjs выше
+# (метка allow-bare-fetch, зона только office) — предшественник, вывод из
+# эксплуатации отдельным ходом; двойная проверка безвредна: этот зуб строже.
+echo "pre-push [#1912]: node scripts/check-bare-fetch.mjs"
+node scripts/check-bare-fetch.mjs
+
 # Паритет секрет-гейта (#1262): pre-commit смотрит только индекс (`protect --staged`),
 # а CI — `detect` по истории ВСЕХ ветвей (fetch-depth: 0). 26.07 синтетическая PEM-фикстура
 # прошла локально, в CI стала находкой и покрасила заявку соседней сессии. Здесь тот же
