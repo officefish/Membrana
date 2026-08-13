@@ -21,6 +21,14 @@
       "summary": "Список активных/архивных задач в терминале"
     },
     {
+      "id": "handoff",
+      "verb": "handoff",
+      "zone": "workshop",
+      "yarn": "yarn task:handoff",
+      "doc": "docs/tasks/HANDOFF_STATUS.md",
+      "summary": "Актуальный хендоф со сверкой каждой строки очереди (формат капитана 13.08; honest unknown на сеть)"
+    },
+    {
       "id": "board",
       "verb": "board",
       "zone": "workshop",

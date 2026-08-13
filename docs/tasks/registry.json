@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "tw-handoff-status",
+      "title": "Мастерская задач: глагол task:handoff — актуальный хендоф со сверкой каждой строки (формат капитана 13.08)",
+      "promptPath": "docs/prompts/TW_HANDOFF_STATUS_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "инструмент по прямому слову капитана 13.08; формат в памяти сессии (handoff-status-report-format)",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-13",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "notes": "Показ HANDOFF.md с живой сверкой: строки очереди резолвятся по registry/архиву и gh issue state (honest unknown на сеть), таблица ✅/🔴 со свидетельствами, итог N/M + остаток кустами. Зона workshop мастерской задач. Маршрут one-shot (S, один исполнитель).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "network-nightly-probes",
       "title": "Ночной такт 01:00: сбор зонд-снимков, транспорт в дом, registry-пересчёт (В4+В5)",
       "promptPath": "docs/prompts/NETWORK_NIGHTLY_PROBES_PROMPT.md",

@@ -26,7 +26,7 @@
 | [docs/evidence](../../../docs/evidence/README.md) | primary | `yarn evidence verify` | audit · decompose · inspectElement | — | Мастерская индексации вещдоков (#1303, слово капитана 26–27.07): **индекс — суть, |
 | [docs/precedents](../../../docs/precedents/README.md) | — | `yarn precedent:register --validate` | audit · decompose · ~~inspectElement~~ | — | Дом-контейнер прецедентов: единичных задокументированных случаев (симптом → корень → |
 | [docs/procedures](../../../docs/procedures/README.md) | — | `yarn procedures:workshop --audit` | audit · decompose · inspectElement | — | Дом **определений процедур** — спроектированных сущностей, оперирующих категориями |
-| [docs/tasks](../../../docs/tasks/README.md) | primary | `yarn task:inspect` | ~~audit~~ · ~~decompose~~ · inspectElement | kits/tasks-master | Актуальные **активные** и **архивные** задачи по стандарту |
+| [docs/tasks](../../../docs/tasks/README.md) ✗ | primary | `yarn task:inspect` | ~~audit~~ · ~~decompose~~ · inspectElement | kits/tasks-master | Актуальные **активные** и **архивные** задачи по стандарту |
 | [scripts](../../../scripts/README.md) | — | `yarn scripts:orphans` | audit · decompose · inspectElement | — | Единственный дом группы «скрипты и yarn-обвязка ритуала». Реализация паттерна |
 
 ## Meta (атлас)
