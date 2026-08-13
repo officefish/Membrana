@@ -6,7 +6,12 @@
   ],
   "frozenDigest": "c4f5c0b384343867be979b583bcceeddcde2d5efb75d06279ac5834a1f33690c",
   "magistral": "archivarius-sessions-container",
-  "swallow": null,
+  "swallow": {
+    "draftDigest": "8d65277b39e1dd7e271095bf8f1cb78a051898c5b372835099b66b6d17957859",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-08-13.md",
+    "ownerAck": true,
+    "day": "2026-08-13"
+  },
   "day": "2026-08-13",
   "magistralChosenAt": "2026-08-13"
 }
