@@ -1,24 +1,12 @@
 {
   "magistralOptions": [
-    "tariff-promo-server-wiring",
     "angelina-hostess-impl",
-    "archivarius-sessions-container"
+    "archivarius-sessions-container",
+    "mfcc-compare-sprint"
   ],
-  "frozenDigest": "8bcc7405df2f5a8c6876fe7315d2da789a9151d52d5a759dfe674b56012bf553",
-  "magistral": "tariff-promo-server-wiring",
-  "swallow": {
-    "draftDigest": "6b0f7b5883ea76da8fd19432864d8e1419bdc9197439e7f5dfdcea76b9910edc",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-12.md",
-    "ownerAck": true,
-    "claimsProbe": {
-      "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-08-12.md",
-      "sha": "29ee6b29a661",
-      "at": "2026-08-12T19:54:42.845Z"
-    },
-    "gate": "evening:partner-swallow",
-    "day": "2026-08-12"
-  },
-  "day": "2026-08-12",
-  "magistralChosenAt": "2026-08-12"
+  "frozenDigest": "c4f5c0b384343867be979b583bcceeddcde2d5efb75d06279ac5834a1f33690c",
+  "magistral": "archivarius-sessions-container",
+  "swallow": null,
+  "day": "2026-08-13",
+  "magistralChosenAt": "2026-08-13"
 }
