@@ -25,6 +25,7 @@ import {
   listPendingGithubClose,
   loadRegistry,
   saveRegistry,
+  syncTasksReadme,
 } from './lib/task-registry.mjs';
 
 const REPO = 'officefish/Membrana';
@@ -185,8 +186,13 @@ for (const task of pending) {
 }
 
 saveRegistry(registry);
+// README синкается ТЕМ ЖЕ прогоном, что правит реестр (фидбек 12.08 п.7: дрейф
+// «закрытия соседа» чинился отдельным коммитом post-factum — c7af8e74/#1898).
+// Невалидный шаблон README не переписывает и говорит об этом вслух — как в archive-task.
+const readme = await syncTasksReadme(registry);
+if (!readme.written) console.error(`⚠ README НЕ обновлён — ${readme.reason}`);
 console.log(
-  `\nГотово: ${ok} закрыто, ${fail} ошибок, ${skipped} пропущено (нет карточки). registry.json обновлён.`,
+  `\nГотово: ${ok} закрыто, ${fail} ошибок, ${skipped} пропущено (нет карточки). registry.json обновлён${readme.written ? ', README синхронизирован' : ''}.`,
 );
 if (skipped > 0) {
   console.log(

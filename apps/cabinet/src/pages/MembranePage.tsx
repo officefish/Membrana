@@ -42,7 +42,9 @@ function PromoRedeemForm({ onRedeemed }: { onRedeemed: () => void }) {
 
   return (
     <div className="mt-4 rounded-lg bg-base-100 p-4">
-      <p className="text-sm text-base-content/60">Промокод</p>
+      <label htmlFor="promo-code-input" className="text-sm text-base-content/60">
+        Промокод
+      </label>
       <p className="mt-1 text-xs text-base-content/50">
         Код открывает тариф выше текущего; понижения по коду нет
       </p>
@@ -54,20 +56,22 @@ function PromoRedeemForm({ onRedeemed }: { onRedeemed: () => void }) {
         }}
       >
         <input
+          id="promo-code-input"
           type="text"
           className="input input-bordered input-sm flex-1 font-mono"
           placeholder="PROMO-2026"
           value={code}
           onChange={(e) => setCode(e.target.value)}
           disabled={busy}
-          aria-label="Промокод"
+          aria-invalid={deny ? true : undefined}
+          aria-describedby={deny ? 'promo-deny-text' : undefined}
         />
         <button type="submit" className="btn btn-primary btn-sm" disabled={busy || !code.trim()}>
           {busy ? <span className="loading loading-spinner loading-xs" /> : 'Применить'}
         </button>
       </form>
       {deny && (
-        <div className="alert alert-error mt-3 py-2 text-sm" role="alert">
+        <div id="promo-deny-text" className="alert alert-error mt-3 py-2 text-sm" role="alert">
           <span>{deny}</span>
         </div>
       )}
