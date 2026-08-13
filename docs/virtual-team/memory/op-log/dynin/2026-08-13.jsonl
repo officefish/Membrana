@@ -1,1 +1,5 @@
 {"ts":"2026-08-13T11:00:24.945Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-13T12:47:30.915Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-13T12:47:02.648Z","origin":"ask-persona"}
+{"ts":"2026-08-13T12:47:30.921Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-13T12:47:02.648Z","origin":"ask-persona"}
+{"ts":"2026-08-13T12:47:30.927Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-01-evening-review-predicate-m3-volume-measure","reason":"там я настаивал: область определения предиката задаётся до самой формулы. Ровно та же ошибка здесь возможна с «сессии ДНЯ» — если не зафиксировать таймзону и границу, mtime >= day_start станет вкусовым.","origin":"ask-persona"}
+{"ts":"2026-08-13T12:47:30.937Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-18-evening-auditor-doc2-report-generator","reason":"оттуда контракт: step(input) → {passed, failed, evidence} с детерминированным входом. Мой словарь исходов должен быть его сужением, а не параллельной вселенной.","origin":"ask-persona"}

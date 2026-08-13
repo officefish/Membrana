@@ -1,0 +1,73 @@
+{
+  "//": "План локального спринта archivarius-evening-step (фаза эпика #1330, магистраль 13.08). До ратификации владельца исполнение не начинается. Порядок блоков держит инвариант движков: манифест-провод (e2) режется ПОСЛЕ рождения движка (e1).",
+  "schema": "sprint-cut/1",
+  "sprintId": "archivarius-evening-step",
+  "taskId": "archivarius-evening-step",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
+    "reason": "Носители contract_signature/session_prep не являются обязательным машинным корпусом membrana-local-sprint; ответственность проверяется планом, зонами, контекстными следами, review-вещдоками и procedure-run-journal."
+  },
+  "window": {
+    "from": "2026-08-13T15:23:00+03:00",
+    "to": "2026-08-13T20:30:00+03:00"
+  },
+  "revisionAt": "2026-08-13T15:23:00+03:00",
+  "blocks": [
+    {
+      "blockId": "e1-evening-step-engine",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/archivarius-evening-step.mjs",
+        "scripts/archivarius-evening-step.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 200
+      },
+      "revisionAt": "2026-08-13T15:23:00+03:00",
+      "revisionOf": "39e74467f212b1c1fa98024450ff44ab900de00f728b9ba5050f835dbfc78a01"
+    },
+    {
+      "blockId": "e2-evening-manifest-wire",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/tasks/evening-ritual-steps.json",
+        "package.json"
+      ],
+      "estimate": {
+        "changedLines": 45
+      },
+      "revisionAt": "2026-08-13T15:23:00+03:00",
+      "revisionOf": "44e1b6bdbb580e2f8bfe9a4a494456442050a1014e71d627386988bff5a58ada"
+    },
+    {
+      "blockId": "e3-form-and-home",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/archivarius/README.md",
+        "docs/archivarius/workshop.manifest.json"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionAt": "2026-08-13T15:23:00+03:00",
+      "revisionOf": "d26c1c278fd74dc43c988bdfb9edf7c4c019d42f5a68a0c091f84c2b20c9387d"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-13T15:42:21+03:00",
+    "digest": "e8abf56ab5c80ecde040b7048ab8984bea675c9b4a41db2c190732e66fef2578"
+  }
+}

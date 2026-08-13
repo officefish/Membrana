@@ -1,1 +1,5 @@
 {"ts":"2026-08-13T11:00:25.926Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-13T12:55:07.068Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-13T12:54:41.698Z","origin":"ask-persona"}
+{"ts":"2026-08-13T12:55:07.079Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-13T12:54:41.698Z","origin":"ask-persona"}
+{"ts":"2026-08-13T12:55:07.087Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-08-06-static-mmbrn-container-m5-affine-role","reason":"прямой прецедент закрытого словаря глаголов дома (discover, read-, write-); тот же принцип: не расширяем словарь под триггер/шаг цепочки.","origin":"ask-persona"}
+{"ts":"2026-08-13T12:55:07.094Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-30-workshop-wires-m3-scripts-instrument","reason":"разведение слоёв «дом / мастерская / набор» и роль workshop.manifest.json; здесь ровно про то, что относится к манифесту мастерской, а что — к соседнему слою (цепочка).","origin":"ask-persona"}

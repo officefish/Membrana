@@ -236,6 +236,31 @@
           },
           "notes": "Дозор ИНФОРМИРУЕТ (вердикт M1 security-posture): advisories — данные отчёта, не код возврата; alert превращает в задачу Teamlead. Других exit-кодов скрипт не производит."
         },
+        "archivarius-evening": {
+          "script": "scripts/archivarius-evening-step.mjs",
+          "codes": {
+            "0": {
+              "bucket": "ok",
+              "meaning": "ok (сессии дня доехали, строка счётчиков files/spans/maskedLines/accepted) | empty-day (свежих файлов нет, сеть не тронута)"
+            },
+            "1": {
+              "bucket": "failure",
+              "meaning": "настоящая ошибка: отказ батча после ретраев — partial молча не бывает"
+            },
+            "2": {
+              "bucket": "failure",
+              "meaning": "вход/окружение: источник транскриптов не резолвится / неизвестный аргумент"
+            },
+            "3": {
+              "bucket": "finding",
+              "meaning": "office-unreachable — сеть/ключ (детализация в строке скипа); сессии остаются на диске и доедут следующим прогоном"
+            }
+          },
+          "findingExitCodes": [
+            3
+          ],
+          "notes": "Спринт archivarius-evening-step (фаза #1330, 13.08): словарь исходов закрыт контрактом трёх инвариантов, exit — тотальная функция от исхода (таблица OUTCOME_EXIT держится зубом)."
+        },
         "evening-tail": {
           "script": "scripts/ritual-evening-tail.mjs",
           "codes": {
