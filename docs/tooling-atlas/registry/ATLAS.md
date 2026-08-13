@@ -103,6 +103,7 @@
 | [docs/containers/strategic-docs](../../../docs/containers/strategic-docs/README.md) | `publishTemplates` | — | `docs/containers/strategic-docs` |
 | [docs/containers/strategic-docs](../../../docs/containers/strategic-docs/README.md) | `publishReleases` | — | `docs/containers/strategic-docs` |
 | [docs/containers/strategic-docs](../../../docs/containers/strategic-docs/README.md) | `discoverWorkspaces` | — | `strategy.mmbrn.tech` |
+| [docs/tasks](../../../docs/tasks/README.md) | `handoff` | `yarn task:handoff` | `docs/tasks/registry.json` |
 
 ## Неймспейсы (проекция реестра)
 

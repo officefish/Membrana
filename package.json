@@ -425,6 +425,7 @@
     "llm-calls:snapshot": "node scripts/llm-calls-snapshot.mjs",
     "check:workshop-dependencies": "node scripts/check-workshop-dependencies.mjs",
     "task:states": "node scripts/task-states.mjs",
+    "task:handoff": "node scripts/task-handoff-status.mjs",
     "task:invariants": "node scripts/task-invariants.mjs",
     "task:invariants:repair": "node scripts/task-invariants-repair.mjs",
     "tasks:sync-check": "node scripts/task-invariants.mjs",
