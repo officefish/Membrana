@@ -20,8 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `network-nightly-probes` | Ночной такт 01:00: сбор зонд-снимков, транспорт в дом, registry-пересчёт (В4+В5) | M | [`NETWORK_NIGHTLY_PROBES_PROMPT.md`](../prompts/NETWORK_NIGHTLY_PROBES_PROMPT.md) | [#1913](https://github.com/officefish/Membrana/issues/1913) |
-| `network-bare-fetch-tooth` | Зуб check-bare-fetch: политика машин из machine-policy, warn-храповик бюджетом (В7) | M | [`NETWORK_BARE_FETCH_TOOTH_PROMPT.md`](../prompts/NETWORK_BARE_FETCH_TOOTH_PROMPT.md) | [#1912](https://github.com/officefish/Membrana/issues/1912) |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-live-services` | #1303-C: LIVE_SERVICES, документация и monitoring | S | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
@@ -140,6 +138,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `network-nightly-probes` | Ночной такт 01:00: сбор зонд-снимков, транспорт в дом, registry-пересчёт (В4+В5) | 2026-08-13 | [`NETWORK_NIGHTLY_PROBES_PROMPT.md`](../prompts/NETWORK_NIGHTLY_PROBES_PROMPT.md) | #1913 (Issue открыт) | [карточка](./archive/network-nightly-probes.md) |
+| `network-bare-fetch-tooth` | Зуб check-bare-fetch: политика машин из machine-policy, warn-храповик бюджетом (В7) | 2026-08-13 | [`NETWORK_BARE_FETCH_TOOTH_PROMPT.md`](../prompts/NETWORK_BARE_FETCH_TOOTH_PROMPT.md) | #1912 (Issue открыт) | [карточка](./archive/network-bare-fetch-tooth.md) |
 | `network-house-skeleton` | Контейнер network: каркас дома — README, схема снимка, нормы registry (канон заседания) | 2026-08-13 | [`NETWORK_HOUSE_SKELETON_PROMPT.md`](../prompts/NETWORK_HOUSE_SKELETON_PROMPT.md) | #1910 (Issue открыт) | [карточка](./archive/network-house-skeleton.md) |
 | `archivarius-evening-step` | Шаг архива сессий в вечерней цепочке: тракт scan→extract→ingest→push едет сам, отказ office честный | 2026-08-13 | [`ARCHIVARIUS_EVENING_STEP_PROMPT.md`](../prompts/ARCHIVARIUS_EVENING_STEP_PROMPT.md) | — | [карточка](./archive/archivarius-evening-step.md) |
 | `dead-wire-local-only-carrier` | Dead-wire: класс носителя вне git (gitignored) невыразим словарём pending — новая причина local-only-carrier | 2026-08-13 | [`DEAD_WIRE_LOCAL_ONLY_CARRIER_PROMPT.md`](../prompts/DEAD_WIRE_LOCAL_ONLY_CARRIER_PROMPT.md) | — | [карточка](./archive/dead-wire-local-only-carrier.md) |
