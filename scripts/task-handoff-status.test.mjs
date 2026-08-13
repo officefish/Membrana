@@ -80,6 +80,12 @@ test('honest unknown: сеть не дала состояние и карточ�
   assert.match(r.evidence, /не добыто|нечем/u);
 });
 
+test('honest unknown: ни карточки, ни Issue вовсе — строке нечем свидетельствовать (P2 Ожегова)', () => {
+  const r = resolveRow({ id: 'ghost-row', issues: [] }, ctx({}, {}));
+  assert.equal(r.verdict, 'unknown');
+  assert.match(r.evidence, /нечем свидетельствовать/u);
+});
+
 test('словарь вердиктов закрыт', () => {
   assert.deepEqual([...ROW_VERDICTS].sort(), ['alive', 'closed', 'mismatch', 'unknown']);
 });

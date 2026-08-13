@@ -63,9 +63,11 @@ async function main() {
   const text = readFileSync(resolve(ROOT, HANDOFF_REL), 'utf8');
   const { title, rows } = parseHandoffQueue(text);
   const fileCommit = readFileCommit(ROOT, HANDOFF_REL);
-  const staleDays = fileCommit
-    ? Math.max(0, Math.round((Date.now() - Date.parse(`${fileCommit.date}T00:00:00Z`)) / 86_400_000))
-    : null;
+  // Невалидная дата коммита → staleDays null (не 0: «сегодняшний» — тоже утверждение).
+  const parsedDate = fileCommit ? Date.parse(`${fileCommit.date}T00:00:00Z`) : NaN;
+  const staleDays = Number.isNaN(parsedDate)
+    ? null
+    : Math.max(0, Math.round((Date.now() - parsedDate) / 86_400_000));
 
   const registry = loadRegistry();
   const cards = buildCardsIndex(registry);

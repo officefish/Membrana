@@ -23,11 +23,14 @@
 
 ## Definition of Done
 
-- [x] Ядро чистое (`scripts/lib/task-handoff-status.mjs`), обвязка отдельно, 11 зубов.
-- [x] Провод `yarn task:handoff` + запись каталога (zone workshop) + домен-глагол
+> Галки ставит закрытие карточки (task:archive со свидетельством), не промпт —
+> DoD авансом = класс B3/B10 (поймано ревью PR #1922).
+
+- [ ] Ядро чистое (`scripts/lib/task-handoff-status.mjs`), обвязка отдельно, зубы зелёные.
+- [ ] Провод `yarn task:handoff` + запись каталога (zone workshop) + домен-глагол
       манифеста + `docs/tasks/HANDOFF_STATUS.md`.
-- [x] Кит tasks-master: root + пины (kits:audit blocking 0).
-- [x] Боевой прогон воспроизводит эталон 13.08 (13/20 закрыты, кусты остатка).
+- [ ] Кит tasks-master: root + пины (kits:audit blocking 0).
+- [ ] Боевой прогон воспроизводит эталон 13.08 (13/20 закрыты, кусты остатка).
 
 ## Out of Scope
 
