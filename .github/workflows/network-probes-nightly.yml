@@ -24,6 +24,8 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
+  # read СОЗНАТЕЛЬНО: workflow только собирает и грузит артефакт; «--commit» у pull —
+  # локальный сценарий утра на dev-машине, из CI коммит невозможен по построению (P1 #1923).
   contents: read
 
 jobs:

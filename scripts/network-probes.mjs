@@ -147,7 +147,8 @@ export function pull(deps) {
       deps.log('✗ pull: завершённых прогонов ночного такта нет');
       return 1;
     }
-    mkdirSync(destDir, { recursive: true });
+    // Каталог дня НЕ создаётся до успешного download: пустая папка даты выглядела бы
+    // лентой ночи, которой не было (P1 ревью #1923). gh download создаёт --dir сам.
     exec('gh', ['run', 'download', String(runs[0].databaseId), '--name', NIGHTLY_ARTIFACT, '--dir', destDir], { cwd: deps.cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
     deps.log(`· pull: прогон ${runs[0].databaseId} (${runs[0].conclusion}) → ${HOME_REL}/analysis/${deps.date}/`);
   } catch (e) {
@@ -189,7 +190,9 @@ export async function runNetworkProbes(argv, deps = {}) {
   log(`Usage: yarn network:probes <collect|pull|recompute> [--out f] [--date YYYY-MM-DD] [--commit]
 
   Канон: docs/meeting/network-container/MEETING_VERDICT.md (В4/В5). Дом: ${HOME_REL}.
-  Зонды read-only (#1425); пересчёт не трогает рукописные нормы registry.`);
+  Зонды read-only (#1425); пересчёт не трогает рукописные нормы registry.
+  --commit — ЛОКАЛЬНЫЙ сценарий (утро на dev-машине): workflow держит contents: read
+  и коммитить не может по построению — доставка в ствол идёт обычным PR-циклом.`);
   return cmd ? 2 : 0;
 }
 
