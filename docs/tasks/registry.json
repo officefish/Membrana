@@ -8,14 +8,14 @@
       "noIssueReason": "инструмент по прямому слову капитана 13.08; формат в памяти сессии (handoff-status-report-format)",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-13",
-      "archivedAt": null,
+      "archivedAt": "2026-08-13",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "Показ HANDOFF.md с живой сверкой: строки очереди резолвятся по registry/архиву и gh issue state (honest unknown на сеть), таблица ✅/🔴 со свидетельствами, итог N/M + остаток кустами. Зона workshop мастерской задач. Маршрут one-shot (S, один исполнитель).",
-      "archiveNotes": null,
+      "archiveNotes": "Шот: PR #1922 MERGED — глагол yarn task:handoff в мастерской задач (формат капитана 13.08: сверка каждой строки хендофа по registry/Issue до показа, ✅/🔴/⚠/❓, итог N/M + кусты). 13 зубов, кит tasks-master 30/30, боевой прогон воспроизвёл эталон 13/20. Ревью-хроника: 2 законных вердикта (домен-глагол объектом, DoD без аванса) + 1 ложная посылка (await у синхронного батча) снята комментарием-констрейнтом.",
       "githubIssueClosedAt": null
     },
     {
