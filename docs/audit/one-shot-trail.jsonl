@@ -23,3 +23,4 @@
 {"timestamp":"2026-08-08T10:00:22.853Z","path":"scripts/lib/branch-status.mjs","slug":"branch-status-merged-evidence","headRev":"d22e691a142b7f652073ce82a8c73ddd58ba8b04","status":"merged"}
 {"timestamp":"2026-08-08T11:20:13.926Z","path":"scripts/pr-ship.mjs","slug":"ship-tail-land-upstream","headRev":"43f4d5af118ae882c3fa5b6508bbb001a9021efd","status":"merged"}
 {"timestamp":"2026-08-13T14:58:09.056Z","path":"scripts/lib/dead-wire.mjs","slug":"dead-wire-local-only-carrier","headRev":"9979bbe12b6aaa7f7160ba1548289809b5a0cc6f","status":"merged","executor":"dynin"}
+{"timestamp":"2026-08-13T17:51:19.339Z","path":"scripts/task-handoff-status.mjs","slug":"tw-handoff-status","headRev":"d52f821de1d0b8f94caab27d4169ef7aadd5320d","status":"merged","executor":"ozhegov"}
