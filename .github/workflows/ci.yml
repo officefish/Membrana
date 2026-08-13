@@ -75,6 +75,12 @@ jobs:
       - name: Root scripts — ESLint (warn-храповик, порог в package.json)
         run: yarn lint:scripts
 
+      # #1912 (В7 заседания network-container): голый fetch в серверной зоне без
+      # proxy-обвязки и без записи-исключения в machine-policy. Warn-храповик:
+      # легаси в бюджете зелёные и названы; новое — красный.
+      - name: Network — зуб политики машин (bare fetch)
+        run: yarn network:bare-fetch
+
       - name: Мастерские — контракт, принадлежность, свежесть атласа (HOME_WORKSHOP)
         run: yarn validate:workshop && yarn check:workshop-ownership && yarn check:workshop-dependencies && yarn tooling:atlas --check
 
