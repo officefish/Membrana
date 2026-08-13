@@ -15,7 +15,11 @@
     "reviewing": "declined: движок не строим (решение владельца 11.08) — docs/tasks/declined-verbs.json",
     "stackLike": [],
     "domain": [
-      "handoff: yarn task:handoff — актуальный хендоф со сверкой строк (формат капитана 13.08)"
+      {
+        "name": "handoff",
+        "worksOn": "docs/HANDOFF.md",
+        "tool": "yarn task:handoff"
+      }
     ]
   }
 }
