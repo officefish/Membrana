@@ -1,140 +1,49 @@
-# Промпт: Зуб check-bare-fetch: политика машин из machine-policy, warn-храповик бюджетом (В7)
+# Промпт: Зуб check-bare-fetch — политика машин из machine-policy, warn-храповик (#1912)
 
-> **Task-промпт для агента-разработчика** (Cursor IDE / Claude / другой LLM).
-> Процесс постановки: [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md).
-> Скопируй блок **«Промпт целиком»** в начало диалога. Размер задачи: **M**.
-> Ожидаемый артефакт: **N PR** — <одна фраза>.
-> Реестр: `id` = `network-bare-fetch-tooth` в [`docs/tasks/registry.json`](../tasks/registry.json).
-
----
+> M · id `network-bare-fetch-tooth` · Issue [#1912](https://github.com/officefish/Membrana/issues/1912) · lead **ozhegov**, support **dynin**.
+> Поставка 2 исполнения формы (канон — вердикт **В7** заседания
+> [`network-container`](../meeting/network-container/MEETING_VERDICT.md), ратифицирован
+> 13.08 с гармонизацией носителя). Нормы уже в стволе (поставка #1910).
 
 ## Контекст
 
-<1–2 абзаца: зачем задача, что уже есть в репозитории, что не трогаем.>
+Инвентарь 12.08: proxy-awareness — свойство файла, не политика машины; четыре голых
+fetch в серверных пакетах названы бюджетом (`registry/network-policy-violations-budget.json`).
+Политика машин — `registry/machine-policy.json` (единственный источник истины зуба).
 
-**Связанные документы:**
+## Что построить
 
-| Документ | Зачем |
-|----------|--------|
-| [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) | Роли, порядок работы |
-| [`ARCHITECTURE.md`](../ARCHITECTURE.md) | Границы модулей |
-| [`DESIGN.md`](../DESIGN.md) | UI (если есть) |
-| [`TASKS_MANAGEMENT.md`](../TASKS_MANAGEMENT.md) | Issue / PR |
-| <другие> | … |
+1. **`scripts/check-bare-fetch.mjs`** (+чистое ядро в `scripts/lib/`): серверный файл
+   (fallback-glob: `packages/background-*/src`, `packages/services/*/src` — конвенции
+   `packageKind` в репо НЕТ, эрратум M7) + `fetch(`-семейство без proxy-обёртки + не
+   покрыт `allowedBarePackages` → находка. Словарь находок закрыт: `VIOLATION` (красный)
+   · `LEGACY` (в бюджете) · `AMNESTY` (с `expiresAt`) · `POLICY_INVALID` (красный).
+   Автопочинки нет (#1425).
+2. **Warn-храповик**: находки LEGACY считаются против `maxBareCallsCount`; сверх
+   бюджета — VIOLATION. Снижение бюджета — PR с доказательством; увеличение — только
+   amnesty-записью.
+3. **Провод**: pre-push (`.githooks/pre-push`, по образцу соседних зубов) + шаг CI.
+   Stdout — немедленный сигнал; находка дублируется в канал М4 (night-report) — форма
+   дубля согласуется при исполнении поставки #1913 (T_night).
 
-**Референс (только идеи UX, не копировать код):** `packages/temp/...` — если есть.
+## Запрещено
 
-**GitHub Issue:** [#1912](https://github.com/officefish/Membrana/issues/1912)
+- Чинить голые вызовы (#1425) — зуб называет, не чинит.
+- Исключения комментарием в коде — только записью в machine-policy.
+- Второй источник политики.
 
----
-
-## Промпт целиком (для вставки агенту)
-
-> Всё ниже до раздела **«Заметки для человека-постановщика»** — текст задания для агента.
-
----
-
-### Кто ты
-
-Ты — **координатор виртуальной команды Membrana** под руководством **Vesnin** (Teamlead). Перед кодом — краткий план (1–2 абзаца + список файлов). Соблюдай [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) и [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md).
-
----
-
-### Что построить (продуктовое описание)
-
-1. …
-2. …
-
----
-
-### Архитектура / контракт
-
-| Слой | Путь | Ответственность |
-|------|------|-----------------|
-| … | … | … |
-
-**Запрещено:**
-
-- …
-
----
-
-### Визуальный дизайн (если есть UI)
-
-- …
-
----
-
-### Тесты
+## Тесты (минимум)
 
 | Область | Минимум |
-|---------|---------|
-| … | … |
+|---|---|
+| Детект | голый fetch в серверном файле → находка; proxy-обёртка → нет |
+| Исключения | permanent/amnesty покрывают; истёкший expiresAt → VIOLATION |
+| Храповик | 4 известных = LEGACY зелёно; 5-й → VIOLATION красный |
+| Политика | битый machine-policy.json → POLICY_INVALID, красный |
 
----
+## DoD
 
-### Definition of Done
-
-- [ ] …
-- [ ] `yarn turbo run lint typecheck test build --continue` — зелёный (или указать scope).
+- [ ] Зуб зелёный на текущем стволе (4 LEGACY в бюджете, 0 VIOLATION).
+- [ ] Подсаженный пятый голый вызов роняет прогон с именем файла.
+- [ ] Провод в pre-push и CI; карта exit-кодов если зуб входит в цепочку.
 - [ ] LGTM Teamlead.
-
----
-
-### Out of scope
-
-- …
-
----
-
-### Порядок работы ролей
-
-1. **Teamlead** — …
-2. **Структурщик** — …
-3. **Математик** — …
-4. **Музыкант** — …
-5. **Верстальщик** — …
-
----
-
-### Формат ответа координатора (планирование)
-
-```text
-[Teamlead]: …
-[Структурщик]: …
-[Математик]: …
-[Музыкант]: …
-[Верстальщик]: …
-
-Итоговый артефакт: …
-Definition of Done: …
-```
-
----
-
----
-
-## Acceptance criteria (scaffold)
-
-> Заполнить до кода. Чеклист приёмки = Definition of Done + явные AC Issue.
-
-- [ ] …
-- [ ] …
-
-## Заметки для человека-постановщика
-
-1. GitHub Issue (`wish` / `bug` / `imperfection`) + ссылка на этот файл.
-2. Запись в `docs/tasks/registry.json` (`status: active`).
-3. После merge: отчёт в Issue → `yarn task:archive <slug> --notes "…"`.
-
-### Проверка после PR
-
-```bash
-# команды проверки
-```
-
----
-
-## Связь с дорожной картой
-
-- …

@@ -1,140 +1,30 @@
-# Промпт: Контейнер network: каркас дома — README, схема снимка, нормы registry (канон заседания)
+# Промпт: Контейнер network — каркас дома (#1910)
 
-> **Task-промпт для агента-разработчика** (Cursor IDE / Claude / другой LLM).
-> Процесс постановки: [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md).
-> Скопируй блок **«Промпт целиком»** в начало диалога. Размер задачи: **S**.
-> Ожидаемый артефакт: **N PR** — <одна фраза>.
-> Реестр: `id` = `network-house-skeleton` в [`docs/tasks/registry.json`](../tasks/registry.json).
+> S · id `network-house-skeleton` · Issue [#1910](https://github.com/officefish/Membrana/issues/1910) · lead **ozhegov**.
+> Поставка 1 исполнения формы, ратифицированной заседанием
+> [`network-container`](../meeting/network-container/MEETING_VERDICT.md) (обе ратификации
+> владельца 13.08). Исполнена тем же днём (PR этой поставки). Файл — указатель.
 
----
+## Что построено (канон — MEETING_VERDICT, вердикты В1/В2/В3/В5/В6/В7)
 
-## Контекст
+- `docs/audit/network/README.md` — карта дома: единица зонд-снимок, словарь 5 состояний
+  плюс ось outcome, слои (лента / overwrite-проекции / **рукописные нормы** / cache),
+  retention 90д, запрещённые классы полей, такт и канал находки, границы #1425.
+- `docs/audit/network/schema.json` — закрытая схема снимка (`additionalProperties:
+  false` — слой 1 защиты шва В3).
+- `registry/egress-rules.json` — нормы трафика данными; K1 мигрирован словом
+  (office→Linear via media-VPS, precedent_ref), поведение кода не менялось.
+- `registry/machine-policy.json` — политика машин (гармонизированный носитель, аудит
+  M6–M7); permanent-исключение media/linear-snapshot.
+- `registry/network-policy-violations-budget.json` — warn-храповик, бюджет 4.
+- `.gitignore`: `docs/audit/network/cache/`.
 
-<1–2 абзаца: зачем задача, что уже есть в репозитории, что не трогаем.>
-
-**Связанные документы:**
-
-| Документ | Зачем |
-|----------|--------|
-| [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) | Роли, порядок работы |
-| [`ARCHITECTURE.md`](../ARCHITECTURE.md) | Границы модулей |
-| [`DESIGN.md`](../DESIGN.md) | UI (если есть) |
-| [`TASKS_MANAGEMENT.md`](../TASKS_MANAGEMENT.md) | Issue / PR |
-| <другие> | … |
-
-**Референс (только идеи UX, не копировать код):** `packages/temp/...` — если есть.
-
-**GitHub Issue:** [#1910](https://github.com/officefish/Membrana/issues/1910)
-
----
-
-## Промпт целиком (для вставки агенту)
-
-> Всё ниже до раздела **«Заметки для человека-постановщика»** — текст задания для агента.
-
----
-
-### Кто ты
-
-Ты — **координатор виртуальной команды Membrana** под руководством **Vesnin** (Teamlead). Перед кодом — краткий план (1–2 абзаца + список файлов). Соблюдай [`VIRTUAL_TEAM_PROMPT.md`](../VIRTUAL_TEAM_PROMPT.md) и [`TASK_PROMPT_WORKFLOW.md`](./TASK_PROMPT_WORKFLOW.md).
-
----
-
-### Что построить (продуктовое описание)
-
-1. …
-2. …
-
----
-
-### Архитектура / контракт
-
-| Слой | Путь | Ответственность |
-|------|------|-----------------|
-| … | … | … |
-
-**Запрещено:**
-
-- …
-
----
-
-### Визуальный дизайн (если есть UI)
-
-- …
-
----
-
-### Тесты
-
-| Область | Минимум |
-|---------|---------|
-| … | … |
-
----
-
-### Definition of Done
-
-- [ ] …
-- [ ] `yarn turbo run lint typecheck test build --continue` — зелёный (или указать scope).
-- [ ] LGTM Teamlead.
-
----
-
-### Out of scope
-
-- …
-
----
-
-### Порядок работы ролей
-
-1. **Teamlead** — …
-2. **Структурщик** — …
-3. **Математик** — …
-4. **Музыкант** — …
-5. **Верстальщик** — …
-
----
-
-### Формат ответа координатора (планирование)
-
-```text
-[Teamlead]: …
-[Структурщик]: …
-[Математик]: …
-[Музыкант]: …
-[Верстальщик]: …
-
-Итоговый артефакт: …
-Definition of Done: …
-```
-
----
-
----
-
-## Acceptance criteria (scaffold)
-
-> Заполнить до кода. Чеклист приёмки = Definition of Done + явные AC Issue.
-
-- [ ] …
-- [ ] …
-
-## Заметки для человека-постановщика
-
-1. GitHub Issue (`wish` / `bug` / `imperfection`) + ссылка на этот файл.
-2. Запись в `docs/tasks/registry.json` (`status: active`).
-3. После merge: отчёт в Issue → `yarn task:archive <slug> --notes "…"`.
-
-### Проверка после PR
+## Проверка
 
 ```bash
-# команды проверки
+yarn tooling:atlas --check          # дом 54-й, производные свежи
+cat docs/audit/network/README.md    # канон совпадает с MEETING_VERDICT
 ```
 
----
-
-## Связь с дорожной картой
-
-- …
+Зубы и ночной такт — поставки #1912, #1913. Мастерская (3 глагола) — отдельной
+поставкой; до неё дом — «дом без мастерской» (законно по атласу).
