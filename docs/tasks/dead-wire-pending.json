@@ -15,8 +15,7 @@
       "footprint": 3
     },
     "cabinet:mp7:prod": {
-      "reason": "awaits-implementation",
-      "until": "2026-08-16",
+      "reason": "local-only-carrier",
       "footprint": 7
     }
   }

@@ -12,6 +12,7 @@
  *   2 — проверка НЕ состоялась (вход нечитаем) — это не «зелёный»
  */
 
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -49,6 +50,31 @@ export function readPending(root) {
 }
 
 /**
+ * gitignore-покрытие пути — истина у самого git (#1911): check-ignore читает все
+ * слои (.gitignore, exclude, глобальный), парсить их рукой значило бы завести
+ * второй, расходящийся парсер. exit 0 = покрыт, exit 1 = нет; иной код — ошибка
+ * входа (проверка не состоялась), не «false».
+ * @param {string} root
+ * @returns {(rel: string) => boolean}
+ */
+export function makeIsIgnored(root) {
+  const cache = new Map();
+  return (rel) => {
+    if (cache.has(rel)) return cache.get(rel);
+    let ignored;
+    try {
+      execFileSync('git', ['check-ignore', '-q', rel], { cwd: root, stdio: 'ignore' });
+      ignored = true;
+    } catch (error) {
+      if (/** @type {{status?: number}} */ (error)?.status === 1) ignored = false;
+      else throw new Error(`git check-ignore не состоялся для «${rel}»: ${/** @type {Error} */ (error).message}`);
+    }
+    cache.set(rel, ignored);
+    return ignored;
+  };
+}
+
+/**
  * Прогон по дереву. Вынесен отдельно, чтобы тест звал его без process.exit.
  * @param {object} [input]
  * @param {string} [input.root]
@@ -64,7 +90,7 @@ export function runCheck({ root = REPO_ROOT, today, extraScripts = {} } = {}) {
   const fileExists = (rel) => fs.existsSync(path.join(root, rel));
   const stamp = today ?? new Date().toISOString().slice(0, 10);
 
-  const report = auditWires({ scripts, fileExists, pending, today: stamp });
+  const report = auditWires({ scripts, fileExists, pending, today: stamp, isIgnored: makeIsIgnored(root) });
   const catalogs = readCatalogs(root);
   const fromCatalogs = auditCatalogs({ catalogs, scripts, fileExists, pending, today: stamp });
 

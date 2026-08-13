@@ -27,8 +27,10 @@ const dead = () => false;
 const LIVE_PENDING = JSON.parse(
   readFileSync(new URL('../docs/tasks/dead-wire-pending.json', import.meta.url), 'utf8'),
 );
+// local-only-carrier срока не несёт (#1911) — в выборку сроков входят только календарные записи.
 const LIVE_UNTIL = Object.values(LIVE_PENDING.pending)
   .map((p) => p.until)
+  .filter((u) => typeof u === 'string')
   .sort()
   .at(-1);
 const shiftDay = (iso, days) =>
@@ -146,7 +148,10 @@ test('перечни закрыты', () => {
   assert.deepEqual([...VERDICTS], ['implement', 'pending', 'remove']);
   assert.equal(FINDING_KINDS.length, 5, 'пятый род введён актом владельца 01.08, шестого нет');
   assert.ok(FINDING_KINDS.includes('carrier_mismatch'));
-  assert.equal(PENDING_REASONS.length, 4);
+  // 5-я причина local-only-carrier введена решением владельца 13.08 (#1911, S-карточка
+  // dead-wire-local-only-carrier): носитель сознательно вне git; шестой причины нет.
+  assert.equal(PENDING_REASONS.length, 5);
+  assert.ok(PENDING_REASONS.includes('local-only-carrier'));
   assert.ok(Object.isFrozen(VERDICTS) && Object.isFrozen(FINDING_KINDS));
 });
 
@@ -244,10 +249,12 @@ test('живой package.json: после разбора связь честна
 test('перечень pending: за сроком проявляются ВСЕ его записи, сколько бы их ни было', () => {
   const report = runCheck({ today: TODAY });
   assert.equal(report.findings.length, 0);
-  // Сдвинем «сегодня» за срок — все записи перечня обязаны проявиться. Число
-  // берём из перечня, а не из памяти: 11.08 три записи законно вынесены
-  // (глаголы сняты владельцем, они больше не «ждут реализации»).
-  const pendingCount = Object.keys(LIVE_PENDING.pending).length;
+  // Сдвинем «сегодня» за срок — все КАЛЕНДАРНЫЕ записи перечня обязаны проявиться.
+  // Число берём из перечня, а не из памяти: 11.08 три записи законно вынесены
+  // (глаголы сняты владельцем, они больше не «ждут реализации»). local-only-carrier
+  // (#1911) календарём не протухает — его честность меряется gitignore-покрытием.
+  const pendingCount = Object.values(LIVE_PENDING.pending)
+    .filter((p) => typeof p.until === 'string').length;
   const after = runCheck({ today: shiftDay(LIVE_UNTIL, 1) });
   assert.equal(after.findings.length, pendingCount, 'за сроком должны проявиться все записи перечня');
   assert.ok(after.findings.every((f) => f.kind === 'pending_expired'));
@@ -333,4 +340,46 @@ test('манифест и цепочка не разъедутся молча: �
   if (w.role === 'gate') {
     assert.doesNotMatch(chain.slice(at, at + 60), /\|\|\s*true/u, 'роль gate объявлена, а отказ гасится');
   }
+});
+
+// ── local-only-carrier (#1911): носитель сознательно вне git ─────────────────
+
+const localOnlyEntry = { 'ssh:deploy': { reason: 'local-only-carrier', footprint: 7 } };
+const wire = { name: 'ssh:deploy', command: 'node scripts/_ssh-deploy.mjs', pending: localOnlyEntry, today: TODAY };
+const ignoredYes = () => true;
+const ignoredNo = () => false;
+
+test('local-only: носитель есть локально и покрыт gitignore — тишина, НЕ pending_orphan', () => {
+  const findings = checkWire({ ...wire, fileExists: alive, isIgnored: ignoredYes });
+  assert.deepEqual(findings, []);
+});
+
+test('local-only: носителя нет (CI) и путь покрыт gitignore — тишина, НЕ dead_wire', () => {
+  const findings = checkWire({ ...wire, fileExists: dead, isIgnored: ignoredYes });
+  assert.deepEqual(findings, []);
+});
+
+test('local-only: путь НЕ покрыт gitignore — причина названа ложно, pending_invalid', () => {
+  const findings = checkWire({ ...wire, fileExists: alive, isIgnored: ignoredNo });
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].kind, 'pending_invalid');
+  assert.match(findings[0].detail, /названа ложно/u);
+});
+
+test('local-only: без инъекции isIgnored покрытие честно НЕ проверяется — unknown, не ложь', () => {
+  const findings = checkWire({ ...wire, fileExists: dead });
+  assert.deepEqual(findings, []);
+});
+
+test('local-only: срок until запрещён — мёртвое поле лгало бы о механике протухания', () => {
+  const problems = pendingEntryProblems({ reason: 'local-only-carrier', until: '2026-08-16' });
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /не несёт срока/u);
+  assert.deepEqual(pendingEntryProblems({ reason: 'local-only-carrier' }), []);
+});
+
+test('local-only: календарём не протухает — pendingExpired о нём не спрашивают (нет until в выборке)', () => {
+  const entries = Object.values(LIVE_PENDING.pending).filter((p) => p.reason === 'local-only-carrier');
+  assert.ok(entries.length >= 1, 'живой перечень несёт запись класса — вещдок cabinet:mp7:prod');
+  assert.ok(entries.every((p) => p.until === undefined));
 });
