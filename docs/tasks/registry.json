@@ -25,16 +25,16 @@
       "githubIssue": 1913,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-13",
-      "archivedAt": null,
+      "archivedAt": "2026-08-13",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1923 (squash 1c82fa51), review LGTM после двух P1 (mkdir после download; contents:read сознательно); такт 01:00 + транспорт + пересчёт с защитой норм + retention; живой прогон: office ok, static down — ряд начат; Issue #1913 закрыт",
       "githubIssueClosedAt": null
     },
     {
@@ -44,16 +44,16 @@
       "githubIssue": 1912,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-13",
-      "archivedAt": null,
+      "archivedAt": "2026-08-13",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "dynin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #1921 (squash a0209135), review LGTM (артефакт docs/reviews); зуб В7 живьём зелёный (зона 459, LEGACY 3/3, VIOLATION 0), провод pre-push+CI, бюджет дедуплицирован 4→3 с доказательством; Issue #1912 закрыт",
       "githubIssueClosedAt": null
     },
     {
