@@ -1,0 +1,36 @@
+{
+  "$id": "membrana://audit/network/probes-plan@1",
+  "//": "План ночных зондов (В4/В5 заседания network-container). Рукописная норма: пересчёт registry не трогает. Поля закрыты: probe_id (стабильный id для overwrite-проекции), organ (net:http), target (санитизированный URL без userinfo/токенов), expectStatus (класс успеха), infra_node_id (односторонняя ссылка В3, опционально). Цели — публичные health/endpoint'ы: read-only GET, мониторинг, не мутация (#1425).",
+  "probes": [
+    {
+      "probe_id": "github-api",
+      "organ": "net:http",
+      "target": "https://api.github.com/",
+      "expectStatus": "2xx-4xx",
+      "comment": "доступность GitHub API с машины такта (транспорт PR/CI)"
+    },
+    {
+      "probe_id": "npm-registry",
+      "organ": "net:http",
+      "target": "https://registry.npmjs.org/",
+      "expectStatus": "2xx-3xx",
+      "comment": "доступность npm registry (install-путь CI; вещдок флейков 12.08: electron/keytar socket hang up)"
+    },
+    {
+      "probe_id": "office-health",
+      "organ": "net:http",
+      "target": "https://office.mmbrn.tech/health",
+      "expectStatus": "2xx",
+      "infra_node_id": "office-vds",
+      "comment": "здоровье office снаружи (транзиентные таймауты — вещдок CLAUDE.md про ласточку)"
+    },
+    {
+      "probe_id": "static-mmbrn",
+      "organ": "net:http",
+      "target": "https://static.mmbrn.tech/",
+      "expectStatus": "2xx-3xx",
+      "infra_node_id": "static-mmbrn",
+      "comment": "провижен static-контура (замер 12.08: TLS fail — фаза Target provision не исполнена; ряд зафиксирует момент поднятия)"
+    }
+  ]
+}
