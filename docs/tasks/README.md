@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `archivarius-evening-step` | Шаг архива сессий в вечерней цепочке: тракт scan→extract→ingest→push едет сам, отказ office честный | M | [`ARCHIVARIUS_EVENING_STEP_PROMPT.md`](../prompts/ARCHIVARIUS_EVENING_STEP_PROMPT.md) | — |
 | `dead-wire-local-only-carrier` | Dead-wire: класс носителя вне git (gitignored) невыразим словарём pending — новая причина local-only-carrier | S | [`DEAD_WIRE_LOCAL_ONLY_CARRIER_PROMPT.md`](../prompts/DEAD_WIRE_LOCAL_ONLY_CARRIER_PROMPT.md) | — |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |

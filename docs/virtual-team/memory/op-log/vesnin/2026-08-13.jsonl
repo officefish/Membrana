@@ -1,1 +1,4 @@
 {"ts":"2026-08-13T11:00:26.901Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-13T12:27:33.625Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-13T12:27:13.195Z","origin":"ask-persona"}
+{"ts":"2026-08-13T12:27:33.638Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-13T12:27:13.195Z","origin":"ask-persona"}
+{"ts":"2026-08-13T12:27:33.645Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-08-05-team-evening-feedback","reason":"прямой прецедент: четыре ревью-контекста по ролям, revisionAt в trail, и там я отмечал риск L-задачи без ADR-контракта. Здесь тот же типоразмер (3 блока по ролям), и вопрос про контракт stdout/skip/маску — просится ADR или явная запись в манифесте, иначе e1 и e2 договорятся «на словах».","origin":"ask-persona"}

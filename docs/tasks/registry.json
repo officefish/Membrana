@@ -1,6 +1,28 @@
 {
   "tasks": [
     {
+      "id": "archivarius-evening-step",
+      "title": "Шаг архива сессий в вечерней цепочке: тракт scan→extract→ingest→push едет сам, отказ office честный",
+      "promptPath": "docs/prompts/ARCHIVARIUS_EVENING_STEP_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "фаза эпика archivarius-sessions-container (#1330); свой номер при взятии — залежь номеров фаз шумит в close-github",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-13",
+      "archivedAt": null,
+      "leadPersona": "dynin",
+      "supportPersonas": [
+        "vesnin",
+        "ozhegov"
+      ],
+      "notes": "Живой зазор 13.08: тракт готов кодом (runTract, вещдок 106884 спанов 04.08), но в evening-ritual-steps.json шага нет — сессии едут в Mongo руками. Продукт: вечерняя цепочка сама заливает сессии дня с маскировкой; office недоступен → именованный skip, не молчок.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "archivarius-sessions-container"
+    },
+    {
       "id": "dead-wire-local-only-carrier",
       "title": "Dead-wire: класс носителя вне git (gitignored) невыразим словарём pending — новая причина local-only-carrier",
       "promptPath": "docs/prompts/DEAD_WIRE_LOCAL_ONLY_CARRIER_PROMPT.md",

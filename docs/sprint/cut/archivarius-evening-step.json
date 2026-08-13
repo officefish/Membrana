@@ -1,0 +1,65 @@
+{
+  "//": "План локального спринта archivarius-evening-step (фаза эпика #1330, магистраль 13.08). До ратификации владельца исполнение не начинается. Порядок блоков держит инвариант движков: манифест-провод (e2) режется ПОСЛЕ рождения движка (e1).",
+  "schema": "sprint-cut/1",
+  "sprintId": "archivarius-evening-step",
+  "taskId": "archivarius-evening-step",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
+    "reason": "Носители contract_signature/session_prep не являются обязательным машинным корпусом membrana-local-sprint; ответственность проверяется планом, зонами, контекстными следами, review-вещдоками и procedure-run-journal."
+  },
+  "window": {
+    "from": "2026-08-13T15:23:00+03:00",
+    "to": "2026-08-13T20:30:00+03:00"
+  },
+  "revisionAt": "2026-08-13T15:23:00+03:00",
+  "blocks": [
+    {
+      "blockId": "e1-evening-step-engine",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/archivarius-evening-step.mjs",
+        "scripts/archivarius-evening-step.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 200
+      },
+      "revisionAt": "2026-08-13T15:23:00+03:00"
+    },
+    {
+      "blockId": "e2-evening-manifest-wire",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/tasks/evening-ritual-steps.json",
+        "package.json"
+      ],
+      "estimate": {
+        "changedLines": 45
+      },
+      "revisionAt": "2026-08-13T15:23:00+03:00"
+    },
+    {
+      "blockId": "e3-form-and-home",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/archivarius/README.md",
+        "docs/archivarius/workshop.manifest.json"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionAt": "2026-08-13T15:23:00+03:00"
+    }
+  ]
+}
