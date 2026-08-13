@@ -33,7 +33,8 @@
       "estimate": {
         "changedLines": 200
       },
-      "revisionAt": "2026-08-13T15:23:00+03:00"
+      "revisionAt": "2026-08-13T15:23:00+03:00",
+      "revisionOf": "39e74467f212b1c1fa98024450ff44ab900de00f728b9ba5050f835dbfc78a01"
     },
     {
       "blockId": "e2-evening-manifest-wire",
@@ -46,7 +47,8 @@
       "estimate": {
         "changedLines": 45
       },
-      "revisionAt": "2026-08-13T15:23:00+03:00"
+      "revisionAt": "2026-08-13T15:23:00+03:00",
+      "revisionOf": "44e1b6bdbb580e2f8bfe9a4a494456442050a1014e71d627386988bff5a58ada"
     },
     {
       "blockId": "e3-form-and-home",
@@ -59,7 +61,13 @@
       "estimate": {
         "changedLines": 60
       },
-      "revisionAt": "2026-08-13T15:23:00+03:00"
+      "revisionAt": "2026-08-13T15:23:00+03:00",
+      "revisionOf": "d26c1c278fd74dc43c988bdfb9edf7c4c019d42f5a68a0c091f84c2b20c9387d"
     }
-  ]
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-13T15:42:21+03:00",
+    "digest": "e8abf56ab5c80ecde040b7048ab8984bea675c9b4a41db2c190732e66fef2578"
+  }
 }

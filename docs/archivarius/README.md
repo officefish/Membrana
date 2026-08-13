@@ -75,6 +75,35 @@ yarn archivarius search --index docs/archivarius/cache/spans.jsonl --text "needl
 `cache/` — рабочий локальный снимок и не источник правды. Серверный источник после
 миграции — MongoDB office.
 
+## Вечерний поток
+
+С 13.08 (спринт `archivarius-evening-step`, фаза эпика #1330) сессии дня едут в
+office **сами**: вечерняя цепочка несёт шаг `archivarius-evening`
+(`docs/tasks/evening-ritual-steps.json`, после `deps-watch`, до `evening-tail` —
+поздний слот захватывает больше сессий дня). До этого шага тракт запускался
+только руками (вещдок 04.08: ручная заливка 106884 спанов).
+
+```bash
+yarn archivarius:evening   # тот же тракт scan→extract→ingest, но только файлы дня
+```
+
+Отличия от полного `yarn archivarius:push`:
+
+- **фильтр дня** — в extract идут только файлы с mtime не старше начала дня;
+  mtime — единственный источник (имена транскриптов — uuid, дат не несут);
+- **health-предполёт** office до чтения корпуса;
+- **словарь исходов закрыт**: `ok | office-unreachable | empty-day`; различение
+  «сеть / ключа нет / ключ отвергнут» живёт в detail строки скипа, не в словаре;
+- **отчёт — ровно одна строка счётчиков** `files/spans/maskedLines/accepted`;
+  тела строк транскриптов в stdout не попадают (держится снапшот-тестом);
+- `office-unreachable` — именованный скип (exit 3, `findingExitCodes` манифеста
+  вечера): вечер не краснеет, сессии остаются на диске и доедут следующим прогоном;
+  отказ батча после ретраев — настоящая ошибка (exit 1), partial молча не бывает.
+
+Шаг цепочки — НЕ глагол мастерской: словарь `verbs` в `workshop.manifest.json`
+закрыт (прецедент static-mmbrn M5), дом вечерней цепочки — её исполняемый манифест.
+Контракт и спецификация спринта: `docs/prompts/ARCHIVARIUS_EVENING_STEP_PROMPT.md`.
+
 ## HTTP API office
 
 Все маршруты требуют `X-Membrana-Token`.

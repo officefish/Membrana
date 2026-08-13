@@ -1,0 +1,6 @@
+{"traceId":"tr-e1-dynin-run","blockId":"e1-evening-step-engine","kind":"context_run","subject":"dynin","at":"2026-08-13T15:52:00+03:00","ref":"docs/virtual-team/memory/op-log/dynin/2026-08-13.jsonl"}
+{"traceId":"tr-e1-dynin-review","blockId":"e1-evening-step-engine","kind":"review_pass","subject":"dynin","at":"2026-08-13T16:02:00+03:00","ref":"scripts/archivarius-evening-step.test.mjs"}
+{"traceId":"tr-e2-vesnin-run","blockId":"e2-evening-manifest-wire","kind":"context_run","subject":"vesnin","at":"2026-08-13T16:10:00+03:00","ref":"docs/virtual-team/memory/op-log/vesnin/2026-08-13.jsonl"}
+{"traceId":"tr-e2-vesnin-review","blockId":"e2-evening-manifest-wire","kind":"review_pass","subject":"vesnin","at":"2026-08-13T16:14:00+03:00","ref":"docs/tasks/evening-ritual-steps.json"}
+{"traceId":"tr-e3-ozhegov-run","blockId":"e3-form-and-home","kind":"context_run","subject":"ozhegov","at":"2026-08-13T16:20:00+03:00","ref":"docs/virtual-team/memory/op-log/ozhegov/2026-08-13.jsonl"}
+{"traceId":"tr-e3-ozhegov-review","blockId":"e3-form-and-home","kind":"review_pass","subject":"ozhegov","at":"2026-08-13T16:24:00+03:00","ref":"docs/archivarius/README.md"}

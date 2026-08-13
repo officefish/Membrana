@@ -248,6 +248,23 @@
       ]
     },
     {
+      "id": "archivarius-evening",
+      "script": "scripts/archivarius-evening-step.mjs",
+      "kind": "mechanic",
+      "criticality": "noncritical",
+      "whyNoncritical": "Office транзиентно таймаутит (норма CLAUDE.md «повторить, не оставлять») — вечер не блокируется мёртвым office: исход office-unreachable печатается именованным скипом (exit 3 в findingExitCodes), сессии дня остаются на диске и доедут следующим прогоном.",
+      "label": "Архив сессий дня — тракт scan→extract→ingest в office сам",
+      "//": "Спринт archivarius-evening-step (фаза эпика #1330, магистраль 13.08): контейнер оборачивает ПОТОК сессий, а не точку — до этого шага сессии доезжали в Mongo только руками (вещдок 04.08: ручная заливка 106884 спанов). Фильтр дня по mtime: в extract идут только файлы, менявшиеся сегодня. Отчёт — ровно одна строка счётчиков files/spans/maskedLines/accepted, тела строк транскриптов в stdout не попадают (контракт трёх инвариантов). Стоит ПОСЛЕ deps-watch и ДО evening-tail: поздний слот захватывает больше сессий дня, а хвост и доставка идут следом.",
+      "findingExitCodes": [
+        3
+      ],
+      "//findings": "exit 3 = office-unreachable (сеть/ключ — детализация в строке скипа) — находка репортёра, не поломка шага. Настоящая ошибка (отказ батча после ретраев, partial не существует молча) = exit 1.",
+      "consumes": [],
+      "produces": [
+        "office archivarius spans (внешний артефакт, прецедент формы — rag index)"
+      ]
+    },
+    {
       "id": "evening-tail",
       "script": "scripts/ritual-evening-tail.mjs",
       "kind": "mechanic",
