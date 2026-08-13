@@ -380,6 +380,7 @@
     "usercase": "node scripts/usercase.mjs",
     "net:http": "node scripts/net-http.mjs",
     "net:diag": "node scripts/net-diag.mjs",
+    "network:bare-fetch": "node scripts/check-bare-fetch.mjs",
     "repo:clean": "node scripts/repo-clean.mjs",
     "repo:branches": "node scripts/repo-branches.mjs",
     "repo:branches:decompose": "node scripts/repo-branches-decompose.mjs",
