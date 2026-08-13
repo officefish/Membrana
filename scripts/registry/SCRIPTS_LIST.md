@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-11 |
-| Head SHA | 3be51dc6c9a38f6ff3a2fd3206a451fd064c0d46 |
+| Date | 2026-08-13 |
+| Head SHA | 3e681a268387b343b6f682f26f92535ea2d287f4 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1117 |
-| Yarn scripts (package.json) | 441 |
-| Yarn → `scripts/` | 386 |
+| Code files under `scripts/` | 1164 |
+| Yarn scripts (package.json) | 446 |
+| Yarn → `scripts/` | 391 |
 | Yarn без пути `scripts/` | 55 |
-| Yarn → missing file | 9 |
-| Code files without yarn ref | 811 |
+| Yarn → missing file | 8 |
+| Code files without yarn ref | 852 |
 
-## Yarn → scripts/ (386)
+## Yarn → scripts/ (391)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -43,6 +43,7 @@
 - `anthropic:task` → `scripts/anthropic-task.mjs`
 - `apply:lead-persona` → `scripts/apply-lead-persona-defaults.mjs` ⚠ missing: `scripts/apply-lead-persona-defaults.mjs`
 - `archivarius` → `scripts/archivarius.mjs`
+- `archivarius:evening` → `scripts/archivarius-evening-step.mjs`
 - `archivarius:push` → `scripts/archivarius-push.mjs`
 - `archive:daily-day` → `scripts/archive-daily-day-artifacts.mjs`
 - `archive:daily-review` → `scripts/archive-daily-code-review.mjs`
@@ -79,7 +80,7 @@
 - `cabinet:mp4:prod` → `scripts/_ssh-cabinet-mp4-prod.mjs`
 - `cabinet:mp5:prod` → `scripts/_ssh-cabinet-mp5-prod.mjs`
 - `cabinet:mp6:prod` → `scripts/_ssh-cabinet-mp6-prod.mjs`
-- `cabinet:mp7:prod` → `scripts/_ssh-cabinet-mp7-prod.mjs` ⚠ missing: `scripts/_ssh-cabinet-mp7-prod.mjs`
+- `cabinet:mp7:prod` → `scripts/_ssh-cabinet-mp7-prod.mjs`
 - `cabinet:pair-unlink:prod` → `scripts/_ssh-cabinet-pair-unlink-prod.mjs`
 - `cabinet:pairing:e2e:deploy` → `scripts/_ssh-cabinet-pairing-e2e-deploy.mjs`
 - `cabinet:quota-refactor:prod` → `scripts/_ssh-cabinet-quota-refactor-prod.mjs`
@@ -211,8 +212,11 @@
 - `neighbors` → `scripts/neighbors.mjs`
 - `net:diag` → `scripts/net-diag.mjs`
 - `net:http` → `scripts/net-http.mjs`
+- `network:analysis:archive` → `scripts/archive-network-analysis.mjs`
+- `network:bare-fetch` → `scripts/check-bare-fetch.mjs`
 - `network:preflight` → `scripts/network/preflight.mjs`
 - `network:probe` → `scripts/network/probe.mjs`
+- `network:probes` → `scripts/network-probes.mjs`
 - `network:snapshot` → `scripts/network/snapshot.mjs`
 - `network:tooth` → `scripts/network/tooth.mjs`
 - `night-hunt:pr-review` → `scripts/night-hunt-pr-review.mjs`
@@ -313,6 +317,7 @@
 - `task:archive` → `scripts/archive-task.mjs`
 - `task:close-github` → `scripts/task-close-github-issues.mjs`
 - `task:close-github:dry` → `scripts/task-close-github-issues.mjs`
+- `task:handoff` → `scripts/task-handoff-status.mjs`
 - `task:inspect` → `scripts/task-inspect.mjs`
 - `task:invariants` → `scripts/task-invariants.mjs`
 - `task:invariants:repair` → `scripts/task-invariants-repair.mjs`
@@ -412,7 +417,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (811)
+## Code files without yarn ref (852)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -423,41 +428,73 @@
 - `scripts/_llm-proxy-env.mjs`
 - `scripts/_main-day-issue.mjs`
 - `scripts/_ollama-client.mjs`
+- `scripts/_ssh-cabinet-logs.mjs`
 - `scripts/_ssh-cabinet-mp2-post-deploy.mjs`
 - `scripts/_ssh-cabinet-mp2-smoke.mjs`
 - `scripts/_ssh-cabinet-mp2-verify.mjs`
 - `scripts/_ssh-cabinet-mp3-debug.mjs`
 - `scripts/_ssh-cabinet-mp3-media-fix.mjs`
+- `scripts/_ssh-cabinet-pair-debug.mjs`
+- `scripts/_ssh-cabinet-pair-hotfix-prod.mjs`
+- `scripts/_ssh-cabinet-pairing-prod-fix.mjs`
 - `scripts/_ssh-cabinet-post-smoke.mjs`
 - `scripts/_ssh-cabinet-quota-refactor-smoke.mjs`
+- `scripts/_ssh-cabinet-recover.mjs`
+- `scripts/_ssh-cabinet-redeploy.mjs`
+- `scripts/_ssh-catalog-api-dupes.mjs`
 - `scripts/_ssh-catalog-dedupe-prod.mjs`
+- `scripts/_ssh-catalog-dupes-check.mjs`
+- `scripts/_ssh-catalog-labels-audit.mjs`
+- `scripts/_ssh-device-board-smoke.mjs`
+- `scripts/_ssh-ds5-debug.mjs`
+- `scripts/_ssh-ds5-debug2.mjs`
+- `scripts/_ssh-ds5-debug3.mjs`
+- `scripts/_ssh-ds5-debug4.mjs`
+- `scripts/_ssh-media-add-office-key.mjs`
 - `scripts/_ssh-media-check.mjs`
 - `scripts/_ssh-media-config.mjs`
 - `scripts/_ssh-media-deploy.mjs`
+- `scripts/_ssh-media-disk-usage.mjs`
+- `scripts/_ssh-media-ensure-debug.mjs`
+- `scripts/_ssh-media-ensure-reserved-smoke.mjs`
 - `scripts/_ssh-media-exec.mjs`
+- `scripts/_ssh-media-hotfix-deploy.mjs`
+- `scripts/_ssh-media-mtr-office.mjs`
+- `scripts/_ssh-media-office-path-test.mjs`
 - `scripts/_ssh-media-ports.mjs`
+- `scripts/_ssh-media-prod-diag.mjs`
 - `scripts/_ssh-media-prod-up.mjs`
 - `scripts/_ssh-media-rebuild.mjs`
+- `scripts/_ssh-media-restart-api.mjs`
 - `scripts/_ssh-media-restart.mjs`
 - `scripts/_ssh-media-show-token.mjs`
 - `scripts/_ssh-media-smoke.mjs`
 - `scripts/_ssh-media-swagger-deploy.mjs`
 - `scripts/_ssh-media-tls-setup.mjs`
 - `scripts/_ssh-media-up-only.mjs`
+- `scripts/_ssh-media-upload-smoke.mjs`
 - `scripts/_ssh-office-check.mjs`
 - `scripts/_ssh-office-config.mjs`
 - `scripts/_ssh-office-config.test.mjs`
 - `scripts/_ssh-office-env-status.mjs`
+- `scripts/_ssh-office-inventory.mjs`
+- `scripts/_ssh-office-jump-probe.mjs`
+- `scripts/_ssh-office-local-forward.mjs`
 - `scripts/_ssh-office-prod-up.mjs`
+- `scripts/_ssh-office-proxy-probe.mjs`
 - `scripts/_ssh-office-show-token.mjs`
 - `scripts/_ssh-office-smoke.mjs`
 - `scripts/_ssh-office-tls-setup.mjs`
+- `scripts/_ssh-office-tunnel-exec.mjs`
+- `scripts/_ssh-office-tunnel-probe.mjs`
 - `scripts/_ssh-pagination-catalog-smoke.mjs`
 - `scripts/_ssh-pagination-prod-deploy.mjs`
 - `scripts/_ssh-panel-deploy.mjs`
 - `scripts/_ssh-panel-smoke.mjs`
 - `scripts/_ssh-panel-smoke.test.mjs`
+- `scripts/_ssh-prod-check.mjs`
 - `scripts/_ssh-tariff-dataset-ds5-prod-smoke.mjs`
+- `scripts/_ssh-vdr-prod-smoke.mjs`
 - `scripts/_strategic-plan.mjs`
 - `scripts/_sync-office-env-from-root.mjs`
 - `scripts/affine-capacity-gate.test.mjs`
@@ -472,6 +509,7 @@
 - `scripts/anthropic-credit-hint.test.mjs`
 - `scripts/anthropic-env.test.mjs`
 - `scripts/archivarius-dump.test.mjs`
+- `scripts/archivarius-evening-step.test.mjs`
 - `scripts/archivarius-restore-drill.test.mjs`
 - `scripts/archivarius.test.mjs`
 - `scripts/archive-doc-snapshot.test.mjs`
@@ -513,6 +551,7 @@
 - `scripts/build-v08-policy-constructor-json.mjs`
 - `scripts/cabinet-deploy-image-tag.test.mjs`
 - `scripts/calibration-preset-sync.test.mjs`
+- `scripts/check-bare-fetch.test.mjs`
 - `scripts/check-package-boundaries.test.mjs`
 - `scripts/check-package-json-bom.test.mjs`
 - `scripts/ci-triage.test.mjs`
@@ -532,6 +571,7 @@
 - `scripts/context-collector-paths.mjs`
 - `scripts/context-collector-paths.test.mjs`
 - `scripts/context-collector.mjs`
+- `scripts/corpus-track-acceptance.test.mjs`
 - `scripts/cowork-close.test.mjs`
 - `scripts/cowork-execution-smoke.test.mjs`
 - `scripts/cowork-open.test.mjs`
@@ -657,6 +697,7 @@
 - `scripts/lib/case-store.mjs`
 - `scripts/lib/case-store.test.mjs`
 - `scripts/lib/changed-files-scope.mjs`
+- `scripts/lib/check-bare-fetch.mjs`
 - `scripts/lib/ci-red-triage.mjs`
 - `scripts/lib/classify-worktree.mjs`
 - `scripts/lib/client-logs-parser.mjs`
@@ -673,6 +714,7 @@
 - `scripts/lib/consilium-prompt.mjs`
 - `scripts/lib/container-cache-hygiene.mjs`
 - `scripts/lib/container-cache-hygiene.test.mjs`
+- `scripts/lib/corpus-track-acceptance.mjs`
 - `scripts/lib/cowork-close.mjs`
 - `scripts/lib/dataset-audio.mjs`
 - `scripts/lib/day-memo-facts.mjs`
@@ -802,6 +844,7 @@
 - `scripts/lib/movement-mode.test.mjs`
 - `scripts/lib/namespace-registry.mjs`
 - `scripts/lib/net-diag.mjs`
+- `scripts/lib/network-probes.mjs`
 - `scripts/lib/night-build.mjs`
 - `scripts/lib/night-land-reports.mjs`
 - `scripts/lib/night-report-gate.mjs`
@@ -932,6 +975,7 @@
 - `scripts/lib/tariff-cutover.mjs`
 - `scripts/lib/tariff-grid-check.mjs`
 - `scripts/lib/task-closure-review.mjs`
+- `scripts/lib/task-handoff-status.mjs`
 - `scripts/lib/task-inspect.mjs`
 - `scripts/lib/task-invariants-links.mjs`
 - `scripts/lib/task-invariants.mjs`
@@ -1034,6 +1078,7 @@
 - `scripts/neighbors.test.mjs`
 - `scripts/net-diag.test.mjs`
 - `scripts/net-http.test.mjs`
+- `scripts/network-probes.test.mjs`
 - `scripts/network/classify.test.mjs`
 - `scripts/network/lib/classify.mjs`
 - `scripts/network/lib/probe-core.mjs`
@@ -1172,6 +1217,7 @@
 - `scripts/task-closure-review-schema.test.mjs`
 - `scripts/task-closure-review-skills.test.mjs`
 - `scripts/task-closure-review.test.mjs`
+- `scripts/task-handoff-status.test.mjs`
 - `scripts/task-inspect.test.mjs`
 - `scripts/task-invariants.test.mjs`
 - `scripts/task-pr-land.test.mjs`
@@ -1226,10 +1272,9 @@
 - `scripts/worktree-sync-check.test.mjs`
 - `scripts/worktrees-align.test.mjs`
 
-## Yarn → missing file (9)
+## Yarn → missing file (8)
 
 - `apply:lead-persona` → missing `scripts/apply-lead-persona-defaults.mjs`
-- `cabinet:mp7:prod` → missing `scripts/_ssh-cabinet-mp7-prod.mjs`
 - `lint:scripts` → missing `scripts/**/*.mjs`
 - `night:run` → missing `scripts/night-build-run-phase.mjs`
 - `templates:content:real:birds` → missing `scripts/materialize-free-v1-real.py`
@@ -1238,7 +1283,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1117)
+## All code files (1164)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1252,6 +1297,7 @@
 - `scripts/_ssh-affine-install.mjs`
 - `scripts/_ssh-cabinet-deploy-image.mjs`
 - `scripts/_ssh-cabinet-deploy.mjs`
+- `scripts/_ssh-cabinet-logs.mjs`
 - `scripts/_ssh-cabinet-mp2-post-deploy.mjs`
 - `scripts/_ssh-cabinet-mp2-smoke.mjs`
 - `scripts/_ssh-cabinet-mp2-verify.mjs`
@@ -1263,48 +1309,80 @@
 - `scripts/_ssh-cabinet-mp4-prod.mjs`
 - `scripts/_ssh-cabinet-mp5-prod.mjs`
 - `scripts/_ssh-cabinet-mp6-prod.mjs`
+- `scripts/_ssh-cabinet-mp7-prod.mjs`
+- `scripts/_ssh-cabinet-pair-debug.mjs`
+- `scripts/_ssh-cabinet-pair-hotfix-prod.mjs`
 - `scripts/_ssh-cabinet-pair-unlink-prod.mjs`
 - `scripts/_ssh-cabinet-pairing-e2e-deploy.mjs`
+- `scripts/_ssh-cabinet-pairing-prod-fix.mjs`
 - `scripts/_ssh-cabinet-post-smoke.mjs`
 - `scripts/_ssh-cabinet-quota-refactor-prod.mjs`
 - `scripts/_ssh-cabinet-quota-refactor-smoke.mjs`
+- `scripts/_ssh-cabinet-recover.mjs`
+- `scripts/_ssh-cabinet-redeploy.mjs`
 - `scripts/_ssh-cabinet-rollback.mjs`
 - `scripts/_ssh-cabinet-smoke.mjs`
 - `scripts/_ssh-cabinet-tj6-live-journal-smoke.mjs`
 - `scripts/_ssh-cabinet-u10-workspace-prod.mjs`
 - `scripts/_ssh-cabinet-u10-workspace-smoke.mjs`
+- `scripts/_ssh-catalog-api-dupes.mjs`
 - `scripts/_ssh-catalog-dedupe-prod.mjs`
+- `scripts/_ssh-catalog-dupes-check.mjs`
+- `scripts/_ssh-catalog-labels-audit.mjs`
 - `scripts/_ssh-device-board-deploy.mjs`
+- `scripts/_ssh-device-board-smoke.mjs`
+- `scripts/_ssh-ds5-debug.mjs`
+- `scripts/_ssh-ds5-debug2.mjs`
+- `scripts/_ssh-ds5-debug3.mjs`
+- `scripts/_ssh-ds5-debug4.mjs`
+- `scripts/_ssh-media-add-office-key.mjs`
 - `scripts/_ssh-media-cabinet-cors-fix.mjs`
 - `scripts/_ssh-media-check.mjs`
 - `scripts/_ssh-media-config.mjs`
 - `scripts/_ssh-media-deploy.mjs`
+- `scripts/_ssh-media-disk-usage.mjs`
+- `scripts/_ssh-media-ensure-debug.mjs`
+- `scripts/_ssh-media-ensure-reserved-smoke.mjs`
 - `scripts/_ssh-media-exec.mjs`
+- `scripts/_ssh-media-hotfix-deploy.mjs`
+- `scripts/_ssh-media-mtr-office.mjs`
+- `scripts/_ssh-media-office-path-test.mjs`
 - `scripts/_ssh-media-ports.mjs`
+- `scripts/_ssh-media-prod-diag.mjs`
 - `scripts/_ssh-media-prod-up.mjs`
 - `scripts/_ssh-media-rebuild.mjs`
+- `scripts/_ssh-media-restart-api.mjs`
 - `scripts/_ssh-media-restart.mjs`
 - `scripts/_ssh-media-show-token.mjs`
 - `scripts/_ssh-media-smoke.mjs`
 - `scripts/_ssh-media-swagger-deploy.mjs`
 - `scripts/_ssh-media-tls-setup.mjs`
 - `scripts/_ssh-media-up-only.mjs`
+- `scripts/_ssh-media-upload-smoke.mjs`
 - `scripts/_ssh-office-check.mjs`
 - `scripts/_ssh-office-config.mjs`
 - `scripts/_ssh-office-config.test.mjs`
 - `scripts/_ssh-office-env-status.mjs`
 - `scripts/_ssh-office-exec.mjs`
+- `scripts/_ssh-office-inventory.mjs`
+- `scripts/_ssh-office-jump-probe.mjs`
+- `scripts/_ssh-office-local-forward.mjs`
 - `scripts/_ssh-office-prod-up.mjs`
+- `scripts/_ssh-office-proxy-probe.mjs`
 - `scripts/_ssh-office-show-token.mjs`
 - `scripts/_ssh-office-smoke.mjs`
 - `scripts/_ssh-office-tls-setup.mjs`
+- `scripts/_ssh-office-tunnel-exec.mjs`
+- `scripts/_ssh-office-tunnel-probe.mjs`
 - `scripts/_ssh-pagination-catalog-smoke.mjs`
 - `scripts/_ssh-pagination-prod-deploy.mjs`
 - `scripts/_ssh-panel-deploy.mjs`
 - `scripts/_ssh-panel-smoke.mjs`
 - `scripts/_ssh-panel-smoke.test.mjs`
+- `scripts/_ssh-prod-check.mjs`
 - `scripts/_ssh-root-site-setup.mjs`
 - `scripts/_ssh-tariff-dataset-ds5-prod-smoke.mjs`
+- `scripts/_ssh-vdr-prod-smoke.mjs`
 - `scripts/_strategic-plan.mjs`
 - `scripts/_sync-office-env-from-root.mjs`
 - `scripts/affine-capacity-gate.mjs`
@@ -1330,6 +1408,8 @@
 - `scripts/anthropic-task.mjs`
 - `scripts/archivarius-dump.mjs`
 - `scripts/archivarius-dump.test.mjs`
+- `scripts/archivarius-evening-step.mjs`
+- `scripts/archivarius-evening-step.test.mjs`
 - `scripts/archivarius-push.mjs`
 - `scripts/archivarius-restore-drill.mjs`
 - `scripts/archivarius-restore-drill.test.mjs`
@@ -1339,6 +1419,7 @@
 - `scripts/archive-daily-day-artifacts.mjs`
 - `scripts/archive-doc-snapshot.test.mjs`
 - `scripts/archive-inventory.test.mjs`
+- `scripts/archive-network-analysis.mjs`
 - `scripts/archive-night-hunt-artifacts.mjs`
 - `scripts/archive-task.mjs`
 - `scripts/artifact-freshness.test.mjs`
@@ -1410,6 +1491,8 @@
 - `scripts/case-inspect.mjs`
 - `scripts/case-portfolio.mjs`
 - `scripts/case-register.mjs`
+- `scripts/check-bare-fetch.mjs`
+- `scripts/check-bare-fetch.test.mjs`
 - `scripts/check-layer-direction.mjs`
 - `scripts/check-package-boundaries.mjs`
 - `scripts/check-package-boundaries.test.mjs`
@@ -1441,6 +1524,7 @@
 - `scripts/context-collector-paths.mjs`
 - `scripts/context-collector-paths.test.mjs`
 - `scripts/context-collector.mjs`
+- `scripts/corpus-track-acceptance.test.mjs`
 - `scripts/cowork-close.mjs`
 - `scripts/cowork-close.test.mjs`
 - `scripts/cowork-execution-smoke.test.mjs`
@@ -1620,6 +1704,7 @@
 - `scripts/lib/case-store.mjs`
 - `scripts/lib/case-store.test.mjs`
 - `scripts/lib/changed-files-scope.mjs`
+- `scripts/lib/check-bare-fetch.mjs`
 - `scripts/lib/ci-red-triage.mjs`
 - `scripts/lib/classify-worktree.mjs`
 - `scripts/lib/client-logs-parser.mjs`
@@ -1636,6 +1721,7 @@
 - `scripts/lib/consilium-prompt.mjs`
 - `scripts/lib/container-cache-hygiene.mjs`
 - `scripts/lib/container-cache-hygiene.test.mjs`
+- `scripts/lib/corpus-track-acceptance.mjs`
 - `scripts/lib/cowork-close.mjs`
 - `scripts/lib/dataset-audio.mjs`
 - `scripts/lib/day-memo-facts.mjs`
@@ -1765,6 +1851,7 @@
 - `scripts/lib/movement-mode.test.mjs`
 - `scripts/lib/namespace-registry.mjs`
 - `scripts/lib/net-diag.mjs`
+- `scripts/lib/network-probes.mjs`
 - `scripts/lib/night-build.mjs`
 - `scripts/lib/night-land-reports.mjs`
 - `scripts/lib/night-report-gate.mjs`
@@ -1895,6 +1982,7 @@
 - `scripts/lib/tariff-cutover.mjs`
 - `scripts/lib/tariff-grid-check.mjs`
 - `scripts/lib/task-closure-review.mjs`
+- `scripts/lib/task-handoff-status.mjs`
 - `scripts/lib/task-inspect.mjs`
 - `scripts/lib/task-invariants-links.mjs`
 - `scripts/lib/task-invariants.mjs`
@@ -2027,6 +2115,8 @@
 - `scripts/net-diag.test.mjs`
 - `scripts/net-http.mjs`
 - `scripts/net-http.test.mjs`
+- `scripts/network-probes.mjs`
+- `scripts/network-probes.test.mjs`
 - `scripts/network/classify.test.mjs`
 - `scripts/network/lib/classify.mjs`
 - `scripts/network/lib/probe-core.mjs`
@@ -2252,6 +2342,8 @@
 - `scripts/task-closure-review-skills.test.mjs`
 - `scripts/task-closure-review.mjs`
 - `scripts/task-closure-review.test.mjs`
+- `scripts/task-handoff-status.mjs`
+- `scripts/task-handoff-status.test.mjs`
 - `scripts/task-inspect.mjs`
 - `scripts/task-inspect.test.mjs`
 - `scripts/task-invariants-repair.mjs`
