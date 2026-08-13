@@ -20,10 +20,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `tw-handoff-status` | Мастерская задач: глагол task:handoff — актуальный хендоф со сверкой каждой строки (формат капитана 13.08) | S | [`TW_HANDOFF_STATUS_PROMPT.md`](../prompts/TW_HANDOFF_STATUS_PROMPT.md) | — |
 | `network-nightly-probes` | Ночной такт 01:00: сбор зонд-снимков, транспорт в дом, registry-пересчёт (В4+В5) | M | [`NETWORK_NIGHTLY_PROBES_PROMPT.md`](../prompts/NETWORK_NIGHTLY_PROBES_PROMPT.md) | [#1913](https://github.com/officefish/Membrana/issues/1913) |
 | `network-bare-fetch-tooth` | Зуб check-bare-fetch: политика машин из machine-policy, warn-храповик бюджетом (В7) | M | [`NETWORK_BARE_FETCH_TOOTH_PROMPT.md`](../prompts/NETWORK_BARE_FETCH_TOOTH_PROMPT.md) | [#1912](https://github.com/officefish/Membrana/issues/1912) |
-| `network-house-skeleton` | Контейнер network: каркас дома — README, схема снимка, нормы registry (канон заседания) | S | [`NETWORK_HOUSE_SKELETON_PROMPT.md`](../prompts/NETWORK_HOUSE_SKELETON_PROMPT.md) | [#1910](https://github.com/officefish/Membrana/issues/1910) |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-live-services` | #1303-C: LIVE_SERVICES, документация и monitoring | S | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
@@ -43,7 +41,6 @@
 | `meeting-evening-review-predicate` | Заседание: вечерний кадр — предмет ревью, порядок трёх документов, ворота качества | L | [`MEETING_BRIEF.md`](../meeting/evening-review-predicate/MEETING_BRIEF.md) | — |
 | `evening-chain-review-predicate` | Вечер: предмет ревью, порядок трёх документов, ворота качества (№6 хендофа, M→L по слову владельца 01.08) | L | [`EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md`](../prompts/EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md) | — |
 | `mfcc-compare-sprint` | MFCC-ядро: обвязка, детекторы и сравнительный прогон против гармонического на FFT | M | [`mfcc-compare-sprint.json`](../sprint/cut/mfcc-compare-sprint.json) | — |
-| `network-container` | Контейнер network: словарь исходов, зонды обоими путями, предполётная проверка, снимок окружения для агентов | M | [`NETWORK_CONTAINER_PROMPT.md`](../prompts/NETWORK_CONTAINER_PROMPT.md) | [#1449](https://github.com/officefish/Membrana/issues/1449) |
 | `archivarius-sessions-container` | Контейнер сессий Archivarius: Mongo office, адресуемые span, ingest/search с секрет-маской | L | [`ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md`](../prompts/ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md) | [#1330](https://github.com/officefish/Membrana/issues/1330) |
 | `insight-mandate-for-new` | Решение по инсайту недостижимо для новых инсайтов: мандаты только из зашитой миграции | M | [`INSIGHT_MANDATE_FOR_NEW_PROMPT.md`](../prompts/INSIGHT_MANDATE_FOR_NEW_PROMPT.md) | — |
 | `frame-rails-2307` | Эпик: базовые процедуры на фрейм-рельсы (утро/спринт/заседание) | L | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | — |
@@ -143,8 +140,11 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `tw-handoff-status` | Мастерская задач: глагол task:handoff — актуальный хендоф со сверкой каждой строки (формат капитана 13.08) | 2026-08-13 | [`TW_HANDOFF_STATUS_PROMPT.md`](../prompts/TW_HANDOFF_STATUS_PROMPT.md) | — | [карточка](./archive/tw-handoff-status.md) |
+| `network-house-skeleton` | Контейнер network: каркас дома — README, схема снимка, нормы registry (канон заседания) | 2026-08-13 | [`NETWORK_HOUSE_SKELETON_PROMPT.md`](../prompts/NETWORK_HOUSE_SKELETON_PROMPT.md) | #1910 (Issue открыт) | [карточка](./archive/network-house-skeleton.md) |
 | `archivarius-evening-step` | Шаг архива сессий в вечерней цепочке: тракт scan→extract→ingest→push едет сам, отказ office честный | 2026-08-13 | [`ARCHIVARIUS_EVENING_STEP_PROMPT.md`](../prompts/ARCHIVARIUS_EVENING_STEP_PROMPT.md) | — | [карточка](./archive/archivarius-evening-step.md) |
 | `dead-wire-local-only-carrier` | Dead-wire: класс носителя вне git (gitignored) невыразим словарём pending — новая причина local-only-carrier | 2026-08-13 | [`DEAD_WIRE_LOCAL_ONLY_CARRIER_PROMPT.md`](../prompts/DEAD_WIRE_LOCAL_ONLY_CARRIER_PROMPT.md) | — | [карточка](./archive/dead-wire-local-only-carrier.md) |
+| `network-container` | Контейнер network: словарь исходов, зонды обоими путями, предполётная проверка, снимок окружения для агентов | 2026-08-13 | [`NETWORK_CONTAINER_PROMPT.md`](../prompts/NETWORK_CONTAINER_PROMPT.md) | #1449 (Issue открыт) | [карточка](./archive/network-container.md) |
 | `eslint-ratchet-single-source` | Порог ESLint-храповика живёт одним источником (package.json), ci.yml без копии числа | 2026-08-12 | [`ESLINT_RATCHET_SINGLE_SOURCE_PROMPT.md`](../prompts/ESLINT_RATCHET_SINGLE_SOURCE_PROMPT.md) | #1896 | [карточка](./archive/eslint-ratchet-single-source.md) |
 | `worktrees-align-snapshot-guard` | worktrees:align: гард охвата до мутации и продолжение обхода после отказа | 2026-08-12 | [`WORKTREES_ALIGN_SNAPSHOT_GUARD_PROMPT.md`](../prompts/WORKTREES_ALIGN_SNAPSHOT_GUARD_PROMPT.md) | #1864 | [карточка](./archive/worktrees-align-snapshot-guard.md) |
 | `openrouter-default-model-unverified` | Дефолтная модель офиса живёт литералом в коде и никем не проверяется на живость | 2026-08-12 | [`OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md`](../prompts/OPENROUTER_DEFAULT_MODEL_UNVERIFIED_PROMPT.md) | — | [карточка](./archive/openrouter-default-model-unverified.md) |
