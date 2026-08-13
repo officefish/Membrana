@@ -1,0 +1,23 @@
+{
+  "$id": "membrana://audit/network/violations-budget@1",
+  "//": "Warn-храповик легаси голых fetch (В7, ратифицировано 13.08). Бюджет считает ИЗВЕСТНЫЕ голые вызовы — названы, НЕ амнистированы. Новое нарушение сверх бюджета — красный (VIOLATION). Снижение бюджета — только PR с доказательством устранения вызова; увеличение — только amnesty-записью в machine-policy.json, не правкой числа.",
+  "maxBareCallsCount": 4,
+  "knownLegacy": [
+    {
+      "site": "packages/background-office/src/modules/deepseek/deepseek.service.ts",
+      "note": "глобальный fetch, HTTPS_PROXY не читает (материал 29.07)"
+    },
+    {
+      "site": "packages/background-cabinet/src/modules/pair/media-bridge.service.ts",
+      "note": "голый fetch (инвентарь 12.08)"
+    },
+    {
+      "site": "packages/background-media/src/linear-snapshot/linear-snapshot.service.ts",
+      "note": "голый fetch; машина NL — кандидат на permanent-исключение при заведении зуба (уже покрыт allowedBarePackages)"
+    },
+    {
+      "site": "packages/services/media-library/src/backends/server-storage-backend.ts",
+      "note": "голый fetch (инвентарь 12.08)"
+    }
+  ]
+}
