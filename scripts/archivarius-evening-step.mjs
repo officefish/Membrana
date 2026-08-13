@@ -40,7 +40,15 @@ export const OUTCOME_EXIT = Object.freeze({
   'office-unreachable': 3,
 });
 
-/** Начало дня для инъецированного «сейчас» — границы дня считает вызывающий тест/цепочка. */
+/**
+ * Начало дня для инъецированного «сейчас» — ЛОКАЛЬНАЯ полночь узла, сознательно
+ * (P1 ревью 13.08, вердикт письменно): шаг живёт в вечерней цепочке той же машины,
+ * чьи сессии архивирует, — «день» здесь = локальный день владельца сессий, и
+ * граница обязана совпадать с его календарём, а не с UTC. При переносе шага на
+ * сервер с чужой TZ допущение пересматривается вместе с манифестом вечера.
+ * Тесты держатся TZ-устойчиво по построению: «свежий» = now (всегда после локальной
+ * полуночи), «вчерашний» = now−24h (всегда до неё) — без литералов границы.
+ */
 export function startOfDay(now) {
   const day = new Date(now);
   day.setHours(0, 0, 0, 0);
@@ -70,6 +78,17 @@ export function buildEveningLine(report) {
 /** Контрактная строка скипа — исход назван, причина в скобках, тел строк нет. */
 export function buildSkipLine(outcome, detail) {
   return `archivarius-evening: skip outcome=${outcome} (${detail})`;
+}
+
+/**
+ * Единственная точка выбора строки вывода: только исход ok печатает счётчики.
+ * empty-day — именованный skip (P1 ревью 13.08: нули счётчиков неотличимы от
+ * «файлы были, а спанов ноль» — исход обязан читаться словом, не анализом чисел).
+ */
+export function lineFor(result) {
+  if (result.outcome === 'ok') return buildEveningLine(result.report);
+  if (result.outcome === 'empty-day') return buildSkipLine('empty-day', 'свежих файлов дня нет');
+  return buildSkipLine(result.outcome, result.detail);
 }
 
 /** Health-предполёт: office отвечает — иначе office-unreachable с причиной. */
@@ -140,7 +159,14 @@ function parseArgs(argv) {
 }
 
 async function main() {
-  const args = parseArgs(process.argv.slice(2));
+  let args;
+  try {
+    args = parseArgs(process.argv.slice(2));
+  } catch (error) {
+    // Parse-ошибка — вход, не исполнение: exit 2, как и нерезолвящийся источник (P2 Ожегова 13.08).
+    console.error(`archivarius-evening — ${error.message}`);
+    return 2;
+  }
   const sources = args.from.length
     ? args.from.map((p) => expandHome(p))
     : [defaultTranscriptsDir()].filter(Boolean);
@@ -156,11 +182,7 @@ async function main() {
     token,
     log: (line) => console.error(line),
   });
-  if (result.outcome === 'office-unreachable') {
-    console.log(buildSkipLine(result.outcome, result.detail));
-  } else {
-    console.log(buildEveningLine(result.report));
-  }
+  console.log(lineFor(result));
   return OUTCOME_EXIT[result.outcome];
 }
 

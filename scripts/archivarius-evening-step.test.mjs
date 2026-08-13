@@ -18,6 +18,7 @@ import {
   buildSkipLine,
   checkOfficeHealth,
   filterFreshFiles,
+  lineFor,
   runEveningStep,
   startOfDay,
 } from './archivarius-evening-step.mjs';
@@ -74,8 +75,11 @@ test('ok: в extract идут только файлы дня, строка от�
     });
     assert.equal(result.outcome, 'ok');
     // Фильтр дня: вчерашний файл не читался — files=1, спанов ровно два.
-    const line = buildEveningLine(result.report);
+    // Границы TZ-устойчивы по построению: fresh=now (после локальной полуночи в
+    // любой TZ), stale=now−24h (до неё в любой TZ) — литералов границы в тесте нет.
+    const line = lineFor(result);
     assert.equal(line, 'archivarius-evening: files=1 spans=2 maskedLines=1 accepted=2');
+    assert.equal(line, buildEveningLine(result.report), 'ok — единственный исход со строкой счётчиков');
     // Тела строк транскриптов не текут ни в строку отчёта, ни в лог шага.
     const all = [line, ...logs].join('\n');
     assert.ok(!all.includes(SECRET_MARKER), 'секрет из транскрипта попал в вывод шага');
@@ -101,7 +105,8 @@ test('empty-day: свежих файлов нет — сеть не трогае
     });
     assert.equal(result.outcome, 'empty-day');
     assert.equal(calls.length, 0, 'empty-day не должен ходить в сеть');
-    assert.equal(buildEveningLine(result.report), 'archivarius-evening: files=0 spans=0 maskedLines=0 accepted=0');
+    // P1 ревью 13.08: empty-day читается СЛОВОМ, не нулями счётчиков.
+    assert.equal(lineFor(result), 'archivarius-evening: skip outcome=empty-day (свежих файлов дня нет)');
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }

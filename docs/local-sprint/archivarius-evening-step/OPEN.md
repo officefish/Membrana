@@ -22,9 +22,13 @@
 
 | Блок | Персона | Зона | Статус |
 |------|---------|------|--------|
-| e1 движок вечернего шага | dynin | `scripts/archivarius-evening-step.mjs` + тест | in work |
-| e2 провод в манифест вечера (после e1) | vesnin | `evening-ritual-steps.json`, `package.json` | ждёт e1 |
-| e3 форма и дом | ozhegov | `docs/archivarius/README.md`, `workshop.manifest.json` | ждёт e1 |
+| e1 движок вечернего шага | dynin | `scripts/archivarius-evening-step.mjs` + тест | done (8/8 зубов) |
+| e2 провод в манифест вечера (после e1) | vesnin | `evening-ritual-steps.json`, `package.json` | done (68/68 зубов манифеста) |
+| e3 форма и дом | ozhegov | `docs/archivarius/README.md` | done (манифест мастерской сознательно не тронут — словарь verbs закрыт) |
+
+Гейт исполнения: 3/3 honest_pair · боевой прогон `files=2 spans=2823 maskedLines=2 accepted=2823`.
+P1 ревью закрыты письменно: TZ-граница = локальная полночь узла (допущение в коде),
+empty-day — именованный skip (`lineFor`).
 
 ## Контракт трёх инвариантов (ревью Веснина, лента актов)
 
