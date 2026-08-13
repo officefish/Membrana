@@ -76,6 +76,8 @@ async function main() {
   const issueStates = new Map();
   if (!noNetwork && numbers.length > 0) {
     // Сеть не ответила → honest unknown: отчёт выходит с ❓, а не падает и не гадает.
+    // fetchStatesBatch — СИНХРОННЫЙ (execFileSync внутри), await не нужен; имя
+    // провоцирует прочтение «async» — поймано ревью PR #1922.
     const batch = fetchStatesBatch(numbers);
     if (batch.unknown) {
       console.error(`task:handoff — состояния Issue не добыты: ${batch.reason}; показываю с ❓`);

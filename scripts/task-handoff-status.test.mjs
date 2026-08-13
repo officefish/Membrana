@@ -120,6 +120,13 @@ test('рендер: пять секций формата — шапка, отс�
   assert.match(text, /класс #1330/u);
 });
 
+test('обвязка: пустой registry.tasks и пустой git log — не падение (P2 ревью)', async () => {
+  const { buildCardsIndex, readFileCommit } = await import('./task-handoff-status.mjs');
+  assert.deepEqual([...buildCardsIndex({ tasks: [] }).keys()], []);
+  assert.deepEqual([...buildCardsIndex({}).keys()], [], 'реестр без tasks — пустой индекс');
+  assert.equal(readFileCommit('C:/нет/такого/корня', 'нет.md'), null, 'git не ответил → null, не throw');
+});
+
 test('рендер без очереди: честное «сверять нечего»', () => {
   const text = renderHandoffStatus({ title: 'X', fileCommit: null, staleDays: null, rows: [] });
   assert.match(text, /сверять нечего/u);

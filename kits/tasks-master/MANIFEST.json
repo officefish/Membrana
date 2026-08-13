@@ -36,7 +36,7 @@
     "scripts/lib/tasks-readme-engine.mjs": "3a45a41f5e17587bc54b85011eeacbeffa7c264b",
     "scripts/one-shot-rank.mjs": "4a0ef8a7583b95748b921429080d910c5b39a6da",
     "scripts/one-shot-trail.mjs": "bfc8c08599dc293c9c21addc8e2ae177b0de4173",
-    "scripts/task-handoff-status.mjs": "51c7fc42168935d1d6598159d76a3709f00d6b5e",
+    "scripts/task-handoff-status.mjs": "9a75ad949aa00d93a2990152436e9659c12c6ea7",
     "scripts/task-inspect.mjs": "bbf58ce8997b876fdf97d8f1a42e20c6500c77ce",
     "scripts/task-invariants-repair.mjs": "9b4fdd7ac6226d54400d8c9e91ba8d1656a81ede",
     "scripts/task-invariants.mjs": "10b66ad6e7ff30419eee50fef428dafc1f932745",
