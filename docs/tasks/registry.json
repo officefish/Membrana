@@ -87,14 +87,14 @@
       "noIssueReason": "S-карточка тулинга по слову владельца 13.08; issue при взятии в работу",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-13",
-      "archivedAt": null,
+      "archivedAt": "2026-08-13",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "Вещдок 13.08: cabinet:mp7:prod → scripts/_ssh-cabinet-mp7-prod.mjs существует локально, но .gitignore:88 (scripts/_ssh-*.mjs) держит его вне git. Локальный dead-wire:check требует снять pending-запись (pending_orphan), CI без файла требует держать (dead_wire) — противоречие невыразимо закрытым словарём PENDING_REASONS. Утром 13.08 снятие записи уронило CI PR #1904, откат 9132907c. Нужно: причина local-only-carrier (без until-протухания или с явной политикой), учёт gitignore в предикате, зуб на класс.",
-      "archiveNotes": null,
+      "archiveNotes": "Шот: PR #1914 MERGED (Closes #1911), причина local-only-carrier в словаре + gitignore-предикат в обвязке; cabinet:mp7:prod переведён — локальный прогон и CI зелёные одной записью; 37/37 зубов; журнал шотов: docs/audit/one-shot-trail.jsonl",
       "githubIssueClosedAt": null
     },
     {

@@ -15,6 +15,12 @@ export const PENDING_REASONS = Object.freeze([
   'blocked-by-epic', // ждёт мерджа эпика, ссылка обязательна
   'external-dependency', // ждёт внешнюю поставку вне нашего контроля
   'migration-in-progress', // носитель переезжает, старое имя ещё нужно
+  // Носитель сознательно вне git (#1911, вещдок 13.08 cabinet:mp7:prod): локально файл
+  // есть, в CI его нет ПО ПОСТРОЕНИЮ (.gitignore) — без этого класса локальный прогон
+  // требовал снять запись (pending_orphan), а CI требовал держать (dead_wire).
+  // Протухание меряется не календарём, а gitignore-покрытием: паттерн выпал → запись
+  // обязана уйти (pending_invalid «названа ложно»).
+  'local-only-carrier',
 ]);
 
 /** Вердикты разбора — закрытый enum. Прочерк вердиктом не считается. */
@@ -108,6 +114,14 @@ export function pendingEntryProblems(entry) {
   if (typeof reason !== 'string' || !PENDING_REASONS.includes(reason)) {
     problems.push(`причина вне закрытого перечня: ${JSON.stringify(reason)}`);
   }
+  if (reason === 'local-only-carrier') {
+    // Срок этому классу запрещён, а не «не нужен»: мёртвое поле лгало бы о механике
+    // протухания — она gitignore-покрытием, не календарём (#1911).
+    if (until !== undefined) {
+      problems.push('local-only-carrier не несёт срока until — протухание меряется gitignore-покрытием, не календарём');
+    }
+    return problems;
+  }
   if (typeof until !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(until)) {
     problems.push(`срок не дата YYYY-MM-DD: ${JSON.stringify(until)}`);
   } else if (Number.isNaN(Date.parse(`${until}T00:00:00Z`))) {
@@ -140,10 +154,38 @@ export function pendingExpired(entry, today) {
  * @param {string} input.today дата прогона, YYYY-MM-DD
  * @returns {Array<{kind: string, name: string, carrier: string|null, detail: string}>}
  */
-export function checkWire({ name, command, fileExists, pending, today }) {
+export function checkWire({ name, command, fileExists, pending, today, isIgnored }) {
   const findings = [];
   const carriers = extractCarrierPaths(command);
   const entry = Object.prototype.hasOwnProperty.call(pending, name) ? pending[name] : undefined;
+
+  // local-only-carrier (#1911): носитель сознательно вне git. Существование файла
+  // НЕ является сигналом ни в одну сторону (локально есть, в CI нет по построению) —
+  // ни pending_orphan при живом, ни dead_wire при отсутствующем. Честность записи
+  // держит gitignore-покрытие: предикат приходит инъекцией из обвязки; без предиката
+  // покрытие честно не проверяется (unknown), а не считается ложью.
+  if (entry !== null && typeof entry === 'object' && !Array.isArray(entry)
+    && (/** @type {{reason?: unknown}} */ (entry)).reason === 'local-only-carrier') {
+    const problems = pendingEntryProblems(entry);
+    if (problems.length > 0) {
+      findings.push({ kind: 'pending_invalid', name, carrier: carriers[0] ?? null, detail: problems.join('; ') });
+      return findings;
+    }
+    if (typeof isIgnored === 'function') {
+      for (const carrier of carriers) {
+        if (!isIgnored(carrier)) {
+          findings.push({
+            kind: 'pending_invalid',
+            name,
+            carrier,
+            detail: 'причина local-only-carrier названа ложно: путь не покрыт .gitignore — паттерн выпал, запись обязана уйти',
+          });
+        }
+      }
+    }
+    return findings;
+  }
+
   const missing = carriers.filter((path) => !fileExists(path));
 
   if (missing.length === 0) {
@@ -200,9 +242,10 @@ export function checkWire({ name, command, fileExists, pending, today }) {
  * @param {(path: string) => boolean} input.fileExists
  * @param {Record<string, unknown>} [input.pending]
  * @param {string} input.today
+ * @param {(path: string) => boolean} [input.isIgnored] gitignore-покрытие пути (для local-only-carrier); без инъекции покрытие честно не проверяется
  * @returns {{findings: Array<object>, checked: number, byKind: Record<string, number>}}
  */
-export function auditWires({ scripts, fileExists, pending = {}, today }) {
+export function auditWires({ scripts, fileExists, pending = {}, today, isIgnored }) {
   if (scripts === null || typeof scripts !== 'object') {
     throw new Error('auditWires: scripts обязан быть объектом package.json.scripts');
   }
@@ -212,7 +255,7 @@ export function auditWires({ scripts, fileExists, pending = {}, today }) {
 
   const findings = [];
   for (const [name, command] of Object.entries(scripts)) {
-    findings.push(...checkWire({ name, command: String(command), fileExists, pending, today }));
+    findings.push(...checkWire({ name, command: String(command), fileExists, pending, today, isIgnored }));
   }
 
   // Записи pending о командах, которых в package.json уже нет.
