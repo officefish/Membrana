@@ -1,5 +1,5 @@
 {
-  "date": "2026-08-12",
+  "date": "2026-08-13",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -55,6 +55,13 @@
       "id": "@npmcli/move-file (deprecation)",
       "severity": "moderate",
       "issue": "This functionality has been moved to @npmcli/fs",
+      "url": ""
+    },
+    {
+      "pkg": "@xmldom/xmldom",
+      "id": "@xmldom/xmldom (deprecation)",
+      "severity": "moderate",
+      "issue": "this version has critical issues, please update to the latest version",
       "url": ""
     },
     {
@@ -210,6 +217,13 @@
       "severity": "moderate",
       "issue": "This version is no longer supported. Please see https://eslint.org/version-support for other options.",
       "url": ""
+    },
+    {
+      "pkg": "extract-zip",
+      "id": "1139346",
+      "severity": "high",
+      "issue": "extract-zip unvalidated symlink path traversal",
+      "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv"
     },
     {
       "pkg": "fast-uri",
