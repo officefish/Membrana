@@ -1,0 +1,27 @@
+{
+  "$id": "membrana://audit/network/egress-rules@1",
+  "//": "Правила исходящего трафика ДАННЫМИ (В6 заседания network-container, ратифицировано 13.08). Рукописная норма: ночной пересчёт registry этот файл НЕ трогает. Свободный текст — только в comment. Зубы: T_night (снимки ленты против active-правил) и T_gate (дифф call-sites) — поставки #1912/#1913.",
+  "fields": {
+    "rule_id": "уникальный id правила",
+    "class": "класс правила (K1 — направление трафика office↔внешние)",
+    "source_zone": "зона-источник (машина/сервис)",
+    "dest_class": "класс назначения",
+    "verdict": "allowed | forbidden | via",
+    "via_node": "обязателен при verdict=via, иначе null",
+    "precedent_ref": "ссылка на прецедент/код-носитель",
+    "status": "active | deprecated"
+  },
+  "rules": [
+    {
+      "rule_id": "K1-office-linear",
+      "class": "K1",
+      "source_zone": "office",
+      "dest_class": "linear",
+      "verdict": "via",
+      "via_node": "media-vps-nl",
+      "precedent_ref": "docs/discussions/network-container-material-2026-07-29.md · packages/background-office/src/linear-snapshot/media-snapshot.client.ts",
+      "status": "active",
+      "comment": "Миграция K1 из прозы кода в норму данными (M6): office в Linear не ходит — делегирует media-VPS NL. Поведение кода этим файлом не менялось; слово нормы здесь, поведение — в коде до отдельного такта."
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "$id": "membrana://audit/network/probe-snapshot@1",
+  "//": "Закрытая схема зонд-снимка (В1/В2/В3 заседания network-container, ратифицировано 13.08). Поле вне схемы не создаётся — первый слой защиты шва с infra-policy. Расширение словаря status — только ADR-записью в доме (владелец словаря — архитектор дома).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["organ", "at", "machine", "target", "outcome"],
+  "properties": {
+    "organ": {
+      "type": "string",
+      "minLength": 1,
+      "//": "Орган наблюдения: net:diag | llm:probe | infra:probe | net:http | outbound-self-check | … (набор органов открыт, имя обязано быть именем существующего инструмента)"
+    },
+    "probe_id": {
+      "type": "string",
+      "//": "Стабильный id зонда для overwrite-проекции registry/{probe_id}.json"
+    },
+    "at": { "type": "string", "format": "date-time" },
+    "machine": {
+      "type": "string",
+      "enum": ["dev", "office", "media-vps-nl", "cabinet", "ci"],
+      "//": "Машина-источник наблюдения; словарь согласован с registry/machine-policy.json"
+    },
+    "target": {
+      "type": "string",
+      "minLength": 1,
+      "//": "Санитизированная цель (host/verb) — БЕЗ userinfo, токенов, приватных путей (запрещённые классы 1–2)"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["executed", "failed"],
+      "//": "Ось акта (В2): failed = проверка не состоялась; status при этом не интерпретируется"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "degraded", "down", "unknown", "partial"],
+      "//": "Закрытый словарь В2; неизвестное значение органа → unknown + organ_raw_status"
+    },
+    "organ_raw_status": {
+      "type": "string",
+      "//": "Оригинальное значение органа вне словаря (вспомогательное, вне словаря)"
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "latencyMs": { "type": "number", "minimum": 0 },
+        "httpStatus": { "type": "integer" }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "//": "Атрибутивный блок маршрута ВНУТРИ снимка (В1); не отдельная запись",
+      "properties": {
+        "exit": { "type": "string", "//": "direct | proxy | via:<node> — декларативно; истина направлений в egress-rules.json" },
+        "infra_node_id": { "type": "string", "//": "Односторонняя ссылка на узел infra-policy (В3); непрозрачный ключ, снимок его не валидирует" }
+      }
+    },
+    "error_class": {
+      "type": "string",
+      "//": "Нормализованный класс ошибки (например net:timeout) — не сырое тело (запрещённый класс 3)"
+    },
+    "note": { "type": "string", "//": "Короткое слово; не место для дампов (класс 4)" }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "$id": "membrana://audit/network/machine-policy@1",
+  "//": "Политика машин (В7 заседания network-container, ратифицировано 13.08 с гармонизацией носителя: registry дома, не пакет; прецедент жанра — docs/security/infra-policy.json + скрипт-читатель). Единственный источник истины для зуба scripts/check-bare-fetch.mjs (#1912). allowedExits — ДЕКЛАРАТИВНОЕ поле: источник истины направлений — egress-rules.json (В6). Рукописная норма: ночной пересчёт registry файл не трогает.",
+  "machines": [
+    {
+      "machine": "dev",
+      "allowedExits": ["proxy-local"],
+      "proxy": "env:HTTPS_PROXY (.env)",
+      "comment": "dev-машина РФ за локальным прокси"
+    },
+    {
+      "machine": "office",
+      "allowedExits": ["proxy", "via:media-vps-nl"],
+      "proxy": "env:HTTPS_PROXY (доставка компоузом — находка 29.07)",
+      "comment": "RF VDS за фильтром; прямой выход нелегален"
+    },
+    {
+      "machine": "media-vps-nl",
+      "allowedExits": ["direct"],
+      "proxy": null,
+      "comment": "NL без фильтра — прямой выход легален"
+    },
+    {
+      "machine": "cabinet",
+      "allowedExits": ["via:media-vps-nl"],
+      "proxy": null,
+      "comment": "ходит через media (media-bridge)"
+    },
+    {
+      "machine": "ci",
+      "allowedExits": ["direct"],
+      "proxy": null,
+      "comment": "GitHub-раннеры — прямой выход"
+    }
+  ],
+  "allowedBarePackages": [
+    {
+      "type": "permanent",
+      "package": "packages/background-media/src/linear-snapshot",
+      "reason": "NL direct exit is legal, no filter — прямой fetch с media-VPS легален по построению (машина без фильтра)"
+    }
+  ],
+  "//exceptions": "Исключение — ТОЛЬКО записью здесь: type permanent|amnesty, package, reason (обязателен), amnesty дополнительно несёт expiresAt. Комментарий в коде (// allow:) исключением НЕ является."
+}

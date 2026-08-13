@@ -192,3 +192,6 @@ var/backups/
 # Носитель кадра night-report (#1293): локальная подтяжка артефакта ночи,
 # свежесть по generatedAt — файл не коммитится, утро тянет его заново.
 tests/reports/nightly-full/
+
+# Дом network: транзит скрипта зондирования (В5 заседания network-container)
+docs/audit/network/cache/

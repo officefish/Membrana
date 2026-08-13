@@ -20,6 +20,9 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `network-nightly-probes` | Ночной такт 01:00: сбор зонд-снимков, транспорт в дом, registry-пересчёт (В4+В5) | M | [`NETWORK_NIGHTLY_PROBES_PROMPT.md`](../prompts/NETWORK_NIGHTLY_PROBES_PROMPT.md) | [#1913](https://github.com/officefish/Membrana/issues/1913) |
+| `network-bare-fetch-tooth` | Зуб check-bare-fetch: политика машин из machine-policy, warn-храповик бюджетом (В7) | M | [`NETWORK_BARE_FETCH_TOOTH_PROMPT.md`](../prompts/NETWORK_BARE_FETCH_TOOTH_PROMPT.md) | [#1912](https://github.com/officefish/Membrana/issues/1912) |
+| `network-house-skeleton` | Контейнер network: каркас дома — README, схема снимка, нормы registry (канон заседания) | S | [`NETWORK_HOUSE_SKELETON_PROMPT.md`](../prompts/NETWORK_HOUSE_SKELETON_PROMPT.md) | [#1910](https://github.com/officefish/Membrana/issues/1910) |
 | `dead-wire-local-only-carrier` | Dead-wire: класс носителя вне git (gitignored) невыразим словарём pending — новая причина local-only-carrier | S | [`DEAD_WIRE_LOCAL_ONLY_CARRIER_PROMPT.md`](../prompts/DEAD_WIRE_LOCAL_ONLY_CARRIER_PROMPT.md) | — |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
