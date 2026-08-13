@@ -17,7 +17,7 @@
     "domain": [
       {
         "name": "handoff",
-        "worksOn": "docs/HANDOFF.md",
+        "worksOn": "docs/tasks/registry.json",
         "tool": "yarn task:handoff"
       }
     ]
