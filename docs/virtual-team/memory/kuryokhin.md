@@ -5,8 +5,62 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14296/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 272 (причины в op-log) -->
+Записей: 50 · бюджет 14386/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 280 (причины в op-log) -->
+
+### 2026-08-13 · позиция · network-container-m0-order
+
+> Слышу тему: 3 (граница с infra-policy) — это не просто «где шов», это вопрос о том, что вообще попадает в контейнер `network`, а что остаётся в infra. Пока 3 не решён, вопросы 5 (что в реестр, что в cache) и 6 (правила K1) могут тянуть в реестр то, что должно остаться у infra. […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/network-container-m0-order-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m1-home-record
+
+> Слышу это как вопрос о дорожке, а не о микшере. Органы такта 1 — `net:diag`, `llm:probe`, `infra:probe`, `net:http`, `outbound-self-check`, `scripts/network/*` — это микрофоны на шине, не сама партитура маршрутов. Одна запись должна звучать как снимок прослушивания: кто слушал, […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/network-container-m1-home-record-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m2-infra-border
+
+> Слышу риск в обратной связи: а может ли `infra-policy` ссылаться на снимок? Это было бы инверсией тракта — норма, зависящая от наблюдения. Архитектурно: нет. `infra-policy` — upstream, снимок — downstream. Обратная ссылка создаёт цикл. Если policy-запись хочет сослаться на […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/network-container-m2-infra-border-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m3-status-vocab
+
+> Слышу вопрос про «не состоялась» как про потерю сигнала, а не про качество сигнала. Это разные вещи: один канал говорит о форме волны, другой — о том, дошла ли волна вообще. Если записать «не состоялась» как отдельное состояние в том же словаре — получим полифонию там, где нужна […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/network-container-m3-status-vocab-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m4-owner-rhythm
+
+> Сеть — не аудио-контур. Я слышу предмет как «зонд бьёт в серверный шов и пишет снимок». Это не DSP, не embedded. Но ритм — моя территория: ритм должен совпадать с существующими тактами, иначе получим джэм без дирижёра. Ночные контуры уже есть: 02:00 vitest, 03:00 tests-nightly. […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/network-container-m4-owner-rhythm-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m5-storage
+
+> Начну с интуиции потока. Снимок зонда — это кадр во времени: узел был в таком-то состоянии в такую-то ночь. Если мы перезаписываем его — мы теряем партитуру, оставляем только последний такт. Для аудио это было бы катастрофой: нельзя слышать форму без истории. Предлагаю смотреть […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/network-container-m5-storage-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m6-k1-rules
+
+> Слышу K1 как маршрутный патч, не как партитуру ленты. «Office не ходит в Linear — ходит через media-VPS» — это via-норма, сегодня спрятанная прозой в `media-snapshot.client`. Если оставить её только в коде, зуб кусает воздух: сравнивать не с чем. Норма должна звучать отдельно от […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/network-container-m6-k1-rules-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · network-container-m7-machine-policy
+
+> Соглашусь с Родченко по структуре. Добавлю наблюдение из инвентаря 12.08: proxy-awareness сейчас — свойство файла, а не машины. `deepseek`, `media-bridge`, `linear-snapshot`, `server-storage-backend` — голые; RAG-эмбеддеры — proxy-aware, но только в office. Это значит, что […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/network-container-m7-machine-policy-2026-08-13.md#reply-1`
+
+### 2026-08-13 · позиция · team-evening-feedback
+
+> Курёхин. Оценка артефактов: аудио-путь дня не касается, поэтому оценивать документы по своей зоне не могу; по общему впечатлению — MAIN_DAY_ISSUE перечислил «сознательно не делаем DSP-бенчмарки и trends DRONE_TIGHT» с корректной ссылкой на потолок эшелона 0 (§6 FFT_METRICS) — […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-13.md#reply-1`
 
 ### 2026-08-12 · позиция · team-evening-feedback
 
@@ -248,56 +302,8 @@
 
 — источник: `docs/seanses/workshop-wires-m3-scripts-instrument-2026-07-30.md#reply-1`
 
-### 2026-07-30 · позиция · workshop-wires-m4-invariant-tooth
+### 2026-07-23 · позиция · llm-procedure-channels-m4a-agent-usage
 
-> На слух вещдок `network:tooth`: написали, не вшили — сутки красный в тишине, никто не услышал. Второй клиппинг — всегда красный без освобождения. Зуб «бесхозных нет» на 476/887 — это feedback на 0 dB в весь микс: либо mute, либо игнор. Нужен count-in: сразу meters по **новому** […] _(реплик в сеансе: 6)_
+> Флаг worktree без OFFICE URL: emit no-op warn once — не спамить. Не писать события в git. _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/workshop-wires-m4-invariant-tooth-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m5-kit-frame
-
-> На слух заседание началось с контраста: киты — единственная оснастка, которую сессия зовёт исправно, audit на pre-push. Провода — это шина канала; кит — rack с приборами, который процедура выкатывает на сцену. Разные партии. Склеить в один fader — клиппинг смысла: «канал есть», […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/workshop-wires-m5-kit-frame-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m6-session-hook
-
-> На слух старт — count-in до первого take, не overture. Агент должен услышать room tone мастерских *до* самописного грепа. Вещдок 30.07 — три разведочных грепа и ложный вывод: в миксе не было partition of available instruments. Цена уже есть: один fetch ≤15 с, graceful offline — […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/workshop-wires-m6-session-hook-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m7-norm-in-docs
-
-> На слух три take подряд (21.07, 29.07, 30.07) — одна и та же фальшь: норма «зови мастерскую» висела в партитуре текстом, а в миксе — разведочный греп и ноль вызовов инструмента. Хук грепа слышит только удар по струне грепа, не тишину мастерской. Значит опора не может быть «гейт […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m7-norm-in-docs-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m8-tests-parking
-
-> На слух тест — не отдельная шина, а monitor-send с канала предмета: без предмета send висит в воздухе. `tests-master` уже слышу как rack запуска (container, nightly, groups) — это не лента самих take’ов. Тащить все 281 в один «дом тестов» = свести все monitor’ы в один bus без […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/workshop-wires-m8-tests-parking-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m9-wholesale-retail
-
-> На слух это два разных тракта. Пол — count-in и room tone: «какие мастерские в зале». Поштучный провод — тюнинг конкретной струны после того, как take сорвался. Запрет #1467 «не оптовая правка навигации» слышу как запрет **сводить микс одной ручкой на 476 инструментах**, а не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m9-wholesale-retail-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m0-order
-
-> По тракту сигнала: сначала *какая лента master* (SoT), потом *что обязано попасть в take* (evidence), потом *маленький meters/notary в git*, потом *кто жмёт record и как не задвоить*, потом *smoke восстановления*, потом *перенос старых бобин*, и только в конце *почему новый […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/task-archive-cold-store-m0-order-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m1-source-of-truth
-
-> На слух repo JSONL как единственный master-tape — это лента в чемодане: агент офлайн слышит, сервер молчит, объём registry снова раздувается или JSONL растёт в git-шуме. Office-mongo чистый — master на mmbrn.tech, но без checkpoint в repo нет count-in «что считалось каноном на […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/task-archive-cold-store-m1-source-of-truth-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m2-evidence-contract
-
-> На слух закрытие без take на ленте — mono-фальшь: объявили «готово», а merge-SHA не записан. Evidence — это master-tape закрытия: task id, snapshot статуса, PR, SHA, review, issue state. Hint «вроде влили» — щелчок в пустоту, не proof. Archive лента не доказывает, что инсайт […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m4a-agent-usage-2026-07-23-2026-07-23.md#reply-1`
