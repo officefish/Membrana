@@ -1,25 +1,25 @@
-<!-- Сгенерировано: 2026-08-13T10:21:52.323Z (yarn day:report; vesnin) -->
+<!-- Сгенерировано: 2026-08-14T05:33:27.204Z (yarn day:report; vesnin) -->
 
-# Доклад по задачам — 2026-08-13
+# Доклад по задачам — 2026-08-14
 
 Автор: Тимлид (vesnin) · зеркало 5-блочного плана дня.
 
 ## Магистраль
 
-- `angelina-hostess-impl` — ведёт ozhegov
-- #1761 — CLOSED
+- `archivarius-sessions-container` — ведёт dynin
+- #1330 — OPEN
+- #1907 — MERGED
+- #1908 — MERGED
 
 ## Подкрепление
 
-- `angelina-hostess-impl` — ведёт ozhegov
-- #1761 — CLOSED
+- #1907 — MERGED
+- #1908 — MERGED
 
 ## Перспективные
 
-- `angelina-hostess-impl` — ведёт ozhegov
-- `mfcc-compare-sprint` — ведёт tarasov
-- #1445 — CLOSED
-- #1761 — CLOSED
+- #1907 — MERGED
+- #1908 — MERGED
 
 ## Экспериментальные
 
@@ -27,5 +27,5 @@
 
 ## Санитарные
 
-- #1875 — MERGED
-- #1744 — OPEN
+- #1907 — MERGED
+- #1908 — MERGED
