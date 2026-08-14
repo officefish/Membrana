@@ -1,5 +1,5 @@
 {
-  "date": "2026-08-13",
+  "date": "2026-08-14",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -346,7 +346,7 @@
     },
     {
       "pkg": "nanoid",
-      "id": "1138813",
+      "id": "1139427",
       "severity": "high",
       "issue": "nanoid: custom generators can loop indefinitely when size is zero",
       "url": "https://github.com/advisories/GHSA-2v37-7h3g-55p8"

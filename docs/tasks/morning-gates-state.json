@@ -2,23 +2,16 @@
   "magistralOptions": [
     "angelina-hostess-impl",
     "archivarius-sessions-container",
-    "mfcc-compare-sprint"
+    "assets-container"
   ],
-  "frozenDigest": "c4f5c0b384343867be979b583bcceeddcde2d5efb75d06279ac5834a1f33690c",
+  "frozenDigest": "f5ae7902e841ded728c93a1e52874483512496aefaf754b592cdcec4d9f8ecea",
   "magistral": "archivarius-sessions-container",
   "swallow": {
-    "draftDigest": "790a9fdd891c5e7ada342b9dfde457fafca555689482a4001d14241633006bc0",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-13.md",
+    "draftDigest": "a864d384f69b13ab3fa79483ae3735588807bb7d7917324c423d860626798e07",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-08-14.md",
     "ownerAck": true,
-    "day": "2026-08-13",
-    "claimsProbe": {
-      "verdict": "soft",
-      "protocol": "docs/seanses/team-evening-feedback-2026-08-13.md",
-      "sha": "b8ecda1026aa",
-      "at": "2026-08-13T18:31:21.218Z"
-    },
-    "gate": "evening:partner-swallow"
+    "day": "2026-08-14"
   },
-  "day": "2026-08-13",
-  "magistralChosenAt": "2026-08-13"
+  "day": "2026-08-14",
+  "magistralChosenAt": "2026-08-14"
 }
