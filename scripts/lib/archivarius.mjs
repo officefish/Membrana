@@ -339,7 +339,7 @@ export async function withRetry(fn, opts = {}) {
 /**
  * Итоговый отчёт тракта — счётчики, НИКОГДА не bytes (дефект archivarius-evening-tract:
  * «без --out весь корпус спанов в stdout» тут неповторим по построению).
- * @param {{files: number, spans: number, maskedLines: number, batches: number, accepted: number, dryRun: boolean}} input
+ * @param {{files: number, spans: number, maskedLines: number, batches: number, accepted: number, oversizedSkipped?: Array<{sessionId: string, uuid: string, bytes: number}>, dryRun: boolean}} input
  */
 export function buildPushReport(input) {
   return {
@@ -348,6 +348,7 @@ export function buildPushReport(input) {
     maskedLines: Number(input.maskedLines) || 0,
     batches: Number(input.batches) || 0,
     accepted: Number(input.accepted) || 0,
+    oversizedSkipped: Array.isArray(input.oversizedSkipped) ? input.oversizedSkipped : [],
     dryRun: Boolean(input.dryRun),
   };
 }
