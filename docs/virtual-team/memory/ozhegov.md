@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14301/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 284 (причины в op-log) -->
+Записей: 49 · бюджет 14281/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 285 (причины в op-log) -->
+
+### 2026-08-14 · позиция · team-evening-feedback
+
+> Ожегов. Оценка артефактов: DAILY_CODE_REVIEW точно назвал C1 (инъекция `fetchImpl`/`sleep`/`log` через параметры) и C4 (чистые функции `extractStep`/`ingestStep`/`runTract`) — оба соблюдены; MAIN_DAY_ISSUE верно перечислил DoD как проверяемые пункты, а не механику. Итоги дня: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-14.md#reply-1`
 
 ### 2026-08-13 · позиция · network-container-m0-order
 
@@ -295,9 +301,3 @@
 > Леммы, иначе снова синонимы. **Контейнер (дом)** — каталог-носитель документации/артефактов с опознаваемой границей. **Мастерская** — контейнер с `workshop.manifest.json` (контракт скриптов). **Неймспейс** — запись `docs/namespaces/REGISTRY.json` (M1): holder + membership; не […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/workshop-wires-m2-atlas-discovery-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m3-scripts-instrument
-
-> Леммы, иначе синонимы. **Дом** `scripts/` — контейнер с README (+ AGENT_PROMPT как локальный канон). **Мастерская** — дом ∧ `workshop.manifest.json`. **Набор** в обратном поиске — пока закрываем как *kit* (MANIFEST roots/pins); namespace и home — отдельные слои belongs, не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m3-scripts-instrument-2026-07-30.md#reply-1`

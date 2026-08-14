@@ -1,1 +1,4 @@
 {"ts":"2026-08-14T06:12:59.646Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-08-14T17:48:57.295Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-08-14-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-14T17:48:57.295Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-07-30-workshop-wires-m3-scripts-instrument","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-14T17:48:57.295Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

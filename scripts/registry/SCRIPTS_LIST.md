@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-13 |
-| Head SHA | 3e681a268387b343b6f682f26f92535ea2d287f4 |
+| Date | 2026-08-14 |
+| Head SHA | f0b000997631548fa52062c7971b176f07c6a8f0 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,12 +16,12 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1164 |
+| Code files under `scripts/` | 1131 |
 | Yarn scripts (package.json) | 446 |
 | Yarn → `scripts/` | 391 |
 | Yarn без пути `scripts/` | 55 |
-| Yarn → missing file | 8 |
-| Code files without yarn ref | 852 |
+| Yarn → missing file | 9 |
+| Code files without yarn ref | 820 |
 
 ## Yarn → scripts/ (391)
 
@@ -80,7 +80,7 @@
 - `cabinet:mp4:prod` → `scripts/_ssh-cabinet-mp4-prod.mjs`
 - `cabinet:mp5:prod` → `scripts/_ssh-cabinet-mp5-prod.mjs`
 - `cabinet:mp6:prod` → `scripts/_ssh-cabinet-mp6-prod.mjs`
-- `cabinet:mp7:prod` → `scripts/_ssh-cabinet-mp7-prod.mjs`
+- `cabinet:mp7:prod` → `scripts/_ssh-cabinet-mp7-prod.mjs` ⚠ missing: `scripts/_ssh-cabinet-mp7-prod.mjs`
 - `cabinet:pair-unlink:prod` → `scripts/_ssh-cabinet-pair-unlink-prod.mjs`
 - `cabinet:pairing:e2e:deploy` → `scripts/_ssh-cabinet-pairing-e2e-deploy.mjs`
 - `cabinet:quota-refactor:prod` → `scripts/_ssh-cabinet-quota-refactor-prod.mjs`
@@ -417,7 +417,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (852)
+## Code files without yarn ref (820)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -428,73 +428,41 @@
 - `scripts/_llm-proxy-env.mjs`
 - `scripts/_main-day-issue.mjs`
 - `scripts/_ollama-client.mjs`
-- `scripts/_ssh-cabinet-logs.mjs`
 - `scripts/_ssh-cabinet-mp2-post-deploy.mjs`
 - `scripts/_ssh-cabinet-mp2-smoke.mjs`
 - `scripts/_ssh-cabinet-mp2-verify.mjs`
 - `scripts/_ssh-cabinet-mp3-debug.mjs`
 - `scripts/_ssh-cabinet-mp3-media-fix.mjs`
-- `scripts/_ssh-cabinet-pair-debug.mjs`
-- `scripts/_ssh-cabinet-pair-hotfix-prod.mjs`
-- `scripts/_ssh-cabinet-pairing-prod-fix.mjs`
 - `scripts/_ssh-cabinet-post-smoke.mjs`
 - `scripts/_ssh-cabinet-quota-refactor-smoke.mjs`
-- `scripts/_ssh-cabinet-recover.mjs`
-- `scripts/_ssh-cabinet-redeploy.mjs`
-- `scripts/_ssh-catalog-api-dupes.mjs`
 - `scripts/_ssh-catalog-dedupe-prod.mjs`
-- `scripts/_ssh-catalog-dupes-check.mjs`
-- `scripts/_ssh-catalog-labels-audit.mjs`
-- `scripts/_ssh-device-board-smoke.mjs`
-- `scripts/_ssh-ds5-debug.mjs`
-- `scripts/_ssh-ds5-debug2.mjs`
-- `scripts/_ssh-ds5-debug3.mjs`
-- `scripts/_ssh-ds5-debug4.mjs`
-- `scripts/_ssh-media-add-office-key.mjs`
 - `scripts/_ssh-media-check.mjs`
 - `scripts/_ssh-media-config.mjs`
 - `scripts/_ssh-media-deploy.mjs`
-- `scripts/_ssh-media-disk-usage.mjs`
-- `scripts/_ssh-media-ensure-debug.mjs`
-- `scripts/_ssh-media-ensure-reserved-smoke.mjs`
 - `scripts/_ssh-media-exec.mjs`
-- `scripts/_ssh-media-hotfix-deploy.mjs`
-- `scripts/_ssh-media-mtr-office.mjs`
-- `scripts/_ssh-media-office-path-test.mjs`
 - `scripts/_ssh-media-ports.mjs`
-- `scripts/_ssh-media-prod-diag.mjs`
 - `scripts/_ssh-media-prod-up.mjs`
 - `scripts/_ssh-media-rebuild.mjs`
-- `scripts/_ssh-media-restart-api.mjs`
 - `scripts/_ssh-media-restart.mjs`
 - `scripts/_ssh-media-show-token.mjs`
 - `scripts/_ssh-media-smoke.mjs`
 - `scripts/_ssh-media-swagger-deploy.mjs`
 - `scripts/_ssh-media-tls-setup.mjs`
 - `scripts/_ssh-media-up-only.mjs`
-- `scripts/_ssh-media-upload-smoke.mjs`
 - `scripts/_ssh-office-check.mjs`
 - `scripts/_ssh-office-config.mjs`
 - `scripts/_ssh-office-config.test.mjs`
 - `scripts/_ssh-office-env-status.mjs`
-- `scripts/_ssh-office-inventory.mjs`
-- `scripts/_ssh-office-jump-probe.mjs`
-- `scripts/_ssh-office-local-forward.mjs`
 - `scripts/_ssh-office-prod-up.mjs`
-- `scripts/_ssh-office-proxy-probe.mjs`
 - `scripts/_ssh-office-show-token.mjs`
 - `scripts/_ssh-office-smoke.mjs`
 - `scripts/_ssh-office-tls-setup.mjs`
-- `scripts/_ssh-office-tunnel-exec.mjs`
-- `scripts/_ssh-office-tunnel-probe.mjs`
 - `scripts/_ssh-pagination-catalog-smoke.mjs`
 - `scripts/_ssh-pagination-prod-deploy.mjs`
 - `scripts/_ssh-panel-deploy.mjs`
 - `scripts/_ssh-panel-smoke.mjs`
 - `scripts/_ssh-panel-smoke.test.mjs`
-- `scripts/_ssh-prod-check.mjs`
 - `scripts/_ssh-tariff-dataset-ds5-prod-smoke.mjs`
-- `scripts/_ssh-vdr-prod-smoke.mjs`
 - `scripts/_strategic-plan.mjs`
 - `scripts/_sync-office-env-from-root.mjs`
 - `scripts/affine-capacity-gate.test.mjs`
@@ -1272,9 +1240,10 @@
 - `scripts/worktree-sync-check.test.mjs`
 - `scripts/worktrees-align.test.mjs`
 
-## Yarn → missing file (8)
+## Yarn → missing file (9)
 
 - `apply:lead-persona` → missing `scripts/apply-lead-persona-defaults.mjs`
+- `cabinet:mp7:prod` → missing `scripts/_ssh-cabinet-mp7-prod.mjs`
 - `lint:scripts` → missing `scripts/**/*.mjs`
 - `night:run` → missing `scripts/night-build-run-phase.mjs`
 - `templates:content:real:birds` → missing `scripts/materialize-free-v1-real.py`
@@ -1283,7 +1252,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1164)
+## All code files (1131)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1297,7 +1266,6 @@
 - `scripts/_ssh-affine-install.mjs`
 - `scripts/_ssh-cabinet-deploy-image.mjs`
 - `scripts/_ssh-cabinet-deploy.mjs`
-- `scripts/_ssh-cabinet-logs.mjs`
 - `scripts/_ssh-cabinet-mp2-post-deploy.mjs`
 - `scripts/_ssh-cabinet-mp2-smoke.mjs`
 - `scripts/_ssh-cabinet-mp2-verify.mjs`
@@ -1309,80 +1277,48 @@
 - `scripts/_ssh-cabinet-mp4-prod.mjs`
 - `scripts/_ssh-cabinet-mp5-prod.mjs`
 - `scripts/_ssh-cabinet-mp6-prod.mjs`
-- `scripts/_ssh-cabinet-mp7-prod.mjs`
-- `scripts/_ssh-cabinet-pair-debug.mjs`
-- `scripts/_ssh-cabinet-pair-hotfix-prod.mjs`
 - `scripts/_ssh-cabinet-pair-unlink-prod.mjs`
 - `scripts/_ssh-cabinet-pairing-e2e-deploy.mjs`
-- `scripts/_ssh-cabinet-pairing-prod-fix.mjs`
 - `scripts/_ssh-cabinet-post-smoke.mjs`
 - `scripts/_ssh-cabinet-quota-refactor-prod.mjs`
 - `scripts/_ssh-cabinet-quota-refactor-smoke.mjs`
-- `scripts/_ssh-cabinet-recover.mjs`
-- `scripts/_ssh-cabinet-redeploy.mjs`
 - `scripts/_ssh-cabinet-rollback.mjs`
 - `scripts/_ssh-cabinet-smoke.mjs`
 - `scripts/_ssh-cabinet-tj6-live-journal-smoke.mjs`
 - `scripts/_ssh-cabinet-u10-workspace-prod.mjs`
 - `scripts/_ssh-cabinet-u10-workspace-smoke.mjs`
-- `scripts/_ssh-catalog-api-dupes.mjs`
 - `scripts/_ssh-catalog-dedupe-prod.mjs`
-- `scripts/_ssh-catalog-dupes-check.mjs`
-- `scripts/_ssh-catalog-labels-audit.mjs`
 - `scripts/_ssh-device-board-deploy.mjs`
-- `scripts/_ssh-device-board-smoke.mjs`
-- `scripts/_ssh-ds5-debug.mjs`
-- `scripts/_ssh-ds5-debug2.mjs`
-- `scripts/_ssh-ds5-debug3.mjs`
-- `scripts/_ssh-ds5-debug4.mjs`
-- `scripts/_ssh-media-add-office-key.mjs`
 - `scripts/_ssh-media-cabinet-cors-fix.mjs`
 - `scripts/_ssh-media-check.mjs`
 - `scripts/_ssh-media-config.mjs`
 - `scripts/_ssh-media-deploy.mjs`
-- `scripts/_ssh-media-disk-usage.mjs`
-- `scripts/_ssh-media-ensure-debug.mjs`
-- `scripts/_ssh-media-ensure-reserved-smoke.mjs`
 - `scripts/_ssh-media-exec.mjs`
-- `scripts/_ssh-media-hotfix-deploy.mjs`
-- `scripts/_ssh-media-mtr-office.mjs`
-- `scripts/_ssh-media-office-path-test.mjs`
 - `scripts/_ssh-media-ports.mjs`
-- `scripts/_ssh-media-prod-diag.mjs`
 - `scripts/_ssh-media-prod-up.mjs`
 - `scripts/_ssh-media-rebuild.mjs`
-- `scripts/_ssh-media-restart-api.mjs`
 - `scripts/_ssh-media-restart.mjs`
 - `scripts/_ssh-media-show-token.mjs`
 - `scripts/_ssh-media-smoke.mjs`
 - `scripts/_ssh-media-swagger-deploy.mjs`
 - `scripts/_ssh-media-tls-setup.mjs`
 - `scripts/_ssh-media-up-only.mjs`
-- `scripts/_ssh-media-upload-smoke.mjs`
 - `scripts/_ssh-office-check.mjs`
 - `scripts/_ssh-office-config.mjs`
 - `scripts/_ssh-office-config.test.mjs`
 - `scripts/_ssh-office-env-status.mjs`
 - `scripts/_ssh-office-exec.mjs`
-- `scripts/_ssh-office-inventory.mjs`
-- `scripts/_ssh-office-jump-probe.mjs`
-- `scripts/_ssh-office-local-forward.mjs`
 - `scripts/_ssh-office-prod-up.mjs`
-- `scripts/_ssh-office-proxy-probe.mjs`
 - `scripts/_ssh-office-show-token.mjs`
 - `scripts/_ssh-office-smoke.mjs`
 - `scripts/_ssh-office-tls-setup.mjs`
-- `scripts/_ssh-office-tunnel-exec.mjs`
-- `scripts/_ssh-office-tunnel-probe.mjs`
 - `scripts/_ssh-pagination-catalog-smoke.mjs`
 - `scripts/_ssh-pagination-prod-deploy.mjs`
 - `scripts/_ssh-panel-deploy.mjs`
 - `scripts/_ssh-panel-smoke.mjs`
 - `scripts/_ssh-panel-smoke.test.mjs`
-- `scripts/_ssh-prod-check.mjs`
 - `scripts/_ssh-root-site-setup.mjs`
 - `scripts/_ssh-tariff-dataset-ds5-prod-smoke.mjs`
-- `scripts/_ssh-vdr-prod-smoke.mjs`
 - `scripts/_strategic-plan.mjs`
 - `scripts/_sync-office-env-from-root.mjs`
 - `scripts/affine-capacity-gate.mjs`

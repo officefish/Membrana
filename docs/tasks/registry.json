@@ -35,7 +35,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1923 (squash 1c82fa51), review LGTM после двух P1 (mkdir после download; contents:read сознательно); такт 01:00 + транспорт + пересчёт с защитой норм + retention; живой прогон: office ok, static down — ряд начат; Issue #1913 закрыт",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-14"
     },
     {
       "id": "network-bare-fetch-tooth",
@@ -54,7 +54,7 @@
       ],
       "notes": "",
       "archiveNotes": "PR #1921 (squash a0209135), review LGTM (артефакт docs/reviews); зуб В7 живьём зелёный (зона 459, LEGACY 3/3, VIOLATION 0), провод pre-push+CI, бюджет дедуплицирован 4→3 с доказательством; Issue #1912 закрыт",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-14"
     },
     {
       "id": "network-house-skeleton",
@@ -1952,7 +1952,7 @@
       ],
       "notes": "Блок 1: контейнер-архивариус сессий. База MongoDB в office-стеке — источник; репо — нотариус контракта и снимков (#1229).",
       "archiveNotes": "Приёмка 14.08: контейнер построен 27.07–04.08 (PR #1335/#1407/#1711), acceptance #1330 сверен по пунктам — docs/archivarius/acceptance-2026-08-14.md (PR #1930). Живой след: заливка 111073/111074 спанов, GET span сегодняшней сессии, sha сошёлся. Посылки MAIN_DAY_ISSUE опровергнуты probe (violated, фактические маркеры). Находка+фикс: именованный пропуск 413-гиганта (PR #1930).",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-14"
     },
     {
       "id": "worktree-hygiene-epic",
