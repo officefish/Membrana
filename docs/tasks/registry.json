@@ -1941,17 +1941,17 @@
       "githubIssue": 1330,
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-07-27",
-      "archivedAt": null,
+      "archivedAt": "2026-08-14",
       "leadPersona": "dynin",
       "supportPersonas": [
         "vesnin",
         "ozhegov"
       ],
       "notes": "Блок 1: контейнер-архивариус сессий. База MongoDB в office-стеке — источник; репо — нотариус контракта и снимков (#1229).",
-      "archiveNotes": null,
+      "archiveNotes": "Приёмка 14.08: контейнер построен 27.07–04.08 (PR #1335/#1407/#1711), acceptance #1330 сверен по пунктам — docs/archivarius/acceptance-2026-08-14.md (PR #1930). Живой след: заливка 111073/111074 спанов, GET span сегодняшней сессии, sha сошёлся. Посылки MAIN_DAY_ISSUE опровергнуты probe (violated, фактические маркеры). Находка+фикс: именованный пропуск 413-гиганта (PR #1930).",
       "githubIssueClosedAt": null
     },
     {
