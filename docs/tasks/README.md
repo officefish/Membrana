@@ -20,8 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `network-nightly-probes` | Ночной такт 01:00: сбор зонд-снимков, транспорт в дом, registry-пересчёт (В4+В5) | M | [`NETWORK_NIGHTLY_PROBES_PROMPT.md`](../prompts/NETWORK_NIGHTLY_PROBES_PROMPT.md) | [#1913](https://github.com/officefish/Membrana/issues/1913) |
-| `network-bare-fetch-tooth` | Зуб check-bare-fetch: политика машин из machine-policy, warn-храповик бюджетом (В7) | M | [`NETWORK_BARE_FETCH_TOOTH_PROMPT.md`](../prompts/NETWORK_BARE_FETCH_TOOTH_PROMPT.md) | [#1912](https://github.com/officefish/Membrana/issues/1912) |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-live-services` | #1303-C: LIVE_SERVICES, документация и monitoring | S | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
@@ -41,7 +39,6 @@
 | `meeting-evening-review-predicate` | Заседание: вечерний кадр — предмет ревью, порядок трёх документов, ворота качества | L | [`MEETING_BRIEF.md`](../meeting/evening-review-predicate/MEETING_BRIEF.md) | — |
 | `evening-chain-review-predicate` | Вечер: предмет ревью, порядок трёх документов, ворота качества (№6 хендофа, M→L по слову владельца 01.08) | L | [`EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md`](../prompts/EVENING_REVIEW_PREDICATE_2026_08_01_PROMPT.md) | — |
 | `mfcc-compare-sprint` | MFCC-ядро: обвязка, детекторы и сравнительный прогон против гармонического на FFT | M | [`mfcc-compare-sprint.json`](../sprint/cut/mfcc-compare-sprint.json) | — |
-| `archivarius-sessions-container` | Контейнер сессий Archivarius: Mongo office, адресуемые span, ingest/search с секрет-маской | L | [`ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md`](../prompts/ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md) | [#1330](https://github.com/officefish/Membrana/issues/1330) |
 | `insight-mandate-for-new` | Решение по инсайту недостижимо для новых инсайтов: мандаты только из зашитой миграции | M | [`INSIGHT_MANDATE_FOR_NEW_PROMPT.md`](../prompts/INSIGHT_MANDATE_FOR_NEW_PROMPT.md) | — |
 | `frame-rails-2307` | Эпик: базовые процедуры на фрейм-рельсы (утро/спринт/заседание) | L | [`FRAME_RAILS_2307_PROMPT.md`](../prompts/FRAME_RAILS_2307_PROMPT.md) | — |
 | `lpc-d-panel` | LPC D: panel owner LLM page | M | [`LLM_PROCEDURE_CHANNELS_PROMPT.md`](../prompts/LLM_PROCEDURE_CHANNELS_PROMPT.md) | [#1011](https://github.com/officefish/Membrana/issues/1011) |
@@ -140,7 +137,10 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `archivarius-sessions-container` | Контейнер сессий Archivarius: Mongo office, адресуемые span, ingest/search с секрет-маской | 2026-08-14 | [`ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md`](../prompts/ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md) | #1330 (Issue открыт) | [карточка](./archive/archivarius-sessions-container.md) |
 | `tw-handoff-status` | Мастерская задач: глагол task:handoff — актуальный хендоф со сверкой каждой строки (формат капитана 13.08) | 2026-08-13 | [`TW_HANDOFF_STATUS_PROMPT.md`](../prompts/TW_HANDOFF_STATUS_PROMPT.md) | — | [карточка](./archive/tw-handoff-status.md) |
+| `network-nightly-probes` | Ночной такт 01:00: сбор зонд-снимков, транспорт в дом, registry-пересчёт (В4+В5) | 2026-08-13 | [`NETWORK_NIGHTLY_PROBES_PROMPT.md`](../prompts/NETWORK_NIGHTLY_PROBES_PROMPT.md) | #1913 (Issue открыт) | [карточка](./archive/network-nightly-probes.md) |
+| `network-bare-fetch-tooth` | Зуб check-bare-fetch: политика машин из machine-policy, warn-храповик бюджетом (В7) | 2026-08-13 | [`NETWORK_BARE_FETCH_TOOTH_PROMPT.md`](../prompts/NETWORK_BARE_FETCH_TOOTH_PROMPT.md) | #1912 (Issue открыт) | [карточка](./archive/network-bare-fetch-tooth.md) |
 | `network-house-skeleton` | Контейнер network: каркас дома — README, схема снимка, нормы registry (канон заседания) | 2026-08-13 | [`NETWORK_HOUSE_SKELETON_PROMPT.md`](../prompts/NETWORK_HOUSE_SKELETON_PROMPT.md) | #1910 | [карточка](./archive/network-house-skeleton.md) |
 | `archivarius-evening-step` | Шаг архива сессий в вечерней цепочке: тракт scan→extract→ingest→push едет сам, отказ office честный | 2026-08-13 | [`ARCHIVARIUS_EVENING_STEP_PROMPT.md`](../prompts/ARCHIVARIUS_EVENING_STEP_PROMPT.md) | — | [карточка](./archive/archivarius-evening-step.md) |
 | `dead-wire-local-only-carrier` | Dead-wire: класс носителя вне git (gitignored) невыразим словарём pending — новая причина local-only-carrier | 2026-08-13 | [`DEAD_WIRE_LOCAL_ONLY_CARRIER_PROMPT.md`](../prompts/DEAD_WIRE_LOCAL_ONLY_CARRIER_PROMPT.md) | — | [карточка](./archive/dead-wire-local-only-carrier.md) |
