@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14330/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 281 (причины в op-log) -->
+Записей: 49 · бюджет 14309/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 282 (причины в op-log) -->
+
+### 2026-08-14 · позиция · team-evening-feedback
+
+> Дынин. Оценка артефактов: DAILY_CODE_REVIEW корректно проверил детерминированность `ingestStep`, терминал рекурсии (`batch.length === 1`) и корректность `Buffer.byteLength(JSON.stringify(span))` для UTF-8 — все инварианты подтверждены. Мой бестиарий (B3, B4, B6) отработал: B4 […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-14.md#reply-1`
 
 ### 2026-08-13 · позиция · network-container-m0-order
 
@@ -295,9 +301,3 @@
 > Формализую без UI. Дано: предикат обнаружения сегодня `D₀(c) ⇔ ∃ docs/**/c/workshop.manifest.json`. Индекс ATLAS = derive(D₀). Замер: |ATLAS|=12, |README|=45, |¬manifest|=33. `docs/network` ∈ ¬D₀ при наличии скриптов и зуба — вещдок неполноты D₀ относительно «дома». T9 требует: […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/workshop-wires-m2-atlas-discovery-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m3-scripts-instrument
-
-> Формализую без UI. Пусть S — носители в `scripts/` (инструменты ∪ тесты, §2). `belongs(s) ∈ {home, namespace, orphan}` из M1. Предикат бесхозности для прямого глагола: `orphan_only(s) ⇔ belongs(s) = orphan`. Не смешиваем «не в roots кита» с orphan: замер 476 — факт покрытия […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m3-scripts-instrument-2026-07-30.md#reply-1`

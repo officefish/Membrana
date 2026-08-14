@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14368/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 287 (причины в op-log) -->
+Записей: 49 · бюджет 14344/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 288 (причины в op-log) -->
+
+### 2026-08-14 · позиция · team-evening-feedback
+
+> Веснин. Оценка артефектов: MAIN_DAY_ISSUE честно вынес расхождение `morning-gates-state.json` vs `main-day-assertions.json` в таблицу обоснования — это правильное поведение канона, не замалчивание; DAILY_CODE_REVIEW корректно снял C1-риск, который я фиксировал вечером 13.08. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-14.md#reply-1`
 
 ### 2026-08-13 · позиция · network-container-m0-order
 
@@ -295,9 +301,3 @@
 > Планка матча узкая: видимость для справочника, не содержание домов, не список будущих мастерских, не 33 манифеста «чтобы зелено». Входы не пересматриваем: M1, M8. Связка: Математик — предикаты D и dрейфа; Архитектор — форма слоёв SoT↔derive; Структурщик — леммы kind; Верстальщик […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/workshop-wires-m2-atlas-discovery-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m3-scripts-instrument
-
-> Планка матча узкая: носитель + два глагола + держатель + отношение к `tooling:overview`. Связка: Архитектор — граница дома вне docs; Структурщик — леммы манифеста и набора; Математик — предикаты orphan и reverse-index; Музыкант — самоприменимость тракта; Верстальщик — честные […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m3-scripts-instrument-2026-07-30.md#reply-1`

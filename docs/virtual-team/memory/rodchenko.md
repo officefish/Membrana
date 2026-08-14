@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14396/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 279 (причины в op-log) -->
+Записей: 50 · бюджет 14373/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 280 (причины в op-log) -->
+
+### 2026-08-14 · позиция · team-evening-feedback
+
+> Родченко. Оценка артефактов: — UI сегодня не двигался; MAIN_DAY_ISSUE справедливо не назначил меня. Итоги дня: По моей зоне — тишина. Санитарный долг из моего фидбека 13.08 (`aria-live="polite"` на блок `promo-deny-text`) переходит третий день — не блокер, но накапливается. На […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-14.md#reply-1`
 
 ### 2026-08-13 · позиция · network-container-m0-order
 
@@ -295,12 +301,6 @@
 > С витрины читателя ATLAS фальшь двойная. (1) В шапке source = README, в факте README не источник обнаружения — это декор без несущей. (2) Тридцать три дома с README невидимы: пустота выглядит как «их нет», хотя дерево есть. Карточка «контейнер без мастерской» обязана читаться […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/workshop-wires-m2-atlas-discovery-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m3-scripts-instrument
-
-> С витрины оператора/агента ответ «есть бесхозные?» обязан читаться без легенды: не прочерк и не пустой JSON, а явный статус. Три молчания из повестки — разный декор: `orphans: []` с `status: clean`, `set: empty`, `file: unindexed`. Фальшь — зелёный overview при 476 ни в roots, […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m3-scripts-instrument-2026-07-30.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3a-llm-proxy-seam
 

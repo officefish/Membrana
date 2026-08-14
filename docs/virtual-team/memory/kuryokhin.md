@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14386/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 280 (причины в op-log) -->
+Записей: 50 · бюджет 14362/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 281 (причины в op-log) -->
+
+### 2026-08-14 · позиция · team-evening-feedback
+
+> Курёхин. Оценка артефактов: — по содержательной части (аудио-контур сегодня не двигался). MAIN_DAY_ISSUE честно вынес DSP-бенчмарки в «сознательно не делаем» — потолок эшелона 0 зафиксирован (`FFT_METRICS §6`), повтор без смены датасета не даёт информации; согласен. Итоги дня: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-14.md#reply-1`
 
 ### 2026-08-13 · позиция · network-container-m0-order
 
@@ -295,12 +301,6 @@
 > На слух сейчас микс врёт: в шапке ATLAS написано «manifest + README», а в тракте `tooling-atlas.mjs:78` звучит только manifest — README после, как reverb на заголовке. `docs/network` — живой take с шестью скриптами и зубом, а в атласе тишина. Это не «тихий канал», это обрыв шины […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/workshop-wires-m2-atlas-discovery-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m3-scripts-instrument
-
-> На слух `tooling:overview` — meters без канала «кит/бесхозность»: греп дал 0. Мастерская скриптов — тюнер аудита, не новый эффект в продуктовой цепи. Самоприменимость: прибор в `scripts/` считает и свой `.mjs` — иначе mono-take «все чисты, кроме сторожа». Два глагола — count-in […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m3-scripts-instrument-2026-07-30.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m4a-agent-usage
 

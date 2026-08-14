@@ -1,1 +1,8 @@
 {"ts":"2026-08-14T06:12:59.481Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-14T15:03:23.424Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-14T15:02:46.207Z","origin":"ask-persona"}
+{"ts":"2026-08-14T15:03:23.438Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-14T15:02:46.207Z","origin":"ask-persona"}
+{"ts":"2026-08-14T15:03:23.448Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-29-team-evening-feedback","reason":"прямой прецедент модульной раскладки S0…S9 для tariff-grid: там мы уже отделяли «декларацию» от «гейтов», чтобы регистр не красил ствол. Здесь та же схема: регистр (декларация допущенных нарушений) отдельно от валидатора (гейт).","origin":"ask-persona"}
+{"ts":"2026-08-14T15:03:23.460Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-08-01-evening-review-predicate-m3-volume-measure","reason":"прецедент «мерки»: счётчик долга — это функция registry → ℕ на карточке, а не агрегат «сколько всего плохо». Форма записи должна сохранять кардинальность (по frameId), чтобы счётчик оставался мерным.","origin":"ask-persona"}
+{"ts":"2026-08-14T17:48:57.193Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-14-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-14T17:48:57.193Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-30-workshop-wires-m3-scripts-instrument","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-14T17:48:57.193Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14390/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 294 (причины в op-log) -->
+Записей: 50 · бюджет 14387/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 295 (причины в op-log) -->
+
+### 2026-08-14 · позиция · team-evening-feedback
+
+> Тарасов. Оценка артефактов: Связка `STRATEGY_DAY → DAILY_STANDUP → MAIN_DAY_ISSUE → DAILY_CODE_REVIEW` сегодня отработала как единый контур впервые за неделю — фокус магистрали (`archivarius-sessions-container`, ingest-эндпоинт с живым trace) был назван утром и закрыт вечером […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-14.md#reply-1`
 
 ### 2026-08-13 · позиция · network-container-m0-order
 
@@ -301,9 +307,3 @@
 > Планка M3 узкая. M1: Mongo office — канон, repo — carrier. M2: cold-record с `proof` уже закрыт. Сегодня только: что лежит в git как маленький слепок, какие поля, как доказать тождество серверного архива, что — sanity, что checkpoint **не** значит. Q5 writer, Q4 restore, Q6 […] _(реплик в сеансе: 8)_
 
 — источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
-
-### 2026-07-29 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** STRATEGY_DAY — красный щит «не рабочий документ», честно; вечерний фидбек 28.07 — хорош (8/10 от команды). MAIN_DAY_ISSUE качественный: `product-tariffs-support` обоснован owner-choice, таблица посылок, матрица DoD. DAILY_CODE_REVIEW — исчерпывающий, но 11 […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-29.md#reply-1`
