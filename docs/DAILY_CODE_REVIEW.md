@@ -1,59 +1,42 @@
-<!-- Сгенерировано: 2026-08-13T18:28:01.611Z (yarn code-review; daily, llm-anthropic) -->
+<!-- Сгенерировано: 2026-08-14T16:58:00.371Z (yarn code-review; daily, llm-anthropic) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
-> Precision: approximate
-> ⚠ граница периода около полуночи: 25d789e1 @ 2026-08-13T00:04:18+03:00
-> Период: 25d789e11a296db3d0c9f8d67906f904643958ae^..b8ecda1026aacd1c6d9783e62945de7153ba4377 (17 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 25d789e1 #1903 (568), 1aef04fb #1904 (573), 95f1b4b5 #1907 (684), 39c37aaa #1908 (1491), f5b49cd4 #1910 (445), a0209135 #1912 (444), 1c82fa51 #1913 (749), d52f821d #1922 (517), b8ecda10 (867)
+> Precision: exact
+> Период: 49f20e2c2c8f5975054f2bd5f7f15e107374e3bf^..5c61bb6d2e48b15a16af8be38313438b3243ca1f (9 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 5c61bb6d (843)
 
 ---
 
 Tier: T1
 
-**Ведущий ревью: Vesnin (Архитектор)** — скоуп диффа охватывает docs/tasks, scripts/lib, apps/cabinet, docs/meeting, docs/procedures, docs/seanses, docs/audit, docs/local-sprint. Ни один путь не входит в авто-T2 (нет packages/core, MembranaRegistry, audio-engine). Снижаю до T1 и провожу полный формат — затронуто ≥2 пакетов/подсистем (тулинг, UI, docs).
-
-Бестиарий — прохожу перед блоками ролей:
-- B1 Инструкция-в-хвосте: не обнаружена.
-- B3 DoD-на-механику: `archivarius-evening-step` CLOSURE описывает `honest_pair 3/3` и `files=2 spans=2823` — это продуктовый вещдок, не механика. Чисто.
-- B6 Молчаливый зелёный: `local-only-carrier` без `isIgnored` возвращает `[]` молча — задокументировано явным комментарием «unknown, не ложь»; приемлемо.
-- B8 Немой носитель: `network-container` архивирован, каркас `docs/audit/network` (PR #1915) зарегистрирован в README — объявлен.
-- B9 Проза: `MEETING_ACTIVE.md` описывает «M0 сыгран, вердикт-DAG получен; СТОП на owner-гейте ратификации» — это статус-документ, не утверждение о машинном носителе. Чисто.
-- B10 Заглушка: `archiveNotes` у `fix-node-modules-links-1647` был прочерком (`—`), теперь дописан свидетельством — исправление нормы #1744. Чисто.
-
-Находок бестиария нет.
+**[Dynin — ведущий ревью]:** Бестиарий проверен по диффу. B4 (Маркер-предсказанное-имя): зафиксирован и **закрыт самим диффом** — `//recut-14-08` в `main-day-assertions.json` прямо называет класс `marker-fix-17-07` и объясняет, почему посылки перечеканены фактическими символами (`ingestSchema`, `spanSchema`, `searchSpans`) вместо предсказанных имён. B3 (DoD-на-механику): частично снят — DoD #1330 переформулирован в «приёмка acceptance + живой trace sha», не «тест зелёный». B6 (Молчаливый зелёный): в `procedure-runs/trail/2026-08-14.jsonl` sequence=1 закрыт честным `fail` с `orphanedBy` — паттерн не воспроизведён. Остальных зверей в диффе не вижу. **Вердикт ведущего: пропуск.**
 
 ---
 
-**[Vesnin (Архитектор)]:** Tier T1. Скоуп дня — пять независимых поставок: (1) `archivarius-evening-step` закрыт с боевым вещдоком; (2) `dead-wire-local-only-carrier` — новый класс pending-причины с gitignore-предикатом; (3) заседание `network-container` M0–M7 завершено и ратифицировано, канон уложен в `docs/meeting/network-container/`; (4) каркас `docs/audit/network` (PR #1915 MERGED); (5) санитарный патч `#1919` (a11y промокода, README-sync в `close-github`, `archiveNotes`). Архитектурных нарушений границ в видимом диффе нет; все пять поставок изолированы по зоне ответственности.
+[Teamlead]: Tier T1. PR size: #1928 211 строк OK, #1929 140 OK, #1930 118 OK, #1931 32 OK, остальные мелкие — все OK. Затронуты `docs/` (ритуальные артефакты), `scripts/archivarius-push.mjs`, `scripts/lib/archivarius.mjs`, `scripts/archivarius.test.mjs` — два пакета (scripts + docs), но изменения в docs носят исключительно docs-характер, runtime-пакет один. C8: `console.log` в production-коде отсутствует, только `log()`-колбэк с инъекцией — норма. C9: секреты не попали; `maskedPayload` в trace не несёт значений, только адрес и байты — принято. C10: карточка `archivarius-sessions-container` архивирована, `README.md` обновлён в том же PR #1931 — синхронизация соблюдена; `acceptance-2026-08-14.md` появился в `docs/archivarius/` — новый дом объявлен без записи в `LIVE_SERVICES`, но это docs-артефакт, не живой сервис — P2. Ключевая находка дня (#1930): одиночный HTTP 413 ранее обрывал весь тракт; теперь именованный пропуск с `oversizedSkipped[]` в отчёте и тракт продолжается — корректное исправление, не заглушка. Утро: `yarn turbo run typecheck test --filter=scripts` и `node --test scripts/archivarius.test.mjs` (локально, 13/13 зубов подтвердить); прочитать `acceptance-2026-08-14.md`, сверить остаток #1330 (поле `closed`/`open`); если Issue #1330 до сих пор OPEN — закрыть с комментарием-ссылкой на acceptance.
 
-**[Teamlead (Тарасов)]:** PR size: все раскрытые диффы — OK (≤400 строк); восемь oversized помечены и не развёрнуты — норма регламента, каждый требует отдельного ревью. `procedure-runs/trail/2026-08-13.jsonl` несёт смешение `schema@1` и `schema@2` — записи разных версий в одном файле; это не блокер дня (файл append-only, журнал читается по `runId`), но требует внимания при следующем изменении схемы: риск парсера, ожидающего одну версию. C1 — границы модулей соблюдены. C8 — console.log в диффе не обнаружен (только `console.error` в `task-close-github-issues.mjs` — легитимный warn-путь). C10 — `docs/tasks/README.md` синкается тем же прогоном `close-github` (фикс п.7 фидбека 12.08). Риски на завтра: восемь oversized PR (#1903/#1904/#1907/#1908/#1910/#1912/#1913, uncommitted `b8ecda10`) ждут поимённого ревью.
+[Структурщик]: C1 соблюдён: `archivarius-push.mjs` не тянет React, не обращается напрямую к store; инъекция `fetchImpl`/`sleep`/`log` через параметры — правильная слабая связанность. C4: scripts-слой без фреймворков, чистые функции `extractStep`/`ingestStep`/`runTract` с явными входами и выходами. C7: тесты рядом (`archivarius.test.mjs`), новый кейс «одиночный 413 — именованный пропуск» покрыт, 13/13. Нарушений границ пакетов нет. Одно наблюдение P2 (opportunity): `oversizedSkipped` в `buildPushReport` принимает любой `Array.isArray` без валидации элементов — при будущем расширении схемы тихо пропустит невалидный элемент; рассмотреть zod-валидацию элемента при записи.
 
-**[Структурщик (Ожегов)]:** C4/C7 — `scripts/lib/dead-wire.mjs`: новый `makeIsIgnored` инжектится параметром, а не импортируется напрямую — слабая связанность соблюдена. Тесты в `dead-wire.test.mjs` покрывают все ветки нового класса (`local-only-carrier`): живой+ignored, мёртвый+ignored, живой+!ignored, без `isIgnored`, срок запрещён, calendar-expiry. 37/37 зубов по CLOSURE — достаточно. Одно наблюдение (P2, opportunity): `makeIsIgnored` бросает `new Error(...)` при exit-коде ≠ 0 и ≠ 1 — исключение всплывает в `runCheck` непойманным; при недоступном `git` прогон упадёт с необработанной ошибкой вместо именованного исхода. Не блокирует.
+[Математик]: `ingestStep` — детерминированная функция с явными входами; рекурсивное деление батча пополам корректно, терминал — `batch.length === 1`. Новая ветка одиночного 413: выход `oversizedSkipped.push(...)` + `return` без throw — корректен, бесконечного деления нет. `Buffer.byteLength(JSON.stringify(span))` для измерения байтового размера спана — правильно для UTF-8 строки; граничный случай: `JSON.stringify` не выбросит на валидном объекте. Математических инвариантов не нарушено.
 
-**[Математик (Дынин)]:** C6 — `pendingEntryProblems`: ранний `return problems` после `local-only-carrier` блока предотвращает ложное срабатывание `until`-валидатора — корректно. Фильтр `typeof p.until === 'string'` в тесте `LIVE_UNTIL` устраняет `undefined` из выборки — off-by-one на edge-case (единственная запись без `until`) закрыт. DAG в протоколе M0 верифицирован топологической сортировкой прямо в тексте консилиума — математически корректно, цикл отсутствует.
+[Музыкант]: —
 
-**[Музыкант (Курёхин)]:** — (аудио-путь не затронут).
-
-**[Верстальщик (Родченко)]:** C5/a11y — патч `#1919` в `MembranePage.tsx`: `<p>Промокод</p>` заменён на `<label htmlFor="promo-code-input">`, `input` получил `id="promo-code-input"` — связка label↔input теперь явная. Добавлены `aria-invalid` и `aria-describedby` на блок ошибки с `id="promo-deny-text"` — скрин-ридер объявит ошибку при deny. Изменение минимальное и корректное по DESIGN.md (daisyUI-классы не тронуты).
+[Верстальщик]: —
 
 ---
 
-**Итоговый артефакт:** `docs/DAILY_CODE_REVIEW.md`
+**Итоговый артефакт:** `docs/DAILY_CODE_REVIEW.md` (вечер 2026-08-14)
 
 **Definition of Done (утро):**
 ```bash
-# Прочитать этот файл, затем:
-yarn turbo run typecheck test --filter=@membrana/scripts   # dead-wire-check, dead-wire.test
-yarn turbo run typecheck --filter=@membrana/cabinet         # a11y-патч MembranePage
-yarn dead-wire:check                                        # убедиться cabinet:mp7:prod зелёный
-# Восемь oversized PR ревьюить поимённо:
-# yarn code-review:pr 1903  yarn code-review:pr 1904  yarn code-review:pr 1907
-# yarn code-review:pr 1908  yarn code-review:pr 1910  yarn code-review:pr 1912
-# yarn code-review:pr 1913  yarn code-review:pr 1922 (uncommitted → b8ecda10)
+node --test scripts/archivarius.test.mjs          # 13/13 зубов
+yarn turbo run typecheck --filter=scripts          # 0 ошибок
+# Если Issue #1330 OPEN → закрыть с ссылкой на acceptance-2026-08-14.md
 ```
 
 **Риски:**
-- P2 — `makeIsIgnored` не ловит exit-коды ≠ 0/1: при недоступном `git` прогон упадёт необработанно. Opportunity, не блокер.
-- P2 — `procedure-runs/trail/2026-08-13.jsonl` несёт `schema@1` и `schema@2` в одном файле. Проверить парсер на мультиверсионность при следующем изменении схемы.
-- P1 (carry-over) — восемь oversized PR не развёрнуты; содержимое #1907/#1908 (archivarius + network M1–M7) критично и требует полного ревью завтра утром.
+- P2: `docs/archivarius/acceptance-2026-08-14.md` — новый дом без записи в `LIVE_SERVICES`/каталог; не блокирует merge, занести в санитарные завтра.
+- P2: `archiveNotes` в `fix-node-modules-links-1647.md` — поле `"—"` (норма #1744, фидбек Ожегова) — переходит третий день, opportunity завтра.
+- P2: `aria-live="polite"` на `promo-deny-text` — отсутствует (Родченко) — переходит.
+- Наблюдение: Issue #1330 по таблице состояний OPEN; если acceptance закрывает все пункты — закрыть issue утром первым шагом.
