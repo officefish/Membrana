@@ -174,7 +174,7 @@ test('тракт: scan читает источники, extract читает в�
   });
   assert.deepEqual(posted.map((p) => p.spans), [2, 1], 'батчи по потолку --batch');
   assert.ok(posted.every((p) => p.url === 'https://office.test/v1/archivarius/ingest' && p.token === 'tkn'));
-  assert.deepEqual(report, { files: 2, spans: 3, maskedLines: 0, batches: 2, accepted: 3, dryRun: false });
+  assert.deepEqual(report, { files: 2, spans: 3, maskedLines: 0, batches: 2, accepted: 3, oversizedSkipped: [], dryRun: false });
   rmSync(dir, { recursive: true, force: true });
 });
 
@@ -189,7 +189,7 @@ test('тракт --dry-run не касается сети; отчёт не не�
     token: null,
     fetchImpl: async () => { throw new Error('сеть в dry-run запрещена'); },
   });
-  assert.deepEqual(report, { files: 1, spans: 1, maskedLines: 0, batches: 0, accepted: 0, dryRun: true });
+  assert.deepEqual(report, { files: 1, spans: 1, maskedLines: 0, batches: 0, accepted: 0, oversizedSkipped: [], dryRun: true });
   assert.ok(!JSON.stringify(report).includes('secret text'), 'отчёт — счётчики, не содержимое');
   rmSync(dir, { recursive: true, force: true });
 });
@@ -210,13 +210,12 @@ test('ingestStep: отказ office после повторов — честна
 test('buildPushReport нормализует счётчики и не выдумывает полей', () => {
   assert.deepEqual(
     buildPushReport({ files: '2', spans: 3, maskedLines: null, batches: 1, accepted: 3, dryRun: 0 }),
-    { files: 2, spans: 3, maskedLines: 0, batches: 1, accepted: 3, dryRun: false },
+    { files: 2, spans: 3, maskedLines: 0, batches: 1, accepted: 3, oversizedSkipped: [], dryRun: false },
   );
 });
 
-test('ingestStep: 413 делит батч пополам рекурсивно; одиночный 413 — честный отказ без ретрая', async () => {
+test('ingestStep: 413 делит батч пополам рекурсивно; одиночный 413 — именованный пропуск, тракт продолжается', async () => {
   const sizes = [];
-  let failFirst = true;
   const fakeFetch = async (_url, init) => {
     const n = JSON.parse(init.body).spans.length;
     sizes.push(n);
@@ -224,22 +223,33 @@ test('ingestStep: 413 делит батч пополам рекурсивно; �
     return { ok: true, json: async () => ({ accepted: n }) };
   };
   const spans = Array.from({ length: 5 }, (_, i) => ({ i }));
-  const { batches, accepted } = await ingestStep(spans, {
+  const { batches, accepted, oversizedSkipped } = await ingestStep(spans, {
     baseUrl: 'https://office.test', token: 't', batchSize: 5,
     fetchImpl: fakeFetch, sleep: async () => {},
   });
   assert.equal(accepted, 5, 'все спаны доехали после делений');
   assert.deepEqual(sizes, [5, 3, 2, 1, 2], '5 → 413 → 3(413) → 2+1, затем хвост 2');
   assert.ok(batches >= 3);
+  assert.deepEqual(oversizedSkipped, [], 'делимые 413 пропусков не порождают');
 
   let calls = 0;
-  await assert.rejects(
-    ingestStep([{ big: true }], {
-      baseUrl: 'https://office.test', token: 't', batchSize: 1,
-      fetchImpl: async () => { calls += 1; return { ok: false, status: 413 }; },
-      sleep: async () => {},
-    }),
-    /HTTP 413/u,
+  const giant = { sessionId: 's-1', uuid: 'u-1', big: 'x' };
+  const result = await ingestStep([giant, { sessionId: 's-2', uuid: 'u-2' }], {
+    baseUrl: 'https://office.test', token: 't', batchSize: 1,
+    fetchImpl: async (_url, init) => {
+      calls += 1;
+      const span = JSON.parse(init.body).spans[0];
+      if (span.uuid === 'u-1') return { ok: false, status: 413 };
+      return { ok: true, json: async () => ({ accepted: 1 }) };
+    },
+    sleep: async () => {},
+  });
+  assert.equal(calls, 2, '413 детерминирован — без трёх повторов, хвост доезжает');
+  assert.equal(result.accepted, 1, 'спан после гиганта принят — тракт не оборван');
+  assert.equal(result.oversizedSkipped.length, 1, 'пропуск именован в отчёте');
+  assert.deepEqual(
+    result.oversizedSkipped[0],
+    { sessionId: 's-1', uuid: 'u-1', bytes: Buffer.byteLength(JSON.stringify(giant)) },
+    'адрес и байты без содержимого',
   );
-  assert.equal(calls, 1, '413 детерминирован — без трёх повторов');
 });

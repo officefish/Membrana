@@ -59,11 +59,13 @@ export function extractStep(files, { readFile = (p) => readFileSync(p, 'utf8') }
  * Шаг ingest: спаны из extract → office батчами. Возвращает счёт принятого.
  * HTTP 413 (тело больше лимита сервера — счёт спанов не равен счёту байтов: реплики
  * разной длины, находка живого прогона 04.08) лечится ДЕЛЕНИЕМ батча пополам
- * рекурсивно; одиночный спан с 413 — честный отказ, не бесконечное деление.
+ * рекурсивно; одиночный спан с 413 — именованный пропуск (адрес и байты в
+ * oversizedSkipped отчёта, содержимое не печатается), НЕ обрыв тракта: до 14.08
+ * отказ на одном спане-гиганте молча терял весь хвост заливки (находка приёмки #1330).
  */
 export async function ingestStep(spans, { baseUrl, token, batchSize, fetchImpl = fetch, sleep, log = () => {} }) {
   const base = baseUrl.replace(/\/+$/u, '');
-  const state = { sent: 0, accepted: 0 };
+  const state = { sent: 0, accepted: 0, oversizedSkipped: [] };
 
   async function postOnce(batch, label) {
     const res = await fetchImpl(`${base}/v1/archivarius/ingest`, {
@@ -99,6 +101,15 @@ export async function ingestStep(spans, { baseUrl, token, batchSize, fetchImpl =
         await pushBatch(batch.slice(mid), `${label}b`);
         return;
       }
+      if (error?.status === 413 && batch.length === 1) {
+        const span = batch[0];
+        const bytes = Buffer.byteLength(JSON.stringify(span));
+        state.oversizedSkipped.push({ sessionId: span.sessionId, uuid: span.uuid, bytes });
+        log(
+          `archivarius:push — батч ${label}: 413 на одиночном спане ${span.sessionId}/${span.uuid} (${bytes} байт) — пропущен именованно, тракт продолжается`,
+        );
+        return;
+      }
       throw error;
     }
   }
@@ -107,7 +118,7 @@ export async function ingestStep(spans, { baseUrl, token, batchSize, fetchImpl =
   for (const [i, batch] of batches.entries()) {
     await pushBatch(batch, `${i + 1}/${batches.length}`);
   }
-  return { batches: state.sent, accepted: state.accepted };
+  return { batches: state.sent, accepted: state.accepted, oversizedSkipped: state.oversizedSkipped };
 }
 
 /** Тракт целиком — композиция трёх шагов; каждый читает выход предыдущего. */
@@ -119,8 +130,11 @@ export async function runTract({ sources, batchSize, dryRun, baseUrl, token, fet
   if (dryRun) {
     return buildPushReport({ files: files.length, spans: spans.length, maskedLines, batches: 0, accepted: 0, dryRun: true });
   }
-  const { batches, accepted } = await ingestStep(spans, { baseUrl, token, batchSize, fetchImpl, sleep, log });
-  return buildPushReport({ files: files.length, spans: spans.length, maskedLines, batches, accepted, dryRun: false });
+  const { batches, accepted, oversizedSkipped } = await ingestStep(spans, { baseUrl, token, batchSize, fetchImpl, sleep, log });
+  if (oversizedSkipped.length > 0) {
+    log(`archivarius:push — пропущено именованно (413 на одиночном спане): ${oversizedSkipped.length}`);
+  }
+  return buildPushReport({ files: files.length, spans: spans.length, maskedLines, batches, accepted, oversizedSkipped, dryRun: false });
 }
 
 function parseArgs(argv) {
