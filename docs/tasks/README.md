@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | M | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-live-services` | #1303-C: LIVE_SERVICES, документация и monitoring | S | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-cutover` | #1305-D: cutover, canary и rollback | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
@@ -137,6 +136,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | 2026-08-14 | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — | [карточка](./archive/static-mmbrn-live-inventory.md) |
 | `archivarius-sessions-container` | Контейнер сессий Archivarius: Mongo office, адресуемые span, ingest/search с секрет-маской | 2026-08-14 | [`ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md`](../prompts/ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md) | #1330 (Issue открыт) | [карточка](./archive/archivarius-sessions-container.md) |
 | `tw-handoff-status` | Мастерская задач: глагол task:handoff — актуальный хендоф со сверкой каждой строки (формат капитана 13.08) | 2026-08-13 | [`TW_HANDOFF_STATUS_PROMPT.md`](../prompts/TW_HANDOFF_STATUS_PROMPT.md) | — | [карточка](./archive/tw-handoff-status.md) |
 | `network-nightly-probes` | Ночной такт 01:00: сбор зонд-снимков, транспорт в дом, registry-пересчёт (В4+В5) | 2026-08-13 | [`NETWORK_NIGHTLY_PROBES_PROMPT.md`](../prompts/NETWORK_NIGHTLY_PROBES_PROMPT.md) | #1913 (Issue открыт) | [карточка](./archive/network-nightly-probes.md) |
