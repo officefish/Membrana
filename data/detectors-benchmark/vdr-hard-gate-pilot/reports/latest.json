@@ -1,11 +1,22 @@
 {
-  "generatedAt": "2026-07-03T11:09:27.712Z",
+  "generatedAt": "2026-08-15T15:35:09.508Z",
   "datasetVersion": "vvdr-hard-gate-pilot-v1",
   "curatedOnly": true,
   "preliminaryOriginLabels": true,
   "skippedUnlabeled": 0,
   "groundTruth": null,
   "sampleCount": 33,
+  "config": {
+    "mode": "live",
+    "source": "data/detectors-benchmark/v0.2/calibration-preset.json",
+    "presetGeneratedAt": "2026-06-15T12:30:00.126Z",
+    "detectorsCalibrated": [
+      "cepstral",
+      "harmonic",
+      "spectral-flux"
+    ]
+  },
+  "splitFallback": true,
   "manifestPath": "data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json",
   "detectors": [
     {
@@ -20,207 +31,242 @@
         "precision": 0.4583333333333333,
         "recall": 0.6875,
         "f1": 0.5499999999999999,
-        "latencyP50Ms": 0.08600000000001273,
-        "latencyP95Ms": 0.17450000000008004
+        "pd": 0.6875,
+        "pfa": 0.7647058823529411,
+        "pdCI": {
+          "low": 0.4440393186673406,
+          "high": 0.8583556494803894
+        },
+        "pfaCI": {
+          "low": 0.5273775411082839,
+          "high": 0.9044511092832406
+        },
+        "rocAuc": 0.34558823529411764,
+        "prAuc": 0.4185334921931549,
+        "positiveShare": 0.48484848484848486,
+        "precisionByPrior": [
+          {
+            "ratio": "1:1",
+            "prior": 0.5,
+            "precision": 0.47341772151898737
+          },
+          {
+            "ratio": "1:10",
+            "prior": 0.09090909090909091,
+            "precision": 0.08248786943096605
+          },
+          {
+            "ratio": "1:100",
+            "prior": 0.009900990099009901,
+            "precision": 0.008910277791013485
+          },
+          {
+            "ratio": "1:1000",
+            "prior": 0.000999000999000999,
+            "precision": 0.0008982309173963792
+          }
+        ],
+        "latencyP50Ms": 0.18860000000006494,
+        "latencyP95Ms": 0.567600000000084
       },
       "perSample": [
         {
-          "id": "pilot-drone-001",
-          "truthDrone": true,
-          "predDrone": false,
-          "maxConfidence": 0.5135226557811535
-        },
-        {
-          "id": "pilot-drone-002",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.5987927862865294
-        },
-        {
-          "id": "pilot-drone-003",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.5639320552732219
-        },
-        {
-          "id": "pilot-drone-004",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.672612430470546
-        },
-        {
-          "id": "pilot-drone-005",
-          "truthDrone": true,
-          "predDrone": false,
-          "maxConfidence": 0
-        },
-        {
-          "id": "pilot-drone-006",
-          "truthDrone": true,
-          "predDrone": false,
-          "maxConfidence": 0.43491859748542566
-        },
-        {
-          "id": "pilot-drone-007",
-          "truthDrone": true,
-          "predDrone": false,
-          "maxConfidence": 0.497074493895019
-        },
-        {
-          "id": "pilot-drone-008",
-          "truthDrone": true,
-          "predDrone": false,
-          "maxConfidence": 0
-        },
-        {
-          "id": "pilot-drone-009",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.604722829459166
-        },
-        {
-          "id": "pilot-drone-010",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.8335688189875269
-        },
-        {
-          "id": "pilot-drone-011",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.6661657819417228
-        },
-        {
-          "id": "pilot-drone-012",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.7814433991951688
-        },
-        {
-          "id": "pilot-drone-013",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.7140267373416809
-        },
-        {
-          "id": "pilot-drone-014",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.6498398500981266
-        },
-        {
-          "id": "pilot-drone-015",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.7817191107728979
-        },
-        {
-          "id": "pilot-drone-016",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.5731927728707845
-        },
-        {
-          "id": "pilot-not-helicopter-01",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.7698725197977488
-        },
-        {
-          "id": "pilot-not-helicopter-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.6344156722469529
-        },
-        {
-          "id": "pilot-not-helicopter-03",
+          "id": "pilot-01",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.7039277728625418
         },
         {
-          "id": "pilot-not-vacuum-cleaner-01",
-          "truthDrone": false,
-          "predDrone": false,
-          "maxConfidence": 0.48230095850679766
-        },
-        {
-          "id": "pilot-not-vacuum-cleaner-02",
-          "truthDrone": false,
-          "predDrone": false,
-          "maxConfidence": 0.4921811061036217
-        },
-        {
-          "id": "pilot-not-vacuum-cleaner-03",
-          "truthDrone": false,
+          "id": "pilot-02",
+          "truthDrone": true,
           "predDrone": true,
-          "maxConfidence": 0.7738216204209486
+          "maxConfidence": 0.5639320552732219
         },
         {
-          "id": "pilot-not-washing-machine-01",
-          "truthDrone": false,
-          "predDrone": false,
-          "maxConfidence": 0.42807302248683343
+          "id": "pilot-03",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.7814433991951688
         },
         {
-          "id": "pilot-not-washing-machine-02",
+          "id": "pilot-04",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.8681820903262041
         },
         {
-          "id": "pilot-not-chainsaw-01",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.8442100472486889
-        },
-        {
-          "id": "pilot-not-chainsaw-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.7466160712211449
-        },
-        {
-          "id": "pilot-not-engine-01",
-          "truthDrone": false,
-          "predDrone": false,
-          "maxConfidence": 0.30173959019581553
-        },
-        {
-          "id": "pilot-not-engine-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.7099901461822031
-        },
-        {
-          "id": "pilot-not-airplane-01",
+          "id": "pilot-05",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.7018348936794311
         },
         {
-          "id": "pilot-not-wind-01",
+          "id": "pilot-06",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.7144461231211595
+        },
+        {
+          "id": "pilot-07",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.604722829459166
+        },
+        {
+          "id": "pilot-08",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.7817191107728979
+        },
+        {
+          "id": "pilot-09",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0.48230095850679766
+        },
+        {
+          "id": "pilot-10",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0.4921811061036217
+        },
+        {
+          "id": "pilot-11",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0.30173959019581553
+        },
+        {
+          "id": "pilot-12",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.6661657819417228
+        },
+        {
+          "id": "pilot-13",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.5987927862865294
+        },
+        {
+          "id": "pilot-14",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0
+        },
+        {
+          "id": "pilot-15",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.5135226557811535
+        },
+        {
+          "id": "pilot-16",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.7822608213929522
         },
         {
-          "id": "pilot-not-wind-02",
+          "id": "pilot-17",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.6344156722469529
+        },
+        {
+          "id": "pilot-18",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.7803245874328483
         },
         {
-          "id": "pilot-not-chirping-birds-01",
+          "id": "pilot-19",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0
+        },
+        {
+          "id": "pilot-20",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.7099901461822031
+        },
+        {
+          "id": "pilot-21",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.43491859748542566
+        },
+        {
+          "id": "pilot-22",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.8335688189875269
+        },
+        {
+          "id": "pilot-23",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.6706815712408104
         },
         {
-          "id": "pilot-not-chirping-birds-02",
+          "id": "pilot-24",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0.42807302248683343
+        },
+        {
+          "id": "pilot-25",
           "truthDrone": false,
           "predDrone": true,
-          "maxConfidence": 0.7144461231211595
+          "maxConfidence": 0.7466160712211449
+        },
+        {
+          "id": "pilot-26",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.5731927728707845
+        },
+        {
+          "id": "pilot-27",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.8442100472486889
+        },
+        {
+          "id": "pilot-28",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.672612430470546
+        },
+        {
+          "id": "pilot-29",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.7738216204209486
+        },
+        {
+          "id": "pilot-30",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.6498398500981266
+        },
+        {
+          "id": "pilot-31",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.497074493895019
+        },
+        {
+          "id": "pilot-32",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.7698725197977488
+        },
+        {
+          "id": "pilot-33",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.7140267373416809
         }
       ]
     },
@@ -236,205 +282,240 @@
         "precision": 0.48484848484848486,
         "recall": 1,
         "f1": 0.653061224489796,
-        "latencyP50Ms": 0.2096999999998843,
-        "latencyP95Ms": 0.3876000000000204
+        "pd": 1,
+        "pfa": 1,
+        "pdCI": {
+          "low": 0.8063865817272802,
+          "high": 1
+        },
+        "pfaCI": {
+          "low": 0.8156763396284354,
+          "high": 1
+        },
+        "rocAuc": 0.5588235294117647,
+        "prAuc": 0.5161290322580645,
+        "positiveShare": 0.48484848484848486,
+        "precisionByPrior": [
+          {
+            "ratio": "1:1",
+            "prior": 0.5,
+            "precision": 0.5
+          },
+          {
+            "ratio": "1:10",
+            "prior": 0.09090909090909091,
+            "precision": 0.09090909090909091
+          },
+          {
+            "ratio": "1:100",
+            "prior": 0.009900990099009901,
+            "precision": 0.009900990099009901
+          },
+          {
+            "ratio": "1:1000",
+            "prior": 0.000999000999000999,
+            "precision": 0.000999000999000999
+          }
+        ],
+        "latencyP50Ms": 0.481300000000374,
+        "latencyP95Ms": 1.2305000000005748
       },
       "perSample": [
         {
-          "id": "pilot-drone-001",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-002",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-003",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-004",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-005",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-006",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-007",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-008",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-009",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-010",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-011",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-012",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-013",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-014",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-015",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-drone-016",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-not-helicopter-01",
+          "id": "pilot-01",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 1
         },
         {
-          "id": "pilot-not-helicopter-02",
+          "id": "pilot-02",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-03",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-04",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 1
         },
         {
-          "id": "pilot-not-helicopter-03",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-not-vacuum-cleaner-01",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-not-vacuum-cleaner-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-not-vacuum-cleaner-03",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-not-washing-machine-01",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-not-washing-machine-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-not-chainsaw-01",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-not-chainsaw-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-not-engine-01",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.9830611022287349
-        },
-        {
-          "id": "pilot-not-engine-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 1
-        },
-        {
-          "id": "pilot-not-airplane-01",
+          "id": "pilot-05",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.8518658199512673
         },
         {
-          "id": "pilot-not-wind-01",
+          "id": "pilot-06",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 1
         },
         {
-          "id": "pilot-not-wind-02",
+          "id": "pilot-07",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-08",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-09",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 1
         },
         {
-          "id": "pilot-not-chirping-birds-01",
+          "id": "pilot-10",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 1
         },
         {
-          "id": "pilot-not-chirping-birds-02",
+          "id": "pilot-11",
           "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.9830611022287349
+        },
+        {
+          "id": "pilot-12",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-13",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-14",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-15",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-16",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-17",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-18",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-19",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-20",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-21",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-22",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-23",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-24",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-25",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-26",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-27",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-28",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-29",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-30",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-31",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-32",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-33",
+          "truthDrone": true,
           "predDrone": true,
           "maxConfidence": 1
         }
@@ -445,214 +526,249 @@
       "family": "dsp",
       "status": "benchmarked",
       "metrics": {
-        "tp": 16,
-        "fp": 17,
-        "fn": 0,
-        "tn": 0,
-        "precision": 0.48484848484848486,
-        "recall": 1,
-        "f1": 0.653061224489796,
-        "latencyP50Ms": 0.08240000000023429,
-        "latencyP95Ms": 0.15039999999999054
+        "tp": 13,
+        "fp": 14,
+        "fn": 3,
+        "tn": 3,
+        "precision": 0.48148148148148145,
+        "recall": 0.8125,
+        "f1": 0.6046511627906976,
+        "pd": 0.8125,
+        "pfa": 0.8235294117647058,
+        "pdCI": {
+          "low": 0.5699064013154177,
+          "high": 0.9340852122641324
+        },
+        "pfaCI": {
+          "low": 0.5897007098262422,
+          "high": 0.9380898628745101
+        },
+        "rocAuc": 0.3639705882352941,
+        "prAuc": 0.4064867660357667,
+        "positiveShare": 0.48484848484848486,
+        "precisionByPrior": [
+          {
+            "ratio": "1:1",
+            "prior": 0.5,
+            "precision": 0.4966292134831461
+          },
+          {
+            "ratio": "1:10",
+            "prior": 0.09090909090909091,
+            "precision": 0.08980089394555059
+          },
+          {
+            "ratio": "1:100",
+            "prior": 0.009900990099009901,
+            "precision": 0.009769683037885153
+          },
+          {
+            "ratio": "1:1000",
+            "prior": 0.000999000999000999,
+            "precision": 0.000985634708613377
+          }
+        ],
+        "latencyP50Ms": 0.18329999999878055,
+        "latencyP95Ms": 0.48959999999897263
       },
       "perSample": [
         {
-          "id": "pilot-drone-001",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9906815968935447
-        },
-        {
-          "id": "pilot-drone-002",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9961224262219819
-        },
-        {
-          "id": "pilot-drone-003",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9953597541356318
-        },
-        {
-          "id": "pilot-drone-004",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9951529744027579
-        },
-        {
-          "id": "pilot-drone-005",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9941389644853821
-        },
-        {
-          "id": "pilot-drone-006",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9919932837837149
-        },
-        {
-          "id": "pilot-drone-007",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9932292046843834
-        },
-        {
-          "id": "pilot-drone-008",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9908630700211593
-        },
-        {
-          "id": "pilot-drone-009",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9916549213825929
-        },
-        {
-          "id": "pilot-drone-010",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9910614078410374
-        },
-        {
-          "id": "pilot-drone-011",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9913712026534385
-        },
-        {
-          "id": "pilot-drone-012",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9877388347429532
-        },
-        {
-          "id": "pilot-drone-013",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9875009747780676
-        },
-        {
-          "id": "pilot-drone-014",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9937973317020439
-        },
-        {
-          "id": "pilot-drone-015",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9924232557696928
-        },
-        {
-          "id": "pilot-drone-016",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.9948311856342986
-        },
-        {
-          "id": "pilot-not-helicopter-01",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.98848538079135
-        },
-        {
-          "id": "pilot-not-helicopter-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.9906532538638587
-        },
-        {
-          "id": "pilot-not-helicopter-03",
+          "id": "pilot-01",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.9940621224885364
         },
         {
-          "id": "pilot-not-vacuum-cleaner-01",
-          "truthDrone": false,
+          "id": "pilot-02",
+          "truthDrone": true,
           "predDrone": true,
-          "maxConfidence": 0.9940709728157715
+          "maxConfidence": 0.9953597541356318
         },
         {
-          "id": "pilot-not-vacuum-cleaner-02",
-          "truthDrone": false,
+          "id": "pilot-03",
+          "truthDrone": true,
           "predDrone": true,
-          "maxConfidence": 0.9928655550738705
+          "maxConfidence": 0.9877388347429532
         },
         {
-          "id": "pilot-not-vacuum-cleaner-03",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.9885805704823847
-        },
-        {
-          "id": "pilot-not-washing-machine-01",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.9936097273218896
-        },
-        {
-          "id": "pilot-not-washing-machine-02",
+          "id": "pilot-04",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.9934741296989174
         },
         {
-          "id": "pilot-not-chainsaw-01",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.9978739884967507
-        },
-        {
-          "id": "pilot-not-chainsaw-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.9999569409325983
-        },
-        {
-          "id": "pilot-not-engine-01",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.986521344999646
-        },
-        {
-          "id": "pilot-not-engine-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.9986052679303272
-        },
-        {
-          "id": "pilot-not-airplane-01",
+          "id": "pilot-05",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.9923947079861037
         },
         {
-          "id": "pilot-not-wind-01",
+          "id": "pilot-06",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0.9961163296992734
+        },
+        {
+          "id": "pilot-07",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.9916549213825929
+        },
+        {
+          "id": "pilot-08",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.9924232557696928
+        },
+        {
+          "id": "pilot-09",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.9940709728157715
+        },
+        {
+          "id": "pilot-10",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.9928655550738705
+        },
+        {
+          "id": "pilot-11",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.986521344999646
+        },
+        {
+          "id": "pilot-12",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.9913712026534385
+        },
+        {
+          "id": "pilot-13",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.9961224262219819
+        },
+        {
+          "id": "pilot-14",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.9908630700211593
+        },
+        {
+          "id": "pilot-15",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.9906815968935447
+        },
+        {
+          "id": "pilot-16",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.9956587641752366
         },
         {
-          "id": "pilot-not-wind-02",
+          "id": "pilot-17",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.9906532538638587
+        },
+        {
+          "id": "pilot-18",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.9952490783779787
         },
         {
-          "id": "pilot-not-chirping-birds-01",
+          "id": "pilot-19",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.9941389644853821
+        },
+        {
+          "id": "pilot-20",
           "truthDrone": false,
           "predDrone": true,
+          "maxConfidence": 0.9986052679303272
+        },
+        {
+          "id": "pilot-21",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.9919932837837149
+        },
+        {
+          "id": "pilot-22",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.9910614078410374
+        },
+        {
+          "id": "pilot-23",
+          "truthDrone": false,
+          "predDrone": false,
           "maxConfidence": 0.9992894904455001
         },
         {
-          "id": "pilot-not-chirping-birds-02",
+          "id": "pilot-24",
           "truthDrone": false,
           "predDrone": true,
-          "maxConfidence": 0.9961163296992734
+          "maxConfidence": 0.9936097273218896
+        },
+        {
+          "id": "pilot-25",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.9999569409325983
+        },
+        {
+          "id": "pilot-26",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.9948311856342986
+        },
+        {
+          "id": "pilot-27",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.9978739884967507
+        },
+        {
+          "id": "pilot-28",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.9951529744027579
+        },
+        {
+          "id": "pilot-29",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.9885805704823847
+        },
+        {
+          "id": "pilot-30",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.9937973317020439
+        },
+        {
+          "id": "pilot-31",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.9932292046843834
+        },
+        {
+          "id": "pilot-32",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0.98848538079135
+        },
+        {
+          "id": "pilot-33",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.9875009747780676
         }
       ]
     },
@@ -668,216 +784,495 @@
         "precision": 0.52,
         "recall": 0.8125,
         "f1": 0.6341463414634146,
-        "latencyP50Ms": 1.324999999999818,
-        "latencyP95Ms": 2.6958999999997104
+        "pd": 0.8125,
+        "pfa": 0.7058823529411765,
+        "pdCI": {
+          "low": 0.5699064013154177,
+          "high": 0.9340852122641324
+        },
+        "pfaCI": {
+          "low": 0.468664666737861,
+          "high": 0.8672020613444361
+        },
+        "rocAuc": 0.6838235294117647,
+        "prAuc": 0.7089145768025078,
+        "positiveShare": 0.48484848484848486,
+        "precisionByPrior": [
+          {
+            "ratio": "1:1",
+            "prior": 0.5,
+            "precision": 0.5351089588377723
+          },
+          {
+            "ratio": "1:10",
+            "prior": 0.09090909090909091,
+            "precision": 0.10322279308734236
+          },
+          {
+            "ratio": "1:100",
+            "prior": 0.009900990099009901,
+            "precision": 0.01137943463261418
+          },
+          {
+            "ratio": "1:1000",
+            "prior": 0.000999000999000999,
+            "precision": 0.0011497182930064872
+          }
+        ],
+        "latencyP50Ms": 3.963999999999942,
+        "latencyP95Ms": 8.599899999999252
       },
       "perSample": [
         {
-          "id": "pilot-drone-001",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.76
-        },
-        {
-          "id": "pilot-drone-002",
-          "truthDrone": true,
-          "predDrone": false,
-          "maxConfidence": 0.97
-        },
-        {
-          "id": "pilot-drone-003",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.76
-        },
-        {
-          "id": "pilot-drone-004",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.76
-        },
-        {
-          "id": "pilot-drone-005",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.76
-        },
-        {
-          "id": "pilot-drone-006",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.7
-        },
-        {
-          "id": "pilot-drone-007",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.67
-        },
-        {
-          "id": "pilot-drone-008",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.67
-        },
-        {
-          "id": "pilot-drone-009",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.76
-        },
-        {
-          "id": "pilot-drone-010",
-          "truthDrone": true,
-          "predDrone": false,
-          "maxConfidence": 0.93
-        },
-        {
-          "id": "pilot-drone-011",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.76
-        },
-        {
-          "id": "pilot-drone-012",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.76
-        },
-        {
-          "id": "pilot-drone-013",
-          "truthDrone": true,
-          "predDrone": false,
-          "maxConfidence": 0.94
-        },
-        {
-          "id": "pilot-drone-014",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.64
-        },
-        {
-          "id": "pilot-drone-015",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.76
-        },
-        {
-          "id": "pilot-drone-016",
-          "truthDrone": true,
-          "predDrone": true,
-          "maxConfidence": 0.76
-        },
-        {
-          "id": "pilot-not-helicopter-01",
+          "id": "pilot-01",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.66
         },
         {
-          "id": "pilot-not-helicopter-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.66
-        },
-        {
-          "id": "pilot-not-helicopter-03",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.66
-        },
-        {
-          "id": "pilot-not-vacuum-cleaner-01",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.73
-        },
-        {
-          "id": "pilot-not-vacuum-cleaner-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.73
-        },
-        {
-          "id": "pilot-not-vacuum-cleaner-03",
-          "truthDrone": false,
+          "id": "pilot-02",
+          "truthDrone": true,
           "predDrone": true,
           "maxConfidence": 0.76
         },
         {
-          "id": "pilot-not-washing-machine-01",
-          "truthDrone": false,
+          "id": "pilot-03",
+          "truthDrone": true,
           "predDrone": true,
           "maxConfidence": 0.76
         },
         {
-          "id": "pilot-not-washing-machine-02",
+          "id": "pilot-04",
           "truthDrone": false,
           "predDrone": false,
           "maxConfidence": 0.9
         },
         {
-          "id": "pilot-not-chainsaw-01",
-          "truthDrone": false,
-          "predDrone": false,
-          "maxConfidence": 0.82
-        },
-        {
-          "id": "pilot-not-chainsaw-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.67
-        },
-        {
-          "id": "pilot-not-engine-01",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.62
-        },
-        {
-          "id": "pilot-not-engine-02",
-          "truthDrone": false,
-          "predDrone": true,
-          "maxConfidence": 0.74
-        },
-        {
-          "id": "pilot-not-airplane-01",
+          "id": "pilot-05",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.6
         },
         {
-          "id": "pilot-not-wind-01",
+          "id": "pilot-06",
           "truthDrone": false,
           "predDrone": false,
-          "maxConfidence": 0.77
+          "maxConfidence": 0.53
         },
         {
-          "id": "pilot-not-wind-02",
+          "id": "pilot-07",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.76
+        },
+        {
+          "id": "pilot-08",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.76
+        },
+        {
+          "id": "pilot-09",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.73
+        },
+        {
+          "id": "pilot-10",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.73
+        },
+        {
+          "id": "pilot-11",
           "truthDrone": false,
           "predDrone": true,
           "maxConfidence": 0.62
         },
         {
-          "id": "pilot-not-chirping-birds-01",
+          "id": "pilot-12",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.76
+        },
+        {
+          "id": "pilot-13",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.97
+        },
+        {
+          "id": "pilot-14",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.67
+        },
+        {
+          "id": "pilot-15",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.76
+        },
+        {
+          "id": "pilot-16",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0.77
+        },
+        {
+          "id": "pilot-17",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.66
+        },
+        {
+          "id": "pilot-18",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.62
+        },
+        {
+          "id": "pilot-19",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.76
+        },
+        {
+          "id": "pilot-20",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.74
+        },
+        {
+          "id": "pilot-21",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.7
+        },
+        {
+          "id": "pilot-22",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.93
+        },
+        {
+          "id": "pilot-23",
           "truthDrone": false,
           "predDrone": false,
           "maxConfidence": 0.83
         },
         {
-          "id": "pilot-not-chirping-birds-02",
+          "id": "pilot-24",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.76
+        },
+        {
+          "id": "pilot-25",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.67
+        },
+        {
+          "id": "pilot-26",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.76
+        },
+        {
+          "id": "pilot-27",
           "truthDrone": false,
           "predDrone": false,
-          "maxConfidence": 0.53
+          "maxConfidence": 0.82
+        },
+        {
+          "id": "pilot-28",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.76
+        },
+        {
+          "id": "pilot-29",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.76
+        },
+        {
+          "id": "pilot-30",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.64
+        },
+        {
+          "id": "pilot-31",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.67
+        },
+        {
+          "id": "pilot-32",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.66
+        },
+        {
+          "id": "pilot-33",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.94
         }
       ]
     },
     {
       "name": "yamnet",
       "family": "neural",
-      "status": "scaffold",
-      "metrics": null,
-      "perSample": null
+      "status": "benchmarked",
+      "metrics": {
+        "tp": 10,
+        "fp": 15,
+        "fn": 6,
+        "tn": 2,
+        "precision": 0.4,
+        "recall": 0.625,
+        "f1": 0.48780487804878053,
+        "pd": 0.625,
+        "pfa": 0.8823529411764706,
+        "pdCI": {
+          "low": 0.3864064709793481,
+          "high": 0.815190174452472
+        },
+        "pfaCI": {
+          "low": 0.6566315750229009,
+          "high": 0.967120919987079
+        },
+        "rocAuc": 0.2977941176470588,
+        "prAuc": 0.43996136476148995,
+        "positiveShare": 0.48484848484848486,
+        "precisionByPrior": [
+          {
+            "ratio": "1:1",
+            "prior": 0.5,
+            "precision": 0.4146341463414634
+          },
+          {
+            "ratio": "1:10",
+            "prior": 0.09090909090909091,
+            "precision": 0.066147859922179
+          },
+          {
+            "ratio": "1:100",
+            "prior": 0.009900990099009901,
+            "precision": 0.007033512618949111
+          },
+          {
+            "ratio": "1:1000",
+            "prior": 0.000999000999000999,
+            "precision": 0.0007078319523670732
+          }
+        ],
+        "latencyP50Ms": 244.304900000001,
+        "latencyP95Ms": 287.40390000000116
+      },
+      "perSample": [
+        {
+          "id": "pilot-01",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.16593586206436156
+        },
+        {
+          "id": "pilot-02",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.04750786945223808
+        },
+        {
+          "id": "pilot-03",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.07138997688889503
+        },
+        {
+          "id": "pilot-04",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.02869536355137825
+        },
+        {
+          "id": "pilot-05",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.062042880803346634
+        },
+        {
+          "id": "pilot-06",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0.0001373702514683828
+        },
+        {
+          "id": "pilot-07",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.1811743810772896
+        },
+        {
+          "id": "pilot-08",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.8791791200637817
+        },
+        {
+          "id": "pilot-09",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.12814799398183824
+        },
+        {
+          "id": "pilot-10",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.18858916014432908
+        },
+        {
+          "id": "pilot-11",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.22337708473205567
+        },
+        {
+          "id": "pilot-12",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.015891509130597115
+        },
+        {
+          "id": "pilot-13",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.028998186439275743
+        },
+        {
+          "id": "pilot-14",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.001018809014931321
+        },
+        {
+          "id": "pilot-15",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.005282759014517069
+        },
+        {
+          "id": "pilot-16",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.1571033924818039
+        },
+        {
+          "id": "pilot-17",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.12922957241535185
+        },
+        {
+          "id": "pilot-18",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.3214175283908844
+        },
+        {
+          "id": "pilot-19",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.004233866930007935
+        },
+        {
+          "id": "pilot-20",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.14982948303222657
+        },
+        {
+          "id": "pilot-21",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.0018699598498642443
+        },
+        {
+          "id": "pilot-22",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.20551495850086213
+        },
+        {
+          "id": "pilot-23",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0.0014998172060586513
+        },
+        {
+          "id": "pilot-24",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.3298126459121704
+        },
+        {
+          "id": "pilot-25",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.5235952734947205
+        },
+        {
+          "id": "pilot-26",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.00010361619642935693
+        },
+        {
+          "id": "pilot-27",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.13599388003349303
+        },
+        {
+          "id": "pilot-28",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.05520148202776909
+        },
+        {
+          "id": "pilot-29",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.07801828980445862
+        },
+        {
+          "id": "pilot-30",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.015837019309401512
+        },
+        {
+          "id": "pilot-31",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.007009366527199745
+        },
+        {
+          "id": "pilot-32",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.17886854410171507
+        },
+        {
+          "id": "pilot-33",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 0.20493907928466795
+        }
+      ]
     },
     {
       "name": "clap",
