@@ -6,7 +6,13 @@
   ],
   "frozenDigest": "3b346ed2f965cd45fdf063c3d043e1a52200c9eb0a540fa7ce9813dd3fc1f57e",
   "magistral": "vdr-hg3-trends-benchmark",
-  "swallow": null,
+  "swallow": {
+    "gate": "evening:partner-swallow",
+    "draftDigest": "fdbd76b9d9883bca96de962680bf82b8f2e6623b564184316f258a902fda1eae",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-15.md",
+    "ownerAck": true,
+    "day": "2026-08-15"
+  },
   "day": "2026-08-15",
   "magistralChosenAt": "2026-08-15"
 }

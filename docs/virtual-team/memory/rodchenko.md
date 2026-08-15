@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14373/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 280 (причины в op-log) -->
+Записей: 50 · бюджет 14386/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 281 (причины в op-log) -->
+
+### 2026-08-15 · позиция · team-evening-feedback
+
+> Родченко. Оценка артефактов: `MAIN_DAY_ISSUE` и HANDOFF третий день переносят `aria-live="polite"` на `promo-deny-text` в санитарные (~10 минут работы). Документы честны, но правка не делается. Итоги дня: UI-диффа за день нет; санитарный хвост a11y висит. На завтра: закрыть […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-15.md#reply-1`
 
 ### 2026-08-14 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/workshop-wires-m1-home-namespace-2026-07-30.md#reply-1`
 
-### 2026-07-30 · позиция · workshop-wires-m2-atlas-discovery
+### 2026-07-23 · позиция · llm-procedure-channels-m2a-scope
 
-> С витрины читателя ATLAS фальшь двойная. (1) В шапке source = README, в факте README не источник обнаружения — это декор без несущей. (2) Тридцать три дома с README невидимы: пустота выглядит как «их нет», хотя дерево есть. Карточка «контейнер без мастерской» обязана читаться […] _(реплик в сеансе: 6)_
+> На панели v1 список процедур = filter meters∧routingEnabled, не «весь registry». Иначе владелец видит серые тумблеры. Витрина честная: два ряда. Расширение — новый ряд после PR. _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/workshop-wires-m2-atlas-discovery-2026-07-30.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m3a-llm-proxy-seam
-
-> Для панели провайдеры — enum из ritual catalog, не весь experimental JSON. Иначе тумблер покажет FreeModel, которого v1 resolve не обещает. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m3a-llm-proxy-seam-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m2a-scope-2026-07-23-2026-07-23.md#reply-1`

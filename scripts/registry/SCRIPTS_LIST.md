@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-14 |
-| Head SHA | f0b000997631548fa52062c7971b176f07c6a8f0 |
+| Date | 2026-08-15 |
+| Head SHA | 894e60bb69ce0ed2478d2fa3fadb6c77b7dce13d |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1131 |
-| Yarn scripts (package.json) | 446 |
-| Yarn → `scripts/` | 391 |
+| Code files under `scripts/` | 1133 |
+| Yarn scripts (package.json) | 447 |
+| Yarn → `scripts/` | 392 |
 | Yarn без пути `scripts/` | 55 |
 | Yarn → missing file | 9 |
-| Code files without yarn ref | 820 |
+| Code files without yarn ref | 821 |
 
-## Yarn → scripts/ (391)
+## Yarn → scripts/ (392)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -397,6 +397,7 @@
 - `usercase:verify-prerun` → `scripts/verify-usercase-prerun.mjs`
 - `validate:vdr` → `scripts/validate-vdr.mjs`
 - `validate:workshop` → `scripts/check-workshops.mjs`
+- `vdr:blind` → `scripts/vdr-blind-corpus.mjs`
 - `vdr:labels-merge` → `scripts/vdr-labels-merge.mjs`
 - `vdr:list` → `scripts/list-free-v1-content.mjs`
 - `vds:run` → `scripts/deploy-run.mjs`, `scripts/_ssh-office-exec.mjs`
@@ -417,7 +418,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (820)
+## Code files without yarn ref (821)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1221,6 +1222,7 @@
 - `scripts/validate-procedure.test.mjs`
 - `scripts/validate-vdr.test.mjs`
 - `scripts/validate-workshop.test.mjs`
+- `scripts/vdr-blind-corpus.test.mjs`
 - `scripts/vdr-labels-merge.test.mjs`
 - `scripts/verify-encoding.test.mjs`
 - `scripts/verify-mcp-bootstrap.test.mjs`
@@ -1252,7 +1254,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1131)
+## All code files (1133)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -2345,6 +2347,8 @@
 - `scripts/validate-vdr.mjs`
 - `scripts/validate-vdr.test.mjs`
 - `scripts/validate-workshop.test.mjs`
+- `scripts/vdr-blind-corpus.mjs`
+- `scripts/vdr-blind-corpus.test.mjs`
 - `scripts/vdr-labels-merge.mjs`
 - `scripts/vdr-labels-merge.test.mjs`
 - `scripts/verify-branch-protection.mjs`

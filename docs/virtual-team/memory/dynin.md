@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14309/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 282 (причины в op-log) -->
+Записей: 49 · бюджет 14287/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 283 (причины в op-log) -->
+
+### 2026-08-15 · позиция · team-evening-feedback
+
+> Дынин. Оценка артефактов: артефакты дня в моей зоне не задействованы; горизонт корректно исключил DSP-бенчмарки как «повтор без смены датасета не даёт информации» — это моя логика, применена без меня. Итоги дня: — (в диффе нет математики; пилотный корпус — данные, не алгоритмы). […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-15.md#reply-1`
 
 ### 2026-08-14 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Формализую. Пусть S — множество путей скриптов, H — множество домов (носитель `workshop.manifest.json`), N — множество неймспейсов. Предикаты: `inHome(s,h) ⇔ s ∈ members(h) ∧ h ∈ H`; `inNamespace(s,n) ⇔ s ∈ members(n) ∧ n ∈ N`. Инвариант различения: `isHome(x) ⇔ has(x, verbs) ∧ […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/workshop-wires-m1-home-namespace-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m2-atlas-discovery
-
-> Формализую без UI. Дано: предикат обнаружения сегодня `D₀(c) ⇔ ∃ docs/**/c/workshop.manifest.json`. Индекс ATLAS = derive(D₀). Замер: |ATLAS|=12, |README|=45, |¬manifest|=33. `docs/network` ∈ ¬D₀ при наличии скриптов и зуба — вещдок неполноты D₀ относительно «дома». T9 требует: […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m2-atlas-discovery-2026-07-30.md#reply-1`

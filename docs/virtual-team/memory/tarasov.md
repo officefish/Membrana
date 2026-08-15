@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14387/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 295 (причины в op-log) -->
+Записей: 50 · бюджет 14368/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 296 (причины в op-log) -->
+
+### 2026-08-15 · позиция · team-evening-feedback
+
+> Тарасов. Оценка артефактов: `STRATEGY_DAY` и `DAILY_STANDUP` согласованы на магистрали `secret-parser-built`; `MAIN_DAY_ISSUE` честно вынес расхождение с `main-day-assertions.json` в таблицу (норма У1), не замолчал; `DAILY_CODE_REVIEW` подтвердил T1/пропуск. Артефакты сработали […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-15.md#reply-1`
 
 ### 2026-08-14 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > Планка матча узкая: минимальный evidence contract, required vs optional/derived, forbidden hints, явный отказ выводить L/O. Не лезем в checkpoint shape, writer, recovery, migration, insight lifecycle. Связка: Структурщик — леммы полей; Математик — предикат valid; Архитектор — […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m3-repo-checkpoint
-
-> Планка M3 узкая. M1: Mongo office — канон, repo — carrier. M2: cold-record с `proof` уже закрыт. Сегодня только: что лежит в git как маленький слепок, какие поля, как доказать тождество серверного архива, что — sanity, что checkpoint **не** значит. Q5 writer, Q4 restore, Q6 […] _(реплик в сеансе: 8)_
-
-— источник: `docs/seanses/task-archive-cold-store-m3-repo-checkpoint-2026-07-30.md#reply-1`
