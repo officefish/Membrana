@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-08-14T04:56:23.727Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-08-15T07:47:16.662Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -49,12 +49,12 @@ _Кристаллов активно: 128 (owner: 82, derived: 46). Страте
 - ~~**Версионируемые тулинг-киты: наборы умений агента под задачу**~~ — `insight:insight-tooling-kits` _(stale · 2026-07-19)_
 - ~~**Server forwarding — серверные функции сценария**~~ — `insight:insight-server-forwarding` _(stale · 2026-06-25)_
 - ~~**Ночные сны → процедура во фреймах с настраиваемым через панель провайдером**~~ — `insight:insight-dreams-procedure-frames` _(stale · 2026-07-25)_
-- **Память процедур: показывается, а не запрашивается; вовлечённость числом, а не подтверждением** — `insight:insight-procedure-memory-shown-not-asked`
+- ~~**Память процедур: показывается, а не запрашивается; вовлечённость числом, а не подтверждением**~~ — `insight:insight-procedure-memory-shown-not-asked` _(stale · 2026-08-01)_
 - ~~**Оркестрация процедур через n8n: кожух и производный рендер поверх git как единственного источника правды**~~ — `insight:insight-procedures-orchestration-n8n` _(stale · 2026-07-26)_
 - ~~**Токены правды: владельческие факты как источник истины для ритуала**~~ — `insight:insight-truth-tokens-owner-facts` _(stale · 2026-07-16)_
 - ~~**Контейнер прецедентов + мастерская к нему**~~ — `insight:insight-precedent-container` _(stale · 2026-07-22)_
 - ~~**Второй тариф: MFCC-спектр + нейроанализ спектрограмм машинным зрением, разделение продукта по тарифам**~~ — `insight:insight-spectrum-tiers` _(stale · 2026-07-28)_
-- **Повестка заседания — выписка, а не проза председателя: машинные факты с id и зуб на посылки** — `insight:insight-meeting-agenda-as-extract`
+- ~~**Повестка заседания — выписка, а не проза председателя: машинные факты с id и зуб на посылки**~~ — `insight:insight-meeting-agenda-as-extract` _(stale · 2026-08-01)_
 - ~~**Dual-density UI: operator vs engineer mode**~~ — `insight:insight-rodchenko-operator-density-mode` _(stale · 2026-06-25)_
 - ~~**Tier2: 5 канонических рабочих деревьев (main/tooling/product/codex/cursor), спринт всегда уходит в свою ветку**~~ — `insight:insight-tier2-worktree-topology` _(stale · 2026-07-20)_
 - ~~**Начитанная виртуальная команда: досье персон + фоновый stack-watch за новинками стека**~~ — `insight:insight-team-stack-watch` _(stale · 2026-07-09)_
