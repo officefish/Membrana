@@ -1,24 +1,12 @@
 {
   "magistralOptions": [
+    "vdr-hg3-trends-benchmark",
     "angelina-hostess-impl",
-    "archivarius-sessions-container",
     "assets-container"
   ],
-  "frozenDigest": "f5ae7902e841ded728c93a1e52874483512496aefaf754b592cdcec4d9f8ecea",
-  "magistral": "archivarius-sessions-container",
-  "swallow": {
-    "draftDigest": "381521aa9cfcde31b978798e7d4728774facca57ca2ffdbea095770803992d71",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-14.md",
-    "ownerAck": true,
-    "day": "2026-08-14",
-    "claimsProbe": {
-      "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-08-14.md",
-      "sha": "5c61bb6d2e48",
-      "at": "2026-08-14T17:01:11.686Z"
-    },
-    "gate": "evening:partner-swallow"
-  },
-  "day": "2026-08-14",
-  "magistralChosenAt": "2026-08-14"
+  "frozenDigest": "3b346ed2f965cd45fdf063c3d043e1a52200c9eb0a540fa7ce9813dd3fc1f57e",
+  "magistral": "vdr-hg3-trends-benchmark",
+  "swallow": null,
+  "day": "2026-08-15",
+  "magistralChosenAt": "2026-08-15"
 }
