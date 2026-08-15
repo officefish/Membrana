@@ -457,7 +457,8 @@
     "snapshots:rebuild": "node scripts/snapshots-rebuild.mjs",
     "calibrate:mfcc": "node scripts/calibrate-mfcc-gates.mjs",
     "branch:status": "node scripts/branch-status.mjs",
-    "worktree:resolve": "node scripts/worktree-resolution.mjs"
+    "worktree:resolve": "node scripts/worktree-resolution.mjs",
+    "vdr:blind": "node scripts/vdr-blind-corpus.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
