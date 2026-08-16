@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-08-15T07:55:19.063Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-08-16T06:12:37.906Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -44,7 +44,7 @@ _Кристаллов активно: 128 (owner: 82, derived: 46). Страте
 - ~~**Сопряжение с внешним эффектором C-UAS (ВИЗОР-МПВС, запрос Дениса)**~~ — `insight:insight-effector-cue-integration` _(stale · 2026-07-17)_
 - ~~**Серверные генераторы: конверты → чистые функции office, git-роутер с очередями**~~ — `insight:insight-server-generators-office` _(stale · 2026-07-21)_
 - **Портфель шотов всплывает в момент решения: акт Тарасова, выбор кандидатов, форкаст↔факт после мерджа** — `insight:insight-one-shot-portfolio-surfacing`
-- **Депо: комната недельного охвата — глубокие аудиты и санитарные работы отдельным контуром** — `insight:insight-depot-weekly-room`
+- ~~**Депо: комната недельного охвата — глубокие аудиты и санитарные работы отдельным контуром**~~ — `insight:insight-depot-weekly-room` _(stale · 2026-08-02)_
 - ~~**Issue closure must account for every active registry child**~~ — `insight:insight-ghost-task-closure-invariant` _(stale · 2026-06-29)_
 - ~~**Версионируемые тулинг-киты: наборы умений агента под задачу**~~ — `insight:insight-tooling-kits` _(stale · 2026-07-19)_
 - ~~**Server forwarding — серверные функции сценария**~~ — `insight:insight-server-forwarding` _(stale · 2026-06-25)_
@@ -64,7 +64,7 @@ _Кристаллов активно: 128 (owner: 82, derived: 46). Страте
 - ~~**Канонический FSM сессии recorder (anti-L18)**~~ — `insight:insight-kuryokhin-recorder-session-fsm` _(stale · 2026-06-25)_
 - ~~**Роутинг изменений: сессии без push, заявки-патчи, office-очередь, именные гейты**~~ — `insight:insight-change-routing-office` _(stale · 2026-07-22)_
 - ~~**Акустические характеристики 7 классов звука free-v1: discriminative FFT features**~~ — `insight:insight-free-v1-acoustic-classes` _(stale · 2026-06-30)_
-- **Счёт вмешательств владельца: суверенные против компенсирующих** — `insight:insight-owner-intervention-ledger`
+- ~~**Счёт вмешательств владельца: суверенные против компенсирующих**~~ — `insight:insight-owner-intervention-ledger` _(stale · 2026-08-02)_
 - ~~**Линза Ожегова — кроссагентский скилл верификации ЧИСТОТЫ РЕЧИ (не грамотности)**~~ — `insight:insight-ozhegov-lens-speech-purity-skill` _(stale · 2026-07-17)_
 - ~~**Интеграция внешнего датасета DADS (Антон) в контур детекторов**~~ — `insight:insight-dads-detector-integration` _(stale · 2026-07-17)_
 - ~~**Объект Slide и fullscreen-режим презентации сценария**~~ — `insight:insight-slide-fullscreen-presentation` _(stale · 2026-06-25)_
@@ -85,7 +85,7 @@ _Кристаллов активно: 128 (owner: 82, derived: 46). Страте
 - ~~**ServerFunctionRegistry в @membrana/core**~~ — `insight:insight-ozhegov-server-function-registry` _(stale · 2026-06-25)_
 - ~~**Контракт намерения: граф правды ↔ мостик, треугольник + мана + твёрдость**~~ — `insight:insight-intent-contract-graph-bridge` _(stale · 2026-07-26)_
 - ~~**Живой нейро-combined детектор (эшелон-2-live): yamnet в combinedScore**~~ — `insight:insight-live-neural-combined-detector` _(stale · 2026-07-12)_
-- **Server-only прогон двух ритуалов через панель как показательный опыт автономии** — `insight:insight-server-only-ritual-run`
+- ~~**Server-only прогон двух ритуалов через панель как показательный опыт автономии**~~ — `insight:insight-server-only-ritual-run` _(stale · 2026-08-02)_
 - ~~**Хранилище архива закрытых задач: append-only log vs Postgres**~~ — `insight:insight-task-archive-storage` _(stale · 2026-06-28)_
 - ~~**Chain-log golden oracle для operator smoke**~~ — `insight:insight-dynin-chain-log-golden-oracle` _(stale · 2026-06-25)_
 
