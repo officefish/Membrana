@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14397/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 282 (причины в op-log) -->
+Записей: 50 · бюджет 14378/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 283 (причины в op-log) -->
+
+### 2026-08-16 · позиция · team-evening-feedback
+
+> Курёхин. Оценка артефактов: `SESSION_V_CAPTURE_PROTOCOL_2026-08-16.md` и `SESSION_B_MFCC_BENCHMARK_2026-08-16.md` — правильная разбивка на «формат съёмки» и «оценку пригодности набора»; полоса В отделена от полосы съёмки. Итоги дня: `field:capture` (#1953) — тракт полевой […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-16.md#reply-1`
 
 ### 2026-08-15 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > По тракту принадлежности сначала слышу **шину имён** — что такое дом и неймспейс (1). Без count-in «чей инструмент» остальные take — шум. Дальше — **объём ленты**: тесты в том же доме или нет (8) — замер 604 уже шепчет, что громкость микса прыгнет вдвое. Потом meters обнаружения […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/workshop-wires-m0-order-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m1-home-namespace
-
-> На слух 476 скриптов «ни в roots, ни в pins» — это не оркестр без партитуры, а take’ы без шины. Дом — мастерская с verbs (audit/decompose/…) — полный пульт. Неймспейс слышу как **bus без fader’ов verbs**: группирует прикладные и двумерные скрипты, но не обещает ритуал […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m1-home-namespace-2026-07-30.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
 

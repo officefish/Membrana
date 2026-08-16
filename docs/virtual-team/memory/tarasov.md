@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14368/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 296 (причины в op-log) -->
+Записей: 50 · бюджет 14321/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 297 (причины в op-log) -->
+
+### 2026-08-16 · позиция · team-evening-feedback
+
+> Тарасов. Оценка артефактов: `STRATEGY_DAY` / `DAY_PLAN` / `DAILY_STANDUP` / `MAIN_DAY_ISSUE` согласованы вокруг гейта `secret-parser-built` — это редкая цельность. `DAILY_CODE_REVIEW` честно отметил, что пять oversized-PR влиты без развёрнутого ревью и […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-16.md#reply-1`
 
 ### 2026-08-15 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > Планка матча узкая — выбрать ровно одну модель SoT и назвать append-only / derived / fallback / forbidden. Не лезем в поля checkpoint, evidence, writer, migration, lifecycle insight. Связка: Архитектор — форма дома; Структурщик — леммы границ; Математик — предикат append-only. […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/task-archive-cold-store-m1-source-of-truth-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · task-archive-cold-store-m2-evidence-contract
-
-> Планка матча узкая: минимальный evidence contract, required vs optional/derived, forbidden hints, явный отказ выводить L/O. Не лезем в checkpoint shape, writer, recovery, migration, insight lifecycle. Связка: Структурщик — леммы полей; Математик — предикат valid; Архитектор — […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/task-archive-cold-store-m2-evidence-contract-2026-07-30.md#reply-1`

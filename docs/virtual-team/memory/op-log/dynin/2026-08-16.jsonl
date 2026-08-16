@@ -1,1 +1,4 @@
 {"ts":"2026-08-16T07:26:34.560Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-16T17:10:31.615Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-16-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-16T17:10:31.615Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-30-workshop-wires-m1-home-namespace","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-16T17:10:31.615Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

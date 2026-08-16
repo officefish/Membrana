@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-15 |
-| Head SHA | 894e60bb69ce0ed2478d2fa3fadb6c77b7dce13d |
+| Date | 2026-08-16 |
+| Head SHA | 70f32ad42dde2c8d2a75a8df952bf10cc35bb785 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1133 |
-| Yarn scripts (package.json) | 447 |
-| Yarn → `scripts/` | 392 |
+| Code files under `scripts/` | 1137 |
+| Yarn scripts (package.json) | 448 |
+| Yarn → `scripts/` | 393 |
 | Yarn без пути `scripts/` | 55 |
 | Yarn → missing file | 9 |
-| Code files without yarn ref | 821 |
+| Code files without yarn ref | 824 |
 
-## Yarn → scripts/ (392)
+## Yarn → scripts/ (393)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -152,6 +152,7 @@
 - `evening:gate` → `scripts/evening-gate.mjs`
 - `evidence` → `scripts/evidence.mjs`
 - `feedback:claims` → `scripts/feedback-claims-probe.mjs`
+- `field:capture` → `scripts/field-capture.mjs`
 - `git:check-divergence` → `scripts/git-check-divergence.mjs`
 - `git:fresh-branch` → `scripts/git-fresh-branch.mjs`
 - `git:rebase-continue` → `scripts/git-rebase-continue.mjs`
@@ -418,7 +419,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (821)
+## Code files without yarn ref (824)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -499,6 +500,7 @@
 - `scripts/belongs-tooth.mjs`
 - `scripts/belongs-tooth.test.mjs`
 - `scripts/belongs.test.mjs`
+- `scripts/benchmark-detectors.test.mjs`
 - `scripts/benchmark-metrics.test.mjs`
 - `scripts/benchmark-prior-metrics.test.mjs`
 - `scripts/bestiary-audit.test.mjs`
@@ -584,6 +586,7 @@
 - `scripts/experimental/opencode-consilium.mjs`
 - `scripts/experimental/opencode-task.mjs`
 - `scripts/feedback-claims-probe.test.mjs`
+- `scripts/field-capture.test.mjs`
 - `scripts/fix-imports-with-claude.js`
 - `scripts/fixtures/membrana-leveling-disposition-product.mjs`
 - `scripts/gc-void.test.mjs`
@@ -799,6 +802,7 @@
 - `scripts/lib/membrana-leveling-snapshot.mjs`
 - `scripts/lib/merge-fact.mjs`
 - `scripts/lib/merge-fact.test.mjs`
+- `scripts/lib/mfcc-benchmark.mjs`
 - `scripts/lib/mfcc-gates.mjs`
 - `scripts/lib/mint-intent.mjs`
 - `scripts/lib/mint-intent.test.mjs`
@@ -1254,7 +1258,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1133)
+## All code files (1137)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1382,6 +1386,7 @@
 - `scripts/belongs-tooth.test.mjs`
 - `scripts/belongs.test.mjs`
 - `scripts/benchmark-detectors.mjs`
+- `scripts/benchmark-detectors.test.mjs`
 - `scripts/benchmark-fft-trends.mjs`
 - `scripts/benchmark-metrics.test.mjs`
 - `scripts/benchmark-prior-metrics.test.mjs`
@@ -1538,6 +1543,8 @@
 - `scripts/feedback-claims-probe.test.mjs`
 - `scripts/fetch-real-dataset-collection.mjs`
 - `scripts/fetch-vdr-pilot-corpus.mjs`
+- `scripts/field-capture.mjs`
+- `scripts/field-capture.test.mjs`
 - `scripts/fix-imports-with-claude.js`
 - `scripts/fixtures/membrana-leveling-disposition-product.mjs`
 - `scripts/gc-void.test.mjs`
@@ -1775,6 +1782,7 @@
 - `scripts/lib/membrana-leveling-snapshot.mjs`
 - `scripts/lib/merge-fact.mjs`
 - `scripts/lib/merge-fact.test.mjs`
+- `scripts/lib/mfcc-benchmark.mjs`
 - `scripts/lib/mfcc-gates.mjs`
 - `scripts/lib/mint-intent.mjs`
 - `scripts/lib/mint-intent.test.mjs`
