@@ -1,1 +1,4 @@
 {"ts":"2026-08-16T07:26:35.656Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-08-16T17:10:32.391Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-08-16-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-16T17:10:32.391Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-07-30-workshop-wires-m1-home-namespace","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-16T17:10:32.391Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

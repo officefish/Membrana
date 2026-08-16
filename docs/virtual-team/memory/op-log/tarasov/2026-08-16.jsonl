@@ -1,1 +1,4 @@
 {"ts":"2026-08-16T07:26:36.998Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-08-16T17:10:33.203Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-16-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-16T17:10:33.203Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-07-30-task-archive-cold-store-m2-evidence-contract","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-16T17:10:33.203Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

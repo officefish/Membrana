@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14287/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 283 (причины в op-log) -->
+Записей: 49 · бюджет 14250/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 284 (причины в op-log) -->
+
+### 2026-08-16 · позиция · team-evening-feedback
+
+> Дынин. Оценка артефактов: `MAIN_DAY_ISSUE` содержит таблицу обоснования магистрали с провенансом каждого утверждения — правильная форма. Раздел «Посылки» использует маркеры (`symbol:redactSecrets`, `file:...`) и вердикты `holds` — предикатная строгость. Итоги дня: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-16.md#reply-1`
 
 ### 2026-08-15 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Предикат ребра фиксирую как в bridge M0: A→B ⇔ область определения вопроса B содержит переменную, которую задаёт ответ A. Не runtime скриптов и не «удобно рядом». V={1..9}. (1) задаёт переменные home, namespace, holder. (8) содержит home инструмента vs home тестов ← ждёт (1). […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/workshop-wires-m0-order-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m1-home-namespace
-
-> Формализую. Пусть S — множество путей скриптов, H — множество домов (носитель `workshop.manifest.json`), N — множество неймспейсов. Предикаты: `inHome(s,h) ⇔ s ∈ members(h) ∧ h ∈ H`; `inNamespace(s,n) ⇔ s ∈ members(n) ∧ n ∈ N`. Инвариант различения: `isHome(x) ⇔ has(x, verbs) ∧ […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m1-home-namespace-2026-07-30.md#reply-1`

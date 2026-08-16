@@ -1,1 +1,4 @@
 {"ts":"2026-08-16T07:26:36.123Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-16T17:10:32.601Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-16-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-16T17:10:32.601Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-30-workshop-wires-m1-home-namespace","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-16T17:10:32.601Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

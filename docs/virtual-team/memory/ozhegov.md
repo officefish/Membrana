@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14259/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 286 (причины в op-log) -->
+Записей: 49 · бюджет 14208/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 287 (причины в op-log) -->
+
+### 2026-08-16 · позиция · team-evening-feedback
+
+> Ожегов. Оценка артефактов: `DAILY_STANDUP` и `MAIN_DAY_ISSUE` называют одно и то же одним словом — «гейт `secret-parser-built`». Роутинг персон в стендапе построен из реестра, а не моделью — правильный источник. Итоги дня: append-only соблюдён везде — […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-16.md#reply-1`
 
 ### 2026-08-15 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Леммы «ждёт» только контрактные: без ответа A у B нет области определения. Имена — как в повестке, без новых ярлыков. Фундамент области — (1). (8) — словарная статья «дом теста»: только после (1). (2) — признаки обнаружения и неймспейс в справочнике: после (1). (3) — […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/workshop-wires-m0-order-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m1-home-namespace
-
-> Леммы, иначе синонимы. **Дом (home)** — каталог с `workshop.manifest.json` по паттерну HOME_WORKSHOP; умеет verbs, worksOn, опц. kit. **Неймспейс (namespace)** — не мастерская: нет обязанности verbs/kit; это именованная область членства скриптов. **Держатель дома** — leadPersona […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m1-home-namespace-2026-07-30.md#reply-1`

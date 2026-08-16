@@ -1,1 +1,4 @@
 {"ts":"2026-08-16T07:26:37.433Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-16T17:10:33.608Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-16-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-16T17:10:33.608Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-07-30-workshop-wires-m1-home-namespace","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-16T17:10:33.608Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
