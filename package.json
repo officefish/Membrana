@@ -458,7 +458,8 @@
     "calibrate:mfcc": "node scripts/calibrate-mfcc-gates.mjs",
     "branch:status": "node scripts/branch-status.mjs",
     "worktree:resolve": "node scripts/worktree-resolution.mjs",
-    "vdr:blind": "node scripts/vdr-blind-corpus.mjs"
+    "vdr:blind": "node scripts/vdr-blind-corpus.mjs",
+    "field:capture": "node scripts/field-capture.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
