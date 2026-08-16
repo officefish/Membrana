@@ -9,8 +9,8 @@
  * (отсутствие/несвежесть — свой блокер «ночь не отработала»).
  */
 import { execFileSync } from 'node:child_process';
-import { mkdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { mkdirSync, rmSync } from 'node:fs';
+import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { loadNightReportFrame, runNightReportGate } from './lib/night-report-gate.mjs';
@@ -18,6 +18,22 @@ import { loadNightReportFrame, runNightReportGate } from './lib/night-report-gat
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const NIGHTLY_WORKFLOW = 'tests-nightly-full.yml';
 export const NIGHTLY_ARTIFACT = 'nightly-full-report';
+
+/**
+ * gh run download отказывается перезаписывать существующие файлы артефакта.
+ * Носитель nightly-full локален и производен, поэтому перед pull чистим только
+ * ожидаемые latest.* в каталоге назначения, не трогая весь каталог отчётов.
+ *
+ * @param {string} destDir
+ * @param {string | null} carrierPath
+ */
+export function clearNightReportDownloadTargets(destDir, carrierPath = null) {
+  const names = new Set(['latest.json', 'latest.md']);
+  if (carrierPath) names.add(basename(carrierPath));
+  for (const name of names) {
+    rmSync(join(destDir, name), { force: true });
+  }
+}
 
 /**
  * @param {string[]} argv
@@ -68,6 +84,7 @@ export function pullNightReport(cwd, deps = {}) {
     const { carrier } = loadNightReportFrame(cwd);
     const destDir = carrier ? join(cwd, dirname(carrier.path)) : join(cwd, 'tests/reports/nightly-full');
     mkdirSync(destDir, { recursive: true });
+    clearNightReportDownloadTargets(destDir, carrier?.path ?? null);
     exec('gh', ['run', 'download', String(runs[0].databaseId), '--name', NIGHTLY_ARTIFACT, '--dir', destDir], {
       cwd,
       encoding: 'utf8',

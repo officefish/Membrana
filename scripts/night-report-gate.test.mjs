@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { test } from 'node:test';
@@ -12,7 +12,7 @@ import {
   loadNightReportFrame,
   runNightReportGate,
 } from './lib/night-report-gate.mjs';
-import { parseNightReportArgs, pullNightReport } from './night-report-gate.mjs';
+import { clearNightReportDownloadTargets, parseNightReportArgs, pullNightReport } from './night-report-gate.mjs';
 
 const CARRIER = { path: 'tests/reports/nightly-full/latest.json', blocksMorningWhen: SUPPORTED_BLOCK_EXPR };
 const TODAY = '2026-08-11';
@@ -161,4 +161,45 @@ test('parseNightReportArgs + pullNightReport с подставным gh', () => 
     },
   });
   assert.equal(failPull, false);
+});
+
+test('pullNightReport: перед gh download удаляет существующие latest.* носители', () => {
+  const root = tempRoot();
+  const destDir = join(root, dirname(CARRIER.path));
+  mkdirSync(destDir, { recursive: true });
+  const jsonPath = join(destDir, 'latest.json');
+  const mdPath = join(destDir, 'latest.md');
+  writeFileSync(jsonPath, '{}', 'utf8');
+  writeFileSync(mdPath, '# old', 'utf8');
+
+  const okPull = pullNightReport(root, {
+    exec: (_cmd, args) => {
+      if (args[0] === 'run' && args[1] === 'list') {
+        return JSON.stringify([{ databaseId: 43, conclusion: 'success', updatedAt: '2026-08-16T03:20:00Z' }]);
+      }
+      assert.equal(args[0], 'run');
+      assert.equal(args[1], 'download');
+      assert.equal(existsSync(jsonPath), false);
+      assert.equal(existsSync(mdPath), false);
+      return '';
+    },
+  });
+
+  assert.equal(okPull, true);
+});
+
+test('clearNightReportDownloadTargets: чистит только ожидаемые latest-файлы', () => {
+  const root = tempRoot();
+  const destDir = join(root, dirname(CARRIER.path));
+  mkdirSync(destDir, { recursive: true });
+  const keepPath = join(destDir, 'history.json');
+  writeFileSync(join(destDir, 'latest.json'), '{}', 'utf8');
+  writeFileSync(join(destDir, 'latest.md'), '# old', 'utf8');
+  writeFileSync(keepPath, '{}', 'utf8');
+
+  clearNightReportDownloadTargets(destDir, CARRIER.path);
+
+  assert.equal(existsSync(join(destDir, 'latest.json')), false);
+  assert.equal(existsSync(join(destDir, 'latest.md')), false);
+  assert.equal(existsSync(keepPath), true);
 });
