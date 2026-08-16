@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14281/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 285 (причины в op-log) -->
+Записей: 49 · бюджет 14259/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 286 (причины в op-log) -->
+
+### 2026-08-15 · позиция · team-evening-feedback
+
+> Ожегов. Оценка артефактов: `DAILY_STANDUP` явно назвал магистраль, `MAIN_DAY_ISSUE` дал DoD в 7 пунктов — структура ясная; но по факту DoD не пройден ни в одном пункте (сканер не тронут, manifest не создан, гейт не помечен). Итоги дня: третий день подряд `ritual:day` оставляет […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-15.md#reply-1`
 
 ### 2026-08-14 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Леммы, иначе синонимы. **Дом (home)** — каталог с `workshop.manifest.json` по паттерну HOME_WORKSHOP; умеет verbs, worksOn, опц. kit. **Неймспейс (namespace)** — не мастерская: нет обязанности verbs/kit; это именованная область членства скриптов. **Держатель дома** — leadPersona […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/workshop-wires-m1-home-namespace-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m2-atlas-discovery
-
-> Леммы, иначе снова синонимы. **Контейнер (дом)** — каталог-носитель документации/артефактов с опознаваемой границей. **Мастерская** — контейнер с `workshop.manifest.json` (контракт скриптов). **Неймспейс** — запись `docs/namespaces/REGISTRY.json` (M1): holder + membership; не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/workshop-wires-m2-atlas-discovery-2026-07-30.md#reply-1`

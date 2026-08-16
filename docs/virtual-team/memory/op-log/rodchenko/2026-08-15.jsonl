@@ -1,0 +1,4 @@
+{"ts":"2026-08-15T19:49:57.644Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-08-15-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-15T19:49:57.644Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-07-30-workshop-wires-m2-atlas-discovery","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-15T19:49:57.644Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-07-23-llm-procedure-channels-m3a-llm-proxy-seam","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-15T19:49:57.644Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

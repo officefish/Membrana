@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14362/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 281 (причины в op-log) -->
+Записей: 50 · бюджет 14397/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 282 (причины в op-log) -->
+
+### 2026-08-15 · позиция · team-evening-feedback
+
+> Курёхин. Оценка артефактов: аудио-контур сегодня не двигался; пилотный корпус WAV — это данные для детекции, не обработка звука. Итоги дня: — (33 pilot-WAV положены в корпус, но это материал для валидации, не мой контур). На завтра: —; если освободится полоса — посмотреть, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-15.md#reply-1`
 
 ### 2026-08-14 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/workshop-wires-m1-home-namespace-2026-07-30.md#reply-1`
 
-### 2026-07-30 · позиция · workshop-wires-m2-atlas-discovery
+### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
 
-> На слух сейчас микс врёт: в шапке ATLAS написано «manifest + README», а в тракте `tooling-atlas.mjs:78` звучит только manifest — README после, как reverb на заголовке. `docs/network` — живой take с шестью скриптами и зубом, а в атласе тишина. Это не «тихий канал», это обрыв шины […] _(реплик в сеансе: 6)_
+> Флаг: без `source` (overlay|default) снова тихая ложь канала — C1 уже требует. tokens неизвестны (некоторые API) → null, не ноль. Ноль врёт об экономике. _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/workshop-wires-m2-atlas-discovery-2026-07-30.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m4a-agent-usage
-
-> Флаг worktree без OFFICE URL: emit no-op warn once — не спамить. Не писать события в git. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m4a-agent-usage-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m3b-telemetry-2026-07-23-2026-07-23.md#reply-1`
