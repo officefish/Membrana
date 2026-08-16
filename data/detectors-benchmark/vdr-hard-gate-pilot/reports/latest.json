@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-15T15:35:09.508Z",
+  "generatedAt": "2026-08-16T09:29:25.187Z",
   "datasetVersion": "vvdr-hard-gate-pilot-v1",
   "curatedOnly": true,
   "preliminaryOriginLabels": true,
@@ -66,8 +66,8 @@
             "precision": 0.0008982309173963792
           }
         ],
-        "latencyP50Ms": 0.18860000000006494,
-        "latencyP95Ms": 0.567600000000084
+        "latencyP50Ms": 0.08640000000002601,
+        "latencyP95Ms": 0.16570000000001528
       },
       "perSample": [
         {
@@ -317,8 +317,8 @@
             "precision": 0.000999000999000999
           }
         ],
-        "latencyP50Ms": 0.481300000000374,
-        "latencyP95Ms": 1.2305000000005748
+        "latencyP50Ms": 0.20850000000018554,
+        "latencyP95Ms": 0.3410999999998694
       },
       "perSample": [
         {
@@ -568,8 +568,8 @@
             "precision": 0.000985634708613377
           }
         ],
-        "latencyP50Ms": 0.18329999999878055,
-        "latencyP95Ms": 0.48959999999897263
+        "latencyP50Ms": 0.07950000000028012,
+        "latencyP95Ms": 0.14150000000017826
       },
       "perSample": [
         {
@@ -819,8 +819,8 @@
             "precision": 0.0011497182930064872
           }
         ],
-        "latencyP50Ms": 3.963999999999942,
-        "latencyP95Ms": 8.599899999999252
+        "latencyP50Ms": 1.2712999999998829,
+        "latencyP95Ms": 2.6210000000000946
       },
       "perSample": [
         {
@@ -1070,8 +1070,8 @@
             "precision": 0.0007078319523670732
           }
         ],
-        "latencyP50Ms": 244.304900000001,
-        "latencyP95Ms": 287.40390000000116
+        "latencyP50Ms": 82.78229999999985,
+        "latencyP95Ms": 113.97789999999986
       },
       "perSample": [
         {
@@ -1273,6 +1273,277 @@
           "maxConfidence": 0.20493907928466795
         }
       ]
+    },
+    {
+      "name": "mfcc",
+      "family": "dsp",
+      "status": "benchmarked",
+      "metrics": {
+        "tp": 15,
+        "fp": 14,
+        "fn": 1,
+        "tn": 3,
+        "precision": 0.5172413793103449,
+        "recall": 0.9375,
+        "f1": 0.6666666666666667,
+        "pd": 0.9375,
+        "pfa": 0.8235294117647058,
+        "pdCI": {
+          "low": 0.7167073163197013,
+          "high": 0.9888809426916687
+        },
+        "pfaCI": {
+          "low": 0.5897007098262422,
+          "high": 0.9380898628745101
+        },
+        "rocAuc": 0.6139705882352942,
+        "prAuc": 0.5530913978494624,
+        "positiveShare": 0.48484848484848486,
+        "precisionByPrior": [
+          {
+            "ratio": "1:1",
+            "prior": 0.5,
+            "precision": 0.5323590814196242
+          },
+          {
+            "ratio": "1:10",
+            "prior": 0.09090909090909091,
+            "precision": 0.10220440881763529
+          },
+          {
+            "ratio": "1:100",
+            "prior": 0.009900990099009901,
+            "precision": 0.011255793423085412
+          },
+          {
+            "ratio": "1:1000",
+            "prior": 0.000999000999000999,
+            "precision": 0.0011370983924550175
+          }
+        ],
+        "latencyP50Ms": 1.2384999999994761,
+        "latencyP95Ms": 1.8518999999996595
+      },
+      "perSample": [
+        {
+          "id": "pilot-01",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-02",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-03",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-04",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-05",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0
+        },
+        {
+          "id": "pilot-06",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-07",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-08",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-09",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-10",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-11",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-12",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-13",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-14",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-15",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-16",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0
+        },
+        {
+          "id": "pilot-17",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-18",
+          "truthDrone": false,
+          "predDrone": false,
+          "maxConfidence": 0.25862068965517243
+        },
+        {
+          "id": "pilot-19",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-20",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.9310344827586207
+        },
+        {
+          "id": "pilot-21",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-22",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-23",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 0.7241379310344828
+        },
+        {
+          "id": "pilot-24",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-25",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-26",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-27",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-28",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-29",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-30",
+          "truthDrone": true,
+          "predDrone": false,
+          "maxConfidence": 0.1896551724137931
+        },
+        {
+          "id": "pilot-31",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-32",
+          "truthDrone": false,
+          "predDrone": true,
+          "maxConfidence": 1
+        },
+        {
+          "id": "pilot-33",
+          "truthDrone": true,
+          "predDrone": true,
+          "maxConfidence": 1
+        }
+      ],
+      "passport": {
+        "configHash": "mel40-c24-buf4096-sr48000",
+        "strictness": "normal",
+        "minInBandRatio": 0.5,
+        "minPassRate": 0.6,
+        "minMagnitude": 0,
+        "judgedCoefficients": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "situationsCalibrated": false,
+        "presetSource": "data/detectors-benchmark/v0.2/reports/mfcc-gates-first-cut.json",
+        "calibratedOn": "data/detectors-benchmark/v0.2",
+        "selfMeasurement": {
+          "self": false,
+          "reason": "ворота сняты на data/detectors-benchmark/v0.2, прогон идёт по другому корпусу"
+        }
+      }
     },
     {
       "name": "clap",

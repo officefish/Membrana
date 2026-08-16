@@ -5,6 +5,7 @@
  *   yarn benchmark:detectors                                   # канон: v0.2, патчит DETECTOR_BENCHMARK.md
  *   yarn benchmark:detectors -- --manifest data/detectors-benchmark/vdr-hard-gate-pilot/manifest.json
  *   yarn benchmark:detectors -- --manifest <...> --origin-labels
+ *   yarn benchmark:detectors -- --mfcc-strictness strict      # рабочая точка тембрового
  *
  * vdr-hg3: `--manifest` — прогон на альтернативном корпусе (отчёт пишется в
  * reports/ ЭТОГО корпуса; канонический DETECTOR_BENCHMARK.md и v0.2 latest.json
@@ -20,6 +21,16 @@ import { detectorMetrics, sortNumbers } from './lib/benchmark-metrics.mjs';
 import { patchDetectorBenchmarkMd } from './lib/benchmark-report-md.mjs';
 import { loadCalibrationPreset } from './lib/calibration-preset.mjs';
 import { filterCuratedSamples } from './lib/manifest-labels.mjs';
+import {
+  MFCC_DEFAULT_STRICTNESS,
+  MFCC_STRICTNESS_LEVELS,
+  mfccConfigFromHash,
+  mfccPipeSpec,
+  mfccPresetProblem,
+  mfccSelfMeasurement,
+  mfccVectorsOf,
+} from './lib/mfcc-benchmark.mjs';
+import { frames } from './lib/mfcc-gates.mjs';
 import { readWavMono } from './lib/wav-read.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -27,7 +38,9 @@ const DEFAULT_DATASET_DIR = join(ROOT, 'data', 'detectors-benchmark', 'v0.2');
 const DEFAULT_MANIFEST_PATH = join(DEFAULT_DATASET_DIR, 'manifest.json');
 const BENCHMARK_MD = join(ROOT, 'docs', 'DETECTOR_BENCHMARK.md');
 
-function parseArgs(argv) {
+// Экспортируется для зубов (`benchmark-detectors.test.mjs`): закрытые списки аргументов —
+// ровно то место, где молчаливая подстановка умолчания меняет вердикт, не роняя прогон.
+export function parseArgs(argv) {
   const options = {
     manifestPath: DEFAULT_MANIFEST_PATH,
     originLabels: false,
@@ -37,6 +50,9 @@ function parseArgs(argv) {
     // поверхности он называться не вправе.
     config: 'live',
     strictSplit: false,
+    // Рабочая точка тембрового детектора. Умолчание — то, с которым живёт прибор; выбирать
+    // уровень по итогу прогона значило бы отобрать порог по тесту.
+    mfccStrictness: MFCC_DEFAULT_STRICTNESS,
   };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--manifest' && argv[i + 1]) {
@@ -49,6 +65,14 @@ function parseArgs(argv) {
         throw new Error(`--config принимает live|defaults, получено: ${value}`);
       }
       options.config = value;
+    } else if (argv[i] === '--mfcc-strictness' && argv[i + 1]) {
+      const value = argv[++i];
+      if (!MFCC_STRICTNESS_LEVELS.includes(value)) {
+        throw new Error(
+          `--mfcc-strictness принимает ${MFCC_STRICTNESS_LEVELS.join('|')}, получено: ${value}`,
+        );
+      }
+      options.mfccStrictness = value;
     } else if (argv[i] === '--strict-split') {
       // Внешний корпус (напр. DADS) обязан нести собственный test-split:
       // подмена сплита всем корпусом на нём выдаёт чужую цифру за тестовую.
@@ -276,6 +300,163 @@ export async function runYamnet(manifestSamples, datasetDir) {
   };
 }
 
+export const MFCC_CORE_DIST = join(
+  ROOT,
+  'packages',
+  'services',
+  'mfcc-analyzer',
+  'dist',
+  'index.js',
+);
+
+/**
+ * Пресет тембрового детектора — КОНФИГ ДЕТЕКТОРА, НЕ КОРПУС, поэтому всегда из канонического
+ * v0.2, как и curated-шаблоны выше. Прогон на пилоте судит теми же воротами, иначе строки
+ * двух прогонов были бы про разные детекторы.
+ *
+ * Читается из `data/`, а не переписывается сюда третьей копией: `data/` и есть серверная
+ * сторона калибровки (клиентский `presets.ts` — её копия для сборки, и он это про себя
+ * говорит). Ворота пересняли — `yarn calibrate:mfcc`, и измеритель поедет на новых без правок.
+ */
+export const MFCC_PRESET_JSON = join(DEFAULT_DATASET_DIR, 'reports', 'mfcc-gates-first-cut.json');
+
+/**
+ * Пресет калибровки с проверкой пригодности. Отказ — с причиной и с названным лекарством:
+ * негодный пресет обязан остановить прогон здесь, а не всплыть отказом судьи на сотом файле.
+ */
+export async function readMfccPreset(strictness = MFCC_DEFAULT_STRICTNESS) {
+  const report = JSON.parse(await readFile(MFCC_PRESET_JSON, 'utf8'));
+  if (report.preset == null) {
+    throw new Error(`${MFCC_PRESET_JSON}: нет ключа preset — снимите ворота: yarn calibrate:mfcc`);
+  }
+  const problem = mfccPresetProblem(report.preset, strictness);
+  if (problem !== null) {
+    throw new Error(
+      `пресет тембрового детектора негоден: ${problem}\n  источник: ${MFCC_PRESET_JSON}\n  пересъёмка: yarn calibrate:mfcc`,
+    );
+  }
+  // Корпус, на котором СНЯТЫ ворота, едет вместе с пресетом: без него не сказать, судит
+  // прибор чужой звук или тот самый, из которого выведены его же коридоры.
+  return { ...report.preset, calibratedOn: report.corpus?.path ?? null };
+}
+
+/**
+ * ND4 — mfcc: тембровый детектор пакета `@membrana/mfcc-analyzer-service` в общей таблице.
+ *
+ * ЗАЧЕМ ШЕСТЫМ. Критерий приёмки распознавания объявлен владельцем 15.08 ПО MFCC, а обвязка о
+ * нём не знала: считались пять других способов, и приёмочное число по заявленному критерию
+ * получить было нечем.
+ *
+ * ЧЕМ СУДИТ. Ровно тем же, чем прибор: труба пакета (`evaluatePipe`) по воротам калибровки.
+ * Своей математики здесь нет и быть не должно — измеритель, судящий собственной копией счёта,
+ * мерит себя (урок 31.07).
+ *
+ * ЧЕМ СЧИТАЕТ. `meyda` — той самой библиотекой, которой сняты ворота. СОБСТВЕННЫМ
+ * экземпляром настроек, а не глобальным объектом: настройки на общей `Meyda` — общее
+ * состояние, и второй потребитель молча перебил бы число фильтров, а вектор продолжал бы
+ * ехать под тем же отпечатком (замер и приговор — `mfccExtractor.ts`). Настройки задаются
+ * СВОЙСТВАМИ объекта: параметр вызова `Meyda.extract` молча игнорируется.
+ *
+ * КАДРИРОВАНИЕ. Тем же `frames()`, что и калибровка: подряд, без перекрытия, хвост короче
+ * кадра отброшен. Иначе ворота сняты на одном кадрировании, а вердикт вынесен на другом.
+ *
+ * ОТКАЗ — НЕ ОТРИЦАТЕЛЬНЫЙ ОТВЕТ. Судья отказал (чужая частота, чужой отпечаток, все кадры
+ * немые) — прогон падает с именем файла. Записать сюда `predDrone: false` значило бы выдать
+ * «судить было нечем» за «дрона нет» и посчитать по этому метрику.
+ */
+export async function runMfcc(manifestSamples, datasetDir, strictness = MFCC_DEFAULT_STRICTNESS) {
+  await ensureBuilt(MFCC_CORE_DIST, 'mfcc-analyzer (dist/index.js)');
+  const { evaluatePipe } = await import(pathToFileURL(MFCC_CORE_DIST).href);
+  const Meyda = (await import('meyda')).default;
+
+  const preset = await readMfccPreset(strictness);
+  const config = mfccConfigFromHash(preset.configHash);
+  const spec = mfccPipeSpec(preset, strictness);
+  const instance = {
+    ...Meyda,
+    bufferSize: config.bufferSize,
+    melBands: config.melBands,
+    numberOfMFCCCoefficients: config.numberOfCoefficients,
+    // Частота ЯВНО: банк мел-фильтров строится от неё, и вектор, снятый на умолчании
+    // библиотеки, несравним с воротами так же, как кадр чужой длины (#1603).
+    sampleRate: config.sampleRate,
+  };
+
+  /** @type {{ id: string; truthDrone: boolean; predDrone: boolean; maxConfidence: number }[]} */
+  const perSample = [];
+  const allLatencies = [];
+
+  for (const entry of manifestSamples) {
+    const wavPath = join(datasetDir, entry.path);
+    const { samples, sampleRate } = await readWavMono(wavPath);
+    if (sampleRate !== config.sampleRate) {
+      // Пересчитать вектор под чужие ворота нельзя, поэтому запись не считается, а не
+      // подгоняется. Прибор поступает так же и по той же причине.
+      throw new Error(
+        `${entry.id}: частота записи ${sampleRate} ≠ ${config.sampleRate}, на которой сняты ворота «${preset.configHash}» — несравнимо`,
+      );
+    }
+
+    const frameVectors = [];
+    let startIndex = 0;
+    for (const frame of frames(samples, config.bufferSize)) {
+      const t0 = performance.now();
+      const raw = instance.extract('mfcc', frame);
+      allLatencies.push(performance.now() - t0);
+      if (!Array.isArray(raw) || raw.length !== config.numberOfCoefficients) {
+        throw new Error(
+          `${entry.id}: считалка вернула ${Array.isArray(raw) ? `${raw.length} значений` : 'не массив'}, ожидалось ${config.numberOfCoefficients}`,
+        );
+      }
+      if (raw.some((v) => !Number.isFinite(v))) {
+        // NaN переживёт любое усреднение и всплывёт метрикой, которую никто не считал.
+        throw new Error(`${entry.id}: считалка вернула нечисловое значение (NaN или Infinity)`);
+      }
+      frameVectors.push({ startIndex, coefficients: raw });
+      startIndex += config.bufferSize;
+    }
+
+    const outcome = evaluatePipe(mfccVectorsOf(frameVectors, preset.configHash), spec);
+    if (!outcome.ok) {
+      throw new Error(`${entry.id}: судья отказал — ${outcome.reason}`);
+    }
+    perSample.push({
+      id: entry.id,
+      truthDrone: entry.label === 'drone',
+      predDrone: outcome.report.detected,
+      // Доля прошедших кадров среди судимых — единственная непрерывная величина трубы, и
+      // именно по ней прибор объявляет детекцию. Ранговые метрики (ROC-AUC) считаются по ней.
+      maxConfidence: outcome.report.passRate,
+    });
+  }
+
+  const sortedLat = sortNumbers(allLatencies);
+
+  return {
+    name: 'mfcc',
+    family: 'dsp',
+    status: 'benchmarked',
+    metrics: detectorMetrics(perSample, sortedLat),
+    perSample,
+    // Паспорт рабочей точки (ADR-0006 Р3): цифра тембрового детектора без ворот, уровня
+    // строгости и порога немого кадра неинтерпретируема.
+    passport: {
+      configHash: preset.configHash,
+      strictness,
+      minInBandRatio: spec.minInBandRatio,
+      minPassRate: spec.minPassRate,
+      minMagnitude: spec.minMagnitude,
+      judgedCoefficients: preset.judgedCoefficients,
+      situationsCalibrated: preset.situationsCalibrated ?? null,
+      presetSource: MFCC_PRESET_JSON.replace(`${ROOT}`, '').replace(/^[/\\]/, '').replace(/\\/g, '/'),
+      calibratedOn: preset.calibratedOn,
+      // Самозамер обязан доехать до отчёта, а не остаться предупреждением в консоли: цифру
+      // читают из JSON, а не из вывода прогона.
+      selfMeasurement: mfccSelfMeasurement(preset.calibratedOn, datasetDir),
+    },
+  };
+}
+
 /**
  * Отбор сэмплов канонического прогона: только curated-метки, test-split при
  * наличии. Reused by detector-compare-export.mjs — тот же корпус, что бенчмарк.
@@ -394,6 +575,31 @@ async function main() {
     console.log(
       `yamnet: precision=${m.precision?.toFixed(3) ?? '—'} recall=${m.recall?.toFixed(3) ?? '—'} F1=${m.f1?.toFixed(3) ?? '—'}`,
     );
+  }
+
+  // ND4: тембровый эшелон в общей таблице — критерий приёмки владельца объявлен по нему.
+  const mfccResult = await runMfcc(testSamples, datasetDir, options.mfccStrictness);
+  benchmarked.push(mfccResult);
+  {
+    const m = mfccResult.metrics;
+    console.log(
+      `mfcc: precision=${m.precision?.toFixed(3) ?? '—'} recall=${m.recall?.toFixed(3) ?? '—'} F1=${m.f1?.toFixed(3) ?? '—'}`,
+    );
+    const p = mfccResult.passport;
+    console.log(
+      `  ворота «${p.configHash}» · строгость ${p.strictness} (${p.minInBandRatio} кадра / ${p.minPassRate} серии) · ` +
+        `судимые коэффициенты ${p.judgedCoefficients.join(',')}` +
+        (p.minMagnitude === 0 ? ' · порог немого кадра 0 — ЗАЩИТЫ НЕТ' : ` · порог немого кадра ${p.minMagnitude}`) +
+        (p.situationsCalibrated === false ? ' · обстановки владельца НЕ откалиброваны' : ''),
+    );
+    if (p.selfMeasurement.self) {
+      console.warn(
+        `⚠ mfcc — САМОЗАМЕР: ${p.selfMeasurement.reason}.\n` +
+          '  Коридоры выведены перцентилями по классу цели ЭТИХ ЖЕ записей, поэтому цифра выше —\n' +
+          '  верхняя оценка, а не ожидание на новом звуке. Сравнимая с соседями цифра снимается\n' +
+          '  на корпусе, которого ворота не видели.',
+      );
+    }
   }
 
   const detectors = [
