@@ -89,7 +89,7 @@
     "dataset:sync-free-v1": "node scripts/sync-free-v1-catalog.mjs",
     "dataset:assign-splits": "node scripts/assign-dataset-splits.mjs",
     "dataset:export-ground-truth": "node scripts/export-ground-truth-manifest.mjs --from-prod",
-    "detectors:build": "yarn turbo run build --filter=@membrana/core --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service --filter=@membrana/cepstral-detector-service --filter=@membrana/spectral-flux-detector-service --filter=@membrana/template-match-detector-service --filter=@membrana/yamnet-detector-service --filter=@membrana/detection-ensemble-service",
+    "detectors:build": "yarn turbo run build --filter=@membrana/core --filter=@membrana/detector-base --filter=@membrana/harmonic-detector-service --filter=@membrana/cepstral-detector-service --filter=@membrana/spectral-flux-detector-service --filter=@membrana/template-match-detector-service --filter=@membrana/yamnet-detector-service --filter=@membrana/mfcc-analyzer-service --filter=@membrana/detection-ensemble-service",
     "benchmark:detectors": "yarn detectors:build && node scripts/benchmark-detectors.mjs",
     "detector:compare:export": "yarn detectors:build && node scripts/detector-compare-export.mjs",
     "drift:code": "yarn detectors:build && node scripts/drift-anchor-code.mjs --source ci",

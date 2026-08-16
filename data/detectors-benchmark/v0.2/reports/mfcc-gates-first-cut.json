@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-31T12:05:40.310Z",
+  "generatedAt": "2026-08-16T09:22:32.144Z",
   "corpus": {
     "path": "data/detectors-benchmark/v0.2",
     "counts": {
@@ -9,7 +9,7 @@
   },
   "configs": [
     {
-      "tag": "mel26-c13-buf2048",
+      "tag": "mel26-c13-buf2048-sr48000",
       "config": {
         "melBands": 26,
         "numberOfCoefficients": 13,
@@ -180,7 +180,7 @@
       ]
     },
     {
-      "tag": "mel32-c20-buf2048",
+      "tag": "mel32-c20-buf2048-sr48000",
       "config": {
         "melBands": 32,
         "numberOfCoefficients": 20,
@@ -435,7 +435,7 @@
       ]
     },
     {
-      "tag": "mel40-c24-buf4096",
+      "tag": "mel40-c24-buf4096-sr48000",
       "config": {
         "melBands": 40,
         "numberOfCoefficients": 24,
@@ -739,7 +739,7 @@
     }
   ],
   "preset": {
-    "configHash": "mel40-c24-buf4096",
+    "configHash": "mel40-c24-buf4096-sr48000",
     "judgedCoefficients": [
       0,
       1,
