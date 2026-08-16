@@ -126,6 +126,10 @@ export function parseArgs(argv) {
     else if (a === '--help' || a === '-h') out.help = true;
     else throw new Error(`неизвестный флаг: ${a}`);
   }
+  // Нулевая длительность и нулевая частота — не «пустая запись», а негодный вход:
+  // отказ именованный, чтобы ошибку было видно на месте, а не по тишине в поле.
+  if (!Number.isFinite(out.seconds) || out.seconds <= 0) throw new Error('--seconds: нужно положительное число секунд');
+  if (!Number.isFinite(out.rate) || out.rate <= 0) throw new Error('--rate: нужна положительная частота дискретизации');
   return out;
 }
 
@@ -195,8 +199,13 @@ function listDevices() {
   console.log(picked ? `выбран бы: «${picked.name}»` : 'полевой вход по имени не опознан');
 }
 
+/** Контракт окружения объявлен в `.env.example`; отсутствие файла — именованный отказ, не стектрейс. */
 function env() {
-  const raw = readFileSync(new URL('../.env', import.meta.url), 'utf8');
+  const path = new URL('../.env', import.meta.url);
+  if (!existsSync(path)) {
+    throw new Error('нет файла .env — контракт полевого узла объявлен в .env.example (четыре ключа FIELD_NODE_*/VITE_MEDIA_*)');
+  }
+  const raw = readFileSync(path, 'utf8');
   const map = Object.fromEntries(
     raw.split('\n').filter((l) => l.includes('=') && !l.startsWith('#')).map((l) => {
       const i = l.indexOf('=');
@@ -207,7 +216,14 @@ function env() {
 }
 
 async function main(argv) {
-  const args = parseArgs(argv);
+  // Негодный вход показывается словом, а не стектрейсом: в поле читать стек некому.
+  let args;
+  try {
+    args = parseArgs(argv);
+  } catch (e) {
+    console.error(`field:capture — ${e instanceof Error ? e.message : e}`);
+    return 2;
+  }
   if (args.help) {
     console.log('Usage: yarn field:capture [--list] [--device "<вход>"] [--seconds N] [--what ...] [--distance ...] [--dry-run]');
     return 0;
@@ -251,7 +267,11 @@ async function main(argv) {
     return 1;
   }
 
-  if (args.dryRun) { console.log('dry-run: не отправляю.'); return 0; }
+  if (args.dryRun) {
+    // Файл СОХРАНЯЕТСЯ намеренно: при сухом прогоне он и есть предмет осмотра.
+    console.log(`dry-run: не отправляю. Запись оставлена для осмотра: ${out}`);
+    return 0;
+  }
 
   const { base, token, device, collection } = env();
   if (!base || !token || !device || !collection) {

@@ -88,3 +88,9 @@ test('parseArgs: частота по умолчанию — поддержива
   assert.equal(parseArgs(['--dry-run']).dryRun, true);
   assert.throws(() => parseArgs(['--нет-такого']), /неизвестный флаг/u);
 });
+
+test('parseArgs: негодный вход — именованный отказ, не тихая пустая запись', () => {
+  assert.throws(() => parseArgs(['--seconds', '0']), /--seconds/u);
+  assert.throws(() => parseArgs(['--seconds', 'abc']), /--seconds/u);
+  assert.throws(() => parseArgs(['--rate', '0']), /--rate/u);
+});
