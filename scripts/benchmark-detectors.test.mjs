@@ -13,7 +13,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { parseArgs } from './benchmark-detectors.mjs';
+import { parseArgs, runMfcc } from './benchmark-detectors.mjs';
 import {
   MFCC_DEFAULT_STRICTNESS,
   MFCC_STRICTNESS_LEVELS,
@@ -175,6 +175,12 @@ test('чужой уровень в аргументе роняет прогон,
     () => parseArgs(['--mfcc-strictness', 'medium']),
     /--mfcc-strictness принимает easy\|normal\|strict/u,
   );
+});
+
+test('пустой корпус — отказ, а не детектор без срабатываний', async () => {
+  // Доли от нулевых знаменателей дают `null`, задержки — пустой ряд, и строка отчёта выглядит
+  // нормальной. `main()` ловит это выше, но `runMfcc` экспортирован для повторного применения.
+  await assert.rejects(() => runMfcc([], '/nowhere'), /корпус пуст — мерить нечего/u);
 });
 
 test('прогон по не-каноническому манифесту канонический MD не патчит', () => {

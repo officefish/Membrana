@@ -38,8 +38,15 @@ const DEFAULT_DATASET_DIR = join(ROOT, 'data', 'detectors-benchmark', 'v0.2');
 const DEFAULT_MANIFEST_PATH = join(DEFAULT_DATASET_DIR, 'manifest.json');
 const BENCHMARK_MD = join(ROOT, 'docs', 'DETECTOR_BENCHMARK.md');
 
-// Экспортируется для зубов (`benchmark-detectors.test.mjs`): закрытые списки аргументов —
-// ровно то место, где молчаливая подстановка умолчания меняет вердикт, не роняя прогон.
+/**
+ * Разбор аргументов прогона — ПУБЛИЧНЫЙ КОНТРАКТ этого CLI, а не побочный экспорт ради зубов.
+ *
+ * Названо явно по ревью тимлида (PR #1951, P2 структурщика): экспорт появился под тест, но
+ * тем самым стал обещанием. Обещание такое: имена флагов и умолчания меняются вместе с зубами
+ * `benchmark-detectors.test.mjs`, а закрытые списки значений (`--config`, `--mfcc-strictness`)
+ * отвергают чужое значение броском — молчаливая подстановка умолчания меняет вердикт, не роняя
+ * прогон, и это худший из отказов.
+ */
 export function parseArgs(argv) {
   const options = {
     manifestPath: DEFAULT_MANIFEST_PATH,
@@ -365,6 +372,13 @@ export async function readMfccPreset(strictness = MFCC_DEFAULT_STRICTNESS) {
  * «судить было нечем» за «дрона нет» и посчитать по этому метрику.
  */
 export async function runMfcc(manifestSamples, datasetDir, strictness = MFCC_DEFAULT_STRICTNESS) {
+  if (manifestSamples.length === 0) {
+    // Пустой корпус не «детектор без срабатываний»: доли считаются от нулевых знаменателей,
+    // метрики выходят `null`, задержки — из пустого ряда, и строка отчёта выглядит нормальной.
+    // `main()` этот случай ловит выше, но `runMfcc` экспортирован для повторного применения —
+    // отказ обязан жить в самой функции (ревью тимлида PR #1951, P2 математика).
+    throw new Error('mfcc: корпус пуст — мерить нечего');
+  }
   await ensureBuilt(MFCC_CORE_DIST, 'mfcc-analyzer (dist/index.js)');
   const { evaluatePipe } = await import(pathToFileURL(MFCC_CORE_DIST).href);
   const Meyda = (await import('meyda')).default;
@@ -400,6 +414,10 @@ export async function runMfcc(manifestSamples, datasetDir, strictness = MFCC_DEF
     const frameVectors = [];
     let startIndex = 0;
     for (const frame of frames(samples, config.bufferSize)) {
+      // ЧТО ИМЕННО ЗАМЕРЯЕТСЯ: свёртка ОДНОГО кадра, без суда трубы. Так же считают три
+      // соседних dsp-детектора (`frameLatenciesMs` у `analyzeSample`), и колонка сравнима с
+      // ними именно поэтому. Суд трубы идёт РАЗ НА ЗАПИСЬ, а не на кадр, и приписать его к
+      // покадровой задержке значило бы сделать колонку несравнимой (ревью PR #1951, P2).
       const t0 = performance.now();
       const raw = instance.extract('mfcc', frame);
       allLatencies.push(performance.now() - t0);
