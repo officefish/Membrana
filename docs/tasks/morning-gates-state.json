@@ -1,18 +1,17 @@
 {
   "magistralOptions": [
-    "vdr-hg3-trends-benchmark",
-    "angelina-hostess-impl",
-    "assets-container"
+    "batch-collection-run-contour",
+    "assets-container",
+    "angelina-hostess-impl"
   ],
-  "frozenDigest": "3b346ed2f965cd45fdf063c3d043e1a52200c9eb0a540fa7ce9813dd3fc1f57e",
-  "magistral": "vdr-hg3-trends-benchmark",
+  "frozenDigest": "9e1554405811e3c0e5a1ac0b863b1971227c6e7065f8181144d448ebe7d01993",
+  "magistral": "batch-collection-run-contour",
   "swallow": {
-    "gate": "evening:partner-swallow",
-    "draftDigest": "fdbd76b9d9883bca96de962680bf82b8f2e6623b564184316f258a902fda1eae",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-15.md",
+    "draftDigest": "aca3539be1ef376a7a8a05c78b014270e5c7e503b2730f5bd5bb7c1ab9f1db54",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-08-16.md",
     "ownerAck": true,
-    "day": "2026-08-15"
+    "day": "2026-08-16"
   },
-  "day": "2026-08-15",
-  "magistralChosenAt": "2026-08-15"
+  "day": "2026-08-16",
+  "magistralChosenAt": "2026-08-16"
 }
