@@ -6,7 +6,12 @@
   ],
   "frozenDigest": "87cae9d3a75502e81bff6b53a6865ac7f9d2366de65195177b738f8c24e5802f",
   "magistral": "server-plugin-foundation",
-  "swallow": null,
+  "swallow": {
+    "draftDigest": "006b3b2f4e43c99f144b7799d6d5a52ef898d1b7b522c3cabcd260ba9d2f1e17",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-08-17.md",
+    "ownerAck": true,
+    "day": "2026-08-17"
+  },
   "day": "2026-08-17",
   "magistralChosenAt": "2026-08-17"
 }
