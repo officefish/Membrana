@@ -1,171 +1,172 @@
 {
-  "defaultAxis": "category",
-  "categories": [
-    {
-      "name": "Детекция и качество распознавания",
-      "patterns": [
-        "^(scoreboard|detector|dads-|vdr-|nb-vlr|neural-|real-dataset|live-parallel|lp\\d|detection-alarm|batch-collection|trends-fft|sample-library|sld\\d|corpus-track)"
-      ]
-    },
-    {
-      "name": "Device Board — сценарный редактор и runtime",
-      "patterns": [
-        "^(db-|db3h|device-board|usercase|ucv2|mp7b|membrane-node-runtime)"
-      ]
-    },
-    {
-      "name": "Платформа, кабинет, продуктовая витрина",
-      "patterns": [
-        "^(media-library|product-landing|root-domain|cabinet-scenario|pcb-|studio-capture|sca-|tariff-|membrana-device-build|comp-packaging|grp\\d|graphify)",
-        "^(office-stability|office-vds)"
-      ]
-    },
-    {
-      "name": "Ритуалы и контур достоверности команды",
-      "patterns": [
-        "^(ritual|morning-ritual|morning-gates|morning-journal|frame-holder|evening-|night-build-format|strategy-day|rt-\\d|main-day-probe|meeting-|mf\\d|truth-graph|drift-anchor|linear-hygiene|angelina-hostess)",
-        "^(insight-mandate|insight-review|closure-acceptance|cascade-honest|morning-report|code-review-lead|tef-|feedback-claims-|main-day-issue-channel|night-triage-|forecast-|subconscious-)",
-        "^(cowork-honest-sprint|mfcc-compare-sprint|mfcc-lib-choice|cut-act-trace)$",
-        "^gate-"
-      ]
-    },
-    {
-      "name": "Агентский тулинг, CI и техдолг",
-      "patterns": [
-        "^(agent-tooling|nb-at|ci-gate|cg\\d|scripts-boundary|tech-debt|oc-proxy|opencode|rag-|fv1-)",
-        "^(frictiond|friction6-|tooling-friction|delivery-predicates|tooling-sanitary|tooling-truth|branch-hygiene|branch-salvage|tw-|tc-|tests-container|ship-|pr-ship|leveling-|notes-|deps-|worktrees?-|secret-|send-gate|weekly-|review-|dead-wire-)",
-        "^(sprint-cut-|one-shot-|instruments-honest-verdict|s-queue-|fix-node-modules-|fix-sprint-experience-|eslint-)"
-      ]
-    },
-    {
-      "name": "Партнёры и внешние коммуникации",
-      "patterns": [
-        "^(swallow|ally-swallow|pt-|partner-tutorials)"
-      ]
-    },
-    {
-      "name": "Ресёрчи — входы для решений",
-      "patterns": [
-        "^(linear-agent-identity|team-accountability|generated-docs|angelina-orchestrator|research-query)"
-      ]
-    },
-    {
-      "name": "Контейнеры, процедуры и мастерские",
-      "patterns": [
-        "^(deploy-procedure-survey|deploy-procedures|archivarius-|dump-inventory-|precedent-container|assets-container|network-|static-mmbrn-|cowork-static-|tooling-atlas|procedural-|procedures-corpus|procedure-run-journal|adr-procedure|frame-rails|frames-alive|bridge-room|angelina-codex|dual-mintlify-product-harness|product-mintlify-container|harness-workflow-pages|workflow-examples-marathon|sprint-dictionary-to-lib|run-journal-|recreate-execution-procedure-interface|lazy-close-scope)",
-        "^(dockerfile-|image-)"
-      ]
-    },
-    {
-      "name": "LLM-каналы и провода процедур",
-      "patterns": [
-        "^(llm-procedure|llm-transport|llm-probe|lpc-[a-z]|dreams-|openrouter-)"
-      ]
-    }
-  ],
-  "axes": {
-    "size": {
-      "order": [
-        "XS",
-        "S",
-        "M",
-        "L"
-      ]
-    },
-    "age": {
-      "buckets": [
-        {
-          "name": "≤7 дн",
-          "maxDaysInclusive": 7
-        },
-        {
-          "name": "8–30 дн",
-          "maxDaysInclusive": 30
-        },
-        {
-          "name": "31–90 дн",
-          "maxDaysInclusive": 90
-        },
-        {
-          "name": ">90 дн"
-        }
-      ]
-    },
-    "lead": {
-      "order": [
-        "vesnin",
-        "ozhegov",
-        "dynin",
-        "angelina",
-        "rodchenko"
-      ]
-    },
-    "kind": {
-      "order": [
-        "cowork-sprint",
-        "membrana-local-sprint",
-        "day-sprint",
-        "night-build",
-        "epic",
-        "hackathon",
-        "marathon",
-        "competition-packaging",
-        "oneshot"
-      ]
-    },
-    "links": {
-      "groups": [
-        {
-          "name": "GH + Linear + prompt",
-          "allOf": [
-            "githubIssue",
-            "linearId",
-            "promptPath"
-          ]
-        },
-        {
-          "name": "GH + prompt (без Linear)",
-          "allOf": [
-            "githubIssue",
-            "promptPath"
-          ],
-          "noneOf": [
-            "linearId"
-          ]
-        },
-        {
-          "name": "Linear + prompt (без GH)",
-          "allOf": [
-            "linearId",
-            "promptPath"
-          ],
-          "noneOf": [
-            "githubIssue"
-          ]
-        },
-        {
-          "name": "только prompt",
-          "allOf": [
-            "promptPath"
-          ],
-          "noneOf": [
-            "githubIssue",
-            "linearId"
-          ]
-        },
-        {
-          "name": "без связей",
-          "noneOf": [
-            "githubIssue",
-            "linearId",
-            "promptPath"
-          ]
-        }
-      ]
-    },
-    "category": {
-      "maxUnassignedShare": 0.05,
-      "note": "Доля active-карточек вне категорий выше порога — НАХОДКА (exit 3), не примечание: конфиг отстаёт естественно (новые префиксы каждую неделю), значит система обязана кричать сама. Вещдок 29.07: 23% молча (#1428)."
-    }
+ "defaultAxis": "category",
+ "categories": [
+  {
+   "name": "Детекция и качество распознавания",
+   "patterns": [
+    "^(scoreboard|detector|dads-|vdr-|nb-vlr|neural-|real-dataset|live-parallel|lp\\d|detection-alarm|batch-collection|trends-fft|sample-library|sld\\d|corpus-track)"
+   ]
+  },
+  {
+   "name": "Device Board — сценарный редактор и runtime",
+   "patterns": [
+    "^(db-|db3h|device-board|usercase|ucv2|mp7b|membrane-node-runtime)"
+   ]
+  },
+  {
+   "name": "Платформа, кабинет, продуктовая витрина",
+   "patterns": [
+    "^(media-library|product-landing|root-domain|cabinet-scenario|pcb-|studio-capture|sca-|tariff-|membrana-device-build|comp-packaging|grp\\d|graphify)",
+    "^(office-stability|office-vds)",
+    "^(server-plugin)"
+   ]
+  },
+  {
+   "name": "Ритуалы и контур достоверности команды",
+   "patterns": [
+    "^(ritual|morning-ritual|morning-gates|morning-journal|frame-holder|evening-|night-build-format|strategy-day|rt-\\d|main-day-probe|meeting-|mf\\d|truth-graph|drift-anchor|linear-hygiene|angelina-hostess)",
+    "^(insight-mandate|insight-review|closure-acceptance|cascade-honest|morning-report|code-review-lead|tef-|feedback-claims-|main-day-issue-channel|night-triage-|forecast-|subconscious-)",
+    "^(cowork-honest-sprint|mfcc-compare-sprint|mfcc-lib-choice|cut-act-trace)$",
+    "^gate-"
+   ]
+  },
+  {
+   "name": "Агентский тулинг, CI и техдолг",
+   "patterns": [
+    "^(agent-tooling|nb-at|ci-gate|cg\\d|scripts-boundary|tech-debt|oc-proxy|opencode|rag-|fv1-)",
+    "^(frictiond|friction6-|tooling-friction|delivery-predicates|tooling-sanitary|tooling-truth|branch-hygiene|branch-salvage|tw-|tc-|tests-container|ship-|pr-ship|leveling-|notes-|deps-|worktrees?-|secret-|send-gate|weekly-|review-|dead-wire-)",
+    "^(sprint-cut-|one-shot-|instruments-honest-verdict|s-queue-|fix-node-modules-|fix-sprint-experience-|eslint-)"
+   ]
+  },
+  {
+   "name": "Партнёры и внешние коммуникации",
+   "patterns": [
+    "^(swallow|ally-swallow|pt-|partner-tutorials)"
+   ]
+  },
+  {
+   "name": "Ресёрчи — входы для решений",
+   "patterns": [
+    "^(linear-agent-identity|team-accountability|generated-docs|angelina-orchestrator|research-query)"
+   ]
+  },
+  {
+   "name": "Контейнеры, процедуры и мастерские",
+   "patterns": [
+    "^(deploy-procedure-survey|deploy-procedures|archivarius-|dump-inventory-|precedent-container|assets-container|network-|static-mmbrn-|cowork-static-|tooling-atlas|procedural-|procedures-corpus|procedure-run-journal|adr-procedure|frame-rails|frames-alive|bridge-room|angelina-codex|dual-mintlify-product-harness|product-mintlify-container|harness-workflow-pages|workflow-examples-marathon|sprint-dictionary-to-lib|run-journal-|recreate-execution-procedure-interface|lazy-close-scope)",
+    "^(dockerfile-|image-)"
+   ]
+  },
+  {
+   "name": "LLM-каналы и провода процедур",
+   "patterns": [
+    "^(llm-procedure|llm-transport|llm-probe|lpc-[a-z]|dreams-|openrouter-)"
+   ]
   }
+ ],
+ "axes": {
+  "size": {
+   "order": [
+    "XS",
+    "S",
+    "M",
+    "L"
+   ]
+  },
+  "age": {
+   "buckets": [
+    {
+     "name": "≤7 дн",
+     "maxDaysInclusive": 7
+    },
+    {
+     "name": "8–30 дн",
+     "maxDaysInclusive": 30
+    },
+    {
+     "name": "31–90 дн",
+     "maxDaysInclusive": 90
+    },
+    {
+     "name": ">90 дн"
+    }
+   ]
+  },
+  "lead": {
+   "order": [
+    "vesnin",
+    "ozhegov",
+    "dynin",
+    "angelina",
+    "rodchenko"
+   ]
+  },
+  "kind": {
+   "order": [
+    "cowork-sprint",
+    "membrana-local-sprint",
+    "day-sprint",
+    "night-build",
+    "epic",
+    "hackathon",
+    "marathon",
+    "competition-packaging",
+    "oneshot"
+   ]
+  },
+  "links": {
+   "groups": [
+    {
+     "name": "GH + Linear + prompt",
+     "allOf": [
+      "githubIssue",
+      "linearId",
+      "promptPath"
+     ]
+    },
+    {
+     "name": "GH + prompt (без Linear)",
+     "allOf": [
+      "githubIssue",
+      "promptPath"
+     ],
+     "noneOf": [
+      "linearId"
+     ]
+    },
+    {
+     "name": "Linear + prompt (без GH)",
+     "allOf": [
+      "linearId",
+      "promptPath"
+     ],
+     "noneOf": [
+      "githubIssue"
+     ]
+    },
+    {
+     "name": "только prompt",
+     "allOf": [
+      "promptPath"
+     ],
+     "noneOf": [
+      "githubIssue",
+      "linearId"
+     ]
+    },
+    {
+     "name": "без связей",
+     "noneOf": [
+      "githubIssue",
+      "linearId",
+      "promptPath"
+     ]
+    }
+   ]
+  },
+  "category": {
+   "maxUnassignedShare": 0.05,
+   "note": "Доля active-карточек вне категорий выше порога — НАХОДКА (exit 3), не примечание: конфиг отстаёт естественно (новые префиксы каждую неделю), значит система обязана кричать сама. Вещдок 29.07: 23% молча (#1428)."
+  }
+ }
 }
