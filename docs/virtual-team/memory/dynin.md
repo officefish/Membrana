@@ -5,8 +5,74 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14250/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 284 (причины в op-log) -->
+Записей: 49 · бюджет 14230/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 295 (причины в op-log) -->
+
+### 2026-08-17 · позиция · server-plugin-foundation-m0-order
+
+> Формализую предикат ребра, как делал в сетевых комнатах: ребро A→B существует тогда и только тогда, когда ответ на A определяет переменную v, а вопрос B требует v как данное. Проверяю вопрос 4 («повод и события»): он говорит о «журнале», который «сегодня событий не испускает». […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/server-plugin-foundation-m0-order-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m1-vocabulary
+
+> Формализую вопрос о трёх родах до начала спора. Три рода — это три непересекающихся подмножества множества плагинов P: `handler`, `report`, `showcase`. Вопрос: является ли «род» полем одного интерфейса `PluginManifest`, или три отдельных интерфейса? Если поле — дискриминант […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/server-plugin-foundation-m1-vocabulary-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m2-mount-homes
+
+> Формализую предикат дома строго. Пусть `H` — множество допустимых значений `mountTarget`. Манифест `m` валиден тогда и только тогда, когда `m.mountTarget ∈ H`. `H` должно быть перечислимым и проверяемым до исполнения — это условие детерминированной валидации. Если `H` живёт […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/server-plugin-foundation-m2-mount-homes-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m3-results-home
+
+> Начну с посылок, которые определяют форму. PluginId из M1 уже несёт пространство имён — вида `module:plugin`. mountTarget из M2 уже длинной формы — `background-office/journal`. Цепочка Т3.3: «модуль → плагин → версия → коллекция → прогон». Если PluginId = `module:plugin`, то в […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/server-plugin-foundation-m3-results-home-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m3r-address
+
+> Поставлю предикат строго. Пусть `A = RunAddress`. Функция `home(A)` должна быть детерминированной и не требовать обращения к внешнему реестру в момент адресации. Если `home(A) = lookup(A.pluginId, HOME_REGISTRY)` — это не функция адреса, это запрос. Адрес — замкнутая структура. […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/server-plugin-foundation-m3r-address-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m4-triggers
+
+> Формализую вопрос о двух режимах. Пусть `T` — множество триггеров плагина. Режим «подписка» (живой): плагин получает событие `e` в момент `t(e)`, если он активен в `t(e)`. Режим «запрос» (постфактум): плагин вызывается внешним агентом с явным `ctx`, независимо от момента […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/server-plugin-foundation-m4-triggers-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m5-showcase
+
+> Начну с постановки предиката. Форма показа — это не произвольная строка и не открытое поле; это элемент конечного множества. Если множество открыто, клиентская страница не может декларативно сопоставить значение с рендерером без ветвящейся логики — это нарушение Т3.6. Предлагаю […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/server-plugin-foundation-m5-showcase-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m5r-showcase
+
+> Формализую предикат: ShowcaseManifest вводит поля тогда и только тогда, когда страница не может вывести их значение из базовых пяти полей детерминированно. kind уже говорит «showcase» — но не говорит, какую форму показа выбрать внутри рода. Значит displayForm — необходимое […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/server-plugin-foundation-m5r-showcase-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m6-first-wave
+
+> Формализую выбор первого живого плагина. Пусть критерий — минимальная зависимость от внешних весов, детерминированность выхода, покрываемость юнит-тестом без мока аудиостека. Проверяю кандидатов: yamnet требует TensorFlow-модели — внешняя зависимость, нет в пакете локально, риск […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/server-plugin-foundation-m6-first-wave-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m6r-first-wave
+
+> Формализую состав RunRecord для первого живого прогона `membrana.handler.mfcc`. Контракты дают нам три компонента: (1) `RunAddress = { pluginId: 'membrana.handler.mfcc', version, collectionId, runId, mountTarget: 'background-media/collections' }` — адрес записи, уникальный […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/server-plugin-foundation-m6r-first-wave-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · team-evening-feedback
+
+> Dynin. Оценка артефактов: MAIN_DAY_ISSUE честно называет `assertions[]` пустыми (`//link-16-08`) — предмет эпика невыразим маркерами, суррогатов не выдумано, норма реестра соблюдена. Инвариант посылок сохранён. Итоги дня: чистых функций не тронуто — дифф целиком в `docs/`, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-17.md#reply-1`
 
 ### 2026-08-16 · позиция · team-evening-feedback
 
@@ -235,69 +301,3 @@
 > Формализую область. У нас три кандидата до day-memo: Archivarius, sessions:scan, sessions:extract. team-memory-report уже стоит на шаге 6 — он читатель журналов персон, не сессий. Его место в цепочке установлено. Вопрос о голове — это вопрос о тех органах, которые работают с […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/evening-review-predicate-m4s-existing-organs-2026-08-01.md#reply-1`
-
-### 2026-08-01 · позиция · evening-review-predicate-m4x-session-archive
-
-> Формализую. Пусть `HEAD(day-memo)` — множество входных артефактов шага `day-memo`. Предикат попадания: `∃ artifact: source(artifact) ∈ {sessions:scan, sessions:extract, archivarius} ∧ readable(artifact) ∧ routed(artifact, day-memo)`. Сейчас: `sessions:scan` → stdout, не […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/evening-review-predicate-m4x-session-archive-2026-08-01.md#reply-1`
-
-### 2026-08-01 · позиция · evening-review-predicate-m6-quality-gates
-
-> Формализую без UI. Пусть `C_day` — множество карточек, активных за день (из реестра). Пусть `J_doc` — множество суждений документа с типизированными полями `boundary`, `checks`, `safety`. Предикат покрытия: `covered(doc) ⇔ ∀c ∈ C_day: ∃j ∈ J_doc: j.cardId = c.id ∧ j.boundary ≠ ε […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/evening-review-predicate-m6-quality-gates-2026-08-01.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m2-contract
-
-> Фиксирую область. M1 дал: `assigned(S,p)`, `participated(S,p)`, `SprintExecution(S)` = проекция Assignments × Evidence. Вопрос 2 вводит новую переменную до окна: контракт C, который p принимает *до* работы. Без C нет области «принял / не принял», а без них `assigned` в M1 — […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m2-contract-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m3-contract-review
-
-> Формализую без UI. Пусть C — контракт спринта (M2, три поля), D — след исполнения (evidence bundle), p — исполнитель как проекция (M1). Предикат ревью: `match(C, D) → {pass, fail(diff[])}`. Независимо: `codeQuality(PR) ∈ {LGTM, BLOCK}` и `shipOk(HEAD)` — другие предикаты, другие […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m3-contract-review-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m4-calls
-
-> Формализую без UI и без привязки к локусу M1. Пусть S — sprintId, p — personaId. Кандидатные акты исполнителя — закрытое множество A = {accept_contract, review, refuse}. Каждый акт — функция call(a, S, p, payload) → Result, где Result ∈ {ok(receipt), err(reason)}. Вещдок e ∈ […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m4-calls-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m5-auditor
-
-> Формализую без UI. Пусть S — спринт, L(S) — ведущий, Perf(S) = participated(S) из M1, A(S) — назначенный аудитор. Предикат изоляции: `isolated(S) ⇔ A(S)≠⊥ ∧ A(S)∉ Perf(S) ∧ A(S)≠ L(S) ∧ L(S)∉ Perf(S)` — три попарных неравенства; «аудитор ≠ ведущий ≠ исполнитель» как цикл […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m5-auditor-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m6-moderation
-
-> Формализую без UI. Роли на окне S: `lead(S)`, `performer(S)`, `auditor(S)` — не обязательно persona из одного алфавита, но **попарно различимы по функции**. Предикат несовместимости: `incompatible(lead, performer) ⇔ ∃S: lead(S)=performer(S) ∧ role(lead)≠role(performer)` в смысле […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m6-moderation-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m7-second-door
-
-> Формализую шов, не flow. Пусть режим спринта \(m \in \{\mathtt{honest}, \mathtt{no\_persona}\}\). Выбор — акт \(choose(S, m, actor, proof)\), где \(S\) — id окна/спринта, \(proof\) — машинно читаемый носитель. Инвариант лазейки: \(\mathtt{no\_persona} \Rightarrow \neg\exists p: […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m7-second-door-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m8-memory
-
-> Формализую без UI. Пусть журнал персоны p — лента записей E. Сейчас ∀e тип(e)=position. Вводим род `execution`. Минимальный кортеж: `ExecRecord = (sprintId, personaId, act, result, evidenceRefs[])`. Предикат допуска в журнал исполнения: `admit(e) ⇔ holdsContract(personaId, […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m8-memory-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m9-cards
-
-> Формализую. Пусть карточка c имеет `leadPersona(c) ∈ P ∪ {ε}`. Сейчас ∀c: leadPersona(c) ≠ ε (214/214) и gate G₀ ⇔ leadPersona ≠ ε — тождественно true на реестре: информационная энтропия гейта = 0. Предикат плана: `planned(c,p) ⇔ leadPersona(c)=p`. Предикат факта из M1: […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m9-cards-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m0-order
-
-> Предикат ребра фиксирую как в bridge M0: A→B ⇔ область определения вопроса B содержит переменную, которую задаёт ответ A. Не runtime скриптов и не «удобно рядом». V={1..9}. (1) задаёт переменные home, namespace, holder. (8) содержит home инструмента vs home тестов ← ждёт (1). […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/workshop-wires-m0-order-2026-07-30.md#reply-1`

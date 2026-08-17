@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-16 |
-| Head SHA | 70f32ad42dde2c8d2a75a8df952bf10cc35bb785 |
+| Date | 2026-08-17 |
+| Head SHA | 27610723ff894dfbb8c70df81e75143adc04f2c5 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -17,13 +17,13 @@
 | Metric | Count |
 |--------|------:|
 | Code files under `scripts/` | 1137 |
-| Yarn scripts (package.json) | 448 |
-| Yarn → `scripts/` | 393 |
+| Yarn scripts (package.json) | 446 |
+| Yarn → `scripts/` | 391 |
 | Yarn без пути `scripts/` | 55 |
-| Yarn → missing file | 9 |
+| Yarn → missing file | 7 |
 | Code files without yarn ref | 824 |
 
-## Yarn → scripts/ (393)
+## Yarn → scripts/ (391)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -41,7 +41,6 @@
 - `analyzers:research:week:dry` → `scripts/analyzers-research-week.mjs`
 - `anthropic:smoke` → `scripts/anthropic-smoke.mjs`
 - `anthropic:task` → `scripts/anthropic-task.mjs`
-- `apply:lead-persona` → `scripts/apply-lead-persona-defaults.mjs` ⚠ missing: `scripts/apply-lead-persona-defaults.mjs`
 - `archivarius` → `scripts/archivarius.mjs`
 - `archivarius:evening` → `scripts/archivarius-evening-step.mjs`
 - `archivarius:push` → `scripts/archivarius-push.mjs`
@@ -230,7 +229,6 @@
 - `night:research` → `scripts/night-research.mjs`
 - `night:research:sweep` → `scripts/night-research.mjs`
 - `night:research:yield` → `scripts/night-research.mjs`
-- `night:run` → `scripts/night-build-run-phase.mjs` ⚠ missing: `scripts/night-build-run-phase.mjs`
 - `office:image:smoke` → `scripts/office-image-smoke.mjs`
 - `office:research-digest` → `scripts/office-research-digest.mjs`
 - `office:ssh` → `scripts/_ssh-office-exec.mjs`
@@ -1246,12 +1244,10 @@
 - `scripts/worktree-sync-check.test.mjs`
 - `scripts/worktrees-align.test.mjs`
 
-## Yarn → missing file (9)
+## Yarn → missing file (7)
 
-- `apply:lead-persona` → missing `scripts/apply-lead-persona-defaults.mjs`
 - `cabinet:mp7:prod` → missing `scripts/_ssh-cabinet-mp7-prod.mjs`
 - `lint:scripts` → missing `scripts/**/*.mjs`
-- `night:run` → missing `scripts/night-build-run-phase.mjs`
 - `templates:content:real:birds` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:machine-hum` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:silence` → missing `scripts/materialize-free-v1-real.py`
