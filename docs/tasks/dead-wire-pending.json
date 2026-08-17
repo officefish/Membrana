@@ -4,19 +4,10 @@
   "ratifiedBy": "owner",
   "ratifiedAt": "2026-08-11",
   "pending": {
-    "night:run": {
-      "reason": "awaits-implementation",
-      "until": "2026-08-16",
-      "footprint": 4
-    },
-    "apply:lead-persona": {
-      "reason": "awaits-implementation",
-      "until": "2026-08-16",
-      "footprint": 3
-    },
     "cabinet:mp7:prod": {
       "reason": "local-only-carrier",
       "footprint": 7
     }
-  }
+  },
+  "//retired-17-08": "Два объявления сняты 17.08 по слову владельца (первый путь из трёх). night:run → scripts/night-build-run-phase.mjs и apply:lead-persona → scripts/apply-lead-persona-defaults.mjs были объявлены в манифесте, носителей не имели никогда, отсрочка ратифицирована владельцем 11.08 со сроком до 16.08 и истекла. Продлевать второй раз отказались сознательно: объявленное без носителя — обещание, которое холодная сессия примет за существующее, и это ровно тот класс, что ловится всю неделю. Замысел не потерян: под ночную сборку в реестре живёт карточка night-build-format-v2 (M, active); если понадобится — вернётся отдельной задачей со своим носителем."
 }
