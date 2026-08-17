@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `server-plugin-foundation` | Плагинная основа сервера: серверные модули анализа и визуализации коллекций звуков | L | [`SERVER_PLUGIN_FOUNDATION_PROMPT.md`](../prompts/SERVER_PLUGIN_FOUNDATION_PROMPT.md) | — |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-live-services` | #1303-C: LIVE_SERVICES, документация и monitoring | S | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
 | `static-mmbrn-cutover` | #1305-D: cutover, canary и rollback | L | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
