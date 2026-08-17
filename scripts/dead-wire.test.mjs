@@ -246,18 +246,23 @@ test('живой package.json: после разбора связь честна
   assert.ok(report.checked > 400, `команд проверено: ${report.checked}`);
 });
 
-test('перечень pending: за сроком проявляются ВСЕ его записи, сколько бы их ни было', () => {
-  const report = runCheck({ today: TODAY });
-  assert.equal(report.findings.length, 0);
-  // Сдвинем «сегодня» за срок — все КАЛЕНДАРНЫЕ записи перечня обязаны проявиться.
-  // Число берём из перечня, а не из памяти: 11.08 три записи законно вынесены
-  // (глаголы сняты владельцем, они больше не «ждут реализации»). local-only-carrier
-  // (#1911) календарём не протухает — его честность меряется gitignore-покрытием.
-  const pendingCount = Object.values(LIVE_PENDING.pending)
-    .filter((p) => typeof p.until === 'string').length;
-  const after = runCheck({ today: shiftDay(LIVE_UNTIL, 1) });
-  assert.equal(after.findings.length, pendingCount, 'за сроком должны проявиться все записи перечня');
-  assert.ok(after.findings.every((f) => f.kind === 'pending_expired'));
+test('перечень pending: за сроком проявляются ВСЕ его календарные записи', () => {
+  // Механика срока доказывается на ПОДСТАВНОМ перечне, а не на живом файле:
+  // 17.08 живой перечень законно остался без календарных записей (владелец снял
+  // night:run и apply:lead-persona вместо второго продления), и прежняя проверка
+  // через runCheck стала недоказуемой — доказывать протухание было не на чем.
+  // Ядро принимает перечень параметром, поэтому проверяем его, а не оболочку.
+  const scripts = { 'a:one': 'node scripts/нет-1.mjs', 'a:two': 'node scripts/нет-2.mjs' };
+  const pending = {
+    'a:one': { reason: 'awaits-implementation', until: '2026-09-01' },
+    'a:two': { reason: 'awaits-implementation', until: '2026-09-01' },
+  };
+  const before = auditWires({ scripts, fileExists: dead, pending, today: '2026-08-31', isIgnored: () => false });
+  assert.equal(before.findings.filter((f) => f.kind === 'pending_expired').length, 0, 'до срока молчит');
+
+  const after = auditWires({ scripts, fileExists: dead, pending, today: '2026-09-02', isIgnored: () => false });
+  const expired = after.findings.filter((f) => f.kind === 'pending_expired');
+  assert.equal(expired.length, Object.keys(pending).length, 'за сроком проявляются ВСЕ записи, сколько бы их ни было');
 });
 
 test('подложенный фальшивый провод роняет зуб, package.json не тронут', () => {
@@ -275,14 +280,24 @@ test('подложенный фальшивый провод роняет зуб
 test('срок доказывается БЕЗ его ожидания: дата приходит параметром', () => {
   // Системное время не подделывается: ядро берёт день прогона аргументом, и это
   // единственный честный способ проверить будущее.
-  const before = runCheck({ today: shiftDay(LIVE_UNTIL, -1) });
-  const onDay = runCheck({ today: LIVE_UNTIL });
-  const after = runCheck({ today: shiftDay(LIVE_UNTIL, 1) });
+  const scripts = { 'a:one': 'node scripts/нет-1.mjs' };
+  const pending = { 'a:one': { reason: 'awaits-implementation', until: '2026-09-01' } };
+  const run = (today) => auditWires({ scripts, fileExists: dead, pending, today, isIgnored: () => false })
+    .findings.filter((f) => f.kind === 'pending_expired');
 
-  const expired = (r) => r.findings.filter((f) => f.kind === 'pending_expired');
-  assert.equal(expired(before).length, 0, 'накануне срок ещё в силе');
-  assert.equal(expired(onDay).length, 0, 'в САМ день срок ещё не вышел — сравнение строгое');
-  assert.ok(expired(after).length > 0, 'назавтра прибор кричит');
+  assert.equal(run('2026-08-31').length, 0, 'накануне срок ещё в силе');
+  assert.equal(run('2026-09-01').length, 0, 'в САМ день срок ещё не вышел — сравнение строгое');
+  assert.ok(run('2026-09-02').length > 0, 'назавтра прибор кричит');
+});
+
+test('живой перечень здоров: календарные записи, если есть, ещё не протухли', () => {
+  // Живой файл проверяется на ЗДРАВОСТЬ, а не служит доказательством механики:
+  // пустой список календарных записей — законное состояние, а не поломка зуба.
+  const calendar = Object.entries(LIVE_PENDING.pending).filter(([, p]) => typeof p.until === 'string');
+  for (const [name, entry] of calendar) {
+    assert.match(entry.until, /^\d{4}-\d{2}-\d{2}$/u, `${name}: срок обязан быть датой YYYY-MM-DD`);
+  }
+  assert.equal(runCheck({ today: TODAY }).findings.length, 0, 'на сегодняшний день находок нет');
 });
 
 test('сегодня сторож молчит: шума от ежедневного звонка нет', () => {
