@@ -5,8 +5,74 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14208/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 287 (причины в op-log) -->
+Записей: 49 · бюджет 14206/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 298 (причины в op-log) -->
+
+### 2026-08-17 · позиция · server-plugin-foundation-m0-order
+
+> Согласен с коллегой по начальной точке. Формализую: вопрос 1 производит переменную «контракт плагина» — тип, форма манифеста, три рода. Вопрос 2 потребляет её: «что делает модуль домом» — это вопрос о том, что именно модуль обязан принять. Принять — значит знать тип того, что […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/server-plugin-foundation-m0-order-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m1-vocabulary
+
+> Начну с лемм — иначе разъедемся в словах. Мы называем «словарём» не словник из README, а типовой манифест, который каждый плагин обязан экспортировать. Это TypeScript-интерфейс. Его дом не должен жить внутри `background-office` — потому что `background-media` тоже потребляет […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/server-plugin-foundation-m1-vocabulary-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m2-mount-homes
+
+> Зафиксирую леммы. «Дом» в этом контексте — Nest-модуль в `packages/background-office` или `packages/background-media`, который объявляет публичный контракт приёма плагинов. Контракт дома — это не просто факт существования модуля; это набор экспортов: точка регистрации плагина, […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/server-plugin-foundation-m2-mount-homes-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m3-results-home
+
+> Уточняю термины. `collectionId` — это идентификатор коллекции звуков из home `background-media/collections` (вердикт M2). Он внешний ключ, не вложенная структура. Запись результата живёт в доме результатов (Mongo офиса, отдельная коллекция), ссылается на коллекцию по id — не […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/server-plugin-foundation-m3-results-home-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m3r-address
+
+> Фиксирую лемму. `RunAddress` — это адрес одного конкретного прогона в системе. По Т3.3 цепочка: `модуль → плагин → версия → коллекция → прогон`. Из этих звеньев `pluginId` даёт «плагин» (`org.kind.slug`), `version` — версию, `collectionId` — коллекцию, `runId` — прогон. Звено […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/server-plugin-foundation-m3r-address-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m4-triggers
+
+> Уточняю терминологию, чтобы не расходились потом. «Канал» — это не поле манифеста, это контракт в `plugin-contracts`. Если `triggers` — закрытый словарь из `plugin-contracts`, то тип должен быть `PluginTrigger[]`, а не `string[]` — M1 оставил место именно для этого. Словарь […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/server-plugin-foundation-m4-triggers-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m5-showcase
+
+> Уточняю лемму «полиморфно». `getRegisteredPlugins()` возвращает `ReadonlyArray<PluginManifest>`. Чтобы страница отличила `ShowcaseManifest` от базового, нужен дискриминант в типе — поле `kind`. Предлагаю: базовый `PluginManifest` несёт `kind: PluginKind`, где `PluginKind` — […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/server-plugin-foundation-m5-showcase-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m5r-showcase
+
+> Начну с лемм, иначе расползёмся. «База» — PluginManifest с ровно пятью полями: id, version, kind, mountTarget, triggers. Это закрытый вопрос: посылка дана поимённо, не обсуждается. ShowcaseManifest — расширяющий тип. Значит единственный законный способ добавить поля — interface […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/server-plugin-foundation-m5r-showcase-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m6-first-wave
+
+> Перед выбором первого плагина уточню лемму «первая волна». Волна — это множество плагинов, поставляемых одним PR-контуром к приёмке основы. Если мы говорим «все шесть сразу», это один контур с шестью точками сбоя. Если «mfcc первым, остальные пятью отдельными PR» — это не одна […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/server-plugin-foundation-m6-first-wave-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · server-plugin-foundation-m6r-first-wave
+
+> Лемма до спора: шесть детекторов — это пакеты `packages/services/*` рода `handler`, дом `background-media/collections`. Это закрыто Т3.5. `ShowcaseManifest` — отдельный вид, контракт M1/M5′ его предусмотрел, переоткрывать M1 не нужно (находка A6-6 правильная). Но включить […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/server-plugin-foundation-m6r-first-wave-2026-08-17.md#reply-1`
+
+### 2026-08-17 · позиция · team-evening-feedback
+
+> Ozhegov. Оценка артефактов: DAILY_STANDUP аккуратно называет параллельный приоритет — ревью PR #1951/#1953 до любых работ поверх калибровочного корпуса; MAIN_DAY_ISSUE называет то же самое в подкреплении. Согласованность между документами удовлетворительная, кроме несовпадения […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-17.md#reply-1`
 
 ### 2026-08-16 · позиция · team-evening-feedback
 
@@ -235,69 +301,3 @@
 > Леммы. archive-night-hunt и archive-daily-day — имена шагов 2 и 3 по фактическому источнику evening-ritual-steps.json. Их функция из имён читается как архивирование ночных и дневных артефактов — не транскриптов сессий. sessions:scan и sessions:extract — отдельные скрипты с […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/evening-review-predicate-m4s-existing-organs-2026-08-01.md#reply-1`
-
-### 2026-08-01 · позиция · evening-review-predicate-m4x-session-archive
-
-> Леммы. **Голова вечера** — входной корпус для `day-memo`. **Тракт** — связанная цепочка вызовов, где выход одного органа становится входом следующего. **Тракта нет** — факт о связях между органами, не о существовании органов. Из трёх органов на вход `day-memo` сегодня может […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/evening-review-predicate-m4x-session-archive-2026-08-01.md#reply-1`
-
-### 2026-08-01 · позиция · evening-review-predicate-m6-quality-gates
-
-> Лемма про разделение ответственности. Три документа вечера имеют разную природу входа: `day-memo` суммирует день целиком (вход: `C_day`), `audit-evening` отражает ход цепочки (вход: артефакты прогона), `code-review` судит код (вход: коммиты и контракты). Один предикат покрытия […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/evening-review-predicate-m6-quality-gates-2026-08-01.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m2-contract
-
-> Леммы, иначе синонимы. **Контракт спринта (SprintContract)** — именованный артефакт окна S: предмет + границы + предикат сделанного; не Issue, не task-prompt, не зона leadPersona. **Формулировщик** — роль/слот, который *создаёт* C до назначения accept. **Принятие** — […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m2-contract-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m3-contract-review
-
-> Леммы, иначе синонимы. **ContractReview** — именованный акт: subject = performer projection (M1), object = Contract (M2), input = EvidenceDone, output = VerdictRecord. **VerdictRecord** — вещдок-запись, не chat-реплика. **diff[]** — список полей/пунктов контракта, где D ⊭ C. Не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m3-contract-review-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m4-calls
-
-> Леммы, иначе синонимы. **Вызов исполнителя (PerformerCall)** — именованный акт a∈A с субъектом p и sprintId S, инициированный по контракту окна. **Квитанция (Receipt)** — значение Result.ok: стабильный id + a + S + p + ts + (опц.) payloadHash. **Отказ (Refusal)** — Result ветки […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/sprint-honest-m4-calls-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m5-auditor
-
-> Леммы, иначе синонимы. **Аудитор спринта** — не persona-советчик и не запись в реестре голосов консилиума; это **слот назначения** `AuditAssignment(S) → auditorId`, отдельный от `Assignments(S)` исполнения (M1) и от ведущего окна. **Ведущий (lead)** — кто вёл принятие/ритм окна […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m5-auditor-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m6-moderation
-
-> Леммы, иначе синонимы. **Ведение (facilitation)** — оркестрация окна: очередь, гейты, журнал «спросили/ответили». **Надзор (supervision)** — предметно-процедурное суждение: достаточно ли следа, LGTM/BLOCK, «рот тот». **Исполнитель** — M1: assignment + participation evidence. […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m6-moderation-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m7-second-door
-
-> Леммы, иначе синонимы. **Шов выбора (choice seam)** — точка фиксации режима *до* старта исполнения, не UI-тогл mid-flight. **Режим honest** — действует контракт M1–M6 (assigned ≠ participated, следы, аудитор). **Режим no_persona** — режим *без* персональной ответственности; не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m7-second-door-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m8-memory
-
-> Леммы, иначе снова синонимы. **Позиция** — словарная статья «что персона утверждала в комнате» (уже есть). **Акт** — именованное обязательство контракта в спринте (не diff и не «работал»). **Результат** — закрытый исход акта относительно DoD/приёмки. **След** — адресуемый […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m8-memory-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · sprint-honest-m9-cards
-
-> Леммы. **leadPersona** — словарная статья *назначения/плана* (assignment intent), home: `docs/tasks/registry.json` карточка. **Исполнитель (M1)** — не leadPersona; отдельный предикат по evidence. **Гейт непустоты** — сейчас проверяет синтаксис плана, не факт. Синоним […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/sprint-honest-m9-cards-2026-07-30.md#reply-1`
-
-### 2026-07-30 · позиция · workshop-wires-m0-order
-
-> Леммы «ждёт» только контрактные: без ответа A у B нет области определения. Имена — как в повестке, без новых ярлыков. Фундамент области — (1). (8) — словарная статья «дом теста»: только после (1). (2) — признаки обнаружения и неймспейс в справочнике: после (1). (3) — […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/workshop-wires-m0-order-2026-07-30.md#reply-1`
