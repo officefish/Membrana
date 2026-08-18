@@ -18,6 +18,9 @@ COPY docs/prompts/DREAM_MASTER_PROMPT.md docs/prompts/DREAM_MASTER_PROMPT.md
 COPY packages/services/rag packages/services/rag
 COPY packages/services/static-registry packages/services/static-registry
 COPY packages/core packages/core
+# @membrana/plugin-contracts — словарь плагинности (#1961); без COPY `workspaces focus`
+# идёт за пакетом в npm и падает 404 — воркспейс, которого нет в контексте, не воркспейс.
+COPY packages/plugin-contracts packages/plugin-contracts
 COPY packages/background-office packages/background-office
 # LPC defaults + dreams pure libs (dynamic import from DreamsService)
 COPY scripts/lib/llm-procedures.json \
@@ -72,6 +75,10 @@ COPY --from=build /app/packages/services/static-registry/dist /app/packages/serv
 COPY --from=build /app/packages/services/static-registry/package.json /app/packages/services/static-registry/package.json
 COPY --from=build /app/packages/core/dist /app/packages/core/dist
 COPY --from=build /app/packages/core/package.json /app/packages/core/package.json
+# plugin-contracts: цель симлинка node_modules/@membrana/plugin-contracts (#1961). dist
+# рождается у tsc -b офиса через references — как у core.
+COPY --from=build /app/packages/plugin-contracts/dist /app/packages/plugin-contracts/dist
+COPY --from=build /app/packages/plugin-contracts/package.json /app/packages/plugin-contracts/package.json
 COPY --from=build /app/scripts/lib /app/scripts/lib
 # scripts/network/lib: classify.mjs — СТАТИЧЕСКИЙ импорт dreams-tick.mjs:19 с 07.08.
 # Сюда правка 07.08 не дошла: она тронула только build-стадию. Дефект второй ступени —

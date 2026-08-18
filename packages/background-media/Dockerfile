@@ -12,6 +12,9 @@ COPY tsconfig.base.json ./
 COPY packages/core packages/core
 COPY packages/libs packages/libs
 COPY packages/services packages/services
+# @membrana/plugin-contracts — словарь плагинности (#1961); без COPY `workspaces focus`
+# идёт за пакетом в npm и падает 404 (поймано смоуком офиса на PR #1965).
+COPY packages/plugin-contracts packages/plugin-contracts
 COPY packages/background-media packages/background-media
 
 # prisma generate ЗДЕСЬ (#1724): #1632 вынес его в turbo-задачу, docker через turbo
