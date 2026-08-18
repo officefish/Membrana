@@ -1,148 +1,155 @@
-<!-- Сгенерировано: 2026-08-17T07:05:45.009Z (yarn main-day-issue@b9f813f5) -->
+<!-- Сгенерировано: 2026-08-18T05:53:13.308Z (yarn main-day-issue@92212bc7) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
-<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"b0295841203cbd0dd70b73486940c8fc0fcc184f","digest":"2cd5a93c45da6a1726ac6270ed8cbfa3c19bc1a7065fc41d33052dccf92ec24d"},"DAILY_STANDUP":{"version":"b0295841203cbd0dd70b73486940c8fc0fcc184f","digest":"8add26aee7c33ccab419a858ea66c935484c7656d6318e1dbe97739f1d1d4254"}}} -->
+<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"5a54aa472321d4ef0a1c1cf68fad21b948004530","digest":"02f4c4f036c21c601077187e290ecfaa9731943c43532eb871389c6cd2603da5"},"DAILY_STANDUP":{"version":"5a54aa472321d4ef0a1c1cf68fad21b948004530","digest":"71239ce5c8e81b1d779db59b2122812caf2d2473fda0034c1b0f78aa44be7c01"}}} -->
 <!-- Звено канала: provider=anthropic model=claude-sonnet-4-6 source=overlay generations=1 -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
-<!-- active в реестре: static-mmbrn-retirement, static-mmbrn-live-services, static-mmbrn-cutover, static-mmbrn-m6-alignment, static-mmbrn-rehydrate-parity, static-mmbrn-ingress-auth, static-mmbrn-target-provision, static-mmbrn-disposition-ledger, static-mmbrn-container, morning-journal-close-step, frame-holders-reassign-twenty, frame-holder-moderator-split, workflow-examples-marathon, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, meeting-evening-review-predicate, evening-chain-review-predicate, mfcc-compare-sprint, insight-mandate-for-new, frame-rails-2307, lpc-d-panel, lpc-c-office, lpc-b-wire, lpc-a-lib, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, membrane-node-runtime-remote, mp7b-rt7-prod-hardening, device-board-three-hosts-2026-06-26, db3h-s4-microphone-detectors, neural-free-tier-dataset-report, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, detection-alarm-loop-refactor, batch-collection-run-contour -->
+<!-- active в реестре: server-plugin-foundation, static-mmbrn-retirement, static-mmbrn-live-services, static-mmbrn-cutover, static-mmbrn-m6-alignment, static-mmbrn-rehydrate-parity, static-mmbrn-ingress-auth, static-mmbrn-target-provision, static-mmbrn-disposition-ledger, static-mmbrn-container, morning-journal-close-step, frame-holders-reassign-twenty, frame-holder-moderator-split, workflow-examples-marathon, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, meeting-evening-review-predicate, evening-chain-review-predicate, mfcc-compare-sprint, insight-mandate-for-new, frame-rails-2307, lpc-d-panel, lpc-c-office, lpc-b-wire, lpc-a-lib, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, membrane-node-runtime-remote, mp7b-rt7-prod-hardening, device-board-three-hosts-2026-06-26, db3h-s4-microphone-detectors, neural-free-tier-dataset-report, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, detection-alarm-loop-refactor, batch-collection-run-contour -->
 
-# MAIN_DAY_ISSUE — 2026-08-17
+# MAIN_DAY_ISSUE — 2026-08-18
 
 ## Метаданные
 
 | Поле | Значение |
 |------|----------|
-| `primaryFocusId` | `batch-collection-run-contour` |
-| `primaryTitle` | Batch-collection-run-contour: консилиум-гейт по модели исполнения — открыть полевую неделю |
-| `githubIssue` | #494 |
+| `primaryFocusId` | `server-plugin-foundation` |
+| `primaryTitle` | Плагинная основа сервера — первая карточка реализации под Issue #1961 |
+| `githubIssue` | #1961 |
 | `size` | L |
-| `promptPath` | docs/prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md |
-| `сгенерировано` | 2026-08-17 |
+| `promptPath` | docs/prompts/SERVER_PLUGIN_FOUNDATION_PROMPT.md |
+| `сгенерировано` | 2026-08-18 |
 
 ---
 
 ## Магистраль
 
-**Batch-collection-run-contour (L, #494)** — магистраль дня взята с `sources[0]` в `main-day-assertions.json`: владелец выбрал её 16.08 из замороженного топ-3, при условии что «оборудование приехало и подключено, полевая неделя начинается 17.08».
+**server-plugin-foundation** (#1961) — плагинная основа сервера: пакет контрактов `packages/plugin-contracts` и первый живой плагин `membrana.handler.mfcc`.
 
-Первый шаг эпика, предписанный его собственным промптом, — **консилиум-гейт по модели исполнения**: разрешить развилку live-каденс vs batch-итерация, определить границы новых core-контрактов (`SampleCollectionRef`, узел-источник, `for-each-sample`, устройство collection, batch-рантайм) до входа в код. Без этого гейта любой написанный код строится на незафиксированной модели и будет переписан.
+Магистраль взята из `sources[0].claim` (`docs/tasks/main-day-assertions.json`, owner-choice@chat/magistral-17-08, дата 2026-08-17): владелец выбрал `server-plugin-foundation` из замороженного топ-3 словом 17.08. Синтез не производился.
 
-**Критерий успеха к вечеру:** проведён консилиум по модели исполнения, зафиксирован артефакт решения (≥ 1 стр., имена контрактов, выбранная модель); Issue #494 несёт комментарий со ссылкой на артефакт; команда готова открыть первую карточку реализации.
+Вердикт консилиума по Issue #1961 ратифицирован 17.08, форма решения зафиксирована Архитектором. Сегодня — первый день, когда реализация не заблокирована ни гейтом `secret-parser-built` (резак `redactSecrets` существует, 18/18 тестов), ни отсутствием вердикта. Гейт `secret-parser-built` остаётся открытым по критерию (в) — предикат `amnestyLifted` отложен словом владельца; это не блокирует `server-plugin-foundation`.
+
+Замысел словом владельца: клиент несёт модульно-плагинную архитектуру — серверу нужна такая же основа, чтобы писать плагины серверного журнала. Полевой сбор отложен (Firebat ждёт монитор + клавиатуру), день отдан фундаменту, на котором встанет разбор будущих записей.
+
+**Критерий успеха к вечеру:** файл `packages/plugin-contracts/package.json` существует в репозитории И символ `PluginExecutor` достижим grep'ом по `packages/**/src/**` — оба маркера из `main-day-assertions.json` дают `violated` (работа сделана), либо один из них остаётся `holds` с письменным диагнозом блокера в карточке.
 
 ---
 
 ## Подкрепление
 
-- **Провести развёрнутое ревью PR #1951 (MFCC-измеритель, 632 строки) и PR #1953 (field:capture, 415 строк) до любых работ поверх них.** Оба диффа влиты без ревью и питают калибровочный корпус; недостоверный корпус делает любой будущий замер F1 по batch-контуру бессмысленным. Ревью — предусловие для честного первого прогона.
-- **Подключить резак `redactSecrets` к `night-triage-secret-scan.mjs` и создать `rotation-manifest-2026-08-17.md`.** Гейт `secret-parser-built` открыт четвёртый день без технических причин; его закрытие снимает амнестию на правку архива и разблокирует продуктовую полосу (`angelina-hostess-impl`, `assets-container`). Резак существует (`scripts/lib/secret-redact.mjs`, 18/18 тестов), точка сопряжения со сканером требует прогона на грязной фикстуре до правки.
+- **Ревью PR #1951 (MFCC-измеритель, 632 строки) и PR #1953 (field:capture, 415 строк)** — без этого ревью калибровочный корпус недостоверен, а первый живой плагин `membrana.handler.mfcc` лишён проверенного baseline. Ревью прогнать до первого коммита по `server-plugin-foundation`, не после.
+- **Изолированный прогон `yarn workspace @membrana/rag-service test`** — красный третий день; диагностика до назначения исполнителя. Не править поверх красного — только зафиксировать воспроизводимость и передать диагноз.
 
 ---
 
 ## Перспективные
 
-- Закрытие гейта `secret-parser-built` (подключение `redactSecrets` + манифест ротации) разблокирует продуктовую полосу: `angelina-hostess-impl` и `assets-container` перестают быть заблокированными параллельным L-блоком.
-- После консилиума-гейта по batch-модели — открыть первую карточку реализации `batch-collection-run-contour` и пройти шаг 2 промпта (SampleCollectionRef, узел-источник).
-- Починка красного `@membrana/rag-service#test` (третий день) открывает достоверный статус CI и позволяет опираться на него при планировании продуктовых работ недели.
+- После появления `packages/plugin-contracts` открывается вход в `angelina-hostess-impl` и `assets-container` — обе карточки ждут плагинного контракта как фундамента.
+- Развёрнутое ревью коммита `66fc8c6a` (862 строки) откроет чистую сдачу следующего PR по `server-plugin-foundation` без хвостов ревью-долга.
+- Диагностика `@membrana/rag-service#test` при подтверждении воспроизводимости создаёт задание для исполнителя и разблокирует RAG-контур, стоящий третий день.
 
 ---
 
 ## Экспериментальные
 
-- **Проба:** запустить `night-triage-secret-scan.mjs` поверх одного тестового файла с заглушённым паттерном ДО правки — узнать, достаточно ли текущего API `redactSecrets` для сквозного прогона без переписывания сканера (изолированный экспортируемый вызов по аналогии с `clearNightReportDownloadTargets`).
-- **Проба:** создать `rotation-manifest-2026-08-17.md` вручную по минимальному шаблону и прогнать сканер поверх него — проверить, не засвечивает ли детектор собственный манифест.
-- **Проба:** запустить `yarn workspace @membrana/rag-service test` изолированно до любых правок — выяснить, воспроизводится ли красный тест детерминированно или был артефактом окружения 16.08.
+- **Эксперимент 1.** Создать `packages/plugin-contracts` как пустой пакет с `package.json` и единственным экспортом-заглушкой `PluginExecutor` — узнать, достаточно ли каркаса, чтобы `main-day-probe` перевернул оба маркера в `violated`, и тем самым подтвердить, что посылки `assertions.json` корректно адресованы.
+- **Эксперимент 2.** Запустить `yarn workspace @membrana/rag-service test` трижды подряд в чистом окружении tooling-дерева — узнать, флакает ли тест или падает детерминированно; результат определяет приоритет исполнителя.
+- **Эксперимент 3.** Прогнать `yarn main-day-probe` до и после создания каркаса `plugin-contracts` — зафиксировать снимок «до» как baseline, сравнить со снимком «после»; расхождение = находка о точности маркеров.
 
 ---
 
 ## Санитарные
 
-- `@membrana/rag-service#test` красный третий день — починить до новых прогонов поверх него.
-- Ревью-долги PR #1951 (MFCC-измеритель, 632 строки) и PR #1953 (field:capture, 415 строк) не проведены — блокируют достоверность калибровочного корпуса.
-- `rotation-manifest-2026-08-17.md` не создан, резак к `night-triage-secret-scan.mjs` не подключён — гейт `secret-parser-built` не закрыт четвёртый день.
-- Карточка на orphaned-паттерн `ritual:day` не заведена — три дня подряд, кандидат в preflight-зуб.
-- Формула объёма в промптах сессий содержит ошибку: 303 МБ/ч, не 317 (16 бит = 2 байта, не 2.5).
+- Ревью-долг: `yarn code-review:pr 1960` (520 строк) и коммит `66fc8c6a` (862 строки) — до любых коммитов поверх `server-plugin-foundation`, иначе ревью будет проводиться поверх незамеченных проблем.
+- Ревью PR #1951 (MFCC-измеритель) и PR #1953 (field:capture) — питают калибровочный корпус; без них `membrana.handler.mfcc` лишён достоверного baseline.
+- Диагностика `@membrana/rag-service#test` — красный третий день; `yarn workspace @membrana/rag-service test` изолированно, до назначения исполнителя.
+- Завести карточку в реестр на orphaned-паттерн `ritual:day` (`r1/r2/r3` в `2026-08-17.jsonl`) — три дня подряд, кандидат в preflight-зуб.
+- Расхождение MAIN_DAY_ISSUE: перечеканить `main-day-assertions.json` под актуальную магистраль `server-plugin-foundation` (#1961) — посылки уже несут правильные маркеры (`packages/plugin-contracts/package.json`, symbol:`PluginExecutor`), но дата чеканки и `//date` в комментарии не обновлены до 18.08; обновить до запуска `yarn main-day-probe`.
 
 ---
 
 ## Почему это магистраль (таблица обоснования)
 
 | Утверждение | Происхождение | Первоисточник | Свежесть |
-|---|---|---|---|
-| Магистраль — `batch-collection-run-contour` (L, #494); выбор из замороженного топ-3 | `sources[0]` в `main-day-assertions.json` | owner-choice@chat/magistral-16-08 (слово владельца) | 2026-08-16 |
-| Гейт старта карточки удовлетворён: оборудование приехало и подключено, полевая неделя начинается 17.08 | `sources[0].claim` | owner-choice@chat/magistral-16-08 | 2026-08-16 |
-| Первый шаг эпика — консилиум-гейт по модели исполнения, не код (предмет невыразим маркерами, обоснование в `//link-16-08`) | `main-day-assertions.json` `//link-16-08` | `docs/tasks/main-day-assertions.json` (агент 16.08) | 2026-08-16 |
-| Стендап подтверждает: `batch-collection-run-contour` — в «сознательно не делаем» НЕ до гейта, а до закрытия PR-ревью и гейта secret | `docs/DAILY_STANDUP.md` | стендап-генератор b9f813f5 | 2026-08-17 |
-| DAY_PLAN называет `batch-collection-run-contour` в магистральных кандидатах с пометкой «берётся после закрытия гейта и ревью» | `docs/DAY_PLAN.md` | plan-генератор #1363 | 2026-08-17 |
-| Стендап и DAY_PLAN — **1 источник, 2 отражения** плана; вес равен одному, не двум | группировка по origin | генераторная цепочка того же утра | 2026-08-17 |
-| **Расхождение (норма У1, 31.07):** `morning-gates-state.json` в контексте отсутствует → гейт не несёт более позднего волеизъявления; `sources[0]` от 16.08 остаётся актуальным. Расхождение не замолчано — названо явно. | проверка входов | отсутствие `morning-gates-state.json` в контексте | — |
+|-------------|---------------|---------------|----------|
+| Владелец назвал `server-plugin-foundation` магистралью из замороженного топ-3 | `docs/tasks/main-day-assertions.json`, sources[0] | owner-choice@chat/magistral-17-08 (слово владельца) | 2026-08-17 |
+| Вердикт консилиума Issue #1961 ратифицирован, форма решения зафиксирована Архитектором | issue | GitHub Issue #1961 | 2026-08-17 |
+| Реализация сегодня не заблокирована гейтом: резак `redactSecrets` существует (18/18 тестов) | код | `scripts/lib/secret-redact.mjs`, `//retired-redact-wrong-address-03-08` в assertions | 2026-08-03 |
+| Полевой сбор отложен (Firebat ждёт монитор+клавиатуру) — день отдан фундаменту | сессия | owner-choice@chat/magistral-17-08 | 2026-08-17 |
+| Стендап 18.08 называет `server-plugin-foundation` первым разблокированным фронтом после гейта | план | `docs/DAILY_STANDUP.md` (отражение sources[0]) | 2026-08-18 |
+| DAY_PLAN 18.08 подтверждает ту же карточку | план | `docs/DAY_PLAN.md` (отражение sources[0]) | 2026-08-18 |
+
+> Стендап и DAY_PLAN — **1 источник, 2 отражения** sources[0]; их суммарный вес равен весу одного. Независимые источники: owner-choice (17.08), Issue #1961 (17.08), код резака (03.08). Все три независимы и согласны.
+
+> **Расхождение гейта и assertions:** `docs/tasks/morning-gates-state.json` не предоставлен во входах — проверить наличие поля `magistral.day = 2026-08-18` невозможно. Если файл несёт сегодняшнюю дату и иную магистраль — норма У1 предписывает взять выбор гейта как более свежий и зафиксировать расхождение строкой: **«магистраль взята с гейта, assertions не перечеканены»**. В отсутствие файла во входах магистраль берётся из sources[0] — это канон при пустом или недоступном гейте.
 
 ---
 
-## Посылки
+## Посылки (фокус строится на «работы ещё нет»)
 
-Посылки `assertions[]` в `main-day-assertions.json` **сознательно пусты** (`//link-16-08`): предмет эпика — неразведённая модель исполнения, а не отсутствующий символ. Утверждение «модель не определена» невыразимо маркерами `kind:file/test/symbol`. Выдумывать проверяемый суррогат ради непустого списка запрещено нормой реестра.
+| Посылка | Маркер | Вердикт |
+|---------|--------|---------|
+| Пакет контрактов серверной плагинности не существует (дом словаря — `packages/plugin-contracts`) | `file:packages/plugin-contracts/package.json` | holds |
+| Первый живой плагин `membrana.handler.mfcc` не реализован (вердикт M6-прим: PR-3) | `symbol:PluginExecutor` | holds |
 
-Гвард старта зафиксирован в промпте эпика шагом 1: **консилиум-гейт по модели исполнения**. Этот гвард — не посылка MAIN_DAY_ISSUE, а условие перехода к коду внутри эпика.
-
-**Развилки нет, посылок не требуется.**
+Оба маркера взяты дословно из `docs/tasks/main-day-assertions.json` (assertions[0] и assertions[1], issue 1961). Если при запуске `yarn main-day-probe` один из них даёт `violated` — работа по нему существует; зафиксировать как НАХОДКУ (реестр протух) и скорректировать DoD.
 
 ---
 
 ## Сегодня делаем
 
-1. Провести консилиум по модели исполнения `batch-collection-run-contour`: выбрать live-каденс vs batch-итерация, зафиксировать имена контрактов (`SampleCollectionRef`, узел-источник, `for-each-sample`).
-2. Зафиксировать артефакт решения консилиума (≥ 1 стр.) и оставить комментарий в Issue #494 со ссылкой на него.
-3. Прогнать `night-triage-secret-scan.mjs` на грязной фикстуре — убедиться в точке сопряжения с `redactSecrets` до правки сканера.
-4. Подключить `redactSecrets` к `night-triage-secret-scan.mjs`; сканер завершается с кодом 0 на фикстуре с засвеченным паттерном.
-5. Создать `docs/security/rotation-manifest-2026-08-17.md` с датированным проходом и списком засвеченных ключей.
-6. Пометить гейт `secret-parser-built` как `passed` в `morning-gates-state.json`.
-7. Провести развёрнутое ревью PR #1951 и PR #1953; оставить письменный вердикт по каждому.
+1. Прогнать `yarn main-day-probe` — зафиксировать baseline вердиктов обоих маркеров до первого коммита.
+2. Создать пакет `packages/plugin-contracts` с `package.json`, экспортом `PluginExecutor` и минимальным типом контракта плагина — достаточно для прохождения маркера `file:packages/plugin-contracts/package.json`.
+3. Реализовать `PluginExecutor` (интерфейс / класс) в `packages/plugin-contracts/src/` — достаточно для прохождения маркера `symbol:PluginExecutor` при grep по `packages/**/src/**`.
+4. Прогнать `yarn main-day-probe` повторно — убедиться, что оба маркера дают `violated`.
+5. Прогнать `yarn code-review:pr 1960` и ревью коммита `66fc8c6a` — закрыть ревью-долг до следующего коммита.
+6. Прогнать `yarn workspace @membrana/rag-service test` изолированно — зафиксировать воспроизводимость или флакание.
+7. Обновить дату и `//date` в `docs/tasks/main-day-assertions.json` до 18.08 — закрыть санитарное расхождение.
 
 ---
 
 ## Definition of Done (фокус)
 
-- [ ] Консилиум по модели исполнения проведён; артефакт решения записан в `docs/` или `docs/seanses/`.
-- [ ] Issue #494 несёт комментарий со ссылкой на артефакт консилиума.
-- [ ] `night-triage-secret-scan.mjs` вызывает `redactSecrets` и завершается с кодом 0 на фикстуре с засвеченным паттерном.
-- [ ] `docs/security/rotation-manifest-2026-08-17.md` создан: дата, список засвеченных паттернов, статус ротации.
-- [ ] Гейт `secret-parser-built` помечен `passed` в `morning-gates-state.json`.
-- [ ] PR #1951 и PR #1953 получили письменный ревью-вердикт.
-- [ ] Открыта первая карточка реализации `batch-collection-run-contour` (шаг 2 промпта) — либо зафиксировано письменное обоснование переноса.
+- [ ] `packages/plugin-contracts/package.json` существует в рабочем дереве
+- [ ] Символ `PluginExecutor` достижим `git grep` по `packages/**/src/**`
+- [ ] `yarn main-day-probe` печатает `violated` по обоим маркерам assertions[0] и assertions[1]
+- [ ] Ревью PR #1960 / коммит `66fc8c6a` проведено и зафиксировано в `DAILY_CODE_REVIEW.md`
+- [ ] Ревью PR #1951 и PR #1953 завершено (вердикт LGTM или список блокеров)
+- [ ] Диагноз `@membrana/rag-service#test` зафиксирован (воспроизводится / флакает / среда)
+- [ ] `docs/tasks/main-day-assertions.json` несёт актуальную дату чеканки 2026-08-18
 
 ---
 
 ## Сознательно не делаем сегодня
 
-- **`angelina-hostess-impl`** — продуктовая полоса открывается после прохождения гейта `secret-parser-built`; брать её до закрытия гейта — воспроизводить паттерн параллельного L-блока.
-- **`assets-container`** — та же причина; разблокируется вместе с `angelina-hostess-impl` после гейта.
-- **DSP-бенчмарки (harmonic/cepstral/spectral-flux) на free-v1** — потолок эшелона 0 зафиксирован (`DRONE_TIGHT` 95%/30%); повтор без смены датасета или fusion информации не добавляет.
-- **`mfcc-compare-sprint`** — берётся после закрытия гейта и достоверного ревью #1951/#1953.
-- **Preflight-зуб на orphaned-паттерн `ritual:day`** — три дня кандидат в карточку, но не в магистраль; не вытесняет гейт.
+- **Гейт `secret-parser-built` критерий (в) / предикат `amnestyLifted`** — отложен словом владельца; трогать до слова владельца запрещено.
+- **`batch-collection-run-contour` (#494)** — консилиум-гейт по модели исполнения не проведён; карточка не получила артефакта решения; входить в код без зафиксированной модели — повторить паттерн.
+- **`mfcc-compare-sprint`** — берётся после достоверного ревью PR #1951 и #1953; оба влиты без ревью, калибровочный корпус недостоверен.
+- **Повторный benchmark harmonic / cepstral / spectral-flux на free-v1** — потолок эшелона 0 зафиксирован (`DRONE_TIGHT` 95%/30%); без смены датасета, алгоритма или fusion прогон не добавляет информации.
+- **`angelina-hostess-impl`** — ждёт `plugin-contracts` как фундамента; открывается после прохождения сегодняшней магистрали.
 
 ---
 
 ## Вторично (если останется время)
 
-- Завести карточку на orphaned-паттерн `ritual:day` (preflight-зуб) — три дня подряд, пора.
-- Изолированный прогон `yarn workspace @membrana/rag-service test` — проверить воспроизводимость красного теста до назначения исполнителя.
+1. Завести карточку в реестр на orphaned-паттерн `ritual:day` (`r1/r2/r3` в `2026-08-17.jsonl`) — три дня подряд, кандидат в preflight-зуб.
+2. Набросать структуру первого плагина `membrana.handler.mfcc` в виде TODO-комментариев поверх `PluginExecutor` — чтобы следующая карточка (PR-3 по вердикту M6-прим) имела точку входа.
 
 ---
 
 ## Зависимости и риски
 
-- **Блокер консилиума:** если model-execution-гейт не пройти сегодня, реализация `batch-collection-run-contour` снова сдвигается; полевая неделя 17.08 начнётся без зафиксированной модели — риск переписывания кода.
-- **Блокер сканера:** сканер и резак имеют неизвестную точку сопряжения; без прогона на грязной фикстуре подключение упадёт в рантайме, а не в CI — прогон на фикстуре обязателен до правки.
-- **Ревью #1951/#1953:** оба диффа oversized и влиты без ревью; скрытая ошибка в них делает любой последующий приёмочный замер F1 недостоверным — ревью должно предшествовать первому batch-прогону.
-- **`morning-gates-state.json` отсутствует во входах:** расхождение У1 не может быть разрешено по свежести гейта; `sources[0]` от 16.08 принят как актуальный; при появлении гейта со свежей датой — перечеканить по норме У1.
+- **Блокер 1:** если `yarn main-day-probe` уже даёт `violated` по одному из маркеров — работа по нему существует под другим именем; НАХОДКУ зафиксировать письменно, не тихо обойти.
+- **Блокер 2:** ревью PR #1951 и #1953 может выявить блокеры для `membrana.handler.mfcc`; в этом случае DoD по пункту «первый живой плагин» переносится на следующий день с письменным диагнозом.
+- **Риск:** `@membrana/rag-service#test` красный третий день — если флакает, исполнитель не назначен и тест не чинится, риск накопления красноты в CI растёт; диагностика сегодня снижает риск.
+- **Риск:** `morning-gates-state.json` не предоставлен во входах — если файл несёт сегодняшнюю дату с иной магистралью, расхождение не поймано автоматически; прогнать `yarn main-day-probe` вручную до первого коммита.
 
 ---
 
 ## Ссылки
 
-- [DAILY_STANDUP.md](docs/DAILY_STANDUP.md) — стендап 2026-08-17
-- [DAY_PLAN.md](docs/DAY_PLAN.md) — план дня, слоты магистрали
-- [main-day-assertions.json](docs/tasks/main-day-assertions.json) — sources[0], owner-choice 16.08
-- [BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md](docs/prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md) — task-промпт эпика
-- [GitHub Issue #494](https://github.com/membrana/membrana/issues/494) — карточка эпика
+- [DAILY_STANDUP.md](docs/DAILY_STANDUP.md) — стендап 2026-08-18
+- [DAY_PLAN.md](docs/DAY_PLAN.md) — план дня 2026-08-18
+- [GitHub Issue #1961](https://github.com/membrana/membrana/issues/1961) — server-plugin-foundation
+- [main-day-assertions.json](docs/tasks/main-day-assertions.json) — посылки и sources[0]
 - [FFT_METRICS_POTENTIAL_AND_LIMITS.md](docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) — потолок эшелона 0, §6
