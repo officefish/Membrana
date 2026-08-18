@@ -19,3 +19,13 @@ export {
   type MfccRuntimeConfig,
   type MfccStrictness,
 } from './mfcc/preset.js';
+export {
+  MfccRunRefusal,
+  createMfccExecutor,
+  mfccConfigHashOf,
+  mfccFingerprintsOf,
+  type MfccExecutorDeps,
+  type MfccRunResult,
+  type MfccSampleOutcome,
+  type MfccSampleVerdict,
+} from './mfcc/executor.js';
