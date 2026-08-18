@@ -84,10 +84,7 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
         limit: filter.limit ?? 50,
       })
       .toArray();
-    return rows.map(({ pluginId, version, collectionId, runId, mountTarget, stateRecord: _stateRecord, ...run }) => ({
-      ...run,
-      address: run.address ?? { pluginId, version, collectionId, runId, mountTarget },
-    }));
+    return rows.map(({ pluginId: _pluginId, version: _version, collectionId: _collectionId, runId: _runId, mountTarget: _mountTarget, stateRecord: _stateRecord, ...run }) => run);
   }
 
   async onModuleDestroy(): Promise<void> {
