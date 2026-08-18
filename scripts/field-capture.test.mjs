@@ -3,7 +3,7 @@ import test from 'node:test';
 
 import {
   DEVICE_HINTS, MEASURED_FIELDS, SILENCE_PEAK_DBFS,
-  buildDeclared, buildMeta, measureWav, parseArgs, parseAudioDevices, pickFieldDevice,
+  buildDeclared, buildMeta, envCandidates, measureWav, parseArgs, parseAudioDevices, pickFieldDevice,
 } from './field-capture.mjs';
 
 const LIST = [
@@ -93,4 +93,12 @@ test('parseArgs: негодный вход — именованный отказ
   assert.throws(() => parseArgs(['--seconds', '0']), /--seconds/u);
   assert.throws(() => parseArgs(['--seconds', 'abc']), /--seconds/u);
   assert.throws(() => parseArgs(['--rate', '0']), /--rate/u);
+});
+
+test('envCandidates: .env ищется РЯДОМ со скриптом первым — переносимость одним файлом', () => {
+  const list = envCandidates('file:///C:/membrana-node/field-capture.mjs').map((u) => u.pathname);
+  assert.equal(list.length, 2);
+  assert.match(list[0], /\/membrana-node\/\.env$/u, 'первым — рядом со скриптом (узел Firebat, находка 18.08)');
+  assert.match(list[1], /\/\.env$/u, 'вторым — уровнем выше (репозиторий: scripts/ → корень)');
+  assert.notEqual(list[0], list[1]);
 });
