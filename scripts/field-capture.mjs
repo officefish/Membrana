@@ -199,11 +199,19 @@ function listDevices() {
   console.log(picked ? `выбран бы: «${picked.name}»` : 'полевой вход по имени не опознан');
 }
 
-/** Контракт окружения объявлен в `.env.example`; отсутствие файла — именованный отказ, не стектрейс. */
+/**
+ * Порядок поиска .env: РЯДОМ со скриптом (переносимость одним файлом — узел Firebat
+ * держит скрипт и .env в одной папке; находка первого сцепления 18.08), затем на
+ * уровень выше (в репозитории скрипт живёт в scripts/, а .env — в корне).
+ */
+export function envCandidates(base = import.meta.url) {
+  return [new URL('./.env', base), new URL('../.env', base)];
+}
+
 function env() {
-  const path = new URL('../.env', import.meta.url);
-  if (!existsSync(path)) {
-    throw new Error('нет файла .env — контракт полевого узла объявлен в .env.example (четыре ключа FIELD_NODE_*/VITE_MEDIA_*)');
+  const path = envCandidates().find((u) => existsSync(u));
+  if (!path) {
+    throw new Error('нет файла .env ни рядом со скриптом, ни уровнем выше — контракт полевого узла объявлен в .env.example (четыре ключа FIELD_NODE_*/VITE_MEDIA_*)');
   }
   const raw = readFileSync(path, 'utf8');
   const map = Object.fromEntries(
