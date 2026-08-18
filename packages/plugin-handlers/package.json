@@ -1,0 +1,36 @@
+{
+  "name": "@membrana/plugin-handlers",
+  "version": "0.1.0",
+  "description": "Handler-плагины первой волны серверной плагинности (#1961): шесть детекторов дома background-media/collections. Первый живой — membrana.handler.mfcc поверх @membrana/mfcc-analyzer-service; остальные — манифест и именованный отказ. Framework-нейтрально: ни Nest, ни Prisma, ни Mongo.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist .turbo .tsbuildinfo",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@membrana/mfcc-analyzer-service": "*",
+    "@membrana/plugin-contracts": "*"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^3.2.0"
+  }
+}
