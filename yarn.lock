@@ -2665,6 +2665,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@membrana/plugin-contracts@workspace:packages/plugin-contracts":
+  version: 0.0.0-use.local
+  resolution: "@membrana/plugin-contracts@workspace:packages/plugin-contracts"
+  dependencies:
+    eslint: "npm:^8.57.0"
+    rimraf: "npm:^5.0.0"
+    typescript: "npm:^5.4.0"
+    vitest: "npm:^3.2.0"
+  languageName: unknown
+  linkType: soft
+
 "@membrana/rag-service@workspace:*, @membrana/rag-service@workspace:packages/services/rag":
   version: 0.0.0-use.local
   resolution: "@membrana/rag-service@workspace:packages/services/rag"

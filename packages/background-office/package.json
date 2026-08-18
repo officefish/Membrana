@@ -19,6 +19,7 @@
   "dependencies": {
     "@fastify/static": "^8.0.0",
     "@membrana/core": "*",
+    "@membrana/plugin-contracts": "*",
     "@membrana/rag-service": "workspace:*",
     "@membrana/static-registry-service": "*",
     "@nestjs/common": "^11.0.0",

@@ -4,6 +4,7 @@
   "references": [
     { "path": "./packages/core" },
     { "path": "./packages/agenda" },
+    { "path": "./packages/plugin-contracts" },
     { "path": "./packages/device-board" },
     { "path": "./packages/services/audio-engine" },
     { "path": "./packages/services/usercase-catalog" },
