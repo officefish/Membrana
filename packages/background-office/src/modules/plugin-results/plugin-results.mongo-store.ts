@@ -1,0 +1,75 @@
+import { Inject, Injectable, OnModuleDestroy, ServiceUnavailableException } from '@nestjs/common';
+
+import type { AppConfig } from '../../config/env.schema';
+import { APP_CONFIG } from '../../config/config.tokens';
+import type { PluginResultsStore, ReadRunsFilter, RunRecord, StateRecord } from './plugin-results.types';
+
+type MongoCollectionLike = {
+  createIndex(keys: Record<string, unknown>, options?: Record<string, unknown>): Promise<unknown>;
+  updateOne(filter: Record<string, unknown>, update: Record<string, unknown>, options?: Record<string, unknown>): Promise<unknown>;
+  find(filter: Record<string, unknown>, options?: Record<string, unknown>): { toArray(): Promise<RunRecord[]> };
+};
+
+type MongoClientLike = { db(name?: string): { collection(name: string): MongoCollectionLike }; close(): Promise<void> };
+
+async function loadMongoClientCtor(): Promise<new (uri: string) => { connect(): Promise<MongoClientLike> }> {
+  const mod = (await import('mongodb')) as { MongoClient?: new (uri: string) => { connect(): Promise<MongoClientLike> } };
+  if (!mod.MongoClient) throw new ServiceUnavailableException('mongodb package is not available');
+  return mod.MongoClient;
+}
+
+@Injectable()
+export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDestroy {
+  private client: MongoClientLike | null = null;
+  private collection: MongoCollectionLike | null = null;
+
+  constructor(@Inject(APP_CONFIG) private readonly config: AppConfig) {}
+
+  protected async connect(uri: string): Promise<MongoClientLike> {
+    const MongoClient = await loadMongoClientCtor();
+    return new MongoClient(uri).connect();
+  }
+
+  private async results(): Promise<MongoCollectionLike> {
+    if (this.collection) return this.collection;
+    if (!this.config.ARCHIVARIUS_MONGO_URI) {
+      throw new ServiceUnavailableException('ARCHIVARIUS_MONGO_URI is required for MongoPluginResultsStore');
+    }
+    this.client = await this.connect(this.config.ARCHIVARIUS_MONGO_URI);
+    this.collection = this.client
+      .db(this.config.ARCHIVARIUS_MONGO_DB ?? 'membrana_archivarius')
+      .collection('plugin-results');
+    await this.collection.createIndex({ pluginId: 1, version: 1, collectionId: 1, runId: 1 }, { unique: true });
+    await this.collection.createIndex({ pluginId: 1, version: 1, collectionId: 1, kind: 1, completedAt: -1 });
+    return this.collection;
+  }
+
+  async writeRun(run: RunRecord, state: StateRecord): Promise<void> {
+    const { pluginId, version, collectionId, runId } = run;
+    await (await this.results()).updateOne(
+      { pluginId, version, collectionId, runId },
+      { $set: { ...run, stateRecord: { ...state } } },
+      { upsert: true },
+    );
+  }
+
+  async readRuns(filter: ReadRunsFilter): Promise<RunRecord[]> {
+    const query: Record<string, unknown> = { collectionId: filter.collectionId };
+    if (filter.pluginId) query.pluginId = filter.pluginId;
+    if (filter.version) query.version = filter.version;
+    if (filter.kind) query.kind = filter.kind;
+    return (await this.results())
+      .find(query, {
+        projection: { _id: 0, stateRecord: 0 },
+        sort: { completedAt: -1 },
+        limit: filter.limit ?? 50,
+      })
+      .toArray();
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.client?.close();
+    this.client = null;
+    this.collection = null;
+  }
+}

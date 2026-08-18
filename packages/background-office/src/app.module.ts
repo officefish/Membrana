@@ -19,6 +19,7 @@ import { PanelUsersModule } from './modules/panel-users/panel-users.module';
 import { TelegramModule } from './modules/telegram/telegram.module';
 import { LlmChannelsModule } from './modules/llm-channels/llm-channels.module';
 import { ArchivariusModule } from './modules/archivarius/archivarius.module';
+import { PluginResultsModule } from './modules/plugin-results/plugin-results.module';
 import { TaskArchiveModule } from './modules/task-archive/task-archive.module';
 import { HealthController } from './health.controller';
 import type { AppConfig } from './config/env.schema';
@@ -68,6 +69,7 @@ const testImports =
     PanelUsersModule,
     LlmChannelsModule,
     ArchivariusModule,
+    PluginResultsModule,
     TaskArchiveModule,
   ],
   controllers: [HealthController],
