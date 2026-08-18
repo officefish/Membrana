@@ -152,11 +152,8 @@ async function main() {
   const { MFCC_HANDLER_MANIFEST, createMfccExecutor, mfccFingerprintsOf, mfccConfigFromHash, sha256Hex } = handlers;
 
   const { preset } = JSON.parse(await readFile(PRESET_JSON, 'utf8'));
-  const config = mfccConfigFromHash(preset.configHash);
-  const Meyda = (await import('meyda')).default;
-  // Свой экземпляр настроек, не глобальный объект: параметр вызова meyda молча игнорирует (#1603).
-  const instance = { ...Meyda, bufferSize: config.bufferSize, melBands: config.melBands, numberOfMFCCCoefficients: config.numberOfCoefficients, sampleRate: config.sampleRate };
-  const extract = (frame) => instance.extract('mfcc', frame);
+  // Считалка — единственная точка настройки meyda живёт в пакете плагинов (та же, что у регистратора media).
+  const extract = await handlers.createMeydaExtractor(mfccConfigFromHash(preset.configHash));
 
   const deps = { manifest: MFCC_HANDLER_MANIFEST, reader: httpSampleReader({ base, token, deviceId }, { sha256Hex }), extract, preset, strictness: opt.strictness };
   const executor = createMfccExecutor(deps);

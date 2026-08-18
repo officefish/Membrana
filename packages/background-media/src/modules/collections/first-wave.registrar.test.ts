@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { AppConfig } from '../../config/env.schema';
 import type { BlobStorageService } from '../../blob/blob-storage.service';
 import type { PrismaService } from '../../prisma/prisma.service';
-import { FirstWavePluginsRegistrar } from './first-wave.registrar';
+import { FirstWavePluginsRegistrar, prismaSampleReader } from './first-wave.registrar';
 import { CollectionsPluginHostService } from './plugin-host.service';
 
 const CATALOG_ROOT = join(__dirname, '../../../../../data/detectors-benchmark/v0.2');
@@ -34,7 +34,8 @@ describe('FirstWavePluginsRegistrar', () => {
   });
 
   it('читатель проб — только чтение: список по collectionId, байты по storageRef, sha256 содержимого', async () => {
-    const reader = new FirstWavePluginsRegistrar(new CollectionsPluginHostService(), prisma, blobs, config).sampleReader();
+    const { sha256Hex } = await import('@membrana/plugin-handlers');
+    const reader = prismaSampleReader(prisma, blobs, sha256Hex);
     expect(Object.keys(reader).sort()).toEqual(['listSamples', 'readAudio']);
     const list = await reader.listSamples('c1');
     expect(list.map((s) => s.id)).toEqual(['a', 'b']);

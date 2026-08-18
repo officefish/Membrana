@@ -19,6 +19,7 @@ export {
   type MfccRuntimeConfig,
   type MfccStrictness,
 } from './mfcc/preset.js';
+export { createMeydaExtractor } from './mfcc/meyda-extractor.js';
 export {
   MfccRunRefusal,
   createMfccExecutor,
