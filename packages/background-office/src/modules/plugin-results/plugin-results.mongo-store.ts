@@ -33,6 +33,7 @@ async function loadMongoClientCtor(): Promise<new (uri: string) => { connect(): 
 export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDestroy {
   private client: MongoClientLike | null = null;
   private collection: MongoCollectionLike | null = null;
+  private collectionPromise: Promise<MongoCollectionLike> | null = null;
 
   constructor(@Inject(APP_CONFIG) private readonly config: AppConfig) {}
 
@@ -43,16 +44,23 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
 
   private async results(): Promise<MongoCollectionLike> {
     if (this.collection) return this.collection;
+    if (this.collectionPromise) return this.collectionPromise;
     if (!this.config.ARCHIVARIUS_MONGO_URI) {
       throw new ServiceUnavailableException('ARCHIVARIUS_MONGO_URI is required for MongoPluginResultsStore');
     }
-    this.client = await this.connect(this.config.ARCHIVARIUS_MONGO_URI);
-    this.collection = this.client
+    this.collectionPromise = this.initResults();
+    return this.collectionPromise;
+  }
+
+  private async initResults(): Promise<MongoCollectionLike> {
+    this.client = await this.connect(this.config.ARCHIVARIUS_MONGO_URI!);
+    const collection = this.client
       .db(this.config.ARCHIVARIUS_MONGO_DB ?? 'membrana_archivarius')
       .collection(PLUGIN_RESULTS_COLLECTION);
-    await this.collection.createIndex({ pluginId: 1, version: 1, collectionId: 1, runId: 1 }, { unique: true });
-    await this.collection.createIndex({ pluginId: 1, version: 1, collectionId: 1, kind: 1, completedAt: -1 });
-    return this.collection;
+    await collection.createIndex({ pluginId: 1, version: 1, collectionId: 1, runId: 1 }, { unique: true });
+    await collection.createIndex({ pluginId: 1, version: 1, collectionId: 1, kind: 1, completedAt: -1 });
+    this.collection = collection;
+    return collection;
   }
 
   async writeRun(run: RunRecord, state: StateRecord): Promise<void> {
@@ -86,5 +94,6 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
     await this.client?.close();
     this.client = null;
     this.collection = null;
+    this.collectionPromise = null;
   }
 }

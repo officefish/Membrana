@@ -37,11 +37,14 @@ function state(): StateRecord {
 }
 
 class FakeMongoStore extends MongoPluginResultsStore {
+  connects = 0;
+
   constructor(config: AppConfig, private readonly fakeCollection: Record<string, unknown>) {
     super(config);
   }
 
   protected override async connect(_uri: string) {
+    this.connects += 1;
     return {
       db: () => ({ collection: () => this.fakeCollection }),
       close: async () => undefined,
@@ -71,6 +74,10 @@ describe('MongoPluginResultsStore', () => {
 
     await store.writeRun(run(), state());
     await expect(store.readRuns({ collectionId: 'c1', kind: 'handler', limit: 5 })).resolves.toEqual([run()]);
+    await Promise.all([
+      store.writeRun(run({ address: { ...run().address, runId: 'r2' } }), state()),
+      store.readRuns({ collectionId: 'c1' }),
+    ]);
 
     expect(indexes).toEqual([
       { keys: { pluginId: 1, version: 1, collectionId: 1, runId: 1 }, options: { unique: true } },
@@ -90,5 +97,6 @@ describe('MongoPluginResultsStore', () => {
         limit: 5,
       },
     });
+    expect(store.connects).toBe(1);
   });
 });
