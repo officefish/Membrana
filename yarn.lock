@@ -2224,6 +2224,7 @@ __metadata:
     "@fastify/multipart": "npm:^9.0.0"
     "@fastify/static": "npm:^8.0.0"
     "@membrana/drone-detection-orchestrator-service": "npm:*"
+    "@membrana/plugin-contracts": "npm:*"
     "@nestjs/common": "npm:^11.0.0"
     "@nestjs/core": "npm:^11.0.0"
     "@nestjs/platform-fastify": "npm:^11.0.0"
@@ -2255,6 +2256,7 @@ __metadata:
   dependencies:
     "@fastify/static": "npm:^8.0.0"
     "@membrana/core": "npm:*"
+    "@membrana/plugin-contracts": "npm:*"
     "@membrana/rag-service": "workspace:*"
     "@membrana/static-registry-service": "npm:*"
     "@nestjs/common": "npm:^11.0.0"
@@ -2665,7 +2667,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@membrana/plugin-contracts@workspace:packages/plugin-contracts":
+"@membrana/plugin-contracts@npm:*, @membrana/plugin-contracts@workspace:packages/plugin-contracts":
   version: 0.0.0-use.local
   resolution: "@membrana/plugin-contracts@workspace:packages/plugin-contracts"
   dependencies:
