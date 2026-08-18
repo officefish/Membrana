@@ -81,6 +81,9 @@ export const envSchema = z.object({
   /** Archivarius (#1330): sessions archive MongoDB store, local compose only until owner-gated prod migration. */
   ARCHIVARIUS_MONGO_URI: z.string().optional(),
   ARCHIVARIUS_MONGO_DB: z.string().optional(),
+  /** Plugin results (#1961): defaults to Archivarius Mongo, override when storage splits. */
+  PLUGIN_RESULTS_MONGO_URI: z.string().optional(),
+  PLUGIN_RESULTS_MONGO_DB: z.string().optional(),
   /** Task archive cold store: MongoDB is canonical; repo carries checkpoints/exports only. */
   TASK_ARCHIVE_MONGO_URI: z.string().optional(),
   TASK_ARCHIVE_MONGO_DB: z.string().optional(),

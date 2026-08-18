@@ -50,7 +50,7 @@ flowchart LR
 
 | Пакет | Порт (dev) | Prod URL | Stateful? | Назначение |
 |-------|------------|----------|-----------|------------|
-| **`@membrana/background-office`** | 3000 | `https://office.membrana.space` | Частично | **Интеграционный шлюз:** Anthropic Claude, Linear GraphQL, Linear webhooks, GitHub Issues (persona-контекст), **RAG query** (`POST /api/rag/query`, R4), **push-ingest observability/telemetry** (drift-anchor, ADR 0004 — см. ниже), **Archivarius sessions** (`/v1/archivarius/*`, MongoDB, #1330). Скрипты `yarn ask`, CI, dev-tools. |
+| **`@membrana/background-office`** | 3000 | `https://office.membrana.space` | Частично | **Интеграционный шлюз:** Anthropic Claude, Linear GraphQL, Linear webhooks, GitHub Issues (persona-контекст), **RAG query** (`POST /api/rag/query`, R4), **push-ingest observability/telemetry** (drift-anchor, ADR 0004 — см. ниже), **Archivarius sessions** (`/v1/archivarius/*`, MongoDB, #1330), **plugin results** (`plugin-results`, MongoDB, #1961). Скрипты `yarn ask`, CI, dev-tools. |
 | **`@membrana/background-media`** | 3010 | `https://media.membrana.space` | **Да** | **Data-plane веб-клиента:** библиотека сэмплов (коллекции, multipart upload, blob storage), trends-шаблоны (JSON), квота. Изоляция по **`deviceId`** (узел/клиент); v2 эпика #67 — scope по **`membraneId`**. Стек: **NestJS + Fastify**, **Prisma + PostgreSQL**. |
 | **`@membrana/background-cabinet`** *(план)* | 3020 | `https://cabinet.membrana.space` | **Да** | **Identity + domain:** users (login/password), membranes, nodes, access keys (TTL enum), tariffs, telemetry metadata. SPA: `apps/cabinet` → `cabinet.membrana.space`. |
 
@@ -63,7 +63,9 @@ flowchart LR
 - trends-шаблоны пользователя;
 - PostgreSQL / файловые volume под пользовательские данные.
 
-Исключение: Archivarius (#1330) хранит сессионные span в MongoDB office-стека;
+Исключение: Archivarius (#1330) хранит сессионные span, а `plugin-results` (#1961) —
+результаты серверных плагинов в той же MongoDB office-стека по умолчанию
+(`PLUGIN_RESULTS_MONGO_URI` — явный split);
 репозиторий остаётся нотариусом контракта и снимков, prod-миграция Mongo — отдельный
 owner-gated шаг. Не смешивать это с media blob storage.
 
