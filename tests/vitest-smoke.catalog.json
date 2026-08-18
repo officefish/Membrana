@@ -9,7 +9,7 @@
     "@membrana/detector-base"
   ],
   "withoutTests": [],
-  "corpusSize": 38,
+  "corpusSize": 39,
   "ranking": [
     {
       "name": "@membrana/core",
@@ -69,6 +69,10 @@
     },
     {
       "name": "@membrana/media-library-service",
+      "fanIn": 2
+    },
+    {
+      "name": "@membrana/plugin-contracts",
       "fanIn": 2
     },
     {
