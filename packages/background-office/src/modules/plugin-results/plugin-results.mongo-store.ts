@@ -34,7 +34,6 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
   private client: MongoClientLike | null = null;
   private collection: MongoCollectionLike | null = null;
   private collectionPromise: Promise<MongoCollectionLike> | null = null;
-
   constructor(@Inject(APP_CONFIG) private readonly config: AppConfig) {}
 
   protected async connect(uri: string): Promise<MongoClientLike> {
@@ -46,10 +45,11 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
     if (this.collection) return this.collection;
     if (this.collectionPromise) return this.collectionPromise;
     const mongoUri = this.config.PLUGIN_RESULTS_MONGO_URI ?? this.config.ARCHIVARIUS_MONGO_URI;
-    if (!mongoUri) {
-      throw new ServiceUnavailableException('PLUGIN_RESULTS_MONGO_URI or ARCHIVARIUS_MONGO_URI is required');
-    }
-    this.collectionPromise = this.initResults(mongoUri);
+    if (!mongoUri) throw new ServiceUnavailableException('PLUGIN_RESULTS_MONGO_URI or ARCHIVARIUS_MONGO_URI is required');
+    this.collectionPromise = this.initResults(mongoUri).catch((error: unknown) => {
+      this.collectionPromise = null;
+      throw error;
+    });
     return this.collectionPromise;
   }
 
@@ -63,7 +63,6 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
     this.collection = collection;
     return collection;
   }
-
   async writeRun(run: RunRecord, state?: StateRecord): Promise<void> {
     const { pluginId, version, collectionId, runId, mountTarget } = run.address;
     await (await this.results()).updateOne(
@@ -92,6 +91,7 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
   }
 
   async onModuleDestroy(): Promise<void> {
+    await this.collectionPromise?.catch(() => undefined);
     await this.client?.close();
     this.client = null;
     this.collection = null;
