@@ -5,11 +5,12 @@ import { DevicesModule } from '../devices/devices.module';
 import { CatalogProvisionService } from './catalog-provision.service';
 import { CollectionsController } from './collections.controller';
 import { CollectionsService } from './collections.service';
+import { CollectionsPluginHostService } from './plugin-host.service';
 
 @Module({
   imports: [DevicesModule, BlobModule, AudioModule],
   controllers: [CollectionsController],
-  providers: [CollectionsService, CatalogProvisionService],
-  exports: [CollectionsService, CatalogProvisionService],
+  providers: [CollectionsService, CatalogProvisionService, CollectionsPluginHostService],
+  exports: [CollectionsService, CatalogProvisionService, CollectionsPluginHostService],
 })
 export class CollectionsModule {}
