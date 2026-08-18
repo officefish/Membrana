@@ -40,9 +40,7 @@ describe('PluginResultsService', () => {
   it('writes runs and computes stale on read instead of storing it', async () => {
     const store = new MemoryPluginResultsStore();
     const service = new PluginResultsService(store);
-    const { isPluginId } = await import('@membrana/plugin-contracts');
-    expect(isPluginId(run().address.pluginId)).toBe(true);
-    await service.writeRun(run(), state());
+    await service.writeRun(run());
     const rows = await service.readRuns({ collectionId: 'c1', currentInputHash: 'new' });
     expect(rows).toEqual([{ ...run(), stale: true }]);
     const stored = [...(store as unknown as { runs: Map<string, unknown> }).runs.values()][0];

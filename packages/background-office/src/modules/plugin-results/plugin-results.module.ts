@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
@@ -15,9 +15,11 @@ import { PLUGIN_RESULTS_STORE, PluginResultsService } from './plugin-results.ser
       useFactory: (config: AppConfig) =>
         config.PLUGIN_RESULTS_MONGO_URI || config.ARCHIVARIUS_MONGO_URI
           ? new MongoPluginResultsStore(config)
-          : new MemoryPluginResultsStore(),
+          : (Logger.warn('PLUGIN_RESULTS: no Mongo URI, using volatile memory store', PluginResultsModule.name),
+            new MemoryPluginResultsStore()),
     },
   ],
   exports: [PluginResultsService],
 })
 export class PluginResultsModule {}
+// Writes enter through PluginResultsService; the plugin execution adapter is tracked by #1961.

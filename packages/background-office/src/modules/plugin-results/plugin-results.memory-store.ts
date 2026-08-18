@@ -17,8 +17,9 @@ export class MemoryPluginResultsStore implements PluginResultsStore {
   private readonly runs = new Map<string, RunRecord>();
   private readonly states = new Map<string, StateRecord>();
 
-  async writeRun(run: RunRecord, state: StateRecord): Promise<void> {
+  async writeRun(run: RunRecord, state?: StateRecord): Promise<void> {
     this.runs.set(runKeyOf(run), { ...run });
+    if (!state) return;
     this.states.set(
       keyOf({
         pluginId: state.pluginId,

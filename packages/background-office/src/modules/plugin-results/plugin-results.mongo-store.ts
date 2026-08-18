@@ -64,11 +64,11 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
     return collection;
   }
 
-  async writeRun(run: RunRecord, state: StateRecord): Promise<void> {
+  async writeRun(run: RunRecord, state?: StateRecord): Promise<void> {
     const { pluginId, version, collectionId, runId, mountTarget } = run.address;
     await (await this.results()).updateOne(
       { pluginId, version, collectionId, runId },
-      { $set: { ...run, pluginId, version, collectionId, runId, mountTarget, stateRecord: { ...state } } },
+      { $set: { ...run, pluginId, version, collectionId, runId, mountTarget, ...(state ? { stateRecord: { ...state } } : {}) } },
       { upsert: true },
     );
   }

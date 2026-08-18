@@ -12,6 +12,6 @@ export interface ReadRunsFilter {
 }
 
 export interface PluginResultsStore {
-  writeRun(run: RunRecord, state: StateRecord): Promise<void>;
+  writeRun(run: RunRecord, state?: StateRecord): Promise<void>;
   readRuns(filter: ReadRunsFilter): Promise<RunRecord[]>;
 }

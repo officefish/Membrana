@@ -15,9 +15,9 @@ function pluginContracts(): Promise<PluginContracts> {
 export class PluginResultsService {
   constructor(@Inject(PLUGIN_RESULTS_STORE) private readonly store: PluginResultsStore) {}
 
-  async writeRun(run: RunRecord, state: StateRecord): Promise<void> {
+  async writeRun(run: RunRecord, state?: StateRecord): Promise<void> {
     const { isPluginId } = await pluginContracts();
-    if (!isPluginId(run.address.pluginId) || !isPluginId(state.pluginId)) {
+    if (!isPluginId(run.address.pluginId) || (state && !isPluginId(state.pluginId))) {
       throw new BadRequestException('Invalid plugin id');
     }
     await this.store.writeRun(run, state);
