@@ -1,4 +1,11 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+  type OnModuleInit,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 
 import {
   COLLECTIONS_PLUGIN_HOST_ID,
@@ -48,13 +55,19 @@ function isPluginContext(value: unknown): value is PluginContext {
 }
 
 @Injectable()
-export class CollectionsPluginHostService implements IPluginHost {
+export class CollectionsPluginHostService implements IPluginHost, OnModuleInit {
   readonly mountTargetId = COLLECTIONS_PLUGIN_HOST_ID;
   private readonly logger = new Logger(CollectionsPluginHostService.name);
   private readonly plugins = new Map<PluginId, PluginRegistration>();
+  private contracts: PluginContracts | null = null;
 
-  async registerPlugin(manifest: PluginManifest, executor: PluginExecutor): Promise<void> {
-    const { HOME_REGISTRY, isPluginId } = await pluginContracts();
+  async onModuleInit(): Promise<void> {
+    this.contracts = await pluginContracts();
+  }
+
+  registerPlugin(manifest: PluginManifest, executor: PluginExecutor): void {
+    if (!this.contracts) throw new ServiceUnavailableException('Plugin host is not initialized');
+    const { HOME_REGISTRY, isPluginId } = this.contracts;
     if (!isPluginId(manifest.id)) throw new BadRequestException('Invalid plugin id');
     if (!Object.hasOwn(HOME_REGISTRY, manifest.mountTarget)) {
       throw new BadRequestException(`Unknown plugin mountTarget: ${manifest.mountTarget}`);

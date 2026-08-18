@@ -44,29 +44,35 @@ function executor(calls: PluginContext[]): PluginExecutor {
   };
 }
 
+async function readyHost(): Promise<CollectionsPluginHostService> {
+  const host = new CollectionsPluginHostService();
+  await host.onModuleInit();
+  return host;
+}
+
 describe('CollectionsPluginHostService', () => {
   it('accepts canonical PluginId and rejects a legacy slug', async () => {
-    const host = new CollectionsPluginHostService();
-    await expect(host.registerPlugin(manifest(), executor([]))).resolves.toBeUndefined();
-    await expect(
-      host.registerPlugin(manifest({ id: 'mfcc-detector' as PluginId }), executor([])),
-    ).rejects.toThrow(BadRequestException);
+    const host = await readyHost();
+    expect(() => host.registerPlugin(manifest(), executor([]))).not.toThrow();
+    expect(() => host.registerPlugin(manifest({ id: 'mfcc-detector' as PluginId }), executor([]))).toThrow(
+      BadRequestException,
+    );
   });
 
   it('rejects unknown and foreign mount targets before runtime', async () => {
-    const host = new CollectionsPluginHostService();
-    await expect(
-      host.registerPlugin(manifest({ mountTarget: 'samples' as HomeName }), executor([])),
-    ).rejects.toThrow(BadRequestException);
-    await expect(
-      host.registerPlugin(manifest({ mountTarget: 'background-office/journal' }), executor([])),
-    ).rejects.toThrow(BadRequestException);
+    const host = await readyHost();
+    expect(() => host.registerPlugin(manifest({ mountTarget: 'samples' as HomeName }), executor([]))).toThrow(
+      BadRequestException,
+    );
+    expect(() => host.registerPlugin(manifest({ mountTarget: 'background-office/journal' }), executor([]))).toThrow(
+      BadRequestException,
+    );
   });
 
   it('notify reaches enabled matching plugins and drops disabled signals', async () => {
     const calls: PluginContext[] = [];
-    const host = new CollectionsPluginHostService();
-    await host.registerPlugin(manifest(), executor(calls));
+    const host = await readyHost();
+    host.registerPlugin(manifest(), executor(calls));
     host.notify({ trigger: 'collections.collection_created', occurredAt: new Date(), payload: context() });
     host.notify({ trigger: 'collections.sample_added', occurredAt: new Date(), payload: context() });
     host.setPluginEnabled(goodId, false);
@@ -78,8 +84,8 @@ describe('CollectionsPluginHostService', () => {
 
   it('rejects malformed live contexts before execution', async () => {
     const calls: PluginContext[] = [];
-    const host = new CollectionsPluginHostService();
-    await host.registerPlugin(manifest(), executor(calls));
+    const host = await readyHost();
+    host.registerPlugin(manifest(), executor(calls));
     expect(() => host.notify({ trigger: 'collections.sample_added', occurredAt: new Date(), payload: null })).toThrow(
       BadRequestException,
     );
@@ -89,9 +95,9 @@ describe('CollectionsPluginHostService', () => {
   it('request runs exactly one enabled executor post factum', async () => {
     const callsA: PluginContext[] = [];
     const callsB: PluginContext[] = [];
-    const host = new CollectionsPluginHostService();
-    await host.registerPlugin(manifest(), executor(callsA));
-    await host.registerPlugin(manifest({ id: 'membrana.handler.other' as PluginId }), executor(callsB));
+    const host = await readyHost();
+    host.registerPlugin(manifest(), executor(callsA));
+    host.registerPlugin(manifest({ id: 'membrana.handler.other' as PluginId }), executor(callsB));
     await host.request(goodId, 'collections.collection_created', context());
     expect(callsA).toEqual([context({ trigger: 'collections.collection_created' })]);
     expect(callsB).toEqual([]);
