@@ -2,52 +2,104 @@ import { BadRequestException } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
 
 import { CollectionsPluginHostService } from './plugin-host.service';
-import type { PluginId, PluginRuntime } from './plugin-host.types';
+import type { HomeName, PluginContext, PluginExecutor, PluginId, PluginManifest } from './plugin-host.types';
 
-const goodId = 'scope/plugin' as PluginId;
+const goodId = 'membrana.handler.mfcc' as PluginId;
 
-function plugin(over: Partial<PluginRuntime['manifest']> = {}, calls: unknown[] = []): PluginRuntime {
+function manifest(over: Partial<PluginManifest> = {}): PluginManifest {
   return {
-    manifest: {
-      id: goodId,
-      kind: 'handler',
-      version: '1.0.0',
-      mountTarget: 'background-media/collections',
-      triggers: ['background-media.collections.changed'],
-      ...over,
-    },
-    handle: async (trigger, ctx) => calls.push({ trigger, ctx }),
+    id: goodId,
+    kind: 'handler',
+    version: '1.0.0',
+    mountTarget: 'background-media/collections',
+    triggers: ['collections.sample_added'],
+    windowSize: 64,
+    ...over,
   };
 }
 
+function context(over: Partial<PluginContext> = {}): PluginContext {
+  return {
+    address: {
+      pluginId: goodId,
+      version: '1.0.0',
+      collectionId: 'c1',
+      runId: 'r1',
+      mountTarget: 'background-media/collections',
+    },
+    fingerprints: { inputHash: 'input', configHash: 'config' },
+    resumeMode: 'fresh',
+    trigger: 'collections.sample_added',
+    payload: { collectionId: 'c1', sampleId: 's1' },
+    ...over,
+  };
+}
+
+function executor(calls: PluginContext[]): PluginExecutor {
+  return {
+    execute: async (ctx) => {
+      calls.push(ctx);
+      return { kind: 'handler', completedAt: new Date('2026-08-18T08:00:00.000Z') };
+    },
+  };
+}
+
+async function readyHost(): Promise<CollectionsPluginHostService> {
+  const host = new CollectionsPluginHostService();
+  await host.onModuleInit();
+  return host;
+}
+
 describe('CollectionsPluginHostService', () => {
-  it('rejects unknown hosts, foreign hosts and invalid PluginId before runtime', () => {
-    const host = new CollectionsPluginHostService();
-    expect(() => host.registerPlugin(plugin({ mountTarget: 'samples' }))).toThrow(BadRequestException);
-    expect(() => host.registerPlugin(plugin({ mountTarget: 'background-office/journal' }))).toThrow(BadRequestException);
-    expect(() => host.registerPlugin(plugin({ id: 'Bad Id' as PluginId }))).toThrow(BadRequestException);
+  it('accepts canonical PluginId and rejects a legacy slug', async () => {
+    const host = await readyHost();
+    expect(() => host.registerPlugin(manifest(), executor([]))).not.toThrow();
+    expect(() => host.registerPlugin(manifest({ id: 'mfcc-detector' as PluginId }), executor([]))).toThrow(
+      BadRequestException,
+    );
+  });
+
+  it('rejects unknown and foreign mount targets before runtime', async () => {
+    const host = await readyHost();
+    expect(() => host.registerPlugin(manifest({ mountTarget: 'samples' as HomeName }), executor([]))).toThrow(
+      BadRequestException,
+    );
+    expect(() => host.registerPlugin(manifest({ mountTarget: 'background-office/journal' }), executor([]))).toThrow(
+      BadRequestException,
+    );
   });
 
   it('notify reaches enabled matching plugins and drops disabled signals', async () => {
-    const calls: unknown[] = [];
-    const host = new CollectionsPluginHostService();
-    host.registerPlugin(plugin({}, calls));
-    await host.notify({ trigger: 'other', ctx: 1 });
-    await host.notify({ trigger: 'background-media.collections.changed', ctx: 2 });
+    const calls: PluginContext[] = [];
+    const host = await readyHost();
+    host.registerPlugin(manifest(), executor(calls));
+    host.notify({ trigger: 'collections.collection_created', occurredAt: new Date(), payload: context() });
+    host.notify({ trigger: 'collections.sample_added', occurredAt: new Date(), payload: context() });
     host.setPluginEnabled(goodId, false);
-    await host.notify({ trigger: 'background-media.collections.changed', ctx: 3 });
-    expect(calls).toEqual([{ trigger: 'background-media.collections.changed', ctx: 2 }]);
-    expect(host.getRegisteredPlugins()).toEqual([{ manifest: plugin().manifest, enabled: false }]);
+    host.notify({ trigger: 'collections.sample_added', occurredAt: new Date(), payload: context() });
+    await Promise.resolve();
+    expect(calls).toEqual([context()]);
+    expect(host.getRegisteredPlugins()).toEqual([manifest()]);
   });
 
-  it('request runs exactly one enabled plugin post factum', async () => {
-    const callsA: unknown[] = [];
-    const callsB: unknown[] = [];
-    const host = new CollectionsPluginHostService();
-    host.registerPlugin(plugin({}, callsA));
-    host.registerPlugin(plugin({ id: 'scope/other' as PluginId }, callsB));
-    await host.request(goodId, 'manual', { collectionId: 'c1' });
-    expect(callsA).toEqual([{ trigger: 'manual', ctx: { collectionId: 'c1' } }]);
+  it('rejects malformed live contexts before execution', async () => {
+    const calls: PluginContext[] = [];
+    const host = await readyHost();
+    host.registerPlugin(manifest(), executor(calls));
+    expect(() => host.notify({ trigger: 'collections.sample_added', occurredAt: new Date(), payload: null })).toThrow(
+      BadRequestException,
+    );
+    expect(calls).toEqual([]);
+  });
+
+  it('request runs exactly one enabled executor post factum', async () => {
+    const callsA: PluginContext[] = [];
+    const callsB: PluginContext[] = [];
+    const host = await readyHost();
+    host.registerPlugin(manifest(), executor(callsA));
+    host.registerPlugin(manifest({ id: 'membrana.handler.other' as PluginId }), executor(callsB));
+    await host.request(goodId, 'collections.collection_created', context());
+    expect(callsA).toEqual([context({ trigger: 'collections.collection_created' })]);
     expect(callsB).toEqual([]);
   });
 });
