@@ -71,8 +71,19 @@ describe('CollectionsPluginHostService', () => {
     host.notify({ trigger: 'collections.sample_added', occurredAt: new Date(), payload: context() });
     host.setPluginEnabled(goodId, false);
     host.notify({ trigger: 'collections.sample_added', occurredAt: new Date(), payload: context() });
+    await Promise.resolve();
     expect(calls).toEqual([context()]);
     expect(host.getRegisteredPlugins()).toEqual([manifest()]);
+  });
+
+  it('rejects malformed live contexts before execution', async () => {
+    const calls: PluginContext[] = [];
+    const host = new CollectionsPluginHostService();
+    await host.registerPlugin(manifest(), executor(calls));
+    expect(() => host.notify({ trigger: 'collections.sample_added', occurredAt: new Date(), payload: null })).toThrow(
+      BadRequestException,
+    );
+    expect(calls).toEqual([]);
   });
 
   it('request runs exactly one enabled executor post factum', async () => {

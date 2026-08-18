@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 import {
   COLLECTIONS_PLUGIN_HOST_ID,
@@ -19,13 +19,38 @@ type PluginContracts = {
 let pluginContractsPromise: Promise<PluginContracts> | null = null;
 
 function pluginContracts(): Promise<PluginContracts> {
-  pluginContractsPromise ??= import('@membrana/plugin-contracts');
+  pluginContractsPromise ??= import('@membrana/plugin-contracts').catch((error: unknown) => {
+    pluginContractsPromise = null;
+    throw error;
+  });
   return pluginContractsPromise;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function isPluginContext(value: unknown): value is PluginContext {
+  if (!isRecord(value) || !isRecord(value.address) || !isRecord(value.fingerprints)) return false;
+  const { address, fingerprints } = value;
+  return (
+    typeof address.pluginId === 'string' &&
+    typeof address.version === 'string' &&
+    typeof address.collectionId === 'string' &&
+    typeof address.runId === 'string' &&
+    typeof address.mountTarget === 'string' &&
+    typeof fingerprints.inputHash === 'string' &&
+    typeof fingerprints.configHash === 'string' &&
+    (value.resumeMode === 'fresh' || value.resumeMode === 'from-freeze') &&
+    typeof value.trigger === 'string' &&
+    'payload' in value
+  );
 }
 
 @Injectable()
 export class CollectionsPluginHostService implements IPluginHost {
   readonly mountTargetId = COLLECTIONS_PLUGIN_HOST_ID;
+  private readonly logger = new Logger(CollectionsPluginHostService.name);
   private readonly plugins = new Map<PluginId, PluginRegistration>();
 
   async registerPlugin(manifest: PluginManifest, executor: PluginExecutor): Promise<void> {
@@ -51,10 +76,13 @@ export class CollectionsPluginHostService implements IPluginHost {
   }
 
   notify(event: IPluginEvent): void {
+    if (!isPluginContext(event.payload)) throw new BadRequestException('Invalid plugin context');
     for (const entry of this.plugins.values()) {
       if (!entry.enabled || !entry.manifest.triggers.includes(event.trigger)) continue;
-      const ctx = { ...(event.payload as PluginContext), trigger: event.trigger };
-      void entry.executor.execute(ctx);
+      const ctx = { ...event.payload, trigger: event.trigger };
+      void entry.executor
+        .execute(ctx)
+        .catch((error: unknown) => this.logger.error({ error, pluginId: entry.manifest.id }, 'Plugin notify failed'));
     }
   }
 
