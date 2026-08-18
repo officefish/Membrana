@@ -4,10 +4,20 @@ import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
 import type { PluginResultsStore, ReadRunsFilter, RunRecord, StateRecord } from './plugin-results.types';
 
+const PLUGIN_RESULTS_COLLECTION = 'plugin-results';
+
+type RunDocument = RunRecord & {
+  pluginId: RunRecord['address']['pluginId'];
+  version: string;
+  collectionId: string;
+  runId: string;
+  stateRecord: StateRecord;
+};
+
 type MongoCollectionLike = {
   createIndex(keys: Record<string, unknown>, options?: Record<string, unknown>): Promise<unknown>;
   updateOne(filter: Record<string, unknown>, update: Record<string, unknown>, options?: Record<string, unknown>): Promise<unknown>;
-  find(filter: Record<string, unknown>, options?: Record<string, unknown>): { toArray(): Promise<RunRecord[]> };
+  find(filter: Record<string, unknown>, options?: Record<string, unknown>): { toArray(): Promise<RunDocument[]> };
 };
 
 type MongoClientLike = { db(name?: string): { collection(name: string): MongoCollectionLike }; close(): Promise<void> };
@@ -38,17 +48,17 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
     this.client = await this.connect(this.config.ARCHIVARIUS_MONGO_URI);
     this.collection = this.client
       .db(this.config.ARCHIVARIUS_MONGO_DB ?? 'membrana_archivarius')
-      .collection('plugin-results');
+      .collection(PLUGIN_RESULTS_COLLECTION);
     await this.collection.createIndex({ pluginId: 1, version: 1, collectionId: 1, runId: 1 }, { unique: true });
     await this.collection.createIndex({ pluginId: 1, version: 1, collectionId: 1, kind: 1, completedAt: -1 });
     return this.collection;
   }
 
   async writeRun(run: RunRecord, state: StateRecord): Promise<void> {
-    const { pluginId, version, collectionId, runId } = run;
+    const { pluginId, version, collectionId, runId } = run.address;
     await (await this.results()).updateOne(
       { pluginId, version, collectionId, runId },
-      { $set: { ...run, stateRecord: { ...state } } },
+      { $set: { ...run, pluginId, version, collectionId, runId, stateRecord: { ...state } } },
       { upsert: true },
     );
   }
@@ -58,13 +68,14 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
     if (filter.pluginId) query.pluginId = filter.pluginId;
     if (filter.version) query.version = filter.version;
     if (filter.kind) query.kind = filter.kind;
-    return (await this.results())
+    const rows = await (await this.results())
       .find(query, {
-        projection: { _id: 0, stateRecord: 0 },
+        projection: { _id: 0, pluginId: 0, version: 0, collectionId: 0, runId: 0, stateRecord: 0 },
         sort: { completedAt: -1 },
         limit: filter.limit ?? 50,
       })
       .toArray();
+    return rows.map(({ pluginId: _pluginId, version: _version, collectionId: _collectionId, runId: _runId, stateRecord: _stateRecord, ...run }) => run);
   }
 
   async onModuleDestroy(): Promise<void> {

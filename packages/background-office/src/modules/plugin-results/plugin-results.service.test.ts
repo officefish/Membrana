@@ -1,3 +1,4 @@
+import type { PluginId } from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
 import { describe, expect, it } from 'vitest';
 
 import { MemoryPluginResultsStore } from './plugin-results.memory-store';
@@ -6,20 +7,33 @@ import type { RunRecord, StateRecord } from './plugin-results.types';
 
 function run(over: Partial<RunRecord> = {}): RunRecord {
   return {
-    pluginId: 'scope/plugin',
-    version: '1.0.0',
-    collectionId: 'c1',
-    runId: 'r1',
-    kind: 'state',
-    completedAt: '2026-08-18T06:00:00.000Z',
-    inputHash: 'old',
-    payload: { ok: true },
+    address: {
+      pluginId: 'membrana.handler.mfcc' as PluginId,
+      version: '1.0.0',
+      collectionId: 'c1',
+      runId: 'r1',
+      mountTarget: 'background-media/collections',
+    },
+    kind: 'handler',
+    completedAt: new Date('2026-08-18T06:00:00.000Z'),
+    fingerprints: { inputHash: 'old', configHash: 'cfg' },
+    resumeMode: 'fresh',
     ...over,
   };
 }
 
 function state(over: Partial<StateRecord> = {}): StateRecord {
-  return { ...run(), state: { current: true }, ...over };
+  return {
+    pluginId: 'membrana.handler.mfcc' as PluginId,
+    version: '1.0.0',
+    collectionId: 'c1',
+    kind: 'state',
+    frozenAt: new Date('2026-08-18T06:00:00.000Z'),
+    windowStart: 0,
+    windowEnd: 1,
+    payload: { current: true },
+    ...over,
+  };
 }
 
 describe('PluginResultsService', () => {

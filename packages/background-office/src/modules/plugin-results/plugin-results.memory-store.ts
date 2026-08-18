@@ -2,8 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 import type { PluginResultsStore, ReadRunsFilter, RunRecord, StateRecord } from './plugin-results.types';
 
-function keyOf(run: Pick<RunRecord, 'pluginId' | 'version' | 'collectionId' | 'runId'>): string {
-  return `${run.pluginId}\u0000${run.version}\u0000${run.collectionId}\u0000${run.runId}`;
+type RunKey = Pick<RunRecord['address'], 'pluginId' | 'version' | 'collectionId' | 'runId'>;
+
+function keyOf(key: RunKey): string {
+  return `${key.pluginId}|${key.version}|${key.collectionId}|${key.runId}`;
+}
+
+function runKeyOf(run: RunRecord): string {
+  return keyOf(run.address);
 }
 
 @Injectable()
@@ -12,18 +18,18 @@ export class MemoryPluginResultsStore implements PluginResultsStore {
   private readonly states = new Map<string, StateRecord>();
 
   async writeRun(run: RunRecord, state: StateRecord): Promise<void> {
-    this.runs.set(keyOf(run), { ...run });
-    this.states.set(keyOf(state), { ...state });
+    this.runs.set(runKeyOf(run), { ...run });
+    this.states.set(keyOf({ ...state, runId: run.address.runId }), { ...state });
   }
 
   async readRuns(filter: ReadRunsFilter): Promise<RunRecord[]> {
     const limit = filter.limit ?? 50;
     return [...this.runs.values()]
-      .filter((run) => run.collectionId === filter.collectionId)
-      .filter((run) => !filter.pluginId || run.pluginId === filter.pluginId)
-      .filter((run) => !filter.version || run.version === filter.version)
+      .filter((run) => run.address.collectionId === filter.collectionId)
+      .filter((run) => !filter.pluginId || run.address.pluginId === filter.pluginId)
+      .filter((run) => !filter.version || run.address.version === filter.version)
       .filter((run) => !filter.kind || run.kind === filter.kind)
-      .sort((a, b) => b.completedAt.localeCompare(a.completedAt))
+      .sort((a, b) => b.completedAt.getTime() - a.completedAt.getTime())
       .slice(0, limit)
       .map((run) => ({ ...run }));
   }

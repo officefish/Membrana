@@ -1,4 +1,5 @@
 import { ServiceUnavailableException } from '@nestjs/common';
+import type { PluginId } from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
 import { describe, expect, it } from 'vitest';
 
 import type { AppConfig } from '../../config/env.schema';
@@ -7,15 +8,31 @@ import type { RunRecord, StateRecord } from './plugin-results.types';
 
 function run(over: Partial<RunRecord> = {}): RunRecord {
   return {
-    pluginId: 'scope/plugin',
+    address: {
+      pluginId: 'membrana.handler.mfcc' as PluginId,
+      version: '1.0.0',
+      collectionId: 'c1',
+      runId: 'r1',
+      mountTarget: 'background-media/collections',
+    },
+    kind: 'handler',
+    completedAt: new Date('2026-08-18T06:00:00.000Z'),
+    fingerprints: { inputHash: 'h1', configHash: 'cfg' },
+    resumeMode: 'fresh',
+    ...over,
+  };
+}
+
+function state(): StateRecord {
+  return {
+    pluginId: 'membrana.handler.mfcc' as PluginId,
     version: '1.0.0',
     collectionId: 'c1',
-    runId: 'r1',
     kind: 'state',
-    completedAt: '2026-08-18T06:00:00.000Z',
-    inputHash: 'h1',
-    payload: { ok: true },
-    ...over,
+    frozenAt: new Date('2026-08-18T06:00:00.000Z'),
+    windowStart: 0,
+    windowEnd: 1,
+    payload: { current: true },
   };
 }
 
@@ -24,7 +41,7 @@ class FakeMongoStore extends MongoPluginResultsStore {
     super(config);
   }
 
-  protected override async connect() {
+  protected override async connect(_uri: string) {
     return {
       db: () => ({ collection: () => this.fakeCollection }),
       close: async () => undefined,
@@ -52,21 +69,25 @@ describe('MongoPluginResultsStore', () => {
     };
     const store = new FakeMongoStore({ ARCHIVARIUS_MONGO_URI: 'mongodb://fake' } as AppConfig, fake);
 
-    await store.writeRun(run(), { ...run(), state: { current: true } } as StateRecord);
-    await expect(store.readRuns({ collectionId: 'c1', kind: 'state', limit: 5 })).resolves.toEqual([run()]);
+    await store.writeRun(run(), state());
+    await expect(store.readRuns({ collectionId: 'c1', kind: 'handler', limit: 5 })).resolves.toEqual([run()]);
 
     expect(indexes).toEqual([
       { keys: { pluginId: 1, version: 1, collectionId: 1, runId: 1 }, options: { unique: true } },
       { keys: { pluginId: 1, version: 1, collectionId: 1, kind: 1, completedAt: -1 }, options: undefined },
     ]);
     expect(updates[0]).toMatchObject({
-      filter: { pluginId: 'scope/plugin', version: '1.0.0', collectionId: 'c1', runId: 'r1' },
+      filter: { pluginId: 'membrana.handler.mfcc', version: '1.0.0', collectionId: 'c1', runId: 'r1' },
       options: { upsert: true },
     });
     expect(JSON.stringify(updates[0])).toContain('stateRecord');
     expect(finds[0]).toMatchObject({
-      filter: { collectionId: 'c1', kind: 'state' },
-      options: { projection: { _id: 0, stateRecord: 0 }, sort: { completedAt: -1 }, limit: 5 },
+      filter: { collectionId: 'c1', kind: 'handler' },
+      options: {
+        projection: { _id: 0, pluginId: 0, version: 0, collectionId: 0, runId: 0, stateRecord: 0 },
+        sort: { completedAt: -1 },
+        limit: 5,
+      },
     });
   });
 });

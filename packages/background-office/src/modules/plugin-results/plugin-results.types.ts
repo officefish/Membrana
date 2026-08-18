@@ -1,36 +1,12 @@
-export type PluginResultKind = 'state' | 'report' | 'artifact';
+import type { PluginId, RunRecord, RunRecordView, StateRecord } from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
 
-export interface RunRecord {
-  pluginId: string;
-  version: string;
-  collectionId: string;
-  runId: string;
-  kind: PluginResultKind;
-  completedAt: string;
-  inputHash: string;
-  payload: unknown;
-}
-
-export interface StateRecord {
-  pluginId: string;
-  version: string;
-  collectionId: string;
-  runId: string;
-  kind: PluginResultKind;
-  completedAt: string;
-  inputHash: string;
-  state: unknown;
-}
-
-export interface RunRecordView extends RunRecord {
-  stale: boolean;
-}
+export type { RunRecord, RunRecordView, StateRecord };
 
 export interface ReadRunsFilter {
-  pluginId?: string;
+  pluginId?: PluginId;
   version?: string;
   collectionId: string;
-  kind?: PluginResultKind;
+  kind?: RunRecord['kind'];
   currentInputHash?: string;
   limit?: number;
 }
