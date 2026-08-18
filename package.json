@@ -457,7 +457,8 @@
     "branch:status": "node scripts/branch-status.mjs",
     "worktree:resolve": "node scripts/worktree-resolution.mjs",
     "vdr:blind": "node scripts/vdr-blind-corpus.mjs",
-    "field:capture": "node scripts/field-capture.mjs"
+    "field:capture": "node scripts/field-capture.mjs",
+    "plugin:run:mfcc": "node scripts/plugin-run-mfcc.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

@@ -9,7 +9,7 @@
     "@membrana/detector-base"
   ],
   "withoutTests": [],
-  "corpusSize": 39,
+  "corpusSize": 40,
   "ranking": [
     {
       "name": "@membrana/core",
@@ -44,6 +44,10 @@
       "fanIn": 3
     },
     {
+      "name": "@membrana/plugin-contracts",
+      "fanIn": 3
+    },
+    {
       "name": "@membrana/spectral-flux-detector-service",
       "fanIn": 3
     },
@@ -72,7 +76,7 @@
       "fanIn": 2
     },
     {
-      "name": "@membrana/plugin-contracts",
+      "name": "@membrana/mfcc-analyzer-service",
       "fanIn": 2
     },
     {
@@ -89,10 +93,6 @@
     },
     {
       "name": "@membrana/detection-ensemble-service",
-      "fanIn": 1
-    },
-    {
-      "name": "@membrana/mfcc-analyzer-service",
       "fanIn": 1
     },
     {
