@@ -11,6 +11,7 @@ type RunDocument = RunRecord & {
   version: string;
   collectionId: string;
   runId: string;
+  mountTarget: RunRecord['address']['mountTarget'];
   stateRecord: StateRecord;
 };
 
@@ -55,10 +56,10 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
   }
 
   async writeRun(run: RunRecord, state: StateRecord): Promise<void> {
-    const { pluginId, version, collectionId, runId } = run.address;
+    const { pluginId, version, collectionId, runId, mountTarget } = run.address;
     await (await this.results()).updateOne(
       { pluginId, version, collectionId, runId },
-      { $set: { ...run, pluginId, version, collectionId, runId, stateRecord: { ...state } } },
+      { $set: { ...run, pluginId, version, collectionId, runId, mountTarget, stateRecord: { ...state } } },
       { upsert: true },
     );
   }
@@ -70,12 +71,15 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
     if (filter.kind) query.kind = filter.kind;
     const rows = await (await this.results())
       .find(query, {
-        projection: { _id: 0, pluginId: 0, version: 0, collectionId: 0, runId: 0, stateRecord: 0 },
+        projection: { _id: 0, stateRecord: 0 },
         sort: { completedAt: -1 },
         limit: filter.limit ?? 50,
       })
       .toArray();
-    return rows.map(({ pluginId: _pluginId, version: _version, collectionId: _collectionId, runId: _runId, stateRecord: _stateRecord, ...run }) => run);
+    return rows.map(({ pluginId, version, collectionId, runId, mountTarget, stateRecord: _stateRecord, ...run }) => ({
+      ...run,
+      address: run.address ?? { pluginId, version, collectionId, runId, mountTarget },
+    }));
   }
 
   async onModuleDestroy(): Promise<void> {

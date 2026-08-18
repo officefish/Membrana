@@ -81,10 +81,11 @@ describe('MongoPluginResultsStore', () => {
       options: { upsert: true },
     });
     expect(JSON.stringify(updates[0])).toContain('stateRecord');
+    expect(JSON.stringify(updates[0])).toContain('background-media/collections');
     expect(finds[0]).toMatchObject({
       filter: { collectionId: 'c1', kind: 'handler' },
       options: {
-        projection: { _id: 0, pluginId: 0, version: 0, collectionId: 0, runId: 0, stateRecord: 0 },
+        projection: { _id: 0, stateRecord: 0 },
         sort: { completedAt: -1 },
         limit: 5,
       },

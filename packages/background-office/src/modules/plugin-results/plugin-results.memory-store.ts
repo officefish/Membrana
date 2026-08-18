@@ -19,7 +19,15 @@ export class MemoryPluginResultsStore implements PluginResultsStore {
 
   async writeRun(run: RunRecord, state: StateRecord): Promise<void> {
     this.runs.set(runKeyOf(run), { ...run });
-    this.states.set(keyOf({ ...state, runId: run.address.runId }), { ...state });
+    this.states.set(
+      keyOf({
+        pluginId: state.pluginId,
+        version: state.version,
+        collectionId: state.collectionId,
+        runId: run.address.runId,
+      }),
+      { ...state },
+    );
   }
 
   async readRuns(filter: ReadRunsFilter): Promise<RunRecord[]> {
