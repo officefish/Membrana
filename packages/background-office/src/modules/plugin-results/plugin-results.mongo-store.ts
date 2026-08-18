@@ -48,6 +48,7 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
     if (!this.config.ARCHIVARIUS_MONGO_URI) {
       throw new ServiceUnavailableException('ARCHIVARIUS_MONGO_URI is required for MongoPluginResultsStore');
     }
+    // M3 #1961: plugin-results deliberately shares the Archivarius Mongo connection.
     this.collectionPromise = this.initResults();
     return this.collectionPromise;
   }
