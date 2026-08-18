@@ -1,5 +1,7 @@
 export const COLLECTIONS_PLUGIN_HOST_ID = 'background-media/collections';
-export const HOME_REGISTRY = [COLLECTIONS_PLUGIN_HOST_ID, 'background-office/journal'] as const;
+// TODO(#1961): replace this local first-wave mirror with @membrana/plugin-contracts
+// before adding the second host.
+export const HOME_REGISTRY = [COLLECTIONS_PLUGIN_HOST_ID] as const;
 
 export type PluginId = string & { readonly __brand: 'PluginId' };
 export type MountTargetId = (typeof HOME_REGISTRY)[number];
