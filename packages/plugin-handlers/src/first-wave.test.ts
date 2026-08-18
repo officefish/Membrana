@@ -1,6 +1,8 @@
 import { isPluginId, type IPluginEvent, type IPluginHost, type PluginContext, type PluginExecutor, type PluginId, type PluginManifest, type PluginTrigger } from '@membrana/plugin-contracts';
 import { describe, expect, it } from 'vitest';
 import { FIRST_WAVE_MANIFESTS, registerFirstWave } from './first-wave.js';
+import { MFCC_HANDLER_MANIFEST } from './mfcc/manifest.js';
+import { mfccConfigHashOf } from './mfcc/executor.js';
 import { PluginNotImplementedError, STUB_HANDLER_MANIFESTS } from './stubs.js';
 
 /** Минимальный хост-заглушка ПО ИНТЕРФЕЙСУ M2/M4/M5′ — не копия хоста PR-2, а его контрактная форма. */
@@ -68,5 +70,18 @@ describe('первая волна — шесть handler в хосте collectio
       expect((err as Error).message).toMatch(new RegExp(`${m.id}.*не реализован.*collections\\.sample_added`, 'u'));
       expect((err as Error).name).toBe('PluginNotImplementedError');
     }
+  });
+  it('onResult получает результат mfcc после execute (мост в plugin-results — сид, не хост); заглушка бросает, сид не зовётся', async () => {
+    const host = fakeHost();
+    const got: string[] = [];
+    registerFirstWave(host, {
+      mfcc: { reader: { listSamples: async () => [], readAudio: async () => ({ bytes: new Uint8Array(), contentHash: '' }) }, extract: () => [], preset: PRESET, strictness: 'normal' },
+      onResult: (m, c, r) => { got.push(`${m.id}:${c.address.runId}:${r.kind}`); },
+    });
+    const configHash = mfccConfigHashOf(MFCC_HANDLER_MANIFEST, PRESET, 'normal');
+    const inputHash = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'; // sha256('') — пустой срез
+    await host.request(MFCC_HANDLER_MANIFEST.id, 'collections.sample_added', { ...ctx(MFCC_HANDLER_MANIFEST.id), fingerprints: { inputHash, configHash } });
+    await expect(host.request(STUB_HANDLER_MANIFESTS[0]!.id, 'collections.sample_added', ctx(STUB_HANDLER_MANIFESTS[0]!.id))).rejects.toBeInstanceOf(PluginNotImplementedError);
+    expect(got).toEqual(['membrana.handler.mfcc:r:handler']);
   });
 });

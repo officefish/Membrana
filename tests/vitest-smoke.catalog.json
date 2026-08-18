@@ -44,6 +44,10 @@
       "fanIn": 3
     },
     {
+      "name": "@membrana/mfcc-analyzer-service",
+      "fanIn": 3
+    },
+    {
       "name": "@membrana/plugin-contracts",
       "fanIn": 3
     },
@@ -76,10 +80,6 @@
       "fanIn": 2
     },
     {
-      "name": "@membrana/mfcc-analyzer-service",
-      "fanIn": 2
-    },
-    {
       "name": "@membrana/sample-playback-service",
       "fanIn": 2
     },
@@ -93,6 +93,10 @@
     },
     {
       "name": "@membrana/detection-ensemble-service",
+      "fanIn": 1
+    },
+    {
+      "name": "@membrana/plugin-handlers",
       "fanIn": 1
     },
     {
