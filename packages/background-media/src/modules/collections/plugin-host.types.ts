@@ -3,13 +3,28 @@ export const HOME_REGISTRY = [COLLECTIONS_PLUGIN_HOST_ID, 'background-office/jou
 
 export type PluginId = string & { readonly __brand: 'PluginId' };
 export type MountTargetId = (typeof HOME_REGISTRY)[number];
+export type PluginKind = 'handler' | 'report' | 'showcase';
 
-export interface PluginManifest {
+interface BasePluginManifest {
   id: PluginId;
   version: string;
   mountTarget: string;
   triggers: string[];
 }
+
+export interface HandlerManifest extends BasePluginManifest {
+  kind: 'handler';
+}
+
+export interface ReportManifest extends BasePluginManifest {
+  kind: 'report';
+}
+
+export interface ShowcaseManifest extends BasePluginManifest {
+  kind: 'showcase';
+}
+
+export type PluginManifest = HandlerManifest | ReportManifest | ShowcaseManifest;
 
 export interface PluginRuntime {
   manifest: PluginManifest;

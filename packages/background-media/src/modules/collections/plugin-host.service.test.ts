@@ -10,9 +10,10 @@ function plugin(over: Partial<PluginRuntime['manifest']> = {}, calls: unknown[] 
   return {
     manifest: {
       id: goodId,
+      kind: 'handler',
       version: '1.0.0',
       mountTarget: 'background-media/collections',
-      triggers: ['collection.changed'],
+      triggers: ['background-media.collections.changed'],
       ...over,
     },
     handle: async (trigger, ctx) => calls.push({ trigger, ctx }),
@@ -32,10 +33,10 @@ describe('CollectionsPluginHostService', () => {
     const host = new CollectionsPluginHostService();
     host.registerPlugin(plugin({}, calls));
     await host.notify({ trigger: 'other', ctx: 1 });
-    await host.notify({ trigger: 'collection.changed', ctx: 2 });
+    await host.notify({ trigger: 'background-media.collections.changed', ctx: 2 });
     host.setPluginEnabled(goodId, false);
-    await host.notify({ trigger: 'collection.changed', ctx: 3 });
-    expect(calls).toEqual([{ trigger: 'collection.changed', ctx: 2 }]);
+    await host.notify({ trigger: 'background-media.collections.changed', ctx: 3 });
+    expect(calls).toEqual([{ trigger: 'background-media.collections.changed', ctx: 2 }]);
     expect(host.getRegisteredPlugins()).toEqual([{ manifest: plugin().manifest, enabled: false }]);
   });
 
