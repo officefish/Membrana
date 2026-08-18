@@ -12,11 +12,11 @@ import { PLUGIN_RESULTS_STORE, PluginResultsService } from './plugin-results.ser
     {
       provide: PLUGIN_RESULTS_STORE,
       inject: [APP_CONFIG],
-      useFactory: (config: AppConfig) =>
-        config.PLUGIN_RESULTS_MONGO_URI || config.ARCHIVARIUS_MONGO_URI
-          ? new MongoPluginResultsStore(config)
-          : (Logger.warn('PLUGIN_RESULTS: no Mongo URI, using volatile memory store', PluginResultsModule.name),
-            new MemoryPluginResultsStore()),
+      useFactory: (config: AppConfig) => {
+        if (config.PLUGIN_RESULTS_MONGO_URI || config.ARCHIVARIUS_MONGO_URI) return new MongoPluginResultsStore(config);
+        Logger.warn('PLUGIN_RESULTS: no Mongo URI, using volatile memory store', PluginResultsModule.name);
+        return new MemoryPluginResultsStore();
+      },
     },
   ],
   exports: [PluginResultsService],
