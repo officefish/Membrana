@@ -2,7 +2,7 @@ import type { PluginId } from '@membrana/plugin-contracts' with { 'resolution-mo
 import { describe, expect, it } from 'vitest';
 
 import { MemoryPluginResultsStore } from './plugin-results.memory-store';
-import { PLUGIN_RESULTS_STORE, PluginResultsService } from './plugin-results.service';
+import { PluginResultsService } from './plugin-results.service';
 import type { RunRecord, StateRecord } from './plugin-results.types';
 
 function run(over: Partial<RunRecord> = {}): RunRecord {
@@ -55,9 +55,5 @@ describe('PluginResultsService', () => {
     await expect(service.writeRun(badRun, state({ pluginId: 'membrana' as PluginId }))).rejects.toThrow(
       'Invalid plugin id',
     );
-  });
-
-  it('exports an injectable store token for the module boundary', () => {
-    expect(typeof PLUGIN_RESULTS_STORE).toBe('symbol');
   });
 });

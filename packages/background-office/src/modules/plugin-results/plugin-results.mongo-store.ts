@@ -45,18 +45,18 @@ export class MongoPluginResultsStore implements PluginResultsStore, OnModuleDest
   private async results(): Promise<MongoCollectionLike> {
     if (this.collection) return this.collection;
     if (this.collectionPromise) return this.collectionPromise;
-    if (!this.config.ARCHIVARIUS_MONGO_URI) {
-      throw new ServiceUnavailableException('ARCHIVARIUS_MONGO_URI is required for MongoPluginResultsStore');
+    const mongoUri = this.config.PLUGIN_RESULTS_MONGO_URI ?? this.config.ARCHIVARIUS_MONGO_URI;
+    if (!mongoUri) {
+      throw new ServiceUnavailableException('PLUGIN_RESULTS_MONGO_URI or ARCHIVARIUS_MONGO_URI is required');
     }
-    // M3 #1961: plugin-results deliberately shares the Archivarius Mongo connection.
-    this.collectionPromise = this.initResults();
+    this.collectionPromise = this.initResults(mongoUri);
     return this.collectionPromise;
   }
 
-  private async initResults(): Promise<MongoCollectionLike> {
-    this.client = await this.connect(this.config.ARCHIVARIUS_MONGO_URI!);
+  private async initResults(mongoUri: string): Promise<MongoCollectionLike> {
+    this.client = await this.connect(mongoUri);
     const collection = this.client
-      .db(this.config.ARCHIVARIUS_MONGO_DB ?? 'membrana_archivarius')
+      .db(this.config.PLUGIN_RESULTS_MONGO_DB ?? this.config.ARCHIVARIUS_MONGO_DB ?? 'membrana_archivarius')
       .collection(PLUGIN_RESULTS_COLLECTION);
     await collection.createIndex({ pluginId: 1, version: 1, collectionId: 1, runId: 1 }, { unique: true });
     await collection.createIndex({ pluginId: 1, version: 1, collectionId: 1, kind: 1, completedAt: -1 });

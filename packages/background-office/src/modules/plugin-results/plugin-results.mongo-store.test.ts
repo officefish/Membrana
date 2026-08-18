@@ -82,7 +82,7 @@ describe('MongoPluginResultsStore', () => {
         return { toArray: async () => [document()] };
       },
     };
-    const store = new FakeMongoStore({ ARCHIVARIUS_MONGO_URI: 'mongodb://fake' } as AppConfig, fake);
+    const store = new FakeMongoStore({ PLUGIN_RESULTS_MONGO_URI: 'mongodb://fake' } as AppConfig, fake);
 
     await store.writeRun(run(), state());
     await expect(store.readRuns({ collectionId: 'c1', kind: 'handler', limit: 5 })).resolves.toEqual([run()]);

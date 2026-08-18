@@ -64,7 +64,8 @@ flowchart LR
 - PostgreSQL / файловые volume под пользовательские данные.
 
 Исключение: Archivarius (#1330) хранит сессионные span, а `plugin-results` (#1961) —
-результаты серверных плагинов в той же MongoDB office-стека;
+результаты серверных плагинов в той же MongoDB office-стека по умолчанию
+(`PLUGIN_RESULTS_MONGO_URI` — явный split);
 репозиторий остаётся нотариусом контракта и снимков, prod-миграция Mongo — отдельный
 owner-gated шаг. Не смешивать это с media blob storage.
 

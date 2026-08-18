@@ -13,7 +13,9 @@ import { PLUGIN_RESULTS_STORE, PluginResultsService } from './plugin-results.ser
       provide: PLUGIN_RESULTS_STORE,
       inject: [APP_CONFIG],
       useFactory: (config: AppConfig) =>
-        config.ARCHIVARIUS_MONGO_URI ? new MongoPluginResultsStore(config) : new MemoryPluginResultsStore(),
+        config.PLUGIN_RESULTS_MONGO_URI || config.ARCHIVARIUS_MONGO_URI
+          ? new MongoPluginResultsStore(config)
+          : new MemoryPluginResultsStore(),
     },
   ],
   exports: [PluginResultsService],
