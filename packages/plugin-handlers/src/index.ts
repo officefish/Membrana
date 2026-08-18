@@ -29,3 +29,5 @@ export {
   type MfccSampleOutcome,
   type MfccSampleVerdict,
 } from './mfcc/executor.js';
+export { PluginNotImplementedError, STUB_HANDLER_MANIFESTS, STUB_HANDLER_SLUGS, notImplementedExecutor } from './stubs.js';
+export { FIRST_WAVE_MANIFESTS, registerFirstWave, type FirstWaveDeps } from './first-wave.js';
