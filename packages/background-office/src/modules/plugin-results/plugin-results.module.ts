@@ -8,14 +8,12 @@ import { PLUGIN_RESULTS_STORE, PluginResultsService } from './plugin-results.ser
 
 @Module({
   providers: [
-    MemoryPluginResultsStore,
-    MongoPluginResultsStore,
     PluginResultsService,
     {
       provide: PLUGIN_RESULTS_STORE,
-      inject: [APP_CONFIG, MemoryPluginResultsStore, MongoPluginResultsStore],
-      useFactory: (config: AppConfig, memoryStore: MemoryPluginResultsStore, mongoStore: MongoPluginResultsStore) =>
-        config.ARCHIVARIUS_MONGO_URI ? mongoStore : memoryStore,
+      inject: [APP_CONFIG],
+      useFactory: (config: AppConfig) =>
+        config.ARCHIVARIUS_MONGO_URI ? new MongoPluginResultsStore(config) : new MemoryPluginResultsStore(),
     },
   ],
   exports: [PluginResultsService],

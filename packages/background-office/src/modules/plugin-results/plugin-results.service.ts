@@ -3,17 +3,13 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import type { PluginResultsStore, ReadRunsFilter, RunRecord, RunRecordView, StateRecord } from './plugin-results.types';
 
 export const PLUGIN_RESULTS_STORE = Symbol('PLUGIN_RESULTS_STORE');
-const PLUGIN_ID_PATTERN = /^[a-z][a-z0-9]*(\.[a-z][a-z0-9-]*){2}$/u;
-
-function isPluginId(value: unknown): boolean {
-  return typeof value === 'string' && PLUGIN_ID_PATTERN.test(value);
-}
 
 @Injectable()
 export class PluginResultsService {
   constructor(@Inject(PLUGIN_RESULTS_STORE) private readonly store: PluginResultsStore) {}
 
   async writeRun(run: RunRecord, state: StateRecord): Promise<void> {
+    const { isPluginId } = await import('@membrana/plugin-contracts');
     if (!isPluginId(run.address.pluginId) || !isPluginId(state.pluginId)) {
       throw new BadRequestException('Invalid plugin id');
     }
