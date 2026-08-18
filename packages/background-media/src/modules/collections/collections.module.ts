@@ -5,12 +5,13 @@ import { DevicesModule } from '../devices/devices.module';
 import { CatalogProvisionService } from './catalog-provision.service';
 import { CollectionsController } from './collections.controller';
 import { CollectionsService } from './collections.service';
+import { FirstWavePluginsRegistrar } from './first-wave.registrar';
 import { CollectionsPluginHostService } from './plugin-host.service';
 
 @Module({
   imports: [DevicesModule, BlobModule, AudioModule],
   controllers: [CollectionsController],
-  providers: [CollectionsService, CatalogProvisionService, CollectionsPluginHostService],
+  providers: [CollectionsService, CatalogProvisionService, CollectionsPluginHostService, FirstWavePluginsRegistrar],
   exports: [CollectionsService, CatalogProvisionService, CollectionsPluginHostService],
 })
 export class CollectionsModule {}

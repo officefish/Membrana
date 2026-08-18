@@ -2225,6 +2225,7 @@ __metadata:
     "@fastify/static": "npm:^8.0.0"
     "@membrana/drone-detection-orchestrator-service": "npm:*"
     "@membrana/plugin-contracts": "npm:*"
+    "@membrana/plugin-handlers": "npm:*"
     "@nestjs/common": "npm:^11.0.0"
     "@nestjs/core": "npm:^11.0.0"
     "@nestjs/platform-fastify": "npm:^11.0.0"
@@ -2234,6 +2235,7 @@ __metadata:
     "@types/node": "npm:^20.11.0"
     dotenv: "npm:^16.4.5"
     eslint: "npm:^8.57.0"
+    meyda: "npm:^5.6.3"
     music-metadata: "npm:^10.6.4"
     nestjs-pino: "npm:^4.1.0"
     pino: "npm:^9.5.0"
@@ -2678,7 +2680,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@membrana/plugin-handlers@workspace:packages/plugin-handlers":
+"@membrana/plugin-handlers@npm:*, @membrana/plugin-handlers@workspace:packages/plugin-handlers":
   version: 0.0.0-use.local
   resolution: "@membrana/plugin-handlers@workspace:packages/plugin-handlers"
   dependencies:
