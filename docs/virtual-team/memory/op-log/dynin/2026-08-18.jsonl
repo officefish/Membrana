@@ -1,1 +1,4 @@
 {"ts":"2026-08-18T06:32:03.633Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-18T16:50:12.248Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-18-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-18T16:50:12.248Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-01-evening-review-predicate-m4s-existing-organs","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-18T16:50:12.248Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

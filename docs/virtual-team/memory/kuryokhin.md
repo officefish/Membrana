@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14366/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 294 (причины в op-log) -->
+Записей: 50 · бюджет 14379/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 295 (причины в op-log) -->
+
+### 2026-08-18 · позиция · team-evening-feedback
+
+> Kuryokhin. Оценка артефактов: MAIN_DAY_ISSUE честно назвал приёмку Т3.11 через живой прогон на реальных полевых записях — не сухой executor-тест. Вещдок `first-live-run-2026-08-18.md` — правильный формат предъявления аудио-контура. Итоги дня: `membrana.handler.mfcc` прогнался […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-18.md#reply-1`
 
 ### 2026-08-17 · позиция · server-plugin-foundation-m0-order
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/evening-review-predicate-m4-memoization-2026-08-01.md#reply-1`
 
-### 2026-08-01 · позиция · evening-review-predicate-m4s-existing-organs
+### 2026-07-23 · позиция · llm-procedure-channels-m2a-scope
 
-> Слышу тракт: scan даёт список каналов, extract снимает дорожки, archivarius мастерит и кладёт на полку с адресом. Без scan — extract работает вслепую; без extract — archivarius получает пустой вход. Это не параллельные шины — это последовательный тракт захвата. Только после того […] _(реплик в сеансе: 5)_
+> Флаг кандидата 3: подключим всё — получим пульт с тумблерами на процедуры, которые ещё не умеют читать overlay. Мёртвые двери. Лучше два живых канала, чем десять тёмных. Кандидат 2 это держит. _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/evening-review-predicate-m4s-existing-organs-2026-08-01.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
-
-> Флаг: без `source` (overlay|default) снова тихая ложь канала — C1 уже требует. tokens неизвестны (некоторые API) → null, не ноль. Ноль врёт об экономике. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m3b-telemetry-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m2a-scope-2026-07-23-2026-07-23.md#reply-1`

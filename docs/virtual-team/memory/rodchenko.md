@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14395/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 293 (причины в op-log) -->
+Записей: 50 · бюджет 14380/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 294 (причины в op-log) -->
+
+### 2026-08-18 · позиция · team-evening-feedback
+
+> Rodchenko. Оценка артефактов: дифф дня не затронул UI-слой — MAIN_DAY_ISSUE это отражал, магистраль серверная. Норма У1: оценка процесса и голос обязательны. Итоги дня: — UI-компоненты не менялись, DESIGN.md не затрагивался, a11y-регрессий нет. Появился вещдок […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-18.md#reply-1`
 
 ### 2026-08-17 · позиция · server-plugin-foundation-m0-order
 
@@ -301,9 +307,3 @@
 > С витрины оператора: сейчас шаги 2 и 3 называются archive-night-hunt и archive-daily-day — они уже в голове цепочки, но их содержание в повестке не раскрыто. Прежде чем вставлять органы, нужно выяснить, покрывают ли шаги 2–3 функцию sessions:scan + sessions:extract. Если да — […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/evening-review-predicate-m4s-existing-organs-2026-08-01.md#reply-1`
-
-### 2026-07-29 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** S7 (витрина с затемнением) — UI-коммит, остальное models/logic. tariffVitrineViewModel — React+TS по DESIGN.md? Не видно дизайн-контракта. **Итоги дня:** tariffVitrineViewModel — экран витрины тарифов: затемнение с предупреждением (S7), а не сокрытие — […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-07-29.md#reply-1`

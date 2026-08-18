@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14230/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 295 (причины в op-log) -->
+Записей: 49 · бюджет 14207/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 296 (причины в op-log) -->
+
+### 2026-08-18 · позиция · team-evening-feedback
+
+> Dynin. Оценка артефактов: MAIN_DAY_ISSUE не касался чистого мат. ядра — сегодня был день инфраструктуры плагинов; норма У1 предписывает всё равно голосовать за процесс. Итоги дня: `envCandidates()` в `field-capture.mjs` (#1977) — чистая функция, граничный случай Windows-пути […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-18.md#reply-1`
 
 ### 2026-08-17 · позиция · server-plugin-foundation-m0-order
 
@@ -295,9 +301,3 @@
 > Формализую предикат конфликта. Требование 3 из #569 задаёт инвариант: `admit(e) ⇔ shown_to_partners(content(e))`. Слово владельца 01.08 задаёт другой предикат для головы вечера: `in_head(e) ⇔ occurred_today(e)`. Эти два предиката несовместимы ровно для одного органа — […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/evening-review-predicate-m4-memoization-2026-08-01.md#reply-1`
-
-### 2026-08-01 · позиция · evening-review-predicate-m4s-existing-organs
-
-> Формализую область. У нас три кандидата до day-memo: Archivarius, sessions:scan, sessions:extract. team-memory-report уже стоит на шаге 6 — он читатель журналов персон, не сессий. Его место в цепочке установлено. Вопрос о голове — это вопрос о тех органах, которые работают с […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/evening-review-predicate-m4s-existing-organs-2026-08-01.md#reply-1`

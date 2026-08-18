@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 51 · бюджет 14396/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 307 (причины в op-log) -->
+Записей: 51 · бюджет 14371/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 308 (причины в op-log) -->
+
+### 2026-08-18 · позиция · team-evening-feedback
+
+> Tarasov. Оценка артефактов: STRATEGY_DAY помечен вещдоком и не читался как план — правильно; DAILY_STANDUP и MAIN_DAY_ISSUE согласованы через `sources[0]` (owner-choice 17.08), посылки корректно перечеканены в момент влития PR-1 (#1973) и сняты вещдоком после Т3.11 (#1976); […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-18.md#reply-1`
 
 ### 2026-08-17 · позиция · server-plugin-foundation-m0-order
 
@@ -301,12 +307,6 @@
 > Стоп. Архитектор поставил правильную конструкцию, но операциональный вопрос повис. Фактическая нумерация: шаги 1–5 — это bridge-close, archive-night-hunt, archive-daily-day, truth-cool, rag-index. Они в голове. Вопрос: куда именно встают scan/extract/archivarius? Владелец сказал […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/evening-review-predicate-m4s-existing-organs-2026-08-01.md#reply-1`
-
-### 2026-08-01 · позиция · evening-review-predicate-m4x-session-archive
-
-> Планка матча узкая. Три органа, три независимые точки входа, тракта нет — это факт устройства, не готовности. Прошлые два прогона пали именно потому, что комната скользила мимо устройства к желаемому. Сегодня — сначала ответ по фактуре, потом форма. Вопросы (а), (б), (в), (г) […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/evening-review-predicate-m4x-session-archive-2026-08-01.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
 

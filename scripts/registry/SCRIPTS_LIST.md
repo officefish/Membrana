@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-17 |
-| Head SHA | 27610723ff894dfbb8c70df81e75143adc04f2c5 |
+| Date | 2026-08-18 |
+| Head SHA | c18d1c33d82893368a3ea3393db3dc4f355f8055 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1137 |
-| Yarn scripts (package.json) | 446 |
-| Yarn → `scripts/` | 391 |
+| Code files under `scripts/` | 1138 |
+| Yarn scripts (package.json) | 447 |
+| Yarn → `scripts/` | 392 |
 | Yarn без пути `scripts/` | 55 |
 | Yarn → missing file | 7 |
 | Code files without yarn ref | 824 |
 
-## Yarn → scripts/ (391)
+## Yarn → scripts/ (392)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -241,6 +241,7 @@
 - `plan:day` → `scripts/day-plan.mjs`
 - `plan:week` → `scripts/strategic-plan-week.mjs`
 - `plan:week:full` → `scripts/strategic-plan-week.mjs`
+- `plugin:run:mfcc` → `scripts/plugin-run-mfcc.mjs`
 - `pr:recreate` → `scripts/pr-recreate.mjs`
 - `pr:ship` → `scripts/pr-ship.mjs`
 - `pr:verify` → `scripts/pr-verify.mjs`
@@ -1254,7 +1255,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1137)
+## All code files (1138)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -2129,6 +2130,7 @@
 - `scripts/persona-memory/lib/subconscious-retrieval.test.mjs`
 - `scripts/plan-week-if-monday.mjs`
 - `scripts/plan-week-if-monday.test.mjs`
+- `scripts/plugin-run-mfcc.mjs`
 - `scripts/pr-recreate.mjs`
 - `scripts/pr-recreate.test.mjs`
 - `scripts/pr-ship.mjs`

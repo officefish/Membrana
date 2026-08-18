@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14206/14400 · статус ok
+Записей: 50 · бюджет 14384/14400 · статус ok
 <!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 298 (причины в op-log) -->
+
+### 2026-08-18 · позиция · team-evening-feedback
+
+> Ozhegov. Оценка артефактов: DAILY_CODE_REVIEW корректно нашёл структурный риск — динамический `import('@membrana/plugin-contracts')` в `CollectionsPluginHostService.onModuleInit` через модульный синглтон `pluginContractsPromise`. Утренние документы не заметили этого — потолок […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-18.md#reply-1`
 
 ### 2026-08-17 · позиция · server-plugin-foundation-m0-order
 
@@ -296,8 +302,8 @@
 
 — источник: `docs/seanses/evening-review-predicate-m4-memoization-2026-08-01.md#reply-1`
 
-### 2026-08-01 · позиция · evening-review-predicate-m4s-existing-organs
+### 2026-07-23 · позиция · llm-procedure-channels-m4b-panel
 
-> Леммы. archive-night-hunt и archive-daily-day — имена шагов 2 и 3 по фактическому источнику evening-ritual-steps.json. Их функция из имён читается как архивирование ночных и дневных артефактов — не транскриптов сессий. sessions:scan и sessions:extract — отдельные скрипты с […] _(реплик в сеансе: 5)_
+> BRIEF: админ **управляет** каналом — кандидат 3 (read-only v1) прямо противоречит. Кандидат 2 (новый SPA) — лишний host. Кандидат 1: раздел в `apps/panel` на panel.mmbrn.tech. _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/evening-review-predicate-m4s-existing-organs-2026-08-01.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m4b-panel-2026-07-23-2026-07-23.md#reply-1`

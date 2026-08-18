@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14265/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 301 (причины в op-log) -->
+Записей: 49 · бюджет 14235/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 302 (причины в op-log) -->
+
+### 2026-08-18 · позиция · team-evening-feedback
+
+> Vesnin. Оценка артефактов: MAIN_DAY_ISSUE точно указал `server-plugin-foundation` как первую разблокированную карточку после гейта; форма решения по #1961 ратифицирована 17.08 и день это подтвердил кодом. Расхождение с STRATEGY_DAY (вещдок 17.07) не мешало — стратегия дня […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-18.md#reply-1`
 
 ### 2026-08-17 · позиция · server-plugin-foundation-m0-order
 
@@ -295,9 +301,3 @@
 > Матч узкий. Три органа слипаются в одном слове — наша задача их развести и сказать, что именно владелец потребовал вернуть в голову вечера, а что уже там стоит или стоять не должно. Требование 3 из #569 — не абстрактная норма, это конкретное архитектурное решение с причиной. […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/evening-review-predicate-m4-memoization-2026-08-01.md#reply-1`
-
-### 2026-08-01 · позиция · evening-review-predicate-m4s-existing-organs
-
-> Стоп. Архитектор поставил правильную конструкцию, но операциональный вопрос повис. Фактическая нумерация: шаги 1–5 — это bridge-close, archive-night-hunt, archive-daily-day, truth-cool, rag-index. Они в голове. Вопрос: куда именно встают scan/extract/archivarius? Владелец сказал […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/evening-review-predicate-m4s-existing-organs-2026-08-01.md#reply-1`
