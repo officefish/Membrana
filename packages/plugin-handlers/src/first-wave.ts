@@ -30,6 +30,7 @@ const withSink = (manifest: HandlerManifest, executor: PluginExecutor, sink: Fir
 /** Регистрирует шесть; возвращает манифесты в порядке регистрации. Ошибка хоста не глотается. */
 export function registerFirstWave(host: IPluginHost, deps: FirstWaveDeps): ReadonlyArray<HandlerManifest> {
   host.registerPlugin(MFCC_HANDLER_MANIFEST, withSink(MFCC_HANDLER_MANIFEST, createMfccExecutor({ ...deps.mfcc, manifest: MFCC_HANDLER_MANIFEST }), deps.onResult));
-  for (const manifest of STUB_HANDLER_MANIFESTS) host.registerPlugin(manifest, withSink(manifest, notImplementedExecutor(manifest), deps.onResult));
+  // Заглушки без сида: их execute бросает до любого результата — сиду нечего нести (ревью #1975, P0-1).
+  for (const manifest of STUB_HANDLER_MANIFESTS) host.registerPlugin(manifest, notImplementedExecutor(manifest));
   return FIRST_WAVE_MANIFESTS;
 }

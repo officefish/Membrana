@@ -86,8 +86,9 @@ const sshExec = (conn, cmd) => new Promise((ok, no) => conn.exec(cmd, (err, stre
   let out = ''; stream.on('data', (d) => { out += d; }).on('close', () => ok(out.trim()));
 }));
 
-/** SSH-туннель к Mongo офиса: контейнер наружу порт не публикует, адрес берём у docker на месте. */
-export async function openOfficeMongoTunnel() {
+/** SSH-туннель к Mongo офиса: контейнер наружу порт не публикует, адрес берём у docker на месте. Не экспортируется:
+ * закрытие гарантирует только `finally` в main() (ревью #1975, P0-2). */
+async function openOfficeMongoTunnel() {
   const { Client } = await import('ssh2');
   const conn = new Client();
   await new Promise((ok, no) => conn.on('ready', ok).on('error', no).connect(getOfficeSshConfig()));

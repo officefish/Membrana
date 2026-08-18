@@ -71,7 +71,7 @@ describe('первая волна — шесть handler в хосте collectio
       expect((err as Error).name).toBe('PluginNotImplementedError');
     }
   });
-  it('onResult получает результат mfcc после execute (мост в plugin-results — сид, не хост); заглушки до сида не доходят', async () => {
+  it('onResult получает результат mfcc после execute (мост в plugin-results — сид, не хост); заглушка бросает, сид не зовётся', async () => {
     const host = fakeHost();
     const got: string[] = [];
     registerFirstWave(host, {
@@ -81,7 +81,7 @@ describe('первая волна — шесть handler в хосте collectio
     const configHash = mfccConfigHashOf(MFCC_HANDLER_MANIFEST, PRESET, 'normal');
     const inputHash = 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'; // sha256('') — пустой срез
     await host.request(MFCC_HANDLER_MANIFEST.id, 'collections.sample_added', { ...ctx(MFCC_HANDLER_MANIFEST.id), fingerprints: { inputHash, configHash } });
-    await host.request(STUB_HANDLER_MANIFESTS[0]!.id, 'collections.sample_added', ctx(STUB_HANDLER_MANIFESTS[0]!.id)).catch(() => undefined);
+    await expect(host.request(STUB_HANDLER_MANIFESTS[0]!.id, 'collections.sample_added', ctx(STUB_HANDLER_MANIFESTS[0]!.id))).rejects.toBeInstanceOf(PluginNotImplementedError);
     expect(got).toEqual(['membrana.handler.mfcc:r:handler']);
   });
 });
