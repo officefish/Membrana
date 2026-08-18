@@ -36,6 +36,18 @@ function state(): StateRecord {
   };
 }
 
+function document(): RunRecord & {
+  pluginId: PluginId;
+  version: string;
+  collectionId: string;
+  runId: string;
+  mountTarget: RunRecord['address']['mountTarget'];
+  stateRecord: StateRecord;
+} {
+  const record = run();
+  return { ...record, ...record.address, stateRecord: state() };
+}
+
 class FakeMongoStore extends MongoPluginResultsStore {
   connects = 0;
 
@@ -67,7 +79,7 @@ describe('MongoPluginResultsStore', () => {
       updateOne: async (filter: unknown, update: unknown, options: unknown) => updates.push({ filter, update, options }),
       find: (filter: unknown, options: unknown) => {
         finds.push({ filter, options });
-        return { toArray: async () => [run()] };
+        return { toArray: async () => [document()] };
       },
     };
     const store = new FakeMongoStore({ ARCHIVARIUS_MONGO_URI: 'mongodb://fake' } as AppConfig, fake);
