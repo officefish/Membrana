@@ -26,6 +26,7 @@
   "dependencies": {
     "@membrana/mfcc-analyzer-service": "*",
     "@membrana/plugin-contracts": "*",
+    "@membrana/wav-decode": "*",
     "meyda": "^5.6.3"
   },
   "devDependencies": {

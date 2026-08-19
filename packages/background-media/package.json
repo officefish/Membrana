@@ -24,6 +24,7 @@
     "@membrana/drone-detection-orchestrator-service": "*",
     "@membrana/plugin-contracts": "*",
     "@membrana/plugin-handlers": "*",
+    "@membrana/wav-decode": "*",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-fastify": "^11.0.0",

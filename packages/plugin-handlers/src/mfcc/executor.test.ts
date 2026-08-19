@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { PluginContext, RunFingerprints } from '@membrana/plugin-contracts';
@@ -95,15 +94,23 @@ describe('membrana.handler.mfcc — executor', () => {
     expect(r.samples[0]).toMatchObject({ outcome: 'refused', reason: expect.stringMatching(/mp3/) });
   });
 
-  it('норма #1950 структурно: у порта чтения два члена, оба читают; executor импортирует только ядро, контракты и порт', () => {
+  it('норма #1950 структурно: у порта чтения два члена, оба читают; граница импортов executor — правило линтера', async () => {
     const port: Record<keyof CollectionSampleReader, true> = { listSamples: true, readAudio: true };
     expect(Object.keys(port).sort()).toEqual(['listSamples', 'readAudio']);
-    for (const file of ['executor.ts', 'preset.ts', '../sample-reader.ts', '../wav.ts']) {
-      const src = readFileSync(join(HERE, file), 'utf8');
-      const imports = [...src.matchAll(/^import .* from '([^']+)';/gmu)].map((m) => m[1]);
-      for (const spec of imports) {
-        expect(spec, `${file} → ${spec}`).toMatch(/^(@membrana\/(mfcc-analyzer-service|plugin-contracts)|\.\.?\/(sample-reader|wav|manifest)\.js|\.\/preset\.js|node:crypto)$/u);
-      }
-    }
-  });
+    type Lint = { messages: Array<{ ruleId: string | null; message: string }> };
+    type ESLintCtor = new (o: { cwd: string }) => { lintFiles(p: string[]): Promise<Lint[]>; lintText(t: string, o: { filePath: string }): Promise<Lint[]> };
+    // @ts-expect-error — @types/eslint в дереве нет; форма названа типом выше
+    const { ESLint } = (await import('eslint')) as { ESLint: ESLintCtor };
+    const eslint = new ESLint({ cwd: join(HERE, '../..') });
+    const clean = await eslint.lintFiles([join(HERE, 'executor.ts')]);
+    expect(clean.flatMap((r) => r.messages.map((m) => `${m.ruleId}: ${m.message}`))).toEqual([]);
+    // Тот же файл с запрещённым импортом — правило обязано сработать, иначе граница декоративна.
+    const dirty = await eslint.lintText(`import { readFileSync } from 'node:fs';
+import { PrismaClient } from '@prisma/client';
+export const x = [readFileSync, PrismaClient];
+`, { filePath: join(HERE, 'executor.ts') });
+    const ids = dirty.flatMap((r) => r.messages.filter((m) => m.ruleId === 'no-restricted-imports').map((m) => m.message));
+    expect(ids).toHaveLength(2);
+    expect(ids.join(' ')).toMatch(/#1950/u);
+  }, 60_000); // ESLint + typescript-парсер грузятся секунды; на CI под нагрузкой 5 с по умолчанию не хватило
 });

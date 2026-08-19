@@ -116,7 +116,8 @@ export function createMfccExecutor(deps: MfccExecutorDeps): PluginExecutor {
     const pcm = decoded.audio.samples;
     for (let start = 0; start + config.bufferSize <= pcm.length; start += config.bufferSize) {
       const r = processWindow(
-        { samples: pcm.subarray(start, start + config.bufferSize), sampleRate: config.sampleRate, startIndex: start, nodeId: null },
+        // nodeId — имя источника кадра по контракту ядра; у серверного плагина это проба (#1972 п.2).
+        { samples: pcm.subarray(start, start + config.bufferSize), sampleRate: config.sampleRate, startIndex: start, nodeId: s.id },
         config,
         deps.extract,
       );

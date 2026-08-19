@@ -9,7 +9,7 @@
     "@membrana/detector-base"
   ],
   "withoutTests": [],
-  "corpusSize": 40,
+  "corpusSize": 41,
   "ranking": [
     {
       "name": "@membrana/core",
@@ -81,6 +81,10 @@
     },
     {
       "name": "@membrana/sample-playback-service",
+      "fanIn": 2
+    },
+    {
+      "name": "@membrana/wav-decode",
       "fanIn": 2
     },
     {
