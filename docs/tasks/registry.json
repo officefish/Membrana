@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "capture-sidecar-protocol",
+      "title": "Спутник записи и порядок съёмки",
+      "promptPath": "docs/prompts/CAPTURE_SIDECAR_PROTOCOL_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "Форма спутника и нарезка ратифицированы владельцем; след доставки — локальный спринт",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-19",
+      "archivedAt": null,
+      "leadPersona": "kuryokhin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "plugin-results-payload-pocket",
       "title": "Словарь: карман payload в RunResult vs расширение в корне (passthrough в приёмнике моста)",
       "promptPath": "docs/prompts/PLUGIN_RESULTS_PAYLOAD_POCKET_PROMPT.md",
