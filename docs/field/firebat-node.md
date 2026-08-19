@@ -56,3 +56,28 @@ YYYY-MM-DD HH:MM | файл | класс | что снимали | рассто�
 
 Классы словаря строки: `фон` · `проба` · `дрон` · `улица` · `полигон` · `калибровка`
 (расширение — правкой этого файла, не синонимом в строке).
+
+## Установка приложения узла (b5, ADR-0027)
+
+Один прогон на узле от пользователя, под которым пишется звук (на Firebat: `firebat-t6\indic`),
+комплект — с флешки `D:\membrana-node` или из `scripts/` репозитория:
+
+```
+powershell -ExecutionPolicy Bypass -File firebat-service-install.ps1 `
+  -MediaUrl https://media.membrana.space -DeviceId <uuid устройства> -NodeKey <ключ узла> -KitSource D:\membrana-node
+```
+
+Что ставится: `node` и `ffmpeg` (winget, если нет) · комплект `C:\membrana-node\{firebat-poller.mjs,
+field-capture.mjs, lib\capture-sidecar.mjs}` · `.env` узла **без служебного токена** (ключ узла
+выдаёт оператор один раз: `POST /v1/devices/:deviceId/node-key` под `X-Membrana-Token`) · задача
+планировщика `MembranaNode` — **при входе пользователя**, перезапуск через минуту при падении.
+Почему вход пользователя, а не служба SYSTEM: захват звука через dshow живёт в интерактивной
+сессии; чтобы узел поднимался после перезагрузки сам, владелец включает автовход (`netplwiz`).
+Проверка руками: `cd C:\membrana-node; node firebat-poller.mjs --once`. Снять: тот же скрипт с
+`-Uninstall` (записи и комплект остаются).
+
+Ловушка, пойманная при написании: PowerShell 5.1 читает `.ps1` без BOM как cp1251 — кириллица
+в строках ломает разбор; файл сохранён **UTF-8 с BOM** (ловушка класса «PS 5.1 UTF-8»).
+Установщик Studio (`yarn studio:package`) собрался впервые 19.08 с первого раза — `Membrana Studio
+Setup 0.1.0.exe` (~150 МБ) в `apps/membrana-studio/release/` (каталог в `.gitignore`); комплект
+узла в NSIS пока не вшит — остаток после приёмки b7.

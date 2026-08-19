@@ -40,3 +40,6 @@
 {"ts":"2026-08-19T13:57:13.105Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-19T13:56:53.880Z","origin":"ask-persona"}
 {"ts":"2026-08-19T13:57:13.115Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-19T13:56:53.880Z","origin":"ask-persona"}
 {"ts":"2026-08-19T13:57:13.122Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-08-17-server-plugin-foundation-m1-vocabulary","reason":"тем же приёмом фиксирую словарь исходов и .env-контракт как леммы до подписи.","origin":"ask-persona"}
+{"ts":"2026-08-19T14:38:05.852Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-19T14:37:41.406Z","origin":"ask-persona"}
+{"ts":"2026-08-19T14:38:05.869Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-19T14:37:41.406Z","origin":"ask-persona"}
+{"ts":"2026-08-19T14:38:05.876Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-23-llm-procedure-channels-m2b-control-plane","reason":"там я держал границу «канал = замкнутый путь носителей до потребителя»; здесь та же проверка: путь «оператор → -NodeKey → .env узла → poller» замкнут, служебный токен в него не входит по построению, это ровно норма ADR-0027 Р3.","origin":"ask-persona"}
