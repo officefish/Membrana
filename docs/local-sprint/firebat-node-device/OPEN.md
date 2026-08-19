@@ -4,7 +4,7 @@
 |------|----------|
 | Sprint | `firebat-node-device` |
 | Procedure | `membrana-local-sprint` |
-| Registry card | `firebat-node-device` (L, магистраль 19.08 по owner-choice; Issue заведётся с первым PR) |
+| Registry card | `firebat-node-device` (L, магистраль 19.08 по owner-choice; Issue [#1998](https://github.com/officefish/Membrana/issues/1998)) |
 | Prompt | [`FIREBAT_NODE_DEVICE_PROMPT.md`](../../prompts/FIREBAT_NODE_DEVICE_PROMPT.md) · точка входа сессии `SESSION_A_NODE_DEVICE_SPRINT_2026-08-19.md` |
 | Cut plan | [`firebat-node-device.json`](../../sprint/cut/firebat-node-device.json) · ратифицирован владельцем 2026-08-19T12:12Z («ратифицирую») |
 | Cutter context | Ожегов, `yarn ask ozhegov` 19.08, четыре захода → [`cut-firebat-node-device-20260819-ozhegov-run.md`](../../discussions/cut-firebat-node-device-20260819-ozhegov-run.md) |
@@ -34,7 +34,7 @@
 
 | Блок | Персона | Зона | Оценка | Статус |
 |------|---------|------|-------:|--------|
-| b1 ADR транспорта и дома (первым) | ozhegov | `docs/adr/` | 60 | ждёт |
+| b1 ADR транспорта и дома (первым) | ozhegov | `docs/adr/ADR-0027` | 60 | исполнен · подпись Ожегова 19.08 |
 | b2 ключ узла | ozhegov | `…/background-media/src/modules/firebat-node/node-key.*` | 180 | ждёт |
 | b3 API опроса и очередь заданий | ozhegov | `…/firebat-node/{controller,task-queue,module,index}` | 260 | ждёт |
 | b4 poller узла (однофайловый) | ozhegov | `scripts/firebat-poller.mjs` + тест | 300 | ждёт |
