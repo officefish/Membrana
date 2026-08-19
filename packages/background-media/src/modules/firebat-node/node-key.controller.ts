@@ -1,7 +1,7 @@
 /**
  * Выдача и отзыв ключа узла (ADR-0027 Р3). Обе ручки — под служебным токеном + DeviceGuard:
  * ключ выдаёт оператор сервера, не сам узел. Сырой ключ возвращается ОДИН раз.
- * Монтирование модуля — блок b3 (firebat-node.module.ts / index.ts).
+ * Монтируется FirebatNodeModule (ревью #2003: модуль в b2, ручки узла добавит b3).
  */
 import { ConflictException, Controller, Delete, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
@@ -30,7 +30,7 @@ export class NodeKeyController {
   async issue(@Param('deviceId') deviceId: string, @Query('rotate') rotate?: string) {
     const res = await this.keys.issue(deviceId, { rotate: rotate === 'true' });
     if (res.outcome === 'already_active') {
-      throw new ConflictException(`Active node key ${res.keyId} exists for device ${deviceId}; pass ?rotate=true to replace it`);
+      throw new ConflictException(`Active node key exists for device ${deviceId}; pass ?rotate=true to replace it`);
     }
     const { key } = res;
     return {
