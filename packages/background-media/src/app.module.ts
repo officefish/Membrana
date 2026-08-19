@@ -13,6 +13,7 @@ import { TrendsTemplatesModule } from './modules/trends-templates/trends-templat
 import { DeviceScenariosModule } from './modules/device-scenarios/device-scenarios.module';
 import { DeviceWorkspacesModule } from './modules/device-workspaces/device-workspaces.module';
 import { LinearSnapshotModule } from './linear-snapshot/linear-snapshot.module';
+import { PluginResultsBridgeModule } from './modules/plugin-results-bridge/plugin-results-bridge.module';
 
 const testImports =
   process.env.NODE_ENV === 'test'
@@ -58,6 +59,7 @@ const testImports =
     DeviceScenariosModule,
     DeviceWorkspacesModule,
     LinearSnapshotModule,
+    PluginResultsBridgeModule,
   ],
   controllers: [HealthController],
 })
