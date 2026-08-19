@@ -6,8 +6,14 @@
   "mode": "explicit-honest",
   "cutBy": "vesnin",
   "coverage": {
-    "traceKinds": ["context_run", "review_pass"],
-    "absent": ["contract_signature", "session_prep"],
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
     "reason": "Носители contract_signature/session_prep не являются обязательным машинным корпусом membrana-local-sprint; ответственность проверяется планом, зонами, контекстными следами, review-вещдоками и procedure-run-journal."
   },
   "window": {
@@ -20,19 +26,29 @@
       "blockId": "b1-bridge-form",
       "persona": "vesnin",
       "context": "vesnin",
-      "zone": ["docs/plugins/results-bridge-form.md"],
-      "estimate": { "changedLines": 80 },
+      "zone": [
+        "docs/plugins/results-bridge-form.md"
+      ],
+      "estimate": {
+        "changedLines": 80
+      },
       "revisionAt": "2026-08-19T11:20:00+03:00",
-      "note": "Форма моста: HTTP push media → office (POST RunRecord в модуль plugin-results офиса, ключ класса X-Membrana-Token). Обоснование против очереди (лишняя инфраструктура, M4 уже отверг Redis), прямой Mongo из media (нарушает границу дома M2/M3; скрипт 18.08 — временный обход, не образец) и pull (media стала бы вторым домом результатов — против #1950). Именованные исходы отправки, порядок деплоя office → media, риски."
+      "note": "Форма моста: HTTP push media → office (POST RunRecord в модуль plugin-results офиса, ключ класса X-Membrana-Token). Обоснование против очереди (лишняя инфраструктура, M4 уже отверг Redis), прямой Mongo из media (нарушает границу дома M2/M3; скрипт 18.08 — временный обход, не образец) и pull (media стала бы вторым домом результатов — против #1950). Именованные исходы отправки, порядок деплоя office → media, риски.",
+      "revisionOf": "4ab1440d68a21ae15a01a6d4a8f656290a84ba6fd7250f58157c0905c5e140bc"
     },
     {
       "blockId": "b2-office-receiver",
       "persona": "ozhegov",
       "context": "ozhegov",
-      "zone": ["packages/background-office/src/modules/plugin-results/"],
-      "estimate": { "changedLines": 220 },
+      "zone": [
+        "packages/background-office/src/modules/plugin-results/"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
       "revisionAt": "2026-08-19T11:20:00+03:00",
-      "note": "Контроллер POST /plugin-results/runs (ApiTokenGuard) → PluginResultsService.writeRun; тело — RunRecord (+ StateRecord?) по контрактам plugin-contracts, валидация формы (адрес из пяти полей, два отпечатка, resumeMode, completedAt как ISO → Date), идемпотентность по уникальному индексу (повтор того же runId — не 500). Зубы рядом. Никакой новой математики."
+      "note": "Контроллер POST /plugin-results/runs (ApiTokenGuard) → PluginResultsService.writeRun; тело — RunRecord (+ StateRecord?) по контрактам plugin-contracts, валидация формы (адрес из пяти полей, два отпечатка, resumeMode, completedAt как ISO → Date), идемпотентность по уникальному индексу (повтор того же runId — не 500). Зубы рядом. Никакой новой математики.",
+      "revisionOf": "9e3147edbf55f0862f35b7cf0082ad50d2f4be62cdd8147011c050b449bf5673"
     },
     {
       "blockId": "b3-media-sender",
@@ -43,9 +59,12 @@
         "packages/background-media/src/config/env.schema.ts",
         "packages/background-media/src/app.module.ts"
       ],
-      "estimate": { "changedLines": 220 },
+      "estimate": {
+        "changedLines": 220
+      },
       "revisionAt": "2026-08-19T11:20:00+03:00",
-      "note": "Новый модуль plugin-results-bridge: PluginResultsBridgeService.send(runRecord) → fetch POST в office с таймаутом; env OFFICE_API_URL / OFFICE_API_TOKEN (optional — без них исход office-not-configured, сервис стартует). Исходы закрытым словарём: sent · office-not-configured · office-unreachable · office-rejected. Повторов-до-бесконечности нет: одна попытка + одна повторная на сетевой отказ, дальше — именованный отказ в лог. Зубы рядом (fetch подменяется)."
+      "note": "Новый модуль plugin-results-bridge: PluginResultsBridgeService.send(runRecord) → fetch POST в office с таймаутом; env OFFICE_API_URL / OFFICE_API_TOKEN (optional — без них исход office-not-configured, сервис стартует). Исходы закрытым словарём: sent · office-not-configured · office-unreachable · office-rejected. Повторов-до-бесконечности нет: одна попытка + одна повторная на сетевой отказ, дальше — именованный отказ в лог. Зубы рядом (fetch подменяется).",
+      "revisionOf": "f5e0a98d86a8c15edbdae593da33cfa86b11d5a385239cc6de3af0bfb4273003"
     },
     {
       "blockId": "b4-media-request-entry",
@@ -55,18 +74,31 @@
         "packages/background-media/src/modules/collections/",
         "packages/plugin-handlers/src/"
       ],
-      "estimate": { "changedLines": 260 },
+      "estimate": {
+        "changedLines": 260
+      },
       "revisionAt": "2026-08-19T11:20:00+03:00",
-      "note": "Вход без скрипта: POST /collections/:collectionId/plugins/:pluginId/request (ApiTokenGuard media) → собирает PluginContext (runId UUID v7 — перенос из scripts/plugin-run-mfcc.mjs в plugin-handlers как общий помощник; отпечатки тем же чтением, что у прогона — mfccFingerprintsOf через FirstWaveDeps; resumeMode 'fresh'; trigger из тела, из закрытого PLUGIN_TRIGGERS) → host.request. Провод сида: onResult в FirstWavePluginsRegistrar собирает RunRecord {…result, address, fingerprints, resumeMode} и зовёт мост (b3); исход моста — в лог именем. Зубы рядом. Контракты plugin-contracts не трогаются."
+      "note": "Вход без скрипта: POST /collections/:collectionId/plugins/:pluginId/request (ApiTokenGuard media) → собирает PluginContext (runId UUID v7 — перенос из scripts/plugin-run-mfcc.mjs в plugin-handlers как общий помощник; отпечатки тем же чтением, что у прогона — mfccFingerprintsOf через FirstWaveDeps; resumeMode 'fresh'; trigger из тела, из закрытого PLUGIN_TRIGGERS) → host.request. Провод сида: onResult в FirstWavePluginsRegistrar собирает RunRecord {…result, address, fingerprints, resumeMode} и зовёт мост (b3); исход моста — в лог именем. Зубы рядом. Контракты plugin-contracts не трогаются.",
+      "revisionOf": "af0865a701aadfeedd995613183e19d6ffa15a03399c7262bdcad03913aaf37a"
     },
     {
       "blockId": "b5-live-acceptance",
       "persona": "vesnin",
       "context": "vesnin",
-      "zone": ["docs/plugins/results-bridge-live-run-2026-08-19.md"],
-      "estimate": { "changedLines": 70 },
+      "zone": [
+        "docs/plugins/results-bridge-live-run-2026-08-19.md"
+      ],
+      "estimate": {
+        "changedLines": 70
+      },
       "revisionAt": "2026-08-19T11:20:00+03:00",
-      "note": "Приёмка: POST request в media → хост collections → mfcc → сид → мост → office → RunRecord в plugin-results; документ прогона читается обратно readRuns (или GET office) — не лог. Условие: оба сервиса несут новый код (деплой office → media по слову владельца; лабораторная дорожка — оба локально, office с Mongo по туннелю). Скрипт plugin:run:mfcc в приёмке не участвует и не удаляется."
+      "note": "Приёмка: POST request в media → хост collections → mfcc → сид → мост → office → RunRecord в plugin-results; документ прогона читается обратно readRuns (или GET office) — не лог. Условие: оба сервиса несут новый код (деплой office → media по слову владельца; лабораторная дорожка — оба локально, office с Mongo по туннелю). Скрипт plugin:run:mfcc в приёмке не участвует и не удаляется.",
+      "revisionOf": "753ea8f1bf372b74e21cbe0efce59852dcfe3553e50573a98539dbbaf3b0c12b"
     }
-  ]
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-19T08:25:01+00:00",
+    "digest": "1883a31320c05896b839a8a56207d9a27a9f9ff8f4838709dbd6e826e8ebc810"
+  }
 }

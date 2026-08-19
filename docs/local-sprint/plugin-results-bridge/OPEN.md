@@ -6,11 +6,11 @@
 | Procedure | `membrana-local-sprint` |
 | Registry epic | `server-plugin-foundation` (#1961 — упоминается, не закрывается) |
 | Prompt | [`PLUGIN_RESULTS_BRIDGE_PROMPT.md`](../../prompts/PLUGIN_RESULTS_BRIDGE_PROMPT.md) · точка входа сессии `SESSION_B_RESULTS_BRIDGE_SPRINT_2026-08-19.md` |
-| Cut plan | [`plugin-results-bridge.json`](../../sprint/cut/plugin-results-bridge.json) · **ждёт ратификации владельца** |
+| Cut plan | [`plugin-results-bridge.json`](../../sprint/cut/plugin-results-bridge.json) · ратифицирован владельцем 2026-08-19T08:25Z («Ратифицирую») |
 | Cutter context | Веснин, `yarn ask vesnin` 19.08 11:18 → [`plugin-results-bridge-cut.md`](../../discussions/plugin-results-bridge-cut.md) |
 | Lead | vesnin |
 | Support | ozhegov · dynin |
-| Status | open · **ratify** (код не начат) |
+| Status | open · execute |
 
 ## Зачем
 
