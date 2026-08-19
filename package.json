@@ -458,6 +458,7 @@
     "worktree:resolve": "node scripts/worktree-resolution.mjs",
     "vdr:blind": "node scripts/vdr-blind-corpus.mjs",
     "field:capture": "node scripts/field-capture.mjs",
+    "firebat:poller": "node scripts/firebat-poller.mjs",
     "capture:sidecar": "node scripts/capture-sidecar.mjs",
     "plugin:run:mfcc": "node scripts/plugin-run-mfcc.mjs"
   },

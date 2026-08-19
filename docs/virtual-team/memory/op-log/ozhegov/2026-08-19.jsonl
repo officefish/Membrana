@@ -37,3 +37,6 @@
 {"ts":"2026-08-19T13:17:03.881Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-08-06-static-mmbrn-container-m5-affine-role","reason":"закрытый словарь операций (upload-revision, write-metadata): подтверждает, что «сдать результат» и «залить файл» разводятся не двумя ручками, а одной операцией upload-revision, вызванной из контекста задания.","origin":"ask-persona"}
 {"ts":"2026-08-19T13:23:52.582Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-19T13:23:31.037Z","origin":"ask-persona"}
 {"ts":"2026-08-19T13:23:52.668Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-19T13:23:31.037Z","origin":"ask-persona"}
+{"ts":"2026-08-19T13:57:13.105Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-19T13:56:53.880Z","origin":"ask-persona"}
+{"ts":"2026-08-19T13:57:13.115Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-19T13:56:53.880Z","origin":"ask-persona"}
+{"ts":"2026-08-19T13:57:13.122Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-08-17-server-plugin-foundation-m1-vocabulary","reason":"тем же приёмом фиксирую словарь исходов и .env-контракт как леммы до подписи.","origin":"ask-persona"}
