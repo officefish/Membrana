@@ -45,6 +45,7 @@ export function measureWav(buf) {
     off += 8 + size + (size % 2);
   }
   if (dataOff === null) throw new Error('WAV без блока data');
+  if (channels <= 0) throw new Error('WAV: число каналов должно быть положительным');
   const frames = Math.floor(dataLen / (2 * channels));
   let peak = 0;
   let sum = 0;

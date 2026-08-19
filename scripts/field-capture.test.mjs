@@ -70,6 +70,12 @@ test('measureWav: свойства читаются из файла, а не п�
   assert.ok(Math.abs(m.seconds - 2) < 0.01);
 });
 
+test('measureWav: ноль каналов отвергается до расчёта кадров', () => {
+  const malformed = makeWav();
+  malformed.writeUInt16LE(0, 22);
+  assert.throws(() => measureWav(malformed), /число каналов/u);
+});
+
 test('buildMeta: измеряемые поля в объявленное не попадают НИКОГДА', () => {
   const meta = buildMeta(parseArgs(['--what', 'drone', '--distance', '50']), 'stamp');
   for (const field of MEASURED_FIELDS) {
