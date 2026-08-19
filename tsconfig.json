@@ -6,6 +6,7 @@
     { "path": "./packages/agenda" },
     { "path": "./packages/plugin-contracts" },
     { "path": "./packages/plugin-handlers" },
+    { "path": "./packages/libs/wav-decode" },
     { "path": "./packages/device-board" },
     { "path": "./packages/services/audio-engine" },
     { "path": "./packages/services/usercase-catalog" },

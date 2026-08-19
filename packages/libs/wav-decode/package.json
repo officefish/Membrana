@@ -1,0 +1,31 @@
+{
+  "name": "@membrana/wav-decode",
+  "version": "0.1.0",
+  "description": "Один WAV PCM16 → моно Float32 декодер на три потребителя (plugin-handlers, background-media, scripts/lib/wav-read) вместо трёх копий (#1972). Собран CommonJS нарочно: его require'ит CJS-сервис media на Node 20 и import'ят ESM-пакеты и .mjs-скрипты.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist .turbo .tsbuildinfo",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^3.2.0"
+  }
+}

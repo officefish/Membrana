@@ -2226,6 +2226,7 @@ __metadata:
     "@membrana/drone-detection-orchestrator-service": "npm:*"
     "@membrana/plugin-contracts": "npm:*"
     "@membrana/plugin-handlers": "npm:*"
+    "@membrana/wav-decode": "npm:*"
     "@nestjs/common": "npm:^11.0.0"
     "@nestjs/core": "npm:^11.0.0"
     "@nestjs/platform-fastify": "npm:^11.0.0"
@@ -2685,6 +2686,7 @@ __metadata:
   dependencies:
     "@membrana/mfcc-analyzer-service": "npm:*"
     "@membrana/plugin-contracts": "npm:*"
+    "@membrana/wav-decode": "npm:*"
     eslint: "npm:^8.57.0"
     meyda: "npm:^5.6.3"
     rimraf: "npm:^5.0.0"
@@ -2879,6 +2881,17 @@ __metadata:
     vitest: "npm:^3.2.0"
   peerDependencies:
     react: ^18.0.0
+  languageName: unknown
+  linkType: soft
+
+"@membrana/wav-decode@npm:*, @membrana/wav-decode@workspace:packages/libs/wav-decode":
+  version: 0.0.0-use.local
+  resolution: "@membrana/wav-decode@workspace:packages/libs/wav-decode"
+  dependencies:
+    eslint: "npm:^8.57.0"
+    rimraf: "npm:^5.0.0"
+    typescript: "npm:^5.4.0"
+    vitest: "npm:^3.2.0"
   languageName: unknown
   linkType: soft
 
