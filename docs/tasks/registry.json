@@ -22,6 +22,27 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "contour-sanity-2026-08-19",
+      "title": "Санитария контура прогонов через спринт: диагноз красного rag-теста, ревью-долг #1951/#1953, хвосты #1972, синглтон импорта в хосте",
+      "promptPath": "docs/prompts/SESSION_G_CONTOUR_SANITY_SPRINT_2026-08-19.md",
+      "githubIssue": 1972,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-19",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin",
+        "kuryokhin"
+      ],
+      "notes": "слово владельца 19.08: вся работа через membrana-local-sprint; у каждого дефекта своя персона; media#test не чинить (локальный артефакт песочницы, CI зелёный)",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "plugin-results-payload-pocket",
       "title": "Словарь: карман payload в RunResult vs расширение в корне (passthrough в приёмнике моста)",
       "promptPath": "docs/prompts/PLUGIN_RESULTS_PAYLOAD_POCKET_PROMPT.md",
@@ -71,7 +92,7 @@
       "linearId": null,
       "size": "L",
       "status": "active",
-      "sprintKind": "day-sprint",
+      "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-19",
       "archivedAt": null,
       "leadPersona": "ozhegov",
@@ -80,27 +101,6 @@
         "kuryokhin"
       ],
       "notes": "Слово владельца 18.08 вечером (магистраль 19.08): «мы должны получить все необходимые права через установку нашего приложения; SSH — для отладки лабораторных работ». Ступень 1 плана SESSION_A_FIREBAT_NODE закрыта 18.08: узел пишет 48 кГц в заводском режиме карты (без Focusrite Control), отправляет сам, две записи приняты (62fe8ea1…, c4cfbf06…); скрипт переносим одним файлом (fix #1977). Ступени 2–3 НЕ закрыты: клиентский инсталлятор ни разу не собирался (apps/membrana-studio release/ нет). Узел за вторым роутером — вход снаружи закрыт; канал ОБЯЗАН быть исходящим от узла. Хвосты в магистраль: рабочее усиление с запасом (щелчок дал −1 dBFS), отдельный ключ на загрузку вместо служебного токена, круглосуточный режим — другой глагол, не field:capture.",
-      "archiveNotes": null,
-      "githubIssueClosedAt": null
-    },
-    {
-      "id": "contour-sanity-2026-08-19",
-      "title": "Санитария контура прогонов через спринт: диагноз красного rag-теста, ревью-долг #1951/#1953, хвосты #1972, синглтон импорта в хосте",
-      "promptPath": "docs/prompts/SESSION_G_CONTOUR_SANITY_SPRINT_2026-08-19.md",
-      "githubIssue": 1972,
-      "linearId": null,
-      "size": "M",
-      "status": "active",
-      "sprintKind": "membrana-local-sprint",
-      "createdAt": "2026-08-19",
-      "archivedAt": null,
-      "leadPersona": "ozhegov",
-      "supportPersonas": [
-        "dynin",
-        "vesnin",
-        "kuryokhin"
-      ],
-      "notes": "слово владельца 19.08: вся работа через membrana-local-sprint; у каждого дефекта своя персона; media#test не чинить (локальный артефакт песочницы, CI зелёный)",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
