@@ -53,7 +53,9 @@ export class PluginResultsController {
       collectionId,
       ...(pluginId ? { pluginId: pluginId as ReadRunsFilter['pluginId'] } : {}),
       ...(currentInputHash ? { currentInputHash } : {}),
-      ...(limit && Number.isFinite(Number(limit)) ? { limit: Number(limit) } : {}),
+      // Только положительное целое: `limit=0` у Mongo означает «без лимита», и строка '0' молча
+      // снимала бы ограничение (ревью PR #1981, P2).
+      ...(limit && Number.isInteger(Number(limit)) && Number(limit) > 0 ? { limit: Number(limit) } : {}),
     };
     return { runs: await this.results.readRuns(filter) };
   }

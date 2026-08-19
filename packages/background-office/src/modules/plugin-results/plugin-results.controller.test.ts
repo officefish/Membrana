@@ -10,6 +10,7 @@ import { PluginResultsController } from './plugin-results.controller';
 import { assertDtoMatchesContracts, writeRunBodySchema } from './plugin-results.dto';
 import { MemoryPluginResultsStore } from './plugin-results.memory-store';
 import { PluginResultsService } from './plugin-results.service';
+import type { PluginResultsStore } from './plugin-results.types';
 
 const body = (over: Record<string, unknown> = {}) => ({
   run: {
@@ -65,9 +66,25 @@ describe('PluginResultsController — приёмник моста media → offi
     expect((await c.readRuns('c-field')).runs).toHaveLength(0);
   });
 
-  it('pluginId вне формы <org>.<kind>.<slug> отвергает служба валидатором пакета контрактов', async () => {
-    const c = controller();
+  it('pluginId вне формы <org>.<kind>.<slug> отвергает СЛУЖБА валидатором пакета — до стора, каким бы стор ни был', async () => {
+    // Стор-шпион: если бы валидация жила в сторе, подмена стора её сняла бы молча (ревью PR #1981, блокер #2).
+    const calls: string[] = [];
+    const spyStore: PluginResultsStore = { writeRun: async (r) => { calls.push(r.address.pluginId); }, readRuns: async () => [] };
+    const c = new PluginResultsController(new PluginResultsService(spyStore));
     await expect(c.writeRun(body({ address: { ...body().run.address, pluginId: 'mfcc-detector' } }))).rejects.toBeInstanceOf(BadRequestException);
+    expect(calls).toEqual([]);
+    await c.writeRun(body());
+    expect(calls).toEqual(['membrana.handler.mfcc']);
+  });
+
+  it('limit: положительное целое проходит, 0 и мусор не снимают ограничение', async () => {
+    const seen: Array<number | undefined> = [];
+    const spyStore: PluginResultsStore = { writeRun: async () => {}, readRuns: async (f) => { seen.push(f.limit); return []; } };
+    const c = new PluginResultsController(new PluginResultsService(spyStore));
+    await c.readRuns('c', undefined, undefined, '5');
+    await c.readRuns('c', undefined, undefined, '0');
+    await c.readRuns('c', undefined, undefined, 'abc');
+    expect(seen).toEqual([5, undefined, undefined]);
   });
 
   it('чтение без collectionId — 400', async () => {
