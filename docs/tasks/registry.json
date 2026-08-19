@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "plugin-results-payload-pocket",
+      "title": "Словарь: карман payload в RunResult vs расширение в корне (passthrough в приёмнике моста)",
+      "promptPath": "docs/prompts/PLUGIN_RESULTS_PAYLOAD_POCKET_PROMPT.md",
+      "githubIssue": 1982,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-19",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "Follow-up ревью PR #1981 / P2 Ожегова b2: приёмник моста пропускает поля исполнителя passthrough; решение владельца словаря (Архитектор) — карман payload в RunResult контракта (класс по M1 уточнить) либо расширение в корне как норма. До решения passthrough остаётся с ссылкой на #1982.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "server-plugin-foundation"
+    },
+    {
       "id": "plugin-results-bridge",
       "title": "Мост media → office для результатов плагинов (RunRecord в plugin-results без скрипта)",
       "promptPath": "docs/prompts/PLUGIN_RESULTS_BRIDGE_PROMPT.md",
