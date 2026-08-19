@@ -1,10 +1,10 @@
-<!-- Сгенерировано: 2026-08-18T16:41:17.480Z (yarn code-review; daily, llm-anthropic) -->
+<!-- Сгенерировано: 2026-08-19T18:26:01.669Z (yarn code-review; daily, llm-anthropic) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: 5321dc05ecb84edeb736be7804d69cc6c02c062a^..547102f7dda0b34f9aac1314f02451e67e889bc1 (14 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 5321dc05 #1963 (582), ee40ba3b #1965 (717), 5295d87e #1967 (411), c6d344e8 #1971 (401), 389d1a2f #1970 (402), 383a38d6 #1975 (416), 547102f7 (867)
+> Период: aacc1732776baf22dfeb8f5bde1deee3e305b1f0^..054e371a4f8b2cf80953f5df1477803da9dd12e3 (26 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 1e42d6da #1980 (578), 18ba21c4 #1981 (741), 89764d90 #1987 (439), 776e9d67 #2003 (474), 574eb2b6 #2004 (644), 054e371a (847)
 
 ---
 
@@ -12,102 +12,96 @@ Tier: T2
 
 ---
 
-[Teamlead / Vesnin]:
+## Ведущий ревью: vesnin (Архитектор)
 
-PR size: oversized — семь PR >400 строк из 14 коммитов; дифф дня суммарно ~4000+ строк. Обоснование признаётся: план M6′ требовал параллельных сессий, и каждый PR — атомарная единица слоя (contracts → host → handlers → results → wiring → live-run). Тем не менее фиксирую P1-recommend: следующий аналогичный день должен давать промежуточные merge-чекпоинты внутри дня, а не seven PRs в один вечер.
+**Скоуп диффа:** 6 коммитов в развёрнутом виде + 6 oversized-PR (не развёрнуты); затронуты `packages/background-media`, `packages/services/rag`, `docs/` (ritual artifacts, sprint, discussions, registry). Автоматически T2: пути `background-media`, `rag-service`, плагинный контур (`plugin-results-bridge`).
 
-**Ключевой результат дня:** Т3.11 шторма исполнена — `membrana.handler.mfcc` прогнался живым на реальных полевых записях, `RunRecord` лежит в `plugin-results` (Mongo офиса), вещдок `docs/plugins/first-live-run-2026-08-18.md` существует. Это конкретный и измеримый прогресс.
+**Проверка бестиария (T5):**
+- B3 «DoD-на-механику» — в `contour-sanity-2026-08-19.json` DoD блока 3/4 сформулирован через «протокол персоны с вердиктом LGTM/BLOCK» (документ, не код) — **принято**, не механика.
+- B4 «Маркер-предсказанное-имя» — `//dod` блока 5 ссылается на `packages/libs/wav-decode/` — пакет ещё не существует в диффе; зуб «grep не найдёт своих копий» утверждает будущее состояние. **Флаг B4** — зафиксировать как риск, не BLOCK (sprint-cut, код ещё не написан, это план).
+- B6 «Молчаливый зелёный» — `ritual-evening-2026-08-18` закрыт статусом `fail` с gap `deliver-to-main`; следующий прогон `ritual-day-2026-08-19` корректно вытеснил незакрытый `ritual-day-2026-08-18` с `orphanedBy`. Патч честный, не молчаливый.
+- B8 «Немой носитель» — `PluginResultsBridgeService` объявлен в module и зарегистрирован в `app.module.ts`; `OFFICE_API_URL`/`OFFICE_API_TOKEN` читаются через `APP_CONFIG` токен. Носитель объявлен. Чисто.
+- B9 «Проза» — `cut-contour-sanity-ozhegov.md` содержит «Решения резчика» как конспект, не как машинный носитель. Однако `contour-sanity-2026-08-19.json` — машинная нарезка с зонами и `revisionOf` хешами. Проза дополняет, а не заменяет носитель. **Принято.**
 
-**Риски на завтра:**
+**Вердикт ведущего:** ПРОПУСК по развёрнутым коммитам (#1979, #1985, #1983). Oversized-PR (#1980, #1981, #1987, #2003, #2004, последний коммит 847 строк) — **ревьюить отдельно**, вердикт по ним не выносится.
 
-- `@membrana/background-media#test` **красный** — P0, блокирует утро; причина в диффе PR #1974 (`notify` стал синхронным `void`, тесты, вероятно, ждали `await host.notify()`). До зелёного CI merge ветки `chore/evening-2026-08-18` не производить.
-- Посылки дня (#1973 → #1976) сняты правильно и вовремя, но урок третий раз подряд: нужен автоматический шаг в `task:archive` / хук влития PR.
-- PR #1972 и Issue #1950 — OPEN, статус невыяснен из диффа; на утро: прочитать и определить, блокируют ли они следующий слой.
-- Мост `background-media → background-office` для записи результатов внутри сервисов — только скрипт, не провод; хвост зафиксирован в `//retired-t311-accepted-18-08`, но ещё не в коде.
-- Узел Firebat пишет в 44.1 кГц — одна проба `refused`; норма воспроизводства требует 48 кГц.
+---
 
-**Персонаж `farrell`** появился в `op-log` (новые `.jsonl`-файлы на восемь персон), но в регламенте команды (`VIRTUAL_TEAM_PROMPT.md`) он не объявлен — B8 (немой носитель). P2, не блокирует, но требует либо объявления, либо удаления из op-log политики.
+[Teamlead]:
 
-**C8 (console.log):** в видимом диффе (`#1966`, `#1969`, `#1974`, `#1977`) production-логов нет; `logger.error` в сервисе — корректно через NestJS Logger.
-**C9 (секреты):** `.env`-файл не коммитится; `field-capture.mjs` ищет `.env` не в репозитории — чисто.
-**C10 (docs sync):** `docs/plugins/first-live-run-2026-08-18.md` и `main-day-assertions.json` синхронизированы вещдоком.
+Tier T2. PR size: **oversized** — 6 из 8 коммитов превышают 400 строк; развёрнуты только 3 коммита (#1979 178 строк, #1985 188 строк, #1983 378 строк) — по ним вердикт выносится. По остальным (#1980 578, #1981 741, #1987 439, #2003 474, #2004 644, HEAD 847) — P1 «recommend split», ревью отдельными `yarn code-review:pr N`.
+
+Что зачтено сегодня:
+
+1. **Ritual artifacts (#1979)** — утренние артефакты 19.08 влиты корректно. `DAILY_STANDUP.md` верно переключил фокус с `secret-parser-built` на `background-media#test` + ревью-долг. Расхождение стендапа с `sources[0]` (`server-plugin-foundation` vs «починить CI») названо явно в таблице обоснования — это честная фиксация, не замалчивание. C8: `console.log` не замечен.
+
+2. **PluginResultsBridgeService (#1985)** — отправитель моста `media → office` построен правильно: закрытый словарь исходов (`BRIDGE_OUTCOMES as const`), инъекция `BridgeFetch` параметром, `MAX_ATTEMPTS = 2` без бесконечного ретрая, `AbortSignal.timeout`. Тесты покрывают все 4 исхода + retry-save. C4: сервис без React — чисто. C7: тесты рядом, ветви покрыты.
+
+3. **RAG fix (#1983)** — диагноз Дынина точный: стеночные часы на живом git-дереве под `turbo --concurrency=3`. Решение верное: `keywordSearch` переведён на корпус-фикстуру во `tmpdir`, acceptance-порог снят из `expect` в `console.info` + опциональный `RAG_ACCEPTANCE_TIMING_MS`. `testTimeout` поднят до 60 с только для acceptance, не для юнитов. C6: чистая функция не затронута.
+
+**P0:** нет.
+
+**P1 (не блокирует развёрнутые коммиты, но обязателен для oversized):**
+1. `packages/libs/wav-decode/` — пакет объявлен в нарезке (`wav-decode-lib`, зоны блока 5), но в диффе отсутствует. При написании: не допускать B4 — зуб «своих копий не осталось» проверять только после создания пакета, не в нарезке.
+2. Oversized-коммиты (#1980, #1981, #1987, #2003, #2004, HEAD 847) — не ревьюились; любой из них может нести P0. **Обязательный следующий шаг.**
+
+**P2:**
+- `let pluginContractsPromise` (синглтон) в `plugin-host.service.ts` и `plugin-results.service.ts` — заявлен в нарезке (блок 7 `host-import-singleton`), в диффе не исправлен. Opportunity: снять до следующего merge в эти файлы.
+- `README.md` rag-service дополнен секцией «Тесты и часы» — полезно, C10 закрыт для этого пакета.
 
 **Утренние команды:**
-
 ```bash
-# 1. Первым делом — починить красный тест background-media
+yarn code-review:pr 1980
+yarn code-review:pr 1981
+yarn code-review:pr 1987
+yarn code-review:pr 2003
+yarn code-review:pr 2004
+yarn turbo run test --filter=@membrana/rag-service
 yarn turbo run test --filter=@membrana/background-media
-
-# 2. После зелёного — полный прогон затронутых пакетов
-yarn turbo run lint typecheck test \
-  --filter=@membrana/background-media \
-  --filter=@membrana/plugin-contracts \
-  --filter=@membrana/plugin-handlers \
-  --filter=@membrana/background-office
-
-# 3. Проверить статус PR #1972 и Issue #1950 (OPEN по таблице состояний)
-# yarn ask vesnin --gh-issue 1950 "блокирует ли следующий слой?"
-
-# 4. Smoke: живой прогон mfcc на узле Firebat при 48 кГц
-# (проверить, что refused-проба уходит после смены rate на узле)
+yarn turbo run typecheck --filter=@membrana/background-media --filter=@membrana/rag-service
 ```
 
----
-
-[Структурщик / Ozhegov]:
-
-**C1 (границы пакетов):** `plugin-handlers` импортирует только `@membrana/plugin-contracts` — граница соблюдена. `background-media` в PR #1974 перешёл с локального `plugin-host.types` на re-export из `plugin-contracts` через `with { 'resolution-mode': 'import' }` — правильное направление; локальный дубль типов зачищен полностью.
-
-**C3/C4 (сервисы):** `CollectionsPluginHostService` реализует `OnModuleInit` и лениво грузит `@membrana/plugin-contracts` через динамический `import()` — это нетипичный паттерн для Nest-сервиса: `onModuleInit` обычно синхронен или использует DI-провайдер, а не `pluginContractsPromise` с модульным синглтоном. Риск: при двух экземплярах (тест + рантайм) состояние `pluginContractsPromise` не изолировано. P2 — не блокирует, но рекомендую вынести валидаторы (`isPluginId`, `HOME_REGISTRY`) в статический импорт.
-
-**C7 (тесты):** тест `CollectionsPluginHostService` в PR #1974 покрывает `notify` как `void` (fire-and-forget), но не проверяет, что executor действительно вызван после микротаска (`await Promise.resolve()`). Скорее всего — причина красного `background-media#test`. P0 — исправить до merge.
-
-**Stubs (#1969):** `PluginNotImplementedError` бросается честно и не молчит — паттерн верный. `STUB_HANDLER_SLUGS` — конкретный порядок зафиксирован массивом, порядок регистрации в `registerFirstWave` детерминирован — хорошо.
+Риски на завтра: oversized-PR без ревью — любой из них может нести архитектурный дефект в плагинном контуре (#1961); приоритет утра — #1981 (741 строк, `plugin-results-bridge b1+b2`) и HEAD (847 строк).
 
 ---
 
-[Математик / Dynin]:
+[Архитектор]:
 
-**C6 (чистые функции):** `envCandidates()` в `field-capture.mjs` (#1977) — чистая функция, тест явный, граничный случай Windows-пути с `file:///C:/` проверен. Нет NaN, нет off-by-one.
+`PluginResultsBridgeModule` корректно изолирован: экспортирует только `PluginResultsBridgeService`, не тянет Mongo или HTTP-клиент в зависимости — мост остаётся тонким. `BridgeFetch` как параметр конструктора — правильная инверсия зависимости, тест не мокает глобальный `fetch`. Контракт `RunRecord` / `StateRecord` из `@membrana/plugin-contracts` с `resolution-mode: import` — форма M1/M3 соблюдена. Единственный открытый вопрос архитектуры — `mountTarget: 'background-media/collections'` зашит в тестовой фикстуре как строка: убедиться, что в рантайме это значение идёт из `plugin-contracts`-константы, а не дублируется строкой (C3-риск). По oversized #1981 — форму моста (`b1+b2`) проверить на соответствие M3 (`адрес = pluginId + mountTarget`, не module-сегмент) — это первичный риск завтра.
 
-`isPluginContext()` в `plugin-host.service.ts` (#1974) — структурная валидация без рекурсии, все поля явно проверены типами `typeof === 'string'` и `resumeMode` литералами. Граничный случай `null` пойман `isRecord`. Чисто.
+[Структурщик]:
 
-Претензий к вычислительной логике нет — мат. ядро этого дня в PR #1967/#1971 (oversized, не развёрнуты); на утро рекомендую отдельным проходом проверить граничные случаи MFCC-пресета (bounds length vs. judgedCoefficients).
+C1: `PluginResultsBridgeModule` — новый модуль в `background-media/src/modules/`, регистрация в `app.module.ts` — граница пакета не нарушена, циклов нет. C4: сервис без React, NestJS-Injectable — чисто. C7: тесты в `plugin-results-bridge.service.test.ts` — 7 зубов, все ветви `BridgeOutcomeKind` покрыты, включая retry-save и `StateRecord`. Синглтон `pluginContractsPromise` не исправлен в этом диффе — риск: два экземпляра теста и рантайма делят обещание; в media сбрасывается при ошибке, в office залипает. Блок 7 нарезки это закрывает — проконтролировать исполнение до следующего merge в эти файлы.
 
----
+[Математик]:
 
-[Музыкант / Kuryokhin]:
+C6: `keywordSearch` в тесте переведён на фикстуру — проверяется функция (`length > 0`, `usedArchive: true`), а не стеночные часы. Диагноз верен: `git log` за 30 дней = 868 коммитов, 6 862 мс; `getRecentDocs` = 2 543 документа, 4 860 мс — детерминированный рост с корпусом, не флак кода. Вариант 1 (фикстура) выбран правильно: вариант 2 (skip) терял бы сигнал, вариант 3 (оставить) уже трижды повторялся. `TIMING_GATE_MS = Number.parseInt(…, 10)` — корректно: при пустой строке `parseInt` вернёт `NaN`, `Number.isFinite(NaN) = false`, порог не применяется. Edge case покрыт.
 
-**C2 (Web Audio):** в видимом диффе Web Audio не затронут — `—`.
+[Музыкант]:
 
-Узел Firebat: одна проба `refused` на 44.1 кГц — это честное поведение ворот («несравнимо»), не баг плагина. Но риск для полевого контура реален: если узел пишет не в 48 кГц, детектор системно отказывает. P1: до следующего полевого прогона проверить `arecord --rate 48000` или аналог на узле и задокументировать в `docs/field/firebat-node.md`.
+C2: Web Audio в диффе не затронут. Плагинный контур (#1961) в `plugin-results-bridge` — только транспорт RunRecord, DSP-логики нет. Замечание по future-блоку: когда `membrana.handler.mfcc` появится как живой плагин (oversized #1981/#1985-продолжение), проверить, что `onResult` в `CollectionsModule` не вызывает Web Audio напрямую — только через audio-engine.
 
----
+[Верстальщик]:
 
-[Верстальщик / Rodchenko]:
-
-**C5 (UI):** дифф дня не затрагивает UI-компоненты — `—`.
+C5: UI в диффе не затронут — `—`.
 
 ---
 
-**Итоговый артефакт:** `docs/DAILY_CODE_REVIEW.md` (18.08.2026)
+**Итоговый артефакт:** `docs/DAILY_CODE_REVIEW.md`
 
 **Definition of Done (утро):**
-
+```bash
+yarn code-review:pr 1980   # #1981 — приоритет (741 строк, b1+b2 моста)
+yarn code-review:pr 1981
+yarn code-review:pr 1987
+yarn turbo run test --filter=@membrana/rag-service
+yarn turbo run test --filter=@membrana/background-media
+yarn turbo run typecheck --filter=@membrana/background-media --filter=@membrana/plugin-contracts
 ```
-yarn turbo run lint typecheck test \
-  --filter=@membrana/background-media \
-  --filter=@membrana/plugin-contracts \
-  --filter=@membrana/plugin-handlers \
-  --filter=@membrana/background-office
-```
-
-Все четыре пакета зелёные. PR #1972 и Issue #1950 прочитаны, статус определён.
 
 **Риски:**
+- **P1** — Oversized #1980/#1981/#1987/#2003/#2004 + HEAD (847) не ревьюились; любой несёт P0 в плагинном контуре.
+- **P1** — `packages/libs/wav-decode/` объявлен в нарезке, кода нет — B4-риск при написании зуба «копий не осталось».
+- **P2** — Синглтон `pluginContractsPromise` не снят; блок 7 нарезки ратифицирован, исполнение не подтверждено.
 
-- **P0** — `@membrana/background-media#test` красный; исправить до любого следующего merge.
-- **P1** — узел Firebat пишет в 44.1 кГц; детектор отказывает на таких пробах. Задокументировать требование 48 кГц и проверить настройку захвата.
-- **P1** — мост `background-media → background-office` (запись результатов между сервисами) существует только как скрипт; провода нет. Зафиксировать как follow-up Issue, если ещё не оформлено.
-- **P2** — персонаж `farrell` в `op-log` без объявления в команде (B8); объявить или удалить из политики op-log.
-- **P2** — динамический `import('@membrana/plugin-contracts')` в `CollectionsPluginHostService` вместо статического DI; риск при множественных экземплярах.
+**Вердикт:** LGTM по развёрнутым коммитам (#1979, #1985, #1983). По oversized — **BLOCK до отдельного ревью.**
