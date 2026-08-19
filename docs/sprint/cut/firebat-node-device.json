@@ -43,14 +43,17 @@
       "zone": [
         "packages/background-media/src/modules/firebat-node/node-key.service.ts",
         "packages/background-media/src/modules/firebat-node/node-key.guard.ts",
-        "packages/background-media/src/modules/firebat-node/node-key.service.test.ts"
+        "packages/background-media/src/modules/firebat-node/node-key.controller.ts",
+        "packages/background-media/src/modules/firebat-node/node-key.service.test.ts",
+        "packages/background-media/prisma/schema.prisma",
+        "packages/background-media/prisma/migrations/20260819120000_firebat_node_key/migration.sql"
       ],
       "estimate": {
-        "changedLines": 180
+        "changedLines": 260
       },
-      "revisionAt": "2026-08-19T12:40:00+03:00",
-      "note": "Отдельный отзываемый ключ узла только на загрузку в свою коллекцию + гвард; служебный токен медиа-сервиса с узла убрать. Ключ узла ≠ nodeId наблюдений (лемма b1). Экспорт модуля только через index.ts; devices не просачивается импортами в другие модули media.",
-      "revisionOf": "f1ad6a0974810432bb8bcdd29a6ae9b3d9f7e9aba6a37e506d0b263f73efd137"
+      "revisionAt": "2026-08-19T12:59:33+00:00",
+      "note": "Отдельный отзываемый ключ узла только на загрузку в свою коллекцию + гвард; служебный токен медиа-сервиса с узла убрать. Ключ узла ≠ nodeId наблюдений (лемма b1). Экспорт модуля только через index.ts; devices не просачивается импортами в другие модули media. РЕВИЗИЯ 19.08 (контекст Ожегова, docs/discussions/firebat-node-device-b2.md): ключ — отдельная сущность жизненного цикла → таблица NodeKey {id, deviceId, keyHash, createdAt, revokedAt, lastUsedAt} + миграция; класть keyHash в Device — смешение словарных статей; обходов без миграции резчик не подписывает. Выдача POST /v1/devices/:id/node-key (ApiTokenGuard, raw один раз, 409 при активном, ?rotate=true), отзыв DELETE → revokedAt; NodeKeyGuard только на ручки узла, чужой deviceId = 403.",
+      "revisionOf": "45fe852bf8dd1434b7e28991133b409c3c554a9fb116b6f778297124236956c6"
     },
     {
       "blockId": "b3-node-poll-api",
@@ -131,9 +134,10 @@
       "revisionOf": "f5dbfd7427659cc5f7511ab693b6ea526b18c3354adf59e54195164e4a692415"
     }
   ],
+  "//recut": "Перерезка 19.08 2026-08-19T12:59:33+00:00: тронута ТОЛЬКО зона и объём b2 (контекст Ожегова: ключ узла = отдельная сущность, нужна таблица NodeKey + миграция). Отметка ревизии стоит на блоке b2 (прецедент archivarius-mongo-dump 08.08): у остальных шести блоков — момент первой ратификации 12:12Z, их следы не обесцениваются. Владелец: «ратифицирую» (второе слово, на ревизию).",
   "ratification": {
     "by": "owner",
-    "at": "2026-08-19T12:12:38+00:00",
-    "digest": "f3e5777bccea6f364f5c119e7be222c5304c53ff217f69981a9c68201513c741"
+    "at": "2026-08-19T12:59:33+00:00",
+    "digest": "d07eb0876927201e53f452abbd28ee37f23d764f97bf013738cdb8b6791df9e0"
   }
 }

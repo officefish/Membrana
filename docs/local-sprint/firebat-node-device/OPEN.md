@@ -35,11 +35,11 @@
 | Блок | Персона | Зона | Оценка | Статус |
 |------|---------|------|-------:|--------|
 | b1 ADR транспорта и дома (первым) | ozhegov | `docs/adr/ADR-0027` | 60 | исполнен · подпись Ожегова 19.08 |
-| b2 ключ узла | ozhegov | `…/background-media/src/modules/firebat-node/node-key.*` | 180 | ждёт |
+| b2 ключ узла (ревизия 19.08: + таблица NodeKey и миграция) | ozhegov | `…/firebat-node/node-key.*` · `prisma/schema.prisma` · миграция | 260 | исполнен · подпись Ожегова 19.08 |
 | b3 API опроса и очередь заданий | ozhegov | `…/firebat-node/{controller,task-queue,module,index}` | 260 | ждёт |
 | b4 poller узла (однофайловый) | ozhegov | `scripts/firebat-poller.mjs` + тест | 300 | ждёт |
 | b5 установщик + служба | ozhegov | `apps/membrana-studio` · `scripts/firebat-service-install.ps1` | 200 | ждёт |
-| b6 усиление + спутник (∥) | kuryokhin | `docs/field/firebat-node.md` · `docs/LIVE_SERVICES.md` | 60 | ждёт |
+| b6 усиление + спутник (∥) | kuryokhin | `docs/field/firebat-node.md` · `docs/LIVE_SERVICES.md` | 60 | документ исполнен · подпись Курёхина 19.08 (#2000); ручка GAIN — руки владельца |
 | b7 приёмка (замыкает) | tarasov | `docs/field/firebat-node-acceptance-2026-08-19.md` | 40 | ждёт |
 
 Порядок: b1 → b2 → b3 → b4 → b5; b6 параллельно; b7 последним. Каждый PR ≤ 400 строк.

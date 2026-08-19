@@ -59,10 +59,28 @@ model Device {
   trendTemplates          TrendTemplate[]
   deviceScenario          DeviceScenario?
   deviceWorkspaces        DeviceWorkspace[]
+  /** Ключи полевого узла (ADR-0027 Р3): отзываемый секрет только на ручки узла своего устройства. */
+  nodeKeys                NodeKey[]
   /** Active user workspace id for device-board multi-slot persist (U10 W5). */
   activeWorkspaceId       String?
 
   @@index([membraneId])
+}
+
+/// Ключ полевого узла (ADR-0027, b2 firebat-node-device): отдельная сущность жизненного цикла
+/// выдать · сменить · отозвать. Хранится ТОЛЬКО sha256-хеш сырого ключа; сырой ключ отдаётся один раз
+/// при выдаче. Ключ ≠ nodeId наблюдения: секрет не попадает в данные записи.
+model NodeKey {
+  id         String    @id @default(uuid()) @db.Uuid
+  deviceId   String    @db.Uuid
+  device     Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  /// sha256(raw) в hex — сравнение timingSafeEqual, сырой ключ на сервере не хранится.
+  keyHash    String    @unique
+  createdAt  DateTime  @default(now())
+  revokedAt  DateTime?
+  lastUsedAt DateTime?
+
+  @@index([deviceId, revokedAt])
 }
 
 model DeviceWorkspace {
