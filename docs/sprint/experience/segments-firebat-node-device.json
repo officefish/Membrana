@@ -1,0 +1,16 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "firebat-node-device",
+  "forTask": "firebat-node-device — узел как устройство: приложение на Firebat само держит исходящий канал к серверу (опрос очереди), ключ узла вместо служебного токена, установщик, усиление в спутнике, приёмка живым проводом (#1998, ADR-0027)",
+  "note": "Замер по PR блоков (additions+deletions): b1 #1999 · b2 #2003 (ревизия: таблица NodeKey + миграция; после BLOCK ревью сюда же переехал минимальный модуль и строка LIVE_SERVICES) · b3 #2004 · b4 #2006 · b5 #2007 · b6 #2000 · b7 — документ приёмки и конспект Тарасова в ветке закрытия. Перелёт b3/b4 против прогноза — зубы и две стороны контроллера (оператор/узел); b2 — ревизионная зона плюс перенос модуля из b3 по ревью.",
+  "measuredAt": "2026-08-19T16:30:00+00:00",
+  "segments": [
+    { "cutBlockId": "b1-node-adr", "changedLines": 175 },
+    { "cutBlockId": "b2-node-key", "changedLines": 474 },
+    { "cutBlockId": "b3-node-poll-api", "changedLines": 644 },
+    { "cutBlockId": "b4-node-poller", "changedLines": 331 },
+    { "cutBlockId": "b5-node-installer", "changedLines": 186 },
+    { "cutBlockId": "b6-node-gain-sidecar", "changedLines": 123 },
+    { "cutBlockId": "b7-node-acceptance", "changedLines": 80 }
+  ]
+}

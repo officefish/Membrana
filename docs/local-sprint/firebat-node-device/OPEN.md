@@ -10,7 +10,7 @@
 | Cutter context | Ожегов, `yarn ask ozhegov` 19.08, четыре захода → [`cut-firebat-node-device-20260819-ozhegov-run.md`](../../discussions/cut-firebat-node-device-20260819-ozhegov-run.md) |
 | Lead | ozhegov |
 | Support | vesnin · kuryokhin |
-| Status | open · execute |
+| Status | **closed** · гейт 7/7 honest_pair · род опыта miss (71,4 %: b2 ревизия, b3 перелёт) · остаток за владельцем названными строками |
 
 ## Зачем
 
@@ -40,7 +40,7 @@
 | b4 poller узла | ozhegov | `scripts/firebat-poller.mjs` + тест | 300 | исполнен · подпись Ожегова 19.08 (комплект узла = 3 файла + .env — названо) |
 | b5 установщик + служба | ozhegov | `scripts/firebat-service-install.ps1` · `apps/membrana-studio` (NSIS собран впервые) | 200 | исполнен · подпись Ожегова 19.08; остаток: комплект узла в NSIS — отдельная карточка |
 | b6 усиление + спутник (∥) | kuryokhin | `docs/field/firebat-node.md` · `docs/LIVE_SERVICES.md` | 60 | документ исполнен · подпись Курёхина 19.08 (#2000); ручка GAIN — руки владельца |
-| b7 приёмка (замыкает) | tarasov | `docs/field/firebat-node-acceptance-2026-08-19.md` | 40 | ждёт |
+| b7 приёмка (замыкает) | tarasov | `docs/field/firebat-node-acceptance-2026-08-19.md` | 40 | **LGTM с остатком** (Тарасов 19.08): провод доказан на проде; автостарт Firebat и ручка GAIN — руки владельца; e2e-smoke #2009 |
 
 Порядок: b1 → b2 → b3 → b4 → b5; b6 параллельно; b7 последним. Каждый PR ≤ 400 строк.
 Вне спринта: наблюдения в реальном времени (WS), парринг через device-board, мультиузел/TDOA,
@@ -50,3 +50,12 @@
 
 Входящие порты на узле · Focusrite Control на узле · служебный токен в установщике ·
 менять поведение #1950 (объявленное vs измеренное) в этом спринте.
+
+## Закрытие 19.08
+
+- Гейт: `yarn sprint:gate` — 7/7 `honest_pair`, следов 14, находок 0; журнал прогона закрыт (`docs/procedure-runs/trail/2026-08-19.jsonl`).
+- Опыт: `yarn sprint:experience` — исход **miss** (точность 71,4 %, перелёт b2 после ревизии и b3); сегменты `docs/sprint/experience/segments-firebat-node-device.json`.
+- Приёмка: `docs/field/firebat-node-acceptance-2026-08-19.md` — полный провод на проде (ключ узла → задание → файл → запись `d7a20df5-…` → done), Тарасов LGTM с остатком.
+- Остаток за владельцем: прогон установщика на Firebat (автостарт после перезагрузки), ручка GAIN по процедуре b6 — две строки в таблицу приёмки.
+- Остаток в тикетах: #2009 (@Optional-правило + e2e-smoke подъёма в CI — блокирует следующий прод-деплой), #2005 (сигнатура конструктора NodeKeyService), комплект узла в NSIS — карточкой (studio-installer ≠ node-kit).
+- Трение деплоя: restart-loop media ~8 мин (конструкторы Nest), Dockerfile/.dockerignore без плагинной основы — PR #2008; счётчик миграций «9 из 10» — ложная тревога.
