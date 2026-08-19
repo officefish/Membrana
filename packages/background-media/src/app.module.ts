@@ -13,6 +13,7 @@ import { TrendsTemplatesModule } from './modules/trends-templates/trends-templat
 import { DeviceScenariosModule } from './modules/device-scenarios/device-scenarios.module';
 import { DeviceWorkspacesModule } from './modules/device-workspaces/device-workspaces.module';
 import { LinearSnapshotModule } from './linear-snapshot/linear-snapshot.module';
+import { FirebatNodeModule } from './modules/firebat-node';
 import { PluginResultsBridgeModule } from './modules/plugin-results-bridge/plugin-results-bridge.module';
 
 const testImports =
@@ -60,6 +61,7 @@ const testImports =
     DeviceWorkspacesModule,
     LinearSnapshotModule,
     PluginResultsBridgeModule,
+    FirebatNodeModule,
   ],
   controllers: [HealthController],
 })
