@@ -15,10 +15,14 @@ import { DeviceGuard } from '../../common/guards/device.guard';
 import {
   CollectionResponseDto,
   CreateCollectionDto,
+  PluginRunResponseDto,
   ProvisionCatalogResponseDto,
+  RequestPluginRunDto,
 } from './collections.dto';
 import { CatalogProvisionService } from './catalog-provision.service';
 import { CollectionsService } from './collections.service';
+import { FirstWavePluginsRegistrar } from './first-wave.registrar';
+import type { PluginId, PluginTrigger } from './plugin-host.types';
 
 @ApiTags('Collections')
 @Controller('v1/devices/:deviceId/collections')
@@ -33,6 +37,7 @@ export class CollectionsController {
   constructor(
     private readonly collections: CollectionsService,
     private readonly catalogProvision: CatalogProvisionService,
+    private readonly firstWave: FirstWavePluginsRegistrar,
   ) {}
 
   @Get()
@@ -87,4 +92,36 @@ export class CollectionsController {
     await this.collections.delete(deviceId, collectionId);
     return { ok: true };
   }
+
+  @Post(':collectionId/plugins/:pluginId/request')
+  @ApiOperation({
+    summary: 'Запросить прогон плагина первой волны на коллекции (вход request хоста collections, #1961)',
+    description:
+      'Контекст прогона собирается сервисом: runId UUID v7, отпечатки тем же чтением, что у прогона, resumeMode fresh; ' +
+      'результат уезжает сидом onResult в дом результатов office — исход моста в ответе. Заглушки первой волны — 501.',
+  })
+  @ApiParam({ name: 'collectionId', format: 'uuid' })
+  @ApiParam({ name: 'pluginId', example: 'membrana.handler.mfcc' })
+  @ApiResponse({ status: 200, type: PluginRunResponseDto })
+  @ApiResponse({ status: 501, description: 'Плагин-заглушка: прогон не определён' })
+  @ApiStandardErrors()
+  @ApiBadRequest()
+  async requestPluginRun(
+    @Param('deviceId') deviceId: string,
+    @Param('collectionId') collectionId: string,
+    @Param('pluginId') pluginId: string,
+    @Body() body: RequestPluginRunDto,
+  ): Promise<PluginRunResponseDto> {
+    // Коллекция обязана принадлежать устройству из пути: иначе токен устройства прогонял бы чужие коллекции.
+    await this.collections.getOwned(deviceId, collectionId);
+    const outcome = await this.firstWave.requestRun({
+      pluginId: pluginId as PluginId,
+      collectionId,
+      ...(body?.trigger ? { trigger: body.trigger as PluginTrigger } : {}),
+      ...(body?.sampleId ? { sampleId: body.sampleId } : {}),
+    });
+    this.logger.log({ deviceId, collectionId, pluginId, runId: outcome.runId, bridge: outcome.bridge?.outcome ?? null }, 'Plugin run requested');
+    return { runId: outcome.runId, address: { ...outcome.address }, fingerprints: outcome.fingerprints, bridge: outcome.bridge };
+  }
+
 }
