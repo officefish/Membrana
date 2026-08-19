@@ -22,6 +22,27 @@
       "parentEpic": "server-plugin-foundation"
     },
     {
+      "id": "firebat-node-device",
+      "title": "Узел как устройство: приложение на Firebat само держит канал к серверу и получает права при установке",
+      "promptPath": "docs/prompts/FIREBAT_NODE_DEVICE_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "форма канала и установщика решается сегодня; Issue заведётся с первым PR",
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-19",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "vesnin",
+        "kuryokhin"
+      ],
+      "notes": "Слово владельца 18.08 вечером (магистраль 19.08): «мы должны получить все необходимые права через установку нашего приложения; SSH — для отладки лабораторных работ». Ступень 1 плана SESSION_A_FIREBAT_NODE закрыта 18.08: узел пишет 48 кГц в заводском режиме карты (без Focusrite Control), отправляет сам, две записи приняты (62fe8ea1…, c4cfbf06…); скрипт переносим одним файлом (fix #1977). Ступени 2–3 НЕ закрыты: клиентский инсталлятор ни разу не собирался (apps/membrana-studio release/ нет). Узел за вторым роутером — вход снаружи закрыт; канал ОБЯЗАН быть исходящим от узла. Хвосты в магистраль: рабочее усиление с запасом (щелчок дал −1 dBFS), отдельный ключ на загрузку вместо служебного токена, круглосуточный режим — другой глагол, не field:capture.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "server-plugin-foundation",
       "title": "Плагинная основа сервера: серверные модули анализа и визуализации коллекций звуков",
       "promptPath": "docs/prompts/SERVER_PLUGIN_FOUNDATION_PROMPT.md",

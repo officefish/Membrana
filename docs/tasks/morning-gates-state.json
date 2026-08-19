@@ -1,24 +1,12 @@
 {
   "magistralOptions": [
+    "firebat-node-device",
     "server-plugin-foundation",
-    "firebat-node-deploy",
-    "assets-container"
+    "rag-service-red-test"
   ],
-  "frozenDigest": "9fdcd8ed430321b1a9499ec88e3448a8415e86bca7c930832e5e2f3f91c0cd78",
-  "magistral": "server-plugin-foundation",
-  "swallow": {
-    "draftDigest": "2e9ccd06e86aa9643b2e0449589718332b7f6098d7482505af1cd03f387ffcfa",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-18.md",
-    "ownerAck": true,
-    "day": "2026-08-18",
-    "claimsProbe": {
-      "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-08-18.md",
-      "sha": "547102f7dda0",
-      "at": "2026-08-18T16:43:58.039Z"
-    },
-    "gate": "evening:partner-swallow"
-  },
-  "day": "2026-08-18",
-  "magistralChosenAt": "2026-08-18"
+  "frozenDigest": "9ee6b5ca09a569dde4f7eb7094e438cc966ed69ef1412d5ebecdae525bc0a855",
+  "magistral": "firebat-node-device",
+  "swallow": null,
+  "day": "2026-08-19",
+  "magistralChosenAt": "2026-08-19"
 }
