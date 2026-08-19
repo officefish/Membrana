@@ -71,7 +71,10 @@ describe('PluginResultsController — приёмник моста media → offi
     const calls: string[] = [];
     const spyStore: PluginResultsStore = { writeRun: async (r) => { calls.push(r.address.pluginId); }, readRuns: async () => [] };
     const c = new PluginResultsController(new PluginResultsService(spyStore));
-    await expect(c.writeRun(body({ address: { ...body().run.address, pluginId: 'mfcc-detector' } }))).rejects.toBeInstanceOf(BadRequestException);
+    const rejected = c.writeRun(body({ address: { ...body().run.address, pluginId: 'mfcc-detector' } }));
+    await expect(rejected).rejects.toBeInstanceOf(BadRequestException);
+    // Именно 400, не 500: служба бросает HttpException, контроллеру перехватывать нечего (ревью PR #1981).
+    await expect(rejected).rejects.toMatchObject({ status: 400 });
     expect(calls).toEqual([]);
     await c.writeRun(body());
     expect(calls).toEqual(['membrana.handler.mfcc']);
