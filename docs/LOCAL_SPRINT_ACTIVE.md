@@ -4,6 +4,12 @@
 
 ## Focus
 
+- **contour-sanity-2026-08-19** ([#1972](https://github.com/officefish/Membrana/issues/1972)) ·
+  нарезка предъявлена 19.08, ждёт ратификации · [`OPEN.md`](./local-sprint/contour-sanity-2026-08-19/OPEN.md) —
+  санитария контура прогонов: диагноз красного rag-теста (Дынин) → решение; ревью-долг #1951/#1953
+  протоколами персон (Веснин/Курёхин); хвосты #1972 и синглтон импорта в хосте (Ожегов).
+  Слово владельца 19.08: только через спринт, код до ратификации — нарушение.
+
 - **dump-inventory-from-archive** ([#1814](https://github.com/officefish/Membrana/issues/1814)) ·
   gate pass 4/4 honest_pair (закрыт первым заходом) · прогноз↔исход **hit** ·
   [`OPEN.md`](./local-sprint/dump-inventory-from-archive/OPEN.md) —
