@@ -1,0 +1,139 @@
+{
+  "//": "План локального спринта firebat-node-device (магистраль 19.08, owner-choice). До ратификации владельца исполнение не начинается. Резчик — Ожегов (lead карточки), конспект в docs/discussions/cut-firebat-node-device-20260819-ozhegov-run.md (четыре захода: леммы и критерии → семь блоков → две поправки координатора (усиление = ручка gain + файл-спутник, не модуль; персоны только из реестра голосов) → подтверждение формы с пятью словарными оговорками). Порядок: b1 первым (форма, ADR); b2 → b3 последовательно (ключ до API); b4 после b3 (контракт poll); b5 после b4; b6 параллельно всему (руки владельца у железа); b7 замыкает после b5+b6. Вне спринта: near-realtime наблюдения (WS), парринг через device-board, TDOA, foundation-пакет узла, LoRa.",
+  "schema": "sprint-cut/1",
+  "sprintId": "firebat-node-device",
+  "taskId": "firebat-node-device",
+  "mode": "explicit-honest",
+  "cutBy": "ozhegov",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
+    "reason": "Носители contract_signature/session_prep не являются обязательным машинным корпусом membrana-local-sprint; ответственность проверяется планом, зонами, контекстными следами, review-вещдоками и procedure-run-journal."
+  },
+  "window": {
+    "from": "2026-08-19T12:40:00+03:00",
+    "to": "2026-08-19T21:00:00+03:00"
+  },
+  "revisionAt": "2026-08-19T12:40:00+03:00",
+  "blocks": [
+    {
+      "blockId": "b1-node-adr",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/adr/"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionAt": "2026-08-19T12:40:00+03:00",
+      "note": "ADR: транспорт узла = poll (HTTP pull очереди заданий), дом приёма = background-media, ключ узла — обязательное поле идентичности. Обоснование против WebSocket (near-realtime не требуется в этом спринте — узел собирает записи для калибровки) и обратного туннеля (инструмент обслуживания, не транспорт данных). Леммы одним списком: узел · ключ узла · nodeId наблюдения · спутник узла · задание · проба; разведение «ключ узла ≠ nodeId» отдельным абзацем.",
+      "revisionOf": "b7af4b9aad5645886f9b52df27fe4918eb8990c785eb9dd943558a9679bd83b5"
+    },
+    {
+      "blockId": "b2-node-key",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/background-media/src/modules/firebat-node/node-key.service.ts",
+        "packages/background-media/src/modules/firebat-node/node-key.guard.ts",
+        "packages/background-media/src/modules/firebat-node/node-key.service.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "revisionAt": "2026-08-19T12:40:00+03:00",
+      "note": "Отдельный отзываемый ключ узла только на загрузку в свою коллекцию + гвард; служебный токен медиа-сервиса с узла убрать. Ключ узла ≠ nodeId наблюдений (лемма b1). Экспорт модуля только через index.ts; devices не просачивается импортами в другие модули media.",
+      "revisionOf": "f1ad6a0974810432bb8bcdd29a6ae9b3d9f7e9aba6a37e506d0b263f73efd137"
+    },
+    {
+      "blockId": "b3-node-poll-api",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/background-media/src/modules/firebat-node/firebat-node.controller.ts",
+        "packages/background-media/src/modules/firebat-node/firebat-node.controller.test.ts",
+        "packages/background-media/src/modules/firebat-node/task-queue.service.ts",
+        "packages/background-media/src/modules/firebat-node/task-queue.service.test.ts",
+        "packages/background-media/src/modules/firebat-node/firebat-node.module.ts",
+        "packages/background-media/src/modules/firebat-node/index.ts"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "revisionAt": "2026-08-19T12:40:00+03:00",
+      "note": "Контракт poll: GET tasks · POST task result · POST heartbeat; очередь заданий «снять пробу N с» в media. Исходы poll — ЗАКРЫТЫЙ словарь ok | stale_key | backoff, единый на весь тракт (media ↔ poller ↔ приёмка b7); синонимы (retry, throttled, unauthorized) запрещены; stale_key — единственный отказ по ключу. Зубы рядом.",
+      "revisionOf": "7ba1e2451a228a393d707ecba86379226d70a58e8daf6a4f32f16f2dc8bba358"
+    },
+    {
+      "blockId": "b4-node-poller",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/firebat-poller.mjs",
+        "scripts/firebat-poller.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 300
+      },
+      "revisionAt": "2026-08-19T12:40:00+03:00",
+      "note": "Однофайловый poller БЕЗ внешних зависимостей (класс field-capture.mjs — переносим с .env рядом; проверено 18.08): опрос очереди, исполнение «снять пробу» через существующий field-capture, отправка, heartbeat, backoff по словарю b3. Регистрация службой — блок b5. poll-api (контракт, b3) и poller (исполнитель, b4) — разные леммы в разных файлах.",
+      "revisionOf": "29f2d1a06e7d8e5cd3c1839ba81aab1ac2cd38d8b2956e6e93693d2bf21c7024"
+    },
+    {
+      "blockId": "b5-node-installer",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "apps/membrana-studio/",
+        "scripts/firebat-service-install.ps1"
+      ],
+      "estimate": {
+        "changedLines": 200
+      },
+      "revisionAt": "2026-08-19T12:40:00+03:00",
+      "note": "Первая сборка инсталлятора apps/membrana-studio в истории проекта (yarn package = electron-builder --win nsis; release/ отсутствует) — ждать сюрпризов, каждый называть; PowerShell-скрипт регистрации службы/автозапуска poller'а с правами живёт в scripts/ монорепо, НЕ внутри apps/membrana-studio (ответственность приложения и деплоя узла не смешивать). Владелец запускает на узле точными строками.",
+      "revisionOf": "70e2b34f12ba7c044086ea700ac5c82e708a510bfea082b1490ddb07fcc46af5"
+    },
+    {
+      "blockId": "b6-node-gain-sidecar",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "docs/field/firebat-node.md",
+        "docs/LIVE_SERVICES.md"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionAt": "2026-08-19T12:40:00+03:00",
+      "note": "Рабочее усиление входа 1 с запасом (щелчок пальцами 18.08 дал −1 dBFS; цель: близкий резкий звук ≤ −6 dBFS, фон около −50), положение записано в спутник узла и больше не меняется всю неделю. docs/field/firebat-node.md — шаблон спутника (одна строка на запись недели, раздел «объявлено»), чтобы b7 ссылался словом. Руки у железа — владелец.",
+      "revisionOf": "735561176061333401dbbeab60e97319f9343207ec1b64c98277f997d79793d0"
+    },
+    {
+      "blockId": "b7-node-acceptance",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "docs/field/firebat-node-acceptance-2026-08-19.md"
+      ],
+      "estimate": {
+        "changedLines": 40
+      },
+      "revisionAt": "2026-08-19T12:40:00+03:00",
+      "note": "Приёмка устройства: после перезагрузки узел сам поднимает канал (poller службой); с сервера задание «снять пробу 15 с» → запись принята media с измерением; id записи в документе; служебного токена на узле нет (только ключ узла); усиление из спутника b6. Документ предъявления — читаемый, не лог.",
+      "revisionOf": "f5dbfd7427659cc5f7511ab693b6ea526b18c3354adf59e54195164e4a692415"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-19T12:12:38+00:00",
+    "digest": "f3e5777bccea6f364f5c119e7be222c5304c53ff217f69981a9c68201513c741"
+  }
+}
