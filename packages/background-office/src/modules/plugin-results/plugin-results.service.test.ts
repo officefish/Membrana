@@ -2,7 +2,7 @@ import type { PluginId } from '@membrana/plugin-contracts' with { 'resolution-mo
 import { describe, expect, it } from 'vitest';
 
 import { MemoryPluginResultsStore } from './plugin-results.memory-store';
-import { PluginResultsService } from './plugin-results.service';
+import { PluginResultsService, type PluginContracts } from './plugin-results.service';
 import type { RunRecord, StateRecord } from './plugin-results.types';
 
 function run(over: Partial<RunRecord> = {}): RunRecord {
@@ -53,5 +53,28 @@ describe('PluginResultsService', () => {
     await expect(service.writeRun(badRun, state({ pluginId: 'membrana' as PluginId }))).rejects.toThrow(
       'Invalid plugin id',
     );
+  });
+});
+
+describe('PluginResultsService — обещание импорта контрактов живёт в экземпляре (#1972)', () => {
+  class FlakyService extends PluginResultsService {
+    attempts = 0;
+    constructor(store: MemoryPluginResultsStore, private readonly failFirst: boolean) {
+      super(store);
+    }
+    protected override loadContracts(): Promise<PluginContracts> {
+      this.attempts += 1;
+      if (this.failFirst && this.attempts === 1) return Promise.reject(new Error('import упал'));
+      return Promise.resolve({ isPluginId: (v) => typeof v === 'string' && v.includes('.') });
+    }
+  }
+
+  it('ошибка импорта у одного экземпляра не залипает у другого и не залипает у него самого', async () => {
+    const flaky = new FlakyService(new MemoryPluginResultsStore(), true);
+    const healthy = new FlakyService(new MemoryPluginResultsStore(), false);
+    await expect(flaky.writeRun(run())).rejects.toThrow('import упал');
+    await expect(healthy.writeRun(run())).resolves.toBeUndefined();
+    await expect(flaky.writeRun(run())).resolves.toBeUndefined();
+    expect(flaky.attempts).toBe(2);
   });
 });

@@ -19,19 +19,10 @@ import {
   type PluginTrigger,
 } from './plugin-host.types';
 
-type PluginContracts = {
+export type PluginContracts = {
   readonly HOME_REGISTRY: Readonly<Record<string, unknown>>;
   isPluginId(value: unknown): boolean;
 };
-let pluginContractsPromise: Promise<PluginContracts> | null = null;
-
-function pluginContracts(): Promise<PluginContracts> {
-  pluginContractsPromise ??= import('@membrana/plugin-contracts').catch((error: unknown) => {
-    pluginContractsPromise = null;
-    throw error;
-  });
-  return pluginContractsPromise;
-}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
@@ -60,9 +51,28 @@ export class CollectionsPluginHostService implements IPluginHost, OnModuleInit {
   private readonly logger = new Logger(CollectionsPluginHostService.name);
   private readonly plugins = new Map<PluginId, PluginRegistration>();
   private contracts: PluginContracts | null = null;
+  /**
+   * Обещание импорта — ПОЛЕ ЭКЗЕМПЛЯРА, не модульный `let` (фидбек Ожегова 18.08, спринт
+   * contour-sanity #1972): два экземпляра (тест + рантайм, два модуля) не делят состояние, и
+   * ошибка импорта у одного не залипает у другого. Ошибка сбрасывает кеш — повтор возможен.
+   */
+  private contractsPromise: Promise<PluginContracts> | null = null;
+
+  /** Шов загрузки контрактов: тест подменяет наследником, рантайм — динамический импорт ESM-пакета. */
+  protected loadContracts(): Promise<PluginContracts> {
+    return import('@membrana/plugin-contracts');
+  }
+
+  private pluginContracts(): Promise<PluginContracts> {
+    this.contractsPromise ??= this.loadContracts().catch((error: unknown) => {
+      this.contractsPromise = null;
+      throw error;
+    });
+    return this.contractsPromise;
+  }
 
   async onModuleInit(): Promise<void> {
-    this.contracts = await pluginContracts();
+    this.contracts = await this.pluginContracts();
   }
 
   registerPlugin(manifest: PluginManifest, executor: PluginExecutor): void {
