@@ -85,7 +85,15 @@ export const writeRunBodySchema = z.object({
 
 export type WriteRunBodyDto = z.infer<typeof writeRunBodySchema>;
 
-/** DTO выводится В контракт, а не рядом с ним: проверяется типовой системой (зуб рядом). */
+/**
+ * DTO выводится В контракт, а не рядом с ним: проверяется типовой системой (зуб рядом).
+ *
+ * ЧТО ИМЕННО ГАРАНТИРУЕТСЯ (ревью PR #1981, P0): присваиваемость БАЗЫ — каждое именованное поле
+ * DTO имеет тип поля контракта (`PluginId` брендом, `HomeName`, `ResumeMode`, `Date`, `PluginKind`),
+ * и служба получает `RunRecord`, а не «почти RunRecord». НЕ гарантируется отсутствие лишних полей:
+ * `RunRecordDto` несёт индексную сигнатуру от `.passthrough()` — это форма, названная выше, и
+ * предмет #1982. Зуб честен ровно на ширину этого утверждения.
+ */
 export type RunRecordDto = z.infer<typeof runRecordSchema>;
 export type StateRecordDto = z.infer<typeof stateRecordSchema>;
 export const assertDtoMatchesContracts = (run: RunRecordDto, state: StateRecordDto): [RunRecord, StateRecord] => [run, state];
