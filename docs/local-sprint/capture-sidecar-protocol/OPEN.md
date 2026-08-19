@@ -9,7 +9,7 @@
 | Prompt | [`docs/prompts/CAPTURE_SIDECAR_PROTOCOL_PROMPT.md`](../../prompts/CAPTURE_SIDECAR_PROTOCOL_PROMPT.md) |
 | Cutter | `kuryokhin` |
 | Team | `dynin` · `ozhegov` |
-| Status | RATIFIED · IMPLEMENTATION PENDING |
+| Status | GATE PASS 4/4 `honest_pair` · experience `hit` |
 
 ## Предмет
 
