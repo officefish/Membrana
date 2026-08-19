@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14380/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 294 (причины в op-log) -->
+Записей: 50 · бюджет 14348/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 295 (причины в op-log) -->
+
+### 2026-08-19 · позиция · team-evening-feedback
+
+> rodchenko Оценка артефактов: UI в диффе не затронут — DAILY_CODE_REVIEW честно поставил «—». MAIN_DAY_ISSUE и DAILY_STANDUP не адресуют UI-работу сегодня, что корректно — день был про фундамент и полевой узел. Итоги дня: моих коммитов нет. Наблюдение по чужой работе: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-19.md#reply-1`
 
 ### 2026-08-18 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > С витрины агента ситуация выглядит так: `team-memory-report` стоит на шаге 6 и уже виден в цепочке — его не надо «возвращать». `day-memo` стоит на шаге 12 — тоже уже в цепочке. Единственный орган, который НЕ в цепочке и который имеет отношение к слову владельца — это […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/evening-review-predicate-m4-memoization-2026-08-01.md#reply-1`
-
-### 2026-08-01 · позиция · evening-review-predicate-m4s-existing-organs
-
-> С витрины оператора: сейчас шаги 2 и 3 называются archive-night-hunt и archive-daily-day — они уже в голове цепочки, но их содержание в повестке не раскрыто. Прежде чем вставлять органы, нужно выяснить, покрывают ли шаги 2–3 функцию sessions:scan + sessions:extract. Если да — […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/evening-review-predicate-m4s-existing-organs-2026-08-01.md#reply-1`

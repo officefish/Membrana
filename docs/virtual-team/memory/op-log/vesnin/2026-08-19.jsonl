@@ -3,3 +3,6 @@
 {"ts":"2026-08-19T10:03:45.321Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-19T10:03:28.110Z","origin":"ask-persona"}
 {"ts":"2026-08-19T10:03:45.323Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-19T10:03:28.110Z","origin":"ask-persona"}
 {"ts":"2026-08-19T10:03:45.325Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-08-03-static-mmbrn-container-m1-boundary","reason":"тот же приём: положительная граница + отрицательная + инварианты. Здесь форма моста ровно так и построена (что соединяется, против альтернатив, словарь исходов) — образец применён, не изобретён заново.","origin":"ask-persona"}
+{"ts":"2026-08-19T18:43:37.397Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-19-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-19T18:43:37.397Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-08-01-evening-review-predicate-m4-memoization","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-19T18:43:37.397Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

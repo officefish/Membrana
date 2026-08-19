@@ -40,7 +40,7 @@
       ],
       "notes": "слово владельца 19.08: вся работа через membrana-local-sprint; у каждого дефекта своя персона; media#test не чинить (локальный артефакт песочницы, CI зелёный)",
       "archiveNotes": "Спринт 19.08 через membrana-local-sprint (нарезка 7 блоков ратифицирована владельцем 09:08Z). Диагноз красного rag-service#test (Дынин): падают часы, не поиск — keywordSearch по живому репо = git log 30 дней (6.9 с) + 2543 документа, под turbo --concurrency=3 вечернего code-review пробивает 30 с; решение — фикстура + часы acceptance как метрика (PR #1983). Ревью-долг #1951/#1953 закрыт протоколами Веснина/Курёхина (PR #1991; рекомендация по --rate 44100 → #2001). Хвосты #1972: @membrana/wav-decode вместо трёх копий, nodeId=sampleId, no-restricted-imports (PR #1987). Синглтон импорта контрактов снят в media и office (PR #1989). Гейт 7/7 honest_pair, прогноз↔исход hit.",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-19"
     },
     {
       "id": "plugin-results-payload-pocket",

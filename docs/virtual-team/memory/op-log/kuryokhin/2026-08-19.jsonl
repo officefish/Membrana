@@ -4,3 +4,6 @@
 {"ts":"2026-08-19T12:42:42.554Z","persona":"kuryokhin","verb":"cloud_query","ref":"kuryokhin-2026-08-19T12:42:26.548Z","origin":"ask-persona"}
 {"ts":"2026-08-19T12:42:42.565Z","persona":"kuryokhin","verb":"surface_invoke","ref":"kuryokhin-2026-08-19T12:42:26.548Z","origin":"ask-persona"}
 {"ts":"2026-08-19T12:42:42.566Z","persona":"kuryokhin","verb":"emerge","ref":"kuryokhin-2026-06-09-media-library-dataset","reason":"там я как раз настаивал, что без строки «класс + условия записи» датасет утечёт в копипасту руками; сейчас спутник узла именно это и вводит на входе. Проверяю, что моя тогдашняя претензия закрыта: класс, расстояние, 48V, GAIN-флаг — в обязательном минимуме есть.","origin":"ask-persona"}
+{"ts":"2026-08-19T18:43:36.957Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-08-19-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-19T18:43:36.957Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-08-01-evening-review-predicate-m4-memoization","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-19T18:43:36.957Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

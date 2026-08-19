@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14384/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 298 (причины в op-log) -->
+Записей: 50 · бюджет 14361/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 301 (причины в op-log) -->
+
+### 2026-08-19 · позиция · team-evening-feedback
+
+> ozhegov Оценка артефактов: DAILY_CODE_REVIEW проверяет бестиарий пошагово (B3/B4/B6/B8/B9) — это правильный формат; DAY_REPORT.md собрал 25 коммитов по областям с честной классификацией «переписывание — не ничего не делали». MAIN_DAY_ISSUE и DAILY_STANDUP расходятся, и это […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-19.md#reply-1`
 
 ### 2026-08-18 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > Уточняю термины, иначе будем спорить о разных вещах. «Мерка объёма» — это функция card → ℕ, применённая к одной карточке: осмысленна. «Агрегат по дню» — это функция {card₁…cardₙ} → ℕ, потерявшая структуру множества: теряет информацию о распределении. «Реляционный предикат […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/evening-review-predicate-m3-volume-measure-2026-08-01.md#reply-1`
-
-### 2026-08-01 · позиция · evening-review-predicate-m4-memoization
-
-> Разведу термины, чтобы не ехать на синонимах. «Мемоизация в голове вечера» — это не тип операции, это временно́й слот: то, что происходит ДО `day-memo`. Орган `team-memory-report` (шаг 6) — читатель, не писатель; он не мемоизирует, он отчитывается о состоянии памяти. Орган […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/evening-review-predicate-m4-memoization-2026-08-01.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m4b-panel
 

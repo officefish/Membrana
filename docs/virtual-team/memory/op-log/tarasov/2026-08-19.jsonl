@@ -1,3 +1,6 @@
 {"ts":"2026-08-19T16:21:50.952Z","persona":"tarasov","verb":"cloud_query","ref":"tarasov-2026-08-19T16:21:32.078Z","origin":"ask-persona"}
 {"ts":"2026-08-19T16:21:50.968Z","persona":"tarasov","verb":"surface_invoke","ref":"tarasov-2026-08-19T16:21:32.078Z","origin":"ask-persona"}
 {"ts":"2026-08-19T16:21:50.973Z","persona":"tarasov","verb":"emerge","ref":"tarasov-2026-08-13-network-container-m6-k1-rules","reason":"там я держал планку «один вердикт без довесков»; здесь та же ситуация: приёмка предмета спринта не должна размазаться на пойманное деплоем.","origin":"ask-persona"}
+{"ts":"2026-08-19T18:43:37.306Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-19-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-19T18:43:37.306Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-01-evening-review-predicate-m4s-existing-organs","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-19T18:43:37.306Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:51","origin":"persona-extract"}
