@@ -1,0 +1,3 @@
+{"ts":"2026-08-19T08:28:28.250Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-19T08:28:00.560Z","origin":"ask-persona"}
+{"ts":"2026-08-19T08:28:28.253Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-19T08:28:00.560Z","origin":"ask-persona"}
+{"ts":"2026-08-19T08:28:28.255Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-08-17-server-plugin-foundation-m4-triggers","reason":"там я уже отклонял string[] вместо PluginTrigger[]: тот же дефект в b2 будет, если zod продублирует форму вместо вывода из контрактов.","origin":"ask-persona"}

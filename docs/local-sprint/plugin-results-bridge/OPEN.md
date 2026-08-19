@@ -53,3 +53,18 @@ PR-план: PR-A = b1+b2 (office) · PR-B = b3+b4 (media + handlers) · PR-C = 
    без них мост отвечает именованным `office-not-configured`, сервис стартует.
 3. **Отпечатки при `request`.** `configHash` плагино-специфичен; вход считает их тем же
    чтением, что прогон (`mfccFingerprintsOf`), через deps первой волны — не выдумывает.
+
+## Ход исполнения
+
+- **b1 done** — `docs/plugins/results-bridge-form.md`: форма A (HTTP push), три альтернативы с
+  причинами, словарь исходов, вход `request`, порядок деплоя.
+- **b2 done** — приёмник `POST/GET /plugin-results/runs` (ApiTokenGuard) → `writeRun`/`readRuns`;
+  DTO выводится В контракт (типовой зуб `assertDtoMatchesContracts`, бренд `PluginId` на границе,
+  `HomeName` satisfies); 8 зубов контроллера. Контекст Ожегова:
+  [`plugin-results-bridge-b2.md`](../../discussions/plugin-results-bridge-b2.md).
+  **Открытый P2 архитектору (Ожегов):** `.passthrough()` в `runRecordSchema` — «теневой словарь
+  через POST». Оставлен сознательно: дом уже хранит документ целиком (`$set: {...run}`), запись
+  18.08 несёт пробы/сводку исполнителя в корне; HTTP-путь беднее in-process дал бы два облика
+  дома. Закрывается карманом `payload` на стороне `RunResult` решением Архитектора, не срезом в DTO.
+  Не принято: переименование маршрута (`/plugin-results/runs` ↔ `writeRun/readRuns` дома);
+  привязка токена к `pluginId` — вне предмета (M5′, границы авторизации).

@@ -1,0 +1,4 @@
+{"traceId":"tr-b1-vesnin-run","blockId":"b1-bridge-form","kind":"context_run","subject":"vesnin","at":"2026-08-19T08:18:54+00:00","ref":"docs/virtual-team/memory/op-log/vesnin/2026-08-19.jsonl"}
+{"traceId":"tr-b1-vesnin-review","blockId":"b1-bridge-form","kind":"review_pass","subject":"vesnin","at":"2026-08-19T08:27:00+00:00","ref":"docs/plugins/results-bridge-form.md"}
+{"traceId":"tr-b2-ozhegov-run","blockId":"b2-office-receiver","kind":"context_run","subject":"ozhegov","at":"2026-08-19T08:29:00+00:00","ref":"docs/virtual-team/memory/op-log/ozhegov/2026-08-19.jsonl"}
+{"traceId":"tr-b2-ozhegov-review","blockId":"b2-office-receiver","kind":"review_pass","subject":"ozhegov","at":"2026-08-19T08:30:58+00:00","ref":"packages/background-office/src/modules/plugin-results/plugin-results.controller.test.ts"}
