@@ -31,6 +31,10 @@ const pluginIdBrand = z.string().min(1).transform((s) => s as PluginId);
 const HOME_NAMES = ['background-office/journal', 'background-media/collections'] as const satisfies readonly HomeName[];
 // Полнота, не только принадлежность: `satisfies` говорит «каждый — дом», это — «все дома названы».
 // Новый ключ в HOME_REGISTRY без правки здесь роняет typecheck, а не молча отвергает адрес 400-м.
+// ПРОВЕРЕНО ОТРИЦАТЕЛЬНО 19.08.2026: с массивом из одного дома tsc даёт
+// «TS2322: Type 'true' is not assignable to type 'false'» на строке ниже — зуб не компилируется в
+// true при неполном списке (ревью PR #1981). Текущие HomeName пакета: background-office/journal ·
+// background-media/collections (HOME_REGISTRY, M2).
 type HomeNameMissingHere = Exclude<HomeName, (typeof HOME_NAMES)[number]>;
 const HOME_NAMES_COMPLETE: [HomeNameMissingHere] extends [never] ? true : false = true;
 void HOME_NAMES_COMPLETE;
