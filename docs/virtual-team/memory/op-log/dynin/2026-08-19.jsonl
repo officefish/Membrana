@@ -2,3 +2,6 @@
 {"ts":"2026-08-19T09:31:15.593Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-19T09:30:39.787Z","origin":"ask-persona"}
 {"ts":"2026-08-19T09:31:15.596Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-17-server-plugin-foundation-m6r-first-wave","reason":"там я уже фиксировал состав RunRecord и адрес (pluginId, version, collectionId, runId, mountTarget); текущий b4 — ровно вход, порождающий такую запись, и швы совпадают.","origin":"ask-persona"}
 {"ts":"2026-08-19T09:31:15.597Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-23-llm-procedure-channels-m4a-agent-usage","reason":"там же схема идемпотентности через клиентский eventId и dedupe; здесь ровно этот приём нужен для повторов POST /request.","origin":"ask-persona"}
+{"ts":"2026-08-19T18:43:36.731Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-19-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-19T18:43:36.731Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-01-evening-review-predicate-m4-memoization","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-19T18:43:36.731Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-18 |
-| Head SHA | c18d1c33d82893368a3ea3393db3dc4f355f8055 |
+| Date | 2026-08-19 |
+| Head SHA | afcb0a81b95fe1d2f11904a642f7131cf5e4fad2 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1138 |
-| Yarn scripts (package.json) | 447 |
-| Yarn → `scripts/` | 392 |
+| Code files under `scripts/` | 1143 |
+| Yarn scripts (package.json) | 449 |
+| Yarn → `scripts/` | 394 |
 | Yarn без пути `scripts/` | 55 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 824 |
+| Code files without yarn ref | 827 |
 
-## Yarn → scripts/ (392)
+## Yarn → scripts/ (394)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -91,6 +91,7 @@
 - `calibrate:detectors` → `scripts/calibrate-detectors.mjs`
 - `calibrate:mfcc` → `scripts/calibrate-mfcc-gates.mjs`
 - `canon:sign` → `scripts/canon-sign.mjs`
+- `capture:sidecar` → `scripts/capture-sidecar.mjs`
 - `case:decompose` → `scripts/case-decompose.mjs`
 - `case:generalize` → `scripts/case-generalize.mjs`
 - `case:inspect` → `scripts/case-inspect.mjs`
@@ -152,6 +153,7 @@
 - `evidence` → `scripts/evidence.mjs`
 - `feedback:claims` → `scripts/feedback-claims-probe.mjs`
 - `field:capture` → `scripts/field-capture.mjs`
+- `firebat:poller` → `scripts/firebat-poller.mjs`
 - `git:check-divergence` → `scripts/git-check-divergence.mjs`
 - `git:fresh-branch` → `scripts/git-fresh-branch.mjs`
 - `git:rebase-continue` → `scripts/git-rebase-continue.mjs`
@@ -418,7 +420,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (824)
+## Code files without yarn ref (827)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -521,6 +523,7 @@
 - `scripts/build-v08-policy-constructor-json.mjs`
 - `scripts/cabinet-deploy-image-tag.test.mjs`
 - `scripts/calibration-preset-sync.test.mjs`
+- `scripts/capture-sidecar.test.mjs`
 - `scripts/check-bare-fetch.test.mjs`
 - `scripts/check-package-boundaries.test.mjs`
 - `scripts/check-package-json-bom.test.mjs`
@@ -586,6 +589,7 @@
 - `scripts/experimental/opencode-task.mjs`
 - `scripts/feedback-claims-probe.test.mjs`
 - `scripts/field-capture.test.mjs`
+- `scripts/firebat-poller.test.mjs`
 - `scripts/fix-imports-with-claude.js`
 - `scripts/fixtures/membrana-leveling-disposition-product.mjs`
 - `scripts/gc-void.test.mjs`
@@ -665,6 +669,7 @@
 - `scripts/lib/calibration-preset.mjs`
 - `scripts/lib/captain-notebook.mjs`
 - `scripts/lib/captain-notebook.test.mjs`
+- `scripts/lib/capture-sidecar.mjs`
 - `scripts/lib/case-store.mjs`
 - `scripts/lib/case-store.test.mjs`
 - `scripts/lib/changed-files-scope.mjs`
@@ -1255,7 +1260,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1138)
+## All code files (1143)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1426,6 +1431,8 @@
 - `scripts/calibrate-mfcc-gates.mjs`
 - `scripts/calibration-preset-sync.test.mjs`
 - `scripts/canon-sign.mjs`
+- `scripts/capture-sidecar.mjs`
+- `scripts/capture-sidecar.test.mjs`
 - `scripts/case-decompose.mjs`
 - `scripts/case-generalize.mjs`
 - `scripts/case-inspect.mjs`
@@ -1542,6 +1549,8 @@
 - `scripts/fetch-vdr-pilot-corpus.mjs`
 - `scripts/field-capture.mjs`
 - `scripts/field-capture.test.mjs`
+- `scripts/firebat-poller.mjs`
+- `scripts/firebat-poller.test.mjs`
 - `scripts/fix-imports-with-claude.js`
 - `scripts/fixtures/membrana-leveling-disposition-product.mjs`
 - `scripts/gc-void.test.mjs`
@@ -1643,6 +1652,7 @@
 - `scripts/lib/calibration-preset.mjs`
 - `scripts/lib/captain-notebook.mjs`
 - `scripts/lib/captain-notebook.test.mjs`
+- `scripts/lib/capture-sidecar.mjs`
 - `scripts/lib/case-store.mjs`
 - `scripts/lib/case-store.test.mjs`
 - `scripts/lib/changed-files-scope.mjs`

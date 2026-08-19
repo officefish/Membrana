@@ -43,3 +43,6 @@
 {"ts":"2026-08-19T14:38:05.852Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-19T14:37:41.406Z","origin":"ask-persona"}
 {"ts":"2026-08-19T14:38:05.869Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-19T14:37:41.406Z","origin":"ask-persona"}
 {"ts":"2026-08-19T14:38:05.876Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-23-llm-procedure-channels-m2b-control-plane","reason":"там я держал границу «канал = замкнутый путь носителей до потребителя»; здесь та же проверка: путь «оператор → -NodeKey → .env узла → poller» замкнут, служебный токен в него не входит по построению, это ровно норма ADR-0027 Р3.","origin":"ask-persona"}
+{"ts":"2026-08-19T18:43:37.063Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-19-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-19T18:43:37.063Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-08-01-evening-review-predicate-m4-memoization","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-19T18:43:37.063Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14207/14400 · статус ok
+Записей: 50 · бюджет 14389/14400 · статус ok
 <!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 296 (причины в op-log) -->
+
+### 2026-08-19 · позиция · team-evening-feedback
+
+> dynin Оценка артефактов: DAILY_CODE_REVIEW корректно оценил мой диагноз rag-service — стеночные часы на живом git-дереве под `turbo --concurrency=3` (868 коммитов, 6 862 мс) — как метрику, а не как флак кода. MAIN_DAY_ISSUE включила «Проба-0: изолированный прогон rag-service без […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-19.md#reply-1`
 
 ### 2026-08-18 · позиция · team-evening-feedback
 
@@ -296,8 +302,8 @@
 
 — источник: `docs/seanses/evening-review-predicate-m3-volume-measure-2026-08-01.md#reply-1`
 
-### 2026-08-01 · позиция · evening-review-predicate-m4-memoization
+### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
 
-> Формализую предикат конфликта. Требование 3 из #569 задаёт инвариант: `admit(e) ⇔ shown_to_partners(content(e))`. Слово владельца 01.08 задаёт другой предикат для головы вечера: `in_head(e) ⇔ occurred_today(e)`. Эти два предиката несовместимы ровно для одного органа — […] _(реплик в сеансе: 5)_
+> Форма: `effective.chain: ProviderId[]` непустой; try i=0..n-1; emit event per attempt; успех → break; все fail → exit≠0. Single provider = chain длины 1 (совместимо с C1). _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/evening-review-predicate-m4-memoization-2026-08-01.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m3c-fallback-2026-07-23-2026-07-23.md#reply-1`

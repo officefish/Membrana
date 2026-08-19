@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 51 · бюджет 14371/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 308 (причины в op-log) -->
+Записей: 51 · бюджет 14340/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 309 (причины в op-log) -->
+
+### 2026-08-19 · позиция · team-evening-feedback
+
+> tarasov Оценка артефактов: STRATEGY_DAY 17.07 — вещдок, не источник (это честно помечено, но не заменено); MAIN_DAY_ISSUE и DAILY_STANDUP согласованы между собой по «санитарной» линии (CI + ревью-долг) и одновременно расходятся с `sources[0]` (server-plugin-foundation) — […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-19.md#reply-1`
 
 ### 2026-08-18 · позиция · team-evening-feedback
 
@@ -301,12 +307,6 @@
 > Матч узкий. Три органа слипаются в одном слове — наша задача их развести и сказать, что именно владелец потребовал вернуть в голову вечера, а что уже там стоит или стоять не должно. Требование 3 из #569 — не абстрактная норма, это конкретное архитектурное решение с причиной. […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/evening-review-predicate-m4-memoization-2026-08-01.md#reply-1`
-
-### 2026-08-01 · позиция · evening-review-predicate-m4s-existing-organs
-
-> Стоп. Архитектор поставил правильную конструкцию, но операциональный вопрос повис. Фактическая нумерация: шаги 1–5 — это bridge-close, archive-night-hunt, archive-daily-day, truth-cool, rag-index. Они в голове. Вопрос: куда именно встают scan/extract/archivarius? Владелец сказал […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/evening-review-predicate-m4s-existing-organs-2026-08-01.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
 

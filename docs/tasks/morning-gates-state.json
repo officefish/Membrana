@@ -6,7 +6,19 @@
   ],
   "frozenDigest": "9ee6b5ca09a569dde4f7eb7094e438cc966ed69ef1412d5ebecdae525bc0a855",
   "magistral": "firebat-node-device",
-  "swallow": null,
+  "swallow": {
+    "claimsProbe": {
+      "verdict": "hard",
+      "protocol": "docs/seanses/team-evening-feedback-2026-08-19.md",
+      "sha": "054e371a4f8b",
+      "at": "2026-08-19T18:30:52.753Z"
+    },
+    "gate": "evening:partner-swallow",
+    "draftDigest": "b5b3aa6dc393e5d7e0833c52294d66e11bbdecca7e8341a90fef5e70bb0c57dc",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-19.md",
+    "ownerAck": true,
+    "day": "2026-08-19"
+  },
   "day": "2026-08-19",
   "magistralChosenAt": "2026-08-19"
 }

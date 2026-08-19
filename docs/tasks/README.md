@@ -141,7 +141,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `contour-sanity-2026-08-19` | Санитария контура прогонов через спринт: диагноз красного rag-теста, ревью-долг #1951/#1953, хвосты #1972, синглтон импорта в хосте | 2026-08-19 | [`SESSION_G_CONTOUR_SANITY_SPRINT_2026-08-19.md`](../prompts/SESSION_G_CONTOUR_SANITY_SPRINT_2026-08-19.md) | #1972 (Issue открыт) | [карточка](./archive/contour-sanity-2026-08-19.md) |
+| `contour-sanity-2026-08-19` | Санитария контура прогонов через спринт: диагноз красного rag-теста, ревью-долг #1951/#1953, хвосты #1972, синглтон импорта в хосте | 2026-08-19 | [`SESSION_G_CONTOUR_SANITY_SPRINT_2026-08-19.md`](../prompts/SESSION_G_CONTOUR_SANITY_SPRINT_2026-08-19.md) | #1972 | [карточка](./archive/contour-sanity-2026-08-19.md) |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | 2026-08-14 | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — | [карточка](./archive/static-mmbrn-live-inventory.md) |
 | `archivarius-sessions-container` | Контейнер сессий Archivarius: Mongo office, адресуемые span, ingest/search с секрет-маской | 2026-08-14 | [`ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md`](../prompts/ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md) | #1330 | [карточка](./archive/archivarius-sessions-container.md) |
 | `tw-handoff-status` | Мастерская задач: глагол task:handoff — актуальный хендоф со сверкой каждой строки (формат капитана 13.08) | 2026-08-13 | [`TW_HANDOFF_STATUS_PROMPT.md`](../prompts/TW_HANDOFF_STATUS_PROMPT.md) | — | [карточка](./archive/tw-handoff-status.md) |
