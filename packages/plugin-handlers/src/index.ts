@@ -32,3 +32,4 @@ export {
 } from './mfcc/executor.js';
 export { PluginNotImplementedError, STUB_HANDLER_MANIFESTS, STUB_HANDLER_SLUGS, notImplementedExecutor } from './stubs.js';
 export { FIRST_WAVE_MANIFESTS, registerFirstWave, type FirstWaveDeps, type FirstWaveResultSink } from './first-wave.js';
+export { UUID_V7_PATTERN, uuidV7, type RandomBytes } from './run-id.js';

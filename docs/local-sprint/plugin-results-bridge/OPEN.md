@@ -10,7 +10,7 @@
 | Cutter context | Веснин, `yarn ask vesnin` 19.08 11:18 → [`plugin-results-bridge-cut.md`](../../discussions/plugin-results-bridge-cut.md) |
 | Lead | vesnin |
 | Support | ozhegov · dynin |
-| Status | open · execute |
+| Status | code done · acceptance blocked (b5 ждёт деплоя) — см. CLOSURE.md |
 
 ## Зачем
 
@@ -71,3 +71,17 @@ PR-план: PR-A = b1+b2 (office) · PR-B = b3+b4 (media + handlers) · PR-C = 
   дома. Именованный follow-up: #1982 (держатель Веснин) — карман `payload` в `RunResult` либо расширение в корне как норма.
   Не принято: переименование маршрута (`/plugin-results/runs` ↔ `writeRun/readRuns` дома);
   привязка токена к `pluginId` — вне предмета (M5′, границы авторизации).
+- **PR-A #1981 влит** (`18ba21c4`, 19.08 09:28Z): b1+b2; ревью тимлида — 8 раундов, LGTM;
+  по дороге: #1982 (passthrough → карман payload, карточка `plugin-results-payload-pocket`),
+  строка приёмника в LIVE_SERVICES.md, исключение bare-fetch для моста в политике машин.
+- **b3 done** — `PluginResultsBridgeService` (media): один POST + одна повторная на сетевой отказ,
+  исходы закрытым словарём, `office-not-configured` без сети; 7 зубов. PR-B1 **#1985**.
+- **b4 done** — вход `POST …/collections/:id/plugins/:pluginId/request` + `requestRun` в
+  регистраторе: контекст из deps исполнителя, `uuidV7` в `@membrana/plugin-handlers`, повод из
+  подписки манифеста (первая волна — только `sample_added` → `sampleId` обязателен по M4), заглушки
+  501; сид → мост, исход моста в ответе. 4+4 зуба. Контекст Дынина:
+  [`plugin-results-bridge-b4.md`](../../discussions/plugin-results-bridge-b4.md). PR-B2 — после #1985.
+  **Отклонено как расширение словаря (вопросы Архитектору, не код):** `requestId`/ключ
+  идемпотентности и `depsSnapshotId` в `RunRecord` (M1/M3′ не переоткрываются; повтор запроса —
+  новый детерминированный прогон, дом идемпотентен по `runId`); `resumeMode` параметром запроса
+  (эрратум A4-1: объявление старта, его решает дом по `StateRecord`, не вызывающий).

@@ -42,3 +42,29 @@ export class ProvisionCatalogResponseDto {
   @ApiProperty({ example: 120, description: 'Total entries in manifest' })
   total!: number;
 }
+
+/** Запрос прогона плагина на коллекции (вход `request` хоста `collections`, b4 спринта plugin-results-bridge, #1961). */
+export class RequestPluginRunDto {
+  @ApiPropertyOptional({
+    description: 'Повод из закрытого словаря PLUGIN_TRIGGERS; умолчание collections.collection_created (payload M4: { collectionId, occurredAt })',
+    example: 'collections.collection_created',
+  })
+  trigger?: string;
+
+  @ApiPropertyOptional({ description: 'Обязателен для collections.sample_added (payload M4 несёт sampleId)' })
+  sampleId?: string;
+}
+
+export class PluginRunResponseDto {
+  @ApiProperty({ example: '01a0150f-95e6-718b-bfa7-4ba313511a10', description: 'runId — UUID v7, адрес прогона в доме результатов' })
+  runId!: string;
+
+  @ApiProperty({ description: 'RunAddress: pluginId · version · collectionId · runId · mountTarget' })
+  address!: Record<string, string>;
+
+  @ApiProperty({ description: 'RunFingerprints: inputHash · configHash' })
+  fingerprints!: { inputHash: string; configHash: string };
+
+  @ApiProperty({ description: 'Исход моста в office: sent · office-not-configured · office-unreachable · office-rejected; null — сид не дошёл', nullable: true })
+  bridge!: { outcome: string; runId: string; attempts: number; status?: number; reason?: string } | null;
+}
