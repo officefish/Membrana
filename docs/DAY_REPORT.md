@@ -1,33 +1,36 @@
-<!-- Сгенерировано: 2026-08-18T06:18:48.890Z (yarn day:report; vesnin) -->
+<!-- Сгенерировано: 2026-08-19T06:00:31.900Z (yarn day:report; vesnin) -->
 
-# Доклад по задачам — 2026-08-18
+# Доклад по задачам — 2026-08-19
 
 Автор: Тимлид (vesnin) · зеркало 5-блочного плана дня.
 
 ## Магистраль
 
 - `server-plugin-foundation` — ведёт vesnin
-- #1961 — OPEN
 
 ## Подкрепление
 
+- `angelina-hostess-impl` — ведёт ozhegov
+- `assets-container` — ведёт vesnin
 - `server-plugin-foundation` — ведёт vesnin
+- `mfcc-compare-sprint` — ведёт tarasov
 - #1951 — MERGED
 - #1953 — MERGED
 
 ## Перспективные
 
-- `angelina-hostess-impl` — ведёт ozhegov
-- `assets-container` — ведёт vesnin
 - `server-plugin-foundation` — ведёт vesnin
+- `batch-collection-run-contour` — ведёт ozhegov
+- `mfcc-compare-sprint` — ведёт tarasov
+- #1951 — MERGED
+- #1953 — MERGED
 
 ## Экспериментальные
 
-— задач со ссылками нет (темы блока — в каноне дня) —
+- `server-plugin-foundation` — ведёт vesnin
 
 ## Санитарные
 
-- `server-plugin-foundation` — ведёт vesnin
+- `mfcc-compare-sprint` — ведёт tarasov
 - #1951 — MERGED
 - #1953 — MERGED
-- #1961 — OPEN
