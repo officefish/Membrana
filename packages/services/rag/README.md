@@ -75,3 +75,12 @@ Rituals use `scripts/lib/rag-ritual.mjs` — see [`docs/RAG.md`](../../../docs/R
 | R0–R6 | ✅ shipped |
 | Voyage embeddings provider | ✅ shipped (#425) |
 | R7 (Obsidian, Pinecone) | optional / planned |
+
+## Тесты и часы
+
+- `yarn workspace @membrana/rag-service test` — юниты; `keywordSearch` проверяется на корпусе-фикстуре
+  во временном каталоге, а не на живом репозитории (диагноз 19.08: на живом дереве один вызов стоит
+  `git log` за 30 дней + тысячи `stat`/`readFile`, под параллельным `turbo` пробивал таймаут).
+- `yarn workspace @membrana/rag-service test:acceptance` — P@5 по живому корпусу; время запроса
+  **печатается** (`[rag acceptance] P@5 ok · N ms`), а валит тест только при явном пороге
+  `RAG_ACCEPTANCE_TIMING_MS=<мс>`: цена запроса растёт с репозиторием и зависит от машины.
