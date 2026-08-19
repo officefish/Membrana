@@ -1,4 +1,7 @@
-import { describe, expect, it } from 'vitest';
+import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { loadRagConfig, RAG_CONFIG_DEFAULTS } from './config.js';
 import { keywordSearch } from './operative/keyword-search.js';
@@ -59,13 +62,35 @@ describe('retrieveContext (R1 archive)', () => {
 });
 
 describe('keywordSearch (R2 operative)', () => {
+  // Корпус-фикстура вместо живого репозитория (диагноз Дынина 19.08, спринт contour-sanity):
+  // на живом дереве keywordSearch стоит git log за 30 дней (≈7 с, 868 коммитов) + 2,5 тыс. stat/read —
+  // под параллельным turbo тест пробивал testTimeout 30 с. Здесь проверяется ФУНКЦИЯ
+  // (operative-фрагменты без LanceDB), а не скорость диска; скорость живого корпуса меряет acceptance.
+  let fixtureRoot = '';
+
+  beforeAll(async () => {
+    fixtureRoot = await mkdtemp(join(tmpdir(), 'rag-operative-'));
+    await mkdir(join(fixtureRoot, 'docs'), { recursive: true });
+    await writeFile(
+      join(fixtureRoot, 'docs', 'MAIN_DAY_ISSUE.md'),
+      '# Main day issue\n\nMembrana — магистраль дня: Membrana plugin host, Membrana collections.\n',
+      'utf8',
+    );
+    await writeFile(join(fixtureRoot, 'docs', 'DAILY_CODE_REVIEW.md'), '# Review\n\nMembrana review of the day.\n', 'utf8');
+  });
+
+  afterAll(async () => {
+    await rm(fixtureRoot, { recursive: true, force: true });
+  });
+
   it('returns operative fragments without LanceDB', async () => {
-    const fragments = await keywordSearch(REPO_ROOT, 'Membrana', {
+    const fragments = await keywordSearch(fixtureRoot, 'Membrana', {
       days: 30,
       topK: 3,
     });
     expect(fragments.length).toBeGreaterThan(0);
     expect(fragments.every((fragment) => fragment.circuit === 'operative')).toBe(true);
+    expect(fragments.map((fragment) => fragment.metadata.source)).toContain('docs/MAIN_DAY_ISSUE.md');
   });
 });
 

@@ -1,0 +1,130 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "contour-sanity-2026-08-19",
+  "taskId": "contour-sanity-2026-08-19",
+  "mode": "explicit-honest",
+  "cutBy": "ozhegov",
+  "window": {
+    "from": "2026-08-19T08:30:00+00:00",
+    "to": "2026-08-19T18:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "rag-red-diagnosis",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "docs/discussions/rag-service-red-diagnosis-dynin.md"
+      ],
+      "revisionAt": "2026-08-19T08:30:00+00:00",
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionOf": "0db9d5a7dc2d8c6855504bff7a87f7f214ce1d8ff54f29fd11a051fbfcfb9c1c"
+    },
+    {
+      "blockId": "rag-red-resolution",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/services/rag/src/retriever/acceptance.test.ts",
+        "packages/services/rag/src/service.test.ts",
+        "packages/services/rag/vitest.config.ts",
+        "packages/services/rag/README.md"
+      ],
+      "revisionAt": "2026-08-19T08:30:00+00:00",
+      "estimate": {
+        "changedLines": 80
+      },
+      "revisionOf": "1be725fb49c1f787cb7bfb7310db8ee648aab2abe6381cee76515e0e28c772e9"
+    },
+    {
+      "blockId": "review-1951-vesnin",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/discussions/review-pr-1951-mfcc-benchmark-vesnin.md"
+      ],
+      "revisionAt": "2026-08-19T08:30:00+00:00",
+      "estimate": {
+        "changedLines": 100
+      },
+      "revisionOf": "9dea751155dc5d21bfb8c4516eccf1c5a153b6ae8857d9af748ee6d98fabd822"
+    },
+    {
+      "blockId": "review-1953-kuryokhin",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "docs/discussions/review-pr-1953-field-capture-kuryokhin.md"
+      ],
+      "revisionAt": "2026-08-19T08:30:00+00:00",
+      "estimate": {
+        "changedLines": 100
+      },
+      "revisionOf": "2fc4bc0f9b71148046080814f2cceda4ff68b704699e995e10df535e74192466"
+    },
+    {
+      "blockId": "wav-decode-lib",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/libs/wav-decode/",
+        "packages/plugin-handlers/src/wav.ts",
+        "packages/plugin-handlers/package.json",
+        "packages/background-media/src/audio/decode-wav-mono.ts",
+        "packages/background-media/package.json",
+        "scripts/lib/wav-read.mjs",
+        "tsconfig.json",
+        "yarn.lock"
+      ],
+      "revisionAt": "2026-08-19T08:30:00+00:00",
+      "estimate": {
+        "changedLines": 220
+      },
+      "revisionOf": "5a0628135dd0e9dae24ceffb10e4edd5e8cec32c190789d497fd94f1bf14ba3c"
+    },
+    {
+      "blockId": "executor-tails",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/plugin-handlers/.eslintrc.cjs",
+        "packages/plugin-handlers/src/mfcc/executor.ts",
+        "packages/plugin-handlers/src/mfcc/executor.test.ts"
+      ],
+      "revisionAt": "2026-08-19T08:30:00+00:00",
+      "estimate": {
+        "changedLines": 60
+      },
+      "revisionOf": "64302872b006c986622a445659b5b1a39bdd22e1c6c32cd77943ccd85b206929"
+    },
+    {
+      "blockId": "host-import-singleton",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/background-media/src/modules/collections/plugin-host.service.ts",
+        "packages/background-media/src/modules/collections/plugin-host.service.test.ts",
+        "packages/background-office/src/modules/plugin-results/plugin-results.service.ts",
+        "packages/background-office/src/modules/plugin-results/plugin-results.service.test.ts"
+      ],
+      "revisionAt": "2026-08-19T08:30:00+00:00",
+      "estimate": {
+        "changedLines": 70
+      },
+      "revisionOf": "fa27a3227be44321fcaf8dfcf997631d26730ce8abab8b8f3dd8bbd5d8b99dad"
+    }
+  ],
+  "//why": "Слово владельца 19.08: четыре дефекта контура прогонов (фидбек 16–18.08) — через membrana-local-sprint, у каждого своя персона; код до ратификации — нарушение. Дефекты не блокируют магистраль, но делают статус тестов недостоверным, а на неделе на тестах стоит приёмка.",
+  "//observed": "Изолированный прогон @membrana/rag-service 19.08 11:20: 4 падения из ~45, все четыре — про ВРЕМЯ (таймаут 30 000 мс в service.test.ts; три P@5 в acceptance.test.ts с «expected 8803/14466/8102 to be less than 8000»), ни одно — про качество поиска; CI на стволе зелёный. #1951 +625/−7 (5 файлов), #1953 +414/−1 (5 файлов), оба 16.08 без разбора, оба питают калибровочный корпус. Модульный let pluginContractsPromise — в media (сбрасывается при ошибке) И в office plugin-results.service.ts (не сбрасывается).",
+  "//cutter": "Конспект резчика: docs/discussions/cut-contour-sanity-ozhegov.md. Диагноз (блок 1) отделён от решения (блок 2): блок 2 не начинается без документа блока 1; его зона названа широко (тесты и конфиг пакета), потому что до диагноза точный файл неизвестен. Ревью — две персоны, два протокола персон в docs/discussions/ (артефакт yarn code-review:pr по .gitignore:154 в репо не идёт — вердикт инструмента цитируется в протоколе). Хвосты #1972 — два блока, чтобы зоны не пересекались по файлам plugin-handlers. Синглтон снимается в обоих домах одним приёмом (обещание — поле экземпляра); глубже синглтона хост не трогается.",
+  "//order": "1 → 2 (диагноз до решения). 3, 4 — независимо. 5 → 6 (зуб импортов блока 6 должен знать импорт @membrana/wav-decode из блока 5). 7 — независимо. Зоны не пересекаются по файлам.",
+  "//dod": "Блок 1: документ с причиной — где падает, какие пороги, от чего зависит время, почему CI зелёный; без правок кода. Блок 2: решение по диагнозу — чинить / архивировать / оставить с причиной — и его исполнение в зоне; красное либо снято, либо названо поимённо с причиной. Блок 3/4: протокол персоны с вердиктом code-review:pr (LGTM/BLOCK), находками по существу (3 — самозамер и границы измерителя; 4 — тракт: частота, разрядность, уровень, ресемплинг/нормализация) и рекомендацией. Блок 5: @membrana/wav-decode с зубами, три потребителя переведены, своих копий декодера не осталось (зуб grep). Блок 6: nodeId несёт sampleId; граница импортов executor — правило линтера, regex-зуб снят или сведён к линтеру. Блок 7: обещание импорта — поле экземпляра в media и office; зуб: два экземпляра не делят состояние, ошибка импорта одного не залипает у другого.",
+  "//out-of-scope": "media#test (локальный артефакт песочницы, CI зелёный) — не чинить. Контракты плагинов и хост глубже синглтона — не трогать. mfcc-детектор и калибровка — не переписывать (только ревью и границы). Каждый дефект — свой PR ≤ 400, yarn pr:ship после ревью, ссылка на #1961/#1972; протоколы ревью — документы, не код.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-19T09:08:00+00:00",
+    "digest": "1cb17cd7a9fba0f941bbc99a3fbe29e3b82f4bf08c8271b6aa9e307b485651ba"
+  }
+}

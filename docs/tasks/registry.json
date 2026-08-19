@@ -63,6 +63,27 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "contour-sanity-2026-08-19",
+      "title": "Санитария контура прогонов через спринт: диагноз красного rag-теста, ревью-долг #1951/#1953, хвосты #1972, синглтон импорта в хосте",
+      "promptPath": "docs/prompts/SESSION_G_CONTOUR_SANITY_SPRINT_2026-08-19.md",
+      "githubIssue": 1972,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-19",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "dynin",
+        "vesnin",
+        "kuryokhin"
+      ],
+      "notes": "слово владельца 19.08: вся работа через membrana-local-sprint; у каждого дефекта своя персона; media#test не чинить (локальный артефакт песочницы, CI зелёный)",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "server-plugin-foundation",
       "title": "Плагинная основа сервера: серверные модули анализа и визуализации коллекций звуков",
       "promptPath": "docs/prompts/SERVER_PLUGIN_FOUNDATION_PROMPT.md",
