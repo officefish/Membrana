@@ -150,13 +150,15 @@ async function api(cfg, path, init = {}) {
 }
 
 async function handInResult(cfg, task, result) {
-  const fd = new FormData();
-  if (result.file) {
-    fd.append('file', new Blob([readFileSync(result.file)], { type: 'audio/wav' }), `node-${result.stamp}.wav`);
-    fd.append('meta', JSON.stringify(buildResultMeta(task, result.stamp)));
-  } else {
-    fd.append('error', result.error);
+  if (!result.file) {
+    // Отказ — JSON-телом, не multipart-полем: иначе сервер слово не видит (Firebat 19.08).
+    return api(cfg, `/tasks/${task.taskId}/result`, {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ error: result.error }), timeoutMs: 30_000,
+    });
   }
+  const fd = new FormData();
+  fd.append('file', new Blob([readFileSync(result.file)], { type: 'audio/wav' }), `node-${result.stamp}.wav`);
+  fd.append('meta', JSON.stringify(buildResultMeta(task, result.stamp)));
   return api(cfg, `/tasks/${task.taskId}/result`, { method: 'POST', body: fd, timeoutMs: 120_000 });
 }
 
