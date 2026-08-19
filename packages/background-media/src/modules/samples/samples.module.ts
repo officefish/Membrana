@@ -10,5 +10,7 @@ import { SamplesService } from './samples.service';
   imports: [BlobModule, AudioModule, CollectionsModule, DevicesModule],
   controllers: [SamplesController],
   providers: [SamplesService],
+  /** Единственный внешний потребитель — FirebatNodeModule (результат задания = та же загрузка, ADR-0027). */
+  exports: [SamplesService],
 })
 export class SamplesModule {}
