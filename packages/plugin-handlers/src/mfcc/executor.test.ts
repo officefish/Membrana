@@ -112,5 +112,5 @@ export const x = [readFileSync, PrismaClient];
     const ids = dirty.flatMap((r) => r.messages.filter((m) => m.ruleId === 'no-restricted-imports').map((m) => m.message));
     expect(ids).toHaveLength(2);
     expect(ids.join(' ')).toMatch(/#1950/u);
-  });
+  }, 60_000); // ESLint + typescript-парсер грузятся секунды; на CI под нагрузкой 5 с по умолчанию не хватило
 });
