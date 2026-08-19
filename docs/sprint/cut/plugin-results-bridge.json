@@ -1,0 +1,72 @@
+{
+  "//": "План локального спринта plugin-results-bridge (фаза эпика server-plugin-foundation, #1961). До ратификации владельца исполнение не начинается. Порядок: b1 (форма моста) режется ПЕРВЫМ — без зафиксированной формы приёмник и отправитель разойдутся; b2 и b3 параллельны (разные сервисы); b4 после b3 (провод сида в мост требует модуля моста); b5 после b2+b4 и после того, как оба сервиса несут новый код.",
+  "schema": "sprint-cut/1",
+  "sprintId": "plugin-results-bridge",
+  "taskId": "plugin-results-bridge",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "coverage": {
+    "traceKinds": ["context_run", "review_pass"],
+    "absent": ["contract_signature", "session_prep"],
+    "reason": "Носители contract_signature/session_prep не являются обязательным машинным корпусом membrana-local-sprint; ответственность проверяется планом, зонами, контекстными следами, review-вещдоками и procedure-run-journal."
+  },
+  "window": {
+    "from": "2026-08-19T11:20:00+03:00",
+    "to": "2026-08-19T21:00:00+03:00"
+  },
+  "revisionAt": "2026-08-19T11:20:00+03:00",
+  "blocks": [
+    {
+      "blockId": "b1-bridge-form",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": ["docs/plugins/results-bridge-form.md"],
+      "estimate": { "changedLines": 80 },
+      "revisionAt": "2026-08-19T11:20:00+03:00",
+      "note": "Форма моста: HTTP push media → office (POST RunRecord в модуль plugin-results офиса, ключ класса X-Membrana-Token). Обоснование против очереди (лишняя инфраструктура, M4 уже отверг Redis), прямой Mongo из media (нарушает границу дома M2/M3; скрипт 18.08 — временный обход, не образец) и pull (media стала бы вторым домом результатов — против #1950). Именованные исходы отправки, порядок деплоя office → media, риски."
+    },
+    {
+      "blockId": "b2-office-receiver",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": ["packages/background-office/src/modules/plugin-results/"],
+      "estimate": { "changedLines": 220 },
+      "revisionAt": "2026-08-19T11:20:00+03:00",
+      "note": "Контроллер POST /plugin-results/runs (ApiTokenGuard) → PluginResultsService.writeRun; тело — RunRecord (+ StateRecord?) по контрактам plugin-contracts, валидация формы (адрес из пяти полей, два отпечатка, resumeMode, completedAt как ISO → Date), идемпотентность по уникальному индексу (повтор того же runId — не 500). Зубы рядом. Никакой новой математики."
+    },
+    {
+      "blockId": "b3-media-sender",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/background-media/src/modules/plugin-results-bridge/",
+        "packages/background-media/src/config/env.schema.ts",
+        "packages/background-media/src/app.module.ts"
+      ],
+      "estimate": { "changedLines": 220 },
+      "revisionAt": "2026-08-19T11:20:00+03:00",
+      "note": "Новый модуль plugin-results-bridge: PluginResultsBridgeService.send(runRecord) → fetch POST в office с таймаутом; env OFFICE_API_URL / OFFICE_API_TOKEN (optional — без них исход office-not-configured, сервис стартует). Исходы закрытым словарём: sent · office-not-configured · office-unreachable · office-rejected. Повторов-до-бесконечности нет: одна попытка + одна повторная на сетевой отказ, дальше — именованный отказ в лог. Зубы рядом (fetch подменяется)."
+    },
+    {
+      "blockId": "b4-media-request-entry",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-media/src/modules/collections/",
+        "packages/plugin-handlers/src/"
+      ],
+      "estimate": { "changedLines": 260 },
+      "revisionAt": "2026-08-19T11:20:00+03:00",
+      "note": "Вход без скрипта: POST /collections/:collectionId/plugins/:pluginId/request (ApiTokenGuard media) → собирает PluginContext (runId UUID v7 — перенос из scripts/plugin-run-mfcc.mjs в plugin-handlers как общий помощник; отпечатки тем же чтением, что у прогона — mfccFingerprintsOf через FirstWaveDeps; resumeMode 'fresh'; trigger из тела, из закрытого PLUGIN_TRIGGERS) → host.request. Провод сида: onResult в FirstWavePluginsRegistrar собирает RunRecord {…result, address, fingerprints, resumeMode} и зовёт мост (b3); исход моста — в лог именем. Зубы рядом. Контракты plugin-contracts не трогаются."
+    },
+    {
+      "blockId": "b5-live-acceptance",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": ["docs/plugins/results-bridge-live-run-2026-08-19.md"],
+      "estimate": { "changedLines": 70 },
+      "revisionAt": "2026-08-19T11:20:00+03:00",
+      "note": "Приёмка: POST request в media → хост collections → mfcc → сид → мост → office → RunRecord в plugin-results; документ прогона читается обратно readRuns (или GET office) — не лог. Условие: оба сервиса несут новый код (деплой office → media по слову владельца; лабораторная дорожка — оба локально, office с Mongo по туннелю). Скрипт plugin:run:mfcc в приёмке не участвует и не удаляется."
+    }
+  ]
+}

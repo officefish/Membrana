@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "plugin-results-bridge",
+      "title": "Мост media → office для результатов плагинов (RunRecord в plugin-results без скрипта)",
+      "promptPath": "docs/prompts/PLUGIN_RESULTS_BRIDGE_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "фаза эпика server-plugin-foundation (#1961); эпик открыт до моста, свой номер не заводится — залежь номеров фаз шумит в close-github",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-19",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov"
+      ],
+      "notes": "PR-5 плана M6′: результат плагина рождается в media (хост collections), дом результатов живёт в office — провода нет, 18.08 запись сделал скрипт plugin:run:mfcc. Спринт: форма моста · приёмник office · отправитель media · приёмка живым прогоном без скрипта.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "server-plugin-foundation"
+    },
+    {
       "id": "server-plugin-foundation",
       "title": "Плагинная основа сервера: серверные модули анализа и визуализации коллекций звуков",
       "promptPath": "docs/prompts/SERVER_PLUGIN_FOUNDATION_PROMPT.md",
