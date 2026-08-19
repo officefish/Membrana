@@ -29,6 +29,11 @@ const isoDate = z
 const pluginIdBrand = z.string().min(1).transform((s) => s as PluginId);
 
 const HOME_NAMES = ['background-office/journal', 'background-media/collections'] as const satisfies readonly HomeName[];
+// Полнота, не только принадлежность: `satisfies` говорит «каждый — дом», это — «все дома названы».
+// Новый ключ в HOME_REGISTRY без правки здесь роняет typecheck, а не молча отвергает адрес 400-м.
+type HomeNameMissingHere = Exclude<HomeName, (typeof HOME_NAMES)[number]>;
+const HOME_NAMES_COMPLETE: [HomeNameMissingHere] extends [never] ? true : false = true;
+void HOME_NAMES_COMPLETE;
 
 export const runAddressSchema = z.object({
   pluginId: pluginIdBrand,
