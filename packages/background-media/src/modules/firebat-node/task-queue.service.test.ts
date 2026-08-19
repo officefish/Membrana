@@ -5,7 +5,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { POLL_OUTCOMES, TASK_KINDS, TASK_STATES, TaskQueueService } from './task-queue.service';
+import { CAPTURE_LEASE_MARGIN_MS, POLL_OUTCOMES, TASK_KINDS, TASK_STATES, TaskQueueService } from './task-queue.service';
 
 const clock = (startMs = 1_000_000) => {
   let t = startMs;
@@ -62,6 +62,21 @@ describe('TaskQueueService', () => {
     c.tick(2_000);
     const again = q.lease('d1');
     expect(again.outcome === 'ok' && again.task?.taskId).toBe(a.task.taskId);
+  });
+
+  it('лизинг capture — от длительности съёмки плюс запас; diagnostics — штатные 30 с (Firebat 19.08: 10 с съёмки не уложились в 30)', () => {
+    const c = clock();
+    const q = new TaskQueueService({ now: c.now, leaseTtlMs: 30_000 });
+    q.enqueue('d1', { kind: 'capture', seconds: 10, collectionId: 'c' });
+    q.enqueue('d1', { kind: 'diagnostics' });
+    const cap = q.lease('d1');
+    if (cap.outcome !== 'ok' || !cap.task) throw new Error('lease failed');
+    expect(cap.task.leaseUntil!.getTime() - c.now().getTime()).toBe(10_000 + CAPTURE_LEASE_MARGIN_MS);
+    const diag = q.lease('d1');
+    if (diag.outcome !== 'ok' || !diag.task) throw new Error('lease failed');
+    expect(diag.task.leaseUntil!.getTime() - c.now().getTime()).toBe(30_000);
+    c.tick(60_000);
+    expect(q.complete('d1', cap.task.taskId, { ok: true, sampleId: 's' }).outcome).toBe('ok');
   });
 
   it('пустая очередь при частом опросе — backoff с retryAfterMs; редкий опрос — ok/пусто', () => {

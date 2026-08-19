@@ -17,6 +17,7 @@ const make = () => {
 
 const multipart = (opts: { file?: { buffer: Buffer; mimetype: string; meta?: string }; body?: Record<string, unknown> }) =>
   ({
+    isMultipart: () => Boolean(opts.file),
     file: async () =>
       opts.file
         ? {

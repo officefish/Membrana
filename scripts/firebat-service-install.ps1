@@ -74,7 +74,10 @@ New-Item -ItemType Directory -Force -Path (Join-Path $InstallDir 'lib') | Out-Nu
 foreach ($f in $kit) {
   $src = Join-Path $KitSource $f
   if (-not (Test-Path $src)) { throw "node-install — в комплекте нет $f (искал $src)" }
-  Copy-Item -Force $src (Join-Path $InstallDir $f)
+  # Комплект уже лежит в InstallDir (владелец скопировал руками, 19.08) — файл сам в себя не копируется.
+  $dst = Join-Path $InstallDir $f
+  if ((Test-Path $dst) -and ((Resolve-Path $src).Path -ieq (Resolve-Path $dst).Path)) { continue }
+  Copy-Item -Force $src $dst
 }
 Say "комплект положен в $InstallDir ($($kit -join ', '))"
 

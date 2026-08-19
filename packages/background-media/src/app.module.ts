@@ -40,6 +40,9 @@ const testImports =
                 paths: [
                   'req.headers["x-membrana-token"]',
                   'req.headers["X-Membrana-Token"]',
+                  // ключ узла (ADR-0027 Р3) — секрет того же класса; в лог попадал открытым (Firebat 19.08)
+                  'req.headers["x-membrana-node-key"]',
+                  'req.headers["X-Membrana-Node-Key"]',
                 ],
                 censor: '[Redacted]',
               },

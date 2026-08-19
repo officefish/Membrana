@@ -125,7 +125,10 @@ export class FirebatNodeController {
     if (!leased) throw new NotFoundException(`task ${taskId} unknown for device ${deviceId}`);
     if (leased.state !== 'leased') throw new BadRequestException(`task ${taskId} is ${leased.state}, not leased`);
 
-    const part = await req.file();
+    // Отказ узла приходит JSON-телом { error } (не multipart): с @fastify/multipart req.body при
+    // multipart пуст, и слово причины терялось — узел Firebat 19.08 сдал «no file and no error word».
+    // isMultipart()/file() — публичная аугментация FastifyRequest из @fastify/multipart (как в SamplesController).
+    const part = req.isMultipart() ? await req.file() : undefined;
     let sampleId: string | undefined;
     let error: string | undefined;
     if (part) {
