@@ -1,0 +1,12 @@
+{
+  "//": "Замер объёма ПО ФАКТУ, git diff --numstat по влитым PR (#1981 b1+b2, #1985 b3, #1988 b4) и рабочему диффу b5 на момент сборки рода. Не округлён и не подогнан под прогноз.",
+  "sprintId": "plugin-results-bridge",
+  "measuredAt": "2026-08-19T10:05:05+00:00",
+  "segments": [
+    { "blockId": "b1-bridge-form", "changedLines": 72 },
+    { "blockId": "b2-office-receiver", "changedLines": 292 },
+    { "blockId": "b3-media-sender", "changedLines": 195 },
+    { "blockId": "b4-media-request-entry", "changedLines": 304 },
+    { "blockId": "b5-live-acceptance", "changedLines": 44 }
+  ]
+}

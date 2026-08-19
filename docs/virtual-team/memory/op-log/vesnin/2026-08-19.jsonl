@@ -1,2 +1,5 @@
 {"ts":"2026-08-19T08:18:54.821Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-19T08:18:28.444Z","origin":"ask-persona"}
 {"ts":"2026-08-19T08:18:54.823Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-19T08:18:28.444Z","origin":"ask-persona"}
+{"ts":"2026-08-19T10:03:45.321Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-19T10:03:28.110Z","origin":"ask-persona"}
+{"ts":"2026-08-19T10:03:45.323Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-19T10:03:28.110Z","origin":"ask-persona"}
+{"ts":"2026-08-19T10:03:45.325Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-08-03-static-mmbrn-container-m1-boundary","reason":"тот же приём: положительная граница + отрицательная + инварианты. Здесь форма моста ровно так и построена (что соединяется, против альтернатив, словарь исходов) — образец применён, не изобретён заново.","origin":"ask-persona"}
