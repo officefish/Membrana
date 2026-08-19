@@ -11,7 +11,7 @@
  * `ok` и `backoff` (пустая очередь при частом опросе · переполнение); `stale_key` рождается
  * только в NodeKeyGuard. `backoff` — поле тела ответа, не HTTP-статус.
  */
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 
 export const POLL_OUTCOMES = ['ok', 'stale_key', 'backoff'] as const;
@@ -81,7 +81,10 @@ export class TaskQueueService {
   private readonly minEmptyPollIntervalMs: number;
   private readonly now: () => Date;
 
-  constructor(opts: TaskQueueOptions = {}) {
+  // @Optional намеренно: TS эмитит для интерфейса design:paramtypes=Object, и без @Optional Nest
+  // падает на старте «can't resolve dependencies (?)» — класс restart-loop деплоя 19.08
+  // (PluginResultsBridgeService). Опции приходят только из зубов; в DI токена нет и не будет.
+  constructor(@Optional() opts: TaskQueueOptions = {}) {
     this.maxQueued = opts.maxQueued ?? TASK_QUEUE_DEFAULTS.maxQueued;
     this.leaseTtlMs = opts.leaseTtlMs ?? TASK_QUEUE_DEFAULTS.leaseTtlMs;
     this.minEmptyPollIntervalMs = opts.minEmptyPollIntervalMs ?? TASK_QUEUE_DEFAULTS.minEmptyPollIntervalMs;

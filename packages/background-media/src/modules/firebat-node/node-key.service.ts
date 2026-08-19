@@ -9,7 +9,7 @@
  * Хранилище вынесено за интерфейс, чтобы зубы шли без Postgres (класс зубов
  * plugin-results-bridge: подмена параметром, не моком модуля).
  */
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 
 import { PrismaService } from '../../prisma/prisma.service';
@@ -97,7 +97,7 @@ export class PrismaNodeKeyStore implements NodeKeyStore {
 export class NodeKeyService {
   private readonly store: NodeKeyStore;
 
-  constructor(prisma: PrismaService, store?: NodeKeyStore, private readonly now: () => Date = () => new Date()) {
+  constructor(prisma: PrismaService, @Optional() store?: NodeKeyStore, @Optional() private readonly now: () => Date = () => new Date()) {
     this.store = store ?? new PrismaNodeKeyStore(prisma);
   }
 

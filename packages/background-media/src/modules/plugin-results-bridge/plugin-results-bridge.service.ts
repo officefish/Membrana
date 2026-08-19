@@ -15,7 +15,7 @@
  * Без `OFFICE_API_URL`/`OFFICE_API_TOKEN` сервис стартует, мост отвечает `office-not-configured`:
  * «провода нет» — состояние названное, а не тихий лог под видом отправки.
  */
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, Optional } from '@nestjs/common';
 import type { RunRecord, StateRecord } from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
 import { APP_CONFIG } from '../../config/config.tokens';
 import type { AppConfig } from '../../config/env.schema';
@@ -47,7 +47,7 @@ export class PluginResultsBridgeService {
   private readonly logger = new Logger(PluginResultsBridgeService.name);
   private readonly fetchImpl: BridgeFetch;
 
-  constructor(@Inject(APP_CONFIG) private readonly config: AppConfig, fetchImpl?: BridgeFetch) {
+  constructor(@Inject(APP_CONFIG) private readonly config: AppConfig, @Optional() fetchImpl?: BridgeFetch) {
     this.fetchImpl = fetchImpl ?? ((url, init) => fetch(url, init));
   }
 
