@@ -4,9 +4,9 @@
 
 ## Focus
 
-- **capture-sidecar-protocol** (без Issue: след доставки — локальный спринт) · RATIFIED ·
-  IMPLEMENTATION PENDING · [`OPEN.md`](./local-sprint/capture-sidecar-protocol/OPEN.md) — форма
-  спутника, порядок съёмки, fail-closed глагол и живая приёмка на записи узла.
+- **capture-sidecar-protocol** (без Issue: след доставки — локальный спринт) · GATE PASS 4/4
+  `honest_pair` · experience `hit` · [`OPEN.md`](./local-sprint/capture-sidecar-protocol/OPEN.md) —
+  форма спутника, порядок съёмки, fail-closed глагол и живая приёмка на записи узла.
 
 - **contour-sanity-2026-08-19** ([#1972](https://github.com/officefish/Membrana/issues/1972)) ·
   нарезка предъявлена 19.08, ждёт ратификации · [`OPEN.md`](./local-sprint/contour-sanity-2026-08-19/OPEN.md) —

@@ -1,0 +1,12 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "capture-sidecar-protocol",
+  "measuredAt": "2026-08-19T12:44:00+03:00",
+  "note": "Tracked files count git diff --numstat additions; untracked files count full lines before experience output.",
+  "segments": [
+    { "cutBlockId": "sidecar-form", "changedLines": 271 },
+    { "cutBlockId": "capture-order", "changedLines": 89 },
+    { "cutBlockId": "checker-command", "changedLines": 155 },
+    { "cutBlockId": "live-acceptance", "changedLines": 297 }
+  ]
+}
