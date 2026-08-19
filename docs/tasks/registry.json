@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "capture-sidecar-protocol",
+      "title": "Спутник записи и порядок съёмки",
+      "promptPath": "docs/prompts/CAPTURE_SIDECAR_PROTOCOL_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "Форма спутника и нарезка ещё не ратифицированы владельцем",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-19",
+      "archivedAt": null,
+      "leadPersona": "kuryokhin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "firebat-node-device",
       "title": "Узел как устройство: приложение на Firebat само держит канал к серверу и получает права при установке",
       "promptPath": "docs/prompts/FIREBAT_NODE_DEVICE_PROMPT.md",

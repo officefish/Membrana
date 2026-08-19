@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `capture-sidecar-protocol` | Спутник записи и порядок съёмки | M | [`CAPTURE_SIDECAR_PROTOCOL_PROMPT.md`](../prompts/CAPTURE_SIDECAR_PROTOCOL_PROMPT.md) | — |
 | `firebat-node-device` | Узел как устройство: приложение на Firebat само держит канал к серверу и получает права при установке | L | [`FIREBAT_NODE_DEVICE_PROMPT.md`](../prompts/FIREBAT_NODE_DEVICE_PROMPT.md) | — |
 | `server-plugin-foundation` | Плагинная основа сервера: серверные модули анализа и визуализации коллекций звуков | L | [`SERVER_PLUGIN_FOUNDATION_PROMPT.md`](../prompts/SERVER_PLUGIN_FOUNDATION_PROMPT.md) | [#1961](https://github.com/officefish/Membrana/issues/1961) |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |

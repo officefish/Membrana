@@ -4,6 +4,10 @@
 
 ## Focus
 
+- **capture-sidecar-protocol** (без Issue до ратификации формы) · GATE PASS 4/4
+  `honest_pair` · [`OPEN.md`](./local-sprint/capture-sidecar-protocol/OPEN.md) — форма
+  спутника, порядок съёмки, fail-closed глагол и живая приёмка на записи узла.
+
 - **dump-inventory-from-archive** ([#1814](https://github.com/officefish/Membrana/issues/1814)) ·
   gate pass 4/4 honest_pair (закрыт первым заходом) · прогноз↔исход **hit** ·
   [`OPEN.md`](./local-sprint/dump-inventory-from-archive/OPEN.md) —
