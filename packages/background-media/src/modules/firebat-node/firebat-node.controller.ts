@@ -127,9 +127,8 @@ export class FirebatNodeController {
 
     // Отказ узла приходит JSON-телом { error } (не multipart): с @fastify/multipart req.body при
     // multipart пуст, и слово причины терялось — узел Firebat 19.08 сдал «no file and no error word».
-    const multipartReq = req as FastifyRequest & { isMultipart?: () => boolean };
-    const isMultipart = typeof multipartReq.isMultipart === 'function' ? multipartReq.isMultipart() : true;
-    const part = isMultipart ? await req.file() : undefined;
+    // isMultipart()/file() — публичная аугментация FastifyRequest из @fastify/multipart (как в SamplesController).
+    const part = req.isMultipart() ? await req.file() : undefined;
     let sampleId: string | undefined;
     let error: string | undefined;
     if (part) {
