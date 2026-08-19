@@ -1,0 +1,90 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "capture-sidecar-protocol",
+  "taskId": "capture-sidecar-protocol",
+  "mode": "explicit-honest",
+  "cutBy": "kuryokhin",
+  "window": {
+    "from": "2026-08-19T12:00:00+03:00",
+    "to": "2026-08-19T22:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "sidecar-form",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/lib/capture-sidecar.mjs",
+        "scripts/field-capture.mjs",
+        "scripts/field-capture.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 340
+      },
+      "revisionAt": "2026-08-19T12:40:38.2448983+03:00",
+      "revisionOf": "9dea9a5a7710bd7a682050ef3b6c10cc6df7c03fd9980ce24ab6f46af63ae813"
+    },
+    {
+      "blockId": "capture-order",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "docs/capture/CAPTURE_PROTOCOL.md",
+        "docs/capture/capture-sidecar.example.json"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionAt": "2026-08-19T12:20:10.2116992+03:00",
+      "revisionOf": "a12963b2b75b84673476a5c178b3f8c9829d6b8845a1d3755dc35b50a7e99d78"
+    },
+    {
+      "blockId": "checker-command",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/capture-sidecar.mjs",
+        "scripts/capture-sidecar.test.mjs",
+        "package.json"
+      ],
+      "estimate": {
+        "changedLines": 190
+      },
+      "revisionAt": "2026-08-19T12:20:10.2116992+03:00",
+      "revisionOf": "80b95c17d6b79cf4ce91c6dbdcb9e7df25307bcc85f934ce0800c3e3640ec212"
+    },
+    {
+      "blockId": "live-acceptance",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "docs/tasks/README.md",
+        "docs/tasks/registry.json",
+        "scripts/tasks-decompose.config.json",
+        "docs/prompts/CAPTURE_SIDECAR_PROTOCOL_PROMPT.md",
+        "docs/discussions/cut-capture-sidecar-protocol-kuryokhin.md",
+        "docs/local-sprint/capture-sidecar-protocol/**",
+        "docs/sprint/cut/capture-sidecar-protocol.json",
+        "docs/sprint/cut/trail/capture-sidecar-protocol.jsonl",
+        "docs/sprint/trail/capture-sidecar-protocol.jsonl",
+        "docs/sprint/experience/forecast-records.jsonl",
+        "docs/procedure-runs/trail/2026-08-19.jsonl"
+      ],
+      "estimate": {
+        "changedLines": 330
+      },
+      "revisionAt": "2026-08-19T12:40:38.2448983+03:00",
+      "revisionOf": "cb0cc950063a4b4b824c78c6ea2cf3226d47289cb34221be0e35d63ec3ed8908"
+    }
+  ],
+  "//scope": "Спутник создаётся рядом с одним WAV и проверяется отдельно; существующий field:capture меняется только в точке создания спутника. Живая приёмка использует одну запись field-node-2026-08 из коллекции «Полевые записи 2026-08».",
+  "//order": "Сначала фиксируется форма и машинная граница declared/measured; затем порядок: одна цепь и усиление на серию, 60 секунд, три парных прохода по 20/50/100/200 м с разворотом среднего прохода и чередованием цель/фон; после формы строится глагол проверки; последним тот же глагол проверяет спутник к живой записи.",
+  "//dod": "Строгая форма разделяет declared и measured; declared содержит предмет, аппарат, дистанцию, высоту, место, погоду/ветер, оператора и усиление; measured получает время, duration/sampleRate/channels/audioFormat/sizeBytes/peakDbfs/rmsDbfs только из инструмента; WAV и sidecar имеют общий stem; capture:sidecar принимает валидный файл и именованно отвергает пустой declared, измеряемое в declared, объявленное в measured и отсутствие связи с записью; описан сопоставимый порядок 20/50/100/200 м с тремя повторами и negatives>=positives; одна живая запись узла имеет проверенный спутник.",
+  "//out-of-scope": "Пакетный рантайм; второй реестр; исправление #1950; изменение ingestion/API media; детекторы; UI; отбор обучающих данных выводом детектора.",
+  "//recut": "v2 19.08: фактический замер после реализации поднял прогноз sidecar-form 230→340 и live-acceptance 230→330; task:register показал capture-sidecar-protocol вне категорий, поэтому в процедурную зону добавлен существующий scripts/tasks-decompose.config.json. Предмет, четыре блока и их держатели не менялись; прежняя ратификация снята.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-19T12:40:38.2448983+03:00",
+    "digest": "05e690116d7dc2ee88872f2176556ec077727e3d12dcabfcfb9900eca16e94ff"
+  }
+}
