@@ -4,7 +4,7 @@
   {
    "name": "Детекция и качество распознавания",
    "patterns": [
-    "^(scoreboard|detector|dads-|vdr-|nb-vlr|neural-|real-dataset|live-parallel|lp\\d|detection-alarm|batch-collection|trends-fft|sample-library|sld\\d|corpus-track)"
+    "^(scoreboard|detector|dads-|vdr-|nb-vlr|neural-|real-dataset|live-parallel|lp\\d|detection-alarm|batch-collection|capture-sidecar|trends-fft|sample-library|sld\\d|corpus-track)"
    ]
   },
   {

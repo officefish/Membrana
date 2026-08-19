@@ -1,0 +1,31 @@
+{
+  "schema": "capture-sidecar/1",
+  "recording": {
+    "id": null,
+    "fileName": "20260819T090000Z_target_drone_d050_r01.wav"
+  },
+  "declared": {
+    "what": "target: drone",
+    "apparatus": "ECM8000 + Scarlett Solo, input 1",
+    "distanceM": 50,
+    "heightM": 30,
+    "place": "north test field",
+    "weather": "overcast, dry",
+    "wind": "light, from west",
+    "operator": "field-node operator",
+    "gain": "input 1 knob mark 5/10",
+    "notes": "first repeat"
+  },
+  "measured": {
+    "instrument": "field-capture",
+    "capturedAt": "2026-08-19T09:00:00.000Z",
+    "durationSec": 60,
+    "sampleRate": 48000,
+    "channels": 1,
+    "audioFormat": "wav",
+    "sizeBytes": 5760044,
+    "peakDbfs": -8.4,
+    "rmsDbfs": -24.1,
+    "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+  }
+}
