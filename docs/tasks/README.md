@@ -20,6 +20,8 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `plugin-results-payload-pocket` | Словарь: карман payload в RunResult vs расширение в корне (passthrough в приёмнике моста) | S | [`PLUGIN_RESULTS_PAYLOAD_POCKET_PROMPT.md`](../prompts/PLUGIN_RESULTS_PAYLOAD_POCKET_PROMPT.md) | [#1982](https://github.com/officefish/Membrana/issues/1982) |
+| `plugin-results-bridge` | Мост media → office для результатов плагинов (RunRecord в plugin-results без скрипта) | M | [`PLUGIN_RESULTS_BRIDGE_PROMPT.md`](../prompts/PLUGIN_RESULTS_BRIDGE_PROMPT.md) | — |
 | `firebat-node-device` | Узел как устройство: приложение на Firebat само держит канал к серверу и получает права при установке | L | [`FIREBAT_NODE_DEVICE_PROMPT.md`](../prompts/FIREBAT_NODE_DEVICE_PROMPT.md) | — |
 | `server-plugin-foundation` | Плагинная основа сервера: серверные модули анализа и визуализации коллекций звуков | L | [`SERVER_PLUGIN_FOUNDATION_PROMPT.md`](../prompts/SERVER_PLUGIN_FOUNDATION_PROMPT.md) | [#1961](https://github.com/officefish/Membrana/issues/1961) |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |

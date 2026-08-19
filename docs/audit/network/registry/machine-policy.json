@@ -59,6 +59,11 @@
       "type": "permanent",
       "package": "packages/services/media-library/src/bundled-catalog",
       "reason": "browser-side загрузка манифеста самплов относительными URL — исполняется в клиенте, серверная proxy-среда не применима"
+    },
+    {
+      "type": "permanent",
+      "package": "packages/background-media/src/modules/plugin-results-bridge",
+      "reason": "мост media → office для результатов плагинов (#1961, docs/plugins/results-bridge-form.md): исходящий вызов с media-VPS-NL — машина без фильтра, прямой выход легален по построению (как linear-snapshot в media); назначение — office.mmbrn.tech, внутренний сервис"
     }
   ],
   "//exceptions": "Исключение — ТОЛЬКО записью здесь: type permanent|amnesty, package, reason (обязателен), amnesty дополнительно несёт expiresAt. Комментарий в коде (// allow:) исключением НЕ является."

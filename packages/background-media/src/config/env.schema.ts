@@ -59,6 +59,13 @@ export const envSchema = z.object({
   LINEAR_API_KEY: z.string().min(1).optional(),
   /** Directory for persisted linear-snapshot@1 artifacts. */
   LINEAR_SNAPSHOT_DIR: z.string().min(1).default('./data/linear-snapshots'),
+  /**
+   * Мост media → office для результатов плагинов (#1961, docs/plugins/results-bridge-form.md):
+   * базовый URL офиса и ключ класса X-Membrana-Token. Оба optional: без них media стартует, а мост
+   * отвечает именованным `office-not-configured` — «провода нет» не маскируется под отправку.
+   */
+  OFFICE_API_URL: z.string().url().optional(),
+  OFFICE_API_TOKEN: z.string().min(1).optional(),
 });
 
 const envSchemaWithDefaults = envSchema.transform((data) => ({

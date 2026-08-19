@@ -2,11 +2,13 @@ import { Logger, Module } from '@nestjs/common';
 
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
+import { PluginResultsController } from './plugin-results.controller';
 import { MemoryPluginResultsStore } from './plugin-results.memory-store';
 import { MongoPluginResultsStore } from './plugin-results.mongo-store';
 import { PLUGIN_RESULTS_STORE, PluginResultsService } from './plugin-results.service';
 
 @Module({
+  controllers: [PluginResultsController],
   providers: [
     PluginResultsService,
     {
@@ -22,4 +24,5 @@ import { PLUGIN_RESULTS_STORE, PluginResultsService } from './plugin-results.ser
   exports: [PluginResultsService],
 })
 export class PluginResultsModule {}
-// Writes enter through PluginResultsService; the plugin execution adapter is tracked by #1961.
+// Writes enter through PluginResultsService: in-process callers and the media → office bridge
+// (PluginResultsController, блок b2 спринта plugin-results-bridge, #1961).
