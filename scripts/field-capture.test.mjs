@@ -3,7 +3,7 @@ import test from 'node:test';
 
 import {
   DEVICE_HINTS, MEASURED_FIELDS, SILENCE_PEAK_DBFS,
-  buildDeclared, buildMeta, envCandidates, measureWav, parseArgs, parseAudioDevices, pickFieldDevice,
+  buildDeclared, buildMeta, buildSidecarDeclared, envCandidates, measureWav, parseArgs, parseAudioDevices, pickFieldDevice,
 } from './field-capture.mjs';
 
 const LIST = [
@@ -70,6 +70,12 @@ test('measureWav: свойства читаются из файла, а не п�
   assert.ok(Math.abs(m.seconds - 2) < 0.01);
 });
 
+test('measureWav: ноль каналов отвергается до расчёта кадров', () => {
+  const malformed = makeWav();
+  malformed.writeUInt16LE(0, 22);
+  assert.throws(() => measureWav(malformed), /число каналов/u);
+});
+
 test('buildMeta: измеряемые поля в объявленное не попадают НИКОГДА', () => {
   const meta = buildMeta(parseArgs(['--what', 'drone', '--distance', '50']), 'stamp');
   for (const field of MEASURED_FIELDS) {
@@ -81,6 +87,19 @@ test('buildMeta: измеряемые поля в объявленное не п
 
 test('buildDeclared: пустое объявление называется словом, а не молчит', () => {
   assert.equal(buildDeclared(parseArgs([])), 'объявленное не заполнено');
+});
+
+test('buildSidecarDeclared: форма полна и усиление остаётся объявленным', () => {
+  const args = parseArgs([
+    '--what', 'target: drone', '--apparatus', 'ECM8000 + Scarlett', '--distance', '50',
+    '--height', '30', '--place', 'field', '--weather', 'dry', '--wind', 'light',
+    '--operator', 'operator-1', '--gain', 'knob 5/10',
+  ]);
+  const declared = buildSidecarDeclared(args);
+  assert.equal(declared.distanceM, 50);
+  assert.equal(declared.gain, 'knob 5/10');
+  assert.throws(() => buildSidecarDeclared(parseArgs(['--what', 'drone'])), /объявленное не заполнено/u);
+  assert.throws(() => buildSidecarDeclared({ ...args, distance: '-1' }), /distanceM/u);
 });
 
 test('parseArgs: частота по умолчанию — поддерживаемая устройством', () => {

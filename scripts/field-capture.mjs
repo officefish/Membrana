@@ -16,12 +16,18 @@
  * Usage:
  *   yarn field:capture --list                       # какие входы видит система
  *   yarn field:capture --device "<имя входа>" --seconds 60 \
- *     --what drone --distance 50 --height 30 --place polygon --notes "ветер слабый"
+ *     --what drone --apparatus "ECM8000 + Scarlett" --distance 50 --height 30 \
+ *     --place polygon --weather dry --wind light --operator owner --gain "knob 5/10"
  *   yarn field:capture ... --dry-run                # записать, не отправляя
  */
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, readFileSync, statSync, unlinkSync } from 'node:fs';
+import { existsSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import {
+  createCaptureSidecar, measureWav, validateCaptureSidecar, writeCaptureSidecar,
+} from './lib/capture-sidecar.mjs';
+
+export { measureWav };
 
 /** Поля, которые сервер меряет сам — в объявленное их класть запрещено. */
 export const MEASURED_FIELDS = Object.freeze(['durationSec', 'sampleRate', 'channels', 'audioFormat', 'sizeBytes']);
@@ -72,44 +78,12 @@ export function pickFieldDevice(devices, hints = DEVICE_HINTS) {
  * @param {Buffer} buf WAV
  * @returns {{sampleRate:number, channels:number, seconds:number, peakDbfs:number, rmsDbfs:number}}
  */
-export function measureWav(buf) {
-  let off = 12;
-  let dataOff = null;
-  let dataLen = 0;
-  let channels = 1;
-  let sampleRate = 0;
-  while (off < buf.length - 8) {
-    const id = buf.toString('ascii', off, off + 4);
-    const size = buf.readUInt32LE(off + 4);
-    if (id === 'fmt ') {
-      channels = buf.readUInt16LE(off + 10);
-      sampleRate = buf.readUInt32LE(off + 12);
-    }
-    if (id === 'data') { dataOff = off + 8; dataLen = size; break; }
-    off += 8 + size + (size % 2);
-  }
-  if (dataOff === null) throw new Error('WAV без блока data');
-  const frames = Math.floor(dataLen / (2 * channels));
-  let peak = 0;
-  let sum = 0;
-  for (let i = 0; i < frames; i += 1) {
-    const v = buf.readInt16LE(dataOff + i * channels * 2);
-    const a = Math.abs(v);
-    if (a > peak) peak = a;
-    sum += v * v;
-  }
-  const dbfs = (x) => (x > 0 ? 20 * Math.log10(x / 32768) : -Infinity);
-  return {
-    sampleRate, channels, seconds: frames / (sampleRate || 1),
-    peakDbfs: dbfs(peak), rmsDbfs: dbfs(Math.sqrt(sum / Math.max(frames, 1))),
-  };
-}
-
 /** @param {string[]} argv */
 export function parseArgs(argv) {
   const out = {
     list: false, device: null, seconds: 60, rate: 44100, dryRun: false,
-    what: null, distance: null, height: null, place: null, notes: null, help: false,
+    what: null, apparatus: null, distance: null, height: null, place: null,
+    weather: null, wind: null, operator: null, gain: null, notes: null, help: false,
   };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
@@ -119,9 +93,14 @@ export function parseArgs(argv) {
     else if (a === '--rate') out.rate = Number(argv[++i]);
     else if (a === '--dry-run') out.dryRun = true;
     else if (a === '--what') out.what = argv[++i];
+    else if (a === '--apparatus') out.apparatus = argv[++i];
     else if (a === '--distance') out.distance = argv[++i];
     else if (a === '--height') out.height = argv[++i];
     else if (a === '--place') out.place = argv[++i];
+    else if (a === '--weather') out.weather = argv[++i];
+    else if (a === '--wind') out.wind = argv[++i];
+    else if (a === '--operator') out.operator = argv[++i];
+    else if (a === '--gain') out.gain = argv[++i];
     else if (a === '--notes') out.notes = argv[++i];
     else if (a === '--help' || a === '-h') out.help = true;
     else throw new Error(`неизвестный флаг: ${a}`);
@@ -144,8 +123,35 @@ export function buildDeclared(args) {
   if (args.distance) parts.push(`дистанция: ${args.distance} м`);
   if (args.height) parts.push(`высота: ${args.height} м`);
   if (args.place) parts.push(`место: ${args.place}`);
+  if (args.weather) parts.push(`погода: ${args.weather}`);
+  if (args.wind) parts.push(`ветер: ${args.wind}`);
+  if (args.operator) parts.push(`оператор: ${args.operator}`);
+  if (args.gain) parts.push(`усиление: ${args.gain}`);
   if (args.notes) parts.push(args.notes);
   return parts.length > 0 ? parts.join(' · ') : 'объявленное не заполнено';
+}
+
+export function buildSidecarDeclared(args) {
+  const missingText = ['what', 'apparatus', 'place', 'weather', 'wind', 'operator', 'gain']
+    .filter((key) => typeof args[key] !== 'string' || args[key].trim() === '');
+  const missingNumbers = [['distanceM', args.distance], ['heightM', args.height]]
+    .filter(([, value]) => value === null || value === '' || !Number.isFinite(Number(value)) || Number(value) < 0)
+    .map(([key]) => key);
+  const missing = [...missingText, ...missingNumbers];
+  if (missing.length > 0) throw new Error(`объявленное не заполнено: ${missing.join(', ')}`);
+  const values = {
+    what: args.what,
+    apparatus: args.apparatus,
+    distanceM: Number(args.distance),
+    heightM: Number(args.height),
+    place: args.place,
+    weather: args.weather,
+    wind: args.wind,
+    operator: args.operator,
+    gain: args.gain,
+    ...(args.notes ? { notes: args.notes } : {}),
+  };
+  return values;
 }
 
 /**
@@ -233,10 +239,14 @@ async function main(argv) {
     return 2;
   }
   if (args.help) {
-    console.log('Usage: yarn field:capture [--list] [--device "<вход>"] [--seconds N] [--what ...] [--distance ...] [--dry-run]');
+    console.log('Usage: yarn field:capture [--list] [--device "<вход>"] [--seconds N] --what ... --apparatus ... --distance ... --height ... --place ... --weather ... --wind ... --operator ... --gain ... [--dry-run]');
     return 0;
   }
   if (args.list) { listDevices(); return 0; }
+
+  let declared;
+  try { declared = buildSidecarDeclared(args); }
+  catch (e) { console.error(`field:capture — ${e.message}`); return 2; }
 
   // Адрес входа НЕ прописывается жёстко: он меняется при смене драйвера.
   let address = args.device;
@@ -251,7 +261,8 @@ async function main(argv) {
     console.log(`field:capture — вход найден по имени: «${picked.name}»`);
   }
 
-  const stamp = new Date().toISOString().replace(/[:.]/gu, '-');
+  const capturedAt = new Date().toISOString();
+  const stamp = capturedAt.replace(/[:.]/gu, '-');
   const out = join(process.env.TEMP ?? '.', `field-${stamp}.wav`);
 
   console.log(`field:capture — пишу ${args.seconds} с на ${args.rate} Гц (беру ВХОД 1, не сведение)…`);
@@ -266,6 +277,13 @@ async function main(argv) {
 
   const size = statSync(out).size;
   const level = measureWav(readFileSync(out));
+  const sidecar = createCaptureSidecar({ recordingPath: out, declared, capturedAt });
+  const sidecarPath = writeCaptureSidecar(out, sidecar);
+  const sidecarFindings = validateCaptureSidecar(sidecar, { sidecarPath });
+  if (sidecarFindings.length > 0) {
+    console.error(`field:capture — спутник невалиден: ${sidecarFindings[0].code} ${sidecarFindings[0].path}`);
+    return 2;
+  }
   console.log(`field:capture — снято: ${size} байт · ${level.seconds.toFixed(2)} с · ${level.sampleRate} Гц`);
   console.log(`  уровень: пик ${level.peakDbfs.toFixed(1)} dBFS · средний ${level.rmsDbfs.toFixed(1)} dBFS`);
 
@@ -277,7 +295,8 @@ async function main(argv) {
 
   if (args.dryRun) {
     // Файл СОХРАНЯЕТСЯ намеренно: при сухом прогоне он и есть предмет осмотра.
-    console.log(`dry-run: не отправляю. Запись оставлена для осмотра: ${out}`);
+    console.log(`dry-run: не отправляю. Запись: ${out}`);
+    console.log(`  спутник: ${sidecarPath}`);
     return 0;
   }
 
@@ -301,7 +320,9 @@ async function main(argv) {
   console.log(`  длительность: ${body.durationSec} с · частота: ${body.sampleRate} Гц · каналов: ${body.channels} · формат: ${body.audioFormat}`);
   console.log(`  объявлено нами: ${body.notes}`);
   console.log(`  адрес записи: ${body.id}`);
-  unlinkSync(out);
+  sidecar.recording.id = body.id;
+  writeCaptureSidecar(out, sidecar);
+  console.log(`  локальная пара сохранена: ${out} · ${sidecarPath}`);
   return 0;
 }
 
