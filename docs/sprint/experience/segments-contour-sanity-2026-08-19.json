@@ -1,0 +1,16 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "contour-sanity-2026-08-19",
+  "forTask": "contour-sanity-2026-08-19 — санитария контура прогонов через спринт (#1972): диагноз красного rag-теста, ревью-долг #1951/#1953, хвосты #1972, синглтон импорта в хосте",
+  "note": "Замер git diff --numstat origin/main...HEAD по зонам блоков плана после исполнения всех семи. Блок 5 несёт и минусы трёх снятых копий декодера (143 удалённых строки) и 13 строк yarn.lock — цена свода видна числом.",
+  "measuredAt": "2026-08-19T09:49:07+00:00",
+  "segments": [
+    { "cutBlockId": "rag-red-diagnosis", "changedLines": 73 },
+    { "cutBlockId": "rag-red-resolution", "changedLines": 50 },
+    { "cutBlockId": "review-1951-vesnin", "changedLines": 48 },
+    { "cutBlockId": "review-1953-kuryokhin", "changedLines": 42 },
+    { "cutBlockId": "wav-decode-lib", "changedLines": 377 },
+    { "cutBlockId": "executor-tails", "changedLines": 54 },
+    { "cutBlockId": "host-import-singleton", "changedLines": 115 }
+  ]
+}
