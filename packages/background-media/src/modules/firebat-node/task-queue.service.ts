@@ -71,6 +71,8 @@ export interface TaskQueueOptions {
 }
 
 export const TASK_QUEUE_DEFAULTS = { maxQueued: 100, leaseTtlMs: 30_000, minEmptyPollIntervalMs: 2_000 } as const;
+/** Запас лизинга сверх длительности съёмки: перечисление входов dshow + запуск ffmpeg + отправка WAV. */
+export const CAPTURE_LEASE_MARGIN_MS = 120_000;
 
 @Injectable()
 export class TaskQueueService {
@@ -158,7 +160,10 @@ export class TaskQueueService {
     this.lastEmptyPoll.delete(deviceId);
     next.state = 'leased';
     next.leasedAt = new Date(nowMs);
-    next.leaseUntil = new Date(nowMs + this.leaseTtlMs);
+    // Лизинг — от длительности задания: съёмка N с + перечисление входов + отправка файла по полевому
+    // интернету. 30 с на capture 10 с не хватило (Firebat 19.08: задание вернулось в queued, сдача — 400).
+    const ttl = next.kind === 'capture' ? Math.max(this.leaseTtlMs, (Number(next.seconds) || 0) * 1000 + CAPTURE_LEASE_MARGIN_MS) : this.leaseTtlMs;
+    next.leaseUntil = new Date(nowMs + ttl);
     return { outcome: 'ok', task: next };
   }
 
