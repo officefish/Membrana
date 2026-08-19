@@ -31,3 +31,9 @@
 {"ts":"2026-08-19T12:49:55.617Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-07-19-registry-relocation-m0-order","reason":"оттуда правило: инвариант «единственный писатель» и явная форма холодного хранилища важнее удобства; ключ узла — отдельная сущность жизненного цикла (issue/revoke), и склеивать её с Device — синонимия слоёв.","origin":"ask-persona"}
 {"ts":"2026-08-19T13:04:42.889Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-19T13:04:29.579Z","origin":"ask-persona"}
 {"ts":"2026-08-19T13:04:42.893Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-19T13:04:29.579Z","origin":"ask-persona"}
+{"ts":"2026-08-19T13:17:03.854Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-19T13:16:32.211Z","origin":"ask-persona"}
+{"ts":"2026-08-19T13:17:03.874Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-19T13:16:32.211Z","origin":"ask-persona"}
+{"ts":"2026-08-19T13:17:03.879Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-08-17-server-plugin-foundation-m2-mount-homes","reason":"прямо про «дом = Nest-модуль с публичным контрактом приёма»: тот же вопрос, где монтируется точка приёма (здесь — FirebatNodeModule в app.module.ts), и почему это часть зоны, а не отдельная ревизия.","origin":"ask-persona"}
+{"ts":"2026-08-19T13:17:03.881Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-08-06-static-mmbrn-container-m5-affine-role","reason":"закрытый словарь операций (upload-revision, write-metadata): подтверждает, что «сдать результат» и «залить файл» разводятся не двумя ручками, а одной операцией upload-revision, вызванной из контекста задания.","origin":"ask-persona"}
+{"ts":"2026-08-19T13:23:52.582Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-19T13:23:31.037Z","origin":"ask-persona"}
+{"ts":"2026-08-19T13:23:52.668Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-19T13:23:31.037Z","origin":"ask-persona"}
