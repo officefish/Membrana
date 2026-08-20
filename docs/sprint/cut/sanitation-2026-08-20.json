@@ -13,49 +13,79 @@
       "blockId": "review-1980",
       "persona": "tarasov",
       "context": "tarasov",
-      "zone": ["docs/discussions/pr-1980-code-review.md"],
+      "zone": [
+        "docs/discussions/pr-1980-code-review.md"
+      ],
       "revisionAt": "2026-08-20T09:00:00+00:00",
-      "estimate": { "changedLines": 110 }
+      "estimate": {
+        "changedLines": 110
+      },
+      "revisionOf": "ef96bdb21fc7979a8cf039d0b943bbab0d5c31e0d1d5420a4c2274a5427863ef"
     },
     {
       "blockId": "review-1981",
       "persona": "vesnin",
       "context": "vesnin",
-      "zone": ["docs/discussions/pr-1981-code-review.md"],
+      "zone": [
+        "docs/discussions/pr-1981-code-review.md"
+      ],
       "revisionAt": "2026-08-20T09:00:00+00:00",
-      "estimate": { "changedLines": 120 }
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionOf": "4aaea5e6e1d58cad00358ac1e9b95ef0591ae98660df0087c8c04be54e925bee"
     },
     {
       "blockId": "review-1987",
       "persona": "dynin",
       "context": "dynin",
-      "zone": ["docs/discussions/pr-1987-code-review.md"],
+      "zone": [
+        "docs/discussions/pr-1987-code-review.md"
+      ],
       "revisionAt": "2026-08-20T09:00:00+00:00",
-      "estimate": { "changedLines": 110 }
+      "estimate": {
+        "changedLines": 110
+      },
+      "revisionOf": "7647ffc64b95cbb557ce8773ea8ff8469d5692f10788400ace16057056772ace"
     },
     {
       "blockId": "review-2003",
       "persona": "vesnin",
       "context": "vesnin",
-      "zone": ["docs/discussions/pr-2003-code-review.md"],
+      "zone": [
+        "docs/discussions/pr-2003-code-review.md"
+      ],
       "revisionAt": "2026-08-20T09:00:00+00:00",
-      "estimate": { "changedLines": 110 }
+      "estimate": {
+        "changedLines": 110
+      },
+      "revisionOf": "c02f95d191fa14264c2b74a7e34bc27fd086e10b3ad256799fa0679da289a73a"
     },
     {
       "blockId": "review-2004",
       "persona": "dynin",
       "context": "dynin",
-      "zone": ["docs/discussions/pr-2004-code-review.md"],
+      "zone": [
+        "docs/discussions/pr-2004-code-review.md"
+      ],
       "revisionAt": "2026-08-20T09:00:00+00:00",
-      "estimate": { "changedLines": 110 }
+      "estimate": {
+        "changedLines": 110
+      },
+      "revisionOf": "27f186bc46f80a47776cf1db41bdba13c094bc0bc0d26b6cbcf47eb2512a9ab9"
     },
     {
       "blockId": "review-2013",
       "persona": "tarasov",
       "context": "tarasov",
-      "zone": ["docs/discussions/pr-2013-code-review.md"],
+      "zone": [
+        "docs/discussions/pr-2013-code-review.md"
+      ],
       "revisionAt": "2026-08-20T09:00:00+00:00",
-      "estimate": { "changedLines": 110 }
+      "estimate": {
+        "changedLines": 110
+      },
+      "revisionOf": "dd4e23f8800186605b5275638054f65f566aefbb55b4bba914eac162ba798ef6"
     },
     {
       "blockId": "ci-smoke-app-di",
@@ -67,15 +97,23 @@
         ".github/workflows/unit-tests.yml"
       ],
       "revisionAt": "2026-08-20T09:00:00+00:00",
-      "estimate": { "changedLines": 160 }
+      "estimate": {
+        "changedLines": 160
+      },
+      "revisionOf": "989b2af389919ac79a48637f776aea2741094434a2727a01a3b6ba2b34fb0c8f"
     },
     {
       "blockId": "optional-canon-rule",
       "persona": "vesnin",
       "context": "vesnin",
-      "zone": ["docs/ARCHITECTURE.md"],
+      "zone": [
+        "docs/ARCHITECTURE.md"
+      ],
       "revisionAt": "2026-08-20T09:00:00+00:00",
-      "estimate": { "changedLines": 40 }
+      "estimate": {
+        "changedLines": 40
+      },
+      "revisionOf": "05fa1571712768a9becc0f0a53d46f5ba9183784eeab7e32535f345d64fd2be4"
     },
     {
       "blockId": "secret-parser-gate",
@@ -88,7 +126,10 @@
         "docs/tasks/morning-gates-state.json"
       ],
       "revisionAt": "2026-08-20T09:00:00+00:00",
-      "estimate": { "changedLines": 150 }
+      "estimate": {
+        "changedLines": 150
+      },
+      "revisionOf": "0a53d27c2ad97606bba642c2c0bdd4527f681a55cd4591e8818ed0a1d336725f"
     }
   ],
   "//why": "Слово владельца 20.08: санитария строго через membrana-local-sprint. Три предмета фидбека 19.08: (1) P1 DAILY_CODE_REVIEW — шесть oversized-PR без вердикта, любой может нести P0 в плагинном контуре #1961; (2) #2009 — restart-loop прода 8 минут 19.08, Тарасов без CI-шага подъёма следующий деплой не подписывает; (3) веха secret-parser-built не закрыта пятый день.",
@@ -97,5 +138,10 @@
   "//order": "1–6 независимы · 7, 8 независимы · 9 независим. Зоны не пересекаются.",
   "//dod": "Блоки 1–6: артефакт pr-N-code-review.md в репо с явным вердиктом LGTM/BLOCK; находки P0/P1 оформлены Issue (или явное «находок нет»). Блок 7: оба smoke-зуба зелёные локально и шаг в unit-tests.yml; зуб падает на классе 19.08 (проверить намеренной поломкой DI локально, не коммитить поломку). Блок 8: правило в каноне с ссылкой на #2009 и вердикт b7. Блок 9: гейт закрыт (резак в сканере флагом, датированный проход на фикстуре, манифест, отметка passed) ЛИБО эскалация владельцу с названной ценой.",
   "//out-of-scope": "Магистраль дня (studio-firebat-user-pairing) и полосы Б/В — не трогать. Прод не деплоить. git add -A запрещён. .gitignore не править (прецедент git add -f). Правки самих отревьюированных PR — не здесь: только вердикты и Issue.",
-  "//pr-plan": "PR-1: вердикты #1980/#1981/#1987 (~340 строк) · PR-2: вердикты #2003/#2004/#2013 (~330) · PR-3: smoke + канон (#2009 в упоминании) · PR-4: гейт секретов. Каждый через code-review:pr → pr:ship."
+  "//pr-plan": "PR-1: вердикты #1980/#1981/#1987 (~340 строк) · PR-2: вердикты #2003/#2004/#2013 (~330) · PR-3: smoke + канон (#2009 в упоминании) · PR-4: гейт секретов. Каждый через code-review:pr → pr:ship.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-20T11:18:00+00:00",
+    "digest": "3ace6f22e743ae57b66a4dacbbbdfe936817fe654a98502f78c7b73cd1acce7c"
+  }
 }
