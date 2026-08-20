@@ -1,3 +1,7 @@
 {"ts":"2026-08-20T07:24:05.860Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
 {"ts":"2026-08-20T10:23:00.036Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-20T10:22:44.795Z","origin":"ask-persona"}
 {"ts":"2026-08-20T10:23:00.039Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-20T10:22:44.795Z","origin":"ask-persona"}
+{"ts":"2026-08-20T18:03:44.054Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-20-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-20T18:03:44.054Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-08-01-evening-review-predicate-m3-volume-measure","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-20T18:03:44.054Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-23-llm-procedure-channels-m4b-panel","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-20T18:03:44.054Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

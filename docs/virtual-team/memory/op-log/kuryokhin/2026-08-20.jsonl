@@ -1,3 +1,7 @@
 {"ts":"2026-08-20T07:24:05.749Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
 {"ts":"2026-08-20T11:13:05.169Z","persona":"kuryokhin","verb":"cloud_query","ref":"kuryokhin-2026-08-20T11:12:32.570Z","origin":"ask-persona"}
 {"ts":"2026-08-20T11:13:05.181Z","persona":"kuryokhin","verb":"surface_invoke","ref":"kuryokhin-2026-08-20T11:12:32.570Z","origin":"ask-persona"}
+{"ts":"2026-08-20T18:03:43.958Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-08-20-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-20T18:03:43.958Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-08-01-evening-review-predicate-m3-volume-measure","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-20T18:03:43.958Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-07-23-llm-procedure-channels-m2a-scope","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-20T18:03:43.958Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

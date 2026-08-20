@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14361/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 301 (причины в op-log) -->
+Записей: 50 · бюджет 14397/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 303 (причины в op-log) -->
+
+### 2026-08-20 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** Стендап и MAIN_DAY_ISSUE хорошо синхронизированы; code-review корректно отметил, что пакетных изменений в развёрнутом diff нет. DAY_PLAN отражал реальные приоритеты. **Итоги дня:** Границы packages сегодня не задеты — вся работа в прикладном слое Studio и […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-20.md#reply-1`
 
 ### 2026-08-19 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/evening-review-predicate-m2-order-of-three-2026-08-01.md#reply-1`
 
-### 2026-08-01 · позиция · evening-review-predicate-m3-volume-measure
+### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
 
-> Уточняю термины, иначе будем спорить о разных вещах. «Мерка объёма» — это функция card → ℕ, применённая к одной карточке: осмысленна. «Агрегат по дню» — это функция {card₁…cardₙ} → ℕ, потерявшая структуру множества: теряет информацию о распределении. «Реляционный предикат […] _(реплик в сеансе: 5)_
+> C1 дал один effective channel. F1 — что если он мёртв. Кандидат 4 (тихий ollama) — худший: LGTM от слабой модели без метки. Кандидат 1 (только STOP) честен, но не лечит вечер при лимите Anthropic, если overlay не успели сменить. _(реплик в сеансе: 5)_
 
-— источник: `docs/seanses/evening-review-predicate-m3-volume-measure-2026-08-01.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m4b-panel
-
-> BRIEF: админ **управляет** каналом — кандидат 3 (read-only v1) прямо противоречит. Кандидат 2 (новый SPA) — лишний host. Кандидат 1: раздел в `apps/panel` на panel.mmbrn.tech. _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/llm-procedure-channels-m4b-panel-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m3c-fallback-2026-07-23-2026-07-23.md#reply-1`

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14359/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 297 (причины в op-log) -->
+Записей: 50 · бюджет 14396/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 298 (причины в op-log) -->
+
+### 2026-08-20 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** MAIN_DAY_ISSUE верно определил продуктовый контур захвата (Studio→Firebat) как приоритет. Code-review корректно отметил отсутствие аудио-DSP в развёрнутом diff. **Итоги дня:** Пользовательский путь Studio на Firebat закрыт — парринг ключом из кабинета, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-20.md#reply-1`
 
 ### 2026-08-19 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/evening-review-predicate-m2-order-of-three-2026-08-01.md#reply-1`
 
-### 2026-08-01 · позиция · evening-review-predicate-m3-volume-measure
+### 2026-07-29 · позиция · team-evening-feedback
 
-> Слышу ровно то, что описал Математик: если сложить все дорожки в шине без учёта, где каждая писалась — получишь уровень, который ни о чём не говорит. Промах 31.07 — это не «уровень был высок», это «шина заглушила все каналы разом». Дефект в глаголе: `oversized` стал командой […] _(реплик в сеансе: 5)_
+> **Оценка артефактов:** Аудио-движок не затронут. **Итоги дня:** Для музыканта — фон: tariff-grid не затрагивает Web Audio, но MFCC/нейро-спектрограммы (инструменты тарифа 2) — зона пересечения Калмыка и математика. Пока только инвентаризация в issue #1404. **На завтра:** […]
 
-— источник: `docs/seanses/evening-review-predicate-m3-volume-measure-2026-08-01.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m2a-scope
-
-> Флаг кандидата 3: подключим всё — получим пульт с тумблерами на процедуры, которые ещё не умеют читать overlay. Мёртвые двери. Лучше два живых канала, чем десять тёмных. Кандидат 2 это держит. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m2a-scope-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-07-29.md#reply-1`

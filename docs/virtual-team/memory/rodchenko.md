@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14348/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 295 (причины в op-log) -->
+Записей: 50 · бюджет 14329/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 296 (причины в op-log) -->
+
+### 2026-08-20 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** Все документы дня корректны; UI-задач в фокусе не было, что отражено в code-review (C5 —). **Итоги дня:** Прямых UI-задач не было. Косвенно — нарезка studio-firebat-user-pairing дала 5 блоков Vesnin с точностью 100% (род опыта hit). Можно отметить: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-20.md#reply-1`
 
 ### 2026-08-19 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > С витрины аудитора и капитана: если вечерний отчёт несёт строку `oversized: true` по дню — это индикатор без смысла. Мне не ясно, что за ним стоит: одна карточка вышла за атом, или шесть карточек суммой? Это разные риски и разные действия. Честный индикатор на витрине вечера […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/evening-review-predicate-m3-volume-measure-2026-08-01.md#reply-1`
-
-### 2026-08-01 · позиция · evening-review-predicate-m4-memoization
-
-> С витрины агента ситуация выглядит так: `team-memory-report` стоит на шаге 6 и уже виден в цепочке — его не надо «возвращать». `day-memo` стоит на шаге 12 — тоже уже в цепочке. Единственный орган, который НЕ в цепочке и который имеет отношение к слову владельца — это […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/evening-review-predicate-m4-memoization-2026-08-01.md#reply-1`
