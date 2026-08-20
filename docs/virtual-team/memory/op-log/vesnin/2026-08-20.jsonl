@@ -6,3 +6,7 @@
 {"ts":"2026-08-20T07:43:19.276Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-20T07:42:56.743Z","origin":"ask-persona"}
 {"ts":"2026-08-20T07:43:19.278Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-20T07:42:56.743Z","origin":"ask-persona"}
 {"ts":"2026-08-20T07:43:19.279Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-06-17-desktop-product-line","reason":"там же зафиксировано разделение Studio/Device Electron-оболочек и доступ к FS; текущий кастинг про safeStorage в Studio-preload — прямое продолжение той границы.","origin":"ask-persona"}
+{"ts":"2026-08-20T10:31:20.235Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-20T10:31:03.473Z","origin":"ask-persona"}
+{"ts":"2026-08-20T10:31:20.245Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-20T10:31:03.473Z","origin":"ask-persona"}
+{"ts":"2026-08-20T10:31:20.246Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-07-19-insight-archive-lifecycle-c2-state-axes-r4","reason":"та же дисциплина «форма следует функции, декор без конструкции запрещён»: audience-поле оправдано двумя subjects (node ↔ client), пятое поле без нового subject было бы декором.","origin":"ask-persona"}
+{"ts":"2026-08-20T10:31:20.248Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-08-05-team-evening-feedback","reason":"норма про ADR-контракт до расщепления работы: b5 закрывает ADR-0028 до старта спринта реализации, ровно тот случай, который тогда назвал риском.","origin":"ask-persona"}

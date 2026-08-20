@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, session, shell } from 'electron';
 import path from 'node:path';
 
 import { registerLoggingIpc, attachWindowShellLogging } from './logging/register-ipc';
+import { registerSecureStorageIpc } from './secure-storage';
 import { initShellLog, writeShellLog } from './logging/shell-log';
 import { createMediaLibraryFsStore } from './media-library/media-library-fs';
 import { registerMediaLibraryIpc } from './media-library/register-ipc';
@@ -106,6 +107,9 @@ if (!app.requestSingleInstanceLock()) {
     // SC5: версия сборки студии — renderer включает её в WS handshake (clientVersion),
     // cabinet логирует устаревшие сборки warning-ом (strict gate — DR6).
     ipcMain.handle('membrana:studio-shell:getAppVersion', () => app.getVersion());
+
+    // b4 studio-firebat-user-pairing: канал safeStorage — провод до ADR-0028, включение позже.
+    registerSecureStorageIpc();
 
     createMainWindow();
 
