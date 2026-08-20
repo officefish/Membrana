@@ -19,7 +19,7 @@
     "^(media-library|product-landing|root-domain|cabinet-scenario|pcb-|studio-capture|sca-|tariff-|membrana-device-build|comp-packaging|grp\\d|graphify)",
     "^(office-stability|office-vds)",
     "^(server-plugin|plugin-results-)",
-    "^(firebat-node)"
+    "^(firebat-node)", "^(studio-firebat)"
    ]
   },
   {
