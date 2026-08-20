@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `sanitation-2026-08-20` | Санитария 20.08 через спринт: 6 вердиктов oversized-PR, e2e-smoke подъёма media/office в CI (#2009), гейт secret-parser-built | M | [`SESSION_G_SANITATION_SPRINT_2026-08-20.md`](../prompts/SESSION_G_SANITATION_SPRINT_2026-08-20.md) | [#2009](https://github.com/officefish/Membrana/issues/2009) |
 | `media-per-device-token` | ADR-0028 R1 R2 per-device media token | M | [`SESSION_V_PER_DEVICE_TOKEN_SPRINT_2026-08-20.md`](../prompts/SESSION_V_PER_DEVICE_TOKEN_SPRINT_2026-08-20.md) | — |
 | `capture-sidecar-protocol` | Спутник записи и порядок съёмки | M | [`CAPTURE_SIDECAR_PROTOCOL_PROMPT.md`](../prompts/CAPTURE_SIDECAR_PROTOCOL_PROMPT.md) | — |
 | `plugin-results-payload-pocket` | Словарь: карман payload в RunResult vs расширение в корне (passthrough в приёмнике моста) | S | [`PLUGIN_RESULTS_PAYLOAD_POCKET_PROMPT.md`](../prompts/PLUGIN_RESULTS_PAYLOAD_POCKET_PROMPT.md) | [#1982](https://github.com/officefish/Membrana/issues/1982) |
@@ -143,6 +142,7 @@
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
 | `mfcc-first-field-probe` | Первая проба mfcc через мост на записи узла Firebat (89e428ba, боевой вход request) | 2026-08-20 | [`MFCC_FIRST_FIELD_PROBE_PROMPT.md`](../prompts/MFCC_FIRST_FIELD_PROBE_PROMPT.md) | — | [карточка](./archive/mfcc-first-field-probe.md) |
+| `sanitation-2026-08-20` | Санитария 20.08 через спринт: 6 вердиктов oversized-PR, e2e-smoke подъёма media/office в CI (#2009), гейт secret-parser-built | 2026-08-20 | [`SESSION_G_SANITATION_SPRINT_2026-08-20.md`](../prompts/SESSION_G_SANITATION_SPRINT_2026-08-20.md) | #2009 (Issue открыт) | [карточка](./archive/sanitation-2026-08-20.md) |
 | `plugin-results-bridge` | Мост media → office для результатов плагинов (RunRecord в plugin-results без скрипта) | 2026-08-20 | [`PLUGIN_RESULTS_BRIDGE_PROMPT.md`](../prompts/PLUGIN_RESULTS_BRIDGE_PROMPT.md) | — | [карточка](./archive/plugin-results-bridge.md) |
 | `studio-firebat-user-pairing` | Пользовательский путь: Studio на Firebat, парринг ключом из кабинета, записи в набор пользователя | 2026-08-20 | [`STUDIO_FIREBAT_USER_PAIRING_PROMPT.md`](../prompts/STUDIO_FIREBAT_USER_PAIRING_PROMPT.md) | — | [карточка](./archive/studio-firebat-user-pairing.md) |
 | `contour-sanity-2026-08-19` | Санитария контура прогонов через спринт: диагноз красного rag-теста, ревью-долг #1951/#1953, хвосты #1972, синглтон импорта в хосте | 2026-08-19 | [`SESSION_G_CONTOUR_SANITY_SPRINT_2026-08-19.md`](../prompts/SESSION_G_CONTOUR_SANITY_SPRINT_2026-08-19.md) | #1972 | [карточка](./archive/contour-sanity-2026-08-19.md) |
