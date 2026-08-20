@@ -4,6 +4,12 @@
 
 ## Focus
 
+- **sanitation-2026-08-20** ([#2009](https://github.com/officefish/Membrana/issues/2009)) ·
+  gate pass 9/9 honest_pair · прогноз↔исход hit (9/9) · [`OPEN.md`](./local-sprint/sanitation-2026-08-20/OPEN.md) —
+  шесть вердиктов oversized-PR (все LGTM, находки → #2020); смоук подъёма графа DI media/office в CI
+  (судит dist — esbuild не эмитит design:paramtypes) + правило @Optional в каноне; веха secret-parser-built:
+  критерии 1–2 закрыты, критерий 3 эскалирован владельцу с ценой (#2022).
+
 - **capture-sidecar-protocol** (без Issue: след доставки — локальный спринт) · GATE PASS 4/4
   `honest_pair` · experience `hit` · [`OPEN.md`](./local-sprint/capture-sidecar-protocol/OPEN.md) —
   форма спутника, порядок съёмки, fail-closed глагол и живая приёмка на записи узла.
