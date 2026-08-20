@@ -12,3 +12,6 @@
 {"ts":"2026-08-20T11:15:12.594Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-20T11:14:43.923Z","origin":"ask-persona"}
 {"ts":"2026-08-20T11:15:12.595Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-20T11:14:43.923Z","origin":"ask-persona"}
 {"ts":"2026-08-20T11:15:12.596Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-18-evening-auditor-m3-trigger-reader","reason":"там я вводил consumed(report,t) как предикат, проверяемый следующим артефактом; здесь ровно та же дисциплина: идемпотентность должна проверяться не самоотчётом ответа, а состоянием дома результатов.","origin":"ask-persona"}
+{"ts":"2026-08-20T18:03:43.740Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-20-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-20T18:03:43.740Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-01-evening-review-predicate-m3-volume-measure","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-20T18:03:43.740Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

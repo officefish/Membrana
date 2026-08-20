@@ -16,3 +16,6 @@
 {"ts":"2026-08-20T11:08:19.493Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-20T11:07:56.983Z","origin":"ask-persona"}
 {"ts":"2026-08-20T11:08:19.496Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-20T11:07:56.983Z","origin":"ask-persona"}
 {"ts":"2026-08-20T11:08:19.498Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-08-03-one-shot-manifest-m3-volume","reason":"там уже разложено, что «два прогона» — это два вызова одного предиката в разные моменты; ровно та же форма нужна здесь для «двух request с тем же sampleId»: один эндпоинт, два момента, равные отпечатки — разные runId.","origin":"ask-persona"}
+{"ts":"2026-08-20T18:03:44.360Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-20-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-20T18:03:44.360Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-08-01-evening-review-predicate-m3-volume-measure","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-20T18:03:44.360Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

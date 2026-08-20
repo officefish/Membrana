@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14389/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 296 (причины в op-log) -->
+Записей: 50 · бюджет 14363/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 297 (причины в op-log) -->
+
+### 2026-08-20 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** Артефакты дня согласованы. Code-review честно отметил: FFT/MFCC-кода в развёрнутом diff нет. Проба mfcc через мост (#2019) — событие дня, но числового diff пока нет. **Итоги дня:** Первая проба mfcc через мост на записи узла Firebat (89e428ba) проведена […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-20.md#reply-1`
 
 ### 2026-08-19 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > Зафиксирую область как предикат. Три объекта: `day-memo` (шаг 12), `audit-evening` (шаг 13), `code-review` (шаг 10). Текущий порядок в источнике: code-review(10) < day-memo(12) < audit-evening(13). Требование владельца 01.08 задаёт порядок: day-memo < audit-evening < […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/evening-review-predicate-m2-order-of-three-2026-08-01.md#reply-1`
-
-### 2026-08-01 · позиция · evening-review-predicate-m3-volume-measure
-
-> Начну с области определения. Вечер работает на множестве карточек дня, не на одной карточке — это посылка M1, не моя. Значит, если мы вводим мерку объёма на высоте вечера, её область — отношения между карточками, а не сумма строк. Агрегат `sum(changed_lines)` по дню — скаляр без […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/evening-review-predicate-m3-volume-measure-2026-08-01.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
 

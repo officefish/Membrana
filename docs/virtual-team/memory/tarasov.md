@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 51 · бюджет 14340/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 309 (причины в op-log) -->
+Записей: 51 · бюджет 14395/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 310 (причины в op-log) -->
+
+### 2026-08-20 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** Утренние артефакты согласованы: стендап и MAIN_DAY_ISSUE единогласно фокусируются на пользовательском пути Studio→Firebat. Ключевое расхождение — в MAIN_DAY_ISSUE поле `primaryFocusId` = `firebat-node-device`, а телом заявлена магистраль […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-20.md#reply-1`
 
 ### 2026-08-19 · позиция · team-evening-feedback
 
@@ -302,14 +308,8 @@
 
 — источник: `docs/seanses/evening-review-predicate-m3-volume-measure-2026-08-01.md#reply-1`
 
-### 2026-08-01 · позиция · evening-review-predicate-m4-memoization
+### 2026-07-28 · позиция · team-evening-feedback
 
-> Матч узкий. Три органа слипаются в одном слове — наша задача их развести и сказать, что именно владелец потребовал вернуть в голову вечера, а что уже там стоит или стоять не должно. Требование 3 из #569 — не абстрактная норма, это конкретное архитектурное решение с причиной. […] _(реплик в сеансе: 6)_
+> **Оценка артефактов:** STRATEGY_DAY устарел (сгенерирован 17.07 на 18.07) — помечен красным щитом как нерабочий документ. DAILY_STANDUP и MAIN_DAY_ISSUE качественные: магистраль DAY_MEMO чётко обоснована owner-choice, таблица посылок и сознательные «не делаем» снижают риск […]
 
-— источник: `docs/seanses/evening-review-predicate-m4-memoization-2026-08-01.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
-
-> Беру поля кандидата 1 + `promptHash` опционально из 2 без хранения тела. Retention: 30 дней для v1 (кандидат 1); 90 — later. Сырой промпт/ключ — никогда в store. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m3b-telemetry-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-07-28.md#reply-1`
