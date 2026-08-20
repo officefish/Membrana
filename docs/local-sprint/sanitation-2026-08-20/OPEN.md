@@ -4,10 +4,10 @@
 |------|----------|
 | Sprint | `sanitation-2026-08-20` |
 | Issue | [#2009](https://github.com/officefish/Membrana/issues/2009) (e2e-smoke) · точка входа `docs/prompts/SESSION_G_SANITATION_SPRINT_2026-08-20.md` |
-| Plan | [`docs/sprint/cut/sanitation-2026-08-20.json`](../../sprint/cut/sanitation-2026-08-20.json) — **ждёт ратификации владельца** |
+| Plan | [`docs/sprint/cut/sanitation-2026-08-20.json`](../../sprint/cut/sanitation-2026-08-20.json) (ратифицирован владельцем 20.08 11:18Z, «ратифицирую») |
 | Cutter | ozhegov ([конспект](../../discussions/cut-sanitation-2026-08-20-ozhegov.md)) |
 | Blocks | 6× review (tarasov ×2, vesnin ×2, dynin ×2) · ci-smoke-app-di (ozhegov) · optional-canon-rule (vesnin) · secret-parser-gate (ozhegov) |
-| Status | OPEN · нарезка предъявлена владельцу 20.08; код до ратификации не пишется |
+| Status | в исполнении · блоки 1–3 (вердикты #1980/#1981/#1987) — в этом PR; итоги всех девяти и гейт — закрывающим PR стека |
 
 ## Предмет
 
