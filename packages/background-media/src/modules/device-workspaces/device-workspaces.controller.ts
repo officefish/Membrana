@@ -20,8 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { ApiBadRequest, ApiStandardErrors } from '../../common/swagger/api-decorators';
 import { API_TOKEN_SECURITY } from '../../common/swagger/openapi.constants';
-import { ApiTokenGuard } from '../../common/guards/api-token.guard';
-import { DeviceGuard } from '../../common/guards/device.guard';
+import { MediaDeviceAccessGuard } from '../../common/guards/media-device-access.guard';
 import {
   DeleteWorkspaceResultDto,
   DeviceWorkspaceListDto,
@@ -33,7 +32,7 @@ import { DeviceWorkspacesService } from './device-workspaces.service';
 
 @ApiTags('Device workspaces')
 @Controller('v1/devices/:deviceId/device-workspaces')
-@UseGuards(ApiTokenGuard, DeviceGuard)
+@UseGuards(MediaDeviceAccessGuard)
 @ApiSecurity(API_TOKEN_SECURITY)
 @ApiHeader({ name: 'X-Membrana-Token', required: true })
 @ApiParam({ name: 'deviceId', format: 'uuid' })

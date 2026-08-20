@@ -16,6 +16,12 @@ export interface MediaDeviceRegistration {
   name: string;
   kind: string;
   createdAt: string;
+  clientKey: {
+    keyId: string;
+    raw: string;
+    createdAt: string;
+    rotatedFrom: string | null;
+  };
 }
 
 export interface MediaQuotaBucket {
@@ -113,6 +119,23 @@ export class MediaBridgeService {
     });
     await this.assertOk(res, 'Media server registration');
     return (await res.json()) as MediaDeviceRegistration;
+  }
+
+  async issueClientKey(deviceId: string): Promise<MediaDeviceRegistration['clientKey']> {
+    const res = await this.mediaFetch(`/v1/devices/${deviceId}/client-key`, {
+      method: 'POST',
+      headers: this.mediaHeaders(),
+    });
+    await this.assertOk(res, 'Media client key issue');
+    return (await res.json()) as MediaDeviceRegistration['clientKey'];
+  }
+
+  async revokeClientKey(deviceId: string): Promise<void> {
+    const res = await this.mediaFetch(`/v1/devices/${deviceId}/client-key`, {
+      method: 'DELETE',
+      headers: this.mediaHeaders(),
+    });
+    await this.assertOk(res, 'Media client key revoke');
   }
 
   async syncMembraneContext(deviceId: string, membrane: MediaMembraneContext): Promise<void> {

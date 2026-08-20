@@ -4,6 +4,11 @@
 
 ## Focus
 
+- **media-per-device-token** (без Issue до первого PR; ADR-0028 Р1+Р2) ·
+  cut awaiting owner ratification · [`OPEN.md`](./local-sprint/media-per-device-token/OPEN.md) —
+  media выдаёт per-device client key вместо служебного `MEDIA_API_TOKEN` в `PairResponse.mediaToken`;
+  revoke `pairedKey` каскадно отзывает media-key. Р3/Р4, `apps/client`, форма `PairResponse` и prod deploy вне спринта.
+
 - **capture-sidecar-protocol** (без Issue: след доставки — локальный спринт) · GATE PASS 4/4
   `honest_pair` · experience `hit` · [`OPEN.md`](./local-sprint/capture-sidecar-protocol/OPEN.md) —
   форма спутника, порядок съёмки, fail-closed глагол и живая приёмка на записи узла.

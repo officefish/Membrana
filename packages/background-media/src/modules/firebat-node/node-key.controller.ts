@@ -28,7 +28,7 @@ export class NodeKeyController {
   @ApiResponse({ status: 409, description: 'Active key already exists (pass ?rotate=true)', type: ApiErrorBodyDto })
   @ApiResponse({ status: 401, description: 'Invalid or missing token', type: ApiErrorBodyDto })
   async issue(@Param('deviceId') deviceId: string, @Query('rotate') rotate?: string) {
-    const res = await this.keys.issue(deviceId, { rotate: rotate === 'true' });
+    const res = await this.keys.issue(deviceId, { audience: 'node', rotate: rotate === 'true' });
     if (res.outcome === 'already_active') {
       throw new ConflictException(`Active node key exists for device ${deviceId}; pass ?rotate=true to replace it`);
     }
@@ -47,6 +47,6 @@ export class NodeKeyController {
   @ApiOperation({ summary: 'Revoke the active node key (soft: revokedAt)' })
   @ApiResponse({ status: 200, description: '{ outcome: revoked | no_active_key }' })
   async revoke(@Param('deviceId') deviceId: string) {
-    return this.keys.revoke(deviceId);
+    return this.keys.revoke(deviceId, { audience: 'node' });
   }
 }

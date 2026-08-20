@@ -3,6 +3,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import type { NodeAccessKeyDuration, Tariff } from '../../prisma/client';
@@ -20,6 +21,7 @@ import { isNodeLimitReached, nextNodeLabel } from '../../domain/node-limit';
 import { resolvePairedKeyStatus } from '../../domain/paired-key-status';
 import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
 import { DeviceCaptureService } from '../device-capture/device-capture.service';
+import { MediaBridgeService } from '../pair/media-bridge.service';
 
 const FREE_TARIFF_ID = 'free-v1';
 const FREE_DATASET_CATALOG_ID = 'free-v1-catalog';
@@ -97,10 +99,13 @@ function serializeAccessKey(key: {
 
 @Injectable()
 export class MembraneService {
+  private readonly logger = new Logger(MembraneService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly nodeRealtime: NodeRealtimeService,
     private readonly deviceCapture: DeviceCaptureService,
+    private readonly mediaBridge: MediaBridgeService,
   ) {}
 
   async getOrCreateMembraneForUser(userId: string) {
@@ -262,6 +267,10 @@ export class MembraneService {
           key.node.membraneId,
           'revoked',
         );
+        await this.mediaBridge.revokeClientKey(pairedDevice.mediaDeviceId).catch((error: unknown) => {
+          const message = error instanceof Error ? error.message : String(error);
+          this.logger.warn(`media client key revoke failed for ${pairedDevice.mediaDeviceId}: ${message}`);
+        });
       }
       // PL4: захват (держится сессией кабинета) над этим узлом бессмысленен —
       // узел теряет сопряжение. Форс-release (broadcast кабинету), не ждём TTL.

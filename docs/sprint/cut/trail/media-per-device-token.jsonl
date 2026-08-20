@@ -1,0 +1,5 @@
+{"kind":"cut_context_run","sprintId":"media-per-device-token","subject":"vesnin","at":"2026-08-20T14:12:00+03:00","ref":"docs/discussions/cut-media-per-device-token-vesnin.md","planDigest":null}
+{"kind":"cut_act","sprintId":"media-per-device-token","subject":"vesnin","at":"2026-08-20T14:15:00+03:00","ref":"docs/sprint/cut/media-per-device-token.json","planDigest":"47e25fdb833334812d8bab933d8ecc291aa3e57351b2f98a5ba5a768f9571317"}
+{"kind":"recut_act","sprintId":"media-per-device-token","subject":"vesnin","at":"2026-08-20T14:25:00+03:00","ref":"docs/sprint/cut/media-per-device-token.json","planDigest":"f6a8ea4fd24c2c224a394a558ca1c0ce67026a710fd6711425379aa22fe3ef68"}
+{"kind":"recut_act","sprintId":"media-per-device-token","subject":"vesnin","at":"2026-08-20T17:42:00+03:00","ref":"docs/sprint/cut/media-per-device-token.json","planDigest":"b18f4b9e4f79d2f95bdca51c9e735fd7a408a1f03b6e67144ae6d3d213ad0a17"}
+{"kind":"recut_act","sprintId":"media-per-device-token","subject":"vesnin","at":"2026-08-20T17:48:00+03:00","ref":"docs/sprint/cut/media-per-device-token.json","planDigest":"0a074572186a06a9fb8aeb914701bbeb0810cb44eaff69852b72aecb9a5f5ae6"}

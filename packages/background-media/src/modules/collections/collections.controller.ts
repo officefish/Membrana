@@ -10,8 +10,7 @@ import {
 import { ApiBadRequest, ApiStandardErrors } from '../../common/swagger/api-decorators';
 import { OkResponseDto } from '../../common/swagger/common.dto';
 import { API_TOKEN_SECURITY } from '../../common/swagger/openapi.constants';
-import { ApiTokenGuard } from '../../common/guards/api-token.guard';
-import { DeviceGuard } from '../../common/guards/device.guard';
+import { MediaDeviceAccessGuard } from '../../common/guards/media-device-access.guard';
 import {
   CollectionResponseDto,
   CreateCollectionDto,
@@ -26,7 +25,7 @@ import type { PluginId, PluginTrigger } from './plugin-host.types';
 
 @ApiTags('Collections')
 @Controller('v1/devices/:deviceId/collections')
-@UseGuards(ApiTokenGuard, DeviceGuard)
+@UseGuards(MediaDeviceAccessGuard)
 @ApiSecurity(API_TOKEN_SECURITY)
 @ApiHeader({ name: 'X-Membrana-Token', required: true })
 @ApiHeader({ name: 'X-Membrana-Device-Id', required: false })

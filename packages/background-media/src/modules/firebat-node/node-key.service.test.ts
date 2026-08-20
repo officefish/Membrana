@@ -5,19 +5,26 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { NODE_KEY_VERDICTS, NodeKeyService, hashNodeKey, type NodeKeyRow, type NodeKeyStore } from './node-key.service';
+import {
+  NODE_KEY_VERDICTS,
+  NodeKeyService,
+  hashNodeKey,
+  type NodeKeyAudience,
+  type NodeKeyRow,
+  type NodeKeyStore,
+} from './node-key.service';
 
 class MemoryStore implements NodeKeyStore {
   rows: NodeKeyRow[] = [];
   private seq = 0;
-  async findActiveByDevice(deviceId: string) {
-    return [...this.rows].reverse().find((r) => r.deviceId === deviceId && r.revokedAt === null) ?? null;
+  async findActiveByDevice(deviceId: string, audience: NodeKeyAudience) {
+    return [...this.rows].reverse().find((r) => r.deviceId === deviceId && r.audience === audience && r.revokedAt === null) ?? null;
   }
   async findByHash(keyHash: string) {
     return this.rows.find((r) => r.keyHash === keyHash) ?? null;
   }
-  async create(deviceId: string, keyHash: string) {
-    const row: NodeKeyRow = { id: `k${++this.seq}`, deviceId, keyHash, createdAt: new Date('2026-08-19T12:00:00Z'), revokedAt: null, lastUsedAt: null };
+  async create(deviceId: string, audience: NodeKeyAudience, keyHash: string) {
+    const row: NodeKeyRow = { id: `k${++this.seq}`, deviceId, audience, keyHash, createdAt: new Date('2026-08-19T12:00:00Z'), revokedAt: null, lastUsedAt: null };
     this.rows.push(row);
     return row;
   }
@@ -38,7 +45,7 @@ const make = () => {
 
 describe('NodeKeyService', () => {
   it('словарь вердиктов закрыт — пять имён', () => {
-    expect([...NODE_KEY_VERDICTS]).toEqual(['ok', 'missing', 'unknown', 'revoked', 'foreign_device']);
+    expect([...NODE_KEY_VERDICTS]).toEqual(['ok', 'missing', 'unknown', 'revoked', 'foreign_device', 'foreign_audience']);
   });
 
   it('issue: сырой ключ отдаётся один раз, в хранилище только sha256-хеш', async () => {
@@ -49,6 +56,7 @@ describe('NodeKeyService', () => {
     expect(res.key.raw).toMatch(/^[A-Za-z0-9_-]{43}$/u);
     expect(store.rows).toHaveLength(1);
     expect(store.rows[0]!.keyHash).toBe(hashNodeKey(res.key.raw));
+    expect(store.rows[0]!.audience).toBe('node');
     expect(JSON.stringify(store.rows)).not.toContain(res.key.raw);
   });
 
@@ -82,6 +90,23 @@ describe('NodeKeyService', () => {
     const res = await svc.issue('dev-1');
     if (res.outcome !== 'issued') throw new Error('issue failed');
     expect(await svc.verify(res.key.raw, 'dev-2')).toEqual({ verdict: 'foreign_device' });
+  });
+
+  it('audience: node и client — два разных активных ключа одного устройства', async () => {
+    const { svc } = make();
+    const node = await svc.issue('dev-1');
+    const client = await svc.issue('dev-1', { audience: 'client' });
+    expect(node.outcome).toBe('issued');
+    expect(client.outcome).toBe('issued');
+    if (node.outcome !== 'issued' || client.outcome !== 'issued') return;
+    expect(await svc.verify(client.key.raw, 'dev-1')).toEqual({ verdict: 'foreign_audience' });
+    expect(await svc.verify(client.key.raw, 'dev-1', { audience: 'client' })).toEqual({
+      verdict: 'ok',
+      keyId: 'k2',
+      deviceId: 'dev-1',
+    });
+    expect(await svc.revoke('dev-1', { audience: 'client' })).toEqual({ outcome: 'revoked', keyId: 'k2' });
+    expect((await svc.verify(node.key.raw, 'dev-1')).verdict).toBe('ok');
   });
 
   it('revoke: мягкий — строка остаётся; повторный revoke — no_active_key', async () => {

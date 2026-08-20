@@ -4,6 +4,7 @@ import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
 import { TARIFF_DATASET_SYSTEM_KEY } from '../../lib/collection-ids';
 import { PrismaService } from '../../prisma/prisma.service';
+import { NodeKeyService } from '../firebat-node/node-key.service';
 import { resolveDeviceLimits } from './device-limits';
 
 export interface QuotaBucketDto {
@@ -41,14 +42,15 @@ export class DevicesService {
   constructor(
     private readonly prisma: PrismaService,
     @Inject(APP_CONFIG) private readonly config: AppConfig,
+    private readonly nodeKeys: NodeKeyService,
   ) {}
 
   async register(
     name: string,
     kind: DeviceKind,
     membraneContext?: DeviceMembraneContext,
-  ): Promise<Device> {
-    return this.prisma.device.create({
+  ): Promise<{ device: Device; clientKey: { raw: string; keyId: string; createdAt: Date } }> {
+    const device = await this.prisma.device.create({
       data: {
         name,
         kind,
@@ -65,6 +67,28 @@ export class DevicesService {
           : {}),
       },
     });
+    const issued = await this.nodeKeys.issue(device.id, { audience: 'client' });
+    if (issued.outcome !== 'issued') {
+      throw new Error(`Client media key was not issued for new device ${device.id}`);
+    }
+    return { device, clientKey: issued.key };
+  }
+
+  async issueClientKey(deviceId: string): Promise<{
+    raw: string;
+    keyId: string;
+    createdAt: Date;
+    rotatedFrom: string | null;
+  }> {
+    const issued = await this.nodeKeys.issue(deviceId, { audience: 'client', rotate: true });
+    if (issued.outcome !== 'issued') {
+      throw new Error(`Client media key was not issued for device ${deviceId}`);
+    }
+    return issued.key;
+  }
+
+  async revokeClientKey(deviceId: string) {
+    return this.nodeKeys.revoke(deviceId, { audience: 'client' });
   }
 
   async syncMembraneContext(deviceId: string, membraneContext: DeviceMembraneContext): Promise<Device> {

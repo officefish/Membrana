@@ -5,6 +5,16 @@
 
 ---
 
+## 2026-08-20 — `media-per-device-token` — **OPEN**
+
+- **Goal:** реализация ADR-0028 Р1+Р2: per-device client key media вместо служебного
+  `MEDIA_API_TOKEN` в `PairResponse.mediaToken`, плюс revoke cascade от `pairedKey`.
+- **Task:** `media-per-device-token` (Issue с первым PR по DoD)
+- **OPEN:** [`local-sprint/media-per-device-token/OPEN.md`](./local-sprint/media-per-device-token/OPEN.md)
+- **Prompt:** [`prompts/SESSION_V_PER_DEVICE_TOKEN_SPRINT_2026-08-20.md`](./prompts/SESSION_V_PER_DEVICE_TOKEN_SPRINT_2026-08-20.md)
+- **Cut:** [`sprint/cut/media-per-device-token.json`](./sprint/cut/media-per-device-token.json) · ждёт ратификации владельца в чате
+- **Boundary:** Р3/Р4, `apps/client`, изменение формы `PairResponse`, prod deploy — вне прогона.
+
 ## 2026-08-08 — `static-mmbrn-inventory-export` — **CLOSED**
 
 - **Goal:** offline, read-only Affine source snapshot extractor with sealed exact-set manifest

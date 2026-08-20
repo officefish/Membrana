@@ -22,13 +22,15 @@ export class NodeKeyGuard implements CanActivate {
     if (!deviceId) throw new ForbiddenException('deviceId required');
     const header = req.headers[NODE_KEY_HEADER];
     const raw = Array.isArray(header) ? header[0] : header;
-    const res = await this.keys.verify(raw, deviceId);
+    const res = await this.keys.verify(raw, deviceId, { audience: 'node' });
     switch (res.verdict) {
       case 'ok':
         req.nodeKey = { keyId: res.keyId, deviceId: res.deviceId };
         return true;
       case 'foreign_device':
         throw new ForbiddenException('node key belongs to another device');
+      case 'foreign_audience':
+        throw new ForbiddenException('node key audience mismatch');
       case 'missing':
         throw new UnauthorizedException(`Missing ${NODE_KEY_HEADER} header`);
       case 'revoked':
