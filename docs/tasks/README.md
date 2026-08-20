@@ -134,6 +134,7 @@
 | `pt-3-honest-tech-storytelling` | PT3: как честно рассказывать о технологии и стадии (пары до/после, пометки риска, dual-use GLOSSARY §4, без сырых внутренних цифр) | M | [`PARTNER_TUTORIALS_SPRINT_PROMPT.md`](../prompts/PARTNER_TUTORIALS_SPRINT_PROMPT.md) | — |
 | `detection-alarm-loop-refactor` | Detection-Alarm рефакторинг переключения лупов: fusion→lastDetection+front+loop-transition-policy (тема1), effectiveLoop-sync/захват-гейтинг (ADR Р1/Р2), pure-геттеры, Alpha L36 | L | [`LOOP_SWITCH_CONTROL_ADR.md`](../actions/device-board/LOOP_SWITCH_CONTROL_ADR.md) | — |
 | `batch-collection-run-contour` | batch-collection-run-contour: прогон детекторов по коллекции — новая execution-модель live↔batch (пост-FREE, следующий цикл) | L | [`BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md`](../prompts/BATCH_COLLECTION_RUN_CONTOUR_PROMPT.md) | [#494](https://github.com/officefish/Membrana/issues/494) |
+| `studio-firebat-user-pairing` | Пользовательский путь: Studio на Firebat, парринг ключом из кабинета, записи в набор пользователя | L | [`STUDIO_FIREBAT_USER_PAIRING_PROMPT.md`](../prompts/STUDIO_FIREBAT_USER_PAIRING_PROMPT.md) | — |
 
 ---
 

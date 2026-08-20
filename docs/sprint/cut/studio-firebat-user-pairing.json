@@ -1,0 +1,92 @@
+{
+  "schema": "sprint-cut/1",
+  "//": "План локального спринта studio-firebat-user-pairing (магистраль 20.08, owner-choice). Резчик — Веснин (lead карточки), конспект docs/discussions/cut-studio-firebat-user-pairing.md (два захода: форма дня из 5 блоков + развилка mediaToken → ADR, не код дня; заход 2 — кастинг по зонам кода, Дынин снят с хранения секретов). Операционные шаги владельца (установка Studio на Firebat, вход, ключ из кабинета) — НЕ блоки разработки, их вещдоки собирает b6. Порядок: b2 → b3 → b4 последовательно (порт → словарь → IPC); b5 параллельно; b6 замыкает. Вне спринта: смена контракта PairResponse (cabinet+client+media разом), включение шифрования safeStorage (за ADR-0028 отдельным спринтом media-per-device-token), ротация mediaToken.",
+  "sprintId": "studio-firebat-user-pairing",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-08-20T10:30:00+03:00",
+    "to": "2026-08-20T21:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b2-credentials-port",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "apps/client/src/lib/pairing-credentials-store.ts",
+        "apps/client/src/lib/pairing-credentials-store.test.ts",
+        "apps/client/src/stores/nodeConnectionStore.ts"
+      ],
+      "estimate": {
+        "changedLines": 130
+      },
+      "note": "Порт PairingCredentialsStore + два адаптера: localStorageAdapter (web/dev, поведение как сегодня) и electronSafeStorageAdapter-заглушка с пометкой @stage ADR-0028 (шифрование НЕ включается — нет миграции ключей и политики ротации). nodeConnectionStore зовёт порт, не localStorage напрямую. Словарь хранения — одно имя, синонимы запрещены.",
+      "revisionAt": "2026-08-20T10:16:19+00:00",
+      "revisionOf": "bf4f677b228e9129f73dd7e3d4c3c5c5ac61b725f5dfd7c816849c022319e052"
+    },
+    {
+      "blockId": "b3-api-dictionary",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "apps/client/src/api/pairingCredentials.ts",
+        "apps/client/src/api/pairingCredentials.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 80
+      },
+      "note": "Ответ на вопрос резчика: B3 = ТОЛЬКО словарь под порт — чистые функции отображения PairResponse → PairedNodeCredentials (уже чистые) + их зубы; api-слой не переписывается. Дынин уместен как математик чистых адаптеров.",
+      "revisionAt": "2026-08-20T10:16:19+00:00",
+      "revisionOf": "41f6b42c921de1e34cce992bcb2633b48f8b366747b4cac421f12a4b4340bb48"
+    },
+    {
+      "blockId": "b4-studio-ipc",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/membrana-studio/src/main.ts",
+        "apps/membrana-studio/src/preload.ts",
+        "apps/membrana-studio/src/secure-storage.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "note": "IPC secureStorage.get/set/del через preload (contextBridge), в main — канал к electron safeStorage, но адаптер клиента остаётся заглушкой до ADR-0028: провод есть, шифрование за флагом выключено. Studio грузит client dist — ничего в клиенте не дублировать.",
+      "revisionAt": "2026-08-20T10:16:19+00:00",
+      "revisionOf": "6dd076cebec6442cdcd5e9bf46049a4b040b7666685f31e068f2b307180fd9a5"
+    },
+    {
+      "blockId": "b5-adr-0028-debt",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/adr/ADR-0028-pair-media-token-per-device.md"
+      ],
+      "estimate": {
+        "changedLines": 90
+      },
+      "note": "Фиксация долга словом: pair отдаёт КАЖДОМУ спаренному клиенту mediaToken = служебный MEDIA_API_TOKEN, и он лежит в localStorage на диске узла — класс риска, снятый с поллера вчера (ADR-0027 Р3, NodeKey). Решение: сегодня служебный остаётся (техдолг), реализация per-device — отдельный спринт media-per-device-token по образцу ADR-0027 (таблица, guard, отзыв); сверка словарей NodeKey vs ключ парринга — раздел ADR.",
+      "revisionAt": "2026-08-20T10:16:19+00:00",
+      "revisionOf": "b627f9ccfe4763b2539e995f3050b16775d5ee309be0d1e442355fa763c14827"
+    },
+    {
+      "blockId": "b6-acceptance",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "docs/field/studio-firebat-acceptance-2026-08-20.md"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "note": "Вещдоки машинно-проверяемые (форма Веснина): (1) установка Studio на Firebat владельцем — вывод/скрин + строка trail; (2) pair-ответ с membrane.id, deviceId, pairedKeyId (токены маскируются); (3) GET коллекций media под membraneId показывает reserved-набор пользователя; (4) первая запись из Studio на Firebat лежит в наборе, deviceId совпадает. Порядок операционных шагов владельца — в этом же документе.",
+      "revisionAt": "2026-08-20T10:16:19+00:00",
+      "revisionOf": "c895b4846cbc94b63c26449fc3c622a943ead40d52951c925e379a31d38dfd44"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-20T10:16:19+00:00",
+    "digest": "7f322ae47911782883322ea58d453a2a0be7d4cb4a4d66e1358b82fa8363c83e"
+  }
+}
