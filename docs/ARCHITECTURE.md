@@ -191,6 +191,21 @@ interface AudioWindow {
 
 Клиент при недоступности media-server: `browser-limited-fallback` (IndexedDB) — см. `MEDIA_LIBRARY_ARCHITECTURE.md` §4.3.
 
+#### Nest-конструкторы: `@Optional` для внешних портов (обязательное)
+
+Параметр конструктора Nest-провайдера, чей тип — **функция или интерфейс** (инжектируемый порт:
+`fetch`, store, opts), обязан нести `@Optional()` (и `@Inject(token)`, если порт настоящий):
+тип функции/интерфейса не существует в рантайме, Nest не может его разрешить, и приложение
+падает на старте — `can't resolve dependencies (?)`. Класс пойман 19.08 боевым restart-loop
+media ~8 минут: три сервиса (мост, NodeKey, очередь узла) держали такие параметры для тестовых
+подмен, зубы строили сервисы напрямую и падения не видели (вердикт b7 Веснина/структурщика,
+[#2009](https://github.com/officefish/Membrana/issues/2009); хотфикс PR #2008).
+
+Сторож — smoke подъёма графа DI в CI (`app.module.smoke.test.ts` в media и office, шаг
+«App DI smoke» в `unit-tests.yml`): судит **dist** (артефакт tsc, тот же, что на проде), потому
+что vitest/esbuild не эмитит `design:paramtypes` и DI по классам на src не разрешим. Подмена
+для тестов идёт параметром по умолчанию или `@Optional`-портом — НЕ обязательным параметром.
+
 ### 1f. Визуальный граф прибора (`@membrana/device-board`)
 
 Пакет `@membrana/device-board` — редактор **signal graph** (топология захват →
