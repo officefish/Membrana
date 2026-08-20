@@ -1,6 +1,28 @@
 {
   "tasks": [
     {
+      "id": "sanitation-2026-08-20",
+      "title": "Санитария 20.08 через спринт: 6 вердиктов oversized-PR, e2e-smoke подъёма media/office в CI (#2009), гейт secret-parser-built",
+      "promptPath": "docs/prompts/SESSION_G_SANITATION_SPRINT_2026-08-20.md",
+      "githubIssue": 2009,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-20",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "tarasov",
+        "vesnin",
+        "dynin",
+        "kuryokhin"
+      ],
+      "notes": "слово владельца 20.08: строго через membrana-local-sprint, ревью по PR отдельно (не пакетом); магистраль и спринты Б/В не трогать; прод не деплоить; Тарасов без smoke-шага следующий деплой не подписывает",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "capture-sidecar-protocol",
       "title": "Спутник записи и порядок съёмки",
       "promptPath": "docs/prompts/CAPTURE_SIDECAR_PROTOCOL_PROMPT.md",
