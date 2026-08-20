@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   NotFoundException,
   Param,
   Patch,
@@ -21,8 +23,16 @@ import { ApiErrorBodyDto } from '../../common/swagger/common.dto';
 import { API_TOKEN_SECURITY } from '../../common/swagger/openapi.constants';
 import { ApiTokenGuard } from '../../common/guards/api-token.guard';
 import { DeviceGuard } from '../../common/guards/device.guard';
+import { MediaDeviceAccessGuard } from '../../common/guards/media-device-access.guard';
 import { DevicesService } from './devices.service';
-import { DeviceResponseDto, PatchDeviceMembraneContextDto, QuotaResponseDto, RegisterDeviceDto } from './devices.dto';
+import {
+  ClientDeviceKeyResponseDto,
+  DeviceResponseDto,
+  PatchDeviceMembraneContextDto,
+  QuotaResponseDto,
+  RegisterDeviceDto,
+  RegisterDeviceResponseDto,
+} from './devices.dto';
 import type { DeviceMembraneContext } from './devices.service';
 
 @ApiTags('Devices')
@@ -48,11 +58,11 @@ export class DevicesController {
   @ApiSecurity(API_TOKEN_SECURITY)
   @ApiOperation({ summary: 'Register a new field node (device)' })
   @ApiHeader({ name: 'X-Membrana-Token', required: true })
-  @ApiResponse({ status: 201, description: 'Device registered', type: DeviceResponseDto })
+  @ApiResponse({ status: 201, description: 'Device registered; raw client key is returned once', type: RegisterDeviceResponseDto })
   @ApiResponse({ status: 401, description: 'Invalid or missing token', type: ApiErrorBodyDto })
   @ApiBadRequest()
   async register(@Body() body: RegisterDeviceDto) {
-    const device = await this.devices.register(
+    const { device, clientKey } = await this.devices.register(
       body.name,
       body.kind,
       this.parseMembraneContext(body.membrane),
@@ -62,11 +72,17 @@ export class DevicesController {
       name: device.name,
       kind: device.kind,
       createdAt: device.createdAt.toISOString(),
+      clientKey: {
+        keyId: clientKey.keyId,
+        raw: clientKey.raw,
+        createdAt: clientKey.createdAt.toISOString(),
+        rotatedFrom: null,
+      },
     };
   }
 
   @Get(':deviceId')
-  @UseGuards(ApiTokenGuard, DeviceGuard)
+  @UseGuards(MediaDeviceAccessGuard)
   @ApiSecurity(API_TOKEN_SECURITY)
   @ApiOperation({ summary: 'Get device metadata' })
   @ApiParam({ name: 'deviceId', format: 'uuid' })
@@ -111,8 +127,39 @@ export class DevicesController {
     };
   }
 
-  @Get(':deviceId/quota')
+  @Post(':deviceId/client-key')
   @UseGuards(ApiTokenGuard, DeviceGuard)
+  @ApiSecurity(API_TOKEN_SECURITY)
+  @ApiOperation({ summary: 'Issue/rotate client media key for paired device (raw key is returned once)' })
+  @ApiParam({ name: 'deviceId', format: 'uuid' })
+  @ApiHeader({ name: 'X-Membrana-Token', required: true })
+  @ApiResponse({ status: 201, type: ClientDeviceKeyResponseDto })
+  @ApiStandardErrors()
+  async issueClientKey(@Param('deviceId') deviceId: string) {
+    const key = await this.devices.issueClientKey(deviceId);
+    return {
+      keyId: key.keyId,
+      raw: key.raw,
+      createdAt: key.createdAt.toISOString(),
+      rotatedFrom: key.rotatedFrom,
+    };
+  }
+
+  @Delete(':deviceId/client-key')
+  @HttpCode(200)
+  @UseGuards(ApiTokenGuard, DeviceGuard)
+  @ApiSecurity(API_TOKEN_SECURITY)
+  @ApiOperation({ summary: 'Revoke active client media key for paired device' })
+  @ApiParam({ name: 'deviceId', format: 'uuid' })
+  @ApiHeader({ name: 'X-Membrana-Token', required: true })
+  @ApiResponse({ status: 200, description: '{ outcome: revoked | no_active_key }' })
+  @ApiStandardErrors()
+  revokeClientKey(@Param('deviceId') deviceId: string) {
+    return this.devices.revokeClientKey(deviceId);
+  }
+
+  @Get(':deviceId/quota')
+  @UseGuards(MediaDeviceAccessGuard)
   @ApiSecurity(API_TOKEN_SECURITY)
   @ApiOperation({ summary: 'Storage quota for device' })
   @ApiParam({ name: 'deviceId', format: 'uuid' })

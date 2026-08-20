@@ -1,0 +1,115 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "media-per-device-token",
+  "taskId": "media-per-device-token",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-08-20T14:15:00+03:00",
+    "to": "2026-08-20T21:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-media-key-audience",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/background-media/src/modules/firebat-node/node-key.service.ts",
+        "packages/background-media/src/modules/firebat-node/node-key.guard.ts",
+        "packages/background-media/src/modules/firebat-node/node-key.controller.ts",
+        "packages/background-media/src/modules/firebat-node/node-key.service.test.ts",
+        "packages/background-media/prisma/schema.prisma",
+        "packages/background-media/prisma/migrations/"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "note": "Расширить NodeKey полем audience: 'node' | 'client' по рекомендации ADR-0028. NodeKeyStore/NodeKeyService получают audience в issue/verify/revoke/findActiveByDevice; существующий node path остаётся default 'node'. Зубы только через in-memory store; raw key по-прежнему отдаётся один раз, на сервере только sha256. NodeKeyGuard для ручек узла требует audience 'node'.",
+      "revisionAt": "2026-08-20T14:17:16+03:00",
+      "revisionOf": "8ac56aaa82ec548b37aab0ef4552f17d606d28ff4661de27ff7b40bcc71a33f9"
+    },
+    {
+      "blockId": "b2-media-client-access",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-media/src/modules/devices/devices.controller.ts",
+        "packages/background-media/src/modules/devices/devices.service.ts",
+        "packages/background-media/src/modules/devices/devices.dto.ts",
+        "packages/background-media/src/modules/collections/collections.controller.ts",
+        "packages/background-media/src/modules/collections/collections.controller.test.ts",
+        "packages/background-media/src/modules/samples/samples.controller.ts",
+        "packages/background-media/src/modules/device-workspaces/device-workspaces.controller.ts",
+        "packages/background-media/src/modules/device-scenarios/device-scenarios.controller.ts",
+        "packages/background-media/src/modules/trends-templates/trends-templates.controller.ts",
+        "packages/background-media/src/common/guards/media-device-access.guard.ts"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "note": "Media под служебным X-Membrana-Token выдаёт client audience key при POST /v1/devices и отдельным вызовом для уже существующего deviceId (rotate=true для re-pair, потому raw не хранится). Client-token принимается в том же X-Membrana-Token на device-scoped client media surfaces: collections, samples, device-workspaces, legacy device-scenario, trends-templates. Служебный токен остаётся для cabinet/admin-вызовов. Форма публичного PairResponse не меняется; меняется только media internal response.",
+      "revisionAt": "2026-08-20T14:30:00+03:00",
+      "revisionOf": "12bdf8f3bcd0091535d460c80064dfdf57fefd0e35147416ad04a0162e755ef8"
+    },
+    {
+      "blockId": "b3-cabinet-pair-bridge",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/background-cabinet/src/modules/pair/media-bridge.service.ts",
+        "packages/background-cabinet/src/modules/pair/pair.service.ts",
+        "packages/background-cabinet/src/modules/pair/pair.dto.ts",
+        "packages/background-cabinet/src/modules/pair/pair.service.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 210
+      },
+      "note": "MediaBridgeService.registerDevice читает clientKey.raw из media response; для existing mediaDeviceId добавляет issueClientKey(deviceId, rotate=true), а также рождает revokeClientKey(deviceId) для следующего блока. PairService.pair возвращает mediaToken = clientKey.raw, не config.MEDIA_API_TOKEN, при неизменной форме строки PairResponse. apps/client не трогать.",
+      "revisionAt": "2026-08-20T14:17:16+03:00",
+      "revisionOf": "3607e096cf50197efb4b8070158aee1369a72542c8e14172680ca8e85f34935f"
+    },
+    {
+      "blockId": "b4-cabinet-revoke-cascade",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-cabinet/src/modules/membrane/membrane.service.ts",
+        "packages/background-cabinet/src/modules/membrane/membrane-revoke.service.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "note": "MembraneService.revokeAccessKey после локального revoke/session cleanup вызывает MediaBridgeService.revokeClientKey(mediaDeviceId). Потеря media не должна давать ложную зелёнку: тесты фиксируют успешный каскад и named failure/log path; pairedKey revoke остаётся единым пользовательским действием.",
+      "revisionAt": "2026-08-20T14:17:16+03:00",
+      "revisionOf": "b535dfb036b198546d1b4dcade476c42f40fa7cc74fb07c5f8a93f68c3bb139d"
+    },
+    {
+      "blockId": "b5-gate-review-trail",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "docs/local-sprint/media-per-device-token/OPEN.md",
+        "docs/local-sprint/media-per-device-token/CLOSURE.md",
+        "docs/sprint/cut/media-per-device-token.json",
+        "docs/sprint/cut/trail/media-per-device-token.jsonl"
+      ],
+      "estimate": {
+        "changedLines": 60
+      },
+      "note": "Ангелина ведёт procedure-run-journal, sprint:gate и sprint:experience; Тарасов оставляет дополнительный review-evidence, но accountable context блока остаётся Angelina, потому execution-gate v1 требует persona=context. Проверить: Р1+Р2 покрыты, Р3/Р4/apps/client/prod-deploy не тронуты, PR каждый <=400 строк или явно разнесён.",
+      "revisionAt": "2026-08-20T17:49:00+03:00",
+      "revisionOf": "3ba46ad29969a823272889aa68e833211670bf483e6ed222eb930cee4d207b14"
+    }
+  ],
+  "//cutter": "Контекст резчика: docs/discussions/cut-media-per-device-token-vesnin.md. Веснин согласовал audience в NodeKey; координатор исправил фактические пути из ответа ask по текущему коду: cabinet, не background-office; media endpoints в devices/node-key/controllers, MediaBridgeService на стороне cabinet.",
+  "//order": "b1 -> b2 -> b3 -> b4; b5 замыкает. b3 рождает все методы cabinet MediaBridgeService, включая revokeClientKey, чтобы b4 не пересекался по pair/media-bridge.service.ts и отвечал только за MembraneService cascade.",
+  "//out-of-scope": "Р3 rotation MEDIA_API_TOKEN, Р4 safeStorage, изменение формы PairResponse, prod deploy, прямые правки apps/client.",
+  "//recut": "2026-08-20T14:25:00+03:00: b2 расширен с collections/samples до всех device-scoped клиентских media surfaces, потому apps/client уже использует PairResponse.mediaToken для device-workspaces и legacy device-scenario. Это не меняет apps/client и не меняет PairResponse shape, но предотвращает runtime regression после замены содержимого mediaToken.",
+  "//recut-2": "2026-08-20T17:42:00+03:00: b5 context приведён к persona=angelina, потому execution-gate v1 не принимает context≠persona. Tarasov остаётся дополнительным review-evidence в docs/local-sprint/media-per-device-token/reviews/b5-tarasov-review.md, но не accountable context блока.",
+  "//ratification-note": "Owner ratified the recut-2 semantics in chat at 2026-08-20T17:45:00+03:00; this file change only corrects the missed context field to the ratified meaning before re-stamping with sprint-cut.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-20T17:49:00+03:00",
+    "digest": "384599118bcfdf0578a876a85f5e935897635b2d30e93a10e650f4abb8ec12ca"
+  }
+}

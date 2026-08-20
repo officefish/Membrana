@@ -48,6 +48,25 @@ export class DeviceResponseDto {
   createdAt!: string;
 }
 
+export class ClientDeviceKeyResponseDto {
+  @ApiProperty({ format: 'uuid' })
+  keyId!: string;
+
+  @ApiProperty({ description: 'Raw client media key; returned once, server stores only sha256(raw).' })
+  raw!: string;
+
+  @ApiProperty({ format: 'date-time' })
+  createdAt!: string;
+
+  @ApiPropertyOptional({ format: 'uuid', nullable: true })
+  rotatedFrom!: string | null;
+}
+
+export class RegisterDeviceResponseDto extends DeviceResponseDto {
+  @ApiProperty({ type: ClientDeviceKeyResponseDto })
+  clientKey!: ClientDeviceKeyResponseDto;
+}
+
 export class QuotaBucketResponseDto {
   @ApiProperty({ example: 1048576 })
   usedBytes!: number;

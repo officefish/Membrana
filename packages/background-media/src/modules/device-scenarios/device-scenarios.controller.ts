@@ -9,14 +9,13 @@ import {
 } from '@nestjs/swagger';
 import { ApiBadRequest, ApiStandardErrors } from '../../common/swagger/api-decorators';
 import { API_TOKEN_SECURITY } from '../../common/swagger/openapi.constants';
-import { ApiTokenGuard } from '../../common/guards/api-token.guard';
-import { DeviceGuard } from '../../common/guards/device.guard';
+import { MediaDeviceAccessGuard } from '../../common/guards/media-device-access.guard';
 import { DeviceScenarioRecordDto } from './device-scenarios.dto';
 import { DeviceScenariosService } from './device-scenarios.service';
 
 @ApiTags('Device scenarios')
 @Controller('v1/devices/:deviceId/device-scenario')
-@UseGuards(ApiTokenGuard, DeviceGuard)
+@UseGuards(MediaDeviceAccessGuard)
 @ApiSecurity(API_TOKEN_SECURITY)
 @ApiHeader({ name: 'X-Membrana-Token', required: true })
 @ApiParam({ name: 'deviceId', format: 'uuid' })

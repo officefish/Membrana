@@ -22,13 +22,16 @@ function buildService() {
   const deviceCapture = {
     forceReleaseByNode: vi.fn().mockResolvedValue(undefined),
   } as unknown as import('../device-capture/device-capture.service').DeviceCaptureService;
-  const service = new MembraneService(prisma, nodeRealtime, deviceCapture);
-  return { service, prisma, nodeRealtime, deviceCapture };
+  const mediaBridge = {
+    revokeClientKey: vi.fn().mockResolvedValue(undefined),
+  } as unknown as import('../pair/media-bridge.service').MediaBridgeService;
+  const service = new MembraneService(prisma, nodeRealtime, deviceCapture, mediaBridge);
+  return { service, prisma, nodeRealtime, deviceCapture, mediaBridge };
 }
 
 describe('MembraneService.revokeAccessKey — PL2 pairingStatus', () => {
   it('revoke переводит устройство в revoked, сохраняя pairedKeyId, + notify узлу', async () => {
-    const { service, prisma, nodeRealtime, deviceCapture } = buildService();
+    const { service, prisma, nodeRealtime, deviceCapture, mediaBridge } = buildService();
     vi.mocked(prisma.nodeAccessKey.findUnique).mockResolvedValue({
       id: keyId,
       nodeId,
@@ -65,10 +68,11 @@ describe('MembraneService.revokeAccessKey — PL2 pairingStatus', () => {
       membraneId,
       'revoked',
     );
+    expect(mediaBridge.revokeClientKey).toHaveBeenCalledWith(mediaDeviceId);
   });
 
   it('deleteAccessKey активного ключа: revoke + отвязка устройства + delete, без 409 (PL3)', async () => {
-    const { service, prisma, nodeRealtime, deviceCapture } = buildService();
+    const { service, prisma, nodeRealtime, deviceCapture, mediaBridge } = buildService();
     const activeKey = {
       id: keyId,
       nodeId,
@@ -97,6 +101,7 @@ describe('MembraneService.revokeAccessKey — PL2 pairingStatus', () => {
       membraneId,
       'revoked',
     );
+    expect(mediaBridge.revokeClientKey).toHaveBeenCalledWith(mediaDeviceId);
     // Отвязка на уровне устройства: pairedKeyId очищен, статус unpaired.
     expect(prisma.device.updateMany).toHaveBeenCalledWith({
       where: { pairedKeyId: keyId },

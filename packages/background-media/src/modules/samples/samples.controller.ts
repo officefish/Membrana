@@ -27,8 +27,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import { ApiBadRequest, ApiStandardErrors } from '../../common/swagger/api-decorators';
 import { OkResponseDto } from '../../common/swagger/common.dto';
 import { API_TOKEN_SECURITY } from '../../common/swagger/openapi.constants';
-import { ApiTokenGuard } from '../../common/guards/api-token.guard';
-import { DeviceGuard } from '../../common/guards/device.guard';
+import { MediaDeviceAccessGuard } from '../../common/guards/media-device-access.guard';
 import { parseSamplesPageQuery } from '../../lib/pagination';
 import {
   MoveSampleDto,
@@ -42,7 +41,7 @@ import { SamplesService } from './samples.service';
 
 @ApiTags('Samples')
 @Controller('v1/devices/:deviceId')
-@UseGuards(ApiTokenGuard, DeviceGuard)
+@UseGuards(MediaDeviceAccessGuard)
 @ApiSecurity(API_TOKEN_SECURITY)
 @ApiHeader({ name: 'X-Membrana-Token', required: true })
 @ApiHeader({ name: 'X-Membrana-Device-Id', required: false })
