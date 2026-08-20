@@ -19,8 +19,9 @@
 // правил — `yarn secret:redact` (scripts/secret-redact.mjs, ядро scripts/lib/secret-redact.mjs).
 // Здесь только детекторы: этот файл остаётся блокирующим гейтом, чтобы рез и гейт
 // не превратились в один скрипт с двумя ответственностями.
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { formatRotationManifest, redactSecrets } from './lib/secret-redact.mjs';
 
 /** Пути, которые читает рутина (контракт из ROUTINE_PROMPT.md). */
 export const ROUTINE_READ_PATHS = [
@@ -97,8 +98,65 @@ export function scanRoutineReadPaths(cwd = process.cwd(), paths = ROUTINE_READ_P
   return findings;
 }
 
+/**
+ * Режим реза (веха `secret-parser-built`, критерий 1: «сканер имеет резак»). Рез НЕ слит с
+ * гейтом: детекторный режим и его exit-контракт не тронуты, рез — отдельный флаг, а вся
+ * механика — в общем ядре `lib/secret-redact.mjs` (та же, что у `yarn secret:redact`).
+ * Вход никогда не перезаписывается: копия — `<in>.redacted` или `--out`.
+ *
+ * @param {string[]} argv
+ * @returns {{ input: string; out: string | null; manifest: string | null; date: string | null }}
+ */
+export function parseScanRedactCli(argv) {
+  const o = { input: /** @type {string | null} */ (null), out: null, manifest: null, date: null };
+  const valueAt = (i, flag) => {
+    const v = argv[i];
+    if (v === undefined || v.startsWith('-')) throw new Error(`--redact: ключ ${flag} требует значение`);
+    return v;
+  };
+  for (let i = 0; i < argv.length; i += 1) {
+    const a = argv[i];
+    if (a === '--redact') o.input = valueAt(++i, a);
+    else if (a === '--out') o.out = valueAt(++i, a);
+    else if (a === '--manifest') o.manifest = valueAt(++i, a);
+    else if (a === '--date') o.date = valueAt(++i, a);
+  }
+  if (!o.input) throw new Error('--redact: нет входного файла');
+  if (o.out !== null && resolve(o.out) === resolve(o.input)) {
+    throw new Error('--redact: --out совпадает со входом — вход не перезаписывается');
+  }
+  return /** @type {{ input: string; out: string | null; manifest: string | null; date: string | null }} */ (o);
+}
+
+/**
+ * Прогнать рез: копия без секретов + (опционально) манифест ротации. Возвращает счётчик резов.
+ * Дата обязана прийти параметром для датированного прохода; без неё берутся системные часы —
+ * это черновик, о чём говорит сам манифест (см. secret-redact.mjs).
+ *
+ * @param {{ input: string; out: string | null; manifest: string | null; date: string | null }} o
+ * @param {string} [cwd]
+ */
+export function runScanRedact(o, cwd = process.cwd()) {
+  const inputAbs = resolve(cwd, o.input);
+  const text = readFileSync(inputAbs, 'utf8');
+  const { text: clean, cuts } = redactSecrets(text);
+  const outAbs = resolve(cwd, o.out ?? `${o.input}.redacted`);
+  writeFileSync(outAbs, clean, 'utf8');
+  const date = o.date ?? new Date().toISOString().slice(0, 10);
+  if (o.manifest) {
+    writeFileSync(resolve(cwd, o.manifest), formatRotationManifest(cuts, { file: o.input, date, dryRun: false }), 'utf8');
+  }
+  return { cuts: cuts.length, out: outAbs };
+}
+
 function main() {
   const asJson = process.argv.includes('--json');
+  if (process.argv.includes('--redact')) {
+    const o = parseScanRedactCli(process.argv.slice(2));
+    const res = runScanRedact(o);
+    console.log(`рез: ${res.cuts} фрагмент(ов) вырезано → ${res.out}${o.manifest ? ` · манифест: ${o.manifest}` : ''}`);
+    return;
+  }
   const findings = scanRoutineReadPaths();
 
   if (asJson) {
