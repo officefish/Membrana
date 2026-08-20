@@ -25,11 +25,11 @@
 
 | Блок | Персона | Зона | Оценка | Статус |
 |------|---------|------|-------:|--------|
-| b2 порт хранения кредов | ozhegov | `apps/client/src/lib/pairing-credentials-store.*` · `stores/nodeConnectionStore.ts` | 130 | ждёт |
-| b3 словарь API (после b2) | dynin | `apps/client/src/api/pairingCredentials.*` | 80 | ждёт |
-| b4 IPC Studio (после b3) | rodchenko | `apps/membrana-studio/src/{main,preload}.ts` + тест | 120 | ждёт |
-| b5 ADR-0028 долг mediaToken (∥) | vesnin | `docs/adr/ADR-0028-pair-media-token-per-device.md` | 90 | ждёт |
-| b6 приёмка (замыкает) | tarasov | `docs/field/studio-firebat-acceptance-2026-08-20.md` | 60 | ждёт |
+| b2 порт хранения кредов | ozhegov | порт + два адаптера | 130 | исполнен · подпись Ожегова |
+| b3 словарь API (после b2) | dynin | 8 зубов-предикатов | 80 | исполнен · «Да» Дынина |
+| b4 IPC Studio (после b3) | rodchenko | канал + мост, шифрование за флагом | 120 | исполнен · подпись Родченко |
+| b5 ADR-0028 долг mediaToken (∥) | vesnin | ADR записана | 90 | исполнен · подпись Веснина |
+| b6 приёмка (замыкает) | tarasov | таблица вещдоков заполнена | 60 | исполнен · LGTM Тарасова 20.08 |
 
 Операционные шаги владельца (не блоки): установка Studio с флешки на Firebat → вход →
 ключ из кабинета → парринг → запись. Порядок — в документе приёмки b6.
