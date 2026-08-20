@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -8,6 +8,8 @@ import {
   scanJsonForSensitiveKeys,
   scanRoutineReadPaths,
   scanTextForSecrets,
+  parseScanRedactCli,
+  runScanRedact,
 } from './night-triage-secret-scan.mjs';
 
 test('scanTextForSecrets: чистый markdown — ноль находок', () => {
@@ -64,4 +66,25 @@ test('scanRoutineReadPaths: отсутствующий файл чтения —
   const findings = scanRoutineReadPaths(cwd, ['docs/tasks/registry.json']);
   assert.equal(findings.length, 1);
   assert.equal(findings[0].kind, 'read-error');
+});
+
+test('--redact (веха secret-parser-built): копия без ключа, манифест с датой и счётчиком, вход не тронут', () => {
+  const cwd = mkdtempSync(join(tmpdir(), 'nt-redact-'));
+  const dirty = 'до\nANTHROPIC_API_KEY=sk-ant-api03-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nпосле\n';
+  writeFileSync(join(cwd, 'dirty.txt'), dirty, 'utf8');
+  const o = parseScanRedactCli(['--redact', 'dirty.txt', '--out', 'clean.txt', '--manifest', 'manifest.md', '--date', '2026-08-20']);
+  const res = runScanRedact(o, cwd);
+  assert.equal(res.cuts, 1);
+  const clean = readFileSync(join(cwd, 'clean.txt'), 'utf8');
+  assert.ok(!clean.includes('sk-ant-'), 'ключ вырезан из копии');
+  assert.ok(clean.includes('до\n'), 'нетронутый текст сохранён');
+  assert.equal(readFileSync(join(cwd, 'dirty.txt'), 'utf8'), dirty, 'вход байт в байт не тронут');
+  const manifest = readFileSync(join(cwd, 'manifest.md'), 'utf8');
+  assert.ok(manifest.includes('2026-08-20'), 'манифест датирован');
+  assert.ok(manifest.includes('Вырезано фрагментов: 1'), 'манифест несёт счётчик');
+  assert.ok(!manifest.includes('sk-ant-'), 'манифест не содержит вырезанных значений');
+});
+
+test('--redact: --out совпадает со входом — отказ (вход не перезаписывается)', () => {
+  assert.throws(() => parseScanRedactCli(['--redact', 'x.txt', '--out', 'x.txt']), /не перезаписывается/u);
 });
