@@ -1,0 +1,6 @@
+{"ts":"2026-08-20T11:06:51.675Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-20T11:06:25.425Z","origin":"ask-persona"}
+{"ts":"2026-08-20T11:06:51.680Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-20T11:06:25.425Z","origin":"ask-persona"}
+{"ts":"2026-08-20T11:06:51.682Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-08-18-team-evening-feedback","reason":"там я уже ратифицировал форму решения по #1961 17.08 и день подтвердил кодом на server-plugin-foundation; текущий b5 — тот же контур, замыкается по той же норме «читаем из дома, не из лога».","origin":"ask-persona"}
+{"ts":"2026-08-20T11:08:19.493Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-20T11:07:56.983Z","origin":"ask-persona"}
+{"ts":"2026-08-20T11:08:19.496Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-20T11:07:56.983Z","origin":"ask-persona"}
+{"ts":"2026-08-20T11:08:19.498Z","persona":"vesnin","verb":"emerge","ref":"vesnin-2026-08-03-one-shot-manifest-m3-volume","reason":"там уже разложено, что «два прогона» — это два вызова одного предиката в разные моменты; ровно та же форма нужна здесь для «двух request с тем же sampleId»: один эндпоинт, два момента, равные отпечатки — разные runId.","origin":"ask-persona"}

@@ -10,7 +10,7 @@
 | Cutter context | Веснин, `yarn ask vesnin` 19.08 11:18 → [`plugin-results-bridge-cut.md`](../../discussions/plugin-results-bridge-cut.md) |
 | Lead | vesnin |
 | Support | ozhegov · dynin |
-| Status | code done · acceptance blocked (b5 ждёт деплоя) — см. CLOSURE.md |
+| Status | closed 20.08 · гейт 5/5 · карточка архивирована |
 
 ## Зачем
 

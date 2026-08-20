@@ -1,6 +1,28 @@
 {
   "tasks": [
     {
+      "id": "mfcc-first-field-probe",
+      "title": "Первая проба mfcc через мост на записи узла Firebat (89e428ba, боевой вход request)",
+      "promptPath": "docs/prompts/MFCC_FIRST_FIELD_PROBE_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "фаза эпика server-plugin-foundation (#1961); мини-спринт одного дня, свой номер — залежь в close-github",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-20",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "kuryokhin"
+      ],
+      "notes": "Прогон mfcc по коллекции «Полевые записи 2026-08» с записью узла 89e428ba (9,975 с · 48 кГц) боевым входом request (b4), НЕ скриптом; RunRecord мостом в plugin-results; вердикт-документ mfcc-first-field-probe-2026-08-20.md + раздел разблокировки mfcc-compare-sprint (#2001).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "server-plugin-foundation"
+    },
+    {
       "id": "capture-sidecar-protocol",
       "title": "Спутник записи и порядок съёмки",
       "promptPath": "docs/prompts/CAPTURE_SIDECAR_PROTOCOL_PROMPT.md",
@@ -70,16 +92,16 @@
       "noIssueReason": "фаза эпика server-plugin-foundation (#1961); эпик открыт до моста, свой номер не заводится — залежь номеров фаз шумит в close-github",
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-19",
-      "archivedAt": null,
+      "archivedAt": "2026-08-20",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov"
       ],
       "notes": "PR-5 плана M6′: результат плагина рождается в media (хост collections), дом результатов живёт в office — провода нет, 18.08 запись сделал скрипт plugin:run:mfcc. Спринт: форма моста · приёмник office · отправитель media · приёмка живым прогоном без скрипта.",
-      "archiveNotes": null,
+      "archiveNotes": "Мост живой: b1–b4 в стволе (PR #1981 18ba21c4 · #1985 ca07071f · #1988 293f77d9), b5 принят после деплоя 19.08 вечера — runId 01a01ac2-cd88-7197-86d8-e2228d6ccad0 через HTTP-путь, bridge sent, чтение обратно из дома; гейт 5/5 honest_pair, журнал pass 20.08, род опыта hit (100% 5/5). Вещдок docs/plugins/results-bridge-live-run-2026-08-19.md; проба-продолжение mfcc-first-field-probe.",
       "githubIssueClosedAt": null,
       "parentEpic": "server-plugin-foundation"
     },
