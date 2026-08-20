@@ -195,3 +195,7 @@ tests/reports/nightly-full/
 
 # Дом network: транзит скрипта зондирования (В5 заседания network-container)
 docs/audit/network/cache/
+
+# Исходники пилотного корпуса VDR (неослеплённые классы) — публикация раскрыла бы слепую разметку (#1941); слепые копии pilot-NN.wav в репо
+data/detectors-benchmark/vdr-hard-gate-pilot/drone/
+data/detectors-benchmark/vdr-hard-gate-pilot/not-drone/
