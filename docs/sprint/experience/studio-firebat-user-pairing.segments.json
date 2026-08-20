@@ -1,0 +1,12 @@
+{
+  "//": "Замер ПО ФАКТУ (wc -l новых файлов + numstat переписанных точек вызова из ствола d2fa95cd). Не подогнан: b2 больше прогноза в полтора раза — порт потребовал переноса валидации формы из nodeConnectionStore и отдельного зуба на выбор адаптера; b4/b5/b6 меньше — провод и документы легли короче ожидания.",
+  "sprintId": "studio-firebat-user-pairing",
+  "measuredAt": "2026-08-20T15:05:00+03:00",
+  "segments": [
+    { "blockId": "b2-credentials-port", "changedLines": 190 },
+    { "blockId": "b3-api-dictionary", "changedLines": 88 },
+    { "blockId": "b4-studio-ipc", "changedLines": 108 },
+    { "blockId": "b5-adr-0028-debt", "changedLines": 70 },
+    { "blockId": "b6-acceptance", "changedLines": 46 }
+  ]
+}

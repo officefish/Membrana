@@ -10,7 +10,7 @@
 | Cutter context | Веснин, `yarn ask vesnin` 20.08, два захода → [`cut-studio-firebat-user-pairing.md`](../../discussions/cut-studio-firebat-user-pairing.md) |
 | Lead | vesnin |
 | Support | ozhegov · rodchenko |
-| Status | open · execute |
+| Status | **closed** · гейт 5/5, опыт hit, карточка архивирована 20.08 · [CLOSURE.md](./CLOSURE.md) |
 
 ## Зачем
 
