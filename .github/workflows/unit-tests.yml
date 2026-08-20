@@ -74,6 +74,21 @@ jobs:
         if: always()
         run: yarn workspace @membrana/harmonic-detector-service test:integration
 
+      # App DI smoke (#2009): после restart-loop прода 19.08 (@Optional-класс) сервис обязан
+      # ПОДНИМАТЬСЯ, а не только проходить зубы сервисов. Смоук судит dist (артефакт tsc, как на
+      # проде): vitest/esbuild не эмитит design:paramtypes, DI по классам на src не разрешим.
+      # SMOKE_REQUIRE_DIST=1 — отсутствие dist здесь падение, не скип. DATABASE_URL — заглушка
+      # для prisma generate, как в ci.yml:33; живой базы у шага нет и не должно быть.
+      - name: App DI smoke — background-media и background-office поднимаются (#2009)
+        if: always()
+        env:
+          DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
+          SMOKE_REQUIRE_DIST: "1"
+        run: |
+          yarn turbo run build --filter=@membrana/background-media --filter=@membrana/background-office
+          yarn workspace @membrana/background-media test src/app.module.smoke.test.ts
+          yarn workspace @membrana/background-office test src/app.module.smoke.test.ts
+
       - name: Setup Node.js 22 (для TypeScript-native тестов)
         if: always()
         uses: actions/setup-node@v4
