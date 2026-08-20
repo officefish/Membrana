@@ -1,0 +1,9 @@
+{
+  "//": "Замер объёма ПО ФАКТУ (wc -l новых файлов — оба созданы этим спринтом). Не подогнан: p1 втрое больше прогноза — сырые RunRecordView двух прогонов оказались длиннее ожидания, расхождение и есть предмет рода.",
+  "sprintId": "mfcc-first-field-probe",
+  "measuredAt": "2026-08-20T11:16:03+00:00",
+  "segments": [
+    { "blockId": "p1-field-probe-run", "changedLines": 337 },
+    { "blockId": "p2-probe-verdict-doc", "changedLines": 63 }
+  ]
+}

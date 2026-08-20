@@ -1,0 +1,59 @@
+{
+  "//": "Мини-спринт mfcc-first-field-probe (S, фаза эпика server-plugin-foundation #1961): первая проба mfcc через мост на записи узла Firebat 89e428ba боевым входом request. До ратификации владельца исполнение не начинается. Правки резчика внесены: p1 несёт явный предикат равенства отпечатков и полный адрес; p2 — анти-критерий провала.",
+  "schema": "sprint-cut/1",
+  "sprintId": "mfcc-first-field-probe",
+  "taskId": "mfcc-first-field-probe",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
+    "reason": "Носители contract_signature/session_prep не являются обязательным машинным корпусом membrana-local-sprint; ответственность проверяется планом, зонами, контекстными следами, review-вещдоками и procedure-run-journal."
+  },
+  "window": {
+    "from": "2026-08-20T10:30:00+03:00",
+    "to": "2026-08-20T21:00:00+03:00"
+  },
+  "revisionAt": "2026-08-20T10:30:00+03:00",
+  "blocks": [
+    {
+      "blockId": "p1-field-probe-run",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "docs/plugins/mfcc-first-field-probe-2026-08-20.run.json"
+      ],
+      "estimate": {
+        "changedLines": 140
+      },
+      "note": "ДВА вызова POST …/plugins/membrana.handler.mfcc/request подряд с тем же sampleId 89e428ba (боевой вход b4, скрипт/туннель запрещены). Файл .run.json несёт: оба ответа входа (runId, address ПОЛНОСТЬЮ, fingerprints, bridge), явный предикат равенства отпечатков (inputHash₁==inputHash₂ && configHash₁==configHash₂ && runId₁!=runId₂ — вычислен, не задекларирован), чтение обратно обоих RunRecord из office GET-ом, и stale=true прежнего прогона 01a01ac2 при новом currentInputHash.",
+      "revisionAt": "2026-08-20T11:10:49+00:00",
+      "revisionOf": "36fa60e266e84fd0c48cd2e1279c95699f11e784724bf5bacce39e194e86d6a6"
+    },
+    {
+      "blockId": "p2-probe-verdict-doc",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "docs/plugins/mfcc-first-field-probe-2026-08-20.md"
+      ],
+      "estimate": {
+        "changedLines": 130
+      },
+      "note": "Вердикт-документ: адрес прогона, отпечатки, что намерил mfcc на реальном полевом фоне (запись 89e428ba — фон помещения, дрона нет; гипотеза: detected на фоне = ложный зелёный ворот, снятых на чужом корпусе, и это честный результат). Анти-критерий провала ДО чисел: мост не доехал / runId совпали / отпечатки разошлись / чтение обратно пусто. Раздел разблокировки mfcc-compare-sprint — списком «чего не хватает» (датасет, ворота 48 кГц, #2001), вход для Курёхина, не эссе.",
+      "revisionAt": "2026-08-20T11:10:49+00:00",
+      "revisionOf": "6e8850ba92df63d4aaf59b2bc988521b588bdcd5c6c99d5daf3151d0b31edc6b"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-20T11:10:49+00:00",
+    "digest": "6070bbf2e11ab374bf24262751df83578749dc5f2d7e41fff8f805fa16dad87e"
+  }
+}

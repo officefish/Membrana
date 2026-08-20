@@ -20,9 +20,9 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `mfcc-first-field-probe` | Первая проба mfcc через мост на записи узла Firebat (89e428ba, боевой вход request) | S | [`MFCC_FIRST_FIELD_PROBE_PROMPT.md`](../prompts/MFCC_FIRST_FIELD_PROBE_PROMPT.md) | — |
 | `capture-sidecar-protocol` | Спутник записи и порядок съёмки | M | [`CAPTURE_SIDECAR_PROTOCOL_PROMPT.md`](../prompts/CAPTURE_SIDECAR_PROTOCOL_PROMPT.md) | — |
 | `plugin-results-payload-pocket` | Словарь: карман payload в RunResult vs расширение в корне (passthrough в приёмнике моста) | S | [`PLUGIN_RESULTS_PAYLOAD_POCKET_PROMPT.md`](../prompts/PLUGIN_RESULTS_PAYLOAD_POCKET_PROMPT.md) | [#1982](https://github.com/officefish/Membrana/issues/1982) |
-| `plugin-results-bridge` | Мост media → office для результатов плагинов (RunRecord в plugin-results без скрипта) | M | [`PLUGIN_RESULTS_BRIDGE_PROMPT.md`](../prompts/PLUGIN_RESULTS_BRIDGE_PROMPT.md) | — |
 | `firebat-node-device` | Узел как устройство: приложение на Firebat само держит канал к серверу и получает права при установке | L | [`FIREBAT_NODE_DEVICE_PROMPT.md`](../prompts/FIREBAT_NODE_DEVICE_PROMPT.md) | [#1998](https://github.com/officefish/Membrana/issues/1998) |
 | `server-plugin-foundation` | Плагинная основа сервера: серверные модули анализа и визуализации коллекций звуков | L | [`SERVER_PLUGIN_FOUNDATION_PROMPT.md`](../prompts/SERVER_PLUGIN_FOUNDATION_PROMPT.md) | [#1961](https://github.com/officefish/Membrana/issues/1961) |
 | `static-mmbrn-retirement` | #1305-E: retirement counters и checklist | M | [`EPIC.md`](../meeting/static-mmbrn-container/EPIC.md) | — |
@@ -141,6 +141,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `plugin-results-bridge` | Мост media → office для результатов плагинов (RunRecord в plugin-results без скрипта) | 2026-08-20 | [`PLUGIN_RESULTS_BRIDGE_PROMPT.md`](../prompts/PLUGIN_RESULTS_BRIDGE_PROMPT.md) | — | [карточка](./archive/plugin-results-bridge.md) |
 | `contour-sanity-2026-08-19` | Санитария контура прогонов через спринт: диагноз красного rag-теста, ревью-долг #1951/#1953, хвосты #1972, синглтон импорта в хосте | 2026-08-19 | [`SESSION_G_CONTOUR_SANITY_SPRINT_2026-08-19.md`](../prompts/SESSION_G_CONTOUR_SANITY_SPRINT_2026-08-19.md) | #1972 | [карточка](./archive/contour-sanity-2026-08-19.md) |
 | `static-mmbrn-live-inventory` | #1305-A2: live read-only sealed inventory Affine | 2026-08-14 | [`STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md`](../prompts/STATIC_MMBRN_LIVE_INVENTORY_PROMPT.md) | — | [карточка](./archive/static-mmbrn-live-inventory.md) |
 | `archivarius-sessions-container` | Контейнер сессий Archivarius: Mongo office, адресуемые span, ingest/search с секрет-маской | 2026-08-14 | [`ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md`](../prompts/ARCHIVARIUS_SESSIONS_CONTAINER_PROMPT.md) | #1330 | [карточка](./archive/archivarius-sessions-container.md) |

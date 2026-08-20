@@ -4,9 +4,9 @@
 |------|----------|
 | Sprint | `plugin-results-bridge` (фаза эпика `server-plugin-foundation`, #1961) |
 | PR | [#1981](https://github.com/officefish/Membrana/pull/1981) b1+b2 (office, `18ba21c4`) · [#1985](https://github.com/officefish/Membrana/pull/1985) b3 (media, `ca07071f`) · [#1988](https://github.com/officefish/Membrana/pull/1988) b4 (media+handlers, `293f77d9`) — все MERGED 19.08 |
-| Гейт исполнения | 4/5 `honest_pair` (b1 vesnin · b2 ozhegov · b3 ozhegov · b4 dynin); b5 — `plan_lied` → **blocked-запись** в `docs/procedure-runs/trail/2026-08-19.jsonl#5` (ждёт прод-деплоя) |
+| Гейт исполнения | 5/5 `honest_pair` (b5 закрыт 20.08 после деплоя и перерезки окна, ратифицированной владельцем) |
 | Опыт (ADR-0026) | `vesnin-plugin-results-bridge-cut-1` · hit · точность нарезки 100% (5/5), переполнений 0; факт: b1 72 · b2 292 · b3 195 · b4 304 · b5 44 против прогноза 80/220/220/260/70 |
-| Статус | **code done · acceptance blocked** |
+| Статус | **closed 20.08** — b5 принят после деплоя 19.08 вечера: runId 01a01ac2-…, bridge sent; гейт 5/5, журнал pass, карточка архивирована |
 
 ## Итог
 

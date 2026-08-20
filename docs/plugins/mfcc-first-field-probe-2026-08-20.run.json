@@ -1,0 +1,337 @@
+{
+  "//": "Блок p1 мини-спринта mfcc-first-field-probe (фаза #1961, нарезка ратифицирована владельцем 20.08 11:10Z). Два вызова боевого входа request (b4) подряд с тем же sampleId — скрипт и SSH-туннель не участвовали. Предикат идемпотентности ВЫЧИСЛЕН из ответов (поле predicate), чтение обратно — GET из дома результатов office.",
+  "probedAt": "2026-08-20T11:11:00Z",
+  "entry": "POST media.membrana.space/v1/devices/{FIELD_NODE_DEVICE_ID}/collections/{FIELD_NODE_COLLECTION_ID}/plugins/membrana.handler.mfcc/request",
+  "body": {
+    "sampleId": "89e428ba-beb1-4689-8169-fd5e5eb13f7b"
+  },
+  "calls": [
+    {
+      "http": 201,
+      "timeSec": 4.88,
+      "response": {
+        "runId": "01a01ede-3eb5-7fa9-afc3-6293f78a4443",
+        "address": {
+          "pluginId": "membrana.handler.mfcc",
+          "version": "0.1.0",
+          "collectionId": "efbf9733-586a-4918-80fd-8fb8b4b9e364",
+          "runId": "01a01ede-3eb5-7fa9-afc3-6293f78a4443",
+          "mountTarget": "background-media/collections"
+        },
+        "fingerprints": {
+          "inputHash": "f294f9f2716984205adec2753ae2f56d7f3225dcb3f692dadc207c65bea929e8",
+          "configHash": "4b65be396451b097d4eb68fc5db106eccd631d24152943d2565b4063e19572c1"
+        },
+        "bridge": {
+          "outcome": "sent",
+          "runId": "01a01ede-3eb5-7fa9-afc3-6293f78a4443",
+          "attempts": 1,
+          "status": 201
+        }
+      }
+    },
+    {
+      "http": 201,
+      "timeSec": 3.24,
+      "response": {
+        "runId": "01a01ede-4f40-75de-bcfa-c19fade650fa",
+        "address": {
+          "pluginId": "membrana.handler.mfcc",
+          "version": "0.1.0",
+          "collectionId": "efbf9733-586a-4918-80fd-8fb8b4b9e364",
+          "runId": "01a01ede-4f40-75de-bcfa-c19fade650fa",
+          "mountTarget": "background-media/collections"
+        },
+        "fingerprints": {
+          "inputHash": "f294f9f2716984205adec2753ae2f56d7f3225dcb3f692dadc207c65bea929e8",
+          "configHash": "4b65be396451b097d4eb68fc5db106eccd631d24152943d2565b4063e19572c1"
+        },
+        "bridge": {
+          "outcome": "sent",
+          "runId": "01a01ede-4f40-75de-bcfa-c19fade650fa",
+          "attempts": 1,
+          "status": 201
+        }
+      }
+    }
+  ],
+  "predicate": {
+    "inputHashEqual": true,
+    "configHashEqual": true,
+    "runIdDiffer": true,
+    "inputHashDiffersFromRun_01a01ac2": true,
+    "holds": true,
+    "outputHashEqual": true,
+    "passportEqual": true,
+    "activeRunsCount": 2,
+    "completedAtOrdered": true
+  },
+  "readBack": {
+    "from": "GET office.mmbrn.tech/plugin-results/runs?collectionId=…&pluginId=membrana.handler.mfcc&currentInputHash=<inputHash пробы>",
+    "runsTotal": 4,
+    "probeRunsPresent": true,
+    "staleOfPriorRuns": [
+      {
+        "runId": "01a01ac2-cd88-7197-86d8-e2228d6ccad0",
+        "stale": true
+      },
+      {
+        "runId": "01a0150f-95e6-718b-bfa7-4ba313511a10",
+        "stale": true
+      }
+    ],
+    "run1": {
+      "address": {
+        "pluginId": "membrana.handler.mfcc",
+        "version": "0.1.0",
+        "collectionId": "efbf9733-586a-4918-80fd-8fb8b4b9e364",
+        "runId": "01a01ede-3eb5-7fa9-afc3-6293f78a4443",
+        "mountTarget": "background-media/collections"
+      },
+      "completedAt": "2026-08-20T11:11:18.311Z",
+      "fingerprints": {
+        "inputHash": "f294f9f2716984205adec2753ae2f56d7f3225dcb3f692dadc207c65bea929e8",
+        "configHash": "4b65be396451b097d4eb68fc5db106eccd631d24152943d2565b4063e19572c1"
+      },
+      "kind": "handler",
+      "measured": {
+        "inputHash": "f294f9f2716984205adec2753ae2f56d7f3225dcb3f692dadc207c65bea929e8",
+        "configHash": "4b65be396451b097d4eb68fc5db106eccd631d24152943d2565b4063e19572c1"
+      },
+      "passport": {
+        "presetConfigHash": "mel40-c24-buf4096-sr48000",
+        "strictness": "normal",
+        "minInBandRatio": 0.5,
+        "minPassRate": 0.6,
+        "minMagnitude": 0,
+        "judgedCoefficients": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "resumeMode": "fresh",
+      "samples": [
+        {
+          "sampleId": "0c445906-ac66-496e-b972-f0a6ddba0faa",
+          "title": "ПРОБА ТРАКТА 16.08 — не полевая запись",
+          "contentHash": "99df022afce64717be038c54c71bddaab8e60b071995812bdc162bcebac111bc",
+          "sampleRate": 48000,
+          "frames": 35,
+          "outcome": "detected",
+          "reason": null,
+          "judgedCount": 35,
+          "silentCount": 0,
+          "passRate": 1
+        },
+        {
+          "sampleId": "37c5fd02-b354-46c0-b835-673501abdf0b",
+          "title": "Полевая запись 2026-08-16T14-56-54-667Z",
+          "contentHash": "a2aad9866023e9624199584d055c2a98c6a43a5d46192bc41858cc35468fa4e6",
+          "sampleRate": 44100,
+          "frames": 0,
+          "outcome": "refused",
+          "reason": "частота 44100 ≠ 48000, на которой сняты ворота — несравнимо",
+          "judgedCount": null,
+          "silentCount": null,
+          "passRate": null
+        },
+        {
+          "sampleId": "62fe8ea1-05f2-4e42-8e9d-4e6dbd5fff86",
+          "title": "Полевая запись 2026-08-18T16-10-11-042Z",
+          "contentHash": "43645ba62be9ddcf5a833d60f1c9a570e449be54e0e9f1c04e2208120f5c5ab8",
+          "sampleRate": 48000,
+          "frames": 175,
+          "outcome": "detected",
+          "reason": null,
+          "judgedCount": 175,
+          "silentCount": 0,
+          "passRate": 1
+        },
+        {
+          "sampleId": "7c5e1c54-14fe-4639-a672-e22c74ed96a4",
+          "title": "Полевая запись 2026-08-16T14-40-38-226Z",
+          "contentHash": "c76806550176f4662aac572623cf82f935e5ca5cf4696c9143cd7d920a93306b",
+          "sampleRate": 48000,
+          "frames": 175,
+          "outcome": "detected",
+          "reason": null,
+          "judgedCount": 175,
+          "silentCount": 0,
+          "passRate": 1
+        },
+        {
+          "sampleId": "89e428ba-beb1-4689-8169-fd5e5eb13f7b",
+          "title": "node 2026-08-19T18-08-55-641Z",
+          "contentHash": "12b6d1a9147733df89f18ee3ecb83df6a0ea6ccc367f7cb16135c587a551821f",
+          "sampleRate": 48000,
+          "frames": 116,
+          "outcome": "detected",
+          "reason": null,
+          "judgedCount": 116,
+          "silentCount": 0,
+          "passRate": 1
+        },
+        {
+          "sampleId": "c4cfbf06-c415-4f4f-a829-9a49f76fcaf6",
+          "title": "Полевая запись 2026-08-18T16-10-29-154Z",
+          "contentHash": "7afc2441ab9925b99bcebeebb90ce4abd8ef7814467ad92084d9a2722b943c87",
+          "sampleRate": 48000,
+          "frames": 175,
+          "outcome": "detected",
+          "reason": null,
+          "judgedCount": 175,
+          "silentCount": 0,
+          "passRate": 1
+        },
+        {
+          "sampleId": "d7a20df5-2d11-44f2-9470-14b337613aad",
+          "title": "Sample d7a20df5",
+          "contentHash": "2bb50503901200c9524fea2514e4af428c6cf1d4ac1b1bf9df9342972c627fc5",
+          "sampleRate": 44100,
+          "frames": 0,
+          "outcome": "refused",
+          "reason": "частота 44100 ≠ 48000, на которой сняты ворота — несравнимо",
+          "judgedCount": null,
+          "silentCount": null,
+          "passRate": null
+        }
+      ],
+      "summary": {
+        "total": 7,
+        "detected": 5,
+        "notDetected": 0,
+        "refused": 2
+      },
+      "stale": false
+    },
+    "run2": {
+      "address": {
+        "pluginId": "membrana.handler.mfcc",
+        "version": "0.1.0",
+        "collectionId": "efbf9733-586a-4918-80fd-8fb8b4b9e364",
+        "runId": "01a01ede-4f40-75de-bcfa-c19fade650fa",
+        "mountTarget": "background-media/collections"
+      },
+      "completedAt": "2026-08-20T11:11:22.661Z",
+      "fingerprints": {
+        "inputHash": "f294f9f2716984205adec2753ae2f56d7f3225dcb3f692dadc207c65bea929e8",
+        "configHash": "4b65be396451b097d4eb68fc5db106eccd631d24152943d2565b4063e19572c1"
+      },
+      "kind": "handler",
+      "measured": {
+        "inputHash": "f294f9f2716984205adec2753ae2f56d7f3225dcb3f692dadc207c65bea929e8",
+        "configHash": "4b65be396451b097d4eb68fc5db106eccd631d24152943d2565b4063e19572c1"
+      },
+      "passport": {
+        "presetConfigHash": "mel40-c24-buf4096-sr48000",
+        "strictness": "normal",
+        "minInBandRatio": 0.5,
+        "minPassRate": 0.6,
+        "minMagnitude": 0,
+        "judgedCoefficients": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "resumeMode": "fresh",
+      "samples": [
+        {
+          "sampleId": "0c445906-ac66-496e-b972-f0a6ddba0faa",
+          "title": "ПРОБА ТРАКТА 16.08 — не полевая запись",
+          "contentHash": "99df022afce64717be038c54c71bddaab8e60b071995812bdc162bcebac111bc",
+          "sampleRate": 48000,
+          "frames": 35,
+          "outcome": "detected",
+          "reason": null,
+          "judgedCount": 35,
+          "silentCount": 0,
+          "passRate": 1
+        },
+        {
+          "sampleId": "37c5fd02-b354-46c0-b835-673501abdf0b",
+          "title": "Полевая запись 2026-08-16T14-56-54-667Z",
+          "contentHash": "a2aad9866023e9624199584d055c2a98c6a43a5d46192bc41858cc35468fa4e6",
+          "sampleRate": 44100,
+          "frames": 0,
+          "outcome": "refused",
+          "reason": "частота 44100 ≠ 48000, на которой сняты ворота — несравнимо",
+          "judgedCount": null,
+          "silentCount": null,
+          "passRate": null
+        },
+        {
+          "sampleId": "62fe8ea1-05f2-4e42-8e9d-4e6dbd5fff86",
+          "title": "Полевая запись 2026-08-18T16-10-11-042Z",
+          "contentHash": "43645ba62be9ddcf5a833d60f1c9a570e449be54e0e9f1c04e2208120f5c5ab8",
+          "sampleRate": 48000,
+          "frames": 175,
+          "outcome": "detected",
+          "reason": null,
+          "judgedCount": 175,
+          "silentCount": 0,
+          "passRate": 1
+        },
+        {
+          "sampleId": "7c5e1c54-14fe-4639-a672-e22c74ed96a4",
+          "title": "Полевая запись 2026-08-16T14-40-38-226Z",
+          "contentHash": "c76806550176f4662aac572623cf82f935e5ca5cf4696c9143cd7d920a93306b",
+          "sampleRate": 48000,
+          "frames": 175,
+          "outcome": "detected",
+          "reason": null,
+          "judgedCount": 175,
+          "silentCount": 0,
+          "passRate": 1
+        },
+        {
+          "sampleId": "89e428ba-beb1-4689-8169-fd5e5eb13f7b",
+          "title": "node 2026-08-19T18-08-55-641Z",
+          "contentHash": "12b6d1a9147733df89f18ee3ecb83df6a0ea6ccc367f7cb16135c587a551821f",
+          "sampleRate": 48000,
+          "frames": 116,
+          "outcome": "detected",
+          "reason": null,
+          "judgedCount": 116,
+          "silentCount": 0,
+          "passRate": 1
+        },
+        {
+          "sampleId": "c4cfbf06-c415-4f4f-a829-9a49f76fcaf6",
+          "title": "Полевая запись 2026-08-18T16-10-29-154Z",
+          "contentHash": "7afc2441ab9925b99bcebeebb90ce4abd8ef7814467ad92084d9a2722b943c87",
+          "sampleRate": 48000,
+          "frames": 175,
+          "outcome": "detected",
+          "reason": null,
+          "judgedCount": 175,
+          "silentCount": 0,
+          "passRate": 1
+        },
+        {
+          "sampleId": "d7a20df5-2d11-44f2-9470-14b337613aad",
+          "title": "Sample d7a20df5",
+          "contentHash": "2bb50503901200c9524fea2514e4af428c6cf1d4ac1b1bf9df9342972c627fc5",
+          "sampleRate": 44100,
+          "frames": 0,
+          "outcome": "refused",
+          "reason": "частота 44100 ≠ 48000, на которой сняты ворота — несравнимо",
+          "judgedCount": null,
+          "silentCount": null,
+          "passRate": null
+        }
+      ],
+      "summary": {
+        "total": 7,
+        "detected": 5,
+        "notDetected": 0,
+        "refused": 2
+      },
+      "stale": false
+    }
+  },
+  "//predicate-extension": "Дополнение по ревью Дынина (p1): outputHash — sha256 от {samples, summary, passport} (completedAt/runId исключены — им положено различаться); inputHash считается ДО ворот частоты и покрывает вход коллекции, не «то, что реально судилось» — названо, не спрятано; bridge sent — про доставку, не про исполнение; третий вызов после рестарта узла — за пределами пробы, названо остатком."
+}
