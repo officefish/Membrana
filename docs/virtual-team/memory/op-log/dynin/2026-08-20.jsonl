@@ -9,3 +9,6 @@
 {"ts":"2026-08-20T10:25:32.337Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-20T10:25:23.758Z","origin":"ask-persona"}
 {"ts":"2026-08-20T10:25:32.339Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-20T10:25:23.758Z","origin":"ask-persona"}
 {"ts":"2026-08-20T10:25:32.339Z","persona":"dynin","verb":"reject","ref":"dynin-2026-08-20T10:25:23.758Z","reason":"облако поднято по темам journal/execution/pairing/plugin-manifest — ни одна память не касается null vs optional в типе tariff и не влияет на бинарный вердикт b3","origin":"ask-persona"}
+{"ts":"2026-08-20T11:15:12.594Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-20T11:14:43.923Z","origin":"ask-persona"}
+{"ts":"2026-08-20T11:15:12.595Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-20T11:14:43.923Z","origin":"ask-persona"}
+{"ts":"2026-08-20T11:15:12.596Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-18-evening-auditor-m3-trigger-reader","reason":"там я вводил consumed(report,t) как предикат, проверяемый следующим артефактом; здесь ровно та же дисциплина: идемпотентность должна проверяться не самоотчётом ответа, а состоянием дома результатов.","origin":"ask-persona"}

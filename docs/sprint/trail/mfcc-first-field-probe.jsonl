@@ -1,0 +1,4 @@
+{"traceId":"tr-p1-dynin-run","blockId":"p1-field-probe-run","kind":"context_run","subject":"dynin","at":"2026-08-20T11:15:41+00:00","ref":"docs/virtual-team/memory/op-log/dynin/2026-08-20.jsonl"}
+{"traceId":"tr-p1-dynin-review","blockId":"p1-field-probe-run","kind":"review_pass","subject":"dynin","at":"2026-08-20T11:15:41+00:00","ref":"docs/plugins/mfcc-first-field-probe-2026-08-20.run.json"}
+{"traceId":"tr-p2-kuryokhin-run","blockId":"p2-probe-verdict-doc","kind":"context_run","subject":"kuryokhin","at":"2026-08-20T11:14:22+00:00","ref":"docs/virtual-team/memory/op-log/kuryokhin/2026-08-20.jsonl"}
+{"traceId":"tr-p2-kuryokhin-review","blockId":"p2-probe-verdict-doc","kind":"review_pass","subject":"kuryokhin","at":"2026-08-20T11:14:22+00:00","ref":"docs/plugins/mfcc-first-field-probe-2026-08-20.md"}
