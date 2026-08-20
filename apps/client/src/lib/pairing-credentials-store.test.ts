@@ -4,7 +4,7 @@
  * а не размазана; web-адаптер сохраняет сегодняшнее поведение; Electron-заглушка делегирует
  * web-адаптеру (ОДИН формат хранения до ADR-0028); выбор адаптера — по мосту preload.
  */
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import type { PairedNodeCredentials } from './nodeConnectionMode';
 import {
