@@ -1,27 +1,6 @@
 {
   "tasks": [
     {
-      "id": "studio-firebat-user-pairing",
-      "title": "Пользовательский путь: Studio на Firebat, парринг ключом из кабинета, записи в набор пользователя",
-      "promptPath": "docs/prompts/STUDIO_FIREBAT_USER_PAIRING_PROMPT.md",
-      "githubIssue": null,
-      "noIssueReason": "Issue заведётся с первым PR — форма дня решается нарезкой",
-      "linearId": null,
-      "size": "L",
-      "status": "archived",
-      "sprintKind": "membrana-local-sprint",
-      "createdAt": "2026-08-20",
-      "archivedAt": "2026-08-20",
-      "leadPersona": "vesnin",
-      "supportPersonas": [
-        "ozhegov",
-        "rodchenko"
-      ],
-      "notes": "Магистраль 20.08 (owner-choice из топ-3). Слово владельца 19.08: работа через Studio с авторизацией пользователя; датасет = набор пользователя; ключи выдаёт кабинет (парринг) — НЕ строить заново. Разведка 20.08: парринг целый (POST /v1/pair, устройство под membraneId, клиентская панель есть, Studio грузит клиент), НО pair отдаёт клиенту mediaToken = служебный MEDIA_API_TOKEN всего сервиса — класс риска, снятый с узла вчера (ADR-0027 Р3). Сверка словарей NodeKey vs ключ парринга — внутри спринта. Установщик Studio собран 19.08.",
-      "archiveNotes": "Магистраль 20.08 (owner-choice) доказана на железе: Studio установлена на Firebat, пользователь admin сгенерировал ключ в кабинете 11:06, Studio связалась ключом (устройство 1c04f0bc под мембраной c144a9ef), 11:07-11:08 шесть записей легли в набор пользователя — путь без скриптов, вещдоки с сервера (NodeAccessKey/Device/Sample). Нарезка Веснина 5 блоков ратифицирована 10:16Z; гейт 5/5 honest_pair, находок 0; род опыта hit, точность нарезки 100%. Код: порт хранения кредов (b2 ozhegov), зубы словаря API (b3 dynin), провод secureStorage в Studio за флагом (b4 rodchenko), ADR-0028 про служебный mediaToken (b5 vesnin), приёмка LGTM (b6 tarasov). PR #2018, ствол d2fa95cd. Остаток: реализация ADR-0028 (спринт media-per-device-token, сессия В).",
-      "githubIssueClosedAt": null
-    },
-    {
       "id": "mfcc-first-field-probe",
       "title": "Первая проба mfcc через мост на записи узла Firebat (89e428ba, боевой вход request)",
       "promptPath": "docs/prompts/MFCC_FIRST_FIELD_PROBE_PROMPT.md",
@@ -62,6 +41,29 @@
         "kuryokhin"
       ],
       "notes": "слово владельца 20.08: строго через membrana-local-sprint, ревью по PR отдельно (не пакетом); магистраль и спринты Б/В не трогать; прод не деплоить; Тарасов без smoke-шага следующий деплой не подписывает",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "media-per-device-token",
+      "title": "ADR-0028 R1 R2 per-device media token",
+      "promptPath": "docs/prompts/SESSION_V_PER_DEVICE_TOKEN_SPRINT_2026-08-20.md",
+      "githubIssue": null,
+      "noIssueReason": "Issue создаётся с первым PR по DoD SESSION_V_PER_DEVICE_TOKEN_SPRINT_2026-08-20",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-20",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "angelina",
+        "tarasov",
+        "ozhegov"
+      ],
+      "notes": "membrana-local-sprint; ADR-0028 R1+R2 only; no apps/client; no R3/R4; no prod deploy",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
@@ -21526,6 +21528,27 @@
       "archiveNotes": "PR #499; review LGTM 1b9243237a15; PR #499 merged 2026-07-15T08:35:56Z (f0d39173b9026b4ecdb130febdf20697574ba389)",
       "githubIssueClosedAt": "2026-07-15",
       "githubIssueStateReason": "COMPLETED"
+    },
+    {
+      "id": "studio-firebat-user-pairing",
+      "title": "Пользовательский путь: Studio на Firebat, парринг ключом из кабинета, записи в набор пользователя",
+      "promptPath": "docs/prompts/STUDIO_FIREBAT_USER_PAIRING_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "Issue заведётся с первым PR — форма дня решается нарезкой",
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-20",
+      "archivedAt": "2026-08-20",
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ],
+      "notes": "Магистраль 20.08 (owner-choice из топ-3). Слово владельца 19.08: работа через Studio с авторизацией пользователя; датасет = набор пользователя; ключи выдаёт кабинет (парринг) — НЕ строить заново. Разведка 20.08: парринг целый (POST /v1/pair, устройство под membraneId, клиентская панель есть, Studio грузит клиент), НО pair отдаёт клиенту mediaToken = служебный MEDIA_API_TOKEN всего сервиса — класс риска, снятый с узла вчера (ADR-0027 Р3). Сверка словарей NodeKey vs ключ парринга — внутри спринта. Установщик Studio собран 19.08.",
+      "archiveNotes": "Магистраль 20.08 (owner-choice) доказана на железе: Studio установлена на Firebat, пользователь admin сгенерировал ключ в кабинете 11:06, Studio связалась ключом (устройство 1c04f0bc под мембраной c144a9ef), 11:07-11:08 шесть записей легли в набор пользователя — путь без скриптов, вещдоки с сервера (NodeAccessKey/Device/Sample). Нарезка Веснина 5 блоков ратифицирована 10:16Z; гейт 5/5 honest_pair, находок 0; род опыта hit, точность нарезки 100%. Код: порт хранения кредов (b2 ozhegov), зубы словаря API (b3 dynin), провод secureStorage в Studio за флагом (b4 rodchenko), ADR-0028 про служебный mediaToken (b5 vesnin), приёмка LGTM (b6 tarasov). PR #2018, ствол d2fa95cd. Остаток: реализация ADR-0028 (спринт media-per-device-token, сессия В).",
+      "githubIssueClosedAt": null
     }
   ]
 }

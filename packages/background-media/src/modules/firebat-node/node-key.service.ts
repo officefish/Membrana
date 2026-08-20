@@ -15,16 +15,19 @@ import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 import { PrismaService } from '../../prisma/prisma.service';
 
 export const NODE_KEY_HEADER = 'x-membrana-node-key';
+export const NODE_KEY_AUDIENCES = ['node', 'client'] as const;
+export type NodeKeyAudience = (typeof NODE_KEY_AUDIENCES)[number];
 /** Длина сырого ключа в байтах до base64url. */
 export const NODE_KEY_BYTES = 32;
 
 /** Закрытый словарь исходов проверки ключа — единые имена для guard, лога и приёмки. */
-export const NODE_KEY_VERDICTS = ['ok', 'missing', 'unknown', 'revoked', 'foreign_device'] as const;
+export const NODE_KEY_VERDICTS = ['ok', 'missing', 'unknown', 'revoked', 'foreign_device', 'foreign_audience'] as const;
 export type NodeKeyVerdict = (typeof NODE_KEY_VERDICTS)[number];
 
 export interface NodeKeyRow {
   id: string;
   deviceId: string;
+  audience: NodeKeyAudience;
   keyHash: string;
   createdAt: Date;
   revokedAt: Date | null;
@@ -33,9 +36,9 @@ export interface NodeKeyRow {
 
 /** Минимальный контракт хранилища: ровно то, что нужно жизненному циклу ключа. */
 export interface NodeKeyStore {
-  findActiveByDevice(deviceId: string): Promise<NodeKeyRow | null>;
+  findActiveByDevice(deviceId: string, audience: NodeKeyAudience): Promise<NodeKeyRow | null>;
   findByHash(keyHash: string): Promise<NodeKeyRow | null>;
-  create(deviceId: string, keyHash: string): Promise<NodeKeyRow>;
+  create(deviceId: string, audience: NodeKeyAudience, keyHash: string): Promise<NodeKeyRow>;
   revoke(id: string, at: Date): Promise<void>;
   touch(id: string, at: Date): Promise<void>;
 }
@@ -45,6 +48,7 @@ export interface IssuedNodeKey {
   raw: string;
   keyId: string;
   deviceId: string;
+  audience: NodeKeyAudience;
   createdAt: Date;
   /** Ключ, отозванный при `rotate` (id), либо null. */
   rotatedFrom: string | null;
@@ -72,16 +76,16 @@ const hexEqual = (a: string, b: string): boolean => {
 export class PrismaNodeKeyStore implements NodeKeyStore {
   constructor(private readonly prisma: PrismaService) {}
 
-  findActiveByDevice(deviceId: string): Promise<NodeKeyRow | null> {
-    return this.prisma.nodeKey.findFirst({ where: { deviceId, revokedAt: null }, orderBy: { createdAt: 'desc' } });
+  findActiveByDevice(deviceId: string, audience: NodeKeyAudience): Promise<NodeKeyRow | null> {
+    return this.prisma.nodeKey.findFirst({ where: { deviceId, audience, revokedAt: null }, orderBy: { createdAt: 'desc' } });
   }
 
   findByHash(keyHash: string): Promise<NodeKeyRow | null> {
     return this.prisma.nodeKey.findUnique({ where: { keyHash } });
   }
 
-  create(deviceId: string, keyHash: string): Promise<NodeKeyRow> {
-    return this.prisma.nodeKey.create({ data: { deviceId, keyHash } });
+  create(deviceId: string, audience: NodeKeyAudience, keyHash: string): Promise<NodeKeyRow> {
+    return this.prisma.nodeKey.create({ data: { deviceId, audience, keyHash } });
   }
 
   async revoke(id: string, at: Date): Promise<void> {
@@ -101,9 +105,10 @@ export class NodeKeyService {
     this.store = store ?? new PrismaNodeKeyStore(prisma);
   }
 
-  /** Выдать ключ устройству. Один активный ключ на устройство — инвариант; `rotate` отзывает прежний. */
-  async issue(deviceId: string, opts: { rotate?: boolean } = {}): Promise<IssueOutcome> {
-    const active = await this.store.findActiveByDevice(deviceId);
+  /** Выдать ключ устройству. Один активный ключ на устройство и audience — инвариант; `rotate` отзывает прежний. */
+  async issue(deviceId: string, opts: { audience?: NodeKeyAudience; rotate?: boolean } = {}): Promise<IssueOutcome> {
+    const audience = opts.audience ?? 'node';
+    const active = await this.store.findActiveByDevice(deviceId, audience);
     let rotatedFrom: string | null = null;
     if (active) {
       if (!opts.rotate) return { outcome: 'already_active', keyId: active.id };
@@ -111,13 +116,13 @@ export class NodeKeyService {
       rotatedFrom = active.id;
     }
     const raw = randomBytes(NODE_KEY_BYTES).toString('base64url');
-    const row = await this.store.create(deviceId, hashNodeKey(raw));
-    return { outcome: 'issued', key: { raw, keyId: row.id, deviceId, createdAt: row.createdAt, rotatedFrom } };
+    const row = await this.store.create(deviceId, audience, hashNodeKey(raw));
+    return { outcome: 'issued', key: { raw, keyId: row.id, deviceId, audience, createdAt: row.createdAt, rotatedFrom } };
   }
 
   /** Мягкий отзыв активного ключа (revokedAt) — строка остаётся для аудита. */
-  async revoke(deviceId: string): Promise<RevokeOutcome> {
-    const active = await this.store.findActiveByDevice(deviceId);
+  async revoke(deviceId: string, opts: { audience?: NodeKeyAudience } = {}): Promise<RevokeOutcome> {
+    const active = await this.store.findActiveByDevice(deviceId, opts.audience ?? 'node');
     if (!active) return { outcome: 'no_active_key' };
     await this.store.revoke(active.id, this.now());
     return { outcome: 'revoked', keyId: active.id };
@@ -127,12 +132,13 @@ export class NodeKeyService {
    * Проверить сырой ключ против устройства из пути. Чужое устройство — `foreign_device`
    * (не «unknown»: ключ настоящий, но не на этот адрес). Успех отмечает lastUsedAt.
    */
-  async verify(raw: string | undefined, deviceId: string): Promise<VerifyOutcome> {
+  async verify(raw: string | undefined, deviceId: string, opts: { audience?: NodeKeyAudience } = {}): Promise<VerifyOutcome> {
     if (typeof raw !== 'string' || raw === '') return { verdict: 'missing' };
     const hash = hashNodeKey(raw);
     const row = await this.store.findByHash(hash);
     if (!row || !hexEqual(row.keyHash, hash)) return { verdict: 'unknown' };
     if (row.revokedAt) return { verdict: 'revoked' };
+    if (row.audience !== (opts.audience ?? 'node')) return { verdict: 'foreign_audience' };
     if (row.deviceId !== deviceId) return { verdict: 'foreign_device' };
     await this.store.touch(row.id, this.now());
     return { verdict: 'ok', keyId: row.id, deviceId: row.deviceId };

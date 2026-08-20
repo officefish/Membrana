@@ -49,6 +49,7 @@ export class PairService {
 
     const now = new Date();
     let mediaDeviceId = node.device?.mediaDeviceId ?? null;
+    let mediaClientKeyRaw: string;
     const membraneContext = {
       membraneId: node.membrane.id,
       userStorageQuotaBytes: node.membrane.tariff.userStorageQuotaBytes.toString(),
@@ -61,6 +62,7 @@ export class PairService {
       const label = clientLabel?.trim() || node.label;
       const mediaDevice = await this.mediaBridge.registerDevice(label, membraneContext);
       mediaDeviceId = mediaDevice.id;
+      mediaClientKeyRaw = mediaDevice.clientKey.raw;
       await this.mediaBridge.ensureReservedCollections(mediaDeviceId);
       await this.prisma.device.create({
         data: {
@@ -72,6 +74,8 @@ export class PairService {
         },
       });
     } else {
+      const mediaClientKey = await this.mediaBridge.issueClientKey(mediaDeviceId);
+      mediaClientKeyRaw = mediaClientKey.raw;
       await this.mediaBridge.syncMembraneContext(mediaDeviceId, membraneContext);
       await this.mediaBridge.ensureReservedCollections(mediaDeviceId);
       await this.prisma.device.update({
@@ -104,7 +108,7 @@ export class PairService {
       token: session.token,
       expiresAt: session.expiresAt,
       deviceId: mediaDeviceId,
-      mediaToken: this.config.MEDIA_API_TOKEN,
+      mediaToken: mediaClientKeyRaw,
       mediaApiUrl: this.config.MEDIA_PUBLIC_API_URL,
       membrane: { id: node.membrane.id },
       node: { id: node.id, label: node.label },

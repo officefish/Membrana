@@ -1,0 +1,13 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "media-per-device-token",
+  "note": "Changed-line measurement by ratified block zone after implementation. Tracked files use git diff --numstat; untracked test/evidence files use full line count.",
+  "measuredAt": "2026-08-20T17:35:00+03:00",
+  "segments": [
+    { "cutBlockId": "b1-media-key-audience", "changedLines": 96 },
+    { "cutBlockId": "b2-media-client-access", "changedLines": 260 },
+    { "cutBlockId": "b3-cabinet-pair-bridge", "changedLines": 140 },
+    { "cutBlockId": "b4-cabinet-revoke-cascade", "changedLines": 25 },
+    { "cutBlockId": "b5-gate-review-trail", "changedLines": 60 }
+  ]
+}
