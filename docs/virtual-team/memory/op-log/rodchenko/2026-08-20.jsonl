@@ -1,0 +1,4 @@
+{"ts":"2026-08-20T07:24:05.961Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-08-20T10:30:05.127Z","persona":"rodchenko","verb":"cloud_query","ref":"rodchenko-2026-08-20T10:29:51.094Z","origin":"ask-persona"}
+{"ts":"2026-08-20T10:30:05.129Z","persona":"rodchenko","verb":"surface_invoke","ref":"rodchenko-2026-08-20T10:29:51.094Z","origin":"ask-persona"}
+{"ts":"2026-08-20T10:30:05.131Z","persona":"rodchenko","verb":"emerge","ref":"rodchenko-2026-07-23-tasks-workshop-m4d-readme","reason":"тот же принцип «зуб падает раньше, чем кажется»: здесь три зуба (словарь/путь/отказ) закрывают провод до включения, как pre-commit ловит расхождение до сборки.","origin":"ask-persona"}

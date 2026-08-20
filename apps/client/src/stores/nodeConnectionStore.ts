@@ -1,13 +1,10 @@
 import { create } from 'zustand';
 
 import type { NodeConnectionMode, PairedNodeCredentials, PairingInvalidReason } from '../lib/nodeConnectionMode';
+import { resolvePairingCredentialsStore, type PersistedNodeConnection } from '../lib/pairing-credentials-store';
 
-const STORAGE_KEY = 'membrana.client.nodeConnection';
-
-interface PersistedNodeConnection {
-  mode: NodeConnectionMode | null;
-  pairing: PairedNodeCredentials | null;
-}
+// Хранение — через порт (b2 studio-firebat-user-pairing): web-адаптер сегодня, Electron за ADR-0028.
+const credentialsStore = resolvePairingCredentialsStore();
 
 interface NodeConnectionState extends PersistedNodeConnection {
   hydrated: boolean;
@@ -46,30 +43,8 @@ interface NodeConnectionState extends PersistedNodeConnection {
   reportConnectionRestored: () => void;
 }
 
-function readPersisted(): PersistedNodeConnection {
-  if (typeof window === 'undefined') {
-    return { mode: null, pairing: null };
-  }
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { mode: null, pairing: null };
-    const parsed = JSON.parse(raw) as PersistedNodeConnection;
-    if (parsed.mode !== 'autonomous' && parsed.mode !== 'paired') {
-      return { mode: null, pairing: null };
-    }
-    return {
-      mode: parsed.mode,
-      pairing: parsed.mode === 'paired' ? parsed.pairing : null,
-    };
-  } catch {
-    return { mode: null, pairing: null };
-  }
-}
-
-function writePersisted(state: PersistedNodeConnection): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-}
+const readPersisted = (): PersistedNodeConnection => credentialsStore.read();
+const writePersisted = (state: PersistedNodeConnection): void => credentialsStore.write(state);
 
 export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => ({
   mode: null,
@@ -209,7 +184,7 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
 /** Tests: reset store + storage. */
 export function resetNodeConnectionStoreForTests(): void {
   if (typeof window !== 'undefined') {
-    localStorage.removeItem(STORAGE_KEY);
+    credentialsStore.clear();
   }
   useNodeConnectionStore.setState({
     mode: null,

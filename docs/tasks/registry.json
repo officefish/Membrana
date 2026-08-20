@@ -1,6 +1,27 @@
 {
   "tasks": [
     {
+      "id": "studio-firebat-user-pairing",
+      "title": "Пользовательский путь: Studio на Firebat, парринг ключом из кабинета, записи в набор пользователя",
+      "promptPath": "docs/prompts/STUDIO_FIREBAT_USER_PAIRING_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "Issue заведётся с первым PR — форма дня решается нарезкой",
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-20",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "rodchenko"
+      ],
+      "notes": "Магистраль 20.08 (owner-choice из топ-3). Слово владельца 19.08: работа через Studio с авторизацией пользователя; датасет = набор пользователя; ключи выдаёт кабинет (парринг) — НЕ строить заново. Разведка 20.08: парринг целый (POST /v1/pair, устройство под membraneId, клиентская панель есть, Studio грузит клиент), НО pair отдаёт клиенту mediaToken = служебный MEDIA_API_TOKEN всего сервиса — класс риска, снятый с узла вчера (ADR-0027 Р3). Сверка словарей NodeKey vs ключ парринга — внутри спринта. Установщик Studio собран 19.08.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "mfcc-first-field-probe",
       "title": "Первая проба mfcc через мост на записи узла Firebat (89e428ba, боевой вход request)",
       "promptPath": "docs/prompts/MFCC_FIRST_FIELD_PROBE_PROMPT.md",

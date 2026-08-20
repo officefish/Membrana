@@ -6,6 +6,7 @@ const ML = 'membrana:media-library';
 const JL = 'membrana:journal';
 const TT = 'membrana:trends-templates';
 const LG = 'membrana:logging';
+const SS = 'membrana:secure-storage';
 
 async function invoke<T>(channel: string, ...args: unknown[]): Promise<T> {
   return ipcRenderer.invoke(channel, ...args) as Promise<T>;
@@ -75,6 +76,15 @@ const shellLog = {
     ipcRenderer.sendSync(`${LG}:flushScenarioTrace`, text, runId);
   },
 };
+
+// Мост хранения кредов (b4 studio-firebat-user-pairing): провод есть, клиентский адаптер
+// зовёт его только после ADR-0028 (см. pairing-credentials-store в apps/client — @stage).
+contextBridge.exposeInMainWorld('membranaSecureStorage', {
+  available: false, // честно false до ADR-0028: наличие моста ≠ включённое шифрование
+  get: () => invoke<string | null>(`${SS}:get`),
+  set: (raw: string) => invoke<boolean>(`${SS}:set`, raw),
+  del: () => invoke<void>(`${SS}:del`),
+});
 
 contextBridge.exposeInMainWorld('electronAPI', {
   mediaLibrary,
