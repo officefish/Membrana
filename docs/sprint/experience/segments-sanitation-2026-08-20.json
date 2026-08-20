@@ -1,0 +1,18 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "sanitation-2026-08-20",
+  "forTask": "sanitation-2026-08-20 — санитария 20.08: шесть вердиктов oversized-PR, e2e-smoke подъёма media/office (#2009), веха secret-parser-built",
+  "note": "Замер git diff --numstat origin/main...HEAD по зонам блоков после исполнения всех девяти. Ревью-блоки — объём самого артефакта вердикта (генерируется инструментом, прогноз 110 держался как оценка длины протокола).",
+  "measuredAt": "2026-08-20T15:48:58+00:00",
+  "segments": [
+    { "cutBlockId": "review-1980", "changedLines": 61 },
+    { "cutBlockId": "review-1981", "changedLines": 68 },
+    { "cutBlockId": "review-1987", "changedLines": 77 },
+    { "cutBlockId": "review-2003", "changedLines": 97 },
+    { "cutBlockId": "review-2004", "changedLines": 73 },
+    { "cutBlockId": "review-2013", "changedLines": 54 },
+    { "cutBlockId": "ci-smoke-app-di", "changedLines": 97 },
+    { "cutBlockId": "optional-canon-rule", "changedLines": 15 },
+    { "cutBlockId": "secret-parser-gate", "changedLines": 123 }
+  ]
+}
