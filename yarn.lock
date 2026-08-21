@@ -2684,6 +2684,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@membrana/plugin-handlers@workspace:packages/plugin-handlers"
   dependencies:
+    "@membrana/fft-analyzer-service": "npm:*"
     "@membrana/mfcc-analyzer-service": "npm:*"
     "@membrana/plugin-contracts": "npm:*"
     "@membrana/wav-decode": "npm:*"
