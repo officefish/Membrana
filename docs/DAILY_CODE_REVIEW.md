@@ -1,33 +1,29 @@
-<!-- Сгенерировано: 2026-08-20T17:47:35.584Z (yarn code-review; daily, llm-xai) -->
+<!-- Сгенерировано: 2026-08-21T16:15:11.179Z (yarn code-review; daily, llm-xai) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: c0d7ca31f38873c5b4e11d1b1070e6bbace0a423^..611e83ca4ca57116632583c9b4f2915bd6d5bfb9 (14 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 9d12d1a3 #2019 (927), d2fa95cd #2018 (1014), c8a0f6bd #2023 (464), 28369bf0 #2031 (1184), 611e83ca (813)
+> Период: ec9e40cabf4fdb1d295723a4ac7ad1169af7a286^..75169b27520115c1adcd4ea1b27fe4b4a823cc9e (21 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): ec9e40ca #2036 (452), 46ff9fa5 #2038 (631), 7c39c329 #2040 (998), 313fdcf2 #2042 (438), 2693e1ff #2041 (590), 4f7cd6a1 #2051 (535), dc0642ff #2052 (1020), 6ff9aaeb #2048 (939), 564b4719 #2056 (424), 6f383138 (2271), 75169b27 (834)
 
 ---
 
-Tier: T1
+Tier: T2
 
-[Архитектор]: Ведущий (vesnin). По развёрнутому diff (ритуал/docs #2015–#2017) — **пропуск**; зверей B1/B2/B7 в явном виде нет. P1-форма: в одном утре #2015→#2016 метаданные `primaryFocusId: firebat-node-device` расходятся с телом «магистраль — studio-firebat-user-pairing» (B9-проза для холодной сессии). Маркеры посылок `OutgoingNodeChannel` / `FirebatOutboundChannel` без живого `git grep` в артефакте — риск B4, если имя выдумано под гейт. Пять oversized-коммитов дня (#2018/#2019/#2023/#2031/HEAD 611e83ca, 464–1184 строк) **не развёрнуты** — отдельный проход обязателен, в этом daily не LGTM’ить код моста/санитарии вслепую. Живая таблица: #1980/#1981/#1987/#2003/#2004/#1951/#1953 уже MERGED — утренний долг «закрыть 6 oversized» частично снят merge’ем, не вердиктом этого ревью.
+**[vesnin]:** День многоконтурный: плагинный разбор сеанса (j1–j3 → tonal-split), scenario-rate 48k, полевая калибровка Firebat, шторм→бриф дежурства, выкатка ADR-0028 per-device + safestorage. По развёрнутому docs-диффу (#2043/#2044/#2045/#2047/#2053/#2054) антипаттернов B1–B10 не вижу: shortfall и lab-vs-battle названы честно, секреты в приёмке не печатаются, DoD не прикрыт «зубом зелёный». **Блок по бестиарию: пропуск.** Оговорка: 11 oversized-коммитов без тела диффа — код `plugin-handlers` / media image / scenario capture в этом прогоне **не верифицирован построчно**; опираюсь на уже влитые LGTM, journal/trail и живые состояния PR. Открытый продуктовый хвост не из сегодняшнего docs-диффа, но из дня: **#2046** (первый трек 44,1 вместо fail-closed после #2042) — P0-кандидат на утро, пока OPEN.
 
-[Teamlead]: День 2026-08-20: утренние ритуальные артефакты в ствол (#2015–#2017), gitignore слепых классов VDR-пилота (C9 ок), треды known-debt / ADR-0025, journal trail с серией orphaned `ritual-day` fail. Кодовый объём дня ушёл в oversized-PR (в т.ч. санитария, мост, крупные хвосты) — по таблице состояний многое MERGED; #2009 OPEN, #2020/#2022 OPEN. Риск на завтра: агент читает MAIN_DAY_ISSUE и берёт неверную магистраль; orphaned open ритуала = B6-сосед (обрыв без close). Утро: `yarn standup` + читать этот review; не генерировать code-review. Команды: `yarn turbo run lint typecheck test --filter=@membrana/background-media`; `yarn workspace @membrana/rag-service test --no-coverage`; `yarn docs:lint`; при работе моста — `yarn turbo run test --filter=@membrana/background-office`; статус `gh pr view 2009 --json state,title`.
+[Teamlead]: Сводка: магистраль «двадцать опорных» доведена до архива дважды (journal-session-twenty + session-twenty-tonal-split), гейты 3/3, опыт нарезки записан (33% → 66.7%). Параллельно закрыт scenario-rate и выкачена связка per-device (media+cabinet, 4 вещдока с сервера). Шторм дежурства сжёг 7 вдохов → MEETING_BRIEF с M1–M10, порядок ратифицирован. Риски на завтра: (1) #2046 fail-closed rate; (2) боевой `request` session-digest после образа media; (3) заседание duty-node — M2 цена тревоги ждёт слова владельца. Утро: не `yarn code-review`; читать этот файл + `DAILY_STANDUP` / `MAIN_DAY_ISSUE`. Команды: `yarn turbo run lint typecheck test --filter=@membrana/plugin-handlers --filter=@membrana/background-media`; smoke media health + `POST …/membrana.report.session-digest/request` на одном deviceId; проверить repro #2046 (первый трек сценария = 48k или явный отказ); `yarn docs:lint`.
 
-[Структурщик]: В развёрнутом diff пакетов runtime почти нет — границы packages не задеты. `docs/discussions/*known-debt*` фиксирует дом `scripts/lib/known-debt.json` и один модуль-читатель — согласовано с слабой связанностью; в этом diff файла регистра ещё нет (только проза ask). Trail `procedure-runs`: повторные orphaned close — носитель честный, но операционный контур утра даёт fail-каскад; не маскировать success. C7/C8/C3 по visible diff: —. Oversized #2018/#2031 и merge’и моста — C1/C3 (M3: адрес = pluginId+mountTarget) проверить отдельным diff-only, не по заголовку PR.
+[Архитектор]: Дом report в `background-media/collections` и род без `windowSize` согласованы с M1/M2 foundation; `ctx.payload` для окна — осознанный обход, не раздувание plugin-contracts (#1982 карман payload остаётся открытым вопросом, не блокером дня). Дежурство как **режим поллера** (Т5), не пакет — верная граница цены; смысл на сервере, компактификация на узле — не ломает плагинную ось. SampleMeta как единый носитель формы+происхождения — в повестку M8, не в скрытый код «заодно».
 
-[Математик]: В развёрнутом куске FFT/MFCC/кода анализатора нет. Проба mfcc / корпус 89e428ba — только в плане (#2017); до появления числового diff: NaN/границы окон не ревьюить. `data/detectors-benchmark/vdr-hard-gate-pilot/{drone,not-drone}/` в gitignore — правильно против утечки слепой разметки (#1941).
+[Структурщик]: C1/C4 по доступному следу: меры и executor сидят в handlers, монтаж report-wave — в media-доме; архивы registry/README согласованы (#2045/#2053). Зуб verify:image-workspace-deps после отказа выкатки — правильный носитель, не проза. Следить, чтобы `registerReportWave` не снова оказался мёртвым экспортом при следующих переносах (урок BLOCK #2041). C7: зубы j1/j2/h* в trail есть; e2e боевого входа — только после деплоя образа.
 
-[Музыкант]: Web Audio / audio-engine в diff нет (C2 —). Firebat/Studio path — продуктовый контур захвата; в visible diff только доки и ignore. SSH vs исходящий канал — не аудио-DSP; к Kuryokhin не цеплять до diff installer/outbound client.
+[Математик]: C6: относительный пик над фоном сеанса и дедуп по признакам — на месте; дефект «сеанс из копий» пойман зубом и тимлидом независимо. Граница flatness **абсолютом 0.15** вместо квантиля 0.5 — корректный ответ на континуум 0.33–0.38; классы на часе легли с провалом 0.150/0.155. Мера «время до уверенного детекта @ SNR» и FPR на тишине (шторм Т7) — ещё без калиброванного источника; не закрывать DoD дежурства лабораторной twenty.
 
-[Верстальщик]: UI/DESIGN.md/a11y в diff нет (C5 —).
+[Музыкант]: C2 в docs-диффе не нарушен (Web Audio не трогали). Калибровка «полвторого», AIR off, урок «по фону −55…−50, не по хлопку» — в `firebat-node.md`, ручку не трогать. deltaDb=9 на тихом поле — рабочая точка; 16 бит при запасе ~20 дБ для детекции достаточно (Т2) — #2037 логично закрывать отказом, не миграцией корпуса. Часовой материал + split references/negatives закрыли предупреждение владельца про шаги/двери в топе.
 
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-08-20)
-Definition of Done (утро):
-- прочитать этот review + вчерашний фокус; сверить `MAIN_DAY_ISSUE` meta vs тело (одна магистраль словом)
-- `yarn turbo run test --filter=@membrana/background-media`
-- `yarn workspace @membrana/rag-service test --no-coverage`
-- `yarn docs:lint`
-- `gh pr list --state open --limit 20` — #2009/#2020/#2022 не молчанием
-- oversized merge’и дня: точечный `yarn code-review:pr` на остаток OPEN или bugbot-pass по plugin-results / sanitation, если ещё не было письменного LGTM
-Риски: P1 — рассинхрон магистрали в MAIN_DAY_ISSUE (B9); P1 — код дня в oversized без развёрнутого ревью; P2 — orphaned ritual-day opens; P2 — `secret-parser-built` снова уедет без диагноза; — P0 в visible docs-diff.
+[Верстальщик]: — (UI/DESIGN.md в диффе дня нет)
+
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-08-21)  
+Definition of Done (утро): прочитан вчерашний review + standup; зелёные `yarn turbo run lint typecheck test --filter=@membrana/plugin-handlers --filter=@membrana/background-media`; боевой или честно заблокированный smoke `session-digest`; статус #2046 (fix или явный issue-план); не стартовать M-комнаты duty-node без ответа владельца на M2.  
+Риски: **P0** — #2046 первый трек 44,1 / дыра fail-closed; **P1** — цепочка oversized без построчного re-review + зависимость twenty от пересборки media image; **P2** — #2037/#1982/M10 ветрозащита, нарезка с коэффициентом на зубы (урок +59% journal).
