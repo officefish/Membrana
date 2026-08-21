@@ -1,2 +1,4 @@
 {"traceId":"tr-j1-dynin-run","blockId":"j1-session-measures","kind":"context_run","subject":"dynin","at":"2026-08-21T05:08:53+00:00","ref":"docs/virtual-team/memory/op-log/dynin/2026-08-21.jsonl"}
 {"traceId":"tr-j1-dynin-review","blockId":"j1-session-measures","kind":"review_pass","subject":"dynin","at":"2026-08-21T05:08:53+00:00","ref":"packages/plugin-handlers/src/session-metrics/index.test.ts"}
+{"traceId":"tr-j2-ozhegov-run","blockId":"j2-session-digest-plugin","kind":"context_run","subject":"ozhegov","at":"2026-08-21T07:57:41+00:00","ref":"docs/virtual-team/memory/op-log/ozhegov/2026-08-21.jsonl"}
+{"traceId":"tr-j2-ozhegov-review","blockId":"j2-session-digest-plugin","kind":"review_pass","subject":"ozhegov","at":"2026-08-21T07:57:41+00:00","ref":"packages/plugin-handlers/src/session-digest/executor.test.ts"}

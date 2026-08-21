@@ -13,8 +13,11 @@ const CATALOG_ROOT = join(__dirname, '../../../../../data/detectors-benchmark/v0
 const config = { MEDIA_CATALOG_ROOT: CATALOG_ROOT } as unknown as AppConfig;
 
 const rows = [
-  { id: 'b', collectionId: 'c1', sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'B', storageRef: 'd/b.wav' },
-  { id: 'a', collectionId: 'c1', sampleRate: 44100, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'A', storageRef: 'd/a.wav' },
+  // createdAt несёт модель Sample (@default(now())): порт отдаёт его наружу с 21.08 — им
+  // адресуется окно сеанса у рода report. Фикстура обязана отражать модель, иначе зуб
+  // проверяет не ту строку, что приходит из Prisma.
+  { id: 'b', collectionId: 'c1', sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'B', storageRef: 'd/b.wav', createdAt: new Date('2026-08-21T10:00:01.000Z') },
+  { id: 'a', collectionId: 'c1', sampleRate: 44100, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'A', storageRef: 'd/a.wav', createdAt: new Date('2026-08-21T10:00:00.000Z') },
 ];
 const prisma = {
   sample: {
@@ -40,14 +43,19 @@ async function registrar(cfg = config, bridge = spyBridge().bridge) {
 }
 
 describe('FirstWavePluginsRegistrar', () => {
-  it('на старте модуля хост collections держит шесть плагинов первой волны, mfcc — с живым executor', async () => {
+  it('на старте модуля хост collections держит шесть детекторов ПЛЮС свод сеанса рода report', async () => {
     const host = new CollectionsPluginHostService();
     await host.onModuleInit();
     await new FirstWavePluginsRegistrar(host, prisma, blobs, config, spyBridge().bridge).onModuleInit();
-    expect(host.getRegisteredPlugins().map((m) => m.id)).toEqual([
+    const registered = host.getRegisteredPlugins();
+    expect(registered.map((m) => m.id)).toEqual([
       'membrana.handler.mfcc', 'membrana.handler.harmonic', 'membrana.handler.cepstral',
       'membrana.handler.spectral-flux', 'membrana.handler.template-match', 'membrana.handler.yamnet',
+      // Свод сеанса смонтирован в том же доме отдельной волной — род report, не детектор (j2, #1961).
+      'membrana.report.session-digest',
     ]);
+    expect(registered.filter((m) => m.kind === 'handler')).toHaveLength(6);
+    expect(registered.filter((m) => m.kind === 'report')).toHaveLength(1);
   });
 
   it('читатель проб — только чтение: список по collectionId, байты по storageRef, sha256 содержимого', async () => {
