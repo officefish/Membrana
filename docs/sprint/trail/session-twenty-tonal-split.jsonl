@@ -1,0 +1,6 @@
+{"traceId":"tr-h1-dynin-run","blockId":"h1-flatness-absolute","kind":"context_run","subject":"dynin","at":"2026-08-21T11:47:01+00:00","ref":"docs/virtual-team/memory/op-log/dynin/2026-08-21.jsonl"}
+{"traceId":"tr-h1-dynin-review","blockId":"h1-flatness-absolute","kind":"review_pass","subject":"dynin","at":"2026-08-21T11:47:01+00:00","ref":"packages/plugin-handlers/src/session-metrics/index.test.ts"}
+{"traceId":"tr-h2-ozhegov-run","blockId":"h2-split-result","kind":"context_run","subject":"ozhegov","at":"2026-08-21T11:47:01+00:00","ref":"docs/virtual-team/memory/op-log/ozhegov/2026-08-21.jsonl"}
+{"traceId":"tr-h2-ozhegov-review","blockId":"h2-split-result","kind":"review_pass","subject":"ozhegov","at":"2026-08-21T11:47:01+00:00","ref":"packages/plugin-handlers/src/session-digest/executor.test.ts"}
+{"traceId":"tr-h3-kuryokhin-run","blockId":"h3-hour-verdict","kind":"context_run","subject":"kuryokhin","at":"2026-08-21T11:47:01+00:00","ref":"docs/virtual-team/memory/op-log/kuryokhin/2026-08-21.jsonl"}
+{"traceId":"tr-h3-kuryokhin-review","blockId":"h3-hour-verdict","kind":"review_pass","subject":"kuryokhin","at":"2026-08-21T11:47:01+00:00","ref":"docs/plugins/session-hour-2026-08-21.md"}
