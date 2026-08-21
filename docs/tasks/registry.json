@@ -8,17 +8,17 @@
       "noIssueReason": "фаза эпика server-plugin-foundation (#1961); Issue заводится с первым PR по DoD задания",
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-21",
-      "archivedAt": null,
+      "archivedAt": "2026-08-21",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "dynin",
         "kuryokhin"
       ],
       "notes": "Магистраль дня 21.08, серверная половина. Сеанс ~720 треков по 5 с в reserved-коллекции __buffer__. Три меры: пик над фоном сеанса (не абсолютный порог), дедуп по близости признаков, спектральная плоскостность/гармоничность. Детектор дрона для ранжирования запрещён (проба 20.08: detected на фоне).",
-      "archiveNotes": null,
+      "archiveNotes": "Прибор разбора сеанса в стволе: меры (PR #2040, 7c39c329), плагин membrana.report.session-digest смонтирован в доме background-media/collections (PR #2041, 2693e1ff), вещдоки первого прогона (PR #2043, 80022d31). Дом назначен консилиумом 21.08 (модуля journal в office нет — факт разведки), расхождение со словом задания ратифицировано владельцем. Гейт 3/3 honest_pair, журнал pass, опыт записан: точность нарезки 33% — два блока переполнили прогноз вдвое. Прогон лабораторный на 7 пробах (недобор 17 из 20): часовой сеанс ждёт id устройства владельца, боевой вход — деплоя media со стволом.",
       "githubIssueClosedAt": null,
       "parentEpic": "server-plugin-foundation"
     },
