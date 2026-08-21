@@ -16,6 +16,14 @@ export interface CollectionSampleDescriptor {
   readonly audioFormat: string;
   readonly sizeBytes: number;
   readonly title: string;
+  /**
+   * Отметка создания пробы, ISO. НЕОБЯЗАТЕЛЬНА: порт общий с mfcc, которому она не нужна, и
+   * добавление поля ничего у него не ломает. Ею адресуется ОКНО СЕАНСА (j2, #1961).
+   *
+   * Полем, а не методом `createdAt(sampleId)`: у сеанса ~720 проб, и отдельный запрос на
+   * каждую превратил бы одно чтение списка в 720 обращений к базе.
+   */
+  readonly createdAt?: string;
 }
 
 export interface CollectionSampleAudio {

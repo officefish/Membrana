@@ -13,8 +13,11 @@ const CATALOG_ROOT = join(__dirname, '../../../../../data/detectors-benchmark/v0
 const config = { MEDIA_CATALOG_ROOT: CATALOG_ROOT } as unknown as AppConfig;
 
 const rows = [
-  { id: 'b', collectionId: 'c1', sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'B', storageRef: 'd/b.wav' },
-  { id: 'a', collectionId: 'c1', sampleRate: 44100, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'A', storageRef: 'd/a.wav' },
+  // createdAt несёт модель Sample (@default(now())): порт отдаёт его наружу с 21.08 — им
+  // адресуется окно сеанса у рода report. Фикстура обязана отражать модель, иначе зуб
+  // проверяет не ту строку, что приходит из Prisma.
+  { id: 'b', collectionId: 'c1', sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'B', storageRef: 'd/b.wav', createdAt: new Date('2026-08-21T10:00:01.000Z') },
+  { id: 'a', collectionId: 'c1', sampleRate: 44100, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'A', storageRef: 'd/a.wav', createdAt: new Date('2026-08-21T10:00:00.000Z') },
 ];
 const prisma = {
   sample: {

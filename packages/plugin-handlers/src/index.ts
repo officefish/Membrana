@@ -21,13 +21,6 @@ export {
 } from './mfcc/preset.js';
 export { createMeydaExtractor } from './mfcc/meyda-extractor.js';
 export {
-  summarizeSessionSampleRates,
-  type SessionSampleRateConsistency,
-  type SessionSampleRateGroup,
-  type SessionSampleRateInput,
-  type SessionSampleRateStatus,
-} from './mfcc/session-sample-rate.js';
-export {
   MfccRunRefusal,
   createMfccExecutor,
   mfccConfigHashOf,
@@ -38,5 +31,37 @@ export {
   type MfccSampleVerdict,
 } from './mfcc/executor.js';
 export { PluginNotImplementedError, STUB_HANDLER_MANIFESTS, STUB_HANDLER_SLUGS, notImplementedExecutor } from './stubs.js';
-export { FIRST_WAVE_MANIFESTS, registerFirstWave, type FirstWaveDeps, type FirstWaveResultSink } from './first-wave.js';
+export {
+  FIRST_WAVE_MANIFESTS,
+  registerFirstWave,
+  registerReportWave,
+  type FirstWaveDeps,
+  type FirstWaveResultSink,
+  type ReportResultSink,
+} from './first-wave.js';
 export { UUID_V7_PATTERN, uuidV7, type RandomBytes } from './run-id.js';
+export { SESSION_DIGEST_MANIFEST } from './session-digest/manifest.js';
+export {
+  SESSION_DIGEST_DEFAULTS,
+  SESSION_DIGEST_ID,
+  createSessionDigestExecutor,
+  windowOf,
+  type ReferenceSound,
+  type SessionDigestDeps,
+  type SessionDigestResult,
+  type SessionDigestTuning,
+  type SessionWindow,
+} from './session-digest/executor.js';
+export {
+  dbOverFloor,
+  dedupeGreedy,
+  findEvents,
+  loudnessEnvelope,
+  sessionFloor,
+  structureBoundary,
+  structureOf,
+  type EventFeatures,
+  type EventStructure,
+  type SessionEvent,
+  type SessionRefusal,
+} from './session-metrics/index.js';
