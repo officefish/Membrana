@@ -8,17 +8,17 @@
       "noIssueReason": "фаза эпика server-plugin-foundation (#1961), продолжение #2039 — пробел вскрыт боевым прогоном 21.08",
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-21",
-      "archivedAt": null,
+      "archivedAt": "2026-08-21",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
         "kuryokhin"
       ],
       "notes": "Боевой вход requestRun умеет ровно один плагин (mfcc): свод сеанса смонтирован в хосте, но вход в него не ведёт — 501 «заглушка первой волны». Плюс повод по умолчанию (sample_added) требует sampleId, которого своду не нужно. Лабораторный путь пробел не видел.",
-      "archiveNotes": null,
+      "archiveNotes": "Боевой вход ведёт к своду сеанса: повод collections.collection_created, отпечатки рода report свои, словарь сборщиков контекста (PR #2056, 564b4719). Прогон часа боевым входом состоялся: runId 01a024dc-dfca-7ee9-bf31-a047e1f1f798, 201 за 12 с, bridge sent, первый RunRecord рода report в plugin-results; отбор совпал с лабораторным 20/20 и 20/20 (PR #2058, 16542775). Гейт 2/2, журнал pass. Пробел входа нашёл боевой путь — лаборатория звала исполнителя напрямую и видеть его не могла.",
       "githubIssueClosedAt": null,
       "parentEpic": "server-plugin-foundation"
     },
