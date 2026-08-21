@@ -1,0 +1,10 @@
+{
+  "//": "Замер ПО ФАКТУ: j1 и j2 — git diff --numstat по влитым PR (#2040, #2041) в зонах блоков; j3 — строки обоих вещдоков. Не подогнан под прогноз: j2 недобрал (плагин собрался из мер j1 компактнее ожидания), j3 перебрал (машинный вещдок длиннее, чем виделось).",
+  "sprintId": "journal-session-twenty",
+  "measuredAt": "2026-08-21T09:28:56+00:00",
+  "segments": [
+    { "blockId": "j1-session-measures", "changedLines": 490 },
+    { "blockId": "j2-session-digest-plugin", "changedLines": 510 },
+    { "blockId": "j3-session-run-and-verdict", "changedLines": 146 }
+  ]
+}
