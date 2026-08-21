@@ -1,0 +1,17 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "deploy-safestorage-2026-08-21",
+  "forTask": "deploy-safestorage-2026-08-21 — деплой связки per-device ключей (ADR-0028 Р1/Р2) + включение шифрованного хранения (Р4)",
+  "note": "Замер git diff --numstat против 6ff9aaeb^ (точка до влития PR #2050) по зонам блоков. Блок deploy-media исполнялся ДВАЖДЫ: первая выкатка отклонена по ERR_MODULE_NOT_FOUND и откачена, повторная — после починки образа; в объёме блока это один документ, где записаны обе попытки.",
+  "measuredAt": "2026-08-21T13:05:00+00:00",
+  "segments": [
+    { "cutBlockId": "deploy-preflight", "changedLines": 69 },
+    { "cutBlockId": "media-image-deps", "changedLines": 231 },
+    { "cutBlockId": "deploy-media", "changedLines": 80 },
+    { "cutBlockId": "deploy-cabinet", "changedLines": 38 },
+    { "cutBlockId": "deploy-acceptance", "changedLines": 62 },
+    { "cutBlockId": "secure-store-cache", "changedLines": 235 },
+    { "cutBlockId": "studio-bridge-honest", "changedLines": 38 },
+    { "cutBlockId": "client-store-wiring", "changedLines": 32 }
+  ]
+}
