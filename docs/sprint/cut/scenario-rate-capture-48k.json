@@ -1,0 +1,44 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "scenario-rate-capture-48k",
+  "taskId": "scenario-rate-sprint",
+  "mode": "explicit-honest",
+  "cutBy": "kuryokhin",
+  "window": {
+    "from": "2026-08-21T11:05:31+03:00",
+    "to": "2026-08-21T12:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "a1-capture-48k-guard",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "packages/services/audio-engine/src/types.ts",
+        "packages/services/audio-engine/src/core/audio-context.ts",
+        "packages/services/audio-engine/src/core/audio-context.test.ts",
+        "packages/services/audio-engine/src/core/live-sampler.ts",
+        "apps/client/src/modules/device-board/scenarioMicJournalBridge.ts",
+        "docs/discussions/cut-scenario-rate-capture-48k-kuryokhin.md",
+        "docs/local-sprint/scenario-rate-capture-48k/**",
+        "docs/sprint/cut/scenario-rate-capture-48k.json",
+        "docs/sprint/cut/trail/scenario-rate-capture-48k.jsonl",
+        "docs/sprint/trail/scenario-rate-capture-48k.jsonl",
+        "docs/procedure-runs/trail/2026-08-21.jsonl"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "note": "Owner correction after PR #2038: naming heterogeneous sample rates is not enough for the urgent hour. Implement the minimum blocker-removal path: scenario capture requests 48 kHz through audio-engine LiveSampler; audio-engine constructs AudioContext with the requested sampleRate and fails closed with a named reason if the browser returns a different actual sampleRate. No resampling, no MFCC 44.1 widening, no production deploy.",
+      "revisionAt": "2026-08-21T11:17:20+03:00",
+      "revisionOf": "612ef4ea92a478e4d1c8bbf5baf8a07243d13adb1e560d05ca020df187fb558f"
+    }
+  ],
+  "//cutter": "Context: docs/discussions/cut-scenario-rate-capture-48k-kuryokhin.md. This is a continuation mini-sprint for task card scenario-rate-sprint / #2001 after PR #2038 left scenario capture able to record 44.1 kHz.",
+  "//out-of-scope": "No resampling in the urgent path, no MFCC 44.1 widening, no magistral session or journal plugin edits beyond passing the capture target, no #1950 behavior change, no production deploy, no manual one-track fix.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-21T11:17:20+03:00",
+    "digest": "a110a4c8cd667d00761aea7f697d7d44497f2e3c037ffdb5bb4f744801dec2b2"
+  }
+}

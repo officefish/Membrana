@@ -23,6 +23,8 @@ export type SampleFrameHandler = (frame: AudioSampleFrame) => void;
 export interface LiveCaptureConfig {
   /** Размер окна выборки (степень двойки). По умолчанию 2048. */
   readonly bufferSize: number;
+  /** Желаемая частота AudioContext. Если браузер вернёт другую — sampler откажется стартовать. */
+  readonly sampleRate?: number;
   /**
    * Сглаживание AnalyserNode (для частотного режима). При выборке временных
    * данных параметр практически не влияет, но мы пробрасываем его на случай,

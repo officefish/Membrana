@@ -9,7 +9,7 @@
  * Жизненный цикл: idle → starting → running → stopped (или error).
  */
 
-import { logger } from '@membrana/core';
+import { DomainError, logger } from '@membrana/core';
 
 import {
   type AudioSampleFrame,
@@ -146,7 +146,8 @@ export class LiveSampler {
         this.ownsStream = true;
       }
 
-      this.audioContext = createAudioContext();
+      this.audioContext = createAudioContext({ sampleRate: this.config.sampleRate });
+      this.ensureRequestedSampleRate();
       this.sourceNode = this.audioContext.createMediaStreamSource(this.liveStream);
       this.analyserNode = this.audioContext.createAnalyser();
       this.analyserNode.fftSize = this.config.bufferSize;
@@ -165,6 +166,19 @@ export class LiveSampler {
       await this.stop();
       throw error;
     }
+  }
+
+  private ensureRequestedSampleRate(): void {
+    const requested = this.config.sampleRate;
+    if (requested === undefined || !this.audioContext) return;
+
+    const actual = this.audioContext.sampleRate;
+    if (actual === requested) return;
+
+    throw new DomainError(
+      `AudioContext sampleRate ${actual} does not match requested ${requested}`,
+      'WEB_AUDIO_SAMPLE_RATE_UNAVAILABLE',
+    );
   }
 
   /** Останавливает сэмплер, освобождает все ресурсы. */

@@ -4,8 +4,12 @@
 
 import { DomainError } from '@membrana/core';
 
+export interface CreateAudioContextOptions {
+  readonly sampleRate?: number;
+}
+
 /** Создаёт AudioContext с поддержкой webkit-префикса. */
-export function createAudioContext(): AudioContext {
+export function createAudioContext(options: CreateAudioContextOptions = {}): AudioContext {
   const Ctor: typeof AudioContext | undefined =
     window.AudioContext ??
     (window as unknown as { webkitAudioContext?: typeof AudioContext })
@@ -17,7 +21,9 @@ export function createAudioContext(): AudioContext {
       'WEB_AUDIO_UNAVAILABLE',
     );
   }
-  return new Ctor();
+  return options.sampleRate === undefined
+    ? new Ctor()
+    : new Ctor({ sampleRate: options.sampleRate });
 }
 
 /**

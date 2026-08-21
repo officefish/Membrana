@@ -1,0 +1,9 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "scenario-rate-capture-48k",
+  "note": "Measured by the single ratified block zone; includes focused code, tests, and sprint trace docs.",
+  "measuredAt": "2026-08-21T11:22:00+03:00",
+  "segments": [
+    { "cutBlockId": "a1-capture-48k-guard", "changedLines": 180 }
+  ]
+}
