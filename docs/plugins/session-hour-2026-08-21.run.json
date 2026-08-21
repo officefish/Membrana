@@ -1,27 +1,20 @@
 {
-  "//": "Блок h3 мини-спринта session-twenty-tonal-split (#1961, продолжение #2039). Разбор ЧАСОВОГО сеанса владельца после правки: граница плоскостности абсолютом 0.15 (слух Курёхина на этом же распределении), списки разделены — опорные образы тональные, негативный материал широкополосный, дедуп внутри каждого рода.",
+  "//": "Блок r2 спринта report-entry-gap (#1961, продолжение #2039). Разбор ЧАСОВОГО сеанса владельца БОЕВЫМ входом: POST /v1/devices/:d/collections/__buffer__/plugins/membrana.report.session-digest/request. Документ ниже ПРОЧИТАН ОБРАТНО из дома результатов офиса (GET /plugin-results/runs), не из ответа входа.",
   "probedAt": "2026-08-21T11:45:40Z",
-  "lane": "lab-run-on-real-hour",
-  "laneWhy": "Боевой вход POST …/plugins/membrana.report.session-digest/request отвечает 400 «is not registered»: образ media на проде несёт код до PR #2041 (пересборка — за ведущей сессией). Пробы прочитаны GET-ами медиа-сервиса, исполнитель — из ствола. Скрипт с SSH-туннелем не участвовал.",
+  "lane": "live-run-through-production-entry",
   "session": {
     "collection": "__buffer__ устройства 1c04f0bc-29b0-4d3f-a437-d87dc879579d",
     "window": {
-      "from": "2026-08-21T09:41:00.000Z",
+      "from": "2026-08-21T09:45:18.000Z",
       "to": "2026-08-21T10:46:00.000Z",
-      "tracksSeen": 670,
-      "tracksInWindow": 670
+      "tracksSeen": 1040,
+      "tracksInWindow": 666
     },
-    "tracks": 670,
-    "bufferTotal": 786,
-    "bufferOlderThanSession": 116,
-    "bufferOlderNote": "В __buffer__ лежат треки со 2 июля по 20 августа — окно обязательно, иначе фон и отбор считались бы по полутора месяцам чужого звука.",
+    "tracks": 666,
+    "bufferTotal": 1040,
+    "bufferOlderThanSession": 374,
+    "bufferOlderNote": "В __buffer__ на момент прогона 1040 треков, в окне 666 — остальное старьё со 2 июля по 20 августа плюс приёмочные пробы дня. Окно обязательно: без него фон и отбор считались бы по чужому звуку.",
     "gaps": [
-      {
-        "from": "2026-08-21T09:41:59.531Z",
-        "to": "2026-08-21T09:45:18.806Z",
-        "sec": 199,
-        "why": "разрыв записи; НЕ пропуск прибора"
-      },
       {
         "from": "2026-08-21T09:48:22.401Z",
         "to": "2026-08-21T09:50:20.245Z",
@@ -32,7 +25,8 @@
     "sampleRates": {
       "44100": 2,
       "48000": 668
-    }
+    },
+    "windowStartNote": "Старт окна 09:45:18, а не 09:41:44 — слово владельца: ранняя запись была пробой после установки. Прежний разрыв 09:41:59→09:45:18 (199 с) НЕ дыра, а пауза между пробой и стартом сеанса; в этом вещдоке он не значится."
   },
   "floor": {
     "value": 0.005,
@@ -45,7 +39,10 @@
     "flatnessCeiling": 0.15,
     "referencesLimit": 20,
     "negativesLimit": 20,
-    "provisionalThresholds": true,
+    "provisional": [
+      "frameSize",
+      "minDistanceRatio"
+    ],
     "flatnessCeilingBy": "kuryokhin",
     "flatnessCeilingWhy": "на этом сеансе классы легли с провалом: тональные 0.027…0.150, широкополосные 0.155…0.361 — физическая дыра, а не срез по выборке; квантиль удалён"
   },
@@ -75,9 +72,7 @@
         "zeroCrossingRate": 0.052503052503052504,
         "flux": 0.01191503610635589
       },
-      "similarDropped": 18,
-      "trackCreatedAt": "2026-08-21T10:11:40.216Z",
-      "trackDurationSec": 4.938666666666666
+      "similarDropped": 18
     },
     {
       "sampleId": "ced859e6-9b36-4108-92ac-f9f79e261458",
@@ -94,9 +89,7 @@
         "zeroCrossingRate": 0.025396825396825397,
         "flux": 0.07317825674940073
       },
-      "similarDropped": 46,
-      "trackCreatedAt": "2026-08-21T10:14:24.155Z",
-      "trackDurationSec": 5.101333333333334
+      "similarDropped": 46
     },
     {
       "sampleId": "5cef3ed0-7e14-4b7d-82be-a60cd02ff185",
@@ -113,9 +106,7 @@
         "zeroCrossingRate": 0.026373626373626374,
         "flux": 0.0035041928991411107
       },
-      "similarDropped": 4,
-      "trackCreatedAt": "2026-08-21T10:38:35.863Z",
-      "trackDurationSec": 4.96
+      "similarDropped": 4
     },
     {
       "sampleId": "c8b49eb0-bf1b-4a2e-81be-c63defa351ea",
@@ -132,9 +123,7 @@
         "zeroCrossingRate": 0.08034188034188035,
         "flux": 0.04604611622776229
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:19:54.079Z",
-      "trackDurationSec": 5.130666666666666
+      "similarDropped": 0
     },
     {
       "sampleId": "3a24165b-ff13-4f1c-8e21-3e5d3aa2a663",
@@ -151,9 +140,7 @@
         "zeroCrossingRate": 0.09401709401709402,
         "flux": 0.04664232579531667
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:11:40.216Z",
-      "trackDurationSec": 4.938666666666666
+      "similarDropped": 0
     },
     {
       "sampleId": "9f74d826-f8ec-4039-8fc8-93e7b43f8cf9",
@@ -170,9 +157,7 @@
         "zeroCrossingRate": 0.03247863247863248,
         "flux": 0.07286900144891523
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:14:18.822Z",
-      "trackDurationSec": 5.082666666666666
+      "similarDropped": 0
     },
     {
       "sampleId": "ced859e6-9b36-4108-92ac-f9f79e261458",
@@ -189,9 +174,7 @@
         "zeroCrossingRate": 0.005372405372405372,
         "flux": 0.02033651619864486
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:14:24.155Z",
-      "trackDurationSec": 5.101333333333334
+      "similarDropped": 0
     },
     {
       "sampleId": "4955d623-49ab-43f3-a710-314062a58ecb",
@@ -208,9 +191,7 @@
         "zeroCrossingRate": 0.02564102564102564,
         "flux": 0.009512199127276428
       },
-      "similarDropped": 1,
-      "trackCreatedAt": "2026-08-21T10:20:30.905Z",
-      "trackDurationSec": 4.949333333333334
+      "similarDropped": 1
     },
     {
       "sampleId": "accc2438-e57e-4ff9-b4a0-37892cbea2d1",
@@ -227,9 +208,7 @@
         "zeroCrossingRate": 0.07326007326007326,
         "flux": 0.036980294373188685
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:40:43.172Z",
-      "trackDurationSec": 5.032
+      "similarDropped": 0
     },
     {
       "sampleId": "8ee11c7e-64d8-4918-9b1b-05189e828862",
@@ -246,9 +225,7 @@
         "zeroCrossingRate": 0.08669108669108669,
         "flux": 0.035881348881836105
       },
-      "similarDropped": 3,
-      "trackCreatedAt": "2026-08-21T10:23:08.722Z",
-      "trackDurationSec": 4.949333333333334
+      "similarDropped": 3
     },
     {
       "sampleId": "1301b343-da77-499c-9176-3b623243b454",
@@ -265,9 +242,7 @@
         "zeroCrossingRate": 0.05860805860805861,
         "flux": 0.005680522014440139
       },
-      "similarDropped": 17,
-      "trackCreatedAt": "2026-08-21T10:34:37.833Z",
-      "trackDurationSec": 5.090666666666666
+      "similarDropped": 17
     },
     {
       "sampleId": "208b1e62-0bb1-44ce-9e87-b11b20b9aa67",
@@ -284,9 +259,7 @@
         "zeroCrossingRate": 0.07936507936507936,
         "flux": 0.007710842772891901
       },
-      "similarDropped": 5,
-      "trackCreatedAt": "2026-08-21T10:45:09.703Z",
-      "trackDurationSec": 5.650666666666667
+      "similarDropped": 5
     },
     {
       "sampleId": "7303f7af-2513-4029-97d1-5cc7bc310895",
@@ -303,9 +276,7 @@
         "zeroCrossingRate": 0.018315018315018316,
         "flux": 0.006932132479716714
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:39:29.043Z",
-      "trackDurationSec": 5.250666666666667
+      "similarDropped": 0
     },
     {
       "sampleId": "efc077c1-57a0-4154-ad19-fdb105b6c45e",
@@ -322,9 +293,7 @@
         "zeroCrossingRate": 0.03321123321123321,
         "flux": 0.005526757207683873
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:01:53.427Z",
-      "trackDurationSec": 5.029333333333334
+      "similarDropped": 0
     },
     {
       "sampleId": "6dfbe2b3-c511-4050-be77-af837272cebd",
@@ -341,9 +310,7 @@
         "zeroCrossingRate": 0.13455433455433455,
         "flux": 0.03679270371833403
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:20:15.137Z",
-      "trackDurationSec": 5.072
+      "similarDropped": 0
     },
     {
       "sampleId": "2563a269-1c1e-4b38-90a9-d4aa7a4edeac",
@@ -360,9 +327,7 @@
         "zeroCrossingRate": 0.044444444444444446,
         "flux": 0.008597649570446226
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:01:22.592Z",
-      "trackDurationSec": 4.989333333333334
+      "similarDropped": 0
     },
     {
       "sampleId": "1301b343-da77-499c-9176-3b623243b454",
@@ -379,9 +344,7 @@
         "zeroCrossingRate": 0.04004884004884005,
         "flux": 0.05385262462511141
       },
-      "similarDropped": 12,
-      "trackCreatedAt": "2026-08-21T10:34:37.833Z",
-      "trackDurationSec": 5.090666666666666
+      "similarDropped": 12
     },
     {
       "sampleId": "326d952c-22e5-4f47-a8cc-3eb85380b75a",
@@ -398,9 +361,7 @@
         "zeroCrossingRate": 0.03247863247863248,
         "flux": 0.04337731649495012
       },
-      "similarDropped": 6,
-      "trackCreatedAt": "2026-08-21T10:42:44.900Z",
-      "trackDurationSec": 5.16
+      "similarDropped": 6
     },
     {
       "sampleId": "47799cae-2d11-4baa-a2a5-03a865c449ae",
@@ -417,9 +378,7 @@
         "zeroCrossingRate": 0.01098901098901099,
         "flux": 0.014770424867820344
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:00:36.183Z",
-      "trackDurationSec": 5.090666666666666
+      "similarDropped": 0
     },
     {
       "sampleId": "bee9495f-0d9d-4e25-ba35-8e539c404187",
@@ -436,31 +395,10 @@
         "zeroCrossingRate": 0.008302808302808303,
         "flux": 0.048019322725106936
       },
-      "similarDropped": 6,
-      "trackCreatedAt": "2026-08-21T10:09:45.436Z",
-      "trackDurationSec": 5.058666666666666
+      "similarDropped": 6
     }
   ],
   "negatives": [
-    {
-      "sampleId": "3d57d819-3e5f-4f29-98b2-b7d1bf489499",
-      "title": "MakeTrack eba01bbc-e90",
-      "startSec": 0,
-      "endSec": 0.5973333333333333,
-      "peakDb": 39.08458534253064,
-      "durationSec": 0.5973333333333333,
-      "structure": "broadband",
-      "features": {
-        "centroidHz": 3823.4347366437482,
-        "rolloffHz": 5964.84375,
-        "flatness": 0.15019948295292415,
-        "zeroCrossingRate": 0.07863247863247863,
-        "flux": 0
-      },
-      "similarDropped": 1,
-      "trackCreatedAt": "2026-08-21T10:20:36.257Z",
-      "trackDurationSec": 5.16
-    },
     {
       "sampleId": "1c391a48-bc86-4869-900d-1d64522ec409",
       "title": "MakeTrack 6b0eabd2-169",
@@ -476,9 +414,24 @@
         "zeroCrossingRate": 0.0231990231990232,
         "flux": 0.09196004291253188
       },
-      "similarDropped": 2,
-      "trackCreatedAt": "2026-08-21T10:41:14.759Z",
-      "trackDurationSec": 5.04
+      "similarDropped": 2
+    },
+    {
+      "sampleId": "3d57d819-3e5f-4f29-98b2-b7d1bf489499",
+      "title": "MakeTrack eba01bbc-e90",
+      "startSec": 0,
+      "endSec": 0.5973333333333333,
+      "peakDb": 39.08458534253064,
+      "durationSec": 0.5973333333333333,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 3823.4347366437482,
+        "rolloffHz": 5964.84375,
+        "flatness": 0.15019948295292415,
+        "zeroCrossingRate": 0.07863247863247863,
+        "flux": 0
+      },
+      "similarDropped": 1
     },
     {
       "sampleId": "208b1e62-0bb1-44ce-9e87-b11b20b9aa67",
@@ -495,9 +448,7 @@
         "zeroCrossingRate": 0.01904761904761905,
         "flux": 0.009031983844993386
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:45:09.703Z",
-      "trackDurationSec": 5.650666666666667
+      "similarDropped": 0
     },
     {
       "sampleId": "bde7a597-87ca-43c3-8079-8fda9a4bc42e",
@@ -514,9 +465,7 @@
         "zeroCrossingRate": 0.09816849816849817,
         "flux": 0.00242794894851203
       },
-      "similarDropped": 1,
-      "trackCreatedAt": "2026-08-21T10:15:58.542Z",
-      "trackDurationSec": 5.08
+      "similarDropped": 1
     },
     {
       "sampleId": "3c987cad-8b94-4b8a-a2a9-7f79c5bfa0b7",
@@ -533,9 +482,7 @@
         "zeroCrossingRate": 0.1054945054945055,
         "flux": 0.027755393809520586
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:20:20.411Z",
-      "trackDurationSec": 4.96
+      "similarDropped": 0
     },
     {
       "sampleId": "9439813a-4329-45a7-9fdf-954fc0871d0d",
@@ -552,9 +499,7 @@
         "zeroCrossingRate": 0.1304029304029304,
         "flux": 0.004334322539449044
       },
-      "similarDropped": 2,
-      "trackCreatedAt": "2026-08-21T10:28:42.303Z",
-      "trackDurationSec": 4.96
+      "similarDropped": 2
     },
     {
       "sampleId": "1c83caee-e4a7-4d2d-af9e-215018519e77",
@@ -571,9 +516,7 @@
         "zeroCrossingRate": 0.12893772893772895,
         "flux": 0.002302207412978831
       },
-      "similarDropped": 2,
-      "trackCreatedAt": "2026-08-21T10:43:05.942Z",
-      "trackDurationSec": 4.930666666666666
+      "similarDropped": 2
     },
     {
       "sampleId": "778a6350-370a-4326-95f7-2e2ca31857a6",
@@ -590,9 +533,7 @@
         "zeroCrossingRate": 0.04053724053724054,
         "flux": 0.004664155490242092
       },
-      "similarDropped": 2,
-      "trackCreatedAt": "2026-08-21T10:04:22.870Z",
-      "trackDurationSec": 5.090666666666666
+      "similarDropped": 2
     },
     {
       "sampleId": "ced859e6-9b36-4108-92ac-f9f79e261458",
@@ -609,9 +550,7 @@
         "zeroCrossingRate": 0.016605616605616606,
         "flux": 0
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:14:24.155Z",
-      "trackDurationSec": 5.101333333333334
+      "similarDropped": 0
     },
     {
       "sampleId": "bde7a597-87ca-43c3-8079-8fda9a4bc42e",
@@ -628,9 +567,7 @@
         "zeroCrossingRate": 0.0380952380952381,
         "flux": 0.007202601282480776
       },
-      "similarDropped": 1,
-      "trackCreatedAt": "2026-08-21T10:15:58.542Z",
-      "trackDurationSec": 5.08
+      "similarDropped": 1
     },
     {
       "sampleId": "9f74d826-f8ec-4039-8fc8-93e7b43f8cf9",
@@ -647,9 +584,7 @@
         "zeroCrossingRate": 0.04737484737484737,
         "flux": 0.0026885724120518815
       },
-      "similarDropped": 2,
-      "trackCreatedAt": "2026-08-21T10:14:18.822Z",
-      "trackDurationSec": 5.082666666666666
+      "similarDropped": 2
     },
     {
       "sampleId": "f05abe1e-cc5c-4020-a38d-06adecbbc0dc",
@@ -666,9 +601,7 @@
         "zeroCrossingRate": 0.05885225885225885,
         "flux": 0.004816182723969777
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:21:39.290Z",
-      "trackDurationSec": 4.981333333333334
+      "similarDropped": 0
     },
     {
       "sampleId": "8ee11c7e-64d8-4918-9b1b-05189e828862",
@@ -685,9 +618,7 @@
         "zeroCrossingRate": 0.08180708180708181,
         "flux": 0.012514147699762609
       },
-      "similarDropped": 7,
-      "trackCreatedAt": "2026-08-21T10:23:08.722Z",
-      "trackDurationSec": 4.949333333333334
+      "similarDropped": 7
     },
     {
       "sampleId": "3d57d819-3e5f-4f29-98b2-b7d1bf489499",
@@ -704,9 +635,7 @@
         "zeroCrossingRate": 0.10964590964590964,
         "flux": 0.0020824621036099242
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:20:36.257Z",
-      "trackDurationSec": 5.16
+      "similarDropped": 0
     },
     {
       "sampleId": "3c987cad-8b94-4b8a-a2a9-7f79c5bfa0b7",
@@ -723,9 +652,7 @@
         "zeroCrossingRate": 0.12673992673992673,
         "flux": 0.0315441408146883
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:20:20.411Z",
-      "trackDurationSec": 4.96
+      "similarDropped": 0
     },
     {
       "sampleId": "7adaea8d-ddeb-449a-b830-819ffc07187e",
@@ -742,9 +669,7 @@
         "zeroCrossingRate": 0.11184371184371185,
         "flux": 0.00483735978477408
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T09:52:07.314Z",
-      "trackDurationSec": 5.042666666666666
+      "similarDropped": 0
     },
     {
       "sampleId": "61100f33-a928-4a74-a9ec-24a66881123e",
@@ -761,9 +686,7 @@
         "zeroCrossingRate": 0.12283272283272283,
         "flux": 0.00287007176110722
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:16:03.855Z",
-      "trackDurationSec": 4.952
+      "similarDropped": 0
     },
     {
       "sampleId": "d344a113-6e24-4d2d-ae34-c21e808fe990",
@@ -780,9 +703,7 @@
         "zeroCrossingRate": 0.08815628815628816,
         "flux": 0.006067714697039249
       },
-      "similarDropped": 2,
-      "trackCreatedAt": "2026-08-21T10:44:26.200Z",
-      "trackDurationSec": 5.08
+      "similarDropped": 2
     },
     {
       "sampleId": "3a24165b-ff13-4f1c-8e21-3e5d3aa2a663",
@@ -799,9 +720,7 @@
         "zeroCrossingRate": 0.0547008547008547,
         "flux": 0.005764413010650853
       },
-      "similarDropped": 1,
-      "trackCreatedAt": "2026-08-21T10:11:40.216Z",
-      "trackDurationSec": 4.938666666666666
+      "similarDropped": 1
     },
     {
       "sampleId": "04eb97bb-5af8-47f7-9167-90ff61ea122e",
@@ -818,9 +737,43 @@
         "zeroCrossingRate": 0.06446886446886448,
         "flux": 0.058341815509063186
       },
-      "similarDropped": 0,
-      "trackCreatedAt": "2026-08-21T10:40:48.322Z",
-      "trackDurationSec": 5.072
+      "similarDropped": 0
     }
-  ]
+  ],
+  "live": {
+    "entry": "POST media.membrana.space/v1/devices/1c04f0bc-…/collections/__buffer__/plugins/membrana.report.session-digest/request",
+    "body": {
+      "from": "2026-08-21T09:45:18.000Z",
+      "to": "2026-08-21T10:46:00.000Z"
+    },
+    "http": 201,
+    "seconds": 11.96,
+    "runId": "01a024dc-dfca-7ee9-bf31-a047e1f1f798",
+    "address": {
+      "pluginId": "membrana.report.session-digest",
+      "version": "0.1.0",
+      "collectionId": "__buffer__",
+      "runId": "01a024dc-dfca-7ee9-bf31-a047e1f1f798",
+      "mountTarget": "background-media/collections"
+    },
+    "bridge": {
+      "outcome": "sent",
+      "attempts": 1,
+      "status": 201
+    },
+    "fingerprints": {
+      "inputHash": "2ca448a05998b5c6ec2055fb92e1f34204a185a6ba0d9be82822bd38e9c929b7",
+      "configHash": "f80adda1003f91e64274b959b2032543d468ef0614dd8a00c23370c716ca2fcb"
+    },
+    "completedAt": "2026-08-21T15:07:41.207Z",
+    "staleOnReadBack": false,
+    "readBack": "GET office.mmbrn.tech/plugin-results/runs?collectionId=__buffer__&pluginId=membrana.report.session-digest",
+    "note": "ПЕРВЫЙ RunRecord рода report в доме результатов: до сих пор туда ложились только handler-прогоны mfcc. Прод на стволе 564b4719 (образ пересобран сессией Г по порядку дня: простой устройства, гейт App DI smoke на этом SHA, verify:image-workspace-deps, метка отката)."
+  },
+  "labVsLive": {
+    "claim": "Лабораторный прогон (окно 09:41:00, 670 треков) и боевой (09:45:18, 666 треков) дали ОДИН И ТОТ ЖЕ отбор.",
+    "referencesMatched": "20 из 20",
+    "negativesMatched": "20 из 20",
+    "why": "Четыре трека разницы — проба после установки; событий над порогом она не дала. Совпадение при разном окне и разном пути исполнения подтверждает детерминизм прибора и честность лабораторного вещдока."
+  }
 }
