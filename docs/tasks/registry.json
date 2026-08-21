@@ -1,6 +1,28 @@
 {
   "tasks": [
     {
+      "id": "deploy-safestorage-2026-08-21",
+      "title": "Деплой связки per-device ключей (ADR-0028 Р1/Р2) + включение шифрованного хранения кредов (Р4)",
+      "promptPath": "docs/prompts/SESSION_G_DEPLOY_SAFESTORAGE_SPRINT_2026-08-21.md",
+      "githubIssue": null,
+      "noIssueReason": "ADR-0028 несёт решения; Issue заводится при находке на приёмке",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-21",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [
+        "tarasov",
+        "vesnin",
+        "dynin"
+      ],
+      "notes": "слово владельца 21.08: деплой разрешён, порядок media → cabinet; вещдоки с сервера, при отклонении откат сначала; Р3 не сегодня",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "journal-session-twenty",
       "title": "Плагин разбора сеанса: двадцать опорных звуков часового сеанса (относительная громкость, отсев похожего, шум vs структура)",
       "promptPath": "docs/prompts/JOURNAL_SESSION_TWENTY_PROMPT.md",
