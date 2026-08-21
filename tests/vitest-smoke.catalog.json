@@ -6,18 +6,19 @@
   "smoke": [
     "@membrana/audio-engine-service",
     "@membrana/core",
-    "@membrana/detector-base"
+    "@membrana/detector-base",
+    "@membrana/fft-analyzer-service"
   ],
   "withoutTests": [],
   "corpusSize": 41,
   "ranking": [
     {
       "name": "@membrana/core",
-      "fanIn": 27
+      "fanIn": 28
     },
     {
       "name": "@membrana/audio-engine-service",
-      "fanIn": 16
+      "fanIn": 17
     },
     {
       "name": "@membrana/detector-base",
@@ -25,7 +26,7 @@
     },
     {
       "name": "@membrana/fft-analyzer-service",
-      "fanIn": 9
+      "fanIn": 10
     },
     {
       "name": "@membrana/trends-detector-service",
