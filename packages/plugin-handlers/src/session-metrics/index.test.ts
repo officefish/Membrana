@@ -18,7 +18,8 @@ import {
   refuseSession,
   sessionFloor,
   shortfallOf,
-  structureBoundary,
+  indicesByStructure,
+  DEFAULT_FLATNESS_CEILING,
   structureOf,
   type EventFeatures,
 } from './index.js';
@@ -142,19 +143,40 @@ describe('отсев похожего (требование 2)', () => {
   });
 });
 
-describe('шум против структуры (требование 3)', () => {
-  it('граница — квантиль сеанса, а не константа', () => {
-    const flat = [0.1, 0.2, 0.3, 0.8, 0.9];
-    expect(structureBoundary(flat, 0.5)).toBe(0.3);
-    expect(structureBoundary(flat, 0)).toBe(0.1);
-    // Тот же квантиль на «шумном» сеансе даёт ДРУГОЕ число — в этом и смысл.
-    expect(structureBoundary([0.7, 0.8, 0.9], 0.5)).toBe(0.8);
+describe('шум против структуры (требование 3) — граница абсолютом', () => {
+  it('потолок по слуху 0.15; ровно на потолке событие тональное', () => {
+    expect(DEFAULT_FLATNESS_CEILING).toBe(0.15);
+    // Числа взяты из часового сеанса 21.08: крайние тональный и широкополосный.
+    expect(structureOf(0.15, DEFAULT_FLATNESS_CEILING)).toBe('tonal');
+    expect(structureOf(0.15000001, DEFAULT_FLATNESS_CEILING)).toBe('broadband');
+    expect(structureOf(0.027, DEFAULT_FLATNESS_CEILING)).toBe('tonal');
+    expect(structureOf(0.361, DEFAULT_FLATNESS_CEILING)).toBe('broadband');
   });
 
-  it('тон уходит в опорные, широкополосный всплеск — в негативный материал', () => {
-    const boundary = structureBoundary([0.1, 0.2, 0.9, 0.95], 0.5);
-    expect(structureOf(0.1, boundary)).toBe('tonal');
-    expect(structureOf(0.95, boundary)).toBe('broadband');
+  it('сеанс из одних шагов НЕ объявляет половину шагов тональными — то, чего не умел квантиль', () => {
+    // Все события широкополосные (0.20…0.36). Квантиль 0.5 назвал бы половину «тональными»;
+    // абсолют честно говорит: тональных нет.
+    const steps = [0.2, 0.24, 0.28, 0.31, 0.36];
+    expect(indicesByStructure(steps, DEFAULT_FLATNESS_CEILING, 'tonal')).toEqual([]);
+    expect(indicesByStructure(steps, DEFAULT_FLATNESS_CEILING, 'broadband')).toEqual([0, 1, 2, 3, 4]);
+  });
+
+  it('подмножество рода сохраняет порядок входа — отбор решает не этот блок', () => {
+    const mixed = [0.36, 0.03, 0.20, 0.11, 0.15];
+    expect(indicesByStructure(mixed, DEFAULT_FLATNESS_CEILING, 'tonal')).toEqual([1, 3, 4]);
+    expect(indicesByStructure(mixed, DEFAULT_FLATNESS_CEILING, 'broadband')).toEqual([0, 2]);
+  });
+
+  it('не посчитавшаяся плоскостность не попадает НИ В ОДИН род', () => {
+    // NaN <= ceiling ложно, и без защиты событие молча ушло бы в негатив как факт о звуке.
+    const withNan = [0.03, Number.NaN, 0.3, Number.POSITIVE_INFINITY];
+    expect(indicesByStructure(withNan, DEFAULT_FLATNESS_CEILING, 'tonal')).toEqual([0]);
+    expect(indicesByStructure(withNan, DEFAULT_FLATNESS_CEILING, 'broadband')).toEqual([2]);
+  });
+
+  it('потолок — параметр: другой тракт назовёт другое число', () => {
+    expect(structureOf(0.25, 0.3)).toBe('tonal');
+    expect(structureOf(0.25, 0.15)).toBe('broadband');
   });
 });
 

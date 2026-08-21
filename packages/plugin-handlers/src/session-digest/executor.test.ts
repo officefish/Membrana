@@ -9,8 +9,11 @@ import type { CollectionSampleDescriptor, CollectionSampleReader } from '../samp
 import { SESSION_DIGEST_MANIFEST } from './manifest.js';
 import { createSessionDigestExecutor, windowOf, type SessionDigestResult } from './executor.js';
 
-/** WAV PCM16 моно 48 кГц: заголовок + сэмплы. Тише/громче задаётся амплитудой. */
-function wav(seconds: number, amp: number, hz: number, sr = 48000): Uint8Array {
+/**
+ * WAV PCM16 моно 48 кГц. `noise > 0` подмешивает детерминированную «пилу» — так рождается
+ * широкополосное событие (шаг, дверь), которое отличимо от чистого тона плоскостностью.
+ */
+function wav(seconds: number, amp: number, hz: number, sr = 48000, noise = 0): Uint8Array {
   const n = Math.floor(seconds * sr);
   const buf = new ArrayBuffer(44 + n * 2);
   const view = new DataView(buf);
@@ -20,13 +23,15 @@ function wav(seconds: number, amp: number, hz: number, sr = 48000): Uint8Array {
   view.setUint32(24, sr, true); view.setUint32(28, sr * 2, true); view.setUint16(32, 2, true); view.setUint16(34, 16, true);
   ascii(36, 'data'); view.setUint32(40, n * 2, true);
   for (let i = 0; i < n; i++) {
-    const v = amp * Math.sin((2 * Math.PI * hz * i) / sr);
+    const v = amp * Math.sin((2 * Math.PI * hz * i) / sr) + (noise === 0 ? 0 : noise * (((i * 2654435761) % 2000) / 1000 - 1));
     view.setInt16(44 + i * 2, Math.max(-1, Math.min(1, v)) * 32767, true);
   }
   return new Uint8Array(buf);
 }
 
 interface Track { id: string; title: string; createdAt?: string; bytes: Uint8Array }
+
+const STAMP = '2026-08-21T10:00:30.000Z';
 
 function reader(tracks: readonly Track[]): CollectionSampleReader {
   return {
@@ -88,9 +93,10 @@ describe('окно сеанса приезжает в ctx.payload (контра�
     const r = await run(tracks, { from: '2026-08-21T09:59:00.000Z', to: '2026-08-21T10:01:00.000Z' });
     expect(r.window.tracksSeen).toBe(33);
     expect(r.window.tracksInWindow).toBe(31);
-    expect(r.twenty.map((t) => t.sampleId)).toContain('in');
-    expect(r.twenty.map((t) => t.sampleId)).not.toContain('out');
-    expect(r.twenty.map((t) => t.sampleId)).not.toContain('no-stamp');
+    const seen = [...r.references, ...r.negatives].map((s) => s.sampleId);
+    expect(seen).toContain('in');
+    expect(seen).not.toContain('out');
+    expect(seen).not.toContain('no-stamp');
   });
 });
 
@@ -99,7 +105,7 @@ describe('свод: адрес — точка, паспорт честен, от
     const r = await run([...quiet(30), { id: 'loud', title: 'сигнал', createdAt: '2026-08-21T10:00:30.000Z', bytes: wav(1, 0.6, 440) }]);
     expect(r.refusal).toBeNull();
     expect(r.floor.measured).toBe(true);
-    const found = r.twenty.find((t) => t.sampleId === 'loud');
+    const found = [...r.references, ...r.negatives].find((s) => s.sampleId === 'loud');
     expect(found).toBeDefined();
     expect(found!.peakDb).toBeGreaterThan(12);
     expect(found!.endSec).toBeGreaterThan(found!.startSec);
@@ -110,8 +116,11 @@ describe('свод: адрес — точка, паспорт честен, от
   it('паспорт несёт рабочую точку и признаётся, что пороги ещё не подтверждены слухом', async () => {
     const r = await run([...quiet(30)], {}, { deltaDb: 18 });
     expect(r.passport.deltaDb).toBe(18);
-    expect(r.passport.limit).toBe(20);
-    expect(r.passport.provisionalThresholds).toBe(true);
+    expect(r.passport.referencesLimit).toBe(20);
+    expect(r.passport.negativesLimit).toBe(20);
+    expect(r.passport.flatnessCeiling).toBe(0.15);
+    // Поимённо, а не общим флагом: слух уже назвал потолок и дБ, но не кадр и не близость.
+    expect(r.passport.provisional).toEqual(['frameSize', 'minDistanceRatio']);
   });
 
   it('двадцать одинаковых хлопков схлопываются, и вытеснение видно числом', async () => {
@@ -119,7 +128,7 @@ describe('свод: адрес — точка, паспорт честен, от
       id: `clone${i}`, title: `хлопок ${i}`, createdAt: '2026-08-21T10:00:30.000Z', bytes: wav(1, 0.6, 440),
     }));
     const r = await run([...quiet(30), ...clones]);
-    const kept = r.twenty.filter((t) => t.sampleId.startsWith('clone'));
+    const kept = [...r.references, ...r.negatives].filter((s) => s.sampleId.startsWith('clone'));
     expect(kept).toHaveLength(1);
     expect(kept[0]!.similarDropped).toBeGreaterThan(0);
     expect(r.eventsFound).toBeGreaterThanOrEqual(8);
@@ -130,8 +139,9 @@ describe('отказы именем, не тихим нулём', () => {
   it('в окне пусто — session-too-short с числами', async () => {
     const r = await run(quiet(30), { from: '2030-01-01T00:00:00.000Z' });
     expect(r.refusal?.reason).toBe('session-too-short');
-    expect(r.twenty).toEqual([]);
-    expect(r.shortfall).toBe(20);
+    expect(r.references).toEqual([]);
+    expect(r.negatives).toEqual([]);
+    expect(r.shortfall).toEqual({ references: 20, negatives: 20 });
   });
 
   it('кадров меньше двадцати — фон НЕ измерен, и прогон это говорит', async () => {
@@ -143,6 +153,49 @@ describe('отказы именем, не тихим нулём', () => {
   it('ничего громче фона — no-events-over-floor, а не пустой топ без причины', async () => {
     const r = await run(quiet(40), {}, { deltaDb: 40 });
     expect(r.refusal?.reason).toBe('no-events-over-floor');
-    expect(r.twenty).toEqual([]);
+    expect(r.references).toEqual([]);
+    expect(r.negatives).toEqual([]);
+  });
+});
+
+describe('опорные и негатив — РАЗНЫЕ списки (требование 3 владельца)', () => {
+  /** Тон 440 Гц — опорный образ; «шаг» — та же громкость, но широкополосный. */
+  const tone = (id: string) => ({ id, title: `тон ${id}`, createdAt: STAMP, bytes: wav(1, 0.5, 440) });
+  const step = (id: string) => ({ id, title: `шаг ${id}`, createdAt: STAMP, bytes: wav(1, 0.1, 300, 48000, 0.6) });
+
+  it('громкий шаг НЕ вытесняет тихий тон из опорных — дедуп идёт внутри рода', async () => {
+    const r = await run([...quiet(30), step('s1'), step('s2'), tone('t1')]);
+    expect(r.references.map((s) => s.sampleId)).toContain('t1');
+    expect(r.references.every((s) => s.structure === 'tonal')).toBe(true);
+    expect(r.negatives.every((s) => s.structure === 'broadband')).toBe(true);
+    // Шаги не пропали — они в негативе, с адресами. Их ДВА одинаковых, и дедуп внутри рода
+    // честно оставляет один: это те же «двадцать кусков одного хлопка», только в негативе.
+    expect(r.negatives).toHaveLength(1);
+    expect(r.negatives[0]!.sampleId.startsWith('s')).toBe(true);
+    expect(r.negatives[0]!.similarDropped).toBeGreaterThan(0);
+  });
+
+  it('списки не пересекаются и оба несут адрес-точку', async () => {
+    const r = await run([...quiet(30), step('s1'), tone('t1')]);
+    const refs = new Set(r.references.map((s) => `${s.sampleId}@${s.startSec}`));
+    for (const n of r.negatives) expect(refs.has(`${n.sampleId}@${n.startSec}`)).toBe(false);
+    for (const s of [...r.references, ...r.negatives]) {
+      expect(s.endSec).toBeGreaterThan(s.startSec);
+      expect(s.sampleId).toBeTruthy();
+    }
+  });
+
+  it('недобор считается по каждому списку отдельно', async () => {
+    const r = await run([...quiet(30), tone('t1')]);
+    expect(r.shortfall.references).toBe(19);
+    expect(r.shortfall.negatives).toBe(20);
+  });
+
+  it('потолок плоскостности — параметр: подняв его, шаг переезжает в опорные', async () => {
+    const tracks = [...quiet(30), step('s1')];
+    expect((await run(tracks)).references).toHaveLength(0);
+    const loose = await run(tracks, {}, { flatnessCeiling: 0.99 });
+    expect(loose.references.map((s) => s.sampleId)).toContain('s1');
+    expect(loose.negatives).toHaveLength(0);
   });
 });
