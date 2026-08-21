@@ -1,2 +1,4 @@
 {"traceId":"tr-r1-ozhegov-run","blockId":"r1-report-entry","kind":"context_run","subject":"ozhegov","at":"2026-08-21T14:05:25+00:00","ref":"docs/virtual-team/memory/op-log/ozhegov/2026-08-21.jsonl"}
 {"traceId":"tr-r1-ozhegov-review","blockId":"r1-report-entry","kind":"review_pass","subject":"ozhegov","at":"2026-08-21T14:05:25+00:00","ref":"packages/background-media/src/modules/collections/first-wave.registrar.test.ts"}
+{"traceId":"tr-r2-kuryokhin-run","blockId":"r2-live-hour-evidence","kind":"context_run","subject":"kuryokhin","at":"2026-08-21T15:09:54+00:00","ref":"docs/virtual-team/memory/op-log/kuryokhin/2026-08-21.jsonl"}
+{"traceId":"tr-r2-kuryokhin-review","blockId":"r2-live-hour-evidence","kind":"review_pass","subject":"kuryokhin","at":"2026-08-21T15:09:54+00:00","ref":"docs/plugins/session-hour-2026-08-21.md"}
