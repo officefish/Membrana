@@ -96,6 +96,15 @@ describe('отсев похожего (требование 2)', () => {
     expect(droppedAs.get(3)).toBe(0);
   });
 
+  it('сеанс из одних копий: остаётся ОДИН, а не двадцать кусков одного хлопка', () => {
+    // Вырожденный случай: максимум расстояний ноль, порог ноль. Строгое «<» пропустило бы всех.
+    const clones = Array.from({ length: 8 }, () => features());
+    const vectors = normalizeFeatures(clones);
+    const { kept, droppedAs } = dedupeGreedy(vectors, clones.map((_, i) => i), 0.05, 20);
+    expect(kept).toEqual([0]);
+    expect(droppedAs.size).toBe(7);
+  });
+
   it('порядок несущий: первым остаётся тот, кого подали громчайшим', () => {
     const vectors = normalizeFeatures([features(), features(), features({ centroidHz: 5000 })]);
     expect(dedupeGreedy(vectors, [1, 0, 2], 0.05, 20).kept[0]).toBe(1);

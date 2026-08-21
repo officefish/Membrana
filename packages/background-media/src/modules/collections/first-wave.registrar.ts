@@ -49,6 +49,9 @@ export function prismaSampleReader(prisma: PrismaService, blobs: BlobStorageServ
     listSamples: async (collectionId) =>
       (await prisma.sample.findMany({ where: { collectionId }, orderBy: { id: 'asc' } })).map((row) => ({
         id: row.id, sampleRate: row.sampleRate, channels: row.channels, audioFormat: row.audioFormat, sizeBytes: row.sizeBytes, title: row.title,
+        // Отметка создания — ею адресуется окно сеанса у рода report (j2, #1961). Отдаётся ISO-строкой:
+        // порт framework-нейтрален и о Date из Prisma знать не обязан.
+        createdAt: row.createdAt.toISOString(),
       })),
     readAudio: async (sample) => {
       const row = await prisma.sample.findUniqueOrThrow({ where: { id: sample.id }, select: { storageRef: true } });

@@ -210,7 +210,11 @@ export function dedupeGreedy(
     kept.push(idx);
     for (const other of order) {
       if (other === idx || droppedAs.has(other) || kept.includes(other)) continue;
-      if (euclidean(vectors[idx]!, vectors[other]!) < threshold) droppedAs.set(other, idx);
+      // НЕ ДАЛЬШЕ порога, а не «строго ближе». Разница видна на вырожденном сеансе: когда все
+      // кандидаты — копии одного хлопка, максимум расстояний равен нулю, порог тоже, и строгое
+      // сравнение не выбросило бы НИКОГО — двадцать кусков одного звука прошли бы в отбор.
+      // Поймано зубом соседнего блока (j2) на восьми клонах, не рассуждением.
+      if (euclidean(vectors[idx]!, vectors[other]!) <= threshold) droppedAs.set(other, idx);
     }
   }
   return { kept, droppedAs };
