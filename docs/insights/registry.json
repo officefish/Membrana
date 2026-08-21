@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-04",
+  "updatedAt": "2026-08-21",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -875,6 +875,17 @@
       "horizon": null,
       "weight": 7.2,
       "createdAt": "2026-08-03",
+      "tags": []
+    },
+    {
+      "id": "insight-active-alarm-notifications",
+      "title": "Активная тревога: уведомления оператору сверх журнала",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-08-21",
       "tags": []
     }
   ]
