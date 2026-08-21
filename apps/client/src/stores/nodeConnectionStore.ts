@@ -3,8 +3,20 @@ import { create } from 'zustand';
 import type { NodeConnectionMode, PairedNodeCredentials, PairingInvalidReason } from '../lib/nodeConnectionMode';
 import { resolvePairingCredentialsStore, type PersistedNodeConnection } from '../lib/pairing-credentials-store';
 
-// Хранение — через порт (b2 studio-firebat-user-pairing): web-адаптер сегодня, Electron за ADR-0028.
-const credentialsStore = resolvePairingCredentialsStore();
+// Хранение — через порт (b2 studio-firebat-user-pairing). С ADR-0028 Р4 (21.08) в Studio узла
+// это шифртекст safeStorage: `resolve` отдаёт пару «порт + hydrate», порт остаётся синхронным.
+const credentials = resolvePairingCredentialsStore();
+const credentialsStore = credentials.store;
+
+/**
+ * Подъём шифртекста в кэш ДО первого чтения. В web `hydrate` — пустое обещание, поведение
+ * не меняется; в Studio — чтение шифртекста и, при первом запуске после обновления, перенос
+ * старых кредов из localStorage (миграция одним стартом, ADR-0028 Р4).
+ *
+ * Обещание держится модулем, а не сторой: `hydrate()` стора синхронен и зовётся из UI —
+ * ждать его там нельзя, а дважды поднимать кэш незачем.
+ */
+const credentialsReady: Promise<void> = credentials.hydrate();
 
 interface NodeConnectionState extends PersistedNodeConnection {
   hydrated: boolean;
@@ -61,12 +73,16 @@ export const useNodeConnectionStore = create<NodeConnectionState>((set, get) => 
 
   hydrate: () => {
     if (get().hydrated) return;
-    const persisted = readPersisted();
-    set({
-      ...persisted,
-      hydrated: true,
-      showModePicker: persisted.mode === null,
-    });
+    const apply = (persisted: PersistedNodeConnection): void => {
+      set({
+        ...persisted,
+        hydrated: true,
+        showModePicker: persisted.mode === null,
+      });
+    };
+    // Кэш уже поднят (web — сразу, Studio — после чтения шифртекста) → берём значение;
+    // иначе ждём подъёма и применяем следом, не блокируя UI.
+    void credentialsReady.then(() => apply(readPersisted()));
   },
 
   openModePicker: () =>
