@@ -13,33 +13,53 @@
       "blockId": "deploy-preflight",
       "persona": "tarasov",
       "context": "tarasov",
-      "zone": ["docs/deploy/deploy-2026-08-21-preflight.md"],
+      "zone": [
+        "docs/deploy/deploy-2026-08-21-preflight.md"
+      ],
       "revisionAt": "2026-08-21T09:00:00+00:00",
-      "estimate": { "changedLines": 90 }
+      "estimate": {
+        "changedLines": 90
+      },
+      "revisionOf": "044b4271e214a80c8383d9de04a4ede3c0f2368991d5ad6778953cb27a7f6101"
     },
     {
       "blockId": "deploy-media",
       "persona": "ozhegov",
       "context": "ozhegov",
-      "zone": ["docs/deploy/deploy-2026-08-21-media.md"],
+      "zone": [
+        "docs/deploy/deploy-2026-08-21-media.md"
+      ],
       "revisionAt": "2026-08-21T09:00:00+00:00",
-      "estimate": { "changedLines": 100 }
+      "estimate": {
+        "changedLines": 100
+      },
+      "revisionOf": "da18ee8e2911d852b8cc6bf0424ee3a52fea7edf894569c07ff66639f54cbcbc"
     },
     {
       "blockId": "deploy-cabinet",
       "persona": "ozhegov",
       "context": "ozhegov",
-      "zone": ["docs/deploy/deploy-2026-08-21-cabinet.md"],
+      "zone": [
+        "docs/deploy/deploy-2026-08-21-cabinet.md"
+      ],
       "revisionAt": "2026-08-21T09:00:00+00:00",
-      "estimate": { "changedLines": 80 }
+      "estimate": {
+        "changedLines": 80
+      },
+      "revisionOf": "aa26a1570fc06c46a9bfa92fe2e074f426128411b7afe3083bf49ef25ea67f5a"
     },
     {
       "blockId": "deploy-acceptance",
       "persona": "dynin",
       "context": "dynin",
-      "zone": ["docs/deploy/deploy-2026-08-21-acceptance.md"],
+      "zone": [
+        "docs/deploy/deploy-2026-08-21-acceptance.md"
+      ],
       "revisionAt": "2026-08-21T09:00:00+00:00",
-      "estimate": { "changedLines": 120 }
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionOf": "1b7267cfe8f0822678a962488e199259ae3f346ef601b3994702e605020e4fd4"
     },
     {
       "blockId": "secure-store-cache",
@@ -50,7 +70,10 @@
         "apps/client/src/lib/pairing-credentials-store.test.ts"
       ],
       "revisionAt": "2026-08-21T09:00:00+00:00",
-      "estimate": { "changedLines": 230 }
+      "estimate": {
+        "changedLines": 230
+      },
+      "revisionOf": "c51578e02de84d2f8ff9011987c7cf8d0592a6673e6f71ea73cfc85e435d58cd"
     },
     {
       "blockId": "studio-bridge-honest",
@@ -62,15 +85,23 @@
         "apps/membrana-studio/src/secure-storage.test.ts"
       ],
       "revisionAt": "2026-08-21T09:00:00+00:00",
-      "estimate": { "changedLines": 120 }
+      "estimate": {
+        "changedLines": 120
+      },
+      "revisionOf": "cf25846574f131399bc60c9b0e1c25f36ca81713ca5dc72d5f08d6c69ea10a61"
     },
     {
       "blockId": "client-store-wiring",
       "persona": "vesnin",
       "context": "vesnin",
-      "zone": ["apps/client/src/stores/nodeConnectionStore.ts"],
+      "zone": [
+        "apps/client/src/stores/nodeConnectionStore.ts"
+      ],
       "revisionAt": "2026-08-21T09:00:00+00:00",
-      "estimate": { "changedLines": 70 }
+      "estimate": {
+        "changedLines": 70
+      },
+      "revisionOf": "e31e4d17972717521c4673892ce0761977de10bf321041c16addafa16b1a71dd"
     }
   ],
   "//why": "Слово владельца 21.08: деплой связки с per-device ключами разрешён, порядок media → cabinet; и включение шифрованного хранения кредов (ADR-0028 Р4). Вся работа Р1/Р2 (PR #2031, 20.08) живёт только в стволе: прод работает по-старому.",
@@ -79,5 +110,10 @@
   "//order": "b1 → b2 → b3 → b4 жёсткой цепью (preflight → media → cabinet → приёмка). Часть 2 (b5 → b6 → b7) стартует ТОЛЬКО после снятой приёмки b4: включать шифрование до подтверждения per-device ключа значит зашифровать возможно старый служебный токен и потерять диагностируемость. Зоны не пересекаются.",
   "//dod": "b1: документ с гейтом (App DI smoke зелёный, ссылка на прогон), снимком состояния прода и НАЗВАННОЙ командой отката до выкатки. b2: media на коде ствола, миграция node_key_audience применена (проверено psql: колонка audience есть), health 200, тег отката существует — вещдоки в документе. b3: cabinet поднят на свежем образе, health 200, вещдоки в документе. b4: четыре вещдока приёмки С СЕРВЕРА — (1) перевыдача: mediaToken в ответе ≠ API_INTERNAL_TOKEN, (2) в NodeKey строка audience='client', (3) запись из Studio принята устройством 1c04f0bc-…, (4) отзыв связки → revokedAt у client-ключа и отбой загрузки тем ключом; расхождение = откат, не пояснение. b5: кэш-адаптер поверх моста — порт синхронный (три глагола), hydrate при старте, миграция localStorage → шифртекст одним стартом, политика «не расшифровалось → пустое состояние (чистый ре-парринг), не крах»; зубы на все три ветки. b6: available честный (по isEncryptionAvailable, не хардкод), get/set/del зубами. b7: nodeConnectionStore зовёт резолвер с hydrate до первого чтения; поведение web не изменилось.",
   "//out-of-scope": "Р3 (ротация MEDIA_API_TOKEN) — не сегодня, только после раскатки Р1. Магистраль дня и полосы Б/В не трогать. office не деплоится (не нужен). git add -A запрещён. Правки самих сервисов ради деплоя не делаются: выкатывается ствол как есть; если ствол не поднимается — откат и разбор, а не правка на проде.",
-  "//pr-plan": "PR-1: b1–b4 (документы деплоя и приёмки, ~390) · PR-2: b5+b6 (кэш-адаптер и честный мост, ~350) · PR-3: b7 + закрытие спринта (провод, гейт, опыт, CLOSURE). Каждый через code-review:pr → pr:ship."
+  "//pr-plan": "PR-1: b1–b4 (документы деплоя и приёмки, ~390) · PR-2: b5+b6 (кэш-адаптер и честный мост, ~350) · PR-3: b7 + закрытие спринта (провод, гейт, опыт, CLOSURE). Каждый через code-review:pr → pr:ship.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-21T09:43:00+00:00",
+    "digest": "e4ad0558f688780428192a2070f8a245f9d363be57d1e108e813bb9f0c95ce05"
+  }
 }
