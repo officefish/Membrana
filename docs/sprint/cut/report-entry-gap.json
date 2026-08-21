@@ -1,0 +1,62 @@
+{
+  "//": "Мини-спринт report-entry-gap (S, фаза #1961, продолжение #2039). Повод — ФАКТ боевого прогона 21.08 после пересборки образа сессией Г: плагин в образе, зарегистрирован, но вход requestRun ведёт только к mfcc (first-wave.registrar.ts:153) — свод отвечает 501 «заглушка первой волны»; а повод по умолчанию (sample_added) требует sampleId, которого своду не нужно. ПОПРАВКА К РЕЗЧИКУ: он предложил повод window_opened — такого в закрытом PLUGIN_TRIGGERS нет, и заводить его нельзя (#1982). Берём collections.collection_created — он в словаре и sampleId не требует. Зубы идут В ЭТОТ ЖЕ PR, а не отдельной карточкой: норма репозитория — зубы рядом; объёмы кладутся с коэффициентом на зубы и провенанс (урок 21.08).",
+  "schema": "sprint-cut/1",
+  "sprintId": "report-entry-gap",
+  "taskId": "report-entry-gap",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
+    "reason": "Носители contract_signature/session_prep не являются обязательным машинным корпусом membrana-local-sprint; ответственность проверяется планом, зонами, контекстными следами, review-вещдоками и procedure-run-journal."
+  },
+  "window": {
+    "from": "2026-08-21T17:30:00+03:00",
+    "to": "2026-08-21T23:59:00+03:00"
+  },
+  "revisionAt": "2026-08-21T17:30:00+03:00",
+  "blocks": [
+    {
+      "blockId": "r1-report-entry",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/plugin-handlers/src/session-digest/",
+        "packages/background-media/src/modules/collections/first-wave.registrar.ts",
+        "packages/background-media/src/modules/collections/first-wave.registrar.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "note": "Три вещи. (1) Повод свода — collections.collection_created вместо sample_added: он в ЗАКРЫТОМ словаре M4 и sampleId не требует, а свод идёт по окну, не по пробе; манифест правится, контракты нет. (2) Отпечатки рода report: configHash — от СОБСТВЕННОГО пресета свода (flatnessCeiling, deltaDb, minDistanceRatio, frameSize, лимиты), inputHash — чтением проб ОКНА, не всей коллекции; функция живёт рядом с исполнителем свода, как mfccFingerprintsOf рядом с mfcc. (3) Форма ветвления в requestRun — СЛОВАРЬ «pluginId → сборщик контекста» вместо лестницы if: два плагина терпимы веткой, N — нет, и словарь делает вход открытым для третьего рода без правки входа. Зубы рядом: боевой путь 501→200 на подменённом хосте, отпечатки свода детерминированы, повод без sampleId проходит.",
+      "revisionAt": "2026-08-21T13:45:27+00:00",
+      "revisionOf": "eb0a8d522f4f78d8aa73ba1503c7f7b6a67fb83dae22420d0bcd2dab8ba309a8"
+    },
+    {
+      "blockId": "r2-live-hour-evidence",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "docs/plugins/session-hour-2026-08-21.md",
+        "docs/plugins/session-hour-2026-08-21.run.json"
+      ],
+      "estimate": {
+        "changedLines": 140
+      },
+      "note": "Прогон часа БОЕВЫМ входом на окне владельца 09:45:18 → 10:46 UTC (устройство 1c04f0bc-…, коллекция __buffer__) и правка вещдока: строка «прогон лабораторный» заменяется боевым адресом с runId и исходом моста; проверяется, что RunRecord рода report доехал в plugin-results офиса (до сих пор туда ложились только handler-прогоны). Окно исправляется по слову владельца: старт 09:45:18, а не 09:41:44 — ранняя запись была пробой после установки, и «вторая дыра» 09:41:59→09:45:18 не дыра, а пауза между пробой и стартом; в вещдоке остаётся ОДНА дыра (118 с, перезапуск при деплое). Сверить двадцать опорных боевого прогона с лабораторными: расхождение — находка, совпадение — подтверждение.",
+      "revisionAt": "2026-08-21T13:45:27+00:00",
+      "revisionOf": "1a3ca3076a2d0e47a2a584e447beafd62bba1773e6583b37c81803850084638b"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-21T13:45:27+00:00",
+    "digest": "05cbb7b6182968af373985848a2e2802d5db91454f3d445911484fef668f6108"
+  }
+}

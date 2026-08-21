@@ -1,0 +1,2 @@
+{"traceId":"tr-r1-ozhegov-run","blockId":"r1-report-entry","kind":"context_run","subject":"ozhegov","at":"2026-08-21T14:05:25+00:00","ref":"docs/virtual-team/memory/op-log/ozhegov/2026-08-21.jsonl"}
+{"traceId":"tr-r1-ozhegov-review","blockId":"r1-report-entry","kind":"review_pass","subject":"ozhegov","at":"2026-08-21T14:05:25+00:00","ref":"packages/background-media/src/modules/collections/first-wave.registrar.test.ts"}

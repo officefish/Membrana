@@ -51,7 +51,7 @@ const ctx = (payload: unknown): PluginContext => ({
   },
   fingerprints: { inputHash: 'in', configHash: 'cfg' },
   resumeMode: 'fresh',
-  trigger: 'collections.sample_added',
+  trigger: 'collections.collection_created',
   payload,
 });
 
@@ -67,7 +67,9 @@ describe('манифест — по контракту plugin-contracts', () => 
   it('род report (не handler), дом collections, повод из закрытого словаря, имя <org>.<kind>.<slug>', () => {
     expect(SESSION_DIGEST_MANIFEST.kind).toBe('report');
     expect(SESSION_DIGEST_MANIFEST.mountTarget).toBe('background-media/collections');
-    expect(SESSION_DIGEST_MANIFEST.triggers).toEqual(['collections.sample_added']);
+    // collection_created, а не sample_added: боевой вход 21.08 показал, что sample_added тянет
+    // за собой обязательный sampleId (payload M4), которого своду не нужно — он идёт по окну.
+    expect(SESSION_DIGEST_MANIFEST.triggers).toEqual(['collections.collection_created']);
     expect(SESSION_DIGEST_MANIFEST.id).toMatch(/^[a-z][a-z0-9]*(\.[a-z][a-z0-9-]*){2}$/u);
     // У рода report поля windowSize нет вовсе — выдумывать ему смысл не пришлось.
     expect('windowSize' in SESSION_DIGEST_MANIFEST).toBe(false);

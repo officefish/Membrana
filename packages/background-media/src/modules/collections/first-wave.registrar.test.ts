@@ -42,7 +42,13 @@ async function registrar(cfg = config, bridge = spyBridge().bridge) {
   return { host, reg };
 }
 
-describe('FirstWavePluginsRegistrar', () => {
+/**
+ * Таймаут поднят до 20 с осознанно, а не ради зелёного: каждый прогон регистратора грузит meyda
+ * и читает пресет ворот из каталога, а таких прогонов в файле десять. По отдельности файл
+ * укладывается в умолчание, при параллельном прогоне пакета первые два теста упирались в 5 с —
+ * это цена загрузки библиотеки, а не медленный код.
+ */
+describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
   it('на старте модуля хост collections держит шесть детекторов ПЛЮС свод сеанса рода report', async () => {
     const host = new CollectionsPluginHostService();
     await host.onModuleInit();
@@ -120,5 +126,36 @@ describe('FirstWavePluginsRegistrar', () => {
       await expect(reg.requestRun({ pluginId: 'membrana.handler.harmonic' as PluginId, collectionId: 'c1', sampleId: 'a' })).rejects.toMatchObject({ status: 501 });
       await expect(reg.requestRun({ pluginId: 'membrana.report.nope' as PluginId, collectionId: 'c1' })).rejects.toMatchObject({ status: 400 });
     });
+  });
+});
+
+describe('вход ведёт и к своду сеанса (r1, пробел вскрыт боевым путём 21.08)', () => {
+  it('свод запускается БЕЗ sampleId — он идёт по окну, а не по пробе', async () => {
+    const { bridge, sent } = spyBridge();
+    const { reg } = await registrar(config, bridge);
+    const out = await reg.requestRun({ pluginId: 'membrana.report.session-digest' as PluginId, collectionId: 'c1', from: '2026-08-21T09:45:18.000Z', to: '2026-08-21T10:46:00.000Z' });
+    // До правки здесь было 501 «прогон не определён»: вход умел только mfcc.
+    expect(out.address.pluginId).toBe('membrana.report.session-digest');
+    expect(out.address.mountTarget).toBe('background-media/collections');
+    expect(out.fingerprints.inputHash).toMatch(/^[0-9a-f]{64}$/);
+    expect(out.fingerprints.configHash).toMatch(/^[0-9a-f]{64}$/);
+    expect(sent).toHaveLength(1);
+    expect(sent[0]!.kind).toBe('report');
+  });
+
+  it('отпечатки свода — СВОИ: другой пресет даёт другой configHash, тот же вход — тот же inputHash', async () => {
+    const { reg } = await registrar();
+    const a = await reg.requestRun({ pluginId: 'membrana.report.session-digest' as PluginId, collectionId: 'c1' });
+    const b = await reg.requestRun({ pluginId: 'membrana.report.session-digest' as PluginId, collectionId: 'c1' });
+    expect(a.fingerprints).toEqual(b.fingerprints);
+    const mfcc = await reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, collectionId: 'c1', sampleId: 'a' });
+    // Свод и mfcc читают те же пробы, но пресеты разные — отпечатки конфигурации не совпадают.
+    expect(a.fingerprints.configHash).not.toBe(mfcc.fingerprints.configHash);
+  });
+
+  it('незаведённый сборщик — 501, а не выдуманный контекст', async () => {
+    const { reg } = await registrar();
+    await expect(reg.requestRun({ pluginId: 'membrana.handler.yamnet' as PluginId, collectionId: 'c1', sampleId: 'a' }))
+      .rejects.toMatchObject({ status: 501 });
   });
 });

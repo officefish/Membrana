@@ -53,6 +53,12 @@ export class RequestPluginRunDto {
 
   @ApiPropertyOptional({ description: 'Обязателен для collections.sample_added (payload M4 несёт sampleId)' })
   sampleId?: string;
+
+  @ApiPropertyOptional({ description: 'Начало окна сеанса, ISO — для родов, идущих по времени (свод сеанса)' })
+  from?: string;
+
+  @ApiPropertyOptional({ description: 'Конец окна сеанса, ISO' })
+  to?: string;
 }
 
 export class PluginRunResponseDto {

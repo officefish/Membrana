@@ -12,9 +12,18 @@
  * Объявленный заданием `background-office/journal` домом исполнения не стал — за его именем
  * в дереве нет ни модуля, ни хоста; он остаётся будущим получателем уведомления (Т3.7, M4).
  *
- * ПОВОД — `collections.sample_added`, единственный из закрытых трёх, после которого окно
- * сеанса вообще определено: `collection_created` наступает до данных, `journal.entry_created`
- * живёт в чужом доме.
+ * ПОВОД — `collections.collection_created`, и это ИСПРАВЛЕНИЕ по боевому пути 21.08.
+ *
+ * Сначала здесь стоял `collections.sample_added` с рассуждением «единственный, после которого
+ * окно сеанса определено». Боевой вход рассуждение опроверг: `sample_added` несёт в payload
+ * (M4) конкретную пробу, и вход честно требует `sampleId` — своду он не нужен, свод идёт по
+ * ОКНУ, а не по пробе. Требовать адрес пробы ради свода значило бы просить у вызывающего
+ * данные, которые ни на что не влияют.
+ *
+ * `collection_created` из того же ЗАКРЫТОГО словаря M4 (расширять словарь нельзя — #1982) и
+ * говорит о коллекции целиком — ровно предмет свода. Что он «наступает до данных» — верно для
+ * живого канала `notify`, но здесь канал `request`: повод в нём адрес причины, а не отметка
+ * момента (M4: плагин канала не знает).
  */
 import type { PluginId, ReportManifest } from '@membrana/plugin-contracts';
 
@@ -23,5 +32,5 @@ export const SESSION_DIGEST_MANIFEST: ReportManifest = {
   version: '0.1.0',
   kind: 'report',
   mountTarget: 'background-media/collections',
-  triggers: ['collections.sample_added'],
+  triggers: ['collections.collection_created'],
 };
