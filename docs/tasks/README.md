@@ -20,8 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `deploy-safestorage-2026-08-21` | Деплой связки per-device ключей (ADR-0028 Р1/Р2) + включение шифрованного хранения кредов (Р4) | M | [`SESSION_G_DEPLOY_SAFESTORAGE_SPRINT_2026-08-21.md`](../prompts/SESSION_G_DEPLOY_SAFESTORAGE_SPRINT_2026-08-21.md) | — |
-| `session-twenty-tonal-split` | Двадцать опорных — из тональных: граница абсолютом и раздельные списки (опорные / негативный материал) | S | [`SESSION_TWENTY_TONAL_SPLIT_PROMPT.md`](../prompts/SESSION_TWENTY_TONAL_SPLIT_PROMPT.md) | — |
 | `scenario-rate-sprint` | Scenario board sample-rate consistency 44.1 vs 48 kHz | M | [`SESSION_V_SCENARIO_RATE_SPRINT_2026-08-21.md`](../prompts/SESSION_V_SCENARIO_RATE_SPRINT_2026-08-21.md) | [#2001](https://github.com/officefish/Membrana/issues/2001) |
 | `media-per-device-token` | ADR-0028 R1 R2 per-device media token | M | [`SESSION_V_PER_DEVICE_TOKEN_SPRINT_2026-08-20.md`](../prompts/SESSION_V_PER_DEVICE_TOKEN_SPRINT_2026-08-20.md) | — |
 | `capture-sidecar-protocol` | Спутник записи и порядок съёмки | M | [`CAPTURE_SIDECAR_PROTOCOL_PROMPT.md`](../prompts/CAPTURE_SIDECAR_PROTOCOL_PROMPT.md) | — |
@@ -144,6 +142,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `deploy-safestorage-2026-08-21` | Деплой связки per-device ключей (ADR-0028 Р1/Р2) + включение шифрованного хранения кредов (Р4) | 2026-08-21 | [`SESSION_G_DEPLOY_SAFESTORAGE_SPRINT_2026-08-21.md`](../prompts/SESSION_G_DEPLOY_SAFESTORAGE_SPRINT_2026-08-21.md) | — | [карточка](./archive/deploy-safestorage-2026-08-21.md) |
+| `session-twenty-tonal-split` | Двадцать опорных — из тональных: граница абсолютом и раздельные списки (опорные / негативный материал) | 2026-08-21 | [`SESSION_TWENTY_TONAL_SPLIT_PROMPT.md`](../prompts/SESSION_TWENTY_TONAL_SPLIT_PROMPT.md) | — | [карточка](./archive/session-twenty-tonal-split.md) |
 | `journal-session-twenty` | Плагин разбора сеанса: двадцать опорных звуков часового сеанса (относительная громкость, отсев похожего, шум vs структура) | 2026-08-21 | [`JOURNAL_SESSION_TWENTY_PROMPT.md`](../prompts/JOURNAL_SESSION_TWENTY_PROMPT.md) | — | [карточка](./archive/journal-session-twenty.md) |
 | `mfcc-first-field-probe` | Первая проба mfcc через мост на записи узла Firebat (89e428ba, боевой вход request) | 2026-08-20 | [`MFCC_FIRST_FIELD_PROBE_PROMPT.md`](../prompts/MFCC_FIRST_FIELD_PROBE_PROMPT.md) | — | [карточка](./archive/mfcc-first-field-probe.md) |
 | `sanitation-2026-08-20` | Санитария 20.08 через спринт: 6 вердиктов oversized-PR, e2e-smoke подъёма media/office в CI (#2009), гейт secret-parser-built | 2026-08-20 | [`SESSION_G_SANITATION_SPRINT_2026-08-20.md`](../prompts/SESSION_G_SANITATION_SPRINT_2026-08-20.md) | #2009 | [карточка](./archive/sanitation-2026-08-20.md) |
