@@ -1,24 +1,17 @@
 {
   "magistralOptions": [
-    "studio-firebat-user-pairing",
-    "results-bridge-tails-mfcc-probe",
-    "review-debt-oversized-and-foundation"
+    "hour-session-journal-twenty",
+    "deploy-per-device-token",
+    "secret-parser-rotation"
   ],
-  "frozenDigest": "7ecfaa3d2b70a6e1975bae7c79cf2fecc4e5e37481dce3e414e308c12cc6b1e0",
-  "magistral": "studio-firebat-user-pairing",
+  "frozenDigest": "96862ac6a8eaf5b0ba34fd2ae4aab7779ad4f91d3c9a2c323161d885294925f5",
+  "magistral": "hour-session-journal-twenty",
   "swallow": {
-    "draftDigest": "fb35e4a52112215fbb10e34f65a79c0e4067ff04bc3237ebce280d580956a1df",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-20.md",
+    "draftDigest": "09c83de13b3a9bbea95de0068f08ad9302de9a279f7b874289929908f5edd969",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-08-21.md",
     "ownerAck": true,
-    "day": "2026-08-20",
-    "claimsProbe": {
-      "verdict": "soft",
-      "protocol": "docs/seanses/team-evening-feedback-2026-08-20.md",
-      "sha": "611e83ca4ca5",
-      "at": "2026-08-20T17:50:50.314Z"
-    },
-    "gate": "evening:partner-swallow"
+    "day": "2026-08-21"
   },
-  "day": "2026-08-20",
-  "magistralChosenAt": "2026-08-20"
+  "day": "2026-08-21",
+  "magistralChosenAt": "2026-08-21"
 }
