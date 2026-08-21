@@ -213,7 +213,12 @@ export function createSessionDigestExecutor(deps: SessionDigestDeps): PluginExec
         );
       }
 
-      const vectors = normalizeFeatures(candidates.map((c) => c.features));
+      // Длительность всплеска — пятая ось дедупа, аргумент обязателен (j1, ревью PR #2040):
+      // щелчок и долгий гул одного тембра иначе схлопнулись бы в один звук.
+      const vectors = normalizeFeatures(
+        candidates.map((c) => c.features),
+        candidates.map((c) => c.event.endSec - c.event.startSec),
+      );
       const order = candidates
         .map((_, i) => i)
         .sort((a, b) => candidates[b]!.event.peakDb - candidates[a]!.event.peakDb);
