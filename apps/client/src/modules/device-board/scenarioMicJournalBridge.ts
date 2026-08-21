@@ -78,6 +78,7 @@ const MICROPHONE_MODULE_ID = 'microphone';
 const MIN_CHUNK_MS = 5_000;
 const MAX_CHUNK_MS = 30_000;
 const SOUND_LEVEL_SAMPLE_MS = 200;
+const SCENARIO_CAPTURE_SAMPLE_RATE = 48_000;
 const SOUND_LEVEL_FFT_SIZE = 2048;
 const SAMPLE_CAPTURE_MS = 100;
 
@@ -1742,14 +1743,24 @@ export class ScenarioMicJournalBridge {
     await this.stopStreamCaptureSampler();
     scenarioChainLog('stream', 'sampler-start', {
       bufferSize: SOUND_LEVEL_FFT_SIZE,
+      sampleRate: SCENARIO_CAPTURE_SAMPLE_RATE,
       streamActive: stream.active,
       warmupMs: 48,
     });
     const sampler = new LiveSampler({
       bufferSize: SOUND_LEVEL_FFT_SIZE,
+      sampleRate: SCENARIO_CAPTURE_SAMPLE_RATE,
       smoothingTimeConstant: 0.5,
     });
-    await sampler.start(stream);
+    try {
+      await sampler.start(stream);
+    } catch (error) {
+      scenarioChainLog('stream', 'sampler-refused', {
+        reason: error instanceof Error ? error.message : String(error),
+        requestedSampleRate: SCENARIO_CAPTURE_SAMPLE_RATE,
+      });
+      throw error;
+    }
     this.streamCaptureSampler = sampler;
     this.streamCaptureStream = stream;
     // AnalyserNode often returns zeros on the first frames after AudioContext start.
