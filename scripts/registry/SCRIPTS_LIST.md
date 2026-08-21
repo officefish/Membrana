@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-20 |
-| Head SHA | ea05077b3fc9981e4b3bd10968446422b8516da2 |
+| Date | 2026-08-21 |
+| Head SHA | 8dbfc443fb22c2ab3e2a835022a91a6359855d85 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1143 |
-| Yarn scripts (package.json) | 449 |
-| Yarn → `scripts/` | 394 |
+| Code files under `scripts/` | 1145 |
+| Yarn scripts (package.json) | 450 |
+| Yarn → `scripts/` | 395 |
 | Yarn без пути `scripts/` | 55 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 827 |
+| Code files without yarn ref | 828 |
 
-## Yarn → scripts/ (394)
+## Yarn → scripts/ (395)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -405,6 +405,7 @@
 - `vds:run` → `scripts/deploy-run.mjs`, `scripts/_ssh-office-exec.mjs`
 - `verify:branch-protection` → `scripts/verify-branch-protection.mjs`
 - `verify:encoding` → `scripts/verify-encoding.mjs`
+- `verify:image-workspace-deps` → `scripts/verify-image-workspace-deps.mjs`
 - `verify:tailwind-coverage` → `scripts/generate-tailwind-configs.mjs`
 - `verify:voices` → `scripts/verify-voices.mjs`
 - `verify:wire-sync` → `scripts/verify-wire-sync.mjs`
@@ -420,7 +421,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (827)
+## Code files without yarn ref (828)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1233,6 +1234,7 @@
 - `scripts/vdr-blind-corpus.test.mjs`
 - `scripts/vdr-labels-merge.test.mjs`
 - `scripts/verify-encoding.test.mjs`
+- `scripts/verify-image-workspace-deps.test.mjs`
 - `scripts/verify-mcp-bootstrap.test.mjs`
 - `scripts/verify-mintlify-docs.test.mjs`
 - `scripts/verify-usercase-write-paths.mjs`
@@ -1260,7 +1262,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1143)
+## All code files (1145)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -2372,6 +2374,8 @@
 - `scripts/verify-docs-canon.mjs`
 - `scripts/verify-encoding.mjs`
 - `scripts/verify-encoding.test.mjs`
+- `scripts/verify-image-workspace-deps.mjs`
+- `scripts/verify-image-workspace-deps.test.mjs`
 - `scripts/verify-mcp-bootstrap.mjs`
 - `scripts/verify-mcp-bootstrap.test.mjs`
 - `scripts/verify-mintlify-docs.mjs`

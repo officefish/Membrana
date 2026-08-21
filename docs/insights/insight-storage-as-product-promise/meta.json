@@ -1,0 +1,13 @@
+{
+  "id": "insight-storage-as-product-promise",
+  "title": "Хранение как продуктовое обещание: детекция первична, записи вспомогательны, буфер живёт сортировкой",
+  "status": "draft",
+  "source": "user",
+  "horizon": null,
+  "weight": null,
+  "createdAt": "2026-08-21",
+  "researchedAt": null,
+  "reviewedAt": null,
+  "closedAt": null,
+  "tags": []
+}
