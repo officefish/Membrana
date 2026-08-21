@@ -35,8 +35,9 @@ import {
   refuseSession,
   sessionFloor,
   shortfallOf,
-  structureBoundary,
+  indicesByStructure,
   structureOf,
+  DEFAULT_FLATNESS_CEILING,
   type EventFeatures,
   type SessionEvent,
   type SessionRefusal,
@@ -51,9 +52,19 @@ export const SESSION_DIGEST_DEFAULTS = {
   deltaDb: 12,
   /** Порог похожести в долях максимума расстояния сеанса. //provisional */
   minDistanceRatio: 0.05,
-  /** Квантиль плоскостности, ниже которого событие считается тональным. //provisional */
-  structureQuantile: 0.5,
-  limit: 20,
+  /**
+   * Потолок плоскостности: не выше — тональное (опорный образ), выше — широкополосное
+   * (негативный материал). Число названо слухом на часовом сеансе 21.08, где классы легли
+   * с провалом 0.150 / 0.155; квантиль убран — см. session-metrics.
+   */
+  flatnessCeiling: DEFAULT_FLATNESS_CEILING,
+  /** Сколько опорных образов отдаём. */
+  referencesLimit: 20,
+  /**
+   * Сколько негативного материала отдаём. Двадцать, а не «все»: негатив — сбалансированный
+   * контрпример к двадцати опорным, а не свалка на сотни адресов (разбор резчика 21.08).
+   */
+  negativesLimit: 20,
 } as const;
 
 export interface SessionWindow {
@@ -65,8 +76,9 @@ export interface SessionDigestTuning {
   readonly frameSize?: number;
   readonly deltaDb?: number;
   readonly minDistanceRatio?: number;
-  readonly structureQuantile?: number;
-  readonly limit?: number;
+  readonly flatnessCeiling?: number;
+  readonly referencesLimit?: number;
+  readonly negativesLimit?: number;
 }
 
 /** Опорный звук: адрес — точка (проба + смещение), а не «трек целиком». */
@@ -91,8 +103,9 @@ export interface SessionDigestPassport {
   readonly frameSize: number;
   readonly deltaDb: number;
   readonly minDistanceRatio: number;
-  readonly structureQuantile: number;
-  readonly limit: number;
+  readonly flatnessCeiling: number;
+  readonly referencesLimit: number;
+  readonly negativesLimit: number;
   /** true, пока пороги не подтверждены слухом на реальном сеансе (блок j3). */
   readonly provisionalThresholds: boolean;
 }
@@ -101,8 +114,16 @@ export interface SessionDigestResult extends RunResult {
   readonly kind: 'report';
   readonly window: SessionWindow & { readonly tracksSeen: number; readonly tracksInWindow: number };
   readonly floor: { readonly value: number; readonly measured: boolean };
-  readonly twenty: readonly ReferenceSound[];
-  readonly shortfall: number;
+  /**
+   * Опорные образы — ТОЛЬКО тональные. Прежнее поле `twenty` убрано: часовой сеанс 21.08 дал
+   * в нём 12 широкополосных из 20 (шаги и дверь), и имя врало о содержимом. Требование
+   * владельца: тональные — опорные, широкополосные — негативный материал.
+   */
+  readonly references: readonly ReferenceSound[];
+  /** Негативный материал — широкополосные, с адресами; не выброшены и не смешаны с опорными. */
+  readonly negatives: readonly ReferenceSound[];
+  /** Недобор по каждому списку отдельно: у опорных и негатива он свой. */
+  readonly shortfall: { readonly references: number; readonly negatives: number };
   readonly eventsFound: number;
   readonly passport: SessionDigestPassport;
   readonly refusal: SessionRefusal | null;
@@ -142,8 +163,9 @@ export function createSessionDigestExecutor(deps: SessionDigestDeps): PluginExec
     kind: 'report',
     window: { ...w, tracksSeen: seen, tracksInWindow: inWin },
     floor: { value: 0, measured: false },
-    twenty: [],
-    shortfall: cfg.limit,
+    references: [],
+    negatives: [],
+    shortfall: { references: cfg.referencesLimit, negatives: cfg.negativesLimit },
     eventsFound: 0,
     passport: { ...cfg, provisionalThresholds: true },
     refusal: null,
@@ -224,32 +246,43 @@ export function createSessionDigestExecutor(deps: SessionDigestDeps): PluginExec
         candidates.map((c) => c.features),
         candidates.map((c) => c.event.endSec - c.event.startSec),
       );
-      const order = candidates
-        .map((_, i) => i)
-        .sort((a, b) => candidates[b]!.event.peakDb - candidates[a]!.event.peakDb);
-      const { kept, droppedAs } = dedupeGreedy(vectors, order, cfg.minDistanceRatio, cfg.limit);
-      const boundary = structureBoundary(candidates.map((c) => c.features.flatness), cfg.structureQuantile);
+      const flatness = candidates.map((c) => c.features.flatness);
+      const byLoudness = (indices: readonly number[]): number[] =>
+        [...indices].sort((a, b) => candidates[b]!.event.peakDb - candidates[a]!.event.peakDb);
 
-      const twenty: ReferenceSound[] = kept.map((i) => {
-        const c = candidates[i]!;
-        return {
-          sampleId: c.track.id,
-          title: c.track.title,
-          startSec: c.event.startSec,
-          endSec: c.event.endSec,
-          peakDb: c.event.peakDb,
-          durationSec: c.event.endSec - c.event.startSec,
-          structure: structureOf(c.features.flatness, boundary),
-          features: c.features,
-          similarDropped: [...droppedAs.values()].filter((by) => by === i).length,
-        };
-      });
+      const soundsOf = (structure: 'tonal' | 'broadband', limit: number): ReferenceSound[] => {
+        // Дедуп ВНУТРИ рода: общий отсев дал бы негативу вытеснять опорные (шаг громче тона),
+        // и двадцать образов снова оказались бы дверью — то, ради чего спринт и случился.
+        const order = byLoudness(indicesByStructure(flatness, cfg.flatnessCeiling, structure));
+        const { kept, droppedAs } = dedupeGreedy(vectors, order, cfg.minDistanceRatio, limit);
+        return kept.map((i) => {
+          const c = candidates[i]!;
+          return {
+            sampleId: c.track.id,
+            title: c.track.title,
+            startSec: c.event.startSec,
+            endSec: c.event.endSec,
+            peakDb: c.event.peakDb,
+            durationSec: c.event.endSec - c.event.startSec,
+            structure: structureOf(c.features.flatness, cfg.flatnessCeiling),
+            features: c.features,
+            similarDropped: [...droppedAs.values()].filter((by) => by === i).length,
+          };
+        });
+      };
+
+      const references = soundsOf('tonal', cfg.referencesLimit);
+      const negatives = soundsOf('broadband', cfg.negativesLimit);
 
       return done(
         {
           floor: { value: floor, measured: true },
-          twenty,
-          shortfall: shortfallOf(twenty.length, cfg.limit),
+          references,
+          negatives,
+          shortfall: {
+            references: shortfallOf(references.length, cfg.referencesLimit),
+            negatives: shortfallOf(negatives.length, cfg.negativesLimit),
+          },
           eventsFound: candidates.length,
         },
         all.length, tracks.length, window,
