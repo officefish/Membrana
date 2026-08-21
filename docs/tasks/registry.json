@@ -8,10 +8,10 @@
       "noIssueReason": "ADR-0028 несёт решения; Issue заводится при находке на приёмке",
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-08-21",
-      "archivedAt": null,
+      "archivedAt": "2026-08-21",
       "leadPersona": "ozhegov",
       "supportPersonas": [
         "tarasov",
@@ -19,7 +19,7 @@
         "dynin"
       ],
       "notes": "слово владельца 21.08: деплой разрешён, порядок media → cabinet; вещдоки с сервера, при отклонении откат сначала; Р3 не сегодня",
-      "archiveNotes": null,
+      "archiveNotes": "Спринт 21.08: связка per-device ключей (ADR-0028 Р1/Р2) ВЫКАЧЕНА и принята — media (6ff9aaeb, семь плагинов, health 200) + cabinet (образ GHCR, smokeOk); четыре вещдока с сервера: raw != служебного токена, строка audience='client', запись 201 (проба cac7be7e), после отзыва 401 'client media key revoked'; ключ узла Firebat не тронут. Первая выкатка ОТКЛОНЕНА (ERR_MODULE_NOT_FOUND fft-analyzer: образ не нёс dist пакетов графа) и откачена; перерезка v2 — блок media-image-deps: Dockerfile несёт весь транзитивный граф + зуб verify:image-workspace-deps (краснел на 11 пакетах). ADR-0028 Р4 включён: порт синхронный, кэш при старте, миграция одним стартом, политика чистого ре-парринга, честный available. Цена дня: дыра 09:48-09:50 UTC в живом сеансе (~25 треков) — долг #2048 (предикат живого сеанса). PR #2050, #2054. Гейт 8/8, прогноз-исход hit.",
       "githubIssueClosedAt": null
     },
     {
