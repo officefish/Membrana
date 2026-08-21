@@ -5,8 +5,11 @@
  */
 import { describe, expect, it } from 'vitest';
 
+import { FftCore } from '@membrana/fft-analyzer-service';
+
 import {
   dbOverFloor,
+  featuresOf,
   dedupeGreedy,
   euclidean,
   findEvents,
@@ -96,6 +99,15 @@ describe('отсев похожего (требование 2)', () => {
     expect(droppedAs.get(3)).toBe(0);
   });
 
+  it('сеанс из одних копий: остаётся ОДИН, а не двадцать кусков одного хлопка', () => {
+    // Вырожденный случай: максимум расстояний ноль, порог ноль. Строгое «<» пропустило бы всех.
+    const clones = Array.from({ length: 8 }, () => features());
+    const vectors = normalizeFeatures(clones);
+    const { kept, droppedAs } = dedupeGreedy(vectors, clones.map((_, i) => i), 0.05, 20);
+    expect(kept).toEqual([0]);
+    expect(droppedAs.size).toBe(7);
+  });
+
   it('порядок несущий: первым остаётся тот, кого подали громчайшим', () => {
     const vectors = normalizeFeatures([features(), features(), features({ centroidHz: 5000 })]);
     expect(dedupeGreedy(vectors, [1, 0, 2], 0.05, 20).kept[0]).toBe(1);
@@ -142,5 +154,36 @@ describe('отказы и недобор', () => {
     expect(shortfallOf(14, 20)).toBe(6);
     expect(shortfallOf(20, 20)).toBe(0);
     expect(shortfallOf(25, 20)).toBe(0);
+  });
+});
+
+describe('признаки события — прямой зуб (P2 ревью PR #2040)', () => {
+  const SIZE = 2048;
+  const SR = 48000;
+  const freqs = Float32Array.from({ length: SIZE / 2 }, (_, i) => (i * SR) / SIZE);
+  const fft = new FftCore(SIZE);
+
+  it('тон и шум различаются плоскостностью; центроида шума выше центроиды низкого тона', () => {
+    const pure = fft.computeMagnitudes(tone(SIZE, 0.5, 440, SR));
+    const noiseSamples = new Float32Array(SIZE);
+    // Детерминированный «шум»: знакопеременная пила без периода кратного окну.
+    for (let i = 0; i < SIZE; i++) noiseSamples[i] = ((i * 2654435761) % 2000) / 1000 - 1;
+    const noise = fft.computeMagnitudes(noiseSamples);
+
+    const fTone = featuresOf(pure, freqs, tone(SIZE, 0.5, 440, SR), null);
+    const fNoise = featuresOf(noise, freqs, noiseSamples, null);
+
+    expect(fTone.flatness).toBeLessThan(fNoise.flatness);
+    expect(fTone.centroidHz).toBeLessThan(fNoise.centroidHz);
+    expect(fTone.zeroCrossingRate).toBeLessThan(fNoise.zeroCrossingRate);
+    expect(fTone.rolloffHz).toBeGreaterThanOrEqual(0);
+  });
+
+  it('flux нулевой без предыдущего кадра — «сравнивать не с чем» не выдумывает число', () => {
+    const mags = fft.computeMagnitudes(tone(SIZE, 0.5, 440, SR));
+    expect(featuresOf(mags, freqs, tone(SIZE, 0.5, 440, SR), null).flux).toBe(0);
+    // С предыдущим кадром другого содержания поток обязан быть строго положительным.
+    const other = fft.computeMagnitudes(tone(SIZE, 0.5, 3000, SR));
+    expect(featuresOf(mags, freqs, tone(SIZE, 0.5, 440, SR), other).flux).toBeGreaterThan(0);
   });
 });
