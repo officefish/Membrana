@@ -1,0 +1,12 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "scenario-rate-sprint",
+  "note": "Measured by ratified block zone after implementation; procedural docs and focused code changes only.",
+  "measuredAt": "2026-08-21T09:30:00+03:00",
+  "segments": [
+    { "cutBlockId": "b1-cause-address", "changedLines": 78 },
+    { "cutBlockId": "b2-session-rate-tooth", "changedLines": 104 },
+    { "cutBlockId": "b3-wire-judgeable-path", "changedLines": 20 },
+    { "cutBlockId": "b4-gate-trail", "changedLines": 96 }
+  ]
+}

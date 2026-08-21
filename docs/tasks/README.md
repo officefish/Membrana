@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `scenario-rate-sprint` | Scenario board sample-rate consistency 44.1 vs 48 kHz | M | [`SESSION_V_SCENARIO_RATE_SPRINT_2026-08-21.md`](../prompts/SESSION_V_SCENARIO_RATE_SPRINT_2026-08-21.md) | [#2001](https://github.com/officefish/Membrana/issues/2001) |
 | `media-per-device-token` | ADR-0028 R1 R2 per-device media token | M | [`SESSION_V_PER_DEVICE_TOKEN_SPRINT_2026-08-20.md`](../prompts/SESSION_V_PER_DEVICE_TOKEN_SPRINT_2026-08-20.md) | — |
 | `capture-sidecar-protocol` | Спутник записи и порядок съёмки | M | [`CAPTURE_SIDECAR_PROTOCOL_PROMPT.md`](../prompts/CAPTURE_SIDECAR_PROTOCOL_PROMPT.md) | — |
 | `plugin-results-payload-pocket` | Словарь: карман payload в RunResult vs расширение в корне (passthrough в приёмнике моста) | S | [`PLUGIN_RESULTS_PAYLOAD_POCKET_PROMPT.md`](../prompts/PLUGIN_RESULTS_PAYLOAD_POCKET_PROMPT.md) | [#1982](https://github.com/officefish/Membrana/issues/1982) |

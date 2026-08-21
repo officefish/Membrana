@@ -10,7 +10,7 @@
   {
    "name": "Device Board — сценарный редактор и runtime",
    "patterns": [
-    "^(db-|db3h|device-board|usercase|ucv2|mp7b|membrane-node-runtime)"
+    "^(db-|db3h|device-board|usercase|ucv2|mp7b|membrane-node-runtime|scenario-rate)"
    ]
   },
   {

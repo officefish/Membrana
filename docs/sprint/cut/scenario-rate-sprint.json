@@ -1,0 +1,87 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "scenario-rate-sprint",
+  "taskId": "scenario-rate-sprint",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-08-21T08:45:00+03:00",
+    "to": "2026-08-21T12:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-cause-address",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/discussions/cut-scenario-rate-sprint-vesnin.md",
+        "docs/local-sprint/scenario-rate-sprint/OPEN.md",
+        "docs/sprint/cut/scenario-rate-sprint.json"
+      ],
+      "estimate": {
+        "changedLines": 80
+      },
+      "note": "First block before code: diagnose why one scenario can emit 44.1 and 48 kHz. Address: ScenarioMicJournalBridge.captureAudioSample stores frame.sampleRate; ensureStreamCaptureSampler creates LiveSampler without target rate; LiveSampler.startLoop emits AudioContext.sampleRate; media parseUpload persists metadata.sampleRate. Decision for ratification: no urgent resample, no MFCC 44.1 widening; add a named heterogeneity tooth.",
+      "revisionAt": "2026-08-21T09:12:00+03:00",
+      "revisionOf": "0af9ce62b894fa1622bb51b2c370c4328aa555419cdd2ff1e1865189d78049dd"
+    },
+    {
+      "blockId": "b2-session-rate-tooth",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/plugin-handlers/src/mfcc/session-sample-rate.ts",
+        "packages/plugin-handlers/src/mfcc/session-sample-rate.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "note": "Implement a pure helper and tests for session/candidate sample-rate consistency beside the MFCC handler. It must report homogeneous 48000, homogeneous 44100, mixed rates, missing rate, and non-judgeable reason without mutating sample metadata.",
+      "revisionAt": "2026-08-21T09:12:00+03:00",
+      "revisionOf": "ec8463633d02d7e720be6b99967edaf4de908ba6fca452afa1f073f3316b69ef"
+    },
+    {
+      "blockId": "b3-wire-judgeable-path",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "packages/plugin-handlers/src/mfcc/executor.ts",
+        "packages/plugin-handlers/src/mfcc/executor.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "note": "Wire the tooth into the MFCC executor, the nearest non-magistral judged path that already refuses unsupported sample rates for #2001. Preserve #1950 declared-vs-measured semantics and keep measured sampleRate unchanged.",
+      "revisionAt": "2026-08-21T09:12:00+03:00",
+      "revisionOf": "06fb6683e1f6aa986071eff0145951d54717fc68bb71cc3b68d98f15cec7958c"
+    },
+    {
+      "blockId": "b4-gate-trail",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "docs/local-sprint/scenario-rate-sprint/CLOSURE.md",
+        "docs/local-sprint/scenario-rate-sprint/GATE_REPORT.md",
+        "docs/local-sprint/scenario-rate-sprint/reviews/**",
+        "docs/sprint/cut/trail/scenario-rate-sprint.jsonl",
+        "docs/sprint/trail/scenario-rate-sprint.jsonl",
+        "docs/procedure-runs/trail/2026-08-21.jsonl",
+        "docs/tasks/registry.json",
+        "docs/tasks/README.md"
+      ],
+      "estimate": {
+        "changedLines": 100
+      },
+      "note": "Run focused tests, sprint:gate, procedure-run journal, and sprint:experience. Close #2001 only if the class is guarded in the live judged path; otherwise reformulate #2001 with the named residual.",
+      "revisionAt": "2026-08-21T09:12:00+03:00",
+      "revisionOf": "019586170d96423eb8bef90b8b43aceab11e51fb45c69cd830579b35a2e9dfb1"
+    }
+  ],
+  "//cutter": "Context: docs/discussions/cut-scenario-rate-sprint-vesnin.md. Prompt freshness gap: PR #2036 is open locally, so this branch carries the prompt copied from origin/pr/2036 while code starts from origin/main.",
+  "//out-of-scope": "No magistral session or journal plugin edits, no #1950 behavior change, no production deploy, no manual one-track fix.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-21T09:12:00+03:00",
+    "digest": "b7a29d6b90f1cdf0af7a73a05c462c8cefcd915e1cf1e31ab01c1098b4b97b80"
+  }
+}
