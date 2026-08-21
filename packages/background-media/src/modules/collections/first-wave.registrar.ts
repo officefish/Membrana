@@ -72,6 +72,9 @@ export interface RunRequest {
   readonly collectionId: string;
   readonly trigger?: PluginTrigger;
   readonly sampleId?: string;
+  /** Окно сеанса для родов, идущих по времени (свод). ISO-границы; см. session-digest. */
+  readonly from?: string;
+  readonly to?: string;
 }
 
 export interface RunRequestOutcome {
@@ -88,6 +91,15 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
   private handlers: Handlers | null = null;
   /** deps живого mfcc — для отпечатков при `request` тем же чтением, что у прогона. */
   private mfccDeps: MfccExecutorDeps | null = null;
+  /**
+   * Сборщики контекста по роду плагина: `pluginId → как собрать PluginContext`.
+   *
+   * СЛОВАРЬ, А НЕ ЛЕСТНИЦА `if`. До 21.08 здесь стояла одна ветка «не mfcc — значит заглушка»,
+   * и она отсекла СМОНТИРОВАННЫЙ свод сеанса: плагин в доме есть, вход к нему не ведёт —
+   * 501 «прогон не определён». Лабораторный путь этого не показывал (исполнитель звался
+   * напрямую), поймал боевой. Словарь делает вход открытым для третьего рода без правки входа.
+   */
+  private readonly contextBuilders = new Map<string, (req: RunRequest) => Promise<PluginContext>>();
   /** Ожидающие исход моста по runId — только `requestRun`; notify-прогоны сюда не пишут. */
   private readonly awaiting = new Map<string, (o: BridgeOutcome) => void>();
 
@@ -123,11 +135,40 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
       // здесь), сид тот же (единственная точка выхода результата из media), но словарь родов
       // не смешивается. Пороги отбора остаются рабочей точкой пакета до слуховой калибровки.
       handlers.registerReportWave(this.host, { reader: mfcc.reader, onResult: onReportResult });
+
+      const mfccManifest = handlers.MFCC_HANDLER_MANIFEST;
+      this.contextBuilders.set(mfccManifest.id, async (req) => ({
+        address: this.addressOf(mfccManifest, req, handlers.uuidV7()),
+        fingerprints: await handlers.mfccFingerprintsOf(this.mfccDeps!, req.collectionId),
+        resumeMode: 'fresh',
+        trigger: req.trigger ?? mfccManifest.triggers[0]!,
+        payload: { collectionId: req.collectionId, sampleId: req.sampleId, occurredAt: new Date() },
+      }));
+
+      const digestManifest = handlers.SESSION_DIGEST_MANIFEST;
+      this.contextBuilders.set(digestManifest.id, async (req) => {
+        // Окно приезжает от вызывающего и едет в payload: свод идёт по ОКНУ, не по пробе.
+        const window = { ...(req.from ? { from: req.from } : {}), ...(req.to ? { to: req.to } : {}) };
+        return {
+          address: this.addressOf(digestManifest, req, handlers.uuidV7()),
+          fingerprints: await handlers.sessionDigestFingerprintsOf(
+            { reader: mfcc.reader }, req.collectionId, window, handlers.sha256Hex,
+          ),
+          resumeMode: 'fresh',
+          trigger: req.trigger ?? digestManifest.triggers[0]!,
+          payload: { collectionId: req.collectionId, ...window, occurredAt: new Date() },
+        };
+      });
     } catch (error) {
       this.logger.error({ error }, 'membrana.handler.mfcc не зарегистрирован: пресет ворот или считалка недоступны; регистрируются пять заглушек');
       for (const manifest of handlers.STUB_HANDLER_MANIFESTS) this.host.registerPlugin(manifest, handlers.notImplementedExecutor(manifest));
     }
     this.logger.log({ plugins: this.host.getRegisteredPlugins().map((m) => m.id) }, 'First-wave plugins registered');
+  }
+
+  /** Адрес прогона: пять полей из манифеста и запроса; одна формула на все рода. */
+  private addressOf(manifest: { id: PluginId; version: string; mountTarget: PluginContext['address']['mountTarget'] }, req: RunRequest, runId: string): PluginContext['address'] {
+    return { pluginId: manifest.id, version: manifest.version, collectionId: req.collectionId, runId, mountTarget: manifest.mountTarget };
   }
 
   /**
@@ -148,21 +189,17 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
       throw new BadRequestException(`Plugin ${req.pluginId} does not subscribe to ${trigger} (manifest.triggers: ${manifest.triggers.join(', ')})`);
     }
     if (trigger === 'collections.sample_added' && !req.sampleId) {
+      // Повод несёт пробу (payload M4) — без её адреса запрос неполон. Своду сеанса это
+      // требование не мешает: он подписан на collection_created и о пробе не спрашивает.
       throw new BadRequestException('sample_added requires sampleId (payload M4: { collectionId, sampleId, occurredAt })');
     }
-    if (req.pluginId !== handlers.MFCC_HANDLER_MANIFEST.id || !this.mfccDeps) {
-      // Заглушка: её execute бросает до любого результата, отпечатков у неё нет — «не реализовано», не «плохой запрос».
-      throw new NotImplementedException(`Plugin ${req.pluginId}: прогон не определён (заглушка первой волны)`);
+    const build = this.contextBuilders.get(req.pluginId);
+    if (!build) {
+      // Плагин зарегистрирован, но сборщика контекста у него нет — «не реализовано», не «плохой
+      // запрос»: у заглушек первой волны отпечатков не существует, и выдумать их вход не вправе.
+      throw new NotImplementedException(`Plugin ${req.pluginId}: прогон не определён (сборщик контекста не заведён)`);
     }
-    const fingerprints = await handlers.mfccFingerprintsOf(this.mfccDeps, req.collectionId);
-    const occurredAt = new Date();
-    const ctx: PluginContext = {
-      address: { pluginId: manifest.id, version: manifest.version, collectionId: req.collectionId, runId: handlers.uuidV7(), mountTarget: manifest.mountTarget },
-      fingerprints,
-      resumeMode: 'fresh',
-      trigger,
-      payload: trigger === 'collections.sample_added' ? { collectionId: req.collectionId, sampleId: req.sampleId, occurredAt } : { collectionId: req.collectionId, occurredAt },
-    };
+    const ctx: PluginContext = { ...(await build({ ...req, trigger })), trigger };
     let bridge: BridgeOutcome | null = null;
     this.awaiting.set(ctx.address.runId, (o) => { bridge = o; });
     try {
@@ -170,6 +207,6 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
     } finally {
       this.awaiting.delete(ctx.address.runId);
     }
-    return { runId: ctx.address.runId, address: ctx.address, fingerprints, bridge };
+    return { runId: ctx.address.runId, address: ctx.address, fingerprints: ctx.fingerprints, bridge };
   }
 }

@@ -21,11 +21,11 @@
  * реальном сеансе (блок j3) и называет с обоснованием; здесь они живут затем, чтобы прогон был
  * возможен, и едут в паспорт результата, чтобы цифра не читалась как измеренная.
  */
-import type { PluginContext, PluginExecutor, RunResult } from '@membrana/plugin-contracts';
+import type { PluginContext, PluginExecutor, RunFingerprints, RunResult } from '@membrana/plugin-contracts';
 import { FftCore } from '@membrana/fft-analyzer-service';
 import { decodeWavMono16 } from '@membrana/wav-decode';
 
-import type { CollectionSampleDescriptor, CollectionSampleReader } from '../sample-reader.js';
+import { inputHashOf, type CollectionSampleDescriptor, type CollectionSampleReader } from '../sample-reader.js';
 import {
   dedupeGreedy,
   featuresOf,
@@ -163,6 +163,43 @@ export function windowOf(payload: unknown): SessionWindow {
   const from = typeof p.from === 'string' ? p.from : undefined;
   const to = typeof p.to === 'string' ? p.to : undefined;
   return { ...(from ? { from } : {}), ...(to ? { to } : {}) };
+}
+
+/**
+ * Отпечатки прогона свода. Живут рядом с исполнителем — как `mfccFingerprintsOf` рядом с mfcc:
+ * чем считали, тем и отпечаток.
+ *
+ * `configHash` — от СОБСТВЕННОГО пресета свода (потолок плоскостности, дБ над фоном, близость,
+ * кадр, лимиты), а не от пресета mfcc: у свода своя рабочая точка, и подмена чужой означала бы,
+ * что два разных отбора носят один отпечаток.
+ *
+ * `inputHash` — по пробам ОКНА, не всей коллекции (разбор резчика 21.08): окно и есть граница
+ * сеанса, а коллекция `__buffer__` несёт ещё и полтора месяца старых записей — включать их в
+ * отпечаток значило бы объявлять протухшим каждый прогон при любой чужой записи в буфер.
+ */
+export async function sessionDigestFingerprintsOf(
+  deps: SessionDigestDeps,
+  collectionId: string,
+  window: SessionWindow,
+  sha256Hex: (bytes: Uint8Array) => string,
+): Promise<RunFingerprints> {
+  const cfg = { ...SESSION_DIGEST_DEFAULTS, ...(deps.tuning ?? {}) };
+  const inWin = (await deps.reader.listSamples(collectionId)).filter((s) => inWindow(s, window));
+  const entries: { sampleId: string; contentHash: string }[] = [];
+  for (const s of inWin) entries.push({ sampleId: s.id, contentHash: (await deps.reader.readAudio(s)).contentHash });
+  return {
+    inputHash: inputHashOf(entries),
+    configHash: sha256Hex(new TextEncoder().encode(JSON.stringify({
+      pluginId: SESSION_DIGEST_MANIFEST.id,
+      version: SESSION_DIGEST_MANIFEST.version,
+      frameSize: cfg.frameSize,
+      deltaDb: cfg.deltaDb,
+      minDistanceRatio: cfg.minDistanceRatio,
+      flatnessCeiling: cfg.flatnessCeiling,
+      referencesLimit: cfg.referencesLimit,
+      negativesLimit: cfg.negativesLimit,
+    }))),
+  };
 }
 
 export function createSessionDigestExecutor(deps: SessionDigestDeps): PluginExecutor {

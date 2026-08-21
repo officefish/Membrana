@@ -1,6 +1,28 @@
 {
   "tasks": [
     {
+      "id": "report-entry-gap",
+      "title": "Боевой вход ведёт к своду сеанса: повод из закрытого словаря, отпечатки рода report, словарь сборщиков контекста",
+      "promptPath": "docs/prompts/REPORT_ENTRY_GAP_PROMPT.md",
+      "githubIssue": null,
+      "noIssueReason": "фаза эпика server-plugin-foundation (#1961), продолжение #2039 — пробел вскрыт боевым прогоном 21.08",
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-21",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "kuryokhin"
+      ],
+      "notes": "Боевой вход requestRun умеет ровно один плагин (mfcc): свод сеанса смонтирован в хосте, но вход в него не ведёт — 501 «заглушка первой волны». Плюс повод по умолчанию (sample_added) требует sampleId, которого своду не нужно. Лабораторный путь пробел не видел.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null,
+      "parentEpic": "server-plugin-foundation"
+    },
+    {
       "id": "deploy-safestorage-2026-08-21",
       "title": "Деплой связки per-device ключей (ADR-0028 Р1/Р2) + включение шифрованного хранения кредов (Р4)",
       "promptPath": "docs/prompts/SESSION_G_DEPLOY_SAFESTORAGE_SPRINT_2026-08-21.md",

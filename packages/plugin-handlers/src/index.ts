@@ -52,6 +52,8 @@ export {
   SESSION_DIGEST_DEFAULTS,
   SESSION_DIGEST_ID,
   createSessionDigestExecutor,
+  sessionDigestFingerprintsOf,
+  PROVISIONAL_THRESHOLDS,
   windowOf,
   type ReferenceSound,
   type SessionDigestDeps,
