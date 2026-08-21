@@ -149,26 +149,47 @@ export function featuresOf(
   };
 }
 
-/** Оси дедупа. `flux` в них НЕ входит: он про «было событие», а не про «какой это звук». */
+/**
+ * Спектральные оси дедупа. `flux` в них НЕ входит: он про «было событие», а не про «какой это
+ * звук». Пятая ось — ДЛИТЕЛЬНОСТЬ всплеска — приходит отдельно (см. `normalizeFeatures`):
+ * она свойство события, а не кадра, и `featuresOf` её не считает.
+ */
 const DEDUPE_AXES = ['centroidHz', 'rolloffHz', 'flatness', 'zeroCrossingRate'] as const;
 
 /**
  * Нормировка по диапазону СЕАНСА, а не по абсолютной шкале: центроида в герцах и
  * плоскостность в долях иначе несопоставимы, и евклид считал бы расстояние по одной оси.
  * Вырожденная ось (все значения равны) даёт нули — она про эти события ничего не говорит.
+ *
+ * ДЛИТЕЛЬНОСТЬ — пятая ось, и аргумент ОБЯЗАТЕЛЕН: короткий щелчок и долгий гул одного
+ * тембра — разные звуки, и без этой оси дедуп схлопнул бы их в один (нарезка j1 называла
+ * длительность всплеска в векторе признаков; поймано ревью PR #2040). Обязательность —
+ * не строгость ради строгости: необязательный аргумент означал бы «можно забыть», а забытая
+ * ось молча меняет состав двадцати.
  */
-export function normalizeFeatures(features: readonly EventFeatures[]): number[][] {
+export function normalizeFeatures(
+  features: readonly EventFeatures[],
+  durationsSec: readonly number[],
+): number[][] {
   if (features.length === 0) return [];
-  const ranges = DEDUPE_AXES.map((axis) => {
-    const values = features.map((f) => f[axis]);
+  if (durationsSec.length !== features.length) {
+    throw new Error(
+      `normalizeFeatures: длительностей ${durationsSec.length} ≠ событий ${features.length} — ось дедупа неполна`,
+    );
+  }
+  const columns: number[][] = [
+    ...DEDUPE_AXES.map((axis) => features.map((f) => f[axis])),
+    [...durationsSec],
+  ];
+  const ranges = columns.map((values) => {
     const min = Math.min(...values);
     const max = Math.max(...values);
     return { min, span: max - min };
   });
-  return features.map((f) =>
-    DEDUPE_AXES.map((axis, i) => {
-      const { min, span } = ranges[i]!;
-      return span === 0 ? 0 : (f[axis] - min) / span;
+  return features.map((_, row) =>
+    columns.map((values, col) => {
+      const { min, span } = ranges[col]!;
+      return span === 0 ? 0 : (values[row]! - min) / span;
     }),
   );
 }

@@ -91,7 +91,7 @@ describe('отсев похожего (требование 2)', () => {
   it('двадцать кусков одного хлопка схлопываются в один', () => {
     const same = Array.from({ length: 5 }, () => features());
     const far = features({ centroidHz: 6000, rolloffHz: 12000, flatness: 0.9, zeroCrossingRate: 0.8 });
-    const vectors = normalizeFeatures([...same, far]);
+    const vectors = normalizeFeatures([...same, far], new Array(6).fill(0.2));
     const order = [0, 1, 2, 3, 4, 5];
     const { kept, droppedAs } = dedupeGreedy(vectors, order, 0.05, 20);
     expect(kept).toEqual([0, 5]);
@@ -102,28 +102,42 @@ describe('отсев похожего (требование 2)', () => {
   it('сеанс из одних копий: остаётся ОДИН, а не двадцать кусков одного хлопка', () => {
     // Вырожденный случай: максимум расстояний ноль, порог ноль. Строгое «<» пропустило бы всех.
     const clones = Array.from({ length: 8 }, () => features());
-    const vectors = normalizeFeatures(clones);
+    const vectors = normalizeFeatures(clones, new Array(clones.length).fill(0.2));
     const { kept, droppedAs } = dedupeGreedy(vectors, clones.map((_, i) => i), 0.05, 20);
     expect(kept).toEqual([0]);
     expect(droppedAs.size).toBe(7);
   });
 
+
+  it('длительность — пятая ось: щелчок и долгий гул одного тембра НЕ схлопываются', () => {
+    // Спектрально события неразличимы; отличается только длительность всплеска.
+    const same = [features(), features()];
+    const vectors = normalizeFeatures(same, [0.08, 2.5]);
+    expect(vectors[0]).toEqual([0, 0, 0, 0, 0]);
+    expect(vectors[1]![4]).toBe(1);
+    const { kept } = dedupeGreedy(vectors, [0, 1], 0.05, 20);
+    expect(kept).toEqual([0, 1]);
+  });
+
+  it('длительностей не столько, сколько событий — отказ, а не молча забытая ось', () => {
+    expect(() => normalizeFeatures([features(), features()], [0.2])).toThrow(/ось дедупа неполна/u);
+  });
   it('порядок несущий: первым остаётся тот, кого подали громчайшим', () => {
-    const vectors = normalizeFeatures([features(), features(), features({ centroidHz: 5000 })]);
+    const vectors = normalizeFeatures([features(), features(), features({ centroidHz: 5000 })], [0.2, 0.2, 0.2]);
     expect(dedupeGreedy(vectors, [1, 0, 2], 0.05, 20).kept[0]).toBe(1);
   });
 
   it('limit держится: из ста разных берём двадцать', () => {
     const many = Array.from({ length: 100 }, (_, i) => features({ centroidHz: 200 + i * 80 }));
-    const vectors = normalizeFeatures(many);
+    const vectors = normalizeFeatures(many, new Array(many.length).fill(0.2));
     expect(dedupeGreedy(vectors, many.map((_, i) => i), 0.001, 20).kept).toHaveLength(20);
   });
 
   it('нормировка по диапазону сеанса: вырожденная ось молчит, а не тянет расстояние', () => {
-    const v = normalizeFeatures([features(), features({ centroidHz: 2000 })]);
-    expect(v[0]).toEqual([0, 0, 0, 0]);
+    const v = normalizeFeatures([features(), features({ centroidHz: 2000 })], [0.2, 0.2]);
+    expect(v[0]).toEqual([0, 0, 0, 0, 0]);
     expect(v[1]![0]).toBe(1);
-    expect(v[1]!.slice(1)).toEqual([0, 0, 0]);
+    expect(v[1]!.slice(1)).toEqual([0, 0, 0, 0]);
     expect(euclidean(v[0]!, v[1]!)).toBeCloseTo(1, 10);
   });
 });
