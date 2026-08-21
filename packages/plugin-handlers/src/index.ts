@@ -21,6 +21,13 @@ export {
 } from './mfcc/preset.js';
 export { createMeydaExtractor } from './mfcc/meyda-extractor.js';
 export {
+  summarizeSessionSampleRates,
+  type SessionSampleRateConsistency,
+  type SessionSampleRateGroup,
+  type SessionSampleRateInput,
+  type SessionSampleRateStatus,
+} from './mfcc/session-sample-rate.js';
+export {
   MfccRunRefusal,
   createMfccExecutor,
   mfccConfigHashOf,
