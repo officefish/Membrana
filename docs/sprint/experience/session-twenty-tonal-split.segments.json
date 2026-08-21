@@ -1,0 +1,10 @@
+{
+  "//": "Замер ПО ФАКТУ: h1/h2 — git diff --numstat в зонах блоков, h3 — строки обоих вещдоков (машинный .run.json несёт сорок событий с признаками, отсюда объём). Прогноз брался с уроком 21.08 (код×2 на зубы и провенанс) — проверяем, помог ли он.",
+  "sprintId": "session-twenty-tonal-split",
+  "measuredAt": "2026-08-21T11:47:23+00:00",
+  "segments": [
+    { "blockId": "h1-flatness-absolute", "changedLines": 93 },
+    { "blockId": "h2-split-result", "changedLines": 178 },
+    { "blockId": "h3-hour-verdict", "changedLines": 939 }
+  ]
+}

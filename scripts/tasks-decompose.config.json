@@ -18,7 +18,7 @@
    "patterns": [
     "^(media-library|media-per-device-token|product-landing|root-domain|cabinet-scenario|pcb-|studio-capture|sca-|tariff-|membrana-device-build|comp-packaging|grp\\d|graphify)",
     "^(office-stability|office-vds)",
-    "^(server-plugin|plugin-results-|mfcc-first-field-probe|journal-session-twenty)",
+    "^(server-plugin|plugin-results-|mfcc-first-field-probe|journal-session-twenty|session-twenty-)",
     "^(firebat-node)", "^(studio-firebat)"
    ]
   },

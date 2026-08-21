@@ -1,0 +1,826 @@
+{
+  "//": "Блок h3 мини-спринта session-twenty-tonal-split (#1961, продолжение #2039). Разбор ЧАСОВОГО сеанса владельца после правки: граница плоскостности абсолютом 0.15 (слух Курёхина на этом же распределении), списки разделены — опорные образы тональные, негативный материал широкополосный, дедуп внутри каждого рода.",
+  "probedAt": "2026-08-21T11:45:40Z",
+  "lane": "lab-run-on-real-hour",
+  "laneWhy": "Боевой вход POST …/plugins/membrana.report.session-digest/request отвечает 400 «is not registered»: образ media на проде несёт код до PR #2041 (пересборка — за ведущей сессией). Пробы прочитаны GET-ами медиа-сервиса, исполнитель — из ствола. Скрипт с SSH-туннелем не участвовал.",
+  "session": {
+    "collection": "__buffer__ устройства 1c04f0bc-29b0-4d3f-a437-d87dc879579d",
+    "window": {
+      "from": "2026-08-21T09:41:00.000Z",
+      "to": "2026-08-21T10:46:00.000Z",
+      "tracksSeen": 670,
+      "tracksInWindow": 670
+    },
+    "tracks": 670,
+    "bufferTotal": 786,
+    "bufferOlderThanSession": 116,
+    "bufferOlderNote": "В __buffer__ лежат треки со 2 июля по 20 августа — окно обязательно, иначе фон и отбор считались бы по полутора месяцам чужого звука.",
+    "gaps": [
+      {
+        "from": "2026-08-21T09:41:59.531Z",
+        "to": "2026-08-21T09:45:18.806Z",
+        "sec": 199,
+        "why": "разрыв записи; НЕ пропуск прибора"
+      },
+      {
+        "from": "2026-08-21T09:48:22.401Z",
+        "to": "2026-08-21T09:50:20.245Z",
+        "sec": 118,
+        "why": "перезапуск сервера при деплое (слово владельца); НЕ пропуск прибора"
+      }
+    ],
+    "sampleRates": {
+      "44100": 2,
+      "48000": 668
+    }
+  },
+  "floor": {
+    "value": 0.005,
+    "measured": true
+  },
+  "passport": {
+    "frameSize": 4096,
+    "deltaDb": 12,
+    "minDistanceRatio": 0.05,
+    "flatnessCeiling": 0.15,
+    "referencesLimit": 20,
+    "negativesLimit": 20,
+    "provisionalThresholds": true,
+    "flatnessCeilingBy": "kuryokhin",
+    "flatnessCeilingWhy": "на этом сеансе классы легли с провалом: тональные 0.027…0.150, широкополосные 0.155…0.361 — физическая дыра, а не срез по выборке; квантиль удалён"
+  },
+  "eventsFound": 810,
+  "shortfall": {
+    "references": 0,
+    "negatives": 0
+  },
+  "beforeSplit": {
+    "note": "До правки отбор мешал рода в одном топе: 12 из 20 были широкополосными (шаги и дверь) — владелец предупредил об этом заранее, прогон подтвердил.",
+    "tonalInTop20": 8,
+    "broadbandInTop20": 12
+  },
+  "references": [
+    {
+      "sampleId": "3a24165b-ff13-4f1c-8e21-3e5d3aa2a663",
+      "title": "MakeTrack c163c353-e87",
+      "startSec": 4.010666666666666,
+      "endSec": 4.351999999999999,
+      "peakDb": 39.08246409518632,
+      "durationSec": 0.34133333333333304,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 2436.606991509319,
+        "rolloffHz": 3761.71875,
+        "flatness": 0.09639320995210737,
+        "zeroCrossingRate": 0.052503052503052504,
+        "flux": 0.01191503610635589
+      },
+      "similarDropped": 18,
+      "trackCreatedAt": "2026-08-21T10:11:40.216Z",
+      "trackDurationSec": 4.938666666666666
+    },
+    {
+      "sampleId": "ced859e6-9b36-4108-92ac-f9f79e261458",
+      "title": "MakeTrack 67c2f8bc-1e6",
+      "startSec": 0.5973333333333333,
+      "endSec": 0.8533333333333333,
+      "peakDb": 37.758011072158624,
+      "durationSec": 0.256,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 1037.4322812590824,
+        "rolloffHz": 1207.03125,
+        "flatness": 0.031830017843084334,
+        "zeroCrossingRate": 0.025396825396825397,
+        "flux": 0.07317825674940073
+      },
+      "similarDropped": 46,
+      "trackCreatedAt": "2026-08-21T10:14:24.155Z",
+      "trackDurationSec": 5.101333333333334
+    },
+    {
+      "sampleId": "5cef3ed0-7e14-4b7d-82be-a60cd02ff185",
+      "title": "MakeTrack c0bbf173-216",
+      "startSec": 1.9626666666666666,
+      "endSec": 2.389333333333333,
+      "peakDb": 35.7598475468987,
+      "durationSec": 0.4266666666666665,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 1815.5005056619655,
+        "rolloffHz": 3621.09375,
+        "flatness": 0.11044597466113204,
+        "zeroCrossingRate": 0.026373626373626374,
+        "flux": 0.0035041928991411107
+      },
+      "similarDropped": 4,
+      "trackCreatedAt": "2026-08-21T10:38:35.863Z",
+      "trackDurationSec": 4.96
+    },
+    {
+      "sampleId": "c8b49eb0-bf1b-4a2e-81be-c63defa351ea",
+      "title": "MakeTrack 4d949fa2-329",
+      "startSec": 3.584,
+      "endSec": 4.522666666666667,
+      "peakDb": 34.739808831788444,
+      "durationSec": 0.9386666666666668,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 2560.9427753612686,
+        "rolloffHz": 6621.09375,
+        "flatness": 0.12042467144983106,
+        "zeroCrossingRate": 0.08034188034188035,
+        "flux": 0.04604611622776229
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:19:54.079Z",
+      "trackDurationSec": 5.130666666666666
+    },
+    {
+      "sampleId": "3a24165b-ff13-4f1c-8e21-3e5d3aa2a663",
+      "title": "MakeTrack c163c353-e87",
+      "startSec": 4.437333333333333,
+      "endSec": 4.608,
+      "peakDb": 34.62363164791463,
+      "durationSec": 0.17066666666666652,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 2149.7224539545796,
+        "rolloffHz": 2625,
+        "flatness": 0.03209852220304778,
+        "zeroCrossingRate": 0.09401709401709402,
+        "flux": 0.04664232579531667
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:11:40.216Z",
+      "trackDurationSec": 4.938666666666666
+    },
+    {
+      "sampleId": "9f74d826-f8ec-4039-8fc8-93e7b43f8cf9",
+      "title": "MakeTrack d57acb02-e43",
+      "startSec": 4.266666666666667,
+      "endSec": 5.034666666666666,
+      "peakDb": 34.31886376886808,
+      "durationSec": 0.7679999999999998,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 1016.238596417553,
+        "rolloffHz": 1218.75,
+        "flatness": 0.027397882339901595,
+        "zeroCrossingRate": 0.03247863247863248,
+        "flux": 0.07286900144891523
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:14:18.822Z",
+      "trackDurationSec": 5.082666666666666
+    },
+    {
+      "sampleId": "ced859e6-9b36-4108-92ac-f9f79e261458",
+      "title": "MakeTrack 67c2f8bc-1e6",
+      "startSec": 0.9386666666666666,
+      "endSec": 2.389333333333333,
+      "peakDb": 34.04431191248574,
+      "durationSec": 1.4506666666666663,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 1580.5910027525938,
+        "rolloffHz": 2484.375,
+        "flatness": 0.12522338286809473,
+        "zeroCrossingRate": 0.005372405372405372,
+        "flux": 0.02033651619864486
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:14:24.155Z",
+      "trackDurationSec": 5.101333333333334
+    },
+    {
+      "sampleId": "4955d623-49ab-43f3-a710-314062a58ecb",
+      "title": "MakeTrack 5adc2014-893",
+      "startSec": 2.9866666666666664,
+      "endSec": 4.096,
+      "peakDb": 33.41492265257889,
+      "durationSec": 1.1093333333333337,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 2299.241864299888,
+        "rolloffHz": 5003.90625,
+        "flatness": 0.13207651623008176,
+        "zeroCrossingRate": 0.02564102564102564,
+        "flux": 0.009512199127276428
+      },
+      "similarDropped": 1,
+      "trackCreatedAt": "2026-08-21T10:20:30.905Z",
+      "trackDurationSec": 4.949333333333334
+    },
+    {
+      "sampleId": "accc2438-e57e-4ff9-b4a0-37892cbea2d1",
+      "title": "MakeTrack c4cc6cfd-65b",
+      "startSec": 3.7546666666666666,
+      "endSec": 4.096,
+      "peakDb": 32.52344535437648,
+      "durationSec": 0.3413333333333335,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 1742.496429318502,
+        "rolloffHz": 3222.65625,
+        "flatness": 0.10343408014912692,
+        "zeroCrossingRate": 0.07326007326007326,
+        "flux": 0.036980294373188685
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:40:43.172Z",
+      "trackDurationSec": 5.032
+    },
+    {
+      "sampleId": "8ee11c7e-64d8-4918-9b1b-05189e828862",
+      "title": "MakeTrack 6db70985-273",
+      "startSec": 2.2186666666666666,
+      "endSec": 2.56,
+      "peakDb": 32.20394393214004,
+      "durationSec": 0.3413333333333335,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 3797.5368911586443,
+        "rolloffHz": 7640.625,
+        "flatness": 0.13207232681724393,
+        "zeroCrossingRate": 0.08669108669108669,
+        "flux": 0.035881348881836105
+      },
+      "similarDropped": 3,
+      "trackCreatedAt": "2026-08-21T10:23:08.722Z",
+      "trackDurationSec": 4.949333333333334
+    },
+    {
+      "sampleId": "1301b343-da77-499c-9176-3b623243b454",
+      "title": "MakeTrack 4518b115-d2c",
+      "startSec": 1.3653333333333333,
+      "endSec": 1.6213333333333333,
+      "peakDb": 31.56146641752168,
+      "durationSec": 0.256,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 2728.6256456007027,
+        "rolloffHz": 4195.3125,
+        "flatness": 0.13967379212276562,
+        "zeroCrossingRate": 0.05860805860805861,
+        "flux": 0.005680522014440139
+      },
+      "similarDropped": 17,
+      "trackCreatedAt": "2026-08-21T10:34:37.833Z",
+      "trackDurationSec": 5.090666666666666
+    },
+    {
+      "sampleId": "208b1e62-0bb1-44ce-9e87-b11b20b9aa67",
+      "title": "MakeTrack 828fed09-b63",
+      "startSec": 1.1093333333333333,
+      "endSec": 1.536,
+      "peakDb": 31.1827228812283,
+      "durationSec": 0.42666666666666675,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 3279.0494391648417,
+        "rolloffHz": 5953.125,
+        "flatness": 0.12185617152896695,
+        "zeroCrossingRate": 0.07936507936507936,
+        "flux": 0.007710842772891901
+      },
+      "similarDropped": 5,
+      "trackCreatedAt": "2026-08-21T10:45:09.703Z",
+      "trackDurationSec": 5.650666666666667
+    },
+    {
+      "sampleId": "7303f7af-2513-4029-97d1-5cc7bc310895",
+      "title": "MakeTrack 9071ac1d-e60",
+      "startSec": 0.5973333333333333,
+      "endSec": 2.816,
+      "peakDb": 30.65018280684971,
+      "durationSec": 2.2186666666666666,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 1758.4940487244671,
+        "rolloffHz": 2871.09375,
+        "flatness": 0.107563649464604,
+        "zeroCrossingRate": 0.018315018315018316,
+        "flux": 0.006932132479716714
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:39:29.043Z",
+      "trackDurationSec": 5.250666666666667
+    },
+    {
+      "sampleId": "efc077c1-57a0-4154-ad19-fdb105b6c45e",
+      "title": "MakeTrack 5afda0a4-ce3",
+      "startSec": 2.048,
+      "endSec": 2.56,
+      "peakDb": 30.623245482174553,
+      "durationSec": 0.512,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 1522.7169423848102,
+        "rolloffHz": 1570.3125,
+        "flatness": 0.08486636545111959,
+        "zeroCrossingRate": 0.03321123321123321,
+        "flux": 0.005526757207683873
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:01:53.427Z",
+      "trackDurationSec": 5.029333333333334
+    },
+    {
+      "sampleId": "6dfbe2b3-c511-4050-be77-af837272cebd",
+      "title": "MakeTrack 95917ccd-ca2",
+      "startSec": 4.096,
+      "endSec": 4.608,
+      "peakDb": 30.458078373098875,
+      "durationSec": 0.5119999999999996,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 4011.769920369572,
+        "rolloffHz": 6234.375,
+        "flatness": 0.12964800205469995,
+        "zeroCrossingRate": 0.13455433455433455,
+        "flux": 0.03679270371833403
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:20:15.137Z",
+      "trackDurationSec": 5.072
+    },
+    {
+      "sampleId": "2563a269-1c1e-4b38-90a9-d4aa7a4edeac",
+      "title": "MakeTrack ce9a6546-939",
+      "startSec": 1.9626666666666666,
+      "endSec": 2.7306666666666666,
+      "peakDb": 30.326116204176692,
+      "durationSec": 0.768,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 1409.3492615309176,
+        "rolloffHz": 1476.5625,
+        "flatness": 0.08552800827994192,
+        "zeroCrossingRate": 0.044444444444444446,
+        "flux": 0.008597649570446226
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:01:22.592Z",
+      "trackDurationSec": 4.989333333333334
+    },
+    {
+      "sampleId": "1301b343-da77-499c-9176-3b623243b454",
+      "title": "MakeTrack 4518b115-d2c",
+      "startSec": 1.024,
+      "endSec": 1.1946666666666665,
+      "peakDb": 30.09864134700613,
+      "durationSec": 0.17066666666666652,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 1374.3013575766972,
+        "rolloffHz": 2250,
+        "flatness": 0.047263319312730166,
+        "zeroCrossingRate": 0.04004884004884005,
+        "flux": 0.05385262462511141
+      },
+      "similarDropped": 12,
+      "trackCreatedAt": "2026-08-21T10:34:37.833Z",
+      "trackDurationSec": 5.090666666666666
+    },
+    {
+      "sampleId": "326d952c-22e5-4f47-a8cc-3eb85380b75a",
+      "title": "MakeTrack ad6f30a8-39c",
+      "startSec": 2.7306666666666666,
+      "endSec": 2.901333333333333,
+      "peakDb": 30.035008171282342,
+      "durationSec": 0.17066666666666652,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 1935.1366328987388,
+        "rolloffHz": 4500,
+        "flatness": 0.08512701335825583,
+        "zeroCrossingRate": 0.03247863247863248,
+        "flux": 0.04337731649495012
+      },
+      "similarDropped": 6,
+      "trackCreatedAt": "2026-08-21T10:42:44.900Z",
+      "trackDurationSec": 5.16
+    },
+    {
+      "sampleId": "47799cae-2d11-4baa-a2a5-03a865c449ae",
+      "title": "MakeTrack c07780ab-c72",
+      "startSec": 3.7546666666666666,
+      "endSec": 4.778666666666666,
+      "peakDb": 29.91775728184549,
+      "durationSec": 1.0239999999999996,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 1531.9103604629563,
+        "rolloffHz": 2589.84375,
+        "flatness": 0.10848385966931935,
+        "zeroCrossingRate": 0.01098901098901099,
+        "flux": 0.014770424867820344
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:00:36.183Z",
+      "trackDurationSec": 5.090666666666666
+    },
+    {
+      "sampleId": "bee9495f-0d9d-4e25-ba35-8e539c404187",
+      "title": "MakeTrack ab920a92-0ac",
+      "startSec": 3.925333333333333,
+      "endSec": 4.181333333333333,
+      "peakDb": 29.67291600494665,
+      "durationSec": 0.2559999999999998,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 1192.5020148390893,
+        "rolloffHz": 1898.4375,
+        "flatness": 0.06622911588581347,
+        "zeroCrossingRate": 0.008302808302808303,
+        "flux": 0.048019322725106936
+      },
+      "similarDropped": 6,
+      "trackCreatedAt": "2026-08-21T10:09:45.436Z",
+      "trackDurationSec": 5.058666666666666
+    }
+  ],
+  "negatives": [
+    {
+      "sampleId": "3d57d819-3e5f-4f29-98b2-b7d1bf489499",
+      "title": "MakeTrack eba01bbc-e90",
+      "startSec": 0,
+      "endSec": 0.5973333333333333,
+      "peakDb": 39.08458534253064,
+      "durationSec": 0.5973333333333333,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 3823.4347366437482,
+        "rolloffHz": 5964.84375,
+        "flatness": 0.15019948295292415,
+        "zeroCrossingRate": 0.07863247863247863,
+        "flux": 0
+      },
+      "similarDropped": 1,
+      "trackCreatedAt": "2026-08-21T10:20:36.257Z",
+      "trackDurationSec": 5.16
+    },
+    {
+      "sampleId": "1c391a48-bc86-4869-900d-1d64522ec409",
+      "title": "MakeTrack 6b0eabd2-169",
+      "startSec": 3.328,
+      "endSec": 3.4986666666666664,
+      "peakDb": 39.08458534253064,
+      "durationSec": 0.17066666666666652,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 3641.7573105617034,
+        "rolloffHz": 9726.5625,
+        "flatness": 0.21716446556980487,
+        "zeroCrossingRate": 0.0231990231990232,
+        "flux": 0.09196004291253188
+      },
+      "similarDropped": 2,
+      "trackCreatedAt": "2026-08-21T10:41:14.759Z",
+      "trackDurationSec": 5.04
+    },
+    {
+      "sampleId": "208b1e62-0bb1-44ce-9e87-b11b20b9aa67",
+      "title": "MakeTrack 828fed09-b63",
+      "startSec": 2.901333333333333,
+      "endSec": 5.632,
+      "peakDb": 39.05032202027829,
+      "durationSec": 2.7306666666666666,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 3140.122850962332,
+        "rolloffHz": 7523.4375,
+        "flatness": 0.1653806224234242,
+        "zeroCrossingRate": 0.01904761904761905,
+        "flux": 0.009031983844993386
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:45:09.703Z",
+      "trackDurationSec": 5.650666666666667
+    },
+    {
+      "sampleId": "bde7a597-87ca-43c3-8079-8fda9a4bc42e",
+      "title": "MakeTrack 5f4925f6-688",
+      "startSec": 0.08533333333333333,
+      "endSec": 0.512,
+      "peakDb": 38.178178552612216,
+      "durationSec": 0.4266666666666667,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 4826.745400034244,
+        "rolloffHz": 10417.96875,
+        "flatness": 0.3612044418623812,
+        "zeroCrossingRate": 0.09816849816849817,
+        "flux": 0.00242794894851203
+      },
+      "similarDropped": 1,
+      "trackCreatedAt": "2026-08-21T10:15:58.542Z",
+      "trackDurationSec": 5.08
+    },
+    {
+      "sampleId": "3c987cad-8b94-4b8a-a2a9-7f79c5bfa0b7",
+      "title": "MakeTrack f60f3913-37b",
+      "startSec": 1.6213333333333333,
+      "endSec": 1.9626666666666666,
+      "peakDb": 37.57166006844133,
+      "durationSec": 0.34133333333333327,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 5039.745342477124,
+        "rolloffHz": 11003.90625,
+        "flatness": 0.22457905066149794,
+        "zeroCrossingRate": 0.1054945054945055,
+        "flux": 0.027755393809520586
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:20:20.411Z",
+      "trackDurationSec": 4.96
+    },
+    {
+      "sampleId": "9439813a-4329-45a7-9fdf-954fc0871d0d",
+      "title": "MakeTrack 658ddb8e-882",
+      "startSec": 2.901333333333333,
+      "endSec": 3.2426666666666666,
+      "peakDb": 35.73181562683661,
+      "durationSec": 0.3413333333333335,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 4613.69449112185,
+        "rolloffHz": 9410.15625,
+        "flatness": 0.3188657187733788,
+        "zeroCrossingRate": 0.1304029304029304,
+        "flux": 0.004334322539449044
+      },
+      "similarDropped": 2,
+      "trackCreatedAt": "2026-08-21T10:28:42.303Z",
+      "trackDurationSec": 4.96
+    },
+    {
+      "sampleId": "1c83caee-e4a7-4d2d-af9e-215018519e77",
+      "title": "MakeTrack fdf8fc31-c02",
+      "startSec": 1.8773333333333333,
+      "endSec": 2.2186666666666666,
+      "peakDb": 34.997783825406586,
+      "durationSec": 0.34133333333333327,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 5142.058264830789,
+        "rolloffHz": 10113.28125,
+        "flatness": 0.23606237232507438,
+        "zeroCrossingRate": 0.12893772893772895,
+        "flux": 0.002302207412978831
+      },
+      "similarDropped": 2,
+      "trackCreatedAt": "2026-08-21T10:43:05.942Z",
+      "trackDurationSec": 4.930666666666666
+    },
+    {
+      "sampleId": "778a6350-370a-4326-95f7-2e2ca31857a6",
+      "title": "MakeTrack 3a5964da-698",
+      "startSec": 4.010666666666666,
+      "endSec": 4.437333333333333,
+      "peakDb": 34.276546940574015,
+      "durationSec": 0.42666666666666675,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 2713.1316024548946,
+        "rolloffHz": 5882.8125,
+        "flatness": 0.18939952333917262,
+        "zeroCrossingRate": 0.04053724053724054,
+        "flux": 0.004664155490242092
+      },
+      "similarDropped": 2,
+      "trackCreatedAt": "2026-08-21T10:04:22.870Z",
+      "trackDurationSec": 5.090666666666666
+    },
+    {
+      "sampleId": "ced859e6-9b36-4108-92ac-f9f79e261458",
+      "title": "MakeTrack 67c2f8bc-1e6",
+      "startSec": 0,
+      "endSec": 0.3413333333333333,
+      "peakDb": 34.051412675422505,
+      "durationSec": 0.3413333333333333,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 1962.7943793252448,
+        "rolloffHz": 1957.03125,
+        "flatness": 0.15548235851466732,
+        "zeroCrossingRate": 0.016605616605616606,
+        "flux": 0
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:14:24.155Z",
+      "trackDurationSec": 5.101333333333334
+    },
+    {
+      "sampleId": "bde7a597-87ca-43c3-8079-8fda9a4bc42e",
+      "title": "MakeTrack 5f4925f6-688",
+      "startSec": 0.5973333333333333,
+      "endSec": 1.792,
+      "peakDb": 33.91741760892351,
+      "durationSec": 1.1946666666666668,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 3591.7178241436845,
+        "rolloffHz": 9292.96875,
+        "flatness": 0.20894747181743573,
+        "zeroCrossingRate": 0.0380952380952381,
+        "flux": 0.007202601282480776
+      },
+      "similarDropped": 1,
+      "trackCreatedAt": "2026-08-21T10:15:58.542Z",
+      "trackDurationSec": 5.08
+    },
+    {
+      "sampleId": "9f74d826-f8ec-4039-8fc8-93e7b43f8cf9",
+      "title": "MakeTrack d57acb02-e43",
+      "startSec": 3.7546666666666666,
+      "endSec": 4.096,
+      "peakDb": 33.87116192823059,
+      "durationSec": 0.3413333333333335,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 2422.3151101262506,
+        "rolloffHz": 5027.34375,
+        "flatness": 0.1990357541884874,
+        "zeroCrossingRate": 0.04737484737484737,
+        "flux": 0.0026885724120518815
+      },
+      "similarDropped": 2,
+      "trackCreatedAt": "2026-08-21T10:14:18.822Z",
+      "trackDurationSec": 5.082666666666666
+    },
+    {
+      "sampleId": "f05abe1e-cc5c-4020-a38d-06adecbbc0dc",
+      "title": "MakeTrack 66d991d2-2ea",
+      "startSec": 2.6453333333333333,
+      "endSec": 4.949333333333334,
+      "peakDb": 33.80958894737388,
+      "durationSec": 2.3040000000000003,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 2676.4256905020534,
+        "rolloffHz": 5027.34375,
+        "flatness": 0.16548839968854515,
+        "zeroCrossingRate": 0.05885225885225885,
+        "flux": 0.004816182723969777
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:21:39.290Z",
+      "trackDurationSec": 4.981333333333334
+    },
+    {
+      "sampleId": "8ee11c7e-64d8-4918-9b1b-05189e828862",
+      "title": "MakeTrack 6db70985-273",
+      "startSec": 1.536,
+      "endSec": 1.792,
+      "peakDb": 33.45099874890235,
+      "durationSec": 0.256,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 3439.393880726172,
+        "rolloffHz": 7500,
+        "flatness": 0.21942658538708834,
+        "zeroCrossingRate": 0.08180708180708181,
+        "flux": 0.012514147699762609
+      },
+      "similarDropped": 7,
+      "trackCreatedAt": "2026-08-21T10:23:08.722Z",
+      "trackDurationSec": 4.949333333333334
+    },
+    {
+      "sampleId": "3d57d819-3e5f-4f29-98b2-b7d1bf489499",
+      "title": "MakeTrack eba01bbc-e90",
+      "startSec": 4.522666666666667,
+      "endSec": 4.778666666666666,
+      "peakDb": 33.16858959209641,
+      "durationSec": 0.25599999999999934,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 5661.820768214081,
+        "rolloffHz": 11085.9375,
+        "flatness": 0.3303835281702421,
+        "zeroCrossingRate": 0.10964590964590964,
+        "flux": 0.0020824621036099242
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:20:36.257Z",
+      "trackDurationSec": 5.16
+    },
+    {
+      "sampleId": "3c987cad-8b94-4b8a-a2a9-7f79c5bfa0b7",
+      "title": "MakeTrack f60f3913-37b",
+      "startSec": 0.5973333333333333,
+      "endSec": 1.024,
+      "peakDb": 32.999864845502,
+      "durationSec": 0.42666666666666675,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 4450.193787842465,
+        "rolloffHz": 7417.96875,
+        "flatness": 0.1536281458730086,
+        "zeroCrossingRate": 0.12673992673992673,
+        "flux": 0.0315441408146883
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:20:20.411Z",
+      "trackDurationSec": 4.96
+    },
+    {
+      "sampleId": "7adaea8d-ddeb-449a-b830-819ffc07187e",
+      "title": "MakeTrack 423668ff-ec7",
+      "startSec": 1.1093333333333333,
+      "endSec": 1.28,
+      "peakDb": 32.94467861836348,
+      "durationSec": 0.17066666666666674,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 7712.2860510393275,
+        "rolloffHz": 12867.1875,
+        "flatness": 0.35902598254599943,
+        "zeroCrossingRate": 0.11184371184371185,
+        "flux": 0.00483735978477408
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T09:52:07.314Z",
+      "trackDurationSec": 5.042666666666666
+    },
+    {
+      "sampleId": "61100f33-a928-4a74-a9ec-24a66881123e",
+      "title": "MakeTrack 0b97212b-e2f",
+      "startSec": 1.9626666666666666,
+      "endSec": 2.304,
+      "peakDb": 32.36114077637265,
+      "durationSec": 0.34133333333333327,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 4583.325213737417,
+        "rolloffHz": 9304.6875,
+        "flatness": 0.267779577940049,
+        "zeroCrossingRate": 0.12283272283272283,
+        "flux": 0.00287007176110722
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:16:03.855Z",
+      "trackDurationSec": 4.952
+    },
+    {
+      "sampleId": "d344a113-6e24-4d2d-ae34-c21e808fe990",
+      "title": "MakeTrack 1c67d8d9-2d5",
+      "startSec": 3.328,
+      "endSec": 3.584,
+      "peakDb": 32.24074254433316,
+      "durationSec": 0.2560000000000002,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 4129.929873339178,
+        "rolloffHz": 7781.25,
+        "flatness": 0.27668075820656557,
+        "zeroCrossingRate": 0.08815628815628816,
+        "flux": 0.006067714697039249
+      },
+      "similarDropped": 2,
+      "trackCreatedAt": "2026-08-21T10:44:26.200Z",
+      "trackDurationSec": 5.08
+    },
+    {
+      "sampleId": "3a24165b-ff13-4f1c-8e21-3e5d3aa2a663",
+      "title": "MakeTrack c163c353-e87",
+      "startSec": 0.512,
+      "endSec": 1.024,
+      "peakDb": 31.357398254709075,
+      "durationSec": 0.512,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 3874.242777355432,
+        "rolloffHz": 9269.53125,
+        "flatness": 0.24283668030065786,
+        "zeroCrossingRate": 0.0547008547008547,
+        "flux": 0.005764413010650853
+      },
+      "similarDropped": 1,
+      "trackCreatedAt": "2026-08-21T10:11:40.216Z",
+      "trackDurationSec": 4.938666666666666
+    },
+    {
+      "sampleId": "04eb97bb-5af8-47f7-9167-90ff61ea122e",
+      "title": "MakeTrack 774c266f-ee0",
+      "startSec": 3.84,
+      "endSec": 4.608,
+      "peakDb": 30.5922950633361,
+      "durationSec": 0.7679999999999998,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 2635.9459657612433,
+        "rolloffHz": 5566.40625,
+        "flatness": 0.1507473785395611,
+        "zeroCrossingRate": 0.06446886446886448,
+        "flux": 0.058341815509063186
+      },
+      "similarDropped": 0,
+      "trackCreatedAt": "2026-08-21T10:40:48.322Z",
+      "trackDurationSec": 5.072
+    }
+  ]
+}
