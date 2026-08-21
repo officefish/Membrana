@@ -23,6 +23,22 @@
       "revisionOf": "044b4271e214a80c8383d9de04a4ede3c0f2368991d5ad6778953cb27a7f6101"
     },
     {
+      "blockId": "media-image-deps",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/background-media/Dockerfile",
+        "scripts/verify-image-workspace-deps.mjs",
+        "scripts/verify-image-workspace-deps.test.mjs",
+        "package.json"
+      ],
+      "revisionAt": "2026-08-21T10:10:00+00:00",
+      "estimate": {
+        "changedLines": 150
+      },
+      "revisionOf": "f9fa86dd27085384ec8bbffcef83f1343fbf35728a0db335f4afc87dba4b6990"
+    },
+    {
       "blockId": "deploy-media",
       "persona": "ozhegov",
       "context": "ozhegov",
@@ -108,12 +124,13 @@
   "//observed": "Проверено руками 21.08: гейт Тарасова — шаг «App DI smoke (#2009)» на стволе 2693e1ff success; прод-чекаут /root/membrana на 6df73034 (19.08); media-api Up 40 часов (образ membrana/background-media:local от 19.08); cabinet-api/web Up 5 недель (ghcr :main); в таблице NodeKey прода колонок audience НЕТ (id, deviceId, keyHash, createdAt, revokedAt, lastUsedAt); последняя применённая миграция 20260819120000_firebat_node_key, 20260820111700_node_key_audience не применена. Новый страж media-device-access.guard.ts принимает служебный токен — выкатка обратно совместима.",
   "//cutter": "Конспект: docs/discussions/cut-deploy-safestorage-2026-08-21-ozhegov.md. НАХОДКА РЕЗЧИКА: docker compose build пишет в тот же тег membrana/background-media:local — без предварительного тега отката обещание «старый образ на месте» станет ложью; поэтому первый шаг b2 — пометить текущий образ rollback-2026-08-21 и записать команду возврата ДО сборки. Деплой — действие, но зоны блоков суть файлы вещдоков в docs/deploy/ (по одному на блок, не пересекаются); вещдоки снимаются с сервера (psql/docker/health), не из ответов клиента. Приёмку судит НЕ тот, кто выкатывал: четыре вещдока собирает Дынин. Часть 2: порт остаётся синхронным — асинхронность моста снимается кэшем при старте (hydrate до первого read, запись в кэш синхронна, отправка в мост fire-and-forget); второе имя AsyncPairingCredentialsStore не заводится. available:false в preload — хардкод, честность требует спрашивать платформу (isEncryptionAvailable уже в main) — это блок словаря моста (ozhegov). Миграция localStorage → шифртекст и политика «расшифровка не удалась → чистый ре-парринг» — блок Веснина.",
   "//order": "b1 → b2 → b3 → b4 жёсткой цепью (preflight → media → cabinet → приёмка). Часть 2 (b5 → b6 → b7) стартует ТОЛЬКО после снятой приёмки b4: включать шифрование до подтверждения per-device ключа значит зашифровать возможно старый служебный токен и потерять диагностируемость. Зоны не пересекаются.",
-  "//dod": "b1: документ с гейтом (App DI smoke зелёный, ссылка на прогон), снимком состояния прода и НАЗВАННОЙ командой отката до выкатки. b2: media на коде ствола, миграция node_key_audience применена (проверено psql: колонка audience есть), health 200, тег отката существует — вещдоки в документе. b3: cabinet поднят на свежем образе, health 200, вещдоки в документе. b4: четыре вещдока приёмки С СЕРВЕРА — (1) перевыдача: mediaToken в ответе ≠ API_INTERNAL_TOKEN, (2) в NodeKey строка audience='client', (3) запись из Studio принята устройством 1c04f0bc-…, (4) отзыв связки → revokedAt у client-ключа и отбой загрузки тем ключом; расхождение = откат, не пояснение. b5: кэш-адаптер поверх моста — порт синхронный (три глагола), hydrate при старте, миграция localStorage → шифртекст одним стартом, политика «не расшифровалось → пустое состояние (чистый ре-парринг), не крах»; зубы на все три ветки. b6: available честный (по isEncryptionAvailable, не хардкод), get/set/del зубами. b7: nodeConnectionStore зовёт резолвер с hydrate до первого чтения; поведение web не изменилось.",
+  "//dod": "b1: документ с гейтом (App DI smoke зелёный, ссылка на прогон), снимком состояния прода и НАЗВАННОЙ командой отката до выкатки. b2: media на коде ствола, миграция node_key_audience применена (проверено psql: колонка audience есть), health 200, тег отката существует — вещдоки в документе. b3: cabinet поднят на свежем образе, health 200, вещдоки в документе. b4: четыре вещдока приёмки С СЕРВЕРА — (1) перевыдача: mediaToken в ответе ≠ API_INTERNAL_TOKEN, (2) в NodeKey строка audience='client', (3) запись из Studio принята устройством 1c04f0bc-…, (4) отзыв связки → revokedAt у client-ключа и отбой загрузки тем ключом; расхождение = откат, не пояснение. b5: кэш-адаптер поверх моста — порт синхронный (три глагола), hydrate при старте, миграция localStorage → шифртекст одним стартом, политика «не расшифровалось → пустое состояние (чистый ре-парринг), не крах»; зубы на все три ветки. b6: available честный (по isEncryptionAvailable, не хардкод), get/set/del зубами. b7: nodeConnectionStore зовёт резолвер с hydrate до первого чтения; поведение web не изменилось. media-image-deps: runtime-стадия несёт весь транзитивный граф workspace-зависимостей media (список не пишется рукой либо сверяется зубом); зуб verify:image-workspace-deps краснеет на текущем Dockerfile ДО правки и зеленеет после; глагол в package.json.",
   "//out-of-scope": "Р3 (ротация MEDIA_API_TOKEN) — не сегодня, только после раскатки Р1. Магистраль дня и полосы Б/В не трогать. office не деплоится (не нужен). git add -A запрещён. Правки самих сервисов ради деплоя не делаются: выкатывается ствол как есть; если ствол не поднимается — откат и разбор, а не правка на проде.",
   "//pr-plan": "PR-1: b1–b4 (документы деплоя и приёмки, ~390) · PR-2: b5+b6 (кэш-адаптер и честный мост, ~350) · PR-3: b7 + закрытие спринта (провод, гейт, опыт, CLOSURE). Каждый через code-review:pr → pr:ship.",
+  "//recut": "ПЕРЕРЕЗКА v2 (ратифицирована владельцем 21.08 после отклонённой выкатки). Основание — вещдок docs/deploy/deploy-2026-08-21-media.md: runtime-стадия Dockerfile копирует dist ПОИМЁННЫМ списком, PR #2041 (j2) добавил в plugin-handlers импорт @membrana/fft-analyzer-service, образ его не несёт → ERR_MODULE_NOT_FOUND → restart-loop → откат. По графу недостающих 11 пакетов, включая drone-detection-orchestrator-service (спящая мина: вызов drone-detection-report на СЕГОДНЯШНЕМ проде упал бы так же). Новый блок media-image-deps идёт ПЕРЕД deploy-media: образ обязан нести весь транзитивный граф, и расхождение обязан ловить зуб ДО выкатки, а не рантайм прода.",
   "ratification": {
     "by": "owner",
-    "at": "2026-08-21T09:43:00+00:00",
-    "digest": "e4ad0558f688780428192a2070f8a245f9d363be57d1e108e813bb9f0c95ce05"
+    "at": "2026-08-21T09:55:00+00:00",
+    "digest": "598296f46f16b892ebc78dd8114c376569713cd3f4b93632463e8477b0432ecf"
   }
 }
