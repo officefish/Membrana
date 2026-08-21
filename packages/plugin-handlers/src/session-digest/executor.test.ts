@@ -119,7 +119,8 @@ describe('свод: адрес — точка, паспорт честен, от
     expect(r.passport.referencesLimit).toBe(20);
     expect(r.passport.negativesLimit).toBe(20);
     expect(r.passport.flatnessCeiling).toBe(0.15);
-    expect(r.passport.provisionalThresholds).toBe(true);
+    // Поимённо, а не общим флагом: слух уже назвал потолок и дБ, но не кадр и не близость.
+    expect(r.passport.provisional).toEqual(['frameSize', 'minDistanceRatio']);
   });
 
   it('двадцать одинаковых хлопков схлопываются, и вытеснение видно числом', async () => {

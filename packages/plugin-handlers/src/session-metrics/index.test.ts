@@ -167,6 +167,13 @@ describe('шум против структуры (требование 3) — г
     expect(indicesByStructure(mixed, DEFAULT_FLATNESS_CEILING, 'broadband')).toEqual([0, 2]);
   });
 
+  it('не посчитавшаяся плоскостность не попадает НИ В ОДИН род', () => {
+    // NaN <= ceiling ложно, и без защиты событие молча ушло бы в негатив как факт о звуке.
+    const withNan = [0.03, Number.NaN, 0.3, Number.POSITIVE_INFINITY];
+    expect(indicesByStructure(withNan, DEFAULT_FLATNESS_CEILING, 'tonal')).toEqual([0]);
+    expect(indicesByStructure(withNan, DEFAULT_FLATNESS_CEILING, 'broadband')).toEqual([2]);
+  });
+
   it('потолок — параметр: другой тракт назовёт другое число', () => {
     expect(structureOf(0.25, 0.3)).toBe('tonal');
     expect(structureOf(0.25, 0.15)).toBe('broadband');

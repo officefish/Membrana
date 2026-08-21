@@ -67,6 +67,13 @@ export const SESSION_DIGEST_DEFAULTS = {
   negativesLimit: 20,
 } as const;
 
+/**
+ * Пороги без слуха. `flatnessCeiling` и `deltaDb` здесь НЕ значатся: их назвал Курёхин на
+ * часовом сеансе 21.08 с обоснованием (провал между классами 0.150/0.155; «в тихой комнате
+ * громкое начинается с ~10 дБ над полом»). Остальные два — рабочая точка кода до замера.
+ */
+export const PROVISIONAL_THRESHOLDS: readonly string[] = ['frameSize', 'minDistanceRatio'];
+
 export interface SessionWindow {
   readonly from?: string;
   readonly to?: string;
@@ -106,8 +113,12 @@ export interface SessionDigestPassport {
   readonly flatnessCeiling: number;
   readonly referencesLimit: number;
   readonly negativesLimit: number;
-  /** true, пока пороги не подтверждены слухом на реальном сеансе (блок j3). */
-  readonly provisionalThresholds: boolean;
+  /**
+   * Пороги, которые слух ЕЩЁ НЕ называл, — поимённо, а не общим флагом. Общий флаг врал бы
+   * с 21.08: `flatnessCeiling` и `deltaDb` названы Курёхиным на часовом сеансе, а
+   * `frameSize` и `minDistanceRatio` до сих пор рабочая точка кода.
+   */
+  readonly provisional: readonly string[];
 }
 
 export interface SessionDigestResult extends RunResult {
@@ -167,7 +178,7 @@ export function createSessionDigestExecutor(deps: SessionDigestDeps): PluginExec
     negatives: [],
     shortfall: { references: cfg.referencesLimit, negatives: cfg.negativesLimit },
     eventsFound: 0,
-    passport: { ...cfg, provisionalThresholds: true },
+    passport: { ...cfg, provisional: PROVISIONAL_THRESHOLDS },
     refusal: null,
     ...over,
   });

@@ -281,7 +281,11 @@ export function indicesByStructure(
 ): number[] {
   const out: number[] = [];
   for (let i = 0; i < flatnessValues.length; i++) {
-    if (structureOf(flatnessValues[i]!, flatnessCeiling) === structure) out.push(i);
+    const flatness = flatnessValues[i]!;
+    // Не-конечное значение НЕ относится ни к одному роду: «не посчиталось» — это не «шум».
+    // Молчаливое `NaN <= ceiling === false` отправило бы такое событие в негатив как факт.
+    if (!Number.isFinite(flatness)) continue;
+    if (structureOf(flatness, flatnessCeiling) === structure) out.push(i);
   }
   return out;
 }
