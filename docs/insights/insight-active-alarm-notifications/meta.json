@@ -1,0 +1,13 @@
+{
+  "id": "insight-active-alarm-notifications",
+  "title": "Активная тревога: уведомления оператору сверх журнала",
+  "status": "draft",
+  "source": "user",
+  "horizon": null,
+  "weight": null,
+  "createdAt": "2026-08-21",
+  "researchedAt": null,
+  "reviewedAt": null,
+  "closedAt": null,
+  "tags": []
+}
