@@ -1,0 +1,77 @@
+{
+  "//": "Спринт journal-session-twenty (M, фаза эпика server-plugin-foundation #1961), магистраль дня 21.08 — серверная половина. Дом исполнения назначен консилиумом 21.08 (docs/seanses/journal-session-twenty-home-2026-08-21.md): background-media/collections, журнал — будущий получатель уведомления. Расхождение со словом владельца («дом журнала») выносится НА РАТИФИКАЦИЮ вместе с этим планом. Порядок держит инвариант движков: j2 берёт меры, рождённые j1; j3 гоняет то, что смонтировал j2.",
+  "schema": "sprint-cut/1",
+  "sprintId": "journal-session-twenty",
+  "taskId": "journal-session-twenty",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "contract_signature",
+      "session_prep"
+    ],
+    "reason": "Носители contract_signature/session_prep не являются обязательным машинным корпусом membrana-local-sprint; ответственность проверяется планом, зонами, контекстными следами, review-вещдоками и procedure-run-journal."
+  },
+  "window": {
+    "from": "2026-08-21T12:00:00+03:00",
+    "to": "2026-08-21T22:00:00+03:00"
+  },
+  "revisionAt": "2026-08-21T12:00:00+03:00",
+  "blocks": [
+    {
+      "blockId": "j1-session-measures",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/plugin-handlers/src/session-metrics/"
+      ],
+      "estimate": {
+        "changedLines": 300
+      },
+      "note": "Чистые меры и отбор, БЕЗ файлов и сети (вход — значения). Три требования владельца, каждое поверх СУЩЕСТВУЮЩЕГО носителя @membrana/fft-analyzer-service, не своей копией формул: (1) громкость относительная — пик трека минус фон сеанса, фон через estimateNoiseFloor (10-й перцентиль RMS-истории всего сеанса), абсолютный порог запрещён; (2) отсев похожего — вектор признаков (spectralCentroid · spectralFlatness · spectralRolloff · zeroCrossingRate · длительность всплеска) и жадный отбор с порогом близости: двадцать РАЗНЫХ, а не двадцать кусков одного хлопка; (3) шум vs структура — spectralFlatness (1 = белый шум, 0 = тон), тональные идут в опорные, широкополосные помечаются негативным материалом, не выбрасываются молча. Отказ с причиной вместо тихого нуля: сеанс короче минимума, фон не оценивается (<20 кадров у estimateNoiseFloor), все кадры немые. Зубы рядом.",
+      "revisionAt": "2026-08-21T05:04:51+00:00",
+      "revisionOf": "51851ca18c910bf59fc1bf88f81ecbec3debccbccd68350545adfeda62f79457"
+    },
+    {
+      "blockId": "j2-session-digest-plugin",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "packages/plugin-handlers/src/session-digest/",
+        "packages/plugin-handlers/src/sample-reader.ts",
+        "packages/plugin-handlers/src/index.ts",
+        "packages/background-media/src/modules/collections/first-wave.registrar.ts"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "note": "Плагин membrana.handler.session-digest: HandlerManifest (род handler, mountTarget background-media/collections по вердикту комнаты, повод из закрытого PLUGIN_TRIGGERS — назвать какой и почему, windowSize объявить осмысленно), PluginExecutor поверх мер j1, регистрация рядом с первой волной. Сеанс — окно времени внутри коллекции — выражается ctx.payload (вердикт комнаты), контракты plugin-contracts НЕ трогать (#1982). Порт CollectionSampleReader расширяется createdAt — это plugin-handlers, не контракты. Выход — адреса (sampleId + смещение) в RunRecord, плагин пишет только в plugin-results (#1950). Зубы рядом.",
+      "revisionAt": "2026-08-21T05:04:51+00:00",
+      "revisionOf": "089c46f2f6d604f0195906314ff7417ff4c2d100e217bb183b875c0f119c6eb8"
+    },
+    {
+      "blockId": "j3-session-run-and-verdict",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "docs/plugins/session-twenty-2026-08-21.md",
+        "docs/plugins/session-twenty-2026-08-21.run.json"
+      ],
+      "estimate": {
+        "changedLines": 160
+      },
+      "note": "Прогон на РЕАЛЬНОМ сеансе боевым входом request (скрипт с туннелем запрещён): час владельца, либо вчерашние треки устройства, если час ещё не записан — тогда назвать это в документе и повторить на часе. Пороги отбора (близость дедупа, граница плоскостности) выбирает слух Курёхина и называет числом с обоснованием. Документ: двадцать звуков с адресом (sampleId, смещение), характеристиками (пик над фоном, длительность, мера структуры) и словом «на что похоже»; анти-критерий провала ДО чисел; машинный .run.json рядом (класс mfcc-first-field-probe-2026-08-20.run.json). Детектор дрона в ранжировании не участвует — запрет владельца 21.08.",
+      "revisionAt": "2026-08-21T05:04:51+00:00",
+      "revisionOf": "37cc9a502d2bfd0c8d11a1570a7817c5c329200eb6e12c6eaf7a47d6214de07c"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-21T05:04:51+00:00",
+    "digest": "1fc9d55e1d0bd4b5502cf676e4d0f6d6253dc9ebab298f1bcd553a641b23f73f"
+  }
+}

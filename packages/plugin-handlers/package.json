@@ -24,6 +24,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@membrana/fft-analyzer-service": "*",
     "@membrana/mfcc-analyzer-service": "*",
     "@membrana/plugin-contracts": "*",
     "@membrana/wav-decode": "*",
