@@ -43,14 +43,19 @@ async function registrar(cfg = config, bridge = spyBridge().bridge) {
 }
 
 describe('FirstWavePluginsRegistrar', () => {
-  it('на старте модуля хост collections держит шесть плагинов первой волны, mfcc — с живым executor', async () => {
+  it('на старте модуля хост collections держит шесть детекторов ПЛЮС свод сеанса рода report', async () => {
     const host = new CollectionsPluginHostService();
     await host.onModuleInit();
     await new FirstWavePluginsRegistrar(host, prisma, blobs, config, spyBridge().bridge).onModuleInit();
-    expect(host.getRegisteredPlugins().map((m) => m.id)).toEqual([
+    const registered = host.getRegisteredPlugins();
+    expect(registered.map((m) => m.id)).toEqual([
       'membrana.handler.mfcc', 'membrana.handler.harmonic', 'membrana.handler.cepstral',
       'membrana.handler.spectral-flux', 'membrana.handler.template-match', 'membrana.handler.yamnet',
+      // Свод сеанса смонтирован в том же доме отдельной волной — род report, не детектор (j2, #1961).
+      'membrana.report.session-digest',
     ]);
+    expect(registered.filter((m) => m.kind === 'handler')).toHaveLength(6);
+    expect(registered.filter((m) => m.kind === 'report')).toHaveLength(1);
   });
 
   it('читатель проб — только чтение: список по collectionId, байты по storageRef, sha256 содержимого', async () => {

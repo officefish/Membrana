@@ -28,8 +28,8 @@
 import { BadRequestException, Inject, Injectable, Logger, NotImplementedException, type OnModuleInit } from '@nestjs/common';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { CollectionSampleReader, FirstWaveDeps, MfccExecutorDeps } from '@membrana/plugin-handlers' with { 'resolution-mode': 'import' };
-import type { PluginContext, PluginId, PluginTrigger, RunRecord } from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
+import type { CollectionSampleReader, FirstWaveDeps, MfccExecutorDeps, ReportResultSink } from '@membrana/plugin-handlers' with { 'resolution-mode': 'import' };
+import type { PluginContext, PluginId, PluginTrigger, RunRecord, RunResult } from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
 import { BlobStorageService } from '../../blob/blob-storage.service';
 import { APP_CONFIG } from '../../config/config.tokens';
 import type { AppConfig } from '../../config/env.schema';
@@ -102,10 +102,14 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
   async onModuleInit(): Promise<void> {
     const handlers = await loadHandlers();
     this.handlers = handlers;
-    const onResult: FirstWaveDeps['onResult'] = async (_manifest, ctx, result) => {
+    const toBridge = async (ctx: PluginContext, result: RunResult): Promise<void> => {
       const record: RunRecord = { ...result, address: ctx.address, fingerprints: ctx.fingerprints, resumeMode: ctx.resumeMode };
       const outcome = await this.bridge.send(record);
       this.awaiting.get(ctx.address.runId)?.(outcome);
+    };
+    const onReportResult: ReportResultSink = (_manifest, ctx, result) => toBridge(ctx, result);
+    const onResult: FirstWaveDeps['onResult'] = async (_manifest, ctx, result) => {
+      await toBridge(ctx, result);
     };
     try {
       const presetPath = join(resolveCatalogRoot(this.config), MFCC_GATES_PRESET_FILE);
@@ -115,6 +119,10 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
       const mfcc = { reader: prismaSampleReader(this.prisma, this.blobs, handlers.sha256Hex), extract: await handlers.createMeydaExtractor(config), preset, strictness: 'normal' as const };
       this.mfccDeps = { ...mfcc, manifest: handlers.MFCC_HANDLER_MANIFEST };
       handlers.registerFirstWave(this.host, { mfcc, onResult });
+      // Свод сеанса — род `report`, своя волна (структурщик, j2): читатель тот же (звук лежит
+      // здесь), сид тот же (единственная точка выхода результата из media), но словарь родов
+      // не смешивается. Пороги отбора остаются рабочей точкой пакета до слуховой калибровки.
+      handlers.registerReportWave(this.host, { reader: mfcc.reader, onResult: onReportResult });
     } catch (error) {
       this.logger.error({ error }, 'membrana.handler.mfcc не зарегистрирован: пресет ворот или считалка недоступны; регистрируются пять заглушек');
       for (const manifest of handlers.STUB_HANDLER_MANIFESTS) this.host.registerPlugin(manifest, handlers.notImplementedExecutor(manifest));

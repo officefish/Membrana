@@ -30,6 +30,13 @@ export {
   type MfccSampleOutcome,
   type MfccSampleVerdict,
 } from './mfcc/executor.js';
+export {
+  summarizeSessionSampleRates,
+  type SessionSampleRateConsistency,
+  type SessionSampleRateGroup,
+  type SessionSampleRateInput,
+  type SessionSampleRateStatus,
+} from './mfcc/session-sample-rate.js';
 export { PluginNotImplementedError, STUB_HANDLER_MANIFESTS, STUB_HANDLER_SLUGS, notImplementedExecutor } from './stubs.js';
 export {
   FIRST_WAVE_MANIFESTS,
