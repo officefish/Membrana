@@ -11,6 +11,7 @@ import type { HandlerManifest, PluginContext, PluginExecutor, RunFingerprints, R
 import { inputHashOf, sha256Hex, type CollectionSampleAudio, type CollectionSampleDescriptor, type CollectionSampleReader } from '../sample-reader.js';
 import { decodeWavMono16 } from '../wav.js';
 import { mfccConfigFromHash, mfccPipeSpecOf, type MfccGatePreset, type MfccStrictness } from './preset.js';
+import { summarizeSessionSampleRates, type SessionSampleRateConsistency } from './session-sample-rate.js';
 
 export type MfccSampleOutcome = 'detected' | 'not-detected' | 'refused';
 
@@ -42,6 +43,7 @@ export interface MfccRunResult extends RunResult {
     readonly judgedCoefficients: readonly number[];
   };
   readonly samples: readonly MfccSampleVerdict[];
+  readonly sampleRateConsistency: SessionSampleRateConsistency;
   readonly summary: { readonly total: number; readonly detected: number; readonly notDetected: number; readonly refused: number };
 }
 
@@ -142,6 +144,11 @@ export function createMfccExecutor(deps: MfccExecutorDeps): PluginExecutor {
       }
       const { collectionId } = ctx.address;
       const list = [...(await deps.reader.listSamples(collectionId))].sort((a, b) => (a.id < b.id ? -1 : 1));
+      const sampleRateConsistency = summarizeSessionSampleRates(list.map((s) => ({
+        sampleId: s.id,
+        title: s.title,
+        sampleRate: s.sampleRate,
+      })), config.sampleRate);
       const verdicts: MfccSampleVerdict[] = [];
       for (const s of list) verdicts.push(judge(s, await deps.reader.readAudio(s)));
       const inputHash = inputHashOf(verdicts.map((v) => ({ sampleId: v.sampleId, contentHash: v.contentHash })));
@@ -160,6 +167,7 @@ export function createMfccExecutor(deps: MfccExecutorDeps): PluginExecutor {
           judgedCoefficients: spec.judgedCoefficients ?? [],
         },
         samples: verdicts,
+        sampleRateConsistency,
         summary: { total: verdicts.length, detected: count('detected'), notDetected: count('not-detected'), refused: count('refused') },
       };
     },

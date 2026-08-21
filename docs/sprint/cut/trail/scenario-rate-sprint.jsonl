@@ -1,0 +1,3 @@
+{"kind":"cut_context_run","sprintId":"scenario-rate-sprint","subject":"vesnin","at":"2026-08-21T08:52:00+03:00","ref":"docs/discussions/cut-scenario-rate-sprint-vesnin.md","planDigest":null}
+{"kind":"cut_act","sprintId":"scenario-rate-sprint","subject":"vesnin","at":"2026-08-21T08:58:00+03:00","ref":"docs/sprint/cut/scenario-rate-sprint.json","planDigest":"157ddabe17d6c707b9853eec962b63fc670be90e65aadf37a972ab683c095cc1"}
+{"kind":"recut_act","sprintId":"scenario-rate-sprint","subject":"vesnin","at":"2026-08-21T09:07:00+03:00","ref":"docs/sprint/cut/scenario-rate-sprint.json","planDigest":"d7f5b0ce8d4accdd86c0b63824d1c909fc224b85901da8405f32477cbec3a226"}

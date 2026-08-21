@@ -1,6 +1,28 @@
 {
   "tasks": [
     {
+      "id": "scenario-rate-sprint",
+      "title": "Scenario board sample-rate consistency 44.1 vs 48 kHz",
+      "promptPath": "docs/prompts/SESSION_V_SCENARIO_RATE_SPRINT_2026-08-21.md",
+      "githubIssue": 2001,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-21",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "kuryokhin",
+        "ozhegov",
+        "angelina"
+      ],
+      "notes": "Срочный membrana-local-sprint 21.08 перед часовым сеансом: сценарий борда в одном сеансе пишет 48 кГц и 44.1 кГц; причина первого блока — WebAudio LiveSampler наследует AudioContext.sampleRate без фиксации rate, media upload честно сохраняет metadata.sampleRate. Запреты: не трогать магистраль/плагин журнала/#1950, не деплоить prod, не чинить один трек вручную.",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "mfcc-first-field-probe",
       "title": "Первая проба mfcc через мост на записи узла Firebat (89e428ba, боевой вход request)",
       "promptPath": "docs/prompts/MFCC_FIRST_FIELD_PROBE_PROMPT.md",

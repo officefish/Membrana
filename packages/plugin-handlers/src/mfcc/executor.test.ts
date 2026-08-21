@@ -76,6 +76,9 @@ describe('membrana.handler.mfcc — executor', () => {
     expect(r1.samples.find((s) => s.sampleId === 'b-tone-48k')).toMatchObject({ outcome: 'detected', frames: 17, reason: null });
     expect(r1.samples.find((s) => s.sampleId === 'a-silence-48k')).toMatchObject({ outcome: 'refused', reason: expect.stringMatching(/немые/) });
     expect(r1.samples.find((s) => s.sampleId === 'c-tone-44k')).toMatchObject({ outcome: 'refused', reason: expect.stringMatching(/44100 ≠ 48000/) });
+    expect(r1.sampleRateConsistency).toMatchObject({ status: 'mixed', judgeable: false, expectedSampleRate: 48000 });
+    expect(r1.sampleRateConsistency.reason).toMatch(/разнородная частота/u);
+    expect(r1.sampleRateConsistency.reason).toMatch(/44100 Hz: c-tone-44k/u);
     expect(r1.summary).toEqual({ total: 3, detected: 1, notDetected: 0, refused: 2 });
     expect(r1.measured.inputHash).toBe(inputHashOf(r1.samples.map((s) => ({ sampleId: s.sampleId, contentHash: s.contentHash }))));
   });
@@ -92,6 +95,7 @@ describe('membrana.handler.mfcc — executor', () => {
     const deps = depsOf(fakeReader({ 'm.mp3': { bytes: new Uint8Array([1, 2, 3]), sampleRate: 48000, audioFormat: 'mp3' } }));
     const r = (await createMfccExecutor(deps).execute(ctxOf(await mfccFingerprintsOf(deps, 'c')))) as MfccRunResult;
     expect(r.samples[0]).toMatchObject({ outcome: 'refused', reason: expect.stringMatching(/mp3/) });
+    expect(r.sampleRateConsistency).toMatchObject({ status: 'homogeneous', judgeable: true, reason: null });
   });
 
   it('норма #1950 структурно: у порта чтения два члена, оба читают; граница импортов executor — правило линтера', async () => {
