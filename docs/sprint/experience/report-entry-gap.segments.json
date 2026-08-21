@@ -1,0 +1,9 @@
+{
+  "//": "Замер ПО ФАКТУ: r1 — git diff влитого PR #2056 в зонах блока, r2 — правка обоих вещдоков (не их полный размер: документ существовал, менялись путь, окно и разделы сверки).",
+  "sprintId": "report-entry-gap",
+  "measuredAt": "2026-08-21T15:43:00+00:00",
+  "segments": [
+    { "blockId": "r1-report-entry", "changedLines": 176 },
+    { "blockId": "r2-live-hour-evidence", "changedLines": 323 }
+  ]
+}
