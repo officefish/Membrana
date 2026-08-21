@@ -7,7 +7,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('electron', () => ({
   app: { getPath: () => 'C:/fake/userData' },
-  ipcMain: { handle: vi.fn() },
+  ipcMain: { handle: vi.fn(), on: vi.fn() },
   safeStorage: { isEncryptionAvailable: () => { throw new Error('no display'); } },
 }));
 
@@ -33,5 +33,17 @@ describe('secure-storage', () => {
       'membrana:secure-storage:get',
       'membrana:secure-storage:set',
     ]);
+  });
+
+  it('ADR-0028 Р4: у доступности есть СИНХРОННЫЙ близнец — contextBridge выставляет available значением', () => {
+    const on = ipcMain.on as ReturnType<typeof vi.fn>;
+    on.mockClear();
+    registerSecureStorageIpc();
+    const sync = on.mock.calls.find((c) => c[0] === 'membrana:secure-storage:available-sync');
+    expect(sync, 'без синхронного канала мост врал бы хардкодом').toBeTruthy();
+    const event = { returnValue: undefined as unknown };
+    (sync![1] as (e: { returnValue: unknown }) => void)(event);
+    // safeStorage в этом зубе бросает (нет дисплея) → платформа честно отвечает false
+    expect(event.returnValue).toBe(false);
   });
 });

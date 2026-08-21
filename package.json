@@ -21,6 +21,7 @@
     "build:affected": "node scripts/build-affected.mjs",
     "wire:generate": "node scripts/generate-wire-contract.mjs",
     "verify:wire-sync": "node scripts/verify-wire-sync.mjs",
+    "verify:image-workspace-deps": "node scripts/verify-image-workspace-deps.mjs",
     "verify:branch-protection": "node scripts/verify-branch-protection.mjs",
     "deploy:when-green": "node scripts/deploy-when-green.mjs",
     "deploy:run": "node scripts/deploy-run.mjs",

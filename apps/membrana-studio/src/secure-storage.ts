@@ -34,6 +34,13 @@ export function isSecureStorageAvailable(): boolean {
 export function registerSecureStorageIpc(): void {
   ipcMain.handle(`${SS}:available`, () => isSecureStorageAvailable());
 
+  // СИНХРОННЫЙ близнец: `contextBridge` выставляет `available` ЗНАЧЕНИЕМ в момент exposure,
+  // а `invoke` асинхронен — до 21.08 поле было захардкожено `false`, и мост врал про платформу
+  // (ADR-0028 Р4). Синхронный канал даёт мосту ответ платформы там, где он нужен: сразу.
+  ipcMain.on(`${SS}:available-sync`, (event) => {
+    event.returnValue = isSecureStorageAvailable();
+  });
+
   ipcMain.handle(`${SS}:get`, async (): Promise<string | null> => {
     if (!isSecureStorageAvailable()) return null;
     try {
