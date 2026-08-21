@@ -1,0 +1,81 @@
+{
+  "//": "Блок j3 мини-спринта journal-session-twenty (#1961/#2039). ЛАБОРАТОРНЫЙ прогон: исполнитель из ствола (PR #2040 j1 + #2041 j2), пробы прочитаны GET-ами медиа-сервиса. Боевой вход request НЕ использован — прод несёт код до #2041, деплой 21.08 запрещён владельцем. Пороги — слухом Курёхина (deltaDb 9), не умолчанием.",
+  "probedAt": "2026-08-21T08:51:28Z",
+  "lane": "lab-run-on-real-audio",
+  "entryUsed": "createSessionDigestExecutor (dist ствола) + GET /v1/devices/:d/samples/:id/blob",
+  "entryNotUsed": "POST /v1/devices/:d/collections/:c/plugins/membrana.report.session-digest/request — 400 «is not registered»: прод до деплоя",
+  "collection": {
+    "tracksSeen": 7,
+    "tracksInWindow": 7
+  },
+  "thresholds": {
+    "frameSize": 4096,
+    "deltaDb": 9,
+    "minDistanceRatio": 0.05,
+    "structureQuantile": 0.5,
+    "limit": 20,
+    "provisionalThresholds": true,
+    "chosenBy": "kuryokhin",
+    "deltaDbWhy": "12 — для гулкого помещения; 6 тащит шорох; при фоне у пола носителя громким считается >10 дБ над ним, 9 даёт запас на неравномерность АЧХ"
+  },
+  "floor": {
+    "value": 0.005,
+    "measured": true
+  },
+  "eventsFound": 3,
+  "shortfall": 17,
+  "refusal": null,
+  "twenty": [
+    {
+      "sampleId": "62fe8ea1-05f2-4e42-8e9d-4e6dbd5fff86",
+      "title": "Полевая запись 2026-08-18T16-10-11-042Z",
+      "startSec": 13.909333333333333,
+      "endSec": 14.08,
+      "peakDb": 38.07874769338104,
+      "durationSec": 0.1706666666666674,
+      "structure": "broadband",
+      "features": {
+        "centroidHz": 4615.8305327134585,
+        "rolloffHz": 10546.875,
+        "flatness": 0.37788606879078274,
+        "zeroCrossingRate": 0.0336996336996337,
+        "flux": 0.0006596931886073824
+      },
+      "similarDropped": 0
+    },
+    {
+      "sampleId": "0c445906-ac66-496e-b972-f0a6ddba0faa",
+      "title": "ПРОБА ТРАКТА 16.08 — не полевая запись",
+      "startSec": 0,
+      "endSec": 2.9866666666666664,
+      "peakDb": 34.290251554843174,
+      "durationSec": 2.9866666666666664,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 584.343226146021,
+        "rolloffHz": 445.3125,
+        "flatness": 0.019877364735671126,
+        "zeroCrossingRate": 0.018315018315018316,
+        "flux": 0
+      },
+      "similarDropped": 0
+    },
+    {
+      "sampleId": "d7a20df5-2d11-44f2-9470-14b337613aad",
+      "title": "Sample d7a20df5",
+      "startSec": 0.9287981859410431,
+      "endSec": 1.1145578231292517,
+      "peakDb": 21.822712380986857,
+      "durationSec": 0.18575963718820854,
+      "structure": "tonal",
+      "features": {
+        "centroidHz": 3405.652061425388,
+        "rolloffHz": 8397.94921875,
+        "flatness": 0.33415201353104046,
+        "zeroCrossingRate": 0.11623931623931624,
+        "flux": 0.001244011771057338
+      },
+      "similarDropped": 0
+    }
+  ]
+}
