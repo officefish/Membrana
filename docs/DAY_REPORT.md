@@ -1,31 +1,26 @@
-<!-- Сгенерировано: 2026-08-20T06:14:41.973Z (yarn day:report; vesnin) -->
+<!-- Сгенерировано: 2026-08-21T04:36:24.222Z (yarn day:report; vesnin) -->
 
-# Доклад по задачам — 2026-08-20
+# Доклад по задачам — 2026-08-21
 
 Автор: Тимлид (vesnin) · зеркало 5-блочного плана дня.
 
 ## Магистраль
 
 - `firebat-node-device` — ведёт ozhegov
+- `server-plugin-foundation` — ведёт vesnin
+- #2022 — OPEN
 
 ## Подкрепление
 
-- `plugin-results-bridge` — ведёт vesnin
-- `server-plugin-foundation` — ведёт vesnin
-- `angelina-hostess-impl` — ведёт ozhegov
-- `assets-container` — ведёт vesnin
-- #1980 — MERGED
-- #1981 — MERGED
-- #1987 — MERGED
-- #2003 — MERGED
-- #2004 — MERGED
+- `batch-collection-run-contour` — ведёт ozhegov
+- #2022 — OPEN
 
 ## Перспективные
 
-- `server-plugin-foundation` — ведёт vesnin
-- `angelina-hostess-impl` — ведёт ozhegov
-- `assets-container` — ведёт vesnin
-- `mfcc-compare-sprint` — ведёт tarasov
+- `media-per-device-token` — ведёт vesnin
+- #2022 — OPEN
+- #1951 — MERGED
+- #1953 — MERGED
 
 ## Экспериментальные
 
@@ -33,10 +28,7 @@
 
 ## Санитарные
 
-- `plugin-results-bridge` — ведёт vesnin
-- `mfcc-compare-sprint` — ведёт tarasov
-- #1981 — MERGED
-- #1980 — MERGED
-- #1987 — MERGED
-- #2003 — MERGED
-- #2004 — MERGED
+- `firebat-node-device` — ведёт ozhegov
+- #2022 — OPEN
+- #1951 — MERGED
+- #1953 — MERGED

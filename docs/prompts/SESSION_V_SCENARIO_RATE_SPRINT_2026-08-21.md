@@ -1,56 +1,43 @@
-# Session V — 2026-08-21: scenario rate 44.1 vs 48 kHz (#2001)
+# Сессия В — 21.08: частота сценария 44,1 vs 48 кГц (#2001) — срочный блокер качества часа
 
-> Entry point for a separate session. Everything goes through
-> `membrana-local-sprint` (card -> cutter context -> cut -> owner ratification in
-> chat before code -> blocks -> gate -> experience -> CLOSURE).
-> Urgency: before the hour-long session, otherwise part of the material will be
-> non-judgeable and will need to be recaptured.
+> Точка входа отдельной сессии. **Всё через `membrana-local-sprint`** (карточка → контекст
+> резчика → нарезка → **ратификация владельцем в чате до кода** → блоки → гейт → опыт →
+> CLOSURE). **Срочность: до часового сеанса** — иначе час материала выйдет частично
+> несудимым, и его придётся переснимать.
 
-## Observed
+## Наблюдаемое (сверено 21.08 по базе прода)
 
-On the owner's device `1c04f0bc-...` production has 236 records, including both
-44,100 and 48,000 Hz. Yesterday's board scenario tracks: three consecutive tracks
-at 48 kHz, and one `MakeTrack 31b53800-1d5`, 3.11 s, at 44,100 Hz. So one scenario
-within one session produces different sample rates.
+На устройстве владельца `1c04f0bc-…` лежат 236 записей, среди них **и 44 100, и 48 000 Гц**.
+Вчерашние треки сценария борда: три подряд по 48 кГц, один — `MakeTrack 31b53800-1d5`,
+3,11 с, **44 100 Гц**. То есть сценарий в одном сеансе даёт разную частоту.
 
-Cost: mfcc analysis gates honestly refuse 44.1 kHz. Evidence: 2026-08-20 probe in
-`docs/plugins/mfcc-first-field-probe-2026-08-20.md`; debt is open as #2001.
-Today the owner records an hour with this scenario, so part of the tracks can fall
-outside analysis.
+Цена: ворота разбора mfcc на 44,1 кГц отвечают **refused** (вещдок — проба 20.08,
+`docs/plugins/mfcc-first-field-probe-2026-08-20.md`); долг открыт как **#2001**. Сегодня
+владелец пишет ЧАС таким сценарием — часть треков может оказаться вне разбора.
 
-## Task
+## Задача
 
-1. Cause discovery first, before any code: why the same scenario writes different
-   sample rates. Candidates: input device is selected by OS default instead of
-   name; scenario node does not set rate and inherits card/driver mode; input
-   changes between tracks. Output: written cause with code address.
-2. Solution, based on cutter context, one of:
-   - normalize in the path (resample to 48 kHz at ingest or in the scenario node)
-     — Kuryokhin voice from 2026-08-20;
-   - or second gates (analysis accepts 44.1 honestly), with explicit comparison
-     cost;
-   - or hard-fix the capture frequency in the scenario.
-   The choice must be justified, not tweaked.
-3. Tooth for the class: heterogeneous sample rate within one session must be named
-   explicitly (at ingest, in sidecar check, or in analysis). It must not be mixed
-   silently in one set.
+1. **Разведка причины** (первым блоком, до любого кода): почему один и тот же сценарий
+   пишет разную частоту. Кандидаты: устройство ввода выбирается по умолчанию ОС, а не по
+   имени; узел сценария не задаёт rate и наследует режим карты/драйвера; смена входа между
+   треками. Вывод — словом, с адресом в коде.
+2. **Решение** — по контексту резчика, один из:
+   - привести в тракте (ресемпл к 48 кГц на входе приёма или в узле сценария) — голос
+     Курёхина 20.08;
+   - либо вторые ворота (разбор принимает 44,1 честно) — тогда назвать цену для сравнимости
+     корпуса;
+   - либо жёстко фиксировать частоту в сценарии на съёмке.
+   Выбор обосновать, не «подкрутить».
+3. **Зуб**, который ловит класс: разнородная частота внутри одного сеанса должна называться
+   явно (в приёме, в проверке спутника или в разборе) — молча смешивать 44,1 и 48 в одном
+   наборе нельзя.
 
-## Forbidden
+## Запрещено
 
-Touching the magistral session or journal plugin; changing #1950 behavior
-(declared vs measured); production deploy; `git add -A`; manually fixing one track.
+Трогать магистраль (сеанс и плагин журнала) · менять поведение #1950 (объявленное vs
+измеренное) · деплой прода · `git add -A` · «починить» подгонкой одного трека вручную.
 
 ## DoD
 
-Cause named with code address; solution ratified by cut and implemented; tooth for
-the class exists; #2001 is closed or explicitly reformulated with a remaining
-debt; full sprint trail exists.
-
----
-
-## Acceptance criteria (scaffold)
-
-> Заполнить до кода. Чеклист приёмки = Definition of Done + явные AC Issue.
-
-- [ ] …
-- [ ] …
+Причина названа с адресом в коде · решение ратифицировано нарезкой и реализовано · зуб на
+класс есть · #2001 закрыт или явно переформулирован с остатком · спринтовый след полный.
