@@ -164,13 +164,31 @@ describe('исполнитель', () => {
     expect(r).not.toHaveProperty('fingerprints');
   });
 
-  it('общий вход контракта задания НЕ выдумывает — бросает, а не возвращает правдоподобную пустоту', async () => {
+  it('вход контракта берёт задание из ОБОГАЩЁННОЙ нагрузки дома журнала', async () => {
+    const port = stubPort(3);
+    const exec = createChartListExecutor({ port });
+    // Дом кладёт проверенные записи в payload перед вызовом — это его объявленный интерфейс.
+    const r = (await exec.execute(
+      ctx({ volume: 20, criterion: 'loudness-over-floor', userId: 'u1', entries: [{ id: 'e0' }, { id: 'e1' }] }),
+    )) as { asked: number; selection: { picks: unknown[] } };
+    expect(port.calls).toBe(1);
+    expect(r.asked).toBe(2);
+    expect(r.selection.picks).toHaveLength(3);
+  });
+
+  it('без entries — БРОСАЕТ: звали мимо дома журнала, и пустота скрыла бы ошибку вызывающего', async () => {
     const port = stubPort(5);
     const exec = createChartListExecutor({ port });
     await expect(exec.execute(ctx({ volume: 20, criterion: 'loudness-over-floor' }))).rejects.toThrow(
-      /без задания не исполним/,
+      /мимо дома журнала/,
     );
-    // Порт не звали: измерение впустую — трата чужого ресурса ради пустого ответа.
     expect(port.calls).toBe(0);
+  });
+
+  it('записи читаются и строками, и объектами ленты — дом кладёт вторые', async () => {
+    const { entriesOf } = await import('./executor.js');
+    expect(entriesOf({ entries: ['a', 'b'] })).toEqual(['a', 'b']);
+    expect(entriesOf({ entries: [{ id: 'a' }, { id: 'b' }] })).toEqual(['a', 'b']);
+    expect(entriesOf({})).toBeNull();
   });
 });

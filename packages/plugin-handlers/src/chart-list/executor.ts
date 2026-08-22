@@ -80,6 +80,26 @@ export function settingsOf(payload: unknown): ChartListSettings {
   return { volume, criterion };
 }
 
+/**
+ * Записи из обогащённой нагрузки дома журнала.
+ *
+ * `null` — поля нет вовсе (звали мимо дома); пустой массив — дом дал пустое, чего он не делает:
+ * пустое задание он отвергает раньше причиной `empty-task`.
+ */
+export function entriesOf(payload: unknown): readonly string[] | null {
+  const p = (payload ?? {}) as Record<string, unknown>;
+  if (!Array.isArray(p.entries)) return null;
+  return p.entries
+    .map((e) => (typeof e === 'string' ? e : ((e ?? {}) as { id?: unknown }).id))
+    .filter((v): v is string => typeof v === 'string' && v.length > 0);
+}
+
+/** Пользователь из нагрузки — его кладёт вызывающий; порту он нужен для выбора ленты. */
+export function userIdOf(payload: unknown): string {
+  const p = (payload ?? {}) as Record<string, unknown>;
+  return typeof p.userId === 'string' ? p.userId : '';
+}
+
 /** Годны ли настройки — спрашивается ДО измерения: мерить двести треков ради отказа незачем. */
 export function settingsUsable(s: ChartListSettings): boolean {
   return isChartListVolume(s.volume) && isChartListCriterion(s.criterion);
@@ -117,19 +137,27 @@ export function createChartListExecutor(deps: ChartListDeps): PluginExecutor & {
 
   return {
     /**
-     * Вход контракта. БРОСАЕТ, и это не недоделка.
+     * Вход контракта. Задание берётся из ОБОГАЩЁННОЙ нагрузки дома журнала.
      *
-     * `PluginContext` задания не несёт — контракт хоста его не предусматривает, — а чарт-лист без
-     * задания бессмыслен: отбирать не из чего. Подставить пустое задание значило бы позвать
-     * измерение впустую и вернуть правдоподобный пустой результат, по которому не отличить «нечего
-     * отбирать» от «позвали не в ту дверь». Рабочий вход журнала — `runWithTask`.
+     * ИСПРАВЛЕНИЕ СОБСТВЕННОЙ ПОСЫЛКИ (блок c6a). Прежняя версия бросала: рассуждение было, что
+     * `PluginContext` задания не несёт, значит вход неисполним. Посылка неполна — дом журнала перед
+     * вызовом кладёт в `payload` ПРОВЕРЕННЫЕ записи (`entries`), и это его объявленный интерфейс,
+     * а не случайность. То есть задание до плагина доходит, просто не полем контракта.
      *
-     * Поймано собственным зубом: первая версия именно подставляла пустое задание и звала порт.
+     * Найдено сборкой: дом зовёт `execute`, и брошенное исключение сделало бы плагин
+     * незапускаемым в собственном доме.
+     *
+     * Отсутствие `entries` по-прежнему БРОСАЕТ: это значит, что позвали мимо дома журнала, и
+     * правдоподобный пустой результат скрыл бы ошибку вызывающего.
      */
-    async execute(_ctx: PluginContext): Promise<RunResult> {
-      throw new Error(
-        'chart-list: execute без задания не исполним — у журнала свой вход runWithTask(ctx, task)',
-      );
+    async execute(ctx: PluginContext): Promise<RunResult> {
+      const entries = entriesOf(ctx.payload);
+      if (!entries) {
+        throw new Error(
+          'chart-list: в нагрузке нет entries — плагин зван мимо дома журнала, который их кладёт',
+        );
+      }
+      return runWithTask(ctx, { userId: userIdOf(ctx.payload), entryIds: entries });
     },
     runWithTask,
   };
