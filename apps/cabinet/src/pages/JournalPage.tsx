@@ -4,6 +4,9 @@ import { SOUND_CLASSES, type SoundClass } from '@membrana/core';
 import { CabinetLiveJournalItemRow } from '@/components/journal/CabinetLiveJournalItemRow';
 import { LiveJournalPager } from '@/components/journal/LiveJournalPager';
 import { useCabinetLiveJournal } from '@/lib/useCabinetLiveJournal';
+import { PagePluginArea } from '@/plugins/PagePluginArea';
+import { useHomePagePlugins } from '@/plugins/useHomePagePlugins';
+import type { CabinetRendererRegistry } from '@/plugins/adapters/manifestToPagePlugin';
 
 const FILTER_OPTIONS: { value: LiveJournalFilter; label: string }[] = [
   { value: 'all', label: 'Все' },
@@ -23,7 +26,18 @@ const SOUND_CLASS_LABELS: Readonly<Record<SoundClass, string>> = {
   unknown: 'Неизвестно',
 };
 
+/**
+ * Рисовалки кабинета для жильцов дома журнала.
+ *
+ * Список ПУСТ, и это верное состояние почвы, а не недоделка: дом сам называет своих жильцов, а
+ * кабинет объявляет, чем он умеет их рисовать. Настоящий чарт-лист приедет вторым заданием и
+ * добавится сюда одной строкой — механизм при этом не правится. Жилец, зарегистрированный в
+ * доме без рисовалки, из сайдбара не пропадёт: он виден и помечен словами (адаптер И-5).
+ */
+const JOURNAL_RENDERERS: CabinetRendererRegistry = {};
+
 export function JournalPage() {
+  const pagePlugins = useHomePagePlugins(JOURNAL_RENDERERS);
   const journal = useCabinetLiveJournal();
 
   const activeFilterLabel =
@@ -75,7 +89,29 @@ export function JournalPage() {
   };
 
   return (
+    <PagePluginArea
+      plugins={pagePlugins.plugins}
+      state={pagePlugins.state}
+      onToggle={pagePlugins.toggle}
+      onActivate={pagePlugins.activate}
+      onCollapseMain={pagePlugins.collapseMain}
+    >
     <div className="mx-auto max-w-4xl space-y-6">
+      {/*
+        Ответ дома о жильцах показывается словами. Хук отдаёт loading и error, и не показать их
+        значило бы завести мёртвый регулятор: оператор видел бы пустой сайдбар и не отличал
+        «плагинов нет» от «дом не ответил». Ошибка — предмет страницы, а не сайдбара: сайдбар
+        рисует жильцов, которых получил, и о причине их отсутствия не знает.
+      */}
+      {pagePlugins.error ? (
+        <p className="text-sm text-error" role="status">
+          Список плагинов не получен: {pagePlugins.error}
+        </p>
+      ) : pagePlugins.loading ? (
+        <p className="text-sm text-base-content/50" role="status">
+          Спрашиваем дом о плагинах…
+        </p>
+      ) : null}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Live-журнал телеметрии</h1>
@@ -248,5 +284,6 @@ export function JournalPage() {
         </div>
       )}
     </div>
+    </PagePluginArea>
   );
 }

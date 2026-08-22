@@ -115,3 +115,38 @@ export async function deleteTelemetryJournalItems(
   if (!res.ok) throw new Error(await parseError(res));
   return (await res.json()) as { deleted: number };
 }
+
+/**
+ * Жильцы дома журнала. Адаптер И-6 интеграции коворка `cowork-server-plugin-pages`.
+ *
+ * Дом отдаёт манифест и включённость РЯДОМ, а не включённость внутри манифеста: манифест — ровно
+ * пять полей плюс форма показа, включённость же есть операция реестра (M5′).
+ */
+export interface JournalPluginStateView {
+  readonly manifest: {
+    readonly id: string;
+    readonly version: string;
+    readonly kind: 'handler' | 'report' | 'showcase';
+    readonly mountTarget: string;
+    readonly triggers: readonly string[];
+    readonly displayForm?: string;
+    readonly description?: string;
+  };
+  readonly enabled: boolean;
+}
+
+export async function fetchJournalPlugins(): Promise<readonly JournalPluginStateView[]> {
+  const res = await authFetch('/v1/telemetry/plugins');
+  if (!res.ok) throw new Error(await parseError(res));
+  const body = (await res.json()) as { plugins: readonly JournalPluginStateView[] };
+  return body.plugins;
+}
+
+/** Переключить включённость. Владелец состояния — дом; страница просит, а не решает. */
+export async function setJournalPluginEnabled(pluginId: string, enabled: boolean): Promise<void> {
+  const res = await authFetch(`/v1/telemetry/plugins/${encodeURIComponent(pluginId)}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ enabled }),
+  });
+  if (!res.ok) throw new Error(await parseError(res));
+}

@@ -37,6 +37,10 @@
       "fanIn": 5
     },
     {
+      "name": "@membrana/plugin-contracts",
+      "fanIn": 4
+    },
+    {
       "name": "@membrana/cepstral-detector-service",
       "fanIn": 3
     },
@@ -46,10 +50,6 @@
     },
     {
       "name": "@membrana/mfcc-analyzer-service",
-      "fanIn": 3
-    },
-    {
-      "name": "@membrana/plugin-contracts",
       "fanIn": 3
     },
     {
