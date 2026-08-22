@@ -39,6 +39,28 @@ describe('createAudioContext', () => {
     expect(receivedOptions).toEqual({ sampleRate: 48_000 });
   });
 
+  it('throws and closes context when strict sampleRate is not available', () => {
+    let closeCalled = false;
+
+    class FakeAudioContext {
+      readonly sampleRate = 44_100;
+
+      close(): Promise<void> {
+        closeCalled = true;
+        return Promise.resolve();
+      }
+    }
+
+    Object.defineProperty(globalThis, 'window', {
+      configurable: true,
+      value: { AudioContext: FakeAudioContext },
+    });
+
+    expect(() => createAudioContext({ sampleRate: 48_000, requireSampleRate: true })).toThrow(
+      'AudioContext sampleRate 44100 does not match requested 48000',
+    );
+    expect(closeCalled).toBe(true);
+  });
   it('keeps default construction when no sampleRate is requested', () => {
     let receivedOptions: AudioContextOptions | undefined;
 

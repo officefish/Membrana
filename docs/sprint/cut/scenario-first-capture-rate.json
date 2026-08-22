@@ -1,0 +1,91 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "scenario-first-capture-rate",
+  "taskId": "scenario-first-capture-rate",
+  "mode": "explicit-honest",
+  "cutBy": "kuryokhin",
+  "window": {
+    "from": "2026-08-22T11:08:26+03:00",
+    "to": "2026-08-22T13:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "b1-card-and-cause",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "docs/prompts/SESSION_V_FIRST_CAPTURE_RATE_2026-08-22.md",
+        "docs/discussions/cut-scenario-first-capture-rate-kuryokhin.md",
+        "docs/local-sprint/scenario-first-capture-rate/OPEN.md",
+        "docs/sprint/cut/scenario-first-capture-rate.json",
+        "docs/sprint/cut/trail/scenario-first-capture-rate.jsonl",
+        "docs/tasks/registry.json",
+        "docs/tasks/README.md"
+      ],
+      "estimate": {
+        "changedLines": 120
+      },
+      "note": "Register #2046, name the actual bypass: recording chunks use startClipRecorder/startWavRecorder, not LiveSampler. Prepare owner-ratified cut before code.",
+      "revisionAt": "2026-08-22T11:12:00+03:00",
+      "revisionOf": "50ea4f444c8384b3184a80ff083fed5d0e221079bec2abd18b7ff24e18d18248"
+    },
+    {
+      "blockId": "b2-audio-engine-rate-preflight",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/services/audio-engine/src/core/audio-context.ts",
+        "packages/services/audio-engine/src/core/audio-context.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 160
+      },
+      "note": "Add reusable audio-engine rate assertion/preflight that can fail closed before a recorder accepts samples. Keep direct Web Audio policy centralized as far as this urgent patch allows.",
+      "revisionAt": "2026-08-22T11:12:00+03:00",
+      "revisionOf": "d60b79559b88d588ff0add94ffc5376279150c8ad79780a6028b36ed08415e0f"
+    },
+    {
+      "blockId": "b3-wav-recorder-first-capture-guard",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "apps/client/src/plugins/mic-buffer-recorder/clipRecorder.ts",
+        "apps/client/src/plugins/mic-buffer-recorder/clipRecorder.test.ts",
+        "apps/client/src/modules/device-board/scenarioMicJournalBridge.ts"
+      ],
+      "estimate": {
+        "changedLines": 240
+      },
+      "note": "Wire the preflight into WAV recording before worklet PCM is accepted. Add the first-capture-after-start tooth and scenario refusal log. No resampling and no bit-depth change.",
+      "revisionAt": "2026-08-22T11:12:00+03:00",
+      "revisionOf": "0438287201f04d3084454d572c0cd61ff30223543daa41a77c2a0378a5cf5066"
+    },
+    {
+      "blockId": "b4-gate-trail",
+      "persona": "angelina",
+      "context": "angelina",
+      "zone": [
+        "docs/local-sprint/scenario-first-capture-rate/CLOSURE.md",
+        "docs/local-sprint/scenario-first-capture-rate/GATE_REPORT.md",
+        "docs/local-sprint/scenario-first-capture-rate/SEGMENTS.json",
+        "docs/local-sprint/scenario-first-capture-rate/reviews/**",
+        "docs/sprint/trail/scenario-first-capture-rate.jsonl",
+        "docs/procedure-runs/trail/2026-08-22.jsonl",
+        "docs/virtual-team/memory/archive/**"
+      ],
+      "estimate": {
+        "changedLines": 100
+      },
+      "note": "Run focused tests, sprint:gate, sprint:experience, and closure. PR can merge, but production deploy is out of scope without coordinator approval.",
+      "revisionAt": "2026-08-22T11:12:00+03:00",
+      "revisionOf": "883dec69beb343a7c2dbb42beb6e7395e6dc4d1d9f206f22e765dc0efcb6a580"
+    }
+  ],
+  "//cutter": "Context: docs/discussions/cut-scenario-first-capture-rate-kuryokhin.md. Issue #2046 was read from GitHub before the cut. Worktree: C:/Users/user190825/practice/Membrana-issue-2046.",
+  "//out-of-scope": "No production deploy without coordinator approval, no archive recoding, no #2037 bit-depth work, no resampling, no MFCC 44.1 widening.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-22T11:12:00+03:00",
+    "digest": "da688391680909b73ba3b5bf8afeff72091d4b143eadbf952005bb5b4b886939"
+  }
+}

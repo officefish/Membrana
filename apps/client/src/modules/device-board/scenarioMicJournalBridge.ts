@@ -514,7 +514,19 @@ export class ScenarioMicJournalBridge {
     this.cancelActiveClipRecorder(deviceHandle);
     const captureFormat = pickFallbackCaptureFormat(policy.captureFormat);
     const encoder = captureFormat === 'wav' ? 'worklet' : 'mediarecorder';
-    const recorder = startClipRecorder(stream, captureFormat);
+    let recorder: ActiveClipRecorder;
+    try {
+      recorder = startClipRecorder(stream, captureFormat);
+    } catch (error) {
+      scenarioChainLog('recording', 'start-recording-refused', {
+        deviceHandle,
+        captureFormat,
+        encoder,
+        requestedSampleRate: captureFormat === 'wav' ? SCENARIO_CAPTURE_SAMPLE_RATE : null,
+        reason: error instanceof Error ? error.message : String(error),
+      });
+      return false;
+    }
     this.activeClipRecorders.set(deviceHandle, { recorder, captureFormat, encoder });
     session.start(policy, Date.now());
     scenarioChainLog('recording', 'start-recording', {
@@ -1812,7 +1824,16 @@ export class ScenarioMicJournalBridge {
   async recordChunk(options: { readonly durationMs: number }): Promise<{ readonly clipId: string }> {
     const durationMs = clampChunkDurationMs(options.durationMs);
     const stream = await this.resolveActiveStream();
-    const recorder = startClipRecorder(stream, 'wav');
+    let recorder: ActiveClipRecorder;
+    try {
+      recorder = startClipRecorder(stream, 'wav');
+    } catch (error) {
+      scenarioChainLog('recording', 'record-chunk-refused', {
+        requestedSampleRate: SCENARIO_CAPTURE_SAMPLE_RATE,
+        reason: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
 
     try {
       await waitMs(durationMs);

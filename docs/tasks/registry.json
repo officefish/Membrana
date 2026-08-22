@@ -22,6 +22,27 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "scenario-rate-first-capture",
+      "title": "Первый трек после старта сценария: 44.1 кГц должен fail-closed до записи (#2046)",
+      "promptPath": "docs/prompts/SESSION_V_FIRST_CAPTURE_RATE_2026-08-22.md",
+      "githubIssue": 2046,
+      "linearId": "DRU-621",
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-08-22",
+      "archivedAt": null,
+      "leadPersona": "kuryokhin",
+      "supportPersonas": [
+        "vesnin",
+        "dynin",
+        "angelina"
+      ],
+      "notes": "P0-candidate from 21.08 evening review: first recording chunk after scenario start writes 44100 despite PR #2042 fail-closed promise. Work in separate worktree; no deploy without coordinator because live session deploy tears recordings (#2048).",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "report-entry-gap",
       "title": "Боевой вход ведёт к своду сеанса: повод из закрытого словаря, отпечатки рода report, словарь сборщиков контекста",
       "promptPath": "docs/prompts/REPORT_ENTRY_GAP_PROMPT.md",
