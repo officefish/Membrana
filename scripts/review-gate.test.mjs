@@ -22,6 +22,7 @@ import {
   shouldEnsureReview,
   statusFromDecision,
 } from './lib/review-gate.mjs';
+import { reviewSearchPaths } from './review-gate.mjs';
 
 const SHA = '163a759e163a759e163a759e163a759e163a759e';
 const verdict = (v) => ({ sha: SHA, verdict: v, lead: 'vesnin', at: null });
@@ -315,4 +316,39 @@ test('CLI: --restamp сохраняет базу вердикта, а не по�
   const legacyPrev = parseVerdict(legacy);
   const legacyRestamped = renderVerdictMarker({ sha: 'a'.repeat(40), base: legacyPrev.base, verdict: 'LGTM', lead: legacyPrev.lead });
   assert.equal(legacyRestamped.includes('base:'), false, 'база не выдумывается из воздуха');
+});
+
+test('reviewSearchPaths: своё дерево первым, соседние из git worktree list, дублей нет', () => {
+  const out = [
+    'worktree C:/p/Membrana',
+    'HEAD abc',
+    '',
+    'worktree C:/p/Membrana-records',
+    'HEAD def',
+    '',
+  ].join('\n');
+  const paths = reviewSearchPaths('C:/p/Membrana-records', 'docs/discussions/pr-1-code-review.md', () => out);
+  assert.equal(paths.length, 2, 'своё дерево не дублируется записью из git worktree list');
+  assert.ok(paths[0].includes('Membrana-records'), 'своё дерево ПЕРВОЕ: свежий локальный прогон не перекрывается чужим старым');
+  assert.ok(paths[1].includes('Membrana') && !paths[1].includes('Membrana-records'), 'соседнее дерево добавлено');
+});
+
+test('reviewSearchPaths: git недоступен — один свой путь, поведение прежнее (не ошибка гейта)', () => {
+  const paths = reviewSearchPaths('C:/p/solo', 'docs/discussions/pr-1-code-review.md', () => { throw new Error('not a git repo'); });
+  assert.deepEqual(paths.length, 1);
+  assert.ok(paths[0].includes('solo'));
+});
+
+test('«не найдено» называет просмотренные пути — ненайденный артефакт перестаёт быть загадкой', () => {
+  const withList = reviewGateDecision({
+    headSha: 'abc12345',
+    verdict: null,
+    artifact: { exists: false, path: 'p.md', searched: ['/a/p.md', '/b/p.md'] },
+  });
+  assert.equal(withList.state, 'unknown');
+  assert.match(withList.reason, /искал: \/a\/p\.md · \/b\/p\.md/u);
+
+  // Без списка (старые вызовы и зубы ядра) текст прежний — контракт не сломан.
+  const without = reviewGateDecision({ headSha: 'abc12345', verdict: null, artifact: { exists: false, path: 'p.md' } });
+  assert.doesNotMatch(without.reason, /искал:/u);
 });
