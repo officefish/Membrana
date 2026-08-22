@@ -4,6 +4,9 @@ import { SOUND_CLASSES, type SoundClass } from '@membrana/core';
 import { CabinetLiveJournalItemRow } from '@/components/journal/CabinetLiveJournalItemRow';
 import { LiveJournalPager } from '@/components/journal/LiveJournalPager';
 import { useCabinetLiveJournal } from '@/lib/useCabinetLiveJournal';
+import { PagePluginArea } from '@/plugins/PagePluginArea';
+import { usePagePlugins } from '@/plugins/usePagePlugins';
+import { createRowStubPlugin } from '@/plugins/stubs/rowStubPlugin';
 
 const FILTER_OPTIONS: { value: LiveJournalFilter; label: string }[] = [
   { value: 'all', label: 'Все' },
@@ -23,7 +26,14 @@ const SOUND_CLASS_LABELS: Readonly<Record<SoundClass, string>> = {
   unknown: 'Неизвестно',
 };
 
+/**
+ * Жильцы страницы журнала. Пока один — стаб блока B: механизм принимается на живой странице,
+ * а настоящий чарт-лист приедет вторым заданием и встанет в это же гнездо без правок механизма.
+ */
+const JOURNAL_PAGE_PLUGINS = [createRowStubPlugin()];
+
 export function JournalPage() {
+  const pagePlugins = usePagePlugins();
   const journal = useCabinetLiveJournal();
 
   const activeFilterLabel =
@@ -75,6 +85,13 @@ export function JournalPage() {
   };
 
   return (
+    <PagePluginArea
+      plugins={JOURNAL_PAGE_PLUGINS}
+      state={pagePlugins.state}
+      onToggle={pagePlugins.toggle}
+      onActivate={pagePlugins.activate}
+      onCollapseMain={pagePlugins.collapseMain}
+    >
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
@@ -248,5 +265,6 @@ export function JournalPage() {
         </div>
       )}
     </div>
+    </PagePluginArea>
   );
 }
