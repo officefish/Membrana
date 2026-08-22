@@ -91,3 +91,14 @@ export {
   type ChartListTuning,
   type ChartListVolume,
 } from './chart-list/selection.js';
+export { CHART_LIST_MANIFEST, CHART_LIST_ID } from './chart-list/manifest.js';
+export {
+  createChartListExecutor,
+  settingsOf,
+  settingsUsable,
+  type ChartListDeps,
+  type ChartListMeasurePort,
+  type ChartListResult,
+  type ChartListSettings,
+  type ChartListTask,
+} from './chart-list/executor.js';
