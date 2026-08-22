@@ -12,11 +12,11 @@
 
 | Поле | Значение |
 |------|----------|
-| `primaryFocusId` | `firebat-node-device` |
+| `primaryFocusId` | `journal-home-real` (owner-choice 22.08; генератор выдал `firebat-node-device` — источник вчерашний, перезаписано по гейту) |
 | `primaryTitle` | Узел Firebat как устройство: приложение на узле, исходящий канал, права при установке |
 | `githubIssue` | — (опора дня: #2046 на тракте rate) |
 | `size` | L |
-| `promptPath` | — (карточка реестра `firebat-node-device`, leadPersona: ozhegov) |
+| `promptPath` | — (карточка `journal-home-real` заводится с первым PR дня) |
 | `сгенерировано` | 2026-08-22 |
 
 ## Магистраль
@@ -64,14 +64,14 @@
 
 | Утверждение | Происхождение | Первоисточник | Свежесть |
 |-------------|---------------|---------------|----------|
-| Магистраль = `firebat-node-device` (L): приложение на узле, исходящий канал, права при установке | сессия | owner-choice@chat/magistral-19-08 (`docs/tasks/main-day-assertions.json` → `sources[0].claim`) | 2026-08-19 |
-| Выбор из замороженного top-3; генераторные созвучия отвергнуты по существу | снимок-хардкод | `frozenDigest` 9ee6b5ca… / frozenOptions: firebat-node-device, server-plugin-foundation, rag-service-red-test | 2026-08-19 |
+| Магистраль = `journal-home-real` (L): настоящий дом журнала на сервере; форма для человека — до кода | сессия | owner-choice@chat/magistral-19-08 (`docs/tasks/main-day-assertions.json` → `sources[0].claim`) | 2026-08-19 |
+| Выбор из замороженного top-3; генераторные созвучия отвергнуты по существу | снимок-хардкод | `frozenDigest` 9ee6b5ca… / frozenOptions 22.08: journal-home-real, duty-mode-alarm-state, cepstral-harmonic-feature | 2026-08-22 |
 | Ступень 1 (узел пишет 48 kHz и шлёт сам) закрыта; узел за NAT → только исходящий канал; SSH ≠ модель прав | сессия | то же owner-choice 19.08 (контекст claim) | 2026-08-18…19 |
 | Сегодняшний операционный затвор дня — #2046 (48 kHz fail-closed / явный отказ), P0 вечернего ревью; это **подкрепление** контура узла, не смена L-магистрали | issue / план | `docs/DAILY_STANDUP.md` + `docs/DAY_PLAN.md` (слот Подкрепление); формулировка стендапа: «не новая L-магистраль» | 2026-08-22 |
 | План дня **не** назначил новую магистраль: top-3 = angelina-hostess-impl / assets-container / batch-collection-run-contour, нужен owner-choice | план | `docs/DAY_PLAN.md` («магистраль НЕ назначена планом») | 2026-08-22 |
 | Параллельный L без owner-choice сегодня сознательно не стартуем (hostess / assets / batch) | план / сессия | стендап «Что сознательно не делаем» + DAY_PLAN | 2026-08-22 |
 | `morning-gates-state.json` с `magistral` на day=2026-08-22 во входе ритуала **не представлен** → правило У1 (гейт свежее assertions) не сработало; остаёмся на `sources[0]` | код | отсутствие сегодняшнего gate-magistral во входном пакете; assertions не перечеканены под 22.08 | 2026-08-22 |
-| **Расхождение:** assertions несут magistral 19.08 (`firebat-node-device`), DAY_PLAN 22.08 предлагает иной top-3 и ждёт слова владельца; **магистраль дня взята из assertions `sources[0]`, assertions под сегодняшний freeze не перечеканены** | план / сессия | норма У1 31.07 + freshness-спринт 02.08; находка: перечеканка `main-day-assertions.json` каноном предписана и не сделана | 2026-08-22 |
+| **Расхождение снято owner-choice 22.08:** assertions и sources[0] несут магистраль 19.08 — источник устарел на три дня; действующий мандат дня — `journal-home-real`, перечеканка посылок к вечеру | план / сессия | норма У1 31.07 + freshness-спринт 02.08; находка: перечеканка `main-day-assertions.json` каноном предписана и не сделана | 2026-08-22 |
 
 Голоса по различным первоисточникам:
 
@@ -94,7 +94,7 @@
 
 ## Сегодня делаем
 
-1. Зафиксировать мандат дня: primary = `firebat-node-device`; операционный затвор = #2046 (не подмена L).  
+1. Зафиксировать мандат дня: primary = `journal-home-real` (owner-choice 22.08); операционный затвор = #2046 (не подмена L).  
 2. Закрыть #2046: первый трек сценария не стартует на 44,1 молча — только 48 kHz fail-closed **или** явный отказ с проверяемым UX/логом.  
 3. Добавить или подтвердить автоматизированный след (тест/зуб) на контракт rate на тракте сценарий/capture.  
 4. Не чинить «демо» обходом, оставляющим 44,1 в одном из путей (capture / scenario / node).  
@@ -104,7 +104,7 @@
 
 ## Definition of Done (фокус)
 
-- [ ] Магистраль дня явно = `firebat-node-device` (owner `sources[0]`), без подмены на hostess/assets/batch
+- [ ] Магистраль дня явно = `journal-home-real` (owner-choice 22.08), без подмены генераторными созвучиями
 - [ ] #2046 CLOSED либо с merge fail-closed 48 kHz, либо с явным отказом и зафиксированным поведением
 - [ ] Нет пути «первый трек сценария тихо на 44,1»
 - [ ] Есть проверяемый след (тест, зуб или e2e-якорь) на контракт sample rate тракта
@@ -141,4 +141,4 @@
 - `docs/tasks/main-day-assertions.json` — `sources[0]`: owner-choice magistral-19-08 → `firebat-node-device`
 - `docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md` — запрет магистрали «Этап 1.A / DSP benchmark»
 - GitHub #2046 — rate fail-closed первого трека сценария
-- Реестр: `firebat-node-device` (lead: ozhegov / structurist)
+- Реестр: карточка `journal-home-real` заводится с первым PR дня; `firebat-node-device` закрыт 20.08
