@@ -6,7 +6,7 @@
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
 Записей: 50 · бюджет 14366/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 323 (причины в op-log) -->
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 324 (причины в op-log) -->
 
 ### 2026-08-21 · позиция · duty-node-detection-m1-slovar
 
