@@ -170,7 +170,7 @@ describe('исполнитель', () => {
     // Дом кладёт проверенные записи в payload перед вызовом — это его объявленный интерфейс.
     const r = (await exec.execute(
       ctx({ volume: 20, criterion: 'loudness-over-floor', userId: 'u1', entries: [{ id: 'e0' }, { id: 'e1' }] }),
-    )) as { asked: number; selection: { picks: unknown[] } };
+    )) as unknown as { asked: number; selection: { picks: unknown[] } };
     expect(port.calls).toBe(1);
     expect(r.asked).toBe(2);
     expect(r.selection.picks).toHaveLength(3);
