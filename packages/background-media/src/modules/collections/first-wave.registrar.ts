@@ -88,6 +88,21 @@ export interface RunRequestOutcome {
   readonly fingerprints: PluginContext['fingerprints'];
   /** Исход моста для этого прогона; `null` — сид не дошёл (прогон отказал до результата). */
   readonly bridge: BridgeOutcome | null;
+  /**
+   * Результат исполнителя — для прогонов, чей вызывающий обязан его УВИДЕТЬ, а не только узнать,
+   * что прогон был. Заведено блоком c5c спринта `chart-list-plugin`.
+   *
+   * Почему не через дом результатов: `RunResult` контракта — ровно два поля (`completedAt`,
+   * `kind`), `RunRecord` добавляет адрес, отпечатки и режим. Измеренному в паспорте места НЕТ,
+   * и офис срезал бы лишнее схемой. Правки контрактов задание запрещает (Т6), а писать измеренное
+   * куда-то мимо plugin-results запрещает норма #1950.
+   *
+   * Двух источников правды не возникает: паспорт удостоверяет, ЧТО прогон был и по какому входу;
+   * здесь возвращается то, что прогон ПОСЧИТАЛ. Паспорт измерений не несёт вовсе.
+   *
+   * `undefined` — обычный случай: детекторам первой волны возвращать вызывающему нечего.
+   */
+  readonly result?: unknown;
 }
 
 @Injectable()
@@ -107,6 +122,8 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
   private readonly contextBuilders = new Map<string, (req: RunRequest) => Promise<PluginContext>>();
   /** Ожидающие исход моста по runId — только `requestRun`; notify-прогоны сюда не пишут. */
   private readonly awaiting = new Map<string, (o: BridgeOutcome) => void>();
+  /** Результаты исполнителей по runId — заполняются обёрткой регистрации, читаются в requestRun. */
+  private readonly results = new Map<string, unknown>();
 
   constructor(
     private readonly host: CollectionsPluginHostService,
@@ -149,6 +166,32 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
         trigger: req.trigger ?? mfccManifest.triggers[0]!,
         payload: { collectionId: req.collectionId, sampleId: req.sampleId, occurredAt: new Date() },
       }));
+
+      const measureManifest = handlers.CHART_LIST_MEASURE_MANIFEST;
+      this.contextBuilders.set(measureManifest.id, async (req) => ({
+        address: this.addressOf(measureManifest, req, handlers.uuidV7()),
+        // Отпечаток входа — от СОСТАВА набора, а не от всей коллекции: прогон шёл по перечню.
+        fingerprints: {
+          inputHash: handlers.sha256Hex([...(req.sampleIds ?? [])].sort().join('\n')),
+          configHash: handlers.sha256Hex(JSON.stringify(handlers.CHART_LIST_MEASURE_DEFAULTS)),
+        },
+        resumeMode: 'fresh',
+        trigger: req.trigger ?? measureManifest.triggers[0]!,
+        payload: { collectionId: req.collectionId, sampleIds: req.sampleIds ?? [], occurredAt: new Date() },
+      }));
+      this.host.registerPlugin(measureManifest, {
+        execute: async (ctx) => {
+          const outcome = await handlers.measureSampleSet(
+            { reader: mfcc.reader },
+            ctx.address.collectionId,
+            handlers.sampleIdsOf(ctx.payload),
+          );
+          // Результат кладётся ПО runId, а не в поле службы: параллельные прогоны не должны
+          // затирать друг друга — тот же довод, по которому исход моста ловится картой.
+          this.results.set(ctx.address.runId, outcome);
+          return { completedAt: new Date(), kind: 'report' as const };
+        },
+      });
 
       const digestManifest = handlers.SESSION_DIGEST_MANIFEST;
       this.contextBuilders.set(digestManifest.id, async (req) => {
@@ -221,6 +264,14 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
     } finally {
       this.awaiting.delete(ctx.address.runId);
     }
-    return { runId: ctx.address.runId, address: ctx.address, fingerprints: ctx.fingerprints, bridge };
+    const result = this.results.get(ctx.address.runId);
+    this.results.delete(ctx.address.runId);
+    return {
+      runId: ctx.address.runId,
+      address: ctx.address,
+      fingerprints: ctx.fingerprints,
+      bridge,
+      ...(result === undefined ? {} : { result }),
+    };
   }
 }

@@ -49,7 +49,7 @@ async function registrar(cfg = config, bridge = spyBridge().bridge) {
  * это цена загрузки библиотеки, а не медленный код.
  */
 describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
-  it('на старте модуля хост collections держит шесть детекторов ПЛЮС свод сеанса рода report', async () => {
+  it('на старте модуля хост collections держит шесть детекторов, свод сеанса и измеритель чарт-листа', async () => {
     const host = new CollectionsPluginHostService();
     await host.onModuleInit();
     await new FirstWavePluginsRegistrar(host, prisma, blobs, config, spyBridge().bridge).onModuleInit();
@@ -59,9 +59,12 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
       'membrana.handler.spectral-flux', 'membrana.handler.template-match', 'membrana.handler.yamnet',
       // Свод сеанса смонтирован в том же доме отдельной волной — род report, не детектор (j2, #1961).
       'membrana.report.session-digest',
+      // Измеритель чарт-листа — ВТОРОЕ внедрение одного функционала (Т6, c5b): показывает
+      // человеку чарт-лист в доме журнала, а меряет здесь, где звук лежит локально.
+      'membrana.report.chart-list-measure',
     ]);
     expect(registered.filter((m) => m.kind === 'handler')).toHaveLength(6);
-    expect(registered.filter((m) => m.kind === 'report')).toHaveLength(1);
+    expect(registered.filter((m) => m.kind === 'report')).toHaveLength(2);
   });
 
   it('читатель проб — только чтение: список по collectionId, байты по storageRef, sha256 содержимого', async () => {
