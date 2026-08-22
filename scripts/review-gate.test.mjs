@@ -7,6 +7,7 @@
  */
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { join, resolve } from 'node:path';
 
 import {
   PUBLISH_ATTEMPTS,
@@ -22,6 +23,7 @@ import {
   shouldEnsureReview,
   statusFromDecision,
 } from './lib/review-gate.mjs';
+import { reviewSearchPaths } from './review-gate.mjs';
 
 const SHA = '163a759e163a759e163a759e163a759e163a759e';
 const verdict = (v) => ({ sha: SHA, verdict: v, lead: 'vesnin', at: null });
@@ -315,4 +317,38 @@ test('CLI: --restamp сохраняет базу вердикта, а не по�
   const legacyPrev = parseVerdict(legacy);
   const legacyRestamped = renderVerdictMarker({ sha: 'a'.repeat(40), base: legacyPrev.base, verdict: 'LGTM', lead: legacyPrev.lead });
   assert.equal(legacyRestamped.includes('base:'), false, 'база не выдумывается из воздуха');
+});
+
+test('reviewSearchPaths: своё дерево первым, соседние из git worktree list, дублей нет', () => {
+  // Пути строятся resolve() внутри зуба: литерал 'C:/p/…' абсолютен лишь на Windows, и на
+  // Linux-раннере свой путь переставал совпадать с записью git worktree list (красное на CI
+  // при зелёном локально, 22.08). Платформа не должна решать, что проверяет зуб.
+  const own = resolve('tmp-wt', 'Membrana-records');
+  const neighbour = resolve('tmp-wt', 'Membrana');
+  const out = [`worktree ${neighbour}`, 'HEAD abc', '', `worktree ${own}`, 'HEAD def', ''].join('\n');
+  const paths = reviewSearchPaths(own, 'docs/discussions/pr-1-code-review.md', () => out);
+  assert.equal(paths.length, 2, 'своё дерево не дублируется записью из git worktree list');
+  assert.equal(paths[0], join(own, 'docs/discussions/pr-1-code-review.md'), 'своё дерево ПЕРВОЕ: свежий локальный прогон не перекрывается чужим старым');
+  assert.equal(paths[1], join(neighbour, 'docs/discussions/pr-1-code-review.md'), 'соседнее дерево добавлено');
+});
+
+test('reviewSearchPaths: git недоступен — один свой путь, поведение прежнее (не ошибка гейта)', () => {
+  const solo = resolve('tmp-wt', 'solo');
+  const paths = reviewSearchPaths(solo, 'docs/discussions/pr-1-code-review.md', () => { throw new Error('not a git repo'); });
+  assert.equal(paths.length, 1);
+  assert.equal(paths[0], join(solo, 'docs/discussions/pr-1-code-review.md'));
+});
+
+test('«не найдено» называет просмотренные пути — ненайденный артефакт перестаёт быть загадкой', () => {
+  const withList = reviewGateDecision({
+    headSha: 'abc12345',
+    verdict: null,
+    artifact: { exists: false, path: 'p.md', searched: ['/a/p.md', '/b/p.md'] },
+  });
+  assert.equal(withList.state, 'unknown');
+  assert.match(withList.reason, /искал: \/a\/p\.md · \/b\/p\.md/u);
+
+  // Без списка (старые вызовы и зубы ядра) текст прежний — контракт не сломан.
+  const without = reviewGateDecision({ headSha: 'abc12345', verdict: null, artifact: { exists: false, path: 'p.md' } });
+  assert.doesNotMatch(without.reason, /искал:/u);
 });

@@ -30,17 +30,17 @@
       "noIssueReason": "коворк ведётся артефактами формата: brief, контракт, ретроспектива",
       "linearId": null,
       "size": "L",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-22",
-      "archivedAt": null,
+      "archivedAt": "2026-08-22",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
         "dynin"
       ],
       "notes": "",
-      "archiveNotes": null,
+      "archiveNotes": "PR #2068 merged 2026-08-22 as 9bb3f401; фазы 0-5 коворка пройдены; три блока вошли, победителя нет; LGTM тимлида (vesnin) по 681ddb6a, review-gate pass, CI зелёный. Дефект резки brief (зона C без package.json спрятала границу ESM/CJS) зафиксирован в RETROSPECTIVE. Магистраль journal-home-real и #2046 этим мёрджем НЕ закрыты.",
       "githubIssueClosedAt": null
     },
     {
