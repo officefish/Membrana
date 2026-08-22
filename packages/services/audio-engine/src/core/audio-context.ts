@@ -6,6 +6,7 @@ import { DomainError } from '@membrana/core';
 
 export interface CreateAudioContextOptions {
   readonly sampleRate?: number;
+  readonly requireSampleRate?: boolean;
 }
 
 /** Создаёт AudioContext с поддержкой webkit-префикса. */
@@ -21,9 +22,23 @@ export function createAudioContext(options: CreateAudioContextOptions = {}): Aud
       'WEB_AUDIO_UNAVAILABLE',
     );
   }
-  return options.sampleRate === undefined
+  const context = options.sampleRate === undefined
     ? new Ctor()
     : new Ctor({ sampleRate: options.sampleRate });
+
+  if (
+    options.requireSampleRate === true &&
+    options.sampleRate !== undefined &&
+    context.sampleRate !== options.sampleRate
+  ) {
+    void closeAudioContext(context);
+    throw new DomainError(
+      `AudioContext sampleRate ${context.sampleRate} does not match requested ${options.sampleRate}`,
+      'WEB_AUDIO_SAMPLE_RATE_UNAVAILABLE',
+    );
+  }
+
+  return context;
 }
 
 /**

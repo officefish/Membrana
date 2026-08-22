@@ -1,0 +1,12 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "scenario-first-capture-rate",
+  "note": "Measured by the owner-ratified four-block cut; code change is intentionally narrow and non-deploying.",
+  "measuredAt": "2026-08-22T12:34:00+03:00",
+  "segments": [
+    { "cutBlockId": "b1-card-and-cause", "changedLines": 120 },
+    { "cutBlockId": "b2-audio-engine-rate-preflight", "changedLines": 160 },
+    { "cutBlockId": "b3-wav-recorder-first-capture-guard", "changedLines": 240 },
+    { "cutBlockId": "b4-gate-trail", "changedLines": 100 }
+  ]
+}
