@@ -18,7 +18,7 @@
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { EXTERNAL_CALL_TIMEOUT_MS } from './lib/merge-fact.mjs';
@@ -35,6 +35,35 @@ import {
 } from './lib/review-gate.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
+/**
+ * Пути артефакта ревью во ВСЕХ рабочих деревьях: своё дерево первым, остальные — из
+ * `git worktree list`. Дубли сняты; порядок несущий — своё дерево имеет приоритет, чтобы
+ * свежий локальный прогон не был перекрыт чужим старым файлом.
+ *
+ * Отказ `git` (не репозиторий, git недоступен) — не ошибка гейта: возвращается один
+ * собственный путь, поведение прежнее.
+ *
+ * @param {string} root корень текущего дерева
+ * @param {string} rel относительный путь артефакта
+ * @param {(cmd: string, args: string[]) => string} [run] для зубов
+ */
+export function reviewSearchPaths(root, rel, run = sh) {
+  const paths = [join(root, rel)];
+  let out = '';
+  try {
+    out = run('git', ['worktree', 'list', '--porcelain']);
+  } catch {
+    return paths;
+  }
+  for (const line of out.split('\n')) {
+    const m = /^worktree (.+)$/u.exec(line.trim());
+    if (!m) continue;
+    const candidate = join(resolve(m[1]), rel);
+    if (!paths.includes(candidate)) paths.push(candidate);
+  }
+  return paths;
+}
 const argv = process.argv.slice(2);
 const flag = (n) => {
   const i = argv.indexOf(`--${n}`);
@@ -117,8 +146,23 @@ function main() {
     }
   }
 
-  const reviewPath = join(repoRoot, `docs/discussions/pr-${pr}-code-review.md`);
-  let md = existsSync(reviewPath) ? readFileSync(reviewPath, 'utf8') : '';
+  // ЧТЕНИЕ артефакта — по ВСЕМ рабочим деревьям репозитория, запись — только в своё.
+  //
+  // Вещдок 22.08: ревью прогнали в одном дереве, мёржили из другого — гейт файла не увидел
+  // и потребовал переносить его руками. Артефакт по `.gitignore:154` не коммитится, значит
+  // физически лежит там, где гоняли `code-review:pr`, а деревьев у сессий много.
+  //
+  // Почему поиском, а не переездом в git-common-dir: адрес `docs/discussions/pr-N-code-review.md`
+  // знают `code-review.mjs`, `pr-ship.mjs`, правило игнора и девять уже трекнутых файлов —
+  // переезд сменил бы контракт ради одного сценария. Поиск read-only и ничего не ломает.
+  const reviewRel = `docs/discussions/pr-${pr}-code-review.md`;
+  const reviewPath = join(repoRoot, reviewRel); // куда ПИШЕМ (--ensure/--publish): своё дерево
+  const searched = reviewSearchPaths(repoRoot, reviewRel);
+  const foundPath = searched.find((p) => existsSync(p)) ?? null;
+  let md = foundPath ? readFileSync(foundPath, 'utf8') : '';
+  if (foundPath && foundPath !== reviewPath) {
+    console.log(`  ⓘ артефакт ревью взят из соседнего дерева: ${foundPath}`);
+  }
 
   // ТЕКУЩАЯ merge-base (#1771) — тем же источником, что и тракт диффа: `compare` отдаёт
   // базу и голову согласованно и работает для ЧУЖОГО PR, чья ветка не выкачана. Локальный
@@ -150,7 +194,11 @@ function main() {
   };
   // Признак артефакта — от скрипта: ядро в ФС не ходит, а «файла нет» и «файл есть без
   // маркера» лечатся по-разному (блок e1 спринта review-honesty).
-  const artifactOf = () => ({ exists: existsSync(reviewPath), path: `docs/discussions/pr-${pr}-code-review.md` });
+  const artifactOf = () => ({
+    exists: Boolean(foundPath ?? null) || existsSync(reviewPath),
+    path: foundPath ?? reviewRel,
+    searched: searched.length > 1 ? searched : undefined,
+  });
   let decision = reviewGateDecision({ headSha, currentBase, verdict: parseVerdict(md), override, scope: scopeFromBody(md), artifact: artifactOf() });
 
   // --ensure (#1465 Ф2): «ревью не прогонялось» — не повод останавливать шип и звать
@@ -200,4 +248,7 @@ function main() {
   return 3;
 }
 
-if (process.argv[1]?.endsWith('review-gate.mjs')) process.exit(main());
+// Сторож входа: НЕ endsWith('review-gate.mjs') — это истинно и для review-gate.test.mjs,
+// который с 22.08 импортирует отсюда reviewSearchPaths; при таком запуске main() выстрелил бы
+// прямо в прогоне зубов. Сверяем имя файла целиком.
+if (basename(process.argv[1] ?? '') === 'review-gate.mjs') process.exit(main());

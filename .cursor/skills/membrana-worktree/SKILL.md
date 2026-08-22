@@ -42,19 +42,49 @@ description: >-
    - новая ветка: `git worktree add -b feat/<topic> ../Membrana-<label> main`
    - персона-ветка (если основная сессия НЕ на ней): `git worktree add ../Membrana-dynin dynin`
 3. **Bootstrap нового worktree** (рабочий каталог отдельный, НЕ разделяется):
-   - `.env` → скопировать из primary (gitignore).
-   - `node_modules` → **per-worktree `yarn install`** (Yarn cache ускоряет).
-   Shared junction/symlink на чужой `node_modules` — **anti-pattern** (#725):
-   ломает Nest11/express resolve. Не заводить новый bootstrap «с junction».
-   (`yarn worktree:bootstrap` исторически делал junction — не опираться на это
-   как на канон; follow-up #705 = install, не junction.)
-4. **Запустить сессию:** `cd ../Membrana-<label> && yarn claude:code` (proxy-aware).
-5. **Работать изолированно.** Каждая сессия коммитит/пушит свою ветку — общего индекса нет,
+
+   ```bash
+   cd ../Membrana-<label> && yarn worktree:bootstrap
+   ```
+
+   **Штатный ответ на «как поднять свежее дерево» — этот глагол.** Сегодня он делает
+   **свой `yarn install`** в дереве (умолчание `mode: 'install'`, канон #725) и копирует
+   `.env` из primary; выбранный способ пишется в `WORKTREE.md`. Junction остался только
+   за явным `--junction` и в `--help` назван анти-паттерном #725 (ломает Nest11/express
+   resolve, прячет несобранные пакеты — 29.07: rag-service, пять e2e).
+
+   _Прежняя редакция этого скилла говорила «bootstrap исторически делал junction — не
+   опираться». Это устарело: инструмент переписан, отставал текст. Проверено 22.08
+   живым `--dry-run` в дереве без модулей: `modules-install: yarn install …`._
+
+   **Если install не проходит.** В песочнице агента `yarn install` иногда падает на
+   создании связей воркспейсов (`EPERM: operation not permitted, symlink`) даже при
+   `winLinkType: junctions`. Тогда выходов **два**, и оба честные:
+   - выполнить установку из терминала владельца (та же команда, другие права);
+   - **работать в дереве из канона, где модули уже есть** — и не гонять локальных судей
+     здесь (см. ниже).
+
+4. **Что можно делать в дереве БЕЗ установки, а что нельзя.** Установка нужна не всегда:
+   задачи про документы, git и `pr:ship` обходятся без неё, и это законно — цель не
+   «чтобы всегда всё было», а «чтобы агент знал, чего у него нет».
+   - **можно:** правки документов, `git`, `gh`, `yarn pr:ship` (запускается как
+     `node scripts/pr-ship.mjs`, если `yarn` недоступен), скрипты на голом node;
+   - **нельзя доверять:** `vitest`, `tsc`, `turbo` — workspace-пакеты не резолвятся.
+     `yarn`-обёртки судей откажут рано и назовут оба выхода (`yarn test`, `typecheck`).
+   - **⚠ Одолженный бинарь соседнего дерева даёт ЛОЖНЫЙ ЗЕЛЁНЫЙ.** Запуск вида
+     `node ../Membrana/node_modules/vitest/vitest.mjs run …` в дереве без установки
+     проходит и печатает «✓ passed», хотя `require.resolve('@membrana/…')` в том же
+     прогоне даёт `MODULE_NOT_FOUND`: зелёными выглядят ровно те тесты, что не трогали
+     workspace-импорты, а остальные либо падают в глубине, либо судят пакеты **чужого**
+     дерева (#725). Такой прогон **не является свидетельством** — гнать судей только в
+     установленном дереве.
+5. **Запустить сессию:** `cd ../Membrana-<label> && yarn claude:code` (proxy-aware).
+6. **Работать изолированно.** Каждая сессия коммитит/пушит свою ветку — общего индекса нет,
    контаминация исключена.
-6. **Смена трека mid-flight.** Перед новой задачей в том же чате — одной строкой:
+7. **Смена трека mid-flight.** Перед новой задачей в том же чате — одной строкой:
    предыдущая ветка: uncommitted / PR открыт / merged. Не оставлять владельца
    спрашивать «а прошлую доделали?».
-7. **Убрать по завершении:** `git worktree remove ../Membrana-<label>` (`--force` если грязный)
+8. **Убрать по завершении:** `git worktree remove ../Membrana-<label>` (`--force` если грязный)
    → затем `git worktree prune`. Ветку мёржит/удаляет её собственный ship-флоу.
 
 ## Anti-patterns
@@ -63,6 +93,8 @@ description: >-
 - Держать одну ветку в двух worktree (git откажет) или силой `checkout` под чужой активной
   сессией (сдёрнешь её работу).
 - **Junction / symlink shared `node_modules`** (#725) — Nest11/express resolve ломается.
+- **Одолженный бинарь из соседнего дерева** (`node ../Membrana/node_modules/…`) — даёт
+  зелёный, ничего не значащий для этого дерева: ложное свидетельство хуже честной ошибки.
 - Забыть `.env` / `yarn install` в новом worktree → «нет ключа»/«module not found».
 - `git add -A`, когда в общем worktree лежит чужое (до изоляции) — коммить свои файлы поимённо.
 - Оставить мёртвый worktree — периодически `git worktree prune`.
@@ -73,7 +105,8 @@ description: >-
 git worktree list                                   # активные worktree
 git worktree add ../Membrana-<label> <branch>       # существующая ветка
 git worktree add -b feat/<topic> ../Membrana-<label> origin/main
-cd ../Membrana-<label> && yarn install              # per-wt modules (#725)
+cd ../Membrana-<label> && yarn worktree:bootstrap    # штатно: свой install + .env (#725)
+cd ../Membrana-<label> && yarn install              # то же вручную, без копии .env
 git worktree remove ../Membrana-<label>             # убрать (--force если грязный)
 git worktree prune                                  # почистить записи мёртвых
 ```
