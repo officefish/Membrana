@@ -102,3 +102,15 @@ export {
   type ChartListSettings,
   type ChartListTask,
 } from './chart-list/executor.js';
+export { CHART_LIST_MEASURE_MANIFEST, CHART_LIST_MEASURE_ID } from './chart-list-measure/manifest.js';
+export {
+  measureSampleSet,
+  sampleIdsOf,
+  CHART_LIST_MEASURE_DEFAULTS,
+  type MeasureDeps,
+  type MeasureOutcome,
+  type MeasureRefusal,
+  type MeasureRefusalReason,
+  type MeasureTuning,
+  type MeasuredCandidate,
+} from './chart-list-measure/executor.js';
