@@ -9,7 +9,7 @@ import { ServiceUnavailableException } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
 
 import { splitByDevice, type EntrySampleRow } from './entry-samples';
-import { MediaRunPort, type PortFetch } from './media-run.port';
+import { MediaRunPort, type MediaRunCaller } from './media-run.port';
 
 const row = (over: Partial<EntrySampleRow> = {}): EntrySampleRow => ({
   entryId: 'e1',
@@ -77,8 +77,12 @@ const okBody = {
   },
 };
 
-const respond = (status: number, body: unknown): PortFetch => async () =>
-  new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+/** Подменённый разговор с media: сети нет, проверяется порт, а не транспорт. */
+const respond = (status: number, body: unknown): MediaRunCaller => ({
+  async requestPluginRun() {
+    return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+  },
+});
 
 describe('порт заказа', () => {
   it('ненастроенный порт ОТКАЗЫВАЕТ, а не отдаёт пустую выборку', async () => {
@@ -86,17 +90,27 @@ describe('порт заказа', () => {
     await expect(port.measure(task)).rejects.toThrow(ServiceUnavailableException);
   });
 
-  it('заказ уходит по адресу устройства и коллекции, внутренним токеном', async () => {
-    let seen: { url: string; init: RequestInit } | null = null;
-    const port = new MediaRunPort(config, async (url, init) => {
-      seen = { url, init };
-      return new Response(JSON.stringify(okBody), { status: 200 });
+  it('заказ адресован устройством, буфером и ИМЕНЕМ ИЗМЕРИТЕЛЯ', async () => {
+    let seen: { deviceId: string; collectionId: string; pluginId: string; body: unknown } | null = null;
+    const port = new MediaRunPort(config, {
+      async requestPluginRun(deviceId, collectionId, pluginId, body) {
+        seen = { deviceId, collectionId, pluginId, body };
+        return new Response(JSON.stringify(okBody), { status: 200 });
+      },
     });
     await port.measure(task);
-    expect(seen!.url).toContain('/v1/devices/d1/collections/__buffer__/plugins/');
-    expect(seen!.url).toContain('membrana.report.chart-list-measure');
-    expect((seen!.init.headers as Record<string, string>)['X-Membrana-Token']).toBe('внутренний');
-    expect(JSON.parse(seen!.init.body as string)).toEqual({ sampleIds: ['s1'] });
+    expect(seen!.deviceId).toBe('d1');
+    expect(seen!.collectionId).toBe('__buffer__');
+    expect(seen!.pluginId).toBe('membrana.report.chart-list-measure');
+    expect(seen!.body).toEqual({ sampleIds: ['s1'] });
+  });
+
+  it('транспорта порт не держит: заголовки и база — забота общего разговора с media', async () => {
+    const src = await import('node:fs').then((fs) =>
+      fs.readFileSync(new URL('./media-run.port.ts', import.meta.url), 'utf8'),
+    );
+    // Зуб сети считает голые fetch в серверной зоне; порт обязан оставаться пустым по транспорту.
+    expect(src.includes('fetch(')).toBe(false);
   });
 
   it('измеренное приходит ответом прогона', async () => {

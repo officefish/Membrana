@@ -13,8 +13,14 @@
  * Остаётся синхронный ответ входа `request` — им и пользуемся. Паспорт при этом уезжает в дом
  * результатов как обычно: двух источников правды нет, потому что паспорт измерений не несёт.
  *
- * ТОКЕН — ВНУТРЕННИЙ. Вход media принимает `X-Membrana-Token: API_INTERNAL_TOKEN` наравне с
- * ключом устройства; заводить второй способ входа ради кабинета незачем.
+ * ТРАНСПОРТА ЗДЕСЬ НЕТ — и это исправление по зубу сети. Первая версия держала свой `fetch`, и
+ * зуб `network:bare-fetch` покраснел: голый вызов в серверной зоне не видит `HTTPS_PROXY`, а
+ * бюджет таких вызовов закрытый. Мой файл занял чужой слот и вытеснил за бюджет
+ * `server-storage-backend.ts` — амнистировать чужое ради своего было бы нечестно.
+ *
+ * Правильный ответ дал сам зуб: «снизь вызов». У кабинета УЖЕ есть один разговор с media
+ * (`MediaBridgeService`) — с базой, внутренним токеном и разбором недоступности. Порт зовёт его,
+ * а своего транспорта не держит: один сервис — один разговор с соседом.
  */
 import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 
@@ -46,10 +52,15 @@ export interface MediaRunPortConfig {
   readonly bufferCollectionId: string;
 }
 
-export type PortFetch = (url: string, init: RequestInit) => Promise<Response>;
+/**
+ * Кто умеет заказать прогон у media. Порт, а не служба: зуб подменяет его, не поднимая ни сети,
+ * ни модуля пары.
+ */
+export interface MediaRunCaller {
+  requestPluginRun(deviceId: string, collectionId: string, pluginId: string, body: unknown): Promise<Response>;
+}
 
 const MEASURE_PLUGIN_ID = 'membrana.report.chart-list-measure';
-const REQUEST_TIMEOUT_MS = 60_000;
 
 @Injectable()
 export class MediaRunPort {
@@ -57,7 +68,7 @@ export class MediaRunPort {
 
   constructor(
     private readonly config: MediaRunPortConfig,
-    private readonly fetchImpl: PortFetch = (url, init) => fetch(url, init),
+    private readonly caller: MediaRunCaller,
   ) {}
 
   get configured(): boolean {
@@ -76,18 +87,12 @@ export class MediaRunPort {
         'Порт media не настроен (MEDIA_API_URL / API_INTERNAL_TOKEN) — измерение не заказано',
       );
     }
-    const base = this.config.mediaApiUrl.replace(/\/+$/, '');
-    const url =
-      `${base}/v1/devices/${encodeURIComponent(task.deviceId)}` +
-      `/collections/${encodeURIComponent(this.config.bufferCollectionId)}` +
-      `/plugins/${encodeURIComponent(MEASURE_PLUGIN_ID)}/request`;
-
-    const res = await this.fetchImpl(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Membrana-Token': this.config.internalToken },
-      body: JSON.stringify({ sampleIds: [...task.sampleIds] }),
-      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-    });
+    const res = await this.caller.requestPluginRun(
+      task.deviceId,
+      this.config.bufferCollectionId,
+      MEASURE_PLUGIN_ID,
+      { sampleIds: [...task.sampleIds] },
+    );
 
     if (!res.ok) {
       const detail = await res.text().catch(() => '');

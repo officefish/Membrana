@@ -14,6 +14,7 @@ import { ChartListRegistrar } from './selection/chart-list.registrar';
 import { APP_CONFIG } from '../../config/config.tokens';
 import type { AppConfig } from '../../config/env.schema';
 import { PrismaService } from '../../prisma/prisma.service';
+import { MediaBridgeService } from '../pair/media-bridge.service';
 
 @Module({
   imports: [AuthModule],
@@ -32,13 +33,16 @@ import { PrismaService } from '../../prisma/prisma.service';
       // Порт настраивается ИЗ КОНФИГА, а не из констант: адрес media и внутренний токен уже
       // объявлены схемой окружения (MEDIA_API_URL / MEDIA_API_TOKEN) и используются модулем пары.
       provide: MediaRunPort,
-      useFactory: (config: AppConfig) =>
-        new MediaRunPort({
-          mediaApiUrl: config.MEDIA_API_URL,
-          internalToken: config.MEDIA_API_TOKEN,
-          bufferCollectionId: '__buffer__',
-        }),
-      inject: [APP_CONFIG],
+      useFactory: (config: AppConfig, bridge: MediaBridgeService) =>
+        new MediaRunPort(
+          {
+            mediaApiUrl: config.MEDIA_API_URL,
+            internalToken: config.MEDIA_API_TOKEN,
+            bufferCollectionId: '__buffer__',
+          },
+          bridge,
+        ),
+      inject: [APP_CONFIG, MediaBridgeService],
     },
     {
       provide: ChartListMeasureAdapter,
@@ -53,6 +57,7 @@ import { PrismaService } from '../../prisma/prisma.service';
     },
     ChartListRegistrar,
     MembraneResolver,
+    MediaBridgeService,
   ],
   exports: [JournalService, JournalPluginHostService],
 })
