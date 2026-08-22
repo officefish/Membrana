@@ -12,8 +12,11 @@
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-22",
       "archivedAt": null,
-      "leadPersona": null,
-      "supportPersonas": [],
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ],
       "notes": "",
       "archiveNotes": null,
       "githubIssueClosedAt": null
