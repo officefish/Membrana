@@ -4,7 +4,7 @@
 |-------|-------|
 | Sprint | `scenario-first-capture-rate` |
 | Procedure | `membrana-local-sprint` |
-| Registry card | `scenario-first-capture-rate` (M, #2046) |
+| Registry card | `scenario-rate-first-capture` (M, #2046) |
 | Prompt | [`SESSION_V_FIRST_CAPTURE_RATE_2026-08-22.md`](../../prompts/SESSION_V_FIRST_CAPTURE_RATE_2026-08-22.md) |
 | Cut plan | [`scenario-first-capture-rate.json`](../../sprint/cut/scenario-first-capture-rate.json) |
 | Cutter context | Kuryokhin, [`cut-scenario-first-capture-rate-kuryokhin.md`](../../discussions/cut-scenario-first-capture-rate-kuryokhin.md) |
