@@ -118,11 +118,12 @@ export class CollectionsController {
       collectionId,
       ...(body?.trigger ? { trigger: body.trigger as PluginTrigger } : {}),
       ...(body?.sampleId ? { sampleId: body.sampleId } : {}),
+      ...(body?.sampleIds ? { sampleIds: body.sampleIds } : {}),
       ...(body?.from ? { from: body.from } : {}),
       ...(body?.to ? { to: body.to } : {}),
     });
     this.logger.log({ deviceId, collectionId, pluginId, runId: outcome.runId, bridge: outcome.bridge?.outcome ?? null }, 'Plugin run requested');
-    return { runId: outcome.runId, address: { ...outcome.address }, fingerprints: outcome.fingerprints, bridge: outcome.bridge };
+    return { runId: outcome.runId, address: { ...outcome.address }, fingerprints: outcome.fingerprints, bridge: outcome.bridge, ...(outcome.result === undefined ? {} : { result: outcome.result }) };
   }
 
 }

@@ -7,6 +7,9 @@ import { useCabinetLiveJournal } from '@/lib/useCabinetLiveJournal';
 import { PagePluginArea } from '@/plugins/PagePluginArea';
 import { useHomePagePlugins } from '@/plugins/useHomePagePlugins';
 import type { CabinetRendererRegistry } from '@/plugins/adapters/manifestToPagePlugin';
+import { ChartListSettings } from '@/plugins/chart-list/ChartListSettings';
+import { ChartListWidget } from '@/plugins/chart-list/ChartListWidget';
+import { useChartList } from '@/plugins/chart-list/useChartList';
 
 const FILTER_OPTIONS: { value: LiveJournalFilter; label: string }[] = [
   { value: 'all', label: 'Все' },
@@ -26,19 +29,44 @@ const SOUND_CLASS_LABELS: Readonly<Record<SoundClass, string>> = {
   unknown: 'Неизвестно',
 };
 
-/**
- * Рисовалки кабинета для жильцов дома журнала.
- *
- * Список ПУСТ, и это верное состояние почвы, а не недоделка: дом сам называет своих жильцов, а
- * кабинет объявляет, чем он умеет их рисовать. Настоящий чарт-лист приедет вторым заданием и
- * добавится сюда одной строкой — механизм при этом не правится. Жилец, зарегистрированный в
- * доме без рисовалки, из сайдбара не пропадёт: он виден и помечен словами (адаптер И-5).
- */
-const JOURNAL_RENDERERS: CabinetRendererRegistry = {};
+const CHART_LIST_ID = 'membrana.showcase.chart-list';
 
 export function JournalPage() {
-  const pagePlugins = useHomePagePlugins(JOURNAL_RENDERERS);
   const journal = useCabinetLiveJournal();
+  const chartList = useChartList(journal.selectedDeviceId);
+
+  /**
+   * Рисовалки кабинета для жильцов дома журнала.
+   *
+   * Обещание почвы выполнено буквально: чарт-лист встал ОДНОЙ строкой реестра, механизм плагинов
+   * страницы не правился ни в чём. Настройки уедут в сайдбар, виджет — под основной блок, потому
+   * что так устроено гнездо, а не потому, что чарт-лист об этом попросил.
+   */
+  const journalRenderers: CabinetRendererRegistry = {
+    [CHART_LIST_ID]: {
+      name: 'Чарт-лист',
+      renderSettings: () => (
+        <ChartListSettings
+          state={chartList.state}
+          onVolume={chartList.setVolume}
+          onCriterion={chartList.setCriterion}
+        />
+      ),
+      renderWidget: () => (
+        <ChartListWidget
+          state={chartList.state}
+          items={journal.items}
+          canGenerate={Boolean(journal.selectedDeviceId)}
+          onGenerate={() => chartList.generate()}
+          onPage={chartList.setPage}
+          onPlay={(item) => journal.playTrack(item)}
+          onExportBlob={(item) => journal.exportTrackBlob(item)}
+        />
+      ),
+    },
+  };
+
+  const pagePlugins = useHomePagePlugins(journalRenderers);
 
   const activeFilterLabel =
     FILTER_OPTIONS.find((option) => option.value === journal.filter)?.label ?? journal.filter;
