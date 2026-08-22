@@ -1,3 +1,4 @@
+import { createAudioContext } from '@membrana/audio-engine-service';
 import type { MediaLibraryCaptureFormat } from '@membrana/media-library-service';
 
 import { encodeWavPcm16 } from './encodeWav';
@@ -43,7 +44,10 @@ async function loadWavCaptureWorklet(ctx: AudioContext): Promise<void> {
 }
 
 function startWavRecorder(stream: MediaStream): ActiveClipRecorder {
-  const ctx = new AudioContext({ sampleRate: WAV_SAMPLE_RATE });
+  const ctx = createAudioContext({
+    sampleRate: WAV_SAMPLE_RATE,
+    requireSampleRate: true,
+  });
   const source = ctx.createMediaStreamSource(stream);
   const pcmChunks: Float32Array[] = [];
   let worklet: AudioWorkletNode | null = null;
