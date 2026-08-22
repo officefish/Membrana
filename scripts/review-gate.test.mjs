@@ -7,6 +7,7 @@
  */
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { join, resolve } from 'node:path';
 
 import {
   PUBLISH_ATTEMPTS,
@@ -319,24 +320,23 @@ test('CLI: --restamp сохраняет базу вердикта, а не по�
 });
 
 test('reviewSearchPaths: своё дерево первым, соседние из git worktree list, дублей нет', () => {
-  const out = [
-    'worktree C:/p/Membrana',
-    'HEAD abc',
-    '',
-    'worktree C:/p/Membrana-records',
-    'HEAD def',
-    '',
-  ].join('\n');
-  const paths = reviewSearchPaths('C:/p/Membrana-records', 'docs/discussions/pr-1-code-review.md', () => out);
+  // Пути строятся resolve() внутри зуба: литерал 'C:/p/…' абсолютен лишь на Windows, и на
+  // Linux-раннере свой путь переставал совпадать с записью git worktree list (красное на CI
+  // при зелёном локально, 22.08). Платформа не должна решать, что проверяет зуб.
+  const own = resolve('tmp-wt', 'Membrana-records');
+  const neighbour = resolve('tmp-wt', 'Membrana');
+  const out = [`worktree ${neighbour}`, 'HEAD abc', '', `worktree ${own}`, 'HEAD def', ''].join('\n');
+  const paths = reviewSearchPaths(own, 'docs/discussions/pr-1-code-review.md', () => out);
   assert.equal(paths.length, 2, 'своё дерево не дублируется записью из git worktree list');
-  assert.ok(paths[0].includes('Membrana-records'), 'своё дерево ПЕРВОЕ: свежий локальный прогон не перекрывается чужим старым');
-  assert.ok(paths[1].includes('Membrana') && !paths[1].includes('Membrana-records'), 'соседнее дерево добавлено');
+  assert.equal(paths[0], join(own, 'docs/discussions/pr-1-code-review.md'), 'своё дерево ПЕРВОЕ: свежий локальный прогон не перекрывается чужим старым');
+  assert.equal(paths[1], join(neighbour, 'docs/discussions/pr-1-code-review.md'), 'соседнее дерево добавлено');
 });
 
 test('reviewSearchPaths: git недоступен — один свой путь, поведение прежнее (не ошибка гейта)', () => {
-  const paths = reviewSearchPaths('C:/p/solo', 'docs/discussions/pr-1-code-review.md', () => { throw new Error('not a git repo'); });
-  assert.deepEqual(paths.length, 1);
-  assert.ok(paths[0].includes('solo'));
+  const solo = resolve('tmp-wt', 'solo');
+  const paths = reviewSearchPaths(solo, 'docs/discussions/pr-1-code-review.md', () => { throw new Error('not a git repo'); });
+  assert.equal(paths.length, 1);
+  assert.equal(paths[0], join(solo, 'docs/discussions/pr-1-code-review.md'));
 });
 
 test('«не найдено» называет просмотренные пути — ненайденный артефакт перестаёт быть загадкой', () => {
