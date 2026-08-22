@@ -32,6 +32,10 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 /** Сервисы, чей образ несёт workspace-пакеты. Дом списка — здесь, рядом с предикатом. */
 export const IMAGE_SERVICES = Object.freeze([
   { id: 'media', pkg: 'packages/background-media', dockerfile: 'packages/background-media/Dockerfile' },
+  // Кабинет внесён 22.08 после падения сборки на @membrana/plugin-contracts@npm:* (404): зуб
+  // честно проверял то, что ему поручили, и молчал про всё остальное. Список из одного сервиса
+  // ловит один сервис — класс чинится внесением, а не разбором случая.
+  { id: 'cabinet', pkg: 'packages/background-cabinet', dockerfile: 'packages/background-cabinet/Dockerfile' },
 ]);
 
 /** Каталоги, где живут воркспейсы (совпадает с `workspaces` корневого package.json). */
@@ -75,7 +79,19 @@ export function transitiveWorkspaceDeps(map, rootPkgName) {
  * Пути, которые runtime-стадия Dockerfile действительно копирует.
  *
  * Разбор консервативный: берётся хвост файла ПОСЛЕ последнего `FROM … AS runtime`, оттуда —
- * `COPY --from=… <src> <dst>`. `packages/x/dist` и `packages/x` считаются покрытием `packages/x`.
+ * `COPY --from=… <src> <dst>`.
+ *
+ * ПОКРЫТИЕМ СЧИТАЕТСЯ ТОЛЬКО КОД: каталог пакета целиком (`packages/x`) либо его сборка
+ * (`packages/x/dist`). Один `packages/x/package.json` покрытием НЕ является.
+ *
+ * Ужесточено 22.08 контрольной пробой. Прежняя версия засчитывала ЛЮБОЙ путь внутри пакета —
+ * и образ с манифестом, но без `dist`, проходил зуб зелёным. Это ровно тот висячий симлинк,
+ * ради которого зуб заведён: `node_modules/@membrana/x` ведёт в каталог, где `package.json`
+ * указывает на `dist/index.js`, которого нет. Сборка зелёная, старт зелёный, падение — на первом
+ * импорте, уже на проде.
+ *
+ * Найдено так: из готового Dockerfile убрана одна строка `COPY … plugin-handlers/dist`, и зуб НЕ
+ * покраснел. Предикат, который не краснеет на внесённом дефекте, не удостоверяет ничего.
  */
 export function copiedPackageDirs(dockerfileText) {
   const runtimeStart = dockerfileText.search(/^FROM\s+\S+\s+AS\s+runtime\b/mu);
@@ -83,8 +99,10 @@ export function copiedPackageDirs(dockerfileText) {
   const dirs = new Set();
   for (const m of tail.matchAll(/^COPY\s+(?:--from=\S+\s+)?(\S+)/gmu)) {
     const src = m[1].replace(/^\/app\//u, '').replace(/\\/gu, '/');
-    const hit = /^(packages\/(?:libs\/|services\/(?:detectors\/)?)?[^/]+)/u.exec(src);
-    if (hit) dirs.add(hit[1]);
+    const hit = /^(packages\/(?:libs\/|services\/(?:detectors\/)?)?[^/]+)(\/.*)?$/u.exec(src);
+    if (!hit) continue;
+    const rest = hit[2] ?? '';
+    if (rest === '' || rest === '/' || /^\/dist(\/|$)/u.test(rest)) dirs.add(hit[1]);
   }
   return dirs;
 }
