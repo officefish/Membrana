@@ -63,22 +63,31 @@ describe('PluginId — <org>.<kind>.<slug>', () => {
 });
 
 describe('HOME_REGISTRY — два дома длинной формы', () => {
-  it('ровно два ключа', () => {
+  it('ровно два ключа: журнал кабинета и коллекции медиа', () => {
     expect(Object.keys(HOME_REGISTRY).sort()).toEqual([
+      'background-cabinet/journal',
       'background-media/collections',
-      'background-office/journal',
     ]);
-    expectTypeOf<HomeName>().toEqualTypeOf<'background-office/journal' | 'background-media/collections'>();
+    expectTypeOf<HomeName>().toEqualTypeOf<'background-cabinet/journal' | 'background-media/collections'>();
+  });
+
+  it('снятое имя перестаёт быть домом — призрак не отвечает «да» (Т4 шторма 22.08)', () => {
+    // Пока имя стояло в реестре, валидация пропускала манифест к дому, за которым в дереве
+    // не было ни модуля, ни хоста. Снятие имени и есть механизм, которым призрак отвергается.
+    expect(isHomeName('background-office/journal')).toBe(false);
+    expectTypeOf<HomeName>().not.toMatchTypeOf<'background-office/journal'>();
   });
 
   it('чужой адрес отвергается до рантайма', () => {
-    expect(isHomeName('background-office/journal')).toBe(true);
+    expect(isHomeName('background-cabinet/journal')).toBe(true);
     expect(isHomeName('background-devices/devices')).toBe(false);
     expect(isHomeName('journal')).toBe(false);
     expect(isHomeName('toString')).toBe(false);
   });
 
   it('константы дома результатов — рядом с реестром, не внутри него (A3-6)', () => {
+    // Дом результатов снятием дома КРЕПЛЕНИЯ background-office/journal не затронут: совпадение
+    // слова background-office в двух местах ничего между ними не связывает.
     expect(PLUGIN_RESULTS_DB).toBe('background-office');
     expect(PLUGIN_RESULTS_COLLECTION).toBe('plugin-results');
     expect(Object.keys(HOME_REGISTRY)).not.toContain(PLUGIN_RESULTS_COLLECTION);
