@@ -32,8 +32,8 @@ const SOUND_CLASS_LABELS: Readonly<Record<SoundClass, string>> = {
 const CHART_LIST_ID = 'membrana.showcase.chart-list';
 
 export function JournalPage() {
-  const chartList = useChartList();
   const journal = useCabinetLiveJournal();
+  const chartList = useChartList(journal.selectedDeviceId);
 
   /**
    * Рисовалки кабинета для жильцов дома журнала.
@@ -56,8 +56,8 @@ export function JournalPage() {
         <ChartListWidget
           state={chartList.state}
           items={journal.items}
-          canGenerate={journal.items.length > 0}
-          onGenerate={() => chartList.generate(journal.items.map((i) => i.id))}
+          canGenerate={Boolean(journal.selectedDeviceId)}
+          onGenerate={() => chartList.generate()}
           onPage={chartList.setPage}
           onPlay={(item) => journal.playTrack(item)}
           onExportBlob={(item) => journal.exportTrackBlob(item)}

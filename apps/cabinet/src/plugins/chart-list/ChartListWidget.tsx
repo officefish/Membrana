@@ -9,6 +9,10 @@
  * Измеренное приезжает из выборки и рисуется НАД карточкой — оно объясняет, почему запись сюда
  * попала, и в саму карточку журнала не лезет: журнал остаётся хроникой факта.
  *
+ * ОТБОР ИДЁТ ПО ВСЕЙ ХРОНИКЕ, а показывается на фоне ЗАГРУЖЕННОЙ ленты (Т1). Поэтому строка
+ * выборки может не найти своей карточки: отобрано по всему журналу, а на странице — текущая
+ * страница с фильтром. Это не рассинхрон, а разные множества по построению.
+ *
  * ЗАПИСЬ, ВЫПАВШАЯ ИЗ ЗАГРУЖЕННОЙ ЛЕНТЫ, НЕ ПРОПАДАЕТ. У неё показывается измеренное и честная
  * строка «записи нет на загруженной странице». Молча укоротить список значило бы соврать о числе
  * отобранного.
@@ -57,13 +61,16 @@ export function ChartListWidget({
           type="button"
           className="btn btn-primary btn-sm"
           disabled={state.busy || !canGenerate}
+          aria-describedby={!canGenerate && !state.busy ? 'chart-list-why-disabled' : undefined}
           onClick={onGenerate}
         >
-          {state.busy ? 'Собираем выборку…' : 'Сгенерировать выборку'}
+          {state.busy ? 'Собираем выборку по всему журналу…' : 'Сгенерировать выборку'}
         </button>
         {!canGenerate && !state.busy ? (
-          // Кнопка без материала — мёртвый регулятор. Причина названа словами, а не пустотой.
-          <span className="text-xs text-base-content/50">В ленте нет записей для отбора.</span>
+          // Кнопка без материала — мёртвый регулятор. Причина названа словами и связана с кнопкой.
+          <span id="chart-list-why-disabled" className="text-xs text-base-content/50">
+            Устройство не выбрано — отбирать не из чего.
+          </span>
         ) : null}
       </div>
 
@@ -80,7 +87,9 @@ export function ChartListWidget({
 
       {state.selection ? (
         <>
-          <p className="text-xs text-base-content/60">
+          {/* Смена выборки объявляется вслух: список меняется целиком, и молчаливая подмена
+              содержимого — то же, что подменить ответ на другой вопрос. */}
+          <p className="text-xs text-base-content/60" role="status" aria-live="polite">
             Отобрано {state.selection.picks.length} из {state.selection.measured} измеренных
             {state.selection.asked > state.selection.measured
               ? ` (запрошено ${state.selection.asked}, у остальных звука нет)`

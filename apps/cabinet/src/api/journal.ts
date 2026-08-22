@@ -197,6 +197,14 @@ export async function generateChartList(input: {
   return (await res.json()) as ChartListGenerateResponse;
 }
 
+/** Перечень собранного, свежие первыми. Нужен, чтобы страница открылась с последней выборкой. */
+export async function listChartLists(limit = 20): Promise<readonly ChartListSelectionDto[]> {
+  const res = await authFetch(`/v1/telemetry/chart-list?limit=${limit}`);
+  if (!res.ok) throw new Error(await parseError(res));
+  const body = (await res.json()) as { selections: readonly ChartListSelectionDto[] };
+  return body.selections;
+}
+
 /** Открыть собранную выборку по адресу — то, ради чего она хранится (Т3). */
 export async function openChartList(selectionId: string): Promise<ChartListSelectionDto> {
   const res = await authFetch(`/v1/telemetry/chart-list/${encodeURIComponent(selectionId)}`);
