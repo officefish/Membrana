@@ -75,6 +75,11 @@ export interface RunRequest {
   /** Окно сеанса для родов, идущих по времени (свод). ISO-границы; см. session-digest. */
   readonly from?: string;
   readonly to?: string;
+  /**
+   * Набор адресов проб для родов, идущих по ПЕРЕЧНЮ, а не по окну (отбор чарт-листа, c5a).
+   * Со `sampleId` и окном не сочетается: смесь не даёт сказать, что именно измерено.
+   */
+  readonly sampleIds?: readonly string[];
 }
 
 export interface RunRequestOutcome {
@@ -187,6 +192,15 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
     if (!manifest.triggers.includes(trigger)) {
       // host.request повод по манифесту не сверяет (сверяет notify) — сверка здесь, на входе.
       throw new BadRequestException(`Plugin ${req.pluginId} does not subscribe to ${trigger} (manifest.triggers: ${manifest.triggers.join(', ')})`);
+    }
+    // Формы задания взаимоисключающи. Молча предпочесть одну другой значило бы измерить не то,
+    // что просили, и отдать результат как заказанный — та самая подмена, которую ловит норма #1950.
+    const forms = [req.sampleIds?.length ? 'набор' : null, req.sampleId ? 'проба' : null, req.from || req.to ? 'окно' : null].filter(Boolean);
+    if (forms.length > 1) {
+      throw new BadRequestException(`Формы задания не сочетаются: ${forms.join(' + ')} — прогон идёт по чему-то одному`);
+    }
+    if (req.sampleIds && req.sampleIds.length === 0) {
+      throw new BadRequestException('Пустой набор проб: измерять нечего — отказ до прогона, а не пустой результат');
     }
     if (trigger === 'collections.sample_added' && !req.sampleId) {
       // Повод несёт пробу (payload M4) — без её адреса запрос неполон. Своду сеанса это

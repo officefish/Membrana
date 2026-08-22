@@ -29,13 +29,12 @@
       "persona": "kuryokhin",
       "context": "kuryokhin",
       "zone": [
-        "packages/plugin-handlers/src/chart-list/selection.ts",
-        "packages/plugin-handlers/src/index.ts"
+        "packages/plugin-handlers/src/chart-list/selection.ts"
       ],
       "estimate": {
         "changedLines": 230
       },
-      "note": "Ядро отбора поверх session-metrics — меры НЕ переписываются: deltaDb, structureOf, peakDb, dedupeGreedy, indicesByStructure уже есть. Здесь объём выборки (200/100/60/20) и три критерия как настройки ОДНОГО плагина (Т2). Четвёртого критерия нет."
+      "note": "Ядро отбора поверх session-metrics — меры НЕ переписываются: deltaDb, structureOf, peakDb, dedupeGreedy, indicesByStructure уже есть. Здесь объём выборки (200/100/60/20) и три критерия как настройки ОДНОГО плагина (Т2). Четвёртого критерия нет. Бочка пакета (index.ts) при перерезке передана блоку c5b — она пишется последним, и один путь обязан иметь одного владельца."
     },
     {
       "blockId": "c2b-selection-teeth",
@@ -91,18 +90,49 @@
       "note": "Транспорт выборки и зубы ЖИВУЧЕСТИ: выборка переживает уход со страницы и открывается по адресу; чужая выборка неотличима от несуществующей."
     },
     {
-      "blockId": "c5-media-order-port",
+      "blockId": "c5a-media-run-accepts-sample-set",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/background-media/src/modules/collections/collections.dto.ts",
+        "packages/background-media/src/modules/collections/collections.controller.ts",
+        "packages/background-media/src/modules/collections/first-wave.registrar.ts",
+        "packages/background-media/src/modules/collections/first-wave.registrar.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "note": "Вход прогона media принимает НАБОР проб (sampleIds[]), а не только одну пробу либо окно. Замерено: сегодня RunRequest несёт collectionId + sampleId? + from?/to? — ни одна форма не выражает «измерь вот эти двести». Расширение служит плагинному механизму, а не обходит его: набор едет поводом collections.collection_created как адрес причины. Окна у чарт-листа нет по Т1, поэтому from/to не годятся."
+    },
+    {
+      "blockId": "c5b-media-measure-plugin",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "packages/plugin-handlers/src/chart-list-measure/manifest.ts",
+        "packages/plugin-handlers/src/chart-list-measure/executor.ts",
+        "packages/plugin-handlers/src/chart-list-measure/executor.test.ts",
+        "packages/plugin-handlers/src/index.ts"
+      ],
+      "estimate": {
+        "changedLines": 340
+      },
+      "note": "ВТОРОЙ плагин ОДНОГО функционала — ровно то, что описывает Т6: обособление несёт пакет, множественное внедрение делается несколькими плагинами с общим сервисом. Дом — background-media/collections, там звук лежит локально. Меры не переписываются: session-metrics. Отдаёт измеренных кандидатов, отбора НЕ делает — отбор живёт в доме журнала. Т2 не нарушен: у человека по-прежнему один плагин с двумя настройками, второй ему не виден."
+    },
+    {
+      "blockId": "c5c-cabinet-order-port",
       "persona": "vesnin",
       "context": "vesnin",
       "zone": [
         "packages/background-cabinet/src/modules/journal/selection/media-run.port.ts",
         "packages/background-cabinet/src/modules/journal/selection/media-run.port.test.ts",
+        "packages/background-cabinet/src/modules/journal/selection/entry-samples.ts",
         "packages/background-cabinet/src/modules/journal/journal.module.ts"
       ],
       "estimate": {
         "changedLines": 320
       },
-      "note": "Вариант A: считает media, где звук локален; журнал заказывает. Порт узкий — заказ прогона и приём измеренного, звук через кабинет НЕ течёт. Цена названа: заводится горизонтальная связь кабинет→media, которой в графе не было. Альтернатива «оркестрирует браузер» отвергнута: тогда плагин не зарегистрирован в доме и DoD не выполняется."
+      "note": "Порт заказа кабинет → media внутренним токеном (X-Membrana-Token = API_INTERNAL_TOKEN, вход media его уже принимает). deviceId восстанавливается на сервере из mediaDeviceId записей — замерено, поле есть в TelemetryReport и TelemetryLiveRecord, просто не выведено в LiveJournalItemRow. Измеренное возвращается ОТВЕТОМ прогона: канал request синхронный, и чтение результата из офиса завело бы второе горизонтальное ребро ради того же числа. Паспорт прогона при этом уезжает в дом результатов как обычно."
     },
     {
       "blockId": "c6a-settings-and-order",
@@ -147,7 +177,7 @@
   ],
   "ratification": {
     "by": "owner",
-    "at": "2026-08-22T13:57:00+03:00",
-    "digest": "b7a29c1b87cbc03a1bf163a0cbcad2c342079d2455468975bed1b6bb458fa12b"
+    "at": "2026-08-22T14:42:00+03:00",
+    "digest": "2fa6d13b781fea64b6345aacbbe5ebf6aa713c1b0e46629376d5c0ee37bd8785"
   }
 }

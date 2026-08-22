@@ -118,6 +118,7 @@ export class CollectionsController {
       collectionId,
       ...(body?.trigger ? { trigger: body.trigger as PluginTrigger } : {}),
       ...(body?.sampleId ? { sampleId: body.sampleId } : {}),
+      ...(body?.sampleIds ? { sampleIds: body.sampleIds } : {}),
       ...(body?.from ? { from: body.from } : {}),
       ...(body?.to ? { to: body.to } : {}),
     });

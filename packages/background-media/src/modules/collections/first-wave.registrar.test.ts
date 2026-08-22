@@ -126,6 +126,44 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
       await expect(reg.requestRun({ pluginId: 'membrana.handler.harmonic' as PluginId, collectionId: 'c1', sampleId: 'a' })).rejects.toMatchObject({ status: 501 });
       await expect(reg.requestRun({ pluginId: 'membrana.report.nope' as PluginId, collectionId: 'c1' })).rejects.toMatchObject({ status: 400 });
     });
+
+    describe('набор проб как форма задания (c5a спринта chart-list-plugin)', () => {
+      it('формы задания не смешиваются: набор вместе с окном отвергается', async () => {
+        const { reg } = await registrar(config, spyBridge().bridge);
+        await expect(
+          reg.requestRun({
+            pluginId: 'membrana.handler.mfcc' as PluginId,
+            collectionId: 'c1',
+            sampleIds: ['a', 'b'],
+            from: '2026-08-21T09:45:00Z',
+          }),
+        ).rejects.toMatchObject({ status: 400 });
+      });
+
+      it('набор вместе с одной пробой отвергается — иначе неясно, что измерено', async () => {
+        const { reg } = await registrar(config, spyBridge().bridge);
+        await expect(
+          reg.requestRun({
+            pluginId: 'membrana.handler.mfcc' as PluginId,
+            collectionId: 'c1',
+            sampleIds: ['a', 'b'],
+            sampleId: 'a',
+          }),
+        ).rejects.toMatchObject({ status: 400 });
+      });
+
+      it('пустой набор — отказ ДО прогона, а не пустой результат', async () => {
+        const { reg } = await registrar(config, spyBridge().bridge);
+        await expect(
+          reg.requestRun({
+            pluginId: 'membrana.handler.mfcc' as PluginId,
+            collectionId: 'c1',
+            sampleIds: [],
+          }),
+        ).rejects.toMatchObject({ status: 400 });
+      });
+    });
+
   });
 });
 
