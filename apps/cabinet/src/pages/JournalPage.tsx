@@ -5,8 +5,8 @@ import { CabinetLiveJournalItemRow } from '@/components/journal/CabinetLiveJourn
 import { LiveJournalPager } from '@/components/journal/LiveJournalPager';
 import { useCabinetLiveJournal } from '@/lib/useCabinetLiveJournal';
 import { PagePluginArea } from '@/plugins/PagePluginArea';
-import { usePagePlugins } from '@/plugins/usePagePlugins';
-import { createRowStubPlugin } from '@/plugins/stubs/rowStubPlugin';
+import { useHomePagePlugins } from '@/plugins/useHomePagePlugins';
+import type { CabinetRendererRegistry } from '@/plugins/adapters/manifestToPagePlugin';
 
 const FILTER_OPTIONS: { value: LiveJournalFilter; label: string }[] = [
   { value: 'all', label: 'Все' },
@@ -27,13 +27,17 @@ const SOUND_CLASS_LABELS: Readonly<Record<SoundClass, string>> = {
 };
 
 /**
- * Жильцы страницы журнала. Пока один — стаб блока B: механизм принимается на живой странице,
- * а настоящий чарт-лист приедет вторым заданием и встанет в это же гнездо без правок механизма.
+ * Рисовалки кабинета для жильцов дома журнала.
+ *
+ * Список ПУСТ, и это верное состояние почвы, а не недоделка: дом сам называет своих жильцов, а
+ * кабинет объявляет, чем он умеет их рисовать. Настоящий чарт-лист приедет вторым заданием и
+ * добавится сюда одной строкой — механизм при этом не правится. Жилец, зарегистрированный в
+ * доме без рисовалки, из сайдбара не пропадёт: он виден и помечен словами (адаптер И-5).
  */
-const JOURNAL_PAGE_PLUGINS = [createRowStubPlugin()];
+const JOURNAL_RENDERERS: CabinetRendererRegistry = {};
 
 export function JournalPage() {
-  const pagePlugins = usePagePlugins();
+  const pagePlugins = useHomePagePlugins(JOURNAL_RENDERERS);
   const journal = useCabinetLiveJournal();
 
   const activeFilterLabel =
@@ -86,7 +90,7 @@ export function JournalPage() {
 
   return (
     <PagePluginArea
-      plugins={JOURNAL_PAGE_PLUGINS}
+      plugins={pagePlugins.plugins}
       state={pagePlugins.state}
       onToggle={pagePlugins.toggle}
       onActivate={pagePlugins.activate}

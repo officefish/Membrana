@@ -64,7 +64,7 @@ describe('CollectionsPluginHostService', () => {
     expect(() => host.registerPlugin(manifest({ mountTarget: 'samples' as HomeName }), executor([]))).toThrow(
       BadRequestException,
     );
-    expect(() => host.registerPlugin(manifest({ mountTarget: 'background-office/journal' }), executor([]))).toThrow(
+    expect(() => host.registerPlugin(manifest({ mountTarget: 'background-cabinet/journal' }), executor([]))).toThrow(
       BadRequestException,
     );
   });

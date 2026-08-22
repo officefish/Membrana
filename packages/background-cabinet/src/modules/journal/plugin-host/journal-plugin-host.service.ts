@@ -16,21 +16,27 @@
  * принимает готовый контекст от вызывающего, как и предписано контрактом хоста, и своего
  * адреса не изобретает.
  */
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+  type OnModuleInit,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 
 import type { LiveJournalItemRow } from '../live-journal-items.mapper';
-import {
-  JOURNAL_HOME,
-  isPluginId,
-  type HomeName,
-  type IPluginEvent,
-  type IPluginHost,
-  type PluginContext,
-  type PluginExecutor,
-  type PluginId,
-  type PluginManifest,
-  type PluginTrigger,
-} from './contracts.stub';
+import type {
+  HomeName,
+  IPluginEvent,
+  IPluginHost,
+  PluginContext,
+  PluginExecutor,
+  PluginId,
+  PluginManifest,
+  PluginTrigger,
+} from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
+import { JOURNAL_HOME } from './home';
 import { taskKinds, verifyJournalTask, type JournalTask, type JournalTaskVerdict } from './journal-task';
 
 interface Registration {
@@ -45,16 +51,44 @@ export interface JournalEntriesReader {
 }
 
 @Injectable()
-export class JournalPluginHostService implements IPluginHost {
+export class JournalPluginHostService implements IPluginHost, OnModuleInit {
   readonly mountTargetId: HomeName = JOURNAL_HOME;
 
   private readonly logger = new Logger(JournalPluginHostService.name);
   private readonly plugins = new Map<PluginId, Registration>();
 
+  /**
+   * Значения контрактов приходят ДИНАМИЧЕСКИМ импортом, а типы — обычным.
+   *
+   * Причина не в стиле: `@membrana/plugin-contracts` — ESM-пакет, а этот пакет собирается в
+   * CommonJS, и `require` до него не дотянется. Типы такой границы не знают (их нет в рантайме) и
+   * берутся напрямую с `resolution-mode` — как в `background-office`; значения берутся импортом
+   * с ожиданием — как в `background-media`. Обе половины повторяют уже решённое в доме, а не
+   * заводят третий способ.
+   *
+   * Границу вскрыла ИНТЕГРАЦИЯ коворка: в изоляции модуль стоял на стабе контрактов в своей зоне,
+   * и стаб был CommonJS — то есть прятал ровно тот шов, ради которого зона и была нарезана.
+   */
+  protected loadContracts(): Promise<{ isPluginId(value: unknown): boolean }> {
+    return import('@membrana/plugin-contracts');
+  }
+
+  private contractsPromise: Promise<{ isPluginId(value: unknown): boolean }> | null = null;
+  private contracts: { isPluginId(value: unknown): boolean } | null = null;
+
+  async onModuleInit(): Promise<void> {
+    this.contractsPromise ??= this.loadContracts().catch((error: unknown) => {
+      this.contractsPromise = null;
+      throw error;
+    });
+    this.contracts = await this.contractsPromise;
+  }
+
   constructor(private readonly entries: JournalEntriesReader) {}
 
   registerPlugin(manifest: PluginManifest, executor: PluginExecutor): void {
-    if (!isPluginId(manifest.id)) throw new BadRequestException('Invalid plugin id');
+    if (!this.contracts) throw new ServiceUnavailableException('Plugin host is not initialized');
+    if (!this.contracts.isPluginId(manifest.id)) throw new BadRequestException('Invalid plugin id');
     if (manifest.mountTarget !== this.mountTargetId) {
       // Чужой дом — отказ до рантайма плагина, а не после. Дом, принимающий чужие манифесты,
       // перестаёт быть домом: `mountTarget` тогда ничего не значит.
@@ -67,6 +101,22 @@ export class JournalPluginHostService implements IPluginHost {
 
   getRegisteredPlugins(): ReadonlyArray<PluginManifest> {
     return [...this.plugins.values()].map(({ manifest }) => manifest);
+  }
+
+  /**
+   * Жильцы вместе с их включённостью.
+   *
+   * ЗАЧЕМ ОТДЕЛЬНЫЙ ЧИТАТЕЛЬ. `enabled` не входит и не войдёт в манифест: манифест — ровно пять
+   * полей, а включённость есть операция реестра (M5′). Но без читателя `setPluginEnabled` писал
+   * бы в состояние, которое снаружи не прочесть, — и галочке в сайдбаре страницы неоткуда было
+   * бы взять своё положение. Находка Interface Consilium коворка `cowork-server-plugin-pages`
+   * (адаптер И-4): вопрос «спрашивается отдельно» не имел метода спроса.
+   *
+   * Дом — ЕДИНСТВЕННЫЙ владелец включённости. Страница её отражает и просит переключить, своего
+   * состояния не заводит: две включённости означали бы «выключил в сайдбаре, а дом всё ещё зовёт».
+   */
+  getPluginStates(): ReadonlyArray<{ manifest: PluginManifest; enabled: boolean }> {
+    return [...this.plugins.values()].map(({ manifest, enabled }) => ({ manifest, enabled }));
   }
 
   /** Включённость — операция реестра, не поле описания (M5′). */

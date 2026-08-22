@@ -1,5 +1,5 @@
 /**
- * Зубы журнала-дома (блок C). Соседей нет: реестр домов замещён стабом в своей зоне,
+ * Зубы журнала-дома (блок C). Соседей нет: реестр домов настоящий, из пакета контрактов,
  * плагин — стабом-исполнителем здесь же. DoD блока проверяется без блоков A и B.
  */
 import { BadRequestException, NotFoundException } from '@nestjs/common';
@@ -12,11 +12,22 @@ import type {
   PluginId,
   PluginManifest,
   RunResult,
-} from './contracts.stub';
+} from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
 import { JournalPluginHostService, type JournalEntriesReader } from './journal-plugin-host.service';
 import { verifyJournalTask } from './journal-task';
 
 const PLUGIN = 'membrana.showcase.chart-list' as PluginId;
+
+/**
+ * Хост, доведённый до готовности. Значения контрактов приезжают динамическим импортом ESM-пакета,
+ * поэтому до `onModuleInit` регистрация честно отвечает «не инициализирован», а не молча пропускает.
+ */
+async function readyHost(rows: readonly LiveJournalItemRow[] = []): Promise<JournalPluginHostService> {
+  const host = new JournalPluginHostService(reader(rows));
+  await host.onModuleInit();
+  return host;
+}
+
 
 const manifest = (over: Partial<PluginManifest> = {}): PluginManifest =>
   ({
@@ -71,33 +82,34 @@ const ctx = (): PluginContext => ({
   payload: {},
 });
 
-const host = (rows: readonly LiveJournalItemRow[] = []) => new JournalPluginHostService(reader(rows));
+const host = readyHost;
 
 describe('журнал — дом крепления', () => {
-  it('дом объявлен именем кабинета, а не офиса', () => {
-    expect(host().mountTargetId).toBe('background-cabinet/journal');
+  it('дом объявлен именем кабинета, а не офиса', async () => {
+    expect((await host()).mountTargetId).toBe('background-cabinet/journal');
   });
 
-  it('регистрирует плагин своего дома', () => {
-    const h = host();
+  it('регистрирует плагин своего дома', async () => {
+    const h = await host();
     h.registerPlugin(manifest(), stubExecutor());
     expect(h.getRegisteredPlugins().map((m) => m.id)).toEqual([PLUGIN]);
   });
 
-  it('манифест с ЧУЖИМ mountTarget отвергается — иначе mountTarget ничего не значит', () => {
-    const h = host();
+  it('манифест с ЧУЖИМ mountTarget отвергается — иначе mountTarget ничего не значит', async () => {
+    const h = await host();
     expect(() => h.registerPlugin(manifest({ mountTarget: 'background-media/collections' }), stubExecutor()))
       .toThrow(BadRequestException);
     expect(h.getRegisteredPlugins()).toHaveLength(0);
   });
 
-  it('имя не по форме <org>.<kind>.<slug> отвергается', () => {
-    expect(() => host().registerPlugin(manifest({ id: 'chart-list' as PluginId }), stubExecutor()))
+  it('имя не по форме <org>.<kind>.<slug> отвергается', async () => {
+    const h = await host();
+    expect(() => h.registerPlugin(manifest({ id: 'chart-list' as PluginId }), stubExecutor()))
       .toThrow(BadRequestException);
   });
 
   it('включённость — операция реестра: выключенный не зовётся, незнакомый не находится', async () => {
-    const h = host([entry('e1')]);
+    const h = await host([entry('e1')]);
     const exec = stubExecutor();
     h.registerPlugin(manifest(), exec);
     h.setPluginEnabled(PLUGIN, false);
@@ -106,8 +118,8 @@ describe('журнал — дом крепления', () => {
     expect(exec.calls).toHaveLength(0);
   });
 
-  it('notify зовёт только подписанных на повод и только включённых', () => {
-    const h = host();
+  it('notify зовёт только подписанных на повод и только включённых', async () => {
+    const h = await host();
     const subscribed = stubExecutor();
     const other = stubExecutor();
     h.registerPlugin(manifest(), subscribed);
@@ -120,7 +132,7 @@ describe('журнал — дом крепления', () => {
 
 describe('задание проверяется ДО вызова плагина (К8: ручка не крутит мёртвый регулятор)', () => {
   it('несуществующая запись — отказ именем, плагин не позван', async () => {
-    const h = host([entry('e1')]);
+    const h = await host([entry('e1')]);
     const exec = stubExecutor();
     h.registerPlugin(manifest(), exec);
     const { verdict } = await h.requestWithTask(PLUGIN, 'journal.entry_created', ctx(), 'u1', {
@@ -133,7 +145,7 @@ describe('задание проверяется ДО вызова плагина
   });
 
   it('пустое задание — отказ, а не вызов «ни над чем»', async () => {
-    const h = host([entry('e1')]);
+    const h = await host([entry('e1')]);
     const exec = stubExecutor();
     h.registerPlugin(manifest(), exec);
     const { verdict } = await h.requestWithTask(PLUGIN, 'journal.entry_created', ctx(), 'u1', {
@@ -145,7 +157,7 @@ describe('задание проверяется ДО вызова плагина
   });
 
   it('просьба о звуке — отказ: журнал звука не хранит, лента несёт ссылки', async () => {
-    const h = host([entry('e1')]);
+    const h = await host([entry('e1')]);
     const exec = stubExecutor();
     h.registerPlugin(manifest(), exec);
     const { verdict } = await h.requestWithTask(PLUGIN, 'journal.entry_created', ctx(), 'u1', {
@@ -160,7 +172,7 @@ describe('задание проверяется ДО вызова плагина
   });
 
   it('годное задание доходит до плагина вместе с записями и составом родов', async () => {
-    const h = host([entry('e1'), entry('e2', 'report')]);
+    const h = await host([entry('e1'), entry('e2', 'report')]);
     const exec = stubExecutor();
     h.registerPlugin(manifest(), exec);
     const { verdict, kinds } = await h.requestWithTask(PLUGIN, 'journal.entry_created', ctx(), 'u1', {
@@ -180,5 +192,28 @@ describe('задание проверяется ДО вызова плагина
     const verdict = verifyJournalTask({ entryIds: ['someone-else'], needs: ['entries'] }, []);
     expect(verdict.ok).toBe(false);
     if (!verdict.ok) expect(verdict.reason).toBe('entry-not-found');
+  });
+});
+
+describe('читатель включённости (адаптер И-4 коворка)', () => {
+  it('жилец приходит включённым, и это ВИДНО снаружи, а не только внутри', async () => {
+    const host = await readyHost();
+    host.registerPlugin(manifest(), stubExecutor());
+    expect(host.getPluginStates()).toEqual([{ manifest: manifest(), enabled: true }]);
+  });
+
+  it('выключенный отражается выключенным — иначе галочке сайдбара неоткуда взять положение', async () => {
+    const host = await readyHost();
+    host.registerPlugin(manifest(), stubExecutor());
+    host.setPluginEnabled(PLUGIN, false);
+    expect(host.getPluginStates()[0]?.enabled).toBe(false);
+    host.setPluginEnabled(PLUGIN, true);
+    expect(host.getPluginStates()[0]?.enabled).toBe(true);
+  });
+
+  it('включённость в манифест не протекает: манифест — ровно пять полей (M5′)', async () => {
+    const host = await readyHost();
+    host.registerPlugin(manifest(), stubExecutor());
+    for (const m of host.getRegisteredPlugins()) expect('enabled' in m).toBe(false);
   });
 });
