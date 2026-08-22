@@ -9,7 +9,7 @@
 | **Архивирована** | 2026-08-22 |
 | **GitHub Issue** | — |
 | **Linear** | — |
-| **Промпт** | [`docs/cowork-sprint/cowork-server-plugin-pages/INTERFACE_CONTRACT.md`](../../docs/cowork-sprint/cowork-server-plugin-pages/INTERFACE_CONTRACT.md) |
+| **Промпт** | [`docs/cowork-sprint/cowork-server-plugin-pages/INTERFACE_CONTRACT.md`](../../../docs/cowork-sprint/cowork-server-plugin-pages/INTERFACE_CONTRACT.md) |
 
 ## Заметки при закрытии
 
