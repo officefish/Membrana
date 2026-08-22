@@ -4,3 +4,7 @@
 {"ts":"2026-08-22T05:28:06.499Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-29-night-triage-insight-harvest","reason":"там был предикат «достойна карточки» с ценой reversible decision; здесь та же асимметрия: цена ошибочного прогона vs. цена ошибочного чтения.","origin":"ask-persona"}
 {"ts":"2026-08-22T06:03:39.256Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-22T06:03:27.738Z","origin":"ask-persona"}
 {"ts":"2026-08-22T06:03:39.261Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-22T06:03:27.738Z","origin":"ask-persona"}
+{"ts":"2026-08-22T17:03:58.416Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-22-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-22T17:03:58.416Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-04-static-mmbrn-container-m4-storage","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-22T17:03:58.416Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-07-23-llm-procedure-channels-m3c-fallback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-22T17:03:58.416Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
