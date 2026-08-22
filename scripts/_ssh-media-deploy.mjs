@@ -1,15 +1,36 @@
 #!/usr/bin/env node
 /**
- * Remote A5c deploy via SSH (one-off). Reads BACKGROUND_MEDIA_* from .env.
+ * Выкладка media на VPS по SSH. Читает BACKGROUND_MEDIA_* из `.env`.
+ *
+ * ВЕТКА БОЛЬШЕ НЕ ЗАШИТА. До 22.08 здесь стояло `techies68` — ветка, которой на удалённом НЕТ
+ * вовсе (`git fetch origin techies68` → «couldn't find remote ref»). Путь выкатки media молча
+ * указывал в никуда: скрипт либо падал на сервере, либо оставлял его на старом коде. Порядок
+ * «сначала ствол, потом прод» им не исполнялся в принципе — слова `main` он не знал. Найдено
+ * проверкой ветки ПЕРЕД выкаткой, а не после (спринт `chart-list-plugin`, 22.08).
+ *
+ * Способ взят у кабинета, а не изобретён третий: та же цепочка переопределений с умолчанием
+ * `main` и те же два предохранителя — сверка локального состояния с `origin/<branch>` (DR0) и
+ * отказ выкатывать не-зелёный в CI коммит (DR1). Два разных способа выкатки на одном сервере
+ * разъехались бы, и разъехались бы молча.
  */
 import { readFileSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Client } from 'ssh2';
+import { deployPreflight } from './_deploy-preflight.mjs';
+import { assertCiGreen } from './_deploy-ci-gate.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const envText = readFileSync(resolve(root, '.env'), 'utf8');
 const get = (key) => envText.match(new RegExp(`^${key}=(.*)$`, 'm'))?.[1]?.trim() ?? '';
+
+const branch =
+  process.env.MEDIA_GIT_BRANCH || get('MEDIA_GIT_BRANCH') || get('GIT_BRANCH') || 'main';
+
+// DR0: локальное состояние обязано совпадать с origin/<branch> — прод собирается из origin.
+const preflight = deployPreflight({ branch, cwd: root });
+// DR1: на прод едет только зелёный в CI коммит.
+assertCiGreen({ branch, sha: preflight.originHead });
 
 const host = get('BACKGROUND_MEDIA_IPV4');
 const password = get('BACKGROUND_MEDIA_PASSWORD');
@@ -51,12 +72,14 @@ mkdir -p /var/lib/membrana/media-blobs /etc/membrana
 echo "=== [4/6] git ==="
 cd /root
 if [ ! -d membrana/.git ]; then
-  git clone --depth 1 --branch techies68 https://github.com/officefish/Membrana.git membrana
+  git clone --branch "${branch}" https://github.com/officefish/Membrana.git membrana
 else
   cd membrana
-  git fetch origin techies68
-  git checkout techies68
-  git pull --ff-only origin techies68
+  git fetch origin "${branch}"
+  # reset --hard, а не pull --ff-only: сервер обязан стать РОВНО тем, что в origin. ff-only
+  # молча отказывался бы при любом расхождении и оставлял прод на старом коде.
+  git reset --hard FETCH_HEAD
+  git log -1 --oneline
   cd ..
 fi
 cd /root/membrana
