@@ -1,1 +1,6 @@
 {"ts":"2026-08-22T04:29:36.145Z","persona":"dynin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-08-22T05:28:06.483Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-22T05:27:55.033Z","origin":"ask-persona"}
+{"ts":"2026-08-22T05:28:06.492Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-22T05:27:55.033Z","origin":"ask-persona"}
+{"ts":"2026-08-22T05:28:06.499Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-29-night-triage-insight-harvest","reason":"там был предикат «достойна карточки» с ценой reversible decision; здесь та же асимметрия: цена ошибочного прогона vs. цена ошибочного чтения.","origin":"ask-persona"}
+{"ts":"2026-08-22T06:03:39.256Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-22T06:03:27.738Z","origin":"ask-persona"}
+{"ts":"2026-08-22T06:03:39.261Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-22T06:03:27.738Z","origin":"ask-persona"}
