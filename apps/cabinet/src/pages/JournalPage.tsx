@@ -97,6 +97,21 @@ export function JournalPage() {
       onCollapseMain={pagePlugins.collapseMain}
     >
     <div className="mx-auto max-w-4xl space-y-6">
+      {/*
+        Ответ дома о жильцах показывается словами. Хук отдаёт loading и error, и не показать их
+        значило бы завести мёртвый регулятор: оператор видел бы пустой сайдбар и не отличал
+        «плагинов нет» от «дом не ответил». Ошибка — предмет страницы, а не сайдбара: сайдбар
+        рисует жильцов, которых получил, и о причине их отсутствия не знает.
+      */}
+      {pagePlugins.error ? (
+        <p className="text-sm text-error" role="status">
+          Список плагинов не получен: {pagePlugins.error}
+        </p>
+      ) : pagePlugins.loading ? (
+        <p className="text-sm text-base-content/50" role="status">
+          Спрашиваем дом о плагинах…
+        </p>
+      ) : null}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Live-журнал телеметрии</h1>
