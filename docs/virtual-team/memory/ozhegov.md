@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14400/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 316 (причины в op-log) -->
+Записей: 49 · бюджет 14205/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 318 (причины в op-log) -->
+
+### 2026-08-22 · позиция · team-evening-feedback
+
+> Оценка артефактов: Стендап и MAIN_DAY_ISSUE согласованы: фокус #2046 не размыт, «сознательно не делаем» оградило от hostess/assets/batch. DAILY_CODE_REVIEW отметил orphaned ritual-day — честно, без silent green. Итоги дня: По видимому diff — docs/tasks/comms/procedure-runs, кода […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-22.md#reply-1`
 
 ### 2026-08-21 · позиция · duty-node-detection-m1-slovar
 
@@ -295,15 +301,3 @@
 > Stable principal — `userId` канонической записи пользователя Panel; credential только отображается в него. Для анонимного запроса используется sentinel `anon` с baseline ролью `public`. _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
-
-> Для storage records выбирается существующий M2 `location.kind=local`. Непустой `location.ref` имеет форму `static:{class}:{sha256_64hex}`; это адрес внутри storage backend, не URL и не `canonicalRef`. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m2b-control-plane
-
-> Владелец хочет **переключать канал с панели** — кандидат 1 (только git/PR) делает админа = merge, это не тумблер. Кандидат 3 (только .env) делает панель read-only по маршруту — прямо бьёт BRIEF. Остаются 2 (office SoT) и 4 (гибрид). _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/llm-procedure-channels-m2b-control-plane-2026-07-23-2026-07-23.md#reply-1`
