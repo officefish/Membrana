@@ -6,7 +6,7 @@
 
 ## Магистраль
 
-- `firebat-node-device` — ведёт ozhegov
+- `journal-home-real` — магистраль 22.08 по owner-choice (карточка заводится с первым PR); `firebat-node-device` закрыт 20.08
 - `server-plugin-foundation` — ведёт vesnin
 - #2046 — OPEN
 
