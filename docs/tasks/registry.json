@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "cowork-server-plugin-pages",
+      "title": "Cowork Sprint: почва под плагины серверных страниц",
+      "promptPath": "docs/cowork-sprint/cowork-server-plugin-pages/INTERFACE_CONTRACT.md",
+      "githubIssue": null,
+      "noIssueReason": "коворк ведётся артефактами формата: brief, контракт, ретроспектива",
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-22",
+      "archivedAt": null,
+      "leadPersona": null,
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "report-entry-gap",
       "title": "Боевой вход ведёт к своду сеанса: повод из закрытого словаря, отпечатки рода report, словарь сборщиков контекста",
       "promptPath": "docs/prompts/REPORT_ENTRY_GAP_PROMPT.md",
