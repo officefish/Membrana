@@ -163,6 +163,92 @@ export function clearSwallowMoment(state) {
  * @param {string} today YYYY-MM-DD (подаётся снаружи)
  * @returns {boolean}
  */
+/**
+ * Дайджест снимка топ-3 — тем же способом, что и при заморозке. Вынесен, потому что его
+ * теперь считают трое: заморозка, проверка выбора из снимка и сторож ручной чеканки.
+ *
+ * @param {Array<string|{id?: string}>} options
+ */
+export function snapshotDigest(options) {
+  const ids = (options ?? []).map((o) => (typeof o === 'string' ? o : o?.id)).filter(Boolean);
+  return createHash('sha256').update(ids.join('\n')).digest('hex');
+}
+
+/**
+ * Ручная чеканка магистрали владельцем — легитимна по канону утра («подписывается
+ * author=human»), а прибор её не умел: `--choose` принимал только id из замороженного
+ * снимка (#2083). Случай 23.08: владелец назвал магистралью вчерашнюю работу, карточки под
+ * которую в реестре ещё нет; гейт закрылся, а вместе с ним встал canSend — то есть не ушёл
+ * обязательный доклад партнёрам.
+ *
+ * ДВА ПОЛЯ, НЕ ОДНО. `magistralOptions`/`frozenDigest` — вещдок того, что предложила
+ * МАШИНА; `magistral` + `magistralAuthor` — что выбрал ЧЕЛОВЕК. Обход «переморозить снимок
+ * с выбором владельца внутри» запрещён билетом: получилась бы запись, будто генератор его
+ * ранжировал. Поэтому ручная чеканка снимок не трогает, а фиксирует его дайджест НА МОМЕНТ
+ * выбора — по нему потом видно, вписали в снимок человеческий id задним числом или нет.
+ *
+ * @param {object} state
+ * @param {string} id идентификатор магистрали (может быть ВНЕ снимка — в этом весь смысл)
+ * @param {string} today YYYY-MM-DD
+ */
+export function chooseMagistralManually(state, id, today) {
+  const next = { ...state, magistral: id, magistralAuthor: 'human' };
+  next.magistralManual = {
+    at: today,
+    // Запись держит ИМЕННО тот id, который зачеканили: иначе достаточно поменять
+    // `magistral` рядом со старой записью, и подмена пройдёт за чеканку.
+    chosen: id,
+    // Снимок остаётся как есть; помним лишь его отпечаток, чтобы поймать подмену.
+    snapshotDigest: snapshotDigest(state?.magistralOptions ?? []),
+    inSnapshot: (state?.magistralOptions ?? [])
+      .map((o) => (typeof o === 'string' ? o : o?.id))
+      .includes(id),
+  };
+  return setMagistralMoment(next, today);
+}
+
+/**
+ * Сторож ручной чеканки: снимок не подменён после человеческого выбора.
+ *
+ * Красное — ровно тот обход, который запрещает #2083: человеческий id дописали в
+ * `magistralOptions` (и, возможно, пересчитали `frozenDigest`, чтобы «сошлось»). Тогда
+ * запись утверждала бы, что машина ранжировала выбор владельца, — ложь в вещдоке.
+ *
+ * @param {object} state
+ * @returns {{ok: true} | {ok: false, reason: string}}
+ */
+export function manualChoiceIntact(state) {
+  const manual = state?.magistralManual;
+  const chosenId = typeof state?.magistral === 'string' ? state.magistral : state?.magistral?.id;
+  if (state?.magistralAuthor === 'human') {
+    // Без записи о чеканке подпись «human» ничем не подтверждена: дописать автора в файл
+    // состояния руками — и гейт открылся бы на любой id мимо двери. Подпись без чеканки
+    // не считается (P2 ревью #2085).
+    if (!manual) {
+      return { ok: false, reason: 'автор «human» без записи о чеканке — подпись ничем не подтверждена, чеканить через morning:gate magistral --author human' };
+    }
+    if (manual.chosen && chosenId && manual.chosen !== chosenId) {
+      return { ok: false, reason: `магистраль «${chosenId}» подменена рядом с записью о чеканке «${manual.chosen}» — чеканка не переносится на другой выбор` };
+    }
+  }
+  if (!manual) return { ok: true };
+  const options = (state?.magistralOptions ?? []).map((o) => (typeof o === 'string' ? o : o?.id));
+  if (!manual.inSnapshot && chosenId && options.includes(chosenId)) {
+    return {
+      ok: false,
+      reason: `человеческий выбор «${chosenId}» вписан В снимок машины — снимок обязан остаться вещдоком генератора (#2083)`,
+    };
+  }
+  const now = snapshotDigest(state?.magistralOptions ?? []);
+  if (manual.snapshotDigest && now !== manual.snapshotDigest) {
+    return {
+      ok: false,
+      reason: `снимок изменился после ручной чеканки (было ${String(manual.snapshotDigest).slice(0, 8)}, стало ${now.slice(0, 8)}) — вещдок генератора подменён`,
+    };
+  }
+  return { ok: true };
+}
+
 export function magistralChosen(state, today) {
   // Р2 ADR-0024: сверяем СВОЙ момент, а не общий `state.day`. Прежняя строка звала
   // `dayFresh(state, today)` — и потому чужой шаг (`swallow --draft`) делал вчерашний
@@ -170,6 +256,10 @@ export function magistralChosen(state, today) {
   if (!magistralMomentFresh(state, today)) return false;
   const chosen = typeof state?.magistral === 'string' ? state.magistral : state?.magistral?.id;
   if (!chosen) return false;
+  // Ручная чеканка (#2083): канон её разрешает, значит предикат обязан её признавать —
+  // иначе canSend стоит и обязательный доклад партнёрам не уходит. Снимок при этом не
+  // проверяется на вхождение (id законно ВНЕ него), но проверяется на НЕПОДМЕНУ.
+  if (state?.magistralAuthor === 'human') return manualChoiceIntact(state).ok;
   const options = (state?.magistralOptions ?? []).map((o) => (typeof o === 'string' ? o : o?.id));
   if (state?.frozenDigest) {
     const actual = createHash('sha256').update(options.join('\n')).digest('hex');
