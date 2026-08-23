@@ -24,6 +24,7 @@ import {
   setVolume,
   startGenerating,
   structureLabel,
+  compositionLine,
   type ChartListPickView,
   type ChartListSelectionView,
 } from './chartList';
@@ -162,5 +163,56 @@ describe('подписи', () => {
   it('структура названа по-человечески', () => {
     expect(structureLabel('tonal')).toBe('тональный');
     expect(structureLabel('broadband')).toBe('широкополосный');
+  });
+});
+
+describe('подпись состава не врёт о материале (находка приёмки 22.08)', () => {
+  const sel = (over: Partial<ChartListSelectionView> = {}): ChartListSelectionView => ({
+    ...selection(200),
+    asked: 1301,
+    measured: 329,
+    shortfall: 0,
+    ...over,
+  });
+
+  it('со свежим прогоном причины НАЗВАНЫ раздельно, а не свалены в одну', () => {
+    const line = compositionLine(sel(), { tracks: 667, reports: 634, measured: 329, unmeasuredTracks: 338 });
+    expect(line).toContain('667 треков и 634 отчётов');
+    expect(line).toContain('у отчётов звука нет по природе');
+    expect(line).toContain('338 треков не измерены');
+    // Старая ложь: у 338 треков звук БЫЛ, они не прошли порог.
+    expect(line).not.toContain('у остальных звука нет');
+  });
+
+  it('две причины не выдаются за одну: «без пробы ЛИБО тише порога»', () => {
+    const line = compositionLine(sel(), { tracks: 667, reports: 634, measured: 329, unmeasuredTracks: 338 });
+    expect(line).toContain('без пробы либо тише порога');
+  });
+
+  it('БЕЗ разбора причина не называется вовсе — восстановленная выборка его не имеет', () => {
+    const line = compositionLine(sel(), null);
+    expect(line).toContain('запрошено 1301 записей');
+    expect(line).not.toContain('звука нет');
+    expect(line).not.toContain('порога');
+  });
+
+  it('недобор до объёма назван отдельно и в обоих случаях', () => {
+    const withB = compositionLine(sel({ shortfall: 13 }), { tracks: 20, reports: 0, measured: 7, unmeasuredTracks: 13 });
+    const noB = compositionLine(sel({ shortfall: 13 }), null);
+    expect(withB).toContain('не хватило 13');
+    expect(noB).toContain('не хватило 13');
+  });
+
+  it('когда всё измерено — лишних оговорок нет', () => {
+    const line = compositionLine(sel({ asked: 10, measured: 10 }), { tracks: 10, reports: 0, measured: 10, unmeasuredTracks: 0 });
+    expect(line).not.toContain('не измерены');
+    expect(line).not.toContain('отчётов звука нет');
+  });
+
+  it('разбор приходит только со свежей выборкой и живёт в состоянии', () => {
+    const s = receiveSelection(initialChartListState, sel(), { tracks: 667, reports: 634, measured: 329, unmeasuredTracks: 338 });
+    expect(s.breakdown?.unmeasuredTracks).toBe(338);
+    // Восстановление без разбора его не выдумывает.
+    expect(receiveSelection(initialChartListState, sel()).breakdown).toBeNull();
   });
 });

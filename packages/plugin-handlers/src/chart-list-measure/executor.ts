@@ -46,7 +46,9 @@ import type { CollectionSampleReader } from '../sample-reader.js';
 
 export interface MeasuredCandidate {
   readonly sampleId: string;
+  /** Превышение над фоном ВЫБОРКИ, дБ — почему трек замечен. Величина относительная. */
   readonly deltaDb: number;
+  /** АБСОЛЮТНЫЙ уровень пика, dBFS: 0 — полная шкала. Величина материала, не выборки. */
   readonly peakDb: number;
   readonly flatness: number;
   readonly structure: EventStructure;
@@ -93,6 +95,56 @@ export interface MeasureDeps {
 }
 
 const refuse = (reason: MeasureRefusalReason, detail: string): MeasureRefusal => ({ reason, detail });
+
+/**
+ * АБСОЛЮТНЫЙ уровень пика, dBFS: `0` — полная шкала, отрицательное — тише.
+ *
+ * ЗАЧЕМ ОТДЕЛЬНО ОТ ПРЕВЫШЕНИЯ. Приёмка 22.08 показала: во всех двадцати строках выборки
+ * «превышение над фоном» и «пик» несли ОДНО И ТО ЖЕ число. Причина — `SessionEvent.peakDb`
+ * считается в `session-metrics` той же формулой `dbOverFloor(peak, floor)`, что и превышение.
+ * Строка обещала человеку три измерения и давала два, одно из них дважды.
+ *
+ * Две величины отвечают на разные вопросы. Превышение: «насколько этот звук громче фона ВЫБОРКИ» —
+ * величина относительная, и на другом материале у того же трека она другая. Абсолютный пик:
+ * «насколько громко вообще» — величина материала, а не выборки.
+ *
+ * ПОЧЕМУ ЭТО ВАЖНО ДЛЯ ПРИЁМКИ: четыре трека первого прогона имели ровно `+39.1`. Совпадение до
+ * десятой доли у разных записей означает упор в потолок, и увидеть это можно ТОЛЬКО по абсолютной
+ * шкале: у клиппованного сигнала пик прижат к `0 dBFS`.
+ *
+ * Значение НЕ обрезается сверху: пик выше полной шкалы — перегрузка, и прятать её нулём значило бы
+ * снова показать вместо измерения удобное число.
+ */
+export function peakDbFs(peak: number): number {
+  if (!(peak > 0)) return Number.NEGATIVE_INFINITY;
+  return 20 * Math.log10(peak);
+}
+
+/**
+ * ИСТИННЫЙ пик по отсчётам события: наибольший модуль сэмпла.
+ *
+ * ПОЧЕМУ НЕ `SessionEvent.peak`. Поле названо `peak`, но несёт `frameLoudness` — а это
+ * `max(RMS, пик × 0.45)`, то есть ГРОМКОСТЬ КАДРА, не пик. Для синуса RMS = A/√2, и величина
+ * оказывается ровно на 3.01 дБ ниже амплитуды.
+ *
+ * Найдено собственным зубом: я ожидал у сигнала 0.6 полной шкалы −4.44 dBFS, получил −7.44.
+ * Разрыв ровно 3.01 дБ в двух случаях подряд — не шум, а формула. Взять `SessionEvent.peak` за
+ * «пик» значило бы повторить ту же ложь именем, которую этот блок и чинит: величина под чужим
+ * названием.
+ *
+ * Меры `session-metrics` при этом НЕ переписываются: там `peak` считается для СВОЕЙ задачи —
+ * поиска событий по огибающей, — и для неё смесь RMS с пиком уместна. Здесь нужна другая величина,
+ * и она считается здесь.
+ */
+export function truePeakOf(samples: Float32Array, from: number, to: number): number {
+  let peak = 0;
+  const end = Math.min(to, samples.length);
+  for (let i = Math.max(0, from); i < end; i += 1) {
+    const a = Math.abs(samples[i]!);
+    if (a > peak) peak = a;
+  }
+  return peak;
+}
 
 /**
  * Измерить набор проб коллекции.
@@ -182,7 +234,13 @@ export async function measureSampleSet(
     candidates.push({
       sampleId: t.id,
       deltaDb: dbOverFloor(loudest.peak, floor),
-      peakDb: loudest.peakDb,
+      peakDb: peakDbFs(
+        truePeakOf(
+          decoded.audio.samples,
+          loudest.startFrame * cfg.frameSize,
+          (loudest.startFrame + loudest.frameCount) * cfg.frameSize,
+        ),
+      ),
       flatness: features.flatness,
       structure: structureOf(features.flatness, cfg.flatnessCeiling),
       durationSec: loudest.endSec - loudest.startSec,
