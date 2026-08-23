@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-22 |
-| Head SHA | e198d78afe958f59e5639203338bb7442567eb75 |
+| Date | 2026-08-23 |
+| Head SHA | 806a0f9233733ea5cbac620d8ec85d997e0912ae |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1149 |
-| Yarn scripts (package.json) | 451 |
-| Yarn → `scripts/` | 398 |
+| Code files under `scripts/` | 1162 |
+| Yarn scripts (package.json) | 454 |
+| Yarn → `scripts/` | 401 |
 | Yarn без пути `scripts/` | 53 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 831 |
+| Code files without yarn ref | 841 |
 
-## Yarn → scripts/ (398)
+## Yarn → scripts/ (401)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -154,6 +154,7 @@
 - `feedback:claims` → `scripts/feedback-claims-probe.mjs`
 - `field:capture` → `scripts/field-capture.mjs`
 - `firebat:poller` → `scripts/firebat-poller.mjs`
+- `gc:void` → `scripts/gc.mjs`
 - `git:check-divergence` → `scripts/git-check-divergence.mjs`
 - `git:fresh-branch` → `scripts/git-fresh-branch.mjs`
 - `git:rebase-continue` → `scripts/git-rebase-continue.mjs`
@@ -169,6 +170,7 @@
 - `insight:verify` → `scripts/insight.mjs`
 - `issues:audit` → `scripts/github-issues-audit.mjs`
 - `issues:audit:apply` → `scripts/github-issues-audit.mjs`
+- `journals:verify` → `scripts/verify-journal-merge.mjs`
 - `kits:audit` → `scripts/kits-audit.mjs`
 - `kits:pins` → `scripts/kits-pins.mjs`
 - `linear:movement-audit` → `scripts/linear-movement-audit.mjs`
@@ -415,6 +417,7 @@
 - `vitest:gate` → `scripts/vitest-gate.mjs`
 - `vitest:smoke-list` → `scripts/vitest-smoke-list.mjs`
 - `vocabulary:generate` → `scripts/vocabulary-generate.mjs`
+- `void:barriers` → `scripts/verify-void-barriers.mjs`
 - `wire:generate` → `scripts/generate-wire-contract.mjs`
 - `workflow:examples` → `scripts/workflow-examples.mjs`
 - `workspace:links` → `scripts/workspace-links.mjs`
@@ -424,7 +427,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (831)
+## Code files without yarn ref (841)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -432,6 +435,7 @@
 - `scripts/_deepseek-env.mjs`
 - `scripts/_deploy-ci-gate.mjs`
 - `scripts/_deploy-preflight.mjs`
+- `scripts/_deploy-preflight.test.mjs`
 - `scripts/_llm-proxy-env.mjs`
 - `scripts/_main-day-issue.mjs`
 - `scripts/_ollama-client.mjs`
@@ -597,6 +601,7 @@
 - `scripts/fix-imports-with-claude.js`
 - `scripts/fixtures/membrana-leveling-disposition-product.mjs`
 - `scripts/gc-void.test.mjs`
+- `scripts/gc.test.mjs`
 - `scripts/generate-calibration-preset-ts.mjs`
 - `scripts/generate-wire-contract.test.mjs`
 - `scripts/generate_report.mjs`
@@ -617,6 +622,7 @@
 - `scripts/insight-ritual.test.mjs`
 - `scripts/insight-skill-mirrors.test.mjs`
 - `scripts/isolated-merge.test.mjs`
+- `scripts/journal-merge.test.mjs`
 - `scripts/kit-subgraph-audit.test.mjs`
 - `scripts/kits-pins.test.mjs`
 - `scripts/kits-prepush-strict.mjs`
@@ -770,6 +776,7 @@
 - `scripts/lib/install-state.mjs`
 - `scripts/lib/install-state.test.mjs`
 - `scripts/lib/isolated-merge.mjs`
+- `scripts/lib/journal-merge.mjs`
 - `scripts/lib/junction-safety.mjs`
 - `scripts/lib/junction-safety.test.mjs`
 - `scripts/lib/kit-subgraph-audit.mjs`
@@ -820,6 +827,7 @@
 - `scripts/lib/mongo-dump-policy.mjs`
 - `scripts/lib/mongo-restore-policy.mjs`
 - `scripts/lib/mongo-restore-policy.test.mjs`
+- `scripts/lib/morning-entry.mjs`
 - `scripts/lib/morning-gates.mjs`
 - `scripts/lib/morning-ritual.mjs`
 - `scripts/lib/morning-wiring.mjs`
@@ -1002,6 +1010,8 @@
 - `scripts/lib/vitest-gate-scope.test.mjs`
 - `scripts/lib/vitest-workspace.mjs`
 - `scripts/lib/vocabulary-check.mjs`
+- `scripts/lib/void-index.mjs`
+- `scripts/lib/void-sentence.mjs`
 - `scripts/lib/wav-read.mjs`
 - `scripts/lib/workflow-examples.mjs`
 - `scripts/lib/workshop-dependencies.mjs`
@@ -1053,6 +1063,7 @@
 - `scripts/migrate-mvp-graph-v20-async.mjs`
 - `scripts/mintlify-workflow-docs.test.mjs`
 - `scripts/mongo-dump-policy.test.mjs`
+- `scripts/morning-entry.test.mjs`
 - `scripts/morning-gates.test.mjs`
 - `scripts/morning-ritual-run.mjs`
 - `scripts/morning-ritual.test.mjs`
@@ -1244,10 +1255,12 @@
 - `scripts/verify-mcp-bootstrap.test.mjs`
 - `scripts/verify-mintlify-docs.test.mjs`
 - `scripts/verify-usercase-write-paths.mjs`
+- `scripts/verify-void-barriers.test.mjs`
 - `scripts/verify-wire-sync.test.mjs`
 - `scripts/vitest-smoke-list.test.mjs`
 - `scripts/vocabulary-check.test.mjs`
 - `scripts/voices-registry.test.mjs`
+- `scripts/void-sentence.test.mjs`
 - `scripts/workflow-examples.test.mjs`
 - `scripts/workshop-dependencies.test.mjs`
 - `scripts/workshop-ownership.test.mjs`
@@ -1268,7 +1281,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1149)
+## All code files (1162)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1276,6 +1289,7 @@
 - `scripts/_deepseek-env.mjs`
 - `scripts/_deploy-ci-gate.mjs`
 - `scripts/_deploy-preflight.mjs`
+- `scripts/_deploy-preflight.test.mjs`
 - `scripts/_llm-proxy-env.mjs`
 - `scripts/_main-day-issue.mjs`
 - `scripts/_ollama-client.mjs`
@@ -1562,6 +1576,8 @@
 - `scripts/fix-imports-with-claude.js`
 - `scripts/fixtures/membrana-leveling-disposition-product.mjs`
 - `scripts/gc-void.test.mjs`
+- `scripts/gc.mjs`
+- `scripts/gc.test.mjs`
 - `scripts/generate-calibration-preset-ts.mjs`
 - `scripts/generate-class-template.mjs`
 - `scripts/generate-competition-async-v2-synthesis.mjs`
@@ -1602,6 +1618,7 @@
 - `scripts/insight-skill-mirrors.test.mjs`
 - `scripts/insight.mjs`
 - `scripts/isolated-merge.test.mjs`
+- `scripts/journal-merge.test.mjs`
 - `scripts/kit-subgraph-audit.test.mjs`
 - `scripts/kits-audit.mjs`
 - `scripts/kits-pins.mjs`
@@ -1757,6 +1774,7 @@
 - `scripts/lib/install-state.mjs`
 - `scripts/lib/install-state.test.mjs`
 - `scripts/lib/isolated-merge.mjs`
+- `scripts/lib/journal-merge.mjs`
 - `scripts/lib/junction-safety.mjs`
 - `scripts/lib/junction-safety.test.mjs`
 - `scripts/lib/kit-subgraph-audit.mjs`
@@ -1807,6 +1825,7 @@
 - `scripts/lib/mongo-dump-policy.mjs`
 - `scripts/lib/mongo-restore-policy.mjs`
 - `scripts/lib/mongo-restore-policy.test.mjs`
+- `scripts/lib/morning-entry.mjs`
 - `scripts/lib/morning-gates.mjs`
 - `scripts/lib/morning-ritual.mjs`
 - `scripts/lib/morning-wiring.mjs`
@@ -1989,6 +2008,8 @@
 - `scripts/lib/vitest-gate-scope.test.mjs`
 - `scripts/lib/vitest-workspace.mjs`
 - `scripts/lib/vocabulary-check.mjs`
+- `scripts/lib/void-index.mjs`
+- `scripts/lib/void-sentence.mjs`
 - `scripts/lib/wav-read.mjs`
 - `scripts/lib/workflow-examples.mjs`
 - `scripts/lib/workshop-dependencies.mjs`
@@ -2064,6 +2085,7 @@
 - `scripts/mintlify-workflow-docs.test.mjs`
 - `scripts/mongo-dump-policy.test.mjs`
 - `scripts/morning-care.mjs`
+- `scripts/morning-entry.test.mjs`
 - `scripts/morning-gate.mjs`
 - `scripts/morning-gates.test.mjs`
 - `scripts/morning-ritual-run.mjs`
@@ -2386,6 +2408,7 @@
 - `scripts/verify-encoding.test.mjs`
 - `scripts/verify-image-workspace-deps.mjs`
 - `scripts/verify-image-workspace-deps.test.mjs`
+- `scripts/verify-journal-merge.mjs`
 - `scripts/verify-mcp-bootstrap.mjs`
 - `scripts/verify-mcp-bootstrap.test.mjs`
 - `scripts/verify-mintlify-docs.mjs`
@@ -2396,6 +2419,8 @@
 - `scripts/verify-usercase-prerun.mjs`
 - `scripts/verify-usercase-write-paths.mjs`
 - `scripts/verify-voices.mjs`
+- `scripts/verify-void-barriers.mjs`
+- `scripts/verify-void-barriers.test.mjs`
 - `scripts/verify-wire-sync.mjs`
 - `scripts/verify-wire-sync.test.mjs`
 - `scripts/vitest-gate.mjs`
@@ -2404,6 +2429,7 @@
 - `scripts/vocabulary-check.test.mjs`
 - `scripts/vocabulary-generate.mjs`
 - `scripts/voices-registry.test.mjs`
+- `scripts/void-sentence.test.mjs`
 - `scripts/workflow-examples.mjs`
 - `scripts/workflow-examples.test.mjs`
 - `scripts/workshop-dependencies.test.mjs`
