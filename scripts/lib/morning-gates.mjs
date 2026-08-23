@@ -195,6 +195,9 @@ export function chooseMagistralManually(state, id, today) {
   const next = { ...state, magistral: id, magistralAuthor: 'human' };
   next.magistralManual = {
     at: today,
+    // Запись держит ИМЕННО тот id, который зачеканили: иначе достаточно поменять
+    // `magistral` рядом со старой записью, и подмена пройдёт за чеканку.
+    chosen: id,
     // Снимок остаётся как есть; помним лишь его отпечаток, чтобы поймать подмену.
     snapshotDigest: snapshotDigest(state?.magistralOptions ?? []),
     inSnapshot: (state?.magistralOptions ?? [])
@@ -216,13 +219,24 @@ export function chooseMagistralManually(state, id, today) {
  */
 export function manualChoiceIntact(state) {
   const manual = state?.magistralManual;
+  const chosenId = typeof state?.magistral === 'string' ? state.magistral : state?.magistral?.id;
+  if (state?.magistralAuthor === 'human') {
+    // Без записи о чеканке подпись «human» ничем не подтверждена: дописать автора в файл
+    // состояния руками — и гейт открылся бы на любой id мимо двери. Подпись без чеканки
+    // не считается (P2 ревью #2085).
+    if (!manual) {
+      return { ok: false, reason: 'автор «human» без записи о чеканке — подпись ничем не подтверждена, чеканить через morning:gate magistral --author human' };
+    }
+    if (manual.chosen && chosenId && manual.chosen !== chosenId) {
+      return { ok: false, reason: `магистраль «${chosenId}» подменена рядом с записью о чеканке «${manual.chosen}» — чеканка не переносится на другой выбор` };
+    }
+  }
   if (!manual) return { ok: true };
   const options = (state?.magistralOptions ?? []).map((o) => (typeof o === 'string' ? o : o?.id));
-  const chosen = typeof state?.magistral === 'string' ? state.magistral : state?.magistral?.id;
-  if (!manual.inSnapshot && chosen && options.includes(chosen)) {
+  if (!manual.inSnapshot && chosenId && options.includes(chosenId)) {
     return {
       ok: false,
-      reason: `человеческий выбор «${chosen}» вписан В снимок машины — снимок обязан остаться вещдоком генератора (#2083)`,
+      reason: `человеческий выбор «${chosenId}» вписан В снимок машины — снимок обязан остаться вещдоком генератора (#2083)`,
     };
   }
   const now = snapshotDigest(state?.magistralOptions ?? []);

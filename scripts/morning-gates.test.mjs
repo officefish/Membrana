@@ -350,3 +350,28 @@ test('#2083: выбор из снимка снимает автора-челов
   const outside = { ...manual, magistral: OUTSIDE, magistralAuthor: 'snapshot' };
   assert.equal(magistralChosen(outside, DAY), false, 'вчерашняя чеканка не легализует id вне снимка сегодня');
 });
+
+test('#2083 ЗУБ ПОРЧИ: подпись «human», дописанная в состояние руками, гейт НЕ открывает', () => {
+  // Обход мимо двери: правим файл состояния текстовым редактором. Без записи о чеканке
+  // подпись ничем не подтверждена — иначе весь предикат сводится к одному слову в JSON.
+  const state = { ...frozen(), magistral: OUTSIDE, magistralAuthor: 'human' };
+  const verdict = manualChoiceIntact(state);
+  assert.equal(verdict.ok, false);
+  assert.match(verdict.reason, /без записи о чеканке/u);
+  assert.equal(magistralChosen(state, DAY), false, 'дописанное слово не заменяет чеканку');
+});
+
+test('#2083 ЗУБ ПОРЧИ: магистраль подменена рядом со старой записью о чеканке — красное', () => {
+  const state = chooseMagistralManually(frozen(), OUTSIDE, DAY);
+  state.magistral = 'подменённый-контур'; // запись о чеканке осталась от прежнего id
+  const verdict = manualChoiceIntact(state);
+  assert.equal(verdict.ok, false);
+  assert.match(verdict.reason, /подменена рядом с записью о чеканке/u);
+  assert.equal(magistralChosen(state, DAY), false);
+});
+
+test('#2083: запись о чеканке называет свой id — по ней видно, что именно чеканили', () => {
+  const state = chooseMagistralManually(frozen(), OUTSIDE, DAY);
+  assert.equal(state.magistralManual.chosen, OUTSIDE);
+  assert.equal(manualChoiceIntact(state).ok, true, 'честная чеканка остаётся зелёной');
+});
