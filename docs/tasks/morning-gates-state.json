@@ -1,17 +1,24 @@
 {
   "magistralOptions": [
-    "journal-home-real",
-    "duty-mode-alarm-state",
-    "cepstral-harmonic-feature"
+    "angelina-hostess-impl",
+    "assets-container",
+    "batch-collection-run-contour"
   ],
-  "frozenDigest": "bfdbc87deb2074452e087d51a7a504823a3e18a7d39b1c3ffe90a444edeaebd2",
-  "magistral": "journal-home-real",
+  "frozenDigest": "d44f3b842ecfccdf4d997cd1756355e89cb19323637ed3089d9fa0e1aaf167f3",
+  "magistral": "chart-list-prod-polish",
   "swallow": {
-    "draftDigest": "177a0b034e17dc53a22892a2564bb9a3dbddaba10e77215f74f3ee6b0193c2b6",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-08-22.md",
+    "draftDigest": "84d8b97c87b24cc382f673eb44f9ef51980fc3540046042435d9ead867f90e9b",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-08-23.md",
     "ownerAck": true,
-    "day": "2026-08-22"
+    "day": "2026-08-23"
   },
-  "day": "2026-08-22",
-  "magistralChosenAt": "2026-08-22"
+  "day": "2026-08-23",
+  "magistralChosenAt": "2026-08-23",
+  "magistralAuthor": "human",
+  "magistralManual": {
+    "at": "2026-08-23",
+    "chosen": "chart-list-prod-polish",
+    "snapshotDigest": "d44f3b842ecfccdf4d997cd1756355e89cb19323637ed3089d9fa0e1aaf167f3",
+    "inSnapshot": false
+  }
 }

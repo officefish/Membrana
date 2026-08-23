@@ -1,5 +1,5 @@
 {
-  "date": "2026-08-20",
+  "date": "2026-08-23",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -430,8 +430,8 @@
     },
     {
       "pkg": "tar",
-      "id": "1124287",
-      "severity": "moderate",
+      "id": "1145647",
+      "severity": "high",
       "issue": "node-tar: Uncontrolled recursion in mapHas/filesFilter allows uncatchable stack-overflow DoS via crafted long-path tar with member selection",
       "url": "https://github.com/advisories/GHSA-r292-9mhp-454m"
     },
