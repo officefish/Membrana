@@ -2189,6 +2189,7 @@ __metadata:
     "@fastify/cors": "npm:^10.0.0"
     "@membrana/core": "npm:*"
     "@membrana/plugin-contracts": "npm:*"
+    "@membrana/plugin-handlers": "npm:*"
     "@nestjs/common": "npm:^11.0.0"
     "@nestjs/core": "npm:^11.0.0"
     "@nestjs/platform-fastify": "npm:^11.0.0"

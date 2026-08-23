@@ -1,3 +1,8 @@
 {"ts":"2026-08-22T04:29:37.880Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
 {"ts":"2026-08-22T05:28:16.545Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-22T05:28:06.503Z","origin":"ask-persona"}
 {"ts":"2026-08-22T05:28:16.555Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-22T05:28:06.503Z","origin":"ask-persona"}
+{"ts":"2026-08-22T10:51:51.503Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-08-22T10:51:43.812Z","origin":"ask-persona"}
+{"ts":"2026-08-22T10:51:51.506Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-08-22T10:51:43.812Z","origin":"ask-persona"}
+{"ts":"2026-08-22T17:03:59.050Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-22-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-22T17:03:59.050Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-08-04-static-mmbrn-container-m4-storage","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-22T17:03:59.050Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

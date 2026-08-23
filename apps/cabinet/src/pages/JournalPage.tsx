@@ -7,6 +7,9 @@ import { useCabinetLiveJournal } from '@/lib/useCabinetLiveJournal';
 import { PagePluginArea } from '@/plugins/PagePluginArea';
 import { useHomePagePlugins } from '@/plugins/useHomePagePlugins';
 import type { CabinetRendererRegistry } from '@/plugins/adapters/manifestToPagePlugin';
+import { ChartListSettings } from '@/plugins/chart-list/ChartListSettings';
+import { ChartListWidget } from '@/plugins/chart-list/ChartListWidget';
+import { useChartList } from '@/plugins/chart-list/useChartList';
 
 const FILTER_OPTIONS: { value: LiveJournalFilter; label: string }[] = [
   { value: 'all', label: 'Все' },
@@ -26,19 +29,44 @@ const SOUND_CLASS_LABELS: Readonly<Record<SoundClass, string>> = {
   unknown: 'Неизвестно',
 };
 
-/**
- * Рисовалки кабинета для жильцов дома журнала.
- *
- * Список ПУСТ, и это верное состояние почвы, а не недоделка: дом сам называет своих жильцов, а
- * кабинет объявляет, чем он умеет их рисовать. Настоящий чарт-лист приедет вторым заданием и
- * добавится сюда одной строкой — механизм при этом не правится. Жилец, зарегистрированный в
- * доме без рисовалки, из сайдбара не пропадёт: он виден и помечен словами (адаптер И-5).
- */
-const JOURNAL_RENDERERS: CabinetRendererRegistry = {};
+const CHART_LIST_ID = 'membrana.showcase.chart-list';
 
 export function JournalPage() {
-  const pagePlugins = useHomePagePlugins(JOURNAL_RENDERERS);
   const journal = useCabinetLiveJournal();
+  const chartList = useChartList(journal.selectedDeviceId);
+
+  /**
+   * Рисовалки кабинета для жильцов дома журнала.
+   *
+   * Обещание почвы выполнено буквально: чарт-лист встал ОДНОЙ строкой реестра, механизм плагинов
+   * страницы не правился ни в чём. Настройки уедут в сайдбар, виджет — под основной блок, потому
+   * что так устроено гнездо, а не потому, что чарт-лист об этом попросил.
+   */
+  const journalRenderers: CabinetRendererRegistry = {
+    [CHART_LIST_ID]: {
+      name: 'Чарт-лист',
+      renderSettings: () => (
+        <ChartListSettings
+          state={chartList.state}
+          onVolume={chartList.setVolume}
+          onCriterion={chartList.setCriterion}
+        />
+      ),
+      renderWidget: () => (
+        <ChartListWidget
+          state={chartList.state}
+          items={journal.items}
+          canGenerate={Boolean(journal.selectedDeviceId)}
+          onGenerate={() => chartList.generate()}
+          onPage={chartList.setPage}
+          onPlay={(item) => journal.playTrack(item)}
+          onExportBlob={(item) => journal.exportTrackBlob(item)}
+        />
+      ),
+    },
+  };
+
+  const pagePlugins = useHomePagePlugins(journalRenderers);
 
   const activeFilterLabel =
     FILTER_OPTIONS.find((option) => option.value === journal.filter)?.label ?? journal.filter;
@@ -93,10 +121,23 @@ export function JournalPage() {
       plugins={pagePlugins.plugins}
       state={pagePlugins.state}
       onToggle={pagePlugins.toggle}
-      onActivate={pagePlugins.activate}
-      onCollapseMain={pagePlugins.collapseMain}
+      mainHeader={
+        /*
+          Кнопка сворачивания — НАД списком и доступна ВСЕГДА (l2, слово владельца 23.08).
+          В mainHeader, а не в теле: тело скрывается при сворачивании, и кнопка исчезла бы вместе
+          с ним. Прежнее правило «сворачивать имеет смысл только ради виджета» снято.
+        */
+        <button
+          type="button"
+          className="btn btn-ghost btn-xs mb-2"
+          aria-expanded={!pagePlugins.state.mainCollapsed}
+          onClick={() => pagePlugins.collapseMain(!pagePlugins.state.mainCollapsed)}
+        >
+          {pagePlugins.state.mainCollapsed ? 'Развернуть журнал' : 'Свернуть журнал'}
+        </button>
+      }
     >
-    <div className="mx-auto max-w-4xl space-y-6">
+    <div className="mx-auto w-full max-w-screen-2xl space-y-6">
       {/*
         Ответ дома о жильцах показывается словами. Хук отдаёт loading и error, и не показать их
         значило бы завести мёртвый регулятор: оператор видел бы пустой сайдбар и не отличал
@@ -253,7 +294,8 @@ export function JournalPage() {
               </p>
             ) : (
               <>
-                <ul className="space-y-2 max-h-[min(32rem,70vh)] overflow-y-auto pr-1">
+                {/* Своей прокрутки у списка нет: страница листается целиком (l3, правило рядом). */}
+                <ul className="space-y-2 pr-1">
                   {journal.displayed.map((item) => (
                     <li key={item.id}>
                       <CabinetLiveJournalItemRow

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14373/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 309 (причины в op-log) -->
+Записей: 49 · бюджет 14254/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 311 (причины в op-log) -->
+
+### 2026-08-22 · позиция · team-evening-feedback
+
+> Оценка артефактов: sampleRatesCorrection в вещдоке сессии Б — честный пересчёт по окну (666 = 1×44.1 + 665×48), не «вычитание из старого». Это правильный подход к верификации носителя. Итоги дня: В развёрнутом diff математики нет — день инфраструктурный. Cepstral/harmonic (drone […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-22.md#reply-1`
 
 ### 2026-08-21 · позиция · duty-node-detection-m1-slovar
 
@@ -295,15 +301,3 @@
 > Порядок ролей полный: `public < ally < operator < owner`. Решение строится одной функцией сравнения ролей, без permission-grant и без снижения роли субъекта. _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
-
-> Единственный physical admission predicate: `free_after >= 12 GiB AND used_after / provisioned_capacity < 0.90`. Soft watermark `0.85` только создаёт наблюдаемый alert и не меняет ALLOW. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m3c-fallback
-
-> Форма: `effective.chain: ProviderId[]` непустой; try i=0..n-1; emit event per attempt; успех → break; все fail → exit≠0. Single provider = chain длины 1 (совместимо с C1). _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m3c-fallback-2026-07-23-2026-07-23.md#reply-1`

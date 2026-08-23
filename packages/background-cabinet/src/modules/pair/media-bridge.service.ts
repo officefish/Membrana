@@ -89,6 +89,29 @@ export class MediaBridgeService {
     return this.config.MEDIA_API_URL.replace(/\/$/, '');
   }
 
+  /**
+   * Заказать прогон плагина на коллекции устройства. Заведено спринтом `chart-list-plugin`.
+   *
+   * ЗДЕСЬ, А НЕ ВТОРЫМ КЛИЕНТОМ. У кабинета один разговор с media, и заводить рядом второй
+   * значило бы удвоить заголовки, базу и разбор отказов — и удвоить голый `fetch` в серверной
+   * зоне, чего прямо не велит зуб сети. Порт чарт-листа зовёт этот вход, а транспорта не держит.
+   */
+  async requestPluginRun(
+    deviceId: string,
+    collectionId: string,
+    pluginId: string,
+    body: unknown,
+  ): Promise<Response> {
+    const path =
+      `/v1/devices/${encodeURIComponent(deviceId)}/collections/${encodeURIComponent(collectionId)}` +
+      `/plugins/${encodeURIComponent(pluginId)}/request`;
+    return this.mediaFetch(path, {
+      method: 'POST',
+      headers: this.mediaHeaders(),
+      body: JSON.stringify(body),
+    });
+  }
+
   private async mediaFetch(path: string, init: RequestInit): Promise<Response> {
     try {
       return await fetch(`${this.mediaBase()}${path}`, init);

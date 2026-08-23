@@ -1,0 +1,197 @@
+/**
+ * Зубы отбора чарт-листа. Блок c2b спринта `chart-list-plugin`.
+ *
+ * Гоняются на ЧИСЛАХ, без декодирования звука: ядро отбора звука не касается, и зуб, которому
+ * понадобился бы wav, доказывал бы, что граница слоёв проведена неверно.
+ *
+ * Проверяется не «функция вернула массив», а утверждения, ради которых критерии заведены: что
+ * выбор между ними что-то значит, что отсев работает на вырожденном материале, и что отказ
+ * приходит вместо списка, а не пустым списком.
+ */
+import { describe, expect, it } from 'vitest';
+
+import {
+  CHART_LIST_CRITERIA,
+  CHART_LIST_VOLUMES,
+  isChartListCriterion,
+  isChartListVolume,
+  selectChartList,
+  type ChartListCandidate,
+} from './selection.js';
+import type { EventFeatures } from '../session-metrics/index.js';
+
+const features = (over: Partial<EventFeatures> = {}): EventFeatures => ({
+  centroidHz: 1000,
+  rolloffHz: 4000,
+  flatness: 0.1,
+  zeroCrossingRate: 0.05,
+  flux: 0.2,
+  ...over,
+});
+
+const cand = (over: Partial<ChartListCandidate> = {}): ChartListCandidate => ({
+  entryId: 'e1',
+  sampleId: 's1',
+  at: 1_755_000_000_000,
+  deltaDb: 15,
+  peakDb: -20,
+  flatness: 0.1,
+  structure: 'tonal',
+  durationSec: 1.5,
+  features: features(),
+  ...over,
+});
+
+/** Разнородный материал: у каждого своя спектральная форма — отсеву нечего вытеснять. */
+const varied = (n: number): ChartListCandidate[] =>
+  Array.from({ length: n }, (_, i) =>
+    cand({
+      entryId: `e${i}`,
+      sampleId: `s${i}`,
+      deltaDb: 30 - i,
+      flatness: 0.02 + i * 0.03,
+      structure: i < 3 ? 'tonal' : 'broadband',
+      durationSec: 0.5 + i,
+      features: features({ centroidHz: 500 + i * 900, rolloffHz: 2000 + i * 1500, flux: i * 0.3 }),
+    }),
+  );
+
+/** Вырожденный материал: восемь копий одного хлопка, отличаются только громкостью. */
+const clones = (n: number): ChartListCandidate[] =>
+  Array.from({ length: n }, (_, i) =>
+    cand({
+      entryId: `c${i}`,
+      sampleId: `cs${i}`,
+      deltaDb: 25 - i * 0.1,
+      structure: 'broadband',
+      flatness: 0.4,
+      durationSec: 1,
+      features: features({ centroidHz: 3000, rolloffHz: 7000, flatness: 0.4, flux: 1 }),
+    }),
+  );
+
+describe('закрытые списки настроек', () => {
+  it('объёмы — ровно заказ владельца, произвольного числа нет', () => {
+    expect([...CHART_LIST_VOLUMES]).toEqual([200, 100, 60, 20]);
+    expect(isChartListVolume(50)).toBe(false);
+    expect(isChartListVolume(20)).toBe(true);
+  });
+
+  it('критериев ровно три — четвёртый отвергнут командой 3/3', () => {
+    expect(CHART_LIST_CRITERIA).toHaveLength(3);
+    expect(isChartListCriterion('rare')).toBe(false);
+    expect(isChartListCriterion('редкие')).toBe(false);
+  });
+});
+
+describe('критерий «превышение над фоном»', () => {
+  it('порядок — по превышению, самый громкий первым', () => {
+    const s = selectChartList(varied(5), 'loudness-over-floor', 20);
+    expect(s.picks.map((p) => p.deltaDb)).toEqual([30, 29, 28, 27, 26]);
+    expect(s.picks[0]?.rank).toBe(1);
+  });
+
+  it('похожее НЕ отсеивает — иначе выбор между первым и вторым критерием ничего не значил бы', () => {
+    const s = selectChartList(clones(8), 'loudness-over-floor', 20);
+    expect(s.picks).toHaveLength(8);
+    expect(s.picks.every((p) => p.displaced === 0)).toBe(true);
+  });
+});
+
+describe('критерий «разнообразие спектральной формы»', () => {
+  it('на вырожденном материале оставляет ОДИН звук, а не двадцать кусков одного хлопка', () => {
+    const s = selectChartList(clones(8), 'spectral-variety', 20);
+    expect(s.picks).toHaveLength(1);
+    expect(s.picks[0]?.displaced).toBe(7);
+  });
+
+  it('на разнородном материале не выбрасывает никого — ноль вытесненных законен', () => {
+    const s = selectChartList(varied(6), 'spectral-variety', 20);
+    expect(s.picks).toHaveLength(6);
+    expect(s.picks.every((p) => p.displaced === 0)).toBe(true);
+  });
+
+  it('громкие идут вперёд среди непохожих — отсев меняет состав, а не смысл порядка', () => {
+    const s = selectChartList(varied(6), 'spectral-variety', 20);
+    expect(s.picks[0]?.deltaDb).toBe(30);
+  });
+});
+
+describe('критерий «близость к портрету дрона»', () => {
+  it('тональное впереди широкополосного — портрет, а не громкость', () => {
+    const s = selectChartList(varied(6), 'drone-likeness', 20);
+    expect(s.picks[0]?.structure).toBe('tonal');
+    expect(s.picks.at(-1)?.structure).toBe('broadband');
+  });
+
+  it('порядок отличается от порядка по громкости — иначе критерий был бы синонимом', () => {
+    const material = [
+      cand({ entryId: 'громкий-шум', deltaDb: 40, flatness: 0.9, structure: 'broadband' }),
+      cand({ entryId: 'тихий-тон', deltaDb: 12, flatness: 0.03, structure: 'tonal' }),
+    ];
+    expect(selectChartList(material, 'loudness-over-floor', 20).picks[0]?.entryId).toBe('громкий-шум');
+    expect(selectChartList(material, 'drone-likeness', 20).picks[0]?.entryId).toBe('тихий-тон');
+  });
+});
+
+describe('объём и недобор', () => {
+  it('объём режет список, а не материал: заказано 20 — пришло 20 из 40', () => {
+    const s = selectChartList(varied(40), 'loudness-over-floor', 20);
+    expect(s.picks).toHaveLength(20);
+    expect(s.shortfall).toBe(0);
+  });
+
+  it('недобор назван числом, а не молчанием', () => {
+    const s = selectChartList(varied(7), 'loudness-over-floor', 20);
+    expect(s.picks).toHaveLength(7);
+    expect(s.shortfall).toBe(13);
+  });
+});
+
+describe('отказы приходят ВМЕСТО списка', () => {
+  it('кандидатов нет — отказ назван, а не пустой список без причины', () => {
+    const s = selectChartList([], 'loudness-over-floor', 20);
+    expect(s.refusal?.reason).toBe('no-candidates');
+    expect(s.picks).toEqual([]);
+  });
+
+  it('критерий вне тройки — отказ, а не тихая подстановка первого', () => {
+    const s = selectChartList(varied(3), 'rare', 20);
+    expect(s.refusal?.reason).toBe('unknown-criterion');
+    expect(s.picks).toEqual([]);
+  });
+
+  it('объём вне списка — отказ, а не округление к ближайшему', () => {
+    const s = selectChartList(varied(3), 'loudness-over-floor', 50);
+    expect(s.refusal?.reason).toBe('unknown-volume');
+    expect(s.picks).toEqual([]);
+  });
+
+  it('успешный отбор отказа не несёт — отказ и список взаимоисключающи', () => {
+    const s = selectChartList(varied(3), 'loudness-over-floor', 20);
+    expect(s.refusal).toBeNull();
+    expect(s.picks.length).toBeGreaterThan(0);
+  });
+});
+
+describe('строка несёт ровно названное владельцем', () => {
+  it('превышение над фоном, структура и пик — есть', () => {
+    const p = selectChartList(varied(1), 'loudness-over-floor', 20).picks[0]!;
+    expect(p).toHaveProperty('deltaDb');
+    expect(p).toHaveProperty('structure');
+    expect(p).toHaveProperty('peakDb');
+  });
+
+  it('узла, длительности, частоты и режима захвата НЕТ — они уже в карточке журнала', () => {
+    const p = selectChartList(varied(1), 'loudness-over-floor', 20).picks[0]!;
+    for (const absent of ['nodeId', 'durationSec', 'sampleRate', 'captureMode']) {
+      expect(absent in p).toBe(false);
+    }
+  });
+
+  it('адреса записи и блоба оба на месте: по первому строка ищет себя, по второму играет звук', () => {
+    const p = selectChartList(varied(1), 'loudness-over-floor', 20).picks[0]!;
+    expect(p.entryId).toBeTruthy();
+    expect(p.sampleId).toBeTruthy();
+  });
+});

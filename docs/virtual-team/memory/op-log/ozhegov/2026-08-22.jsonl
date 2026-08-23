@@ -1,3 +1,7 @@
 {"ts":"2026-08-22T04:29:37.050Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
 {"ts":"2026-08-22T05:28:15.772Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-08-22T05:28:06.504Z","origin":"ask-persona"}
 {"ts":"2026-08-22T05:28:15.780Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-08-22T05:28:06.504Z","origin":"ask-persona"}
+{"ts":"2026-08-22T17:03:58.745Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-22-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-22T17:03:58.745Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-08-04-static-mmbrn-container-m4-storage","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-22T17:03:58.745Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-07-23-llm-procedure-channels-m2b-control-plane","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-22T17:03:58.745Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

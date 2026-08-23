@@ -12,13 +12,14 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { orchestrateCascade, presentNode } from './lib/angelina-cascade.mjs';
 import { buildSnapshot, gitFsIo } from './lib/angelina-adapter.mjs';
 import { canSend, todayIso } from './lib/morning-gates.mjs';
+import { entryLine, judgeMorningEntries } from './lib/morning-entry.mjs';
 
 const EXIT_BLOCKED = 22;
 
@@ -35,6 +36,87 @@ export const CASCADE_DAY = {
     { from: 'DAILY_STANDUP', to: 'MAIN_DAY_ISSUE' },
   ],
 };
+
+/**
+ * Наблюдение дверей в утро для предиката `|entry|=1` (вердикт M4-H). Порт: читает дерево,
+ * решение выносит чистое ядро `lib/morning-entry.mjs`.
+ *
+ * Дверь — КОМАНДА, открывающая процедуру утра. Свидетели двери бывают трёх слоёв:
+ *   command   — команда package.json, зовущая `procedure-run-record.mjs open --procedure
+ *               ritual-day`. Шаги цепочки дверью не считаются: они исполняют начатое.
+ *   skill     — живой скилл, ВЕЛЯЩИЙ запустить цепочку. Свидетель той же двери, а не вторая:
+ *               ровно этого требовал вердикт M1 («ссылка, не копия»). Скилл, лишь называющий
+ *               утро, не свидетель вовсе — в дереве таких три, и все три суть ЗАПРЕТЫ
+ *               («утро вычеркнуто», «не меняет», «Do NOT use for»).
+ *   autostart — хук или прогон CI, зовущий цепочку без человека. Строки-комментарии не в счёт.
+ *
+ * ЧЕСТНАЯ ГРАНИЦА НАБЛЮДЕНИЯ. Ловятся ОБЪЯВЛЕННЫЕ двери — те, что зовут цепочку её
+ * собственным именем. Дверь, переписавшая утро своими словами и своими шагами, отсюда не
+ * видна; такую ловит предикат разбиения канонов (`lib/skill-status.mjs`), а не этот. Оба
+ * молчать одновременно не должны — потому и живут порознь.
+ *
+ * @param {string} repoRoot
+ * @param {{readFileSync: Function, existsSync: Function, readdirSync: Function, join: Function}} io
+ * @returns {Array<{layer: string, name: string, command: string}>}
+ */
+export function observeMorningEntries(repoRoot, io) {
+  const found = [];
+  const read = (p) => {
+    try {
+      return io.existsSync(p) ? io.readFileSync(p, 'utf8') : null;
+    } catch {
+      return null; // нечитаемый файл дверью не объявляем — молчаливой двери не бывает
+    }
+  };
+  const list = (p) => {
+    try {
+      return io.existsSync(p) ? io.readdirSync(p) : [];
+    } catch {
+      return [];
+    }
+  };
+
+  // Слой команд: кто открывает процедуру утра.
+  const commands = [];
+  const pkgRaw = read(io.join(repoRoot, 'package.json'));
+  if (pkgRaw) {
+    try {
+      const scripts = JSON.parse(pkgRaw).scripts ?? {};
+      for (const [name, body] of Object.entries(scripts)) {
+        if (typeof body === 'string' && /procedure-run-record\.mjs open[^&|]*--procedure ritual-day/u.test(body)) {
+          const command = `yarn ${name}`;
+          commands.push(command);
+          found.push({ layer: 'command', name: command, command });
+        }
+      }
+    } catch { /* битый package.json — о нём скажет своя проверка, не эта */ }
+  }
+
+  // Слой скиллов: кто велит запустить команду. Свидетель известной двери — не новая дверь.
+  const skillsDir = io.join(repoRoot, '.cursor', 'skills');
+  for (const dir of list(skillsDir)) {
+    const body = read(io.join(skillsDir, dir, 'SKILL.md'));
+    if (!body || !/^status:\s*live\s*$/mu.test(body)) continue;
+    for (const command of commands) {
+      if (body.includes(command)) found.push({ layer: 'skill', name: dir, command });
+    }
+  }
+
+  // Слой автозапуска: кто начинает утро без человека.
+  for (const rel of [['.husky'], ['.github', 'workflows']]) {
+    const dir = io.join(repoRoot, ...rel);
+    for (const name of list(dir)) {
+      const body = read(io.join(dir, name));
+      if (!body) continue;
+      const live = body.split('\n').filter((line) => !/^\s*#/u.test(line)).join('\n');
+      for (const command of commands) {
+        if (live.includes(command)) found.push({ layer: 'autostart', name: `${rel.join('/')}/${name}`, command });
+      }
+    }
+  }
+
+  return found;
+}
 
 /** Состояние гейтов утра (сопровождение по фронтиру, M4-H). Файл пишет morning-gate CLI. */
 export const GATES_STATE_REL = 'docs/tasks/morning-gates-state.json';
@@ -68,7 +150,11 @@ function greet(repoRoot) {
       ? 'гейты: оба пройдены — отправка разрешена'
       : `гейты: ${gate.blockedBy.join(' · ')}`;
   }
-  console.log(`Доброе утро. Ведёт Ангелина · head ${head} · утро ведёт единственный вход (|entry|=1).`);
+  const entries = judgeMorningEntries(
+    observeMorningEntries(repoRoot, { readFileSync, existsSync, readdirSync, join }),
+  );
+  console.log(`Доброе утро. Ведёт Ангелина · head ${head}.`);
+  console.log(entryLine(entries));
   console.log(gatesLine);
 }
 
