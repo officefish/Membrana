@@ -111,7 +111,14 @@ export function CabinetShell({ user, onLogout }: CabinetShellProps) {
 
   return (
     <div className="flex min-h-screen">
-      <aside className="flex w-64 flex-col border-r border-base-content/10 bg-base-200 p-4">
+      {/*
+        Сайдбар НЕ уезжает со страницей (l3, слово владельца 23.08): он прилипает к верху и живёт
+        ровно в высоту экрана. Прежде он был обычным столбцом — прокручивая длинный журнал, человек
+        терял навигацию из виду. Своей полосы прокрутки у него при этом нет: пунктов немного, и
+        вложенная прокрутка внутри прилипшего столбца была бы вторым органом там, где хватает
+        одного — страничного.
+      */}
+      <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-base-content/10 bg-base-200 p-4">
         <div className="mb-8">
           <p className="text-lg font-semibold">Membrana</p>
           <p className="text-xs text-base-content/60">cabinet.membrana.space</p>

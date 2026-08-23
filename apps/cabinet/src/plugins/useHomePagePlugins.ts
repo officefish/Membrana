@@ -22,7 +22,6 @@ import {
 } from './adapters/manifestToPagePlugin';
 import {
   initialPagePluginsState,
-  setActive,
   setEnabled,
   setMainCollapsed,
   type CabinetPagePlugin,
@@ -35,7 +34,6 @@ export interface UseHomePagePlugins {
   readonly loading: boolean;
   readonly error: string | null;
   readonly toggle: (id: string, enabled: boolean) => void;
-  readonly activate: (id: string | null) => void;
   readonly collapseMain: (collapsed: boolean) => void;
 }
 
@@ -82,7 +80,6 @@ export function useHomePagePlugins(renderers: CabinetRendererRegistry): UseHomeP
     })();
   }, []);
 
-  const activate = useCallback((id: string | null) => setState((s) => setActive(s, id)), []);
   const collapseMain = useCallback(
     (collapsed: boolean) => setState((s) => setMainCollapsed(s, collapsed)),
     [],
@@ -94,7 +91,6 @@ export function useHomePagePlugins(renderers: CabinetRendererRegistry): UseHomeP
     loading,
     error,
     toggle,
-    activate,
     collapseMain,
   };
 }

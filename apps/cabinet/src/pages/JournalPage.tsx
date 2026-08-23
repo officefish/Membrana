@@ -121,10 +121,23 @@ export function JournalPage() {
       plugins={pagePlugins.plugins}
       state={pagePlugins.state}
       onToggle={pagePlugins.toggle}
-      onActivate={pagePlugins.activate}
-      onCollapseMain={pagePlugins.collapseMain}
+      mainHeader={
+        /*
+          Кнопка сворачивания — НАД списком и доступна ВСЕГДА (l2, слово владельца 23.08).
+          В mainHeader, а не в теле: тело скрывается при сворачивании, и кнопка исчезла бы вместе
+          с ним. Прежнее правило «сворачивать имеет смысл только ради виджета» снято.
+        */
+        <button
+          type="button"
+          className="btn btn-ghost btn-xs mb-2"
+          aria-expanded={!pagePlugins.state.mainCollapsed}
+          onClick={() => pagePlugins.collapseMain(!pagePlugins.state.mainCollapsed)}
+        >
+          {pagePlugins.state.mainCollapsed ? 'Развернуть журнал' : 'Свернуть журнал'}
+        </button>
+      }
     >
-    <div className="mx-auto max-w-4xl space-y-6">
+    <div className="mx-auto w-full max-w-screen-2xl space-y-6">
       {/*
         Ответ дома о жильцах показывается словами. Хук отдаёт loading и error, и не показать их
         значило бы завести мёртвый регулятор: оператор видел бы пустой сайдбар и не отличал
@@ -281,7 +294,8 @@ export function JournalPage() {
               </p>
             ) : (
               <>
-                <ul className="space-y-2 max-h-[min(32rem,70vh)] overflow-y-auto pr-1">
+                {/* Своей прокрутки у списка нет: страница листается целиком (l3, правило рядом). */}
+                <ul className="space-y-2 pr-1">
                   {journal.displayed.map((item) => (
                     <li key={item.id}>
                       <CabinetLiveJournalItemRow

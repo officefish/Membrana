@@ -50,11 +50,26 @@ export interface ChartListSelectionView {
   readonly picks: readonly ChartListPickView[];
 }
 
+/**
+ * Разбор состава прогона — по родам записей. Приходит ТОЛЬКО со свежим прогоном.
+ *
+ * У восстановленной выборки его нет и не будет: это сведение о прогоне, а не о выборке, и в базе
+ * оно не хранится. Поэтому подпись обязана работать в обоих случаях — с разбором и без, — и без
+ * него НЕ ДОДУМЫВАТЬ причин.
+ */
+export interface ChartListBreakdown {
+  readonly tracks: number;
+  readonly reports: number;
+  readonly measured: number;
+  readonly unmeasuredTracks: number;
+}
+
 export interface ChartListState {
   readonly volume: ChartListVolume;
   readonly criterion: ChartListCriterion;
   readonly busy: boolean;
   readonly selection: ChartListSelectionView | null;
+  readonly breakdown: ChartListBreakdown | null;
   /** Причина, названная сервером словами. Не «ошибка» — исход работы. */
   readonly refusal: string | null;
   readonly error: string | null;
@@ -67,6 +82,7 @@ export const initialChartListState: ChartListState = {
   criterion: 'loudness-over-floor',
   busy: false,
   selection: null,
+  breakdown: null,
   refusal: null,
   error: null,
   page: 0,
@@ -103,8 +119,9 @@ export function startGenerating(state: ChartListState): ChartListState {
 export function receiveSelection(
   state: ChartListState,
   selection: ChartListSelectionView,
+  breakdown: ChartListBreakdown | null = null,
 ): ChartListState {
-  return { ...state, busy: false, selection, refusal: null, error: null, page: 0 };
+  return { ...state, busy: false, selection, breakdown, refusal: null, error: null, page: 0 };
 }
 
 /** Отказ — исход работы. Прошлая выборка остаётся: она по-прежнему верна для своего прогона. */
@@ -162,6 +179,34 @@ export function joinWithItems<T extends JoinableItem>(
 ): readonly JoinedRow<T>[] {
   const byId = new Map(items.map((i) => [i.id, i]));
   return picks.map((pick) => ({ pick, item: byId.get(pick.entryId) ?? null }));
+}
+
+/**
+ * Подпись состава прогона.
+ *
+ * ПОЧЕМУ ПЕРЕПИСАНА. Первый боевой прогон 22.08 показывал «запрошено 1301, у остальных звука нет».
+ * Неправда: у 634 отчётов звука нет по природе, но ещё 338 треков звук ИМЕЛИ и просто не прошли
+ * порог над фоном. Подпись сваливала оба случая в один и врала о материале.
+ *
+ * Без разбора причина НЕ НАЗЫВАЕТСЯ вовсе: у восстановленной выборки разбора нет, и додумывать
+ * «наверное, звука не было» значило бы вернуть ту же ложь другим путём.
+ */
+export function compositionLine(
+  selection: ChartListSelectionView,
+  breakdown: ChartListBreakdown | null,
+): string {
+  const head = `Отобрано ${selection.picks.length} из ${selection.measured} измеренных`;
+  const tail = selection.shortfall > 0 ? `; не хватило ${selection.shortfall} до заказанного объёма` : '';
+  if (!breakdown) {
+    return `${head}; запрошено ${selection.asked} записей${tail}`;
+  }
+  const parts = [`в задании ${breakdown.tracks} треков и ${breakdown.reports} отчётов`];
+  if (breakdown.reports > 0) parts.push('у отчётов звука нет по природе');
+  if (breakdown.unmeasuredTracks > 0) {
+    // Две причины, а различить их нечем: порт отдаёт кандидатов, не отчёт о выбывших.
+    parts.push(`ещё ${breakdown.unmeasuredTracks} треков не измерены — без пробы либо тише порога над фоном`);
+  }
+  return `${head}; ${parts.join(', ')}${tail}`;
 }
 
 /** Подпись превышения: число с единицей, а не голая цифра. */
