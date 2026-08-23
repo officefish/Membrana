@@ -95,7 +95,7 @@ export function gcReport(moved, today) {
  * в PR (человек-гейт вердикта M5).
  *
  * @param {{subjectRef?: string, rejectedAt?: string|null}} sentence приговорённый след
- * @param {{parent?: string, derivatives?: string[]}} paths родитель и его производные
+ * @param {{parent?: string, derivatives?: string[], homeId?: string}} paths родитель, производные и имя дома
  * @param {string} voidDir корень кладбища
  * @returns {{ok: true, moves: Array<{from: string, to: string, role: string}>} | {ok: false, reason: string}}
  */
@@ -105,7 +105,11 @@ export function planVoidMove(sentence, paths, voidDir = VOID_DIR) {
   const parent = typeof paths?.parent === 'string' && paths.parent.trim() !== '' ? paths.parent.trim() : null;
   if (!parent) return { ok: false, reason: `след «${id}» приговорён, но его путь в дереве не найден — перенос без предмета` };
 
-  const home = `${voidDir}/${id}`;
+  // Дом зовётся именем САМОГО следа, а не мандата, которому вынесли приговор: по этому
+  // имени кладбище сверяется с реестром, откуда след ушёл, и штраф свежести находит своего
+  // адресата. Мандат — форма приговора, имя следа — его личность.
+  const homeId = typeof paths?.homeId === 'string' && paths.homeId.trim() !== '' ? paths.homeId.trim() : id;
+  const home = `${voidDir}/${homeId}`;
   const moves = [{ from: parent, to: home, role: 'родитель' }];
   const seen = new Set([parent]);
   for (const raw of paths?.derivatives ?? []) {

@@ -8,7 +8,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { setActive, setEnabled, setMainCollapsed, isSupportedForm } from '../pagePlugins';
+import { setEnabled, setMainCollapsed, shownPlugins, isSupportedForm } from '../pagePlugins';
 import {
   enabledIdsFromHome,
   toPagePlugins,
@@ -69,20 +69,23 @@ describe('интеграционный смоук: провод дома → с�
     expect(enabledIdsFromHome(WIRE)).toEqual(['membrana.showcase.chart-list']);
   });
 
-  it('шаг 6: включённый жилец активируется, и тогда основной блок сворачивается', () => {
-    let s = { enabled: enabledIdsFromHome(WIRE), activeId: null, mainCollapsed: false };
-    s = setActive(s, 'membrana.showcase.chart-list');
-    expect(s.activeId).toBe('membrana.showcase.chart-list');
-    s = setMainCollapsed(s, true);
-    expect(s.mainCollapsed).toBe(true);
+  it('шаг 6: включённый домом жилец показан СРАЗУ — отдельного действия показа нет', () => {
+    // Правило почвы «показ выбирается кликом» снято владельцем 23.08: галочка и есть показ.
+    const s = { enabled: enabledIdsFromHome(WIRE), mainCollapsed: false };
+    const plugins = toPagePlugins(WIRE, renderers);
+    expect(shownPlugins(plugins, s).map((p) => p.id)).toEqual(['membrana.showcase.chart-list']);
   });
 
-  it('шаг 6: выключенный домом активным не становится — выключатель дома что-то значит', () => {
-    const s = setActive(
-      { enabled: enabledIdsFromHome(WIRE), activeId: null, mainCollapsed: false },
-      'membrana.showcase.zone-map-one',
-    );
-    expect(s.activeId).toBeNull();
+  it('шаг 6: ВЫКЛЮЧЕННЫЙ домом не показывается — выключатель дома что-то значит', () => {
+    const s = { enabled: enabledIdsFromHome(WIRE), mainCollapsed: false };
+    const plugins = toPagePlugins(WIRE, renderers);
+    expect(shownPlugins(plugins, s).map((p) => p.id)).not.toContain('membrana.showcase.zone-map-one');
+  });
+
+  it('шаг 6: журнал сворачивается сам по себе, без единого показанного жильца', () => {
+    // Второе снятое правило: сворачивание больше не требует виджета.
+    const s = setMainCollapsed({ enabled: [], mainCollapsed: false }, true);
+    expect(s.mainCollapsed).toBe(true);
   });
 
   it('шаг 7: форма zone-map видна, но помечена — страница её не умеет и говорит об этом', () => {
@@ -97,12 +100,13 @@ describe('интеграционный смоук: провод дома → с�
     expect(zoneMap?.renderWidget()).toContain('нечем его нарисовать');
   });
 
-  it('выключение активного гасит виджет и сворачивание — правило ядра живо на отражённом состоянии', () => {
-    let s = { enabled: enabledIdsFromHome(WIRE), activeId: null, mainCollapsed: false };
-    s = setActive(s, 'membrana.showcase.chart-list');
+  it('выключение жильца убирает его виджет, но НЕ разворачивает журнал за человека', () => {
+    let s = { enabled: enabledIdsFromHome(WIRE), mainCollapsed: false };
     s = setMainCollapsed(s, true);
     s = setEnabled(s, 'membrana.showcase.chart-list', false);
-    expect(s.activeId).toBeNull();
-    expect(s.mainCollapsed).toBe(false);
+    const plugins = toPagePlugins(WIRE, renderers);
+    expect(shownPlugins(plugins, s)).toHaveLength(0);
+    // Свернул человек — отменять его решение из-за чужого выключателя нельзя.
+    expect(s.mainCollapsed).toBe(true);
   });
 });

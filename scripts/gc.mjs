@@ -59,6 +59,13 @@ export function readProjection(repoRoot, io = { existsSync, readFileSync }) {
  * живёт каталогом. Всё, что внутри каталога, едет вместе с ним и отдельным ходом не
  * считается — потому производные здесь только внешние.
  *
+ * V1: ВНЕШНИХ ПРОИЗВОДНЫХ НЕ ИЩЕТ, и список пуст НАМЕРЕННО, а не по недосмотру. Внешняя
+ * производная (прогон в docs/seanses, эхо в сводке) сегодня ничем не объявлена: связь
+ * «это порождено тем следом» в дереве не записана, и вывести её можно лишь угадыванием по
+ * имени файла. Угаданная производная хуже ненайденной: она уедет на кладбище живой. План
+ * переноса внешние принимает и везёт одной операцией (см. planVoidMove) — как только связь
+ * появится объявленной, читать её будет здесь, и менять придётся одну эту функцию.
+ *
  * @param {string} repoRoot
  * @param {string} subjectRef
  * @param {object|null} baseContext
@@ -70,7 +77,7 @@ export function locateTrace(repoRoot, subjectRef, baseContext, io = { existsSync
   const insightId = revision?.insightId ?? subjectRef;
   const parentRel = `docs/insights/${insightId}`;
   const parent = io.existsSync(join(repoRoot, parentRel)) ? parentRel : null;
-  return { parent, derivatives: [] };
+  return { parent, derivatives: [], homeId: insightId };
 }
 
 /** Прочитать базовый контекст цикла (для разрешения мандат → инсайт). */
@@ -144,13 +151,14 @@ export function runGc(repoRoot, opts = {}) {
       held.push({ id: sentence.subjectRef, gaps });
       continue;
     }
-    const plan = planVoidMove(sentence, locateTrace(repoRoot, sentence.subjectRef, baseContext), VOID_DIR);
+    const where = locateTrace(repoRoot, sentence.subjectRef, baseContext);
+    const plan = planVoidMove(sentence, where, VOID_DIR);
     if (!plan.ok) {
       held.push({ id: sentence.subjectRef, gaps: [plan.reason] });
       continue;
     }
     const files = dry ? [] : applyMove(repoRoot, plan, sentence);
-    moved.push({ id: sentence.subjectRef, rejectedAt: sentence.rejectedAt, moves: plan.moves, files });
+    moved.push({ id: where.homeId ?? sentence.subjectRef, subjectRef: sentence.subjectRef, rejectedAt: sentence.rejectedAt, moves: plan.moves, files });
   }
 
   return { today, dry, moved, held, reason, unreadable: projection === null && reason !== null && !reason.includes('не заведён') };

@@ -144,3 +144,51 @@ describe('измерение набора', () => {
     expect(typeof c.flatness).toBe('number');
   });
 });
+
+describe('пик и превышение — РАЗНЫЕ величины (находка приёмки 22.08)', () => {
+  it('на реальном фоне два числа расходятся — иначе строка врёт о трёх измерениях', async () => {
+    const tracks = [...quiet(30), { id: 'loud', bytes: wav(1, 0.6, 440) }];
+    const r = await measureSampleSet(deps(tracks), 'c1', tracks.map((t) => t.id));
+    const c = r.candidates.find((x) => x.sampleId === 'loud')!;
+    // До починки оба несли dbOverFloor(peak, floor) и совпадали до десятой доли.
+    expect(c.deltaDb).not.toBeCloseTo(c.peakDb, 1);
+  });
+
+  it('пик АБСОЛЮТНЫЙ: у сигнала тише полной шкалы он отрицательный', async () => {
+    const tracks = [...quiet(30), { id: 'loud', bytes: wav(1, 0.6, 440) }];
+    const r = await measureSampleSet(deps(tracks), 'c1', tracks.map((t) => t.id));
+    const c = r.candidates.find((x) => x.sampleId === 'loud')!;
+    expect(c.peakDb).toBeLessThan(0);
+    // 0.6 полной шкалы ≈ −4.4 dBFS: величина материала, а не выборки.
+    expect(c.peakDb).toBeCloseTo(20 * Math.log10(0.6), 0);
+  });
+
+  it('превышение ЗАВИСИТ от набора, абсолютный пик — НЕТ', async () => {
+    const loud = { id: 'loud', bytes: wav(1, 0.6, 440) };
+    const inQuiet = await measureSampleSet(deps([...quiet(30), loud]), 'c1', [...quiet(30).map((t) => t.id), 'loud']);
+    const noisy = Array.from({ length: 30 }, (_, i) => ({ id: `n${i}`, bytes: wav(1, 0.2, 300) }));
+    const inNoisy = await measureSampleSet(deps([...noisy, loud]), 'c1', [...noisy.map((t) => t.id), 'loud']);
+
+    const a = inQuiet.candidates.find((c) => c.sampleId === 'loud')!;
+    const b = inNoisy.candidates.find((c) => c.sampleId === 'loud');
+    if (b) {
+      // Один трек, два набора: превышение поехало, пик остался — в этом и весь смысл разделения.
+      expect(a.deltaDb).not.toBeCloseTo(b.deltaDb, 1);
+      expect(a.peakDb).toBeCloseTo(b.peakDb, 1);
+    }
+  });
+
+  it('клиппованный сигнал виден: пик прижат к нулю dBFS', async () => {
+    // Амплитуда 1.0 — упор в потолок. Именно это подозревалось у четырёх треков с +39.1.
+    const tracks = [...quiet(30), { id: 'clipped', bytes: wav(1, 1.0, 440) }];
+    const r = await measureSampleSet(deps(tracks), 'c1', tracks.map((t) => t.id));
+    const c = r.candidates.find((x) => x.sampleId === 'clipped')!;
+    expect(c.peakDb).toBeGreaterThan(-0.5);
+  });
+
+  it('тишина не даёт ложного нуля: пика нет — не кандидат', async () => {
+    const { peakDbFs } = await import('./executor.js');
+    expect(peakDbFs(0)).toBe(Number.NEGATIVE_INFINITY);
+    expect(peakDbFs(-1)).toBe(Number.NEGATIVE_INFINITY);
+  });
+});

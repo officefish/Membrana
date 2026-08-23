@@ -179,9 +179,18 @@ export interface ChartListSelectionDto {
   readonly picks: readonly ChartListPickDto[];
 }
 
+export interface ChartListBreakdownDto {
+  readonly tracks: number;
+  readonly reports: number;
+  readonly measured: number;
+  readonly unmeasuredTracks: number;
+}
+
 export interface ChartListGenerateResponse {
   readonly selection: ChartListSelectionDto | null;
   readonly refusal: { readonly reason: string; readonly detail: string } | null;
+  /** Разбор состава прогона; приходит только со свежей сборкой, в базе не хранится. */
+  readonly breakdown: ChartListBreakdownDto | null;
 }
 
 export async function generateChartList(input: {
