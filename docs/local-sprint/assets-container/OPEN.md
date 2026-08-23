@@ -10,7 +10,7 @@
 | Cutter context | Vesnin, [`cut-assets-container-2026-08-23-vesnin.md`](../../discussions/cut-assets-container-2026-08-23-vesnin.md) |
 | Lead | vesnin |
 | Support | ozhegov |
-| Status | recut ratified · no code yet |
+| Status | recut ratified · blocked by originals R7 · no code yet |
 
 ## Why
 
@@ -28,9 +28,17 @@ domain semantics: receipt, asset set, holder, today photo confirmation, RT-9
 freshness and Scarlett Solo field acceptance. It reuses the originals contract
 for immutable records, storage, lifecycle and Panel authority.
 
+Owner follow-up decision on 2026-08-23: the epic waits for originals container
+readiness. It does not start as a storage-less domain layer and does not use
+temporary storage. The named external blocker is R7: `static.mmbrn.tech`
+cutover remains NO-GO until readiness gates pass.
+
 ## Code Gate
 
 No implementation starts from the old three-tier framing. The next code sprint
 must begin from [`assets-container.json`](../../sprint/cut/assets-container.json)
 and must not add a second authorizer or a second storage truth for sensitive
 asset material.
+
+No implementation block starts while the R7 originals-readiness blocker is
+active, because the "photo captured today" tooth requires real storage.
