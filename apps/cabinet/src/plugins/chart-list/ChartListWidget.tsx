@@ -24,6 +24,7 @@ import { LiveJournalPager } from '@/components/journal/LiveJournalPager';
 
 import {
   CHART_LIST_PAGE_SIZE,
+  compositionLine,
   formatDeltaDb,
   joinWithItems,
   pageCount,
@@ -90,11 +91,7 @@ export function ChartListWidget({
           {/* Смена выборки объявляется вслух: список меняется целиком, и молчаливая подмена
               содержимого — то же, что подменить ответ на другой вопрос. */}
           <p className="text-xs text-base-content/60" role="status" aria-live="polite">
-            Отобрано {state.selection.picks.length} из {state.selection.measured} измеренных
-            {state.selection.asked > state.selection.measured
-              ? ` (запрошено ${state.selection.asked}, у остальных звука нет)`
-              : ''}
-            {state.selection.shortfall > 0 ? `; не хватило ${state.selection.shortfall} до заказанного объёма` : ''}
+            {compositionLine(state.selection, state.breakdown)}
           </p>
 
           <ul className="space-y-3">
@@ -106,7 +103,7 @@ export function ChartListWidget({
                   <span>
                     {structureLabel(pick.structure)} ({pick.flatness.toFixed(3)})
                   </span>
-                  <span>пик {pick.peakDb.toFixed(1)} дБ</span>
+                  <span>пик {pick.peakDb.toFixed(1)} dBFS</span>
                   {pick.displaced > 0 ? <span>вытеснил похожих: {pick.displaced}</span> : null}
                 </div>
                 {item ? (
@@ -127,7 +124,9 @@ export function ChartListWidget({
 
           {total > 1 ? (
             <LiveJournalPager
-              page={state.page}
+              // Счётчик страниц внутри нулевой, человеку показывается с единицы: у журнала
+              // рядом «Стр. 1 из 27», и «Стр. 0 из 10» читалось как сбой.
+              page={state.page + 1}
               totalPages={total}
               pageSize={CHART_LIST_PAGE_SIZE}
               shownCount={rows.length}

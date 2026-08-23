@@ -89,7 +89,7 @@ export function useChartList(deviceId: string | null): UseChartList {
           });
           setState((s) =>
             out.selection
-              ? receiveSelection(s, out.selection)
+              ? receiveSelection(s, out.selection, out.breakdown ?? null)
               : receiveRefusal(s, out.refusal?.reason ?? 'no-result'),
           );
         } catch (e) {
