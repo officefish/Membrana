@@ -31,12 +31,40 @@ import { ChartListSelectionService, type StoredSelection } from './selection.ser
  * различить их здесь нечем: порт измерения отдаёт кандидатов, а не отчёт о выбывших. Сказать
  * «либо то, либо это» честно; назвать одно из двух наугад — нет.
  */
+/**
+ * Вытесненный как похожий — адресом. Форма повторена ЗДЕСЬ, а не импортирована из `plugin-handlers`:
+ * граница с плагином и так разбирается приведением, и тянуть ESM-тип в CommonJS-дом ради одного
+ * поля значило бы завести транзитивную зависимость там, где её нет.
+ */
+export interface DisplacedEntry {
+  readonly entryId: string;
+  readonly sampleId: string;
+  readonly at: number;
+  readonly deltaDb: number;
+  readonly peakDb: number;
+  readonly structure: string;
+  readonly flatness: number;
+}
+
+export interface Displacement {
+  readonly keeperRank: number;
+  readonly keeperEntryId: string;
+  readonly displaced: readonly DisplacedEntry[];
+}
+
 export interface GenerateBreakdown {
   readonly tracks: number;
   readonly reports: number;
   readonly measured: number;
   /** Треки, до кандидатов не дошедшие: без пробы либо тише порога. */
   readonly unmeasuredTracks: number;
+  /**
+   * Кто кого вытеснил как похожего. Пусто, когда отсев не работал (все критерии, кроме
+   * «разнообразия звука») либо никого не вытеснил — это отсутствие события, а не пропажа данных.
+   *
+   * Едет ТОЛЬКО в разборе состава и не сохраняется: проверять порог слухом нужно на свежем прогоне.
+   */
+  readonly displacements: readonly Displacement[];
 }
 
 /** Что вернулось человеку: выборка либо названная причина отказа. */
@@ -102,7 +130,7 @@ export class ChartListOrchestrator {
     }
 
     const result = outcome.result as
-      | { selection?: { criterion: string; volume: number; picks: unknown[]; shortfall: number; refusal: { reason: string; detail: string } | null }; asked?: number; measured?: number }
+      | { selection?: { criterion: string; volume: number; picks: unknown[]; shortfall: number; refusal: { reason: string; detail: string } | null; displacements?: unknown }; asked?: number; measured?: number }
       | null;
 
     if (!result?.selection) {
@@ -138,6 +166,10 @@ export class ChartListOrchestrator {
       })),
     });
 
+    const displacements = (Array.isArray(result.selection.displacements)
+      ? result.selection.displacements
+      : []) as readonly Displacement[];
+
     const tracks = outcome.kinds?.tracks ?? 0;
     const measured = result.measured ?? picks.length;
     return {
@@ -148,6 +180,7 @@ export class ChartListOrchestrator {
         reports: outcome.kinds?.reports ?? 0,
         measured,
         unmeasuredTracks: Math.max(0, tracks - measured),
+        displacements,
       },
     };
   }

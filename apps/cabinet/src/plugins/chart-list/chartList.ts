@@ -57,11 +57,49 @@ export interface ChartListSelectionView {
  * оно не хранится. Поэтому подпись обязана работать в обоих случаях — с разбором и без, — и без
  * него НЕ ДОДУМЫВАТЬ причин.
  */
+export interface ChartListDisplacedView {
+  readonly entryId: string;
+  readonly sampleId: string;
+  readonly at: number;
+  readonly deltaDb: number;
+  readonly peakDb: number;
+  readonly structure: string;
+  readonly flatness: number;
+}
+
+export interface ChartListDisplacementView {
+  readonly keeperRank: number;
+  readonly keeperEntryId: string;
+  readonly displaced: readonly ChartListDisplacedView[];
+}
+
 export interface ChartListBreakdown {
   readonly tracks: number;
   readonly reports: number;
   readonly measured: number;
   readonly unmeasuredTracks: number;
+  /**
+   * Кто кого вытеснил как похожего — чтобы порог отсева можно было проверить СЛУХОМ, а не доводом.
+   *
+   * Владелец 23.08 оставил `minDistanceRatio` как есть и назвал условие, при котором его будет на
+   * чём двигать: послушать оставленного и вытесненного подряд. Близнецы — порог хорош; разные
+   * звуки — порог жаден. Счётчик «вытеснил N» на этот вопрос не отвечает.
+   *
+   * Пусто у критериев без отсева («громче фона», «похожесть на дрон») — там вытеснять некому.
+   */
+  readonly displacements: readonly ChartListDisplacementView[];
+}
+
+/**
+ * Кого вытеснила строка с этим местом. Поиск по МЕСТУ, а не по индексу страницы: места сквозные,
+ * страницы — нет, и на второй странице индекс уехал бы.
+ */
+export function displacedOfRank(
+  breakdown: ChartListBreakdown | null,
+  rank: number,
+): readonly ChartListDisplacedView[] {
+  if (!breakdown) return [];
+  return breakdown.displacements.find((d) => d.keeperRank === rank)?.displaced ?? [];
 }
 
 export interface ChartListState {
@@ -191,6 +229,15 @@ export function joinWithItems<T extends JoinableItem>(
  * Без разбора причина НЕ НАЗЫВАЕТСЯ вовсе: у восстановленной выборки разбора нет, и додумывать
  * «наверное, звука не было» значило бы вернуть ту же ложь другим путём.
  */
+/** Сшить вытесненных с записями ленты — тем же способом, что и строки выборки. */
+export function joinDisplaced<T extends JoinableItem>(
+  displaced: readonly ChartListDisplacedView[],
+  items: readonly T[],
+): readonly { readonly row: ChartListDisplacedView; readonly item: T | null }[] {
+  const byId = new Map(items.map((i) => [i.id, i]));
+  return displaced.map((row) => ({ row, item: byId.get(row.entryId) ?? null }));
+}
+
 export function compositionLine(
   selection: ChartListSelectionView,
   breakdown: ChartListBreakdown | null,
