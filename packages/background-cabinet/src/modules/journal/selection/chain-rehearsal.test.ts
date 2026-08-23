@@ -191,3 +191,53 @@ describe('цепочка проходит целиком (репетиция, н
     expect(one.store.saved[0]!.inputHash).toBe(again.store.saved[0]!.inputHash);
   });
 });
+
+describe('задание ДЛИННЕЕ страницы ленты проходит (вещдок 22.08)', () => {
+  /**
+   * Здесь стоит НАСТОЯЩИЙ читатель ленты, а не стаб.
+   *
+   * Прочие зубы этого файла подают ленту стабом — и потому 22.08 были зелёными, пока прод отказывал.
+   * Дефект жил ровно между домом и службой: читатель просил страницу, служба молча резала до 50.
+   * Стаб этот участок закрывал собой, и цепочка «проходила» на трёх записях.
+   */
+  it('300 записей не отвергаются entry-not-found — читатель видит ленту целиком', async () => {
+    const { JournalServiceEntriesReader } = await import('../plugin-host/journal-entries.reader');
+    const ids = Array.from({ length: 300 }, (_, i) => `e${i}`);
+    const rows = ids.map(entry);
+
+    const fakeService = {
+      async listJournalItems(_u: string, limitRaw?: string) {
+        const asked = limitRaw ? Number.parseInt(limitRaw, 10) : 50;
+        return { items: rows.slice(0, Math.min(asked, 50)), nextCursor: null, counts: {} };
+      },
+      async listAllJournalItems() {
+        return { items: rows, counts: {} };
+      },
+    };
+
+    const host = new JournalPluginHostService(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      new JournalServiceEntriesReader(fakeService as any),
+    );
+    await host.onModuleInit();
+
+    const handlers = await import('@membrana/plugin-handlers');
+    host.registerPlugin(
+      handlers.CHART_LIST_MANIFEST as never,
+      handlers.createChartListExecutor({ port: { measure: async (t) => measured(t.entryIds) as never } }),
+    );
+
+    const store = fakeStore();
+    const outcome = await new ChartListOrchestrator(host, store.svc, () => 'run-300').generate({
+      userId: 'u1',
+      membraneId: 'm1',
+      entryIds: ids,
+      volume: 200,
+      criterion: 'loudness-over-floor',
+    });
+
+    expect(outcome.refusal).toBeNull();
+    expect(outcome.selection).not.toBeNull();
+    expect(outcome.selection!.asked).toBe(300);
+  });
+});
