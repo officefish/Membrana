@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14394/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 313 (причины в op-log) -->
+Записей: 50 · бюджет 14365/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 314 (причины в op-log) -->
+
+### 2026-08-23 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** Артефакты дня согласованы с моей зоной: C2/Web Audio/audio-engine в диффе дня не тронуты, и это правильно — L-ось устройства не про тракт захвата. CODE_REVIEW верно отметил, что журнальный фикс — дом записей и sampleId, а не захват. MAIN_DAY_ISSUE […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-23.md#reply-1`
 
 ### 2026-08-22 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
 
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
+### 2026-07-23 · позиция · llm-procedure-channels-m4a-agent-usage
 
-> Affine остаётся сменным человеческим движком под контейнером. Его нативные роли не определяют, что пользователь Membrana вправе сделать с материалом. _(реплик в сеансе: 6)_
+> Флаг worktree без OFFICE URL: emit no-op warn once — не спамить. Не писать события в git. _(реплик в сеансе: 4)_
 
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
-
-> Storage-policy classes две: `standard` и `sensitive`. Sensitive bytes шифруются at rest отдельным key namespace; standard также шифруется at rest, но другим namespace. Между классами нет общего ciphertext или credential. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
+— источник: `docs/seanses/llm-procedure-channels-m4a-agent-usage-2026-07-23-2026-07-23.md#reply-1`

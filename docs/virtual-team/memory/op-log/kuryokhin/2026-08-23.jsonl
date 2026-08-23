@@ -1,3 +1,7 @@
 {"ts":"2026-08-23T07:18:14.488Z","persona":"kuryokhin","verb":"cloud_query","ref":"kuryokhin-2026-08-23T07:18:08.633Z","origin":"ask-persona"}
 {"ts":"2026-08-23T07:18:14.491Z","persona":"kuryokhin","verb":"surface_invoke","ref":"kuryokhin-2026-08-23T07:18:08.633Z","origin":"ask-persona"}
 {"ts":"2026-08-23T06:37:29.230Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-08-23T14:16:08.557Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-08-23-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-23T14:16:08.557Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-08-04-static-mmbrn-container-m3-access","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-23T14:16:08.557Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-08-04-static-mmbrn-container-m4-storage","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-23T14:16:08.557Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

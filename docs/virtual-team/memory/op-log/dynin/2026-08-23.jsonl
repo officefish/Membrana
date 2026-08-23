@@ -3,3 +3,6 @@
 {"ts":"2026-08-23T06:37:28.991Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
 {"ts":"2026-08-23T06:24:27.826Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-08-23T06:24:20.264Z","origin":"ask-persona"}
 {"ts":"2026-08-23T06:24:27.829Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-08-23T06:24:20.264Z","origin":"ask-persona"}
+{"ts":"2026-08-23T14:16:08.339Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-23-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-23T14:16:08.339Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-04-static-mmbrn-container-m3-access","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-23T14:16:08.339Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

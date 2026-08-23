@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14205/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 318 (причины в op-log) -->
+Записей: 49 · бюджет 14271/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 319 (причины в op-log) -->
+
+### 2026-08-23 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** Структура документов дня чистая: у каждой задачи — явный статус (магистраль/подкрепление/перспективные/санитарные). Слабое место — `firebat-node-device` не имеет ни одного структурного артефакта в логе дня: ни контракта канала, ни записи о границе […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-23.md#reply-1`
 
 ### 2026-08-22 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Три точки хранения факта архивации (registry.json → README → archive/*.md) обновлены атомарно одним коммитом #1732 — слабая связанность соблюдена, B2-риск файла-перекрёстка не сработал. Скрипты `execution-gate`, `llm-procedure-transport`, `llm-probe`, `prepush-typecheck-scope` […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
-
-> Stable principal — `userId` канонической записи пользователя Panel; credential только отображается в него. Для анонимного запроса используется sentinel `anon` с baseline ролью `public`. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`

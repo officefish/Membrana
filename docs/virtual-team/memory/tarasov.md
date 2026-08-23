@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 51 · бюджет 14397/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 323 (причины в op-log) -->
+Записей: 50 · бюджет 14274/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 325 (причины в op-log) -->
+
+### 2026-08-23 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** MAIND_DAY_ISSUE зафиксировал верную L-ось (firebat-node-device) и чётко отделил её от контекстных задач (форма журнала, hostess/assets). STRATEGY_DAY и DAY_PLAN согласованы с каноном дня, но главная находка — сорванная свежесть `main-day-assertions.json` […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-23.md#reply-1`
 
 ### 2026-08-22 · позиция · team-evening-feedback
 
@@ -301,15 +307,3 @@
 > Объекты политики образуют цепочку container → collection → lineage. Lineage определяется `canonicalRef`, а не URL Affine и не адресом байтов. _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
-
-> FD-1, FD-2 и FD-3 не делят машину, volume, учётную запись или credential. Потеря одного домена не должна лишать одновременно primary bytes, backup bundle и metadata, нужных для restore. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
-
-### 2026-08-03 · позиция · one-shot-manifest-m4-homogeneity
-
-> Стоп. Комната не проектирует витрину — это не её матч. Вопрос узкий: какой предикат, когда бежит, что возвращает, путь замены. Всё остальное — чужие комнаты. Держите планку. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/one-shot-manifest-m4-homogeneity-2026-08-03.md#reply-1`

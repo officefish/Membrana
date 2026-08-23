@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14345/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 325 (причины в op-log) -->
+Записей: 49 · бюджет 14258/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 327 (причины в op-log) -->
+
+### 2026-08-23 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** DAY_PLAN и MAIN_DAY_ISSUE структурно согласованы: ограничители (hostess/assets/batch) не пересекаются с L-осью. Свежесть assertions — архитектурный дефект контура: если источник мандата протух, вся конструкция дня держится на устаревшем решении. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-23.md#reply-1`
 
 ### 2026-08-22 · позиция · team-evening-feedback
 
@@ -295,15 +301,3 @@
 > Спринт `instruments-honest-verdict` пришёл с четырьмя ревью-контекстами (Dynin b2/b4, Ozhegov recut, Vesnin) — норма нарезки по ролям соблюдена, `revisionAt` виден в trail. ADR-контракта ночного билда сегодня не заведено, что для L-задачи риск: без ADR легко расщепить работу по […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
-
-> Единственный источник решений доступа — Panel. `registry.jsonl` остаётся источником тождества и истории материала по M2, но не становится авторизатором. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
-
-> Беру поля кандидата 1 + `promptHash` опционально из 2 без хранения тела. Retention: 30 дней для v1 (кандидат 1); 90 — later. Сырой промпт/ключ — никогда в store. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m3b-telemetry-2026-07-23-2026-07-23.md#reply-1`
