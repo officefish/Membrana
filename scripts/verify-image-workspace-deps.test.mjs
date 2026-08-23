@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { copiedPackageDirs, serviceFindings, transitiveWorkspaceDeps } from './verify-image-workspace-deps.mjs';
+import { copiedLocalBuildSources, copiedPackageDirs, serviceFindings, transitiveWorkspaceDeps } from './verify-image-workspace-deps.mjs';
 
 const MAP = {
   '@membrana/svc': { dir: 'packages/background-svc', deps: ['@membrana/handlers'] },
@@ -52,4 +52,52 @@ test('живой Dockerfile media покрывает свой граф (регр
     const text = readFileSync(new URL(`../${service.dockerfile}`, import.meta.url), 'utf8');
     assert.deepEqual(serviceFindings(service, map, text), [], `${service.id}: образ обязан нести весь граф`);
   }
+});
+
+test('ОДИН package.json покрытием НЕ является — это и есть висячий симлинк', () => {
+  // Прежний предикат засчитывал любой путь внутри пакета и пропускал ровно тот дефект, ради
+  // которого зуб заведён: символьная ссылка ведёт в каталог, где манифест указывает на dist,
+  // которого нет. Сборка зелёная, старт зелёный, ERR_MODULE_NOT_FOUND — на первом импорте в проде.
+  const df = [
+    'FROM node:20-alpine AS runtime',
+    'COPY --from=build /app/packages/handlers/package.json /app/packages/handlers/package.json',
+  ].join('\n');
+  assert.deepEqual([...copiedPackageDirs(df)], []);
+});
+
+test('сборка пакета покрытием является — и каталог целиком тоже', () => {
+  const df = [
+    'FROM node:20-alpine AS runtime',
+    'COPY --from=build /app/packages/handlers/dist /app/packages/handlers/dist',
+    'COPY --from=build /app/packages/services/fft /app/packages/services/fft',
+  ].join('\n');
+  const dirs = copiedPackageDirs(df);
+  assert.ok(dirs.has('packages/handlers'));
+  assert.ok(dirs.has('packages/services/fft'));
+});
+
+test('манифест рядом со сборкой покрытия не отменяет', () => {
+  const df = [
+    'FROM node:20-alpine AS runtime',
+    'COPY --from=build /app/packages/handlers/dist /app/packages/handlers/dist',
+    'COPY --from=build /app/packages/handlers/package.json /app/packages/handlers/package.json',
+  ].join('\n');
+  assert.deepEqual([...copiedPackageDirs(df)], ['packages/handlers']);
+});
+test('copiedLocalBuildSources берёт только COPY из build context и игнорирует --from', () => {
+  const df = [
+    'FROM node:20-alpine AS build',
+    'COPY package.json yarn.lock .yarnrc.yml ./',
+    'COPY packages/background-cabinet packages/background-cabinet',
+    'FROM node:20-alpine AS runtime',
+    'COPY --from=build /app/packages/background-cabinet/dist ./dist',
+    'COPY packages/background-cabinet/docker/entrypoint.sh /entrypoint.sh',
+  ].join('\n');
+  assert.deepEqual(copiedLocalBuildSources(df), [
+    'package.json',
+    'yarn.lock',
+    '.yarnrc.yml',
+    'packages/background-cabinet',
+    'packages/background-cabinet/docker/entrypoint.sh',
+  ]);
 });

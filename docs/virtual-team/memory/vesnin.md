@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14366/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 324 (причины в op-log) -->
+Записей: 50 · бюджет 14345/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 325 (причины в op-log) -->
+
+### 2026-08-22 · позиция · team-evening-feedback
+
+> Оценка артефактов: MAIN_DAY_ISSUE — опорный документ дня: явно разведены магистраль (journal-home-real) и операционный затвор (#2046), что предотвратило подмену L генераторными созвучиями. STRATEGY_DAY и assertions от 19.08 — источник риска, отмечен в «Посылках». Итоги дня: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-22.md#reply-1`
 
 ### 2026-08-21 · позиция · duty-node-detection-m1-slovar
 
@@ -295,12 +301,6 @@
 > Единственный источник решений доступа — Panel. `registry.jsonl` остаётся источником тождества и истории материала по M2, но не становится авторизатором. _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
-
-> Выбираю одну topology: FD-1 — выделенный primary storage host/volume для bytes; FD-2 — независимый backup host/volume; FD-3 — отдельный management host/volume для immutable `registry.jsonl` и append-only lifecycle ledger. Office VDS не входит ни в один storage failure domain. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m3b-telemetry
 

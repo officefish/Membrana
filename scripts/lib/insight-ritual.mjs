@@ -388,19 +388,42 @@ export function formatInsightList(repoRoot, statusFilter) {
   ].join('\n');
 }
 
-/** @param {string} repoRoot @param {number} minWeight */
-export function collectInsightsForWeeklyPlan(repoRoot, minWeight = 6) {
+/**
+ * Кандидаты недельного плана по весу — со штрафом свежести кладбища (recent_void_penalty,
+ * вердикт M5-GC заседания `angelina-hostess`).
+ *
+ * ЗАЧЕМ ШТРАФ. Приговорённая идея возвращается не тем же именем, а новым: старую отвергли,
+ * похожую завели заново, и генератор поднимает её в план как свежую. Три барьера стерегут
+ * ССЫЛКИ на мёртвый путь, а этот штраф — саму идею: пока приговор не истёк (90 дней),
+ * генератор её не предлагает.
+ *
+ * Штраф — КОНТРАКТ ВЫЗОВА, а не логика ядра: список свежеотвергнутых приходит значением,
+ * и генератор не знает ни про кладбище, ни про ФС. Иначе завёлся бы цикл план → void → план.
+ *
+ * @param {string} repoRoot
+ * @param {number} minWeight
+ * @param {Set<string>|Iterable<string>} [recentlyVoided] свежеотвергнутые id (recentVoidIds)
+ */
+export function collectInsightsForWeeklyPlan(repoRoot, minWeight = 6, recentlyVoided = null) {
+  const penalised = recentlyVoided instanceof Set ? recentlyVoided : new Set(recentlyVoided ?? []);
   return (readRegistry(repoRoot).insights ?? []).filter(
     (item) =>
       item.weight !== null &&
       item.weight >= minWeight &&
-      (item.status === 'adopted' || item.status === 'reviewed'),
+      (item.status === 'adopted' || item.status === 'reviewed') &&
+      !penalised.has(item.id),
   );
 }
 
-/** @param {string} repoRoot @param {number} minWeight */
-export function formatInsightsWeeklyBlock(repoRoot, minWeight = 6) {
-  const items = collectInsightsForWeeklyPlan(repoRoot, minWeight);
+/**
+ * @param {string} repoRoot
+ * @param {number} minWeight
+ * @param {Set<string>|Iterable<string>} [recentlyVoided] свежеотвергнутые id — ПРОБРАСЫВАЮТСЯ
+ *   в отбор. Без проброса штраф оставался бы украшением: параметр у отбора есть, а живой
+ *   вызов идёт через эту обёртку (P1 ревью #2091).
+ */
+export function formatInsightsWeeklyBlock(repoRoot, minWeight = 6, recentlyVoided = null) {
+  const items = collectInsightsForWeeklyPlan(repoRoot, minWeight, recentlyVoided);
   if (items.length === 0) {
     return '';
   }

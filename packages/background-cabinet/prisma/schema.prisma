@@ -76,6 +76,7 @@ model Membrane {
   liveRecords TelemetryLiveRecord[]
   scenarioEditLeases NodeScenarioEditLease[]
   deviceCaptures     NodeDeviceCapture[]
+  chartListSelections ChartListSelection[]
   createdAt DateTime @default(now())
 
   @@index([tariffId])
@@ -290,4 +291,60 @@ enum PromoCodeStatus {
   active
   spent
   revoked
+}
+
+/**
+ * Выборка чарт-листа — ПОЛЬЗОВАТЕЛЬСКИЙ артефакт (Т3/Т4/Т5 шторма 22.08).
+ *
+ * Живёт в кабинетной базе рядом с аккаунтом, а не в доме результатов: офис по Т4 —
+ * административный сервер команды, и пользовательскому артефакту там не место. В доме
+ * результатов остаётся ПАСПОРТ ПРОГОНА; здесь — то, что человек открывает завтра.
+ * Два носителя — не обход вердикта M3, а граница, которую вводит Т5.
+ *
+ * Схема telemetry-journal НЕ тронута: журнал остаётся хроникой факта, отбор — отдельная
+ * сущность со ссылкой на запись. Гибрид отвергнут командой 3/3, включая его автора.
+ *
+ * Ключ — membraneId, тот же, которым скреплены записи журнала: чужая выборка обязана быть
+ * неотличима от несуществующей ровно тем же предикатом, что и чужая запись.
+ */
+model ChartListSelection {
+  id         String   @id @default(uuid()) @db.Uuid
+  membraneId String   @db.Uuid
+  membrane   Membrane @relation(fields: [membraneId], references: [id], onDelete: Cascade)
+  /** Критерий и объём — настройки прогона. Хранятся, потому что человек вправе увидеть, ЧТО заказывал. */
+  criterion  String
+  volume     Int
+  /** Ссылка на паспорт прогона в доме результатов. Сам паспорт здесь НЕ дублируется. */
+  runId      String
+  /** Отпечаток состава задания — по нему видно, что два прогона шли по разным записям. */
+  inputHash  String
+  asked      Int
+  measured   Int
+  shortfall  Int
+  createdAt  DateTime @default(now())
+  picks      ChartListPick[]
+
+  @@index([membraneId, createdAt(sort: Desc)])
+}
+
+/**
+ * Строка выборки. Несёт ровно названное владельцем: превышение над фоном, структура, пик.
+ *
+ * Узла, длительности, частоты и режима захвата здесь НЕТ — они уже в карточке журнала, и вторая
+ * копия разъехалась бы с первой. `entryId` ведёт в ленту, `sampleId` — к блобу в media.
+ */
+model ChartListPick {
+  id          String             @id @default(uuid()) @db.Uuid
+  selectionId String             @db.Uuid
+  selection   ChartListSelection @relation(fields: [selectionId], references: [id], onDelete: Cascade)
+  rank        Int
+  entryId     String             @db.Uuid
+  sampleId    String
+  deltaDb     Float
+  peakDb      Float
+  structure   String
+  flatness    Float
+  displaced   Int                @default(0)
+
+  @@unique([selectionId, rank])
 }

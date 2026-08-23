@@ -10,7 +10,7 @@ import type {
   CreateTelemetryReportDto,
   UpdateTelemetryLiveRecordDto,
 } from './journal.dto';
-import { cabinetRowsToLiveJournalItems } from './live-journal-items.mapper';
+import { cabinetRowsToLiveJournalItems, type LiveJournalItemRow } from './live-journal-items.mapper';
 import {
   LIVE_JOURNAL_PAGE_SIZE,
   countLiveJournalItemRowFilters,
@@ -276,6 +276,35 @@ export class JournalService {
       filter,
     });
     return { items: page.items, nextCursor: page.nextCursor, counts };
+  }
+
+  /**
+   * Лента пользователя ЦЕЛИКОМ, без пагинации.
+   *
+   * ЗАЧЕМ ОТДЕЛЬНЫЙ ВХОД. `listJournalItems` — вход ПОКАЗА: он режет ленту страницей, потому что
+   * человек смотрит по одной. Проверке задания плагина нужна обратная вещь — вся лента разом,
+   * чтобы сказать, существует ли присланный адрес. Через страничный вход это выражается только
+   * обходом курсором, а обход перечитывал бы ленту заново на каждой странице: склейка происходит
+   * ЗДЕСЬ, в памяти, и пагинация применяется к уже готовому списку.
+   *
+   * Вещдок 22.08: читатель проверки просил страницу на `'500'`, `parseLimit` молча срезал до 50
+   * (`MAX_LIST_LIMIT = LIVE_JOURNAL_PAGE_SIZE`), дом видел 50 записей из 1301 и трижды отказал
+   * боевому прогону причиной `entry-not-found`. Отказ был ПРАВИЛЬНЫМ — врал вызывающий.
+   *
+   * ПОТОЛОК ОСТАЁТСЯ И НАЗВАН: `JOURNAL_INTERNAL_FETCH_CAP` строк на таблицу. Он честный —
+   * объявлен константой и не подменяется на лету, — но однажды упрётся, и тогда проверка снова
+   * начнёт врать. Поэтому он объявлен и в `plugin-host/MODULE_INTERFACE.md`, а не только тут.
+   */
+  async listAllJournalItems(
+    userId: string,
+    mediaDeviceId?: string,
+  ): Promise<{ items: LiveJournalItemRow[]; counts: LiveJournalFilterCounts }> {
+    const [reportsResult, liveResult] = await Promise.all([
+      this.fetchReportsForMerge(userId, mediaDeviceId),
+      this.fetchLiveRecordsForMerge(userId, mediaDeviceId),
+    ]);
+    const merged = cabinetRowsToLiveJournalItems(reportsResult.reports, liveResult.liveRecords);
+    return { items: merged, counts: countLiveJournalItemRowFilters(merged) };
   }
 
   private async fetchReportsForMerge(userId: string, mediaDeviceId?: string) {

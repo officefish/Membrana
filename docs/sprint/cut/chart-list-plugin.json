@@ -1,0 +1,183 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "chart-list-plugin",
+  "taskId": "chart-list-plugin",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-08-22T13:48:00+03:00",
+    "to": "2026-08-22T18:30:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "c1-two-gaps-answered",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/background-cabinet/src/modules/journal/plugin-host/MODULE_INTERFACE.md",
+        "packages/background-cabinet/src/modules/journal/plugin-host/journal-run-address.ts",
+        "packages/background-cabinet/src/modules/journal/plugin-host/journal-run-address.test.ts",
+        "docs/local-sprint/chart-list-plugin/OPEN.md"
+      ],
+      "estimate": {
+        "changedLines": 240
+      },
+      "note": "Пробел 1: collectionId='journal' — устойчивое имя набора, без идентификатора пользователя в базе результатов офиса; два прогона по-прежнему расходятся только runId, цена M3′ не тронута. Пробел 2: inputHash от СОСТАВА entryIds (упорядоченного), не от содержимого: журнал — хроника факта, запись после создания не меняется, а хеш содержимого потребовал бы звука, которого у журнала нет (audio-not-here). Различимость двух заданий даёт отпечаток, а не адрес — оба пробела закрывают друг друга. Класс правки объявления — 1 (расширение списка «что даю»)."
+    },
+    {
+      "blockId": "c2a-selection-core",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "packages/plugin-handlers/src/chart-list/selection.ts"
+      ],
+      "estimate": {
+        "changedLines": 230
+      },
+      "note": "Ядро отбора поверх session-metrics — меры НЕ переписываются: deltaDb, structureOf, peakDb, dedupeGreedy, indicesByStructure уже есть. Здесь объём выборки (200/100/60/20) и три критерия как настройки ОДНОГО плагина (Т2). Четвёртого критерия нет. Бочка пакета (index.ts) при перерезке передана блоку c5b — она пишется последним, и один путь обязан иметь одного владельца."
+    },
+    {
+      "blockId": "c2b-selection-teeth",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "packages/plugin-handlers/src/chart-list/selection.test.ts",
+        "packages/plugin-handlers/src/chart-list/THRESHOLDS.md"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "note": "Зубы отбора на синтетике и ПРОВЕНАНС порогов: чей порог, когда назван, чем обоснован, помечен ли //provisional. Отделён от ядра по памяти о недооценке зубов и провенанса. Пропажу собаки и машин 21.08 НЕ чиним — вопрос к метрике, вне задания."
+    },
+    {
+      "blockId": "c3-chart-list-plugin",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/plugin-handlers/src/chart-list/manifest.ts",
+        "packages/plugin-handlers/src/chart-list/executor.ts",
+        "packages/plugin-handlers/src/chart-list/executor.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 380
+      },
+      "note": "Манифест рода showcase с домом background-cabinet/journal и displayForm из SUPPORTED_FORMS страницы (ссылаться, не копировать). Исполнитель — адаптер к интерфейсу журнала (Т1/Т6): ручки едут в ctx.payload, в configHash НЕ вносятся. Правок plugin-contracts не требуется."
+    },
+    {
+      "blockId": "c4a-selection-schema",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-cabinet/prisma/schema.prisma",
+        "packages/background-cabinet/src/modules/journal/selection/selection.service.ts"
+      ],
+      "estimate": {
+        "changedLines": 250
+      },
+      "note": "Выборка живёт в кабинетной базе рядом с аккаунтом (Т3/Т4/Т5), имеет собственный адрес. Схема telemetry-journal НЕ трогается — новые таблицы отдельно: журнал остаётся хроникой факта. Паспорт прогона сюда НЕ кладём, он в доме результатов."
+    },
+    {
+      "blockId": "c4b-selection-durability",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "packages/background-cabinet/src/modules/journal/selection/selection.service.test.ts",
+        "packages/background-cabinet/src/modules/journal/selection/selection.controller.ts"
+      ],
+      "estimate": {
+        "changedLines": 250
+      },
+      "note": "Транспорт выборки и зубы ЖИВУЧЕСТИ: выборка переживает уход со страницы и открывается по адресу; чужая выборка неотличима от несуществующей."
+    },
+    {
+      "blockId": "c5a-media-run-accepts-sample-set",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/background-media/src/modules/collections/collections.dto.ts",
+        "packages/background-media/src/modules/collections/collections.controller.ts",
+        "packages/background-media/src/modules/collections/first-wave.registrar.ts",
+        "packages/background-media/src/modules/collections/first-wave.registrar.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "note": "Вход прогона media принимает НАБОР проб (sampleIds[]), а не только одну пробу либо окно. Замерено: сегодня RunRequest несёт collectionId + sampleId? + from?/to? — ни одна форма не выражает «измерь вот эти двести». Расширение служит плагинному механизму, а не обходит его: набор едет поводом collections.collection_created как адрес причины. Окна у чарт-листа нет по Т1, поэтому from/to не годятся."
+    },
+    {
+      "blockId": "c5b-media-measure-plugin",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "packages/plugin-handlers/src/chart-list-measure/manifest.ts",
+        "packages/plugin-handlers/src/chart-list-measure/executor.ts",
+        "packages/plugin-handlers/src/chart-list-measure/executor.test.ts",
+        "packages/plugin-handlers/src/index.ts"
+      ],
+      "estimate": {
+        "changedLines": 340
+      },
+      "note": "ВТОРОЙ плагин ОДНОГО функционала — ровно то, что описывает Т6: обособление несёт пакет, множественное внедрение делается несколькими плагинами с общим сервисом. Дом — background-media/collections, там звук лежит локально. Меры не переписываются: session-metrics. Отдаёт измеренных кандидатов, отбора НЕ делает — отбор живёт в доме журнала. Т2 не нарушен: у человека по-прежнему один плагин с двумя настройками, второй ему не виден."
+    },
+    {
+      "blockId": "c5c-cabinet-order-port",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/background-cabinet/src/modules/journal/selection/media-run.port.ts",
+        "packages/background-cabinet/src/modules/journal/selection/media-run.port.test.ts",
+        "packages/background-cabinet/src/modules/journal/selection/entry-samples.ts",
+        "packages/background-cabinet/src/modules/journal/journal.module.ts"
+      ],
+      "estimate": {
+        "changedLines": 320
+      },
+      "note": "Порт заказа кабинет → media внутренним токеном (X-Membrana-Token = API_INTERNAL_TOKEN, вход media его уже принимает). deviceId восстанавливается на сервере из mediaDeviceId записей — замерено, поле есть в TelemetryReport и TelemetryLiveRecord, просто не выведено в LiveJournalItemRow. Измеренное возвращается ОТВЕТОМ прогона: канал request синхронный, и чтение результата из офиса завело бы второе горизонтальное ребро ради того же числа. Паспорт прогона при этом уезжает в дом результатов как обычно."
+    },
+    {
+      "blockId": "c6a-settings-and-order",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/cabinet/src/plugins/chart-list/ChartListSettings.tsx",
+        "apps/cabinet/src/plugins/chart-list/chartList.ts",
+        "apps/cabinet/src/plugins/chart-list/chartList.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "note": "Две настройки ТОЛЬКО в сайдбаре (канон §3) и кнопка «сгенерировать выборку» в виджете. Встаёт в ГОТОВОЕ гнездо: сайдбар, виджет ниже блока и сворачивание сделаны почвой — своего не строить."
+    },
+    {
+      "blockId": "c6b-rows-and-paging",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/cabinet/src/plugins/chart-list/ChartListWidget.tsx",
+        "apps/cabinet/src/pages/JournalPage.tsx"
+      ],
+      "estimate": {
+        "changedLines": 240
+      },
+      "note": "Строка рендерится компонентом CabinetLiveJournalItemRow: то же проигрывание, тот же waveform. В строке — превышение над фоном, структура, пик; узла, длительности, частоты и режима захвата нет. Пагинация через LiveJournalPager."
+    },
+    {
+      "blockId": "c7-acceptance-hour-session",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "docs/field/chart-list-acceptance-2026-08-22.md",
+        "docs/local-sprint/chart-list-plugin/CLOSURE.md"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "note": "Приёмка на часовом сеансе 21.08 (671 трек, устройство 1c04f0bc-29b0-4d3f-a437-d87dc879579d), сверка с разметкой владельца docs/field/session-2026-08-21-listening.md. Прогон БОЕВЫМ входом, не скриптом с туннелем. Деплой в прод — только по слову владельца."
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-22T14:42:00+03:00",
+    "digest": "2fa6d13b781fea64b6345aacbbe5ebf6aa713c1b0e46629376d5c0ee37bd8785"
+  }
+}

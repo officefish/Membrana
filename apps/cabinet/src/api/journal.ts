@@ -150,3 +150,73 @@ export async function setJournalPluginEnabled(pluginId: string, enabled: boolean
   });
   if (!res.ok) throw new Error(await parseError(res));
 }
+
+/**
+ * Выборка чарт-листа. Блоки c6a/c6b спринта `chart-list-plugin`.
+ *
+ * Отказ отбора приходит ПОЛЕМ `refusal`, а не кодом: «фон не измерен» — исход работы, о котором
+ * человек должен прочесть словами. Ошибкой остаётся только негодная форма запроса.
+ */
+export interface ChartListPickDto {
+  readonly rank: number;
+  readonly entryId: string;
+  readonly sampleId: string;
+  readonly deltaDb: number;
+  readonly peakDb: number;
+  readonly structure: string;
+  readonly flatness: number;
+  readonly displaced: number;
+}
+
+export interface ChartListSelectionDto {
+  readonly id: string;
+  readonly criterion: string;
+  readonly volume: number;
+  readonly asked: number;
+  readonly measured: number;
+  readonly shortfall: number;
+  readonly createdAt: string;
+  readonly picks: readonly ChartListPickDto[];
+}
+
+export interface ChartListBreakdownDto {
+  readonly tracks: number;
+  readonly reports: number;
+  readonly measured: number;
+  readonly unmeasuredTracks: number;
+}
+
+export interface ChartListGenerateResponse {
+  readonly selection: ChartListSelectionDto | null;
+  readonly refusal: { readonly reason: string; readonly detail: string } | null;
+  /** Разбор состава прогона; приходит только со свежей сборкой, в базе не хранится. */
+  readonly breakdown: ChartListBreakdownDto | null;
+}
+
+export async function generateChartList(input: {
+  entryIds: readonly string[];
+  volume: number;
+  criterion: string;
+}): Promise<ChartListGenerateResponse> {
+  const res = await authFetch('/v1/telemetry/chart-list', {
+    method: 'POST',
+    body: JSON.stringify({ entryIds: [...input.entryIds], volume: input.volume, criterion: input.criterion }),
+  });
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as ChartListGenerateResponse;
+}
+
+/** Перечень собранного, свежие первыми. Нужен, чтобы страница открылась с последней выборкой. */
+export async function listChartLists(limit = 20): Promise<readonly ChartListSelectionDto[]> {
+  const res = await authFetch(`/v1/telemetry/chart-list?limit=${limit}`);
+  if (!res.ok) throw new Error(await parseError(res));
+  const body = (await res.json()) as { selections: readonly ChartListSelectionDto[] };
+  return body.selections;
+}
+
+/** Открыть собранную выборку по адресу — то, ради чего она хранится (Т3). */
+export async function openChartList(selectionId: string): Promise<ChartListSelectionDto> {
+  const res = await authFetch(`/v1/telemetry/chart-list/${encodeURIComponent(selectionId)}`);
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as ChartListSelectionDto;
+}

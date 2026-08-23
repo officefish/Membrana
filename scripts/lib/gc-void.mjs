@@ -81,3 +81,44 @@ export function gcReport(moved, today) {
   }
   return lines.join('\n');
 }
+
+/**
+ * План переноса одного приговорённого следа на кладбище (блок b3, DoD вердикта M5:
+ * «производные следуют за родителем ОДНОЙ операцией»).
+ *
+ * ПОЧЕМУ ОДНОЙ. Разорванный перенос оставляет полуживой путь: родитель на кладбище,
+ * черновики и прогоны — в живом дереве, и читатель находит их грепом как действующие. Это
+ * и есть возрождение, против которого поставлены три барьера. Поэтому план либо целый,
+ * либо его нет: частичного переноса не бывает.
+ *
+ * Ядро НЕ двигает файлы — оно выносит план значением. Двигает порт, и человек видит diff
+ * в PR (человек-гейт вердикта M5).
+ *
+ * @param {{subjectRef?: string, rejectedAt?: string|null}} sentence приговорённый след
+ * @param {{parent?: string, derivatives?: string[], homeId?: string}} paths родитель, производные и имя дома
+ * @param {string} voidDir корень кладбища
+ * @returns {{ok: true, moves: Array<{from: string, to: string, role: string}>} | {ok: false, reason: string}}
+ */
+export function planVoidMove(sentence, paths, voidDir = VOID_DIR) {
+  const id = typeof sentence?.subjectRef === 'string' ? sentence.subjectRef.trim() : '';
+  if (id === '') return { ok: false, reason: 'у приговорённого следа нет имени — переносить нечего' };
+  const parent = typeof paths?.parent === 'string' && paths.parent.trim() !== '' ? paths.parent.trim() : null;
+  if (!parent) return { ok: false, reason: `след «${id}» приговорён, но его путь в дереве не найден — перенос без предмета` };
+
+  // Дом зовётся именем САМОГО следа, а не мандата, которому вынесли приговор: по этому
+  // имени кладбище сверяется с реестром, откуда след ушёл, и штраф свежести находит своего
+  // адресата. Мандат — форма приговора, имя следа — его личность.
+  const homeId = typeof paths?.homeId === 'string' && paths.homeId.trim() !== '' ? paths.homeId.trim() : id;
+  const home = `${voidDir}/${homeId}`;
+  const moves = [{ from: parent, to: home, role: 'родитель' }];
+  const seen = new Set([parent]);
+  for (const raw of paths?.derivatives ?? []) {
+    const d = typeof raw === 'string' ? raw.trim() : '';
+    if (d === '' || seen.has(d)) continue;
+    // Производная, лежащая ВНУТРИ родителя, едет вместе с ним и отдельным ходом не является.
+    if (d.startsWith(`${parent}/`)) continue;
+    seen.add(d);
+    moves.push({ from: d, to: `${home}/${d.split('/').pop()}`, role: 'производная' });
+  }
+  return { ok: true, moves };
+}

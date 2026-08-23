@@ -1,6 +1,28 @@
 {
   "tasks": [
     {
+      "id": "chart-list-plugin",
+      "title": "Плагин журнала «чарт лист»: отбор звуков поверх почвы",
+      "promptPath": "docs/prompts/SESSION_B_CHART_LIST_TASK.md",
+      "githubIssue": null,
+      "noIssueReason": "ведётся промптом SESSION_B_CHART_LIST_TASK.md и артефактами локального спринта",
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-22",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin",
+        "rodchenko"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "cowork-server-plugin-pages",
       "title": "Cowork Sprint: почва под плагины серверных страниц",
       "promptPath": "docs/cowork-sprint/cowork-server-plugin-pages/INTERFACE_CONTRACT.md",

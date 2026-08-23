@@ -32,6 +32,10 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 /** Сервисы, чей образ несёт workspace-пакеты. Дом списка — здесь, рядом с предикатом. */
 export const IMAGE_SERVICES = Object.freeze([
   { id: 'media', pkg: 'packages/background-media', dockerfile: 'packages/background-media/Dockerfile' },
+  // Кабинет внесён 22.08 после падения сборки на @membrana/plugin-contracts@npm:* (404): зуб
+  // честно проверял то, что ему поручили, и молчал про всё остальное. Список из одного сервиса
+  // ловит один сервис — класс чинится внесением, а не разбором случая.
+  { id: 'cabinet', pkg: 'packages/background-cabinet', dockerfile: 'packages/background-cabinet/Dockerfile' },
 ]);
 
 /** Каталоги, где живут воркспейсы (совпадает с `workspaces` корневого package.json). */
@@ -71,24 +75,88 @@ export function transitiveWorkspaceDeps(map, rootPkgName) {
   return [...seen].sort();
 }
 
+function runtimeStageTail(dockerfileText) {
+  const runtimeStart = dockerfileText.search(/^FROM\s+\S+\s+AS\s+runtime\b/mu);
+  return runtimeStart === -1 ? dockerfileText : dockerfileText.slice(runtimeStart);
+}
+
+function dockerfileWords(line) {
+  return [...line.matchAll(/"([^"]*)"|'([^']*)'|(\S+)/gu)].map((m) => m[1] ?? m[2] ?? m[3]);
+}
+
+function normalizeDockerfileSource(src) {
+  return src.replace(/^\/app\//u, '').replace(/\\/gu, '/').replace(/^\.\//u, '').replace(/\/$/u, '');
+}
+
+/**
+ * Источники COPY-инструкций Dockerfile.
+ *
+ * `localOnly` оставляет только COPY из build context (без `--from`): это ровно то, что
+ * локальная грязь может ложно казаться «уезжающим в прод», хотя сервер соберёт origin/main.
+ * `runtimeOnly` берёт только runtime-стадию для зуба состава образа.
+ */
+export function dockerfileCopySources(dockerfileText, { runtimeOnly = false, localOnly = false } = {}) {
+  const body = runtimeOnly ? runtimeStageTail(dockerfileText) : dockerfileText;
+  const sources = [];
+  for (const raw of body.split(/\r?\n/u)) {
+    const line = raw.trim();
+    if (!/^COPY\s/u.test(line)) continue;
+    const tokens = dockerfileWords(line.replace(/^COPY\s+/u, ''));
+    let i = 0;
+    let hasFrom = false;
+    while (i < tokens.length && tokens[i].startsWith('--')) {
+      const flag = tokens[i];
+      if (flag === '--from') {
+        hasFrom = true;
+        i += 2;
+      } else {
+        if (flag.startsWith('--from=')) hasFrom = true;
+        i += 1;
+      }
+    }
+    if (localOnly && hasFrom) continue;
+    const positional = tokens.slice(i);
+    if (positional.length < 2) continue;
+    for (const src of positional.slice(0, -1)) {
+      const normalized = normalizeDockerfileSource(src);
+      if (normalized) sources.push(normalized);
+    }
+  }
+  return sources;
+}
+
+/** Локальные источники build context: COPY без --from во всём Dockerfile. */
+export function copiedLocalBuildSources(dockerfileText) {
+  return dockerfileCopySources(dockerfileText, { localOnly: true });
+}
 /**
  * Пути, которые runtime-стадия Dockerfile действительно копирует.
  *
  * Разбор консервативный: берётся хвост файла ПОСЛЕ последнего `FROM … AS runtime`, оттуда —
- * `COPY --from=… <src> <dst>`. `packages/x/dist` и `packages/x` считаются покрытием `packages/x`.
+ * `COPY --from=… <src> <dst>`.
+ *
+ * ПОКРЫТИЕМ СЧИТАЕТСЯ ТОЛЬКО КОД: каталог пакета целиком (`packages/x`) либо его сборка
+ * (`packages/x/dist`). Один `packages/x/package.json` покрытием НЕ является.
+ *
+ * Ужесточено 22.08 контрольной пробой. Прежняя версия засчитывала ЛЮБОЙ путь внутри пакета —
+ * и образ с манифестом, но без `dist`, проходил зуб зелёным. Это ровно тот висячий симлинк,
+ * ради которого зуб заведён: `node_modules/@membrana/x` ведёт в каталог, где `package.json`
+ * указывает на `dist/index.js`, которого нет. Сборка зелёная, старт зелёный, падение — на первом
+ * импорте, уже на проде.
+ *
+ * Найдено так: из готового Dockerfile убрана одна строка `COPY … plugin-handlers/dist`, и зуб НЕ
+ * покраснел. Предикат, который не краснеет на внесённом дефекте, не удостоверяет ничего.
  */
 export function copiedPackageDirs(dockerfileText) {
-  const runtimeStart = dockerfileText.search(/^FROM\s+\S+\s+AS\s+runtime\b/mu);
-  const tail = runtimeStart === -1 ? dockerfileText : dockerfileText.slice(runtimeStart);
   const dirs = new Set();
-  for (const m of tail.matchAll(/^COPY\s+(?:--from=\S+\s+)?(\S+)/gmu)) {
-    const src = m[1].replace(/^\/app\//u, '').replace(/\\/gu, '/');
-    const hit = /^(packages\/(?:libs\/|services\/(?:detectors\/)?)?[^/]+)/u.exec(src);
-    if (hit) dirs.add(hit[1]);
+  for (const src of dockerfileCopySources(dockerfileText, { runtimeOnly: true })) {
+    const hit = /^(packages\/(?:libs\/|services\/(?:detectors\/)?)?[^/]+)(\/.*)?$/u.exec(src);
+    if (!hit) continue;
+    const rest = hit[2] ?? '';
+    if (rest === '' || rest === '/' || /^\/dist(\/|$)/u.test(rest)) dirs.add(hit[1]);
   }
   return dirs;
 }
-
 /** Вердикт по одному сервису значением: ни ФС, ни печати. */
 export function serviceFindings(service, map, dockerfileText) {
   const pkgName = Object.keys(map).find((n) => map[n].dir === service.pkg);

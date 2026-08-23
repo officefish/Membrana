@@ -35,6 +35,7 @@ import type {
   PluginId,
   PluginManifest,
   PluginTrigger,
+  RunResult,
 } from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
 import { JOURNAL_HOME } from './home';
 import { taskKinds, verifyJournalTask, type JournalTask, type JournalTaskVerdict } from './journal-task';
@@ -154,16 +155,32 @@ export class JournalPluginHostService implements IPluginHost, OnModuleInit {
     ctx: PluginContext,
     userId: string,
     task: JournalTask,
-  ): Promise<{ verdict: JournalTaskVerdict; kinds: ReturnType<typeof taskKinds> | null }> {
+  ): Promise<{
+    verdict: JournalTaskVerdict;
+    kinds: ReturnType<typeof taskKinds> | null;
+    /**
+     * Результат исполнителя. Заведён спринтом `chart-list-plugin`: у витрины результат — это то,
+     * ЧТО показать человеку, и терять его значило бы звать плагина ради побочного действия.
+     *
+     * Контракт `IPluginHost.request` возвращает `void` намеренно: живому каналу результат некуда
+     * девать. Но `requestWithTask` — вход ЭТОГО модуля, а не контрактный, и он вправе вернуть то,
+     * что посчитал его же исполнитель. Тем же приёмом пользуется дом коллекций media.
+     */
+    result: RunResult | null;
+  }> {
     const entry = this.requireEnabled(pluginId);
     const verdict = verifyJournalTask(task, await this.entries.listEntries(userId));
     if (!verdict.ok) {
       this.logger.warn({ pluginId, reason: verdict.reason }, 'Journal task refused before plugin run');
-      return { verdict, kinds: null };
+      return { verdict, kinds: null, result: null };
     }
     const kinds = taskKinds(verdict.entries);
-    await entry.executor.execute({ ...ctx, trigger, payload: { ...(ctx.payload as object), entries: verdict.entries, kinds } });
-    return { verdict, kinds };
+    const result = await entry.executor.execute({
+      ...ctx,
+      trigger,
+      payload: { ...(ctx.payload as object), entries: verdict.entries, kinds },
+    });
+    return { verdict, kinds, result };
   }
 
   private requireEnabled(pluginId: PluginId): Registration {

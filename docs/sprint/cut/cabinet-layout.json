@@ -1,0 +1,61 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "cabinet-layout",
+  "taskId": "cabinet-layout",
+  "mode": "explicit-honest",
+  "cutBy": "rodchenko",
+  "window": {
+    "from": "2026-08-23T10:10:00+03:00",
+    "to": "2026-08-23T16:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "l1-checkbox-is-showing",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/cabinet/src/plugins/pagePlugins.ts",
+        "apps/cabinet/src/plugins/pagePlugins.test.ts",
+        "apps/cabinet/src/plugins/PagePluginsSidebar.tsx",
+        "apps/cabinet/src/plugins/PagePluginArea.tsx"
+      ],
+      "estimate": {
+        "changedLines": 260
+      },
+      "note": "ВКЛЮЧЁННОСТЬ И ПОКАЗ СВОДЯТСЯ В ОДНО по слову владельца: галочки достаточно, клик по названию как отдельное действие уходит. Включённые рисуются СТОПКОЙ, один виджет под другим — гнездо перестаёт быть единственным. Почва разводила эти вещи намеренно (M5′: включённость — операция реестра дома), и разведение снимается СЛОВОМ ВЛАДЕЛЬЦА, а не потому, что сломалось: владелец не смог найти показ, лишнее действие названо лишним. Дом по-прежнему владеет включённостью — меняется только то, что страница из неё выводит. Зубы ядра, закреплявшие activeId, переписываются: правило отменено, а не обойдено."
+    },
+    {
+      "blockId": "l2-collapse-above-list",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/cabinet/src/pages/JournalPage.tsx",
+        "apps/cabinet/src/plugins/CollapseMainBlock.md"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "note": "Кнопка сворачивания основного списка встаёт НАД списком и доступна всегда. Следствие, названное до кода: правило почвы «свернуть нельзя, пока нет виджета» СНИМАЕТСЯ — оно держалось на том, что сворачивать имеет смысл только ради виджета, а владелец хочет сворачивать список сам по себе. Зуб на это правило переписывается. Зоны разведены: PagePluginArea принадлежит l1, страница — этому блоку, ширины и прокрутки — l3."
+    },
+    {
+      "blockId": "l3-widths-and-scrolls",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "apps/cabinet/src/plugins/ChartListWidgetLayout.md",
+        "apps/cabinet/src/components/journal/LiveJournalPager.tsx",
+        "apps/cabinet/src/App.tsx",
+        "apps/cabinet/src/index.css"
+      ],
+      "estimate": {
+        "changedLines": 240
+      },
+      "note": "Три замечания владельца об одном — лишние полосы прокрутки и неравные ширины. (1) Внутренний скроллбар списка журнала убирается: страница прокручивается целиком, вложенная прокрутка внутри карточки — лишний орган. (2) Виджет выборки растягивается вровень со списком журнала и своей прокрутки не имеет. (3) Левый сайдбар навигации тоже не прокручивается сам по себе. Правило записывается словами рядом с кодом, иначе через месяц вложенную прокрутку вернут «чтобы шапка не уезжала». Страница принадлежит l2: правки ширин и прокруток, требующие её, вносит l2 по правилу из этого блока."
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-23T10:18:00+03:00",
+    "digest": "6581eee885b2173fc33f25881cd763a2d329f09300ba1a6d43c45c21017b1c3a"
+  }
+}
