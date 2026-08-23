@@ -462,7 +462,8 @@
     "field:capture": "node scripts/field-capture.mjs",
     "firebat:poller": "node scripts/firebat-poller.mjs",
     "capture:sidecar": "node scripts/capture-sidecar.mjs",
-    "plugin:run:mfcc": "node scripts/plugin-run-mfcc.mjs"
+    "plugin:run:mfcc": "node scripts/plugin-run-mfcc.mjs",
+    "gc:void": "node scripts/gc.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
