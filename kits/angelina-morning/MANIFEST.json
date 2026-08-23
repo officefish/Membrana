@@ -80,7 +80,7 @@
     "scripts/main-day-issue.mjs": "2fedf0afde710809d4ab06a9069f76c80a3b27f6",
     "scripts/main-day-probe.mjs": "c9d62cc28a34babcf792ad115d172aca674a8bd4",
     "scripts/morning-care.mjs": "089ac5dc6527cea3716f0fe00e1d62f450074f1a",
-    "scripts/morning-gate.mjs": "b683025a8e26c4860a478233dbad74398664200f",
+    "scripts/morning-gate.mjs": "9f0ad0effe785f9efb9ea7bbfa87ba1c637d07bb",
     "scripts/plan-week-if-monday.mjs": "4de9f7e1d42d88c5cd262041c3eb29e918cec194",
     "scripts/repo-clean.mjs": "339b3ed8adebe735cc2608b204f70bddf4709bc2",
     "scripts/strategy-day.mjs": "4e87373353828c2551fe04f740fd6b600a09dfe6",
