@@ -70,7 +70,7 @@ export function locateTrace(repoRoot, subjectRef, baseContext, io = { existsSync
   const insightId = revision?.insightId ?? subjectRef;
   const parentRel = `docs/insights/${insightId}`;
   const parent = io.existsSync(join(repoRoot, parentRel)) ? parentRel : null;
-  return { parent, derivatives: [] };
+  return { parent, derivatives: [], homeId: insightId };
 }
 
 /** Прочитать базовый контекст цикла (для разрешения мандат → инсайт). */
@@ -144,13 +144,14 @@ export function runGc(repoRoot, opts = {}) {
       held.push({ id: sentence.subjectRef, gaps });
       continue;
     }
-    const plan = planVoidMove(sentence, locateTrace(repoRoot, sentence.subjectRef, baseContext), VOID_DIR);
+    const where = locateTrace(repoRoot, sentence.subjectRef, baseContext);
+    const plan = planVoidMove(sentence, where, VOID_DIR);
     if (!plan.ok) {
       held.push({ id: sentence.subjectRef, gaps: [plan.reason] });
       continue;
     }
     const files = dry ? [] : applyMove(repoRoot, plan, sentence);
-    moved.push({ id: sentence.subjectRef, rejectedAt: sentence.rejectedAt, moves: plan.moves, files });
+    moved.push({ id: where.homeId ?? sentence.subjectRef, subjectRef: sentence.subjectRef, rejectedAt: sentence.rejectedAt, moves: plan.moves, files });
   }
 
   return { today, dry, moved, held, reason, unreadable: projection === null && reason !== null && !reason.includes('не заведён') };

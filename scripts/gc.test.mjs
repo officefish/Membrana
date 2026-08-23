@@ -85,7 +85,7 @@ test('приговорённый след переносится на кладб
     const r = runGc(root, { today: '2026-08-23' });
     assert.equal(r.moved.length, 1, 'до моста и порта этот перенос был невозможен');
     assert.equal(existsSync(join(root, 'docs/insights/insight-старый-сценарий')), false, 'живой путь убран');
-    const moved = join(root, 'docs/void/mandate-1/INSIGHT.md');
+    const moved = join(root, 'docs/void/insight-старый-сценарий/INSIGHT.md');
     assert.equal(existsSync(moved), true, 'след лёг на кладбище');
 
     const body = readFileSync(moved, 'utf8');
@@ -166,8 +166,21 @@ test('кладбище растёт монотонно: удаления про�
   const { root, cleanup } = tree();
   try {
     runGc(root, { today: '2026-08-23' });
-    const body = readFileSync(join(root, 'docs/void/mandate-1/INSIGHT.md'), 'utf8');
+    const body = readFileSync(join(root, 'docs/void/insight-старый-сценарий/INSIGHT.md'), 'utf8');
     assert.match(body, /тело/u, 'содержимое перенесено целиком, а не стёрто');
-    assert.equal(existsSync(join(root, 'docs/void/mandate-1/meta.json')), true, 'не-markdown тоже переехал');
+    assert.equal(existsSync(join(root, 'docs/void/insight-старый-сценарий/meta.json')), true, 'не-markdown тоже переехал');
+  } finally { cleanup(); }
+});
+
+test('дом на кладбище зовётся именем СЛЕДА, а не мандата — иначе штраф не найдёт адресата', () => {
+  // Приговор выносится мандату (`mandate-1`), но искать след потом будут по его имени —
+  // тем же, что стоит в реестре инсайтов. Разойдись эти имена, recent_void_penalty
+  // штрафовал бы никого, а кладбище перестало бы сверяться с тем, откуда след ушёл.
+  const { root, cleanup } = tree();
+  try {
+    const r = runGc(root, { today: '2026-08-23' });
+    assert.equal(r.moved[0].id, 'insight-старый-сценарий', 'имя следа');
+    assert.equal(r.moved[0].subjectRef, 'mandate-1', 'мандат сохранён отдельным полем — форма приговора');
+    assert.equal(existsSync(join(root, 'docs/void/mandate-1')), false, 'домом мандат не становится');
   } finally { cleanup(); }
 });
