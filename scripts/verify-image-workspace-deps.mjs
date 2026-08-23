@@ -75,6 +75,60 @@ export function transitiveWorkspaceDeps(map, rootPkgName) {
   return [...seen].sort();
 }
 
+function runtimeStageTail(dockerfileText) {
+  const runtimeStart = dockerfileText.search(/^FROM\s+\S+\s+AS\s+runtime\b/mu);
+  return runtimeStart === -1 ? dockerfileText : dockerfileText.slice(runtimeStart);
+}
+
+function dockerfileWords(line) {
+  return [...line.matchAll(/"([^"]*)"|'([^']*)'|(\S+)/gu)].map((m) => m[1] ?? m[2] ?? m[3]);
+}
+
+function normalizeDockerfileSource(src) {
+  return src.replace(/^\/app\//u, '').replace(/\\/gu, '/').replace(/^\.\//u, '').replace(/\/$/u, '');
+}
+
+/**
+ * Источники COPY-инструкций Dockerfile.
+ *
+ * `localOnly` оставляет только COPY из build context (без `--from`): это ровно то, что
+ * локальная грязь может ложно казаться «уезжающим в прод», хотя сервер соберёт origin/main.
+ * `runtimeOnly` берёт только runtime-стадию для зуба состава образа.
+ */
+export function dockerfileCopySources(dockerfileText, { runtimeOnly = false, localOnly = false } = {}) {
+  const body = runtimeOnly ? runtimeStageTail(dockerfileText) : dockerfileText;
+  const sources = [];
+  for (const raw of body.split(/\r?\n/u)) {
+    const line = raw.trim();
+    if (!/^COPY\s/u.test(line)) continue;
+    const tokens = dockerfileWords(line.replace(/^COPY\s+/u, ''));
+    let i = 0;
+    let hasFrom = false;
+    while (i < tokens.length && tokens[i].startsWith('--')) {
+      const flag = tokens[i];
+      if (flag === '--from') {
+        hasFrom = true;
+        i += 2;
+      } else {
+        if (flag.startsWith('--from=')) hasFrom = true;
+        i += 1;
+      }
+    }
+    if (localOnly && hasFrom) continue;
+    const positional = tokens.slice(i);
+    if (positional.length < 2) continue;
+    for (const src of positional.slice(0, -1)) {
+      const normalized = normalizeDockerfileSource(src);
+      if (normalized) sources.push(normalized);
+    }
+  }
+  return sources;
+}
+
+/** Локальные источники build context: COPY без --from во всём Dockerfile. */
+export function copiedLocalBuildSources(dockerfileText) {
+  return dockerfileCopySources(dockerfileText, { localOnly: true });
+}
 /**
  * Пути, которые runtime-стадия Dockerfile действительно копирует.
  *
@@ -94,11 +148,8 @@ export function transitiveWorkspaceDeps(map, rootPkgName) {
  * покраснел. Предикат, который не краснеет на внесённом дефекте, не удостоверяет ничего.
  */
 export function copiedPackageDirs(dockerfileText) {
-  const runtimeStart = dockerfileText.search(/^FROM\s+\S+\s+AS\s+runtime\b/mu);
-  const tail = runtimeStart === -1 ? dockerfileText : dockerfileText.slice(runtimeStart);
   const dirs = new Set();
-  for (const m of tail.matchAll(/^COPY\s+(?:--from=\S+\s+)?(\S+)/gmu)) {
-    const src = m[1].replace(/^\/app\//u, '').replace(/\\/gu, '/');
+  for (const src of dockerfileCopySources(dockerfileText, { runtimeOnly: true })) {
     const hit = /^(packages\/(?:libs\/|services\/(?:detectors\/)?)?[^/]+)(\/.*)?$/u.exec(src);
     if (!hit) continue;
     const rest = hit[2] ?? '';
@@ -106,7 +157,6 @@ export function copiedPackageDirs(dockerfileText) {
   }
   return dirs;
 }
-
 /** Вердикт по одному сервису значением: ни ФС, ни печати. */
 export function serviceFindings(service, map, dockerfileText) {
   const pkgName = Object.keys(map).find((n) => map[n].dir === service.pkg);

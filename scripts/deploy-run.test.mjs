@@ -17,11 +17,35 @@ const clockFrom = (isoList) => {
 
 test('parse: процедура из закрытого списка, --service обязателен, команда после «--»', () => {
   const p = parseDeployRunArgs(['deploy-media-vps', '--service', 'cabinet', '--', 'node', 'x.mjs']);
-  assert.deepEqual(p, { procedureId: 'deploy-media-vps', service: 'cabinet', command: ['node', 'x.mjs'] });
+  assert.deepEqual(p, { procedureId: 'deploy-media-vps', service: 'cabinet', command: ['node', 'x.mjs'], allowDirtyReason: null });
   assert.throws(() => parseDeployRunArgs(['deploy-something', '--service', 'x', '--', 'a']), /вне закрытого списка/u);
   assert.throws(() => parseDeployRunArgs(['deploy-office-vds', '--', 'a']), /--service/u);
   assert.throws(() => parseDeployRunArgs(['deploy-office-vds', '--service', 'office']), /после «--»/u);
   assert.deepEqual(DEPLOY_PROCEDURES, ['deploy-office-vds', 'deploy-media-vps']);
+});
+
+
+test('parse: --allow-dirty-reason вынимается даже после команды yarn script', () => {
+  const p = parseDeployRunArgs([
+    'deploy-media-vps',
+    '--service',
+    'cabinet',
+    '--',
+    'node',
+    'scripts/_ssh-cabinet-deploy.mjs',
+    '--allow-dirty-reason',
+    'журнал вне build context, деплой берёт origin/main',
+  ]);
+  assert.deepEqual(p, {
+    procedureId: 'deploy-media-vps',
+    service: 'cabinet',
+    command: ['node', 'scripts/_ssh-cabinet-deploy.mjs'],
+    allowDirtyReason: 'журнал вне build context, деплой берёт origin/main',
+  });
+  assert.throws(
+    () => parseDeployRunArgs(['deploy-media-vps', '--service', 'cabinet', '--', 'node', 'x', '--allow-dirty-reason']),
+    /требует непустую причину/u,
+  );
 });
 
 test('runDeploy: exit 0 → open+close pass в ленте, exit-код прозрачен', () => {
@@ -90,4 +114,30 @@ test('runDeploy: обрыв без close ловится ленивым закр�
   const orphan = records.find((r) => r.runPhase === 'close' && (r.coverage.gaps ?? []).includes('orphaned'));
   assert.ok(orphan, 'сирота первого прогона закрыта лениво');
   assert.equal(orphan.orphanedBy.runId, runId);
+});
+test('runDeploy: причина обхода DR0 пишется в open evidence и передаётся дочернему preflight env', () => {
+  const root = tempRepo();
+  let spawnOpts;
+  runDeploy(
+    root,
+    {
+      procedureId: 'deploy-media-vps',
+      service: 'cabinet',
+      command: ['node', 'scripts/_ssh-cabinet-deploy.mjs'],
+      allowDirtyReason: 'локальный журнал вне build context, сервер берёт origin/main',
+    },
+    {
+      nowIso: clockFrom(['2026-08-04T18:00:00.000Z', '2026-08-04T18:01:00.000Z']),
+      spawn: (_cmd, _args, opts) => {
+        spawnOpts = opts;
+        return { status: 0 };
+      },
+    },
+  );
+  assert.equal(spawnOpts.env.DEPLOY_ALLOW_DIRTY, '1');
+  assert.equal(spawnOpts.env.DEPLOY_DIRTY_REASON, 'локальный журнал вне build context, сервер берёт origin/main');
+  const records = readProcedureRunTrail(root, defaultTrailPath('2026-08-04'));
+  assert.ok(
+    records[0].coverage.evidence.includes('deploy-preflight bypass: локальный журнал вне build context, сервер берёт origin/main'),
+  );
 });
