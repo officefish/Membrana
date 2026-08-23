@@ -9,6 +9,7 @@ import {
   sendIdempotencyKey, freezeTopThree, terminalSend,
   dayFresh, draftDigestOf, payloadMatchesDraft, todayIso,
   magistralMoment, magistralMomentFresh,
+  chooseMagistralManually, manualChoiceIntact, snapshotDigest,
   swallowMoment, swallowMomentFresh, setSwallowMoment,
 } from './lib/morning-gates.mjs';
 
@@ -264,4 +265,113 @@ test('моменты двигаются независимо: draft не тро�
   const frozen = freezeTopThree(['x'], TODAY);
   assert.equal('swallow' in frozen, false, 'заморозка магистрали ласточку не сбрасывает и не заводит');
   assert.equal(frozen.magistralChosenAt, null);
+});
+
+
+/**
+ * Ручная чеканка магистрали (#2083). Канон утра её разрешает («подписывается author=human»),
+ * прибор не умел — и из-за закрытого магистрального гейта вставал canSend, то есть не уходил
+ * ОБЯЗАТЕЛЬНЫЙ доклад партнёрам. Случай 23.08: владелец назвал работу, которой нет в снимке.
+ */
+const SNAPSHOT = ['angelina-hostess-impl', 'assets-container', 'batch-collection-run-contour'];
+const OUTSIDE = 'chart-list-prod-polish';
+const frozen = (day = DAY) => ({
+  ...freezeTopThree(SNAPSHOT, day),
+  swallow: { day, ownerAck: true, draftDigest: 'd', draftFile: 'x.md' },
+});
+
+test('#2083: выбор ВНЕ снимка старым путём отвергается — это и была блокировка доклада', () => {
+  const state = { ...frozen(), magistral: OUTSIDE, magistralAuthor: 'snapshot' };
+  assert.equal(magistralChosen(state, DAY), false);
+});
+
+test('#2083: ручная чеканка признаётся предикатом, canSend открывается', () => {
+  const state = chooseMagistralManually(frozen(), OUTSIDE, DAY);
+  assert.equal(state.magistralAuthor, 'human');
+  assert.equal(magistralChosen(state, DAY), true, 'канон разрешает — предикат обязан признавать');
+  assert.equal(canSend(state, DAY).ok, true, 'иначе обязательный доклад партнёрам не уйдёт');
+});
+
+test('#2083: снимок машины остаётся НЕТРОНУТЫМ — два разных поля, не одно', () => {
+  const before = frozen();
+  const state = chooseMagistralManually(before, OUTSIDE, DAY);
+  assert.deepEqual(state.magistralOptions, SNAPSHOT, 'что предложила машина');
+  assert.equal(state.frozenDigest, before.frozenDigest, 'отпечаток снимка не пересчитан');
+  assert.equal(state.magistral, OUTSIDE, 'что выбрал человек — отдельным полем');
+  assert.equal(state.magistralManual.inSnapshot, false, 'и записано, что выбор был ВНЕ снимка');
+});
+
+test('#2083 ЗУБ ПОРЧИ: человеческий выбор вписан В снимок — красное, гейт закрыт', () => {
+  const state = chooseMagistralManually(frozen(), OUTSIDE, DAY);
+  // Ровно запрещённый билетом обход: дописать выбор владельца в снимок генератора и
+  // пересчитать дайджест, чтобы «сошлось». Так запись утверждала бы, что машина его ранжировала.
+  state.magistralOptions = [...state.magistralOptions, OUTSIDE];
+  state.frozenDigest = snapshotDigest(state.magistralOptions);
+
+  const verdict = manualChoiceIntact(state);
+  assert.equal(verdict.ok, false, 'сторож, который не краснеет на внесённой порче, ничего не удостоверяет');
+  assert.match(verdict.reason, /вписан В снимок/u);
+  assert.equal(magistralChosen(state, DAY), false, 'подгонка не должна открывать гейт');
+});
+
+test('#2083 ЗУБ ПОРЧИ: снимок переморожен после чеканки — красное по расхождению отпечатка', () => {
+  const state = chooseMagistralManually(frozen(), OUTSIDE, DAY);
+  state.magistralOptions = ['совсем-другой-контур'];
+  state.frozenDigest = snapshotDigest(state.magistralOptions);
+
+  const verdict = manualChoiceIntact(state);
+  assert.equal(verdict.ok, false);
+  assert.match(verdict.reason, /снимок изменился после ручной чеканки/u);
+});
+
+test('#2083: честная ручная чеканка НЕ даёт ложного срабатывания сторожа', () => {
+  const state = chooseMagistralManually(frozen(), OUTSIDE, DAY);
+  assert.equal(manualChoiceIntact(state).ok, true);
+});
+
+test('#2083: выбор владельца, совпавший с кандидатом снимка, помечается честно и сторожа не злит', () => {
+  const state = chooseMagistralManually(frozen(), SNAPSHOT[0], DAY);
+  assert.equal(state.magistralManual.inSnapshot, true, 'записано как есть: выбор совпал со снимком');
+  assert.equal(manualChoiceIntact(state).ok, true, 'это не подгонка — снимок не менялся');
+  assert.equal(magistralChosen(state, DAY), true);
+});
+
+test('#2083: ручная чеканка протухает через сутки, как и обычная (свой момент, ADR-0024)', () => {
+  const state = chooseMagistralManually(frozen(), OUTSIDE, DAY);
+  assert.equal(magistralChosen(state, '2026-07-27'), false, 'вчерашняя чеканка сегодня не считается');
+});
+
+test('#2083: выбор из снимка снимает автора-человека — состояние не хранит двух ответов сразу', () => {
+  // Ядро отвечает за поля выбора; смывание записи о чеканке — за прибором (см. morning-gate.mjs).
+  // Здесь фиксируем главное: как только автором снова стала машина, предикат судит по снимку.
+  const manual = chooseMagistralManually(frozen(), OUTSIDE, DAY);
+  const back = { ...manual, magistral: SNAPSHOT[1], magistralAuthor: 'snapshot' };
+  assert.equal(magistralChosen(back, DAY), true, 'кандидат из снимка законен');
+  const outside = { ...manual, magistral: OUTSIDE, magistralAuthor: 'snapshot' };
+  assert.equal(magistralChosen(outside, DAY), false, 'вчерашняя чеканка не легализует id вне снимка сегодня');
+});
+
+test('#2083 ЗУБ ПОРЧИ: подпись «human», дописанная в состояние руками, гейт НЕ открывает', () => {
+  // Обход мимо двери: правим файл состояния текстовым редактором. Без записи о чеканке
+  // подпись ничем не подтверждена — иначе весь предикат сводится к одному слову в JSON.
+  const state = { ...frozen(), magistral: OUTSIDE, magistralAuthor: 'human' };
+  const verdict = manualChoiceIntact(state);
+  assert.equal(verdict.ok, false);
+  assert.match(verdict.reason, /без записи о чеканке/u);
+  assert.equal(magistralChosen(state, DAY), false, 'дописанное слово не заменяет чеканку');
+});
+
+test('#2083 ЗУБ ПОРЧИ: магистраль подменена рядом со старой записью о чеканке — красное', () => {
+  const state = chooseMagistralManually(frozen(), OUTSIDE, DAY);
+  state.magistral = 'подменённый-контур'; // запись о чеканке осталась от прежнего id
+  const verdict = manualChoiceIntact(state);
+  assert.equal(verdict.ok, false);
+  assert.match(verdict.reason, /подменена рядом с записью о чеканке/u);
+  assert.equal(magistralChosen(state, DAY), false);
+});
+
+test('#2083: запись о чеканке называет свой id — по ней видно, что именно чеканили', () => {
+  const state = chooseMagistralManually(frozen(), OUTSIDE, DAY);
+  assert.equal(state.magistralManual.chosen, OUTSIDE);
+  assert.equal(manualChoiceIntact(state).ok, true, 'честная чеканка остаётся зелёной');
 });
