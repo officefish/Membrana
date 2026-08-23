@@ -102,6 +102,12 @@ jobs:
       - name: Void — три барьера кладбища против возрождения
         run: yarn void:barriers
 
+      # Союзное слияние журналов (#2096) снимает конфликт — и вместе с ним последнее место,
+      # где человек смотрел на ленту глазами. Зуб возвращает способность сказать «нет»:
+      # двойник по ключу, точный повтор, журнал мимо соглашения.
+      - name: Journals — союзное слияние не склеило двойников
+        run: yarn journals:verify
+
       - name: Turbo — lint, typecheck, build
         run: yarn turbo run lint typecheck build --continue
 
