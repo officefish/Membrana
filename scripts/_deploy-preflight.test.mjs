@@ -11,11 +11,6 @@ function git(cwd, args) {
   return execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
 }
 
-function write(path, body = '') {
-  mkdirSync(join(path, '..'), { recursive: true });
-  writeFileSync(path, body);
-}
-
 function tempGitRepo() {
   const root = mkdtempSync(join(tmpdir(), 'deploy-preflight-'));
   const remote = mkdtempSync(join(tmpdir(), 'deploy-preflight-remote-'));
