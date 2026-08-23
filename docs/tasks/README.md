@@ -57,7 +57,7 @@
 | `frames-alive-dynin` | Оживление фреймов — Дынин: математика версии+резолв | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#980](https://github.com/officefish/Membrana/issues/980) |
 | `frames-alive-ozhegov` | Оживление фреймов — Ожегов: контракт+код+начинка | M | [`FRAMES_ALIVE_SPRINT_PROMPT.md`](../prompts/FRAMES_ALIVE_SPRINT_PROMPT.md) | [#979](https://github.com/officefish/Membrana/issues/979) |
 | `tooling-atlas` | Атлас контейнеров — контейнер контейнеров + мастерская + mintlify | M | [`TOOLING_ATLAS_PROMPT.md`](../prompts/TOOLING_ATLAS_PROMPT.md) | — |
-| `assets-container` | Эпик: контейнер имущества — три яруса (git/сервер-БД/Drive), набор от чека, подтверждение датой-сегодня | L | [`ASSETS_CONTAINER_PROMPT.md`](../prompts/ASSETS_CONTAINER_PROMPT.md) | [#959](https://github.com/officefish/Membrana/issues/959) |
+| `assets-container` | Эпик: контейнер имущества как доменный слой над originals-contract — чек, набор, holder, фото-сегодня | L | [`ASSETS_CONTAINER_PROMPT.md`](../prompts/ASSETS_CONTAINER_PROMPT.md) | [#959](https://github.com/officefish/Membrana/issues/959) |
 | `bridge-room` | Спринт «мостик»: явное открытие/закрытие комнаты капитана, попугай-техдолг, конспекты фреймом в репо | M | [`BRIDGE_ROOM_PROMPT.md`](../prompts/BRIDGE_ROOM_PROMPT.md) | [#936](https://github.com/officefish/Membrana/issues/936) |
 | `precedent-container` | Контейнер прецедентов + мастерская к нему | M | [`PRECEDENT_CONTAINER_PROMPT.md`](../prompts/PRECEDENT_CONTAINER_PROMPT.md) | — |
 | `procedural-workshop` | Процедурная мастерская — три глагола над 2D-домом | M | [`PROCEDURAL_WORKSHOP_PROMPT.md`](../prompts/PROCEDURAL_WORKSHOP_PROMPT.md) | — |
