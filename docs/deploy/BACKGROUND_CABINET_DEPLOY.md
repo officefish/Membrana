@@ -62,7 +62,7 @@ docker image inspect ghcr.io/officefish/membrana-cabinet-api:latest --format='{{
 
 | Гейт | Что проверяет | Блокирует, если | Обход |
 |------|----------------|-----------------|-------|
-| **preflight** (`scripts/_deploy-preflight.mjs`) | рабочее дерево + расхождение HEAD с `origin/<branch>` | есть незакоммиченное/untracked или local≠origin | `--allow-dirty` / `DEPLOY_ALLOW_DIRTY=1` |
+| **preflight** (`scripts/_deploy-preflight.mjs`) | build context сервиса по `COPY`-строкам Dockerfile + расхождение HEAD с `origin/<branch>` | есть незакоммиченное/untracked внутри build context или local≠origin | `--allow-dirty-reason "причина"` / `DEPLOY_DIRTY_REASON="причина"` вместе с `DEPLOY_ALLOW_DIRTY=1` |
 | **ci-gate** (`scripts/_deploy-ci-gate.mjs`) | статус GitHub Actions для SHA `origin/<branch>` через `gh` | workflow «CI» не завершён успехом | `--allow-red-ci` / `DEPLOY_ALLOW_RED_CI=1` |
 
 ```bash
@@ -70,9 +70,9 @@ docker image inspect ghcr.io/officefish/membrana-cabinet-api:latest --format='{{
 yarn cabinet:deploy:prod
 
 # осознанный обход обоих гейтов (например, hotfix вне CI)
-DEPLOY_ALLOW_DIRTY=1 DEPLOY_ALLOW_RED_CI=1 yarn cabinet:deploy:prod
-# или флагами:
-yarn cabinet:deploy:prod -- --allow-dirty --allow-red-ci
+DEPLOY_ALLOW_DIRTY=1 DEPLOY_DIRTY_REASON="hotfix: сервер берёт origin/main, локальная грязь сверена" DEPLOY_ALLOW_RED_CI=1 yarn cabinet:deploy:prod
+# или флагами: причина обхода DR0 пишется в журнал deploy-run
+yarn cabinet:deploy:prod --allow-dirty-reason "hotfix: сервер берёт origin/main, локальная грязь сверена" -- --allow-red-ci
 ```
 
 Список обязательных workflow для ci-gate можно переопределить: `DEPLOY_CI_WORKFLOWS="CI,Unit tests"`.

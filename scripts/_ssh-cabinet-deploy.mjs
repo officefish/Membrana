@@ -27,7 +27,7 @@ const branch =
   'main';
 
 // DR0 gate: локальное состояние должно совпадать с origin/<branch> (прод собирается из origin).
-const preflight = deployPreflight({ branch, cwd: root });
+const preflight = deployPreflight({ branch, cwd: root, service: 'cabinet' });
 // DR1 gate: на прод едет только зелёный в CI коммит.
 assertCiGreen({ branch, sha: preflight.originHead });
 

@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { copiedPackageDirs, serviceFindings, transitiveWorkspaceDeps } from './verify-image-workspace-deps.mjs';
+import { copiedLocalBuildSources, copiedPackageDirs, serviceFindings, transitiveWorkspaceDeps } from './verify-image-workspace-deps.mjs';
 
 const MAP = {
   '@membrana/svc': { dir: 'packages/background-svc', deps: ['@membrana/handlers'] },
@@ -83,4 +83,21 @@ test('манифест рядом со сборкой покрытия не от
     'COPY --from=build /app/packages/handlers/package.json /app/packages/handlers/package.json',
   ].join('\n');
   assert.deepEqual([...copiedPackageDirs(df)], ['packages/handlers']);
+});
+test('copiedLocalBuildSources берёт только COPY из build context и игнорирует --from', () => {
+  const df = [
+    'FROM node:20-alpine AS build',
+    'COPY package.json yarn.lock .yarnrc.yml ./',
+    'COPY packages/background-cabinet packages/background-cabinet',
+    'FROM node:20-alpine AS runtime',
+    'COPY --from=build /app/packages/background-cabinet/dist ./dist',
+    'COPY packages/background-cabinet/docker/entrypoint.sh /entrypoint.sh',
+  ].join('\n');
+  assert.deepEqual(copiedLocalBuildSources(df), [
+    'package.json',
+    'yarn.lock',
+    '.yarnrc.yml',
+    'packages/background-cabinet',
+    'packages/background-cabinet/docker/entrypoint.sh',
+  ]);
 });

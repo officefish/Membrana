@@ -23,7 +23,7 @@ git push origin cabinet-v0.2.0
 
 ```bash
 CABINET_GIT_BRANCH=u10-workspace-prod CABINET_IMAGE_TAG=build \
-DEPLOY_ALLOW_DIRTY=1 DEPLOY_ALLOW_RED_CI=1 \
+DEPLOY_ALLOW_DIRTY=1 DEPLOY_DIRTY_REASON="u10 workspace: сервер берёт origin/main, локальная грязь сверена" DEPLOY_ALLOW_RED_CI=1 \
 yarn cabinet:u10-workspace:prod
 ```
 

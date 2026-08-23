@@ -33,11 +33,36 @@ const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const DEPLOY_PROCEDURES = Object.freeze(['deploy-office-vds', 'deploy-media-vps']);
 
 /**
+ * Извлечь причину обхода DR0 из любой позиции argv: yarn scripts часто доклеивает
+ * пользовательские аргументы после команды, то есть уже за `--` deploy-run.
+ */
+function extractAllowDirtyReason(argv) {
+  const out = [];
+  let reason = null;
+  for (let i = 0; i < argv.length; i += 1) {
+    if (argv[i] !== '--allow-dirty-reason') {
+      out.push(argv[i]);
+      continue;
+    }
+    if (reason !== null) throw new Error('--allow-dirty-reason указан дважды');
+    const value = argv[i + 1];
+    if (typeof value !== 'string' || value.trim() === '' || value.startsWith('--')) {
+      throw new Error('--allow-dirty-reason требует непустую причину');
+    }
+    reason = value.trim();
+    i += 1;
+  }
+  return { argv: out, allowDirtyReason: reason };
+}
+
+/**
  * Разбор argv: `<procedureId> --service <svc> -- <команда...>`.
  * @param {string[]} argv
- * @returns {{procedureId: string, service: string, command: string[]}}
+ * @returns {{procedureId: string, service: string, command: string[], allowDirtyReason: string | null}}
  */
 export function parseDeployRunArgs(argv) {
+  const extracted = extractAllowDirtyReason(argv);
+  argv = extracted.argv;
   const sep = argv.indexOf('--');
   if (sep === -1 || sep === argv.length - 1) {
     throw new Error('нет команды после «--» — журналировать нечего');
@@ -55,9 +80,8 @@ export function parseDeployRunArgs(argv) {
   if (typeof service !== 'string' || service.trim() === '' || service.startsWith('-')) {
     throw new Error('нет --service <svc> — сервис есть параметр прогона, не пятая копия процедуры');
   }
-  return { procedureId, service, command };
+  return { procedureId, service, command, allowDirtyReason: extracted.allowDirtyReason };
 }
-
 /** Ревизия HEAD рабочего дерева — вещдок «что выкатывалось»; недоступный git — честное «н/д». */
 export function headRevision(root) {
   try {
@@ -72,15 +96,19 @@ export function headRevision(root) {
  * журнал пишется библиотекой procedure-run-record, не второй копией.
  *
  * @param {string} root
- * @param {{procedureId: string, service: string, command: string[]}} input
+ * @param {{procedureId: string, service: string, command: string[], allowDirtyReason?: string | null}} input
  * @param {{nowIso?: () => string, spawn?: typeof spawnSync}} [deps]
  * @returns {{exitCode: number, runId: string}}
  */
-export function runDeploy(root, { procedureId, service, command }, deps = {}) {
+export function runDeploy(root, input, deps = {}) {
+  const { procedureId, service, command, allowDirtyReason } = input;
   const nowIso = deps.nowIso ?? (() => new Date().toISOString());
   const spawn = deps.spawn ?? spawnSync;
   const rev = headRevision(root);
   const commandLabel = command.join(' ');
+  const bypassReason = String(allowDirtyReason ?? '').trim();
+  const openEvidence = [`ревизия ${rev}`, `команда: ${commandLabel}`];
+  if (bypassReason) openEvidence.push(`deploy-preflight bypass: ${bypassReason}`);
 
   // Subject нейтрален («прогон», не «выкладка»): через vds:run идут и выкладки, и
   // диагностика — журнал не утверждает больше, чем знает; род видно по команде в evidence.
@@ -88,10 +116,13 @@ export function runDeploy(root, { procedureId, service, command }, deps = {}) {
     procedureId,
     at: nowIso(),
     subject: `прогон ${service} @ ${rev}`,
-    evidence: [`ревизия ${rev}`, `команда: ${commandLabel}`],
+    evidence: openEvidence,
   });
 
-  const res = spawn(command[0], command.slice(1), { stdio: 'inherit', cwd: root });
+  const spawnEnv = bypassReason
+    ? { ...process.env, DEPLOY_ALLOW_DIRTY: '1', DEPLOY_DIRTY_REASON: bypassReason }
+    : process.env;
+  const res = spawn(command[0], command.slice(1), { stdio: 'inherit', cwd: root, env: spawnEnv });
   const exitCode = typeof res.status === 'number' ? res.status : 1;
 
   cmdClose(root, {
@@ -108,7 +139,6 @@ export function runDeploy(root, { procedureId, service, command }, deps = {}) {
   });
   return { exitCode, runId: record.runId };
 }
-
 function main() {
   let parsed;
   try {
