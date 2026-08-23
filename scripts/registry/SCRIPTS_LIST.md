@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-21 |
-| Head SHA | 8dbfc443fb22c2ab3e2a835022a91a6359855d85 |
+| Date | 2026-08-22 |
+| Head SHA | e198d78afe958f59e5639203338bb7442567eb75 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1145 |
-| Yarn scripts (package.json) | 450 |
-| Yarn → `scripts/` | 395 |
-| Yarn без пути `scripts/` | 55 |
+| Code files under `scripts/` | 1149 |
+| Yarn scripts (package.json) | 451 |
+| Yarn → `scripts/` | 398 |
+| Yarn без пути `scripts/` | 53 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 828 |
+| Code files without yarn ref | 831 |
 
-## Yarn → scripts/ (395)
+## Yarn → scripts/ (398)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -362,6 +362,7 @@
 - `templates:generate` → `scripts/generate-class-template.mjs`
 - `templates:generate:drone-regression` → `scripts/generate-class-template.mjs`
 - `templates:stage-gate` → `scripts/evaluate-free-v1-stage-gate.mjs`
+- `test` → `scripts/require-install-state.mjs`
 - `test:scripts` → `scripts/test-scripts-run.mjs`
 - `test:scripts:domain` → `scripts/test-scripts-run.mjs`
 - `test:scripts:full` → `scripts/tests-container.mjs`
@@ -385,6 +386,7 @@
 - `truth:cool` → `scripts/truth.mjs`
 - `truth:review` → `scripts/truth.mjs`
 - `truth:verify` → `scripts/truth.mjs`
+- `typecheck` → `scripts/require-install-state.mjs`
 - `usercase` → `scripts/usercase.mjs`
 - `usercase:build` → `scripts/build-usercase.mjs`
 - `usercase:build-competition-all` → `scripts/build-usercase-competition-all.mjs`
@@ -406,6 +408,7 @@
 - `verify:branch-protection` → `scripts/verify-branch-protection.mjs`
 - `verify:encoding` → `scripts/verify-encoding.mjs`
 - `verify:image-workspace-deps` → `scripts/verify-image-workspace-deps.mjs`
+- `verify:install-state` → `scripts/require-install-state.mjs`
 - `verify:tailwind-coverage` → `scripts/generate-tailwind-configs.mjs`
 - `verify:voices` → `scripts/verify-voices.mjs`
 - `verify:wire-sync` → `scripts/verify-wire-sync.mjs`
@@ -421,7 +424,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (828)
+## Code files without yarn ref (831)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -764,6 +767,8 @@
 - `scripts/lib/insight-lifecycle-store.mjs`
 - `scripts/lib/insight-lifecycle.mjs`
 - `scripts/lib/insight-ritual.mjs`
+- `scripts/lib/install-state.mjs`
+- `scripts/lib/install-state.test.mjs`
 - `scripts/lib/isolated-merge.mjs`
 - `scripts/lib/junction-safety.mjs`
 - `scripts/lib/junction-safety.test.mjs`
@@ -1137,6 +1142,7 @@
 - `scripts/repo-clean.test.mjs`
 - `scripts/report-format-check.test.mjs`
 - `scripts/report-lens.test.mjs`
+- `scripts/require-install-state.test.mjs`
 - `scripts/research-digest.test.mjs`
 - `scripts/resolutions-check.test.mjs`
 - `scripts/review-gate.test.mjs`
@@ -1262,7 +1268,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1145)
+## All code files (1149)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1748,6 +1754,8 @@
 - `scripts/lib/insight-lifecycle-store.mjs`
 - `scripts/lib/insight-lifecycle.mjs`
 - `scripts/lib/insight-ritual.mjs`
+- `scripts/lib/install-state.mjs`
+- `scripts/lib/install-state.test.mjs`
 - `scripts/lib/isolated-merge.mjs`
 - `scripts/lib/junction-safety.mjs`
 - `scripts/lib/junction-safety.test.mjs`
@@ -2202,6 +2210,8 @@
 - `scripts/report-check.mjs`
 - `scripts/report-format-check.test.mjs`
 - `scripts/report-lens.test.mjs`
+- `scripts/require-install-state.mjs`
+- `scripts/require-install-state.test.mjs`
 - `scripts/research-digest.test.mjs`
 - `scripts/research-free-v1-real-sources.mjs`
 - `scripts/research.mjs`
@@ -2410,7 +2420,7 @@
 - `scripts/worktrees-align.mjs`
 - `scripts/worktrees-align.test.mjs`
 
-## Yarn without scripts/ path (55)
+## Yarn without scripts/ path (53)
 
 - `build`
 - `cabinet:app:dev`
@@ -2464,6 +2474,4 @@
 - `save-daily-day`
 - `smoke:test`
 - `templates:content:generate`
-- `test`
 - `test:detectors`
-- `typecheck`
