@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14398/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 311 (причины в op-log) -->
+Записей: 50 · бюджет 14394/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 313 (причины в op-log) -->
+
+### 2026-08-22 · позиция · team-evening-feedback
+
+> Оценка артефактов: P0-затвор #2046 и его закрытие #2065 — правильный вектор канона: 48 kHz fail-closed, без тихого 44.1. Это ядро аудио-контура, и оно закрыто (затвор дня соблюдён). Итоги дня: Fail-closed реализован и смёржен (#2065), но diff не просмотрен построчно — не […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-22.md#reply-1`
 
 ### 2026-08-21 · позиция · duty-node-detection-m1-slovar
 
@@ -301,9 +307,3 @@
 > Storage-policy classes две: `standard` и `sensitive`. Sensitive bytes шифруются at rest отдельным key namespace; standard также шифруется at rest, но другим namespace. Между классами нет общего ciphertext или credential. _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
-
-### 2026-08-02 · позиция · team-evening-feedback
-
-> Курёхин. Оценка артефактов: аудио-путь сегодня не затронут, но `mfccAnalyzerPlugin.ts` и `judgeByPackage.test.ts` появились в диффе (#1645) — «прибор, судящий пакетом» относится к моей зоне, я это не сопровождал. Итоги дня: MFCC-прибор (#1562) влит вчера, smoke-тест на живом […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-02.md#reply-1`

@@ -1,1 +1,4 @@
 {"ts":"2026-08-22T04:29:37.624Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-08-22T17:03:58.945Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-22-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-22T17:03:58.945Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-03-one-shot-manifest-m0-order","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-22T17:03:58.945Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:51","origin":"persona-extract"}
