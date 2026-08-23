@@ -121,8 +121,21 @@ export function JournalPage() {
       plugins={pagePlugins.plugins}
       state={pagePlugins.state}
       onToggle={pagePlugins.toggle}
-      onActivate={pagePlugins.activate}
-      onCollapseMain={pagePlugins.collapseMain}
+      mainHeader={
+        /*
+          Кнопка сворачивания — НАД списком и доступна ВСЕГДА (l2, слово владельца 23.08).
+          В mainHeader, а не в теле: тело скрывается при сворачивании, и кнопка исчезла бы вместе
+          с ним. Прежнее правило «сворачивать имеет смысл только ради виджета» снято.
+        */
+        <button
+          type="button"
+          className="btn btn-ghost btn-xs mb-2"
+          aria-expanded={!pagePlugins.state.mainCollapsed}
+          onClick={() => pagePlugins.collapseMain(!pagePlugins.state.mainCollapsed)}
+        >
+          {pagePlugins.state.mainCollapsed ? 'Развернуть журнал' : 'Свернуть журнал'}
+        </button>
+      }
     >
     <div className="mx-auto max-w-4xl space-y-6">
       {/*

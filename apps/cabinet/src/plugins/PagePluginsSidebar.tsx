@@ -10,6 +10,10 @@
  *
  * НАСТРОЙКИ ТОЛЬКО ЗДЕСЬ. Канон §3: параметры, которые пользователь меняет руками, живут в
  * сайдбаре и НЕ дублируются в теле страницы. Поэтому `renderSettings` вызывается только тут.
+ *
+ * ГАЛОЧКА — ЕДИНСТВЕННЫЙ ОРГАН (l1, 23.08). Название жильца было кнопкой показа и кнопкой не
+ * выглядело: владелец 22.08 не смог найти показ. Теперь название — просто название, а галочка
+ * и включает жильца в доме, и показывает его виджет. Один орган вместо двух, и он видим.
  */
 import { useState } from 'react';
 
@@ -24,10 +28,9 @@ export interface PagePluginsSidebarProps {
   readonly plugins: readonly CabinetPagePlugin[];
   readonly state: PagePluginsState;
   readonly onToggle: (id: string, enabled: boolean) => void;
-  readonly onActivate: (id: string | null) => void;
 }
 
-export function PagePluginsSidebar({ plugins, state, onToggle, onActivate }: PagePluginsSidebarProps) {
+export function PagePluginsSidebar({ plugins, state, onToggle }: PagePluginsSidebarProps) {
   const [openId, setOpenId] = useState<string | null>(null);
 
   if (plugins.length === 0) {
@@ -44,7 +47,6 @@ export function PagePluginsSidebar({ plugins, state, onToggle, onActivate }: Pag
       <ul className="space-y-1">
         {plugins.map((plugin) => {
           const enabled = isEnabled(state, plugin.id);
-          const active = state.activeId === plugin.id;
           const settingsOpen = openId === plugin.id;
           return (
             <li key={plugin.id} className="rounded border border-base-300/60 p-2">
@@ -56,15 +58,9 @@ export function PagePluginsSidebar({ plugins, state, onToggle, onActivate }: Pag
                   aria-label={`Включить ${plugin.name}`}
                   onChange={(e) => onToggle(plugin.id, e.target.checked)}
                 />
-                <button
-                  type="button"
-                  className={`flex-1 text-left text-sm ${active ? 'font-semibold' : ''} ${enabled ? '' : 'text-base-content/40'}`}
-                  disabled={!enabled}
-                  aria-pressed={active}
-                  onClick={() => onActivate(active ? null : plugin.id)}
-                >
+                <span className={`flex-1 text-sm ${enabled ? 'font-semibold' : 'text-base-content/40'}`}>
                   {plugin.name}
-                </button>
+                </span>
               </div>
 
               {plugin.description ? (
