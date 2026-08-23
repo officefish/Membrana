@@ -1,0 +1,98 @@
+{
+  "//": "Ратифицированная перерезка assets-container 23.08: имущество — доменный слой поверх originals/static.mmbrn.tech contract, не второй storage/access-контейнер. До кода: только карточка, контекст резчика и план.",
+  "schema": "sprint-cut/1",
+  "sprintId": "assets-container",
+  "taskId": "assets-container",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "coverage": {
+    "traceKinds": [
+      "context_run",
+      "review_pass"
+    ],
+    "absent": [
+      "implementation"
+    ],
+    "reason": "Задание владельца — пере-резать эпик ДО кода; implementation intentionally absent until a later owner command."
+  },
+  "window": {
+    "from": "2026-08-23T12:00:00+03:00",
+    "to": "2026-08-23T13:30:00+03:00"
+  },
+  "revisionAt": "2026-08-23T12:45:47.7347378+03:00",
+  "blocks": [
+    {
+      "blockId": "a1-domain-schema-projection",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/assets/ASSETS_SCHEMA.md",
+        "docs/assets/ASSETS_REGISTRY.md",
+        "docs/prompts/ASSETS_CONTAINER_PROMPT.md"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "revisionAt": "2026-08-23T12:45:47.7347378+03:00",
+      "note": "Define asset, receipt, set, holder, photo today, confirmedDate and status as assets-domain schema. Project records to the originals contract instead of inventing new immutable index/history. No second canonicalRef formula, no second registry truth.",
+      "revisionOf": "6d8a863b21cea36b019e2b33a0d5ba9e8e9aead7476c32a28152363dd459e350"
+    },
+    {
+      "blockId": "a2-domain-commands",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/assets.mjs",
+        "scripts/assets.test.mjs",
+        "package.json",
+        "docs/assets/ASSETS_COMMANDS.md"
+      ],
+      "estimate": {
+        "changedLines": 320
+      },
+      "revisionAt": "2026-08-23T12:45:47.7347378+03:00",
+      "note": "Implement assets add/confirm/audit/sync as domain adapters over the shared intake/access/storage contract. confirm requires a photo with today's captured date; audit names RT-9 freshness separately from storage readiness.",
+      "revisionOf": "7f31efe10f9e5b81d61780dbdc1a76d7eb2c00125d7b4b282e9b77d20559dc01"
+    },
+    {
+      "blockId": "a3-panel-api-binding",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "packages/background-office/src/modules/assets/**",
+        "packages/background-cabinet/src/modules/assets/**",
+        "docs/deploy/ASSETS_SENSITIVE_API.md"
+      ],
+      "estimate": {
+        "changedLines": 300
+      },
+      "revisionAt": "2026-08-23T12:45:47.7347378+03:00",
+      "note": "Wire sensitive asset material only through Panel-authorized API/storage. No assets-specific authorizer; no overwrite of sensitive records. If static originals readiness is absent, this block must stop at an explicit owner price instead of choosing a bypass.",
+      "revisionOf": "33ae3d1766895d82f81868ed062406f43daed265adb44ec61c50e6f4dbafe0e3"
+    },
+    {
+      "blockId": "a4-domain-teeth-and-field-acceptance",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "docs/assets/ASSETS_TEETH.md",
+        "docs/field/assets-scarlett-solo-acceptance.md",
+        "scripts/assets-domain-teeth.test.mjs"
+      ],
+      "estimate": {
+        "changedLines": 180
+      },
+      "revisionAt": "2026-08-23T12:45:47.7347378+03:00",
+      "note": "Teeth: no receipt means no set; holder is required; confirm cannot stamp a non-today photo; fact-to-receipt drift is named. Field acceptance is Scarlett Solo with receipt and today's photo, after owner readiness decision.",
+      "revisionOf": "33c57fb7ef1e425cfa4eb5afd1af61b0b609efed6210a22c40ef936369456af3"
+    }
+  ],
+  "//covered-by-originals": "R2 covers immutable id/sha256/bytes/registry/supersedes/canonicalRef; R3 covers Panel authority and fail-closed proxy; R4 covers standard/sensitive storage, overwrite ban, backup/restore, retention and direct bypass denial; R7 keeps cutover NO-GO until gates pass.",
+  "//assets-own": "Receipt-bound set, holder by nature, photo confirmation with today's date, RT-9 freshness, set pin = receipt and Scarlett Solo field acceptance.",
+  "//owner-readiness": "Owner must decide whether assets waits for static originals readiness or starts as a domain-layer without storage/cutover. This plan does not choose that for the owner.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-23T12:45:47.7347378+03:00",
+    "digest": "17b4a198dc8179c99ea4d33f9934edae33e8ecf3829a872b3c548ef8138baf37"
+  }
+}

@@ -4552,7 +4552,7 @@
     },
     {
       "id": "assets-container",
-      "title": "Эпик: контейнер имущества — три яруса (git/сервер-БД/Drive), набор от чека, подтверждение датой-сегодня",
+      "title": "Эпик: контейнер имущества как доменный слой над originals-contract — чек, набор, holder, фото-сегодня",
       "promptPath": "docs/prompts/ASSETS_CONTAINER_PROMPT.md",
       "githubIssue": 959,
       "linearId": null,
@@ -4565,7 +4565,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "notes": "",
+      "notes": "Перерезка 2026-08-23 ратифицирована владельцем: immutable index/bytes/history, Panel access и storage/lifecycle покрыты static originals R2/R3/R4; assets-container оставляет домен имущества (чек, набор, holder, фото-сегодня, RT-9, Scarlett Solo acceptance).",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
