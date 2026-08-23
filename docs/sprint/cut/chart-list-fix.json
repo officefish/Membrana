@@ -1,0 +1,61 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "chart-list-fix",
+  "taskId": "chart-list-fix",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-08-23T10:10:00+03:00",
+    "to": "2026-08-23T14:30:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "f1-absolute-peak",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "packages/plugin-handlers/src/chart-list-measure/executor.ts",
+        "packages/plugin-handlers/src/chart-list-measure/executor.test.ts",
+        "packages/plugin-handlers/src/chart-list/selection.ts",
+        "packages/plugin-handlers/src/chart-list/selection.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "note": "Пик становится АБСОЛЮТНЫМ уровнем (dBFS), отдельным от превышения над фоном. Найдено приёмкой: во всех двадцати строках оба числа совпадали, потому что session-metrics считает peakDb той же формулой dbOverFloor(peak, floor). Строка обещала три измерения и давала два. Превышение отвечает «насколько громче фона выборки», абсолютный пик — «насколько громко вообще» и упёрся ли сигнал в потолок. Меры session-metrics НЕ переписываются: абсолютный пик считается здесь, рядом с событием. Зуб обязан требовать, чтобы два числа расходились на материале с непустым фоном."
+    },
+    {
+      "blockId": "f2-honest-labels",
+      "persona": "rodchenko",
+      "context": "rodchenko",
+      "zone": [
+        "packages/background-cabinet/src/modules/journal/selection/measure.adapter.ts",
+        "packages/background-cabinet/src/modules/journal/selection/chart-list.orchestrator.ts",
+        "apps/cabinet/src/plugins/chart-list/ChartListWidget.tsx",
+        "apps/cabinet/src/plugins/chart-list/chartList.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 240
+      },
+      "note": "Подписи перестают врать о материале. Сейчас пишется «запрошено 1301, у остальных звука нет» — неправда: 634 отчёта действительно без звука, но 338 треков СО звуком не прошли порог deltaDb. Три причины считаются и называются раздельно: отчёты без звука, треки без пробы, треки ниже порога над фоном. Здесь же нумерация страниц: сейчас «Стр. 0 из 10», потому что счётчик отдаётся сырым и он нулевой; у журнала рядом «Стр. 1 из 27». Оба дефекта об одном — числа в подписи обязаны совпадать с материалом."
+    },
+    {
+      "blockId": "f3-acceptance-runs-2-3",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "docs/field/chart-list-acceptance-2026-08-22.md",
+        "docs/local-sprint/chart-list-plugin/CLOSURE.md"
+      ],
+      "estimate": {
+        "changedLines": 220
+      },
+      "note": "Приёмка доводится до конца: прогоны 2 и 3 по тому же материалу, меняется только критерий. Проверяются оставшиеся ожидания, записанные ДО опыта: порог отсева minDistanceRatio=0.05 на объёме 200 (displaced у первых строк — единицы вытесняют десятки?) и обязанность «похожести на дрон» поднять шлифмашинку и сирену. Плюс четвёртая находка первого прогона: четыре трека ровно +39.1 — подозрение на клиппинг, проверяемое только после f1. Собака и гул машин числами не решаются: ждут слуха владельца, который сортирует материал по датасетам."
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-23T10:18:00+03:00",
+    "digest": "e53c7660d23f1633b1d7fd4b629a0a946d1aaf6ad134fd32ac5d36af1ce70f44"
+  }
+}
