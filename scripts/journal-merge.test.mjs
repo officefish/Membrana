@@ -157,7 +157,7 @@ function repo() {
 }
 
 test('ПРАВИЛО ЖИВЬЁМ: два расходящихся дописывания сливаются без конфликта и без потерь', () => {
-  const { root, git, write, read, cleanup } = repo();
+  const { git, write, read, cleanup } = repo();
   try {
     const J = 'docs/sprint/trail/спринт.jsonl';
     write(J, '{"traceId":"tr-1"}\n{"traceId":"tr-2"}\n');
@@ -180,7 +180,7 @@ test('ПРАВИЛО ЖИВЬЁМ: два расходящихся дописы�
 });
 
 test('ПРАВИЛО ЖИВЬЁМ: файл вне класса конфликтует как раньше — правило не расползлось', () => {
-  const { root, git, write, read, cleanup } = repo();
+  const { git, write, read, cleanup } = repo();
   try {
     write('docs/state.json', '{"состояние":"снимок"}\n');
     write('docs/tasks-snapshot.jsonl', '{"snapshot":1}\n');
@@ -203,7 +203,7 @@ test('ПРАВИЛО ЖИВЬЁМ: файл вне класса конфликт
 });
 
 test('ПРАВИЛО ЖИВЬЁМ: фикстура и ловушка имени под союз не идут', () => {
-  const { root, git, write, cleanup } = repo();
+  const { git, write, cleanup } = repo();
   try {
     write('scripts/fixtures/f.jsonl', '{"traceId":"fx"}\n');
     write('docs/trailer/не-журнал.jsonl', '{"id":"x"}\n');
