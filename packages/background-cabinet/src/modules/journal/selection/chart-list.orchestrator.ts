@@ -20,10 +20,31 @@ import {
 import { JournalPluginHostService } from '../plugin-host/journal-plugin-host.service';
 import { ChartListSelectionService, type StoredSelection } from './selection.service';
 
+/**
+ * Из чего сложилось «измерено N из M» — по родам записей.
+ *
+ * НЕ СОХРАНЯЕТСЯ в базе намеренно: это сведение о ПРОГОНЕ, а не о выборке. Выборка живёт своими
+ * `asked`/`measured`; разбор нужен человеку в ту минуту, когда он спрашивает «почему из тысячи
+ * трёхсот измерено триста двадцать девять». Ради него заводить столбцы и миграцию — дорого.
+ *
+ * ПОЧЕМУ ТРЕКИ НЕ РАЗДЕЛЕНЫ ДАЛЬШЕ. «Без пробы» и «тише порога над фоном» — разные причины, но
+ * различить их здесь нечем: порт измерения отдаёт кандидатов, а не отчёт о выбывших. Сказать
+ * «либо то, либо это» честно; назвать одно из двух наугад — нет.
+ */
+export interface GenerateBreakdown {
+  readonly tracks: number;
+  readonly reports: number;
+  readonly measured: number;
+  /** Треки, до кандидатов не дошедшие: без пробы либо тише порога. */
+  readonly unmeasuredTracks: number;
+}
+
 /** Что вернулось человеку: выборка либо названная причина отказа. */
 export interface GenerateOutcome {
   readonly selection: StoredSelection | null;
   readonly refusal: { readonly reason: string; readonly detail: string } | null;
+  /** Разбор состава прогона; `null` — при отказе, когда разбирать нечего. */
+  readonly breakdown: GenerateBreakdown | null;
 }
 
 export interface GenerateInput {
@@ -48,7 +69,7 @@ export class ChartListOrchestrator {
   async generate(input: GenerateInput): Promise<GenerateOutcome> {
     if (input.entryIds.length === 0) {
       // Дом отверг бы это причиной empty-task, но платить за круг ради известного ответа незачем.
-      return { selection: null, refusal: { reason: 'empty-task', detail: 'в задании ноль записей' } };
+      return { selection: null, refusal: { reason: 'empty-task', detail: 'в задании ноль записей' }, breakdown: null };
     }
 
     const runId = this.newRunId();
@@ -77,7 +98,7 @@ export class ChartListOrchestrator {
     );
 
     if (!outcome.verdict.ok) {
-      return { selection: null, refusal: { reason: outcome.verdict.reason, detail: 'задание отвергнуто домом' } };
+      return { selection: null, refusal: { reason: outcome.verdict.reason, detail: 'задание отвергнуто домом' }, breakdown: null };
     }
 
     const result = outcome.result as
@@ -85,10 +106,10 @@ export class ChartListOrchestrator {
       | null;
 
     if (!result?.selection) {
-      return { selection: null, refusal: { reason: 'no-result', detail: 'плагин не вернул выборку' } };
+      return { selection: null, refusal: { reason: 'no-result', detail: 'плагин не вернул выборку' }, breakdown: null };
     }
     if (result.selection.refusal) {
-      return { selection: null, refusal: result.selection.refusal };
+      return { selection: null, refusal: result.selection.refusal, breakdown: null };
     }
 
     const picks = result.selection.picks as ReadonlyArray<{
@@ -117,6 +138,17 @@ export class ChartListOrchestrator {
       })),
     });
 
-    return { selection, refusal: null };
+    const tracks = outcome.kinds?.tracks ?? 0;
+    const measured = result.measured ?? picks.length;
+    return {
+      selection,
+      refusal: null,
+      breakdown: {
+        tracks,
+        reports: outcome.kinds?.reports ?? 0,
+        measured,
+        unmeasuredTracks: Math.max(0, tracks - measured),
+      },
+    };
   }
 }
