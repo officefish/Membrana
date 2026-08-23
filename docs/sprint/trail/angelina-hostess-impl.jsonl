@@ -4,3 +4,5 @@
 {"traceId":"tr-sentence-dynin-review","blockId":"void-sentence-source","kind":"review_pass","subject":"dynin","at":"2026-08-23T09:52:00+03:00","ref":"scripts/void-sentence.test.mjs"}
 {"traceId":"tr-gcport-ozhegov-run","blockId":"gc-port","kind":"context_run","subject":"ozhegov","at":"2026-08-23T09:55:00+03:00","ref":"docs/discussions/cut-angelina-hostess-impl-ozhegov.md"}
 {"traceId":"tr-gcport-ozhegov-review","blockId":"gc-port","kind":"review_pass","subject":"ozhegov","at":"2026-08-23T10:12:00+03:00","ref":"scripts/gc.test.mjs"}
+{"traceId":"tr-barriers-kuryokhin-run","blockId":"void-barriers","kind":"context_run","subject":"kuryokhin","at":"2026-08-23T10:20:00+03:00","ref":"docs/discussions/cut-angelina-hostess-impl-ozhegov.md"}
+{"traceId":"tr-barriers-kuryokhin-review","blockId":"void-barriers","kind":"review_pass","subject":"kuryokhin","at":"2026-08-23T10:34:00+03:00","ref":"scripts/verify-void-barriers.test.mjs"}
