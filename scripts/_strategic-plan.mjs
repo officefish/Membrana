@@ -31,6 +31,8 @@ import {
 import { buildDriftSectionFromDisk } from './lib/drift-digest-section.mjs';
 import { headRevision } from './lib/git-day-context.mjs';
 import { formatInsightsWeeklyBlock } from './lib/insight-ritual.mjs';
+import { recentVoidIds } from './lib/gc-void.mjs';
+import { readVoidIndex } from './lib/void-index.mjs';
 
 const MAX_BUFFER = 12 * 1024 * 1024;
 
@@ -320,7 +322,15 @@ export async function runStrategicPlan(options) {
     sections.push(buildDetectionPlanningContextSection({ fftMetricsDoc }), '');
   }
   if (options.includeInsights) {
-    const insightsBlock = formatInsightsWeeklyBlock(process.cwd(), 6);
+    // recent_void_penalty (вердикт M5-GC): приговорённая идея возвращается не тем же именем,
+    // а новым — и генератор поднял бы её в план как свежую. Индекс кладбища читает ВЫЗОВ, а не
+    // генератор: связь односторонняя, цикла план → void → план нет.
+    const { index: voidIndex, undated } = readVoidIndex(process.cwd());
+    const today = new Date().toISOString().slice(0, 10);
+    if (undated.length > 0) {
+      console.warn(`⚠ штраф свежести: могилы без даты приговора не штрафуются — ${undated.join(', ')}`);
+    }
+    const insightsBlock = formatInsightsWeeklyBlock(process.cwd(), 6, recentVoidIds(voidIndex, today));
     if (insightsBlock) {
       sections.push(
         '---',
