@@ -117,6 +117,52 @@ describe('критерий «разнообразие спектральной �
   });
 });
 
+describe('пары «оставленный / вытесненный»', () => {
+  it('вытесненные приходят АДРЕСАМИ, а не только счётчиком — иначе порог нечем проверить слухом', () => {
+    const s = selectChartList(clones(8), 'spectral-variety', 20);
+    expect(s.displacements).toHaveLength(1);
+    expect(s.displacements[0]?.keeperRank).toBe(1);
+    expect(s.displacements[0]?.displaced).toHaveLength(7);
+    for (const d of s.displacements[0]!.displaced) {
+      expect(typeof d.entryId).toBe('string');
+      expect(d.entryId.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('счётчик и число адресов сходятся — два способа сказать одно не расходятся', () => {
+    const s = selectChartList(clones(8), 'spectral-variety', 20);
+    const byRank = new Map(s.displacements.map((d) => [d.keeperRank, d.displaced.length]));
+    for (const p of s.picks) expect(byRank.get(p.rank) ?? 0).toBe(p.displaced);
+  });
+
+  it('вытесненный несёт ВРЕМЯ — соседство по времени и есть та слепота, которую проверяют слухом', () => {
+    const s = selectChartList(clones(8), 'spectral-variety', 20);
+    for (const d of s.displacements[0]!.displaced) expect(Number.isFinite(d.at)).toBe(true);
+  });
+
+  it('оставленного среди вытесненных НЕТ — иначе строка вытеснила бы сама себя', () => {
+    const s = selectChartList(clones(8), 'spectral-variety', 20);
+    const kept = new Set(s.picks.map((p) => p.entryId));
+    for (const d of s.displacements.flatMap((x) => x.displaced)) {
+      expect(kept.has(d.entryId)).toBe(false);
+    }
+  });
+
+  it('на разнородном материале пар нет — ноль вытесненных законен', () => {
+    expect(selectChartList(varied(6), 'spectral-variety', 20).displacements).toHaveLength(0);
+  });
+
+  it('у критериев БЕЗ отсева пар нет по природе — там вытеснять некому', () => {
+    expect(selectChartList(clones(8), 'loudness-over-floor', 20).displacements).toHaveLength(0);
+    expect(selectChartList(clones(8), 'drone-likeness', 20).displacements).toHaveLength(0);
+  });
+
+  it('отказ несёт пустые пары, а не отсутствующее поле — форма ответа одна на все исходы', () => {
+    expect(selectChartList([], 'spectral-variety', 20).displacements).toEqual([]);
+    expect(selectChartList(clones(4), 'нет-такого', 20).displacements).toEqual([]);
+  });
+});
+
 describe('критерий «близость к портрету дрона»', () => {
   it('тональное впереди широкополосного — портрет, а не громкость', () => {
     const s = selectChartList(varied(6), 'drone-likeness', 20);

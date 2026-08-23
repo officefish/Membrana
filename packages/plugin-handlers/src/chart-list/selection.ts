@@ -77,6 +77,31 @@ export interface ChartListPick {
   readonly displaced: number;
 }
 
+/**
+ * Вытесненный как похожий — АДРЕСОМ, а не счётчиком.
+ *
+ * До 23.08 отсев отдавал только число «скольких вытеснил», а адрес выбрасывался явно (`void dropped`).
+ * Число говорит, что отсев работал; оно не говорит, ПРАВ ли он был. Проверить порог можно лишь одним
+ * способом — послушать оставленного и вытесненного подряд, а для этого нужен адрес.
+ */
+export interface ChartListDisplaced {
+  readonly entryId: string;
+  readonly sampleId: string;
+  /** Время записи: соседство по времени — первое, что слышно, и первое, чего отсев НЕ видит. */
+  readonly at: number;
+  readonly deltaDb: number;
+  readonly peakDb: number;
+  readonly structure: EventStructure;
+  readonly flatness: number;
+}
+
+/** Кто кого вытеснил. Одна запись на оставленного, вытеснившего хотя бы одного. */
+export interface ChartListDisplacement {
+  readonly keeperRank: number;
+  readonly keeperEntryId: string;
+  readonly displaced: readonly ChartListDisplaced[];
+}
+
 export type ChartListRefusalReason = 'no-candidates' | 'unknown-criterion' | 'unknown-volume';
 
 export interface ChartListRefusal {
@@ -90,6 +115,16 @@ export interface ChartListSelection {
   readonly picks: readonly ChartListPick[];
   /** Скольких не хватило до заказанного объёма. Ноль — набралось полностью. */
   readonly shortfall: number;
+  /**
+   * Кто кого вытеснил как похожего — адресами, чтобы порог можно было проверить слухом.
+   *
+   * НЕ СОХРАНЯЕТСЯ. Это свойство ПРОГОНА, а не выборки: восстановленная выборка пар не покажет, и
+   * это честно — хранится решение отсева, а не его черновик. Колонка в базе потребовала бы миграции
+   * ради диагностики, которая нужна на свежем прогоне.
+   *
+   * Пусто у всех критериев, кроме «разнообразия звука»: отсев работает только там.
+   */
+  readonly displacements: readonly ChartListDisplacement[];
   readonly refusal: ChartListRefusal | null;
 }
 
@@ -116,6 +151,18 @@ const byDeltaDbDesc = (a: ChartListCandidate, b: ChartListCandidate): number => 
 const byTonalityAsc = (a: ChartListCandidate, b: ChartListCandidate): number =>
   a.flatness - b.flatness || b.deltaDb - a.deltaDb;
 
+function displacedOf(c: ChartListCandidate): ChartListDisplaced {
+  return {
+    entryId: c.entryId,
+    sampleId: c.sampleId,
+    at: c.at,
+    deltaDb: c.deltaDb,
+    peakDb: c.peakDb,
+    structure: c.structure,
+    flatness: c.flatness,
+  };
+}
+
 function pickOf(c: ChartListCandidate, rank: number, displaced: number): ChartListPick {
   return {
     entryId: c.entryId,
@@ -140,7 +187,7 @@ function selectByVariety(
   sorted: readonly ChartListCandidate[],
   volume: number,
   tuning: ChartListTuning,
-): ChartListPick[] {
+): { picks: ChartListPick[]; displacements: ChartListDisplacement[] } {
   const vectors = normalizeFeatures(
     sorted.map((c) => c.features),
     sorted.map((c) => c.durationSec),
@@ -148,12 +195,28 @@ function selectByVariety(
   const order = sorted.map((_, i) => i);
   const { kept, droppedAs } = dedupeGreedy(vectors, order, tuning.minDistanceRatio, volume);
 
-  const displacedBy = new Map<number, number>();
+  // Адрес вытесненного СОХРАНЯЕТСЯ, а не сворачивается в счёт: см. `ChartListDisplaced`.
+  const displacedBy = new Map<number, number[]>();
   for (const [dropped, keeper] of droppedAs) {
-    void dropped;
-    displacedBy.set(keeper, (displacedBy.get(keeper) ?? 0) + 1);
+    const list = displacedBy.get(keeper);
+    if (list) list.push(dropped);
+    else displacedBy.set(keeper, [dropped]);
   }
-  return kept.map((idx, rank) => pickOf(sorted[idx]!, rank + 1, displacedBy.get(idx) ?? 0));
+  const picks = kept.map((idx, rank) =>
+    pickOf(sorted[idx]!, rank + 1, displacedBy.get(idx)?.length ?? 0),
+  );
+  const displacements = kept.flatMap<ChartListDisplacement>((idx, rank) => {
+    const dropped = displacedBy.get(idx);
+    if (!dropped || dropped.length === 0) return [];
+    return [
+      {
+        keeperRank: rank + 1,
+        keeperEntryId: sorted[idx]!.entryId,
+        displaced: dropped.map((d) => displacedOf(sorted[d]!)),
+      },
+    ];
+  });
+  return { picks, displacements };
 }
 
 /**
@@ -177,6 +240,7 @@ export function selectChartList(
       volume: safeVolume,
       picks: [],
       shortfall: safeVolume,
+      displacements: [],
       refusal: refuse('unknown-criterion', `критерий «${criterion}» вне закрытой тройки`),
     };
   }
@@ -186,6 +250,7 @@ export function selectChartList(
       volume: safeVolume,
       picks: [],
       shortfall: safeVolume,
+      displacements: [],
       refusal: refuse('unknown-volume', `объём ${volume} вне списка 200/100/60/20`),
     };
   }
@@ -195,13 +260,21 @@ export function selectChartList(
       volume: safeVolume,
       picks: [],
       shortfall: safeVolume,
+      displacements: [],
       refusal: refuse('no-candidates', 'измеренных кандидатов нет — отбирать не из чего'),
     };
   }
 
   let picks: ChartListPick[];
+  // Пусто у всех критериев, кроме отсева: у «громче фона» и «похожести на дрон» вытеснять некому —
+  // они режут отсортированный список. Пустые пары там не пропажа, а отсутствие события.
+  let displacements: ChartListDisplacement[] = [];
   if (criterion === 'spectral-variety') {
-    picks = selectByVariety([...candidates].sort(byDeltaDbDesc), safeVolume, tuning);
+    ({ picks, displacements } = selectByVariety(
+      [...candidates].sort(byDeltaDbDesc),
+      safeVolume,
+      tuning,
+    ));
   } else {
     const sorted = [...candidates].sort(
       criterion === 'drone-likeness' ? byTonalityAsc : byDeltaDbDesc,
@@ -214,6 +287,7 @@ export function selectChartList(
     volume: safeVolume,
     picks,
     shortfall: shortfallOf(picks.length, safeVolume),
+    displacements,
     refusal: null,
   };
 }

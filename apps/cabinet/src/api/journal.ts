@@ -179,11 +179,29 @@ export interface ChartListSelectionDto {
   readonly picks: readonly ChartListPickDto[];
 }
 
+export interface ChartListDisplacedDto {
+  readonly entryId: string;
+  readonly sampleId: string;
+  readonly at: number;
+  readonly deltaDb: number;
+  readonly peakDb: number;
+  readonly structure: string;
+  readonly flatness: number;
+}
+
+export interface ChartListDisplacementDto {
+  readonly keeperRank: number;
+  readonly keeperEntryId: string;
+  readonly displaced: readonly ChartListDisplacedDto[];
+}
+
 export interface ChartListBreakdownDto {
   readonly tracks: number;
   readonly reports: number;
   readonly measured: number;
   readonly unmeasuredTracks: number;
+  /** Кто кого вытеснил как похожего. Пусто, когда отсев не работал либо никого не вытеснил. */
+  readonly displacements: readonly ChartListDisplacementDto[];
 }
 
 export interface ChartListGenerateResponse {

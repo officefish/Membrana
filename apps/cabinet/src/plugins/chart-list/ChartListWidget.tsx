@@ -13,6 +13,13 @@
  * выборки может не найти своей карточки: отобрано по всему журналу, а на странице — текущая
  * страница с фильтром. Это не рассинхрон, а разные множества по построению.
  *
+ * ВЫТЕСНЕННЫЕ ЛЕЖАТ ПОД ТЕМ, КТО ИХ ВЫТЕСНИЛ, и раскрываются по требованию. Так порог отсева
+ * проверяется слухом: оставленный и вытесненный слушаются подряд, одной и той же строкой. Свёрнуты
+ * по умолчанию — выборка остаётся списком отобранного, а не разбором работы отсева.
+ *
+ * У ВОССТАНОВЛЕННОЙ ВЫБОРКИ ИХ НЕТ, и вместо раскрытия остаётся прежний счётчик. То же правило, по
+ * которому подпись состава без разбора не называет причин: показывать нечего — не притворяться.
+ *
  * ЗАПИСЬ, ВЫПАВШАЯ ИЗ ЗАГРУЖЕННОЙ ЛЕНТЫ, НЕ ПРОПАДАЕТ. У неё показывается измеренное и честная
  * строка «записи нет на загруженной странице». Молча укоротить список значило бы соврать о числе
  * отобранного.
@@ -25,11 +32,14 @@ import { LiveJournalPager } from '@/components/journal/LiveJournalPager';
 import {
   CHART_LIST_PAGE_SIZE,
   compositionLine,
+  displacedOfRank,
   formatDeltaDb,
+  joinDisplaced,
   joinWithItems,
   pageCount,
   pagePicks,
   structureLabel,
+  type ChartListDisplacedView,
   type ChartListState,
 } from './chartList';
 
@@ -41,6 +51,60 @@ export interface ChartListWidgetProps {
   readonly onPage: (page: number) => void;
   readonly onPlay: (item: LiveJournalItem) => Promise<void>;
   readonly onExportBlob: (item: LiveJournalItem) => Promise<Blob>;
+}
+
+/**
+ * Вытесненные как похожие — под своим победителем.
+ *
+ * Пусто — не рисуется вовсе: у восстановленной выборки пар нет, у критериев без отсева их нет по
+ * природе, и пустой раскрывающийся блок в обоих случаях обещал бы содержимое, которого не будет.
+ */
+function DisplacedList({
+  displaced,
+  items,
+  onPlay,
+  onExportBlob,
+}: {
+  readonly displaced: readonly ChartListDisplacedView[];
+  readonly items: readonly LiveJournalItem[];
+  readonly onPlay: (item: LiveJournalItem) => Promise<void>;
+  readonly onExportBlob: (item: LiveJournalItem) => Promise<Blob>;
+}) {
+  if (displaced.length === 0) return null;
+  const joined = joinDisplaced(displaced, items);
+
+  return (
+    <details className="mt-2 ml-4 border-l border-base-300/60 pl-3">
+      <summary className="cursor-pointer text-xs text-base-content/55">
+        Вытеснено как похожие: {displaced.length} — послушать подряд
+      </summary>
+      <ul className="mt-2 space-y-3">
+        {joined.map(({ row, item }) => (
+          <li key={row.entryId}>
+            <div className="mb-1 flex flex-wrap items-baseline gap-2 text-xs text-base-content/50">
+              <span>{formatDeltaDb(row.deltaDb)}</span>
+              <span>
+                {structureLabel(row.structure)} ({row.flatness.toFixed(3)})
+              </span>
+              <span>пик {row.peakDb.toFixed(1)} dBFS</span>
+            </div>
+            {item ? (
+              <CabinetLiveJournalItemRow
+                item={item}
+                linkedReportCount={0}
+                onPlay={() => onPlay(item)}
+                onExportBlob={() => onExportBlob(item)}
+              />
+            ) : (
+              <p className="text-xs text-base-content/45">
+                Записи нет на загруженной странице журнала — измеренное показано, карточка не найдена.
+              </p>
+            )}
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
 }
 
 export function ChartListWidget({
@@ -118,6 +182,13 @@ export function ChartListWidget({
                     Записи нет на загруженной странице журнала — измеренное показано, карточка не найдена.
                   </p>
                 )}
+
+                <DisplacedList
+                  displaced={displacedOfRank(state.breakdown, pick.rank)}
+                  items={items}
+                  onPlay={onPlay}
+                  onExportBlob={onExportBlob}
+                />
               </li>
             ))}
           </ul>
