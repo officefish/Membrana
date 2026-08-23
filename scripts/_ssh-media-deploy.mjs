@@ -108,7 +108,15 @@ echo "=== compose ps ==="
 ./deploy/media-stack.sh ps
 
 echo "=== API token (VITE_MEDIA_API_TOKEN) ==="
-grep '^API_INTERNAL_TOKEN=' /etc/membrana/media.env
+# ЗНАЧЕНИЕ НЕ ПЕЧАТАЕМ. Процедура deploy-media-vps (Р3 ADR-0023) прямо требует: секреты и
+# env-значения в журнал не пишутся. Прежняя строка делала grep токена целиком, и 23.08 он
+# уехал в переписку из вывода выкатки — токен пришлось считать скомпрометированным.
+# Выкатке нужно знать, ЗАДАН ли токен, а не какой он.
+if grep -qE '^API_INTERNAL_TOKEN=.+' /etc/membrana/media.env; then
+  echo "API_INTERNAL_TOKEN: задан, длина $(grep '^API_INTERNAL_TOKEN=' /etc/membrana/media.env | cut -d= -f2- | tr -d '\\n' | wc -c) символов"
+else
+  echo "API_INTERNAL_TOKEN: НЕ ЗАДАН — кабинет и порты в media не пройдут"
+fi
 `;
 
 function runDeploy() {
