@@ -1,0 +1,2 @@
+{"traceId":"tr-entry-ozhegov-run","blockId":"entry-single-predicate","kind":"context_run","subject":"ozhegov","at":"2026-08-23T09:12:00+03:00","ref":"docs/discussions/cut-angelina-hostess-impl-ozhegov.md"}
+{"traceId":"tr-entry-ozhegov-review","blockId":"entry-single-predicate","kind":"review_pass","subject":"ozhegov","at":"2026-08-23T09:34:00+03:00","ref":"scripts/morning-entry.test.mjs"}
