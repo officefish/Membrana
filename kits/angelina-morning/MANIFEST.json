@@ -52,7 +52,7 @@
     "scripts/lib/main-day-issue-paths.mjs": "57ecbd9568cbe18572500744d6aa5d41416122d0",
     "scripts/lib/main-day-magistral-freshness.mjs": "67bb1b52e63c5ad35c136177ea700e8ae6ac2765",
     "scripts/lib/main-day-probe.mjs": "1a32d350dfe6e06e54b8c032a6a689c4ec37a8d0",
-    "scripts/lib/morning-gates.mjs": "e6a889d8ed606c7f662e82e7d66d806d097aff70",
+    "scripts/lib/morning-gates.mjs": "ccacf0dfd74aeb696362313cdd3c08ddf208fabc",
     "scripts/lib/morning-wiring.mjs": "a472a1902236f5a80096094b498080ac0d2ea945",
     "scripts/lib/night-report-gate.mjs": "95fd36d847e521aa0e1252018a0c30ec449ca8ce",
     "scripts/lib/office-token.mjs": "b3203a0f7649d34f5eed3f61c0d0930bc0c4eeeb",
