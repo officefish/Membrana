@@ -4,7 +4,8 @@
  *
  *   yarn morning:gate status                                — где стоим, чего ждём
  *   yarn morning:gate freeze --top a,b,c                    — заморозить снимок топ-3
- *   yarn morning:gate magistral --choose <id>               — owner-choice магистрали
+ *   yarn morning:gate magistral --choose <id>               — owner-choice из снимка
+ *   yarn morning:gate magistral --choose <id> --author human — ручная чеканка ВНЕ снимка (#2083)
  *   yarn morning:gate swallow --skeleton                    — шаблон-зеркало ласточки (Ф2 #788)
  *   yarn morning:gate swallow --draft <file>                — зафиксировать показанный черновик (гейт зеркала/чистоты)
  *   yarn morning:gate swallow --ack                         — явное «ок» владельца
@@ -18,9 +19,11 @@ import { spawnSync } from 'node:child_process';
 
 import {
   canSend,
+  chooseMagistralManually,
   draftDigestOf,
   freezeTopThree,
   magistralChosen,
+  manualChoiceIntact,
   magistralMoment,
   setMagistralMoment,
   setSwallowMoment,
@@ -74,11 +77,38 @@ if (cmd === 'status' || !cmd) {
   }
 } else if (cmd === 'magistral') {
   const choice = arg('choose');
+  const author = arg('author');
   if (!choice) {
     console.error('нужен --choose <id>');
     process.exitCode = 2;
+  } else if (author && author !== 'human') {
+    console.error(`--author принимает только «human» (получено «${author}»): машинного автора у чеканки не бывает`);
+    process.exitCode = 2;
+  } else if (author === 'human') {
+    // Дверь ручной чеканки (#2083). Снимок НЕ трогается: он остаётся вещдоком генератора,
+    // а человеческий выбор живёт своими полями (magistralAuthor / magistralManual).
+    Object.assign(state, chooseMagistralManually(state, choice, today));
+    const intact = manualChoiceIntact(state);
+    if (!intact.ok) {
+      console.error(`✖ ${intact.reason}`);
+      process.exitCode = 3;
+    } else {
+      save(state);
+      const inSnap = state.magistralManual?.inSnapshot;
+      console.log(`✓ магистраль зачеканена РУКОЙ владельца (author=human): ${choice}`);
+      console.log(
+        `  снимок машины не тронут: ${(state.magistralOptions ?? []).join(' · ') || '(снимка нет)'}` +
+          (inSnap ? ' — выбор входит в него' : ' — выбор ВНЕ него, так и записано'),
+      );
+    }
   } else {
     state.magistral = choice;
+    state.magistralAuthor = 'snapshot';
+    // Запись о ручной чеканке смывается вместе с выбором, который её породил (P2 ревью
+    // #2085): иначе в состоянии остаётся `magistralManual` от прошлого дня и вещдок
+    // утверждает чеканку, которой сегодня не было. На предикат она не влияет, но читают
+    // состояние и глазами.
+    delete state.magistralManual;
     // Р1/Р3 ADR-0024: выбор магистрали ставит СВОЙ момент и не трогает день ласточки.
     // Прежняя строка поднимала общий `state.day`, если его не было, — то есть писала
     // в чужой субъект ради своей свежести.
