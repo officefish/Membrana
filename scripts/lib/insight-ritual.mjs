@@ -415,9 +415,15 @@ export function collectInsightsForWeeklyPlan(repoRoot, minWeight = 6, recentlyVo
   );
 }
 
-/** @param {string} repoRoot @param {number} minWeight */
-export function formatInsightsWeeklyBlock(repoRoot, minWeight = 6) {
-  const items = collectInsightsForWeeklyPlan(repoRoot, minWeight);
+/**
+ * @param {string} repoRoot
+ * @param {number} minWeight
+ * @param {Set<string>|Iterable<string>} [recentlyVoided] свежеотвергнутые id — ПРОБРАСЫВАЮТСЯ
+ *   в отбор. Без проброса штраф оставался бы украшением: параметр у отбора есть, а живой
+ *   вызов идёт через эту обёртку (P1 ревью #2091).
+ */
+export function formatInsightsWeeklyBlock(repoRoot, minWeight = 6, recentlyVoided = null) {
+  const items = collectInsightsForWeeklyPlan(repoRoot, minWeight, recentlyVoided);
   if (items.length === 0) {
     return '';
   }

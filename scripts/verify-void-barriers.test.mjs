@@ -11,7 +11,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { recentVoidIds } from './lib/gc-void.mjs';
-import { collectInsightsForWeeklyPlan } from './lib/insight-ritual.mjs';
+import { collectInsightsForWeeklyPlan, formatInsightsWeeklyBlock } from './lib/insight-ritual.mjs';
+import { readVoidIndex } from './lib/void-index.mjs';
 import { checkEpitaphs, checkIndex, checkNoLiveLinks, listGraves, verifyBarriers } from './verify-void-barriers.mjs';
 
 const EPITAPH = [
@@ -163,4 +164,66 @@ test('recent_void_penalty ДЕЙСТВУЕТ в генераторе: приго
     ], '2026-08-23')).map((i) => i.id);
     assert.deepEqual(истёк.sort(), ['insight-живой', 'insight-мёртвый'], 'через 90 дней штраф отпускает');
   } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+// ── индекс кладбища и ПРОВОДКА штрафа ─────────────────────────────────────────
+
+test('индекс кладбища берёт дату приговора из эпитафии, а не угадывает', () => {
+  const { root, cleanup } = tree();
+  try {
+    const { index, undated } = readVoidIndex(root);
+    assert.deepEqual(index, [{ id: 'insight-мёртвый', rejectedAt: '2026-08-23' }]);
+    assert.deepEqual(undated, [], 'дата читается — могила не в списке недатированных');
+  } finally { cleanup(); }
+});
+
+test('могила без читаемой даты штрафуется БЕССРОЧНО — fail-closed, и названа вслух', () => {
+  // Первая редакция этого зуба утверждала обратное («без даты не штрафуем») и покраснела:
+  // ошибка была в зубе и в моей записи о поведении, а не в ядре. Приговор состоялся, срок
+  // его истечения неизвестен — отпустить идею по незнанию значит вернуть в план отвергнутое.
+  const { root, cleanup } = tree({ epitaph: false });
+  try {
+    const { index, undated } = readVoidIndex(root);
+    assert.equal(index[0].rejectedAt, null, 'дата не выдумана');
+    assert.deepEqual(undated, ['insight-мёртвый'], 'пропуск виден вызывающему — дату надо дописать');
+    assert.equal(recentVoidIds(index, '2026-08-23').has('insight-мёртвый'), true, 'штраф держится');
+    assert.equal(recentVoidIds(index, '2030-01-01').has('insight-мёртвый'), true, 'и не истекает сам собой');
+  } finally { cleanup(); }
+});
+
+test('ПРОВОДКА: обёртка недельного блока пробрасывает штраф в отбор', () => {
+  // Дефект, найденный ревью #2091: параметр у отбора был, а живой вызов шёл через обёртку,
+  // которая его не пробрасывала — механизм был украшением. Зуб держит именно ПУТЬ вызова.
+  const root = mkdtempSync(join(tmpdir(), 'void-wire-'));
+  try {
+    mkdirSync(join(root, 'docs/insights'), { recursive: true });
+    writeFileSync(join(root, 'docs/insights/registry.json'), JSON.stringify({
+      version: 1,
+      updatedAt: null,
+      insights: [
+        { id: 'insight-живой', status: 'adopted', weight: 8, title: 'жив' },
+        { id: 'insight-мёртвый', status: 'adopted', weight: 9, title: 'приговорён' },
+      ],
+    }), 'utf8');
+
+    const без = formatInsightsWeeklyBlock(root, 6);
+    assert.match(без, /insight-мёртвый/u, 'без штрафа приговорённый в блоке есть');
+
+    const со = formatInsightsWeeklyBlock(root, 6, recentVoidIds([
+      { id: 'insight-мёртвый', rejectedAt: '2026-08-01' },
+    ], '2026-08-23'));
+    assert.doesNotMatch(со, /insight-мёртвый/u, 'штраф доходит до блока через обёртку');
+    assert.match(со, /insight-живой/u, 'живой на месте');
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});
+
+test('барьер 3 смотрит и в код: ссылка на могилу из packages/ ловится', () => {
+  const { root, cleanup } = tree();
+  try {
+    mkdirSync(join(root, 'packages/детектор/src'), { recursive: true });
+    writeFileSync(join(root, 'packages/детектор/src/index.ts'), "// подход из docs/void/insight-мёртвый\n", 'utf8');
+    const breaches = verifyBarriers(root).breaches;
+    assert.equal(breaches.length, 1, 'ссылка из кода живее ссылки из доки — её зовут при сборке');
+    assert.match(breaches[0], /packages/u);
+  } finally { cleanup(); }
 });

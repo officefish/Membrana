@@ -133,7 +133,10 @@ function liveTree(repoRoot) {
       else if (/\.(md|mjs|js|ts|json|ya?ml)$/u.test(name)) out.push(rel);
     }
   };
-  for (const top of ['docs', 'scripts', '.cursor']) {
+  // packages/ и apps/ входят намеренно: ссылка на могилу из кода живее, чем из доки —
+  // её зовут при сборке, а не при чтении. Барьер, слепой к половине дерева, стережёт половину
+  // (P2 ревью #2091).
+  for (const top of ['docs', 'scripts', '.cursor', 'packages', 'apps']) {
     const dir = join(repoRoot, top);
     if (existsSync(dir)) walk(dir, top);
   }
