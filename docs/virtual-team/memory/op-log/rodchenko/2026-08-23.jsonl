@@ -1,2 +1,5 @@
 {"ts":"2026-08-23T07:18:16.150Z","persona":"rodchenko","verb":"cloud_query","ref":"rodchenko-2026-08-23T07:18:08.634Z","origin":"ask-persona"}
 {"ts":"2026-08-23T06:37:29.424Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-08-23T14:16:08.777Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-08-23-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-23T14:16:08.777Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-04-static-mmbrn-container-m4-storage","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-23T14:16:08.777Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

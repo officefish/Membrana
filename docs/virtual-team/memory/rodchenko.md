@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14286/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 309 (причины в op-log) -->
+Записей: 50 · бюджет 14379/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 310 (причины в op-log) -->
+
+### 2026-08-23 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** Артефакты дня дают чёткий и верный сигнал: UI-код `journal-home-real` и нарезку экранов журнала **не начинать** до письменного «да» владельца по форме. Это сняло риск самодеятельной вёрстки. Документы дня согласованы — нет противоречий между планом и […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-23.md#reply-1`
 
 ### 2026-08-22 · позиция · team-evening-feedback
 
@@ -301,9 +307,3 @@
 > Видимость полей разнесена до ответа API: `sensitive.reason` и `location.kind` входят в metadata, `location.ref` выдаётся только действием `read-ref`, байты — только `read-bytes`. _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
-
-> M4 назначает наблюдаемые значения и вещдоки, но не UI, цвет, текст статуса, endpoint или download flow. Любое представление этих метрик остаётся предметом M5-M6. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`

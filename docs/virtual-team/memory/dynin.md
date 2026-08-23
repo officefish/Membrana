@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14254/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 311 (причины в op-log) -->
+Записей: 49 · бюджет 14357/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 312 (причины в op-log) -->
+
+### 2026-08-23 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** MAIN_DAY_ISSUE указал верный приоритет: чистого DSP/FFT в дне нет, и это правильно — день не про алгоритмы, а про контур устройства. CODE_REVIEW корректно отметил отсутствие математических изменений в развёрнутом диффе. Единственная математическая правка — […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-23.md#reply-1`
 
 ### 2026-08-22 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > — Оценка артефактов: MAIN_DAY_ISSUE в §Санитарные корректно опирается на измеренные числа (`dads-lab-report-2026-07-18.md`) и явно запрещает лишние DSP-бенчмарки — инвариант «не удорожать вход без новых данных» соблюдён. Итоги дня: чистых функций сегодня не двигали; данных новых […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
-
-> Порядок ролей полный: `public < ally < operator < owner`. Решение строится одной функцией сравнения ролей, без permission-grant и без снижения роли субъекта. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
