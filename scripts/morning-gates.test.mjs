@@ -340,3 +340,13 @@ test('#2083: ручная чеканка протухает через сутк�
   const state = chooseMagistralManually(frozen(), OUTSIDE, DAY);
   assert.equal(magistralChosen(state, '2026-07-27'), false, 'вчерашняя чеканка сегодня не считается');
 });
+
+test('#2083: выбор из снимка снимает автора-человека — состояние не хранит двух ответов сразу', () => {
+  // Ядро отвечает за поля выбора; смывание записи о чеканке — за прибором (см. morning-gate.mjs).
+  // Здесь фиксируем главное: как только автором снова стала машина, предикат судит по снимку.
+  const manual = chooseMagistralManually(frozen(), OUTSIDE, DAY);
+  const back = { ...manual, magistral: SNAPSHOT[1], magistralAuthor: 'snapshot' };
+  assert.equal(magistralChosen(back, DAY), true, 'кандидат из снимка законен');
+  const outside = { ...manual, magistral: OUTSIDE, magistralAuthor: 'snapshot' };
+  assert.equal(magistralChosen(outside, DAY), false, 'вчерашняя чеканка не легализует id вне снимка сегодня');
+});
