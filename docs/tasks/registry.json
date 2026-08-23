@@ -4565,7 +4565,7 @@
       "supportPersonas": [
         "ozhegov"
       ],
-      "notes": "Перерезка 2026-08-23 ратифицирована владельцем: immutable index/bytes/history, Panel access и storage/lifecycle покрыты static originals R2/R3/R4; assets-container оставляет домен имущества (чек, набор, holder, фото-сегодня, RT-9, Scarlett Solo acceptance).",
+      "notes": "Перерезка 2026-08-23 ратифицирована владельцем: immutable index/bytes/history, Panel access и storage/lifecycle покрыты static originals R2/R3/R4; assets-container оставляет домен имущества (чек, набор, holder, фото-сегодня, RT-9, Scarlett Solo acceptance). Решение владельца 2026-08-23: эпик ждёт готовности originals R7; без storage-less старта и без временного хранилища.",
       "archiveNotes": null,
       "githubIssueClosedAt": null
     },
