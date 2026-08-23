@@ -1,0 +1,58 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "chart-list-polish",
+  "taskId": "chart-list-polish",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "window": {
+    "from": "2026-08-23T08:45:00+03:00",
+    "to": "2026-08-23T14:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "s1-reader-sees-whole-feed",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/background-cabinet/src/modules/journal/journal.service.ts",
+        "packages/background-cabinet/src/modules/journal/plugin-host/journal-entries.reader.ts",
+        "packages/background-cabinet/src/modules/journal/plugin-host/MODULE_INTERFACE.md"
+      ],
+      "estimate": {
+        "changedLines": 200
+      },
+      "note": "Служба получает публичный метод, отдающий склеенную ленту БЕЗ пагинации; читатель зовёт его один раз. Ложная константа '500' удаляется — числа, которое прибор молча заменит своим, в коде быть не должно. Потолок JOURNAL_INTERNAL_FETCH_CAP=5000 остаётся и объявляется в MODULE_INTERFACE.md как честная граница (класс 1): он на порядок выше нынешних 1301, но однажды упрётся. Вариант с обходом курсором отвергнут замером: служба и так держит ленту целиком, обход перечитал бы её 27 раз."
+    },
+    {
+      "blockId": "s2-regression-teeth",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "packages/background-cabinet/src/modules/journal/plugin-host/journal-entries.reader.test.ts",
+        "packages/background-cabinet/src/modules/journal/selection/chain-rehearsal.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 160
+      },
+      "note": "Зуб, который вчера отсутствовал и потому дефект дожил до прода: задание ДЛИННЕЕ одной страницы ленты не отвергается. Проверяется на числах больше страницы (сотни записей), а не на трёх. Отдельный зуб на то, что читатель не режет ленту пределом: подать ленту в 300 записей и потребовать, чтобы вернулись все 300. Без этих двух зубов предел вернут через месяц, и отказ повторится."
+    },
+    {
+      "blockId": "s3-acceptance-on-hour",
+      "persona": "kuryokhin",
+      "context": "kuryokhin",
+      "zone": [
+        "docs/field/chart-list-acceptance-2026-08-22.md",
+        "docs/local-sprint/chart-list-plugin/CLOSURE.md"
+      ],
+      "estimate": {
+        "changedLines": 240
+      },
+      "note": "Боевой прогон по часу 21.08 (устройство 1c04f0bc-…, 667 треков) и сверка по протоколу, написанному ДО опыта. Три ожидания проверяются поимённо: поведение minDistanceRatio=0.05 на объёме 200 (displaced у первых строк); поднимает ли «превышение над фоном» собаку и гул машин — разделение диагнозов, НЕ починка; обязана ли «похожесть на дрон» поднять шлифмашинку и сирену. Кнопку нажимает владелец, сверяю я. Приёмка не называется проведённой до прогона."
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-08-23T08:52:00+03:00",
+    "digest": "ee04bd1dc235073a5b74274f4b01fde839e33ee2615341b6787aedb75f24a7b3"
+  }
+}
