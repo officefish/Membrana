@@ -5,7 +5,7 @@
     "batch-collection-run-contour"
   ],
   "frozenDigest": "d44f3b842ecfccdf4d997cd1756355e89cb19323637ed3089d9fa0e1aaf167f3",
-  "magistral": null,
+  "magistral": "chart-list-prod-polish",
   "swallow": {
     "draftDigest": "84d8b97c87b24cc382f673eb44f9ef51980fc3540046042435d9ead867f90e9b",
     "draftFile": "docs/comms/drafts/swallow-day-2026-08-23.md",
@@ -13,5 +13,12 @@
     "day": "2026-08-23"
   },
   "day": "2026-08-23",
-  "magistralChosenAt": null
+  "magistralChosenAt": "2026-08-23",
+  "magistralAuthor": "human",
+  "magistralManual": {
+    "at": "2026-08-23",
+    "chosen": "chart-list-prod-polish",
+    "snapshotDigest": "d44f3b842ecfccdf4d997cd1756355e89cb19323637ed3089d9fa0e1aaf167f3",
+    "inSnapshot": false
+  }
 }
