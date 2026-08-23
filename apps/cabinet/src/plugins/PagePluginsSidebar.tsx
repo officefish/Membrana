@@ -11,6 +11,10 @@
  * НАСТРОЙКИ ТОЛЬКО ЗДЕСЬ. Канон §3: параметры, которые пользователь меняет руками, живут в
  * сайдбаре и НЕ дублируются в теле страницы. Поэтому `renderSettings` вызывается только тут.
  *
+ * САЙДБАР НЕ УЕЗЖАЕТ (23.08). Прилипает к верху, как левая навигация: прокручивая длинный список
+ * выборки, человек не должен терять переключатели жильцов из виду. Своей полосы прокрутки у него
+ * нет — правило одной полосы на страницу.
+ *
  * ГАЛОЧКА — ЕДИНСТВЕННЫЙ ОРГАН (l1, 23.08). Название жильца было кнопкой показа и кнопкой не
  * выглядело: владелец 22.08 не смог найти показ. Теперь название — просто название, а галочка
  * и включает жильца в доме, и показывает его виджет. Один орган вместо двух, и он видим.
@@ -35,14 +39,17 @@ export function PagePluginsSidebar({ plugins, state, onToggle }: PagePluginsSide
 
   if (plugins.length === 0) {
     return (
-      <aside className="w-full lg:w-64 shrink-0" aria-label="Плагины страницы">
+      <aside className="w-full shrink-0 lg:sticky lg:top-4 lg:w-64 lg:self-start" aria-label="Плагины страницы">
         <p className="text-xs text-base-content/45">У этой страницы пока нет жильцов.</p>
       </aside>
     );
   }
 
   return (
-    <aside className="w-full lg:w-64 shrink-0 space-y-2" aria-label="Плагины страницы">
+    <aside
+      className="w-full shrink-0 space-y-2 lg:sticky lg:top-4 lg:w-64 lg:self-start"
+      aria-label="Плагины страницы"
+    >
       <h2 className="text-sm font-semibold text-base-content/70">Плагины</h2>
       <ul className="space-y-1">
         {plugins.map((plugin) => {
