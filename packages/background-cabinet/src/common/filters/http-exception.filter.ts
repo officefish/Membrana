@@ -44,6 +44,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         .status(HttpStatus.SERVICE_UNAVAILABLE)
         .header('Retry-After', String(exception.retryAfterS))
         .send({
+          ...exception.extra,
           genus: 'busy',
           message: exception.message,
           retryAfterS: exception.retryAfterS,
@@ -54,6 +55,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     if (exception instanceof CabinetUnreachableException) {
       void res.status(HttpStatus.SERVICE_UNAVAILABLE).send({
+        ...exception.extra,
         genus: 'unreachable',
         message: exception.message,
         dependency: exception.dependency,

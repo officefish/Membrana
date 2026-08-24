@@ -10,11 +10,16 @@ import { HttpException, HttpStatus } from '@nestjs/common';
  */
 export type FailureGenus = 'broken' | 'busy' | 'unreachable';
 
-/** «Я занят — подожди N секунд». Сервисы кидают его вместо голой 503. */
+/**
+ * «Я занят — подожди N секунд». Сервисы кидают его вместо голой 503.
+ * `extra` — необязательные предметные числа best-effort в теле (M2: `/health/deep`
+ * при отказе всё равно несёт числа); контрактный минимум M1 не меняется.
+ */
 export class CabinetBusyException extends HttpException {
   constructor(
     public readonly retryAfterS: number,
     message = 'Сервис занят',
+    public readonly extra: Record<string, unknown> = {},
   ) {
     super({ genus: 'busy', message, retryAfterS }, HttpStatus.SERVICE_UNAVAILABLE);
   }
@@ -25,6 +30,7 @@ export class CabinetUnreachableException extends HttpException {
   constructor(
     public readonly dependency: string,
     message = 'Зависимость недоступна',
+    public readonly extra: Record<string, unknown> = {},
   ) {
     super({ genus: 'unreachable', message, dependency }, HttpStatus.SERVICE_UNAVAILABLE);
   }
