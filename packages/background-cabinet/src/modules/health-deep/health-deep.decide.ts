@@ -16,7 +16,8 @@ export type HealthDeepNumbers = {
 
 export type HealthDeepThresholds = {
   tapeWarn: number;
-  tapeFail: number;
+  /** null = fail по ленте НЕ вооружён: до α-калибровки лента судит не выше warn. */
+  tapeFail: number | null;
   dbWarnMs: number;
   dbFailMs: number;
   ratioWarn: number;
@@ -25,14 +26,16 @@ export type HealthDeepThresholds = {
 
 /**
  * Стартовые пороги — ДО калибровки (протокол — CALIBRATION.md рядом):
- * лента: fail 2400 — фактический уровень аварии 23.08 (замерено, не подогнано),
- * warn — половина; база: 1000/3000 мс; доля: 0,95/0,80 (вердикт M2).
- * После калибровки α (C(N)≈αN²) tapeWarn/Fail пересчитываются и пишутся рядом
- * с контрактом.
+ * лента: warn 2400 — фактический уровень аварии 23.08 (замерено, не подогнано);
+ * fail по ленте НЕ вооружён (null) до α-замера: 24.08 в проде лента 3209 при базе
+ * 2 мс давала busy — порог, снятый с квадратичного чтения, кричал зря (класс
+ * «сигнализация станет шумом»); здоровая длинная лента — degraded, не тревога.
+ * База: 1000/3000 мс; доля: 0,95/0,80 (вердикт M2). После калибровки α (C(N)≈αN²)
+ * пороги ленты задаются env и fail вооружается.
  */
 export const DEFAULT_HEALTH_DEEP_THRESHOLDS: HealthDeepThresholds = {
-  tapeWarn: 1200,
-  tapeFail: 2400,
+  tapeWarn: 2400,
+  tapeFail: null,
   dbWarnMs: 1000,
   dbFailMs: 3000,
   ratioWarn: 0.95,
@@ -45,7 +48,7 @@ export function decideHealthDeep(
   n: HealthDeepNumbers,
   t: HealthDeepThresholds = DEFAULT_HEALTH_DEEP_THRESHOLDS,
 ): HealthDeepLevel {
-  const tapeFail = n.tapeLength !== null && n.tapeLength >= t.tapeFail;
+  const tapeFail = t.tapeFail !== null && n.tapeLength !== null && n.tapeLength >= t.tapeFail;
   const dbFail = n.dbLatencyMs !== null && n.dbLatencyMs >= t.dbFailMs;
   const ratioFail = n.ingestArrivedRatio !== null && n.ingestArrivedRatio < t.ratioFail;
   if (tapeFail || dbFail || ratioFail) return 'fail';

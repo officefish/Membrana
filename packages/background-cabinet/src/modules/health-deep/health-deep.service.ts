@@ -42,7 +42,11 @@ export function loadHealthDeepThresholds(): HealthDeepThresholds {
   const d = DEFAULT_HEALTH_DEEP_THRESHOLDS;
   return {
     tapeWarn: envInt('HEALTH_DEEP_TAPE_WARN', d.tapeWarn),
-    tapeFail: envInt('HEALTH_DEEP_TAPE_FAIL', d.tapeFail),
+    // fail по ленте вооружается ТОЛЬКО явным env после α-калибровки (CALIBRATION.md).
+    tapeFail:
+      process.env.HEALTH_DEEP_TAPE_FAIL !== undefined
+        ? envInt('HEALTH_DEEP_TAPE_FAIL', Number.MAX_SAFE_INTEGER)
+        : d.tapeFail,
     dbWarnMs: envInt('HEALTH_DEEP_DB_WARN_MS', d.dbWarnMs),
     dbFailMs: envInt('HEALTH_DEEP_DB_FAIL_MS', d.dbFailMs),
     ratioWarn: envFloat('HEALTH_DEEP_RATIO_WARN', d.ratioWarn),
