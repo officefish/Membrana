@@ -26,7 +26,7 @@ function sampleTrackInput(trackId: string) {
 }
 
 describe('SyncJournalStorageBackend', () => {
-  it('reconciles remote snapshot and drops server-deleted rows (JS2)', async () => {
+  it('does not full-rescan when incremental counts are behind local cache (#2113)', async () => {
     const remoteTrack = {
       id: 'track-server',
       kind: 'track' as const,
@@ -68,7 +68,77 @@ describe('SyncJournalStorageBackend', () => {
 
     const backend = createSyncJournalStorageBackend(port);
     expect(await backend.listItems()).toHaveLength(1);
-    expect(await backend.listItems()).toHaveLength(0);
+    expect(await backend.listItems()).toHaveLength(1);
+    expect(listJournalItems).toHaveBeenCalledTimes(2);
+    expect(listJournalItems).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ since: remoteTrack.timestamp }),
+    );
+  });
+
+  it('pulls only rows changed since the last remote journal timestamp (#2113)', async () => {
+    const firstTrack = {
+      id: 'track-server-1',
+      kind: 'track' as const,
+      timestamp: Date.parse('2026-06-15T12:00:00.000Z'),
+      clientEntryId: liveJournalTrackClientEntryId('remote-track-1'),
+      moduleId: 'mic-mod',
+      moduleName: 'microphone',
+      tags: ['live', 'track'],
+      track: sampleTrackInput('remote-track-1').track,
+    };
+    const nextTrack = {
+      ...firstTrack,
+      id: 'track-server-2',
+      timestamp: Date.parse('2026-06-15T12:00:05.000Z'),
+      clientEntryId: liveJournalTrackClientEntryId('remote-track-2'),
+      track: sampleTrackInput('remote-track-2').track,
+    };
+    const listJournalItems = vi
+      .fn()
+      .mockResolvedValueOnce({
+        items: [firstTrack],
+        nextCursor: null,
+        counts: { all: 1, tracks: 1, reports: 0, detections: 0 },
+      })
+      .mockResolvedValueOnce({
+        items: [nextTrack],
+        nextCursor: null,
+        counts: { all: 2, tracks: 2, reports: 0, detections: 0 },
+      });
+    const port: ICabinetJournalPort = {
+      listReports: vi.fn().mockResolvedValue([]),
+      listLiveRecords: vi.fn().mockResolvedValue([]),
+      listJournalItems,
+      createReport: vi.fn(),
+      createLiveRecord: vi.fn(),
+    };
+
+    const backend = createSyncJournalStorageBackend(port);
+    expect(await backend.listItems()).toHaveLength(1);
+    expect(await backend.listItems()).toHaveLength(2);
+
+    expect(listJournalItems).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ since: firstTrack.timestamp }),
+    );
+  });
+
+  it('backs off remote pulls after a failed refresh (#2113)', async () => {
+    const listJournalItems = vi.fn().mockRejectedValue(new Error('cabinet congested'));
+    const port: ICabinetJournalPort = {
+      listReports: vi.fn().mockResolvedValue([]),
+      listLiveRecords: vi.fn().mockResolvedValue([]),
+      listJournalItems,
+      createReport: vi.fn(),
+      createLiveRecord: vi.fn(),
+    };
+
+    const backend = createSyncJournalStorageBackend(port, { remotePullBackoffMs: 60_000 });
+    await backend.listItems();
+    await backend.listItems();
+
+    expect(listJournalItems).toHaveBeenCalledTimes(1);
   });
 
   it('pulls remote rows and pushes local appends', async () => {
