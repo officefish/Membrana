@@ -358,3 +358,35 @@ describe('bundled catalog seed', () => {
     expect(quota.usedBytes).toBe(0);
   });
 });
+
+describe('requestLibraryChartList (#2110)', () => {
+  it('бэкенд без глагола отбора — named-отказ, а не пустая выборка', async () => {
+    // MemoryStorageBackend глагола не несёт намеренно: звук набора лежит на media, браузерному
+    // бэкенду витрину звать некого. Молча вернуть пустую выборку значило бы выдать отсутствие
+    // канала за «в наборе ничего не нашлось».
+    const svc = createMediaLibraryService(new MemoryStorageBackend({ limitBytes: 1_000_000 }));
+    await expect(
+      svc.requestLibraryChartList('c1', { volume: 20, criterion: 'loudness-over-floor' }),
+    ).rejects.toThrow(/только при серверной библиотеке/u);
+  });
+
+  it('бэкенд с глаголом — сервис пробрасывает заказ и ответ как есть', async () => {
+    const backend = new MemoryStorageBackend({ limitBytes: 1_000_000 }) as unknown as Record<string, unknown>;
+    const outcome = {
+      runId: 'r1',
+      selection: { criterion: 'loudness-over-floor', volume: 20, picks: [], shortfall: 20, refusal: null },
+      inSet: 3,
+      inWindow: 3,
+      measured: 3,
+    };
+    const seen: unknown[] = [];
+    backend.requestLibraryChartList = (collectionId: string, req: unknown) => {
+      seen.push([collectionId, req]);
+      return Promise.resolve(outcome);
+    };
+    const svc = createMediaLibraryService(backend as never);
+    const got = await svc.requestLibraryChartList('c1', { volume: 20, criterion: 'loudness-over-floor', from: '2026-08-24T00:00:00.000Z' });
+    expect(got).toBe(outcome);
+    expect(seen).toEqual([['c1', { volume: 20, criterion: 'loudness-over-floor', from: '2026-08-24T00:00:00.000Z' }]]);
+  });
+});
