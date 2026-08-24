@@ -1,0 +1,11 @@
+# τ_check = 5 мин (вердикт M1c). Persistent: пропущенный из-за downtime тик догоняется.
+[Unit]
+Description=Membrana disk watchdog timer (every 5 min)
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
