@@ -10,6 +10,7 @@ import { createMicProximityAlarmPlugin } from '../plugins/mic-proximity-alarm';
 import { createSampleLibraryPlayerPlugin } from '../plugins/sample-library-player';
 import { createSampleLibraryDroneAnalysisPlugin } from '../plugins/sample-library-drone-analysis';
 import { createSampleLibraryFftThresholdTestPlugin } from '../plugins/sample-library-fft-threshold-test';
+import { createSampleLibraryChartListPlugin } from '../plugins/sample-library-chart-list';
 import { createTrendsFftSampleAnalyzerPlugin } from '../plugins/trends-fft-sample-analyzer';
 import { createNeuralDroneAnalyzerPlugin } from '../plugins/neural-drone-analyzer';
 import { createMicStreamVizPlugin } from '../plugins/microphone-stream-viz';
@@ -193,6 +194,7 @@ export function registerClientModules(): void {
   // одному — работа уровня реестра, не этого блока.
   MembranaRegistry.registerPlugin('microphone', createMfccAnalyzerTestPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryPlayerPlugin());
+  MembranaRegistry.registerPlugin('sample-library', createSampleLibraryChartListPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryDroneAnalysisPlugin());
   MembranaRegistry.registerPlugin('sample-library', createSampleLibraryFftThresholdTestPlugin());
   MembranaRegistry.registerPlugin('sample-library', createTrendsFftSampleAnalyzerPlugin());

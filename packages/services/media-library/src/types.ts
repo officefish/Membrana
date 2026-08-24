@@ -90,3 +90,48 @@ export interface PaginatedSamples<T = MediaSample> {
   total: number;
   totalPages: number;
 }
+
+/**
+ * Заказ отбора чарт-листа по текущему набору (#2110). Даты — ISO-строки: пояс человека
+ * замораживается на клиенте, сервер и ядро о поясах не знают.
+ */
+export interface LibraryChartListRequest {
+  volume: number;
+  criterion: string;
+  /** Начало промежутка, ISO, включительно. */
+  from?: string;
+  /** Конец промежутка, ISO, включительно. */
+  to?: string;
+}
+
+/** Строка выборки, как её отдаёт витрина media. */
+export interface LibraryChartListPick {
+  entryId: string;
+  sampleId: string;
+  rank: number;
+  deltaDb: number;
+  peakDb: number;
+  structure: string;
+  flatness: number;
+  displaced: number;
+}
+
+export interface LibraryChartListRefusal {
+  reason: string;
+  detail: string;
+}
+
+/** Исход прогона витрины: выборка + честные счётчики набора/окна/измеренного. */
+export interface LibraryChartListRunOutcome {
+  runId: string;
+  selection: {
+    criterion: string;
+    volume: number;
+    picks: LibraryChartListPick[];
+    shortfall: number;
+    refusal: LibraryChartListRefusal | null;
+  };
+  inSet: number;
+  inWindow: number;
+  measured: number;
+}

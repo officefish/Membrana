@@ -93,6 +93,7 @@
         "sample-library-player",
         "sample-library-drone-analysis",
         "sample-library-fft-threshold-test",
+        "sample-library-chart-list",
         "trends-fft-sample-analyzer",
         "neural-drone-analyzer"
       ],
@@ -429,6 +430,24 @@
       ],
       "relatedTasks": [
         "fl1-sample-library-fft-threshold-plugin"
+      ]
+    },
+    {
+      "id": "sample-library-chart-list",
+      "kind": "plugin",
+      "name": "Отбор чарт-листа",
+      "status": "draft",
+      "parentModuleId": "sample-library",
+      "promptPath": "docs/catalog/client/prompts/plugins/sample-library-chart-list.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/sample-library-chart-list/sampleLibraryChartListPlugin.ts"
+      },
+      "services": [
+        "@membrana/media-library-service",
+        "@membrana/sample-playback-service"
+      ],
+      "relatedTasks": [
+        "library-selection-plugin-2110"
       ]
     },
     {

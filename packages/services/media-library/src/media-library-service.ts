@@ -12,6 +12,8 @@ import { mediaLibraryTrace, traceElapsedMs } from './media-library-trace.js';
 import { isBufferSampleCountCapActive } from './quota-status.js';
 import type { IStorageBackend } from './ports/storage-backend.js';
 import type {
+  LibraryChartListRequest,
+  LibraryChartListRunOutcome,
   Collection,
   ImportBlobOptions,
   MediaLibrarySnapshot,
@@ -245,6 +247,20 @@ export class MediaLibraryService {
   async removeSample(sampleId: string): Promise<void> {
     await this.backend.removeSample(sampleId);
     await this.refresh();
+  }
+
+  /**
+   * Отбор чарт-листа по текущему набору (#2110). Есть только у серверного бэкенда: звук
+   * набора лежит на media, отбор идёт там же. Остальным — named-отказ, не пустая выборка.
+   */
+  async requestLibraryChartList(
+    collectionId: string,
+    req: LibraryChartListRequest,
+  ): Promise<LibraryChartListRunOutcome> {
+    if (!this.backend.requestLibraryChartList) {
+      throw new Error('Отбор чарт-листа доступен только при серверной библиотеке (media-server)');
+    }
+    return this.backend.requestLibraryChartList(collectionId, req);
   }
 
   async moveSample(sampleId: string, toCollectionId: string): Promise<MediaSample> {

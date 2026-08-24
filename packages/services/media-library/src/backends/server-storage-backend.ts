@@ -5,6 +5,8 @@ import { resolveMediaLibraryTraceId } from '../media-library-trace.js';
 import type { IStorageBackend } from '../ports/storage-backend.js';
 import type {
   Collection,
+  LibraryChartListRequest,
+  LibraryChartListRunOutcome,
   CollectionKind,
   MediaSample,
   NewSampleMeta,
@@ -248,6 +250,36 @@ export class ServerStorageBackend implements IStorageBackend {
         bufferLimitBytes: 0,
       };
     }
+  }
+
+  /**
+   * Отбор чарт-листа по текущему набору (#2110): боевой вход media
+   * POST /collections/:id/plugins/:pluginId/request. Выборку считает витрина на сервере —
+   * здесь только заказ и разбор ответа; result приходит тем же ответом (канал c5c).
+   */
+  async requestLibraryChartList(
+    collectionId: string,
+    req: LibraryChartListRequest,
+  ): Promise<LibraryChartListRunOutcome> {
+    const row = await this.requestJson<{ runId: string; result?: Omit<LibraryChartListRunOutcome, 'runId'> }>(
+      `/collections/${encodeURIComponent(collectionId)}/plugins/membrana.showcase.library-chart-list/request`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          volume: req.volume,
+          criterion: req.criterion,
+          ...(req.from ? { from: req.from } : {}),
+          ...(req.to ? { to: req.to } : {}),
+        }),
+      },
+    );
+    if (!row.result) {
+      // Прогон был, а результата нет — это поломка канала, не пустая выборка: молча показать
+      // ноль строк значило бы выдать сбой за «в наборе ничего не нашлось».
+      throw new Error('Витрина отбора не вернула результат прогона (канал result пуст)');
+    }
+    return { runId: row.runId, ...row.result };
   }
 
   async ensureReservedCollections(): Promise<void> {

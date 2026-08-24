@@ -1,5 +1,7 @@
 import type {
   Collection,
+  LibraryChartListRequest,
+  LibraryChartListRunOutcome,
   MediaSample,
   NewSampleMeta,
   PaginatedSamples,
@@ -32,6 +34,18 @@ export interface IStorageBackend {
   ): Promise<MediaSample>;
   readBlob(sampleId: string): Promise<Blob>;
   ensureReservedCollections(): Promise<void>;
+  /**
+   * Optional: отбор чарт-листа по текущему набору (#2110) — есть ТОЛЬКО у серверного бэкенда.
+   *
+   * Опциональность честная, а не удобная: звук набора лежит на media, и отбор идёт там, где
+   * звук (та же граница, по которой измеритель живёт на сервере). Браузерный и electron-fs
+   * бэкенды звать некого — сервис отвечает named-отказом, а не выдумывает пустую выборку.
+   */
+  requestLibraryChartList?(
+    collectionId: string,
+    req: LibraryChartListRequest,
+  ): Promise<LibraryChartListRunOutcome>;
+
   /** Optional: seed read-only tariff catalog (MemoryStorageBackend). */
   importCatalogSample?(
     collectionId: string,

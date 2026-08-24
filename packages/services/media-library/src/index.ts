@@ -16,6 +16,10 @@ export {
 } from './constants.js';
 
 export type {
+  LibraryChartListPick,
+  LibraryChartListRefusal,
+  LibraryChartListRequest,
+  LibraryChartListRunOutcome,
   Collection,
   CollectionKind,
   MediaLibrarySnapshot,
