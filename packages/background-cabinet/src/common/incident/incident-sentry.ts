@@ -67,7 +67,13 @@ async function postEnvelope(parts: DsnParts, body: string): Promise<void> {
   if (proxy) {
     const dispatcher = new ProxyAgent(proxy);
     try {
-      await undiciFetch(url, { method: 'POST', headers, body, dispatcher } as never);
+      await undiciFetch(url, {
+        method: 'POST',
+        headers,
+        body,
+        dispatcher,
+        signal: AbortSignal.timeout(10_000),
+      } as never);
     } finally {
       await dispatcher.close().catch(() => undefined);
     }
