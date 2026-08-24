@@ -1,129 +1,139 @@
-<!-- Сгенерировано: 2026-08-23T05:28:50.562Z (yarn main-day-issue@0a495865) -->
+<!-- Сгенерировано: 2026-08-24T06:50:55.777Z (yarn main-day-issue@e8bb5733) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
-<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"82a93a6e7d874ace13057d78bafcb8f9bf32b36c","digest":"cc1cf035d66919ac51439bdfc31750c7ab2cd5dbe5ca29531a5102941510f43a"},"DAILY_STANDUP":{"version":"82a93a6e7d874ace13057d78bafcb8f9bf32b36c","digest":"3c9b3ad74b73d72141f67a45aba1903c788e9e682d5bb4b99d93d26801911f0e"}}} -->
+<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"1b4f067e7384845025cae4ed9a489b8ad7065ef1","digest":"cad7aa3a06cc0a744a1161557960f23fec06acf831b8f0465a52d791155affdd"},"DAILY_STANDUP":{"version":"1b4f067e7384845025cae4ed9a489b8ad7065ef1","digest":"9142a68d66a54e69ccee5e84230686c86677bb43e9bef16066163add7beb5d04"}}} -->
 <!-- Звено канала: provider=xai model=grok-4.5 source=overlay generations=1 -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
 <!-- active в реестре: chart-list-plugin, scenario-rate-first-capture, scenario-rate-sprint, media-per-device-token, capture-sidecar-protocol, plugin-results-payload-pocket, firebat-node-device, server-plugin-foundation, static-mmbrn-retirement, static-mmbrn-live-services, static-mmbrn-cutover, static-mmbrn-m6-alignment, static-mmbrn-rehydrate-parity, static-mmbrn-ingress-auth, static-mmbrn-target-provision, static-mmbrn-disposition-ledger, static-mmbrn-container, morning-journal-close-step, frame-holders-reassign-twenty, frame-holder-moderator-split, workflow-examples-marathon, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, meeting-evening-review-predicate, evening-chain-review-predicate, mfcc-compare-sprint, insight-mandate-for-new, frame-rails-2307, lpc-d-panel, lpc-c-office, lpc-b-wire, lpc-a-lib, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, membrane-node-runtime-remote, mp7b-rt7-prod-hardening, device-board-three-hosts-2026-06-26, db3h-s4-microphone-detectors, neural-free-tier-dataset-report, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, detection-alarm-loop-refactor, batch-collection-run-contour -->
 
-# MAIN_DAY_ISSUE — 2026-08-23: firebat-node-device
+# MAIN_DAY_ISSUE — 2026-08-24
+
+<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"DAILY_STANDUP":{"digest":"standup-2026-08-24"},"STRATEGY_DAY":{"version":"1b4f067e7384845025cae4ed9a489b8ad7065ef1"},"DAY_PLAN":{"canon-digest":"e29394fc745205b84db9ec24eccfd2c303852bb59935c237c6ead59f5b7b8817"}}} -->
+<!-- Сгенерировано: 2026-08-24 (yarn main-day-issue / Teamlead Tarasov) -->
 
 ## Метаданные
 
 | Поле | Значение |
 |------|----------|
-| `primaryFocusId` | `firebat-node-device` |
-| `primaryTitle` | Узел Firebat как устройство: приложение на узле, исходящий канал, права при установке |
-| `githubIssue` | — |
-| `size` | L |
+| `primaryFocusId` | `none` (фокус вне реестра: боевая авария журнала) |
+| `primaryTitle` | Снять квадратичность журнала: append → refresh без полного rescan ленты |
+| `githubIssue` | #2113 |
+| `size` | M |
 | `promptPath` | — |
-| `сгенерировано` | 2026-08-23 |
+| `сгенерировано` | 2026-08-24 |
 
 ## Магистраль
 
-Единственный обязательный мандат дня — **`firebat-node-device` (L)**: узел Firebat как устройство, на котором живёт приложение, само держит **исходящий** канал к серверу и получает права **при установке** (не через «голый» SSH как операционную модель; SSH — отладка лаборатории). Источник мандата — `sources[0]` в `docs/tasks/main-day-assertions.json` (owner-choice 19.08, frozen top-3: `firebat-node-device` · `server-plugin-foundation` · `rag-service-red-test`); синтез иной L-оси из стендапа/плана **запрещён**, пока owner-source задан. Контекст исполнения: ступень «узел пишет 48 kHz и отправляет сам» уже закрыта; узел за вторым роутером ⇒ вход снаружи закрыт, канал только исходящий; в стволе уже лежат fail-closed rate-работы (#2046 / #2065) — они **подкрепляют** контур захвата, а не подменяют L-ось устройства. К вечеру: явный прогресс карточки устройства (контракт/инсталляционный контур/канал), плюс живой smoke «старт сценария → только 48 kHz или отказ на **первом** треке» на пути узла; без нового owner-choice не уходим в hostess / assets / batch и не открываем UI `journal-home-real`.
+Снять квадратичность журнала (#2113): путь **append → refresh** не перечитывает всю ленту на каждую пробу. Ночное дежурство 23.08 упёрлось в боевую аварию — каждая запись тянет полный обход страниц при серверном `take` до 5000 и склейке в памяти; разбор зафиксирован в `docs/field/2026-08-23-night-duty-journal-congestion.md`. #2086 честно развёл витрину и порт проверки задания, но живой контур дежурства от этого не стал линейным.
 
-**Критерий успеха к вечеру:** зафиксирован проверяемый сдвиг по `firebat-node-device` (артефакт: diff/ADR/скрипт установки или протокол канала) **и** smoke rate fail-closed на первом треке (pass/fail с логом), без параллельного старта чужих L.
+**Owner-assertions протухли** (`sources[0]` = firebat-node-device, 19.08); свежего `morning:gate` / `--choose` на 24.08 во входах нет. Синтез L из top-3 плана (hostess / assets / batch) запрещён стендапом. Магистраль дня — **оперативный мандат стендапа** по аварии, не «додуманный» L-эпик и не повтор stale firebat без нового choose.
+
+**Критерий к вечеру:** один проверяемый инкремент (контракт списка / курсор **или** потолок без полного rescan) + воспроизводимый before/after по меркам из field-дока.
 
 ## Подкрепление
 
-- **P1-ревью / дожим #2065:** fail-closed rate на **всех** путях scenario / capture / node — не «демо-зелёный» один путь; живой smoke: старт сценария → 48 kHz или отказ на первом треке (подпора магистрали узла, не смена оси).
-- **Веха `secret-parser-built` (без снятия амнистии кодом дня):** сверить и завести/починить карточку в реестре (claims-probe: «карточки нет»); инвентарь `night-triage-secret-scan.mjs` по линии «резак vs детектор» с опорой на `scripts/lib/secret-redact.mjs` (урок retired-redact-wrong-address) и контур датированного прохода + манифест ротации (`credential-rotation-biweekly`) — claims/инвентарь, не импровизационное «закрыли гейт».
+- Зафиксировать и не размывать контракт «витрина ≠ порт проверки» (#2086): любой патч refresh/append опирается на уже разведённые порты, не склеивает их обратно ради удобства UI.
+- P1-ревью OPEN oversized #2096 через `yarn code-review:pr` — рядом с магистралью, **не вместо** неё; ловит перегруз PR-поверхности, пока режется горячий путь журнала.
 
 ## Перспективные
 
-- Согласованная с владельцем **форма журнала** (буфер · наборы · архив + обещания тарифов) — откроет нарезку `journal-home-real` и сессию UI **без** кода до письменного «да» (owner-choice 22.08 критерием «форма согласована» ещё не закрыт).
-- Гейт **`secret-parser-built`** (резак в контуре night-triage + датированный проход с манифестом ротации) — снимет амнистию правки архива и разблокирует безопасные бэкапы сессий (кристаллы `session-backup-requires-secret-redaction`, `secret-parser-cuts-aggressively`).
-- Вечерний сеанс «что не из моего набора» после зелёного fail-closed rate на первом треке — только когда P0-дыра захвата закрыта на живом пути узла.
+- Проход вехи `secret-parser-built` (резак + датированный манифест ротации) — снятие амнистии на правку архива и безопасный бэкап сессий.
+- Owner-choice по форме журнала (буфер · наборы · архив) — разблок настоящего `journal-home-real` вместо монтирования в `background-media/collections`.
+- Живой smoke Firebat «первый трек → 48 kHz или fail-closed» и исходящий канал узла — после свежего choose, не как тихая подмена фокуса.
 
 ## Экспериментальные
 
-- Прогон `night-triage-secret-scan` + redact-контура на одном фикстурном транскрипте с ключом-заглушкой: режет ли цепочка сейчас или только детектит паттерны.
-- За ~15 мин три колонки «буфер · наборы · архив» глазами человека у кабинета (md/бумага): читаются ли тарифные обещания как навигация **без** UI-кода.
-- Узкий smoke на Firebat — только первый трек сценария: 48 kHz или отказ; отличие «держит в диффе» vs «держит на живом пути».
+- Фикстурный прогон `night-triage-secret-scan` + redact на одном транскрипте-заглушке с ключом-маркером — режет цепочка или только детектит.
+- Прогон имеющегося анализатора (кепстр/автокорреляция) на паре «шлифмашинка vs моторный фрагмент» из сеанса 21.08 — есть ли разделимый признак без нового DSP.
+- Dated dry-run манифеста ротации на ключе-заглушке (без реального revoke) — хватает ли формы манифеста под гейт `secret-parser-built`.
 
 ## Санитарные
 
-- claims-probe: сверить `secret-parser-built` / `session-digest` в registry (карточек нет @a4c95028efbe)
-- P1-ревью #2065: fail-closed rate на всех путях scenario/capture/node
-- P1-ревью #2068: границы office/media/plugin-pages, хуки без прямого store вместо registry
-- **перечеканить `main-day-assertions.json`** — assertions/sources от 19.08, freshness сорван (канон предписывает перечеканку — не сделана)
-- smoke rate живьём: старт сценария → отказ или 48 kHz на **первом** треке
-- не разворачивать построчный oversized-долг (#2065/#2068/#2067/…) в магистраль дня
+- перечеканка `main-day-assertions.json` (протух 19.08 → не перечеканен к 23–24.08) — санитарный долг; риск устаревшего owner-choice
+- P1-ревью OPEN oversized #2096 (`yarn code-review:pr`)
+- выборочный bug-pass merged oversized: #2091 / #2093 / #2088
+- протокол живого smoke Firebat: первый трек → 48 kHz или fail-closed (дыра DoD, хвост #2046)
+- фикстурный прогон secret-scan/redact на транскрипте-заглушке — диагностика резака к вехе `secret-parser-built`
 
 ## Почему это магистраль (таблица обоснования)
 
 | Утверждение | Происхождение | Первоисточник | Свежесть |
 |-------------|---------------|---------------|----------|
-| Магистраль дня = `firebat-node-device` (L): приложение на узле, исходящий канал, права при установке | сессия | owner-choice@chat/magistral-19-08 → `docs/tasks/main-day-assertions.json` `sources[0].claim` | 2026-08-19 |
-| Выбор сделан из замороженного top-3 (`firebat-node-device`, `server-plugin-foundation`, `rag-service-red-test`), digest `9ee6b5ca…` | снимок-хардкод | frozen snapshot morning:gate 19.08 (`frozenDigest` / `frozenOptions` в sources[0]) | 2026-08-19 |
-| Синтез магистрали из стендапа/плана/горизонта запрещён, пока задан owner-source | план | канон MAIN_DAY_ISSUE / probe (прецеденты 16.07 фантом; 18.07 #598/#599 vs «подключить генератор») | 2026-07-16… |
-| Узел за NAT/вторым роутером → канал только исходящий; SSH не операционная модель прав | сессия | слово владельца 18.08 вечером (цитата в sources[0]) | 2026-08-18 |
-| Ступень «48 kHz пишет и отправляет сам» закрыта — день не про повтор съёмки, а про устройство/установку/канал | сессия | контекст sources[0] + ствол rate #2046/#2065 | 2026-08-18…22 |
-| **Расхождение: магистраль взята с assertions `sources[0]`; гейт утра сегодняшним `magistral` не переопределил; assertions не перечеканены** | план | `docs/DAY_PLAN.md` санитарно: «assertions от 19.08, freshness сорван»; `morning-gates-state.json` в контуре дня не дал более свежего owner-magistral на 23.08 | 2026-08-23 |
-| Стендап держит фокус «форма `journal-home-real`» и запрет UI/hostess/assets/batch без choose — это **контекст и ограничители**, не замена owner-magistral | план | `docs/DAILY_STANDUP.md` 2026-08-23 | 2026-08-23 |
-| Горизонт вехи `secret-parser-built` (approaching) не назначает L-ось дня | план | `docs/STRATEGY_DAY.md` / `day-horizon.json` (gate #592) | 2026-08-23 |
-| Top-3 плана (hostess / assets / batch) — кандидаты **без** owner-choice; план явно: «магистраль НЕ назначена» | план | `docs/DAY_PLAN.md` 2026-08-23 | 2026-08-23 |
+| Фокус дня: снять квадратичность журнала #2113 (append→refresh без полного rescan) | сессия | `docs/DAILY_STANDUP.md` ← field `docs/field/2026-08-23-night-duty-journal-congestion.md` + GH #2113 | 2026-08-23/24 |
+| Ночная авария: каждая запись → полный обход страниц, `take` до 5000, склейка в памяти | код / issue | field-док ночного дежурства 23.08 + #2113 | 2026-08-23 |
+| #2086 развёл витрину и порт проверки, но контур дежурства не линеен | issue | GH #2086 (контекст стендапа) | 2026-08 |
+| Stale owner-source: `sources[0]` = firebat-node-device | снимок-хардкод | `docs/tasks/main-day-assertions.json` → owner-choice@chat/magistral-19-08 | 2026-08-19 |
+| **Расхождение: assertions не перечеканены; свежего gate-magistral на 24.08 нет** | план / сессия | DAY_PLAN «магистраль НЕ назначена» + sanitary «протух 19.08»; У1 без сегодняшнего `morning-gates-state.magistral` | 2026-08-24 |
+| Не синтезировать L из top-3 (hostess / assets / batch) без слова владельца | план | `docs/DAY_PLAN.md` + стендап «сознательно не делаем» | 2026-08-24 |
+| Не делать день L-осью firebat без нового choose | сессия | стендап «сознательно не делаем» (не отменяет stale sources, блокирует тихий синтез) | 2026-08-24 |
+| Веха горизонта `secret-parser-built` — approaching, не primary | план | `docs/STRATEGY_DAY.md` / `day-horizon.json` | 2026-08-24 |
+| Не магистраль: Этап 1.A / benchmark harmonic+cepstral+flux | код | `docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md` §6; `detection-planning-priorities.mjs` | 2026-06-14 / канон |
 
-**Голоса по различным первоисточникам:** (1) owner-choice 19.08 + frozen top-3 — **1 источник** (поля claim/frozen* коррелированы); (2) канон anti-синтеза probe — 1 источник; (3) слово 18.08 про права/SSH — 1 источник, усиливает тот же мандат устройства; (4) стендап 23.08 и DAY_PLAN top-3 — **отдельные** источники про форму журнала и кандидатов, но **не** имеют права перебить sources[0] без нового choose/гейта. Итог: мандат = `firebat-node-device`; freshess assertions сорван — находка дня, не повод синтезировать journal/hostess.
+**Голоса по различным первоисточникам:**
 
-*1 источник owner-magistral, 2 отражения в ритуальных доках (standup/plan цитируют ограничения дня, не новый choose).*
+1. **Ночная авария журнала** (field 23.08 + #2113 + стендап 24.08) — **1 источник, 3 отражения** → оперативный мандат дня.
+2. **Owner assertions 19.08 firebat** — 1 источник, протух; не перечеканен; без today-gate по У1 не перекрывает аварию и не назначается заново «из инерции».
+3. **План top-3 без choose** — 1 источник: «магистраль не назначена планом»; усиливает запрет синтеза L.
+4. **FFT §6 / anti-1.A** — 1 источник: только вето на ложную детекционную магистраль.
+
+Итог: единственный свежий независимый мандат — линеаризация журнала #2113. Stale firebat и top-3 без owner-choice в таблицу как находка и границы, не как primary.
 
 ## Посылки
 
-`assertions[]` в `main-day-assertions.json` **пуст** (сознательно / не перечеканено под текущий день).
-
 | Посылка | Маркер | Вердикт |
 |---------|--------|---------|
-| — | — | развилки A/B нет, посылок не требуется |
+| Путь refresh журнала после append перечитывает/склеивает ленту целиком (квадратичный рост под дежурством) | `file:docs/field/2026-08-23-night-duty-journal-congestion.md` + issue #2113 | `holds` (по field-разбору; символ-потолок/курсор — цель дня) |
+| Работа «ввести курсор/потолок без full rescan» ещё не закрыта как проверяемый инкремент дня | issue #2113 open + отсутствие вечернего before/after в field-доке | `holds` до появления инкремента |
+| Owner-магистраль firebat актуальна как выбор «сегодня» | `sources[0].date == 2026-08-19` при today 2026-08-24 | **violated по свежести** — ПОСЫЛКА НАРУШЕНА как основание primary; только sanitary recut |
 
-Назначение дня опирается на **owner-source** (выбор карточки), не на утверждение «символа в коде ещё нет». Маркерный гвард «работы нет» для устройства не выдумываем (класс retired-17-07 / link-16-08: невыразимое маркером не чеканить суррогатом).
+Развилка A/B эпиков (hostess vs assets vs batch vs firebat) **не открыта** словом владельца сегодня → в primary не берём. Посылок «работы нет» по L-эпикам не требуется.
 
 ## Сегодня делаем
 
-1. Зафиксировать рабочий край `firebat-node-device`: что уже в стволе (48 kHz path, install/PS1, rate fail-closed) vs дыра «устройство / исходящий канал / права при установке».
-2. Сделать **один** проверяемый инкремент L-оси (контракт канала **или** инсталляционный контур прав **или** документированная граница «приложение на узле»), без расползания в hostess/assets/batch.
-3. Прогнать живой smoke: старт сценария на узле → **первый** трек только 48 kHz или отказ; результат (pass/fail + путь) записать.
-4. P1-проход #2065: перечень путей scenario/capture/node и статус fail-closed на каждом (таблица, не «вроде зелёный»).
-5. Claims-probe по `secret-parser-built`: есть ли карточка в registry; если нет — завести/восстановить факт, не закрывая веху кодом-импровизацией.
-6. Санитарно: явным пунктом вечера запланировать **перечеканку** `main-day-assertions.json` (sources/date под актуальный owner-choice) — сейчас freshness сорван.
+1. Воспроизвести замер before из `docs/field/2026-08-23-night-duty-journal-congestion.md` (страницы / `take` / время refresh на N append).
+2. Ввести один инкремент на горячем пути: **курсор/continuation** или **жёсткий потолок без full rescan** (контракт списка), без UI «дома журнала».
+3. Прогнать after-замер тем же сценарием; записать цифры next to before (field-док или приложение к #2113).
+4. Не смешивать витрину и порт проверки задания (#2086) в одном API-ответе «на всякий случай».
+5. P1-ревью #2096 — заметка/вердикт, не блокер мержа инкремента журнала.
+6. Санитарно: очередь на перечеканку `main-day-assertions.json` (факт протухания зафиксирован в этом MAIN_DAY_ISSUE).
 
 ## Definition of Done (фокус)
 
-- [ ] Primary focus дня = `firebat-node-device`, не подменён journal-UI / hostess / assets / batch
-- [ ] Есть артефакт инкремента по устройству (код и/или ADR/протокол канала/установки) с проверяемым diff
-- [ ] Исходящий канал / права-при-установке: следующий конкретный шаг записан или закрыт, без «SSH как норма»
-- [ ] Smoke: первый трек сценария на узле → 48 kHz **или** отказ fail-closed (лог/протокол)
-- [ ] #2065: статус fail-closed по путям scenario/capture/node зафиксирован таблицей
-- [ ] Ветки hostess / assets / batch / UI `journal-home-real` не стартовали без нового owner-choice
-- [ ] Находка freshness `main-day-assertions.json` (19.08 → 23.08) названа; перечеканка в санитарном хвосте, не замалчивание
-- [ ] Веху `secret-parser-built` кодом дня «с амнистией» не закрывали
+- [ ] Горячий путь append → refresh не делает полный обход всей ленты на каждую пробу
+- [ ] Есть явный контракт: курсор/continuation **или** потолок размера выборки без server `take`→склейка «до 5000» как единственной модели
+- [ ] Before/after по метрикам из field-дока 23.08 воспроизводимы одним сценарием
+- [ ] Витрина и порт проверки задания остаются разведены (#2086 не откатан)
+- [ ] Нет нового UI «journal-home» / нарезки «буфер · наборы · архив» без письменного «да» владельца
+- [ ] #2113 обновлён фактом инкремента (комментарий или PR-ссылка)
+- [ ] Регрессия: дежурный сценарий (серия append) не деградирует до квадратичного wall-time на проверяемом N
 
 ## Сознательно не делаем сегодня
 
-- UI-код `journal-home-real` и нарезка экранов до письменного «да» владельца по форме (буфер · наборы · архив)
-- Параллельные L без choose: `angelina-hostess-impl`, `assets-container`, `batch-collection-run-contour`
-- «Этап 1.A» / повторный benchmark harmonic+cepstral+flux на free-v1 и код `mfcc-compare-sprint` без вердикта по открытым issue
-- Закрытие вехи `secret-parser-built` (#2022 кр.3) импровизацией в архиве — только claims-probe / инвентарь резака
-- Построчный разбор oversized-долга (#2065/#2068/#2067/…) как замена L-оси устройства
-- Синтез «новой магистрали» из top-3 плана вопреки `sources[0]`
+- Не назначаем магистралью `angelina-hostess-impl` / `assets-container` / `batch-collection-run-contour` без owner-choice
+- Не продолжаем L-ось `firebat-node-device` как primary без нового choose (stale sources[0] — перечеканить, не «додумать»)
+- Не верстаем и не нарезаем `journal-home-real` / форму «буфер · наборы · архив»
+- Не закрываем веху `secret-parser-built` правкой архива и не снимаем амнистию «с плеча»
+- Не поднимаем «Этап 1.A» / benchmark harmonic+cepstral+flux на free-v1
+- Не делаем день повторной калибровкой FFT-порогов или OR-live DSP
 
 ## Вторично (если останется время)
 
-- Набросок md «буфер · наборы · архив» (15 мин) — топливо к завтрашнему owner-choice по журналу, не код
-- Фикстурный прогон secret-scan/redact на одном транскрипте-заглушке (диагностика резака, не снятие амнистии)
+1. Фикстурный прогон secret-scan/redact на транскрипте-заглушке (диагностика к `secret-parser-built`).
+2. Черновик манифеста ротации (даты, контуры, biweekly) без revoke и без правки архива.
 
 ## Зависимости и риски
 
-- **Блокер-процесс:** `main-day-assertions.json` не перечеканен с 19.08 — риск, что живой choose владельца уже иной, а ритуал держит старый `sources[0]`; лечится перечеканкой/gate `--choose`, не молчаливым синтезом
-- **Блокер-сеть:** узел за вторым роутером — любой «входящий» дизайн канала ложен; только исходящий hold
-- **Риск подмены оси:** сильный продуктовый зуд journal-form / hostess из стендапа уводит день в L без choose
-- **Риск rate:** обход fail-closed на одном из путей capture/node маскирует «зелёный» diff при дыре на первом треке
+- **Риск расползания:** «раз уж журнал» → UI дома журнала / hostess / assets — блокер фокуса; держать только горячий путь append/refresh.
+- **Stale owner-source:** assertions 19.08 vs оперативный фокус 24.08 — перечеканка обязана, иначе probe/ритуал снова кормят firebat-инерцией.
+- **#2096 oversized** может отвлечь ревью-ресурс; лимит — P1-заметка, не день ревью.
+- **Блокер данных:** без before/after по field-меркам инкремент нельзя честно принять.
 
 ## Ссылки
 
-- [`docs/DAILY_STANDUP.md`](./DAILY_STANDUP.md) — стендап 2026-08-23
-- [`docs/DAY_PLAN.md`](./DAY_PLAN.md) — 5 слотов; top-3 без owner-choice
-- [`docs/STRATEGY_DAY.md`](./STRATEGY_DAY.md) — горизонт, веха `secret-parser-built`
-- [`docs/tasks/main-day-assertions.json`](./tasks/main-day-assertions.json) — `sources[0]` = owner magistral 19.08
-- [`docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md`](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) — запрет магистрали «Этап 1.A» / одиночный DSP-benchmark
+- [docs/DAILY_STANDUP.md](./DAILY_STANDUP.md)
+- [docs/DAY_PLAN.md](./DAY_PLAN.md)
+- [docs/STRATEGY_DAY.md](./STRATEGY_DAY.md)
+- [docs/field/2026-08-23-night-duty-journal-congestion.md](./field/2026-08-23-night-duty-journal-congestion.md)
+- [docs/tasks/main-day-assertions.json](./tasks/main-day-assertions.json)
+- GitHub #2113 · #2086 · #2096
+- [docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) §6 (вето на Этап 1.A)
