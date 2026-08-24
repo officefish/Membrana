@@ -410,6 +410,10 @@ export function validateEveningFeedbackReadAt(p) {
  * @returns {{ readAt?: Record<string, {version?: string|null, digest?: string|null}>, magistral?: object }|null}
  */
 export function parseEveningFeedbackGuard(content) {
+  // Ленивое `.*?` вложенности НЕ боится: захват обязан кончаться `}` непосредственно
+  // перед `-->`, поэтому внутренние `}` пропускаются расширением (ревью PR #2136
+  // предположило обратное — опровергнуто прогоном, тест «боевая форма» ниже).
+  // Строка `-->` внутри guard невозможна: JSON.stringify наших полей её не порождает.
   const m = content.match(/<!--\s*evening-feedback\s+(\{.*?\})\s*-->/s);
   if (!m) return null;
   try {

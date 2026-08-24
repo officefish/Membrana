@@ -100,6 +100,24 @@ test('parseEveningFeedbackGuard: круговой проход через шап
   assert.deepEqual(parsed, guard);
 });
 
+test('parseEveningFeedbackGuard: боевая форма — вложенность 3 уровня + комментарий в теле', () => {
+  // Ровно тот случай, который ревью PR #2136 назвало мёртвым (P0, «regex до первой }»):
+  // вложенный guard, null-поля отсутствовавшего файла, обычный HTML-комментарий дальше в теле.
+  const guard = {
+    day: '2026-08-24',
+    magistral: { id: 'logging-observability-contour', author: 'human', source: 'gate-state', fresh: true },
+    readAt: {
+      DAILY_AUDIT: rec('abc123', 'd'.repeat(64)),
+      DAY_MEMO: rec(null, null),
+      DAILY_CODE_REVIEW: rec('def456', 'e'.repeat(64)),
+    },
+  };
+  const content =
+    `<!-- Сгенерировано: X -->\n<!-- evening-feedback ${JSON.stringify(guard)} -->\n\n` +
+    '# Протокол\nтело <!-- обычный комментарий -->';
+  assert.deepEqual(parseEveningFeedbackGuard(content), guard);
+});
+
 test('parseEveningFeedbackGuard: битый JSON → null, не исключение', () => {
   assert.equal(parseEveningFeedbackGuard('<!-- evening-feedback {oops} -->'), null);
   assert.equal(parseEveningFeedbackGuard('нет шапки вовсе'), null);
