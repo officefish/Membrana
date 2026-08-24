@@ -5,8 +5,44 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14357/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 312 (причины в op-log) -->
+Записей: 49 · бюджет 14388/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 318 (причины в op-log) -->
+
+### 2026-08-24 · позиция · logging-observability-cut-m0-order
+
+> Формализую объект: ориентированный граф G на вершинах {1,2,3,4}. Ребро A→B ⇔ «решение A предшествует решению B». Транзитивность не домысливаем рёбрами «для красоты» — только обоснованные. Норма «издатели прежде сборщиков» — вход, не вывод: она задаёт ориентацию там, где один […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/logging-observability-cut-m0-order-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1-incident-number
+
+> Формализую инварианты до спора о синтаксисе. Пусть ответ ошибки рода «сломан» несёт идентификатор `I`. Тогда: (1) `I` либо официально отчеканен Сентри, либо помечен как временный — смешение пространств имён запрещено; (2) равенство `I` в теле, в заголовке (если есть) и в строке […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m1-incident-number-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1b-duty-pulse
+
+> Фиксирую контракт чисел из факта 23.08. Входят: `probes_total` (накоплено за окно), `step_s` (средний интервал между пробами, с), `media_used_mb` / `media_cap_mb` (места осталось = cap − used). Сознательно не входят: спектр, SNR, вердикт детектора, HTTP-латентность кабинета, […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/logging-observability-cut-m1b-duty-pulse-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1c-disk-guard
+
+> Формализую. Пусть `free_bytes(t)` — свободное место в момент t, `write_rate` — байт/с записи (медиана за окно, не пик одной ночи). Остаток минут: `T_remain = free_bytes / max(write_rate, ε)`. Порог тревоги — по `T_remain`, не по «круглым ГБ»: так есть физический смысл. Ночь […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m1c-disk-guard-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m2-health-deep
+
+> Фиксирую предикат видимости 23.08 численно. Факт: лента ~2400 записей → ~115 тыс. строк на пробу, квадратичный рост стоимости чтения. Пусть `tape_len = N` — число записей (или строк-участников агрегата — уточним носитель) в ленте, подлежащей тяжёлому чтению. Авария растёт как […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/logging-observability-cut-m2-health-deep-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · team-evening-feedback
+
+> Оценка артефактов: `DAILY_CODE_REVIEW` фиксирует: #2124 — correctness сильный (границы включительные, half-open окна, NaN → `invalid-window`, окно до `selectChartList`). Квадратичность ленты (N·pages) — класс сложности, не DSP; after-мерки wall-time на N append обязательны. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-24.md#reply-1`
 
 ### 2026-08-23 · позиция · team-evening-feedback
 
@@ -260,44 +296,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
 
-### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
+### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 
-> Фиксирую численный baseline, не cardinality proof: pages=82, assets=57, CLI `doc list`=0. Inventory gate = fenced DB/export snapshot с per-object `sourceId`, `kind∈{page,asset}`, `sha256`, relations, grants, timestamps. До manifest+hash+disposition статус корпуса = `NOT […] _(реплик в сеансе: 7)_
+> Порядок ролей полный: `public < ally < operator < owner`. Решение строится одной функцией сравнения ролей, без permission-grant и без снижения роли субъекта. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-08.md#reply-1`
-
-### 2026-08-08 · позиция · team-evening-feedback
-
-> Дынин, чистые функции и провенанс. Оценка артефактов: `MAIN_DAY_ISSUE` содержит критерий успеха, различимый механически (`grep decideTransition` вне `*.test.*`) — это годный предикат, не декларация. Таблица посылок несёт маркеры `holds` с явным источником — правильная форма. […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-08.md#reply-1`
-
-### 2026-08-07 · позиция · team-evening-feedback
-
-> Дынин. Оценка артефактов: в `DAILY_CODE_REVIEW` мой блок «—» — честно, чистых функций дня не касались; `MAIN_DAY_ISSUE` корректно вынес посылки в таблицу holds/маркер — предикатная форма соблюдена. Итоги дня: по моей зоне (FFT/вейвлеты/детекторы) — движения ноль; красный CI трёх […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-07.md#reply-1`
-
-### 2026-08-06 · позиция · team-evening-feedback
-
-> — Оценка артефактов: Ф2 витрины (`scoreboard-spectral-ladder`, #1749) закрыта на измеренных числах из `dads-lab-report-2026-07-18.md` и `latest.json` — без новых замеров. Регрессионный зуб flux (#1750) вышел с известной дельтой спектра, а не «величиной нужного порядка» — это […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
-
-> `requiredProjectionSet` должен быть независим от фактических страниц движка. Panel назначает множество требуемых `canonicalRef`, а readiness сравнивает его с reducer output binding ledger и полным inventory живых engine objects на одном snapshot. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
-
-> Сначала фиксирую два множества, которые нельзя смешивать: M2 records и attempts. Идемпотентность живёт на ключе `(principal,intentId)`, а независимое поступление тех же bytes с новым intent создаёт новый record и новую lineage. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
-
-### 2026-08-05 · позиция · team-evening-feedback
-
-> — Оценка артефактов: MAIN_DAY_ISSUE в §Санитарные корректно опирается на измеренные числа (`dads-lab-report-2026-07-18.md`) и явно запрещает лишние DSP-бенчмарки — инвариант «не удорожать вход без новых данных» соблюдён. Итоги дня: чистых функций сегодня не двигали; данных новых […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`

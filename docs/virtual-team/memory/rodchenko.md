@@ -5,8 +5,44 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14379/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 310 (причины в op-log) -->
+Записей: 49 · бюджет 14400/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 317 (причины в op-log) -->
+
+### 2026-08-24 · позиция · logging-observability-cut-m0-order
+
+> С витрины оператора три разных сигнала: лицо ошибки на экране (номер), числа «живости» кабинета, тревога «диск кончается», пульс «дежурство дышит». Визуально они не один виджет. Зависимость решения не из «рядом на дашборде», а из того, чей контракт ломает чужой экран при […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/logging-observability-cut-m0-order-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1-incident-number
+
+> С витрины: человек читает тело и то, что UI вывел крупно. Заголовок ответа оператор не увидит. Значит поле номера в JSON — обязательный блок зоны ошибки; request-id можно мелким вторичным, но не вместо номера. Три рода отказа — три разных лица на экране: «сломан» с номером; […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m1-incident-number-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1b-duty-pulse
+
+> С витрины дежурства пульс — не поток логов и не карточка происшествия. Оператору нужна одна зона фиксации: живые числа «проб · шаг · места» и честный статус «тик / тишина». Если каждый минутный пульс красит badge как тревогу — экран врёт и выгорает. Картотека — редкий сигнал; […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/logging-observability-cut-m1b-duty-pulse-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1c-disk-guard
+
+> UI этой комнаты нет — и не надо. Но оператору в телеге нужна честная конструкция сообщения: хост, том, `free` числом, `T_remain` в минутах, порог. Без метафор «диск болеет». Тишина сторожа на витрине офиса — соседняя комната; здесь только чтобы текст тревоги читался без легенды, […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m1c-disk-guard-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m2-health-deep
+
+> С витрины дежурного: глазочитаемость — числа `tabular-nums`, не проза «всё плохо». Три рода отказа — три слова на бейдже, без легенды. Но экраны и Grafana эта комната не проектирует; мне важно, чтобы JSON ответа сам читался человеком в `curl`: плоская структура, короткие ключи, […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/logging-observability-cut-m2-health-deep-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · team-evening-feedback
+
+> Оценка артефактов: `MAIN_DAY_ISSUE` и стендап сознательно не открывали UI «дома журнала» / нарезку «буфер · наборы · архив» — верно, без письменного «да» владельца. `DAILY_CODE_REVIEW` отмечает: #2124 — ядро отбора, не JSX; a11y/DESIGN не применимы. Т4 шторма (лицо ошибки + […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-24.md#reply-1`
 
 ### 2026-08-23 · позиция · team-evening-feedback
 
@@ -265,45 +301,3 @@
 > Начинаю с пользовательского контура ссылок. Старые deep link на `strategy.mmbrn.tech` после cutover не должны «тихо» открывать чужой UI: либо явный mapped redirect на static/Panel-маршрут, либо честный unmapped. Никакого pass-through «как было» — это обход authority и ломает […] _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-08.md#reply-1`
-
-### 2026-08-08 · позиция · team-evening-feedback
-
-> Родченко, презентационный UI. Оценка артефактов: по моей зоне артефакты дня прямо не касаются, но `MAIN_DAY_ISSUE` содержит требование «клиент получает типизированный ответ с различимой причиной из закрытого списка» — это косвенно моя граница (форма ошибки в UI). Итоги дня: UI […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-08.md#reply-1`
-
-### 2026-08-07 · позиция · team-evening-feedback
-
-> Родченко. Оценка артефактов: `MAIN_DAY_ISSUE` явно требует «клиент отображает конкретную причину отказа, не generic, для каждого из пяти случаев есть сопоставление в типе/enum» — DoD корректный, моя зона названа; в `DAILY_CODE_REVIEW` мой блок «—» — клиентская часть провода не […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-07.md#reply-1`
-
-### 2026-08-06 · позиция · team-evening-feedback
-
-> — Оценка артефактов: Ф2 витрины закрыта плагином `apps/client/src/plugins/mic-detector-scoreboard/` (`DetectorScoreboardPanel.tsx` + `ladderData.ts` + тест) — это моя ткань, форма изделия соблюдена (плагин, не стенд), таблица на измеренном. DAILY_CODE_REVIEW правильно отметил […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
-
-> Пользователь видит контейнерные identities и разрешённые результаты, а не нативные роли и ids Affine. Исчезновение движка может убрать browsing и layout, но не должно изменить адрес, права или историю материала. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
-
-> Metadata, ref, bytes и download — четыре разных результата. Metadata включает разрешённые M2 поля и `sensitive.reason`, но никогда `location.ref`; ref-операция возвращает только `location.ref`. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
-
-### 2026-08-05 · позиция · team-evening-feedback
-
-> — Оценка артефактов: MAIN_DAY_ISSUE удерживает запрет «не берём `detector-scoreboard` Ф1 в код до зелёного CI» — это защищает будущую витрину от посадки на слепой merge; для UI это правильная дисциплина. Итоги дня: витрин не появилось; таблицы качества детекции нет; панели […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
-
-> Видимость полей разнесена до ответа API: `sensitive.reason` и `location.kind` входят в metadata, `location.ref` выдаётся только действием `read-ref`, байты — только `read-bytes`. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`

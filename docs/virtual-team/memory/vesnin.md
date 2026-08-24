@@ -5,8 +5,44 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14258/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 327 (причины в op-log) -->
+Записей: 49 · бюджет 14398/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 333 (причины в op-log) -->
+
+### 2026-08-24 · позиция · logging-observability-cut-m0-order
+
+> Конструкция наблюдаемости здесь — не общий дом логов (отложено), а четыре отдельных контракта. Ищу несущую: что без себя делает соседние вердикты пустыми. Номер происшествия (1) — сшивка лица ответа API с картотекой; владелец уже зафиксировал чеканщика. Это горизонтальный […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/logging-observability-cut-m0-order-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1-incident-number
+
+> Конструкция: номер — не украшение 500, а несущий шов трёх хранилищ. Значит тело JSON ответа при роде «сломан» несёт поле номера; заголовок рядом — тот же литерал. `X-Request-Id` остаётся на каждый ответ как сейчас; номер происшествия — только на лице «сломан», не на каждый 200. […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m1-incident-number-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1b-duty-pulse
+
+> Конструкция. Граница модуля «запись» владеет пульсом целиком — по той же логике, что паспорт записи (M8): происхождение и жизнь материала не зависят от кабинета. Издатель — процесс узла/борда, который ведёт захват. Хозяин расписания — локальный таймер/тик внутри этого процесса […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/logging-observability-cut-m1b-duty-pulse-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1c-disk-guard
+
+> Конструкция узкая: сторож — локальный контур на машине с диском, не модуль офиса. Диск media/кабинета — предмет измерения; офис — транзиентный посредник, который по данности таймаутит. Тревога «через офис» как единственный путь — форма, которая не выдерживает отказ носителя […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m1c-disk-guard-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m2-health-deep
+
+> Конструкция: `/health/deep` — издатель кабинета, лежит в том же отказном контракте M1. При деградации/отказе тело несёт `genus ∈ {broken, busy, unreachable}`; при `broken` — `incidentId` + заголовок `X-Incident-Id`, рядом `requestId`. Не изобретаем четвёртый статус «degraded» […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/logging-observability-cut-m2-health-deep-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · team-evening-feedback
+
+> Оценка артефактов: `MAIN_DAY_ISSUE` чётко разводит витрину и порт проверки задания (#2086) — это архитектурно верно. `DAILY_CODE_REVIEW` фиксирует, что #2115 (пересадка `plan:week` на панельную цепочку) согласуется с Т1 шторма — границы процедур соблюдены. Свежесть […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-24.md#reply-1`
 
 ### 2026-08-23 · позиция · team-evening-feedback
 
@@ -260,44 +296,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
 
-### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
-
-> Конструкция D1: **Migration Delivery Contract (MDC-1)** — append-only migration ledger + per-object disposition manifest + causal rollout DAG (provision→M4→M5→M6-align→routes→canary→cutover→observe→retire) + M3 route matrix. Affine page ≠ original; engine id ≠ canonicalRef; […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-08.md#reply-1`
-
-### 2026-08-08 · позиция · team-evening-feedback
-
-> Веснин, границы и контракты. Оценка артефактов: `MAIN_DAY_ISSUE` образцово честен — таблица посылок с маркерами `holds`, явно названное расхождение с `morning-gates-state.json` (норма У1), закрытый список причин отказа. ADR-0025 принят и нарезан по канону Р3 без ловушки 05.08. […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-08.md#reply-1`
-
-### 2026-08-07 · позиция · team-evening-feedback
-
-> Веснин. Оценка артефактов: `MAIN_DAY_ISSUE` образцово несёт таблицу обоснования с провенансом и посылками (holds на трёх маркерах) — норма #1573 отработала; ADR-0024 разводит `state.day` и момент выбора магистрали, устраняя источник расхождений между `main-day-assertions.json` и […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-07.md#reply-1`
-
-### 2026-08-06 · позиция · team-evening-feedback
-
-> Магистраль оказалась призраком — это не провал дня, это работа приборов, которые построены двумя другими спринтами того же дня. `instruments-honest-verdict` и `review-honesty` вышли ровно затем, чтобы такие вердикты можно было выносить письменно, а не в разговоре. День сам себя […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
-
 ### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
 
 > Выбираю одну модель: Affine является только сменной человеческой проекцией. Канонические originals, identity, authority, binding и переносимые annotations остаются вне движка. Контракт Affine не становится новым интерфейсом контейнера. _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
-
-> До object gate `recordId` разрешается в `canonicalRef`, current tip, policy version и object-version vector. Неизвестный record, binding, action или version даёт fail-closed, а не fallback. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
-
-### 2026-08-05 · позиция · team-evening-feedback
-
-> Спринт `instruments-honest-verdict` пришёл с четырьмя ревью-контекстами (Dynin b2/b4, Ozhegov recut, Vesnin) — норма нарезки по ролям соблюдена, `revisionAt` виден в trail. ADR-контракта ночного билда сегодня не заведено, что для L-задачи риск: без ADR легко расщепить работу по […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`

@@ -1,0 +1,15 @@
+{"ts":"2026-08-24T07:33:25.515Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-24-logging-observability-cut-m0-order","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-24-logging-observability-cut-m1-incident-number","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-24-logging-observability-cut-m1b-duty-pulse","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-24-logging-observability-cut-m1c-disk-guard","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-24-logging-observability-cut-m2-health-deep","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-08-24-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-08-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-07-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-06-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-06-static-mmbrn-container-m5-affine-role","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-06-static-mmbrn-container-m6-intake-delivery","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-05-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-04-static-mmbrn-container-m3-access","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-24T18:27:33.596Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
