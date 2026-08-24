@@ -20,6 +20,12 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `obs-sentry-container` | Кусок E: контейнер Сентри на офисе — картотека происшествий | L | [`OBS_SENTRY_CONTAINER_PROMPT.md`](../prompts/OBS_SENTRY_CONTAINER_PROMPT.md) | [#2122](https://github.com/officefish/Membrana/issues/2122) |
+| `obs-health-deep` | Кусок D: /health/deep кабинета — числа вместо ок | M | [`OBS_HEALTH_DEEP_PROMPT.md`](../prompts/OBS_HEALTH_DEEP_PROMPT.md) | [#2121](https://github.com/officefish/Membrana/issues/2121) |
+| `obs-duty-pulse` | Кусок C: пульс дежурства — издаёт узел записи | M | [`OBS_DUTY_PULSE_PROMPT.md`](../prompts/OBS_DUTY_PULSE_PROMPT.md) | [#2120](https://github.com/officefish/Membrana/issues/2120) |
+| `obs-failure-face` | Кусок B: контракт отказа кабинета — род + номер происшествия (INC/TMP) | M | [`OBS_FAILURE_FACE_PROMPT.md`](../prompts/OBS_FAILURE_FACE_PROMPT.md) | [#2119](https://github.com/officefish/Membrana/issues/2119) |
+| `obs-disk-guard` | Кусок A: сторож диска (Д1) — тревога места напрямую в телеграм | M | [`OBS_DISK_GUARD_PROMPT.md`](../prompts/OBS_DISK_GUARD_PROMPT.md) | [#2118](https://github.com/officefish/Membrana/issues/2118) |
+| `logging-observability-contour` | Магистраль наблюдаемости: исполнение нарезки заседания logging-observability-cut | L | [`LOGGING_OBSERVABILITY_CONTOUR_PROMPT.md`](../prompts/LOGGING_OBSERVABILITY_CONTOUR_PROMPT.md) | [#2117](https://github.com/officefish/Membrana/issues/2117) |
 | `chart-list-plugin` | Плагин журнала «чарт лист»: отбор звуков поверх почвы | L | [`SESSION_B_CHART_LIST_TASK.md`](../prompts/SESSION_B_CHART_LIST_TASK.md) | — |
 | `scenario-rate-first-capture` | Первый трек после старта сценария: 44.1 кГц должен fail-closed до записи (#2046) | M | [`SESSION_V_FIRST_CAPTURE_RATE_2026-08-22.md`](../prompts/SESSION_V_FIRST_CAPTURE_RATE_2026-08-22.md) | [#2046](https://github.com/officefish/Membrana/issues/2046) |
 | `scenario-rate-sprint` | Scenario board sample-rate consistency 44.1 vs 48 kHz | M | [`SESSION_V_SCENARIO_RATE_SPRINT_2026-08-21.md`](../prompts/SESSION_V_SCENARIO_RATE_SPRINT_2026-08-21.md) | [#2001](https://github.com/officefish/Membrana/issues/2001) |
