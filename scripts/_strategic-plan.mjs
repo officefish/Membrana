@@ -16,13 +16,11 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-import {
-  anthropicPost,
-  defaultModel,
-  getAnthropicKey,
-  loadDotEnv,
-  printAnthropicHttpError,
-} from './_anthropic-env.mjs';
+import { loadDotEnv } from './_anthropic-env.mjs';
+// Провод к панели каналов (группа ritual): switch провайдера — в панели, не здесь.
+// Прямой вызов api.anthropic.com снят 24.08 — потолок Anthropic ронял план недели,
+// пока остальная утренняя генерация жила на панельной цепочке (находка ритуала 24.08).
+import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 import {
   buildDetectionPlanningConstraintsBullets,
   buildDetectionPlanningContextSection,
@@ -215,15 +213,6 @@ function buildTaskBody({ horizonLabel, rangeLabel, outputFileName, includeDetect
 export async function runStrategicPlan(options) {
   loadDotEnv();
 
-  let key;
-  try {
-    key = getAnthropicKey();
-  } catch (e) {
-    console.error(e.message);
-    console.error('См. .env.example.');
-    process.exit(1);
-  }
-
   const archPath = resolve(process.cwd(), 'docs/ARCHITECTURE.md');
   const servicesPath = resolve(process.cwd(), 'docs/SERVICES.md');
 
@@ -364,52 +353,25 @@ export async function runStrategicPlan(options) {
         `\n\n[… контекст обрезан до ${MAX_CONTEXT_CHARS} символов …]\n`
       : assembled;
 
-  const model = defaultModel();
   // План имеет 6 обязательных разделов с детализацией по задачам (поля «Цель / DoD /
   // Роль / Размер»). На реальных периодах 4096 токенов обрезались на середине раздела 4
   // (см. первый авто-запуск 2026-05-14). 8192 — комфортный потолок для claude-haiku-4-5
   // (модель допускает значительно больше); если упрёмся снова — увеличим адресно.
-  const bodyJson = {
-    model,
-    max_tokens: 8192,
-    messages: [
-      {
-        role: 'user',
-        content: [{ type: 'text', text: bodyText }],
-      },
-    ],
-  };
-
   let exitCode = 0;
   try {
-    const { ok, status: httpStatus, text } = await anthropicPost(
-      'https://api.anthropic.com/v1/messages',
-      {
-        headers: {
-          'content-type': 'application/json',
-          'x-api-key': key,
-          'anthropic-version': '2023-06-01',
-        },
-        bodyJson,
-      },
-    );
+    const r = await invokeProcedureLlm({
+      procedureId: 'strategic-plan',
+      prompt: bodyText,
+      maxTokens: 8192,
+    });
 
-    if (!ok) {
-      printAnthropicHttpError(httpStatus, text);
+    if (!r.ok) {
+      console.error(
+        `[fail] LLM-канал стратегического плана исчерпан по всей цепочке: ${r.error || (r.status ? `HTTP ${r.status}` : 'нет ответа')}`,
+      );
       exitCode = 1;
     } else {
-      let out = '';
-      try {
-        const json = JSON.parse(text);
-        const parts = json?.content ?? [];
-        out = parts
-          .filter((b) => b?.type === 'text')
-          .map((b) => b.text)
-          .join('\n');
-        if (!out) out = JSON.stringify(parts, null, 2);
-      } catch {
-        out = text;
-      }
+      let out = r.text || '';
       if (options.includeDriftDigest) {
         // DA5: read-only дрейф-секция из последнего DRIFT_*.json (DA3-раннер).
         // Детерминированный рендер, не LLM; graceful — без дайджеста секции нет.

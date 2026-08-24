@@ -36,6 +36,14 @@
       "meters": true
     },
     {
+      "id": "strategic-plan",
+      "entryMjs": "scripts/_strategic-plan.mjs",
+      "yarnScript": "plan:week",
+      "title": "Ритуал · стратегический план (день/неделя)",
+      "meters": true,
+      "group": "ritual"
+    },
+    {
       "id": "ritual-preflight",
       "entryMjs": "scripts/morning-care.mjs",
       "yarnScript": "morning-care",
