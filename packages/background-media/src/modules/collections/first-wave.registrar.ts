@@ -80,6 +80,9 @@ export interface RunRequest {
    * Со `sampleId` и окном не сочетается: смесь не даёт сказать, что именно измерено.
    */
   readonly sampleIds?: readonly string[];
+  /** Настройки отбора библиотеки (#2110): ручки человека, не форма задания. */
+  readonly volume?: number;
+  readonly criterion?: string;
 }
 
 export interface RunRequestOutcome {
@@ -190,6 +193,61 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
           // затирать друг друга — тот же довод, по которому исход моста ловится картой.
           this.results.set(ctx.address.runId, outcome);
           return { completedAt: new Date(), kind: 'report' as const };
+        },
+      });
+
+      // Витрина отбора библиотеки (#2110) — второй показ семейства чарт-листа. Окно и
+      // настройки едут в payload; отпечаток входа — от состава проб В ОКНЕ тем же чтением,
+      // что у прогона (как у свода сеанса). Ручки человека в configHash не входят — цена
+      // принята семейством: два прогона с разными настройками расходятся только runId.
+      const libraryManifest = handlers.LIBRARY_CHART_LIST_MANIFEST;
+      const libraryWindowOf = (req: RunRequest) => ({
+        ...(req.from ? { fromMs: Date.parse(req.from) } : {}),
+        ...(req.to ? { toMs: Date.parse(req.to) } : {}),
+      });
+      const librarySamplesOf = async (collectionId: string) => {
+        const all = await mfcc.reader.listSamples(collectionId);
+        // Проба без createdAt в отбор по окну не попадает МОЛЧА НЕ выбрасывается: ей ставится
+        // эпоха 0 — при заданном окне она честно выпадет, без окна участвует как все.
+        return all.map((d) => ({ sampleId: d.id, at: d.createdAt ? Date.parse(d.createdAt) : 0 }));
+      };
+      this.contextBuilders.set(libraryManifest.id, async (req) => {
+        const samples = await librarySamplesOf(req.collectionId);
+        const { candidates } = handlers.filterByDateWindow(samples, libraryWindowOf(req));
+        return {
+          address: this.addressOf(libraryManifest, req, handlers.uuidV7()),
+          fingerprints: {
+            inputHash: handlers.sha256Hex(candidates.map((s) => s.sampleId).sort().join('\n')),
+            configHash: handlers.sha256Hex(JSON.stringify(handlers.CHART_LIST_DEFAULTS)),
+          },
+          resumeMode: 'fresh',
+          trigger: req.trigger ?? libraryManifest.triggers[0]!,
+          payload: {
+            collectionId: req.collectionId,
+            ...(req.from ? { from: req.from } : {}),
+            ...(req.to ? { to: req.to } : {}),
+            volume: req.volume ?? Number.NaN,
+            criterion: req.criterion ?? '',
+            occurredAt: new Date(),
+          },
+        };
+      });
+      this.host.registerPlugin(libraryManifest, {
+        execute: async (ctx) => {
+          const p = ctx.payload as { collectionId: string; from?: string; to?: string; volume: number; criterion: string };
+          const samples = await librarySamplesOf(p.collectionId);
+          const window = {
+            ...(p.from ? { fromMs: Date.parse(p.from) } : {}),
+            ...(p.to ? { toMs: Date.parse(p.to) } : {}),
+          };
+          const outcome = await handlers.runLibraryChartList(
+            { measure: async (ids) => (await handlers.measureSampleSet({ reader: mfcc.reader }, p.collectionId, ids)).candidates },
+            samples,
+            { volume: p.volume, criterion: p.criterion },
+            window,
+          );
+          this.results.set(ctx.address.runId, outcome);
+          return { completedAt: new Date(), kind: 'showcase' as const };
         },
       });
 

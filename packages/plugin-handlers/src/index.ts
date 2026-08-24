@@ -82,8 +82,10 @@ export {
   CHART_LIST_CRITERIA,
   CHART_LIST_DEFAULTS,
   CHART_LIST_VOLUMES,
+  filterByDateWindow,
   type ChartListCandidate,
   type ChartListCriterion,
+  type ChartListDateWindow,
   type ChartListPick,
   type ChartListRefusal,
   type ChartListRefusalReason,
@@ -103,6 +105,15 @@ export {
   type ChartListTask,
 } from './chart-list/executor.js';
 export { CHART_LIST_MEASURE_MANIFEST, CHART_LIST_MEASURE_ID } from './chart-list-measure/manifest.js';
+export { LIBRARY_CHART_LIST_MANIFEST, LIBRARY_CHART_LIST_ID } from './chart-list-library/manifest.js';
+export {
+  librarySettingsUsable,
+  runLibraryChartList,
+  type LibraryChartListOutcome,
+  type LibraryChartListSettings,
+  type LibraryMeasurePort,
+  type LibrarySampleRef,
+} from './chart-list-library/executor.js';
 export {
   measureSampleSet,
   sampleIdsOf,

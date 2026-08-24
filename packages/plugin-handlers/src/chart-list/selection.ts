@@ -178,10 +178,10 @@ export interface ChartListDateWindow {
  * `empty-window` — окно правильное, но в нём никого: честный ответ «в этот промежуток записей
  * нет», отличимый от «кандидатов нет вовсе» (`no-candidates`).
  */
-export function filterByDateWindow(
-  candidates: readonly ChartListCandidate[],
+export function filterByDateWindow<T extends { readonly at: number }>(
+  candidates: readonly T[],
   window: ChartListDateWindow | null | undefined,
-): { candidates: readonly ChartListCandidate[]; refusal: ChartListRefusal | null } {
+): { candidates: readonly T[]; refusal: ChartListRefusal | null } {
   if (!window || (window.fromMs === undefined && window.toMs === undefined)) {
     return { candidates, refusal: null };
   }
