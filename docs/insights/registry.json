@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-21",
+  "updatedAt": "2026-08-23",
   "insights": [
     {
       "id": "insight-own-field-corpus-single-spec",
@@ -897,6 +897,17 @@
       "horizon": null,
       "weight": null,
       "createdAt": "2026-08-21",
+      "tags": []
+    },
+    {
+      "id": "insight-spectral-methods-for-drone",
+      "title": "Спектральный анализ под задачу дрона: порядковый анализ, спектр огибающей, постоянная добротность",
+      "status": "draft",
+      "source": "user",
+      "sprintPhase": null,
+      "horizon": null,
+      "weight": null,
+      "createdAt": "2026-08-23",
       "tags": []
     }
   ]
