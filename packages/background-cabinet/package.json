@@ -28,6 +28,7 @@
     "@nestjs/platform-ws": "^11.0.0",
     "@nestjs/websockets": "^11.0.0",
     "@prisma/client": "^6.1.0",
+    "@sentry/node": "^9",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
     "nestjs-pino": "^4.1.0",

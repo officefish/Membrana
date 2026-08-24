@@ -9,6 +9,7 @@ import {
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import { mintIncidentId } from '../incident/incident-id';
+import { captureIncident, isIncidentSentryEnabled } from '../incident/incident-sentry';
 import {
   CabinetBusyException,
   CabinetUnreachableException,
@@ -84,7 +85,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
-    const { id: incidentId, source } = mintIncidentId();
+    const official = isIncidentSentryEnabled();
+    const { id: incidentId, source } = mintIncidentId(official);
+    if (official) captureIncident(exception, { incidentId, requestId });
     // Тот же литерал номера — в лог: человек диктует номер с экрана, лог даёт
     // окружение по времени, картотека (кусок E) даст след по INC.
     this.logger.error(
