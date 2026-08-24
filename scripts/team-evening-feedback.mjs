@@ -11,12 +11,18 @@
  * LLM-канал: процедура `team-evening-feedback` (реестр каналов, эпик #1007) — цепочка
  * с фолбэком вместо прямого вызова Anthropic (#1210). Провенанс звена уходит в шапку протокола.
  */
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
+
 import { loadDotEnv } from './_anthropic-env.mjs';
 import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 import {
   EVENING_FEEDBACK_RAG_QUERY,
   buildEveningFeedbackUserMessage,
+  buildEveningReadAt,
   collectDayDocumentsContext,
+  collectGateMagistral,
   collectGitDaySummary,
   parseTeamEveningFeedbackCli,
   printTeamEveningFeedbackHelp,
@@ -28,6 +34,7 @@ import {
   VIRTUAL_TEAM_PATH,
   writeEveningFeedbackMarkdown,
 } from './lib/team-evening-feedback-ritual.mjs';
+import { gitFsIo, readEntry } from './lib/angelina-adapter.mjs';
 import {
   formatRagContextBlock,
   logRagStatus,
@@ -54,8 +61,17 @@ const regulation = readRequiredFile(REGULATION_PATH);
 const prompt = readRequiredFile(PROMPT_PATH);
 const virtualTeam = readRequiredFile(VIRTUAL_TEAM_PATH);
 
-const dayDocs = collectDayDocumentsContext();
+const today = new Date().toISOString().slice(0, 10);
+const dayDocs = collectDayDocumentsContext({ day: today });
 const { block: gitSummary } = collectGitDaySummary();
+// #2107: магистраль — из состояния гейта; MAIN_DAY_ISSUE ручной чеканки не знает.
+const gate = collectGateMagistral({ day: today });
+// #2107: readAt — версия+отпечаток каждого входа на момент генерации (форма утра).
+const readAt = buildEveningReadAt(
+  gitFsIo(process.cwd(), { execFileSync, readFileSync, existsSync, join }),
+  today,
+  readEntry,
+);
 
 let ragBlock = '';
 if (!cli.noRag) {
@@ -71,6 +87,7 @@ const bodyText = buildEveningFeedbackUserMessage({
   dayDocs,
   gitSummary,
   ragBlock,
+  magistralBlock: gate.block,
   focusNote: cli.focusNote,
 });
 
@@ -97,6 +114,11 @@ try {
     noSave: cli.noSave,
     invoke: invokeProcedureLlm,
     write: writeEveningFeedbackMarkdown,
+    guard: {
+      day: today,
+      magistral: { id: gate.id, author: gate.author, source: 'gate-state', fresh: gate.fresh },
+      readAt,
+    },
     log: (line) => console.error(line),
     emit: (body) => console.log(body),
   });

@@ -22,20 +22,37 @@ const MAX_DOC_CHARS = 24_000;
 const MAX_CONTEXT_CHARS = 90_000;
 const MAX_GIT_LOG_CHARS = 12_000;
 
-/** @type {readonly { readonly rel: string; readonly label: string; readonly required?: boolean }[]} */
+/** @type {readonly { readonly key: string; readonly rel: string; readonly label: string; readonly evening?: boolean }[]} */
 export const DAY_DOC_INPUTS = [
-  { rel: 'docs/STRATEGIC_PLAN_DAY.md', label: 'Стратегический план на день' },
-  { rel: 'docs/DAILY_STANDUP.md', label: 'Утренний стендап' },
-  { rel: 'docs/MAIN_DAY_ISSUE.md', label: 'MAIN_DAY_ISSUE (канон дня)' },
+  { key: 'STRATEGIC_PLAN_DAY', rel: 'docs/STRATEGIC_PLAN_DAY.md', label: 'Стратегический план на день' },
+  { key: 'DAILY_STANDUP', rel: 'docs/DAILY_STANDUP.md', label: 'Утренний стендап' },
+  { key: 'MAIN_DAY_ISSUE', rel: 'docs/MAIN_DAY_ISSUE.md', label: 'MAIN_DAY_ISSUE (канон дня)' },
   // Конвейер (владелец, 18.07): генератор-аудитор считает сухие факты → рефлексия
   // работает ПОСЛЕ него и НА нём → из неё растут дайджест партнёрам и фидбек владельцу.
   // Порядок в цепочке был верен (audit-evening стоит до фидбека), а вход отсутствовал:
   // 18.07 рефлексия обсуждала oversized из ревью и не назвала разрез 60/33/4 — самое
   // информативное число дня, — потому что не видела хронику.
-  { rel: 'docs/DAILY_AUDIT.md', label: 'Хроника дня — сухие факты (ADR-0013)' },
-  { rel: 'docs/DAILY_CODE_REVIEW.md', label: 'Вечернее code-review (сгенерировано сегодня)' },
-  { rel: 'docs/CURRENT_TASK.md', label: 'Буфер CURRENT_TASK' },
+  { key: 'DAILY_AUDIT', rel: 'docs/DAILY_AUDIT.md', label: 'Хроника дня — сухие факты (ADR-0013)', evening: true },
+  { key: 'DAILY_CODE_REVIEW', rel: 'docs/DAILY_CODE_REVIEW.md', label: 'Вечернее code-review (сгенерировано сегодня)', evening: true },
+  { key: 'CURRENT_TASK', rel: 'docs/CURRENT_TASK.md', label: 'Буфер CURRENT_TASK' },
 ];
+
+/**
+ * Полный список входов дня: статические DAY_DOC_INPUTS + мемо дня (путь зависит от даты).
+ * Мемо — третий вечерний документ (#2107): без него команда судит план, а не прожитое
+ * (живая цена 23.08 — 5.7/10 за день, закрытый по настоящей магистрали).
+ *
+ * @param {string} day — YYYY-MM-DD
+ */
+export function eveningFeedbackInputs(day) {
+  return [
+    ...DAY_DOC_INPUTS,
+    { key: 'DAY_MEMO', rel: `docs/memos/${day}.md`, label: 'Мемо дня (факты и решения к вечеру)', evening: true },
+  ];
+}
+
+/** Ключи, без которых протокол фидбека не засчитывается (#2107): три вечерних документа. */
+export const EVENING_REQUIRED_KEYS = Object.freeze(['DAILY_AUDIT', 'DAILY_CODE_REVIEW', 'DAY_MEMO']);
 
 export const EVENING_FEEDBACK_RAG_QUERY =
   'evening team feedback strategic plan main day issue code review developer rhythm';
@@ -176,13 +193,14 @@ export function collectGitDaySummary(opts = {}) {
 }
 
 /**
- * @param {{ readonly cwd?: string }} [opts]
+ * @param {{ readonly cwd?: string; readonly day?: string }} [opts]
  */
 export function collectDayDocumentsContext(opts = {}) {
   const cwd = opts.cwd ?? process.cwd();
+  const day = opts.day ?? new Date().toISOString().slice(0, 10);
   const sections = [];
 
-  for (const doc of DAY_DOC_INPUTS) {
+  for (const doc of eveningFeedbackInputs(day)) {
     const abs = resolve(cwd, doc.rel);
     const text = readBoundedFile(abs, MAX_DOC_CHARS);
     if (text === null) {
@@ -193,6 +211,56 @@ export function collectDayDocumentsContext(opts = {}) {
   }
 
   return trimBlock(sections.join('\n'), MAX_CONTEXT_CHARS, 'документы дня');
+}
+
+export const GATE_STATE_REL = 'docs/tasks/morning-gates-state.json';
+
+/**
+ * Магистраль дня — из состояния гейта, а не из MAIN_DAY_ISSUE (#2107).
+ *
+ * MAIN_DAY_ISSUE по построению не знает ручной чеканки, сделанной ПОСЛЕ его генерации:
+ * 23.08 фидбек судил день по firebat из утреннего документа, тогда как владелец зачеканил
+ * chart-list-prod-polish рукой, — и выставил 5.7/10 за «несдвинутую» магистраль, закрытую
+ * по настоящей. 24.08 расхождение повторилось бы: документ предлагал #2113, зачеканен
+ * logging-observability-contour. Гейт — единственный источник, который знает выбор владельца.
+ *
+ * @param {{ readonly cwd?: string; readonly day?: string }} [opts]
+ * @returns {{ id: string|null, author: string|null, day: string|null, fresh: boolean, block: string }}
+ */
+export function collectGateMagistral(opts = {}) {
+  const cwd = opts.cwd ?? process.cwd();
+  const today = opts.day ?? new Date().toISOString().slice(0, 10);
+  const abs = resolve(cwd, GATE_STATE_REL);
+  let state = null;
+  try {
+    state = JSON.parse(readFileSync(abs, 'utf8'));
+  } catch {
+    /* нет файла / битый JSON — честно скажем ниже */
+  }
+  const id = state?.magistral ?? null;
+  const author = state?.magistralAuthor ?? null;
+  const day = state?.day ?? null;
+  const fresh = Boolean(id) && day === today;
+
+  const lines = ['## Магистраль дня — состояние гейта (авторитетный источник)', ''];
+  if (!state) {
+    lines.push(`(состояние гейта недоступно: \`${GATE_STATE_REL}\`)`);
+  } else if (!fresh) {
+    lines.push(
+      `⚠ Состояние гейта НЕ сегодняшнее (day=${day ?? '—'}, сегодня ${today}) — магистраль дня не зачеканена; судить день по магистрали из MAIN_DAY_ISSUE запрещено, назови это расхождение в протоколе.`,
+    );
+  } else {
+    lines.push(
+      `Зачеканенная магистраль: **${id}** (author=${author ?? '—'}, момент ${state.magistralChosenAt ?? day}).`,
+      '',
+      'Судить «сдвинулась ли магистраль» ТОЛЬКО по этому идентификатору. Если MAIN_DAY_ISSUE',
+      'предлагает другую магистраль — это вход генератора до слова владельца, а не решение дня.',
+    );
+    if (Array.isArray(state.magistralOptions) && state.magistralOptions.length) {
+      lines.push('', `Снимок топ-3 на момент выбора: ${state.magistralOptions.join(' · ')}.`);
+    }
+  }
+  return { id, author, day, fresh, block: lines.join('\n') };
 }
 
 /**
@@ -234,6 +302,7 @@ export function buildEveningFeedbackUserMessage(p) {
     p.virtualTeam +
     '\n\n---\n\n' +
     (p.ragBlock ? `## RAG context\n\n${p.ragBlock}\n\n---\n\n` : '') +
+    (p.magistralBlock ? `${p.magistralBlock}\n\n---\n\n` : '') +
     '## Документы дня\n\n' +
     p.dayDocs +
     '\n\n---\n\n## Git\n\n' +
@@ -264,9 +333,94 @@ export function writeEveningFeedbackMarkdown(opts) {
   ]
     .filter(Boolean)
     .join('; ');
-  const header = `<!-- Сгенерировано: ${stamp} (yarn team-evening-feedback; ${flags}) -->\n\n`;
+  const header = `<!-- Сгенерировано: ${stamp} (yarn team-evening-feedback; ${flags}) -->\n`;
+  // #2107: блок readAt — та же форма, что утренний страж Ангелины: не «я прочитал»,
+  // а ЧТО ИМЕННО прочитано (версия + отпечаток каждого входа на момент генерации).
+  const guardLine = opts.meta?.guard
+    ? `<!-- evening-feedback ${JSON.stringify(opts.meta.guard)} -->\n`
+    : '';
   mkdirSync(dirname(opts.path), { recursive: true });
-  writeFileSync(opts.path, header + opts.body, 'utf8');
+  writeFileSync(opts.path, header + guardLine + '\n' + opts.body, 'utf8');
+}
+
+/**
+ * readAt по входам вечера: версия (git) + отпечаток содержимого каждого входа.
+ * io — gitFsIo из angelina-adapter; чтение здесь, суждение — в чистом предикате ниже.
+ *
+ * @param {{ content: (rel: string) => string|null, version: (rel: string) => string|null }} io
+ * @param {string} day — YYYY-MM-DD
+ * @returns {Record<string, { version: string|null, digest: string|null }>}
+ */
+export function buildEveningReadAt(io, day, readEntryFn) {
+  const out = {};
+  for (const doc of eveningFeedbackInputs(day)) {
+    out[doc.key] = readEntryFn(io, doc.rel);
+  }
+  return out;
+}
+
+/**
+ * ЧИСТЫЙ предикат #2107: протокол засчитан ⟺ readAt несёт все обязательные входы
+ * и отпечатки совпадают с переданным текущим состоянием. Без ФС, без часов, без сети —
+ * судит только переданные значения; порча любого поля обязана давать красный.
+ *
+ * @param {{
+ *   readonly readAt: Record<string, { version?: string|null, digest?: string|null }>|null|undefined;
+ *   readonly current: Record<string, { version?: string|null, digest?: string|null }>;
+ *   readonly requiredKeys?: readonly string[];
+ * }} p
+ * @returns {{ ok: boolean, failures: string[] }}
+ */
+export function validateEveningFeedbackReadAt(p) {
+  const failures = [];
+  const readAt = p.readAt;
+  const required = p.requiredKeys ?? EVENING_REQUIRED_KEYS;
+  if (!readAt || typeof readAt !== 'object') {
+    return { ok: false, failures: ['readAt отсутствует — протокол не доказывает чтения входов'] };
+  }
+  for (const key of required) {
+    const rec = readAt[key];
+    if (!rec) {
+      failures.push(`${key}: входа нет в readAt`);
+      continue;
+    }
+    if (!rec.digest) {
+      failures.push(`${key}: отпечаток пуст (файл отсутствовал при генерации)`);
+      continue;
+    }
+    const cur = p.current[key];
+    if (!cur || !cur.digest) {
+      failures.push(`${key}: текущего отпечатка нет — вход исчез после генерации`);
+      continue;
+    }
+    if (rec.digest !== cur.digest) {
+      failures.push(`${key}: отпечаток не совпадает (читано не то, что лежит)`);
+      continue;
+    }
+    if (rec.version != null && cur.version != null && rec.version !== cur.version) {
+      failures.push(`${key}: версия не совпадает (читан вход другого дня)`);
+    }
+  }
+  return { ok: failures.length === 0, failures };
+}
+
+/**
+ * Разбор машинной строки протокола: `<!-- evening-feedback {...} -->`.
+ * @param {string} content
+ * @returns {{ readAt?: Record<string, {version?: string|null, digest?: string|null}>, magistral?: object }|null}
+ */
+export function parseEveningFeedbackGuard(content) {
+  // Ленивое `.*?` вложенности НЕ боится: захват обязан кончаться `}` непосредственно
+  // перед `-->`, поэтому внутренние `}` пропускаются расширением (ревью PR #2136
+  // предположило обратное — опровергнуто прогоном, тест «боевая форма» ниже).
+  // Строка `-->` внутри guard невозможна: JSON.stringify наших полей её не порождает.
+  const m = content.match(/<!--\s*evening-feedback\s+(\{.*?\})\s*-->/s);
+  if (!m) return null;
+  try {
+    return JSON.parse(m[1]);
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -355,6 +509,7 @@ export async function runEveningFeedbackLlm(deps) {
       llmProvider: result.provider,
       llmModel: result.model,
       llmSource: result.source,
+      guard: deps.guard,
     },
   });
   log(`Записано: ${deps.outputPath}`);
