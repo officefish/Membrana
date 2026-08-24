@@ -63,6 +63,12 @@
    "patterns": [
     "^(llm-procedure|llm-transport|llm-probe|lpc-[a-z]|dreams-|openrouter-)"
    ]
+  },
+  {
+   "name": "Наблюдаемость и диагностика аварий",
+   "patterns": [
+    "^(obs-|logging-observability)"
+   ]
   }
  ],
  "axes": {
