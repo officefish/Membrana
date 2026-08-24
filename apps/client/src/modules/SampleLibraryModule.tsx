@@ -38,6 +38,10 @@ import {
   SampleLibraryFftThresholdTestPanel,
 } from '../plugins/sample-library-fft-threshold-test';
 import {
+  SAMPLE_LIBRARY_CHART_LIST_PLUGIN_ID,
+  SampleLibraryChartListPanel,
+} from '../plugins/sample-library-chart-list';
+import {
   TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID,
   TrendsFftSampleAnalyzerPanel,
 } from '../plugins/trends-fft-sample-analyzer';
@@ -264,22 +268,6 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     <div className="flex h-full min-h-0 flex-col gap-3 p-2">
       {activePluginIds.includes(SAMPLE_LIBRARY_PLAYER_PLUGIN_ID) ? (
         <SampleLibraryPlayerPanel moduleId={module.id} />
-      ) : null}
-
-      {activePluginIds.includes(SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID) ? (
-        <SampleLibraryDroneAnalysisPanel moduleId={module.id} />
-      ) : null}
-
-      {activePluginIds.includes(SAMPLE_LIBRARY_FFT_THRESHOLD_TEST_PLUGIN_ID) ? (
-        <SampleLibraryFftThresholdTestPanel moduleId={module.id} />
-      ) : null}
-
-      {activePluginIds.includes(TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID) ? (
-        <TrendsFftSampleAnalyzerPanel moduleId={module.id} />
-      ) : null}
-
-      {activePluginIds.includes(NEURAL_DRONE_ANALYZER_PLUGIN_ID) ? (
-        <NeuralDroneAnalyzerPanel moduleId={module.id} />
       ) : null}
 
       <MediaLibraryQuotaBanner quota={snapshot.quota} />
@@ -568,6 +556,29 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
           </div>
         </section>
       </div>
+
+      {/* Панели плагинов — ПОД основным блоком, по журнальному образцу (пункт 1.2 владельца):
+          у журнала кабинета виджет плагина встаёт под лентой, а не над ней. Плеер остаётся
+          сверху — он орган управления прослушиванием, а не виджет-результат. */}
+      {activePluginIds.includes(SAMPLE_LIBRARY_CHART_LIST_PLUGIN_ID) && selected ? (
+        <SampleLibraryChartListPanel moduleId={module.id} collectionId={selected.id} />
+      ) : null}
+
+      {activePluginIds.includes(SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID) ? (
+        <SampleLibraryDroneAnalysisPanel moduleId={module.id} />
+      ) : null}
+
+      {activePluginIds.includes(SAMPLE_LIBRARY_FFT_THRESHOLD_TEST_PLUGIN_ID) ? (
+        <SampleLibraryFftThresholdTestPanel moduleId={module.id} />
+      ) : null}
+
+      {activePluginIds.includes(TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID) ? (
+        <TrendsFftSampleAnalyzerPanel moduleId={module.id} />
+      ) : null}
+
+      {activePluginIds.includes(NEURAL_DRONE_ANALYZER_PLUGIN_ID) ? (
+        <NeuralDroneAnalyzerPanel moduleId={module.id} />
+      ) : null}
     </div>
   );
 };
