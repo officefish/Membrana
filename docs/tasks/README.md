@@ -22,8 +22,6 @@
 |----|----------|--------|--------|--------|
 | `obs-sentry-container` | Кусок E: контейнер Сентри на офисе — картотека происшествий | L | [`OBS_SENTRY_CONTAINER_PROMPT.md`](../prompts/OBS_SENTRY_CONTAINER_PROMPT.md) | [#2122](https://github.com/officefish/Membrana/issues/2122) |
 | `obs-health-deep` | Кусок D: /health/deep кабинета — числа вместо ок | M | [`OBS_HEALTH_DEEP_PROMPT.md`](../prompts/OBS_HEALTH_DEEP_PROMPT.md) | [#2121](https://github.com/officefish/Membrana/issues/2121) |
-| `obs-duty-pulse` | Кусок C: пульс дежурства — издаёт узел записи | M | [`OBS_DUTY_PULSE_PROMPT.md`](../prompts/OBS_DUTY_PULSE_PROMPT.md) | [#2120](https://github.com/officefish/Membrana/issues/2120) |
-| `obs-failure-face` | Кусок B: контракт отказа кабинета — род + номер происшествия (INC/TMP) | M | [`OBS_FAILURE_FACE_PROMPT.md`](../prompts/OBS_FAILURE_FACE_PROMPT.md) | [#2119](https://github.com/officefish/Membrana/issues/2119) |
 | `logging-observability-contour` | Магистраль наблюдаемости: исполнение нарезки заседания logging-observability-cut | L | [`LOGGING_OBSERVABILITY_CONTOUR_PROMPT.md`](../prompts/LOGGING_OBSERVABILITY_CONTOUR_PROMPT.md) | [#2117](https://github.com/officefish/Membrana/issues/2117) |
 | `chart-list-plugin` | Плагин журнала «чарт лист»: отбор звуков поверх почвы | L | [`SESSION_B_CHART_LIST_TASK.md`](../prompts/SESSION_B_CHART_LIST_TASK.md) | — |
 | `scenario-rate-first-capture` | Первый трек после старта сценария: 44.1 кГц должен fail-closed до записи (#2046) | M | [`SESSION_V_FIRST_CAPTURE_RATE_2026-08-22.md`](../prompts/SESSION_V_FIRST_CAPTURE_RATE_2026-08-22.md) | [#2046](https://github.com/officefish/Membrana/issues/2046) |
@@ -149,6 +147,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `obs-duty-pulse` | Кусок C: пульс дежурства — издаёт узел записи | 2026-08-24 | [`OBS_DUTY_PULSE_PROMPT.md`](../prompts/OBS_DUTY_PULSE_PROMPT.md) | #2120 (Issue открыт) | [карточка](./archive/obs-duty-pulse.md) |
+| `obs-failure-face` | Кусок B: контракт отказа кабинета — род + номер происшествия (INC/TMP) | 2026-08-24 | [`OBS_FAILURE_FACE_PROMPT.md`](../prompts/OBS_FAILURE_FACE_PROMPT.md) | #2119 (Issue открыт) | [карточка](./archive/obs-failure-face.md) |
 | `obs-disk-guard` | Кусок A: сторож диска (Д1) — тревога места напрямую в телеграм | 2026-08-24 | [`OBS_DISK_GUARD_PROMPT.md`](../prompts/OBS_DISK_GUARD_PROMPT.md) | #2118 (Issue открыт) | [карточка](./archive/obs-disk-guard.md) |
 | `cowork-server-plugin-pages` | Cowork Sprint: почва под плагины серверных страниц | 2026-08-22 | [`INTERFACE_CONTRACT.md`](../cowork-sprint/cowork-server-plugin-pages/INTERFACE_CONTRACT.md) | — | [карточка](./archive/cowork-server-plugin-pages.md) |
 | `report-entry-gap` | Боевой вход ведёт к своду сеанса: повод из закрытого словаря, отпечатки рода report, словарь сборщиков контекста | 2026-08-21 | [`REPORT_ENTRY_GAP_PROMPT.md`](../prompts/REPORT_ENTRY_GAP_PROMPT.md) | — | [карточка](./archive/report-entry-gap.md) |
