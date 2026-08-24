@@ -146,10 +146,10 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
-| `obs-health-deep` | Кусок D: /health/deep кабинета — числа вместо ок | 2026-08-24 | [`OBS_HEALTH_DEEP_PROMPT.md`](../prompts/OBS_HEALTH_DEEP_PROMPT.md) | #2121 (Issue открыт) | [карточка](./archive/obs-health-deep.md) |
-| `obs-duty-pulse` | Кусок C: пульс дежурства — издаёт узел записи | 2026-08-24 | [`OBS_DUTY_PULSE_PROMPT.md`](../prompts/OBS_DUTY_PULSE_PROMPT.md) | #2120 (Issue открыт) | [карточка](./archive/obs-duty-pulse.md) |
-| `obs-failure-face` | Кусок B: контракт отказа кабинета — род + номер происшествия (INC/TMP) | 2026-08-24 | [`OBS_FAILURE_FACE_PROMPT.md`](../prompts/OBS_FAILURE_FACE_PROMPT.md) | #2119 (Issue открыт) | [карточка](./archive/obs-failure-face.md) |
-| `obs-disk-guard` | Кусок A: сторож диска (Д1) — тревога места напрямую в телеграм | 2026-08-24 | [`OBS_DISK_GUARD_PROMPT.md`](../prompts/OBS_DISK_GUARD_PROMPT.md) | #2118 (Issue открыт) | [карточка](./archive/obs-disk-guard.md) |
+| `obs-health-deep` | Кусок D: /health/deep кабинета — числа вместо ок | 2026-08-24 | [`OBS_HEALTH_DEEP_PROMPT.md`](../prompts/OBS_HEALTH_DEEP_PROMPT.md) | #2121 | [карточка](./archive/obs-health-deep.md) |
+| `obs-duty-pulse` | Кусок C: пульс дежурства — издаёт узел записи | 2026-08-24 | [`OBS_DUTY_PULSE_PROMPT.md`](../prompts/OBS_DUTY_PULSE_PROMPT.md) | #2120 | [карточка](./archive/obs-duty-pulse.md) |
+| `obs-failure-face` | Кусок B: контракт отказа кабинета — род + номер происшествия (INC/TMP) | 2026-08-24 | [`OBS_FAILURE_FACE_PROMPT.md`](../prompts/OBS_FAILURE_FACE_PROMPT.md) | #2119 | [карточка](./archive/obs-failure-face.md) |
+| `obs-disk-guard` | Кусок A: сторож диска (Д1) — тревога места напрямую в телеграм | 2026-08-24 | [`OBS_DISK_GUARD_PROMPT.md`](../prompts/OBS_DISK_GUARD_PROMPT.md) | #2118 | [карточка](./archive/obs-disk-guard.md) |
 | `cowork-server-plugin-pages` | Cowork Sprint: почва под плагины серверных страниц | 2026-08-22 | [`INTERFACE_CONTRACT.md`](../cowork-sprint/cowork-server-plugin-pages/INTERFACE_CONTRACT.md) | — | [карточка](./archive/cowork-server-plugin-pages.md) |
 | `report-entry-gap` | Боевой вход ведёт к своду сеанса: повод из закрытого словаря, отпечатки рода report, словарь сборщиков контекста | 2026-08-21 | [`REPORT_ENTRY_GAP_PROMPT.md`](../prompts/REPORT_ENTRY_GAP_PROMPT.md) | — | [карточка](./archive/report-entry-gap.md) |
 | `deploy-safestorage-2026-08-21` | Деплой связки per-device ключей (ADR-0028 Р1/Р2) + включение шифрованного хранения кредов (Р4) | 2026-08-21 | [`SESSION_G_DEPLOY_SAFESTORAGE_SPRINT_2026-08-21.md`](../prompts/SESSION_G_DEPLOY_SAFESTORAGE_SPRINT_2026-08-21.md) | — | [карточка](./archive/deploy-safestorage-2026-08-21.md) |

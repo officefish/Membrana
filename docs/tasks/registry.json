@@ -33,7 +33,7 @@
       "supportPersonas": [],
       "notes": "Кусок задания EPIC заседания logging-observability-cut; DoD в docs/meeting/logging-observability-cut/EPIC.md",
       "archiveNotes": "PR #2139 (LGTM): /health/deep с предметными числами, ретро-предикат 23.08 фикстурами, калибровка α — CALIBRATION.md; отчёт в #2121",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-24",
       "parentEpic": "logging-observability-contour"
     },
     {
@@ -51,7 +51,7 @@
       "supportPersonas": [],
       "notes": "Кусок задания EPIC заседания logging-observability-cut; DoD в docs/meeting/logging-observability-cut/EPIC.md",
       "archiveNotes": "PR #2137 (LGTM): издатель пульса на узле + детектор тишины + клиентская обвязка; доезд silent в картотеку — кусок E; отчёт в #2120",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-24",
       "parentEpic": "logging-observability-contour"
     },
     {
@@ -69,7 +69,7 @@
       "supportPersonas": [],
       "notes": "Кусок задания EPIC заседания logging-observability-cut; DoD в docs/meeting/logging-observability-cut/EPIC.md",
       "archiveNotes": "PR #2135 (LGTM): genus+incidentId INC/TMP, X-Incident-Id, типизированные busy/unreachable, CORS expose; отчёт в #2119",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-24",
       "parentEpic": "logging-observability-contour"
     },
     {
@@ -87,7 +87,7 @@
       "supportPersonas": [],
       "notes": "Кусок задания EPIC заседания logging-observability-cut; DoD в docs/meeting/logging-observability-cut/EPIC.md",
       "archiveNotes": "PR #2132 (сквош cbd0b9c3): сторож+sentinel+systemd+тесты A/B/C/F в стволе; замер достижимости записан в #2118; прод не тронут — install.sh руками владельца (README)",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-08-24",
       "parentEpic": "logging-observability-contour"
     },
     {

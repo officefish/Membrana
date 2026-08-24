@@ -5,8 +5,44 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14271/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 319 (причины в op-log) -->
+Записей: 49 · бюджет 14377/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 325 (причины в op-log) -->
+
+### 2026-08-24 · позиция · logging-observability-cut-m0-order
+
+> Комната узкая: только рёбра между четырьмя кандидатами, без словаря и без существа. Лемма зависимости решения: «вердикт A раньше B», если без зафиксированного A обсуждение B либо бессмысленно, либо с высокой ценой переделки контракта. Д1 («сторож первым») — очередь исполнения; в […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/logging-observability-cut-m0-order-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1-incident-number
+
+> Леммы. «Номер происшествия» — ключ картотеки и сшивки. «Request-id» — ключ одного HTTP-прохода. Публичный контракт фильтра ошибок — словарная статья отдельно от интерсептора request-id. Место: тело обязательно (потребитель UI и любой клиент, который не читает заголовки); […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m1-incident-number-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1b-duty-pulse
+
+> Леммы. `DutyPulse` ≠ `Incident`. `DutyPulse` — периодическая запись состояния захвата. `PulseSilence` — сбой, единственный повод в картотеку (Т6). Носитель пульса: локальный append-only sink на узле (свой файл/лента величин во времени), не общий app-log кабинета и не коллекция […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/logging-observability-cut-m1b-duty-pulse-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1c-disk-guard
+
+> Лемма: `DiskSpaceWatchdog` ≠ `TelegramClient` офиса. Сторож — отдельный процесс/юнит на хосте диска; публичный контракт — «измерил → решил → отправил», без импорта office-кода. Секрет токена не просачивается из env офиса в media через общий пакет: раскладка — свой env/secret на […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m1c-disk-guard-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m2-health-deep
+
+> Начну с границ словаря. `/health` и `/health/deep` — две разные статьи, не синонимы. `/health` — liveness процесса кабинета: жив, версия, uptime. `/health/deep` — read-model предметного состояния кабинета: зависимости и очереди, без которых продукт врёт «ок». Публичный контракт […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m2-health-deep-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · team-evening-feedback
+
+> Оценка артефактов: `MAIN_DAY_ISSUE` корректно назначает фокус на горячий путь журнала, а не на UI. `DAILY_CODE_REVIEW` отмечает: #2115 — границы соблюдены (убран прямой `anthropicPost` из `_strategic-plan.mjs`, процедура в `llm-procedures.json`); #2124 — чистая функция в […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-24.md#reply-1`
 
 ### 2026-08-23 · позиция · team-evening-feedback
 
@@ -260,44 +296,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
 
-### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
-
-> Граница пакетов: source Affine (office VDS, `:3010`) не становится origin static. Destination — container `static.mmbrn.tech` + Panel authorizer + registry.jsonl. Strategic docs остаются Panel/Git; копировать их в static originals без M6 intent владельца — `нарушена слабая […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-08.md#reply-1`
-
-### 2026-08-08 · позиция · team-evening-feedback
-
-> Ожегов, слабая связанность и точность. Оценка артефактов: `DAILY_CODE_REVIEW` точно указал: `decideTransition` живёт только в собственном тесте — это класс «производитель есть, провод отсутствует», названо своим именем. Реестр за день корректно двинул 2 карточки в архив с […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-08.md#reply-1`
-
-### 2026-08-07 · позиция · team-evening-feedback
-
-> Ожегов. Оценка артефактов: `DAILY_CODE_REVIEW` называет конкретно: `splitDeliverable` / `planExecute` / `shipArgsFor` в `ritual-deliver-to-main.mjs`, константа `DELIVERABLE_STATUSES` — граница «доставке подлежит vs не лечится доставкой» зафиксирована; замечание про сырые строки […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-07.md#reply-1`
-
-### 2026-08-06 · позиция · team-evening-feedback
-
-> Три спринта закрылись в один день (`instruments-honest-verdict`, `review-honesty`, `scoreboard-spectral-ladder`) — это редкая плотность, и все три коснулись общей ткани: приборы, гейты, витрина. `worktrees:align` (#1740) добавил защитный контур: WIP-снимок грязных, merge вместо […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
-
-> Закрытый словарь M3 сохраняется дословно: `discover`, `read-metadata`, `read-ref`, `read-bytes`, `download`, `write-metadata`, `upload-revision`, `manage-access`. Объекты только container, collection и lineage; annotation write не добавляется. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
-
 ### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 
 > Operation surface является одной закрытой таблицей. Вне неё нет скрытых CLI-команд, server endpoints или операций из примечаний; у каждой строки ровно один M3 action и ровно один authority object. _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
-
-### 2026-08-05 · позиция · team-evening-feedback
-
-> Три точки хранения факта архивации (registry.json → README → archive/*.md) обновлены атомарно одним коммитом #1732 — слабая связанность соблюдена, B2-риск файла-перекрёстка не сработал. Скрипты `execution-gate`, `llm-procedure-transport`, `llm-probe`, `prepush-typecheck-scope` […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`

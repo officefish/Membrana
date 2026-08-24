@@ -1,0 +1,14 @@
+{"ts":"2026-08-24T07:33:25.989Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.762Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-24-logging-observability-cut-m0-order","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.762Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-24-logging-observability-cut-m1-incident-number","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.762Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-24-logging-observability-cut-m1b-duty-pulse","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.762Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-24-logging-observability-cut-m1c-disk-guard","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.762Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-24-logging-observability-cut-m2-health-deep","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.762Z","persona":"vesnin","verb":"write_operational","ref":"vesnin-2026-08-24-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-24T18:27:33.762Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-08-08-static-mmbrn-container-m7-migration-delivery","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-24T18:27:33.762Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-08-08-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-24T18:27:33.762Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-08-07-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-24T18:27:33.762Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-08-06-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-24T18:27:33.762Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-08-06-static-mmbrn-container-m6-intake-delivery","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-24T18:27:33.762Z","persona":"vesnin","verb":"transfer_to_archive","ref":"vesnin-2026-08-05-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-24T18:27:33.762Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

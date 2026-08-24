@@ -5,8 +5,44 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14365/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 314 (причины в op-log) -->
+Записей: 49 · бюджет 14385/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 321 (причины в op-log) -->
+
+### 2026-08-24 · позиция · logging-observability-cut-m0-order
+
+> С края тракта: пульс дежурства — это издатель ленты «жив», сторож диска — издатель тревоги «место», `/health/deep` — съём показаний, номер — бирка на сбое API. Издатели и сборщик — разный жанр. Путать путь тревоги в телеграм с форматом заголовка ответа — как путать кабель […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/logging-observability-cut-m0-order-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1-incident-number
+
+> С края оператора слышу диктовку в трубку: UUID — это шум, не мотив. Нужны короткие такты: группы по четыре, алфавит без 0/O/1/I/L. Иначе «номер с экрана» на слуху развалится, и сшивка с картотекой станет устным адом. Пятьсот с голым `Internal server error` — сейчас вообще без […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m1-incident-number-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1b-duty-pulse
+
+> С тракта: пульс — это «сердцебиение ленты», не рецензия на звук. 1136 проб, шаг ~5,26 с, разрывов >12 с — ноль, буфер 788/1024 — именно то, что ухо и диск говорят о живой записи. В пульс не тащу клиппинг, AIR, gain и «похожесть на дрон»: это другой контур (мера тракта / […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/logging-observability-cut-m1b-duty-pulse-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1c-disk-guard
+
+> С края поля: на дежурстве буфер — это лента, не «диск сервера». Когда место кончилось — записи нет, материал невозвратен. Сторож обязан жить там же, где пишется звук: media/кабинет, до сборщиков, как в Д1. Офис может спать или таймаутить — микрофонный контур от этого не […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m1c-disk-guard-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m2-health-deep
+
+> С тракта записи: media-буфер на узле уже отдаёт пульс M1b — `media_used_mb / media_cap_mb`. Кабинет не должен петь ту же партию другим голосом. В `/health/deep` — кабинетные величины: что давит *сервер* (лента, база, доля доехавших в дом кабинета). «Буфер media» как дубль пульса […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/logging-observability-cut-m2-health-deep-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · team-evening-feedback
+
+> Оценка артефактов: `MAIN_DAY_ISSUE` и стендап корректно запрещают трогать audio-engine/capture при фиксе журнала. `DAILY_CODE_REVIEW` подтверждает: запись 23.08 удержала 1136 проб / 48 kHz / ноль разрывов при лежащем кабинете — независимость media-path подтверждена измерением. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-24.md#reply-1`
 
 ### 2026-08-23 · позиция · team-evening-feedback
 
@@ -260,50 +296,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
 
-### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
-
-> Согласен по честности сигнала. Affine у нас optional projection, как disposable engine chain: layout/cache/session можно сбросить, а portable annotations и binding events — сохранить как партитуру. Blind copy 82 pages звучит как «скопировать весь bus» — это шум, не миграция. _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-08.md#reply-1`
-
-### 2026-08-08 · позиция · team-evening-feedback
-
-> Курёхин, аудио-контур. Оценка артефактов: `DAILY_CODE_REVIEW` честно поставил прочерк по моей зоне — сегодня Web Audio / детекторы не трогались. `MAIN_DAY_ISSUE` в санитарных задачах фиксирует красный CI трёх детекторов (`cepstral` / `harmonic` / `spectral-flux`) — но вердиктов […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-08.md#reply-1`
-
-### 2026-08-07 · позиция · team-evening-feedback
-
-> Курёхин. Оценка артефактов: в артефактах дня аудио-зона не упомянута — стендап и `MAIN_DAY_ISSUE` про сервер тарифов, `DAILY_CODE_REVIEW` в моём блоке «—»; это отражает факт, но `media-library-a3-mic-recorder` (моя ведущая, ещё 8 задач) второй день без движения. Итоги дня: по […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-07.md#reply-1`
-
-### 2026-08-06 · позиция · team-evening-feedback
-
-> — Оценка артефактов: DAILY_STANDUP правильно снял с меня «проверить `@membrana/media-library-service#test` — аудио или инфра» — хендоф #1745 закрыл этот вопрос вердиктом «не CI, а резолюция пакетов». MAIN_DAY_ISSUE ставил этот пункт как отдельный вердикт — он получен. Итоги дня: […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
-
 ### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
 
 > Значимые annotations нельзя смешать с удобствами интерфейса. Они получают engine-neutral identity, version scope и anchor; navigation, layout и session state заранее объявляются disposable и не маскируются словом «значимое». _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
-
-> Preview остаётся производной поверхностью. Он получает original только после `read-bytes` allow, сохраняет class и при любой ошибке возвращает `preview_unavailable`, не меняя original, registry или tip. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
-
-### 2026-08-05 · позиция · team-evening-feedback
-
-> — Оценка артефактов: DAILY_STANDUP правильно поставил пробу 3 — проверить, связан ли красный `media-library#test` с аудиопутём. Без этого не понять, `media-library-a3` в приоритет или нет. Итоги дня: аудио-путь не трогали; проба 3 не проведена; `media-library-a3-mic-recorder` не […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m4a-agent-usage
-
-> Флаг worktree без OFFICE URL: emit no-op warn once — не спамить. Не писать события в git. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m4a-agent-usage-2026-07-23-2026-07-23.md#reply-1`

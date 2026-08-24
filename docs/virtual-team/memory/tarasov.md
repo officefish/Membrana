@@ -5,8 +5,44 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14274/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 325 (причины в op-log) -->
+Записей: 49 · бюджет 14297/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 332 (причины в op-log) -->
+
+### 2026-08-24 · позиция · logging-observability-cut-m0-order
+
+> Планка комнаты: граф, фундамент или явный «фундамента нет», риск обратного ранга, фактура. Не путать исполнение Д1 с рангом решения — кто смешает, получат BLOCK на протоколе. Держим ритм: сначала рёбра с обоснованием, потом частичный порядок, без существа «куда писать номер». _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/logging-observability-cut-m0-order-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1-incident-number
+
+> Планка комнаты узкая: контракт номера, не деплой и не соседние существа. Данности владельца не трогаем — чеканщик Сентри, отдельная картотека, сшивка трёх родов хранения. На выходе нужны: место, форма, лог/экран, отказ без чеканщика, DoD, список посылок. Спорим по читателям, не […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m1-incident-number-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1b-duty-pulse
+
+> Планка ясна: хозяин расписания живёт **на стороне записи/устройства**, не в кабинете. Факт 23.08 — сто минут ровного шага при лежащем канале кабинета — это матч, не теория. Связка: Музыкант+Структурщик — издатель и носитель; Математик — порог тишины; Верстальщик — только чтение. […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/logging-observability-cut-m1b-duty-pulse-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m1c-disk-guard
+
+> Положение: Д1 не пересматриваем; сторож — P0 в исполнении. Решение формы: живёт на машине диска; путь — прямой Bot API + запасной через офис. Связка на кусок: Математик — пороги и предикат тишины; Структурщик — границы модуля и секрет; Музыкант — смысл write_rate для ленты. […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m1c-disk-guard-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · logging-observability-cut-m2-health-deep
+
+> Планка ясна: прибор обязан поймать класс аварии 23.08 за часы до пятисоток. Иначе это тренировка, не матч. Не размазываем scope: состав величин, форма, пороги, три genus. Сборщики, сторож, #2113/#2110 — вне комнаты. Жду от Математика числа с физическим смыслом, от Архитектора — […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/logging-observability-cut-m2-health-deep-2026-08-24.md#reply-1`
+
+### 2026-08-24 · позиция · team-evening-feedback
+
+> Оценка артефактов: Стратегический план дня (`STRATEGIC_PLAN_DAY.md`) остаётся вещдоком с пометкой «читать как источник плана нельзя» — это известный дефект генератора, но он требует внимания: план на 18.07 при дате 24.08 вводит в заблуждение. `MAIN_DAY_ISSUE` и `DAILY_STANDUP` […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-24.md#reply-1`
 
 ### 2026-08-23 · позиция · team-evening-feedback
 
@@ -265,45 +301,3 @@
 > Планка: один D1, один carrier, один rollout DAG, одна ledger machine, одна route matrix, один набор gates. Комната read-only — кода, DNS, Caddy, Panel, issues не трогаем. Run1–run4 rejected; константы выбираем здесь. Вердикт в конце: GO только при честном NO-GO текущих […] _(реплик в сеансе: 7)_
 
 — источник: `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-08.md#reply-1`
-
-### 2026-08-08 · позиция · team-evening-feedback
-
-> Тарасов, координация дня. Оценка артефактов: `STRATEGY_DAY` (помечен вещдоком, план на 18.07) — устаревший, но помечен явно, дрейф зафиксирован; `DAILY_STANDUP` и `MAIN_DAY_ISSUE` согласованы между собой (ось `tariff-promo-server-wiring`, санитарный P1 по orphaned run), […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-08.md#reply-1`
-
-### 2026-08-07 · позиция · team-evening-feedback
-
-> Тарасов. Оценка артефактов: `STRATEGY_DAY` устарел (17.07, вещдок), но `MAIN_DAY_ISSUE` и `DAILY_STANDUP` перечеканены под owner-choice `tariff-promo-server-wiring` и согласованы между собой; `DAILY_CODE_REVIEW` честно поднял orphaned run `ritual-day-2026-08-07-r2` и […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-07.md#reply-1`
-
-### 2026-08-06 · позиция · team-evening-feedback
-
-> Магистраль дня — `agent-tooling-night-build` — вечером архивирована (PR #1746, `docs/tasks/archive/agent-tooling-night-build.md`): «девять фаз доставлены ночью 08.07, вещдоки пофайлово — двигать было нечего». Это ключевой поворот дня: утренняя магистраль оказалась фантомом, а […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-06.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
-
-> Граница исполнения начинается с решения Panel и актуального binding. Если Panel дал deny либо binding отсутствует, неоднозначен или stale, к Affine не передаётся ничего. Это правило действует для каждой из восьми способностей без исключений. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
-
-> Выбираем одну модель LIGD: durable intent ledger, immutable registry и gated delivery. Commit для caller состоит из verified FD-1, safe registry append и durable binding; FD-2 приходит только последующим complete checkpoint. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
-
-### 2026-08-05 · позиция · team-evening-feedback
-
-> Магистраль дня — `agent-tooling-night-build` (owner-choice из замороженного топ-3). Артефакты дня согласованы между собой: STRATEGY_DAY, DAILY_STANDUP, MAIN_DAY_ISSUE, DAILY_CODE_REVIEW ссылаются на одну и ту же ось «санитария CI + класс болезни ночного билда», при этом […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-05.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
-
-> Объекты политики образуют цепочку container → collection → lineage. Lineage определяется `canonicalRef`, а не URL Affine и не адресом байтов. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
