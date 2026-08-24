@@ -24,6 +24,11 @@ const DEFAULT_LIST_LIMIT = LIVE_JOURNAL_PAGE_SIZE;
 const MAX_LIST_LIMIT = LIVE_JOURNAL_PAGE_SIZE;
 /** Max DB rows loaded when building merged journal (JS1). Not the UI page size. */
 export const JOURNAL_INTERNAL_FETCH_CAP = 5000;
+const TELEMETRY_TRACK_SCHEMA_VERSION = 'telemetry-track/v1';
+const LIVE_JOURNAL_REPORT_KINDS = [
+  'drone-detection-report/v1',
+  'drone-detection-brief/v1',
+];
 
 /** Parses list query limit for journal endpoints. */
 export function parseJournalListLimit(raw: string | undefined): number {
@@ -34,6 +39,23 @@ export function parseJournalListLimit(raw: string | undefined): number {
 
 function parseLimit(raw: string | undefined): number {
   return parseJournalListLimit(raw);
+}
+
+function parseSince(raw: string | undefined): Date | null {
+  if (!raw) return null;
+  const timestamp = Number(raw);
+  if (!Number.isFinite(timestamp) || timestamp < 0) return null;
+  return new Date(timestamp);
+}
+
+function decodeCursor(raw?: string): { timestamp: number; clientEntryId: string } | null {
+  if (!raw) return null;
+  const separator = raw.indexOf(':');
+  if (separator <= 0) return null;
+  const timestamp = Number(raw.slice(0, separator));
+  const clientEntryId = decodeURIComponent(raw.slice(separator + 1));
+  if (!Number.isFinite(timestamp) || clientEntryId.length === 0) return null;
+  return { timestamp, clientEntryId };
 }
 
 interface MembraneContext {
@@ -253,26 +275,51 @@ export class JournalService {
     mediaDeviceId?: string,
     cursor?: string,
     filterRaw?: string,
+    sinceRaw?: string,
   ): Promise<{
     items: ReturnType<typeof paginateLiveJournalItemRows>['items'];
     nextCursor: string | null;
     counts: LiveJournalFilterCounts;
   }> {
+    const ctx = await this.requireMembraneContext(userId);
     const pageSize = parseLimit(limitRaw);
     const filter = parseLiveJournalFilter(filterRaw);
-    const [reportsResult, liveResult] = await Promise.all([
-      this.fetchReportsForMerge(userId, mediaDeviceId),
-      this.fetchLiveRecordsForMerge(userId, mediaDeviceId),
+    const deviceFilter = this.resolveMediaDeviceFilter(ctx, mediaDeviceId);
+    const decodedCursor = decodeCursor(cursor);
+    const since = parseSince(sinceRaw);
+    const take = pageSize + 1;
+
+    const [counts, reportRows, liveRows] = await Promise.all([
+      this.countJournalFilters(ctx, deviceFilter),
+      filter === 'tracks'
+        ? Promise.resolve([])
+        : this.prisma.telemetryReport.findMany({
+            where: this.buildReportJournalWhere(ctx, deviceFilter, {
+              cursor: decodedCursor,
+              since,
+              detectionsOnly: filter === 'detections',
+            }),
+            orderBy: [{ finishedAt: 'desc' }, { clientEntryId: 'desc' }],
+            take,
+          }),
+      filter === 'reports' || filter === 'detections'
+        ? Promise.resolve([])
+        : this.prisma.telemetryLiveRecord.findMany({
+            where: this.buildLiveJournalWhere(ctx, deviceFilter, {
+              cursor: decodedCursor,
+              since,
+            }),
+            orderBy: [{ startedAt: 'desc' }, { clientRecordId: 'desc' }],
+            take,
+          }),
     ]);
 
     const merged = cabinetRowsToLiveJournalItems(
-      reportsResult.reports,
-      liveResult.liveRecords,
+      reportRows.map(serializeReport),
+      liveRows.map(serializeLiveRecord),
     );
-    const counts = countLiveJournalItemRowFilters(merged);
     const page = paginateLiveJournalItemRows(merged, {
       limit: pageSize,
-      cursor,
       filter,
     });
     return { items: page.items, nextCursor: page.nextCursor, counts };
@@ -305,6 +352,95 @@ export class JournalService {
     ]);
     const merged = cabinetRowsToLiveJournalItems(reportsResult.reports, liveResult.liveRecords);
     return { items: merged, counts: countLiveJournalItemRowFilters(merged) };
+  }
+
+  private async countJournalFilters(
+    ctx: MembraneContext,
+    deviceFilter: string | undefined,
+  ): Promise<LiveJournalFilterCounts> {
+    const [tracks, reports, detections] = await Promise.all([
+      this.prisma.telemetryLiveRecord.count({
+        where: this.buildLiveJournalWhere(ctx, deviceFilter),
+      }),
+      this.prisma.telemetryReport.count({
+        where: this.buildReportJournalWhere(ctx, deviceFilter),
+      }),
+      this.prisma.telemetryReport.count({
+        where: this.buildReportJournalWhere(ctx, deviceFilter, { detectionsOnly: true }),
+      }),
+    ]);
+    return {
+      all: tracks + reports,
+      tracks,
+      reports,
+      detections,
+    };
+  }
+
+  private buildReportJournalWhere(
+    ctx: MembraneContext,
+    deviceFilter: string | undefined,
+    options: {
+      cursor?: { timestamp: number; clientEntryId: string } | null;
+      since?: Date | null;
+      detectionsOnly?: boolean;
+    } = {},
+  ): Prisma.TelemetryReportWhereInput {
+    const and: Prisma.TelemetryReportWhereInput[] = [];
+    if (options.since) {
+      and.push({ finishedAt: { gte: options.since } });
+    }
+    if (options.cursor) {
+      const cursorDate = new Date(options.cursor.timestamp);
+      and.push({
+        OR: [
+          { finishedAt: { lt: cursorDate } },
+          {
+            finishedAt: cursorDate,
+            clientEntryId: { lt: options.cursor.clientEntryId },
+          },
+        ],
+      });
+    }
+    return {
+      membraneId: ctx.membraneId,
+      reportKind: { in: LIVE_JOURNAL_REPORT_KINDS },
+      ...(deviceFilter ? { mediaDeviceId: deviceFilter } : {}),
+      ...(options.detectionsOnly ? { tags: { has: 'detection' } } : {}),
+      ...(and.length > 0 ? { AND: and } : {}),
+    };
+  }
+
+  private buildLiveJournalWhere(
+    ctx: MembraneContext,
+    deviceFilter: string | undefined,
+    options: {
+      cursor?: { timestamp: number; clientEntryId: string } | null;
+      since?: Date | null;
+    } = {},
+  ): Prisma.TelemetryLiveRecordWhereInput {
+    const and: Prisma.TelemetryLiveRecordWhereInput[] = [];
+    if (options.since) {
+      and.push({ startedAt: { gte: options.since } });
+    }
+    if (options.cursor) {
+      const cursorDate = new Date(options.cursor.timestamp);
+      and.push({
+        OR: [
+          { startedAt: { lt: cursorDate } },
+          {
+            startedAt: cursorDate,
+            clientRecordId: { lt: options.cursor.clientEntryId },
+          },
+        ],
+      });
+    }
+    return {
+      membraneId: ctx.membraneId,
+      recordKind: TELEMETRY_TRACK_SCHEMA_VERSION,
+      ...(deviceFilter ? { mediaDeviceId: deviceFilter } : {}),
+      ...(and.length > 0 ? { AND: and } : {}),
+    };
   }
 
   private async fetchReportsForMerge(userId: string, mediaDeviceId?: string) {

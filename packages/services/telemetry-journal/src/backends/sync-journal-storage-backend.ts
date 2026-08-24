@@ -35,7 +35,11 @@ export interface SyncJournalStorageBackendOptions {
   readonly mediaDeviceId?: string;
   /** MP7: parallel WebSocket push (REST remains fallback). */
   readonly realtimePush?: IRealtimeJournalPushPort;
+  /** Backoff after a failed remote pull so a congested cabinet is not hammered by refresh loops. */
+  readonly remotePullBackoffMs?: number;
 }
+
+const DEFAULT_REMOTE_PULL_BACKOFF_MS = 30_000;
 
 /** MP7 Node Realtime Gateway — fire-and-forget journal append over WS. */
 export interface IRealtimeJournalPushPort {
@@ -61,6 +65,12 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
 
   private readonly pendingPushEntryIds = new Set<string>();
 
+  private readonly remotePullBackoffMs: number;
+
+  private remotePullBlockedUntil = 0;
+
+  private lastRemoteJournalTimestamp: number | null = null;
+
   constructor(
     port: ICabinetJournalPort,
     options: SyncJournalStorageBackendOptions = {},
@@ -73,6 +83,7 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
     this.localCacheKey = options.localCacheKey;
     this.mediaDeviceId = options.mediaDeviceId;
     this.realtimePush = options.realtimePush;
+    this.remotePullBackoffMs = options.remotePullBackoffMs ?? DEFAULT_REMOTE_PULL_BACKOFF_MS;
 
     if (this.localCacheKey) {
       const cached = readJournalLocalCache(this.localCacheKey);
@@ -171,37 +182,52 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
   }
 
   private async pullRemote(): Promise<void> {
+    if (Date.now() < this.remotePullBlockedUntil) return;
+
     try {
       if (this.port.listJournalItems) {
-        const remoteItems = await this.fetchRemoteItemsFromUnifiedApi();
-        this.local.reconcileRemoteItems(remoteItems, this.pendingPushEntryIds);
+        const pulled = await this.fetchRemoteItemsFromUnifiedApi(this.lastRemoteJournalTimestamp);
+        if (this.lastRemoteJournalTimestamp === null) {
+          this.local.reconcileRemoteItems(pulled.items, this.pendingPushEntryIds);
+          this.replaceRemoteWatermark(pulled.items);
+        } else {
+          this.local.mergeRemoteItems(pulled.items);
+          this.rememberRemoteItems(pulled.items);
+        }
       } else {
         const remoteItems = await this.fetchRemoteItemsFromLegacyLists();
         this.local.mergeRemoteItems(remoteItems);
+        this.rememberRemoteItems(remoteItems);
       }
       this.persistLocalCache();
     } catch {
+      this.remotePullBlockedUntil = Date.now() + this.remotePullBackoffMs;
       /* keep local cache when cabinet is unreachable */
     }
   }
 
-  private async fetchRemoteItemsFromUnifiedApi(): Promise<LiveJournalItem[]> {
+  private async fetchRemoteItemsFromUnifiedApi(
+    since: number | null,
+  ): Promise<{ items: LiveJournalItem[]; counts: PaginatedCabinetJournalItems['counts'] }> {
     const all: LiveJournalItem[] = [];
     let cursor: string | null = null;
+    let counts: PaginatedCabinetJournalItems['counts'];
     do {
       const result = await this.port.listJournalItems!({
         limit: LIVE_JOURNAL_PAGE_SIZE,
         mediaDeviceId: this.mediaDeviceId,
         cursor,
         filter: 'all',
+        since: since ?? undefined,
       });
       const page = isPaginatedCabinetJournalItems(result)
         ? result
         : { items: result, nextCursor: null, counts: undefined };
       all.push(...page.items);
+      counts = page.counts;
       cursor = page.nextCursor;
     } while (cursor);
-    return all;
+    return { items: all, counts };
   }
 
   private async fetchRemoteItemsFromLegacyLists(): Promise<LiveJournalItem[]> {
@@ -210,6 +236,22 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
       this.port.listLiveRecords(this.pullLimit),
     ]);
     return cabinetRowsToJournalItems(reports, liveRecords);
+  }
+
+  private rememberRemoteItems(items: readonly LiveJournalItem[]): void {
+    for (const item of items) {
+      if (
+        this.lastRemoteJournalTimestamp === null ||
+        item.timestamp > this.lastRemoteJournalTimestamp
+      ) {
+        this.lastRemoteJournalTimestamp = item.timestamp;
+      }
+    }
+  }
+
+  private replaceRemoteWatermark(items: readonly LiveJournalItem[]): void {
+    this.lastRemoteJournalTimestamp = null;
+    this.rememberRemoteItems(items);
   }
 }
 

@@ -30,4 +30,6 @@ export interface ListJournalQueryDto {
   cursor?: string;
   /** Live journal filter (TJ9). */
   filter?: string;
+  /** Incremental sync lower bound: item timestamp in milliseconds. */
+  since?: string;
 }
