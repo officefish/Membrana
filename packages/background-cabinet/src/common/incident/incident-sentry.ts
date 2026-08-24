@@ -21,9 +21,16 @@ export function isIncidentSentryEnabled(): boolean {
 
 export async function initIncidentSentry(dsn: string | undefined): Promise<void> {
   if (!dsn) return;
-  const Sentry = await import('@sentry/node');
-  Sentry.init({ dsn, tracesSampleRate: 0 });
-  captureFn = (exception, context) => Sentry.captureException(exception, context);
+  try {
+    const Sentry = await import('@sentry/node');
+    Sentry.init({ dsn, tracesSampleRate: 0 });
+    captureFn = (exception, context) => Sentry.captureException(exception, context);
+  } catch (err) {
+    // Наблюдаемость не вправе ронять кабинет: битый модуль/DSN → остаёмся на TMP.
+    // eslint-disable-next-line no-console
+    console.error('[incident-sentry] init failed — чекан остаётся TMP:', err);
+    captureFn = null;
+  }
 }
 
 export function captureIncident(
