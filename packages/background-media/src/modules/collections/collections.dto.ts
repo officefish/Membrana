@@ -51,10 +51,21 @@ export class RequestPluginRunDto {
   })
   trigger?: string;
 
+  /**
+   * Настройки отбора библиотеки (#2110) — НЕ форма задания, а ручки человека: форма задания
+   * говорит, ЧТО измерять (набор/проба/окно), настройки — как отбирать из измеренного.
+   * Негодные значения не подставляются молча: отбор откажет названной причиной.
+   */
+  @ApiPropertyOptional({ description: 'Объём выборки отбора (200/100/60/20) — только для витрины отбора', example: 20 })
+  volume?: number;
+
+  @ApiPropertyOptional({ description: 'Критерий отбора (loudness-over-floor | spectral-variety | drone-likeness)', example: 'loudness-over-floor' })
+  criterion?: string;
+
   @ApiPropertyOptional({ description: 'Обязателен для collections.sample_added (payload M4 несёт sampleId)' })
   sampleId?: string;
 
-  @ApiPropertyOptional({ description: 'Начало окна сеанса, ISO — для родов, идущих по времени (свод сеанса)' })
+  @ApiPropertyOptional({ description: 'Начало окна сеанса, ISO — для родов, идущих по времени (свод сеанса, отбор библиотеки)' })
   from?: string;
 
   @ApiPropertyOptional({ description: 'Конец окна сеанса, ISO' })

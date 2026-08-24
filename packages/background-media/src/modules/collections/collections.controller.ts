@@ -121,6 +121,8 @@ export class CollectionsController {
       ...(body?.sampleIds ? { sampleIds: body.sampleIds } : {}),
       ...(body?.from ? { from: body.from } : {}),
       ...(body?.to ? { to: body.to } : {}),
+      ...(body?.volume !== undefined ? { volume: body.volume } : {}),
+      ...(body?.criterion ? { criterion: body.criterion } : {}),
     });
     this.logger.log({ deviceId, collectionId, pluginId, runId: outcome.runId, bridge: outcome.bridge?.outcome ?? null }, 'Plugin run requested');
     return { runId: outcome.runId, address: { ...outcome.address }, fingerprints: outcome.fingerprints, bridge: outcome.bridge, ...(outcome.result === undefined ? {} : { result: outcome.result }) };

@@ -49,7 +49,7 @@ async function registrar(cfg = config, bridge = spyBridge().bridge) {
  * это цена загрузки библиотеки, а не медленный код.
  */
 describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
-  it('на старте модуля хост collections держит шесть детекторов, свод сеанса и измеритель чарт-листа', async () => {
+  it('на старте модуля хост collections держит шесть детекторов, свод сеанса, измеритель и витрину отбора', async () => {
     const host = new CollectionsPluginHostService();
     await host.onModuleInit();
     await new FirstWavePluginsRegistrar(host, prisma, blobs, config, spyBridge().bridge).onModuleInit();
@@ -62,9 +62,13 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
       // Измеритель чарт-листа — ВТОРОЕ внедрение одного функционала (Т6, c5b): показывает
       // человеку чарт-лист в доме журнала, а меряет здесь, где звук лежит локально.
       'membrana.report.chart-list-measure',
+      // Витрина отбора библиотеки (#2110) — второй ПОКАЗ семейства чарт-листа: отбирает по
+      // текущему набору там же, где звук лежит. Журнальная витрина живёт в кабинете и не тронута.
+      'membrana.showcase.library-chart-list',
     ]);
     expect(registered.filter((m) => m.kind === 'handler')).toHaveLength(6);
     expect(registered.filter((m) => m.kind === 'report')).toHaveLength(2);
+    expect(registered.filter((m) => m.kind === 'showcase')).toHaveLength(1);
   });
 
   it('читатель проб — только чтение: список по collectionId, байты по storageRef, sha256 содержимого', async () => {
@@ -198,5 +202,52 @@ describe('вход ведёт и к своду сеанса (r1, пробел в
     const { reg } = await registrar();
     await expect(reg.requestRun({ pluginId: 'membrana.handler.yamnet' as PluginId, collectionId: 'c1', sampleId: 'a' }))
       .rejects.toMatchObject({ status: 501 });
+  });
+});
+
+describe('витрина отбора библиотеки (#2110)', () => {
+  it('прогон по окну: отбор идёт по текущему набору, результат приходит вызывающему', async () => {
+    const host = new CollectionsPluginHostService();
+    await host.onModuleInit();
+    const reg = new FirstWavePluginsRegistrar(host, prisma, blobs, config, spyBridge().bridge);
+    await reg.onModuleInit();
+    const out = await reg.requestRun({
+      pluginId: 'membrana.showcase.library-chart-list' as PluginId,
+      collectionId: 'c1',
+      volume: 20,
+      criterion: 'loudness-over-floor',
+    });
+    expect(out.address.collectionId).toBe('c1');
+    const result = out.result as { selection: { refusal: unknown; picks: unknown[] }; inSet: number };
+    // Фикстурные пробы — не настоящие wav, измеритель честно откажет ЛИБО отберёт: предмет зуба —
+    // что результат ДОЕХАЛ до вызывающего и счётчики названы, а не что звук раскодировался.
+    expect(result).toBeTruthy();
+    expect(result.inSet).toBeGreaterThan(0);
+  });
+
+  it('негодные настройки — отказ отбора словом, прогон не падает', async () => {
+    const host = new CollectionsPluginHostService();
+    await host.onModuleInit();
+    const reg = new FirstWavePluginsRegistrar(host, prisma, blobs, config, spyBridge().bridge);
+    await reg.onModuleInit();
+    const out = await reg.requestRun({
+      pluginId: 'membrana.showcase.library-chart-list' as PluginId,
+      collectionId: 'c1',
+      volume: 7,
+      criterion: 'loudness-over-floor',
+    });
+    const result = out.result as { selection: { refusal: { reason: string } | null } };
+    expect(result.selection.refusal?.reason).toBe('unknown-volume');
+  });
+
+  it('отпечаток входа считается от состава проб В ОКНЕ: другое окно — другой inputHash', async () => {
+    const host = new CollectionsPluginHostService();
+    await host.onModuleInit();
+    const reg = new FirstWavePluginsRegistrar(host, prisma, blobs, config, spyBridge().bridge);
+    await reg.onModuleInit();
+    const base = { pluginId: 'membrana.showcase.library-chart-list' as PluginId, collectionId: 'c1', volume: 20, criterion: 'loudness-over-floor' };
+    const all = await reg.requestRun(base);
+    const windowed = await reg.requestRun({ ...base, from: '2026-08-21T10:00:00.500Z' });
+    expect(all.fingerprints.inputHash).not.toBe(windowed.fingerprints.inputHash);
   });
 });
