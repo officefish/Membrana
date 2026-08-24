@@ -17,6 +17,7 @@ import { NodeRealtimeModule } from './modules/node-realtime/node-realtime.module
 import { DeviceCaptureModule } from './modules/device-capture/device-capture.module';
 import { NodeLivenessModule } from './modules/node-liveness/node-liveness.module';
 import { TariffModule } from './modules/tariff/tariff.module';
+import { HealthDeepModule } from './modules/health-deep/health-deep.module';
 
 const testImports =
   process.env.NODE_ENV === 'test'
@@ -44,7 +45,7 @@ const testImports =
       ];
 
 @Module({
-  imports: [AppConfigModule, PrismaModule, ...testImports, AuthModule, MembraneModule, PairModule, JournalModule, SampleLibraryModule, NodeRealtimeModule, DeviceCaptureModule, NodeLivenessModule, TariffModule],
+  imports: [AppConfigModule, PrismaModule, ...testImports, AuthModule, MembraneModule, PairModule, JournalModule, SampleLibraryModule, NodeRealtimeModule, DeviceCaptureModule, NodeLivenessModule, TariffModule, HealthDeepModule],
   controllers: [HealthController],
 })
 export class AppModule {}

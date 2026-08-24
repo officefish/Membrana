@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import type { Prisma } from '../../prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { ingestWindowGauge } from '../health-deep/ingest-window.gauge';
 import type {
   CreateTelemetryLiveRecordDto,
   CreateTelemetryReportDto,
@@ -162,6 +163,8 @@ export class JournalService {
     }
 
     const created = await this.prisma.telemetryReport.create({ data });
+    // Write-path датчик /health/deep: запись доехала (кусок D #2121, M2).
+    ingestWindowGauge.recordArrived();
     return { report: serializeReport(created), deduplicated: false as const };
   }
 
@@ -213,6 +216,8 @@ export class JournalService {
         payload: body.payload as Prisma.InputJsonValue,
       },
     });
+    // Write-path датчик /health/deep: запись доехала (кусок D #2121, M2).
+    ingestWindowGauge.recordArrived();
     return { liveRecord: serializeLiveRecord(created), deduplicated: false as const };
   }
 
