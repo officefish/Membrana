@@ -27,6 +27,9 @@ async function bootstrap(): Promise<void> {
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-Id'],
+    // Браузерный клиент обязан УМЕТЬ ПРОЧЕСТЬ номер происшествия и request-id
+    // из заголовков (кусок B #2119, вердикт M1: X-Incident-Id = литералу в теле).
+    exposedHeaders: ['X-Request-Id', 'X-Incident-Id'],
   });
 
   app.enableShutdownHooks();
