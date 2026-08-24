@@ -32,19 +32,28 @@ Claude Code skills in `.claude/skills/` are **thin mirrors** — follow the link
 
 **`membrana-team-evening-feedback` is a process obligation, not an option.**
 
-After `yarn ritual:evening` completes (or when the user signals end of day — "уходим на
-вечерний ритуал", "до завтра", "closing the day"), Claude Code MUST run:
+The evening chain (`yarn ritual:evening`) runs the feedback step ITSELF. The old norm
+("MUST run manually after the chain") duplicated it: 22.08 produced TWO protocols of one
+evening with opposing verdicts. Норма противоречила цепочке, и права цепочка (#2107).
 
-```bash
-yarn team-evening-feedback
-```
+The obligation is that **exactly one protocol for today exists**, not that the command is
+typed by hand:
 
-Rules:
-- Run even if `code-review` step failed — feedback is independent.
-- If `ANTHROPIC_API_KEY` is unavailable, run `yarn team-evening-feedback:dry` and show
-  the context to the user instead.
+- After `yarn ritual:evening`, CHECK `docs/seanses/team-evening-feedback-<today>.md`
+  exists. It does → done, do NOT run again.
+- Missing (chain step failed / day closed without the chain) → run `yarn
+  team-evening-feedback` manually, even if `code-review` failed — feedback is independent.
+- A second protocol for the same day MUST NOT be generated; two protocols of one evening
+  are a defect, not thoroughness.
+- If the LLM chain is exhausted, run `yarn team-evening-feedback:dry` and show the
+  context to the user instead.
 - Commit `docs/seanses/team-evening-feedback-<date>.md` after a successful run.
 - Do not skip silently — if blocked, tell the user explicitly and offer `--dry` fallback.
+- The protocol header carries a machine `evening-feedback` guard line (readAt: version +
+  digest of every input, magistral from gate state). A protocol without it does not prove
+  the team read the evening documents (#2107; predicate
+  `validateEveningFeedbackReadAt`, porcha-tests in
+  `scripts/team-evening-feedback-readat.test.mjs`).
 
 ## Mandatory: Partner swallow (ласточка) — утром И вечером, РУКАМИ
 
