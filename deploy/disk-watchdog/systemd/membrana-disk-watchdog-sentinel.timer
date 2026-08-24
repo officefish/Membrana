@@ -1,0 +1,12 @@
+# Каждые 5 мин; T_silence=15 мин → stale-тревога не позже T_silence + τ_check = 20 мин
+# после остановки главного сторожа (DoD-предикат B).
+[Unit]
+Description=Membrana disk watchdog sentinel timer (every 5 min)
+
+[Timer]
+OnBootSec=4min
+OnUnitActiveSec=5min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
