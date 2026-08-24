@@ -84,7 +84,10 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   const [selectedId, setSelectedId] = useState<string>(BUFFER_COLLECTION_ID);
   const [newCollectionName, setNewCollectionName] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const [labelSavingId, setLabelSavingId] = useState<string | null>(null);
+  /** Перенос буфер→набор: что едет и куда — видно словом, а не молчанием (#2110). */
+  const [moveState, setMoveState] = useState<{ state: 'moving' | 'done'; sampleId: string; targetName: string } | null>(null);
+  /** Именованные состояния сохранения подписи — по каждой пробе (#2110). */
+  const [labelStates, setLabelStates] = useState<Record<string, { state: 'idle' | 'saving' | 'saved' | 'error'; detail?: string }>>({});
   const [labelFilter, setLabelFilter] = useState<'all' | SampleLabel>('all');
   const { busy: clearingBuffer, run: runRemoteMutation } = useRemoteMutation();
 
@@ -96,7 +99,13 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   }, [service]);
 
   const samples = useMemo(
-    () => snapshot.samplesByCollection[selectedId] ?? [],
+    // Свежие СВЕРХУ (#2110): главный инструмент — разборка ночных проб, и человек начинает с
+    // последнего записанного, а не листает к нему через тысячу старых. Сортировка на копии —
+    // снапшот сервиса не переворачивается на месте.
+    () =>
+      [...(snapshot.samplesByCollection[selectedId] ?? [])].sort(
+        (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt),
+      ),
     [snapshot.samplesByCollection, selectedId],
   );
   const selected = snapshot.collections.find((c) => c.id === selectedId);
@@ -111,14 +120,25 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
 
   const handleUpdateLabelNotes = useCallback(
     async (sampleId: string, patch: UpdateSampleLabelNotes) => {
-      setError(null);
-      setLabelSavingId(sampleId);
+      // Состояние сохранения — ПО КАЖДОЙ пробе, именованное (#2110): прежде один labelSavingId
+      // на весь модуль держал владельца — пока одна подпись едет, следующую не тронуть. Теперь
+      // сохранение асинхронное: подписал → перешёл к следующей, а исход (saving → saved | error)
+      // виден у той строки, которой принадлежит, и ошибка не теряется в общем баннере.
+      setLabelStates((prev) => ({ ...prev, [sampleId]: { state: 'saving' } }));
       try {
         await service.updateSampleLabelNotes(sampleId, patch);
+        setLabelStates((prev) => ({ ...prev, [sampleId]: { state: 'saved' } }));
+        // «Сохранено» — сигнал, не жилец: через пару секунд строка возвращается к покою.
+        window.setTimeout(() => {
+          setLabelStates((prev) =>
+            prev[sampleId]?.state === 'saved' ? { ...prev, [sampleId]: { state: 'idle' } } : prev,
+          );
+        }, 2500);
       } catch (e) {
-        setError(e instanceof Error ? e.message : String(e));
-      } finally {
-        setLabelSavingId(null);
+        setLabelStates((prev) => ({
+          ...prev,
+          [sampleId]: { state: 'error', detail: e instanceof Error ? e.message : String(e) },
+        }));
       }
     },
     [service],
@@ -214,13 +234,23 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     async (sampleId: string, toId: string) => {
       if (!toId) return;
       setError(null);
+      // Перенос буфер→набор больше не молчит (#2110): пока едет — «переносится…», по исходу —
+      // «перенесено в <набор>» либо ошибка. Прежде проба просто исчезала из списка, и человек
+      // не знал, уехала она или потерялась.
+      const targetName = snapshot.collections.find((c) => c.id === toId)?.name ?? toId;
+      setMoveState({ state: 'moving', sampleId, targetName });
       try {
         await service.moveSample(sampleId, toId);
+        setMoveState({ state: 'done', sampleId, targetName });
+        window.setTimeout(() => {
+          setMoveState((prev) => (prev?.state === 'done' && prev.sampleId === sampleId ? null : prev));
+        }, 3000);
       } catch (e) {
+        setMoveState(null);
         setError(e instanceof Error ? e.message : String(e));
       }
     },
-    [service],
+    [service, snapshot.collections],
   );
 
   const handleClearBuffer = useCallback(async () => {
@@ -268,6 +298,14 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     <div className="flex h-full min-h-0 flex-col gap-3 p-2">
       {activePluginIds.includes(SAMPLE_LIBRARY_PLAYER_PLUGIN_ID) ? (
         <SampleLibraryPlayerPanel moduleId={module.id} />
+      ) : null}
+
+      {moveState ? (
+        <div className={moveState.state === 'moving' ? 'alert alert-info py-1 text-xs' : 'alert alert-success py-1 text-xs'} role="status">
+          {moveState.state === 'moving'
+            ? `Переносится в «${moveState.targetName}»…`
+            : `Перенесено в «${moveState.targetName}»`}
+        </div>
       ) : null}
 
       <MediaLibraryQuotaBanner quota={snapshot.quota} />
@@ -440,7 +478,8 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                 ) : (
                   filteredSamples.map((s: MediaSample) => {
                     const isSelected = playback.selectedSampleId === s.id;
-                    const saving = labelSavingId === s.id;
+                    const labelState = labelStates[s.id] ?? { state: 'idle' as const };
+                    const saving = labelState.state === 'saving';
                     return (
                     <Fragment key={s.id}>
                     <tr
@@ -459,6 +498,14 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                           saving={saving}
                           onSave={handleUpdateLabelNotes}
                         />
+                        {labelState.state === 'saved' ? (
+                          <span className="text-xs text-success" role="status">сохранено</span>
+                        ) : null}
+                        {labelState.state === 'error' ? (
+                          <span className="text-xs text-error" role="alert" title={labelState.detail}>
+                            не сохранилось: {labelState.detail}
+                          </span>
+                        ) : null}
                       </td>
                       <td>{s.source}</td>
                       <td className="text-right tabular-nums">
