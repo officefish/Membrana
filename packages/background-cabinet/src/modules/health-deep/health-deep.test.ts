@@ -68,7 +68,9 @@ function makePrisma(overrides: Partial<PrismaMock> = {}): PrismaMock {
 }
 
 function makeService(prisma: PrismaMock, nowRef: { t: number }) {
-  return new HealthDeepService(prisma as unknown as PrismaService, () => nowRef.t);
+  const svc = new HealthDeepService(prisma as unknown as PrismaService);
+  svc.setClockForTests(() => nowRef.t);
+  return svc;
 }
 
 describe('HealthDeepService — дешёвые источники (M2: p99, без Θ(N²) на request-path)', () => {

@@ -56,10 +56,17 @@ export class HealthDeepService {
 
   private tapeCache: { value: number; at: number } | null = null;
 
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly now: () => number = () => Date.now(),
-  ) {}
+  // НЕ параметр конструктора: Nest инжектит ВСЕ параметры @Injectable-класса, и
+  // тип-функция валит подъём графа UnknownDependenciesException'ом — ровно инцидент
+  // деплоя 24.08 (класс #2009). Часы — свойство с тестовым швом.
+  private now: () => number = () => Date.now();
+
+  constructor(private readonly prisma: PrismaService) {}
+
+  /** Тестовый шов: подмена часов (TTL-кэш, budget). */
+  setClockForTests(now: () => number): void {
+    this.now = now;
+  }
 
   /** Budget пробы базы: чуть выше fail-порога — дольше ждать незачем (M2: unreachable). */
   get dbBudgetMs(): number {
