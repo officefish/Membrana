@@ -2,6 +2,7 @@ import { BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
 
 import { AllExceptionsFilter } from './http-exception.filter';
+import { setIncidentSentryCaptureForTests } from '../incident/incident-sentry';
 import {
   CabinetBusyException,
   CabinetUnreachableException,
@@ -93,6 +94,28 @@ describe('AllExceptionsFilter — лицо отказа (кусок B, верд�
     expect(sent.payload?.message).toBe('bad');
     expect(sent.payload?.stack).toBeUndefined();
     expect(sent.payload?.error).toBeUndefined();
+  });
+
+  it('картотека доступна → номер INC-…, событие уезжает с тегом incident_id (кусок E)', () => {
+    const captured: Array<{ tags: Record<string, string> }> = [];
+    setIncidentSentryCaptureForTests((_e, ctx) => captured.push(ctx));
+    try {
+      const { host, sent } = makeHost();
+      filter.catch(new Error('boom'), host);
+      expect(sent.payload?.incidentId).toMatch(/^INC-/);
+      expect(sent.headers['X-Incident-Id']).toBe(sent.payload?.incidentId);
+      expect(captured).toHaveLength(1);
+      expect(captured[0]?.tags.incident_id).toBe(sent.payload?.incidentId);
+      expect(captured[0]?.tags.request_id).toBe('req-123');
+    } finally {
+      setIncidentSentryCaptureForTests(null);
+    }
+  });
+
+  it('картотека спит (нет DSN) → суррогат TMP, capture не зовётся — куски B–D как были', () => {
+    const { host, sent } = makeHost();
+    filter.catch(new Error('boom'), host);
+    expect(sent.payload?.incidentId).toMatch(/^TMP-/);
   });
 
   it('requestId без заголовка — пустая строка, не падение', () => {

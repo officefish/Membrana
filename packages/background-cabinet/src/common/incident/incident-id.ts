@@ -24,9 +24,12 @@ function randomGroup(): string {
   return out;
 }
 
-export function mintIncidentId(): IncidentMint {
-  // Кусок E подключит сюда чекан Сентри; до него — честный суррогат.
-  return { id: `TMP-${randomGroup()}-${randomGroup()}`, source: 'tmp' };
+export function mintIncidentId(official = false): IncidentMint {
+  // official=true — картотека Сентри доступна (кусок E, incident-sentry.ts):
+  // номер становится INC и событие уезжает в картотеку; иначе честный суррогат.
+  return official
+    ? { id: `INC-${randomGroup()}-${randomGroup()}`, source: 'sentry' }
+    : { id: `TMP-${randomGroup()}-${randomGroup()}`, source: 'tmp' };
 }
 
 export const INCIDENT_ID_PATTERN = /^(INC|TMP)-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}$/;
