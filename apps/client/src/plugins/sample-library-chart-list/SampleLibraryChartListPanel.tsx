@@ -11,7 +11,7 @@
  */
 import React, { useCallback, useMemo, useState } from 'react';
 import { useMediaLibrary } from '@membrana/media-library-service';
-import type { LibraryChartListRunOutcome } from '@membrana/media-library-service';
+import type { LibraryChartListPick, LibraryChartListRunOutcome } from '@membrana/media-library-service';
 import { selectSample, useSamplePlayback } from '@membrana/sample-playback-service';
 
 import { dateInputToIsoWindow } from './types';
@@ -156,7 +156,7 @@ export const SampleLibraryChartListPanel: React.FC<SampleLibraryChartListPanelPr
                 </tr>
               </thead>
               <tbody>
-                {selection?.picks.map((p) => (
+                {selection?.picks.map((p: LibraryChartListPick) => (
                   <tr key={p.sampleId} className={playback.selectedSampleId === p.sampleId ? 'bg-primary/10' : undefined}>
                     <td className="tabular-nums">{p.rank}</td>
                     <td className="max-w-[14rem] truncate">{titleOf(p.sampleId)}</td>
