@@ -95,6 +95,9 @@ class DutyPulseHost {
       },
     });
     publisher.start();
+    // Старт duty-окна — первый «вдох»: до первого тика издания тишины ещё нет,
+    // иначе холодный check() выстрелил бы ложным silent-incident (ревью PR #2137, P2).
+    detector.observeSample(Date.now());
     this.publisher = publisher;
     this.detector = detector;
     this.checkTimer = setInterval(() => {
