@@ -102,7 +102,12 @@ export interface ChartListDisplacement {
   readonly displaced: readonly ChartListDisplaced[];
 }
 
-export type ChartListRefusalReason = 'no-candidates' | 'unknown-criterion' | 'unknown-volume';
+export type ChartListRefusalReason =
+  | 'no-candidates'
+  | 'unknown-criterion'
+  | 'unknown-volume'
+  | 'empty-window'
+  | 'invalid-window';
 
 export interface ChartListRefusal {
   readonly reason: ChartListRefusalReason;
@@ -142,6 +147,67 @@ export interface ChartListTuning {
 export const CHART_LIST_DEFAULTS: ChartListTuning = {
   minDistanceRatio: 0.05,
 };
+
+/**
+ * Промежуток дат — четвёртая настройка человека (#2110), а не четвёртый критерий.
+ *
+ * Критерии отвечают «кто лучший», окно — «среди кого искать»: оно СУЖАЕТ кандидатов ДО отбора,
+ * одинаково для всех трёх критериев, и потому живёт отдельной функцией, а не веткой внутри
+ * каждого. Четвёртый критерий отвергнут командой 3/3 ещё в спринте чарт-листа — окно им не
+ * является и той развилки не переоткрывает.
+ *
+ * Границы в epoch ms — той же единицей, что `ChartListCandidate.at`: перевод человеческих дат
+ * в миллисекунды — забота вызывающего (у него часовой пояс человека), ядро едино для сервера и
+ * клиента и о поясах не знает. Обе границы включительны: «с 20.08 по 22.08» для человека значит
+ * «включая оба дня», и резать последний день полуоткрытым интервалом значило бы молча отвечать
+ * не на тот вопрос.
+ */
+export interface ChartListDateWindow {
+  /** Левая граница, epoch ms, включительно. Не задана — от начала времён. */
+  readonly fromMs?: number;
+  /** Правая граница, epoch ms, включительно. Не задана — до конца ленты. */
+  readonly toMs?: number;
+}
+
+/**
+ * Сузить кандидатов окном дат.
+ *
+ * Возвращает отказ ВМЕСТО списка в двух случаях, и они разные:
+ * `invalid-window` — границы перепутаны местами (from позже to): это ошибка запроса, и молча
+ * вернуть пусто значило бы выдать опечатку за «в этот период ничего не было»;
+ * `empty-window` — окно правильное, но в нём никого: честный ответ «в этот промежуток записей
+ * нет», отличимый от «кандидатов нет вовсе» (`no-candidates`).
+ */
+export function filterByDateWindow(
+  candidates: readonly ChartListCandidate[],
+  window: ChartListDateWindow | null | undefined,
+): { candidates: readonly ChartListCandidate[]; refusal: ChartListRefusal | null } {
+  if (!window || (window.fromMs === undefined && window.toMs === undefined)) {
+    return { candidates, refusal: null };
+  }
+  const from = window.fromMs ?? Number.NEGATIVE_INFINITY;
+  const to = window.toMs ?? Number.POSITIVE_INFINITY;
+  if (!Number.isFinite(from) && window.fromMs !== undefined) {
+    return { candidates: [], refusal: refuse('invalid-window', 'левая граница окна — не число') };
+  }
+  if (!Number.isFinite(to) && window.toMs !== undefined) {
+    return { candidates: [], refusal: refuse('invalid-window', 'правая граница окна — не число') };
+  }
+  if (from > to) {
+    return {
+      candidates: [],
+      refusal: refuse('invalid-window', `границы окна перепутаны: from (${window.fromMs}) позже to (${window.toMs})`),
+    };
+  }
+  const inWindow = candidates.filter((c) => c.at >= from && c.at <= to);
+  if (candidates.length > 0 && inWindow.length === 0) {
+    return {
+      candidates: [],
+      refusal: refuse('empty-window', 'в заданный промежуток дат не попала ни одна запись'),
+    };
+  }
+  return { candidates: inWindow, refusal: null };
+}
 
 const refuse = (reason: ChartListRefusalReason, detail: string): ChartListRefusal => ({ reason, detail });
 
@@ -230,9 +296,26 @@ export function selectChartList(
   criterion: string,
   volume: number,
   tuning: ChartListTuning = CHART_LIST_DEFAULTS,
+  window: ChartListDateWindow | null = null,
 ): ChartListSelection {
   const safeCriterion = isChartListCriterion(criterion) ? criterion : 'loudness-over-floor';
   const safeVolume = isChartListVolume(volume) ? volume : 20;
+
+  // Окно сужает ДО отбора: критерий ранжирует только тех, кто в промежутке. Порядок важен —
+  // обратный означал бы «выбрали лучших за всё время, потом спрятали не попавших в окно», и
+  // выборка на 20 могла бы вернуть три строки при полном окне записей.
+  const windowed = filterByDateWindow(candidates, window);
+  if (windowed.refusal) {
+    return {
+      criterion: safeCriterion,
+      volume: safeVolume,
+      picks: [],
+      shortfall: safeVolume,
+      displacements: [],
+      refusal: windowed.refusal,
+    };
+  }
+  candidates = windowed.candidates;
 
   if (!isChartListCriterion(criterion)) {
     return {
