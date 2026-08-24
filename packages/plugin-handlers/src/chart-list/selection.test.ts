@@ -16,6 +16,7 @@ import {
   isChartListCriterion,
   isChartListVolume,
   selectChartList,
+  filterByDateWindow,
   type ChartListCandidate,
 } from './selection.js';
 import type { EventFeatures } from '../session-metrics/index.js';
@@ -239,5 +240,100 @@ describe('строка несёт ровно названное владельц
     const p = selectChartList(varied(1), 'loudness-over-floor', 20).picks[0]!;
     expect(p.entryId).toBeTruthy();
     expect(p.sampleId).toBeTruthy();
+  });
+});
+
+// ── окно дат (#2110) ──────────────────────────────────────────────────────────
+
+describe('filterByDateWindow', () => {
+  const DAY = 86_400_000;
+  const t0 = 1_755_000_000_000;
+  /** Три записи в три «дня»: вчера, сегодня, завтра. */
+  const spread = [
+    cand({ entryId: 'вчера', sampleId: 'sв', at: t0 - DAY }),
+    cand({ entryId: 'сегодня', sampleId: 'sс', at: t0 }),
+    cand({ entryId: 'завтра', sampleId: 'sз', at: t0 + DAY }),
+  ];
+
+  it('без окна кандидаты проходят как есть — старые вызовы не меняют поведения', () => {
+    expect(filterByDateWindow(spread, null).candidates).toHaveLength(3);
+    expect(filterByDateWindow(spread, {}).candidates).toHaveLength(3);
+    expect(filterByDateWindow(spread, undefined).refusal).toBeNull();
+  });
+
+  it('окно сужает с обеих сторон, границы ВКЛЮЧИТЕЛЬНЫ', () => {
+    // «с 20.08 по 22.08» для человека значит «включая оба дня» — запись ровно на границе своя.
+    const { candidates, refusal } = filterByDateWindow(spread, { fromMs: t0, toMs: t0 + DAY });
+    expect(refusal).toBeNull();
+    expect(candidates.map((c) => c.entryId)).toEqual(['сегодня', 'завтра']);
+  });
+
+  it('полуоткрытые окна законны: только from и только to', () => {
+    expect(filterByDateWindow(spread, { fromMs: t0 }).candidates.map((c) => c.entryId)).toEqual([
+      'сегодня',
+      'завтра',
+    ]);
+    expect(filterByDateWindow(spread, { toMs: t0 }).candidates.map((c) => c.entryId)).toEqual([
+      'вчера',
+      'сегодня',
+    ]);
+  });
+
+  it('ПУСТОЕ ОКНО — отказ словом, отличимый от «кандидатов нет вовсе»', () => {
+    const { candidates, refusal } = filterByDateWindow(spread, {
+      fromMs: t0 + 10 * DAY,
+      toMs: t0 + 11 * DAY,
+    });
+    expect(candidates).toHaveLength(0);
+    expect(refusal?.reason).toBe('empty-window');
+  });
+
+  it('ПЕРЕПУТАННЫЕ ГРАНИЦЫ — отказ invalid-window, а не молчаливое пусто', () => {
+    // Опечатка в датах не то же самое, что «в этот период ничего не было».
+    const { refusal } = filterByDateWindow(spread, { fromMs: t0 + DAY, toMs: t0 - DAY });
+    expect(refusal?.reason).toBe('invalid-window');
+    expect(refusal?.detail).toContain('перепутаны');
+  });
+
+  it('нечисловая граница — отказ, а не сравнение с NaN', () => {
+    expect(filterByDateWindow(spread, { fromMs: Number.NaN }).refusal?.reason).toBe('invalid-window');
+  });
+});
+
+describe('selectChartList с окном', () => {
+  const DAY = 86_400_000;
+  const t0 = 1_755_000_000_000;
+
+  it('окно сужает ДО отбора: выборка на 20 берёт лучших ИЗ ПРОМЕЖУТКА, а не прячет из готовой', () => {
+    // Десять записей: пять старых ГРОМКИХ и пять свежих тихих. Отбор «громче фона» при окне
+    // на свежие обязан вернуть пять свежих — если бы окно применялось ПОСЛЕ отбора, вернулось
+    // бы пусто: топ-20 за всё время заняли бы старые громкие.
+    const olderLoud = Array.from({ length: 5 }, (_, i) =>
+      cand({ entryId: `старый${i}`, sampleId: `so${i}`, at: t0 - 10 * DAY, deltaDb: 30 + i }),
+    );
+    const freshQuiet = Array.from({ length: 5 }, (_, i) =>
+      cand({ entryId: `свежий${i}`, sampleId: `sf${i}`, at: t0 + i, deltaDb: 5 + i }),
+    );
+    const out = selectChartList([...olderLoud, ...freshQuiet], 'loudness-over-floor', 20, undefined, {
+      fromMs: t0,
+    });
+    expect(out.refusal).toBeNull();
+    expect(out.picks).toHaveLength(5);
+    expect(out.picks.every((p) => p.entryId.startsWith('свежий'))).toBe(true);
+  });
+
+  it('отказ окна доезжает до выборки целиком, отбор не запускается', () => {
+    const out = selectChartList([cand()], 'loudness-over-floor', 20, undefined, {
+      fromMs: t0 + DAY,
+      toMs: t0 - DAY,
+    });
+    expect(out.refusal?.reason).toBe('invalid-window');
+    expect(out.picks).toHaveLength(0);
+  });
+
+  it('без окна подпись вызова прежняя — пятый аргумент необязателен', () => {
+    const out = selectChartList([cand()], 'loudness-over-floor', 20);
+    expect(out.refusal).toBeNull();
+    expect(out.picks).toHaveLength(1);
   });
 });
