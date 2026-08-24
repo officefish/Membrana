@@ -81,25 +81,20 @@ export class LiveJournalService {
 
   async refresh(): Promise<void> {
     const items = await this.backend.listItems();
-    this.snapshot = {
-      items: [...items].sort((a, b) => b.timestamp - a.timestamp),
-      storageMode: this.backend.getStorageMode(),
-      version: this.version,
-    };
-    this.emit();
+    this.publishItems(items);
   }
 
   async appendTrack(input: AppendLiveJournalTrackInput): Promise<LiveJournalItem | null> {
     assertLiveJournalTrackPayload(input.track);
     const item = await this.backend.appendTrack(input);
-    if (item) await this.refresh();
+    if (item) this.publishLocalAppend(item);
     return item;
   }
 
   async appendReport(input: AppendLiveJournalReportInput): Promise<LiveJournalItem | null> {
     assertLiveJournalReportPayload(input.report);
     const item = await this.backend.appendReport(input);
-    if (item) await this.refresh();
+    if (item) this.publishLocalAppend(item);
     return item;
   }
 
@@ -115,6 +110,22 @@ export class LiveJournalService {
   private emit(): void {
     this.version += 1;
     this.listeners.forEach((listener) => listener());
+  }
+
+  private publishLocalAppend(item: LiveJournalItem): void {
+    this.publishItems([
+      item,
+      ...this.snapshot.items.filter((existing) => existing.clientEntryId !== item.clientEntryId),
+    ]);
+  }
+
+  private publishItems(items: readonly LiveJournalItem[]): void {
+    this.snapshot = {
+      items: [...items].sort((a, b) => b.timestamp - a.timestamp),
+      storageMode: this.backend.getStorageMode(),
+      version: this.version,
+    };
+    this.emit();
   }
 }
 

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   TELEMETRY_TRACK_SCHEMA_VERSION,
@@ -86,6 +86,22 @@ describe('live journal filters', () => {
 });
 
 describe('LiveJournalService', () => {
+  it('publishes appended track locally without refreshing the remote list (#2113)', async () => {
+    const backend = createMemoryJournalStorageBackend();
+    const listItems = vi.spyOn(backend, 'listItems');
+    const service = createLiveJournalService(backend);
+    await service.init();
+    listItems.mockClear();
+
+    const track = await service.appendTrack(sampleTrackInput('track-no-refresh'));
+
+    expect(track?.kind).toBe('track');
+    expect(listItems).not.toHaveBeenCalled();
+    expect(service.getSnapshot().items.map((item) => item.clientEntryId)).toEqual([
+      liveJournalTrackClientEntryId('track-no-refresh'),
+    ]);
+  });
+
   it('appends track and report with dedupe', async () => {
     const service = createLiveJournalService(createMemoryJournalStorageBackend());
     await service.init();

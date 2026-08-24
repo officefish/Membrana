@@ -32,6 +32,7 @@ export function createCabinetJournalPort(token: string): ICabinetJournalPort {
         mediaDeviceId: query?.mediaDeviceId,
         cursor: query?.cursor ?? undefined,
         filter: query?.filter,
+        since: query?.since,
       });
       if (unified) return unified;
 
