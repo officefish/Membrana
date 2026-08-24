@@ -68,6 +68,7 @@ export class JournalController {
       query.mediaDeviceId,
       query.cursor,
       query.filter,
+      query.since,
     );
   }
 

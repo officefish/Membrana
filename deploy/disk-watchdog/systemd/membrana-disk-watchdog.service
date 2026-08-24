@@ -1,0 +1,10 @@
+# Сторож диска (Д1, кусок A #2118). Намеренно БЕЗ Wants/After на docker и сборщики:
+# сторож обязан жить, даже когда всё остальное лежит (DoD-предикат G).
+[Unit]
+Description=Membrana disk watchdog (D1): tape volume free-space alarm
+
+[Service]
+Type=oneshot
+ExecStart=/opt/membrana/disk-watchdog/disk-watchdog.sh run
+# Секреты и пороги — только в env-файле на хосте, не в юните и не в репозитории.
+EnvironmentFile=-/etc/membrana/disk-watchdog.env
