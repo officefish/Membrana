@@ -17,15 +17,26 @@ const T = DEFAULT_HEALTH_DEEP_THRESHOLDS;
 
 describe('decideHealthDeep — пороги с физическим смыслом (вердикт M2)', () => {
   it('РЕТРО-ПРЕДИКАТ 23.08 (обязательная фикстура DoD): лента 2400 → не «ок»', () => {
-    expect(decideHealthDeep({ tapeLength: 2400, dbLatencyMs: 100, ingestArrivedRatio: null }, T)).toBe('fail');
+    // До α-калибровки лента судит не выше warn (fail не вооружён) — но «ок» не рисуется.
+    expect(decideHealthDeep({ tapeLength: 2400, dbLatencyMs: 100, ingestArrivedRatio: null }, T)).toBe('warn');
+  });
+
+  it('находка прод 24.08: лента 3209 при базе 2 мс → degraded, НЕ busy (шум снят)', () => {
+    expect(decideHealthDeep({ tapeLength: 3209, dbLatencyMs: 2, ingestArrivedRatio: null }, T)).toBe('warn');
+  });
+
+  it('после калибровки (tapeFail вооружён env) лента даёт fail', () => {
+    expect(
+      decideHealthDeep({ tapeLength: 5000, dbLatencyMs: 2, ingestArrivedRatio: null }, { ...T, tapeFail: 4800 }),
+    ).toBe('fail');
   });
 
   it('РЕТРО-ПРЕДИКАТ 23.08: задержка базы 3900 мс → не «ок»', () => {
     expect(decideHealthDeep({ tapeLength: 10, dbLatencyMs: 3900, ingestArrivedRatio: null }, T)).toBe('fail');
   });
 
-  it('warn-пороги: лента 1200 / база 1000 мс / доля 0,9 → degraded, не fail', () => {
-    expect(decideHealthDeep({ tapeLength: 1200, dbLatencyMs: 10, ingestArrivedRatio: null }, T)).toBe('warn');
+  it('warn-пороги: лента 2400 / база 1000 мс / доля 0,9 → degraded, не fail', () => {
+    expect(decideHealthDeep({ tapeLength: 2400, dbLatencyMs: 10, ingestArrivedRatio: null }, T)).toBe('warn');
     expect(decideHealthDeep({ tapeLength: 10, dbLatencyMs: 1000, ingestArrivedRatio: null }, T)).toBe('warn');
     expect(decideHealthDeep({ tapeLength: 10, dbLatencyMs: 10, ingestArrivedRatio: 0.9 }, T)).toBe('warn');
   });
@@ -126,18 +137,34 @@ describe('HealthDeepController — контракт ответа по M1/M2', ()
     expect(body.thresholds).toEqual(svc.thresholds);
   });
 
-  it('fail-порог → CabinetBusyException (503 busy) с числами best-effort внутри', async () => {
+  it('fail-порог (вооружённый env после калибровки) → CabinetBusyException с числами внутри', async () => {
+    process.env.HEALTH_DEEP_TAPE_FAIL = '2400';
+    try {
+      const prisma = makePrisma({
+        telemetryReport: { count: vi.fn().mockResolvedValue(2000) },
+        telemetryLiveRecord: { count: vi.fn().mockResolvedValue(1000) },
+      });
+      const ctrl = new HealthDeepController(makeService(prisma, { t: 1_756_000_000_000 }));
+      await expect(ctrl.deep(makeReq())).rejects.toSatisfy((e: unknown) => {
+        expect(e).toBeInstanceOf(CabinetBusyException);
+        const busy = e as CabinetBusyException;
+        expect(busy.extra.tape_length).toBe(3000);
+        return true;
+      });
+    } finally {
+      delete process.env.HEALTH_DEEP_TAPE_FAIL;
+    }
+  });
+
+  it('до калибровки длинная лента даёт 200 degraded, не busy (находка прод 24.08)', async () => {
     const prisma = makePrisma({
-      telemetryReport: { count: vi.fn().mockResolvedValue(2000) },
+      telemetryReport: { count: vi.fn().mockResolvedValue(2209) },
       telemetryLiveRecord: { count: vi.fn().mockResolvedValue(1000) },
     });
     const ctrl = new HealthDeepController(makeService(prisma, { t: 1_756_000_000_000 }));
-    await expect(ctrl.deep(makeReq())).rejects.toSatisfy((e: unknown) => {
-      expect(e).toBeInstanceOf(CabinetBusyException);
-      const busy = e as CabinetBusyException;
-      expect(busy.extra.tape_length).toBe(3000);
-      return true;
-    });
+    const body = await ctrl.deep(makeReq());
+    expect(body.status).toBe('degraded');
+    expect(body.tape_length).toBe(3209);
   });
 
   it('база молчит дольше budget → CabinetUnreachableException(postgres)', async () => {
