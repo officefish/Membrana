@@ -19,6 +19,8 @@ export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
   APP_VERSION: z.string().optional(),
+  /** DSN картотеки Сентри (кусок E #2122): задан → чекан INC, нет/пуст → суррогат TMP. */
+  SENTRY_DSN: z.preprocess((v) => (v === '' ? undefined : v), z.string().url().optional()),
   API_INTERNAL_TOKEN: z.string().min(1, 'API_INTERNAL_TOKEN is required'),
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   SESSION_TTL_HOURS: z.coerce.number().int().positive().default(168),

@@ -6,6 +6,7 @@ import { WsAdapter } from '@nestjs/platform-ws';
 import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/http-exception.filter';
+import { initIncidentSentry } from './common/incident/incident-sentry';
 import { RequestIdInterceptor } from './common/interceptors/request-id.interceptor';
 import { APP_CONFIG } from './config/config.tokens';
 import { loadDotenvFiles } from './config/load-dotenv';
@@ -31,6 +32,9 @@ async function bootstrap(): Promise<void> {
     // из заголовков (кусок B #2119, вердикт M1: X-Incident-Id = литералу в теле).
     exposedHeaders: ['X-Request-Id', 'X-Incident-Id'],
   });
+
+  // Картотека Сентри (кусок E #2122): без SENTRY_DSN интеграция спит — чекан TMP.
+  await initIncidentSentry(config.SENTRY_DSN);
 
   app.enableShutdownHooks();
   const logger = app.get(Logger);
