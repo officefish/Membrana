@@ -41,6 +41,7 @@ import {
   resolveMediaLibraryStorageMode,
 } from '@membrana/media-library-service';
 import { FftAnalyzer, frameLoudness } from '@membrana/fft-analyzer-service';
+import { getDutyPulseHost } from './dutyPulseHost';
 
 import {
   getMicrophoneCaptureSnapshot,
@@ -464,6 +465,8 @@ export class ScenarioMicJournalBridge {
 
   /** Сброс singleton-очередей при load/start сценария (CollectRuntimeStore сбрасывается отдельно). */
   resetCollectorSessions(): void {
+    // Конец duty-окна: остановка пульса намеренная, тревоги тишины не будет (M1b).
+    getDutyPulseHost().stop();
     this.collectorRegistry.resetAll();
     this.continuousPcmByDevice.clear();
     this.recordingSessions.clear();
@@ -952,6 +955,9 @@ export class ScenarioMicJournalBridge {
           createdAtIso,
         },
       });
+
+      // Проба доехала до журнала — отметка в пульсе дежурства (кусок C, M1b).
+      getDutyPulseHost().probe();
 
       scenarioChainLog('track', 'done', {
         nodeId,
@@ -1949,6 +1955,8 @@ export class ScenarioMicJournalBridge {
           createdAtIso: new Date().toISOString(),
         },
       });
+      // Проба main-ветки в журнале — отметка в пульсе дежурства (кусок C, M1b).
+      getDutyPulseHost().probe();
     }
 
     const detected = event.payload?.detected === true;

@@ -98,3 +98,17 @@ export {
   type UserCaseValidationError,
   type UserCaseValidationResult,
 } from './validators/index.js';
+export {
+  DutyPulsePublisher,
+  PulseSilenceDetector,
+  pulseState,
+  PULSE_PERIOD_MS,
+  PULSE_STALE_MS,
+  PULSE_SILENT_MS,
+} from './duty-pulse.js';
+export type {
+  DutyPulseSample,
+  DutyPulseState,
+  DutyPulsePublisherOptions,
+  PulseSilenceDetectorOptions,
+} from './duty-pulse.js';
