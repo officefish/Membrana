@@ -130,6 +130,7 @@ export interface ListTelemetryJournalItemsQuery {
   readonly mediaDeviceId?: string;
   readonly cursor?: string | null;
   readonly filter?: 'all' | 'tracks' | 'reports' | 'detections';
+  readonly since?: number;
 }
 
 export interface PaginatedTelemetryJournalItems {
@@ -147,6 +148,9 @@ export async function listTelemetryJournalItems(
   if (query.mediaDeviceId) params.set('mediaDeviceId', query.mediaDeviceId);
   if (query.cursor) params.set('cursor', query.cursor);
   if (query.filter && query.filter !== 'all') params.set('filter', query.filter);
+  if (typeof query.since === 'number' && Number.isFinite(query.since)) {
+    params.set('since', String(query.since));
+  }
 
   const res = await fetch(`${getCabinetApiBase()}/v1/telemetry/journal-items?${params.toString()}`, {
     headers: { Authorization: `Bearer ${token}` },
