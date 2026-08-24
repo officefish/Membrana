@@ -58,7 +58,8 @@ export function scenarioChainLog(
     | 'analysis'
     | 'report'
     | 'journal'
-    | 'async-job',
+    | 'async-job'
+    | 'duty-pulse',
   event: string,
   context?: Readonly<Record<string, unknown>>,
 ): void {
