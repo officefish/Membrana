@@ -1,0 +1,9 @@
+# Сторож сторожа (sibling на том же хосте, вердикт M1c): ловит тишину главного
+# сторожа по возрасту last_ok_ts. Отдельный юнит — падение главного его не трогает.
+[Unit]
+Description=Membrana disk watchdog sentinel: alarm on watchdog silence
+
+[Service]
+Type=oneshot
+ExecStart=/opt/membrana/disk-watchdog/disk-watchdog-sentinel.sh
+EnvironmentFile=-/etc/membrana/disk-watchdog.env
