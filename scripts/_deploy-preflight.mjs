@@ -88,8 +88,8 @@ function timestampFromMediaPayload(payload) {
 function fetchJsonSync(url, { token, timeoutMs = 5000 } = {}) {
   const script = `
 const url = process.argv[1];
-const token = process.argv[2] || '';
-const timeoutMs = Number(process.argv[3] || 5000);
+const timeoutMs = Number(process.argv[2] || 5000);
+const token = process.env.DEPLOY_MEDIA_PROBE_TOKEN || '';
 const controller = new AbortController();
 const timer = setTimeout(() => controller.abort(), timeoutMs);
 try {
@@ -108,17 +108,25 @@ try {
   clearTimeout(timer);
 }
 `;
-  return parseJsonSafe(execFileSync(process.execPath, ['-e', script, url, token ?? '', String(timeoutMs)], {
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'pipe'],
-    timeout: timeoutMs + 1000,
-  }));
+  try {
+    const out = execFileSync(process.execPath, ['-e', script, url, String(timeoutMs)], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      timeout: timeoutMs + 1000,
+      env: { ...process.env, DEPLOY_MEDIA_PROBE_TOKEN: token ?? '' },
+    });
+    return { ok: true, payload: parseJsonSafe(out) };
+  } catch (error) {
+    const stderr = error && typeof error === 'object' && 'stderr' in error ? String(error.stderr ?? '').trim() : '';
+    const message = stderr || (error instanceof Error ? error.message : String(error));
+    return { ok: false, error: message };
+  }
 }
 
 function mediaLastSampleUrl(env = process.env) {
   const explicit = firstString(env.DEPLOY_MEDIA_LAST_SAMPLE_URL, env.MEDIA_LAST_SAMPLE_URL);
   if (explicit) return explicit;
-  const api = firstString(env.MEDIA_API_URL, env.BACKGROUND_MEDIA_API_URL);
+  const api = firstString(env.MEDIA_API_URL, env.BACKGROUND_MEDIA_API_URL, env.VITE_MEDIA_API_URL);
   const deviceId = firstString(env.DEPLOY_MEDIA_DEVICE_ID, env.MEDIA_PREFLIGHT_DEVICE_ID);
   const collectionId = firstString(env.DEPLOY_MEDIA_COLLECTION_ID, env.MEDIA_PREFLIGHT_COLLECTION_ID);
   if (!api) return null;
@@ -140,20 +148,47 @@ function envWithDotenv(cwd, env = process.env) {
   return merged;
 }
 
-export function defaultLiveSessionProbe({ cwd, env = process.env } = {}) {
+function envFlag(value) {
+  return /^(1|true|yes|on)$/iu.test(String(value ?? '').trim());
+}
+
+function liveSessionProbeRequired({ service, env = process.env, requireLiveSessionGuard } = {}) {
+  if (typeof requireLiveSessionGuard === 'boolean') return requireLiveSessionGuard;
+  if (envFlag(env.DEPLOY_REQUIRE_LIVE_SESSION_GUARD)) return true;
+  return service === 'media' || service === 'cabinet';
+}
+
+export function defaultLiveSessionProbe({ cwd, env = process.env, service, requireLiveSessionGuard } = {}) {
   const resolvedEnv = envWithDotenv(cwd, env);
+  const required = liveSessionProbeRequired({ service, env: resolvedEnv, requireLiveSessionGuard });
   const url = mediaLastSampleUrl(resolvedEnv);
-  if (!url) return null;
-  const payload = fetchJsonSync(url, {
-    token: firstString(resolvedEnv.MEDIA_API_TOKEN, resolvedEnv.MEDIA_INTERNAL_TOKEN, resolvedEnv.API_INTERNAL_TOKEN),
+  if (!url) {
+    const reason = 'MEDIA_API_URL/DEPLOY_MEDIA_LAST_SAMPLE_URL не задан — live-session guard не знает, где спросить media';
+    return required ? { status: 'error', reason } : { status: 'skipped', reason };
+  }
+  const token = firstString(resolvedEnv.MEDIA_API_TOKEN, resolvedEnv.MEDIA_INTERNAL_TOKEN, resolvedEnv.API_INTERNAL_TOKEN);
+  if (!token) {
+    const reason = 'MEDIA_API_TOKEN/MEDIA_INTERNAL_TOKEN не задан — live-session guard не может авторизоваться в media';
+    return required ? { status: 'error', reason, source: url } : { status: 'skipped', reason, source: url };
+  }
+  const fetched = fetchJsonSync(url, {
+    token,
     timeoutMs: Number(resolvedEnv.DEPLOY_MEDIA_PREFLIGHT_TIMEOUT_MS ?? 5000),
   });
-  const lastSampleAt = timestampFromMediaPayload(payload);
-  return lastSampleAt ? { lastSampleAt, source: url } : null;
+  if (!fetched.ok) {
+    return { status: 'error', reason: `live-session probe failed: ${fetched.error}`, source: url };
+  }
+  const lastSampleAt = timestampFromMediaPayload(fetched.payload);
+  return { status: 'ok', lastSampleAt, source: url };
 }
 
 export function liveSessionProblem(probeResult, { now = new Date(), maxAgeMs = 60_000 } = {}) {
   if (!probeResult) return null;
+  if (probeResult.status === 'error') {
+    const source = probeResult.source ? ` (${probeResult.source})` : '';
+    return `live-session guard unavailable: ${probeResult.reason}${source}`;
+  }
+  if (probeResult.status === 'skipped') return null;
   const ageMs =
     typeof probeResult.ageMs === 'number'
       ? probeResult.ageMs
@@ -221,14 +256,16 @@ export function allowDirtyReason(argv = process.argv.slice(2), env = process.env
  * @param {boolean} [opts.allowDirty] Разрешить обход (по умолчанию из argv/env).
  * @param {string|null} [opts.allowDirtyReason] Причина обхода.
  * @param {(code:number)=>never} [opts.exit] Выход; параметр ради зубов.
- * @returns {{ clean: boolean, problems: string[], originHead: string | null, dirtyLines: string[], ignoredDirtyLines: string[], buildContextPaths: string[] | null, allowDirtyReason: string | null }}
+ * @returns {{ clean: boolean, problems: string[], hardProblems: string[], originHead: string | null, dirtyLines: string[], ignoredDirtyLines: string[], buildContextPaths: string[] | null, allowDirtyReason: string | null, liveSessionProbeStatus: object | null }}
  */
 export function deployPreflight({
   branch,
   cwd,
   service,
   buildContextPaths,
+  env = process.env,
   liveSessionProbe = defaultLiveSessionProbe,
+  requireLiveSessionGuard,
   liveSessionMaxAgeMs = 60_000,
   now = new Date(),
   allowDirty = isAllowDirty(),
@@ -237,12 +274,13 @@ export function deployPreflight({
 }) {
   const problems = [];
   const hardProblems = [];
+  let liveSessionProbeStatus = null;
   let originHead = null;
 
   const inside = tryGit('rev-parse --is-inside-work-tree', { cwd });
   if (!inside.ok || inside.out !== 'true') {
     console.warn('[preflight] не git-репозиторий — пропускаю проверку чистоты дерева');
-    return { clean: true, problems, originHead, dirtyLines: [], ignoredDirtyLines: [], buildContextPaths: null, allowDirtyReason: null };
+    return { clean: true, problems, hardProblems, originHead, dirtyLines: [], ignoredDirtyLines: [], buildContextPaths: null, allowDirtyReason: null, liveSessionProbeStatus };
   }
 
   const contextPaths = deployBuildContextPaths({ service, cwd, buildContextPaths });
@@ -280,14 +318,29 @@ export function deployPreflight({
     );
   }
 
-  const liveProbeResult = liveSessionProbe ? liveSessionProbe({ branch, cwd, service }) : null;
+  let liveProbeResult = null;
+  if (liveSessionProbe) {
+    try {
+      liveProbeResult = liveSessionProbe({ branch, cwd, service, env, requireLiveSessionGuard });
+    } catch (error) {
+      liveProbeResult = {
+        status: 'error',
+        reason: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+  liveSessionProbeStatus = liveProbeResult && typeof liveProbeResult === 'object' ? liveProbeResult : null;
   const liveProblem = liveSessionProblem(liveProbeResult, { now, maxAgeMs: liveSessionMaxAgeMs });
   if (liveProblem) hardProblems.push(liveProblem);
+  if (liveSessionProbeStatus?.status === 'skipped') {
+    const source = liveSessionProbeStatus.source ? ` (${liveSessionProbeStatus.source})` : '';
+    console.warn(`[preflight] SKIPPED live-session guard: ${liveSessionProbeStatus.reason}${source}`);
+  }
 
   if (problems.length === 0 && hardProblems.length === 0) {
     const ignored = ignoredDirtyLines.length > 0 ? `; вне контекста не блокирует: ${ignoredDirtyLines.length}` : '';
     console.log(`[preflight] OK: build context чист и HEAD совпадает с origin/${branch}${ignored}`);
-    return { clean: true, problems, hardProblems, originHead, dirtyLines, ignoredDirtyLines, buildContextPaths: contextPaths, allowDirtyReason: null };
+    return { clean: true, problems, hardProblems, originHead, dirtyLines, ignoredDirtyLines, buildContextPaths: contextPaths, allowDirtyReason: null, liveSessionProbeStatus };
   }
 
   console.error('\n[preflight] ВНИМАНИЕ — локальное состояние ≠ то, что задеплоится из origin:');
@@ -308,7 +361,7 @@ export function deployPreflight({
   );
 
   if (hardProblems.length > 0) {
-    console.error('[preflight] свежая проба означает живой сеанс записи — деплой запрещён.\n');
+    console.error('[preflight] live-session guard не разрешил деплой.\n');
     exit(1);
   }
 
@@ -318,7 +371,7 @@ export function deployPreflight({
       exit(1);
     }
     console.error(`[preflight] обход включён: ${reason} — продолжаю.\n`);
-    return { clean: false, problems, hardProblems, originHead, dirtyLines, ignoredDirtyLines, buildContextPaths: contextPaths, allowDirtyReason: reason };
+    return { clean: false, problems, hardProblems, originHead, dirtyLines, ignoredDirtyLines, buildContextPaths: contextPaths, allowDirtyReason: reason, liveSessionProbeStatus };
   }
 
   exit(1);
