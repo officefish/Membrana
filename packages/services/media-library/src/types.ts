@@ -104,6 +104,43 @@ export interface LibraryChartListRequest {
   to?: string;
 }
 
+/** Заказ поиска дублей в наборе (#2109): только окно; ручек порога у человека нет намеренно. */
+export interface LibraryDuplicatesRequest {
+  from?: string;
+  to?: string;
+}
+
+/** Адрес похожей пробы, как его отдаёт витрина media (с моментом — соседство по времени слышно первым). */
+export interface LibraryDuplicateRef {
+  entryId: string;
+  sampleId: string;
+  at: number;
+  deltaDb: number;
+  peakDb: number;
+  structure: 'tonal' | 'broadband';
+  flatness: number;
+}
+
+export interface LibraryDuplicateGroup {
+  keeper: LibraryDuplicateRef;
+  duplicates: LibraryDuplicateRef[];
+}
+
+export interface LibraryDuplicatesRunOutcome {
+  runId: string;
+  report: {
+    groups: LibraryDuplicateGroup[];
+    candidatesSeen: number;
+    duplicatesFound: number;
+    /** Порог числом и словом «унаследован» — панель обязана показать это рядом с парами. */
+    passport: { minDistanceRatio: number; inherited: true };
+    refusal: { reason: string; detail: string } | null;
+  };
+  inSet: number;
+  inWindow: number;
+  measured: number;
+}
+
 /** Строка выборки, как её отдаёт витрина media. */
 export interface LibraryChartListPick {
   entryId: string;
