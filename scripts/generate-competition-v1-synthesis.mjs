@@ -6,8 +6,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadDotEnv as loadAnthropicEnv, anthropicPost, getAnthropicKey, defaultModel, printAnthropicHttpError } from './_anthropic-env.mjs';
-import { deepseekChat, loadDotEnv as loadDeepSeekEnv, extractChatCompletionText, printDeepSeekHttpError, defaultDeepSeekModel } from './_deepseek-env.mjs';
+import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sprintDir = resolve(root, 'docs/competition-sprint/comp-mvp-packaging-2026-06-21');
@@ -33,49 +32,28 @@ const system =
 
 let answer;
 if (useDeepSeek) {
-  loadDeepSeekEnv();
-  const { ok, status, text } = await deepseekChat({
-    model: defaultDeepSeekModel(),
-    messages: [
-      { role: 'system', content: system },
-      { role: 'user', content: userContent },
-    ],
-    temperature: 0.4,
-    max_tokens: 8192,
+  // Зуб #2147/№4 (llm-panel-wire): провайдера решает панельная цепочка, флаг оставлен
+  // для совместимости вызовов и больше ничего не выбирает.
+  console.error('[warn] --deepseek устарел: провайдера решает панель (llm-procedure overlay)');
+}
+{
+  const r = await invokeProcedureLlm({
+    procedureId: 'competition-synthesis',
+    prompt: `${system}
+
+${userContent}`,
+    maxTokens: 8192,
   });
-  if (!ok) {
-    printDeepSeekHttpError(status, text);
+  if (!r.ok) {
+    console.error(`[fail] LLM-канал синтеза исчерпан по всей цепочке: ${r.error || (r.status ? `HTTP ${r.status}` : 'нет ответа')}`);
     process.exit(1);
   }
-  answer = extractChatCompletionText(text);
-} else {
-  loadAnthropicEnv();
-  const key = getAnthropicKey();
-  const { ok, status, text } = await anthropicPost('https://api.anthropic.com/v1/messages', {
-    headers: {
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
-    bodyJson: {
-      model: defaultModel(),
-      max_tokens: 8192,
-      system,
-      messages: [{ role: 'user', content: userContent }],
-    },
-  });
-  if (!ok) {
-    printAnthropicHttpError(status, text);
-    process.exit(1);
-  }
-  const parsed = JSON.parse(text);
-  answer = parsed.content?.find((c) => c.type === 'text')?.text;
-  if (!answer) {
-    console.error('Anthropic: пустой ответ');
+  answer = r.text;
+  if (!answer?.trim()) {
+    console.error('LLM: пустой ответ');
     process.exit(1);
   }
 }
-
-const header = `> **Generated:** ${new Date().toISOString().slice(0, 10)} · provider: ${useDeepSeek ? 'DeepSeek' : 'Anthropic'} · sprint \`comp-mvp-packaging-2026-06-21\`\n\n`;
+const header = `> **Generated:** ${new Date().toISOString().slice(0, 10)} · provider: llm-panel · sprint \`comp-mvp-packaging-2026-06-21\`\n\n`;
 writeFileSync(outPath, `${header}${answer.trim()}\n`, 'utf8');
 console.error(`Wrote ${outPath}`);
