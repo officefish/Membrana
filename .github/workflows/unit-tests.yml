@@ -79,15 +79,19 @@ jobs:
       # проде): vitest/esbuild не эмитит design:paramtypes, DI по классам на src не разрешим.
       # SMOKE_REQUIRE_DIST=1 — отсутствие dist здесь падение, не скип. DATABASE_URL — заглушка
       # для prisma generate, как в ci.yml:33; живой базы у шага нет и не должно быть.
-      - name: App DI smoke — background-media и background-office поднимаются (#2009)
+      # #2147/№1: смоук покрывает ВСЕ Nest-приложения (24.08 кабинет был вне гейта —
+      # HealthDeepService уронил деплой, а не CI). Полноту списка сторожит
+      # scripts/nest-di-smoke-coverage.test.mjs: новое Nest-приложение без строк здесь — красный.
+      - name: App DI smoke — все Nest-приложения поднимаются из dist (#2009, #2147)
         if: always()
         env:
           DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci
           SMOKE_REQUIRE_DIST: "1"
         run: |
-          yarn turbo run build --filter=@membrana/background-media --filter=@membrana/background-office
+          yarn turbo run build --filter=@membrana/background-media --filter=@membrana/background-office --filter=@membrana/background-cabinet
           yarn workspace @membrana/background-media test src/app.module.smoke.test.ts
           yarn workspace @membrana/background-office test src/app.module.smoke.test.ts
+          yarn workspace @membrana/background-cabinet test src/app.module.smoke.test.ts
 
       - name: Setup Node.js 22 (для TypeScript-native тестов)
         if: always()
