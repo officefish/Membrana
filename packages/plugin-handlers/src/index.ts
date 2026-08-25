@@ -95,6 +95,13 @@ export {
 } from './chart-list/selection.js';
 export { CHART_LIST_MANIFEST, CHART_LIST_ID } from './chart-list/manifest.js';
 export {
+  findDuplicatePairs,
+  type DuplicateGroup,
+  type DuplicatesRefusal,
+  type DuplicatesRefusalReason,
+  type DuplicatesReport,
+} from './chart-list/duplicates.js';
+export {
   createChartListExecutor,
   settingsOf,
   settingsUsable,
