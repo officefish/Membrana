@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14297/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 332 (причины в op-log) -->
+Записей: 49 · бюджет 14280/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 333 (причины в op-log) -->
+
+### 2026-08-25 · позиция · team-evening-feedback
+
+> Оценка артефактов: Документы дня согласованы лучше, чем обычно. `MAIN_DAY_ISSUE` корректно определяет магистраль, а стендап и план дня не пытаются её переопределить, а лишь отражают контекст. Расхождение `sources` (24.08) с календарной датой зафиксировано честно, без попытки […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-25.md#reply-1`
 
 ### 2026-08-24 · позиция · logging-observability-cut-m0-order
 
@@ -295,9 +301,3 @@
 > День с ясной осью — «S-очередь дня» отработана, эпик `ci-gate-stabilization` закрыт двумя последними детьми (cg2, cg4), долг `llm-probe-still-lies-net` погашен с зубами и живым прогоном. Оценка артефактов: `STRATEGIC_PLAN_DAY` — вещдок 17.07, читать нельзя (помечено); […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
-
-### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
-
-> Планка: один D1, один carrier, один rollout DAG, одна ledger machine, одна route matrix, один набор gates. Комната read-only — кода, DNS, Caddy, Panel, issues не трогаем. Run1–run4 rejected; константы выбираем здесь. Вердикт в конце: GO только при честном NO-GO текущих […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-08.md#reply-1`

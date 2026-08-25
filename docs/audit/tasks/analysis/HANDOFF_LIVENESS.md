@@ -1,20 +1,20 @@
 # Handoff liveness
 
-Generated: 2026-08-25T05:13:11.576Z
+Generated: 2026-08-25T07:16:58.191Z
 Source: docs/HANDOFF.md
-Carrier query: ok (single GraphQL batch)
+Carrier query: unknown (Post "https://api.github.com/graphql": EOF)
 
 | # | liveness | carriers | occupied | evidence |
 |---|----------|----------|----------|----------|
-| 1 | alive | #2110 | **сессия Г** (магистраль) | #2110 OPEN |
-| 2 | alive | #2147 | **сессия Б** | #2147 OPEN |
-| 3 | alive | #2113 | **сессия В** (подготовка) | #2113 OPEN |
-| 4 | alive | #2131 | **сессия В** | #2131 OPEN |
-| 5 | alive | #2117 | **ведущая** | #2117 OPEN |
-| 6 | alive | #2148 | **владелец** | #2148 OPEN |
-| 7 | alive | #2148 | **владелец** | #2148 OPEN |
-| 8 | alive | #2109 | **владелец** 25–27.08 | #2109 OPEN |
-| 9 | alive | #2122 | никто до 10.09 | #2122 OPEN |
-| 10 | alive | #2147, #2110 | **сессия Г** (после строки 1) | #2147 OPEN, #2110 OPEN |
+| 1 | unknown | #2110 | **сессия Г** (магистраль) | carrier state unknown: Post "https://api.github.com/graphql": EOF |
+| 2 | unknown | #2147 | **сессия Б** | carrier state unknown: Post "https://api.github.com/graphql": EOF |
+| 3 | unknown | #2113 | **сессия В** (подготовка) | carrier state unknown: Post "https://api.github.com/graphql": EOF |
+| 4 | unknown | #2131 | **сессия В** | carrier state unknown: Post "https://api.github.com/graphql": EOF |
+| 5 | unknown | #2117 | **ведущая** | carrier state unknown: Post "https://api.github.com/graphql": EOF |
+| 6 | unknown | #2148 | **владелец** | carrier state unknown: Post "https://api.github.com/graphql": EOF |
+| 7 | unknown | #2148 | **владелец** | carrier state unknown: Post "https://api.github.com/graphql": EOF |
+| 8 | unknown | #2109 | **владелец** 25–27.08 | carrier state unknown: Post "https://api.github.com/graphql": EOF |
+| 9 | unknown | #2122 | никто до 10.09 | carrier state unknown: Post "https://api.github.com/graphql": EOF |
+| 10 | unknown | #2147, #2110 | **сессия Г** (после строки 1) | carrier state unknown: Post "https://api.github.com/graphql": EOF |
 
-Summary: alive=10, dead=0, unknown=0.
+Summary: alive=0, dead=0, unknown=10.
