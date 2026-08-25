@@ -1,6 +1,8 @@
 import type {
   Collection,
   LibraryChartListRequest,
+  SessionDigestRequest,
+  SessionDigestRunOutcome,
   LibraryChartListRunOutcome,
   MediaSample,
   NewSampleMeta,
@@ -45,6 +47,11 @@ export interface IStorageBackend {
     collectionId: string,
     req: LibraryChartListRequest,
   ): Promise<LibraryChartListRunOutcome>;
+  /** Свод сеанса (#2039): двадцать опорных звуков окна — только серверный бэкенд. */
+  requestSessionDigest?(
+    collectionId: string,
+    req: SessionDigestRequest,
+  ): Promise<SessionDigestRunOutcome>;
 
   /** Optional: seed read-only tariff catalog (MemoryStorageBackend). */
   importCatalogSample?(

@@ -390,3 +390,21 @@ describe('requestLibraryChartList (#2110)', () => {
     expect(seen).toEqual([['c1', { volume: 20, criterion: 'loudness-over-floor', from: '2026-08-24T00:00:00.000Z' }]]);
   });
 });
+
+describe('requestSessionDigest (#2039)', () => {
+  it('бэкенд без глагола — named-отказ', async () => {
+    const svc = createMediaLibraryService(new MemoryStorageBackend({ limitBytes: 1_000_000 }));
+    await expect(svc.requestSessionDigest('c1')).rejects.toThrow(/только при серверной библиотеке/u);
+  });
+
+  it('сервис пробрасывает окно и ответ как есть', async () => {
+    const backend = new MemoryStorageBackend({ limitBytes: 1_000_000 }) as unknown as Record<string, unknown>;
+    const outcome = { runId: 'r1', kind: 'report', references: [], negatives: [], shortfall: { references: 20, negatives: 20 }, eventsFound: 0, window: { tracksSeen: 0, tracksInWindow: 0 }, floor: { value: -60, measured: false }, passport: { frameSize: 1024, deltaDb: 12, minDistanceRatio: 0.05, flatnessCeiling: 0.15, referencesLimit: 20, negativesLimit: 20, provisional: ['frameSize', 'minDistanceRatio'] }, refusal: null };
+    const seen: unknown[] = [];
+    backend.requestSessionDigest = (collectionId: string, req: unknown) => { seen.push([collectionId, req]); return Promise.resolve(outcome); };
+    const svc = createMediaLibraryService(backend as never);
+    const got = await svc.requestSessionDigest('c1', { from: '2026-08-23T00:00:00.000Z', to: '2026-08-23T23:59:59.999Z' });
+    expect(got).toBe(outcome);
+    expect(seen).toEqual([['c1', { from: '2026-08-23T00:00:00.000Z', to: '2026-08-23T23:59:59.999Z' }]]);
+  });
+});
