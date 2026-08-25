@@ -467,7 +467,8 @@
     "plugin:run:mfcc": "node scripts/plugin-run-mfcc.mjs",
     "gc:void": "node scripts/gc.mjs",
     "void:barriers": "node scripts/verify-void-barriers.mjs",
-    "journals:verify": "node scripts/verify-journal-merge.mjs"
+    "journals:verify": "node scripts/verify-journal-merge.mjs",
+    "node:duty-ready": "node scripts/node-duty-ready.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
