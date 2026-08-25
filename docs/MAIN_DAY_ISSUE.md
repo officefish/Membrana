@@ -1,139 +1,129 @@
-<!-- Сгенерировано: 2026-08-24T06:50:55.777Z (yarn main-day-issue@e8bb5733) -->
+<!-- Сгенерировано: 2026-08-25T05:31:24.818Z (yarn main-day-issue@0aeaf175) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
-<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"1b4f067e7384845025cae4ed9a489b8ad7065ef1","digest":"cad7aa3a06cc0a744a1161557960f23fec06acf831b8f0465a52d791155affdd"},"DAILY_STANDUP":{"version":"1b4f067e7384845025cae4ed9a489b8ad7065ef1","digest":"9142a68d66a54e69ccee5e84230686c86677bb43e9bef16066163add7beb5d04"}}} -->
+<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"bd7f8e8d120191e7a08be91c386951ca661b68dd","digest":"0b8e9933a4e522a607845f52db7dd4fc051ec0bc00ce13c645ad4fca30ff6f49"},"DAILY_STANDUP":{"version":"bd7f8e8d120191e7a08be91c386951ca661b68dd","digest":"5f3bfa00dd6f544e1084d0ea9de66aa505c9213125b67cb632c53e331c025e0c"}}} -->
 <!-- Звено канала: provider=xai model=grok-4.5 source=overlay generations=1 -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
-<!-- active в реестре: chart-list-plugin, scenario-rate-first-capture, scenario-rate-sprint, media-per-device-token, capture-sidecar-protocol, plugin-results-payload-pocket, firebat-node-device, server-plugin-foundation, static-mmbrn-retirement, static-mmbrn-live-services, static-mmbrn-cutover, static-mmbrn-m6-alignment, static-mmbrn-rehydrate-parity, static-mmbrn-ingress-auth, static-mmbrn-target-provision, static-mmbrn-disposition-ledger, static-mmbrn-container, morning-journal-close-step, frame-holders-reassign-twenty, frame-holder-moderator-split, workflow-examples-marathon, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, meeting-evening-review-predicate, evening-chain-review-predicate, mfcc-compare-sprint, insight-mandate-for-new, frame-rails-2307, lpc-d-panel, lpc-c-office, lpc-b-wire, lpc-a-lib, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, membrane-node-runtime-remote, mp7b-rt7-prod-hardening, device-board-three-hosts-2026-06-26, db3h-s4-microphone-detectors, neural-free-tier-dataset-report, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, detection-alarm-loop-refactor, batch-collection-run-contour -->
+<!-- active в реестре: obs-sentry-container, logging-observability-contour, chart-list-plugin, scenario-rate-first-capture, scenario-rate-sprint, media-per-device-token, capture-sidecar-protocol, plugin-results-payload-pocket, firebat-node-device, server-plugin-foundation, static-mmbrn-retirement, static-mmbrn-live-services, static-mmbrn-cutover, static-mmbrn-m6-alignment, static-mmbrn-rehydrate-parity, static-mmbrn-ingress-auth, static-mmbrn-target-provision, static-mmbrn-disposition-ledger, static-mmbrn-container, morning-journal-close-step, frame-holders-reassign-twenty, frame-holder-moderator-split, workflow-examples-marathon, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, meeting-evening-review-predicate, evening-chain-review-predicate, mfcc-compare-sprint, insight-mandate-for-new, frame-rails-2307, lpc-d-panel, lpc-c-office, lpc-b-wire, lpc-a-lib, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, membrane-node-runtime-remote, mp7b-rt7-prod-hardening, device-board-three-hosts-2026-06-26, db3h-s4-microphone-detectors, neural-free-tier-dataset-report, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, detection-alarm-loop-refactor, batch-collection-run-contour -->
 
-# MAIN_DAY_ISSUE — 2026-08-24
-
-<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"DAILY_STANDUP":{"digest":"standup-2026-08-24"},"STRATEGY_DAY":{"version":"1b4f067e7384845025cae4ed9a489b8ad7065ef1"},"DAY_PLAN":{"canon-digest":"e29394fc745205b84db9ec24eccfd2c303852bb59935c237c6ead59f5b7b8817"}}} -->
-<!-- Сгенерировано: 2026-08-24 (yarn main-day-issue / Teamlead Tarasov) -->
+# MAIN_DAY_ISSUE — 2026-08-25
 
 ## Метаданные
 
 | Поле | Значение |
 |------|----------|
-| `primaryFocusId` | `none` (фокус вне реестра: боевая авария журнала) |
-| `primaryTitle` | Снять квадратичность журнала: append → refresh без полного rescan ленты |
-| `githubIssue` | #2113 |
-| `size` | M |
-| `promptPath` | — |
-| `сгенерировано` | 2026-08-24 |
+| `primaryFocusId` | `logging-observability-contour` |
+| `primaryTitle` | Оснастка наблюдаемости по следам ночного затора 23.08 (эпик #2117, куски A–E) |
+| `githubIssue` | #2117 |
+| `size` | L |
+| `promptPath` | — (карточка/эпик #2117; куски #2118–#2122) |
+| `сгенерировано` | 2026-08-25 |
 
 ## Магистраль
 
-Снять квадратичность журнала (#2113): путь **append → refresh** не перечитывает всю ленту на каждую пробу. Ночное дежурство 23.08 упёрлось в боевую аварию — каждая запись тянет полный обход страниц при серверном `take` до 5000 и склейке в памяти; разбор зафиксирован в `docs/field/2026-08-23-night-duty-journal-congestion.md`. #2086 честно развёл витрину и порт проверки задания, но живой контур дежурства от этого не стал линейным.
+Продолжаем **владельческий** фокус `logging-observability-contour`: оснастка наблюдаемости по следам ночного затора 23.08 — шторм `storm-logging-observability-2026-08-24` (6 тезисов + директива Д1), заседание `logging-observability-cut`, эпик **#2117**, куски **A–E (#2118–#2122)**, исполнитель — сессия Б. Выбор владельца 24.08 из замороженного топ-3; две другие линии (`journal-linearization-2113`, `sample-library-sort-plugin-2110`) **не отменены** и едут сессиями В и Г, но **единственный обязательный мандат дня** — контур наблюдаемости, а не L-эпики hostess/assets/batch и не «закрыть линейность на словах».
 
-**Owner-assertions протухли** (`sources[0]` = firebat-node-device, 19.08); свежего `morning:gate` / `--choose` на 24.08 во входах нет. Синтез L из top-3 плана (hostess / assets / batch) запрещён стендапом. Магистраль дня — **оперативный мандат стендапа** по аварии, не «додуманный» L-эпик и не повтор stale firebat без нового choose.
+Код linearize уже в стволе/на проде; без развёрнутого diff и цифр N append зачёт hot-path запрещён — это стык с сессией В и P0/P1 вечернего review, не подмена магистрали. К вечеру: измеримый сдвиг по кускам A–E контура (что влито / что осталось с id), плюс явный статус связанного #2113 (закрыт или gap с before/after), без зачёта «кажется линейно» и без ухода в посторонние L-оси.
 
-**Критерий к вечеру:** один проверяемый инкремент (контракт списка / курсор **или** потолок без полного rescan) + воспроизводимый before/after по меркам из field-дока.
+**Критерий успеха к вечеру:** по эпику #2117 зафиксирован прогресс сессии Б (артефакты/PR/статусы кусков); #2113 либо закрыт с wall-time before/after по field-меркам 23.08, либо оставшийся gap назван явно; ревью #2127/#2125 не висят как «не смотрели».
 
 ## Подкрепление
 
-- Зафиксировать и не размывать контракт «витрина ≠ порт проверки» (#2086): любой патч refresh/append опирается на уже разведённые порты, не склеивает их обратно ради удобства UI.
-- P1-ревью OPEN oversized #2096 через `yarn code-review:pr` — рядом с магистралью, **не вместо** неё; ловит перегруз PR-поверхности, пока режется горячий путь журнала.
+- **`journal-linearization` (#2113), сессия В:** `yarn code-review:pr` на **#2127** и **#2125** (развёрнутый diff, не nit) + before/after wall-time по field-меркам 23.08 на ленте; без цифр N append issue не закрывать.
+- **Хвосты контура наблюдаемости на проде:** `/health/deep` всё ещё `busy` в простое (PR 2144 в стволе — пересборка кабинета); не маскировать дежурством и не смешивать с L-эпиками вне owner-choice.
 
 ## Перспективные
 
-- Проход вехи `secret-parser-built` (резак + датированный манифест ротации) — снятие амнистии на правку архива и безопасный бэкап сессий.
-- Owner-choice по форме журнала (буфер · наборы · архив) — разблок настоящего `journal-home-real` вместо монтирования в `background-media/collections`.
-- Живой smoke Firebat «первый трек → 48 kHz или fail-closed» и исходящий канал узла — после свежего choose, не как тихая подмена фокуса.
+- Прохождение гейта **`secret-parser-built`** (резак + датированный проход с манифестом ротации) — снятие амнистии на правку архива и безопасные бэкапы сессий.
+- Дежурство **пт 28.08**: приёмка линеаризации журнала (#2113, wall-time на ленте ≥2500) и калибровка сторожа диска; до него — разгрузка буфера ~1727 проб.
+- Апгрейд офиса **не раньше 10.09** → self-hosted контейнер Сентри (**#2122**, кусок E контура наблюдаемости).
 
 ## Экспериментальные
 
-- Фикстурный прогон `night-triage-secret-scan` + redact на одном транскрипте-заглушке с ключом-маркером — режет цепочка или только детектит.
-- Прогон имеющегося анализатора (кепстр/автокорреляция) на паре «шлифмашинка vs моторный фрагмент» из сеанса 21.08 — есть ли разделимый признак без нового DSP.
-- Dated dry-run манифеста ротации на ключе-заглушке (без реального revoke) — хватает ли формы манифеста под гейт `secret-parser-built`.
+- Прогон `night-triage-secret-scan.mjs` на синтетической фикстуре с плейсхолдер-ключами (без реального бэкапа) — резак уже вырезает или только детектит.
+- Сухой набросок датированного манифеста ротации по 2–3 плейсхолдерам из фикстуры — хватает ли полей под biweekly-ротацию.
+- Показать пары дублей в буфере сэмплов (~1727) **без** удаления — достаточно ли «показать пару» для разгрузки перед 28.08.
 
 ## Санитарные
 
-- перечеканка `main-day-assertions.json` (протух 19.08 → не перечеканен к 23–24.08) — санитарный долг; риск устаревшего owner-choice
-- P1-ревью OPEN oversized #2096 (`yarn code-review:pr`)
-- выборочный bug-pass merged oversized: #2091 / #2093 / #2088
-- протокол живого smoke Firebat: первый трек → 48 kHz или fail-closed (дыра DoD, хвост #2046)
-- фикстурный прогон secret-scan/redact на транскрипте-заглушке — диагностика резака к вехе `secret-parser-built`
+- P1-долг ревью oversized: `yarn code-review:pr 2127` и `2125` — без развёрнутого diff инкремент не зачтён (C1-склейка курсора, ~2435 строк).
+- #2127 linearize на проде, но before/after wall-time на N append по field-меркам **не** зафиксирован — #2113 без этого не закрывается.
+- Санитарный smoke Firebat: «первый трек → 48 kHz или fail-closed» — живой протокол с вечера не прогнан.
+- `/health/deep` = `busy` в простое на проде — пересборка кабинета подберёт PR 2144.
+- Перевыпуск токена `@MembranaWatchdog_bot` (дважды засвечен) + хвост манифеста ротации/secret-scan под веху `secret-parser-built` (не primary).
 
 ## Почему это магистраль (таблица обоснования)
 
 | Утверждение | Происхождение | Первоисточник | Свежесть |
 |-------------|---------------|---------------|----------|
-| Фокус дня: снять квадратичность журнала #2113 (append→refresh без полного rescan) | сессия | `docs/DAILY_STANDUP.md` ← field `docs/field/2026-08-23-night-duty-journal-congestion.md` + GH #2113 | 2026-08-23/24 |
-| Ночная авария: каждая запись → полный обход страниц, `take` до 5000, склейка в памяти | код / issue | field-док ночного дежурства 23.08 + #2113 | 2026-08-23 |
-| #2086 развёл витрину и порт проверки, но контур дежурства не линеен | issue | GH #2086 (контекст стендапа) | 2026-08 |
-| Stale owner-source: `sources[0]` = firebat-node-device | снимок-хардкод | `docs/tasks/main-day-assertions.json` → owner-choice@chat/magistral-19-08 | 2026-08-19 |
-| **Расхождение: assertions не перечеканены; свежего gate-magistral на 24.08 нет** | план / сессия | DAY_PLAN «магистраль НЕ назначена» + sanitary «протух 19.08»; У1 без сегодняшнего `morning-gates-state.magistral` | 2026-08-24 |
-| Не синтезировать L из top-3 (hostess / assets / batch) без слова владельца | план | `docs/DAY_PLAN.md` + стендап «сознательно не делаем» | 2026-08-24 |
-| Не делать день L-осью firebat без нового choose | сессия | стендап «сознательно не делаем» (не отменяет stale sources, блокирует тихий синтез) | 2026-08-24 |
-| Веха горизонта `secret-parser-built` — approaching, не primary | план | `docs/STRATEGY_DAY.md` / `day-horizon.json` | 2026-08-24 |
-| Не магистраль: Этап 1.A / benchmark harmonic+cepstral+flux | код | `docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md` §6; `detection-planning-priorities.mjs` | 2026-06-14 / канон |
+| Магистраль дня = `logging-observability-contour` (эпик #2117, A–E #2118–#2122, сессия Б) | сессия | `docs/tasks/main-day-assertions.json` → `sources[0].claim` (owner-choice@chat/magistral-24-08) | 2026-08-24 |
+| Выбор из замороженного топ-3: logging-observability-contour · journal-linearization-2113 · sample-library-sort-plugin-2110; две другие линии не отменены (сессии В/Г) | сессия | тот же `sources[0]` + `frozenOptions` / `frozenDigest` | 2026-08-24 |
+| Стендап держит фокус приёмки #2113 + review #2127/#2125 как P0/P1 дня — **поддержка/стык**, не переназначение магистрали | план | `docs/DAILY_STANDUP.md` (yarn standup 2026-08-25) | 2026-08-25 |
+| План дня **не** назначил магистраль: top-3 hostess/assets/batch — только кандидаты, нужен owner-choice; сознательно не брать их без слова владельца | план | `docs/DAY_PLAN.md` + стендап «Что сознательно не делаем» | 2026-08-25 |
+| Assertions с 19.08 — санитарная перечеканка, не источник новой L-магистрали | снимок-хардкод | `main-day-assertions.json` (комментарии retired/link) + стендап | 2026-08-19… |
+| Горизонт вехи `secret-parser-built` — фон/санитария, не primary focus | план | `docs/STRATEGY_DAY.md` / `day-horizon.json` (#592) | 2026-08-25 |
+| `morning-gates-state.json` → `magistral` на **сегодня** во входах ритуала **не** передан; свежее gate-override по У1 (31.07) не применено | снимок-хардкод | отсутствие входа gейта в пакете генерации | 2026-08-25 |
 
-**Голоса по различным первоисточникам:**
+**Голоса по различным первоисточникам:** 1 владельческий источник (`sources[0]`, 24.08) задаёт id магистрали. Стендап и DAY_PLAN — **отражения контекста исполнения и запретов**, не конкурирующий owner-choice; коррелированы с ритуалом 25.08, не перевешивают `sources[0]`. Итог: **1 источник магистрали, N отражений контекста** (стендап / plan / horizon).
 
-1. **Ночная авария журнала** (field 23.08 + #2113 + стендап 24.08) — **1 источник, 3 отражения** → оперативный мандат дня.
-2. **Owner assertions 19.08 firebat** — 1 источник, протух; не перечеканен; без today-gate по У1 не перекрывает аварию и не назначается заново «из инерции».
-3. **План top-3 без choose** — 1 источник: «магистраль не назначена планом»; усиливает запрет синтеза L.
-4. **FFT §6 / anti-1.A** — 1 источник: только вето на ложную детекционную магистраль.
-
-Итог: единственный свежий независимый мандат — линеаризация журнала #2113. Stale firebat и top-3 без owner-choice в таблицу как находка и границы, не как primary.
+**Расхождение:** `sources[0]` датирован **24.08**, календарный день документа — **25.08**; перечеканка `main-day-assertions.json` каноном на сегодня **не** сделана. Gate-magistral на 25.08 во входах нет → магистраль взята с `sources[0]`, assertions не перечеканены (наблюдение У1-класса: свежесть sources отстаёт от дня). Синтез top-3 из DAY_PLAN **запрещён**.
 
 ## Посылки
 
+`assertions[]` в `main-day-assertions.json` **пуст**. Развилки A/B «работы ещё нет» для назначения магистрали нет — фокус задан owner-choice, не маркером отсутствия символа.
+
+**развилки нет, посылок не требуется**
+
 | Посылка | Маркер | Вердикт |
 |---------|--------|---------|
-| Путь refresh журнала после append перечитывает/склеивает ленту целиком (квадратичный рост под дежурством) | `file:docs/field/2026-08-23-night-duty-journal-congestion.md` + issue #2113 | `holds` (по field-разбору; символ-потолок/курсор — цель дня) |
-| Работа «ввести курсор/потолок без full rescan» ещё не закрыта как проверяемый инкремент дня | issue #2113 open + отсутствие вечернего before/after в field-доке | `holds` до появления инкремента |
-| Owner-магистраль firebat актуальна как выбор «сегодня» | `sources[0].date == 2026-08-19` при today 2026-08-24 | **violated по свежести** — ПОСЫЛКА НАРУШЕНА как основание primary; только sanitary recut |
-
-Развилка A/B эпиков (hostess vs assets vs batch vs firebat) **не открыта** словом владельца сегодня → в primary не берём. Посылок «работы нет» по L-эпикам не требуется.
+| — | — | развилки нет, посылок не требуется |
 
 ## Сегодня делаем
 
-1. Воспроизвести замер before из `docs/field/2026-08-23-night-duty-journal-congestion.md` (страницы / `take` / время refresh на N append).
-2. Ввести один инкремент на горячем пути: **курсор/continuation** или **жёсткий потолок без full rescan** (контракт списка), без UI «дома журнала».
-3. Прогнать after-замер тем же сценарием; записать цифры next to before (field-док или приложение к #2113).
-4. Не смешивать витрину и порт проверки задания (#2086) в одном API-ответе «на всякий случай».
-5. P1-ревью #2096 — заметка/вердикт, не блокер мержа инкремента журнала.
-6. Санитарно: очередь на перечеканку `main-day-assertions.json` (факт протухания зафиксирован в этом MAIN_DAY_ISSUE).
+1. Вести сессию Б по **`logging-observability-contour` (#2117)**: зафиксировать, какие куски A–E (#2118–#2122) двигаем сегодня и какой проверяемый выход (PR/доки/статус).
+2. Прогнать **`yarn code-review:pr 2127`** и **`yarn code-review:pr 2125`** с развёрнутым diff; вердикт в след дня / issue.
+3. Снять **before/after wall-time** по field-меркам 23.08 на N append (лента журнала) и вписать в field-док или #2113.
+4. Обновить статус **#2113**: закрыт **или** явный remaining gap (не «кажется линейно»).
+5. Проверить прод-хвост наблюдаемости: `/health/deep` после пересборки кабинета (PR 2144) — `busy` в простое или нет; результат одной строкой.
+6. Не открывать hostess / assets / batch / UI «дома журнала» / FFT «Этап 1.A» без нового owner-choice.
 
 ## Definition of Done (фокус)
 
-- [ ] Горячий путь append → refresh не делает полный обход всей ленты на каждую пробу
-- [ ] Есть явный контракт: курсор/continuation **или** потолок размера выборки без server `take`→склейка «до 5000» как единственной модели
-- [ ] Before/after по метрикам из field-дока 23.08 воспроизводимы одним сценарием
-- [ ] Витрина и порт проверки задания остаются разведены (#2086 не откатан)
-- [ ] Нет нового UI «journal-home» / нарезки «буфер · наборы · архив» без письменного «да» владельца
-- [ ] #2113 обновлён фактом инкремента (комментарий или PR-ссылка)
-- [ ] Регрессия: дежурный сценарий (серия append) не деградирует до квадратичного wall-time на проверяемом N
+- [ ] Primary focus дня = `logging-observability-contour` (#2117), не подменён top-3 из DAY_PLAN и не «только #2113».
+- [ ] Есть письменный статус кусков A–E (#2118–#2122): сделано / в PR / отложено с причиной.
+- [ ] `yarn code-review:pr` выполнен для #2127 и #2125 (развёрнутый diff, не LGTM-заглушка).
+- [ ] Before/after wall-time по field-меркам 23.08 зафиксирован в field-доке или в #2113.
+- [ ] #2113 закрыт **либо** оставшийся gap назван явно (условия закрытия понятны дежурству 28.08).
+- [ ] Нет зачёта hot-path append→refresh «на словах»; регрессия под дежурством не проигнорирована.
+- [ ] В вечернем следе видно: магистраль = контур наблюдаемости; сессии В/Г не объявлены «единственным фокусом дня».
+- [ ] `main-day-assertions.json` / sources: отмечено, что перечеканка на 25.08 не сделана (или сделана отдельным шагом, если владелец выбрал заново).
 
 ## Сознательно не делаем сегодня
 
-- Не назначаем магистралью `angelina-hostess-impl` / `assets-container` / `batch-collection-run-contour` без owner-choice
-- Не продолжаем L-ось `firebat-node-device` как primary без нового choose (stale sources[0] — перечеканить, не «додумать»)
-- Не верстаем и не нарезаем `journal-home-real` / форму «буфер · наборы · архив»
-- Не закрываем веху `secret-parser-built` правкой архива и не снимаем амнистию «с плеча»
-- Не поднимаем «Этап 1.A» / benchmark harmonic+cepstral+flux на free-v1
-- Не делаем день повторной калибровкой FFT-порогов или OR-live DSP
+- Не назначаем магистралью `angelina-hostess-impl` / `assets-container` / `batch-collection-run-contour` без свежего owner-choice.
+- Не продолжаем L-ось `firebat-node-device` как primary без слова владельца.
+- Не открываем UI «дома журнала» / нарезку «буфер · наборы · архив» и не склеиваем витрину с портом проверки (#2086).
+- Не трогаем веху `secret-parser-built` правкой архива и не снимаем амнистию «вручную»; secret-scan — фикстура/манифест-черновик, не primary.
+- Не поднимаем «Этап 1.A» / benchmark harmonic+cepstral+flux / повторную FFT-калибровку free-v1.
+- Не делаем primary апгрейд Сентри (#2122) до окна офиса (не раньше 10.09).
+- Не разгружаем удалением 1727 проб «заодно» — только показ пар, если хватит времени.
 
 ## Вторично (если останется время)
 
-1. Фикстурный прогон secret-scan/redact на транскрипте-заглушке (диагностика к `secret-parser-built`).
-2. Черновик манифеста ротации (даты, контуры, biweekly) без revoke и без правки архива.
+1. Smoke Firebat: «первый трек → 48 kHz или fail-closed».
+2. Черновик фикстуры/манифеста под `secret-parser-built` (без реального бэкапа и без primary-статуса).
 
 ## Зависимости и риски
 
-- **Риск расползания:** «раз уж журнал» → UI дома журнала / hostess / assets — блокер фокуса; держать только горячий путь append/refresh.
-- **Stale owner-source:** assertions 19.08 vs оперативный фокус 24.08 — перечеканка обязана, иначе probe/ритуал снова кормят firebat-инерцией.
-- **#2096 oversized** может отвлечь ревью-ресурс; лимит — P1-заметка, не день ревью.
-- **Блокер данных:** без before/after по field-меркам инкремент нельзя честно принять.
+- **Риск зачёта linearize без цифр** → регрессия append→refresh под дежурством; #2113 останется ложно-зелёным.
+- **Расхождение дня и sources (24.08 vs 25.08)** → нужен owner re-choose или честная пометка; молчаливый синтез top-3 из плана — ошибка класса 16.07/18.07.
+- **Прод `/health/deep` busy** — маскирует сигнал наблюдаемости; зависит от выкладки кабинета.
+- **Объём #2127/#2125** — oversized diff; без review инкремент формально в стволе, но не принят командой.
 
 ## Ссылки
 
-- [docs/DAILY_STANDUP.md](./DAILY_STANDUP.md)
-- [docs/DAY_PLAN.md](./DAY_PLAN.md)
-- [docs/STRATEGY_DAY.md](./STRATEGY_DAY.md)
-- [docs/field/2026-08-23-night-duty-journal-congestion.md](./field/2026-08-23-night-duty-journal-congestion.md)
-- [docs/tasks/main-day-assertions.json](./tasks/main-day-assertions.json)
-- GitHub #2113 · #2086 · #2096
-- [docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) §6 (вето на Этап 1.A)
+- [`docs/DAILY_STANDUP.md`](./DAILY_STANDUP.md) — стендап 2026-08-25
+- [`docs/DAY_PLAN.md`](./DAY_PLAN.md) — план слотов (магистраль не назначена планом)
+- [`docs/STRATEGY_DAY.md`](./STRATEGY_DAY.md) — горизонт, веха `secret-parser-built`
+- [`docs/tasks/main-day-assertions.json`](./tasks/main-day-assertions.json) — `sources[0]`: owner-choice 24.08
+- GitHub: эпик наблюдаемости **#2117**; куски **#2118–#2122**; линейность журнала **#2113**; PR review **#2127**, **#2125**; Сентри **#2122**

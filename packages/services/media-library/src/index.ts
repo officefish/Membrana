@@ -34,6 +34,12 @@ export type {
   ImportBlobOptions,
 } from './types.js';
 
+export {
+  LIBRARY_CHART_LIST_CRITERIA,
+  LIBRARY_CHART_LIST_VOLUMES,
+  dateInputToIsoWindow,
+} from './library-chart-list.js';
+
 export type { IStorageBackend } from './ports/storage-backend.js';
 export type { IElectronMediaLibraryPort } from './ports/electron-media-library-port.js';
 

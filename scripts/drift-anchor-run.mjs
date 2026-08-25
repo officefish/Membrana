@@ -20,6 +20,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { buildBehavioralComponents } from './drift-anchor-behavioral.mjs';
 import { buildSnapshot } from './drift-anchor-snapshot.mjs';
+import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BASELINE_PATH = join(ROOT, 'docs/anchors/baseline.json');
@@ -31,8 +32,12 @@ function loadThresholds() {
   return { epsilon1: t.epsilon1, epsilon2: t.epsilon2 };
 }
 
-/** Минимальный Anthropic-вызов через media-прокси (ClaudeService-аналог для .mjs). Graceful. */
-async function annotate(anchor, anthropicKey, proxyUrl, model) {
+/**
+ * Гипотеза причины дрейфа — через панельную цепочку (зуб #2147/№4, llm-panel-wire):
+ * прямой вызов Anthropic Messages API снят 25.08 — потолок одного провайдера ронял
+ * reasoning, панель падает на запасные звенья сама. Graceful: канал исчерпан → null.
+ */
+async function annotate(anchor) {
   const prompt = [
     'Ты — аналитик агентного дрейфа Membrana. Ниже — ОДИН дрейфующий якорь (вердикт уже вынесен чистой функцией, НЕ меняй его).',
     'Дай ОДНУ короткую строку-гипотезу на русском: вероятная причина дрейфа (недавний коммит/правка). Без преамбулы, только гипотеза.',
@@ -40,42 +45,12 @@ async function annotate(anchor, anthropicKey, proxyUrl, model) {
     `Якорь: ${anchor.id} (${anchor.kind}), вердикт ${anchor.verdict}.`,
     `baseline=${anchor.baseline}, current=${anchor.current}, delta=${anchor.delta}.`,
   ].join('\n');
-
-  const body = JSON.stringify({
-    model: model || 'claude-haiku-4-5-20251001',
-    max_tokens: 256,
-    messages: [{ role: 'user', content: [{ type: 'text', text: prompt }] }],
-  });
-  const headers = {
-    'content-type': 'application/json',
-    'x-api-key': anthropicKey,
-    'anthropic-version': '2023-06-01',
-  };
-
-  let res;
-  if (proxyUrl) {
-    const { fetch: undiciFetch, ProxyAgent } = await import('undici');
-    const dispatcher = new ProxyAgent(proxyUrl);
-    try {
-      res = await undiciFetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST', headers, body, dispatcher, signal: AbortSignal.timeout(60_000),
-      });
-      const text = await res.text();
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = JSON.parse(text);
-      return (json.content ?? []).filter((b) => b.type === 'text').map((b) => b.text).join(' ').trim() || null;
-    } finally {
-      try { await dispatcher.close(); } catch { /* ignore */ }
-    }
+  const r = await invokeProcedureLlm({ procedureId: 'drift-anchor', prompt, maxTokens: 256 });
+  if (!r.ok) {
+    console.error(`annotate ${anchor.id}: LLM-канал исчерпан (${r.error || (r.status ? `HTTP ${r.status}` : 'нет ответа')}) — graceful`);
+    return null;
   }
-
-  res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST', headers, body, signal: AbortSignal.timeout(60_000),
-  });
-  const text = await res.text();
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const json = JSON.parse(text);
-  return (json.content ?? []).filter((b) => b.type === 'text').map((b) => b.text).join(' ').trim() || null;
+  return (r.text ?? '').trim() || null;
 }
 
 async function main() {
@@ -97,15 +72,13 @@ async function main() {
 
   const digest = computeDrift(baseline, current, thresholds);
 
-  // Claude аннотирует ТОЛЬКО дрейфующие якоря (гипотеза, вердикт не трогает)
-  const key = process.env.ANTHROPIC_API_KEY?.trim();
-  const proxy = process.env.HTTPS_PROXY?.trim() || process.env.HTTP_PROXY?.trim();
-  const model = process.env.ANTHROPIC_MODEL?.trim();
+  // LLM аннотирует ТОЛЬКО дрейфующие якоря (гипотеза, вердикт не трогает);
+  // канал/ключи решает панель — локальная проверка ключа снята вместе с прямым вызовом.
   const anchors = [];
   for (const a of digest.anchors) {
-    if (!noLlm && key && a.verdict !== 'ok') {
+    if (!noLlm && a.verdict !== 'ok') {
       try {
-        const reasoning = await annotate(a, key, proxy, model);
+        const reasoning = await annotate(a);
         anchors.push(reasoning ? { ...a, reasoning } : a);
         continue;
       } catch (e) {
