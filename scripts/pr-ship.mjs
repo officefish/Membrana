@@ -546,6 +546,9 @@ function parseArgs(argv) {
     else if (a === '--allow-mention') o.allowMentionWithoutClose = true;
     else if (a === '--issue-mention') o.issueMention = next();
     else if (a === '--body-file') o.bodyFile = next();
+    // Зуб #2147/№2 (вещдоки 21.08): предмет действия явный — merge-only с --pr N
+    // отказывает, если PR текущей ветки не тот, вместо молчаливого действия по чужому.
+    else if (a === '--pr') o.pr = Number.parseInt(next(), 10);
     else if (a === '--execute') o.execute = true;
   }
   return o;
@@ -564,6 +567,60 @@ export function ciWaitDisposition(code) {
 }
 
 const MAX_CI_WAIT_RESUMES = 3;
+
+/**
+ * Зуб #2147/№2 (класс #2070, повтор 24.08): «коммит уже сделан руками» — pr:ship с шагом
+ * commit при ПУСТОМ ИНДЕКСЕ не выполнит ни одного шага доставки («nothing to commit»
+ * после минуты pre-commit-хуков). Шаг commit коммитит только стейдж — плана `git add`
+ * у pr:ship нет. Отказ ДО шагов, ненулевой, с лекарством.
+ * @param {{commitRequested:boolean, mergeOnly:boolean, execute:boolean, stagedCount:number}} p
+ * @returns {string|null}
+ */
+export function commitPreflightProblem({ commitRequested, mergeOnly, execute, stagedCount }) {
+  if (!execute || mergeOnly || !commitRequested) return null;
+  if (stagedCount > 0) return null;
+  return (
+    'pr:ship: индекс пуст — шагу commit коммитить нечего (коммит уже сделан руками?). ' +
+    'Шаги commit/push/PR НЕ выполнены. Либо застейджи файлы поимённо (git add <files>), ' +
+    'либо доставь готовые коммиты `pr:ship --no-commit`.'
+  );
+}
+
+/**
+ * Зуб #2147/№2 (вещдоки 21.08, трижды за день): merge-only действует по PR ТЕКУЩЕЙ
+ * ветки; --pr N делает предмет явным — расхождение это отказ, а не догадка.
+ * @param {number|null|undefined} requestedPr @param {number|null} branchPr @param {string} branch
+ * @returns {string|null}
+ */
+export function requestedPrMismatchProblem(requestedPr, branchPr, branch) {
+  if (requestedPr == null) return null;
+  if (!Number.isFinite(requestedPr)) return `pr:ship: --pr «${requestedPr}» — не число.`;
+  if (branchPr == null) {
+    return `pr:ship: --pr ${requestedPr}, но PR по текущей ветке «${branch}» не найден — отказ, не догадка.`;
+  }
+  if (requestedPr !== branchPr) {
+    return (
+      `pr:ship: --pr ${requestedPr} ≠ PR #${branchPr} текущей ветки «${branch}» — отказ: ` +
+      'инструмент действует только по явно названному PR (вещдок 21.08: влитие не того PR).'
+    );
+  }
+  return null;
+}
+
+/**
+ * Финальная строка состояния (#2147/№2): доклад «доставлено» подтверждается СТВОЛОМ
+ * (gh pr view --json state,mergeCommit), а не exit-кодом обёртки. Печатается всегда
+ * в execute-режиме, включая no-op пути.
+ * @param {{number:number|null, state:string, mergeCommit:string|null}|null} pr
+ * @returns {string}
+ */
+export function finalStateLine(pr) {
+  if (!pr || pr.number == null) {
+    return 'итог: состояние PR НЕ ПОДТВЕРЖДЕНО (gh недоступен или PR не найден) — проверь: gh pr view <N> --json state,mergeCommit';
+  }
+  const mc = pr.mergeCommit ? ` mergeCommit=${String(pr.mergeCommit).slice(0, 8)}` : '';
+  return `итог: PR #${pr.number} state=${pr.state}${mc} (по gh pr view --json state,mergeCommit)`;
+}
 
 /**
  * Прогон шага ci-wait с повтором на транзиентных кодах (#1166). Первый заход — как есть,
@@ -603,6 +660,22 @@ function main() {
       process.exitCode = 1;
       return;
     }
+    // Зуб #2147/№2: пустой индекс при запрошенном шаге commit — отказ ДО шагов,
+    // а не «nothing to commit» после минуты pre-commit-хуков без push/PR.
+    const stagedCount = execFileSync('git', ['diff', '--cached', '--name-only'], { encoding: 'utf8' })
+      .split(/\r?\n/u)
+      .filter(Boolean).length;
+    const commitProblem = commitPreflightProblem({
+      commitRequested: opts.commit !== false,
+      mergeOnly: Boolean(opts.mergeOnly),
+      execute: true,
+      stagedCount,
+    });
+    if (commitProblem) {
+      console.error(commitProblem);
+      process.exitCode = 1;
+      return;
+    }
   }
 
   // Возможность автослияния — свойство репозитория, а не флага: спрашиваем ДО плана,
@@ -620,11 +693,19 @@ function main() {
     } catch {
       /* gh вспомогательный — гард молча уступает обычному пути */
     }
+    // Зуб #2147/№2: --pr N делает предмет действия явным; расхождение — отказ.
+    const mismatch = requestedPrMismatchProblem(opts.pr ?? null, prNum, current);
+    if (mismatch) {
+      console.error(mismatch);
+      process.exitCode = 1;
+      return;
+    }
     const landed = alreadyInBase(prNum, opts.base ?? 'main');
     if (landed) {
       console.log(
         `pr:ship --merge-only: PR #${prNum} уже в origin/${opts.base ?? 'main'} как ${landed.slice(0, 8)} — no-op, второй хвост не нужен (#1320)`,
       );
+      printFinalPrState(prNum);
       return;
     }
     const problem = headSyncProblem(readHeadRefs());
@@ -747,6 +828,34 @@ function main() {
   }
   if (!opts.execute) console.log('\n(dry-run — ничего не выполнено; добавь --execute)');
   if (opts.execute && opts.merge) reportWorktreeFate(current);
+  // Зуб #2147/№2: финал ВСЕГДА печатает состояние по стволу — доклад «доставлено»
+  // сверяется gh pr view --json state,mergeCommit, не exit-кодом обёртки.
+  if (opts.execute) printFinalPrState(opts.pr ?? null);
+}
+
+/** Печать финального состояния PR (по номеру или PR текущей ветки); gh недоступен — честное «не подтверждено». */
+function printFinalPrState(requestedPr) {
+  let pr = null;
+  try {
+    const args = [
+      'pr',
+      'view',
+      ...(requestedPr != null ? [String(requestedPr)] : []),
+      '--json',
+      'number,state,mergeCommit',
+    ];
+    const parsed = JSON.parse(
+      execFileSync('gh', args, { encoding: 'utf8', timeout: EXTERNAL_CALL_TIMEOUT_MS }),
+    );
+    pr = {
+      number: parsed.number ?? null,
+      state: String(parsed.state ?? 'UNKNOWN').toUpperCase(),
+      mergeCommit: parsed.mergeCommit?.oid ?? null,
+    };
+  } catch {
+    pr = null;
+  }
+  console.log(finalStateLine(pr));
 }
 
 /**
