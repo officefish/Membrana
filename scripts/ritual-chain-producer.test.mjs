@@ -23,6 +23,10 @@ import test from 'node:test';
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const scripts = JSON.parse(readFileSync(resolve(repoRoot, 'package.json'), 'utf8')).scripts;
 const runnerSrc = readFileSync(resolve(repoRoot, 'scripts/ritual-evening-run.mjs'), 'utf8');
+// #2081 (#2173): сборка аргументов close вынесена в lib — зуб судит раннер ВМЕСТЕ с ней,
+// иначе он проверял бы букву исходника, а не инвариант (статус по факту, gap, procedure).
+const closeArgsSrc = readFileSync(resolve(repoRoot, 'scripts/lib/ritual-evening-close-args.mjs'), 'utf8');
+const closeSrc = `${runnerSrc}\n${closeArgsSrc}`;
 const dayRunnerSrc = readFileSync(resolve(repoRoot, 'scripts/ritual-day-run.mjs'), 'utf8');
 
 // ── утро: раннер ──────────────────────────────────────────────────────────────
@@ -63,17 +67,19 @@ test('ritual:evening: раннер открывает прогон в журна
 });
 
 test('ritual:evening: close в раннере — статус ПО ФАКТУ прогона, не зашитый pass', () => {
+  assert.match(runnerSrc, /eveningCloseArgs\(\{ failed, findings/u, 'раннер строит close через eveningCloseArgs (lib)');
   assert.match(
-    runnerSrc,
+    closeSrc,
     /failed\.length > 0 \? 'fail' : 'pass'/u,
     'статус close вычисляется из упавших критичных, а не зашит',
   );
   assert.match(
-    runnerSrc,
+    closeSrc,
     /'close',\s*'--procedure',\s*'ritual-evening'/u,
     'close --procedure ritual-evening в раннере',
   );
-  assert.match(runnerSrc, /'--gap', f\.id/u, 'gaps называют упавшие критичные шаги');
+  assert.match(closeSrc, /'--gap', f\.id/u, 'gaps называют упавшие критичные шаги');
+  assert.match(closeSrc, /'--friction', `\$\{f\.id\}: finding exit/u, '#2081: находки уходят во friction журнала, не сирота');
 });
 
 test('ritual:evening: сухой и частичный прогоны в журнал не пишутся', () => {

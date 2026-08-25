@@ -40,6 +40,7 @@ import {
   loadRitualExitCodesMap,
 } from './lib/ritual-exit-codes.mjs';
 import { blockedInputs, explainStatus, isBlocking, isFinding, stepStatus } from './lib/step-status.mjs';
+import { eveningCloseArgs } from './lib/ritual-evening-close-args.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const MANIFEST_REL = 'docs/tasks/evening-ritual-steps.json';
@@ -191,11 +192,8 @@ function main() {
     // Статус close — ПО ФАКТУ прогона; gaps называют упавшие критичные шаги.
     const closeStatus = failed.length > 0 ? 'fail' : 'pass';
     console.error(`\n=== ritual:evening → журнал: close прогона (${closeStatus}) ===`);
-    journal.close = journalCall([
-      'close', '--procedure', 'ritual-evening', '--status', closeStatus,
-      '--evidence', 'docs/HANDOFF.md',
-      ...failed.flatMap((f) => ['--gap', f.id]),
-    ]);
+    // #2081 хвост: находки (deliver-to-main pending-ci) — в журнал, не сирота назавтра.
+    journal.close = journalCall(eveningCloseArgs({ failed, findings, evidence: 'docs/HANDOFF.md' }));
     if (journal.close !== 0) {
       console.error('✗ журнал: close не записан — прогон останется открытым, его закроет fail/orphaned следующий open');
     }
