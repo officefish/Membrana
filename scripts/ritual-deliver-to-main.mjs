@@ -27,7 +27,9 @@ import { fileURLToPath } from 'node:url';
 
 import {
   guardDeliver,
+  classifyDeliverShipFailure,
   planExecute,
+  pendingCiContinuation,
   ritualConfig,
   runDeliverGate,
   shipArgsFor,
@@ -139,10 +141,26 @@ function runDeliverExecute(root, opts) {
   });
 
   console.log(`→ доставка: ${plan.reason}${staged.length ? '' : ' (уже закоммичено локально — без шага commit)'}`);
+  let shipFailed = false;
   try {
-    execFileSync(process.execPath, shipArgs, { cwd: root, stdio: 'inherit' });
+    const out = execFileSync(process.execPath, shipArgs, {
+      cwd: root,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'pipe'],
+      maxBuffer: 64 * 1024 * 1024,
+    });
+    if (out) process.stdout.write(out);
   } catch (e) {
-    console.error(`✗ pr:ship не довёл доставку: ${e instanceof Error ? e.message : String(e)}`);
+    const err = /** @type {{stdout?: unknown, stderr?: unknown, message?: unknown}} */ (e ?? {});
+    if (typeof err.stdout === 'string' && err.stdout) process.stdout.write(err.stdout);
+    if (typeof err.stderr === 'string' && err.stderr) process.stderr.write(err.stderr);
+    const outcome = classifyDeliverShipFailure(e);
+    if (outcome === 'pending-ci') {
+      console.error(`↷ ${pendingCiContinuation({ ritual, branchHint: plan.branchHint })}`);
+      return 3;
+    }
+    shipFailed = true;
+    console.error(`✗ pr:ship не довёл доставку: ${err.message ?? String(e)}`);
     // Не возвращаем «ок» по коду команды — пересчёт ниже скажет о стволе правду.
   }
 
@@ -152,7 +170,8 @@ function runDeliverExecute(root, opts) {
     console.warn('  fetch после доставки не удался — вердикт считается по прежнему снимку ствола');
   }
   console.log('→ пересчёт кадра после доставки');
-  return runDeliverGate(root, opts);
+  const finalCode = runDeliverGate(root, opts);
+  return finalCode === 0 ? 0 : (shipFailed ? 1 : finalCode);
 }
 
 /**

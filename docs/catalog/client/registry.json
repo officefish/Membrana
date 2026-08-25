@@ -95,6 +95,7 @@
         "sample-library-fft-threshold-test",
         "sample-library-chart-list",
         "sample-library-session-digest",
+        "sample-library-duplicates",
         "trends-fft-sample-analyzer",
         "neural-drone-analyzer"
       ],
@@ -467,6 +468,24 @@
       ],
       "relatedTasks": [
         "session-digest-face-2039"
+      ]
+    },
+    {
+      "id": "sample-library-duplicates",
+      "kind": "plugin",
+      "name": "Дубли набора",
+      "status": "draft",
+      "parentModuleId": "sample-library",
+      "promptPath": "docs/catalog/client/prompts/plugins/sample-library-duplicates.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/sample-library-duplicates/sampleLibraryDuplicatesPlugin.ts"
+      },
+      "services": [
+        "@membrana/media-library-service",
+        "@membrana/sample-playback-service"
+      ],
+      "relatedTasks": [
+        "library-duplicates-2109"
       ]
     },
     {

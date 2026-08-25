@@ -65,10 +65,13 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
       // Витрина отбора библиотеки (#2110) — второй ПОКАЗ семейства чарт-листа: отбирает по
       // текущему набору там же, где звук лежит. Журнальная витрина живёт в кабинете и не тронута.
       'membrana.showcase.library-chart-list',
+      // Витрина дублей набора (#2109) — третий показ семейства: пары похожих во всём наборе,
+      // ничего не удаляет; результат вызывающему по runId, как у соседей.
+      'membrana.showcase.library-duplicates',
     ]);
     expect(registered.filter((m) => m.kind === 'handler')).toHaveLength(6);
     expect(registered.filter((m) => m.kind === 'report')).toHaveLength(2);
-    expect(registered.filter((m) => m.kind === 'showcase')).toHaveLength(1);
+    expect(registered.filter((m) => m.kind === 'showcase')).toHaveLength(2);
   });
 
   it('читатель проб — только чтение: список по collectionId, байты по storageRef, sha256 содержимого', async () => {
@@ -245,6 +248,18 @@ describe('витрина отбора библиотеки (#2110)', () => {
     });
     const result = out.result as { selection: { refusal: { reason: string } | null } };
     expect(result.selection.refusal?.reason).toBe('unknown-volume');
+  });
+
+  it('витрина дублей (#2109): прогон по набору возвращает отчёт о парах вызывающему и не знает «удалить»', async () => {
+    const host = new CollectionsPluginHostService();
+    await host.onModuleInit();
+    const reg = new FirstWavePluginsRegistrar(host, prisma, blobs, config, spyBridge().bridge);
+    await reg.onModuleInit();
+    const out = await reg.requestRun({ pluginId: 'membrana.showcase.library-duplicates' as PluginId, collectionId: 'c1' });
+    const result = out.result as { report: { groups: unknown[]; passport: { inherited: boolean } } } | undefined;
+    expect(result?.report).toBeDefined();
+    expect(result?.report.passport.inherited).toBe(true);
+    expect(JSON.stringify(result)).not.toMatch(/delete|remove|удал/iu);
   });
 
   it('отпечаток входа считается от состава проб В ОКНЕ: другое окно — другой inputHash', async () => {

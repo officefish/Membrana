@@ -46,6 +46,10 @@ import {
   SampleLibrarySessionDigestPanel,
 } from '../plugins/sample-library-session-digest';
 import {
+  SAMPLE_LIBRARY_DUPLICATES_PLUGIN_ID,
+  SampleLibraryDuplicatesPanel,
+} from '../plugins/sample-library-duplicates';
+import {
   TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID,
   TrendsFftSampleAnalyzerPanel,
 } from '../plugins/trends-fft-sample-analyzer';
@@ -617,6 +621,10 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
 
       {activePluginIds.includes(SAMPLE_LIBRARY_SESSION_DIGEST_PLUGIN_ID) && selected ? (
         <SampleLibrarySessionDigestPanel moduleId={module.id} collectionId={selected.id} />
+      ) : null}
+
+      {activePluginIds.includes(SAMPLE_LIBRARY_DUPLICATES_PLUGIN_ID) && selected ? (
+        <SampleLibraryDuplicatesPanel moduleId={module.id} collectionId={selected.id} />
       ) : null}
 
       {activePluginIds.includes(SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID) ? (

@@ -219,6 +219,37 @@ export function verifyDeliverOnMain(repoRoot, opts = {}) {
  */
 export const DELIVERABLE_STATUSES = Object.freeze(['missing-on-main', 'drift-from-main']);
 
+export const DELIVER_EXECUTE_OUTCOMES = Object.freeze(['delivered', 'pending-ci', 'failed']);
+
+/**
+ * `pr:ship` внутри ритуала может дойти до ожидания CI и честно сказать: хвост ещё не вынес
+ * вердикт. Это не delivered и не failure ритуала: работа ушла в PR, продолжение названо.
+ *
+ * @param {unknown} error
+ * @returns {'pending-ci'|'failed'}
+ */
+export function classifyDeliverShipFailure(error) {
+  const e = /** @type {{status?: unknown, stdout?: unknown, stderr?: unknown, message?: unknown}} */ (error ?? {});
+  const status = typeof e.status === 'number' ? e.status : null;
+  if (status === 3) return 'pending-ci';
+  const text = [e.stdout, e.stderr, e.message].filter((v) => typeof v === 'string').join('\n');
+  if (
+    /pr:wait[^\n]*(таймаут|timeout|ещё идут|running|проверки не созданы|not registered)/iu.test(text) ||
+    /ci-wait\s+транзиент|CI ещё идёт|обязательные проверки так и не зарегистрированы/iu.test(text)
+  ) {
+    return 'pending-ci';
+  }
+  return 'failed';
+}
+
+/**
+ * @param {{ritual: string, branchHint?: string}} input
+ */
+export function pendingCiContinuation({ ritual, branchHint = '' }) {
+  const branch = branchHint ? ` (ветка/PR: ${branchHint})` : '';
+  return `pending-ci: CI ещё не вынес вердикт${branch}; продолжить: yarn ritual:deliver-to-main --ritual ${ritual} --execute`;
+}
+
 /**
  * Разделить негодные позиции на «доставке подлежит» и «доставкой не лечится».
  *
