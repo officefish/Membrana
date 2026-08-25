@@ -31,9 +31,9 @@ services:
       GITHUB_REPO: ${GITHUB_REPO:-Membrana}
       DREAMS_ENABLED: ${DREAMS_ENABLED:-true}
       DREAMS_VOLUME_PATH: ${DREAMS_VOLUME_PATH:-/var/lib/membrana-dreams}
-      ARCHIVARIUS_MONGO_URI: ${ARCHIVARIUS_MONGO_URI:-mongodb://archivarius-mongo:27017/membrana_archivarius}
+      ARCHIVARIUS_MONGO_URI: ${ARCHIVARIUS_MONGO_URI:-mongodb://archivarius:change-me@archivarius-mongo:27017/membrana_archivarius?authSource=admin}
       ARCHIVARIUS_MONGO_DB: ${ARCHIVARIUS_MONGO_DB:-membrana_archivarius}
-      TASK_ARCHIVE_MONGO_URI: ${TASK_ARCHIVE_MONGO_URI:-mongodb://archivarius-mongo:27017/membrana_task_archive}
+      TASK_ARCHIVE_MONGO_URI: ${TASK_ARCHIVE_MONGO_URI:-mongodb://archivarius:change-me@archivarius-mongo:27017/membrana_task_archive?authSource=admin}
       TASK_ARCHIVE_MONGO_DB: ${TASK_ARCHIVE_MONGO_DB:-membrana_task_archive}
     # PU1 (#463, ADR 0005): реестр партнёров панели — единственные
     # невоспроизводимые данные office; без volume пропадут при редеплое.
@@ -59,6 +59,9 @@ services:
   archivarius-mongo:
     image: mongo:7
     restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${ARCHIVARIUS_MONGO_USERNAME:-archivarius}
+      MONGO_INITDB_ROOT_PASSWORD: ${ARCHIVARIUS_MONGO_PASSWORD:-change-me}
     volumes:
       - archivarius-mongo-data:/data/db
     healthcheck:
@@ -67,6 +70,12 @@ services:
           'CMD',
           'mongosh',
           '--quiet',
+          '--username',
+          '${ARCHIVARIUS_MONGO_USERNAME:-archivarius}',
+          '--password',
+          '${ARCHIVARIUS_MONGO_PASSWORD:-change-me}',
+          '--authenticationDatabase',
+          'admin',
           '--eval',
           'db.adminCommand({ ping: 1 }).ok',
         ]

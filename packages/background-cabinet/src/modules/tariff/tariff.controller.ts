@@ -26,6 +26,7 @@ import { BadRequestException, Body, Controller, Post, Req, UseGuards } from '@ne
 
 import { SessionGuard, type AuthenticatedRequest } from '../../common/guards/session.guard';
 import { MembraneService } from '../membrane/membrane.service';
+import { PromoRedemptionRateLimiter } from './promo-redemption-rate-limit';
 import { TariffTransitionService, type TransitionOutcome } from './tariff-transition.service';
 
 /** DTO погашения: РОВНО код. Всё остальное о попытке знает сессия и сервер. */
@@ -40,12 +41,20 @@ export interface RedeemPromoDto {
  */
 const CODE_RE = /^[A-Za-z0-9][A-Za-z0-9_-]{2,63}$/;
 
+function clientIpOf(req: AuthenticatedRequest): string | null {
+  const forwarded = req.headers?.['x-forwarded-for'];
+  const firstForwarded = Array.isArray(forwarded) ? forwarded[0] : forwarded;
+  const ip = typeof firstForwarded === 'string' ? firstForwarded.split(',')[0]?.trim() : req.ip;
+  return ip || null;
+}
+
 @Controller('v1')
 @UseGuards(SessionGuard)
 export class TariffController {
   constructor(
     private readonly membraneService: MembraneService,
     private readonly tariffTransition: TariffTransitionService,
+    private readonly promoRateLimiter: PromoRedemptionRateLimiter,
   ) {}
 
   @Post('membranes/me/tariff/promo-redemptions')
@@ -60,6 +69,7 @@ export class TariffController {
       );
     }
     const userId = req.authUser!.id;
+    this.promoRateLimiter.assertAllowed({ accountId: userId, ip: clientIpOf(req) });
     const membrane = await this.membraneService.getOrCreateMembraneForUser(userId);
     return this.tariffTransition.redeemPromo({
       membraneId: membrane.id,

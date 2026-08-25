@@ -1,4 +1,4 @@
-import { ForbiddenException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TARIFF_DATASET_SYSTEM_KEY } from '../../lib/collection-ids';
@@ -113,5 +113,87 @@ describe('SamplesService.updateLabelNotes', () => {
     expect(prisma.sample.update).toHaveBeenCalled();
     expect(prisma.sample.updateMany).not.toHaveBeenCalled();
     expect(result.label).toBe('not-drone');
+  });
+});
+
+describe('SamplesService.upload audio metadata contract', () => {
+  const prisma = {
+    sample: {
+      create: vi.fn(),
+    },
+  };
+  const collections = { getOwned: vi.fn() };
+  const devices = { getQuota: vi.fn() };
+  const blobs = { buildStorageRef: vi.fn(), write: vi.fn(), delete: vi.fn(), createReadStream: vi.fn() };
+  const audio = { parseUpload: vi.fn() };
+
+  let service: SamplesService;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    service = new SamplesService(
+      prisma as never,
+      collections as never,
+      devices as never,
+      blobs as never,
+      audio as never,
+    );
+    collections.getOwned.mockResolvedValue({ kind: 'user', systemKey: null });
+    devices.getQuota.mockResolvedValue({
+      userStorage: { usedBytes: 0, limitBytes: 1_000_000 },
+      buffer: { usedBytes: 0, limitBytes: 1_000_000 },
+    });
+    blobs.buildStorageRef.mockReturnValue('dev/sample.wav');
+    audio.parseUpload.mockResolvedValue({
+      durationSec: 1.25,
+      sampleRate: 44_100,
+      channels: 1,
+      audioFormat: 'wav',
+      contentType: 'audio/wav',
+      sizeBytes: 100,
+    });
+    prisma.sample.create.mockImplementation(async ({ data }) => makeSampleRow({
+      id: data.id,
+      deviceId: data.deviceId,
+      collectionId: data.collectionId,
+      title: data.title,
+      systemKey: null,
+      durationSec: data.durationSec,
+      sampleRate: data.sampleRate,
+      channels: data.channels,
+    } as never));
+  });
+
+  it('stores measured WAV metadata, not declared meta values', async () => {
+    const out = await service.upload(
+      'dev-1',
+      'col-1',
+      Buffer.from('wav'),
+      'audio/wav',
+      { title: 'declared-ok', durationSec: 1.25, sampleRate: 44_100, channels: 1 },
+    );
+
+    expect(out.sampleRate).toBe(44_100);
+    expect(prisma.sample.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        durationSec: 1.25,
+        sampleRate: 44_100,
+        channels: 1,
+      }),
+    });
+  });
+
+  it('rejects declared 48 kHz when measured WAV bytes are 44.1 kHz', async () => {
+    await expect(
+      service.upload(
+        'dev-1',
+        'col-1',
+        Buffer.from('wav'),
+        'audio/wav',
+        { title: 'bad-rate', durationSec: 1.25, sampleRate: 48_000, channels: 1 },
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(blobs.write).not.toHaveBeenCalled();
+    expect(prisma.sample.create).not.toHaveBeenCalled();
   });
 });

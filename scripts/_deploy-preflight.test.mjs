@@ -78,3 +78,88 @@ test('deployPreflight: обход с причиной проходит и воз
   assert.equal(res.clean, false);
   assert.equal(res.allowDirtyReason, 'оператор сверил локальный эксперимент, деплой берёт origin/main');
 });
+
+test('deployPreflight: свежая проба media краснит live-session guard (#2048)', () => {
+  const root = tempGitRepo();
+  assert.throws(
+    () => deployPreflight({
+      branch: 'main',
+      cwd: root,
+      buildContextPaths: context,
+      liveSessionProbe: () => ({ lastSampleAt: '2026-08-25T10:00:30.000Z', source: 'test media' }),
+      now: new Date('2026-08-25T10:01:00.000Z'),
+      exit: refuse,
+    }),
+    /exit:1/u,
+  );
+});
+
+test('deployPreflight: обязательный media live-session guard без URL краснит preflight (#2048)', () => {
+  const root = tempGitRepo();
+  assert.throws(
+    () => deployPreflight({
+      branch: 'main',
+      cwd: root,
+      service: 'media',
+      buildContextPaths: context,
+      env: {},
+      exit: refuse,
+    }),
+    /exit:1/u,
+  );
+});
+
+test('deployPreflight: сбой live-session probe становится hard problem, а не raw throw', () => {
+  const root = tempGitRepo();
+  assert.throws(
+    () => deployPreflight({
+      branch: 'main',
+      cwd: root,
+      buildContextPaths: context,
+      liveSessionProbe: () => {
+        throw new Error('media timeout');
+      },
+      exit: refuse,
+    }),
+    /exit:1/u,
+  );
+});
+
+test('deployPreflight: необязательный live-session guard без URL называется явно как skipped', () => {
+  const root = tempGitRepo();
+  const res = deployPreflight({
+    branch: 'main',
+    cwd: root,
+    buildContextPaths: context,
+    env: {},
+    exit: refuse,
+  });
+  assert.equal(res.clean, true);
+  assert.equal(res.liveSessionProbeStatus?.status, 'skipped');
+});
+
+test('deployPreflight: старая проба media не блокирует деплой', () => {
+  const root = tempGitRepo();
+  const res = deployPreflight({
+    branch: 'main',
+    cwd: root,
+    buildContextPaths: context,
+    liveSessionProbe: () => ({ lastSampleAt: '2026-08-25T09:59:59.000Z', source: 'test media' }),
+    now: new Date('2026-08-25T10:01:00.000Z'),
+    exit: refuse,
+  });
+  assert.equal(res.clean, true);
+});
+
+test('deployPreflight: проба ровно 60 секунд назад уже не считается живой', () => {
+  const root = tempGitRepo();
+  const res = deployPreflight({
+    branch: 'main',
+    cwd: root,
+    buildContextPaths: context,
+    liveSessionProbe: () => ({ lastSampleAt: '2026-08-25T10:00:00.000Z', source: 'test media' }),
+    now: new Date('2026-08-25T10:01:00.000Z'),
+    exit: refuse,
+  });
+  assert.equal(res.clean, true);
+});

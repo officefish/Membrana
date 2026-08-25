@@ -36,6 +36,28 @@ export interface UploadMetaOverride {
   notes?: string;
 }
 
+function assertDeclaredAudioMetaMatchesMeasured(meta: UploadMetaOverride | undefined, parsed: {
+  readonly durationSec: number;
+  readonly sampleRate: number;
+  readonly channels: 1 | 2;
+}): void {
+  if (meta?.sampleRate !== undefined && meta.sampleRate !== parsed.sampleRate) {
+    throw new BadRequestException(
+      `Declared audio metadata mismatch: sampleRate ${meta.sampleRate} != measured ${parsed.sampleRate}`,
+    );
+  }
+  if (meta?.channels !== undefined && meta.channels !== parsed.channels) {
+    throw new BadRequestException(
+      `Declared audio metadata mismatch: channels ${meta.channels} != measured ${parsed.channels}`,
+    );
+  }
+  if (meta?.durationSec !== undefined && Math.abs(meta.durationSec - parsed.durationSec) > 0.05) {
+    throw new BadRequestException(
+      `Declared audio metadata mismatch: durationSec ${meta.durationSec} != measured ${parsed.durationSec}`,
+    );
+  }
+}
+
 export interface PatchSampleLabelInput {
   label?: string;
   notes?: string | null;
@@ -95,6 +117,7 @@ export class SamplesService {
     this.assertUploadAllowed(collection);
 
     const parsed = await this.audio.parseUpload(fileBuffer, mimeType);
+    assertDeclaredAudioMetaMatchesMeasured(meta, parsed);
     const quota = await this.devices.getQuota(deviceId);
     const bucket =
       collection.kind === 'buffer'
@@ -131,9 +154,9 @@ export class SamplesService {
           class: meta?.class ?? 'unclassified',
           label: meta?.label ?? 'unlabeled',
           source: meta?.source ? sampleSourceFromApi(meta.source) : 'disk_import',
-          durationSec: meta?.durationSec ?? parsed.durationSec,
-          sampleRate: meta?.sampleRate ?? parsed.sampleRate,
-          channels: meta?.channels ?? parsed.channels,
+          durationSec: parsed.durationSec,
+          sampleRate: parsed.sampleRate,
+          channels: parsed.channels,
           audioFormat: parsed.audioFormat,
           contentType: parsed.contentType,
           sizeBytes: parsed.sizeBytes,
