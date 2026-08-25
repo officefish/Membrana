@@ -21,6 +21,7 @@ import {
   recordKey,
   unguardedJournals,
 } from './lib/journal-merge.mjs';
+import { mergeAttrs, verifyJournals } from './verify-journal-merge.mjs';
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -36,6 +37,23 @@ test('соглашение: журнал опознаётся каталогом
 test('соглашение: вторая ось — имя файла', () => {
   assert.equal(isJournalPath('docs/audit/one-shot-trail.jsonl'), true);
   assert.equal(isJournalPath('docs/comms/sent-log.jsonl'), true);
+});
+
+test('соглашение: инвентарь docs/**/*.jsonl покрывает носители второй очереди', () => {
+  for (const path of [
+    'docs/network/history/2026-08.jsonl',
+    'docs/bridge/debt-ledger.jsonl',
+    'docs/truth/packets.jsonl',
+    'docs/workflows/examples.jsonl',
+    'docs/local-sprint/x/EXPERIENCE.jsonl',
+    'docs/audit/network/analysis/2026-08-13/probes.jsonl',
+  ]) {
+    assert.equal(isJournalPath(path), true, `${path} должен быть журналом`);
+  }
+});
+
+test('соглашение: memory/archive названо исключением, union там неверен', () => {
+  assert.equal(isJournalPath('docs/virtual-team/memory/archive/ozhegov.jsonl'), false);
 });
 
 test('соглашение КРАСНОЕ: подстрока дверью не является', () => {
@@ -61,6 +79,13 @@ test('ключ записи: первое присутствующее поле 
   assert.equal(recordKey({ traceId: 'tr-1', id: 'иной' }), 'traceId:tr-1', 'порядок предпочтения соблюдён');
   assert.equal(recordKey({ eventId: 'e1' }), 'eventId:e1');
   assert.equal(recordKey({ id: 'x' }), 'id:x');
+});
+
+test('ключ записи: event-log с verb/id/at не путает ключ сущности с ключом события', () => {
+  assert.equal(
+    recordKey({ verb: 'birth', id: 'debt-1', at: '2026-08-01T00:00:00Z' }),
+    'verb+id+at:birth:debt-1:2026-08-01T00:00:00Z',
+  );
 });
 
 test('ключ записи: запись без ключа законна и ключа не выдумывает', () => {
@@ -108,6 +133,12 @@ test('нечитаемая строка считается, но зуб на н�
   const { unreadable, keyed } = findJournalDuplicates('не json\n{"traceId":"tr-1"}\n');
   assert.equal(unreadable, 1);
   assert.deepEqual(keyed, []);
+});
+
+test('комментарии в jsonl-носителе не считаются записями журнала', () => {
+  const { exact, unreadable } = findJournalDuplicates('# шапка\n# шапка\n{"traceId":"tr-1"}\n');
+  assert.deepEqual(exact, []);
+  assert.equal(unreadable, 0);
 });
 
 // ── класс, а не файл ──────────────────────────────────────────────────────────
@@ -213,5 +244,39 @@ test('ПРАВИЛО ЖИВЬЁМ: фикстура и ловушка имени
     assert.match(attrs, /fixtures\/f\.jsonl: merge: unspecified/u, 'у фикстуры важно последнее значение');
     assert.match(attrs, /trailer.*: merge: unspecified/u, 'подстрока «trail» дверью не является');
     assert.match(attrs, /sprint\/trail\/j\.jsonl: merge: union/u);
+  } finally { cleanup(); }
+});
+
+test('ПРАВИЛО ЖИВЬЁМ: инвентарь docs/**/*.jsonl имеет merge=union, исключение — нет', () => {
+  const { root, git, write, cleanup } = repo();
+  try {
+    const journalPaths = [
+      'docs/network/history/2026-08.jsonl',
+      'docs/bridge/debt-ledger.jsonl',
+      'docs/truth/packets.jsonl',
+      'docs/workflows/examples.jsonl',
+      'docs/local-sprint/x/EXPERIENCE.jsonl',
+      'docs/audit/network/analysis/2026-08-13/probes.jsonl',
+    ];
+    for (const p of journalPaths) write(p, '{"id":"x"}\n');
+    write('docs/virtual-team/memory/archive/ozhegov.jsonl', '{"id":"archive"}\n');
+    git('add', '-A'); git('commit', '-qm', 'base');
+
+    const attrs = mergeAttrs(root, [...journalPaths, 'docs/virtual-team/memory/archive/ozhegov.jsonl'], (args) => git(...args));
+    for (const p of journalPaths) assert.equal(attrs.get(p), 'union', `${p} под union`);
+    assert.equal(attrs.get('docs/virtual-team/memory/archive/ozhegov.jsonl'), 'unspecified');
+  } finally { cleanup(); }
+});
+
+test('ПОРЧА: снятый атрибут с одного журнала краснит сторож с именем файла', () => {
+  const { root, git, write, cleanup } = repo();
+  try {
+    const target = 'docs/network/history/2026-08.jsonl';
+    write(target, '{"id":"net-1"}\n');
+    write('.gitattributes', `${readFileSync(join(REPO_ROOT, '.gitattributes'), 'utf8')}\n${target} !merge\n`);
+    git('add', '-A'); git('commit', '-qm', 'base');
+
+    const result = verifyJournals(root);
+    assert.equal(result.breaches.some((b) => b.includes(target) && b.includes('merge=unspecified')), true);
   } finally { cleanup(); }
 });

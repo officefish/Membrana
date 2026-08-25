@@ -41,7 +41,20 @@ export const JOURNAL_SUFFIXES = Object.freeze(['-trail.jsonl', '-log.jsonl']);
  * Список ЯВНЫЙ и КОРОТКИЙ — и остаётся честным лишь потому, что третье правило зуба
  * замечает всякий новый журнал мимо соглашения. Без зуба этот список молча отстал бы.
  */
-export const JOURNAL_EXCEPTIONS = Object.freeze(['docs/evidence/registry.jsonl']);
+export const JOURNAL_PREFIXES = Object.freeze([
+  'docs/audit/network/analysis/',
+  'docs/local-sprint/',
+  'docs/network/history/',
+  'docs/truth/',
+]);
+
+export const JOURNAL_EXCEPTIONS = Object.freeze([
+  'docs/bridge/debt-ledger.jsonl',
+  'docs/evidence/registry.jsonl',
+  'docs/workflows/examples.jsonl',
+]);
+
+export const NOT_JOURNAL_PREFIXES = Object.freeze(['docs/virtual-team/memory/archive/']);
 
 /** Поля-ключи в порядке предпочтения. Первое найденное и есть ключ записи. */
 export const KEY_FIELDS = Object.freeze(['traceId', 'eventId', 'assertionId', 'id']);
@@ -57,9 +70,11 @@ export const KEY_FIELDS = Object.freeze(['traceId', 'eventId', 'assertionId', 'i
  */
 export function isJournalPath(path) {
   if (typeof path !== 'string' || !path.endsWith('.jsonl')) return false;
+  if (NOT_JOURNAL_PREFIXES.some((prefix) => path.startsWith(prefix))) return false;
   const segments = path.split('/').slice(0, -1);
   if (segments.some((s) => NOT_JOURNAL_DIRS.includes(s))) return false;
   if (JOURNAL_EXCEPTIONS.includes(path)) return true;
+  if (JOURNAL_PREFIXES.some((prefix) => path.startsWith(prefix))) return true;
   if (JOURNAL_SUFFIXES.some((suffix) => path.endsWith(suffix))) return true;
   return segments.some((s) => JOURNAL_DIRS.includes(s));
 }
@@ -76,6 +91,16 @@ export function isJournalPath(path) {
  */
 export function recordKey(record) {
   if (record === null || typeof record !== 'object') return null;
+  if (
+    typeof record.verb === 'string' &&
+    typeof record.id === 'string' &&
+    typeof record.at === 'string' &&
+    record.verb.trim() !== '' &&
+    record.id.trim() !== '' &&
+    record.at.trim() !== ''
+  ) {
+    return `verb+id+at:${record.verb.trim()}:${record.id.trim()}:${record.at.trim()}`;
+  }
   for (const field of KEY_FIELDS) {
     const value = /** @type {Record<string, unknown>} */ (record)[field];
     if (typeof value === 'string' && value.trim() !== '') return `${field}:${value.trim()}`;
@@ -90,7 +115,7 @@ export function recordKey(record) {
  * @returns {{keyed: Array<{key: string, variants: string[]}>, exact: Array<{line: string, count: number}>, unreadable: number}}
  */
 export function findJournalDuplicates(body) {
-  const lines = String(body ?? '').split('\n').map((l) => l.trim()).filter(Boolean);
+  const lines = String(body ?? '').split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
   const byLine = new Map();
   const byKey = new Map();
   let unreadable = 0;
