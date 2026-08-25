@@ -19,7 +19,7 @@ function cand(id: string, deltaDb: number, at: number, seed: number): ChartListC
     durationSec: 5,
     // Оси ровно те, что у отсева (DEDUPE_AXES): чужое поле дало бы undefined → NaN → «никто
     // никому не похож» — первая редакция зуба так и упала, ядро было ни при чём.
-    features: { centroidHz: 1000 + seed * 500, rolloffHz: 3000 + seed * 700, flatness: 0.1 + seed * 0.02, zeroCrossingRate: 0.05 + seed * 0.01 },
+    features: { centroidHz: 1000 + seed * 500, rolloffHz: 3000 + seed * 700, flatness: 0.1 + seed * 0.02, zeroCrossingRate: 0.05 + seed * 0.01, flux: 0.2 },
   };
 }
 
