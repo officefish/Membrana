@@ -42,6 +42,10 @@ import {
   SampleLibraryChartListPanel,
 } from '../plugins/sample-library-chart-list';
 import {
+  SAMPLE_LIBRARY_SESSION_DIGEST_PLUGIN_ID,
+  SampleLibrarySessionDigestPanel,
+} from '../plugins/sample-library-session-digest';
+import {
   SAMPLE_LIBRARY_DUPLICATES_PLUGIN_ID,
   SampleLibraryDuplicatesPanel,
 } from '../plugins/sample-library-duplicates';
@@ -613,6 +617,10 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
           сверху — он орган управления прослушиванием, а не виджет-результат. */}
       {activePluginIds.includes(SAMPLE_LIBRARY_CHART_LIST_PLUGIN_ID) && selected ? (
         <SampleLibraryChartListPanel moduleId={module.id} collectionId={selected.id} />
+      ) : null}
+
+      {activePluginIds.includes(SAMPLE_LIBRARY_SESSION_DIGEST_PLUGIN_ID) && selected ? (
+        <SampleLibrarySessionDigestPanel moduleId={module.id} collectionId={selected.id} />
       ) : null}
 
       {activePluginIds.includes(SAMPLE_LIBRARY_DUPLICATES_PLUGIN_ID) && selected ? (

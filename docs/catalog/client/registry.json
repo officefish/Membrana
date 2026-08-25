@@ -94,6 +94,7 @@
         "sample-library-drone-analysis",
         "sample-library-fft-threshold-test",
         "sample-library-chart-list",
+        "sample-library-session-digest",
         "sample-library-duplicates",
         "trends-fft-sample-analyzer",
         "neural-drone-analyzer"
@@ -449,6 +450,24 @@
       ],
       "relatedTasks": [
         "library-selection-plugin-2110"
+      ]
+    },
+    {
+      "id": "sample-library-session-digest",
+      "kind": "plugin",
+      "name": "Разбор сеанса",
+      "status": "draft",
+      "parentModuleId": "sample-library",
+      "promptPath": "docs/catalog/client/prompts/plugins/sample-library-session-digest.md",
+      "code": {
+        "pluginFile": "apps/client/src/plugins/sample-library-session-digest/sampleLibrarySessionDigestPlugin.ts"
+      },
+      "services": [
+        "@membrana/media-library-service",
+        "@membrana/sample-playback-service"
+      ],
+      "relatedTasks": [
+        "session-digest-face-2039"
       ]
     },
     {
