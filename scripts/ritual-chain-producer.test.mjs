@@ -3,9 +3,8 @@
  * рождаются ВЫЗОВОМ процедуры, не рукой. Болезнь-вещдок: 47 версий документа дня,
  * ноль записей в журнале.
  *
- * Утро (ritual:day) — шелл-цепочка в package.json: open первым шагом, close после
- * deliver; сверка ПО ФАКТУ глагола, разбором шагов по && (прецедент
- * prepush-env-guard: «проверка идёт по факту, а не по догадке»).
+ * Утро (ritual:day) — раннер: open первым шагом, close после deliver; pending-ci
+ * закрывается named gap, а не shell-хвостом pass.
  *
  * Вечер (ritual:evening) ведётся МАНИФЕСТОМ (гард step-status.test.mjs) — глагол
  * обязан остаться чистым раннером, а open/close живут В РАННЕРЕ: только он видит
@@ -24,35 +23,29 @@ import test from 'node:test';
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const scripts = JSON.parse(readFileSync(resolve(repoRoot, 'package.json'), 'utf8')).scripts;
 const runnerSrc = readFileSync(resolve(repoRoot, 'scripts/ritual-evening-run.mjs'), 'utf8');
+const dayRunnerSrc = readFileSync(resolve(repoRoot, 'scripts/ritual-day-run.mjs'), 'utf8');
 
-const OPEN = 'node scripts/procedure-run-record.mjs open --procedure ritual-day';
-const CLOSE = 'node scripts/procedure-run-record.mjs close --procedure ritual-day --status pass';
+// ── утро: раннер ──────────────────────────────────────────────────────────────
 
-// ── утро: шелл-цепочка ────────────────────────────────────────────────────────
-
-test('ritual:day: open — первый шаг цепочки, до всякой работы', () => {
-  const steps = scripts['ritual:day'].split('&&').map((s) => s.trim());
-  assert.ok(steps[0].startsWith(OPEN), 'цепочка начинается с open --procedure ritual-day');
-  assert.match(steps[0], /--evidence \S+/u, 'open несёт --evidence');
+test('ritual:day: глагол — раннер, а не shell-цепочка с ложным хвостом', () => {
+  assert.equal(scripts['ritual:day'], 'node scripts/ritual-day-run.mjs');
 });
 
-test('ritual:day: close — последний шаг, после deliver: запись о доставленном, не о начатом', () => {
-  const steps = scripts['ritual:day'].split('&&').map((s) => s.trim());
-  assert.ok(steps.at(-1).startsWith(CLOSE), 'close — последний шаг цепочки');
-  assert.match(steps.at(-1), /--evidence \S+/u, 'close несёт --evidence');
-  assert.ok(steps.at(-2).includes('scripts/ritual-deliver-to-main.mjs'), 'предпоследний — кадр доставки');
-  assert.equal(
-    steps.filter((s) => s.includes('procedure-run-record.mjs close')).length,
-    1,
-    'close один — вторая запись была бы второй правдой',
-  );
+test('ritual:day: раннер открывает прогон до всякой работы', () => {
+  assert.match(dayRunnerSrc, /'open',\s*'--procedure',\s*'ritual-day'/u, 'open --procedure ritual-day в раннере');
+  assert.match(dayRunnerSrc, /'--evidence',\s*'docs\/tasks\/morning-ritual-steps\.json'/u, 'open несёт --evidence');
+});
+
+test('ritual:day: close пишется по исходу доставки, pending-ci не становится pass', () => {
+  assert.match(dayRunnerSrc, /'scripts\/ritual-deliver-to-main\.mjs',\s*'--execute'/u, 'кадр доставки исполняется');
+  assert.match(dayRunnerSrc, /code === 3/u, 'pending-ci — отдельная ветка исхода');
+  assert.match(dayRunnerSrc, /closeRun\('skipped', \['--gap', 'deliver-to-main:pending-ci'/u, 'pending-ci пишет named gap');
+  assert.match(dayRunnerSrc, /closeRun\('pass'\)/u, 'pass только после всех шагов');
 });
 
 test('ritual:day: сторожа не глушат — open и close без || true', () => {
-  const steps = scripts['ritual:day'].split('&&').map((s) => s.trim());
-  for (const step of [steps.at(0), steps.at(-1)]) {
-    assert.ok(!step.includes('|| true'), `шаг «${step.slice(0, 60)}…» не глушится: молчаливый пропуск записи — болезнь спринта`);
-  }
+  assert.doesNotMatch(scripts['ritual:day'], /\|\| true/u);
+  assert.doesNotMatch(dayRunnerSrc, /\|\| true/u);
 });
 
 // ── вечер: раннер по манифесту ────────────────────────────────────────────────

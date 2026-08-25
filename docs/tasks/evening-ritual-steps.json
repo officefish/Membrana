@@ -306,7 +306,7 @@
       "//critical": "КРИТИЧЕН намеренно, как у утра. Не находка, а ворота: пока артефакты вечера не в стволе, вечер для соседних сессий не состоялся, и цепочка обязана кончиться красным. Мягкий вердикт вернул бы ровно то состояние, из-за которого находка заведена — «показал, но не доставил».",
       "//last": "СТРОГО последний: проверяет в том числе docs/seanses/team-evening-feedback-<date>.md, который рождает предыдущий шаг evening-tail.",
       "id": "deliver-to-main",
-      "script": "scripts/ritual-deliver-to-main.mjs --ritual evening",
+      "script": "scripts/ritual-deliver-to-main.mjs --ritual evening --execute",
       "kind": "gate",
       "criticality": "critical",
       "label": "Кадр доставки: артефакты вечера на origin/main",
@@ -316,8 +316,12 @@
         "docs/seanses/team-evening-feedback-<date>.md"
       ],
       "produces": [
-        "вердикт кадра в stdout (0 — доставлено · 2 — STOP с планом доставки)"
-      ]
+        "вердикт кадра в stdout (0 — delivered · 3 — pending-ci с named tail · 2 — STOP с планом доставки)"
+      ],
+      "findingExitCodes": [
+        3
+      ],
+      "//findings": "exit 3 = pr:wait/CI ещё не вынес вердикт. Это named tail доставки, а не ложный delivered и не отказ ритуала."
     }
   ],
   "//journal": "Прогон вечера пишется в журнал процедур НЕ шагами манифеста, а самим раннером ritual-evening-run.mjs: open до первого шага, close после итога со статусом ПО ФАКТУ (pass/fail + gaps из упавших критичных). Шагом манифеста close был бы ложью: шаги независимы, close-шаг написал бы pass и при упавшем критичном. Обрыв самого раннера оставляет сироту — её закроет fail/orphaned следующий open (ленивое закрытие, ADR-0022 Р4).",

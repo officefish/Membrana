@@ -97,3 +97,16 @@ docs/tasks/README.md merge=ours
 # только дописывается (замер: +32 −0). Список исключений остаётся честным лишь потому, что
 # зуб `journals:verify` замечает всякий новый журнал мимо соглашения.
 docs/evidence/registry.jsonl merge=union
+docs/bridge/debt-ledger.jsonl merge=union
+docs/workflows/examples.jsonl merge=union
+
+# Вторая очередь #2096: inventory docs/**/*.jsonl, где append-only видно не из имени.
+docs/audit/network/analysis/**/*.jsonl merge=union
+docs/local-sprint/**/*.jsonl merge=union
+docs/network/history/**/*.jsonl merge=union
+docs/truth/**/*.jsonl merge=union
+docs/local-sprint/**/fixtures/**/*.jsonl !merge
+
+# Названное исключение: memory/archive — смешанный архив, часть файлов переписывается,
+# значит порядок/последнее значение там важнее союзного сложения строк.
+docs/virtual-team/memory/archive/*.jsonl !merge

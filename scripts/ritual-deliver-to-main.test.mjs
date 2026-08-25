@@ -11,7 +11,9 @@ import {
   DELIVERABLE_STATUSES,
   DELIVER_RITUALS,
   checkArtifactDeliver,
+  classifyDeliverShipFailure,
   guardDeliver,
+  pendingCiContinuation,
   planDeliver,
   planExecute,
   ritualConfig,
@@ -381,4 +383,24 @@ test('shipArgsFor: пустой индекс → --no-commit (артефакты
   const a = shipArgsFor({ ritual: 'day', today: TODAY, branch: 'b', hasStaged: false });
   assert.ok(a.includes('--no-commit'));
   assert.match(a[a.indexOf('--message') + 1], new RegExp(`утро ${TODAY}`, 'u'));
+});
+
+test('deliver outcome: pr:wait timeout становится pending-ci, не failed', () => {
+  assert.equal(
+    classifyDeliverShipFailure({ status: 3, stderr: '[pr:wait] таймаут 15 мин — проверки ещё идут.' }),
+    'pending-ci',
+  );
+  assert.equal(
+    classifyDeliverShipFailure({ status: 1, stderr: 'ci-wait транзиент (код 3: CI ещё идёт)' }),
+    'pending-ci',
+  );
+  assert.equal(classifyDeliverShipFailure({ status: 2, stderr: 'deliver-to-main STOP — нет артефакта' }), 'failed');
+  assert.equal(classifyDeliverShipFailure({ status: 1, stderr: 'review:gate BLOCK' }), 'failed');
+});
+
+test('pending-ci называет хвост и команду продолжения', () => {
+  const line = pendingCiContinuation({ ritual: 'evening', branchHint: 'angelina/chore/ritual-evening-20260825' });
+  assert.match(line, /pending-ci/u);
+  assert.match(line, /yarn ritual:deliver-to-main --ritual evening --execute/u);
+  assert.match(line, /ritual-evening-20260825/u);
 });
