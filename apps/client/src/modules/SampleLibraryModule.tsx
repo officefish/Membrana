@@ -42,6 +42,10 @@ import {
   SampleLibraryChartListPanel,
 } from '../plugins/sample-library-chart-list';
 import {
+  SAMPLE_LIBRARY_DUPLICATES_PLUGIN_ID,
+  SampleLibraryDuplicatesPanel,
+} from '../plugins/sample-library-duplicates';
+import {
   TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID,
   TrendsFftSampleAnalyzerPanel,
 } from '../plugins/trends-fft-sample-analyzer';
@@ -609,6 +613,10 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
           сверху — он орган управления прослушиванием, а не виджет-результат. */}
       {activePluginIds.includes(SAMPLE_LIBRARY_CHART_LIST_PLUGIN_ID) && selected ? (
         <SampleLibraryChartListPanel moduleId={module.id} collectionId={selected.id} />
+      ) : null}
+
+      {activePluginIds.includes(SAMPLE_LIBRARY_DUPLICATES_PLUGIN_ID) && selected ? (
+        <SampleLibraryDuplicatesPanel moduleId={module.id} collectionId={selected.id} />
       ) : null}
 
       {activePluginIds.includes(SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID) ? (
