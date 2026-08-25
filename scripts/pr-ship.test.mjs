@@ -13,6 +13,9 @@ import {
   planMergeTail,
   reviewGateArgs,
   planPrShip,
+  commitPreflightProblem,
+  requestedPrMismatchProblem,
+  finalStateLine,
   unfinishedMergeProblem,
 } from './pr-ship.mjs';
 
@@ -632,4 +635,36 @@ test('#1759: base занят соседом — по-прежнему тольк
   assert.deepEqual(labels.filter((l) => l.startsWith('land-')), [], 'при занятой базе перецеливание не планируется');
   assert.ok(labels.includes('sync-fetch'));
   assert.match(skippedSync, /другой worktree/u);
+});
+
+// ── Зуб #2147/№2: честный exit и явный предмет действия ──────────────────────
+
+test('#2147/2 commitPreflightProblem: пустой индекс при шаге commit — отказ с лекарством --no-commit', () => {
+  const p = commitPreflightProblem({ commitRequested: true, mergeOnly: false, execute: true, stagedCount: 0 });
+  assert.match(p, /индекс пуст/);
+  assert.match(p, /--no-commit/);
+});
+
+test('#2147/2 commitPreflightProblem: непустой стейдж / merge-only / dry-run / --no-commit — не предмет отказа', () => {
+  assert.equal(commitPreflightProblem({ commitRequested: true, mergeOnly: false, execute: true, stagedCount: 3 }), null);
+  assert.equal(commitPreflightProblem({ commitRequested: true, mergeOnly: true, execute: true, stagedCount: 0 }), null);
+  assert.equal(commitPreflightProblem({ commitRequested: true, mergeOnly: false, execute: false, stagedCount: 0 }), null);
+  assert.equal(commitPreflightProblem({ commitRequested: false, mergeOnly: false, execute: true, stagedCount: 0 }), null);
+});
+
+test('#2147/2 requestedPrMismatchProblem: расхождение и «PR не найден» — отказ, совпадение и отсутствие --pr — нет', () => {
+  assert.match(requestedPrMismatchProblem(2044, 2047, 'feat/x'), /2044 ≠ PR #2047/);
+  assert.match(requestedPrMismatchProblem(2044, null, 'feat/x'), /не найден — отказ, не догадка/);
+  assert.equal(requestedPrMismatchProblem(2047, 2047, 'feat/x'), null);
+  assert.equal(requestedPrMismatchProblem(null, 2047, 'feat/x'), null);
+  assert.match(requestedPrMismatchProblem(Number.NaN, 2047, 'feat/x'), /не число/);
+});
+
+test('#2147/2 finalStateLine: состояние по стволу; gh недоступен — честное «НЕ ПОДТВЕРЖДЕНО»', () => {
+  assert.match(
+    finalStateLine({ number: 2143, state: 'MERGED', mergeCommit: 'abcdef1234567890' }),
+    /итог: PR #2143 state=MERGED mergeCommit=abcdef12/,
+  );
+  assert.match(finalStateLine({ number: 2143, state: 'OPEN', mergeCommit: null }), /state=OPEN(?! mergeCommit)/);
+  assert.match(finalStateLine(null), /НЕ ПОДТВЕРЖДЕНО/);
 });
