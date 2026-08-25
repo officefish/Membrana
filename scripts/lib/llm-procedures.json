@@ -36,6 +36,20 @@
       "meters": true
     },
     {
+      "id": "drift-anchor",
+      "entryMjs": "scripts/drift-anchor-run.mjs",
+      "yarnScript": "drift:run",
+      "title": "Drift-anchor · гипотеза причины дрейфа (DA3)",
+      "meters": true
+    },
+    {
+      "id": "competition-synthesis",
+      "entryMjs": "scripts/generate-competition-async-v2-synthesis.mjs",
+      "yarnScript": "competition:synthesis-async-v2",
+      "title": "Competition · синтез концепций (v1 и async-v2 — один канал)",
+      "meters": true
+    },
+    {
       "id": "strategic-plan",
       "entryMjs": "scripts/_strategic-plan.mjs",
       "yarnScript": "plan:week",

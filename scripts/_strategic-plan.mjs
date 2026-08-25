@@ -18,7 +18,7 @@ import { execFileSync } from 'node:child_process';
 
 import { loadDotEnv } from './_anthropic-env.mjs';
 // Провод к панели каналов (группа ritual): switch провайдера — в панели, не здесь.
-// Прямой вызов api.anthropic.com снят 24.08 — потолок Anthropic ронял план недели,
+// Прямой вызов Anthropic Messages API снят 24.08 — потолок Anthropic ронял план недели,
 // пока остальная утренняя генерация жила на панельной цепочке (находка ритуала 24.08).
 import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
 import {
