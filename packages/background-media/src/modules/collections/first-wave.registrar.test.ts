@@ -184,6 +184,13 @@ describe('вход ведёт и к своду сеанса (r1, пробел в
     const out = await reg.requestRun({ pluginId: 'membrana.report.session-digest' as PluginId, collectionId: 'c1', from: '2026-08-21T09:45:18.000Z', to: '2026-08-21T10:46:00.000Z' });
     // До правки здесь было 501 «прогон не определён»: вход умел только mfcc.
     expect(out.address.pluginId).toBe('membrana.report.session-digest');
+    // #2039: свод доезжает до вызывающего, а не только мостом в office — витрине в библиотеке
+    // нужны опорные, а не адрес прогона.
+    const digest = out.result as { kind: string; references: unknown[]; negatives: unknown[]; passport: { provisional: string[] } } | undefined;
+    expect(digest?.kind).toBe('report');
+    expect(Array.isArray(digest?.references)).toBe(true);
+    expect(Array.isArray(digest?.negatives)).toBe(true);
+    expect(Array.isArray(digest?.passport.provisional)).toBe(true);
     expect(out.address.mountTarget).toBe('background-media/collections');
     expect(out.fingerprints.inputHash).toMatch(/^[0-9a-f]{64}$/);
     expect(out.fingerprints.configHash).toMatch(/^[0-9a-f]{64}$/);

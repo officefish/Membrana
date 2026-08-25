@@ -1,6 +1,8 @@
 import type {
   Collection,
   LibraryChartListRequest,
+  SessionDigestRequest,
+  SessionDigestRunOutcome,
   LibraryDuplicatesRequest,
   LibraryDuplicatesRunOutcome,
   LibraryChartListRunOutcome,
@@ -47,6 +49,11 @@ export interface IStorageBackend {
     collectionId: string,
     req: LibraryChartListRequest,
   ): Promise<LibraryChartListRunOutcome>;
+  /** Свод сеанса (#2039): двадцать опорных звуков окна — только серверный бэкенд. */
+  requestSessionDigest?(
+    collectionId: string,
+    req: SessionDigestRequest,
+  ): Promise<SessionDigestRunOutcome>;
   /** Пары похожих в наборе (#2109): только серверный бэкенд, ничего не удаляет. */
   requestLibraryDuplicates?(
     collectionId: string,

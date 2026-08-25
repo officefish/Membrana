@@ -14,6 +14,8 @@ import type { IStorageBackend } from './ports/storage-backend.js';
 import type {
   LibraryChartListRequest,
   LibraryChartListRunOutcome,
+  SessionDigestRequest,
+  SessionDigestRunOutcome,
   LibraryDuplicatesRequest,
   LibraryDuplicatesRunOutcome,
   Collection,
@@ -263,6 +265,17 @@ export class MediaLibraryService {
       throw new Error('Отбор чарт-листа доступен только при серверной библиотеке (media-server)');
     }
     return this.backend.requestLibraryChartList(collectionId, req);
+  }
+
+  /** Свод сеанса (#2039): двадцать опорных звуков окна. Ядро отчёта — на media, здесь только заказ. */
+  async requestSessionDigest(
+    collectionId: string,
+    req: SessionDigestRequest = {},
+  ): Promise<SessionDigestRunOutcome> {
+    if (!this.backend.requestSessionDigest) {
+      throw new Error('Свод сеанса доступен только при серверной библиотеке (media-server)');
+    }
+    return this.backend.requestSessionDigest(collectionId, req);
   }
 
   /** Пары похожих в наборе (#2109). Ничего не удаляет — удаление только по клику, отдельным глаголом removeSample. */

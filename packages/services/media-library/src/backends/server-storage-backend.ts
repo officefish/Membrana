@@ -7,6 +7,8 @@ import type {
   Collection,
   LibraryChartListRequest,
   LibraryChartListRunOutcome,
+  SessionDigestRequest,
+  SessionDigestRunOutcome,
   LibraryDuplicatesRequest,
   LibraryDuplicatesRunOutcome,
   CollectionKind,
@@ -259,6 +261,25 @@ export class ServerStorageBackend implements IStorageBackend {
    * POST /collections/:id/plugins/:pluginId/request. Выборку считает витрина на сервере —
    * здесь только заказ и разбор ответа; result приходит тем же ответом (канал c5c).
    */
+  async requestSessionDigest(
+    collectionId: string,
+    req: SessionDigestRequest,
+  ): Promise<SessionDigestRunOutcome> {
+    const row = await this.requestJson<{ runId: string; result?: Omit<SessionDigestRunOutcome, 'runId'> }>(
+      `/collections/${encodeURIComponent(collectionId)}/plugins/membrana.report.session-digest/request`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...(req.from ? { from: req.from } : {}),
+          ...(req.to ? { to: req.to } : {}),
+        }),
+      },
+    );
+    if (!row.result) throw new Error('media не вернул результат свода сеанса — прогон без исхода');
+    return { runId: row.runId, ...row.result };
+  }
+
   async requestLibraryDuplicates(
     collectionId: string,
     req: LibraryDuplicatesRequest,

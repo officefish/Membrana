@@ -144,7 +144,14 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
       const outcome = await this.bridge.send(record);
       this.awaiting.get(ctx.address.runId)?.(outcome);
     };
-    const onReportResult: ReportResultSink = (_manifest, ctx, result) => toBridge(ctx, result);
+    // Свод сеанса (#2039): результат едет и мостом в office (как прежде), и ВЫЗЫВАЮЩЕМУ по
+    // runId — как у измерителя и витрин. До 25.08 второго пути не было: витрина в библиотеке
+    // получала от requestRun только адрес и отпечатки, и «двадцать опорных» жили лишь в
+    // хранилище office. Ядро отчёта не тронуто — это проводка, не мера.
+    const onReportResult: ReportResultSink = async (_manifest, ctx, result) => {
+      this.results.set(ctx.address.runId, result);
+      await toBridge(ctx, result);
+    };
     const onResult: FirstWaveDeps['onResult'] = async (_manifest, ctx, result) => {
       await toBridge(ctx, result);
     };

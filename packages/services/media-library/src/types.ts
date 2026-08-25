@@ -104,10 +104,51 @@ export interface LibraryChartListRequest {
   to?: string;
 }
 
+/** Заказ свода сеанса (#2039): ночь — промежутком дат в поясе человека, ISO включительно. */
+export interface SessionDigestRequest {
+  from?: string;
+  to?: string;
+}
+
 /** Заказ поиска дублей в наборе (#2109): только окно; ручек порога у человека нет намеренно. */
 export interface LibraryDuplicatesRequest {
   from?: string;
   to?: string;
+}
+
+/** Опорный (или негативный) звук свода — адрес пробы и что о нём измерено. */
+export interface SessionDigestSound {
+  sampleId: string;
+  title: string;
+  startSec: number;
+  endSec: number;
+  peakDb: number;
+  durationSec: number;
+  structure: 'tonal' | 'broadband';
+  similarDropped: number;
+}
+
+export interface SessionDigestRunOutcome {
+  runId: string;
+  kind: 'report';
+  window: { from?: string; to?: string; tracksSeen: number; tracksInWindow: number };
+  floor: { value: number; measured: boolean };
+  /** Опорные образы — тональные; негативы — широкополосные, не выброшены. */
+  references: SessionDigestSound[];
+  negatives: SessionDigestSound[];
+  shortfall: { references: number; negatives: number };
+  eventsFound: number;
+  /** Паспорт: чем считали, и какие пороги слух ещё не называл — поимённо. */
+  passport: {
+    frameSize: number;
+    deltaDb: number;
+    minDistanceRatio: number;
+    flatnessCeiling: number;
+    referencesLimit: number;
+    negativesLimit: number;
+    provisional: string[];
+  };
+  refusal: { reason: string; detail: string } | null;
 }
 
 /** Адрес похожей пробы, как его отдаёт витрина media (с моментом — соседство по времени слышно первым). */
