@@ -78,3 +78,31 @@ test('deployPreflight: обход с причиной проходит и воз
   assert.equal(res.clean, false);
   assert.equal(res.allowDirtyReason, 'оператор сверил локальный эксперимент, деплой берёт origin/main');
 });
+
+test('deployPreflight: свежая проба media краснит live-session guard (#2048)', () => {
+  const root = tempGitRepo();
+  assert.throws(
+    () => deployPreflight({
+      branch: 'main',
+      cwd: root,
+      buildContextPaths: context,
+      liveSessionProbe: () => ({ lastSampleAt: '2026-08-25T10:00:30.000Z', source: 'test media' }),
+      now: new Date('2026-08-25T10:01:00.000Z'),
+      exit: refuse,
+    }),
+    /exit:1/u,
+  );
+});
+
+test('deployPreflight: старая проба media не блокирует деплой', () => {
+  const root = tempGitRepo();
+  const res = deployPreflight({
+    branch: 'main',
+    cwd: root,
+    buildContextPaths: context,
+    liveSessionProbe: () => ({ lastSampleAt: '2026-08-25T09:59:59.000Z', source: 'test media' }),
+    now: new Date('2026-08-25T10:01:00.000Z'),
+    exit: refuse,
+  });
+  assert.equal(res.clean, true);
+});

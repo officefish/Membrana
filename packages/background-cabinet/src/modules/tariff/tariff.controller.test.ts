@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { BadRequestException } from '@nestjs/common';
 
+import { PromoRedemptionRateLimiter } from './promo-redemption-rate-limit';
 import { TariffController } from './tariff.controller';
 import type { TransitionOutcome } from './tariff-transition.service';
 
@@ -33,18 +34,20 @@ function makeController(outcome: TransitionOutcome) {
     getOrCreateMembraneForUser: vi.fn(async () => ({ id: 'membrane-from-session' })),
   };
   const transition = { redeemPromo: vi.fn(async () => outcome) };
+  const rateLimiter = { assertAllowed: vi.fn() };
   const controller = new TariffController(
     membraneService as never,
     transition as never,
+    rateLimiter as never,
   );
-  const req = { authUser: { id: 'user-1' } } as never;
-  return { controller, membraneService, transition, req };
+  const req = { authUser: { id: 'user-1' }, headers: {}, ip: '203.0.113.10' } as never;
+  return { controller, membraneService, transition, rateLimiter, req };
 }
 
 describe('POST membranes/me/tariff/promo-redemptions', () => {
   it('успех уезжает как есть; мембрана — из сессии, не из тела', async () => {
     const ok: TransitionOutcome = { ok: true, fromTariffId: 'free', toTariffId: 'pro' };
-    const { controller, membraneService, transition, req } = makeController(ok);
+    const { controller, membraneService, transition, rateLimiter, req } = makeController(ok);
 
     const res = await controller.redeemPromo(req, {
       code: 'PROMO-2026',
@@ -58,6 +61,10 @@ describe('POST membranes/me/tariff/promo-redemptions', () => {
       membraneId: 'membrane-from-session',
       code: 'PROMO-2026',
       actorId: 'user-1',
+    });
+    expect(rateLimiter.assertAllowed).toHaveBeenCalledWith({
+      accountId: 'user-1',
+      ip: '203.0.113.10',
     });
   });
 
@@ -99,5 +106,23 @@ describe('POST membranes/me/tariff/promo-redemptions', () => {
     expect(transition.redeemPromo).toHaveBeenCalledWith(
       expect.objectContaining({ code: 'PROMO-2026' }),
     );
+  });
+
+  it('N+1 попытка с одного аккаунта/IP получает 429 до домена', async () => {
+    const ok: TransitionOutcome = { ok: true, fromTariffId: 'free', toTariffId: 'pro' };
+    const membraneService = {
+      getOrCreateMembraneForUser: vi.fn(async () => ({ id: 'membrane-from-session' })),
+    };
+    const transition = { redeemPromo: vi.fn(async () => ok) };
+    const limiter = new PromoRedemptionRateLimiter({ maxAttempts: 2, windowMs: 60_000 });
+    const controller = new TariffController(membraneService as never, transition as never, limiter);
+    const req = { authUser: { id: 'user-1' }, headers: {}, ip: '203.0.113.10' } as never;
+
+    await controller.redeemPromo(req, { code: 'PROMO-2026' });
+    await controller.redeemPromo(req, { code: 'PROMO-2026' });
+    await expect(controller.redeemPromo(req, { code: 'PROMO-2026' })).rejects.toMatchObject({
+      status: 429,
+    });
+    expect(transition.redeemPromo).toHaveBeenCalledTimes(2);
   });
 });

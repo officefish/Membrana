@@ -15,6 +15,7 @@ import { DeviceWorkspacesModule } from './modules/device-workspaces/device-works
 import { LinearSnapshotModule } from './linear-snapshot/linear-snapshot.module';
 import { FirebatNodeModule } from './modules/firebat-node';
 import { PluginResultsBridgeModule } from './modules/plugin-results-bridge/plugin-results-bridge.module';
+import { DeployPreflightModule } from './modules/deploy-preflight/deploy-preflight.module';
 
 const testImports =
   process.env.NODE_ENV === 'test'
@@ -64,6 +65,7 @@ const testImports =
     DeviceWorkspacesModule,
     LinearSnapshotModule,
     PluginResultsBridgeModule,
+    DeployPreflightModule,
     FirebatNodeModule,
   ],
   controllers: [HealthController],

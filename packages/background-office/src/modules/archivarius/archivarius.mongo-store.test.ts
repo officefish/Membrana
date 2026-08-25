@@ -45,6 +45,16 @@ describe('MongoArchivariusStore (контракт, фейковая коллек
     await expect(store.searchSpans({ limit: 1 })).rejects.toBeInstanceOf(ServiceUnavailableException);
   });
 
+  it('ARCHIVARIUS_MONGO_URI без учётных данных отвечает 503 до подключения', async () => {
+    const store = new MongoArchivariusStore({ ARCHIVARIUS_MONGO_URI: 'mongodb://localhost:27017/membrana_archivarius' } as AppConfig);
+    await expect(store.getSpan('s', 'u')).rejects.toBeInstanceOf(ServiceUnavailableException);
+    await store.getSpan('s', 'u').catch((error: ServiceUnavailableException) => {
+      expect(error.getResponse()).toMatchObject({
+        code: 'ARCHIVARIUS_MONGO_AUTH_REQUIRED',
+      });
+    });
+  });
+
   it('upsertSpans строит bulkWrite-упсерты по {sessionId, uuid} с ordered:false; пустой вход — ноль вызовов', async () => {
     const calls: Array<{ ops: unknown[]; options: Record<string, unknown> }> = [];
     const store = storeWithFakeCollection({

@@ -11,7 +11,7 @@
  * причины `--allow-dirty-reason <text>` / `DEPLOY_DIRTY_REASON=<text>`; deploy-run
  * пишет эту причину в журнал прогона.
  */
-import { execSync } from 'node:child_process';
+import { execFileSync, execSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -51,6 +51,119 @@ function pathMatchesContext(path, context) {
   const c = normalizeRelPath(context);
   if (!p || !c) return false;
   return c === '.' || p === c || p.startsWith(`${c}/`);
+}
+
+function parseJsonSafe(text) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
+function firstString(...values) {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) return value.trim();
+  }
+  return null;
+}
+
+function timestampFromMediaPayload(payload) {
+  if (!payload || typeof payload !== 'object') return null;
+  const direct = firstString(
+    payload.lastSampleAt,
+    payload.lastProbeAt,
+    payload.createdAt,
+    payload.finishedAt,
+    payload.startedAt,
+  );
+  if (direct) return direct;
+  const items = Array.isArray(payload.items) ? payload.items : [];
+  const first = items[0];
+  return first && typeof first === 'object'
+    ? firstString(first.createdAt, first.finishedAt, first.startedAt)
+    : null;
+}
+
+function fetchJsonSync(url, { token, timeoutMs = 5000 } = {}) {
+  const script = `
+const url = process.argv[1];
+const token = process.argv[2] || '';
+const timeoutMs = Number(process.argv[3] || 5000);
+const controller = new AbortController();
+const timer = setTimeout(() => controller.abort(), timeoutMs);
+try {
+  const headers = token ? { 'X-Membrana-Token': token, Authorization: 'Bearer ' + token } : {};
+  const res = await fetch(url, { headers, signal: controller.signal });
+  const text = await res.text();
+  if (!res.ok) {
+    console.error('HTTP ' + res.status + ': ' + text.slice(0, 200));
+    process.exit(1);
+  }
+  console.log(text);
+} catch (error) {
+  console.error(error instanceof Error ? error.message : String(error));
+  process.exit(1);
+} finally {
+  clearTimeout(timer);
+}
+`;
+  return parseJsonSafe(execFileSync(process.execPath, ['-e', script, url, token ?? '', String(timeoutMs)], {
+    encoding: 'utf8',
+    stdio: ['ignore', 'pipe', 'pipe'],
+    timeout: timeoutMs + 1000,
+  }));
+}
+
+function mediaLastSampleUrl(env = process.env) {
+  const explicit = firstString(env.DEPLOY_MEDIA_LAST_SAMPLE_URL, env.MEDIA_LAST_SAMPLE_URL);
+  if (explicit) return explicit;
+  const api = firstString(env.MEDIA_API_URL, env.BACKGROUND_MEDIA_API_URL);
+  const deviceId = firstString(env.DEPLOY_MEDIA_DEVICE_ID, env.MEDIA_PREFLIGHT_DEVICE_ID);
+  const collectionId = firstString(env.DEPLOY_MEDIA_COLLECTION_ID, env.MEDIA_PREFLIGHT_COLLECTION_ID);
+  if (!api) return null;
+  const base = api.replace(/\/$/u, '');
+  if (!deviceId || !collectionId) return `${base}/v1/deploy-preflight/last-sample`;
+  return `${base}/v1/devices/${encodeURIComponent(deviceId)}/collections/${encodeURIComponent(collectionId)}/samples?page=1&limit=1`;
+}
+
+function envWithDotenv(cwd, env = process.env) {
+  const file = cwd ? resolve(cwd, '.env') : null;
+  if (!file || !existsSync(file)) return env;
+  const merged = { ...env };
+  for (const line of readFileSync(file, 'utf8').split(/\r?\n/u)) {
+    const match = /^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/u.exec(line.trim());
+    if (!match) continue;
+    const [, key, value] = match;
+    if (merged[key] === undefined) merged[key] = value.trim().replace(/^"|"$/gu, '');
+  }
+  return merged;
+}
+
+export function defaultLiveSessionProbe({ cwd, env = process.env } = {}) {
+  const resolvedEnv = envWithDotenv(cwd, env);
+  const url = mediaLastSampleUrl(resolvedEnv);
+  if (!url) return null;
+  const payload = fetchJsonSync(url, {
+    token: firstString(resolvedEnv.MEDIA_API_TOKEN, resolvedEnv.MEDIA_INTERNAL_TOKEN, resolvedEnv.API_INTERNAL_TOKEN),
+    timeoutMs: Number(resolvedEnv.DEPLOY_MEDIA_PREFLIGHT_TIMEOUT_MS ?? 5000),
+  });
+  const lastSampleAt = timestampFromMediaPayload(payload);
+  return lastSampleAt ? { lastSampleAt, source: url } : null;
+}
+
+export function liveSessionProblem(probeResult, { now = new Date(), maxAgeMs = 60_000 } = {}) {
+  if (!probeResult) return null;
+  const ageMs =
+    typeof probeResult.ageMs === 'number'
+      ? probeResult.ageMs
+      : Date.parse(String(probeResult.lastSampleAt ?? '')) > 0
+        ? now.getTime() - Date.parse(String(probeResult.lastSampleAt))
+        : null;
+  if (ageMs === null || !Number.isFinite(ageMs) || ageMs < 0 || ageMs >= maxAgeMs) return null;
+  const ageSec = Math.max(0, Math.round(ageMs / 1000));
+  const source = probeResult.source ? ` (${probeResult.source})` : '';
+  return `устройство пишет: последняя проба ${ageSec} с назад, моложе ${Math.round(maxAgeMs / 1000)} с${source}`;
 }
 
 export function dirtyLinesInBuildContext(dirtyLines, buildContextPaths = null) {
@@ -102,6 +215,9 @@ export function allowDirtyReason(argv = process.argv.slice(2), env = process.env
  * @param {string} [opts.cwd]         Корень репозитория.
  * @param {string} [opts.service]     Сервис из IMAGE_SERVICES; включает scoped dirty по Dockerfile COPY.
  * @param {string[]} [opts.buildContextPaths] Тестовый/явный контекст сборки.
+ * @param {()=>({lastSampleAt?: string, ageMs?: number, source?: string}|null)} [opts.liveSessionProbe] Проверка живого сеанса записи.
+ * @param {number} [opts.liveSessionMaxAgeMs] Свежесть пробы, блокирующая деплой.
+ * @param {Date} [opts.now] Часы для зубов.
  * @param {boolean} [opts.allowDirty] Разрешить обход (по умолчанию из argv/env).
  * @param {string|null} [opts.allowDirtyReason] Причина обхода.
  * @param {(code:number)=>never} [opts.exit] Выход; параметр ради зубов.
@@ -112,11 +228,15 @@ export function deployPreflight({
   cwd,
   service,
   buildContextPaths,
+  liveSessionProbe = defaultLiveSessionProbe,
+  liveSessionMaxAgeMs = 60_000,
+  now = new Date(),
   allowDirty = isAllowDirty(),
   allowDirtyReason: reason = allowDirtyReason(),
   exit = process.exit,
 }) {
   const problems = [];
+  const hardProblems = [];
   let originHead = null;
 
   const inside = tryGit('rev-parse --is-inside-work-tree', { cwd });
@@ -160,14 +280,19 @@ export function deployPreflight({
     );
   }
 
-  if (problems.length === 0) {
+  const liveProbeResult = liveSessionProbe ? liveSessionProbe({ branch, cwd, service }) : null;
+  const liveProblem = liveSessionProblem(liveProbeResult, { now, maxAgeMs: liveSessionMaxAgeMs });
+  if (liveProblem) hardProblems.push(liveProblem);
+
+  if (problems.length === 0 && hardProblems.length === 0) {
     const ignored = ignoredDirtyLines.length > 0 ? `; вне контекста не блокирует: ${ignoredDirtyLines.length}` : '';
     console.log(`[preflight] OK: build context чист и HEAD совпадает с origin/${branch}${ignored}`);
-    return { clean: true, problems, originHead, dirtyLines, ignoredDirtyLines, buildContextPaths: contextPaths, allowDirtyReason: null };
+    return { clean: true, problems, hardProblems, originHead, dirtyLines, ignoredDirtyLines, buildContextPaths: contextPaths, allowDirtyReason: null };
   }
 
   console.error('\n[preflight] ВНИМАНИЕ — локальное состояние ≠ то, что задеплоится из origin:');
   for (const p of problems) console.error(`  • ${p}`);
+  for (const p of hardProblems) console.error(`  • ${p}`);
   if (dirtyLines.length > 0) {
     console.error('\n  Незакоммиченные/неотслеживаемые файлы ВНУТРИ build context:');
     for (const line of dirtyLines.slice(0, 40)) console.error(`    ${line}`);
@@ -182,13 +307,18 @@ export function deployPreflight({
       ' — локальные изменения в build context НЕ попадут в сборку.\n  Закоммить и запушь их, либо осознанно обойди gate: --allow-dirty-reason "почему" (или DEPLOY_DIRTY_REASON).\n',
   );
 
+  if (hardProblems.length > 0) {
+    console.error('[preflight] свежая проба означает живой сеанс записи — деплой запрещён.\n');
+    exit(1);
+  }
+
   if (allowDirty) {
     if (!reason) {
       console.error('[preflight] обход включён, но причина не названа — отказ. Укажи --allow-dirty-reason или DEPLOY_DIRTY_REASON.\n');
       exit(1);
     }
     console.error(`[preflight] обход включён: ${reason} — продолжаю.\n`);
-    return { clean: false, problems, originHead, dirtyLines, ignoredDirtyLines, buildContextPaths: contextPaths, allowDirtyReason: reason };
+    return { clean: false, problems, hardProblems, originHead, dirtyLines, ignoredDirtyLines, buildContextPaths: contextPaths, allowDirtyReason: reason };
   }
 
   exit(1);
