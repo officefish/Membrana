@@ -390,3 +390,26 @@ describe('requestLibraryChartList (#2110)', () => {
     expect(seen).toEqual([['c1', { volume: 20, criterion: 'loudness-over-floor', from: '2026-08-24T00:00:00.000Z' }]]);
   });
 });
+
+describe('requestLibraryDuplicates (#2109)', () => {
+  it('бэкенд без глагола — named-отказ, а не пустые пары', async () => {
+    const svc = createMediaLibraryService(new MemoryStorageBackend({ limitBytes: 1_000_000 }));
+    await expect(svc.requestLibraryDuplicates('c1')).rejects.toThrow(/только при серверной библиотеке/u);
+  });
+
+  it('сервис пробрасывает заказ и ответ как есть; глагола «удалить» в ответе нет', async () => {
+    const backend = new MemoryStorageBackend({ limitBytes: 1_000_000 }) as unknown as Record<string, unknown>;
+    const outcome = {
+      runId: 'r1',
+      report: { groups: [], candidatesSeen: 2, duplicatesFound: 0, passport: { minDistanceRatio: 0.05, inherited: true }, refusal: null },
+      inSet: 2, inWindow: 2, measured: 2,
+    };
+    const seen: unknown[] = [];
+    backend.requestLibraryDuplicates = (collectionId: string, req: unknown) => { seen.push([collectionId, req]); return Promise.resolve(outcome); };
+    const svc = createMediaLibraryService(backend as never);
+    const got = await svc.requestLibraryDuplicates('c1', { from: '2026-08-23T00:00:00.000Z' });
+    expect(got).toBe(outcome);
+    expect(seen).toEqual([['c1', { from: '2026-08-23T00:00:00.000Z' }]]);
+    expect(JSON.stringify(got)).not.toMatch(/delete|remove|удал/iu);
+  });
+});

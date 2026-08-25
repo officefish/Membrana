@@ -113,6 +113,8 @@ export {
 } from './chart-list/executor.js';
 export { CHART_LIST_MEASURE_MANIFEST, CHART_LIST_MEASURE_ID } from './chart-list-measure/manifest.js';
 export { LIBRARY_CHART_LIST_MANIFEST, LIBRARY_CHART_LIST_ID } from './chart-list-library/manifest.js';
+export { LIBRARY_DUPLICATES_MANIFEST, LIBRARY_DUPLICATES_ID } from './chart-list-duplicates/manifest.js';
+export { runLibraryDuplicates, type LibraryDuplicatesOutcome } from './chart-list-duplicates/executor.js';
 export {
   librarySettingsUsable,
   runLibraryChartList,
