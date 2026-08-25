@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import {
   TELEMETRY_TRACK_SCHEMA_VERSION,
+  createLiveJournalService,
   createSyncJournalStorageBackend,
   liveJournalTrackClientEntryId,
   type ICabinetJournalPort,
@@ -73,6 +74,61 @@ describe('SyncJournalStorageBackend', () => {
     expect(listJournalItems).toHaveBeenNthCalledWith(
       2,
       expect.objectContaining({ since: remoteTrack.timestamp }),
+    );
+  });
+
+  it('drops server-deleted rows only on explicit full reconcile (#2131)', async () => {
+    const keptTrack = {
+      id: 'track-kept',
+      kind: 'track' as const,
+      timestamp: Date.parse('2026-06-15T12:00:05.000Z'),
+      clientEntryId: liveJournalTrackClientEntryId('kept-track'),
+      moduleId: 'mic-mod',
+      moduleName: 'microphone',
+      tags: ['live', 'track'],
+      track: sampleTrackInput('kept-track').track,
+    };
+    const deletedTrack = {
+      ...keptTrack,
+      id: 'track-deleted',
+      timestamp: Date.parse('2026-06-15T12:00:00.000Z'),
+      clientEntryId: liveJournalTrackClientEntryId('deleted-track'),
+      track: sampleTrackInput('deleted-track').track,
+    };
+    const listJournalItems = vi
+      .fn()
+      .mockResolvedValueOnce({
+        items: [keptTrack, deletedTrack],
+        nextCursor: null,
+        counts: { all: 2, tracks: 2, reports: 0, detections: 0 },
+      })
+      .mockResolvedValueOnce({
+        items: [keptTrack],
+        nextCursor: null,
+        counts: { all: 1, tracks: 1, reports: 0, detections: 0 },
+      });
+    const port: ICabinetJournalPort = {
+      listReports: vi.fn().mockResolvedValue([]),
+      listLiveRecords: vi.fn().mockResolvedValue([]),
+      listJournalItems,
+      createReport: vi.fn(),
+      createLiveRecord: vi.fn(),
+    };
+
+    const service = createLiveJournalService(createSyncJournalStorageBackend(port));
+    await service.init();
+    expect(service.getSnapshot().items.map((item) => item.clientEntryId)).toContain(
+      deletedTrack.clientEntryId,
+    );
+
+    await service.refresh({ mode: 'full-reconcile' });
+
+    expect(service.getSnapshot().items.map((item) => item.clientEntryId)).toEqual([
+      keptTrack.clientEntryId,
+    ]);
+    expect(listJournalItems).toHaveBeenNthCalledWith(
+      2,
+      expect.not.objectContaining({ since: expect.any(Number) }),
     );
   });
 

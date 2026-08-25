@@ -10,6 +10,8 @@ import type {
 export interface IJournalStorageBackend {
   getStorageMode(): LiveJournalStorageMode;
   listItems(): Promise<readonly LiveJournalItem[]>;
+  /** Explicit full remote reconcile for server-side deletes; hot append path must not call it. */
+  reconcileRemote?(): Promise<readonly LiveJournalItem[]>;
   appendTrack(input: AppendLiveJournalTrackInput): Promise<LiveJournalItem | null>;
   appendReport(input: AppendLiveJournalReportInput): Promise<LiveJournalItem | null>;
   getItemByClientEntryId(clientEntryId: string): Promise<LiveJournalItem | null>;

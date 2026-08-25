@@ -47,7 +47,7 @@ export interface ListCabinetJournalItemsQuery {
   readonly mediaDeviceId?: string;
   readonly cursor?: string | null;
   readonly filter?: LiveJournalFilter;
-  /** Incremental sync lower bound: return rows whose journal timestamp is greater than this. */
+  /** Incremental sync lower bound: return rows whose journal timestamp is at least this. */
   readonly since?: number;
 }
 

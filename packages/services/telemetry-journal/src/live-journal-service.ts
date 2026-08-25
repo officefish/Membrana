@@ -17,6 +17,12 @@ import type {
   LiveJournalSnapshot,
 } from './types.js';
 
+export type LiveJournalRefreshMode = 'incremental' | 'full-reconcile';
+
+export interface LiveJournalRefreshOptions {
+  readonly mode?: LiveJournalRefreshMode;
+}
+
 export class LiveJournalService {
   private backend: IJournalStorageBackend;
 
@@ -79,8 +85,11 @@ export class LiveJournalService {
     this.emit();
   }
 
-  async refresh(): Promise<void> {
-    const items = await this.backend.listItems();
+  async refresh(options: LiveJournalRefreshOptions = {}): Promise<void> {
+    const items =
+      options.mode === 'full-reconcile' && this.backend.reconcileRemote
+        ? await this.backend.reconcileRemote()
+        : await this.backend.listItems();
     this.publishItems(items);
   }
 
