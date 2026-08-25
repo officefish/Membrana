@@ -41,6 +41,8 @@ export interface SyncJournalStorageBackendOptions {
 
 const DEFAULT_REMOTE_PULL_BACKOFF_MS = 30_000;
 
+type RemotePullMode = 'incremental' | 'full-reconcile';
+
 /** MP7 Node Realtime Gateway — fire-and-forget journal append over WS. */
 export interface IRealtimeJournalPushPort {
   pushReport(input: AppendLiveJournalReportInput): Promise<void>;
@@ -105,6 +107,11 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
   async getItemByClientEntryId(clientEntryId: string): Promise<LiveJournalItem | null> {
     await this.pullRemote();
     return this.local.getItemByClientEntryId(clientEntryId);
+  }
+
+  async reconcileRemote(): Promise<readonly LiveJournalItem[]> {
+    await this.pullRemote('full-reconcile');
+    return this.local.listItems();
   }
 
   async appendTrack(input: AppendLiveJournalTrackInput): Promise<LiveJournalItem | null> {
@@ -181,13 +188,17 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
     writeJournalLocalCache(this.localCacheKey, this.local.takeSnapshot());
   }
 
-  private async pullRemote(): Promise<void> {
+  private async pullRemote(mode: RemotePullMode = 'incremental'): Promise<void> {
     if (Date.now() < this.remotePullBlockedUntil) return;
 
     try {
       if (this.port.listJournalItems) {
-        const pulled = await this.fetchRemoteItemsFromUnifiedApi(this.lastRemoteJournalTimestamp);
-        if (this.lastRemoteJournalTimestamp === null) {
+        const shouldReconcile =
+          mode === 'full-reconcile' || this.lastRemoteJournalTimestamp === null;
+        const pulled = await this.fetchRemoteItemsFromUnifiedApi(
+          shouldReconcile ? null : this.lastRemoteJournalTimestamp,
+        );
+        if (shouldReconcile) {
           this.local.reconcileRemoteItems(pulled.items, this.pendingPushEntryIds);
           this.replaceRemoteWatermark(pulled.items);
         } else {
@@ -196,8 +207,13 @@ export class SyncJournalStorageBackend implements IJournalStorageBackend {
         }
       } else {
         const remoteItems = await this.fetchRemoteItemsFromLegacyLists();
-        this.local.mergeRemoteItems(remoteItems);
-        this.rememberRemoteItems(remoteItems);
+        if (mode === 'full-reconcile') {
+          this.local.reconcileRemoteItems(remoteItems, this.pendingPushEntryIds);
+          this.replaceRemoteWatermark(remoteItems);
+        } else {
+          this.local.mergeRemoteItems(remoteItems);
+          this.rememberRemoteItems(remoteItems);
+        }
       }
       this.persistLocalCache();
     } catch {

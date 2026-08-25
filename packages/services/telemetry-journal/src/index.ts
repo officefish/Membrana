@@ -66,6 +66,8 @@ export {
   getDefaultLiveJournalService,
   resetDefaultLiveJournalServiceForTests,
   setDefaultLiveJournalServiceForTests,
+  type LiveJournalRefreshMode,
+  type LiveJournalRefreshOptions,
 } from './live-journal-service.js';
 
 export type {

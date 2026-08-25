@@ -8,8 +8,11 @@ import {
   Post,
   Query,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import { performance } from 'node:perf_hooks';
+import type { FastifyReply } from 'fastify';
 import { SessionGuard, type AuthenticatedRequest } from '../../common/guards/session.guard';
 import type {
   CreateTelemetryLiveRecordDto,
@@ -61,8 +64,13 @@ export class JournalController {
   }
 
   @Get('journal-items')
-  listJournalItems(@Req() req: AuthenticatedRequest, @Query() query: ListJournalQueryDto) {
-    return this.journalService.listJournalItems(
+  async listJournalItems(
+    @Req() req: AuthenticatedRequest,
+    @Query() query: ListJournalQueryDto,
+    @Res({ passthrough: true }) res: FastifyReply,
+  ) {
+    const started = performance.now();
+    const result = await this.journalService.listJournalItems(
       req.authUser!.id,
       query.limit,
       query.mediaDeviceId,
@@ -70,6 +78,11 @@ export class JournalController {
       query.filter,
       query.since,
     );
+    const durationMs = performance.now() - started;
+    const value = durationMs.toFixed(1);
+    res.header('Server-Timing', `journal-db;dur=${value}`);
+    res.header('X-Membrana-Journal-Db-Duration-Ms', value);
+    return result;
   }
 
   @Delete('journal-items')
