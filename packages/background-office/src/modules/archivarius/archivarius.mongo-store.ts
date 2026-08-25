@@ -42,6 +42,22 @@ async function loadMongoClientCtor(): Promise<new (uri: string) => MongoClientLi
   }
 }
 
+function assertMongoUriHasCredentials(uri: string): void {
+  try {
+    const parsed = new URL(uri);
+    if (parsed.username && parsed.password) return;
+  } catch {
+    throw new ServiceUnavailableException({
+      code: 'ARCHIVARIUS_MONGO_URI_INVALID',
+      message: 'ARCHIVARIUS_MONGO_URI is not a valid MongoDB connection string',
+    });
+  }
+  throw new ServiceUnavailableException({
+    code: 'ARCHIVARIUS_MONGO_AUTH_REQUIRED',
+    message: 'ARCHIVARIUS_MONGO_URI must include username and password',
+  });
+}
+
 /** Диапазонное условие «строго после тройки курсора» при сортировке {ts, sessionId, uuid}. */
 function afterCursorFilter(after: { ts: string; sessionId: string; uuid: string }): Record<string, unknown> {
   return {
@@ -65,6 +81,7 @@ export class MongoArchivariusStore implements ArchivariusStore, ArchivariusQuery
     if (!this.config.ARCHIVARIUS_MONGO_URI) {
       throw new ServiceUnavailableException('ARCHIVARIUS_MONGO_URI is required for MongoArchivariusStore');
     }
+    assertMongoUriHasCredentials(this.config.ARCHIVARIUS_MONGO_URI);
     const MongoClient = await loadMongoClientCtor();
     this.client = await new MongoClient(this.config.ARCHIVARIUS_MONGO_URI).connect();
     this.collection = this.client

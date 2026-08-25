@@ -8,6 +8,7 @@
   Что делает (идемпотентно):
     1. Проверяет node и ffmpeg (ставит через winget, если нет — winget спрашивает владельца).
     2. Кладёт комплект узла в C:\membrana-node: firebat-poller.mjs, field-capture.mjs,
+       node-duty-ready.mjs (предикат готовности к дежурству, #2049: node node-duty-ready.mjs),
        lib\capture-sidecar.mjs (тракт записи — тот же, что у field:capture).
     3. Пишет .env узла из параметров: адрес сервера, устройство, КЛЮЧ УЗЛА.
        Служебного токена медиа-сервиса в .env узла НЕТ и быть не может (ADR-0027 Р3):
@@ -69,7 +70,7 @@ foreach ($tool in @(@{ cmd = 'node'; id = 'OpenJS.NodeJS.LTS' }, @{ cmd = 'ffmpe
 }
 
 # 2. Комплект узла — три файла тракта. Берётся из KitSource (флешка / папка репозитория scripts/).
-$kit = @('firebat-poller.mjs', 'field-capture.mjs', 'lib\capture-sidecar.mjs')
+$kit = @('firebat-poller.mjs', 'field-capture.mjs', 'lib\capture-sidecar.mjs', 'node-duty-ready.mjs')
 New-Item -ItemType Directory -Force -Path (Join-Path $InstallDir 'lib') | Out-Null
 foreach ($f in $kit) {
   $src = Join-Path $KitSource $f

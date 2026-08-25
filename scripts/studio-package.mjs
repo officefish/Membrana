@@ -15,6 +15,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { classifyPackageFailure, packageFailureAdvice } from './lib/studio-package-failure.mjs';
+import { depsBuildArgs } from './lib/studio-package-plan.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const WIN_UNPACKED = join(root, 'apps', 'membrana-studio', 'release', 'win-unpacked');
@@ -61,8 +62,10 @@ if (leftoverExistedBeforeRun) {
   rmSync(WIN_UNPACKED, { recursive: true, force: true });
 }
 
-// Класс «stale dist»: turbo-замыкание собирает протухшие зависимости само (#2147/№5).
-await mustPass('yarn', ['turbo', 'run', 'build', '--filter=@membrana/membrana-studio...']);
+// Класс «stale dist»: turbo-замыкания собирают протухшие зависимости сами (#2147/№5).
+// Два замыкания — клиента и Studio: studio:build собирает apps/client, чьи зависимости
+// (telemetry-journal-service, вещдок Г 25.08) в манифест Studio не входят.
+await mustPass('yarn', depsBuildArgs());
 
 await mustPass('yarn', ['studio:build'], { MEMBRANA_STUDIO_PROD: '1' });
 

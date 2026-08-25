@@ -28,7 +28,7 @@ const branch =
   process.env.MEDIA_GIT_BRANCH || get('MEDIA_GIT_BRANCH') || get('GIT_BRANCH') || 'main';
 
 // DR0: локальное состояние обязано совпадать с origin/<branch> — прод собирается из origin.
-const preflight = deployPreflight({ branch, cwd: root });
+const preflight = deployPreflight({ branch, cwd: root, service: 'media' });
 // DR1: на прод едет только зелёный в CI коммит.
 assertCiGreen({ branch, sha: preflight.originHead });
 

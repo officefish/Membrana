@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { AuthModule } from '../auth/auth.module';
 import { MembraneModule } from '../membrane/membrane.module';
+import { PromoRedemptionRateLimiter } from './promo-redemption-rate-limit';
 import { TariffController } from './tariff.controller';
 import { TariffTransitionService } from './tariff-transition.service';
 
@@ -15,7 +16,7 @@ import { TariffTransitionService } from './tariff-transition.service';
 @Module({
   imports: [AuthModule, MembraneModule],
   controllers: [TariffController],
-  providers: [TariffTransitionService],
+  providers: [PromoRedemptionRateLimiter, TariffTransitionService],
   exports: [TariffTransitionService],
 })
 export class TariffModule {}
