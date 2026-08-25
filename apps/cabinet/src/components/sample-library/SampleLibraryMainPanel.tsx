@@ -2,6 +2,7 @@ import { BUFFER_COLLECTION_ID } from '@membrana/media-library-service';
 
 import { MediaLibraryQuotaBanner } from '@/components/MediaLibraryQuotaBanner';
 import { CabinetSampleChartListPanel } from '@/components/sample-library/CabinetSampleChartListPanel';
+import { CabinetSampleDuplicatesPanel } from '@/components/sample-library/CabinetSampleDuplicatesPanel';
 import { CabinetSampleCollectionBody } from '@/components/sample-library/CabinetSampleCollectionBody';
 import type { CabinetSampleLibraryModel } from '@/lib/useCabinetSampleLibrary';
 
@@ -242,6 +243,18 @@ export function SampleLibraryMainPanel({
           knownSamples={nodeSamples}
           playback={playback}
           disabled={playbackDisabled}
+        />
+      ) : null}
+      {/* Дубли набора (#2109): показать пары и ждать слова; удаление — тем же глаголом хука,
+          что у строки таблицы, чтобы страница перечиталась и тост сказал словом. */}
+      {selection.kind === 'node' && service && active ? (
+        <CabinetSampleDuplicatesPanel
+          service={service}
+          collectionId={selection.collectionId}
+          knownSamples={nodeSamples}
+          playback={playback}
+          onRemove={(id) => handleRemove(id)}
+          disabled={playbackDisabled || !canMutate}
         />
       ) : null}
     </section>

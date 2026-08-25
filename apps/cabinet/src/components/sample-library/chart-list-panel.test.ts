@@ -79,3 +79,37 @@ describe('b4 действует в кабинетной таблице, а не 
     expect(media).toContain("orderBy: { createdAt: 'desc' }");
   });
 });
+
+describe('панель дублей в кабинете — показать пары и ждать слова (#2109)', () => {
+  it('панель существует, объявляет регион и заказывает витрину дублей по текущей коллекции', () => {
+    const src = read('components/sample-library/CabinetSampleDuplicatesPanel.tsx');
+    expect(src).toContain('aria-label="Дубли набора"');
+    expect(src).toContain('service.requestLibraryDuplicates(collectionId,');
+  });
+
+  it('удаление — ТОЛЬКО по клику, ТОЛЬКО с подтверждением, ТОЛЬКО по одной; «удалить все» нет', () => {
+    const src = read('components/sample-library/CabinetSampleDuplicatesPanel.tsx');
+    expect(src).toContain('window.confirm(');
+    expect(src).not.toMatch(/удалить все|removeAll|deleteAll/iu);
+    expect(src).not.toMatch(/duplicates\.map\([^)]*onRemove/u);
+  });
+
+  it('порог печатается со словом «унаследован» — цена числа видна человеку', () => {
+    const src = read('components/sample-library/CabinetSampleDuplicatesPanel.tsx');
+    expect(src).toContain('унаследован от отбора');
+  });
+
+  it('«послушать подряд» — общим ядром близнецов, не своей очередью', () => {
+    const src = read('components/sample-library/CabinetSampleDuplicatesPanel.tsx');
+    expect(src).toContain("playSequence");
+    expect(src).toContain("from '@membrana/sample-playback-service'");
+  });
+
+  it('смонтирована в MainPanel под панелью отбора; удаление — глаголом хука', () => {
+    const src = read('components/sample-library/SampleLibraryMainPanel.tsx');
+    const chart = src.indexOf('<CabinetSampleChartListPanel');
+    const dup = src.indexOf('<CabinetSampleDuplicatesPanel');
+    expect(dup).toBeGreaterThan(chart);
+    expect(src).toContain('onRemove={(id) => handleRemove(id)}');
+  });
+});
