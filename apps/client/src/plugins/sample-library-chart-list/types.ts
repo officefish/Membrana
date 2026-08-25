@@ -10,22 +10,8 @@ export interface SampleLibraryChartListPluginConfig {
 export const defaultSampleLibraryChartListConfig: SampleLibraryChartListPluginConfig = {};
 
 /**
- * Перевод дат из `<input type="date">` в ISO-границы промежутка — В ПОЯСЕ ЧЕЛОВЕКА.
- *
- * Ядро отбора о поясах не знает (оно едино для сервера и клиента), поэтому пояс замораживается
- * здесь: «22.08» для человека — от его local-полуночи до его local-23:59:59.999, и обе границы
- * включительны. `new Date('2026-08-22')` не годится: строка без времени читается как UTC, и для
- * человека восточнее Гринвича день начался бы вчера вечером.
+ * Перевод дат живёт в общем ядре близнецов — `@membrana/media-library-service` (#2110):
+ * Studio и кабинет обязаны считать день человека одинаково, и две копии правила
+ * разъехались бы молча. Реэкспорт оставлен, чтобы соседи панели не меняли импортов.
  */
-export function dateInputToIsoWindow(fromDate: string, toDate: string): { from?: string; to?: string } {
-  const out: { from?: string; to?: string } = {};
-  if (/^\d{4}-\d{2}-\d{2}$/u.test(fromDate)) {
-    const [y, m, d] = fromDate.split('-').map(Number);
-    out.from = new Date(y!, m! - 1, d!, 0, 0, 0, 0).toISOString();
-  }
-  if (/^\d{4}-\d{2}-\d{2}$/u.test(toDate)) {
-    const [y, m, d] = toDate.split('-').map(Number);
-    out.to = new Date(y!, m! - 1, d!, 23, 59, 59, 999).toISOString();
-  }
-  return out;
-}
+export { dateInputToIsoWindow } from '@membrana/media-library-service';
