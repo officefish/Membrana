@@ -3,6 +3,8 @@ import type {
   LibraryChartListRequest,
   SessionDigestRequest,
   SessionDigestRunOutcome,
+  LibraryDuplicatesRequest,
+  LibraryDuplicatesRunOutcome,
   LibraryChartListRunOutcome,
   MediaSample,
   NewSampleMeta,
@@ -52,6 +54,11 @@ export interface IStorageBackend {
     collectionId: string,
     req: SessionDigestRequest,
   ): Promise<SessionDigestRunOutcome>;
+  /** Пары похожих в наборе (#2109): только серверный бэкенд, ничего не удаляет. */
+  requestLibraryDuplicates?(
+    collectionId: string,
+    req: LibraryDuplicatesRequest,
+  ): Promise<LibraryDuplicatesRunOutcome>;
 
   /** Optional: seed read-only tariff catalog (MemoryStorageBackend). */
   importCatalogSample?(

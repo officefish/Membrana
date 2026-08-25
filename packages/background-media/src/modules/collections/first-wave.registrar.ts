@@ -258,6 +258,47 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
         },
       });
 
+      // Витрина дублей набора (#2109) — третий показ семейства. Чтение проб, окно и отпечаток
+      // входа — те же, что у витрины отбора; ручек человека нет (порог унаследован, паспорт это
+      // говорит), configHash — от умолчаний. Результат — по runId, как у соседей: ничего не удаляет.
+      const duplicatesManifest = handlers.LIBRARY_DUPLICATES_MANIFEST;
+      this.contextBuilders.set(duplicatesManifest.id, async (req) => {
+        const samples = await librarySamplesOf(req.collectionId);
+        const { candidates } = handlers.filterByDateWindow(samples, libraryWindowOf(req));
+        return {
+          address: this.addressOf(duplicatesManifest, req, handlers.uuidV7()),
+          fingerprints: {
+            inputHash: handlers.sha256Hex(candidates.map((s) => s.sampleId).sort().join('\n')),
+            configHash: handlers.sha256Hex(JSON.stringify(handlers.CHART_LIST_DEFAULTS)),
+          },
+          resumeMode: 'fresh',
+          trigger: req.trigger ?? duplicatesManifest.triggers[0]!,
+          payload: {
+            collectionId: req.collectionId,
+            ...(req.from ? { from: req.from } : {}),
+            ...(req.to ? { to: req.to } : {}),
+            occurredAt: new Date(),
+          },
+        };
+      });
+      this.host.registerPlugin(duplicatesManifest, {
+        execute: async (ctx) => {
+          const p = ctx.payload as { collectionId: string; from?: string; to?: string };
+          const samples = await librarySamplesOf(p.collectionId);
+          const window = {
+            ...(p.from ? { fromMs: Date.parse(p.from) } : {}),
+            ...(p.to ? { toMs: Date.parse(p.to) } : {}),
+          };
+          const outcome = await handlers.runLibraryDuplicates(
+            { measure: async (ids) => (await handlers.measureSampleSet({ reader: mfcc.reader }, p.collectionId, ids)).candidates },
+            samples,
+            window,
+          );
+          this.results.set(ctx.address.runId, outcome);
+          return { completedAt: new Date(), kind: 'showcase' as const };
+        },
+      });
+
       const digestManifest = handlers.SESSION_DIGEST_MANIFEST;
       this.contextBuilders.set(digestManifest.id, async (req) => {
         // Окно приезжает от вызывающего и едет в payload: свод идёт по ОКНУ, не по пробе.

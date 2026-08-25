@@ -16,6 +16,8 @@ import type {
   LibraryChartListRunOutcome,
   SessionDigestRequest,
   SessionDigestRunOutcome,
+  LibraryDuplicatesRequest,
+  LibraryDuplicatesRunOutcome,
   Collection,
   ImportBlobOptions,
   MediaLibrarySnapshot,
@@ -274,6 +276,17 @@ export class MediaLibraryService {
       throw new Error('Свод сеанса доступен только при серверной библиотеке (media-server)');
     }
     return this.backend.requestSessionDigest(collectionId, req);
+  }
+
+  /** Пары похожих в наборе (#2109). Ничего не удаляет — удаление только по клику, отдельным глаголом removeSample. */
+  async requestLibraryDuplicates(
+    collectionId: string,
+    req: LibraryDuplicatesRequest = {},
+  ): Promise<LibraryDuplicatesRunOutcome> {
+    if (!this.backend.requestLibraryDuplicates) {
+      throw new Error('Поиск дублей доступен только при серверной библиотеке (media-server)');
+    }
+    return this.backend.requestLibraryDuplicates(collectionId, req);
   }
 
   async moveSample(sampleId: string, toCollectionId: string): Promise<MediaSample> {

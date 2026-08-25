@@ -9,6 +9,8 @@ import type {
   LibraryChartListRunOutcome,
   SessionDigestRequest,
   SessionDigestRunOutcome,
+  LibraryDuplicatesRequest,
+  LibraryDuplicatesRunOutcome,
   CollectionKind,
   MediaSample,
   NewSampleMeta,
@@ -275,6 +277,25 @@ export class ServerStorageBackend implements IStorageBackend {
       },
     );
     if (!row.result) throw new Error('media не вернул результат свода сеанса — прогон без исхода');
+    return { runId: row.runId, ...row.result };
+  }
+
+  async requestLibraryDuplicates(
+    collectionId: string,
+    req: LibraryDuplicatesRequest,
+  ): Promise<LibraryDuplicatesRunOutcome> {
+    const row = await this.requestJson<{ runId: string; result?: Omit<LibraryDuplicatesRunOutcome, 'runId'> }>(
+      `/collections/${encodeURIComponent(collectionId)}/plugins/membrana.showcase.library-duplicates/request`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...(req.from ? { from: req.from } : {}),
+          ...(req.to ? { to: req.to } : {}),
+        }),
+      },
+    );
+    if (!row.result) throw new Error('media не вернул результат поиска дублей — прогон без исхода');
     return { runId: row.runId, ...row.result };
   }
 
