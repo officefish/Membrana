@@ -1,44 +1,36 @@
-<!-- Сгенерировано: 2026-08-24T18:13:41.272Z (yarn code-review; daily, llm-xai) -->
+<!-- Сгенерировано: 2026-08-25T16:00:59.349Z (yarn code-review; daily, llm-xai) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: ce6ba4a17619990cf20cad9cadf548e17efc7d71^..950f795951d31f72784e74abf3bdabbc6107ccf9 (24 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): b4035c84 #2125 (2435), 5efa5137 #2127 (445), cbd0b9c3 #2132 (627), 666cca26 #2126 (469), 3936cca1 #2130 (508), 31615169 #2137 (490), dbeb5ee7 #2121 (507), 950f7959 (845)
+> Период: 1bade127124827b2ffe8479b97131debc84832a9^..50e47045ec89f4db33da8a9acc8f2a3b86a83e17 (25 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): e4e82d40 #2154 (408), 6a2fa9c6 #2110 (541), 7260993c #2157 (472), 8a87ce05 #2162 (635), 0e7fe7ed #2161 (813), 61705d2d #2168 (710), 50e47045 (835)
 
 ---
 
 Tier: T2
 
-[Архитектор/vesnin]: Ведущий. По видимому exact-diff бестиарий B1–B10 не всплескивает BLOCK: #2115 уводит `plan:week` на панельную цепочку (издаём через реестр процедур, не прямой Anthropic) — это согласуется с Т1 шторма; #2124 держит окно дат как настройку до отбора, не четвёртый критерий. Новые экспонаты 23.08 («перечитать всё», «пагинация напоказ», «пострадавший разгоняет») — предмет #2127, дифф oversized и здесь не развёрнут: **пропуск по docs/ритуалу/chart-list/LLM-проводу; горячий journal-path и meeting #2125 — отдельно, не «LGTM дня скопом»**. Свежесть `main-day-assertions` (19.08) по-прежнему архитектурный дефект контура мандата — не код-BLOCK, но риск ложной оси завтра.
+[Архитектор/Vesnin]: **ПРОПУСК** с оговорками, не BLOCK на утро. День по стволу: ритуал/HANDOFF, зуб `pr:ship` (#2152 / #2147-2), хвосты наблюдаемости и кабинетный chart-list — границы «docs vs tooling vs product» в развёрнутых кусках в целом соблюдены. Антипаттерны: **B6** целенаправленно лечится в #2152 (пустой индекс → ненуль, финал только через `gh pr view`) — хорошо; **B3** риск жив, если #2113/linearize зачтут без wall-time before/after; **B2** — серия oversized (#2110, #2157, #2161, #2162, #2168, 50e47045) без развёрнутого diff в этом прогоне — не авто-BLOCK дня, но **P1** «ревью отдельно». Расхождение мандата: HANDOFF топ-1 = кабинетная панель (#2110), MAIN_DAY = `logging-observability-contour` (#2117) при sources от 24.08 — не выдумывать единую магистраль, утром явный owner-rechoose или честная пометка. C9: в прозе — перевыпуск токена бота; в диффе секретов не видно — не коммитить токены.
 
-[Teamlead]: День бился в боевую аварию журнала и контур наблюдаемости: field #2111, шторм #2116, нарезка meeting #2125 (2435 строк), фикс #2127 (445) — магистраль #2113 по смыслу закрывалась кодом, но **восемь oversized без развёрнутого diff** (#2125/#2127/#2132/#2126/#2130/#2137/#2121/950f7959) = P1-долг ревью, не nit. Рядом: insight дрона #2112 (draft), chart-list окно дат #2124, пересадка `strategic-plan` на `invokeProcedureLlm` #2115, утренние ритуальные артефакты #2114. Риски на завтра: (1) не принять journal-linearize без before/after из field-дока; (2) не склеить витрину и порт проверки (#2086); (3) obs-куски #2118–#2121 OPEN — не подменять ими неревьюенный #2127.  
-Утро: прочитать этот DAILY;  
-`yarn turbo run lint typecheck test --filter=@membrana/plugin-handlers`;  
-точечно journal/cabinet-пакеты из #2127 (`yarn turbo run typecheck test --filter=…` по фактическим package name из PR);  
-`yarn code-review:pr 2127` и `yarn code-review:pr 2125` (обязательный долг);  
-`yarn docs:lint`; не стартовать hostess/assets/batch/UI journal-home без owner-choice.
+[Teamlead]: Сводка: утро 25.08 (HANDOFF + claim-сессии Г/В/Б/ведущая), ритуальные артефакты, зуб доставки #2152, далее пачка product/tooling PR с oversized-диффами — предмет вечернего долга, не «LGTM всего дня вслепую». Риски на завтра: (1) ложный зелёный linearize без цифр N append, (2) гонка main в окно деплоя кабинета (`/health/deep` busy ← PR 2144 ещё не на проде), (3) буфер 1727 проб до дежурства 28.08. Утро: читать этот review + HANDOFF; не гонять `yarn code-review` утром. Команды: `yarn turbo run lint typecheck test --filter=./scripts` (или пакет, где лежат тесты `pr-ship`); `yarn code-review:pr 2110`; при необходимости `yarn code-review:pr 2127` / `2125` если вердикты ещё не в следе; `gh pr view <N> --json state,mergeCommit` на всё «доставленное» руками; смоук кабинета после деплоя: `/health/deep` не `busy` в idle.
 
-[Структурщик]: #2115 — границы соблюдены: убран прямой `anthropicPost`/`getAnthropicKey` из `_strategic-plan.mjs`, процедура `strategic-plan` в `llm-procedures.json` (group ritual) + chain в `llm-procedure-defaults.json`; switch провайдера остаётся в панели. #2124 — чистая функция в `plugin-handlers` без React/store, отказ `empty-window`/`invalid-window` отделён от `no-candidates`, пятый аргумент опционален (совместимость). C3/C4 по видимому diff ок. #2127/#2125 без тела — C1 (циклы, склейка client do/while ↔ server take 5000) **не зачтены** до отдельного прохода. C7: тесты окна дат рядом и по делу. C8/C9 в видимом — без `console.log`/секретов.
+[Структурщик]: #2152 — чистые экспорты `commitPreflightProblem` / `requestedPrMismatchProblem` / `finalStateLine` + unit-тесты, preflight до шагов, без скрытого `git add` — слабая связанность CLI сохранена, C7 ок для зуба. Ритуал/HANDOFF/liveness — машинная колонка «Занято» согласована с claim-контрактом (C10 docs sync). Oversized product-PR (#2110 cabinet twin, #2161/#2162/#2168 и др.) в этом daily **не развёрнуты** — границы пакетов и циклы (C1/C3/C4) для них = отдельный pr-review, не зачёт «по заголовку». Trail `ritual-day` orphaned/fail — запах процесса (не silent green кода, но каскад обломков входа).
 
-[Математик]: #2124 — correctness сильный: границы включительные, half-open окна, NaN → `invalid-window` (не сравнение с NaN), окно **до** `selectChartList` (громкие старые не вытесняют тихих в окне). #2112 — порядковый анализ / огибающая / Q-const как гипотеза; RESEARCH пустой — в код не тащить. Квадратичность ленты (N·pages) — класс сложности, не DSP; after-мерки wall-time на N append обязательны для приёмки #2127. Кепстр 80–250 Гц vs станок ~53 Гц — напоминание не двигать пороги «Этап 1.A» без choose.
+[Математик]: В развёрнутом диффе нет FFT/спектра/analyzer — **—**. Напоминание по долгу дня: before/after wall-time и «запросов на пробу ⟂ длина ленты» для #2113 — измерительные инварианты, не UI; без чисел N append закрытие issue = B3.
 
-[Музыкант]: Запись 23.08 удержала 1136 проб / 48 kHz / ноль разрывов при лежащем кабинете — независимость media-path подтверждена измерением; фикс журнала не должен трогать audio-engine/capture. C2 не задет в видимом diff. Smoke «первый трек → 48 kHz или fail-closed» — санитарный хвост, не подмена фокуса. Insight дрона: envelope/order — следующий контур Музыканта+Математика после research, не вчерашний merge.
+[Музыкант]: Web Audio / audio-engine / 48 kHz path в развёрнутых кусках не трогались — **—**. Санитарный хвост Firebat «первый трек → 48 kHz или fail-closed» (#2046 class) остаётся smoke’ом, не магистралью; C2 не нарушен тем, что видно.
 
-[Верстальщик]: UI «дома журнала» / нарезка буфер·наборы·архив в дне сознательно не открывались — верно. #2124 — ядро отбора, не JSX; a11y/DESIGN не применимы. Т4 шторма (лицо ошибки + номер на экране) — завтрашняя сессия Б/собрание, не верстка вчера. C5: —.
+[Верстальщик]: Кабинетный близнец panel (#2110) и b4 (свежие сверху, per-sample, перенос) — зона DESIGN/a11y (C5), дифф oversized **не ревьюился здесь**. P1: не мержить/не принимать UX «на словах витрины на проде» без прохода по табличным контролам и клавиатуре; Studio↔cabinet parity — продуктовое слово владельца, проверять визуально на проде после `studio:package`/зуба #2147.
 
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 24.08 / ствол ce6ba4a1^..950f7959)
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-08-25)  
+Definition of Done (утро):  
+1) прочитан HANDOFF + этот review;  
+2) `gh pr view` по открытым/вчерашним поставкам;  
+3) `yarn code-review:pr 2110` (и хвосты oversized по слову ведущей);  
+4) статус #2113 = closed **или** явный gap с field-метриками;  
+5) после деплоя кабинета — `/health/deep` idle ≠ ложный `busy`.  
 
-Definition of Done (утро):
-- [ ] Прочитан вчерашний review + field `2026-08-23-night-duty-journal-congestion.md`
-- [ ] `yarn turbo run typecheck test --filter=@membrana/plugin-handlers` зелёный
-- [ ] Отдельный human/agent pass: `yarn code-review:pr 2127` (linearize) и `yarn code-review:pr 2125` (meeting cut)
-- [ ] Before/after по меркам field на #2127 зафиксированы или явный gap в #2113
-- [ ] Не стартовать journal-home UI / hostess / assets / batch без owner-choice
-- [ ] Перечеканка `main-day-assertions.json` в санитарном хвосте (stale 19.08)
-
-Риски:
-- **P0 (контур):** регрессия live-journal append→refresh, если #2127 не до конца линеаризует client full-scan или server memory-merge — **не зачтён без diff-ревью**
-- **P1:** 8 oversized PR без развёрнутого review; #2096 и OPEN obs #2118–#2121 отвлекают от hot-path
-- **P1:** stale owner-assertions → ложная L-ось firebat «из инерции»
-- **P2:** insight-drone RESEARCH пуст; orphaned ritual-day trail (молчаливые fail close) — гигиена процедуры, не merge-blocker
+Риски:  
+- **P0** — зачёт journal linearize / #2113 без wall-time before/after (регрессия дежурства 28.08)  
+- **P1** — непросмотренные oversized (#2110, #2157, #2161, #2162, #2168, 50e47045); расхождение MAIN vs HANDOFF по магистрали; прод-хвост health-deep  
+- **P2** — orphaned ritual-day в trail; калибровка DW + docker prune на media-VPS (руки владельца)
