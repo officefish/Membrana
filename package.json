@@ -153,6 +153,7 @@
     "archivarius:push": "node scripts/archivarius-push.mjs",
     "archivarius:evening": "node scripts/archivarius-evening-step.mjs",
     "report:check": "node scripts/report-check.mjs",
+    "report:delivery-check": "node scripts/delivery-report-check.mjs",
     "ritual:evening": "node scripts/ritual-evening-run.mjs",
     "ritual:evening:local": "yarn archive:daily-day && yarn ensure-ollama && yarn local-code-review && yarn save-code-review && yarn task:close-github",
     "night:open": "node scripts/night-build-open.mjs",
