@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, Optional } from '@nestjs/common';
 
 export interface PromoRateLimitAttempt {
   readonly accountId: string;
@@ -10,6 +10,8 @@ interface Bucket {
   count: number;
   resetAt: number;
 }
+
+export const PROMO_REDEMPTION_RATE_LIMIT_OPTIONS = Symbol('PROMO_REDEMPTION_RATE_LIMIT_OPTIONS');
 
 const DEFAULT_MAX_ATTEMPTS = 5;
 const DEFAULT_WINDOW_MS = 60_000;
@@ -25,7 +27,11 @@ export class PromoRedemptionRateLimiter {
   private readonly windowMs: number;
   private readonly buckets = new Map<string, Bucket>();
 
-  constructor(options: { maxAttempts?: number; windowMs?: number } = {}) {
+  constructor(
+    @Optional()
+    @Inject(PROMO_REDEMPTION_RATE_LIMIT_OPTIONS)
+    options: { maxAttempts?: number; windowMs?: number } = {},
+  ) {
     this.maxAttempts =
       options.maxAttempts ?? positiveInt(process.env.PROMO_REDEMPTION_RATE_LIMIT_MAX, DEFAULT_MAX_ATTEMPTS);
     this.windowMs =
