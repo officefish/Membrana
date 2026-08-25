@@ -1,5 +1,11 @@
 // Зуб #2147/№1: один сторож покрытия App DI smoke на ВСЕ Nest-приложения.
 // Новое приложение с @nestjs/core без смоука или без строк CI-гейта — красный.
+//
+// ГДЕ БЕЖИТ В CI (вопрос ревью #2156): через `yarn test:scripts` (ci.yml, двумя
+// джобами) — discovery каталога тестов берёт scripts/**/*.test.mjs
+// (scripts/lib/tests-container.mjs: root=scripts, suffix=.test.mjs); проверка:
+// `node scripts/test-scripts-run.mjs --list | grep nest-di`. Смоук-файл кабинета
+// существует на main с #2142 (24.08) — этот PR добавляет только гейт-строки и сторожа.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
