@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14398/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 333 (причины в op-log) -->
+Записей: 49 · бюджет 14357/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 334 (причины в op-log) -->
+
+### 2026-08-25 · позиция · team-evening-feedback
+
+> Оценка артефактов: `MAIN_DAY_ISSUE` чётко определяет архитектурную магистраль и фиксирует расхождение с `sources`, что позволяет избежать ошибок «немого синтеза». Ревью, хоть и с оговорками, корректно подсветило антипаттерн B6 и его лечение в #2152. Итоги дня: Границы модулей в […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-25.md#reply-1`
 
 ### 2026-08-24 · позиция · logging-observability-cut-m0-order
 
@@ -290,14 +296,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
 
-### 2026-08-10 · позиция · team-evening-feedback
+### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 
-> Скоуп — тулинг и бизнес-процессы, ни один путь не входит в авто-T2, Tier корректно понижен до T1. Оценка артефактов: регламент Team Evening Feedback и промпт согласованы; MAIN_DAY_ISSUE устарел на день (магистраль архивариуса уже закрыта PR #1815 по данным реестра карточек […]
+> До object gate `recordId` разрешается в `canonicalRef`, current tip, policy version и object-version vector. Неизвестный record, binding, action или version даёт fail-closed, а не fallback. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
-
-> Выбираю одну модель: Affine является только сменной человеческой проекцией. Канонические originals, identity, authority, binding и переносимые annotations остаются вне движка. Контракт Affine не становится новым интерфейсом контейнера. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`

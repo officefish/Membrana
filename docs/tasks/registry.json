@@ -15,7 +15,7 @@
       "supportPersonas": [],
       "notes": "сессия Б после пяти зубов · шот · git check-attr merge = union для всех *.jsonl в docs",
       "archiveNotes": "PR #2171 (c20ab145), сессия Б 25.08 — сверено ведущей: предок main, CI 5/5; на проде с деплоя №3",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-25"
     },
     {
       "id": "deliver-to-main-in-chain",
@@ -32,7 +32,7 @@
       "supportPersonas": [],
       "notes": "сессия Б после пяти зубов · шот · DoD: утро и вечер exit 0 без повтора",
       "archiveNotes": "PR #2171 (c20ab145), сессия Б 25.08 — сверено ведущей: предок main, CI 5/5; на проде с деплоя №3",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-25"
     },
     {
       "id": "archivarius-mongo-auth",
@@ -49,7 +49,7 @@
       "supportPersonas": [],
       "notes": "сессия В (Codex) · шот · выкатка офиса — руки владельца",
       "archiveNotes": "PR #2162 (8a87ce05), сессия В (Codex) 25.08 — сверено ведущей по стволу: предок main; CI зелёный, DI-смоук кабинета поймал класс #2009 в CI до прода",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-25"
     },
     {
       "id": "capture-measured-over-declared",
@@ -66,7 +66,7 @@
       "supportPersonas": [],
       "notes": "сессия В (Codex) · шот · порча: заголовок 48k при 44.1k → отказ с родом (контракт куска B)",
       "archiveNotes": "PR #2162 (8a87ce05), сессия В (Codex) 25.08 — сверено ведущей по стволу: предок main; CI зелёный, DI-смоук кабинета поймал класс #2009 в CI до прода",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-25"
     },
     {
       "id": "promo-redemptions-rate-limit",
@@ -83,7 +83,7 @@
       "supportPersonas": [],
       "notes": "сессия В (Codex) · шот · зуб N+1 → 429",
       "archiveNotes": "PR #2162 (8a87ce05), сессия В (Codex) 25.08 — сверено ведущей по стволу: предок main; CI зелёный, DI-смоук кабинета поймал класс #2009 в CI до прода",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-25"
     },
     {
       "id": "deploy-busy-device-predicate",
@@ -100,7 +100,7 @@
       "supportPersonas": [],
       "notes": "сессия В (Codex) · шот · порча: свежая проба → preflight красный; цена класса 25 треков 21.08",
       "archiveNotes": "PR #2162 (8a87ce05), сессия В (Codex) 25.08 — сверено ведущей по стволу: предок main; CI зелёный, DI-смоук кабинета поймал класс #2009 в CI до прода",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-25"
     },
     {
       "id": "node-duty-ready-predicate",

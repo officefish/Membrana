@@ -1,1 +1,4 @@
 {"ts":"2026-08-25T05:36:05.430Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-25T16:23:47.572Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-08-25-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-25T16:23:47.572Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-08-static-mmbrn-container-m7-migration-delivery","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-25T16:23:47.572Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

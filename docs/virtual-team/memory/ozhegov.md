@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14377/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 325 (причины в op-log) -->
+Записей: 49 · бюджет 14383/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 326 (причины в op-log) -->
+
+### 2026-08-25 · позиция · team-evening-feedback
+
+> Оценка артефактов: Согласованность документов высокая. `DAILY_CODE_REVIEW` верно указывает на «запах процесса» — orphaned trail `ritual-day`, что важнее, чем «зелёный код». Итоги дня: Работа по `pr:ship` (#2152) проведена образцово: чистые экспорты, явные проблемы, unit-тесты — […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-25.md#reply-1`
 
 ### 2026-08-24 · позиция · logging-observability-cut-m0-order
 
@@ -289,12 +295,6 @@
 > Ожегов Оценка артефактов: MAIN_DAY_ISSUE и стендап дали разные магистрали — это норма (гейт свежее), но `docs/tasks/README.md` был синхронизирован с реестром отдельным коммитом (`c7af8e74`) уже после закрытий соседа — типичный дрейф бухгалтерии, санитарная норма #1744 сработала […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
-
-### 2026-08-10 · позиция · team-evening-feedback
-
-> `tasks/registry.json` — шесть переходов состояний атомарны, `archiveNotes` содержательны (не B10-заглушки), README реестра синхронизирован. Оценка артефактов: `debt-ledger.jsonl` — append-only соблюдён, verb `repay`+`birth` корректны; регламенты и промпт вечернего фидбека […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
 
 ### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 

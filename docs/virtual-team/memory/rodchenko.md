@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14400/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 317 (причины в op-log) -->
+Записей: 49 · бюджет 14381/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 318 (причины в op-log) -->
+
+### 2026-08-25 · позиция · team-evening-feedback
+
+> Оценка артефактов: Видно большое внимание к продуктовой части (`sample-library`). Артефакты фиксируют понятный критерий — «показать пары, ждать слова». Это правильный подход. Итоги дня: Огромный пласт работы сделан в моей зоне — кабинетная панель (#2110), дубли в наборах (#2109, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-25.md#reply-1`
 
 ### 2026-08-24 · позиция · logging-observability-cut-m0-order
 
@@ -295,9 +301,3 @@
 > UI-компоненты не затронуты; night-hunt упоминает дрейф `--color-*` ↔ DaisyUI — архивный аналитический артефакт, не новый код. Оценка артефактов: регламент и промпт вечернего фидбека — читабельны, формат таблиц не сломан; markdown-структура MAIN_DAY_ISSUE плотная, но раздел […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
-
-### 2026-08-08 · позиция · static-mmbrn-container-m7-migration-delivery
-
-> Начинаю с пользовательского контура ссылок. Старые deep link на `strategy.mmbrn.tech` после cutover не должны «тихо» открывать чужой UI: либо явный mapped redirect на static/Panel-маршрут, либо честный unmapped. Никакого pass-through «как было» — это обход authority и ломает […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/static-mmbrn-container-m7-migration-delivery-2026-08-08.md#reply-1`

@@ -7,10 +7,17 @@
   "frozenDigest": "0313601377efad41543ed4c6f33fad7e9322d39395ecce4395ea05cfc2b9868d",
   "magistral": "sample-library-cabinet-chart-list",
   "swallow": {
-    "draftDigest": "ea5a9c91fe97e1c43a58e3e9456ff5b271952f05e59a6c61640ea830514d819d",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-08-25.md",
+    "draftDigest": "96bd67e81cc1f9933546ad3d0030fa14e27cd9fe37ddd2ededabbbea3e5d49f7",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-25.md",
     "ownerAck": true,
-    "day": "2026-08-25"
+    "day": "2026-08-25",
+    "claimsProbe": {
+      "verdict": "soft",
+      "protocol": "docs/seanses/team-evening-feedback-2026-08-25.md",
+      "sha": "50e47045ec89",
+      "at": "2026-08-25T16:04:18.127Z"
+    },
+    "gate": "evening:partner-swallow"
   },
   "day": "2026-08-25",
   "magistralChosenAt": "2026-08-25",
