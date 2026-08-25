@@ -30,6 +30,13 @@ const LIVE_PENDING = JSON.parse(
   readFileSync(new URL('../docs/tasks/dead-wire-pending.json', import.meta.url), 'utf8'),
 );
 
+function ritualHostSource(pkg, host) {
+  const script = String(pkg.scripts[host] ?? '');
+  const m = /^node\s+(scripts\/[^\s]+\.mjs)$/u.exec(script);
+  if (!m) return script;
+  return `${script}\n${readFileSync(new URL(`../${m[1]}`, import.meta.url), 'utf8')}`;
+}
+
 // ── извлечение носителя ──────────────────────────────────────────────────────
 
 test('составная команда отдаёт все носители, а не первый', () => {
@@ -303,7 +310,7 @@ test('сторож ВПАЯН в утреннюю цепочку, а не тол
   // Ловушка, ради которой зуб и стоит: глагол dead-wire:check существовал в package.json
   // и в этом файле — и не звался ниоткуда. Объявление без вызова прибором не является.
   const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-  const chain = String(pkg.scripts['ritual:day']);
+  const chain = ritualHostSource(pkg, 'ritual:day');
   assert.ok(chain.includes('dead-wire-check.mjs'), 'вызова нет — сторож снова спит');
 
   const at = chain.indexOf('dead-wire-check.mjs');
@@ -313,7 +320,7 @@ test('сторож ВПАЯН в утреннюю цепочку, а не тол
 
 test('сторож НЕ обёрнут в «|| true»: гашеный отказ — не сторож', () => {
   const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-  const chain = String(pkg.scripts['ritual:day']);
+  const chain = ritualHostSource(pkg, 'ritual:day');
   const at = chain.indexOf('dead-wire-check.mjs');
   const tail = chain.slice(at, at + 60);
   assert.doesNotMatch(tail, /\|\|\s*true/u, 'обёртка вернула бы ровно ту болезнь, что лечится');
@@ -339,7 +346,7 @@ test('манифест и цепочка не разъедутся молча: �
   const pkg = JSON.parse(readFileSync(new URL('package.json', root), 'utf8'));
 
   const w = m.trigger.watchdog;
-  const chain = String(pkg.scripts[w.host]);
+  const chain = ritualHostSource(pkg, w.host);
   const at = chain.indexOf(w.command);
 
   assert.ok(at >= 0, `манифест объявляет «${w.command}» в цепочке ${w.host}, а её там нет`);
