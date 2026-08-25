@@ -394,12 +394,17 @@ export function validateEveningFeedbackReadAt(p) {
       continue;
     }
     if (rec.digest !== cur.digest) {
-      failures.push(`${key}: отпечаток не совпадает (читано не то, что лежит)`);
+      // Отпечаток разошёлся — тут версия помогает назвать причину: другой день или правка после чтения.
+      const versionNote =
+        rec.version != null && cur.version != null && rec.version !== cur.version
+          ? ' и версия другая (читан вход другого дня)'
+          : '';
+      failures.push(`${key}: отпечаток не совпадает (читано не то, что лежит)${versionNote}`);
       continue;
     }
-    if (rec.version != null && cur.version != null && rec.version !== cur.version) {
-      failures.push(`${key}: версия не совпадает (читан вход другого дня)`);
-    }
+    // Отпечаток совпал — версия НЕ судит: доставка в ствол (deliver-to-main) легитимно
+    // меняет git-версию того же содержимого. Первый живой прогон 25.08 покраснел ровно
+    // на этом: DAILY_CODE_REVIEW прочитан верно, потом закоммичен цепочкой — ложный красный.
   }
   return { ok: failures.length === 0, failures };
 }

@@ -50,13 +50,20 @@ test('порча: подменить отпечаток → красный', () 
   assert.ok(r.failures.some((f) => f.includes('DAILY_AUDIT') && f.includes('отпечаток')));
 });
 
-test('порча: подсунуть вчерашний вход → красный по версии', () => {
+test('порча: вчерашний вход с ДРУГИМ содержимым → красный, версия названа причиной', () => {
   const { readAt, current } = greenPair();
-  // содержимое совпало (digest тот же), но git-версия другая — вход другого дня
-  readAt.DAILY_CODE_REVIEW = rec('sha-yesterday', readAt.DAILY_CODE_REVIEW.digest);
+  readAt.DAILY_CODE_REVIEW = rec('sha-yesterday', 'digest-yesterday');
   const r = validateEveningFeedbackReadAt({ readAt, current });
   assert.equal(r.ok, false);
-  assert.ok(r.failures.some((f) => f.includes('DAILY_CODE_REVIEW') && f.includes('версия')));
+  assert.ok(r.failures.some((f) => f.includes('DAILY_CODE_REVIEW') && f.includes('отпечаток') && f.includes('версия')));
+});
+
+test('доставка в ствол: тот же отпечаток, другая версия → ЗЕЛЁНЫЙ (живой прогон 25.08)', () => {
+  const { readAt, current } = greenPair();
+  // deliver-to-main закоммитил прочитанный файл: содержимое то же, git-версия новая
+  current.DAILY_CODE_REVIEW = rec('sha-after-delivery', readAt.DAILY_CODE_REVIEW.digest);
+  const r = validateEveningFeedbackReadAt({ readAt, current });
+  assert.equal(r.ok, true, JSON.stringify(r.failures));
 });
 
 test('файл отсутствовал при генерации (digest=null) → красный', () => {
