@@ -57,7 +57,14 @@ export function extractDeliveryClaims(text) {
   for (const line of text.split(/\r?\n/u)) {
     if (/^\s*итог: PR #/u.test(line)) continue;
     if (!CLAIM_WORD_RE.test(line)) continue;
-    for (const m of line.matchAll(/(?:PR ?)?#(\d{2,6})\b/gu)) claims.add(Number(m[1]));
+    for (const m of line.matchAll(/(\p{L}+[  ])?(?:PR ?)?#(\d{2,6})\b/gu)) {
+      // Живой ложный позитив 25.08: «пять зубов #2147 доставлены» — номер ISSUE в
+      // строке с заявкой. Ссылки на не-PR сущности (issue/зуб/строка/эпик/задача)
+      // заявкой о доставке PR не являются.
+      const prev = (m[1] ?? '').trim().toLowerCase();
+      if (/^(issue|зуб(?:ов|а|ы)?|строк[аи]|таблиц[аы]|эпик[а-я]*|задач[а-я]*|карточк[а-я]*)$/u.test(prev)) continue;
+      claims.add(Number(m[2]));
+    }
   }
   return [...claims].sort((a, b) => a - b);
 }

@@ -69,3 +69,12 @@ test('#2147/3 строка-свидетельство сама по себе з�
   assert.deepEqual(extractDeliveryClaims(SHIP_LINE), []);
   assert.deepEqual(extractDeliveryClaims('зуб 2 влит (#2152)'), [2152]);
 });
+
+test('#2147/3 живой ложный позитив 25.08: номер issue в строке заявки — не заявка о PR', () => {
+  // Первый боевой прогон предиката: «пять зубов #2147 доставлены» пометил issue
+  // как недоставленный PR. Ссылки вида «issue #N» / «зубов #N» — не предмет сверки.
+  assert.deepEqual(extractDeliveryClaims('## Сессия Б — пять зубов #2147 доставлены (25.08)'), []);
+  assert.deepEqual(extractDeliveryClaims('доставлен issue #2147'), []);
+  // но настоящая заявка в той же строке остаётся заявкой
+  assert.deepEqual(extractDeliveryClaims('зубов #2147: влит PR #2152'), [2152]);
+});
