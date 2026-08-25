@@ -41,3 +41,14 @@ test('#2147/5 не-denied падение → unknown, лекарств не со
   assert.equal(c.file, null);
   assert.match(packageFailureAdvice(c).join('\n'), /не классифицировано/);
 });
+
+// ── #2147/5, вещдок Г 25.08 (после #2159): дереды обязаны включать замыкание клиента ──
+import { DEPS_BUILD_FILTERS, depsBuildArgs } from './lib/studio-package-plan.mjs';
+
+test('#2147/5 дереды: замыкание @membrana/client... обязательно (telemetry-journal-service — зависимость клиента, не Studio)', () => {
+  assert.ok(DEPS_BUILD_FILTERS.includes('@membrana/client...'), 'без замыкания клиента dist его зависимостей протухает по содержимому (Г, 25.08)');
+  assert.ok(DEPS_BUILD_FILTERS.includes('@membrana/membrana-studio...'));
+  const args = depsBuildArgs();
+  assert.deepEqual(args.slice(0, 3), ['turbo', 'run', 'build']);
+  assert.ok(args.includes('--filter=@membrana/client...'));
+});
