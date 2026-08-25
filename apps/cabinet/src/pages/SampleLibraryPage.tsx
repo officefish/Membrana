@@ -110,7 +110,9 @@ export function SampleLibraryPage() {
           handleMove={lib.handleMove}
           handleExport={lib.handleExport}
           canLabelCatalog={lib.canLabelCatalog}
+          service={lib.service}
           labelSavingId={lib.labelSavingId}
+          labelStates={lib.labelStates}
           labelAnnotateError={lib.labelAnnotateError}
           handlePatchCatalogLabelNotes={lib.handlePatchCatalogLabelNotes}
           handlePatchNodeLabelNotes={lib.handlePatchNodeLabelNotes}
