@@ -1,20 +1,20 @@
 # Handoff liveness
 
-Generated: 2026-07-30T11:04:49.751Z
+Generated: 2026-08-25T04:53:56.204Z
 Source: docs/HANDOFF.md
 Carrier query: ok (single GraphQL batch)
 
 | # | liveness | carriers | occupied | evidence |
 |---|----------|----------|----------|----------|
-| 1 | unknown | — | **эта сессия** | no GitHub Issue/PR carrier |
-| 2 | unknown | — | **эта сессия** | no GitHub Issue/PR carrier |
-| 3 | unknown | — | ✅ закрыто | no GitHub Issue/PR carrier |
-| 4 | dead | PR #1481 | ✅ закрыто | PR #1481 MERGED |
-| 5 | unknown | — | свободно | no GitHub Issue/PR carrier |
-| 6 | dead | #1436 | **Codex · codex/worktree-demolition-frames** | #1436 CLOSED/COMPLETED |
-| 7 | alive | #1468 | пауза до слова владельца | #1468 OPEN |
-| 8 | alive | #1422 | **сделано (tooling-сессия 30.07)** | #1422 OPEN |
-| 9 | alive | #1467 | свободно | #1467 OPEN |
-| 10 | dead | #1475 | **Codex · codex/evening-ritual-door** | #1475 CLOSED/COMPLETED |
+| 1 | alive | #2110 | **кандидат в магистраль** (слово владельца 24.08 вечером); приёмка — владелец собирает выборку из ночного улова на проде | #2110 OPEN |
+| 2 | alive | #2147 | подкрепление; приёмка — колонка «повтор» на 28.08 пуста, каждый зуб доказан порчей | #2147 OPEN |
+| 3 | alive | #2113 | закрыть на дежурстве **пт 28.08**; до того Issue держать открытым | #2113 OPEN |
+| 4 | alive | #2131 | малый; можно взять сессией, свободной от магистрали | #2131 OPEN |
+| 5 | alive | #2117 | деплой кабинета при следующем окне; не срочно | #2117 OPEN |
+| 6 | alive | #2148 | калибровка — на дежурстве 28.08; токен — рука владельца | #2148 OPEN |
+| 7 | alive | #2148 | рука владельца (ssh агентам закрыт); удлиняет горизонт сторожа кратно | #2148 OPEN |
+| 8 | alive | #2109 | чистка дублей — показывать пары, не удалять по порогу | #2109 OPEN |
+| 9 | alive | #2122 | **в план до 10.09 не брать** | #2122 OPEN |
+| 10 | alive | #2147, #2110 | нужен владельцу для разбора буфера новым инструментом; после зуба #2147 | #2147 OPEN, #2110 OPEN |
 
-Summary: alive=3, dead=3, unknown=4.
+Summary: alive=10, dead=0, unknown=0.
