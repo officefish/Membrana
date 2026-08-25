@@ -1,6 +1,7 @@
 import { BUFFER_COLLECTION_ID } from '@membrana/media-library-service';
 
 import { MediaLibraryQuotaBanner } from '@/components/MediaLibraryQuotaBanner';
+import { CabinetSampleChartListPanel } from '@/components/sample-library/CabinetSampleChartListPanel';
 import { CabinetSampleCollectionBody } from '@/components/sample-library/CabinetSampleCollectionBody';
 import type { CabinetSampleLibraryModel } from '@/lib/useCabinetSampleLibrary';
 
@@ -33,7 +34,9 @@ export type SampleLibraryMainPanelProps = Pick<
   | 'handleMove'
   | 'handleExport'
   | 'canLabelCatalog'
+  | 'service'
   | 'labelSavingId'
+  | 'labelStates'
   | 'labelAnnotateError'
   | 'handlePatchCatalogLabelNotes'
   | 'handlePatchNodeLabelNotes'
@@ -71,7 +74,9 @@ export function SampleLibraryMainPanel({
   handleMove,
   handleExport,
   canLabelCatalog,
+  service,
   labelSavingId,
+  labelStates,
   labelAnnotateError,
   handlePatchCatalogLabelNotes,
   handlePatchNodeLabelNotes,
@@ -138,6 +143,7 @@ export function SampleLibraryMainPanel({
           }
           canLabelAnnotate={canLabelCatalog}
           labelSavingId={labelSavingId}
+          labelStates={labelStates}
           labelAnnotateError={labelAnnotateError}
           onSaveLabelNotes={(id, patch) => void handlePatchCatalogLabelNotes(id, patch)}
           samplesPage={samplesPagination.page}
@@ -217,6 +223,7 @@ export function SampleLibraryMainPanel({
         onExport={(sample) => void handleExport(sample)}
         canLabelAnnotate={!isTariffDataset && active}
         labelSavingId={labelSavingId}
+        labelStates={labelStates}
         labelAnnotateError={labelAnnotateError}
         onSaveLabelNotes={(id, patch) => void handlePatchNodeLabelNotes(id, patch)}
         samplesPage={samplesPagination.page}
@@ -226,6 +233,17 @@ export function SampleLibraryMainPanel({
         samplesPageLoading={samplesPageLoading}
         onSamplesPageChange={setSamplesPage}
       />
+      {/* Виджет отбора — ПОД основным блоком, по журнальному образцу (у журнала кабинета
+          виджет плагина встаёт под лентой). Близнец Studio-панели (#2110). */}
+      {selection.kind === 'node' && service && active ? (
+        <CabinetSampleChartListPanel
+          service={service}
+          collectionId={selection.collectionId}
+          knownSamples={nodeSamples}
+          playback={playback}
+          disabled={playbackDisabled}
+        />
+      ) : null}
     </section>
   );
 }

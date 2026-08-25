@@ -56,7 +56,33 @@ export function useCabinetSampleLibrary() {
   const [mediaReloadNonce, setMediaReloadNonce] = useState(0);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
-  const [labelSavingId, setLabelSavingId] = useState<string | null>(null);
+  /**
+   * Состояния сохранения подписи — ПО КАЖДОЙ пробе, именованные (#2110, b4 в кабинете).
+   * Прежде один labelSavingId на весь модуль держал владельца: пока одна подпись едет,
+   * следующую не тронуть. Теперь подписал — перешёл к следующей; исход виден у своей строки.
+   */
+  const [labelStates, setLabelStates] = useState<
+    Record<string, { state: 'idle' | 'saving' | 'saved' | 'error'; detail?: string }>
+  >({});
+  const setLabelState = useCallback(
+    (sampleId: string, next: { state: 'idle' | 'saving' | 'saved' | 'error'; detail?: string }) => {
+      setLabelStates((prev) => ({ ...prev, [sampleId]: next }));
+      if (next.state === 'saved') {
+        // «Сохранено» — сигнал, не жилец.
+        window.setTimeout(() => {
+          setLabelStates((prev) =>
+            prev[sampleId]?.state === 'saved' ? { ...prev, [sampleId]: { state: 'idle' } } : prev,
+          );
+        }, 2500);
+      }
+    },
+    [],
+  );
+  /** Совместимость со старыми потребителями: «кто-то сохраняется» — первый из сохраняющихся. */
+  const labelSavingId = useMemo(
+    () => Object.entries(labelStates).find(([, v]) => v.state === 'saving')?.[0] ?? null,
+    [labelStates],
+  );
   const [labelAnnotateError, setLabelAnnotateError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [samplesPageByKey, setSamplesPageByKey] = useState<Record<string, number>>({});
@@ -65,7 +91,7 @@ export function useCabinetSampleLibrary() {
   const [playbackRowSnapshot, setPlaybackRowSnapshot] = useState<
     MediaSample | MembraneCatalogSample | null
   >(null);
-  const { toast, dismiss, showError, showSuccess } = useCabinetToast();
+  const { toast, dismiss, showError, showSuccess, showInfo } = useCabinetToast();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -305,7 +331,7 @@ export function useCabinetSampleLibrary() {
   const handlePatchCatalogLabelNotes = useCallback(
     async (sampleId: string, patch: UpdateSampleLabelNotes) => {
       if (!membraneId || !canLabelCatalog) return;
-      setLabelSavingId(sampleId);
+      setLabelState(sampleId, { state: 'saving' });
       setLabelAnnotateError(null);
       try {
         const updated = await patchCatalogSample(membraneId, sampleId, patch);
@@ -317,24 +343,23 @@ export function useCabinetSampleLibrary() {
               }
             : prev,
         );
-        showSuccess('Разметка сохранена');
+        setLabelState(sampleId, { state: 'saved' });
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
         setLabelAnnotateError(msg);
+        setLabelState(sampleId, { state: 'error', detail: msg });
         showError(`Разметка: ${msg}`, () =>
           void handlePatchCatalogLabelNotes(sampleId, patch),
         );
-      } finally {
-        setLabelSavingId(null);
       }
     },
-    [canLabelCatalog, membraneId, showError, showSuccess],
+    [canLabelCatalog, membraneId, setLabelState, showError],
   );
 
   const handlePatchNodeLabelNotes = useCallback(
     async (sampleId: string, patch: UpdateSampleLabelNotes) => {
       if (!service || !active || isTariffDataset) return;
-      setLabelSavingId(sampleId);
+      setLabelState(sampleId, { state: 'saving' });
       setLabelAnnotateError(null);
       try {
         const updated = await service.updateSampleLabelNotes(sampleId, patch);
@@ -346,16 +371,17 @@ export function useCabinetSampleLibrary() {
               }
             : prev,
         );
-        showSuccess('Разметка сохранена');
+        // Успех — у строки («сохранено»), а не общим тостом: тост на каждую подпись при разборе
+        // тысячи проб — шум, который заслоняет ошибки.
+        setLabelState(sampleId, { state: 'saved' });
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
         setLabelAnnotateError(msg);
+        setLabelState(sampleId, { state: 'error', detail: msg });
         showError(`Разметка: ${msg}`, () => void handlePatchNodeLabelNotes(sampleId, patch));
-      } finally {
-        setLabelSavingId(null);
       }
     },
-    [active, isTariffDataset, service, showError, showSuccess],
+    [active, isTariffDataset, service, setLabelState, showError],
   );
 
   const moveTargets = useMemo(
@@ -487,13 +513,17 @@ export function useCabinetSampleLibrary() {
   const handleMove = useCallback(
     async (sampleId: string, toId: string) => {
       if (!toId || readOnlyCollection) return;
+      // Перенос буфер→набор говорит, КУДА едет (#2110): «переносится в …» пока идёт,
+      // «перенесено в …» по исходу. Прежде тост знал, что перенесён, но не знал куда.
+      const targetName = snapshot.collections.find((c) => c.id === toId)?.name ?? toId;
+      showInfo(`Переносится в «${targetName}»…`);
       await runMediaOp('Перенос сэмпла', async () => {
         await service!.moveSample(sampleId, toId);
-        showSuccess('Сэмпл перенесён');
+        showSuccess(`Перенесено в «${targetName}»`);
       });
       await reloadSamplesPage();
     },
-    [readOnlyCollection, reloadSamplesPage, runMediaOp, service, showSuccess],
+    [readOnlyCollection, reloadSamplesPage, runMediaOp, service, showInfo, showSuccess, snapshot.collections],
   );
 
   const handleClearBuffer = useCallback(async () => {
@@ -569,7 +599,10 @@ export function useCabinetSampleLibrary() {
     handleExport,
     isAdmin,
     canLabelCatalog,
+    /** Сервис библиотеки узла — для панели отбора: тот же транспорт, что читает пробы. */
+    service,
     labelSavingId,
+    labelStates,
     labelAnnotateError,
     handlePatchCatalogLabelNotes,
     handlePatchNodeLabelNotes,

@@ -48,7 +48,15 @@ export function useCabinetToast() {
     [show],
   );
 
+  /** Ход операции словом (#2110): «переносится…» — не успех и не ошибка, а «идёт». */
+  const showInfo = useCallback(
+    (message: string) => {
+      show({ message, variant: 'info' });
+    },
+    [show],
+  );
+
   useEffect(() => dismiss, [dismiss]);
 
-  return { toast, dismiss, showError, showSuccess };
+  return { toast, dismiss, showError, showSuccess, showInfo };
 }

@@ -40,6 +40,8 @@ export interface CabinetSampleCollectionBodyProps {
   readonly onExport?: (sample: MediaSample) => void;
   readonly canLabelAnnotate?: boolean;
   readonly labelSavingId?: string | null;
+  /** Именованные состояния подписи по пробе (#2110); labelSavingId остаётся для совместимости. */
+  readonly labelStates?: Record<string, { state: 'idle' | 'saving' | 'saved' | 'error'; detail?: string }>;
   readonly labelAnnotateError?: string | null;
   readonly onSaveLabelNotes?: (sampleId: string, patch: UpdateSampleLabelNotes) => void;
   readonly samplesPage?: number;
@@ -70,6 +72,7 @@ export function CabinetSampleCollectionBody({
   onExport,
   canLabelAnnotate,
   labelSavingId,
+  labelStates,
   labelAnnotateError,
   onSaveLabelNotes,
   samplesPage = 1,
@@ -151,6 +154,7 @@ export function CabinetSampleCollectionBody({
         onExport={onExport}
         canLabelAnnotate={canLabelAnnotate}
         labelSavingId={labelSavingId}
+        labelStates={labelStates}
         labelAnnotateError={labelAnnotateError}
         onSaveLabelNotes={onSaveLabelNotes}
       />

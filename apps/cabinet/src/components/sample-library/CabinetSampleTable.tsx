@@ -24,6 +24,7 @@ export interface CabinetSampleTableProps {
   readonly onExport?: (sample: MediaSample) => void;
   readonly canLabelAnnotate?: boolean;
   readonly labelSavingId?: string | null;
+  readonly labelStates?: Record<string, { state: 'idle' | 'saving' | 'saved' | 'error'; detail?: string }>;
   readonly labelAnnotateError?: string | null;
   readonly onSaveLabelNotes?: (sampleId: string, patch: UpdateSampleLabelNotes) => void;
 }
@@ -44,6 +45,7 @@ export function CabinetSampleTable({
   onExport,
   canLabelAnnotate = false,
   labelSavingId = null,
+  labelStates = {},
   labelAnnotateError = null,
   onSaveLabelNotes,
 }: CabinetSampleTableProps) {
@@ -80,8 +82,10 @@ export function CabinetSampleTable({
               const source = mode === 'node' ? (row as MediaSample).source : undefined;
               const sample = mode === 'node' ? (row as MediaSample) : null;
               const rowNotes = 'notes' in row ? row.notes : undefined;
-              const saving = labelSavingId === id;
-              const saveError = saving ? labelAnnotateError : null;
+              // Состояние подписи — своей строки (#2110): сохраняется ли ЭТА проба и чем кончилось.
+              const labelState = labelStates[id] ?? { state: 'idle' as const };
+              const saving = labelState.state === 'saving' || labelSavingId === id;
+              const saveError = labelState.state === 'error' ? (labelState.detail ?? labelAnnotateError) : null;
 
               return (
                 <Fragment key={id}>
@@ -102,6 +106,9 @@ export function CabinetSampleTable({
                         error={saveError}
                         onSave={onSaveLabelNotes ?? (() => undefined)}
                       />
+                      {labelState.state === 'saved' ? (
+                        <span className="ml-1 text-xs text-success" role="status">сохранено</span>
+                      ) : null}
                     </td>
                     {mode === 'node' ? <td>{source}</td> : null}
                     <td className="text-right tabular-nums">{formatBytes(row.sizeBytes)}</td>
