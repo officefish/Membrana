@@ -20,8 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `union-merge-all-jsonl` | Союзное слияние всех append-only журналов docs/**/*.jsonl (Б, после #2147) | S | [`UNION_MERGE_ALL_JSONL_PROMPT.md`](../prompts/UNION_MERGE_ALL_JSONL_PROMPT.md) | [#2096](https://github.com/officefish/Membrana/issues/2096) |
-| `deliver-to-main-in-chain` | Доставка в ствол внутри цепочки ритуала: ожидание CI как шаг, не второй заход (Б, после #2147) | M | [`DELIVER_TO_MAIN_IN_CHAIN_PROMPT.md`](../prompts/DELIVER_TO_MAIN_IN_CHAIN_PROMPT.md) | [#2081](https://github.com/officefish/Membrana/issues/2081) |
 | `node-duty-ready-predicate` | Узел к дежурству: предикат готовности Firebat — сон/гибернация/автовход/служба (Г4) | S | [`NODE_DUTY_READY_PREDICATE_PROMPT.md`](../prompts/NODE_DUTY_READY_PREDICATE_PROMPT.md) | [#2049](https://github.com/officefish/Membrana/issues/2049) |
 | `studio-package-av-refusal` | Установщик Studio: честный отказ при AV-блокировке + fallback на артефакт CI (Г3) | S | [`STUDIO_PACKAGE_AV_REFUSAL_PROMPT.md`](../prompts/STUDIO_PACKAGE_AV_REFUSAL_PROMPT.md) | — |
 | `session-digest-library-face` | Разбор сеанса лицом: витрина session-digest в библиотеке по образцу чарт-листа (Г2) | M | [`SESSION_DIGEST_LIBRARY_FACE_PROMPT.md`](../prompts/SESSION_DIGEST_LIBRARY_FACE_PROMPT.md) | [#2039](https://github.com/officefish/Membrana/issues/2039) |
@@ -152,6 +150,8 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `union-merge-all-jsonl` | Союзное слияние всех append-only журналов docs/**/*.jsonl (Б, после #2147) | 2026-08-25 | [`UNION_MERGE_ALL_JSONL_PROMPT.md`](../prompts/UNION_MERGE_ALL_JSONL_PROMPT.md) | #2096 (Issue открыт) | [карточка](./archive/union-merge-all-jsonl.md) |
+| `deliver-to-main-in-chain` | Доставка в ствол внутри цепочки ритуала: ожидание CI как шаг, не второй заход (Б, после #2147) | 2026-08-25 | [`DELIVER_TO_MAIN_IN_CHAIN_PROMPT.md`](../prompts/DELIVER_TO_MAIN_IN_CHAIN_PROMPT.md) | #2081 (Issue открыт) | [карточка](./archive/deliver-to-main-in-chain.md) |
 | `archivarius-mongo-auth` | Archivarius-Mongo с аутентификацией: строка подключения с учётными данными (В4) | 2026-08-25 | [`ARCHIVARIUS_MONGO_AUTH_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_AUTH_PROMPT.md) | #1753 (Issue открыт) | [карточка](./archive/archivarius-mongo-auth.md) |
 | `capture-measured-over-declared` | Приём записи: измеренное перебивает объявленное — длительность/частота/каналы из WAV (В3) | 2026-08-25 | [`CAPTURE_MEASURED_OVER_DECLARED_PROMPT.md`](../prompts/CAPTURE_MEASURED_OVER_DECLARED_PROMPT.md) | #1950 (Issue открыт) | [карточка](./archive/capture-measured-over-declared.md) |
 | `promo-redemptions-rate-limit` | Promo-эндпойнт без rate-limit: 429 после N попыток (В2) | 2026-08-25 | [`PROMO_REDEMPTIONS_RATE_LIMIT_PROMPT.md`](../prompts/PROMO_REDEMPTIONS_RATE_LIMIT_PROMPT.md) | #1917 (Issue открыт) | [карточка](./archive/promo-redemptions-rate-limit.md) |
