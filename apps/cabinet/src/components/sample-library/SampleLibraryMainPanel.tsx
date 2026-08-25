@@ -2,6 +2,7 @@ import { BUFFER_COLLECTION_ID } from '@membrana/media-library-service';
 
 import { MediaLibraryQuotaBanner } from '@/components/MediaLibraryQuotaBanner';
 import { CabinetSampleChartListPanel } from '@/components/sample-library/CabinetSampleChartListPanel';
+import { CabinetSampleSessionDigestPanel } from '@/components/sample-library/CabinetSampleSessionDigestPanel';
 import { CabinetSampleCollectionBody } from '@/components/sample-library/CabinetSampleCollectionBody';
 import type { CabinetSampleLibraryModel } from '@/lib/useCabinetSampleLibrary';
 
@@ -237,6 +238,16 @@ export function SampleLibraryMainPanel({
           виджет плагина встаёт под лентой). Близнец Studio-панели (#2110). */}
       {selection.kind === 'node' && service && active ? (
         <CabinetSampleChartListPanel
+          service={service}
+          collectionId={selection.collectionId}
+          knownSamples={nodeSamples}
+          playback={playback}
+          disabled={playbackDisabled}
+        />
+      ) : null}
+      {/* Разбор сеанса (#2039): двадцать опорных ночи лицом — тот же отчёт, тот же транспорт. */}
+      {selection.kind === 'node' && service && active ? (
+        <CabinetSampleSessionDigestPanel
           service={service}
           collectionId={selection.collectionId}
           knownSamples={nodeSamples}

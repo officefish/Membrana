@@ -79,3 +79,29 @@ describe('b4 действует в кабинетной таблице, а не 
     expect(media).toContain("orderBy: { createdAt: 'desc' }");
   });
 });
+
+describe('панель разбора сеанса в кабинете — свод лицом (#2039)', () => {
+  it('панель существует, объявляет регион и заказывает отчёт свода по текущей коллекции', () => {
+    const src = read('components/sample-library/CabinetSampleSessionDigestPanel.tsx');
+    expect(src).toContain('aria-label="Разбор сеанса"');
+    expect(src).toContain('service.requestSessionDigest(collectionId,');
+  });
+
+  it('опорные и негативы показаны ДВУМЯ списками — негативы не выброшены и не смешаны', () => {
+    const src = read('components/sample-library/CabinetSampleSessionDigestPanel.tsx');
+    expect(src).toContain("list('Опорные (тональные)', outcome.references");
+    expect(src).toContain("list('Негативный материал (широкополосные)', outcome.negatives");
+  });
+
+  it('паспорт печатает пороги, которых слух не называл, ПОИМЁННО', () => {
+    const src = read('components/sample-library/CabinetSampleSessionDigestPanel.tsx');
+    expect(src).toContain('outcome.passport.provisional.join');
+  });
+
+  it('смонтирована в MainPanel под панелью отбора', () => {
+    const src = read('components/sample-library/SampleLibraryMainPanel.tsx');
+    const chart = src.indexOf('<CabinetSampleChartListPanel');
+    const dig = src.indexOf('<CabinetSampleSessionDigestPanel');
+    expect(dig).toBeGreaterThan(chart);
+  });
+});
