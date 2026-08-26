@@ -57,6 +57,16 @@ export function extractDeliveryClaims(text) {
   for (const line of text.split(/\r?\n/u)) {
     if (/^\s*итог: PR #/u.test(line)) continue;
     if (!CLAIM_WORD_RE.test(line)) continue;
+    // Боевой ложный позитив №2 (26.08): «**1. #2181 — находка.** Влит PR #2189» — в строке
+    // ДВА номера, и задача #2181 читалась как недоставленный PR. Правило: если в строке PR
+    // назван явно («PR #N»), заявкой считаются ТОЛЬКО такие номера, а голые #N рядом —
+    // контекст (issue, задача, пункт). Голый номер остаётся заявкой лишь когда явного нет:
+    // иначе «влит #2152» перестало бы ловиться, а это ослабило бы зуб.
+    const explicit = [...line.matchAll(/PR ?#(\d{2,6})\b/gu)].map((m) => Number(m[1]));
+    if (explicit.length > 0) {
+      for (const n of explicit) claims.add(n);
+      continue;
+    }
     for (const m of line.matchAll(/(\p{L}+[  ])?(?:PR ?)?#(\d{2,6})\b/gu)) {
       // Живой ложный позитив 25.08: «пять зубов #2147 доставлены» — номер ISSUE в
       // строке с заявкой. Ссылки на не-PR сущности (issue/зуб/строка/эпик/задача)
