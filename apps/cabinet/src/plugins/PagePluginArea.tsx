@@ -47,11 +47,23 @@ export interface PagePluginAreaProps {
    * Поймано разбором до прогона, а не пользователем.
    */
   readonly mainHeader?: ReactNode;
+  /**
+   * Левая колонка ОРГАНОВ управления — не сворачивается вместе с содержимым (#2188).
+   *
+   * Разница несущая: содержимое (лента, список проб) сворачивают, чтобы освободить экран под
+   * виджеты; органы (выбор набора, выбор устройства) нужны ИМЕННО ТОГДА — человек работает с
+   * выборкой и переключает набор. Владелец нашёл это на проде: «Свернуть список» уносил и
+   * сайдбар управления наборами, и переключиться было нечем.
+   *
+   * Свойство общее, а не библиотечное: у журнала органы тоже слева, и когда он захочет
+   * сворачивать ленту — механизм уже здесь.
+   */
+  readonly mainAside?: ReactNode;
   /** Основной блок страницы — то, ради чего страница существует. */
   readonly children: ReactNode;
 }
 
-export function PagePluginArea({ plugins, state, onToggle, mainHeader, children }: PagePluginAreaProps) {
+export function PagePluginArea({ plugins, state, onToggle, mainHeader, mainAside, children }: PagePluginAreaProps) {
   const shown = shownPlugins(plugins, state);
 
   return (
@@ -62,6 +74,12 @@ export function PagePluginArea({ plugins, state, onToggle, mainHeader, children 
           (блок l2), потому что сворачивают список, а не гнездо плагинов. Область отвечает за
           гнездо и сайдбар, страница — за свой заголовок и свои органы.
         */}
+        {/*
+          Органы — своей колонкой, рядом с содержимым и ВНЕ свёртки. Положи их в `children`, и
+          свёрнутый список унёс бы их с собой: ровно то, что владелец увидел на проде 26.08.
+        */}
+        {mainAside}
+
         <div className="min-w-0 flex-1 space-y-4">
           {mainHeader}
           {state.mainCollapsed ? null : children}

@@ -183,8 +183,7 @@ export function SampleLibraryPage() {
           </div>
           </div>
         }
-      >
-          <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
+        mainAside={
             <SampleLibrarySidebar
               catalog={lib.catalog}
               nodes={lib.nodes}
@@ -206,6 +205,9 @@ export function SampleLibraryPage() {
               handleDeleteCollection={lib.handleDeleteCollection}
               handleClearBuffer={lib.handleClearBuffer}
             />
+        }
+      >
+
             <SampleLibraryMainPanel
               selection={lib.selection}
               catalog={lib.catalog}
@@ -244,7 +246,6 @@ export function SampleLibraryPage() {
               samplesPageLoading={lib.samplesPageLoading}
               samplesPagination={lib.samplesPagination}
             />
-          </div>
       </PagePluginArea>
 
       {lib.membraneId ? (

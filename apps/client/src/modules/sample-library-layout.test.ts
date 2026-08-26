@@ -43,6 +43,22 @@ describe('раскладка библиотеки: правило одно, но
     expect(area.indexOf('shown.map(')).toBeGreaterThan(area.indexOf('state.mainCollapsed ? null : children'));
   });
 
+  it('свёртка берёт СПИСОК, но не органы управления — у обоих близнецов (#2188)', () => {
+    // Владелец нашёл на проде: «Свернуть список» уносил левый сайдбар наборов, а он нужен
+    // ИМЕННО при свёрнутом списке — переключить набор, работая с выборкой.
+    const studio = read(STUDIO);
+    const collapse = studio.indexOf('{mainCollapsed ? null : (');
+    const list = studio.indexOf('<section className="flex min-w-0 flex-1 flex-col gap-2">');
+    const asideStudio = studio.indexOf('flex min-h-0 flex-1 gap-3');
+    expect(collapse).toBeGreaterThan(asideStudio);
+    expect(list).toBeGreaterThan(collapse);
+
+    // В кабинете органы поданы отдельным пропом, который область рисует ВНЕ свёртки.
+    expect(read(CABINET_PAGE)).toContain('mainAside={');
+    const area = read(CABINET_AREA);
+    expect(area.indexOf('{mainAside}')).toBeLessThan(area.indexOf('state.mainCollapsed ? null : children'));
+  });
+
   it('сторона зоны плагинов РАЗНАЯ по канону, и это не разъезд, а основание', () => {
     // SIDEBAR_SIDE.md: Studio — прибор (слева), кабинет — операторская (справа). Слово владельца
     // 26.08: канон в силе, симметрия близнецов в механизме, а не в стороне экрана.
