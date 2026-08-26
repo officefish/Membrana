@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `plugin-placement-contract` | Контракт зоны размещения плагин-панелей + зуб соответствия раскладке | S | [`PLUGIN_PLACEMENT_CONTRACT_PROMPT.md`](../prompts/PLUGIN_PLACEMENT_CONTRACT_PROMPT.md) | [#2182](https://github.com/officefish/Membrana/issues/2182) |
 | `playback-hang-timeout` | Таймаут ожидания статуса в playSequence + сброс stale outcome при смене набора | S | [`PLAYBACK_HANG_TIMEOUT_PROMPT.md`](../prompts/PLAYBACK_HANG_TIMEOUT_PROMPT.md) | [#2181](https://github.com/officefish/Membrana/issues/2181) |
 | `node-duty-ready-predicate` | Узел к дежурству: предикат готовности Firebat — сон/гибернация/автовход/служба (Г4) | S | [`NODE_DUTY_READY_PREDICATE_PROMPT.md`](../prompts/NODE_DUTY_READY_PREDICATE_PROMPT.md) | [#2049](https://github.com/officefish/Membrana/issues/2049) |
 | `studio-package-av-refusal` | Установщик Studio: честный отказ при AV-блокировке + fallback на артефакт CI (Г3) | S | [`STUDIO_PACKAGE_AV_REFUSAL_PROMPT.md`](../prompts/STUDIO_PACKAGE_AV_REFUSAL_PROMPT.md) | — |
@@ -152,6 +151,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `plugin-placement-contract` | Контракт зоны размещения плагин-панелей + зуб соответствия раскладке | 2026-08-26 | [`PLUGIN_PLACEMENT_CONTRACT_PROMPT.md`](../prompts/PLUGIN_PLACEMENT_CONTRACT_PROMPT.md) | #2182 | [карточка](./archive/plugin-placement-contract.md) |
 | `union-merge-all-jsonl` | Союзное слияние всех append-only журналов docs/**/*.jsonl (Б, после #2147) | 2026-08-25 | [`UNION_MERGE_ALL_JSONL_PROMPT.md`](../prompts/UNION_MERGE_ALL_JSONL_PROMPT.md) | #2096 | [карточка](./archive/union-merge-all-jsonl.md) |
 | `deliver-to-main-in-chain` | Доставка в ствол внутри цепочки ритуала: ожидание CI как шаг, не второй заход (Б, после #2147) | 2026-08-25 | [`DELIVER_TO_MAIN_IN_CHAIN_PROMPT.md`](../prompts/DELIVER_TO_MAIN_IN_CHAIN_PROMPT.md) | #2081 | [карточка](./archive/deliver-to-main-in-chain.md) |
 | `archivarius-mongo-auth` | Archivarius-Mongo с аутентификацией: строка подключения с учётными данными (В4) | 2026-08-25 | [`ARCHIVARIUS_MONGO_AUTH_PROMPT.md`](../prompts/ARCHIVARIUS_MONGO_AUTH_PROMPT.md) | #1753 | [карточка](./archive/archivarius-mongo-auth.md) |
