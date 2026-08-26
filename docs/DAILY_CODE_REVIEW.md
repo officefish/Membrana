@@ -1,36 +1,40 @@
-<!-- Сгенерировано: 2026-08-25T16:00:59.349Z (yarn code-review; daily, llm-xai) -->
+<!-- Сгенерировано: 2026-08-26T15:09:24.619Z (yarn code-review; daily, llm-xai) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: 1bade127124827b2ffe8479b97131debc84832a9^..50e47045ec89f4db33da8a9acc8f2a3b86a83e17 (25 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): e4e82d40 #2154 (408), 6a2fa9c6 #2110 (541), 7260993c #2157 (472), 8a87ce05 #2162 (635), 0e7fe7ed #2161 (813), 61705d2d #2168 (710), 50e47045 (835)
+> Период: 553d03938e9e0632a0df06eca1ce907c5e978a24^..e6d298be88206d0738742fa476aefa33a2d32c97 (16 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 01dd2b02 #2177 (772), 29a18a99 #2192 (529), 7c40e656 #2188 (486), 07913a0d #2201 (543), e6d298be (936)
 
 ---
 
 Tier: T2
 
-[Архитектор/Vesnin]: **ПРОПУСК** с оговорками, не BLOCK на утро. День по стволу: ритуал/HANDOFF, зуб `pr:ship` (#2152 / #2147-2), хвосты наблюдаемости и кабинетный chart-list — границы «docs vs tooling vs product» в развёрнутых кусках в целом соблюдены. Антипаттерны: **B6** целенаправленно лечится в #2152 (пустой индекс → ненуль, финал только через `gh pr view`) — хорошо; **B3** риск жив, если #2113/linearize зачтут без wall-time before/after; **B2** — серия oversized (#2110, #2157, #2161, #2162, #2168, 50e47045) без развёрнутого diff в этом прогоне — не авто-BLOCK дня, но **P1** «ревью отдельно». Расхождение мандата: HANDOFF топ-1 = кабинетная панель (#2110), MAIN_DAY = `logging-observability-contour` (#2117) при sources от 24.08 — не выдумывать единую магистраль, утром явный owner-rechoose или честная пометка. C9: в прозе — перевыпуск токена бота; в диффе секретов не видно — не коммитить токены.
+[vesnin]: **Условно пропуск** на влитое мелкое (ритуал, duty-tooling, #2181, архив #2182); **блок зачёта дня по магистрали** без развёрнутого ревью oversized **#2177/#2184** и остальных неразвёрнутых диффов (#2192, #2188, #2201, `e6d298be`). Бестиарий: B3 — риск зачесть раскладку/зубы JSX вместо play-path у владельца; B6 — не допущен в #2181 (таймаут → `error` + `failedSampleId`, не silent skip); каталожный `placement` правильно отвергнут (#2187) — второй словарь размещения не завёлся. У1: `main-day-assertions` stale относительно #2177 — не silent-green ритуала.
 
-[Teamlead]: Сводка: утро 25.08 (HANDOFF + claim-сессии Г/В/Б/ведущая), ритуальные артефакты, зуб доставки #2152, далее пачка product/tooling PR с oversized-диффами — предмет вечернего долга, не «LGTM всего дня вслепую». Риски на завтра: (1) ложный зелёный linearize без цифр N append, (2) гонка main в окно деплоя кабинета (`/health/deep` busy ← PR 2144 ещё не на проде), (3) буфер 1727 проб до дежурства 28.08. Утро: читать этот review + HANDOFF; не гонять `yarn code-review` утром. Команды: `yarn turbo run lint typecheck test --filter=./scripts` (или пакет, где лежат тесты `pr-ship`); `yarn code-review:pr 2110`; при необходимости `yarn code-review:pr 2127` / `2125` если вердикты ещё не в следе; `gh pr view <N> --json state,mergeCommit` на всё «доставленное» руками; смоук кабинета после деплоя: `/health/deep` не `busy` в idle.
+[Teamlead]: День вокруг **#2177** (симметрия библиотеки + play выборки) + санитария долга (#2181) и пятничной готовности (#2179). В ствол безопасно легли: утро-ритуал #2178, field/measure #2179, карточки #2183, фикс playback #2181/#2189, архив placement #2187. **PR size:** #2177 oversized (+772), плюс ещё четыре oversized без развёрнутого diff — **не** зачитывать «магистраль закрыта» по заголовкам. Утро: не генерировать code-review; читать этот файл; smoke play из выборки; `yarn code-review:pr` на #2177 (и при необходимости хвосты). Команды:
+`yarn turbo run lint typecheck test --filter=@membrana/sample-playback --filter=@membrana/cabinet --filter=@membrana/client`
+`yarn test:scripts`
+`yarn node:duty-ready` (на Firebat перед живым)
+`yarn journal:measure-live --report-md` — только в пятницу на ленте ≥2500, не утром как primary.
 
-[Структурщик]: #2152 — чистые экспорты `commitPreflightProblem` / `requestedPrMismatchProblem` / `finalStateLine` + unit-тесты, preflight до шагов, без скрытого `git add` — слабая связанность CLI сохранена, C7 ок для зуба. Ритуал/HANDOFF/liveness — машинная колонка «Занято» согласована с claim-контрактом (C10 docs sync). Oversized product-PR (#2110 cabinet twin, #2161/#2162/#2168 и др.) в этом daily **не развёрнуты** — границы пакетов и циклы (C1/C3/C4) для них = отдельный pr-review, не зачёт «по заголовку». Trail `ritual-day` orphaned/fail — запах процесса (не silent green кода, но каскад обломков входа).
+[Структурщик]: #2181 — сброс `outcome` по `collectionId` симметрично в 4 панелях (cabinet+client) — слабая связанность с сервисом сохранена, логика бюджета в `@membrana/sample-playback`. #2187 верно: `PagePluginArea` + `pagePluginSource` вместо поля каталога — один носитель раскладки. Oversized #2177 не разобран по границам пакетов в этом прогоне — C1/C4/C7 для library layout **отложены** на отдельный pr-review. Карточки registry/README согласованы с архивом.
 
-[Математик]: В развёрнутом диффе нет FFT/спектра/analyzer — **—**. Напоминание по долгу дня: before/after wall-time и «запросов на пробу ⟂ длина ленты» для #2113 — измерительные инварианты, не UI; без чисел N append закрытие issue = B3.
+[Математик]: `playBudgetMs`: длительность + slack; `0`/NaN → fallback — ветки покрыты тестом. `requestsPerNewItem` и warning при лишней пагинации — корректная арифметика окна, без off-by-one в тестах summarize. `BASELINE_2113` заморожен константой — ок для before/after, не путать с live-истиной.
 
-[Музыкант]: Web Audio / audio-engine / 48 kHz path в развёрнутых кусках не трогались — **—**. Санитарный хвост Firebat «первый трек → 48 kHz или fail-closed» (#2046 class) остаётся smoke’ом, не магистралью; C2 не нарушен тем, что видно.
+[Музыкант]: #2181 лечит зависание sequence (нет вечного wait) — путь play панелей дублей/чарт-листа. Smoke 48 kHz first-track (#2179) опирается на уже существующий fail-closed `WEB_AUDIO_SAMPLE_RATE_UNAVAILABLE` в audio-engine — протоколом, не новым DSP. **Дефект «треки из выборки не играют» (#2177)** в развёрнутом diff здесь не виден: без repro→green play-path C2/play DoD магистрали **не закрыт** этим daily.
 
-[Верстальщик]: Кабинетный близнец panel (#2110) и b4 (свежие сверху, per-sample, перенос) — зона DESIGN/a11y (C5), дифф oversized **не ревьюился здесь**. P1: не мержить/не принимать UX «на словах витрины на проде» без прохода по табличным контролам и клавиатуре; Studio↔cabinet parity — продуктовое слово владельца, проверять визуально на проде после `studio:package`/зуба #2147.
+[Верстальщик]: Stale outcome при смене набора — правильный UX (не показывать чужие числа). Симметрия библиотеки↔журнал, сайдбар, waveform, sync-play — предмет #2177 (oversized): a11y/DESIGN и «виден без подсказки» зубом JSX **не** доказываются (честная граница #2187). Кнопку отмены sequence в панели сознательно не добавляли — remaining, не блокер шота #2181.
 
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-08-25)  
-Definition of Done (утро):  
-1) прочитан HANDOFF + этот review;  
-2) `gh pr view` по открытым/вчерашним поставкам;  
-3) `yarn code-review:pr 2110` (и хвосты oversized по слову ведущей);  
-4) статус #2113 = closed **или** явный gap с field-метриками;  
-5) после деплоя кабинета — `/health/deep` idle ≠ ложный `busy`.  
-
-Риски:  
-- **P0** — зачёт journal linearize / #2113 без wall-time before/after (регрессия дежурства 28.08)  
-- **P1** — непросмотренные oversized (#2110, #2157, #2161, #2162, #2168, 50e47045); расхождение MAIN vs HANDOFF по магистрали; прод-хвост health-deep  
-- **P2** — orphaned ritual-day в trail; калибровка DW + docker prune на media-VPS (руки владельца)
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-08-26)
+Definition of Done (утро):
+- прочитать этот review + вчерашний фокус #2177;
+- `yarn turbo run typecheck test --filter=@membrana/sample-playback --filter=@membrana/cabinet --filter=@membrana/client`;
+- ручной smoke: буфер узла → выборка → play стабильно;
+- `yarn code-review:pr` на открытый/хвостовой #2177 (развёрнутый diff);
+- не primary: #2113 measure, secret-parser, hostess/assets/batch.
+Риски:
+- **P1** — #2177 и др. oversized без развёрнутого review / возможен B3 (раскладка зелёная, play у владельца нет);
+- **P1** — assertions sources[0] stale (У1) → завтрашний main-day снова разъедется;
+- **P2** — ревью-долг хвостов (#2110, #2157…), media-VPS 76 %, `/health/deep` busy на проде;
+- **P2** — visibility инструмента без runtime-замера не закрыта (принято).
