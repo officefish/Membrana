@@ -7,14 +7,14 @@
       "githubIssue": 2182,
       "linearId": null,
       "size": "S",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "day-sprint",
       "createdAt": "2026-08-26",
-      "archivedAt": null,
+      "archivedAt": "2026-08-26",
       "leadPersona": "ozhegov",
       "supportPersonas": [],
       "notes": "Шот после #2177 (раскладка — сессия Г). Зуб судит соответствие объявлению, НЕ видимость — граница названа в issue",
-      "archiveNotes": null,
+      "archiveNotes": "Поглощён магистралью #2177/#2184: зона плагинов стала сущностью (PagePluginArea + pagePluginSource), зубы порядка JSX написаны для обоих близнецов (sample-library-layout.test.ts). Каталожное поле placement завело бы второй словарь размещения — не делаем. Issue #2182 закрыт с обоснованием",
       "githubIssueClosedAt": null
     },
     {
