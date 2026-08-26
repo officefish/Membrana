@@ -822,7 +822,17 @@ function main() {
       }
       if (opts.execute) {
         if (userFile) {
-          args = s.args.map((a) => (a === '__BODY_FILE__' ? userFile : a));
+          // #2020: своё тело пишет пользователь, но причина размера обязана доехать до
+          // ревьюера — иначе комментарий обещает то, чего код не делает. Пользовательский
+          // файл НЕ трогаем: собираем временную копию с дописанной строкой.
+          let bodyPath = userFile;
+          if (sizeReasonForBody) {
+            bodyDir = makeLongTempDir(REPO_ROOT, 'pr-ship-');
+            const merged = join(bodyDir, 'body.md');
+            writeFileSync(merged, appendSizeReason(readFileSync(userFile, 'utf8'), sizeReasonForBody), 'utf8');
+            bodyPath = sizeReasonForBody ? merged : userFile;
+          }
+          args = s.args.map((a) => (a === '__BODY_FILE__' ? bodyPath : a));
         } else {
           bodyDir = makeLongTempDir(REPO_ROOT, 'pr-ship-');
           const bodyFile = join(bodyDir, 'body.md');
