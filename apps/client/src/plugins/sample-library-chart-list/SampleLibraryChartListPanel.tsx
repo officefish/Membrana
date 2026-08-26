@@ -9,7 +9,7 @@
  * кабинета), результат таблицей ниже. Отказ отбора показывается СЛОВАМИ отказа, а не пустой
  * таблицей: «в этот промежуток записей нет» и «критерий не выбран» — разные события.
  */
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useMediaLibrary } from '@membrana/media-library-service';
 import type { LibraryChartListPick, LibraryChartListRunOutcome } from '@membrana/media-library-service';
 import { selectSample, useSamplePlayback, playSampleNow, togglePlayPause } from '@membrana/sample-playback-service';
@@ -43,6 +43,11 @@ export const SampleLibraryChartListPanel: React.FC<SampleLibraryChartListPanelPr
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [outcome, setOutcome] = useState<LibraryChartListRunOutcome | null>(null);
+  // #2181: набор сменился — прежний отчёт больше не про него. Сбрасываем СРАЗУ, не дожидаясь
+  // ответа: иначе числа прошлого набора выдают себя за новые всё время загрузки.
+  useEffect(() => {
+    setOutcome(null);
+  }, [collectionId]);
 
   /** Название пробы — из снапшота набора: выборка несёт адреса, имена живут у библиотеки. */
   const titleOf = useMemo(() => {

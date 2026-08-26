@@ -13,7 +13,7 @@
  * Отказ отбора показывается СЛОВАМИ отказа, а не пустой таблицей: «в этот промежуток записей
  * нет» и «критерий не выбран» — разные события.
  */
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   LIBRARY_CHART_LIST_CRITERIA,
   LIBRARY_CHART_LIST_VOLUMES,
@@ -48,6 +48,11 @@ export function CabinetSampleChartListPanel({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [outcome, setOutcome] = useState<LibraryChartListRunOutcome | null>(null);
+  // #2181: набор сменился — прежний отчёт больше не про него. Сбрасываем СРАЗУ, не дожидаясь
+  // ответа: иначе числа прошлого набора выдают себя за новые всё время загрузки.
+  useEffect(() => {
+    setOutcome(null);
+  }, [collectionId]);
 
   const titleOf = useMemo(() => {
     // Кабинет листает пробы страницами: имя есть только у проб текущей страницы. Проба с другой
