@@ -63,6 +63,10 @@ describe('панель отбора в кабинете (близнец Studio)'
     const page = read('pages/SampleLibraryPage.tsx');
     expect(page).toContain('mainHeader={');
     expect(page).toContain('collapseMain(!pagePlugins.state.mainCollapsed)');
+    // Плеер ОСТАЁТСЯ при свёрнутом списке — прямое требование 4 владельца, доделано по
+    // BLOCK ревью #2184: в теле он жил внутри сворачиваемого и исчезал вместе с ним.
+    expect(page).toContain('state.mainCollapsed ? (');
+    expect(page).toContain('<CabinetSamplePlayerSection');
     // Виджеты остаются: область рисует их отдельно от основного блока.
     expect(read('plugins/PagePluginArea.tsx')).toContain('state.mainCollapsed ? null : children');
   });
@@ -164,6 +168,8 @@ describe('клик «играть» на строке выборки (#2177, д�
     for (const p of ['CabinetSampleChartListPanel', 'CabinetSampleSessionDigestPanel']) {
       const src = read(`components/sample-library/${p}.tsx`);
       expect(src).toContain('playSampleNow(');
+      // Лицо отказа ОДНО на все панели: молчащая кнопка и есть дефект приёмки.
+      expect(src).toContain('Проба не загрузилась');
       expect(src).toContain('togglePlayPause');
     }
   });

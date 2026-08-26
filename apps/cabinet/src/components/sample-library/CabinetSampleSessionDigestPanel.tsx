@@ -60,10 +60,13 @@ export function CabinetSampleSessionDigestPanel({
     (sound: SessionDigestSound) =>
       // Клик «играть» играет, а не только выбирает (#2177): половина без второй — тот дефект,
       // что владелец нашёл на проде 26.08.
+      // Лицо отказа — ОДНО на все панели: молчащая кнопка и есть тот дефект приёмки.
       void playSampleNow(
         { id: sound.sampleId, title: titleOf(sound), collectionId },
         { select: selectSample, toggle: togglePlayPause },
-      ),
+      ).then((played) => {
+        if (!played) setError('Проба не загрузилась — играть нечего');
+      }),
     [collectionId, titleOf],
   );
 

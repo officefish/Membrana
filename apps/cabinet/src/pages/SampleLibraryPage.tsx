@@ -4,6 +4,7 @@ import { CabinetToast } from '@/components/CabinetToast';
 import { CabinetSampleChartListPanel } from '@/components/sample-library/CabinetSampleChartListPanel';
 import { CabinetSampleDuplicatesPanel } from '@/components/sample-library/CabinetSampleDuplicatesPanel';
 import { CabinetSampleSessionDigestPanel } from '@/components/sample-library/CabinetSampleSessionDigestPanel';
+import { CabinetSamplePlayerSection } from '@/components/sample-library/CabinetSamplePlayerSection';
 import { PagePluginArea } from '@/plugins/PagePluginArea';
 import { localPluginSource } from '@/plugins/pagePluginSource';
 import { useHomePagePlugins } from '@/plugins/useHomePagePlugins';
@@ -153,6 +154,21 @@ export function SampleLibraryPage() {
             список унёс бы её с собой — развернуть стало бы нечем. Та же причина, что у
             журнала (PagePluginArea.mainHeader), и потому раскладка взята, а не изобретена.
           */
+          <div className="space-y-2">
+            {/*
+              Виджет плеера ОСТАЁТСЯ при свёрнутом списке (#2177, требование 4): «список
+              сворачивается, виджет waveform остаётся». В теле он живёт внутри сворачиваемого и
+              исчезал вместе с ним — ревью #2184 поймало это раньше владельца. Здесь он рисуется
+              ТОЛЬКО в свёрнутом состоянии: в развёрнутом он уже есть внизу, и два плеера разом
+              были бы двумя органами одного звука.
+            */}
+            {pagePlugins.state.mainCollapsed ? (
+              <CabinetSamplePlayerSection
+                playback={lib.playback}
+                selectedSample={lib.selectedPlaybackSample}
+                onExport={lib.selectedPlaybackSample && lib.active ? () => void lib.handleExportSelected() : undefined}
+              />
+            ) : null}
           <div className="flex items-center justify-between">
             <span className="text-sm text-base-content/60">
               {pagePlugins.state.mainCollapsed ? 'Список свёрнут — виджеты плагинов остались' : 'Список наборов и проб'}
@@ -164,6 +180,7 @@ export function SampleLibraryPage() {
             >
               {pagePlugins.state.mainCollapsed ? 'Развернуть список' : 'Свернуть список'}
             </button>
+          </div>
           </div>
         }
       >
