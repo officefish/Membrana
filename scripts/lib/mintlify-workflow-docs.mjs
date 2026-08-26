@@ -9,7 +9,30 @@ import {
 import { dirname, join } from 'node:path';
 
 import { auditProcedures } from './procedural-workshop.mjs';
+import { isAdr0025Debt } from './procedure-personas.mjs';
 import { readReadmeDigest } from './readme-digest.mjs';
+
+/**
+ * Пояснение к `built-invalid`, когда невалидность — это НАЗВАННЫЙ долг, а не поломка.
+ *
+ * Без него витрина сообщает внешнему читателю «процедура невалидна» и молчит о причине:
+ * семь процедур, включая оба ритуала, выглядят сломанными, хотя у них ровно один
+ * задокументированный долг, ждущий отдельной задачи. Голая правда без контекста читается
+ * как авария — а по ADR-0025 Р3 краснота должна давить на закрытие долга, не пугать.
+ *
+ * Состояние НЕ подменяется: `built-invalid` остаётся ровно тем, чем был. Добавляется только
+ * причина — прятать долг было бы противоположностью Р3.
+ */
+function buildStateNote(procedure) {
+  const problems = procedure.problems ?? [];
+  if (problems.length === 0 || !problems.every((p) => isAdr0025Debt(p))) return '';
+  const n = problems.length;
+  // Склонение руками: страница публичная, «5 фрейма(-ов)» на витрине читается как небрежность.
+  const tail = n % 10;
+  const teen = n % 100 >= 11 && n % 100 <= 14;
+  const word = !teen && tail === 1 ? 'фрейм ждёт' : !teen && tail >= 2 && tail <= 4 ? 'фрейма ждут' : 'фреймов ждут';
+  return ` — по названному долгу ADR-0025: ${n} ${word} держателя ([#1787](https://github.com/officefish/Membrana/issues/1787)). Не поломка`;
+}
 import { discoverContainers } from './tooling-atlas.mjs';
 
 const GENERATED_NOTICE =
@@ -72,6 +95,9 @@ export function loadWorkflowDocsModel(repoRoot) {
       manifest,
       migrationState: migrationState(procedure),
       buildState: auditById.get(procedure.id)?.state ?? 'unknown',
+      // Причины невалидности нужны витрине, чтобы отличить названный долг от поломки
+      // (см. buildStateNote). Состояние без причины читается снаружи как авария.
+      problems: auditById.get(procedure.id)?.problems ?? [],
       portfolio: auditById.get(procedure.id)?.portfolio ?? { status: 'missing', count: 0, items: [] },
     };
   });
@@ -170,6 +196,7 @@ function portfolioLines(procedure) {
 export function renderProcedurePage(procedure) {
   const manifest = procedure.manifest;
   const lines = frontmatter(procedure.title, procedure.summary ?? `Процедура ${procedure.id}`);
+
   lines.push(
     procedure.summary ? mdx(procedure.summary) : 'Краткое назначение пока не опубликовано.',
     '',
@@ -178,7 +205,7 @@ export function renderProcedurePage(procedure) {
     `- **ID:** \`${mdx(procedure.id)}\``,
     `- **Род:** ${mdx(procedure.procedureKind)}`,
     `- **Держатель:** ${mdx(procedure.holder)}`,
-    `- **Состояние:** \`${mdx(procedure.buildState)}\``,
+    `- **Состояние:** \`${mdx(procedure.buildState)}\`${buildStateNote(procedure)}`,
     `- **Миграция:** \`${mdx(procedure.migrationState)}\``,
   );
   if (procedure.homePath) lines.push(`- **Канон:** [\`${mdx(procedure.homePath)}\`](${sourceUrl(`${procedure.homePath}/README.md`)})`);
