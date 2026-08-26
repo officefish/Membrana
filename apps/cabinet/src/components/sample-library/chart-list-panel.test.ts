@@ -34,13 +34,37 @@ describe('панель отбора в кабинете (близнец Studio)'
     expect(src).toContain('service.requestLibraryChartList(collectionId,');
   });
 
-  it('смонтирована в MainPanel ПОД основным блоком узловой секции — журнальный образец', () => {
-    const src = read('components/sample-library/SampleLibraryMainPanel.tsx');
-    const body = src.indexOf('rows={nodeSamples}');
-    const panel = src.indexOf('<CabinetSampleChartListPanel');
-    expect(body).toBeGreaterThan(-1);
-    expect(panel).toBeGreaterThan(body);
-    expect(src).toContain("selection.kind === 'node' && service && active");
+  it('панель — ЖИЛЕЦ зоны плагинов, а не блок в потоке страницы (#2177, требование 1)', () => {
+    // Владелец нашёл панель только по подсказке: она лежала ниже сорока строк списка. Теперь
+    // жильцы объявлены страницей и рисуются журнальной областью — у них выделенное место.
+    const page = read('pages/SampleLibraryPage.tsx');
+    expect(page).toContain('<PagePluginArea');
+    expect(page).toContain('membrana.showcase.library-chart-list');
+    // И НЕ рисуется в потоке основной панели — иначе задвоилась бы.
+    expect(read('components/sample-library/SampleLibraryMainPanel.tsx')).not.toContain('CabinetSampleChartListPanel');
+  });
+
+  it('зона плагинов справа и НЕ уезжает со списком (требования 1 и 2)', () => {
+    // Сторона и прилипание взяты у журнала, а не изобретены: канон SIDEBAR_SIDE.md запрещает
+    // выравнивать стороны — кабинет справа, Studio слева, и это основание рабочего места.
+    const sidebar = read('plugins/PagePluginsSidebar.tsx');
+    expect(sidebar).toContain('lg:sticky lg:top-4');
+    expect(sidebar).toContain('aria-label="Плагины страницы"');
+  });
+
+  it('тумблер решает показ виджета, и источник включённости назван (требование 3)', () => {
+    const page = read('pages/SampleLibraryPage.tsx');
+    expect(page).toContain('localPluginSource');
+    // Расхождение с журналом названо в коде, а не сглажено: у media нет входа включённости.
+    expect(read('plugins/pagePluginSource.ts')).toContain('владелец включённости СТРАНИЦА');
+  });
+
+  it('список сворачивается, кнопка живёт ВНЕ сворачиваемого (требование 4)', () => {
+    const page = read('pages/SampleLibraryPage.tsx');
+    expect(page).toContain('mainHeader={');
+    expect(page).toContain('collapseMain(!pagePlugins.state.mainCollapsed)');
+    // Виджеты остаются: область рисует их отдельно от основного блока.
+    expect(read('plugins/PagePluginArea.tsx')).toContain('state.mainCollapsed ? null : children');
   });
 
   it('отказ отбора показывается словами, а не пустой таблицей', () => {
@@ -105,12 +129,10 @@ describe('панель дублей в кабинете — показать п�
     expect(src).toContain("from '@membrana/sample-playback-service'");
   });
 
-  it('смонтирована в MainPanel под панелью отбора; удаление — глаголом хука', () => {
-    const src = read('components/sample-library/SampleLibraryMainPanel.tsx');
-    const chart = src.indexOf('<CabinetSampleChartListPanel');
-    const dup = src.indexOf('<CabinetSampleDuplicatesPanel');
-    expect(dup).toBeGreaterThan(chart);
-    expect(src).toContain('onRemove={(id) => handleRemove(id)}');
+  it('дубли — жилец зоны плагинов; удаление по-прежнему глаголом хука', () => {
+    const page = read('pages/SampleLibraryPage.tsx');
+    expect(page).toContain('membrana.showcase.library-duplicates');
+    expect(page).toContain('lib.handleRemove(id)');
   });
 });
 
@@ -132,10 +154,17 @@ describe('панель разбора сеанса в кабинете — св�
     expect(src).toContain('outcome.passport.provisional.join');
   });
 
-  it('смонтирована в MainPanel под панелью отбора', () => {
-    const src = read('components/sample-library/SampleLibraryMainPanel.tsx');
-    const chart = src.indexOf('<CabinetSampleChartListPanel');
-    const dig = src.indexOf('<CabinetSampleSessionDigestPanel');
-    expect(dig).toBeGreaterThan(chart);
+  it('разбор сеанса — жилец зоны плагинов', () => {
+    expect(read('pages/SampleLibraryPage.tsx')).toContain('membrana.showcase.library-session-digest');
+  });
+});
+
+describe('клик «играть» на строке выборки (#2177, дефект приёмки 26.08)', () => {
+  it('панели зовут общий глагол, а не половину: выбор БЕЗ звука — это и был дефект', () => {
+    for (const p of ['CabinetSampleChartListPanel', 'CabinetSampleSessionDigestPanel']) {
+      const src = read(`components/sample-library/${p}.tsx`);
+      expect(src).toContain('playSampleNow(');
+      expect(src).toContain('togglePlayPause');
+    }
   });
 });
