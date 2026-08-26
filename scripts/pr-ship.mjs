@@ -41,6 +41,12 @@ import { fileURLToPath } from 'node:url';
 import { classifyWorktree, parseWorktreeCard } from './lib/classify-worktree.mjs';
 import { explainCommitType } from './lib/commit-types.mjs';
 import { makeLongTempDir } from './lib/long-temp-path.mjs';
+import {
+  appendSizeReason,
+  changedLinesForShip,
+  oversizedShipProblem,
+  sizeReasonLine,
+} from './lib/pr-ship-size.mjs';
 import { EXTERNAL_CALL_TIMEOUT_MS, alreadyInBase } from './lib/merge-fact.mjs';
 import { isMergeBlocked, readMergeabilityWithRestRecheck } from './lib/pr-mergeability.mjs';
 import {
@@ -511,7 +517,15 @@ export function planPrShip(opts) {
     label: 'pr-create',
     cmd: 'gh',
     args: ['pr', 'create', '--base', base, '--title', title, '--body-file', '__BODY_FILE__'],
-    bodyText: opts.bodyFile ? `__USER_BODY_FILE__${opts.bodyFile}` : mention ? mention.trim() : closes ? closes.trim() : title,
+    // #2020: причина размера уезжает В ТЕЛО PR — ревьюер видит её вместе с диффом.
+    // При своём --body-file тело пишет пользователь: дописываем причину строкой ниже,
+    // но файл не трогаем — вместо этого причина идёт в заголовок шага (см. main).
+    bodyText: opts.bodyFile
+      ? `__USER_BODY_FILE__${opts.bodyFile}`
+      : appendSizeReason(
+          mention ? mention.trim() : closes ? closes.trim() : title,
+          opts.sizeReasonLine ?? '',
+        ),
   });
   let skippedSync;
   if (merge) {
@@ -546,6 +560,8 @@ function parseArgs(argv) {
     else if (a === '--allow-mention') o.allowMentionWithoutClose = true;
     else if (a === '--issue-mention') o.issueMention = next();
     else if (a === '--body-file') o.bodyFile = next();
+    // #2020: названная причина, по которой этот PR не режется (дверь порога 400).
+    else if (a === '--size-reason') o.sizeReason = next();
     // Зуб #2147/№2 (вещдоки 21.08): предмет действия явный — merge-only с --pr N
     // отказывает, если PR текущей ветки не тот, вместо молчаливого действия по чужому.
     else if (a === '--pr') o.pr = Number.parseInt(next(), 10);
@@ -728,8 +744,34 @@ function main() {
     }
   }
 
+  // #2020: порог размера — ДО создания PR. Считаем закоммиченное + индекс: шаг commit
+  // ещё впереди, и без индекса оценка соврала бы в меньшую сторону.
+  let sizeReasonForBody = null;
+  if (opts.execute) {
+    const changedLines = changedLinesForShip({
+      base: opts.base ?? 'main',
+      run: (args) => execFileSync('git', args, { encoding: 'utf8' }),
+    });
+    const problem = oversizedShipProblem({
+      changedLines,
+      reason: opts.sizeReason,
+      mergeOnly: Boolean(opts.mergeOnly),
+      execute: true,
+    });
+    if (problem) {
+      console.error(problem);
+      process.exitCode = 1;
+      return;
+    }
+    if (String(opts.sizeReason ?? "").trim().length > 0) {
+      sizeReasonForBody = sizeReasonLine({ changedLines, reason: opts.sizeReason });
+      console.log(`  ⚠ ${sizeReasonForBody}`);
+    }
+  }
+
   const { title, steps, skippedSync } = planPrShip({
     ...opts,
+    sizeReasonLine: sizeReasonForBody,
     currentBranch: current,
     localBranches: listLocalBranches(),
     worktreeBranches: otherWorktreeBranches(),
@@ -780,7 +822,17 @@ function main() {
       }
       if (opts.execute) {
         if (userFile) {
-          args = s.args.map((a) => (a === '__BODY_FILE__' ? userFile : a));
+          // #2020: своё тело пишет пользователь, но причина размера обязана доехать до
+          // ревьюера — иначе комментарий обещает то, чего код не делает. Пользовательский
+          // файл НЕ трогаем: собираем временную копию с дописанной строкой.
+          let bodyPath = userFile;
+          if (sizeReasonForBody) {
+            bodyDir = makeLongTempDir(REPO_ROOT, 'pr-ship-');
+            const merged = join(bodyDir, 'body.md');
+            writeFileSync(merged, appendSizeReason(readFileSync(userFile, 'utf8'), sizeReasonForBody), 'utf8');
+            bodyPath = sizeReasonForBody ? merged : userFile;
+          }
+          args = s.args.map((a) => (a === '__BODY_FILE__' ? bodyPath : a));
         } else {
           bodyDir = makeLongTempDir(REPO_ROOT, 'pr-ship-');
           const bodyFile = join(bodyDir, 'body.md');
