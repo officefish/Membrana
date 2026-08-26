@@ -23,7 +23,7 @@ import {
   type MediaLibraryService,
   type MediaSample,
 } from '@membrana/media-library-service';
-import { selectSample, type SamplePlaybackSnapshot } from '@membrana/sample-playback-service';
+import { selectSample, type SamplePlaybackSnapshot, playSampleNow, togglePlayPause } from '@membrana/sample-playback-service';
 
 export interface CabinetSampleChartListPanelProps {
   readonly service: MediaLibraryService;
@@ -72,9 +72,18 @@ export function CabinetSampleChartListPanel({
 
   const handlePlay = useCallback(
     (sampleId: string) => {
-      void selectSample({ id: sampleId, title: titleOf(sampleId), collectionId });
+      void playSampleNow(
+        { id: sampleId, title: titleOf(sampleId), collectionId },
+        { select: selectSample, toggle: togglePlayPause, statusOf: () => playback.status },
+      ).then((played) => {
+        // Отказ не глотается: проба могла не загрузиться, и молчание кнопки — тот самый
+        // дефект приёмки 26.08, только в другом месте.
+        if (!played) setError('Проба не загрузилась — играть нечего');
+      });
     },
-    [collectionId, titleOf],
+    // playback.status в зависимостях: статус читается в момент клика, и устаревшее замыкание
+    // судило бы по прошлому состоянию плеера.
+    [collectionId, titleOf, playback.status],
   );
 
   const selection = outcome?.selection ?? null;

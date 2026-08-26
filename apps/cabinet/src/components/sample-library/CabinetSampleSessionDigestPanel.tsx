@@ -14,7 +14,7 @@ import {
   type SessionDigestRunOutcome,
   type SessionDigestSound,
 } from '@membrana/media-library-service';
-import { selectSample, type SamplePlaybackSnapshot } from '@membrana/sample-playback-service';
+import { selectSample, type SamplePlaybackSnapshot, playSampleNow, togglePlayPause } from '@membrana/sample-playback-service';
 
 export interface CabinetSampleSessionDigestPanelProps {
   readonly service: MediaLibraryService;
@@ -57,8 +57,16 @@ export function CabinetSampleSessionDigestPanel({
   }, [service, collectionId, fromDate, toDate]);
 
   const play = useCallback(
-    (sound: SessionDigestSound) => void selectSample({ id: sound.sampleId, title: titleOf(sound), collectionId }),
-    [collectionId, titleOf],
+    (sound: SessionDigestSound) =>
+      // Клик «играть» играет, а не только выбирает (#2177): половина без второй — тот дефект,
+      // что владелец нашёл на проде 26.08.
+      void playSampleNow(
+        { id: sound.sampleId, title: titleOf(sound), collectionId },
+        { select: selectSample, toggle: togglePlayPause, statusOf: () => playback.status },
+      ),
+    // playback.status в зависимостях: статус читается в момент клика, и устаревшее замыкание
+    // судило бы по прошлому состоянию плеера.
+    [collectionId, titleOf, playback.status],
   );
 
   const list = (title: string, sounds: readonly SessionDigestSound[], shortfall: number) => (

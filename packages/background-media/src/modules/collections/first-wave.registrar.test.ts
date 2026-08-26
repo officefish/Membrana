@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
@@ -271,5 +272,56 @@ describe('витрина отбора библиотеки (#2110)', () => {
     const all = await reg.requestRun(base);
     const windowed = await reg.requestRun({ ...base, from: '2026-08-21T10:00:00.500Z' });
     expect(all.fingerprints.inputHash).not.toBe(windowed.fingerprints.inputHash);
+  });
+});
+
+/**
+ * Один источник числа для витрины и таблицы (#2177).
+ *
+ * СВОЯ фикстура базы, а не общая: общая описывает одно устройство, и на ней чтение по паре
+ * неотличимо от чтения по одному `collectionId` — зуб зеленел бы при обоих. Здесь два
+ * устройства с ОДНИМ именем набора, как на проде: `Collection @@id([deviceId, id])`.
+ */
+describe('один источник числа для витрины и таблицы (#2177)', () => {
+  const twoDevices = [
+    { id: 'a', collectionId: 'c1', deviceId: 'dev-1', sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'A', storageRef: 'd/a.wav', createdAt: new Date('2026-08-21T10:00:00.000Z') },
+    { id: 'b', collectionId: 'c1', deviceId: 'dev-1', sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'B', storageRef: 'd/b.wav', createdAt: new Date('2026-08-21T10:00:01.000Z') },
+    { id: 'z', collectionId: 'c1', deviceId: 'dev-2', sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'Z', storageRef: 'd/z.wav', createdAt: new Date('2026-08-21T10:00:02.000Z') },
+  ];
+  const prismaPair = {
+    sample: {
+      findMany: async ({ where }: { where: { collectionId: string; deviceId?: string } }) =>
+        twoDevices
+          .filter((r) => r.collectionId === where.collectionId && (where.deviceId === undefined || r.deviceId === where.deviceId))
+          .sort((x, y) => (x.id < y.id ? -1 : 1)),
+      findUniqueOrThrow: async ({ where }: { where: { id: string } }) => twoDevices.find((r) => r.id === where.id)!,
+    },
+  } as unknown as PrismaService;
+
+  it('витрина считает набор СВОЕГО устройства, а не всех с тем же именем набора', async () => {
+    // Дефект 26.08 числами владельца: витрина «в наборе 1980», таблица той же коллекции
+    // «1–40 из 1727», сумма ВСЕХ коллекций устройства — 1947. Первое больше суммы своих —
+    // значит считались чужие устройства. Здесь у dev-1 две пробы, у dev-2 одна с тем же
+    // именем набора: витрина обязана увидеть две.
+    const host = new CollectionsPluginHostService();
+    await host.onModuleInit();
+    const reg = new FirstWavePluginsRegistrar(host, prismaPair, blobs, config, spyBridge().bridge);
+    await reg.onModuleInit();
+
+    const out = await reg.requestRun({
+      pluginId: 'membrana.showcase.library-chart-list' as PluginId,
+      deviceId: 'dev-1',
+      collectionId: 'c1',
+      volume: 20,
+      criterion: 'loudness-over-floor',
+    });
+    expect((out.result as { inSet: number }).inSet).toBe(2);
+  }, 20_000);
+
+  it('устройство в адресе прогона ОБЯЗАТЕЛЬНО — необязательное было бы fail-open', () => {
+    const src = readFileSync(join(__dirname, 'first-wave.registrar.ts'), 'utf8');
+    expect(src).toContain('readonly deviceId: string;');
+    expect(src).not.toMatch(/readonly deviceId\?:/u);
+    expect(src).toContain('where: { deviceId, collectionId }');
   });
 });

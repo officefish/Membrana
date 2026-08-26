@@ -12,7 +12,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useMediaLibrary } from '@membrana/media-library-service';
 import type { LibraryChartListPick, LibraryChartListRunOutcome } from '@membrana/media-library-service';
-import { selectSample, useSamplePlayback } from '@membrana/sample-playback-service';
+import { selectSample, useSamplePlayback, playSampleNow, togglePlayPause } from '@membrana/sample-playback-service';
 
 import { dateInputToIsoWindow } from './types';
 
@@ -69,9 +69,18 @@ export const SampleLibraryChartListPanel: React.FC<SampleLibraryChartListPanelPr
   const handlePlay = useCallback(
     (sampleId: string) => {
       // Проигрыватель хочет цель с именем — берём её из снапшота набора, как основной список.
-      void selectSample({ id: sampleId, title: titleOf(sampleId), collectionId });
+      void playSampleNow(
+        { id: sampleId, title: titleOf(sampleId), collectionId },
+        { select: selectSample, toggle: togglePlayPause, statusOf: () => playback.status },
+      ).then((played) => {
+        // Отказ не глотается: проба могла не загрузиться, и молчание кнопки — тот самый
+        // дефект приёмки 26.08, только в другом месте.
+        if (!played) setError('Проба не загрузилась — играть нечего');
+      });
     },
-    [collectionId, titleOf],
+    // playback.status в зависимостях: статус читается в момент клика, и устаревшее замыкание
+    // судило бы по прошлому состоянию плеера.
+    [collectionId, titleOf, playback.status],
   );
 
   const selection = outcome?.selection ?? null;
