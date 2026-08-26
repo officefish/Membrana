@@ -1,6 +1,6 @@
 # Реестр кейсов — производный снимок
 
-Пересобран: 2026-07-30 · источник истины — файлы `docs/cases/*.md` (append-only).
+Пересобран: 2026-08-08 · источник истины — файлы `docs/cases/*.md` (append-only).
 Руками не править: `yarn case:register --rebuild`.
 
 | id | date | home | mechanism | repeatable | подвал |
