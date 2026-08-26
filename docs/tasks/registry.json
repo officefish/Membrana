@@ -15,7 +15,7 @@
       "supportPersonas": [],
       "notes": "Шот после #2177 (раскладка — сессия Г). Зуб судит соответствие объявлению, НЕ видимость — граница названа в issue",
       "archiveNotes": "Поглощён магистралью #2177/#2184: зона плагинов стала сущностью (PagePluginArea + pagePluginSource), зубы порядка JSX написаны для обоих близнецов (sample-library-layout.test.ts). Каталожное поле placement завело бы второй словарь размещения — не делаем. Issue #2182 закрыт с обоснованием",
-      "githubIssueClosedAt": null
+      "githubIssueClosedAt": "2026-08-26"
     },
     {
       "id": "playback-hang-timeout",
