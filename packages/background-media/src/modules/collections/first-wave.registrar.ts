@@ -69,6 +69,19 @@ export function prismaSampleReader(prisma: PrismaService, blobs: BlobStorageServ
  */
 export interface RunRequest {
   readonly pluginId: PluginId;
+  /**
+   * Устройство-владелец коллекции. ОБЯЗАТЕЛЬНО, и это исправление дефекта 26.08, а не удобство.
+   *
+   * Схема БД: `Collection @@id([deviceId, id])` — коллекция уникальна ПАРОЙ. Значит
+   * `__buffer__` есть у КАЖДОГО устройства, и чтение по одному `collectionId` гребёт чужие
+   * пробы. Владелец увидел это числами: витрина «в наборе 1980», таблица той же коллекции
+   * «1–40 из 1727», сумма всех коллекций устройства — 1947. Первое число больше суммы всех
+   * своих коллекций, потому что считало чужие устройства.
+   *
+   * Поле НЕ опционально: необязательный `deviceId` — fail-open, забыл передать и снова чужие
+   * пробы, молча. Обязательное ловит typecheck на каждом вызывающем.
+   */
+  readonly deviceId: string;
   readonly collectionId: string;
   readonly trigger?: PluginTrigger;
   readonly sampleId?: string;
@@ -212,14 +225,29 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
         ...(req.from ? { fromMs: Date.parse(req.from) } : {}),
         ...(req.to ? { toMs: Date.parse(req.to) } : {}),
       });
-      const librarySamplesOf = async (collectionId: string) => {
-        const all = await mfcc.reader.listSamples(collectionId);
+      /**
+       * Пробы набора для витрин — ПАРОЙ (устройство, коллекция), а не одним `collectionId`.
+       *
+       * Порт `CollectionSampleReader` читает по одной коллекции: он писался под прогон внутри
+       * устройства и о паре не знает. Здесь витрине нужен именно набор ЭТОГО устройства, поэтому
+       * чтение идёт прямо к базе тем же условием, каким его делает таблица кабинета
+       * (`samples.service`: `where: { deviceId, collectionId }`) — один источник числа для
+       * витрины и таблицы. Расхождение 1980/1727 родилось ровно из двух разных условий.
+       */
+      const librarySamplesOf = async (collectionId: string, deviceId: string) => {
+        const all = (
+          await this.prisma.sample.findMany({
+            where: { deviceId, collectionId },
+            orderBy: { id: 'asc' },
+            select: { id: true, createdAt: true },
+          })
+        ).map((row) => ({ id: row.id, createdAt: row.createdAt.toISOString() }));
         // Проба без createdAt в отбор по окну не попадает МОЛЧА НЕ выбрасывается: ей ставится
         // эпоха 0 — при заданном окне она честно выпадет, без окна участвует как все.
         return all.map((d) => ({ sampleId: d.id, at: d.createdAt ? Date.parse(d.createdAt) : 0 }));
       };
       this.contextBuilders.set(libraryManifest.id, async (req) => {
-        const samples = await librarySamplesOf(req.collectionId);
+        const samples = await librarySamplesOf(req.collectionId, req.deviceId);
         const { candidates } = handlers.filterByDateWindow(samples, libraryWindowOf(req));
         return {
           address: this.addressOf(libraryManifest, req, handlers.uuidV7()),
@@ -230,6 +258,10 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
           resumeMode: 'fresh',
           trigger: req.trigger ?? libraryManifest.triggers[0]!,
           payload: {
+            // Устройство едет с прогоном: исполнитель обязан прочитать ТОТ ЖЕ набор, что и
+            // строитель контекста, иначе отпечаток входа считался бы по одному списку, а отбор
+            // шёл бы по другому.
+            deviceId: req.deviceId,
             collectionId: req.collectionId,
             ...(req.from ? { from: req.from } : {}),
             ...(req.to ? { to: req.to } : {}),
@@ -241,8 +273,8 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
       });
       this.host.registerPlugin(libraryManifest, {
         execute: async (ctx) => {
-          const p = ctx.payload as { collectionId: string; from?: string; to?: string; volume: number; criterion: string };
-          const samples = await librarySamplesOf(p.collectionId);
+          const p = ctx.payload as { deviceId: string; collectionId: string; from?: string; to?: string; volume: number; criterion: string };
+          const samples = await librarySamplesOf(p.collectionId, p.deviceId);
           const window = {
             ...(p.from ? { fromMs: Date.parse(p.from) } : {}),
             ...(p.to ? { toMs: Date.parse(p.to) } : {}),
@@ -263,7 +295,7 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
       // говорит), configHash — от умолчаний. Результат — по runId, как у соседей: ничего не удаляет.
       const duplicatesManifest = handlers.LIBRARY_DUPLICATES_MANIFEST;
       this.contextBuilders.set(duplicatesManifest.id, async (req) => {
-        const samples = await librarySamplesOf(req.collectionId);
+        const samples = await librarySamplesOf(req.collectionId, req.deviceId);
         const { candidates } = handlers.filterByDateWindow(samples, libraryWindowOf(req));
         return {
           address: this.addressOf(duplicatesManifest, req, handlers.uuidV7()),
@@ -274,6 +306,10 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
           resumeMode: 'fresh',
           trigger: req.trigger ?? duplicatesManifest.triggers[0]!,
           payload: {
+            // Устройство едет с прогоном: исполнитель обязан прочитать ТОТ ЖЕ набор, что и
+            // строитель контекста, иначе отпечаток входа считался бы по одному списку, а отбор
+            // шёл бы по другому.
+            deviceId: req.deviceId,
             collectionId: req.collectionId,
             ...(req.from ? { from: req.from } : {}),
             ...(req.to ? { to: req.to } : {}),
@@ -283,8 +319,8 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
       });
       this.host.registerPlugin(duplicatesManifest, {
         execute: async (ctx) => {
-          const p = ctx.payload as { collectionId: string; from?: string; to?: string };
-          const samples = await librarySamplesOf(p.collectionId);
+          const p = ctx.payload as { deviceId: string; collectionId: string; from?: string; to?: string };
+          const samples = await librarySamplesOf(p.collectionId, p.deviceId);
           const window = {
             ...(p.from ? { fromMs: Date.parse(p.from) } : {}),
             ...(p.to ? { toMs: Date.parse(p.to) } : {}),

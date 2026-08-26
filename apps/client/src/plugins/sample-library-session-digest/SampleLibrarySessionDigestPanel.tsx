@@ -18,7 +18,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useMediaLibrary } from '@membrana/media-library-service';
 import type { SessionDigestRunOutcome, SessionDigestSound } from '@membrana/media-library-service';
 import { dateInputToIsoWindow } from '@membrana/media-library-service';
-import { selectSample, useSamplePlayback } from '@membrana/sample-playback-service';
+import { selectSample, useSamplePlayback, playSampleNow, togglePlayPause } from '@membrana/sample-playback-service';
 
 export interface SampleLibrarySessionDigestPanelProps {
   readonly moduleId: string;
@@ -58,7 +58,16 @@ export const SampleLibrarySessionDigestPanel: React.FC<SampleLibrarySessionDiges
   }, [service, collectionId, fromDate, toDate]);
 
   const play = useCallback(
-    (sound: SessionDigestSound) => void selectSample({ id: sound.sampleId, title: titleOf(sound), collectionId }),
+    (sound: SessionDigestSound) =>
+      // Клик «играть» играет, а не только выбирает (#2177): половина без второй — тот дефект,
+      // что владелец нашёл на проде 26.08.
+      // Лицо отказа — ОДНО на все панели: молчащая кнопка и есть тот дефект приёмки.
+      void playSampleNow(
+        { id: sound.sampleId, title: titleOf(sound), collectionId },
+        { select: selectSample, toggle: togglePlayPause },
+      ).then((played) => {
+        if (!played) setError('Проба не загрузилась — играть нечего');
+      }),
     [collectionId, titleOf],
   );
 

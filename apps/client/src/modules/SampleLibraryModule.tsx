@@ -91,6 +91,11 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   );
   const [selectedId, setSelectedId] = useState<string>(BUFFER_COLLECTION_ID);
   const [newCollectionName, setNewCollectionName] = useState('');
+  /**
+   * Свёрнут ли основной список (#2177, требование 4). Виджеты плагинов при этом ОСТАЮТСЯ:
+   * сворачивают список, чтобы работать с выборкой, а не чтобы спрятать всё разом.
+   */
+  const [mainCollapsed, setMainCollapsed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /** Перенос буфер→набор: что едет и куда — видно словом, а не молчанием (#2110). */
   const [moveState, setMoveState] = useState<{ state: 'moving' | 'done'; sampleId: string; targetName: string } | null>(null);
@@ -308,6 +313,20 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
         <SampleLibraryPlayerPanel moduleId={module.id} />
       ) : null}
 
+      {/*
+        Шапка списка — ВНЕ сворачиваемого (#2177, требование 4). Положи кнопку внутрь, и
+        свёрнутый список унёс бы её с собой: развернуть стало бы нечем. То же правило, что у
+        журнальной области кабинета (`PagePluginArea.mainHeader`) — правило одно на близнецов.
+      */}
+      <div className="flex items-center justify-between text-xs">
+        <span className="text-base-content/60">
+          {mainCollapsed ? 'Список свёрнут — виджеты плагинов остались' : 'Список наборов и проб'}
+        </span>
+        <button type="button" className="btn btn-ghost btn-xs" onClick={() => setMainCollapsed((v) => !v)}>
+          {mainCollapsed ? 'Развернуть список' : 'Свернуть список'}
+        </button>
+      </div>
+
       {moveState ? (
         <div className={moveState.state === 'moving' ? 'alert alert-info py-1 text-xs' : 'alert alert-success py-1 text-xs'} role="status">
           {moveState.state === 'moving'
@@ -324,6 +343,8 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
         </div>
       ) : null}
 
+      {/* Основной блок списка сворачивается целиком; виджеты плагинов ниже остаются (#2177). */}
+      {mainCollapsed ? null : (
       <div className="flex min-h-0 flex-1 gap-3">
         <aside className="flex w-52 shrink-0 flex-col gap-2 overflow-y-auto rounded-lg border border-base-300 bg-base-200/40 p-2">
           <span className="text-[10px] uppercase tracking-wide text-base-content/50">
@@ -611,6 +632,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
           </div>
         </section>
       </div>
+      )}
 
       {/* Панели плагинов — ПОД основным блоком, по журнальному образцу (пункт 1.2 владельца):
           у журнала кабинета виджет плагина встаёт под лентой, а не над ней. Плеер остаётся

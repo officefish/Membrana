@@ -12,14 +12,13 @@
  */
 import { useCallback, useEffect, useState } from 'react';
 
-import { fetchJournalPlugins, setJournalPluginEnabled } from '@/api/journal';
-
 import {
   enabledIdsFromHome,
   toPagePlugins,
   type CabinetRendererRegistry,
   type HomePluginState,
 } from './adapters/manifestToPagePlugin';
+import { homePluginSource, type PagePluginSource } from './pagePluginSource';
 import {
   initialPagePluginsState,
   setEnabled,
@@ -37,7 +36,15 @@ export interface UseHomePagePlugins {
   readonly collapseMain: (collapsed: boolean) => void;
 }
 
-export function useHomePagePlugins(renderers: CabinetRendererRegistry): UseHomePagePlugins {
+/**
+ * Источник состояния — ПАРАМЕТР (#2177). Жёсткий импорт журнального дома делал общий механизм
+ * страниц журнальным по факту: библиотеке пришлось бы завести вторую раскладку, а её быть не
+ * должно. Разницу между источниками см. в `pagePluginSource.ts` — она названа, а не сглажена.
+ */
+export function useHomePagePlugins(
+  renderers: CabinetRendererRegistry,
+  source: PagePluginSource = homePluginSource,
+): UseHomePagePlugins {
   const [states, setStates] = useState<readonly HomePluginState[]>([]);
   const [state, setState] = useState<PagePluginsState>(initialPagePluginsState);
   const [loading, setLoading] = useState(true);
@@ -47,7 +54,7 @@ export function useHomePagePlugins(renderers: CabinetRendererRegistry): UseHomeP
     let alive = true;
     void (async () => {
       try {
-        const fetched = (await fetchJournalPlugins()) as readonly HomePluginState[];
+        const fetched = await source.list();
         if (!alive) return;
         setStates(fetched);
         // Положение галочек берётся у дома, а не сохраняется между заходами на страницу.
@@ -62,12 +69,12 @@ export function useHomePagePlugins(renderers: CabinetRendererRegistry): UseHomeP
     return () => {
       alive = false;
     };
-  }, []);
+  }, [source]);
 
   const toggle = useCallback((id: string, enabled: boolean) => {
     void (async () => {
       try {
-        await setJournalPluginEnabled(id, enabled);
+        await source.setEnabled(id, enabled);
         // Правим отражение только после подтверждения дома: иначе галочка соврёт о доме.
         setState((s) => setEnabled(s, id, enabled));
         setStates((prev) =>
@@ -78,7 +85,7 @@ export function useHomePagePlugins(renderers: CabinetRendererRegistry): UseHomeP
         setError(e instanceof Error ? e.message : 'Дом не принял переключение');
       }
     })();
-  }, []);
+  }, [source]);
 
   const collapseMain = useCallback(
     (collapsed: boolean) => setState((s) => setMainCollapsed(s, collapsed)),

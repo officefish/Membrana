@@ -32,5 +32,6 @@ export {
 export { LruCache } from './lru-cache';
 
 export { playSequence, type SequenceOutcome, type SequencePrimitives } from './sequence';
+export { playSampleNow } from './play-now';
 
 export { useSamplePlayback, useSamplePlaybackEscapeKey, handleSamplePlaybackEscapeKey } from './hooks';
