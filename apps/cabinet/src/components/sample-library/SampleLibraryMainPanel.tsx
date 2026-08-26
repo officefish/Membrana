@@ -1,9 +1,6 @@
 import { BUFFER_COLLECTION_ID } from '@membrana/media-library-service';
 
 import { MediaLibraryQuotaBanner } from '@/components/MediaLibraryQuotaBanner';
-import { CabinetSampleChartListPanel } from '@/components/sample-library/CabinetSampleChartListPanel';
-import { CabinetSampleSessionDigestPanel } from '@/components/sample-library/CabinetSampleSessionDigestPanel';
-import { CabinetSampleDuplicatesPanel } from '@/components/sample-library/CabinetSampleDuplicatesPanel';
 import { CabinetSampleCollectionBody } from '@/components/sample-library/CabinetSampleCollectionBody';
 import type { CabinetSampleLibraryModel } from '@/lib/useCabinetSampleLibrary';
 
@@ -36,7 +33,6 @@ export type SampleLibraryMainPanelProps = Pick<
   | 'handleMove'
   | 'handleExport'
   | 'canLabelCatalog'
-  | 'service'
   | 'labelSavingId'
   | 'labelStates'
   | 'labelAnnotateError'
@@ -76,7 +72,6 @@ export function SampleLibraryMainPanel({
   handleMove,
   handleExport,
   canLabelCatalog,
-  service,
   labelSavingId,
   labelStates,
   labelAnnotateError,
@@ -235,39 +230,6 @@ export function SampleLibraryMainPanel({
         samplesPageLoading={samplesPageLoading}
         onSamplesPageChange={setSamplesPage}
       />
-      {/* Виджет отбора — ПОД основным блоком, по журнальному образцу (у журнала кабинета
-          виджет плагина встаёт под лентой). Близнец Studio-панели (#2110). */}
-      {selection.kind === 'node' && service && active ? (
-        <CabinetSampleChartListPanel
-          service={service}
-          collectionId={selection.collectionId}
-          knownSamples={nodeSamples}
-          playback={playback}
-          disabled={playbackDisabled}
-        />
-      ) : null}
-      {/* Разбор сеанса (#2039): двадцать опорных ночи лицом — тот же отчёт, тот же транспорт. */}
-      {selection.kind === 'node' && service && active ? (
-        <CabinetSampleSessionDigestPanel
-          service={service}
-          collectionId={selection.collectionId}
-          knownSamples={nodeSamples}
-          playback={playback}
-          disabled={playbackDisabled}
-        />
-      ) : null}
-      {/* Дубли набора (#2109): показать пары и ждать слова; удаление — тем же глаголом хука,
-          что у строки таблицы, чтобы страница перечиталась и тост сказал словом. */}
-      {selection.kind === 'node' && service && active ? (
-        <CabinetSampleDuplicatesPanel
-          service={service}
-          collectionId={selection.collectionId}
-          knownSamples={nodeSamples}
-          playback={playback}
-          onRemove={(id) => handleRemove(id)}
-          disabled={playbackDisabled || !canMutate}
-        />
-      ) : null}
     </section>
   );
 }

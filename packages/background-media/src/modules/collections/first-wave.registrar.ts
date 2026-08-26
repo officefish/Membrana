@@ -73,6 +73,18 @@ export function prismaSampleReader(prisma: PrismaService, blobs: BlobStorageServ
  */
 export interface RunRequest {
   readonly pluginId: PluginId;
+  /**
+   * Устройство-владелец коллекции. ОБЯЗАТЕЛЬНО, и это исправление дефекта 26.08, а не удобство.
+   *
+   * Схема БД: `Collection @@id([deviceId, id])` — коллекция уникальна ПАРОЙ. Значит
+   * `__buffer__` есть у КАЖДОГО устройства, и чтение по одному `collectionId` гребёт чужие
+   * пробы. Владелец увидел это числами: витрина «в наборе 1980», таблица той же коллекции
+   * «1–40 из 1727», сумма всех коллекций устройства — 1947. Первое число больше суммы всех
+   * своих коллекций, потому что считало чужие устройства.
+   *
+   * Поле НЕ опционально: необязательный `deviceId` — fail-open, забыл передать и снова чужие
+   * пробы, молча. Обязательное ловит typecheck на каждом вызывающем.
+   */
   readonly deviceId: string;
   readonly collectionId: string;
   readonly trigger?: PluginTrigger;
@@ -230,8 +242,22 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
         ...(req.from ? { fromMs: Date.parse(req.from) } : {}),
         ...(req.to ? { toMs: Date.parse(req.to) } : {}),
       });
+      /**
+       * Пробы набора для витрин — ПАРОЙ (устройство, коллекция), а не одним `collectionId`.
+       *
+       * Витрине нужен лёгкий список `id/createdAt`, поэтому он идёт прямо к базе тем же условием,
+       * каким его делает таблица кабинета (`samples.service`: `where: { deviceId, collectionId }`).
+       * Аудио-измерения ниже читают байты через `CollectionSampleReader` с той же обязательной
+       * парой: отпечаток, список витрины и чтение WAV больше не расходятся по устройству.
+       */
       const librarySamplesOf = async (deviceId: string, collectionId: string) => {
-        const all = await mfcc.reader.listSamples(deviceId, collectionId);
+        const all = (
+          await this.prisma.sample.findMany({
+            where: { deviceId, collectionId },
+            orderBy: { id: 'asc' },
+            select: { id: true, createdAt: true },
+          })
+        ).map((row) => ({ id: row.id, createdAt: row.createdAt.toISOString() }));
         // Проба без createdAt в отбор по окну не попадает МОЛЧА НЕ выбрасывается: ей ставится
         // эпоха 0 — при заданном окне она честно выпадет, без окна участвует как все.
         return all.map((d) => ({ sampleId: d.id, at: d.createdAt ? Date.parse(d.createdAt) : 0 }));
@@ -248,6 +274,9 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
           resumeMode: 'fresh',
           trigger: req.trigger ?? libraryManifest.triggers[0]!,
           payload: {
+            // Устройство едет с прогоном: исполнитель обязан прочитать ТОТ ЖЕ набор, что и
+            // строитель контекста, иначе отпечаток входа считался бы по одному списку, а отбор
+            // шёл бы по другому.
             deviceId: req.deviceId,
             collectionId: req.collectionId,
             ...(req.from ? { from: req.from } : {}),
@@ -293,6 +322,9 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
           resumeMode: 'fresh',
           trigger: req.trigger ?? duplicatesManifest.triggers[0]!,
           payload: {
+            // Устройство едет с прогоном: исполнитель обязан прочитать ТОТ ЖЕ набор, что и
+            // строитель контекста, иначе отпечаток входа считался бы по одному списку, а отбор
+            // шёл бы по другому.
             deviceId: req.deviceId,
             collectionId: req.collectionId,
             ...(req.from ? { from: req.from } : {}),

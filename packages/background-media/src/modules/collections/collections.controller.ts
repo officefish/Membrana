@@ -117,6 +117,8 @@ export class CollectionsController {
     await this.collections.getOwned(deviceId, collectionId);
     const outcome = await this.firstWave.requestRun({
       pluginId: pluginId as PluginId,
+      // Устройство уже проверено выше (`getOwned`) — и теперь доезжает до чтения проб, а не
+      // теряется на границе: витрина обязана считать набор ЭТОГО устройства (#2177).
       deviceId,
       collectionId,
       ...(body?.trigger ? { trigger: body.trigger as PluginTrigger } : {}),
