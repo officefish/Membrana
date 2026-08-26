@@ -32,3 +32,32 @@ describe('playSampleNow', () => {
     expect(calls).toEqual(['select'], 'жать «играть» поверх ошибки — прятать причину за бездействием');
   });
 });
+
+describe('живой статус, а не прошлый рендер (BLOCK ревью #2184)', () => {
+  it('статус читается ПОСЛЕ выбора: устаревший счёл бы ошибку успехом', async () => {
+    // Панель подавала `() => playback.status` — проп ПРОШЛОГО рендера. Он ещё «paused» в тот
+    // миг, когда сервис уже поставил «error»: глагол включил бы звук поверх несуществующего
+    // буфера и вернул `true`. Здесь источник меняется между вызовами, как и в жизни.
+    let live = 'paused';
+    const calls: string[] = [];
+    const played = await playSampleNow(target, {
+      select: (async () => { calls.push('select'); live = 'error'; }) as never,
+      toggle: (async () => { calls.push('toggle'); }) as never,
+      statusOf: () => live,
+    });
+    expect(played).toBe(false);
+    expect(calls).toEqual(['select'], 'звук не включается поверх отказа загрузки');
+  });
+
+  it('без statusOf глагол берёт снимок У СЕРВИСА и работает', async () => {
+    // Поведением, а не чтением исходника: зуб на текст файла проверяет написание, а не работу.
+    const calls: string[] = [];
+    const played = await playSampleNow(target, {
+      select: (async () => { calls.push('select'); }) as never,
+      toggle: (async () => { calls.push('toggle'); }) as never,
+    });
+    // Снимок сервиса в тестовой среде — начальный «idle», а не «error»: звук включается.
+    expect(played).toBe(true);
+    expect(calls).toEqual(['select', 'toggle']);
+  });
+});

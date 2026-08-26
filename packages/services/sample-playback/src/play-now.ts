@@ -16,7 +16,7 @@
  * оставляет статус `error` с причиной — играть нечего, и глагол молча не «успевает»: он
  * возвращает `false`, а вызывающий волен сказать об этом словом.
  */
-import { selectSample, togglePlayPause } from './service';
+import { getSamplePlaybackSnapshot, selectSample, togglePlayPause } from './service';
 import type { SamplePlaybackTarget } from './types';
 
 /**
@@ -29,13 +29,19 @@ export async function playSampleNow(
   deps: {
     readonly select: typeof selectSample;
     readonly toggle: typeof togglePlayPause;
-    readonly statusOf: () => string;
+    /**
+     * Живой статус плеера. По умолчанию берётся у СЕРВИСА, а не у React-пропа: проп несёт
+     * состояние ПРОШЛОГО рендера, и сразу после `select` он ещё старый — на `playing` глагол
+     * счёл бы ошибку успехом, на `error` наоборот. Ревью #2184 поймало это раньше прода.
+     */
+    readonly statusOf?: () => string;
   },
 ): Promise<boolean> {
   await deps.select(target);
   // Состояние спрашивается ПОСЛЕ выбора: `selectSample` ставит `error`, если буфер не пришёл.
   // Жать «играть» поверх ошибки значило бы прятать причину за молчаливым бездействием.
-  if (deps.statusOf() === 'error') return false;
+  const statusOf = deps.statusOf ?? (() => getSamplePlaybackSnapshot().status);
+  if (statusOf() === 'error') return false;
   await deps.toggle();
   return true;
 }

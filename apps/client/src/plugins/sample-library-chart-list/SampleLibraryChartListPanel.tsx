@@ -71,16 +71,14 @@ export const SampleLibraryChartListPanel: React.FC<SampleLibraryChartListPanelPr
       // Проигрыватель хочет цель с именем — берём её из снапшота набора, как основной список.
       void playSampleNow(
         { id: sampleId, title: titleOf(sampleId), collectionId },
-        { select: selectSample, toggle: togglePlayPause, statusOf: () => playback.status },
+        { select: selectSample, toggle: togglePlayPause },
       ).then((played) => {
         // Отказ не глотается: проба могла не загрузиться, и молчание кнопки — тот самый
         // дефект приёмки 26.08, только в другом месте.
         if (!played) setError('Проба не загрузилась — играть нечего');
       });
     },
-    // playback.status в зависимостях: статус читается в момент клика, и устаревшее замыкание
-    // судило бы по прошлому состоянию плеера.
-    [collectionId, titleOf, playback.status],
+    [collectionId, titleOf],
   );
 
   const selection = outcome?.selection ?? null;

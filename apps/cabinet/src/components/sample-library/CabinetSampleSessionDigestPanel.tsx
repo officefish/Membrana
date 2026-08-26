@@ -62,11 +62,9 @@ export function CabinetSampleSessionDigestPanel({
       // что владелец нашёл на проде 26.08.
       void playSampleNow(
         { id: sound.sampleId, title: titleOf(sound), collectionId },
-        { select: selectSample, toggle: togglePlayPause, statusOf: () => playback.status },
+        { select: selectSample, toggle: togglePlayPause },
       ),
-    // playback.status в зависимостях: статус читается в момент клика, и устаревшее замыкание
-    // судило бы по прошлому состоянию плеера.
-    [collectionId, titleOf, playback.status],
+    [collectionId, titleOf],
   );
 
   const list = (title: string, sounds: readonly SessionDigestSound[], shortfall: number) => (
