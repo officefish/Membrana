@@ -123,6 +123,7 @@ export interface SessionDigestPassport {
 
 export interface SessionDigestResult extends RunResult {
   readonly kind: 'report';
+  readonly deviceId: string;
   readonly window: SessionWindow & { readonly tracksSeen: number; readonly tracksInWindow: number };
   readonly floor: { readonly value: number; readonly measured: boolean };
   /**
@@ -165,6 +166,12 @@ export function windowOf(payload: unknown): SessionWindow {
   return { ...(from ? { from } : {}), ...(to ? { to } : {}) };
 }
 
+export function deviceIdOf(payload: unknown): string {
+  if (typeof payload !== 'object' || payload === null) return '';
+  const raw = (payload as Record<string, unknown>).deviceId;
+  return typeof raw === 'string' ? raw : '';
+}
+
 /**
  * Отпечатки прогона свода. Живут рядом с исполнителем — как `mfccFingerprintsOf` рядом с mfcc:
  * чем считали, тем и отпечаток.
@@ -179,12 +186,13 @@ export function windowOf(payload: unknown): SessionWindow {
  */
 export async function sessionDigestFingerprintsOf(
   deps: SessionDigestDeps,
+  deviceId: string,
   collectionId: string,
   window: SessionWindow,
   sha256Hex: (bytes: Uint8Array) => string,
 ): Promise<RunFingerprints> {
   const cfg = { ...SESSION_DIGEST_DEFAULTS, ...(deps.tuning ?? {}) };
-  const inWin = (await deps.reader.listSamples(collectionId)).filter((s) => inWindow(s, window));
+  const inWin = (await deps.reader.listSamples(deviceId, collectionId)).filter((s) => inWindow(s, window));
   const entries: { sampleId: string; contentHash: string }[] = [];
   for (const s of inWin) entries.push({ sampleId: s.id, contentHash: (await deps.reader.readAudio(s)).contentHash });
   return {
@@ -209,6 +217,7 @@ export function createSessionDigestExecutor(deps: SessionDigestDeps): PluginExec
   const done = (over: Partial<SessionDigestResult>, seen: number, inWin: number, w: SessionWindow): SessionDigestResult => ({
     completedAt: now(),
     kind: 'report',
+    deviceId: over.deviceId ?? '',
     window: { ...w, tracksSeen: seen, tracksInWindow: inWin },
     floor: { value: 0, measured: false },
     references: [],
@@ -223,11 +232,13 @@ export function createSessionDigestExecutor(deps: SessionDigestDeps): PluginExec
   return {
     async execute(ctx: PluginContext): Promise<SessionDigestResult> {
       const window = windowOf(ctx.payload);
-      const all = await deps.reader.listSamples(ctx.address.collectionId);
+      const deviceId = deviceIdOf(ctx.payload);
+      if (!deviceId) throw new Error('deviceId обязателен для чтения проб коллекции');
+      const all = await deps.reader.listSamples(deviceId, ctx.address.collectionId);
       const tracks = all.filter((s) => inWindow(s, window));
       if (tracks.length === 0) {
         return done(
-          { refusal: refuseSession('session-too-short', `в окне ноль проб из ${all.length} в коллекции`) },
+          { deviceId, refusal: refuseSession('session-too-short', `в окне ноль проб из ${all.length} в коллекции`) },
           all.length, 0, window,
         );
       }
@@ -246,6 +257,7 @@ export function createSessionDigestExecutor(deps: SessionDigestDeps): PluginExec
       if (floorIsFallback) {
         return done(
           {
+            deviceId,
             floor: { value: floor, measured: false },
             refusal: refuseSession('floor-not-measured', `кадров ${history.length} < 20 — фон сеанса не измерен`),
           },
@@ -281,6 +293,7 @@ export function createSessionDigestExecutor(deps: SessionDigestDeps): PluginExec
       if (candidates.length === 0) {
         return done(
           {
+            deviceId,
             floor: { value: floor, measured: true },
             refusal: refuseSession('no-events-over-floor', `ни одного события громче фона на ${cfg.deltaDb} дБ`),
           },
@@ -324,6 +337,7 @@ export function createSessionDigestExecutor(deps: SessionDigestDeps): PluginExec
 
       return done(
         {
+          deviceId,
           floor: { value: floor, measured: true },
           references,
           negatives,

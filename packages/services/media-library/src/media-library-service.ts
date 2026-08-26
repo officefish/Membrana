@@ -22,6 +22,7 @@ import type {
   ImportBlobOptions,
   MediaLibrarySnapshot,
   MediaSample,
+  MediaPluginState,
   NewSampleMeta,
   PaginatedSamples,
 } from './types.js';
@@ -287,6 +288,24 @@ export class MediaLibraryService {
       throw new Error('Поиск дублей доступен только при серверной библиотеке (media-server)');
     }
     return this.backend.requestLibraryDuplicates(collectionId, req);
+  }
+
+  async listCollectionPlugins(collectionId: string): Promise<readonly MediaPluginState[]> {
+    if (!this.backend.listCollectionPlugins) {
+      throw new Error('Список плагинов библиотеки доступен только при серверной библиотеке (media-server)');
+    }
+    return this.backend.listCollectionPlugins(collectionId);
+  }
+
+  async setCollectionPluginEnabled(
+    collectionId: string,
+    pluginId: string,
+    enabled: boolean,
+  ): Promise<void> {
+    if (!this.backend.setCollectionPluginEnabled) {
+      throw new Error('Переключение плагинов библиотеки доступно только при серверной библиотеке (media-server)');
+    }
+    await this.backend.setCollectionPluginEnabled(collectionId, pluginId, enabled);
   }
 
   async moveSample(sampleId: string, toCollectionId: string): Promise<MediaSample> {

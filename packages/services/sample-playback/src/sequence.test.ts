@@ -3,7 +3,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { playSequence, type SequencePrimitives } from './sequence';
+import { playBudgetMs, playSequence, type SequencePrimitives } from './sequence';
 import type { SamplePlaybackSnapshot, SamplePlaybackStatus } from './types';
 
 /** Фикстурный хаб: статусы переключает тест, подписчики уведомляются как у живого. */
@@ -95,3 +95,67 @@ describe('playSequence', () => {
 });
 
 const tick = () => new Promise<void>((r) => setTimeout(r, 0));
+
+// ── #2181 (находка долга ревью #2180): бюджет ожидания — зависания нет ──────────
+
+/** Хаб, который «умер»: select уводит в loading и статус больше не меняется. */
+function stuckHub(stage: 'ready' | 'play') {
+  let snap: SamplePlaybackSnapshot = {
+    selectedSampleId: null, selectedTitle: null, selectedCollectionId: null,
+    status: 'idle', currentTimeSec: 0, durationSec: 0, waveform: [], errorMessage: null,
+  };
+  const listeners = new Set<() => void>();
+  const set = (patch: Partial<SamplePlaybackSnapshot>) => {
+    snap = { ...snap, ...patch };
+    for (const l of listeners) l();
+  };
+  const p: SequencePrimitives = {
+    select: async (t) => {
+      set({ selectedSampleId: t.id, status: 'loading' });
+      await Promise.resolve();
+      // stage='ready' — не доходит до paused вовсе; иначе готовность есть, а конца не будет.
+      if (stage === 'play') set({ status: 'paused', durationSec: 1 });
+    },
+    play: async () => set({ status: 'playing' }),
+    subscribe: (l) => { listeners.add(l); return () => listeners.delete(l); },
+    snapshot: () => snap,
+  };
+  return { p };
+}
+
+describe('#2181 бюджет ожидания', () => {
+  it('ПОРЧА: хаб не готовит пробу — отказ по бюджету с ИМЕНЕМ пробы, а не вечное ожидание', async () => {
+    const { p } = stuckHub('ready');
+    const out = await playSequence(p, [T('a')], undefined, { readyMs: 10 });
+    expect(out.stoppedBy).toBe('error');
+    expect(out.failedSampleId).toBe('a');
+    expect(out.error).toMatch(/не подготовилась за 10 мс/u);
+    expect(out.played).toBe(0);
+  });
+
+  it('ПОРЧА: проба не доигрывает — отказ по бюджету, названный, не молчаливый пропуск', async () => {
+    const { p } = stuckHub('play');
+    const out = await playSequence(p, [T('b')], undefined, { playSlackMs: 10, playFallbackMs: 10 });
+    expect(out.stoppedBy).toBe('error');
+    expect(out.failedSampleId).toBe('b');
+    expect(out.error).toMatch(/не доиграла за \d+ мс/u);
+  });
+
+  it('здоровый хаб укладывается в бюджет — исход прежний, бюджет не мешает', async () => {
+    const h = hub();
+    const done = playSequence(h.p, [T('x'), T('y')], undefined, { readyMs: 1000, playSlackMs: 1000 });
+    for (let i = 0; i < 2; i += 1) {
+      await new Promise((r) => setTimeout(r, 0));
+      h.status('ended');
+    }
+    const out = await done;
+    expect(out).toEqual({ played: 2, stoppedBy: 'complete', failedSampleId: null, error: null });
+  });
+
+  it('потолок конца считается от длительности пробы, иначе — fallback', () => {
+    const b = { readyMs: 1, playSlackMs: 500, playFallbackMs: 7000 };
+    expect(playBudgetMs(2, b)).toBe(2500);
+    expect(playBudgetMs(0, b)).toBe(7000);
+    expect(playBudgetMs(Number.NaN, b)).toBe(7000);
+  });
+});

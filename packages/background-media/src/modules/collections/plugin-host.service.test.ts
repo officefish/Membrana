@@ -102,6 +102,17 @@ describe('CollectionsPluginHostService', () => {
     expect(callsA).toEqual([context({ trigger: 'collections.collection_created' })]);
     expect(callsB).toEqual([]);
   });
+
+  it('дом отдаёт включённость отдельно от манифеста и request по выключенному плагину отказывает', async () => {
+    const host = await readyHost();
+    host.registerPlugin(manifest(), executor([]));
+    expect(host.getPluginStates()).toEqual([{ manifest: manifest(), enabled: true }]);
+
+    host.setPluginEnabled(goodId, false);
+
+    expect(host.getPluginStates()).toEqual([{ manifest: manifest(), enabled: false }]);
+    await expect(host.request(goodId, 'collections.sample_added', context())).rejects.toMatchObject({ status: 400 });
+  });
 });
 
 describe('CollectionsPluginHostService — обещание импорта контрактов живёт в экземпляре (#1972)', () => {

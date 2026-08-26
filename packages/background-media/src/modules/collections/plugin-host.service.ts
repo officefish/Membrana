@@ -92,6 +92,10 @@ export class CollectionsPluginHostService implements IPluginHost, OnModuleInit {
     return [...this.plugins.values()].map(({ manifest }) => manifest);
   }
 
+  getPluginStates(): ReadonlyArray<{ manifest: PluginManifest; enabled: boolean }> {
+    return [...this.plugins.values()].map(({ manifest, enabled }) => ({ manifest, enabled }));
+  }
+
   setPluginEnabled(pluginId: PluginId, enabled: boolean): void {
     const entry = this.plugins.get(pluginId);
     if (!entry) throw new NotFoundException(`Plugin ${pluginId} is not registered`);

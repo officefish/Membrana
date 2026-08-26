@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Logger, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import {
   ApiHeader,
   ApiOperation,
@@ -13,10 +13,12 @@ import { API_TOKEN_SECURITY } from '../../common/swagger/openapi.constants';
 import { MediaDeviceAccessGuard } from '../../common/guards/media-device-access.guard';
 import {
   CollectionResponseDto,
+  CollectionPluginListResponseDto,
   CreateCollectionDto,
   PluginRunResponseDto,
   ProvisionCatalogResponseDto,
   RequestPluginRunDto,
+  SetCollectionPluginEnabledDto,
 } from './collections.dto';
 import { CatalogProvisionService } from './catalog-provision.service';
 import { CollectionsService } from './collections.service';
@@ -129,6 +131,43 @@ export class CollectionsController {
     });
     this.logger.log({ deviceId, collectionId, pluginId, runId: outcome.runId, bridge: outcome.bridge?.outcome ?? null }, 'Plugin run requested');
     return { runId: outcome.runId, address: { ...outcome.address }, fingerprints: outcome.fingerprints, bridge: outcome.bridge, ...(outcome.result === undefined ? {} : { result: outcome.result }) };
+  }
+
+  @Get(':collectionId/plugins')
+  @ApiOperation({
+    summary: 'List collection home plugins with registry enabled state',
+    description: 'Включённость отдаёт дом collections; страница её отражает и не держит свой реестр.',
+  })
+  @ApiParam({ name: 'collectionId', format: 'uuid' })
+  @ApiResponse({ status: 200, type: CollectionPluginListResponseDto })
+  @ApiStandardErrors()
+  async listPlugins(
+    @Param('deviceId') deviceId: string,
+    @Param('collectionId') collectionId: string,
+  ): Promise<CollectionPluginListResponseDto> {
+    await this.collections.getOwned(deviceId, collectionId);
+    return { mountTarget: this.firstWave.mountTargetId, plugins: [...this.firstWave.getPluginStates()] };
+  }
+
+  @Patch(':collectionId/plugins/:pluginId')
+  @ApiOperation({
+    summary: 'Set collection home plugin enabled state',
+    description: 'Владелец включённости — дом collections; enabled не записывается в манифест.',
+  })
+  @ApiParam({ name: 'collectionId', format: 'uuid' })
+  @ApiParam({ name: 'pluginId', example: 'membrana.showcase.library-chart-list' })
+  @ApiResponse({ status: 200, type: OkResponseDto })
+  @ApiStandardErrors()
+  @ApiBadRequest()
+  async setPluginEnabled(
+    @Param('deviceId') deviceId: string,
+    @Param('collectionId') collectionId: string,
+    @Param('pluginId') pluginId: string,
+    @Body() body: SetCollectionPluginEnabledDto,
+  ): Promise<OkResponseDto> {
+    await this.collections.getOwned(deviceId, collectionId);
+    this.firstWave.setPluginEnabled(pluginId as PluginId, body?.enabled === true);
+    return { ok: true };
   }
 
 }

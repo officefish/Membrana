@@ -31,6 +31,8 @@ export type {
   CollectionKind,
   MediaLibrarySnapshot,
   MediaSample,
+  MediaPluginManifest,
+  MediaPluginState,
   NewSampleMeta,
   SampleLabel,
   SampleSource,

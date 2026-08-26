@@ -34,7 +34,8 @@ function reader(tracks: readonly Track[]): CollectionSampleReader {
   return {
     listSamples: async () =>
       tracks.map((t): CollectionSampleDescriptor => ({
-        id: t.id, title: t.id, sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: t.bytes.length,
+        id: t.id, deviceId: 'dev-1', collectionId: 'c1',
+        title: t.id, sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: t.bytes.length,
       })),
     readAudio: async (s) => ({ bytes: tracks.find((t) => t.id === s.id)!.bytes, contentHash: `h-${s.id}` }),
   };
@@ -81,13 +82,13 @@ describe('набор проб из нагрузки', () => {
 
 describe('измерение набора', () => {
   it('пустой набор — отказ, а не пустой список без причины', async () => {
-    const r = await measureSampleSet(deps([]), 'c1', []);
+    const r = await measureSampleSet(deps([]), 'dev-1', 'c1', []);
     expect(r.refusal?.reason).toBe('empty-set');
   });
 
   it('фон НЕ измерен — отказ, а не превышение над подставленным полом', async () => {
     // Один короткий трек: кадров меньше двадцати, фон посчитать не из чего.
-    const r = await measureSampleSet(deps([{ id: 'a', bytes: wav(0.05, 0.5, 440) }]), 'c1', ['a']);
+    const r = await measureSampleSet(deps([{ id: 'a', bytes: wav(0.05, 0.5, 440) }]), 'dev-1', 'c1', ['a']);
     expect(r.refusal?.reason).toBe('floor-not-measured');
     expect(r.floor.measured).toBe(false);
     expect(r.candidates).toEqual([]);
@@ -95,7 +96,7 @@ describe('измерение набора', () => {
 
   it('громкий трек над тихим фоном становится кандидатом с ИЗМЕРЕННЫМ фоном', async () => {
     const tracks = [...quiet(30), { id: 'loud', bytes: wav(1, 0.6, 440) }];
-    const r = await measureSampleSet(deps(tracks), 'c1', tracks.map((t) => t.id));
+    const r = await measureSampleSet(deps(tracks), 'dev-1', 'c1', tracks.map((t) => t.id));
     expect(r.refusal).toBeNull();
     expect(r.floor.measured).toBe(true);
     expect(r.candidates.map((c) => c.sampleId)).toContain('loud');
@@ -104,9 +105,9 @@ describe('измерение набора', () => {
 
   it('превышение считается ОТ ФОНА НАБОРА: тот же трек в шумном наборе даёт меньше дБ', async () => {
     const loud = { id: 'loud', bytes: wav(1, 0.6, 440) };
-    const inQuiet = await measureSampleSet(deps([...quiet(30), loud]), 'c1', [...quiet(30).map((t) => t.id), 'loud']);
+    const inQuiet = await measureSampleSet(deps([...quiet(30), loud]), 'dev-1', 'c1', [...quiet(30).map((t) => t.id), 'loud']);
     const noisy = Array.from({ length: 30 }, (_, i) => ({ id: `n${i}`, bytes: wav(1, 0.2, 300) }));
-    const inNoisy = await measureSampleSet(deps([...noisy, loud]), 'c1', [...noisy.map((t) => t.id), 'loud']);
+    const inNoisy = await measureSampleSet(deps([...noisy, loud]), 'dev-1', 'c1', [...noisy.map((t) => t.id), 'loud']);
 
     const a = inQuiet.candidates.find((c) => c.sampleId === 'loud')!.deltaDb;
     const b = inNoisy.candidates.find((c) => c.sampleId === 'loud')?.deltaDb ?? Number.NEGATIVE_INFINITY;
@@ -116,7 +117,7 @@ describe('измерение набора', () => {
 
   it('измеритель НЕ отбирает: отдаёт всех, кого измерил, без порядка и без обрезки', async () => {
     const tracks = [...quiet(30), { id: 'l1', bytes: wav(1, 0.6, 440) }, { id: 'l2', bytes: wav(1, 0.5, 880) }];
-    const r = await measureSampleSet(deps(tracks), 'c1', tracks.map((t) => t.id));
+    const r = await measureSampleSet(deps(tracks), 'dev-1', 'c1', tracks.map((t) => t.id));
     expect(r.candidates.length).toBeGreaterThanOrEqual(2);
     expect(r).not.toHaveProperty('picks');
     expect(r).not.toHaveProperty('volume');
@@ -124,21 +125,21 @@ describe('измерение набора', () => {
 
   it('один кандидат на трек — строка выборки есть строка журнала, у неё один адрес', async () => {
     const tracks = [...quiet(30), { id: 'loud', bytes: wav(2, 0.6, 440) }];
-    const r = await measureSampleSet(deps(tracks), 'c1', tracks.map((t) => t.id));
+    const r = await measureSampleSet(deps(tracks), 'dev-1', 'c1', tracks.map((t) => t.id));
     const forLoud = r.candidates.filter((c) => c.sampleId === 'loud');
     expect(forLoud).toHaveLength(1);
   });
 
   it('проба вне коллекции пропускается, но расхождение со спрошенным видно', async () => {
     const tracks = [...quiet(30), { id: 'loud', bytes: wav(1, 0.6, 440) }];
-    const r = await measureSampleSet(deps(tracks), 'c1', [...tracks.map((t) => t.id), 'нет-такой']);
+    const r = await measureSampleSet(deps(tracks), 'dev-1', 'c1', [...tracks.map((t) => t.id), 'нет-такой']);
     expect(r.asked).toBe(tracks.length + 1);
     expect(r.candidates.length).toBeLessThan(r.asked);
   });
 
   it('структура названа ярлыком, а не оставлена числом', async () => {
     const tracks = [...quiet(30), { id: 'loud', bytes: wav(1, 0.6, 440) }];
-    const r = await measureSampleSet(deps(tracks), 'c1', tracks.map((t) => t.id));
+    const r = await measureSampleSet(deps(tracks), 'dev-1', 'c1', tracks.map((t) => t.id));
     const c = r.candidates.find((x) => x.sampleId === 'loud')!;
     expect(['tonal', 'broadband']).toContain(c.structure);
     expect(typeof c.flatness).toBe('number');
@@ -148,7 +149,7 @@ describe('измерение набора', () => {
 describe('пик и превышение — РАЗНЫЕ величины (находка приёмки 22.08)', () => {
   it('на реальном фоне два числа расходятся — иначе строка врёт о трёх измерениях', async () => {
     const tracks = [...quiet(30), { id: 'loud', bytes: wav(1, 0.6, 440) }];
-    const r = await measureSampleSet(deps(tracks), 'c1', tracks.map((t) => t.id));
+    const r = await measureSampleSet(deps(tracks), 'dev-1', 'c1', tracks.map((t) => t.id));
     const c = r.candidates.find((x) => x.sampleId === 'loud')!;
     // До починки оба несли dbOverFloor(peak, floor) и совпадали до десятой доли.
     expect(c.deltaDb).not.toBeCloseTo(c.peakDb, 1);
@@ -156,7 +157,7 @@ describe('пик и превышение — РАЗНЫЕ величины (на
 
   it('пик АБСОЛЮТНЫЙ: у сигнала тише полной шкалы он отрицательный', async () => {
     const tracks = [...quiet(30), { id: 'loud', bytes: wav(1, 0.6, 440) }];
-    const r = await measureSampleSet(deps(tracks), 'c1', tracks.map((t) => t.id));
+    const r = await measureSampleSet(deps(tracks), 'dev-1', 'c1', tracks.map((t) => t.id));
     const c = r.candidates.find((x) => x.sampleId === 'loud')!;
     expect(c.peakDb).toBeLessThan(0);
     // 0.6 полной шкалы ≈ −4.4 dBFS: величина материала, а не выборки.
@@ -165,9 +166,9 @@ describe('пик и превышение — РАЗНЫЕ величины (на
 
   it('превышение ЗАВИСИТ от набора, абсолютный пик — НЕТ', async () => {
     const loud = { id: 'loud', bytes: wav(1, 0.6, 440) };
-    const inQuiet = await measureSampleSet(deps([...quiet(30), loud]), 'c1', [...quiet(30).map((t) => t.id), 'loud']);
+    const inQuiet = await measureSampleSet(deps([...quiet(30), loud]), 'dev-1', 'c1', [...quiet(30).map((t) => t.id), 'loud']);
     const noisy = Array.from({ length: 30 }, (_, i) => ({ id: `n${i}`, bytes: wav(1, 0.2, 300) }));
-    const inNoisy = await measureSampleSet(deps([...noisy, loud]), 'c1', [...noisy.map((t) => t.id), 'loud']);
+    const inNoisy = await measureSampleSet(deps([...noisy, loud]), 'dev-1', 'c1', [...noisy.map((t) => t.id), 'loud']);
 
     const a = inQuiet.candidates.find((c) => c.sampleId === 'loud')!;
     const b = inNoisy.candidates.find((c) => c.sampleId === 'loud');
@@ -181,7 +182,7 @@ describe('пик и превышение — РАЗНЫЕ величины (на
   it('клиппованный сигнал виден: пик прижат к нулю dBFS', async () => {
     // Амплитуда 1.0 — упор в потолок. Именно это подозревалось у четырёх треков с +39.1.
     const tracks = [...quiet(30), { id: 'clipped', bytes: wav(1, 1.0, 440) }];
-    const r = await measureSampleSet(deps(tracks), 'c1', tracks.map((t) => t.id));
+    const r = await measureSampleSet(deps(tracks), 'dev-1', 'c1', tracks.map((t) => t.id));
     const c = r.candidates.find((x) => x.sampleId === 'clipped')!;
     expect(c.peakDb).toBeGreaterThan(-0.5);
   });

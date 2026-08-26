@@ -51,6 +51,11 @@ export function CabinetSampleDuplicatesPanel({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [outcome, setOutcome] = useState<LibraryDuplicatesRunOutcome | null>(null);
+  // #2181: набор сменился — прежний отчёт больше не про него. Сбрасываем СРАЗУ, не дожидаясь
+  // ответа: иначе числа прошлого набора выдают себя за новые всё время загрузки.
+  useEffect(() => {
+    setOutcome(null);
+  }, [collectionId]);
   const [sequenceNote, setSequenceNote] = useState<string | null>(null);
   const [removed, setRemoved] = useState<ReadonlySet<string>>(new Set());
   const abortRef = useRef<AbortController | null>(null);
