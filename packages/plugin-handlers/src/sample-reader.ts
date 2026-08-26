@@ -10,6 +10,8 @@ import { createHash } from 'node:crypto';
 
 export interface CollectionSampleDescriptor {
   readonly id: string;
+  readonly deviceId: string;
+  readonly collectionId: string;
   readonly sampleRate: number;
   readonly channels: number;
   /** `wav` | `mp3` | … — как хранит сервис; декодер плагина умеет только `wav` PCM16. */
@@ -33,7 +35,7 @@ export interface CollectionSampleAudio {
 }
 
 export interface CollectionSampleReader {
-  listSamples(collectionId: string): Promise<readonly CollectionSampleDescriptor[]>;
+  listSamples(deviceId: string, collectionId: string): Promise<readonly CollectionSampleDescriptor[]>;
   readAudio(sample: CollectionSampleDescriptor): Promise<CollectionSampleAudio>;
 }
 

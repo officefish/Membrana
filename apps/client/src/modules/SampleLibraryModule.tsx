@@ -8,6 +8,7 @@ import {
   useMediaLibrary,
   type Collection,
   type MediaSample,
+  type MediaPluginState,
   type SampleLabel,
   type UpdateSampleLabelNotes,
 } from '@membrana/media-library-service';
@@ -38,15 +39,12 @@ import {
   SampleLibraryFftThresholdTestPanel,
 } from '../plugins/sample-library-fft-threshold-test';
 import {
-  SAMPLE_LIBRARY_CHART_LIST_PLUGIN_ID,
   SampleLibraryChartListPanel,
 } from '../plugins/sample-library-chart-list';
 import {
-  SAMPLE_LIBRARY_SESSION_DIGEST_PLUGIN_ID,
   SampleLibrarySessionDigestPanel,
 } from '../plugins/sample-library-session-digest';
 import {
-  SAMPLE_LIBRARY_DUPLICATES_PLUGIN_ID,
   SampleLibraryDuplicatesPanel,
 } from '../plugins/sample-library-duplicates';
 import {
@@ -80,16 +78,34 @@ const LABEL_FILTER_OPTIONS: ReadonlyArray<{ value: 'all' | SampleLabel; title: s
   { value: 'unlabeled', title: 'Неразмеченные' },
 ];
 
+const MEDIA_HOME_CHART_LIST_PLUGIN_ID = 'membrana.showcase.library-chart-list';
+const MEDIA_HOME_SESSION_DIGEST_PLUGIN_ID = 'membrana.report.session-digest';
+const MEDIA_HOME_DUPLICATES_PLUGIN_ID = 'membrana.showcase.library-duplicates';
+
+const MEDIA_HOME_PANEL_PLUGIN_IDS = new Set<string>([
+  MEDIA_HOME_CHART_LIST_PLUGIN_ID,
+  MEDIA_HOME_SESSION_DIGEST_PLUGIN_ID,
+  MEDIA_HOME_DUPLICATES_PLUGIN_ID,
+]);
+
+export function enabledMediaPluginIdsFromHome(states: readonly MediaPluginState[]): readonly string[] {
+  return states
+    .filter((state) => MEDIA_HOME_PANEL_PLUGIN_IDS.has(state.manifest.id) && state.enabled)
+    .map((state) => state.manifest.id);
+}
+
 export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = ({
   module,
 }) => {
   const config = module.config as SampleLibraryConfig;
   const { snapshot, service } = useMediaLibrary();
   const playback = useSamplePlayback();
-  const activePluginIds = useMembranaStore(
+  const localActivePluginIds = useMembranaStore(
     useShallow((state) => state.getModule(module.id)?.activePlugins ?? []),
   );
   const [selectedId, setSelectedId] = useState<string>(BUFFER_COLLECTION_ID);
+  const [mediaPluginStates, setMediaPluginStates] = useState<readonly MediaPluginState[]>([]);
+  const [pluginStateError, setPluginStateError] = useState<string | null>(null);
   const [newCollectionName, setNewCollectionName] = useState('');
   const [error, setError] = useState<string | null>(null);
   /** Перенос буфер→набор: что едет и куда — видно словом, а не молчанием (#2110). */
@@ -105,6 +121,35 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       void disposeSamplePlayback();
     };
   }, [service]);
+
+  useEffect(() => {
+    let alive = true;
+    void (async () => {
+      if (snapshot.quota.backend !== 'server') {
+        setMediaPluginStates([]);
+        setPluginStateError(null);
+        return;
+      }
+      try {
+        const states = await service.listCollectionPlugins(selectedId);
+        if (!alive) return;
+        setMediaPluginStates(states);
+        setPluginStateError(null);
+      } catch (e) {
+        if (!alive) return;
+        setMediaPluginStates([]);
+        setPluginStateError(e instanceof Error ? e.message : String(e));
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [service, selectedId, snapshot.quota.backend]);
+
+  const mediaActivePluginIds = useMemo(
+    () => enabledMediaPluginIdsFromHome(mediaPluginStates),
+    [mediaPluginStates],
+  );
 
   const samples = useMemo(
     // Свежие СВЕРХУ (#2110): главный инструмент — разборка ночных проб, и человек начинает с
@@ -304,7 +349,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-3 p-2">
-      {activePluginIds.includes(SAMPLE_LIBRARY_PLAYER_PLUGIN_ID) ? (
+      {localActivePluginIds.includes(SAMPLE_LIBRARY_PLAYER_PLUGIN_ID) ? (
         <SampleLibraryPlayerPanel moduleId={module.id} />
       ) : null}
 
@@ -321,6 +366,12 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       {error ? (
         <div className="alert alert-error text-sm" role="alert">
           {error}
+        </div>
+      ) : null}
+
+      {pluginStateError ? (
+        <div className="alert alert-warning text-xs" role="status">
+          {pluginStateError}
         </div>
       ) : null}
 
@@ -615,31 +666,31 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       {/* Панели плагинов — ПОД основным блоком, по журнальному образцу (пункт 1.2 владельца):
           у журнала кабинета виджет плагина встаёт под лентой, а не над ней. Плеер остаётся
           сверху — он орган управления прослушиванием, а не виджет-результат. */}
-      {activePluginIds.includes(SAMPLE_LIBRARY_CHART_LIST_PLUGIN_ID) && selected ? (
+      {mediaActivePluginIds.includes(MEDIA_HOME_CHART_LIST_PLUGIN_ID) && selected ? (
         <SampleLibraryChartListPanel moduleId={module.id} collectionId={selected.id} />
       ) : null}
 
-      {activePluginIds.includes(SAMPLE_LIBRARY_SESSION_DIGEST_PLUGIN_ID) && selected ? (
+      {mediaActivePluginIds.includes(MEDIA_HOME_SESSION_DIGEST_PLUGIN_ID) && selected ? (
         <SampleLibrarySessionDigestPanel moduleId={module.id} collectionId={selected.id} />
       ) : null}
 
-      {activePluginIds.includes(SAMPLE_LIBRARY_DUPLICATES_PLUGIN_ID) && selected ? (
+      {mediaActivePluginIds.includes(MEDIA_HOME_DUPLICATES_PLUGIN_ID) && selected ? (
         <SampleLibraryDuplicatesPanel moduleId={module.id} collectionId={selected.id} />
       ) : null}
 
-      {activePluginIds.includes(SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID) ? (
+      {localActivePluginIds.includes(SAMPLE_LIBRARY_DRONE_ANALYSIS_PLUGIN_ID) ? (
         <SampleLibraryDroneAnalysisPanel moduleId={module.id} />
       ) : null}
 
-      {activePluginIds.includes(SAMPLE_LIBRARY_FFT_THRESHOLD_TEST_PLUGIN_ID) ? (
+      {localActivePluginIds.includes(SAMPLE_LIBRARY_FFT_THRESHOLD_TEST_PLUGIN_ID) ? (
         <SampleLibraryFftThresholdTestPanel moduleId={module.id} />
       ) : null}
 
-      {activePluginIds.includes(TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID) ? (
+      {localActivePluginIds.includes(TRENDS_FFT_SAMPLE_ANALYZER_PLUGIN_ID) ? (
         <TrendsFftSampleAnalyzerPanel moduleId={module.id} />
       ) : null}
 
-      {activePluginIds.includes(NEURAL_DRONE_ANALYZER_PLUGIN_ID) ? (
+      {localActivePluginIds.includes(NEURAL_DRONE_ANALYZER_PLUGIN_ID) ? (
         <NeuralDroneAnalyzerPanel moduleId={module.id} />
       ) : null}
     </div>

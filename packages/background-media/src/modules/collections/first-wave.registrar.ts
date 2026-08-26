@@ -2,9 +2,9 @@
  * Регистрация первой волны handler-плагинов в хосте `collections` на старте модуля (M6′, #1961)
  * и — с блока b4 спринта `plugin-results-bridge` — ВХОД `request` без скрипта и провод сида в мост.
  *
- * Читатель проб — in-process и ТОЛЬКО чтение: `prisma.sample.findMany` по `collectionId` +
+ * Читатель проб — in-process и ТОЛЬКО чтение: `prisma.sample.findMany` по `deviceId + collectionId` +
  * `BlobStorageService.readBuffer` (норма #1950). Не `SamplesService.list`: тот скопирован под
- * устройство (`deviceId`), которого в `PluginContext` нет — адрес прогона несёт `collectionId`.
+ * HTTP, а плагину нужен узкий порт чтения с обязательным владельцем.
  * Адаптер вынесен функцией `prismaSampleReader` — у него свой контракт (порт из двух читающих
  * членов) и свой зуб; регистратор его только собирает.
  *
@@ -46,15 +46,19 @@ const loadHandlers = () => import('@membrana/plugin-handlers');
 /** Порт чтения проб поверх Prisma и блобов: два члена, оба читают. */
 export function prismaSampleReader(prisma: PrismaService, blobs: BlobStorageService, sha256Hex: Handlers['sha256Hex']): CollectionSampleReader {
   return {
-    listSamples: async (collectionId) =>
-      (await prisma.sample.findMany({ where: { collectionId }, orderBy: { id: 'asc' } })).map((row) => ({
-        id: row.id, sampleRate: row.sampleRate, channels: row.channels, audioFormat: row.audioFormat, sizeBytes: row.sizeBytes, title: row.title,
+    listSamples: async (deviceId, collectionId) =>
+      (await prisma.sample.findMany({ where: { deviceId, collectionId }, orderBy: { id: 'asc' } })).map((row) => ({
+        id: row.id, deviceId: row.deviceId, collectionId: row.collectionId,
+        sampleRate: row.sampleRate, channels: row.channels, audioFormat: row.audioFormat, sizeBytes: row.sizeBytes, title: row.title,
         // Отметка создания — ею адресуется окно сеанса у рода report (j2, #1961). Отдаётся ISO-строкой:
         // порт framework-нейтрален и о Date из Prisma знать не обязан.
         createdAt: row.createdAt.toISOString(),
       })),
     readAudio: async (sample) => {
-      const row = await prisma.sample.findUniqueOrThrow({ where: { id: sample.id }, select: { storageRef: true } });
+      const row = await prisma.sample.findFirstOrThrow({
+        where: { id: sample.id, deviceId: sample.deviceId, collectionId: sample.collectionId },
+        select: { storageRef: true },
+      });
       const bytes = new Uint8Array(await blobs.readBuffer(row.storageRef));
       return { bytes, contentHash: sha256Hex(bytes) };
     },
@@ -69,6 +73,7 @@ export function prismaSampleReader(prisma: PrismaService, blobs: BlobStorageServ
  */
 export interface RunRequest {
   readonly pluginId: PluginId;
+  readonly deviceId: string;
   readonly collectionId: string;
   readonly trigger?: PluginTrigger;
   readonly sampleId?: string;
@@ -136,6 +141,18 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
     private readonly bridge: PluginResultsBridgeService,
   ) {}
 
+  get mountTargetId(): string {
+    return this.host.mountTargetId;
+  }
+
+  getPluginStates(): ReadonlyArray<{ manifest: unknown; enabled: boolean }> {
+    return this.host.getPluginStates();
+  }
+
+  setPluginEnabled(pluginId: PluginId, enabled: boolean): void {
+    this.host.setPluginEnabled(pluginId, enabled);
+  }
+
   async onModuleInit(): Promise<void> {
     const handlers = await loadHandlers();
     this.handlers = handlers;
@@ -171,10 +188,10 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
       const mfccManifest = handlers.MFCC_HANDLER_MANIFEST;
       this.contextBuilders.set(mfccManifest.id, async (req) => ({
         address: this.addressOf(mfccManifest, req, handlers.uuidV7()),
-        fingerprints: await handlers.mfccFingerprintsOf(this.mfccDeps!, req.collectionId),
+        fingerprints: await handlers.mfccFingerprintsOf(this.mfccDeps!, req.deviceId, req.collectionId),
         resumeMode: 'fresh',
         trigger: req.trigger ?? mfccManifest.triggers[0]!,
-        payload: { collectionId: req.collectionId, sampleId: req.sampleId, occurredAt: new Date() },
+        payload: { deviceId: req.deviceId, collectionId: req.collectionId, sampleId: req.sampleId, occurredAt: new Date() },
       }));
 
       const measureManifest = handlers.CHART_LIST_MEASURE_MANIFEST;
@@ -187,12 +204,13 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
         },
         resumeMode: 'fresh',
         trigger: req.trigger ?? measureManifest.triggers[0]!,
-        payload: { collectionId: req.collectionId, sampleIds: req.sampleIds ?? [], occurredAt: new Date() },
+        payload: { deviceId: req.deviceId, collectionId: req.collectionId, sampleIds: req.sampleIds ?? [], occurredAt: new Date() },
       }));
       this.host.registerPlugin(measureManifest, {
         execute: async (ctx) => {
           const outcome = await handlers.measureSampleSet(
             { reader: mfcc.reader },
+            handlers.deviceIdOf(ctx.payload),
             ctx.address.collectionId,
             handlers.sampleIdsOf(ctx.payload),
           );
@@ -212,14 +230,14 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
         ...(req.from ? { fromMs: Date.parse(req.from) } : {}),
         ...(req.to ? { toMs: Date.parse(req.to) } : {}),
       });
-      const librarySamplesOf = async (collectionId: string) => {
-        const all = await mfcc.reader.listSamples(collectionId);
+      const librarySamplesOf = async (deviceId: string, collectionId: string) => {
+        const all = await mfcc.reader.listSamples(deviceId, collectionId);
         // Проба без createdAt в отбор по окну не попадает МОЛЧА НЕ выбрасывается: ей ставится
         // эпоха 0 — при заданном окне она честно выпадет, без окна участвует как все.
         return all.map((d) => ({ sampleId: d.id, at: d.createdAt ? Date.parse(d.createdAt) : 0 }));
       };
       this.contextBuilders.set(libraryManifest.id, async (req) => {
-        const samples = await librarySamplesOf(req.collectionId);
+        const samples = await librarySamplesOf(req.deviceId, req.collectionId);
         const { candidates } = handlers.filterByDateWindow(samples, libraryWindowOf(req));
         return {
           address: this.addressOf(libraryManifest, req, handlers.uuidV7()),
@@ -230,6 +248,7 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
           resumeMode: 'fresh',
           trigger: req.trigger ?? libraryManifest.triggers[0]!,
           payload: {
+            deviceId: req.deviceId,
             collectionId: req.collectionId,
             ...(req.from ? { from: req.from } : {}),
             ...(req.to ? { to: req.to } : {}),
@@ -241,14 +260,14 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
       });
       this.host.registerPlugin(libraryManifest, {
         execute: async (ctx) => {
-          const p = ctx.payload as { collectionId: string; from?: string; to?: string; volume: number; criterion: string };
-          const samples = await librarySamplesOf(p.collectionId);
+          const p = ctx.payload as { deviceId: string; collectionId: string; from?: string; to?: string; volume: number; criterion: string };
+          const samples = await librarySamplesOf(p.deviceId, p.collectionId);
           const window = {
             ...(p.from ? { fromMs: Date.parse(p.from) } : {}),
             ...(p.to ? { toMs: Date.parse(p.to) } : {}),
           };
           const outcome = await handlers.runLibraryChartList(
-            { measure: async (ids) => (await handlers.measureSampleSet({ reader: mfcc.reader }, p.collectionId, ids)).candidates },
+            { measure: async (ids) => (await handlers.measureSampleSet({ reader: mfcc.reader }, p.deviceId, p.collectionId, ids)).candidates },
             samples,
             { volume: p.volume, criterion: p.criterion },
             window,
@@ -263,7 +282,7 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
       // говорит), configHash — от умолчаний. Результат — по runId, как у соседей: ничего не удаляет.
       const duplicatesManifest = handlers.LIBRARY_DUPLICATES_MANIFEST;
       this.contextBuilders.set(duplicatesManifest.id, async (req) => {
-        const samples = await librarySamplesOf(req.collectionId);
+        const samples = await librarySamplesOf(req.deviceId, req.collectionId);
         const { candidates } = handlers.filterByDateWindow(samples, libraryWindowOf(req));
         return {
           address: this.addressOf(duplicatesManifest, req, handlers.uuidV7()),
@@ -274,6 +293,7 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
           resumeMode: 'fresh',
           trigger: req.trigger ?? duplicatesManifest.triggers[0]!,
           payload: {
+            deviceId: req.deviceId,
             collectionId: req.collectionId,
             ...(req.from ? { from: req.from } : {}),
             ...(req.to ? { to: req.to } : {}),
@@ -283,14 +303,14 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
       });
       this.host.registerPlugin(duplicatesManifest, {
         execute: async (ctx) => {
-          const p = ctx.payload as { collectionId: string; from?: string; to?: string };
-          const samples = await librarySamplesOf(p.collectionId);
+          const p = ctx.payload as { deviceId: string; collectionId: string; from?: string; to?: string };
+          const samples = await librarySamplesOf(p.deviceId, p.collectionId);
           const window = {
             ...(p.from ? { fromMs: Date.parse(p.from) } : {}),
             ...(p.to ? { toMs: Date.parse(p.to) } : {}),
           };
           const outcome = await handlers.runLibraryDuplicates(
-            { measure: async (ids) => (await handlers.measureSampleSet({ reader: mfcc.reader }, p.collectionId, ids)).candidates },
+            { measure: async (ids) => (await handlers.measureSampleSet({ reader: mfcc.reader }, p.deviceId, p.collectionId, ids)).candidates },
             samples,
             window,
           );
@@ -306,11 +326,11 @@ export class FirstWavePluginsRegistrar implements OnModuleInit {
         return {
           address: this.addressOf(digestManifest, req, handlers.uuidV7()),
           fingerprints: await handlers.sessionDigestFingerprintsOf(
-            { reader: mfcc.reader }, req.collectionId, window, handlers.sha256Hex,
+            { reader: mfcc.reader }, req.deviceId, req.collectionId, window, handlers.sha256Hex,
           ),
           resumeMode: 'fresh',
           trigger: req.trigger ?? digestManifest.triggers[0]!,
-          payload: { collectionId: req.collectionId, ...window, occurredAt: new Date() },
+          payload: { deviceId: req.deviceId, collectionId: req.collectionId, ...window, occurredAt: new Date() },
         };
       });
     } catch (error) {

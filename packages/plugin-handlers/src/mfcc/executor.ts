@@ -30,6 +30,7 @@ export interface MfccSampleVerdict {
 
 export interface MfccRunResult extends RunResult {
   readonly kind: 'handler';
+  readonly deviceId: string;
   readonly collectionId: string;
   /** Отпечатки, измеренные САМИМ прогоном; совпадение с `ctx.fingerprints` — условие выхода. */
   readonly measured: RunFingerprints;
@@ -86,8 +87,16 @@ export function mfccConfigHashOf(manifest: HandlerManifest, preset: MfccGatePres
 }
 
 /** Отпечатки для `ctx.fingerprints` — тем же чтением и теми же формулами, что и прогон. */
-export async function mfccFingerprintsOf(deps: MfccExecutorDeps, collectionId: string): Promise<RunFingerprints> {
-  const samples = await deps.reader.listSamples(collectionId);
+function deviceIdOf(payload: unknown): string {
+  const deviceId = typeof payload === 'object' && payload !== null && typeof (payload as { deviceId?: unknown }).deviceId === 'string'
+    ? (payload as { deviceId: string }).deviceId
+    : '';
+  if (!deviceId) throw new MfccRunRefusal('deviceId обязателен для чтения проб коллекции');
+  return deviceId;
+}
+
+export async function mfccFingerprintsOf(deps: MfccExecutorDeps, deviceId: string, collectionId: string): Promise<RunFingerprints> {
+  const samples = await deps.reader.listSamples(deviceId, collectionId);
   const entries = [];
   for (const s of samples) entries.push({ sampleId: s.id, contentHash: (await deps.reader.readAudio(s)).contentHash });
   return { inputHash: inputHashOf(entries), configHash: mfccConfigHashOf(deps.manifest, deps.preset, deps.strictness) };
@@ -143,7 +152,8 @@ export function createMfccExecutor(deps: MfccExecutorDeps): PluginExecutor {
         throw new MfccRunRefusal(`configHash контекста ${ctx.fingerprints.configHash} ≠ измеренного ${configHash}`);
       }
       const { collectionId } = ctx.address;
-      const list = [...(await deps.reader.listSamples(collectionId))].sort((a, b) => (a.id < b.id ? -1 : 1));
+      const deviceId = deviceIdOf(ctx.payload);
+      const list = [...(await deps.reader.listSamples(deviceId, collectionId))].sort((a, b) => (a.id < b.id ? -1 : 1));
       const sampleRateConsistency = summarizeSessionSampleRates(list.map((s) => ({
         sampleId: s.id,
         title: s.title,
@@ -159,6 +169,7 @@ export function createMfccExecutor(deps: MfccExecutorDeps): PluginExecutor {
       return {
         kind: 'handler',
         completedAt: now(),
+        deviceId,
         collectionId,
         measured: { inputHash, configHash },
         passport: {

@@ -52,6 +52,7 @@ export {
   SESSION_DIGEST_DEFAULTS,
   SESSION_DIGEST_ID,
   createSessionDigestExecutor,
+  deviceIdOf,
   sessionDigestFingerprintsOf,
   PROVISIONAL_THRESHOLDS,
   windowOf,

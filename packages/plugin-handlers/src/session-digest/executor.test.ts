@@ -37,7 +37,8 @@ function reader(tracks: readonly Track[]): CollectionSampleReader {
   return {
     listSamples: async () =>
       tracks.map((t): CollectionSampleDescriptor => ({
-        id: t.id, title: t.title, sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: t.bytes.length,
+        id: t.id, deviceId: 'dev-1', collectionId: 'c-session',
+        title: t.title, sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: t.bytes.length,
         ...(t.createdAt ? { createdAt: t.createdAt } : {}),
       })),
     readAudio: async (s) => ({ bytes: tracks.find((t) => t.id === s.id)!.bytes, contentHash: `h-${s.id}` }),
@@ -52,7 +53,7 @@ const ctx = (payload: unknown): PluginContext => ({
   fingerprints: { inputHash: 'in', configHash: 'cfg' },
   resumeMode: 'fresh',
   trigger: 'collections.collection_created',
-  payload,
+  payload: typeof payload === 'object' && payload !== null ? { deviceId: 'dev-1', ...payload } : payload,
 });
 
 const run = (tracks: readonly Track[], payload: unknown = {}, tuning = {}) =>

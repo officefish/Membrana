@@ -13,6 +13,7 @@ import type {
   LibraryDuplicatesRunOutcome,
   CollectionKind,
   MediaSample,
+  MediaPluginState,
   NewSampleMeta,
   SampleLabel,
   SampleSource,
@@ -322,6 +323,28 @@ export class ServerStorageBackend implements IStorageBackend {
       throw new Error('Витрина отбора не вернула результат прогона (канал result пуст)');
     }
     return { runId: row.runId, ...row.result };
+  }
+
+  async listCollectionPlugins(collectionId: string): Promise<readonly MediaPluginState[]> {
+    const row = await this.requestJson<{ plugins: readonly MediaPluginState[] }>(
+      `/collections/${encodeURIComponent(collectionId)}/plugins`,
+    );
+    return row.plugins;
+  }
+
+  async setCollectionPluginEnabled(
+    collectionId: string,
+    pluginId: string,
+    enabled: boolean,
+  ): Promise<void> {
+    await this.requestJson<{ ok: true }>(
+      `/collections/${encodeURIComponent(collectionId)}/plugins/${encodeURIComponent(pluginId)}`,
+      {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enabled }),
+      },
+    );
   }
 
   async ensureReservedCollections(): Promise<void> {
