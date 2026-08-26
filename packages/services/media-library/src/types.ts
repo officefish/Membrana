@@ -83,6 +83,21 @@ export interface MediaLibrarySnapshot {
   version: number;
 }
 
+export interface MediaPluginManifest {
+  id: string;
+  version: string;
+  kind: 'handler' | 'report' | 'showcase';
+  mountTarget: string;
+  triggers: readonly string[];
+  displayForm?: string;
+  description?: string;
+}
+
+export interface MediaPluginState {
+  manifest: MediaPluginManifest;
+  enabled: boolean;
+}
+
 export interface PaginatedSamples<T = MediaSample> {
   items: T[];
   page: number;

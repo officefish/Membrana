@@ -17,13 +17,19 @@ const rows = [
   // createdAt несёт модель Sample (@default(now())): порт отдаёт его наружу с 21.08 — им
   // адресуется окно сеанса у рода report. Фикстура обязана отражать модель, иначе зуб
   // проверяет не ту строку, что приходит из Prisma.
-  { id: 'b', collectionId: 'c1', sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'B', storageRef: 'd/b.wav', createdAt: new Date('2026-08-21T10:00:01.000Z') },
-  { id: 'a', collectionId: 'c1', sampleRate: 44100, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'A', storageRef: 'd/a.wav', createdAt: new Date('2026-08-21T10:00:00.000Z') },
+  { id: 'b', deviceId: 'dev-1', collectionId: 'c1', sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'B', storageRef: 'd1/b.wav', createdAt: new Date('2026-08-21T10:00:01.000Z') },
+  { id: 'a', deviceId: 'dev-1', collectionId: 'c1', sampleRate: 44100, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'A', storageRef: 'd1/a.wav', createdAt: new Date('2026-08-21T10:00:00.000Z') },
+  { id: 'foreign', deviceId: 'dev-2', collectionId: 'c1', sampleRate: 48000, channels: 1, audioFormat: 'wav', sizeBytes: 3, title: 'Foreign', storageRef: 'd2/foreign.wav', createdAt: new Date('2026-08-21T10:00:02.000Z') },
 ];
 const prisma = {
   sample: {
-    findMany: async ({ where }: { where: { collectionId: string } }) => rows.filter((r) => r.collectionId === where.collectionId).sort((x, y) => (x.id < y.id ? -1 : 1)),
-    findUniqueOrThrow: async ({ where }: { where: { id: string } }) => rows.find((r) => r.id === where.id)!,
+    findMany: async ({ where }: { where: { deviceId: string; collectionId: string } }) =>
+      rows.filter((r) => r.deviceId === where.deviceId && r.collectionId === where.collectionId).sort((x, y) => (x.id < y.id ? -1 : 1)),
+    findFirstOrThrow: async ({ where }: { where: { id: string; deviceId: string; collectionId: string } }) => {
+      const row = rows.find((r) => r.id === where.id && r.deviceId === where.deviceId && r.collectionId === where.collectionId);
+      if (!row) throw new Error('not found');
+      return row;
+    },
   },
 } as unknown as PrismaService;
 const blobs = { readBuffer: async (ref: string) => Buffer.from(ref) } as unknown as BlobStorageService;
@@ -75,15 +81,16 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
     expect(registered.filter((m) => m.kind === 'showcase')).toHaveLength(2);
   });
 
-  it('читатель проб — только чтение: список по collectionId, байты по storageRef, sha256 содержимого', async () => {
+  it('читатель проб — только чтение в устройстве: одноимённая коллекция другого узла не видна', async () => {
     const { sha256Hex } = await import('@membrana/plugin-handlers');
     const reader = prismaSampleReader(prisma, blobs, sha256Hex);
     expect(Object.keys(reader).sort()).toEqual(['listSamples', 'readAudio']);
-    const list = await reader.listSamples('c1');
+    const list = await reader.listSamples('dev-1', 'c1');
     expect(list.map((s) => s.id)).toEqual(['a', 'b']);
     const audio = await reader.readAudio(list[0]!);
-    expect(Buffer.from(audio.bytes).toString()).toBe('d/a.wav');
+    expect(Buffer.from(audio.bytes).toString()).toBe('d1/a.wav');
     expect(audio.contentHash).toMatch(/^[0-9a-f]{64}$/);
+    await expect(reader.readAudio({ ...list[0]!, deviceId: 'dev-2' })).rejects.toThrow(/not found/);
   });
 
   it('без пресета mfcc не регистрируется, пять заглушек — регистрируются (не тихо)', async () => {
@@ -98,7 +105,7 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
     it('mfcc: контекст из deps исполнителя → хост → сид → мост; RunRecord несёт адрес, отпечатки, resumeMode fresh; исход моста в ответе', async () => {
       const { bridge, sent } = spyBridge('sent');
       const { reg } = await registrar(config, bridge);
-      const out = await reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, collectionId: 'c1', sampleId: 'a' });
+      const out = await reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, deviceId: 'dev-1', collectionId: 'c1', sampleId: 'a' });
       expect(out.runId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
       expect(out.address).toEqual({ pluginId: 'membrana.handler.mfcc', version: expect.any(String), collectionId: 'c1', runId: out.runId, mountTarget: 'background-media/collections' });
       expect(out.fingerprints.inputHash).toMatch(/^[0-9a-f]{64}$/);
@@ -115,8 +122,8 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
 
     it('отпечатки детерминированы: два запроса на одном входе — равные inputHash/configHash, разные runId', async () => {
       const { reg } = await registrar();
-      const a = await reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, collectionId: 'c1', sampleId: 'a' });
-      const b = await reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, collectionId: 'c1', sampleId: 'a' });
+      const a = await reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, deviceId: 'dev-1', collectionId: 'c1', sampleId: 'a' });
+      const b = await reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, deviceId: 'dev-1', collectionId: 'c1', sampleId: 'a' });
       expect(a.fingerprints).toEqual(b.fingerprints);
       expect(a.runId).not.toBe(b.runId);
     });
@@ -124,18 +131,18 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
     it('исход моста именем, не исключением: office-not-configured не роняет прогон', async () => {
       const { bridge } = spyBridge('office-not-configured');
       const { reg } = await registrar(config, bridge);
-      const out = await reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, collectionId: 'c1', sampleId: 'a' });
+      const out = await reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, deviceId: 'dev-1', collectionId: 'c1', sampleId: 'a' });
       expect(out.bridge?.outcome).toBe('office-not-configured');
     });
 
     it('повод сверяется с манифестом; sample_added требует sampleId; заглушка — 501; незарегистрированный — 400', async () => {
       const { reg } = await registrar();
       // повод вне подписки манифеста (mfcc подписан только на sample_added)
-      await expect(reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, collectionId: 'c1', sampleId: 'a', trigger: 'collections.collection_created' })).rejects.toMatchObject({ status: 400 });
+      await expect(reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, deviceId: 'dev-1', collectionId: 'c1', sampleId: 'a', trigger: 'collections.collection_created' })).rejects.toMatchObject({ status: 400 });
       // умолчание — sample_added, а он без sampleId не payload M4
-      await expect(reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, collectionId: 'c1' })).rejects.toMatchObject({ status: 400 });
-      await expect(reg.requestRun({ pluginId: 'membrana.handler.harmonic' as PluginId, collectionId: 'c1', sampleId: 'a' })).rejects.toMatchObject({ status: 501 });
-      await expect(reg.requestRun({ pluginId: 'membrana.report.nope' as PluginId, collectionId: 'c1' })).rejects.toMatchObject({ status: 400 });
+      await expect(reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, deviceId: 'dev-1', collectionId: 'c1' })).rejects.toMatchObject({ status: 400 });
+      await expect(reg.requestRun({ pluginId: 'membrana.handler.harmonic' as PluginId, deviceId: 'dev-1', collectionId: 'c1', sampleId: 'a' })).rejects.toMatchObject({ status: 501 });
+      await expect(reg.requestRun({ pluginId: 'membrana.report.nope' as PluginId, deviceId: 'dev-1', collectionId: 'c1' })).rejects.toMatchObject({ status: 400 });
     });
 
     describe('набор проб как форма задания (c5a спринта chart-list-plugin)', () => {
@@ -144,6 +151,7 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
         await expect(
           reg.requestRun({
             pluginId: 'membrana.handler.mfcc' as PluginId,
+            deviceId: 'dev-1',
             collectionId: 'c1',
             sampleIds: ['a', 'b'],
             from: '2026-08-21T09:45:00Z',
@@ -156,6 +164,7 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
         await expect(
           reg.requestRun({
             pluginId: 'membrana.handler.mfcc' as PluginId,
+            deviceId: 'dev-1',
             collectionId: 'c1',
             sampleIds: ['a', 'b'],
             sampleId: 'a',
@@ -168,6 +177,7 @@ describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
         await expect(
           reg.requestRun({
             pluginId: 'membrana.handler.mfcc' as PluginId,
+            deviceId: 'dev-1',
             collectionId: 'c1',
             sampleIds: [],
           }),
@@ -182,7 +192,7 @@ describe('вход ведёт и к своду сеанса (r1, пробел в
   it('свод запускается БЕЗ sampleId — он идёт по окну, а не по пробе', async () => {
     const { bridge, sent } = spyBridge();
     const { reg } = await registrar(config, bridge);
-    const out = await reg.requestRun({ pluginId: 'membrana.report.session-digest' as PluginId, collectionId: 'c1', from: '2026-08-21T09:45:18.000Z', to: '2026-08-21T10:46:00.000Z' });
+    const out = await reg.requestRun({ pluginId: 'membrana.report.session-digest' as PluginId, deviceId: 'dev-1', collectionId: 'c1', from: '2026-08-21T09:45:18.000Z', to: '2026-08-21T10:46:00.000Z' });
     // До правки здесь было 501 «прогон не определён»: вход умел только mfcc.
     expect(out.address.pluginId).toBe('membrana.report.session-digest');
     // #2039: свод доезжает до вызывающего, а не только мостом в office — витрине в библиотеке
@@ -201,17 +211,17 @@ describe('вход ведёт и к своду сеанса (r1, пробел в
 
   it('отпечатки свода — СВОИ: другой пресет даёт другой configHash, тот же вход — тот же inputHash', async () => {
     const { reg } = await registrar();
-    const a = await reg.requestRun({ pluginId: 'membrana.report.session-digest' as PluginId, collectionId: 'c1' });
-    const b = await reg.requestRun({ pluginId: 'membrana.report.session-digest' as PluginId, collectionId: 'c1' });
+    const a = await reg.requestRun({ pluginId: 'membrana.report.session-digest' as PluginId, deviceId: 'dev-1', collectionId: 'c1' });
+    const b = await reg.requestRun({ pluginId: 'membrana.report.session-digest' as PluginId, deviceId: 'dev-1', collectionId: 'c1' });
     expect(a.fingerprints).toEqual(b.fingerprints);
-    const mfcc = await reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, collectionId: 'c1', sampleId: 'a' });
+    const mfcc = await reg.requestRun({ pluginId: 'membrana.handler.mfcc' as PluginId, deviceId: 'dev-1', collectionId: 'c1', sampleId: 'a' });
     // Свод и mfcc читают те же пробы, но пресеты разные — отпечатки конфигурации не совпадают.
     expect(a.fingerprints.configHash).not.toBe(mfcc.fingerprints.configHash);
   });
 
   it('незаведённый сборщик — 501, а не выдуманный контекст', async () => {
     const { reg } = await registrar();
-    await expect(reg.requestRun({ pluginId: 'membrana.handler.yamnet' as PluginId, collectionId: 'c1', sampleId: 'a' }))
+    await expect(reg.requestRun({ pluginId: 'membrana.handler.yamnet' as PluginId, deviceId: 'dev-1', collectionId: 'c1', sampleId: 'a' }))
       .rejects.toMatchObject({ status: 501 });
   });
 });
@@ -224,6 +234,7 @@ describe('витрина отбора библиотеки (#2110)', () => {
     await reg.onModuleInit();
     const out = await reg.requestRun({
       pluginId: 'membrana.showcase.library-chart-list' as PluginId,
+      deviceId: 'dev-1',
       collectionId: 'c1',
       volume: 20,
       criterion: 'loudness-over-floor',
@@ -243,6 +254,7 @@ describe('витрина отбора библиотеки (#2110)', () => {
     await reg.onModuleInit();
     const out = await reg.requestRun({
       pluginId: 'membrana.showcase.library-chart-list' as PluginId,
+      deviceId: 'dev-1',
       collectionId: 'c1',
       volume: 7,
       criterion: 'loudness-over-floor',
@@ -256,7 +268,7 @@ describe('витрина отбора библиотеки (#2110)', () => {
     await host.onModuleInit();
     const reg = new FirstWavePluginsRegistrar(host, prisma, blobs, config, spyBridge().bridge);
     await reg.onModuleInit();
-    const out = await reg.requestRun({ pluginId: 'membrana.showcase.library-duplicates' as PluginId, collectionId: 'c1' });
+    const out = await reg.requestRun({ pluginId: 'membrana.showcase.library-duplicates' as PluginId, deviceId: 'dev-1', collectionId: 'c1' });
     const result = out.result as { report: { groups: unknown[]; passport: { inherited: boolean } } } | undefined;
     expect(result?.report).toBeDefined();
     expect(result?.report.passport.inherited).toBe(true);
@@ -268,7 +280,7 @@ describe('витрина отбора библиотеки (#2110)', () => {
     await host.onModuleInit();
     const reg = new FirstWavePluginsRegistrar(host, prisma, blobs, config, spyBridge().bridge);
     await reg.onModuleInit();
-    const base = { pluginId: 'membrana.showcase.library-chart-list' as PluginId, collectionId: 'c1', volume: 20, criterion: 'loudness-over-floor' };
+    const base = { pluginId: 'membrana.showcase.library-chart-list' as PluginId, deviceId: 'dev-1', collectionId: 'c1', volume: 20, criterion: 'loudness-over-floor' };
     const all = await reg.requestRun(base);
     const windowed = await reg.requestRun({ ...base, from: '2026-08-21T10:00:00.500Z' });
     expect(all.fingerprints.inputHash).not.toBe(windowed.fingerprints.inputHash);
@@ -294,7 +306,11 @@ describe('один источник числа для витрины и табл
         twoDevices
           .filter((r) => r.collectionId === where.collectionId && (where.deviceId === undefined || r.deviceId === where.deviceId))
           .sort((x, y) => (x.id < y.id ? -1 : 1)),
-      findUniqueOrThrow: async ({ where }: { where: { id: string } }) => twoDevices.find((r) => r.id === where.id)!,
+      findFirstOrThrow: async ({ where }: { where: { id: string; deviceId: string; collectionId: string } }) => {
+        const row = twoDevices.find((r) => r.id === where.id && r.deviceId === where.deviceId && r.collectionId === where.collectionId);
+        if (!row) throw new Error('not found');
+        return row;
+      },
     },
   } as unknown as PrismaService;
 

@@ -35,7 +35,7 @@ describe('раскладка библиотеки: правило одно, но
   it('сворачивается СПИСОК, а виджеты плагинов остаются — у обоих', () => {
     const studio = read(STUDIO);
     const blockAt = studio.indexOf('{mainCollapsed ? null : (');
-    const widgetsAt = studio.indexOf('SAMPLE_LIBRARY_CHART_LIST_PLUGIN_ID) && selected');
+    const widgetsAt = studio.indexOf('MEDIA_HOME_CHART_LIST_PLUGIN_ID) && selected');
     expect(widgetsAt).toBeGreaterThan(blockAt);
 
     // В кабинете то же: область рисует жильцов отдельно от основного блока.

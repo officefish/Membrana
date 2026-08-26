@@ -154,6 +154,7 @@ export function truePeakOf(samples: Float32Array, from: number, to: number): num
  */
 export async function measureSampleSet(
   deps: MeasureDeps,
+  deviceId: string,
   collectionId: string,
   sampleIds: readonly string[],
 ): Promise<MeasureOutcome> {
@@ -170,7 +171,7 @@ export async function measureSampleSet(
   }
 
   const wanted = new Set(sampleIds);
-  const all = await deps.reader.listSamples(collectionId);
+  const all = await deps.reader.listSamples(deviceId, collectionId);
   const tracks = all.filter((s) => wanted.has(s.id));
 
   // Проход 1 — огибающие и фон ПО ВСЕМУ НАБОРУ (см. заголовок: «фон выборки», не «фон сеанса»).

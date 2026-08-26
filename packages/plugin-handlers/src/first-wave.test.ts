@@ -28,7 +28,7 @@ const ctx = (pluginId: PluginId): PluginContext => ({
   fingerprints: { inputHash: 'i', configHash: 'c' },
   resumeMode: 'fresh',
   trigger: 'collections.sample_added',
-  payload: {},
+  payload: { deviceId: 'dev-1', collectionId: 'c' },
 });
 
 const PRESET = {

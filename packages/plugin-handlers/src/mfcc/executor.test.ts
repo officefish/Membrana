@@ -40,11 +40,12 @@ const extract = (frame: Float32Array): number[] => {
 };
 
 function fakeReader(files: Record<string, { bytes: Uint8Array; sampleRate: number; audioFormat?: string }>): CollectionSampleReader {
-  const desc = (id: string): CollectionSampleDescriptor => ({
-    id, sampleRate: files[id]!.sampleRate, channels: 1, audioFormat: files[id]!.audioFormat ?? 'wav', sizeBytes: files[id]!.bytes.length, title: id,
+  const desc = (deviceId: string, collectionId: string, id: string): CollectionSampleDescriptor => ({
+    id, deviceId, collectionId,
+    sampleRate: files[id]!.sampleRate, channels: 1, audioFormat: files[id]!.audioFormat ?? 'wav', sizeBytes: files[id]!.bytes.length, title: id,
   });
   return {
-    async listSamples() { return Object.keys(files).reverse().map(desc); },
+    async listSamples(deviceId, collectionId) { return Object.keys(files).reverse().map((id) => desc(deviceId, collectionId, id)); },
     async readAudio(s) { const bytes = files[s.id]!.bytes; return { bytes, contentHash: sha256Hex(bytes) }; },
   };
 }
@@ -60,13 +61,13 @@ const depsOf = (reader: CollectionSampleReader): MfccExecutorDeps =>
 
 const ctxOf = (fingerprints: RunFingerprints, collectionId = 'col-1'): PluginContext => ({
   address: { pluginId: MFCC_HANDLER_MANIFEST.id, version: MFCC_HANDLER_MANIFEST.version, collectionId, runId: 'run-1', mountTarget: 'background-media/collections' },
-  fingerprints, resumeMode: 'fresh', trigger: 'collections.sample_added', payload: {},
+  fingerprints, resumeMode: 'fresh', trigger: 'collections.sample_added', payload: { deviceId: 'dev-1', collectionId },
 });
 
 describe('membrana.handler.mfcc — executor', () => {
   it('детерминизм: два прогона на одном входе — одинаковые отпечатки и одинаковый выход', async () => {
     const deps = depsOf(fakeReader(FILES));
-    const fp = await mfccFingerprintsOf(deps, 'col-1');
+    const fp = await mfccFingerprintsOf(deps, 'dev-1', 'col-1');
     const run = async () => (await createMfccExecutor(deps).execute(ctxOf(fp))) as MfccRunResult;
     const [r1, r2] = [await run(), await run()];
     expect(r1).toEqual(r2);
@@ -85,7 +86,7 @@ describe('membrana.handler.mfcc — executor', () => {
 
   it('расхождение отпечатков контекста с измеренными — именованный отказ, не тихий результат', async () => {
     const deps = depsOf(fakeReader(FILES));
-    const fp = await mfccFingerprintsOf(deps, 'col-1');
+    const fp = await mfccFingerprintsOf(deps, 'dev-1', 'col-1');
     const ex = createMfccExecutor(deps);
     await expect(ex.execute(ctxOf({ ...fp, configHash: 'other' }))).rejects.toBeInstanceOf(MfccRunRefusal);
     await expect(ex.execute(ctxOf({ ...fp, inputHash: 'stale' }))).rejects.toThrow(/срез коллекции изменился/);
@@ -93,7 +94,7 @@ describe('membrana.handler.mfcc — executor', () => {
 
   it('не-wav проба — отказ по пробе с причиной, прогон не падает', async () => {
     const deps = depsOf(fakeReader({ 'm.mp3': { bytes: new Uint8Array([1, 2, 3]), sampleRate: 48000, audioFormat: 'mp3' } }));
-    const r = (await createMfccExecutor(deps).execute(ctxOf(await mfccFingerprintsOf(deps, 'c')))) as MfccRunResult;
+    const r = (await createMfccExecutor(deps).execute(ctxOf(await mfccFingerprintsOf(deps, 'dev-1', 'c'), 'c'))) as MfccRunResult;
     expect(r.samples[0]).toMatchObject({ outcome: 'refused', reason: expect.stringMatching(/mp3/) });
     expect(r.sampleRateConsistency).toMatchObject({ status: 'homogeneous', judgeable: true, reason: null });
   });

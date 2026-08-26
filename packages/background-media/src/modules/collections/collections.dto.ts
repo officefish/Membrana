@@ -89,6 +89,27 @@ export class RequestPluginRunDto {
   sampleIds?: string[];
 }
 
+export class CollectionPluginStateDto {
+  @ApiProperty({ description: 'Plugin manifest as registered by the collections home' })
+  manifest!: unknown;
+
+  @ApiProperty({ description: 'Registry enabled flag; not part of the manifest' })
+  enabled!: boolean;
+}
+
+export class CollectionPluginListResponseDto {
+  @ApiProperty({ example: 'background-media/collections' })
+  mountTarget!: string;
+
+  @ApiProperty({ type: [CollectionPluginStateDto] })
+  plugins!: CollectionPluginStateDto[];
+}
+
+export class SetCollectionPluginEnabledDto {
+  @ApiProperty({ example: true })
+  enabled!: boolean;
+}
+
 export class PluginRunResponseDto {
   @ApiProperty({ example: '01a0150f-95e6-718b-bfa7-4ba313511a10', description: 'runId — UUID v7, адрес прогона в доме результатов' })
   runId!: string;

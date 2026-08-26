@@ -7,6 +7,7 @@ import type {
   LibraryDuplicatesRunOutcome,
   LibraryChartListRunOutcome,
   MediaSample,
+  MediaPluginState,
   NewSampleMeta,
   PaginatedSamples,
   StorageQuota,
@@ -59,6 +60,15 @@ export interface IStorageBackend {
     collectionId: string,
     req: LibraryDuplicatesRequest,
   ): Promise<LibraryDuplicatesRunOutcome>;
+  /** Домовая включённость плагинов media collections (#2186): только серверный бэкенд. */
+  listCollectionPlugins?(
+    collectionId: string,
+  ): Promise<readonly MediaPluginState[]>;
+  setCollectionPluginEnabled?(
+    collectionId: string,
+    pluginId: string,
+    enabled: boolean,
+  ): Promise<void>;
 
   /** Optional: seed read-only tariff catalog (MemoryStorageBackend). */
   importCatalogSample?(
