@@ -43,10 +43,61 @@ describe('раскладка библиотеки: правило одно, но
     expect(area.indexOf('shown.map(')).toBeGreaterThan(area.indexOf('state.mainCollapsed ? null : children'));
   });
 
+  it('свёртка берёт СПИСОК, но не органы управления — у обоих близнецов (#2188)', () => {
+    // Владелец нашёл на проде: «Свернуть список» уносил левый сайдбар наборов, а он нужен
+    // ИМЕННО при свёрнутом списке — переключить набор, работая с выборкой.
+    const studio = read(STUDIO);
+    const collapse = studio.indexOf('{mainCollapsed ? null : (');
+    const list = studio.indexOf('<section className="flex min-w-0 flex-1 flex-col gap-2">');
+    const asideStudio = studio.indexOf('flex min-h-0 flex-1 gap-3');
+    expect(collapse).toBeGreaterThan(asideStudio);
+    expect(list).toBeGreaterThan(collapse);
+
+    // В кабинете органы поданы отдельным пропом, который область рисует ВНЕ свёртки.
+    expect(read(CABINET_PAGE)).toContain('mainAside={');
+    const area = read(CABINET_AREA);
+    expect(area.indexOf('{mainAside}')).toBeLessThan(area.indexOf('state.mainCollapsed ? null : children'));
+  });
+
   it('сторона зоны плагинов РАЗНАЯ по канону, и это не разъезд, а основание', () => {
     // SIDEBAR_SIDE.md: Studio — прибор (слева), кабинет — операторская (справа). Слово владельца
     // 26.08: канон в силе, симметрия близнецов в механизме, а не в стороне экрана.
     expect(read('apps/cabinet/src/plugins/PagePluginsSidebar.tsx')).toContain('lg:sticky lg:top-4');
     expect(read('apps/cabinet/src/plugins/SIDEBAR_SIDE.md')).toContain('Выравнивать кабинет под Studio');
+  });
+});
+
+describe('действия строк выборки: правило одно, носителей два (#2188)', () => {
+  const ACTIONS_STUDIO = 'apps/client/src/components/SampleRowActions.tsx';
+  const ACTIONS_CABINET = 'apps/cabinet/src/components/sample-library/CabinetSampleRowActions.tsx';
+
+  it('оба близнеца несут ОДНИ органы: перенос, скачивание, удаление с подтверждением', () => {
+    for (const p of [ACTIONS_STUDIO, ACTIONS_CABINET]) {
+      const src = read(p);
+      expect(src).toContain('Перенести…');
+      expect(src).toContain('window.confirm(');
+      expect(src).toContain('Удалить пробу');
+    }
+  });
+
+  it('оба близнеца убирают строку ПОСЛЕ действия — не «успех и как было»', () => {
+    expect(read('apps/client/src/plugins/sample-library-chart-list/SampleLibraryChartListPanel.tsx')).toContain('dropFromSelection');
+    expect(read('apps/cabinet/src/components/sample-library/CabinetSampleChartListPanel.tsx')).toContain('dropFromSelection');
+  });
+
+  it('ПРОВОДКА: оба близнеца ДОВОДЯТ глаголы до панели, а не только объявляют пропсы', () => {
+    // Пропсы без проводки — механизм, которого нет: панель их объявила, а звать некому.
+    // Ревью #2190 поймало это у Studio: патч упал на середине, пропсы легли, вызов остался
+    // старым, и зуб «панель зовёт сервис» был зелёным, потому что проверял не тот конец.
+    expect(read(STUDIO)).toContain('onMove={(id, toId) => handleMove(id, toId)}');
+    expect(read(STUDIO)).toContain('onRemove={(id) => handleRemove(id)}');
+    expect(read(CABINET_PAGE)).toContain('onMove={(id, toId) => lib.handleMove(id, toId)}');
+    expect(read(CABINET_PAGE)).toContain('onRemove={(id) => lib.handleRemove(id)}');
+  });
+
+  it('ни один близнец не заводит своих глаголов набора', () => {
+    for (const p of ['apps/client/src/plugins/sample-library-chart-list/SampleLibraryChartListPanel.tsx', 'apps/cabinet/src/components/sample-library/CabinetSampleChartListPanel.tsx']) {
+      expect(read(p)).not.toMatch(/service.(moveSample|deleteSample)/u);
+    }
   });
 });

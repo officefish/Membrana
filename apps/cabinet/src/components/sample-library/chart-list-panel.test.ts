@@ -174,3 +174,38 @@ describe('клик «играть» на строке выборки (#2177, д�
     }
   });
 });
+
+describe('действия строк выборки — те же, что у строк библиотеки (#2188, требование 2)', () => {
+  it('органы строки ОБЩИЕ, а не нарисованы в панели заново', () => {
+    // Выборка есть вид на те же пробы. Нарисуй органы отдельно — разъедутся со списком молча;
+    // класс уже ловили на плеере в #2184, второй раз ловить незачем.
+    expect(read('components/sample-library/CabinetSampleChartListPanel.tsx')).toContain('<CabinetSampleRowActions');
+    const actions = read('components/sample-library/CabinetSampleRowActions.tsx');
+    expect(actions).toContain('Перенести…');
+    expect(actions).toContain('window.confirm(');
+  });
+
+  it('глаголы НЕ дублируются: панель зовёт сервис библиотеки через страницу', () => {
+    const page = read('pages/SampleLibraryPage.tsx');
+    expect(page).toContain('onMove={(id, toId) => lib.handleMove(id, toId)}');
+    expect(page).toContain('onRemove={(id) => lib.handleRemove(id)}');
+    expect(page).toContain('lib.handleExport(s)');
+    // Своей правды о наборе у панели нет — она не заводит своих глаголов.
+    expect(read('components/sample-library/CabinetSampleChartListPanel.tsx')).not.toMatch(/service.(moveSample|deleteSample|getSampleBlob)/u);
+  });
+
+  it('ЧЕСТНЫЙ ИСХОД: после действия строка уходит из выборки, а не «успех и как было»', () => {
+    // Класс stale outcome (#2181): перенесённая проба ушла в другой набор, стёртая исчезла —
+    // в выборке ТЕКУЩЕГО набора их больше нет, и счётчик набора уменьшается вместе с ними.
+    const src = read('components/sample-library/CabinetSampleChartListPanel.tsx');
+    expect(src).toContain('dropFromSelection');
+    expect(src).toContain('picks.filter((p) => p.sampleId !== sampleId)');
+    expect(src).toContain('inSet: Math.max(0, prev.inSet - 1)');
+    // И вызывается ПОСЛЕ глагола, а не вместо него: строка исчезает по факту, не по клику.
+    expect(src).toContain('.then(() => dropFromSelection(id))');
+  });
+
+  it('удаление — с подтверждением, называющим пробу', () => {
+    expect(read('components/sample-library/CabinetSampleRowActions.tsx')).toContain('Удалить пробу');
+  });
+});

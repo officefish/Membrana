@@ -21,9 +21,12 @@ import {
   type LibraryChartListPick,
   type LibraryChartListRunOutcome,
   type MediaLibraryService,
+  type Collection,
   type MediaSample,
 } from '@membrana/media-library-service';
 import { selectSample, type SamplePlaybackSnapshot, playSampleNow, togglePlayPause } from '@membrana/sample-playback-service';
+
+import { CabinetSampleRowActions } from '@/components/sample-library/CabinetSampleRowActions';
 
 export interface CabinetSampleChartListPanelProps {
   readonly service: MediaLibraryService;
@@ -32,6 +35,15 @@ export interface CabinetSampleChartListPanelProps {
   readonly knownSamples: readonly MediaSample[];
   readonly playback: SamplePlaybackSnapshot;
   readonly disabled?: boolean;
+  /**
+   * Действия над пробой — ТЕ ЖЕ глаголы сервиса, что у строки списка (#2188). Панель их не
+   * заводит: выборка есть вид на те же пробы, и вторая правда о наборе здесь была бы ложью.
+   */
+  readonly moveTargets?: readonly Collection[];
+  readonly canMutate?: boolean;
+  readonly onMove?: (sampleId: string, toId: string) => Promise<void> | void;
+  readonly onExport?: (sampleId: string) => void;
+  readonly onRemove?: (sampleId: string) => Promise<void> | void;
 }
 
 export function CabinetSampleChartListPanel({
@@ -40,6 +52,11 @@ export function CabinetSampleChartListPanel({
   knownSamples,
   playback,
   disabled = false,
+  moveTargets = [],
+  canMutate = false,
+  onMove,
+  onExport,
+  onRemove,
 }: CabinetSampleChartListPanelProps) {
   const [volume, setVolume] = useState<number>(20);
   const [criterion, setCriterion] = useState<string>('loudness-over-floor');
@@ -88,6 +105,25 @@ export function CabinetSampleChartListPanel({
     },
     [collectionId, titleOf],
   );
+
+  /**
+   * Строка выборки после действия обязана сказать ПРАВДУ (#2188, класс stale outcome #2181).
+   *
+   * Перенесённая проба ушла в другой набор, стёртая исчезла — в выборке ТЕКУЩЕГО набора их
+   * больше нет. Оставить строку значило бы «успех, и всё как было»: человек увидел бы тост об
+   * успехе и ту же строку на месте, и не понял бы, случилось ли что-нибудь.
+   */
+  const dropFromSelection = useCallback((sampleId: string) => {
+    setOutcome((prev) =>
+      prev
+        ? {
+            ...prev,
+            inSet: Math.max(0, prev.inSet - 1),
+            selection: { ...prev.selection, picks: prev.selection.picks.filter((p) => p.sampleId !== sampleId) },
+          }
+        : prev,
+    );
+  }, []);
 
   const selection = outcome?.selection ?? null;
 
@@ -195,15 +231,39 @@ export function CabinetSampleChartListPanel({
                     <td className="text-right tabular-nums">{p.peakDb.toFixed(1)}</td>
                     <td>{p.structure}{p.displaced > 0 ? ` · вытеснил ${p.displaced}` : ''}</td>
                     <td>
-                      <button
-                        type="button"
-                        className="btn btn-ghost btn-xs"
-                        aria-label="Воспроизвести"
-                        disabled={disabled}
-                        onClick={() => handlePlay(p.sampleId)}
-                      >
-                        ▶
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs"
+                          aria-label="Воспроизвести"
+                          disabled={disabled}
+                          onClick={() => handlePlay(p.sampleId)}
+                        >
+                          ▶
+                        </button>
+                        <CabinetSampleRowActions
+                          sampleId={p.sampleId}
+                          title={titleOf(p.sampleId)}
+                          disabled={disabled}
+                          moveTargets={moveTargets}
+                          canMutate={canMutate}
+                          {...(onExport ? { onExport } : {})}
+                          {...(onMove
+                            ? {
+                                onMove: (id: string, toId: string) => {
+                                  void Promise.resolve(onMove(id, toId)).then(() => dropFromSelection(id));
+                                },
+                              }
+                            : {})}
+                          {...(onRemove
+                            ? {
+                                onRemove: (id: string) => {
+                                  void Promise.resolve(onRemove(id)).then(() => dropFromSelection(id));
+                                },
+                              }
+                            : {})}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))}

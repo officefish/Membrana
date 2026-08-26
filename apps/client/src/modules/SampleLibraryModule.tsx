@@ -395,7 +395,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       ) : null}
 
       {/* Основной блок списка сворачивается целиком; виджеты плагинов ниже остаются (#2177). */}
-      {mainCollapsed ? null : (
+      {/* Ряд: слева органы (наборы узла), справа список проб. */}
       <div className="flex min-h-0 flex-1 gap-3">
         <aside className="flex w-52 shrink-0 flex-col gap-2 overflow-y-auto rounded-lg border border-base-300 bg-base-200/40 p-2">
           <span className="text-[10px] uppercase tracking-wide text-base-content/50">
@@ -462,6 +462,8 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
           ) : null}
         </aside>
 
+        {/* Сворачивается ТОЛЬКО список проб: органы слева остаются, как остался плеер. */}
+        {mainCollapsed ? null : (
         <section className="flex min-w-0 flex-1 flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-lg font-semibold">{selected?.name ?? '—'}</h2>
@@ -682,14 +684,27 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
             </table>
           </div>
         </section>
+        )}
       </div>
-      )}
+
 
       {/* Панели плагинов — ПОД основным блоком, по журнальному образцу (пункт 1.2 владельца):
           у журнала кабинета виджет плагина встаёт под лентой, а не над ней. Плеер остаётся
           сверху — он орган управления прослушиванием, а не виджет-результат. */}
       {mediaActivePluginIds.includes(MEDIA_HOME_CHART_LIST_PLUGIN_ID) && selected ? (
-        <SampleLibraryChartListPanel moduleId={module.id} collectionId={selected.id} />
+        <SampleLibraryChartListPanel
+          moduleId={module.id}
+          collectionId={selected.id}
+          moveTargets={moveTargets}
+          canMutate={selectedId === BUFFER_COLLECTION_ID && moveTargets.length > 0}
+          onMove={(id, toId) => handleMove(id, toId)}
+          onExport={(id) => {
+            // Скачивание берёт пробу из библиотеки по адресу: у выборки своего блоба нет.
+            const s = samples.find((x) => x.id === id);
+            if (s) void handleExportSample(s);
+          }}
+          onRemove={(id) => handleRemove(id)}
+        />
       ) : null}
 
       {mediaActivePluginIds.includes(MEDIA_HOME_SESSION_DIGEST_PLUGIN_ID) && selected ? (

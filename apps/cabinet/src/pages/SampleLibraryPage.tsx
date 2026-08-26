@@ -44,6 +44,15 @@ export function SampleLibraryPage() {
             knownSamples={lib.nodeSamples}
             playback={lib.playback}
             disabled={lib.playbackDisabled}
+            moveTargets={lib.moveTargets}
+            canMutate={lib.canMutate}
+            onMove={(id, toId) => lib.handleMove(id, toId)}
+            onExport={(id) => {
+              // Скачивание берёт пробу из библиотеки по адресу: у выборки своего блоба нет.
+              const s = lib.nodeSamples.find((x) => x.id === id);
+              if (s) void lib.handleExport(s);
+            }}
+            onRemove={(id) => lib.handleRemove(id)}
           />
         ) : (
           <p className="text-sm text-base-content/60" role="status">
@@ -183,8 +192,7 @@ export function SampleLibraryPage() {
           </div>
           </div>
         }
-      >
-          <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
+        mainAside={
             <SampleLibrarySidebar
               catalog={lib.catalog}
               nodes={lib.nodes}
@@ -206,6 +214,9 @@ export function SampleLibraryPage() {
               handleDeleteCollection={lib.handleDeleteCollection}
               handleClearBuffer={lib.handleClearBuffer}
             />
+        }
+      >
+
             <SampleLibraryMainPanel
               selection={lib.selection}
               catalog={lib.catalog}
@@ -244,7 +255,6 @@ export function SampleLibraryPage() {
               samplesPageLoading={lib.samplesPageLoading}
               samplesPagination={lib.samplesPagination}
             />
-          </div>
       </PagePluginArea>
 
       {lib.membraneId ? (
