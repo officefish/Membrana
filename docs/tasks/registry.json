@@ -1,6 +1,40 @@
 {
   "tasks": [
     {
+      "id": "plugin-placement-contract",
+      "title": "Контракт зоны размещения плагин-панелей + зуб соответствия раскладке",
+      "promptPath": "docs/prompts/PLUGIN_PLACEMENT_CONTRACT_PROMPT.md",
+      "githubIssue": 2182,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-26",
+      "archivedAt": null,
+      "leadPersona": "ozhegov",
+      "supportPersonas": [],
+      "notes": "Шот после #2177 (раскладка — сессия Г). Зуб судит соответствие объявлению, НЕ видимость — граница названа в issue",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
+      "id": "playback-hang-timeout",
+      "title": "Таймаут ожидания статуса в playSequence + сброс stale outcome при смене набора",
+      "promptPath": "docs/prompts/PLAYBACK_HANG_TIMEOUT_PROMPT.md",
+      "githubIssue": 2181,
+      "linearId": null,
+      "size": "S",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-08-26",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [],
+      "notes": "Из долга ревью #2180 (находки 9/11/13): waitForStatus без бюджета — панель зависает; outcome не сбрасывается при смене collectionId",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "union-merge-all-jsonl",
       "title": "Союзное слияние всех append-only журналов docs/**/*.jsonl (Б, после #2147)",
       "promptPath": "docs/prompts/UNION_MERGE_ALL_JSONL_PROMPT.md",
