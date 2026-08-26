@@ -44,6 +44,15 @@ export function SampleLibraryPage() {
             knownSamples={lib.nodeSamples}
             playback={lib.playback}
             disabled={lib.playbackDisabled}
+            moveTargets={lib.moveTargets}
+            canMutate={lib.canMutate}
+            onMove={(id, toId) => lib.handleMove(id, toId)}
+            onExport={(id) => {
+              // Скачивание берёт пробу из библиотеки по адресу: у выборки своего блоба нет.
+              const s = lib.nodeSamples.find((x) => x.id === id);
+              if (s) void lib.handleExport(s);
+            }}
+            onRemove={(id) => lib.handleRemove(id)}
           />
         ) : (
           <p className="text-sm text-base-content/60" role="status">

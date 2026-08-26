@@ -66,3 +66,28 @@ describe('раскладка библиотеки: правило одно, но
     expect(read('apps/cabinet/src/plugins/SIDEBAR_SIDE.md')).toContain('Выравнивать кабинет под Studio');
   });
 });
+
+describe('действия строк выборки: правило одно, носителей два (#2188)', () => {
+  const ACTIONS_STUDIO = 'apps/client/src/components/SampleRowActions.tsx';
+  const ACTIONS_CABINET = 'apps/cabinet/src/components/sample-library/CabinetSampleRowActions.tsx';
+
+  it('оба близнеца несут ОДНИ органы: перенос, скачивание, удаление с подтверждением', () => {
+    for (const p of [ACTIONS_STUDIO, ACTIONS_CABINET]) {
+      const src = read(p);
+      expect(src).toContain('Перенести…');
+      expect(src).toContain('window.confirm(');
+      expect(src).toContain('Удалить пробу');
+    }
+  });
+
+  it('оба близнеца убирают строку ПОСЛЕ действия — не «успех и как было»', () => {
+    expect(read('apps/client/src/plugins/sample-library-chart-list/SampleLibraryChartListPanel.tsx')).toContain('dropFromSelection');
+    expect(read('apps/cabinet/src/components/sample-library/CabinetSampleChartListPanel.tsx')).toContain('dropFromSelection');
+  });
+
+  it('ни один близнец не заводит своих глаголов набора', () => {
+    for (const p of ['apps/client/src/plugins/sample-library-chart-list/SampleLibraryChartListPanel.tsx', 'apps/cabinet/src/components/sample-library/CabinetSampleChartListPanel.tsx']) {
+      expect(read(p)).not.toMatch(/service.(moveSample|deleteSample)/u);
+    }
+  });
+});

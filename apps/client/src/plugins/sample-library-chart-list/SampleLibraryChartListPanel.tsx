@@ -12,6 +12,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useMediaLibrary } from '@membrana/media-library-service';
 import type { LibraryChartListPick, LibraryChartListRunOutcome } from '@membrana/media-library-service';
+import { SampleRowActions } from '../../components/SampleRowActions';
 import { selectSample, useSamplePlayback, playSampleNow, togglePlayPause } from '@membrana/sample-playback-service';
 
 import { dateInputToIsoWindow } from './types';
@@ -27,11 +28,26 @@ export interface SampleLibraryChartListPanelProps {
   readonly moduleId: string;
   /** Текущий набор — его выбирает сайдбар библиотеки, панель выбор не дублирует. */
   readonly collectionId: string;
+  /**
+   * Действия над пробой — ТЕ ЖЕ глаголы модуля, что у строки списка (#2188). Панель их не
+   * заводит: выборка есть вид на те же пробы. Имена пропсов совпадают с кабинетным близнецом —
+   * разъедутся имена, разъедется и поведение.
+   */
+  readonly moveTargets?: readonly { readonly id: string; readonly name: string }[];
+  readonly canMutate?: boolean;
+  readonly onMove?: (sampleId: string, toId: string) => Promise<void> | void;
+  readonly onExport?: (sampleId: string) => void;
+  readonly onRemove?: (sampleId: string) => Promise<void> | void;
 }
 
 export const SampleLibraryChartListPanel: React.FC<SampleLibraryChartListPanelProps> = ({
   moduleId: _moduleId,
   collectionId,
+  moveTargets = [],
+  canMutate = false,
+  onMove,
+  onExport,
+  onRemove,
 }) => {
   const { service, snapshot } = useMediaLibrary();
   const playback = useSamplePlayback();
@@ -80,6 +96,23 @@ export const SampleLibraryChartListPanel: React.FC<SampleLibraryChartListPanelPr
     },
     [collectionId, titleOf],
   );
+
+  /**
+   * Строка после действия говорит ПРАВДУ (#2188; класс stale outcome #2181): перенесённая
+   * ушла в другой набор, стёртая исчезла — в выборке текущего набора их больше нет. Оставить
+   * строку значило бы «успех, и всё как было».
+   */
+  const dropFromSelection = useCallback((sampleId: string) => {
+    setOutcome((prev) =>
+      prev
+        ? {
+            ...prev,
+            inSet: Math.max(0, prev.inSet - 1),
+            selection: { ...prev.selection, picks: prev.selection.picks.filter((x) => x.sampleId !== sampleId) },
+          }
+        : prev,
+    );
+  }, []);
 
   const selection = outcome?.selection ?? null;
 
@@ -171,14 +204,25 @@ export const SampleLibraryChartListPanel: React.FC<SampleLibraryChartListPanelPr
                     <td className="text-right tabular-nums">{p.peakDb.toFixed(1)}</td>
                     <td>{p.structure}{p.displaced > 0 ? ` · вытеснил ${p.displaced}` : ''}</td>
                     <td>
-                      <button
-                        type="button"
-                        className="btn btn-ghost btn-xs"
-                        aria-label="Воспроизвести"
-                        onClick={() => handlePlay(p.sampleId)}
-                      >
-                        ▶
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs"
+                          aria-label="Воспроизвести"
+                          onClick={() => handlePlay(p.sampleId)}
+                        >
+                          ▶
+                        </button>
+                        <SampleRowActions
+                          sampleId={p.sampleId}
+                          title={titleOf(p.sampleId)}
+                          moveTargets={moveTargets}
+                          canMutate={canMutate}
+                          {...(onExport ? { onExport } : {})}
+                          {...(onMove ? { onMove: (id: string, toId: string) => { void Promise.resolve(onMove(id, toId)).then(() => dropFromSelection(id)); } } : {})}
+                          {...(onRemove ? { onRemove: (id: string) => { void Promise.resolve(onRemove(id)).then(() => dropFromSelection(id)); } } : {})}
+                        />
+                      </div>
                     </td>
                   </tr>
                 ))}
