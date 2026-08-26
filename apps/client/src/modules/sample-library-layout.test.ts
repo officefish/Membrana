@@ -85,6 +85,16 @@ describe('действия строк выборки: правило одно, �
     expect(read('apps/cabinet/src/components/sample-library/CabinetSampleChartListPanel.tsx')).toContain('dropFromSelection');
   });
 
+  it('ПРОВОДКА: оба близнеца ДОВОДЯТ глаголы до панели, а не только объявляют пропсы', () => {
+    // Пропсы без проводки — механизм, которого нет: панель их объявила, а звать некому.
+    // Ревью #2190 поймало это у Studio: патч упал на середине, пропсы легли, вызов остался
+    // старым, и зуб «панель зовёт сервис» был зелёным, потому что проверял не тот конец.
+    expect(read(STUDIO)).toContain('onMove={(id, toId) => handleMove(id, toId)}');
+    expect(read(STUDIO)).toContain('onRemove={(id) => handleRemove(id)}');
+    expect(read(CABINET_PAGE)).toContain('onMove={(id, toId) => lib.handleMove(id, toId)}');
+    expect(read(CABINET_PAGE)).toContain('onRemove={(id) => lib.handleRemove(id)}');
+  });
+
   it('ни один близнец не заводит своих глаголов набора', () => {
     for (const p of ['apps/client/src/plugins/sample-library-chart-list/SampleLibraryChartListPanel.tsx', 'apps/cabinet/src/components/sample-library/CabinetSampleChartListPanel.tsx']) {
       expect(read(p)).not.toMatch(/service.(moveSample|deleteSample)/u);

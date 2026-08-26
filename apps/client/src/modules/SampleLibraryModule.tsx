@@ -641,7 +641,19 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
           у журнала кабинета виджет плагина встаёт под лентой, а не над ней. Плеер остаётся
           сверху — он орган управления прослушиванием, а не виджет-результат. */}
       {activePluginIds.includes(SAMPLE_LIBRARY_CHART_LIST_PLUGIN_ID) && selected ? (
-        <SampleLibraryChartListPanel moduleId={module.id} collectionId={selected.id} />
+        <SampleLibraryChartListPanel
+          moduleId={module.id}
+          collectionId={selected.id}
+          moveTargets={moveTargets}
+          canMutate={selectedId === BUFFER_COLLECTION_ID && moveTargets.length > 0}
+          onMove={(id, toId) => handleMove(id, toId)}
+          onExport={(id) => {
+            // Скачивание берёт пробу из библиотеки по адресу: у выборки своего блоба нет.
+            const s = samples.find((x) => x.id === id);
+            if (s) void handleExportSample(s);
+          }}
+          onRemove={(id) => handleRemove(id)}
+        />
       ) : null}
 
       {activePluginIds.includes(SAMPLE_LIBRARY_SESSION_DIGEST_PLUGIN_ID) && selected ? (
