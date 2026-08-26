@@ -28,6 +28,10 @@ const runnerSrc = readFileSync(resolve(repoRoot, 'scripts/ritual-evening-run.mjs
 const closeArgsSrc = readFileSync(resolve(repoRoot, 'scripts/lib/ritual-evening-close-args.mjs'), 'utf8');
 const closeSrc = `${runnerSrc}\n${closeArgsSrc}`;
 const dayRunnerSrc = readFileSync(resolve(repoRoot, 'scripts/ritual-day-run.mjs'), 'utf8');
+// #1782: сборка аргументов close вынесена в lib — зуб судит раннер ВМЕСТЕ с ней,
+// иначе он проверял бы букву исходника, а не инвариант (статус по факту, named gap).
+const dayCloseArgsSrc = readFileSync(resolve(repoRoot, 'scripts/lib/ritual-day-close.mjs'), 'utf8');
+const dayCloseSrc = dayRunnerSrc + String.fromCharCode(10) + dayCloseArgsSrc;
 
 // ── утро: раннер ──────────────────────────────────────────────────────────────
 
@@ -43,8 +47,12 @@ test('ritual:day: раннер открывает прогон до всякой
 test('ritual:day: close пишется по исходу доставки, pending-ci не становится pass', () => {
   assert.match(dayRunnerSrc, /'scripts\/ritual-deliver-to-main\.mjs',\s*'--execute'/u, 'кадр доставки исполняется');
   assert.match(dayRunnerSrc, /code === 3/u, 'pending-ci — отдельная ветка исхода');
-  assert.match(dayRunnerSrc, /closeRun\('skipped', \['--gap', 'deliver-to-main:pending-ci'/u, 'pending-ci пишет named gap');
+  assert.match(dayRunnerSrc, /closeRun\('pending-ci'/u, 'pending-ci — свой исход, а не строка статуса на месте');
+  assert.match(dayCloseSrc, /'deliver-to-main:pending-ci'/u, 'pending-ci пишет named gap');
+  assert.match(dayCloseSrc, /'--status', status/u, 'статус собирается из исхода, не зашит');
   assert.match(dayRunnerSrc, /closeRun\('pass'\)/u, 'pass только после всех шагов');
+  // #1782: закрытие гарантировано и на пути обрыва — сирота лжёт следующему прогону.
+  assert.match(dayRunnerSrc, /finally \{/u, 'обрыв цепочки не должен терять запись прогона');
 });
 
 test('ritual:day: сторожа не глушат — open и close без || true', () => {

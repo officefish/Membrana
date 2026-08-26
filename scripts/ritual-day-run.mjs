@@ -5,12 +5,19 @@
  * Старая shell-цепочка умела только две правды: дошли до конца → close pass, оборвались →
  * ненулевой код. У `deliver-to-main --execute` появился третий честный исход: pending-ci.
  * Это хвост, а не провал ритуала и не доставка; поэтому close пишет `skipped` с named gap.
+ *
+ * #1782: закрытие ГАРАНТИРОВАНО. Раньше оно жило хвостом `&&`-цепочки с константой `pass`:
+ * оборвалось звено — записи нет вовсе, и следующий прогон закрывал сироту лениво как `fail`,
+ * вписывая в журнал провал, которого не было (вещдок 07.08). Здесь закрытие идёт через
+ * `finally`: исключение внутри цепочки уносит прогон, но не запись о нём. Сборка аргументов
+ * вынесена в `lib/ritual-day-close.mjs` — её судит зуб, а не глаз.
  */
 import { spawnSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { pendingCiContinuation } from './lib/ritual-deliver-to-main.mjs';
+import { dayCloseArgs } from './lib/ritual-day-close.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -36,21 +43,16 @@ function runNode(args) {
   return spawnSync(process.execPath, args, { cwd: root, stdio: 'inherit', env: process.env }).status ?? 1;
 }
 
-function closeRun(status, extra = []) {
-  return runNode([
-    'scripts/procedure-run-record.mjs',
-    'close',
-    '--procedure',
-    'ritual-day',
-    '--status',
-    status,
-    '--evidence',
-    'docs/MAIN_DAY_ISSUE.md',
-    ...extra,
-  ]);
+let journalClosed = false;
+
+/** Закрыть прогон по исходу. Идемпотентно: повторный вызов из finally ничего не пишет. */
+function closeRun(outcome, extra = {}) {
+  if (journalClosed) return 0;
+  journalClosed = true;
+  return runNode(['scripts/procedure-run-record.mjs', ...dayCloseArgs({ outcome, ...extra })]);
 }
 
-export function main() {
+function runChain() {
   const open = runNode([
     'scripts/procedure-run-record.mjs',
     'open',
@@ -69,7 +71,7 @@ export function main() {
     if (step.delivery && code === 3) {
       const tail = pendingCiContinuation({ ritual: 'day', branchHint: 'angelina/chore/ritual-day-<date>' });
       console.error(`↷ ${tail}`);
-      const close = closeRun('skipped', ['--gap', 'deliver-to-main:pending-ci', '--friction', tail]);
+      const close = closeRun('pending-ci', { tail });
       return close === 0 ? 0 : 1;
     }
 
@@ -78,12 +80,30 @@ export function main() {
       continue;
     }
 
-    const close = closeRun('fail', ['--gap', step.id]);
+    const close = closeRun('failed', { stepId: step.id });
     return close === 0 ? 1 : close;
   }
 
   const close = closeRun('pass');
   return close === 0 ? 0 : 1;
+}
+
+/**
+ * #1782: что бы ни случилось внутри цепочки, запись прогона закрывается. Сирота лжёт
+ * следующему прогону (он закроет её как `fail`), поэтому обрыв получает СВОЁ имя.
+ */
+export function main() {
+  try {
+    return runChain();
+  } catch (e) {
+    const why = String(e?.message ?? e).split('\n')[0];
+    console.error(`✗ ritual:day оборвался: ${why}`);
+    closeRun('aborted', { tail: `цепочка оборвана: ${why}` });
+    return 1;
+  } finally {
+    // Ни один путь возврата не оставляет прогон открытым: closeRun идемпотентен.
+    closeRun('aborted', { tail: 'цепочка завершилась без явного закрытия' });
+  }
 }
 
 const entry = (process.argv[1] ?? '').replace(/\\/g, '/');
