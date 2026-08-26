@@ -21,7 +21,8 @@
         "^(chart-list-plugin|cowork-server-plugin|server-plugin|plugin-results-|mfcc-first-field-probe|journal-session-twenty|session-twenty-|report-entry-)",
         "^(firebat-node)",
         "^(studio-firebat)",
-        "^(dedup-pairs-|session-digest-library|studio-package-|node-duty-|promo-redemptions-|capture-measured-)"
+        "^(dedup-pairs-|session-digest-library|studio-package-|node-duty-|promo-redemptions-|capture-measured-)",
+        "^(playback-|plugin-placement-)"
       ]
     },
     {
