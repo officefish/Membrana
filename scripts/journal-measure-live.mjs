@@ -14,6 +14,15 @@ const DEFAULT_LIMIT = 50;
 const DEFAULT_MIN_ITEMS = 2_500;
 const DEFAULT_SAMPLE_WINDOW_MS = 7_000;
 
+export const BASELINE_2113 = Object.freeze({
+  source: 'docs/field/2026-08-23-night-duty-journal-congestion.md',
+  feedItems: 2_400,
+  requestsPerSample: 48,
+  rowsPerSample: 115_000,
+  dbUnderLoadMs: [3863, 8108, 8211],
+  dbAfterStopMs: [260, 71, 355],
+});
+
 export function parseArgs(argv) {
   const out = {
     api: process.env.CABINET_API_URL || DEFAULT_API,
@@ -25,6 +34,7 @@ export function parseArgs(argv) {
     minItems: DEFAULT_MIN_ITEMS,
     sampleWindowMs: DEFAULT_SAMPLE_WINDOW_MS,
     json: false,
+    reportMd: false,
     help: false,
   };
   for (let i = 0; i < argv.length; i += 1) {
@@ -38,6 +48,7 @@ export function parseArgs(argv) {
     else if (arg === '--min-items') out.minItems = parsePositiveInt(requiredValue(argv, ++i, arg), arg);
     else if (arg === '--sample-window-ms') out.sampleWindowMs = parsePositiveInt(requiredValue(argv, ++i, arg), arg);
     else if (arg === '--json') out.json = true;
+    else if (arg === '--report-md') out.reportMd = true;
     else if (arg === '--help' || arg === '-h') out.help = true;
     else throw new Error(`unknown flag: ${arg}`);
   }
@@ -63,10 +74,14 @@ export function summarizePages(pages, watermark) {
     .filter((value) => typeof value === 'number' && Number.isFinite(value));
   const httpDurations = pages.map((page) => page.httpDurationMs);
   const newItems = items.filter((item) => Number(item.timestamp) > watermark);
+  const requestsPerNewItem = newItems.length > 0
+    ? Number((pages.length / newItems.length).toFixed(2))
+    : null;
   return {
     requests: pages.length,
     returnedItems: items.length,
     newItems: newItems.length,
+    requestsPerNewItem,
     dbMs: aggregate(dbDurations),
     httpMs: aggregate(httpDurations),
     dbTimingAvailable: dbDurations.length === pages.length,
@@ -172,6 +187,9 @@ function printHuman(result) {
   console.log(`  sample window: ${result.sampleWindowMs} ms`);
   console.log(`  watermark: ${result.watermarkIso}`);
   console.log(`  journal-items requests per sample window: ${result.delta.requests}`);
+  if (result.delta.requestsPerNewItem !== null) {
+    console.log(`  requests per observed sample: ${result.delta.requestsPerNewItem}`);
+  }
   console.log(`  returned items: ${result.delta.returnedItems}; new items after watermark: ${result.delta.newItems}`);
   if (result.delta.dbMs) {
     console.log(`  DB latency ms: min ${result.delta.dbMs.min} · avg ${result.delta.dbMs.avg} · max ${result.delta.dbMs.max}`);
@@ -186,10 +204,42 @@ function printHuman(result) {
   );
 }
 
+export function buildReportMarkdown(result) {
+  const db = result.delta.dbMs
+    ? `${result.delta.dbMs.avg} avg / ${result.delta.dbMs.max} max`
+    : 'unavailable';
+  const http = result.delta.httpMs
+    ? `${result.delta.httpMs.avg} avg / ${result.delta.httpMs.max} max`
+    : 'unavailable';
+  const requestsPerSample = result.delta.requestsPerNewItem === null
+    ? 'n/a'
+    : String(result.delta.requestsPerNewItem);
+  const warnings = result.warnings.length ? result.warnings.map((w) => `- ${w}`).join('\n') : '- none';
+  return [
+    `## #2113 after-meter — ${new Date(result.measuredAt).toISOString()}`,
+    '',
+    `Baseline: ${BASELINE_2113.source}`,
+    '',
+    '| Metric | 23.08 before | 28.08 after |',
+    '|---|---:|---:|',
+    `| Feed length | ~${BASELINE_2113.feedItems} | ${result.feedCount} |`,
+    `| Requests per sample | ~${BASELINE_2113.requestsPerSample} | ${requestsPerSample} |`,
+    `| Rows read per sample | ~${BASELINE_2113.rowsPerSample} | ${result.delta.returnedItems} returned over delta |`,
+    `| DB latency ms | ${BASELINE_2113.dbUnderLoadMs.join(' / ')} under load | ${db} |`,
+    `| HTTP latency ms | n/a | ${http} |`,
+    '',
+    `Command window: ${result.sampleWindowMs} ms; watermark: ${result.watermarkIso}; new items: ${result.delta.newItems}.`,
+    `Verdict: ${result.ok ? 'PASS' : 'WARN'}.`,
+    '',
+    'Warnings:',
+    warnings,
+  ].join('\n');
+}
+
 export async function main(argv = process.argv.slice(2)) {
   const options = parseArgs(argv);
   if (options.help) {
-    console.log('Usage: yarn journal:measure-live [--api URL] [--token TOKEN | --login LOGIN --password PASS] [--media-device-id ID] [--sample-window-ms 7000] [--min-items 2500] [--json]');
+    console.log('Usage: yarn journal:measure-live [--api URL] [--token TOKEN | --login LOGIN --password PASS] [--media-device-id ID] [--sample-window-ms 7000] [--min-items 2500] [--json|--report-md]');
     return 0;
   }
   const token = await resolveToken(options);
@@ -204,10 +254,18 @@ export async function main(argv = process.argv.slice(2)) {
   const warnings = [];
   if (feedCount < options.minItems) warnings.push(`feed count ${feedCount} < ${options.minItems}`);
   if (delta.newItems === 0) warnings.push('no new item observed during sample window');
+  if (delta.newItems > 0) {
+    const expectedMaxRequests = Math.max(1, Math.ceil(delta.newItems / options.limit));
+    if (delta.requests > expectedMaxRequests + 1) {
+      warnings.push(`delta pagination used ${delta.requests} requests for ${delta.newItems} new item(s)`);
+    }
+  }
   if (!delta.dbTimingAvailable) warnings.push('DB timing header missing on at least one page');
+  if (delta.dbMs && delta.dbMs.avg >= 1000) warnings.push(`DB avg ${delta.dbMs.avg} ms is not in hundreds-ms range`);
 
   const result = {
     ok: warnings.length === 0,
+    measuredAt: new Date().toISOString(),
     api: options.api,
     feedCount,
     minItems: options.minItems,
@@ -217,7 +275,8 @@ export async function main(argv = process.argv.slice(2)) {
     delta,
     warnings,
   };
-  if (options.json) console.log(JSON.stringify(result, null, 2));
+  if (options.reportMd) console.log(buildReportMarkdown(result));
+  else if (options.json) console.log(JSON.stringify(result, null, 2));
   else printHuman(result);
   return result.ok ? 0 : 1;
 }

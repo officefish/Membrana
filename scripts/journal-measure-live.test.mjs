@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  buildReportMarkdown,
   parseArgs,
   parseServerTiming,
   summarizePages,
@@ -20,6 +21,7 @@ test('journal measure parses explicit live-run options', () => {
     '--min-items',
     '2500',
     '--json',
+    '--report-md',
   ]);
 
   assert.equal(parsed.api, 'https://cabinet.example');
@@ -28,6 +30,7 @@ test('journal measure parses explicit live-run options', () => {
   assert.equal(parsed.sampleWindowMs, 6000);
   assert.equal(parsed.minItems, 2500);
   assert.equal(parsed.json, true);
+  assert.equal(parsed.reportMd, true);
 });
 
 test('journal measure parses Server-Timing journal-db duration', () => {
@@ -56,5 +59,30 @@ test('journal measure summarizes per-sample page count and DB latency', () => {
   assert.equal(summary.requests, 2);
   assert.equal(summary.returnedItems, 3);
   assert.equal(summary.newItems, 2);
+  assert.equal(summary.requestsPerNewItem, 1);
   assert.deepEqual(summary.dbMs, { min: 10.2, avg: 15.3, max: 20.4 });
+});
+
+test('journal measure report form names before/after metrics for Issue #2113', () => {
+  const md = buildReportMarkdown({
+    ok: true,
+    measuredAt: '2026-08-28T18:00:00.000Z',
+    feedCount: 2600,
+    sampleWindowMs: 7000,
+    watermarkIso: '2026-08-28T17:59:55.000Z',
+    delta: {
+      requests: 1,
+      returnedItems: 1,
+      newItems: 1,
+      requestsPerNewItem: 1,
+      dbMs: { min: 120, avg: 180, max: 240 },
+      httpMs: { min: 150, avg: 210, max: 270 },
+    },
+    warnings: [],
+  });
+  assert.match(md, /#2113 after-meter/u);
+  assert.match(md, /Requests per sample/u);
+  assert.match(md, /~48/u, 'форма несёт baseline 23.08');
+  assert.match(md, /180 avg \/ 240 max/u);
+  assert.match(md, /Verdict: PASS/u);
 });
