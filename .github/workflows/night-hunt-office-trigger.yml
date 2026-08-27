@@ -1,5 +1,13 @@
-# Optional backup: trigger Night Hunt on background-office (Fly/VPS) when local PC is off.
+# Trigger Night Hunt on background-office (Fly/VPS) when local PC is off.
 # Secrets: OFFICE_URL, OFFICE_API_TOKEN (repository secrets)
+#
+# FailClosed (вердикт M1 заседания hunt-and-canon, 27.08): отказ обязан выглядеть как
+# отказ. Прежняя редакция глушила его ДВАЖДЫ — `continue-on-error: true` на шаге и
+# `|| echo "… (optional)"` на команде: офис отвечал 400, прогон был зелёный, охота
+# молчала с 12.07 и никто не знал. Масок в этом прогоне быть не должно ни одной.
+#
+# Отсутствие секретов — единственный законный «пропуск»: это НЕ отказ, а незаведённый
+# вход, и он остаётся exit 0 с явной строкой.
 
 name: night-hunt-office-trigger
 
@@ -13,17 +21,30 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: POST night-hunt run-all (optional backup)
-        continue-on-error: true
+      - name: POST night-hunt run-all
         env:
           OFFICE_URL: ${{ secrets.OFFICE_URL }}
           OFFICE_API_TOKEN: ${{ secrets.OFFICE_API_TOKEN }}
         run: |
-          if [ -z "$OFFICE_URL" ] || [ -z "$OFFICE_API_TOKEN" ]; then
-            echo "OFFICE_URL or OFFICE_API_TOKEN not set — skip (optional)"
+          set -euo pipefail
+          if [ -z "${OFFICE_URL:-}" ] || [ -z "${OFFICE_API_TOKEN:-}" ]; then
+            echo "OFFICE_URL or OFFICE_API_TOKEN not set — вход не заведён, запускать нечего"
             exit 0
           fi
-          curl -fsS -X POST "${OFFICE_URL%/}/v1/night-hunt/run-all" \
+          url="${OFFICE_URL%/}/v1/night-hunt/run-all"
+          body="$(mktemp)"
+          # -f снят намеренно: он прячет тело ответа, а в отказе нужен код И адрес.
+          if ! code="$(curl -sS -o "$body" -w '%{http_code}' -X POST "$url" \
             -H "X-Membrana-Token: ${OFFICE_API_TOKEN}" \
             -H "Content-Type: application/json" \
-            --max-time 300 || echo "night-hunt trigger failed (optional)"
+            --max-time 300)"; then
+            echo "night-hunt trigger ОТКАЗ: до $url не дозвонились (curl не смог выполнить запрос)"
+            exit 1
+          fi
+          if [ "$code" -lt 200 ] || [ "$code" -ge 300 ]; then
+            echo "night-hunt trigger ОТКАЗ: HTTP $code от $url"
+            echo "ответ офиса (первые 500 байт):"
+            head -c 500 "$body" || true
+            exit 1
+          fi
+          echo "night-hunt trigger OK: HTTP $code от $url"
