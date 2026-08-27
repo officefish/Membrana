@@ -23,10 +23,13 @@
       "script": "scripts/archive-night-hunt-artifacts.mjs",
       "kind": "mechanic",
       "criticality": "critical",
-      "label": "Архивация night-hunt отчётов",
+      "label": "Архивация night-hunt отчётов (вещдок ≠ копия)",
       "consumes": [],
       "produces": [
         "docs/archive/night-hunt/<date>/"
+      ],
+      "findingExitCodes": [
+        3
       ]
     },
     {
