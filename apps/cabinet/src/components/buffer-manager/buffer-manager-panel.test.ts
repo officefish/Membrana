@@ -77,6 +77,41 @@ describe('панель управления буфером', () => {
   });
 });
 
+describe('крепление в журнале — ТА ЖЕ панель, второй раскладки нет', () => {
+  it('журнал показывает того же жильца тем же компонентом', () => {
+    const page = read('pages/JournalPage.tsx');
+    expect(page).toContain("'membrana.showcase.buffer-manager'");
+    expect(page).toContain('<BufferManagerPanel');
+  });
+
+  it('своей панели журнал не заводит: компонент один на оба дома', () => {
+    const page = read('pages/JournalPage.tsx');
+    expect(page).toContain("from '@/components/buffer-manager/BufferManagerPanel'");
+    // Второго файла панели быть не должно — искать его негде, кроме общей папки.
+    expect(page).not.toMatch(/JournalBufferManager|BufferManagerJournalPanel/u);
+  });
+
+  it('жилец объявлен МЕСТНЫМ поверх домовых: журнальный дом его не исполняет', () => {
+    const page = read('pages/JournalPage.tsx');
+    expect(page).toContain('withLocalTenants(homePluginSource, JOURNAL_LOCAL_TENANTS)');
+    const tenants = page.slice(page.indexOf('JOURNAL_LOCAL_TENANTS'), page.indexOf('export function JournalPage'));
+    expect(tenants).toContain("mountTarget: 'background-media/collections'");
+    expect(tenants).toContain('enabled: true');
+  });
+
+  it('буфер адресуется константой набора, а не строкой-литералом на странице', () => {
+    const page = read('pages/JournalPage.tsx');
+    expect(page).toContain('collectionId={BUFFER_COLLECTION_ID}');
+    expect(page).toContain("BUFFER_COLLECTION_ID } from '@membrana/media-library-service'");
+  });
+
+  it('занятость буфера берётся у квоты узла, выбранного в журнале', () => {
+    const page = read('pages/JournalPage.tsx');
+    expect(page).toContain('useCabinetMediaLibrary(journal.selectedDeviceId)');
+    expect(page).toContain('media.snapshot.quota.bufferUsedBytes');
+  });
+});
+
 describe('крепление в библиотеке', () => {
   it('панель — ЖИЛЕЦ зоны плагинов страницы, а не блок в потоке', () => {
     const page = read('pages/SampleLibraryPage.tsx');
