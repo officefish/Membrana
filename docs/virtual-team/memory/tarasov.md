@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14280/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 333 (причины в op-log) -->
+Записей: 49 · бюджет 14288/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 334 (причины в op-log) -->
+
+### 2026-08-26 · позиция · team-evening-feedback
+
+> Оценка артефактов: Утренние документы дня согласованы: стендап и MAIN_DAY_ISSUE чётко фиксируют фокус #2177 как прямое слово владельца, при этом assertions остались stale (У1) — расхождение зафиксировано и требует перечеканки. Итоги дня: 15 PR влито, включая ключевой #2184 по […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-26.md#reply-1`
 
 ### 2026-08-25 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Тарасов Оценка артефактов: STRATEGY_DAY устарел на 26 дней (17.07), но MAIN_DAY_ISSUE честно поднял магистраль с гейта 12.08 (`tariff-promo-server-wiring`) вместо `angelina-hostess-impl` из assertions 11.08 — расхождение источников зафиксировано открыто, это работает. […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
-
-### 2026-08-10 · позиция · team-evening-feedback
-
-> День с ясной осью — «S-очередь дня» отработана, эпик `ci-gate-stabilization` закрыт двумя последними детьми (cg2, cg4), долг `llm-probe-still-lies-net` погашен с зубами и живым прогоном. Оценка артефактов: `STRATEGIC_PLAN_DAY` — вещдок 17.07, читать нельзя (помечено); […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`
