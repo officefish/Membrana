@@ -1,31 +1,30 @@
 {
   "magistralOptions": [
-    "sample-library-cabinet-chart-list",
-    "week-without-repeats",
-    "logging-observability-contour"
+    "buffer-control-plugin-2204",
+    "night-hunt-design-canon-meeting",
+    "friday-duty-readiness"
   ],
-  "frozenDigest": "0313601377efad41543ed4c6f33fad7e9322d39395ecce4395ea05cfc2b9868d",
-  "magistral": "sample-library-cabinet-chart-list",
+  "frozenDigest": "3255988699eda8ccaae7dc266cbafcafc7e1550ba374ad8320063cd2957c5c95",
+  "magistral": "buffer-control-plugin-2204",
   "swallow": {
-    "draftDigest": "96bd67e81cc1f9933546ad3d0030fa14e27cd9fe37ddd2ededabbbea3e5d49f7",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-25.md",
+    "draftDigest": "a1a82af5ee9d324911a4e887ea19793b0b4106c7f07a5462b4fa3114bfac2f34",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-08-27.md",
     "ownerAck": true,
-    "day": "2026-08-25",
+    "day": "2026-08-27",
     "claimsProbe": {
-      "verdict": "soft",
-      "protocol": "docs/seanses/team-evening-feedback-2026-08-25.md",
-      "sha": "50e47045ec89",
-      "at": "2026-08-25T16:04:18.127Z"
-    },
-    "gate": "evening:partner-swallow"
+      "verdict": "hard",
+      "protocol": "docs/seanses/team-evening-feedback-2026-08-27.md",
+      "sha": "be025cad6d31",
+      "at": "2026-08-27T18:02:17.737Z"
+    }
   },
-  "day": "2026-08-25",
-  "magistralChosenAt": "2026-08-25",
+  "day": "2026-08-27",
+  "magistralChosenAt": "2026-08-27",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-08-25",
-    "chosen": "sample-library-cabinet-chart-list",
-    "snapshotDigest": "0313601377efad41543ed4c6f33fad7e9322d39395ecce4395ea05cfc2b9868d",
+    "at": "2026-08-27",
+    "chosen": "buffer-control-plugin-2204",
+    "snapshotDigest": "3255988699eda8ccaae7dc266cbafcafc7e1550ba374ad8320063cd2957c5c95",
     "inSnapshot": true
   }
 }
