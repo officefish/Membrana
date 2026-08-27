@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
+import { stopDecision } from '@membrana/media-library-service';
 import { useMembranaStore } from '@membrana/agenda';
 import type { MediaLibraryCaptureFormat, MediaLibraryRecordingMode, MediaLibraryStorageMode } from '@membrana/media-library-service';
 
@@ -111,6 +112,11 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
     !snapshot.streamLive || snapshot.recordingBlocked || snapshot.isRecording;
 
   const autoActive = snapshot.mode === 'auto' && snapshot.streamLive && !snapshot.recordingBlocked;
+  // Судит буфер ядро, а не панель: порог и слово — один носитель на все дома (#2204).
+  const bufferVerdict = stopDecision(
+    { usedBytes: snapshot.usedBytes, limitBytes: snapshot.limitBytes },
+    { what: 'Запись в буфер' },
+  );
 
   return (
     <div className="rounded-box border border-base-300 bg-base-200/30 p-4 flex flex-col gap-4">
@@ -311,10 +317,25 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
             formatStoredSampleCount(snapshot.sampleCount)
           )}
         </p>
-        {snapshot.recordingBlocked ? (
+        {/*
+          ГОВОРЯЩЕЕ СЛОВО ВМЕСТО ЯРЛЫКА (#2204, режим 1). Было: «Запись заблокирована — квота
+          буфера исчерпана». Человек не узнавал ни сколько записано, ни сколько осталось, ни
+          что делать — и узнавал только когда всё уже встало. Слово собирает ядро
+          `stopDecision`: что остановилось, почему, сколько свободно и куда идти убирать.
+
+          Предупреждение на подходе к пределу тоже отсюда: раньше его не было вовсе.
+          Лимит ПО СЧЁТУ проб (браузерный запас) — отдельная причина, и она остаётся своей
+          строкой: смешать её с байтами значило бы соврать о том, что кончилось.
+        */}
+        {bufferVerdict.action !== 'run' ? (
+          <p className={bufferVerdict.action === 'stop' ? 'text-xs text-error' : 'text-xs text-warning'} role="status">
+            {bufferVerdict.say}
+          </p>
+        ) : null}
+        {snapshot.recordingBlocked && bufferVerdict.action !== 'stop' ? (
           <p className="text-xs text-error">
             {snapshot.storageMode === 'browser-limited-fallback'
-              ? 'Запись заблокирована — квота или лимит сэмплов.'
+              ? 'Запись заблокирована — достигнут лимит числа проб в буфере.'
               : 'Запись заблокирована — квота буфера исчерпана.'}
           </p>
         ) : null}

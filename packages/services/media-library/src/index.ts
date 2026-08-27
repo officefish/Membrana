@@ -69,6 +69,14 @@ export {
 
 export { BUFFER_MANAGER_MANIFEST, BUFFER_MANAGER_ID } from './buffer-manager-manifest.js';
 
+export {
+  BUFFER_STOP_RATIO,
+  BUFFER_STOP_WARN_RATIO,
+  stopDecision,
+  type BufferStopAction,
+  type BufferStopVerdict,
+} from './buffer-stop.js';
+
 export type { IStorageBackend } from './ports/storage-backend.js';
 export type { IElectronMediaLibraryPort } from './ports/electron-media-library-port.js';
 
