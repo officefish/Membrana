@@ -73,6 +73,8 @@ export {
   BUFFER_STOP_RATIO,
   BUFFER_STOP_WARN_RATIO,
   stopDecision,
+  stopDecisionOf,
+  type BufferFill,
   type BufferStopAction,
   type BufferStopVerdict,
 } from './buffer-stop.js';

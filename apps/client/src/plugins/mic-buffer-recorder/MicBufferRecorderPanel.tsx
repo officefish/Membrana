@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { stopDecision } from '@membrana/media-library-service';
 import { useMembranaStore } from '@membrana/agenda';
 import type { MediaLibraryCaptureFormat, MediaLibraryRecordingMode, MediaLibraryStorageMode } from '@membrana/media-library-service';
 
@@ -112,11 +111,12 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
     !snapshot.streamLive || snapshot.recordingBlocked || snapshot.isRecording;
 
   const autoActive = snapshot.mode === 'auto' && snapshot.streamLive && !snapshot.recordingBlocked;
-  // Судит буфер ядро, а не панель: порог и слово — один носитель на все дома (#2204).
-  const bufferVerdict = stopDecision(
-    { usedBytes: snapshot.usedBytes, limitBytes: snapshot.limitBytes },
-    { what: 'Запись в буфер' },
-  );
+  /**
+   * Вердикт БЕРЁТСЯ, а не считается здесь (ревью #2214). Своя копия расчёта означала бы, что
+   * панель может сказать «остановлено», пока плагин ещё пишет: ровно эта ложь и была найдена.
+   * Считает состояние — оно же по нему и гасит запись.
+   */
+  const bufferVerdict = snapshot.bufferVerdict;
 
   return (
     <div className="rounded-box border border-base-300 bg-base-200/30 p-4 flex flex-col gap-4">

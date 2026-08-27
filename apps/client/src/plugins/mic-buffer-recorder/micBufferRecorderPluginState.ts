@@ -1,3 +1,4 @@
+import { stopDecision, type BufferStopVerdict } from '@membrana/media-library-service';
 import type {
   MediaLibraryCaptureFormat,
   MediaLibraryRecordingMode,
@@ -21,6 +22,15 @@ export interface MicBufferRecorderSnapshot {
   readonly sampleCount: number;
   readonly maxBufferSamples: number;
   readonly recordingBlocked: boolean;
+  /**
+   * Вердикт буфера (#2204, режим 1) — ОДИН на показ и на решение гасить.
+   *
+   * Ревью #2214 нашло ложь оператору: панель считала вердикт сама и говорила
+   * «остановлено» на 98%, а гасило запись только по `recordingBlocked`, то есть на 100%.
+   * В окне между ними человек читал «остановлено», пока запись шла. Теперь вердикт
+   * считается здесь, один раз, и по нему И говорят, И останавливают — разойтись нечему.
+   */
+  readonly bufferVerdict: BufferStopVerdict;
   readonly storageMode: MediaLibraryStorageMode;
   readonly serverReachable: boolean;
   readonly error: string | null;
@@ -29,6 +39,9 @@ export interface MicBufferRecorderSnapshot {
 }
 
 const BUFFER_SAMPLE_COUNT_PENDING_TIMEOUT_MS = 30_000;
+
+/** Имя того, что пишет, — одно на слово и на решение. */
+const RECORDING_WHAT = 'запись в буфер';
 
 class MicBufferRecorderPluginStateImpl {
   private streamLive = false;
@@ -45,6 +58,7 @@ class MicBufferRecorderPluginStateImpl {
   private sampleCount = 0;
   private maxBufferSamples = 10;
   private recordingBlocked = false;
+  private bufferVerdict: BufferStopVerdict = stopDecision({ usedBytes: 0, limitBytes: 0 }, { what: RECORDING_WHAT });
   private storageMode: MediaLibraryStorageMode = 'browser-limited-fallback';
   private serverReachable = true;
   private error: string | null = null;
@@ -125,6 +139,10 @@ class MicBufferRecorderPluginStateImpl {
     this.sampleCount = params.sampleCount;
     this.maxBufferSamples = params.maxBufferSamples;
     this.recordingBlocked = params.recordingBlocked;
+    this.bufferVerdict = stopDecision(
+      { usedBytes: params.usedBytes, limitBytes: params.limitBytes },
+      { what: RECORDING_WHAT },
+    );
     this.storageMode = params.storageMode;
     this.serverReachable = params.serverReachable;
     this.rebuild();
@@ -188,6 +206,7 @@ class MicBufferRecorderPluginStateImpl {
       sampleCount: this.sampleCount,
       maxBufferSamples: this.maxBufferSamples,
       recordingBlocked: this.recordingBlocked,
+      bufferVerdict: this.bufferVerdict,
       storageMode: this.storageMode,
       serverReachable: this.serverReachable,
       error: this.error,

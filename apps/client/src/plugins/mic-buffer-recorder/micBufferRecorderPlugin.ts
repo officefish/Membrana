@@ -320,7 +320,15 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
 
       const unsubQuota = subscribeMediaLibraryQuotaUpdated((payload) => {
         micBufferRecorderPluginState.setQuota(payload);
-        if (payload.recordingBlocked && activeRecorder) {
+        /*
+          ГАСИМ ПО ТОМУ ЖЕ ВЕРДИКТУ, ЧТО ПОКАЗЫВАЕМ (#2204, ревью #2214).
+          Раньше остановка шла только по `recordingBlocked` — то есть когда квота УЖЕ
+          исчерпана под ноль. Порог остановки ядра срабатывает раньше края, и если гасить
+          по старому признаку, панель говорила бы «остановлено», пока запись идёт. Один
+          источник у слова и у действия — рассинхрону неоткуда взяться.
+        */
+        const verdict = micBufferRecorderPluginState.getSnapshot().bufferVerdict;
+        if ((payload.recordingBlocked || verdict.action === 'stop') && activeRecorder) {
           clearAutoTimers();
           clearRecordingTimers();
           void finishActiveRecorder('error');

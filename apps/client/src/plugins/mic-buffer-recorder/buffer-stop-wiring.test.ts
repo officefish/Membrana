@@ -15,15 +15,39 @@ import { stopDecision } from '@membrana/media-library-service';
 
 const HERE = fileURLToPath(new URL('./', import.meta.url));
 const PANEL = readFileSync(join(HERE, 'MicBufferRecorderPanel.tsx'), 'utf8');
+const STATE = readFileSync(join(HERE, 'micBufferRecorderPluginState.ts'), 'utf8');
+const PLUGIN = readFileSync(join(HERE, 'micBufferRecorderPlugin.ts'), 'utf8');
 
 const MB = 1048576;
 
-describe('панель записи берёт слово у ядра', () => {
+describe('слово и остановка — из ОДНОГО вердикта (BLOCK ревью #2214)', () => {
+  it('вердикт считает состояние, а не панель: своей копии расчёта в панели нет', () => {
+    // Найденная ложь: панель считала вердикт сама и говорила «остановлено» на пороге ядра,
+    // а гасило запись только по recordingBlocked, то есть у самого края. В окне между ними
+    // оператор на дежурстве читал «остановлено», пока запись шла.
+    expect(PANEL).toContain('snapshot.bufferVerdict');
+    expect(PANEL).not.toContain('stopDecision(');
+    expect(STATE).toContain('stopDecision(');
+  });
+
+  it('запись гасится ПО ВЕРДИКТУ, а не только по исчерпанной квоте', () => {
+    expect(PLUGIN).toContain("verdict.action === 'stop'");
+    expect(PLUGIN).toContain('payload.recordingBlocked || ');
+  });
+
+  it('вердикт пересчитывается при каждом обновлении квоты, а не один раз на старте', () => {
+    const setQuota = STATE.slice(STATE.indexOf('setQuota('), STATE.indexOf('setError('));
+    expect(setQuota).toContain('this.bufferVerdict = stopDecision(');
+  });
+
+  it('имя того, что пишет, — одно на слово и на решение', () => {
+    expect(STATE).toContain('RECORDING_WHAT');
+    expect(PANEL).not.toContain("what: '");
+  });
+
   it('судит ядром, а не своим порогом: локальных долей и процентов в панели нет', () => {
-    expect(PANEL).toContain('stopDecision(');
-    expect(PANEL).toContain("from '@membrana/media-library-service'");
-    // Своего порога быть не должно — разойдётся с ядром и с сервером.
     expect(PANEL).not.toMatch(/0\.9[0-9]?\s*\*\s*limitBytes/u);
+    expect(STATE).toContain("from '@membrana/media-library-service'");
   });
 
   it('на экран идёт СЛОВО вердикта, а не пересказ панели', () => {
@@ -50,17 +74,19 @@ describe('слово, которое увидит человек на живых
   it('на подходе к пределу человек предупреждён ЗАРАНЕЕ, а не по факту остановки', () => {
     const v = stopDecision(
       { usedBytes: 950 * MB, limitBytes: 1024 * MB },
-      { what: 'Запись в буфер', bytesPerMinute: 5.3 * MB },
+      { what: 'запись в буфер', bytesPerMinute: 5.3 * MB },
     );
     expect(v.action).toBe('warn');
     expect(v.say).toMatch(/около 13 мин записи/u);
-    expect(v.say).toMatch(/Пора убрать лишнее/u);
+    expect(v.say).toMatch(/пора убрать лишнее/u);
   });
 
   it('остановка называет что, почему, сколько и куда идти', () => {
-    const v = stopDecision({ usedBytes: 1020 * MB, limitBytes: 1024 * MB }, { what: 'Запись в буфер' });
+    const v = stopDecision({ usedBytes: 1020 * MB, limitBytes: 1024 * MB }, { what: 'сценарий дежурства' });
     expect(v.action).toBe('stop');
-    expect(v.say).toMatch(/^Запись в буфер остановлена/u);
+    // Имя стоит ПОСЛЕ глагола: род подставленного имени заранее неизвестен, и «сценарий
+    // дежурства остановлена» было бы браком, который зуб бы закрепил (P2 ревью #2214).
+    expect(v.say).toMatch(/^Остановлено: сценарий дежурства\./u);
     expect(v.say).toMatch(/заполнен на 100%|заполнен на 99%/u);
     expect(v.say).toMatch(/Управлении буфером/u);
   });
