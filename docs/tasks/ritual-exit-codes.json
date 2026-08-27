@@ -2,7 +2,7 @@
   "//": "Карта кодов возврата ритуальных скриптов (#622). Проверяемый артефакт: scripts/lib/ritual-exit-codes.mjs + scripts/ritual-exit-codes.test.mjs. ЗАПРЕТ: не менять сами коды скриптов — только описывать.",
   "version": 1,
   "githubIssue": 622,
-  "updatedAt": "2026-08-23",
+  "updatedAt": "2026-08-27",
   "chains": {
     "evening": {
       "command": "yarn ritual:evening",
@@ -17,9 +17,16 @@
             },
             "1": {
               "bucket": "failure",
-              "meaning": "непойманный throw (Node default) — явного process.exit(1) нет"
+              "meaning": "ошибка среды: нет каталога источника / кривой --window-hours"
+            },
+            "3": {
+              "bucket": "finding",
+              "meaning": "ОТКАЗ достоверности: источник протух / без маркера рождения — вещдок не чеканится, папки нет (вердикт M2 hunt-and-canon)"
             }
-          }
+          },
+          "findingExitCodes": [
+            3
+          ]
         },
         "archive-daily-day": {
           "script": "scripts/archive-daily-day-artifacts.mjs",

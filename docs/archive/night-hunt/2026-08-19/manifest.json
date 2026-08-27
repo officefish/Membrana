@@ -7,5 +7,44 @@
     "services-api-drift-2026-30.md",
     "services-api-drift-2026-32.md"
   ],
-  "archivedAt": "2026-08-19T18:23:15.390Z"
+  "archivedAt": "2026-08-19T18:23:15.390Z",
+  "entries": [
+    {
+      "name": "design-drift-2026-28.md",
+      "bornAt": "2026-07-12T12:47:56.410Z",
+      "contentHash": "feb4e3c18dfbfaf8ae1bc3cc8e64d02a2706be9f4eb7f41737837274b885235c",
+      "evidenceClass": "copy_not_exhibit",
+      "verdict": "refused_stale"
+    },
+    {
+      "name": "graph-drift-2026-28.md",
+      "bornAt": "2026-07-12T12:54:20.673Z",
+      "contentHash": "92c7b93467647b6b5f681832c8c562754d6ce81c4a81bf821d54c5909b92fad4",
+      "evidenceClass": "copy_not_exhibit",
+      "verdict": "refused_stale"
+    },
+    {
+      "name": "services-api-drift-2026-28.md",
+      "bornAt": "2026-07-12T12:53:41.897Z",
+      "contentHash": "026559de3eb4939be3d5e064d44cb4784ebf421c0d5ff149b71fe2c36bd06640",
+      "evidenceClass": "copy_not_exhibit",
+      "verdict": "refused_stale"
+    },
+    {
+      "name": "services-api-drift-2026-30.md",
+      "bornAt": "2026-07-20T11:00:32.726Z",
+      "contentHash": "f2b6092a3ac18615da193059564a3669c916a342df727ee61cd418e799478bda",
+      "evidenceClass": "copy_not_exhibit",
+      "verdict": "refused_stale"
+    },
+    {
+      "name": "services-api-drift-2026-32.md",
+      "bornAt": "2026-08-03T11:00:33.058Z",
+      "contentHash": "55cb7c9d70c8342daf791bb646b1fc6b511eaa9e957872cab3f3c8d44b8c3626",
+      "evidenceClass": "copy_not_exhibit",
+      "verdict": "refused_stale"
+    }
+  ],
+  "evidenceClass": "copy_not_exhibit",
+  "veritySealedAt": "2026-08-27T16:34:49.920Z"
 }
