@@ -1,15 +1,22 @@
+import { useMemo } from 'react';
 import type { LiveJournalFilter } from '@membrana/telemetry-journal-service';
 import { SOUND_CLASSES, type SoundClass } from '@membrana/core';
 
 import { CabinetLiveJournalItemRow } from '@/components/journal/CabinetLiveJournalItemRow';
 import { LiveJournalPager } from '@/components/journal/LiveJournalPager';
 import { useCabinetLiveJournal } from '@/lib/useCabinetLiveJournal';
+import { BUFFER_COLLECTION_ID, BUFFER_MANAGER_MANIFEST } from '@membrana/media-library-service';
+
+import { BufferManagerPanel } from '@/components/buffer-manager/BufferManagerPanel';
+import { useCabinetMediaLibrary } from '@/lib/useCabinetMediaLibrary';
 import { PagePluginArea } from '@/plugins/PagePluginArea';
+import { homePluginSource, withLocalTenants } from '@/plugins/pagePluginSource';
 import { useHomePagePlugins } from '@/plugins/useHomePagePlugins';
 import type { CabinetRendererRegistry } from '@/plugins/adapters/manifestToPagePlugin';
 import { ChartListSettings } from '@/plugins/chart-list/ChartListSettings';
 import { ChartListWidget } from '@/plugins/chart-list/ChartListWidget';
 import { useChartList } from '@/plugins/chart-list/useChartList';
+import type { HomePluginState } from '@/plugins/adapters/manifestToPagePlugin';
 
 const FILTER_OPTIONS: { value: LiveJournalFilter; label: string }[] = [
   { value: 'all', label: 'Все' },
@@ -31,9 +38,25 @@ const SOUND_CLASS_LABELS: Readonly<Record<SoundClass, string>> = {
 
 const CHART_LIST_ID = 'membrana.showcase.chart-list';
 
+/**
+ * Управление буфером — жилец дома media, показанный НА странице журнала (#2204).
+ *
+ * Слово владельца 27.08: буфер виден и из журнала. Дом при этом остаётся чужим: журнальный
+ * хост принял бы только своего, и регистрировать здесь плагина media значило бы завести
+ * жильца, за которым дом журнала ничего не исполняет. Поэтому он объявлен местным — см.
+ * `withLocalTenants`, где разница домовой и местной включённости названа.
+ */
+const JOURNAL_LOCAL_TENANTS: readonly HomePluginState[] = [
+  // Манифест берётся у носителя, а не переписывается: BLOCK ревью #2211 нашёл разошедшийся
+  // инлайн-дубль на соседней странице. Одно описание плагина — одно место.
+  { enabled: true, manifest: BUFFER_MANAGER_MANIFEST },
+];
+
 export function JournalPage() {
   const journal = useCabinetLiveJournal();
   const chartList = useChartList(journal.selectedDeviceId);
+  // Библиотека узла нужна панели буфера: тот же транспорт, которым кабинет читает пробы.
+  const media = useCabinetMediaLibrary(journal.selectedDeviceId);
 
   /**
    * Рисовалки кабинета для жильцов дома журнала.
@@ -64,9 +87,31 @@ export function JournalPage() {
         />
       ),
     },
+    [BUFFER_MANAGER_MANIFEST.id]: {
+      name: 'Управление буфером',
+      renderWidget: () =>
+        media.active && media.service ? (
+          <BufferManagerPanel
+            service={media.service}
+            collectionId={BUFFER_COLLECTION_ID}
+            usedBytes={media.snapshot.quota.bufferUsedBytes}
+            limitBytes={media.snapshot.quota.bufferLimitBytes}
+            onCleaned={() => media.refresh()}
+          />
+        ) : (
+          <p className="text-sm text-base-content/60" role="status">
+            Выберите узел — буфер живёт на узле.
+          </p>
+        ),
+    },
   };
 
-  const pagePlugins = useHomePagePlugins(journalRenderers);
+  // Источник склеенный: жильцы дома журнала плюс местное управление буфером.
+  const pluginSource = useMemo(
+    () => withLocalTenants(homePluginSource, JOURNAL_LOCAL_TENANTS),
+    [],
+  );
+  const pagePlugins = useHomePagePlugins(journalRenderers, pluginSource);
 
   const activeFilterLabel =
     FILTER_OPTIONS.find((option) => option.value === journal.filter)?.label ?? journal.filter;
