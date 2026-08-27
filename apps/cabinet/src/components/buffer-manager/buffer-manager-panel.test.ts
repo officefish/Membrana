@@ -80,7 +80,7 @@ describe('панель управления буфером', () => {
 describe('крепление в журнале — ТА ЖЕ панель, второй раскладки нет', () => {
   it('журнал показывает того же жильца тем же компонентом', () => {
     const page = read('pages/JournalPage.tsx');
-    expect(page).toContain("'membrana.showcase.buffer-manager'");
+    expect(page).toContain('BUFFER_MANAGER_MANIFEST');
     expect(page).toContain('<BufferManagerPanel');
   });
 
@@ -95,14 +95,17 @@ describe('крепление в журнале — ТА ЖЕ панель, вт�
     const page = read('pages/JournalPage.tsx');
     expect(page).toContain('withLocalTenants(homePluginSource, JOURNAL_LOCAL_TENANTS)');
     const tenants = page.slice(page.indexOf('JOURNAL_LOCAL_TENANTS'), page.indexOf('export function JournalPage'));
-    expect(tenants).toContain("mountTarget: 'background-media/collections'");
-    expect(tenants).toContain('enabled: true');
+    // Носитель один и здесь: инлайн-описания на второй странице быть не должно.
+    expect(tenants).toContain('{ enabled: true, manifest: BUFFER_MANAGER_MANIFEST }');
+    expect(tenants).not.toMatch(/id: 'membrana\.showcase\.buffer-manager'/u);
   });
 
   it('буфер адресуется константой набора, а не строкой-литералом на странице', () => {
     const page = read('pages/JournalPage.tsx');
     expect(page).toContain('collectionId={BUFFER_COLLECTION_ID}');
-    expect(page).toContain("BUFFER_COLLECTION_ID } from '@membrana/media-library-service'");
+    const imports = page.slice(0, page.indexOf('const FILTER_OPTIONS'));
+    expect(imports).toContain('BUFFER_COLLECTION_ID');
+    expect(imports).toContain("from '@membrana/media-library-service'");
   });
 
   it('занятость буфера берётся у квоты узла, выбранного в журнале', () => {

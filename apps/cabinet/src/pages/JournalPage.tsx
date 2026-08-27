@@ -5,7 +5,7 @@ import { SOUND_CLASSES, type SoundClass } from '@membrana/core';
 import { CabinetLiveJournalItemRow } from '@/components/journal/CabinetLiveJournalItemRow';
 import { LiveJournalPager } from '@/components/journal/LiveJournalPager';
 import { useCabinetLiveJournal } from '@/lib/useCabinetLiveJournal';
-import { BUFFER_COLLECTION_ID } from '@membrana/media-library-service';
+import { BUFFER_COLLECTION_ID, BUFFER_MANAGER_MANIFEST } from '@membrana/media-library-service';
 
 import { BufferManagerPanel } from '@/components/buffer-manager/BufferManagerPanel';
 import { useCabinetMediaLibrary } from '@/lib/useCabinetMediaLibrary';
@@ -47,18 +47,9 @@ const CHART_LIST_ID = 'membrana.showcase.chart-list';
  * `withLocalTenants`, где разница домовой и местной включённости названа.
  */
 const JOURNAL_LOCAL_TENANTS: readonly HomePluginState[] = [
-  {
-    enabled: true,
-    manifest: {
-      id: 'membrana.showcase.buffer-manager',
-      version: '0.1.0',
-      kind: 'showcase',
-      mountTarget: 'background-media/collections',
-      triggers: [],
-      displayForm: 'table',
-      description: 'Управление буфером: сколько занято и что уйдёт при уборке',
-    },
-  },
+  // Манифест берётся у носителя, а не переписывается: BLOCK ревью #2211 нашёл разошедшийся
+  // инлайн-дубль на соседней странице. Одно описание плагина — одно место.
+  { enabled: true, manifest: BUFFER_MANAGER_MANIFEST },
 ];
 
 export function JournalPage() {
@@ -96,7 +87,7 @@ export function JournalPage() {
         />
       ),
     },
-    'membrana.showcase.buffer-manager': {
+    [BUFFER_MANAGER_MANIFEST.id]: {
       name: 'Управление буфером',
       renderWidget: () =>
         media.active && media.service ? (
