@@ -59,6 +59,15 @@ class MicBufferRecorderPluginStateImpl {
   private maxBufferSamples = 10;
   private recordingBlocked = false;
   private bufferVerdict: BufferStopVerdict = stopDecision({ usedBytes: 0, limitBytes: 0 }, { what: RECORDING_WHAT });
+  /**
+   * Наблюдаемый темп роста буфера, байт/мин — считается ПО ФАКТУ, а не по догадке о формате.
+   *
+   * Пока роста не видели, темпа нет, и ядро на неизвестном темпе минут не рождает: врать
+   * числом «осталось N минут» на холодном старте нельзя. Первый прирост даёт первую оценку.
+   */
+  private observedBytesPerMinute: number | null = null;
+  private lastQuotaAt: number | null = null;
+  private lastQuotaUsedBytes: number | null = null;
   private storageMode: MediaLibraryStorageMode = 'browser-limited-fallback';
   private serverReachable = true;
   private error: string | null = null;
@@ -139,9 +148,13 @@ class MicBufferRecorderPluginStateImpl {
     this.sampleCount = params.sampleCount;
     this.maxBufferSamples = params.maxBufferSamples;
     this.recordingBlocked = params.recordingBlocked;
+    this.observeRate(params.usedBytes);
     this.bufferVerdict = stopDecision(
       { usedBytes: params.usedBytes, limitBytes: params.limitBytes },
-      { what: RECORDING_WHAT },
+      {
+        what: RECORDING_WHAT,
+        ...(this.observedBytesPerMinute === null ? {} : { bytesPerMinute: this.observedBytesPerMinute }),
+      },
     );
     this.storageMode = params.storageMode;
     this.serverReachable = params.serverReachable;
@@ -188,6 +201,25 @@ class MicBufferRecorderPluginStateImpl {
   private rebuild(): void {
     this.snapshotCache = this.buildSnapshot();
     for (const listener of this.listeners) listener();
+  }
+
+  /**
+   * Темп по двум соседним замерам квоты. Убывание и стояние на месте темпом не считаются:
+   * после уборки буфер падает, и «минус пять мегабайт в минуту» — не скорость записи.
+   * Сглаживания нет намеренно: показываем то, что видим, а не то, что усреднили.
+   */
+  private observeRate(usedBytes: number): void {
+    const now = Date.now();
+    const prevAt = this.lastQuotaAt;
+    const prevUsed = this.lastQuotaUsedBytes;
+    this.lastQuotaAt = now;
+    this.lastQuotaUsedBytes = usedBytes;
+    if (prevAt === null || prevUsed === null) return;
+    const minutes = (now - prevAt) / 60000;
+    const grew = usedBytes - prevUsed;
+    // Слишком короткое окно даёт дикие числа из шума — ждём следующего замера.
+    if (!(minutes >= 0.05) || !(grew > 0)) return;
+    this.observedBytesPerMinute = grew / minutes;
   }
 
   private buildSnapshot(): MicBufferRecorderSnapshot {

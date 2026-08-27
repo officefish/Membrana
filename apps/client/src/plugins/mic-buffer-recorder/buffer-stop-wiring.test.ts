@@ -65,6 +65,45 @@ describe('слово и остановка — из ОДНОГО вердикт�
   });
 });
 
+describe('удержание и возобновление (второй BLOCK ревью #2214)', () => {
+  it('старт записи отбивается вердиктом, а не только исчерпанной квотой', () => {
+    // Без этого гейта авторежим стартовал бы новый сегмент сразу после того, как вердикт
+    // погасил предыдущий: порог ядра срабатывает РАНЬШЕ края, и recordingBlocked ещё ложь.
+    // Получился бы цикл «остановлено → пишем → остановлено».
+    expect(PLUGIN).toContain("if (snap.bufferVerdict.action === 'stop') {");
+    expect(PLUGIN).toContain('micBufferRecorderPluginState.setError(snap.bufferVerdict.say)');
+  });
+
+  it('удержание СНИМАЕТСЯ, и в авторежиме запись идёт дальше сама', () => {
+    // Слово обещает «станет возможна снова» — обещание без исполнителя было бы второй ложью.
+    expect(PLUGIN).toContain('if (bufferHold && !holding)');
+    expect(PLUGIN).toContain("if (runtimeMode === 'auto' && !activeRecorder) schedulePauseThenNextSegment()");
+  });
+
+  it('ядро обещает ВОЗМОЖНОСТЬ, а не чужое поведение: «продолжится сама» из слова убрано', () => {
+    const v = stopDecision({ usedBytes: 1020 * MB, limitBytes: 1024 * MB });
+    expect(v.say).toMatch(/станет возможна снова/u);
+    expect(v.say).not.toMatch(/продолжится сама/u);
+    // Политика «до освобождения, не насовсем» осталась полем — это вопрос 2 постулирования.
+    expect(v.resumable).toBe(true);
+  });
+});
+
+describe('минуты берутся из наблюдаемого темпа, а не из догадки', () => {
+  it('темп считается по приросту квоты между замерами', () => {
+    expect(STATE).toContain('observeRate(');
+    expect(STATE).toContain('this.observedBytesPerMinute = grew / minutes;');
+  });
+
+  it('темпа нет — в ядро он не передаётся, и минут в слове не будет', () => {
+    expect(STATE).toContain('this.observedBytesPerMinute === null ? {} : { bytesPerMinute:');
+  });
+
+  it('убывание темпом не считается: после уборки буфер падает, это не скорость записи', () => {
+    expect(STATE).toContain('!(grew > 0)');
+  });
+});
+
 describe('слово, которое увидит человек на живых числах прода 27.08', () => {
   it('806 из 1024 (79%) — запись идёт, паники нет', () => {
     const v = stopDecision({ usedBytes: 806 * MB, limitBytes: 1024 * MB }, { what: 'Запись в буфер' });

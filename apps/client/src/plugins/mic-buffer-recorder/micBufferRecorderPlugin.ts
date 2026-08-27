@@ -158,12 +158,23 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
         }
       };
 
+      /** Держим ли запись из-за буфера — чтобы знать, что именно отпускать при освобождении. */
+      let bufferHold = false;
+
       const canStartRecording = (): boolean => {
         const snap = micBufferRecorderPluginState.getSnapshot();
         if (!currentStream || currentStream.getAudioTracks().length === 0) {
           if (runtimeMode === 'manual') {
             micBufferRecorderPluginState.setError('Запустите поток микрофона в модуле.');
           }
+          return false;
+        }
+        if (snap.bufferVerdict.action === 'stop') {
+          // Удержание по вердикту (#2204, ревью #2214). Без этого гейта авторежим стартовал бы
+          // новый сегмент сразу после того, как вердикт погасил предыдущий: порог ядра
+          // срабатывает РАНЬШЕ края квоты, а `recordingBlocked` на 98% ещё ложь. Получился бы
+          // цикл «остановлено → пишем → остановлено» и мигающая панель вместо внятного стопа.
+          micBufferRecorderPluginState.setError(snap.bufferVerdict.say);
           return false;
         }
         if (snap.recordingBlocked) {
@@ -328,10 +339,26 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
           источник у слова и у действия — рассинхрону неоткуда взяться.
         */
         const verdict = micBufferRecorderPluginState.getSnapshot().bufferVerdict;
-        if ((payload.recordingBlocked || verdict.action === 'stop') && activeRecorder) {
+        const holding = payload.recordingBlocked || verdict.action === 'stop';
+        if (holding && activeRecorder) {
           clearAutoTimers();
           clearRecordingTimers();
           void finishActiveRecorder('error');
+        }
+        /*
+          ВОЗОБНОВЛЕНИЕ — ЗДЕСЬ, А НЕ В ОБЕЩАНИИ (#2204, ревью #2214).
+          Слово говорит «запись станет возможна снова, когда место освободится». Возобновляет
+          тот, кто останавливал: в авторежиме — плагин, сам, как только вердикт перестал быть
+          стопом и квота отпустила. Раньше этого не делал никто, и слово было обещанием без
+          исполнителя. В ручном режиме возобновляет человек — оттого слово говорит о
+          возможности, а не о том, что запись пойдёт сама.
+        */
+        if (bufferHold && !holding) {
+          bufferHold = false;
+          micBufferRecorderPluginState.setError(null);
+          if (runtimeMode === 'auto' && !activeRecorder) schedulePauseThenNextSegment();
+        } else if (holding) {
+          bufferHold = true;
         }
       });
 
