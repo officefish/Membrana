@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14382/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 319 (причины в op-log) -->
+Записей: 49 · бюджет 14376/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 320 (причины в op-log) -->
+
+### 2026-08-26 · позиция · team-evening-feedback
+
+> Оценка артефактов: Математическая составляющая дня скромная, но корректная: `playBudgetMs` с длительностью + slack и fallback на `0`/NaN покрыт тестами; `requestsPerNewItem` без off-by-one. Итоги дня: `BASELINE_2113` заморожен константой — ок для before/after, но я явно […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-26.md#reply-1`
 
 ### 2026-08-25 · позиция · team-evening-feedback
 
@@ -289,12 +295,6 @@
 > Дынин. Оценка артефактов: STRATEGY_DAY-вещдок не участвовал, MAIN_DAY_ISSUE выписал таблицу «Почему это магистраль» с provenance и пометкой «1 первоисточник, 3 строки — следствия одного выбора» — это правильная работа с независимостью голосов, не подсчёт строк. Итоги дня: DAG в […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-13.md#reply-1`
-
-### 2026-08-12 · позиция · team-evening-feedback
-
-> Дынин Оценка артефактов: STRATEGY_DAY §0 честно признаёт устаревание снимка 06.07 — методологически корректно, но 26 дней спустя это перестало работать как честность и стало пассивом. MAIN_DAY_ISSUE несёт таблицу посылок с маркером и вердиктом `unknown` — правильная форма, но […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
 
 ### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14381/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 318 (причины в op-log) -->
+Записей: 49 · бюджет 14386/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 319 (причины в op-log) -->
+
+### 2026-08-26 · позиция · team-evening-feedback
+
+> Оценка артефактов: Stale outcome при смене набора — правильный UX-фикс (#2181): не показывать чужие числа. Симметрия библиотеки↔журнал — предмет #2184, но a11y/DESIGN и «виден без подсказки» зубом JSX не доказываются. Итоги дня: Свёртка не уносит органы (#2190) и действия строк […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-26.md#reply-1`
 
 ### 2026-08-25 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Родченко Оценка артефактов: MAIN_DAY_ISSUE не обещал UI-работы, но по факту сегодня в кабинете появилась форма промокода (`apps/cabinet/src/pages/MembranePage.tsx` + `promoDenyText.ts/test.ts`) — это моя зона, и это не отражено в стендапе. Артефакты дня не увидели UI-часть […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
-
-### 2026-08-10 · позиция · team-evening-feedback
-
-> UI-компоненты не затронуты; night-hunt упоминает дрейф `--color-*` ↔ DaisyUI — архивный аналитический артефакт, не новый код. Оценка артефактов: регламент и промпт вечернего фидбека — читабельны, формат таблиц не сломан; markdown-структура MAIN_DAY_ISSUE плотная, но раздел […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-10.md#reply-1`

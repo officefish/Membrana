@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14395/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 322 (причины в op-log) -->
+Записей: 49 · бюджет 14385/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 323 (причины в op-log) -->
+
+### 2026-08-26 · позиция · team-evening-feedback
+
+> Оценка артефактов: #2181 лечит зависание sequence — это реальная починка play-пути панелей дублей/чарт-листа. Но ключевой дефект #2177 «треки из выборки не играют» в развёрнутом diff здесь не виден. Итоги дня: Smoke 48 kHz first-track (#2179) опирается на существующий […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-26.md#reply-1`
 
 ### 2026-08-25 · позиция · team-evening-feedback
 
@@ -290,14 +296,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-13.md#reply-1`
 
-### 2026-08-12 · позиция · team-evening-feedback
+### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 
-> Курёхин Оценка артефактов: аудио-магистраль сегодня не в фокусе — стратегия и канон дня об этом не говорят, и это честно (тариф + санитария). MAIN_DAY_ISSUE не обещал ничего про DSP — согласовано. Итоги дня: по моему профилю — «—» на содержании. Но: закрыт […]
+> Preview остаётся производной поверхностью. Он получает original только после `read-bytes` allow, сохраняет class и при любой ошибке возвращает `preview_unavailable`, не меняя original, registry или tip. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
-
-> Значимые annotations нельзя смешать с удобствами интерфейса. Они получают engine-neutral identity, version scope и anchor; navigation, layout и session state заранее объявляются disposable и не маскируются словом «значимое». _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`

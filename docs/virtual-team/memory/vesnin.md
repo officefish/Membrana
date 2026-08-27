@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14357/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 334 (причины в op-log) -->
+Записей: 49 · бюджет 14359/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 335 (причины в op-log) -->
+
+### 2026-08-26 · позиция · team-evening-feedback
+
+> Оценка артефактов: Архитектурная картина дня собрана корректно: #2187 верно отверг каталожный `placement` в пользу `PagePluginArea` + `pagePluginSource` — один носитель раскладки, второй словарь не завёлся. Границы пакетов в #2184 не разобраны (отложено). Итоги дня: ADR-0025 […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-26.md#reply-1`
 
 ### 2026-08-25 · позиция · team-evening-feedback
 
@@ -289,12 +295,6 @@
 > Веснин. Оценка артефактов: MAIN_DAY_ISSUE — единственный документ дня, где расхождение источников выписано явно с указанием старшинства (sources[0] vs standup); это правильная работа с У1. STRATEGY_DAY-вещдок не мешал — все реальные решения дня опирались на MEETING_VERDICT […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-13.md#reply-1`
-
-### 2026-08-12 · позиция · team-evening-feedback
-
-> Веснин Оценка артефактов: STRATEGY_DAY — вещдок, а не рабочий документ (помечено сверху) — на нём никто и не строил план, что честно. MAIN_DAY_ISSUE как контракт дня отработал: маркер `symbol:tariffPromoServerWiring`, таблица посылок, явное расхождение с assertions — форма […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
 
 ### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 
