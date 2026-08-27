@@ -119,6 +119,40 @@ export interface LibraryChartListRequest {
   to?: string;
 }
 
+/** Заказ плана уборки буфера (#2204): принцип и объём — из словаря плагина. */
+export interface BufferCleanupPlanRequest {
+  principle: 'oldest' | 'newest';
+  volume: number;
+}
+
+/** Строка плана: что именно уйдёт. Человек видит её ДО подтверждения. */
+export interface BufferCleanupPlanRow {
+  id: string;
+  title: string;
+  createdAt: string;
+  sizeBytes: number;
+}
+
+/** Ответ плана уборки: список, защищённые с причинами и числа. */
+export interface BufferCleanupPlanOutcome {
+  principle: 'oldest' | 'newest';
+  requested: number;
+  doomed: readonly BufferCleanupPlanRow[];
+  protectedOut: readonly { id: string; title: string; why: string }[];
+  freedBytes: number;
+  remaining: number;
+  inBuffer: number;
+  /** Не null — набралось меньше запрошенного; показывать обязательно. */
+  shortfall: string | null;
+}
+
+/** Итог уборки: сколько ушло, сколько освободилось и кого не тронули — с причинами. */
+export interface BufferCleanupExecuteOutcome {
+  deleted: number;
+  freedBytes: number;
+  refused: readonly { id: string; why: string }[];
+}
+
 /** Заказ свода сеанса (#2039): ночь — промежутком дат в поясе человека, ISO включительно. */
 export interface SessionDigestRequest {
   from?: string;

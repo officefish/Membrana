@@ -1,4 +1,7 @@
 import type {
+  BufferCleanupExecuteOutcome,
+  BufferCleanupPlanOutcome,
+  BufferCleanupPlanRequest,
   Collection,
   LibraryChartListRequest,
   SessionDigestRequest,
@@ -60,6 +63,22 @@ export interface IStorageBackend {
     collectionId: string,
     req: LibraryDuplicatesRequest,
   ): Promise<LibraryDuplicatesRunOutcome>;
+  /**
+   * План уборки буфера (#2204): что уйдёт при выбранных принципе и объёме. Ничего не меняет.
+   * Только серверный бэкенд — считать план по неполной странице проб нельзя.
+   */
+  planBufferCleanup?(
+    collectionId: string,
+    req: BufferCleanupPlanRequest,
+  ): Promise<BufferCleanupPlanOutcome>;
+  /**
+   * Уборка буфера (#2204): удаляет РОВНО перечисленных. Списка нет — удалять нечего; «сто
+   * ранних» одним вызовом этот глагол не умеет, и это его несущее свойство, а не пробел.
+   */
+  executeBufferCleanup?(
+    collectionId: string,
+    sampleIds: readonly string[],
+  ): Promise<BufferCleanupExecuteOutcome>;
   /** Домовая включённость плагинов media collections (#2186): только серверный бэкенд. */
   listCollectionPlugins?(
     collectionId: string,

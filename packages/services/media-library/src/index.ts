@@ -16,6 +16,10 @@ export {
 } from './constants.js';
 
 export type {
+  BufferCleanupExecuteOutcome,
+  BufferCleanupPlanOutcome,
+  BufferCleanupPlanRequest,
+  BufferCleanupPlanRow,
   LibraryChartListPick,
   LibraryChartListRefusal,
   LibraryChartListRequest,
@@ -62,6 +66,8 @@ export {
   type ProtectedSample,
   type SampleReference,
 } from './buffer-cleanup.js';
+
+export { BUFFER_MANAGER_MANIFEST, BUFFER_MANAGER_ID } from './buffer-manager-manifest.js';
 
 export type { IStorageBackend } from './ports/storage-backend.js';
 export type { IElectronMediaLibraryPort } from './ports/electron-media-library-port.js';

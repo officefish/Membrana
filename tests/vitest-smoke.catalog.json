@@ -29,6 +29,10 @@
       "fanIn": 11
     },
     {
+      "name": "@membrana/plugin-contracts",
+      "fanIn": 7
+    },
+    {
       "name": "@membrana/trends-detector-service",
       "fanIn": 6
     },
@@ -38,10 +42,6 @@
     },
     {
       "name": "@membrana/mfcc-analyzer-service",
-      "fanIn": 4
-    },
-    {
-      "name": "@membrana/plugin-contracts",
       "fanIn": 4
     },
     {

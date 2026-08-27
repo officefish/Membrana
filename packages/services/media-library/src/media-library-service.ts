@@ -12,6 +12,9 @@ import { mediaLibraryTrace, traceElapsedMs } from './media-library-trace.js';
 import { isBufferSampleCountCapActive } from './quota-status.js';
 import type { IStorageBackend } from './ports/storage-backend.js';
 import type {
+  BufferCleanupExecuteOutcome,
+  BufferCleanupPlanOutcome,
+  BufferCleanupPlanRequest,
   LibraryChartListRequest,
   LibraryChartListRunOutcome,
   SessionDigestRequest,
@@ -288,6 +291,34 @@ export class MediaLibraryService {
       throw new Error('Поиск дублей доступен только при серверной библиотеке (media-server)');
     }
     return this.backend.requestLibraryDuplicates(collectionId, req);
+  }
+
+  /**
+   * План уборки буфера (#2204): что уйдёт при выбранных принципе и объёме. Ничего не меняет,
+   * звать можно сколько угодно — на этом и держится правило «сперва покажи».
+   */
+  async planBufferCleanup(
+    collectionId: string,
+    req: BufferCleanupPlanRequest,
+  ): Promise<BufferCleanupPlanOutcome> {
+    if (!this.backend.planBufferCleanup) {
+      throw new Error('Управление буфером доступно только при серверной библиотеке (media-server)');
+    }
+    return this.backend.planBufferCleanup(collectionId, req);
+  }
+
+  /**
+   * Уборка буфера (#2204): уходят РОВНО перечисленные, список берётся из показанного плана.
+   * Глагола «удали сто ранних» здесь нет намеренно — удаление необратимо.
+   */
+  async executeBufferCleanup(
+    collectionId: string,
+    sampleIds: readonly string[],
+  ): Promise<BufferCleanupExecuteOutcome> {
+    if (!this.backend.executeBufferCleanup) {
+      throw new Error('Управление буфером доступно только при серверной библиотеке (media-server)');
+    }
+    return this.backend.executeBufferCleanup(collectionId, sampleIds);
   }
 
   async listCollectionPlugins(collectionId: string): Promise<readonly MediaPluginState[]> {

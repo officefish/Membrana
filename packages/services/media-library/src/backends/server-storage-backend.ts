@@ -4,6 +4,9 @@ import { TARIFF_DATASET_SYSTEM_KEY, DEFAULT_SAMPLES_PAGE_SIZE } from '../constan
 import { resolveMediaLibraryTraceId } from '../media-library-trace.js';
 import type { IStorageBackend } from '../ports/storage-backend.js';
 import type {
+  BufferCleanupExecuteOutcome,
+  BufferCleanupPlanOutcome,
+  BufferCleanupPlanRequest,
   Collection,
   LibraryChartListRequest,
   LibraryChartListRunOutcome,
@@ -323,6 +326,46 @@ export class ServerStorageBackend implements IStorageBackend {
       throw new Error('Витрина отбора не вернула результат прогона (канал result пуст)');
     }
     return { runId: row.runId, ...row.result };
+  }
+
+  /**
+   * План уборки буфера (#2204). Отдельная ручка, а не `plugins/…/request`: прогон витрины
+   * отвечает результатом по runId и живёт в контракте первой волны, а уборке нужны два шага
+   * с человеком посередине — показать и дождаться слова.
+   */
+  async planBufferCleanup(
+    collectionId: string,
+    req: BufferCleanupPlanRequest,
+  ): Promise<BufferCleanupPlanOutcome> {
+    return this.requestJson<BufferCleanupPlanOutcome>(
+      `/collections/${encodeURIComponent(collectionId)}/buffer-cleanup/plan`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ principle: req.principle, volume: req.volume }),
+      },
+    );
+  }
+
+  /**
+   * Уборка буфера (#2204): уходят РОВНО перечисленные. Пустой список сюда не отправляется —
+   * его отбивает и клиент, и сервер: удаление без показанного списка невозможно по контракту.
+   */
+  async executeBufferCleanup(
+    collectionId: string,
+    sampleIds: readonly string[],
+  ): Promise<BufferCleanupExecuteOutcome> {
+    if (sampleIds.length === 0) {
+      throw new Error('Уборка без списка невозможна: сперва план, потом слово человека');
+    }
+    return this.requestJson<BufferCleanupExecuteOutcome>(
+      `/collections/${encodeURIComponent(collectionId)}/buffer-cleanup/execute`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sampleIds: [...sampleIds] }),
+      },
+    );
   }
 
   async listCollectionPlugins(collectionId: string): Promise<readonly MediaPluginState[]> {
