@@ -49,6 +49,20 @@ export {
   dateInputToIsoWindow,
 } from './library-chart-list.js';
 
+export {
+  BUFFER_CLEANUP_PRINCIPLES,
+  BUFFER_CLEANUP_VOLUMES,
+  describeCleanupPlan,
+  isBufferCleanupVolume,
+  isPinnedByHuman,
+  planBufferCleanup,
+  type BufferCleanupPlan,
+  type BufferCleanupPrinciple,
+  type BufferCleanupVolume,
+  type ProtectedSample,
+  type SampleReference,
+} from './buffer-cleanup.js';
+
 export type { IStorageBackend } from './ports/storage-backend.js';
 export type { IElectronMediaLibraryPort } from './ports/electron-media-library-port.js';
 
