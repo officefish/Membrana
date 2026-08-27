@@ -5,7 +5,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
 
-import { deployPreflight } from './_deploy-preflight.mjs';
+import {
+  defaultLiveSessionProbe,
+  deployPreflight,
+  liveSessionProblem,
+  mediaLastSampleTarget,
+} from './_deploy-preflight.mjs';
 
 function git(cwd, args) {
   return execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
@@ -107,6 +112,78 @@ test('deployPreflight: обязательный media live-session guard без 
     }),
     /exit:1/u,
   );
+});
+
+test('defaultLiveSessionProbe: отказ без ключей называет все имена, запасную дверь и ручную проверку (#2199)', () => {
+  const result = defaultLiveSessionProbe({
+    env: {},
+    service: 'media',
+    requireLiveSessionGuard: true,
+  });
+  assert.equal(result.status, 'error');
+  assert.match(result.reason, /DEPLOY_MEDIA_LAST_SAMPLE_URL/u);
+  assert.match(result.reason, /MEDIA_API_URL/u);
+  assert.match(result.reason, /VITE_MEDIA_SERVER_URL/u);
+  assert.match(result.reason, /DEPLOY_MEDIA_PROBE_TOKEN/u);
+  assert.match(result.reason, /VITE_MEDIA_API_TOKEN/u);
+  assert.match(result.reason, /DEPLOY_MEDIA_DEVICE_ID \+ DEPLOY_MEDIA_COLLECTION_ID=__buffer__/u);
+  assert.match(result.reason, /GET \/v1\/deploy-preflight\/last-sample/u);
+  assert.match(result.reason, /X-Membrana-Token/u);
+});
+
+test('defaultLiveSessionProbe: VITE_* имена дают честный источник в статусе (#2199)', () => {
+  const result = defaultLiveSessionProbe({
+    env: {
+      VITE_MEDIA_SERVER_URL: 'https://media.example/',
+      VITE_MEDIA_API_TOKEN: 'token',
+    },
+    service: 'media',
+    requireLiveSessionGuard: true,
+    fetchJson: (url, { token }) => {
+      assert.equal(url, 'https://media.example/v1/deploy-preflight/last-sample');
+      assert.equal(token, 'token');
+      return { ok: true, payload: { lastSampleAt: '2026-08-27T12:00:00.000Z' } };
+    },
+  });
+  assert.equal(result.status, 'ok');
+  assert.equal(result.urlSource, 'VITE_MEDIA_SERVER_URL');
+  assert.equal(result.credentialSource, 'VITE_MEDIA_API_TOKEN');
+  assert.match(result.note, /адрес взят из VITE_MEDIA_SERVER_URL/u);
+  assert.match(result.note, /токен взят из VITE_MEDIA_API_TOKEN/u);
+
+  const target = mediaLastSampleTarget({
+    VITE_MEDIA_SERVER_URL: 'https://media.example/',
+  });
+  assert.deepEqual(target, {
+    url: 'https://media.example/v1/deploy-preflight/last-sample',
+    urlSource: 'VITE_MEDIA_SERVER_URL',
+    legacyDoor: false,
+  });
+});
+
+test('defaultLiveSessionProbe: запасная дверь строит старый вход списка проб (#2199)', () => {
+  const target = mediaLastSampleTarget({
+    MEDIA_API_URL: 'https://media.example/',
+    DEPLOY_MEDIA_DEVICE_ID: 'dev/1',
+    DEPLOY_MEDIA_COLLECTION_ID: '__buffer__',
+  });
+  assert.equal(
+    target.url,
+    'https://media.example/v1/devices/dev%2F1/collections/__buffer__/samples?page=1&limit=1',
+  );
+  assert.equal(target.legacyDoor, true);
+  assert.equal(target.deviceIdSource, 'DEPLOY_MEDIA_DEVICE_ID');
+  assert.equal(target.collectionIdSource, 'DEPLOY_MEDIA_COLLECTION_ID');
+});
+
+test('liveSessionProblem: media недоступна остаётся fail-closed и не маскируется fallback-подсказкой (#2199)', () => {
+  const problem = liveSessionProblem({
+    status: 'error',
+    reason: 'live-session probe failed: HTTP 503: unavailable',
+    source: 'https://media.example/v1/deploy-preflight/last-sample',
+  });
+  assert.match(problem, /HTTP 503/u);
+  assert.doesNotMatch(problem, /VITE_MEDIA_API_TOKEN/u);
 });
 
 test('deployPreflight: сбой live-session probe становится hard problem, а не raw throw', () => {

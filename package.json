@@ -461,6 +461,8 @@
     "vdr:blind": "node scripts/vdr-blind-corpus.mjs",
     "field:capture": "node scripts/field-capture.mjs",
     "firebat:poller": "node scripts/firebat-poller.mjs",
+    "node:duty-ready": "node scripts/node-duty-ready.mjs",
+    "journal:measure-live": "node scripts/journal-measure-live.mjs",
     "capture:sidecar": "node scripts/capture-sidecar.mjs",
     "plugin:run:mfcc": "node scripts/plugin-run-mfcc.mjs",
     "gc:void": "node scripts/gc.mjs",

@@ -20,6 +20,7 @@ test('parseEnv: три ключа узла обязательны, служеб�
   assert.throws(() => parseEnv(`${ENV_OK}VITE_MEDIA_API_TOKEN=secret\n`), /служебный токен/u);
   assert.ok(!ENV_KEYS.includes('VITE_MEDIA_API_TOKEN'));
   assert.throws(() => parseEnv(`${ENV_OK}FIELD_NODE_POLL_MS=10\n`), /FIELD_NODE_POLL_MS/u);
+  assert.throws(() => parseEnv(`${ENV_OK}FIELD_NODE_RATE=44100\n`), /48 kHz/u);
 });
 
 test('classifyPoll: 401 → stale_key; backoff в теле → backoff с retryAfterMs; ok → задание или пусто; прочее — транспорт, не исход', () => {
