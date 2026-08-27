@@ -80,15 +80,18 @@ describe('панель управления буфером', () => {
 describe('крепление в библиотеке', () => {
   it('панель — ЖИЛЕЦ зоны плагинов страницы, а не блок в потоке', () => {
     const page = read('pages/SampleLibraryPage.tsx');
-    expect(page).toContain("'membrana.showcase.buffer-manager'");
+    expect(page).toContain('BUFFER_MANAGER_MANIFEST');
     expect(page).toContain('<BufferManagerPanel');
   });
 
-  it('жилец объявлен странице включённым — иначе владелец увидит пустое место', () => {
+  it('жилец объявлен включённым и БЕРЁТ манифест у носителя, а не переписывает его', () => {
+    // Ревью #2211: инлайн-копия манифеста уже разошлась с носителем. Второго описания
+    // одного плагина быть не должно — страница обязана импортировать, а не диктовать.
     const page = read('pages/SampleLibraryPage.tsx');
     const tenant = page.slice(page.indexOf('LIBRARY_TENANTS'), page.indexOf('export function SampleLibraryPage'));
-    expect(tenant).toContain("id: 'membrana.showcase.buffer-manager'");
-    expect(tenant).toMatch(/enabled: true, manifest: \{ id: 'membrana\.showcase\.buffer-manager'/u);
+    expect(tenant).toContain('{ enabled: true, manifest: BUFFER_MANAGER_MANIFEST }');
+    expect(tenant).not.toMatch(/id: 'membrana\.showcase\.buffer-manager'/u);
+    expect(page).toContain("BUFFER_MANAGER_MANIFEST } from '@membrana/media-library-service'");
   });
 
   it('занятость буфера берётся у квоты узла, а не считается панелью заново', () => {

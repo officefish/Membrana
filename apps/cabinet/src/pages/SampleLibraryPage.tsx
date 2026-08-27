@@ -5,6 +5,8 @@ import { CabinetSampleChartListPanel } from '@/components/sample-library/Cabinet
 import { CabinetSampleDuplicatesPanel } from '@/components/sample-library/CabinetSampleDuplicatesPanel';
 import { CabinetSampleSessionDigestPanel } from '@/components/sample-library/CabinetSampleSessionDigestPanel';
 import { CabinetSamplePlayerSection } from '@/components/sample-library/CabinetSamplePlayerSection';
+import { BUFFER_MANAGER_MANIFEST } from '@membrana/media-library-service';
+
 import { BufferManagerPanel } from '@/components/buffer-manager/BufferManagerPanel';
 import { PagePluginArea } from '@/plugins/PagePluginArea';
 import { localPluginSource } from '@/plugins/pagePluginSource';
@@ -23,7 +25,8 @@ import { useCabinetSampleLibrary } from '@/lib/useCabinetSampleLibrary';
 const LIBRARY_TENANTS: readonly HomePluginState[] = [
   { enabled: true, manifest: { id: 'membrana.showcase.library-chart-list', version: '0.1.0', kind: 'showcase', mountTarget: 'background-media/collections', triggers: [], displayForm: 'table', description: 'Отбор звуков набора по объёму, критерию и промежутку дат' } },
   { enabled: true, manifest: { id: 'membrana.showcase.library-duplicates', version: '0.1.0', kind: 'showcase', mountTarget: 'background-media/collections', triggers: [], displayForm: 'table', description: 'Пары похожих проб набора — показать и ждать слова' } },
-  { enabled: true, manifest: { id: 'membrana.showcase.buffer-manager', version: '0.1.0', kind: 'showcase', mountTarget: 'background-media/collections', triggers: [], displayForm: 'table', description: 'Управление буфером: сколько занято и что уйдёт при уборке' } },
+  // Манифест берётся у носителя, а не переписывается: ревью #2211 нашло разошедшийся дубль.
+  { enabled: true, manifest: BUFFER_MANAGER_MANIFEST },
   { enabled: true, manifest: { id: 'membrana.showcase.library-session-digest', version: '0.1.0', kind: 'showcase', mountTarget: 'background-media/collections', triggers: [], displayForm: 'table', description: 'Двадцать опорных звуков сеанса и негативный материал' } },
 ];
 
@@ -97,7 +100,7 @@ export function SampleLibraryPage() {
           </p>
         ),
     },
-    'membrana.showcase.buffer-manager': {
+    [BUFFER_MANAGER_MANIFEST.id]: {
       name: 'Управление буфером',
       renderWidget: () =>
         nodeView && collectionId ? (

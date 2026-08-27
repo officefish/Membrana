@@ -2611,6 +2611,7 @@ __metadata:
   resolution: "@membrana/media-library-service@workspace:packages/services/media-library"
   dependencies:
     "@membrana/core": "npm:*"
+    "@membrana/plugin-contracts": "npm:*"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     "@vitejs/plugin-react": "npm:^4.3.1"
