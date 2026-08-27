@@ -53,6 +53,7 @@ export {
   BUFFER_CLEANUP_PRINCIPLES,
   BUFFER_CLEANUP_VOLUMES,
   describeCleanupPlan,
+  isBufferCleanupVolume,
   isPinnedByHuman,
   planBufferCleanup,
   type BufferCleanupPlan,

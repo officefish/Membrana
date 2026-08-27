@@ -34,6 +34,14 @@ export const BUFFER_CLEANUP_VOLUMES = [20, 50, 100, 200] as const;
 export type BufferCleanupVolume = (typeof BUFFER_CLEANUP_VOLUMES)[number];
 
 /**
+ * Объём пришёл из словаря? Ядро принимает `number`, потому что число приезжает с формы дома
+ * строкой; проверка обязана быть ЯВНОЙ и в доме, а не молчаливым доверием (P2 ревью #2207).
+ */
+export function isBufferCleanupVolume(value: unknown): value is BufferCleanupVolume {
+  return (BUFFER_CLEANUP_VOLUMES as readonly number[]).includes(Number(value));
+}
+
+/**
  * Почему проба защищена от удаления. Строка человеческая: она попадёт человеку на экран
  * рядом с именем пробы, а не в лог.
  */
@@ -112,15 +120,28 @@ export function planBufferCleanup(
     byRef.set(r.sampleId, list);
   }
 
-  const ordered = [...samples].sort((a, b) => {
-    const at = Date.parse(a.createdAt);
-    const bt = Date.parse(b.createdAt);
-    if (Number.isNaN(at) || Number.isNaN(bt)) return 0;
-    return p.principle === 'oldest' ? at - bt : bt - at;
-  });
+  // Проба с непрочитанным временем в отборе по времени участвовать не может. Раньше
+  // компаратор возвращал для неё 0, и она оказывалась где придётся — то есть могла уйти под
+  // нож молча (P2 ревью #2207). Отбор по времени, значит нет времени — нет и приговора:
+  // такая проба уходит в защищённые с названной причиной.
+  const timeless: MediaSample[] = [];
+  const timed: { sample: MediaSample; at: number }[] = [];
+  for (const s of samples) {
+    const at = Date.parse(s.createdAt);
+    if (Number.isNaN(at)) timeless.push(s);
+    else timed.push({ sample: s, at });
+  }
+
+  const ordered = timed
+    .sort((a, b) => (p.principle === 'oldest' ? a.at - b.at : b.at - a.at))
+    .map((t) => t.sample);
 
   const doomed: MediaSample[] = [];
-  const protectedOut: ProtectedSample[] = [];
+  const protectedOut: ProtectedSample[] = timeless.map((s) => ({
+    id: s.id,
+    title: s.title,
+    why: 'время создания не прочитано — отбор по времени её не судит',
+  }));
   for (const s of ordered) {
     if (doomed.length >= p.volume) break;
     const refs = byRef.get(s.id);

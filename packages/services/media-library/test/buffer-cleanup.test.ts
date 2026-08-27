@@ -11,6 +11,7 @@ import {
   BUFFER_CLEANUP_PRINCIPLES,
   BUFFER_CLEANUP_VOLUMES,
   describeCleanupPlan,
+  isBufferCleanupVolume,
   isPinnedByHuman,
   planBufferCleanup,
   type SampleReference,
@@ -139,6 +140,23 @@ describe('вещдоки (22.08): ссылка защищает пробу и н
     expect(plan.doomed).toHaveLength(0);
     expect(plan.freedBytes).toBe(0);
     expect(plan.shortfall).toMatch(/5 защищено/);
+  });
+});
+
+describe('края, названные ревью #2207', () => {
+  it('непрочитанное время — защита, а не место «где придётся»: такая проба не уходит под нож', () => {
+    const all = [...buffer(30), sample({ id: 'broken', createdAt: 'позавчера' })];
+    const plan = planBufferCleanup(all, { principle: 'oldest', volume: 30 });
+    expect(plan.doomed.map((s) => s.id)).not.toContain('broken');
+    expect(plan.protectedOut.map((s) => s.id)).toContain('broken');
+    expect(plan.protectedOut.find((s) => s.id === 'broken')?.why).toMatch(/время создания не прочитано/);
+  });
+
+  it('объём судится словарём, а не доверием: 17 не из словаря, 100 — из словаря', () => {
+    expect(isBufferCleanupVolume(100)).toBe(true);
+    expect(isBufferCleanupVolume('50')).toBe(true); // форма дома отдаёт строкой
+    expect(isBufferCleanupVolume(17)).toBe(false);
+    expect(isBufferCleanupVolume(null)).toBe(false);
   });
 });
 
