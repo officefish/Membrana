@@ -9,6 +9,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { CollectionsModule } from './modules/collections/collections.module';
 import { DevicesModule } from './modules/devices/devices.module';
 import { SamplesModule } from './modules/samples/samples.module';
+import { BufferCleanupModule } from './modules/buffer-cleanup/buffer-cleanup.module';
 import { TrendsTemplatesModule } from './modules/trends-templates/trends-templates.module';
 import { DeviceScenariosModule } from './modules/device-scenarios/device-scenarios.module';
 import { DeviceWorkspacesModule } from './modules/device-workspaces/device-workspaces.module';
@@ -60,6 +61,7 @@ const testImports =
     DevicesModule,
     CollectionsModule,
     SamplesModule,
+    BufferCleanupModule,
     TrendsTemplatesModule,
     DeviceScenariosModule,
     DeviceWorkspacesModule,
