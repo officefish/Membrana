@@ -16,6 +16,10 @@ export {
 } from './constants.js';
 
 export type {
+  BufferCleanupExecuteOutcome,
+  BufferCleanupPlanOutcome,
+  BufferCleanupPlanRequest,
+  BufferCleanupPlanRow,
   LibraryChartListPick,
   LibraryChartListRefusal,
   LibraryChartListRequest,
