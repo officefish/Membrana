@@ -84,6 +84,24 @@ test('#2204 веб-образ судится СТАДИЕЙ СБОРКИ: пак
   assert.ok(!dirs.has('apps/cabinet/dist'));
 });
 
+test('#2204 подпуть покрытием НЕ является и на стадии сборки — ей нужны исходники целиком', async () => {
+  // Порча показала дыру: без этой проверки «покрытием считается любой путь внутри пакета»
+  // проходило зелёным, потому что живой Dockerfile копирует каталоги целиком и ослабление на
+  // нём не проявляется. Это тот же класс, что ловили 22.08 для runtime-стадии: предикат,
+  // который не краснеет на внесённом дефекте, не удостоверяет ничего.
+  const { buildStagePackageDirs } = await import('./verify-image-workspace-deps.mjs');
+  const df = [
+    'FROM node:20-alpine AS build',
+    'COPY packages/core/package.json packages/core/package.json',
+    'COPY packages/services/lib/dist packages/services/lib/dist',
+    'COPY packages/whole packages/whole',
+  ].join('\n');
+  // Сравнение МНОЖЕСТВА целиком, а не отдельных has(): ослабление добавляет в него сам
+  // подпуть ('packages/core/package.json'), и проверка вида !has('packages/core') осталась бы
+  // зелёной, ничего не удостоверив. Поймано порчей.
+  assert.deepEqual([...buildStagePackageDirs(df)].sort(), ['packages/whole']);
+});
+
 test('#2204 focus — ВТОРОЙ список того же образа, и он отстаёт отдельно от COPY', async () => {
   const { focusedWorkspaces, serviceFindings: findings } = await import('./verify-image-workspace-deps.mjs');
   const df = [
