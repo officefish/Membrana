@@ -1,40 +1,41 @@
-<!-- Сгенерировано: 2026-08-27T17:58:50.491Z (yarn code-review; daily, llm-xai) -->
+<!-- Сгенерировано: 2026-08-28T18:38:15.062Z (yarn code-review; daily, llm-xai) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: 9da18125b2845c21f08989ddaed0fc0e2aa97875^..be025cad6d31d759e7a1d2f6f12da9abe4cc5adc (11 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 9da18125 #2202 (1205), bd91c588 #2205 (444), c488baa0 #2208 (531), 76d14771 #2209 (1361), 4b001596 #2211 (551), e7d021af #2212 (2105), be025cad (629)
+> Период: 6ad1085f0a40e8142c4a4d63ea527bbe5858abe5^..560360574835bba62d94220d9ed0a6b594299107 (11 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 6ad1085f #2221 (707), 7e74e10e #2204 (531), 56036057 (609)
 
 ---
 
 Tier: T2
 
-**[Архитектор / vesnin] (ведущий):** Скоуп дня — #2204 (ядро + dual-mount) и fail-closed охоты; границы `packages/services/media-library` ↔ cabinet ↔ media-дом в видимом диффе соблюдены, второго ядра GC нет. `withLocalTenants` честно разводит домовую и местную включённость — не B8-регистрация чужого жильца в журнале. **B6** в #2210 снят верно (двойное глушение убрано). **Вердикт ведущего: BLOCK на утро** — красные `@membrana/media-library-service#test` и `@membrana/background-media#test`; плюс в развёрнутом диффе нет проверяемого **стопа сценария по порогу** (DoD #2204 п.3) — только GC-план и UI-крепления. Oversized без тела (#2208/#2211/#2212/…) — отдельный проход, не авто-LGTM.
+**[vesnin]:** пропуск с оговорками (не блок дня). Дифф дня — гигиена деплоя/образов и fail-closed полевого rate, не закрытие продуктового DoD #2204 п.3; бестиарий B1–B10 в развёрнутых кусках не всплыл. B6 лечится зубом `verify:image-workspace-deps` (стадия build + focus); B3 риск остаётся вне диффа: «кнопки/GC/образ зелёный» ≠ стоп по remaining. Oversized без разворота: `6ad1085f` #2221 (707), хвост #2204/`7e74e10e` (531), `56036057` (609) — отдельно, не в зачёт вечера.
 
-[Teamlead]: День по #2204: части 1–4 в стволе (ядро → media-API → library mount → journal mount), плюс M1 fail-closed (#2210) и M2/ритуал/заседание. PR size: цепочка #2204 нарезана (OK по смыслу), но суммарно день **oversized** (#2202 1205, #2205 444, #2208 531, #2209 1361, #2211 551, #2212 2105, be025cad 629) — P1 «ревьювать по одному», не блок merge уже влитого. Риски на завтра: (1) красные тесты media-library/background-media, (2) доказать remaining/порог стопа/сигнал наружу или gap-таблицу, (3) recut `main-day-assertions` под факт 27.08. Утро: читать этот файл; не открывать новый L-эпик.
+[Teamlead]: День 28.08 — ритуальные доки (#2222), fail-closed `FIELD_NODE_RATE=48k` (#2216), честный live-session guard с именами env и запасной дверью (#2217), цепочка образа cabinet-web: COPY+focus+build `plugin-contracts` + зуб на `apps/*` (#2223–#2225), снимок сети фактом (#2227). Магистраль owner #2204 (green media + стоп remaining) **не доказана** развёрнутым диффом: ушли build/CI-гигиена под тем же номером issue, не предикат стопа. PR size: несколько merge OK; три oversized без тела — P1 «ревью отдельно», не nit. Утро: читать этот файл + `MAIN_DAY_ISSUE`; не синтезировать L из top-3, пока нет green media и п.3/gap в #2204. Команды: `yarn turbo run test --filter=@membrana/media-library-service --filter=@membrana/background-media`; `yarn test:scripts` (или точечно preflight/image-deps); `yarn verify:image-workspace-deps`; при касании кабинета — сборка образа/CI step «Образы — транзитивный граф».
 
-[Структурщик]: #2207 — чистое ядро в `media-library-service`, export через `index`, план ≠ delete, тесты на вещдоки/pin/timeless/shortfall — C4/C7 ок в видимом куске. #2213: один `BufferManagerPanel`, `BUFFER_COLLECTION_ID`/`BUFFER_MANAGER_MANIFEST` без инлайн-дубля id, `withLocalTenants` + зубы на «местный toggle не уезжает дому» — связанность домов не сломана. Не видно диффа #2208/#2211: сверить, что исполнение удаления только по id из плана и что quota/stop не разъехались в двух местах. C1: циклов в показанном нет.
+[Архитектор]: Контракт preflight стал явным: URL/token/legacy door — именованные списки, probe возвращает `urlSource`/`credentialSource`/`note`, отказ fail-closed не маскируется подсказкой (#2199). Зуб образов признал класс, не случай: `cabinet-web` + `stage: 'build'` vs runtime — верная граница; второй список `yarn workspaces focus` судится отдельно от COPY. Поле 48 kHz — узкий инвариант Firebat, без расползания в audio-engine. Риск архитектуры дня: issue #2204 как «зонтик» для Dockerfile/tsconfig без носителя buffer-stop в `packages/` — не плодить второе ядро «по пути».
 
-[Математик]: `planBufferCleanup` — детерминированный отбор по `createdAt`, NaN-время → protected (correctness), `freedBytes`/`remaining` следствия счёта; словари volume/principle закрыты + `isBufferCleanupVolume`. Края shortfall и «весь буфер защищён» покрыты. Стоп-порог квоты как предикат сценария в этом диффе **не** формализован — не зачитывать DoD «стоп по remaining» по GC-плану.
+[Структурщик]: Границы соблюдены: логика в `scripts/_deploy-preflight.mjs` / `verify-image-workspace-deps.mjs`, cabinet только paths+Dockerfile. C1: циклов нет; C4/C3/C2 N/A. Тесты рядом с предикатами (parseEnv 44.1k, defaultLiveSessionProbe, buildStagePackageDirs, focus missing, coverage всех Dockerfile). C7: явный CI step `yarn verify:image-workspace-deps` — хорошо против «одна строка в 4k». C8/C9: секреты в `.env.example` как имена, не значения; токены только из env. Слабое место: рукописные COPY+focus в Dockerfile снова разъедутся — зуб обязателен в CI (уже добавлен).
 
-[Музыкант]: Web Audio path не трогали (C2 —). Буфер/квота узла и GC по сэмплам — media-контур; play-path #2177 сознательно не primary. После зелёных тестов — smoke: частичная уборка ≠ wipe-all на живом буфере до дежурства 28.08.
+[Математик]: `FIELD_NODE_RATE !== DEFAULTS.rate` — жёсткий equality, не «около 48000»; тест на 44100. `liveSessionProblem` / age probe без смены численной семантики maxAge. NaN/empty: `Number.isFinite` на poll/rate сохранены. Стоп-предикат remaining/порог буфера в диффе **отсутствует** — correctness DoD #2204 п.3 не закрыт кодом дня.
 
-[Верстальщик]: Journal mount — тот же panel, fallback «Выберите узел» с `role="status"`; локальные tenants через plugin area, не блок в потоке. Полный UI panel (#2211) без развёрнутого diff — утром a11y/confirm plan (необратимость) и симметрия library↔journal глазами, C5 точечно.
+[Музыкант]: Канон захвата 48 kHz fail-closed на field-poller согласован с продуктовым контуром Firebat; Web Audio path не трогали (C2 —). Сборка `plugin-contracts` в cabinet-web — обвязка контрактов плагинов, не DSP. Квота буфера/дежурство: без воспроизводимого stop+signal сценарный record path по-прежнему может писать в квоту — ops-риск, не клиппинг audio graph.
 
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-08-27); предмет — #2204/#2207–#2213, #2210, ритуал #2202/#2205/#2206 + be025cad.
+[Верстальщик]: UI/DESIGN.md в развёрнутом диффе нет (—). tsconfig path `@membrana/plugin-contracts` — инфраструктура резолва, не презентация. Не принимать будущий GC UI за a11y/DoD без контракта стопа.
+
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 28.08) — сводка merge #2216/#2217/#2221–#2225/#2227 + долг #2204 DoD п.3 / media RED / oversized-без-diff.
 
 Definition of Done (утро):
-1. `yarn turbo run test --filter=@membrana/media-library-service --filter=@membrana/background-media` → green (сейчас RED — P0).
-2. `yarn turbo run lint typecheck test --filter=@membrana/media-library-service --filter=@membrana/background-media --filter=cabinet` (или фактический package name кабинета).
-3. Проверка DoD #2204: remaining + порог стопа + сигнал наружу **воспроизводимы** или явная gap-таблица в issue/PR; GC ≠ только wipe-all.
-4. `docs/tasks/main-day-assertions.json` sources[0] = мандат 27.08/#2204 (снять У1), если ещё не влито из WIP.
-5. Точечно: `gh pr view` на хвосты oversized #2208/#2211/#2212 только если блочат прод/квоту; иначе очередь после green.
-6. Не `yarn code-review` утром — только чтение вчерашнего ревью + standup/main-day.
+1. `yarn turbo run test --filter=@membrana/media-library-service --filter=@membrana/background-media` → green или fail-log в #2204  
+2. Стоп по remaining+сигнал **или** gap-таблица п.3 в #2204 (не UI-only)  
+3. `yarn verify:image-workspace-deps` + не краснеть step CI «Образы…»  
+4. При необходимости: `node --test scripts/_deploy-preflight.test.mjs scripts/firebat-poller.test.mjs scripts/verify-image-workspace-deps.test.mjs`  
+5. Smoke частичной разгрузки ≠ wipe-all; вещдоки перед GC «ранние»  
+6. Oversized #2221 / 531 / 609 — очередь ревью, не блок merge уже влитого без отдельного прохода
 
 Риски:
-- **P0** — падают тесты `media-library-service` и `background-media` (гигиена прогона).
-- **P1** — в развёрнутом диффе нет доказательства **стоп сценария по квоте**; риск B3 (сдана механика GC/кнопок без продуктового стопа) до 28.08.
-- **P1** — куча oversized без тела диффа (#2208 серверная уборка, #2211 panel, #2212 archiver, ритуалы) — дрейф ревью-долга.
-- **P2** — stale assertions / morning-care fail в `procedure-runs` trail; ритуальный шум не продуктовый блокер.
-- **—** nit/style не блокируют.
+- **P0:** RED `@membrana/media-library-service` / `@membrana/background-media` и отсутствие фальсифицируемого стопа remaining (#2204) на день дежурства/квоты  
+- **P1:** три oversized без развёрнутого diff; #2199 ещё OPEN в таблице живых состояний при уже влитом #2217 — сверить `gh pr view`, не верить только прозе  
+- **P1:** подмена закрытия #2204 починкой образа cabinet (B3)  
+- **P2:** рукописный drift COPY↔focus снова; dual-list лечится зубом, не памятью
