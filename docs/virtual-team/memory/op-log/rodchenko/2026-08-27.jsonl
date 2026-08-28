@@ -1,1 +1,14 @@
 {"ts":"2026-08-27T13:58:19.051Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:18.421Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-08-27-hunt-and-canon-m0-order","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:18.421Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-08-27-hunt-and-canon-m1-silence-guard","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:18.421Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-08-27-hunt-and-canon-m2-false-evidence","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:18.421Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-08-27-hunt-and-canon-m3-design-canon","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:18.421Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-08-27-hunt-and-canon-m4-hunter-form","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:18.421Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-08-27-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:18.421Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-13-network-container-m3-status-vocab","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-27T18:18:18.421Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-13-network-container-m4-owner-rhythm","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-27T18:18:18.421Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-13-network-container-m5-storage","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-27T18:18:18.421Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-13-network-container-m6-k1-rules","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-27T18:18:18.421Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-13-network-container-m7-machine-policy","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-27T18:18:18.421Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-12-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-27T18:18:18.421Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

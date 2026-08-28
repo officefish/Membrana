@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-23 |
-| Head SHA | 806a0f9233733ea5cbac620d8ec85d997e0912ae |
+| Date | 2026-08-27 |
+| Head SHA | 9d8e9a5775ddfb4b74c8242890dd07bb030965a8 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1162 |
-| Yarn scripts (package.json) | 454 |
-| Yarn → `scripts/` | 401 |
+| Code files under `scripts/` | 1188 |
+| Yarn scripts (package.json) | 457 |
+| Yarn → `scripts/` | 404 |
 | Yarn без пути `scripts/` | 53 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 841 |
+| Code files without yarn ref | 866 |
 
-## Yarn → scripts/ (401)
+## Yarn → scripts/ (404)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -170,6 +170,7 @@
 - `insight:verify` → `scripts/insight.mjs`
 - `issues:audit` → `scripts/github-issues-audit.mjs`
 - `issues:audit:apply` → `scripts/github-issues-audit.mjs`
+- `journal:measure-live` → `scripts/journal-measure-live.mjs`
 - `journals:verify` → `scripts/verify-journal-merge.mjs`
 - `kits:audit` → `scripts/kits-audit.mjs`
 - `kits:pins` → `scripts/kits-pins.mjs`
@@ -233,6 +234,7 @@
 - `night:research` → `scripts/night-research.mjs`
 - `night:research:sweep` → `scripts/night-research.mjs`
 - `night:research:yield` → `scripts/night-research.mjs`
+- `node:duty-ready` → `scripts/node-duty-ready.mjs`
 - `office:image:smoke` → `scripts/office-image-smoke.mjs`
 - `office:research-digest` → `scripts/office-research-digest.mjs`
 - `office:ssh` → `scripts/_ssh-office-exec.mjs`
@@ -271,13 +273,14 @@
 - `repo:branches:reconcile` → `scripts/repo-branches-reconcile.mjs`
 - `repo:clean` → `scripts/repo-clean.mjs`
 - `report:check` → `scripts/report-check.mjs`
+- `report:delivery-check` → `scripts/delivery-report-check.mjs`
 - `report:vdr6` → `scripts/generate-vdr6-report.mjs`
 - `research` → `scripts/research.mjs`
 - `resolutions:check` → `scripts/resolutions-check.mjs`
 - `review:gate` → `scripts/review-gate.mjs`
 - `review:oversized` → `scripts/review-oversized.mjs`
 - `ritual:artifacts-commit` → `scripts/ritual-artifacts-commit.mjs`
-- `ritual:day` → `scripts/procedure-run-record.mjs`, `scripts/ritual-artifacts-commit.mjs`, `scripts/morning-care.mjs`, `scripts/infra-probe.mjs`, `scripts/worktree-sync.mjs`, `scripts/repo-clean.mjs`, `scripts/deps-watch.mjs`, `scripts/dead-wire-check.mjs`, `scripts/plan-week-if-monday.mjs`, `scripts/strategy-day.mjs`, `scripts/day-plan.mjs`, `scripts/daily-standup.mjs`, `scripts/main-day-probe.mjs`, `scripts/main-day-issue.mjs`, `scripts/angelina.mjs`, `scripts/ritual-deliver-to-main.mjs`
+- `ritual:day` → `scripts/ritual-day-run.mjs`
 - `ritual:day:no-api` → `scripts/morning-care.mjs`, `scripts/daily-standup.mjs`, `scripts/main-day-probe.mjs`, `scripts/main-day-issue.mjs`
 - `ritual:deliver-to-main` → `scripts/ritual-deliver-to-main.mjs`
 - `ritual:evening` → `scripts/ritual-evening-run.mjs`
@@ -427,7 +430,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (841)
+## Code files without yarn ref (866)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -485,6 +488,7 @@
 - `scripts/angelina-cascade.test.mjs`
 - `scripts/angelina-delegate.test.mjs`
 - `scripts/angelina-validate.test.mjs`
+- `scripts/angelina.mjs`
 - `scripts/anthropic-credit-hint.test.mjs`
 - `scripts/anthropic-env.test.mjs`
 - `scripts/archivarius-dump.test.mjs`
@@ -564,12 +568,14 @@
 - `scripts/day-work-diff.test.mjs`
 - `scripts/dead-wire.test.mjs`
 - `scripts/deep-research.test.mjs`
+- `scripts/delivery-report.test.mjs`
 - `scripts/deploy-run.test.mjs`
 - `scripts/deploy-when-green.test.mjs`
 - `scripts/deploy-wiring.test.mjs`
 - `scripts/detection-planning-priorities.test.mjs`
 - `scripts/detector-compare-export.test.mjs`
 - `scripts/detectors-window-carrier.test.mjs`
+- `scripts/disk-watchdog.test.mjs`
 - `scripts/docs-canon.test.mjs`
 - `scripts/docs-dev.mjs`
 - `scripts/dreams-format.test.mjs`
@@ -622,6 +628,7 @@
 - `scripts/insight-ritual.test.mjs`
 - `scripts/insight-skill-mirrors.test.mjs`
 - `scripts/isolated-merge.test.mjs`
+- `scripts/journal-measure-live.test.mjs`
 - `scripts/journal-merge.test.mjs`
 - `scripts/kit-subgraph-audit.test.mjs`
 - `scripts/kits-pins.test.mjs`
@@ -719,6 +726,7 @@
 - `scripts/lib/debt-gate.mjs`
 - `scripts/lib/debt-gate.test.mjs`
 - `scripts/lib/deep-research.mjs`
+- `scripts/lib/delivery-report.mjs`
 - `scripts/lib/deps-watch-audit-state.mjs`
 - `scripts/lib/deps-watch-audit-state.test.mjs`
 - `scripts/lib/deps-watch-diff.mjs`
@@ -788,6 +796,7 @@
 - `scripts/lib/linear-movement-audit.mjs`
 - `scripts/lib/linear-movement-audit.test.mjs`
 - `scripts/lib/live-links.mjs`
+- `scripts/lib/llm-panel-wire.mjs`
 - `scripts/lib/llm-procedure-chain.mjs`
 - `scripts/lib/llm-procedure-emit.mjs`
 - `scripts/lib/llm-procedure-evidence.mjs`
@@ -834,9 +843,11 @@
 - `scripts/lib/movement-mode.mjs`
 - `scripts/lib/movement-mode.test.mjs`
 - `scripts/lib/namespace-registry.mjs`
+- `scripts/lib/nest-di-smoke-coverage.mjs`
 - `scripts/lib/net-diag.mjs`
 - `scripts/lib/network-probes.mjs`
 - `scripts/lib/night-build.mjs`
+- `scripts/lib/night-hunt-veracity.mjs`
 - `scripts/lib/night-land-reports.mjs`
 - `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
@@ -853,12 +864,14 @@
 - `scripts/lib/persona-memory.mjs`
 - `scripts/lib/pr-mergeability.mjs`
 - `scripts/lib/pr-mergeability.test.mjs`
+- `scripts/lib/pr-ship-size.mjs`
 - `scripts/lib/precedent-store.mjs`
 - `scripts/lib/prisma-docker-guard.mjs`
 - `scripts/lib/procedural-workshop.mjs`
 - `scripts/lib/procedure-contract-license.mjs`
 - `scripts/lib/procedure-contract-stamp.mjs`
 - `scripts/lib/procedure-home-form.mjs`
+- `scripts/lib/procedure-personas.mjs`
 - `scripts/lib/procedure-run-journal.mjs`
 - `scripts/lib/procedure-runs-digest.mjs`
 - `scripts/lib/procedures-registry.mjs`
@@ -887,9 +900,11 @@
 - `scripts/lib/review-referenced-states.test.mjs`
 - `scripts/lib/ritual-artifacts.mjs`
 - `scripts/lib/ritual-artifacts.test.mjs`
+- `scripts/lib/ritual-day-close.mjs`
 - `scripts/lib/ritual-deliver-to-main.mjs`
 - `scripts/lib/ritual-digest-extract.mjs`
 - `scripts/lib/ritual-evening-artifacts.mjs`
+- `scripts/lib/ritual-evening-close-args.mjs`
 - `scripts/lib/ritual-exit-codes.mjs`
 - `scripts/lib/ritual-morning-artifacts.mjs`
 - `scripts/lib/ritual-tree-hygiene.mjs`
@@ -960,6 +975,8 @@
 - `scripts/lib/strategy-channels.mjs`
 - `scripts/lib/strategy-horizon.mjs`
 - `scripts/lib/studio-ms5-prod-smoke.mjs`
+- `scripts/lib/studio-package-failure.mjs`
+- `scripts/lib/studio-package-plan.mjs`
 - `scripts/lib/swallow-delivery-ledger.mjs`
 - `scripts/lib/swallow-mirror.mjs`
 - `scripts/lib/tailwind-coverage.mjs`
@@ -1070,6 +1087,7 @@
 - `scripts/morning-wiring.test.mjs`
 - `scripts/namespace-registry.test.mjs`
 - `scripts/neighbors.test.mjs`
+- `scripts/nest-di-smoke-coverage.test.mjs`
 - `scripts/net-diag.test.mjs`
 - `scripts/net-http.test.mjs`
 - `scripts/network-probes.test.mjs`
@@ -1079,10 +1097,12 @@
 - `scripts/network/probe-core.test.mjs`
 - `scripts/network/tooth.test.mjs`
 - `scripts/night-build-handoff.test.mjs`
+- `scripts/night-hunt-veracity.test.mjs`
 - `scripts/night-land-reports.test.mjs`
 - `scripts/night-report-gate.test.mjs`
 - `scripts/night-research.test.mjs`
 - `scripts/night-triage-secret-scan.test.mjs`
+- `scripts/node-duty-ready.test.mjs`
 - `scripts/node-link-probe.test.mjs`
 - `scripts/norm-liveness.test.mjs`
 - `scripts/office-image-smoke.test.mjs`
@@ -1119,8 +1139,10 @@
 - `scripts/persona-memory/lib/subconscious-lift.test.mjs`
 - `scripts/persona-memory/lib/subconscious-retrieval.mjs`
 - `scripts/persona-memory/lib/subconscious-retrieval.test.mjs`
+- `scripts/plan-week-if-monday.mjs`
 - `scripts/plan-week-if-monday.test.mjs`
 - `scripts/pr-recreate.test.mjs`
+- `scripts/pr-ship-size.test.mjs`
 - `scripts/pr-ship.test.mjs`
 - `scripts/pr-verify.test.mjs`
 - `scripts/pr-wait.test.mjs`
@@ -1135,7 +1157,9 @@
 - `scripts/procedural-workshop.test.mjs`
 - `scripts/procedure-contract-license.test.mjs`
 - `scripts/procedure-home-form.test.mjs`
+- `scripts/procedure-personas.test.mjs`
 - `scripts/procedure-run-journal.test.mjs`
+- `scripts/procedure-run-record.mjs`
 - `scripts/procedure-run-record.test.mjs`
 - `scripts/procedure-runs-digest.test.mjs`
 - `scripts/procedures-registry.test.mjs`
@@ -1158,7 +1182,9 @@
 - `scripts/resolutions-check.test.mjs`
 - `scripts/review-gate.test.mjs`
 - `scripts/ritual-chain-producer.test.mjs`
+- `scripts/ritual-day-close.test.mjs`
 - `scripts/ritual-deliver-to-main.test.mjs`
+- `scripts/ritual-evening-close-args.test.mjs`
 - `scripts/ritual-evening-run.args.test.mjs`
 - `scripts/ritual-evening-tail.mjs`
 - `scripts/ritual-evening-tail.test.mjs`
@@ -1198,6 +1224,7 @@
 - `scripts/strategy-channels.test.mjs`
 - `scripts/strategy-horizon.test.mjs`
 - `scripts/studio-ms5-prod-smoke.test.mjs`
+- `scripts/studio-package.test.mjs`
 - `scripts/swallow-draft.test.mjs`
 - `scripts/swallow-live-links.test.mjs`
 - `scripts/sync-github-token.mjs`
@@ -1227,6 +1254,7 @@
 - `scripts/tasks-archive-closed.test.mjs`
 - `scripts/tasks-audit.test.mjs`
 - `scripts/tasks-decompose.test.mjs`
+- `scripts/team-evening-feedback-readat.test.mjs`
 - `scripts/team-evening-feedback-ritual.test.mjs`
 - `scripts/team-memory-report.cli.test.mjs`
 - `scripts/team-memory-report.test.mjs`
@@ -1281,7 +1309,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1162)
+## All code files (1188)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1513,6 +1541,8 @@
 - `scripts/dead-wire.test.mjs`
 - `scripts/deep-research.test.mjs`
 - `scripts/deepseek-task.mjs`
+- `scripts/delivery-report-check.mjs`
+- `scripts/delivery-report.test.mjs`
 - `scripts/deploy-run.mjs`
 - `scripts/deploy-run.test.mjs`
 - `scripts/deploy-when-green.mjs`
@@ -1524,6 +1554,7 @@
 - `scripts/detector-compare-export.mjs`
 - `scripts/detector-compare-export.test.mjs`
 - `scripts/detectors-window-carrier.test.mjs`
+- `scripts/disk-watchdog.test.mjs`
 - `scripts/docs-canon.test.mjs`
 - `scripts/docs-dev.mjs`
 - `scripts/dreams-format.test.mjs`
@@ -1618,6 +1649,8 @@
 - `scripts/insight-skill-mirrors.test.mjs`
 - `scripts/insight.mjs`
 - `scripts/isolated-merge.test.mjs`
+- `scripts/journal-measure-live.mjs`
+- `scripts/journal-measure-live.test.mjs`
 - `scripts/journal-merge.test.mjs`
 - `scripts/kit-subgraph-audit.test.mjs`
 - `scripts/kits-audit.mjs`
@@ -1717,6 +1750,7 @@
 - `scripts/lib/debt-gate.mjs`
 - `scripts/lib/debt-gate.test.mjs`
 - `scripts/lib/deep-research.mjs`
+- `scripts/lib/delivery-report.mjs`
 - `scripts/lib/deps-watch-audit-state.mjs`
 - `scripts/lib/deps-watch-audit-state.test.mjs`
 - `scripts/lib/deps-watch-diff.mjs`
@@ -1786,6 +1820,7 @@
 - `scripts/lib/linear-movement-audit.mjs`
 - `scripts/lib/linear-movement-audit.test.mjs`
 - `scripts/lib/live-links.mjs`
+- `scripts/lib/llm-panel-wire.mjs`
 - `scripts/lib/llm-procedure-chain.mjs`
 - `scripts/lib/llm-procedure-emit.mjs`
 - `scripts/lib/llm-procedure-evidence.mjs`
@@ -1832,9 +1867,11 @@
 - `scripts/lib/movement-mode.mjs`
 - `scripts/lib/movement-mode.test.mjs`
 - `scripts/lib/namespace-registry.mjs`
+- `scripts/lib/nest-di-smoke-coverage.mjs`
 - `scripts/lib/net-diag.mjs`
 - `scripts/lib/network-probes.mjs`
 - `scripts/lib/night-build.mjs`
+- `scripts/lib/night-hunt-veracity.mjs`
 - `scripts/lib/night-land-reports.mjs`
 - `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
@@ -1851,12 +1888,14 @@
 - `scripts/lib/persona-memory.mjs`
 - `scripts/lib/pr-mergeability.mjs`
 - `scripts/lib/pr-mergeability.test.mjs`
+- `scripts/lib/pr-ship-size.mjs`
 - `scripts/lib/precedent-store.mjs`
 - `scripts/lib/prisma-docker-guard.mjs`
 - `scripts/lib/procedural-workshop.mjs`
 - `scripts/lib/procedure-contract-license.mjs`
 - `scripts/lib/procedure-contract-stamp.mjs`
 - `scripts/lib/procedure-home-form.mjs`
+- `scripts/lib/procedure-personas.mjs`
 - `scripts/lib/procedure-run-journal.mjs`
 - `scripts/lib/procedure-runs-digest.mjs`
 - `scripts/lib/procedures-registry.mjs`
@@ -1885,9 +1924,11 @@
 - `scripts/lib/review-referenced-states.test.mjs`
 - `scripts/lib/ritual-artifacts.mjs`
 - `scripts/lib/ritual-artifacts.test.mjs`
+- `scripts/lib/ritual-day-close.mjs`
 - `scripts/lib/ritual-deliver-to-main.mjs`
 - `scripts/lib/ritual-digest-extract.mjs`
 - `scripts/lib/ritual-evening-artifacts.mjs`
+- `scripts/lib/ritual-evening-close-args.mjs`
 - `scripts/lib/ritual-exit-codes.mjs`
 - `scripts/lib/ritual-morning-artifacts.mjs`
 - `scripts/lib/ritual-tree-hygiene.mjs`
@@ -1958,6 +1999,8 @@
 - `scripts/lib/strategy-channels.mjs`
 - `scripts/lib/strategy-horizon.mjs`
 - `scripts/lib/studio-ms5-prod-smoke.mjs`
+- `scripts/lib/studio-package-failure.mjs`
+- `scripts/lib/studio-package-plan.mjs`
 - `scripts/lib/swallow-delivery-ledger.mjs`
 - `scripts/lib/swallow-mirror.mjs`
 - `scripts/lib/tailwind-coverage.mjs`
@@ -2096,6 +2139,7 @@
 - `scripts/namespace-registry.test.mjs`
 - `scripts/neighbors.mjs`
 - `scripts/neighbors.test.mjs`
+- `scripts/nest-di-smoke-coverage.test.mjs`
 - `scripts/net-diag.mjs`
 - `scripts/net-diag.test.mjs`
 - `scripts/net-http.mjs`
@@ -2116,6 +2160,7 @@
 - `scripts/night-build-handoff.test.mjs`
 - `scripts/night-build-open.mjs`
 - `scripts/night-hunt-pr-review.mjs`
+- `scripts/night-hunt-veracity.test.mjs`
 - `scripts/night-land-reports.mjs`
 - `scripts/night-land-reports.test.mjs`
 - `scripts/night-report-gate.mjs`
@@ -2124,6 +2169,8 @@
 - `scripts/night-research.test.mjs`
 - `scripts/night-triage-secret-scan.mjs`
 - `scripts/night-triage-secret-scan.test.mjs`
+- `scripts/node-duty-ready.mjs`
+- `scripts/node-duty-ready.test.mjs`
 - `scripts/node-link-probe.mjs`
 - `scripts/node-link-probe.test.mjs`
 - `scripts/norm-liveness.test.mjs`
@@ -2175,6 +2222,7 @@
 - `scripts/plugin-run-mfcc.mjs`
 - `scripts/pr-recreate.mjs`
 - `scripts/pr-recreate.test.mjs`
+- `scripts/pr-ship-size.test.mjs`
 - `scripts/pr-ship.mjs`
 - `scripts/pr-ship.test.mjs`
 - `scripts/pr-verify.mjs`
@@ -2195,6 +2243,7 @@
 - `scripts/procedural-workshop.test.mjs`
 - `scripts/procedure-contract-license.test.mjs`
 - `scripts/procedure-home-form.test.mjs`
+- `scripts/procedure-personas.test.mjs`
 - `scripts/procedure-run-journal.mjs`
 - `scripts/procedure-run-journal.test.mjs`
 - `scripts/procedure-run-record.mjs`
@@ -2244,8 +2293,11 @@
 - `scripts/review-oversized.mjs`
 - `scripts/ritual-artifacts-commit.mjs`
 - `scripts/ritual-chain-producer.test.mjs`
+- `scripts/ritual-day-close.test.mjs`
+- `scripts/ritual-day-run.mjs`
 - `scripts/ritual-deliver-to-main.mjs`
 - `scripts/ritual-deliver-to-main.test.mjs`
+- `scripts/ritual-evening-close-args.test.mjs`
 - `scripts/ritual-evening-run.args.test.mjs`
 - `scripts/ritual-evening-run.mjs`
 - `scripts/ritual-evening-tail.mjs`
@@ -2309,6 +2361,7 @@
 - `scripts/studio-ms5-prod-smoke.test.mjs`
 - `scripts/studio-offline-journal-check.mjs`
 - `scripts/studio-package.mjs`
+- `scripts/studio-package.test.mjs`
 - `scripts/swallow-draft.mjs`
 - `scripts/swallow-draft.test.mjs`
 - `scripts/swallow-live-links.test.mjs`
@@ -2361,6 +2414,7 @@
 - `scripts/tasks-decompose.mjs`
 - `scripts/tasks-decompose.test.mjs`
 - `scripts/tasks-sync-issue-state.mjs`
+- `scripts/team-evening-feedback-readat.test.mjs`
 - `scripts/team-evening-feedback-ritual.test.mjs`
 - `scripts/team-evening-feedback.mjs`
 - `scripts/team-memory-report.cli.test.mjs`

@@ -5,8 +5,44 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14379/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 327 (причины в op-log) -->
+Записей: 49 · бюджет 14393/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 333 (причины в op-log) -->
+
+### 2026-08-27 · позиция · hunt-and-canon-m0-order
+
+> Лемма зависимости решения та же, что на logging-observability-cut-m0: «A раньше B», если без A комната B либо пуста, либо ломает уже принятый контракт. Словарь кандидатов закрыт — не сливать (2) и (3): оба про проглоченный отказ, но один не замечает тишину, другой активно […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/hunt-and-canon-m0-order-2026-08-27.md#reply-1`
+
+### 2026-08-27 · позиция · hunt-and-canon-m1-silence-guard
+
+> Леммы. `SilenceWatchdog` ≠ `NightHuntTrigger` ≠ `OfficeClient`. Сторож — отдельная словарная статья: «ожидал факт → не нашёл в окне → красный». Публичный контракт — проверка наличия/честности исхода, без импорта office-кода и без «optional echo». Глушение в YAML […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/hunt-and-canon-m1-silence-guard-2026-08-27.md#reply-1`
+
+### 2026-08-27 · позиция · hunt-and-canon-m2-false-evidence
+
+> Леммы. **Вещдок** ≠ **копия**. Вещдок — артефакт, привязанный к ожидаемому событию ночи (исход e в смысле M1). Копия — байты, перенесённые без доказательства свежести источника. `manifest.archivedAt` — лемма «когда скопировали»; имя папки `YYYY-MM-DD` сейчас врёт, что это исход […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`
+
+### 2026-08-27 · позиция · hunt-and-canon-m3-design-canon
+
+> Леммы. «Канон цвета» ≠ «библиотека DaisyUI» ≠ «файл DESIGN.md как README». Словарно: канон — нормативный набор токенов продукта; тема DaisyUI — адаптер презентации; `DESIGN.md` — носитель нормы, если мы так решим. Слабая связанность: UI-дома не должны каждый тащить свою палитру. […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/hunt-and-canon-m3-design-canon-2026-08-27.md#reply-1`
+
+### 2026-08-27 · позиция · hunt-and-canon-m4-hunter-form
+
+> Леммы. «Обходчик» ≠ «NightHuntService-промпт». «Job охоты» ≠ «суждение LLM». Публичный контракт обходчика — словарная статья: читает дерево, пишет детерминированный результат. Три имени `design-token-drift`, `services-api-contract-drift`, `monorepo-dependency-graph` сейчас — […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/hunt-and-canon-m4-hunter-form-2026-08-27.md#reply-1`
+
+### 2026-08-27 · позиция · team-evening-feedback
+
+> Оценка артефактов: Стендап и MAIN_DAY_ISSUE четко развели «не делаем» и «делаем» — это дисциплина. Code-review подтвердил связанность в видимом диффе. Итоги дня: #2207 — чистое ядро в `media-library-service`, export через `index`, план ≠ delete, тесты на […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-27.md#reply-1`
 
 ### 2026-08-26 · позиция · team-evening-feedback
 
@@ -260,44 +296,8 @@
 
 — источник: `docs/seanses/network-container-m2-infra-border-2026-08-13.md#reply-1`
 
-### 2026-08-13 · позиция · network-container-m3-status-vocab
+### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
 
-> Согласен с Дыниным по осям, уточняю по словарю. Если берём `net:diag` дословно, граница пакета чёткая: снимок ссылается на внешний словарь, и любое расширение `net:diag` автоматически меняет допустимые значения снимка — это скрытая связь. Если вводим свой словарь снимка, граница […] _(реплик в сеансе: 4)_
+> Закрытый словарь M3 сохраняется дословно: `discover`, `read-metadata`, `read-ref`, `read-bytes`, `download`, `write-metadata`, `upload-revision`, `manage-access`. Объекты только container, collection и lineage; annotation write не добавляется. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/network-container-m3-status-vocab-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m4-owner-rhythm
-
-> Предмет точнее: зонд-снимок живёт в `docs/audit/network` (M1), единица — снимок, глаголы `audit/decompose/inspect`. Это структурная операция над сервисным швом. Субъект проверки шва отложен из M2 именно в эту комнату. По природе предмета: владелец такта — тот, кто держит карту […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/network-container-m4-owner-rhythm-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m5-storage
-
-> Зафиксирую термины до начала спора. «Лента» — append-only jsonl, каждая строка — один снимок одного зонда в одну ночь, ключ `(probe_id, date)`. «Перезаписываемый снимок» — один файл или запись на зонд, каждую ночь затирается. «Двухслойно» — лента как источник истины плюс […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/network-container-m5-storage-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m6-k1-rules
-
-> Лемма пути. M5 зафиксировал двухслойное хранение: лента + `registry/`, README — карта дома. Правило — не единица ленты → не `events.jsonl` и не снимок. Дом контейнера network — `docs/audit/network/`. Предлагаю носитель: `docs/audit/network/registry/egress-rules.json` (или […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/network-container-m6-k1-rules-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m7-machine-policy
-
-> Уточню термины до кода. «Носитель» — это файл, у которого один владелец (M4 — Ожегов как кандидат-держатель), схема задокументирована, и он является единственным источником истины для зуба. Предлагаю: `packages/network-policy/policy.json` + экспортирующий `index.ts` — граница […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/network-container-m7-machine-policy-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · team-evening-feedback
-
-> Ожегов. Оценка артефактов: DAILY_CODE_REVIEW честно отметил P2 в `makeIsIgnored` (непойманный throw при exit ≠ 0/1) и мультиверсионность schema@1+schema@2 в trail/2026-08-13.jsonl — оба наблюдения точные. MAIN_DAY_ISSUE корректно перечислил зависимости и риски по секрет-маске в […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-13.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
-
-> Operation surface является одной закрытой таблицей. Вне неё нет скрытых CLI-команд, server endpoints или операций из примечаний; у каждой строки ровно один M3 action и ровно один authority object. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`

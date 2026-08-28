@@ -1,30 +1,19 @@
 {
   "magistralOptions": [
     "buffer-control-plugin-2204",
-    "night-hunt-design-canon-meeting",
-    "friday-duty-readiness"
+    "buffer-delete-modal-2218",
+    "node-duty-ready-predicate"
   ],
-  "frozenDigest": "3255988699eda8ccaae7dc266cbafcafc7e1550ba374ad8320063cd2957c5c95",
+  "frozenDigest": "ec2e46356e371880a14bcb0bcf3abd9a9ed7d317a300568d2b4c0f27887633b7",
   "magistral": "buffer-control-plugin-2204",
-  "swallow": {
-    "draftDigest": "a1a82af5ee9d324911a4e887ea19793b0b4106c7f07a5462b4fa3114bfac2f34",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-08-27.md",
-    "ownerAck": true,
-    "day": "2026-08-27",
-    "claimsProbe": {
-      "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-08-27.md",
-      "sha": "be025cad6d31",
-      "at": "2026-08-27T18:02:17.737Z"
-    }
-  },
-  "day": "2026-08-27",
-  "magistralChosenAt": "2026-08-27",
+  "swallow": null,
+  "day": "2026-08-28",
+  "magistralChosenAt": "2026-08-28",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-08-27",
+    "at": "2026-08-28",
     "chosen": "buffer-control-plugin-2204",
-    "snapshotDigest": "3255988699eda8ccaae7dc266cbafcafc7e1550ba374ad8320063cd2957c5c95",
+    "snapshotDigest": "ec2e46356e371880a14bcb0bcf3abd9a9ed7d317a300568d2b4c0f27887633b7",
     "inSnapshot": true
   }
 }
