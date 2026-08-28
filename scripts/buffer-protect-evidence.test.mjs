@@ -125,6 +125,23 @@ test('ВЫВОЗ: каждому окну назначено человечес�
   assert.match(evac, /молчаливого пропуска нет/u, 'частичный вывоз называется, а не скрывается');
 });
 
+test('ЛИЦО ОТКАЗА ЕДИНО: каждая ветка отказа называет последствие', () => {
+  // Поймано CI 28.08: зуб на отказ проверял текст ОДНОЙ ветки («media не ответила»), а в
+  // CI без .env срабатывала другая («нет ключей») — с другим текстом. Зуб зеленел там, где
+  // сам отказ был другим. Проверка среды-независимая: разные ветки — одно последствие.
+  const script = readFileSync(SCRIPT, 'utf8');
+  const lines = script.split(/\r?\n/);
+  const CONSEQUENCE = 'уборку запускать нельзя';
+  const bad = [];
+  for (let i = 0; i < lines.length; i += 1) {
+    if (!lines[i].includes('✗ ОТКАЗ')) continue;
+    // Последствие обязано стоять в пределах трёх строк после самого отказа.
+    const near = lines.slice(i, i + 4).join('\n');
+    if (!near.includes(CONSEQUENCE)) bad.push(`${i + 1}: ${lines[i].trim().slice(0, 70)}`);
+  }
+  assert.deepEqual(bad, [], `ветки отказа без последствия:\n${bad.join('\n')}`);
+});
+
 test('порядок исходов различает находку и отказ', () => {
   const script = readFileSync(SCRIPT, 'utf8');
   assert.match(script, /EXIT_FINDING = 3/u, 'находка — 3');

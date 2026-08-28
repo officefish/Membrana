@@ -164,6 +164,7 @@ async function main() {
   if (!existsSync(registryPath)) {
     console.error(`✗ ОТКАЗ: нет реестра окон ${REGISTRY_REL} — проверить ссылки нечем.`);
     console.error('  это не «нечего проверять»: без реестра уборка пойдёт вслепую.');
+    console.error('  проверка ссылок не состоялась — уборку запускать нельзя.');
     return EXIT_REFUSED;
   }
   /** @type {{windows: Array<{id:string,doc:string,deviceId:string,from:string,to:string,why:string}>}} */
@@ -172,11 +173,13 @@ async function main() {
     registry = JSON.parse(readFileSync(registryPath, 'utf8'));
   } catch (e) {
     console.error(`✗ ОТКАЗ: реестр ${REGISTRY_REL} нечитаем: ${e instanceof Error ? e.message : e}`);
+    console.error('  проверка ссылок не состоялась — уборку запускать нельзя.');
     return EXIT_REFUSED;
   }
   const windows = Array.isArray(registry?.windows) ? registry.windows : [];
   if (windows.length === 0) {
     console.error(`✗ ОТКАЗ: в реестре ноль окон — так проверка всегда «зелёная» и ничего не значит.`);
+    console.error('  проверка ссылок не состоялась — уборку запускать нельзя.');
     return EXIT_REFUSED;
   }
 
@@ -186,6 +189,7 @@ async function main() {
     console.error('✗ ОТКАЗ: не задан адрес или ключ media.');
     console.error('  адрес: MEDIA_API_URL | VITE_MEDIA_SERVER_URL | BACKGROUND_MEDIA_API_URL');
     console.error('  ключ : MEDIA_API_TOKEN | VITE_MEDIA_API_TOKEN | MEDIA_INTERNAL_TOKEN');
+    console.error('  проверка ссылок не состоялась — уборку запускать нельзя.');
     return EXIT_REFUSED;
   }
 
