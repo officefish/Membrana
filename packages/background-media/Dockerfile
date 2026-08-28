@@ -32,6 +32,7 @@ RUN yarn workspaces focus @membrana/background-media --all \
   && yarn workspace @membrana/plugin-contracts build \
   && yarn workspace @membrana/wav-decode build \
   && yarn workspace @membrana/mfcc-analyzer-service build \
+  && yarn workspace @membrana/media-library-service build \
   && yarn workspace @membrana/plugin-handlers build \
   && yarn workspace @membrana/background-media prisma:generate \
   && yarn workspace @membrana/background-media build

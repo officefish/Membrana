@@ -2227,6 +2227,7 @@ __metadata:
     "@fastify/multipart": "npm:^9.0.0"
     "@fastify/static": "npm:^8.0.0"
     "@membrana/drone-detection-orchestrator-service": "npm:*"
+    "@membrana/media-library-service": "npm:*"
     "@membrana/plugin-contracts": "npm:*"
     "@membrana/plugin-handlers": "npm:*"
     "@membrana/wav-decode": "npm:*"
