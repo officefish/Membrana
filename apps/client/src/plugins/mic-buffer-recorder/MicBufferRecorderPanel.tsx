@@ -28,7 +28,6 @@ import { useMicBufferRecorder } from './useMicBufferRecorder';
 interface Props {
   readonly moduleId: string;
 }
-
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -61,6 +60,7 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
       manualPresetSec: config.manualPresetSec,
       autoSegmentSec: config.autoSegmentSec,
       pauseSec: config.pauseSec,
+      bufferPolicy: config.bufferPolicy,
       effectiveFormat: pickFallbackCaptureFormat(config.defaultFormat),
     });
   }, [config, snapshot.mode]);
@@ -107,10 +107,14 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
   const serverUnavailable =
     snapshot.storageMode === 'remote-server' && !snapshot.serverReachable;
 
-  const recordingDisabled =
-    !snapshot.streamLive || snapshot.recordingBlocked || snapshot.isRecording;
+  const stopSelected = snapshot.bufferPolicy === 'stop';
+  const stopVerdictActive = stopSelected && snapshot.bufferVerdict.action === 'stop';
+  const pressureWarningActive = stopSelected && snapshot.bufferVerdict.action === 'warn';
 
-  const autoActive = snapshot.mode === 'auto' && snapshot.streamLive && !snapshot.recordingBlocked;
+  const recordingDisabled =
+    !snapshot.streamLive || snapshot.recordingBlocked || stopVerdictActive || snapshot.isRecording;
+
+  const autoActive = snapshot.mode === 'auto' && snapshot.streamLive && !snapshot.recordingBlocked && !stopVerdictActive;
 
   return (
     <div className="rounded-box border border-base-300 bg-base-200/30 p-4 flex flex-col gap-4">
@@ -150,6 +154,34 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
         </div>
       </div>
 
+
+      <div className="flex flex-col gap-2">
+        <span className="text-xs text-base-content/60">Поведение буфера при 95%</span>
+        <div className="join">
+          <button
+            type="button"
+            className={`btn btn-sm join-item ${config.bufferPolicy === 'auto-cleanup' ? 'btn-primary' : 'btn-ghost'}`}
+            disabled={snapshot.isRecording}
+            onClick={() => patchConfig({ bufferPolicy: 'auto-cleanup' })}
+          >
+            Автоочистка
+          </button>
+          <button
+            type="button"
+            className={`btn btn-sm join-item ${config.bufferPolicy === 'stop' ? 'btn-primary' : 'btn-ghost'}`}
+            disabled={snapshot.isRecording}
+            onClick={() => patchConfig({ bufferPolicy: 'stop' })}
+          >
+            Остановка
+          </button>
+        </div>
+      </div>
+
+      {stopVerdictActive || pressureWarningActive ? (
+        <div className={`alert ${stopVerdictActive ? 'alert-error' : 'alert-warning'} text-sm py-2`} role="alert">
+          {snapshot.bufferVerdict.say}
+        </div>
+      ) : null}
       {snapshot.mode === 'manual' ? (
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap gap-2">
@@ -311,7 +343,7 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
             formatStoredSampleCount(snapshot.sampleCount)
           )}
         </p>
-        {snapshot.recordingBlocked ? (
+        {snapshot.recordingBlocked && !stopVerdictActive ? (
           <p className="text-xs text-error">
             {snapshot.storageMode === 'browser-limited-fallback'
               ? 'Запись заблокирована — квота или лимит сэмплов.'

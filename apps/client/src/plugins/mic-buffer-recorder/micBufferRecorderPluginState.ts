@@ -1,3 +1,8 @@
+import {
+  stopDecision,
+  type BufferPressurePolicy,
+  type BufferStopVerdict,
+} from '@membrana/media-library-service';
 import type {
   MediaLibraryCaptureFormat,
   MediaLibraryRecordingMode,
@@ -13,6 +18,7 @@ export interface MicBufferRecorderSnapshot {
   readonly manualPresetSec: ManualDurationPresetSec;
   readonly autoSegmentSec: AutoSegmentPresetSec;
   readonly pauseSec: number;
+  readonly bufferPolicy: BufferPressurePolicy;
   readonly isRecording: boolean;
   readonly elapsedSec: number;
   readonly targetDurationSec: number;
@@ -21,6 +27,15 @@ export interface MicBufferRecorderSnapshot {
   readonly sampleCount: number;
   readonly maxBufferSamples: number;
   readonly recordingBlocked: boolean;
+  /**
+   * Вердикт буфера (#2204, режим 1) — ОДИН на показ и на решение гасить.
+   *
+   * Ревью #2214 нашло ложь оператору: панель считала вердикт сама и говорила
+   * «остановлено» на 98%, а гасило запись только по `recordingBlocked`, то есть на 100%.
+   * В окне между ними человек читал «остановлено», пока запись шла. Теперь вердикт
+   * считается здесь, один раз, и по нему И говорят, И останавливают — разойтись нечему.
+   */
+  readonly bufferVerdict: BufferStopVerdict;
   readonly storageMode: MediaLibraryStorageMode;
   readonly serverReachable: boolean;
   readonly error: string | null;
@@ -30,6 +45,9 @@ export interface MicBufferRecorderSnapshot {
 
 const BUFFER_SAMPLE_COUNT_PENDING_TIMEOUT_MS = 30_000;
 
+/** Имя того, что пишет, — одно на слово и на решение. */
+const RECORDING_WHAT = 'запись в буфер';
+
 class MicBufferRecorderPluginStateImpl {
   private streamLive = false;
   private mode: MediaLibraryRecordingMode = 'auto';
@@ -37,6 +55,7 @@ class MicBufferRecorderPluginStateImpl {
   private manualPresetSec: ManualDurationPresetSec = 5;
   private autoSegmentSec: AutoSegmentPresetSec = 5;
   private pauseSec = 1;
+  private bufferPolicy: BufferPressurePolicy = 'auto-cleanup';
   private isRecording = false;
   private elapsedSec = 0;
   private targetDurationSec = 5;
@@ -45,6 +64,19 @@ class MicBufferRecorderPluginStateImpl {
   private sampleCount = 0;
   private maxBufferSamples = 10;
   private recordingBlocked = false;
+  private bufferVerdict: BufferStopVerdict = stopDecision(
+    { usedBytes: 0, limitBytes: 0 },
+    { what: RECORDING_WHAT, policy: this.bufferPolicy },
+  );
+  /**
+   * Наблюдаемый темп роста буфера, байт/мин — считается ПО ФАКТУ, а не по догадке о формате.
+   *
+   * Пока роста не видели, темпа нет, и ядро на неизвестном темпе минут не рождает: врать
+   * числом «осталось N минут» на холодном старте нельзя. Первый прирост даёт первую оценку.
+   */
+  private observedBytesPerMinute: number | null = null;
+  private lastQuotaAt: number | null = null;
+  private lastQuotaUsedBytes: number | null = null;
   private storageMode: MediaLibraryStorageMode = 'browser-limited-fallback';
   private serverReachable = true;
   private error: string | null = null;
@@ -74,6 +106,7 @@ class MicBufferRecorderPluginStateImpl {
     manualPresetSec: ManualDurationPresetSec;
     autoSegmentSec: AutoSegmentPresetSec;
     pauseSec: number;
+    bufferPolicy: BufferPressurePolicy;
     effectiveFormat: MediaLibraryCaptureFormat;
   }): void {
     this.mode = params.mode;
@@ -81,6 +114,8 @@ class MicBufferRecorderPluginStateImpl {
     this.manualPresetSec = params.manualPresetSec;
     this.autoSegmentSec = params.autoSegmentSec;
     this.pauseSec = params.pauseSec;
+    this.bufferPolicy = params.bufferPolicy;
+    this.bufferVerdict = this.makeStopDecision();
     this.effectiveFormat = params.effectiveFormat;
     this.rebuild();
   }
@@ -125,6 +160,8 @@ class MicBufferRecorderPluginStateImpl {
     this.sampleCount = params.sampleCount;
     this.maxBufferSamples = params.maxBufferSamples;
     this.recordingBlocked = params.recordingBlocked;
+    this.observeRate(params.usedBytes);
+    this.bufferVerdict = this.makeStopDecision();
     this.storageMode = params.storageMode;
     this.serverReachable = params.serverReachable;
     this.rebuild();
@@ -172,6 +209,36 @@ class MicBufferRecorderPluginStateImpl {
     for (const listener of this.listeners) listener();
   }
 
+  /**
+   * Темп по двум соседним замерам квоты. Убывание и стояние на месте темпом не считаются:
+   * после уборки буфер падает, и «минус пять мегабайт в минуту» — не скорость записи.
+   * Сглаживания нет намеренно: показываем то, что видим, а не то, что усреднили.
+   */
+  private makeStopDecision(): BufferStopVerdict {
+    return stopDecision(
+      { usedBytes: this.usedBytes, limitBytes: this.limitBytes },
+      {
+        what: RECORDING_WHAT,
+        policy: this.bufferPolicy,
+        ...(this.observedBytesPerMinute === null ? {} : { bytesPerMinute: this.observedBytesPerMinute }),
+      },
+    );
+  }
+
+  private observeRate(usedBytes: number): void {
+    const now = Date.now();
+    const prevAt = this.lastQuotaAt;
+    const prevUsed = this.lastQuotaUsedBytes;
+    this.lastQuotaAt = now;
+    this.lastQuotaUsedBytes = usedBytes;
+    if (prevAt === null || prevUsed === null) return;
+    const minutes = (now - prevAt) / 60000;
+    const grew = usedBytes - prevUsed;
+    // Слишком короткое окно даёт дикие числа из шума — ждём следующего замера.
+    if (!(minutes >= 0.05) || !(grew > 0)) return;
+    this.observedBytesPerMinute = grew / minutes;
+  }
+
   private buildSnapshot(): MicBufferRecorderSnapshot {
     return {
       streamLive: this.streamLive,
@@ -180,6 +247,7 @@ class MicBufferRecorderPluginStateImpl {
       manualPresetSec: this.manualPresetSec,
       autoSegmentSec: this.autoSegmentSec,
       pauseSec: this.pauseSec,
+      bufferPolicy: this.bufferPolicy,
       isRecording: this.isRecording,
       elapsedSec: this.elapsedSec,
       targetDurationSec: this.targetDurationSec,
@@ -188,6 +256,7 @@ class MicBufferRecorderPluginStateImpl {
       sampleCount: this.sampleCount,
       maxBufferSamples: this.maxBufferSamples,
       recordingBlocked: this.recordingBlocked,
+      bufferVerdict: this.bufferVerdict,
       storageMode: this.storageMode,
       serverReachable: this.serverReachable,
       error: this.error,

@@ -1,4 +1,8 @@
-import type { MediaLibraryCaptureFormat, MediaLibraryRecordingMode } from '@membrana/media-library-service';
+import type {
+  BufferPressurePolicy,
+  MediaLibraryCaptureFormat,
+  MediaLibraryRecordingMode,
+} from '@membrana/media-library-service';
 
 export const MIC_BUFFER_RECORDER_PLUGIN_ID = 'mic-buffer-recorder';
 
@@ -26,14 +30,15 @@ export interface MicBufferRecorderPluginConfig {
   readonly manualPresetSec: ManualDurationPresetSec;
   readonly autoSegmentSec: AutoSegmentPresetSec;
   readonly pauseSec: number;
+  readonly bufferPolicy: BufferPressurePolicy;
 }
-
 export const defaultMicBufferRecorderConfig: MicBufferRecorderPluginConfig = {
   defaultMode: 'auto',
   defaultFormat: 'wav',
   manualPresetSec: 5,
   autoSegmentSec: 5,
   pauseSec: 1,
+  bufferPolicy: 'auto-cleanup',
 };
 
 export function resolveMicBufferRecorderConfig(
@@ -52,6 +57,7 @@ export function resolveMicBufferRecorderConfig(
     raw?.defaultFormat === 'webm' || raw?.defaultFormat === 'mp4' || raw?.defaultFormat === 'wav'
       ? raw.defaultFormat
       : defaultMicBufferRecorderConfig.defaultFormat;
+  const bufferPolicy = raw?.bufferPolicy === 'stop' ? 'stop' : 'auto-cleanup';
 
   return {
     defaultMode,
@@ -65,5 +71,6 @@ export function resolveMicBufferRecorderConfig(
     pauseSec: Number.isFinite(pause)
       ? Math.min(MAX_AUTO_PAUSE_SEC, Math.max(MIN_AUTO_PAUSE_SEC, pause))
       : defaultMicBufferRecorderConfig.pauseSec,
+    bufferPolicy,
   };
 }
