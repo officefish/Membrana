@@ -53,6 +53,10 @@
       "fanIn": 3
     },
     {
+      "name": "@membrana/media-library-service",
+      "fanIn": 3
+    },
+    {
       "name": "@membrana/spectral-flux-detector-service",
       "fanIn": 3
     },
@@ -78,10 +82,6 @@
     },
     {
       "name": "@membrana/journal-report-views",
-      "fanIn": 2
-    },
-    {
-      "name": "@membrana/media-library-service",
       "fanIn": 2
     },
     {
