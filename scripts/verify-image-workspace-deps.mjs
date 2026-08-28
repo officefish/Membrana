@@ -31,11 +31,30 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 /** Сервисы, чей образ несёт workspace-пакеты. Дом списка — здесь, рядом с предикатом. */
 export const IMAGE_SERVICES = Object.freeze([
-  { id: 'media', pkg: 'packages/background-media', dockerfile: 'packages/background-media/Dockerfile' },
+  { id: 'media', pkg: 'packages/background-media', dockerfile: 'packages/background-media/Dockerfile', stage: 'runtime' },
   // Кабинет внесён 22.08 после падения сборки на @membrana/plugin-contracts@npm:* (404): зуб
   // честно проверял то, что ему поручили, и молчал про всё остальное. Список из одного сервиса
   // ловит один сервис — класс чинится внесением, а не разбором случая.
-  { id: 'cabinet', pkg: 'packages/background-cabinet', dockerfile: 'packages/background-cabinet/Dockerfile' },
+  { id: 'cabinet', pkg: 'packages/background-cabinet', dockerfile: 'packages/background-cabinet/Dockerfile', stage: 'runtime' },
+  // Офис 28.08: дом существовал с самого начала, а в списке его не было — та же дыра охвата.
+  { id: 'office', pkg: 'packages/background-office', dockerfile: 'packages/background-office/Dockerfile', stage: 'runtime' },
+  /*
+    ВЕБ-ОБРАЗ КАБИНЕТА, 28.08 — и это не «ещё одна строка», а признание, что внесение по
+    одному не работает.
+
+    27.08 повторился ТОТ ЖЕ дефект НА ТОМ ЖЕ пакете, что и 22.08: `media-library` получил
+    зависимость `@membrana/plugin-contracts`, `apps/cabinet/Dockerfile` её не копирует, yarn
+    считает пакет внешним и падает 404. Пять вершин ствола красные. 22.08 этот класс закрыли
+    внесением `packages/background-cabinet` — то есть починили дом, а не охват; `apps/*` в
+    поле зрения зуба не было вовсе.
+
+    СТАДИЯ У ВЕБ-ОБРАЗА ДРУГАЯ, и потому мало было дописать путь. У `background-*` рабочие
+    пакеты нужны в runtime-стадии (симлинки `node_modules/@membrana/*` ведут в `/app/packages`).
+    У веб-образа runtime — это nginx с готовым `dist`, а пакеты нужны СТАДИИ СБОРКИ: не
+    скопировал в build — нечего собирать. Проверять у него runtime бессмысленно: там их не
+    будет никогда, и зуб краснел бы всегда.
+  */
+  { id: 'cabinet-web', pkg: 'apps/cabinet', dockerfile: 'apps/cabinet/Dockerfile', stage: 'build' },
 ]);
 
 /** Каталоги, где живут воркспейсы (совпадает с `workspaces` корневого package.json). */
@@ -157,16 +176,61 @@ export function copiedPackageDirs(dockerfileText) {
   }
   return dirs;
 }
+/** Часть Dockerfile ДО первой runtime-стадии — то, где веб-образ собирается. */
+function buildStageHead(dockerfileText) {
+  const runtimeStart = dockerfileText.search(/^FROM\s+\S+\s+AS\s+runtime\b/mu);
+  return runtimeStart === -1 ? dockerfileText : dockerfileText.slice(0, runtimeStart);
+}
+
+/**
+ * Каталоги рабочих пакетов, скопированные в стадию СБОРКИ.
+ *
+ * Покрытием считается каталог целиком (`COPY packages/x packages/x`): стадии сборки нужны
+ * исходники, а не `dist` — она их и собирает. Этим правило отличается от runtime-стадии, где
+ * покрытием служит именно `dist`.
+ */
+export function buildStagePackageDirs(dockerfileText) {
+  const dirs = new Set();
+  for (const src of dockerfileCopySources(buildStageHead(dockerfileText), { localOnly: true })) {
+    if (/^(packages\/(?:libs\/|services\/(?:detectors\/)?)?[^/]+|apps\/[^/]+)$/u.test(src)) dirs.add(src);
+  }
+  return dirs;
+}
+
+/**
+ * Пакеты, перечисленные в `yarn workspaces focus …` — ВТОРОЙ рукописный список того же образа.
+ *
+ * Он существует отдельно от COPY и отстаёт независимо: можно скопировать каталог и забыть имя
+ * в focus. Поэтому зуб судит оба списка, а не один.
+ */
+export function focusedWorkspaces(dockerfileText) {
+  const names = new Set();
+  for (const m of buildStageHead(dockerfileText).matchAll(/yarn\s+workspaces\s+focus\s+([^\n\\]*)/gu)) {
+    for (const word of m[1].split(/\s+/u)) {
+      if (word.startsWith('@membrana/')) names.add(word);
+    }
+  }
+  return names;
+}
+
 /** Вердикт по одному сервису значением: ни ФС, ни печати. */
 export function serviceFindings(service, map, dockerfileText) {
   const pkgName = Object.keys(map).find((n) => map[n].dir === service.pkg);
   if (!pkgName) return [{ service: service.id, kind: 'unreadable', detail: `не найден package.json в ${service.pkg}` }];
-  const copied = copiedPackageDirs(dockerfileText);
+  const onBuildStage = service.stage === 'build';
+  const copied = onBuildStage ? buildStagePackageDirs(dockerfileText) : copiedPackageDirs(dockerfileText);
+  const focused = onBuildStage ? focusedWorkspaces(dockerfileText) : null;
+  const where = onBuildStage ? 'стадию сборки' : 'runtime-стадию';
   const findings = [];
   for (const dep of transitiveWorkspaceDeps(map, pkgName)) {
     const dir = map[dep].dir;
     if (!copied.has(dir)) {
-      findings.push({ service: service.id, kind: 'missing-in-image', detail: `${dep} → ${dir} не копируется в runtime-стадию` });
+      findings.push({ service: service.id, kind: 'missing-in-image', detail: `${dep} → ${dir} не копируется в ${where}` });
+    }
+    // Второй список того же образа отстаёт независимо от первого: каталог скопирован, а имя
+    // в focus забыто — yarn такой пакет не поставит. Пустой focus не судим: его может не быть.
+    if (focused !== null && focused.size > 0 && !focused.has(dep)) {
+      findings.push({ service: service.id, kind: 'missing-in-focus', detail: `${dep} не назван в yarn workspaces focus` });
     }
   }
   return findings;
@@ -193,7 +257,8 @@ function main(argv) {
   } else {
     console.error(`verify:image-workspace-deps — находок: ${findings.length} (висячий симлинк в образе = ERR_MODULE_NOT_FOUND на проде):`);
     for (const f of findings) console.error(`  ✗ [${f.service}] ${f.detail}`);
-    console.error('  лекарство: добавить COPY dist+package.json пакета в runtime-стадию Dockerfile');
+    console.error('  лекарство runtime-образов: COPY dist+package.json пакета в runtime-стадию');
+    console.error('  лекарство веб-образов: COPY каталога пакета в стадию сборки И имя в yarn workspaces focus');
   }
   return findings.length === 0 ? 0 : 1;
 }
