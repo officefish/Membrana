@@ -32,6 +32,7 @@ RUN yarn workspaces focus @membrana/background-media --all \
   && yarn workspace @membrana/plugin-contracts build \
   && yarn workspace @membrana/wav-decode build \
   && yarn workspace @membrana/mfcc-analyzer-service build \
+  && yarn workspace @membrana/media-library-service build \
   && yarn workspace @membrana/plugin-handlers build \
   && yarn workspace @membrana/background-media prisma:generate \
   && yarn workspace @membrana/background-media build
@@ -66,6 +67,8 @@ COPY --from=build /app/packages/libs/detector-report/dist /app/packages/libs/det
 COPY --from=build /app/packages/libs/detector-report/package.json /app/packages/libs/detector-report/package.json
 COPY --from=build /app/packages/services/mfcc-analyzer/dist /app/packages/services/mfcc-analyzer/dist
 COPY --from=build /app/packages/services/mfcc-analyzer/package.json /app/packages/services/mfcc-analyzer/package.json
+COPY --from=build /app/packages/services/media-library/dist /app/packages/services/media-library/dist
+COPY --from=build /app/packages/services/media-library/package.json /app/packages/services/media-library/package.json
 COPY --from=build /app/packages/services/fft-analyzer/dist /app/packages/services/fft-analyzer/dist
 COPY --from=build /app/packages/services/fft-analyzer/package.json /app/packages/services/fft-analyzer/package.json
 COPY --from=build /app/packages/services/audio-engine/dist /app/packages/services/audio-engine/dist
