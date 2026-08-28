@@ -469,7 +469,8 @@
     "void:barriers": "node scripts/verify-void-barriers.mjs",
     "journals:verify": "node scripts/verify-journal-merge.mjs",
     "node:duty-ready": "node scripts/node-duty-ready.mjs",
-    "buffer:protect-evidence": "node scripts/buffer-protect-evidence.mjs"
+    "buffer:protect-evidence": "node scripts/buffer-protect-evidence.mjs",
+    "buffer:evacuate-evidence": "node scripts/buffer-evacuate-evidence.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

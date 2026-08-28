@@ -37,6 +37,8 @@ const EXIT_OK = 0;
 const EXIT_REFUSED = 1;
 const EXIT_FINDING = 3;
 
+const BUFFER_ID = '__buffer__';
+
 /**
  * Потолок страницы у media — 100: `limit=200` отдаёт те же сто. Первая редакция просила 200
  * и обрывала цикл на «пришло меньше запрошенного», то есть читала ТОЛЬКО свежую сотню и
@@ -91,29 +93,48 @@ async function fetchJson(url, token) {
 }
 
 /**
- * Все пробы буфера устройства — страницами, потому что их полторы тысячи.
+ * Пробы ОДНОГО набора — страницами, потому что их полторы тысячи.
  *
  * Полнота чтения ПРОВЕРЯЕТСЯ: сервер называет `total`, и если собрали меньше, это отказ, а
- * не «сколько прочли, по тому и судим». Недочитанный буфер занижает число незащищённых
+ * не «сколько прочли, по тому и судим». Недочитанный набор занижает число незащищённых
  * вещдоков — врёт в безопасную на вид сторону, и такую ложь заметить труднее всего.
  */
-async function loadBuffer(base, token, deviceId) {
+async function loadCollection(base, token, deviceId, collectionId) {
   const byId = new Map();
   let total = null;
   for (let page = 1; page <= MAX_PAGES; page += 1) {
-    const url = `${base}/v1/devices/${encodeURIComponent(deviceId)}/collections/__buffer__/samples?page=${page}&limit=${PAGE_SIZE}`;
+    const url = `${base}/v1/devices/${encodeURIComponent(deviceId)}/collections/${encodeURIComponent(collectionId)}/samples?page=${page}&limit=${PAGE_SIZE}`;
     const json = await fetchJson(url, token);
     const items = Array.isArray(json.items) ? json.items : [];
     if (typeof json.total === 'number') total = json.total;
-    for (const it of items) byId.set(it.id, it);
+    for (const it of items) byId.set(it.id, { ...it, collectionId });
     if (items.length === 0) break;
     if (total !== null && byId.size >= total) break;
   }
   const rows = [...byId.values()];
   if (total !== null && rows.length < total) {
-    throw new Error(`прочитано ${rows.length} проб из ${total} — буфер недочитан, судить по части нельзя`);
+    throw new Error(`набор ${collectionId}: прочитано ${rows.length} из ${total} — недочитан, судить по части нельзя`);
   }
   return rows;
+}
+
+/**
+ * ВСЕ пробы устройства, по всем наборам.
+ *
+ * Почему не только буфер (правка после шага 0, 28.08). Приёмочные документы ссылаются на
+ * пробы УСТРОЙСТВОМ И ОКНОМ ВРЕМЕНИ — ни одного номера пробы в них нет, — а номер пробы
+ * переживает перенос между наборами. Значит вещдок остаётся вещдоком и после вывоза из
+ * буфера; искать его обязаны везде. Прежняя редакция смотрела только `__buffer__` и после
+ * вывоза доложила бы «в окне ноль проб» — ложное зелёное ровно того класса, который это
+ * задание и чинит.
+ */
+async function loadDevice(base, token, deviceId) {
+  const cols = await fetchJson(`${base}/v1/devices/${encodeURIComponent(deviceId)}/collections`, token);
+  const list = Array.isArray(cols) ? cols : (cols.items ?? []);
+  if (list.length === 0) throw new Error(`у устройства ${deviceId} не перечислен ни один набор`);
+  const rows = [];
+  for (const c of list) rows.push(...(await loadCollection(base, token, deviceId, c.id)));
+  return { rows, collections: list };
 }
 
 async function pin(base, token, deviceId, sample, windowRow) {
@@ -169,11 +190,11 @@ async function main() {
   }
 
   const devices = [...new Set(windows.map((w) => w.deviceId))];
-  /** @type {Map<string, any[]>} */
-  const buffers = new Map();
+  /** @type {Map<string, {rows: any[], collections: any[]}>} */
+  const state = new Map();
   for (const deviceId of devices) {
     try {
-      buffers.set(deviceId, await loadBuffer(base, token, deviceId));
+      state.set(deviceId, await loadDevice(base, token, deviceId));
     } catch (e) {
       console.error(`✗ ОТКАЗ: media не ответила по устройству ${deviceId}: ${e instanceof Error ? e.message : e}`);
       console.error('  проверка ссылок не состоялась — уборку запускать нельзя.');
@@ -184,9 +205,13 @@ async function main() {
   let unprotected = 0;
   let pinned = 0;
   for (const w of windows) {
-    const rows = (buffers.get(w.deviceId) ?? []).filter((s) => inWindow(s.createdAt, w.from, w.to));
-    const bare = rows.filter((s) => !isPinned(s));
-    console.error(`· ${w.id}: в буфере ${rows.length} проб окна, без защиты ${bare.length}`);
+    const all = (state.get(w.deviceId)?.rows ?? []).filter((s) => inWindow(s.createdAt, w.from, w.to));
+    const inBuffer = all.filter((s) => s.collectionId === BUFFER_ID);
+    const evacuated = all.length - inBuffer.length;
+    // Ссылка документа держится устройством и окном, поэтому считаем ВЕЗДЕ, а защита нужна
+    // только тем, кто ещё лежит в приёмном лотке: вывезенные защищены самим набором.
+    const bare = inBuffer.filter((s) => !isPinned(s));
+    console.error(`· ${w.id}: в окне ${all.length} проб (в буфере ${inBuffer.length}, вывезено ${evacuated}), без защиты ${bare.length}`);
     console.error(`  источник: ${w.doc}`);
     if (bare.length === 0) continue;
     unprotected += bare.length;
