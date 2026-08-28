@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 
 import type { AppConfig } from '../../config/env.schema';
 import type { BlobStorageService } from '../../blob/blob-storage.service';
@@ -55,6 +55,22 @@ async function registrar(cfg = config, bridge = spyBridge().bridge) {
  * укладывается в умолчание, при параллельном прогоне пакета первые два теста упирались в 5 с —
  * это цена загрузки библиотеки, а не медленный код.
  */
+/**
+ * ЗАГРУЗКА ОБРАБОТЧИКОВ — ВНЕ ИЗМЕРЯЕМОГО ВРЕМЕНИ ТЕСТА.
+ *
+ * `onModuleInit` регистратора тянет `@membrana/plugin-handlers` динамическим импортом, и это
+ * дорого: замер 28.08 — 2966 мс даже из собранного dist (meyda, декодер wav), а через
+ * трансформацию исходников в vitest время скачет от нагрузки машины. Цену платил ПЕРВЫЙ тест
+ * файла и краснел таймаутом — то есть зуб сообщал «долго» вместо «предмет сломан», и от
+ * снятия самого предмета покраснел бы ровно так же.
+ *
+ * Прогрев переносит цену в подготовку. Медленная загрузка при этом остаётся фактом и видна
+ * на старте сервиса — здесь лишь сказано, что она не предмет ЭТИХ зубов.
+ */
+beforeAll(async () => {
+  await import('@membrana/plugin-handlers');
+});
+
 describe('FirstWavePluginsRegistrar', { timeout: 20_000 }, () => {
   it('на старте модуля хост collections держит шесть детекторов, свод сеанса, измеритель и витрину отбора', async () => {
     const host = new CollectionsPluginHostService();
