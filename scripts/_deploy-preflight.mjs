@@ -123,16 +123,59 @@ try {
   }
 }
 
-function mediaLastSampleUrl(env = process.env) {
-  const explicit = firstString(env.DEPLOY_MEDIA_LAST_SAMPLE_URL, env.MEDIA_LAST_SAMPLE_URL);
-  if (explicit) return explicit;
-  const api = firstString(env.MEDIA_API_URL, env.BACKGROUND_MEDIA_API_URL, env.VITE_MEDIA_API_URL);
-  const deviceId = firstString(env.DEPLOY_MEDIA_DEVICE_ID, env.MEDIA_PREFLIGHT_DEVICE_ID);
-  const collectionId = firstString(env.DEPLOY_MEDIA_COLLECTION_ID, env.MEDIA_PREFLIGHT_COLLECTION_ID);
+export const MEDIA_LIVE_SESSION_URL_ENV_NAMES = Object.freeze([
+  'DEPLOY_MEDIA_LAST_SAMPLE_URL',
+  'MEDIA_LAST_SAMPLE_URL',
+  'MEDIA_API_URL',
+  'BACKGROUND_MEDIA_API_URL',
+  'VITE_MEDIA_API_URL',
+  'VITE_MEDIA_SERVER_URL',
+]);
+
+export const MEDIA_LIVE_SESSION_TOKEN_ENV_NAMES = Object.freeze([
+  'DEPLOY_MEDIA_PROBE_TOKEN',
+  'MEDIA_API_TOKEN',
+  'MEDIA_INTERNAL_TOKEN',
+  'VITE_MEDIA_API_TOKEN',
+  'API_INTERNAL_TOKEN',
+]);
+
+export const MEDIA_LIVE_SESSION_LEGACY_DOOR_ENV_NAMES = Object.freeze([
+  'DEPLOY_MEDIA_DEVICE_ID',
+  'DEPLOY_MEDIA_COLLECTION_ID',
+  'MEDIA_PREFLIGHT_DEVICE_ID',
+  'MEDIA_PREFLIGHT_COLLECTION_ID',
+]);
+
+export const MEDIA_LIVE_SESSION_MANUAL_CHECK =
+  'GET /v1/deploy-preflight/last-sample with X-Membrana-Token';
+
+function firstEnvString(env, names) {
+  for (const name of names) {
+    const value = firstString(env[name]);
+    if (value) return { name, value };
+  }
+  return null;
+}
+
+export function mediaLastSampleTarget(env = process.env) {
+  const explicit = firstEnvString(env, ['DEPLOY_MEDIA_LAST_SAMPLE_URL', 'MEDIA_LAST_SAMPLE_URL']);
+  if (explicit) return { url: explicit.value, urlSource: explicit.name, legacyDoor: false };
+  const api = firstEnvString(env, ['MEDIA_API_URL', 'BACKGROUND_MEDIA_API_URL', 'VITE_MEDIA_API_URL', 'VITE_MEDIA_SERVER_URL']);
+  const deviceId = firstEnvString(env, ['DEPLOY_MEDIA_DEVICE_ID', 'MEDIA_PREFLIGHT_DEVICE_ID']);
+  const collectionId = firstEnvString(env, ['DEPLOY_MEDIA_COLLECTION_ID', 'MEDIA_PREFLIGHT_COLLECTION_ID']);
   if (!api) return null;
-  const base = api.replace(/\/$/u, '');
-  if (!deviceId || !collectionId) return `${base}/v1/deploy-preflight/last-sample`;
-  return `${base}/v1/devices/${encodeURIComponent(deviceId)}/collections/${encodeURIComponent(collectionId)}/samples?page=1&limit=1`;
+  const base = api.value.replace(/\/$/u, '');
+  if (!deviceId || !collectionId) {
+    return { url: `${base}/v1/deploy-preflight/last-sample`, urlSource: api.name, legacyDoor: false };
+  }
+  return {
+    url: `${base}/v1/devices/${encodeURIComponent(deviceId.value)}/collections/${encodeURIComponent(collectionId.value)}/samples?page=1&limit=1`,
+    urlSource: api.name,
+    legacyDoor: true,
+    deviceIdSource: deviceId.name,
+    collectionIdSource: collectionId.name,
+  };
 }
 
 function envWithDotenv(cwd, env = process.env) {
@@ -158,28 +201,61 @@ function liveSessionProbeRequired({ service, env = process.env, requireLiveSessi
   return service === 'media' || service === 'cabinet';
 }
 
-export function defaultLiveSessionProbe({ cwd, env = process.env, service, requireLiveSessionGuard } = {}) {
+export function defaultLiveSessionProbe({ cwd, env = process.env, service, requireLiveSessionGuard, fetchJson = fetchJsonSync } = {}) {
   const resolvedEnv = envWithDotenv(cwd, env);
   const required = liveSessionProbeRequired({ service, env: resolvedEnv, requireLiveSessionGuard });
-  const url = mediaLastSampleUrl(resolvedEnv);
-  if (!url) {
-    const reason = 'MEDIA_API_URL/DEPLOY_MEDIA_LAST_SAMPLE_URL не задан — live-session guard не знает, где спросить media';
+  const target = mediaLastSampleTarget(resolvedEnv);
+  if (!target) {
+    const reason = liveSessionConfigHint(
+      'live-session guard не знает, где спросить media',
+      { includeUrlNames: true, includeTokenNames: true },
+    );
     return required ? { status: 'error', reason } : { status: 'skipped', reason };
   }
-  const token = firstString(resolvedEnv.MEDIA_API_TOKEN, resolvedEnv.MEDIA_INTERNAL_TOKEN, resolvedEnv.API_INTERNAL_TOKEN);
+  const token = firstEnvString(resolvedEnv, MEDIA_LIVE_SESSION_TOKEN_ENV_NAMES);
   if (!token) {
-    const reason = 'MEDIA_API_TOKEN/MEDIA_INTERNAL_TOKEN не задан — live-session guard не может авторизоваться в media';
-    return required ? { status: 'error', reason, source: url } : { status: 'skipped', reason, source: url };
+    const reason = liveSessionConfigHint(
+      'live-session guard не может авторизоваться в media',
+      { includeUrlNames: true, includeTokenNames: true },
+    );
+    return required ? { status: 'error', reason, source: target.url } : { status: 'skipped', reason, source: target.url };
   }
-  const fetched = fetchJsonSync(url, {
-    token,
+  const fetched = fetchJson(target.url, {
+    token: token.value,
     timeoutMs: Number(resolvedEnv.DEPLOY_MEDIA_PREFLIGHT_TIMEOUT_MS ?? 5000),
   });
   if (!fetched.ok) {
-    return { status: 'error', reason: `live-session probe failed: ${fetched.error}`, source: url };
+    return { status: 'error', reason: `live-session probe failed: ${fetched.error}`, source: target.url };
   }
   const lastSampleAt = timestampFromMediaPayload(fetched.payload);
-  return { status: 'ok', lastSampleAt, source: url };
+  return {
+    status: 'ok',
+    lastSampleAt,
+    source: target.url,
+    credentialSource: token.name,
+    urlSource: target.urlSource,
+    note: liveSessionProbeSourceNote(target, token),
+  };
+}
+
+function liveSessionConfigHint(problem, { includeUrlNames = false, includeTokenNames = false } = {}) {
+  const parts = [problem];
+  if (includeUrlNames) parts.push(`адрес ищется в: ${MEDIA_LIVE_SESSION_URL_ENV_NAMES.join(', ')}`);
+  if (includeTokenNames) parts.push(`токен ищется в: ${MEDIA_LIVE_SESSION_TOKEN_ENV_NAMES.join(', ')}`);
+  parts.push(
+    `запасная дверь: DEPLOY_MEDIA_DEVICE_ID + DEPLOY_MEDIA_COLLECTION_ID=__buffer__ -> старый вход списка проб; также ищутся: ${MEDIA_LIVE_SESSION_LEGACY_DOOR_ENV_NAMES.join(', ')}`,
+  );
+  parts.push(`ручная проверка до выкатки: ${MEDIA_LIVE_SESSION_MANUAL_CHECK}`);
+  return parts.join('; ');
+}
+
+function liveSessionProbeSourceNote(target, token) {
+  const urlSource = `адрес взят из ${target.urlSource}`;
+  const tokenSource = `токен взят из ${token.name}`;
+  const door = target.legacyDoor
+    ? `; запасная дверь ${target.deviceIdSource} + ${target.collectionIdSource}`
+    : '';
+  return `${urlSource}; ${tokenSource}${door}`;
 }
 
 export function liveSessionProblem(probeResult, { now = new Date(), maxAgeMs = 60_000 } = {}) {
@@ -335,6 +411,8 @@ export function deployPreflight({
   if (liveSessionProbeStatus?.status === 'skipped') {
     const source = liveSessionProbeStatus.source ? ` (${liveSessionProbeStatus.source})` : '';
     console.warn(`[preflight] SKIPPED live-session guard: ${liveSessionProbeStatus.reason}${source}`);
+  } else if (liveSessionProbeStatus?.note) {
+    console.log(`[preflight] live-session guard: ${liveSessionProbeStatus.note}`);
   }
 
   if (problems.length === 0 && hardProblems.length === 0) {
