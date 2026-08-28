@@ -65,6 +65,7 @@ export function parseEnv(raw) {
   const rate = Number(map.FIELD_NODE_RATE ?? DEFAULTS.rate);
   if (!Number.isFinite(pollMs) || pollMs < 1000) throw new Error('FIELD_NODE_POLL_MS должен быть числом ≥ 1000');
   if (!Number.isFinite(rate) || rate <= 0) throw new Error('FIELD_NODE_RATE должен быть положительным числом');
+  if (rate !== DEFAULTS.rate) throw new Error(`FIELD_NODE_RATE должен быть ${DEFAULTS.rate}: Firebat пишет только 48 kHz или fail-closed (#2046)`);
   return { base: map.VITE_MEDIA_SERVER_URL.replace(/\/+$/u, ''), device: map.FIELD_NODE_DEVICE_ID, key: map.FIELD_NODE_KEY, pollMs, rate };
 }
 
