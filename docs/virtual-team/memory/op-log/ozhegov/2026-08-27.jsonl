@@ -1,1 +1,15 @@
 {"ts":"2026-08-27T13:58:18.952Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-27-hunt-and-canon-m0-order","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-27-hunt-and-canon-m1-silence-guard","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-27-hunt-and-canon-m2-false-evidence","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-27-hunt-and-canon-m3-design-canon","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-27-hunt-and-canon-m4-hunter-form","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"write_operational","ref":"ozhegov-2026-08-27-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-08-13-network-container-m3-status-vocab","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-08-13-network-container-m4-owner-rhythm","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-08-13-network-container-m5-storage","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-08-13-network-container-m6-k1-rules","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-08-13-network-container-m7-machine-policy","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-08-13-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"transfer_to_archive","ref":"ozhegov-2026-08-06-static-mmbrn-container-m6-intake-delivery","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-27T18:18:17.835Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

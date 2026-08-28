@@ -5,8 +5,44 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14359/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 335 (причины в op-log) -->
+Записей: 49 · бюджет 14400/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 341 (причины в op-log) -->
+
+### 2026-08-27 · позиция · hunt-and-canon-m0-order
+
+> Конструкция узкая: M0 отдаёт только порядок и рёбра, не форму обходчика и не палитру. Несущая из подсказок: (4) — вход предмета измерения для token-job; без предмета форма обходчика для этого job недоопределена. (2) не зависит от того, чем станет обходчик — кандидат в корни. (3) […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/hunt-and-canon-m0-order-2026-08-27.md#reply-1`
+
+### 2026-08-27 · позиция · hunt-and-canon-m1-silence-guard
+
+> Конструкция узкая, как M1c. Предмет наблюдения — не офис и не UI, а *факт ожидаемого ночного события* (старт по cron / честный исход пускового шага). Носитель предиката — контур на хосте, где этот факт виден как данность (журнал прогонов / runner / тот же ops-хост, что видит […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/hunt-and-canon-m1-silence-guard-2026-08-27.md#reply-1`
+
+### 2026-08-27 · позиция · hunt-and-canon-m2-false-evidence
+
+> Граница комнаты узкая: честность архива как свидетельства, не форма обходчика (M4) и не корни (1)/(4). M0 уже развёл (2) и (3): здесь только (3) — почему чеканится доказательство работы, которой не было. Конструкция: архиватор сегодня — копировщик с честным штампом копирования и […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`
+
+### 2026-08-27 · позиция · hunt-and-canon-m3-design-canon
+
+> Комната узкая: предмет измерения для ребра (4)→(1), не метрика M4. Конструкция: сейчас в `DESIGN.md` два независимых узуса цвета — восемь `--color-*` и семантика DaisyUI (`data-theme`, `badge-*`, `text-error`). В `apps/client/src` вхождений `--color-` — ноль. Это не дрейф, а […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/hunt-and-canon-m3-design-canon-2026-08-27.md#reply-1`
+
+### 2026-08-27 · позиция · hunt-and-canon-m4-hunter-form
+
+> Конструкция. Ночной обходчик — не рецензент и не «умный PR». Это измеритель по дереву в том же роде, что `yarn verify:*` и зубы. Граница модуля: вход — снимок репозитория и манифест предметов замера; выход — машинный вердикт. Путь GitHub → офис → LLM → PR — форма, которая не […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/hunt-and-canon-m4-hunter-form-2026-08-27.md#reply-1`
+
+### 2026-08-27 · позиция · team-evening-feedback
+
+> Оценка артефактов: MAIN_DAY_ISSUE верно развел магистраль (#2204) и контекст (secret-parser-built), но stale assertions создали расхождение У1 — ритуал завтра снова увидит 25.08. Code-review аккуратно развел T2-вердикт и P0-риски. Итоги дня: Границы […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-27.md#reply-1`
 
 ### 2026-08-26 · позиция · team-evening-feedback
 
@@ -260,44 +296,8 @@
 
 — источник: `docs/seanses/network-container-m2-infra-border-2026-08-13.md#reply-1`
 
-### 2026-08-13 · позиция · network-container-m3-status-vocab
+### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
 
-> Конструкция проясняется. Два поля: `status` — словарь сетевого состояния, `outcome` — факт исполнения зонда. Но нужно зафиксировать точку отображения. `net:diag` несёт `ok`, `degraded`, `down`, `unknown`, `partial` — это пять значений органа-источника. Словарь снимка либо […] _(реплик в сеансе: 4)_
+> Выбираю одну модель: Affine является только сменной человеческой проекцией. Канонические originals, identity, authority, binding и переносимые annotations остаются вне движка. Контракт Affine не становится новым интерфейсом контейнера. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/network-container-m3-status-vocab-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m4-owner-rhythm
-
-> Слышу спор о ритме и хочу сначала закрыть вопрос кандидата, чтобы не тащить его хвостом. Природа предмета: аудит сети — это проверка сервисного шва, контракта между слоями. M2 дал разрез «норма vs наблюдение», M3 дал словарь состояний и назвал владельца словаря — архитектор […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/network-container-m4-owner-rhythm-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m5-storage
-
-> Конструкция ясна. Образец llm-calls уже дал нам рабочую раскладку: `registry/` — overwrite-проекция текущего состояния, датированные `analysis/` — основной корпус, `cache/` — под gitignore. Для сети нужно то же самое, но с поправкой на единицу записи: у нас не вызов, а […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/network-container-m5-storage-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m6-k1-rules
-
-> Конструкция В6 — четыре оси, не одна: носитель слова, форма записи, предмет/момент зуба, акт миграции K1. Политика машины (В7) — за дверью. По M1 правило не единица ленты; по M2 правило — норма, не наблюдение. Значит дом network-container — да, но слой registry/, не jsonl-лента […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/network-container-m6-k1-rules-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m7-machine-policy
-
-> Точная картина. Итак, конструкция: политике нужен один носитель — файл с фиксированной схемой, живущий в репо. Назовём его `network-policy.json` (или `.ts` с `as const` — для типизации). Схема: массив записей вида `{ machine, allowedExits, proxy | null, reason }`. Четыре […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/network-container-m7-machine-policy-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · team-evening-feedback
-
-> Веснин. Оценка артефактов: MAIN_DAY_ISSUE — единственный документ дня, где расхождение источников выписано явно с указанием старшинства (sources[0] vs standup); это правильная работа с У1. STRATEGY_DAY-вещдок не мешал — все реальные решения дня опирались на MEETING_VERDICT […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-13.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
-
-> До object gate `recordId` разрешается в `canonicalRef`, current tip, policy version и object-version vector. Неизвестный record, binding, action или version даёт fail-closed, а не fallback. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
