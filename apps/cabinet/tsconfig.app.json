@@ -15,6 +15,7 @@
       "@membrana/core/*": ["../../packages/core/src/*"],
       "@membrana/device-board": ["../../packages/device-board/src/index.ts"],
       "@membrana/device-board/*": ["../../packages/device-board/src/*"],
+      "@membrana/plugin-contracts": ["../../packages/plugin-contracts/src/index.ts"],
       "@membrana/media-library-service": ["../../packages/services/media-library/src/index.ts"],
       "@membrana/media-library-service/*": ["../../packages/services/media-library/src/*"],
       "@membrana/sample-playback-service": ["../../packages/services/sample-playback/src/index.ts"],
