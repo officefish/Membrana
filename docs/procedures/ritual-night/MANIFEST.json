@@ -1,9 +1,11 @@
 {
-  "//": "Контейнер процедуры НОЧИ. Ночь получает свою дверь наравне с утром и вечером: до сих пор у неё была россыпь глаголов (tests:nightly-full, night:research, night-hunt:pr-review, night:land-reports, night:open/close) и ни одной двери. Форма взята у ritual-day и ritual-evening, не изобретена заново.",
-  "//полосы": "Три полосы канона (MANIFEST_QUEUE_KEYS): preflight — гейт ДО работы; frames — автоцепочка; post — хвост. Владелец назвал пять фреймов; регрессия, дозор и синтез — это СЕРИЯ сюжетных в средней полосе, а не три отдельные полосы. Так ночь встаёт в общий контракт, а не заводит рядом второе понятие фрейма.",
-  "//держатели": "Держатели — предложение, не приговор: назначение держателей у нас отдельная работа владельца (FRAME_HOLDERS_REASSIGN_TWENTY_PROMPT). Взяты по соседству: провода у ozhegov — как в preflight утра; сводка у angelina — как весь конспект.",
   "id": "ritual-night",
   "leadPersona": "angelina",
+  "kitVersion": null,
+  "engines": [
+    "scripts/night-preflight.mjs"
+  ],
+  "precedents": [],
   "preflight": [
     {
       "id": "night-wiring",
@@ -57,7 +59,7 @@
   "post": [
     {
       "id": "night-summary",
-      "holder": "angelina",
+      "holder": "rodchenko",
       "tag": "служебный-доставка",
       "//": "НЕСУЩИЙ ФРЕЙМ. Пять ночных механизмов умерли не потому, что плохи, а потому что их результат никто не читал: утренний гейт смотрит только на отчёт тестов. Сводка одна, и утро обязано прочесть её целиком.",
       "carrier": {
@@ -67,16 +69,8 @@
         "writer": "node scripts/night-summary.mjs",
         "reader": "yarn night-summary:gate",
         "blocksMorningWhen": "summary.missing || summary.stale || frames.any(status == fail && criticality == critical)"
-      }
+      },
+      "//держатель": "НЕ angelina сознательно. Зуб корпуса держит снимок долга «модератор-в-holder» ровно на 20 фреймах (08.08): angelina — модератор, и каждый новый фрейм за ней увеличивает долг, который команда сокращает. Заводить новый долг ради удобства нельзя. Держатель переназначаем владельцем."
     }
-  ],
-  "trigger": {
-    "kind": "captain-word",
-    "command": "yarn ritual:night",
-    "note": "ночь идёт без человека, но дверь у неё та же: глагол один, и он же вызывается расписанием"
-  },
-  "steps": {
-    "kind": "ref",
-    "path": "docs/tasks/night-ritual-steps.json"
-  }
+  ]
 }
