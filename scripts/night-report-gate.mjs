@@ -39,7 +39,7 @@ export function clearNightReportDownloadTargets(destDir, carrierPath = null) {
  * @param {string[]} argv
  */
 export function parseNightReportArgs(argv) {
-  const out = { pull: false, today: null, help: false };
+  const out = { pull: false, today: null, expectedRevision: null, help: false };
   for (let i = 0; i < argv.length; i += 1) {
     const a = argv[i];
     if (a === '--pull') out.pull = true;
@@ -47,6 +47,10 @@ export function parseNightReportArgs(argv) {
       const next = argv[++i];
       if (!/^\d{4}-\d{2}-\d{2}$/u.test(next ?? '')) throw new Error('--today: YYYY-MM-DD');
       out.today = next;
+    } else if (a === '--expected-revision') {
+      const next = argv[++i];
+      if (!/^[0-9a-f]{7,40}$/u.test(next ?? '')) throw new Error('--expected-revision: git SHA/prefix');
+      out.expectedRevision = next;
     } else if (a === '--help' || a === '-h') out.help = true;
     else throw new Error(`неизвестный флаг: ${a}`);
   }
@@ -120,11 +124,16 @@ export function runNightReportCli(argv, deps = {}) {
 
   Гейт ночи для утра (#1293): красный/несвежий/отсутствующий носитель = STOP (exit 2).
   --pull — сперва подтянуть артефакт ${NIGHTLY_ARTIFACT} последнего прогона ${NIGHTLY_WORKFLOW} с main.
-  Дисциплина: дом носителя tests/reports/nightly-full/ локален (gitignore), свежесть — по generatedAt.`);
+  --expected-revision SHA — тестовый/ручной target вместо origin/main.
+  Дисциплина: дом носителя tests/reports/nightly-full/ локален (gitignore), свежесть — по git revision, не по календарной дате.`);
     return 0;
   }
   if (args.pull) pullNightReport(cwd, deps);
-  return runNightReportGate(cwd, { log: deps.log, today: args.today ?? undefined });
+  return runNightReportGate(cwd, {
+    log: deps.log,
+    today: args.today ?? undefined,
+    expectedRevision: args.expectedRevision ?? undefined,
+  });
 }
 
 const entry = (process.argv[1] ?? '').replace(/\\/g, '/');

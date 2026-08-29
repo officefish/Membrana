@@ -16,11 +16,14 @@ import { clearNightReportDownloadTargets, parseNightReportArgs, pullNightReport 
 
 const CARRIER = { path: 'tests/reports/nightly-full/latest.json', blocksMorningWhen: SUPPORTED_BLOCK_EXPR };
 const TODAY = '2026-08-11';
+const HEAD_A = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+const HEAD_B = 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb';
 
 function reportFixture(overrides = {}) {
   return {
     schemaVersion: 1,
     generatedAt: `${TODAY}T03:10:00.000Z`,
+    git: { revision: HEAD_A },
     setup: { run: ['a.test.mjs', 'b.test.mjs'], notRun: ['c.test.mjs'], skipped: [] },
     kit: { id: 'tests-master', ok: true },
     execution: { status: 'pass', exitCode: 0 },
@@ -36,17 +39,19 @@ test('evaluateNightReport: три различимых блокера — missin
 
   const stale = evaluateNightReport({
     carrier: CARRIER,
-    report: reportFixture({ generatedAt: '2026-08-10T03:10:00.000Z' }),
+    report: reportFixture({ git: { revision: HEAD_B } }),
     today: TODAY,
+    expectedRevision: HEAD_A,
   });
   assert.equal(stale.status, 'stale');
-  assert.match(stale.blockers[0], /отчёт от 2026-08-10/u);
+  assert.match(stale.blockers[0], /не на текущем стволе/u);
   assert.notEqual(stale.blockers[0], missing.blockers[0]);
 
   const red = evaluateNightReport({
     carrier: CARRIER,
     report: reportFixture({ execution: { status: 'fail', exitCode: 1 }, problems: ['x'] }),
     today: TODAY,
+    expectedRevision: HEAD_A,
   });
   assert.equal(red.status, 'red');
   assert.match(red.blockers[0], /ночной красный/u);
@@ -54,10 +59,29 @@ test('evaluateNightReport: три различимых блокера — missin
 });
 
 test('evaluateNightReport: зелёная свежая ночь проходит, «что не гонялось» видно', () => {
-  const ok = evaluateNightReport({ carrier: CARRIER, report: reportFixture(), today: TODAY });
+  const ok = evaluateNightReport({ carrier: CARRIER, report: reportFixture(), today: '2026-08-12', expectedRevision: HEAD_A });
   assert.equal(ok.status, 'pass');
   assert.equal(ok.blockers.length, 0);
   assert.ok(ok.summary.some((s) => s.includes('не гонялось: 1')));
+});
+
+test('evaluateNightReport: свежесть не завязана на календарь, но чужая вершина красная', () => {
+  const delayed = evaluateNightReport({
+    carrier: CARRIER,
+    report: reportFixture({ generatedAt: '2026-08-10T13:55:00.000Z' }),
+    today: TODAY,
+    expectedRevision: HEAD_A,
+  });
+  assert.equal(delayed.status, 'pass');
+
+  const wrongHead = evaluateNightReport({
+    carrier: CARRIER,
+    report: reportFixture({ git: { revision: HEAD_B } }),
+    today: TODAY,
+    expectedRevision: HEAD_A,
+  });
+  assert.equal(wrongHead.status, 'stale');
+  assert.match(wrongHead.blockers[0], /отчёт bbbbbbbbbbbb, ожидается aaaaaaaaaaaa/u);
 });
 
 test('evaluateNightReport: неподдержанное выражение кадра — fail closed', () => {
@@ -65,6 +89,7 @@ test('evaluateNightReport: неподдержанное выражение ка�
     carrier: { ...CARRIER, blocksMorningWhen: 'always-green' },
     report: reportFixture(),
     today: TODAY,
+    expectedRevision: HEAD_A,
   });
   assert.equal(v.status, 'invalid');
   assert.match(v.blockers[0], /fail closed/u);
@@ -92,7 +117,7 @@ test('runNightReportGate: подсаженный красный отчёт ос�
   const lines = [];
   const code = runNightReportGate(
     tempRoot({ report: reportFixture({ execution: { status: 'fail', exitCode: 1 } }) }),
-    { log: (s) => lines.push(s), today: TODAY },
+    { log: (s) => lines.push(s), today: TODAY, expectedRevision: HEAD_A },
   );
   assert.equal(code, 2);
   assert.ok(lines.some((l) => l.includes('ночной красный')));
@@ -100,11 +125,11 @@ test('runNightReportGate: подсаженный красный отчёт ос�
 
 test('runNightReportGate: свежий зелёный — 0; отсутствие носителя — 2 своим текстом', () => {
   assert.equal(
-    runNightReportGate(tempRoot({ report: reportFixture() }), { log: () => {}, today: TODAY }),
+    runNightReportGate(tempRoot({ report: reportFixture() }), { log: () => {}, today: TODAY, expectedRevision: HEAD_A }),
     0,
   );
   const lines = [];
-  assert.equal(runNightReportGate(tempRoot(), { log: (s) => lines.push(s), today: TODAY }), 2);
+  assert.equal(runNightReportGate(tempRoot(), { log: (s) => lines.push(s), today: TODAY, expectedRevision: HEAD_A }), 2);
   assert.ok(lines.some((l) => l.includes('ночь не отработала')));
 });
 
@@ -137,6 +162,7 @@ test('parseNightReportArgs + pullNightReport с подставным gh', () => 
   assert.deepEqual(parseNightReportArgs(['--pull', '--today', '2026-08-11']), {
     pull: true,
     today: '2026-08-11',
+    expectedRevision: null,
     help: false,
   });
   assert.throws(() => parseNightReportArgs(['--today', 'вчера']));
