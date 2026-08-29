@@ -21,6 +21,24 @@
       }
     },
     {
+      "id": "ritual-night",
+      "procedureKind": "ритм",
+      "holder": "angelina",
+      "homePath": "docs/procedures/ritual-night",
+      "container": {
+        "value": true,
+        "provenance": "angelina@242dc0e6"
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": false,
+        "provenance": null
+      }
+    },
+    {
       "id": "ritual-day",
       "procedureKind": "ритм",
       "holder": "angelina",
