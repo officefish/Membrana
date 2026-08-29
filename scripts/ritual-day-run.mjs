@@ -22,7 +22,9 @@ import { dayCloseArgs } from './lib/ritual-day-close.mjs';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const STEPS = Object.freeze([
-  { id: 'ritual-artifacts', script: ['scripts/ritual-artifacts-commit.mjs', '--manifest', 'docs/tasks/morning-ritual-steps.json'], critical: false },
+  // Утро забирает СВОИ артефакты и ХВОСТ ВЧЕРАШНЕГО ВЕЧЕРА: память персон, оп-логи и
+  // черновик ласточки пишутся после вечернего забора, и три утра подряд их разгребали руками.
+  { id: 'ritual-artifacts', script: ['scripts/ritual-artifacts-commit.mjs', '--manifest', 'docs/tasks/morning-ritual-steps.json', '--manifest', 'docs/tasks/evening-ritual-steps.json', '--since-yesterday'], critical: false },
   { id: 'morning-care', script: ['scripts/morning-care.mjs'], critical: true },
   { id: 'infra-probe', script: ['scripts/infra-probe.mjs', '--summary'], critical: false },
   { id: 'worktree-sync', script: ['scripts/worktree-sync.mjs'], critical: false },

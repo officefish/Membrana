@@ -89,7 +89,10 @@
         "docs/virtual-team/memory/"
       ],
       "produces": [
-        "docs/seanses/team-memory-report-<дата>.md"
+        "docs/seanses/team-memory-report-<дата>.md",
+        "docs/virtual-team/memory",
+        "docs/virtual-team/memory/op-log",
+        "docs/virtual-team/memory/archive"
       ],
       "findingExitCodes": [
         3
@@ -301,7 +304,9 @@
       "produces": [
         "docs/seanses/team-evening-feedback-<date>.md",
         "docs/seanses/team-evening-feedback-<date>.md — секция «Проверка утверждений»",
-        "docs/tasks/morning-gates-state.json — swallow.claimsProbe"
+        "docs/tasks/morning-gates-state.json — swallow.claimsProbe",
+        "docs/comms/drafts",
+        "docs/comms/sent-log.jsonl"
       ]
     },
     {
