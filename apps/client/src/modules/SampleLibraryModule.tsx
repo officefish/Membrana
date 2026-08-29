@@ -1,4 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { DeletionConfirmDialog } from '@/components/DeletionConfirmDialog';
+import { readPersistedPairedCredentials } from '@/lib/resolveMediaLibraryBackend';
 import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
 import {
@@ -316,9 +318,8 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       setError('Media-server недоступен — очистка буфера невозможна.');
       return;
     }
-    if (!window.confirm('Очистить буфер __buffer__? Сэмплы будут удалены без восстановления.')) {
-      return;
-    }
+    // Подтверждение живёт в окне удаления (#2218): оно показывает, ЧТО уйдёт и чем это
+    // может оказаться. Системный confirm умел только «уверены?».
     setError(null);
     try {
       await runRemoteMutation('Очистка буфера', async () => {
@@ -328,6 +329,64 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       setError(e instanceof Error ? e.message : String(e));
     }
   }, [runRemoteMutation, snapshot.quota.backend, snapshot.quota.serverReachable]);
+
+  /**
+   * ВОРОТА УДАЛЕНИЯ (#2218) — близнец кабинетных. Обе воронки Studio, построчное удаление
+   * и очистка буфера, проходят через одно окно со списком и гипотезой ценности.
+   */
+  const [pendingDeletion, setPendingDeletion] = useState<{
+    readonly title: string;
+    readonly samples: readonly MediaSample[];
+    readonly declaredTotal?: number;
+    readonly run: () => void | Promise<void>;
+  } | null>(null);
+  const [deletingNow, setDeletingNow] = useState(false);
+
+  /**
+   * ПРИБОР ДЛЯ ГИПОТЕЗЫ ЦЕНОСТИ. Без него окна вещдоков не применяются, и вердикт
+   * «вещдок» падает до «разобрано руками» — то есть второе движение у близнецов
+   * получается РАЗНОЙ силы: в кабинете галочка обязательна, в Studio нет (ревью #2232).
+   * В связке с узлом прибор известен; в автономном режиме записи местные, и окна
+   * узла к ним не относятся — тогда `undefined` честен, а не потерян.
+   */
+  const pairedDeviceId = useMemo(() => readPersistedPairedCredentials()?.deviceId, []);
+
+  const confirmDeletion = useCallback(async () => {
+    if (!pendingDeletion) return;
+    setDeletingNow(true);
+    try {
+      await pendingDeletion.run();
+    } finally {
+      setDeletingNow(false);
+      setPendingDeletion(null);
+    }
+  }, [pendingDeletion]);
+
+  const removeGated = useCallback(
+    async (sampleId: string): Promise<void> => {
+      const one = samples.find((x) => x.id === sampleId);
+      // Та же оговорка, что в кабинете: вне загруженной страницы пробы нет в руках, но
+      // удаление по id состоится — окно обязано знать число, а не молчать «нечего».
+      setPendingDeletion({
+        title: 'Удалить пробу',
+        samples: one ? [one] : [],
+        declaredTotal: 1,
+        run: () => handleRemove(sampleId),
+      });
+    },
+    [handleRemove, samples],
+  );
+
+  const clearBufferGated = useCallback(async (): Promise<void> => {
+    const declared =
+      snapshot.collections.find((c) => c.id === BUFFER_COLLECTION_ID)?.sampleCount ?? samples.length;
+    setPendingDeletion({
+      title: 'Очистить буфер',
+      samples,
+      declaredTotal: declared,
+      run: () => handleClearBuffer(),
+    });
+  }, [handleClearBuffer, samples, snapshot.collections]);
 
   const handleSelectSample = useCallback(async (sample: MediaSample) => {
     setError(null);
@@ -455,7 +514,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                 clearingBuffer ||
                 (snapshot.quota.backend === 'server' && !snapshot.quota.serverReachable)
               }
-              onClick={() => void handleClearBuffer()}
+              onClick={() => void clearBufferGated()}
             >
               {clearingBuffer ? 'Очистка…' : 'Очистить буфер'}
             </button>
@@ -650,7 +709,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                         <button
                           type="button"
                           className="btn btn-xs btn-ghost text-error"
-                          onClick={() => void handleRemove(s.id)}
+                          onClick={() => void removeGated(s.id)}
                         >
                           Удалить
                         </button>
@@ -703,7 +762,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
             const s = samples.find((x) => x.id === id);
             if (s) void handleExportSample(s);
           }}
-          onRemove={(id) => handleRemove(id)}
+          onRemove={(id) => void removeGated(id)}
         />
       ) : null}
 
@@ -730,6 +789,18 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       {localActivePluginIds.includes(NEURAL_DRONE_ANALYZER_PLUGIN_ID) ? (
         <NeuralDroneAnalyzerPanel moduleId={module.id} />
       ) : null}
+
+      <DeletionConfirmDialog
+        open={pendingDeletion !== null}
+        title={pendingDeletion?.title ?? ''}
+        samples={pendingDeletion?.samples ?? []}
+        declaredTotal={pendingDeletion?.declaredTotal}
+        collections={snapshot.collections}
+        deviceId={pairedDeviceId}
+        busy={deletingNow}
+        onCancel={() => setPendingDeletion(null)}
+        onConfirm={() => void confirmDeletion()}
+      />
     </div>
   );
 };

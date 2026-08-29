@@ -117,7 +117,12 @@ describe('панель дублей в кабинете — показать п�
 
   it('удаление — ТОЛЬКО по клику, ТОЛЬКО с подтверждением, ТОЛЬКО по одной; «удалить все» нет', () => {
     const src = read('components/sample-library/CabinetSampleDuplicatesPanel.tsx');
-    expect(src).toContain('window.confirm(');
+    // Подтверждение переехало из window.confirm в окно удаления страницы (#2218): оно
+    // показывает список и гипотезу ценности, чего системный вопрос не умел. Правило то же —
+    // сменился носитель, и зуб теперь смотрит туда, где подтверждение живёт.
+    expect(src).toContain('await onRemove(ref.sampleId)');
+    expect(src).not.toContain('window.confirm(');
+    expect(read('pages/SampleLibraryPage.tsx')).toContain('<DeletionConfirmDialog');
     expect(src).not.toMatch(/удалить все|removeAll|deleteAll/iu);
     expect(src).not.toMatch(/duplicates\.map\([^)]*onRemove/u);
   });
@@ -182,13 +187,21 @@ describe('действия строк выборки — те же, что у с
     expect(read('components/sample-library/CabinetSampleChartListPanel.tsx')).toContain('<CabinetSampleRowActions');
     const actions = read('components/sample-library/CabinetSampleRowActions.tsx');
     expect(actions).toContain('Перенести…');
-    expect(actions).toContain('window.confirm(');
+    // Подтверждение — в окне удаления (#2218), не в органе строки: орган зовёт onRemove,
+    // страница ведёт вызов через ворота. Второй, более слабый вопрос рядом с сильным
+    // приучал бы жать «да».
+    expect(actions).toContain('onRemove(sampleId)');
+    expect(actions).not.toContain('window.confirm(');
+    expect(read('pages/SampleLibraryPage.tsx')).toContain('onRemove={removeGated}');
   });
 
   it('глаголы НЕ дублируются: панель зовёт сервис библиотеки через страницу', () => {
     const page = read('pages/SampleLibraryPage.tsx');
     expect(page).toContain('onMove={(id, toId) => lib.handleMove(id, toId)}');
-    expect(page).toContain('onRemove={(id) => lib.handleRemove(id)}');
+    // Глагол по-прежнему один — сервис библиотеки; но вызов идёт через ворота удаления
+    // (#2218), а не прямо: окно обязано встать между кнопкой и необратимым действием.
+    expect(page).toContain('onRemove={removeGated}');
+    expect(page).toContain('lib.handleRemove(id)');
     expect(page).toContain('lib.handleExport(s)');
     // Своей правды о наборе у панели нет — она не заводит своих глаголов.
     expect(read('components/sample-library/CabinetSampleChartListPanel.tsx')).not.toMatch(/service.(moveSample|deleteSample|getSampleBlob)/u);
@@ -206,6 +219,11 @@ describe('действия строк выборки — те же, что у с
   });
 
   it('удаление — с подтверждением, называющим пробу', () => {
-    expect(read('components/sample-library/CabinetSampleRowActions.tsx')).toContain('Удалить пробу');
+    // Имя пробы называет окно удаления (#2218); орган строки несёт его в aria-label,
+    // чтобы «удалить эту» без имени не подтверждали не глядя.
+    expect(read('components/sample-library/CabinetSampleRowActions.tsx')).toContain(
+      'aria-label={`Удалить ${title}`}',
+    );
+    expect(read('pages/SampleLibraryPage.tsx')).toContain("askDelete('Удалить пробу'");
   });
 });
