@@ -124,6 +124,7 @@
     "night:research": "node scripts/night-research.mjs",
     "night:research:yield": "node scripts/night-research.mjs --yield",
     "night:research:sweep": "node scripts/night-research.mjs --sweep",
+    "night:preflight": "node scripts/night-preflight.mjs",
     "dreams:probe-models": "node scripts/dreams-probe-models.mjs",
     "dreams:tick": "node scripts/dreams.mjs tick",
     "dreams:digest": "node scripts/dreams.mjs digest",
