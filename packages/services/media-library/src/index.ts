@@ -48,6 +48,17 @@ export type {
 } from './types.js';
 
 export {
+  EVIDENCE_WINDOWS,
+  assessDeletion,
+  assessDeletionValue,
+  evidenceWindowOf,
+  type DeletionValueContext,
+  type DeletionValueLevel,
+  type DeletionValueSummary,
+  type DeletionValueVerdict,
+  type EvidenceWindow,
+} from './deletion-value.js';
+export {
   LIBRARY_CHART_LIST_CRITERIA,
   LIBRARY_CHART_LIST_VOLUMES,
   dateInputToIsoWindow,

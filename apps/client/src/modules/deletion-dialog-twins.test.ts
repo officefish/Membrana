@@ -1,0 +1,116 @@
+/**
+ * Зубы окна удаления (#2218): близнецы не расходятся, и удаления без окна не бывает.
+ *
+ * Почему зуб читает ФАЙЛЫ, а не рендерит компоненты: правило живёт в двух домах-носителях
+ * (общего UI-пакета нет), и вопрос здесь не «работает ли кнопка», а «одинаково ли правило
+ * и не завёл ли дом свой обходной путь». Рендер этого не покажет — он проверяет один дом.
+ */
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { describe, expect, it } from 'vitest';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+const REPO = resolve(HERE, '..', '..', '..', '..');
+
+const CABINET_DIALOG = resolve(REPO, 'apps/cabinet/src/components/sample-library/DeletionConfirmDialog.tsx');
+const STUDIO_DIALOG = resolve(REPO, 'apps/client/src/components/DeletionConfirmDialog.tsx');
+const CABINET_PAGE = resolve(REPO, 'apps/cabinet/src/pages/SampleLibraryPage.tsx');
+const STUDIO_MODULE = resolve(REPO, 'apps/client/src/modules/SampleLibraryModule.tsx');
+
+/** Файлы, где раньше жил системный вопрос: он снят, и вернуться туда не должен. */
+const DELETION_CARRIERS = [
+  'apps/cabinet/src/components/sample-library/CabinetSampleRowActions.tsx',
+  'apps/cabinet/src/components/sample-library/CabinetSampleDuplicatesPanel.tsx',
+  'apps/client/src/components/SampleRowActions.tsx',
+  'apps/client/src/modules/SampleLibraryModule.tsx',
+];
+
+const read = (p: string) => readFileSync(p, 'utf8');
+
+describe('окно удаления — близнецы', () => {
+  it('ЗЕРКАЛО: оба дома судят ценность ЯДРОМ, а не своей копией правила', () => {
+    for (const p of [CABINET_DIALOG, STUDIO_DIALOG]) {
+      const s = read(p);
+      expect(s).toContain("from '@membrana/media-library-service'");
+      expect(s).toContain('assessDeletion');
+      // Дом не заводит своих слов о ценности: уровни и причины приходят из ядра.
+      expect(s).not.toMatch(/level\s*=\s*['"]evidence['"]/u);
+    }
+  });
+
+  it('оба окна показывают ТО ЖЕ: список, ценность, причину и число к удалению', () => {
+    for (const p of [CABINET_DIALOG, STUDIO_DIALOG]) {
+      const s = read(p);
+      expect(s).toContain('summary.headline');
+      expect(s).toContain('summary.verdicts');
+      expect(s).toContain('Ценность');
+      expect(s).toContain('Почему');
+      expect(s).toContain('Удалить ${willDelete}');
+    }
+  });
+
+  it('НЕЗАНИЖЕНИЕ: если разобрано меньше, чем уйдёт, окно говорит это словами', () => {
+    for (const p of [CABINET_DIALOG, STUDIO_DIALOG]) {
+      const s = read(p);
+      expect(s).toContain('declaredTotal');
+      expect(s).toContain('Уйдут все');
+    }
+  });
+
+  it('вещдок требует второго движения — галочки, а рядовая уборка одного', () => {
+    for (const p of [CABINET_DIALOG, STUDIO_DIALOG]) {
+      const s = read(p);
+      expect(s).toContain('acknowledged');
+      expect(s).toContain('summary.evidence > 0 && !acknowledged');
+    }
+  });
+
+  it('окна не разошлись по существу: тела совпадают, кроме ссылки на дом-близнец', () => {
+    const norm = (s: string) =>
+      s
+        .replace(/ \* БЛИЗНЕЦ[\s\S]*?внимательность\.\n/u, '')
+        .replace(/\s+/gu, ' ')
+        .trim();
+    expect(norm(read(STUDIO_DIALOG))).toEqual(norm(read(CABINET_DIALOG)));
+  });
+});
+
+describe('удаления без окна не бывает', () => {
+  it('ПОРЧА: системный window.confirm не вернулся ни в один носитель удаления', () => {
+    for (const rel of DELETION_CARRIERS) {
+      const s = read(resolve(REPO, rel));
+      expect(s, `${rel}: системный вопрос слабее окна и не должен стоять рядом с ним`).not.toContain(
+        'window.confirm',
+      );
+    }
+  });
+
+  it('обе воронки кабинета заведены на ворота, а не на голый обработчик', () => {
+    const s = read(CABINET_PAGE);
+    expect(s).toContain('<DeletionConfirmDialog');
+    expect(s).toContain('const removeGated');
+    expect(s).toContain('const clearBufferGated');
+    expect(s).toContain('handleClearBuffer={clearBufferGated}');
+    expect(s).toContain('handleRemove={removeGated}');
+    // Прямой вызов удаления мимо ворот — это и есть дыра, которую чиним.
+    expect(s).not.toContain('onRemove={(id) => lib.handleRemove(id)}');
+  });
+
+  it('обе воронки Studio заведены на ворота', () => {
+    const s = read(STUDIO_MODULE);
+    expect(s).toContain('<DeletionConfirmDialog');
+    expect(s).toContain('const removeGated');
+    expect(s).toContain('const clearBufferGated');
+    expect(s).toContain('void clearBufferGated()');
+    expect(s).toContain('void removeGated(');
+  });
+
+  it('очистка буфера объявляет ПОЛНОЕ число, а не размер загруженной страницы', () => {
+    for (const p of [CABINET_PAGE, STUDIO_MODULE]) {
+      const s = read(p);
+      expect(s).toContain('declaredTotal');
+      expect(s).toContain('sampleCount');
+    }
+  });
+});

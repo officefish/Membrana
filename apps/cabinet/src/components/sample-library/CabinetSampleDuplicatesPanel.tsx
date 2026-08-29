@@ -107,7 +107,8 @@ export function CabinetSampleDuplicatesPanel({
 
   const handleRemove = useCallback(
     async (ref: LibraryDuplicateRef) => {
-      if (!window.confirm(`Удалить «${titleOf(ref.sampleId)}» (${fmtAt(ref.at)})? Действие необратимо.`)) return;
+      // Подтверждение живёт в окне удаления страницы (#2218), не здесь: иначе человек
+      // отвечает на два вопроса подряд, и сильный из них теряется за слабым.
       await onRemove(ref.sampleId);
       setRemoved((prev) => new Set([...prev, ref.sampleId]));
     },
