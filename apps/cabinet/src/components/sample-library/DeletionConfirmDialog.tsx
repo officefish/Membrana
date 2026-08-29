@@ -15,7 +15,7 @@
  * поэтому правило одно, а носителя два; расхождение ловит зуб сходства
  * `apps/client/src/modules/deletion-dialog-twins.test.ts`, а не внимательность.
  */
-import { useEffect, useMemo, useReducer, type ReactNode } from 'react';
+import { useEffect, useMemo, useReducer, useRef, type ReactNode } from 'react';
 
 import {
   DELETION_GATE_CLOSED,
@@ -73,8 +73,8 @@ export function DeletionConfirmDialog({
   onConfirm,
 }: DeletionConfirmDialogProps): ReactNode {
   const summary = useMemo(
-    () => assessDeletion(samples, { collections, deviceId }),
-    [samples, collections, deviceId],
+    () => assessDeletion(samples, { collections, deviceId, declaredTotal }),
+    [samples, collections, deviceId, declaredTotal],
   );
   /**
    * Состояние ворот живёт в ЯДРЕ (`deletionGateReducer`), а не в этом компоненте: правило
@@ -92,25 +92,66 @@ export function DeletionConfirmDialog({
     dispatch(open ? { type: 'open', key: openKey } : { type: 'close' });
   }, [open, openKey]);
 
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const returnFocusTo = useRef<Element | null>(null);
+
+  /**
+   * КЛАВИАТУРА И ФОКУС. Окно предупреждает о необратимом, и человек не обязан ловить
+   * мышью «Отмена»: Escape закрывает, Tab не выпускает наружу, а по закрытии фокус
+   * возвращается туда, откуда пришёл. Без ловушки Tab уводит на страницу под окном, и
+   * следующий Enter нажимает кнопку, которой человек не видит.
+   */
   useEffect(() => {
     if (!open) return undefined;
+    returnFocusTo.current = document.activeElement;
+    const node = dialogRef.current;
+    const focusables = () =>
+      Array.from(
+        node?.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+        ) ?? [],
+      );
+    focusables()[0]?.focus();
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !busy) onCancel();
+      if (e.key === 'Escape' && !busy) {
+        onCancel();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const list = focusables();
+      if (list.length === 0) return;
+      const first = list[0];
+      const last = list[list.length - 1];
+      if (!first || !last) return;
+      const active = document.activeElement;
+      if (e.shiftKey && (active === first || !node?.contains(active))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (active === last || !node?.contains(active))) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      if (returnFocusTo.current instanceof HTMLElement) returnFocusTo.current.focus();
+    };
   }, [open, busy, onCancel]);
 
   if (!open) return null;
 
+  // Числа считает ядро: дом их только показывает.
   const known = summary.total;
-  const willDelete = typeof declaredTotal === 'number' ? declaredTotal : known;
-  const unknown = Math.max(0, willDelete - known);
+  const willDelete = summary.willDelete;
+  const unknown = summary.unknown;
   const nothingToDelete = willDelete === 0;
   const valuable = summary.evidence + summary.curated;
   const blocked = isDeletionBlocked({
     willDelete,
     evidence: summary.evidence,
+    unknown,
     acknowledged,
     busy,
   });
@@ -118,6 +159,7 @@ export function DeletionConfirmDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
       <div
+        ref={dialogRef}
         role="dialog"
         aria-modal="true"
         aria-label={title}
@@ -175,7 +217,7 @@ export function DeletionConfirmDialog({
           </div>
         )}
 
-        {summary.evidence > 0 ? (
+        {summary.evidence > 0 || unknown > 0 ? (
           <label className="flex cursor-pointer items-start gap-2 text-sm">
             <input
               type="checkbox"
@@ -183,7 +225,11 @@ export function DeletionConfirmDialog({
               checked={acknowledged}
               onChange={(e) => dispatch({ type: 'acknowledge', value: e.target.checked })}
             />
-            <span>Понимаю, что удаляю вещдоки, и делаю это осознанно</span>
+            <span>
+              {summary.evidence > 0
+                ? 'Понимаю, что удаляю вещдоки, и делаю это осознанно'
+                : `Понимаю, что об ${unknown} записях ценность не выяснена, и удаляю их осознанно`}
+            </span>
           </label>
         ) : null}
 

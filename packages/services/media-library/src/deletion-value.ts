@@ -124,6 +124,11 @@ export interface DeletionValueContext {
   /** Устройство: окна вещдоков привязаны к нему. */
   readonly deviceId?: string;
   readonly windows?: readonly EvidenceWindow[];
+  /**
+   * Сколько записей уйдёт НА САМОМ ДЕЛЕ, если это больше, чем разобрано в `samples`.
+   * Свод обязан считать потерю по нему, а не по длине разобранного списка.
+   */
+  readonly declaredTotal?: number;
 }
 
 const LABEL_WORDS: Record<string, string> = {
@@ -197,7 +202,12 @@ export function assessDeletionValue(
 }
 
 export interface DeletionValueSummary {
+  /** Сколько записей РАЗОБРАНО по ценности. */
   readonly total: number;
+  /** Сколько уйдёт на самом деле: `declaredTotal`, если он больше разобранного. */
+  readonly willDelete: number;
+  /** Сколько уйдёт, но о ценности сказать нечего. Неизвестность — риск, а не его отсутствие. */
+  readonly unknown: number;
   readonly evidence: number;
   readonly curated: number;
   readonly ordinary: number;
@@ -245,16 +255,27 @@ export function assessDeletion(
   const ordinary = verdicts.length - evidence - curated;
   const bytes = verdicts.reduce((a, v) => a + (v.sizeBytes ?? 0), 0);
 
-  const n = verdicts.length;
+  const known = verdicts.length;
+  const willDelete = Math.max(known, typeof ctx.declaredTotal === 'number' ? ctx.declaredTotal : known);
+  const unknown = willDelete - known;
+
+  // ШАПКА СЧИТАЕТ ПО УХОДЯЩЕМУ, А НЕ ПО РАЗОБРАННОМУ. Первая редакция брала длину списка
+  // вердиктов, и при частично загруженной странице человек читал «уйдут 40 записей», когда
+  // уходило 1747: занижение потери в самой заметной строке окна (ревью #2232, третий заход).
   const parts: string[] = [
-    `${plural(n, 'Уйдёт', 'Уйдут', 'Уйдут')} безвозвратно ${n} ${plural(n, 'запись', 'записи', 'записей')}, ${mb(bytes)}`,
+    `${plural(willDelete, 'Уйдёт', 'Уйдут', 'Уйдут')} безвозвратно ${willDelete} ${plural(willDelete, 'запись', 'записи', 'записей')}${unknown > 0 ? '' : `, ${mb(bytes)}`}`,
   ];
+  if (unknown > 0) parts.push(`разобрано по ценности ${known}, об остальных ${unknown} сказать нечего`);
   if (evidence > 0) parts.push(`из них вещдоков: ${evidence}`);
   if (curated > 0) parts.push(`разобранных руками: ${curated}`);
-  if (evidence === 0 && curated === 0 && n > 0) parts.push('ценных среди них не найдено');
+  if (evidence === 0 && curated === 0 && unknown === 0 && known > 0) {
+    parts.push('ценных среди них не найдено');
+  }
 
   return {
-    total: verdicts.length,
+    total: known,
+    willDelete,
+    unknown,
     evidence,
     curated,
     ordinary,
@@ -318,10 +339,17 @@ export function deletionGateReducer(state: DeletionGateState, event: DeletionGat
 export function isDeletionBlocked(input: {
   readonly willDelete: number;
   readonly evidence: number;
+  /** Сколько уходит без разбора ценности. Ноль — если разобрано всё. */
+  readonly unknown?: number;
   readonly acknowledged: boolean;
   readonly busy?: boolean;
 }): boolean {
   if (input.willDelete <= 0) return true;
   if (input.busy) return true;
-  return input.evidence > 0 && !input.acknowledged;
+  // НЕИЗВЕСТНОСТЬ — РИСК, А НЕ ЕГО ОТСУТСТВИЕ. Прежняя редакция требовала второго движения
+  // только при найденных вещдоках, то есть снимала предохранитель ровно тогда, когда дом
+  // знал МЕНЬШЕ всего: очистка буфера с частично загруженной страницей проходила в одно
+  // нажатие, хотя за пределами страницы могли лежать любые вещдоки (ревью #2232).
+  const risky = input.evidence > 0 || (input.unknown ?? 0) > 0;
+  return risky && !input.acknowledged;
 }

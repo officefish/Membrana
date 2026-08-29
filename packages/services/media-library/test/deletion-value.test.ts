@@ -201,3 +201,55 @@ describe('ложный вещдок при неизвестном приборе
     expect(v.level).toBe('ordinary');
   });
 });
+
+describe('НЕИЗВЕСТНОСТЬ — РИСК, а не его отсутствие (третий вход класса, ревью #2232)', () => {
+  it('шапка считает по УХОДЯЩЕМУ, а не по разобранному', () => {
+    const s = assessDeletion([sample()], { declaredTotal: 1747 });
+    expect(s.willDelete).toBe(1747);
+    expect(s.unknown).toBe(1746);
+    expect(s.headline).toContain('1747');
+    expect(s.headline, 'разобранное число не должно выдаваться за уходящее').not.toMatch(
+      /безвозвратно 1 /u,
+    );
+    expect(s.headline).toContain('об остальных 1746 сказать нечего');
+  });
+
+  it('ПОРЧА: очистка буфера с неполной страницей требует второго движения', () => {
+    // Вещдоки могут лежать ЗА пределами загруженной страницы. Прежняя редакция снимала
+    // предохранитель ровно тогда, когда дом знал меньше всего.
+    const s = assessDeletion([sample()], { declaredTotal: 1747 });
+    expect(s.evidence).toBe(0);
+    expect(
+      isDeletionBlocked({
+        willDelete: s.willDelete,
+        evidence: s.evidence,
+        unknown: s.unknown,
+        acknowledged: false,
+      }),
+      'неразобранный остаток обязан требовать галочки',
+    ).toBe(true);
+    expect(
+      isDeletionBlocked({
+        willDelete: s.willDelete,
+        evidence: s.evidence,
+        unknown: s.unknown,
+        acknowledged: true,
+      }),
+    ).toBe(false);
+  });
+
+  it('когда разобрано ВСЁ и ценного нет — второго движения не требуется', () => {
+    const s = assessDeletion([sample()], { collections: [], deviceId: DEVICE });
+    expect(s.unknown).toBe(0);
+    expect(
+      isDeletionBlocked({ willDelete: s.willDelete, evidence: 0, unknown: 0, acknowledged: false }),
+      'лишняя ступень на рядовой уборке приучает жать «да»',
+    ).toBe(false);
+  });
+
+  it('declaredTotal меньше разобранного не занижает: побеждает большее', () => {
+    const s = assessDeletion([sample({ id: 'a' }), sample({ id: 'b' })], { declaredTotal: 1 });
+    expect(s.willDelete).toBe(2);
+    expect(s.unknown).toBe(0);
+  });
+});
