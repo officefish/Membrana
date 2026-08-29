@@ -17,11 +17,12 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { declaredWorkspaces, importedWorkspaces, undeclaredImports } from './lib/declared-imports.mjs';
+import { workspaceSearchPaths } from './lib/workspace-dirs.mjs';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
-/** Те же каталоги воркспейсов, что у соседнего сторожа образов — один список на оба. */
-const WORKSPACE_DIRS = ['packages', 'packages/libs', 'packages/services', 'packages/services/detectors', 'apps'];
+/** Каталоги воркспейсов читаются у корневого манифеста — копии списка расходятся (ревью #2233). */
+const SEARCH = workspaceSearchPaths(JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8')));
 
 const CODE = /\.(ts|tsx|mts|cts|js|jsx|mjs|cjs)$/u;
 const SKIP_DIRS = new Set(['node_modules', 'dist', '.turbo', 'generated', 'coverage', 'release', 'build']);
@@ -36,20 +37,26 @@ function walk(dir, out = []) {
   return out;
 }
 
+function addPackage(list, dir) {
+  const abs = resolve(ROOT, dir);
+  const pkgPath = join(abs, 'package.json');
+  if (!existsSync(pkgPath)) return;
+  const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
+  if (typeof pkg.name !== 'string') return;
+  list.push({ name: pkg.name, dir, abs, pkg });
+}
+
 function readWorkspaces() {
   const list = [];
-  for (const dir of WORKSPACE_DIRS) {
-    const abs = resolve(ROOT, dir);
+  for (const parent of SEARCH.parents) {
+    const abs = resolve(ROOT, parent);
     if (!existsSync(abs)) continue;
     for (const entry of readdirSync(abs, { withFileTypes: true })) {
-      if (!entry.isDirectory()) continue;
-      const pkgPath = join(abs, entry.name, 'package.json');
-      if (!existsSync(pkgPath)) continue;
-      const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
-      if (typeof pkg.name !== 'string') continue;
-      list.push({ name: pkg.name, dir: `${dir}/${entry.name}`, abs: join(abs, entry.name), pkg });
+      if (entry.isDirectory()) addPackage(list, `${parent}/${entry.name}`);
     }
   }
+  // Точные пути (`apps/demos/Research-Tree`) — пакет сам по себе, а не родитель пакетов.
+  for (const exact of SEARCH.packages) addPackage(list, exact);
   return list;
 }
 
