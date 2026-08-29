@@ -75,8 +75,12 @@ describe('действия строк выборки: правило одно, �
     for (const p of [ACTIONS_STUDIO, ACTIONS_CABINET]) {
       const src = read(p);
       expect(src).toContain('Перенести…');
-      expect(src).toContain('window.confirm(');
-      expect(src).toContain('Удалить пробу');
+      // «Удаление с подтверждением» осталось правилом, но подтверждение теперь — окно со
+      // списком и гипотезой ценности (#2218). Органы обоих домов зовут onRemove; сами
+      // вопросов не задают.
+      expect(src).toContain('onRemove(sampleId)');
+      expect(src).not.toContain('window.confirm(');
+      expect(src).toContain('Удалить ');
     }
   });
 
@@ -90,9 +94,13 @@ describe('действия строк выборки: правило одно, �
     // Ревью #2190 поймало это у Studio: патч упал на середине, пропсы легли, вызов остался
     // старым, и зуб «панель зовёт сервис» был зелёным, потому что проверял не тот конец.
     expect(read(STUDIO)).toContain('onMove={(id, toId) => handleMove(id, toId)}');
-    expect(read(STUDIO)).toContain('onRemove={(id) => handleRemove(id)}');
     expect(read(CABINET_PAGE)).toContain('onMove={(id, toId) => lib.handleMove(id, toId)}');
-    expect(read(CABINET_PAGE)).toContain('onRemove={(id) => lib.handleRemove(id)}');
+    // Удаление с #2218 идёт через ворота окна, а не прямым вызовом: проводка та же по сути —
+    // панель зовёт сервис библиотеки, — но между кнопкой и необратимым действием встало окно.
+    expect(read(STUDIO)).toContain('void removeGated(');
+    expect(read(STUDIO)).toContain('run: () => handleRemove(sampleId)');
+    expect(read(CABINET_PAGE)).toContain('onRemove={removeGated}');
+    expect(read(CABINET_PAGE)).toContain('lib.handleRemove(id)');
   });
 
   it('ни один близнец не заводит своих глаголов набора', () => {
