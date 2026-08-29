@@ -61,8 +61,13 @@ describe('окно удаления — близнецы', () => {
   it('вещдок требует второго движения — галочки, а рядовая уборка одного', () => {
     for (const p of [CABINET_DIALOG, STUDIO_DIALOG]) {
       const s = read(p);
-      expect(s).toContain('acknowledged');
-      expect(s).toContain('summary.evidence > 0 && !acknowledged');
+      // Само правило «когда можно жать» живёт в ядре (isDeletionBlocked) и проверяется
+      // там таблицей случаев; дом обязан его ЗВАТЬ и подавать все четыре входа, а не
+      // складывать своё условие рядом.
+      expect(s).toContain('isDeletionBlocked({');
+      expect(s).toContain('evidence: summary.evidence');
+      expect(s).toContain('acknowledged,');
+      expect(s).toContain('Понимаю, что удаляю вещдоки');
     }
   });
 
@@ -73,6 +78,41 @@ describe('окно удаления — близнецы', () => {
         .replace(/\s+/gu, ' ')
         .trim();
     expect(norm(read(STUDIO_DIALOG))).toEqual(norm(read(CABINET_DIALOG)));
+  });
+});
+
+describe('ЖИЗНЬ СОСТОЯНИЯ между открытиями', () => {
+  // Ревью #2232 нашло дефект, которого не видел ни один зуб этого файла: пять проверок
+  // смотрели СОДЕРЖИМОЕ окна и ни одна — его поведение во времени. Свидетельство бралось
+  // не там, где живёт риск. Эти три зуба закрывают именно проводку; сама механика ворот
+  // проверяется последовательностью событий в ядре
+  // (packages/services/media-library/test/deletion-value.test.ts).
+  it('оба дома берут состояние ворот из ЯДРА, а не держат своё', () => {
+    for (const p of [CABINET_DIALOG, STUDIO_DIALOG]) {
+      const s = read(p);
+      expect(s).toContain('deletionGateReducer');
+      expect(s).toContain('isDeletionBlocked');
+      // Своё состояние для галочки — вторая копия правила и прямой путь к прежнему
+      // дефекту: компонент не размонтируется, и локальный флаг переживает окно.
+      expect(s, 'галочка не должна жить в локальном состоянии дома').not.toContain('setAcknowledged');
+      expect(s, 'useState в окне больше не нужен — состояние ворот в ядре').not.toContain('useState');
+    }
+  });
+
+  it('оба дома ОБЪЯВЛЯЮТ воротам открытие и закрытие — молча состояние не меняется', () => {
+    for (const p of [CABINET_DIALOG, STUDIO_DIALOG]) {
+      const s = read(p);
+      expect(s).toContain("dispatch(open ? { type: 'open'");
+      expect(s).toContain("{ type: 'close' }");
+    }
+  });
+
+  it('ключ открытия различает РАЗНЫЕ удаления: заголовок и состав списка', () => {
+    for (const p of [CABINET_DIALOG, STUDIO_DIALOG]) {
+      const s = read(p);
+      expect(s).toContain('const openKey');
+      expect(s).toContain('samples.map((s) => s.id).join');
+    }
   });
 });
 

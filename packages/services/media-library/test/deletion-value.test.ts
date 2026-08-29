@@ -10,10 +10,13 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import {
+  DELETION_GATE_CLOSED,
   EVIDENCE_WINDOWS,
   assessDeletion,
   assessDeletionValue,
+  deletionGateReducer,
   evidenceWindowOf,
+  isDeletionBlocked,
 } from '../src/deletion-value.js';
 import type { Collection, MediaSample } from '../src/types.js';
 
@@ -135,5 +138,66 @@ describe('окна вещдоков — одна правда, два носит
     const fromJson = registry.windows.map((w) => `${w.id}|${w.deviceId}|${w.from}|${w.to}|${w.doc}`).sort();
     const fromCore = EVIDENCE_WINDOWS.map((w) => `${w.id}|${w.deviceId}|${w.from}|${w.to}|${w.doc}`).sort();
     expect(fromCore).toEqual(fromJson);
+  });
+});
+
+describe('ворота удаления — поведение во времени', () => {
+  const evidenceInput = { willDelete: 1, evidence: 1, acknowledged: false } as const;
+
+  it('ПОРЧА РЕВЬЮ: второе движение НЕ переживает окно', () => {
+    // Отметил «понимаю» → отменил → открыл окно для ДРУГОГО удаления. Галочка обязана
+    // сброситься, иначе предохранитель срабатывает один раз за сеанс.
+    let st = deletionGateReducer(DELETION_GATE_CLOSED, { type: 'open', key: 'удаление-1' });
+    st = deletionGateReducer(st, { type: 'acknowledge', value: true });
+    expect(isDeletionBlocked({ ...evidenceInput, acknowledged: st.acknowledged })).toBe(false);
+
+    // БЕЗ 'close' намеренно: закрытие обнуляет и в сломанной редакции, поэтому тест,
+    // идущий через него, дефекта не видит — проверено порчей. Несущий инвариант ровно
+    // один: ЛЮБОЕ открытие обнуляет второе движение.
+    st = deletionGateReducer(st, { type: 'open', key: 'удаление-2' });
+
+    expect(st.acknowledged, 'галочка пережила окно — предохранитель сломан').toBe(false);
+    expect(isDeletionBlocked({ ...evidenceInput, acknowledged: st.acknowledged })).toBe(true);
+  });
+
+  it('повторное открытие ТОГО ЖЕ удаления тоже обнуляет: закрытие можно пропустить', () => {
+    let st = deletionGateReducer(DELETION_GATE_CLOSED, { type: 'open', key: 'одно-и-то-же' });
+    st = deletionGateReducer(st, { type: 'acknowledge', value: true });
+    st = deletionGateReducer(st, { type: 'open', key: 'одно-и-то-же' });
+    expect(st.acknowledged).toBe(false);
+  });
+
+  it('галочку нельзя поставить у закрытого окна', () => {
+    const st = deletionGateReducer(DELETION_GATE_CLOSED, { type: 'acknowledge', value: true });
+    expect(st.acknowledged).toBe(false);
+  });
+
+  it('блокировка: пустой список, занятость и неподтверждённый вещдок', () => {
+    expect(isDeletionBlocked({ willDelete: 0, evidence: 0, acknowledged: true })).toBe(true);
+    expect(isDeletionBlocked({ willDelete: 5, evidence: 0, acknowledged: false, busy: true })).toBe(true);
+    expect(isDeletionBlocked({ willDelete: 5, evidence: 2, acknowledged: false })).toBe(true);
+    expect(isDeletionBlocked({ willDelete: 5, evidence: 2, acknowledged: true })).toBe(false);
+    expect(isDeletionBlocked({ willDelete: 5, evidence: 0, acknowledged: false })).toBe(false);
+  });
+});
+
+describe('ложный вещдок при неизвестном приборе', () => {
+  it('ПОРЧА РЕВЬЮ: без прибора окно НЕ объявляет вещдоком чужую запись', () => {
+    const v = assessDeletionValue(sample({ createdAt: '2026-08-23T18:24:03.788Z' }), {});
+    expect(v.level, 'совпадение по одному времени вещдоком не является').not.toBe('evidence');
+  });
+
+  it('но и не молчит: неопределённость названа словами и отсылает к документу', () => {
+    const v = assessDeletionValue(sample({ createdAt: '2026-08-23T18:24:03.788Z' }), {});
+    expect(v.level).toBe('curated');
+    expect(v.why).toContain('дом не знает прибора');
+    expect(v.why).toContain('docs/field/2026-08-23-night-duty-journal-congestion.md');
+  });
+
+  it('чужой прибор в окно не попадает вовсе', () => {
+    const v = assessDeletionValue(sample({ createdAt: '2026-08-23T18:24:03.788Z' }), {
+      deviceId: 'другое-устройство',
+    });
+    expect(v.level).toBe('ordinary');
   });
 });

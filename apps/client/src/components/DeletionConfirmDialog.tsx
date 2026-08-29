@@ -15,10 +15,13 @@
  * поэтому правило одно, а носителя два; расхождение ловит зуб сходства
  * `apps/client/src/modules/deletion-dialog-twins.test.ts`, а не внимательность.
  */
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useReducer, type ReactNode } from 'react';
 
 import {
+  DELETION_GATE_CLOSED,
   assessDeletion,
+  deletionGateReducer,
+  isDeletionBlocked,
   type Collection,
   type DeletionValueLevel,
   type MediaSample,
@@ -73,8 +76,30 @@ export function DeletionConfirmDialog({
     () => assessDeletion(samples, { collections, deviceId }),
     [samples, collections, deviceId],
   );
-  // Вещдок требует ВТОРОГО движения: галочка «понимаю». Рядовая уборка — одного.
-  const [acknowledged, setAcknowledged] = useState(false);
+  /**
+   * Состояние ворот живёт в ЯДРЕ (`deletionGateReducer`), а не в этом компоненте: правило
+   * «любое открытие обнуляет второе движение» — общее для обоих домов, и проверяется оно
+   * последовательностью событий в зубе, а не рендером.
+   */
+  const [gate, dispatch] = useReducer(deletionGateReducer, DELETION_GATE_CLOSED);
+  const acknowledged = gate.acknowledged;
+
+  // Открытие объявляется воротам своим ключом: своё удаление — свой ключ, и второе
+  // движение начинается заново. Ключ несёт и заголовок, и состав списка: смена любого из
+  // них — другое удаление, а не то же самое.
+  const openKey = `${title}|${samples.map((s) => s.id).join(',')}`;
+  useEffect(() => {
+    dispatch(open ? { type: 'open', key: openKey } : { type: 'close' });
+  }, [open, openKey]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !busy) onCancel();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, busy, onCancel]);
 
   if (!open) return null;
 
@@ -83,7 +108,12 @@ export function DeletionConfirmDialog({
   const unknown = Math.max(0, willDelete - known);
   const nothingToDelete = willDelete === 0;
   const valuable = summary.evidence + summary.curated;
-  const blocked = nothingToDelete || busy || (summary.evidence > 0 && !acknowledged);
+  const blocked = isDeletionBlocked({
+    willDelete,
+    evidence: summary.evidence,
+    acknowledged,
+    busy,
+  });
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
@@ -151,7 +181,7 @@ export function DeletionConfirmDialog({
               type="checkbox"
               className="checkbox checkbox-sm"
               checked={acknowledged}
-              onChange={(e) => setAcknowledged(e.target.checked)}
+              onChange={(e) => dispatch({ type: 'acknowledge', value: e.target.checked })}
             />
             <span>Понимаю, что удаляю вещдоки, и делаю это осознанно</span>
           </label>

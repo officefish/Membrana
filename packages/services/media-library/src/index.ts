@@ -48,7 +48,13 @@ export type {
 } from './types.js';
 
 export {
+  DELETION_GATE_CLOSED,
   EVIDENCE_WINDOWS,
+  deletionGateReducer,
+  isDeletionBlocked,
+  windowByTimeOnly,
+  type DeletionGateEvent,
+  type DeletionGateState,
   assessDeletion,
   assessDeletionValue,
   evidenceWindowOf,

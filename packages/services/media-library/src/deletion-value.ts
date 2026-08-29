@@ -72,16 +72,45 @@ export const EVIDENCE_WINDOWS: readonly EvidenceWindow[] = Object.freeze([
 const KEEP_WORDS = /хранить|не удалять|вещдок/u;
 const KEEP_LATIN = /\bkeep\b/u;
 
-/** Запись попадает в объявленное окно вещдока? Границы включительные. */
+/**
+ * Запись попадает в объявленное окно вещдока? Границы включительные.
+ *
+ * ПРИБОР ОБЯЗАТЕЛЕН для вердикта «вещдок». Окна привязаны к устройству, и совпадение по
+ * одному времени доказывает лишь то, что запись сделана в те же часы — возможно, другим
+ * прибором. Первая редакция при неизвестном устройстве пропускала фильтр и объявляла
+ * вещдоком чужое: ЛОЖНЫЙ вещдок опаснее пропущенного, потому что приучает жать «понимаю»
+ * (поймано ревью #2232).
+ */
 export function evidenceWindowOf(
   sample: Pick<MediaSample, 'createdAt'>,
   deviceId?: string,
   windows: readonly EvidenceWindow[] = EVIDENCE_WINDOWS,
 ): EvidenceWindow | null {
+  if (!deviceId) return null;
   const t = Date.parse(sample.createdAt);
   if (!Number.isFinite(t)) return null;
   for (const w of windows) {
-    if (deviceId && w.deviceId !== deviceId) continue;
+    if (w.deviceId !== deviceId) continue;
+    const a = Date.parse(w.from);
+    const b = Date.parse(w.to);
+    if (Number.isFinite(a) && Number.isFinite(b) && t >= a && t <= b) return w;
+  }
+  return null;
+}
+
+/**
+ * Окно, совпавшее ТОЛЬКО по времени, когда прибор дому неизвестен.
+ *
+ * Это не вердикт «вещдок», а названная неопределённость: подсказка есть, доказательства
+ * нет. Молчать здесь тоже нельзя — тогда дом без прибора терял бы предупреждение целиком.
+ */
+export function windowByTimeOnly(
+  sample: Pick<MediaSample, 'createdAt'>,
+  windows: readonly EvidenceWindow[] = EVIDENCE_WINDOWS,
+): EvidenceWindow | null {
+  const t = Date.parse(sample.createdAt);
+  if (!Number.isFinite(t)) return null;
+  for (const w of windows) {
     const a = Date.parse(w.from);
     const b = Date.parse(w.to);
     if (Number.isFinite(a) && Number.isFinite(b) && t >= a && t <= b) return w;
@@ -131,6 +160,17 @@ export function assessDeletionValue(
       level: 'evidence',
       why: `входит в окно вещдока «${window.id}»: ${window.why}; ссылается ${window.doc}`,
     };
+  }
+
+  if (!ctx.deviceId) {
+    const maybe = windowByTimeOnly(sample, ctx.windows);
+    if (maybe) {
+      return {
+        ...base,
+        level: 'curated',
+        why: `время записи попадает в окно «${maybe.id}», но дом не знает прибора — сверьте по ${maybe.doc}`,
+      };
+    }
   }
 
   const collection = ctx.collections?.find((c) => c.id === sample.collectionId);
@@ -222,4 +262,66 @@ export function assessDeletion(
     headline: `${parts.join(' · ')}.`,
     verdicts,
   };
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * ПОВЕДЕНИЕ ОКНА ВО ВРЕМЕНИ — тоже правило, а не деталь дома.
+ *
+ * Ревью #2232 нашло дефект, которого не видел ни один мой зуб: галочка «понимаю, что
+ * удаляю вещдоки» жила в React-состоянии компонента, а компонент при закрытии отдавал
+ * `null`, но НЕ размонтировался. Отметил → отменил → открыл окно для другого удаления —
+ * второе движение уже сделано за человека. Предохранитель срабатывал ОДИН РАЗ за сеанс.
+ *
+ * Зубы этого не поймали, потому что проверяли содержимое окна, а не его жизнь между
+ * открытиями: свидетельство бралось не там, где живёт риск. Поэтому состояние переехало
+ * сюда — в чистый редьюсер, который можно прогнать последовательностью событий, и правило
+ * стало общим для обоих домов вместо двух копий в двух компонентах.
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+export interface DeletionGateState {
+  /** Ключ открытого окна: своё удаление — свой ключ. `null` — окно закрыто. */
+  readonly openKey: string | null;
+  readonly acknowledged: boolean;
+}
+
+export type DeletionGateEvent =
+  | { readonly type: 'open'; readonly key: string }
+  | { readonly type: 'acknowledge'; readonly value: boolean }
+  | { readonly type: 'close' };
+
+export const DELETION_GATE_CLOSED: DeletionGateState = Object.freeze({ openKey: null, acknowledged: false });
+
+/**
+ * Переход состояния ворот удаления.
+ *
+ * Несущее правило одно: ЛЮБОЕ открытие обнуляет второе движение. Не «закрытие обнуляет» —
+ * закрытие можно пропустить (перерисовка, смена набора, повторный вызов), а открытие
+ * пропустить нельзя: без него окна нет.
+ */
+export function deletionGateReducer(state: DeletionGateState, event: DeletionGateEvent): DeletionGateState {
+  switch (event.type) {
+    case 'open':
+      return { openKey: event.key, acknowledged: false };
+    case 'acknowledge':
+      return state.openKey === null ? state : { ...state, acknowledged: event.value };
+    case 'close':
+      return DELETION_GATE_CLOSED;
+    default:
+      return state;
+  }
+}
+
+/**
+ * Заблокирована ли кнопка удаления. Одна функция на оба дома — иначе «когда можно жать»
+ * разъедется между близнецами молча.
+ */
+export function isDeletionBlocked(input: {
+  readonly willDelete: number;
+  readonly evidence: number;
+  readonly acknowledged: boolean;
+  readonly busy?: boolean;
+}): boolean {
+  if (input.willDelete <= 0) return true;
+  if (input.busy) return true;
+  return input.evidence > 0 && !input.acknowledged;
 }

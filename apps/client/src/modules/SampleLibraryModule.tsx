@@ -355,9 +355,12 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   const removeGated = useCallback(
     async (sampleId: string): Promise<void> => {
       const one = samples.find((x) => x.id === sampleId);
+      // Та же оговорка, что в кабинете: вне загруженной страницы пробы нет в руках, но
+      // удаление по id состоится — окно обязано знать число, а не молчать «нечего».
       setPendingDeletion({
         title: 'Удалить пробу',
         samples: one ? [one] : [],
+        declaredTotal: 1,
         run: () => handleRemove(sampleId),
       });
     },

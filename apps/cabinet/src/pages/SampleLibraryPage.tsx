@@ -72,7 +72,10 @@ export function SampleLibraryPage() {
   const removeGated = useCallback(
     async (id: string): Promise<void> => {
       const one = lib.nodeSamples.find((s: MediaSample) => s.id === id);
-      askDelete('Удалить пробу', one ? [one] : [], () => lib.handleRemove(id));
+      // Проба может лежать вне загруженной страницы: тогда список пуст, но удаление по id
+      // состоится. Объявляем ЧИСЛО — иначе окно решило бы «удалять нечего» и не дало бы
+      // подтвердить то, что на деле уйдёт (родня занижения потери, ревью #2232).
+      askDelete('Удалить пробу', one ? [one] : [], () => lib.handleRemove(id), 1);
     },
     [askDelete, lib],
   );
