@@ -470,7 +470,8 @@
     "journals:verify": "node scripts/verify-journal-merge.mjs",
     "node:duty-ready": "node scripts/node-duty-ready.mjs",
     "buffer:protect-evidence": "node scripts/buffer-protect-evidence.mjs",
-    "buffer:evacuate-evidence": "node scripts/buffer-evacuate-evidence.mjs"
+    "buffer:evacuate-evidence": "node scripts/buffer-evacuate-evidence.mjs",
+    "verify:declared-imports": "node scripts/verify-declared-imports.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
