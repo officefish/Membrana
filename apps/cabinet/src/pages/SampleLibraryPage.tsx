@@ -6,11 +6,8 @@ import { DeletionConfirmDialog } from '@/components/sample-library/DeletionConfi
 import { CabinetSampleDuplicatesPanel } from '@/components/sample-library/CabinetSampleDuplicatesPanel';
 import { CabinetSampleSessionDigestPanel } from '@/components/sample-library/CabinetSampleSessionDigestPanel';
 import { CabinetSamplePlayerSection } from '@/components/sample-library/CabinetSamplePlayerSection';
-import {
-  BUFFER_COLLECTION_ID,
-  BUFFER_MANAGER_MANIFEST,
-  type MediaSample,
-} from '@membrana/media-library-service';
+import { BUFFER_COLLECTION_ID, BUFFER_MANAGER_MANIFEST } from '@membrana/media-library-service';
+import type { MediaSample } from '@membrana/media-library-service';
 
 import { BufferManagerPanel } from '@/components/buffer-manager/BufferManagerPanel';
 import { PagePluginArea } from '@/plugins/PagePluginArea';
