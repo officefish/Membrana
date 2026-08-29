@@ -1,5 +1,6 @@
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { DeletionConfirmDialog } from '@/components/DeletionConfirmDialog';
+import { readPersistedPairedCredentials } from '@/lib/resolveMediaLibraryBackend';
 import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
 import {
@@ -340,6 +341,15 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     readonly run: () => void | Promise<void>;
   } | null>(null);
   const [deletingNow, setDeletingNow] = useState(false);
+
+  /**
+   * ПРИБОР ДЛЯ ГИПОТЕЗЫ ЦЕНОСТИ. Без него окна вещдоков не применяются, и вердикт
+   * «вещдок» падает до «разобрано руками» — то есть второе движение у близнецов
+   * получается РАЗНОЙ силы: в кабинете галочка обязательна, в Studio нет (ревью #2232).
+   * В связке с узлом прибор известен; в автономном режиме записи местные, и окна
+   * узла к ним не относятся — тогда `undefined` честен, а не потерян.
+   */
+  const pairedDeviceId = useMemo(() => readPersistedPairedCredentials()?.deviceId, []);
 
   const confirmDeletion = useCallback(async () => {
     if (!pendingDeletion) return;
@@ -786,6 +796,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
         samples={pendingDeletion?.samples ?? []}
         declaredTotal={pendingDeletion?.declaredTotal}
         collections={snapshot.collections}
+        deviceId={pairedDeviceId}
         busy={deletingNow}
         onCancel={() => setPendingDeletion(null)}
         onConfirm={() => void confirmDeletion()}
