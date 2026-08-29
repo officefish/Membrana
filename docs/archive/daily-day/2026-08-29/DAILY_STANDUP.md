@@ -1,3 +1,12 @@
+<!--
+  archive-role: archive-snapshot
+  archive-day: 2026-08-29
+  archived-at: 2026-08-29T15:32:57.521Z
+  source: docs/DAILY_STANDUP.md
+  canonical: docs/DAILY_STANDUP.md (перезаписывается yarn plan:day / standup / main-day-issue)
+  Не использовать как основной документ дня — побочный снимок для ретроспективы и анализа.
+-->
+
 <!-- Сгенерировано: 2026-08-29T08:24:54.822Z (yarn standup@77b53ff9) -->
 <!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->
 <!-- Входы: VIRTUAL_TEAM_PROMPT, docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md, STRATEGY_DAY, DAILY_CODE_REVIEW, GitHub Issues (25), packages/temp (0 файлов) -->

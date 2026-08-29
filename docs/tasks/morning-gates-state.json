@@ -1,19 +1,24 @@
 {
   "magistralOptions": [
-    "buffer-control-plugin-2204",
+    "night-procedure-frames",
     "buffer-delete-modal-2218",
-    "node-duty-ready-predicate"
+    "assets-container"
   ],
-  "frozenDigest": "ec2e46356e371880a14bcb0bcf3abd9a9ed7d317a300568d2b4c0f27887633b7",
-  "magistral": "buffer-control-plugin-2204",
-  "swallow": null,
-  "day": "2026-08-28",
-  "magistralChosenAt": "2026-08-28",
+  "frozenDigest": "c1e3ed9c7d15b2d3bc40aeb7e56f1ccdfa324c6993c90aa7c1868681f5aecb3e",
+  "magistral": "night-procedure-frames",
+  "swallow": {
+    "draftDigest": "1d21616afb49c2e26ae7dbe681639a19d6a3ce2c9863606ba681847693e85b25",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-08-29.md",
+    "ownerAck": true,
+    "day": "2026-08-29"
+  },
+  "day": "2026-08-29",
+  "magistralChosenAt": "2026-08-29",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-08-28",
-    "chosen": "buffer-control-plugin-2204",
-    "snapshotDigest": "ec2e46356e371880a14bcb0bcf3abd9a9ed7d317a300568d2b4c0f27887633b7",
+    "at": "2026-08-29",
+    "chosen": "night-procedure-frames",
+    "snapshotDigest": "c1e3ed9c7d15b2d3bc40aeb7e56f1ccdfa324c6993c90aa7c1868681f5aecb3e",
     "inSnapshot": true
   }
 }

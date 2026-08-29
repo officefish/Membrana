@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-27 |
-| Head SHA | 9d8e9a5775ddfb4b74c8242890dd07bb030965a8 |
+| Date | 2026-08-29 |
+| Head SHA | 354bc33982f972a39b9b7fbfdf8eec24ab15ab44 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1188 |
-| Yarn scripts (package.json) | 457 |
-| Yarn → `scripts/` | 404 |
+| Code files under `scripts/` | 1196 |
+| Yarn scripts (package.json) | 460 |
+| Yarn → `scripts/` | 407 |
 | Yarn без пути `scripts/` | 53 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 866 |
+| Code files without yarn ref | 871 |
 
-## Yarn → scripts/ (404)
+## Yarn → scripts/ (407)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -70,6 +70,8 @@
 - `bridge:lead` → `scripts/bridge-lead-call.mjs`
 - `bridge:notebook` → `scripts/bridge-notebook.mjs`
 - `bridge:shown` → `scripts/bridge-shown.mjs`
+- `buffer:evacuate-evidence` → `scripts/buffer-evacuate-evidence.mjs`
+- `buffer:protect-evidence` → `scripts/buffer-protect-evidence.mjs`
 - `build:affected` → `scripts/build-affected.mjs`
 - `cabinet:deploy:image:prod` → `scripts/_ssh-cabinet-deploy-image.mjs`
 - `cabinet:deploy:prod` → `scripts/deploy-run.mjs`, `scripts/_ssh-cabinet-deploy.mjs`
@@ -411,6 +413,7 @@
 - `vdr:list` → `scripts/list-free-v1-content.mjs`
 - `vds:run` → `scripts/deploy-run.mjs`, `scripts/_ssh-office-exec.mjs`
 - `verify:branch-protection` → `scripts/verify-branch-protection.mjs`
+- `verify:declared-imports` → `scripts/verify-declared-imports.mjs`
 - `verify:encoding` → `scripts/verify-encoding.mjs`
 - `verify:image-workspace-deps` → `scripts/verify-image-workspace-deps.mjs`
 - `verify:install-state` → `scripts/require-install-state.mjs`
@@ -430,7 +433,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (866)
+## Code files without yarn ref (871)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -530,6 +533,7 @@
 - `scripts/bridge-frames.test.mjs`
 - `scripts/bridge-room.test.mjs`
 - `scripts/bridge-toolkit.test.mjs`
+- `scripts/buffer-protect-evidence.test.mjs`
 - `scripts/build-affected.test.mjs`
 - `scripts/build-usercase-competition-team.mjs`
 - `scripts/build-v08-policy-constructor-json.mjs`
@@ -567,6 +571,7 @@
 - `scripts/day-plan-frame.test.mjs`
 - `scripts/day-work-diff.test.mjs`
 - `scripts/dead-wire.test.mjs`
+- `scripts/declared-imports.test.mjs`
 - `scripts/deep-research.test.mjs`
 - `scripts/delivery-report.test.mjs`
 - `scripts/deploy-run.test.mjs`
@@ -725,6 +730,7 @@
 - `scripts/lib/debt-classify.test.mjs`
 - `scripts/lib/debt-gate.mjs`
 - `scripts/lib/debt-gate.test.mjs`
+- `scripts/lib/declared-imports.mjs`
 - `scripts/lib/deep-research.mjs`
 - `scripts/lib/delivery-report.mjs`
 - `scripts/lib/deps-watch-audit-state.mjs`
@@ -1033,6 +1039,7 @@
 - `scripts/lib/workflow-examples.mjs`
 - `scripts/lib/workshop-dependencies.mjs`
 - `scripts/lib/workshop-ownership.mjs`
+- `scripts/lib/workspace-dirs.mjs`
 - `scripts/lib/workspace-links.mjs`
 - `scripts/lib/worktree-align/align-plan.mjs`
 - `scripts/lib/worktree-align/align-plan.test.mjs`
@@ -1292,6 +1299,7 @@
 - `scripts/workflow-examples.test.mjs`
 - `scripts/workshop-dependencies.test.mjs`
 - `scripts/workshop-ownership.test.mjs`
+- `scripts/workspace-dirs.test.mjs`
 - `scripts/workspace-links.test.mjs`
 - `scripts/worktree-bootstrap.test.mjs`
 - `scripts/worktree-merge.mjs`
@@ -1309,7 +1317,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1188)
+## All code files (1196)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1466,6 +1474,9 @@
 - `scripts/bridge-shown.mjs`
 - `scripts/bridge-toolkit.test.mjs`
 - `scripts/bridge.mjs`
+- `scripts/buffer-evacuate-evidence.mjs`
+- `scripts/buffer-protect-evidence.mjs`
+- `scripts/buffer-protect-evidence.test.mjs`
 - `scripts/build-affected.mjs`
 - `scripts/build-affected.test.mjs`
 - `scripts/build-templates-from-dataset.mjs`
@@ -1539,6 +1550,7 @@
 - `scripts/day-work-diff.test.mjs`
 - `scripts/dead-wire-check.mjs`
 - `scripts/dead-wire.test.mjs`
+- `scripts/declared-imports.test.mjs`
 - `scripts/deep-research.test.mjs`
 - `scripts/deepseek-task.mjs`
 - `scripts/delivery-report-check.mjs`
@@ -1749,6 +1761,7 @@
 - `scripts/lib/debt-classify.test.mjs`
 - `scripts/lib/debt-gate.mjs`
 - `scripts/lib/debt-gate.test.mjs`
+- `scripts/lib/declared-imports.mjs`
 - `scripts/lib/deep-research.mjs`
 - `scripts/lib/delivery-report.mjs`
 - `scripts/lib/deps-watch-audit-state.mjs`
@@ -2057,6 +2070,7 @@
 - `scripts/lib/workflow-examples.mjs`
 - `scripts/lib/workshop-dependencies.mjs`
 - `scripts/lib/workshop-ownership.mjs`
+- `scripts/lib/workspace-dirs.mjs`
 - `scripts/lib/workspace-links.mjs`
 - `scripts/lib/worktree-align/align-plan.mjs`
 - `scripts/lib/worktree-align/align-plan.test.mjs`
@@ -2457,6 +2471,7 @@
 - `scripts/vdr-labels-merge.test.mjs`
 - `scripts/verify-branch-protection.mjs`
 - `scripts/verify-client-catalog.mjs`
+- `scripts/verify-declared-imports.mjs`
 - `scripts/verify-docs-canon.mjs`
 - `scripts/verify-encoding.mjs`
 - `scripts/verify-encoding.test.mjs`
@@ -2488,6 +2503,7 @@
 - `scripts/workflow-examples.test.mjs`
 - `scripts/workshop-dependencies.test.mjs`
 - `scripts/workshop-ownership.test.mjs`
+- `scripts/workspace-dirs.test.mjs`
 - `scripts/workspace-links.mjs`
 - `scripts/workspace-links.test.mjs`
 - `scripts/worktree-bootstrap.mjs`
