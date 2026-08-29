@@ -21,7 +21,7 @@
     "scripts/lib/procedure-contract-stamp.mjs": "af43e936d958784b1b824786e0eca4c6ebf1bffb",
     "scripts/lib/procedure-home-form.mjs": "39a162665b322e5ac81a0769dd2cd6d650d933ae",
     "scripts/lib/procedure-personas.mjs": "01476ad42b9824007e457ebecaf3ba23d9aa56f4",
-    "scripts/lib/procedures-registry.mjs": "27fd0b4120fe44c098316941eb785ebce66a7be4",
+    "scripts/lib/procedures-registry.mjs": "e4d9ed5306705b5a53b84f678152b8779cfb58f0",
     "scripts/lib/repo-branches-decompose.mjs": "ce4b67773def69ca9a15fc864433ab2962e9cfcc",
     "scripts/lib/repo-branches.mjs": "285eef53a2cfed734c7bb342ab3dbc3d4cb52fc2",
     "scripts/lib/scripts-inventory.mjs": "94aaa34fcb4ebf054b579f66e54f460f92af1cad",
