@@ -40,6 +40,7 @@
     "@membrana/template-match-detector-service": "*",
     "@membrana/trends-detector-service": "*",
     "@membrana/usercase-catalog-service": "*",
+    "@membrana/yamnet-detector-service": "*",
     "@uiw/react-json-view": "2.0.0-alpha.42",
     "meyda": "^5.6.3",
     "react": "^18.3.1",

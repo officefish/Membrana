@@ -119,6 +119,10 @@
     {
       "name": "@membrana/usercase-catalog-service",
       "fanIn": 1
+    },
+    {
+      "name": "@membrana/yamnet-detector-service",
+      "fanIn": 1
     }
   ]
 }
