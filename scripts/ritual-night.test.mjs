@@ -145,3 +145,66 @@ test('ПРОФИЛАКТИКА: у каждого шага cadence сходит�
     assert.equal(s.cadence, derived, `${s.id}: заявлен ритм «${s.cadence}», а cron «${s.schedule}» говорит «${derived}»`);
   }
 });
+
+test('ПРОФИЛАКТИКА: носитель сводки объявлен ровно тем, что лежит в стволе', async () => {
+  // Класс тот же, что у ритмов, только разъехались не манифест с cron, а ДВА PR одного дня:
+  // сводку влил #2242 (e3687287), пока этот PR ждал слова владельца. Манифест объявлял
+  // docs/night/<date>/SUMMARY.md, писателя `node scripts/night-summary.mjs` и читателя
+  // `night-summary:gate` — ни файла, ни обоих глаголов в стволе нет. Объявление и факт обязаны
+  // совпадать после слияния, иначе манифест ночи врёт с первого дня.
+  const { readFileSync } = await import('node:fs');
+  const { NIGHT_SUMMARY_MARKDOWN_REL, NIGHT_SUMMARY_REPORT_REL } = await import('./lib/night-summary.mjs');
+
+  const manifest = JSON.parse(readFileSync(new URL('../docs/procedures/ritual-night/MANIFEST.json', import.meta.url), 'utf8'));
+  const carrier = manifest.post.find((f) => f.id === 'night-summary')?.carrier;
+  assert.ok(carrier, 'несущий фрейм сводки исчез из манифеста');
+
+  // Пути в манифесте — ПОВТОР констант ствола. Повтор и есть источник расхождения, потому сверяем.
+  assert.equal(carrier.machine, NIGHT_SUMMARY_REPORT_REL, 'машинный носитель разошёлся с NIGHT_SUMMARY_REPORT_REL');
+  assert.equal(carrier.path, NIGHT_SUMMARY_MARKDOWN_REL, 'человекочитаемый носитель разошёлся с NIGHT_SUMMARY_MARKDOWN_REL');
+
+  // Глаголы обязаны существовать. Прежние — не существовали, и это никого не остановило.
+  const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+  for (const role of ['writer', 'reader']) {
+    const verb = String(carrier[role] ?? '').replace(/^yarn\s+/u, '').split(/\s+/u)[0];
+    assert.ok(pkg.scripts[verb], `${role}: глагола «${verb}» нет в package.json — объявлен вызов, которого не существует`);
+  }
+});
+
+test('исполняемый контракт утра объявлен ОДИН раз — в манифесте утра, не в манифесте ночи', async () => {
+  // Потребитель (runNightReportGate) читает RITUAL_DAY_MANIFEST_REL, кадр NIGHT_REPORT_FRAME_ID.
+  // Манифест ночи ему не виден вовсе. Своё blocksMorningWhen здесь было бы вторым объявлением
+  // одного факта — и, разойдясь с SUPPORTED_BLOCK_EXPR, роняло бы гейт fail closed.
+  const { readFileSync } = await import('node:fs');
+  const { NIGHT_REPORT_FRAME_ID, RITUAL_DAY_MANIFEST_REL, SUPPORTED_BLOCK_EXPR } = await import('./lib/night-report-gate.mjs');
+
+  const night = JSON.parse(readFileSync(new URL('../docs/procedures/ritual-night/MANIFEST.json', import.meta.url), 'utf8'));
+  const carrier = night.post.find((f) => f.id === 'night-summary')?.carrier;
+  assert.equal(carrier.blocksMorningWhen, undefined, 'ночь объявила своё blocksMorningWhen — второе объявление одного факта');
+
+  const day = JSON.parse(readFileSync(new URL(`../${RITUAL_DAY_MANIFEST_REL}`, import.meta.url), 'utf8'));
+  const frames = [...(day.preflight ?? []), ...(day.frames ?? []), ...(day.post ?? [])];
+  const live = frames.find((f) => f.id === NIGHT_REPORT_FRAME_ID)?.carrier;
+  assert.ok(live, `кадр ${NIGHT_REPORT_FRAME_ID} исчез из манифеста утра — потребителю нечего читать`);
+  assert.equal(live.blocksMorningWhen, SUPPORTED_BLOCK_EXPR, 'живое выражение разошлось с единственным поддержанным — гейт упал бы fail closed');
+});
+
+test('СНИМОК ДОЛГА: сводка читает три ночных workflow из пяти шагов ночи', async () => {
+  // Долг называется числом, чтобы не расти молча. Механизм заведён лечить «пять следов, ни одного
+  // читателя», а читает три: охота и НЕДЕЛЬНЫЙ ПЛАН — тот самый, что падал семнадцать понедельников
+  // подряд, — не покрыты вовсе. Расширение обязано двинуть это число ОСОЗНАННО, как род процедуры.
+  const { readFileSync } = await import('node:fs');
+  const { NIGHT_WORKFLOWS } = await import('./lib/night-summary.mjs');
+  assert.equal(NIGHT_WORKFLOWS.length, 3, 'состав сводки изменился — обнови снимок долга вместе с решением');
+
+  const doc = JSON.parse(readFileSync(new URL('../docs/tasks/night-ritual-steps.json', import.meta.url), 'utf8'));
+  const covered = new Set(NIGHT_WORKFLOWS.map((w) => w.workflow));
+  const uncovered = doc.steps
+    .filter((s) => !covered.has(String(s.workflow).replace('.github/workflows/', '')))
+    .map((s) => s.id);
+  assert.deepEqual(
+    uncovered.sort(),
+    ['night-hunt', 'vitest-corpus', 'weekly-plan'],
+    'состав непрочитанных шагов сдвинулся — это либо починка долга, либо новая слепота, и молча оно не проходит',
+  );
+});
