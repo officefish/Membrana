@@ -78,7 +78,7 @@ export function readNightReport(repoRoot, rel) {
  * @param {string | null} [input.reportProblem]
  * @param {string} input.expectedRevision 40-char SHA or prefix of target origin/main
  * @param {string} [input.today] legacy/log-only day; freshness is not decided by calendar date
- * @returns {{ status: 'pass'|'missing'|'stale'|'red'|'invalid', blockers: string[], summary: string[] }}
+ * @returns {{ status: 'pass'|'missing'|'stale'|'pending'|'red'|'invalid', blockers: string[], summary: string[] }}
  */
 export function evaluateNightReport({ carrier, report, reportProblem = null, expectedRevision, today = null }) {
   /** @type {string[]} */
@@ -195,7 +195,7 @@ function evaluateNightSummary(report) {
     });
   if (blockers.length === 0) return { status: 'pass', blockers: [], summary: lines };
   const first = checks.find((check) => check.required !== false && check.status !== 'pass');
-  const status = ['missing', 'stale', 'red', 'invalid'].includes(first?.status) ? first.status : 'red';
+  const status = ['missing', 'stale', 'pending', 'red', 'invalid'].includes(first?.status) ? first.status : 'red';
   return { status, blockers, summary: lines };
 }
 

@@ -113,6 +113,27 @@ test('evaluateNightReport: сводка без обязательного чте
   assert.match(verdict.blockers[0], /conclusion=failure/u);
 });
 
+test('evaluateNightReport: pending workflow остаётся pending в агрегатном статусе', () => {
+  const report = reportFixture({
+    workflows: [
+      {
+        id: 'vitest-nightly',
+        title: 'Vitest nightly',
+        workflow: 'vitest-nightly.yml',
+        required: true,
+        status: 'pending',
+        reason: 'запуск ещё не завершён: in_progress',
+      },
+    ],
+    execution: { status: 'pass', exitCode: 0 },
+  });
+
+  const verdict = evaluateNightReport({ carrier: CARRIER, report, today: TODAY, expectedRevision: HEAD_A });
+  assert.equal(verdict.status, 'pending');
+  assert.match(verdict.blockers[0], /Vitest nightly/u);
+  assert.match(verdict.blockers[0], /in_progress/u);
+});
+
 test('evaluateNightReport: свежесть не завязана на календарь, но чужая вершина красная', () => {
   const delayed = evaluateNightReport({
     carrier: CARRIER,
