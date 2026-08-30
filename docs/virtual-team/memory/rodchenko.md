@@ -5,8 +5,20 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14386/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 325 (причины в op-log) -->
+Записей: 49 · бюджет 14344/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 327 (причины в op-log) -->
+
+### 2026-08-29 · позиция · team-evening-feedback
+
+> Оценка артефактов: UI/дизайн не в фокусе дня — в diff нет ни одного изменения, относящегося к презентационному слою. `MAIN_DAY_ISSUE` вторичкой держит `buffer-delete-modal-2218`, но это «по возможности». Итоги дня: Вёрстки не было. Правки `apps/client/package.json` — только […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
+
+### 2026-08-28 · позиция · team-evening-feedback
+
+> Оценка артефактов: UI-часть в документах дня отсутствует — и это правильно: #2204 — сервисная/инфраструктурная задача. MAIN_DAY_ISSUE явно запрещает принимать GC/UI за закрытие DoD — чёткая граница. Итоги дня: В диффе дня UI/DESIGN.md нет (—). tsconfig path […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
 
 ### 2026-08-27 · позиция · hunt-and-canon-m0-order
 
@@ -289,15 +301,3 @@
 > С витрины читателя отчёта: в `llm-calls` человек открывает дом и видит ленту однородных карточек вызова, не кашу из политик и сырых дампов. Для network нужна та же конструкция: одна карточка = один зонд-снимок, заголовки честные (`organ`, `outcome`, время), без сырого тела […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/network-container-m1-home-record-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m2-infra-border
-
-> Мне важно понять форму ссылки для будущей витрины: если снимок ссылается на `infra-policy`-запись — чем? Путём — хрупко: `infra-policy.json` может переехать. Id — стабильнее, если id канонический. Ничем — тогда связь теряется при анализе. С точки зрения читаемости и честности […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/network-container-m2-infra-border-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · team-evening-feedback
-
-> Родченко. Оценка артефактов: DAILY_CODE_REVIEW развернул a11y-патч #1919 подробно с проверкой связки label↔input и aria-invalid/aria-describedby — оценка справедливая. MAIN_DAY_ISSUE корректно перенёс a11y-проход MembranePage во «Вторично (если останется время)» — приоритет […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-13.md#reply-1`

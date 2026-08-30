@@ -5,8 +5,20 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14365/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 326 (причины в op-log) -->
+Записей: 49 · бюджет 14397/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 328 (причины в op-log) -->
+
+### 2026-08-29 · позиция · team-evening-feedback
+
+> Оценка артефактов: Артефакты дня корректны. `MAIN_DAY_ISSUE` чётко разделил «измерения/факты» (schedule drift, охота-враньё) от «гипотез». Код-ревью верно пометил мою роль как «нет FFT/спектра» — день не математический. Итоги дня: В изменениях нет математики, но есть корректные […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
+
+### 2026-08-28 · позиция · team-evening-feedback
+
+> Оценка артефактов: MAIN_DAY_ISSUE — лучший пример формализации: посылки с маркерами `unknown` → к вечеру должны стать green или явный fail-log. Code-review точно указал на отсутствие стоп-предиката в диффе — это correctness-требование, не косметика. Итоги дня: `FIELD_NODE_RATE` […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
 
 ### 2026-08-27 · позиция · hunt-and-canon-m0-order
 
@@ -284,20 +296,8 @@
 
 — источник: `docs/seanses/network-container-m0-order-2026-08-13.md#reply-1`
 
-### 2026-08-13 · позиция · network-container-m1-home-record
+### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
 
-> Формализую кандидат единицы. Пусть запись `r` = результат одного акта зонда: `(organ, target_ref, observed_at, outcome_class, metrics_subset)`. Это функция наблюдения, не объект конфигурации. Маршрут и правило — либо поля/проекции, либо сущности других комнат; если сделать […] _(реплик в сеансе: 5)_
+> Сначала фиксирую два множества, которые нельзя смешивать: M2 records и attempts. Идемпотентность живёт на ключе `(principal,intentId)`, а независимое поступление тех же bytes с новым intent создаёт новый record и новую lineage. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/network-container-m1-home-record-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m2-infra-border
-
-> Формализую предикат шва строго. Пусть `F_p` — множество полей записи `infra-policy`, `F_s` — множество полей зонд-снимка. Дубль существует тогда и только тогда, когда `∃ f: f ∈ F_p ∩ F_s AND sem(f, policy) = sem(f, snapshot)`, где `sem` — семантический статус поля (норма vs. […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/network-container-m2-infra-border-2026-08-13.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
-
-> Порядок ролей полный: `public < ally < operator < owner`. Решение строится одной функцией сравнения ролей, без permission-grant и без снижения роли субъекта. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
