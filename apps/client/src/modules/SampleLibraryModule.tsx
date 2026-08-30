@@ -301,6 +301,24 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
         setLabelImport({ kind: 'refused', text: `Разметка не принята: ${read.why}.` });
         return;
       }
+      /**
+       * ПРИМЕНЯЕМ ТОЛЬКО К ПОЛНОСТЬЮ ЗАГРУЖЕННОМУ НАБОРУ. Тот же класс, что чинит этот
+       * PR, укусил внутри самой починки (ревью #2244): применение шло по загруженной
+       * странице, а записи вне неё докладывались как «не найдено в наборе» — хотя они в
+       * наборе есть. Полный файл применился бы частично, и человек считал бы, что
+       * применил его целиком. Отказ здесь честнее догрузки: он называет числа.
+       */
+      const inCollection = selected?.sampleCount ?? samples.length;
+      if (inCollection > samples.length) {
+        setLabelImport({
+          kind: 'refused',
+          text:
+            `Разметка не принята: дом загрузил ${samples.length} из ${inCollection} записей набора. ` +
+            'Применение к части набора оставило бы остальные со старой разметкой молча — ' +
+            'откройте набор целиком и повторите.',
+        });
+        return;
+      }
       const byTitle = new Map(samples.map((x) => [x.title, x]));
       let applied = 0;
       const missing: string[] = [];
@@ -326,7 +344,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
         kind: 'ok',
         text:
           `Разметка применена: ${applied} из ${read.manifest.labels.length}` +
-          (missing.length > 0 ? ` · не найдено в наборе: ${missing.length}` : '') + '.',
+          (missing.length > 0 ? ` · нет в наборе: ${missing.length}` : '') + '.',
       });
     },
     [samples, service],

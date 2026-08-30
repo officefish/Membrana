@@ -49,9 +49,24 @@ describe('файл разметки: обе половины круга', () => 
     expect(apply).toBeGreaterThan(gate);
   });
 
-  it('чего не нашли в наборе — называется числом, а не пропускается молча', () => {
+  it('чего нет в наборе — называется числом, а не пропускается молча', () => {
     const s = read(STUDIO);
-    expect(s).toContain('не найдено в наборе');
+    expect(s).toContain('нет в наборе');
+  });
+
+  it('ТОТ ЖЕ КЛАСС ВНУТРИ ПОЧИНКИ: приём отказывает, если набор загружен не весь', () => {
+    // Ревью #2244 поймало это в самой починке: применение шло по загруженной странице, а
+    // записи вне неё докладывались как «не найдено в наборе» — хотя в наборе они есть.
+    // Полный файл применился бы частично, и человек считал бы, что применил целиком.
+    const s = read(STUDIO);
+    expect(s).toContain('const inCollection = selected?.sampleCount ?? samples.length');
+    expect(s).toContain('if (inCollection > samples.length)');
+    expect(s).toContain('дом загрузил');
+    expect(s, 'отказ обязан сказать, что делать').toContain('откройте набор целиком');
+    // Проверка полноты обязана стоять ДО построения карты имён, иначе она бесполезна.
+    expect(s.indexOf('if (inCollection > samples.length)')).toBeLessThan(
+      s.indexOf('const byTitle = new Map('),
+    );
   });
 });
 
