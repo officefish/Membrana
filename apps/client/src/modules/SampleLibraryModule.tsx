@@ -347,7 +347,10 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
           (missing.length > 0 ? ` · нет в наборе: ${missing.length}` : '') + '.',
       });
     },
-    [samples, service],
+    // selected в зависимостях обязателен: без него замыкание судит о полноте по ПРОШЛОМУ
+    // набору — смена набора оставила бы старое число, и отказ считался бы по чужому.
+    // Тот же род, что чинит этот PR: суждение по устаревшему вместо текущего (ревью #2244).
+    [samples, selected, service],
   );
 
   const handleRemove = useCallback(
