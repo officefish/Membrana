@@ -47,7 +47,7 @@ Issue фазы: [#1284](https://github.com/officefish/Membrana/issues/1284). Э�
 ## Гейт ответственности (проход #1219 → ядро)
 
 Обязательное поле `gates` у каждой построенной процедуры несёт либо реальную
-паузу на человека (`waitsFor: owner|human` + `resume`), либо легальное
+паузу на человека или на саму ночь (`waitsFor: owner|human|night` + `resume`), либо легальное
 `{ kind: "none", why }` с честной причиной (`isHonestWhy` отклоняет TODO/n/a).
 
 Отдельный зуб `checkLeadPersona` в реестре задач (вещдок #1219) — **не** поле
