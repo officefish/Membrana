@@ -28,7 +28,7 @@ export const NIGHT_WORKFLOWS = Object.freeze([
 
 function normalizeRevision(value) {
   const s = String(value ?? '').trim().toLowerCase();
-  return /^[0-9a-f]{7,40}$/u.test(s) ? s : null;
+  return /^[0-9a-f]{12,40}$/u.test(s) ? s : null;
 }
 
 function sameRevision(left, right) {
@@ -52,6 +52,17 @@ export function readGitRevision(repoRoot, ref = 'HEAD') {
 }
 
 export function classifyNightWorkflowRun({ workflow, run, expectedRevision }) {
+  const expected = normalizeRevision(expectedRevision);
+  if (!expected) {
+    return {
+      id: workflow.id,
+      title: workflow.title,
+      workflow: workflow.workflow,
+      required: workflow.required !== false,
+      status: 'invalid',
+      reason: 'вершина ствола неизвестна',
+    };
+  }
   if (!run) {
     return {
       id: workflow.id,
@@ -63,7 +74,6 @@ export function classifyNightWorkflowRun({ workflow, run, expectedRevision }) {
     };
   }
   const headSha = normalizeRevision(run.headSha);
-  const expected = normalizeRevision(expectedRevision);
   const base = {
     id: workflow.id,
     title: workflow.title,
@@ -79,9 +89,6 @@ export function classifyNightWorkflowRun({ workflow, run, expectedRevision }) {
       headSha,
     },
   };
-  if (!expected) {
-    return { ...base, status: 'invalid', reason: 'вершина ствола неизвестна' };
-  }
   if (!headSha) {
     return { ...base, status: 'stale', reason: 'у запуска нет headSha' };
   }
@@ -163,7 +170,7 @@ export function writeNightSummary(repoRoot, summary) {
   return { jsonPath, mdPath };
 }
 
-export function latestRunByWorkflow(cwd, workflow, exec = execFileSync) {
+export function latestRunByWorkflow(cwd, workflow, exec = execFileSync, branch = 'main') {
   const raw = exec(
     'gh',
     [
@@ -172,7 +179,7 @@ export function latestRunByWorkflow(cwd, workflow, exec = execFileSync) {
       '--workflow',
       workflow.workflow,
       '--branch',
-      'main',
+      branch,
       '--limit',
       '1',
       '--json',
@@ -185,12 +192,12 @@ export function latestRunByWorkflow(cwd, workflow, exec = execFileSync) {
   return runs[0];
 }
 
-export function buildNightSummaryFromGithub({ cwd, expectedRevision, generatedAt, exec = execFileSync } = {}) {
+export function buildNightSummaryFromGithub({ cwd, expectedRevision, generatedAt, exec = execFileSync, branch = 'main' } = {}) {
   const runsByWorkflow = {};
   const ghErrors = new Map();
   for (const workflow of NIGHT_WORKFLOWS) {
     try {
-      runsByWorkflow[workflow.workflow] = latestRunByWorkflow(cwd, workflow, exec);
+      runsByWorkflow[workflow.workflow] = latestRunByWorkflow(cwd, workflow, exec, branch);
     } catch (e) {
       runsByWorkflow[workflow.workflow] = null;
       ghErrors.set(workflow.title, `gh run list не отработал — ${e instanceof Error ? e.message : e}`);

@@ -198,6 +198,7 @@ test('parseNightReportArgs + pullNightReport с подставным gh', () => 
     help: false,
   });
   assert.throws(() => parseNightReportArgs(['--today', 'вчера']));
+  assert.throws(() => parseNightReportArgs(['--expected-revision', 'abc1234']));
 
   const calls = [];
   const root = tempRoot();

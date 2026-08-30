@@ -201,7 +201,7 @@ function evaluateNightSummary(report) {
 
 function normalizeRevision(value) {
   const s = String(value ?? '').trim().toLowerCase();
-  return /^[0-9a-f]{7,40}$/u.test(s) ? s : null;
+  return /^[0-9a-f]{12,40}$/u.test(s) ? s : null;
 }
 
 function sameRevision(left, right) {

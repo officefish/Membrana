@@ -60,6 +60,19 @@ test('buildNightSummary: чужая вершина и красный workflow в
   assert.match(summary.problems.join('\n'), /Red: conclusion=failure/u);
 });
 
+test('buildNightSummary: неизвестная вершина ствола не маскируется missing-прогоном', () => {
+  const summary = buildNightSummary({
+    expectedRevision: null,
+    workflows: [{ id: 'a', title: 'A', workflow: 'a.yml', required: true }],
+    runsByWorkflow: {},
+  });
+
+  assert.equal(summary.execution.status, 'fail');
+  assert.equal(summary.workflows[0].status, 'invalid');
+  assert.match(summary.workflows[0].reason, /вершина ствола неизвестна/u);
+  assert.match(summary.problems.join('\n'), /A: вершина ствола неизвестна/u);
+});
+
 test('buildNightSummaryFromGithub: gh-сбой становится видимым пунктом сводки', () => {
   const summary = buildNightSummaryFromGithub({
     cwd: process.cwd(),
@@ -76,4 +89,23 @@ test('buildNightSummaryFromGithub: gh-сбой становится видимы
   assert.match(vitest.reason, /gh run list не отработал/u);
   assert.equal(summary.problems.length, 1);
   assert.match(renderNightSummaryMarkdown(summary), /Vitest nightly \| missing/u);
+});
+
+test('buildNightSummaryFromGithub: ветка GitHub Actions передаётся явно', () => {
+  const calls = [];
+  const summary = buildNightSummaryFromGithub({
+    cwd: process.cwd(),
+    expectedRevision: HEAD,
+    branch: 'release/night',
+    exec: (_cmd, args) => {
+      calls.push(args);
+      return JSON.stringify([run()]);
+    },
+  });
+
+  assert.equal(summary.execution.status, 'pass');
+  assert.equal(calls.length, 3);
+  for (const args of calls) {
+    assert.equal(args[args.indexOf('--branch') + 1], 'release/night');
+  }
 });

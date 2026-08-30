@@ -20,6 +20,7 @@ import { NIGHTLY_FULL_REPORT_REL } from './lib/tests-nightly-full.mjs';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const NIGHTLY_WORKFLOW = 'tests-nightly-full.yml';
 export const NIGHTLY_ARTIFACT = 'nightly-full-report';
+export const NIGHTLY_BRANCH = 'main';
 
 /**
  * gh run download отказывается перезаписывать существующие файлы артефакта.
@@ -51,7 +52,7 @@ export function parseNightReportArgs(argv) {
       out.today = next;
     } else if (a === '--expected-revision') {
       const next = argv[++i];
-      if (!/^[0-9a-f]{7,40}$/u.test(next ?? '')) throw new Error('--expected-revision: git SHA/prefix');
+      if (!/^[0-9a-f]{12,40}$/u.test(next ?? '')) throw new Error('--expected-revision: git SHA/prefix (12+ hex)');
       out.expectedRevision = next;
     } else if (a === '--help' || a === '-h') out.help = true;
     else throw new Error(`неизвестный флаг: ${a}`);
@@ -76,7 +77,7 @@ export function pullNightReport(cwd, deps = {}) {
       [
         'run', 'list',
         '--workflow', NIGHTLY_WORKFLOW,
-        '--branch', 'main',
+        '--branch', NIGHTLY_BRANCH,
         '--status', 'completed',
         '--limit', '1',
         '--json', 'databaseId,conclusion,updatedAt',
@@ -110,6 +111,7 @@ export function pullNightReport(cwd, deps = {}) {
     const summary = buildNightSummaryFromGithub({
       cwd,
       expectedRevision,
+      branch: deps.branch ?? NIGHTLY_BRANCH,
       exec,
     });
     writeNightSummary(cwd, summary);
@@ -143,7 +145,7 @@ export function runNightReportCli(argv, deps = {}) {
 
   Гейт ночи для утра (#1293): красный/несвежий/отсутствующий носитель = STOP (exit 2).
   --pull — сперва собрать ${NIGHT_SUMMARY_REPORT_REL}; tests-report ${NIGHTLY_ARTIFACT}/${NIGHTLY_WORKFLOW} подтягивается как детализация.
-  --expected-revision SHA — тестовый/ручной target вместо origin/main.
+  --expected-revision SHA — тестовый/ручной target вместо origin/main (минимум 12 hex).
   Дисциплина: дом носителя tests/reports/nightly-summary/ локален (gitignore), свежесть — по git revision, не по календарной дате.`);
     return 0;
   }
