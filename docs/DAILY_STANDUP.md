@@ -1,29 +1,29 @@
-<!-- Сгенерировано: 2026-08-29T08:24:54.822Z (yarn standup@77b53ff9) -->
+<!-- Сгенерировано: 2026-08-30T08:47:19.164Z (yarn standup@65bd50ff) -->
 <!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->
 <!-- Входы: VIRTUAL_TEAM_PROMPT, docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md, STRATEGY_DAY, DAILY_CODE_REVIEW, GitHub Issues (25), packages/temp (0 файлов) -->
 <!-- Issues: gh CLI -->
-<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"b22ead0cee68f3f7a78e102c16162ed590aaf69d","digest":"8abb26487dfe09fdc56daf14cd78e4cdbc86009fe779ac8a073485b648c71bb6"}}} -->
+<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"78e913a002fdb216b2a2063238bf3376d55d2410","digest":"bb2dc0d9c2cd12542e9851f231146843dce9b495eb264e197842709f4d92ecc7"}}} -->
 
 ## Фокус дня
-- **Добить #2204: green `media-library-service` + `background-media` и фальсифицируемый стоп по remaining/порогу (или gap-таблица DoD п.3) — без подмены UI/GC/образом.**
-- Вчерашний вечерний BLOCK не снят: в развёрнутом диффе ушли deploy/48k/preflight/image-deps, а предикат стопа и green media не доказаны; квота/дежурство без этого снова «кнопки без продуктового стопа». Главный риск — закрыть зонтик #2204 гигиеной cabinet/CI или уйти в L из top-3 DAY_PLAN до owner-choice. Критерий к вечеру: `turbo test` по media-library + background-media → green (или fail-log в #2204); remaining+порог+сигнал наружу воспроизводим **или** явная gap-таблица п.3 в #2204; smoke частичной разгрузки ≠ wipe-all зафиксирован.
+- **Гейт `secret-parser-built`: резак в `night-triage-secret-scan.mjs` + один датированный проход с манифестом ротации.**
+- Веха горизонта #592 в фазе approaching: без агрессивного cut (не только детекта) кристалл `session-backup-requires-secret-redaction` недостижим, а амнистия правки архива висит на дате, а не на предикате. Главный риск — подменить ствол L-кандидатами из DAY_PLAN (`angelina-hostess-impl` / `assets-container` / `batch-collection-run-contour`) или снова утащить день в #2204/media. Критерий к вечеру: резак вырезает payload на фикстуре «сырой хвост не уходит»; есть один датированный проход и манифест ротации (в т.ч. на токенах-заглушках); гейт читается как предикат.
 
 ## Что сознательно не делаем
-- L-магистраль из generator top-3 (`angelina-hostess-impl` / `assets-container` / `batch-collection-run-contour`) — только после снятия BLOCK #2204 и слова владельца.
-- `secret-parser-built` / резак / манифест ротации как primary coding-focus — горизонт и подкрепление, не ствол дня.
-- FFT / «Этап 1.A» / benchmark harmonic+cepstral+flux / `detector-scoreboard` как витрина дня — не магистраль (потолок эшелона 0; CURRENT_TASK не канон).
-- Oversized-хвосты (#2221 / 531 / 609 и пр.) и play-path — только если бьют квоту/прод на дежурстве; иначе очередь P1, не ствол.
+- L-магистрали generator top-3 (`angelina-hostess-impl`, `assets-container`, `batch-collection-run-contour`) — пока нет слова владельца (Q1).
+- `#2204` / красный `@membrana/background-media#test` как primary — только санитария: диагноз или issue, не «ещё раз ритуал».
+- `detector-scoreboard` / CURRENT_TASK-буфер и FFT «Этап 1.A» / повтор free-v1 DSP-бенчмарков — не ствол дня.
+- Oversized `53b60caf` и #2238 (worktree ~40 мин) — не разворачивать в feature-день; whitelist/регламент отдельно от гейта секретов.
 
 ---
 
 ## Роутинг персон (вычислено из реестра, не моделью)
 
 - **Teamlead** · сила: Нагрузки и связки ролей, вердикты, ритм дня, приоритизация эпиков, приёмка исполнения · ведёт: `mfcc-compare-sprint` · журнала нет
-- **Архитектор** · сила: Границы модулей и пакетов, контракты, форма решения, цена альтернатив, ADR · ведёт: `studio-package-av-refusal` (ещё 50) · последняя запись журнала: 2026-08-28
-- **Структурщик** · сила: Сервисы, хуки, сторы, фасады, слабая связанность · ведёт: `firebat-node-device` (ещё 27) · последняя запись журнала: 2026-08-28
-- **Математик** · сила: FFT, вейвлеты, спектр — чистые функции · ведёт: `static-mmbrn-m6-alignment` (ещё 22) · последняя запись журнала: 2026-08-28
-- **Музыкант** · сила: Эффекты, Web Audio, 24 bit / 48 kHz · ведёт: `node-duty-ready-predicate` (ещё 4) · последняя запись журнала: 2026-08-28
-- **Верстальщик** · сила: Презентационный UI по `DESIGN.md`, React/TS, a11y, адаптив · ведёт: `playback-hang-timeout` (ещё 13) · последняя запись журнала: 2026-08-28
+- **Архитектор** · сила: Границы модулей и пакетов, контракты, форма решения, цена альтернатив, ADR · ведёт: `studio-package-av-refusal` (ещё 50) · последняя запись журнала: 2026-08-29
+- **Структурщик** · сила: Сервисы, хуки, сторы, фасады, слабая связанность · ведёт: `firebat-node-device` (ещё 27) · последняя запись журнала: 2026-08-29
+- **Математик** · сила: FFT, вейвлеты, спектр — чистые функции · ведёт: `static-mmbrn-m6-alignment` (ещё 22) · последняя запись журнала: 2026-08-29
+- **Музыкант** · сила: Эффекты, Web Audio, 24 bit / 48 kHz · ведёт: `node-duty-ready-predicate` (ещё 4) · последняя запись журнала: 2026-08-29
+- **Верстальщик** · сила: Презентационный UI по `DESIGN.md`, React/TS, a11y, адаптив · ведёт: `playback-hang-timeout` (ещё 13) · последняя запись журнала: 2026-08-29
 
 > Сила — из таблицы ролей `VIRTUAL_TEAM_PROMPT.md`; задача — из `registry.json`
 > (`leadPersona`/`supportPersonas`); provenance — дата последней записи журнала персоны.

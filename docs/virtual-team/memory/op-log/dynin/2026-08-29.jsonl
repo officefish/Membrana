@@ -1,1 +1,7 @@
 {"ts":"2026-08-29T13:05:18.256Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-29T16:15:04.412Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-28-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-29T16:15:04.412Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-08-29-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-29T16:15:04.412Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-13-network-container-m1-home-record","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-29T16:15:04.412Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-13-network-container-m2-infra-border","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-29T16:15:04.412Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-04-static-mmbrn-container-m3-access","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-29T16:15:04.412Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
