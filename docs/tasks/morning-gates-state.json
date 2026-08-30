@@ -1,25 +1,24 @@
 {
   "magistralOptions": [
     "night-procedure-frames",
-    "buffer-delete-modal-2218",
+    "labels-export-partial-2237",
     "assets-container"
   ],
-  "frozenDigest": "c1e3ed9c7d15b2d3bc40aeb7e56f1ccdfa324c6993c90aa7c1868681f5aecb3e",
+  "frozenDigest": "a1ebc9f31714a28c6fb045a71c9267d27e41637f71d749b688fec8f9c7551094",
   "magistral": "night-procedure-frames",
   "swallow": {
-    "draftDigest": "f3afd9a3db892d4b2ebaf72147cfc21298eb08691c091c9cf449c222a70496cc",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-29.md",
+    "draftDigest": "0dd86e1b108685d913d1b93f715da828e1864c4f5b99b1683866d1366fe412b6",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-08-30.md",
     "ownerAck": true,
-    "day": "2026-08-29",
-    "gate": "evening:partner-swallow"
+    "day": "2026-08-30"
   },
-  "day": "2026-08-29",
-  "magistralChosenAt": "2026-08-29",
+  "day": "2026-08-30",
+  "magistralChosenAt": "2026-08-30",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-08-29",
+    "at": "2026-08-30",
     "chosen": "night-procedure-frames",
-    "snapshotDigest": "c1e3ed9c7d15b2d3bc40aeb7e56f1ccdfa324c6993c90aa7c1868681f5aecb3e",
+    "snapshotDigest": "a1ebc9f31714a28c6fb045a71c9267d27e41637f71d749b688fec8f9c7551094",
     "inSnapshot": true
   }
 }
