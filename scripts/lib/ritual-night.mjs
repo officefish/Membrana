@@ -12,13 +12,31 @@
  */
 
 /** Ритмы, которые ночь умеет. Закрытый словарь: незнакомый ритм — поломка манифеста, не «наверное ежедневно». */
-export const NIGHT_CADENCES = Object.freeze(['daily', 'weekly-monday']);
+export const NIGHT_CADENCES = Object.freeze(['daily', 'weekdays', 'weekly-monday']);
+
+/**
+ * Ритм, который НЕСЁТ САМ cron шага. Ритм не объявляется рядом с расписанием — он из него
+ * выводится, иначе манифест и workflow расходятся молча: ровно так охота (10 7 * * 1-5, пять
+ * ночей) была объявлена недельной и потеряла четыре ночи из пяти, не уронив ни одной проверки.
+ *
+ * @param {string} cron пятиполевой cron
+ * @returns {string|null} ритм из словаря или null, если поле дней недели нам незнакомо
+ */
+export function cadenceOfCron(cron) {
+  const dow = String(cron ?? '').trim().split(/\s+/u)[4];
+  if (dow === '*') return 'daily';
+  if (dow === '1-5') return 'weekdays';
+  if (dow === '1') return 'weekly-monday';
+  return null;
+}
 
 /**
  * Шаг сегодня к исполнению?
  *
  * ЗАЧЕМ РИТМ ВООБЩЕ. Пять процессов ночи жили по РАЗНЫМ расписаниям: пробы сети и полный корпус
- * тестов — каждую ночь, корпус Vitest и недельный план — по понедельникам, охота — по будням.
+ * тестов — каждую ночь, корпус Vitest и недельный план — по понедельникам, охота — по будням. Все
+ * три ритма словарь несёт СВОИМИ именами: свести будни к понедельнику — то же враньё о процессе,
+ * что и погнать недельный план каждые сутки, только тише — потерей четырёх ночей из пяти.
  * Склеить их в одну частоту значило бы соврать о процессе: недельный план погнало бы каждые сутки.
  *
  * @param {{cadence?: string}} step
@@ -27,6 +45,7 @@ export const NIGHT_CADENCES = Object.freeze(['daily', 'weekly-monday']);
 export function stepDueOn(step, weekday) {
   const cadence = step?.cadence ?? 'daily';
   if (cadence === 'daily') return true;
+  if (cadence === 'weekdays') return weekday >= 1 && weekday <= 5;
   if (cadence === 'weekly-monday') return weekday === 1;
   // Незнакомый ритм НЕ исполняется молча и НЕ пропускается молча — он поломка манифеста.
   throw new Error(`ritual-night: шаг «${step?.id}» несёт незнакомый ритм «${cadence}» (знаем: ${NIGHT_CADENCES.join(', ')})`);

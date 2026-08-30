@@ -8,11 +8,14 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { NIGHT_CADENCES, nightVerdict, nightWords, planNight, stepDueOn } from './lib/ritual-night.mjs';
+import { NIGHT_CADENCES, cadenceOfCron, nightVerdict, nightWords, planNight, stepDueOn } from './lib/ritual-night.mjs';
 
 const DAILY = { id: 'network-probes', cadence: 'daily' };
+const WEEKDAYS = { id: 'night-hunt', cadence: 'weekdays' };
 const WEEKLY = { id: 'weekly-plan', cadence: 'weekly-monday' };
+const SUNDAY = 0;
 const MONDAY = 1;
+const FRIDAY = 5;
 const SATURDAY = 6;
 
 test('ежедневный шаг идёт в любой день', () => {
@@ -23,6 +26,13 @@ test('ежедневный шаг идёт в любой день', () => {
 test('недельный шаг идёт ТОЛЬКО в понедельник — иначе план гнался бы каждые сутки', () => {
   assert.equal(stepDueOn(WEEKLY, MONDAY), true);
   assert.equal(stepDueOn(WEEKLY, SATURDAY), false);
+});
+
+test('будний шаг идёт пять ночей, а не одну: понедельник и пятница — да, суббота и воскресенье — нет', () => {
+  assert.equal(stepDueOn(WEEKDAYS, MONDAY), true);
+  assert.equal(stepDueOn(WEEKDAYS, FRIDAY), true);
+  assert.equal(stepDueOn(WEEKDAYS, SATURDAY), false);
+  assert.equal(stepDueOn(WEEKDAYS, SUNDAY), false);
 });
 
 test('ритм по умолчанию — ежедневный: шаг без cadence не пропадает молча', () => {
@@ -111,6 +121,27 @@ test('ФОРМА: настоящий манифест ночи несёт пят
     assert.ok(typeof s.workflow === 'string', `${s.id}: не назван workflow, из которого шаг родом`);
   }
   // План на понедельник обязан звать всех пятерых: понедельник — единственный день, когда
-  // сходятся оба ритма, и именно в него падал недельный план семнадцать раз подряд.
+  // сходятся все три ритма, и именно в него падал недельный план семнадцать раз подряд.
   assert.equal(planNight(doc.steps, { weekday: MONDAY }).every((p) => p.run), true);
+});
+
+test('cadence выводится из cron: заявленный ритм и поле дней недели не расходятся', () => {
+  assert.equal(cadenceOfCron('0 1 * * *'), 'daily');
+  assert.equal(cadenceOfCron('10 7 * * 1-5'), 'weekdays');
+  assert.equal(cadenceOfCron('0 7 * * 1'), 'weekly-monday');
+  // Незнакомое поле дней недели — не «наверное ежедневно», а честное «не знаю».
+  assert.equal(cadenceOfCron('0 7 * * 3'), null);
+});
+
+test('ПРОФИЛАКТИКА: у каждого шага cadence сходится с его СОБСТВЕННЫМ расписанием', async () => {
+  // Класс дефекта, ради которого зуб есть: охота ходит по будням (10 7 * * 1-5), а объявлена была
+  // weekly-monday. Ни одна проверка не краснела — шаг просто молча терял четыре ночи из пяти.
+  // Сверка идёт с cron ТОГО ЖЕ шага, а не с памятью автора: разъехаться они теперь не могут молча.
+  const { readFileSync } = await import('node:fs');
+  const doc = JSON.parse(readFileSync(new URL('../docs/tasks/night-ritual-steps.json', import.meta.url), 'utf8'));
+  for (const s of doc.steps) {
+    const derived = cadenceOfCron(s.schedule);
+    assert.notEqual(derived, null, `${s.id}: расписание «${s.schedule}» вне словаря ритмов — ритм не выводится`);
+    assert.equal(s.cadence, derived, `${s.id}: заявлен ритм «${s.cadence}», а cron «${s.schedule}» говорит «${derived}»`);
+  }
 });
