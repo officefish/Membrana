@@ -112,7 +112,9 @@ export function CabinetSampleDuplicatesPanel({
       await onRemove(ref.sampleId);
       setRemoved((prev) => new Set([...prev, ref.sampleId]));
     },
-    [onRemove, titleOf],
+    // titleOf ушёл из зависимостей вместе с window.confirm (#2218): он был нужен, чтобы
+    // назвать пробу в системном вопросе, а вопрос переехал в окно удаления.
+    [onRemove],
   );
 
   const report = outcome?.report ?? null;

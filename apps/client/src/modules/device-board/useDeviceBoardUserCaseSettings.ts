@@ -27,6 +27,10 @@ export function useDeviceBoardUserCaseSettings() {
     [updateModuleConfig],
   );
 
+  // `config` здесь НЕ аргумент, а ТРИГГЕР пересчёта: читатель гейта берёт конфиг сам из
+  // хранилища, но пересчитать его надо, когда конфиг сменился. Убрать зависимость значило
+  // бы заморозить гейт на первом значении, поэтому намерение объявлено явно, а не заглушено.
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- зависимость-триггер, см. выше
   const gate = useMemo(() => readDeviceBoardUserCaseGate(), [config]);
 
   return {

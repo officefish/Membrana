@@ -76,12 +76,48 @@ module.exports = {
       rules: {
         'react/react-in-jsx-scope': 'off',
         'react/prop-types': 'off',
+        /**
+         * ЗАПУЩЕННЫЙ ПРЕДИКАТ, УМЕЮЩИЙ ОТКАЗАТЬ (30.08).
+         *
+         * `plugin:react-hooks/recommended` ставит это правило в `warn`. 30.08 оно СМОТРЕЛО
+         * прямо на дефект — обработчик приёма разметки судил о полноте набора по значению,
+         * которого не было в зависимостях, то есть по прошлому набору, — назвало его и
+         * пропустило: линт домов в CI гоняется (`turbo run lint`), но предупреждение не
+         * роняет прогон. Не «забыли подключить», а «подключили в режиме, в котором правило
+         * не действует».
+         *
+         * Цена включения измерена перед правкой: по ОДНОМУ предупреждению на client и на
+         * cabinet, ноль на panel и comms-studio. Оба погашены этим же PR.
+         *
+         * Класс, против которого правило стоит, описан в
+         * `docs/field/decisions-on-partial-data.md`: решение по тому, что в руках сейчас,
+         * вместо того, что есть на самом деле. Устаревшее замыкание — его прямой вход.
+         */
+        'react-hooks/exhaustive-deps': 'error',
         '@typescript-eslint/no-unused-vars': [
           'error',
           { argsIgnorePattern: '^_', caughtErrors: 'none', varsIgnorePattern: '^_' },
         ],
         '@typescript-eslint/no-explicit-any': 'error',
         'no-restricted-syntax': noSingletonBridgeNew,
+      },
+    },
+    {
+      /**
+       * ХУКИ ЖИВУТ И В .ts, А НЕ ТОЛЬКО В .tsx.
+       *
+       * Правила react-hooks стояли в override только для файлов tsx и jsx — то есть файлы с
+       * `useCallback`/`useMemo`/`useEffect`, написанные как `.ts` (все кастомные хуки,
+       * включая `useCabinetSampleLibrary.ts`), не проверялись ВООБЩЕ. Не «предупреждали и
+       * пропускали», а не смотрели. Найдено 30.08 при переводе правила в ошибку:
+       * `eslint --print-config` на .ts-файле показал `exhaustive-deps: undefined`.
+       */
+      files: ['apps/**/*.ts', 'packages/**/*.ts'],
+      excludedFiles: ['**/*.test.ts'],
+      plugins: ['react-hooks'],
+      rules: {
+        'react-hooks/rules-of-hooks': 'error',
+        'react-hooks/exhaustive-deps': 'error',
       },
     },
     {
