@@ -3,8 +3,8 @@
  * yarn night-report:gate [--pull] [--today YYYY-MM-DD]
  *
  * Потребитель кадра night-report (#1293): читает носитель
- * tests/reports/nightly-full/latest.json и исполняет blocksMorningWhen кадра.
- * --pull — сперва подтянуть свежий артефакт ночного workflow с main (gh CLI);
+ * tests/reports/nightly-summary/latest.json и исполняет blocksMorningWhen кадра.
+ * --pull — сперва собрать сводку ночных workflow main (gh CLI);
  * сбой подтяжки не маскирует вердикт: гейт честно оценит локальный носитель
  * (отсутствие/несвежесть — свой блокер «ночь не отработала»).
  */
@@ -13,7 +13,9 @@ import { mkdirSync, rmSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { loadNightReportFrame, runNightReportGate } from './lib/night-report-gate.mjs';
+import { runNightReportGate } from './lib/night-report-gate.mjs';
+import { NIGHT_SUMMARY_REPORT_REL, buildNightSummaryFromGithub, readGitRevision, writeNightSummary } from './lib/night-summary.mjs';
+import { NIGHTLY_FULL_REPORT_REL } from './lib/tests-nightly-full.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const NIGHTLY_WORKFLOW = 'tests-nightly-full.yml';
@@ -67,6 +69,7 @@ export function parseNightReportArgs(argv) {
  */
 export function pullNightReport(cwd, deps = {}) {
   const exec = deps.exec ?? execFileSync;
+  let testsPullOk = true;
   try {
     const listRaw = exec(
       'gh',
@@ -83,23 +86,39 @@ export function pullNightReport(cwd, deps = {}) {
     const runs = JSON.parse(listRaw);
     if (!Array.isArray(runs) || runs.length === 0) {
       console.error('[night-report:pull] завершённых прогонов ночи на main нет');
-      return false;
+      testsPullOk = false;
+    } else {
+      const destDir = join(cwd, dirname(NIGHTLY_FULL_REPORT_REL));
+      mkdirSync(destDir, { recursive: true });
+      clearNightReportDownloadTargets(destDir, NIGHTLY_FULL_REPORT_REL);
+      exec('gh', ['run', 'download', String(runs[0].databaseId), '--name', NIGHTLY_ARTIFACT, '--dir', destDir], {
+        cwd,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
+      console.error(
+        `[night-report:pull] tests-report подтянут: прогон ${runs[0].databaseId} (${runs[0].conclusion}, ${runs[0].updatedAt})`,
+      );
     }
-    const { carrier } = loadNightReportFrame(cwd);
-    const destDir = carrier ? join(cwd, dirname(carrier.path)) : join(cwd, 'tests/reports/nightly-full');
-    mkdirSync(destDir, { recursive: true });
-    clearNightReportDownloadTargets(destDir, carrier?.path ?? null);
-    exec('gh', ['run', 'download', String(runs[0].databaseId), '--name', NIGHTLY_ARTIFACT, '--dir', destDir], {
-      cwd,
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });
-    console.error(
-      `[night-report:pull] подтянут прогон ${runs[0].databaseId} (${runs[0].conclusion}, ${runs[0].updatedAt})`,
-    );
-    return true;
   } catch (e) {
-    console.error(`[night-report:pull] не подтянулось: ${e instanceof Error ? e.message : e}`);
+    testsPullOk = false;
+    console.error(`[night-report:pull] tests-report не подтянулся: ${e instanceof Error ? e.message : e}`);
+  }
+
+  try {
+    const expectedRevision = deps.expectedRevision ?? readGitRevision(cwd, 'origin/main') ?? readGitRevision(cwd, 'HEAD');
+    const summary = buildNightSummaryFromGithub({
+      cwd,
+      expectedRevision,
+      exec,
+    });
+    writeNightSummary(cwd, summary);
+    console.error(
+      `[night-report:pull] сводка ночи записана: ${NIGHT_SUMMARY_REPORT_REL} (${summary.execution.status}, ${summary.problems.length} blockers)`,
+    );
+    return testsPullOk && summary.execution.status === 'pass';
+  } catch (e) {
+    console.error(`[night-report:pull] сводка ночи не записана: ${e instanceof Error ? e.message : e}`);
     return false;
   }
 }
@@ -123,9 +142,9 @@ export function runNightReportCli(argv, deps = {}) {
   yarn night-report:gate [--pull] [--today YYYY-MM-DD]
 
   Гейт ночи для утра (#1293): красный/несвежий/отсутствующий носитель = STOP (exit 2).
-  --pull — сперва подтянуть артефакт ${NIGHTLY_ARTIFACT} последнего прогона ${NIGHTLY_WORKFLOW} с main.
+  --pull — сперва собрать ${NIGHT_SUMMARY_REPORT_REL}; tests-report ${NIGHTLY_ARTIFACT}/${NIGHTLY_WORKFLOW} подтягивается как детализация.
   --expected-revision SHA — тестовый/ручной target вместо origin/main.
-  Дисциплина: дом носителя tests/reports/nightly-full/ локален (gitignore), свежесть — по git revision, не по календарной дате.`);
+  Дисциплина: дом носителя tests/reports/nightly-summary/ локален (gitignore), свежесть — по git revision, не по календарной дате.`);
     return 0;
   }
   if (args.pull) pullNightReport(cwd, deps);

@@ -6,10 +6,11 @@
 # checks на main стоят с 08.2026), поэтому schedule включён. Живые ветки — только
 # workflow_dispatch.
 #
-# Носитель: tests/reports/nightly-full/latest.{json,md} — уезжает артефактом
-# `nightly-full-report`; утро подтягивает его `yarn night-report:gate --pull` и
-# читает локально (дом tests/reports/nightly-full/ в .gitignore). Красный прогона
-# виден и здесь, но БЛОКЕР living в утре: morning-care исполняет blocksMorningWhen.
+# Детальный отчёт: tests/reports/nightly-full/latest.{json,md} — уезжает
+# артефактом `nightly-full-report`; утром `yarn night-report:gate --pull`
+# собирает из ночных workflow общий carrier tests/reports/nightly-summary/latest.json.
+# Красный прогона виден и здесь, но БЛОКЕР living в утре: morning-care
+# исполняет blocksMorningWhen по сводке ночи.
 #
 # Сосед: vitest-nightly.yml (02:00 UTC) — корпус vitest воркспейсов; здесь —
 # node --test набор tests-container от pinned-аудита кита tests-master. Разные
@@ -54,9 +55,9 @@ jobs:
       - name: Полный набор от пина (kits/tests-master pinned)
         run: yarn tests:nightly-full
 
-      # Красный не должен прятать носитель: отчёт уезжает и при падении — именно
-      # красный отчёт утро обязано увидеть и разобрать (#1293, решение 2).
-      - name: Носитель кадра night-report — артефакт
+      # Красный не должен прятать детализацию: отчёт уезжает и при падении,
+      # а morning carrier собирается поверх него и соседних ночных workflow.
+      - name: Детализация tests-nightly-full — артефакт
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -71,5 +72,5 @@ jobs:
           if [ -f tests/reports/nightly-full/latest.md ]; then
             cat tests/reports/nightly-full/latest.md >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "Носитель не записан — прогон упал до writeNightlyFullReport." >> "$GITHUB_STEP_SUMMARY"
+            echo "Детальный отчёт не записан — прогон упал до writeNightlyFullReport." >> "$GITHUB_STEP_SUMMARY"
           fi

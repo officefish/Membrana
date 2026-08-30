@@ -5,10 +5,11 @@
  * («Проза» по бестиарию #1204): ночной красный никого не останавливал. Здесь
  * выражение кадра читается и исполняется: красный ИЛИ несвежий отчёт — STOP утра.
  *
- * Носитель (tests/reports/nightly-full/latest.json) пишет tests:nightly-full;
- * ночью он бежит в CI (.github/workflows/tests-nightly-full.yml), утро
- * подтягивает артефакт (`night-report:gate --pull`) и читает локальный файл.
- * Свежесть — по `generatedAt` отчёта, НЕ по mtime (урок rt-9).
+ * Носитель (tests/reports/nightly-summary/latest.json) собирает одну сводку
+ * ночи: что запускалось, что прошло, что упало и почему. Утро читает именно
+ * сводку, а не один tests-report; иначе новый ночной механизм снова может
+ * умереть невидимым.
+ * Свежесть — по git revision ствола, НЕ по mtime и не по календарной дате.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -143,6 +144,17 @@ export function evaluateNightReport({ carrier, report, reportProblem = null, exp
   if (run !== null) summary.push(`гонялось файлов: ${run}`);
   if (notRun !== null) summary.push(`не гонялось: ${notRun}`);
   if (report.kit?.id) summary.push(`кит: ${report.kit.id} (${report.kit.ok ? 'pinned ok' : 'pinned BLOCKED'})`);
+  const summaryVerdict = evaluateNightSummary(report);
+  if (summaryVerdict) {
+    for (const line of summaryVerdict.summary) summary.push(line);
+    if (summaryVerdict.blockers.length > 0) {
+      return {
+        status: summaryVerdict.status,
+        blockers: summaryVerdict.blockers,
+        summary,
+      };
+    }
+  }
   // Исполнение выражения кадра — «execution.status != pass».
   const status = report.execution?.status;
   if (status !== 'pass') {
@@ -157,6 +169,34 @@ export function evaluateNightReport({ carrier, report, reportProblem = null, exp
     };
   }
   return { status: 'pass', blockers: [], summary };
+}
+
+function evaluateNightSummary(report) {
+  if (report.kind !== 'night-summary') return null;
+  const checks = Array.isArray(report.workflows) ? report.workflows : [];
+  const lines = checks.map((check) => {
+    const title = check.title ?? check.id ?? check.workflow ?? 'unknown';
+    const status = check.status ?? 'unknown';
+    const reason = check.reason ? ` — ${check.reason}` : '';
+    return `ночь/${title}: ${status}${reason}`;
+  });
+  if (checks.length === 0) {
+    return {
+      status: 'invalid',
+      blockers: ['ночная сводка пуста: ни один ночной механизм не назван'],
+      summary: lines,
+    };
+  }
+  const blockers = checks
+    .filter((check) => check.required !== false && check.status !== 'pass')
+    .map((check) => {
+      const title = check.title ?? check.id ?? check.workflow ?? 'unknown';
+      return `ночной механизм не прошёл: ${title} — ${check.status ?? 'unknown'}${check.reason ? ` (${check.reason})` : ''}`;
+    });
+  if (blockers.length === 0) return { status: 'pass', blockers: [], summary: lines };
+  const first = checks.find((check) => check.required !== false && check.status !== 'pass');
+  const status = ['missing', 'stale', 'red', 'invalid'].includes(first?.status) ? first.status : 'red';
+  return { status, blockers, summary: lines };
 }
 
 function normalizeRevision(value) {
