@@ -27,15 +27,15 @@
       "homePath": "docs/procedures/ritual-night",
       "container": {
         "value": true,
-        "provenance": "angelina@242dc0e6"
+        "provenance": "angelina@f57d5d77"
       },
       "vocabulary": {
         "value": false,
         "provenance": null
       },
       "grammar": {
-        "value": false,
-        "provenance": null
+        "value": true,
+        "provenance": "angelina@9e4c93f2"
       }
     },
     {

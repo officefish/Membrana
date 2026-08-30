@@ -8,7 +8,7 @@
 | Процедура | Род | Держатель | Статус | container | vocabulary | grammar |
 |-----------|-----|-----------|--------|-----------|------------|---------|
 | [`ritual-evening`](./ritual-evening/README.md) | ритм | angelina | **migrated** | ✅ angelina@78f49d2d | ✅ ozhegov@pl-r5 | ✅ rodchenko@78f49d2d |
-| [`ritual-night`](./ritual-night/README.md) | ритм | angelina | **in-migration** | ✅ angelina@242dc0e6 | — | — |
+| [`ritual-night`](./ritual-night/README.md) | ритм | angelina | **in-migration** | ✅ angelina@f57d5d77 | — | ✅ angelina@9e4c93f2 |
 | [`ritual-day`](./ritual-day/README.md) | ритм | angelina | **in-migration** | ✅ angelina@66fc3b90 | — | ✅ angelina@66fc3b90 |
 | [`ritual-dreams`](./ritual-dreams/README.md) | ритм | dynin | **in-migration** | ✅ dynin@629cb7b6 | — | ✅ dynin@629cb7b6 |
 | [`attribution`](./attribution/README.md) | ритм | dynin | **in-migration** | ✅ dynin@ae2582d6 | — | ✅ dynin@ae2582d6 |
