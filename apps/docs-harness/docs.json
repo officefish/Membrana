@@ -33,6 +33,7 @@
         "pages": [
           "procedures/index",
           "procedures/ritual-evening",
+          "procedures/ritual-night",
           "procedures/ritual-day",
           "procedures/ritual-dreams",
           "procedures/attribution",

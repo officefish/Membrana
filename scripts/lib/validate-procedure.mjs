@@ -349,7 +349,7 @@ export function coreGateProblems(gate, label, seenIds = new Set()) {
     seenIds.add(g.id);
   }
   if (!GATE_WAITS.includes(/** @type {string} */ (g.waitsFor))) {
-    problems.push(`${label}: waitsFor ∉ {owner, human}`);
+    problems.push(`${label}: waitsFor ∉ {${GATE_WAITS.join(", ")}}`);
   }
   if (typeof g.resume !== 'string' || g.resume.trim() === '') {
     problems.push(`${label}: resume — не непустая строка`);
