@@ -77,6 +77,22 @@ test('evaluateNightReport: зелёная сводка ночи проходит
   assert.ok(ok.summary.some((s) => s.includes('ночь/Tests nightly full: pass')));
 });
 
+test('evaluateNightReport: старый detailed tests-report остаётся читаемым переходным носителем', () => {
+  const legacyReport = {
+    schemaVersion: 1,
+    generatedAt: `${TODAY}T03:10:00.000Z`,
+    git: { revision: HEAD_A },
+    setup: { run: ['scripts/a.test.mjs'], notRun: [] },
+    execution: { status: 'pass', exitCode: 0 },
+    problems: [],
+  };
+
+  const verdict = evaluateNightReport({ carrier: CARRIER, report: legacyReport, today: TODAY, expectedRevision: HEAD_A });
+  assert.equal(verdict.status, 'pass');
+  assert.equal(verdict.blockers.length, 0);
+  assert.ok(verdict.summary.some((s) => s.includes('гонялось файлов: 1')));
+});
+
 test('evaluateNightReport: сводка без обязательного чтения workflow не проходит', () => {
   const report = reportFixture({
     workflows: [
@@ -224,6 +240,27 @@ test('parseNightReportArgs + pullNightReport с подставным gh', () => 
   });
   assert.equal(okPull, true);
   assert.ok(calls.map((c) => c[1] + ':' + c[2]).includes('run:download'));
+
+  const redSummaryPull = pullNightReport(root, {
+    expectedRevision: HEAD_A,
+    exec: (_cmd, args) => {
+      if (args[0] === 'run' && args[1] === 'list') {
+        return JSON.stringify([
+          {
+            databaseId: 44,
+            event: 'schedule',
+            status: 'completed',
+            conclusion: 'failure',
+            createdAt: '2026-08-11T03:20:00Z',
+            updatedAt: '2026-08-11T03:20:00Z',
+            headSha: HEAD_A,
+          },
+        ]);
+      }
+      return '';
+    },
+  });
+  assert.equal(redSummaryPull, true);
 
   const failPull = pullNightReport(root, {
     exec: () => {

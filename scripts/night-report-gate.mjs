@@ -118,7 +118,7 @@ export function pullNightReport(cwd, deps = {}) {
     console.error(
       `[night-report:pull] сводка ночи записана: ${NIGHT_SUMMARY_REPORT_REL} (${summary.execution.status}, ${summary.problems.length} blockers)`,
     );
-    return testsPullOk && summary.execution.status === 'pass';
+    return testsPullOk;
   } catch (e) {
     console.error(`[night-report:pull] сводка ночи не записана: ${e instanceof Error ? e.message : e}`);
     return false;
