@@ -189,9 +189,10 @@ docs/sprint/experience/forecast-records.jsonl
 # в scripts/archivarius-dump.test.mjs, чтобы смена каталога не отменила правило молча.
 var/backups/
 
-# Носитель кадра night-report (#1293): локальная подтяжка артефакта ночи,
-# свежесть по generatedAt — файл не коммитится, утро тянет его заново.
+# Носители кадра night-report (#1293+n5): локальная подтяжка артефактов ночи,
+# свежесть по git revision — файлы не коммитятся, утро тянет их заново.
 tests/reports/nightly-full/
+tests/reports/nightly-summary/
 
 # Дом network: транзит скрипта зондирования (В5 заседания network-container)
 docs/audit/network/cache/

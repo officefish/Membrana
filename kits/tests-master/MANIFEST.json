@@ -12,10 +12,10 @@
     "scripts/lib/kit-subgraph-audit.mjs": "e49f55ab4f897133de790cb9e9c2bb53f39ebab1",
     "scripts/lib/test-scripts-plan.mjs": "1363761179672732b9132f2a00d2a7b049f11b7d",
     "scripts/lib/tests-container.mjs": "bf0556a0747cc556ac2d4867b1287e4a62d652e8",
-    "scripts/lib/tests-nightly-full.mjs": "dbb25e04a7c8efd25f4e8ae710454ca317d8eaf8",
+    "scripts/lib/tests-nightly-full.mjs": "fd6aef45c99b937940aba30b522dc3eea4b5142a",
     "scripts/test-scripts-run.mjs": "949022dbb1cdad885e4d8e332821e25aad240e25",
     "scripts/tests-container.mjs": "b4e0ea5d615c43e8d8384178442589a37177bf72",
-    "scripts/tests-nightly-full.mjs": "82064db88749330996bf9179d4fab18a97cbfa83",
+    "scripts/tests-nightly-full.mjs": "0ae86a7380dee8c7b4c127abe906b5abdcb30573",
     "tests/test-scripts.catalog.json": "afd488c422c4748bac3d63457dc11629c493671c"
   }
 }

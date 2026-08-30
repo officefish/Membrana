@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-29 |
-| Head SHA | 354bc33982f972a39b9b7fbfdf8eec24ab15ab44 |
+| Date | 2026-08-30 |
+| Head SHA | 78e913a002fdb216b2a2063238bf3376d55d2410 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,12 +16,12 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1196 |
+| Code files under `scripts/` | 1198 |
 | Yarn scripts (package.json) | 460 |
 | Yarn → `scripts/` | 407 |
 | Yarn без пути `scripts/` | 53 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 871 |
+| Code files without yarn ref | 873 |
 
 ## Yarn → scripts/ (407)
 
@@ -433,7 +433,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (871)
+## Code files without yarn ref (873)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -857,6 +857,7 @@
 - `scripts/lib/night-land-reports.mjs`
 - `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
+- `scripts/lib/night-summary.mjs`
 - `scripts/lib/norm-liveness.mjs`
 - `scripts/lib/office-image-smoke.mjs`
 - `scripts/lib/office-token.mjs`
@@ -1108,6 +1109,7 @@
 - `scripts/night-land-reports.test.mjs`
 - `scripts/night-report-gate.test.mjs`
 - `scripts/night-research.test.mjs`
+- `scripts/night-summary.test.mjs`
 - `scripts/night-triage-secret-scan.test.mjs`
 - `scripts/node-duty-ready.test.mjs`
 - `scripts/node-link-probe.test.mjs`
@@ -1317,7 +1319,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1196)
+## All code files (1198)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1888,6 +1890,7 @@
 - `scripts/lib/night-land-reports.mjs`
 - `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
+- `scripts/lib/night-summary.mjs`
 - `scripts/lib/norm-liveness.mjs`
 - `scripts/lib/office-image-smoke.mjs`
 - `scripts/lib/office-token.mjs`
@@ -2181,6 +2184,7 @@
 - `scripts/night-report-gate.test.mjs`
 - `scripts/night-research.mjs`
 - `scripts/night-research.test.mjs`
+- `scripts/night-summary.test.mjs`
 - `scripts/night-triage-secret-scan.mjs`
 - `scripts/night-triage-secret-scan.test.mjs`
 - `scripts/node-duty-ready.mjs`
