@@ -269,6 +269,18 @@ export function useCabinetSampleLibrary() {
     [nodePageData?.items, selection.kind],
   );
 
+  /**
+   * ПОЛНОЕ ЧИСЛО РЯДОМ С СТРАНИЦЕЙ (#2237). `nodeSamples` — страница, и это законно; беда
+   * была в том, что компенсация («на самом деле их столько») жила у ВЫЗЫВАЮЩЕГО: окно
+   * удаления её знало, а следующий потребитель источника про неё не узнал бы. Теперь
+   * источник отдаёт обе величины сразу, и «сколько на экране» нельзя случайно принять за
+   * «сколько есть».
+   */
+  const nodeSamplesTotal = useMemo(
+    () => (selection.kind === 'node' ? (nodePageData?.total ?? nodeSamples.length) : 0),
+    [nodePageData?.total, nodeSamples.length, selection.kind],
+  );
+
   const reloadSamplesPage = useCallback(async () => {
     if (selection.kind === 'catalog' && membraneId) {
       const data = await fetchMembraneCatalog(
@@ -574,6 +586,7 @@ export function useCabinetSampleLibrary() {
     selectOfflineNode,
     catalogSamples,
     nodeSamples,
+    nodeSamplesTotal,
     selectedCollection,
     isCatalogView,
     isOfflineView,

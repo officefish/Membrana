@@ -5,6 +5,8 @@ import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
 import {
   BUFFER_COLLECTION_ID,
+  buildLabelManifest,
+  readLabelManifest,
   TARIFF_DATASET_SYSTEM_KEY,
   isQuotaFull,
   useMediaLibrary,
@@ -261,22 +263,74 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
    */
   const handleExportLabels = useCallback(() => {
     if (!selected) return;
-    const payload = {
-      collection: selected.name,
+    /**
+     * Файл объявляет свою полноту САМ (#2237). Прежняя редакция писала
+     * `collection: <имя набора>` и разметку из `samples` — то есть из загруженной
+     * страницы: выгрузка называла себя разметкой набора, а несла разметку экрана. Файл
+     * уходит человеку, правится и возвращается импортом, поэтому неполнота приезжала
+     * обратно как достоверные данные. Полное число берём у счётчика набора; не знаем его —
+     * файл честно объявляется неполным.
+     */
+    const payload = buildLabelManifest({
+      collectionName: selected.name,
       collectionId: selected.id,
-      exportedAt: new Date().toISOString(),
-      labels: samples.map((s) => ({
-        fileName: s.title,
-        label: s.label,
-        notes: s.notes ?? null,
-      })),
-    };
+      exported: samples,
+      collectionTotal: selected.sampleCount ?? null,
+    });
     const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], {
       type: 'application/json',
     });
     const safeName = selected.name.toLowerCase().replaceAll(/[^a-z0-9-]+/g, '-');
     downloadBlob(blob, `${safeName || 'collection'}-labels.json`);
   }, [samples, selected]);
+
+  /**
+   * ПРИЁМ РАЗМЕТКИ (#2237). Половина круга, которой не было: файл выгружался, правился
+   * человеком и возвращался — но возвращался мимо кода, руками. Теперь у возврата есть
+   * дверь, и она умеет ОТКАЗЫВАТЬ: неполный файл применять нельзя, иначе записи вне файла
+   * останутся со старой разметкой, а человек будет уверен, что применил набор целиком.
+   */
+  const [labelImport, setLabelImport] = useState<{ kind: 'ok' | 'refused'; text: string } | null>(null);
+
+  const handleImportLabels = useCallback(
+    async (file: File) => {
+      setLabelImport(null);
+      const read = readLabelManifest(await file.text());
+      if (!read.ok) {
+        // Причина едет человеку словами — он должен знать, ЧТО не так и что делать.
+        setLabelImport({ kind: 'refused', text: `Разметка не принята: ${read.why}.` });
+        return;
+      }
+      const byTitle = new Map(samples.map((x) => [x.title, x]));
+      let applied = 0;
+      const missing: string[] = [];
+      for (const entry of read.manifest.labels) {
+        const target = byTitle.get(entry.fileName);
+        if (!target) {
+          missing.push(entry.fileName);
+          continue;
+        }
+        try {
+          await service.updateSampleLabelNotes(target.id, { label: entry.label, notes: entry.notes });
+          applied += 1;
+        } catch (e) {
+          setLabelImport({
+            kind: 'refused',
+            text: `Применено ${applied}, дальше отказ на «${entry.fileName}»: ${e instanceof Error ? e.message : String(e)}.`,
+          });
+          return;
+        }
+      }
+      // Молчаливого пропуска нет и здесь: чего не нашли — называем числом.
+      setLabelImport({
+        kind: 'ok',
+        text:
+          `Разметка применена: ${applied} из ${read.manifest.labels.length}` +
+          (missing.length > 0 ? ` · не найдено в наборе: ${missing.length}` : '') + '.',
+      });
+    },
+    [samples, service],
+  );
 
   const handleRemove = useCallback(
     async (sampleId: string) => {
@@ -471,7 +525,9 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
             >
               {col.name}
               <span className="ml-auto tabular-nums opacity-70">
-                {(snapshot.samplesByCollection[col.id] ?? []).length}
+                {/* Полное число набора, а не длина загруженного массива: кабинет в том же
+                    месте берёт sampleCount, и близнецы расходились на ровном месте (#2237). */}
+                {col.sampleCount ?? (snapshot.samplesByCollection[col.id] ?? []).length}
               </span>
             </button>
           ))}
@@ -566,6 +622,29 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                 Экспорт меток (JSON)
               </button>
             ) : null}
+            {canLabelAnnotate ? (
+              <label className="btn btn-sm btn-outline">
+                Импорт меток (JSON)
+                <input
+                  type="file"
+                  accept="application/json,.json"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    e.target.value = '';
+                    if (file) void handleImportLabels(file);
+                  }}
+                />
+              </label>
+            ) : null}
+            {labelImport ? (
+              <span
+                className={`text-xs ${labelImport.kind === 'refused' ? 'text-error' : 'text-success'}`}
+                role="status"
+              >
+                {labelImport.text}
+              </span>
+            ) : null}
           </div>
 
           {canLabelAnnotate && samples.length > 0 ? (
@@ -586,7 +665,12 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                 ))}
               </div>
               <span className="text-xs text-base-content/60 tabular-nums" aria-live="polite">
-                размечено {labeledCount} из {samples.length}
+                {/* M — полное число набора: доля от страницы показывала «40 из 40»
+                    при 1747 в наборе (#2237). Когда страница не вся, так и сказано. */}
+                размечено {labeledCount} из {selected?.sampleCount ?? samples.length}
+                {(selected?.sampleCount ?? samples.length) > samples.length
+                  ? ` (на этой странице ${samples.length})`
+                  : ''}
               </span>
             </div>
           ) : null}

@@ -80,8 +80,10 @@ export function SampleLibraryPage() {
   const clearBufferGated = useCallback(async (): Promise<void> => {
     const known = lib.nodeSamples;
     const declared =
-      lib.snapshot.collections.find((c: { id: string; sampleCount?: number }) => c.id === BUFFER_COLLECTION_ID)
-        ?.sampleCount ?? known.length;
+      lib.nodeSamplesTotal ||
+      (lib.snapshot.collections.find((c: { id: string; sampleCount?: number }) => c.id === BUFFER_COLLECTION_ID)
+        ?.sampleCount ??
+        known.length);
     askDelete('Очистить буфер', known, () => lib.handleClearBuffer(), declared);
   }, [askDelete, lib]);
   // Источник местный: у media нет входа списка плагинов и переключения (замер 26.08) — см.
