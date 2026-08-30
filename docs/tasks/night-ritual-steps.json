@@ -1,0 +1,77 @@
+{
+  "//": "Шаги ночного ритуала. До этого файла пять процессов жили РОССЫПЬЮ РАСПИСАНИЙ: шесть отдельных cron в .github/workflows, ни одного общего входа, ни одного общего читателя. Манифест не отменяет расписания — он даёт им имя, ритм и место в цепочке.",
+  "//критичность": "Критичность — НЕ «рвёт цепочку». Взято у вечера дословно: критичный шаг падает ГРОМКО и блокирует зависимых, а независимые идут дальше. Прогон в целом отдаёт не-ноль, если упал хоть один критичный. Молчания нет ни в одной ветке.",
+  "//ритм": "Три шага недельные, три ежедневных — поле cadence несёт это явно. Без него ночь погнала бы недельный план каждые сутки: расписания были РАЗНЫЕ, и склеивать их в одну частоту значило бы соврать о процессе.",
+  "version": 1,
+  "chain": "ritual-night",
+  "command": "yarn ritual:night",
+  "steps": [
+    {
+      "id": "network-probes",
+      "label": "Пробы сети",
+      "script": "scripts/network-probes.mjs",
+      "command": "yarn network:probes",
+      "cadence": "daily",
+      "schedule": "0 1 * * *",
+      "workflow": ".github/workflows/network-probes-nightly.yml",
+      "kind": "дозор",
+      "criticality": "noncritical",
+      "whyNoncritical": "Проба сети мигает по чужим причинам — чужой сервис, провайдер, DNS. Её падение это находка для сводки, а не приговор ночи; уронить регрессию и план из-за моргнувшего адреса значило бы сделать ночь заложником мелочи.",
+      "consumes": [],
+      "produces": ["docs/network/probes/<date>/"]
+    },
+    {
+      "id": "regression-container",
+      "label": "Полный прогон корпуса тестов (node --test, набор tests-container)",
+      "script": "scripts/tests-nightly-full.mjs",
+      "command": "yarn tests:nightly-full",
+      "cadence": "daily",
+      "schedule": "0 3 * * *",
+      "workflow": ".github/workflows/tests-nightly-full.yml",
+      "kind": "регрессия",
+      "criticality": "critical",
+      "consumes": [],
+      "produces": ["tests/reports/nightly-full/latest.json", "tests/reports/nightly-full/latest.md"]
+    },
+    {
+      "id": "vitest-corpus",
+      "label": "Полный корпус Vitest и сборка (здоровье ствола без коммитов)",
+      "command": "yarn turbo run lint typecheck test build --continue",
+      "cadence": "weekly-monday",
+      "schedule": "0 6 * * 1",
+      "workflow": ".github/workflows/scheduled-ci.yml",
+      "kind": "регрессия",
+      "criticality": "critical",
+      "//": "Ловит поломки от обновления транзитивных зависимостей, когда в репозитории коммитов не было. Это ЕДИНСТВЕННЫЙ шаг, который судит ствол без нашего участия.",
+      "consumes": [],
+      "produces": []
+    },
+    {
+      "id": "night-hunt",
+      "label": "Охота: разбор открытых PR силами office",
+      "command": "yarn night-hunt:pr-review",
+      "cadence": "weekly-monday",
+      "schedule": "10 7 * * 1-5",
+      "workflow": ".github/workflows/night-hunt-office-trigger.yml",
+      "kind": "дозор",
+      "criticality": "noncritical",
+      "whyNoncritical": "Охота — разведка, и пустой улов у неё законный исход. Плюс office транзиентно таймаутит, что уже записано нормой как повод повторить, а не как провал. Но МОЛЧАТЬ она больше не будет: отказ уезжает в сводку словами.",
+      "consumes": [],
+      "produces": ["docs/archive/night-hunt/<date>/"]
+    },
+    {
+      "id": "weekly-plan",
+      "label": "Недельный стратегический план",
+      "script": "scripts/strategic-plan-week.mjs",
+      "command": "yarn plan:week",
+      "cadence": "weekly-monday",
+      "schedule": "0 7 * * 1",
+      "workflow": ".github/workflows/weekly-strategic-plan.yml",
+      "kind": "синтез",
+      "criticality": "critical",
+      "//вещдок": "ЗАМЕРЕНО, а не пересказано: последние 20 прогонов этого расписания дали 17 failure против 1 success (gh run list --workflow weekly-strategic-plan.yml). Семнадцать понедельников подряд механизм падал, и никто не читал. Он критичен именно поэтому: его отказ обязан быть громким.",
+      "consumes": [],
+      "produces": ["docs/STRATEGIC_PLAN_WEEK.md"]
+    }
+  ]
+}
