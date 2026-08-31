@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14390/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 343 (причины в op-log) -->
+Записей: 49 · бюджет 14362/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 344 (причины в op-log) -->
+
+### 2026-08-30 · позиция · team-evening-feedback
+
+> Оценка артефактов: MAIN_DAY_ISSUE дал чёткий контракт «все три или ни одного» (MANIFEST + trigger/steps/gates), и код дня этому контракту следует. #2245 — узкая и верная форма: публичный контракт `waitsFor` расширен до `owner|human|night`, смысл `night` зафиксирован в CORE […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
 
 ### 2026-08-29 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Вопрос 1 — дом и единица звена — это фундамент конструкции. Без него нельзя ответить ни на один другой: «enum состояний» — состояния чего, если не названа единица? «Граница с infra-policy» — чего она граница, если контейнер не прописан? Вопрос 1 производит переменную «запись» и […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/network-container-m0-order-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m1-home-record
-
-> Конструкция. Плоскость `docs/audit/*` уже несёт жанр «наблюдаемое без права чинить». Класть `network` рядом с `llm-calls` оправдано функцией: отчётность о пробах, не управление сетью и не inventory мощностей. Цена альтернативы «отдельная плоскость `docs/network/`» — второй жанр […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/network-container-m1-home-record-2026-08-13.md#reply-1`

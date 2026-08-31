@@ -1,1 +1,4 @@
 {"ts":"2026-08-30T09:41:32.822Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-08-30T17:58:07.732Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-08-30-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-08-30T17:58:07.732Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-13-network-container-m1-home-record","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-08-30T17:58:07.732Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

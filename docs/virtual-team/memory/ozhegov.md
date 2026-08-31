@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14379/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 335 (причины в op-log) -->
+Записей: 49 · бюджет 14358/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 336 (причины в op-log) -->
+
+### 2026-08-30 · позиция · team-evening-feedback
+
+> Оценка артефактов: Документы дня согласованы, границы работ в MAIN_DAY_ISSUE определены чётко: `docs/procedures/*`, `scripts/lib/validate-procedure.mjs`, тест, hash в `kits/containerization-master/MANIFEST.json`. Связность соблюдена, цикл пакетов не задет. C7: зуб на равенство […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
 
 ### 2026-08-29 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Соглашусь с Весниным в главном, уточню в деталях. Вопрос 2 (enum состояний) зависит от 1, потому что enum описывает состояние записи — а что такое запись, отвечает 1. Но вопрос 2 сам является посылкой для вопросов 6 и 7: правило K1 и proxy-awareness оперируют состоянием […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/network-container-m0-order-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m1-home-record
-
-> Начну с лемм, иначе разъедемся в словах. «Дом» — адрес плоскости артефактов контейнера, не runtime-сервис и не пакет в monorepo. «Единица звена» — одна append-запись контейнера, из которой строятся отчёты; не маршрут как объект политики и не правило firewall. Образец жанра в […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/network-container-m1-home-record-2026-08-13.md#reply-1`
