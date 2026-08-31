@@ -179,6 +179,20 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
   const isTariffDataset =
     selected?.kind === 'system' && selected.systemKey === TARIFF_DATASET_SYSTEM_KEY;
   const canLabelAnnotate = !isTariffDataset;
+  /**
+   * Из какого набора вообще можно двигать пробы.
+   *
+   * Дверь переноса была нарисована ТОЛЬКО в буфере (`selectedId === BUFFER_COLLECTION_ID`),
+   * хотя ни `moveTargets`, ни сервер этого не требовали: сервер блокирует лишь тарифный набор
+   * и перенос в тот же самый. Разложив улов по наборам, человек больше не мог переложить
+   * пробу из набора в набор — не потому, что нельзя, а потому, что органа не нарисовали.
+   *
+   * Предикат сознательно ТОТ ЖЕ, что у близнеца в кабинете (`readOnlyCollection`,
+   * useCabinetSampleLibrary.ts): системный набор только для чтения, тарифный — частный случай
+   * системного. Два дома, одно правило; разъедутся — покраснеет зуб сходства.
+   */
+  const readOnlyCollection = selected?.kind === 'system';
+  const canMoveFrom = Boolean(selected) && !readOnlyCollection;
 
   const handleUpdateLabelNotes = useCallback(
     async (sampleId: string, patch: UpdateSampleLabelNotes) => {
@@ -369,9 +383,13 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     async (sampleId: string, toId: string) => {
       if (!toId) return;
       setError(null);
-      // Перенос буфер→набор больше не молчит (#2110): пока едет — «переносится…», по исходу —
-      // «перенесено в <набор>» либо ошибка. Прежде проба просто исчезала из списка, и человек
-      // не знал, уехала она или потерялась.
+      // Перенос больше не молчит (#2110): пока едет — «переносится…», по исходу — «перенесено
+      // в <набор>» либо ошибка. Прежде проба просто исчезала из списка, и человек не знал,
+      // уехала она или потерялась.
+      //
+      // Слово было написано для переноса ИЗ БУФЕРА, но написано по адресату, а не по источнику,
+      // и потому перенос набор→набор говорит им без единой правки. Это проверено зубом, а не
+      // предположено: молчаливое исчезновение из списка — тот же дефект, откуда бы проба ни ехала.
       const targetName = snapshot.collections.find((c) => c.id === toId)?.name ?? toId;
       setMoveState({ state: 'moving', sampleId, targetName });
       try {
@@ -791,7 +809,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                         >
                           ↓
                         </button>
-                        {selectedId === BUFFER_COLLECTION_ID && moveTargets.length > 0 ? (
+                        {canMoveFrom && moveTargets.length > 0 ? (
                           <select
                             className="select select-bordered select-xs max-w-[8rem]"
                             defaultValue=""
@@ -860,7 +878,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
           moduleId={module.id}
           collectionId={selected.id}
           moveTargets={moveTargets}
-          canMutate={selectedId === BUFFER_COLLECTION_ID && moveTargets.length > 0}
+          canMutate={canMoveFrom && moveTargets.length > 0}
           onMove={(id, toId) => handleMove(id, toId)}
           onExport={(id) => {
             // Скачивание берёт пробу из библиотеки по адресу: у выборки своего блоба нет.

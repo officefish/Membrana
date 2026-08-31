@@ -33,7 +33,7 @@ export interface CabinetSampleCollectionBodyProps {
   readonly onExportSelected?: () => void;
   readonly readOnly?: boolean;
   readonly canMutate?: boolean;
-  readonly showMoveFromBuffer?: boolean;
+  readonly showMove?: boolean;
   readonly moveTargets?: Collection[];
   readonly onRemove?: (id: string) => void;
   readonly onMove?: (id: string, toId: string) => void;
@@ -65,7 +65,7 @@ export function CabinetSampleCollectionBody({
   onExportSelected,
   readOnly,
   canMutate,
-  showMoveFromBuffer,
+  showMove,
   moveTargets,
   onRemove,
   onMove,
@@ -147,7 +147,7 @@ export function CabinetSampleCollectionBody({
         mode={mode}
         readOnly={readOnly}
         canMutate={canMutate}
-        showMoveFromBuffer={showMoveFromBuffer}
+        showMove={showMove}
         moveTargets={moveTargets}
         onRemove={onRemove}
         onMove={onMove}

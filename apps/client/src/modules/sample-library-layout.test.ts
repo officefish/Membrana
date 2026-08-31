@@ -109,3 +109,51 @@ describe('действия строк выборки: правило одно, �
     }
   });
 });
+
+describe('перенос доступен из ЛЮБОГО набора, а не только из буфера', () => {
+  const CABINET_PANEL = 'apps/cabinet/src/components/sample-library/SampleLibraryMainPanel.tsx';
+  const CABINET_TABLE = 'apps/cabinet/src/components/sample-library/CabinetSampleTable.tsx';
+  const CABINET_HOOK = 'apps/cabinet/src/lib/useCabinetSampleLibrary.ts';
+
+  it('ПОРЧА: ни один дом не привязывает ДВЕРЬ переноса к буферу', () => {
+    // Дефект был не в правах и не на сервере: `moveTargets` уже исключал буфер, системные и
+    // текущий, сервер блокировал лишь тарифный набор и перенос в тот же самый. Дверь просто
+    // нарисовали в одном буфере — и, разложив улов по наборам, человек больше не мог переложить
+    // пробу из набора в набор.
+    //
+    // Порча владельца: вернуть условие про буфер — зуб краснеет. Ловим ОБА конца: и сравнение с
+    // BUFFER_COLLECTION_ID рядом с moveTargets, и старое имя пропа, которое несло привязку в себе.
+    const studio = read(STUDIO);
+    expect(studio, 'дверь переноса снова привязана к буферу').not.toMatch(
+      /selectedId === BUFFER_COLLECTION_ID && moveTargets\.length/u,
+    );
+    expect(studio).toContain('canMoveFrom && moveTargets.length > 0');
+
+    for (const p of [CABINET_PANEL, CABINET_TABLE]) {
+      expect(read(p), `${p}: имя showMoveFromBuffer несёт привязку к буферу`).not.toContain(
+        'showMoveFromBuffer=',
+      );
+    }
+    expect(read(CABINET_PANEL)).not.toMatch(/collectionId === BUFFER_COLLECTION_ID/u);
+  });
+
+  it('оба близнеца судят ИСТОЧНИК одинаково: системный набор только для чтения', () => {
+    // Правило одно, носителей два. В кабинете — `readOnlyCollection`, в Studio до этой правки
+    // такого понятия не было вовсе: там стоял буфер. Разъедутся — покраснеет здесь.
+    expect(read(STUDIO)).toContain("const readOnlyCollection = selected?.kind === 'system'");
+    expect(read(CABINET_HOOK)).toContain("readOnlyCollection = isTariffDataset || selectedCollection?.kind === 'system'");
+  });
+
+  it('перенос СОПРОВОЖДАЕТСЯ СЛОВОМ у обоих — и слово названо по адресату', () => {
+    // #2110 чинил молчаливое исчезновение из списка для буфера. Слово написано по адресату
+    // («перенесено В такой-то»), а не по источнику, поэтому набор→набор говорит им без правки.
+    // Зуб держит это явно: сузят слово обратно до буфера — покраснеет.
+    for (const p of [STUDIO, CABINET_HOOK]) {
+      const src = read(p);
+      // Имя переменной у домов своё (`targetName` / `moveState.targetName`) — важно, что имя
+      // набора-адресата подставляется, а не что переменные названы одинаково.
+      expect(src, `${p}: нет слова «переносится»`).toMatch(/Переносится в «\$\{[\w.]+\}»/u);
+      expect(src, `${p}: нет слова «перенесено»`).toMatch(/Перенесено в «\$\{[\w.]+\}»/u);
+    }
+  });
+});

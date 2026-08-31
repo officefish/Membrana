@@ -17,7 +17,7 @@ export interface CabinetSampleTableProps {
   readonly mode: 'catalog' | 'node';
   readonly readOnly?: boolean;
   readonly canMutate?: boolean;
-  readonly showMoveFromBuffer?: boolean;
+  readonly showMove?: boolean;
   readonly moveTargets?: Collection[];
   readonly onRemove?: (id: string) => void;
   readonly onMove?: (id: string, toId: string) => void;
@@ -38,7 +38,7 @@ export function CabinetSampleTable({
   mode,
   readOnly = true,
   canMutate = false,
-  showMoveFromBuffer = false,
+  showMove = false,
   moveTargets = [],
   onRemove,
   onMove,
@@ -140,7 +140,7 @@ export function CabinetSampleTable({
                             ↓
                           </button>
                         ) : null}
-                        {showMoveFromBuffer && canMutate && onMove ? (
+                        {showMove && canMutate && onMove ? (
                           <select
                             className="select select-bordered select-xs max-w-[8rem]"
                             defaultValue=""

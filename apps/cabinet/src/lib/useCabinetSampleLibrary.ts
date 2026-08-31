@@ -525,8 +525,11 @@ export function useCabinetSampleLibrary() {
   const handleMove = useCallback(
     async (sampleId: string, toId: string) => {
       if (!toId || readOnlyCollection) return;
-      // Перенос буфер→набор говорит, КУДА едет (#2110): «переносится в …» пока идёт,
-      // «перенесено в …» по исходу. Прежде тост знал, что перенесён, но не знал куда.
+      // Перенос говорит, КУДА едет (#2110): «переносится в …» пока идёт, «перенесено в …» по
+      // исходу. Прежде тост знал, что перенесён, но не знал куда.
+      //
+      // Слово написано по АДРЕСАТУ, а не по источнику, поэтому перенос набор→набор говорит им
+      // без единой правки — близнец в Studio устроен так же.
       const targetName = snapshot.collections.find((c) => c.id === toId)?.name ?? toId;
       showInfo(`Переносится в «${targetName}»…`);
       await runMediaOp('Перенос сэмпла', async () => {
