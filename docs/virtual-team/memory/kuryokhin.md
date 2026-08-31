@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14386/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 331 (причины в op-log) -->
+Записей: 49 · бюджет 14387/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 332 (причины в op-log) -->
+
+### 2026-08-30 · позиция · team-evening-feedback
+
+> Оценка артефактов: День не касался audio path / Web Audio / device-board runtime. Документы дня (MAIN_DAY_ISSUE, code-review) согласованы и не содержат противоречий по моей зоне. Ритуальный контур ночи выстроен — это создаёт устойчивый фон для продуктовых задач. Итоги дня: «—» […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
 
 ### 2026-08-29 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Слышу тему: 3 (граница с infra-policy) — это не просто «где шов», это вопрос о том, что вообще попадает в контейнер `network`, а что остаётся в infra. Пока 3 не решён, вопросы 5 (что в реестр, что в cache) и 6 (правила K1) могут тянуть в реестр то, что должно остаться у infra. […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/network-container-m0-order-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · team-evening-feedback
-
-> Курёхин. Оценка артефактов: аудио-путь дня не касается, поэтому оценивать документы по своей зоне не могу; по общему впечатлению — MAIN_DAY_ISSUE перечислил «сознательно не делаем DSP-бенчмарки и trends DRONE_TIGHT» с корректной ссылкой на потолок эшелона 0 (§6 FFT_METRICS) — […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-13.md#reply-1`

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14397/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 328 (причины в op-log) -->
+Записей: 49 · бюджет 14391/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 329 (причины в op-log) -->
+
+### 2026-08-30 · позиция · team-evening-feedback
+
+> Оценка артефактов: Алгоритмов/FFT в дне нет — день ритуальный, но документы дня (MAIN_DAY_ISSUE, code-review) согласованы и точны в терминах. Отмечу корректность зуба #2245: инвариант «все три или ни одного» для процедуры — правильная форма. Итоги дня: По моей зоне — «—». […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
 
 ### 2026-08-29 · позиция · team-evening-feedback
 
@@ -290,14 +296,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-14.md#reply-1`
 
-### 2026-08-13 · позиция · network-container-m0-order
+### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
 
-> Формализую предикат ребра, как делал в прошлых комнатах: ребро A→B существует тогда и только тогда, когда answer(A) defines(v) AND question(B) requires(v). Проверяю 4→5: вопрос 4 производит переменную «ритм аудита»; вопрос 5 требует эту переменную, потому что форма хранения […] _(реплик в сеансе: 5)_
+> `requiredProjectionSet` должен быть независим от фактических страниц движка. Panel назначает множество требуемых `canonicalRef`, а readiness сравнивает его с reducer output binding ledger и полным inventory живых engine objects на одном snapshot. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/network-container-m0-order-2026-08-13.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
-
-> Сначала фиксирую два множества, которые нельзя смешивать: M2 records и attempts. Идемпотентность живёт на ключе `(principal,intentId)`, а независимое поступление тех же bytes с новым intent создаёт новый record и новую lineage. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`

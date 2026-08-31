@@ -8,7 +8,7 @@
 | Field | Value |
 |-------|-------|
 | Date | 2026-08-30 |
-| Head SHA | 78e913a002fdb216b2a2063238bf3376d55d2410 |
+| Head SHA | dbdc8bac92d840f7860248bb01cd0bb9bb41e22c |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1198 |
-| Yarn scripts (package.json) | 460 |
-| Yarn → `scripts/` | 407 |
+| Code files under `scripts/` | 1204 |
+| Yarn scripts (package.json) | 462 |
+| Yarn → `scripts/` | 409 |
 | Yarn без пути `scripts/` | 53 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 873 |
+| Code files without yarn ref | 877 |
 
-## Yarn → scripts/ (407)
+## Yarn → scripts/ (409)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -233,6 +233,7 @@
 - `night:close` → `scripts/night-build-close.mjs`
 - `night:land-reports` → `scripts/night-land-reports.mjs`
 - `night:open` → `scripts/night-build-open.mjs`
+- `night:preflight` → `scripts/night-preflight.mjs`
 - `night:research` → `scripts/night-research.mjs`
 - `night:research:sweep` → `scripts/night-research.mjs`
 - `night:research:yield` → `scripts/night-research.mjs`
@@ -286,6 +287,7 @@
 - `ritual:day:no-api` → `scripts/morning-care.mjs`, `scripts/daily-standup.mjs`, `scripts/main-day-probe.mjs`, `scripts/main-day-issue.mjs`
 - `ritual:deliver-to-main` → `scripts/ritual-deliver-to-main.mjs`
 - `ritual:evening` → `scripts/ritual-evening-run.mjs`
+- `ritual:night` → `scripts/ritual-night-run.mjs`
 - `root-site:check` → `scripts/_ssh-root-site-setup.mjs`
 - `root-site:deploy` → `scripts/_ssh-root-site-setup.mjs`
 - `root-site:deploy:installer` → `scripts/_ssh-root-site-setup.mjs`
@@ -433,7 +435,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (873)
+## Code files without yarn ref (877)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -855,6 +857,7 @@
 - `scripts/lib/night-build.mjs`
 - `scripts/lib/night-hunt-veracity.mjs`
 - `scripts/lib/night-land-reports.mjs`
+- `scripts/lib/night-preflight.mjs`
 - `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
 - `scripts/lib/night-summary.mjs`
@@ -914,6 +917,7 @@
 - `scripts/lib/ritual-evening-close-args.mjs`
 - `scripts/lib/ritual-exit-codes.mjs`
 - `scripts/lib/ritual-morning-artifacts.mjs`
+- `scripts/lib/ritual-night.mjs`
 - `scripts/lib/ritual-tree-hygiene.mjs`
 - `scripts/lib/run-ledger/canonical.mjs`
 - `scripts/lib/run-ledger/checkpoint.mjs`
@@ -1107,6 +1111,7 @@
 - `scripts/night-build-handoff.test.mjs`
 - `scripts/night-hunt-veracity.test.mjs`
 - `scripts/night-land-reports.test.mjs`
+- `scripts/night-preflight.test.mjs`
 - `scripts/night-report-gate.test.mjs`
 - `scripts/night-research.test.mjs`
 - `scripts/night-summary.test.mjs`
@@ -1199,6 +1204,7 @@
 - `scripts/ritual-evening-tail.test.mjs`
 - `scripts/ritual-exit-codes.test.mjs`
 - `scripts/ritual-green-cascade.test.mjs`
+- `scripts/ritual-night.test.mjs`
 - `scripts/ritual-tree-hygiene.test.mjs`
 - `scripts/rootpolicy.test.mjs`
 - `scripts/run-ledger.test.mjs`
@@ -1319,7 +1325,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1198)
+## All code files (1204)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1888,6 +1894,7 @@
 - `scripts/lib/night-build.mjs`
 - `scripts/lib/night-hunt-veracity.mjs`
 - `scripts/lib/night-land-reports.mjs`
+- `scripts/lib/night-preflight.mjs`
 - `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
 - `scripts/lib/night-summary.mjs`
@@ -1947,6 +1954,7 @@
 - `scripts/lib/ritual-evening-close-args.mjs`
 - `scripts/lib/ritual-exit-codes.mjs`
 - `scripts/lib/ritual-morning-artifacts.mjs`
+- `scripts/lib/ritual-night.mjs`
 - `scripts/lib/ritual-tree-hygiene.mjs`
 - `scripts/lib/run-ledger/canonical.mjs`
 - `scripts/lib/run-ledger/checkpoint.mjs`
@@ -2180,6 +2188,8 @@
 - `scripts/night-hunt-veracity.test.mjs`
 - `scripts/night-land-reports.mjs`
 - `scripts/night-land-reports.test.mjs`
+- `scripts/night-preflight.mjs`
+- `scripts/night-preflight.test.mjs`
 - `scripts/night-report-gate.mjs`
 - `scripts/night-report-gate.test.mjs`
 - `scripts/night-research.mjs`
@@ -2322,6 +2332,8 @@
 - `scripts/ritual-evening-tail.test.mjs`
 - `scripts/ritual-exit-codes.test.mjs`
 - `scripts/ritual-green-cascade.test.mjs`
+- `scripts/ritual-night-run.mjs`
+- `scripts/ritual-night.test.mjs`
 - `scripts/ritual-tree-hygiene.test.mjs`
 - `scripts/rootpolicy.test.mjs`
 - `scripts/rt-day-report.mjs`
