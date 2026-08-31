@@ -1,40 +1,45 @@
-<!-- Сгенерировано: 2026-08-30T17:34:02.821Z (yarn code-review; daily, llm-xai) -->
+<!-- Сгенерировано: 2026-08-31T17:10:43.879Z (yarn code-review; daily, llm-xai) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: 78e913a002fdb216b2a2063238bf3376d55d2410^..042ad32234299b389fd481b8628f9988389b3f79 (6 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 78e913a0 #2240 (1193), bd2abed0 #2241 (624), e3687287 #2242 (641), 96088fe2 #2243 (1410), 042ad322 (649)
+> Период: 297a9202e5b154944e66595f75d8fdbc74d729e2^..0210aa7e15f4436739c249fb7749f828e78d4b4b (5 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 297a9202 #2246 (1151), 59aeb859 #2244 (595), 0210aa7e (646)
 
 ---
 
 Tier: T1
 
-**[Vesnin — ведущий]:** пропуск. В развёрнутом #2245 зверей бестиария нет: наоборот, закрыт B9-дрейф (канон обещал `owner|human`, код с #1851 молча принимал `night`). Зуб сверки `CORE.md` ↔ `GATE_WAITS` — правильный носитель, не проза. Oversized #2240–#2243/#042ad322 в этом прогоне без тела диффа — в вердикт по содержанию не беру; состояния GitHub: все MERGED/CLOSED, расхождений с таблицей фактов нет.
+**[Архитектор / vesnin]:** Ведущий. По развёрнутому диффу зверей бестиария нет: #2248 прямо лечит **B6 (Молчаливый зелёный)** — `deliveryOutcome` судит по состоянию цели (`MERGED`), а не по последнему шагу; #2249 сводит показ галочки и блок кнопки к одному `deletionAcknowledgementRisk` (анти-тупик «жать нельзя / отметить нечего»). Три oversized (#2246, #2244, `0210aa7e`) в daily не развёрнуты — отдельных блокеров по ним из доступного контекста нет, но **не заявлять LGTM по непрочитанному**. Границы: UI-близнецы cabinet/client + чистое ядро `media-library` + tooling `scripts/` — связность осознанная, циклов не видно. Вердикт дня по развёрнутому: **пропуск**; риск утра — красный `@membrana/background-media#test` (вне диффа дня, но ломает ритуал).
 
-[Teamlead]: День — ритуальный контур, не продуктовый runtime: вечер 29.08 → утро 30.08 → morning-gate читает nightly → `yarn ritual:night` (#2243) → канон гейтов догнал зуб (#2245) → автозабор артефактов. PR size: пять из шести коммитов oversized (624–1410 строк) — P2 «recommend split» на будущее, merge не блокируем (уже в стволе). Риск на завтра: красный `@membrana/background-media#test` в дереве + uncommitted вечерние артефакты на ветке `angelina/chore/ritual-evening-20260830`. Утро: не генерировать code-review; прочитать этот файл; `yarn turbo run test --filter=@membrana/background-media`; `yarn workspace membrana-tooling test scripts/validate-procedure.test.mjs` (или эквивалент node:test); `yarn docs:lint` при наличии; сверить `DAILY_STANDUP` / `MAIN_DAY_ISSUE` с фактом MERGED #2240–#2245.
+**[Teamlead]:** День: #2244 · #2246 · #2248 · #2249 — MERGED; на ветке ещё `0210aa7e` (ритуал 31.08). Ценность: перенос проб из любого пользовательского набора + честный exit `pr:ship` + масштаб как третий риск удаления. PR size: #2249 OK (~283), #2248 OK (~178); #2246/#2244/`0210aa7e` oversized — в daily только учёт, не повторный merge-gate. Утро: не `yarn code-review`; читать этот артефакт → зелёный test media-library + починить/понять background-media → typecheck cabinet/client. Риски на завтра: расхождение близнецов deletion/move; ложный «доставлено» если `deliveryOutcome` обойдут новым optional-путём без `failedSteps`.
 
-[Архитектор]: #2245 — узкая и верная форма: публичный контракт `waitsFor` расширен до `owner|human|night`, смысл `night` зафиксирован в CORE (машинная пауза на ночь, не на человека), CORPUS согласован. Экспорт `GATE_WAITS` ради зуба — осознанная граница «словарь кода = таблица канона»; второй несверяемый список запрещён текстом коммита. Контейнер `ritual-night` и сироты одним PR (#2243) — уже merge; при следующем ритуальном контейнере дробить носители шагов и docs-артефакты.
+**[Структурщик]:** #2249: ядро `deletionAcknowledgementRisk` / `isDeletionBlocked` в `@membrana/media-library`, UI тонкий — C4 ок; rename `showMoveFromBuffer`→`showMove` убирает ложный словарь. Зубы `deletion-dialog-twins` / `sample-library-layout` / `deletion-value.test` держат оба дома и порчу «дверь только в буфере». #2248: `printFinalPrState` возвращает pr наружу — правда доезжает до `process.exitCode`; optional-падения копятся в `failedSteps`. C1/C7 по развёрнутому — соблюдены. C8/C9 — в диффе не видно `console.log`/секретов. Следить: `readOnlyCollection` в Studio (`kind === 'system'`) vs cabinet (`isTariffDataset || system`) — зуб есть, разъезд покраснеет.
 
-[Структурщик]: Границы дня: `docs/procedures/*`, `scripts/lib/validate-procedure.mjs`, тест, hash в `kits/containerization-master/MANIFEST.json` — связность соблюдена, цикл пакетов не задет. C7: зуб на равенство documented ↔ `GATE_WAITS` рядом с валидатором — хорошо. C8/C9: в показанном диффе секретов и `console.log` нет. Untracked/modified — архив дня, evidence, trail, deps-watch: не тащить чужой WIP (B7); вечерний ритуал пусть заберёт своим контуром. C1 вне scope runtime-пакетов.
+**[Математик]:** `deletionAcknowledgementRisk`: порядок evidence → unknown → scale (`willDelete > 1`), `willDelete <= 0` → `null` — ветки покрыты тестами (1 / 2 / evidence на единице / пачка ordinary). Off-by-one на пороге «2» зафиксирован решением владельца, не магией. `assessDeletionValue` после move набор→набор остаётся `curated` — чистая функция от текущего `collectionId`, без скрытого I/O. Для #2248 — детерминированная таблица исходов, без флаков.
 
-[Математик]: — (алгоритмов/FFT нет). Correctness зуба: парсинг строки `| \`waitsFor\` |` + backtick-токенов хрупок к переформатированию таблицы — P2 opportunity (якорь/машина-читаемый фрагмент), не блокер: тест падает при дрейфе, ложный green маловероятен.
+**[Музыкант]:** — (Web Audio / audio-engine / 24-bit path не затронуты)
 
-[Музыкант]: — (audio path / Web Audio / device-board runtime не трогались).
+**[Верстальщик]:** Перенос: select в строке при `showMove`/`canMoveFrom` + `canMutate`; диалог удаления — один `risk` для label и disable, тексты evidence/unknown/scale различаются (scale не врёт «вещдоки»). a11y: checkbox+label сохранены; новых контролов вне паттерна Daisy `select-xs` нет. Lint-warning cabinet `CabinetSampleDuplicatesPanel` (`titleOf` в deps) — **вне** #2249, P2, не блок. Смоук: cabinet + Studio — move из именованного набора, delete 2 ordinary с галочкой, delete 1 ordinary без.
 
-[Верстальщик]: — (UI/DESIGN.md/a11y не в диффе). Lint-warning `CabinetSampleDuplicatesPanel.tsx` (лишняя зависимость `titleOf`) — вне работы дня, P2 nit, не блокер merge.
+---
 
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-08-30); опорный развёрнутый дифф — #2245; oversized #2240/#2241/#2242/#2243/042ad322 — только учёт размера и статуса MERGED.
+**Итоговый артефакт:** `docs/DAILY_CODE_REVIEW.md` (вечер 2026-08-31)
 
-Definition of Done (утро):
-1. Прочитать этот review + вчерашний контекст ритуала (не перегенерировать code-review).
-2. `yarn turbo run test --filter=@membrana/background-media` — разобрать красный test (помеха №1 или pre-existing).
-3. Прогон зуба процедур: тест с `GATE_WAITS` / `validate-procedure`.
-4. `yarn turbo run lint --filter=@membrana/cabinet` — warning hooks не раздувать в P0.
-5. Закрыть вечерний автозабор: чистый tree после ritual-evening либо явный commit только своих артефактов дня.
+**Definition of Done (утро):**
+```bash
+# вчерашнее ревью — только читать; code-review не генерировать
+yarn turbo run test typecheck --filter=@membrana/media-library
+yarn turbo run test typecheck lint --filter=@membrana/cabinet --filter=@membrana/client
+yarn turbo run test --filter=@membrana/background-media
+node --test scripts/pr-ship.test.mjs
+```
+При красном background-media — диагноз в MAIN_DAY / issue, не «проглотить» как optional. Smoke вручную: Studio+Cabinet перенос набор→набор и удаление 2 ordinary.
 
-Риски:
-- **P1:** `@membrana/background-media#test` exit 1 в текущем дереве — не маскировать «молчаливым зелёным» (B6) на утреннем гейте.
-- **P2:** серия oversized ritual-PR без развёрнутого диффа в daily — следующий контейнер ритуала резать &lt;400 строк или выносить docs-артефакты отдельно.
-- **P2:** хрупкий парсинг markdown-строки `waitsFor` в зубе #2245.
-- **—** P0 по показанному #2245 и канону гейтов.
+**Риски:**
+- **P1** — `@membrana/background-media#test` exit 1 на дереве (блокирует уверенность вечернего ритуала; не из #2248/#2249, но живой красный).
+- **P2** — oversized #2246/#2244/`0210aa7e` без развёрнутого diff в этом прогоне (ретро-ликбез только при инциденте).
+- **P2** — lint warning `CabinetSampleDuplicatesPanel` exhaustive-deps.
+- **P2 (opportunity)** — явный follow-up: guard-пропуски в `pr:ship` по-прежнему не в `failedSteps` (честно названо в комментарии #2248).
+
+**Вердикт дня (daily, не merge-gate):** развёрнутые #2248/#2249 — принять как в стволе; утро начать с красного background-media и чтения этого файла.
