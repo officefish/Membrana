@@ -20,6 +20,7 @@ import { useEffect, useMemo, useReducer, useRef, type ReactNode } from 'react';
 import {
   DELETION_GATE_CLOSED,
   assessDeletion,
+  deletionAcknowledgementRisk,
   deletionGateReducer,
   isDeletionBlocked,
   type Collection,
@@ -155,6 +156,10 @@ export function DeletionConfirmDialog({
     acknowledged,
     busy,
   });
+  // ПОКАЗ И ДЕЙСТВИЕ — ИЗ ОДНОГО ВЕРДИКТА. Прежде галочка рисовалась по своему условию
+  // (вещдоки или неизвестность), а кнопка блокировалась по своему. Стоило добавить в
+  // блокировку масштаб — и вышел тупик: две рядовые записи удалить нельзя, а отметить нечего.
+  const risk = deletionAcknowledgementRisk({ willDelete, evidence: summary.evidence, unknown });
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
@@ -217,7 +222,7 @@ export function DeletionConfirmDialog({
           </div>
         )}
 
-        {summary.evidence > 0 || unknown > 0 ? (
+        {risk ? (
           <label className="flex cursor-pointer items-start gap-2 text-sm">
             <input
               type="checkbox"
@@ -226,9 +231,11 @@ export function DeletionConfirmDialog({
               onChange={(e) => dispatch({ type: 'acknowledge', value: e.target.checked })}
             />
             <span>
-              {summary.evidence > 0
+              {risk === 'evidence'
                 ? 'Понимаю, что удаляю вещдоки, и делаю это осознанно'
-                : `Понимаю, что об ${unknown} записях ценность не выяснена, и удаляю их осознанно`}
+                : risk === 'unknown'
+                  ? `Понимаю, что об ${unknown} записях ценность не выяснена, и удаляю их осознанно`
+                  : `Понимаю, что удаляю ${willDelete} записей разом, и делаю это осознанно`}
             </span>
           </label>
         ) : null}

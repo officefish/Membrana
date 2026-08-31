@@ -50,11 +50,13 @@ export type {
 export {
   DELETION_GATE_CLOSED,
   EVIDENCE_WINDOWS,
+  deletionAcknowledgementRisk,
   deletionGateReducer,
   isDeletionBlocked,
   windowByTimeOnly,
   type DeletionGateEvent,
   type DeletionGateState,
+  type DeletionRisk,
   assessDeletion,
   assessDeletionValue,
   evidenceWindowOf,

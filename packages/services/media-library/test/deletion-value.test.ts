@@ -208,7 +208,50 @@ describe('ворота удаления — поведение во времен
     expect(isDeletionBlocked({ willDelete: 5, evidence: 0, acknowledged: false, busy: true })).toBe(true);
     expect(isDeletionBlocked({ willDelete: 5, evidence: 2, acknowledged: false })).toBe(true);
     expect(isDeletionBlocked({ willDelete: 5, evidence: 2, acknowledged: true })).toBe(false);
-    expect(isDeletionBlocked({ willDelete: 5, evidence: 0, acknowledged: false })).toBe(false);
+    // Прежде эта строка утверждала `false`: пять рядовых записей уходили одним нажатием.
+    // Правило изменено РЕШЕНИЕМ (масштаб — третий риск, 31.08), а не подогнано под код.
+    expect(isDeletionBlocked({ willDelete: 5, evidence: 0, acknowledged: false })).toBe(true);
+    expect(isDeletionBlocked({ willDelete: 5, evidence: 0, acknowledged: true })).toBe(false);
+  });
+});
+
+describe('масштаб — третий риск наравне с вещдоком и неизвестностью', () => {
+  it('ПОРЧА: две рядовые записи БЕЗ отметки — отказ', () => {
+    // Порча владельца: снять условие на количество — зуб краснеет.
+    expect(
+      isDeletionBlocked({ willDelete: 2, evidence: 0, unknown: 0, acknowledged: false }),
+      'две записи разом — ошибка в масштабе, второе движение обязательно',
+    ).toBe(true);
+    expect(isDeletionBlocked({ willDelete: 2, evidence: 0, unknown: 0, acknowledged: true })).toBe(false);
+  });
+
+  it('одиночное удаление рядовой пробы остаётся ОДНИМ нажатием', () => {
+    // Обратный конец правила, и он не менее важен: предупреждать одинаково обо всём — значит
+    // добиться, чтобы предупреждение перестали читать. Порог ровно на двух.
+    expect(
+      isDeletionBlocked({ willDelete: 1, evidence: 0, unknown: 0, acknowledged: false }),
+      'лишняя ступень на одиночном удалении рядовой приучает жать «да»',
+    ).toBe(false);
+  });
+
+  it('одиночный ВЕЩДОК требует второго движения, как и раньше', () => {
+    // Масштаб добавлен к рискам, а не заменил их: на единице по-прежнему судит ценность.
+    expect(isDeletionBlocked({ willDelete: 1, evidence: 1, unknown: 0, acknowledged: false })).toBe(true);
+    expect(isDeletionBlocked({ willDelete: 1, evidence: 1, unknown: 0, acknowledged: true })).toBe(false);
+  });
+
+  it('ЖИВОЙ СЛУЧАЙ: очистка буфера из полностью разобранных рядовых больше не идёт в одно нажатие', () => {
+    // Единственный поток, где число к удалению вообще больше единицы. Прежде: всё разобрано,
+    // ценного нет — сто записей уходили одним кликом. Это и есть ошибка в масштабе.
+    const s = assessDeletion([sample({ id: 'a' }), sample({ id: 'b' }), sample({ id: 'c' })], {
+      collections: [],
+      deviceId: DEVICE,
+    });
+    expect(s.unknown).toBe(0);
+    expect(s.evidence).toBe(0);
+    expect(
+      isDeletionBlocked({ willDelete: s.willDelete, evidence: 0, unknown: 0, acknowledged: false }),
+    ).toBe(true);
   });
 });
 
