@@ -73,6 +73,37 @@ describe('гипотеза ценности перед удалением', () =
     expect(v.why).toContain('дрон');
   });
 
+  it('ПОРЧА: проба, уехавшая из набора в набор, ОСТАЁТСЯ разобранной руками', () => {
+    // Оговорка владельца к переносу набор→набор: запись, уехавшая из именованного набора в
+    // другой, не должна стать рядовой и потерять защиту при уборке.
+    //
+    // Держит это не память автора, а форма правила: ступень берётся по ТЕКУЩЕМУ набору пробы,
+    // а не по истории переездов, и `moveTargets` в обоих домах исключает буфер и системные —
+    // значит адресат всегда пользовательский. Зуб пришпиливает оба конца: начни кто-нибудь
+    // считать ступень по происхождению — покраснеет здесь.
+    const cols: Collection[] = [
+      ...collections,
+      { id: 'col-listening', name: 'Разбор на слух 21 августа', kind: 'user', createdAt: '', updatedAt: '' },
+    ];
+    const before = assessDeletionValue(sample({ collectionId: 'col-night' }), { collections: cols, deviceId: DEVICE });
+    const after = assessDeletionValue(sample({ collectionId: 'col-listening' }), { collections: cols, deviceId: DEVICE });
+
+    expect(before.level).toBe('curated');
+    expect(after.level, 'переезд между наборами не делает пробу рядовой').toBe('curated');
+    // Довод называет НОВЫЙ набор: человеку нужно, где проба лежит сейчас, а не где лежала.
+    expect(after.why).toContain('Разбор на слух 21 августа');
+    expect(after.why).toContain('положили руками');
+  });
+
+  it('перенос из буфера в набор ПОДНИМАЕТ ступень, а не только сохраняет', () => {
+    // Обратная сторона той же формы: рядовая проба лотка, уехав в именованный набор, становится
+    // разобранной. Иначе разбор улова не менял бы в защите ничего — а он и есть разбор.
+    const inBuffer = assessDeletionValue(sample({ collectionId: '__buffer__' }), { collections, deviceId: DEVICE });
+    const inSet = assessDeletionValue(sample({ collectionId: 'col-night' }), { collections, deviceId: DEVICE });
+    expect(inBuffer.level).toBe('ordinary');
+    expect(inSet.level).toBe('curated');
+  });
+
   it('рядовая проба лотка названа рядовой СЛОВАМИ, а не молчанием', () => {
     const v = assessDeletionValue(sample(), { collections, deviceId: DEVICE });
     expect(v.level).toBe('ordinary');

@@ -1,5 +1,3 @@
-import { BUFFER_COLLECTION_ID } from '@membrana/media-library-service';
-
 import { MediaLibraryQuotaBanner } from '@/components/MediaLibraryQuotaBanner';
 import { CabinetSampleCollectionBody } from '@/components/sample-library/CabinetSampleCollectionBody';
 import type { CabinetSampleLibraryModel } from '@/lib/useCabinetSampleLibrary';
@@ -82,6 +80,20 @@ export function SampleLibraryMainPanel({
   samplesPageLoading,
   samplesPagination,
 }: SampleLibraryMainPanelProps) {
+  /**
+   * Показывать ли орган переноса в строке.
+   *
+   * Прежде дверь была нарисована ТОЛЬКО в буфере (`selection.collectionId ===
+   * BUFFER_COLLECTION_ID`), хотя этого не требовал никто: `canMutate` уже запрещает менять
+   * пробы в наборах только для чтения, `moveTargets` уже исключает буфер, системные и текущий,
+   * а сервер блокирует лишь тарифный набор и перенос в тот же самый. Условие снято — переносить
+   * можно из любого набора, где вообще разрешено менять пробы.
+   *
+   * Прежнее имя пропа (`showMoveFromBuffer`) само несло привязку: оставить его значило бы
+   * оставить дефект в словаре, сняв его в коде.
+   */
+  const showMove = selection.kind === 'node' && moveTargets.length > 0;
+
   if (isOfflineView && selection.kind === 'node-offline') {
     return (
       <section className="flex min-w-0 flex-1 flex-col gap-3">
@@ -209,11 +221,7 @@ export function SampleLibraryMainPanel({
         }
         readOnly={readOnlyCollection}
         canMutate={canMutate}
-        showMoveFromBuffer={
-          selection.kind === 'node' &&
-          selection.collectionId === BUFFER_COLLECTION_ID &&
-          moveTargets.length > 0
-        }
+        showMove={showMove}
         moveTargets={moveTargets}
         onRemove={(id) => void handleRemove(id)}
         onMove={(id, toId) => void handleMove(id, toId)}
