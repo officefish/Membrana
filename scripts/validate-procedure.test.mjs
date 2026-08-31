@@ -6,6 +6,7 @@ import { after, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import {
+  GATE_WAITS,
   PROCEDURE_CORE_PILOTS,
   PROCEDURE_HOME_PILOTS,
   auditProcedureCorpus,
@@ -575,4 +576,27 @@ test('ADR-0025: список модератор-в-holder машинно чит�
     assert.equal(row.holder, 'angelina');
     assert.match(row.reason, /модератор/);
   }
+});
+
+test('канон знает ровно то же, что зуб: waitsFor в CORE.md == GATE_WAITS', () => {
+  // ЗАЧЕМ ЭТОТ ЗУБ. `night` появился в GATE_WAITS с #1851, а `docs/procedures/CORE.md` четыре
+  // месяца обещал `owner | human`. Публичный контракт и словарь кода разъехались МОЛЧА, и заметил
+  // это лишь первый манифест, который `night` реально применил (ritual-night, #2243).
+  //
+  // Сверка идёт с САМОЙ таблицей канона, а не с её пересказом: второй список значений в
+  // документе, который никто не читает машинно, — это не документация, а обещание.
+  const core = readFileSync(join(repoRoot, 'docs', 'procedures', 'CORE.md'), 'utf8');
+  const row = core
+    .split(/\r?\n/u)
+    .find((line) => line.startsWith('| `waitsFor` |'));
+  assert.ok(row, 'в CORE.md нет строки контракта `waitsFor` — канон гейтов исчез');
+
+  const documented = [...row.matchAll(/`([a-z-]+)`/gu)]
+    .map((m) => m[1])
+    .filter((v) => v !== 'waitsFor');
+  assert.deepEqual(
+    [...documented].sort(),
+    [...GATE_WAITS].sort(),
+    `CORE.md обещает {${documented.join(", ")}}, а зуб принимает {${GATE_WAITS.join(", ")}}`,
+  );
 });

@@ -48,6 +48,35 @@ export type {
 } from './types.js';
 
 export {
+  LABEL_MANIFEST_SCHEMA,
+  buildLabelManifest,
+  readLabelManifest,
+  type BuildLabelManifestInput,
+  type LabelManifest,
+  type LabelManifestEntry,
+  type LabelManifestReadResult,
+  type LabelManifestRefusal,
+  type LabelManifestRefusalReason,
+} from './label-manifest.js';
+
+export {
+  DELETION_GATE_CLOSED,
+  EVIDENCE_WINDOWS,
+  deletionGateReducer,
+  isDeletionBlocked,
+  windowByTimeOnly,
+  type DeletionGateEvent,
+  type DeletionGateState,
+  assessDeletion,
+  assessDeletionValue,
+  evidenceWindowOf,
+  type DeletionValueContext,
+  type DeletionValueLevel,
+  type DeletionValueSummary,
+  type DeletionValueVerdict,
+  type EvidenceWindow,
+} from './deletion-value.js';
+export {
   LIBRARY_CHART_LIST_CRITERIA,
   LIBRARY_CHART_LIST_VOLUMES,
   dateInputToIsoWindow,

@@ -113,7 +113,14 @@ const MODE_KINDS = Object.freeze(['orchestrated', 'mirrored', 'local']);
 const CRITICALITY = Object.freeze(['critical', 'noncritical']);
 // 'night' — машинный гейт ночного прогона (#1293): ждёт не человека, а зелёный
 // свежий носитель кадра night-report; resume называет команду подтяжки.
-const GATE_WAITS = Object.freeze(['owner', 'human', 'night']);
+/**
+ * Кого гейт ждёт. `night` — не человек, а сама ночь: единственный машинный из трёх.
+ *
+ * Экспортируется РАДИ ЗУБА, сверяющего словарь с публичным контрактом docs/procedures/CORE.md.
+ * До 30.08 они разъехались молча: `night` жил здесь с #1851, а канон четыре месяца обещал
+ * `owner|human`.
+ */
+export const GATE_WAITS = Object.freeze(['owner', 'human', 'night']);
 const STUB_WHY_RE = /^(todo|n\/?a|tbd|none|null|-|—|\.+)$/iu;
 const KEBAB_RE = /^[a-z0-9][a-z0-9-]*$/u;
 
@@ -349,7 +356,7 @@ export function coreGateProblems(gate, label, seenIds = new Set()) {
     seenIds.add(g.id);
   }
   if (!GATE_WAITS.includes(/** @type {string} */ (g.waitsFor))) {
-    problems.push(`${label}: waitsFor ∉ {owner, human}`);
+    problems.push(`${label}: waitsFor ∉ {${GATE_WAITS.join(", ")}}`);
   }
   if (typeof g.resume !== 'string' || g.resume.trim() === '') {
     problems.push(`${label}: resume — не непустая строка`);

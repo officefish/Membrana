@@ -5,8 +5,26 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14393/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 333 (причины в op-log) -->
+Записей: 49 · бюджет 14358/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 336 (причины в op-log) -->
+
+### 2026-08-30 · позиция · team-evening-feedback
+
+> Оценка артефактов: Документы дня согласованы, границы работ в MAIN_DAY_ISSUE определены чётко: `docs/procedures/*`, `scripts/lib/validate-procedure.mjs`, тест, hash в `kits/containerization-master/MANIFEST.json`. Связность соблюдена, цикл пакетов не задет. C7: зуб на равенство […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
+
+### 2026-08-29 · позиция · team-evening-feedback
+
+> Оценка артефактов: Код-ревью дня корректно классифицировало слои: C1 (границы пакетов) усилены зубом `declared-imports`, C4/C7 (чистые ядра, тесты рядом) соблюдены. `MAIN_DAY_ISSUE` ясно разграничил primary/secondary/sanitary — это помогает структурировать работу. Итоги дня: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
+
+### 2026-08-28 · позиция · team-evening-feedback
+
+> Оценка артефактов: Документы дня связны: стендап → MAIN_DAY_ISSUE → DoD → code-review — единая линия #2204. Единственное слабое место — отсутствие карточек `media-library-service` / `background-media` в registry (отмечено в MAIN_DAY_ISSUE), что мешает трассировке. Итоги дня: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
 
 ### 2026-08-27 · позиция · hunt-and-canon-m0-order
 
@@ -283,21 +301,3 @@
 > Соглашусь с Весниным в главном, уточню в деталях. Вопрос 2 (enum состояний) зависит от 1, потому что enum описывает состояние записи — а что такое запись, отвечает 1. Но вопрос 2 сам является посылкой для вопросов 6 и 7: правило K1 и proxy-awareness оперируют состоянием […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/network-container-m0-order-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m1-home-record
-
-> Начну с лемм, иначе разъедемся в словах. «Дом» — адрес плоскости артефактов контейнера, не runtime-сервис и не пакет в monorepo. «Единица звена» — одна append-запись контейнера, из которой строятся отчёты; не маршрут как объект политики и не правило firewall. Образец жанра в […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/network-container-m1-home-record-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m2-infra-border
-
-> Уточню лемму «дубль». Дубль — это когда два дома несут поле об одном предмете с одним семантическим статусом. «Узел X имеет пропускную способность 1 Гбит» в `infra-policy` и то же поле в зонд-снимке — дубль. «Узел X наблюдался с трафиком 0.3 Гбит в момент T» в снимке — не дубль, […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/network-container-m2-infra-border-2026-08-13.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
-
-> Закрытый словарь M3 сохраняется дословно: `discover`, `read-metadata`, `read-ref`, `read-bytes`, `download`, `write-metadata`, `upload-revision`, `manage-access`. Объекты только container, collection и lineage; annotation write не добавляется. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`

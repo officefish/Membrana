@@ -27,6 +27,8 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { workspaceSearchPaths } from './lib/workspace-dirs.mjs';
+
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 /** Сервисы, чей образ несёт workspace-пакеты. Дом списка — здесь, рядом с предикатом. */
@@ -57,27 +59,35 @@ export const IMAGE_SERVICES = Object.freeze([
   { id: 'cabinet-web', pkg: 'apps/cabinet', dockerfile: 'apps/cabinet/Dockerfile', stage: 'build' },
 ]);
 
-/** Каталоги, где живут воркспейсы (совпадает с `workspaces` корневого package.json). */
-const WORKSPACE_DIRS = ['packages', 'packages/libs', 'packages/services', 'packages/services/detectors', 'apps'];
+/**
+ * Каталоги воркспейсов — у корневого манифеста, а не копией.
+ *
+ * Копия «совпадала с workspaces» только на словах: корень объявляет ещё
+ * `apps/demos/Research-Tree`, и этого пакета сторож не видел (ревью #2233).
+ */
+const SEARCH = workspaceSearchPaths(JSON.parse(readFileSync(resolve(ROOT, 'package.json'), 'utf8')));
 
 /** Карта «имя пакета → {dir, deps}». Читает ФС один раз; ядро ниже работает значением. */
 export function readWorkspaceMap(root = ROOT) {
   const map = {};
-  for (const dir of WORKSPACE_DIRS) {
-    const abs = resolve(root, dir);
+  const put = (dir) => {
+    const pkgPath = join(resolve(root, dir), 'package.json');
+    if (!existsSync(pkgPath)) return;
+    const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
+    if (typeof pkg.name !== 'string') return;
+    map[pkg.name] = {
+      dir,
+      deps: Object.keys(pkg.dependencies ?? {}).filter((d) => d.startsWith('@membrana/')),
+    };
+  };
+  for (const parent of SEARCH.parents) {
+    const abs = resolve(root, parent);
     if (!existsSync(abs)) continue;
     for (const entry of readdirSync(abs, { withFileTypes: true })) {
-      if (!entry.isDirectory()) continue;
-      const pkgPath = join(abs, entry.name, 'package.json');
-      if (!existsSync(pkgPath)) continue;
-      const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
-      if (typeof pkg.name !== 'string') continue;
-      map[pkg.name] = {
-        dir: `${dir}/${entry.name}`,
-        deps: Object.keys(pkg.dependencies ?? {}).filter((d) => d.startsWith('@membrana/')),
-      };
+      if (entry.isDirectory()) put(`${parent}/${entry.name}`);
     }
   }
+  for (const exact of SEARCH.packages) put(exact);
   return map;
 }
 

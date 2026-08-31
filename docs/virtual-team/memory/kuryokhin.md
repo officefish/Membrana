@@ -5,8 +5,26 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14379/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 329 (причины в op-log) -->
+Записей: 49 · бюджет 14387/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 332 (причины в op-log) -->
+
+### 2026-08-30 · позиция · team-evening-feedback
+
+> Оценка артефактов: День не касался audio path / Web Audio / device-board runtime. Документы дня (MAIN_DAY_ISSUE, code-review) согласованы и не содержат противоречий по моей зоне. Ритуальный контур ночи выстроен — это создаёт устойчивый фон для продуктовых задач. Итоги дня: «—» […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-30.md#reply-1`
+
+### 2026-08-29 · позиция · team-evening-feedback
+
+> Оценка артефактов: С точки зрения аудио-контура день пустой — код-ревью верно пометил «Web Audio / audio-engine не трогались». `MAIN_DAY_ISSUE` понятен, но не имеет отношения к звуку. Итоги дня: Вклада в аудио нет. Изменения в `apps/client/package.json` — только декларация […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-29.md#reply-1`
+
+### 2026-08-28 · позиция · team-evening-feedback
+
+> Оценка артефактов: Канон захвата 48 kHz fail-closed согласован с продуктовым контуром Firebat — FIELD_NODE_RATE вписан в общую картину. MAIN_DAY_ISSUE корректно держит фокус на квоте и дежурстве, не уводя в DSP. Итоги дня: Канон 48 kHz fail-closed на field-poller — правильная […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-28.md#reply-1`
 
 ### 2026-08-27 · позиция · hunt-and-canon-m0-order
 
@@ -283,21 +301,3 @@
 > Слышу тему: 3 (граница с infra-policy) — это не просто «где шов», это вопрос о том, что вообще попадает в контейнер `network`, а что остаётся в infra. Пока 3 не решён, вопросы 5 (что в реестр, что в cache) и 6 (правила K1) могут тянуть в реестр то, что должно остаться у infra. […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/network-container-m0-order-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m1-home-record
-
-> Слышу это как вопрос о дорожке, а не о микшере. Органы такта 1 — `net:diag`, `llm:probe`, `infra:probe`, `net:http`, `outbound-self-check`, `scripts/network/*` — это микрофоны на шине, не сама партитура маршрутов. Одна запись должна звучать как снимок прослушивания: кто слушал, […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/network-container-m1-home-record-2026-08-13.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m2-infra-border
-
-> Слышу риск в обратной связи: а может ли `infra-policy` ссылаться на снимок? Это было бы инверсией тракта — норма, зависящая от наблюдения. Архитектурно: нет. `infra-policy` — upstream, снимок — downstream. Обратная ссылка создаёт цикл. Если policy-запись хочет сослаться на […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/network-container-m2-infra-border-2026-08-13.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m6-intake-delivery
-
-> Preview остаётся производной поверхностью. Он получает original только после `read-bytes` allow, сохраняет class и при любой ошибке возвращает `preview_unavailable`, не меняя original, registry или tip. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m6-intake-delivery-2026-08-06.md#reply-1`

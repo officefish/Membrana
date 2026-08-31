@@ -5,13 +5,15 @@
  * («Проза» по бестиарию #1204): ночной красный никого не останавливал. Здесь
  * выражение кадра читается и исполняется: красный ИЛИ несвежий отчёт — STOP утра.
  *
- * Носитель (tests/reports/nightly-full/latest.json) пишет tests:nightly-full;
- * ночью он бежит в CI (.github/workflows/tests-nightly-full.yml), утро
- * подтягивает артефакт (`night-report:gate --pull`) и читает локальный файл.
- * Свежесть — по `generatedAt` отчёта, НЕ по mtime (урок rt-9).
+ * Носитель (tests/reports/nightly-summary/latest.json) собирает одну сводку
+ * ночи: что запускалось, что прошло, что упало и почему. Утро читает именно
+ * сводку, а не один tests-report; иначе новый ночной механизм снова может
+ * умереть невидимым.
+ * Свежесть — по git revision ствола, НЕ по mtime и не по календарной дате.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 export const NIGHT_REPORT_FRAME_ID = 'night-report';
 export const RITUAL_DAY_MANIFEST_REL = 'docs/procedures/ritual-day/MANIFEST.json';
@@ -74,10 +76,11 @@ export function readNightReport(repoRoot, rel) {
  * @param {object | null} input.carrier декларация кадра (blocksMorningWhen)
  * @param {object | null} input.report содержимое носителя
  * @param {string | null} [input.reportProblem]
- * @param {string} input.today 'YYYY-MM-DD' (UTC)
- * @returns {{ status: 'pass'|'missing'|'stale'|'red'|'invalid', blockers: string[], summary: string[] }}
+ * @param {string} input.expectedRevision 40-char SHA or prefix of target origin/main
+ * @param {string} [input.today] legacy/log-only day; freshness is not decided by calendar date
+ * @returns {{ status: 'pass'|'missing'|'stale'|'pending'|'red'|'invalid', blockers: string[], summary: string[] }}
  */
-export function evaluateNightReport({ carrier, report, reportProblem = null, today }) {
+export function evaluateNightReport({ carrier, report, reportProblem = null, expectedRevision, today = null }) {
   /** @type {string[]} */
   const summary = [];
   const expr = typeof carrier?.blocksMorningWhen === 'string' ? carrier.blocksMorningWhen : '';
@@ -107,18 +110,50 @@ export function evaluateNightReport({ carrier, report, reportProblem = null, tod
     };
   }
   summary.push(`отчёт: ${generatedAt}`);
+  if (today) summary.push(`день чтения: ${today}`);
+  const reportRevision = normalizeRevision(report.git?.revision ?? report.revision ?? report.headSha);
+  const wantedRevision = normalizeRevision(expectedRevision);
+  if (!wantedRevision) {
+    return {
+      status: 'invalid',
+      blockers: ['ночь не отработала: нельзя установить вершину ствола для проверки свежести'],
+      summary,
+    };
+  }
+  summary.push(`вершина ствола: ${wantedRevision}`);
+  if (!reportRevision) {
+    return {
+      status: 'stale',
+      blockers: ['ночь не отработала: у носителя нет ревизии git — свежесть по вершине ствола не подтверждена'],
+      summary,
+    };
+  }
+  summary.push(`ревизия отчёта: ${reportRevision}`);
+  if (!sameRevision(reportRevision, wantedRevision)) {
+    return {
+      status: 'stale',
+      blockers: [
+        `ночь не на текущем стволе: отчёт ${shortRev(reportRevision)}, ожидается ${shortRev(wantedRevision)} — календарная дата больше не решает свежесть`,
+      ],
+      summary,
+    };
+  }
   const setup = report.setup && typeof report.setup === 'object' ? report.setup : {};
   const notRun = Array.isArray(setup.notRun) ? setup.notRun.length : null;
   const run = Array.isArray(setup.run) ? setup.run.length : null;
   if (run !== null) summary.push(`гонялось файлов: ${run}`);
   if (notRun !== null) summary.push(`не гонялось: ${notRun}`);
   if (report.kit?.id) summary.push(`кит: ${report.kit.id} (${report.kit.ok ? 'pinned ok' : 'pinned BLOCKED'})`);
-  if (reportDay !== today) {
-    return {
-      status: 'stale',
-      blockers: [`ночь не отработала: отчёт от ${reportDay}, сегодня ${today} — вчерашняя ночь не вход`],
-      summary,
-    };
+  const summaryVerdict = evaluateNightSummary(report);
+  if (summaryVerdict) {
+    for (const line of summaryVerdict.summary) summary.push(line);
+    if (summaryVerdict.blockers.length > 0) {
+      return {
+        status: summaryVerdict.status,
+        blockers: summaryVerdict.blockers,
+        summary,
+      };
+    }
   }
   // Исполнение выражения кадра — «execution.status != pass».
   const status = report.execution?.status;
@@ -136,16 +171,71 @@ export function evaluateNightReport({ carrier, report, reportProblem = null, tod
   return { status: 'pass', blockers: [], summary };
 }
 
+function evaluateNightSummary(report) {
+  if (report.kind !== 'night-summary') return null;
+  const checks = Array.isArray(report.workflows) ? report.workflows : [];
+  const lines = checks.map((check) => {
+    const title = check.title ?? check.id ?? check.workflow ?? 'unknown';
+    const status = check.status ?? 'unknown';
+    const reason = check.reason ? ` — ${check.reason}` : '';
+    return `ночь/${title}: ${status}${reason}`;
+  });
+  if (checks.length === 0) {
+    return {
+      status: 'invalid',
+      blockers: ['ночная сводка пуста: ни один ночной механизм не назван'],
+      summary: lines,
+    };
+  }
+  const blockers = checks
+    .filter((check) => check.required !== false && check.status !== 'pass')
+    .map((check) => {
+      const title = check.title ?? check.id ?? check.workflow ?? 'unknown';
+      return `ночной механизм не прошёл: ${title} — ${check.status ?? 'unknown'}${check.reason ? ` (${check.reason})` : ''}`;
+    });
+  if (blockers.length === 0) return { status: 'pass', blockers: [], summary: lines };
+  const first = checks.find((check) => check.required !== false && check.status !== 'pass');
+  const status = ['missing', 'stale', 'pending', 'red', 'invalid'].includes(first?.status) ? first.status : 'red';
+  return { status, blockers, summary: lines };
+}
+
+function normalizeRevision(value) {
+  const s = String(value ?? '').trim().toLowerCase();
+  return /^[0-9a-f]{12,40}$/u.test(s) ? s : null;
+}
+
+function sameRevision(left, right) {
+  return left === right || left.startsWith(right) || right.startsWith(left);
+}
+
+function shortRev(revision) {
+  return revision ? revision.slice(0, 12) : 'unknown';
+}
+
+function readGitRevision(repoRoot, ref) {
+  try {
+    return execFileSync('git', ['rev-parse', ref], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Печать + код выхода для morning-care: 0 — зелёная свежая ночь; 2 — STOP.
  *
  * @param {string} repoRoot
- * @param {{ log?: (s: string) => void, today?: string }} [opts]
+ * @param {{ log?: (s: string) => void, today?: string, expectedRevision?: string, expectedRef?: string }} [opts]
  * @returns {number}
  */
 export function runNightReportGate(repoRoot, opts = {}) {
   const log = opts.log ?? console.log;
   const today = opts.today ?? new Date().toISOString().slice(0, 10);
+  const expectedRef = opts.expectedRef ?? 'origin/main';
+  const expectedRevision = opts.expectedRevision ?? readGitRevision(repoRoot, expectedRef) ?? readGitRevision(repoRoot, 'HEAD');
   log('→ night-report (гейт ночи, #1293)');
   const { carrier, problems } = loadNightReportFrame(repoRoot);
   if (!carrier) {
@@ -154,10 +244,10 @@ export function runNightReportGate(repoRoot, opts = {}) {
     return 2;
   }
   const { report, problem } = readNightReport(repoRoot, carrier.path);
-  const verdict = evaluateNightReport({ carrier, report, reportProblem: problem, today });
+  const verdict = evaluateNightReport({ carrier, report, reportProblem: problem, today, expectedRevision });
   for (const s of verdict.summary) log(`  · ${s}`);
   if (verdict.status === 'pass') {
-    log('✓ night-report: ночь зелёная и свежая');
+    log('✓ night-report: ночь зелёная и совпадает с вершиной ствола');
     return 0;
   }
   for (const b of verdict.blockers) log(`  ✗ ${b}`);

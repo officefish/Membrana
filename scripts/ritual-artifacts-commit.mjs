@@ -14,7 +14,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { classifyStatus, whitelistFromManifest } from './lib/ritual-artifacts.mjs';
+import { classifyStatus, sweepDates, whitelistFromManifest } from './lib/ritual-artifacts.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const run = (cmd, args) => execFileSync(cmd, args, { cwd: repoRoot, encoding: 'utf8', timeout: 60_000 });
@@ -28,12 +28,26 @@ function main() {
   }
   // --manifest <path> — какой цепочке принадлежат артефакты (утро спотыкалось о
   // свои же, помеха 29.07 — близнец вечерней №1). Умолчание — вечер, как было.
+  // Флаг повторяем: утро подбирает и ХВОСТ ВЕЧЕРА, читая вечерний манифест как источник,
+  // а не копируя его пути к себе — копия разошлась бы, как разошёлся список воркспейсов.
   const argv = process.argv.slice(2);
-  const mi = argv.indexOf('--manifest');
-  const manifestRel = mi > -1 && argv[mi + 1] ? argv[mi + 1] : 'docs/tasks/evening-ritual-steps.json';
-  const manifest = JSON.parse(readFileSync(join(repoRoot, manifestRel), 'utf8'));
-  const whitelist = whitelistFromManifest(manifest, date);
-  const { take, leave } = classifyStatus(run('git', ['status', '--porcelain']), whitelist, date);
+  const manifestRels = [];
+  for (let i = 0; i < argv.length; i += 1) {
+    if (argv[i] === '--manifest' && argv[i + 1]) manifestRels.push(argv[i + 1]);
+  }
+  if (manifestRels.length === 0) manifestRels.push('docs/tasks/evening-ritual-steps.json');
+
+  // --since-yesterday — окно забора шире суток ровно на стык вечера и утра. Часть продуктов
+  // вечера пишется ПОСЛЕ забора (память персон едет на ласточке, а та ждёт слова владельца),
+  // и утром они уже вчерашние: без окна забор своего же хвоста не узнаёт.
+  const dates = sweepDates(date, { includeYesterday: argv.includes('--since-yesterday') });
+
+  const whitelist = [];
+  for (const rel of manifestRels) {
+    const manifest = JSON.parse(readFileSync(join(repoRoot, rel), 'utf8'));
+    whitelist.push(...whitelistFromManifest(manifest, dates));
+  }
+  const { take, leave } = classifyStatus(run('git', ['status', '--porcelain']), whitelist, dates);
 
   if (leave.length > 0) {
     console.log(`ritual:artifacts-commit — оставлено чужим (${leave.length}): ${leave.slice(0, 5).join(', ')}${leave.length > 5 ? '…' : ''} — находка leveling, не добыча автозабора`);

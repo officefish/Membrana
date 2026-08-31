@@ -1,41 +1,40 @@
-<!-- Сгенерировано: 2026-08-28T18:38:15.062Z (yarn code-review; daily, llm-xai) -->
+<!-- Сгенерировано: 2026-08-30T17:34:02.821Z (yarn code-review; daily, llm-xai) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: 6ad1085f0a40e8142c4a4d63ea527bbe5858abe5^..560360574835bba62d94220d9ed0a6b594299107 (11 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 6ad1085f #2221 (707), 7e74e10e #2204 (531), 56036057 (609)
+> Период: 78e913a002fdb216b2a2063238bf3376d55d2410^..042ad32234299b389fd481b8628f9988389b3f79 (6 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 78e913a0 #2240 (1193), bd2abed0 #2241 (624), e3687287 #2242 (641), 96088fe2 #2243 (1410), 042ad322 (649)
 
 ---
 
-Tier: T2
+Tier: T1
 
-**[vesnin]:** пропуск с оговорками (не блок дня). Дифф дня — гигиена деплоя/образов и fail-closed полевого rate, не закрытие продуктового DoD #2204 п.3; бестиарий B1–B10 в развёрнутых кусках не всплыл. B6 лечится зубом `verify:image-workspace-deps` (стадия build + focus); B3 риск остаётся вне диффа: «кнопки/GC/образ зелёный» ≠ стоп по remaining. Oversized без разворота: `6ad1085f` #2221 (707), хвост #2204/`7e74e10e` (531), `56036057` (609) — отдельно, не в зачёт вечера.
+**[Vesnin — ведущий]:** пропуск. В развёрнутом #2245 зверей бестиария нет: наоборот, закрыт B9-дрейф (канон обещал `owner|human`, код с #1851 молча принимал `night`). Зуб сверки `CORE.md` ↔ `GATE_WAITS` — правильный носитель, не проза. Oversized #2240–#2243/#042ad322 в этом прогоне без тела диффа — в вердикт по содержанию не беру; состояния GitHub: все MERGED/CLOSED, расхождений с таблицей фактов нет.
 
-[Teamlead]: День 28.08 — ритуальные доки (#2222), fail-closed `FIELD_NODE_RATE=48k` (#2216), честный live-session guard с именами env и запасной дверью (#2217), цепочка образа cabinet-web: COPY+focus+build `plugin-contracts` + зуб на `apps/*` (#2223–#2225), снимок сети фактом (#2227). Магистраль owner #2204 (green media + стоп remaining) **не доказана** развёрнутым диффом: ушли build/CI-гигиена под тем же номером issue, не предикат стопа. PR size: несколько merge OK; три oversized без тела — P1 «ревью отдельно», не nit. Утро: читать этот файл + `MAIN_DAY_ISSUE`; не синтезировать L из top-3, пока нет green media и п.3/gap в #2204. Команды: `yarn turbo run test --filter=@membrana/media-library-service --filter=@membrana/background-media`; `yarn test:scripts` (или точечно preflight/image-deps); `yarn verify:image-workspace-deps`; при касании кабинета — сборка образа/CI step «Образы — транзитивный граф».
+[Teamlead]: День — ритуальный контур, не продуктовый runtime: вечер 29.08 → утро 30.08 → morning-gate читает nightly → `yarn ritual:night` (#2243) → канон гейтов догнал зуб (#2245) → автозабор артефактов. PR size: пять из шести коммитов oversized (624–1410 строк) — P2 «recommend split» на будущее, merge не блокируем (уже в стволе). Риск на завтра: красный `@membrana/background-media#test` в дереве + uncommitted вечерние артефакты на ветке `angelina/chore/ritual-evening-20260830`. Утро: не генерировать code-review; прочитать этот файл; `yarn turbo run test --filter=@membrana/background-media`; `yarn workspace membrana-tooling test scripts/validate-procedure.test.mjs` (или эквивалент node:test); `yarn docs:lint` при наличии; сверить `DAILY_STANDUP` / `MAIN_DAY_ISSUE` с фактом MERGED #2240–#2245.
 
-[Архитектор]: Контракт preflight стал явным: URL/token/legacy door — именованные списки, probe возвращает `urlSource`/`credentialSource`/`note`, отказ fail-closed не маскируется подсказкой (#2199). Зуб образов признал класс, не случай: `cabinet-web` + `stage: 'build'` vs runtime — верная граница; второй список `yarn workspaces focus` судится отдельно от COPY. Поле 48 kHz — узкий инвариант Firebat, без расползания в audio-engine. Риск архитектуры дня: issue #2204 как «зонтик» для Dockerfile/tsconfig без носителя buffer-stop в `packages/` — не плодить второе ядро «по пути».
+[Архитектор]: #2245 — узкая и верная форма: публичный контракт `waitsFor` расширен до `owner|human|night`, смысл `night` зафиксирован в CORE (машинная пауза на ночь, не на человека), CORPUS согласован. Экспорт `GATE_WAITS` ради зуба — осознанная граница «словарь кода = таблица канона»; второй несверяемый список запрещён текстом коммита. Контейнер `ritual-night` и сироты одним PR (#2243) — уже merge; при следующем ритуальном контейнере дробить носители шагов и docs-артефакты.
 
-[Структурщик]: Границы соблюдены: логика в `scripts/_deploy-preflight.mjs` / `verify-image-workspace-deps.mjs`, cabinet только paths+Dockerfile. C1: циклов нет; C4/C3/C2 N/A. Тесты рядом с предикатами (parseEnv 44.1k, defaultLiveSessionProbe, buildStagePackageDirs, focus missing, coverage всех Dockerfile). C7: явный CI step `yarn verify:image-workspace-deps` — хорошо против «одна строка в 4k». C8/C9: секреты в `.env.example` как имена, не значения; токены только из env. Слабое место: рукописные COPY+focus в Dockerfile снова разъедутся — зуб обязателен в CI (уже добавлен).
+[Структурщик]: Границы дня: `docs/procedures/*`, `scripts/lib/validate-procedure.mjs`, тест, hash в `kits/containerization-master/MANIFEST.json` — связность соблюдена, цикл пакетов не задет. C7: зуб на равенство documented ↔ `GATE_WAITS` рядом с валидатором — хорошо. C8/C9: в показанном диффе секретов и `console.log` нет. Untracked/modified — архив дня, evidence, trail, deps-watch: не тащить чужой WIP (B7); вечерний ритуал пусть заберёт своим контуром. C1 вне scope runtime-пакетов.
 
-[Математик]: `FIELD_NODE_RATE !== DEFAULTS.rate` — жёсткий equality, не «около 48000»; тест на 44100. `liveSessionProblem` / age probe без смены численной семантики maxAge. NaN/empty: `Number.isFinite` на poll/rate сохранены. Стоп-предикат remaining/порог буфера в диффе **отсутствует** — correctness DoD #2204 п.3 не закрыт кодом дня.
+[Математик]: — (алгоритмов/FFT нет). Correctness зуба: парсинг строки `| \`waitsFor\` |` + backtick-токенов хрупок к переформатированию таблицы — P2 opportunity (якорь/машина-читаемый фрагмент), не блокер: тест падает при дрейфе, ложный green маловероятен.
 
-[Музыкант]: Канон захвата 48 kHz fail-closed на field-poller согласован с продуктовым контуром Firebat; Web Audio path не трогали (C2 —). Сборка `plugin-contracts` в cabinet-web — обвязка контрактов плагинов, не DSP. Квота буфера/дежурство: без воспроизводимого stop+signal сценарный record path по-прежнему может писать в квоту — ops-риск, не клиппинг audio graph.
+[Музыкант]: — (audio path / Web Audio / device-board runtime не трогались).
 
-[Верстальщик]: UI/DESIGN.md в развёрнутом диффе нет (—). tsconfig path `@membrana/plugin-contracts` — инфраструктура резолва, не презентация. Не принимать будущий GC UI за a11y/DoD без контракта стопа.
+[Верстальщик]: — (UI/DESIGN.md/a11y не в диффе). Lint-warning `CabinetSampleDuplicatesPanel.tsx` (лишняя зависимость `titleOf`) — вне работы дня, P2 nit, не блокер merge.
 
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 28.08) — сводка merge #2216/#2217/#2221–#2225/#2227 + долг #2204 DoD п.3 / media RED / oversized-без-diff.
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-08-30); опорный развёрнутый дифф — #2245; oversized #2240/#2241/#2242/#2243/042ad322 — только учёт размера и статуса MERGED.
 
 Definition of Done (утро):
-1. `yarn turbo run test --filter=@membrana/media-library-service --filter=@membrana/background-media` → green или fail-log в #2204  
-2. Стоп по remaining+сигнал **или** gap-таблица п.3 в #2204 (не UI-only)  
-3. `yarn verify:image-workspace-deps` + не краснеть step CI «Образы…»  
-4. При необходимости: `node --test scripts/_deploy-preflight.test.mjs scripts/firebat-poller.test.mjs scripts/verify-image-workspace-deps.test.mjs`  
-5. Smoke частичной разгрузки ≠ wipe-all; вещдоки перед GC «ранние»  
-6. Oversized #2221 / 531 / 609 — очередь ревью, не блок merge уже влитого без отдельного прохода
+1. Прочитать этот review + вчерашний контекст ритуала (не перегенерировать code-review).
+2. `yarn turbo run test --filter=@membrana/background-media` — разобрать красный test (помеха №1 или pre-existing).
+3. Прогон зуба процедур: тест с `GATE_WAITS` / `validate-procedure`.
+4. `yarn turbo run lint --filter=@membrana/cabinet` — warning hooks не раздувать в P0.
+5. Закрыть вечерний автозабор: чистый tree после ritual-evening либо явный commit только своих артефактов дня.
 
 Риски:
-- **P0:** RED `@membrana/media-library-service` / `@membrana/background-media` и отсутствие фальсифицируемого стопа remaining (#2204) на день дежурства/квоты  
-- **P1:** три oversized без развёрнутого diff; #2199 ещё OPEN в таблице живых состояний при уже влитом #2217 — сверить `gh pr view`, не верить только прозе  
-- **P1:** подмена закрытия #2204 починкой образа cabinet (B3)  
-- **P2:** рукописный drift COPY↔focus снова; dual-list лечится зубом, не памятью
+- **P1:** `@membrana/background-media#test` exit 1 в текущем дереве — не маскировать «молчаливым зелёным» (B6) на утреннем гейте.
+- **P2:** серия oversized ritual-PR без развёрнутого диффа в daily — следующий контейнер ритуала резать &lt;400 строк или выносить docs-артефакты отдельно.
+- **P2:** хрупкий парсинг markdown-строки `waitsFor` в зубе #2245.
+- **—** P0 по показанному #2245 и канону гейтов.

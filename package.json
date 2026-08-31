@@ -124,6 +124,7 @@
     "night:research": "node scripts/night-research.mjs",
     "night:research:yield": "node scripts/night-research.mjs --yield",
     "night:research:sweep": "node scripts/night-research.mjs --sweep",
+    "night:preflight": "node scripts/night-preflight.mjs",
     "dreams:probe-models": "node scripts/dreams-probe-models.mjs",
     "dreams:tick": "node scripts/dreams.mjs tick",
     "dreams:digest": "node scripts/dreams.mjs digest",
@@ -155,6 +156,7 @@
     "report:check": "node scripts/report-check.mjs",
     "report:delivery-check": "node scripts/delivery-report-check.mjs",
     "ritual:evening": "node scripts/ritual-evening-run.mjs",
+    "ritual:night": "node scripts/ritual-night-run.mjs",
     "ritual:evening:local": "yarn archive:daily-day && yarn ensure-ollama && yarn local-code-review && yarn save-code-review && yarn task:close-github",
     "night:open": "node scripts/night-build-open.mjs",
     "smoke:test": "yarn workspace @membrana/client smoke:test",
@@ -470,7 +472,8 @@
     "journals:verify": "node scripts/verify-journal-merge.mjs",
     "node:duty-ready": "node scripts/node-duty-ready.mjs",
     "buffer:protect-evidence": "node scripts/buffer-protect-evidence.mjs",
-    "buffer:evacuate-evidence": "node scripts/buffer-evacuate-evidence.mjs"
+    "buffer:evacuate-evidence": "node scripts/buffer-evacuate-evidence.mjs",
+    "verify:declared-imports": "node scripts/verify-declared-imports.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

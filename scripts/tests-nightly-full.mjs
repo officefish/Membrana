@@ -23,7 +23,8 @@ function usage() {
   console.log(`Usage: node scripts/tests-nightly-full.mjs [--dry-run] [--json] [--no-write]
 
 Runs the full tests setup only after kits/tests-master passes pinned audit.
-Writes the night-report carrier under tests/reports/nightly-full/latest.{json,md}.`);
+Writes the detailed tests report under tests/reports/nightly-full/latest.{json,md};
+the morning carrier is the aggregate night summary built by yarn night-report:gate --pull.`);
 }
 
 function main() {
@@ -43,7 +44,7 @@ function main() {
   const report = runNightlyFull({ repoRoot, dryRun: args.dryRun });
   if (!args.noWrite) {
     writeNightlyFullReport(repoRoot, report);
-    console.error('[tests:nightly-full] carrier: tests/reports/nightly-full/latest.json');
+    console.error('[tests:nightly-full] detailed report: tests/reports/nightly-full/latest.json');
   }
   if (args.json) console.log(JSON.stringify(report, null, 2));
   else console.log(renderNightlyFullMarkdown(report));

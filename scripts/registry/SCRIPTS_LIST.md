@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-27 |
-| Head SHA | 9d8e9a5775ddfb4b74c8242890dd07bb030965a8 |
+| Date | 2026-08-30 |
+| Head SHA | dbdc8bac92d840f7860248bb01cd0bb9bb41e22c |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1188 |
-| Yarn scripts (package.json) | 457 |
-| Yarn → `scripts/` | 404 |
+| Code files under `scripts/` | 1204 |
+| Yarn scripts (package.json) | 462 |
+| Yarn → `scripts/` | 409 |
 | Yarn без пути `scripts/` | 53 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 866 |
+| Code files without yarn ref | 877 |
 
-## Yarn → scripts/ (404)
+## Yarn → scripts/ (409)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -70,6 +70,8 @@
 - `bridge:lead` → `scripts/bridge-lead-call.mjs`
 - `bridge:notebook` → `scripts/bridge-notebook.mjs`
 - `bridge:shown` → `scripts/bridge-shown.mjs`
+- `buffer:evacuate-evidence` → `scripts/buffer-evacuate-evidence.mjs`
+- `buffer:protect-evidence` → `scripts/buffer-protect-evidence.mjs`
 - `build:affected` → `scripts/build-affected.mjs`
 - `cabinet:deploy:image:prod` → `scripts/_ssh-cabinet-deploy-image.mjs`
 - `cabinet:deploy:prod` → `scripts/deploy-run.mjs`, `scripts/_ssh-cabinet-deploy.mjs`
@@ -231,6 +233,7 @@
 - `night:close` → `scripts/night-build-close.mjs`
 - `night:land-reports` → `scripts/night-land-reports.mjs`
 - `night:open` → `scripts/night-build-open.mjs`
+- `night:preflight` → `scripts/night-preflight.mjs`
 - `night:research` → `scripts/night-research.mjs`
 - `night:research:sweep` → `scripts/night-research.mjs`
 - `night:research:yield` → `scripts/night-research.mjs`
@@ -284,6 +287,7 @@
 - `ritual:day:no-api` → `scripts/morning-care.mjs`, `scripts/daily-standup.mjs`, `scripts/main-day-probe.mjs`, `scripts/main-day-issue.mjs`
 - `ritual:deliver-to-main` → `scripts/ritual-deliver-to-main.mjs`
 - `ritual:evening` → `scripts/ritual-evening-run.mjs`
+- `ritual:night` → `scripts/ritual-night-run.mjs`
 - `root-site:check` → `scripts/_ssh-root-site-setup.mjs`
 - `root-site:deploy` → `scripts/_ssh-root-site-setup.mjs`
 - `root-site:deploy:installer` → `scripts/_ssh-root-site-setup.mjs`
@@ -411,6 +415,7 @@
 - `vdr:list` → `scripts/list-free-v1-content.mjs`
 - `vds:run` → `scripts/deploy-run.mjs`, `scripts/_ssh-office-exec.mjs`
 - `verify:branch-protection` → `scripts/verify-branch-protection.mjs`
+- `verify:declared-imports` → `scripts/verify-declared-imports.mjs`
 - `verify:encoding` → `scripts/verify-encoding.mjs`
 - `verify:image-workspace-deps` → `scripts/verify-image-workspace-deps.mjs`
 - `verify:install-state` → `scripts/require-install-state.mjs`
@@ -430,7 +435,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (866)
+## Code files without yarn ref (877)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -530,6 +535,7 @@
 - `scripts/bridge-frames.test.mjs`
 - `scripts/bridge-room.test.mjs`
 - `scripts/bridge-toolkit.test.mjs`
+- `scripts/buffer-protect-evidence.test.mjs`
 - `scripts/build-affected.test.mjs`
 - `scripts/build-usercase-competition-team.mjs`
 - `scripts/build-v08-policy-constructor-json.mjs`
@@ -567,6 +573,7 @@
 - `scripts/day-plan-frame.test.mjs`
 - `scripts/day-work-diff.test.mjs`
 - `scripts/dead-wire.test.mjs`
+- `scripts/declared-imports.test.mjs`
 - `scripts/deep-research.test.mjs`
 - `scripts/delivery-report.test.mjs`
 - `scripts/deploy-run.test.mjs`
@@ -725,6 +732,7 @@
 - `scripts/lib/debt-classify.test.mjs`
 - `scripts/lib/debt-gate.mjs`
 - `scripts/lib/debt-gate.test.mjs`
+- `scripts/lib/declared-imports.mjs`
 - `scripts/lib/deep-research.mjs`
 - `scripts/lib/delivery-report.mjs`
 - `scripts/lib/deps-watch-audit-state.mjs`
@@ -849,8 +857,10 @@
 - `scripts/lib/night-build.mjs`
 - `scripts/lib/night-hunt-veracity.mjs`
 - `scripts/lib/night-land-reports.mjs`
+- `scripts/lib/night-preflight.mjs`
 - `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
+- `scripts/lib/night-summary.mjs`
 - `scripts/lib/norm-liveness.mjs`
 - `scripts/lib/office-image-smoke.mjs`
 - `scripts/lib/office-token.mjs`
@@ -907,6 +917,7 @@
 - `scripts/lib/ritual-evening-close-args.mjs`
 - `scripts/lib/ritual-exit-codes.mjs`
 - `scripts/lib/ritual-morning-artifacts.mjs`
+- `scripts/lib/ritual-night.mjs`
 - `scripts/lib/ritual-tree-hygiene.mjs`
 - `scripts/lib/run-ledger/canonical.mjs`
 - `scripts/lib/run-ledger/checkpoint.mjs`
@@ -1033,6 +1044,7 @@
 - `scripts/lib/workflow-examples.mjs`
 - `scripts/lib/workshop-dependencies.mjs`
 - `scripts/lib/workshop-ownership.mjs`
+- `scripts/lib/workspace-dirs.mjs`
 - `scripts/lib/workspace-links.mjs`
 - `scripts/lib/worktree-align/align-plan.mjs`
 - `scripts/lib/worktree-align/align-plan.test.mjs`
@@ -1099,8 +1111,10 @@
 - `scripts/night-build-handoff.test.mjs`
 - `scripts/night-hunt-veracity.test.mjs`
 - `scripts/night-land-reports.test.mjs`
+- `scripts/night-preflight.test.mjs`
 - `scripts/night-report-gate.test.mjs`
 - `scripts/night-research.test.mjs`
+- `scripts/night-summary.test.mjs`
 - `scripts/night-triage-secret-scan.test.mjs`
 - `scripts/node-duty-ready.test.mjs`
 - `scripts/node-link-probe.test.mjs`
@@ -1190,6 +1204,7 @@
 - `scripts/ritual-evening-tail.test.mjs`
 - `scripts/ritual-exit-codes.test.mjs`
 - `scripts/ritual-green-cascade.test.mjs`
+- `scripts/ritual-night.test.mjs`
 - `scripts/ritual-tree-hygiene.test.mjs`
 - `scripts/rootpolicy.test.mjs`
 - `scripts/run-ledger.test.mjs`
@@ -1292,6 +1307,7 @@
 - `scripts/workflow-examples.test.mjs`
 - `scripts/workshop-dependencies.test.mjs`
 - `scripts/workshop-ownership.test.mjs`
+- `scripts/workspace-dirs.test.mjs`
 - `scripts/workspace-links.test.mjs`
 - `scripts/worktree-bootstrap.test.mjs`
 - `scripts/worktree-merge.mjs`
@@ -1309,7 +1325,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1188)
+## All code files (1204)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1466,6 +1482,9 @@
 - `scripts/bridge-shown.mjs`
 - `scripts/bridge-toolkit.test.mjs`
 - `scripts/bridge.mjs`
+- `scripts/buffer-evacuate-evidence.mjs`
+- `scripts/buffer-protect-evidence.mjs`
+- `scripts/buffer-protect-evidence.test.mjs`
 - `scripts/build-affected.mjs`
 - `scripts/build-affected.test.mjs`
 - `scripts/build-templates-from-dataset.mjs`
@@ -1539,6 +1558,7 @@
 - `scripts/day-work-diff.test.mjs`
 - `scripts/dead-wire-check.mjs`
 - `scripts/dead-wire.test.mjs`
+- `scripts/declared-imports.test.mjs`
 - `scripts/deep-research.test.mjs`
 - `scripts/deepseek-task.mjs`
 - `scripts/delivery-report-check.mjs`
@@ -1749,6 +1769,7 @@
 - `scripts/lib/debt-classify.test.mjs`
 - `scripts/lib/debt-gate.mjs`
 - `scripts/lib/debt-gate.test.mjs`
+- `scripts/lib/declared-imports.mjs`
 - `scripts/lib/deep-research.mjs`
 - `scripts/lib/delivery-report.mjs`
 - `scripts/lib/deps-watch-audit-state.mjs`
@@ -1873,8 +1894,10 @@
 - `scripts/lib/night-build.mjs`
 - `scripts/lib/night-hunt-veracity.mjs`
 - `scripts/lib/night-land-reports.mjs`
+- `scripts/lib/night-preflight.mjs`
 - `scripts/lib/night-report-gate.mjs`
 - `scripts/lib/night-research.mjs`
+- `scripts/lib/night-summary.mjs`
 - `scripts/lib/norm-liveness.mjs`
 - `scripts/lib/office-image-smoke.mjs`
 - `scripts/lib/office-token.mjs`
@@ -1931,6 +1954,7 @@
 - `scripts/lib/ritual-evening-close-args.mjs`
 - `scripts/lib/ritual-exit-codes.mjs`
 - `scripts/lib/ritual-morning-artifacts.mjs`
+- `scripts/lib/ritual-night.mjs`
 - `scripts/lib/ritual-tree-hygiene.mjs`
 - `scripts/lib/run-ledger/canonical.mjs`
 - `scripts/lib/run-ledger/checkpoint.mjs`
@@ -2057,6 +2081,7 @@
 - `scripts/lib/workflow-examples.mjs`
 - `scripts/lib/workshop-dependencies.mjs`
 - `scripts/lib/workshop-ownership.mjs`
+- `scripts/lib/workspace-dirs.mjs`
 - `scripts/lib/workspace-links.mjs`
 - `scripts/lib/worktree-align/align-plan.mjs`
 - `scripts/lib/worktree-align/align-plan.test.mjs`
@@ -2163,10 +2188,13 @@
 - `scripts/night-hunt-veracity.test.mjs`
 - `scripts/night-land-reports.mjs`
 - `scripts/night-land-reports.test.mjs`
+- `scripts/night-preflight.mjs`
+- `scripts/night-preflight.test.mjs`
 - `scripts/night-report-gate.mjs`
 - `scripts/night-report-gate.test.mjs`
 - `scripts/night-research.mjs`
 - `scripts/night-research.test.mjs`
+- `scripts/night-summary.test.mjs`
 - `scripts/night-triage-secret-scan.mjs`
 - `scripts/night-triage-secret-scan.test.mjs`
 - `scripts/node-duty-ready.mjs`
@@ -2304,6 +2332,8 @@
 - `scripts/ritual-evening-tail.test.mjs`
 - `scripts/ritual-exit-codes.test.mjs`
 - `scripts/ritual-green-cascade.test.mjs`
+- `scripts/ritual-night-run.mjs`
+- `scripts/ritual-night.test.mjs`
 - `scripts/ritual-tree-hygiene.test.mjs`
 - `scripts/rootpolicy.test.mjs`
 - `scripts/rt-day-report.mjs`
@@ -2457,6 +2487,7 @@
 - `scripts/vdr-labels-merge.test.mjs`
 - `scripts/verify-branch-protection.mjs`
 - `scripts/verify-client-catalog.mjs`
+- `scripts/verify-declared-imports.mjs`
 - `scripts/verify-docs-canon.mjs`
 - `scripts/verify-encoding.mjs`
 - `scripts/verify-encoding.test.mjs`
@@ -2488,6 +2519,7 @@
 - `scripts/workflow-examples.test.mjs`
 - `scripts/workshop-dependencies.test.mjs`
 - `scripts/workshop-ownership.test.mjs`
+- `scripts/workspace-dirs.test.mjs`
 - `scripts/workspace-links.mjs`
 - `scripts/workspace-links.test.mjs`
 - `scripts/worktree-bootstrap.mjs`

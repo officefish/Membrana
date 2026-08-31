@@ -1,8 +1,12 @@
 import React, { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { DeletionConfirmDialog } from '@/components/DeletionConfirmDialog';
+import { readPersistedPairedCredentials } from '@/lib/resolveMediaLibraryBackend';
 import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
 import {
   BUFFER_COLLECTION_ID,
+  buildLabelManifest,
+  readLabelManifest,
   TARIFF_DATASET_SYSTEM_KEY,
   isQuotaFull,
   useMediaLibrary,
@@ -259,22 +263,95 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
    */
   const handleExportLabels = useCallback(() => {
     if (!selected) return;
-    const payload = {
-      collection: selected.name,
+    /**
+     * Файл объявляет свою полноту САМ (#2237). Прежняя редакция писала
+     * `collection: <имя набора>` и разметку из `samples` — то есть из загруженной
+     * страницы: выгрузка называла себя разметкой набора, а несла разметку экрана. Файл
+     * уходит человеку, правится и возвращается импортом, поэтому неполнота приезжала
+     * обратно как достоверные данные. Полное число берём у счётчика набора; не знаем его —
+     * файл честно объявляется неполным.
+     */
+    const payload = buildLabelManifest({
+      collectionName: selected.name,
       collectionId: selected.id,
-      exportedAt: new Date().toISOString(),
-      labels: samples.map((s) => ({
-        fileName: s.title,
-        label: s.label,
-        notes: s.notes ?? null,
-      })),
-    };
+      exported: samples,
+      collectionTotal: selected.sampleCount ?? null,
+    });
     const blob = new Blob([`${JSON.stringify(payload, null, 2)}\n`], {
       type: 'application/json',
     });
     const safeName = selected.name.toLowerCase().replaceAll(/[^a-z0-9-]+/g, '-');
     downloadBlob(blob, `${safeName || 'collection'}-labels.json`);
   }, [samples, selected]);
+
+  /**
+   * ПРИЁМ РАЗМЕТКИ (#2237). Половина круга, которой не было: файл выгружался, правился
+   * человеком и возвращался — но возвращался мимо кода, руками. Теперь у возврата есть
+   * дверь, и она умеет ОТКАЗЫВАТЬ: неполный файл применять нельзя, иначе записи вне файла
+   * останутся со старой разметкой, а человек будет уверен, что применил набор целиком.
+   */
+  const [labelImport, setLabelImport] = useState<{ kind: 'ok' | 'refused'; text: string } | null>(null);
+
+  const handleImportLabels = useCallback(
+    async (file: File) => {
+      setLabelImport(null);
+      const read = readLabelManifest(await file.text());
+      if (!read.ok) {
+        // Причина едет человеку словами — он должен знать, ЧТО не так и что делать.
+        setLabelImport({ kind: 'refused', text: `Разметка не принята: ${read.why}.` });
+        return;
+      }
+      /**
+       * ПРИМЕНЯЕМ ТОЛЬКО К ПОЛНОСТЬЮ ЗАГРУЖЕННОМУ НАБОРУ. Тот же класс, что чинит этот
+       * PR, укусил внутри самой починки (ревью #2244): применение шло по загруженной
+       * странице, а записи вне неё докладывались как «не найдено в наборе» — хотя они в
+       * наборе есть. Полный файл применился бы частично, и человек считал бы, что
+       * применил его целиком. Отказ здесь честнее догрузки: он называет числа.
+       */
+      const inCollection = selected?.sampleCount ?? samples.length;
+      if (inCollection > samples.length) {
+        setLabelImport({
+          kind: 'refused',
+          text:
+            `Разметка не принята: дом загрузил ${samples.length} из ${inCollection} записей набора. ` +
+            'Применение к части набора оставило бы остальные со старой разметкой молча — ' +
+            'откройте набор целиком и повторите.',
+        });
+        return;
+      }
+      const byTitle = new Map(samples.map((x) => [x.title, x]));
+      let applied = 0;
+      const missing: string[] = [];
+      for (const entry of read.manifest.labels) {
+        const target = byTitle.get(entry.fileName);
+        if (!target) {
+          missing.push(entry.fileName);
+          continue;
+        }
+        try {
+          await service.updateSampleLabelNotes(target.id, { label: entry.label, notes: entry.notes });
+          applied += 1;
+        } catch (e) {
+          setLabelImport({
+            kind: 'refused',
+            text: `Применено ${applied}, дальше отказ на «${entry.fileName}»: ${e instanceof Error ? e.message : String(e)}.`,
+          });
+          return;
+        }
+      }
+      // Молчаливого пропуска нет и здесь: чего не нашли — называем числом.
+      setLabelImport({
+        kind: 'ok',
+        text:
+          `Разметка применена: ${applied} из ${read.manifest.labels.length}` +
+          (missing.length > 0 ? ` · нет в наборе: ${missing.length}` : '') + '.',
+      });
+    },
+    // selected в зависимостях обязателен: без него замыкание судит о полноте по ПРОШЛОМУ
+    // набору — смена набора оставила бы старое число, и отказ считался бы по чужому.
+    // Тот же род, что чинит этот PR: суждение по устаревшему вместо текущего (ревью #2244).
+    [samples, selected, service],
+  );
 
   const handleRemove = useCallback(
     async (sampleId: string) => {
@@ -316,9 +393,8 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       setError('Media-server недоступен — очистка буфера невозможна.');
       return;
     }
-    if (!window.confirm('Очистить буфер __buffer__? Сэмплы будут удалены без восстановления.')) {
-      return;
-    }
+    // Подтверждение живёт в окне удаления (#2218): оно показывает, ЧТО уйдёт и чем это
+    // может оказаться. Системный confirm умел только «уверены?».
     setError(null);
     try {
       await runRemoteMutation('Очистка буфера', async () => {
@@ -328,6 +404,64 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       setError(e instanceof Error ? e.message : String(e));
     }
   }, [runRemoteMutation, snapshot.quota.backend, snapshot.quota.serverReachable]);
+
+  /**
+   * ВОРОТА УДАЛЕНИЯ (#2218) — близнец кабинетных. Обе воронки Studio, построчное удаление
+   * и очистка буфера, проходят через одно окно со списком и гипотезой ценности.
+   */
+  const [pendingDeletion, setPendingDeletion] = useState<{
+    readonly title: string;
+    readonly samples: readonly MediaSample[];
+    readonly declaredTotal?: number;
+    readonly run: () => void | Promise<void>;
+  } | null>(null);
+  const [deletingNow, setDeletingNow] = useState(false);
+
+  /**
+   * ПРИБОР ДЛЯ ГИПОТЕЗЫ ЦЕНОСТИ. Без него окна вещдоков не применяются, и вердикт
+   * «вещдок» падает до «разобрано руками» — то есть второе движение у близнецов
+   * получается РАЗНОЙ силы: в кабинете галочка обязательна, в Studio нет (ревью #2232).
+   * В связке с узлом прибор известен; в автономном режиме записи местные, и окна
+   * узла к ним не относятся — тогда `undefined` честен, а не потерян.
+   */
+  const pairedDeviceId = useMemo(() => readPersistedPairedCredentials()?.deviceId, []);
+
+  const confirmDeletion = useCallback(async () => {
+    if (!pendingDeletion) return;
+    setDeletingNow(true);
+    try {
+      await pendingDeletion.run();
+    } finally {
+      setDeletingNow(false);
+      setPendingDeletion(null);
+    }
+  }, [pendingDeletion]);
+
+  const removeGated = useCallback(
+    async (sampleId: string): Promise<void> => {
+      const one = samples.find((x) => x.id === sampleId);
+      // Та же оговорка, что в кабинете: вне загруженной страницы пробы нет в руках, но
+      // удаление по id состоится — окно обязано знать число, а не молчать «нечего».
+      setPendingDeletion({
+        title: 'Удалить пробу',
+        samples: one ? [one] : [],
+        declaredTotal: 1,
+        run: () => handleRemove(sampleId),
+      });
+    },
+    [handleRemove, samples],
+  );
+
+  const clearBufferGated = useCallback(async (): Promise<void> => {
+    const declared =
+      snapshot.collections.find((c) => c.id === BUFFER_COLLECTION_ID)?.sampleCount ?? samples.length;
+    setPendingDeletion({
+      title: 'Очистить буфер',
+      samples,
+      declaredTotal: declared,
+      run: () => handleClearBuffer(),
+    });
+  }, [handleClearBuffer, samples, snapshot.collections]);
 
   const handleSelectSample = useCallback(async (sample: MediaSample) => {
     setError(null);
@@ -412,7 +546,9 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
             >
               {col.name}
               <span className="ml-auto tabular-nums opacity-70">
-                {(snapshot.samplesByCollection[col.id] ?? []).length}
+                {/* Полное число набора, а не длина загруженного массива: кабинет в том же
+                    месте берёт sampleCount, и близнецы расходились на ровном месте (#2237). */}
+                {col.sampleCount ?? (snapshot.samplesByCollection[col.id] ?? []).length}
               </span>
             </button>
           ))}
@@ -455,7 +591,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                 clearingBuffer ||
                 (snapshot.quota.backend === 'server' && !snapshot.quota.serverReachable)
               }
-              onClick={() => void handleClearBuffer()}
+              onClick={() => void clearBufferGated()}
             >
               {clearingBuffer ? 'Очистка…' : 'Очистить буфер'}
             </button>
@@ -507,6 +643,29 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                 Экспорт меток (JSON)
               </button>
             ) : null}
+            {canLabelAnnotate ? (
+              <label className="btn btn-sm btn-outline">
+                Импорт меток (JSON)
+                <input
+                  type="file"
+                  accept="application/json,.json"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    e.target.value = '';
+                    if (file) void handleImportLabels(file);
+                  }}
+                />
+              </label>
+            ) : null}
+            {labelImport ? (
+              <span
+                className={`text-xs ${labelImport.kind === 'refused' ? 'text-error' : 'text-success'}`}
+                role="status"
+              >
+                {labelImport.text}
+              </span>
+            ) : null}
           </div>
 
           {canLabelAnnotate && samples.length > 0 ? (
@@ -527,7 +686,12 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                 ))}
               </div>
               <span className="text-xs text-base-content/60 tabular-nums" aria-live="polite">
-                размечено {labeledCount} из {samples.length}
+                {/* M — полное число набора: доля от страницы показывала «40 из 40»
+                    при 1747 в наборе (#2237). Когда страница не вся, так и сказано. */}
+                размечено {labeledCount} из {selected?.sampleCount ?? samples.length}
+                {(selected?.sampleCount ?? samples.length) > samples.length
+                  ? ` (на этой странице ${samples.length})`
+                  : ''}
               </span>
             </div>
           ) : null}
@@ -650,7 +814,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
                         <button
                           type="button"
                           className="btn btn-xs btn-ghost text-error"
-                          onClick={() => void handleRemove(s.id)}
+                          onClick={() => void removeGated(s.id)}
                         >
                           Удалить
                         </button>
@@ -703,7 +867,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
             const s = samples.find((x) => x.id === id);
             if (s) void handleExportSample(s);
           }}
-          onRemove={(id) => handleRemove(id)}
+          onRemove={(id) => void removeGated(id)}
         />
       ) : null}
 
@@ -730,6 +894,18 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       {localActivePluginIds.includes(NEURAL_DRONE_ANALYZER_PLUGIN_ID) ? (
         <NeuralDroneAnalyzerPanel moduleId={module.id} />
       ) : null}
+
+      <DeletionConfirmDialog
+        open={pendingDeletion !== null}
+        title={pendingDeletion?.title ?? ''}
+        samples={pendingDeletion?.samples ?? []}
+        declaredTotal={pendingDeletion?.declaredTotal}
+        collections={snapshot.collections}
+        deviceId={pairedDeviceId}
+        busy={deletingNow}
+        onCancel={() => setPendingDeletion(null)}
+        onConfirm={() => void confirmDeletion()}
+      />
     </div>
   );
 };

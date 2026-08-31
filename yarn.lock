@@ -2380,6 +2380,7 @@ __metadata:
     "@membrana/template-match-detector-service": "npm:*"
     "@membrana/trends-detector-service": "npm:*"
     "@membrana/usercase-catalog-service": "npm:*"
+    "@membrana/yamnet-detector-service": "npm:*"
     "@playwright/test": "npm:^1.52.0"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
@@ -2589,6 +2590,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@membrana/journal-report-views@workspace:packages/libs/journal-report-views"
   dependencies:
+    "@membrana/core": "npm:*"
     "@membrana/detector-report": "npm:*"
     "@membrana/fft-analyzer-service": "npm:*"
     "@membrana/telemetry-journal-service": "npm:*"
@@ -2901,7 +2903,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@membrana/yamnet-detector-service@workspace:packages/services/detectors/yamnet":
+"@membrana/yamnet-detector-service@npm:*, @membrana/yamnet-detector-service@workspace:packages/services/detectors/yamnet":
   version: 0.0.0-use.local
   resolution: "@membrana/yamnet-detector-service@workspace:packages/services/detectors/yamnet"
   dependencies:

@@ -1,4 +1,4 @@
-import { spawnSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
@@ -8,7 +8,24 @@ import { formatSetupReport, loadTestCatalog, selectTestSetup } from './tests-con
 export const NIGHTLY_FULL_REPORT_REL = 'tests/reports/nightly-full/latest.json';
 export const NIGHTLY_FULL_MARKDOWN_REL = 'tests/reports/nightly-full/latest.md';
 
-export function buildNightlyFullReport({ repoRoot, generatedAt = new Date().toISOString(), dryRun = false } = {}) {
+function readGitRevision(repoRoot, ref = 'HEAD') {
+  try {
+    return execFileSync('git', ['rev-parse', ref], {
+      cwd: repoRoot,
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    return null;
+  }
+}
+
+export function buildNightlyFullReport({
+  repoRoot,
+  generatedAt = new Date().toISOString(),
+  dryRun = false,
+  revision = readGitRevision(repoRoot),
+} = {}) {
   const catalog = loadTestCatalog(repoRoot);
   const setup = selectTestSetup({ repoRoot, setup: 'full', catalog });
   const kit = auditKit({ repoRoot, kitDir: join(repoRoot, 'kits/tests-master'), mode: 'pinned' });
@@ -17,6 +34,9 @@ export function buildNightlyFullReport({ repoRoot, generatedAt = new Date().toIS
     schemaVersion: 1,
     generatedAt,
     issue: 1293,
+    git: {
+      revision,
+    },
     carrier: {
       procedure: 'ritual-day',
       frame: 'night-report',
@@ -70,7 +90,9 @@ export function renderNightlyFullMarkdown(report) {
     '# Tests nightly full',
     '',
     `Generated: ${report.generatedAt}`,
-    `Carrier: ${report.carrier.procedure}/${report.carrier.frame} -> ${report.carrier.path}`,
+    `Revision: ${report.git?.revision ?? 'unknown'}`,
+    `Report: ${report.carrier.path}`,
+    `Morning carrier: tests/reports/nightly-summary/latest.json`,
     `Kit: ${report.kit.id} (${report.kit.mode}) ${report.kit.ok ? 'ok' : 'blocked'}`,
     `Execution: ${report.execution.status}${report.execution.exitCode == null ? '' : ` (exit ${report.execution.exitCode})`}`,
     '',

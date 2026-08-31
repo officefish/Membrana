@@ -39,9 +39,9 @@
       "holder": "angelina",
       "carrier": {
         "kind": "file",
-        "path": "tests/reports/nightly-full/latest.json",
-        "writer": "node scripts/tests-nightly-full.mjs",
-        "nightly": ".github/workflows/tests-nightly-full.yml",
+        "path": "tests/reports/nightly-summary/latest.json",
+        "writer": "yarn night-report:gate --pull",
+        "nightly": ".github/workflows/tests-nightly-full.yml + .github/workflows/vitest-nightly.yml + .github/workflows/network-probes-nightly.yml",
         "puller": "yarn night-report:gate --pull",
         "blocksMorningWhen": "execution.status != pass"
       },
@@ -81,8 +81,8 @@
       {
         "id": "night-report",
         "waitsFor": "night",
-        "resume": "зелёный свежий tests/reports/nightly-full/latest.json (yarn night-report:gate --pull; красный/устаревший — разбор до продолжения)",
-        "note": "#1293: blocksMorningWhen кадра night-report исполняет runNightReportGate в morning-care; три различимых блокера — missing/stale/red"
+        "resume": "зелёная свежая tests/reports/nightly-summary/latest.json (yarn night-report:gate --pull; красный/устаревший пункт ночи — разбор до продолжения)",
+        "note": "#1293+n5: blocksMorningWhen кадра night-report исполняет runNightReportGate в morning-care; читает сводку ночи, а не один tests-report; блокеры — missing/stale/pending/red"
       },
       {
         "id": "magistral-choice",

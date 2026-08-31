@@ -1,11 +1,13 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { CabinetToast } from '@/components/CabinetToast';
 import { CabinetSampleChartListPanel } from '@/components/sample-library/CabinetSampleChartListPanel';
+import { DeletionConfirmDialog } from '@/components/sample-library/DeletionConfirmDialog';
 import { CabinetSampleDuplicatesPanel } from '@/components/sample-library/CabinetSampleDuplicatesPanel';
 import { CabinetSampleSessionDigestPanel } from '@/components/sample-library/CabinetSampleSessionDigestPanel';
 import { CabinetSamplePlayerSection } from '@/components/sample-library/CabinetSamplePlayerSection';
-import { BUFFER_MANAGER_MANIFEST } from '@membrana/media-library-service';
+import { BUFFER_COLLECTION_ID, BUFFER_MANAGER_MANIFEST } from '@membrana/media-library-service';
+import type { MediaSample } from '@membrana/media-library-service';
 
 import { BufferManagerPanel } from '@/components/buffer-manager/BufferManagerPanel';
 import { PagePluginArea } from '@/plugins/PagePluginArea';
@@ -32,6 +34,58 @@ const LIBRARY_TENANTS: readonly HomePluginState[] = [
 
 export function SampleLibraryPage() {
   const lib = useCabinetSampleLibrary();
+
+  /**
+   * ВОРОТА УДАЛЕНИЯ (#2218). Обе воронки — построчное удаление и очистка буфера — проходят
+   * через одно окно. Дом не спрашивает `window.confirm` нигде: системный вопрос умеет
+   * «уверены?» и не умеет ни списка, ни ценности, а именно этого не хватило 28.08.
+   */
+  const [pending, setPending] = useState<{
+    readonly title: string;
+    readonly samples: readonly MediaSample[];
+    readonly declaredTotal?: number;
+    readonly run: () => void | Promise<void>;
+  } | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const askDelete = useCallback(
+    (title: string, samples: readonly MediaSample[], run: () => void | Promise<void>, declaredTotal?: number) => {
+      setPending({ title, samples, run, declaredTotal });
+    },
+    [],
+  );
+
+  const confirmDelete = useCallback(async () => {
+    if (!pending) return;
+    setDeleting(true);
+    try {
+      await pending.run();
+    } finally {
+      setDeleting(false);
+      setPending(null);
+    }
+  }, [pending]);
+
+  const removeGated = useCallback(
+    async (id: string): Promise<void> => {
+      const one = lib.nodeSamples.find((s: MediaSample) => s.id === id);
+      // Проба может лежать вне загруженной страницы: тогда список пуст, но удаление по id
+      // состоится. Объявляем ЧИСЛО — иначе окно решило бы «удалять нечего» и не дало бы
+      // подтвердить то, что на деле уйдёт (родня занижения потери, ревью #2232).
+      askDelete('Удалить пробу', one ? [one] : [], () => lib.handleRemove(id), 1);
+    },
+    [askDelete, lib],
+  );
+
+  const clearBufferGated = useCallback(async (): Promise<void> => {
+    const known = lib.nodeSamples;
+    const declared =
+      lib.nodeSamplesTotal ||
+      (lib.snapshot.collections.find((c: { id: string; sampleCount?: number }) => c.id === BUFFER_COLLECTION_ID)
+        ?.sampleCount ??
+        known.length);
+    askDelete('Очистить буфер', known, () => lib.handleClearBuffer(), declared);
+  }, [askDelete, lib]);
   // Источник местный: у media нет входа списка плагинов и переключения (замер 26.08) — см.
   // `pagePluginSource.ts`. Раскладка при этом ЖУРНАЛЬНАЯ, а не вторая своя.
   const source = useMemo(() => localPluginSource(LIBRARY_TENANTS), []);
@@ -54,10 +108,10 @@ export function SampleLibraryPage() {
             onMove={(id, toId) => lib.handleMove(id, toId)}
             onExport={(id) => {
               // Скачивание берёт пробу из библиотеки по адресу: у выборки своего блоба нет.
-              const s = lib.nodeSamples.find((x) => x.id === id);
+              const s = lib.nodeSamples.find((x: MediaSample) => x.id === id);
               if (s) void lib.handleExport(s);
             }}
-            onRemove={(id) => lib.handleRemove(id)}
+            onRemove={removeGated}
           />
         ) : (
           <p className="text-sm text-base-content/60" role="status">
@@ -119,7 +173,7 @@ export function SampleLibraryPage() {
         ),
     },
   };
-  const handleRemoveFromPanel = (id: string) => void lib.handleRemove(id);
+  const handleRemoveFromPanel = (id: string) => removeGated(id);
   const pagePlugins = useHomePagePlugins(libraryRenderers, source);
 
   if (lib.loading) {
@@ -235,7 +289,7 @@ export function SampleLibraryPage() {
               selectedCollection={lib.selectedCollection}
               handleCreateCollection={lib.handleCreateCollection}
               handleDeleteCollection={lib.handleDeleteCollection}
-              handleClearBuffer={lib.handleClearBuffer}
+              handleClearBuffer={clearBufferGated}
             />
         }
       >
@@ -264,7 +318,7 @@ export function SampleLibraryPage() {
               handleImport={lib.handleImport}
               nodeSamples={lib.nodeSamples}
               moveTargets={lib.moveTargets}
-              handleRemove={lib.handleRemove}
+              handleRemove={removeGated}
               handleMove={lib.handleMove}
               handleExport={lib.handleExport}
               canLabelCatalog={lib.canLabelCatalog}
@@ -279,6 +333,18 @@ export function SampleLibraryPage() {
               samplesPagination={lib.samplesPagination}
             />
       </PagePluginArea>
+
+      <DeletionConfirmDialog
+        open={pending !== null}
+        title={pending?.title ?? ''}
+        samples={pending?.samples ?? []}
+        declaredTotal={pending?.declaredTotal}
+        collections={lib.snapshot.collections}
+        deviceId={lib.selection.kind === 'node' ? lib.selection.nodeId : undefined}
+        busy={deleting}
+        onCancel={() => setPending(null)}
+        onConfirm={() => void confirmDelete()}
+      />
 
       {lib.membraneId ? (
         <p className="text-xs font-mono text-base-content/40">membrane: {lib.membraneId}</p>
