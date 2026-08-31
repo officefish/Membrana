@@ -17,6 +17,7 @@ import {
   requestedPrMismatchProblem,
   finalStateLine,
   unfinishedMergeProblem,
+  deliveryOutcome,
 } from './pr-ship.mjs';
 
 test('#1166 ciWaitDisposition: 0 → green', () => {
@@ -667,4 +668,77 @@ test('#2147/2 finalStateLine: состояние по стволу; gh недо�
   );
   assert.match(finalStateLine({ number: 2143, state: 'OPEN', mergeCommit: null }), /state=OPEN(?! mergeCommit)/);
   assert.match(finalStateLine(null), /НЕ ПОДТВЕРЖДЕНО/);
+});
+
+// ── #2247: код возврата отражает СОСТОЯНИЕ ЦЕЛИ, а не судьбу последнего шага ──
+
+const MERGED = { number: 2247, state: 'MERGED', mergeCommit: 'abcdef1234567890' };
+const OPEN = { number: 2247, state: 'OPEN', mergeCommit: null };
+
+test('#2247 ПОРЧА: упал шаг ДО мерджа — цель не достигнута, выход ненулевой', () => {
+  // Публикация вердикта роняет флоу до слияния: PR остаётся OPEN.
+  const o = deliveryOutcome({ executed: true, mergeRequested: true, pr: OPEN, failedSteps: ['review-gate'] });
+  assert.equal(o.exitCode, 1);
+  assert.match(o.line, /остался state=OPEN/);
+  assert.match(o.line, /review-gate/);
+  assert.match(o.line, /цель не достигнута/);
+});
+
+test('#2247 ПОРЧА: хвост упал ПОСЛЕ успешного мерджа — ноль, но с явной оговоркой', () => {
+  const o = deliveryOutcome({ executed: true, mergeRequested: true, pr: MERGED, failedSteps: ['branch-cleanup'] });
+  assert.equal(o.exitCode, 0, 'уборка ветки не отменяет состоявшуюся доставку');
+  assert.match(o.line, /цель достигнута/);
+  assert.match(o.line, /branch-cleanup/);
+  assert.match(o.line, /хвост требует руки/);
+});
+
+test('#2247 merge --auto: шаг успешен, PR в очереди — это НЕ доставка', () => {
+  // gh pr merge --auto возвращает ноль сразу: он ставит в очередь, а не сливает.
+  // Прежняя обёртка считала цель достигнутой; состояние по стволу говорит иначе.
+  const o = deliveryOutcome({ executed: true, mergeRequested: true, pr: OPEN, failedSteps: [] });
+  assert.equal(o.exitCode, 1);
+  assert.match(o.line, /остался state=OPEN/);
+});
+
+test('#2247 мердж прошёл, ничего не падало — молчаливый ноль', () => {
+  const o = deliveryOutcome({ executed: true, mergeRequested: true, pr: MERGED, failedSteps: [] });
+  assert.equal(o.exitCode, 0);
+  assert.equal(o.line, null, 'исправному прогону нечего добавлять к строке итога');
+});
+
+test('#2247 состояние НЕ подтверждено (gh недоступен) — доклад «доставлено» невозможен', () => {
+  const o = deliveryOutcome({ executed: true, mergeRequested: true, pr: null, failedSteps: [] });
+  assert.equal(o.exitCode, 1);
+  assert.match(o.line, /НЕ подтверждено/);
+  const noMerge = deliveryOutcome({ executed: true, mergeRequested: false, pr: null, failedSteps: [] });
+  assert.equal(noMerge.exitCode, 1, 'без подтверждения нельзя докладывать и о доставке PR');
+});
+
+test('#2247 без --merge цель другая: открытый PR — успех, но падения названы', () => {
+  assert.deepEqual(deliveryOutcome({ executed: true, mergeRequested: false, pr: OPEN, failedSteps: [] }), {
+    exitCode: 0,
+    line: null,
+  });
+  const withFail = deliveryOutcome({ executed: true, mergeRequested: false, pr: OPEN, failedSteps: ['sync-ff'] });
+  assert.equal(withFail.exitCode, 0);
+  assert.match(withFail.line, /цель достигнута/);
+  assert.match(withFail.line, /sync-ff/);
+});
+
+test('#2247 сухой прогон целью не мерялся и молчит', () => {
+  assert.deepEqual(deliveryOutcome({ executed: false, mergeRequested: true, pr: null, failedSteps: ['push'] }), {
+    exitCode: 0,
+    line: null,
+  });
+});
+
+test('#2247 ПРОВОДКА: обёртка копит упавшие шаги и судит по цели, а не по последнему шагу', async () => {
+  const { readFileSync } = await import('node:fs');
+  const src = readFileSync(new URL('./pr-ship.mjs', import.meta.url), 'utf8');
+  // Проглоченный необязательный шаг обязан попасть в исход, а не только в предупреждение.
+  assert.ok(src.includes('failedSteps.push(s.label)'), 'падение необязательного шага копится');
+  assert.ok(src.includes('const outcome = deliveryOutcome({'), 'исход считается');
+  assert.ok(src.includes('process.exitCode = outcome.exitCode'), 'и доходит до кода возврата');
+  // Состояние ствола обязано ДОЕЗЖАТЬ до решения, а не только печататься.
+  assert.ok(src.includes('const pr = printFinalPrState('), 'состояние возвращается наружу');
 });

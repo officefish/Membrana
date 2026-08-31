@@ -639,6 +639,79 @@ export function finalStateLine(pr) {
 }
 
 /**
+ * ИСХОД ДОСТАВКИ (#2247): код возврата отражает СОСТОЯНИЕ ЦЕЛИ, а не судьбу последнего шага.
+ *
+ * За 29–31.08 `pr:ship` пять раз вернул ноль при упавшем шаге, и дважды это едва не стало
+ * ложной записью в отчётности. Зуб #2147/№2 уже требовал печатать состояние по стволу —
+ * и печатал. Непокрытым остался сам ВЫВОД: строка говорила правду, а код возврата её не
+ * повторял. Тот же класс, что в библиотеке: правда, из которой никто не делает вывода.
+ *
+ * Три пути, которыми ноль получался при неудаче:
+ *   1. шаг помечен `optional` — отказ проглатывался предупреждением;
+ *   2. шаг пропущен по `guard` — не выполнялся вовсе, и это считалось нормой;
+ *   3. `gh pr merge --auto` успешен СРАЗУ: он ставит PR в очередь, а не сливает. Обёртка
+ *      считала цель достигнутой, PR оставался OPEN.
+ *
+ * Правило: если мердж запрашивали — цель считается достигнутой только при `MERGED` по
+ * стволу. Если цель достигнута, а упал хвостовой шаг (уборка ветки, синхронизация) — это
+ * ноль, но С ОГОВОРКОЙ: молчать о падении нельзя, а ронять доставку из-за уборки — врать
+ * в другую сторону.
+ *
+ * @param {{
+ *   executed: boolean,
+ *   mergeRequested: boolean,
+ *   pr: {number:number|null, state:string, mergeCommit:string|null}|null,
+ *   failedSteps?: readonly string[],
+ * }} input
+ * @returns {{ exitCode: number, line: string|null }}
+ */
+export function deliveryOutcome(input) {
+  const failed = [...(input.failedSteps ?? [])];
+  const failedNote = failed.length > 0 ? ` (упало: ${failed.join(', ')})` : '';
+
+  // Сухой прогон ничего не доставляет и целью не мерялся.
+  if (!input.executed) return { exitCode: 0, line: null };
+
+  const state = input.pr && input.pr.number != null ? String(input.pr.state).toUpperCase() : null;
+
+  if (!input.mergeRequested) {
+    // Цель — доставленный PR, а не слияние. Нет подтверждения состояния — это не успех.
+    if (state === null) {
+      return {
+        exitCode: 1,
+        line: `✗ цель НЕ подтверждена: состояние PR неизвестно${failedNote} — доклад «доставлено» на этом основании невозможен`,
+      };
+    }
+    if (failed.length > 0) {
+      return { exitCode: 0, line: `⚠ цель достигнута (PR #${input.pr.number} state=${state}), но упало: ${failed.join(', ')}` };
+    }
+    return { exitCode: 0, line: null };
+  }
+
+  if (state === 'MERGED') {
+    if (failed.length > 0) {
+      return {
+        exitCode: 0,
+        line: `⚠ цель достигнута (PR #${input.pr.number} MERGED), но упало: ${failed.join(', ')} — доставка состоялась, хвост требует руки`,
+      };
+    }
+    return { exitCode: 0, line: null };
+  }
+
+  if (state === null) {
+    return {
+      exitCode: 1,
+      line: `✗ мердж запрашивали, состояние НЕ подтверждено${failedNote} — считать доставленным нельзя`,
+    };
+  }
+
+  return {
+    exitCode: 1,
+    line: `✗ мердж запрашивали, но PR #${input.pr.number} остался state=${state}${failedNote} — цель не достигнута`,
+  };
+}
+
+/**
  * Прогон шага ci-wait с повтором на транзиентных кодах (#1166). Первый заход — как есть,
  * повторы — с `--resume` (pr:wait продолжает с чекпойнта). Красный/approval/error и
  * исчерпание повторов — пробрасываем (ship падает честно, как и должен).
@@ -813,6 +886,7 @@ function main() {
 
   /** @type {string|null} */
   let bodyDir = null;
+  const failedSteps = [];
   for (const s of steps) {
     let args = s.args;
     if (s.bodyText != null) {
@@ -868,6 +942,8 @@ function main() {
       execFileSync(s.cmd, args, { stdio: 'inherit' });
     } catch (e) {
       if (!s.optional) throw e;
+      // Необязательный шаг не роняет доставку, но и не исчезает: он поедет в исход (#2247).
+      failedSteps.push(s.label);
       console.error(`  ⚠ ${s.label} не удался (${String(e.message ?? e).split('\n')[0]}) — шаг необязательный, флоу продолжается`);
     }
   }
@@ -882,10 +958,26 @@ function main() {
   if (opts.execute && opts.merge) reportWorktreeFate(current);
   // Зуб #2147/№2: финал ВСЕГДА печатает состояние по стволу — доклад «доставлено»
   // сверяется gh pr view --json state,mergeCommit, не exit-кодом обёртки.
-  if (opts.execute) printFinalPrState(opts.pr ?? null);
+  if (opts.execute) {
+    const pr = printFinalPrState(opts.pr ?? null);
+    // Код возврата — про ЦЕЛЬ, а не про последний шаг (#2247).
+    const outcome = deliveryOutcome({
+      executed: true,
+      mergeRequested: Boolean(opts.merge),
+      pr,
+      failedSteps,
+    });
+    if (outcome.line) console.log(outcome.line);
+    if (outcome.exitCode !== 0) process.exitCode = outcome.exitCode;
+  }
 }
 
-/** Печать финального состояния PR (по номеру или PR текущей ветки); gh недоступен — честное «не подтверждено». */
+/**
+ * Печать финального состояния PR и ВОЗВРАТ его наружу: по нему судится исход доставки
+ * (#2247). Печатать состояние и не давать его решению — то же, что сказать правду и не
+ * сделать из неё вывода.
+ * @returns {{number:number|null, state:string, mergeCommit:string|null}|null}
+ */
 function printFinalPrState(requestedPr) {
   let pr = null;
   try {
@@ -908,6 +1000,7 @@ function printFinalPrState(requestedPr) {
     pr = null;
   }
   console.log(finalStateLine(pr));
+  return pr;
 }
 
 /**
