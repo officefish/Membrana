@@ -4,6 +4,7 @@ import {
   DEFAULT_SAMPLES_PAGE_SIZE,
   TARIFF_DATASET_SYSTEM_KEY,
   isQuotaFull,
+  isReadOnlyCollection,
   type Collection,
   type MediaSample,
   type PaginatedSamples,
@@ -335,7 +336,10 @@ export function useCabinetSampleLibrary() {
     selectedCollection?.kind === 'system' &&
     selectedCollection.systemKey === TARIFF_DATASET_SYSTEM_KEY;
 
-  const readOnlyCollection = isTariffDataset || selectedCollection?.kind === 'system';
+  // Правило одно и живёт в ядре (#2249). Прежняя редакция несла лишний частный случай
+  // (`isTariffDataset ||`): тарифный набор И ЕСТЬ системный, то есть условие было
+  // логически тем же, но объявленным иначе — и зуб близнецов закрепил оба написания.
+  const readOnlyCollection = isReadOnlyCollection(selectedCollection);
   const quotaBlocked = active ? isQuotaFull(snapshot.quota) : false;
   const canMutate = isNodeView && active && !readOnlyCollection && !busy;
   const canLabelCatalog = isCatalogView && isAdmin && Boolean(membraneId);

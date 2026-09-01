@@ -18,7 +18,7 @@
  * это мегабайт, что защищено и почему), а не выполняет удаление. Исполнение — в доме,
  * после явного подтверждения человека, и только по идентификаторам из плана.
  */
-import type { MediaSample } from './types.js';
+import type { Collection, MediaSample } from './types.js';
 
 /** Принципы отбора — закрытый список из заказа владельца 27.08. */
 export const BUFFER_CLEANUP_PRINCIPLES = [
@@ -186,4 +186,23 @@ export function describeCleanupPlan(plan: BufferCleanupPlan): string {
   const mb = (plan.freedBytes / 1048576).toFixed(1);
   const tail = plan.protectedOut.length > 0 ? `, защищено ${plan.protectedOut.length}` : '';
   return `удалить ${plan.doomed.length} ${title} · освободится ${mb} МБ · останется ${plan.remaining}${tail}`;
+}
+
+/**
+ * НАБОР ТОЛЬКО ДЛЯ ЧТЕНИЯ — одно правило на оба дома (#2249, находка архитектора 01.09).
+ *
+ * Правило было объявлено ДВАЖДЫ и разными словами: Studio — `selected?.kind === 'system'`,
+ * кабинет — `isTariffDataset || selectedCollection?.kind === 'system'`. Логически это одно и
+ * то же (тарифный набор и есть системный), то есть живого расхождения в поведении не было —
+ * но объявлений два, и одно уже успело обрасти лишним частным случаем.
+ *
+ * Хуже другого: зуб близнецов, который должен был ловить разъезд, ЗАКРЕПИЛ обе формулировки
+ * как эталон — он сверял две разные строки поимённо. Такой зуб не может покраснеть на
+ * расхождении; он покраснеет, если дома СВЕСТИ. Класс недели в чистом виде: зуб есть,
+ * запущен, а предмета не видит — потому что сторожит написание, а не правило.
+ *
+ * Здесь правило одно и живёт в ядре; дома его ЗОВУТ.
+ */
+export function isReadOnlyCollection(collection: Pick<Collection, 'kind'> | null | undefined): boolean {
+  return collection?.kind === 'system';
 }

@@ -27,6 +27,8 @@ import { headRevision } from './lib/git-day-context.mjs';
 import { provenanceHeader, readEntry, gitFsIo } from './lib/angelina-adapter.mjs';
 import { frame } from './lib/day-plan-frame.mjs';
 import { readDated } from './lib/read-dated.mjs';
+import { REPO } from './lib/github-issues-audit.mjs';
+import { normalizeRepoLinks, rewrittenLinksNote } from './lib/repo-links.mjs';
 import {
   buildDetectionPlanningConstraintsBullets,
   FFT_METRICS_POTENTIAL_AND_LIMITS_REL,
@@ -581,8 +583,15 @@ function writeMainDayIssueFile({ outputPath, commandName, body, meta }) {
       ? `<!-- focus override: ${meta.primaryFocusOverride} -->\n`
       : '') +
     `<!-- active в реестре: ${meta.activeTasks.join(', ') || '—'} -->\n\n`;
+  // АДРЕС РЕПОЗИТОРИЯ — ИЗ КОНСТАНТЫ, А НЕ ИЗ ПАМЯТИ МОДЕЛИ (#2249). Документ пишет LLM, и
+  // адреса ей никто не сообщал: 01.09 она выдала три ссылки на несуществующий репозиторий,
+  // а такие ссылки уезжают партнёрам в ласточке. Переписываем по константе и НАЗЫВАЕМ это
+  // числом — молчаливая подмена была бы той же болезнью с другой стороны.
+  const normalized = normalizeRepoLinks(body, REPO);
+  const note = rewrittenLinksNote(normalized.rewritten, REPO);
+  if (note) console.error(note);
   mkdirSync(dirname(outputPath), { recursive: true });
-  writeFileSync(outputPath, header + body, 'utf8');
+  writeFileSync(outputPath, header + normalized.text, 'utf8');
 }
 
 export function parseMainDayIssueArgs(argv) {

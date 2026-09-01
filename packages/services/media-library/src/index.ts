@@ -100,6 +100,7 @@ export {
   describeCleanupPlan,
   isBufferCleanupVolume,
   isPinnedByHuman,
+  isReadOnlyCollection,
   planBufferCleanup,
   type BufferCleanupPlan,
   type BufferCleanupPrinciple,
