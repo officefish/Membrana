@@ -5,8 +5,44 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14320/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 345 (причины в op-log) -->
+Записей: 49 · бюджет 14384/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 351 (причины в op-log) -->
+
+### 2026-09-01 · позиция · library-open-api-m0-order
+
+> Конструкция. Граф Математика точен, но проверю (1)→(3) и (1)→(4) строже. Вопрос (3) спрашивает «на что распространяется выключатель». Без (1) мы не знаем единицу владения — пользователя, мембрану или набор. Это не выводимо из формы списка (2). Прямое ребро (1)→(3) держится […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/library-open-api-m0-order-2026-09-01.md#reply-1`
+
+### 2026-09-01 · позиция · library-open-api-m1-ownership
+
+> Конструкция. Цепочка `User → Membrane → Device → Collection → Sample` — это граф владения с одним корнем (`User`) и одним узлом пересечения кабинет/media (`Membrane ↔ Device`). Пересечение проходит через `Device.membraneId`. Это единственная точка, где media знает о кабинете. […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/library-open-api-m1-ownership-2026-09-01.md#reply-1`
+
+### 2026-09-01 · позиция · library-open-api-m2-contract
+
+> Адресация сегодня: `/v1/devices/:deviceId/collections`, `…/:collectionId/samples`, `…/:sampleId/blob`. Для открытого API форма остаётся той же — `deviceId` есть технический ключ прибора, `collectionId` — группировка, `sampleId` — идентификатор пробы. Это не переоткрытие M1: мы […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/library-open-api-m2-contract-2026-09-01.md#reply-1`
+
+### 2026-09-01 · позиция · library-open-api-m3-key-ttl
+
+> Из конструкции следует однозначно: умолчание срока ключа-предъявителя живёт не в UI и не в блоке настроек кабинета (его нет), а в серверном коде — в том месте, где ключ генерируется при выдаче ссылки. Носитель умолчания — код генератора ключа на сервере. Исполнитель — серверный […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/library-open-api-m3-key-ttl-2026-09-01.md#reply-1`
+
+### 2026-09-01 · позиция · library-open-api-m4-extraction
+
+> Конструкция выемки держится на трёх осях, уже закрытых соседями: владение = `Device.membraneId` (M1), ключ пробы = `id` без `storageRef`/`notes` (M2), ссылка предъявительская с истечением (шторм + M3). M4 не переоткрывает форму. Вопрос M4 — какие **селекторы** торчат наружу и […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
+
+### 2026-09-01 · позиция · team-evening-feedback
+
+> Vesnin. Оценка артефактов: `MAIN_DAY_ISSUE` даёт точный диагноз до гейта (файл, строки, серверная сторона, `moveTargets`) — редкий случай, когда постановка не требует разведки. Ревью корректно вывело oversized (три коммита >400 строк не развёрнуто); бестиарий чист по […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
 
 ### 2026-08-31 · позиция · team-evening-feedback
 
@@ -265,39 +301,3 @@
 > Конструкция ShowcaseManifest ясна: два добавочных поля поверх базы. Первое — displayForm: DisplayForm, обязательное — это несущая конструкция витринного рода. Второе — description?: string, необязательное — декор с функцией. Прежний вердикт M5 предлагал то же самое; […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m5r-showcase-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m6-first-wave
-
-> Конструкция волны. M2 зафиксировал два дома: journal и collections. Шесть детекторов — плагины рода «обработчик» дома collections. Это значит mountTarget у всех шести — collections. Витринный пример владельца Т2 (сортировка по громкости) имеет другой mountTarget и другой kind — […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m6-first-wave-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m6r-first-wave
-
-> Конструкция волны. Шесть детекторов — один род, один дом, один тип манифеста. Это когерентная волна: все шесть регистрируются через `registerPlugin`, манифест — `HandlerManifest`, витринных полей нет. Витринный плагин — другой род, другой тип манифеста, другой DoD. Включить его […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/server-plugin-foundation-m6r-first-wave-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · team-evening-feedback
-
-> Vesnin. Оценка артефактов: MAIN_DAY_ISSUE и стендап расходятся с фактом дня — оба назвали магистралью `batch-collection-run-contour`, а владелец днём чеканил `server-plugin-foundation` (#1960, `main-day-assertions.json` перезаписан). Это нормальное У1-расхождение, но правило […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-17.md#reply-1`
-
-### 2026-08-16 · позиция · team-evening-feedback
-
-> Веснин. Оценка артефактов: `MAIN_DAY_ISSUE` образцово честно назвал расхождение источников (`main-day-assertions.json` от 14.08 vs `morning-gates-state.json` от 16.08) и разрешил его свежестью — это правильное применение нормы У1. Промпты сессий (#1947, #1948) и требования к […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-16.md#reply-1`
-
-### 2026-08-15 · позиция · team-evening-feedback
-
-> Веснин. Оценка артефактов: `MAIN_DAY_ISSUE` образцово применил норму У1 — расхождение `sources[0]` vs горизонт вынесено как находка, не синтез; `DAILY_CODE_REVIEW` корректно отделил oversized-диффы (#1940, f70c8615) в отдельный контур ревью. Границы соблюдены. Итоги дня: […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-15.md#reply-1`
-
-### 2026-08-14 · позиция · team-evening-feedback
-
-> Веснин. Оценка артефектов: MAIN_DAY_ISSUE честно вынес расхождение `morning-gates-state.json` vs `main-day-assertions.json` в таблицу обоснования — это правильное поведение канона, не замалчивание; DAILY_CODE_REVIEW корректно снял C1-риск, который я фиксировал вечером 13.08. […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-14.md#reply-1`
