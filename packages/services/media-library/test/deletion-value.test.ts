@@ -14,6 +14,7 @@ import {
   EVIDENCE_WINDOWS,
   assessDeletion,
   assessDeletionValue,
+  deletionAcknowledgementRisk,
   deletionGateReducer,
   evidenceWindowOf,
   isDeletionBlocked,
@@ -325,5 +326,80 @@ describe('НЕИЗВЕСТНОСТЬ — РИСК, а не его отсутст
     const s = assessDeletion([sample({ id: 'a' }), sample({ id: 'b' })], { declaredTotal: 1 });
     expect(s.willDelete).toBe(2);
     expect(s.unknown).toBe(0);
+  });
+});
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * ИНВАРИАНТ, А НЕ ПЕРЕЧЕНЬ СЛУЧАЕВ.
+ *
+ * 31.08 вышел тупик: окно, где две рядовые записи удалить НЕЛЬЗЯ ВОВСЕ — кнопка
+ * заблокирована, а галочки нет, потому что показ и блокировка судили по двум независимым
+ * условиям об одном факте. Поймали РУКАМИ, не зубом: зубы проверяли содержимое окна и жизнь
+ * ворот между открытиями, но не согласие показа с действием.
+ *
+ * Зуб близнецов, заведённый тогда, читает ИСХОДНИКИ окон — он ловит дом, который заведёт своё
+ * условие показа. Но он ничего не говорит про само ядро: разойдись `isDeletionBlocked` и
+ * `deletionAcknowledgementRisk` между собой, оба дома честно повторили бы тупик.
+ *
+ * Поэтому здесь — свойство, проверяемое ПЕРЕБОРОМ, а не список примеров. Оно верно при любой
+ * будущей редакции обеих функций и не зависит от того, как записаны условия.
+ * ───────────────────────────────────────────────────────────────────────────── */
+describe('ТУПИКА НЕТ: галочка рисуется ровно там, где блокируется кнопка', () => {
+  const GRID: { willDelete: number; evidence: number; unknown: number }[] = [];
+  for (const willDelete of [0, 1, 2, 3, 40]) {
+    for (const evidence of [0, 1, 2]) {
+      for (const unknown of [0, 1, 5]) {
+        GRID.push({ willDelete, evidence, unknown });
+      }
+    }
+  }
+
+  it('заблокировано ⇒ ЕСТЬ ЧТО ОТМЕТИТЬ (иначе окно без выхода)', () => {
+    for (const g of GRID) {
+      const blocked = isDeletionBlocked({ ...g, acknowledged: false, busy: false });
+      if (!blocked) continue;
+      // Пустой список — законный отказ без галочки: там нечего удалять, а не нечем разрешить.
+      if (g.willDelete <= 0) continue;
+      expect(
+        deletionAcknowledgementRisk(g),
+        `ТУПИК: ${JSON.stringify(g)} — кнопка заблокирована, а отметить нечего`,
+      ).not.toBeNull();
+    }
+  });
+
+  it('ВЫХОД РАБОТАЕТ: отметил — и кнопка разблокировалась', () => {
+    for (const g of GRID) {
+      if (g.willDelete <= 0) continue;
+      if (deletionAcknowledgementRisk(g) === null) continue;
+      expect(
+        isDeletionBlocked({ ...g, acknowledged: false, busy: false }),
+        `${JSON.stringify(g)}: риск назван, а кнопка не заблокирована — предупреждение без силы`,
+      ).toBe(true);
+      expect(
+        isDeletionBlocked({ ...g, acknowledged: true, busy: false }),
+        `${JSON.stringify(g)}: отметка сделана, а кнопка всё равно заблокирована — выход не работает`,
+      ).toBe(false);
+    }
+  });
+
+  it('ЛИШНЕЙ ГАЛОЧКИ НЕТ: риска нет ⇒ не блокируем', () => {
+    // Обратный конец, и он не менее важен: предупреждать одинаково обо всём — значит добиться,
+    // чтобы предупреждение перестали читать.
+    for (const g of GRID) {
+      if (g.willDelete <= 0) continue;
+      if (deletionAcknowledgementRisk(g) !== null) continue;
+      expect(
+        isDeletionBlocked({ ...g, acknowledged: false, busy: false }),
+        `${JSON.stringify(g)}: риска нет, а жать нельзя`,
+      ).toBe(false);
+    }
+  });
+
+  it('занятость и пустой список блокируют БЕЗ галочки — и это не тупик, а ожидание', () => {
+    // Их лечит не отметка человека, а время (busy) или наполнение списка. Требовать здесь
+    // второго движения значило бы предложить человеку разрешить то, что от него не зависит.
+    expect(isDeletionBlocked({ willDelete: 5, evidence: 0, unknown: 0, acknowledged: true, busy: true })).toBe(true);
+    expect(isDeletionBlocked({ willDelete: 0, evidence: 0, unknown: 0, acknowledged: true })).toBe(true);
+    expect(deletionAcknowledgementRisk({ willDelete: 0, evidence: 9, unknown: 9 })).toBe(null);
   });
 });
