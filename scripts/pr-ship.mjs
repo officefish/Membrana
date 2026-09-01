@@ -741,8 +741,8 @@ function runCiWaitWithResume(cmd, baseArgs) {
   }
 }
 
-function main() {
-  const opts = parseArgs(process.argv);
+function main(argv = process.argv) {
+  const opts = parseArgs(argv);
   // Ветки соседних worktree решают, возможен ли ff-sync (см. isBaseHeldElsewhere).
   // Гуард: без --branch коммит идёт в текущую ветку; запрет коммитить прямо в base.
   const current = execFileSync('git', ['branch', '--show-current'], { encoding: 'utf8' }).trim();
@@ -754,7 +754,7 @@ function main() {
     if (hanging) {
       console.error(hanging);
       process.exitCode = 1;
-      return;
+      return 1;
     }
     // Зуб #2147/№2: пустой индекс при запрошенном шаге commit — отказ ДО шагов,
     // а не «nothing to commit» после минуты pre-commit-хуков без push/PR.
@@ -770,7 +770,7 @@ function main() {
     if (commitProblem) {
       console.error(commitProblem);
       process.exitCode = 1;
-      return;
+      return 1;
     }
   }
 
@@ -794,7 +794,7 @@ function main() {
     if (mismatch) {
       console.error(mismatch);
       process.exitCode = 1;
-      return;
+      return 1;
     }
     const landed = alreadyInBase(prNum, opts.base ?? 'main');
     if (landed) {
@@ -802,13 +802,13 @@ function main() {
         `pr:ship --merge-only: PR #${prNum} уже в origin/${opts.base ?? 'main'} как ${landed.slice(0, 8)} — no-op, второй хвост не нужен (#1320)`,
       );
       printFinalPrState(prNum);
-      return;
+      return 0;
     }
     const problem = headSyncProblem(readHeadRefs());
     if (problem) {
       console.error(problem);
       process.exitCode = 1;
-      return;
+      return 1;
     }
   }
 
@@ -841,7 +841,7 @@ function main() {
     if (problem) {
       console.error(problem);
       process.exitCode = 1;
-      return;
+      return 1;
     }
     if (String(opts.sizeReason ?? "").trim().length > 0) {
       sizeReasonForBody = sizeReasonLine({ changedLines, reason: opts.sizeReason });
@@ -977,6 +977,16 @@ function main() {
     if (outcome.line) console.log(outcome.line);
     if (outcome.exitCode !== 0) process.exitCode = outcome.exitCode;
   }
+  return process.exitCode ?? 0;
+}
+
+export function runPrShipCli(argv = process.argv) {
+  try {
+    return main(argv);
+  } catch (e) {
+    console.error(String(e.message ?? e));
+    return 1;
+  }
 }
 
 /**
@@ -1057,10 +1067,5 @@ function reportWorktreeFate(branch) {
 
 // ESM-эквивалент require.main === module
 if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('pr-ship.mjs')) {
-  try {
-    main();
-  } catch (e) {
-    console.error(String(e.message ?? e));
-    process.exit(1);
-  }
+  process.exitCode = runPrShipCli(process.argv);
 }
