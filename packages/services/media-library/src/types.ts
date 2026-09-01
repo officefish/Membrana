@@ -146,8 +146,14 @@ export interface BufferCleanupPlanOutcome {
   shortfall: string | null;
 }
 
-/** Итог уборки: сколько ушло, сколько освободилось и кого не тронули — с причинами. */
-export interface BufferCleanupExecuteOutcome {
+/**
+ * Итог удаления по списку: сколько ушло, сколько освободилось и кого не тронули — с причинами.
+ *
+ * ЧАСТИЧНЫЙ ОТКАЗ — НЕСУЩЕЕ СВОЙСТВО, а не крайний случай: часть списка может уйти, часть
+ * отказать, и отказ обязан называть записи ПОИМЁННО. Проверено живым смоуком 29.08:
+ * пять удалено, трём отказано с причиной у каждой.
+ */
+export interface DeleteByIdsOutcome {
   deleted: number;
   freedBytes: number;
   refused: readonly { id: string; why: string }[];

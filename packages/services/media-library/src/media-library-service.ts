@@ -12,7 +12,7 @@ import { mediaLibraryTrace, traceElapsedMs } from './media-library-trace.js';
 import { isBufferSampleCountCapActive } from './quota-status.js';
 import type { IStorageBackend } from './ports/storage-backend.js';
 import type {
-  BufferCleanupExecuteOutcome,
+  DeleteByIdsOutcome,
   BufferCleanupPlanOutcome,
   BufferCleanupPlanRequest,
   LibraryChartListRequest,
@@ -308,17 +308,23 @@ export class MediaLibraryService {
   }
 
   /**
-   * Уборка буфера (#2204): уходят РОВНО перечисленные, список берётся из показанного плана.
+   * Удаление ПО СПИСКУ: уходят РОВНО перечисленные, список берётся из показанного человеку.
    * Глагола «удали сто ранних» здесь нет намеренно — удаление необратимо.
+   *
+   * ИМЯ ПО СМЫСЛУ, А НЕ ПО ПЕРВОМУ ЗАКАЗЧИКУ (#2250). Путь родился уборкой буфера (#2204) и
+   * назывался ею, хотя буфером не ограничен ни на грамм: сервер принимает список и проверяет
+   * владение ЛЮБЫМ набором. Пока имя говорило «буфер», удаление пачкой из панели выглядело
+   * как отсутствующий механизм — и второй такой же завёлся бы рядом. Это ровно то расхождение,
+   * что чинили 30–31.08: имя, отставшее от смысла, порождает близнеца.
    */
-  async executeBufferCleanup(
+  async deleteSamplesByIds(
     collectionId: string,
     sampleIds: readonly string[],
-  ): Promise<BufferCleanupExecuteOutcome> {
-    if (!this.backend.executeBufferCleanup) {
-      throw new Error('Управление буфером доступно только при серверной библиотеке (media-server)');
+  ): Promise<DeleteByIdsOutcome> {
+    if (!this.backend.deleteSamplesByIds) {
+      throw new Error('Удаление по списку доступно только при серверной библиотеке (media-server)');
     }
-    return this.backend.executeBufferCleanup(collectionId, sampleIds);
+    return this.backend.deleteSamplesByIds(collectionId, sampleIds);
   }
 
   async listCollectionPlugins(collectionId: string): Promise<readonly MediaPluginState[]> {

@@ -1,5 +1,5 @@
 import type {
-  BufferCleanupExecuteOutcome,
+  DeleteByIdsOutcome,
   BufferCleanupPlanOutcome,
   BufferCleanupPlanRequest,
   Collection,
@@ -72,13 +72,14 @@ export interface IStorageBackend {
     req: BufferCleanupPlanRequest,
   ): Promise<BufferCleanupPlanOutcome>;
   /**
-   * Уборка буфера (#2204): удаляет РОВНО перечисленных. Списка нет — удалять нечего; «сто
-   * ранних» одним вызовом этот глагол не умеет, и это его несущее свойство, а не пробел.
+   * Удаление по списку (#2204, переименовано по смыслу #2250): удаляет РОВНО перечисленных.
+   * Списка нет — удалять нечего; «сто ранних» одним вызовом этот глагол не умеет, и это его
+   * несущее свойство, а не пробел. Буфером НЕ ограничен: сервер проверяет владение любым набором.
    */
-  executeBufferCleanup?(
+  deleteSamplesByIds?(
     collectionId: string,
     sampleIds: readonly string[],
-  ): Promise<BufferCleanupExecuteOutcome>;
+  ): Promise<DeleteByIdsOutcome>;
   /** Домовая включённость плагинов media collections (#2186): только серверный бэкенд. */
   listCollectionPlugins?(
     collectionId: string,

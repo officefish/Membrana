@@ -41,7 +41,7 @@ describe('панель управления буфером', () => {
   it('удаление идёт ТОЛЬКО по идентификаторам показанного плана', () => {
     const src = read(PANEL);
     expect(src).toContain('plan.doomed.map((row) => row.id)');
-    expect(src).toContain('service.executeBufferCleanup(');
+    expect(src).toContain('service.deleteSamplesByIds(');
   });
 
   it('кнопка удаления живёт внутри ветки плана — без показа её просто нет', () => {
@@ -72,7 +72,7 @@ describe('панель управления буфером', () => {
 
   it('после уборки план сбрасывается — показывать удалённое как «что уйдёт» нельзя', () => {
     const src = read(PANEL);
-    const afterExecute = src.slice(src.indexOf('const outcome = await service.executeBufferCleanup'));
+    const afterExecute = src.slice(src.indexOf('const outcome = await service.deleteSamplesByIds'));
     expect(afterExecute).toContain('setPlan(null)');
   });
 });

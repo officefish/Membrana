@@ -4,7 +4,7 @@ import { TARIFF_DATASET_SYSTEM_KEY, DEFAULT_SAMPLES_PAGE_SIZE } from '../constan
 import { resolveMediaLibraryTraceId } from '../media-library-trace.js';
 import type { IStorageBackend } from '../ports/storage-backend.js';
 import type {
-  BufferCleanupExecuteOutcome,
+  DeleteByIdsOutcome,
   BufferCleanupPlanOutcome,
   BufferCleanupPlanRequest,
   Collection,
@@ -351,14 +351,14 @@ export class ServerStorageBackend implements IStorageBackend {
    * Уборка буфера (#2204): уходят РОВНО перечисленные. Пустой список сюда не отправляется —
    * его отбивает и клиент, и сервер: удаление без показанного списка невозможно по контракту.
    */
-  async executeBufferCleanup(
+  async deleteSamplesByIds(
     collectionId: string,
     sampleIds: readonly string[],
-  ): Promise<BufferCleanupExecuteOutcome> {
+  ): Promise<DeleteByIdsOutcome> {
     if (sampleIds.length === 0) {
       throw new Error('Уборка без списка невозможна: сперва план, потом слово человека');
     }
-    return this.requestJson<BufferCleanupExecuteOutcome>(
+    return this.requestJson<DeleteByIdsOutcome>(
       `/collections/${encodeURIComponent(collectionId)}/buffer-cleanup/execute`,
       {
         method: 'POST',

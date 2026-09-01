@@ -80,7 +80,7 @@ describe('режимы взаимоисключающие', () => {
   });
 
   it('stop-ветка не вызывает очистку буфера', () => {
-    expect(PLUGIN).not.toMatch(/requestClearMediaLibraryBuffer|executeBufferCleanup|planBufferCleanup/u);
+    expect(PLUGIN).not.toMatch(/requestClearMediaLibraryBuffer|deleteSamplesByIds|planBufferCleanup/u);
     expect(PANEL).toContain("patchConfig({ bufferPolicy: 'stop' })");
     expect(PANEL).toContain("patchConfig({ bufferPolicy: 'auto-cleanup' })");
   });
