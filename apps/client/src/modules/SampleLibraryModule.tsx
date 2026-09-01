@@ -5,6 +5,7 @@ import { ModuleProps, useMembranaStore } from '@membrana/agenda';
 import { useShallow } from 'zustand/react/shallow';
 import {
   BUFFER_COLLECTION_ID,
+  isReadOnlyCollection,
   buildLabelManifest,
   readLabelManifest,
   TARIFF_DATASET_SYSTEM_KEY,
@@ -191,7 +192,8 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
    * useCabinetSampleLibrary.ts): системный набор только для чтения, тарифный — частный случай
    * системного. Два дома, одно правило; разъедутся — покраснеет зуб сходства.
    */
-  const readOnlyCollection = selected?.kind === 'system';
+  // Правило одно и живёт в ядре (#2249): дом его ЗОВЁТ, а не объявляет заново.
+  const readOnlyCollection = isReadOnlyCollection(selected);
   const canMoveFrom = Boolean(selected) && !readOnlyCollection;
 
   const handleUpdateLabelNotes = useCallback(
