@@ -1,5 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 import {
   assertPrMergeableForShip,
@@ -295,6 +297,24 @@ test('упоминание #N без --issue → отказ (живой случ
     () => planPrShip({ type: 'feat', scope: 'client', message: 'yamnet в живом combined (#415)' }),
     /#415.*--issue не задан|НЕ закрывает issue/su,
   );
+});
+
+test('#2247: CLI-отказ на упоминании #N без флага возвращает ненулевой код до PR-create', () => {
+  const result = spawnSync(
+    process.execPath,
+    [
+      fileURLToPath(new URL('./pr-ship.mjs', import.meta.url)),
+      '--type',
+      'fix',
+      '--message',
+      'честный код возврата (#2247)',
+      '--no-merge',
+    ],
+    { encoding: 'utf8' },
+  );
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /#2247.*--issue не задан|НЕ закрывает issue/su);
+  assert.doesNotMatch(result.stdout, /pr-create/u);
 });
 
 test('--issue закрывает issue: Closes попадает в тело, отказа нет', () => {
