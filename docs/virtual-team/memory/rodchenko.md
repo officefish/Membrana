@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14327/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 328 (причины в op-log) -->
+Записей: 49 · бюджет 14309/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 329 (причины в op-log) -->
+
+### 2026-08-31 · позиция · team-evening-feedback
+
+> Оценка артефактов: MAIN_DAY_ISSUE дал точное место дефекта (`SampleLibraryModule.tsx` ~689, ~757, `canMutate`), что сэкономило поиск. Code-review разложил UI-часть: select в строке при `showMove`/`canMoveFrom` + `canMutate`, диалог удаления — один `risk` для label и disable. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
 
 ### 2026-08-30 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Родченко. Оценка артефактов: — UI сегодня не двигался; MAIN_DAY_ISSUE справедливо не назначил меня. Итоги дня: По моей зоне — тишина. Санитарный долг из моего фидбека 13.08 (`aria-live="polite"` на блок `promo-deny-text`) переходит третий день — не блокер, но накапливается. На […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-14.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m0-order
-
-> Смотрю на вопрос 5 с витрины структуры данных. «Ряды вместо снимков» — это форма записи в реестре, а не политика хранения. Чтобы ответить, нужно знать: что такое запись (1) и что входит в реестр контейнера против infra (3). Но есть ещё зависимость 5 от 4: владелец такта […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/network-container-m0-order-2026-08-13.md#reply-1`

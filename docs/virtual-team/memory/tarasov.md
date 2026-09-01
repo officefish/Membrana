@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14276/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 343 (причины в op-log) -->
+Записей: 49 · бюджет 14254/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 344 (причины в op-log) -->
+
+### 2026-08-31 · позиция · team-evening-feedback
+
+> Оценка артефактов: Утренние документы (стендап, MAIN_DAY_ISSUE) были согласованы между собой — оба указывали на `sample-move-between-collections` как магистраль дня, назначенную владельцем. STRATEGY_DAY оставался в стороне от owner-choice, что было явно отмечено в MAIN_DAY_ISSUE […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
 
 ### 2026-08-30 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Тарасов. Оценка артефактов: Связка `STRATEGY_DAY → DAILY_STANDUP → MAIN_DAY_ISSUE → DAILY_CODE_REVIEW` сегодня отработала как единый контур впервые за неделю — фокус магистрали (`archivarius-sessions-container`, ingest-эндпоинт с живым trace) был назван утром и закрыт вечером […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-14.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m0-order
-
-> Задача ясная и жёсткая. Нам не нужен вердикт по существу вопросов — только порядок. Комната работает как разминка перед матчем: расставляем порядок выхода, а не забиваем шайбы. Начнём с обязательного: у каждого вопроса есть ли переменная, без которой он не решается? Если есть — […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/network-container-m0-order-2026-08-13.md#reply-1`

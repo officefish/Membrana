@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14358/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 336 (причины в op-log) -->
+Записей: 49 · бюджет 14342/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 337 (причины в op-log) -->
+
+### 2026-08-31 · позиция · team-evening-feedback
+
+> Оценка артефактов: Стендап дал чёткий фокус и «что сознательно не делаем» — это помогло не размазать день по трём L-якорям. MAIN_DAY_ISSUE структурно сильный: предикаты, DoD, риски, развилка A/B — всё на месте. Code-review выделил C1/C7 по развёрнутому диффу — этого достаточно […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
 
 ### 2026-08-30 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Ожегов. Оценка артефактов: DAILY_CODE_REVIEW точно назвал C1 (инъекция `fetchImpl`/`sleep`/`log` через параметры) и C4 (чистые функции `extractStep`/`ingestStep`/`runTract`) — оба соблюдены; MAIN_DAY_ISSUE верно перечислил DoD как проверяемые пункты, а не механику. Итоги дня: […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-14.md#reply-1`
-
-### 2026-08-13 · позиция · network-container-m0-order
-
-> Соглашусь с Весниным в главном, уточню в деталях. Вопрос 2 (enum состояний) зависит от 1, потому что enum описывает состояние записи — а что такое запись, отвечает 1. Но вопрос 2 сам является посылкой для вопросов 6 и 7: правило K1 и proxy-awareness оперируют состоянием […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/network-container-m0-order-2026-08-13.md#reply-1`
