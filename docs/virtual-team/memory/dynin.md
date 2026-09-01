@@ -5,8 +5,44 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14395/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 330 (причины в op-log) -->
+Записей: 49 · бюджет 14345/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 336 (причины в op-log) -->
+
+### 2026-09-01 · позиция · library-open-api-m0-order
+
+> Формализую граф G = ({1,2,3,4}, E). Ребро (A,B) ∈ E тогда и только тогда, когда вердикт A является необходимым входом для постановки задачи B, то есть без A задача B недоопределена. Из аргументов выше: (1)→(2) — чем адресовать, не зная чьё; (2)→(3) — ключ едет в теле списка, […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/library-open-api-m0-order-2026-09-01.md#reply-1`
+
+### 2026-09-01 · позиция · library-open-api-m1-ownership
+
+> Формализую. Пусть функция `owner: Sample → Membrane` строится как транзитивное замыкание по цепочке. `owner(s) = membrane(device(collection(s)))`. Если `device.membraneId = null`, то `owner(s) = ⊥` — значение неопределено. Это не ошибка вычисления, это область определения […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/library-open-api-m1-ownership-2026-09-01.md#reply-1`
+
+### 2026-09-01 · позиция · library-open-api-m2-contract
+
+> Зафиксирую по полноте. Факт входа: потолок страницы 100, ответ несёт `total`. Это не решение о полноте — это только то, что есть. Решение: ответ должен нести `page` и `limit` явно, чтобы читатель снаружи мог знать, получил ли он всё. Если `total ≤ limit` — страница полная и […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/library-open-api-m2-contract-2026-09-01.md#reply-1`
+
+### 2026-09-01 · позиция · library-open-api-m3-key-ttl
+
+> Сформулирую точнее. Есть два различных объекта: `NodeAccessKey` с полями `duration`, `expiresAt`, `revokedAt` — это модель узлового ключа. И есть ключ-предъявитель трека, который лежит в JSON-списке и по фактуре не имеет собственного блока настроек. Это разные сущности. […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/library-open-api-m3-key-ttl-2026-09-01.md#reply-1`
+
+### 2026-09-01 · позиция · library-open-api-m4-extraction
+
+> Численно: потолок страницы 100, ответ несёт `total`. Ночь 23.08 — 1136 проб → минимум ⌈1136/100⌉ = 12 страниц при фильтре по окну. Счётчика выдач ключей нет, предела частоты на вход нет. Значит цикл `for page in 1..N: GET list → for id in page: GET link` не упирается ни в один […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/library-open-api-m4-extraction-2026-09-01.md#reply-1`
+
+### 2026-09-01 · позиция · team-evening-feedback
+
+> Dynin. Оценка артефактов: ревью справедливо выделило P1 в `repo-links.mjs` — regex `ISSUE_LINK` с флагом `/g` в модульном скоупе; `lastIndex` не сбрасывается между вызовами, зубы косвенно покрывают через `assert.equal(rewritten.length, N)`, но прямого теста «два вызова с одним […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-01.md#reply-1`
 
 ### 2026-08-31 · позиция · team-evening-feedback
 
@@ -260,44 +296,8 @@
 
 — источник: `docs/seanses/server-plugin-foundation-m5-showcase-2026-08-17.md#reply-1`
 
-### 2026-08-17 · позиция · server-plugin-foundation-m5r-showcase
+### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 
-> Формализую предикат: ShowcaseManifest вводит поля тогда и только тогда, когда страница не может вывести их значение из базовых пяти полей детерминированно. kind уже говорит «showcase» — но не говорит, какую форму показа выбрать внутри рода. Значит displayForm — необходимое […] _(реплик в сеансе: 5)_
+> Порядок ролей полный: `public < ally < operator < owner`. Решение строится одной функцией сравнения ролей, без permission-grant и без снижения роли субъекта. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/server-plugin-foundation-m5r-showcase-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m6-first-wave
-
-> Формализую выбор первого живого плагина. Пусть критерий — минимальная зависимость от внешних весов, детерминированность выхода, покрываемость юнит-тестом без мока аудиостека. Проверяю кандидатов: yamnet требует TensorFlow-модели — внешняя зависимость, нет в пакете локально, риск […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m6-first-wave-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m6r-first-wave
-
-> Формализую состав RunRecord для первого живого прогона `membrana.handler.mfcc`. Контракты дают нам три компонента: (1) `RunAddress = { pluginId: 'membrana.handler.mfcc', version, collectionId, runId, mountTarget: 'background-media/collections' }` — адрес записи, уникальный […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/server-plugin-foundation-m6r-first-wave-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · team-evening-feedback
-
-> Dynin. Оценка артефактов: MAIN_DAY_ISSUE честно называет `assertions[]` пустыми (`//link-16-08`) — предмет эпика невыразим маркерами, суррогатов не выдумано, норма реестра соблюдена. Инвариант посылок сохранён. Итоги дня: чистых функций не тронуто — дифф целиком в `docs/`, […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-17.md#reply-1`
-
-### 2026-08-16 · позиция · team-evening-feedback
-
-> Дынин. Оценка артефактов: `MAIN_DAY_ISSUE` содержит таблицу обоснования магистрали с провенансом каждого утверждения — правильная форма. Раздел «Посылки» использует маркеры (`symbol:redactSecrets`, `file:...`) и вердикты `holds` — предикатная строгость. Итоги дня: […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-16.md#reply-1`
-
-### 2026-08-15 · позиция · team-evening-feedback
-
-> Дынин. Оценка артефактов: артефакты дня в моей зоне не задействованы; горизонт корректно исключил DSP-бенчмарки как «повтор без смены датасета не даёт информации» — это моя логика, применена без меня. Итоги дня: — (в диффе нет математики; пилотный корпус — данные, не алгоритмы). […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-15.md#reply-1`
-
-### 2026-08-14 · позиция · team-evening-feedback
-
-> Дынин. Оценка артефактов: DAILY_CODE_REVIEW корректно проверил детерминированность `ingestStep`, терминал рекурсии (`batch.length === 1`) и корректность `Buffer.byteLength(JSON.stringify(span))` для UTF-8 — все инварианты подтверждены. Мой бестиарий (B3, B4, B6) отработал: B4 […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-14.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`

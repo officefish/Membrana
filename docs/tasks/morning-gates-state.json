@@ -7,10 +7,10 @@
   "frozenDigest": "4e5a66812f66f379037c0e665991b41fc3196d0f219a7ce7f49e9670f944cfa5",
   "magistral": "sample-move-between-collections",
   "swallow": {
-    "draftDigest": "373f797df594d8f7d9d60b3267020faafe5a8008810be4a7f14488dea655e704",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-08-31.md",
+    "draftDigest": "d99c38bb325df529c8925f43c170f3933de7e22aed95f5cf8147410b602f1943",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-01.md",
     "ownerAck": true,
-    "day": "2026-08-31",
+    "day": "2026-09-01",
     "claimsProbe": {
       "verdict": "hard",
       "protocol": "docs/seanses/team-evening-feedback-2026-09-01.md",
