@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-08-31 |
-| Head SHA | 4754be9d47e6884de6897ec5530b7c81ce5fd72d |
+| Date | 2026-09-01 |
+| Head SHA | f70b9064674f08dccced8250237ddfde80b6a088 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,12 +16,12 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1204 |
+| Code files under `scripts/` | 1206 |
 | Yarn scripts (package.json) | 462 |
 | Yarn → `scripts/` | 409 |
 | Yarn без пути `scripts/` | 53 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 877 |
+| Code files without yarn ref | 879 |
 
 ## Yarn → scripts/ (409)
 
@@ -435,7 +435,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (877)
+## Code files without yarn ref (879)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -895,6 +895,7 @@
 - `scripts/lib/repo-branches-decompose.mjs`
 - `scripts/lib/repo-branches.mjs`
 - `scripts/lib/repo-clean.mjs`
+- `scripts/lib/repo-links.mjs`
 - `scripts/lib/report-format-check.mjs`
 - `scripts/lib/report-lens.mjs`
 - `scripts/lib/research-digest.mjs`
@@ -1189,6 +1190,7 @@
 - `scripts/repo-branches.test.mjs`
 - `scripts/repo-clean-root.test.mjs`
 - `scripts/repo-clean.test.mjs`
+- `scripts/repo-links.test.mjs`
 - `scripts/report-format-check.test.mjs`
 - `scripts/report-lens.test.mjs`
 - `scripts/require-install-state.test.mjs`
@@ -1325,7 +1327,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1204)
+## All code files (1206)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1932,6 +1934,7 @@
 - `scripts/lib/repo-branches-decompose.mjs`
 - `scripts/lib/repo-branches.mjs`
 - `scripts/lib/repo-clean.mjs`
+- `scripts/lib/repo-links.mjs`
 - `scripts/lib/report-format-check.mjs`
 - `scripts/lib/report-lens.mjs`
 - `scripts/lib/research-digest.mjs`
@@ -2306,6 +2309,7 @@
 - `scripts/repo-clean-root.test.mjs`
 - `scripts/repo-clean.mjs`
 - `scripts/repo-clean.test.mjs`
+- `scripts/repo-links.test.mjs`
 - `scripts/report-check.mjs`
 - `scripts/report-format-check.test.mjs`
 - `scripts/report-lens.test.mjs`
