@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14391/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 329 (причины в op-log) -->
+Записей: 49 · бюджет 14395/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 330 (причины в op-log) -->
+
+### 2026-08-31 · позиция · team-evening-feedback
+
+> Оценка артефактов: MAIN_DAY_ISSUE корректно зафиксировал посылку «сервер уже умеет перенос» со ссылкой на `samples.service.ts` — это сэкономило день: не стали переписывать сервер. Code-review разложил `deletionAcknowledgementRisk` по веткам (evidence → unknown → scale, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-08-31.md#reply-1`
 
 ### 2026-08-30 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Дынин. Оценка артефактов: DAILY_CODE_REVIEW корректно проверил детерминированность `ingestStep`, терминал рекурсии (`batch.length === 1`) и корректность `Buffer.byteLength(JSON.stringify(span))` для UTF-8 — все инварианты подтверждены. Мой бестиарий (B3, B4, B6) отработал: B4 […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-14.md#reply-1`
-
-### 2026-08-06 · позиция · static-mmbrn-container-m5-affine-role
-
-> `requiredProjectionSet` должен быть независим от фактических страниц движка. Panel назначает множество требуемых `canonicalRef`, а readiness сравнивает его с reducer output binding ledger и полным inventory живых engine objects на одном snapshot. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m5-affine-role-2026-08-06.md#reply-1`
