@@ -185,3 +185,66 @@ describe('удаления без окна не бывает', () => {
     expect(read(STUDIO_MODULE)).toContain('readPersistedPairedCredentials');
   });
 });
+
+describe('удаление ПАЧКОЙ в панели чарт-листа (#2250)', () => {
+  const PANEL_STUDIO = resolve(REPO, 'apps/client/src/plugins/sample-library-chart-list/SampleLibraryChartListPanel.tsx');
+  const PANEL_CABINET = resolve(REPO, 'apps/cabinet/src/components/sample-library/CabinetSampleChartListPanel.tsx');
+  const CORE = resolve(REPO, 'packages/services/media-library/src/bulk-selection.ts');
+
+  it('ОБА близнеца берут отбор из ЯДРА, а не заводят свой', () => {
+    // Две копии одного правила разъезжаются молча — ловили на переносе (30.08) и на согласии
+    // показа с действием (31.08). Здесь разъезжаться нечему: решения в ядре, панели рисуют.
+    for (const p of [PANEL_STUDIO, PANEL_CABINET]) {
+      const s = read(p);
+      expect(s, 'панель не спрашивает ядро об отборе').toContain('pickedShownIds');
+      expect(s).toContain('toggleAllShown');
+      expect(s).toContain('SELECT_ALL_SHOWN_LABEL');
+      expect(s).toContain('bulkDeleteLabel(');
+    }
+  });
+
+  it('«всё ПОКАЗАННОЕ» — подпись одна на два дома и живёт в ядре', () => {
+    // Строка в двух домах порознь однажды разойдётся на одно слово, и разойдётся именно на
+    // этом: «выбрать всё» обещает набор, а действие идёт по показанному
+    // (класс docs/field/decisions-on-partial-data.md).
+    expect(read(CORE)).toContain("SELECT_ALL_SHOWN_LABEL = 'Выбрать всё показанное'");
+    for (const p of [PANEL_STUDIO, PANEL_CABINET]) {
+      expect(read(p), 'панель зашила свою подпись — две копии разойдутся').not.toContain('Выбрать всё показанное');
+      expect(read(p), 'подпись обещает весь набор').not.toMatch(/>Выбрать всё</u);
+    }
+  });
+
+  it('ПРОВОДКА: глагол пачки доведён до панели, а не только объявлен пропом', () => {
+    // Ревью #2190 ловило ровно это у Studio: пропсы легли, вызов остался старым, а зуб был
+    // зелёным, потому что проверял не тот конец.
+    expect(read(STUDIO_MODULE)).toContain('onRemoveMany={(ids) => void removeManyGated(ids)}');
+    expect(read(CABINET_PAGE)).toContain('onRemoveMany={removeManyGated}');
+    // И гейт ведёт в ОКНО, а не в прямое удаление: список и оценка ценности обязательны.
+    expect(read(STUDIO_MODULE)).toContain('run: () => handleRemoveMany(sampleIds)');
+    expect(read(CABINET_PAGE)).toContain('lib.handleRemoveMany(ids)');
+  });
+
+  it('ЧИСЛО К УДАЛЕНИЮ — длина СПИСКА, а не длина найденного на странице', () => {
+    // Иначе окно занизило бы потерю до видимого — класс ревью #2232.
+    expect(read(STUDIO_MODULE)).toContain('declaredTotal: sampleIds.length');
+    expect(read(CABINET_PAGE)).toMatch(/lib\.handleRemoveMany\(ids\), ids\.length\)/u);
+  });
+
+  it('ЧАСТИЧНЫЙ ОТКАЗ называет записи ПОИМЁННО в обоих домах', () => {
+    for (const p of [STUDIO_MODULE, resolve(REPO, 'apps/cabinet/src/lib/useCabinetSampleLibrary.ts')]) {
+      const s = read(p);
+      expect(s, 'дом не разбирает отказанные записи').toContain('outcome.refused');
+      expect(s, 'отказ не назван словами').toMatch(/Удалено \$\{outcome\.deleted\}, отказано/u);
+    }
+  });
+
+  it('пачка идёт ОДНИМ вызовом по списку, а не циклом по одиночному удалению', () => {
+    // Цикл дал бы N окон подтверждения и N полу-исходов без общего отчёта.
+    for (const p of [STUDIO_MODULE, resolve(REPO, 'apps/cabinet/src/lib/useCabinetSampleLibrary.ts')]) {
+      expect(read(p)).toContain('deleteSamplesByIds(');
+    }
+    // Имя пути — по смыслу: «уборка буфера» породила бы второго близнеца для наборов.
+    expect(read(resolve(REPO, 'packages/services/media-library/src/media-library-service.ts')))
+      .not.toContain('executeBufferCleanup');
+  });
+});

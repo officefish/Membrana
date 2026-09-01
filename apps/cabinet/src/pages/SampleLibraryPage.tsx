@@ -77,6 +77,22 @@ export function SampleLibraryPage() {
     [askDelete, lib],
   );
 
+  /**
+   * Удаление ПАЧКОЙ по списку (#2250) — один вызов, одно окно. Близнец Studio.
+   *
+   * Число не выдумывается: объявляем длину СПИСКА, а не длину того, что нашлось в загруженной
+   * странице. Пробы вне страницы окно покажет как «разобрано N из M» — честнее, чем занизить
+   * потерю до видимого (класс ревью #2232).
+   */
+  const removeManyGated = useCallback(
+    async (ids: readonly string[]): Promise<void> => {
+      if (ids.length === 0) return;
+      const known = lib.nodeSamples.filter((s: MediaSample) => ids.includes(s.id));
+      askDelete(`Удалить выбранные (${ids.length})`, known, () => lib.handleRemoveMany(ids), ids.length);
+    },
+    [askDelete, lib],
+  );
+
   const clearBufferGated = useCallback(async (): Promise<void> => {
     const known = lib.nodeSamples;
     const declared =
@@ -112,6 +128,7 @@ export function SampleLibraryPage() {
               if (s) void lib.handleExport(s);
             }}
             onRemove={removeGated}
+            onRemoveMany={removeManyGated}
           />
         ) : (
           <p className="text-sm text-base-content/60" role="status">

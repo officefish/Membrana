@@ -541,6 +541,43 @@ export function useCabinetSampleLibrary() {
     [readOnlyCollection, reloadSamplesPage, runMediaOp, service, showInfo, showSuccess, snapshot.collections],
   );
 
+  /**
+   * Удаление по списку (#2250). Один вызов на всю пачку, а не цикл: цикл дал бы N запросов,
+   * N возможных полу-исходов и ни одного общего отчёта.
+   *
+   * ЧАСТИЧНЫЙ ОТКАЗ ГОВОРИТ СЛОВАМИ и ПОИМЁННО — сервер вправе удалить часть и отказать по
+   * части. Молчание здесь хуже ошибки: человек считал бы удалённым то, что осталось.
+   * Близнец в Studio устроен так же.
+   */
+  const handleRemoveMany = useCallback(
+    async (sampleIds: readonly string[]) => {
+      if (readOnlyCollection || sampleIds.length === 0 || selection.kind !== 'node') return;
+      const collectionId = selection.collectionId;
+      await runMediaOp('Удаление выбранных', async () => {
+        const outcome = await service!.deleteSamplesByIds(collectionId, sampleIds);
+        if (outcome.refused.length > 0) {
+          const named = outcome.refused
+            .map((r) => `${nodeSamples.find((s) => s.id === r.id)?.title ?? r.id} — ${r.why}`)
+            .join('; ');
+          showError(`Удалено ${outcome.deleted}, отказано ${outcome.refused.length}: ${named}`);
+        } else {
+          showSuccess(`Удалено ${outcome.deleted}`);
+        }
+      });
+      await reloadSamplesPage();
+    },
+    [
+      nodeSamples,
+      readOnlyCollection,
+      reloadSamplesPage,
+      runMediaOp,
+      selection,
+      service,
+      showError,
+      showSuccess,
+    ],
+  );
+
   const handleClearBuffer = useCallback(async () => {
     if (selection.kind !== 'node') return;
     await runMediaOp('Очистка буфера', async () => {
@@ -610,6 +647,7 @@ export function useCabinetSampleLibrary() {
     handleDeleteCollection,
     handleImport,
     handleRemove,
+    handleRemoveMany,
     handleMove,
     handleClearBuffer,
     handleExport,

@@ -379,6 +379,32 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
     [service],
   );
 
+  /**
+   * Удаление по списку (#2250). Один вызов на всю пачку, а не цикл: цикл дал бы N запросов,
+   * N возможных полу-исходов и ни одного общего отчёта.
+   *
+   * ЧАСТИЧНЫЙ ОТКАЗ ГОВОРИТ СЛОВАМИ. Сервер вправе удалить часть и отказать по части — и
+   * отказ обязан назвать записи поимённо, а не свестись к «что-то не вышло». Молчание здесь
+   * было бы хуже ошибки: человек считал бы удалённым то, что осталось.
+   */
+  const handleRemoveMany = useCallback(
+    async (sampleIds: readonly string[]) => {
+      setError(null);
+      try {
+        const outcome = await service.deleteSamplesByIds(selectedId, sampleIds);
+        if (outcome.refused.length > 0) {
+          const named = outcome.refused
+            .map((r) => `${samples.find((s) => s.id === r.id)?.title ?? r.id} — ${r.why}`)
+            .join('; ');
+          setError(`Удалено ${outcome.deleted}, отказано ${outcome.refused.length}: ${named}`);
+        }
+      } catch (e) {
+        setError(e instanceof Error ? e.message : String(e));
+      }
+    },
+    [samples, selectedId, service],
+  );
+
   const handleMove = useCallback(
     async (sampleId: string, toId: string) => {
       if (!toId) return;
@@ -468,6 +494,30 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
       });
     },
     [handleRemove, samples],
+  );
+
+  /**
+   * Удаление ПАЧКОЙ по списку (#2250) — один вызов, одно окно.
+   *
+   * Число не выдумывается: `declaredTotal` — длина списка, а не длина того, что нашлось в
+   * загруженной странице. Пробы вне страницы окно покажет как «разобрано N из M», и это
+   * честнее, чем занизить потерю до видимого (класс ревью #2232).
+   *
+   * Частичный отказ сервера не глотается: `deleteSamplesByIds` называет отказанные записи
+   * поимённо, и эти слова едут человеку, а не в лог.
+   */
+  const removeManyGated = useCallback(
+    async (sampleIds: readonly string[]): Promise<void> => {
+      if (sampleIds.length === 0) return;
+      const known = samples.filter((s) => sampleIds.includes(s.id));
+      setPendingDeletion({
+        title: `Удалить выбранные (${sampleIds.length})`,
+        samples: known,
+        declaredTotal: sampleIds.length,
+        run: () => handleRemoveMany(sampleIds),
+      });
+    },
+    [handleRemoveMany, samples],
   );
 
   const clearBufferGated = useCallback(async (): Promise<void> => {
@@ -886,6 +936,7 @@ export const SampleLibraryModule: React.FC<ModuleProps<SampleLibraryConfig>> = (
             if (s) void handleExportSample(s);
           }}
           onRemove={(id) => void removeGated(id)}
+          onRemoveMany={(ids) => void removeManyGated(ids)}
         />
       ) : null}
 
