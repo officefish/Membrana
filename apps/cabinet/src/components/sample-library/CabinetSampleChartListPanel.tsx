@@ -17,7 +17,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   LIBRARY_CHART_LIST_CRITERIA,
   LIBRARY_CHART_LIST_VOLUMES,
+  SELECT_ALL_SHOWN_LABEL,
+  allShownPicked,
+  bulkDeleteLabel,
   dateInputToIsoWindow,
+  forgetPicks,
+  pickedShownIds,
+  toggleAllShown,
+  togglePick,
   type LibraryChartListPick,
   type LibraryChartListRunOutcome,
   type MediaLibraryService,
@@ -44,6 +51,13 @@ export interface CabinetSampleChartListPanelProps {
   readonly onMove?: (sampleId: string, toId: string) => Promise<void> | void;
   readonly onExport?: (sampleId: string) => void;
   readonly onRemove?: (sampleId: string) => Promise<void> | void;
+  /**
+   * Удаление ПАЧКОЙ (#2250). Отдельный глагол, а не цикл по `onRemove`: цикл открыл бы окно
+   * подтверждения на каждую запись и превратил защиту в череду вопросов, которые перестают
+   * читать. Список уходит в одно окно и в один вызов сервера, где частичный отказ называет
+   * отказанные записи поимённо.
+   */
+  readonly onRemoveMany?: (sampleIds: readonly string[]) => Promise<void> | void;
 }
 
 export function CabinetSampleChartListPanel({
@@ -57,6 +71,7 @@ export function CabinetSampleChartListPanel({
   onMove,
   onExport,
   onRemove,
+  onRemoveMany,
 }: CabinetSampleChartListPanelProps) {
   const [volume, setVolume] = useState<number>(20);
   const [criterion, setCriterion] = useState<string>('loudness-over-floor');
@@ -126,6 +141,25 @@ export function CabinetSampleChartListPanel({
   }, []);
 
   const selection = outcome?.selection ?? null;
+
+  /**
+   * Отбор строк живёт В ПАНЕЛИ, а решения о нём — в ядре (`bulk-selection.ts`). Держать
+   * состояние в модуле значило бы дать двум близнецам два разных отбора; держать решения в
+   * панели — дать им два разных правила. Здесь только «что отмечено сейчас».
+   */
+  const [picked, setPicked] = useState<ReadonlySet<string>>(new Set());
+  const shownIds = useMemo(() => (selection?.picks ?? []).map((p) => p.sampleId), [selection]);
+  const pickedShown = useMemo(() => pickedShownIds(picked, shownIds), [picked, shownIds]);
+
+  const removeManyGated = useCallback(async () => {
+    if (!onRemoveMany || pickedShown.length === 0) return;
+    const going = [...pickedShown];
+    await onRemoveMany(going);
+    // Ушедшие уходят и из показа, и из отбора: «успех, и всё как было» — тот же класс
+    // stale outcome (#2181), что чинили для одиночного действия.
+    for (const id of going) dropFromSelection(id);
+    setPicked((prev) => forgetPicks(prev, going));
+  }, [dropFromSelection, onRemoveMany, pickedShown]);
 
   return (
     <section
@@ -207,10 +241,33 @@ export function CabinetSampleChartListPanel({
             В наборе {outcome.inSet} · в промежутке {outcome.inWindow} · измерено {outcome.measured}
             {selection && selection.shortfall > 0 ? ` · до объёма не хватило ${selection.shortfall}` : ''}
           </p>
+          {canMutate && onRemoveMany ? (
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <label className="flex cursor-pointer items-center gap-2 text-xs">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs"
+                  checked={allShownPicked(picked, shownIds)}
+                  disabled={shownIds.length === 0}
+                  onChange={() => setPicked((prev) => toggleAllShown(prev, shownIds))}
+                />
+                <span>{SELECT_ALL_SHOWN_LABEL}</span>
+              </label>
+              <button
+                type="button"
+                className="btn btn-error btn-xs"
+                disabled={pickedShown.length === 0}
+                onClick={() => void removeManyGated()}
+              >
+                {bulkDeleteLabel(pickedShown.length)}
+              </button>
+            </div>
+          ) : null}
           <div className="mt-1 max-h-72 overflow-auto rounded border border-base-300">
             <table className="table table-xs">
               <thead>
                 <tr>
+                  {canMutate && onRemoveMany ? <th className="w-8" /> : null}
                   <th>#</th>
                   <th>Название</th>
                   <th className="text-right">Δ дБ</th>
@@ -225,6 +282,17 @@ export function CabinetSampleChartListPanel({
                     key={p.sampleId}
                     className={playback.selectedSampleId === p.sampleId ? 'bg-primary/10' : undefined}
                   >
+                    {canMutate && onRemoveMany ? (
+                      <td>
+                        <input
+                          type="checkbox"
+                          className="checkbox checkbox-xs"
+                          aria-label={`Выбрать ${titleOf(p.sampleId)}`}
+                          checked={picked.has(p.sampleId)}
+                          onChange={() => setPicked((prev) => togglePick(prev, p.sampleId))}
+                        />
+                      </td>
+                    ) : null}
                     <td className="tabular-nums">{p.rank}</td>
                     <td className="max-w-[16rem] truncate">{titleOf(p.sampleId)}</td>
                     <td className="text-right tabular-nums">{p.deltaDb.toFixed(1)}</td>

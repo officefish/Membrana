@@ -16,7 +16,7 @@ export {
 } from './constants.js';
 
 export type {
-  BufferCleanupExecuteOutcome,
+  DeleteByIdsOutcome,
   BufferCleanupPlanOutcome,
   BufferCleanupPlanRequest,
   BufferCleanupPlanRow,
@@ -78,6 +78,16 @@ export {
   type DeletionValueVerdict,
   type EvidenceWindow,
 } from './deletion-value.js';
+export {
+  SELECT_ALL_SHOWN_LABEL,
+  allShownPicked,
+  bulkDeleteLabel,
+  forgetPicks,
+  pickedShownIds,
+  toggleAllShown,
+  togglePick,
+} from './bulk-selection.js';
+
 export {
   LIBRARY_CHART_LIST_CRITERIA,
   LIBRARY_CHART_LIST_VOLUMES,

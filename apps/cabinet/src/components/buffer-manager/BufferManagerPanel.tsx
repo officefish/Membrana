@@ -23,7 +23,7 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   BUFFER_CLEANUP_PRINCIPLES,
   BUFFER_CLEANUP_VOLUMES,
-  type BufferCleanupExecuteOutcome,
+  type DeleteByIdsOutcome,
   type BufferCleanupPlanOutcome,
   type BufferCleanupPrinciple,
   type MediaLibraryService,
@@ -54,7 +54,7 @@ export function BufferManagerPanel({
   const [principle, setPrinciple] = useState<BufferCleanupPrinciple>('oldest');
   const [volume, setVolume] = useState<number>(BUFFER_CLEANUP_VOLUMES[0]);
   const [plan, setPlan] = useState<BufferCleanupPlanOutcome | null>(null);
-  const [done, setDone] = useState<BufferCleanupExecuteOutcome | null>(null);
+  const [done, setDone] = useState<DeleteByIdsOutcome | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,7 +82,7 @@ export function BufferManagerPanel({
     setBusy(true);
     setError(null);
     try {
-      const outcome = await service.executeBufferCleanup(
+      const outcome = await service.deleteSamplesByIds(
         collectionId,
         plan.doomed.map((row) => row.id),
       );
