@@ -7,21 +7,45 @@
  * переходы, которые ни один блок не мог сделать в изоляции, потому что они соединяют ДВЕ
  * стороны шва.
  *
+ * ГРАНИЦА CJS ↔ ESM — НАЙДЕНА CI, НЕ БЛОКАМИ. Первая редакция этого файла импортировала
+ * `@membrana/media-library-service` статически и упала в сборке с `TS1479`: этот пакет —
+ * CommonJS (Nest), а библиотека — ESM, и статический импорт даёт `require()` к ESM-модулю.
+ *
+ * Увидеть это не мог НИ ОДИН блок: каждый сидел внутри своего пакета, и граница проходит
+ * ровно между ними. Мои локальные прогоны шли по пакетам порознь и её тоже не показали —
+ * показала полная сборка монорепозитория.
+ *
+ * Лечение по образцу пакета: типы берутся `import type` (стираются при компиляции и `require`
+ * не порождают), а рантайм-функции ПОДАЮТСЯ СНАРУЖИ. Composition root (дверь) достанет их
+ * динамическим импортом — так же, как это уже делают тесты пакета для
+ * `@membrana/media-library-service` и `@membrana/plugin-handlers`.
+ *
  * Контракт стыка: `docs/cowork-sprint/cowork-library-open-api/INTERFACE_CONTRACT.md`.
- * Адаптеры пронумерованы там же — A1, A2, A3, A4.
  */
-import {
-  toPageEnvelope,
-  toPublicSample,
-  type PageEnvelope,
-  type PublicSample,
-  type TrackKeyGrant,
-} from '@membrana/media-library-service';
+// `resolution-mode: import` обязателен: тип-импорт ESM-модуля из CommonJS без него даёт
+// TS1541. Приём не свой — так же записаны тип-импорты в `buffer-cleanup.service.ts` и
+// `first-wave.registrar.ts` этого же пакета.
+import type {
+  PageEnvelope,
+  PublicSample,
+  TrackKeyGrant,
+} from '@membrana/media-library-service' with { 'resolution-mode': 'import' };
 
 import type { OwnedSamplesPage } from '../library-ownership/library-ownership.service.js';
+import type { MembraneOwnerRequiredError } from '../library-ownership/ownership-errors.js';
 import type { OwnershipSampleRow } from '../library-ownership/ownership-sample-reader.js';
-import { MembraneOwnerRequiredError } from '../library-ownership/ownership-errors.js';
 import type { IssuedTrackLink } from '../track-keys/track-key.generator.js';
+
+/**
+ * Сборщик обёртки — тот самый `toPageEnvelope` блока `contract`, поданный снаружи.
+ *
+ * Подаётся, а не импортируется, из-за границы CJS/ESM (см. шапку). Тип при этом настоящий:
+ * подсунуть сюда свою обёртку с лишним полем компилятор не даст.
+ */
+export type EnvelopeBuilder = <T>(
+  items: readonly T[],
+  numbers: { readonly total: number; readonly page: number; readonly limit: number },
+) => PageEnvelope<T>;
 
 /**
  * A3 — выдача ключа → поля наружу.
@@ -44,7 +68,7 @@ export function grantFromIssuedLink(link: IssuedTrackLink, url: string): TrackKe
  * Отбрасывается `scope`. Он не «лишнее поле», а СОЗНАТЕЛЬНО внутренний разряд: `empty` значит
  * «оси владения у прибора нет», а не «ничего не нашлось». Дверь вправе показать оба состояния
  * одинаково — пустой страницей, — но различие обязано остаться внутри, а не поехать наружу
- * необъявленным двенадцатым полем.
+ * необъявленным полем.
  *
  * Строки уже отобраны осью; ключ навешивается ЗДЕСЬ, поверх отбора. Так и просил блок
  * `ownership`: его проекция ключа не несёт, и перенос этой ответственности внутрь выборки был
@@ -53,8 +77,9 @@ export function grantFromIssuedLink(link: IssuedTrackLink, url: string): TrackKe
 export function envelopeFromOwnedPage(
   page: OwnedSamplesPage,
   toSample: (row: OwnershipSampleRow) => PublicSample,
+  toEnvelope: EnvelopeBuilder,
 ): PageEnvelope<PublicSample> {
-  return toPageEnvelope(page.items.map(toSample), {
+  return toEnvelope(page.items.map(toSample), {
     total: page.total,
     page: page.page,
     limit: page.limit,
@@ -69,10 +94,16 @@ export function envelopeFromOwnedPage(
  * Зуб `contract` на `unknown-field` покраснеет, если этот адаптер забудут.
  */
 export function envelopeFromPaginated<TIn, TOut>(
-  paginated: { readonly items: readonly TIn[]; readonly total: number; readonly page: number; readonly limit: number },
+  paginated: {
+    readonly items: readonly TIn[];
+    readonly total: number;
+    readonly page: number;
+    readonly limit: number;
+  },
   toSample: (row: TIn) => TOut,
+  toEnvelope: EnvelopeBuilder,
 ): PageEnvelope<TOut> {
-  return toPageEnvelope(paginated.items.map(toSample), {
+  return toEnvelope(paginated.items.map(toSample), {
     total: paginated.total,
     page: paginated.page,
     limit: paginated.limit,
@@ -128,13 +159,3 @@ export const CREDENTIAL_BEARING_HEADERS: Readonly<Record<string, string>> = Obje
   'Cache-Control': 'no-store',
   Pragma: 'no-cache',
 });
-
-/** Сериализация строки выборки наружу — ось дала строку, генератор дал ключ. */
-export function publicSampleFromRow(
-  row: OwnershipSampleRow,
-  sample: Parameters<typeof toPublicSample>[0],
-  grant: TrackKeyGrant,
-): PublicSample {
-  void row;
-  return toPublicSample(sample, grant);
-}

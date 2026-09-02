@@ -20,6 +20,7 @@ import {
   isLastPage,
   refusalForOutcome,
   validatePageEnvelopeShape,
+  toPageEnvelope,
   validatePublicSampleShape,
   type MediaSample,
 } from '@membrana/media-library-service';
@@ -112,7 +113,7 @@ describe('smoke швов: ось владения → форма наружу �
         [TRACK_KEY_FIELD]: grant.url,
         [TRACK_KEY_EXPIRES_FIELD]: grant.expiresAt,
       } as never;
-    });
+    }, toPageEnvelope);
 
     expect(page.scope).toBe('membrane');
     expect(validatePageEnvelopeShape(envelope), 'обёртка несёт ровно четыре поля').toEqual([]);
@@ -133,7 +134,7 @@ describe('smoke швов: ось владения → форма наружу �
     const service = new LibraryOwnershipService(reader);
 
     const page = await service.listOwnedSamples(DEVICE_WITHOUT, { page: 1, limit: 100 });
-    const envelope = envelopeFromOwnedPage(page, () => ({}) as never);
+    const envelope = envelopeFromOwnedPage(page, () => ({}) as never, toPageEnvelope);
 
     expect(page.scope).toBe('empty');
     expect(envelope.items).toEqual([]);
