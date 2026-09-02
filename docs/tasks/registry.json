@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "cowork-library-open-api",
+      "title": "Cowork Sprint: Открытое API библиотеки",
+      "promptPath": "docs/cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md",
+      "githubIssue": null,
+      "noIssueReason": "вход спринта — заседание library-open-api (EPIC ред.3, влит 4eba2c77); отдельного иссью не заводилось",
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "cowork-sprint",
+      "createdAt": "2026-09-02",
+      "archivedAt": null,
+      "leadPersona": null,
+      "supportPersonas": [],
+      "notes": "3 блока ownership/contract/key-ttl от BASE_SHA 56423801; изоляция до Interface Consilium; мёржатся все три; M4 (квота) вне спринта — норма к вводу",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "plugin-placement-contract",
       "title": "Контракт зоны размещения плагин-панелей + зуб соответствия раскладке",
       "promptPath": "docs/prompts/PLUGIN_PLACEMENT_CONTRACT_PROMPT.md",
