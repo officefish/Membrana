@@ -6,7 +6,7 @@ import {
   SAMPLES_PATH_TEMPLATE,
   SAMPLE_BLOB_PATH_TEMPLATE,
 } from './paths.js';
-import { TEMPORARY_KEY_FIELD } from './temporary-key.js';
+import { TRACK_KEY_EXPIRES_FIELD, TRACK_KEY_FIELD, TRACK_KEY_FIELDS } from './temporary-key.js';
 
 /**
  * Спецификация открытого API библиотеки (OpenAPI 3.1), собранная из тех же констант, что и
@@ -15,7 +15,12 @@ import { TEMPORARY_KEY_FIELD } from './temporary-key.js';
  */
 
 export interface JsonSchema {
-  type?: string;
+  /**
+   * Массив допускается ради `['string','null']` — законная форма OpenAPI 3.1 и единственный
+   * честный способ сказать «строка ИЛИ снятый срок». Флаг `nullable` из 3.0 сюда не заводим:
+   * это вторая правда о том же, а тип и флаг умеют разойтись.
+   */
+  type?: string | readonly string[];
   format?: string;
   description?: string;
   enum?: readonly (string | number)[];
@@ -91,19 +96,28 @@ function publicSampleSchema(): JsonSchema {
   for (const field of PUBLIC_SAMPLE_FIELDS) {
     properties[field] = CONSTANT_FIELD_SCHEMAS[field];
   }
-  properties[TEMPORARY_KEY_FIELD] = {
+  properties[TRACK_KEY_FIELD] = {
     type: 'string',
     description:
-      'Временное поле ключа: предъявительский URL с истечением. Имя поля сведут на ' +
-      'Interface Consilium (M2 назвал рабочее trackUrl, лемма M4 — temporaryKey).',
+      'Предъявительский URL: партнёр идёт по нему анонимно. Поштучного отзыва у него нет ' +
+      'по конструкции — гасится только ротацией ключа мембраны, разом со всеми ссылками.',
+  };
+  properties[TRACK_KEY_EXPIRES_FIELD] = {
+    type: ['string', 'null'],
+    format: 'date-time',
+    description:
+      'Когда ссылка умрёт (ISO-8601 UTC). null — срок СНЯТ человеком с подписью; это ' +
+      'единственный источник null. Отдельным полем, а не внутри строки запроса: читатель ' +
+      'обязан мочь вычислить срок сам — та же логика, которой отвергнут hasMore.',
   };
   return {
     type: 'object',
     description:
-      'Проба наружу: одиннадцать постоянных полей плюс временное поле ключа. ' +
-      'storageRef и notes наружу не едут.',
+      'Проба наружу: одиннадцать постоянных полей плюс два поля ключа, все обязательные. ' +
+      'storageRef и notes наружу не едут. Одиннадцать + два — осознанное расширение ' +
+      'вердикта M2 решением владельца 02.09, а не умолчание сборки.',
     properties,
-    required: [...PUBLIC_SAMPLE_FIELDS],
+    required: [...PUBLIC_SAMPLE_FIELDS, ...TRACK_KEY_FIELDS],
     additionalProperties: false,
   };
 }

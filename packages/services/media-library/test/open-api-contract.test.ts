@@ -37,23 +37,30 @@ import {
   toPublicSample,
   validatePublicSampleShape,
 } from '../src/open-api/public-sample.js';
-import { TEMPORARY_KEY_FIELD } from '../src/open-api/temporary-key.js';
+import {
+  TRACK_KEY_EXPIRES_FIELD,
+  TRACK_KEY_FIELD,
+  TRACK_KEY_FIELDS,
+} from '../src/open-api/temporary-key.js';
+
+/** Выдача для зубов: поле ключа обязательное, поэтому она нужна каждой пробе. */
+const grant = stubTrackKeyIssuer();
 
 import {
   internalSample,
   internalSamples,
   stubOwnershipDecision,
   stubPageSlice,
-  stubTemporaryKeyIssuer,
+  stubTrackKeyIssuer,
 } from './open-api.stubs.js';
 
 const HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'options', 'head'] as const;
 
 describe('DoD 1 — сериализатор наружу даёт ровно одиннадцать постоянных полей', () => {
   it('отдаёт одиннадцать имён вердикта и ни одного лишнего', () => {
-    const publicSample = toPublicSample(internalSample('sample-1'));
+    const publicSample = toPublicSample(internalSample('sample-1'), grant('sample-1'));
 
-    expect(Object.keys(publicSample).sort()).toEqual(
+    expect(publicSampleConstantFieldNames(publicSample).sort()).toEqual(
       [
         'id',
         'collectionId',
@@ -73,18 +80,39 @@ describe('DoD 1 — сериализатор наружу даёт ровно о
     expect(validatePublicSampleShape(publicSample)).toEqual([]);
   });
 
-  it('временное поле ключа — двенадцатое и необязательное', () => {
-    const issue = stubTemporaryKeyIssuer(new Set(['sample-1']));
+  it('поля ключа — двенадцатое и тринадцатое, ОБА обязательные', () => {
+    // Решение консилиума и владельца 02.09. Прежняя редакция зуба утверждала «двенадцатое и
+    // НЕОБЯЗАТЕЛЬНОЕ»; правило изменено РЕШЕНИЕМ, а не подогнано под код.
+    const sample = toPublicSample(internalSample('sample-1'), grant('sample-1'));
 
-    const withKey = toPublicSample(internalSample('sample-1'), issue('sample-1'));
-    const withoutKey = toPublicSample(internalSample('sample-2'), issue('sample-2'));
+    expect(TRACK_KEY_FIELD in sample).toBe(true);
+    expect(TRACK_KEY_EXPIRES_FIELD in sample).toBe(true);
+    expect(publicSampleConstantFieldNames(sample)).toHaveLength(PUBLIC_SAMPLE_FIELD_COUNT);
+    expect(Object.keys(sample)).toHaveLength(PUBLIC_SAMPLE_FIELD_COUNT + 2);
+    expect(validatePublicSampleShape(sample)).toEqual([]);
+  });
 
-    expect(TEMPORARY_KEY_FIELD in withKey).toBe(true);
-    expect(publicSampleConstantFieldNames(withKey)).toHaveLength(PUBLIC_SAMPLE_FIELD_COUNT);
-    expect(TEMPORARY_KEY_FIELD in withoutKey).toBe(false);
-    expect(Object.keys(withoutKey)).toHaveLength(PUBLIC_SAMPLE_FIELD_COUNT);
-    expect(validatePublicSampleShape(withKey)).toEqual([]);
-    expect(validatePublicSampleShape(withoutKey)).toEqual([]);
+  it('ПРОПУСК поля ключа — дефект формы, а не «ключа нет»', () => {
+    // Ради этого `?` и снят: отсутствующее поле неотличимо от «не выдан», «квота исчерпана»
+    // и «сериализатор забыл». Отказ выдать ключ обязан быть отказом ЗАПРОСА.
+    const full = toPublicSample(internalSample('sample-1'), grant('sample-1')) as Record<string, unknown>;
+
+    for (const field of TRACK_KEY_FIELDS) {
+      const без = { ...full };
+      delete без[field];
+      expect(validatePublicSampleShape(без)).toContainEqual({ kind: 'missing-field', field });
+    }
+  });
+
+  it('снятый срок — законный null, а не пропуск поля', () => {
+    const lifted = toPublicSample(internalSample('sample-1'), {
+      url: 'https://library.example/k/sample-1/opaque-token',
+      expiresAt: null,
+    }) as Record<string, unknown>;
+
+    expect(lifted[TRACK_KEY_EXPIRES_FIELD]).toBeNull();
+    expect(TRACK_KEY_EXPIRES_FIELD in lifted).toBe(true);
+    expect(validatePublicSampleShape(lifted)).toEqual([]);
   });
 
   it('новое внутреннее поле пробы наружу само не едет — сериализатор allow-list', () => {
@@ -93,7 +121,7 @@ describe('DoD 1 — сериализатор наружу даёт ровно о
       secretInternalRef: 'shard-7/rack-2',
     };
 
-    const publicSample = toPublicSample(withExtraInternalField);
+    const publicSample = toPublicSample(withExtraInternalField, grant('sample-1'));
 
     expect('secretInternalRef' in publicSample).toBe(false);
     expect(validatePublicSampleShape(publicSample)).toEqual([]);
@@ -104,7 +132,7 @@ describe('DoD 4 — полнота вычислима читателем на о
   it('последняя страница: items.length < limit', () => {
     const all = internalSamples(7);
     const { slice, numbers } = stubPageSlice(all, 2, 5);
-    const envelope = toPageEnvelope(slice.map((sample) => toPublicSample(sample)), numbers);
+    const envelope = toPageEnvelope(slice.map((sample) => toPublicSample(sample, grant(sample.id))), numbers);
 
     expect(envelope.items).toHaveLength(2);
     expect(isShortPage(envelope)).toBe(true);
@@ -115,7 +143,7 @@ describe('DoD 4 — полнота вычислима читателем на о
   it('есть следующая: items.length === limit && page * limit < total', () => {
     const all = internalSamples(7);
     const { slice, numbers } = stubPageSlice(all, 1, 5);
-    const envelope = toPageEnvelope(slice.map((sample) => toPublicSample(sample)), numbers);
+    const envelope = toPageEnvelope(slice.map((sample) => toPublicSample(sample, grant(sample.id))), numbers);
 
     expect(envelope.items).toHaveLength(5);
     expect(hasNextPage(envelope)).toBe(true);
@@ -126,7 +154,7 @@ describe('DoD 4 — полнота вычислима читателем на о
   it('ровно полная последняя страница — не следующая; короткая страница всегда последняя', () => {
     const all = internalSamples(10);
     const { slice, numbers } = stubPageSlice(all, 2, 5);
-    const envelope = toPageEnvelope(slice.map((sample) => toPublicSample(sample)), numbers);
+    const envelope = toPageEnvelope(slice.map((sample) => toPublicSample(sample, grant(sample.id))), numbers);
 
     expect(envelope.items).toHaveLength(5);
     expect(isShortPage(envelope)).toBe(false);
@@ -148,7 +176,7 @@ describe('DoD 4 — полнота вычислима читателем на о
   it('читатель считает по разобранному JSON, без наших типов', () => {
     const raw: unknown = JSON.parse(
       JSON.stringify(
-        toPageEnvelope(internalSamples(3).map((sample) => toPublicSample(sample)), {
+        toPageEnvelope(internalSamples(3).map((sample) => toPublicSample(sample, grant(sample.id))), {
           total: 11,
           page: 1,
           limit: 3,
@@ -254,13 +282,17 @@ describe('Спецификация OpenAPI собрана из тех же ко�
     ]);
   });
 
-  it('схема пробы — одиннадцать обязательных плюс необязательное поле ключа', () => {
+  it('схема пробы — одиннадцать постоянных плюс ДВА обязательных поля ключа', () => {
+    // Решение владельца 02.09: 11 + 2, осознанное расширение вердикта M2. Спецификация обязана
+    // объявлять поля ключа обязательными — иначе она обещает форму, которой контракт не даёт.
     const schema = buildLibraryOpenApiDocument().components.schemas[PUBLIC_SAMPLE_SCHEMA_NAME];
 
-    expect(schema?.required).toHaveLength(PUBLIC_SAMPLE_FIELD_COUNT);
-    expect([...(schema?.required ?? [])].sort()).toEqual([...PUBLIC_SAMPLE_FIELDS].sort());
+    expect(schema?.required).toHaveLength(PUBLIC_SAMPLE_FIELD_COUNT + TRACK_KEY_FIELDS.length);
+    expect([...(schema?.required ?? [])].sort()).toEqual(
+      [...PUBLIC_SAMPLE_FIELDS, ...TRACK_KEY_FIELDS].sort(),
+    );
     expect(Object.keys(schema?.properties ?? {}).sort()).toEqual(
-      [...PUBLIC_SAMPLE_FIELDS, TEMPORARY_KEY_FIELD].sort(),
+      [...PUBLIC_SAMPLE_FIELDS, ...TRACK_KEY_FIELDS].sort(),
     );
     expect(schema?.additionalProperties).toBe(false);
   });

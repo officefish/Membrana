@@ -25,16 +25,19 @@ import {
 } from '../src/open-api/public-sample.js';
 import type { MediaSample } from '../src/types.js';
 
-import { internalSample, internalSamples } from './open-api.stubs.js';
+import { internalSample, internalSamples, stubTrackKeyIssuer } from './open-api.stubs.js';
+
+/** Выдача для зубов: поле ключа обязательное, поэтому она нужна каждой пробе. */
+const grant = stubTrackKeyIssuer();
 
 /** ПОРЧА: сериализатор, который «заодно» отдаёт внутренний путь хранилища. */
 function corruptedSerializerWithStorageRef(sample: MediaSample): Record<string, unknown> {
-  return { ...toPublicSample(sample), storageRef: sample.storageRef };
+  return { ...toPublicSample(sample, grant(sample.id)), storageRef: sample.storageRef };
 }
 
 /** ПОРЧА: сериализатор, который «заодно» отдаёт пометки человека. */
 function corruptedSerializerWithNotes(sample: MediaSample): Record<string, unknown> {
-  return { ...toPublicSample(sample), notes: sample.notes };
+  return { ...toPublicSample(sample, grant(sample.id)), notes: sample.notes };
 }
 
 /** ПОРЧА: обёртка, в которую завели флаг полноты. */
@@ -53,8 +56,8 @@ describe('DoD 2 — порча: storageRef или notes в выдаче крас
 
     expect(internal.storageRef).toBeTruthy();
     expect(internal.notes).toBeTruthy();
-    expect(forbiddenFieldsIn(toPublicSample(internal))).toEqual([]);
-    expect(validatePublicSampleShape(toPublicSample(internal))).toEqual([]);
+    expect(forbiddenFieldsIn(toPublicSample(internal, grant(internal.id)))).toEqual([]);
+    expect(validatePublicSampleShape(toPublicSample(internal, grant(internal.id)))).toEqual([]);
   });
 
   it('порча storageRef — валидатор называет forbidden-field', () => {
@@ -90,7 +93,7 @@ describe('DoD 2 — порча: storageRef или notes в выдаче крас
   });
 
   it('порча посторонним полем — unknown-field, а не молчание', () => {
-    const corrupted = { ...toPublicSample(internalSample('sample-1')), membraneId: 'm-1' };
+    const corrupted = { ...toPublicSample(internalSample('sample-1'), grant('sample-1')), membraneId: 'm-1' };
 
     expect(validatePublicSampleShape(corrupted)).toContainEqual(
       expect.objectContaining({ kind: 'unknown-field', field: 'membraneId' }),
@@ -98,7 +101,7 @@ describe('DoD 2 — порча: storageRef или notes в выдаче крас
   });
 
   it('порча удалением — missing-field: одиннадцать полей обязательны', () => {
-    const corrupted: Record<string, unknown> = { ...toPublicSample(internalSample('sample-1')) };
+    const corrupted: Record<string, unknown> = { ...toPublicSample(internalSample('sample-1'), grant('sample-1')) };
     delete corrupted['sizeBytes'];
 
     expect(validatePublicSampleShape(corrupted)).toContainEqual(
@@ -109,7 +112,7 @@ describe('DoD 2 — порча: storageRef или notes в выдаче крас
 
 describe('DoD 3 — порча: флаг hasMore красит зуб', () => {
   it('настоящая обёртка чиста', () => {
-    const envelope = toPageEnvelope(internalSamples(3).map((s) => toPublicSample(s)), {
+    const envelope = toPageEnvelope(internalSamples(3).map((s) => toPublicSample(s, grant(s.id))), {
       total: 11,
       page: 1,
       limit: 3,

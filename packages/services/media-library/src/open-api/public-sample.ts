@@ -7,7 +7,12 @@ import {
   type PublicSampleField,
 } from './fields.js';
 import { isPlainObject, type ShapeViolation } from './shape-violation.js';
-import { TEMPORARY_KEY_FIELD, type TemporaryKeyField, type TemporaryKeyValue } from './temporary-key.js';
+import {
+  TRACK_KEY_EXPIRES_FIELD,
+  TRACK_KEY_FIELD,
+  TRACK_KEY_FIELDS,
+  type TrackKeyGrant,
+} from './temporary-key.js';
 
 /**
  * Одиннадцать постоянных полей. `Pick` по `MediaSample` держит имена честными на этапе
@@ -15,13 +20,21 @@ import { TEMPORARY_KEY_FIELD, type TemporaryKeyField, type TemporaryKeyValue } f
  */
 export type PublicSampleConstantFields = Pick<MediaSample, PublicSampleField>;
 
-/** Постоянные поля плюс временное поле ключа (необязательное). */
+/**
+ * Одиннадцать постоянных полей плюс ДВА поля ключа, оба обязательные (решение консилиума и
+ * владельца 02.09; см. `temporary-key.ts`).
+ *
+ * Необязательности здесь нет намеренно: отсутствующее поле неотличимо от «ключ не выдан»,
+ * «квота исчерпана» и «сериализатор забыл». Отказ выдать ключ обязан быть отказом запроса.
+ */
 export type PublicSample = PublicSampleConstantFields & {
-  readonly [K in TemporaryKeyField]?: TemporaryKeyValue;
+  readonly [TRACK_KEY_FIELD]: string;
+  readonly [TRACK_KEY_EXPIRES_FIELD]: string | null;
 };
 
 const FORBIDDEN: ReadonlySet<string> = new Set<string>(FORBIDDEN_SAMPLE_FIELDS);
 const ALLOWED_CONSTANT: ReadonlySet<string> = new Set<string>(PUBLIC_SAMPLE_FIELDS);
+const KEY_FIELDS: ReadonlySet<string> = new Set<string>(TRACK_KEY_FIELDS);
 
 /**
  * Сериализатор наружу — ALLOW-LIST.
@@ -30,21 +43,22 @@ const ALLOWED_CONSTANT: ReadonlySet<string> = new Set<string>(PUBLIC_SAMPLE_FIEL
  * Deny-list протекает при каждом новом внутреннем поле пробы; allow-list не протекает
  * никогда — какое бы поле ни завели внутри, наружу оно не поедет само.
  */
-export function toPublicSample(sample: MediaSample, temporaryKey?: TemporaryKeyValue): PublicSample {
+export function toPublicSample(sample: MediaSample, grant: TrackKeyGrant): PublicSample {
   const out: Record<string, unknown> = {};
   for (const field of PUBLIC_SAMPLE_FIELDS) {
     out[field] = sample[field];
   }
-  if (temporaryKey !== undefined) {
-    out[TEMPORARY_KEY_FIELD] = temporaryKey;
-  }
+  // Выдача обязательна: без неё пробу наружу не отдают вовсе. Аргумент не опционален — тем
+  // самым «забыл ключ» ловится компилятором, а не читателем ответа.
+  out[TRACK_KEY_FIELD] = grant.url;
+  out[TRACK_KEY_EXPIRES_FIELD] = grant.expiresAt;
   return out as PublicSample;
 }
 
-/** Имена постоянных полей, фактически присутствующие в значении (без поля ключа). */
+/** Имена постоянных полей, фактически присутствующие в значении (без полей ключа). */
 export function publicSampleConstantFieldNames(value: unknown): string[] {
   if (!isPlainObject(value)) return [];
-  return Object.keys(value).filter((key) => key !== TEMPORARY_KEY_FIELD);
+  return Object.keys(value).filter((key) => !KEY_FIELDS.has(key));
 }
 
 /**
@@ -69,9 +83,20 @@ export function validatePublicSampleShape(value: unknown): ShapeViolation[] {
       });
       continue;
     }
-    if (key === TEMPORARY_KEY_FIELD) {
+    if (key === TRACK_KEY_FIELD) {
       if (typeof value[key] !== 'string') {
-        violations.push({ kind: 'invalid-value', field: key, detail: 'ключ — строка' });
+        violations.push({ kind: 'invalid-value', field: key, detail: 'адрес ключа — строка' });
+      }
+      continue;
+    }
+    if (key === TRACK_KEY_EXPIRES_FIELD) {
+      const v = value[key];
+      if (v !== null && typeof v !== 'string') {
+        violations.push({
+          kind: 'invalid-value',
+          field: key,
+          detail: 'срок — ISO-строка или null (срок снят человеком)',
+        });
       }
       continue;
     }
@@ -81,6 +106,13 @@ export function validatePublicSampleShape(value: unknown): ShapeViolation[] {
   }
 
   for (const field of PUBLIC_SAMPLE_FIELDS) {
+    if (!(field in value)) {
+      violations.push({ kind: 'missing-field', field });
+    }
+  }
+
+  // Поля ключа обязательные наравне с постоянными: пропуск — не «ключа нет», а дефект формы.
+  for (const field of TRACK_KEY_FIELDS) {
     if (!(field in value)) {
       violations.push({ kind: 'missing-field', field });
     }

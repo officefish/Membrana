@@ -6,6 +6,7 @@
 
 import type { AccessOutcome } from '../src/open-api/errors.js';
 import type { PageNumbers } from '../src/open-api/page-envelope.js';
+import type { TrackKeyGrant } from '../src/open-api/temporary-key.js';
 import type { MediaSample } from '../src/types.js';
 
 /**
@@ -23,14 +24,31 @@ export function stubOwnershipDecision(
 }
 
 /**
- * Стаб блока ключа и срока (M3). Отдаёт непрозрачную строку либо `undefined` — поле ключа
- * необязательно. Форма значение не разбирает.
+ * Стаб блока ключа и срока (M3). Отдаёт выдачу — адрес и срок.
+ *
+ * `undefined` больше НЕ отдаётся: по решению консилиума поле ключа обязательное, и «ключ не
+ * выдан» — это отказ ЗАПРОСА, а не проба без поля. Стаб, умеющий вернуть `undefined`, учил бы
+ * зубы жить с формой, которой контракт не допускает.
  */
-export function stubTemporaryKeyIssuer(
-  issuedFor: ReadonlySet<string>,
-): (sampleId: string) => string | undefined {
-  return (sampleId: string): string | undefined =>
-    issuedFor.has(sampleId) ? `https://library.example/k/${sampleId}/opaque-token` : undefined;
+export function stubTrackKeyIssuer(): (sampleId: string) => TrackKeyGrant {
+  return (sampleId: string): TrackKeyGrant => ({
+    url: `https://library.example/k/${sampleId}/opaque-token`,
+    expiresAt: '2026-09-02T12:15:00.000Z',
+  });
+}
+
+/**
+ * Тот же стаб для случая СНЯТОГО срока: `expiresAt === null`.
+ *
+ * Единственный законный источник `null` — подписанное движение владельца (`source: 'lifted'`
+ * у соседа). Отдельный стаб нужен затем, чтобы зуб проверял именно эту форму, а не получал
+ * `null` случайно.
+ */
+export function stubLiftedTrackKeyIssuer(): (sampleId: string) => TrackKeyGrant {
+  return (sampleId: string): TrackKeyGrant => ({
+    url: `https://library.example/k/${sampleId}/opaque-token`,
+    expiresAt: null,
+  });
 }
 
 /** Стаб блока границ выемки (M4): нарезка страницы и `total` всего множества. */

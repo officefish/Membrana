@@ -14,9 +14,11 @@ export {
 } from './fields.js';
 
 export {
-  TEMPORARY_KEY_FIELD,
-  type TemporaryKeyField,
-  type TemporaryKeyValue,
+  TRACK_KEY_EXPIRES_FIELD,
+  TRACK_KEY_FIELD,
+  TRACK_KEY_FIELDS,
+  type TrackKeyField,
+  type TrackKeyGrant,
 } from './temporary-key.js';
 
 export { isPlainObject, type ShapeViolation, type ShapeViolationKind } from './shape-violation.js';

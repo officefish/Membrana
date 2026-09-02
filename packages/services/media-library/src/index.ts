@@ -88,6 +88,14 @@ export {
   togglePick,
 } from './bulk-selection.js';
 
+/**
+ * Форма открытого API библиотеки — блок `contract` коворка `cowork-library-open-api`.
+ *
+ * Экспорт вносит КООРДИНАТОР на интеграции: общая точка пакета была вне зоны блока по правилу
+ * изоляции, и блок её намеренно не трогал — `src/open-api/index.ts` говорит об этом прямо.
+ */
+export * from './open-api/index.js';
+
 export {
   LIBRARY_CHART_LIST_CRITERIA,
   LIBRARY_CHART_LIST_VOLUMES,
