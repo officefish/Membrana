@@ -20,6 +20,8 @@ import {
   finalStateLine,
   unfinishedMergeProblem,
   deliveryOutcome,
+  confirmedPrShipSuccess,
+  normalizePrShipCliExitCode,
 } from './pr-ship.mjs';
 
 test('#1166 ciWaitDisposition: 0 → green', () => {
@@ -752,6 +754,16 @@ test('#2247 сухой прогон целью не мерялся и молчи
   });
 });
 
+test('#2247 инвариант CLI: голый ранний return без подтверждения цели становится ненулевым', () => {
+  assert.equal(normalizePrShipCliExitCode(undefined), 1);
+  assert.equal(normalizePrShipCliExitCode(null), 1);
+  assert.equal(normalizePrShipCliExitCode(Number.NaN), 1);
+  assert.equal(normalizePrShipCliExitCode('0'), 1);
+  assert.equal(normalizePrShipCliExitCode(0), 1, 'голый числовой ноль не доказывает достижение цели');
+  assert.equal(normalizePrShipCliExitCode(confirmedPrShipSuccess()), 0, 'ноль выдаётся только подтверждённым успехом');
+  assert.equal(normalizePrShipCliExitCode(2), 2, 'будущие именованные ненулевые коды сохраняются');
+});
+
 test('#2247 ПРОВОДКА: обёртка копит упавшие шаги и судит по цели, а не по последнему шагу', async () => {
   const { readFileSync } = await import('node:fs');
   const src = readFileSync(new URL('./pr-ship.mjs', import.meta.url), 'utf8');
@@ -759,6 +771,8 @@ test('#2247 ПРОВОДКА: обёртка копит упавшие шаги 
   assert.ok(src.includes('failedSteps.push(s.label)'), 'падение необязательного шага копится');
   assert.ok(src.includes('const outcome = deliveryOutcome({'), 'исход считается');
   assert.ok(src.includes('process.exitCode = outcome.exitCode'), 'и доходит до кода возврата');
+  assert.ok(src.includes('normalizePrShipCliExitCode(main(argv))'), 'голый ранний return не становится нулём');
+  assert.ok(src.includes('confirmedPrShipSuccess()'), 'ноль требует подтверждённого маркера успеха');
   // Состояние ствола обязано ДОЕЗЖАТЬ до решения, а не только печататься.
   assert.ok(src.includes('const pr = printFinalPrState('), 'состояние возвращается наружу');
 });
