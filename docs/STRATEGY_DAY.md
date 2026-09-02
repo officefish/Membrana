@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-09-01T08:32:30.174Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-09-02T11:26:46.908Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
