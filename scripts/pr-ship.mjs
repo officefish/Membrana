@@ -718,6 +718,78 @@ export function deliveryOutcome(input) {
   };
 }
 
+/* ─────────────────────── УМОЛЧАНИЕ КОДА ВОЗВРАТА ПЕРЕВЁРНУТО (#2247) ───────────────────────
+ *
+ * Слово владельца 02.09: «за одно утро я четыре раза получила "успех" при недостигнутой цели» —
+ * устаревший снимок сети, пустой индекс, несовместимость флагов, ранний отказ, все с нулём.
+ *
+ * ПОЧЕМУ ЭТО БЫЛО НЕИЗБЕЖНО, А НЕ ЧЕТЫРЬМЯ СЛУЧАЙНОСТЯМИ. Ноль был УМОЛЧАНИЕМ: функция
+ * кончалась на `return process.exitCode ?? 0`, и любой ранний выход, не поставивший код руками,
+ * докладывал успех. Ненулевой ЗАСЛУЖИВАЛСЯ перечислением, поэтому верных путей было ровно
+ * столько, сколько мест, где о коде вспомнили. Каждый новый `return` начинал жизнь лгущим, и
+ * починка отдельного случая (#2257 — ранний отказ) чинила случай, а не логику: следующий
+ * добавленный выход соврал бы снова.
+ *
+ * ЧТО СДЕЛАНО. Умолчание перевёрнуто: ноль требует доказательства, а не ненулевой. `main`
+ * больше не возвращает число — она обязана вернуть ВЕРДИКТ, в котором состояние цели НАЗВАНО.
+ * Всё остальное — `return;`, `return 0`, `return 1`, новый выход, заведённый мимо этого
+ * словаря, — не вердикт, и обёртка отвечает `EXIT_UNDECLARED`.
+ *
+ * Число путей перестало иметь значение: перечислять теперь нужно не отказы, а УСПЕХИ, а их
+ * ровно два — цель достигнута и цели не ставили. Забыть объявить успех молча нельзя: молчание
+ * стало ненулевым.
+ *
+ * Отдельный код, а не `1`, — потому что это РАЗНЫЕ вещи. `1` значит «цель не достигнута»,
+ * `EXIT_UNDECLARED` — «о цели не сказано»: первое про доставку, второе про дыру в этом файле.
+ * Слить их значило бы спрятать дыру среди обычных неудач.
+ */
+export const SHIP_VERDICT_KIND = 'pr-ship/verdict@1';
+
+/** Выход, не объявивший состояния цели: не «не достигнута», а «не сказано». */
+export const EXIT_UNDECLARED = 9;
+
+function shipVerdict(exitCode, goal, reason) {
+  return { kind: SHIP_VERDICT_KIND, exitCode, goal, reason };
+}
+
+/** Цель ДОСТИГНУТА и подтверждена — единственный законный ноль доставки. */
+export const goalReached = (reason) => shipVerdict(0, 'reached', reason);
+
+/** Цели не ставили: сухой прогон, справка, no-op. Ноль честен — доставки не обещали. */
+export const goalNotSought = (reason) => shipVerdict(0, 'not-sought', reason);
+
+/** Цель НЕ достигнута либо не подтверждена. */
+export const goalNotReached = (reason, exitCode = 1) => shipVerdict(exitCode, 'not-reached', reason);
+
+/** Вердикт ли это — по форме, а не по вере в вызывающего. */
+export function isShipVerdict(value) {
+  return (
+    Boolean(value) &&
+    typeof value === 'object' &&
+    value.kind === SHIP_VERDICT_KIND &&
+    typeof value.exitCode === 'number' &&
+    typeof value.goal === 'string'
+  );
+}
+
+/**
+ * Единственная дверь из `main` наружу. Ноль проходит только вердиктом; всё прочее —
+ * `EXIT_UNDECLARED` с объяснением, что именно произошло.
+ */
+export function exitCodeOfShipRun(returned) {
+  if (!isShipVerdict(returned)) {
+    console.error(
+      '✗ pr:ship завершился, НЕ объявив состояния цели — ноль на этом основании невозможен.\n' +
+        '  Так выглядит выход, заведённый мимо разбора исхода: он не солгал «успех», он промолчал,\n' +
+        '  а при прежнем умолчании молчание и было успехом (#2247).\n' +
+        `  Код ${EXIT_UNDECLARED} значит не «цель не достигнута», а «о цели не сказано»:\n` +
+        '  верните goalReached / goalNotSought / goalNotReached из этого места.',
+    );
+    return EXIT_UNDECLARED;
+  }
+  return returned.exitCode;
+}
+
 /**
  * Прогон шага ci-wait с повтором на транзиентных кодах (#1166). Первый заход — как есть,
  * повторы — с `--resume` (pr:wait продолжает с чекпойнта). Красный/approval/error и
@@ -753,8 +825,7 @@ function main(argv = process.argv) {
     const hanging = unfinishedMergeProblem({ mergeHeadPath: liveMergeHeadPath() });
     if (hanging) {
       console.error(hanging);
-      process.exitCode = 1;
-      return 1;
+      return goalNotReached('незавершённое слияние в дереве');
     }
     // Зуб #2147/№2: пустой индекс при запрошенном шаге commit — отказ ДО шагов,
     // а не «nothing to commit» после минуты pre-commit-хуков без push/PR.
@@ -769,8 +840,7 @@ function main(argv = process.argv) {
     });
     if (commitProblem) {
       console.error(commitProblem);
-      process.exitCode = 1;
-      return 1;
+      return goalNotReached('предполётная проверка коммита');
     }
   }
 
@@ -793,8 +863,7 @@ function main(argv = process.argv) {
     const mismatch = requestedPrMismatchProblem(opts.pr ?? null, prNum, current);
     if (mismatch) {
       console.error(mismatch);
-      process.exitCode = 1;
-      return 1;
+      return goalNotReached('запрошенный PR не совпал с веткой');
     }
     const landed = alreadyInBase(prNum, opts.base ?? 'main');
     if (landed) {
@@ -802,13 +871,13 @@ function main(argv = process.argv) {
         `pr:ship --merge-only: PR #${prNum} уже в origin/${opts.base ?? 'main'} как ${landed.slice(0, 8)} — no-op, второй хвост не нужен (#1320)`,
       );
       printFinalPrState(prNum);
-      return 0;
+      // Ноль ЗАСЛУЖЕН: состояние цели подтверждено git'ом — коммит PR лежит в origin/base.
+      return goalReached(`PR #${prNum} уже в origin/${opts.base ?? 'main'} как ${landed.slice(0, 8)}`);
     }
     const problem = headSyncProblem(readHeadRefs());
     if (problem) {
       console.error(problem);
-      process.exitCode = 1;
-      return 1;
+      return goalNotReached('локальный HEAD разошёлся с origin');
     }
   }
 
@@ -840,8 +909,7 @@ function main(argv = process.argv) {
     });
     if (problem) {
       console.error(problem);
-      process.exitCode = 1;
-      return 1;
+      return goalNotReached('порог размера PR не пройден и причина не названа');
     }
     if (String(opts.sizeReason ?? "").trim().length > 0) {
       sizeReasonForBody = sizeReasonLine({ changedLines, reason: opts.sizeReason });
@@ -961,28 +1029,32 @@ function main(argv = process.argv) {
       /* cache cleanup best-effort */
     }
   }
-  if (!opts.execute) console.log('\n(dry-run — ничего не выполнено; добавь --execute)');
-  if (opts.execute && opts.merge) reportWorktreeFate(current);
+  if (!opts.execute) {
+    console.log('\n(dry-run — ничего не выполнено; добавь --execute)');
+    return goalNotSought('сухой прогон: доставки не обещали');
+  }
+  if (opts.merge) reportWorktreeFate(current);
   // Зуб #2147/№2: финал ВСЕГДА печатает состояние по стволу — доклад «доставлено»
   // сверяется gh pr view --json state,mergeCommit, не exit-кодом обёртки.
-  if (opts.execute) {
-    const pr = printFinalPrState(opts.pr ?? null);
-    // Код возврата — про ЦЕЛЬ, а не про последний шаг (#2247).
-    const outcome = deliveryOutcome({
-      executed: true,
-      mergeRequested: Boolean(opts.merge),
-      pr,
-      failedSteps,
-    });
-    if (outcome.line) console.log(outcome.line);
-    if (outcome.exitCode !== 0) process.exitCode = outcome.exitCode;
-  }
-  return process.exitCode ?? 0;
+  const pr = printFinalPrState(opts.pr ?? null);
+  // Код возврата — про ЦЕЛЬ, а не про последний шаг (#2247).
+  const outcome = deliveryOutcome({
+    executed: true,
+    mergeRequested: Boolean(opts.merge),
+    pr,
+    failedSteps,
+  });
+  if (outcome.line) console.log(outcome.line);
+  // Ноль здесь не «ничего не помешало», а вывод deliveryOutcome о ПОДТВЕРЖДЁННОМ состоянии.
+  return outcome.exitCode === 0
+    ? goalReached(outcome.line ?? 'состояние цели подтверждено по стволу')
+    : goalNotReached(outcome.line ?? 'состояние цели не подтверждено', outcome.exitCode);
 }
 
 export function runPrShipCli(argv = process.argv) {
   try {
-    return main(argv);
+    // Единственная дверь: ноль проходит только объявленным вердиктом (#2247).
+    return exitCodeOfShipRun(main(argv));
   } catch (e) {
     console.error(String(e.message ?? e));
     return 1;

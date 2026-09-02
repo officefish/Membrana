@@ -20,6 +20,11 @@ import {
   finalStateLine,
   unfinishedMergeProblem,
   deliveryOutcome,
+  exitCodeOfShipRun,
+  EXIT_UNDECLARED,
+  goalReached,
+  goalNotSought,
+  goalNotReached,
 } from './pr-ship.mjs';
 
 test('#1166 ciWaitDisposition: 0 → green', () => {
@@ -752,13 +757,74 @@ test('#2247 сухой прогон целью не мерялся и молчи
   });
 });
 
-test('#2247 ПРОВОДКА: обёртка копит упавшие шаги и судит по цели, а не по последнему шагу', async () => {
+test('#2247 ПРОВОДКА: упавшие шаги копятся, состояние ствола доезжает до решения', async () => {
+  // ЧЕСТНАЯ ОГОВОРКА: эти две проверки сверяют НАЛИЧИЕ проводки по тексту исходника, а не
+  // правило. Правило исхода покрыто зубами deliveryOutcome выше, а перевёрнутое умолчание —
+  // зубами ниже; здесь сторожится лишь то, что провода не выдернули.
   const { readFileSync } = await import('node:fs');
   const src = readFileSync(new URL('./pr-ship.mjs', import.meta.url), 'utf8');
-  // Проглоченный необязательный шаг обязан попасть в исход, а не только в предупреждение.
   assert.ok(src.includes('failedSteps.push(s.label)'), 'падение необязательного шага копится');
-  assert.ok(src.includes('const outcome = deliveryOutcome({'), 'исход считается');
-  assert.ok(src.includes('process.exitCode = outcome.exitCode'), 'и доходит до кода возврата');
-  // Состояние ствола обязано ДОЕЗЖАТЬ до решения, а не только печататься.
   assert.ok(src.includes('const pr = printFinalPrState('), 'состояние возвращается наружу');
+});
+
+test('#2247 УМОЛЧАНИЕ ПЕРЕВЁРНУТО: ноль проходит ТОЛЬКО объявленным вердиктом', () => {
+  // Прежде ноль был умолчанием: любой выход, не поставивший код руками, докладывал успех.
+  // Теперь молчание ненулевое, и это не зависит от числа путей выхода.
+  assert.equal(exitCodeOfShipRun(undefined), EXIT_UNDECLARED, 'голый return успехом не является');
+  assert.equal(exitCodeOfShipRun(null), EXIT_UNDECLARED, 'и null тоже');
+  assert.equal(exitCodeOfShipRun(0), EXIT_UNDECLARED, 'старое `return 0` ноля больше не покупает');
+  assert.equal(exitCodeOfShipRun(1), EXIT_UNDECLARED, 'и `return 1` обязан НАЗВАТЬ состояние');
+  assert.equal(
+    exitCodeOfShipRun({ kind: 'pr-ship/verdict@1' }),
+    EXIT_UNDECLARED,
+    'проверяется форма вердикта, а не наличие метки',
+  );
+});
+
+test('#2247 законных нуля ровно два, и оба названы; прочее ненулевое', () => {
+  assert.equal(exitCodeOfShipRun(goalReached('PR MERGED по стволу')), 0);
+  assert.equal(exitCodeOfShipRun(goalNotSought('сухой прогон')), 0);
+  assert.equal(exitCodeOfShipRun(goalNotReached('состояние не подтверждено')), 1);
+  assert.equal(exitCodeOfShipRun(goalNotReached('чужой код исхода', 3)), 3, 'код доезжает как есть');
+  assert.notEqual(EXIT_UNDECLARED, 1, '«о цели не сказано» и «цель не достигнута» — разные вещи');
+});
+
+test('#2247 ПОРЧА: искусственный ранний возврат до создания PR → ненулевой выход', async () => {
+  // Порча, названная владельцем. Смысл её в том, что НИКАКОГО зуба под конкретный случай не
+  // нужно: путь выхода, о котором никто не знал, ненулевой по устройству. Прежде эта же порча
+  // давала ноль — проверено на коде из ствола, ровно так четыре раза за утро и вышло.
+  //
+  // ЧТО ЭТОТ ЗУБ СТОРОЖИТ И ЧЕГО НЕ СТОРОЖИТ — сказано прямо, чтобы его охват не переоценили.
+  // Он краснеет, если сломать ОБЁРТКУ (вернуть `return main(argv)` мимо exitCodeOfShipRun) —
+  // проверено порчей. Он НЕ покраснеет на раннем возврате, добавленном глубоко внутри ветки
+  // `--execute`: контрольный прогон здесь сухой и туда не заходит. Это не дыра, а разделение
+  // труда: инвариант держит обёртка (её зубы выше), а не перечисление мест — перечисление
+  // мест и было прежней болезнью.
+  const { readFileSync, writeFileSync, rmSync } = await import('node:fs');
+  const real = fileURLToPath(new URL('./pr-ship.mjs', import.meta.url));
+  // Имя обязано оканчиваться на pr-ship.mjs — по этому признаку файл узнаёт себя точкой входа.
+  const spoiled = fileURLToPath(new URL('./porcha-2247-pr-ship.mjs', import.meta.url));
+  const src = readFileSync(real, 'utf8');
+  const anchor = 'function main(argv = process.argv) {';
+  assert.ok(src.includes(anchor), 'якорь порчи на месте');
+  writeFileSync(spoiled, src.replace(anchor, `${anchor}\n  if (String(process.env.PORCHA_2247) === '1') return;`), 'utf8');
+  try {
+    const ARGS = ['--type', 'chore', '--message', 'контрольный сухой прогон', '--no-commit'];
+    const spoiledRun = spawnSync(process.execPath, [spoiled, ...ARGS], {
+      env: { ...process.env, PORCHA_2247: '1' },
+      encoding: 'utf8',
+    });
+    assert.notEqual(spoiledRun.status, 0, 'молчаливый ранний выход обязан быть ненулевым');
+    assert.equal(spoiledRun.status, EXIT_UNDECLARED, 'и именно «о цели не сказано»');
+
+    // Обратная половина порчи: без неё тот же файл на сухом прогоне даёт честный ноль —
+    // иначе зуб краснел бы на чём угодно и ничего не доказывал.
+    const cleanRun = spawnSync(process.execPath, [spoiled, ...ARGS], {
+      env: { ...process.env, PORCHA_2247: '0' },
+      encoding: 'utf8',
+    });
+    assert.equal(cleanRun.status, 0, 'сухой прогон без порчи — законный ноль (цели не ставили)');
+  } finally {
+    rmSync(spoiled, { force: true });
+  }
 });
