@@ -741,6 +741,26 @@ function runCiWaitWithResume(cmd, baseArgs) {
   }
 }
 
+const CONFIRMED_PR_SHIP_SUCCESS = Symbol('confirmed-pr-ship-success');
+
+export function confirmedPrShipSuccess() {
+  return CONFIRMED_PR_SHIP_SUCCESS;
+}
+
+/**
+ * Fail-closed CLI boundary (#2247): `0` is evidence, not default.
+ *
+ * Any bare early `return` from `main()` means the goal state was not confirmed by
+ * `deliveryOutcome(printFinalPrState(...))`. Keep future non-zero codes, but make
+ * missing/invalid returns loud instead of silently successful.
+ *
+ * @param {unknown} code
+ */
+export function normalizePrShipCliExitCode(code) {
+  if (code === CONFIRMED_PR_SHIP_SUCCESS) return 0;
+  return Number.isInteger(code) && code > 0 ? code : 1;
+}
+
 function main(argv = process.argv) {
   const opts = parseArgs(argv);
   // Ветки соседних worktree решают, возможен ли ff-sync (см. isBaseHeldElsewhere).
@@ -802,7 +822,7 @@ function main(argv = process.argv) {
         `pr:ship --merge-only: PR #${prNum} уже в origin/${opts.base ?? 'main'} как ${landed.slice(0, 8)} — no-op, второй хвост не нужен (#1320)`,
       );
       printFinalPrState(prNum);
-      return 0;
+      return confirmedPrShipSuccess();
     }
     const problem = headSyncProblem(readHeadRefs());
     if (problem) {
@@ -977,12 +997,12 @@ function main(argv = process.argv) {
     if (outcome.line) console.log(outcome.line);
     if (outcome.exitCode !== 0) process.exitCode = outcome.exitCode;
   }
-  return process.exitCode ?? 0;
+  return process.exitCode && process.exitCode !== 0 ? process.exitCode : confirmedPrShipSuccess();
 }
 
 export function runPrShipCli(argv = process.argv) {
   try {
-    return main(argv);
+    return normalizePrShipCliExitCode(main(argv));
   } catch (e) {
     console.error(String(e.message ?? e));
     return 1;
