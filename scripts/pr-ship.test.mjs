@@ -770,36 +770,42 @@ test('#2247 ПОРЧА: молчаливый ранний выход до соз
   // единого дефекта, а настоящий регресс, выраженный иначе, прошёл бы мимо. Тот же класс
   // чинили 01.09 у зуба близнецов — «зуб есть, запущен, предмета не видит».
   //
-  // Здесь проверяется ПОВЕДЕНИЕ на границе: копия скрипта с искусственным ранним возвратом
-  // обязана выйти ненулём, она же без порчи — нулём. Вторая половина обязательна: зуб,
-  // который краснеет на чём угодно, не свидетельствует ни о чём.
+  // Здесь проверяется ПОВЕДЕНИЕ на границе, и обе половины обязательны: зуб, краснеющий на
+  // чём угодно, не свидетельствует ни о чём. Поэтому сравниваются ДВЕ порченые копии с одним
+  // и тем же ранним возвратом — с границей и без неё:
+  //   · граница на месте  → ненуль (молчание не проходит за успех);
+  //   · граница снята     → ноль   (ровно так было до #2263 — и так зуб доказывает, что
+  //                                 ненуль в первой половине даёт именно граница).
+  //
+  // ПОЧЕМУ КОНТРОЛЬ ИМЕННО ТАКОЙ (правка после красного ствола 02.09). Первая редакция брала
+  // контролем ЧИСТЫЙ сухой прогон и ждала от него ноль. Локально зелено, в CI красно: там
+  // дерево на detached HEAD, `git branch --show-current` пуст, и честный сухой прогон падает
+  // единицей по делу. Зуб проверял не только границу, но и состояние репозитория — и соврал
+  // о предмете. Ранний возврат теперь стоит ПЕРВОЙ строкой main, до разбора аргументов и до
+  // любого вызова git: обе копии не касаются репозитория вовсе и дают один ответ везде.
   const { readFileSync, writeFileSync, rmSync } = await import('node:fs');
   const real = fileURLToPath(new URL('./pr-ship.mjs', import.meta.url));
   // Имя обязано оканчиваться на pr-ship.mjs — по этому признаку файл узнаёт себя точкой входа.
-  const spoiled = fileURLToPath(new URL('./porcha-2247-pr-ship.mjs', import.meta.url));
+  const withGuard = fileURLToPath(new URL('./porcha-guarded-pr-ship.mjs', import.meta.url));
+  const noGuard = fileURLToPath(new URL('./porcha-unguarded-pr-ship.mjs', import.meta.url));
   const src = readFileSync(real, 'utf8');
   const anchor = 'function main(argv = process.argv) {';
+  const boundary = 'return normalizePrShipCliExitCode(main(argv));';
   assert.ok(src.includes(anchor), 'якорь порчи на месте');
-  writeFileSync(
-    spoiled,
-    src.replace(anchor, `${anchor}\n  if (String(process.env.PORCHA_2247) === '1') return;`),
-    'utf8',
-  );
-  const ARGS = ['--type', 'chore', '--message', 'контрольный сухой прогон', '--no-commit'];
+  assert.ok(src.includes(boundary), 'граница CLI на месте');
+  // Ранний возврат первой строкой: ни parseArgs, ни git не успевают отработать.
+  const spoiled = src.replace(anchor, `${anchor}\n  return;`);
+  writeFileSync(withGuard, spoiled, 'utf8');
+  writeFileSync(noGuard, spoiled.replace(boundary, 'return main(argv);'), 'utf8');
   try {
-    const spoiledRun = spawnSync(process.execPath, [spoiled, ...ARGS], {
-      env: { ...process.env, PORCHA_2247: '1' },
-      encoding: 'utf8',
-    });
-    assert.notEqual(spoiledRun.status, 0, 'молчаливый ранний выход обязан быть ненулевым');
+    const guarded = spawnSync(process.execPath, [withGuard], { encoding: 'utf8' });
+    assert.notEqual(guarded.status, 0, 'с границей молчаливый ранний выход обязан быть ненулевым');
 
-    const cleanRun = spawnSync(process.execPath, [spoiled, ...ARGS], {
-      env: { ...process.env, PORCHA_2247: '0' },
-      encoding: 'utf8',
-    });
-    assert.equal(cleanRun.status, 0, 'без порчи сухой прогон — законный ноль');
+    const unguarded = spawnSync(process.execPath, [noGuard], { encoding: 'utf8' });
+    assert.equal(unguarded.status, 0, 'без границы тот же выход даёт ноль — значит ненуль даёт именно она');
   } finally {
-    rmSync(spoiled, { force: true });
+    rmSync(withGuard, { force: true });
+    rmSync(noGuard, { force: true });
   }
 });
 
