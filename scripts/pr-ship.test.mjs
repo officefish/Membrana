@@ -764,15 +764,59 @@ test('#2247 инвариант CLI: голый ранний return без под
   assert.equal(normalizePrShipCliExitCode(2), 2, 'будущие именованные ненулевые коды сохраняются');
 });
 
-test('#2247 ПРОВОДКА: обёртка копит упавшие шаги и судит по цели, а не по последнему шагу', async () => {
+test('#2247 ПОРЧА: молчаливый ранний выход до создания PR даёт НЕНУЛЕВОЙ код', async () => {
+  // Заменяет две проверки ТЕКСТА исходника — `normalizePrShipCliExitCode(main(argv))` и
+  // `confirmedPrShipSuccess()`. Они сторожили НАПИСАНИЕ: переименование красило бы зуб без
+  // единого дефекта, а настоящий регресс, выраженный иначе, прошёл бы мимо. Тот же класс
+  // чинили 01.09 у зуба близнецов — «зуб есть, запущен, предмета не видит».
+  //
+  // Здесь проверяется ПОВЕДЕНИЕ на границе: копия скрипта с искусственным ранним возвратом
+  // обязана выйти ненулём, она же без порчи — нулём. Вторая половина обязательна: зуб,
+  // который краснеет на чём угодно, не свидетельствует ни о чём.
+  const { readFileSync, writeFileSync, rmSync } = await import('node:fs');
+  const real = fileURLToPath(new URL('./pr-ship.mjs', import.meta.url));
+  // Имя обязано оканчиваться на pr-ship.mjs — по этому признаку файл узнаёт себя точкой входа.
+  const spoiled = fileURLToPath(new URL('./porcha-2247-pr-ship.mjs', import.meta.url));
+  const src = readFileSync(real, 'utf8');
+  const anchor = 'function main(argv = process.argv) {';
+  assert.ok(src.includes(anchor), 'якорь порчи на месте');
+  writeFileSync(
+    spoiled,
+    src.replace(anchor, `${anchor}\n  if (String(process.env.PORCHA_2247) === '1') return;`),
+    'utf8',
+  );
+  const ARGS = ['--type', 'chore', '--message', 'контрольный сухой прогон', '--no-commit'];
+  try {
+    const spoiledRun = spawnSync(process.execPath, [spoiled, ...ARGS], {
+      env: { ...process.env, PORCHA_2247: '1' },
+      encoding: 'utf8',
+    });
+    assert.notEqual(spoiledRun.status, 0, 'молчаливый ранний выход обязан быть ненулевым');
+
+    const cleanRun = spawnSync(process.execPath, [spoiled, ...ARGS], {
+      env: { ...process.env, PORCHA_2247: '0' },
+      encoding: 'utf8',
+    });
+    assert.equal(cleanRun.status, 0, 'без порчи сухой прогон — законный ноль');
+  } finally {
+    rmSync(spoiled, { force: true });
+  }
+});
+
+test('#2247 ПРОВОДКА: упавшие шаги копятся, исход считается и доезжает до кода', async () => {
+  // ЧЕСТНАЯ ОГОВОРКА о том, чем этот зуб является. Проверки ниже сверяют НАЛИЧИЕ проводки по
+  // тексту исходника — поведением их дёшево не покрыть: чтобы увидеть, как исход доезжает до
+  // кода возврата, нужен живой прогон с --execute и настоящим gh. Правило исхода при этом
+  // покрыто зубами deliveryOutcome, граница CLI — зубами normalizePrShipCliExitCode и порчей
+  // выше. Здесь сторожится только то, что провода не выдернули.
+  //
+  // Шаблоны терпимы к форматированию: перенос строки или лишний пробел не должны красить зуб,
+  // не изменив поведения. Совсем от сверки текста здесь не уйти — и это названо, а не скрыто.
   const { readFileSync } = await import('node:fs');
   const src = readFileSync(new URL('./pr-ship.mjs', import.meta.url), 'utf8');
-  // Проглоченный необязательный шаг обязан попасть в исход, а не только в предупреждение.
-  assert.ok(src.includes('failedSteps.push(s.label)'), 'падение необязательного шага копится');
-  assert.ok(src.includes('const outcome = deliveryOutcome({'), 'исход считается');
-  assert.ok(src.includes('process.exitCode = outcome.exitCode'), 'и доходит до кода возврата');
-  assert.ok(src.includes('normalizePrShipCliExitCode(main(argv))'), 'голый ранний return не становится нулём');
-  assert.ok(src.includes('confirmedPrShipSuccess()'), 'ноль требует подтверждённого маркера успеха');
+  assert.match(src, /failedSteps\.push\(/u, 'падение необязательного шага копится');
+  assert.match(src, /deliveryOutcome\(\{/u, 'исход считается');
+  assert.match(src, /process\.exitCode\s*=\s*outcome\.exitCode/u, 'и доходит до кода возврата');
   // Состояние ствола обязано ДОЕЗЖАТЬ до решения, а не только печататься.
-  assert.ok(src.includes('const pr = printFinalPrState('), 'состояние возвращается наружу');
+  assert.match(src, /=\s*printFinalPrState\(/u, 'состояние возвращается наружу');
 });
