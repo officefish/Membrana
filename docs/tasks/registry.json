@@ -12,7 +12,7 @@
       "sprintKind": "cowork-sprint",
       "createdAt": "2026-09-02",
       "archivedAt": null,
-      "leadPersona": null,
+      "leadPersona": "vesnin",
       "supportPersonas": [],
       "notes": "3 блока ownership/contract/key-ttl от BASE_SHA 56423801; изоляция до Interface Consilium; мёржатся все три; M4 (квота) вне спринта — норма к вводу",
       "archiveNotes": null,
