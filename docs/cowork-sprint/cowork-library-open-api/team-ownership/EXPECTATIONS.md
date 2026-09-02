@@ -25,7 +25,7 @@
 | `contract` (M2) | Проекция строки — **идентичность и область, без нагрузки** | `{ id, deviceId, collectionId, createdAt }` | В проекции нет `storageRef`, нет `notes` и **нет поля временного ключа**: ось владения не носитель ключа (см. «Известный шов») |
 | `key-ttl` (M3/M4) | Владелец под операцию | `requireMembraneOwner(device, operation) → membraneId`, иначе `MembraneOwnerRequiredError { code: 'OWNERSHIP_MEMBRANE_ABSENT', deviceId, operation }` | Никогда не возвращает `null` и никогда не молчит; имя операции едет в ошибке, чтобы отказ был читаем на стороне вызывающего |
 | `key-ttl` (M3/M4) | Ключ мембранного масштаба для квоты и выключателя | `membraneId` из той же оси | Одна величина на выборку, квоту и срок — расхождения между ними по построению нет |
-| всем (интеграция) | Исполняемая проверка запрета угадывания | `runOwnershipConformance(resolve) → ConformanceFailure[]` + пять испорченных реализаций | Любой чужой резолвер владения можно прогнать через тот же набор; порча из `deviceId`/`collectionId` роняет поимённо названные случаи |
+| всем (интеграция) | Исполняемая проверка запрета угадывания | `runOwnershipConformance(resolve) → ConformanceFailure[]` + шесть испорченных реализаций | Любой чужой резолвер владения можно прогнать через тот же набор; порча из `deviceId`/`collectionId` роняет поимённо названные случаи |
 
 ## Известный шов — моё одностороннее ожидание (не назначение)
 
@@ -69,7 +69,7 @@ M2 (форма наружу). Поэтому:
 | Стаб | Что замещает | Где живёт |
 |---|---|---|
 | `InMemoryOwnershipSampleReader` | Хранилище треков (Prisma-слой соседей): фильтрует по `membraneId` и окну дат, считает `total`, отдаёт страницу | `packages/background-media/src/modules/library-ownership/stubs/in-memory-sample-reader.stub.ts` |
-| `OWNERSHIP_CORRUPT_RESOLVERS` | Пять испорченных «разрешителей владения» — как если бы владельца выводил сосед | `packages/background-media/src/modules/library-ownership/conformance/corrupt-resolvers.ts` |
+| `OWNERSHIP_CORRUPT_RESOLVERS` | Шесть испорченных «разрешителей владения» — как если бы владельца выводил сосед | `packages/background-media/src/modules/library-ownership/conformance/corrupt-resolvers.ts` |
 | мок `OwnershipPrismaLike` | Сгенерированный Prisma-клиент (в дереве блока его нет) | `.../prisma-ownership-sample-reader.test.ts`, `vi.fn()` |
 
 Стабы **не мёржатся в прод**. К интеграции: файл `stubs/in-memory-sample-reader.stub.ts`
@@ -84,5 +84,21 @@ M2 (форма наружу). Поэтому:
 | Область | `selectionForAxis(axis, window?)` → `{ kind: 'query', filter }` \| `{ kind: 'none' }` | `none` — отдельный разряд, а не пустой фильтр |
 | Сервис | `LibraryOwnershipService` над портом `OwnershipSampleReader` | На `none` читатель **не вызван**; ошибка операции именована и несёт `deviceId` + `operation` |
 | Адаптер | `PrismaOwnershipSampleReader` со структурной типизацией клиента | `where` содержит `device.membraneId` и **не содержит** `deviceId`/`collectionId` |
-| Порча | `runOwnershipConformance` + пять испорченных реализаций | Честная — ноль провалов; каждая порча роняет поимённо названные случаи |
+| Порча | `runOwnershipConformance` + шесть испорченных реализаций | Честная — ноль провалов; каждая порча роняет поимённо названные случаи |
 | Модуль | `LibraryOwnershipModule.withReader(provider)` | Провайдер читателя вносится снаружи — блок не тянет `PrismaModule` в изоляции |
+| Изоляция | `block-isolation.test.ts` читает исходники каталога | За пределы блока не ведёт ни один импорт кроме `@nestjs/common`; стабы и порча в производственные файлы не затекают |
+
+## Что я прошу у координатора на интеграции
+
+Не договорённость с соседями, а работа сборки — то, чего блок по правилам изоляции сделать не мог:
+
+1. Строка в `app.module.ts`: `LibraryOwnershipModule.withReader({ provide: OWNERSHIP_SAMPLE_READER, inject: [PrismaService], useFactory: (prisma) => new PrismaOwnershipSampleReader(prisma) })`.
+2. Удалить или исключить из сборки `stubs/in-memory-sample-reader.stub.ts` и
+   `conformance/corrupt-resolvers.ts` — либо оставить их только для тестов. Набор случаев
+   `conformance/ownership-conformance.ts` при этом **стоит сохранить**: через него можно
+   прогнать любой чужой резолвер владения, если он где-то появится.
+3. Отображение `MembraneOwnerRequiredError` в HTTP-статус — предмет двери (M2). Моё
+   одностороннее предложение: `409`, не `404` и не `403`.
+4. `packages/background-media/generated/prisma` в дереве отсутствует; типизация пакета от этого
+   красная вне зоны блока. Перед интеграционным прогоном нужен `prisma generate` — правка не моя.
+
