@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14386/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 335 (причины в op-log) -->
+Записей: 49 · бюджет 14359/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 336 (причины в op-log) -->
+
+### 2026-09-02 · позиция · team-evening-feedback
+
+> Оценка артефактов: В документах дня UI-изменения представлены только как цель (магистраль `sample-move-between-collections`), но не как факт. MAIN_DAY_ISSUE чётко описывает UI-дефект: дверь move нарисована только при `selectedId === BUFFER_COLLECTION_ID` (~689 и ~757 в […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
 
 ### 2026-09-01 · позиция · library-open-api-m0-order
 
@@ -295,9 +301,3 @@
 > Поддерживаю закрытый словарь — с оговоркой. Четыре формы покрывают Т2 полностью: сортировка по громкости читается как `row`, пиковые зоны — `zone-map`, аномалии — `row` или `table`, тренды — `histogram`. Но мне важно, чтобы `displayForm` был обязательным полем […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m5-showcase-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m5r-showcase
-
-> С витрины читателя: страница получает манифест и должна без угадывания знать, какой компонент рендерить. displayForm — это типографика смысла: явный тег формы, не скрытая конвенция в slug. Если displayForm не задан — страница либо рисует дефолт (что нечестно), либо падает. […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m5r-showcase-2026-08-17.md#reply-1`

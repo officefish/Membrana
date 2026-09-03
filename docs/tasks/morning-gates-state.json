@@ -1,24 +1,24 @@
 {
   "magistralOptions": [
-    "library-open-api-impl",
+    "library-open-api-door",
     "node-duty-ready",
-    "assertions-single-carrier"
+    "archive-quota-direction"
   ],
-  "frozenDigest": "a8b701eb7e12ddb8b900ee6af82284c940081ac900746102cf03db96e1763b66",
-  "magistral": "library-open-api-impl",
+  "frozenDigest": "b38a94401d1b7ab4a8a3dd5882bc7796f83520dc5b3fe8c1430edeef4d5daf6d",
+  "magistral": "library-open-api-door",
   "swallow": {
-    "draftDigest": "a9562a3838bff1e3506948f836f87df47137bc0db1db1348ea7b1fb02fc72d58",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-09-02.md",
-    "ownerAck": true,
-    "day": "2026-09-02"
+    "draftDigest": "15e169b0de315592a080755a87c2b247e488caf6d867a087ddab218e83ccca05",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-09-03.md",
+    "ownerAck": false,
+    "day": "2026-09-03"
   },
-  "day": "2026-09-02",
-  "magistralChosenAt": "2026-09-02",
+  "day": "2026-09-03",
+  "magistralChosenAt": "2026-09-03",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-09-02",
-    "chosen": "library-open-api-impl",
-    "snapshotDigest": "a8b701eb7e12ddb8b900ee6af82284c940081ac900746102cf03db96e1763b66",
+    "at": "2026-09-03",
+    "chosen": "library-open-api-door",
+    "snapshotDigest": "b38a94401d1b7ab4a8a3dd5882bc7796f83520dc5b3fe8c1430edeef4d5daf6d",
     "inSnapshot": true
   }
 }

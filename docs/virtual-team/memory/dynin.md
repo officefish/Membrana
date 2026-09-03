@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14345/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 336 (причины в op-log) -->
+Записей: 49 · бюджет 14395/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 337 (причины в op-log) -->
+
+### 2026-09-02 · позиция · team-evening-feedback
+
+> Оценка артефактов: Артефакты дня не содержат математического контента — фокус на tooling и тестах. STRATEGY_DAY корректно определяет веху `secret-parser-built` как перспективную, не смешивая с primary. MAIN_DAY_ISSUE содержит проверяемые посылки с маркерами — это […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
 
 ### 2026-09-01 · позиция · library-open-api-m0-order
 
@@ -290,14 +296,8 @@
 
 — источник: `docs/seanses/server-plugin-foundation-m4-triggers-2026-08-17.md#reply-1`
 
-### 2026-08-17 · позиция · server-plugin-foundation-m5-showcase
+### 2026-08-16 · позиция · team-evening-feedback
 
-> Начну с постановки предиката. Форма показа — это не произвольная строка и не открытое поле; это элемент конечного множества. Если множество открыто, клиентская страница не может декларативно сопоставить значение с рендерером без ветвящейся логики — это нарушение Т3.6. Предлагаю […] _(реплик в сеансе: 5)_
+> Дынин. Оценка артефактов: `MAIN_DAY_ISSUE` содержит таблицу обоснования магистрали с провенансом каждого утверждения — правильная форма. Раздел «Посылки» использует маркеры (`symbol:redactSecrets`, `file:...`) и вердикты `holds` — предикатная строгость. Итоги дня: […]
 
-— источник: `docs/seanses/server-plugin-foundation-m5-showcase-2026-08-17.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m3-access
-
-> Порядок ролей полный: `public < ally < operator < owner`. Решение строится одной функцией сравнения ролей, без permission-grant и без снижения роли субъекта. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-08-16.md#reply-1`

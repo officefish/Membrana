@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `cowork-library-open-api` | Cowork Sprint: Открытое API библиотеки | L | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md) | — |
 | `playback-hang-timeout` | Таймаут ожидания статуса в playSequence + сброс stale outcome при смене набора | S | [`PLAYBACK_HANG_TIMEOUT_PROMPT.md`](../prompts/PLAYBACK_HANG_TIMEOUT_PROMPT.md) | [#2181](https://github.com/officefish/Membrana/issues/2181) |
 | `node-duty-ready-predicate` | Узел к дежурству: предикат готовности Firebat — сон/гибернация/автовход/служба (Г4) | S | [`NODE_DUTY_READY_PREDICATE_PROMPT.md`](../prompts/NODE_DUTY_READY_PREDICATE_PROMPT.md) | [#2049](https://github.com/officefish/Membrana/issues/2049) |
 | `studio-package-av-refusal` | Установщик Studio: честный отказ при AV-блокировке + fallback на артефакт CI (Г3) | S | [`STUDIO_PACKAGE_AV_REFUSAL_PROMPT.md`](../prompts/STUDIO_PACKAGE_AV_REFUSAL_PROMPT.md) | — |

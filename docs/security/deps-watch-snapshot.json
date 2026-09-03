@@ -1,5 +1,5 @@
 {
-  "date": "2026-08-30",
+  "date": "2026-09-02",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -94,48 +94,6 @@
     },
     {
       "pkg": "axios",
-      "id": "1123882",
-      "severity": "moderate",
-      "issue": "Axios: Excessive recursion in formDataToJSON can cause denial of service",
-      "url": "https://github.com/advisories/GHSA-42h9-826w-cgv3"
-    },
-    {
-      "pkg": "axios",
-      "id": "1123885",
-      "severity": "moderate",
-      "issue": "Axios: Deep formToJSON Key Recursion Can Cause Denial of Service",
-      "url": "https://github.com/advisories/GHSA-pmv8-rq9r-6j72"
-    },
-    {
-      "pkg": "axios",
-      "id": "1123957",
-      "severity": "moderate",
-      "issue": "Axios: Fetch adapter `ReadableStream` uploads bypass `maxBodyLength`",
-      "url": "https://github.com/advisories/GHSA-jqh4-m9w3-8hp9"
-    },
-    {
-      "pkg": "axios",
-      "id": "1123959",
-      "severity": "moderate",
-      "issue": "Axios: Prototype pollution gadgets can alter axios request construction",
-      "url": "https://github.com/advisories/GHSA-mmx7-hfxf-jppx"
-    },
-    {
-      "pkg": "axios",
-      "id": "1123961",
-      "severity": "moderate",
-      "issue": "Axios: NO_PROXY bypass for 0.0.0.0 local addresses in axios",
-      "url": "https://github.com/advisories/GHSA-f4gw-2p7v-4548"
-    },
-    {
-      "pkg": "axios",
-      "id": "1123967",
-      "severity": "high",
-      "issue": "Axios Node HTTP adapter can use an inherited proxy after interceptor config cloning",
-      "url": "https://github.com/advisories/GHSA-gcfj-64vw-6mp9"
-    },
-    {
-      "pkg": "axios",
       "id": "1123969",
       "severity": "moderate",
       "issue": "Axios form serializer maxDepth bypass via {} metatoken",
@@ -143,24 +101,66 @@
     },
     {
       "pkg": "axios",
-      "id": "1123971",
+      "id": "1138749",
       "severity": "moderate",
-      "issue": "Axios: Nested axios option objects can consume polluted prototype values",
-      "url": "https://github.com/advisories/GHSA-7q8q-rj6j-mhjq"
+      "issue": "Axios: Prototype pollution auth subfields can inject Basic auth",
+      "url": "https://github.com/advisories/GHSA-xj6q-8x83-jv6g"
     },
     {
       "pkg": "axios",
-      "id": "1123973",
+      "id": "1147949",
+      "severity": "moderate",
+      "issue": "Axios: Prototype pollution gadgets can alter axios request construction",
+      "url": "https://github.com/advisories/GHSA-mmx7-hfxf-jppx"
+    },
+    {
+      "pkg": "axios",
+      "id": "1147950",
+      "severity": "moderate",
+      "issue": "Axios: Deep formToJSON Key Recursion Can Cause Denial of Service",
+      "url": "https://github.com/advisories/GHSA-pmv8-rq9r-6j72"
+    },
+    {
+      "pkg": "axios",
+      "id": "1153175",
       "severity": "moderate",
       "issue": "Axios: HTTP/2 streamed uploads bypass `maxBodyLength`",
       "url": "https://github.com/advisories/GHSA-mwf2-3pr3-8698"
     },
     {
       "pkg": "axios",
-      "id": "1138749",
+      "id": "1153178",
+      "severity": "high",
+      "issue": "Axios Node HTTP adapter can use an inherited proxy after interceptor config cloning",
+      "url": "https://github.com/advisories/GHSA-gcfj-64vw-6mp9"
+    },
+    {
+      "pkg": "axios",
+      "id": "1153180",
       "severity": "moderate",
-      "issue": "Axios: Prototype pollution auth subfields can inject Basic auth",
-      "url": "https://github.com/advisories/GHSA-xj6q-8x83-jv6g"
+      "issue": "Axios: Nested axios option objects can consume polluted prototype values",
+      "url": "https://github.com/advisories/GHSA-7q8q-rj6j-mhjq"
+    },
+    {
+      "pkg": "axios",
+      "id": "1153182",
+      "severity": "moderate",
+      "issue": "Axios: Fetch adapter `ReadableStream` uploads bypass `maxBodyLength`",
+      "url": "https://github.com/advisories/GHSA-jqh4-m9w3-8hp9"
+    },
+    {
+      "pkg": "axios",
+      "id": "1153184",
+      "severity": "moderate",
+      "issue": "Axios: NO_PROXY bypass for 0.0.0.0 local addresses in axios",
+      "url": "https://github.com/advisories/GHSA-f4gw-2p7v-4548"
+    },
+    {
+      "pkg": "axios",
+      "id": "1153185",
+      "severity": "moderate",
+      "issue": "Axios: Excessive recursion in formDataToJSON can cause denial of service",
+      "url": "https://github.com/advisories/GHSA-42h9-826w-cgv3"
     },
     {
       "pkg": "body-parser",
@@ -196,6 +196,20 @@
       "severity": "high",
       "issue": "brace-expansion: DoS via unbounded intermediate arrays, bypassing the CVE-2026-14257 mitigation",
       "url": "https://github.com/advisories/GHSA-rgw5-rvv9-x895"
+    },
+    {
+      "pkg": "browserslist",
+      "id": "1153171",
+      "severity": "high",
+      "issue": "Browserslist: Unbounded memory growth (no cache eviction) via distinct query results, leading to eventual OOM",
+      "url": "https://github.com/advisories/GHSA-c83g-rgw3-j3cx"
+    },
+    {
+      "pkg": "browserslist",
+      "id": "1153172",
+      "severity": "high",
+      "issue": "Browserslist: Uncaught crash / prototype write via untrusted browserslist-stats.json custom stats (normalizeStats)",
+      "url": "https://github.com/advisories/GHSA-73wf-gq98-2v4g"
     },
     {
       "pkg": "builder-util-runtime",
@@ -371,6 +385,13 @@
       "severity": "moderate",
       "issue": "PostCSS: incomplete fix of GHSA-6g55-p6wh-862q — attacker-controlled sourceMappingURL reads arbitrary .map files when `from` is unset",
       "url": "https://github.com/advisories/GHSA-fxqj-rqcc-2cmp"
+    },
+    {
+      "pkg": "postcss-selector-parser",
+      "id": "1153170",
+      "severity": "low",
+      "issue": "postcss-selector-parser allows denial of service through uncontrolled AST recursion",
+      "url": "https://github.com/advisories/GHSA-w9m9-85wc-3x92"
     },
     {
       "pkg": "prebuild-install",

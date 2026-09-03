@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14287/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 350 (причины в op-log) -->
+Записей: 49 · бюджет 14268/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 351 (причины в op-log) -->
+
+### 2026-09-02 · позиция · team-evening-feedback
+
+> Оценка артефактов: Артефакты дня согласованы между собой: стендап и MAIN_DAY_ISSUE едины в определении P0-блокера (красные тесты media-library и background-cabinet), а магистраль `sample-move-between-collections` корректно выведена из владельческого sources[0] от 31.08. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
 
 ### 2026-09-01 · позиция · library-open-api-m0-order
 
@@ -295,9 +301,3 @@
 > Хорошая связка. Теперь каналы — главная развилка. IPluginHost уже несёт `getRegisteredPlugins(): ReadonlyArray<PluginManifest>` (M2). Вопрос: достаточно ли этого для чтения витринных самоописаний, или нужен отдельный метод? Я против второго метода без нужды: лишний контракт — […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m5-showcase-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m5r-showcase
-
-> Хорошо. Комната переигрывает M5 — не сочиняет базу заново, а строит на ней ShowcaseManifest. Пять граней, все в одном прогоне: состав ShowcaseManifest, словарь DisplayForm, канал чтения, канал включения, самоописание не-витринных родов. Порядок обхода — по сложности […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/server-plugin-foundation-m5r-showcase-2026-08-17.md#reply-1`

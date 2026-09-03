@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14379/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 343 (причины в op-log) -->
+Записей: 49 · бюджет 14400/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 344 (причины в op-log) -->
+
+### 2026-09-02 · позиция · team-evening-feedback
+
+> Оценка артефактов: Документы дня связаны: стендап верно выявил P0-блокер, MAIN_DAY_ISSUE дал чёткие посылки с маркерами для проверки. DAILY_CODE_REVIEW структурно безупречен: C1 (границы пакетов не нарушены), C7 (тесты на поведение, не написание), C4 (изоляция изменений). […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
 
 ### 2026-09-01 · позиция · library-open-api-m0-order
 
@@ -295,9 +301,3 @@
 > Уточняю лемму «полиморфно». `getRegisteredPlugins()` возвращает `ReadonlyArray<PluginManifest>`. Чтобы страница отличила `ShowcaseManifest` от базового, нужен дискриминант в типе — поле `kind`. Предлагаю: базовый `PluginManifest` несёт `kind: PluginKind`, где `PluginKind` — […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m5-showcase-2026-08-17.md#reply-1`
-
-### 2026-08-16 · позиция · team-evening-feedback
-
-> Ожегов. Оценка артефактов: `DAILY_STANDUP` и `MAIN_DAY_ISSUE` называют одно и то же одним словом — «гейт `secret-parser-built`». Роутинг персон в стендапе построен из реестра, а не моделью — правильный источник. Итоги дня: append-only соблюдён везде — […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-16.md#reply-1`
