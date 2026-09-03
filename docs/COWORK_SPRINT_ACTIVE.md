@@ -2,72 +2,59 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `closed` — Phase 5 закрыта 2026-08-09 (`cowork:close`) |
-| sprintId | `cowork-static-registry-read-api` |
-| brief | [`COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-static-registry-read-api/COWORK_SPRINT_BRIEF.md) |
-| task carrier | `cowork-static-registry-read-api` |
-| исполняемая фаза | `static-mmbrn-registry-read-api` (`#1303-A`) |
-| root epic | `static-mmbrn-container` |
-| BASE_SHA | `322501efb24854a848d9cf726d57c99cdc271a1a` |
-| openedAt | 2026-08-09 |
-| owner cut ratification | 2026-08-09 — «ратифицирую» |
-| preparation delivery | PR #1827, merged as `322501ef` |
-| preparation review | T2 LGTM, reviewed SHA `8c82c5031c42ef2e4087fccfc11d8776a2894d70` |
-| current phase | **5 — Merge + archive (closed)** |
-| integration deadline | 2026-08-14 fallback |
+| **status** | `open` — Phase 4 закрыта, Phase 5 (один PR в main) |
+| sprintId | `cowork-library-open-api` |
+| brief | [`COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md) |
+| вход | заседание [`library-open-api/EPIC.md`](./meeting/library-open-api/EPIC.md), ред. 3, влито `4eba2c77` |
+| BASE_SHA | `56423801` (= origin/main на момент открытия) |
+| openedAt | 2026-09-02 |
+| owner cut ratification | формат — слово владельца 02.09 («коворк по слову владельца»); нарезка на три блока ожидает ратификации |
+| current phase | **5 — Merge + archive** |
+| integration deadline | 2026-09-05 fallback (гейт событийный) |
+| координатор | сессия Б |
 
 ## Blocks
 
 | Блок | Ветка | Worktree | Фаза | Готовность |
 |------|-------|----------|------|------------|
-| `registry-contract` | `cowork/cowork-static-registry-read-api/registry-contract` | `.worktrees/Membrana-registry-contract` | freeze | `cbba747e`; 24/24 tests + lint + typecheck |
-| `registry-index` | `cowork/cowork-static-registry-read-api/registry-index` | `.worktrees/Membrana-registry-index` | freeze | `d09dc34a`; 14/14 tests + build + typecheck |
-| `read-api` | `cowork/cowork-static-registry-read-api/read-api` | `.worktrees/Membrana-read-api` | freeze | `44630395`; 8/8 tests + lint + typecheck |
+| `ownership` | `cowork/cowork-library-open-api/ownership` | `Membrana-ownership` | freeze | `de0005f8`; 67 зубов, порча мутацией |
+| `contract` | `cowork/cowork-library-open-api/contract` | `Membrana-contract` | freeze | `b047a20e`; 29→31 зуб, порча мутацией |
+| `key-ttl` | `cowork/cowork-library-open-api/key-ttl` | `Membrana-key-ttl` | freeze | `d59409dd`; 80 зубов, порча живого файла |
 
-Integration-ветка: `cowork/cowork-static-registry-read-api/integration` в
-`.worktrees/static-container-meeting-delivery`.
+Все три ветки заведены от одного `BASE_SHA 56423801`; freeze-теги стоят.
+Integration-ветка: `cowork/cowork-library-open-api/integration` в дереве `Membrana-integration`.
+
+## Что НЕ входит
+
+**M4 — границы выемки (квота выдачи на мембрану).** Эпик называет квоту нормой к вводу, а не
+действующей границей: счётчика выдач и предела частоты в стволе нет, предел фактически
+бесконечен. Блок с нерешённым носителем резать нельзя.
+
+## Известный шов — намеренно не согласован
+
+Имя временного поля ключа: M2 назвал рабочее `trackUrl`, лемма M4 записала `temporaryKey?`.
+Назначать до вскрытия запрещено — каждый блок объявляет ожидание односторонне в своём
+`EXPECTATIONS.md`. Сведение — Phase 3.
 
 ## Phase Ledger
 
-| Фаза | Статус | Evidence |
-|------|--------|----------|
-| 0 — Brief + open | **closed** | brief ратифицирован; PR #1827 merged; четыре ветки и три worktree созданы от одного BASE_SHA |
-| 1 — Concept | **closed** | 3/3: `bfb1dcd5`, `099255c0`, `44536a48`; изоляция заявлена всеми командами, блокеров нет |
-| 2 — Isolated build | **closed** | `ready(A) && ready(B) && ready(C)`; три freeze-тега отправлены на exact SHA |
-| 3 — Interface Consilium | **closed** | 3/3 `ACCEPT-WITH-ADAPTERS`; `INTERFACE_CONTRACT.md`; S-C2 не наступил |
-| 4 — Integration | **closed** | после BLOCK на `0852fdad` и CI BLOCK на `d039833e` exact SHA `c8b298c4` получил closure LGTM и `review/teamlead=success`; обязательные CI-проверки зелёные |
-| 5 — Merge + archive | **closed** | PR #1828 merged как `9baa7f61`; target и carrier архивированы; `cowork:close` выполнен 2026-08-09 |
+| Фаза | Состояние | Дата | Артефакт |
+|------|-----------|------|----------|
+| 0 — Brief + open | ✅ закрыта | 2026-09-02 | brief, ACTIVE, 3 ветки от `56423801` |
+| 1 — Concept | ✅ закрыта | 2026-09-02 | три `CONCEPT.md` + первые `EXPECTATIONS.md` |
+| 2 — Isolated build | ✅ закрыта | 2026-09-02 | все три DoD зелёные на стабах; гейт сработал по предикату, дедлайн не понадобился |
+| 3 — Interface Consilium | ✅ закрыта | 2026-09-02 | протокол + `INTERFACE_CONTRACT.md`; шов имени решён, число полей — владельцем |
+| 4 — Integration | ✅ закрыта | 2026-09-02 | 7 адаптеров, smoke 6/6 через все три шва |
+| 5 — Merge + archive | в работе | — | один PR в main, `RETROSPECTIVE.md` написана |
 
-## Isolation Guard
+## Сверено в стволе до нарезки (02.09)
 
-- Блоки не читают чужие ветки и чужие `EXPECTATIONS.md` до Phase 3.
-- Merge/rebase/cherry-pick между block-ветками запрещены до Interface Consilium.
-- Общие wiring-файлы и task registry меняет только coordinator в Phase 4.
-- Стабы живут в файловой зоне блока и не входят в production graph.
-- Нарушение фиксируется как `compromised`, а не скрывается и не выбрасывает блок.
+| Факт | Состояние |
+|------|-----------|
+| `Device.membraneId` | есть, `prisma/schema.prisma:54`, с индексом |
+| `MediaDeviceAccessGuard` | есть, охрана маршрута |
+| OpenAPI-спецификация библиотеки | нет |
+| Генератор ключей треков, `DEFAULT_TRACK_KEY_TTL` | нет нигде в стволе |
 
-### Process breach для первого разбора Phase 3
-
-После сдачи Phase 1 координатор одновременно прочитал три первых `EXPECTATIONS.md`, хотя
-регламент назначает их первое вскрытие только Interface Consilium после Phase 2. Команды не
-читали чужие материалы и не получили сведений о соседях, поэтому их реализации остались
-изолированными; нарушен момент вскрытия у координатора. Факт идёт первым вопросом консилиума и
-обязательной строкой `RETROSPECTIVE.md`.
-
-## Central Task Guard
-
-`static-mmbrn-live-inventory` остаётся отдельной active ops-задачей и не исполняется этим
-коворком. Остальные узлы EPIC остаются в `docs/meeting/static-mmbrn-container/DEPS.json`.
-Проверка: `node scripts/meeting-status.mjs --id static-mmbrn-container`.
-
----
-
-## Закрытие Phase 5 — `cowork:close` 2026-08-09
-
-Спринт **`cowork-static-registry-read-api`** закрыт предикатом, а не памятью человека: контракт и ретроспектива на месте, блокирующих находок нет.
-
-Неблокирующие находки, оставленные явно (закрытие флага из-за них не роняется):
-
-- находок незакрытости нет
-
-**Что этот шаг НЕ утверждает:** качество сведения блоков машине недоступно. Пустой список находок означает «признаков незакрытости не найдено», а не «коворк закрыт хорошо».
+Отсюда: `ownership` строит ось выборки на существующем поле; `contract` и `key-ttl` создаются
+с нуля.

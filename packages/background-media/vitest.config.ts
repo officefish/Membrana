@@ -1,6 +1,30 @@
+import { fileURLToPath } from 'node:url';
+
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+  /**
+   * ПСЕВДОНИМ СОСЕДНЕГО ПАКЕТА — ТОЛЬКО ДЛЯ ТЕСТОВ; продовые импорты идут по имени пакета.
+   *
+   * Вещдок 02.09 (интеграция коворка `cowork-library-open-api`): в рабочем дереве
+   * `node_modules` подключён junction'ом, и `@membrana/media-library-service` разрешается в
+   * КОПИЮ пакета из ДРУГОГО worktree. Новый подмодуль `open-api`, собранный в этой ветке, там
+   * отсутствует — смоук падал с `hasNextPage is not a function`, то есть на резолвере, а не на
+   * предмете проверки. Такой красный лжёт: он выглядит как поломка шва, которого не касался.
+   *
+   * Псевдоним указывает на исходники СВОЕГО дерева. В CI workspace-ссылки настоящие, и
+   * псевдоним лишь совпадает с ними; здесь он чинит анти-паттерн общего `node_modules`.
+   */
+  resolve: {
+    alias: [
+      {
+        find: /^@membrana\/media-library-service$/u,
+        replacement: fileURLToPath(
+          new URL('../services/media-library/src/index.ts', import.meta.url),
+        ),
+      },
+    ],
+  },
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],
