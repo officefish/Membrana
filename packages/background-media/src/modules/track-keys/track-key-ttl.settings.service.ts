@@ -10,7 +10,7 @@
  * снятие срока это движение человека, и неподписанное движение неотличимо от повреждённой
  * записи. Служба отказывает на входе, а не кладёт в базу то, что резолвер потом отвергнет.
  */
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -33,6 +33,35 @@ export class TrackKeyTtlSettingsService {
     @Inject(PrismaService) private readonly prisma: PrismaService,
     private readonly store: PrismaTrackKeyTtlSettingsStore,
   ) {}
+
+  /**
+   * Мембрана прибора — ВЫВЕДЕННАЯ, а не принятая на слово.
+   *
+   * Прибор без мембраны — законное состояние (M1), но операция, требующая владельца, на нём не
+   * выполняется: подставить умолчание значило бы угадать владельца. Отказ несёт `409` — тот же
+   * разряд, что выбран на консилиуме для «есть, но не привязан»: ресурс существует и не закрыт.
+   */
+  private async membraneOfDevice(deviceId: string): Promise<string> {
+    const device = await this.prisma.device.findUnique({
+      where: { id: deviceId },
+      select: { membraneId: true },
+    });
+    const membraneId = typeof device?.membraneId === 'string' ? device.membraneId.trim() : '';
+    if (membraneId === '') {
+      throw new ConflictException('прибор не привязан к мембране — срок назначать некому');
+    }
+    return membraneId;
+  }
+
+  /** Чтение по прибору: кабинет знает прибор, а не мембрану. */
+  async describeForDevice(deviceId: string): Promise<unknown> {
+    return this.describe(await this.membraneOfDevice(deviceId));
+  }
+
+  /** Запись по прибору. Мембрана выводится тем же путём, что и при чтении. */
+  async writeForDevice(deviceId: string, body: TrackKeyTtlWrite): Promise<unknown> {
+    return this.write(await this.membraneOfDevice(deviceId), body);
+  }
 
   /** Что записано и что из этого следует. Действующий срок считает резолвер, не эта служба. */
   async describe(membraneId: string): Promise<unknown> {

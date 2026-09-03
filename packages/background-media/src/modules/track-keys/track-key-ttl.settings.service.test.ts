@@ -18,6 +18,11 @@ function fakePrisma() {
   const rows = new Map<string, Record<string, unknown>>();
   return {
     rows,
+    /** Приборы: у `device-1` мембрана есть, у `device-orphan` — нет (законное состояние M1). */
+    device: {
+      findUnique: async ({ where }: { where: { id: string } }) =>
+        where.id === 'device-orphan' ? { membraneId: null } : { membraneId: `membrane-of-${where.id}` },
+    },
     trackKeyTtlSetting: {
       findUnique: async ({ where }: { where: { membraneId: string } }) => rows.get(where.membraneId) ?? null,
       upsert: async ({
@@ -97,6 +102,25 @@ describe('срок меняется рукой человека', () => {
   it('незнакомый режим — поломка запроса, а не «наверное умолчание»', async () => {
     const { svc } = service();
     await expect(svc.write(M, { mode: 'forever' })).rejects.toThrow(/неизвестный режим/u);
+  });
+
+  it('мембрана ВЫВОДИТСЯ из прибора, а не принимается на слово', async () => {
+    // Принять `membraneId` из запроса значило бы поверить обратившемуся — частный случай
+    // угадывания владельца, который M1 запрещает прямо.
+    const { svc, prisma } = service();
+    await svc.writeForDevice('device-1', { mode: 'seconds', seconds: 600 });
+    expect(prisma.rows.get('membrane-of-device-1')).toMatchObject({ seconds: 600 });
+  });
+
+  it('ПОРЧА: прибор без мембраны — отказ, а не умолчание', async () => {
+    // Подставить `DEFAULT_TRACK_KEY_TTL` здесь значило бы назначить срок несуществующему
+    // владельцу. Операция, требующая владельца, на приборе без мембраны не выполняется (M1).
+    const { svc, prisma } = service();
+    await expect(svc.describeForDevice('device-orphan')).rejects.toThrow(/не привязан/u);
+    await expect(
+      svc.writeForDevice('device-orphan', { mode: 'seconds', seconds: 600 }),
+    ).rejects.toThrow(/не привязан/u);
+    expect(prisma.rows.size, 'запись без владельца не должна появиться').toBe(0);
   });
 
   it('ответ НАЗЫВАЕТ узловую границу вердикта M3, а не выдаёт её за мембранную', async () => {
