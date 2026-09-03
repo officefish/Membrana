@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SessionGuard, type AuthenticatedRequest } from '../../common/guards/session.guard';
 import {
   parseAcquireScenarioEditLeaseDto,
@@ -6,12 +7,14 @@ import {
 } from './scenario-edit-lease.dto';
 import { ScenarioEditLeaseService } from './scenario-edit-lease.service';
 
+@ApiTags('Scenario edit leases')
 @Controller('v1')
 @UseGuards(SessionGuard)
 export class ScenarioEditLeaseController {
   constructor(private readonly leaseService: ScenarioEditLeaseService) {}
 
   @Post('nodes/:nodeId/scenario/edit-lease')
+  @ApiOperation({ summary: 'Acquire a scenario edit lease for a node' })
   acquire(
     @Req() req: AuthenticatedRequest,
     @Param('nodeId') nodeId: string,
@@ -27,6 +30,7 @@ export class ScenarioEditLeaseController {
   }
 
   @Post('nodes/:nodeId/scenario/edit-lease/renew')
+  @ApiOperation({ summary: 'Renew a scenario edit lease for a node' })
   renew(
     @Req() req: AuthenticatedRequest,
     @Param('nodeId') nodeId: string,
@@ -42,6 +46,7 @@ export class ScenarioEditLeaseController {
   }
 
   @Delete('nodes/:nodeId/scenario/edit-lease')
+  @ApiOperation({ summary: 'Release a scenario edit lease for a node' })
   release(@Req() req: AuthenticatedRequest, @Param('nodeId') nodeId: string) {
     return this.leaseService.release(req.authUser!.id, req.authSessionId!, nodeId);
   }

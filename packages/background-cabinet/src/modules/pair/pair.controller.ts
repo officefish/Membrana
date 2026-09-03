@@ -1,20 +1,24 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { PairDto } from './pair.dto';
 import { PairService } from './pair.service';
 import { SessionGuard, type AuthenticatedRequest } from '../../common/guards/session.guard';
 
+@ApiTags('Pairing')
 @Controller('v1')
 export class PairController {
   constructor(private readonly pairService: PairService) {}
 
   @Post('pair')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Pair a field node with the cabinet' })
   pair(@Body() body: PairDto) {
     return this.pairService.pair(body.accessKey, body.clientLabel);
   }
 
   @Get('pair/status')
   @UseGuards(SessionGuard)
+  @ApiOperation({ summary: 'Return pairing status for the current session' })
   pairStatus(@Req() req: AuthenticatedRequest) {
     const token = this.extractBearerToken(req);
     return this.pairService.getPairStatus(req.authUser!.id, token!);

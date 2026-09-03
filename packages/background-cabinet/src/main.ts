@@ -11,6 +11,7 @@ import { RequestIdInterceptor } from './common/interceptors/request-id.intercept
 import { APP_CONFIG } from './config/config.tokens';
 import { loadDotenvFiles } from './config/load-dotenv';
 import type { AppConfig } from './config/env.schema';
+import { isSwaggerEnabled, mountSwagger } from './swagger/setup-swagger';
 
 async function bootstrap(): Promise<void> {
   loadDotenvFiles();
@@ -44,6 +45,12 @@ async function bootstrap(): Promise<void> {
   app.useWebSocketAdapter(new WsAdapter(app));
 
   const port = config.PORT;
+
+  if (isSwaggerEnabled(config)) {
+    mountSwagger(app, config);
+    logger.log('Swagger UI: /docs (OpenAPI JSON: /docs-json)');
+  }
+
   await app.listen(port, '0.0.0.0');
   logger.log(`Listening on http://localhost:${port}`);
 

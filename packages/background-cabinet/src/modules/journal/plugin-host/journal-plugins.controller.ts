@@ -10,6 +10,7 @@
  * нет решённого адреса, значило бы завести тот самый мёртвый регулятор.
  */
 import { Body, Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { SessionGuard } from '../../../common/guards/session.guard';
 import { JournalPluginHostService } from './journal-plugin-host.service';
@@ -25,17 +26,20 @@ export interface SetPluginEnabledDto {
   readonly enabled: boolean;
 }
 
+@ApiTags('Journal plugins')
 @Controller('v1/telemetry/plugins')
 @UseGuards(SessionGuard)
 export class JournalPluginsController {
   constructor(private readonly host: JournalPluginHostService) {}
 
   @Get()
+  @ApiOperation({ summary: 'List journal plugin states' })
   list(): { readonly mountTarget: string; readonly plugins: readonly JournalPluginStateDto[] } {
     return { mountTarget: this.host.mountTargetId, plugins: this.host.getPluginStates() };
   }
 
   @Patch(':pluginId')
+  @ApiOperation({ summary: 'Enable or disable a journal plugin' })
   setEnabled(@Param('pluginId') pluginId: string, @Body() body: SetPluginEnabledDto): { readonly ok: true } {
     this.host.setPluginEnabled(pluginId as PluginId, body.enabled === true);
     return { ok: true };
