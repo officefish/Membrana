@@ -214,7 +214,7 @@ export function KeysPage({ initialNodeId = null }: KeysPageProps) {
             </div>
           </div>
 
-          <TrackKeyTtlCard deviceId={node?.device?.deviceId ?? null} actor={data?.membrane?.id ?? "cabinet"} />
+          <TrackKeyTtlCard deviceId={node?.device?.mediaDeviceId ?? null} actor={data?.membrane?.id ?? "cabinet"} />
 
           <div className="card bg-base-200">
             <div className="card-body">

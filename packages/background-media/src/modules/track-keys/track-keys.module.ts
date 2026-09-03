@@ -8,13 +8,17 @@
 import { Module } from '@nestjs/common';
 
 import { PrismaModule } from '../../prisma/prisma.module';
+import { DevicesModule } from '../devices/devices.module';
 
 import { PrismaTrackKeyStore, PrismaTrackKeyTtlSettingsStore } from './prisma-track-key.store';
 import { TrackKeyTtlController } from './track-key-ttl.controller';
 import { TrackKeyTtlSettingsService } from './track-key-ttl.settings.service';
 
 @Module({
-  imports: [PrismaModule],
+  // Сторож маршрута просит APP_CONFIG, DeviceGuard и NodeKeyService — их отдаёт DevicesModule.
+  // Смоук DI (#2009) судит dist, где esbuild не пишет design:paramtypes: под vitest на
+  // исходниках этого не видно, и зелёный там ничего не удостоверяет.
+  imports: [PrismaModule, DevicesModule],
   controllers: [TrackKeyTtlController],
   providers: [PrismaTrackKeyStore, PrismaTrackKeyTtlSettingsStore, TrackKeyTtlSettingsService],
   exports: [PrismaTrackKeyStore, PrismaTrackKeyTtlSettingsStore],

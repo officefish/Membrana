@@ -9,6 +9,7 @@
 import { Module } from '@nestjs/common';
 
 import { PrismaModule } from '../../prisma/prisma.module';
+import { DevicesModule } from '../devices/devices.module';
 import { SamplesModule } from '../samples/samples.module';
 import { TrackKeysModule } from '../track-keys/track-keys.module';
 import { TrackKeyGenerator } from '../track-keys/track-key.generator';
@@ -22,7 +23,10 @@ import { NoStoreInterceptor } from './no-store.interceptor';
 export const OPEN_API_BASE_URL = 'OPEN_API_BASE_URL';
 
 @Module({
-  imports: [PrismaModule, SamplesModule, TrackKeysModule],
+  // DevicesModule отдаёт MediaDeviceAccessGuard и всё, что он просит (APP_CONFIG, DeviceGuard,
+  // NodeKeyService). Импортируем ЕГО, а не копируем провайдеров: копия дала бы второй экземпляр
+  // сторожа со своим состоянием — «одна дорога на три ручки» перестала бы быть одной.
+  imports: [PrismaModule, SamplesModule, TrackKeysModule, DevicesModule],
   controllers: [LibraryOpenApiController],
   providers: [
     LibraryOpenApiService,
