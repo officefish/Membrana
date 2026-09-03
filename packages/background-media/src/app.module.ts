@@ -9,6 +9,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { CollectionsModule } from './modules/collections/collections.module';
 import { DevicesModule } from './modules/devices/devices.module';
 import { LibraryOpenApiModule } from './modules/library-open-api/library-open-api.module';
+import { TrackKeysModule } from './modules/track-keys/track-keys.module';
 import { SamplesModule } from './modules/samples/samples.module';
 import { BufferCleanupModule } from './modules/buffer-cleanup/buffer-cleanup.module';
 import { TrendsTemplatesModule } from './modules/trends-templates/trends-templates.module';
@@ -64,6 +65,8 @@ const testImports =
     SamplesModule,
     // Дверь открытого API библиотеки (#2271). Носитель, которого не было в резке коворка.
     LibraryOpenApiModule,
+    // Мембранный выключатель срока ключей (#2271): пишет кабинет, читает media.
+    TrackKeysModule,
     BufferCleanupModule,
     TrendsTemplatesModule,
     DeviceScenariosModule,

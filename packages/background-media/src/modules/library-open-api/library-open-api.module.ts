@@ -10,6 +10,7 @@ import { Module } from '@nestjs/common';
 
 import { PrismaModule } from '../../prisma/prisma.module';
 import { SamplesModule } from '../samples/samples.module';
+import { TrackKeysModule } from '../track-keys/track-keys.module';
 import { TrackKeyGenerator } from '../track-keys/track-key.generator';
 import { PrismaTrackKeyStore, PrismaTrackKeyTtlSettingsStore } from '../track-keys/prisma-track-key.store';
 
@@ -21,13 +22,11 @@ import { NoStoreInterceptor } from './no-store.interceptor';
 export const OPEN_API_BASE_URL = 'OPEN_API_BASE_URL';
 
 @Module({
-  imports: [PrismaModule, SamplesModule],
+  imports: [PrismaModule, SamplesModule, TrackKeysModule],
   controllers: [LibraryOpenApiController],
   providers: [
     LibraryOpenApiService,
     NoStoreInterceptor,
-    PrismaTrackKeyStore,
-    PrismaTrackKeyTtlSettingsStore,
     {
       provide: OPEN_API_BASE_URL,
       useFactory: () => process.env.OPEN_API_BASE_URL ?? 'http://localhost:3000/v1/open/tracks',
