@@ -10,7 +10,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { accessForDevice, statusForAccess } from './open-api-access';
+import { accessForDevice, accessForNested, statusForAccess } from './open-api-access';
 
 const OWNER = 'membrane-owner';
 const STRANGER = 'membrane-stranger';
@@ -67,6 +67,42 @@ describe('порядок: существование → владение', () =
     for (const caller of callers) {
       const verdict = accessForDevice(null, caller);
       expect(verdict, `caller=${JSON.stringify(caller)}`).toBe('absent');
+    }
+  });
+});
+
+describe('вложенный ресурс: набор внутри прибора', () => {
+  it('ПОРЧА РЕВЬЮ: несуществующий набор — 404, а НЕ пустой список', () => {
+    // Настоящая дыра, найденная ревью #2276: список проб шёл сразу в count/findMany, и
+    // отсутствующий набор давал 200 с items: []. Документ ручки обещал 404 — два объявления
+    // одного факта разошлись, и разошлись в УСПОКАИВАЮЩУЮ сторону: партнёр с опечаткой читал
+    // «набор пуст» вместо «набора нет» и не знал, что ошибся.
+    expect(accessForNested('allow', false)).toBe('absent');
+    expect(statusForAccess(accessForNested('allow', false) as 'absent')).toBe(404);
+  });
+
+  it('набор есть и прибор свой — allow', () => {
+    expect(accessForNested('allow', true)).toBe('allow');
+  });
+
+  it('ЧУЖОЙ ПРИБОР НЕ РАЗБАЛТЫВАЕТ СОДЕРЖИМОЕ: 403 независимо от того, есть ли набор', () => {
+    // Если бы существование набора проверялось раньше владения прибором, ответы `404` и `403`
+    // на чужом приборе начали бы РАЗЛИЧАТЬСЯ — то есть рассказывать, какие наборы там лежат.
+    expect(accessForNested('forbidden', true)).toBe('forbidden');
+    expect(accessForNested('forbidden', false)).toBe('forbidden');
+  });
+
+  it('несуществующий прибор остаётся 404 при любом наборе', () => {
+    expect(accessForNested('absent', true)).toBe('absent');
+    expect(accessForNested('absent', false)).toBe('absent');
+  });
+
+  it('ИНВАРИАНТ: вердикт прибора НИКОГДА не смягчается существованием вложенного', () => {
+    // Свойство перебором: наличие набора не может превратить отказ в допуск.
+    for (const device of ['absent', 'forbidden'] as const) {
+      for (const exists of [true, false]) {
+        expect(accessForNested(device, exists), `${device}/${exists}`).not.toBe('allow');
+      }
     }
   });
 });

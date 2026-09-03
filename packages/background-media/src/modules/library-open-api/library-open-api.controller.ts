@@ -87,7 +87,9 @@ export class LibraryOpenApiController {
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ): Promise<unknown> {
-    const access = await this.service.accessTo(deviceId, caller ?? null);
+    // Набор проверяется ТОЙ ЖЕ дорогой: прибор → существование набора. Разложить проверку
+    // по ручкам значило бы завести копии правила разведения 404/403.
+    const access = await this.service.accessToCollection(deviceId, caller ?? null, collectionId);
     refuseUnless(access);
     return this.service.listSamples(deviceId, collectionId, page, limit);
   }

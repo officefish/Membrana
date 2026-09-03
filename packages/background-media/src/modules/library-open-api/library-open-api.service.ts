@@ -17,7 +17,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { SamplesService } from '../samples/samples.service';
 import { TrackKeyGenerator, buildTrackUrl } from '../track-keys/track-key.generator';
 
-import { accessForDevice, type OpenApiAccess } from './open-api-access';
+import { accessForDevice, accessForNested, type OpenApiAccess } from './open-api-access';
 
 /** Потолок страницы — факт входа заседания, а не решение двери. */
 const MAX_LIMIT = 100;
@@ -52,6 +52,26 @@ export class LibraryOpenApiService {
       select: { membraneId: true },
     });
     return accessForDevice(device, callerMembraneId);
+  }
+
+  /**
+   * Решение по набору внутри прибора: сперва прибор, потом существование набора.
+   *
+   * Возвращает исход, а не бросает: отказ выносит контроллер ОДНОЙ дорогой (`refuseUnless`).
+   * Бросать здесь значило бы завести вторую дорогу отказа рядом с первой.
+   */
+  async accessToCollection(
+    deviceId: string,
+    callerMembraneId: string | null,
+    collectionId: string,
+  ): Promise<OpenApiAccess> {
+    const device = await this.accessTo(deviceId, callerMembraneId);
+    if (device !== 'allow') return accessForNested(device, false);
+    const found = await this.prisma.collection.findFirst({
+      where: { id: collectionId, deviceId },
+      select: { id: true },
+    });
+    return accessForNested(device, found !== null);
   }
 
   /** Наборы прибора в наружной обёртке: `items`/`total`/`page`/`limit`, без флага полноты. */
