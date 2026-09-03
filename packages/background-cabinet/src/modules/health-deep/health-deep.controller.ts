@@ -1,4 +1,5 @@
 import { Controller, Get, Req } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { FastifyRequest } from 'fastify';
 
 import { HealthDeepService } from './health-deep.service';
@@ -17,11 +18,13 @@ import {
  * broken) номер происшествия. `/health` (liveness) НЕ трогается — оркестратор
  * живёт на нём, deep зовут руки и сборщики, не чаще раза в минуту.
  */
+@ApiTags('Health')
 @Controller()
 export class HealthDeepController {
   constructor(private readonly service: HealthDeepService) {}
 
   @Get('health/deep')
+  @ApiOperation({ summary: 'Return deep cabinet health numbers and thresholds' })
   async deep(@Req() req: FastifyRequest): Promise<Record<string, unknown>> {
     const requestId =
       typeof req.headers['x-request-id'] === 'string' ? req.headers['x-request-id'] : '';

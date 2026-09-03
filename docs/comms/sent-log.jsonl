@@ -81,3 +81,5 @@
 {"ts":"2026-08-31T09:53:03.962Z","kind":"swallow","file":"docs/comms/drafts/swallow-day-2026-08-31.md","sha256":"c400f2ec4f07bc0dfbb94c07d821d24d56f14181b7b0603b0db34205216e8746","sent":true,"office_response":{"sent":true}}
 {"ts":"2026-08-31T17:22:58.950Z","kind":"swallow","file":"docs/comms/drafts/swallow-evening-2026-08-31.md","sha256":"373f797df594d8f7d9d60b3267020faafe5a8008810be4a7f14488dea655e704","sent":true,"office_response":{"sent":true}}
 {"ts":"2026-09-01T15:44:28.402Z","kind":"swallow","file":"docs/comms/drafts/swallow-evening-2026-09-01.md","sha256":"d99c38bb325df529c8925f43c170f3933de7e22aed95f5cf8147410b602f1943","sent":true,"office_response":{"sent":true}}
+{"ts":"2026-09-02T11:51:18.640Z","kind":"swallow","file":"docs/comms/drafts/swallow-day-2026-09-02.md","sha256":"a9562a3838bff1e3506948f836f87df47137bc0db1db1348ea7b1fb02fc72d58","sent":true,"office_response":{"sent":true}}
+{"ts":"2026-09-02T18:32:52.469Z","kind":"swallow","file":"docs/comms/drafts/swallow-evening-2026-09-02.md","sha256":"4f633184c1ebccfb3b9cae7dfd47329822518ae0ae5099ad6f6ae9615a87725c","sent":true,"office_response":{"sent":true}}

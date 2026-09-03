@@ -14,6 +14,9 @@ cabinet.membrana.space {
 	handle /v1/* {
 		reverse_proxy 127.0.0.1:3020
 	}
+	handle /docs* {
+		reverse_proxy 127.0.0.1:3020
+	}
 	handle {
 		reverse_proxy 127.0.0.1:8080
 	}

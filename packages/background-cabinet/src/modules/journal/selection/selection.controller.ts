@@ -8,6 +8,7 @@
  * открывает выборку по адресу, а не собирает её заново.
  */
 import { BadRequestException, Body, Controller, Get, Injectable, NotFoundException, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { PrismaService } from '../../../prisma/prisma.service';
 
@@ -33,6 +34,7 @@ export class MembraneResolver {
   }
 }
 
+@ApiTags('Chart list selections')
 @Controller('v1/telemetry/chart-list')
 @UseGuards(SessionGuard)
 export class ChartListSelectionController {
@@ -50,6 +52,7 @@ export class ChartListSelectionController {
    * красную плашку без причины. Ошибкой запроса остаётся только негодная форма тела.
    */
   @Post()
+  @ApiOperation({ summary: 'Generate a chart-list selection from journal entries' })
   async generate(
     @Req() req: AuthenticatedRequest,
     @Body() body: { entryIds?: unknown; volume?: unknown; criterion?: unknown },
@@ -72,6 +75,7 @@ export class ChartListSelectionController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'List recent chart-list selections' })
   async listRecent(
     @Req() req: AuthenticatedRequest,
     @Query('limit') limit?: string,
@@ -83,6 +87,7 @@ export class ChartListSelectionController {
   }
 
   @Get(':selectionId')
+  @ApiOperation({ summary: 'Open a stored chart-list selection' })
   async open(
     @Req() req: AuthenticatedRequest,
     @Param('selectionId') selectionId: string,
