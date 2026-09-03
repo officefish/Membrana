@@ -25,6 +25,7 @@ API_INTERNAL_TOKEN=${api_token}
 CABINET_API_PORT=3020
 CABINET_WEB_PORT=8080
 LOG_LEVEL=info
+SWAGGER_ENABLED=true
 SESSION_TTL_HOURS=168
 CABINET_CORS_ORIGINS=https://cabinet.membrana.space
 CLIENT_CORS_ORIGINS=http://localhost:5173,http://localhost:5174,http://localhost:4173
