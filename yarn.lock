@@ -2194,6 +2194,7 @@ __metadata:
     "@nestjs/core": "npm:^11.0.0"
     "@nestjs/platform-fastify": "npm:^11.0.0"
     "@nestjs/platform-ws": "npm:^11.0.0"
+    "@nestjs/swagger": "npm:^11.0.0"
     "@nestjs/testing": "npm:^11.0.0"
     "@nestjs/websockets": "npm:^11.0.0"
     "@prisma/client": "npm:^6.1.0"

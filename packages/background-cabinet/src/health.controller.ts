@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { readFileSync } from 'node:fs';
 import { getPackageJsonPath } from './lib/paths';
 
@@ -28,9 +29,11 @@ function readVersion(): string {
   return cachedVersion;
 }
 
+@ApiTags('Health')
 @Controller()
 export class HealthController {
   @Get('health')
+  @ApiOperation({ summary: 'Server health check' })
   async health(): Promise<{
     status: string;
     version: string;

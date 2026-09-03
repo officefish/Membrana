@@ -23,6 +23,7 @@
  * сознательно. Менять его форму — значит менять контракт клиента: через ADR.
  */
 import { BadRequestException, Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { SessionGuard, type AuthenticatedRequest } from '../../common/guards/session.guard';
 import { MembraneService } from '../membrane/membrane.service';
@@ -48,6 +49,7 @@ function clientIpOf(req: AuthenticatedRequest): string | null {
   return ip || null;
 }
 
+@ApiTags('Tariffs')
 @Controller('v1')
 @UseGuards(SessionGuard)
 export class TariffController {
@@ -58,6 +60,7 @@ export class TariffController {
   ) {}
 
   @Post('membranes/me/tariff/promo-redemptions')
+  @ApiOperation({ summary: 'Redeem a tariff promo code for the authenticated user membrane' })
   async redeemPromo(
     @Req() req: AuthenticatedRequest,
     @Body() body: RedeemPromoDto,
