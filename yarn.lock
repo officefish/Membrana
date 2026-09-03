@@ -2187,6 +2187,7 @@ __metadata:
   resolution: "@membrana/background-cabinet@workspace:packages/background-cabinet"
   dependencies:
     "@fastify/cors": "npm:^10.0.0"
+    "@fastify/static": "npm:^8.0.0"
     "@membrana/core": "npm:*"
     "@membrana/plugin-contracts": "npm:*"
     "@membrana/plugin-handlers": "npm:*"
