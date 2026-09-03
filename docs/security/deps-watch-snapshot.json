@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-02",
+  "date": "2026-09-03",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -59,10 +59,10 @@
     },
     {
       "pkg": "@xmldom/xmldom",
-      "id": "@xmldom/xmldom (deprecation)",
+      "id": "1158517",
       "severity": "moderate",
-      "issue": "this version has critical issues, please update to the latest version",
-      "url": ""
+      "issue": "xmldom: XML fragment injection via invalid EntityReference.nodeName during requireWellFormed serialization",
+      "url": "https://github.com/advisories/GHSA-6gmq-8vp8-gcm6"
     },
     {
       "pkg": "adm-zip",
@@ -261,6 +261,76 @@
       "url": "https://github.com/advisories/GHSA-7p8r-x3mc-p8w7"
     },
     {
+      "pkg": "fast-uri",
+      "id": "1158520",
+      "severity": "high",
+      "issue": "fast-uri vulnerable to host confusion via skipped IDN canonicalization on scheme-relative references",
+      "url": "https://github.com/advisories/GHSA-5jgf-p345-68v8"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1158521",
+      "severity": "high",
+      "issue": "fast-uri vulnerable to host confusion via skipped IDN canonicalization on scheme-relative references",
+      "url": "https://github.com/advisories/GHSA-5jgf-p345-68v8"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1158523",
+      "severity": "high",
+      "issue": "fast-uri vulnerable to server-side request forgery via malformed IPv6 normalization",
+      "url": "https://github.com/advisories/GHSA-f65p-4m7j-42xc"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1158524",
+      "severity": "high",
+      "issue": "fast-uri vulnerable to server-side request forgery via malformed IPv6 normalization",
+      "url": "https://github.com/advisories/GHSA-f65p-4m7j-42xc"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1158526",
+      "severity": "high",
+      "issue": "fast-uri vulnerable to server-side request forgery via repeated hostname percent-decoding",
+      "url": "https://github.com/advisories/GHSA-fph4-wmhf-6fwf"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1158527",
+      "severity": "high",
+      "issue": "fast-uri vulnerable to server-side request forgery via repeated hostname percent-decoding",
+      "url": "https://github.com/advisories/GHSA-fph4-wmhf-6fwf"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1158529",
+      "severity": "high",
+      "issue": "fast-uri vulnerable to host confusion via percent-encoded scheme normalization",
+      "url": "https://github.com/advisories/GHSA-jqff-g426-hqxp"
+    },
+    {
+      "pkg": "fast-uri",
+      "id": "1158530",
+      "severity": "high",
+      "issue": "fast-uri vulnerable to host confusion via percent-encoded scheme normalization",
+      "url": "https://github.com/advisories/GHSA-jqff-g426-hqxp"
+    },
+    {
+      "pkg": "fastify",
+      "id": "1158514",
+      "severity": "moderate",
+      "issue": "fastify vulnerable to schema validation bypass via root primitive coercion mismatch",
+      "url": "https://github.com/advisories/GHSA-w2qp-rph6-63g4"
+    },
+    {
+      "pkg": "fastify",
+      "id": "1158519",
+      "severity": "moderate",
+      "issue": "fastify vulnerable to X-Forwarded-* spoofing under trustProxy hop-count",
+      "url": "https://github.com/advisories/GHSA-3m5p-2c4r-xxw2"
+    },
+    {
       "pkg": "file-type",
       "id": "1114301",
       "severity": "moderate",
@@ -427,6 +497,20 @@
       "severity": "moderate",
       "issue": "qs has a remotely triggerable DoS: qs.stringify crashes with TypeError on null/undefined entries in comma-format arrays when encodeValuesOnly is set",
       "url": "https://github.com/advisories/GHSA-q8mj-m7cp-5q26"
+    },
+    {
+      "pkg": "qs",
+      "id": "1158506",
+      "severity": "moderate",
+      "issue": "qs array-limit bypass via bracket-key comma parsing",
+      "url": "https://github.com/advisories/GHSA-x5fp-wj9c-mxmx"
+    },
+    {
+      "pkg": "qs",
+      "id": "1158507",
+      "severity": "moderate",
+      "issue": "qs: Denial of Service via Attacker Controlled isBuffer",
+      "url": "https://github.com/advisories/GHSA-4mjr-xmp4-gh2g"
     },
     {
       "pkg": "rimraf",
