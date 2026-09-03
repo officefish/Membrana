@@ -1,123 +1,32 @@
-<!-- Сгенерировано: 2026-09-01T14:07:06.365Z (yarn code-review; daily, llm-anthropic) -->
+<!-- Сгенерировано: 2026-09-02T16:26:40.178Z (yarn code-review; daily, llm-deepseek) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: caf5208d93874268eb7477f8448c2f3a1a262994^..9f49a1c02466924fc03675afce2554bb1c41f624 (4 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): caf5208d #2254 (494), f70b9064 (1559), 9f49a1c0 (628)
+> Период: 564238012474b93ad6fa7ade16ae48cc28041d0d^..47d731e941bf506916883bb48c01cf7ec8b43095 (4 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 47d731e9 (672)
 
 ---
 
-Tier: T2
+Tier: T1
 
----
+[vesnin (ведущий, Архитектор)]: Скоуп диффа — ritual/tooling (docs + тесты, 1 runtime-скрипт в 2 PR). Бестиарий чист: B1 (инструкция-в-хвосте) не применим — контекст входа не раздувается; B6/B8 (молчаливый зелёный / немой носитель) не обнаружены — `normalizePrShipCliExitCode` fail-closed, новые артефакты объявлены в trail/evidence. Архитектурно strengthens границу `pr:ship`: ноль кода возврата теперь требует явного маркера `confirmedPrShipSuccess()`. **Пропуск** для всего скоупа.
 
-**Ведущий ревью: Vesnin (Архитектор)**
-*(основание: 25/30 путей диффа — архитектурный скоуп; назначен системой)*
+[Teamlead]: Tier T1. Один runtime-скрипт (`scripts/pr-ship.mjs`), 4 коммита. PR size: #2262 (~258) OK, #2263 (~40) OK, #2264+fix (~60) OK, `47d731e9` (672) — **oversized**, помечен отдельным review-гейтом. Границы соблюдены. Красные тесты (`background-media`, `client`) — известные блокеры из MAIN_DAY_ISSUE (P0), требуют диагноза до merge. Вердикт: **LGTM** на tooling-контур при условии отдельного разбора `47d731e9`.
 
-Бестиарий — проход по диффу 57ae24ea:
-- B1 Инструкция-в-хвосте — не обнаружен.
-- B2 Файл-перекрёсток — `packages/services/media-library/src/index.ts` один реэкспорт, правка узкая; не обнаружен.
-- B3 DoD-на-механику — зубы `sample-library-layout.test.ts` теперь проверяют правило, а не написание; **снят** (был дефектом, исправлен в этом же диффе — P0-находка закрыта внутри коммита).
-- B8 Немой носитель — `REPO` объявлена в `github-issues-audit.mjs`, она же источник для `repo-links.mjs`; носитель объявлен.
-- B9 Проза — комментарии в `buffer-cleanup.ts` длинные, но описывают уже существующий и тестируемый предикат; носитель есть.
-- Остальные звери — не обнаружены.
+[Структурщик]: C1: границы `@membrana/*` не нарушены, дифф только в `scripts/` и `docs/`. C7: тесты в `pr-ship.test.mjs` усилены — зуб #2247 теперь проверяет **поведение** (спавн копии скрипта с порчей), а не только написание; replace текстовых проверок на regex терпим к форматированию. Fail-closed логика в `main()` корректна: любой ранний возврат без маркера успеха становится ненулевым (undefined/null/0 → 1). C4: изменения изолированы, побочных сервисных эффектов нет. Линт: 1 warning P2 (`titleOf` в CabinetSampleDuplicatesPanel) — не блокирует, вынесен в санитарный список дня.
 
-**Вердикт ведущего: пропуск** — блокеров по бестиарию нет.
-
----
-
-```text
-[Vesnin (Архитектор)]:
-Единственный разработанный коммит в полном диффе — 57ae24ea (~213 строк, T2 по
-затронутым пакетам: media-library-service, apps/cabinet, apps/client, scripts/).
-Три oversized-коммита (caf5208d, f70b9064, 9f49a1c0) не развёрнуты — их содержимое
-сегодня не ревьюируется; каждый требует отдельного прохода до merge.
-Архитектурная находка диффа: предикат isReadOnlyCollection вынесен в ядро
-(packages/services/media-library) — граница пакетов соблюдена, оба «дома»
-(cabinet/client) теперь зовут одно правило, C1 чист.
-Зуб близнецов (sample-library-layout.test.ts) был дефектным и исправлен в том же
-коммите — это допустимо: исправление и носитель приходят одним атомом. ADR не нужен:
-правило тривиальное, не кросс-сервисное.
-P1 (не блокирует сегодня): repo-links.mjs содержит regex ISSUE_LINK без флага `s`
-и с глобальным `g` — при многократном вызове одного инстанса модуля состояние
-lastIndex может застыть (известная ловушка `/g` в модульном скоупе).
-Зубы покрывают это косвенно через assert.equal(rewritten.length, N), но прямого
-теста на второй вызов с тем же инстансом нет.
-```
-
-```text
-[Teamlead (Tarasov)]:
-Tier T2 (media-library core + два app-дома + scripts/).
-PR size: коммит 57ae24ea — OK (~213 строк); три oversized не ревьюировались
-(caf5208d 494 / f70b9064 1559 / 9f49a1c0 628) — отдельные прогоны обязательны.
-C8: console.error в _main-day-issue.mjs — намеренный и задокументированный
-(«называется числом, не молчит»); не нарушение.
-C9: секретов в диффе нет; REPO — публичное имя репозитория.
-C10: catalog/docs sync не затронут.
-Красные тесты: @membrana/media-library-service и @membrana/background-cabinet
-упали с exit(1) — это P0 блокер для утреннего merge; нужен диагноз до старта дня.
-Риск завтра: три непрочитанных oversized висят над стволом; пока они не пройдут
-ревью — ствол не чист.
-Утро:
-  1. yarn turbo run test --filter=@membrana/media-library-service — диагноз красного
-  2. yarn turbo run test --filter=@membrana/background-cabinet — диагноз красного
-  3. yarn turbo run typecheck --filter=@membrana/media-library-service --filter=@membrana/client --filter=@membrana/cabinet
-  4. Прочитать DAILY_CODE_REVIEW.md (этот документ) перед стартом
-  5. Отдельные ревью: caf5208d, f70b9064, 9f49a1c0 — по одному, до merge
-```
-
-```text
-[Структурщик (Ozhegov)]:
-C1: isReadOnlyCollection принимает Pick<Collection, 'kind'> — контракт минимальный
-и правильный; хуки не тянут лишнего из ядра.
-C3: MembranaRegistry не затронут — «—».
-C4: useCabinetSampleLibrary.ts — хук тонкий, бизнес-правило ушло в сервис; норма.
-C7: зубы перенесены с «написания» на «правило» — тест теперь проверяет предмет,
-а не строку. Граничный кейс: null/undefined в isReadOnlyCollection — покрыт через
-Pick | null | undefined в сигнатуре; возвращает false через optional chain.
-P2 (opportunity): в SampleLibraryModule.tsx импорт isReadOnlyCollection стоит рядом
-с BUFFER_COLLECTION_ID — порядок imports нарушает алфавитный sort (если линтер
-требует); не блокирует.
-```
-
-```text
-[Математик (Dynin)]:
-C6: isReadOnlyCollection — чистая функция; нет побочных эффектов, нет NaN-риска.
-normalizeRepoLinks — чистая по входу/выходу; regex /g в модульном скоупе —
-это P1, уже зафиксирован Vesnin: при повторном вызове с тем же regex-объектом
-lastIndex не сбрасывается, если вызов прерван. Минимальный fix: переносить ISSUE_LINK
-внутрь функции или вызывать .exec()-цикл с явным reset. Зубы не ловят этот кейс
-явно — добавить тест «два вызова normalizeRepoLinks с одним текстом дают одинаковый
-результат».
-```
-
-```text
-[Музыкант (Kuryokhin)]:
-Web Audio не затронут — «—».
-```
-
-```text
-[Верстальщик (Rodchenko)]:
-UI не затронут — «—».
-```
-
----
-
-**Итоговый артефакт:** `docs/DAILY_CODE_REVIEW.md`
+**Итоговый артефакт:** `docs/DAILY_CODE_REVIEW.md` (вечер 2026-09-02); опора на diff #2262/#2263/#2264 + факт MERGED.
 
 **Definition of Done (утро):**
-```bash
-yarn turbo run test --filter=@membrana/media-library-service   # диагноз P0
-yarn turbo run test --filter=@membrana/background-cabinet      # диагноз P0
-yarn turbo run typecheck \
-  --filter=@membrana/media-library-service \
-  --filter=@membrana/client \
-  --filter=@membrana/cabinet
-# После зелёного — отдельные ревью трёх oversized-коммитов
-```
+1. `yarn turbo run typecheck test --filter=@membrana/media-library-service --filter=@membrana/background-cabinet` — диагноз красных, issue с вердиктом «помеха vs pre-existing» (не «ещё раз прогнать»).
+2. Классифицировать `#2256` (`background-media#test`).
+3. `yarn lint` — 42/42 успешно (1 warning P2 принять к сведению).
+4. Отдельный review-проход `47d731e9` (672 строки, автозабор ритуала).
 
 **Риски:**
-- **P0** — `@membrana/media-library-service` и `@membrana/background-cabinet` тесты красные; причина неизвестна из контекста; merge заблокирован до диагноза.
-- **P1** — regex ISSUE_LINK с флагом `/g` в модульном скоупе `repo-links.mjs`; второй вызов может дать неверный результат; fix и зуб до merge ветки.
-- **P1** — три oversized-коммита (f70b9064 1559 строк, 9f49a1c0 628, caf5208d 494) не прошли ревью; отдельный прогон для каждого.
+- **P0:** Красные тесты в `background-media` и `client` — блокируют merge до диагноза.
+- **P1:** Oversized `47d731e9` (672) не развёрнут — требуется отдельный review-гейт.
+- **P2:** Warning `titleOf` в `CabinetSampleDuplicatesPanel`; дублирование `readGitRevision` (из 29.08, opportunity).
+
+**Вердикт:** **LGTM** (tooling-контур); product-merge заблокирован до снятия P0/P1.
