@@ -1,3 +1,12 @@
+<!--
+  archive-role: archive-snapshot
+  archive-day: 2026-09-03
+  archived-at: 2026-09-03T16:04:32.873Z
+  source: docs/DAY_PLAN.md
+  canonical: docs/DAY_PLAN.md (перезаписывается yarn plan:day / standup / main-day-issue)
+  Не использовать как основной документ дня — побочный снимок для ретроспективы и анализа.
+-->
+
 <!-- angelina {"author":"llm","guard":"angelina","readAt":{}} -->
 <!-- canon-digest: 792bf47b1d1314ef751fd10d7a49d98fe763abf887065c45127d96389ec27cc3 · signedAt: 2026-09-03T10:46:27.360Z -->
 # План дня — 2026-09-03

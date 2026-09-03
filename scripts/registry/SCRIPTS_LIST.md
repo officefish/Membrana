@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-02 |
-| Head SHA | f8bda0bbd9f9f7feeb1f2cd0165c73e8818e5463 |
+| Date | 2026-09-03 |
+| Head SHA | aa153ca6034388239e5611c787e36ecb4d9a05ce |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -17,9 +17,9 @@
 | Metric | Count |
 |--------|------:|
 | Code files under `scripts/` | 1206 |
-| Yarn scripts (package.json) | 462 |
+| Yarn scripts (package.json) | 463 |
 | Yarn → `scripts/` | 409 |
-| Yarn без пути `scripts/` | 53 |
+| Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
 | Code files without yarn ref | 879 |
 
@@ -2536,7 +2536,7 @@
 - `scripts/worktrees-align.mjs`
 - `scripts/worktrees-align.test.mjs`
 
-## Yarn without scripts/ path (53)
+## Yarn without scripts/ path (54)
 
 - `build`
 - `cabinet:app:dev`
@@ -2551,6 +2551,7 @@
 - `cabinet:migrate`
 - `cabinet:migrate:dev`
 - `cabinet:seed`
+- `cabinet:verify-swagger`
 - `clean`
 - `detectors:build`
 - `dev`
