@@ -14,7 +14,8 @@
     "noPropertyAccessFromIndexSignature": false
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"],
+  "//stubs": "Каталоги stubs/ — исполняемые замены соседей на время изоляции коворка. Регламент требует их не мёржить; это исключение делает требование ФАКТОМ СБОРКИ, а не обещанием: до него стабы компилировались в dist наравне с боевым кодом. Вторую половину стережёт зуб stubs-not-in-production.test.ts — что их не импортирует боевой код.",
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts", "**/stubs/**"],
   "references": [
     { "path": "../plugin-contracts" }
   ]
