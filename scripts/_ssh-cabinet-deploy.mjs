@@ -46,6 +46,12 @@ if [ ! -f /etc/membrana/cabinet.env ]; then
   ./deploy/generate-cabinet-env.sh /etc/membrana/cabinet.env | tee /root/cabinet-bootstrap-once.txt
 fi
 
+if grep -q '^SWAGGER_ENABLED=' /etc/membrana/cabinet.env 2>/dev/null; then
+  sed -i 's|^SWAGGER_ENABLED=.*|SWAGGER_ENABLED=true|' /etc/membrana/cabinet.env
+else
+  printf '\\nSWAGGER_ENABLED=true\\n' >> /etc/membrana/cabinet.env
+fi
+
 ln -sf /etc/membrana/cabinet.env packages/background-cabinet/.env.docker
 chmod +x deploy/cabinet-stack.sh
 
