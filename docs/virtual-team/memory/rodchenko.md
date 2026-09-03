@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14359/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 336 (причины в op-log) -->
+Записей: 49 · бюджет 14340/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 337 (причины в op-log) -->
+
+### 2026-09-03 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** UI-контракт `DESIGN.md` в дне не затрагивался — чисто API/серверная работа. `DAILY_CODE_REVIEW` корректен. **Итоги дня:** Мой вклад — UI-блок срока TTL в кабинете: `apps/cabinet/src/components/keys/TrackKeyTtlCard.tsx` + `KeysPage.tsx` + api […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
 
 ### 2026-09-02 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Я смотрю на это с витрины будущего M5: пользователь настраивает плагин и видит список «на что реагирует». Если словарь закрытый и типизированный — витрина может показать человекочитаемые метки без дополнительной таблицы переводов. Если строки произвольные — витрина показывает […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m4-triggers-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m5-showcase
-
-> Поддерживаю закрытый словарь — с оговоркой. Четыре формы покрывают Т2 полностью: сортировка по громкости читается как `row`, пиковые зоны — `zone-map`, аномалии — `row` или `table`, тренды — `histogram`. Но мне важно, чтобы `displayForm` был обязательным полем […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m5-showcase-2026-08-17.md#reply-1`

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14397/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 340 (причины в op-log) -->
+Записей: 49 · бюджет 14383/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 341 (причины в op-log) -->
+
+### 2026-09-03 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** Документы дня не касаются audio-engine / Web Audio / 48 kHz path — мой контур не затронут. `DAILY_CODE_REVIEW` честно фиксирует отсутствие аудио-вклада. **Итоги дня:** Media open-API (#2271/#2276) — дверь библиотеки и ключ с TTL; blob-ручка […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
 
 ### 2026-09-02 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Начну с практического вопроса, который задаёт тон всему остальному. Плагин — это слушатель события. Мне важно понять: событие — это нота в партитуре или сигнал на шине? Если нота — у неё есть высота (имя) и длительность (момент). Если сигнал — у неё есть источник и потребитель. […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m4-triggers-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · team-evening-feedback
-
-> Kuryokhin. Оценка артефактов: артефакты дня к аудио-контуру не обращаются — эшелон 0 (DSP `DRONE_TIGHT` 95%/30%) в потолке, эшелон 2 (yamnet) в prod-бенчмарке; ни утренние документы, ни собрание сегодня не касались Web Audio, 24bit/48kHz, IoT. Итоги дня: по моей зоне — тишина. […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-17.md#reply-1`
