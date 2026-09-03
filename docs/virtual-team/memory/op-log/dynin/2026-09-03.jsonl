@@ -1,1 +1,5 @@
 {"ts":"2026-09-03T10:46:03.383Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-09-03T16:54:34.719Z","persona":"dynin","verb":"write_operational","ref":"dynin-2026-09-03-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-03T16:54:34.719Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-17-server-plugin-foundation-m4-triggers","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-03T16:54:34.719Z","persona":"dynin","verb":"transfer_to_archive","ref":"dynin-2026-08-16-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-03T16:54:34.719Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

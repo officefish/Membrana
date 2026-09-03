@@ -7,10 +7,17 @@
   "frozenDigest": "b38a94401d1b7ab4a8a3dd5882bc7796f83520dc5b3fe8c1430edeef4d5daf6d",
   "magistral": "library-open-api-door",
   "swallow": {
-    "draftDigest": "15e169b0de315592a080755a87c2b247e488caf6d867a087ddab218e83ccca05",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-09-03.md",
+    "draftDigest": "85d1c0cbd4344c8a294420c8c51329f737d0fe4d6f696ea8843dad24bffd2d9a",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-03.md",
     "ownerAck": true,
-    "day": "2026-09-03"
+    "day": "2026-09-03",
+    "claimsProbe": {
+      "verdict": "hard",
+      "protocol": "docs/seanses/team-evening-feedback-2026-09-03.md",
+      "sha": "0acbac156b16",
+      "at": "2026-09-03T16:11:36.977Z"
+    },
+    "gate": "evening:partner-swallow"
   },
   "day": "2026-09-03",
   "magistralChosenAt": "2026-09-03",

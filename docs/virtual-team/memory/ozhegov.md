@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14400/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 344 (причины в op-log) -->
+Записей: 49 · бюджет 14380/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 345 (причины в op-log) -->
+
+### 2026-09-03 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** Стендап и MAIN_DAY_ISSUE согласованы; `DAILY_CODE_REVIEW` корректен — границы пакетов соблюдены, C4 ок, verify-скрипт присутствует. Замечание: `STRATEGIC_PLAN_DAY.md` по-прежнему лежит как вещдок, хотя норма Q1 требует не читать его как источник. **Итоги […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-03.md#reply-1`
 
 ### 2026-09-02 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Уточняю терминологию, чтобы не расходились потом. «Канал» — это не поле манифеста, это контракт в `plugin-contracts`. Если `triggers` — закрытый словарь из `plugin-contracts`, то тип должен быть `PluginTrigger[]`, а не `string[]` — M1 оставил место именно для этого. Словарь […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m4-triggers-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m5-showcase
-
-> Уточняю лемму «полиморфно». `getRegisteredPlugins()` возвращает `ReadonlyArray<PluginManifest>`. Чтобы страница отличила `ShowcaseManifest` от базового, нужен дискриминант в типе — поле `kind`. Предлагаю: базовый `PluginManifest` несёт `kind: PluginKind`, где `PluginKind` — […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m5-showcase-2026-08-17.md#reply-1`
