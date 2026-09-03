@@ -116,3 +116,58 @@ export async function patchCatalogSample(
   if (!res.ok) throw new Error(await parseError(res));
   return (await res.json()) as MembraneCatalogSample;
 }
+
+/**
+ * Срок ключей треков мембраны (#2271, вердикт M3).
+ *
+ * Ходим НАПРЯМУЮ в media, а не через кабинетный backend: настройка живёт в его базе, и
+ * посредник добавил бы третью копию правды о сроке. Адрес и токен берутся из той же сессии,
+ * что и остальная работа с библиотекой.
+ *
+ * ПРИБОР, А НЕ МЕМБРАНА В АДРЕСЕ. Кабинет знает прибор; мембрану media ВЫВОДИТ из него сам —
+ * принять её из запроса значило бы поверить обратившемуся на слово, а это частный случай
+ * угадывания владельца, запрещённого M1.
+ */
+export type TrackKeyTtlMode = 'default' | 'seconds' | 'lifted';
+
+export interface TrackKeyTtlView {
+  readonly stored: unknown;
+  readonly effective: { readonly seconds: number | null; readonly source: string; readonly reason?: string };
+  readonly defaultSeconds: number;
+  readonly maxSeconds: number;
+  /** Названная граница: настройка узловая, мембранный масштаб вердикта M3 ещё не исполнен. */
+  readonly scopeCaveat: string;
+}
+
+async function mediaFetch(deviceId: string, init: RequestInit = {}): Promise<Response> {
+  const session = await fetchMediaSession();
+  const headers = new Headers(init.headers);
+  headers.set('X-Membrana-Token', session.mediaToken);
+  if (init.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
+  const base = session.mediaApiUrl.replace(/\/+$/u, '');
+  return fetch(`${base}/v1/devices/${encodeURIComponent(deviceId)}/track-key-ttl`, {
+    ...init,
+    headers,
+  });
+}
+
+export async function fetchTrackKeyTtl(deviceId: string): Promise<TrackKeyTtlView> {
+  const res = await mediaFetch(deviceId);
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as TrackKeyTtlView;
+}
+
+/**
+ * Записать волю человека.
+ *
+ * `liftedBy` обязателен при снятии срока: неподписанное снятие неотличимо от повреждённой
+ * записи, и media его отвергнет. Кабинет не обходит этот отказ, а показывает его.
+ */
+export async function writeTrackKeyTtl(
+  deviceId: string,
+  body: { mode: TrackKeyTtlMode; seconds?: number | null; liftedBy?: string | null },
+): Promise<TrackKeyTtlView> {
+  const res = await mediaFetch(deviceId, { method: 'PUT', body: JSON.stringify(body) });
+  if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as TrackKeyTtlView;
+}
