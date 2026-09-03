@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14384/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 351 (причины в op-log) -->
+Записей: 49 · бюджет 14372/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 352 (причины в op-log) -->
+
+### 2026-09-02 · позиция · team-evening-feedback
+
+> Оценка артефактов: STRATEGY_DAY и MAIN_DAY_ISSUE задают ясную картину: владельческая магистраль (перенос между наборами) против операционного блокера (красные тесты). DAILY_CODE_REVIEW качественно разложил дифф: два fix-PR укрепляют границу `pr:ship` — поведенческий зуб вместо […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
 
 ### 2026-09-01 · позиция · library-open-api-m0-order
 
@@ -295,9 +301,3 @@
 > Конструкция проясняется. M1 отдал нам пять базовых полей `PluginManifest` и `ShowcaseManifest extends PluginManifest` с незаполненными полями — это наша работа. Структура должна быть минимальной: только то, что нужно странице для показа и включения без знания о внутренностях […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m5-showcase-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m5r-showcase
-
-> Конструкция ShowcaseManifest ясна: два добавочных поля поверх базы. Первое — displayForm: DisplayForm, обязательное — это несущая конструкция витринного рода. Второе — description?: string, необязательное — декор с функцией. Прежний вердикт M5 предлагал то же самое; […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m5r-showcase-2026-08-17.md#reply-1`

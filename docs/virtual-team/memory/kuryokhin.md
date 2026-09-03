@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14389/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 339 (причины в op-log) -->
+Записей: 49 · бюджет 14397/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 340 (причины в op-log) -->
+
+### 2026-09-02 · позиция · team-evening-feedback
+
+> Оценка артефактов: Аудио-контур в документах дня не представлен. MAIN_DAY_ISSUE говорит о move-проб между наборами — это библиотечный, не аудио-функционал. DAILY_CODE_REVIEW чист от DSP/Web Audio изменений. Позитивно: запрет на повтор DSP/FFT benchmark без новых данных соблюдён […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-02.md#reply-1`
 
 ### 2026-09-01 · позиция · library-open-api-m0-order
 
@@ -290,14 +296,8 @@
 
 — источник: `docs/seanses/server-plugin-foundation-m4-triggers-2026-08-17.md#reply-1`
 
-### 2026-08-17 · позиция · server-plugin-foundation-m5-showcase
+### 2026-08-17 · позиция · team-evening-feedback
 
-> С аудио-стороны добавлю: витринный плагин — это «инструмент на сцене», и зрителю важно видеть его имя и тип звучания до того, как он заиграет. `label` + `displayForm` — это именно программка концерта: что будет исполняться и в какой форме. Не нужно выносить в манифест […] _(реплик в сеансе: 5)_
+> Kuryokhin. Оценка артефактов: артефакты дня к аудио-контуру не обращаются — эшелон 0 (DSP `DRONE_TIGHT` 95%/30%) в потолке, эшелон 2 (yamnet) в prod-бенчмарке; ни утренние документы, ни собрание сегодня не касались Web Audio, 24bit/48kHz, IoT. Итоги дня: по моей зоне — тишина. […]
 
-— источник: `docs/seanses/server-plugin-foundation-m5-showcase-2026-08-17.md#reply-1`
-
-### 2026-08-12 · позиция · team-evening-feedback
-
-> Курёхин Оценка артефактов: аудио-магистраль сегодня не в фокусе — стратегия и канон дня об этом не говорят, и это честно (тариф + санитария). MAIN_DAY_ISSUE не обещал ничего про DSP — согласовано. Итоги дня: по моему профилю — «—» на содержании. Но: закрыт […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-12.md#reply-1`
+— источник: `docs/seanses/team-evening-feedback-2026-08-17.md#reply-1`
