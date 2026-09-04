@@ -8,7 +8,7 @@
  */
 import { describe, expect, it, vi } from 'vitest';
 
-import { TariffTransitionService } from './tariff-transition.service';
+import { selfTransitionGate, TariffTransitionService } from './tariff-transition.service';
 
 const MEMBRANE = { id: 'm-1', tariffId: 'free-v1' };
 const PROMO = {
@@ -27,6 +27,8 @@ function prismaStub(over: {
   promo?: unknown;
   spentCount?: number;
   movedCount?: number;
+  /** Строка тарифа-цели в базе; `null` — сетка её знает, база нет. */
+  targetTariffRow?: unknown;
 } = {}) {
   const calls: { spendWhere?: unknown; moveWhere?: unknown; log?: unknown } = {};
   const tx = {
@@ -55,6 +57,11 @@ function prismaStub(over: {
       updateMany: tx.membrane.updateMany,
     },
     promoCode: { findUnique: vi.fn(async () => ('promo' in over ? over.promo : PROMO)) },
+    tariff: {
+      findUnique: vi.fn(async (args: { where: { id: string } }) =>
+        'targetTariffRow' in over ? over.targetTariffRow : { id: args.where.id },
+      ),
+    },
     $transaction: vi.fn(async (fn: (t: typeof tx) => unknown) => fn(tx)),
   };
   return { prisma, tx, calls };
@@ -154,5 +161,130 @@ describe('отказы приходят из закрытого списка д�
     const noMembrane = prismaStub({ membrane: null });
     expect(await svc(noMembrane.prisma).redeemPromo({ membraneId: 'нет', code: 'BLOCKPOST2026', actorId: 'u-1' }))
       .toEqual({ ok: false, reason: 'membrane_unknown' });
+  });
+});
+
+/**
+ * Зубы перехода СОБСТВЕННЫМ ВЫБОРОМ (#2281, слово владельца 04.09).
+ *
+ * Носитель перехода тот же, поэтому здесь проверяется не «работает ли смена» (это держат зубы
+ * промокода), а ровно то, чем собственный выбор ОТЛИЧАЕТСЯ: третье основание в журнале, ворота
+ * названным местом и отсутствие запрета на понижение.
+ */
+describe('смена тарифа собственным выбором', () => {
+  it('меняет тариф и пишет журнал с основанием self — одной транзакцией', async () => {
+    const { prisma, tx, calls } = prismaStub();
+    const out = await svc(prisma).selectTariff({
+      membraneId: 'm-1',
+      toTariffId: 'checkpoint-v1',
+      actorId: 'u-1',
+    });
+
+    expect(out).toEqual({ ok: true, fromTariffId: 'free-v1', toTariffId: 'checkpoint-v1' });
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+    // Запись ровно одна: журнал append-only, и дубль означал бы две правды об одном переходе.
+    expect(tx.tariffChangeLog.create).toHaveBeenCalledTimes(1);
+    expect(calls.log).toMatchObject({
+      membraneId: 'm-1',
+      fromTariffId: 'free-v1',
+      toTariffId: 'checkpoint-v1',
+      proofType: 'self',
+      proofRef: 'm-1',
+      actorId: 'u-1',
+    });
+  });
+
+  it('промокод НЕ трогается — своим выбором подарок не жгут', async () => {
+    const { prisma, tx } = prismaStub();
+    await svc(prisma).selectTariff({ membraneId: 'm-1', toTariffId: 'checkpoint-v1', actorId: 'u-1' });
+    expect(tx.promoCode.updateMany).not.toHaveBeenCalled();
+    expect(prisma.promoCode.findUnique).not.toHaveBeenCalled();
+  });
+
+  it('ПОНИЖЕНИЕ разрешено — «без ворот» означает и вниз тоже', async () => {
+    // У промокода понижение запрещено (promo_downgrade_forbidden) — это правило ПОДАРКА, а не
+    // перехода. Перенести его сюда значило бы запереть владельца на старшем тарифе.
+    const { prisma, calls } = prismaStub({
+      membrane: { id: 'm-1', tariffId: 'observatory-v1' },
+    });
+    const out = await svc(prisma).selectTariff({
+      membraneId: 'm-1',
+      toTariffId: 'free-v1',
+      actorId: 'u-1',
+    });
+
+    expect(out).toEqual({ ok: true, fromTariffId: 'observatory-v1', toTariffId: 'free-v1' });
+    expect(calls.log).toMatchObject({ proofType: 'self', toTariffId: 'free-v1' });
+  });
+
+  it('смена условна по ИСХОДНОМУ тарифу — иначе журнал соврал бы, откуда шли', async () => {
+    const { prisma, calls } = prismaStub();
+    await svc(prisma).selectTariff({ membraneId: 'm-1', toTariffId: 'checkpoint-v1', actorId: 'u-1' });
+    expect(calls.moveWhere).toEqual({ id: 'm-1', tariffId: 'free-v1' });
+  });
+
+  it('параллельная смена — tariff_moved_concurrently, а не same_tariff', async () => {
+    const { prisma } = prismaStub({ movedCount: 0 });
+    const out = await svc(prisma).selectTariff({
+      membraneId: 'm-1',
+      toTariffId: 'checkpoint-v1',
+      actorId: 'u-1',
+    });
+    expect(out).toEqual({ ok: false, reason: 'tariff_moved_concurrently' });
+  });
+
+  it('неизвестная цель — отказ домена, журнал не тронут', async () => {
+    const { prisma, tx } = prismaStub();
+    const out = await svc(prisma).selectTariff({
+      membraneId: 'm-1',
+      toTariffId: 'no-such-v1',
+      actorId: 'u-1',
+    });
+    expect(out).toEqual({ ok: false, reason: 'unknown_target_tariff' });
+    expect(tx.tariffChangeLog.create).not.toHaveBeenCalled();
+  });
+
+  it('цель = текущий тариф — same_tariff, пустой записи в журнале нет', async () => {
+    const { prisma, tx } = prismaStub();
+    const out = await svc(prisma).selectTariff({
+      membraneId: 'm-1',
+      toTariffId: 'free-v1',
+      actorId: 'u-1',
+    });
+    expect(out).toEqual({ ok: false, reason: 'same_tariff' });
+    expect(tx.tariffChangeLog.create).not.toHaveBeenCalled();
+  });
+
+  it('тариф ЕСТЬ в сетке, НЕТ в базе — unknown_target_tariff, а не падение внешним ключом', async () => {
+    // Сетка и база наполняются разными руками; вердикт домена «разрешено» без этой проверки
+    // доехал бы до записи и упал бы пятисоткой вместо ответа.
+    const { prisma, tx } = prismaStub({ targetTariffRow: null });
+    const out = await svc(prisma).selectTariff({
+      membraneId: 'm-1',
+      toTariffId: 'checkpoint-v1',
+      actorId: 'u-1',
+    });
+    expect(out).toEqual({ ok: false, reason: 'unknown_target_tariff' });
+    expect(tx.membrane.updateMany).not.toHaveBeenCalled();
+    expect(tx.tariffChangeLog.create).not.toHaveBeenCalled();
+  });
+
+  it('мембраны нет — membrane_unknown до всякой записи', async () => {
+    const { prisma, tx } = prismaStub({ membrane: null });
+    const out = await svc(prisma).selectTariff({
+      membraneId: 'm-gone',
+      toTariffId: 'checkpoint-v1',
+      actorId: 'u-1',
+    });
+    expect(out).toEqual({ ok: false, reason: 'membrane_unknown' });
+    expect(tx.membrane.updateMany).not.toHaveBeenCalled();
+  });
+});
+
+describe('ворота собственного выбора', () => {
+  it('сегодня ОТКРЫТЫ — и это записано предикатом, а не отсутствием кода', () => {
+    // Зуб держит РЕШЕНИЕ владельца 04.09, а не текущее поведение «само собой». Когда ворота
+    // закроют оплатой, красный здесь скажет: место найдено, поменяли осознанно.
+    expect(selfTransitionGate()).toEqual({ open: true });
   });
 });

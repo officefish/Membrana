@@ -38,6 +38,8 @@ const EXPECTED_PATHS = [
   '/v1/membranes/{membraneId}/nodes',
   '/v1/membranes/me',
   '/v1/membranes/me/nodes',
+  // #2281 — выбор тарифа собственным решением: витрина и смена.
+  '/v1/membranes/me/tariff',
   '/v1/membranes/me/tariff/promo-redemptions',
   '/v1/nodes/{nodeId}',
   '/v1/nodes/{nodeId}/access-keys',
@@ -48,6 +50,7 @@ const EXPECTED_PATHS = [
   '/v1/nodes/{nodeId}/link-state',
   '/v1/pair',
   '/v1/pair/status',
+  '/v1/tariffs',
   '/v1/telemetry/chart-list',
   '/v1/telemetry/chart-list/{selectionId}',
   '/v1/telemetry/journal-items',
