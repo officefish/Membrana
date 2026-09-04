@@ -29,7 +29,7 @@ import type {
   PageEnvelope,
   PublicSample,
   TrackKeyGrant,
-} from '@membrana/media-library-service' with { 'resolution-mode': 'import' };
+} from '@membrana/media-library-service/open-api' with { 'resolution-mode': 'import' };
 
 import type { OwnedSamplesPage } from '../library-ownership/library-ownership.service.js';
 import type { MembraneOwnerRequiredError } from '../library-ownership/ownership-errors.js';
