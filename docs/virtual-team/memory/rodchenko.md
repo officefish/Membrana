@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14340/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 337 (причины в op-log) -->
+Записей: 49 · бюджет 14310/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 338 (причины в op-log) -->
+
+### 2026-09-04 · позиция · team-evening-feedback
+
+> Оценка артефактов: Документы согласованы; UI-часть дня (выбор тарифа на мембране) в #2286 вне обзора — вечерний code-review это честно фиксирует. Канон не даёт противоречивых указаний по интерфейсу. Итоги дня: По диффу виден `MembranePage.tsx` — селект тарифа добавлен. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`
 
 ### 2026-09-03 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Смотрю с витрины: когда оператор открывает журнал прогонов, он фильтрует по дому — `background-office/journal` или `background-media/collections`. Если `mountTarget` нет в `RunAddress`, фильтр требует join с манифестом плагина. Это разрыв между данными и их отображением. Для […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m3r-address-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m4-triggers
-
-> Я смотрю на это с витрины будущего M5: пользователь настраивает плагин и видит список «на что реагирует». Если словарь закрытый и типизированный — витрина может показать человекочитаемые метки без дополнительной таблицы переводов. Если строки произвольные — витрина показывает […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m4-triggers-2026-08-17.md#reply-1`

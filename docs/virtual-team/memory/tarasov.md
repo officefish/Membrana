@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14390/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 351 (причины в op-log) -->
+Записей: 50 · бюджет 14374/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 352 (причины в op-log) -->
+
+### 2026-09-04 · позиция · team-evening-feedback
+
+> Оценка артефактов: Утренние артефакты согласованы: стендап фиксирует фокус на `secret-parser-built`, но `MAIN_DAY_ISSUE` корректно выставляет магистраль `tariff-self-select` по слову владельца (sources[0] 04.09). Расхождение ритуал-фокуса и owner-magistral — осознанное, канон […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`
 
 ### 2026-09-03 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > Позиции сошлись на поле. Фиксирую: `RunAddress` несёт `mountTarget: HomeName` явным полем. Прежний индекс `{pluginId, version, collectionId, runId}` — не меняется, `mountTarget` в индекс не входит. Теперь второй вопрос — окно накопления. Слово Математику. _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m3r-address-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m4-triggers
-
-> Слышу консенсус по имени и типу. Фиксирую: `PluginTrigger` — юнион из закрытого словаря в `plugin-contracts`, форма `<дом>.<событие>`. Это не обсуждается дальше. Теперь нужно решить три оставшихся куска: минимальный словарь событий двух домов, механика испускания через […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m4-triggers-2026-08-17.md#reply-1`
 
 ### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 

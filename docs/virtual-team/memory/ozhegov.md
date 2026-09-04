@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14380/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 345 (причины в op-log) -->
+Записей: 49 · бюджет 14345/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 346 (причины в op-log) -->
+
+### 2026-09-04 · позиция · team-evening-feedback
+
+> Оценка артефактов: Документы согласованы; расхождение ритуал-фокуса и магистрали — норма, вердикт владельца приоритетен. Структура кода не размазана: tariff-ручки в `tariff.controller` → `tariff-transition.service` (существующий), новые `tariff-catalog.service`, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`
 
 ### 2026-09-03 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Фиксирую лемму. `RunAddress` — это адрес одного конкретного прогона в системе. По Т3.3 цепочка: `модуль → плагин → версия → коллекция → прогон`. Из этих звеньев `pluginId` даёт «плагин» (`org.kind.slug`), `version` — версию, `collectionId` — коллекцию, `runId` — прогон. Звено […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m3r-address-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m4-triggers
-
-> Уточняю терминологию, чтобы не расходились потом. «Канал» — это не поле манифеста, это контракт в `plugin-contracts`. Если `triggers` — закрытый словарь из `plugin-contracts`, то тип должен быть `PluginTrigger[]`, а не `string[]` — M1 оставил место именно для этого. Словарь […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m4-triggers-2026-08-17.md#reply-1`

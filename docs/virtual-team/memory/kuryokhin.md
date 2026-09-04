@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14383/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 341 (причины в op-log) -->
+Записей: 49 · бюджет 14360/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 342 (причины в op-log) -->
+
+### 2026-09-04 · позиция · team-evening-feedback
+
+> Оценка артефактов: Документы лаконичны и не противоречат; Web Audio не затронут — отсутствие моего вклада закономерно. Подкрепление `node-duty-ready` в MAIN_DAY_ISSUE — полевой контур, не код дня. Итоги дня: По аудио-контуру — «—». Живой контекст: #2204 (полный буфер на тарифе) […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`
 
 ### 2026-09-03 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Открываю с практики. Плагин `membrana.handler.mfcc` монтируется в `background-media/collections`. Когда runtime запускает прогон, ему нужно знать: в каком доме этот плагин живёт — чтобы маршрутизировать результат в правильный офис. Из `pluginId` дом не читается: `handler` — это […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m3r-address-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m4-triggers
-
-> Начну с практического вопроса, который задаёт тон всему остальному. Плагин — это слушатель события. Мне важно понять: событие — это нота в партитуре или сигнал на шине? Если нота — у неё есть высота (имя) и длительность (момент). Если сигнал — у неё есть источник и потребитель. […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m4-triggers-2026-08-17.md#reply-1`
