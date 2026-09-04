@@ -1,44 +1,43 @@
-<!-- Сгенерировано: 2026-09-03T16:09:03.849Z (yarn code-review; daily, llm-xai) -->
+<!-- Сгенерировано: 2026-09-04T17:24:27.258Z (yarn code-review; daily, llm-xai) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: 08cc65b3c93895b00b05d5641ab4299e12939721^..0acbac156b16b3be410537829c8b4905112b8296 (9 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 08cc65b3 #2268 (1020), e4fe6e3c #2270 (665), 99ea5fdd #2267 (6021), 90cca905 #2271 (1559), 0acbac15 (629)
+> Период: 8db528ff45f8893e2538e4446d1bc5a366f6be26^..aa7d89957abeeae03a834b94f70e6ec037d1f748 (5 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 1f8df30c #2286 (1455), aa7d8995 (625)
 
 ---
 
-Tier: T2
+Tier: T1
 
-[Vesnin]: Ведущий. Скоуп дня — cabinet Swagger (#2272/#2274/#2275), media open-API дверь (#2267 MERGED, #2271 OPEN / #2276 MERGED), ритуальные автозаборы. По развёрнутому diff бестиарий чист (B1–B10 не пойманы); B6 на границе — journal `deploy-media-vps` три fail cabinet @78fbc904, затем media pass @90cca905: не молчаливый зелёный, но хвост выкатки cabinet не закрыт в trail. **Не заявляю LGTM** по oversized без разворота: #2267 (6021), #2271 (1559), #2268 (1020), #2270 (665), `0acbac15` (629). P1 surface: prod `SWAGGER_ENABLED=true` + Caddy `/docs*` (#2274) — сознательное расширение карты API наружу; default в schema был `NODE_ENV !== 'production'`, deploy перебивает. Вердикт ведущего по дню: **пропуск в ствол уже слитого** (факт GitHub), **блок уверенности** на open #2271 и на непрочитанные oversized — ревьюить отдельно до опоры на них.
+**[vesnin]: BLOCK (условный на oversized)** — по развёрнутому диффу (#2280, #2282) бестиарий чист: ритуальные артефакты и чеканка `tariff-self-select` с маркерами/посылками, без B1/B6/B9. **P1:** коммиты `1f8df30c` (#2286, +1455) и `aa7d8995` (+625) **не развёрнуты** — продуктовый носитель дня вне обзора; merge уже в стволе (#2286 MERGED) при отсутствии прохода по швам `TariffChangeProof`/`self`, `GET/POST tariff`, `syncMembraneContext`. До утреннего точечного review-pass по этим двум SHA — не считать DoD #2281 закрытым «по факту merge».
 
-[Teamlead]: Сводка: продуктовая ось — открытый API библиотеки + Swagger кабинета; операционка — ритуал 02–03.09 и выкатки. PR size дня: **oversized** (#2267 +6021, #2271 +1559, ритуалы). Живые состояния: #2272/#2274/#2275/#2267/#2276 MERGED; **#2271 OPEN**; #2256/#2148 OPEN. Красные тесты `@membrana/media-library-service` и `@membrana/background-media` — блокер merge-очереди на завтра (санитария плана). Утро: не генерировать code-review — читать этот файл; smoke swagger и media door после диагноза red-test.  
-Команды:  
-`yarn turbo run test typecheck --filter=@membrana/media-library-service --filter=@membrana/background-media --filter=@membrana/background-cabinet`  
-`yarn cabinet:verify-swagger`  
-`yarn media:verify-swagger` (если есть симметрия)
+[Teamlead]: День = ритуал утра → смена магистрали `library-open-api-door` → `tariff-self-select` (#2281) + oversized поставка. Живые состояния: #2280/#2282/#2286 MERGED, #2281 CLOSED, #2271 CLOSED, #2266 CLOSED; горизонт #592 OPEN. Ритуал-day: fail (`morning-care`) → r2 started — след честный. На утро не открывать L-кандидаты DAY_PLAN и не подменять owner-magistral secret-parser’ом. Команды: `yarn turbo run lint typecheck test --filter=@membrana/background-cabinet` (и пакет, куда легли tariff-ручки, если не cabinet); точечный `git show 1f8df30c --stat` + review швов self/sync; одна запись вердикта по бывшим red #2266/#2256 если ещё в очереди.
 
-[Структурщик]: #2272 — границы пакета соблюдены: `setup-swagger.ts`, constants, env `SWAGGER_ENABLED`, декораторы на контроллерах, зуб `verify-swagger.mjs` (static `@ApiTags`/`@ApiOperation` + runtime paths). Prisma stub в verify — тонкий, без React. C4 ок. Зазор: `EXPECTED_PATHS` не покрывает scenario edit-lease и часть node-ручек с уже навешанными `@ApiOperation` — зуб инвентаря неполный (P2). #2275 `@fastify/static` — нужный runtime для UI, не cycle. Oversized #2267/#2271 по структуре не разобраны — долг отдельным проходом. C7: verify-скрипт есть; red package tests — вне swagger-diff, но ломают DoD дня.
+[Архитектор]: Канон дня выровнен: `sources[0]` 04.09 = `tariff-self-select`, вчерашний door — `sources[1]`, не primary. Граница верная: third proof `self` + список/POST + UI, оплата/промо — одно будущее место. Критический контрактный шов — доталкивание квоты на узлы (`syncMembraneContext` только из pair): без него «зелёный кабинет / старая квота на media». M4-квоты и open-api door сознательно вне ствола — ок.
 
-[Математик]: Числового/FFT ядра в развёрнутом diff нет. Correctness verify-swagger: Proxy-stub `$queryRaw → [{one:1}]`, `find*` → null/[] — достаточно для mount document, не для domain. Edge: regex сбора route-декораторов может промахнуться past multi-decorator блоков — P2. deps-watch: всплеск high `fast-uri` / moderate `fastify`/`qs` в снимке 03.09 — не regress дня кода, учёт security hygiene (C9 follow-up). —
+[Структурщик]: По docs-диффу циклов/пакетов нет (T0-слой). Oversized #2286 обязан не размазать transition в обход `tariff-transition.service.ts` и журнала; POST self — тот же сервис, те же отказы, анти-parallel. Проверить: нет дубля домена; UI тонкий; Prisma/enum `self` + миграция в том же контуре, что сервис. C7/C8/C9 — только по развёрнутому diff утра.
 
-[Музыкант]: Web Audio / audio-engine / 48 kHz path не затронуты в развёрнутых hunks. Media open-API (#2271/#2276) — дверь библиотеки и ключ с TTL; без разворота 1559 строк **нет** заключения по blob/capture path. C2 — . Выкатка media @90cca905 в journal: fail → pass (r4→r5) — контур жив, не DSP.
+[Математик]: — (DSP/FFT не в диффе). Санитария: timeout-класс #2266 — вердикт «помеха vs pre-existing», не «чинить порог вслепую» в tariff-diff.
 
-[Верстальщик]: UI DESIGN.md / a11y в diff нет. Swagger UI — внешний static, не кабинетный React. C5 —. Opportunity (P2): не смешивать `/docs` с product chrome кабинета без контракта в DESIGN.
+[Музыкант]: — Web Audio не затронут. Подкрепление node-duty-ready / живое дежурство буфера (#2204 CLOSED) — полевой контур, не код дня; не смешивать с self-select PR.
 
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-09-03)
+[Верстальщик]: UI выбора тарифа на мембране — в #2286 вне обзора. Утро: a11y/DESIGN на новом селекте; без экрана оплаты «заодно»; отказ/успех перехода видимы пользователю (не только toast-пустышка).
+
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-09-04); опора — #2280/#2282 (ритуал+чеканка) + **долг review** `1f8df30c`/#2286 и `aa7d8995`.
 
 Definition of Done (утро):
-1. Прочитать этот review + вчерашний контекст в standup (не перегенерировать review).
-2. Диагноз red: `yarn turbo run test --filter=@membrana/media-library-service --filter=@membrana/background-media` → помеха vs pre-existing.
-3. `yarn cabinet:verify-swagger` + ручной smoke `https://cabinet.membrana.space/docs` (раз #2274 уже в prod-контуре).
-4. Отдельный review-pass: **#2271** (OPEN) и долг **#2267** (MERGED, 6k без разворота).
-5. Не merge опираться на #2271, пока не будет LGTM по развёрнутому diff.
+1. Развернуть и прочитать `1f8df30c` + `aa7d8995`: proof=`self`, GET `/v1/tariffs`, POST `…/me/tariff`, log, sync/quota на узлы (или явный follow-up).
+2. `yarn turbo run lint typecheck test --filter=@membrana/background-cabinet` (и фактический пакет tariff/membrane UI).
+3. Не стартовать `angelina-hostess-impl` / `assets-container` / `batch-collection-run-contour` без owner-choice.
+4. Secret-parser (#592) — максимум фикстура detector vs redact, не primary.
+5. Прочитать этот review в standup; не генерировать code-review утром.
 
 Риски:
-- **P0/P1:** красные `@membrana/media-library-service` + `@membrana/background-media` — стоп магистрали/merge.
-- **P1:** #2271 OPEN + oversized без ревью; review-debt #2267 (6021).
-- **P1:** публичный Swagger кабинета (`SWAGGER_ENABLED=true`, Caddy `/docs*`) — карта surface + schema; убедиться, что нет write-try без auth в «Try it out» и что session/cookie схемы не утекают лишним.
-- **P1 (ops):** trail — cabinet deploy @78fbc904 fail×3; уточнить, доехал ли cabinet stack после #2275.
-- **P2:** неполный `EXPECTED_PATHS`; nit lint `CabinetSampleDuplicatesPanel` hooks; deps-watch fast-uri/fastify.
-- **P2:** oversized ритуалы #2268/#2270/`0acbac15` — не блокеры продукта, не разворачивать утром в ущерб red-test.
+- **P1** — oversized влит без разворота (#2286 / aa7d8995): ложный DoD self-select, квота на узлах не доехала.
+- **P1** — расхождение ритуал-фокуса (`secret-parser-built`) vs owner-magistral (`tariff-self-select`) → снова probe-фантом, если агент пойдёт за стендапом.
+- **P2** — review-debt #2267 (~6k) и шов `hasMore` кабинета; deps-watch `fast-uri`/`fastify`·`qs` — гигиена, не ствол.
+- **P2** — PR size #2286 >>400 без split-обоснования в обзоре дня.
+
+Вердикт дня (ритуал-слой): **пропуск** для #2280/#2282 (T0 docs).  
+Вердикт поставки: **BLOCK** до утреннего pass по #2286/`aa7d8995` (vesnin).
