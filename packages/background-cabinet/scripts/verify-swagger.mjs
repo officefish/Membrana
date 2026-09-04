@@ -50,6 +50,8 @@ const EXPECTED_PATHS = [
   '/v1/nodes/{nodeId}/link-state',
   '/v1/pair',
   '/v1/pair/status',
+  '/v1/nodes/{nodeId}/scenario/edit-lease',
+  '/v1/nodes/{nodeId}/scenario/edit-lease/renew',
   '/v1/tariffs',
   '/v1/telemetry/chart-list',
   '/v1/telemetry/chart-list/{selectionId}',
@@ -107,12 +109,16 @@ function verifyControllerDecorators() {
     for (const item of missingOperations) console.error(`  - ${item}`);
   }
   if (missingTags.length > 0 || missingOperations.length > 0) {
-    process.exit(1);
+    return false;
   }
+  return true;
 }
 
 async function main() {
-  verifyControllerDecorators();
+  if (!verifyControllerDecorators()) {
+    process.exitCode = 1;
+    return;
+  }
   if (process.argv.includes('--static-only')) {
     console.log('Swagger static tooth OK');
     return;
@@ -222,12 +228,14 @@ async function main() {
     security?.in === 'header';
 
   if (ui.status !== 200 || json.status !== 200 || !apiKeyOk) {
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
   if (missingPaths.length > 0) {
     console.error('Swagger tooth: missing active cabinet paths:');
     for (const path of missingPaths) console.error(`  - ${path}`);
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
   if (operationsWithoutTags.length > 0 || operationsWithoutSummary.length > 0) {
     if (operationsWithoutTags.length > 0) {
@@ -238,12 +246,13 @@ async function main() {
       console.error('Swagger tooth: document operations without summaries:');
       for (const item of operationsWithoutSummary) console.error(`  - ${item}`);
     }
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
   console.log('\nSwagger OK');
 }
 
 main().catch((e) => {
   console.error(e);
-  process.exit(1);
+  process.exitCode = 1;
 });

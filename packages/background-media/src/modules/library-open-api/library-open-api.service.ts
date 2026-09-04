@@ -26,10 +26,10 @@ const DEFAULT_LIMIT = 40;
 /** Ленивая загрузка формы. Один импорт на процесс: повторный `import()` вернёт тот же модуль. */
 // `resolution-mode: import` обязателен и в ТИПОВОЙ позиции: без него TS1542. Ту же форму
 // несут тип-импорты в `buffer-cleanup.service.ts` и `first-wave.registrar.ts` этого пакета.
-type ContractModule = typeof import('@membrana/media-library-service', { with: { 'resolution-mode': 'import' } });
+type ContractModule = typeof import('@membrana/media-library-service/open-api', { with: { 'resolution-mode': 'import' } });
 let contractPromise: Promise<ContractModule> | null = null;
 function contract(): Promise<ContractModule> {
-  contractPromise ??= import('@membrana/media-library-service');
+  contractPromise ??= import('@membrana/media-library-service/open-api');
   return contractPromise;
 }
 

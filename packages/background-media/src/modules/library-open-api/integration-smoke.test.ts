@@ -22,8 +22,8 @@ import {
   validatePageEnvelopeShape,
   toPageEnvelope,
   validatePublicSampleShape,
-  type MediaSample,
-} from '@membrana/media-library-service';
+} from '@membrana/media-library-service/open-api';
+import type { MediaSample } from '@membrana/media-library-service';
 
 import { LibraryOwnershipService } from '../library-ownership/library-ownership.service.js';
 import { MembraneOwnerRequiredError } from '../library-ownership/ownership-errors.js';
