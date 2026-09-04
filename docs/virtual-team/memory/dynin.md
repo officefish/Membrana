@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14389/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 338 (причины в op-log) -->
+Записей: 49 · бюджет 14394/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 339 (причины в op-log) -->
+
+### 2026-09-04 · позиция · team-evening-feedback
+
+> Оценка артефактов: Документы связны; доля «чистой математики» в дне — нулевая (DSP/FFT не в диффе). STRATEGY_DAY/MAIN_DAY_ISSUE не требуют математического вклада — это осознанное решение, не пробел. Итоги дня: По моей зоне — тишина, что корректно: tariff-домен не требует чистых […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-04.md#reply-1`
 
 ### 2026-09-03 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Поставлю предикат строго. Пусть `A = RunAddress`. Функция `home(A)` должна быть детерминированной и не требовать обращения к внешнему реестру в момент адресации. Если `home(A) = lookup(A.pluginId, HOME_REGISTRY)` — это не функция адреса, это запрос. Адрес — замкнутая структура. […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m3r-address-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · team-evening-feedback
-
-> Dynin. Оценка артефактов: MAIN_DAY_ISSUE честно называет `assertions[]` пустыми (`//link-16-08`) — предмет эпика невыразим маркерами, суррогатов не выдумано, норма реестра соблюдена. Инвариант посылок сохранён. Итоги дня: чистых функций не тронуто — дифф целиком в `docs/`, […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-17.md#reply-1`
