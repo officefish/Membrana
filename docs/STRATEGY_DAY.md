@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-09-03T10:45:00.724Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-09-04T11:24:27.245Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -49,7 +49,7 @@ _Кристаллов активно: 128 (owner: 82, derived: 46). Страте
 - ~~**Версионируемые тулинг-киты: наборы умений агента под задачу**~~ — `insight:insight-tooling-kits` _(stale · 2026-07-19)_
 - ~~**Server forwarding — серверные функции сценария**~~ — `insight:insight-server-forwarding` _(stale · 2026-06-25)_
 - ~~**Ночные сны → процедура во фреймах с настраиваемым через панель провайдером**~~ — `insight:insight-dreams-procedure-frames` _(stale · 2026-07-25)_
-- **Активная тревога: уведомления оператору сверх журнала** — `insight:insight-active-alarm-notifications`
+- ~~**Активная тревога: уведомления оператору сверх журнала**~~ — `insight:insight-active-alarm-notifications` _(stale · 2026-08-21)_
 - ~~**Память процедур: показывается, а не запрашивается; вовлечённость числом, а не подтверждением**~~ — `insight:insight-procedure-memory-shown-not-asked` _(stale · 2026-08-01)_
 - ~~**Оркестрация процедур через n8n: кожух и производный рендер поверх git как единственного источника правды**~~ — `insight:insight-procedures-orchestration-n8n` _(stale · 2026-07-26)_
 - ~~**Токены правды: владельческие факты как источник истины для ритуала**~~ — `insight:insight-truth-tokens-owner-facts` _(stale · 2026-07-16)_
@@ -61,7 +61,7 @@ _Кристаллов активно: 128 (owner: 82, derived: 46). Страте
 - ~~**Начитанная виртуальная команда: досье персон + фоновый stack-watch за новинками стека**~~ — `insight:insight-team-stack-watch` _(stale · 2026-07-09)_
 - ~~**QA-раздел в панели офиса: накапливать вопросы союзников и ответы команды**~~ — `insight:insight-office-panel-qa-section` _(stale · 2026-07-14)_
 - ~~**Вечерний ритуал производит три опорных документа — топливо для агентов, симметрично дневному**~~ — `insight:insight-evening-ritual-three-fuel-documents` _(stale · 2026-07-17)_
-- **Хранение как продуктовое обещание: детекция первична, записи вспомогательны, буфер живёт сортировкой** — `insight:insight-storage-as-product-promise`
+- ~~**Хранение как продуктовое обещание: детекция первична, записи вспомогательны, буфер живёт сортировкой**~~ — `insight:insight-storage-as-product-promise` _(stale · 2026-08-21)_
 - ~~**Нет субъекта действия: команда заявлена, но не исполняет**~~ — `insight:insight-acting-subject-missing` _(stale · 2026-07-18)_
 - **Спектральный анализ под задачу дрона: порядковый анализ, спектр огибающей, постоянная добротность** — `insight:insight-spectral-methods-for-drone`
 - ~~**Канонический FSM сессии recorder (anti-L18)**~~ — `insight:insight-kuryokhin-recorder-session-fsm` _(stale · 2026-06-25)_
