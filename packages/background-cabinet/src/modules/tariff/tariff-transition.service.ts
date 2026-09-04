@@ -33,23 +33,37 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { loadTariffGrid } from '../../domain/tariff-grid-source';
 import {
   decideTransition,
+  TRANSITION_DENY_REASONS,
   type PromoCodeStatus,
   type TransitionDenyReason,
   type TransitionRequest,
 } from '../../domain/tariff-transition';
 
+/**
+ * Причины СЕРВИСА — те, чей субъект не переход, а состояние вокруг него. Массив, а не union: см.
+ * `TRANSITION_DENY_REASONS` — потребителям нужен перечислимый список, а вторая копия списка
+ * рядом с типом обязательно разъедется.
+ */
+export const SERVICE_DENY_REASONS = [
+  'promo_unknown',
+  'membrane_unknown',
+  'grid_unavailable',
+  'tariff_moved_concurrently',
+  'self_gate_closed',
+] as const;
+
+/** Полный закрытый список причин, как их видит клиент: домен + сервис, без ручных копий. */
+export const ALL_TRANSITION_DENY_REASONS = [
+  ...TRANSITION_DENY_REASONS,
+  ...SERVICE_DENY_REASONS,
+] as const;
+
+export type OutcomeDenyReason = (typeof ALL_TRANSITION_DENY_REASONS)[number];
+
 /** Исход попытки перехода — наружу уезжает ровно это. */
 export type TransitionOutcome =
   | { readonly ok: true; readonly fromTariffId: string; readonly toTariffId: string }
-  | {
-      readonly ok: false;
-      readonly reason:
-        | TransitionDenyReason
-        | 'promo_unknown'
-        | 'membrane_unknown'
-        | 'grid_unavailable'
-        | 'tariff_moved_concurrently';
-    };
+  | { readonly ok: false; readonly reason: OutcomeDenyReason };
 
 /**
  * `promo_unknown`, `membrane_unknown` и `grid_unavailable` — НЕ причины домена:
@@ -64,6 +78,12 @@ export type TransitionOutcome =
  * `tariff_moved_concurrently` — ТОГО ЖЕ РОДА: субъект не домен, а состояние базы
  * между вердиктом домена и записью сервиса. Домен о параллельной смене не знает и
  * знать не должен, поэтому причина живёт здесь, а не в `TransitionDenyReason`.
+ *
+ * `self_gate_closed` — ТОЖЕ чужой домену субъект (#2281): судит не о переходе, а о том, открыт
+ * ли сегодня СПОСОБ «собственный выбор» вообще. Причина заведена ЗАРАНЕЕ, пустой веткой: когда
+ * переход собственным выбором закроют оплатой или промокодом, закрывать надо будет
+ * `selfTransitionGate`, а не выдумывать в тот момент новый словарь отказов и чинить под него
+ * потребителей. Сегодня ветка недостижима намеренно.
  *
  * Заведена по #1777: раньше этот случай отвечал `same_tariff`, а тот означает
  * «цель совпадает с текущим тарифом» — пользователю читается как «вы уже на нём».
@@ -148,6 +168,136 @@ export class TariffTransitionService {
   }
 
   /**
+   * Переход СОБСТВЕННЫМ ВЫБОРОМ владельца мембраны (#2281, слово владельца 04.09).
+   *
+   * Тот же носитель перехода, что у промокода: домен судит теми же правилами, отказы едут из
+   * того же закрытого списка. Отдельного «своего» пути принятия решений здесь нет намеренно —
+   * он стал бы вторым мнением о том, когда переход законен.
+   *
+   * ВОРОТА — ОДНО МЕСТО, И ОНО НАЗВАНО. Сегодня `selfTransitionGate` пропускает любой тариф
+   * сетки: оплата и промокод как УСЛОВИЕ перехода — следующий билет. Когда их заведут,
+   * закрывать надо ЗДЕСЬ, не переписывая переход и не заводя третий путь.
+   */
+  async selectTariff(input: {
+    membraneId: string;
+    toTariffId: string;
+    actorId: string;
+    now?: Date;
+  }): Promise<TransitionOutcome> {
+    const now = input.now ?? new Date();
+
+    const [membrane, target] = await Promise.all([
+      this.prisma.membrane.findUnique({
+        where: { id: input.membraneId },
+        select: { id: true, tariffId: true },
+      }),
+      this.prisma.tariff.findUnique({ where: { id: input.toTariffId }, select: { id: true } }),
+    ]);
+    if (!membrane) return { ok: false, reason: 'membrane_unknown' };
+
+    const grid = loadTariffGrid();
+    if (!grid) {
+      // Fail-closed тот же, что у промо: без сетки неизвестно, существует ли цель вообще.
+      this.logger.error('сетка тарифов не прочитана — переход отклонён fail-closed');
+      return { ok: false, reason: 'grid_unavailable' };
+    }
+
+    const gate = selfTransitionGate();
+    if (!gate.open) return { ok: false, reason: gate.reason };
+
+    const decision = decideTransition(
+      grid,
+      {
+        membraneId: membrane.id,
+        currentTariffId: membrane.tariffId,
+        targetTariffId: input.toTariffId,
+        proofType: 'self',
+        // Основание — САМА мембрана: право дал её владелец, ссылаться больше не на что.
+        // Ставить сюда id администратора или кода значило бы утверждать, что решение принял
+        // кто-то ещё.
+        proofRef: membrane.id,
+        actorId: input.actorId,
+      },
+      undefined,
+      now,
+    );
+
+    if (!decision.allowed) return { ok: false, reason: decision.reason as TransitionDenyReason };
+
+    /*
+     * ТАРИФ ЕСТЬ В СЕТКЕ, НО НЕТ В БАЗЕ — тоже «неизвестный тариф».
+     *
+     * Домен судит по сетке: там ранг и продуктовое имя. Присваивается же тариф внешним ключом
+     * `Membrane.tariffId`, и строки в базе для такой цели может не быть — сетка и база
+     * наполняются разными руками. Без этой проверки вердикт домена «разрешено» доехал бы до
+     * записи и упал нарушением ссылочной целостности, то есть пятисоткой вместо ответа.
+     *
+     * Причина берётся ТА ЖЕ (`unknown_target_tariff`), а не заводится новая: для владельца
+     * мембраны тариф, которого нельзя выбрать, просто не существует, и знать, в каком из двух
+     * списков его не хватает, ему незачем. Различие видно в логах администратора, а не в ответе.
+     *
+     * Витрина (`buildTariffCatalog`) такой тариф не показывает вовсе — но ручка обязана держаться
+     * и без витрины: она открыта сама по себе.
+     */
+    if (!target) {
+      this.logger.warn(
+        `тариф ${input.toTariffId} есть в сетке, но отсутствует в базе — переход отклонён`,
+      );
+      return { ok: false, reason: 'unknown_target_tariff' };
+    }
+
+    return this.applySelfAtomically({
+      membraneId: membrane.id,
+      fromTariffId: membrane.tariffId,
+      toTariffId: input.toTariffId,
+      actorId: input.actorId,
+    });
+  }
+
+  /**
+   * Смена + журнал одной транзакцией.
+   *
+   * Промо-версия списывает код ПЕРВЫМ и тем защищает подарок; здесь списывать нечего, и
+   * несущим остаётся условие на исходный тариф: без него два одновременных перехода одной
+   * мембраны переплелись бы и журнал соврал бы о том, откуда шли.
+   */
+  private async applySelfAtomically(a: {
+    membraneId: string;
+    fromTariffId: string;
+    toTariffId: string;
+    actorId: string;
+  }): Promise<TransitionOutcome> {
+    try {
+      return await this.prisma.$transaction(async (tx) => {
+        const moved = await tx.membrane.updateMany({
+          where: { id: a.membraneId, tariffId: a.fromTariffId },
+          data: { tariffId: a.toTariffId },
+        });
+        if (moved.count !== 1) throw new ConcurrentTariffMove(a.membraneId);
+
+        await tx.tariffChangeLog.create({
+          data: {
+            membraneId: a.membraneId,
+            fromTariffId: a.fromTariffId,
+            toTariffId: a.toTariffId,
+            proofType: 'self',
+            proofRef: a.membraneId,
+            actorId: a.actorId,
+          },
+        });
+
+        return { ok: true, fromTariffId: a.fromTariffId, toTariffId: a.toTariffId } as const;
+      });
+    } catch (err) {
+      if (err instanceof ConcurrentTariffMove) {
+        this.logger.warn(`переход отменён — тариф мембраны ${err.membraneId} сменили параллельно`);
+        return { ok: false, reason: 'tariff_moved_concurrently' };
+      }
+      throw err;
+    }
+  }
+
+  /**
    * Списание + смена + журнал одной транзакцией. Порядок несущий: сначала
    * списываем код, и только если списание действительно наше — трогаем тариф.
    * Обратный порядок при падении посередине оставил бы поднятый тариф с
@@ -228,4 +378,30 @@ class ConcurrentTariffMove extends Error {
   constructor(readonly membraneId: string) {
     super(`concurrent tariff move for membrane ${membraneId}`);
   }
+}
+
+/**
+ * Форма ворот. Тип объявлен ШИРЕ сегодняшнего возврата намеренно: сузь его до `{ open: true }` —
+ * и ветка отказа в `selectTariff` станет для проверки типов недостижимой, то есть будет снята
+ * как мёртвая при первой же чистке. Ворота исчезли бы вместе с местом, ради которого заведены.
+ */
+export type SelfTransitionGate = { open: true } | { open: false; reason: 'self_gate_closed' };
+
+/**
+ * ВОРОТА ПЕРЕХОДА СОБСТВЕННЫМ ВЫБОРОМ — ОДНО МЕСТО (#2281).
+ *
+ * Слово владельца 04.09: «Возможность перейти на старший тариф должна стать просто функцией…
+ * Впоследствии сделаем ворота с оплатой тарифа либо с открытием его через промокод.»
+ *
+ * Сегодня ворота ОТКРЫТЫ, и это записано предикатом, а не отсутствием кода. Разница
+ * существенная: отсутствие проверки читается как «забыли», а названный открытый предикат — как
+ * «решено, и вот место, где закроется». Когда заведут оплату, менять надо ЗДЕСЬ; переход,
+ * журнал и отказы останутся прежними.
+ *
+ * Причина отказа названа заранее (`self_gate_closed`) и живёт в списке СЕРВИСА, а не домена:
+ * субъект здесь не переход, а способ его инициировать — то же различение, по которому в домен не
+ * попали `membrane_unknown` и `grid_unavailable`.
+ */
+export function selfTransitionGate(): SelfTransitionGate {
+  return { open: true };
 }
