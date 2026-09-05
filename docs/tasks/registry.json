@@ -1,6 +1,23 @@
 {
   "tasks": [
     {
+      "id": "cabinet-deploy-smoke-tooth-2288",
+      "title": "Смоук выкатки кабинета бьёт тарифы, pair и сетку образа",
+      "promptPath": "docs/prompts/CABINET_DEPLOY_SMOKE_TOOTH_2288_PROMPT.md",
+      "githubIssue": 2288,
+      "linearId": "DRU-671",
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-09-05",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "cowork-library-open-api",
       "title": "Cowork Sprint: Открытое API библиотеки",
       "promptPath": "docs/cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md",
