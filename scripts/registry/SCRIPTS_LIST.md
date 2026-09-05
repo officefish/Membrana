@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-04 |
-| Head SHA | 1f8df30ce27e4f7f938a4a0ff9aff2901fc475c6 |
+| Date | 2026-09-05 |
+| Head SHA | 435fbd7c0eb6cae967abfab7b199f7dc19faecce |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,12 +16,12 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1206 |
+| Code files under `scripts/` | 1207 |
 | Yarn scripts (package.json) | 463 |
 | Yarn → `scripts/` | 409 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 879 |
+| Code files without yarn ref | 880 |
 
 ## Yarn → scripts/ (409)
 
@@ -435,7 +435,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (879)
+## Code files without yarn ref (880)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1296,6 +1296,7 @@
 - `scripts/vdr-blind-corpus.test.mjs`
 - `scripts/vdr-labels-merge.test.mjs`
 - `scripts/verify-encoding.test.mjs`
+- `scripts/verify-image-runtime-reads.test.mjs`
 - `scripts/verify-image-workspace-deps.test.mjs`
 - `scripts/verify-mcp-bootstrap.test.mjs`
 - `scripts/verify-mintlify-docs.test.mjs`
@@ -1327,7 +1328,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1206)
+## All code files (1207)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -2495,6 +2496,7 @@
 - `scripts/verify-docs-canon.mjs`
 - `scripts/verify-encoding.mjs`
 - `scripts/verify-encoding.test.mjs`
+- `scripts/verify-image-runtime-reads.test.mjs`
 - `scripts/verify-image-workspace-deps.mjs`
 - `scripts/verify-image-workspace-deps.test.mjs`
 - `scripts/verify-journal-merge.mjs`
