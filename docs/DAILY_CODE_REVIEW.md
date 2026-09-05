@@ -1,43 +1,40 @@
-<!-- Сгенерировано: 2026-09-04T17:24:27.258Z (yarn code-review; daily, llm-xai) -->
+<!-- Сгенерировано: 2026-09-05T17:21:07.252Z (yarn code-review; daily, llm-xai) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: 8db528ff45f8893e2538e4446d1bc5a366f6be26^..aa7d89957abeeae03a834b94f70e6ec037d1f748 (5 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): 1f8df30c #2286 (1455), aa7d8995 (625)
+> Период: da0207b91f75bf1c509b77913c502c2db182e5ea^..29e71db01db9a17057d78329ec43ff3579c72229 (5 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): aafd9ce0 #2287 (566), 29e71db0 (622)
 
 ---
 
 Tier: T1
 
-**[vesnin]: BLOCK (условный на oversized)** — по развёрнутому диффу (#2280, #2282) бестиарий чист: ритуальные артефакты и чеканка `tariff-self-select` с маркерами/посылками, без B1/B6/B9. **P1:** коммиты `1f8df30c` (#2286, +1455) и `aa7d8995` (+625) **не развёрнуты** — продуктовый носитель дня вне обзора; merge уже в стволе (#2286 MERGED) при отсутствии прохода по швам `TariffChangeProof`/`self`, `GET/POST tariff`, `syncMembraneContext`. До утреннего точечного review-pass по этим двум SHA — не считать DoD #2281 закрытым «по факту merge».
+**vesnin (ведущий):** **BLOCK** на продуктовую приёмку дня — носитель магистрали `cabinet-hotfix-2287` и хвост `29e71db0` в oversized-диффах (566 / 622 строк) **не развёрнуты**, сверка швов `COPY docs/tariffs` + `mediaFetch` (нет body ⇒ нет `Content-Type`) по факту кода невозможна. Ритуальная чеканка (#2291/#2292) — **пропуск** (T0, канон/У1). Bestiary по видимому diff: зверей нет; B3/B6 на ритуале не пойманы (DoD дверей явный, trail `started→pass`).
 
-[Teamlead]: День = ритуал утра → смена магистрали `library-open-api-door` → `tariff-self-select` (#2281) + oversized поставка. Живые состояния: #2280/#2282/#2286 MERGED, #2281 CLOSED, #2271 CLOSED, #2266 CLOSED; горизонт #592 OPEN. Ритуал-day: fail (`morning-care`) → r2 started — след честный. На утро не открывать L-кандидаты DAY_PLAN и не подменять owner-magistral secret-parser’ом. Команды: `yarn turbo run lint typecheck test --filter=@membrana/background-cabinet` (и пакет, куда легли tariff-ручки, если не cabinet); точечный `git show 1f8df30c --stat` + review швов self/sync; одна запись вердикта по бывшим red #2266/#2256 если ещё в очереди.
+[Teamlead]: День = pivot владельца 05.09 на `cabinet-hotfix-2287` после вчерашнего BLOCK по self-select; ритуал и assertions перечеканены честно (`sources[0]` hotfix, `sources[1]` tariff-self-select). Продуктовый diff hotfix/закрывающий коммит **вне обзора** — вечерний вердикт по дверям кабинета не может быть ok. Санитария #2286 (fanout/квота) так и не закрыта письменно. Утро: сначала разворот aafd9ce0/#2287 и 29e71db0, живой удар `GET /v1/tariffs` + pair без body; не открывать L из top-3. Команды: `yarn turbo run lint typecheck test --filter=@membrana/cabinet` (и tariff-пакеты поставки); при наличии verify — зуб «образ несёт сетку».
 
-[Архитектор]: Канон дня выровнен: `sources[0]` 04.09 = `tariff-self-select`, вчерашний door — `sources[1]`, не primary. Граница верная: third proof `self` + список/POST + UI, оплата/промо — одно будущее место. Критический контрактный шов — доталкивание квоты на узлы (`syncMembraneContext` только из pair): без него «зелёный кабинет / старая квота на media». M4-квоты и open-api door сознательно вне ствола — ок.
+[Архитектор]: Граница дня верная: hotfix дверей (образ + mediaFetch одним местом) vs review self-select в санитарных — owner `sources[0]` не синтезирован из стендапа/DAY_PLAN. Запрет fallback «БД без сетки» — правильный инвариант носителя. Контракт приёмки выкатки должен судить **двери**, не `/health` (#2288 OPEN — дыра B3, если смоук останется health-only). Oversized без разворота = ложно-закрываемый DoD (повтор урока «влито ≠ работает»).
 
-[Структурщик]: По docs-диффу циклов/пакетов нет (T0-слой). Oversized #2286 обязан не размазать transition в обход `tariff-transition.service.ts` и журнала; POST self — тот же сервис, те же отказы, анти-parallel. Проверить: нет дубля домена; UI тонкий; Prisma/enum `self` + миграция в том же контуре, что сервис. C7/C8/C9 — только по развёрнутому diff утра.
+[Структурщик]: В видимом diff только docs/jsonl/assertions/gates — циклов пакетов нет, C1/C4/C7 не применимы. Ожидаемые швы hotfix (вне diff): `Dockerfile` + `docs/tariffs/**`, единая точка `mediaFetch`/`mediaHeaders`, тест на безтелые POST/DELETE/GET. C8/C9 по docs — ок. PR size: #2291 OK (~180), #2292 OK (~270); #2287/#хвост — oversized, P1 «развернуть отдельно», не nit.
 
-[Математик]: — (DSP/FFT не в диффе). Санитария: timeout-класс #2266 — вердикт «помеха vs pre-existing», не «чинить порог вслепую» в tariff-diff.
+[Математик]: — (нет analyzer/FFT; correctness media body — зона структурщика/кабинета).
 
-[Музыкант]: — Web Audio не затронут. Подкрепление node-duty-ready / живое дежурство буфера (#2204 CLOSED) — полевой контур, не код дня; не смешивать с self-select PR.
+[Музыкант]: — (Web Audio / audio-engine не затронуты).
 
-[Верстальщик]: UI выбора тарифа на мембране — в #2286 вне обзора. Утро: a11y/DESIGN на новом селекте; без экрана оплаты «заодно»; отказ/успех перехода видимы пользователю (не только toast-пустышка).
+[Верстальщик]: — (UI membrane tariff select в этом сегменте не виден; a11y не оценивался).
 
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-09-04); опора — #2280/#2282 (ритуал+чеканка) + **долг review** `1f8df30c`/#2286 и `aa7d8995`.
-
+Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-09-05)
 Definition of Done (утро):
-1. Развернуть и прочитать `1f8df30c` + `aa7d8995`: proof=`self`, GET `/v1/tariffs`, POST `…/me/tariff`, log, sync/quota на узлы (или явный follow-up).
-2. `yarn turbo run lint typecheck test --filter=@membrana/background-cabinet` (и фактический пакет tariff/membrane UI).
-3. Не стартовать `angelina-hostess-impl` / `assets-container` / `batch-collection-run-contour` без owner-choice.
-4. Secret-parser (#592) — максимум фикстура detector vs redact, не primary.
-5. Прочитать этот review в standup; не генерировать code-review утром.
-
+1. Разворот diff `aafd9ce0` (#2287) и `29e71db0` — письменный ok/follow-up по `tariff-grid` in image и mediaFetch Content-Type.
+2. `yarn turbo run lint typecheck test --filter=@membrana/cabinet` (+ связанные tariff-пакеты) — зелёный, результат в вердикте.
+3. Удар по дверям: `GET /v1/tariffs` → 200+список; pair/без body → 401/404, **не** 400.
+4. Зуб «образ несёт сетку» green **или** явный follow-up-issue.
+5. Mini-verdict по #2286 fanout/sync (санитария вчерашнего BLOCK) — не primary.
+6. Не стартовать hostess/assets/batch и не primary #592 без нового owner-choice.
 Риски:
-- **P1** — oversized влит без разворота (#2286 / aa7d8995): ложный DoD self-select, квота на узлах не доехала.
-- **P1** — расхождение ритуал-фокуса (`secret-parser-built`) vs owner-magistral (`tariff-self-select`) → снова probe-фантом, если агент пойдёт за стендапом.
-- **P2** — review-debt #2267 (~6k) и шов `hasMore` кабинета; deps-watch `fast-uri`/`fastify`·`qs` — гигиена, не ствол.
-- **P2** — PR size #2286 >>400 без split-обоснования в обзоре дня.
-
-Вердикт дня (ритуал-слой): **пропуск** для #2280/#2282 (T0 docs).  
-Вердикт поставки: **BLOCK** до утреннего pass по #2286/`aa7d8995` (vesnin).
+- **P0** — merge/выкатка hotfix без разворота oversized и без удара по дверям → снова 503/400 «у человека».
+- **P1** — #2288 OPEN: health-only smoke маскирует мёртвые двери (B3).
+- **P1** — fanout self-select (#2286) всё ещё без живого/тестового подтверждения квоты на узлах.
+- **P2** — deps `fast-uri` high / `fastify`·`qs` moderate — accept-risk или bump, не блокер merge ритуала.
+- **P2** — #2284 ключ узла / duty после дверей, руками владельца.
