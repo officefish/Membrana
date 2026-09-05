@@ -12,9 +12,21 @@
  * Смежный сторож `App DI smoke` (#2009) этот класс НЕ ловит по построению: он судит граф DI на
  * полных `node_modules` дерева — то есть «граф собирается», а не «файлы есть в образе».
  *
- * ЧТО ИМЕННО ПРОВЕРЯЕТСЯ: транзитивный граф workspace-зависимостей сервиса (из `package.json`,
- * не на глаз) ⊆ множество путей, которые runtime-стадия копирует. Обратное включение НЕ
- * требуется: лишняя копия — вес, а не ложь.
+ * ЧТО ИМЕННО ПРОВЕРЯЕТСЯ — ТРИ правила одного вопроса «что на самом деле окажется в образе»:
+ *
+ *   1) КОД: транзитивный граф workspace-зависимостей сервиса (из `package.json`, не на глаз) ⊆
+ *      множество путей, которые копирует нужная стадия. Обратное включение НЕ требуется: лишняя
+ *      копия — вес, а не ложь.
+ *   2) ДАННЫЕ (#2287, 04.09): файл, который читает РАНТАЙМ, обязан лежать там, где рантайм его
+ *      ищет. Проверяется моделью подъёма резолвера по назначениям COPY, а не наличием строки.
+ *   3) КОНТЕКСТ (#2287, 05.09): источник COPY обязан доехать до сборки. Правило заведено после
+ *      того, как правило (2) оказалось зелёным на образе, который НЕ СОБИРАЛСЯ: строка `COPY
+ *      docs/tariffs` в Dockerfile была, а корневой `.dockerignore` исключал `docs` дважды —
+ *      `"/docs/tariffs": not found`. Сторож судил инструкцию и молчал о контексте.
+ *
+ * Урок правила (3) стоит держать при себе и дальше: у проверки надо спрашивать не «что она
+ * судит», а «что она читает». Пока `.dockerignore` не читался, зуб отвечал на другой вопрос,
+ * чем тот, что задавал прод, — и был зелен по праву, отвечая не на тот вопрос.
  *
  * Usage:
  *   node scripts/verify-image-workspace-deps.mjs                 # все объявленные сервисы
@@ -24,6 +36,7 @@
  * Exit: 0 — граф покрыт · 1 — есть непокрытые пакеты · 2 — ошибка входа.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -258,6 +271,133 @@ export function focusedWorkspaces(dockerfileText) {
 }
 
 /**
+ * ПРАВИЛА `.dockerignore` — ЧЕТВЁРТЫЙ рукописный манифест того же образа (#2287, 05.09).
+ *
+ * Почему это здесь. Сторож судил ИНСТРУКЦИЮ (`COPY … есть в Dockerfile`) и молчал о КОНТЕКСТЕ.
+ * 05.09 в Dockerfile кабинета появился `COPY docs/tariffs`, сторож был зелёный, а сборка упала
+ * `"/docs/tariffs": not found`: корневой `.dockerignore` исключает `docs` дважды. Файл в git
+ * есть, в контексте нет — и предикат, который не читает контекст, отвечал на другой вопрос,
+ * чем тот, что задавал прод.
+ *
+ * Разбор сознательно КОНСЕРВАТИВЕН и повторяет docker в том, что нужно для этого вопроса:
+ * порядок правил, последнее совпадение побеждает, совпадением считается и путь, и любой его
+ * предок (исключённый каталог уносит содержимое). Полной эмуляции docker здесь нет и не
+ * заявляется: несовпадение с ним лечится не догадкой, а сборкой в CI — она и есть судья.
+ */
+export function parseDockerignore(text) {
+  const rules = [];
+  for (const raw of (text ?? '').split(/\r?\n/u)) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    const negated = line.startsWith('!');
+    const pattern = (negated ? line.slice(1) : line)
+      .trim()
+      .replace(/\\/gu, '/')
+      .replace(/^\.\//u, '')
+      .replace(/\/+$/u, '');
+    if (pattern) rules.push({ pattern, negated });
+  }
+  return rules;
+}
+
+/** Шаблон docker → регулярное выражение на ПОЛНЫЙ путь: `**` через каталоги, `*` внутри имени. */
+function patternToRegExp(pattern) {
+  let out = '';
+  for (let i = 0; i < pattern.length; i += 1) {
+    const ch = pattern[i];
+    if (ch === '*') {
+      if (pattern[i + 1] === '*') {
+        out += '.*';
+        i += 1;
+      } else {
+        out += '[^/]*';
+      }
+    } else if (ch === '?') out += '[^/]';
+    else out += ch.replace(/[.+^${}()|[\]\\]/gu, '\\$&');
+  }
+  return new RegExp(`^${out}$`, 'u');
+}
+
+/** Путь и все его предки — исключение каталога уносит всё, что под ним. */
+function selfAndAncestors(path) {
+  const parts = path.split('/');
+  return parts.map((_, i) => parts.slice(0, i + 1).join('/'));
+}
+
+/**
+ * Попадёт ли файл в контекст сборки. Побеждает ПОСЛЕДНЕЕ совпавшее правило — как у docker.
+ *
+ * Возвращает `{ included, rule }`: имя решившего правила нужно в тексте находки, иначе
+ * читатель ищет виновную строку в сотне глазами.
+ */
+export function contextDecision(rules, path) {
+  const chain = selfAndAncestors(path);
+  let decision = { included: true, rule: null };
+  for (const rule of rules) {
+    const re = patternToRegExp(rule.pattern);
+    if (chain.some((candidate) => re.test(candidate))) {
+      decision = { included: rule.negated, rule: (rule.negated ? '!' : '') + rule.pattern };
+    }
+  }
+  return decision;
+}
+
+/**
+ * Находки «источник COPY не доедет до сборки» — по каждому COPY из контекста (без `--from`).
+ *
+ * Проверяются ОБА условия, потому что дефект бывает двух родов: файла нет в дереве (опечатка,
+ * переименование) и файл есть, но исключён из контекста (случай 05.09). Для источника-каталога
+ * достаточно ОДНОГО уцелевшего файла: docker копирует содержимое, и каталог, из которого не
+ * прошло ничего, для него не существует — ровно та ошибка `not found`.
+ */
+export function buildContextFindings(service, dockerfileText, dockerignoreText, contextFiles) {
+  const rules = parseDockerignore(dockerignoreText);
+  const findings = [];
+  const seen = new Set();
+  for (const pair of dockerfileCopyPairs(dockerfileText, { localOnly: true })) {
+    if (seen.has(pair.source)) continue;
+    seen.add(pair.source);
+    const under = contextFiles.filter(
+      (file) => file === pair.source || file.startsWith(`${pair.source}/`),
+    );
+    if (under.length === 0) {
+      findings.push({
+        service: service.id,
+        kind: 'not-in-tree',
+        detail: `COPY ${pair.source} — такого пути нет в дереве`,
+      });
+      continue;
+    }
+    const survives = under.some((file) => contextDecision(rules, file).included);
+    if (!survives) {
+      const blame = contextDecision(rules, under[0]);
+      findings.push({
+        service: service.id,
+        kind: 'excluded-from-context',
+        detail:
+          `COPY ${pair.source} — путь есть в дереве, но исключён из build-контекста правилом ` +
+          `«${blame.rule}» в .dockerignore; сборка упадёт "${pair.source}": not found`,
+      });
+      continue;
+    }
+    /*
+     * ЧЕГО ЭТОТ ЗУБ НАМЕРЕННО НЕ СУДИТ — «парность исключений».
+     *
+     * `.dockerignore` этого репозитория пишет исключения парами (`!docs/truth/` +
+     * `!docs/truth/registry.json`), и соблазн потребовать пару проверкой велик. Правило было
+     * написано и СНЯТО замером 05.09: офис копирует `docs/WHITE_PAPER.md` при исключённом `docs`
+     * и БЕЗ строки `!docs/` — и собирается зелёным. Правило дало бы три ложных красных на
+     * работающем образе, то есть подгоняло бы ствол под свою догадку.
+     *
+     * Отсюда граница честности: сторож судит ровно то, что подтверждено замером, — доживает ли
+     * источник COPY до контекста. Точное поведение docker в глубоких вложениях он не эмулирует и
+     * не притворяется, что эмулирует; судья там — сборка образа в CI.
+     */
+  }
+  return findings;
+}
+
+/**
  * Рабочий каталог, действующий в конце runtime-стадии.
  *
  * Берётся ПОСЛЕДНИЙ `WORKDIR` этой стадии: именно он станет `cwd` процесса, а от `cwd` и пляшет
@@ -374,7 +514,7 @@ export function runtimeReadFindings(service, dockerfileText, sources) {
 }
 
 /** Вердикт по одному сервису значением: ни ФС, ни печати. */
-export function serviceFindings(service, map, dockerfileText, sources = {}) {
+export function serviceFindings(service, map, dockerfileText, sources = {}, context = null) {
   const pkgName = Object.keys(map).find((n) => map[n].dir === service.pkg);
   if (!pkgName) return [{ service: service.id, kind: 'unreadable', detail: `не найден package.json в ${service.pkg}` }];
   const onBuildStage = service.stage === 'build';
@@ -394,13 +534,37 @@ export function serviceFindings(service, map, dockerfileText, sources = {}) {
     }
   }
   findings.push(...runtimeReadFindings(service, dockerfileText, sources));
+  // Контекст судится ПОСЛЕДНИМ и ОТДЕЛЬНО: «строка COPY написана» и «источник доедет до
+  // сборки» — разные утверждения, и 05.09 первое было правдой, а второе ложью.
+  if (context) {
+    findings.push(
+      ...buildContextFindings(service, dockerfileText, context.dockerignore, context.files),
+    );
+  }
   return findings;
+}
+
+/**
+ * Build-контекст с диска: правила `.dockerignore` и список путей дерева.
+ *
+ * Пути берутся у git, а не обходом ФС: сервер собирает образ из чекаута, и `node_modules`,
+ * `dist` и локальная грязь в контекст CI не попадают. Обход ФС считал бы лишнее и мог бы
+ * назвать «уцелевшим» файл, которого на сервере нет.
+ */
+export function readBuildContext(root = ROOT) {
+  const ignorePath = resolve(root, '.dockerignore');
+  const dockerignore = existsSync(ignorePath) ? readFileSync(ignorePath, 'utf8') : '';
+  const listed = spawnSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+  if (listed.status !== 0) return null;
+  const files = listed.stdout.split('\0').filter(Boolean);
+  return { dockerignore, files };
 }
 
 function main(argv) {
   const asJson = argv.includes('--json');
   const only = argv.includes('--service') ? argv[argv.indexOf('--service') + 1] : null;
   const map = readWorkspaceMap();
+  const context = readBuildContext();
   const findings = [];
   for (const service of IMAGE_SERVICES) {
     if (only && service.id !== only) continue;
@@ -416,7 +580,7 @@ function main(argv) {
       const abs = resolve(ROOT, need.constantsFrom);
       if (existsSync(abs)) sources[need.constantsFrom] = readFileSync(abs, 'utf8');
     }
-    findings.push(...serviceFindings(service, map, readFileSync(dockerfile, 'utf8'), sources));
+    findings.push(...serviceFindings(service, map, readFileSync(dockerfile, 'utf8'), sources, context));
   }
   if (asJson) {
     console.log(JSON.stringify({ ok: findings.length === 0, findings }, null, 2));

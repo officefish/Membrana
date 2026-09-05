@@ -13,7 +13,10 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  buildContextFindings,
+  contextDecision,
   dockerfileCopyPairs,
+  parseDockerignore,
   imagePathOfRepoFile,
   lookupConstantsFromSource,
   runtimeFindsFile,
@@ -133,4 +136,113 @@ test('WORKDIR в runtime-стадии отсутствует — судить н
 
 test('сервис без объявленных runtimeReads находок не рождает', () => {
   assert.deepEqual(runtimeReadFindings({ id: 'media' }, dockerfile(null), SOURCES), []);
+});
+
+/**
+ * Зубы правила «источник COPY доезжает до build-контекста» (#2287, вторая правка 05.09).
+ *
+ * Правило заведено после того, как зуб выше оказался ЗЕЛЁНЫМ на образе, который не собрался:
+ * строка `COPY docs/tariffs` в Dockerfile была, а `.dockerignore` исключал `docs` дважды.
+ * Проверка судила инструкцию и не читала контекст — отвечала не на тот вопрос, что задавал прод.
+ */
+const IGNORE = [
+  '**/node_modules',
+  'docs',
+  'docs/**',
+  '!docs/truth/',
+  '!docs/truth/registry.json',
+].join('\n');
+
+const CONTEXT_FILES = [
+  'docs/tariffs/tariff-grid.json',
+  'docs/truth/registry.json',
+  'packages/background-cabinet/package.json',
+];
+
+function contextDockerfile(copyLine) {
+  return ['FROM node:20-alpine AS runtime', 'WORKDIR /app', copyLine].join('\n');
+}
+
+test('источник исключён из контекста — находка называет ВИНОВНОЕ правило', () => {
+  const findings = buildContextFindings(
+    { id: 'cabinet' },
+    contextDockerfile('COPY docs/tariffs /app/docs/tariffs'),
+    IGNORE,
+    CONTEXT_FILES,
+  );
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].kind, 'excluded-from-context');
+  assert.match(findings[0].detail, /исключён из build-контекста правилом «docs\/\*\*»/u);
+  // Текст обязан назвать и то, чем это кончится: иначе читатель не свяжет находку с падением.
+  assert.match(findings[0].detail, /not found/u);
+});
+
+test('исключение возвращает путь в контекст — находки нет', () => {
+  const findings = buildContextFindings(
+    { id: 'cabinet' },
+    contextDockerfile('COPY docs/tariffs /app/docs/tariffs'),
+    `${IGNORE}\n!docs/tariffs/\n!docs/tariffs/tariff-grid.json`,
+    CONTEXT_FILES,
+  );
+  assert.deepEqual(findings, []);
+});
+
+test('последнее совпавшее правило побеждает — как у docker', () => {
+  const rules = parseDockerignore(`${IGNORE}\n!docs/tariffs/\n!docs/tariffs/tariff-grid.json`);
+  assert.equal(contextDecision(rules, 'docs/tariffs/tariff-grid.json').included, true);
+  assert.equal(contextDecision(rules, 'docs/WHITE_PAPER.md').included, false);
+  // Исключение каталога уносит содержимое: совпадением считается и предок пути.
+  assert.equal(contextDecision(parseDockerignore('docs'), 'docs/a/b.json').included, false);
+});
+
+test('COPY --from стадии сборки контекстом не судится: у него источник не из дерева', () => {
+  const df = [
+    'FROM node:20-alpine AS runtime',
+    'WORKDIR /app',
+    'COPY --from=build /app/docs/tariffs /app/docs/tariffs',
+  ].join('\n');
+  assert.deepEqual(buildContextFindings({ id: 'cabinet' }, df, IGNORE, CONTEXT_FILES), []);
+});
+
+test('источника нет в дереве вовсе — это ДРУГАЯ находка, чем «исключён»', () => {
+  const findings = buildContextFindings(
+    { id: 'cabinet' },
+    contextDockerfile('COPY docs/tarrifs /app/docs/tariffs'),
+    IGNORE,
+    CONTEXT_FILES,
+  );
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].kind, 'not-in-tree');
+  // Опечатка и исключение лечатся разным: первое — правкой Dockerfile, второе — .dockerignore.
+  assert.doesNotMatch(findings[0].detail, /\.dockerignore/u);
+});
+
+test('уцелел ХОТЯ БЫ один файл каталога — каталог доезжает', () => {
+  // Docker копирует содержимое: каталог, из которого не прошло ничего, для него не существует.
+  const findings = buildContextFindings(
+    { id: 'office' },
+    contextDockerfile('COPY docs/truth /app/docs/truth'),
+    IGNORE,
+    CONTEXT_FILES,
+  );
+  assert.deepEqual(findings, []);
+});
+
+test('парность исключений НЕ судится — ствол доказал, что правило было догадкой', () => {
+  // Офис копирует docs/WHITE_PAPER.md при исключённом `docs` и без строки `!docs/` — и
+  // собирается зелёным. Требование пары дало бы три ложных красных на работающем образе.
+  const rules = parseDockerignore('docs\n!docs/WHITE_PAPER.md');
+  assert.equal(contextDecision(rules, 'docs/WHITE_PAPER.md').included, true);
+  const findings = buildContextFindings(
+    { id: 'office' },
+    contextDockerfile('COPY docs/WHITE_PAPER.md /app/docs/WHITE_PAPER.md'),
+    'docs\n!docs/WHITE_PAPER.md',
+    ['docs/WHITE_PAPER.md'],
+  );
+  assert.deepEqual(findings, []);
+});
+
+test('комментарии и пустые строки .dockerignore правилами не считаются', () => {
+  const rules = parseDockerignore('# комментарий\n\n  docs  \n');
+  assert.deepEqual(rules, [{ pattern: 'docs', negated: false }]);
 });
