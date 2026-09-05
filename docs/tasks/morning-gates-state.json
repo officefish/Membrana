@@ -7,10 +7,17 @@
   "frozenDigest": "10244a0ad843c56b76cadf517192d82f6dfef4b6e0da8b11baf8f3b47b6f496f",
   "magistral": "cabinet-hotfix-2287",
   "swallow": {
-    "draftDigest": "abb918e9b3db74a41314c7c05ef3537e23af40babb32ff703ae71f1713a66527",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-09-05.md",
+    "draftDigest": "19ca8dcce177da7c8fb9c31beaa00f29f2aa4f2dfcd635cdcbe2e93b32c560c0",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-05.md",
     "ownerAck": true,
-    "day": "2026-09-05"
+    "day": "2026-09-05",
+    "claimsProbe": {
+      "verdict": "hard",
+      "protocol": "docs/seanses/team-evening-feedback-2026-09-05.md",
+      "sha": "29e71db01db9",
+      "at": "2026-09-05T17:22:35.877Z"
+    },
+    "gate": "evening:partner-swallow"
   },
   "day": "2026-09-05",
   "magistralChosenAt": "2026-09-05",

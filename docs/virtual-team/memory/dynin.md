@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14394/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 339 (причины в op-log) -->
+Записей: 49 · бюджет 14368/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 340 (причины в op-log) -->
+
+### 2026-09-05 · позиция · team-evening-feedback
+
+> Оценка артефактов: Входы дня корректны: запрет на детекционную магистраль (scoreboard, benchmark harmonic+cepstral+flux) соблюдён — не открывали то, что требует новых замеров. Чистота числовой картины дня хорошая: реестр и граф правды честно не двигались, без инфляции. Итоги […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`
 
 ### 2026-09-04 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Начну с посылок, которые определяют форму. PluginId из M1 уже несёт пространство имён — вида `module:plugin`. mountTarget из M2 уже длинной формы — `background-office/journal`. Цепочка Т3.3: «модуль → плагин → версия → коллекция → прогон». Если PluginId = `module:plugin`, то в […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/server-plugin-foundation-m3-results-home-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m3r-address
-
-> Поставлю предикат строго. Пусть `A = RunAddress`. Функция `home(A)` должна быть детерминированной и не требовать обращения к внешнему реестру в момент адресации. Если `home(A) = lookup(A.pluginId, HOME_REGISTRY)` — это не функция адреса, это запрос. Адрес — замкнутая структура. […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m3r-address-2026-08-17.md#reply-1`

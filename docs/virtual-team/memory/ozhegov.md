@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14345/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 346 (причины в op-log) -->
+Записей: 49 · бюджет 14323/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 347 (причины в op-log) -->
+
+### 2026-09-05 · позиция · team-evening-feedback
+
+> Оценка артефактов: C1/C4/C7 не применимы — циклов пакетов в видимом diff нет. Артефакты ритуала согласованы; приятно, что `morning-gates-state.json` и assertions перечеканены под owner-choice. Единственная шероховатость — реестр задач не двигался (1142 → 1142), хвосты остаются […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`
 
 ### 2026-09-04 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Уточняю термины. `collectionId` — это идентификатор коллекции звуков из home `background-media/collections` (вердикт M2). Он внешний ключ, не вложенная структура. Запись результата живёт в доме результатов (Mongo офиса, отдельная коллекция), ссылается на коллекцию по id — не […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m3-results-home-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m3r-address
-
-> Фиксирую лемму. `RunAddress` — это адрес одного конкретного прогона в системе. По Т3.3 цепочка: `модуль → плагин → версия → коллекция → прогон`. Из этих звеньев `pluginId` даёт «плагин» (`org.kind.slug`), `version` — версию, `collectionId` — коллекцию, `runId` — прогон. Звено […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m3r-address-2026-08-17.md#reply-1`

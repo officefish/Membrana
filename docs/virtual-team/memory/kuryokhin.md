@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14360/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 342 (причины в op-log) -->
+Записей: 49 · бюджет 14314/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 343 (причины в op-log) -->
+
+### 2026-09-05 · позиция · team-evening-feedback
+
+> Оценка артефактов: Web Audio / audio-engine не затронуты — входы дня для меня пустые, но процесс оценен: артефакты не раздуты, день не пытался закрыть несуществующие задачи. Это дисциплинированно. Итоги дня: — (нет аудио-контура). Единственное наблюдение: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`
 
 ### 2026-09-04 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Два отпечатка — это два разных сигнала, которые нельзя смешивать в одном поле. Отпечаток входа: хеш состава коллекции — что именно в ней на момент прогона (список сэмплов с их id и contentHash). Отпечаток конфигурации: хеш множества `{pluginId, version}` всех включённых […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m3-results-home-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m3r-address
-
-> Открываю с практики. Плагин `membrana.handler.mfcc` монтируется в `background-media/collections`. Когда runtime запускает прогон, ему нужно знать: в каком доме этот плагин живёт — чтобы маршрутизировать результат в правильный офис. Из `pluginId` дом не читается: `handler` — это […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m3r-address-2026-08-17.md#reply-1`

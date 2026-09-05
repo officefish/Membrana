@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14374/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 352 (причины в op-log) -->
+Записей: 50 · бюджет 14373/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/tarasov.jsonl · transferred: 353 (причины в op-log) -->
+
+### 2026-09-05 · позиция · team-evening-feedback
+
+> Оценка артефактов: Документы дня согласованы и честны: стендап и MAIN_DAY_ISSUE прямо фиксируют расхождение (review self-select как «одно главное» утром vs owner-choice `cabinet-hotfix-2287`), не замалчивая его. STRATEGY_DAY устарел (горизонт 18.07) — читать как вещдок, не […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`
 
 ### 2026-09-04 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > Хорошо. Ставлю вопрос жёстко: шесть граней, одно заседание, вердикт нужен по всем. Нет «зависит от реализации» — форма сейчас. По носителю сразу скажу позицию: архивариус уже живёт в Mongo офиса, 106К спанов. Класть результаты плагинов туда же — значит не плодить инфраструктуру. […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/server-plugin-foundation-m3-results-home-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m3r-address
-
-> Позиции сошлись на поле. Фиксирую: `RunAddress` несёт `mountTarget: HomeName` явным полем. Прежний индекс `{pluginId, version, collectionId, runId}` — не меняется, `mountTarget` в индекс не входит. Теперь второй вопрос — окно накопления. Слово Математику. _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m3r-address-2026-08-17.md#reply-1`
 
 ### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 
