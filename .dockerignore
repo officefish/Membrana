@@ -102,3 +102,21 @@ docs/**
 !docs/evidence/registry.jsonl
 !docs/prompts/
 !docs/prompts/DREAM_MASTER_PROMPT.md
+# ТАРИФЫ — ЧЕТВЁРТЫЙ ВЫХОД ТОГО ЖЕ КЛАССА (#2287, 05.09).
+#
+# Оба файла ЧИТАЕТ РАНТАЙМ кабинета, а не сборка:
+#   tariff-grid.json    — loadTariffGrid() на каждой попытке открыть тариф;
+#   tariff-scalars.json — prisma/tariff-scalars.mjs при `prisma db seed` внутри образа
+#                         (entrypoint, CABINET_RUN_SEED=true), путь ../../../docs/tariffs.
+# Установлено чтением обоих носителей, а не добавлено «на всякий случай».
+#
+# Пара «каталог + файл» — по образцу строк выше: без `!docs/tariffs/` docker не спускается
+# в исключённый каталог, и правило на файл не срабатывает.
+#
+# ЦЕНА ОТСУТСТВИЯ ЭТИХ СТРОК УЖЕ УПЛАЧЕНА: 05.09 Dockerfile получил `COPY docs/tariffs`,
+# а контекст его не нёс — сборка кабинета упала `"/docs/tariffs": not found` (run
+# 33968068866). Комментарий выше про ТРИ рукописных манифеста оказался неполон: их четыре,
+# и четвёртый — вот этот файл, который до #2287 никто машинно не сверял с Dockerfile.
+!docs/tariffs/
+!docs/tariffs/tariff-grid.json
+!docs/tariffs/tariff-scalars.json
