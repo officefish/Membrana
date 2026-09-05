@@ -64,6 +64,24 @@ COPY --from=build /app/packages/services/mfcc-analyzer/package.json /app/package
 COPY --from=build /app/packages/background-cabinet/dist ./dist
 COPY --from=build /app/packages/background-cabinet/prisma ./prisma
 COPY --from=build /app/packages/background-cabinet/package.json ./package.json
+
+# СЕТКА ТАРИФОВ — ДАННЫЕ, КОТОРЫЕ ЧИТАЕТ РАНТАЙМ (#2287, прод 04.09).
+#
+# `loadTariffGrid()` ищет `docs/tariffs/tariff-grid.json` ВВЕРХ от рабочего каталога. Файл в
+# git с 29.07, но в образ не ехал никогда: этот Dockerfile копирует пакеты, а `docs/` не
+# копировал. Итог на проде — витрина тарифов и погашение промокода отвечали
+# `grid_unavailable`, причём промокод молча с 29.07; витрина #2286 это лишь вскрыла.
+#
+# НАЗНАЧЕНИЕ АБСОЛЮТНОЕ, чтобы повторить раскладку репозитория, — а НЕ потому, что иначе не
+# найдётся. Относительное назначение тоже нашлось бы: резолвер проверяет сам рабочий каталог
+# на нулевом шаге, до всякого подъёма. Первая редакция этого комментария утверждала обратное;
+# порча 05.09 показала, что зуб на такую «поломку» зелен по праву, и неправдой был комментарий.
+# `/app/docs/tariffs` лежит на втором предке и читается как «репозиторный docs/ внутри образа».
+#
+# Класс закрыт зубом `verify:image-workspace-deps`: он моделирует подъём резолвера по
+# назначениям COPY и константам из `tariff-grid-source.ts`, а не ищет эту строку глазами.
+COPY docs/tariffs /app/docs/tariffs
+
 COPY packages/background-cabinet/docker/entrypoint.sh /entrypoint.sh
 RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
 
