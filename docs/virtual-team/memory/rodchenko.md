@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14310/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 338 (причины в op-log) -->
+Записей: 49 · бюджет 14287/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 339 (причины в op-log) -->
+
+### 2026-09-05 · позиция · team-evening-feedback
+
+> Оценка артефактов: UI-сегмента в дне нет — `tariff self-select` вчерашней поставки не виден в diff, a11y не оценивался. Документы дня читабельны, расхождение стендап/MAIN_DAY_ISSUE подано явной таблицей — это хорошо для восприятия. Итоги дня: — (нет UI-изменений). Кабинетные […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`
 
 ### 2026-09-04 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Смотрю на структуру как на карточку, которую будет читать витрина (M5 её нарисует, сейчас не проектирую). Важно: `runId` должен быть человекочитаемым или хотя бы сортируемым по времени — UUID v7 или `{timestamp}-{random}`. Это не декор, это требование к форме: без монотонного […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m3-results-home-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m3r-address
-
-> Смотрю с витрины: когда оператор открывает журнал прогонов, он фильтрует по дому — `background-office/journal` или `background-media/collections`. Если `mountTarget` нет в `RunAddress`, фильтр требует join с манифестом плагина. Это разрыв между данными и их отображением. Для […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m3r-address-2026-08-17.md#reply-1`

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14321/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 354 (причины в op-log) -->
+Записей: 49 · бюджет 14297/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 355 (причины в op-log) -->
+
+### 2026-09-05 · позиция · team-evening-feedback
+
+> Оценка артефактов: Граница дня задана верно: owner `sources[0]` не синтезирован из стендапа/DAY_PLAN — это чисто. Запрет fallback «БД без сетки» — правильный инвариант: он сохраняет диагностируемость дыры образа. Странно, что STRATEGY_DAY почти двухмесячной давности всё ещё […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-05.md#reply-1`
 
 ### 2026-09-04 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Конструкция адреса. PluginId из M1 имеет вид `{namespace}:{name}` — namespace и есть модуль. Если ввести в адрес отдельный `module`-сегмент, получим двойное кодирование: `journal-analyzer/journal-analyzer:word-count/1.0.0/...`. Это нарушение. Форма ключа в Mongo-документе: `{ […] _(реплик в сеансе: 5)_
 
 — источник: `docs/seanses/server-plugin-foundation-m3-results-home-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m3r-address
-
-> Конструкция прояснилась. Три альтернативы адресации дома: (1) восстанавливать из HOME_REGISTRY по `pluginId` — скрытая зависимость, нарушает замкнутость адреса; (2) кодировать в `pluginId` — M1 прямо запрещает, второй сегмент есть род, не модуль; (3) явное поле `mountTarget: […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m3r-address-2026-08-17.md#reply-1`

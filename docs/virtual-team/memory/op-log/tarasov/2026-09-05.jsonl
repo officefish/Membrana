@@ -1,1 +1,4 @@
 {"ts":"2026-09-05T11:13:44.375Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-09-05T17:36:07.752Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-09-05-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-05T17:36:07.752Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-17-server-plugin-foundation-m3r-address","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-05T17:36:07.752Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
