@@ -37,7 +37,25 @@ export const IMAGE_SERVICES = Object.freeze([
   // Кабинет внесён 22.08 после падения сборки на @membrana/plugin-contracts@npm:* (404): зуб
   // честно проверял то, что ему поручили, и молчал про всё остальное. Список из одного сервиса
   // ловит один сервис — класс чинится внесением, а не разбором случая.
-  { id: 'cabinet', pkg: 'packages/background-cabinet', dockerfile: 'packages/background-cabinet/Dockerfile', stage: 'runtime' },
+  {
+    id: 'cabinet',
+    pkg: 'packages/background-cabinet',
+    dockerfile: 'packages/background-cabinet/Dockerfile',
+    stage: 'runtime',
+    /*
+      ДАННЫЕ, А НЕ КОД — второй способ, которым образ бывает неполон (#2287, прод 04.09).
+      Симлинки тут ни при чём: файл в git, пакет собран, старт зелёный — и `grid_unavailable`
+      на каждой попытке открыть тариф. Витрина #2286 это лишь вскрыла: промокод отвечал так же
+      и молча с 29.07. Класс тот же, что у висячего симлинка, — «сборка зелёная, падение на
+      проде», — поэтому живёт в этом же стороже, а не во втором рядом.
+    */
+    runtimeReads: [
+      {
+        constantsFrom: 'packages/background-cabinet/src/domain/tariff-grid-source.ts',
+        why: 'сетка тарифов — носитель прав; без неё витрина и промокод отвечают grid_unavailable',
+      },
+    ],
+  },
   // Офис 28.08: дом существовал с самого начала, а в списке его не было — та же дыра охвата.
   { id: 'office', pkg: 'packages/background-office', dockerfile: 'packages/background-office/Dockerfile', stage: 'runtime' },
   /*
@@ -124,9 +142,24 @@ function normalizeDockerfileSource(src) {
  * локальная грязь может ложно казаться «уезжающим в прод», хотя сервер соберёт origin/main.
  * `runtimeOnly` берёт только runtime-стадию для зуба состава образа.
  */
-export function dockerfileCopySources(dockerfileText, { runtimeOnly = false, localOnly = false } = {}) {
+export function dockerfileCopySources(dockerfileText, options = {}) {
+  return dockerfileCopyPairs(dockerfileText, options).map((pair) => pair.source);
+}
+
+/**
+ * COPY-инструкции ПАРАМИ «источник → назначение».
+ *
+ * Заведено #2287: зуб состава образа судил только источники, а вопрос «найдёт ли рантайм файл»
+ * решает НАЗНАЧЕНИЕ. `COPY docs/tariffs docs/tariffs` при `WORKDIR /app/packages/background-cabinet`
+ * кладёт каталог ВНУТРЬ пакета, а резолвер идёт вверх — источник тот же, поведение
+ * противоположное. Разбор одних источников такую правку пропустил бы молча.
+ *
+ * `destination` сохраняется КАК НАПИСАНО: относительный остаётся относительным, потому что куда
+ * он разрешится — знает только WORKDIR, действующий на этой строке. Это дело вызывающего.
+ */
+export function dockerfileCopyPairs(dockerfileText, { runtimeOnly = false, localOnly = false } = {}) {
   const body = runtimeOnly ? runtimeStageTail(dockerfileText) : dockerfileText;
-  const sources = [];
+  const pairs = [];
   for (const raw of body.split(/\r?\n/u)) {
     const line = raw.trim();
     if (!/^COPY\s/u.test(line)) continue;
@@ -146,12 +179,13 @@ export function dockerfileCopySources(dockerfileText, { runtimeOnly = false, loc
     if (localOnly && hasFrom) continue;
     const positional = tokens.slice(i);
     if (positional.length < 2) continue;
+    const destination = positional[positional.length - 1];
     for (const src of positional.slice(0, -1)) {
       const normalized = normalizeDockerfileSource(src);
-      if (normalized) sources.push(normalized);
+      if (normalized) pairs.push({ source: normalized, destination, hasFrom });
     }
   }
-  return sources;
+  return pairs;
 }
 
 /** Локальные источники build context: COPY без --from во всём Dockerfile. */
@@ -223,8 +257,124 @@ export function focusedWorkspaces(dockerfileText) {
   return names;
 }
 
+/**
+ * Рабочий каталог, действующий в конце runtime-стадии.
+ *
+ * Берётся ПОСЛЕДНИЙ `WORKDIR` этой стадии: именно он станет `cwd` процесса, а от `cwd` и пляшет
+ * поиск данных в рантайме. Без него назначения COPY читать нельзя — относительное назначение
+ * без WORKDIR ничего не значит.
+ */
+export function runtimeWorkdir(dockerfileText) {
+  const matches = [...runtimeStageTail(dockerfileText).matchAll(/^WORKDIR\s+(\S+)/gmu)];
+  const last = matches.at(-1);
+  return last ? last[1].replace(/\/$/u, '') : null;
+}
+
+/** Абсолютный путь в образе для назначения COPY, с учётом действующего WORKDIR. */
+function absoluteInImage(destination, workdir) {
+  const clean = destination.replace(/\\/gu, '/').replace(/^\.\//u, '');
+  if (clean.startsWith('/')) return clean.replace(/\/$/u, '');
+  return `${workdir}/${clean}`.replace(/\/+/gu, '/').replace(/\/$/u, '');
+}
+
+/**
+ * Куда репозиторный файл ЛЯЖЕТ в образе — или `null`, если он в образ не едет.
+ *
+ * Семантика docker: `COPY <каталог> <назначение>` кладёт СОДЕРЖИМОЕ каталога в назначение,
+ * поэтому к назначению приписывается путь файла ОТНОСИТЕЛЬНО источника. Для источника-файла
+ * назначение и есть итоговый путь.
+ */
+export function imagePathOfRepoFile(repoPath, copyPairs, workdir) {
+  for (const pair of copyPairs) {
+    if (pair.source === repoPath) return absoluteInImage(pair.destination, workdir);
+    if (repoPath.startsWith(`${pair.source}/`)) {
+      const rest = repoPath.slice(pair.source.length + 1);
+      return `${absoluteInImage(pair.destination, workdir)}/${rest}`;
+    }
+  }
+  return null;
+}
+
+/**
+ * НАЙДЁТ ЛИ РАНТАЙМ ФАЙЛ В ОБРАЗЕ — модель подъёма резолвера, а не поиск строки COPY глазами.
+ *
+ * Разница несущая. Проверка «в Dockerfile есть строка про docs/tariffs» — это проверка
+ * ПРАВОПИСАНИЯ: она останется зелёной, если назначение сделать относительным, и каталог уедет
+ * внутрь пакета, куда резолвер не заглядывает. Здесь же считается ровно то, что делает
+ * `resolveGridPath`: подъём по предкам `cwd` не глубже `maxLookupDepth`, на каждом шаге —
+ * попытка `<предок>/<lookupPath>`.
+ *
+ * Возвращает `{ found, imagePath, depth, checked }` — глубина и перебранные пути нужны в тексте
+ * находки: «файл в образе есть, но лежит не там» и «файла нет вовсе» лечатся по-разному.
+ */
+export function runtimeFindsFile({ workdir, copyPairs, repoPath, lookupPath, maxLookupDepth }) {
+  const imagePath = imagePathOfRepoFile(repoPath, copyPairs, workdir);
+  const checked = [];
+  let dir = workdir;
+  for (let depth = 0; depth < maxLookupDepth; depth += 1) {
+    const candidate = `${dir}/${lookupPath}`.replace(/\/+/gu, '/');
+    checked.push(candidate);
+    if (imagePath !== null && candidate === imagePath) {
+      return { found: true, imagePath, depth, checked };
+    }
+    const parent = dir.slice(0, dir.lastIndexOf('/')) || '/';
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return { found: false, imagePath, depth: null, checked };
+}
+
+/**
+ * Константы поиска — ИЗ ИСХОДНИКА рантайма, а не переписанные сюда.
+ *
+ * Копия здесь была бы вторым мнением о том же правиле: смени кто-нибудь путь сетки или глубину
+ * подъёма — зуб остался бы зелёным, проверяя вчерашнюю договорённость. Не разобрали исходник —
+ * это находка, а не молчаливое умолчание (норма «пустая проверка хуже отсутствующей»).
+ */
+export function lookupConstantsFromSource(sourceText) {
+  const path = /TARIFF_GRID_PATH\s*=\s*['"]([^'"]+)['"]/u.exec(sourceText);
+  const depth = /MAX_LOOKUP_DEPTH\s*=\s*(\d+)/u.exec(sourceText);
+  if (!path || !depth) return null;
+  return { lookupPath: path[1], maxLookupDepth: Number(depth[1]) };
+}
+
+/** Находки по данным, которые образ обязан нести (#2287). */
+export function runtimeReadFindings(service, dockerfileText, sources) {
+  const findings = [];
+  for (const need of service.runtimeReads ?? []) {
+    const workdir = runtimeWorkdir(dockerfileText);
+    if (!workdir) {
+      findings.push({ service: service.id, kind: 'unreadable', detail: `в runtime-стадии нет WORKDIR — куда лягут данные, неизвестно` });
+      continue;
+    }
+    const sourceText = sources[need.constantsFrom];
+    if (typeof sourceText !== 'string') {
+      findings.push({ service: service.id, kind: 'unreadable', detail: `не прочитан источник констант ${need.constantsFrom}` });
+      continue;
+    }
+    const constants = lookupConstantsFromSource(sourceText);
+    if (!constants) {
+      findings.push({ service: service.id, kind: 'unreadable', detail: `в ${need.constantsFrom} не найдены TARIFF_GRID_PATH / MAX_LOOKUP_DEPTH — правило поиска изменилось, зуб судить не вправе` });
+      continue;
+    }
+    const verdict = runtimeFindsFile({
+      workdir,
+      copyPairs: dockerfileCopyPairs(dockerfileText, { runtimeOnly: true }),
+      repoPath: constants.lookupPath,
+      lookupPath: constants.lookupPath,
+      maxLookupDepth: constants.maxLookupDepth,
+    });
+    if (verdict.found) continue;
+    const detail = verdict.imagePath === null
+      ? `${constants.lookupPath} НЕ копируется в образ (${need.why}); рантайм ищет из ${workdir} вверх: ${verdict.checked.join(' · ')}`
+      : `${constants.lookupPath} копируется в ${verdict.imagePath}, но рантайм туда не заглядывает (${need.why}); ищет из ${workdir} вверх: ${verdict.checked.join(' · ')}`;
+    findings.push({ service: service.id, kind: 'runtime-data-missing', detail });
+  }
+  return findings;
+}
+
 /** Вердикт по одному сервису значением: ни ФС, ни печати. */
-export function serviceFindings(service, map, dockerfileText) {
+export function serviceFindings(service, map, dockerfileText, sources = {}) {
   const pkgName = Object.keys(map).find((n) => map[n].dir === service.pkg);
   if (!pkgName) return [{ service: service.id, kind: 'unreadable', detail: `не найден package.json в ${service.pkg}` }];
   const onBuildStage = service.stage === 'build';
@@ -243,6 +393,7 @@ export function serviceFindings(service, map, dockerfileText) {
       findings.push({ service: service.id, kind: 'missing-in-focus', detail: `${dep} не назван в yarn workspaces focus` });
     }
   }
+  findings.push(...runtimeReadFindings(service, dockerfileText, sources));
   return findings;
 }
 
@@ -258,7 +409,14 @@ function main(argv) {
       findings.push({ service: service.id, kind: 'unreadable', detail: `нет ${service.dockerfile}` });
       continue;
     }
-    findings.push(...serviceFindings(service, map, readFileSync(dockerfile, 'utf8')));
+    // Источники констант читаются здесь: предикаты выше остаются чистыми и проверяемыми
+    // значением. Нечитаемый источник не глотается — он приезжает находкой из предиката.
+    const sources = {};
+    for (const need of service.runtimeReads ?? []) {
+      const abs = resolve(ROOT, need.constantsFrom);
+      if (existsSync(abs)) sources[need.constantsFrom] = readFileSync(abs, 'utf8');
+    }
+    findings.push(...serviceFindings(service, map, readFileSync(dockerfile, 'utf8'), sources));
   }
   if (asJson) {
     console.log(JSON.stringify({ ok: findings.length === 0, findings }, null, 2));

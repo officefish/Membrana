@@ -138,13 +138,23 @@ test('#2204 живой веб-образ кабинета: зуб краснее
   }
 });
 
-test('живой Dockerfile media покрывает свой граф (регресс класса 21.08)', async () => {
+test('живые Dockerfile: образ несёт и граф пакетов, и данные рантайма (класс 21.08 + #2287)', async () => {
   const { readFileSync } = await import('node:fs');
   const { readWorkspaceMap, IMAGE_SERVICES } = await import('./verify-image-workspace-deps.mjs');
   const map = readWorkspaceMap();
   for (const service of IMAGE_SERVICES) {
     const text = readFileSync(new URL(`../${service.dockerfile}`, import.meta.url), 'utf8');
-    assert.deepEqual(serviceFindings(service, map, text), [], `${service.id}: образ обязан нести весь граф`);
+    // Источники констант читаются ровно как в `main` (#2287): без них живой прогон судил бы
+    // только половину правила и молчал бы о второй — том самом дефекте, что убил прод 04.09.
+    const sources = {};
+    for (const need of service.runtimeReads ?? []) {
+      sources[need.constantsFrom] = readFileSync(new URL(`../${need.constantsFrom}`, import.meta.url), 'utf8');
+    }
+    assert.deepEqual(
+      serviceFindings(service, map, text, sources),
+      [],
+      `${service.id}: образ обязан нести весь граф И данные, которые читает рантайм`,
+    );
   }
 });
 

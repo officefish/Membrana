@@ -2,6 +2,7 @@ import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common'
 import { Inject } from '@nestjs/common';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
+import { headersForBody } from './request-headers';
 
 export interface MediaMembraneContext {
   membraneId: string;
@@ -112,9 +113,18 @@ export class MediaBridgeService {
     });
   }
 
+  /**
+   * Единственный выход моста наружу — и потому единственное место, где чинится класс #2287.
+   *
+   * `mediaHeaders()` ставит `Content-Type` безусловно, и это удобно: звать его с телом и без
+   * тела можно одинаково. Поэтому правило «нет тела → нет объявления типа тела» применяется
+   * ЗДЕСЬ, а не у каждого зовущего: без тела у моста ходят ШЕСТЬ вызовов, и договорённость,
+   * которую надо помнить на каждой новой ручке, — не носитель, а обещание.
+   */
   private async mediaFetch(path: string, init: RequestInit): Promise<Response> {
+    const request: RequestInit = { ...init, headers: headersForBody(init.headers, init.body) };
     try {
-      return await fetch(`${this.mediaBase()}${path}`, init);
+      return await fetch(`${this.mediaBase()}${path}`, request);
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'fetch failed';
       throw new ServiceUnavailableException(`Media server unreachable: ${msg}`);
