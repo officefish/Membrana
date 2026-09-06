@@ -5,11 +5,13 @@ import {
   type NodeRealtimeEnvelope,
   type RuntimeCommandPayload,
   type RuntimeMode,
+  type RuntimeOverflowHoldPayload,
   type RuntimeStatePayload,
 } from '@membrana/core';
 import { resolveServerFirstFlags, type ScenarioRuntimeState } from '@membrana/device-board';
 
 import { getDeviceBoardRuntimeController } from '@/lib/deviceBoardRuntimeController';
+import { getDeviceOverflowHold } from '@/lib/device-overflow-hold';
 import { getNodeRealtimeClient } from '@/lib/nodeRealtimeClient';
 import { useServerFirstStore } from '@/stores/serverFirstStore';
 
@@ -42,11 +44,16 @@ function getCaptureWireFields(deviceId: string | null): Pick<
   };
 }
 
-/** Проекция снимка ScenarioRuntime в wire-payload runtime.state. */
+/**
+ * Проекция снимка ScenarioRuntime в wire-payload runtime.state.
+ * `overflowHold` (M4 (б), #2309) — отдельное значение «остановлен: буфер полон» из носителя
+ * `DeviceOverflowHold`; `null` — удержания нет. По умолчанию читается из синглтона.
+ */
 export function runtimeStateToPayload(
   state: ScenarioRuntimeState,
   mode: RuntimeMode,
   deviceId?: string | null,
+  overflowHold: RuntimeOverflowHoldPayload | null = getDeviceOverflowHold().toRuntimePayload(),
 ): RuntimeStatePayload {
   const capture = getCaptureWireFields(deviceId ?? null);
   return {
@@ -61,6 +68,7 @@ export function runtimeStateToPayload(
     alarmLoopIteration: state.alarmLoopIteration,
     lastError: state.lastError,
     ...capture,
+    overflowHold,
   };
 }
 
@@ -143,6 +151,7 @@ export function isRuntimeCommandEnvelope(envelope: NodeRealtimeEnvelope): boolea
 let messageUnsub: (() => void) | null = null;
 let stateUnsub: (() => void) | null = null;
 let connectionUnsub: (() => void) | null = null;
+let holdUnsub: (() => void) | null = null;
 
 interface RuntimeStateSink {
   send: (envelope: NodeRealtimeEnvelope) => void;
@@ -196,6 +205,12 @@ export function startRuntimeRealtimeBridge(): void {
       emitRuntimeState(client, controller, controller.getState());
     }
   });
+
+  // M4 (а)/#2309: push состояния при входе в удержание, повышении id и сбросе — кабинет
+  // видит «жив · не пишет · причина» сразу, не дожидаясь смены фазы сценария.
+  holdUnsub = getDeviceOverflowHold().subscribe(() => {
+    emitRuntimeState(client, controller, controller.getState());
+  });
 }
 
 export function stopRuntimeRealtimeBridge(): void {
@@ -205,4 +220,6 @@ export function stopRuntimeRealtimeBridge(): void {
   stateUnsub = null;
   connectionUnsub?.();
   connectionUnsub = null;
+  holdUnsub?.();
+  holdUnsub = null;
 }
