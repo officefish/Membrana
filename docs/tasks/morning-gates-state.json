@@ -9,7 +9,7 @@
   "swallow": {
     "draftDigest": "9de679774615e5870a5222e32e31cd97e8048a93b7e5945046f52dd15ccfce4d",
     "draftFile": "docs/comms/drafts/swallow-day-2026-09-06.md",
-    "ownerAck": false,
+    "ownerAck": true,
     "day": "2026-09-06"
   },
   "day": "2026-09-06",
