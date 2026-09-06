@@ -15,7 +15,9 @@ const TARIFF = {
   maxUserWorkspaces: 7,
 };
 
-function make(over: { membrane?: unknown; devices?: { mediaDeviceId: string; nodeId: string }[] } = {}) {
+type DeviceRow = { mediaDeviceId: string; nodeId: string; bufferPolicy?: unknown; bufferPolicyParams?: unknown };
+
+function make(over: { membrane?: unknown; devices?: DeviceRow[] } = {}) {
   const devices = over.devices ?? [
     { mediaDeviceId: 'md-1', nodeId: 'n-1' },
     { mediaDeviceId: 'md-2', nodeId: 'n-2' },
@@ -26,12 +28,100 @@ function make(over: { membrane?: unknown; devices?: { mediaDeviceId: string; nod
         'membrane' in over ? over.membrane : { id: 'm-1', tariffId: 'checkpoint-v1', tariff: TARIFF },
       ),
     },
-    device: { findMany: vi.fn(async () => devices) },
+    device: {
+      findMany: vi.fn(async (args?: { where?: { nodeId?: string } }) =>
+        args?.where?.nodeId ? devices.filter((d) => d.nodeId === args.where!.nodeId) : devices,
+      ),
+    },
   };
   const bridge = { syncMembraneContext: vi.fn(async () => undefined) };
   const svc = new MembraneContextFanoutService(prisma as never, bridge as never);
   return { svc, prisma, bridge, devices };
 }
+
+const SMART_PARAMS = { thresholdPercent: 85, selection: 'oldest_first', protectLabeled: true };
+const SMART_MEMBRANE = {
+  id: 'm-1',
+  tariffId: 'checkpoint-v1',
+  tariff: TARIFF,
+  bufferPolicy: 'smart_cleanup',
+  bufferPolicyParams: SMART_PARAMS,
+};
+
+/** Что уехало политикой на данный прибор. */
+function sentPolicy(bridge: { syncMembraneContext: ReturnType<typeof vi.fn> }, mediaDeviceId: string) {
+  const call = bridge.syncMembraneContext.mock.calls.find((c) => c[0] === mediaDeviceId);
+  return (call?.[1] as { bufferPolicy?: unknown } | undefined)?.bufferPolicy;
+}
+
+describe('разноска политики переполнения (#2308) — тем же классом, что квоты', () => {
+  it('галочка стоит → КАЖДЫЙ прибор получает политику мембраны, свои настройки не в счёт', async () => {
+    const { svc, bridge } = make({
+      membrane: { ...SMART_MEMBRANE, bufferPolicyBinding: true },
+      devices: [
+        { mediaDeviceId: 'md-1', nodeId: 'n-1', bufferPolicy: 'stop', bufferPolicyParams: null },
+        { mediaDeviceId: 'md-2', nodeId: 'n-2' },
+      ],
+    });
+    await expect(svc.syncAllNodes('m-1')).resolves.toEqual({ updated: 2, failed: 0 });
+    expect(sentPolicy(bridge, 'md-1')).toEqual({ mode: 'smart_cleanup', params: SMART_PARAMS });
+    expect(sentPolicy(bridge, 'md-2')).toEqual({ mode: 'smart_cleanup', params: SMART_PARAMS });
+  });
+
+  it('галочка снята → приборам ВОЗВРАЩАЮТСЯ их настройки; политика мембраны — черновик (порча: разнести мембрану → красный)', async () => {
+    const { svc, bridge } = make({
+      membrane: { ...SMART_MEMBRANE, bufferPolicyBinding: false },
+      devices: [
+        { mediaDeviceId: 'md-1', nodeId: 'n-1', bufferPolicy: 'stop', bufferPolicyParams: null },
+        {
+          mediaDeviceId: 'md-2',
+          nodeId: 'n-2',
+          bufferPolicy: 'smart_cleanup',
+          bufferPolicyParams: { ...SMART_PARAMS, thresholdPercent: 50 },
+        },
+      ],
+    });
+    await svc.syncAllNodes('m-1');
+    expect(sentPolicy(bridge, 'md-1')).toEqual({ mode: 'stop', params: null });
+    expect(sentPolicy(bridge, 'md-2')).toEqual({
+      mode: 'smart_cleanup',
+      params: { ...SMART_PARAMS, thresholdPercent: 50 },
+    });
+  });
+
+  it('порченая строка прибора при снятой галочке → уезжает stop, не порча', async () => {
+    const { svc, bridge } = make({
+      membrane: { ...SMART_MEMBRANE, bufferPolicyBinding: false },
+      devices: [{ mediaDeviceId: 'md-1', nodeId: 'n-1', bufferPolicy: 'smart_cleanup', bufferPolicyParams: null }],
+    });
+    await svc.syncAllNodes('m-1');
+    expect(sentPolicy(bridge, 'md-1')).toEqual({ mode: 'stop', params: null });
+  });
+
+  it('отказ media по гейту параметров считается «не доехало», а не «обновлено»', async () => {
+    const { svc, bridge } = make({ membrane: { ...SMART_MEMBRANE, bufferPolicyBinding: true } });
+    bridge.syncMembraneContext.mockImplementationOnce(async () => undefined).mockImplementationOnce(async () => {
+      throw new Error('Media membrane context sync refused: params_incomplete');
+    });
+    await expect(svc.syncAllNodes('m-1')).resolves.toEqual({ updated: 1, failed: 1 });
+  });
+
+  it('syncNode — разноска на ОДИН прибор при смене его политики: контекст только ему, счёт {1,0}', async () => {
+    const { svc, bridge, prisma } = make({
+      membrane: { ...SMART_MEMBRANE, bufferPolicyBinding: false },
+      devices: [
+        { mediaDeviceId: 'md-1', nodeId: 'n-1', bufferPolicy: 'stop' },
+        { mediaDeviceId: 'md-2', nodeId: 'n-2', bufferPolicy: 'smart_cleanup', bufferPolicyParams: SMART_PARAMS },
+      ],
+    });
+    await expect(svc.syncNode('m-1', 'n-2')).resolves.toEqual({ updated: 1, failed: 0 });
+    expect(bridge.syncMembraneContext).toHaveBeenCalledTimes(1);
+    expect(sentPolicy(bridge, 'md-2')).toEqual({ mode: 'smart_cleanup', params: SMART_PARAMS });
+    expect(prisma.device.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { node: { membraneId: 'm-1' }, nodeId: 'n-2' } }),
+    );
+  });
+});
 
 describe('разноска контекста мембраны', () => {
   it('все приборы приняли — счёт «2 обновлено / 0 не удалось»', async () => {
@@ -82,6 +172,8 @@ describe('разноска контекста мембраны', () => {
       bufferQuotaBytes: '512',
       datasetCatalogId: 'catalog-checkpoint',
       maxUserWorkspaces: 7,
+      // #2308: политика едет тем же контекстом. Строка без поля (старый ряд) → stop.
+      bufferPolicy: { mode: 'stop', params: null },
     });
   });
 

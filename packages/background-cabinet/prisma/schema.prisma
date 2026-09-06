@@ -78,6 +78,14 @@ model Membrane {
   deviceCaptures     NodeDeviceCapture[]
   chartListSelections ChartListSelection[]
   createdAt DateTime @default(now())
+  /// Политика переполнения мембраны (#2308, M1) — origin команды оператора. Действует на приборы
+  /// ТОЛЬКО пока стоит `bufferPolicyBinding`; при снятой галочке — черновик для будущего включения.
+  bufferPolicy        BufferPolicyMode @default(stop)
+  bufferPolicyParams  Json?
+  /// Галочка «применить ко всем» = ПРИВЯЗКА, не снимок (T13/T17): пока стоит, источник истины
+  /// для каждого прибора, включая будущие, — политика мембраны; per-device значения при этом
+  /// НЕ перезаписываются и возвращаются приборам при снятии.
+  bufferPolicyBinding Boolean @default(false)
 
   @@index([tariffId])
 }
@@ -109,9 +117,20 @@ model Device {
   lastPairSessionToken String?  @unique
   pairedAt             DateTime @default(now())
   lastSeenAt           DateTime @default(now())
+  /// Собственная политика прибора (#2308, M1). Эффективная = binding ? membrane : device;
+  /// хранится нетронутой, пока стоит привязка, — чтобы снятие ВОЗВРАЩАЛО, а не обнуляло.
+  bufferPolicy         BufferPolicyMode @default(stop)
+  bufferPolicyParams   Json?
 
   @@index([mediaDeviceId])
   @@index([pairedKeyId])
+}
+
+/// Политика переполнения буфера (#2308, M1). Легаси `auto-cleanup` в тип не входит:
+/// неизвестное значение отвергает сам Postgres. Умолчание — `stop` (слово владельца 06.09).
+enum BufferPolicyMode {
+  stop
+  smart_cleanup
 }
 
 /** PL2 (pairing-lifecycle): жизненный цикл сопряжения устройства с ключом. */

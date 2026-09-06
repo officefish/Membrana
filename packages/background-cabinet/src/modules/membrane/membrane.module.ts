@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MembraneController } from './membrane.controller';
+import { MembraneBufferPolicyService } from './membrane-buffer-policy.service';
 import { MembraneService } from './membrane.service';
 import { AuthModule } from '../auth/auth.module';
 import { NodeRealtimeModule } from '../node-realtime/node-realtime.module';
@@ -8,9 +9,10 @@ import { PairModule } from '../pair/pair.module';
 
 @Module({
   // PL4: DeviceCaptureModule — для форс-release захвата при отзыве/удалении ключа.
+  // PairModule — мост в media и разноска контекста (квоты + политика переполнения, #2308).
   imports: [AuthModule, NodeRealtimeModule, DeviceCaptureModule, PairModule],
   controllers: [MembraneController],
-  providers: [MembraneService],
+  providers: [MembraneService, MembraneBufferPolicyService],
   exports: [MembraneService],
 })
 export class MembraneModule {}

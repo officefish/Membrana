@@ -22,6 +22,8 @@ import { resolvePairedKeyStatus } from '../../domain/paired-key-status';
 import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
 import { DeviceCaptureService } from '../device-capture/device-capture.service';
 import { MediaBridgeService } from '../pair/media-bridge.service';
+import { effectiveBufferPolicy, effectiveDevicePolicy } from './buffer-policy';
+import { MembraneBufferPolicyService } from './membrane-buffer-policy.service';
 
 const FREE_TARIFF_ID = 'free-v1';
 const FREE_DATASET_CATALOG_ID = 'free-v1-catalog';
@@ -40,19 +42,31 @@ function serializeTariff(tariff: Tariff) {
   };
 }
 
-function serializeNode(node: {
-  id: string;
-  label: string;
-  createdAt: Date;
-  accessKeys: Parameters<typeof serializeAccessKey>[0][];
-  device?: {
-    mediaDeviceId: string;
-    label: string | null;
-    lastSeenAt: Date;
-    pairedKeyId: string | null;
-    pairingStatus: 'paired' | 'revoked' | 'unpaired';
-  } | null;
-}) {
+/** Контекст политики мембраны для сериализации узла (#2308): галочка + строка мембраны. */
+interface MembranePolicyScope {
+  bufferPolicyBinding?: boolean;
+  bufferPolicy?: unknown;
+  bufferPolicyParams?: unknown;
+}
+
+function serializeNode(
+  node: {
+    id: string;
+    label: string;
+    createdAt: Date;
+    accessKeys: Parameters<typeof serializeAccessKey>[0][];
+    device?: {
+      mediaDeviceId: string;
+      label: string | null;
+      lastSeenAt: Date;
+      pairedKeyId: string | null;
+      pairingStatus: 'paired' | 'revoked' | 'unpaired';
+      bufferPolicy?: unknown;
+      bufferPolicyParams?: unknown;
+    } | null;
+  },
+  scope: MembranePolicyScope = {},
+) {
   // #279: производный статус ключа сопряжения — на чтении, без миграций.
   // Ключи уже в выборке (accessKeys), лишних запросов нет.
   const pairedKeyView = node.device
@@ -74,6 +88,14 @@ function serializeNode(node: {
           lastSeenAt: node.device.lastSeenAt.toISOString(),
           pairedKeyStatus: pairedKeyView!.status,
           pairedKeyExpiresAt: pairedKeyView!.expiresAt,
+          // #2308: собственная настройка прибора и то, что он исполняет на самом деле. Оба —
+          // через `effective()`: порченая строка показывается как stop, а не как порча.
+          bufferPolicy: effectiveBufferPolicy(node.device),
+          effectiveBufferPolicy: effectiveDevicePolicy({
+            binding: scope.bufferPolicyBinding === true,
+            membrane: scope,
+            device: node.device,
+          }),
         }
       : null,
   };
@@ -130,12 +152,14 @@ export class MembraneService {
     const membrane = await this.getOrCreateMembraneForUser(userId);
     const nodes = [...membrane.nodes]
       .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
-      .map(serializeNode);
+      .map((node) => serializeNode(node, membrane));
     return {
       membrane: {
         id: membrane.id,
         tariff: serializeTariff(membrane.tariff),
         createdAt: membrane.createdAt.toISOString(),
+        // #2308: режим + параметры + галочка-привязка — одна витрина на странице мембраны.
+        bufferPolicy: MembraneBufferPolicyService.membraneView(membrane),
       },
       // MP7b: список всех узлов мембраны. `node` (первый) — для обратной совместимости.
       nodes,

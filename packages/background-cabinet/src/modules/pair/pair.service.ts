@@ -11,6 +11,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
 import { MediaBridgeService } from './media-bridge.service';
+import { membraneContextForDevice } from './membrane-context-fanout.service';
 
 function minDate(a: Date, b: Date): Date {
   return a.getTime() <= b.getTime() ? a : b;
@@ -50,13 +51,9 @@ export class PairService {
     const now = new Date();
     let mediaDeviceId = node.device?.mediaDeviceId ?? null;
     let mediaClientKeyRaw: string;
-    const membraneContext = {
-      membraneId: node.membrane.id,
-      userStorageQuotaBytes: node.membrane.tariff.userStorageQuotaBytes.toString(),
-      bufferQuotaBytes: node.membrane.tariff.bufferQuotaBytes.toString(),
-      datasetCatalogId: node.membrane.tariff.datasetCatalogId,
-      maxUserWorkspaces: node.membrane.tariff.maxUserWorkspaces,
-    };
+    // Одна сборка контекста на все дороги (#2281, #2308): квоты тарифа + эффективная политика
+    // переполнения. Новый прибор (`device` = null) при стоящей галочке слушает мембрану сразу.
+    const membraneContext = membraneContextForDevice(node.membrane, node.device ?? null);
 
     if (!mediaDeviceId) {
       const label = clientLabel?.trim() || node.label;
