@@ -1,31 +1,24 @@
 {
   "magistralOptions": [
-    "cabinet-hotfix-2287",
-    "node-duty-2284",
-    "deploy-smoke-tooth-2288"
+    "buffer-stop-behavior-2296",
+    "tariffs-in-db-2297",
+    "sanitation-2294-2300"
   ],
-  "frozenDigest": "10244a0ad843c56b76cadf517192d82f6dfef4b6e0da8b11baf8f3b47b6f496f",
-  "magistral": "cabinet-hotfix-2287",
+  "frozenDigest": "ff637d55f399c33da710e0e60a74ef7e17d5a36d3741ff1a0d603fecf7397b8e",
+  "magistral": "buffer-stop-behavior-2296",
   "swallow": {
-    "draftDigest": "19ca8dcce177da7c8fb9c31beaa00f29f2aa4f2dfcd635cdcbe2e93b32c560c0",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-05.md",
-    "ownerAck": true,
-    "day": "2026-09-05",
-    "claimsProbe": {
-      "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-09-05.md",
-      "sha": "29e71db01db9",
-      "at": "2026-09-05T17:22:35.877Z"
-    },
-    "gate": "evening:partner-swallow"
+    "draftDigest": "9de679774615e5870a5222e32e31cd97e8048a93b7e5945046f52dd15ccfce4d",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-09-06.md",
+    "ownerAck": false,
+    "day": "2026-09-06"
   },
-  "day": "2026-09-05",
-  "magistralChosenAt": "2026-09-05",
+  "day": "2026-09-06",
+  "magistralChosenAt": "2026-09-06",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-09-05",
-    "chosen": "cabinet-hotfix-2287",
-    "snapshotDigest": "10244a0ad843c56b76cadf517192d82f6dfef4b6e0da8b11baf8f3b47b6f496f",
+    "at": "2026-09-06",
+    "chosen": "buffer-stop-behavior-2296",
+    "snapshotDigest": "ff637d55f399c33da710e0e60a74ef7e17d5a36d3741ff1a0d603fecf7397b8e",
     "inSnapshot": true
   }
 }
