@@ -1,4 +1,4 @@
-<!-- Сгенерировано: 2026-09-05T08:59:12.979Z (node scripts/strategy-day.mjs) -->
+<!-- Сгенерировано: 2026-09-06T08:35:46.605Z (node scripts/strategy-day.mjs) -->
 <!-- Детерминированный горизонт дня #592; без сети/LLM. Источник вехи: docs/strategy/day-horizon.json -->
 <!-- angelina {"author":"human","guard":"angelina","readAt":{}} -->
 
@@ -63,7 +63,7 @@ _Кристаллов активно: 128 (owner: 82, derived: 46). Страте
 - ~~**Вечерний ритуал производит три опорных документа — топливо для агентов, симметрично дневному**~~ — `insight:insight-evening-ritual-three-fuel-documents` _(stale · 2026-07-17)_
 - ~~**Хранение как продуктовое обещание: детекция первична, записи вспомогательны, буфер живёт сортировкой**~~ — `insight:insight-storage-as-product-promise` _(stale · 2026-08-21)_
 - ~~**Нет субъекта действия: команда заявлена, но не исполняет**~~ — `insight:insight-acting-subject-missing` _(stale · 2026-07-18)_
-- **Спектральный анализ под задачу дрона: порядковый анализ, спектр огибающей, постоянная добротность** — `insight:insight-spectral-methods-for-drone`
+- ~~**Спектральный анализ под задачу дрона: порядковый анализ, спектр огибающей, постоянная добротность**~~ — `insight:insight-spectral-methods-for-drone` _(stale · 2026-08-23)_
 - ~~**Канонический FSM сессии recorder (anti-L18)**~~ — `insight:insight-kuryokhin-recorder-session-fsm` _(stale · 2026-06-25)_
 - ~~**Роутинг изменений: сессии без push, заявки-патчи, office-очередь, именные гейты**~~ — `insight:insight-change-routing-office` _(stale · 2026-07-22)_
 - ~~**Акустические характеристики 7 классов звука free-v1: discriminative FFT features**~~ — `insight:insight-free-v1-acoustic-classes` _(stale · 2026-06-30)_
