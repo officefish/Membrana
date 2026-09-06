@@ -2,6 +2,7 @@ import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { TARIFF_DATASET_SYSTEM_KEY } from '../../lib/collection-ids';
+import { OverflowEpisodeRegistry } from './overflow-episode-registry';
 import { SamplesService } from './samples.service';
 
 function makeSampleRow(overrides: Partial<{
@@ -59,6 +60,7 @@ describe('SamplesService.updateLabelNotes', () => {
       devices as never,
       blobs as never,
       audio as never,
+      new OverflowEpisodeRegistry(() => new Date(0)),
     );
   });
 
@@ -137,6 +139,7 @@ describe('SamplesService.upload audio metadata contract', () => {
       devices as never,
       blobs as never,
       audio as never,
+      new OverflowEpisodeRegistry(() => new Date(0)),
     );
     collections.getOwned.mockResolvedValue({ kind: 'user', systemKey: null });
     devices.getQuota.mockResolvedValue({
