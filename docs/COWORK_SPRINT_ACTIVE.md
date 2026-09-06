@@ -17,7 +17,7 @@
 
 | Блок | Билет | Ветка | Worktree | Фаза | Готовность |
 |------|-------|-------|----------|------|------------|
-| `refusal-contract` (A) | #2307 | `cowork/cowork-buffer-full-stop/refusal-contract` | `Membrana-cw-refusal` | 1 | — |
+| `refusal-contract` (A) | #2307 | `cowork/cowork-buffer-full-stop/refusal-contract` | `Membrana-cw-refusal` | freeze | `f05e4bdc`; 35 зубов samples + 33 plugin-contracts, 9 порч красные; сверено координатором (5 файлов/35 + 2/33 зелёные, вне зоны только `verify-swagger.mjs` — судья swagger, зона по смыслу) |
 | `overflow-policy` (B) | #2308 | `cowork/cowork-buffer-full-stop/overflow-policy` | `Membrana-cw-policy` | 1 | — |
 | `device-hold` (C) | #2309 | `cowork/cowork-buffer-full-stop/device-hold` | `Membrana-cw-hold` | 1 | — |
 
