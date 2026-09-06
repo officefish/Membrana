@@ -2,7 +2,7 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` — Phase 4 закрыта, Phase 5 (один PR в main) |
+| **status** | `closed` — Phase 5 закрыта 2026-09-06 (`cowork:close`) |
 | sprintId | `cowork-library-open-api` |
 | brief | [`COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md) |
 | вход | заседание [`library-open-api/EPIC.md`](./meeting/library-open-api/EPIC.md), ред. 3, влито `4eba2c77` |
@@ -58,3 +58,16 @@ Integration-ветка: `cowork/cowork-library-open-api/integration` в дере
 
 Отсюда: `ownership` строит ось выборки на существующем поле; `contract` и `key-ttl` создаются
 с нуля.
+
+---
+
+## Закрытие Phase 5 — `cowork:close` 2026-09-06
+
+Спринт **`cowork-library-open-api`** закрыт предикатом, а не памятью человека: контракт и ретроспектива на месте, блокирующих находок нет.
+
+Неблокирующие находки, оставленные явно (закрытие флага из-за них не роняется):
+
+- `retrospective_missing_metric` — в RETROSPECTIVE нет обязательной метрики резки «адаптировали vs переписали» — следующий коворк будет резаться на глазок
+- `card_not_archived` — карточка `cowork-library-open-api` в статусе `active` — закрыть флаг можно, но `yarn task:archive` ещё не звали
+
+**Что этот шаг НЕ утверждает:** качество сведения блоков машине недоступно. Пустой список находок означает «признаков незакрытости не найдено», а не «коворк закрыт хорошо».
