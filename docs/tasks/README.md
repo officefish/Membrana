@@ -20,6 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
+| `cabinet-deploy-smoke-tooth-2288` | Смоук выкатки кабинета бьёт тарифы, pair и сетку образа | M | [`CABINET_DEPLOY_SMOKE_TOOTH_2288_PROMPT.md`](../prompts/CABINET_DEPLOY_SMOKE_TOOTH_2288_PROMPT.md) | [#2288](https://github.com/officefish/Membrana/issues/2288) |
 | `cowork-library-open-api` | Cowork Sprint: Открытое API библиотеки | L | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md) | — |
 | `playback-hang-timeout` | Таймаут ожидания статуса в playSequence + сброс stale outcome при смене набора | S | [`PLAYBACK_HANG_TIMEOUT_PROMPT.md`](../prompts/PLAYBACK_HANG_TIMEOUT_PROMPT.md) | [#2181](https://github.com/officefish/Membrana/issues/2181) |
 | `node-duty-ready-predicate` | Узел к дежурству: предикат готовности Firebat — сон/гибернация/автовход/служба (Г4) | S | [`NODE_DUTY_READY_PREDICATE_PROMPT.md`](../prompts/NODE_DUTY_READY_PREDICATE_PROMPT.md) | [#2049](https://github.com/officefish/Membrana/issues/2049) |
