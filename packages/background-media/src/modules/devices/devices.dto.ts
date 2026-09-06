@@ -1,5 +1,31 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { DEVICE_KINDS } from '../../common/swagger/openapi.constants';
+import {
+  BUFFER_POLICY_DENY_REASONS,
+  BUFFER_POLICY_MODES,
+  SMART_CLEANUP_SELECTIONS,
+} from './buffer-policy';
+
+/** Каркас параметров умной очистки (#2308, M1) — без алгоритма (T12). Все три обязательны. */
+export class SmartCleanupParamsDto {
+  @ApiProperty({ example: 90, minimum: 1, maximum: 100, description: 'Buffer fill percent that arms cleanup' })
+  thresholdPercent!: number;
+
+  @ApiProperty({ enum: SMART_CLEANUP_SELECTIONS, example: 'oldest_first', description: 'Victim selection slot (T12 placeholder)' })
+  selection!: (typeof SMART_CLEANUP_SELECTIONS)[number];
+
+  @ApiProperty({ example: true, description: 'Evidence protection: never touch labeled samples' })
+  protectLabeled!: boolean;
+}
+
+/** Политика переполнения буфера. `smart_cleanup` принимается ТОЛЬКО с полным набором параметров. */
+export class BufferPolicyDto {
+  @ApiProperty({ enum: BUFFER_POLICY_MODES, example: 'stop' })
+  mode!: (typeof BUFFER_POLICY_MODES)[number];
+
+  @ApiPropertyOptional({ type: SmartCleanupParamsDto, nullable: true, description: 'Required for smart_cleanup; null for stop' })
+  params?: SmartCleanupParamsDto | null;
+}
 
 export class DeviceMembraneContextDto {
   @ApiProperty({ format: 'uuid' })
@@ -16,6 +42,40 @@ export class DeviceMembraneContextDto {
 
   @ApiPropertyOptional({ example: 3, description: 'Max editable device-board workspaces (tariff axis)' })
   maxUserWorkspaces?: number;
+
+  @ApiPropertyOptional({
+    type: BufferPolicyDto,
+    description:
+      'Buffer overflow policy (#2308). Validated by THIS server too: smart_cleanup without full params is refused. Absent = keep stored policy.',
+  })
+  bufferPolicy?: BufferPolicyDto;
+}
+
+/**
+ * Ответ разноски контекста: успех или доменный отказ гейта параметров (конвенция 12.08 —
+ * `200 { ok:false, reason }`, HTTP-код остаётся транспорту).
+ */
+export class DeviceMembraneSyncResponseDto {
+  @ApiProperty({ example: true })
+  ok!: boolean;
+
+  @ApiPropertyOptional({ enum: BUFFER_POLICY_DENY_REASONS, description: 'Present only when ok=false' })
+  reason?: (typeof BUFFER_POLICY_DENY_REASONS)[number];
+
+  @ApiPropertyOptional({ format: 'uuid' })
+  id?: string;
+
+  @ApiPropertyOptional({ example: 'lab-node' })
+  name?: string;
+
+  @ApiPropertyOptional({ enum: DEVICE_KINDS })
+  kind?: string;
+
+  @ApiPropertyOptional({ format: 'date-time' })
+  createdAt?: string;
+
+  @ApiPropertyOptional({ type: BufferPolicyDto, description: 'Effective policy after the sync (ok=true only)' })
+  bufferPolicy?: BufferPolicyDto;
 }
 
 export class RegisterDeviceDto {
@@ -109,4 +169,10 @@ export class QuotaResponseDto {
 
   @ApiProperty({ type: UserWorkspacesQuotaResponseDto })
   userWorkspaces!: UserWorkspacesQuotaResponseDto;
+
+  @ApiProperty({
+    type: BufferPolicyDto,
+    description: 'Effective buffer overflow policy (#2308): what the device must obey. Absent/corrupt stored value reads as stop.',
+  })
+  bufferPolicy!: BufferPolicyDto;
 }

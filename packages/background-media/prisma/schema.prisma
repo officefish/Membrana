@@ -46,6 +46,16 @@ enum NodeKeyAudience {
   client
 }
 
+/// Политика переполнения буфера (#2308, вердикт M1 заседания `buffer-full-stop`).
+///
+/// ДВА ЗНАЧЕНИЯ, И ОБА НАЗВАНЫ. Легаси `auto-cleanup` клиента в тип НЕ входит: Postgres отвергает
+/// неизвестное значение сам, и вернуть старую автоочистку через базу нельзя ни при каком коде.
+/// Умолчание — `stop` (слово владельца 06.09): буфер — архив вещдоков, а не мусорная корзина.
+enum BufferPolicyMode {
+  stop
+  smart_cleanup
+}
+
 model Device {
   id                      String          @id @default(uuid()) @db.Uuid
   name                    String
@@ -68,6 +78,13 @@ model Device {
   nodeKeys                NodeKey[]
   /** Active user workspace id for device-board multi-slot persist (U10 W5). */
   activeWorkspaceId       String?
+  /// Политика переполнения (#2308, M1): carrier рантайма — прибор читает ЭТО через `/quota`.
+  /// Origin команды — кабинет, разносит тем же PATCH `/membrane`, что квоты. NOT NULL после
+  /// backfill: все приборы, жившие до миграции, — `stop`.
+  bufferPolicy            BufferPolicyMode @default(stop)
+  /// Каркас параметров умной очистки (порог, критерий отбора, защита вещдоков) — БЕЗ алгоритма
+  /// (T12). Null при `stop`. Неполный набор на пути чтения даёт `stop`, а не «умную» с дырой.
+  bufferPolicyParams      Json?
 
   @@index([membraneId])
 }
