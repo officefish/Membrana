@@ -41,6 +41,9 @@ const EXIT_PLAN = 3;
 export const EVACUATION_NAMES = Object.freeze({
   'night-duty-2026-08-23': 'Ночное дежурство 23 августа',
   'listening-session-2026-08-21': 'Разметка на слух 21 августа',
+  // #2302: имя — по форме, названной владельцем («имя вида drone-flyby-2026-09-05-2152»),
+  // чтобы набор находился в списке по дате и времени пролёта, а не по прилагательному.
+  'drone-flyby-2026-09-05-2152': 'drone-flyby-2026-09-05-2152',
 });
 
 export function inWindow(createdAt, from, to) {
