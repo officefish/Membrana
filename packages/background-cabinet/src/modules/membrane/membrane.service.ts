@@ -22,7 +22,7 @@ import { resolvePairedKeyStatus } from '../../domain/paired-key-status';
 import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
 import { DeviceCaptureService } from '../device-capture/device-capture.service';
 import { MediaBridgeService } from '../pair/media-bridge.service';
-import { effectiveBufferPolicy, effectiveDevicePolicy } from './buffer-policy';
+import { effectiveBufferPolicy, effectiveDevicePolicy, membranePolicyScope } from './buffer-policy';
 import { MembraneBufferPolicyService } from './membrane-buffer-policy.service';
 
 const FREE_TARIFF_ID = 'free-v1';
@@ -150,16 +150,21 @@ export class MembraneService {
 
   async getMembraneView(userId: string) {
     const membrane = await this.getOrCreateMembraneForUser(userId);
+    // #2308: политика мембраны — отдельная строка; отсутствие = stop, привязка снята.
+    const policySetting = await this.prisma.membraneBufferPolicy.findUnique({
+      where: { membraneId: membrane.id },
+    });
+    const policyScope = membranePolicyScope(policySetting);
     const nodes = [...membrane.nodes]
       .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
-      .map((node) => serializeNode(node, membrane));
+      .map((node) => serializeNode(node, policyScope));
     return {
       membrane: {
         id: membrane.id,
         tariff: serializeTariff(membrane.tariff),
         createdAt: membrane.createdAt.toISOString(),
         // #2308: режим + параметры + галочка-привязка — одна витрина на странице мембраны.
-        bufferPolicy: MembraneBufferPolicyService.membraneView(membrane),
+        bufferPolicy: MembraneBufferPolicyService.membraneView(policySetting),
       },
       // MP7b: список всех узлов мембраны. `node` (первый) — для обратной совместимости.
       nodes,

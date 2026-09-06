@@ -17,7 +17,7 @@ const TARIFF = {
 
 type DeviceRow = { mediaDeviceId: string; nodeId: string; bufferPolicy?: unknown; bufferPolicyParams?: unknown };
 
-function make(over: { membrane?: unknown; devices?: DeviceRow[] } = {}) {
+function make(over: { membrane?: unknown; setting?: unknown; devices?: DeviceRow[] } = {}) {
   const devices = over.devices ?? [
     { mediaDeviceId: 'md-1', nodeId: 'n-1' },
     { mediaDeviceId: 'md-2', nodeId: 'n-2' },
@@ -28,6 +28,7 @@ function make(over: { membrane?: unknown; devices?: DeviceRow[] } = {}) {
         'membrane' in over ? over.membrane : { id: 'm-1', tariffId: 'checkpoint-v1', tariff: TARIFF },
       ),
     },
+    membraneBufferPolicy: { findUnique: vi.fn(async () => over.setting ?? null) },
     device: {
       findMany: vi.fn(async (args?: { where?: { nodeId?: string } }) =>
         args?.where?.nodeId ? devices.filter((d) => d.nodeId === args.where!.nodeId) : devices,
@@ -40,13 +41,7 @@ function make(over: { membrane?: unknown; devices?: DeviceRow[] } = {}) {
 }
 
 const SMART_PARAMS = { thresholdPercent: 85, selection: 'oldest_first', protectLabeled: true };
-const SMART_MEMBRANE = {
-  id: 'm-1',
-  tariffId: 'checkpoint-v1',
-  tariff: TARIFF,
-  bufferPolicy: 'smart_cleanup',
-  bufferPolicyParams: SMART_PARAMS,
-};
+const SMART_SETTING = { membraneId: 'm-1', mode: 'smart_cleanup', params: SMART_PARAMS };
 
 /** Что уехало политикой на данный прибор. */
 function sentPolicy(bridge: { syncMembraneContext: ReturnType<typeof vi.fn> }, mediaDeviceId: string) {
@@ -57,7 +52,7 @@ function sentPolicy(bridge: { syncMembraneContext: ReturnType<typeof vi.fn> }, m
 describe('разноска политики переполнения (#2308) — тем же классом, что квоты', () => {
   it('галочка стоит → КАЖДЫЙ прибор получает политику мембраны, свои настройки не в счёт', async () => {
     const { svc, bridge } = make({
-      membrane: { ...SMART_MEMBRANE, bufferPolicyBinding: true },
+      setting: { ...SMART_SETTING, binding: true },
       devices: [
         { mediaDeviceId: 'md-1', nodeId: 'n-1', bufferPolicy: 'stop', bufferPolicyParams: null },
         { mediaDeviceId: 'md-2', nodeId: 'n-2' },
@@ -70,7 +65,7 @@ describe('разноска политики переполнения (#2308) —
 
   it('галочка снята → приборам ВОЗВРАЩАЮТСЯ их настройки; политика мембраны — черновик (порча: разнести мембрану → красный)', async () => {
     const { svc, bridge } = make({
-      membrane: { ...SMART_MEMBRANE, bufferPolicyBinding: false },
+      setting: { ...SMART_SETTING, binding: false },
       devices: [
         { mediaDeviceId: 'md-1', nodeId: 'n-1', bufferPolicy: 'stop', bufferPolicyParams: null },
         {
@@ -91,7 +86,7 @@ describe('разноска политики переполнения (#2308) —
 
   it('порченая строка прибора при снятой галочке → уезжает stop, не порча', async () => {
     const { svc, bridge } = make({
-      membrane: { ...SMART_MEMBRANE, bufferPolicyBinding: false },
+      setting: { ...SMART_SETTING, binding: false },
       devices: [{ mediaDeviceId: 'md-1', nodeId: 'n-1', bufferPolicy: 'smart_cleanup', bufferPolicyParams: null }],
     });
     await svc.syncAllNodes('m-1');
@@ -99,7 +94,7 @@ describe('разноска политики переполнения (#2308) —
   });
 
   it('отказ media по гейту параметров считается «не доехало», а не «обновлено»', async () => {
-    const { svc, bridge } = make({ membrane: { ...SMART_MEMBRANE, bufferPolicyBinding: true } });
+    const { svc, bridge } = make({ setting: { ...SMART_SETTING, binding: true } });
     bridge.syncMembraneContext.mockImplementationOnce(async () => undefined).mockImplementationOnce(async () => {
       throw new Error('Media membrane context sync refused: params_incomplete');
     });
@@ -108,7 +103,7 @@ describe('разноска политики переполнения (#2308) —
 
   it('syncNode — разноска на ОДИН прибор при смене его политики: контекст только ему, счёт {1,0}', async () => {
     const { svc, bridge, prisma } = make({
-      membrane: { ...SMART_MEMBRANE, bufferPolicyBinding: false },
+      setting: { ...SMART_SETTING, binding: false },
       devices: [
         { mediaDeviceId: 'md-1', nodeId: 'n-1', bufferPolicy: 'stop' },
         { mediaDeviceId: 'md-2', nodeId: 'n-2', bufferPolicy: 'smart_cleanup', bufferPolicyParams: SMART_PARAMS },

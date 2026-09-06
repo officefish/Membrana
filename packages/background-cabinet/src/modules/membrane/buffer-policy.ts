@@ -131,3 +131,26 @@ export function effectiveDevicePolicy(input: {
 }): BufferPolicy {
   return input.binding ? effectiveBufferPolicy(input.membrane) : effectiveBufferPolicy(input.device);
 }
+
+/**
+ * Строка `MembraneBufferPolicy` так, как её отдаёт Prisma. Отдельная таблица (см. schema):
+ * отсутствие строки — законное состояние, читается как `stop` со снятой привязкой.
+ */
+export interface MembranePolicySetting {
+  readonly mode?: unknown;
+  readonly params?: unknown;
+  readonly binding?: boolean;
+}
+
+/** Привести строку настройки мембраны к форме `BufferPolicyRow` + привязка — одно место перевода имён. */
+export function membranePolicyScope(setting: MembranePolicySetting | null | undefined): {
+  readonly bufferPolicy: unknown;
+  readonly bufferPolicyParams: unknown;
+  readonly bufferPolicyBinding: boolean;
+} {
+  return {
+    bufferPolicy: setting?.mode,
+    bufferPolicyParams: setting?.params,
+    bufferPolicyBinding: setting?.binding === true,
+  };
+}

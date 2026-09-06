@@ -78,16 +78,34 @@ model Membrane {
   deviceCaptures     NodeDeviceCapture[]
   chartListSelections ChartListSelection[]
   createdAt DateTime @default(now())
-  /// Политика переполнения мембраны (#2308, M1) — origin команды оператора. Действует на приборы
-  /// ТОЛЬКО пока стоит `bufferPolicyBinding`; при снятой галочке — черновик для будущего включения.
-  bufferPolicy        BufferPolicyMode @default(stop)
-  bufferPolicyParams  Json?
-  /// Галочка «применить ко всем» = ПРИВЯЗКА, не снимок (T13/T17): пока стоит, источник истины
-  /// для каждого прибора, включая будущие, — политика мембраны; per-device значения при этом
-  /// НЕ перезаписываются и возвращаются приборам при снятии.
-  bufferPolicyBinding Boolean @default(false)
 
   @@index([tariffId])
+}
+
+/// Политика переполнения МЕМБРАНЫ (#2308, M1) — origin команды оператора; отдельной таблицей,
+/// а не колонками `Membrane`.
+///
+/// ПОЧЕМУ ОТДЕЛЬНО. Замер 06.09: любая новая скалярная колонка на `Membrane` рушит перегрузку
+/// `requireOwnedMembrane` в `sample-library.service.ts` (TS2394 — сигнатура перегрузки задаёт
+/// ровную форму строки). Чинить чужой модуль коворк не вправе; настройка мембраны по образцу
+/// `TrackKeyTtlSetting` media живёт рядом, ключ — `membraneId`, уникальность держит схема.
+///
+/// Отсутствие строки = `stop`, привязка снята (effective(⊥) = stop). Миграция заводит строку
+/// каждой существующей мембране явно — backfill, а не «прочитается как stop».
+///
+/// `binding` — галочка «применить ко всем» = ПРИВЯЗКА, не снимок (T13/T17): пока стоит,
+/// источник истины для каждого прибора, включая будущие, — политика мембраны; per-device
+/// значения (`Device.bufferPolicy*`) при этом НЕ перезаписываются и возвращаются при снятии.
+model MembraneBufferPolicy {
+  id         String           @id @default(uuid()) @db.Uuid
+  membraneId String           @db.Uuid
+  mode       BufferPolicyMode @default(stop)
+  /// Каркас параметров умной очистки (порог, критерий отбора, защита вещдоков) — без алгоритма (T12).
+  params     Json?
+  binding    Boolean          @default(false)
+  updatedAt  DateTime         @updatedAt
+
+  @@unique([membraneId])
 }
 
 model Node {

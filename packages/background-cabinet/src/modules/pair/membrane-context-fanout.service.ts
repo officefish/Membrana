@@ -30,7 +30,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { PrismaService } from '../../prisma/prisma.service';
-import { effectiveDevicePolicy } from '../membrane/buffer-policy';
+import { effectiveDevicePolicy, membranePolicyScope, type MembranePolicySetting } from '../membrane/buffer-policy';
 import { MediaBridgeService, type MediaMembraneContext } from './media-bridge.service';
 
 /** Счёт разноски. Наружу уезжает ровно это. */
@@ -118,10 +118,13 @@ export class MembraneContextFanoutService {
   }
 
   private async sync(membraneId: string, onlyNodeId: string | null): Promise<MembraneContextFanoutResult> {
-    const membrane = await this.prisma.membrane.findUnique({
-      where: { id: membraneId },
-      include: { tariff: true },
-    });
+    // Политика мембраны — отдельной строкой (`MembraneBufferPolicy`, см. schema); её отсутствие
+    // законно и читается как stop со снятой привязкой.
+    const [membraneRow, setting] = await Promise.all([
+      this.prisma.membrane.findUnique({ where: { id: membraneId }, include: { tariff: true } }),
+      this.prisma.membraneBufferPolicy.findUnique({ where: { membraneId } }) as Promise<MembranePolicySetting | null>,
+    ]);
+    const membrane = membraneRow ? { ...membraneRow, ...membranePolicyScope(setting) } : null;
     if (!membrane) {
       // Мембраны нет — разносить нечего и некуда. Не ошибка разноски: субъект исчез.
       this.logger.warn(`разноска контекста пропущена — мембрана ${membraneId} не найдена`);

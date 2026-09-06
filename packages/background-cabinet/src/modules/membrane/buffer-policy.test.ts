@@ -107,28 +107,32 @@ describe('миграция кабинета — backfill stop, привязка 
     .filter((line) => !line.trimStart().startsWith('--'))
     .join('\n');
 
-  it('enum из двух значений; обе таблицы получают колонку политики', () => {
+  it('enum из двух значений; прибор получает колонку, мембрана — отдельную таблицу с уникальностью на membraneId', () => {
     expect(dir).toBeTruthy();
     expect(statements).toMatch(/CREATE TYPE "BufferPolicyMode" AS ENUM \('stop', 'smart_cleanup'\)/);
-    expect(statements).toMatch(/ALTER TABLE "Membrane"\s+ADD COLUMN "bufferPolicy" "BufferPolicyMode",/);
+    expect(statements).toMatch(/CREATE TABLE "MembraneBufferPolicy"/);
+    expect(statements).toMatch(/CREATE UNIQUE INDEX "MembraneBufferPolicy_membraneId_key" ON "MembraneBufferPolicy"\("membraneId"\)/);
     expect(statements).toMatch(/ALTER TABLE "Device"\s+ADD COLUMN "bufferPolicy" "BufferPolicyMode",/);
+    // Колонок на "Membrane" НЕТ намеренно (см. schema: перегрузка в sample-library).
+    expect(statements).not.toMatch(/ALTER TABLE "Membrane"/);
   });
 
-  it.each(['Membrane', 'Device'])('%s: backfill stop стоит ДО NOT NULL (порча: поменять порядок → красный)', (table) => {
+  it('мембраны: явный backfill строки stop / привязка снята на КАЖДУЮ существующую (порча: убрать INSERT → красный)', () => {
+    expect(statements).toMatch(
+      /INSERT INTO "MembraneBufferPolicy" \("id", "membraneId", "mode", "binding", "updatedAt"\)\s+SELECT gen_random_uuid\(\), "id", 'stop', false, CURRENT_TIMESTAMP\s+FROM "Membrane"/,
+    );
+    expect(statements).toMatch(/"mode" "BufferPolicyMode" NOT NULL DEFAULT 'stop'/);
+    expect(statements).toMatch(/"binding" BOOLEAN NOT NULL DEFAULT false/);
+    expect(statements).not.toMatch(/'stop', true/);
+  });
+
+  it.each(['Device'])('%s: backfill stop стоит ДО NOT NULL (порча: поменять порядок → красный)', (table) => {
     const backfill = statements.search(new RegExp(`UPDATE "${table}"\\s+SET "bufferPolicy" = 'stop'\\s+WHERE "bufferPolicy" IS NULL`));
     const notNullBlock = statements.indexOf(`ALTER TABLE "${table}"\n  ALTER COLUMN "bufferPolicy" SET DEFAULT 'stop'`);
     expect(backfill).toBeGreaterThan(-1);
     expect(notNullBlock).toBeGreaterThan(-1);
     expect(backfill).toBeLessThan(notNullBlock);
     expect(statements.slice(notNullBlock)).toMatch(/ALTER COLUMN "bufferPolicy" SET NOT NULL/);
-  });
-
-  it('привязка backfill = false и NOT NULL: включение — движение человека, не миграции', () => {
-    const backfill = statements.search(/UPDATE "Membrane"\s+SET "bufferPolicyBinding" = false/);
-    const notNull = statements.search(/ALTER COLUMN "bufferPolicyBinding" SET NOT NULL/);
-    expect(backfill).toBeGreaterThan(-1);
-    expect(notNull).toBeGreaterThan(backfill);
-    expect(statements).not.toMatch(/"bufferPolicyBinding" = true/);
   });
 
   it('автоочистки в SQL-операторах нет', () => {

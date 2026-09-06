@@ -7,6 +7,10 @@
  *   2. галочка-привязка    — `setBinding`         → все приборы;
  *   3. политика прибора    — `setNodePolicy`      → этот прибор.
  *
+ * Носитель политики мембраны — таблица `MembraneBufferPolicy` (одна строка на мембрану, держит
+ * схема); отсутствие строки читается как `stop` со снятой привязкой. Запись — `upsert` по
+ * `membraneId`: первое движение человека заводит строку, дальше правит её.
+ *
  * **Порядок несущий: сначала запись в кабинете, потом приборы** (как у тарифа, #2281). Отказ
  * media смену настройки не отменяет — наружу едет счёт `{updated, failed}`, чтобы страница
  * сказала правду «до одного прибора политика не доехала», а не показала новый режим при старом
@@ -36,16 +40,26 @@ import {
 import {
   effectiveBufferPolicy,
   effectiveDevicePolicy,
+  membranePolicyScope,
   parseBufferPolicy,
   type BufferPolicy,
   type BufferPolicyDenyReason,
+  type MembranePolicySetting,
 } from './buffer-policy';
 
-/** Как политика ложится в строку. `stop` — параметры в DB NULL, чтобы ничего не протекало. */
-function bufferPolicyColumns(policy: BufferPolicy) {
+/** Как политика ложится в строку прибора. `stop` — параметры в DB NULL, чтобы ничего не протекало. */
+function devicePolicyColumns(policy: BufferPolicy) {
   return {
     bufferPolicy: policy.mode,
     bufferPolicyParams: policy.params === null ? Prisma.DbNull : { ...policy.params },
+  };
+}
+
+/** То же для строки настройки мембраны (имена колонок — `mode` / `params`). */
+function membranePolicyColumns(policy: BufferPolicy) {
+  return {
+    mode: policy.mode,
+    params: policy.params === null ? Prisma.DbNull : { ...policy.params },
   };
 }
 
@@ -79,13 +93,14 @@ export class MembraneBufferPolicyService {
     const parsed = parseBufferPolicy(raw);
     if (!parsed.ok) return { ok: false, reason: parsed.reason };
 
-    const membrane = await this.prisma.membrane.update({
-      where: { id: membraneId },
-      data: bufferPolicyColumns(parsed.policy),
-      select: { bufferPolicyBinding: true },
+    const setting = await this.prisma.membraneBufferPolicy.upsert({
+      where: { membraneId },
+      create: { membraneId, ...membranePolicyColumns(parsed.policy) },
+      update: membranePolicyColumns(parsed.policy),
+      select: { binding: true },
     });
     const contextSync = await this.contextFanout.syncAllNodes(membraneId);
-    return { ok: true, bufferPolicy: parsed.policy, applyToAll: membrane.bufferPolicyBinding, contextSync };
+    return { ok: true, bufferPolicy: parsed.policy, applyToAll: setting.binding, contextSync };
   }
 
   /** Галочка-привязка. Включение — только с `confirmed: true`; снятие — без подтверждения. */
@@ -97,9 +112,10 @@ export class MembraneBufferPolicyService {
     if (applyToAll && input.confirmed !== true) {
       return { ok: false, reason: 'binding_not_confirmed' };
     }
-    await this.prisma.membrane.update({
-      where: { id: membraneId },
-      data: { bufferPolicyBinding: applyToAll },
+    await this.prisma.membraneBufferPolicy.upsert({
+      where: { membraneId },
+      create: { membraneId, binding: applyToAll },
+      update: { binding: applyToAll },
       select: { id: true },
     });
     const contextSync = await this.contextFanout.syncAllNodes(membraneId);
@@ -122,12 +138,13 @@ export class MembraneBufferPolicyService {
     // Оператор с неполными параметрами узнаёт об этом раньше, чем о стоящей галочке.
     const parsed = parseBufferPolicy(raw);
     if (!parsed.ok) return { ok: false, reason: parsed.reason };
-    if (node.membrane.bufferPolicyBinding) return { ok: false, reason: 'binding_active' };
+    const scope = membranePolicyScope(await this.readSetting(node.membrane.id));
+    if (scope.bufferPolicyBinding) return { ok: false, reason: 'binding_active' };
     if (!node.device) return { ok: false, reason: 'node_not_paired' };
 
     await this.prisma.device.update({
       where: { nodeId: node.id },
-      data: bufferPolicyColumns(parsed.policy),
+      data: devicePolicyColumns(parsed.policy),
       select: { id: true },
     });
     const contextSync = await this.contextFanout.syncNode(node.membrane.id, node.id);
@@ -136,23 +153,30 @@ export class MembraneBufferPolicyService {
       nodeId: node.id,
       bufferPolicy: parsed.policy,
       effectiveBufferPolicy: effectiveDevicePolicy({
-        binding: node.membrane.bufferPolicyBinding,
-        membrane: node.membrane,
-        device: parsed.policy.mode === 'stop'
-          ? { bufferPolicy: 'stop', bufferPolicyParams: null }
-          : { bufferPolicy: 'smart_cleanup', bufferPolicyParams: parsed.policy.params },
+        binding: scope.bufferPolicyBinding,
+        membrane: scope,
+        device: {
+          bufferPolicy: parsed.policy.mode,
+          bufferPolicyParams: parsed.policy.params,
+        },
       }),
       contextSync,
     };
   }
 
+  /** Строка настройки мембраны или `null` — отсутствие законно (stop, привязка снята). */
+  async readSetting(membraneId: string): Promise<MembranePolicySetting | null> {
+    return this.prisma.membraneBufferPolicy.findUnique({ where: { membraneId } });
+  }
+
   /** Вид политики мембраны для `membranes/me`: эффективная (через `effective()`), не сырая. */
-  static membraneView(membrane: {
-    bufferPolicy?: unknown;
-    bufferPolicyParams?: unknown;
-    bufferPolicyBinding?: boolean;
-  }): { mode: BufferPolicy['mode']; params: BufferPolicy['params']; applyToAll: boolean } {
-    const policy = effectiveBufferPolicy(membrane);
-    return { mode: policy.mode, params: policy.params, applyToAll: membrane.bufferPolicyBinding === true };
+  static membraneView(setting: MembranePolicySetting | null | undefined): {
+    mode: BufferPolicy['mode'];
+    params: BufferPolicy['params'];
+    applyToAll: boolean;
+  } {
+    const scope = membranePolicyScope(setting);
+    const policy = effectiveBufferPolicy(scope);
+    return { mode: policy.mode, params: policy.params, applyToAll: scope.bufferPolicyBinding };
   }
 }

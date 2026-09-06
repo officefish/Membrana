@@ -11,6 +11,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
 import { MediaBridgeService } from './media-bridge.service';
+import { membranePolicyScope } from '../membrane/buffer-policy';
 import { membraneContextForDevice } from './membrane-context-fanout.service';
 
 function minDate(a: Date, b: Date): Date {
@@ -53,7 +54,13 @@ export class PairService {
     let mediaClientKeyRaw: string;
     // Одна сборка контекста на все дороги (#2281, #2308): квоты тарифа + эффективная политика
     // переполнения. Новый прибор (`device` = null) при стоящей галочке слушает мембрану сразу.
-    const membraneContext = membraneContextForDevice(node.membrane, node.device ?? null);
+    const policySetting = await this.prisma.membraneBufferPolicy.findUnique({
+      where: { membraneId: node.membrane.id },
+    });
+    const membraneContext = membraneContextForDevice(
+      { ...node.membrane, ...membranePolicyScope(policySetting) },
+      node.device ?? null,
+    );
 
     if (!mediaDeviceId) {
       const label = clientLabel?.trim() || node.label;

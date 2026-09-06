@@ -16,11 +16,14 @@ const FULL_PARAMS = { thresholdPercent: 90, selection: 'oldest_first', protectLa
 function make(over: { binding?: boolean; node?: unknown } = {}) {
   const order: string[] = [];
   const prisma = {
-    membrane: {
-      update: vi.fn(async () => {
+    membraneBufferPolicy: {
+      upsert: vi.fn(async () => {
         order.push('write');
-        return { bufferPolicyBinding: over.binding ?? false, id: 'm-1' };
+        return { binding: over.binding ?? false, id: 'm-1' };
       }),
+      findUnique: vi.fn(async () =>
+        over.binding === undefined ? null : { membraneId: 'm-1', mode: 'stop', params: null, binding: over.binding },
+      ),
     },
     node: {
       findUnique: vi.fn(async () =>
@@ -28,7 +31,7 @@ function make(over: { binding?: boolean; node?: unknown } = {}) {
           ? over.node
           : {
               id: 'n-1',
-              membrane: { id: 'm-1', userId: 'u-1', bufferPolicyBinding: over.binding ?? false, bufferPolicy: 'stop' },
+              membrane: { id: 'm-1', userId: 'u-1' },
               device: { id: 'd-1', mediaDeviceId: 'md-1' },
             },
       ),
@@ -64,8 +67,8 @@ describe('политика мембраны', () => {
       applyToAll: false,
       contextSync: { updated: 2, failed: 1 },
     });
-    expect(prisma.membrane.update).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: 'm-1' }, data: expect.objectContaining({ bufferPolicy: 'stop' }) }),
+    expect(prisma.membraneBufferPolicy.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { membraneId: 'm-1' }, update: expect.objectContaining({ mode: 'stop' }) }),
     );
     expect(fanout.syncAllNodes).toHaveBeenCalledWith('m-1');
   });
@@ -74,7 +77,7 @@ describe('политика мембраны', () => {
     const { svc, prisma, fanout } = make();
     const res = await svc.setMembranePolicy('m-1', { mode: 'smart_cleanup', params: { thresholdPercent: 90 } });
     expect(res).toEqual({ ok: false, reason: 'params_incomplete' });
-    expect(prisma.membrane.update).not.toHaveBeenCalled();
+    expect(prisma.membraneBufferPolicy.upsert).not.toHaveBeenCalled();
     expect(fanout.syncAllNodes).not.toHaveBeenCalled();
   });
 
@@ -110,7 +113,7 @@ describe('галочка-привязка', () => {
       ok: false,
       reason: 'binding_not_confirmed',
     });
-    expect(prisma.membrane.update).not.toHaveBeenCalled();
+    expect(prisma.membraneBufferPolicy.upsert).not.toHaveBeenCalled();
     expect(fanout.syncAllNodes).not.toHaveBeenCalled();
   });
 
@@ -118,8 +121,8 @@ describe('галочка-привязка', () => {
     const { svc, prisma, order } = make();
     const res = await svc.setBinding('m-1', { applyToAll: true, confirmed: true });
     expect(res).toEqual({ ok: true, applyToAll: true, contextSync: { updated: 2, failed: 1 } });
-    expect(prisma.membrane.update).toHaveBeenCalledWith(
-      expect.objectContaining({ data: { bufferPolicyBinding: true } }),
+    expect(prisma.membraneBufferPolicy.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ update: { binding: true } }),
     );
     expect(order).toEqual(['write', 'fanout']);
   });
@@ -128,8 +131,8 @@ describe('галочка-привязка', () => {
     const { svc, prisma, fanout } = make();
     const res = await svc.setBinding('m-1', { applyToAll: false });
     expect(res).toMatchObject({ ok: true, applyToAll: false });
-    expect(prisma.membrane.update).toHaveBeenCalledWith(
-      expect.objectContaining({ data: { bufferPolicyBinding: false } }),
+    expect(prisma.membraneBufferPolicy.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ update: { binding: false } }),
     );
     expect(fanout.syncAllNodes).toHaveBeenCalledTimes(1);
   });
@@ -178,7 +181,7 @@ describe('политика прибора', () => {
 
   it('узел без прибора → node_not_paired', async () => {
     const { svc } = make({
-      node: { id: 'n-1', membrane: { id: 'm-1', userId: 'u-1', bufferPolicyBinding: false }, device: null },
+      node: { id: 'n-1', membrane: { id: 'm-1', userId: 'u-1' }, device: null },
     });
     await expect(svc.setNodePolicy('u-1', 'n-1', { mode: 'stop' })).resolves.toEqual({
       ok: false,
@@ -188,7 +191,7 @@ describe('политика прибора', () => {
 
   it('чужой узел → 403; несуществующий → 404 (транспорт, не домен)', async () => {
     const foreign = make({
-      node: { id: 'n-1', membrane: { id: 'm-1', userId: 'someone-else', bufferPolicyBinding: false }, device: null },
+      node: { id: 'n-1', membrane: { id: 'm-1', userId: 'someone-else' }, device: null },
     });
     await expect(foreign.svc.setNodePolicy('u-1', 'n-1', { mode: 'stop' })).rejects.toBeInstanceOf(ForbiddenException);
     const missing = make({ node: null });
@@ -198,11 +201,11 @@ describe('политика прибора', () => {
 
 describe('вид мембраны', () => {
   it('порченая строка мембраны показывается как stop, привязка — только при true', () => {
-    expect(MembraneBufferPolicyService.membraneView({ bufferPolicy: 'garbage', bufferPolicyBinding: true })).toEqual({
+    expect(MembraneBufferPolicyService.membraneView({ mode: 'garbage', binding: true })).toEqual({
       mode: 'stop',
       params: null,
       applyToAll: true,
     });
-    expect(MembraneBufferPolicyService.membraneView({})).toEqual({ mode: 'stop', params: null, applyToAll: false });
+    expect(MembraneBufferPolicyService.membraneView(null)).toEqual({ mode: 'stop', params: null, applyToAll: false });
   });
 });

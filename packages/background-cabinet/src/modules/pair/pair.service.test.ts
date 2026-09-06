@@ -11,7 +11,7 @@ async function buildService(
   opts: {
     existingMediaDeviceId?: string;
     /** #2308: политика мембраны и галочка-привязка. */
-    membranePolicy?: { bufferPolicy: string; bufferPolicyParams: unknown; bufferPolicyBinding: boolean };
+    membranePolicy?: { mode: string; params: unknown; binding: boolean };
     devicePolicy?: { bufferPolicy: string; bufferPolicyParams: unknown };
   } = {},
 ) {
@@ -37,7 +37,6 @@ async function buildService(
         datasetCatalogId: 'free-v1-catalog',
         maxUserWorkspaces: 3,
       },
-      ...(opts.membranePolicy ?? {}),
     },
     device: opts.existingMediaDeviceId
       ? { mediaDeviceId: opts.existingMediaDeviceId, ...(opts.devicePolicy ?? {}) }
@@ -46,6 +45,9 @@ async function buildService(
   const prisma = {
     nodeAccessKey: { findMany: vi.fn(async () => [matchedKey]) },
     node: { findUnique: vi.fn(async () => node) },
+    membraneBufferPolicy: {
+      findUnique: vi.fn(async () => (opts.membranePolicy ? { membraneId: 'membrane-1', ...opts.membranePolicy } : null)),
+    },
     device: {
       create: vi.fn(async () => ({})),
       update: vi.fn(async () => ({})),
@@ -128,7 +130,7 @@ describe('PairService.pair — ADR-0028 mediaToken', () => {
 describe('PairService.pair — политика переполнения в контексте (#2308)', () => {
   it('новый прибор при стоящей галочке регистрируется С политикой мембраны', async () => {
     const { accessKey, service, mediaBridge } = await buildService({
-      membranePolicy: { bufferPolicy: 'smart_cleanup', bufferPolicyParams: SMART_PARAMS, bufferPolicyBinding: true },
+      membranePolicy: { mode: 'smart_cleanup', params: SMART_PARAMS, binding: true },
     });
     await service.pair(accessKey);
     const context = mediaBridge.registerDevice.mock.calls[0]![1] as { bufferPolicy?: unknown };
@@ -137,7 +139,7 @@ describe('PairService.pair — политика переполнения в ко
 
   it('новый прибор при снятой галочке регистрируется со stop — политика мембраны его не касается', async () => {
     const { accessKey, service, mediaBridge } = await buildService({
-      membranePolicy: { bufferPolicy: 'smart_cleanup', bufferPolicyParams: SMART_PARAMS, bufferPolicyBinding: false },
+      membranePolicy: { mode: 'smart_cleanup', params: SMART_PARAMS, binding: false },
     });
     await service.pair(accessKey);
     const context = mediaBridge.registerDevice.mock.calls[0]![1] as { bufferPolicy?: unknown };
@@ -154,7 +156,7 @@ describe('PairService.pair — политика переполнения в ко
   it('ре-пейринг при снятой галочке возвращает прибору ЕГО настройку, не мембраны', async () => {
     const { accessKey, service, mediaBridge } = await buildService({
       existingMediaDeviceId: 'media-device-existing',
-      membranePolicy: { bufferPolicy: 'stop', bufferPolicyParams: null, bufferPolicyBinding: false },
+      membranePolicy: { mode: 'stop', params: null, binding: false },
       devicePolicy: { bufferPolicy: 'smart_cleanup', bufferPolicyParams: SMART_PARAMS },
     });
     await service.pair(accessKey);
@@ -167,7 +169,7 @@ describe('PairService.pair — политика переполнения в ко
   it('ре-пейринг при стоящей галочке — политика мембраны поверх настройки прибора', async () => {
     const { accessKey, service, mediaBridge } = await buildService({
       existingMediaDeviceId: 'media-device-existing',
-      membranePolicy: { bufferPolicy: 'stop', bufferPolicyParams: null, bufferPolicyBinding: true },
+      membranePolicy: { mode: 'stop', params: null, binding: true },
       devicePolicy: { bufferPolicy: 'smart_cleanup', bufferPolicyParams: SMART_PARAMS },
     });
     await service.pair(accessKey);
