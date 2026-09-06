@@ -20,6 +20,7 @@ import type {
   PresenceHeartbeatPayload,
   PresenceSnapshotPayload,
   RuntimeCommandPayload,
+  RuntimeOverflowHoldPayload,
 } from './events.js';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -365,4 +366,41 @@ export function parseBoardScenarioListPayload(raw: unknown): BoardScenarioListPa
     return null;
   }
   return { deviceId: raw.deviceId, scenarios, selectedScenarioId: selected };
+}
+
+/**
+ * Валидирует значение `runtime.state.overflowHold` (M4, #2309). `null`/`undefined` —
+ * удержания нет → null. Кривое значение (нет фазы/причины/времени, id не строка) —
+ * тоже null: кабинет не должен нарисовать «остановлен» по мусору.
+ */
+export function parseRuntimeOverflowHoldPayload(raw: unknown): RuntimeOverflowHoldPayload | null {
+  if (raw === null || raw === undefined || !isRecord(raw)) {
+    return null;
+  }
+  const phase = raw.phase;
+  if (phase !== 'held_local' && phase !== 'held') {
+    return null;
+  }
+  const policy = raw.policy;
+  if (policy !== 'stop' && policy !== 'smart_cleanup') {
+    return null;
+  }
+  if (!isNonEmptyString(raw.reason) || !isIsoDateString(raw.overflowAt)) {
+    return null;
+  }
+  const overflowId = raw.overflowId;
+  if (overflowId !== null && !isNonEmptyString(overflowId)) {
+    return null;
+  }
+  // Фаза `held` без id — противоречие: подтверждённый эпизод обязан нести серверный id.
+  if (phase === 'held' && overflowId === null) {
+    return null;
+  }
+  return {
+    phase,
+    reason: raw.reason,
+    overflowId: overflowId === null ? null : overflowId,
+    overflowAt: raw.overflowAt,
+    policy,
+  };
 }
