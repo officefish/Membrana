@@ -29,6 +29,8 @@ export type {
   ServerFirstBadgePerspective,
 } from './components/server-first-badges.js';
 export { BoardServerFirstBadges } from './components/board-server-first-badges.js';
+export { BoardOverflowHoldBadge } from './components/board-overflow-hold-badge.js';
+export type { BoardOverflowHoldView } from './components/board-overflow-hold.js';
 export { BoardUserCasePickerModal } from './components/board-usercase-picker-modal.js';
 export {
   UserCaseCardView,

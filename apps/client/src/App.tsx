@@ -12,6 +12,7 @@ import { NodeConnectionShell } from './components/NodeConnectionShell';
 import { renderPluginSidebarDetails } from './pluginSidebarDetails';
 import { createScenarioRuntimeHost } from './modules/device-board/createScenarioRuntimeHost';
 import { getDeviceBoardRuntimeController } from './lib/deviceBoardRuntimeController';
+import { OverflowWindowHost, useOverflowHoldBoardView } from './lib/overflow-window';
 import { BoardTelemetryJournalPanel } from './modules/device-board/BoardTelemetryJournalPanel';
 import { useDeviceBoardClientBindings } from './modules/device-board/useDeviceBoardClientBindings';
 import { useServerFirstFieldUi } from './modules/device-board/useServerFirstBoardState';
@@ -38,6 +39,8 @@ function AppContentInner() {
   const { serverFirstState, showRunControls: serverFirstShowRunControls } =
     useServerFirstFieldUi(connectionMode === 'paired' ? deviceId : null);
   const { catalogEnabled, catalogService } = useDeviceBoardUserCaseSettings();
+  // #2310: факт «буфер полон» на доске — бейдж + строка статуса из того же носителя удержания.
+  const overflowHoldBoardView = useOverflowHoldBoardView();
 
   const loadUserCaseDocument = useMemo(() => {
     if (!catalogEnabled) {
@@ -51,6 +54,8 @@ function AppContentInner() {
       <NodeConnectionShell />
       {/* CT5: алерты захвата видимы и в дашборде, и поверх fullscreen-борда (z-60 > z-50). */}
       {connectionMode === 'paired' ? <CaptureAlertToasts /> : null}
+      {/* #2310: одно окно оператора «буфер полон» на всё приложение (z-70 — над доской и тостами). */}
+      <OverflowWindowHost />
       {isBoardMode ? (
         <div className="fixed inset-0 z-50 flex flex-col bg-base-100">
           <div className="min-h-0 flex-1">
@@ -64,6 +69,7 @@ function AppContentInner() {
               deviceLive={connectionMode === 'paired' ? deviceLive : undefined}
               serverFirstState={connectionMode === 'paired' ? serverFirstState : null}
               showRunControls={connectionMode === 'paired' ? serverFirstShowRunControls : true}
+              overflowHold={overflowHoldBoardView}
             />
           </div>
         </div>
