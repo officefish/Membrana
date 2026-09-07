@@ -24,15 +24,29 @@ import { isPrismaUniqueViolation } from '../../lib/prisma-errors';
 import { normalizeSampleLabel } from '../../lib/sample-label';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CollectionsService } from '../collections/collections.service';
-import { DevicesService } from '../devices/devices.service';
+import { effectiveBufferPolicy } from '../devices/buffer-policy';
+import { DevicesService, type DeviceQuotaDto } from '../devices/devices.service';
 import {
   axisRefuses,
   buildBufferOverflowRefusal,
   resolveQuotaSubject,
   type BufferOverflowRefusal,
+  type OverflowPolicy,
 } from './buffer-overflow-refusal';
 import { OverflowEpisodeRegistry } from './overflow-episode-registry';
-import { TEMPORARY_OVERFLOW_POLICY_UNTIL_BLOCK_B } from './overflow-policy.temporary';
+
+/**
+ * Политика для поля ответа `overflowPolicy` (шов B→A, адаптер A-1 контракта интеграции
+ * `cowork-buffer-full-stop`). Источник — строка `Device`, которую `DevicesService.getQuota` уже
+ * загрузил для квоты и пропустил через `effectiveBufferPolicy` (поле `bufferPolicy` ответа
+ * `/quota` — канал B→C). Второго чтения базы нет; чистая функция B прогоняется ещё раз по тем же
+ * данным: `⊥` и порча → `stop`, не падение (требование B), и умная очистка без полного S до
+ * ответа не долетает.
+ */
+function overflowPolicyOf(quota: Pick<DeviceQuotaDto, 'bufferPolicy'>): OverflowPolicy {
+  const carried = quota.bufferPolicy as { mode?: unknown; params?: unknown } | null | undefined;
+  return effectiveBufferPolicy({ bufferPolicy: carried?.mode, bufferPolicyParams: carried?.params }).mode;
+}
 
 /**
  * Исход загрузки пробы: проба лежит ИЛИ доменный отказ «места нет» (вердикт M2, #2307).
@@ -160,8 +174,8 @@ export class SamplesService {
    * открывается идемпотентно в `OverflowEpisodeRegistry` — 100 отказов подряд несут один id и
    * одно время. Успешная запись в ось закрывает её эпизод: сервер увидел место.
    *
-   * `overflowPolicy` — ВРЕМЕННО константа `stop` (стаб поля блока B, см.
-   * `overflow-policy.temporary.ts`); интеграция подставляет чтение поля прибора.
+   * `overflowPolicy` — эффективная политика прибора из той же строки `Device`, что и квота
+   * (поле блока B; см. `overflowPolicyOf`).
    */
   async uploadOrRefuse(
     deviceId: string,
@@ -182,7 +196,7 @@ export class SamplesService {
         return buildBufferOverflowRefusal({
           subject,
           quota,
-          overflowPolicy: TEMPORARY_OVERFLOW_POLICY_UNTIL_BLOCK_B,
+          overflowPolicy: overflowPolicyOf(quota),
           episode: this.episodes.open(deviceId, subject),
         });
       }

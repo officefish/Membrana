@@ -25,13 +25,20 @@ const BUFFER_COLLECTION = { id: 'col-buffer', kind: 'buffer' as const, systemKey
 const USER_COLLECTION = { id: 'col-user', kind: 'user' as const, systemKey: null };
 const SYSTEM_COLLECTION = { id: 'col-sys', kind: 'system' as const, systemKey: 'journal' };
 
-function quotaWith(input: { bufferUsed: number; userUsed: number; limit?: number }) {
+/**
+ * Ответ `DevicesService.getQuota` так, как его отдаёт блок B после интеграции: поле
+ * `bufferPolicy` — эффективная политика той же строки `Device` (backfill → `stop`).
+ * `bufferPolicy` в фикстуре — сырое значение, чтобы порчи (дырявый S, чужой режим) дошли до
+ * `overflowPolicyOf` и были прочитаны как `stop`.
+ */
+function quotaWith(input: { bufferUsed: number; userUsed: number; limit?: number; bufferPolicy?: unknown }) {
   const limit = input.limit ?? 1_000;
   return {
     buffer: { usedBytes: input.bufferUsed, limitBytes: limit, backend: 'server' as const },
     userStorage: { usedBytes: input.userUsed, limitBytes: limit, backend: 'server' as const },
     dataset: { catalogId: 'cat', sampleCount: 0 },
     userWorkspaces: { used: 0, limit: 3, backend: 'server' as const },
+    bufferPolicy: input.bufferPolicy === undefined ? { mode: 'stop', params: null } : input.bufferPolicy,
   };
 }
 
@@ -304,6 +311,36 @@ describe('SamplesService — доменный отказ «места нет» (
       expect(err.getStatus()).toBe(200);
       expect(err.getResponse()).toEqual(err.refusal);
       expect(err.refusal.reason).toBe('device_buffer_full');
+    });
+  });
+
+  /**
+   * Smoke шва B→A (контракт интеграции `cowork-buffer-full-stop`, §6 п.1; адаптер A-1):
+   * `overflowPolicy` ответа — эффективная политика той же строки `Device`, что и квота
+   * (поле `bufferPolicy` ответа `getQuota`), прогнанная через `effectiveBufferPolicy` блока B.
+   * Порчи → красный: вернуть константу `stop` (smart с полным S перестанет доезжать);
+   * читать `quota.bufferPolicy.mode` напрямую (smart без S долетит до ответа; ⊥ уронит).
+   */
+  describe('overflowPolicy — из поля политики B на той же строке Device (A-1)', () => {
+    const FULL_S = { thresholdPercent: 90, selection: 'oldest_first', protectLabeled: true };
+
+    it('backfill stop → overflowPolicy: stop', async () => {
+      devices.getQuota.mockResolvedValue(quotaWith({ bufferUsed: 950, userUsed: 0, bufferPolicy: { mode: 'stop', params: null } }));
+      expect(await upload()).toMatchObject({ ok: false, overflowPolicy: 'stop' });
+    });
+
+    it('smart_cleanup с полным S → overflowPolicy: smart_cleanup', async () => {
+      devices.getQuota.mockResolvedValue(
+        quotaWith({ bufferUsed: 950, userUsed: 0, bufferPolicy: { mode: 'smart_cleanup', params: FULL_S } }),
+      );
+      expect(await upload()).toMatchObject({ ok: false, overflowPolicy: 'smart_cleanup' });
+    });
+
+    it('smart_cleanup с пустым S, чужой режим, поле отсутствует → stop (effective(⊥) = stop, не падение)', async () => {
+      for (const bufferPolicy of [{ mode: 'smart_cleanup', params: null }, { mode: 'auto-cleanup' }, null]) {
+        devices.getQuota.mockResolvedValue(quotaWith({ bufferUsed: 950, userUsed: 0, bufferPolicy }));
+        expect(await upload(), JSON.stringify(bufferPolicy)).toMatchObject({ ok: false, overflowPolicy: 'stop' });
+      }
     });
   });
 });
