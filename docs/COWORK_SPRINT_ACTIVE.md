@@ -2,7 +2,7 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` |
+| **status** | `closed` — Phase 5 закрыта 2026-09-07 (`cowork:close`) |
 | sprintId | `cowork-buffer-full-stop` |
 | brief | [`COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-buffer-full-stop/COWORK_SPRINT_BRIEF.md) |
 | вход | заседание [`buffer-full-stop/EPIC.md`](./meeting/buffer-full-stop/EPIC.md) (#2306, влито `edcbbda9`); билеты #2307 / #2308 / #2309, поверх #2310 |
@@ -47,7 +47,7 @@ Integration-ветка: `cowork/cowork-buffer-full-stop/integration` — зав�
 | 2 — Isolated build | ✅ закрыта | 2026-09-06 | все три DoD зелёные на стабах, сверено координатором прогоном; гейт сработал по предикату в день открытия, дедлайн 09.09 не понадобился |
 | 3 — Interface Consilium | ✅ закрыта | 2026-09-06 | [протокол](./discussions/cowork-sprint-cowork-buffer-full-stop-interface-consilium.md) + [`INTERFACE_CONTRACT.md`](./cowork-sprint/cowork-buffer-full-stop/INTERFACE_CONTRACT.md); 10 адаптеров, эскалации нет |
 | 4 — Integration | ✅ закрыта | 2026-09-07 | ветка `cowork/cowork-buffer-full-stop/integration` (`0585f0ba` + доки): 10 адаптеров, переписано 0, стабов и временной константы нет; сверено координатором: media 9/91, client 13/84, cabinet 3/25, wire-sync, оба swagger зелёные; протокол `INTEGRATION_CHECKS.md` |
-| 5 — Merge + archive | в работе | 2026-09-07 | один PR integration → main; мердж — слово владельца; `RETROSPECTIVE.md` написана |
+| 5 — Merge + archive | ✅ закрыта | 2026-09-07 | PR #2314 влит сквошем `d73b6923` по слову владельца («Мержим 2314»), ревью тимлида LGTM (`pr-2314-code-review.md`); `RETROSPECTIVE.md`; карточка архивирована `task:archive`. Поверх: #2310 — PR #2315, база переведена на main |
 
 ## Сверено в стволе до нарезки (06.09)
 
@@ -57,3 +57,15 @@ Integration-ветка: `cowork/cowork-buffer-full-stop/integration` — зав�
 значения «остановлен: буфер полон» в `RuntimeStatePayload.phase` нет; `overflowId`,
 `DeviceOverflowHold` — 0 совпадений. **`@membrana/background-media` не зависит от
 `@membrana/core`** — выбор пакета словаря за блоком A, строка зависимости — на интеграции.
+
+---
+
+## Закрытие Phase 5 — `cowork:close` 2026-09-07
+
+Спринт **`cowork-buffer-full-stop`** закрыт предикатом, а не памятью человека: контракт и ретроспектива на месте, блокирующих находок нет.
+
+Неблокирующие находки, оставленные явно (закрытие флага из-за них не роняется):
+
+- `card_not_archived` — карточка `cowork-buffer-full-stop` в статусе `active` — закрыть флаг можно, но `yarn task:archive` ещё не звали
+
+**Что этот шаг НЕ утверждает:** качество сведения блоков машине недоступно. Пустой список находок означает «признаков незакрытости не найдено», а не «коворк закрыт хорошо».

@@ -20,7 +20,7 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `cowork-buffer-full-stop` | Cowork Sprint: Полный буфер — контракт остановки | L | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-buffer-full-stop/COWORK_SPRINT_BRIEF.md) | — |
+| `cabinet-deploy-smoke-tooth-2288` | Смоук выкатки кабинета бьёт тарифы, pair и сетку образа | M | [`CABINET_DEPLOY_SMOKE_TOOTH_2288_PROMPT.md`](../prompts/CABINET_DEPLOY_SMOKE_TOOTH_2288_PROMPT.md) | [#2288](https://github.com/officefish/Membrana/issues/2288) |
 | `cowork-library-open-api` | Cowork Sprint: Открытое API библиотеки | L | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md) | — |
 | `playback-hang-timeout` | Таймаут ожидания статуса в playSequence + сброс stale outcome при смене набора | S | [`PLAYBACK_HANG_TIMEOUT_PROMPT.md`](../prompts/PLAYBACK_HANG_TIMEOUT_PROMPT.md) | [#2181](https://github.com/officefish/Membrana/issues/2181) |
 | `node-duty-ready-predicate` | Узел к дежурству: предикат готовности Firebat — сон/гибернация/автовход/служба (Г4) | S | [`NODE_DUTY_READY_PREDICATE_PROMPT.md`](../prompts/NODE_DUTY_READY_PREDICATE_PROMPT.md) | [#2049](https://github.com/officefish/Membrana/issues/2049) |
@@ -153,6 +153,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `cowork-buffer-full-stop` | Cowork Sprint: Полный буфер — контракт остановки | 2026-09-07 | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-buffer-full-stop/COWORK_SPRINT_BRIEF.md) | — | [карточка](./archive/cowork-buffer-full-stop.md) |
 | `plugin-placement-contract` | Контракт зоны размещения плагин-панелей + зуб соответствия раскладке | 2026-08-26 | [`PLUGIN_PLACEMENT_CONTRACT_PROMPT.md`](../prompts/PLUGIN_PLACEMENT_CONTRACT_PROMPT.md) | #2182 | [карточка](./archive/plugin-placement-contract.md) |
 | `union-merge-all-jsonl` | Союзное слияние всех append-only журналов docs/**/*.jsonl (Б, после #2147) | 2026-08-25 | [`UNION_MERGE_ALL_JSONL_PROMPT.md`](../prompts/UNION_MERGE_ALL_JSONL_PROMPT.md) | #2096 | [карточка](./archive/union-merge-all-jsonl.md) |
 | `deliver-to-main-in-chain` | Доставка в ствол внутри цепочки ритуала: ожидание CI как шаг, не второй заход (Б, после #2147) | 2026-08-25 | [`DELIVER_TO_MAIN_IN_CHAIN_PROMPT.md`](../prompts/DELIVER_TO_MAIN_IN_CHAIN_PROMPT.md) | #2081 | [карточка](./archive/deliver-to-main-in-chain.md) |
