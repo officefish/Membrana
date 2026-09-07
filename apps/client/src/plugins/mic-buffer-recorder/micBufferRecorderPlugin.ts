@@ -14,6 +14,13 @@ import {
   subscribeMediaLibrarySampleImported,
 } from '../../lib/mediaLibraryHub';
 import { publishMediaLibraryQuotaFromService } from '../../lib/mediaLibraryHubBridge';
+import {
+  applyLocalGuardFromQuota,
+  describeOverflowHold,
+  getDeviceOverflowHold,
+  getEffectiveOverflowPolicyStub,
+  installDeviceOverflowHoldWiring,
+} from '../../lib/device-overflow-hold';
 import { subscribeMicrophoneStream } from '../../modules/microphone/microphoneStreamHub';
 
 import { startClipRecorder, type ActiveClipRecorder } from './clipRecorder';
@@ -74,6 +81,14 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
       let pauseTimeoutId: ReturnType<typeof setTimeout> | null = null;
       let recordingStartedAtMs = 0;
       let runtimeMode: MediaLibraryRecordingMode = readPluginConfig(context.moduleId).defaultMode;
+
+      /*
+        Адаптер удержания (#2309, M3 (г)): плагин — тонкая проводка к ОДНОМУ носителю
+        `DeviceOverflowHold`. Своих флагов «уже остановлен» у плагина нет: спрашиваем
+        `isHeld()` / `refuseStart()`, а факт, id эпизода и выход из удержания живут в носителе.
+      */
+      const hold = getDeviceOverflowHold();
+      installDeviceOverflowHoldWiring(hold);
 
       syncStateFromConfig(context.moduleId, runtimeMode);
       publishMediaLibraryQuotaFromService();
@@ -158,10 +173,17 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
         }
       };
 
-      /** Держим ли запись из-за буфера — до явного ручного запуска после разбора. */
-      let bufferStoppedPermanently = false;
+      /** Гашение при входе в удержание: активная запись НЕ дописывается — клип ушёл бы в закрытую дверь. */
+      const quenchForOverflowHold = (): void => {
+        clearAutoTimers();
+        clearRecordingTimers();
+        cancelActiveRecorder('overflow-hold');
+        micBufferRecorderPluginState.setRecording({ isRecording: false, elapsedSec: 0 });
+        const episode = hold.getEpisode();
+        if (episode) micBufferRecorderPluginState.setError(describeOverflowHold(episode));
+      };
 
-      const canStartRecording = (humanRestart = false): boolean => {
+      const canStartRecording = (): boolean => {
         const snap = micBufferRecorderPluginState.getSnapshot();
         if (!currentStream || currentStream.getAudioTracks().length === 0) {
           if (runtimeMode === 'manual') {
@@ -169,20 +191,11 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
           }
           return false;
         }
-        if (snap.bufferVerdict.action === 'stop') {
-          bufferStoppedPermanently = true;
-          micBufferRecorderPluginState.setError(snap.bufferVerdict.say);
+        // T5: новый старт при удержании отбивается тем же фактом и снова даёт сигнал окна.
+        if (hold.refuseStart({ source: 'mic', what: 'запись в буфер' })) {
+          const episode = hold.getEpisode();
+          if (episode) micBufferRecorderPluginState.setError(describeOverflowHold(episode));
           return false;
-        }
-        if (bufferStoppedPermanently && !humanRestart) {
-          micBufferRecorderPluginState.setError(
-            'Сценарий остановлен насовсем из-за заполнения буфера. Разберитесь с буфером и запустите запись рукой.',
-          );
-          return false;
-        }
-        if (bufferStoppedPermanently && humanRestart) {
-          bufferStoppedPermanently = false;
-          micBufferRecorderPluginState.setError(null);
         }
         if (snap.recordingBlocked) {
           micBufferRecorderPluginState.setError('Буфер заполнен — очистите или освободите место.');
@@ -196,9 +209,8 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
         mode: MediaLibraryRecordingMode,
         targetDurationSec: number,
         reasonOnStop: 'user' | 'timer' | 'auto',
-        humanRestart = false,
       ): void => {
-        if (!canStartRecording(humanRestart) || !currentStream) return;
+        if (!canStartRecording() || !currentStream) return;
 
         const cfg = readPluginConfig(context.moduleId);
         const format = pickFallbackCaptureFormat(cfg.defaultFormat);
@@ -243,11 +255,11 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
         }, targetDurationSec * 1000);
       };
 
-      const startAutoSegment = (humanRestart = false): void => {
+      const startAutoSegment = (): void => {
         if (disposed || runtimeMode !== 'auto') return;
         if (pauseTimeoutId != null) return;
         const cfg = readPluginConfig(context.moduleId);
-        beginRecording('auto', cfg.autoSegmentSec, 'auto', humanRestart);
+        beginRecording('auto', cfg.autoSegmentSec, 'auto');
       };
 
       const schedulePauseThenNextSegment = (): void => {
@@ -297,7 +309,7 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
               runtimeMode = mode;
               syncStateFromConfig(context.moduleId, mode);
               clearAutoTimers();
-              startAutoSegment(true);
+              startAutoSegment();
             };
 
             if (prevMode === 'manual' && activeRecorder) {
@@ -313,7 +325,7 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
           if (runtimeMode !== 'manual') return;
           const cfg = readPluginConfig(context.moduleId);
           const target = clampManualTargetSec(cfg.manualPresetSec);
-          beginRecording('manual', target, 'user', true);
+          beginRecording('manual', target, 'user');
         },
         stopManualRecording(): void {
           if (runtimeMode !== 'manual' || !activeRecorder) return;
@@ -340,28 +352,35 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
       const unsubQuota = subscribeMediaLibraryQuotaUpdated((payload) => {
         micBufferRecorderPluginState.setQuota(payload);
         /*
-          ГАСИМ ПО ТОМУ ЖЕ ВЕРДИКТУ, ЧТО ПОКАЗЫВАЕМ (#2204, ревью #2214).
-          Раньше остановка шла только по `recordingBlocked` — то есть когда квота УЖЕ
-          исчерпана под ноль. Порог остановки ядра срабатывает раньше края, и если гасить
-          по старому признаку, панель говорила бы «остановлено», пока запись идёт. Один
-          источник у слова и у действия — рассинхрону неоткуда взяться.
+          Локальный страж (#2309, M3 (б) — вторичный источник): чтение квоты до отправки идёт
+          в носитель, по тому же порогу ядра, что и вердикт панели. Решение «стоп» здесь не
+          принимается и не запоминается — это делает носитель; освобождение места ничего не
+          возобновляет (нет авто-resume). Политика — эффективная, от сервера (стаб B).
         */
-        const verdict = micBufferRecorderPluginState.getSnapshot().bufferVerdict;
-        const holding = payload.recordingBlocked || verdict.action === 'stop';
-        if (holding && activeRecorder) {
-          clearAutoTimers();
-          clearRecordingTimers();
-          void finishActiveRecorder('error');
-        }
-        if (verdict.action === 'stop') {
-          bufferStoppedPermanently = true;
-          micBufferRecorderPluginState.setError(verdict.say);
-        } else if (payload.recordingBlocked) {
-          bufferStoppedPermanently = true;
-        }
+        applyLocalGuardFromQuota(
+          hold,
+          { usedBytes: payload.usedBytes, limitBytes: payload.limitBytes },
+          getEffectiveOverflowPolicyStub(),
+        );
       });
 
+      // Вход в удержание / повышение id — гасим активную запись; сброс — снимаем слово.
+      const unsubHold = hold.subscribe((_episode, change) => {
+        if (disposed) return;
+        if ((change === 'entered' || change === 'promoted') && hold.isHeld()) {
+          quenchForOverflowHold();
+        } else if (change === 'released') {
+          micBufferRecorderPluginState.setError(null);
+        }
+      });
+      if (hold.isHeld()) {
+        // Эпизод пережил рестарт плагина/сценария: слово человеку сразу, старт будет отбит.
+        const episode = hold.getEpisode();
+        if (episode) micBufferRecorderPluginState.setError(describeOverflowHold(episode));
+      }
+
       const unsubBufferCleared = subscribeMediaLibraryBufferCleared(() => {
+        // Сам сброс удержания по очистке делает проводка носителя (release('cleanup')).
         micBufferRecorderPluginState.setError(null);
         micBufferRecorderPluginState.setBufferSampleCountPending(false);
       });
@@ -380,6 +399,7 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
         registerMicBufferRecorderController(null);
         unsubStream();
         unsubQuota();
+        unsubHold();
         unsubBufferCleared();
         unsubSampleImported();
         clearRecordingTimers();
