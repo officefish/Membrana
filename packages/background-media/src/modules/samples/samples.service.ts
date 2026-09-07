@@ -2,9 +2,10 @@ import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
-  PayloadTooLargeException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import type { Collection, SampleLabel } from '../../prisma/client';
@@ -24,6 +25,34 @@ import { normalizeSampleLabel } from '../../lib/sample-label';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CollectionsService } from '../collections/collections.service';
 import { DevicesService } from '../devices/devices.service';
+import {
+  axisRefuses,
+  buildBufferOverflowRefusal,
+  resolveQuotaSubject,
+  type BufferOverflowRefusal,
+} from './buffer-overflow-refusal';
+import { OverflowEpisodeRegistry } from './overflow-episode-registry';
+import { TEMPORARY_OVERFLOW_POLICY_UNTIL_BLOCK_B } from './overflow-policy.temporary';
+
+/**
+ * Исход загрузки пробы: проба лежит ИЛИ доменный отказ «места нет» (вердикт M2, #2307).
+ * Отказ — не исключение и не HTTP-ошибка: транспорт 200, клиент читает `reason`.
+ */
+export type SampleUploadOutcome =
+  | { readonly ok: true; readonly sample: SampleDto }
+  | BufferOverflowRefusal;
+
+/**
+ * Доменный отказ, доставленный исключением — для вызывающих, которые не умеют нести
+ * объединение `SampleUploadOutcome` (`firebat-node` зовёт `upload()` и берёт `sample.id`).
+ * Статус 200 — по конвенции 12.08: это исход, не поломка транспорта; Nest отдаст то же тело
+ * `{ ok:false, reason, … }`, что и основная дверь. Предпочтительный путь — `uploadOrRefuse`.
+ */
+export class BufferOverflowRefusedException extends HttpException {
+  constructor(readonly refusal: BufferOverflowRefusal) {
+    super(refusal, HttpStatus.OK);
+  }
+}
 
 export interface UploadMetaOverride {
   title?: string;
@@ -80,6 +109,7 @@ export class SamplesService {
     private readonly devices: DevicesService,
     private readonly blobs: BlobStorageService,
     private readonly audio: AudioIngestService,
+    private readonly episodes: OverflowEpisodeRegistry,
   ) {}
 
   async list(
@@ -106,6 +136,11 @@ export class SamplesService {
     };
   }
 
+  /**
+   * Вторая дверь загрузки — совместимая сигнатура для `firebat-node` (результат задания = та же
+   * загрузка, ADR-0027). Отказ по квоте — `BufferOverflowRefusedException` (200 + тело M2),
+   * не 413: транспортный код квоту больше не описывает.
+   */
   async upload(
     deviceId: string,
     collectionId: string,
@@ -113,26 +148,44 @@ export class SamplesService {
     mimeType: string | undefined,
     meta?: UploadMetaOverride,
   ): Promise<SampleDto> {
+    const outcome = await this.uploadOrRefuse(deviceId, collectionId, fileBuffer, mimeType, meta);
+    if (outcome.ok) return outcome.sample;
+    throw new BufferOverflowRefusedException(outcome);
+  }
+
+  /**
+   * Основная дверь: проба лежит ИЛИ доменный отказ «места нет» с эпизодом (M2, #2307).
+   *
+   * Отказ чеканится mapper'ом `buffer-overflow-refusal.ts`; эпизод (`overflowId`/`overflowAt`)
+   * открывается идемпотентно в `OverflowEpisodeRegistry` — 100 отказов подряд несут один id и
+   * одно время. Успешная запись в ось закрывает её эпизод: сервер увидел место.
+   *
+   * `overflowPolicy` — ВРЕМЕННО константа `stop` (стаб поля блока B, см.
+   * `overflow-policy.temporary.ts`); интеграция подставляет чтение поля прибора.
+   */
+  async uploadOrRefuse(
+    deviceId: string,
+    collectionId: string,
+    fileBuffer: Buffer,
+    mimeType: string | undefined,
+    meta?: UploadMetaOverride,
+  ): Promise<SampleUploadOutcome> {
     const collection = await this.collections.getOwned(deviceId, collectionId);
     this.assertUploadAllowed(collection);
 
     const parsed = await this.audio.parseUpload(fileBuffer, mimeType);
     assertDeclaredAudioMetaMatchesMeasured(meta, parsed);
-    const quota = await this.devices.getQuota(deviceId);
-    const bucket =
-      collection.kind === 'buffer'
-        ? quota.buffer
-        : collection.kind === 'user' ||
-            (collection.kind === 'system' && collection.systemKey !== TARIFF_DATASET_SYSTEM_KEY)
-          ? quota.userStorage
-          : null;
-
-    if (bucket && bucket.usedBytes + parsed.sizeBytes > bucket.limitBytes) {
-      throw new PayloadTooLargeException(
-        collection.kind === 'buffer'
-          ? 'Buffer storage quota exceeded'
-          : 'User storage quota exceeded',
-      );
+    const subject = resolveQuotaSubject(collection, TARIFF_DATASET_SYSTEM_KEY);
+    if (subject) {
+      const quota = await this.devices.getQuota(deviceId);
+      if (axisRefuses(quota[subject], parsed.sizeBytes)) {
+        return buildBufferOverflowRefusal({
+          subject,
+          quota,
+          overflowPolicy: TEMPORARY_OVERFLOW_POLICY_UNTIL_BLOCK_B,
+          episode: this.episodes.open(deviceId, subject),
+        });
+      }
     }
 
     const sampleId = randomUUID();
@@ -164,7 +217,9 @@ export class SamplesService {
           notes: meta?.notes,
         },
       });
-      return sampleToDto(row);
+      // Проба легла — в оси было место; открытый эпизод переполнения (если был) закрыт.
+      if (subject) this.episodes.release(deviceId, subject);
+      return { ok: true, sample: sampleToDto(row) };
     } catch (err) {
       await this.blobs.delete(storageRef);
       if (isPrismaUniqueViolation(err)) {
@@ -219,6 +274,8 @@ export class SamplesService {
     }
     await this.blobs.delete(row.storageRef);
     await this.prisma.sample.delete({ where: { id: sampleId } });
+    // Место дали (сюда же приходит buffer-cleanup) — эпизод оси закрыт, следующий отказ = новый.
+    this.releaseEpisodeOf(deviceId, row.collection);
   }
 
   async move(
@@ -242,6 +299,8 @@ export class SamplesService {
         source: 'move',
       },
     });
+    // Проба ушла из оси-источника — там появилось место.
+    this.releaseEpisodeOf(deviceId, row.collection);
     return sampleToDto(updated);
   }
 
@@ -302,6 +361,14 @@ export class SamplesService {
       throw new NotFoundException(`Sample ${sampleId} not found for device`);
     }
     return row;
+  }
+
+  private releaseEpisodeOf(
+    deviceId: string,
+    collection: Pick<Collection, 'kind' | 'systemKey'>,
+  ): void {
+    const subject = resolveQuotaSubject(collection, TARIFF_DATASET_SYSTEM_KEY);
+    if (subject) this.episodes.release(deviceId, subject);
   }
 
   private assertUploadAllowed(collection: Collection): void {
