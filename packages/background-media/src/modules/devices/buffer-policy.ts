@@ -4,7 +4,7 @@
  *
  * Здесь живёт ТРЕТЬЯ скоба fail-closed (после backfill миграции и DEFAULT/NOT NULL колонки):
  * `effectiveBufferPolicy()` на пути чтения. Одной миграции мало — порченая строка, чужое
- * значение, `smart_cleanup` с дырявым набором параметров: всё это обязано читаться как `stop`,
+ * значение, умная очистка с дырявым набором параметров: всё это обязано читаться как `stop`,
  * а не падать и не выдавать прибору «умную очистку», которую никто не настраивал.
  *
  * Слово владельца 06.09: умолчание — стоп; умная очистка — только после настройки её
@@ -12,15 +12,27 @@
  * кабинет проверяет то же при записи). Алгоритм очистки (T12) здесь НЕ живёт: три слота S —
  * имена-закладки, по ним ничего не отбирается и не удаляется.
  *
- * Легаси `auto-cleanup` клиента в словарь не входит и не входит в тип: откат к старой
+ * Легаси автоочистки клиента в словарь не входит и не входит в тип: откат к старой
  * автоочистке невозможен на уровне типа, а не договорённости.
+ *
+ * Словарь режимов — ОДИН на монорепо: `OVERFLOW_POLICIES` пакета `@membrana/plugin-contracts`
+ * (адаптер B-1 контракта интеграции `cowork-buffer-full-stop`). Media — CommonJS и рантайм-объект
+ * ESM-пакета статически не импортирует, поэтому значения берутся из единственного места media,
+ * где литералы чеканятся под `satisfies` (mapper блока A), а типы — через `typeof` словаря.
+ * Своих строк режимов этот файл не пишет; зуб `buffer-overflow-dictionary.test.ts` это сторожит.
  *
  * Имена: `bufferPolicy` — ЭТО поле (настройка). `overflowPolicy` — поле ответа отказа блока A
  * (снимок настройки в эпизоде). Не сливать.
  */
+import {
+  OVERFLOW_POLICY_VALUES,
+  type OverflowPolicy,
+  type SmartCleanupPolicy,
+  type StopPolicy,
+} from '../samples/buffer-overflow-refusal';
 
-export const BUFFER_POLICY_MODES = ['stop', 'smart_cleanup'] as const;
-export type BufferPolicyMode = (typeof BUFFER_POLICY_MODES)[number];
+export const BUFFER_POLICY_MODES = OVERFLOW_POLICY_VALUES;
+export type BufferPolicyMode = OverflowPolicy;
 
 /** Критерий отбора жертв — слот под T12. Закрытый список; T12 расширяет, гейт не ломается. */
 export const SMART_CLEANUP_SELECTIONS = ['oldest_first', 'largest_first'] as const;
@@ -36,8 +48,8 @@ export interface SmartCleanupParams {
 }
 
 export type BufferPolicy =
-  | { readonly mode: 'stop'; readonly params: null }
-  | { readonly mode: 'smart_cleanup'; readonly params: SmartCleanupParams };
+  | { readonly mode: StopPolicy; readonly params: null }
+  | { readonly mode: SmartCleanupPolicy; readonly params: SmartCleanupParams };
 
 /**
  * Закрытый список причин отказа записи политики. Конвенция 12.08: доменный отказ —
@@ -111,7 +123,8 @@ export function parseBufferPolicy(raw: unknown): BufferPolicyParseResult {
   if (raw.mode === 'stop') return { ok: true, policy: DEFAULT_BUFFER_POLICY };
   const params = parseSmartCleanupParams(raw.params);
   if (!params.ok) return { ok: false, reason: params.reason };
-  return { ok: true, policy: { mode: 'smart_cleanup', params: params.params } };
+  // `raw.mode` уже сужен словарём до умной очистки — строка режима здесь не пишется (B-1).
+  return { ok: true, policy: { mode: raw.mode, params: params.params } };
 }
 
 /** Строка прибора так, как её отдаёт Prisma; поля необязательны — читатель обязан пережить ⊥. */

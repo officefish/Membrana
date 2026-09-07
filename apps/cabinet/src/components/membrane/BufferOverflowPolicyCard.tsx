@@ -13,6 +13,7 @@
  * Логика без DOM живёт в `bufferPolicyForm.ts` и покрыта зубами; здесь — только рендер и вызовы.
  */
 import { useCallback, useState } from 'react';
+import { OVERFLOW_POLICIES } from '@membrana/plugin-contracts';
 
 import {
   setBufferPolicyBinding,
@@ -166,8 +167,8 @@ function PolicyEditor({
           aria-describedby={disabledReason ? `${idPrefix}-smart-why` : undefined}
           onChange={(e) => setMode(e.target.value as BufferPolicyMode)}
         >
-          <option value="stop">{MODE_LABEL.stop}</option>
-          <option value="smart_cleanup" disabled={disabledReason !== null}>
+          <option value={OVERFLOW_POLICIES.STOP}>{MODE_LABEL.stop}</option>
+          <option value={OVERFLOW_POLICIES.SMART_CLEANUP} disabled={disabledReason !== null}>
             {MODE_LABEL.smart_cleanup}
           </option>
         </select>

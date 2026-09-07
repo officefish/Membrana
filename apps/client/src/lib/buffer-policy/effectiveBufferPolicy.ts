@@ -7,6 +7,8 @@
  * связать блоки до Interface Consilium. Читатель сам достаёт поле из корня ответа `/quota`
  * либо принимает уже вынутый объект политики — обе формы законны.
  */
+import { OVERFLOW_POLICIES } from '@membrana/plugin-contracts';
+
 import {
   BUFFER_POLICY_MODES,
   SMART_CLEANUP_SELECTIONS,
@@ -52,7 +54,8 @@ export function parseBufferPolicy(raw: unknown): BufferPolicy | null {
   if (typeof mode !== 'string' || !(BUFFER_POLICY_MODES as readonly string[]).includes(mode)) return null;
   if (mode === 'stop') return STOP_POLICY;
   const params = parseParams(raw.params);
-  return params ? { mode: 'smart_cleanup', params } : null;
+  // Строка режима не пишется: единственный носитель литералов — словарь `plugin-contracts` (B-1).
+  return params ? { mode: OVERFLOW_POLICIES.SMART_CLEANUP, params } : null;
 }
 
 /**

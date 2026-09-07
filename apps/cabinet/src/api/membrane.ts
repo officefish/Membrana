@@ -1,3 +1,5 @@
+import { OVERFLOW_POLICIES, type OverflowPolicy } from '@membrana/plugin-contracts';
+
 import { getApiBase } from './auth';
 
 export type NodeAccessKeyDuration =
@@ -42,10 +44,12 @@ export interface NodeDeviceView {
 /**
  * ПОЛИТИКА ПЕРЕПОЛНЕНИЯ БУФЕРА (#2308, вердикт M1) — FOLLOWER контракта кабинетного сервера
  * (`modules/membrane/buffer-policy.ts`). Дом истины — сервер; новые режимы и причины здесь не
- * выдумываются. Легаси `auto-cleanup` в типе нет: витрина не умеет его ни показать, ни послать.
+ * выдумываются. Словарь режимов — один на монорепо, `OVERFLOW_POLICIES` из
+ * `@membrana/plugin-contracts` (адаптер B-1 интеграции `cowork-buffer-full-stop`).
+ * Легаси `auto-cleanup` в типе нет: витрина не умеет его ни показать, ни послать.
  */
-export const BUFFER_POLICY_MODES = ['stop', 'smart_cleanup'] as const;
-export type BufferPolicyMode = (typeof BUFFER_POLICY_MODES)[number];
+export const BUFFER_POLICY_MODES = [OVERFLOW_POLICIES.STOP, OVERFLOW_POLICIES.SMART_CLEANUP] as const;
+export type BufferPolicyMode = OverflowPolicy;
 
 export const SMART_CLEANUP_SELECTIONS = ['oldest_first', 'largest_first'] as const;
 export type SmartCleanupSelection = (typeof SMART_CLEANUP_SELECTIONS)[number];

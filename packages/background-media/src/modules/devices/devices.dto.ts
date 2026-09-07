@@ -18,7 +18,7 @@ export class SmartCleanupParamsDto {
   protectLabeled!: boolean;
 }
 
-/** Политика переполнения буфера. `smart_cleanup` принимается ТОЛЬКО с полным набором параметров. */
+/** Политика переполнения буфера. Умная очистка принимается ТОЛЬКО с полным набором параметров. */
 export class BufferPolicyDto {
   @ApiProperty({ enum: BUFFER_POLICY_MODES, example: 'stop' })
   mode!: (typeof BUFFER_POLICY_MODES)[number];

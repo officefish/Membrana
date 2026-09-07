@@ -6,16 +6,25 @@
  * Здесь: словарь режимов, каркас параметров умной очистки, гейт `paramsComplete(S)` (кабинет
  * проверяет при ЗАПИСИ; сервер записей — ещё раз при разноске) и семантика галочки-привязки.
  *
- * Словарь режимов и три причины гейта — FOLLOWER того же словаря на сервере записей
- * (`background-media/src/modules/devices/buffer-policy.ts`): общего пакета у двух серверов
- * сегодня нет, копии сторожат зубы полноты на каждом носителе (названо в CONCEPT блока).
+ * Словарь режимов — ОДИН на монорепо: `OVERFLOW_POLICIES` пакета `@membrana/plugin-contracts`
+ * (адаптер B-1 контракта интеграции `cowork-buffer-full-stop`). Кабинетный сервер — CommonJS и
+ * рантайм-объект ESM-пакета статически не импортирует (та же граница, что у media, см.
+ * `journal-plugin-host.service.ts`), поэтому здесь ЕДИНСТВЕННОЕ в кабинете место, где строки
+ * режимов набраны — и каждая проверена `satisfies` против union словаря: переименование в
+ * словаре красит `tsc`. Зуб `buffer-overflow-dictionary.test.ts` (media) знает этот файл как
+ * назначенного носителя литерала на CJS-сервере; второй файл кабинета со строкой режима — красный.
+ * Три причины гейта — другой закрытый список (запись настройки), с A не пересекается.
  *
  * Легаси `auto-cleanup` в словарь не входит; откат к старой автоочистке невозможен на уровне типа.
  * Имена: `bufferPolicy` (настройка, этот блок) ≠ `overflowPolicy` (поле ответа отказа, блок A).
  */
+import type { OVERFLOW_POLICIES, OverflowPolicy } from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
 
-export const BUFFER_POLICY_MODES = ['stop', 'smart_cleanup'] as const;
-export type BufferPolicyMode = (typeof BUFFER_POLICY_MODES)[number];
+export const BUFFER_POLICY_MODES = ['stop', 'smart_cleanup'] as const satisfies readonly OverflowPolicy[];
+export type BufferPolicyMode = OverflowPolicy;
+
+type StopPolicy = (typeof OVERFLOW_POLICIES)['STOP'];
+type SmartCleanupPolicy = (typeof OVERFLOW_POLICIES)['SMART_CLEANUP'];
 
 /** Критерий отбора жертв — слот под T12. Закрытый список; T12 расширяет, гейт не ломается. */
 export const SMART_CLEANUP_SELECTIONS = ['oldest_first', 'largest_first'] as const;
@@ -29,8 +38,8 @@ export interface SmartCleanupParams {
 }
 
 export type BufferPolicy =
-  | { readonly mode: 'stop'; readonly params: null }
-  | { readonly mode: 'smart_cleanup'; readonly params: SmartCleanupParams };
+  | { readonly mode: StopPolicy; readonly params: null }
+  | { readonly mode: SmartCleanupPolicy; readonly params: SmartCleanupParams };
 
 /**
  * Закрытый список причин отказа записи (конвенция 12.08: `200 { ok:false, reason }`).
@@ -98,7 +107,8 @@ export function parseBufferPolicy(raw: unknown): BufferPolicyParseResult {
   if (raw.mode === 'stop') return { ok: true, policy: DEFAULT_BUFFER_POLICY };
   const params = parseSmartCleanupParams(raw.params);
   if (!params.ok) return { ok: false, reason: params.reason };
-  return { ok: true, policy: { mode: 'smart_cleanup', params: params.params } };
+  // `raw.mode` уже сужен словарём до умной очистки — вторая строка режима здесь не нужна (B-1).
+  return { ok: true, policy: { mode: raw.mode, params: params.params } };
 }
 
 /** Строка (мембраны или прибора) так, как её отдаёт Prisma; читатель обязан пережить ⊥. */

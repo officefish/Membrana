@@ -9,6 +9,8 @@
  * берут один и тот же предикат полноты. Разведи их — и селект разрешит то, что форма отправить
  * не сможет, либо наоборот.
  */
+import { OVERFLOW_POLICIES } from '@membrana/plugin-contracts';
+
 import {
   BUFFER_POLICY_DENY_REASONS,
   SMART_CLEANUP_SELECTIONS,
@@ -84,7 +86,7 @@ export function smartCleanupDisabledReason(draft: SmartCleanupDraft): string | n
 export function toPolicyInput(mode: BufferPolicyMode, draft: SmartCleanupDraft): BufferPolicyInput | null {
   if (mode === 'stop') return { mode: 'stop' };
   const params = completeParams(draft);
-  return params ? { mode: 'smart_cleanup', params } : null;
+  return params ? { mode: OVERFLOW_POLICIES.SMART_CLEANUP, params } : null;
 }
 
 const DENY_TEXT: Record<BufferPolicyDenyReason, string> = {
