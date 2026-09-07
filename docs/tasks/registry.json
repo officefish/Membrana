@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "cowork-buffer-full-stop",
+      "title": "Cowork Sprint: Полный буфер — контракт остановки",
+      "promptPath": "docs/cowork-sprint/cowork-buffer-full-stop/COWORK_SPRINT_BRIEF.md",
+      "githubIssue": null,
+      "noIssueReason": "вход спринта — эпик заседания buffer-full-stop (#2306, влит edcbbda9); блоки несут свои иссью #2307/#2308/#2309, поверх #2310",
+      "linearId": null,
+      "size": "L",
+      "status": "active",
+      "sprintKind": "cowork-sprint",
+      "createdAt": "2026-09-06",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "3 блока refusal-contract/overflow-policy/device-hold от BASE_SHA edcbbda9; изоляция до Interface Consilium; мёржатся все три; 4/4 (#2310) — поверх, после сведения",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "cowork-library-open-api",
       "title": "Cowork Sprint: Открытое API библиотеки",
       "promptPath": "docs/cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md",
