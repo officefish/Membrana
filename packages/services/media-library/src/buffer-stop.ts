@@ -1,3 +1,5 @@
+import { OVERFLOW_POLICIES, type OverflowPolicy } from '@membrana/plugin-contracts';
+
 import { resolveBufferQuota } from './quota-status.js';
 import type { StorageQuota } from './types.js';
 
@@ -6,12 +8,18 @@ export interface BufferFill {
   readonly limitBytes: number;
 }
 
-export type BufferPressurePolicy = 'auto-cleanup' | 'stop';
+/**
+ * Политика давления буфера = политика переполнения прибора из словаря `@membrana/plugin-contracts`
+ * (`stop` | `smart_cleanup`; адаптер BC-2 интеграции `cowork-buffer-full-stop`, вердикт M1).
+ * Легаси локальной автоочистки в типе больше нет: откат невозможен на уровне типа. До T12
+ * умная очистка для вердикта — «не стоп»: локально сценарий не гасится, место освобождает сервер.
+ */
+export type BufferPressurePolicy = OverflowPolicy;
 
 /** Доля буфера, после которой человека предупреждают. */
 export const BUFFER_STOP_WARN_RATIO = 0.9;
 
-/** Доля буфера, после которой выбранная автоочистка должна сработать асинхронно. */
+/** Доля буфера, после которой умная очистка (когда T12 даст алгоритм) вправе сработать. */
 export const BUFFER_AUTO_CLEANUP_RATIO = 0.95;
 
 /** Доля буфера, после которой выбранная остановка гасит сценарий насовсем. */
@@ -28,7 +36,7 @@ export interface BufferStopVerdict {
   readonly freeBytes: number;
   /** Сколько минут записи осталось при наблюдаемом темпе; null — темп неизвестен. */
   readonly minutesLeft: number | null;
-  /** В режиме автоочистки это сигнал уборщику; в режиме stop он только показывает развилку. */
+  /** В режиме умной очистки это сигнал уборщику (T12); в режиме stop он только показывает развилку. */
   readonly autoCleanupDue: boolean;
   /** После stop сценарий возвращает только человек, не освобождение места само по себе. */
   readonly restart: 'manual';
@@ -116,8 +124,8 @@ function sayOf(
   if (action === 'stop') {
     return `Остановлено насовсем: ${what}. Буфер заполнен на ${percent}%, ${left}. Автоочистка в этом режиме не запускается; разберитесь с буфером в «Управлении буфером» и запустите сценарий рукой.`;
   }
-  if (autoCleanupDue && policy === 'auto-cleanup') {
-    return `Буфер заполнен на ${percent}%: ${left}. Выбрана автоочистка, сценарий записи не останавливается.`;
+  if (autoCleanupDue && policy === OVERFLOW_POLICIES.SMART_CLEANUP) {
+    return `Буфер заполнен на ${percent}%: ${left}. Выбрана умная очистка, сценарий записи не останавливается: место освобождает сервер записей.`;
   }
   if (action === 'warn') {
     return `Буфер заполнен на ${percent}%: ${left}. ${what} пока идёт, но пора разобраться с буфером.`;

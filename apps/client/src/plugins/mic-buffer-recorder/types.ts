@@ -1,5 +1,4 @@
 import type {
-  BufferPressurePolicy,
   MediaLibraryCaptureFormat,
   MediaLibraryRecordingMode,
 } from '@membrana/media-library-service';
@@ -24,13 +23,18 @@ export type AutoSegmentPresetSec = (typeof AUTO_SEGMENT_PRESETS_SEC)[number];
 /** @deprecated use AutoSegmentPresetSec */
 export type AutoIntervalPresetSec = AutoSegmentPresetSec;
 
+/**
+ * Конфиг плагина. Политики переполнения буфера здесь НЕТ (адаптер BC-2 интеграции
+ * `cowork-buffer-full-stop`, вердикт M1): плагин — зеркало, не хозяин; режим задаёт сервер
+ * записей и читается через `lib/buffer-policy-bridge`. Сохранённый в сторе старый ключ
+ * `bufferPolicy` игнорируется — умолчания автоочистки больше нет ни в конфиге, ни в типе.
+ */
 export interface MicBufferRecorderPluginConfig {
   readonly defaultMode: MediaLibraryRecordingMode;
   readonly defaultFormat: MediaLibraryCaptureFormat;
   readonly manualPresetSec: ManualDurationPresetSec;
   readonly autoSegmentSec: AutoSegmentPresetSec;
   readonly pauseSec: number;
-  readonly bufferPolicy: BufferPressurePolicy;
 }
 export const defaultMicBufferRecorderConfig: MicBufferRecorderPluginConfig = {
   defaultMode: 'auto',
@@ -38,7 +42,6 @@ export const defaultMicBufferRecorderConfig: MicBufferRecorderPluginConfig = {
   manualPresetSec: 5,
   autoSegmentSec: 5,
   pauseSec: 1,
-  bufferPolicy: 'auto-cleanup',
 };
 
 export function resolveMicBufferRecorderConfig(
@@ -57,7 +60,6 @@ export function resolveMicBufferRecorderConfig(
     raw?.defaultFormat === 'webm' || raw?.defaultFormat === 'mp4' || raw?.defaultFormat === 'wav'
       ? raw.defaultFormat
       : defaultMicBufferRecorderConfig.defaultFormat;
-  const bufferPolicy = raw?.bufferPolicy === 'stop' ? 'stop' : 'auto-cleanup';
 
   return {
     defaultMode,
@@ -71,6 +73,5 @@ export function resolveMicBufferRecorderConfig(
     pauseSec: Number.isFinite(pause)
       ? Math.min(MAX_AUTO_PAUSE_SEC, Math.max(MIN_AUTO_PAUSE_SEC, pause))
       : defaultMicBufferRecorderConfig.pauseSec,
-    bufferPolicy,
   };
 }

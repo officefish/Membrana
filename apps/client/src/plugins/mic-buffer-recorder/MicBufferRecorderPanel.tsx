@@ -60,7 +60,6 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
       manualPresetSec: config.manualPresetSec,
       autoSegmentSec: config.autoSegmentSec,
       pauseSec: config.pauseSec,
-      bufferPolicy: config.bufferPolicy,
       effectiveFormat: pickFallbackCaptureFormat(config.defaultFormat),
     });
   }, [config, snapshot.mode]);
@@ -155,26 +154,19 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
       </div>
 
 
-      <div className="flex flex-col gap-2">
+      {/*
+        Политика переполнения — ЗЕРКАЛО (BC-2, вердикт M1): режим задаёт оператор в кабинете и
+        разносит сервер записей; здесь он только показывается от читателя B. Кнопок локального
+        выбора (и автоочистки) нет — плагин не хозяин политики.
+      */}
+      <div className="flex flex-col gap-1" data-testid="mic-buffer-policy-mirror">
         <span className="text-xs text-base-content/60">Поведение буфера при 95%</span>
-        <div className="join">
-          <button
-            type="button"
-            className={`btn btn-sm join-item ${config.bufferPolicy === 'auto-cleanup' ? 'btn-primary' : 'btn-ghost'}`}
-            disabled={snapshot.isRecording}
-            onClick={() => patchConfig({ bufferPolicy: 'auto-cleanup' })}
-          >
-            Автоочистка
-          </button>
-          <button
-            type="button"
-            className={`btn btn-sm join-item ${config.bufferPolicy === 'stop' ? 'btn-primary' : 'btn-ghost'}`}
-            disabled={snapshot.isRecording}
-            onClick={() => patchConfig({ bufferPolicy: 'stop' })}
-          >
-            Остановка
-          </button>
-        </div>
+        <span className="text-sm">
+          {stopSelected
+            ? 'Остановка: прибор перестаёт писать, вещдоки не трогаются'
+            : 'Умная очистка: по параметрам, заданным в кабинете'}
+          <span className="ml-1 text-xs text-base-content/50">(задаётся в кабинете, зеркало с сервера)</span>
+        </span>
       </div>
 
       {stopVerdictActive || pressureWarningActive ? (

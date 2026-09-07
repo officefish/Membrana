@@ -14,11 +14,11 @@ import {
   subscribeMediaLibrarySampleImported,
 } from '../../lib/mediaLibraryHub';
 import { publishMediaLibraryQuotaFromService } from '../../lib/mediaLibraryHubBridge';
+import { getEffectiveOverflowPolicy, subscribeEffectiveOverflowPolicy } from '../../lib/buffer-policy-bridge';
 import {
   applyLocalGuardFromQuota,
   describeOverflowHold,
   getDeviceOverflowHold,
-  getEffectiveOverflowPolicyStub,
   installDeviceOverflowHoldWiring,
 } from '../../lib/device-overflow-hold';
 import { subscribeMicrophoneStream } from '../../modules/microphone/microphoneStreamHub';
@@ -59,7 +59,6 @@ function syncStateFromConfig(
     manualPresetSec: cfg.manualPresetSec,
     autoSegmentSec: cfg.autoSegmentSec,
     pauseSec: cfg.pauseSec,
-    bufferPolicy: cfg.bufferPolicy,
     effectiveFormat: pickFallbackCaptureFormat(cfg.defaultFormat),
   });
 }
@@ -349,18 +348,29 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
         }
       });
 
+      /*
+        Зеркало политики (BC-2, вердикт M1): плагин не хозяин `bufferPolicy` — слово панели и
+        вердикт берутся у читателя блока B (мост `buffer-policy-bridge`, источник `/quota`).
+        Один источник на слово и на действие: страж ниже судит той же функцией.
+      */
+      micBufferRecorderPluginState.setBufferPolicy(getEffectiveOverflowPolicy());
+      const unsubPolicy = subscribeEffectiveOverflowPolicy((policy) => {
+        if (disposed) return;
+        micBufferRecorderPluginState.setBufferPolicy(policy);
+      });
+
       const unsubQuota = subscribeMediaLibraryQuotaUpdated((payload) => {
         micBufferRecorderPluginState.setQuota(payload);
         /*
           Локальный страж (#2309, M3 (б) — вторичный источник): чтение квоты до отправки идёт
           в носитель, по тому же порогу ядра, что и вердикт панели. Решение «стоп» здесь не
           принимается и не запоминается — это делает носитель; освобождение места ничего не
-          возобновляет (нет авто-resume). Политика — эффективная, от сервера (стаб B).
+          возобновляет (нет авто-resume). Политика — эффективная, от сервера (читатель B).
         */
         applyLocalGuardFromQuota(
           hold,
           { usedBytes: payload.usedBytes, limitBytes: payload.limitBytes },
-          getEffectiveOverflowPolicyStub(),
+          getEffectiveOverflowPolicy(),
         );
       });
 
@@ -398,6 +408,7 @@ export function createMicBufferRecorderPlugin(): Plugin<MicBufferRecorderPluginC
         disposed = true;
         registerMicBufferRecorderController(null);
         unsubStream();
+        unsubPolicy();
         unsubQuota();
         unsubHold();
         unsubBufferCleared();

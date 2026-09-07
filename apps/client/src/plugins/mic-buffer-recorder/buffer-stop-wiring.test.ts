@@ -71,29 +71,47 @@ describe('плагин — тонкий адаптер носителя удер
     expect(quotaHandler).not.toContain('finishActiveRecorder');
   });
 
-  it('политику носитель берёт у стаба B, а не у зеркала bufferPolicy плагина', () => {
-    expect(PLUGIN).toContain('getEffectiveOverflowPolicyStub()');
+  it('политику носитель берёт у читателя B (мост buffer-policy-bridge), а не у конфига плагина', () => {
+    expect(PLUGIN).toContain("from '../../lib/buffer-policy-bridge'");
     const guardCall = PLUGIN.slice(PLUGIN.indexOf('applyLocalGuardFromQuota('), PLUGIN.indexOf('const unsubHold'));
-    expect(guardCall).not.toContain('bufferPolicy');
+    expect(guardCall).toContain('getEffectiveOverflowPolicy()');
+    expect(guardCall).not.toContain('cfg.bufferPolicy');
+    expect(guardCall).not.toContain('Stub');
   });
 });
 
-describe('зеркало политики B (поле не трогаем): режимы взаимоисключающие', () => {
-  it('конфиг имеет одну policy: auto-cleanup или stop', () => {
-    expect(TYPES).toContain("bufferPolicy: 'auto-cleanup'");
-    expect(TYPES).toContain("raw?.bufferPolicy === 'stop' ? 'stop' : 'auto-cleanup'");
-    expect(STATE).toContain('readonly bufferPolicy');
+/**
+ * BC-2 (контракт интеграции `cowork-buffer-full-stop`): плагин — ЗЕРКАЛО политики B, не хозяин.
+ * Порчи → красный: дефолт `'auto-cleanup'` вернулся в конфиг/состояние; панель снова патчит
+ * `bufferPolicy`; зеркало не подписано на читателя.
+ */
+describe('зеркало политики B: плагин не хозяин bufferPolicy', () => {
+  it('в конфиге плагина политики нет, умолчания автоочистки нет нигде (судится код, не комментарии)', () => {
+    const code = (src: string) => src.split('\n').filter((l) => !/^\s*(\/\/|\*|\/\*|\{\/\*)/u.test(l)).join('\n');
+    expect(code(TYPES)).not.toMatch(/bufferPolicy/u);
+    expect(code(TYPES)).not.toContain('auto-cleanup');
+    expect(code(STATE)).not.toContain("'auto-cleanup'");
+    expect(code(PANEL)).not.toContain('auto-cleanup');
+    expect(STATE).toContain("bufferPolicy: BufferPressurePolicy = 'stop'");
   });
 
-  it('выбор auto-cleanup не ставит stop even at threshold', () => {
-    const v = stopDecision({ usedBytes: 973 * MB, limitBytes: 1024 * MB }, { policy: 'auto-cleanup' });
-    expect(v.autoCleanupDue).toBe(true);
-    expect(v.action).not.toBe('stop');
+  it('слово панели — от читателя: состояние подписано на мост, панель не патчит политику', () => {
+    expect(PLUGIN).toContain('subscribeEffectiveOverflowPolicy(');
+    expect(PLUGIN).toContain('setBufferPolicy(getEffectiveOverflowPolicy())');
+    expect(STATE).toContain('readonly bufferPolicy');
+    expect(PANEL).not.toMatch(/patchConfig\(\{\s*bufferPolicy/u);
+    expect(PANEL).toContain('mic-buffer-policy-mirror');
+  });
+
+  it('smart_cleanup для вердикта до T12 = «не стоп», stop = стоп на 95%', () => {
+    const smart = stopDecision({ usedBytes: 973 * MB, limitBytes: 1024 * MB }, { policy: 'smart_cleanup' });
+    expect(smart.autoCleanupDue).toBe(true);
+    expect(smart.action).not.toBe('stop');
+    const stop = stopDecision({ usedBytes: 973 * MB, limitBytes: 1024 * MB }, { policy: 'stop' });
+    expect(stop.action).toBe('stop');
   });
 
   it('stop-ветка не вызывает очистку буфера', () => {
     expect(PLUGIN).not.toMatch(/requestClearMediaLibraryBuffer|deleteSamplesByIds|planBufferCleanup/u);
-    expect(PANEL).toContain("patchConfig({ bufferPolicy: 'stop' })");
-    expect(PANEL).toContain("patchConfig({ bufferPolicy: 'auto-cleanup' })");
   });
 });

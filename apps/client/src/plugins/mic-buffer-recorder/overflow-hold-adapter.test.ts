@@ -26,10 +26,10 @@ import {
   subscribeMediaLibraryCaptureStart,
   subscribeMediaLibraryCaptureStop,
 } from '../../lib/mediaLibraryHub';
+import { resetBufferPolicyBridgeForTests, setBufferPolicySourceForTests } from '../../lib/buffer-policy-bridge';
 import {
   resetDeviceOverflowHoldForTests,
   resetDeviceOverflowHoldWiringForTests,
-  setEffectiveOverflowPolicyStubForTests,
   type DeviceOverflowHold,
   type OverflowWindowSignal,
 } from '../../lib/device-overflow-hold';
@@ -70,6 +70,18 @@ function quota(usedBytes: number, limitBytes: number) {
   };
 }
 
+/**
+ * Эффективная политика через мост B↔C (адаптер BC-1): источник — сырой `/quota` с полем
+ * `bufferPolicy`; читатель B разбирает его сам, стаба политики больше нет.
+ */
+async function serverPolicy(mode: 'stop' | 'smart_cleanup'): Promise<void> {
+  const bufferPolicy =
+    mode === 'stop'
+      ? { mode, params: null }
+      : { mode, params: { thresholdPercent: 90, selection: 'oldest_first', protectLabeled: true } };
+  await setBufferPolicySourceForTests(async () => ({ bufferPolicy }));
+}
+
 function installPlugin(): () => Promise<void> {
   const plugin = createMicBufferRecorderPlugin();
   const teardown = plugin.install({ moduleId: MODULE_ID } as unknown as ModuleContext<MicBufferRecorderPluginConfig>);
@@ -90,12 +102,13 @@ describe('mic-buffer-recorder — адаптер удержания', () => {
   let cancels: string[];
   let teardown: () => Promise<void>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.useFakeTimers();
     resetMediaLibraryHubForTests();
     resetMicrophoneStreamHubForTests();
     resetDeviceOverflowHoldWiringForTests();
-    setEffectiveOverflowPolicyStubForTests('stop');
+    resetBufferPolicyBridgeForTests();
+    await serverPolicy('stop');
     micBufferRecorderPluginState.reset();
     mockCancel.mockClear();
     hold = resetDeviceOverflowHoldForTests();
@@ -166,10 +179,22 @@ describe('mic-buffer-recorder — адаптер удержания', () => {
     expect(mockCancel).toHaveBeenCalledTimes(1);
   });
 
-  it('локальный страж при эффективной политике smart_cleanup молчит (стаб B)', () => {
-    setEffectiveOverflowPolicyStubForTests('smart_cleanup');
+  it('локальный страж при эффективной политике smart_cleanup молчит (читатель B через мост)', async () => {
+    await serverPolicy('smart_cleanup');
+    expect(micBufferRecorderPluginState.getSnapshot().bufferPolicy).toBe('smart_cleanup');
     publishMediaLibraryQuotaUpdated(quota(1024 * MB, 1024 * MB));
     expect(hold.isHeld()).toBe(false);
+  });
+
+  it('зеркало: слово панели — от читателя B; дыра синка → stop и страж снова судит', async () => {
+    await serverPolicy('smart_cleanup');
+    expect(micBufferRecorderPluginState.getSnapshot().bufferPolicy).toBe('smart_cleanup');
+    await setBufferPolicySourceForTests(async () => {
+      throw new Error('media unreachable');
+    });
+    expect(micBufferRecorderPluginState.getSnapshot().bufferPolicy).toBe('stop');
+    publishMediaLibraryQuotaUpdated(quota(1024 * MB, 1024 * MB));
+    expect(hold.isHeld()).toBe(true);
   });
 
   it('удержание переживает рестарт плагина: после teardown/install старт всё так же отбит', async () => {
