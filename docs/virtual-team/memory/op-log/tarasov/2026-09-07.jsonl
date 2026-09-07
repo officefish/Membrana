@@ -1,0 +1,16 @@
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-09-06-buffer-full-stop-m0-order","origin":"persona-extract"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-09-06-buffer-full-stop-m1-policy","origin":"persona-extract"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-09-06-buffer-full-stop-m2-refusal-code","origin":"persona-extract"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-09-06-buffer-full-stop-m3-device-stop","origin":"persona-extract"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-09-06-buffer-full-stop-m4-life-after","origin":"persona-extract"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-09-06-buffer-full-stop-m5-operator-window","origin":"persona-extract"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-09-07-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-20-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-19-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-18-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-17-server-plugin-foundation-m0-order","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-17-server-plugin-foundation-m1-vocabulary","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-17-server-plugin-foundation-m2-mount-homes","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-17-server-plugin-foundation-m3-results-home","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-04-static-mmbrn-container-m3-access","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-07T16:43:57.275Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
