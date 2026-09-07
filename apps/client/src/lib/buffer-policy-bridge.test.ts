@@ -55,7 +55,10 @@ describe('мост B↔C: эффективная политика с сырог�
     expect(getEffectiveBufferPolicy().source).toBe('never_received');
   });
 
-  it('сырой /quota с smart_cleanup → getEffectiveOverflowPolicy = smart_cleanup; страж C молчит (ignored)', async () => {
+  // #2318 (долг D-1): пока переключателя словаря нет, умная очистка с сервера до стража C НЕ
+  // доходит — читатель B гасит её fail-closed на stop (источник `gated`), и страж держит.
+  // Порча: снять fail-closed → getEffectiveOverflowPolicy = smart_cleanup, страж молчит → красный.
+  it('сырой /quota с smart_cleanup (полный S) → getEffectiveOverflowPolicy = stop (gated); страж C при stop держит', async () => {
     const fetchMock = vi.fn(async () => jsonResponse(quotaRoot({ mode: 'smart_cleanup', params: FULL_PARAMS })));
     vi.stubGlobal('fetch', fetchMock);
     bindBufferPolicySourceToBackend(serverBackend());
@@ -63,23 +66,20 @@ describe('мост B↔C: эффективная политика с сырог�
     await refreshEffectiveOverflowPolicy();
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(getEffectiveOverflowPolicy()).toBe('smart_cleanup');
-    expect(getEffectiveBufferPolicy()).toEqual({
-      policy: { mode: 'smart_cleanup', params: FULL_PARAMS },
-      source: 'server',
-    });
+    expect(getEffectiveOverflowPolicy()).toBe('stop');
+    expect(getEffectiveBufferPolicy()).toEqual({ policy: { mode: 'stop', params: null }, source: 'gated' });
 
     const hold = resetDeviceOverflowHoldForTests();
     const outcome = applyLocalGuardFromQuota(hold, { usedBytes: 1024 * MB, limitBytes: 1024 * MB }, getEffectiveOverflowPolicy());
-    expect(outcome).toBe('ignored');
-    expect(hold.isHeld()).toBe(false);
+    expect(outcome).toBe('entered');
+    expect(hold.isHeld()).toBe(true);
   });
 
   it('/quota упал → stop (sync_failed), не «последнее валидное»; страж при stop держит', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(quotaRoot({ mode: 'smart_cleanup', params: FULL_PARAMS }))));
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(quotaRoot({ mode: 'stop', params: null }))));
     bindBufferPolicySourceToBackend(serverBackend());
     await refreshEffectiveOverflowPolicy();
-    expect(getEffectiveOverflowPolicy()).toBe('smart_cleanup');
+    expect(getEffectiveBufferPolicy()).toEqual({ policy: { mode: 'stop', params: null }, source: 'server' });
 
     vi.stubGlobal('fetch', vi.fn(async () => jsonResponse({ message: 'down' }, 503)));
     await refreshEffectiveOverflowPolicy();
@@ -92,13 +92,17 @@ describe('мост B↔C: эффективная политика с сырог�
     expect(hold.isHeld()).toBe(true);
   });
 
-  it('порча ответа (легаси auto-cleanup, smart без S, поля нет) → stop, malformed', async () => {
+  it('порча ответа (легаси auto-cleanup, поля нет) → stop, malformed; smart без S при закрытом гейте → stop, gated (#2318: гейт раньше полноты)', async () => {
     bindBufferPolicySourceToBackend(serverBackend());
-    for (const bad of [{ mode: 'auto-cleanup' }, { mode: 'smart_cleanup', params: null }, undefined]) {
+    for (const [bad, source] of [
+      [{ mode: 'auto-cleanup' }, 'malformed'],
+      [{ mode: 'smart_cleanup', params: null }, 'gated'],
+      [undefined, 'malformed'],
+    ] as const) {
       vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(quotaRoot(bad))));
       await refreshEffectiveOverflowPolicy();
       expect(getEffectiveOverflowPolicy(), JSON.stringify(bad)).toBe('stop');
-      expect(getEffectiveBufferPolicy().source).toBe('malformed');
+      expect(getEffectiveBufferPolicy().source, JSON.stringify(bad)).toBe(source);
     }
   });
 
@@ -109,7 +113,7 @@ describe('мост B↔C: эффективная политика с сырог�
     expect(getEffectiveBufferPolicy().source).toBe('sync_failed');
   });
 
-  it('подписка C зовётся по факту смены режима', async () => {
+  it('подписка C зовётся по факту смены значения читателя; при закрытом гейте (#2318) режим наружу — всегда stop', async () => {
     const seen: string[] = [];
     const off = subscribeEffectiveOverflowPolicy((mode) => seen.push(mode));
     bindBufferPolicySourceToBackend(serverBackend());
@@ -119,6 +123,8 @@ describe('мост B↔C: эффективная политика с сырог�
     vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(quotaRoot({ mode: 'stop', params: null }))));
     await refreshEffectiveOverflowPolicy();
     off();
-    expect(seen).toEqual(['smart_cleanup', 'stop']);
+    // gated → server: значение читателя сменилось (источник), режим — нет; smart_cleanup C не видит.
+    expect(seen).toEqual(['stop', 'stop']);
+    expect(seen).not.toContain('smart_cleanup');
   });
 });

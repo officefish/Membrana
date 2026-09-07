@@ -7,7 +7,7 @@
  * связать блоки до Interface Consilium. Читатель сам достаёт поле из корня ответа `/quota`
  * либо принимает уже вынутый объект политики — обе формы законны.
  */
-import { OVERFLOW_POLICIES } from '@membrana/plugin-contracts';
+import { OVERFLOW_POLICIES, SMART_CLEANUP_AVAILABLE } from '@membrana/plugin-contracts';
 
 import {
   BUFFER_POLICY_MODES,
@@ -45,14 +45,34 @@ function parseParams(raw: unknown): SmartCleanupParams | null {
 }
 
 /**
- * Разобрать объект политики `{ mode, params }`. Любая порча → `null` (звонящий решает, как
- * назвать причину). Наружу никогда не выходит ничего, кроме двух режимов словаря.
+ * Опция гейта (#2318) — ТОЛЬКО для зубов ветки полноты параметров; боевой код опцию не передаёт
+ * (сканирует зуб media `buffer-policy.test.ts`). Умолчание — переключатель словаря.
  */
-export function parseBufferPolicy(raw: unknown): BufferPolicy | null {
+export interface BufferPolicyGateOptions {
+  readonly smartCleanupAvailable?: boolean;
+}
+
+function smartCleanupAvailable(options: BufferPolicyGateOptions | undefined): boolean {
+  return options?.smartCleanupAvailable ?? SMART_CLEANUP_AVAILABLE;
+}
+
+/** Умная очистка в ответе при выключенном переключателе — то, что читатель гасит fail-closed (#2318). */
+export function isSmartCleanupGated(raw: unknown, options?: BufferPolicyGateOptions): boolean {
+  if (smartCleanupAvailable(options)) return false;
+  return isRecord(raw) && raw.mode === OVERFLOW_POLICIES.SMART_CLEANUP;
+}
+
+/**
+ * Разобрать объект политики `{ mode, params }`. Любая порча → `null` (звонящий решает, как
+ * назвать причину). Наружу никогда не выходит ничего, кроме двух режимов словаря; и с #2318 —
+ * умная очистка наружу не выходит, пока переключатель словаря выключен (гейт РАНЬШЕ полноты S).
+ */
+export function parseBufferPolicy(raw: unknown, options?: BufferPolicyGateOptions): BufferPolicy | null {
   if (!isRecord(raw)) return null;
   const mode = raw.mode;
   if (typeof mode !== 'string' || !(BUFFER_POLICY_MODES as readonly string[]).includes(mode)) return null;
   if (mode === 'stop') return STOP_POLICY;
+  if (!smartCleanupAvailable(options)) return null;
   const params = parseParams(raw.params);
   // Строка режима не пишется: единственный носитель литералов — словарь `plugin-contracts` (B-1).
   return params ? { mode: OVERFLOW_POLICIES.SMART_CLEANUP, params } : null;
@@ -71,8 +91,12 @@ function pickPolicyCandidate(raw: unknown): unknown {
 }
 
 /** Эффективная политика из сырого ответа сервера; порча и пустота названы причиной. */
-export function effectiveBufferPolicy(raw: unknown): EffectiveBufferPolicy {
-  const policy = parseBufferPolicy(pickPolicyCandidate(raw));
+export function effectiveBufferPolicy(raw: unknown, options?: BufferPolicyGateOptions): EffectiveBufferPolicy {
+  const candidate = pickPolicyCandidate(raw);
+  const policy = parseBufferPolicy(candidate, options);
   if (policy) return { policy, source: 'server' };
+  // #2318 fail-closed: сервер прислал умную очистку, а переключателя нет — это не порча ответа,
+  // а гейт; причина названа своим словом, чтобы панель не врала «ответ сломан».
+  if (isSmartCleanupGated(candidate, options)) return { policy: STOP_POLICY, source: 'gated' };
   return { policy: STOP_POLICY, source: 'malformed' };
 }

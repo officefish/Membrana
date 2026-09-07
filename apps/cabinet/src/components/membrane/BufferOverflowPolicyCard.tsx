@@ -13,7 +13,7 @@
  * Логика без DOM живёт в `bufferPolicyForm.ts` и покрыта зубами; здесь — только рендер и вызовы.
  */
 import { useCallback, useState } from 'react';
-import { OVERFLOW_POLICIES } from '@membrana/plugin-contracts';
+import { OVERFLOW_POLICIES, SMART_CLEANUP_AVAILABLE } from '@membrana/plugin-contracts';
 
 import {
   setBufferPolicyBinding,
@@ -178,7 +178,13 @@ function PolicyEditor({
           Умная очистка: {disabledReason.toLowerCase()}
         </p>
       ) : null}
-      <SmartCleanupParamsFields idPrefix={idPrefix} draft={draft} disabled={disabled || busy} onChange={setDraft} />
+      {/* #2318: пока алгоритма T12 нет, слоты параметров выключены вместе с пунктом — заполнять их некуда. */}
+      <SmartCleanupParamsFields
+        idPrefix={idPrefix}
+        draft={draft}
+        disabled={disabled || busy || !SMART_CLEANUP_AVAILABLE}
+        onChange={setDraft}
+      />
       <div className="mt-3">
         <button
           type="button"
@@ -327,7 +333,8 @@ export function BufferOverflowPolicyCard({ data, onChanged }: { data: MembraneVi
         <p className="text-sm text-base-content/70">
           Что делает прибор, когда буфер записи полон. По умолчанию — стоп: буфер хранит вещдоки,
           и прибор перестаёт писать, не стирая их. Умная очистка включается только с заданными
-          параметрами; алгоритм очистки — отдельная работа.
+          параметрами; алгоритм очистки — отдельная работа
+          {SMART_CLEANUP_AVAILABLE ? '.' : ', и пока его нет, умная очистка недоступна.'}
         </p>
 
         <div className="mt-2 rounded-lg bg-base-100 p-4">

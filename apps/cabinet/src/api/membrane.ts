@@ -1,4 +1,4 @@
-import { OVERFLOW_POLICIES, type OverflowPolicy } from '@membrana/plugin-contracts';
+import { OVERFLOW_POLICIES, SMART_CLEANUP_UNAVAILABLE_REASON, type OverflowPolicy } from '@membrana/plugin-contracts';
 
 import { getApiBase } from './auth';
 
@@ -74,6 +74,8 @@ export interface MembraneBufferPolicyView extends BufferPolicyView {
 /** Закрытый список причин отказа записи — follower, 1:1 с сервером. */
 export const BUFFER_POLICY_DENY_REASONS = [
   'unknown_mode',
+  /** #2318: умная очистка недоступна до появления алгоритма T12 — литерал из словаря, не свой. */
+  SMART_CLEANUP_UNAVAILABLE_REASON,
   'params_incomplete',
   'params_invalid',
   'binding_active',
