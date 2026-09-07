@@ -349,6 +349,17 @@ export class ServerStorageBackend implements IStorageBackend {
     return parseJsonText<T>(text, this.baseUrl);
   }
 
+  /**
+   * Сырой ответ `GET /quota` — как отдал сервер записей, без проекции в `StorageQuota`
+   * (адаптер BC-1 интеграции `cowork-buffer-full-stop`). Нужен читателю эффективной политики
+   * переполнения (блок B): поле `bufferPolicy` едет в корне `/quota`, а `getQuota()` его
+   * отбрасывает. Бросает при недоступности сервера — для читателя это «дыра синка» (→ `stop`).
+   * Частоту чтения задаёт вызывающий: сам бэкенд в сеть по расписанию не ходит.
+   */
+  async getQuotaRaw(): Promise<unknown> {
+    return this.requestJson<unknown>('/quota');
+  }
+
   async getQuota(): Promise<StorageQuota> {
     try {
       const data = await this.requestJson<ApiQuotaResponse>('/quota');

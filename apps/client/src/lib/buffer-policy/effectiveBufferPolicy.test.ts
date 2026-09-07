@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { effectiveBufferPolicy, parseBufferPolicy } from './effectiveBufferPolicy';
-import { quotaRoot } from './stubs/quota-source.stub';
+import { quotaRoot } from './quotaSourceFixture';
 import { BUFFER_POLICY_MODES, STOP_POLICY } from './types';
 
 const FULL = { thresholdPercent: 90, selection: 'oldest_first', protectLabeled: true };

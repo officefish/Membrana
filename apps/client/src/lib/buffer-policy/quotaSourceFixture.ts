@@ -1,12 +1,11 @@
 /**
- * СТАБ источника — ответ `/quota` сервера записей с полем `bufferPolicy` (#2308, блок B).
- *
- * Замещает живой `getQuota()` бэкенда `server-storage-backend.ts` (зона блока C). В
- * интеграционную ветку не мёржится; стаб, доживший до прода, — дефект интеграции.
- *
- * Умеет три вещи, которые нужны зубам читателя: отдать ответ, сломаться, отдать порчу.
+ * ФИКСТУРА зубов читателя — источник, отдающий корень `/quota` сервера записей с полем
+ * `bufferPolicy` (#2308, блок B). Это не стаб соседа: живой источник существует —
+ * `ServerStorageBackend.getQuotaRaw()` через мост `lib/buffer-policy-bridge` (адаптер BC-1
+ * интеграции `cowork-buffer-full-stop`). Здесь — управляемый источник для unit-зубов самого
+ * читателя: отдать ответ, сломаться, отдать порчу. Боевой код его не импортирует.
  */
-import type { BufferPolicySourceFn } from '../bufferPolicyReader';
+import type { BufferPolicySourceFn } from './bufferPolicyReader';
 
 export interface QuotaSourceStub {
   readonly source: BufferPolicySourceFn;

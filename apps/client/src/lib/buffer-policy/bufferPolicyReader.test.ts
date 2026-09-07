@@ -6,7 +6,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { createBufferPolicyReader } from './bufferPolicyReader';
-import { createQuotaSourceStub, quotaRoot } from './stubs/quota-source.stub';
+import { createQuotaSourceStub, quotaRoot } from './quotaSourceFixture';
 import { STOP_POLICY } from './types';
 
 const FULL = { thresholdPercent: 90, selection: 'oldest_first', protectLabeled: true };
