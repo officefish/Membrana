@@ -1,40 +1,38 @@
-<!-- Сгенерировано: 2026-09-05T17:21:07.252Z (yarn code-review; daily, llm-xai) -->
+<!-- Сгенерировано: 2026-09-07T16:24:42.130Z (yarn code-review; daily, llm-xai) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: da0207b91f75bf1c509b77913c502c2db182e5ea^..29e71db01db9a17057d78329ec43ff3579c72229 (5 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): aafd9ce0 #2287 (566), 29e71db0 (622)
+> Период: d73b6923df766d0ffe4e66ce65781409a2b7abcd^..43916a9649d8ff3d642434174c42618e3e265af7 (6 коммит(ов))
+> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): d73b6923 #2314 (9343), 4d95e817 #2316 (2277), 17473545 #2324 (1137)
 
 ---
 
-Tier: T1
+Tier: T2
 
-**vesnin (ведущий):** **BLOCK** на продуктовую приёмку дня — носитель магистрали `cabinet-hotfix-2287` и хвост `29e71db0` в oversized-диффах (566 / 622 строк) **не развёрнуты**, сверка швов `COPY docs/tariffs` + `mediaFetch` (нет body ⇒ нет `Content-Type`) по факту кода невозможна. Ритуальная чеканка (#2291/#2292) — **пропуск** (T0, канон/У1). Bestiary по видимому diff: зверей нет; B3/B6 на ритуале не пойманы (DoD дверей явный, trail `started→pass`).
+[Vesnin]: Ведущий. Скоуп дня — контур «буфер полон»: #2314 (контракт остановки), #2316 (окно оператора), #2324 (гейт D-1), закрытие коворка #2317 + ритуальный хвост. Oversized диффы (9343 / 2277 / 1137) в daily не развёрнуты — отдельный проход обязателен; в ствол уже влито (MERGED). По видимому хвосту (архив, COWORK_SPRINT_ACTIVE, registry, journal) B1–B10 не всплыли: карточка архивирована машинно, флаг `closed` не прозой. **Вердикт ведущего: пропуск** на ритуальный слой; продуктовый контур — с оговоркой P1 по красным тестам media и непросмотренным oversized.
 
-[Teamlead]: День = pivot владельца 05.09 на `cabinet-hotfix-2287` после вчерашнего BLOCK по self-select; ритуал и assertions перечеканены честно (`sources[0]` hotfix, `sources[1]` tariff-self-select). Продуктовый diff hotfix/закрывающий коммит **вне обзора** — вечерний вердикт по дверям кабинета не может быть ok. Санитария #2286 (fanout/квота) так и не закрыта письменно. Утро: сначала разворот aafd9ce0/#2287 и 29e71db0, живой удар `GET /v1/tariffs` + pair без body; не открывать L из top-3. Команды: `yarn turbo run lint typecheck test --filter=@membrana/cabinet` (и tariff-пакеты поставки); при наличии verify — зуб «образ несёт сетку».
+[Teamlead]: День закрыл коворк `cowork-buffer-full-stop` (Phase 5) и долг D-1 (#2324); поверх — UI оператора (#2316). Журнал выкаток 07.09: media@d73b6923 pass → cabinet несколько fail → pass@4d95e817 → media+cabinet@17473545 pass. Риски на завтра: красный `@membrana/media-library-service` / `@membrana/background-media` (test+build) и отсутствие построчного ревью трёх oversized PR. Утро: читать этот файл; не открывать новый коворк до зелёного media; точечный bug-pass по #2314/#2316/#2324.
 
-[Архитектор]: Граница дня верная: hotfix дверей (образ + mediaFetch одним местом) vs review self-select в санитарных — owner `sources[0]` не синтезирован из стендапа/DAY_PLAN. Запрет fallback «БД без сетки» — правильный инвариант носителя. Контракт приёмки выкатки должен судить **двери**, не `/health` (#2288 OPEN — дыра B3, если смоук останется health-only). Oversized без разворота = ложно-закрываемый DoD (повтор урока «влито ≠ работает»).
+[Структурщик]: Границы по замыслу коворка (refusal / overflow-policy / device-hold + 10 адаптеров, «переписано 0») выглядят дисциплинированно; C1/C3/C4 по факту diff daily не проверить — тела #2314/#2316/#2324 срезаны. Архив задачи и `registry.json` согласованы (`archived` + карточка). C7: локальный прогон test/build media-library и background-media — exit 1; это P1 до любой новой интеграции в buffer/media. C8/C9 по ритуальному diff — чисто (jsonl journal, op-log, без секретов).
 
-[Структурщик]: В видимом diff только docs/jsonl/assertions/gates — циклов пакетов нет, C1/C4/C7 не применимы. Ожидаемые швы hotfix (вне diff): `Dockerfile` + `docs/tariffs/**`, единая точка `mediaFetch`/`mediaHeaders`, тест на безтелые POST/DELETE/GET. C8/C9 по docs — ок. PR size: #2291 OK (~180), #2292 OK (~270); #2287/#хвост — oversized, P1 «развернуть отдельно», не nit.
+[Математик]: В видимом diff нет FFT/спектра. Предикат «буфер полон» и fail-closed на stop (#2324) — зона correctness: нужен отдельный проход на off-by-one ёмкости, отказ записи до T12, отсутствие «тихого» continue при overflow. Пока дифф срезан — «не подтверждено»; не блокирую daily, фиксирую долг сверки.
 
-[Математик]: — (нет analyzer/FFT; correctness media body — зона структурщика/кабинета).
+[Музыкант]: Аудио-path и device-hold затронуты эпиком (#2314/#2324) — C2 (Web Audio только через audio-engine) в daily-срезе не виден. После выката media@17473545 — smoke: старт записи → заполнение буфера → отказ/hold → нет клиппинга и нет «записи в никуда». Прямой store в обход registry — искать в полном diff #2314.
 
-[Музыкант]: — (Web Audio / audio-engine не затронуты).
+[Верстальщик]: #2316 — окно оператора «буфер полон» (один носитель, два входа, три дороги): a11y фокуса/клавиатуры и DESIGN.md в срезе не видны. P2/opportunity: сверить три дороги с контрактом INTERFACE, не плодить четвёртый вход. Ритуальные md/jsonl — вне UI.
 
-[Верстальщик]: — (UI membrane tariff select в этом сегменте не виден; a11y не оценивался).
+Итоговый артефакт: docs/DAILY_CODE_REVIEW.md (вечер 2026-09-07); опора — 6 коммитов d73b6923^..43916a96, состояния GH: #2314/#2316/#2317/#2324 MERGED
 
-Итоговый артефакт: `docs/DAILY_CODE_REVIEW.md` (вечер 2026-09-05)
 Definition of Done (утро):
-1. Разворот diff `aafd9ce0` (#2287) и `29e71db0` — письменный ok/follow-up по `tariff-grid` in image и mediaFetch Content-Type.
-2. `yarn turbo run lint typecheck test --filter=@membrana/cabinet` (+ связанные tariff-пакеты) — зелёный, результат в вердикте.
-3. Удар по дверям: `GET /v1/tariffs` → 200+список; pair/без body → 401/404, **не** 400.
-4. Зуб «образ несёт сетку» green **или** явный follow-up-issue.
-5. Mini-verdict по #2286 fanout/sync (санитария вчерашнего BLOCK) — не primary.
-6. Не стартовать hostess/assets/batch и не primary #592 без нового owner-choice.
+1. `yarn turbo run build test --filter=@membrana/media-library-service --filter=@membrana/background-media`
+2. `yarn turbo run lint typecheck test --filter=@membrana/client --filter=@membrana/core` (если buffer-типы в core)
+3. `yarn code-review:pr 2314` / `2316` / `2324` — догнать oversized (или `review-bugbot` diff-only)
+4. Smoke кабинета/media на ревизии ≥17473545: buffer-full → UI-дороги → stop fail-closed
+5. `yarn docs:lint` при правках ритуальных md
+
 Риски:
-- **P0** — merge/выкатка hotfix без разворота oversized и без удара по дверям → снова 503/400 «у человека».
-- **P1** — #2288 OPEN: health-only smoke маскирует мёртвые двери (B3).
-- **P1** — fanout self-select (#2286) всё ещё без живого/тестового подтверждения квоты на узлах.
-- **P2** — deps `fast-uri` high / `fastify`·`qs` moderate — accept-risk или bump, не блокер merge ритуала.
-- **P2** — #2284 ключ узла / duty после дверей, руками владельца.
+- **P1** — красные test/build `@membrana/media-library-service`, `@membrana/background-media` (гигиена дерева / CI локально)
+- **P1** — три oversized MERGED без развёрнутого daily-diff: #2314, #2316, #2324 — recommend отдельный bug-pass (не rollback)
+- **P2** — cabinet deploy: серия fail до pass@4d95e817 — зафиксировать корень в postmortem, не «слепой ретрай» (B5) в след. выкатах
+- **P2** — ritual-evening: 17 непогашенных трений в digest за 7 дн. — не блокер merge, долг ритма
