@@ -112,7 +112,7 @@ export class DevicesController {
   @ApiOperation({
     summary: 'Sync membrane tariff limits and buffer overflow policy for paired device (cabinet internal)',
     description:
-      'Domain refusal by the smart-cleanup params gate (#2308) is `200 { ok:false, reason }`; nothing is written then. 4xx stay with transport.',
+      'Domain refusal is `200 { ok:false, reason }`; nothing is written then. Reasons, in check order: `smart_cleanup_unavailable` — the smart-cleanup availability gate (#2318, off until the T12 algorithm exists; judged BEFORE params completeness), then the params gate (#2308). 4xx stay with transport.',
   })
   @ApiParam({ name: 'deviceId', format: 'uuid' })
   @ApiHeader({ name: 'X-Membrana-Token', required: true })
