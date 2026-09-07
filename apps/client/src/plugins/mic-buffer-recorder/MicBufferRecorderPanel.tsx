@@ -3,6 +3,7 @@ import { useMembranaStore } from '@membrana/agenda';
 import type { MediaLibraryCaptureFormat, MediaLibraryRecordingMode, MediaLibraryStorageMode } from '@membrana/media-library-service';
 
 import { requestClearMediaLibraryBuffer } from '../../lib/mediaLibraryHubBridge';
+import { OverflowHoldPlashka } from '../../lib/overflow-window';
 import { useRemoteMutation } from '../../lib/useRemoteMutation';
 
 import { RecordingProgress } from './components/RecordingProgress';
@@ -120,6 +121,9 @@ export function MicBufferRecorderPanel({ moduleId }: Props) {
       <p className="text-xs uppercase tracking-wide text-base-content/50">
         Запись в буфер
       </p>
+
+      {/* #2310: плашка удержания — причина + остаток, клик открывает то же окно того же id. */}
+      <OverflowHoldPlashka />
 
       {snapshot.error ? (
         <div className="alert alert-error text-sm py-2" role="alert">
