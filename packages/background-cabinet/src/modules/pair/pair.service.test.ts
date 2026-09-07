@@ -125,16 +125,19 @@ describe('PairService.pair — ADR-0028 mediaToken', () => {
 /**
  * Семантика привязки при ПРИВЯЗКЕ узла (#2308, M1, T13/T17): галочка стоит → новый прибор
  * слушает мембрану с первого контекста; снята → прибор получает свою настройку (нет строки →
- * stop). Порча: при стоящей галочке отдать новому прибору stop → красный.
+ * stop). Кто чью строку слушает — доказано на чистом слое (`membrane/buffer-policy.test.ts`,
+ * ветка «гейт снят»); здесь, сквозь живую привязку, — #2318 fail-closed: умная очистка в строке
+ * при выключенном гейте до media не доезжает, едет stop. Порча: снять fail-closed → в контексте
+ * регистрации/ре-пейринга уедет smart_cleanup → красный.
  */
 describe('PairService.pair — политика переполнения в контексте (#2308)', () => {
-  it('новый прибор при стоящей галочке регистрируется С политикой мембраны', async () => {
+  it('новый прибор при стоящей галочке: мембрана хранит умную очистку → регистрируется со stop (#2318 fail-closed)', async () => {
     const { accessKey, service, mediaBridge } = await buildService({
       membranePolicy: { mode: 'smart_cleanup', params: SMART_PARAMS, binding: true },
     });
     await service.pair(accessKey);
     const context = mediaBridge.registerDevice.mock.calls[0]![1] as { bufferPolicy?: unknown };
-    expect(context.bufferPolicy).toEqual({ mode: 'smart_cleanup', params: SMART_PARAMS });
+    expect(context.bufferPolicy).toEqual({ mode: 'stop', params: null });
   });
 
   it('новый прибор при снятой галочке регистрируется со stop — политика мембраны его не касается', async () => {
@@ -153,7 +156,7 @@ describe('PairService.pair — политика переполнения в ко
     expect(context.bufferPolicy).toEqual({ mode: 'stop', params: null });
   });
 
-  it('ре-пейринг при снятой галочке возвращает прибору ЕГО настройку, не мембраны', async () => {
+  it('ре-пейринг при снятой галочке: своя строка прибора с умной очисткой → едет stop (#2318 fail-closed), не smart_cleanup', async () => {
     const { accessKey, service, mediaBridge } = await buildService({
       existingMediaDeviceId: 'media-device-existing',
       membranePolicy: { mode: 'stop', params: null, binding: false },
@@ -162,7 +165,7 @@ describe('PairService.pair — политика переполнения в ко
     await service.pair(accessKey);
     expect(mediaBridge.syncMembraneContext).toHaveBeenCalledWith(
       'media-device-existing',
-      expect.objectContaining({ bufferPolicy: { mode: 'smart_cleanup', params: SMART_PARAMS } }),
+      expect.objectContaining({ bufferPolicy: { mode: 'stop', params: null } }),
     );
   });
 

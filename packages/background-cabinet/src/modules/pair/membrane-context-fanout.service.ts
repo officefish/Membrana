@@ -30,7 +30,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { PrismaService } from '../../prisma/prisma.service';
-import { effectiveDevicePolicy, membranePolicyScope, type MembranePolicySetting } from '../membrane/buffer-policy';
+import { explainDevicePolicy, membranePolicyScope, type MembranePolicySetting } from '../membrane/buffer-policy';
+import { warnIfSmartCleanupGated } from '../membrane/buffer-policy-gate-warn';
 import { MediaBridgeService, type MediaMembraneContext } from './media-bridge.service';
 
 /** Счёт разноски. Наружу уезжает ровно это. */
@@ -73,19 +74,31 @@ interface DeviceForContext {
  */
 export function membraneContextForDevice(
   membrane: MembraneForContext,
-  device: Pick<DeviceForContext, 'bufferPolicy' | 'bufferPolicyParams'> | null,
+  device:
+    | (Pick<DeviceForContext, 'bufferPolicy' | 'bufferPolicyParams'> &
+        Partial<Pick<DeviceForContext, 'mediaDeviceId' | 'nodeId'>>)
+    | null,
 ): MediaMembraneContext {
+  const explained = explainDevicePolicy({
+    binding: membrane.bufferPolicyBinding === true,
+    membrane,
+    device,
+  });
+  // #2318 fail-closed: умная очистка в строке при выключенном гейте → в контекст едет stop, и
+  // warn адресуется тому, чья строка подменена (мембрана при привязке, иначе прибор). Один раз на субъект.
+  warnIfSmartCleanupGated(
+    explained,
+    explained.subject === 'membrane'
+      ? { kind: 'membrane', id: membrane.id }
+      : { kind: 'device', id: device?.mediaDeviceId ?? device?.nodeId ?? '—', membraneId: membrane.id },
+  );
   return {
     membraneId: membrane.id,
     userStorageQuotaBytes: membrane.tariff.userStorageQuotaBytes.toString(),
     bufferQuotaBytes: membrane.tariff.bufferQuotaBytes.toString(),
     datasetCatalogId: membrane.tariff.datasetCatalogId,
     maxUserWorkspaces: membrane.tariff.maxUserWorkspaces,
-    bufferPolicy: effectiveDevicePolicy({
-      binding: membrane.bufferPolicyBinding === true,
-      membrane,
-      device,
-    }),
+    bufferPolicy: explained.policy,
   };
 }
 

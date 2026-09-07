@@ -38,14 +38,15 @@ import {
   type MembraneContextFanoutResult,
 } from '../pair/membrane-context-fanout.service';
 import {
-  effectiveBufferPolicy,
   effectiveDevicePolicy,
+  explainBufferPolicy,
   membranePolicyScope,
   parseBufferPolicy,
   type BufferPolicy,
   type BufferPolicyDenyReason,
   type MembranePolicySetting,
 } from './buffer-policy';
+import { warnIfSmartCleanupGated } from './buffer-policy-gate-warn';
 
 /** Как политика ложится в строку прибора. `stop` — параметры в DB NULL, чтобы ничего не протекало. */
 function devicePolicyColumns(policy: BufferPolicy) {
@@ -176,7 +177,10 @@ export class MembraneBufferPolicyService {
     applyToAll: boolean;
   } {
     const scope = membranePolicyScope(setting);
-    const policy = effectiveBufferPolicy(scope);
+    const explained = explainBufferPolicy(scope);
+    // #2318 fail-closed: умная очистка в строке мембраны при выключенном гейте → stop + warn (один на мембрану).
+    if (setting?.membraneId) warnIfSmartCleanupGated(explained, { kind: 'membrane', id: setting.membraneId });
+    const { policy } = explained;
     return { mode: policy.mode, params: policy.params, applyToAll: scope.bufferPolicyBinding };
   }
 }

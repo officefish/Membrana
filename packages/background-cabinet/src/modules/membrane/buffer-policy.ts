@@ -18,10 +18,34 @@
  * Легаси `auto-cleanup` в словарь не входит; откат к старой автоочистке невозможен на уровне типа.
  * Имена: `bufferPolicy` (настройка, этот блок) ≠ `overflowPolicy` (поле ответа отказа, блок A).
  */
-import type { OVERFLOW_POLICIES, OverflowPolicy } from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
+import type {
+  OVERFLOW_POLICIES,
+  OverflowPolicy,
+  SmartCleanupAvailability,
+  SmartCleanupUnavailableReason,
+} from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
 
 export const BUFFER_POLICY_MODES = ['stop', 'smart_cleanup'] as const satisfies readonly OverflowPolicy[];
 export type BufferPolicyMode = OverflowPolicy;
+
+/**
+ * ГЕЙТ ДО T12 (#2318, долг D-1): зеркало переключателя `SMART_CLEANUP_AVAILABLE` словаря
+ * `@membrana/plugin-contracts` (`buffer-overflow/smart-cleanup-gate.ts` — источник истины и
+ * обоснование). Та же граница, что у строк режимов выше: CJS-сервер рантайм-объект ESM-словаря
+ * не импортирует, `satisfies` против литерального типа делает зеркало проверяемым — переворот в
+ * словаре красит `tsc` здесь. Руками не переворачивать — только вслед за словарём.
+ */
+export const SMART_CLEANUP_AVAILABLE = false satisfies SmartCleanupAvailability;
+export const SMART_CLEANUP_UNAVAILABLE_REASON = 'smart_cleanup_unavailable' satisfies SmartCleanupUnavailableReason;
+
+/** Опции гейта — ТОЛЬКО для зубов ветки «гейт снят»; боевой код опцию не передаёт (зуб media сканирует). */
+export interface BufferPolicyGateOptions {
+  readonly smartCleanupAvailable?: boolean;
+}
+
+function smartCleanupAvailable(options: BufferPolicyGateOptions | undefined): boolean {
+  return options?.smartCleanupAvailable ?? SMART_CLEANUP_AVAILABLE;
+}
 
 type StopPolicy = (typeof OVERFLOW_POLICIES)['STOP'];
 type SmartCleanupPolicy = (typeof OVERFLOW_POLICIES)['SMART_CLEANUP'];
@@ -47,6 +71,8 @@ export type BufferPolicy =
  */
 export const BUFFER_POLICY_DENY_REASONS = [
   'unknown_mode',
+  /** Умная очистка выбрана, а алгоритма T12 нет (#2318). Судится РАНЬШЕ полноты параметров. */
+  SMART_CLEANUP_UNAVAILABLE_REASON,
   'params_incomplete',
   'params_invalid',
   /** Правка режима прибора, пока стоит галочка-привязка: была бы молчаливым no-op. */
@@ -60,7 +86,10 @@ export type BufferPolicyDenyReason = (typeof BUFFER_POLICY_DENY_REASONS)[number]
 
 export type BufferPolicyParseResult =
   | { readonly ok: true; readonly policy: BufferPolicy }
-  | { readonly ok: false; readonly reason: 'unknown_mode' | 'params_incomplete' | 'params_invalid' };
+  | {
+      readonly ok: false;
+      readonly reason: 'unknown_mode' | SmartCleanupUnavailableReason | 'params_incomplete' | 'params_invalid';
+    };
 
 export const DEFAULT_BUFFER_POLICY: BufferPolicy = Object.freeze({ mode: 'stop', params: null });
 
@@ -101,10 +130,13 @@ export function parseSmartCleanupParams(
 }
 
 /** Гейт записи: что прислал оператор. Неизвестный режим и неполный S — режим не записывается. */
-export function parseBufferPolicy(raw: unknown): BufferPolicyParseResult {
+export function parseBufferPolicy(raw: unknown, options?: BufferPolicyGateOptions): BufferPolicyParseResult {
   if (!isRecord(raw)) return { ok: false, reason: 'unknown_mode' };
   if (!isMode(raw.mode)) return { ok: false, reason: 'unknown_mode' };
   if (raw.mode === 'stop') return { ok: true, policy: DEFAULT_BUFFER_POLICY };
+  // Гейт доступности — РАНЬШЕ полноты параметров (#2318): иначе «не хватает параметров» лжёт
+  // о причине — оператор заполнит все три слота и упрётся в ту же стену без объяснения.
+  if (!smartCleanupAvailable(options)) return { ok: false, reason: SMART_CLEANUP_UNAVAILABLE_REASON };
   const params = parseSmartCleanupParams(raw.params);
   if (!params.ok) return { ok: false, reason: params.reason };
   // `raw.mode` уже сужен словарём до умной очистки — вторая строка режима здесь не нужна (B-1).
@@ -117,11 +149,31 @@ export interface BufferPolicyRow {
   readonly bufferPolicyParams?: unknown;
 }
 
-/** `effective(⊥) = stop`, `effective(порча) = stop`, `effective(smart без полного S) = stop`. */
-export function effectiveBufferPolicy(row: BufferPolicyRow | null | undefined): BufferPolicy {
-  if (!row) return DEFAULT_BUFFER_POLICY;
-  const parsed = parseBufferPolicy({ mode: row.bufferPolicy, params: row.bufferPolicyParams });
-  return parsed.ok ? parsed.policy : DEFAULT_BUFFER_POLICY;
+/** Эффективная политика вместе с причиной подмены (`null` — строка прочитана как есть или её нет). */
+export interface ExplainedBufferPolicy {
+  readonly policy: BufferPolicy;
+  readonly fallback: BufferPolicyDenyReason | null;
+}
+
+/**
+ * Чтение с объяснением: кому логировать (#2318 — `smart_cleanup` в строке при выключенном гейте
+ * → warn с id субъекта), тот зовёт это; сама функция чиста и не логирует.
+ */
+export function explainBufferPolicy(
+  row: BufferPolicyRow | null | undefined,
+  options?: BufferPolicyGateOptions,
+): ExplainedBufferPolicy {
+  if (!row) return { policy: DEFAULT_BUFFER_POLICY, fallback: null };
+  const parsed = parseBufferPolicy({ mode: row.bufferPolicy, params: row.bufferPolicyParams }, options);
+  return parsed.ok ? { policy: parsed.policy, fallback: null } : { policy: DEFAULT_BUFFER_POLICY, fallback: parsed.reason };
+}
+
+/**
+ * `effective(⊥) = stop`, `effective(порча) = stop`, `effective(smart без полного S) = stop`,
+ * и с #2318 — `effective(smart при выключенном гейте) = stop` (fail-closed).
+ */
+export function effectiveBufferPolicy(row: BufferPolicyRow | null | undefined, options?: BufferPolicyGateOptions): BufferPolicy {
+  return explainBufferPolicy(row, options).policy;
 }
 
 /**
@@ -134,12 +186,29 @@ export function effectiveBufferPolicy(row: BufferPolicyRow | null | undefined): 
  * Per-device строка при стоящей привязке НЕ перезаписывается — поэтому снятие галочки
  * ВОЗВРАЩАЕТ приборам их настройки, а не обнуляет их. Это и отличает привязку от снимка.
  */
-export function effectiveDevicePolicy(input: {
-  readonly binding: boolean;
-  readonly membrane: BufferPolicyRow | null | undefined;
-  readonly device: BufferPolicyRow | null | undefined;
-}): BufferPolicy {
-  return input.binding ? effectiveBufferPolicy(input.membrane) : effectiveBufferPolicy(input.device);
+export function effectiveDevicePolicy(
+  input: {
+    readonly binding: boolean;
+    readonly membrane: BufferPolicyRow | null | undefined;
+    readonly device: BufferPolicyRow | null | undefined;
+  },
+  options?: BufferPolicyGateOptions,
+): BufferPolicy {
+  return explainDevicePolicy(input, options).policy;
+}
+
+/** То же с причиной подмены и указанием, чья строка подменена (для warn #2318). */
+export function explainDevicePolicy(
+  input: {
+    readonly binding: boolean;
+    readonly membrane: BufferPolicyRow | null | undefined;
+    readonly device: BufferPolicyRow | null | undefined;
+  },
+  options?: BufferPolicyGateOptions,
+): ExplainedBufferPolicy & { readonly subject: 'membrane' | 'device' } {
+  return input.binding
+    ? { ...explainBufferPolicy(input.membrane, options), subject: 'membrane' }
+    : { ...explainBufferPolicy(input.device, options), subject: 'device' };
 }
 
 /**
@@ -147,6 +216,8 @@ export function effectiveDevicePolicy(input: {
  * отсутствие строки — законное состояние, читается как `stop` со снятой привязкой.
  */
 export interface MembranePolicySetting {
+  /** Есть у строки Prisma; нужен журналу fail-closed (#2318) — адрес субъекта. */
+  readonly membraneId?: string;
   readonly mode?: unknown;
   readonly params?: unknown;
   readonly binding?: boolean;
@@ -154,11 +225,13 @@ export interface MembranePolicySetting {
 
 /** Привести строку настройки мембраны к форме `BufferPolicyRow` + привязка — одно место перевода имён. */
 export function membranePolicyScope(setting: MembranePolicySetting | null | undefined): {
+  readonly membraneId: string | null;
   readonly bufferPolicy: unknown;
   readonly bufferPolicyParams: unknown;
   readonly bufferPolicyBinding: boolean;
 } {
   return {
+    membraneId: setting?.membraneId ?? null,
     bufferPolicy: setting?.mode,
     bufferPolicyParams: setting?.params,
     bufferPolicyBinding: setting?.binding === true,

@@ -5,11 +5,22 @@
  * подтверждение привязки, отказ per-device при стоящей галочке. Порчи: `smart_cleanup` без
  * параметров записан → красный; разноска до записи → красный; галочка включена без
  * подтверждения → красный; правка прибора при стоящей галочке прошла → красный.
+ *
+ * #2318 (гейт до T12): `smart_cleanup` даже с ПОЛНЫМ набором → `smart_cleanup_unavailable`, ни
+ * записи, ни разноски (порча: снять гейт → красный); неполный набор → причина ГЕЙТА, не
+ * `params_incomplete`, и раньше проверки галочки (порча порядка → красный); строка мембраны с
+ * умной очисткой → вид `stop` + РОВНО один warn на мембрану (порча: снять fail-closed → красный).
  */
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
-import { describe, expect, it, vi } from 'vitest';
+import { ForbiddenException, Logger, NotFoundException } from '@nestjs/common';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { resetSmartCleanupGateWarningsForTests } from './buffer-policy-gate-warn';
 import { MembraneBufferPolicyService } from './membrane-buffer-policy.service';
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  resetSmartCleanupGateWarningsForTests();
+});
 
 const FULL_PARAMS = { thresholdPercent: 90, selection: 'oldest_first', protectLabeled: true };
 
@@ -73,10 +84,18 @@ describe('политика мембраны', () => {
     expect(fanout.syncAllNodes).toHaveBeenCalledWith('m-1');
   });
 
-  it('smart_cleanup БЕЗ параметров → ok:false, ничего не записано, разноски нет (порча: записать → красный)', async () => {
+  it('#2318: smart_cleanup с ПОЛНЫМ набором → ok:false, smart_cleanup_unavailable; ничего не записано, разноски нет (порча: снять гейт → красный)', async () => {
+    const { svc, prisma, fanout } = make();
+    const res = await svc.setMembranePolicy('m-1', { mode: 'smart_cleanup', params: FULL_PARAMS });
+    expect(res).toEqual({ ok: false, reason: 'smart_cleanup_unavailable' });
+    expect(prisma.membraneBufferPolicy.upsert).not.toHaveBeenCalled();
+    expect(fanout.syncAllNodes).not.toHaveBeenCalled();
+  });
+
+  it('smart_cleanup БЕЗ параметров → ok:false — причина ГЕЙТА, не params_incomplete (#2318, порча порядка → красный); ничего не записано, разноски нет', async () => {
     const { svc, prisma, fanout } = make();
     const res = await svc.setMembranePolicy('m-1', { mode: 'smart_cleanup', params: { thresholdPercent: 90 } });
-    expect(res).toEqual({ ok: false, reason: 'params_incomplete' });
+    expect(res).toEqual({ ok: false, reason: 'smart_cleanup_unavailable' });
     expect(prisma.membraneBufferPolicy.upsert).not.toHaveBeenCalled();
     expect(fanout.syncAllNodes).not.toHaveBeenCalled();
   });
@@ -91,7 +110,7 @@ describe('политика мембраны', () => {
 
   it('порядок несущий: сначала запись, потом приборы', async () => {
     const { svc, order } = make();
-    await svc.setMembranePolicy('m-1', { mode: 'smart_cleanup', params: FULL_PARAMS });
+    await svc.setMembranePolicy('m-1', { mode: 'stop' });
     expect(order).toEqual(['write', 'fanout']);
   });
 
@@ -146,16 +165,16 @@ describe('галочка-привязка', () => {
 describe('политика прибора', () => {
   it('галочка снята → записано в прибор, разнесено на ОДИН узел', async () => {
     const { svc, prisma, fanout } = make({ binding: false });
-    const res = await svc.setNodePolicy('u-1', 'n-1', { mode: 'smart_cleanup', params: FULL_PARAMS });
+    const res = await svc.setNodePolicy('u-1', 'n-1', { mode: 'stop' });
     expect(res).toEqual({
       ok: true,
       nodeId: 'n-1',
-      bufferPolicy: { mode: 'smart_cleanup', params: FULL_PARAMS },
-      effectiveBufferPolicy: { mode: 'smart_cleanup', params: FULL_PARAMS },
+      bufferPolicy: { mode: 'stop', params: null },
+      effectiveBufferPolicy: { mode: 'stop', params: null },
       contextSync: { updated: 1, failed: 0 },
     });
     expect(prisma.device.update).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { nodeId: 'n-1' }, data: expect.objectContaining({ bufferPolicy: 'smart_cleanup' }) }),
+      expect.objectContaining({ where: { nodeId: 'n-1' }, data: expect.objectContaining({ bufferPolicy: 'stop' }) }),
     );
     expect(fanout.syncNode).toHaveBeenCalledWith('m-1', 'n-1');
     expect(fanout.syncAllNodes).not.toHaveBeenCalled();
@@ -171,12 +190,18 @@ describe('политика прибора', () => {
     expect(fanout.syncNode).not.toHaveBeenCalled();
   });
 
-  it('неполный набор отбивается РАНЬШЕ проверки галочки — оператор чинит форму первым', async () => {
-    const { svc } = make({ binding: true });
+  it('форма отбивается РАНЬШЕ проверки галочки — и #2318: причина гейта, не params_incomplete (порча порядка → красный)', async () => {
+    const { svc, prisma, fanout } = make({ binding: true });
     await expect(svc.setNodePolicy('u-1', 'n-1', { mode: 'smart_cleanup' })).resolves.toEqual({
       ok: false,
-      reason: 'params_incomplete',
+      reason: 'smart_cleanup_unavailable',
     });
+    await expect(svc.setNodePolicy('u-1', 'n-1', { mode: 'smart_cleanup', params: FULL_PARAMS })).resolves.toEqual({
+      ok: false,
+      reason: 'smart_cleanup_unavailable',
+    });
+    expect(prisma.device.update).not.toHaveBeenCalled();
+    expect(fanout.syncNode).not.toHaveBeenCalled();
   });
 
   it('узел без прибора → node_not_paired', async () => {
@@ -207,5 +232,20 @@ describe('вид мембраны', () => {
       applyToAll: true,
     });
     expect(MembraneBufferPolicyService.membraneView(null)).toEqual({ mode: 'stop', params: null, applyToAll: false });
+  });
+
+  it('#2318 fail-closed: строка мембраны с умной очисткой и полным S → вид stop; warn с id мембраны — РОВНО один на мембрану (порча: снять fail-closed → красный)', () => {
+    const warn = vi.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+    const setting = { membraneId: 'm-7', mode: 'smart_cleanup', params: FULL_PARAMS, binding: true };
+    expect(MembraneBufferPolicyService.membraneView(setting)).toEqual({ mode: 'stop', params: null, applyToAll: true });
+    MembraneBufferPolicyService.membraneView(setting);
+    MembraneBufferPolicyService.membraneView(setting);
+    expect(warn).toHaveBeenCalledTimes(1);
+    const message = String(warn.mock.calls[0]![0]);
+    expect(message).toContain('m-7');
+    expect(message).toMatch(/#2318/u);
+    // Другая мембрана — свой warn: дедупликация по субъекту, не глобальная.
+    MembraneBufferPolicyService.membraneView({ ...setting, membraneId: 'm-8' });
+    expect(warn).toHaveBeenCalledTimes(2);
   });
 });
