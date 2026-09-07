@@ -68,3 +68,15 @@ export {
   type QuotaAxis,
   type QuotaSubject,
 } from './buffer-overflow/index.js';
+
+/**
+ * Переключатель возможности умной очистки (#2318, долг D-1): пока алгоритма T12 нет — `false`,
+ * серверы отвергают запись `smart_cleanup` причиной `SMART_CLEANUP_UNAVAILABLE_REASON`, а читатели
+ * fail-closed на `stop`. Снятие гейта — одна правка в `buffer-overflow/smart-cleanup-gate.ts`.
+ */
+export {
+  SMART_CLEANUP_AVAILABLE,
+  SMART_CLEANUP_UNAVAILABLE_REASON,
+  type SmartCleanupAvailability,
+  type SmartCleanupUnavailableReason,
+} from './buffer-overflow/index.js';

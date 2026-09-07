@@ -22,7 +22,8 @@ import { resolvePairedKeyStatus } from '../../domain/paired-key-status';
 import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
 import { DeviceCaptureService } from '../device-capture/device-capture.service';
 import { MediaBridgeService } from '../pair/media-bridge.service';
-import { effectiveBufferPolicy, effectiveDevicePolicy, membranePolicyScope } from './buffer-policy';
+import { explainBufferPolicy, explainDevicePolicy, membranePolicyScope } from './buffer-policy';
+import { warnIfSmartCleanupGated } from './buffer-policy-gate-warn';
 import { MembraneBufferPolicyService } from './membrane-buffer-policy.service';
 
 const FREE_TARIFF_ID = 'free-v1';
@@ -44,9 +45,36 @@ function serializeTariff(tariff: Tariff) {
 
 /** Контекст политики мембраны для сериализации узла (#2308): галочка + строка мембраны. */
 interface MembranePolicyScope {
+  /** Адрес субъекта для журнала fail-closed (#2318); отсутствует в старых вызовах — тогда «—». */
+  membraneId?: string | null;
   bufferPolicyBinding?: boolean;
   bufferPolicy?: unknown;
   bufferPolicyParams?: unknown;
+}
+
+type NodeDeviceRow = { mediaDeviceId: string; bufferPolicy?: unknown; bufferPolicyParams?: unknown };
+
+/** Собственная настройка прибора через `effective()`; #2318 — умная очистка при выключенном гейте → stop + warn. */
+function serializeDevicePolicy(device: NodeDeviceRow, scope: MembranePolicyScope) {
+  const explained = explainBufferPolicy(device);
+  warnIfSmartCleanupGated(explained, { kind: 'device', id: device.mediaDeviceId, membraneId: scope.membraneId });
+  return explained.policy;
+}
+
+/** Что прибор исполняет на самом деле (привязка → строка мембраны); warn адресуется тому, чья строка подменена. */
+function serializeEffectiveDevicePolicy(device: NodeDeviceRow, scope: MembranePolicyScope) {
+  const explained = explainDevicePolicy({
+    binding: scope.bufferPolicyBinding === true,
+    membrane: scope,
+    device,
+  });
+  warnIfSmartCleanupGated(
+    explained,
+    explained.subject === 'membrane' && scope.membraneId
+      ? { kind: 'membrane', id: scope.membraneId }
+      : { kind: 'device', id: device.mediaDeviceId, membraneId: scope.membraneId },
+  );
+  return explained.policy;
 }
 
 function serializeNode(
@@ -90,12 +118,9 @@ function serializeNode(
           pairedKeyExpiresAt: pairedKeyView!.expiresAt,
           // #2308: собственная настройка прибора и то, что он исполняет на самом деле. Оба —
           // через `effective()`: порченая строка показывается как stop, а не как порча.
-          bufferPolicy: effectiveBufferPolicy(node.device),
-          effectiveBufferPolicy: effectiveDevicePolicy({
-            binding: scope.bufferPolicyBinding === true,
-            membrane: scope,
-            device: node.device,
-          }),
+          // #2318: умная очистка в строке при выключенном гейте → stop + warn (один на субъект).
+          bufferPolicy: serializeDevicePolicy(node.device, scope),
+          effectiveBufferPolicy: serializeEffectiveDevicePolicy(node.device, scope),
         }
       : null,
   };

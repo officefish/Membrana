@@ -9,7 +9,7 @@
  * берут один и тот же предикат полноты. Разведи их — и селект разрешит то, что форма отправить
  * не сможет, либо наоборот.
  */
-import { OVERFLOW_POLICIES } from '@membrana/plugin-contracts';
+import { OVERFLOW_POLICIES, SMART_CLEANUP_AVAILABLE } from '@membrana/plugin-contracts';
 
 import {
   BUFFER_POLICY_DENY_REASONS,
@@ -66,10 +66,28 @@ export function completeParams(draft: SmartCleanupDraft): SmartCleanupParams | n
 }
 
 /**
- * Почему «умная очистка» сейчас недоступна — текстом, а не серой магией (Верстальщик, M1).
- * `null` — доступна.
+ * #2318 (долг D-1): прямой текст витрины, пока переключатель `SMART_CLEANUP_AVAILABLE` словаря
+ * выключен — алгоритма T12 нет. Честная витрина, не скрытая кнопка: пункт виден, выключен, и
+ * рядом сказано почему. Тот же гейт стоит на сервере (`smart_cleanup_unavailable`).
  */
-export function smartCleanupDisabledReason(draft: SmartCleanupDraft): string | null {
+export const SMART_CLEANUP_UNAVAILABLE_TEXT = 'Недоступно до появления алгоритма очистки';
+
+/** Опция гейта — ТОЛЬКО для зубов ветки полноты параметров; боевой код опцию не передаёт. */
+export interface SmartCleanupGateOptions {
+  smartCleanupAvailable?: boolean;
+}
+
+function smartCleanupAvailable(options: SmartCleanupGateOptions | undefined): boolean {
+  return options?.smartCleanupAvailable ?? SMART_CLEANUP_AVAILABLE;
+}
+
+/**
+ * Почему «умная очистка» сейчас недоступна — текстом, а не серой магией (Верстальщик, M1).
+ * `null` — доступна. Гейт доступности (#2318) судится РАНЬШЕ полноты параметров: иначе текст
+ * «не заданы: порог…» лгал бы о причине — оператор заполнит слоты и упрётся в ту же стену.
+ */
+export function smartCleanupDisabledReason(draft: SmartCleanupDraft, options?: SmartCleanupGateOptions): string | null {
+  if (!smartCleanupAvailable(options)) return SMART_CLEANUP_UNAVAILABLE_TEXT;
   const missing: string[] = [];
   const trimmed = draft.thresholdPercent.trim();
   if (!trimmed) missing.push('порог');
@@ -82,15 +100,24 @@ export function smartCleanupDisabledReason(draft: SmartCleanupDraft): string | n
   return `Недоступно, пока не заданы: ${missing.join(', ')}`;
 }
 
-/** Что уезжает на сервер. `smart_cleanup` без полного S не собирается вовсе. */
-export function toPolicyInput(mode: BufferPolicyMode, draft: SmartCleanupDraft): BufferPolicyInput | null {
+/**
+ * Что уезжает на сервер. `smart_cleanup` без полного S не собирается вовсе; и при выключенном
+ * гейте (#2318) — тоже: ОДНО правило на показ и на действие — то же, что красит пункт селекта.
+ */
+export function toPolicyInput(
+  mode: BufferPolicyMode,
+  draft: SmartCleanupDraft,
+  options?: SmartCleanupGateOptions,
+): BufferPolicyInput | null {
   if (mode === 'stop') return { mode: 'stop' };
+  if (smartCleanupDisabledReason(draft, options) !== null) return null;
   const params = completeParams(draft);
   return params ? { mode: OVERFLOW_POLICIES.SMART_CLEANUP, params } : null;
 }
 
 const DENY_TEXT: Record<BufferPolicyDenyReason, string> = {
   unknown_mode: 'Такого режима нет — обновите страницу',
+  smart_cleanup_unavailable: 'Умная очистка недоступна до появления алгоритма очистки',
   params_incomplete: 'Умная очистка не включена: не заданы все параметры',
   params_invalid: 'Умная очистка не включена: один из параметров вне допустимого',
   binding_active: 'Пока стоит «применить ко всем», режим прибора задаёт мембрана — снимите галочку',

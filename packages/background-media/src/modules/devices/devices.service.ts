@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Prisma, type Device, type DeviceKind } from '../../prisma/client';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
@@ -6,7 +6,8 @@ import { TARIFF_DATASET_SYSTEM_KEY } from '../../lib/collection-ids';
 import { PrismaService } from '../../prisma/prisma.service';
 import { NodeKeyService } from '../firebat-node/node-key.service';
 import {
-  effectiveBufferPolicy,
+  SMART_CLEANUP_UNAVAILABLE_REASON,
+  explainBufferPolicy,
   parseBufferPolicy,
   type BufferPolicy,
   type BufferPolicyDenyReason,
@@ -74,6 +75,34 @@ export class DevicesService {
     @Inject(APP_CONFIG) private readonly config: AppConfig,
     private readonly nodeKeys: NodeKeyService,
   ) {}
+
+  private readonly logger = new Logger(DevicesService.name);
+
+  /**
+   * Приборы, о которых warn «умная очистка в базе при выключенном гейте» уже сказан (#2318).
+   * Память процесса, ключ — id прибора: `/quota` прибор читает ≥ 1/мин при удержании, и
+   * warn на каждое чтение был бы не журналом, а шумом; один раз на прибор за жизнь процесса
+   * — достаточно, чтобы оператор увидел строку, которой после backfill быть не должно.
+   * Рестарт media повторит warn один раз — это законно: журнал новый.
+   */
+  private readonly smartCleanupGateWarned = new Set<string>();
+
+  /**
+   * Единственная дорога чтения политики в этом сервисе: fail-closed (`smart_cleanup` при
+   * выключенном гейте → `stop`) делает чистая функция, здесь — только журнал с id прибора и
+   * мембраны. Блок A (`samples.service.ts`) прогоняет ту же чистую функцию по уже эффективной
+   * политике из `/quota` — второго журнала там нет намеренно: строка одна, warn один.
+   */
+  private effectivePolicyOf(device: Pick<Device, 'id' | 'membraneId' | 'bufferPolicy' | 'bufferPolicyParams'>): BufferPolicy {
+    const { policy, fallback } = explainBufferPolicy(device);
+    if (fallback === SMART_CLEANUP_UNAVAILABLE_REASON && !this.smartCleanupGateWarned.has(device.id)) {
+      this.smartCleanupGateWarned.add(device.id);
+      this.logger.warn(
+        `прибор ${device.id} (мембрана ${device.membraneId ?? '—'}) хранит режим умной очистки, а алгоритма T12 нет — прибору уезжает stop (#2318, fail-closed)`,
+      );
+    }
+    return policy;
+  }
 
   async register(
     name: string,
@@ -171,7 +200,7 @@ export class DevicesService {
         ...policyColumns,
       },
     });
-    return { ok: true, device, bufferPolicy: effectiveBufferPolicy(device) };
+    return { ok: true, device, bufferPolicy: this.effectivePolicyOf(device) };
   }
 
   async getById(deviceId: string): Promise<Device | null> {
@@ -188,7 +217,7 @@ export class DevicesService {
     if (!device) {
       throw new NotFoundException(`Device ${deviceId} not found`);
     }
-    return effectiveBufferPolicy(device);
+    return this.effectivePolicyOf(device);
   }
 
   async getQuota(deviceId: string): Promise<DeviceQuotaDto> {
@@ -245,7 +274,7 @@ export class DevicesService {
         limit: limits.maxUserWorkspaces,
         backend: 'server',
       },
-      bufferPolicy: effectiveBufferPolicy(device),
+      bufferPolicy: this.effectivePolicyOf(device),
     };
   }
 }

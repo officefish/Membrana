@@ -329,11 +329,16 @@ describe('SamplesService — доменный отказ «места нет» (
       expect(await upload()).toMatchObject({ ok: false, overflowPolicy: 'stop' });
     });
 
-    it('smart_cleanup с полным S → overflowPolicy: smart_cleanup', async () => {
+    it('smart_cleanup с полным S → overflowPolicy: stop, пока гейт T12 закрыт (#2318, fail-closed на чтении)', async () => {
+      // До #2318 здесь ждали `smart_cleanup`. Гейт D-1: пока `SMART_CLEANUP_AVAILABLE = false`,
+      // эффективная политика прибора — `stop` даже при полном S, и в ответе отказа едет она же
+      // (M3: гасится при `stop`; ответ не должен обещать прибору режим, которого у сервера нет).
+      // Порча: снять fail-closed в `effectiveBufferPolicy` → красный. После переворота
+      // переключателя в plugin-contracts ожидание меняется на `smart_cleanup` вместе с зеркалом.
       devices.getQuota.mockResolvedValue(
         quotaWith({ bufferUsed: 950, userUsed: 0, bufferPolicy: { mode: 'smart_cleanup', params: FULL_S } }),
       );
-      expect(await upload()).toMatchObject({ ok: false, overflowPolicy: 'smart_cleanup' });
+      expect(await upload()).toMatchObject({ ok: false, overflowPolicy: 'stop' });
     });
 
     it('smart_cleanup с пустым S, чужой режим, поле отсутствует → stop (effective(⊥) = stop, не падение)', async () => {

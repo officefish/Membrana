@@ -134,6 +134,39 @@ async function checkUploadResponseForms(doc) {
   return problems;
 }
 
+/**
+ * Зуб гейта умной очистки (#2318, долг D-1): разноска контекста `PATCH /v1/devices/{id}/membrane`
+ * документирует доменный отказ `200 { ok:false, reason }`, и enum `reason` содержит причину
+ * гейта — литерал читается из СЛОВАРЯ (`plugin-contracts/dist/buffer-overflow/smart-cleanup-gate.js`),
+ * не пишется здесь. Порчи → красный: убрать причину из `BUFFER_POLICY_DENY_REASONS` media
+ * (enum DTO строится из него); снять `@ApiResponse(200)` с ручки.
+ */
+const MEMBRANE_SYNC_PATH = '/v1/devices/{deviceId}/membrane';
+
+async function checkMembraneSyncGate(doc) {
+  const problems = [];
+  const gateUrl = pathToFileURL(
+    resolve(pkgRoot, '..', 'plugin-contracts', 'dist', 'buffer-overflow', 'smart-cleanup-gate.js'),
+  ).href;
+  const { SMART_CLEANUP_UNAVAILABLE_REASON } = await import(gateUrl);
+
+  const ok = doc.paths?.[MEMBRANE_SYNC_PATH]?.patch?.responses?.['200'];
+  if (!ok) {
+    problems.push('200 (sync outcome) is not documented');
+    return problems;
+  }
+  const schema = resolveSchema(doc, ok.content?.['application/json']?.schema);
+  const reasonEnum = schema?.properties?.reason?.enum;
+  if (!Array.isArray(reasonEnum)) {
+    problems.push('200 schema: reason has no enum');
+  } else if (!reasonEnum.includes(SMART_CLEANUP_UNAVAILABLE_REASON)) {
+    problems.push(
+      `200 schema: reason enum ${JSON.stringify(reasonEnum)} lacks gate reason ${JSON.stringify(SMART_CLEANUP_UNAVAILABLE_REASON)}`,
+    );
+  }
+  return problems;
+}
+
 async function main() {
   const distApp = pathToFileURL(resolve(pkgRoot, 'dist/app.module.js')).href;
   const distPrisma = pathToFileURL(resolve(pkgRoot, 'dist/prisma/prisma.service.js')).href;
@@ -177,6 +210,7 @@ async function main() {
   const paths = Object.keys(doc.paths ?? {});
   const missingPaths = EXPECTED_PATHS.filter((path) => !paths.includes(path));
   const refusalProblems = await checkUploadResponseForms(doc);
+  const gateProblems = await checkMembraneSyncGate(doc);
 
   console.log('GET /docs/     ->', ui.statusCode, ui.headers['content-type']);
   console.log('GET /docs-json ->', json.statusCode, doc.info?.title ?? '(no title)');
@@ -203,7 +237,14 @@ async function main() {
     process.exitCode = 1;
     return;
   }
+  if (gateProblems.length > 0) {
+    console.error('Swagger tooth: membrane sync must document the smart-cleanup gate refusal (#2318):');
+    for (const problem of gateProblems) console.error(`  - ${problem}`);
+    process.exitCode = 1;
+    return;
+  }
   console.log('Upload response forms: 201 stored · 200 domain refusal (reason enum = dictionary) · 413 transport-only');
+  console.log('Membrane sync: 200 domain refusal enum carries the smart-cleanup gate reason (#2318)');
   console.log('\nSwagger OK');
 }
 

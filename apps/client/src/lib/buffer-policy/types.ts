@@ -42,7 +42,12 @@ export type BufferPolicySource =
   /** Последнее чтение упало (сеть, отказ, исключение источника). */
   | 'sync_failed'
   /** Ответ пришёл, но политики в нём нет или она вне словаря / с дырявым S. */
-  | 'malformed';
+  | 'malformed'
+  /**
+   * #2318 (долг D-1): сервер прислал умную очистку, а переключатель `SMART_CLEANUP_AVAILABLE`
+   * словаря выключен — алгоритма T12 нет. Fail-closed на `stop`; не «порча»: ответ по форме цел.
+   */
+  | 'gated';
 
 export interface EffectiveBufferPolicy {
   readonly policy: BufferPolicy;

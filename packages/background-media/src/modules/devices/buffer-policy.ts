@@ -24,6 +24,11 @@
  * Имена: `bufferPolicy` — ЭТО поле (настройка). `overflowPolicy` — поле ответа отказа блока A
  * (снимок настройки в эпизоде). Не сливать.
  */
+import type {
+  SmartCleanupAvailability,
+  SmartCleanupUnavailableReason,
+} from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
+
 import {
   OVERFLOW_POLICY_VALUES,
   type OverflowPolicy,
@@ -33,6 +38,29 @@ import {
 
 export const BUFFER_POLICY_MODES = OVERFLOW_POLICY_VALUES;
 export type BufferPolicyMode = OverflowPolicy;
+
+/**
+ * ГЕЙТ ДО T12 (#2318, долг D-1): зеркало переключателя `SMART_CLEANUP_AVAILABLE` словаря
+ * `@membrana/plugin-contracts` (`buffer-overflow/smart-cleanup-gate.ts` — там источник истины и
+ * обоснование). Media — CommonJS и рантайм-объект ESM-словаря статически не импортирует; `satisfies`
+ * против литерального типа словаря делает зеркало проверяемым: переворот константы в словаре
+ * красит `tsc` ЗДЕСЬ. Руками эту строку не переворачивают — только вслед за словарём.
+ */
+export const SMART_CLEANUP_AVAILABLE = false satisfies SmartCleanupAvailability;
+export const SMART_CLEANUP_UNAVAILABLE_REASON = 'smart_cleanup_unavailable' satisfies SmartCleanupUnavailableReason;
+
+/**
+ * Опции гейта — ТОЛЬКО для зубов: проверить ветку «гейт снят» (полнота параметров), не
+ * переворачивая словарь. Боевой код опцию не передаёт (это сторожит зуб `buffer-policy.test.ts`,
+ * сканирующий исходники); умолчание — зеркало словаря.
+ */
+export interface BufferPolicyGateOptions {
+  readonly smartCleanupAvailable?: boolean;
+}
+
+function smartCleanupAvailable(options: BufferPolicyGateOptions | undefined): boolean {
+  return options?.smartCleanupAvailable ?? SMART_CLEANUP_AVAILABLE;
+}
 
 /** Критерий отбора жертв — слот под T12. Закрытый список; T12 расширяет, гейт не ломается. */
 export const SMART_CLEANUP_SELECTIONS = ['oldest_first', 'largest_first'] as const;
@@ -58,6 +86,8 @@ export type BufferPolicy =
 export const BUFFER_POLICY_DENY_REASONS = [
   /** Режим вне словаря — в том числе легаси `auto-cleanup`. */
   'unknown_mode',
+  /** Умная очистка выбрана, а алгоритма T12 нет (#2318). Судится РАНЬШЕ полноты параметров. */
+  SMART_CLEANUP_UNAVAILABLE_REASON,
   /** `smart_cleanup`, но хотя бы одного слота S нет. */
   'params_incomplete',
   /** Слот есть, но значение вне домена. */
@@ -117,10 +147,13 @@ export function parseSmartCleanupParams(
  * Гейт записи: что кабинет прислал в разноске. Неизвестный режим и неполный S отвергаются —
  * режим НЕ записывается. Это вход ЗАПИСИ; на чтении работает `effectiveBufferPolicy`.
  */
-export function parseBufferPolicy(raw: unknown): BufferPolicyParseResult {
+export function parseBufferPolicy(raw: unknown, options?: BufferPolicyGateOptions): BufferPolicyParseResult {
   if (!isRecord(raw)) return { ok: false, reason: 'unknown_mode' };
   if (!isMode(raw.mode)) return { ok: false, reason: 'unknown_mode' };
   if (raw.mode === 'stop') return { ok: true, policy: DEFAULT_BUFFER_POLICY };
+  // Гейт доступности — РАНЬШЕ полноты параметров (#2318): иначе «не хватает параметров» лжёт
+  // о причине — оператор заполнит все три слота и упрётся в ту же стену без объяснения.
+  if (!smartCleanupAvailable(options)) return { ok: false, reason: SMART_CLEANUP_UNAVAILABLE_REASON };
   const params = parseSmartCleanupParams(raw.params);
   if (!params.ok) return { ok: false, reason: params.reason };
   // `raw.mode` уже сужен словарём до умной очистки — строка режима здесь не пишется (B-1).
@@ -134,14 +167,29 @@ export interface BufferPolicyRow {
 }
 
 /**
+ * Эффективная политика ВМЕСТЕ с причиной подмены: `fallback` — причина из закрытого списка,
+ * по которой строка не прочиталась как есть и прибору уезжает `stop`; `null` — строка прочитана
+ * как есть (в том числе законный `stop` и ⊥ без строки). Нужна тем, кто логирует (#2318:
+ * `smart_cleanup` в базе при выключенном гейте — warn с id прибора), сама не логирует.
+ */
+export function explainBufferPolicy(
+  row: BufferPolicyRow | null | undefined,
+  options?: BufferPolicyGateOptions,
+): { readonly policy: BufferPolicy; readonly fallback: BufferPolicyDenyReason | null } {
+  if (!row) return { policy: DEFAULT_BUFFER_POLICY, fallback: null };
+  const parsed = parseBufferPolicy({ mode: row.bufferPolicy, params: row.bufferPolicyParams }, options);
+  return parsed.ok ? { policy: parsed.policy, fallback: null } : { policy: DEFAULT_BUFFER_POLICY, fallback: parsed.reason };
+}
+
+/**
  * ЭФФЕКТИВНАЯ политика — что прибор обязан исполнять. `effective(⊥) = stop`,
- * `effective(порча) = stop`, `effective(smart_cleanup без полного S) = stop`.
+ * `effective(порча) = stop`, `effective(smart_cleanup без полного S) = stop`,
+ * и с #2318 — `effective(smart_cleanup при выключенном гейте) = stop` (fail-closed: строка в
+ * базе не должна существовать после backfill, но если есть — прибору «умная очистка» не уезжает).
  *
  * Чистая функция без Prisma и без сети — блок A зовёт её со строкой, которую уже держит для
  * квоты, и кладёт `mode` в `overflowPolicy` ответа отказа.
  */
-export function effectiveBufferPolicy(row: BufferPolicyRow | null | undefined): BufferPolicy {
-  if (!row) return DEFAULT_BUFFER_POLICY;
-  const parsed = parseBufferPolicy({ mode: row.bufferPolicy, params: row.bufferPolicyParams });
-  return parsed.ok ? parsed.policy : DEFAULT_BUFFER_POLICY;
+export function effectiveBufferPolicy(row: BufferPolicyRow | null | undefined, options?: BufferPolicyGateOptions): BufferPolicy {
+  return explainBufferPolicy(row, options).policy;
 }

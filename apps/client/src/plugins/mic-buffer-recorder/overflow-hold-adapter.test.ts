@@ -179,16 +179,20 @@ describe('mic-buffer-recorder — адаптер удержания', () => {
     expect(mockCancel).toHaveBeenCalledTimes(1);
   });
 
-  it('локальный страж при эффективной политике smart_cleanup молчит (читатель B через мост)', async () => {
+  // #2318 (долг D-1, гейт до T12): умная очистка с сервера до плагина не доходит — читатель B
+  // гасит её fail-closed на stop, зеркало панели показывает stop, страж держит. Код плагина не
+  // менялся (зона блока C); перевёрнуты только ожидания — они утверждали ровно ту дыру, которую
+  // гейт закрывает. Порча: снять fail-closed в читателе → зеркало покажет smart_cleanup → красный.
+  it('smart_cleanup от сервера при закрытом гейте: зеркало панели — stop, локальный страж держит (читатель B через мост)', async () => {
     await serverPolicy('smart_cleanup');
-    expect(micBufferRecorderPluginState.getSnapshot().bufferPolicy).toBe('smart_cleanup');
+    expect(micBufferRecorderPluginState.getSnapshot().bufferPolicy).toBe('stop');
     publishMediaLibraryQuotaUpdated(quota(1024 * MB, 1024 * MB));
-    expect(hold.isHeld()).toBe(false);
+    expect(hold.isHeld()).toBe(true);
   });
 
   it('зеркало: слово панели — от читателя B; дыра синка → stop и страж снова судит', async () => {
-    await serverPolicy('smart_cleanup');
-    expect(micBufferRecorderPluginState.getSnapshot().bufferPolicy).toBe('smart_cleanup');
+    await serverPolicy('stop');
+    expect(micBufferRecorderPluginState.getSnapshot().bufferPolicy).toBe('stop');
     await setBufferPolicySourceForTests(async () => {
       throw new Error('media unreachable');
     });

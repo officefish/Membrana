@@ -4,9 +4,16 @@
  * Главное, что здесь проверяется, — ЧАСТИЧНЫЙ УСПЕХ как законный исход и правдивость счёта.
  * Мост в media подменён вручную: важно не «вызвали», а СКОЛЬКО и С ЧЕМ ушло.
  */
-import { describe, expect, it, vi } from 'vitest';
+import { Logger } from '@nestjs/common';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { resetSmartCleanupGateWarningsForTests } from '../membrane/buffer-policy-gate-warn';
 import { MembraneContextFanoutService } from './membrane-context-fanout.service';
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  resetSmartCleanupGateWarningsForTests();
+});
 
 const TARIFF = {
   userStorageQuotaBytes: 9_007_199_254_740_993n,
@@ -50,7 +57,12 @@ function sentPolicy(bridge: { syncMembraneContext: ReturnType<typeof vi.fn> }, m
 }
 
 describe('разноска политики переполнения (#2308) — тем же классом, что квоты', () => {
-  it('галочка стоит → КАЖДЫЙ прибор получает политику мембраны, свои настройки не в счёт', async () => {
+  // Семантика привязки (кто чью строку слушает) доказана на чистом слое `buffer-policy.test.ts`
+  // с опцией «гейт снят». Здесь, сквозь живую разноску, — #2318 fail-closed: умная очистка в
+  // строке при выключенном гейте до media НЕ доезжает, едет stop, и warn адресован тому, чья
+  // строка подменена. Порча: снять fail-closed → в контекст уедет smart_cleanup → красный.
+  it('галочка стоит, мембрана хранит умную очистку → КАЖДЫЙ прибор получает stop; warn один — на мембрану', async () => {
+    const warn = vi.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
     const { svc, bridge } = make({
       setting: { ...SMART_SETTING, binding: true },
       devices: [
@@ -59,11 +71,15 @@ describe('разноска политики переполнения (#2308) —
       ],
     });
     await expect(svc.syncAllNodes('m-1')).resolves.toEqual({ updated: 2, failed: 0 });
-    expect(sentPolicy(bridge, 'md-1')).toEqual({ mode: 'smart_cleanup', params: SMART_PARAMS });
-    expect(sentPolicy(bridge, 'md-2')).toEqual({ mode: 'smart_cleanup', params: SMART_PARAMS });
+    expect(sentPolicy(bridge, 'md-1')).toEqual({ mode: 'stop', params: null });
+    expect(sentPolicy(bridge, 'md-2')).toEqual({ mode: 'stop', params: null });
+    const gateWarns = warn.mock.calls.map((c) => String(c[0])).filter((m) => m.includes('#2318'));
+    expect(gateWarns).toHaveLength(1);
+    expect(gateWarns[0]).toContain('мембрана m-1');
   });
 
-  it('галочка снята → приборам ВОЗВРАЩАЮТСЯ их настройки; политика мембраны — черновик (порча: разнести мембрану → красный)', async () => {
+  it('галочка снята, прибор хранит умную очистку → ему едет stop (своя строка, fail-closed); warn — на прибор; stop-прибор без warn', async () => {
+    const warn = vi.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
     const { svc, bridge } = make({
       setting: { ...SMART_SETTING, binding: false },
       devices: [
@@ -78,10 +94,11 @@ describe('разноска политики переполнения (#2308) —
     });
     await svc.syncAllNodes('m-1');
     expect(sentPolicy(bridge, 'md-1')).toEqual({ mode: 'stop', params: null });
-    expect(sentPolicy(bridge, 'md-2')).toEqual({
-      mode: 'smart_cleanup',
-      params: { ...SMART_PARAMS, thresholdPercent: 50 },
-    });
+    expect(sentPolicy(bridge, 'md-2')).toEqual({ mode: 'stop', params: null });
+    const gateWarns = warn.mock.calls.map((c) => String(c[0])).filter((m) => m.includes('#2318'));
+    expect(gateWarns).toHaveLength(1);
+    expect(gateWarns[0]).toContain('прибор md-2');
+    expect(gateWarns[0]).toContain('m-1');
   });
 
   it('порченая строка прибора при снятой галочке → уезжает stop, не порча', async () => {
@@ -111,7 +128,8 @@ describe('разноска политики переполнения (#2308) —
     });
     await expect(svc.syncNode('m-1', 'n-2')).resolves.toEqual({ updated: 1, failed: 0 });
     expect(bridge.syncMembraneContext).toHaveBeenCalledTimes(1);
-    expect(sentPolicy(bridge, 'md-2')).toEqual({ mode: 'smart_cleanup', params: SMART_PARAMS });
+    // #2318: своя строка с умной очисткой → stop (fail-closed), контекст всё равно уехал ровно ему.
+    expect(sentPolicy(bridge, 'md-2')).toEqual({ mode: 'stop', params: null });
     expect(prisma.device.findMany).toHaveBeenCalledWith(
       expect.objectContaining({ where: { node: { membraneId: 'm-1' }, nodeId: 'n-2' } }),
     );

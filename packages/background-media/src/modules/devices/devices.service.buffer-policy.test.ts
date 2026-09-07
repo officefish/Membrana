@@ -5,11 +5,21 @@
  * политики прибору через `/quota`, вход блока A `getEffectiveBufferPolicy`. Порчи: принять
  * `smart_cleanup` без параметров при разноске → красный; отдать прибору что-то кроме `stop`
  * с порченой строки → красный; записать квоты при отвергнутой политике → красный.
+ *
+ * #2318 (гейт до T12): разноска `smart_cleanup` даже с ПОЛНЫМ набором → `smart_cleanup_unavailable`,
+ * ничего не пишется (порча: снять гейт → запись прошла → красный); неполный набор при выключенном
+ * гейте → причина гейта, не `params_incomplete` (порча порядка → красный); строка с умной
+ * очисткой в базе → прибору `stop` и РОВНО один warn на прибор (порча: снять fail-closed → красный;
+ * warn на каждое чтение → красный).
  */
-import { BadRequestException } from '@nestjs/common';
-import { describe, expect, it, vi } from 'vitest';
+import { BadRequestException, Logger } from '@nestjs/common';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { DevicesService } from './devices.service';
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 const CONFIG = {
   MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE: 1_000,
@@ -78,23 +88,23 @@ describe('разноска контекста: гейт умной очистк�
     expect(String(data.bufferPolicyParams)).not.toContain('threshold');
   });
 
-  it('smart_cleanup с полным набором пишется как есть и возвращается эффективным', async () => {
+  it('#2318: smart_cleanup даже с ПОЛНЫМ набором → ok:false, smart_cleanup_unavailable; в базу НЕ пишется ничего (порча: снять гейт → красный)', async () => {
     const { service, prisma } = makeService();
     const res = await service.syncMembraneContext('dev-1', {
       ...CONTEXT,
       bufferPolicy: { mode: 'smart_cleanup', params: FULL_PARAMS },
     });
-    expect(res).toMatchObject({ ok: true, bufferPolicy: { mode: 'smart_cleanup', params: FULL_PARAMS } });
-    expect(prisma.device.update.mock.calls[0]![0].data.bufferPolicy).toBe('smart_cleanup');
+    expect(res).toEqual({ ok: false, reason: 'smart_cleanup_unavailable' });
+    expect(prisma.device.update).not.toHaveBeenCalled();
   });
 
-  it('smart_cleanup БЕЗ параметров → ok:false, params_incomplete, и в базу НЕ пишется ничего (порча: записать квоты → красный)', async () => {
+  it('#2318: smart_cleanup БЕЗ параметров при выключенном гейте → причина ГЕЙТА, не params_incomplete (порча порядка → красный); в базу не пишется ничего', async () => {
     const { service, prisma } = makeService();
     const res = await service.syncMembraneContext('dev-1', {
       ...CONTEXT,
       bufferPolicy: { mode: 'smart_cleanup' },
     });
-    expect(res).toEqual({ ok: false, reason: 'params_incomplete' });
+    expect(res).toEqual({ ok: false, reason: 'smart_cleanup_unavailable' });
     expect(prisma.device.update).not.toHaveBeenCalled();
   });
 
@@ -130,11 +140,18 @@ describe('регистрация прибора с политикой', () => {
     const { service, prisma } = makeService();
     await service.register('lab', 'other' as never, {
       ...CONTEXT,
-      bufferPolicy: { mode: 'smart_cleanup', params: FULL_PARAMS },
+      bufferPolicy: { mode: 'stop' },
     });
     const data = prisma.device.create.mock.calls[0]![0].data;
-    expect(data.bufferPolicy).toBe('smart_cleanup');
-    expect(data.bufferPolicyParams).toEqual(FULL_PARAMS);
+    expect(data.bufferPolicy).toBe('stop');
+  });
+
+  it('#2318: умная очистка при регистрации — 400 звонящему (внутренний вход), прибор не заводится; гейт судит раньше полноты', async () => {
+    const { service, prisma } = makeService();
+    await expect(
+      service.register('lab', 'other' as never, { ...CONTEXT, bufferPolicy: { mode: 'smart_cleanup', params: FULL_PARAMS } }),
+    ).rejects.toThrow(/smart_cleanup_unavailable/u);
+    expect(prisma.device.create).not.toHaveBeenCalled();
   });
 
   it('неизвестная политика при регистрации — 400 звонящему (внутренний вход), прибор не заводится', async () => {
@@ -153,10 +170,35 @@ describe('канал к прибору: /quota несёт эффективную
     expect(quota.bufferPolicy).toEqual({ mode: 'stop', params: null });
   });
 
-  it('прибор со smart_cleanup и полным S — отдаётся как есть', async () => {
+  it('#2318 fail-closed: прибор со smart_cleanup и полным S в базе → прибору уезжает stop; warn с id прибора и мембраны — РОВНО один на прибор, не на каждое чтение (порча: снять fail-closed → красный)', async () => {
+    const warn = vi.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
     const { service } = makeService(deviceRow({ bufferPolicy: 'smart_cleanup', bufferPolicyParams: FULL_PARAMS }));
+
     const quota = await service.getQuota('dev-1');
-    expect(quota.bufferPolicy).toEqual({ mode: 'smart_cleanup', params: FULL_PARAMS });
+    expect(quota.bufferPolicy).toEqual({ mode: 'stop', params: null });
+    expect(await service.getEffectiveBufferPolicy('dev-1')).toEqual({ mode: 'stop', params: null });
+    await service.getQuota('dev-1');
+
+    expect(warn).toHaveBeenCalledTimes(1);
+    const message = String(warn.mock.calls[0]![0]);
+    expect(message).toContain('dev-1');
+    expect(message).toContain('m-1');
+    expect(message).toMatch(/#2318/u);
+  });
+
+  it('#2318: warn дедуплицируется ПО ПРИБОРУ — второй прибор с той же порчей получает свой warn', async () => {
+    const warn = vi.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
+    const rows: Record<string, unknown>[] = [
+      deviceRow({ id: 'dev-1', bufferPolicy: 'smart_cleanup', bufferPolicyParams: FULL_PARAMS }),
+      deviceRow({ id: 'dev-2', bufferPolicy: 'smart_cleanup', bufferPolicyParams: FULL_PARAMS }),
+    ];
+    const { service, prisma } = makeService();
+    prisma.device.findUnique.mockImplementation((async (args: { where: { id: string } }) =>
+      rows.find((r) => r['id'] === args.where.id) ?? null) as never);
+    await service.getQuota('dev-1');
+    await service.getQuota('dev-2');
+    await service.getQuota('dev-1');
+    expect(warn).toHaveBeenCalledTimes(2);
   });
 
   it('порченая строка (чужое значение / дырявый S) → прибору уезжает stop (порча: отдать иное → красный)', async () => {

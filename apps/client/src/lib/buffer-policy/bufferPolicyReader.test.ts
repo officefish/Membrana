@@ -11,6 +11,8 @@ import { STOP_POLICY } from './types';
 
 const FULL = { thresholdPercent: 90, selection: 'oldest_first', protectLabeled: true };
 const SMART = { mode: 'smart_cleanup', params: FULL };
+/** Значение сервера, отличимое от «ни одного чтения»: stop с источником `server`. */
+const STOP_FROM_SERVER = { policy: STOP_POLICY, source: 'server' } as const;
 
 describe('createBufferPolicyReader', () => {
   it('до первого чтения — stop, never_received; источник не тронут', () => {
@@ -21,29 +23,38 @@ describe('createBufferPolicyReader', () => {
   });
 
   it('успешное чтение — значение сервера', async () => {
+    const stub = createQuotaSourceStub(quotaRoot({ mode: 'stop', params: null }));
+    const reader = createBufferPolicyReader(stub.source);
+    await reader.refresh();
+    expect(reader.current()).toEqual(STOP_FROM_SERVER);
+  });
+
+  it('#2318 fail-closed: сервер прислал smart_cleanup с полным S → stop, источник gated (порча: снять → красный)', async () => {
     const stub = createQuotaSourceStub(quotaRoot(SMART));
     const reader = createBufferPolicyReader(stub.source);
     await reader.refresh();
-    expect(reader.current()).toEqual({ policy: SMART, source: 'server' });
+    expect(reader.current()).toEqual({ policy: STOP_POLICY, source: 'gated' });
+    expect(reader.current().policy.mode).toBe('stop');
   });
 
   it('дыра синка после валидного значения → stop, sync_failed (порча: удержать прошлое → красный)', async () => {
-    const stub = createQuotaSourceStub(quotaRoot(SMART));
+    const stub = createQuotaSourceStub(quotaRoot({ mode: 'stop', params: null }));
     const reader = createBufferPolicyReader(stub.source);
     await reader.refresh();
+    expect(reader.current()).toEqual(STOP_FROM_SERVER);
     stub.fail();
     await expect(reader.refresh()).resolves.toEqual({ policy: STOP_POLICY, source: 'sync_failed' });
     expect(reader.current().policy.mode).toBe('stop');
   });
 
   it('следующее удачное чтение после дыры возвращает значение сервера', async () => {
-    const stub = createQuotaSourceStub(quotaRoot(SMART));
+    const stub = createQuotaSourceStub(quotaRoot({ mode: 'stop', params: null }));
     const reader = createBufferPolicyReader(stub.source);
     stub.fail();
     await reader.refresh();
-    stub.respondWith(quotaRoot(SMART));
+    stub.respondWith(quotaRoot({ mode: 'stop', params: null }));
     await reader.refresh();
-    expect(reader.current()).toEqual({ policy: SMART, source: 'server' });
+    expect(reader.current()).toEqual(STOP_FROM_SERVER);
   });
 
   it('порченый ответ → stop, malformed; refresh никогда не бросает', async () => {

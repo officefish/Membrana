@@ -5,10 +5,13 @@
  */
 import { describe, expect, it } from 'vitest';
 
+import { SMART_CLEANUP_AVAILABLE, SMART_CLEANUP_UNAVAILABLE_REASON } from '@membrana/plugin-contracts';
+
 import { BUFFER_POLICY_DENY_REASONS, BUFFER_POLICY_MODES } from '@/api/membrane';
 import {
   EMPTY_DRAFT,
   MODE_LABEL,
+  SMART_CLEANUP_UNAVAILABLE_TEXT,
   bufferPolicyDenyText,
   completeParams,
   contextSyncText,
@@ -19,18 +22,43 @@ import {
 } from './bufferPolicyForm';
 
 const FULL = { thresholdPercent: '90', selection: 'oldest_first' as const, protectLabeled: true };
+/** #2318: опция «гейт снят» — только для зубов ветки полноты; умолчание — переключатель словаря. */
+const LIFTED = { smartCleanupAvailable: true } as const;
+
+describe('#2318 — умная очистка недоступна до появления алгоритма T12', () => {
+  it('переключатель словаря выключен; пункт выключен с прямым текстом даже при ПОЛНОМ черновике (порча: снять гейт → красный)', () => {
+    expect(SMART_CLEANUP_AVAILABLE).toBe(false);
+    expect(smartCleanupDisabledReason(FULL)).toBe(SMART_CLEANUP_UNAVAILABLE_TEXT);
+    expect(SMART_CLEANUP_UNAVAILABLE_TEXT).toBe('Недоступно до появления алгоритма очистки');
+  });
+
+  it('порядок: пустой черновик при закрытом гейте называет ГЕЙТ, а не «не заданы: порог…» (порча порядка → красный)', () => {
+    expect(smartCleanupDisabledReason(EMPTY_DRAFT)).toBe(SMART_CLEANUP_UNAVAILABLE_TEXT);
+  });
+
+  it('одно правило на показ и на действие: форма не собирает smart при закрытом гейте даже с полным S', () => {
+    expect(toPolicyInput('smart_cleanup', FULL)).toBeNull();
+    expect(toPolicyInput('stop', FULL)).toEqual({ mode: 'stop' });
+  });
+
+  it('причина сервера smart_cleanup_unavailable есть в списке follower-а и имеет прямой текст', () => {
+    expect(BUFFER_POLICY_DENY_REASONS).toContain(SMART_CLEANUP_UNAVAILABLE_REASON);
+    expect(bufferPolicyDenyText(SMART_CLEANUP_UNAVAILABLE_REASON)).toMatch(/недоступна до появления алгоритма/u);
+  });
+});
 
 describe('гейт полноты на витрине — один предикат на показ и на действие', () => {
+  // Ветка «гейт снят» (#2318): предикат полноты живёт и проверяется опцией, не переворотом словаря.
   it('пустой черновик: smart недоступен, причина называет все три слота; форма не собирает smart', () => {
-    expect(smartCleanupDisabledReason(EMPTY_DRAFT)).toBe(
+    expect(smartCleanupDisabledReason(EMPTY_DRAFT, LIFTED)).toBe(
       'Недоступно, пока не заданы: порог, критерий отбора, защита вещдоков',
     );
-    expect(toPolicyInput('smart_cleanup', EMPTY_DRAFT)).toBeNull();
+    expect(toPolicyInput('smart_cleanup', EMPTY_DRAFT, LIFTED)).toBeNull();
   });
 
   it('полный черновик: доступен, собирается', () => {
-    expect(smartCleanupDisabledReason(FULL)).toBeNull();
-    expect(toPolicyInput('smart_cleanup', FULL)).toEqual({
+    expect(smartCleanupDisabledReason(FULL, LIFTED)).toBeNull();
+    expect(toPolicyInput('smart_cleanup', FULL, LIFTED)).toEqual({
       mode: 'smart_cleanup',
       params: { thresholdPercent: 90, selection: 'oldest_first', protectLabeled: true },
     });
@@ -45,9 +73,9 @@ describe('гейт полноты на витрине — один предик�
   });
 
   it('порог вне 1..100 или не целый — причина про порог, не «не задан»', () => {
-    expect(smartCleanupDisabledReason({ ...FULL, thresholdPercent: '0' })).toBe('Порог должен быть целым числом от 1 до 100');
-    expect(smartCleanupDisabledReason({ ...FULL, thresholdPercent: '101' })).toMatch(/от 1 до 100/);
-    expect(smartCleanupDisabledReason({ ...FULL, thresholdPercent: '9.5' })).toMatch(/целым/);
+    expect(smartCleanupDisabledReason({ ...FULL, thresholdPercent: '0' }, LIFTED)).toBe('Порог должен быть целым числом от 1 до 100');
+    expect(smartCleanupDisabledReason({ ...FULL, thresholdPercent: '101' }, LIFTED)).toMatch(/от 1 до 100/);
+    expect(smartCleanupDisabledReason({ ...FULL, thresholdPercent: '9.5' }, LIFTED)).toMatch(/целым/);
     expect(completeParams({ ...FULL, thresholdPercent: '101' })).toBeNull();
   });
 
