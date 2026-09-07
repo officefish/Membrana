@@ -1,17 +1,36 @@
-import { ServerStorageBackend } from '@membrana/media-library-service';
+import { ServerStorageBackend, type SampleRefusal } from '@membrana/media-library-service';
+import { isBufferOverflowRefusal } from '@membrana/plugin-contracts';
 
 import { subscribeMediaLibraryBufferCleared } from '@/lib/mediaLibraryHub';
 
 import { getDeviceOverflowHold } from './deviceOverflowHold';
-import { toOverflowRefusalSnapshotStub } from './stubs/refusal-contract.stub';
-import type { DeviceOverflowHold } from './types';
+import type { DeviceOverflowHold, OverflowRefusalSnapshot } from './types';
 
 let installedFor: DeviceOverflowHold | null = null;
 let uninstall: (() => void) | null = null;
 
 /**
+ * Сырой доменный отказ транспорта → снимок для носителя. Судит ИМПОРТИРОВАННЫЙ предикат словаря A
+ * (`isBufferOverflowRefusal`, адаптер A-3 контракта интеграции): чужая причина (T15), дыра в
+ * эпизоде или в осях → `null`, удержание «по серверу» не открывается — сервер обязан чеканить
+ * эпизод целиком (M2). Своих строк словаря здесь нет.
+ */
+export function toOverflowRefusalSnapshot(refusal: SampleRefusal): OverflowRefusalSnapshot | null {
+  if (!isBufferOverflowRefusal(refusal.raw)) return null;
+  const body = refusal.raw;
+  return {
+    reason: body.reason,
+    overflowId: body.overflowId,
+    overflowAt: body.overflowAt,
+    overflowPolicy: body.overflowPolicy,
+    buffer: body.buffer,
+    userStorage: body.userStorage,
+  };
+}
+
+/**
  * Проводка носителя к пути отправки (M3 (б) главный источник + DoD 1):
- *  - доменный отказ сервера на POST пробы → `activateFromServer` (через стаб словаря A);
+ *  - доменный отказ сервера на POST пробы → `activateFromServer` (через словарь A);
  *  - шлюз отправки: при удержании `putSample` не делает fetch — 0 POST, 0 ретраев;
  *  - очистка буфера (`mediaLibrary.bufferCleared`) → `release('cleanup')`.
  * Идемпотентна: плагин, доска и мост состояния зовут её каждый — ставится один раз.
@@ -26,7 +45,7 @@ export function installDeviceOverflowHoldWiring(
 
   ServerStorageBackend.setSampleUploadGate(() => hold.isHeld());
   const offRefusal = ServerStorageBackend.onSampleRefusal((refusal) => {
-    const snapshot = toOverflowRefusalSnapshotStub(refusal);
+    const snapshot = toOverflowRefusalSnapshot(refusal);
     if (snapshot === null) return;
     hold.activateFromServer(snapshot);
   });

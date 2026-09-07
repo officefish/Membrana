@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { BUFFER_COLLECTION_ID, createServerStorageBackend } from '@membrana/media-library-service';
+import { BUFFER_OVERFLOW_REASONS, OVERFLOW_POLICIES, isBufferOverflowRefusal } from '@membrana/plugin-contracts';
 
 import { publishMediaLibraryBufferCleared, resetMediaLibraryHubForTests } from '@/lib/mediaLibraryHub';
 
@@ -8,16 +9,23 @@ import { resetDeviceOverflowHoldForTests } from './deviceOverflowHold';
 import type { DeviceOverflowHold, OverflowWindowSignal } from './types';
 import { installDeviceOverflowHoldWiring, resetDeviceOverflowHoldWiringForTests } from './wiring';
 
-/** Стаб ответа блока A (поля по заседанию M2). Умирает на интеграции вместе с `stubs/`. */
+/**
+ * Фикстура ответа отказа блока A — по словарю `@membrana/plugin-contracts` (A-3): форма
+ * сверяется импортированным предикатом ниже, чтобы фикстура не разошлась с контрактом.
+ */
 const REFUSAL_BODY = {
   ok: false,
-  reason: 'device_buffer_full',
+  reason: BUFFER_OVERFLOW_REASONS.DEVICE_BUFFER_FULL,
   buffer: { usedBytes: 1_073_741_824, limitBytes: 1_073_741_824 },
   userStorage: { usedBytes: 10, limitBytes: 5_000_000_000 },
-  overflowPolicy: 'stop',
+  overflowPolicy: OVERFLOW_POLICIES.STOP,
   overflowId: 'ovf-night',
   overflowAt: '2026-09-05T21:40:18.000Z',
 };
+
+if (!isBufferOverflowRefusal(REFUSAL_BODY)) {
+  throw new Error('фикстура отказа разошлась со словарём A — тест судил бы не контракт');
+}
 
 const META = {
   title: 'mic-auto',
@@ -95,14 +103,20 @@ describe('проводка носителя к пути отправки (#2309,
     expect(signals).toHaveLength(0);
   });
 
-  it('политика в отказе: дыра → stop (fail-closed), smart_cleanup — как есть', async () => {
+  /*
+    Интеграция (A-3): полноту отказа судит импортированный `isBufferOverflowRefusal` словаря A —
+    отказ без `overflowPolicy` не по форме M2 и удержания «по серверу» не открывает (как чужая
+    причина или отказ без эпизода). До интеграции стаб C подставлял `stop` на дыру; теперь
+    fail-closed на дыре — норма политики B (`effective(⊥) = stop`), а не отказа A.
+  */
+  it('политика в отказе: дыра → отказ не по форме словаря, удержания нет; smart_cleanup — как есть', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => jsonResponse({ ...REFUSAL_BODY, overflowPolicy: undefined })));
     const backend = createServerStorageBackend({ baseUrl: 'https://media.test', deviceId: 'd1', mediaToken: 't' });
-    await swallow(backend.putSample(BUFFER_COLLECTION_ID, new Blob(['x']), META));
-    expect(hold.getEpisode()?.policy).toBe('stop');
+    expect(await swallow(backend.putSample(BUFFER_COLLECTION_ID, new Blob(['x']), META))).toBe('SAMPLE_REFUSED');
+    expect(hold.getEpisode()).toBeNull();
+    expect(signals).toHaveLength(0);
 
-    hold.release('human');
-    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse({ ...REFUSAL_BODY, overflowId: 'ovf-2', overflowPolicy: 'smart_cleanup' })));
+    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse({ ...REFUSAL_BODY, overflowId: 'ovf-2', overflowPolicy: OVERFLOW_POLICIES.SMART_CLEANUP })));
     await swallow(backend.putSample(BUFFER_COLLECTION_ID, new Blob(['x']), META));
     expect(hold.getEpisode()?.policy).toBe('smart_cleanup');
     expect(hold.isHeld()).toBe(false);

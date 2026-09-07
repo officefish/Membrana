@@ -8,10 +8,13 @@ export {
   overflowHoldToRuntimePayload,
   resetDeviceOverflowHoldForTests,
 } from './deviceOverflowHold';
-export { LOCAL_GUARD_REASON_STUB, applyLocalGuardFromQuota, judgeLocalGuard } from './localGuard';
-export { installDeviceOverflowHoldWiring, resetDeviceOverflowHoldWiringForTests } from './wiring';
+export { LOCAL_GUARD_REASON, applyLocalGuardFromQuota, judgeLocalGuard } from './localGuard';
+export {
+  installDeviceOverflowHoldWiring,
+  resetDeviceOverflowHoldWiringForTests,
+  toOverflowRefusalSnapshot,
+} from './wiring';
 export { OVERFLOW_HOLD_QUOTA_READ_INTERVAL_MS, startOverflowHoldVitals } from './vitals';
-export { getEffectiveOverflowPolicyStub, setEffectiveOverflowPolicyStubForTests } from './stubs/effective-policy.stub';
 export type {
   DeviceOverflowHold,
   HoldActivation,

@@ -1,12 +1,13 @@
 import { stopDecision } from '@membrana/media-library-service';
+import { BUFFER_OVERFLOW_REASONS } from '@membrana/plugin-contracts';
 
 import type { DeviceOverflowHold, HoldActivation, OverflowHoldAxis, OverflowHoldPolicy } from './types';
 
 /**
- * Литерал причины для локального стража: страж читает квоту БУФЕРА прибора, значит субъект —
- * буфер прибора. Стаб-литерал словаря A (см. `stubs/refusal-contract.stub.ts`).
+ * Причина для локального стража: страж читает квоту БУФЕРА прибора, значит субъект —
+ * буфер прибора. Значение — из словаря A (`@membrana/plugin-contracts`), не строка (A-3).
  */
-export const LOCAL_GUARD_REASON_STUB = 'device_buffer_full';
+export const LOCAL_GUARD_REASON = BUFFER_OVERFLOW_REASONS.DEVICE_BUFFER_FULL;
 
 /**
  * Локальный страж (M3 (б), вторичный источник): чтение квоты до отправки по тому же порогу,
@@ -29,5 +30,5 @@ export function applyLocalGuardFromQuota(
   if (!judgeLocalGuard(fill, policy)) {
     return 'ignored';
   }
-  return hold.activateFromLocalGuard({ reason: LOCAL_GUARD_REASON_STUB, buffer: fill, policy });
+  return hold.activateFromLocalGuard({ reason: LOCAL_GUARD_REASON, buffer: fill, policy });
 }

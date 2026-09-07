@@ -1,4 +1,5 @@
 import type { RuntimeOverflowHoldPayload } from '@membrana/core';
+import { isOverflowPolicy } from '@membrana/plugin-contracts';
 
 import type {
   DeviceOverflowHold,
@@ -27,7 +28,7 @@ export function createLocalStorageOverflowHoldStore(): OverflowHoldStore {
         if (!parsed || typeof parsed.reason !== 'string' || typeof parsed.overflowAt !== 'string') {
           return null;
         }
-        if (parsed.policy !== 'stop' && parsed.policy !== 'smart_cleanup') return null;
+        if (!isOverflowPolicy(parsed.policy)) return null;
         return {
           overflowId: typeof parsed.overflowId === 'string' ? parsed.overflowId : null,
           overflowAt: parsed.overflowAt,

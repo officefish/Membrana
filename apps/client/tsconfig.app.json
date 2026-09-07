@@ -16,6 +16,7 @@
       "@membrana/core/*": ["../../packages/core/src/*"],
       "@membrana/agenda": ["../../packages/agenda/src/index.ts"],
       "@membrana/agenda/*": ["../../packages/agenda/src/*"],
+      "@membrana/plugin-contracts": ["../../packages/plugin-contracts/src/index.ts"],
       "@membrana/device-board": ["../../packages/device-board/src/index.ts"],
       "@membrana/device-board/*": ["../../packages/device-board/src/*"],
       "@membrana/sample-playback-service": ["../../packages/services/sample-playback/src/index.ts"],
@@ -62,6 +63,7 @@
   "references": [
     { "path": "../../packages/core" },
     { "path": "../../packages/agenda" },
+    { "path": "../../packages/plugin-contracts" },
     { "path": "../../packages/device-board" },
     { "path": "../../packages/services/audio-engine" },
     { "path": "../../packages/services/fft-analyzer" },

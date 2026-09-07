@@ -1,7 +1,8 @@
 import type { RuntimeOverflowHoldPayload } from '@membrana/core';
+import type { OverflowPolicy } from '@membrana/plugin-contracts';
 
-/** Политика переполнения в снимке эпизода (M1/M2): `stop` | `smart_cleanup`. */
-export type OverflowHoldPolicy = 'stop' | 'smart_cleanup';
+/** Политика переполнения в снимке эпизода (M1/M2) — union словаря A, не вторая копия строк. */
+export type OverflowHoldPolicy = OverflowPolicy;
 
 /** Кто открыл эпизод: главный источник — сервер; вторичный — локальный страж квоты. */
 export type OverflowHoldSource = 'server' | 'local';
@@ -19,7 +20,7 @@ export interface OverflowHoldEpisode {
   readonly overflowId: string | null;
   /** ISO 8601: серверное время факта либо момент локального стража. */
   readonly overflowAt: string;
-  /** Литерал словаря отказа (блок A); на стороне стража — стаб-литерал. */
+  /** Литерал словаря отказа (блок A, `@membrana/plugin-contracts`). */
   readonly reason: string;
   readonly policy: OverflowHoldPolicy;
   readonly source: OverflowHoldSource;
@@ -29,7 +30,7 @@ export interface OverflowHoldEpisode {
   readonly enteredAtMs: number;
 }
 
-/** Снимок серверного отказа, прошедший проверку словаря (см. `stubs/refusal-contract.stub.ts`). */
+/** Снимок серверного отказа, прошедший проверку словаря (`isBufferOverflowRefusal`, см. `wiring.ts`). */
 export interface OverflowRefusalSnapshot {
   readonly reason: string;
   readonly overflowId: string;
@@ -43,7 +44,7 @@ export interface OverflowRefusalSnapshot {
 export interface LocalGuardSnapshot {
   readonly reason: string;
   readonly buffer: OverflowHoldAxis;
-  /** Эффективная политика прибора (читатель блока B; до интеграции — стаб). */
+  /** Эффективная политика прибора (читатель блока B через мост `buffer-policy-bridge`). */
   readonly policy: OverflowHoldPolicy;
 }
 
