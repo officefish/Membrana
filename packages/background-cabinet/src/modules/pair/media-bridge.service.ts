@@ -2,6 +2,7 @@ import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common'
 import { Inject } from '@nestjs/common';
 import type { AppConfig } from '../../config/env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
+import type { BufferPolicy } from '../membrane/buffer-policy';
 import { headersForBody } from './request-headers';
 
 export interface MediaMembraneContext {
@@ -10,6 +11,24 @@ export interface MediaMembraneContext {
   bufferQuotaBytes: string | number;
   datasetCatalogId: string;
   maxUserWorkspaces?: number;
+  /**
+   * Эффективная политика переполнения прибора (#2308, M1) — едет в том же контексте, что
+   * квоты: второго класса разноски нет. Считается origin'ом (`effectiveDevicePolicy`),
+   * гейт параметров сервер записей проверяет ещё раз сам.
+   */
+  bufferPolicy?: BufferPolicy;
+}
+
+/**
+ * Отказ сервера записей по гейту параметров (`200 { ok:false, reason }`, конвенция 12.08).
+ * Отдельный класс, чтобы разноска считала его как «не доехало», а не как транспортную ошибку
+ * с текстом — и чтобы журнал называл ПРИЧИНУ, а не HTTP-код.
+ */
+export class MediaContextRefusedError extends Error {
+  constructor(readonly reason: string) {
+    super(`Media membrane context sync refused: ${reason}`);
+    this.name = 'MediaContextRefusedError';
+  }
 }
 
 export interface MediaDeviceRegistration {
@@ -171,6 +190,11 @@ export class MediaBridgeService {
     await this.assertOk(res, 'Media client key revoke');
   }
 
+  /**
+   * ТЕЛО ЧИТАЕТСЯ, А НЕ ТОЛЬКО `res.ok` (#2308). Сервер записей отвечает на отвергнутую политику
+   * доменным `200 { ok:false, reason }`; смотреть лишь на статус значило бы засчитать отказ как
+   * «обновлено» и показать оператору счёт, который лжёт в успокаивающую сторону.
+   */
   async syncMembraneContext(deviceId: string, membrane: MediaMembraneContext): Promise<void> {
     const res = await this.mediaFetch(`/v1/devices/${deviceId}/membrane`, {
       method: 'PATCH',
@@ -178,6 +202,10 @@ export class MediaBridgeService {
       body: JSON.stringify({ membrane }),
     });
     await this.assertOk(res, 'Media membrane context sync');
+    const body = (await res.json().catch(() => null)) as { ok?: unknown; reason?: unknown } | null;
+    if (body && body.ok === false) {
+      throw new MediaContextRefusedError(typeof body.reason === 'string' ? body.reason : 'unknown');
+    }
   }
 
   /** Best-effort; pairing must succeed even if collections already exist or media hiccups. */

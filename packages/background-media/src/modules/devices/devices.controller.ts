@@ -27,6 +27,7 @@ import { MediaDeviceAccessGuard } from '../../common/guards/media-device-access.
 import { DevicesService } from './devices.service';
 import {
   ClientDeviceKeyResponseDto,
+  DeviceMembraneSyncResponseDto,
   DeviceResponseDto,
   PatchDeviceMembraneContextDto,
   QuotaResponseDto,
@@ -50,6 +51,8 @@ export class DevicesController {
       bufferQuotaBytes: membrane.bufferQuotaBytes,
       datasetCatalogId: membrane.datasetCatalogId,
       maxUserWorkspaces: membrane.maxUserWorkspaces,
+      // Сырым: гейт параметров проверяет сервис, а не форма DTO (#2308).
+      ...(membrane.bufferPolicy !== undefined ? { bufferPolicy: membrane.bufferPolicy } : {}),
     };
   }
 
@@ -106,24 +109,32 @@ export class DevicesController {
   @Patch(':deviceId/membrane')
   @UseGuards(ApiTokenGuard, DeviceGuard)
   @ApiSecurity(API_TOKEN_SECURITY)
-  @ApiOperation({ summary: 'Sync membrane tariff limits for paired device (cabinet internal)' })
+  @ApiOperation({
+    summary: 'Sync membrane tariff limits and buffer overflow policy for paired device (cabinet internal)',
+    description:
+      'Domain refusal by the smart-cleanup params gate (#2308) is `200 { ok:false, reason }`; nothing is written then. 4xx stay with transport.',
+  })
   @ApiParam({ name: 'deviceId', format: 'uuid' })
   @ApiHeader({ name: 'X-Membrana-Token', required: true })
-  @ApiResponse({ status: 200, type: DeviceResponseDto })
+  @ApiResponse({ status: 200, type: DeviceMembraneSyncResponseDto })
   @ApiStandardErrors()
   async syncMembrane(
     @Param('deviceId') deviceId: string,
     @Body() body: PatchDeviceMembraneContextDto,
-  ) {
-    const device = await this.devices.syncMembraneContext(
+  ): Promise<DeviceMembraneSyncResponseDto> {
+    const result = await this.devices.syncMembraneContext(
       deviceId,
       this.parseMembraneContext(body.membrane)!,
     );
+    if (!result.ok) return { ok: false, reason: result.reason };
+    const { device } = result;
     return {
+      ok: true,
       id: device.id,
       name: device.name,
       kind: device.kind,
       createdAt: device.createdAt.toISOString(),
+      bufferPolicy: result.bufferPolicy,
     };
   }
 

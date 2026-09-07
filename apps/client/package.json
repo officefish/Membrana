@@ -33,6 +33,7 @@
     "@membrana/journal-report-views": "*",
     "@membrana/media-library-service": "*",
     "@membrana/mfcc-analyzer-service": "*",
+    "@membrana/plugin-contracts": "*",
     "@membrana/sample-playback-service": "*",
     "@membrana/spectral-flux-detector-service": "*",
     "@membrana/telemetry-journal-service": "*",

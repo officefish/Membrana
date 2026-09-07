@@ -356,6 +356,36 @@ export type RuntimeCommandPayload =
       readonly fadeOutMs?: number;
     };
 
+/**
+ * Фаза удержания медиа-ветки прибора при переполнении (M3/M4, #2309):
+ * `held_local` — сработал локальный страж квоты, серверный `overflowId` ещё не получен;
+ * `held` — эпизод подтверждён отказом сервера (`overflowId` есть).
+ */
+export type RuntimeOverflowHoldPhase = 'held_local' | 'held';
+
+/** Политика переполнения, снятая с ответа сервера (M1/M2: `stop` | `smart_cleanup`). */
+export type RuntimeOverflowPolicy = 'stop' | 'smart_cleanup';
+
+/**
+ * Значение состояния «остановлен: буфер полон» (M4 (б), #2309). Отдельно от `phase`
+ * сценария: при удержании сценарий доски может бежать в `main` (детекция живёт, склад
+ * гашен) — фаза сценария и фаза удержания ортогональны. Кабинет читает его, чтобы
+ * показать «жив · не пишет · причина», а не «нет телеметрии».
+ *
+ * `reason` — литерал словаря отказа сервера (`device_buffer_full` | `user_storage_full`;
+ * блок A коворка `cowork-buffer-full-stop`). Тип сужается до union словаря на интеграции —
+ * второй копии строк здесь намеренно нет.
+ */
+export interface RuntimeOverflowHoldPayload {
+  readonly phase: RuntimeOverflowHoldPhase;
+  readonly reason: string;
+  /** Идентификатор эпизода переполнения, чеканит сервер; null — пока только локальный страж. */
+  readonly overflowId: string | null;
+  /** ISO 8601 — время факта переполнения (серверное, либо момент локального стража). */
+  readonly overflowAt: string;
+  readonly policy: RuntimeOverflowPolicy;
+}
+
 /** Снимок состояния runtime (node → server → cabinet). Только скаляры, без кадров. */
 export interface RuntimeStatePayload {
   /** Узел-источник состояния (multi-node, MP7b RT5) — для маппинга на карточку в кабинете. */
@@ -383,6 +413,11 @@ export interface RuntimeStatePayload {
   readonly authority?: RuntimeAuthority;
   /** @deprecated v1 legacy — заменён на `capture.mode` (board.capture). Удаляется в CT7. */
   readonly followerMode?: RuntimeFollowerMode | null;
+  /**
+   * Удержание «буфер полон» (M4, #2309). `null`/отсутствие — удержания нет.
+   * Push: при входе в удержание, повышении локального эпизода до серверного id, сбросе.
+   */
+  readonly overflowHold?: RuntimeOverflowHoldPayload | null;
 }
 
 /** Строка лога runtime (node → server → cabinet). */
@@ -853,4 +888,41 @@ export function parseBoardScenarioListPayload(raw: unknown): BoardScenarioListPa
     return null;
   }
   return { deviceId: raw.deviceId, scenarios, selectedScenarioId: selected };
+}
+
+/**
+ * Валидирует значение `runtime.state.overflowHold` (M4, #2309). `null`/`undefined` —
+ * удержания нет → null. Кривое значение (нет фазы/причины/времени, id не строка) —
+ * тоже null: кабинет не должен нарисовать «остановлен» по мусору.
+ */
+export function parseRuntimeOverflowHoldPayload(raw: unknown): RuntimeOverflowHoldPayload | null {
+  if (raw === null || raw === undefined || !isRecord(raw)) {
+    return null;
+  }
+  const phase = raw.phase;
+  if (phase !== 'held_local' && phase !== 'held') {
+    return null;
+  }
+  const policy = raw.policy;
+  if (policy !== 'stop' && policy !== 'smart_cleanup') {
+    return null;
+  }
+  if (!isNonEmptyString(raw.reason) || !isIsoDateString(raw.overflowAt)) {
+    return null;
+  }
+  const overflowId = raw.overflowId;
+  if (overflowId !== null && !isNonEmptyString(overflowId)) {
+    return null;
+  }
+  // Фаза `held` без id — противоречие: подтверждённый эпизод обязан нести серверный id.
+  if (phase === 'held' && overflowId === null) {
+    return null;
+  }
+  return {
+    phase,
+    reason: raw.reason,
+    overflowId: overflowId === null ? null : overflowId,
+    overflowAt: raw.overflowAt,
+    policy,
+  };
 }

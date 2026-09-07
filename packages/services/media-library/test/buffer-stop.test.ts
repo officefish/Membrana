@@ -91,9 +91,9 @@ describe('слово stop-сигнала', () => {
 });
 
 describe('взаимоисключение режимов', () => {
-  it('выбрана автоочистка → сценарий не получает stop даже на 95%', () => {
+  it('выбрана умная очистка → сценарий не получает stop даже на 95% (до T12 — «не стоп»)', () => {
     const v = stopDecision(fill(Math.ceil(1024 * BUFFER_AUTO_CLEANUP_RATIO), 1024), {
-      policy: 'auto-cleanup',
+      policy: 'smart_cleanup',
     });
     expect(v.autoCleanupDue).toBe(true);
     expect(v.action).not.toBe('stop');

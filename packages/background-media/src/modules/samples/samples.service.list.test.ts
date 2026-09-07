@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { OverflowEpisodeRegistry } from './overflow-episode-registry';
 import { SamplesService } from './samples.service';
 
 describe('SamplesService.list', () => {
@@ -50,6 +51,7 @@ describe('SamplesService.list', () => {
       devices as never,
       blobs as never,
       audio as never,
+      new OverflowEpisodeRegistry(() => new Date(0)),
     );
   });
 

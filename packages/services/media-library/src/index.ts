@@ -147,6 +147,11 @@ export {
 export {
   ServerStorageBackend,
   createServerStorageBackend,
+  parseSampleRefusal,
+  type SampleRefusal,
+  type SampleRefusalAxis,
+  type SampleRefusalListener,
+  type SampleUploadGate,
   type ServerStorageBackendConfig,
 } from './backends/server-storage-backend.js';
 

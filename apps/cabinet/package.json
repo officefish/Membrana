@@ -20,6 +20,7 @@
     "@membrana/device-board": "*",
     "@membrana/journal-report-views": "*",
     "@membrana/media-library-service": "*",
+    "@membrana/plugin-contracts": "*",
     "@membrana/sample-playback-service": "*",
     "@membrana/telemetry-journal-service": "*",
     "react": "^18.3.1",

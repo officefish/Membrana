@@ -37,6 +37,7 @@
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.test.tsx"],
   "references": [
     { "path": "../../packages/core" },
+    { "path": "../../packages/plugin-contracts" },
     { "path": "../../packages/device-board" },
     { "path": "../../packages/services/audio-engine" },
     { "path": "../../packages/services/sample-playback" },

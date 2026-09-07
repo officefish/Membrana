@@ -65,6 +65,75 @@ const EXPECTED_PATHS = [
   '/v1/open/devices/{deviceId}/samples/{sampleId}/blob',
 ];
 
+/**
+ * Зуб двух форм ответа загрузки пробы (вердикт M2, #2307): 201 — проба легла; 200 — доменный
+ * отказ `{ ok:false, reason, buffer, userStorage, overflowPolicy, overflowId, overflowAt }`;
+ * 413 — только транспорт, без доменного `reason`.
+ *
+ * Ожидаемые литералы `reason` читаются из СЛОВАРЯ (`plugin-contracts/dist/buffer-overflow`),
+ * не пишутся здесь — третья копия строк запрещена. Порчи → красный: снять `@ApiResponse(200)`;
+ * `reason` без enum или с лишним литералом; вернуть в 413 описание квоты.
+ */
+const UPLOAD_PATH = '/v1/devices/{deviceId}/collections/{collectionId}/samples';
+const REFUSAL_FIELDS = ['ok', 'reason', 'buffer', 'userStorage', 'overflowPolicy', 'overflowId', 'overflowAt'];
+
+function resolveSchema(doc, schema) {
+  if (schema && typeof schema.$ref === 'string') {
+    const name = schema.$ref.split('/').pop();
+    return doc.components?.schemas?.[name];
+  }
+  return schema;
+}
+
+async function checkUploadResponseForms(doc) {
+  const problems = [];
+  const dictionaryUrl = pathToFileURL(
+    resolve(pkgRoot, '..', 'plugin-contracts', 'dist', 'buffer-overflow', 'reasons.js'),
+  ).href;
+  const { BUFFER_OVERFLOW_REASONS } = await import(dictionaryUrl);
+  const expectedReasons = Object.values(BUFFER_OVERFLOW_REASONS).sort();
+
+  const responses = doc.paths?.[UPLOAD_PATH]?.post?.responses ?? {};
+  if (!responses['201']) problems.push('201 (sample stored) is not documented');
+
+  const refusal = responses['200'];
+  if (!refusal) {
+    problems.push('200 (domain refusal) is not documented');
+  } else {
+    const schema = resolveSchema(doc, refusal.content?.['application/json']?.schema);
+    if (!schema?.properties) {
+      problems.push('200 has no object schema');
+    } else {
+      const missing = REFUSAL_FIELDS.filter((f) => !schema.properties[f]);
+      if (missing.length) problems.push(`200 schema lacks fields: ${missing.join(', ')}`);
+      const okEnum = schema.properties.ok?.enum;
+      if (!Array.isArray(okEnum) || okEnum.length !== 1 || okEnum[0] !== false) {
+        problems.push('200 schema: ok must be enum [false]');
+      }
+      const reasonEnum = schema.properties.reason?.enum;
+      if (!Array.isArray(reasonEnum)) {
+        problems.push('200 schema: reason has no enum');
+      } else if (JSON.stringify([...reasonEnum].sort()) !== JSON.stringify(expectedReasons)) {
+        problems.push(
+          `200 schema: reason enum ${JSON.stringify(reasonEnum)} != dictionary ${JSON.stringify(expectedReasons)}`,
+        );
+      }
+    }
+  }
+
+  const tooLarge = responses['413'];
+  if (!tooLarge) {
+    problems.push('413 (transport: file too large) is not documented');
+  } else {
+    const description = tooLarge.description ?? '';
+    if (!/transport/iu.test(description)) problems.push('413 must be described as transport-only');
+    if (/quota exceeded/iu.test(description)) problems.push('413 must not describe quota as its meaning');
+    const schema = resolveSchema(doc, tooLarge.content?.['application/json']?.schema);
+    if (schema?.properties?.reason) problems.push('413 must not carry a domain reason');
+  }
+  return problems;
+}
+
 async function main() {
   const distApp = pathToFileURL(resolve(pkgRoot, 'dist/app.module.js')).href;
   const distPrisma = pathToFileURL(resolve(pkgRoot, 'dist/prisma/prisma.service.js')).href;
@@ -107,6 +176,7 @@ async function main() {
   const doc = JSON.parse(json.payload);
   const paths = Object.keys(doc.paths ?? {});
   const missingPaths = EXPECTED_PATHS.filter((path) => !paths.includes(path));
+  const refusalProblems = await checkUploadResponseForms(doc);
 
   console.log('GET /docs/     ->', ui.statusCode, ui.headers['content-type']);
   console.log('GET /docs-json ->', json.statusCode, doc.info?.title ?? '(no title)');
@@ -127,6 +197,13 @@ async function main() {
     process.exitCode = 1;
     return;
   }
+  if (refusalProblems.length > 0) {
+    console.error('Swagger tooth: sample upload must document both response forms (M2, #2307):');
+    for (const problem of refusalProblems) console.error(`  - ${problem}`);
+    process.exitCode = 1;
+    return;
+  }
+  console.log('Upload response forms: 201 stored · 200 domain refusal (reason enum = dictionary) · 413 transport-only');
   console.log('\nSwagger OK');
 }
 

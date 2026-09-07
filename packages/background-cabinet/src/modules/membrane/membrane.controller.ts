@@ -1,6 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import type { CreateAccessKeyDto, CreateNodeDto } from './membrane.dto';
+import type {
+  CreateAccessKeyDto,
+  CreateNodeDto,
+  SetBufferPolicyBindingDto,
+  SetBufferPolicyDto,
+} from './membrane.dto';
+import { MembraneBufferPolicyService } from './membrane-buffer-policy.service';
 import { MembraneService } from './membrane.service';
 import { SessionGuard, type AuthenticatedRequest } from '../../common/guards/session.guard';
 
@@ -8,7 +14,49 @@ import { SessionGuard, type AuthenticatedRequest } from '../../common/guards/ses
 @Controller('v1')
 @UseGuards(SessionGuard)
 export class MembraneController {
-  constructor(private readonly membraneService: MembraneService) {}
+  constructor(
+    private readonly membraneService: MembraneService,
+    private readonly bufferPolicy: MembraneBufferPolicyService,
+  ) {}
+
+  /**
+   * ПОЛИТИКА ПЕРЕПОЛНЕНИЯ БУФЕРА (#2308, M1). Три ручки записи ниже — origin команды оператора.
+   * Конвенция 12.08: доменный отказ — `200 { ok:false, reason }` из закрытого списка
+   * (`buffer-policy.ts`), 4xx остаются транспорту (401 — сессия, 403/404 — чужой/несуществующий
+   * узел). Мембрана — из сессии, не из тела. Каждый успех несёт `contextSync: {updated, failed}`.
+   */
+  @Put('membranes/me/buffer-policy')
+  @ApiOperation({
+    summary: 'Set the membrane buffer overflow policy (stop | smart_cleanup with full params); fans out to all devices',
+  })
+  async setBufferPolicy(@Req() req: AuthenticatedRequest, @Body() body: SetBufferPolicyDto) {
+    const membrane = await this.membraneService.getOrCreateMembraneForUser(req.authUser!.id);
+    return this.bufferPolicy.setMembranePolicy(membrane.id, body);
+  }
+
+  @Put('membranes/me/buffer-policy/binding')
+  @ApiOperation({
+    summary: 'Set the "apply to all devices" binding; enabling requires confirmed=true; fans out to all devices',
+  })
+  async setBufferPolicyBinding(
+    @Req() req: AuthenticatedRequest,
+    @Body() body: SetBufferPolicyBindingDto,
+  ) {
+    const membrane = await this.membraneService.getOrCreateMembraneForUser(req.authUser!.id);
+    return this.bufferPolicy.setBinding(membrane.id, body ?? {});
+  }
+
+  @Put('nodes/:nodeId/buffer-policy')
+  @ApiOperation({
+    summary: 'Set the per-device buffer overflow policy of a node (refused while the membrane binding is on)',
+  })
+  setNodeBufferPolicy(
+    @Req() req: AuthenticatedRequest,
+    @Param('nodeId') nodeId: string,
+    @Body() body: SetBufferPolicyDto,
+  ) {
+    return this.bufferPolicy.setNodePolicy(req.authUser!.id, nodeId, body);
+  }
 
   @Get('membranes/me')
   @ApiOperation({ summary: 'Return the authenticated user membrane' })

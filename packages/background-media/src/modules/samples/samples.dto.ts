@@ -5,6 +5,56 @@ import {
   SAMPLE_LABELS,
   SAMPLE_SOURCES_API,
 } from '../../common/swagger/openapi.constants';
+import {
+  BUFFER_OVERFLOW_REASON_VALUES,
+  OVERFLOW_POLICY_VALUES,
+  type BufferOverflowReason,
+  type OverflowPolicy,
+} from './buffer-overflow-refusal';
+
+/** Ось квоты — те же ключи и та же арифметика, что `GET :deviceId/quota`. */
+export class QuotaAxisDto {
+  @ApiProperty({ example: 1_073_741_824 })
+  usedBytes!: number;
+
+  @ApiProperty({ example: 1_073_741_824 })
+  limitBytes!: number;
+}
+
+/**
+ * Доменный отказ «места нет» (вердикт M2, #2307): HTTP 200, не ошибка транспорта. Строки
+ * `reason`/`overflowPolicy` — из mapper'а, который единственный чеканит их на сервере; в этом
+ * файле литералов словаря нет.
+ */
+export class BufferOverflowRefusalDto {
+  @ApiProperty({ enum: [false], example: false })
+  ok!: false;
+
+  @ApiProperty({
+    enum: BUFFER_OVERFLOW_REASON_VALUES,
+    description:
+      'Closed dictionary (@membrana/plugin-contracts buffer-overflow): device buffer full vs user storage full. Read this, not the HTTP status.',
+  })
+  reason!: BufferOverflowReason;
+
+  @ApiProperty({ type: QuotaAxisDto })
+  buffer!: QuotaAxisDto;
+
+  @ApiProperty({ type: QuotaAxisDto })
+  userStorage!: QuotaAxisDto;
+
+  @ApiProperty({ enum: OVERFLOW_POLICY_VALUES, description: 'Device overflow policy known to the server' })
+  overflowPolicy!: OverflowPolicy;
+
+  @ApiProperty({
+    format: 'uuid',
+    description: 'Opaque overflow episode id — identical for every refusal of one episode',
+  })
+  overflowId!: string;
+
+  @ApiProperty({ format: 'date-time', description: 'First refusal of the episode (ISO-8601 UTC)' })
+  overflowAt!: string;
+}
 
 export class UploadMetaOverrideDto {
   @ApiPropertyOptional()

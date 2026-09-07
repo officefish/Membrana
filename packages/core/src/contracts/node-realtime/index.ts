@@ -25,6 +25,9 @@ export {
   type RuntimeCommandPayload,
   type RuntimeLogPayload,
   type RuntimeMode,
+  type RuntimeOverflowHoldPayload,
+  type RuntimeOverflowHoldPhase,
+  type RuntimeOverflowPolicy,
   type RuntimeStatePayload,
   type SessionInvalidatedPayload,
 } from './events.js';
@@ -71,6 +74,7 @@ export {
   parsePresenceHeartbeatPayload,
   parsePresenceSnapshotPayload,
   parseRuntimeCommandPayload,
+  parseRuntimeOverflowHoldPayload,
 } from './validate-payloads.js';
 
 export { createNodeRealtimeEnvelope, parseNodeRealtimeEnvelope } from './parse.js';

@@ -14,24 +14,12 @@ const TYPES = readFileSync(join(HERE, 'types.ts'), 'utf8');
 
 const MB = 1048576;
 
-describe('порог → stop → сигнал: один verdict для state, recorder и панели', () => {
+describe('порог → stop → сигнал: один verdict для state и панели (#2204/#2214)', () => {
   it('state считает stopDecision с выбранной политикой, а панель не копирует порог', () => {
     expect(STATE).toContain('this.bufferVerdict = this.makeStopDecision()');
     expect(STATE).toContain('policy: this.bufferPolicy');
     expect(PANEL).toContain('snapshot.bufferVerdict.say');
     expect(PANEL).not.toContain('stopDecision(');
-  });
-
-  it('активная запись гасится по stop-verdict, а не только по полной квоте', () => {
-    expect(PLUGIN).toContain("verdict.action === 'stop'");
-    expect(PLUGIN).toContain('const holding = payload.recordingBlocked || verdict.action === \'stop\'');
-    expect(PLUGIN).toContain('void finishActiveRecorder(\'error\')');
-  });
-
-  it('новый старт отбивается тем же stop-verdict до следующего сегмента', () => {
-    expect(PLUGIN).toContain("if (snap.bufferVerdict.action === 'stop') {");
-    expect(PLUGIN).toContain('micBufferRecorderPluginState.setError(snap.bufferVerdict.say)');
-    expect(PLUGIN).toContain('if (!canStartRecording(humanRestart) || !currentStream) return;');
   });
 
   it('наружный сигнал — плашка verdict.say с причиной и остатком', () => {
@@ -44,44 +32,86 @@ describe('порог → stop → сигнал: один verdict для state, r
   });
 });
 
-describe('насовсем: освобождение места не запускает сценарий само', () => {
-  it('recorder хранит permanent hold до humanRestart', () => {
-    expect(PLUGIN).toContain('let bufferStoppedPermanently = false');
-    expect(PLUGIN).toContain('bufferStoppedPermanently && !humanRestart');
-    expect(PLUGIN).toContain('bufferStoppedPermanently && humanRestart');
+/**
+ * #2309, M3 (г): решение «стоп» и память «уже остановлен» живут в ОДНОМ носителе
+ * `DeviceOverflowHold`; плагин — вызовы носителя, не вторая машина.
+ */
+describe('плагин — тонкий адаптер носителя удержания (#2309)', () => {
+  it('старт и гашение идут через носитель: refuseStart / subscribe / applyLocalGuardFromQuota', () => {
+    expect(PLUGIN).toContain("from '../../lib/device-overflow-hold'");
+    expect(PLUGIN).toContain("hold.refuseStart({ source: 'mic'");
+    expect(PLUGIN).toContain('hold.subscribe(');
+    expect(PLUGIN).toContain('applyLocalGuardFromQuota(');
+    expect(PLUGIN).toContain("cancelActiveRecorder('overflow-hold')");
   });
 
-  it('после quota update нет авто-resume через schedulePauseThenNextSegment', () => {
-    const quotaHandler = PLUGIN.slice(PLUGIN.indexOf('const unsubQuota = subscribeMediaLibraryQuotaUpdated'));
-    expect(quotaHandler).not.toContain('if (runtimeMode === \'auto\' && !activeRecorder) schedulePauseThenNextSegment()');
-    expect(quotaHandler).toContain('bufferStoppedPermanently = true');
-  });
-
-  it('ручной restart назван в слове, resumable:true запрещён', () => {
+  it('второй машины нет: ни локального флага удержания, ни своего overflowId, ни ручного restart (порча → красный)', () => {
+    expect(PLUGIN).not.toMatch(/bufferStoppedPermanently|bufferHold\b|overflowStopped|heldByBuffer/u);
+    expect(PLUGIN).not.toMatch(/let\s+\w*[hH]eld\w*\s*=/u);
+    expect(PLUGIN).not.toMatch(/overflowId\s*=/u);
+    expect(PLUGIN).not.toContain('humanRestart');
+    expect(PLUGIN).not.toContain("bufferVerdict.action === 'stop'");
     expect(STATE).not.toContain('resumable');
-    expect(PLUGIN).not.toContain('bufferHold');
-    const v = stopDecision({ usedBytes: 1020 * MB, limitBytes: 1024 * MB }, { policy: 'stop' });
-    expect(v.restart).toBe('manual');
-    expect(v.say).toMatch(/запустите сценарий рукой/u);
+  });
+
+  it('активная запись при удержании НЕ дописывается в отправку: гашение — cancel, не finish', () => {
+    const quench = PLUGIN.slice(PLUGIN.indexOf('const quenchForOverflowHold'), PLUGIN.indexOf('const canStartRecording'));
+    expect(quench).toContain("cancelActiveRecorder('overflow-hold')");
+    expect(quench).not.toContain('finishActiveRecorder');
+  });
+
+  it('обработчик квоты не гасит и не возобновляет сам — только страж в носитель', () => {
+    const quotaHandler = PLUGIN.slice(
+      PLUGIN.indexOf('const unsubQuota = subscribeMediaLibraryQuotaUpdated'),
+      PLUGIN.indexOf('const unsubHold'),
+    );
+    expect(quotaHandler).toContain('applyLocalGuardFromQuota(');
+    expect(quotaHandler).not.toContain('schedulePauseThenNextSegment');
+    expect(quotaHandler).not.toContain('release(');
+    expect(quotaHandler).not.toContain('finishActiveRecorder');
+  });
+
+  it('политику носитель берёт у читателя B (мост buffer-policy-bridge), а не у конфига плагина', () => {
+    expect(PLUGIN).toContain("from '../../lib/buffer-policy-bridge'");
+    const guardCall = PLUGIN.slice(PLUGIN.indexOf('applyLocalGuardFromQuota('), PLUGIN.indexOf('const unsubHold'));
+    expect(guardCall).toContain('getEffectiveOverflowPolicy()');
+    expect(guardCall).not.toContain('cfg.bufferPolicy');
+    expect(guardCall).not.toContain('Stub');
   });
 });
 
-describe('режимы взаимоисключающие', () => {
-  it('конфиг имеет одну policy: auto-cleanup или stop', () => {
-    expect(TYPES).toContain("bufferPolicy: 'auto-cleanup'");
-    expect(TYPES).toContain("raw?.bufferPolicy === 'stop' ? 'stop' : 'auto-cleanup'");
-    expect(STATE).toContain('readonly bufferPolicy');
+/**
+ * BC-2 (контракт интеграции `cowork-buffer-full-stop`): плагин — ЗЕРКАЛО политики B, не хозяин.
+ * Порчи → красный: дефолт `'auto-cleanup'` вернулся в конфиг/состояние; панель снова патчит
+ * `bufferPolicy`; зеркало не подписано на читателя.
+ */
+describe('зеркало политики B: плагин не хозяин bufferPolicy', () => {
+  it('в конфиге плагина политики нет, умолчания автоочистки нет нигде (судится код, не комментарии)', () => {
+    const code = (src: string) => src.split('\n').filter((l) => !/^\s*(\/\/|\*|\/\*|\{\/\*)/u.test(l)).join('\n');
+    expect(code(TYPES)).not.toMatch(/bufferPolicy/u);
+    expect(code(TYPES)).not.toContain('auto-cleanup');
+    expect(code(STATE)).not.toContain("'auto-cleanup'");
+    expect(code(PANEL)).not.toContain('auto-cleanup');
+    expect(STATE).toContain("bufferPolicy: BufferPressurePolicy = 'stop'");
   });
 
-  it('выбор auto-cleanup не ставит stop even at threshold', () => {
-    const v = stopDecision({ usedBytes: 973 * MB, limitBytes: 1024 * MB }, { policy: 'auto-cleanup' });
-    expect(v.autoCleanupDue).toBe(true);
-    expect(v.action).not.toBe('stop');
+  it('слово панели — от читателя: состояние подписано на мост, панель не патчит политику', () => {
+    expect(PLUGIN).toContain('subscribeEffectiveOverflowPolicy(');
+    expect(PLUGIN).toContain('setBufferPolicy(getEffectiveOverflowPolicy())');
+    expect(STATE).toContain('readonly bufferPolicy');
+    expect(PANEL).not.toMatch(/patchConfig\(\{\s*bufferPolicy/u);
+    expect(PANEL).toContain('mic-buffer-policy-mirror');
+  });
+
+  it('smart_cleanup для вердикта до T12 = «не стоп», stop = стоп на 95%', () => {
+    const smart = stopDecision({ usedBytes: 973 * MB, limitBytes: 1024 * MB }, { policy: 'smart_cleanup' });
+    expect(smart.autoCleanupDue).toBe(true);
+    expect(smart.action).not.toBe('stop');
+    const stop = stopDecision({ usedBytes: 973 * MB, limitBytes: 1024 * MB }, { policy: 'stop' });
+    expect(stop.action).toBe('stop');
   });
 
   it('stop-ветка не вызывает очистку буфера', () => {
     expect(PLUGIN).not.toMatch(/requestClearMediaLibraryBuffer|deleteSamplesByIds|planBufferCleanup/u);
-    expect(PANEL).toContain("patchConfig({ bufferPolicy: 'stop' })");
-    expect(PANEL).toContain("patchConfig({ bufferPolicy: 'auto-cleanup' })");
   });
 });

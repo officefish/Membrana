@@ -18,6 +18,11 @@ export interface MicBufferRecorderSnapshot {
   readonly manualPresetSec: ManualDurationPresetSec;
   readonly autoSegmentSec: AutoSegmentPresetSec;
   readonly pauseSec: number;
+  /**
+   * ЗЕРКАЛО эффективной политики переполнения прибора (BC-2, вердикт M1): значение приходит от
+   * читателя блока B (`lib/buffer-policy-bridge`, источник — `/quota` сервера записей), плагин
+   * его не задаёт. Умолчание до первого чтения и на любой дыре — `stop`.
+   */
   readonly bufferPolicy: BufferPressurePolicy;
   readonly isRecording: boolean;
   readonly elapsedSec: number;
@@ -55,7 +60,7 @@ class MicBufferRecorderPluginStateImpl {
   private manualPresetSec: ManualDurationPresetSec = 5;
   private autoSegmentSec: AutoSegmentPresetSec = 5;
   private pauseSec = 1;
-  private bufferPolicy: BufferPressurePolicy = 'auto-cleanup';
+  private bufferPolicy: BufferPressurePolicy = 'stop';
   private isRecording = false;
   private elapsedSec = 0;
   private targetDurationSec = 5;
@@ -106,7 +111,6 @@ class MicBufferRecorderPluginStateImpl {
     manualPresetSec: ManualDurationPresetSec;
     autoSegmentSec: AutoSegmentPresetSec;
     pauseSec: number;
-    bufferPolicy: BufferPressurePolicy;
     effectiveFormat: MediaLibraryCaptureFormat;
   }): void {
     this.mode = params.mode;
@@ -114,9 +118,16 @@ class MicBufferRecorderPluginStateImpl {
     this.manualPresetSec = params.manualPresetSec;
     this.autoSegmentSec = params.autoSegmentSec;
     this.pauseSec = params.pauseSec;
-    this.bufferPolicy = params.bufferPolicy;
     this.bufferVerdict = this.makeStopDecision();
     this.effectiveFormat = params.effectiveFormat;
+    this.rebuild();
+  }
+
+  /** Зеркало политики от читателя B; слово панели и вердикт пересчитываются из одного значения. */
+  setBufferPolicy(policy: BufferPressurePolicy): void {
+    if (this.bufferPolicy === policy) return;
+    this.bufferPolicy = policy;
+    this.bufferVerdict = this.makeStopDecision();
     this.rebuild();
   }
 
