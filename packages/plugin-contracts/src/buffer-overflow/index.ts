@@ -19,3 +19,10 @@ export {
   type QuotaAxis,
   type QuotaSubject,
 } from './refusal.js';
+
+export {
+  SMART_CLEANUP_AVAILABLE,
+  SMART_CLEANUP_UNAVAILABLE_REASON,
+  type SmartCleanupAvailability,
+  type SmartCleanupUnavailableReason,
+} from './smart-cleanup-gate.js';
