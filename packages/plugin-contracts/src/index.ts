@@ -49,3 +49,22 @@ export {
 export { type PluginContext, type PluginExecutor } from './executor.js';
 
 export { type IPluginHost } from './host.js';
+
+/**
+ * Словарь отказа «места нет» и режимов переполнения (вердикт M2, #2307; коворк
+ * `cowork-buffer-full-stop`, блок A). Экспорт внесён на интеграции (адаптер A-2 контракта):
+ * единственный носитель литералов в монорепо — сервер записей чеканит, прибор и кабинет импортируют.
+ */
+export {
+  BUFFER_OVERFLOW_REASONS,
+  OVERFLOW_POLICIES,
+  QUOTA_SUBJECTS,
+  isBufferOverflowReason,
+  isBufferOverflowRefusal,
+  isOverflowPolicy,
+  type BufferOverflowReason,
+  type BufferOverflowRefusal,
+  type OverflowPolicy,
+  type QuotaAxis,
+  type QuotaSubject,
+} from './buffer-overflow/index.js';

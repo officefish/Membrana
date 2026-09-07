@@ -3,25 +3,22 @@
  * отказа (вердикт M2, #2307: «пишет литералы при отказе — сервер; потребители — импорт»).
  *
  * Почему литералы здесь, а не импорт рантайм-объекта: `@membrana/plugin-contracts` — ESM-only,
- * media — CommonJS; рантайм-значения оттуда достаются лишь динамическим `import()` корня пакета,
- * а барель пакета до интеграции коворка `buffer-overflow` не экспортирует. Типы же доступны
- * статически, и каждый литерал ниже проверен `satisfies` против union словаря: переименование
- * в словаре красит `tsc` этого пакета. Второй копии строк в media нет — это сторожит
- * `buffer-overflow-dictionary.test.ts` (сканирует исходники обоих пакетов).
- *
- * ВРЕМЕННО ДО ИНТЕГРАЦИИ: импорт типов идёт по относительному пути к исходникам соседнего
- * пакета (project reference перенаправляет на `dist/*.d.ts`). После экспорта из бареля
- * `packages/plugin-contracts/src/index.ts` (общий файл, вносит координатор) строка меняется на
- * `from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' }` — как в
- * `first-wave.registrar.ts`.
+ * media — CommonJS; рантайм-значения оттуда достаются лишь динамическим `import()`, а типы —
+ * статически (`with { 'resolution-mode': 'import' }`, как в `first-wave.registrar.ts`). Каждый
+ * литерал ниже проверен `satisfies` против union словаря: переименование в словаре красит `tsc`
+ * этого пакета. Второй копии строк в media нет — это сторожит `buffer-overflow-dictionary.test.ts`
+ * (сканирует исходники пакетов и приложений). Поле политики B (`devices/buffer-policy.ts`) берёт
+ * значения отсюда, а не пишет своих — адаптер B-1 контракта интеграции `cowork-buffer-full-stop`.
  */
 import type {
+  BUFFER_OVERFLOW_REASONS,
   BufferOverflowReason,
   BufferOverflowRefusal,
+  OVERFLOW_POLICIES,
   OverflowPolicy,
   QuotaAxis,
   QuotaSubject,
-} from '../../../../plugin-contracts/src/buffer-overflow/index.js' with { 'resolution-mode': 'import' };
+} from '@membrana/plugin-contracts' with { 'resolution-mode': 'import' };
 
 export type {
   BufferOverflowReason,
@@ -30,6 +27,15 @@ export type {
   QuotaAxis,
   QuotaSubject,
 };
+
+/**
+ * Литералы режимов и причин как ТИПЫ — для дискриминированных union'ов в CJS-коде media (B-1):
+ * ключи const-объектов словаря доступны через `typeof` даже из type-only импорта, строк здесь
+ * не появляется.
+ */
+export type StopPolicy = (typeof OVERFLOW_POLICIES)['STOP'];
+export type SmartCleanupPolicy = (typeof OVERFLOW_POLICIES)['SMART_CLEANUP'];
+export type DeviceBufferFullReason = (typeof BUFFER_OVERFLOW_REASONS)['DEVICE_BUFFER_FULL'];
 
 /**
  * Чеканка: ось квоты → причина. Единственная связь «субъект ↔ литерал» на сервере.
