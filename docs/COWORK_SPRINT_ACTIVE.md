@@ -9,7 +9,7 @@
 | BASE_SHA | `edcbbda9` (= origin/main на момент открытия) |
 | openedAt | 2026-09-06 |
 | owner cut ratification | формат и нарезка — слово владельца 06.09 («Б — коворк „полный буфер“, три изолированных блока»); билеты выписаны рукой владельца из эпика |
-| current phase | **4 — Integration** |
+| current phase | **5 — Merge + archive** |
 | integration deadline | 2026-09-09 fallback (гейт событийный: ready(A) ∧ ready(B) ∧ ready(C)) |
 | координатор | сессия Б, дерево `Membrana-cw-buffer-full`, ветка `cowork/cowork-buffer-full-stop/coordination` |
 
@@ -46,8 +46,8 @@ Integration-ветка: `cowork/cowork-buffer-full-stop/integration` — зав�
 | 1 — Concept | ✅ закрыта | 2026-09-06 | три `CONCEPT.md` + первые `EXPECTATIONS.md` |
 | 2 — Isolated build | ✅ закрыта | 2026-09-06 | все три DoD зелёные на стабах, сверено координатором прогоном; гейт сработал по предикату в день открытия, дедлайн 09.09 не понадобился |
 | 3 — Interface Consilium | ✅ закрыта | 2026-09-06 | [протокол](./discussions/cowork-sprint-cowork-buffer-full-stop-interface-consilium.md) + [`INTERFACE_CONTRACT.md`](./cowork-sprint/cowork-buffer-full-stop/INTERFACE_CONTRACT.md); 10 адаптеров, эскалации нет |
-| 4 — Integration | в работе | 2026-09-07 | ветка `cowork/cowork-buffer-full-stop/integration`, дерево `Membrana-cw-buffer-integration` |
-| 5 — Merge + archive | — | — | |
+| 4 — Integration | ✅ закрыта | 2026-09-07 | ветка `cowork/cowork-buffer-full-stop/integration` (`0585f0ba` + доки): 10 адаптеров, переписано 0, стабов и временной константы нет; сверено координатором: media 9/91, client 13/84, cabinet 3/25, wire-sync, оба swagger зелёные; протокол `INTEGRATION_CHECKS.md` |
+| 5 — Merge + archive | в работе | 2026-09-07 | один PR integration → main; мердж — слово владельца; `RETROSPECTIVE.md` написана |
 
 ## Сверено в стволе до нарезки (06.09)
 
