@@ -9,7 +9,7 @@
 | BASE_SHA | `edcbbda9` (= origin/main на момент открытия) |
 | openedAt | 2026-09-06 |
 | owner cut ratification | формат и нарезка — слово владельца 06.09 («Б — коворк „полный буфер“, три изолированных блока»); билеты выписаны рукой владельца из эпика |
-| current phase | **1 — Concept** |
+| current phase | **4 — Integration** |
 | integration deadline | 2026-09-09 fallback (гейт событийный: ready(A) ∧ ready(B) ∧ ready(C)) |
 | координатор | сессия Б, дерево `Membrana-cw-buffer-full`, ветка `cowork/cowork-buffer-full-stop/coordination` |
 
@@ -18,8 +18,8 @@
 | Блок | Билет | Ветка | Worktree | Фаза | Готовность |
 |------|-------|-------|----------|------|------------|
 | `refusal-contract` (A) | #2307 | `cowork/cowork-buffer-full-stop/refusal-contract` | `Membrana-cw-refusal` | freeze | `f05e4bdc`; 35 зубов samples + 33 plugin-contracts, 9 порч красные; сверено координатором (5 файлов/35 + 2/33 зелёные, вне зоны только `verify-swagger.mjs` — судья swagger, зона по смыслу) |
-| `overflow-policy` (B) | #2308 | `cowork/cowork-buffer-full-stop/overflow-policy` | `Membrana-cw-policy` | 1 | — |
-| `device-hold` (C) | #2309 | `cowork/cowork-buffer-full-stop/device-hold` | `Membrana-cw-hold` | 1 | — |
+| `overflow-policy` (B) | #2308 | `cowork/cowork-buffer-full-stop/overflow-policy` | `Membrana-cw-policy` | freeze | `769fbbc8`; 42 файла, все в зоне; сверено координатором: media devices 4/50, cabinet pair+membrane 6/65, client buffer-policy 3/19, cabinet UI 1/10 зелёные, `verify:swagger` кабинета OK |
+| `device-hold` (C) | #2309 | `cowork/cowork-buffer-full-stop/device-hold` | `Membrana-cw-hold` | freeze | `b420c930`; 35 файлов, все в зоне; сверено координатором: client 14/87, core 5/51, cabinet 2/15 зелёные, `verify:wire-sync` OK; 6 порч красные |
 
 Все три ветки заведены от одного `BASE_SHA edcbbda9`.
 Integration-ветка: `cowork/cowork-buffer-full-stop/integration` — заводится координатором в Phase 4.
@@ -43,10 +43,10 @@ Integration-ветка: `cowork/cowork-buffer-full-stop/integration` — зав�
 | Фаза | Состояние | Дата | Артефакт |
 |------|-----------|------|----------|
 | 0 — Brief + open | ✅ закрыта | 2026-09-06 | brief по замеру ствола, ACTIVE, карточка реестра, 3 ветки от `edcbbda9`; предыдущий спринт закрыт `cowork:close` |
-| 1 — Concept | в работе | — | три `CONCEPT.md` + первые `EXPECTATIONS.md` |
-| 2 — Isolated build | — | — | |
-| 3 — Interface Consilium | — | — | |
-| 4 — Integration | — | — | |
+| 1 — Concept | ✅ закрыта | 2026-09-06 | три `CONCEPT.md` + первые `EXPECTATIONS.md` |
+| 2 — Isolated build | ✅ закрыта | 2026-09-06 | все три DoD зелёные на стабах, сверено координатором прогоном; гейт сработал по предикату в день открытия, дедлайн 09.09 не понадобился |
+| 3 — Interface Consilium | ✅ закрыта | 2026-09-06 | [протокол](./discussions/cowork-sprint-cowork-buffer-full-stop-interface-consilium.md) + [`INTERFACE_CONTRACT.md`](./cowork-sprint/cowork-buffer-full-stop/INTERFACE_CONTRACT.md); 10 адаптеров, эскалации нет |
+| 4 — Integration | в работе | 2026-09-07 | ветка `cowork/cowork-buffer-full-stop/integration`, дерево `Membrana-cw-buffer-integration` |
 | 5 — Merge + archive | — | — | |
 
 ## Сверено в стволе до нарезки (06.09)
