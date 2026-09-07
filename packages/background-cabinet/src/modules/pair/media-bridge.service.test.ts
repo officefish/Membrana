@@ -9,7 +9,7 @@
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { MediaBridgeService } from './media-bridge.service';
+import { MediaBridgeService, MediaContextRefusedError } from './media-bridge.service';
 import { hasRequestBody, headersForBody } from './request-headers';
 
 const CONFIG = {
@@ -113,6 +113,47 @@ describe('мост в media: запросы С телом', () => {
       datasetCatalogId: 'cat',
     });
     expect(contentTypeOf(calls[0]!.init)).toBe('application/json');
+  });
+});
+
+describe('мост в media: доменный отказ разноски (#2308)', () => {
+  let bridge: MediaBridgeService;
+
+  beforeEach(() => {
+    bridge = new MediaBridgeService(CONFIG);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  const CONTEXT = {
+    membraneId: 'm-1',
+    userStorageQuotaBytes: '1',
+    bufferQuotaBytes: '2',
+    datasetCatalogId: 'cat',
+    bufferPolicy: { mode: 'smart_cleanup' as const, params: null as never },
+  };
+
+  it('200 { ok:false, reason } — это ОТКАЗ, а не успех (порча: смотреть только на res.ok → красный)', async () => {
+    captureFetch({ ok: true, status: 200, body: { ok: false, reason: 'params_incomplete' } });
+    await expect(bridge.syncMembraneContext('dev-1', CONTEXT)).rejects.toBeInstanceOf(MediaContextRefusedError);
+    await expect(bridge.syncMembraneContext('dev-1', CONTEXT)).rejects.toMatchObject({ reason: 'params_incomplete' });
+  });
+
+  it('200 { ok:true, … } — успех; старый media без поля ok — тоже успех (совместимость)', async () => {
+    captureFetch({ body: { ok: true, id: 'dev-1', bufferPolicy: { mode: 'stop', params: null } } });
+    await expect(bridge.syncMembraneContext('dev-1', CONTEXT)).resolves.toBeUndefined();
+    captureFetch({ body: { id: 'dev-1', name: 'x' } });
+    await expect(bridge.syncMembraneContext('dev-1', CONTEXT)).resolves.toBeUndefined();
+  });
+
+  it('политика уезжает в теле контекста рядом с квотами — второго запроса нет', async () => {
+    const calls = captureFetch({ body: { ok: true } });
+    await bridge.syncMembraneContext('dev-1', CONTEXT);
+    expect(calls).toHaveLength(1);
+    const sent = JSON.parse(calls[0]!.init.body as string) as { membrane: { bufferPolicy: unknown } };
+    expect(sent.membrane.bufferPolicy).toEqual({ mode: 'smart_cleanup', params: null });
   });
 });
 

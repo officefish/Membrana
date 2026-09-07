@@ -1,5 +1,5 @@
 /**
- * РАЗНОСКА КОНТЕКСТА МЕМБРАНЫ ПО ЕЁ ПРИБОРАМ (#2281).
+ * РАЗНОСКА КОНТЕКСТА МЕМБРАНЫ ПО ЕЁ ПРИБОРАМ (#2281; политика переполнения — #2308).
  *
  * Зачем заведено. Квота живёт в кабинете, а СТЕРЕЖЁТ её media — по копии, лежащей у каждого
  * прибора. До сегодня эту копию обновляла ровно одна дорога: привязка (`PairService`). Значит
@@ -7,6 +7,11 @@
  * новый тариф и упирался в старую квоту до следующей привязки. Слово владельца 04.09: «квоту до
  * прибора доталкивает только привязка» — отсюда обязательство прогнать `syncMembraneContext` по
  * всем привязанным узлам после записи журнала.
+ *
+ * **Политика переполнения едет ТЕМ ЖЕ классом (#2308, M1).** Вердикт заседания: «разноска из
+ * кабинета тем же классом, что квоты». Второго носителя разноски нет; поле `bufferPolicy` лежит
+ * в том же контексте рядом с квотами. Отличие одно: квоты одинаковы для всех приборов мембраны,
+ * а политика — PER-DEVICE при снятой галочке, поэтому контекст считается на каждый прибор.
  *
  * **Почему это отдельный носитель, а не строки внутри перехода.** У разноски своё поведение:
  * порядок «сначала журнал, потом приборы», частичный успех как ЗАКОННЫЙ исход и счёт
@@ -25,6 +30,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { PrismaService } from '../../prisma/prisma.service';
+import { effectiveDevicePolicy, membranePolicyScope, type MembranePolicySetting } from '../membrane/buffer-policy';
 import { MediaBridgeService, type MediaMembraneContext } from './media-bridge.service';
 
 /** Счёт разноски. Наружу уезжает ровно это. */
@@ -33,6 +39,54 @@ export interface MembraneContextFanoutResult {
   readonly updated: number;
   /** Приборов, до которых контекст не доехал. */
   readonly failed: number;
+}
+
+/** Строка мембраны в объёме, нужном для контекста: тариф + политика + привязка. */
+interface MembraneForContext {
+  readonly id: string;
+  readonly tariff: {
+    readonly userStorageQuotaBytes: bigint;
+    readonly bufferQuotaBytes: bigint;
+    readonly datasetCatalogId: string;
+    readonly maxUserWorkspaces: number;
+  };
+  readonly bufferPolicy?: unknown;
+  readonly bufferPolicyParams?: unknown;
+  readonly bufferPolicyBinding?: boolean;
+}
+
+/** Строка прибора в объёме, нужном для контекста: адрес в media + собственная политика. */
+interface DeviceForContext {
+  readonly mediaDeviceId: string;
+  readonly nodeId: string;
+  readonly bufferPolicy?: unknown;
+  readonly bufferPolicyParams?: unknown;
+}
+
+/**
+ * Контекст прибора — ОДНА функция на все дороги (привязка, смена тарифа, смена политики,
+ * смена галочки). Разойдись сборки полей по дорогам — media получала бы разный контекст по
+ * разным путям, и «quota доехала, а политика нет» стало бы вопросом того, кто звонил.
+ *
+ * `device = null` — прибора ещё нет (первая привязка): при стоящей галочке он всё равно
+ * слушает мембрану, при снятой — получает умолчание `stop`.
+ */
+export function membraneContextForDevice(
+  membrane: MembraneForContext,
+  device: Pick<DeviceForContext, 'bufferPolicy' | 'bufferPolicyParams'> | null,
+): MediaMembraneContext {
+  return {
+    membraneId: membrane.id,
+    userStorageQuotaBytes: membrane.tariff.userStorageQuotaBytes.toString(),
+    bufferQuotaBytes: membrane.tariff.bufferQuotaBytes.toString(),
+    datasetCatalogId: membrane.tariff.datasetCatalogId,
+    maxUserWorkspaces: membrane.tariff.maxUserWorkspaces,
+    bufferPolicy: effectiveDevicePolicy({
+      binding: membrane.bufferPolicyBinding === true,
+      membrane,
+      device,
+    }),
+  };
 }
 
 @Injectable()
@@ -52,10 +106,25 @@ export class MembraneContextFanoutService {
    * контекст сверху значило бы разрешить звонящему разнести по приборам то, чего в базе нет.
    */
   async syncAllNodes(membraneId: string): Promise<MembraneContextFanoutResult> {
-    const membrane = await this.prisma.membrane.findUnique({
-      where: { id: membraneId },
-      include: { tariff: true },
-    });
+    return this.sync(membraneId, null);
+  }
+
+  /**
+   * Разнести контекст на ОДИН прибор — при смене его собственной политики (#2308). Та же
+   * функция контекста, тот же счёт: `{1, 0}` или `{0, 1}`.
+   */
+  async syncNode(membraneId: string, nodeId: string): Promise<MembraneContextFanoutResult> {
+    return this.sync(membraneId, nodeId);
+  }
+
+  private async sync(membraneId: string, onlyNodeId: string | null): Promise<MembraneContextFanoutResult> {
+    // Политика мембраны — отдельной строкой (`MembraneBufferPolicy`, см. schema); её отсутствие
+    // законно и читается как stop со снятой привязкой.
+    const [membraneRow, setting] = await Promise.all([
+      this.prisma.membrane.findUnique({ where: { id: membraneId }, include: { tariff: true } }),
+      this.prisma.membraneBufferPolicy.findUnique({ where: { membraneId } }) as Promise<MembranePolicySetting | null>,
+    ]);
+    const membrane = membraneRow ? { ...membraneRow, ...membranePolicyScope(setting) } : null;
     if (!membrane) {
       // Мембраны нет — разносить нечего и некуда. Не ошибка разноски: субъект исчез.
       this.logger.warn(`разноска контекста пропущена — мембрана ${membraneId} не найдена`);
@@ -65,24 +134,22 @@ export class MembraneContextFanoutService {
     // Приборы берём ВСЕ, включая отвязанные и отозванные: запись о приборе в media жива, и
     // предел она стережёт по своей копии. Пропустить их значило бы оставить в media заведомую
     // ложь о мембране ровно там, где она дороже всего — на неактивном, но существующем приборе.
-    const devices = await this.prisma.device.findMany({
-      where: { node: { membraneId: membrane.id } },
-      select: { mediaDeviceId: true, nodeId: true },
+    const devices: DeviceForContext[] = await this.prisma.device.findMany({
+      where: {
+        node: { membraneId: membrane.id },
+        ...(onlyNodeId ? { nodeId: onlyNodeId } : {}),
+      },
+      select: { mediaDeviceId: true, nodeId: true, bufferPolicy: true, bufferPolicyParams: true },
     });
     if (devices.length === 0) return { updated: 0, failed: 0 };
 
-    // Форма контекста — та же, что при привязке (`PairService.pair`). Второй сборки полей здесь
-    // нет по смыслу: разойдись они, media получала бы разный контекст по разным дорогам.
-    const context: MediaMembraneContext = {
-      membraneId: membrane.id,
-      userStorageQuotaBytes: membrane.tariff.userStorageQuotaBytes.toString(),
-      bufferQuotaBytes: membrane.tariff.bufferQuotaBytes.toString(),
-      datasetCatalogId: membrane.tariff.datasetCatalogId,
-      maxUserWorkspaces: membrane.tariff.maxUserWorkspaces,
-    };
-
     const outcomes = await Promise.allSettled(
-      devices.map((device) => this.mediaBridge.syncMembraneContext(device.mediaDeviceId, context)),
+      devices.map((device) =>
+        this.mediaBridge.syncMembraneContext(
+          device.mediaDeviceId,
+          membraneContextForDevice(membrane, device),
+        ),
+      ),
     );
 
     let updated = 0;

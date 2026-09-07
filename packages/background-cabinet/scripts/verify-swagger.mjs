@@ -38,6 +38,10 @@ const EXPECTED_PATHS = [
   '/v1/membranes/{membraneId}/nodes',
   '/v1/membranes/me',
   '/v1/membranes/me/nodes',
+  // #2308 — политика переполнения буфера: мембрана, галочка-привязка, прибор.
+  '/v1/membranes/me/buffer-policy',
+  '/v1/membranes/me/buffer-policy/binding',
+  '/v1/nodes/{nodeId}/buffer-policy',
   // #2281 — выбор тарифа собственным решением: витрина и смена.
   '/v1/membranes/me/tariff',
   '/v1/membranes/me/tariff/promo-redemptions',
