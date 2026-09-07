@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-05 |
-| Head SHA | 435fbd7c0eb6cae967abfab7b199f7dc19faecce |
+| Date | 2026-09-07 |
+| Head SHA | 35f9c5b2e86332c1f98b23be6917abc989fea9fb |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,12 +16,12 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1207 |
+| Code files under `scripts/` | 1209 |
 | Yarn scripts (package.json) | 463 |
 | Yarn → `scripts/` | 409 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 880 |
+| Code files without yarn ref | 882 |
 
 ## Yarn → scripts/ (409)
 
@@ -435,7 +435,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (880)
+## Code files without yarn ref (882)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -449,6 +449,7 @@
 - `scripts/_ollama-client.mjs`
 - `scripts/_ssh-cabinet-mp2-post-deploy.mjs`
 - `scripts/_ssh-cabinet-mp2-smoke.mjs`
+- `scripts/_ssh-cabinet-mp2-smoke.test.mjs`
 - `scripts/_ssh-cabinet-mp2-verify.mjs`
 - `scripts/_ssh-cabinet-mp3-debug.mjs`
 - `scripts/_ssh-cabinet-mp3-media-fix.mjs`
@@ -690,6 +691,7 @@
 - `scripts/lib/bridge-room.mjs`
 - `scripts/lib/bridge-toolkit.mjs`
 - `scripts/lib/cabinet-catalog-client.mjs`
+- `scripts/lib/cabinet-mp2-smoke.mjs`
 - `scripts/lib/calibration-preset.mjs`
 - `scripts/lib/captain-notebook.mjs`
 - `scripts/lib/captain-notebook.test.mjs`
@@ -1328,7 +1330,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1207)
+## All code files (1209)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1345,6 +1347,7 @@
 - `scripts/_ssh-cabinet-deploy.mjs`
 - `scripts/_ssh-cabinet-mp2-post-deploy.mjs`
 - `scripts/_ssh-cabinet-mp2-smoke.mjs`
+- `scripts/_ssh-cabinet-mp2-smoke.test.mjs`
 - `scripts/_ssh-cabinet-mp2-verify.mjs`
 - `scripts/_ssh-cabinet-mp3-debug.mjs`
 - `scripts/_ssh-cabinet-mp3-media-fix.mjs`
@@ -1730,6 +1733,7 @@
 - `scripts/lib/bridge-room.mjs`
 - `scripts/lib/bridge-toolkit.mjs`
 - `scripts/lib/cabinet-catalog-client.mjs`
+- `scripts/lib/cabinet-mp2-smoke.mjs`
 - `scripts/lib/calibration-preset.mjs`
 - `scripts/lib/captain-notebook.mjs`
 - `scripts/lib/captain-notebook.test.mjs`
