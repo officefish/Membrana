@@ -14,6 +14,8 @@
 - **Plan:** [`sprint/cut/tariff-matrix-2331.json`](./sprint/cut/tariff-matrix-2331.json) — 5 блоков,
   две ратификации владельца (v1 12:30 через ведущую; перерезка b3 19:54 напрямую)
 - **Консилиум:** [`seanses/tariff-matrix-scalars-fate-2026-09-08.md`](./seanses/tariff-matrix-scalars-fate-2026-09-08.md)
+- **Не сделано:** пересев базы и приборов (сид читает скаляры как прежде), режим холодного
+  хранилища, переходы между тарифами — заседание `tariff-single-truth` и задание В.
 
 ## 2026-08-20 — `media-per-device-token` — **OPEN**
 

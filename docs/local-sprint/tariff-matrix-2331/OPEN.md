@@ -8,7 +8,7 @@
 | Plan | [`docs/sprint/cut/tariff-matrix-2331.json`](../../sprint/cut/tariff-matrix-2331.json) · v1 ратифицирована владельцем 08.09 12:30 (через ведущую), перерезка b3 ратифицирована напрямую 08.09 19:54 («ратифицирую»); акты — [`trail/tariff-matrix-2331.jsonl`](../../sprint/cut/trail/tariff-matrix-2331.jsonl) |
 | Cutter | vesnin ([прогон контекста](../../discussions/cut-tariff-matrix-2331-vesnin-run.md)) |
 | Blocks | b1 matrix-passport-storage (ozhegov) → b2 matrix-granules-rights (ozhegov) → b3 matrix-template-release (vesnin) → b4 reseed-grid (dynin) → b5 sprint-closure (vesnin) |
-| Status | исполнение закрыто; гейт и опыт — см. «Гейт» ниже |
+| Status | gate pass 5/5 honest_pair · experience miss (точность 2/5) · PR — см. LOG |
 
 ## Предмет
 
@@ -86,4 +86,6 @@
 
 ## Гейт
 
-_заполняется после `sprint:gate` / `sprint:experience`_
+- `yarn sprint:gate` — **5/5 `honest_pair`**, следов 10 (пара context_run + review_pass у каждого блока по ратифицированной версии плана; первые прогоны контекста дисквалифицированы актами перерезки и повторены; ревью b1/b2/b4 повторены после свежих прогонов — порядок канона context_run ≺ review_pass), находок 0, код 0; журнал прогона `docs/procedure-runs/trail/2026-09-08.jsonl` закрыт инструментом.
+- `yarn sprint:experience` — род `vesnin-tariff-matrix-2331-cut-1`, исход **miss**: точность нарезки 40% (2/5), переполнение 3/5 (b1 1092 против 260, b3 437 против 260, b4 1523 против 380): не учтены зубы с порчами и паспорта на каждое значение. Запись — `docs/sprint/experience/forecast-records.jsonl`, архив персоны Веснина. Урок в следующую нарезку: оценка блока = код + зубы (×2–3 к коду) + данные с паспортами.
+- Ревью команды перед мерджем — `yarn code-review:pr` по PR; консилиум одним вопросом — по скалярам (см. «Вход»).
