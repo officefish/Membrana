@@ -1,31 +1,24 @@
 {
   "magistralOptions": [
-    "buffer-stop-behavior-2296",
-    "tariffs-in-db-2297",
-    "sanitation-2294-2300"
+    "tariff-canon-transitions-2329",
+    "studio-stop-freeze-2328",
+    "team-debts-review-media"
   ],
-  "frozenDigest": "ff637d55f399c33da710e0e60a74ef7e17d5a36d3741ff1a0d603fecf7397b8e",
-  "magistral": "buffer-stop-behavior-2296",
+  "frozenDigest": "81380dc9fb190a62c0e0b3714e88109faceeb779c9820f2fbd30003e4aa8d60f",
+  "magistral": "tariff-canon-transitions-2329",
   "swallow": {
-    "draftDigest": "ceabc392a5f219e96b05073a0dc8e44d62060a53acd3e79e82243c32e4019b45",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-07.md",
+    "draftDigest": "345cbbf50d826ff40b031133753614c7f07f9a8fa520546b2dc87e73ea828207",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-09-08.md",
     "ownerAck": true,
-    "day": "2026-09-07",
-    "claimsProbe": {
-      "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-09-07.md",
-      "sha": "43916a9649d8",
-      "at": "2026-09-07T16:27:39.750Z"
-    },
-    "gate": "evening:partner-swallow"
+    "day": "2026-09-08"
   },
-  "day": "2026-09-06",
-  "magistralChosenAt": "2026-09-06",
+  "day": "2026-09-08",
+  "magistralChosenAt": "2026-09-08",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-09-06",
-    "chosen": "buffer-stop-behavior-2296",
-    "snapshotDigest": "ff637d55f399c33da710e0e60a74ef7e17d5a36d3741ff1a0d603fecf7397b8e",
+    "at": "2026-09-08",
+    "chosen": "tariff-canon-transitions-2329",
+    "snapshotDigest": "81380dc9fb190a62c0e0b3714e88109faceeb779c9820f2fbd30003e4aa8d60f",
     "inSnapshot": true
   }
 }
