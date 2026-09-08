@@ -94,7 +94,7 @@ describe('NodeRealtimeService', () => {
   });
 
   it('registerNode шлёт узлу node.entitlements с тарифным контекстом (csp-2/G1)', async () => {
-    const prisma = mockPrisma([], ['pro-usercases-v1']);
+    const prisma = mockPrisma([], ['legacy-pro-usercases-v1']);
     const service = buildService(prisma);
     const nodeSocket = mockSocket();
 
@@ -111,7 +111,7 @@ describe('NodeRealtimeService', () => {
     expect(entitlements).toBeDefined();
     expect(entitlements.payload).toEqual({
       tariffId: 'free-v1',
-      entitledTariffSkus: ['pro-usercases-v1'],
+      entitledTariffSkus: ['free-v1-catalog'],
     });
   });
 
