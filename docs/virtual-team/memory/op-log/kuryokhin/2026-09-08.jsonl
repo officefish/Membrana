@@ -1,0 +1,4 @@
+{"ts":"2026-09-08T08:03:52.417Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-09-08T08:17:42.265Z","persona":"kuryokhin","verb":"cloud_query","ref":"kuryokhin-2026-09-08T08:17:34.760Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:17:42.267Z","persona":"kuryokhin","verb":"surface_invoke","ref":"kuryokhin-2026-09-08T08:17:34.760Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:17:42.268Z","persona":"kuryokhin","verb":"emerge","ref":"kuryokhin-2026-07-29-tariff-grid-m2-rail","reason":"«тракт уже сведён от базы до бейджа»: ровно про сквозную шину тарифа и кто «последний тронул».","origin":"ask-persona"}
