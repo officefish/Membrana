@@ -141,7 +141,7 @@
 | `tariff-collections` | `{{row_collections}}` | `storage.hot` | storage | `exact-bytes` | 08.09 T1 (512 / 2048 / 4096 МиБ) |
 | `tariff-cold` | `{{row_cold}}` | `storage.cold` | storage | `exact-bytes` | **нет** — заседание tariff-single-truth; 0 / 2048 / 2048 как в сетке 29.07 |
 | `tariff-nodes` | `{{row_nodes}}` | `nodes.max` | rights | `exact-count` | 29.07 (1 / 4 / 9) |
-| `tariff-workspaces` | `{{row_workspaces}}` | `workspaces.user.max` | rights | `exact-count` | 29.07 у датчика (3); старшие — нижняя граница, не закреплено |
+| `tariff-workspaces` | `{{row_workspaces}}` | `workspaces.user.max` | rights | `exact-count` | 29.07 у датчика (3); старшие — по аналогии с датчиком, не закреплено |
 | `tariff-datasets` | `{{row_datasets}}` | `dataset.sounds` | catalog | `catalog-id` | 29.07 у датчика и блокпоста; наблюдательный пункт — заём набора блокпоста (заглушка словами, `ratifiedAt: null`) |
 | `tariff-system-datasets` | `{{row_system_datasets}}` | — (только матрица) | catalog | `matrix-only` | 08.09 T2/T10 (вне квоты, на всех тарифах) |
 | `tariff-instruments` (составная) | `{{row_instruments}}` | `instrument.fft_trends`, `instrument.yamnet`, `instrument.mfcc`, `bearing.position`, `produce.own` | instrument | `enabled-flag` / `gated-by-precondition` / `produce-scope` | 29.07 |
