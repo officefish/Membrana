@@ -5,6 +5,16 @@
 
 ---
 
+## 2026-09-08 — `tariff-matrix-2331` — **OPEN → closure**
+
+- **Goal:** матрица тарифов в контейнере strategic-docs как единственный источник правды (T13–T16);
+  сетка `docs/tariffs/tariff-grid.json` — производная релиза с зубом «сетка = релиз».
+- **Task:** `tariff-matrix-2331` ([#2331](https://github.com/officefish/Membrana/issues/2331))
+- **OPEN:** [`local-sprint/tariff-matrix-2331/OPEN.md`](./local-sprint/tariff-matrix-2331/OPEN.md)
+- **Plan:** [`sprint/cut/tariff-matrix-2331.json`](./sprint/cut/tariff-matrix-2331.json) — 5 блоков,
+  две ратификации владельца (v1 12:30 через ведущую; перерезка b3 19:54 напрямую)
+- **Консилиум:** [`seanses/tariff-matrix-scalars-fate-2026-09-08.md`](./seanses/tariff-matrix-scalars-fate-2026-09-08.md)
+
 ## 2026-08-20 — `media-per-device-token` — **OPEN**
 
 - **Goal:** реализация ADR-0028 Р1+Р2: per-device client key media вместо служебного
