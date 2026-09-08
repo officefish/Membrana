@@ -6,3 +6,8 @@
 {"ts":"2026-09-08T16:56:20.036Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-09-08T16:56:13.750Z","origin":"ask-persona"}
 {"ts":"2026-09-08T17:00:06.534Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-09-08T17:00:00.269Z","origin":"ask-persona"}
 {"ts":"2026-09-08T17:00:06.535Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-09-08T17:00:00.269Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:03:52.193Z","persona":"dynin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-09-08T08:17:29.967Z","persona":"dynin","verb":"cloud_query","ref":"dynin-2026-09-08T08:17:22.801Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:17:29.968Z","persona":"dynin","verb":"surface_invoke","ref":"dynin-2026-09-08T08:17:22.801Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:17:29.970Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-07-29-tariff-grid-m1-form","reason":"предмет тот же: тариф как типизированная сетка, а не «всё number».","origin":"ask-persona"}
+{"ts":"2026-09-08T08:17:30.139Z","persona":"dynin","verb":"emerge","ref":"dynin-2026-08-24-logging-observability-cut-m1-incident-number","reason":"конфликт пространств имён: та же ошибка возможна при смешении SKU и версий тарифа.","origin":"ask-persona"}

@@ -10,3 +10,6 @@
 {"ts":"2026-09-08T16:59:41.067Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-09-08T16:59:33.741Z","origin":"ask-persona"}
 {"ts":"2026-09-08T17:01:27.130Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-09-08T17:01:16.624Z","origin":"ask-persona"}
 {"ts":"2026-09-08T17:01:27.133Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-09-08T17:01:16.624Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:03:52.819Z","persona":"vesnin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-09-08T08:17:18.140Z","persona":"vesnin","verb":"cloud_query","ref":"vesnin-2026-09-08T08:17:04.022Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:17:18.141Z","persona":"vesnin","verb":"surface_invoke","ref":"vesnin-2026-09-08T08:17:04.022Z","origin":"ask-persona"}
