@@ -6,7 +6,6 @@
 
 **Live:** https://strategy.mmbrn.tech
 
-
 ## Workspaces
 
 В Affine — **ровно два** top-level workspace:
@@ -17,7 +16,6 @@
 | **Releases** | Опубликованные read-only snapshots после `yarn strategic-docs:generate` |
 
 **Неправильно (отменено):** зеркалить git-папки `granules/`, `templates/`, `releases/` как подпапки в Affine.
-
 
 ## Namespaces
 
@@ -33,7 +31,6 @@
 Тип документа задаётся **title** (content + meta pair), не подпапкой `granules/` / `templates/`.
 
 Паттерн: [`GROUP_CONTAINERIZATION`](../../../../patterns/GROUP_CONTAINERIZATION.md) — один git-контейнер → один namespace.
-
 
 ## Document types
 
@@ -53,7 +50,6 @@
 
 - **Templates:** `Granule · readme-principles` ↔ `Meta · Granule · readme-principles`, `Template · affine-surface-policy` ↔ `Meta · Template · affine-surface-policy`
 - **Releases:** `Release · affine-surface-policy` ↔ `Meta · Release · affine-surface-policy`
-
 
 ## Automation
 

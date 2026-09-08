@@ -12,6 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 import { valid } from './lib/strategic-docs-model.mjs';
 import { buildGranuleIndex, integratedGenerate } from './lib/strategic-docs-integration.mjs';
+import { renderBySkeleton } from './lib/tasks-readme-engine.mjs';
 import { loadGranules, loadTemplate, CONTAINER_ROOT } from './lib/strategic-docs-loader.mjs';
 import { loadRegistry } from './lib/task-registry.mjs';
 import { makeRegistryIo } from './lib/tasks-readme-engine.mjs';
@@ -45,7 +46,12 @@ async function main() {
   // такая гранула падает на pureIoThrow, и это правильное поведение движка.
   const result = await integratedGenerate(template, granules, {
     io: makeRegistryIo(loadRegistry(ROOT)),
-    renderBody: (parts) => parts.join('\n\n'),
+    // Каркас шаблона — авторитет порядка и литералов между слотами (дизайн контейнера:
+    // README-GRANULATION-DESIGN «каркас остаётся в шаблоне»). Прежняя склейка parts.join через
+    // пустую строку каркас игнорировала: шаблонам из одних плейсхолдеров подстановка даёт тот же
+    // текст байт-в-байт (зуб strategic-docs-generate.test.mjs), а таблицу матрицы тарифов склейка
+    // рассыпала пустыми строками между рядами (#2331).
+    renderBody: renderBySkeleton(template),
   });
 
   const zone = result.route === 'release' ? 'releases' : 'experiments';
