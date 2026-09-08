@@ -1,0 +1,80 @@
+{
+  "schema": "tariff-resource/1",
+  "id": "instruments",
+  "title": "Инструменты",
+  "domain": "instrument",
+  "passport": {
+    "version": "1.0.0",
+    "ratifiedAt": "2026-07-29",
+    "owner": "owner",
+    "source": "tariff-grid 2026-07-29 (заседание, M5); шторм 08.09 инструменты не пересматривал",
+    "note": "Приборы анализа и права на них — как в сетке 29.07: тренды спектра и словарь YAMNet у всех; тембральный портрет MFCC со старших; пеленг и позиция — со старших и только при построенной сети; право производить своё (индексировать набор, строить сценарии на своих детекциях) — со старших."
+  },
+  "entries": [
+    {
+      "id": "fft_trends",
+      "resource": "instrument.fft_trends",
+      "title": "Тренды спектра",
+      "kind": "instrument",
+      "reseedRule": "enabled-flag",
+      "registry": { "titleKey": "tariff.instrument.fftTrends", "description": "Трендовый анализ спектра" },
+      "values": {
+        "free-v1": { "enabled": true, "ratifiedAt": "2026-07-29" },
+        "checkpoint-v1": { "enabled": true, "ratifiedAt": "2026-07-29" },
+        "observatory-v1": { "enabled": true, "ratifiedAt": "2026-07-29" }
+      }
+    },
+    {
+      "id": "yamnet",
+      "resource": "instrument.yamnet",
+      "title": "Словарь YAMNet",
+      "kind": "instrument",
+      "reseedRule": "enabled-flag",
+      "registry": { "titleKey": "tariff.instrument.yamnet", "description": "Распознавание по словарю YAMNet" },
+      "values": {
+        "free-v1": { "enabled": true, "ratifiedAt": "2026-07-29" },
+        "checkpoint-v1": { "enabled": true, "ratifiedAt": "2026-07-29" },
+        "observatory-v1": { "enabled": true, "ratifiedAt": "2026-07-29" }
+      }
+    },
+    {
+      "id": "mfcc",
+      "resource": "instrument.mfcc",
+      "title": "Тембральный портрет (MFCC)",
+      "kind": "instrument",
+      "reseedRule": "enabled-flag",
+      "registry": { "titleKey": "tariff.instrument.mfcc", "description": "Тембральный портрет цели (MFCC): узлы и плагины" },
+      "values": {
+        "free-v1": { "enabled": false, "ratifiedAt": "2026-07-29" },
+        "checkpoint-v1": { "enabled": true, "ratifiedAt": "2026-07-29" },
+        "observatory-v1": { "enabled": true, "ratifiedAt": "2026-07-29" }
+      }
+    },
+    {
+      "id": "bearing",
+      "resource": "bearing.position",
+      "title": "Пеленг и позиция",
+      "kind": "gated",
+      "reseedRule": "gated-by-precondition",
+      "registry": { "titleKey": "tariff.bearing.position", "description": "Пеленг и оценка позиции дрона — при построенной сети" },
+      "values": {
+        "free-v1": { "enabled": false, "preconditionId": "minimal_network_ready", "ratifiedAt": "2026-07-29" },
+        "checkpoint-v1": { "enabled": true, "preconditionId": "minimal_network_ready", "label": "при готовой сети", "ratifiedAt": "2026-07-29" },
+        "observatory-v1": { "enabled": true, "preconditionId": "minimal_network_ready", "label": "при готовой сети", "ratifiedAt": "2026-07-29" }
+      }
+    },
+    {
+      "id": "produce",
+      "resource": "produce.own",
+      "title": "Своё производство",
+      "kind": "produce",
+      "reseedRule": "produce-scope",
+      "registry": { "titleKey": "tariff.produce.own", "description": "Право производить своё: индексировать датасет и строить сценарии на своих детекциях" },
+      "values": {
+        "free-v1": { "enabled": false, "ratifiedAt": "2026-07-29" },
+        "checkpoint-v1": { "enabled": true, "scope": ["dataset_index", "own_detection", "scenario_on_own"], "label": "да: свой набор, свои детекции, сценарии на своих", "ratifiedAt": "2026-07-29" },
+        "observatory-v1": { "enabled": true, "scope": ["dataset_index", "own_detection", "scenario_on_own"], "label": "да: свой набор, свои детекции, сценарии на своих", "ratifiedAt": "2026-07-29" }
+      }
+    }
+  ]
+}
