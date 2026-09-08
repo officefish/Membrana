@@ -66,6 +66,8 @@ model Device {
   userStorageQuotaBytes   BigInt?
   bufferQuotaBytes        BigInt?
   datasetCatalogId        String?
+  /** Cabinet tariff contract version copied with quota context. */
+  tariffContractVersion   Int             @default(1)
   /** Max editable device-board workspaces (U10 tariff axis; STE v1). */
   maxUserWorkspaces       Int?
   createdAt               DateTime        @default(now())

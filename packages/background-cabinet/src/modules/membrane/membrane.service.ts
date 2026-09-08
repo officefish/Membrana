@@ -27,13 +27,12 @@ import { warnIfSmartCleanupGated } from './buffer-policy-gate-warn';
 import { MembraneBufferPolicyService } from './membrane-buffer-policy.service';
 
 const FREE_TARIFF_ID = 'free-v1';
-const FREE_DATASET_CATALOG_ID = 'free-v1-catalog';
-const GIB = 1024n * 1024n * 1024n;
 
 function serializeTariff(tariff: Tariff) {
   return {
     id: tariff.id,
     name: tariff.name,
+    tariffContractVersion: tariff.tariffContractVersion,
     userStorageQuotaBytes: tariff.userStorageQuotaBytes.toString(),
     bufferQuotaBytes: tariff.bufferQuotaBytes.toString(),
     datasetCatalogId: tariff.datasetCatalogId,
@@ -395,25 +394,4 @@ export class MembraneService {
     return { deletedKeyId: keyId };
   }
 
-  /** Ensures free-v1 tariff exists (idempotent, used by seed). */
-  async ensureFreeTariff(): Promise<void> {
-    await this.prisma.tariff.upsert({
-      where: { id: FREE_TARIFF_ID },
-      create: {
-        id: FREE_TARIFF_ID,
-        name: 'Free v1',
-        userStorageQuotaBytes: GIB,
-        bufferQuotaBytes: GIB,
-        datasetCatalogId: FREE_DATASET_CATALOG_ID,
-        maxActiveKeysPerNode: 1,
-        maxNodesPerMembrane: 1,
-        maxUserWorkspaces: 3,
-      },
-      update: {
-        datasetCatalogId: FREE_DATASET_CATALOG_ID,
-        maxNodesPerMembrane: 1,
-        maxUserWorkspaces: 3,
-      },
-    });
-  }
 }

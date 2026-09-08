@@ -2,6 +2,7 @@ import type { Device } from '../../prisma/client';
 import type { AppConfig } from '../../config/env.schema';
 
 export interface ResolvedDeviceLimits {
+  tariffContractVersion: number;
   userStorageQuotaBytes: number;
   bufferQuotaBytes: number;
   datasetCatalogId: string;
@@ -22,9 +23,15 @@ export function intToSafePositive(value: number | null | undefined, fallback: nu
   return Number.isFinite(floored) && floored >= 1 ? floored : fallback;
 }
 
+/** Coerce contract version; version 1 is the backwards-compatible floor for legacy rows. */
+export function resolveTariffContractVersion(value: number | null | undefined): number {
+  return intToSafePositive(value, 1);
+}
+
 /** Resolve per-device tariff limits with env defaults for legacy devices. */
 export function resolveDeviceLimits(device: Device, config: AppConfig): ResolvedDeviceLimits {
   return {
+    tariffContractVersion: resolveTariffContractVersion(device.tariffContractVersion),
     userStorageQuotaBytes: bigintToSafeInt(
       device.userStorageQuotaBytes,
       config.MEDIA_USER_STORAGE_QUOTA_BYTES_PER_DEVICE,

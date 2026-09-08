@@ -5,6 +5,17 @@
 
 ---
 
+## 2026-09-08 — `tariff-matrix-2333` — **OPEN**
+
+- **Goal:** серверная адаптация к матрице тарифов по принятому M1: версия контракта,
+  проекция сетка -> база кабинета, зубы 2/3, проход разноски и один рубильник правды.
+- **Issue:** [#2333](https://github.com/officefish/Membrana/issues/2333)
+- **OPEN:** [`local-sprint/tariff-matrix-2333/OPEN.md`](./local-sprint/tariff-matrix-2333/OPEN.md)
+- **Prompt:** [`prompts/TARIFF_MATRIX_2333_SERVER_ADAPTATION_PROMPT.md`](./prompts/TARIFF_MATRIX_2333_SERVER_ADAPTATION_PROMPT.md)
+- **Cut:** [`sprint/cut/tariff-matrix-2333.json`](./sprint/cut/tariff-matrix-2333.json) · ратифицирован владельцем 2026-09-08T20:20:33+03:00
+- **Status:** implementation checks pass; awaiting review/PR.
+- **Boundary:** M2-M5, `tariff:reseed`, зуб 1, релиз сетки, прибор-край и prod deploy вне этого спринта.
+
 ## 2026-08-20 — `media-per-device-token` — **OPEN**
 
 - **Goal:** реализация ADR-0028 Р1+Р2: per-device client key media вместо служебного

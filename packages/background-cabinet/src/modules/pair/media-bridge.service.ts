@@ -7,6 +7,7 @@ import { headersForBody } from './request-headers';
 
 export interface MediaMembraneContext {
   membraneId: string;
+  tariffContractVersion?: number;
   userStorageQuotaBytes: string | number;
   bufferQuotaBytes: string | number;
   datasetCatalogId: string;
@@ -51,6 +52,7 @@ export interface MediaQuotaBucket {
 }
 
 export interface MediaQuotaResponse {
+  tariffContractVersion: number;
   userStorage: MediaQuotaBucket;
   buffer: MediaQuotaBucket;
   dataset: { catalogId: string; sampleCount: number };

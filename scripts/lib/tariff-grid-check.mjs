@@ -7,7 +7,9 @@
  * провод — поимка на S0). Дублируется предикат, не решение: расхождение двух
  * реализаций само ловится тестом `tariff-grid-check.test.mjs`.
  *
- * Без fs и сети: ФС — в `scripts/tariff-grid-validate.mjs`.
+ * Without fs/network: the CLI owns IO. #2333 v2 removed
+ * docs/tariffs/tariff-scalars.json from quota authors; the live tooth now
+ * judges the grid shape only.
  */
 
 /** Ожидаемые роды прав — закрытый список (вердикт M1). */
@@ -80,50 +82,3 @@ export function gridFindings(grid) {
 
 /** МиБ → байты (единица объявления объёмов в декларации S0). */
 export const mibToBytes = (mib) => (mib == null ? null : mib * 1024 * 1024);
-
-/**
- * Сверка сетки с декларацией числовых потолков (S0): числа не должны
- * разъезжаться между двумя носителями. Сверяются только те значения, которые
- * владелец НАЗВАЛ — предварительные (`//provisional`) не судим.
- *
- * @param {object} grid @param {object} scalars
- */
-export function scalarsCrossFindings(grid, scalars) {
-  const out = [];
-  const provisional = new Set(Object.keys(grid?.['//provisional'] ?? {}));
-  const byId = new Map((scalars?.tariffs ?? []).map((t) => [t.id, t]));
-
-  const pairs = [
-    ['nodes.max', (t) => t.maxNodesPerMembrane],
-    ['workspaces.user.max', (t) => t.maxUserWorkspaces],
-    ['storage.hot', (t) => mibToBytes(t.userStorageQuotaMiB)],
-    ['storage.cold', (t) => mibToBytes(t.coldStorageQuotaMiB)],
-  ];
-
-  for (const row of grid?.rows ?? []) {
-    const declared = byId.get(row.sku);
-    if (!declared) {
-      out.push(
-        finding('grid_shape', `rows.${row.sku}`, 'тариф есть в сетке, но не объявлен в tariff-scalars.json (S0)'),
-      );
-      continue;
-    }
-    for (const [id, pick] of pairs) {
-      const address = `${row.sku}.${id}`;
-      if (provisional.has(address) || provisional.has(`*.${id}`)) continue;
-      const expected = pick(declared);
-      if (expected == null) continue; // владелец не называл — сверять нечего
-      const actual = row.cells?.[id]?.limit;
-      if (actual !== expected) {
-        out.push(
-          finding(
-            'scalars_drift',
-            address,
-            `сетка несёт ${actual}, декларация S0 — ${expected}: два носителя одного числа разъехались`,
-          ),
-        );
-      }
-    }
-  }
-  return out;
-}

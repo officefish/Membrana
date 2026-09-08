@@ -4,6 +4,11 @@
 
 ## Focus
 
+- **tariff-matrix-2333** ([#2333](https://github.com/officefish/Membrana/issues/2333)) ·
+  implementation checks pass, awaiting review/PR · [`OPEN.md`](./local-sprint/tariff-matrix-2333/OPEN.md) —
+  серверная адаптация к матрице тарифов по принятому M1: версия контракта на `Tariff`/`Device`,
+  S6 проекция сетка→база, зуб 3 `Tariff`↔`Device`, проход разноски и один рубильник правды.
+
 - **sanitation-2026-08-20** ([#2009](https://github.com/officefish/Membrana/issues/2009)) ·
   gate pass 9/9 honest_pair · прогноз↔исход hit (9/9) · [`OPEN.md`](./local-sprint/sanitation-2026-08-20/OPEN.md) —
   шесть вердиктов oversized-PR (все LGTM, находки → #2020); смоук подъёма графа DI media/office в CI

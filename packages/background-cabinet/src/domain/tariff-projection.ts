@@ -54,7 +54,8 @@ export function projectCatalogSlice(grid: TariffGridDocument, sku: TariffSku): r
 
 /**
  * Адаптер легаси → та же форма, что даёт сетка (anti-corruption, вердикт M8).
- * Нужен до переключения: потребители уже читают одну форму, автор ещё прежний.
+ * Нужен только когда документ сетки отсутствует или отвергнут целиком: это
+ * отказ от испорченного контракта, а не второй режим правды.
  */
 export function adaptLegacy(snapshot: LegacyTariffSnapshot): ProjectedEntitlements {
   return {
@@ -67,20 +68,18 @@ export function adaptLegacy(snapshot: LegacyTariffSnapshot): ProjectedEntitlemen
 /**
  * ЕДИНСТВЕННАЯ точка, где рождается значение для провода.
  *
- * Автор один и назван явно: включён режим сетки — значение из матрицы, иначе —
+ * Автор один и назван явно: валидная сетка даёт значение из матрицы, иначе —
  * адаптер легаси. Двойной записи не бывает по построению: функция возвращает
  * одно значение с одним именем автора, а не сливает два источника.
  *
- * @param grid документ сетки (`undefined` — сетки нет, работает легаси)
+ * @param grid документ сетки (`undefined` — сетки нет или она отвергнута, работает легаси)
  * @param snapshot слепок легаси-носителя
- * @param gridMode переключение на сетку как на источник истины (шаг S9)
  */
 export function projectEntitlements(
   grid: TariffGridDocument | undefined,
   snapshot: LegacyTariffSnapshot,
-  gridMode: boolean,
 ): ProjectedEntitlements {
-  if (!gridMode || !grid) return adaptLegacy(snapshot);
+  if (!grid) return adaptLegacy(snapshot);
   return {
     tariffId: snapshot.tariffId,
     entitledTariffSkus: projectCatalogSlice(grid, snapshot.tariffId),
@@ -97,8 +96,8 @@ export interface ProjectionFinding {
 
 /**
  * Зуб `projection_sync`: то, что уехало в провод, обязано совпадать с проекцией
- * матрицы — иначе у прав появился второй автор. Сверяется только в режиме сетки:
- * до переключения легаси законно даёт своё (это и есть адаптер, а не дрейф).
+ * матрицы — иначе у прав появился второй автор. Легаси-fallback не судится:
+ * без валидной сетки сравнивать не с чем.
  */
 export function projectionFindings(
   grid: TariffGridDocument | undefined,

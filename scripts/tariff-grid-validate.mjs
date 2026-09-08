@@ -5,8 +5,8 @@
  *
  * Проверяет НАСТОЯЩИЙ документ `docs/tariffs/tariff-grid.json`, а не выдумку
  * теста: полнота матрицы, закрытость реестра, совпадение рода, читаемость формы,
- * плюс сверку с декларацией числовых потолков (S0) — числа не должны разъезжаться
- * между двумя носителями, как разъехались сид и решение владельца 29.07.
+ * Значения квот берутся из самой сетки; `tariff-scalars.json` больше не автор
+ * квот (#2333 v2), иначе у числа снова появятся два носителя.
  *
  * Правила проверки — чистые функции; здесь ФС и отчёт.
  *
@@ -16,17 +16,15 @@ import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { gridFindings, scalarsCrossFindings } from './lib/tariff-grid-check.mjs';
+import { gridFindings } from './lib/tariff-grid-check.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const GRID = join(repoRoot, 'docs/tariffs/tariff-grid.json');
-const SCALARS = join(repoRoot, 'docs/tariffs/tariff-scalars.json');
 
 function main() {
   const grid = JSON.parse(readFileSync(GRID, 'utf8'));
-  const scalars = JSON.parse(readFileSync(SCALARS, 'utf8'));
 
-  const findings = [...gridFindings(grid), ...scalarsCrossFindings(grid, scalars)];
+  const findings = gridFindings(grid);
 
   console.log(
     `tariff:grid — прав в реестре: ${grid.registry?.length ?? 0} · тарифов: ${grid.rows?.length ?? 0} · ` +
@@ -40,7 +38,7 @@ function main() {
   }
 
   if (findings.length === 0) {
-    console.log('tariff:grid — форма честна: полнота, реестр и роды сходятся, числа не разъехались');
+    console.log('tariff:grid — форма честна: полнота, реестр и роды сходятся; сетка — автор чисел');
     return 0;
   }
 

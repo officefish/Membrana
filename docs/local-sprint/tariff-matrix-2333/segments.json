@@ -1,0 +1,27 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "tariff-matrix-2333",
+  "measuredAt": "2026-09-08T21:32:00+03:00",
+  "segments": [
+    {
+      "cutBlockId": "contract-version-carriers",
+      "changedLines": 152,
+      "evidence": "git diff --numstat plus new files in v1 zone"
+    },
+    {
+      "cutBlockId": "grid-to-cabinet-projection",
+      "changedLines": 286,
+      "evidence": "git diff --numstat plus new files in v2 zone"
+    },
+    {
+      "cutBlockId": "device-tariff-tooth-and-fanout",
+      "changedLines": 218,
+      "evidence": "git diff --numstat plus new files in v3 zone"
+    },
+    {
+      "cutBlockId": "single-truth-switch",
+      "changedLines": 210,
+      "evidence": "git diff --numstat plus new files in v4 zone"
+    }
+  ]
+}

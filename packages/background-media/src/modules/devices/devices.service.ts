@@ -26,6 +26,7 @@ export interface DatasetQuotaInfoDto {
 }
 
 export interface DeviceQuotaDto {
+  tariffContractVersion: number;
   userStorage: QuotaBucketDto;
   buffer: QuotaBucketDto;
   dataset: DatasetQuotaInfoDto;
@@ -43,6 +44,7 @@ export interface DeviceQuotaDto {
 
 export interface DeviceMembraneContext {
   membraneId: string;
+  tariffContractVersion?: number;
   userStorageQuotaBytes: bigint | number | string;
   bufferQuotaBytes: bigint | number | string;
   datasetCatalogId: string;
@@ -127,6 +129,9 @@ export class DevicesService {
         ...(membraneContext
           ? {
               membraneId: membraneContext.membraneId,
+              ...(membraneContext.tariffContractVersion !== undefined
+                ? { tariffContractVersion: membraneContext.tariffContractVersion }
+                : {}),
               userStorageQuotaBytes: BigInt(membraneContext.userStorageQuotaBytes),
               bufferQuotaBytes: BigInt(membraneContext.bufferQuotaBytes),
               datasetCatalogId: membraneContext.datasetCatalogId,
@@ -191,6 +196,9 @@ export class DevicesService {
       where: { id: deviceId },
       data: {
         membraneId: membraneContext.membraneId,
+        ...(membraneContext.tariffContractVersion !== undefined
+          ? { tariffContractVersion: membraneContext.tariffContractVersion }
+          : {}),
         userStorageQuotaBytes: BigInt(membraneContext.userStorageQuotaBytes),
         bufferQuotaBytes: BigInt(membraneContext.bufferQuotaBytes),
         datasetCatalogId: membraneContext.datasetCatalogId,
@@ -255,6 +263,7 @@ export class DevicesService {
     }
 
     return {
+      tariffContractVersion: limits.tariffContractVersion,
       userStorage: {
         usedBytes: userStorageUsed,
         limitBytes: limits.userStorageQuotaBytes,

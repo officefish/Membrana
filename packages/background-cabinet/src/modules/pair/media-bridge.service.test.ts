@@ -108,6 +108,7 @@ describe('мост в media: запросы С телом', () => {
     const calls = captureFetch();
     await bridge.syncMembraneContext('dev-1', {
       membraneId: 'm-1',
+      tariffContractVersion: 2,
       userStorageQuotaBytes: '1',
       bufferQuotaBytes: '2',
       datasetCatalogId: 'cat',
@@ -129,6 +130,7 @@ describe('мост в media: доменный отказ разноски (#2308
 
   const CONTEXT = {
     membraneId: 'm-1',
+    tariffContractVersion: 2,
     userStorageQuotaBytes: '1',
     bufferQuotaBytes: '2',
     datasetCatalogId: 'cat',
@@ -154,6 +156,13 @@ describe('мост в media: доменный отказ разноски (#2308
     expect(calls).toHaveLength(1);
     const sent = JSON.parse(calls[0]!.init.body as string) as { membrane: { bufferPolicy: unknown } };
     expect(sent.membrane.bufferPolicy).toEqual({ mode: 'smart_cleanup', params: null });
+  });
+
+  it('версия тарифного контракта уезжает в том же PATCH-теле, что квоты (порча: забыть поле → красный)', async () => {
+    const calls = captureFetch({ body: { ok: true } });
+    await bridge.syncMembraneContext('dev-1', CONTEXT);
+    const sent = JSON.parse(calls[0]!.init.body as string) as { membrane: { tariffContractVersion?: number } };
+    expect(sent.membrane.tariffContractVersion).toBe(2);
   });
 });
 

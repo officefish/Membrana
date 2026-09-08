@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "tariff-matrix-2333",
+      "title": "Сервер: адаптация к матрице тарифов",
+      "promptPath": "docs/prompts/TARIFF_MATRIX_2333_SERVER_ADAPTATION_PROMPT.md",
+      "githubIssue": 2333,
+      "linearId": "DRU-690",
+      "size": "L",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-08",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "cowork-buffer-full-stop",
       "title": "Cowork Sprint: Полный буфер — контракт остановки",
       "promptPath": "docs/cowork-sprint/cowork-buffer-full-stop/COWORK_SPRINT_BRIEF.md",

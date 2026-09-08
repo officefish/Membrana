@@ -31,6 +31,9 @@ export class DeviceMembraneContextDto {
   @ApiProperty({ format: 'uuid' })
   membraneId!: string;
 
+  @ApiPropertyOptional({ example: 1, description: 'Tariff contract version copied from cabinet tariff row' })
+  tariffContractVersion?: number;
+
   @ApiProperty({ example: '1073741824', description: 'User storage quota in bytes (string or number)' })
   userStorageQuotaBytes!: string | number;
 
@@ -73,6 +76,9 @@ export class DeviceMembraneSyncResponseDto {
 
   @ApiPropertyOptional({ format: 'date-time' })
   createdAt?: string;
+
+  @ApiPropertyOptional({ example: 1, description: 'Tariff contract version stored after successful sync' })
+  tariffContractVersion?: number;
 
   @ApiPropertyOptional({ type: BufferPolicyDto, description: 'Effective policy after the sync (ok=true only)' })
   bufferPolicy?: BufferPolicyDto;
@@ -158,6 +164,9 @@ export class UserWorkspacesQuotaResponseDto {
 }
 
 export class QuotaResponseDto {
+  @ApiProperty({ example: 1, description: 'Tariff contract version stored on the device quota snapshot' })
+  tariffContractVersion!: number;
+
   @ApiProperty({ type: QuotaBucketResponseDto })
   userStorage!: QuotaBucketResponseDto;
 

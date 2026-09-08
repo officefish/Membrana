@@ -32,6 +32,7 @@ const FULL_PARAMS = { thresholdPercent: 90, selection: 'oldest_first', protectLa
 
 const CONTEXT = {
   membraneId: 'm-1',
+  tariffContractVersion: 2,
   userStorageQuotaBytes: '10000',
   bufferQuotaBytes: '2000',
   datasetCatalogId: 'catalog-checkpoint',
@@ -45,6 +46,7 @@ function deviceRow(over: Record<string, unknown> = {}) {
     kind: 'other',
     createdAt: new Date('2026-09-06T00:00:00Z'),
     membraneId: 'm-1',
+    tariffContractVersion: 2,
     userStorageQuotaBytes: 10_000n,
     bufferQuotaBytes: 2_000n,
     datasetCatalogId: 'catalog-checkpoint',
@@ -81,6 +83,7 @@ describe('разноска контекста: гейт умной очистк�
     const res = await service.syncMembraneContext('dev-1', { ...CONTEXT, bufferPolicy: { mode: 'stop' } });
     expect(res.ok).toBe(true);
     const data = prisma.device.update.mock.calls[0]![0].data;
+    expect(data.tariffContractVersion).toBe(2);
     expect(data.bufferPolicy).toBe('stop');
     expect(data.bufferQuotaBytes).toBe(2_000n);
     // Prisma.DbNull — объект-маркер, не JS null: параметров при stop в строке НЕТ.
@@ -126,6 +129,19 @@ describe('разноска контекста: гейт умной очистк�
     expect('bufferPolicy' in data).toBe(false);
     expect('bufferPolicyParams' in data).toBe(false);
   });
+
+  it('старый кабинет без версии контракта — лимиты пишутся, версия в строке НЕ трогается', async () => {
+    const { service, prisma } = makeService();
+    const res = await service.syncMembraneContext('dev-1', {
+      membraneId: 'm-1',
+      userStorageQuotaBytes: '10000',
+      bufferQuotaBytes: '2000',
+      datasetCatalogId: 'catalog-checkpoint',
+    });
+    expect(res.ok).toBe(true);
+    const data = prisma.device.update.mock.calls[0]![0].data;
+    expect('tariffContractVersion' in data).toBe(false);
+  });
 });
 
 describe('регистрация прибора с политикой', () => {
@@ -134,6 +150,7 @@ describe('регистрация прибора с политикой', () => {
     await service.register('lab', 'other' as never, CONTEXT);
     const data = prisma.device.create.mock.calls[0]![0].data;
     expect('bufferPolicy' in data).toBe(false);
+    expect(data.tariffContractVersion).toBe(2);
   });
 
   it('с политикой мембраны (галочка стоит) — новый прибор получает её сразу', async () => {
@@ -167,6 +184,7 @@ describe('канал к прибору: /quota несёт эффективную
   it('прибор со stop — quota.bufferPolicy = stop', async () => {
     const { service } = makeService();
     const quota = await service.getQuota('dev-1');
+    expect(quota.tariffContractVersion).toBe(2);
     expect(quota.bufferPolicy).toEqual({ mode: 'stop', params: null });
   });
 

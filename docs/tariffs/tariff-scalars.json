@@ -1,5 +1,5 @@
 {
-  "//": "S0 плана интеграции тарифной сетки (заседание tariff-grid, ратифицировано владельцем 29.07). ДЕКЛАРАЦИЯ числовых потолков трёх тарифов — единственный источник этих чисел. Носители (сид, будущие ячейки матрицы) читают отсюда, не дублируют.",
+  "//": "S0 historical declaration from the first tariff-grid integration. Since #2333 v2 it is NOT a quota author: the live source is docs/tariffs/tariff-grid.json projected into the cabinet Tariff table.",
   "//provenance": "Матрица владельца: шторм storm-tariff-boundary-dev-2026-07-29, тезисы T2-T5. Каркас: docs/meeting/tariff-grid/MEETING_VERDICT.md.",
   "//legal-no": "Неизвестное значение объявляется явно: null + причина в *_note. Молчаливое отсутствие — дефект (зуб tariff_scalars_declared).",
   "//scope": "ТОЛЬКО числовые потолки (род quota) и ссылка на каталог. Инструменты, gated-возможности и produce живут в матрице сетки (S1), не здесь.",

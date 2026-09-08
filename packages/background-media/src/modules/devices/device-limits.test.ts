@@ -10,6 +10,7 @@ const baseDevice: Device = {
   userStorageQuotaBytes: null,
   bufferQuotaBytes: null,
   datasetCatalogId: null,
+  tariffContractVersion: 1,
   maxUserWorkspaces: null,
   createdAt: new Date('2026-01-01'),
   activeWorkspaceId: null,
@@ -38,10 +39,12 @@ describe('device-limits', () => {
         userStorageQuotaBytes: BigInt(10_000),
         bufferQuotaBytes: BigInt(20_000),
         datasetCatalogId: 'pro-catalog',
+        tariffContractVersion: 2,
       },
       config as never,
     );
     expect(limits).toEqual({
+      tariffContractVersion: 2,
       userStorageQuotaBytes: 10_000,
       bufferQuotaBytes: 20_000,
       datasetCatalogId: 'pro-catalog',
@@ -60,6 +63,7 @@ describe('device-limits', () => {
   it('resolveDeviceLimits falls back to env for legacy devices', () => {
     const limits = resolveDeviceLimits(baseDevice, config as never);
     expect(limits).toEqual({
+      tariffContractVersion: 1,
       userStorageQuotaBytes: 1_000,
       bufferQuotaBytes: 2_000,
       datasetCatalogId: 'env-catalog',

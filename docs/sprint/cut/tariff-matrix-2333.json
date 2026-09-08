@@ -1,0 +1,110 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "tariff-matrix-2333",
+  "taskId": "tariff-matrix-2333",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "//why": "Issue #2333 и принятый M1 `tariff-single-truth`: сервер В строит только R-адаптацию после матрицы Б. Разрез по четырём блокам владельца: v1 рождает версию контракта на носителях и в разноске; v2 делает проекцию сетка -> база кабинета и чистит старых авторов квот; v3 проверяет и чинит производную база -> записи приборов; v4 снимает второй рубильник истины. M2-M5, релиз/ресид сетки, прибор-край и доступная квота вне спринта.",
+  "//order": "v1, v2, v3 могут начинаться независимо только как чтение/проектирование, но кодово v3 опирается на поле версии из v1, а v4 идёт после зелёных v2/v3. Если при реализации понадобится писать в файл, уже закреплённый за другим блоком, это recut и новая ратификация, не тихая правка.",
+  "//dod": "Девять предикатов #2333: зуб 2 по четырём парам + version; зуб 3 по пяти парам + policy и порче SQL/PATCH; старт кабинета одно чтение/ноль записей; seed не автор квот и не меняет free мимо сетки; ensureFreeTariff отсутствует; обе миграции и fanout несут version; TARIFF_GRID_MODE пуст по packages/scripts и cutover не опирается на S0_scalars; live проверка после отдельного слова на выкатку; доклад `чисто` называет проверку и объём.",
+  "//out-of-scope": "Доступная квота и M2-M5; форма гранул, релиз, `tariff:reseed`, зуб 1 и пересев сетки (#2331/Б); чтение сетки сервером записей; прибор-край версии #2323; эпизод переполнения #2319; UI-редактор квот; экран статуса пересева; клиентский кэш каталога; второй флаг правды; новый протокол вместо разноски; runtime-реестр quota-ledger; умная очистка; оплата; production deploy без отдельного слова владельца.",
+  "//review": "Ревью персон с предметом: Дынин — предикаты зубов и DoD с красными входами; Ожегов — словарь и тексты команд; Веснин — границы cabinet/media/shared. Заседание M1 уже проведено, новых консилиумов не открывать.",
+  "window": {
+    "from": "2026-09-08T20:10:00+03:00",
+    "to": "2026-09-09T20:10:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "contract-version-carriers",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/background-cabinet/prisma/schema.prisma",
+        "packages/background-media/prisma/schema.prisma",
+        "packages/background-cabinet/src/modules/pair/membrane-context-fanout.service.ts",
+        "packages/background-cabinet/src/modules/pair/membrane-context-fanout.service.test.ts",
+        "packages/background-media/src/modules/devices/devices.service.ts",
+        "packages/background-media/src/modules/devices/devices.service.test.ts",
+        "packages/background-media/src/modules/devices/devices.controller.ts",
+        "packages/background-media/src/modules/devices/devices.controller.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 330
+      },
+      "//": "Колонка версии контракта на `Tariff`, поле на media `Device`, DTO/приём PATCH и `/quota`, fanout payload. `updatedAt` не использовать; прибор-край #2323 не трогать.",
+      "revisionAt": "2026-09-08T20:20:33+03:00",
+      "revisionOf": "fa1e8fcbea31af2559d86eec8054077454458ee8fc4101ceb01e73d17706eba2"
+    },
+    {
+      "blockId": "grid-to-cabinet-projection",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/tariff-project-cabinet.mjs",
+        "scripts/tariff-project-cabinet.test.mjs",
+        "scripts/lib/tariff-project-cabinet.mjs",
+        "scripts/lib/tariff-project-cabinet.test.mjs",
+        "packages/background-cabinet/src/domain/tariff-grid-base.ts",
+        "packages/background-cabinet/src/domain/tariff-grid-base.test.ts",
+        "packages/background-cabinet/src/domain/tariff-grid-source.test.ts",
+        "packages/background-cabinet/prisma/seed.mjs",
+        "packages/background-cabinet/prisma/seed.test.mjs",
+        "packages/background-cabinet/src/modules/membrane/membrane.service.ts",
+        "docs/tariffs/tariff-scalars.json"
+      ],
+      "estimate": {
+        "changedLines": 390
+      },
+      "//": "S6 projection grid -> cabinet DB, tooth 2, #2297 closure path for checkpoint-v1/observatory-v1, seed/scalars no longer author quotas, remove `ensureFreeTariff`. Package alias waits for v4 to avoid shared `package.json` zone.",
+      "revisionAt": "2026-09-08T20:20:33+03:00",
+      "revisionOf": "66e4cbecee35c21e8fa1bcae1e55be475453902545711eb18ab93a1c72b10d15"
+    },
+    {
+      "blockId": "device-tariff-tooth-and-fanout",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/tariff-devices-check.mjs",
+        "scripts/tariff-devices-check.test.mjs",
+        "scripts/lib/tariff-devices-check.mjs",
+        "scripts/lib/tariff-devices-check.test.mjs",
+        "scripts/tariff-devices-fanout.mjs",
+        "scripts/tariff-devices-fanout.test.mjs",
+        "packages/background-cabinet/src/modules/pair/membrane-tariff-fanout-run.service.ts",
+        "packages/background-cabinet/src/modules/pair/membrane-tariff-fanout-run.service.test.ts"
+      ],
+      "estimate": {
+        "changedLines": 360
+      },
+      "//": "Зуб 3 `Tariff` <-> media `Device` по пяти парам + policy, не по счётчику. Идемпотентный проход разноски по всем мембранам на накате; при красном зубе 3 повтор разноски чинит расхождение.",
+      "revisionAt": "2026-09-08T20:20:33+03:00",
+      "revisionOf": "af4ca303e1313fa44386ce680912db215fdec3333038885235ba8d70d59a9c83"
+    },
+    {
+      "blockId": "single-truth-switch",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "packages/background-cabinet/src/domain/tariff-grid-source.ts",
+        "packages/background-cabinet/src/domain/tariff-grid-source.mode.test.ts",
+        "scripts/lib/tariff-cutover.mjs",
+        "scripts/tariff-cutover-check.mjs",
+        "scripts/tariff-cutover.test.mjs",
+        "scripts/tariff-cutover-check.test.mjs",
+        "package.json",
+        "docs/deploy/BACKGROUND_CABINET_DEPLOY.md"
+      ],
+      "estimate": {
+        "changedLines": 280
+      },
+      "//": "`TARIFF_GRID_MODE` and S9 cutover predicates become readiness mirrors under teeth, then stop being a second truth switch. Wire package scripts for v2/v3 commands after their engines exist. `tariff-cutover` no longer relies on S0_scalars.",
+      "revisionAt": "2026-09-08T20:20:33+03:00",
+      "revisionOf": "7be832e7988af73ee035460f092e6946adfebd45031ddb4f09cc41cab6d23f95"
+    }
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-09-08T20:20:33+03:00",
+    "digest": "7de8558105b522123622b3936717d46e40bd49eed7fc2c5c4ce4b2b89270d52d"
+  }
+}

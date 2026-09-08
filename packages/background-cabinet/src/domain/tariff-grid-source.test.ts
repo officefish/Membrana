@@ -2,18 +2,12 @@
  * Зубы источника документа сетки (S3 плана интеграции).
  *
  * Сторожат две вещи, на которых легко соврать себе: битый документ не должен
- * работать «наполовину», а режим сетки не должен включаться сам собой — переход
- * на неё как на единственный источник истины это отдельный шаг плана (S9).
+ * работать «наполовину», а внешний режим сетки больше не должен существовать
+ * как второй источник правды.
  */
 import { describe, expect, it, beforeEach } from 'vitest';
 
-import {
-  isTariffGridMode,
-  loadTariffGrid,
-  resetTariffGridCache,
-  resolveGridPath,
-  TARIFF_GRID_PATH,
-} from './tariff-grid-source';
+import { loadTariffGrid, resetTariffGridCache, resolveGridPath, TARIFF_GRID_PATH } from './tariff-grid-source';
 
 describe('источник документа сетки', () => {
   beforeEach(() => resetTariffGridCache());
@@ -40,15 +34,9 @@ describe('источник документа сетки', () => {
   });
 });
 
-describe('переключатель режима', () => {
-  it('по умолчанию ВЫКЛЮЧЕН — переход на сетку это шаг S9, не побочный эффект', () => {
-    expect(isTariffGridMode({})).toBe(false);
-  });
-
-  it('включается только точным значением — «почти включено» не считается', () => {
-    expect(isTariffGridMode({ TARIFF_GRID_MODE: '1' })).toBe(true);
-    expect(isTariffGridMode({ TARIFF_GRID_MODE: 'true' })).toBe(false);
-    expect(isTariffGridMode({ TARIFF_GRID_MODE: '0' })).toBe(false);
-    expect(isTariffGridMode({ TARIFF_GRID_MODE: '' })).toBe(false);
+describe('снятый переключатель режима', () => {
+  it('модуль не экспортирует внешний рубильник режима', async () => {
+    const source = await import('./tariff-grid-source');
+    expect('isTariffGridMode' in source).toBe(false);
   });
 });
