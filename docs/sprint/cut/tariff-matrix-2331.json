@@ -58,13 +58,16 @@
         "docs/containers/strategic-docs/releases/tariff-matrix/",
         "docs/TARIFF_MATRIX.md",
         "docs/containers/strategic-docs/README.md",
-        "docs/containers/strategic-docs/WORKSHOP.md"
+        "docs/containers/strategic-docs/WORKSHOP.md",
+        "scripts/strategic-docs-generate.mjs",
+        "scripts/strategic-docs-generate.test.mjs"
       ],
       "estimate": {
-        "changedLines": 180
+        "changedLines": 260
       },
-      "revisionAt": "2026-09-08T12:30:08+03:00",
-      "revisionOf": "0c8e63e3409d28124053299862dddcf29c895a0da50d62832fc50d16cccaff77"
+      "//recut": "Перерезка 08.09 после первой сборки релиза: движок strategic-docs-generate.mjs склеивает тела гранул через пустую строку и не подставляет их в каркас шаблона, хотя дизайн контейнера (README-GRANULATION-DESIGN: «каркас остаётся в шаблоне — порядок секций, заголовки между слотами») и слово Веснина по b3 («шапка и порядок колонок — в skeleton литералом») требуют подстановки. Строки таблицы, склеенные пустой строкой, рассыпаются. В зону b3 добавлен движок с зубом регрессии: подстановка в каркас; релизы development-matrix и readme-main (каркас — только плейсхолдеры) пересобираются байт-в-байт; порча «вернуть склейку» → таблица матрицы красная.",
+      "revisionAt": "2026-09-08T19:54:09+03:00",
+      "revisionOf": "3ccaad6339afcb059efa7236968368e95c1d3f0031d5b98571392264b2a4a3b5"
     },
     {
       "blockId": "reseed-grid",
@@ -106,9 +109,10 @@
       "revisionOf": "612a6c231345c8a2f4f2d0781a81f036bfb0a26977433ba189c85e4851198171"
     }
   ],
+  "//ratification-history": "v1 ратифицирована владельцем 2026-09-08T12:30:08+03:00 (дайджест f8953b02…, через ведущую); перерезка b3 (движок каркаса) → новая версия плана, прежняя отметка снята инструментом и поставлена заново по новому слову владельца напрямую координатору 08.09 19:54 («ратифицирую»); акты — docs/sprint/cut/trail/tariff-matrix-2331.jsonl",
   "ratification": {
     "by": "owner",
-    "at": "2026-09-08T12:30:08+03:00",
-    "digest": "f8953b0207f0cbda7b31ba0161913b85f6f0f1e3a964ea9158ef0592b8ce8451"
+    "at": "2026-09-08T19:54:09+03:00",
+    "digest": "0bfe340619fca0d4109de76ee540754aa18c65382eac2dbdfb54c622b6ba0d6e"
   }
 }
