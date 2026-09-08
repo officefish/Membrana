@@ -1,0 +1,99 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "tariff-matrix-2331",
+  "taskId": "tariff-matrix-2331",
+  "mode": "explicit-honest",
+  "cutBy": "vesnin",
+  "//why": "Нож идёт по границе «данные → форма → производная → закрытие». b1 (matrix-passport-storage) рождает форму паспорта гранулы ресурса (дизайн + чистое ядро passport.mjs с зубом полноты) и первые гранулы хранения — purpose, buffer, collections, cold: единственный носитель значений — resource.json внутри гранулы (тариф — колонка, ресурс — строка; T14). b2 (matrix-granules-rights) по готовой форме b1 добавляет гранулы прав — nodes, workspaces, datasets (заглушка наблюдательного пункта на наборе блокпоста — словами), instruments. b3 (matrix-template-release) собирает из гранул шаблон и релиз и ставит корневой указатель — читает b1/b2, ничего не решает о числах. b4 (reseed-grid) строит глагол пересева и зуб «сетка совпадает с релизом» — читает релиз b3, пишет только производную docs/tariffs/tariff-grid.json и провода; скаляры S0 по консилиуму tariff-matrix-scalars-fate-2026-09-08 — замороженная эпоха сида: шапка файла supersede’ит формулу «единственный источник», зуб печатает расхождение S↔R списком, не краснеет. b5 закрывает спринт следом. Зоны не пересекаются; порядок нарезки = порядок зависимостей: b2 без формы b1 не пишется, b3 без гранул не собирается, b4 без релиза не гоняется. Первая версия резала гранулы одним блоком на 420 строк — тимлид перерезал по границе «форма+хранение / права» до порога ревью, владелец извещён через ведущую.",
+  "//dod": "Гранулы buffer/collections/cold/nodes/datasets/workspaces/instruments с паспортами (версия, дата закрепления, владелец, ресурс, единица, домен, правило пересева) и значениями по трём тарифам по T1 (датчик 512+512 МиБ, блокпост 2+2 ГиБ, наблюдательный пункт 4+4 ГиБ; системные наборы вне квоты; наборы по тарифу — у каждого свой, наблюдательный пункт пока на наборе блокпоста — заглушка СЛОВАМИ в грануле); шаблон tariff-matrix, `yarn strategic-docs:generate --template tariff-matrix` собирает релиз; docs/TARIFF_MATRIX.md — указатель; `yarn tariff:reseed` генерирует docs/tariffs/tariff-grid.json из релиза; зуб `yarn tariff:grid` сверяет сетку с релизом — зелёный на стволе, красный при ручной правке сетки (порча показана); ревью команды перед мерджем; чем проверено и сколько файлов взяла проверка — в докладе.",
+  "//out-of-scope": "Пересев базы и приборов (сид, prisma, кабинет) — задание В после заседания tariff-single-truth; поведение при переходах; холодное хранилище как режим; алгоритм умной очистки; наполнение наборов; публикация в Affine (заморожена 26.07). Скаляры S0 (docs/tariffs/tariff-scalars.json) — по консилиуму docs/seanses/tariff-matrix-scalars-fate-2026-09-08.md, вариант (б) усиленный: сид по-прежнему читает S, S := derive(R) — В; PR, делающий S=derive(R) «заодно» или красный зуб на S↔R, — BLOCK.",
+  "//estimate-basis": "b1 — дизайн паспорта + ядро с зубом + 4 гранулы × (granule.json + resource.json + render.mjs) ≈ 260 строк; b2 — 4 гранулы по готовой форме ≈ 200; b3 — шаблон, релиз (генерат), указатель, строки README/WORKSHOP контейнера ≈ 180; b4 — глагол пересева + чистое ядро + зуб сверки G↔R + печать S↔R + шапка скаляров + регенерированная сетка + провода ≈ 380; b5 — OPEN/ACTIVE/LOG/реестр ≈ 120.",
+  "window": {
+    "from": "2026-09-08T11:20:00+03:00",
+    "to": "2026-09-08T23:00:00+03:00"
+  },
+  "blocks": [
+    {
+      "blockId": "matrix-passport-storage",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/containers/strategic-docs/design/TARIFF-MATRIX-DESIGN.md",
+        "scripts/lib/tariff-matrix/passport.mjs",
+        "scripts/lib/tariff-matrix/passport.test.mjs",
+        "docs/containers/strategic-docs/granules/tariff-matrix-purpose/",
+        "docs/containers/strategic-docs/granules/tariff-buffer/",
+        "docs/containers/strategic-docs/granules/tariff-collections/",
+        "docs/containers/strategic-docs/granules/tariff-cold/"
+      ],
+      "estimate": {
+        "changedLines": 260
+      }
+    },
+    {
+      "blockId": "matrix-granules-rights",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/containers/strategic-docs/granules/tariff-nodes/",
+        "docs/containers/strategic-docs/granules/tariff-workspaces/",
+        "docs/containers/strategic-docs/granules/tariff-datasets/",
+        "docs/containers/strategic-docs/granules/tariff-instruments/"
+      ],
+      "estimate": {
+        "changedLines": 200
+      }
+    },
+    {
+      "blockId": "matrix-template-release",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/containers/strategic-docs/templates/tariff-matrix/template.json",
+        "docs/containers/strategic-docs/releases/tariff-matrix/",
+        "docs/TARIFF_MATRIX.md",
+        "docs/containers/strategic-docs/README.md",
+        "docs/containers/strategic-docs/WORKSHOP.md"
+      ],
+      "estimate": {
+        "changedLines": 180
+      }
+    },
+    {
+      "blockId": "reseed-grid",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        "scripts/tariff-reseed.mjs",
+        "scripts/tariff-reseed.test.mjs",
+        "scripts/lib/tariff-matrix/reseed.mjs",
+        "scripts/lib/tariff-matrix/reseed.test.mjs",
+        "scripts/tariff-grid-validate.mjs",
+        "scripts/lib/tariff-grid-check.mjs",
+        "scripts/tariff-grid-check.test.mjs",
+        "docs/tariffs/tariff-grid.json",
+        "docs/tariffs/tariff-scalars.json",
+        "docs/containers/strategic-docs/workshop.catalog.json",
+        "package.json"
+      ],
+      "estimate": {
+        "changedLines": 380
+      }
+    },
+    {
+      "blockId": "sprint-closure",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "docs/local-sprint/tariff-matrix-2331/",
+        "docs/LOCAL_SPRINT_ACTIVE.md",
+        "docs/LOCAL_SPRINT_LOG.md",
+        "docs/tasks/registry.json"
+      ],
+      "estimate": {
+        "changedLines": 120
+      }
+    }
+  ],
+  "ratification": {}
+}
