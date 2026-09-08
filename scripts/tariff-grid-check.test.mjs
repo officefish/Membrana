@@ -234,7 +234,9 @@ test('S↔R: живая сетка против живого S0 — список
   const a = seedEpochDriftReport(GRID, SCALARS);
   const b = seedEpochDriftReport(GRID, SCALARS);
   assert.deepEqual(a, b);
-  assert.ok(a.some((d) => d.path === 'checkpoint-v1.storage.buffer' && d.S === null && d.R === 1024));
+  // Предмет живой: после пересева (T1) буфер блокпоста в релизе 2048 МиБ, у сида — null; буфер датчика 1024→512.
+  assert.ok(a.some((d) => d.path === 'checkpoint-v1.storage.buffer' && d.S === null && d.R === 2048));
+  assert.ok(a.some((d) => d.path === 'free-v1.storage.buffer' && d.S === 1024 && d.R === 512));
 });
 
 test('S↔R: тариф сетки, не объявленный в S0, — строка списка, не падение', () => {
