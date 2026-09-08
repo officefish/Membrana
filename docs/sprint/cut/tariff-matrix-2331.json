@@ -28,7 +28,9 @@
       ],
       "estimate": {
         "changedLines": 260
-      }
+      },
+      "revisionAt": "2026-09-08T12:30:08+03:00",
+      "revisionOf": "c9afd68cb67bb96bfe324b454f8d580c0e4b49331d37d81a96ae56f938840d17"
     },
     {
       "blockId": "matrix-granules-rights",
@@ -43,7 +45,9 @@
       ],
       "estimate": {
         "changedLines": 240
-      }
+      },
+      "revisionAt": "2026-09-08T12:30:08+03:00",
+      "revisionOf": "5089e61062dd34f1ccb1a20d17d8b36b8f1c979f271c9aaded279e8ab93b9dbf"
     },
     {
       "blockId": "matrix-template-release",
@@ -58,7 +62,9 @@
       ],
       "estimate": {
         "changedLines": 180
-      }
+      },
+      "revisionAt": "2026-09-08T12:30:08+03:00",
+      "revisionOf": "0c8e63e3409d28124053299862dddcf29c895a0da50d62832fc50d16cccaff77"
     },
     {
       "blockId": "reseed-grid",
@@ -79,7 +85,9 @@
       ],
       "estimate": {
         "changedLines": 380
-      }
+      },
+      "revisionAt": "2026-09-08T12:30:08+03:00",
+      "revisionOf": "7646a4af9390beebd54e991bf6a8c505f1d84574f154b3a8d6a3d1a3aed8fb5b"
     },
     {
       "blockId": "sprint-closure",
@@ -93,8 +101,14 @@
       ],
       "estimate": {
         "changedLines": 120
-      }
+      },
+      "revisionAt": "2026-09-08T12:30:08+03:00",
+      "revisionOf": "612a6c231345c8a2f4f2d0781a81f036bfb0a26977433ba189c85e4851198171"
     }
   ],
-  "ratification": {}
+  "ratification": {
+    "by": "owner",
+    "at": "2026-09-08T12:30:08+03:00",
+    "digest": "f8953b0207f0cbda7b31ba0161913b85f6f0f1e3a964ea9158ef0592b8ce8451"
+  }
 }
