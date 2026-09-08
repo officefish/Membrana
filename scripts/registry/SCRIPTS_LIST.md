@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-07 |
-| Head SHA | 35f9c5b2e86332c1f98b23be6917abc989fea9fb |
+| Date | 2026-09-08 |
+| Head SHA | f002842e2e83177b15b96e40ec4c2721c3bd861e |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1209 |
-| Yarn scripts (package.json) | 463 |
-| Yarn → `scripts/` | 409 |
+| Code files under `scripts/` | 1213 |
+| Yarn scripts (package.json) | 465 |
+| Yarn → `scripts/` | 411 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 882 |
+| Code files without yarn ref | 884 |
 
-## Yarn → scripts/ (409)
+## Yarn → scripts/ (411)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -72,6 +72,7 @@
 - `bridge:shown` → `scripts/bridge-shown.mjs`
 - `buffer:evacuate-evidence` → `scripts/buffer-evacuate-evidence.mjs`
 - `buffer:protect-evidence` → `scripts/buffer-protect-evidence.mjs`
+- `buffer:watch` → `scripts/buffer-watch.mjs`
 - `build:affected` → `scripts/build-affected.mjs`
 - `cabinet:deploy:image:prod` → `scripts/_ssh-cabinet-deploy-image.mjs`
 - `cabinet:deploy:prod` → `scripts/deploy-run.mjs`, `scripts/_ssh-cabinet-deploy.mjs`
@@ -238,6 +239,7 @@
 - `night:research:sweep` → `scripts/night-research.mjs`
 - `night:research:yield` → `scripts/night-research.mjs`
 - `node:duty-ready` → `scripts/node-duty-ready.mjs`
+- `node:link-state` → `scripts/node-link-state.mjs`
 - `office:image:smoke` → `scripts/office-image-smoke.mjs`
 - `office:research-digest` → `scripts/office-research-digest.mjs`
 - `office:ssh` → `scripts/_ssh-office-exec.mjs`
@@ -435,7 +437,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (882)
+## Code files without yarn ref (884)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -537,6 +539,7 @@
 - `scripts/bridge-room.test.mjs`
 - `scripts/bridge-toolkit.test.mjs`
 - `scripts/buffer-protect-evidence.test.mjs`
+- `scripts/buffer-watch.test.mjs`
 - `scripts/build-affected.test.mjs`
 - `scripts/build-usercase-competition-team.mjs`
 - `scripts/build-v08-policy-constructor-json.mjs`
@@ -1121,6 +1124,7 @@
 - `scripts/night-triage-secret-scan.test.mjs`
 - `scripts/node-duty-ready.test.mjs`
 - `scripts/node-link-probe.test.mjs`
+- `scripts/node-link-state.test.mjs`
 - `scripts/norm-liveness.test.mjs`
 - `scripts/office-image-smoke.test.mjs`
 - `scripts/office-token.test.mjs`
@@ -1330,7 +1334,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1209)
+## All code files (1213)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1491,6 +1495,8 @@
 - `scripts/buffer-evacuate-evidence.mjs`
 - `scripts/buffer-protect-evidence.mjs`
 - `scripts/buffer-protect-evidence.test.mjs`
+- `scripts/buffer-watch.mjs`
+- `scripts/buffer-watch.test.mjs`
 - `scripts/build-affected.mjs`
 - `scripts/build-affected.test.mjs`
 - `scripts/build-templates-from-dataset.mjs`
@@ -2209,6 +2215,8 @@
 - `scripts/node-duty-ready.test.mjs`
 - `scripts/node-link-probe.mjs`
 - `scripts/node-link-probe.test.mjs`
+- `scripts/node-link-state.mjs`
+- `scripts/node-link-state.test.mjs`
 - `scripts/norm-liveness.test.mjs`
 - `scripts/office-image-smoke.mjs`
 - `scripts/office-image-smoke.test.mjs`
