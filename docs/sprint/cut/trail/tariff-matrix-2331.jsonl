@@ -1,2 +1,3 @@
 {"kind":"cut_context_run","sprintId":"tariff-matrix-2331","subject":"vesnin","at":"2026-09-08T08:52:27.221Z","ref":"docs/discussions/cut-tariff-matrix-2331-vesnin-run.md","planDigest":null}
 {"kind":"cut_act","sprintId":"tariff-matrix-2331","subject":"vesnin","at":"2026-09-08T08:52:27.221Z","ref":"docs/sprint/cut/tariff-matrix-2331.json","planDigest":"cf07e44d4c449c002c1769c12a10779696464706bd7ab4fa9a2059b1a2fe69f3"}
+{"kind":"recut_act","sprintId":"tariff-matrix-2331","subject":"vesnin","at":"2026-09-08T08:57:17.051Z","ref":"docs/sprint/cut/tariff-matrix-2331.json","planDigest":"54397c423e59fba9ba91f877f7da679394c3d30874b9ecc8574ece16baea8ec2"}

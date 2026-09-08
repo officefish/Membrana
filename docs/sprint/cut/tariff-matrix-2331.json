@@ -38,10 +38,11 @@
         "docs/containers/strategic-docs/granules/tariff-nodes/",
         "docs/containers/strategic-docs/granules/tariff-workspaces/",
         "docs/containers/strategic-docs/granules/tariff-datasets/",
+        "docs/containers/strategic-docs/granules/tariff-system-datasets/",
         "docs/containers/strategic-docs/granules/tariff-instruments/"
       ],
       "estimate": {
-        "changedLines": 200
+        "changedLines": 240
       }
     },
     {

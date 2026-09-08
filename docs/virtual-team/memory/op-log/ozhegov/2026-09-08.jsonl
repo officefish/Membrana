@@ -1,0 +1,5 @@
+{"ts":"2026-09-08T08:53:10.561Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-08T08:52:57.559Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:53:10.571Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-08T08:52:57.559Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:54:55.952Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-08T08:54:44.152Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:54:55.955Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-08T08:54:44.152Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:54:55.969Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-09-06-buffer-full-stop-m2-refusal-code","reason":"тот же рефрен: «три копии списка — нарушение слабой связанности и гарантированный drift»; здесь ровно та же болезнь с catalogId и заглушкой.","origin":"ask-persona"}
