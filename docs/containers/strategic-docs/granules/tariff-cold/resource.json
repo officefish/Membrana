@@ -1,0 +1,26 @@
+{
+  "schema": "tariff-resource/1",
+  "id": "cold",
+  "resource": "storage.cold",
+  "title": "Холодное хранилище",
+  "domain": "storage",
+  "kind": "quota",
+  "unit": "MiB",
+  "reseedRule": "exact-bytes",
+  "passport": {
+    "version": "1.0.0",
+    "ratifiedAt": null,
+    "owner": "owner",
+    "source": "tariff-grid 2026-07-29 (сетка) → заседание tariff-single-truth",
+    "note": "Холодное хранилище — предмет заседания tariff-single-truth; значения — как в сетке 29.07, не закреплены. Ноль у датчика означает «нельзя», не «неизвестно» (слово 29.07: холодная память объявлена только для блокпоста)."
+  },
+  "registry": {
+    "titleKey": "tariff.storage.cold",
+    "description": "Холодное хранилище треков"
+  },
+  "values": {
+    "free-v1": { "MiB": 0, "ratifiedAt": null, "note": "холодной памяти у датчика нет — ноль означает «нельзя»; режим холодного хранилища решает заседание" },
+    "checkpoint-v1": { "MiB": 2048, "ratifiedAt": null, "note": "«2 ГБ + 2 ГБ холодной памяти» (шторм 29.07) — как в сетке, закрепление ждёт заседания" },
+    "observatory-v1": { "MiB": 2048, "ratifiedAt": null, "note": "нижняя граница от «доступно всё из предыдущих тарифов»; объём владельцем не назван" }
+  }
+}

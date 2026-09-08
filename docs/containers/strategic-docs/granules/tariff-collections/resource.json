@@ -1,0 +1,26 @@
+{
+  "schema": "tariff-resource/1",
+  "id": "collections",
+  "resource": "storage.hot",
+  "title": "Коллекции (горячая память)",
+  "domain": "storage",
+  "kind": "quota",
+  "unit": "MiB",
+  "reseedRule": "exact-bytes",
+  "passport": {
+    "version": "1.0.0",
+    "ratifiedAt": "2026-09-08",
+    "owner": "owner",
+    "source": "storm-tariff-single-truth-2026-09-08 T1",
+    "note": "Слово «коллекции» одно не лжёт лишь с уточнением: в сетке это storage.hot — рабочая память, которую задействуют детекторы. Линейка 512 / 2048 / 4096 МиБ названа владельцем 08.09 (T1); у наблюдательного пункта сетка 29.07 несла 2048 как нижнюю границу — заменено словом владельца."
+  },
+  "registry": {
+    "titleKey": "tariff.storage.hot",
+    "description": "Рабочая память: её задействуют детекторы для пользовательских задач"
+  },
+  "values": {
+    "free-v1": { "MiB": 512, "ratifiedAt": "2026-09-08" },
+    "checkpoint-v1": { "MiB": 2048, "ratifiedAt": "2026-09-08" },
+    "observatory-v1": { "MiB": 4096, "ratifiedAt": "2026-09-08" }
+  }
+}
