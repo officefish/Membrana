@@ -153,6 +153,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `cowork-buffer-full-stop` | Cowork Sprint: Полный буфер — контракт остановки | 2026-09-07 | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-buffer-full-stop/COWORK_SPRINT_BRIEF.md) | — | [карточка](./archive/cowork-buffer-full-stop.md) |
 | `plugin-placement-contract` | Контракт зоны размещения плагин-панелей + зуб соответствия раскладке | 2026-08-26 | [`PLUGIN_PLACEMENT_CONTRACT_PROMPT.md`](../prompts/PLUGIN_PLACEMENT_CONTRACT_PROMPT.md) | #2182 | [карточка](./archive/plugin-placement-contract.md) |
 | `union-merge-all-jsonl` | Союзное слияние всех append-only журналов docs/**/*.jsonl (Б, после #2147) | 2026-08-25 | [`UNION_MERGE_ALL_JSONL_PROMPT.md`](../prompts/UNION_MERGE_ALL_JSONL_PROMPT.md) | #2096 | [карточка](./archive/union-merge-all-jsonl.md) |
 | `deliver-to-main-in-chain` | Доставка в ствол внутри цепочки ритуала: ожидание CI как шаг, не второй заход (Б, после #2147) | 2026-08-25 | [`DELIVER_TO_MAIN_IN_CHAIN_PROMPT.md`](../prompts/DELIVER_TO_MAIN_IN_CHAIN_PROMPT.md) | #2081 | [карточка](./archive/deliver-to-main-in-chain.md) |

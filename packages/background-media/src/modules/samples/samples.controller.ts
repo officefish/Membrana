@@ -30,6 +30,7 @@ import { API_TOKEN_SECURITY } from '../../common/swagger/openapi.constants';
 import { MediaDeviceAccessGuard } from '../../common/guards/media-device-access.guard';
 import { parseSamplesPageQuery } from '../../lib/pagination';
 import {
+  BufferOverflowRefusalDto,
   MoveSampleDto,
   PaginatedSamplesResponseDto,
   PatchSampleLabelDto,
@@ -67,16 +68,31 @@ export class SamplesController {
   @Post('collections/:collectionId/samples')
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UploadSampleMultipartDto })
-  @ApiOperation({ summary: 'Upload audio sample (multipart: file, optional meta JSON field)' })
+  @ApiOperation({
+    summary: 'Upload audio sample (multipart: file, optional meta JSON field)',
+    description:
+      'Two response forms (M2 contract, #2307): 201 — sample stored; 200 { ok:false, reason, … } — domain refusal, device buffer or user storage is full. 413 is transport only (multipart file exceeds MAX_UPLOAD_BYTES) and carries no domain reason.',
+  })
   @ApiParam({ name: 'collectionId' })
-  @ApiResponse({ status: 201, type: SampleResponseDto })
+  @ApiResponse({ status: 201, type: SampleResponseDto, description: 'Sample stored' })
+  @ApiResponse({
+    status: 200,
+    type: BufferOverflowRefusalDto,
+    description:
+      'Domain refusal: device buffer full or user storage full. Not an HTTP error — read `reason`; one overflowId/overflowAt per overflow episode.',
+  })
   @ApiStandardErrors()
   @ApiBadRequest()
-  @ApiResponse({ status: 413, description: 'Device storage quota exceeded' })
+  @ApiResponse({
+    status: 413,
+    description:
+      'Transport only: multipart file exceeds MAX_UPLOAD_BYTES (@fastify/multipart). Carries no domain reason; quota is NOT signalled by this status.',
+  })
   async upload(
     @Param('deviceId') deviceId: string,
     @Param('collectionId') collectionId: string,
     @Req() req: FastifyRequest,
+    @Res() reply: FastifyReply,
   ) {
     const part = await req.file();
     if (!part) {
@@ -92,7 +108,13 @@ export class SamplesController {
         meta = undefined;
       }
     }
-    return this.samples.upload(deviceId, collectionId, buffer, part.mimetype, meta);
+    const outcome = await this.samples.uploadOrRefuse(deviceId, collectionId, buffer, part.mimetype, meta);
+    // Статус ставится здесь, а не `@HttpCode`: у одной ручки две законные формы — 201 проба
+    // легла, 200 доменный отказ (конвенция 12.08). Nest выставил бы 201 обеим.
+    if (!outcome.ok) {
+      return reply.status(200).send(outcome);
+    }
+    return reply.status(201).send(outcome.sample);
   }
 
   @Get('samples/:sampleId/blob')

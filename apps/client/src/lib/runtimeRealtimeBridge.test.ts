@@ -12,6 +12,7 @@ import {
   runtimeStateToPayload,
   type RuntimeBridgeController,
 } from './runtimeRealtimeBridge';
+import { resetDeviceOverflowHoldForTests } from '@/lib/device-overflow-hold';
 import { resetServerFirstStoreForTests, useServerFirstStore } from '@/stores/serverFirstStore';
 
 function fakeController(): RuntimeBridgeController & {
@@ -44,7 +45,33 @@ describe('runtimeRealtimeBridge helpers', () => {
       mainLoopIteration: 3,
       alarmLoopIteration: 0,
       lastError: null,
+      overflowHold: null,
     });
+  });
+
+  it('runtimeStateToPayload несёт overflowHold отдельным значением: фаза, reason, overflowId, overflowAt (#2309)', () => {
+    const hold = resetDeviceOverflowHoldForTests();
+    hold.activateFromServer({
+      reason: 'device_buffer_full',
+      overflowId: 'ovf-1',
+      overflowAt: '2026-09-05T21:40:18.000Z',
+      overflowPolicy: 'stop',
+      buffer: null,
+      userStorage: null,
+    });
+    const state = { ...createIdleScenarioRuntimeState(), phase: 'main' as const, isRunning: true };
+    const payload = runtimeStateToPayload(state, 'normal', 'dev-1');
+    // Фаза сценария и фаза удержания ортогональны: детекция бежит, склад гашен.
+    expect(payload.phase).toBe('main');
+    expect(payload.overflowHold).toEqual({
+      phase: 'held',
+      reason: 'device_buffer_full',
+      overflowId: 'ovf-1',
+      overflowAt: '2026-09-05T21:40:18.000Z',
+      policy: 'stop',
+    });
+    hold.release('human');
+    expect(runtimeStateToPayload(state, 'normal', 'dev-1').overflowHold).toBeNull();
   });
 
   it('isRuntimeCommandEnvelope detects runtime.command only', () => {

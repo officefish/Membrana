@@ -182,8 +182,92 @@ async function parseApiError(res: Response, baseUrl: string): Promise<string> {
 function throwForStatus(res: Response, message: string): never {
   if (res.status === 403) throw new DomainError(message, 'FORBIDDEN');
   if (res.status === 404) throw new DomainError(message, 'NOT_FOUND');
-  if (res.status === 413) throw new DomainError(message, 'QUOTA_EXCEEDED');
+  /*
+    413 — только настоящему «тело слишком большое» (заседание buffer-full-stop M2, #2309).
+    Раньше здесь стояло `QUOTA_EXCEEDED`, и ночью 05→06.09 сервер одиннадцать часов отвечал
+    413 на полный буфер, а клиент маппил его в квоту без единого потребителя. Квота теперь
+    приходит доменным отказом `200 {ok:false, reason}` — см. `parseSampleRefusal`.
+  */
+  if (res.status === 413) throw new DomainError(message, 'PAYLOAD_TOO_LARGE');
   throw new DomainError(message, 'REQUEST_FAILED');
+}
+
+/**
+ * Оси квоты в доменном отказе (те же, что в `GET /quota`). Оба поля — целые байты.
+ */
+export interface SampleRefusalAxis {
+  readonly usedBytes: number;
+  readonly limitBytes: number;
+}
+
+/**
+ * Доменный отказ сервера записей на POST пробы (конвенция кабинета 12.08, M2 #2309):
+ * HTTP 200 + `{ ok:false, reason, … }`. Бэкенд — транспорт: словаря причин он НЕ знает и
+ * не проверяет; литерал `reason` судит носитель удержания на приборе (`DeviceOverflowHold`).
+ * Поля эпизода (`overflowId`, `overflowAt`, `overflowPolicy`) и оси квоты пробрасываются как
+ * есть, если сервер их дал; `raw` — полное тело для окна оператора (M5 строит окно из ответа).
+ */
+export interface SampleRefusal {
+  readonly reason: string;
+  readonly overflowId: string | null;
+  readonly overflowAt: string | null;
+  readonly overflowPolicy: string | null;
+  readonly buffer: SampleRefusalAxis | null;
+  readonly userStorage: SampleRefusalAxis | null;
+  readonly raw: Readonly<Record<string, unknown>>;
+}
+
+export type SampleRefusalListener = (refusal: SampleRefusal) => void;
+
+/** Шлюз отправки: `true` — отправка новых проб удержана, POST не делается (M3: 0 ретраев). */
+export type SampleUploadGate = () => boolean;
+
+const sampleRefusalListeners = new Set<SampleRefusalListener>();
+
+let sampleUploadGate: SampleUploadGate | null = null;
+
+function readAxis(value: unknown): SampleRefusalAxis | null {
+  if (typeof value !== 'object' || value === null) return null;
+  const rec = value as Record<string, unknown>;
+  const usedBytes = Number(rec.usedBytes);
+  const limitBytes = Number(rec.limitBytes);
+  if (!Number.isFinite(usedBytes) || !Number.isFinite(limitBytes)) return null;
+  return { usedBytes, limitBytes };
+}
+
+function readOptionalString(value: unknown): string | null {
+  return typeof value === 'string' && value.length > 0 ? value : null;
+}
+
+/**
+ * Разбор тела ответа на POST пробы: доменный отказ или null (обычный ответ с пробой).
+ * Отказ = объект с `ok === false` и строковым `reason`; всё остальное — не отказ.
+ */
+export function parseSampleRefusal(body: unknown): SampleRefusal | null {
+  if (typeof body !== 'object' || body === null) return null;
+  const rec = body as Record<string, unknown>;
+  if (rec.ok !== false) return null;
+  const reason = readOptionalString(rec.reason);
+  if (reason === null) return null;
+  return {
+    reason,
+    overflowId: readOptionalString(rec.overflowId),
+    overflowAt: readOptionalString(rec.overflowAt),
+    overflowPolicy: readOptionalString(rec.overflowPolicy),
+    buffer: readAxis(rec.buffer),
+    userStorage: readAxis(rec.userStorage),
+    raw: rec,
+  };
+}
+
+function announceSampleRefusal(refusal: SampleRefusal): void {
+  for (const listener of sampleRefusalListeners) {
+    try {
+      listener(refusal);
+    } catch {
+      /* слушатель не должен ронять путь отправки */
+    }
+  }
 }
 
 /** HTTP backend for `background-media` (paired web client). */
@@ -200,6 +284,34 @@ export class ServerStorageBackend implements IStorageBackend {
     this.baseUrl = normalizeBaseUrl(config.baseUrl);
     this.deviceId = config.deviceId;
     this.mediaToken = config.mediaToken;
+  }
+
+  /**
+   * Подписка на доменные отказы POST пробы (#2309). Реестр модульный, как
+   * `setMediaLibraryTraceHook`: бэкенд конструирует не прибор, а резолвер соединения, поэтому
+   * колбэк в конфиге до носителя удержания не доехал бы. Статический метод — чтобы не трогать
+   * барель пакета (общий файл коворка).
+   */
+  static onSampleRefusal(listener: SampleRefusalListener): () => void {
+    sampleRefusalListeners.add(listener);
+    return () => {
+      sampleRefusalListeners.delete(listener);
+    };
+  }
+
+  /**
+   * Шлюз отправки новых проб (#2309, M3 DoD 1): при `gate() === true` `putSample` не делает
+   * `fetch` вовсе — ноль исходящих POST в закрытую дверь, никаких ретраев. Единственный
+   * законный источник `true` — `DeviceOverflowHold.isHeld()`; второй машины здесь нет.
+   */
+  static setSampleUploadGate(gate: SampleUploadGate | null): void {
+    sampleUploadGate = gate;
+  }
+
+  /** Тесты: очистить реестр слушателей и шлюз. */
+  static resetSampleRefusalWiringForTests(): void {
+    sampleRefusalListeners.clear();
+    sampleUploadGate = null;
   }
 
   private deviceUrl(path: string): string {
@@ -235,6 +347,17 @@ export class ServerStorageBackend implements IStorageBackend {
     this.serverReachable = true;
     const text = await readResponseText(res);
     return parseJsonText<T>(text, this.baseUrl);
+  }
+
+  /**
+   * Сырой ответ `GET /quota` — как отдал сервер записей, без проекции в `StorageQuota`
+   * (адаптер BC-1 интеграции `cowork-buffer-full-stop`). Нужен читателю эффективной политики
+   * переполнения (блок B): поле `bufferPolicy` едет в корне `/quota`, а `getQuota()` его
+   * отбрасывает. Бросает при недоступности сервера — для читателя это «дыра синка» (→ `stop`).
+   * Частоту чтения задаёт вызывающий: сам бэкенд в сеть по расписанию не ходит.
+   */
+  async getQuotaRaw(): Promise<unknown> {
+    return this.requestJson<unknown>('/quota');
   }
 
   async getQuota(): Promise<StorageQuota> {
@@ -446,6 +569,12 @@ export class ServerStorageBackend implements IStorageBackend {
   }
 
   async putSample(collectionId: string, blob: Blob, meta: NewSampleMeta): Promise<MediaSample> {
+    if (sampleUploadGate?.() === true) {
+      throw new DomainError(
+        'Отправка проб удержана: буфер полон — новые пробы не отправляются до сброса удержания',
+        'UPLOAD_HELD',
+      );
+    }
     const form = new FormData();
     form.append('file', blob, guessUploadFilename(blob, meta.title));
     form.append(
@@ -473,8 +602,17 @@ export class ServerStorageBackend implements IStorageBackend {
       throwForStatus(res, await parseApiError(res, this.baseUrl));
     }
     const text = await readResponseText(res);
-    const row = parseJsonText<ApiSample>(text, this.baseUrl);
-    return mapSample(row);
+    const body = parseJsonText<unknown>(text, this.baseUrl);
+    const refusal = parseSampleRefusal(body);
+    if (refusal !== null) {
+      announceSampleRefusal(refusal);
+      throw new DomainError(
+        `Сервер записей отказал в приёме пробы: ${refusal.reason}`,
+        'SAMPLE_REFUSED',
+        refusal,
+      );
+    }
+    return mapSample(body as ApiSample);
   }
 
   async removeSample(sampleId: string): Promise<void> {

@@ -5,7 +5,16 @@ import { hashAccessKeySecret } from '../membrane/access-key.util';
 
 const now = new Date('2026-08-20T11:00:00.000Z');
 
-async function buildService(opts: { existingMediaDeviceId?: string } = {}) {
+const SMART_PARAMS = { thresholdPercent: 70, selection: 'largest_first', protectLabeled: true };
+
+async function buildService(
+  opts: {
+    existingMediaDeviceId?: string;
+    /** #2308: политика мембраны и галочка-привязка. */
+    membranePolicy?: { mode: string; params: unknown; binding: boolean };
+    devicePolicy?: { bufferPolicy: string; bufferPolicyParams: unknown };
+  } = {},
+) {
   const accessKey = 'pair-secret';
   const secretHash = await hashAccessKeySecret(accessKey);
   const matchedKey = {
@@ -30,12 +39,15 @@ async function buildService(opts: { existingMediaDeviceId?: string } = {}) {
       },
     },
     device: opts.existingMediaDeviceId
-      ? { mediaDeviceId: opts.existingMediaDeviceId }
+      ? { mediaDeviceId: opts.existingMediaDeviceId, ...(opts.devicePolicy ?? {}) }
       : null,
   };
   const prisma = {
     nodeAccessKey: { findMany: vi.fn(async () => [matchedKey]) },
     node: { findUnique: vi.fn(async () => node) },
+    membraneBufferPolicy: {
+      findUnique: vi.fn(async () => (opts.membranePolicy ? { membraneId: 'membrane-1', ...opts.membranePolicy } : null)),
+    },
     device: {
       create: vi.fn(async () => ({})),
       update: vi.fn(async () => ({})),
@@ -107,5 +119,66 @@ describe('PairService.pair — ADR-0028 mediaToken', () => {
     expect(res.mediaToken).toBe('client-token-rotated');
     expect(mediaBridge.issueClientKey).toHaveBeenCalledWith('media-device-existing');
     expect(mediaBridge.registerDevice).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * Семантика привязки при ПРИВЯЗКЕ узла (#2308, M1, T13/T17): галочка стоит → новый прибор
+ * слушает мембрану с первого контекста; снята → прибор получает свою настройку (нет строки →
+ * stop). Кто чью строку слушает — доказано на чистом слое (`membrane/buffer-policy.test.ts`,
+ * ветка «гейт снят»); здесь, сквозь живую привязку, — #2318 fail-closed: умная очистка в строке
+ * при выключенном гейте до media не доезжает, едет stop. Порча: снять fail-closed → в контексте
+ * регистрации/ре-пейринга уедет smart_cleanup → красный.
+ */
+describe('PairService.pair — политика переполнения в контексте (#2308)', () => {
+  it('новый прибор при стоящей галочке: мембрана хранит умную очистку → регистрируется со stop (#2318 fail-closed)', async () => {
+    const { accessKey, service, mediaBridge } = await buildService({
+      membranePolicy: { mode: 'smart_cleanup', params: SMART_PARAMS, binding: true },
+    });
+    await service.pair(accessKey);
+    const context = mediaBridge.registerDevice.mock.calls[0]![1] as { bufferPolicy?: unknown };
+    expect(context.bufferPolicy).toEqual({ mode: 'stop', params: null });
+  });
+
+  it('новый прибор при снятой галочке регистрируется со stop — политика мембраны его не касается', async () => {
+    const { accessKey, service, mediaBridge } = await buildService({
+      membranePolicy: { mode: 'smart_cleanup', params: SMART_PARAMS, binding: false },
+    });
+    await service.pair(accessKey);
+    const context = mediaBridge.registerDevice.mock.calls[0]![1] as { bufferPolicy?: unknown };
+    expect(context.bufferPolicy).toEqual({ mode: 'stop', params: null });
+  });
+
+  it('старая мембрана без полей политики → stop (effective(⊥) = stop на дороге привязки)', async () => {
+    const { accessKey, service, mediaBridge } = await buildService();
+    await service.pair(accessKey);
+    const context = mediaBridge.registerDevice.mock.calls[0]![1] as { bufferPolicy?: unknown };
+    expect(context.bufferPolicy).toEqual({ mode: 'stop', params: null });
+  });
+
+  it('ре-пейринг при снятой галочке: своя строка прибора с умной очисткой → едет stop (#2318 fail-closed), не smart_cleanup', async () => {
+    const { accessKey, service, mediaBridge } = await buildService({
+      existingMediaDeviceId: 'media-device-existing',
+      membranePolicy: { mode: 'stop', params: null, binding: false },
+      devicePolicy: { bufferPolicy: 'smart_cleanup', bufferPolicyParams: SMART_PARAMS },
+    });
+    await service.pair(accessKey);
+    expect(mediaBridge.syncMembraneContext).toHaveBeenCalledWith(
+      'media-device-existing',
+      expect.objectContaining({ bufferPolicy: { mode: 'stop', params: null } }),
+    );
+  });
+
+  it('ре-пейринг при стоящей галочке — политика мембраны поверх настройки прибора', async () => {
+    const { accessKey, service, mediaBridge } = await buildService({
+      existingMediaDeviceId: 'media-device-existing',
+      membranePolicy: { mode: 'stop', params: null, binding: true },
+      devicePolicy: { bufferPolicy: 'smart_cleanup', bufferPolicyParams: SMART_PARAMS },
+    });
+    await service.pair(accessKey);
+    expect(mediaBridge.syncMembraneContext).toHaveBeenCalledWith(
+      'media-device-existing',
+      expect.objectContaining({ bufferPolicy: { mode: 'stop', params: null } }),
+    );
   });
 });

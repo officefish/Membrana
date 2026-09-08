@@ -16,6 +16,9 @@ export default defineConfig(({ mode }) => {
       '@membrana/core': fileURLToPath(
         new URL('../../packages/core/src/index.ts', import.meta.url),
       ),
+      '@membrana/plugin-contracts': fileURLToPath(
+        new URL('../../packages/plugin-contracts/src/index.ts', import.meta.url),
+      ),
       '@membrana/device-board': fileURLToPath(
         new URL('../../packages/device-board/src/index.ts', import.meta.url),
       ),

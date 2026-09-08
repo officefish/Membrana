@@ -22,6 +22,9 @@ import { resolvePairedKeyStatus } from '../../domain/paired-key-status';
 import { NodeRealtimeService } from '../node-realtime/node-realtime.service';
 import { DeviceCaptureService } from '../device-capture/device-capture.service';
 import { MediaBridgeService } from '../pair/media-bridge.service';
+import { explainBufferPolicy, explainDevicePolicy, membranePolicyScope } from './buffer-policy';
+import { warnIfSmartCleanupGated } from './buffer-policy-gate-warn';
+import { MembraneBufferPolicyService } from './membrane-buffer-policy.service';
 
 const FREE_TARIFF_ID = 'free-v1';
 const FREE_DATASET_CATALOG_ID = 'free-v1-catalog';
@@ -40,19 +43,58 @@ function serializeTariff(tariff: Tariff) {
   };
 }
 
-function serializeNode(node: {
-  id: string;
-  label: string;
-  createdAt: Date;
-  accessKeys: Parameters<typeof serializeAccessKey>[0][];
-  device?: {
-    mediaDeviceId: string;
-    label: string | null;
-    lastSeenAt: Date;
-    pairedKeyId: string | null;
-    pairingStatus: 'paired' | 'revoked' | 'unpaired';
-  } | null;
-}) {
+/** Контекст политики мембраны для сериализации узла (#2308): галочка + строка мембраны. */
+interface MembranePolicyScope {
+  /** Адрес субъекта для журнала fail-closed (#2318); отсутствует в старых вызовах — тогда «—». */
+  membraneId?: string | null;
+  bufferPolicyBinding?: boolean;
+  bufferPolicy?: unknown;
+  bufferPolicyParams?: unknown;
+}
+
+type NodeDeviceRow = { mediaDeviceId: string; bufferPolicy?: unknown; bufferPolicyParams?: unknown };
+
+/** Собственная настройка прибора через `effective()`; #2318 — умная очистка при выключенном гейте → stop + warn. */
+function serializeDevicePolicy(device: NodeDeviceRow, scope: MembranePolicyScope) {
+  const explained = explainBufferPolicy(device);
+  warnIfSmartCleanupGated(explained, { kind: 'device', id: device.mediaDeviceId, membraneId: scope.membraneId });
+  return explained.policy;
+}
+
+/** Что прибор исполняет на самом деле (привязка → строка мембраны); warn адресуется тому, чья строка подменена. */
+function serializeEffectiveDevicePolicy(device: NodeDeviceRow, scope: MembranePolicyScope) {
+  const explained = explainDevicePolicy({
+    binding: scope.bufferPolicyBinding === true,
+    membrane: scope,
+    device,
+  });
+  warnIfSmartCleanupGated(
+    explained,
+    explained.subject === 'membrane' && scope.membraneId
+      ? { kind: 'membrane', id: scope.membraneId }
+      : { kind: 'device', id: device.mediaDeviceId, membraneId: scope.membraneId },
+  );
+  return explained.policy;
+}
+
+function serializeNode(
+  node: {
+    id: string;
+    label: string;
+    createdAt: Date;
+    accessKeys: Parameters<typeof serializeAccessKey>[0][];
+    device?: {
+      mediaDeviceId: string;
+      label: string | null;
+      lastSeenAt: Date;
+      pairedKeyId: string | null;
+      pairingStatus: 'paired' | 'revoked' | 'unpaired';
+      bufferPolicy?: unknown;
+      bufferPolicyParams?: unknown;
+    } | null;
+  },
+  scope: MembranePolicyScope = {},
+) {
   // #279: производный статус ключа сопряжения — на чтении, без миграций.
   // Ключи уже в выборке (accessKeys), лишних запросов нет.
   const pairedKeyView = node.device
@@ -74,6 +116,11 @@ function serializeNode(node: {
           lastSeenAt: node.device.lastSeenAt.toISOString(),
           pairedKeyStatus: pairedKeyView!.status,
           pairedKeyExpiresAt: pairedKeyView!.expiresAt,
+          // #2308: собственная настройка прибора и то, что он исполняет на самом деле. Оба —
+          // через `effective()`: порченая строка показывается как stop, а не как порча.
+          // #2318: умная очистка в строке при выключенном гейте → stop + warn (один на субъект).
+          bufferPolicy: serializeDevicePolicy(node.device, scope),
+          effectiveBufferPolicy: serializeEffectiveDevicePolicy(node.device, scope),
         }
       : null,
   };
@@ -128,14 +175,21 @@ export class MembraneService {
 
   async getMembraneView(userId: string) {
     const membrane = await this.getOrCreateMembraneForUser(userId);
+    // #2308: политика мембраны — отдельная строка; отсутствие = stop, привязка снята.
+    const policySetting = await this.prisma.membraneBufferPolicy.findUnique({
+      where: { membraneId: membrane.id },
+    });
+    const policyScope = membranePolicyScope(policySetting);
     const nodes = [...membrane.nodes]
       .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
-      .map(serializeNode);
+      .map((node) => serializeNode(node, policyScope));
     return {
       membrane: {
         id: membrane.id,
         tariff: serializeTariff(membrane.tariff),
         createdAt: membrane.createdAt.toISOString(),
+        // #2308: режим + параметры + галочка-привязка — одна витрина на странице мембраны.
+        bufferPolicy: MembraneBufferPolicyService.membraneView(policySetting),
       },
       // MP7b: список всех узлов мембраны. `node` (первый) — для обратной совместимости.
       nodes,

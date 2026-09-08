@@ -1,6 +1,24 @@
 {
   "tasks": [
     {
+      "id": "cowork-buffer-full-stop",
+      "title": "Cowork Sprint: Полный буфер — контракт остановки",
+      "promptPath": "docs/cowork-sprint/cowork-buffer-full-stop/COWORK_SPRINT_BRIEF.md",
+      "githubIssue": null,
+      "noIssueReason": "вход спринта — эпик заседания buffer-full-stop (#2306, влит edcbbda9); блоки несут свои иссью #2307/#2308/#2309, поверх #2310",
+      "linearId": null,
+      "size": "L",
+      "status": "archived",
+      "sprintKind": "cowork-sprint",
+      "createdAt": "2026-09-06",
+      "archivedAt": "2026-09-07",
+      "leadPersona": "vesnin",
+      "supportPersonas": [],
+      "notes": "3 блока refusal-contract/overflow-policy/device-hold от BASE_SHA edcbbda9; изоляция до Interface Consilium; мёржатся все три; 4/4 (#2310) — поверх, после сведения",
+      "archiveNotes": "коворк отгружен PR #2314 (squash d73b6923, 07.09): 3 блока freeze f05e4bdc/769fbbc8/b420c930, 10 адаптеров, переписано 0; поверх — PR #2315 (#2310); долги D-1…D-5 в RETROSPECTIVE",
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "cabinet-deploy-smoke-tooth-2288",
       "title": "Смоук выкатки кабинета бьёт тарифы, pair и сетку образа",
       "promptPath": "docs/prompts/CABINET_DEPLOY_SMOKE_TOOTH_2288_PROMPT.md",

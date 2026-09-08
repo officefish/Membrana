@@ -2,59 +2,70 @@
 
 | Поле | Значение |
 |------|----------|
-| **status** | `open` — Phase 4 закрыта, Phase 5 (один PR в main) |
-| sprintId | `cowork-library-open-api` |
-| brief | [`COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md) |
-| вход | заседание [`library-open-api/EPIC.md`](./meeting/library-open-api/EPIC.md), ред. 3, влито `4eba2c77` |
-| BASE_SHA | `56423801` (= origin/main на момент открытия) |
-| openedAt | 2026-09-02 |
-| owner cut ratification | формат — слово владельца 02.09 («коворк по слову владельца»); нарезка на три блока ожидает ратификации |
+| **status** | `closed` — Phase 5 закрыта 2026-09-07 (`cowork:close`) |
+| sprintId | `cowork-buffer-full-stop` |
+| brief | [`COWORK_SPRINT_BRIEF.md`](./cowork-sprint/cowork-buffer-full-stop/COWORK_SPRINT_BRIEF.md) |
+| вход | заседание [`buffer-full-stop/EPIC.md`](./meeting/buffer-full-stop/EPIC.md) (#2306, влито `edcbbda9`); билеты #2307 / #2308 / #2309, поверх #2310 |
+| BASE_SHA | `edcbbda9` (= origin/main на момент открытия) |
+| openedAt | 2026-09-06 |
+| owner cut ratification | формат и нарезка — слово владельца 06.09 («Б — коворк „полный буфер“, три изолированных блока»); билеты выписаны рукой владельца из эпика |
 | current phase | **5 — Merge + archive** |
-| integration deadline | 2026-09-05 fallback (гейт событийный) |
-| координатор | сессия Б |
+| integration deadline | 2026-09-09 fallback (гейт событийный: ready(A) ∧ ready(B) ∧ ready(C)) |
+| координатор | сессия Б, дерево `Membrana-cw-buffer-full`, ветка `cowork/cowork-buffer-full-stop/coordination` |
 
 ## Blocks
 
-| Блок | Ветка | Worktree | Фаза | Готовность |
-|------|-------|----------|------|------------|
-| `ownership` | `cowork/cowork-library-open-api/ownership` | `Membrana-ownership` | freeze | `de0005f8`; 67 зубов, порча мутацией |
-| `contract` | `cowork/cowork-library-open-api/contract` | `Membrana-contract` | freeze | `b047a20e`; 29→31 зуб, порча мутацией |
-| `key-ttl` | `cowork/cowork-library-open-api/key-ttl` | `Membrana-key-ttl` | freeze | `d59409dd`; 80 зубов, порча живого файла |
+| Блок | Билет | Ветка | Worktree | Фаза | Готовность |
+|------|-------|-------|----------|------|------------|
+| `refusal-contract` (A) | #2307 | `cowork/cowork-buffer-full-stop/refusal-contract` | `Membrana-cw-refusal` | freeze | `f05e4bdc`; 35 зубов samples + 33 plugin-contracts, 9 порч красные; сверено координатором (5 файлов/35 + 2/33 зелёные, вне зоны только `verify-swagger.mjs` — судья swagger, зона по смыслу) |
+| `overflow-policy` (B) | #2308 | `cowork/cowork-buffer-full-stop/overflow-policy` | `Membrana-cw-policy` | freeze | `769fbbc8`; 42 файла, все в зоне; сверено координатором: media devices 4/50, cabinet pair+membrane 6/65, client buffer-policy 3/19, cabinet UI 1/10 зелёные, `verify:swagger` кабинета OK |
+| `device-hold` (C) | #2309 | `cowork/cowork-buffer-full-stop/device-hold` | `Membrana-cw-hold` | freeze | `b420c930`; 35 файлов, все в зоне; сверено координатором: client 14/87, core 5/51, cabinet 2/15 зелёные, `verify:wire-sync` OK; 6 порч красные |
 
-Все три ветки заведены от одного `BASE_SHA 56423801`; freeze-теги стоят.
-Integration-ветка: `cowork/cowork-library-open-api/integration` в дереве `Membrana-integration`.
+Все три ветки заведены от одного `BASE_SHA edcbbda9`.
+Integration-ветка: `cowork/cowork-buffer-full-stop/integration` — заводится координатором в Phase 4.
 
-## Что НЕ входит
+## Что НЕ входит блоком
 
-**M4 — границы выемки (квота выдачи на мембрану).** Эпик называет квоту нормой к вводу, а не
-действующей границей: счётчика выдач и предела частоты в стволе нет, предел фактически
-бесконечен. Блок с нерешённым носителем резать нельзя.
+**#2310 — окно оператора (M5).** Строится только из ответа A и статуса C без второго запроса
+квоты: горячий шов с двумя блоками сразу, на стабах это была бы ложная резка. Урок 02.09:
+если блоки дают части, четвёртый — сборка, и он назван заранее. Делается после Phase 4 на
+ветке `integration` или отдельным заданием по слову владельца.
 
-## Известный шов — намеренно не согласован
+## Известные швы — намеренно не согласованы
 
-Имя временного поля ключа: M2 назвал рабочее `trackUrl`, лемма M4 записала `temporaryKey?`.
-Назначать до вскрытия запрещено — каждый блок объявляет ожидание односторонне в своём
-`EXPECTATIONS.md`. Сведение — Phase 3.
+Шесть швов названы в брифе («Известные швы»): пакет словаря причин; чтение политики прибора
+блоком A у B; чтение эффективной политики блоком C у B; форма разбора ответа A на клиенте;
+носитель эпизода и `overflowAt` на сервере; значение состояния узла (C один на обоих концах).
+Каждый блок объявляет ожидание односторонне в `EXPECTATIONS.md`. Сведение — Phase 3.
 
 ## Phase Ledger
 
 | Фаза | Состояние | Дата | Артефакт |
 |------|-----------|------|----------|
-| 0 — Brief + open | ✅ закрыта | 2026-09-02 | brief, ACTIVE, 3 ветки от `56423801` |
-| 1 — Concept | ✅ закрыта | 2026-09-02 | три `CONCEPT.md` + первые `EXPECTATIONS.md` |
-| 2 — Isolated build | ✅ закрыта | 2026-09-02 | все три DoD зелёные на стабах; гейт сработал по предикату, дедлайн не понадобился |
-| 3 — Interface Consilium | ✅ закрыта | 2026-09-02 | протокол + `INTERFACE_CONTRACT.md`; шов имени решён, число полей — владельцем |
-| 4 — Integration | ✅ закрыта | 2026-09-02 | 7 адаптеров, smoke 6/6 через все три шва |
-| 5 — Merge + archive | в работе | — | один PR в main, `RETROSPECTIVE.md` написана |
+| 0 — Brief + open | ✅ закрыта | 2026-09-06 | brief по замеру ствола, ACTIVE, карточка реестра, 3 ветки от `edcbbda9`; предыдущий спринт закрыт `cowork:close` |
+| 1 — Concept | ✅ закрыта | 2026-09-06 | три `CONCEPT.md` + первые `EXPECTATIONS.md` |
+| 2 — Isolated build | ✅ закрыта | 2026-09-06 | все три DoD зелёные на стабах, сверено координатором прогоном; гейт сработал по предикату в день открытия, дедлайн 09.09 не понадобился |
+| 3 — Interface Consilium | ✅ закрыта | 2026-09-06 | [протокол](./discussions/cowork-sprint-cowork-buffer-full-stop-interface-consilium.md) + [`INTERFACE_CONTRACT.md`](./cowork-sprint/cowork-buffer-full-stop/INTERFACE_CONTRACT.md); 10 адаптеров, эскалации нет |
+| 4 — Integration | ✅ закрыта | 2026-09-07 | ветка `cowork/cowork-buffer-full-stop/integration` (`0585f0ba` + доки): 10 адаптеров, переписано 0, стабов и временной константы нет; сверено координатором: media 9/91, client 13/84, cabinet 3/25, wire-sync, оба swagger зелёные; протокол `INTEGRATION_CHECKS.md` |
+| 5 — Merge + archive | ✅ закрыта | 2026-09-07 | PR #2314 влит сквошем `d73b6923` по слову владельца («Мержим 2314»), ревью тимлида LGTM (`pr-2314-code-review.md`); `RETROSPECTIVE.md`; карточка архивирована `task:archive`. Поверх: #2310 — PR #2315, база переведена на main |
 
-## Сверено в стволе до нарезки (02.09)
+## Сверено в стволе до нарезки (06.09)
 
-| Факт | Состояние |
-|------|-----------|
-| `Device.membraneId` | есть, `prisma/schema.prisma:54`, с индексом |
-| `MediaDeviceAccessGuard` | есть, охрана маршрута |
-| OpenAPI-спецификация библиотеки | нет |
-| Генератор ключей треков, `DEFAULT_TRACK_KEY_TTL` | нет нигде в стволе |
+Полная таблица — в брифе. Ключевое: отказ по квоте сегодня — 413 с английским текстом
+(`samples.service.ts:121-134`); поля политики у `Device` нет; локальная политика на клиенте
+`auto-cleanup` по умолчанию; 413 на клиенте маппится в `QUOTA_EXCEEDED` без потребителя;
+значения «остановлен: буфер полон» в `RuntimeStatePayload.phase` нет; `overflowId`,
+`DeviceOverflowHold` — 0 совпадений. **`@membrana/background-media` не зависит от
+`@membrana/core`** — выбор пакета словаря за блоком A, строка зависимости — на интеграции.
 
-Отсюда: `ownership` строит ось выборки на существующем поле; `contract` и `key-ttl` создаются
-с нуля.
+---
+
+## Закрытие Phase 5 — `cowork:close` 2026-09-07
+
+Спринт **`cowork-buffer-full-stop`** закрыт предикатом, а не памятью человека: контракт и ретроспектива на месте, блокирующих находок нет.
+
+Неблокирующие находки, оставленные явно (закрытие флага из-за них не роняется):
+
+- `card_not_archived` — карточка `cowork-buffer-full-stop` в статусе `active` — закрыть флаг можно, но `yarn task:archive` ещё не звали
+
+**Что этот шаг НЕ утверждает:** качество сведения блоков машине недоступно. Пустой список находок означает «признаков незакрытости не найдено», а не «коворк закрыт хорошо».

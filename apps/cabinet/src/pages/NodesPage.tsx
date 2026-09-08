@@ -2,11 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createNode, deleteNode, fetchMembraneMe, type MembraneView, type NodeView } from '@/api/membrane';
 import type { DeviceCaptureMode } from '@/api/deviceCapture';
 import { isNodeLimitReachedView } from '@/lib/nodeListView';
-import { resolveNodeCardStatus } from '@/lib/nodeCardStatus';
+import { resolveNodeCardStatus, resolveNodeVitality } from '@/lib/nodeCardStatus';
 import { DEVICE_OFFLINE_RUN_HINT } from '@/lib/isDeviceLive';
 import { useCabinetNodeRuntime } from '@/lib/useCabinetNodeRuntime';
 import { useCabinetNodesJournalPreview, type NodeJournalPreviewState } from '@/lib/useCabinetNodesJournalPreview';
 import { NodeLastTrackPreview } from '@/components/nodes/NodeLastTrackPreview';
+import { NodeOverflowHoldLine } from '@/components/nodes/NodeOverflowHoldLine';
 import { NodeScenarioCell } from '@/components/nodes/NodeScenarioCell';
 
 interface NodesPageProps {
@@ -198,6 +199,18 @@ function NodeCard({
   });
   const isRunning = state?.isRunning ?? false;
   const mode = state?.mode ?? 'normal';
+  /*
+    M4 (б)/#2309, адаптер C-1: «жив · не пишет · буфер полон» — отдельное значение состояния узла,
+    ортогональное фазе сценария. Один порог «умер» — presence-окно кабинета; время последнего
+    heartbeat кабинет здесь не знает (null) и судит по presence.
+  */
+  const overflowHold = state?.overflowHold ?? null;
+  const vitality = resolveNodeVitality({
+    presenceOnline: deviceLive,
+    lastPresenceAtMs: null,
+    nowMs: Date.now(),
+    overflowHold,
+  });
   const [captureMode, setCaptureMode] = useState<DeviceCaptureMode>('soft');
   const [captureBusy, setCaptureBusy] = useState(false);
   const [captureError, setCaptureError] = useState<string | null>(null);
@@ -342,8 +355,16 @@ function NodeCard({
             isCaptured
               ? `Устройство захвачено (${capture.mode === 'hard' ? 'жёсткий' : 'мягкий'} режим). `
               : ''
-          }${isRunning ? `Режим: ${mode === 'alarm' ? 'тревога' : 'обычный'}` : 'Сценарий остановлен'}`}
+          }${
+            isRunning
+              ? `Режим: ${mode === 'alarm' ? 'тревога' : 'обычный'}`
+              : vitality === 'stopped_buffer_full'
+                ? 'Остановлен: буфер полон — узел жив, не пишет'
+                : 'Сценарий остановлен'
+          }`}
         </span>
+
+        <NodeOverflowHoldLine vitality={vitality} hold={overflowHold} />
 
         {captureError ? (
           <div className="alert alert-error py-2 text-sm">

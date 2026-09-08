@@ -2,14 +2,20 @@ import React from 'react';
 
 import type { ScenarioRuntimeState } from '../runtime/index.js';
 import { resolveActiveLoopIndicator } from './active-loop-indicator.js';
+import type { BoardOverflowHoldView } from './board-overflow-hold.js';
 
 export interface BoardRuntimeStatusProps {
   readonly state: ScenarioRuntimeState;
+  /**
+   * Удержание по буферу (M5 (в), #2310): фаза + причина + «жив, не пишет» — строка статуса
+   * сценария ортогональна фазе рантайма (детекция живёт, медиа-ветка гасится, M4).
+   */
+  readonly overflowHold?: BoardOverflowHoldView | null;
 }
 
 /** Статус scenario runtime под шапкой доски. */
-export const BoardRuntimeStatus: React.FC<BoardRuntimeStatusProps> = ({ state }) => {
-  if (state.phase === 'idle' && !state.isRunning && state.lastError === null) {
+export const BoardRuntimeStatus: React.FC<BoardRuntimeStatusProps> = ({ state, overflowHold = null }) => {
+  if (state.phase === 'idle' && !state.isRunning && state.lastError === null && overflowHold === null) {
     return null;
   }
 
@@ -54,6 +60,17 @@ export const BoardRuntimeStatus: React.FC<BoardRuntimeStatusProps> = ({ state })
         </span>
       ) : null}
       {state.lastError ? <p className="mt-1 text-error">{state.lastError}</p> : null}
+      {overflowHold ? (
+        <p
+          className="mt-1 text-error"
+          role="status"
+          aria-live="polite"
+          data-testid="board-overflow-hold-status"
+          data-overflow-key={overflowHold.overflowKey}
+        >
+          {[overflowHold.phaseText, overflowHold.reasonText, overflowHold.aliveText].join(' · ')}
+        </p>
+      ) : null}
     </div>
   );
 };

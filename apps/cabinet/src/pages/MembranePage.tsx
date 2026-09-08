@@ -6,6 +6,7 @@ import {
   selectTariff,
   type TariffCatalogView,
 } from '@/api/tariff';
+import { BufferOverflowPolicyCard } from '@/components/membrane/BufferOverflowPolicyCard';
 import { formatBytes } from '@/lib/formatBytes';
 import { tariffDenyText } from '@/lib/tariffDenyText';
 
@@ -338,6 +339,9 @@ export function MembranePage() {
           <PromoRedeemForm onRedeemed={() => void load()} />
         </div>
       </div>
+
+      {/* #2308: политика переполнения — та же витрина, что тариф; отдельной страницы прибора нет */}
+      <BufferOverflowPolicyCard data={data} onChanged={() => void load()} />
     </div>
   );
 }

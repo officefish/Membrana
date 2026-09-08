@@ -2,9 +2,10 @@ import {
   BadRequestException,
   ConflictException,
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
-  PayloadTooLargeException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import type { Collection, SampleLabel } from '../../prisma/client';
@@ -23,7 +24,49 @@ import { isPrismaUniqueViolation } from '../../lib/prisma-errors';
 import { normalizeSampleLabel } from '../../lib/sample-label';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CollectionsService } from '../collections/collections.service';
-import { DevicesService } from '../devices/devices.service';
+import { effectiveBufferPolicy } from '../devices/buffer-policy';
+import { DevicesService, type DeviceQuotaDto } from '../devices/devices.service';
+import {
+  axisRefuses,
+  buildBufferOverflowRefusal,
+  resolveQuotaSubject,
+  type BufferOverflowRefusal,
+  type OverflowPolicy,
+} from './buffer-overflow-refusal';
+import { OverflowEpisodeRegistry } from './overflow-episode-registry';
+
+/**
+ * Политика для поля ответа `overflowPolicy` (шов B→A, адаптер A-1 контракта интеграции
+ * `cowork-buffer-full-stop`). Источник — строка `Device`, которую `DevicesService.getQuota` уже
+ * загрузил для квоты и пропустил через `effectiveBufferPolicy` (поле `bufferPolicy` ответа
+ * `/quota` — канал B→C). Второго чтения базы нет; чистая функция B прогоняется ещё раз по тем же
+ * данным: `⊥` и порча → `stop`, не падение (требование B), и умная очистка без полного S до
+ * ответа не долетает.
+ */
+function overflowPolicyOf(quota: Pick<DeviceQuotaDto, 'bufferPolicy'>): OverflowPolicy {
+  const carried = quota.bufferPolicy as { mode?: unknown; params?: unknown } | null | undefined;
+  return effectiveBufferPolicy({ bufferPolicy: carried?.mode, bufferPolicyParams: carried?.params }).mode;
+}
+
+/**
+ * Исход загрузки пробы: проба лежит ИЛИ доменный отказ «места нет» (вердикт M2, #2307).
+ * Отказ — не исключение и не HTTP-ошибка: транспорт 200, клиент читает `reason`.
+ */
+export type SampleUploadOutcome =
+  | { readonly ok: true; readonly sample: SampleDto }
+  | BufferOverflowRefusal;
+
+/**
+ * Доменный отказ, доставленный исключением — для вызывающих, которые не умеют нести
+ * объединение `SampleUploadOutcome` (`firebat-node` зовёт `upload()` и берёт `sample.id`).
+ * Статус 200 — по конвенции 12.08: это исход, не поломка транспорта; Nest отдаст то же тело
+ * `{ ok:false, reason, … }`, что и основная дверь. Предпочтительный путь — `uploadOrRefuse`.
+ */
+export class BufferOverflowRefusedException extends HttpException {
+  constructor(readonly refusal: BufferOverflowRefusal) {
+    super(refusal, HttpStatus.OK);
+  }
+}
 
 export interface UploadMetaOverride {
   title?: string;
@@ -80,6 +123,7 @@ export class SamplesService {
     private readonly devices: DevicesService,
     private readonly blobs: BlobStorageService,
     private readonly audio: AudioIngestService,
+    private readonly episodes: OverflowEpisodeRegistry,
   ) {}
 
   async list(
@@ -106,6 +150,11 @@ export class SamplesService {
     };
   }
 
+  /**
+   * Вторая дверь загрузки — совместимая сигнатура для `firebat-node` (результат задания = та же
+   * загрузка, ADR-0027). Отказ по квоте — `BufferOverflowRefusedException` (200 + тело M2),
+   * не 413: транспортный код квоту больше не описывает.
+   */
   async upload(
     deviceId: string,
     collectionId: string,
@@ -113,26 +162,44 @@ export class SamplesService {
     mimeType: string | undefined,
     meta?: UploadMetaOverride,
   ): Promise<SampleDto> {
+    const outcome = await this.uploadOrRefuse(deviceId, collectionId, fileBuffer, mimeType, meta);
+    if (outcome.ok) return outcome.sample;
+    throw new BufferOverflowRefusedException(outcome);
+  }
+
+  /**
+   * Основная дверь: проба лежит ИЛИ доменный отказ «места нет» с эпизодом (M2, #2307).
+   *
+   * Отказ чеканится mapper'ом `buffer-overflow-refusal.ts`; эпизод (`overflowId`/`overflowAt`)
+   * открывается идемпотентно в `OverflowEpisodeRegistry` — 100 отказов подряд несут один id и
+   * одно время. Успешная запись в ось закрывает её эпизод: сервер увидел место.
+   *
+   * `overflowPolicy` — эффективная политика прибора из той же строки `Device`, что и квота
+   * (поле блока B; см. `overflowPolicyOf`).
+   */
+  async uploadOrRefuse(
+    deviceId: string,
+    collectionId: string,
+    fileBuffer: Buffer,
+    mimeType: string | undefined,
+    meta?: UploadMetaOverride,
+  ): Promise<SampleUploadOutcome> {
     const collection = await this.collections.getOwned(deviceId, collectionId);
     this.assertUploadAllowed(collection);
 
     const parsed = await this.audio.parseUpload(fileBuffer, mimeType);
     assertDeclaredAudioMetaMatchesMeasured(meta, parsed);
-    const quota = await this.devices.getQuota(deviceId);
-    const bucket =
-      collection.kind === 'buffer'
-        ? quota.buffer
-        : collection.kind === 'user' ||
-            (collection.kind === 'system' && collection.systemKey !== TARIFF_DATASET_SYSTEM_KEY)
-          ? quota.userStorage
-          : null;
-
-    if (bucket && bucket.usedBytes + parsed.sizeBytes > bucket.limitBytes) {
-      throw new PayloadTooLargeException(
-        collection.kind === 'buffer'
-          ? 'Buffer storage quota exceeded'
-          : 'User storage quota exceeded',
-      );
+    const subject = resolveQuotaSubject(collection, TARIFF_DATASET_SYSTEM_KEY);
+    if (subject) {
+      const quota = await this.devices.getQuota(deviceId);
+      if (axisRefuses(quota[subject], parsed.sizeBytes)) {
+        return buildBufferOverflowRefusal({
+          subject,
+          quota,
+          overflowPolicy: overflowPolicyOf(quota),
+          episode: this.episodes.open(deviceId, subject),
+        });
+      }
     }
 
     const sampleId = randomUUID();
@@ -164,7 +231,9 @@ export class SamplesService {
           notes: meta?.notes,
         },
       });
-      return sampleToDto(row);
+      // Проба легла — в оси было место; открытый эпизод переполнения (если был) закрыт.
+      if (subject) this.episodes.release(deviceId, subject);
+      return { ok: true, sample: sampleToDto(row) };
     } catch (err) {
       await this.blobs.delete(storageRef);
       if (isPrismaUniqueViolation(err)) {
@@ -219,6 +288,8 @@ export class SamplesService {
     }
     await this.blobs.delete(row.storageRef);
     await this.prisma.sample.delete({ where: { id: sampleId } });
+    // Место дали (сюда же приходит buffer-cleanup) — эпизод оси закрыт, следующий отказ = новый.
+    this.releaseEpisodeOf(deviceId, row.collection);
   }
 
   async move(
@@ -242,6 +313,8 @@ export class SamplesService {
         source: 'move',
       },
     });
+    // Проба ушла из оси-источника — там появилось место.
+    this.releaseEpisodeOf(deviceId, row.collection);
     return sampleToDto(updated);
   }
 
@@ -302,6 +375,14 @@ export class SamplesService {
       throw new NotFoundException(`Sample ${sampleId} not found for device`);
     }
     return row;
+  }
+
+  private releaseEpisodeOf(
+    deviceId: string,
+    collection: Pick<Collection, 'kind' | 'systemKey'>,
+  ): void {
+    const subject = resolveQuotaSubject(collection, TARIFF_DATASET_SYSTEM_KEY);
+    if (subject) this.episodes.release(deviceId, subject);
   }
 
   private assertUploadAllowed(collection: Collection): void {

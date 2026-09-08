@@ -11,6 +11,7 @@ import {
 } from '@membrana/media-library-service';
 
 import type { NodeConnectionMode, PairedNodeCredentials } from '@/lib/nodeConnectionMode';
+import { bindBufferPolicySourceToBackend, refreshEffectiveOverflowPolicy } from '@/lib/buffer-policy-bridge';
 import { appendLiveJournalTrackFromSampleImport } from '@/lib/liveJournalTrackWriter';
 import { resolveMediaLibraryBackend } from '@/lib/resolveMediaLibraryBackend';
 import { MIC_BUFFER_RECORDER_PLUGIN_ID } from '@/plugins/mic-buffer-recorder/types';
@@ -54,6 +55,15 @@ export function publishMediaLibraryQuotaFromService(): void {
   pushQuotaSnapshot();
 }
 
+/**
+ * BC-1: политика переполнения читается ПЕРЕД публикацией квоты — локальный страж (плагин
+ * микрофона) судит по политике того же цикла, а не прошлого. `refresh` читателя не бросает.
+ */
+async function syncPolicyThenPushQuota(): Promise<void> {
+  await refreshEffectiveOverflowPolicy();
+  pushQuotaSnapshot();
+}
+
 async function attachService(svc: MediaLibraryService): Promise<boolean> {
   serviceUnsub?.();
   try {
@@ -63,9 +73,9 @@ async function attachService(svc: MediaLibraryService): Promise<boolean> {
     return false;
   }
   serviceUnsub = svc.subscribe(() => {
-    pushQuotaSnapshot();
+    void syncPolicyThenPushQuota();
   });
-  pushQuotaSnapshot();
+  await syncPolicyThenPushQuota();
   return true;
 }
 
@@ -112,12 +122,14 @@ export async function reconfigureMediaLibraryFromConnection(
   const backend = await resolveMediaLibraryBackend(mode, pairing);
   if (generation !== configureGeneration) return;
   const svc = configureDefaultMediaLibraryService(backend);
+  bindBufferPolicySourceToBackend(backend);
   if (generation !== configureGeneration) return;
   const attached = await attachService(svc);
   if (generation !== configureGeneration) return;
   if (!attached && mode === 'paired' && pairing) {
     const fallback = createBrowserLimitedStorageBackend(DEFAULT_LOCAL_QUOTA_BYTES);
     const fallbackSvc = configureDefaultMediaLibraryService(fallback);
+    bindBufferPolicySourceToBackend(fallback);
     if (generation !== configureGeneration) return;
     await attachService(fallbackSvc);
   }

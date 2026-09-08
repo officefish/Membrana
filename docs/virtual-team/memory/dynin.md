@@ -5,8 +5,50 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14368/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 340 (причины в op-log) -->
+Записей: 49 · бюджет 14396/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 347 (причины в op-log) -->
+
+### 2026-09-07 · позиция · team-evening-feedback
+
+> **Оценка артефактов:** В видимом diff нет FFT/спектра — день чисто продуктовый (buffer/UI). Предикат «буфер полон» и fail-closed на stop (#2324) — зона correctness, требует отдельного прохода; в daily-срезе дифф срезан. **Итоги дня:** По замыслу: гейт умной очистки «до алгоритма […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-07.md#reply-1`
+
+### 2026-09-06 · позиция · buffer-full-stop-m0-order
+
+> Формализую. G = ({P, C, S, W, L}, E), где P — политика, C — код отказа, S — остановка на приборе, W — окно, L — жизнь после остановки. Ребро (A,B) ∈ E ⇔ вердикт A — необходимый вход постановки B. Из подсказок повестки: (P,C), (C,S), (C,W), (S,W). L независима от W; связь L с […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/buffer-full-stop-m0-order-2026-09-06.md#reply-1`
+
+### 2026-09-06 · позиция · buffer-full-stop-m1-policy
+
+> Формализую fail-closed. Пусть домен политики `P ∈ {stop, smart-cleanup}`. Функция чтения: `effective(P_stored) = stop`, если `P_stored ∈ {⊥, null, undefined, unknown, corrupt}`; иначе `P_stored`. Миграция старых приборов: отсутствие поля → `stop`, не `auto-cleanup`. Клиентский […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/buffer-full-stop-m1-policy-2026-09-06.md#reply-1`
+
+### 2026-09-06 · позиция · buffer-full-stop-m2-refusal-code
+
+> Формализую. Пусть отказ загрузки — значение `Reject = { ok: false, reason: R, … }`, где `R` — конечное множество. Минимум различимости для Q2: `device_buffer_full` ≠ `user_storage_full` ≠ прочие (место под T15, не заполняем). Числа: `buffer.usedBytes/limitBytes`, […] _(реплик в сеансе: 5)_
+
+— источник: `docs/seanses/buffer-full-stop-m2-refusal-code-2026-09-06.md#reply-1`
+
+### 2026-09-06 · позиция · buffer-full-stop-m3-device-stop
+
+> Формализую состояние эпизода. Пусть `E = { overflowId, reason, held: true } | ∅`. Инвариант однократности: переход `∅ → E` инициирует сигнал окна **один раз на данный overflowId**; последующие отказы с тем же id — no-op для UI. Новый запуск сценария при `held` читает E и снова […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/buffer-full-stop-m3-device-stop-2026-09-06.md#reply-1`
+
+### 2026-09-06 · позиция · buffer-full-stop-m4-life-after
+
+> Формализую каналы как четыре независимых потока: H = health-ping, T = live telemetry (`telemetry-track/v1`), Q = GET /quota, S = scenario/node state. Инвариант T16: после stop складирования H, Q, S живы; T — вопрос нормы, не факта. Ночь дала контрпример: T→0 при t=21:40:18Z, […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/buffer-full-stop-m4-life-after-2026-09-06.md#reply-1`
+
+### 2026-09-06 · позиция · buffer-full-stop-m5-operator-window
+
+> Две шкалы — два числа из M2: buffer.used/limit и userStorage.used/limit; свободно = limit − used (или то, что несёт ответ; формулу полей не изобретаем — M2 посылка). Время факта — timestamp удержания/отказа, одно значение на `overflowId`. «Что записано до остановки» — […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/buffer-full-stop-m5-operator-window-2026-09-06.md#reply-1`
 
 ### 2026-09-05 · позиция · team-evening-feedback
 
@@ -259,45 +301,3 @@
 > C6: относительный пик над фоном сеанса и дедуп по признакам — на месте; дефект «сеанс из копий» пойман зубом и тимлидом независимо (хорошо, когда два независимых взгляда). Граница flatness абсолютом 0.15 вместо квантиля 0.5 — корректный ответ на континуум 0.33–0.38; классы на […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-21.md#reply-1`
-
-### 2026-08-20 · позиция · team-evening-feedback
-
-> **Оценка артефактов:** Артефакты дня согласованы. Code-review честно отметил: FFT/MFCC-кода в развёрнутом diff нет. Проба mfcc через мост (#2019) — событие дня, но числового diff пока нет. **Итоги дня:** Первая проба mfcc через мост на записи узла Firebat (89e428ba) проведена […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-20.md#reply-1`
-
-### 2026-08-19 · позиция · team-evening-feedback
-
-> dynin Оценка артефактов: DAILY_CODE_REVIEW корректно оценил мой диагноз rag-service — стеночные часы на живом git-дереве под `turbo --concurrency=3` (868 коммитов, 6 862 мс) — как метрику, а не как флак кода. MAIN_DAY_ISSUE включила «Проба-0: изолированный прогон rag-service без […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-19.md#reply-1`
-
-### 2026-08-18 · позиция · team-evening-feedback
-
-> Dynin. Оценка артефактов: MAIN_DAY_ISSUE не касался чистого мат. ядра — сегодня был день инфраструктуры плагинов; норма У1 предписывает всё равно голосовать за процесс. Итоги дня: `envCandidates()` в `field-capture.mjs` (#1977) — чистая функция, граничный случай Windows-пути […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-18.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m0-order
-
-> Формализую предикат ребра, как делал в сетевых комнатах: ребро A→B существует тогда и только тогда, когда ответ на A определяет переменную v, а вопрос B требует v как данное. Проверяю вопрос 4 («повод и события»): он говорит о «журнале», который «сегодня событий не испускает». […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/server-plugin-foundation-m0-order-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m1-vocabulary
-
-> Формализую вопрос о трёх родах до начала спора. Три рода — это три непересекающихся подмножества множества плагинов P: `handler`, `report`, `showcase`. Вопрос: является ли «род» полем одного интерфейса `PluginManifest`, или три отдельных интерфейса? Если поле — дискриминант […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/server-plugin-foundation-m1-vocabulary-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m2-mount-homes
-
-> Формализую предикат дома строго. Пусть `H` — множество допустимых значений `mountTarget`. Манифест `m` валиден тогда и только тогда, когда `m.mountTarget ∈ H`. `H` должно быть перечислимым и проверяемым до исполнения — это условие детерминированной валидации. Если `H` живёт […] _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/server-plugin-foundation-m2-mount-homes-2026-08-17.md#reply-1`
-
-### 2026-08-17 · позиция · server-plugin-foundation-m3-results-home
-
-> Начну с посылок, которые определяют форму. PluginId из M1 уже несёт пространство имён — вида `module:plugin`. mountTarget из M2 уже длинной формы — `background-office/journal`. Цепочка Т3.3: «модуль → плагин → версия → коллекция → прогон». Если PluginId = `module:plugin`, то в […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/server-plugin-foundation-m3-results-home-2026-08-17.md#reply-1`

@@ -44,6 +44,10 @@ import { FftAnalyzer, frameLoudness } from '@membrana/fft-analyzer-service';
 import { getDutyPulseHost } from './dutyPulseHost';
 
 import {
+  getDeviceOverflowHold,
+  installDeviceOverflowHoldWiring,
+} from '@/lib/device-overflow-hold';
+import {
   getMicrophoneCaptureSnapshot,
   requestMicrophoneStart,
   requestMicrophoneStop,
@@ -277,6 +281,13 @@ export class ScenarioMicJournalBridge {
 
   private readonly activeClipRecorders = new Map<string, ActiveClipCapture>();
 
+  /**
+   * Адаптер удержания доски (#2309, M3 (г)): единственная проводка стопа по буферу в доске —
+   * вызовы ОДНОГО носителя `DeviceOverflowHold`. Своих флагов/id у доски нет. Сценарий при
+   * удержании не убивается: детекция и наблюдение живут, гасится только медиа-ветка.
+   */
+  private readonly overflowHold = getDeviceOverflowHold();
+
   private recordingSliceSeq = 0;
 
   private lastRecorderFlushDeviceHandle: string | null = null;
@@ -288,6 +299,32 @@ export class ScenarioMicJournalBridge {
 
   /** Stateful flux между FFT-кадрами main loop (P3 trends path). */
   private readonly scenarioFftAnalyzer = new FftAnalyzer({ fftSize: SOUND_LEVEL_FFT_SIZE });
+
+  private readonly unsubscribeOverflowHold: () => void;
+
+  constructor() {
+    installDeviceOverflowHoldWiring(this.overflowHold);
+    // Вход в удержание гасит активную запись доски и сбрасывает недоставленные пробы —
+    // без ретраев в закрытую дверь. Сценарий (детекция, наблюдение, рантайм) продолжает.
+    this.unsubscribeOverflowHold = this.overflowHold.subscribe((episode, change) => {
+      if ((change !== 'entered' && change !== 'promoted') || !this.overflowHold.isHeld()) return;
+      const activeHandles = [...this.activeClipRecorders.keys()];
+      this.cancelAllActiveClipRecorders();
+      const droppedUploads = this.pendingTrackUploads.size;
+      this.pendingTrackUploads.clear();
+      scenarioChainLog('recording', 'overflow-hold-quench', {
+        overflowId: episode?.overflowId ?? null,
+        reason: episode?.reason ?? null,
+        cancelledRecorders: activeHandles.length,
+        droppedUploads,
+      });
+    });
+  }
+
+  /** Тесты/teardown: снять подписку на носитель удержания. */
+  disposeOverflowHoldAdapter(): void {
+    this.unsubscribeOverflowHold();
+  }
 
   getLastChunk(): RecordedChunkMeta | null {
     return this.lastChunk;
@@ -486,6 +523,15 @@ export class ScenarioMicJournalBridge {
       scenarioChainLog('recording', 'start-recording-skip', {
         deviceHandle,
         reason: 'invalid-stream',
+      });
+      return false;
+    }
+    // T5/#2309: новый старт записи при удержании отбивается носителем и даёт сигнал окна.
+    if (this.overflowHold.refuseStart({ source: 'board', what: 'запись сценария' })) {
+      scenarioChainLog('recording', 'start-recording-refused', {
+        deviceHandle,
+        reason: 'overflow-hold',
+        overflowId: this.overflowHold.getEpisode()?.overflowId ?? null,
       });
       return false;
     }
@@ -832,6 +878,20 @@ export class ScenarioMicJournalBridge {
         kind,
         trackId,
         reason: 'pending-track-not-found',
+      });
+      return;
+    }
+
+    // #2309 M3 DoD 1: при удержании отправка новых проб = 0 — честный отказ job, не ретрай.
+    if (this.overflowHold.isHeld()) {
+      this.pendingTrackUploads.delete(trackId);
+      asyncJobStore.reject(promiseId, 'overflow-hold');
+      scenarioChainLog('async-job', 'rejected', {
+        promiseId,
+        kind,
+        trackId,
+        reason: 'overflow-hold',
+        overflowId: this.overflowHold.getEpisode()?.overflowId ?? null,
       });
       return;
     }

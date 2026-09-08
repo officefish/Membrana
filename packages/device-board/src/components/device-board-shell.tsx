@@ -24,6 +24,8 @@ import type { ScenarioCommentGroupFrameColor } from '@membrana/core';
 import type { Edge, Node, NodeChange, OnSelectionChangeParams } from '@xyflow/react';
 
 import { BoardServerFirstBadges } from './board-server-first-badges.js';
+import { BoardOverflowHoldBadge } from './board-overflow-hold-badge.js';
+import type { BoardOverflowHoldView } from './board-overflow-hold.js';
 import { BoardCanvasBreadcrumb } from './board-canvas-breadcrumb.js';
 import { buildBoardCanvasBreadcrumb } from './board-context-breadcrumb.js';
 import { BoardEditUndoControl } from './board-edit-undo-control.js';
@@ -118,6 +120,11 @@ export interface DeviceBoardShellProps {
   readonly serverFirstPerspective?: 'field' | 'cabinet';
   /** BTJ1: вкладка «Журнал» правого сайдбара — телеметрия хоста (слот клиента). */
   readonly journalSlot?: React.ReactNode;
+  /**
+   * Факт «буфер полон» (#2310, M5 (в)): бейдж в шапке и строка статуса — тексты готовыми
+   * из единственной таблицы клиента; клик по бейджу открывает то же окно того же id.
+   */
+  readonly overflowHold?: BoardOverflowHoldView | null;
 }
 
 const DeviceBoardShellInner: React.FC<{
@@ -128,6 +135,7 @@ const DeviceBoardShellInner: React.FC<{
   serverFirstPerspective: 'field' | 'cabinet';
   /** BTJ1: вкладка «Журнал» правого сайдбара — телеметрия хоста (слот клиента). */
   journalSlot?: React.ReactNode;
+  overflowHold: BoardOverflowHoldView | null;
 }> = ({
   onRequestExit,
   exitLabel,
@@ -135,6 +143,7 @@ const DeviceBoardShellInner: React.FC<{
   runtimeHost,
   serverFirstPerspective,
   journalSlot,
+  overflowHold,
 }) => {
   const { exitBoardMode } = useDeviceBoardMode();
   const graph = useDeviceBoardGraph();
@@ -1527,6 +1536,7 @@ const DeviceBoardShellInner: React.FC<{
               Только просмотр
             </span>
           ) : null}
+          <BoardOverflowHoldBadge hold={overflowHold} />
           {graph.isCompetitionMode ? (
             <span
               className="badge badge-warning badge-outline badge-sm shrink-0"
@@ -1726,7 +1736,7 @@ const DeviceBoardShellInner: React.FC<{
       {importError !== null ? (
         <div className="border-b border-error/30 bg-error/10 px-4 py-2 text-xs text-error">{importError}</div>
       ) : null}
-      <BoardRuntimeStatus state={graph.runtimeState} />
+      <BoardRuntimeStatus state={graph.runtimeState} overflowHold={overflowHold} />
 
       <div className="relative min-h-0 flex-1 basis-0 overflow-hidden">
         <div
@@ -2038,6 +2048,7 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
   serverFirstState = null,
   serverFirstPerspective = 'field',
   journalSlot,
+  overflowHold = null,
 }) => {
   const { session } = useDeviceBoardMode();
 
@@ -2059,6 +2070,7 @@ export const DeviceBoardShell: React.FC<DeviceBoardShellProps> = ({
       runtimeHost={runtimeHost}
       journalSlot={journalSlot}
       serverFirstPerspective={serverFirstPerspective}
+      overflowHold={overflowHold}
     />
   </DeviceBoardGraphProvider>
   );
