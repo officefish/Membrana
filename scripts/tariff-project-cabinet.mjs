@@ -27,13 +27,14 @@ async function main(argv = process.argv.slice(2)) {
         userStorageQuotaBytes: true,
         bufferQuotaBytes: true,
         datasetCatalogId: true,
+        maxNodesPerMembrane: true,
         maxUserWorkspaces: true,
       },
     });
     const findings = tariffGridBaseFindings(grid, records);
     console.log(`tariff:project-cabinet --check — сетка version ${grid.version} · тарифов ${rows.length}`);
     if (findings.length === 0) {
-      console.log('tariff:project-cabinet — база кабинета совпадает с сеткой по четырём парам + version');
+      console.log('tariff:project-cabinet — база кабинета совпадает с сеткой по полям тарифа + version');
       return 0;
     }
     console.error(`tariff:project-cabinet — находок: ${findings.length}`);

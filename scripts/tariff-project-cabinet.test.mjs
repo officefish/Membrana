@@ -15,7 +15,7 @@ test('projection writes all live grid tariffs, closing the #2297 one-row DB path
   assert.deepEqual(rows.map((row) => row.id), ['free-v1', 'checkpoint-v1', 'observatory-v1']);
 });
 
-test('projection carries four device-facing pairs plus contract version', () => {
+test('projection carries device-facing pairs plus contract version', () => {
   const free = projectTariffGridToCabinetBase(GRID)[0];
   const freeGrid = GRID.rows.find((row) => row.sku === 'free-v1');
   assert.equal(free.tariffContractVersion, GRID.version);
@@ -40,6 +40,16 @@ test('tooth 2 reddens when a scalar drifts', () => {
   assert.equal(findings.length, 1);
   assert.equal(findings[0].where, 'free-v1.bufferQuotaBytes');
   assert.match(findings[0].reason, /storage\.buffer/u);
+});
+
+test('tooth 2 reddens when node quota drifts', () => {
+  const records = projectTariffGridToCabinetBase(GRID).map((row) =>
+    row.id === 'free-v1' ? { ...row, maxNodesPerMembrane: row.maxNodesPerMembrane + 1 } : row,
+  );
+  const findings = tariffGridBaseFindings(GRID, records);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].where, 'free-v1.maxNodesPerMembrane');
+  assert.match(findings[0].reason, /nodes\.max/u);
 });
 
 test('upsert uses the projection as create/update data and never calls tariff-scalars', async () => {
