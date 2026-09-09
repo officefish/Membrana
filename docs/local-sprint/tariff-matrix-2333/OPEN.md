@@ -38,7 +38,7 @@
 - `node scripts/execution-gate.mjs --plan ... --traces ...`: gate pass, 4/4 `honest_pair`, 0 findings.
 - `rg TARIFF_GRID_MODE packages scripts`: empty.
 - `git diff --check`: clean.
-- `tsc -p packages/background-cabinet --noEmit` and `tsc -p packages/background-media --noEmit` are blocked by missing worktree `node_modules/@membrana`; using root bin resolves linked packages from sibling builds and reports pre-existing export mismatches outside #2333.
+- `yarn turbo run typecheck --filter=@membrana/background-cabinet --filter=@membrana/background-media`: pass, 20/20 tasks successful.
 
 ## Ратификация
 
