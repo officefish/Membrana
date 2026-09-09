@@ -7,17 +7,17 @@
       "githubIssue": 2331,
       "linearId": null,
       "size": "M",
-      "status": "active",
+      "status": "archived",
       "sprintKind": "membrana-local-sprint",
       "createdAt": "2026-09-08",
-      "archivedAt": null,
+      "archivedAt": "2026-09-09",
       "leadPersona": "vesnin",
       "supportPersonas": [
         "ozhegov",
         "dynin"
       ],
       "notes": "сессия Б, слово владельца 08.09 через ведущую; спринт по membrana-local-sprint; границы — только матрица и сетка как производная (пересев базы/приборов — задание В)",
-      "archiveNotes": null,
+      "archiveNotes": "спринт отгружен PR #2334 (сквош f5dcc7f4, 09.09): матрица тарифов — SSOT в strategic-docs, сетка производная (yarn tariff:reseed, зуб tariff:grid), гейт 5/5 honest_pair, опыт miss (точность нарезки 2/5); слово владельца на мердж напрямую. Сопутствующие: #2336 снимок сети (7bf93d03), #2335 генератор продуктовой страницы читает числа из сетки (ad5f9f60). Остаток на задание В: пересев базы и приборов, S := derive(R)",
       "githubIssueClosedAt": null
     },
     {

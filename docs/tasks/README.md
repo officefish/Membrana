@@ -20,7 +20,6 @@
 
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
-| `tariff-matrix-2331` | Матрица тарифов как единственный источник правды: гранулы по ресурсу + шаблон в strategic-docs, сетка — производная (#2331) | M | [`OPEN.md`](../local-sprint/tariff-matrix-2331/OPEN.md) | [#2331](https://github.com/officefish/Membrana/issues/2331) |
 | `cabinet-deploy-smoke-tooth-2288` | Смоук выкатки кабинета бьёт тарифы, pair и сетку образа | M | [`CABINET_DEPLOY_SMOKE_TOOTH_2288_PROMPT.md`](../prompts/CABINET_DEPLOY_SMOKE_TOOTH_2288_PROMPT.md) | [#2288](https://github.com/officefish/Membrana/issues/2288) |
 | `cowork-library-open-api` | Cowork Sprint: Открытое API библиотеки | L | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md) | — |
 | `playback-hang-timeout` | Таймаут ожидания статуса в playSequence + сброс stale outcome при смене набора | S | [`PLAYBACK_HANG_TIMEOUT_PROMPT.md`](../prompts/PLAYBACK_HANG_TIMEOUT_PROMPT.md) | [#2181](https://github.com/officefish/Membrana/issues/2181) |
@@ -154,6 +153,7 @@
 
 | ID | Название | Архивировано | Промпт | GitHub | Карточка |
 |----|----------|--------------|--------|--------|----------|
+| `tariff-matrix-2331` | Матрица тарифов как единственный источник правды: гранулы по ресурсу + шаблон в strategic-docs, сетка — производная (#2331) | 2026-09-09 | [`OPEN.md`](../local-sprint/tariff-matrix-2331/OPEN.md) | #2331 (Issue открыт) | [карточка](./archive/tariff-matrix-2331.md) |
 | `cowork-buffer-full-stop` | Cowork Sprint: Полный буфер — контракт остановки | 2026-09-07 | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-buffer-full-stop/COWORK_SPRINT_BRIEF.md) | — | [карточка](./archive/cowork-buffer-full-stop.md) |
 | `plugin-placement-contract` | Контракт зоны размещения плагин-панелей + зуб соответствия раскладке | 2026-08-26 | [`PLUGIN_PLACEMENT_CONTRACT_PROMPT.md`](../prompts/PLUGIN_PLACEMENT_CONTRACT_PROMPT.md) | #2182 | [карточка](./archive/plugin-placement-contract.md) |
 | `union-merge-all-jsonl` | Союзное слияние всех append-only журналов docs/**/*.jsonl (Б, после #2147) | 2026-08-25 | [`UNION_MERGE_ALL_JSONL_PROMPT.md`](../prompts/UNION_MERGE_ALL_JSONL_PROMPT.md) | #2096 | [карточка](./archive/union-merge-all-jsonl.md) |
