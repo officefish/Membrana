@@ -20,15 +20,17 @@ describe('grid -> cabinet Tariff projection (#2333 v2)', () => {
     expect(rows.map((row) => row.tariffContractVersion)).toEqual([1, 1, 1]);
   });
 
-  it('free-v1 storage comes from the grid: 512 MiB, not the old 1 GiB seed constant', () => {
+  it('free-v1 storage comes from the grid, not old seed constants', () => {
     const free = tariffGridRowToCabinetBase(LIVE, LIVE.rows[0]!);
-    expect(free.userStorageQuotaBytes).toBe(536870912n);
-    expect(free.bufferQuotaBytes).toBe(1073741824n);
-    expect(free.datasetCatalogId).toBe('free-v1-catalog');
-    expect(free.maxUserWorkspaces).toBe(3);
+    const freeGrid = LIVE.rows[0]!;
+    expect(free.userStorageQuotaBytes).toBe(BigInt(freeGrid.cells['storage.hot']!.limit));
+    expect(free.bufferQuotaBytes).toBe(BigInt(freeGrid.cells['storage.buffer']!.limit));
+    expect(free.datasetCatalogId).toBe(freeGrid.cells['dataset.sounds']!.catalogId);
+    expect(free.maxNodesPerMembrane).toBe(freeGrid.cells['nodes.max']!.limit);
+    expect(free.maxUserWorkspaces).toBe(freeGrid.cells['workspaces.user.max']!.limit);
   });
 
-  it('tooth 2 is green when DB carrier equals grid projection by four pairs plus version', () => {
+  it('tooth 2 is green when DB carrier equals grid projection by fields plus version', () => {
     const records = projectTariffGridToCabinetBase(LIVE);
     expect(tariffGridBaseFindings(LIVE, records)).toEqual([]);
   });
@@ -50,6 +52,19 @@ describe('grid -> cabinet Tariff projection (#2333 v2)', () => {
       where: 'free-v1.userStorageQuotaBytes',
     });
     expect(findings[0]!.reason).toMatch(/storage\.hot/u);
+  });
+
+  it('tooth 2 reddens when node quota drifts from the grid projection', () => {
+    const records = projectTariffGridToCabinetBase(LIVE).map((row) =>
+      row.id === 'free-v1' ? { ...row, maxNodesPerMembrane: row.maxNodesPerMembrane + 1 } : row,
+    );
+    const findings = tariffGridBaseFindings(LIVE, records);
+    expect(findings).toHaveLength(1);
+    expect(findings[0]).toMatchObject({
+      toothId: 'tariff_base_projection',
+      where: 'free-v1.maxNodesPerMembrane',
+    });
+    expect(findings[0]!.reason).toMatch(/nodes\.max/u);
   });
 
   it('tooth 2 reddens when the contract version is stale', () => {

@@ -92,6 +92,7 @@ export function tariffGridBaseFindings(
       ['userStorageQuotaBytes', 'storage.hot', actual.userStorageQuotaBytes, expected.userStorageQuotaBytes],
       ['bufferQuotaBytes', 'storage.buffer', actual.bufferQuotaBytes, expected.bufferQuotaBytes],
       ['datasetCatalogId', 'dataset.sounds', actual.datasetCatalogId, expected.datasetCatalogId],
+      ['maxNodesPerMembrane', 'nodes.max', actual.maxNodesPerMembrane, expected.maxNodesPerMembrane],
       ['maxUserWorkspaces', 'workspaces.user.max', actual.maxUserWorkspaces, expected.maxUserWorkspaces],
     ];
     for (const [field, source, actualValue, expectedValue] of pairs) {
