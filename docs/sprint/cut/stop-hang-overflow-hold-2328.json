@@ -32,7 +32,8 @@
       "estimate": {
         "changedLines": 120
       },
-      "revisionAt": "2026-09-08T21:00:00+03:00"
+      "revisionAt": "2026-09-08T21:00:00+03:00",
+      "revisionOf": "e243fa14e7d599cd7381b7299338a1f4263510fde8e742c154dacc8b7117b853"
     },
     {
       "blockId": "g2-minimal-fix-and-teeth",
@@ -45,7 +46,8 @@
       "estimate": {
         "changedLines": 220
       },
-      "revisionAt": "2026-09-08T21:00:00+03:00"
+      "revisionAt": "2026-09-08T21:00:00+03:00",
+      "revisionOf": "8419b37de9e3fa3142e13de327b431ea86c206436d9c83fe2186edcc7810e750"
     },
     {
       "blockId": "g3-live-studio-evidence",
@@ -57,7 +59,13 @@
       "estimate": {
         "changedLines": 90
       },
-      "revisionAt": "2026-09-08T21:00:00+03:00"
+      "revisionAt": "2026-09-08T21:00:00+03:00",
+      "revisionOf": "3368c4e69da6b3f9a048605732f8bbda66e823c18d890d6e12d5a11952984abe"
     }
-  ]
+  ],
+  "ratification": {
+    "by": "owner",
+    "at": "2026-09-09T10:42:51+03:00",
+    "digest": "b9c87fb6fb1de30174d55d10f809413c87183e38eb3225262c66ecf694e94690"
+  }
 }
