@@ -1,0 +1,46 @@
+{
+  "id": "duty",
+  "leadPersona": "dynin",
+  "kitVersion": null,
+  "engines": [
+    "scripts/node-duty-ready.mjs",
+    "scripts/node-link-state.mjs",
+    "scripts/buffer-watch.mjs",
+    "scripts/buffer-evacuate-evidence.mjs"
+  ],
+  "precedents": [
+    "docs/procedures/duty/2026-09-05.md",
+    "docs/field/2026-08-28-duty-readiness-protocol.md",
+    "docs/field/2026-08-23-night-duty-journal-congestion.md"
+  ],
+  "trigger": {
+    "kind": "captain-word",
+    "command": "yarn buffer:watch",
+    "note": "ночь поднимает владелец: включает прибор на узле и оставляет наблюдатель в песочнице; планировщика у дежурства нет, и это записано честно"
+  },
+  "steps": {
+    "kind": "inline",
+    "items": [
+      { "id": "node-ready", "criticality": "critical" },
+      { "id": "link-state", "criticality": "critical" },
+      { "id": "buffer-watch", "criticality": "critical" },
+      { "id": "morning-evidence", "criticality": "critical" }
+    ]
+  },
+  "gates": {
+    "kind": "inline",
+    "items": [
+      {
+        "id": "node-ready",
+        "waitsFor": "owner",
+        "resume": "три «да» с узла (или «нет» с повёрнутым переключателем) и «узлы к ночи готовы» от node:link-state — руки владельца на узле и его вход в кабинет",
+        "note": "сессия не имеет ни доступа к узлу, ни входа владельца; без его отчёта ночь не считается подготовленной"
+      }
+    ]
+  },
+  "mode": "local",
+  "home": {
+    "kind": "none",
+    "why": "прогон ночи оставляет журнал наблюдателя docs/field/buffer-watch-<дата>.jsonl и датированный протокол рядом с определением; дома-по-датам не заводим, пока дежурств меньше трёх"
+  }
+}

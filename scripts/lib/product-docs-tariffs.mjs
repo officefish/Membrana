@@ -40,14 +40,29 @@ const quota = (value, unit = '') => {
 
 const bytesToMiB = (value) => (typeof value === 'number' ? value / (1024 * 1024) : null);
 
+/**
+ * Число квоты для продуктовой страницы — ИЗ СЕТКИ (docs/tariffs/tariff-grid.json), не из скаляров.
+ *
+ * Консилиум tariff-matrix-scalars-fate-2026-09-08: источник правды о тарифе — релиз матрицы,
+ * сетка — его производная, скаляры S0 — замороженная эпоха сида, «канон тарифа» они не несут
+ * (DoD 5: нет новых презентационных чтений S как канона). До 08.09 страница брала число из
+ * скаляров и печатала «Не определено» там, где сетка уже несла закреплённое значение
+ * (ревью PR #2334, блокер P0).
+ *
+ * Правило: клетка сетки закреплена (не в `//provisional`) → её число; клетка предварительная →
+ * число из S0, если оно там названо, иначе «Не менее …» по клетке как нижняя граница; клетки
+ * нет — «Не определено» (или скаляр как резерв).
+ */
 const quotaFromSources = (declaredValue, unit, gridCell, isProvisional) => {
+  const hasCell = gridCell?.kind === 'quota' && typeof gridCell.limit === 'number';
+  if (!hasCell) return declaredValue != null ? quota(declaredValue, unit) : 'Не определено';
+  const value = unit === 'MiB' ? bytesToMiB(gridCell.limit) : gridCell.limit;
+  if (!isProvisional) return quota(value, unit);
+  // Предварительная клетка: если число всё же названо в S0 (закрыто владельцем в эпоху сида) —
+  // печатаем его; иначе клетка сетки — нижняя граница.
   if (declaredValue != null) return quota(declaredValue, unit);
-  if (!isProvisional || gridCell?.kind !== 'quota' || typeof gridCell.limit !== 'number') {
-    return 'Не определено';
-  }
-  const lowerBound = unit === 'MiB' ? bytesToMiB(gridCell.limit) : gridCell.limit;
-  if (lowerBound === 0) return 'Недоступно сейчас';
-  return `Не менее ${quota(lowerBound, unit)}`;
+  if (value === 0) return 'Недоступно сейчас';
+  return `Не менее ${quota(value, unit)}`;
 };
 
 const availability = (cell) => {
@@ -175,8 +190,20 @@ function renderOfferDetails(offer) {
   }
   lines.push('');
 
+  // «Уточняется» — по тому, что напечатано, а не по скаляру: клетка сетки закреплена → строки нет.
   const unresolved = Object.entries(SCALAR_LABELS)
-    .filter(([key]) => declared[key] == null)
+    .filter(([key]) => {
+      const entitlementId = {
+        userStorageQuotaMiB: 'storage.hot',
+        coldStorageQuotaMiB: 'storage.cold',
+        bufferQuotaMiB: 'storage.buffer',
+        maxNodesPerMembrane: 'nodes.max',
+        maxUserWorkspaces: 'workspaces.user.max',
+      }[key];
+      if (!entitlementId) return declared[key] == null;
+      const shown = displayQuota(offer, key, entitlementId, key.endsWith('QuotaMiB') ? 'MiB' : '');
+      return shown === 'Не определено' || shown.startsWith('Не менее');
+    })
     .filter(([key]) => {
       const entitlementId = {
         userStorageQuotaMiB: 'storage.hot',
