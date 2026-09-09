@@ -36,7 +36,7 @@ export const PROCEDURE_KINDS = Object.freeze(['разработка', 'реше�
 export const PROCEDURE_KIND_EXPECTED_COUNTS = Object.freeze({
   разработка: 8,
   решение: 4,
-  ритм: 15,
+  ритм: 16,
 });
 
 function slash(p) {

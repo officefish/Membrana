@@ -1,0 +1,19 @@
+{
+  "id": "tariff-datasets",
+  "version": "1.0.0",
+  "kind": "function",
+  "fn": "renderTariffDatasetsRow",
+  "modulePath": "./render.mjs",
+  "description": "Строка матрицы «Наборы звуков» (dataset.sounds): набор датчика / набор блокпоста / у наблюдательного пункта — заём набора блокпоста, заглушка словами (слово владельца 08.09); системные наборы — вне квоты, отдельной строкой; значения — в resource.json рядом",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/tariff-datasets/resource.json"
+  },
+  "foundations": [
+    { "path": "docs/storm/storm-tariff-single-truth-2026-09-08/REPORT.md", "role": "вердикт владельца о наборах: у каждого тарифа свой, старший пока на наборе среднего; T2/T10 — системные наборы вне квоты" },
+    { "path": "docs/tariffs/tariff-grid.json", "role": "сетка 29.07 — идентификаторы наборов датчика и блокпоста" },
+    { "path": "docs/containers/strategic-docs/design/TARIFF-MATRIX-DESIGN.md", "role": "схема resource.json, правило пересева catalog-id и форма заглушки" }
+  ],
+  "usedBy": [
+    { "templateId": "tariff-matrix", "placeholder": "{{row_datasets}}", "pin": "1.0.0" }
+  ]
+}

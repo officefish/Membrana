@@ -1,0 +1,19 @@
+{
+  "id": "tariff-workspaces",
+  "version": "1.0.0",
+  "kind": "function",
+  "fn": "renderTariffWorkspacesRow",
+  "modulePath": "./render.mjs",
+  "description": "Строка матрицы «Сценарии» (workspaces.user.max): 3 у датчика закреплено 29.07; у старших 3 — нижняя граница, не закреплено; значения — в resource.json рядом",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/tariff-workspaces/resource.json"
+  },
+  "foundations": [
+    { "path": "docs/meeting/tariff-grid/MEETING_VERDICT.md", "role": "заседание tariff-grid 29.07 — сценарии датчика 3" },
+    { "path": "docs/tariffs/tariff-grid.json", "role": "сетка 29.07 — нижняя граница старших тарифов (//provisional)" },
+    { "path": "docs/containers/strategic-docs/design/TARIFF-MATRIX-DESIGN.md", "role": "схема resource.json и правило пересева exact-count" }
+  ],
+  "usedBy": [
+    { "templateId": "tariff-matrix", "placeholder": "{{row_workspaces}}", "pin": "1.0.0" }
+  ]
+}

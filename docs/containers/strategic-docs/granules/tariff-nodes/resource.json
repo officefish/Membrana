@@ -1,0 +1,27 @@
+{
+  "schema": "tariff-resource/1",
+  "id": "nodes",
+  "resource": "nodes.max",
+  "title": "Приборы",
+  "domain": "rights",
+  "kind": "quota",
+  "unit": "count",
+  "unitWords": ["прибор", "прибора", "приборов"],
+  "reseedRule": "exact-count",
+  "passport": {
+    "version": "1.0.0",
+    "ratifiedAt": "2026-07-29",
+    "owner": "owner",
+    "source": "tariff-grid 2026-07-29 (заседание, M3)",
+    "note": "Сколько устройств можно держать в мембране. Потолок 1 / 4 / 9 назван владельцем на шторме 29.07 и закреплён заседанием tariff-grid; шторм 08.09 его не пересматривал."
+  },
+  "registry": {
+    "titleKey": "tariff.nodes.max",
+    "description": "Сколько устройств можно держать в мембране"
+  },
+  "values": {
+    "free-v1": { "count": 1, "ratifiedAt": "2026-07-29" },
+    "checkpoint-v1": { "count": 4, "ratifiedAt": "2026-07-29" },
+    "observatory-v1": { "count": 9, "ratifiedAt": "2026-07-29" }
+  }
+}

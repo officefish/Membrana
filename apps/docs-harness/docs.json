@@ -50,7 +50,8 @@
           "procedures/membrana-leveling",
           "procedures/weekly-dead-wire",
           "procedures/deploy-office-vds",
-          "procedures/deploy-media-vps"
+          "procedures/deploy-media-vps",
+          "procedures/duty"
         ]
       },
       {

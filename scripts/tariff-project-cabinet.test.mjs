@@ -17,11 +17,13 @@ test('projection writes all live grid tariffs, closing the #2297 one-row DB path
 
 test('projection carries four device-facing pairs plus contract version', () => {
   const free = projectTariffGridToCabinetBase(GRID)[0];
+  const freeGrid = GRID.rows.find((row) => row.sku === 'free-v1');
   assert.equal(free.tariffContractVersion, GRID.version);
-  assert.equal(free.userStorageQuotaBytes, 536870912n);
-  assert.equal(free.bufferQuotaBytes, 1073741824n);
-  assert.equal(free.datasetCatalogId, 'free-v1-catalog');
-  assert.equal(free.maxUserWorkspaces, 3);
+  assert.equal(free.userStorageQuotaBytes, BigInt(freeGrid.cells['storage.hot'].limit));
+  assert.equal(free.bufferQuotaBytes, BigInt(freeGrid.cells['storage.buffer'].limit));
+  assert.equal(free.datasetCatalogId, freeGrid.cells['dataset.sounds'].catalogId);
+  assert.equal(free.maxNodesPerMembrane, freeGrid.cells['nodes.max'].limit);
+  assert.equal(free.maxUserWorkspaces, freeGrid.cells['workspaces.user.max'].limit);
 });
 
 test('tooth 2 reddens when a DB row is missing', () => {

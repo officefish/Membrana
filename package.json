@@ -457,6 +457,7 @@
     "network:preflight": "node scripts/network/preflight.mjs",
     "network:tooth": "node scripts/network/tooth.mjs",
     "tariff:grid": "node scripts/tariff-grid-validate.mjs",
+    "tariff:reseed": "node scripts/tariff-reseed.mjs",
     "tariff:project-cabinet": "node scripts/tariff-project-cabinet.mjs",
     "tariff:project-cabinet:check": "node scripts/tariff-project-cabinet.mjs --check",
     "tariff:devices-check": "node scripts/tariff-devices-check.mjs",
@@ -478,6 +479,8 @@
     "node:duty-ready": "node scripts/node-duty-ready.mjs",
     "buffer:protect-evidence": "node scripts/buffer-protect-evidence.mjs",
     "buffer:evacuate-evidence": "node scripts/buffer-evacuate-evidence.mjs",
+    "buffer:watch": "node scripts/buffer-watch.mjs",
+    "node:link-state": "node scripts/node-link-state.mjs",
     "verify:declared-imports": "node scripts/verify-declared-imports.mjs"
   },
   "devDependencies": {

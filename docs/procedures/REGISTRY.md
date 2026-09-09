@@ -3,7 +3,7 @@
 # REGISTRY — процедуры слоя (проекция)
 
 > `migrated = container ∧ vocabulary ∧ grammar` — производный; статусы: migrated · in-migration · legacy.
-> procedureKind: разработка 8 · решение 4 · ритм 15.
+> procedureKind: разработка 8 · решение 4 · ритм 16.
 
 | Процедура | Род | Держатель | Статус | container | vocabulary | grammar |
 |-----------|-----|-----------|--------|-----------|------------|---------|
@@ -34,3 +34,4 @@
 | [`weekly-dead-wire`](./weekly-dead-wire/README.md) | ритм | ozhegov | **in-migration** | ✅ ozhegov@c195e4bb | — | — |
 | [`deploy-office-vds`](./deploy-office-vds/README.md) | ритм | vesnin | **in-migration** | ✅ vesnin@aef12828 | — | — |
 | [`deploy-media-vps`](./deploy-media-vps/README.md) | ритм | vesnin | **in-migration** | ✅ vesnin@aef12828 | — | — |
+| [`duty`](./duty/README.md) | ритм | dynin | **in-migration** | ✅ dynin@fcd36c5f | — | — |

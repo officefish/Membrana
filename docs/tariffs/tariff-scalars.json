@@ -1,5 +1,6 @@
 {
-  "//": "S0 historical declaration from the first tariff-grid integration. Since #2333 v2 it is NOT a quota author: the live source is docs/tariffs/tariff-grid.json projected into the cabinet Tariff table.",
+  "//": "S0 плана интеграции тарифной сетки (заседание tariff-grid, ратифицировано владельцем 29.07) — ЗАМОРОЖЕННАЯ ЭПОХА СИДА (seed-epoch), НЕ источник правды тарифа с 08.09 (консилиум tariff-matrix-scalars-fate-2026-09-08). Формула S0 «единственный источник этих чисел» superseded: источник — релиз матрицы docs/containers/strategic-docs/releases/tariff-matrix/; сетка docs/tariffs/tariff-grid.json — производная релиза (yarn tariff:reseed) и с #2333 v2 именно она проецируется в кабинетную таблицу Tariff. Этот файл читает только сид prisma/tariff-scalars.mjs; пересев базы — задание В. Расхождение с релизом печатает yarn tariff:grid списком (не красным).",
+  "//supersededBy": "docs/containers/strategic-docs/releases/tariff-matrix/release.json",
   "//provenance": "Матрица владельца: шторм storm-tariff-boundary-dev-2026-07-29, тезисы T2-T5. Каркас: docs/meeting/tariff-grid/MEETING_VERDICT.md.",
   "//legal-no": "Неизвестное значение объявляется явно: null + причина в *_note. Молчаливое отсутствие — дефект (зуб tariff_scalars_declared).",
   "//scope": "ТОЛЬКО числовые потолки (род quota) и ссылка на каталог. Инструменты, gated-возможности и produce живут в матрице сетки (S1), не здесь.",

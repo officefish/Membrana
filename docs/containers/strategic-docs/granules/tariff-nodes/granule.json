@@ -1,0 +1,18 @@
+{
+  "id": "tariff-nodes",
+  "version": "1.0.0",
+  "kind": "function",
+  "fn": "renderTariffNodesRow",
+  "modulePath": "./render.mjs",
+  "description": "Строка матрицы «Приборы» (nodes.max): 1 / 4 / 9 приборов, закреплено заседанием tariff-grid 29.07; значения — в resource.json рядом",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/tariff-nodes/resource.json"
+  },
+  "foundations": [
+    { "path": "docs/meeting/tariff-grid/MEETING_VERDICT.md", "role": "заседание tariff-grid 29.07 — потолок приборов 1/4/9" },
+    { "path": "docs/containers/strategic-docs/design/TARIFF-MATRIX-DESIGN.md", "role": "схема resource.json и правило пересева exact-count" }
+  ],
+  "usedBy": [
+    { "templateId": "tariff-matrix", "placeholder": "{{row_nodes}}", "pin": "1.0.0" }
+  ]
+}

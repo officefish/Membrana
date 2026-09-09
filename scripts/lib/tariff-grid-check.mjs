@@ -8,8 +8,8 @@
  * реализаций само ловится тестом `tariff-grid-check.test.mjs`.
  *
  * Without fs/network: the CLI owns IO. #2333 v2 removed
- * docs/tariffs/tariff-scalars.json from quota authors; the live tooth now
- * judges the grid shape only.
+ * docs/tariffs/tariff-scalars.json from cabinet quota authors; checks below
+ * treat it only as a seed-epoch header and non-blocking drift report.
  */
 
 /** Ожидаемые роды прав — закрытый список (вердикт M1). */
@@ -82,3 +82,116 @@ export function gridFindings(grid) {
 
 /** МиБ → байты (единица объявления объёмов в декларации S0). */
 export const mibToBytes = (mib) => (mib == null ? null : mib * 1024 * 1024);
+
+// ─── сверка с релизом матрицы (спринт tariff-matrix-2331, b4) ──────────────────
+
+/** Ключ элемента массива для адреса: строки — по sku, реестр — по id, иначе индекс. */
+function itemKey(item, i) {
+  if (item && typeof item === 'object') {
+    if (typeof item.sku === 'string') return item.sku;
+    if (typeof item.id === 'string') return item.id;
+  }
+  return String(i);
+}
+
+const show = (v) => (v === undefined ? '(нет)' : JSON.stringify(v));
+const isPlainObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
+const joinPath = (path, key) => (path ? `${path}.${key}` : key);
+
+/**
+ * Пути расхождения двух JSON-значений (детерминированно, без дат). Массивы строк/реестра
+ * сравниваются по ключу (sku/id) и по порядку — порядок реестра = порядок pins релиза.
+ * @returns {Array<{path:string, actual:unknown, expected:unknown}>}
+ */
+export function diffPaths(actual, expected, path = '') {
+  if (Array.isArray(actual) && Array.isArray(expected)) {
+    const out = [];
+    const byKeyA = new Map(actual.map((x, i) => [itemKey(x, i), x]));
+    const byKeyE = new Map(expected.map((x, i) => [itemKey(x, i), x]));
+    for (const [k, e] of byKeyE) out.push(...diffPaths(byKeyA.get(k), e, joinPath(path, k)));
+    for (const [k, a] of byKeyA) {
+      if (!byKeyE.has(k)) out.push({ path: joinPath(path, k), actual: a, expected: undefined });
+    }
+    if (out.length === 0 && actual.map(itemKey).join(' ') !== expected.map(itemKey).join(' ')) {
+      out.push({ path: path || '(документ)', actual: actual.map(itemKey), expected: expected.map(itemKey) });
+    }
+    return out;
+  }
+  if (isPlainObject(actual) && isPlainObject(expected)) {
+    const out = [];
+    for (const k of new Set([...Object.keys(expected), ...Object.keys(actual)])) {
+      out.push(...diffPaths(actual[k], expected[k], joinPath(path, k)));
+    }
+    return out;
+  }
+  if (JSON.stringify(actual) === JSON.stringify(expected)) return [];
+  return [{ path: path || '(документ)', actual, expected }];
+}
+
+/**
+ * G ↔ R — ЕДИНСТВЕННЫЙ красный предмет сверки чисел (консилиум
+ * tariff-matrix-scalars-fate-2026-09-08): сетка на диске обязана быть проекцией релиза.
+ * Порча: правка сетки руками → красный; пересев (yarn tariff:reseed) → зелёный.
+ * @param {object} grid сетка на диске @param {object} projection proj(R) из reseed.mjs
+ */
+export function releaseCrossFindings(grid, projection) {
+  return diffPaths(grid, projection).map(({ path, actual, expected }) =>
+    finding(
+      'release_drift',
+      path,
+      `сетка несёт ${show(actual)}, проекция релиза — ${show(expected)}: сетка правлена руками или не пересеяна (yarn tariff:reseed)`,
+    ),
+  );
+}
+
+export const SCALARS_SUPERSEDED_BY = 'docs/containers/strategic-docs/releases/tariff-matrix/release.json';
+
+/**
+ * Шапка скаляров S0 обязана объявлять себя замороженной эпохой сида, а не источником
+ * правды: ключ `//supersededBy` указывает на релиз матрицы. Без него файл лжёт о роли.
+ */
+export function scalarsHeaderFindings(scalars) {
+  if (scalars?.['//supersededBy'] !== SCALARS_SUPERSEDED_BY) {
+    return [
+      finding(
+        'scalars_epoch',
+        '//supersededBy',
+        `tariff-scalars.json не объявляет supersede: ключ обязан равняться «${SCALARS_SUPERSEDED_BY}» (S0 — эпоха сида, не SSOT)`,
+      ),
+    ];
+  }
+  return [];
+}
+
+/**
+ * S ↔ R — ОБЯЗАТЕЛЬНЫЙ не-красный список расхождений сида (эпоха S0) с сеткой-производной
+ * релиза: полный, включая буфер, каталог и null старших. Печатается в основной stdout зуба,
+ * на код возврата НЕ влияет — пересев базы = задание В.
+ * @returns {Array<{path:string, S:unknown, R:unknown, unit:string}>}
+ */
+export function seedEpochDriftReport(grid, scalars) {
+  const out = [];
+  const byId = new Map((scalars?.tariffs ?? []).map((t) => [t.id, t]));
+  const bytesToMib = (b) => (typeof b === 'number' ? b / (1024 * 1024) : null);
+  const probes = [
+    ['nodes.max', (t) => t.maxNodesPerMembrane ?? null, (c) => c?.limit ?? null, 'count'],
+    ['workspaces.user.max', (t) => t.maxUserWorkspaces ?? null, (c) => c?.limit ?? null, 'count'],
+    ['storage.hot', (t) => t.userStorageQuotaMiB ?? null, (c) => bytesToMib(c?.limit), 'MiB'],
+    ['storage.cold', (t) => t.coldStorageQuotaMiB ?? null, (c) => bytesToMib(c?.limit), 'MiB'],
+    ['storage.buffer', (t) => t.bufferQuotaMiB ?? null, (c) => bytesToMib(c?.limit), 'MiB'],
+    ['dataset.sounds', (t) => t.datasetCatalogId ?? null, (c) => c?.catalogId ?? null, 'catalogId'],
+  ];
+  for (const row of grid?.rows ?? []) {
+    const declared = byId.get(row.sku);
+    if (!declared) {
+      out.push({ path: row.sku, S: null, R: row.productName, unit: 'tariff' });
+      continue;
+    }
+    for (const [id, pickS, pickR, unit] of probes) {
+      const S = pickS(declared);
+      const R = pickR(row.cells?.[id]);
+      if (S !== R) out.push({ path: `${row.sku}.${id}`, S, R, unit });
+    }
+  }
+  return out;
+}

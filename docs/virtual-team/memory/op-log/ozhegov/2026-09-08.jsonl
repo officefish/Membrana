@@ -1,1 +1,22 @@
+{"ts":"2026-09-08T08:53:10.561Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-08T08:52:57.559Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:53:10.571Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-08T08:52:57.559Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:54:55.952Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-08T08:54:44.152Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:54:55.955Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-08T08:54:44.152Z","origin":"ask-persona"}
+{"ts":"2026-09-08T08:54:55.969Z","persona":"ozhegov","verb":"emerge","ref":"ozhegov-2026-09-06-buffer-full-stop-m2-refusal-code","reason":"тот же рефрен: «три копии списка — нарушение слабой связанности и гарантированный drift»; здесь ровно та же болезнь с catalogId и заглушкой.","origin":"ask-persona"}
+{"ts":"2026-09-08T12:01:57.488Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-08T12:01:47.047Z","origin":"ask-persona"}
+{"ts":"2026-09-08T12:01:57.491Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-08T12:01:47.047Z","origin":"ask-persona"}
+{"ts":"2026-09-08T12:02:01.692Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-08T12:01:52.021Z","origin":"ask-persona"}
+{"ts":"2026-09-08T12:02:01.694Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-08T12:01:52.021Z","origin":"ask-persona"}
+{"ts":"2026-09-08T12:03:52.176Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-08T12:03:42.293Z","origin":"ask-persona"}
+{"ts":"2026-09-08T12:03:52.190Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-08T12:03:42.293Z","origin":"ask-persona"}
+{"ts":"2026-09-08T12:03:54.906Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-08T12:03:47.574Z","origin":"ask-persona"}
+{"ts":"2026-09-08T12:03:54.907Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-08T12:03:47.574Z","origin":"ask-persona"}
+{"ts":"2026-09-08T16:56:13.056Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-08T16:56:01.191Z","origin":"ask-persona"}
+{"ts":"2026-09-08T16:56:13.059Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-08T16:56:01.191Z","origin":"ask-persona"}
+{"ts":"2026-09-08T16:56:13.251Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-08T16:56:06.706Z","origin":"ask-persona"}
+{"ts":"2026-09-08T16:56:13.252Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-08T16:56:06.706Z","origin":"ask-persona"}
+{"ts":"2026-09-08T16:59:48.873Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-08T16:59:42.582Z","origin":"ask-persona"}
+{"ts":"2026-09-08T16:59:48.874Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-08T16:59:42.582Z","origin":"ask-persona"}
+{"ts":"2026-09-08T16:59:51.832Z","persona":"ozhegov","verb":"cloud_query","ref":"ozhegov-2026-09-08T16:59:46.077Z","origin":"ask-persona"}
+{"ts":"2026-09-08T16:59:51.833Z","persona":"ozhegov","verb":"surface_invoke","ref":"ozhegov-2026-09-08T16:59:46.077Z","origin":"ask-persona"}
 {"ts":"2026-09-08T08:03:52.517Z","persona":"ozhegov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

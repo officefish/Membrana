@@ -8,6 +8,12 @@
   implementation checks pass, awaiting review/PR · [`OPEN.md`](./local-sprint/tariff-matrix-2333/OPEN.md) —
   серверная адаптация к матрице тарифов по принятому M1: версия контракта на `Tariff`/`Device`,
   S6 проекция сетка→база, зуб 3 `Tariff`↔`Device`, проход разноски и один рубильник правды.
+- **tariff-matrix-2331** ([#2331](https://github.com/officefish/Membrana/issues/2331)) · сессия Б ·
+  нарезка 5 блоков, ратификация владельца 08.09 (v1 через ведущую, перерезка b3 напрямую) ·
+  [`OPEN.md`](./local-sprint/tariff-matrix-2331/OPEN.md) — матрица тарифов как единственный источник
+  правды: гранулы по ресурсу с паспортами в strategic-docs, шаблон `tariff-matrix`, релиз, указатель
+  `docs/TARIFF_MATRIX.md`; пересев `yarn tariff:reseed` → `docs/tariffs/tariff-grid.json`, зуб `tariff:grid`
+  красный только на G↔R; скаляры — замороженная эпоха сида (консилиум 08.09). Гейт/опыт — см. OPEN.
 
 - **sanitation-2026-08-20** ([#2009](https://github.com/officefish/Membrana/issues/2009)) ·
   gate pass 9/9 honest_pair · прогноз↔исход hit (9/9) · [`OPEN.md`](./local-sprint/sanitation-2026-08-20/OPEN.md) —

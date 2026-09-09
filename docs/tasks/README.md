@@ -21,6 +21,7 @@
 | ID | Название | Размер | Промпт | GitHub |
 |----|----------|--------|--------|--------|
 | `tariff-matrix-2333` | Сервер: адаптация к матрице тарифов | L | [`TARIFF_MATRIX_2333_SERVER_ADAPTATION_PROMPT.md`](../prompts/TARIFF_MATRIX_2333_SERVER_ADAPTATION_PROMPT.md) | [#2333](https://github.com/officefish/Membrana/issues/2333) |
+| `tariff-matrix-2331` | Матрица тарифов как единственный источник правды: гранулы по ресурсу + шаблон в strategic-docs, сетка — производная (#2331) | M | [`OPEN.md`](../local-sprint/tariff-matrix-2331/OPEN.md) | [#2331](https://github.com/officefish/Membrana/issues/2331) |
 | `cabinet-deploy-smoke-tooth-2288` | Смоук выкатки кабинета бьёт тарифы, pair и сетку образа | M | [`CABINET_DEPLOY_SMOKE_TOOTH_2288_PROMPT.md`](../prompts/CABINET_DEPLOY_SMOKE_TOOTH_2288_PROMPT.md) | [#2288](https://github.com/officefish/Membrana/issues/2288) |
 | `cowork-library-open-api` | Cowork Sprint: Открытое API библиотеки | L | [`COWORK_SPRINT_BRIEF.md`](../cowork-sprint/cowork-library-open-api/COWORK_SPRINT_BRIEF.md) | — |
 | `playback-hang-timeout` | Таймаут ожидания статуса в playSequence + сброс stale outcome при смене набора | S | [`PLAYBACK_HANG_TIMEOUT_PROMPT.md`](../prompts/PLAYBACK_HANG_TIMEOUT_PROMPT.md) | [#2181](https://github.com/officefish/Membrana/issues/2181) |
