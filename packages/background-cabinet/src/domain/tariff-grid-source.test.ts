@@ -2,18 +2,16 @@
  * Зубы источника документа сетки (S3 плана интеграции).
  *
  * Сторожат две вещи, на которых легко соврать себе: битый документ не должен
- * работать «наполовину», а режим сетки не должен включаться сам собой — переход
- * на неё как на единственный источник истины это отдельный шаг плана (S9).
+ * работать «наполовину», а внешний режим сетки больше не должен существовать
+ * как второй источник правды.
  */
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
 import { describe, expect, it, beforeEach } from 'vitest';
 
-import {
-  isTariffGridMode,
-  loadTariffGrid,
-  resetTariffGridCache,
-  resolveGridPath,
-  TARIFF_GRID_PATH,
-} from './tariff-grid-source';
+import { loadTariffGrid, resetTariffGridCache, resolveGridPath, TARIFF_GRID_PATH } from './tariff-grid-source';
 
 describe('источник документа сетки', () => {
   beforeEach(() => resetTariffGridCache());
@@ -38,17 +36,33 @@ describe('источник документа сетки', () => {
     expect(resolveGridPath(TARIFF_GRID_PATH, process.cwd())).toBeDefined();
     expect(resolveGridPath('docs/tariffs/no-such.json', process.cwd())).toBeUndefined();
   });
+
+  it('стартовый источник читает сетку один раз за процесс и не пишет Tariff', () => {
+    const sourceText = readFileSync(new URL('./tariff-grid-source.ts', import.meta.url), 'utf8');
+    expect(sourceText).not.toMatch(/\bprisma\b|tariff\.(?:create|createMany|upsert|update|updateMany|delete|deleteMany)/iu);
+
+    const liveGridPath = resolveGridPath(TARIFF_GRID_PATH);
+    expect(liveGridPath).toBeDefined();
+
+    const scratch = mkdtempSync(join(tmpdir(), 'tariff-grid-source-'));
+    try {
+      const tempGridPath = join(scratch, 'tariff-grid.json');
+      writeFileSync(tempGridPath, readFileSync(liveGridPath!, 'utf8'));
+
+      const first = loadTariffGrid(tempGridPath);
+      writeFileSync(tempGridPath, '{"rows":[]}');
+
+      expect(loadTariffGrid(tempGridPath)).toBe(first);
+      expect(first!.rows).toHaveLength(3);
+    } finally {
+      rmSync(scratch, { recursive: true, force: true });
+    }
+  });
 });
 
-describe('переключатель режима', () => {
-  it('по умолчанию ВЫКЛЮЧЕН — переход на сетку это шаг S9, не побочный эффект', () => {
-    expect(isTariffGridMode({})).toBe(false);
-  });
-
-  it('включается только точным значением — «почти включено» не считается', () => {
-    expect(isTariffGridMode({ TARIFF_GRID_MODE: '1' })).toBe(true);
-    expect(isTariffGridMode({ TARIFF_GRID_MODE: 'true' })).toBe(false);
-    expect(isTariffGridMode({ TARIFF_GRID_MODE: '0' })).toBe(false);
-    expect(isTariffGridMode({ TARIFF_GRID_MODE: '' })).toBe(false);
+describe('снятый переключатель режима', () => {
+  it('модуль не экспортирует внешний рубильник режима', async () => {
+    const source = await import('./tariff-grid-source');
+    expect('isTariffGridMode' in source).toBe(false);
   });
 });

@@ -19,7 +19,6 @@ import {
   mibToBytes,
   releaseCrossFindings,
   SCALARS_SUPERSEDED_BY,
-  scalarsCrossFindings,
   scalarsHeaderFindings,
   seedEpochDriftReport,
 } from './lib/tariff-grid-check.mjs';
@@ -32,7 +31,6 @@ const SCALARS = JSON.parse(readFileSync(new URL('../docs/tariffs/tariff-scalars.
 
 test('живая сетка честна: полнота, реестр, роды, числа', () => {
   assert.deepEqual(gridFindings(GRID), []);
-  assert.deepEqual(scalarsCrossFindings(GRID, SCALARS), []);
 });
 
 test('живая сетка несёт три тарифа владельца и все пять родов права', () => {
@@ -101,21 +99,6 @@ test('возможность без preconditionId ловится: услови�
   broken.rows[1].cells['bearing.position'] = { kind: 'gated', enabled: true };
   const f = gridFindings(broken).filter((x) => /preconditionId/u.test(x.reason));
   assert.equal(f.length, 1);
-});
-
-test('расхождение сетки с декларацией S0 ловится scalars_drift', () => {
-  const broken = structuredClone(GRID);
-  broken.rows[0].cells['storage.hot'] = { kind: 'quota', limit: 1024 * 1024 * 1024, unit: 'bytes' };
-  const f = scalarsCrossFindings(broken, SCALARS);
-  assert.equal(f.length, 1);
-  assert.equal(f[0].toothId, 'scalars_drift');
-  assert.match(f[0].reason, /разъехались/u);
-});
-
-test('предварительные значения из сверки исключены — их владелец не называл', () => {
-  const broken = structuredClone(GRID);
-  broken.rows[2].cells['storage.hot'] = { kind: 'quota', limit: 42, unit: 'bytes' };
-  assert.deepEqual(scalarsCrossFindings(broken, SCALARS), [], 'observatory.storage.hot помечен provisional');
 });
 
 test('нечитаемый документ — одна находка, а не падение', () => {

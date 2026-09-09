@@ -26,6 +26,7 @@ function deviceRow(bufferQuotaBytes: bigint) {
   return {
     id: 'dev-1',
     membraneId: 'm-1',
+    tariffContractVersion: 1,
     userStorageQuotaBytes: 10_000n,
     bufferQuotaBytes,
     datasetCatalogId: 'catalog-checkpoint',
@@ -50,13 +51,22 @@ describe('предел прибора после смены тарифа', () =>
 
     const before = await service.getQuota('dev-1');
     expect(before.buffer.limitBytes).toBe(2_000);
+    expect(before.tariffContractVersion).toBe(1);
 
     // Ровно то, что делает разноска кабинета: обновляет строку прибора. Ни регистрации, ни
     // выпуска ключа, ни повторной привязки между двумя чтениями не происходит.
-    row.current = deviceRow(50_000n);
+    row.current = { ...deviceRow(50_000n), tariffContractVersion: 2 };
 
     const after = await service.getQuota('dev-1');
     expect(after.buffer.limitBytes).toBe(50_000);
+    expect(after.tariffContractVersion).toBe(2);
+  });
+
+  it('версия контракта читается свежей строкой вместе с лимитами (порча: убрать поле из /quota → красный)', async () => {
+    const { service, row } = makeService();
+    row.current = { ...deviceRow(2_000n), tariffContractVersion: 3 };
+    const quota = await service.getQuota('dev-1');
+    expect(quota.tariffContractVersion).toBe(3);
   });
 
   it('предел читается ЗАНОВО на каждый запрос — кеша между вызовами нет', async () => {

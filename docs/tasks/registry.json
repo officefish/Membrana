@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "tariff-matrix-2333",
+      "title": "Сервер: адаптация к матрице тарифов",
+      "promptPath": "docs/prompts/TARIFF_MATRIX_2333_SERVER_ADAPTATION_PROMPT.md",
+      "githubIssue": 2333,
+      "linearId": "DRU-690",
+      "size": "L",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-08",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "dynin",
+        "ozhegov"
+      ],
+      "notes": "",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "tariff-matrix-2331",
       "title": "Матрица тарифов как единственный источник правды: гранулы по ресурсу + шаблон в strategic-docs, сетка — производная (#2331)",
       "promptPath": "docs/local-sprint/tariff-matrix-2331/OPEN.md",

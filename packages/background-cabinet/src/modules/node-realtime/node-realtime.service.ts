@@ -10,7 +10,7 @@ import {
   type JournalAckPayload,
   type NodeRealtimeEnvelope,
 } from '../../domain/node-realtime-wire';
-import { isTariffGridMode, loadTariffGrid } from '../../domain/tariff-grid-source';
+import { loadTariffGrid } from '../../domain/tariff-grid-source';
 import { projectEntitlements } from '../../domain/tariff-projection';
 
 export interface NodeHealthPingResult {
@@ -162,13 +162,12 @@ export class NodeRealtimeService {
     });
     if (!membrane || socket.readyState !== socket.OPEN) return;
 
-    // S3 плана интеграции сетки: значение для провода рождается в ОДНОЙ точке и
-    // несёт имя автора. До переключения (S9) автор — адаптер легаси, после —
-    // матрица; двойной записи не бывает по построению (вердикт M2).
+    // S3/S9 плана интеграции сетки: значение для провода рождается в ОДНОЙ точке
+    // и несёт имя автора. Валидная матрица — источник истины; если документ
+    // отсутствует или отвергнут, работает честный legacy-fallback.
     const projected = projectEntitlements(
       loadTariffGrid(),
       { tariffId: membrane.tariffId, entitledTariffSkus: membrane.tariff.entitledTariffSkus },
-      isTariffGridMode(),
     );
 
     socket.send(

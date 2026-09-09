@@ -48,6 +48,8 @@ model Session {
 model Tariff {
   id                     String     @id
   name                   String
+  /** Version of the tariff contract copied to paired devices and exposed by /quota. */
+  tariffContractVersion  Int        @default(1)
   /** Total bytes user may store across their collections on the server (paired mode). */
   userStorageQuotaBytes  BigInt
   /** Live recording buffer capacity; larger buffer supports more concurrent devices. */

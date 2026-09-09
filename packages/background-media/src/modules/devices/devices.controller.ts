@@ -47,6 +47,9 @@ export class DevicesController {
     if (!membrane?.membraneId) return undefined;
     return {
       membraneId: membrane.membraneId,
+      ...(membrane.tariffContractVersion !== undefined
+        ? { tariffContractVersion: membrane.tariffContractVersion }
+        : {}),
       userStorageQuotaBytes: membrane.userStorageQuotaBytes,
       bufferQuotaBytes: membrane.bufferQuotaBytes,
       datasetCatalogId: membrane.datasetCatalogId,
@@ -134,6 +137,7 @@ export class DevicesController {
       name: device.name,
       kind: device.kind,
       createdAt: device.createdAt.toISOString(),
+      tariffContractVersion: device.tariffContractVersion,
       bufferPolicy: result.bufferPolicy,
     };
   }
