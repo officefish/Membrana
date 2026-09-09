@@ -1,0 +1,26 @@
+{
+  "schema": "tariff-resource/1",
+  "id": "system-datasets",
+  "resource": "dataset.system",
+  "title": "Системные наборы",
+  "domain": "catalog",
+  "kind": "catalog",
+  "unit": null,
+  "reseedRule": "matrix-only",
+  "passport": {
+    "version": "1.0.0",
+    "ratifiedAt": "2026-09-08",
+    "owner": "owner",
+    "source": "storm-tariff-single-truth-2026-09-08 T2/T10",
+    "note": "Системные наборы звуков доступны на всех тарифах и не расходуют квоту пользователя. Строка живёт только в матрице: в технической сетке прав такого права нет и пересев её пропускает (правило matrix-only)."
+  },
+  "registry": {
+    "titleKey": "tariff.dataset.system",
+    "description": "Системные наборы звуков — вне квоты, на всех тарифах"
+  },
+  "values": {
+    "free-v1": { "available": true, "outsideQuota": true, "ratifiedAt": "2026-09-08" },
+    "checkpoint-v1": { "available": true, "outsideQuota": true, "ratifiedAt": "2026-09-08" },
+    "observatory-v1": { "available": true, "outsideQuota": true, "ratifiedAt": "2026-09-08" }
+  }
+}

@@ -43,6 +43,15 @@
       "summary": "Сборка релиза из шаблона + pinned гранул → releases/ или experiments/"
     },
     {
+      "id": "reseed",
+      "verb": null,
+      "zone": "workshop",
+      "yarn": "yarn tariff:reseed",
+      "script": "scripts/tariff-reseed.mjs",
+      "doc": "docs/TARIFF_MATRIX.md",
+      "summary": "Пересев: сетка docs/tariffs/tariff-grid.json из релиза tariff-matrix (--check — сверка без записи)"
+    },
+    {
       "id": "publish",
       "verb": "publish",
       "zone": "workshop",

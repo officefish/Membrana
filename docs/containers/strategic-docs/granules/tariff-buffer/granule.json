@@ -1,0 +1,18 @@
+{
+  "id": "tariff-buffer",
+  "version": "1.0.0",
+  "kind": "function",
+  "fn": "renderTariffBufferRow",
+  "modulePath": "./render.mjs",
+  "description": "Строка матрицы «Буфер записи» (storage.buffer): 512 / 2048 / 4096 МиБ по T1, закреплено владельцем 08.09; значения — в resource.json рядом",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/tariff-buffer/resource.json"
+  },
+  "foundations": [
+    { "path": "docs/storm/storm-tariff-single-truth-2026-09-08/REPORT.md", "role": "T1 — линейка буфера и коллекций по тарифам" },
+    { "path": "docs/containers/strategic-docs/design/TARIFF-MATRIX-DESIGN.md", "role": "схема resource.json и правило пересева exact-bytes" }
+  ],
+  "usedBy": [
+    { "templateId": "tariff-matrix", "placeholder": "{{row_buffer}}", "pin": "1.0.0" }
+  ]
+}

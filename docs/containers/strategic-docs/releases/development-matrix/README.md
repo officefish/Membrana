@@ -12,7 +12,6 @@ mechanics are held by `membrana-local-sprint`.
 > `docs/containers/strategic-docs/granules/`. Edit granules and template, not
 > the release.
 
-
 ## Route: `one shot`
 
 Use when there is one intention, one executor and one review boundary. The
@@ -26,7 +25,6 @@ Do not use when the intent is diffuse, several owners are involved, seams are
 unclear, the reviewer delegates or queues follow-up, procedure/accountability is
 the product, or the owner asks for sprint.
 
-
 ## Route: `membrana-local-sprint`
 
 Use when the work needs accountable blocks, owner-ratified cut, role-specific
@@ -37,7 +35,6 @@ context/review traces, `sprint:gate` and `procedure-run:journal`.
 
 Do not use for a purely mechanical one-person change where team responsibility
 would be ceremonial.
-
 
 ## Route: `cowork`
 
@@ -50,7 +47,6 @@ integration gate and retro.
 Do not use when early interface negotiation is necessary or only one executor
 exists.
 
-
 ## Route: `challenge`
 
 Use when competing alternatives should fight under one judge.
@@ -58,7 +54,6 @@ Use when competing alternatives should fight under one judge.
 Required evidence: competitor briefs, judging criteria and judge verdict.
 
 Do not use when the goal is synthesis rather than selection.
-
 
 ## Route: `hackathon`
 
@@ -75,7 +70,6 @@ device-board hackathon as 3-5 days. The matrix makes the structural rule
 stronger than the calendar estimate: H1-H4 are exactly four natural handoffs,
 while days are only planning capacity.
 
-
 ## Route: `marathon`
 
 Use when long work must finish without becoming a crater: each stage leaves a
@@ -87,7 +81,6 @@ periodic re-cut/review.
 Do not use when work requires uninterrupted full-day relay or has no useful
 partial artifacts.
 
-
 ## Route: `night build`
 
 Use for autonomous after-hours hardening/refactor with bounded scope and morning
@@ -98,7 +91,6 @@ handoff.
 
 Do not use for product direction, owner choices, prod deploy or unclear blast
 radius.
-
 
 ## One Shot Contract
 
@@ -122,7 +114,6 @@ radius.
 - If a reviewer would need another role's memory to judge it, it is no longer a
   one shot.
 
-
 ## Local Sprint Contract
 
 Use `membrana-local-sprint` when accountability is part of the value.
@@ -138,7 +129,6 @@ Use `membrana-local-sprint` when accountability is part of the value.
 The lesson from `procedure-run-journal-2026-08-01`: the heavy route was worth it
 because it found real defects. That does not make it the default for small
 intentions.
-
 
 ## Container Level
 
@@ -162,7 +152,6 @@ artifact, verification command/result, known gaps and next-stage input.
 If the intended container is not named before cutting work, default to
 `membrana-local-sprint` or `one shot`, whichever the route matrix allows.
 
-
 ## Decision Checklist
 
 1. Can one executor finish and verify it in one coherent review atom?
@@ -174,7 +163,6 @@ If the intended container is not named before cutting work, default to
    Choose the matching container and write its brief before execution.
 4. Is it after-hours bounded hardening?
    Use `night build`.
-
 
 ## Test Double Contract
 

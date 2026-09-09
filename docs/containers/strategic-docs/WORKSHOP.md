@@ -28,6 +28,7 @@ yarn strategic-docs:tools --doc publish
 
 # 2) Сборка релиза
 yarn strategic-docs:generate --template readme-main
+yarn strategic-docs:generate --template tariff-matrix   # матрица тарифов; затем yarn tariff:reseed — сетка из релиза
 
 # 3) Публикация в Affine
 # --template без --target → только Releases (не заливает конструктор)

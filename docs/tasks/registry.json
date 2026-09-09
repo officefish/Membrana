@@ -1,6 +1,26 @@
 {
   "tasks": [
     {
+      "id": "tariff-matrix-2331",
+      "title": "Матрица тарифов как единственный источник правды: гранулы по ресурсу + шаблон в strategic-docs, сетка — производная (#2331)",
+      "promptPath": "docs/local-sprint/tariff-matrix-2331/OPEN.md",
+      "githubIssue": 2331,
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "membrana-local-sprint",
+      "createdAt": "2026-09-08",
+      "archivedAt": null,
+      "leadPersona": "vesnin",
+      "supportPersonas": [
+        "ozhegov",
+        "dynin"
+      ],
+      "notes": "сессия Б, слово владельца 08.09 через ведущую; спринт по membrana-local-sprint; границы — только матрица и сетка как производная (пересев базы/приборов — задание В)",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "cowork-buffer-full-stop",
       "title": "Cowork Sprint: Полный буфер — контракт остановки",
       "promptPath": "docs/cowork-sprint/cowork-buffer-full-stop/COWORK_SPRINT_BRIEF.md",

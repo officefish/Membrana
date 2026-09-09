@@ -1,0 +1,73 @@
+{
+  "releaseId": "tariff-matrix",
+  "version": "0.1.0",
+  "templateId": "tariff-matrix",
+  "templateVersion": "0.1.0",
+  "title": "Матрица тарифов Membrana — единственный источник правды о том, что получает пользователь на каждом тарифе (T13–T16, шторм 08.09.2026)",
+  "target": "docs/containers/strategic-docs/releases/tariff-matrix/README.md",
+  "pins": {
+    "tariff-matrix-purpose": "1.0.0",
+    "tariff-buffer": "1.0.0",
+    "tariff-collections": "1.0.0",
+    "tariff-cold": "1.0.0",
+    "tariff-nodes": "1.0.0",
+    "tariff-workspaces": "1.0.0",
+    "tariff-datasets": "1.0.0",
+    "tariff-system-datasets": "1.0.0",
+    "tariff-instruments": "1.0.0"
+  },
+  "status": "release",
+  "bodyPath": "./README.md",
+  "generatedAt": "2026-09-08T11:59:11.585Z",
+  "trace": {
+    "templateId": "tariff-matrix",
+    "templateVersion": "0.1.0",
+    "granules": {
+      "tariff-matrix-purpose@1.0.0": {
+        "kind": "literal",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "tariff-buffer@1.0.0": {
+        "kind": "function",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "tariff-collections@1.0.0": {
+        "kind": "function",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "tariff-cold@1.0.0": {
+        "kind": "function",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "tariff-nodes@1.0.0": {
+        "kind": "function",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "tariff-workspaces@1.0.0": {
+        "kind": "function",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "tariff-datasets@1.0.0": {
+        "kind": "function",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "tariff-system-datasets@1.0.0": {
+        "kind": "function",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      },
+      "tariff-instruments@1.0.0": {
+        "kind": "function",
+        "version": "1.0.0",
+        "pin": "1.0.0"
+      }
+    }
+  }
+}

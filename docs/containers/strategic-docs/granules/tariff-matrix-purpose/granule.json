@@ -1,0 +1,18 @@
+{
+  "id": "tariff-matrix-purpose",
+  "version": "1.0.0",
+  "kind": "literal",
+  "bodyPath": "./body.md",
+  "description": "Назначение матрицы тарифов, её статус единственного источника правды и предупреждение «релиз генерируется — правь гранулы»",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/tariff-matrix-purpose/body.md"
+  },
+  "foundations": [
+    { "path": "docs/storm/storm-tariff-single-truth-2026-09-08/REPORT.md", "role": "шторм 08.09 — тезисы T13–T16 (матрица как источник, сетка — производная)" },
+    { "path": "docs/seanses/tariff-matrix-scalars-fate-2026-09-08.md", "role": "консилиум о судьбе скаляров S0 — сид на замороженной эпохе до задания В" },
+    { "path": "docs/containers/strategic-docs/design/TARIFF-MATRIX-DESIGN.md", "role": "дизайн паспорта гранулы ресурса" }
+  ],
+  "usedBy": [
+    { "templateId": "tariff-matrix", "placeholder": "{{purpose}}", "pin": "1.0.0" }
+  ]
+}
