@@ -1,0 +1,19 @@
+{
+  "id": "tariff-instruments",
+  "version": "1.0.0",
+  "kind": "function",
+  "fn": "renderTariffInstrumentsRows",
+  "modulePath": "./render.mjs",
+  "description": "Строки матрицы «Инструменты» — по одной на запись: тренды спектра, словарь YAMNet, тембральный портрет MFCC, пеленг при готовой сети, право производить своё; как в сетке 29.07; значения — в resource.json рядом (составная форма entries[])",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/tariff-instruments/resource.json"
+  },
+  "foundations": [
+    { "path": "docs/meeting/tariff-grid/MEETING_VERDICT.md", "role": "заседание tariff-grid 29.07 — инструменты, пеленг с условием, право производить своё (M5)" },
+    { "path": "docs/tariffs/tariff-grid.json", "role": "сетка 29.07 — сегодняшние ячейки инструментов" },
+    { "path": "docs/containers/strategic-docs/design/TARIFF-MATRIX-DESIGN.md", "role": "составная форма resource.json и правила enabled-flag / gated-by-precondition / produce-scope" }
+  ],
+  "usedBy": [
+    { "templateId": "tariff-matrix", "placeholder": "{{row_instruments}}", "pin": "1.0.0" }
+  ]
+}

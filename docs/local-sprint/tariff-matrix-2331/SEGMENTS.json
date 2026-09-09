@@ -1,0 +1,53 @@
+{
+  "schema": "sprint-segments/1",
+  "sprintId": "tariff-matrix-2331",
+  "note": "Замер изменённых строк по зонам ратифицированного плана после исполнения: git diff --numstat origin/main...HEAD (добавления+удаления); файлы вне зон перечислены в outsideZones и в блоки не зачтены.",
+  "measuredAt": "2026-09-08T16:57:12.175Z",
+  "segments": [
+    {
+      "cutBlockId": "matrix-passport-storage",
+      "changedLines": 1092
+    },
+    {
+      "cutBlockId": "matrix-granules-rights",
+      "changedLines": 393
+    },
+    {
+      "cutBlockId": "matrix-template-release",
+      "changedLines": 437
+    },
+    {
+      "cutBlockId": "reseed-grid",
+      "changedLines": 1523
+    },
+    {
+      "cutBlockId": "sprint-closure",
+      "changedLines": 49
+    }
+  ],
+  "outsideZones": [
+    "apps/docs/product/tariffs.mdx:15",
+    "docs/containers/strategic-docs/releases/affine-surface-policy/README.md:4",
+    "docs/containers/strategic-docs/releases/development-matrix/README.md:12",
+    "docs/containers/strategic-docs/releases/readme-main/README.md:9",
+    "docs/discussions/cut-tariff-matrix-2331-vesnin-run.md:20",
+    "docs/discussions/tariff-matrix-2331-b1-ozhegov-context.md:26",
+    "docs/discussions/tariff-matrix-2331-b1-ozhegov-review-2.md:31",
+    "docs/discussions/tariff-matrix-2331-b1-ozhegov-review.md:29",
+    "docs/discussions/tariff-matrix-2331-b2-ozhegov-context.md:24",
+    "docs/discussions/tariff-matrix-2331-b2-ozhegov-review-2.md:24",
+    "docs/discussions/tariff-matrix-2331-b2-ozhegov-review.md:26",
+    "docs/discussions/tariff-matrix-2331-b3-vesnin-context.md:24",
+    "docs/discussions/tariff-matrix-2331-b4-dynin-context.md:26",
+    "docs/discussions/tariff-matrix-2331-b4-dynin-review.md:18",
+    "docs/procedure-runs/trail/2026-09-08.jsonl:1",
+    "docs/seanses/tariff-matrix-scalars-fate-2026-09-08.md:146",
+    "docs/sprint/cut/tariff-matrix-2331.json:118",
+    "docs/sprint/cut/trail/tariff-matrix-2331.jsonl:4",
+    "docs/sprint/trail/tariff-matrix-2331.jsonl:6",
+    "docs/tasks/README.md:1",
+    "docs/virtual-team/memory/op-log/dynin/2026-09-08.jsonl:4",
+    "docs/virtual-team/memory/op-log/ozhegov/2026-09-08.jsonl:13",
+    "docs/virtual-team/memory/op-log/vesnin/2026-09-08.jsonl:4"
+  ]
+}

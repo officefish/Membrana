@@ -1,0 +1,18 @@
+{
+  "id": "tariff-system-datasets",
+  "version": "1.0.0",
+  "kind": "function",
+  "fn": "renderTariffSystemDatasetsRow",
+  "modulePath": "./render.mjs",
+  "description": "Строка матрицы «Системные наборы» — вне квоты, на всех тарифах (T2/T10); живёт только в матрице (правило matrix-only), в сетку не проецируется; значения — в resource.json рядом",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/tariff-system-datasets/resource.json"
+  },
+  "foundations": [
+    { "path": "docs/storm/storm-tariff-single-truth-2026-09-08/REPORT.md", "role": "T2/T10 — системные наборы вне квоты, отдельной строкой" },
+    { "path": "docs/containers/strategic-docs/design/TARIFF-MATRIX-DESIGN.md", "role": "правило пересева matrix-only" }
+  ],
+  "usedBy": [
+    { "templateId": "tariff-matrix", "placeholder": "{{row_system_datasets}}", "pin": "1.0.0" }
+  ]
+}

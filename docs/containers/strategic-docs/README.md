@@ -9,3 +9,5 @@
 Мастерская: [`WORKSHOP.md`](./WORKSHOP.md) · `yarn strategic-docs:tools` · `yarn strategic-docs:publish`.
 
 Поверхность Affine: [`SURFACE.md`](./SURFACE.md) · publish: [`PUBLISH.md`](./PUBLISH.md).
+
+Матрицы с корневыми указателями: [`docs/DEVELOPMENT_MATRIX.md`](../../DEVELOPMENT_MATRIX.md) → релиз `development-matrix`; [`docs/TARIFF_MATRIX.md`](../../TARIFF_MATRIX.md) → релиз `tariff-matrix` (гранулы по ресурсу с паспортами, каталоги `granules/tariff-*`; сетка `docs/tariffs/tariff-grid.json` — производная релиза, пересев `yarn tariff:reseed`).

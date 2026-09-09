@@ -1,0 +1,23 @@
+{
+  "id": "tariff-matrix",
+  "version": "0.1.0",
+  "target": "docs/containers/strategic-docs/releases/tariff-matrix/README.md",
+  "meta": {
+    "description": "Матрица тарифов Membrana — единственный источник правды о том, что получает пользователь на каждом тарифе (T13–T16, шторм 08.09.2026)",
+    "status": "validated",
+    "owner": "product",
+    "surface": ["github"]
+  },
+  "skeleton": "{{purpose}}\n\n## Матрица «тариф × ресурс»\n\nСтрока — ресурс, колонка — тариф (T14). Порядок колонок — по старшинству тарифа и живёт здесь, в шаблоне; гранула ресурса знает только свою строку.\n\n| Ресурс | Датчик | Блокпост | Наблюдательный пункт |\n|---|---|---|---|\n{{row_buffer}}\n{{row_collections}}\n{{row_cold}}\n{{row_nodes}}\n{{row_workspaces}}\n{{row_datasets}}\n{{row_system_datasets}}\n{{row_instruments}}\n\n**Легенда.** «(заглушка)» — тариф пока пользуется чужим набором, свой не назначен; «(не закреплено)» — значение владельцем не названо и взято как нижняя граница или как в прежней сетке; паспорт каждой строки (версия, дата закрепления, владелец, источник, правило пересева) — в `resource.json` её гранулы.\n\n**Пересев.** Техническая сетка `docs/tariffs/tariff-grid.json` — производная этого релиза: `yarn tariff:reseed` собирает её из `release.json` и гранул, зуб `yarn tariff:grid` держит сетку равной релизу. Правки — только через гранулы и пересборку (T16).",
+  "slots": [
+    { "granuleId": "tariff-matrix-purpose", "pin": "1.0.0", "placeholder": "{{purpose}}" },
+    { "granuleId": "tariff-buffer", "pin": "1.0.0", "placeholder": "{{row_buffer}}" },
+    { "granuleId": "tariff-collections", "pin": "1.0.0", "placeholder": "{{row_collections}}" },
+    { "granuleId": "tariff-cold", "pin": "1.0.0", "placeholder": "{{row_cold}}" },
+    { "granuleId": "tariff-nodes", "pin": "1.0.0", "placeholder": "{{row_nodes}}" },
+    { "granuleId": "tariff-workspaces", "pin": "1.0.0", "placeholder": "{{row_workspaces}}" },
+    { "granuleId": "tariff-datasets", "pin": "1.0.0", "placeholder": "{{row_datasets}}" },
+    { "granuleId": "tariff-system-datasets", "pin": "1.0.0", "placeholder": "{{row_system_datasets}}" },
+    { "granuleId": "tariff-instruments", "pin": "1.0.0", "placeholder": "{{row_instruments}}" }
+  ]
+}

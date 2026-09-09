@@ -487,6 +487,24 @@
         "provenance": null
       },
       "procedureKind": "ритм"
+    },
+    {
+      "id": "duty",
+      "procedureKind": "ритм",
+      "holder": "dynin",
+      "homePath": "docs/procedures/duty",
+      "container": {
+        "value": true,
+        "provenance": "dynin@fcd36c5f"
+      },
+      "vocabulary": {
+        "value": false,
+        "provenance": null
+      },
+      "grammar": {
+        "value": false,
+        "provenance": null
+      }
     }
   ]
 }

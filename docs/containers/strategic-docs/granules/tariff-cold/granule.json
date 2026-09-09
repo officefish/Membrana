@@ -1,0 +1,19 @@
+{
+  "id": "tariff-cold",
+  "version": "1.0.0",
+  "kind": "function",
+  "fn": "renderTariffColdRow",
+  "modulePath": "./render.mjs",
+  "description": "Строка матрицы «Холодное хранилище» (storage.cold): 0 / 2048 / 2048 МиБ как в сетке 29.07, НЕ закреплено — предмет заседания tariff-single-truth; значения — в resource.json рядом",
+  "source": {
+    "repoPath": "docs/containers/strategic-docs/granules/tariff-cold/resource.json"
+  },
+  "foundations": [
+    { "path": "docs/tariffs/tariff-grid.json", "role": "сетка 29.07 — откуда взяты незакреплённые значения" },
+    { "path": "docs/storm/storm-tariff-single-truth-2026-09-08/REPORT.md", "role": "развилка «холодное хранилище как режим» — в заседание" },
+    { "path": "docs/containers/strategic-docs/design/TARIFF-MATRIX-DESIGN.md", "role": "схема resource.json и правило пересева exact-bytes" }
+  ],
+  "usedBy": [
+    { "templateId": "tariff-matrix", "placeholder": "{{row_cold}}", "pin": "1.0.0" }
+  ]
+}

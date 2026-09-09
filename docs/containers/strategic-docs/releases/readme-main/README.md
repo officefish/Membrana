@@ -2,10 +2,8 @@
 
 Модульная TypeScript-монорепо: полевой клиент, личный кабинет, аудио-анализ и обнаружение дронов на узле.
 
-
 > **Стратегический контекст:** конечная цель — распределённая сеть пространственной разведки нижнего неба (обнаружение и трекинг дронов в заданном квадрате). См. [`WHITE_PAPER.md`](./WHITE_PAPER.md).
 > **Платформа:** веб-кабинет, pairing узлов, data-plane — [`docs/MEMBRANE_PLATFORM.md`](./docs/MEMBRANE_PLATFORM.md).
-
 
 ## Архитектура
 
@@ -30,7 +28,6 @@ membrana/
 
 **Границы:** `packages/services/*` — чистая бизнес-логика + React-хуки; `background-*` — NestJS data-plane и интеграции, **не** входят в граф сервисов. Канон: [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md), [`docs/BACKGROUND_SERVERS.md`](./docs/BACKGROUND_SERVERS.md), [`docs/SERVICES.md`](./docs/SERVICES.md).
 
-
 ## Принципы
 
 1. **Один источник истины** — общие типы и контракты живут в `@membrana/core`.
@@ -38,7 +35,6 @@ membrana/
 3. **Изоляция модулей** — `agenda` и `device-board` не знают друг о друге, только о `core`.
 4. **Единая точка входа** — каждый пакет экспортирует API только через `src/index.ts`.
 5. **Аудио только через сервисы** — Web Audio API не вызывается из модулей напрямую; канон — `@membrana/audio-engine-service`.
-
 
 ## Быстрый старт
 
@@ -73,7 +69,6 @@ yarn turbo run lint typecheck test build --continue
 yarn check:boundaries
 ```
 
-
 ### Фоновые серверы (опционально)
 
 | Сервер  | Команда                                                            | Порт | Назначение              |
@@ -98,7 +93,6 @@ yarn check:boundaries
 
 Для скриптов с Claude нужен `ANTHROPIC_API_KEY` в `.env`. Утро: `yarn ritual:day`. Вечер: `yarn ritual:evening` (архив плана/стендапа/фокуса → code-review → team-evening-feedback в `docs/seanses/`). Code-review **не** утром. Фокус дня: `docs/MAIN_DAY_ISSUE.md`. Архив: [`docs/archive/README.md`](./docs/archive/README.md).
 
-
 ## Полезные yarn-команды
 
 ```bash
@@ -112,7 +106,6 @@ yarn workspace @membrana/client <script>
 # Выполнить во ВСЕХ пакетах сразу
 yarn workspaces foreach -A run build
 ```
-
 
 ## Структура пакетов
 
@@ -132,13 +125,11 @@ yarn workspaces foreach -A run build
 - **ESLint + Prettier** для качества кода
 - **Cursor** — правила в [`.cursorrules`](./.cursorrules) и [`AGENTS.md`](./AGENTS.md)
 
-
 ## Виртуальная команда AI (аудио / архитектура / UI)
 
 Промпты и нормативные документы для оркестрации ролей (Teamlead, структурщик, математик, музыкант, верстальщик) лежат в каталоге [`docs/`](./docs/README.md). Ритм вызова скриптов — [`docs/DEVELOPER_RHYTHM.md`](./docs/DEVELOPER_RHYTHM.md).
 
 В GitHub Actions доступен ручной запуск workflow **Virtual team context** (`.github/workflows/virtual-team-context.yml`): в summary появятся пути к файлам и чеклист для агента.
-
 
 ## Документация
 

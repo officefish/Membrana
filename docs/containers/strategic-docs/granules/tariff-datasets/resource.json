@@ -1,0 +1,39 @@
+{
+  "schema": "tariff-resource/1",
+  "id": "datasets",
+  "resource": "dataset.sounds",
+  "title": "Наборы звуков",
+  "domain": "catalog",
+  "kind": "catalog",
+  "unit": null,
+  "reseedRule": "catalog-id",
+  "passport": {
+    "version": "1.0.0",
+    "ratifiedAt": "2026-09-08",
+    "owner": "owner",
+    "source": "storm-tariff-single-truth-2026-09-08 (вердикт о наборах); tariff-grid 2026-07-29 (идентификаторы)",
+    "note": "Словарь звуков, доступный распознаванию. Слово владельца 08.09: у каждого тарифа свой набор; наблюдательный пункт ПОКА на наборе блокпоста — это заглушка, не решение: свой набор не назначен. Кабинет сегодня читает у наблюдательного пункта именно набор блокпоста — факт записан как есть, дата закрепления у этого значения — null."
+  },
+  "systemDatasets": {
+    "outsideQuota": true,
+    "note": "Системные наборы — вне квоты, на всех тарифах, отдельной строкой матрицы (T2/T10) — гранула tariff-system-datasets; в сетку не проецируются."
+  },
+  "registry": {
+    "titleKey": "tariff.dataset.sounds",
+    "description": "Словарь звуков, доступный распознаванию"
+  },
+  "values": {
+    "free-v1": { "catalogId": "free-v1-catalog", "label": "набор датчика", "ratifiedAt": "2026-07-29" },
+    "checkpoint-v1": { "catalogId": "checkpoint-v1-catalog", "label": "набор блокпоста", "ratifiedAt": "2026-07-29" },
+    "observatory-v1": {
+      "catalogId": "checkpoint-v1-catalog",
+      "label": "набор блокпоста",
+      "ratifiedAt": null,
+      "stub": {
+        "since": "2026-09-08",
+        "reason": "наблюдательный пункт пока на наборе блокпоста — слово владельца 08.09; свой набор не назначен",
+        "resolvesBy": "назначение набора владельцем"
+      }
+    }
+  }
+}
