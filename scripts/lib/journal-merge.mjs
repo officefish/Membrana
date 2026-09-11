@@ -44,7 +44,6 @@ export const JOURNAL_SUFFIXES = Object.freeze(['-trail.jsonl', '-log.jsonl']);
 export const JOURNAL_PREFIXES = Object.freeze([
   'docs/audit/network/analysis/',
   'docs/local-sprint/',
-  'docs/network/history/',
   'docs/truth/',
 ]);
 
@@ -54,7 +53,32 @@ export const JOURNAL_EXCEPTIONS = Object.freeze([
   'docs/workflows/examples.jsonl',
 ]);
 
-export const NOT_JOURNAL_PREFIXES = Object.freeze(['docs/virtual-team/memory/archive/']);
+/**
+ * Носители, которые журналами НЕ являются, и потому союз для них неверен.
+ *
+ * `memory/archive` — смешанный архив: часть файлов переписывается, и важно последнее
+ * значение, а не сумма строк.
+ *
+ * `network/history` — лента снимков сети. Она попала в соглашение по форме (append-only
+ * `.jsonl`), но это ряд ЗАМЕРОВ, а не журнал событий: записи индексированы моментом, и две
+ * ветки, померившие сеть в один момент, пишут про ОДИН замер две разные строки. Союз
+ * складывает их обе — рождается повтор момента и перепутанный порядок (цена 09.09: четыре
+ * ручных разведения, красный прогон, отказ ревью). У ленты свой семантический драйвер
+ * `merge=network-history`, снимающий двойников по паре «момент+машина»; см.
+ * `scripts/network/lib/history-merge.mjs` и `.gitattributes`.
+ *
+ * Исключение здесь — не дыра: атрибут ленты проверяется положительным утверждением
+ * («имеет свой драйвер»), а не отсутствием union.
+ */
+export const NOT_JOURNAL_PREFIXES = Object.freeze([
+  'docs/virtual-team/memory/archive/',
+  'docs/network/history/',
+]);
+
+/** Носители со своим драйвером слияния: путь → имя драйвера в `.gitattributes`. */
+export const OWN_MERGE_DRIVERS = Object.freeze({
+  'docs/network/history/': 'network-history',
+});
 
 /** Поля-ключи в порядке предпочтения. Первое найденное и есть ключ записи. */
 export const KEY_FIELDS = Object.freeze(['traceId', 'eventId', 'assertionId', 'id']);

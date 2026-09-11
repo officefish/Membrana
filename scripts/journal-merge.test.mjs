@@ -41,7 +41,6 @@ test('соглашение: вторая ось — имя файла', () => {
 
 test('соглашение: инвентарь docs/**/*.jsonl покрывает носители второй очереди', () => {
   for (const path of [
-    'docs/network/history/2026-08.jsonl',
     'docs/bridge/debt-ledger.jsonl',
     'docs/truth/packets.jsonl',
     'docs/workflows/examples.jsonl',
@@ -247,31 +246,48 @@ test('ПРАВИЛО ЖИВЬЁМ: фикстура и ловушка имени
   } finally { cleanup(); }
 });
 
-test('ПРАВИЛО ЖИВЬЁМ: инвентарь docs/**/*.jsonl имеет merge=union, исключение — нет', () => {
+test('ПРАВИЛО ЖИВЬЁМ: инвентарь docs/**/*.jsonl имеет merge=union, исключения названы поимённо', () => {
   const { root, git, write, cleanup } = repo();
   try {
     const journalPaths = [
-      'docs/network/history/2026-08.jsonl',
       'docs/bridge/debt-ledger.jsonl',
       'docs/truth/packets.jsonl',
       'docs/workflows/examples.jsonl',
       'docs/local-sprint/x/EXPERIENCE.jsonl',
       'docs/audit/network/analysis/2026-08-13/probes.jsonl',
     ];
+    // Исключения из союза — с ИМЕНЕМ драйвера и причиной. Молчаливое исключение
+    // неотличимо от снятого атрибута, а это ровно та порча, которую ловит зуб ниже.
+    const namedExceptions = new Map([
+      [
+        'docs/network/history/2026-08.jsonl',
+        {
+          attr: 'network-history',
+          why: 'ряд ЗАМЕРОВ, а не журнал событий: две ветки меряют один момент по-разному, '
+            + 'и союз склеил бы обе строки в точный повтор с перепутанным порядком (#1449, 11.09)',
+        },
+      ],
+      [
+        'docs/virtual-team/memory/archive/ozhegov.jsonl',
+        { attr: 'unspecified', why: 'смешанный архив: часть файлов переписывается, союз неверен' },
+      ],
+    ]);
     for (const p of journalPaths) write(p, '{"id":"x"}\n');
-    write('docs/virtual-team/memory/archive/ozhegov.jsonl', '{"id":"archive"}\n');
+    for (const p of namedExceptions.keys()) write(p, '{"id":"исключение"}\n');
     git('add', '-A'); git('commit', '-qm', 'base');
 
-    const attrs = mergeAttrs(root, [...journalPaths, 'docs/virtual-team/memory/archive/ozhegov.jsonl'], (args) => git(...args));
+    const attrs = mergeAttrs(root, [...journalPaths, ...namedExceptions.keys()], (args) => git(...args));
     for (const p of journalPaths) assert.equal(attrs.get(p), 'union', `${p} под union`);
-    assert.equal(attrs.get('docs/virtual-team/memory/archive/ozhegov.jsonl'), 'unspecified');
+    for (const [p, { attr, why }] of namedExceptions) {
+      assert.equal(attrs.get(p), attr, `${p} — исключение «${attr}»: ${why}`);
+    }
   } finally { cleanup(); }
 });
 
 test('ПОРЧА: снятый атрибут с одного журнала краснит сторож с именем файла', () => {
   const { root, git, write, cleanup } = repo();
   try {
-    const target = 'docs/network/history/2026-08.jsonl';
+    const target = 'docs/truth/packets.jsonl';
     write(target, '{"id":"net-1"}\n');
     write('.gitattributes', `${readFileSync(join(REPO_ROOT, '.gitattributes'), 'utf8')}\n${target} !merge\n`);
     git('add', '-A'); git('commit', '-qm', 'base');
