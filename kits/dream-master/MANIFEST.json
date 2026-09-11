@@ -14,6 +14,6 @@
     "scripts/lib/night-research.mjs": "3306d9d254dd08c8e996212d6ac7e5a7d814a6ef",
     "scripts/lib/strategy-horizon.mjs": "d92be708a73158a69b788063e78afeed7eb6b992",
     "scripts/lib/truth-graph.mjs": "54f1c23e0f0449e4adde145aa2d2633030baa22a",
-    "scripts/network/lib/classify.mjs": "fde13c23f88ec7e82b976f74ca067ba0d3cf3ce8"
+    "scripts/network/lib/classify.mjs": "2b5f6946d183ed579643a51e3e1dcd02c25b1c92"
   }
 }
