@@ -58,41 +58,35 @@ describe('каталог-срез матрицы', () => {
 });
 
 describe('единственный автор значения', () => {
-  it('без режима сетки значение даёт адаптер легаси — и честно называет автора', () => {
-    const p = projectEntitlements(LIVE, legacyFree, false);
-    expect(p.author).toBe('legacy');
-    expect(p.entitledTariffSkus).toEqual(['legacy-sku-a', 'legacy-sku-b']);
-  });
-
-  it('в режиме сетки значение даёт матрица, легаси игнорируется', () => {
-    const p = projectEntitlements(LIVE, legacyFree, true);
+  it('при валидной сетке значение даёт матрица, легаси игнорируется', () => {
+    const p = projectEntitlements(LIVE, legacyFree);
     expect(p.author).toBe('grid');
     expect(p.entitledTariffSkus).toEqual(['free-v1-catalog']);
   });
 
   it('сетки нет — работает легаси, а не пустота', () => {
-    const p = projectEntitlements(undefined, legacyFree, true);
+    const p = projectEntitlements(undefined, legacyFree);
     expect(p.author).toBe('legacy');
     expect(p.entitledTariffSkus).toEqual(['legacy-sku-a', 'legacy-sku-b']);
   });
 
   it('автор всегда ровно один — слияния двух источников не бывает', () => {
-    const grid = projectEntitlements(LIVE, legacyFree, true);
-    const legacy = projectEntitlements(LIVE, legacyFree, false);
+    const grid = projectEntitlements(LIVE, legacyFree);
+    const legacy = projectEntitlements(undefined, legacyFree);
     expect(grid.entitledTariffSkus).not.toEqual(legacy.entitledTariffSkus);
     for (const p of [grid, legacy]) expect(['grid', 'legacy']).toContain(p.author);
   });
 
   it('адаптер даёт ту же форму, что и сетка — потребитель не различает автора по структуре', () => {
     const a = adaptLegacy(legacyFree);
-    const g = projectEntitlements(LIVE, legacyFree, true);
+    const g = projectEntitlements(LIVE, legacyFree);
     expect(Object.keys(a).sort()).toEqual(Object.keys(g).sort());
   });
 });
 
 describe('зуб projection_sync', () => {
   it('согласованный провод находок не даёт', () => {
-    const wire = projectEntitlements(LIVE, legacyFree, true);
+    const wire = projectEntitlements(LIVE, legacyFree);
     expect(projectionFindings(LIVE, wire)).toEqual([]);
   });
 
@@ -106,8 +100,8 @@ describe('зуб projection_sync', () => {
     expect(findings[0].reason).toMatch(/второй автор/);
   });
 
-  it('легаси-автора зуб не судит — до переключения это адаптер, а не дрейф', () => {
-    const wire = projectEntitlements(LIVE, legacyFree, false);
+  it('легаси-автора зуб не судит — без сетки это fallback, а не дрейф', () => {
+    const wire = projectEntitlements(undefined, legacyFree);
     expect(projectionFindings(LIVE, wire)).toEqual([]);
   });
 

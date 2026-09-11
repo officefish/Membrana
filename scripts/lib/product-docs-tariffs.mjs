@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 
-import { gridFindings, scalarsCrossFindings } from './tariff-grid-check.mjs';
+import { gridFindings } from './tariff-grid-check.mjs';
 
 const QUOTA_LABELS = Object.freeze({
   'nodes.max': 'Устройства',
@@ -74,7 +74,7 @@ const availability = (cell) => {
 };
 
 function sourcePairFindings(grid, scalars) {
-  const out = [...gridFindings(grid), ...scalarsCrossFindings(grid, scalars)];
+  const out = [...gridFindings(grid)];
   if (!Array.isArray(scalars?.tariffs)) {
     out.push({ toothId: 'scalars_shape', where: 'tariffs', reason: 'нет массива тарифов' });
     return out;
@@ -260,7 +260,7 @@ export function renderProductTariffsMdx(model) {
     '',
     'Тариф определяет число устройств, объём памяти, доступные инструменты анализа и право строить собственные детекции. Цены пока не опубликованы: здесь показаны только уже принятые продуктовые ограничения.',
     '',
-    '> Доступность берётся из матрицы прав по правилу deny-by-default. Числовые лимиты берутся из отдельной декларации; если лимит не принят, страница говорит об этом прямо.',
+    '> Доступность и числовые лимиты берутся из матрицы прав по правилу deny-by-default. Если лимит не принят, страница говорит об этом прямо.',
     '',
     '> Значение **«Не определено»** означает, что точное число пока не принято. Оно не заменяется нулём или значением соседнего тарифа.',
     '',

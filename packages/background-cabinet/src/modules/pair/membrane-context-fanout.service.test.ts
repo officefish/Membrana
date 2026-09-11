@@ -16,6 +16,7 @@ afterEach(() => {
 });
 
 const TARIFF = {
+  tariffContractVersion: 2,
   userStorageQuotaBytes: 9_007_199_254_740_993n,
   bufferQuotaBytes: 512n,
   datasetCatalogId: 'catalog-checkpoint',
@@ -181,6 +182,7 @@ describe('разноска контекста мембраны', () => {
     await svc.syncAllNodes('m-1');
     expect(bridge.syncMembraneContext).toHaveBeenCalledWith('md-1', {
       membraneId: 'm-1',
+      tariffContractVersion: 2,
       userStorageQuotaBytes: '9007199254740993',
       bufferQuotaBytes: '512',
       datasetCatalogId: 'catalog-checkpoint',
@@ -188,6 +190,15 @@ describe('разноска контекста мембраны', () => {
       // #2308: политика едет тем же контекстом. Строка без поля (старый ряд) → stop.
       bufferPolicy: { mode: 'stop', params: null },
     });
+  });
+
+  it('версия тарифного контракта едет тем же контекстом, что квоты (порча: снять поле из fanout → красный)', async () => {
+    const { svc, bridge } = make();
+    await svc.syncAllNodes('m-1');
+    expect(bridge.syncMembraneContext).toHaveBeenCalledWith(
+      'md-1',
+      expect.objectContaining({ tariffContractVersion: 2 }),
+    );
   });
 
   it('приборов нет — «0 / 0», в media не ходим вовсе', async () => {

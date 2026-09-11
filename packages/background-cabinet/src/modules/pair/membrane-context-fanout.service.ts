@@ -46,6 +46,7 @@ export interface MembraneContextFanoutResult {
 interface MembraneForContext {
   readonly id: string;
   readonly tariff: {
+    readonly tariffContractVersion: number;
     readonly userStorageQuotaBytes: bigint;
     readonly bufferQuotaBytes: bigint;
     readonly datasetCatalogId: string;
@@ -94,6 +95,7 @@ export function membraneContextForDevice(
   );
   return {
     membraneId: membrane.id,
+    tariffContractVersion: membrane.tariff.tariffContractVersion,
     userStorageQuotaBytes: membrane.tariff.userStorageQuotaBytes.toString(),
     bufferQuotaBytes: membrane.tariff.bufferQuotaBytes.toString(),
     datasetCatalogId: membrane.tariff.datasetCatalogId,
