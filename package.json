@@ -12,7 +12,7 @@
     "apps/demos/Research-Tree"
   ],
   "scripts": {
-    "prepare": "git config core.hooksPath .githooks 2>/dev/null && git config merge.registry-union.driver 'node scripts/registry-merge-driver.mjs %O %A %B' 2>/dev/null && git config merge.registry-union.name 'Membrana task registry union' 2>/dev/null && git config merge.ours.driver true 2>/dev/null && echo 'hooks + registry merge-driver enabled' || echo 'prepare skipped (no git context)'",
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null && git config merge.registry-union.driver 'node scripts/registry-merge-driver.mjs %O %A %B' 2>/dev/null && git config merge.registry-union.name 'Membrana task registry union' 2>/dev/null && git config merge.network-history.driver 'node scripts/network/history-merge.mjs %O %A %B' 2>/dev/null && git config merge.network-history.name 'Membrana network snapshot history' 2>/dev/null && git config merge.ours.driver true 2>/dev/null && echo 'hooks + registry merge-driver enabled' || echo 'prepare skipped (no git context)'",
     "pr:ship": "node scripts/pr-ship.mjs",
     "git:rebase-continue": "node scripts/git-rebase-continue.mjs",
     "pr:wait": "node scripts/pr-wait.mjs",
@@ -456,6 +456,7 @@
     "network:snapshot": "node scripts/network/snapshot.mjs",
     "network:preflight": "node scripts/network/preflight.mjs",
     "network:tooth": "node scripts/network/tooth.mjs",
+    "network:history-merge": "node scripts/network/history-merge.mjs",
     "tariff:grid": "node scripts/tariff-grid-validate.mjs",
     "tariff:reseed": "node scripts/tariff-reseed.mjs",
     "tariff:project-cabinet": "node scripts/tariff-project-cabinet.mjs",

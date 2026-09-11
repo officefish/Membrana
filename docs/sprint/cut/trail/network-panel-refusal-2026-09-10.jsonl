@@ -1,0 +1,3 @@
+{"kind":"cut_context_run","sprintId":"network-panel-refusal-2026-09-10","subject":"ozhegov","at":"2026-09-11T16:20:00Z","ref":"docs/virtual-team/memory/op-log/ozhegov/2026-09-11.jsonl"}
+{"kind":"cut_act","sprintId":"network-panel-refusal-2026-09-10","subject":"ozhegov","at":"2026-09-11T16:22:00Z","ref":"docs/sprint/cut/network-panel-refusal-2026-09-10.json"}
+{"kind":"recut_act","sprintId":"network-panel-refusal-2026-09-10","subject":"ozhegov","at":"2026-09-11T16:24:00Z","ref":"docs/sprint/cut/network-panel-refusal-2026-09-10.json"}

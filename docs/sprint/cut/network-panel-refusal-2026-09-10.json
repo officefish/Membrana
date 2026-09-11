@@ -1,0 +1,103 @@
+{
+  "schema": "sprint-cut/1",
+  "sprintId": "network-panel-refusal-2026-09-10",
+  "taskId": "network-panel-refusal-2026-09-10",
+  "mode": "explicit-honest",
+  "cutBy": "ozhegov",
+  "window": {
+    "from": "2026-09-11T14:00:00+00:00",
+    "to": "2026-09-11T20:00:00+00:00"
+  },
+  "blocks": [
+    {
+      "blockId": "outcome-panel-unreachable",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "docs/network/outcomes.yml",
+        "scripts/network/lib/classify.mjs",
+        "scripts/network/classify.test.mjs"
+      ],
+      "revisionAt": "2026-09-10T12:25:00+00:00",
+      "estimate": {
+        "changedLines": 70
+      },
+      "revisionOf": "fdede7ac046709fc7370b82991eee0b5ce1b3096c7d8b2bfa07ff4b6700da62b"
+    },
+    {
+      "blockId": "panel-probe",
+      "persona": "vesnin",
+      "context": "vesnin",
+      "zone": [
+        "scripts/lib/llm-procedure-office.mjs",
+        "scripts/lib/llm-procedure-ritual.mjs",
+        "scripts/lib/llm-procedure-panel.test.mjs",
+        "docs/network/probes/default.json"
+      ],
+      "revisionAt": "2026-09-10T12:25:00+00:00",
+      "estimate": {
+        "changedLines": 190
+      },
+      "revisionOf": "88ec3fc66aec38f76b552c57f440f1fcfdb863620f67372537daa0f6b388f4f5"
+    },
+    {
+      "blockId": "refusal-counter-probe",
+      "persona": "ozhegov",
+      "context": "ozhegov",
+      "zone": [
+        "scripts/network/lib/probe-core.mjs",
+        "scripts/network/probe-core.test.mjs"
+      ],
+      "revisionAt": "2026-09-10T12:25:00+00:00",
+      "estimate": {
+        "changedLines": 90
+      },
+      "revisionOf": "7e0adbde278b0ec136bd238c778235fd9c19aa8ed45d5ea4d02c759105a4a954"
+    },
+    {
+      "blockId": "preflight-wire",
+      "persona": "tarasov",
+      "context": "tarasov",
+      "zone": [
+        "scripts/lib/procedure-network-preflight.mjs",
+        "scripts/procedure-network-preflight.test.mjs",
+        "scripts/consilium.mjs",
+        "scripts/code-review.mjs"
+      ],
+      "revisionAt": "2026-09-10T12:25:00+00:00",
+      "estimate": {
+        "changedLines": 160
+      },
+      "revisionOf": "fcdf1f1773d5bdd09a08f335d24a20a8b2e03f85113e66f8761f5669759aaf94"
+    },
+    {
+      "blockId": "history-merge",
+      "persona": "dynin",
+      "context": "dynin",
+      "zone": [
+        ".gitattributes",
+        "scripts/network/history-merge.mjs",
+        "scripts/network/history-merge.test.mjs",
+        "package.json"
+      ],
+      "revisionAt": "2026-09-10T12:25:00+00:00",
+      "estimate": {
+        "changedLines": 200
+      },
+      "revisionOf": "a30052e8a0648bee72093457963a855a1bc21aa8d067ce2f10fcc879aa8ded18"
+    }
+  ],
+  "//why": "Задание сессии Б от 10.09. Офис недостижим с рабочей машины (клиент прокси гонит трафик в туннель и подменяет имя офиса служебным адресом), сам сервер жив и отвечает с нидерландской машины за 0.2 с. Инструмент четырежды сказал «неизвестно» и объявил цепочку исчерпанной; настоящая причина нашлась встречной пробой с другой машины. Класс — ровно тот, ради которого заведён контейнер network (#1449): его предмет не проложить маршрут, а не дать классификатору соврать про причину. Второй вещдок вчерашнего дня: общая стена цепочки положила три сессии и четыре PR разом.",
+  "//measure": "Живой замер 10.09 в главном чекауте: yarn network:preflight → exitCode 0, все четыре звена ok, вердикт «сеть машины исправна». Тот же момент, собственная панель: fetch https://office.mmbrn.tech/health → ECONNRESET за 6502 мс, что по словарю есть tcp_fail. То есть предполётная проверка сегодня ЗЕЛЁНАЯ при мёртвой панели — офиса нет ни в одном из четырёх профилей docs/network/probes/default.json (control/openrouter/anthropic/deepseek). Пробел в профилях зондов тот же, что задание нашло в словаре исходов: пятнадцать исходов про провайдеров, прокси, ключи и географию, про собственную панель ни одного.",
+  "//entry-point": "Точка входа всех процедур — invokeProcedureLlm (scripts/lib/llm-procedure-ritual.mjs). Она зовёт fetchOfficeOverlay (llm-procedure-office.mjs, ограничение ожидания 2_000 мс), и та возвращает ГОЛЫЙ null на четыре разных случая: нет токена, нет fetch, транспортный отказ или таймаут, ответ не ok. Дальше resolveEffective молча берёт умолчания (source=default), и runProcedureChain бьётся в звенья, каждое из которых даёт errorClass unknown. «Четыре раза неизвестно» рождается здесь: причина отказа панели стёрта на первом же шаге, а откат на репозиторий неотличим от нормальной работы.",
+  "//cutter": "Решение резчика (ozhegov). BLOCK-условие: блок b2 не расширяет транспортное множество. Шесть транспортных исходов — это граница «сеть/не сеть», и новый исход про СВОЮ панель туда не входит: панель это не провайдер и не канал к модели, а прибор владельца, чья недоступность означает «звенья не пробовались». Расширение шестёрки семнадцатым словом сделало бы границу нечитаемой ровно тем способом, от которого словарь заведён. Второе BLOCK-условие: b1 не чинит прокси и не трогает маршруты рабочей машины — это руки владельца.",
+  "//order": "Порядок 1 → 2 → 3 → 4, блок 5 независим. b2 рождает слово, которым b1 называет отказ; b4 пишет текст отказа, который b1 уже умеет производить; b3 подключает готовое к двум процедурам. Зоны не пересекаются: b1 держит llm-procedure-*, b3 — consilium/code-review и свой хелпер, b4 — probe-core, b5 — .gitattributes и свой драйвер.",
+  "//dod": "b2: исход panel_unreachable в docs/network/outcomes.yml и в OUTCOME_IDS; kind вне transport; зуб network:tooth накрывает его закрытостью словаря (порча «добавить в код мимо словаря» краснеет). b1: fetchOfficeOverlay возвращает причину, а не голый null; invokeProcedureLlm при транспортном отказе панели отказывает ДО первой попытки к моделям, называя причину; отсутствие токена и пустой overlay сохраняют прежний откат на репозиторий; профиль office в наборе зондов; порча «вернуть unknown при мёртвой панели» краснеет. b3: предполётная проверка вызывается в consilium.mjs и code-review.mjs до LLM; транспортный отказ — отказ процедуры с названной причиной. b4: текст отказа несёт встречную пробу командой (панель отвечает с нидерландской машины ⇒ дело в канале рабочего места). b5: две ветки, пишущие замер за один момент, дают ленту без двойников и в порядке времени; красный вход — точный повтор строки.",
+  "//out-of-scope": "Не чинить прокси и не трогать маршруты рабочей машины (руки владельца, он делает сейчас). Не расширять словарь сверх одного нового исхода. Не менять поведение при живой панели. Не трогать заседание network-container и его повестки. Побочная находка вне объёма, владельцу названа отдельно: в дереве без установки probe.mjs не находит undici и печатает четыре unknown_protocol вместо инструментальной ошибки — тот же класс лжи, но своя работа.",
+  "//recut": "Перерезка окна 11.09 по слову владельца: содержание блоков, зоны и исполнители не менялись ни на строку — сместились ТОЛЬКО сутки работы (разведка и нарезка 10.09, сборка 11.09). Гейт на прежнем окне давал 10 находок eg-late-close и сам называл лечение: «перерезать ОКНО, не следы». Прежняя отметка снята, план переподписан.",
+  "ratification": {
+    "by": "owner",
+    "at": "2026-09-11T16:30:00Z",
+    "digest": "e527d42915117060d10c10cd9d9f179ce0c24f13c2719885e43c3f4e6221e82c"
+  }
+}

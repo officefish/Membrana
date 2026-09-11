@@ -8,7 +8,13 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
 
-import { OUTCOME_IDS, TRANSPORT_OUTCOMES, classifyOutcome, summarize } from './lib/classify.mjs';
+import {
+  OUTCOME_IDS,
+  TRANSPORT_OUTCOMES,
+  classifyOutcome,
+  classifyPanelOutcome,
+  summarize,
+} from './lib/classify.mjs';
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -125,4 +131,51 @@ test('у каждого исхода словаря есть фикстура в
   for (const id of OUTCOME_IDS) {
     assert.ok(self.includes(`'${id}'`), `исход ${id} не покрыт ни одним тестом`);
   }
+});
+
+// ── Панель владельца: «звенья не пробовались» ≠ «звенья пробовали и отказали» ────
+
+test('ВЕЩДОК 10.09: панель молчит транспортом ⇒ panel_unreachable, звенья не пробовались', () => {
+  // Живой замер рабочей машины: office.mmbrn.tech/health → ECONNRESET за 6502 мс.
+  const r = classifyPanelOutcome({ errorCode: 'ECONNRESET' });
+  assert.equal(r.outcome, 'panel_unreachable');
+  assert.equal(r.linksAttempted, false, 'вызова звеньев не было — решать было нечем');
+  assert.equal(r.transportCause, 'tcp_fail', 'транспортная причина обязана сохраниться');
+  assert.notEqual(r.outcome, 'unknown_protocol', 'ПОРЧА ДНЯ: «неизвестно» при мёртвой панели');
+});
+
+test('порча «неизвестно при мёртвой панели» краснеет на всех четырёх видах молчания', () => {
+  for (const [code, cause] of [
+    ['ENOTFOUND', 'dns_fail'],
+    ['ECONNRESET', 'tcp_fail'],
+    ['CERT_HAS_EXPIRED', 'tls_fail'],
+    ['UND_ERR_HEADERS_TIMEOUT', 'timeout_idle'],
+  ]) {
+    const r = classifyPanelOutcome({ errorCode: code });
+    assert.equal(r.outcome, 'panel_unreachable', `${code}: панель молчит, а исход не назван`);
+    assert.equal(r.transportCause, cause);
+    assert.equal(r.linksAttempted, false);
+  }
+});
+
+test('панель ОТВЕТИЛА ⇒ это не panel_unreachable: отказ разбирается своей причиной', () => {
+  assert.equal(classifyPanelOutcome({ httpStatus: 401 }).outcome, 'auth_invalid_key');
+  assert.equal(classifyPanelOutcome({ httpStatus: 403, viaProxy: false }).outcome, 'geo_blocked');
+  assert.equal(classifyPanelOutcome({ httpStatus: 503, viaProxy: false }).outcome, 'provider_5xx');
+  for (const status of [401, 403, 503]) {
+    assert.equal(classifyPanelOutcome({ httpStatus: status }).linksAttempted, false);
+  }
+});
+
+test('панель отдала набор звеньев ⇒ ok и звенья пробуются', () => {
+  const r = classifyPanelOutcome({ httpStatus: 200, body: '{"procedures":{}}' });
+  assert.equal(r.outcome, 'ok');
+  assert.equal(r.linksAttempted, true);
+  assert.equal(r.transportCause, null);
+});
+
+test('panel_unreachable НЕ входит в транспортное множество — граница «сеть/не сеть» одна', () => {
+  assert.ok(!TRANSPORT_OUTCOMES.includes('panel_unreachable'));
+  assert.ok(OUTCOME_IDS.includes('panel_unreachable'), 'исход обязан быть в закрытом перечне');
+  assert.equal(classifyPanelOutcome({ errorCode: 'ECONNRESET' }).isTransport, false);
 });
