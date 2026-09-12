@@ -120,3 +120,26 @@ test('лента выведена из-под союза и привязана �
   const pkg = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8'));
   assert.match(pkg.scripts.prepare, /merge\.network-history\.driver/u, 'драйвер не регистрируется');
 });
+
+test('граничный случай: одна машина, один момент до миллисекунды — один замер, и это видно', () => {
+  // Замечание ревью PR #2340: случай не был назван. Схлопывание здесь — решение, а не
+  // побочный эффект: два РАЗНЫХ замера одной машины не делят миллисекунду (прогон зондов
+  // занимает секунды), значит совпадение означает одно состояние сети.
+  const at = '2026-09-09T08:12:45.758Z';
+  const r = mergeHistories([], [measure(at, { verdict: 'ветка А' })], [measure(at, { verdict: 'ветка Б' })]);
+  assert.equal(r.entries.length, 1, 'один момент одной машины — один замер');
+  assert.equal(r.duplicates, 1);
+  assert.deepEqual(r.redefined, [`${at}::${HOST}`], 'схлопывание обязано быть НАЗВАНО, а не молчать');
+  assert.equal(r.entries[0].verdict, 'ветка А', 'сторона выбирается детерминированно');
+});
+
+test('граница ключа: миллисекунда РАЗНИЦЫ — уже два замера, ничего не схлопывается', () => {
+  const r = mergeHistories(
+    [],
+    [measure('2026-09-09T08:12:45.758Z')],
+    [measure('2026-09-09T08:12:45.759Z')],
+  );
+  assert.equal(r.entries.length, 2, 'ключ точен до миллисекунды, а не «примерно одно время»');
+  assert.equal(r.duplicates, 0);
+  assert.deepEqual(r.redefined, []);
+});
