@@ -1,38 +1,72 @@
-<!-- Сгенерировано: 2026-09-07T16:24:42.130Z (yarn code-review; daily, llm-xai) -->
+<!-- Сгенерировано: 2026-09-12T12:15:14.092Z (yarn code-review; daily, llm-anthropic) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: d73b6923df766d0ffe4e66ce65781409a2b7abcd^..43916a9649d8ff3d642434174c42618e3e265af7 (6 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): d73b6923 #2314 (9343), 4d95e817 #2316 (2277), 17473545 #2324 (1137)
+> Период: a07a121eb337147b078622d2119e84b37f865f67^..39b3c05754ebff2fe52c00392286e2ba0b607cea (2 коммит(ов))
 
 ---
 
-Tier: T2
+Tier: T1
 
-[Vesnin]: Ведущий. Скоуп дня — контур «буфер полон»: #2314 (контракт остановки), #2316 (окно оператора), #2324 (гейт D-1), закрытие коворка #2317 + ритуальный хвост. Oversized диффы (9343 / 2277 / 1137) в daily не развёрнуты — отдельный проход обязателен; в ствол уже влито (MERGED). По видимому хвосту (архив, COWORK_SPRINT_ACTIVE, registry, journal) B1–B10 не всплыли: карточка архивирована машинно, флаг `closed` не прозой. **Вердикт ведущего: пропуск** на ритуальный слой; продуктовый контур — с оговоркой P1 по красным тестам media и непросмотренным oversized.
+---
 
-[Teamlead]: День закрыл коворк `cowork-buffer-full-stop` (Phase 5) и долг D-1 (#2324); поверх — UI оператора (#2316). Журнал выкаток 07.09: media@d73b6923 pass → cabinet несколько fail → pass@4d95e817 → media+cabinet@17473545 pass. Риски на завтра: красный `@membrana/media-library-service` / `@membrana/background-media` (test+build) и отсутствие построчного ревью трёх oversized PR. Утро: читать этот файл; не открывать новый коворк до зелёного media; точечный bug-pass по #2314/#2316/#2324.
+**Ведущий ревью: vesnin (Архитектор)**
+Скоуп: 22 из 22 путей — docs-only (meeting, seanses, memory op-log, scripts registry, ритуальные артефакты). Бестиарий — проверка пройдена, зверей не обнаружено. Вердикт ведущего: **пропуск**.
 
-[Структурщик]: Границы по замыслу коворка (refusal / overflow-policy / device-hold + 10 адаптеров, «переписано 0») выглядят дисциплинированно; C1/C3/C4 по факту diff daily не проверить — тела #2314/#2316/#2324 срезаны. Архив задачи и `registry.json` согласованы (`archived` + карточка). C7: локальный прогон test/build media-library и background-media — exit 1; это P1 до любой новой интеграции в buffer/media. C8/C9 по ритуальному diff — чисто (jsonl journal, op-log, без секретов).
+Детали: B9 («проза без носителя») — риск рассматривался; протокол `tariff-single-truth-m4-downgrade-cold-r2` несёт машинный гейт «Список посылок» и DoD с именованными тестами, машинного носителя для них ещё нет, но это по природе артефакта (решение до кода) — не патология. B4 («маркер-предсказанное-имя») — проверки ссылаются на будущие пути (`sampleColdFieldsMigrated`, тесты samples API и т.д.); это допустимо в протоколе-решении, не в гвардах рантайма.
 
-[Математик]: В видимом diff нет FFT/спектра. Предикат «буфер полон» и fail-closed на stop (#2324) — зона correctness: нужен отдельный проход на off-by-one ёмкости, отказ записи до T12, отсутствие «тихого» continue при overflow. Пока дифф срезан — «не подтверждено»; не блокирую daily, фиксирую долг сверки.
+---
 
-[Музыкант]: Аудио-path и device-hold затронуты эпиком (#2314/#2324) — C2 (Web Audio только через audio-engine) в daily-срезе не виден. После выката media@17473545 — smoke: старт записи → заполнение буфера → отказ/hold → нет клиппинга и нет «записи в никуда». Прямой store в обход registry — искать в полном diff #2314.
+```text
+Tier: T1
 
-[Верстальщик]: #2316 — окно оператора «буфер полон» (один носитель, два входа, три дороги): a11y фокуса/клавиатуры и DESIGN.md в срезе не видны. P2/opportunity: сверить три дороги с контрактом INTERFACE, не плодить четвёртый вход. Ритуальные md/jsonl — вне UI.
+[Teamlead]: Vesnin. Два коммита за день, оба docs/chore, runtime не затронут.
+  PR size: OK (~426 строк суммарно, но чистая документация — split не требуется,
+  обоснование: весь дифф — markdown + jsonl + реестр скриптов).
+  C8: console.log — не применимо. C9: секреты не введены, .env чист.
+  C10: catalog/device-board не затронут. Красные тесты (@membrana/media-library-service,
+  @membrana/background-media) — зависят от пакетов вне сегодняшнего диффа;
+  атрибуция к коммитам дня не доказана, но утром обязательно выяснить.
+  Lint: 1 warning в @membrana/cabinet — не из этого диффа, фон.
+  Риск на завтра: протокол M4 (прогон 2) принят консилиумом, но DoD (#1–#10)
+  пока без кода-носителя; если утром стартует исполнение, нужен явный task-prompt
+  с карточкой реестра (TASKS_MANAGEMENT.md §7а) до первого коммита.
 
-Итоговый артефакт: docs/DAILY_CODE_REVIEW.md (вечер 2026-09-07); опора — 6 коммитов d73b6923^..43916a96, состояния GH: #2314/#2316/#2317/#2324 MERGED
+[Структурщик]: Ozhegov. C1: границы пакетов не затронуты — только docs/seanses,
+  docs/meeting, docs/virtual-team/memory/op-log, scripts/registry. Цикличных
+  импортов введено быть не может. C4: сервисы не задеты. C7: тесты не добавлены
+  и не требовались — артефакт решения, не код. Единственная структурная заметка:
+  `docs/virtual-team/memory/op-log/dynin/2026-09-11.jsonl` содержит `verb: "reject"`
+  с причиной на русском в поле `reason` — формат JSONL-лога корректен, append-only
+  соблюдён, нарушений нет (P2, opportunity: унифицировать язык `reason`-поля
+  со схемой остальных персон, если она задана — не блокирует).
+
+[Математик]: — (чистые функции и аналитическое ядро не затронуты)
+
+[Музыкант]: — (audio-engine, Web Audio, IoT не затронуты)
+
+[Верстальщик]: — (UI-компоненты, DESIGN.md не затронуты)
+
+Итоговый артефакт: docs/seanses/tariff-single-truth-m4-downgrade-cold-r2-2026-09-11.md,
+  docs/meeting/tariff-single-truth/M4_AGENDA.md (повестка прогона 2),
+  docs/virtual-team/memory/op-log/dynin/2026-09-11.jsonl,
+  docs/seanses/procedure-runs-digest-2026-09-12.md,
+  docs/seanses/team-memory-report-2026-09-12.md,
+  scripts/registry/SCRIPTS_LIST.md (обновление даты/SHA).
 
 Definition of Done (утро):
-1. `yarn turbo run build test --filter=@membrana/media-library-service --filter=@membrana/background-media`
-2. `yarn turbo run lint typecheck test --filter=@membrana/client --filter=@membrana/core` (если buffer-типы в core)
-3. `yarn code-review:pr 2314` / `2316` / `2324` — догнать oversized (или `review-bugbot` diff-only)
-4. Smoke кабинета/media на ревизии ≥17473545: buffer-full → UI-дороги → stop fail-closed
-5. `yarn docs:lint` при правках ритуальных md
+  yarn turbo run typecheck lint --filter=@membrana/background-media --filter=@membrana/media-library-service
+  # → выяснить, связаны ли красные тесты с диффом дня или с фоновым долгом
+  yarn turbo run test --filter=@membrana/background-media --filter=@membrana/media-library-service
+  # → если красное подтверждено вне диффа — завести issue, не блокировать merge ветки
+  # Перед исполнением DoD M4: yarn task:create <id> (карточка реестра по TASKS_MANAGEMENT.md §7а)
 
 Риски:
-- **P1** — красные test/build `@membrana/media-library-service`, `@membrana/background-media` (гигиена дерева / CI локально)
-- **P1** — три oversized MERGED без развёрнутого daily-diff: #2314, #2316, #2324 — recommend отдельный bug-pass (не rollback)
-- **P2** — cabinet deploy: серия fail до pass@4d95e817 — зафиксировать корень в postmortem, не «слепой ретрай» (B5) в след. выкатах
-- **P2** — ritual-evening: 17 непогашенных трений в digest за 7 дн. — не блокер merge, долг ритма
+  P1 — красные тесты в @membrana/background-media и @membrana/media-library-service:
+       причина не атрибутирована диффу, но не выяснена; утром первым шагом.
+  P2 — DoD M4 (#1–#10) без кода-носителя: протокол принят, исполнение не начато;
+       риск «решение устаревает до реализации» — opportunity завести task-prompt сегодня же.
+  P2 — ritual-evening: 3 непогашенных трения из digest-2026-09-12 — не из этого диффа,
+       фон; отдельный разбор.
+```
