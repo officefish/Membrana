@@ -8,6 +8,7 @@ import {
   shouldFailover,
   observationOf,
   FAILOVER_OUTCOMES,
+  NON_FAILOVER_OUTCOMES,
 } from './lib/dreams-tick.mjs';
 import { providerChain } from './lib/dreams-select.mjs';
 import { OUTCOME_IDS, TRANSPORT_OUTCOMES, classifyOutcome } from './network/lib/classify.mjs';
@@ -17,20 +18,32 @@ const PROMPT = '## DREAM_MASTER_VERSION\n\n`1.0.0`\n';
 /** Род, который сны присвоили бы этому ответу/исключению порта. */
 const outcomeFor = (result) => classifyOutcome(observationOf(result)).outcome;
 
-test('shouldFailover: любой не-ok род крутит кубик; ok — нет', () => {
+test('shouldFailover: род провайдерского отказа крутит кубик; названные исключения — нет', () => {
   assert.equal(shouldFailover('billing_exhausted'), true);
   assert.equal(shouldFailover('rate_limited'), true);
   assert.equal(shouldFailover('model_removed'), true);
   assert.equal(shouldFailover('auth_missing_key'), true);
   assert.equal(shouldFailover('provider_5xx'), true);
   assert.equal(shouldFailover('ok'), false);
+  assert.equal(
+    shouldFailover('panel_unreachable'),
+    false,
+    'до звеньев не дошло — перебор провайдеров об одну мёртвую панель это и есть «четыре раза неизвестно»',
+  );
   assert.equal(shouldFailover('net'), false, 'старого словаря больше нет — «net» не род');
 });
 
-test('FAILOVER_OUTCOMES = OUTCOME_IDS \\ {ok} — новый род требует решения вслух', () => {
-  const expected = OUTCOME_IDS.filter((id) => id !== 'ok');
+test('FAILOVER_OUTCOMES = OUTCOME_IDS \\ NON_FAILOVER — новый род требует решения вслух', () => {
+  // Разбиение, а не вычитание одного `ok`: род, не названный НИ В ОДНОМ из двух
+  // множеств, оставляет зуб красным — решение вслух обязано быть записано, а не
+  // подразумеваться. Так 11.09 сюда пришёл `panel_unreachable`.
+  const expected = OUTCOME_IDS.filter((id) => !NON_FAILOVER_OUTCOMES.has(id));
   assert.deepEqual([...FAILOVER_OUTCOMES].sort(), [...expected].sort());
   for (const t of TRANSPORT_OUTCOMES) assert.ok(FAILOVER_OUTCOMES.has(t), `${t} обязан крутить кубик`);
+  for (const id of NON_FAILOVER_OUTCOMES) {
+    assert.ok(OUTCOME_IDS.includes(id), `${id} назван исключением, но в перечне контейнера его нет`);
+    assert.equal(FAILOVER_OUTCOMES.has(id), false, `${id} не может быть в обоих множествах разом`);
+  }
 });
 
 // ─── живые исходы прода 07.08: три «net», оказавшиеся тремя разными родами ───

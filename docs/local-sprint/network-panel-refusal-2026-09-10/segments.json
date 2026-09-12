@@ -1,0 +1,12 @@
+{
+  "sprintId": "network-panel-refusal-2026-09-10",
+  "measuredAt": "2026-09-11T16:40:00Z",
+  "//how": "git diff HEAD --numstat по зоне каждого блока, добавленные строки (порог считается по добавленным, не по сумме). Новые файлы учтены через git add -N.",
+  "segments": [
+    { "cutBlockId": "outcome-panel-unreachable", "blockId": "outcome-panel-unreachable", "changedLines": 116 },
+    { "cutBlockId": "panel-probe", "blockId": "panel-probe", "changedLines": 279 },
+    { "cutBlockId": "refusal-counter-probe", "blockId": "refusal-counter-probe", "changedLines": 114 },
+    { "cutBlockId": "preflight-wire", "blockId": "preflight-wire", "changedLines": 238 },
+    { "cutBlockId": "history-merge", "blockId": "history-merge", "changedLines": 304 }
+  ]
+}

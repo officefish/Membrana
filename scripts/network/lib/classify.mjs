@@ -30,8 +30,23 @@ export const OUTCOME_IDS = Object.freeze([
   'rate_limited',
   'model_removed',
   'provider_5xx',
+  'panel_unreachable',
   'unknown_protocol',
 ]);
+
+/**
+ * Исход обращения к СВОЕЙ панели — отдельное слово, потому что отвечает на другой
+ * вопрос. Пятнадцать исходов выше говорят, чем кончился вызов звена; этот говорит,
+ * что вызова НЕ БЫЛО: набор звеньев не прочитан, цепочка не шла.
+ *
+ * ПОЧЕМУ ВНЕ ТРАНСПОРТНОГО МНОЖЕСТВА. Шесть транспортных исходов держат границу
+ * «сеть/не сеть» для канала к провайдеру. Панель — прибор владельца, и её молчание
+ * означает не «сети нет», а «звенья не пробовались»; семнадцатое слово в шестёрке
+ * сделало бы границу нечитаемой ровно тем способом, от которого словарь заведён.
+ * Транспортная причина при этом не теряется — она едет полем `transportCause`.
+ */
+export const PANEL_UNREACHABLE = 'panel_unreachable';
+
 
 const DNS_CODES = new Set(['ENOTFOUND', 'EAI_AGAIN']);
 const TCP_CODES = new Set(['ECONNREFUSED', 'EHOSTUNREACH', 'ENETUNREACH', 'ECONNRESET']);
@@ -111,6 +126,37 @@ export function classifyOutcome(o = {}) {
 
 function decide(outcome, why) {
   return { outcome, isTransport: TRANSPORT_OUTCOMES.includes(outcome), why };
+}
+
+/**
+ * Наблюдение обращения к панели → исход, читаемый ПЕРЕД цепочкой.
+ *
+ * Вещдок 10.09: панель не ответила (ECONNRESET за 6.5 с — прокси рабочего места
+ * подменял имя офиса служебным адресом), набор звеньев не прочитался, процедура молча
+ * откатилась на умолчания и четырежды сказала «неизвестно», объявив цепочку исчерпанной.
+ * Ложным был не каждый из четырёх ответов, а сам факт, что звенья вообще пробовались:
+ * решать, чем кончился вызов, было нечем — вызова не случилось.
+ *
+ * Панель ответила ЧЕМ УГОДНО (401, 403, 500) — это не `panel_unreachable`: она жива,
+ * и отказ разбирается своим исходом. Молчание транспорта — и только оно — значит
+ * «звенья не пробовались».
+ *
+ * @param {Parameters<typeof classifyOutcome>[0]} observation наблюдение вызова панели
+ * @returns {{outcome: string, isTransport: boolean, why: string, linksAttempted: boolean, transportCause: string|null}}
+ */
+export function classifyPanelOutcome(observation = {}) {
+  const base = classifyOutcome(observation);
+  if (!base.isTransport) {
+    // Панель ответила: звенья прочитаны либо честно отказаны её собственной причиной.
+    return { ...base, linksAttempted: base.outcome === 'ok', transportCause: null };
+  }
+  return {
+    outcome: PANEL_UNREACHABLE,
+    isTransport: false,
+    why: `панель не ответила (${base.outcome}: ${base.why}) — звенья не пробовались`,
+    linksAttempted: false,
+    transportCause: base.outcome,
+  };
 }
 
 /** Сводный вердикт по набору наблюдений: что доминирует и сеть ли это вообще. */

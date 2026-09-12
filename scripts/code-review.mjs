@@ -46,6 +46,7 @@ import { buildReferencedStatesBlock } from './lib/review-referenced-states.mjs';
 import { fetchStatesBatch } from './lib/task-states-batch.mjs';
 import { listActive, loadRegistry } from './lib/task-registry.mjs';
 import { invokeProcedureLlm } from './lib/llm-procedure-ritual.mjs';
+import { runProcedurePreflight } from './lib/procedure-network-preflight.mjs';
 
 /**
  * HEAD SHA ветки PR — к нему привязывается вердикт ревью (шип-гейт #924).
@@ -187,6 +188,12 @@ const outputPath = cli.out ? resolve(process.cwd(), cli.out) : defaultOutputPath
 
 let exitCode = 0;
 try {
+  // Предполётная проверка сети ДО первого звена (#1449, блок preflight-wire 10.09).
+  // Красное значит «звать модели сейчас бессмысленно»: без неё ревью писало в лог
+  // «chain exhausted … unknown» и советовало проверить ключи там, где молчал транспорт.
+  const preflight = await runProcedurePreflight({ procedureId: 'code-review' });
+  if (!preflight.ok) process.exit(preflight.code);
+
   const result = await invokeProcedureLlm({
     procedureId: 'code-review',
     prompt: bodyText,

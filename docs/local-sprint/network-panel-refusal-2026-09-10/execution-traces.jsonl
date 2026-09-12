@@ -1,0 +1,10 @@
+{"traceId":"npr-b1-run","blockId":"outcome-panel-unreachable","kind":"context_run","subject":"ozhegov","at":"2026-09-11T14:35:00Z","ref":"scripts/network/lib/classify.mjs","relatesToSprint":true}
+{"traceId":"npr-b1-review","blockId":"outcome-panel-unreachable","kind":"review_pass","subject":"ozhegov","at":"2026-09-11T14:52:00Z","ref":"docs/local-sprint/network-panel-refusal-2026-09-10/reviews/ozhegov-outcome-and-refusal.md","relatesToSprint":true}
+{"traceId":"npr-b3-run","blockId":"refusal-counter-probe","kind":"context_run","subject":"ozhegov","at":"2026-09-11T14:58:00Z","ref":"scripts/network/lib/probe-core.mjs","relatesToSprint":true}
+{"traceId":"npr-b3-review","blockId":"refusal-counter-probe","kind":"review_pass","subject":"ozhegov","at":"2026-09-11T15:04:00Z","ref":"docs/local-sprint/network-panel-refusal-2026-09-10/reviews/ozhegov-outcome-and-refusal.md","relatesToSprint":true}
+{"traceId":"npr-b2-run","blockId":"panel-probe","kind":"context_run","subject":"vesnin","at":"2026-09-11T15:10:00Z","ref":"scripts/lib/llm-procedure-office.mjs","relatesToSprint":true}
+{"traceId":"npr-b2-review","blockId":"panel-probe","kind":"review_pass","subject":"vesnin","at":"2026-09-11T15:22:00Z","ref":"docs/local-sprint/network-panel-refusal-2026-09-10/reviews/vesnin-panel-probe.md","relatesToSprint":true}
+{"traceId":"npr-b4-run","blockId":"preflight-wire","kind":"context_run","subject":"tarasov","at":"2026-09-11T15:34:00Z","ref":"scripts/lib/procedure-network-preflight.mjs","relatesToSprint":true}
+{"traceId":"npr-b4-review","blockId":"preflight-wire","kind":"review_pass","subject":"tarasov","at":"2026-09-11T15:48:00Z","ref":"docs/local-sprint/network-panel-refusal-2026-09-10/reviews/tarasov-preflight-wire.md","relatesToSprint":true}
+{"traceId":"npr-b5-run","blockId":"history-merge","kind":"context_run","subject":"dynin","at":"2026-09-11T15:52:00Z","ref":"scripts/network/lib/history-merge.mjs","relatesToSprint":true}
+{"traceId":"npr-b5-review","blockId":"history-merge","kind":"review_pass","subject":"dynin","at":"2026-09-11T16:05:00Z","ref":"docs/local-sprint/network-panel-refusal-2026-09-10/reviews/dynin-history-merge.md","relatesToSprint":true}

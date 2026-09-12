@@ -19,6 +19,7 @@ import { spawnSync } from 'node:child_process';
 import { loadDotEnv } from './_anthropic-env.mjs';
 import { invokeProcedureLlm, loadRitualLlmEnv } from './lib/llm-procedure-ritual.mjs';
 import { resolveEffective } from './lib/llm-procedure-resolve.mjs';
+import { runProcedurePreflight } from './lib/procedure-network-preflight.mjs';
 import {
   CONSILIUM_PROMPT_FILE,
   CONSILIUM_ROLES,
@@ -784,6 +785,12 @@ async function main() {
   });
   const absPath = resolve(cwd, relPath);
   loadRitualLlmEnv();
+  // Предполётная проверка сети ДО первого звена (#1449, блок preflight-wire 10.09).
+  // Глагол существовал с 29.07 и не был подключён к консилиуму вовсе: о сети узнавали
+  // из четырёх «неизвестно», когда причина уже стёрта цепочкой. Красное — отказ, а не
+  // предупреждение: спор, начатый без звеньев, даёт протокол без реплик.
+  const preflight = await runProcedurePreflight({ procedureId: 'consilium' });
+  if (!preflight.ok) process.exit(preflight.code);
   const effective = resolveEffective('consilium');
   const chainLabel = effective.chain.map((s) => `${s.provider}/${s.model}`).join(' → ');
   // Кто в цепочке реально ответил — в метаданные протокола. До перехода на procedure
