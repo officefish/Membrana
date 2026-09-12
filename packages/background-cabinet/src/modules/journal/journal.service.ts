@@ -124,6 +124,15 @@ function serializeLiveRecord(row: {
   };
 }
 
+function isPrismaUniqueConstraintError(error: unknown): error is { code: 'P2002' } {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    (error as { code?: unknown }).code === 'P2002'
+  );
+}
+
 @Injectable()
 export class JournalService {
   constructor(private readonly prisma: PrismaService) {}
@@ -162,7 +171,26 @@ export class JournalService {
       }
     }
 
-    const created = await this.prisma.telemetryReport.create({ data });
+    let created;
+    try {
+      created = await this.prisma.telemetryReport.create({ data });
+    } catch (error) {
+      if (!data.clientEntryId || !isPrismaUniqueConstraintError(error)) {
+        throw error;
+      }
+      const existing = await this.prisma.telemetryReport.findUnique({
+        where: {
+          membraneId_clientEntryId: {
+            membraneId: ctx.membraneId,
+            clientEntryId: data.clientEntryId,
+          },
+        },
+      });
+      if (!existing) {
+        throw error;
+      }
+      return { report: serializeReport(existing), deduplicated: true as const };
+    }
     // Write-path датчик /health/deep: запись доехала (кусок D #2121, M2).
     ingestWindowGauge.recordArrived();
     return { report: serializeReport(created), deduplicated: false as const };
@@ -204,18 +232,37 @@ export class JournalService {
       }
     }
 
-    const created = await this.prisma.telemetryLiveRecord.create({
-      data: {
-        membraneId: ctx.membraneId,
-        nodeId: ctx.nodeId,
-        mediaDeviceId: ctx.mediaDeviceId,
-        recordKind: body.recordKind.trim(),
-        moduleId: body.moduleId?.trim() || null,
-        clientRecordId,
-        startedAt,
-        payload: body.payload as Prisma.InputJsonValue,
-      },
-    });
+    let created;
+    try {
+      created = await this.prisma.telemetryLiveRecord.create({
+        data: {
+          membraneId: ctx.membraneId,
+          nodeId: ctx.nodeId,
+          mediaDeviceId: ctx.mediaDeviceId,
+          recordKind: body.recordKind.trim(),
+          moduleId: body.moduleId?.trim() || null,
+          clientRecordId,
+          startedAt,
+          payload: body.payload as Prisma.InputJsonValue,
+        },
+      });
+    } catch (error) {
+      if (!clientRecordId || !isPrismaUniqueConstraintError(error)) {
+        throw error;
+      }
+      const existing = await this.prisma.telemetryLiveRecord.findUnique({
+        where: {
+          membraneId_clientRecordId: {
+            membraneId: ctx.membraneId,
+            clientRecordId,
+          },
+        },
+      });
+      if (!existing) {
+        throw error;
+      }
+      return { liveRecord: serializeLiveRecord(existing), deduplicated: true as const };
+    }
     // Write-path датчик /health/deep: запись доехала (кусок D #2121, M2).
     ingestWindowGauge.recordArrived();
     return { liveRecord: serializeLiveRecord(created), deduplicated: false as const };
