@@ -1,24 +1,24 @@
 {
   "magistralOptions": [
+    "worktree-sanitation",
     "tariff-canon-transitions-2329",
-    "studio-stop-freeze-2328",
-    "team-debts-review-media"
+    "red-tests-media-services"
   ],
-  "frozenDigest": "81380dc9fb190a62c0e0b3714e88109faceeb779c9820f2fbd30003e4aa8d60f",
-  "magistral": "tariff-canon-transitions-2329",
+  "frozenDigest": "e850cc4172b8ae6e955450ecf8f6fe880dae0434842e1102d08e57cb60128782",
+  "magistral": "worktree-sanitation",
   "swallow": {
-    "draftDigest": "345cbbf50d826ff40b031133753614c7f07f9a8fa520546b2dc87e73ea828207",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-09-08.md",
+    "draftDigest": "3edf2b7637a55a0bf811d9f83370005b3162adf863a97f322bf8568fba269bd3",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-09-16.md",
     "ownerAck": true,
-    "day": "2026-09-08"
+    "day": "2026-09-16"
   },
-  "day": "2026-09-08",
-  "magistralChosenAt": "2026-09-08",
+  "day": "2026-09-16",
+  "magistralChosenAt": "2026-09-16",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-09-08",
-    "chosen": "tariff-canon-transitions-2329",
-    "snapshotDigest": "81380dc9fb190a62c0e0b3714e88109faceeb779c9820f2fbd30003e4aa8d60f",
+    "at": "2026-09-16",
+    "chosen": "worktree-sanitation",
+    "snapshotDigest": "e850cc4172b8ae6e955450ecf8f6fe880dae0434842e1102d08e57cb60128782",
     "inSnapshot": true
   }
 }

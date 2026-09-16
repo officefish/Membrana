@@ -5,8 +5,20 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14359/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 354 (причины в op-log) -->
+Записей: 49 · бюджет 14344/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 357 (причины в op-log) -->
+
+### 2026-09-12 · позиция · team-evening-feedback
+
+> Ozhegov. Оценка артефактов: DAILY_AUDIT и memos/2026-09-12 — чистая механическая выжимка, работают как должны; op-log персон обновляется. MAIN_DAY_ISSUE и STANDUP не обновлены на дату — рутина потеряна на входе дня. Итоги дня: границы пакетов не тронуты, JSONL append-only […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-12.md#reply-1`
+
+### 2026-09-08 · позиция · tariff-matrix-scalars-fate
+
+> Словарь. «Источник правды» ≠ «вход сида» ≠ «производная сетка». S0 назвал S «единственным источником чисел» — это устаревшая лемма относительно T13–T16. Публичный контракт сейчас: R владеет смыслом; G — артефакт релиза; S — декларация посева epoch-S0 до задания В. Зуб […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/tariff-matrix-scalars-fate-2026-09-08.md#reply-1`
 
 ### 2026-09-07 · позиция · team-evening-feedback
 
@@ -289,15 +301,3 @@
 > Леммы, чтобы не разъехались слова. «Квота узла» — лимит локального кольцевого буфера duty-ленты, сторож — процесс на узле. «Квота сервера» — лимит принятого объёма на стороне приёма; сторож — сервер, ответ 413 без silently-delete. «Судьба» — признак из решения M7 […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/duty-node-detection-m9-lifecycle-2026-08-21.md#reply-1`
-
-### 2026-08-21 · позиция · journal-session-twenty-home
-
-> Лемма M2: домом делает `IPluginHost`. Факт разведки 21.08 — модуля `journal` в office нет, хоста нет, сущности «запись журнала» нет. Манифест с `mountTarget: background-office/journal` будет отвергнут до рантайма ровно по M2. Монтировать в несуществующий дом — нарушить словарь, […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/journal-session-twenty-home-2026-08-21.md#reply-1`
-
-### 2026-08-21 · позиция · team-evening-feedback
-
-> C1/C4 по доступному следу: меры и executor сидят в handlers, монтаж report-wave — в media-доме. Зуб verify:image-workspace-deps после отказа выкатки — правильный носитель, не проза. Следить, чтобы `registerReportWave` не оказался мёртвым экспортом при следующих переносах (урок […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-21.md#reply-1`
