@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-08 |
-| Head SHA | 7cfcbdffaebd336deddf281a844d425fd046694c |
+| Date | 2026-09-16 |
+| Head SHA | 8cb8dc002ff40a414ca67ec7b17d49f68a5bb3d6 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1213 |
-| Yarn scripts (package.json) | 465 |
-| Yarn → `scripts/` | 411 |
+| Code files under `scripts/` | 1235 |
+| Yarn scripts (package.json) | 471 |
+| Yarn → `scripts/` | 417 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 884 |
+| Code files without yarn ref | 901 |
 
-## Yarn → scripts/ (411)
+## Yarn → scripts/ (417)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -222,6 +222,7 @@
 - `net:http` → `scripts/net-http.mjs`
 - `network:analysis:archive` → `scripts/archive-network-analysis.mjs`
 - `network:bare-fetch` → `scripts/check-bare-fetch.mjs`
+- `network:history-merge` → `scripts/network/history-merge.mjs`
 - `network:preflight` → `scripts/network/preflight.mjs`
 - `network:probe` → `scripts/network/probe.mjs`
 - `network:probes` → `scripts/network-probes.mjs`
@@ -258,7 +259,7 @@
 - `pr:verify` → `scripts/pr-verify.mjs`
 - `pr:wait` → `scripts/pr-wait.mjs`
 - `precedent:register` → `scripts/precedent-register.mjs`
-- `prepare` → `scripts/registry-merge-driver.mjs`
+- `prepare` → `scripts/registry-merge-driver.mjs`, `scripts/network/history-merge.mjs`
 - `prisma:migration` → `scripts/prisma-migration-new.mjs`
 - `probe:node-link` → `scripts/node-link-probe.mjs`
 - `procedure-run:journal` → `scripts/procedure-run-journal.mjs`
@@ -326,7 +327,12 @@
 - `swallow:draft` → `scripts/swallow-draft.mjs`
 - `tailwind:configs:fix` → `scripts/generate-tailwind-configs.mjs`
 - `tariff:cutover` → `scripts/tariff-cutover-check.mjs`
+- `tariff:devices-check` → `scripts/tariff-devices-check.mjs`
+- `tariff:devices-fanout` → `scripts/tariff-devices-fanout.mjs`
 - `tariff:grid` → `scripts/tariff-grid-validate.mjs`
+- `tariff:project-cabinet` → `scripts/tariff-project-cabinet.mjs`
+- `tariff:project-cabinet:check` → `scripts/tariff-project-cabinet.mjs`
+- `tariff:reseed` → `scripts/tariff-reseed.mjs`
 - `task:archive` → `scripts/archive-task.mjs`
 - `task:close-github` → `scripts/task-close-github-issues.mjs`
 - `task:close-github:dry` → `scripts/task-close-github-issues.mjs`
@@ -437,7 +443,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (884)
+## Code files without yarn ref (901)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -814,6 +820,7 @@
 - `scripts/lib/llm-procedure-emit.mjs`
 - `scripts/lib/llm-procedure-evidence.mjs`
 - `scripts/lib/llm-procedure-office.mjs`
+- `scripts/lib/llm-procedure-panel.test.mjs`
 - `scripts/lib/llm-procedure-registry.mjs`
 - `scripts/lib/llm-procedure-resolve.mjs`
 - `scripts/lib/llm-procedure-ritual.mjs`
@@ -886,6 +893,7 @@
 - `scripts/lib/procedure-contract-license.mjs`
 - `scripts/lib/procedure-contract-stamp.mjs`
 - `scripts/lib/procedure-home-form.mjs`
+- `scripts/lib/procedure-network-preflight.mjs`
 - `scripts/lib/procedure-personas.mjs`
 - `scripts/lib/procedure-run-journal.mjs`
 - `scripts/lib/procedure-runs-digest.mjs`
@@ -998,7 +1006,14 @@
 - `scripts/lib/swallow-mirror.mjs`
 - `scripts/lib/tailwind-coverage.mjs`
 - `scripts/lib/tariff-cutover.mjs`
+- `scripts/lib/tariff-devices-check.mjs`
+- `scripts/lib/tariff-devices-fanout.mjs`
 - `scripts/lib/tariff-grid-check.mjs`
+- `scripts/lib/tariff-matrix/passport.mjs`
+- `scripts/lib/tariff-matrix/passport.test.mjs`
+- `scripts/lib/tariff-matrix/reseed.mjs`
+- `scripts/lib/tariff-matrix/reseed.test.mjs`
+- `scripts/lib/tariff-project-cabinet.mjs`
 - `scripts/lib/task-closure-review.mjs`
 - `scripts/lib/task-handoff-status.mjs`
 - `scripts/lib/task-inspect.mjs`
@@ -1110,7 +1125,9 @@
 - `scripts/net-http.test.mjs`
 - `scripts/network-probes.test.mjs`
 - `scripts/network/classify.test.mjs`
+- `scripts/network/history-merge.test.mjs`
 - `scripts/network/lib/classify.mjs`
+- `scripts/network/lib/history-merge.mjs`
 - `scripts/network/lib/probe-core.mjs`
 - `scripts/network/probe-core.test.mjs`
 - `scripts/network/tooth.test.mjs`
@@ -1178,6 +1195,7 @@
 - `scripts/procedural-workshop.test.mjs`
 - `scripts/procedure-contract-license.test.mjs`
 - `scripts/procedure-home-form.test.mjs`
+- `scripts/procedure-network-preflight.test.mjs`
 - `scripts/procedure-personas.test.mjs`
 - `scripts/procedure-run-journal.test.mjs`
 - `scripts/procedure-run-record.mjs`
@@ -1244,6 +1262,7 @@
 - `scripts/storm-codex.test.mjs`
 - `scripts/storm-lifecycle.test.mjs`
 - `scripts/strategic-docs-affine-freeze.test.mjs`
+- `scripts/strategic-docs-generate.test.mjs`
 - `scripts/strategy-channels.test.mjs`
 - `scripts/strategy-horizon.test.mjs`
 - `scripts/studio-ms5-prod-smoke.test.mjs`
@@ -1253,7 +1272,11 @@
 - `scripts/sync-github-token.mjs`
 - `scripts/tailwind-coverage.test.mjs`
 - `scripts/tariff-cutover.test.mjs`
+- `scripts/tariff-devices-check.test.mjs`
+- `scripts/tariff-devices-fanout.test.mjs`
 - `scripts/tariff-grid-check.test.mjs`
+- `scripts/tariff-project-cabinet.test.mjs`
+- `scripts/tariff-reseed.test.mjs`
 - `scripts/tariff-scalars.test.mjs`
 - `scripts/task-archive-audit.mjs`
 - `scripts/task-archive-checkpoint.mjs`
@@ -1334,7 +1357,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1213)
+## All code files (1235)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1859,6 +1882,7 @@
 - `scripts/lib/llm-procedure-emit.mjs`
 - `scripts/lib/llm-procedure-evidence.mjs`
 - `scripts/lib/llm-procedure-office.mjs`
+- `scripts/lib/llm-procedure-panel.test.mjs`
 - `scripts/lib/llm-procedure-registry.mjs`
 - `scripts/lib/llm-procedure-resolve.mjs`
 - `scripts/lib/llm-procedure-ritual.mjs`
@@ -1931,6 +1955,7 @@
 - `scripts/lib/procedure-contract-license.mjs`
 - `scripts/lib/procedure-contract-stamp.mjs`
 - `scripts/lib/procedure-home-form.mjs`
+- `scripts/lib/procedure-network-preflight.mjs`
 - `scripts/lib/procedure-personas.mjs`
 - `scripts/lib/procedure-run-journal.mjs`
 - `scripts/lib/procedure-runs-digest.mjs`
@@ -2043,7 +2068,14 @@
 - `scripts/lib/swallow-mirror.mjs`
 - `scripts/lib/tailwind-coverage.mjs`
 - `scripts/lib/tariff-cutover.mjs`
+- `scripts/lib/tariff-devices-check.mjs`
+- `scripts/lib/tariff-devices-fanout.mjs`
 - `scripts/lib/tariff-grid-check.mjs`
+- `scripts/lib/tariff-matrix/passport.mjs`
+- `scripts/lib/tariff-matrix/passport.test.mjs`
+- `scripts/lib/tariff-matrix/reseed.mjs`
+- `scripts/lib/tariff-matrix/reseed.test.mjs`
+- `scripts/lib/tariff-project-cabinet.mjs`
 - `scripts/lib/task-closure-review.mjs`
 - `scripts/lib/task-handoff-status.mjs`
 - `scripts/lib/task-inspect.mjs`
@@ -2186,7 +2218,10 @@
 - `scripts/network-probes.mjs`
 - `scripts/network-probes.test.mjs`
 - `scripts/network/classify.test.mjs`
+- `scripts/network/history-merge.mjs`
+- `scripts/network/history-merge.test.mjs`
 - `scripts/network/lib/classify.mjs`
+- `scripts/network/lib/history-merge.mjs`
 - `scripts/network/lib/probe-core.mjs`
 - `scripts/network/preflight.mjs`
 - `scripts/network/probe-core.test.mjs`
@@ -2287,6 +2322,7 @@
 - `scripts/procedural-workshop.test.mjs`
 - `scripts/procedure-contract-license.test.mjs`
 - `scripts/procedure-home-form.test.mjs`
+- `scripts/procedure-network-preflight.test.mjs`
 - `scripts/procedure-personas.test.mjs`
 - `scripts/procedure-run-journal.mjs`
 - `scripts/procedure-run-journal.test.mjs`
@@ -2396,6 +2432,7 @@
 - `scripts/storm-lifecycle.test.mjs`
 - `scripts/strategic-docs-affine-freeze.test.mjs`
 - `scripts/strategic-docs-generate.mjs`
+- `scripts/strategic-docs-generate.test.mjs`
 - `scripts/strategic-docs-publish.mjs`
 - `scripts/strategic-docs-tools.mjs`
 - `scripts/strategic-plan-week.mjs`
@@ -2418,8 +2455,16 @@
 - `scripts/tailwind-coverage.test.mjs`
 - `scripts/tariff-cutover-check.mjs`
 - `scripts/tariff-cutover.test.mjs`
+- `scripts/tariff-devices-check.mjs`
+- `scripts/tariff-devices-check.test.mjs`
+- `scripts/tariff-devices-fanout.mjs`
+- `scripts/tariff-devices-fanout.test.mjs`
 - `scripts/tariff-grid-check.test.mjs`
 - `scripts/tariff-grid-validate.mjs`
+- `scripts/tariff-project-cabinet.mjs`
+- `scripts/tariff-project-cabinet.test.mjs`
+- `scripts/tariff-reseed.mjs`
+- `scripts/tariff-reseed.test.mjs`
 - `scripts/tariff-scalars.test.mjs`
 - `scripts/task-archive-audit.mjs`
 - `scripts/task-archive-checkpoint.mjs`
