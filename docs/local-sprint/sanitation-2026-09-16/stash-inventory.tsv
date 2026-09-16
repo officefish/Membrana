@@ -1,0 +1,45 @@
+n	stash_sha	date	source_branch	tracked_files	identical_in_trunk	has_untracked	foreign_mark	message_prefix
+0	8e20491d43eefbb5243bcbf23574b8ae14ee5cc2	2026-08-31	angelina/chore/ritual-evening-20260830	10	0	нет		хвост 31.08 перед выкаткой
+1	098dbe27cc6ec73fa7adb79b054ff3b51a2b9028	2026-08-29	angelina/chore/ritual-evening-20260829	5	0	нет		хвост вечера
+2	3cfa9139b1759679a4e9274f71877ae3ce2df4c0	2026-08-19	feat/capture-sidecar-form	1	0	да		capture-sidecar-pr3-code
+3	90b3500721cf73fbf78957c6e57e8ca935c1fc76	2026-08-19	recreate/pr-1986	9	7	да		capture-sidecar-pr3-artifacts
+4	2cfc8357ec38216f5ea4a3bd4e6d34d956f93825	2026-08-19	feat/capture-sidecar	3	1	да		capture-sidecar-pr2
+5	07aaccebc134ffe2836f7d7e6f9ec494f8a4a62f	2026-08-19	fix/contour-sanity	0	0	да	ЧУЖОЕ	чужое: op-log персон 19.08 06:03 (per
+6	88ce3266e7de46088b5d1520189797239feff541	2026-08-19	chore/magistral-2026-08-19	4	0	нет	ЧУЖОЕ	чужое: артефакты утра 19.08 к
+7	83f1fb3e9347eeaf6b4ef479b55ce97e2a604056	2026-08-19	feat/plugin-host-contracts	2	0	нет	ЧУЖОЕ	чужое (сессия В 18.08): DAY_PLAN + d
+8	cf069b2d2f4876b90902a5a0a28b1200927703b0	2026-08-18	feat/mfcc-in-benchmark	1	0	нет	ЧУЖОЕ	чужое: deps-watch-snapshot date 16.08 (ри
+9	f0115b321892e9e06dd392dd810ce0b7f313782a	2026-08-16	chore/night-paper-2026-08-12	1	0	нет	ЧУЖОЕ	preserve foreign SCRIPTS_LIST before env-and-deb
+10	244299ef3ca7e554aad8d983a31e51ee314e4c2f	2026-08-01	codex/mintlify-workshops-procedures-hackathon	1	0	нет		codex accidental snapshots-help eof
+11	0774ba51bf997d97f76a3de4ea6f2ebcc554315d	2026-08-01	codex/branch-salvage-atlas-examples	0	0	да		leveling-2026-08-01-membrana-codex-before-main-r
+12	e7dc72685ec29b951fe1640b3c5407718fcda156	2026-08-01	storm/mfcc-sprint-test-3007	1	0	да		leveling-2026-08-01-before-main-align
+13	542ddbe9d142c916a16529451f3d72e605018b8d	2026-07-26	feat/audit-concentrate-v1	9	0	нет		wip before strategic-docs publish
+14	efcc56702476f4e0295694bccbf0c8ce5664145a	2026-07-26	feat/registry-merge-driver-serverless	1	0	нет		workshop-pkg
+15	9a77b321a46a200ed15270722f75ce6f061a72fc	2026-07-26	feat/registry-merge-driver-serverless	2	0	нет		non-workshop
+16	6d6e1922374484b317dd92b8bf921830e16acc1b	2026-07-26	angelina/chore/archive-post-deliver	5	0	нет		wip-strategic-docs
+17	e07974ffda94fb31752ea3d5432c435e4b28f15c	2026-07-26	angelina/feat/ritual-deliver-to-main	2	0	да		wip-affine-before-1216
+18	099af083d42ba505333fb010739dc58c43a16ead	2026-07-26	angelina/chore/archive-frame-rails-done	6	0	да		affine-strategic-docs
+19	3aef45ed06731f5d540f3038be734dc9c440fd0e	2026-07-25	tooling/tasks-master-kit	21	3	да		wip-tasks-master-kit-aside-from-sar-w4
+20	f62da5f19cda735476d8760796de5e4d37e746a7	2026-07-25	chore/sar-w4-closure	4	3	да		wip-sar-closure-aside
+21	3e407a294cec3a1df391b613fc84398fcbda53ac	2026-07-25	chore/sar-w4-closure	9	0	да		wip-mixed-sar-and-tasks-master
+22	e94aa9f1e9a86406cdfaafdf3c6799faa6673dec	2026-07-25	chore/archive-sar-w1-canon-dns	2	0	да		wip-before-sar-w2
+23	22db0f43dad0a3135ef9aea3dc470c92c24dfdd6	2026-07-24	feat/tw-v6-invariants	5	1	да		tw-v6-wip
+24	7a90c8d5b5cba86d6c6011c1347214455130082a	2026-07-24	feat/tw-v4-inspect	0	0	да		temp-skip
+25	540de737f2f9a622ce9f6b2deedfdfd697e25d85	2026-07-23	fix/adr-0013-accepted	2	0	нет	ЧУЖОЕ	чужой WIP до мерджа main 23.07
+26	8705e6412f5fa89e655aefe2625145f283c8bcef	2026-07-22	feat/bw-w4-trap-kit	3	1	да	ЧУЖОЕ	wip-alien-transcript
+27	8a9b1c83f3d678931546d20ec790e4bb677d51f1	2026-07-21	(no branch)	3	0	да		wip: insight-core-services-dev-containers before
+28	3dec15d8dfe9028fb90c55dfc910f6890c65ca8c	2026-07-21	fix/adr-0013-accepted	2	1	нет	ЧУЖОЕ	чужие night-build правки до мёр�
+29	2026-07-20	tooling/needs-720-2026-07-20	17	0	да		tooling-needs-720
+30	c7081a3f561b9bfb16a4452661b67084904d577e	2026-07-19	fix/swallow-delivery-trace	0	0	да		wip-before-612
+31	686a547c30a03abac3371cd077e2023903260890	2026-06-30	intern/phase0-scaffold	4	0	да		cleanup-before-task-archive-migration-2026-06-30
+32	489b7c4f0fdd5a07d1e73c87a70bcfd5cd380db2	2026-06-25	fix/async-v2-track-upload-178	44	0	нет		wip before fix/async-v2-l18-l19-recording-detach
+33	f8f69df3c43c2917a7eacf18507f32b5dc169cd9	2026-06-25	db-ap-r1-core-contracts	10	0	да		prep-sprint-wip
+34	f8a5e8d0f985d3f4b69e6ec06f07b0937bb41f41	2026-06-24	fix/function-editor-palette	6	1	нет		ritual
+35	182d0870b9e2dd4cdfe6ff528621800375ba9c13	2026-06-24	night/smoke-testing-s1-night-build-2026-06-23	65	38	да		night-smoke + u10 hotfix WIP
+36	45bb94ecd51fc290a7fadb754c07425d7e56ddc1	2026-06-23	feat/device-board-w0-h2-clipboard-ux	2	0	нет		ritual-artifacts
+37	d564f2203565a37d25a027cb3bb0548db7ea798e	2026-06-23	main	40	0	да		wip-before-u10-deploy-branch
+38	f34acebb7010d31ed959f334da7a477e5c259b0b	2026-06-22	techies68	17	0	да		techies68-wip-non-db
+39	881cd0fdfae043096e8f30a6accf76931751253a	2026-06-21	feat/db-usercases-catalog-u9	7	0	нет		wip registry ritual
+40	1400d639683e8e114d4731482afcca8c38b22cbe	2026-06-14	feat/tariff-dataset-ds5-server-provision	3	0	нет		archive-registry
+41	69822f7be221fd30c7adaa7409c00116989b277a	2026-06-14	feat/tariff-dataset-ds2-domain	8	0	нет		ds5-wip
+42	a3f1cce6a7dc3441b47768ddd34fb86808f4569c	2026-06-13	feat/catchup-media-mcp-ritual	17	3	да		swagger-a5d-wip
+43	f39ad5f9c143fec986cf39e67672afcd7fb1f19f	2026-05-14	techies68	6	1	да		telemetry-client-integration
