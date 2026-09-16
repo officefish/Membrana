@@ -70,6 +70,10 @@ test('неизвестный тариф — громкий отказ, а не �
 test('носитель читает декларацию и не держит своих числовых констант', () => {
   const seed = readFileSync(SEED_URL, 'utf8');
   assert.match(seed, /tariff-scalars\.mjs/u, 'сид читает декларацию');
+  assert.match(seed, /tariff-grid\.json/u, 'сид открывает строки Tariff из сетки, а не из локального списка');
+  assert.match(seed, /for \(const row of grid\.rows\)/u, 'сид проходит все тарифы сетки');
+  assert.ok(!/FREE_TARIFF_ID/u.test(seed), 'free-v1 не должен быть единственным тарифом сида');
+  assert.match(seed, /CABINET_TARIFF_RESTAMP/u, 'перетирание существующих тарифов должно быть явным решением');
   assert.ok(!/GIB\s*=/u.test(seed), 'константа объёма в сиде = второй источник истины');
   assert.ok(
     !/userStorageQuotaBytes:\s*\d/u.test(seed),

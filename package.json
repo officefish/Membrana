@@ -354,6 +354,7 @@
     "cabinet:mp5:prod": "node scripts/_ssh-cabinet-mp5-prod.mjs",
     "cabinet:mp6:prod": "node scripts/_ssh-cabinet-mp6-prod.mjs",
     "cabinet:mp7:prod": "node scripts/_ssh-cabinet-mp7-prod.mjs",
+    "cabinet:tariffs:prod": "node scripts/cabinet-tariffs-open-prod.mjs",
     "studio:dev": "node scripts/studio-dev.mjs",
     "studio:build": "node scripts/studio-build.mjs",
     "studio:package": "node scripts/studio-package.mjs",
