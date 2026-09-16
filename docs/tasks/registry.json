@@ -4713,7 +4713,7 @@
       "supportPersonas": [],
       "notes": "",
       "archiveNotes": "Implemented in current worktree: finalizeReviewManifest now records completion.acceptanceGate and hard mode blocks missing/stale acceptance; schema updated. Tests: node --test scripts/task-closure-review.test.mjs scripts/trace-acceptance.test.mjs scripts/task-closure-review-schema.test.mjs => 51/51. Review: docs/tasks/archive/closure-acceptance-gate-code-review-targeted.md LGTM. Linear live snapshot 2026-07-29T15:51:52.389Z: DRU-365 still Backlog, code/card repaired locally with evidence.",
-      "githubIssueClosedAt": null,
+      "githubIssueClosedAt": "2026-09-16",
       "parentEpic": "frame-rails-2307",
       "githubIssueStateReason": null
     },
