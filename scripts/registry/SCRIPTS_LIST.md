@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-16 |
-| Head SHA | 8cb8dc002ff40a414ca67ec7b17d49f68a5bb3d6 |
+| Date | 2026-09-17 |
+| Head SHA | 661b6021a002f5e5ff3db2ca680508f5c7f89952 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,12 +16,12 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1235 |
+| Code files under `scripts/` | 1236 |
 | Yarn scripts (package.json) | 471 |
 | Yarn → `scripts/` | 417 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 901 |
+| Code files without yarn ref | 902 |
 
 ## Yarn → scripts/ (417)
 
@@ -443,7 +443,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (901)
+## Code files without yarn ref (902)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1345,6 +1345,7 @@
 - `scripts/worktree-merge.mjs`
 - `scripts/worktree-resolution.test.mjs`
 - `scripts/worktree-sync-check.test.mjs`
+- `scripts/worktree-template.test.mjs`
 - `scripts/worktrees-align.test.mjs`
 
 ## Yarn → missing file (7)
@@ -1357,7 +1358,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1235)
+## All code files (1236)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -2592,6 +2593,7 @@
 - `scripts/worktree-resolution.test.mjs`
 - `scripts/worktree-sync-check.test.mjs`
 - `scripts/worktree-sync.mjs`
+- `scripts/worktree-template.test.mjs`
 - `scripts/worktrees-align.mjs`
 - `scripts/worktrees-align.test.mjs`
 
