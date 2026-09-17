@@ -7,8 +7,8 @@
   "frozenDigest": "e850cc4172b8ae6e955450ecf8f6fe880dae0434842e1102d08e57cb60128782",
   "magistral": "worktree-sanitation",
   "swallow": {
-    "draftDigest": "3edf2b7637a55a0bf811d9f83370005b3162adf863a97f322bf8568fba269bd3",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-09-16.md",
+    "draftDigest": "e345cfee5f9f5733f87f6bbd0e8285d4fd406dbcb25549e4c934adc020f538fa",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-16.md",
     "ownerAck": true,
     "day": "2026-09-16",
     "claimsProbe": {
@@ -16,7 +16,8 @@
       "protocol": "docs/seanses/team-evening-feedback-2026-09-16.md",
       "sha": "9e6c3d3489f0",
       "at": "2026-09-16T20:34:43.499Z"
-    }
+    },
+    "gate": "evening:partner-swallow"
   },
   "day": "2026-09-16",
   "magistralChosenAt": "2026-09-16",
