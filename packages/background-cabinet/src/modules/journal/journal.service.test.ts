@@ -8,6 +8,7 @@ function telemetryTrackRow(index: number) {
   const trackId = `track-${index}`;
   return {
     id: `live-${index}`,
+    membraneId: 'membrane-1',
     recordKind: 'telemetry-track/v1',
     moduleId: 'microphone',
     clientRecordId: `live-track-${trackId}`,
@@ -31,6 +32,24 @@ function telemetryTrackRow(index: number) {
     mediaDeviceId: 'device-1',
     createdAt: startedAt,
     updatedAt: startedAt,
+  };
+}
+
+function telemetryReportRow(index: number) {
+  const finishedAt = new Date(Date.parse('2026-08-23T18:00:00.000Z') - index * 5_000);
+  return {
+    id: `report-${index}`,
+    membraneId: 'membrane-1',
+    reportKind: 'drone-detection-report/v1',
+    moduleId: 'drone-detector',
+    moduleName: 'Drone detector',
+    clientEntryId: `report-client-${index}`,
+    finishedAt,
+    payload: { schema: 'drone-detection-report/v1', isDetected: true },
+    tags: ['detection'],
+    nodeId: 'node-1',
+    mediaDeviceId: 'device-1',
+    createdAt: finishedAt,
   };
 }
 
@@ -59,6 +78,97 @@ function createJournalServiceHarness(options: {
     },
   };
   return { service: new JournalService(prisma as never), prisma };
+}
+
+function uniqueConstraintError() {
+  return { code: 'P2002' };
+}
+
+function createJournalServiceWriteHarness() {
+  const reports: ReturnType<typeof telemetryReportRow>[] = [];
+  const liveRecords: ReturnType<typeof telemetryTrackRow>[] = [];
+  const prisma = {
+    membrane: {
+      findUnique: vi.fn().mockResolvedValue({
+        id: 'membrane-1',
+        nodes: [{ id: 'node-1', device: { mediaDeviceId: 'device-1' } }],
+      }),
+    },
+    telemetryReport: {
+      findUnique: vi.fn().mockImplementation(async ({ where }) => {
+        const key = where.membraneId_clientEntryId;
+        return (
+          reports.find(
+            (row) =>
+              row.membraneId === key.membraneId &&
+              row.clientEntryId === key.clientEntryId &&
+              row.mediaDeviceId === 'device-1',
+          ) ?? null
+        );
+      }),
+      create: vi.fn().mockImplementation(async ({ data }) => {
+        if (
+          reports.some(
+            (row) =>
+              row.membraneId === data.membraneId &&
+              row.clientEntryId === data.clientEntryId &&
+              row.mediaDeviceId === data.mediaDeviceId,
+          )
+        ) {
+          throw uniqueConstraintError();
+        }
+        const created = {
+          ...telemetryReportRow(reports.length + 1),
+          ...data,
+          id: `report-created-${reports.length + 1}`,
+          createdAt: new Date('2026-08-23T18:10:00.000Z'),
+        };
+        reports.push(created);
+        return created;
+      }),
+      findMany: vi.fn().mockResolvedValue(reports),
+      count: vi.fn().mockResolvedValue(0),
+    },
+    telemetryLiveRecord: {
+      findUnique: vi.fn().mockImplementation(async ({ where }) => {
+        const key = where.membraneId_clientRecordId;
+        return (
+          liveRecords.find(
+            (row) =>
+              row.membraneId === key.membraneId &&
+              row.clientRecordId === key.clientRecordId &&
+              row.mediaDeviceId === 'device-1',
+          ) ?? null
+        );
+      }),
+      create: vi.fn().mockImplementation(async ({ data }) => {
+        if (
+          liveRecords.some(
+            (row) =>
+              row.membraneId === data.membraneId &&
+              row.clientRecordId === data.clientRecordId &&
+              row.mediaDeviceId === data.mediaDeviceId,
+          )
+        ) {
+          throw uniqueConstraintError();
+        }
+        const created = {
+          ...telemetryTrackRow(liveRecords.length + 1),
+          ...data,
+          id: `live-created-${liveRecords.length + 1}`,
+          status: 'active' as const,
+          endedAt: null,
+          createdAt: new Date('2026-08-23T18:10:00.000Z'),
+          updatedAt: new Date('2026-08-23T18:10:00.000Z'),
+        };
+        liveRecords.push(created);
+        return created;
+      }),
+      findMany: vi.fn().mockResolvedValue(liveRecords),
+      count: vi.fn().mockResolvedValue(0),
+    },
+  };
+  return { service: new JournalService(prisma as never), prisma, reports, liveRecords };
 }
 
 describe('parseJournalListLimit', () => {
@@ -144,5 +254,53 @@ describe('JournalService.listJournalItems', () => {
         }),
       }),
     );
+  });
+});
+
+describe('JournalService concurrent create idempotency', () => {
+  it('deduplicates concurrent reports on the membrane/clientEntryId key', async () => {
+    const { service, prisma, reports } = createJournalServiceWriteHarness();
+    const body = {
+      reportKind: 'drone-detection-report/v1',
+      clientEntryId: 'same-report',
+      moduleId: 'drone-detector',
+      moduleName: 'Drone detector',
+      finishedAt: '2026-08-23T18:00:00.000Z',
+      payload: { schema: 'drone-detection-report/v1', isDetected: true },
+      tags: ['detection'],
+    };
+
+    const [first, second] = await Promise.all([
+      service.createReport('user-1', body),
+      service.createReport('user-1', body),
+    ]);
+
+    expect(reports).toHaveLength(1);
+    expect(first.report.id).toBe(reports[0].id);
+    expect(second.report.id).toBe(reports[0].id);
+    expect([first.deduplicated, second.deduplicated].sort()).toEqual([false, true]);
+    expect(prisma.telemetryReport.create).toHaveBeenCalledTimes(2);
+  });
+
+  it('deduplicates concurrent live records on the membrane/clientRecordId key', async () => {
+    const { service, prisma, liveRecords } = createJournalServiceWriteHarness();
+    const body = {
+      recordKind: 'telemetry-track/v1',
+      clientRecordId: 'same-live-record',
+      moduleId: 'microphone',
+      startedAt: '2026-08-23T18:00:00.000Z',
+      payload: { item: { trackId: 'same-live-record' } },
+    };
+
+    const [first, second] = await Promise.all([
+      service.createLiveRecord('user-1', body),
+      service.createLiveRecord('user-1', body),
+    ]);
+
+    expect(liveRecords).toHaveLength(1);
+    expect(first.liveRecord.id).toBe(liveRecords[0].id);
+    expect(second.liveRecord.id).toBe(liveRecords[0].id);
+    expect([first.deduplicated, second.deduplicated].sort()).toEqual([false, true]);
+    expect(prisma.telemetryLiveRecord.create).toHaveBeenCalledTimes(2);
   });
 });
