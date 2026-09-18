@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-17 |
-| Head SHA | 661b6021a002f5e5ff3db2ca680508f5c7f89952 |
+| Date | 2026-09-18 |
+| Head SHA | 2bddfd2100f8819adcc96f98a644cfaf5a8d21c7 |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
