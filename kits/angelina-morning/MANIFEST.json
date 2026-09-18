@@ -87,7 +87,7 @@
     "scripts/network/lib/classify.mjs": "2b5f6946d183ed579643a51e3e1dcd02c25b1c92",
     "scripts/network/lib/probe-core.mjs": "099f5529ec7e198db1638d817b31cadbffc917df",
     "scripts/plan-week-if-monday.mjs": "4de9f7e1d42d88c5cd262041c3eb29e918cec194",
-    "scripts/repo-clean.mjs": "d3f0bfaa6f3a8069e05d8e61f0a37c47d5f262c9",
+    "scripts/repo-clean.mjs": "57e8a25a5e835ddded1d180ceb3b7b8712031829",
     "scripts/strategy-day.mjs": "4e87373353828c2551fe04f740fd6b600a09dfe6",
     "scripts/telegram-swallow.mjs": "8164cfe6d01764034e8e8c162d5e79c6f31b6eb5",
     "scripts/worktree-sync.mjs": "1c727649ab55edf61a96e9fc8722a0708ab0cf92"
