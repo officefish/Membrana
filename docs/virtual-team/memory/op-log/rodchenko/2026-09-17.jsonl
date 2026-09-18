@@ -1,1 +1,4 @@
 {"ts":"2026-09-17T12:49:24.998Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-09-17T19:26:29.841Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-09-17-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-17T19:26:29.841Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-21-duty-node-detection-m9-lifecycle","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-17T19:26:29.841Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
