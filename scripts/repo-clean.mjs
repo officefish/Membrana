@@ -461,12 +461,19 @@ function stopWorktreeDemolition({ cli, out, removed, failed, exitCode }) {
 }
 
 /**
- * Снять связи (symlink/junction), ведущие НАРУЖУ дерева, ПЕРЕД его сносом (#1436).
- * Снимается сам линк (unlink/rmdir), цель не трогается. Обход пропускает .git.
+ * Снять ВСЕ связи (symlink/junction) дерева ПЕРЕД его сносом — как связи: unlink/rmdir
+ * самого линка, цель не трогается. Обход пропускает .git и не заходит внутрь связей.
+ *   наружу — закон #1436: рекурсивное удаление сквозь такую связь убивает чужие файлы;
+ *   внутрь — урок 18.09: `node_modules/@membrana/* → apps/*` становятся висящими, как
+ *            только git удалил `apps/` (он идёт по алфавиту), и `git worktree remove
+ *            --force` на первой же висящей ссылке обрывается — два дерева подряд
+ *            остались на диске по 49 126 файлов. Снятие внутренней связи как связи
+ *            так же безопасно, как внешней: цель не трогается.
  */
 function neutralizeOutboundLinks(treeRoot, out) {
   const stack = [treeRoot];
   let cut = 0;
+  let cutInbound = 0;
   while (stack.length > 0) {
     const dir = stack.pop();
     let entries;
@@ -486,26 +493,31 @@ function neutralizeOutboundLinks(treeRoot, out) {
       }
       if (st.isSymbolicLink()) {
         const target = resolveLinkTarget(p, readlinkSync(p));
-        if (targetIsOutsideTree(target, treeRoot)) {
+        const outbound = targetIsOutsideTree(target, treeRoot);
+        try {
+          st.isDirectory() ? rmdirSync(p) : unlinkSync(p);
+        } catch {
+          // директория-junction под lstat не isDirectory — пробуем оба глагола
           try {
-            st.isDirectory() ? rmdirSync(p) : unlinkSync(p);
+            rmdirSync(p);
           } catch {
-            // директория-junction под lstat не isDirectory — пробуем оба глагола
-            try {
-              rmdirSync(p);
-            } catch {
-              unlinkSync(p);
-            }
+            unlinkSync(p);
           }
+        }
+        if (outbound) {
           out.log(`    связь наружу снята: ${p} → ${target}`);
           cut++;
+        } else {
+          out.log(`    внутренняя связь снята (стала бы висящей после удаления цели): ${p} → ${target}`);
+          cutInbound++;
         }
-        continue; // внутрь связей не ходим — даже внутренних
+        continue; // внутрь связей не ходим
       }
       if (st.isDirectory()) stack.push(p);
     }
   }
   if (cut > 0) out.log(`  связей наружу снято: ${cut} (${treeRoot})`);
+  if (cutInbound > 0) out.log(`  внутренних связей снято: ${cutInbound} (${treeRoot})`);
 }
 
 /**
