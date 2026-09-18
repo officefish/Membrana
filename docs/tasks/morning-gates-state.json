@@ -6,7 +6,12 @@
   ],
   "frozenDigest": "87cf6975acc5f7a1aa3a01116e86b910ac6544f55898c35ab1ac624e2189bdb2",
   "magistral": "tariff-transitions-live",
-  "swallow": null,
+  "swallow": {
+    "draftDigest": "4354e8615f3b392883f99541e8c4ff07ec6ff5f223fa35860b9366f81e2a5661",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-09-18.md",
+    "ownerAck": true,
+    "day": "2026-09-18"
+  },
   "day": "2026-09-18",
   "magistralChosenAt": "2026-09-18",
   "magistralAuthor": "human",
