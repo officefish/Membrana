@@ -470,7 +470,7 @@ function stopWorktreeDemolition({ cli, out, removed, failed, exitCode }) {
  *            остались на диске по 49 126 файлов. Снятие внутренней связи как связи
  *            так же безопасно, как внешней: цель не трогается.
  */
-function neutralizeOutboundLinks(treeRoot, out) {
+export function neutralizeOutboundLinks(treeRoot, out) {
   const stack = [treeRoot];
   let cut = 0;
   let cutInbound = 0;
