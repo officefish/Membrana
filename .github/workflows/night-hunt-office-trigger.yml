@@ -56,12 +56,19 @@ jobs:
           # Второй слой молчания (18.09): дверь отвечает 200 и `ok:true` даже когда каждое дело
           # пропущено — runJob ловит любое исключение и возвращает `skipped:true` с причиной.
           # 2xx без единого выполненного дела — не запуск, а тишина; здесь она становится отказом.
+          #
+          # Одно исключение — УДЕРЖАНИЕ: офис не открывает второй PR по делу, пока первый не
+          # разобран (`github.service.ts`: «открыт PR #N с префиксом …»). Это не тишина, а
+          # отчёт, который ждёт ревью; красить его отказом значило бы краснеть каждое утро до
+          # мерджа и приучить к красному. Удержание печатается поимённо и считается живым делом.
+          # Все прочие пропуски (выключено, нет LLM, исключение) — отказ.
           total="$(jq -r '(.results // []) | length' "$body")"
           done_count="$(jq -r '[(.results // [])[] | select(.skipped != true)] | length' "$body")"
-          echo "night-hunt trigger: HTTP $code от $url · дел выполнено $done_count из $total"
-          jq -r '(.results // [])[] | "  · \(.id): \(if .skipped == true then "ПРОПУЩЕНО — \(.reason // "без причины")" else (.prUrl // "без PR") end)"' "$body"
-          if [ "$total" -eq 0 ] || [ "$done_count" -eq 0 ]; then
-            echo "night-hunt trigger ОТКАЗ: офис принял запрос, но ни одно дело не выполнено"
+          held_count="$(jq -r '[(.results // [])[] | select(.skipped == true and ((.reason // "") | test("^открыт PR #[0-9]+ ")))] | length' "$body")"
+          echo "night-hunt trigger: HTTP $code от $url · дел выполнено $done_count, на удержании $held_count, всего $total"
+          jq -r '(.results // [])[] | "  · \(.id): \(if .skipped != true then (.prUrl // "выполнено, без PR") elif ((.reason // "") | test("^открыт PR #[0-9]+ ")) then "УДЕРЖАНИЕ — \(.reason)" else "ПРОПУЩЕНО — \(.reason // "без причины")" end)"' "$body"
+          if [ "$total" -eq 0 ] || [ $((done_count + held_count)) -eq 0 ]; then
+            echo "night-hunt trigger ОТКАЗ: офис принял запрос, но ни одно дело не выполнено и не удержано открытым PR"
             exit 1
           fi
           echo "night-hunt trigger OK"
