@@ -16,7 +16,9 @@ export const DEMOLITION_FRAMES = Object.freeze([
   },
   {
     id: 'neutralize-outbound-links',
-    title: 'скан и снятие связей наружу',
+    // 18.09: снимаются все связи, не только наружу — внутренняя ссылка, ставшая
+    // висящей по ходу удаления, обрывает `git worktree remove` и оставляет каталог.
+    title: 'скан и снятие связей: наружу и внутренних',
   },
   {
     id: 'git-worktree-remove',
