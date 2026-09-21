@@ -10,7 +10,13 @@
     "draftDigest": "b46ecf9ef8223b44ad4f89294235394c23fd29c6be54ca19b1702cd2e5343b3d",
     "draftFile": "docs/comms/drafts/swallow-day-2026-09-21.md",
     "ownerAck": true,
-    "day": "2026-09-21"
+    "day": "2026-09-21",
+    "claimsProbe": {
+      "verdict": "soft",
+      "protocol": "docs/seanses/team-evening-feedback-2026-09-21.md",
+      "sha": "d21e3f573018",
+      "at": "2026-09-21T21:44:15.898Z"
+    }
   },
   "day": "2026-09-21",
   "magistralChosenAt": "2026-09-21",
