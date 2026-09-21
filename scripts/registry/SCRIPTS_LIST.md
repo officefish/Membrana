@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-18 |
-| Head SHA | 2bddfd2100f8819adcc96f98a644cfaf5a8d21c7 |
+| Date | 2026-09-21 |
+| Head SHA | 182df7167e0d4d8e255de425770a7272d667bb8c |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,12 +16,12 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1236 |
+| Code files under `scripts/` | 1237 |
 | Yarn scripts (package.json) | 471 |
 | Yarn → `scripts/` | 417 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 902 |
+| Code files without yarn ref | 903 |
 
 ## Yarn → scripts/ (417)
 
@@ -443,7 +443,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (902)
+## Code files without yarn ref (903)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1212,6 +1212,7 @@
 - `scripts/replit-bridge.test.mjs`
 - `scripts/repo-branches-decompose.test.mjs`
 - `scripts/repo-branches.test.mjs`
+- `scripts/repo-clean-links.test.mjs`
 - `scripts/repo-clean-root.test.mjs`
 - `scripts/repo-clean.test.mjs`
 - `scripts/repo-links.test.mjs`
@@ -1358,7 +1359,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1236)
+## All code files (1237)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -2356,6 +2357,7 @@
 - `scripts/repo-branches-reconcile.mjs`
 - `scripts/repo-branches.mjs`
 - `scripts/repo-branches.test.mjs`
+- `scripts/repo-clean-links.test.mjs`
 - `scripts/repo-clean-root.test.mjs`
 - `scripts/repo-clean.mjs`
 - `scripts/repo-clean.test.mjs`
