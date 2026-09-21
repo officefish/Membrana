@@ -5,8 +5,50 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14372/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 369 (причины в op-log) -->
+Записей: 49 · бюджет 14329/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 376 (причины в op-log) -->
+
+### 2026-09-21 · позиция · cabinet-registration-promo-m0-order
+
+> Подтверждаю границу файлов для параллельной работы К2 и К4. К2 затрагивает: новый сервис-клиент офиса в `apps/cabinet/src/` (или отдельный пакет), переменные окружения в `config/env.schema.ts`. К4 затрагивает: `apps/cabinet/src/pages/LoginPage.tsx`, […] _(реплик в сеансе: 4)_
+
+— источник: `docs/seanses/cabinet-registration-promo-m0-order-2026-09-21.md#reply-1`
+
+### 2026-09-21 · позиция · cabinet-registration-promo-m0-order-r2
+
+> И это ключевая граница сессий. Серверные пути `packages/background-cabinet/src/` и браузерные `apps/cabinet/src/` — разные корни, разные сессии. Первый–третий кандидаты — это в основном сервер кабинета и офис; четвёртый — браузерное приложение и лендинг […] _(реплик в сеансе: 9)_
+
+— источник: `docs/seanses/cabinet-registration-promo-m0-order-r2-2026-09-21.md#reply-1`
+
+### 2026-09-21 · позиция · cabinet-registration-promo-m1-grant-door
+
+> Словарь: **код** — сущность панели; **грант** — строка в `grants[]`; **дверь** — маршрут офиса; **гашение** — инкремент `usedCount` (и побочные эффекты); **отзыв** — `revoke-code`. Кабинет не хранит правду о коде. Граница пакета: логика гашения остаётся в `panel-users-core`, […] _(реплик в сеансе: 8)_
+
+— источник: `docs/seanses/cabinet-registration-promo-m1-grant-door-2026-09-21.md#reply-1`
+
+### 2026-09-21 · позиция · cabinet-registration-promo-m2-link-key
+
+> Начну с границы. Сессия B по M0 владеет новым модулем клиента офиса в `packages/background-cabinet/src/modules/` и собственным файлом-схемой пары «адрес + ключ офиса». Значит пара обязана иметь свои имена переменных, а не прятаться за `API_INTERNAL_TOKEN` кабинета — тот на […] _(реплик в сеансе: 8)_
+
+— источник: `docs/seanses/cabinet-registration-promo-m2-link-key-2026-09-21.md#reply-1`
+
+### 2026-09-21 · позиция · cabinet-registration-promo-m3-order-failure
+
+> `AuthService` сегодня не видит клиента офиса: `auth.module.ts` без импортов модулей. Нужно явное расширение границы C: импорт модуля M2 (`office-registration`) в `auth.module.ts` и поле кода в `RegisterDto` (`auth.dto.ts`). Имя метода для C уже зафиксировано M2: […] _(реплик в сеансе: 7)_
+
+— источник: `docs/seanses/cabinet-registration-promo-m3-order-failure-2026-09-21.md#reply-1`
+
+### 2026-09-21 · позиция · cabinet-registration-promo-m4-form-landing
+
+> В `api/auth.ts` нужна `registerRequest(login, password, code)` → `POST /v1/auth/register`, тело `{ login, password, code }`. `parseError` ломает контракт: статус теряется. Предлагаю `AuthApiError` с `status: number` и `message: string`, плюс `mapAuthErrorStatus(status): string` […] _(реплик в сеансе: 6)_
+
+— источник: `docs/seanses/cabinet-registration-promo-m4-form-landing-2026-09-21.md#reply-1`
+
+### 2026-09-21 · позиция · team-evening-feedback
+
+> Ожегов. Оценка артефактов: DAILY_STANDUP чётко разложил, что сознательно не делаем (амнистия архива, DSP-бенчмарки, mfcc в код) — это дисциплина. DAILY_CODE_REVIEW правильно назвал append-only журналы (registry.jsonl, trail/*.jsonl) корректным паттерном с умеренным B2-риском. […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-21.md#reply-1`
 
 ### 2026-09-17 · позиция · team-evening-feedback
 
@@ -259,45 +301,3 @@
 > Оценка артефактов: Слабая связанность в #2181 сохранена — сброс `outcome` по `collectionId` симметрично в 4 панелях, логика бюджета в `@membrana/sample-playback`. Хороший пример соблюдения границ. Итоги дня: Основной структурный вклад — #2181 (таймаут sequence + сброс stale […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-26.md#reply-1`
-
-### 2026-08-25 · позиция · team-evening-feedback
-
-> Оценка артефактов: Согласованность документов высокая. `DAILY_CODE_REVIEW` верно указывает на «запах процесса» — orphaned trail `ritual-day`, что важнее, чем «зелёный код». Итоги дня: Работа по `pr:ship` (#2152) проведена образцово: чистые экспорты, явные проблемы, unit-тесты — […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-25.md#reply-1`
-
-### 2026-08-24 · позиция · logging-observability-cut-m0-order
-
-> Комната узкая: только рёбра между четырьмя кандидатами, без словаря и без существа. Лемма зависимости решения: «вердикт A раньше B», если без зафиксированного A обсуждение B либо бессмысленно, либо с высокой ценой переделки контракта. Д1 («сторож первым») — очередь исполнения; в […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/logging-observability-cut-m0-order-2026-08-24.md#reply-1`
-
-### 2026-08-24 · позиция · logging-observability-cut-m1-incident-number
-
-> Леммы. «Номер происшествия» — ключ картотеки и сшивки. «Request-id» — ключ одного HTTP-прохода. Публичный контракт фильтра ошибок — словарная статья отдельно от интерсептора request-id. Место: тело обязательно (потребитель UI и любой клиент, который не читает заголовки); […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/logging-observability-cut-m1-incident-number-2026-08-24.md#reply-1`
-
-### 2026-08-24 · позиция · logging-observability-cut-m1b-duty-pulse
-
-> Леммы. `DutyPulse` ≠ `Incident`. `DutyPulse` — периодическая запись состояния захвата. `PulseSilence` — сбой, единственный повод в картотеку (Т6). Носитель пульса: локальный append-only sink на узле (свой файл/лента величин во времени), не общий app-log кабинета и не коллекция […] _(реплик в сеансе: 5)_
-
-— источник: `docs/seanses/logging-observability-cut-m1b-duty-pulse-2026-08-24.md#reply-1`
-
-### 2026-08-24 · позиция · logging-observability-cut-m1c-disk-guard
-
-> Лемма: `DiskSpaceWatchdog` ≠ `TelegramClient` офиса. Сторож — отдельный процесс/юнит на хосте диска; публичный контракт — «измерил → решил → отправил», без импорта office-кода. Секрет токена не просачивается из env офиса в media через общий пакет: раскладка — свой env/secret на […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/logging-observability-cut-m1c-disk-guard-2026-08-24.md#reply-1`
-
-### 2026-08-24 · позиция · logging-observability-cut-m2-health-deep
-
-> Начну с границ словаря. `/health` и `/health/deep` — две разные статьи, не синонимы. `/health` — liveness процесса кабинета: жив, версия, uptime. `/health/deep` — read-model предметного состояния кабинета: зависимости и очереди, без которых продукт врёт «ок». Публичный контракт […] _(реплик в сеансе: 7)_
-
-— источник: `docs/seanses/logging-observability-cut-m2-health-deep-2026-08-24.md#reply-1`
-
-### 2026-08-24 · позиция · team-evening-feedback
-
-> Оценка артефактов: `MAIN_DAY_ISSUE` корректно назначает фокус на горячий путь журнала, а не на UI. `DAILY_CODE_REVIEW` отмечает: #2115 — границы соблюдены (убран прямой `anthropicPost` из `_strategic-plan.mjs`, процедура в `llm-procedures.json`); #2124 — чистая функция в […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-24.md#reply-1`
