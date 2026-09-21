@@ -7,8 +7,8 @@
   "frozenDigest": "a0f997bb65bff32962a807a3f627fcf7c38f7221f0856e3e2114b630529b9c5d",
   "magistral": "tariff-transitions-live-day2",
   "swallow": {
-    "draftDigest": "b46ecf9ef8223b44ad4f89294235394c23fd29c6be54ca19b1702cd2e5343b3d",
-    "draftFile": "docs/comms/drafts/swallow-day-2026-09-21.md",
+    "draftDigest": "d65b10208a7ab878975bac95751ddc98a0dfe126843026b8ea7345d3e15d7cf6",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-21.md",
     "ownerAck": true,
     "day": "2026-09-21",
     "claimsProbe": {
@@ -16,7 +16,8 @@
       "protocol": "docs/seanses/team-evening-feedback-2026-09-21.md",
       "sha": "d21e3f573018",
       "at": "2026-09-21T21:44:15.898Z"
-    }
+    },
+    "gate": "evening:partner-swallow"
   },
   "day": "2026-09-21",
   "magistralChosenAt": "2026-09-21",
