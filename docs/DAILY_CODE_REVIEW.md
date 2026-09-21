@@ -1,42 +1,76 @@
-<!-- Сгенерировано: 2026-09-18T17:50:55.890Z (yarn code-review; daily, llm-anthropic) -->
+<!-- Сгенерировано: 2026-09-21T11:56:03.593Z (yarn code-review; daily, llm-anthropic) -->
 
 > Контур ревью (rt-8):
 > Режим: работа дня
 > Precision: exact
-> Период: bac1180ca66e4ba4a017264cce7f225843026b9d^..a80fe4189a7a6b37486ab320b420d39f6ea3414f (9 коммит(ов))
-> ⚠ Oversized (>400 строк, дифф не развёрнут — ревьюить отдельно): bac1180c #2355 (435), 7f6c2875 #2359 (3720), a80fe418 (625)
+> Период: b9a25369729c8d36bb4b52e425028e44f32830e8^..90efea422974027ce69824800dc9bb514223333a (3 коммит(ов))
 
 ---
 
-Tier: T1
+Tier: T0
 
-[Teamlead]: День завершён успешно; 9 коммитов без runtime-регрессий. Основной груз — три документальных PR (тарифы, night-hunt отчёты, доказательства объёма буфера) и одна критическая fix в cabinet (дедублирование гонок). Lint и typecheck зелёные по всем пакетам, test-предупреждения в media-library и background-media НЕ блокируют (cache-хиты для остального). Завтра утром: `yarn turbo run typecheck test --filter='@membrana/background-cabinet' --continue` (к #2313), затем smoke для cabinet и media связки. Вечер дня — уборка: 4 новых untracked-файла (архив дня, мемо, сеансы) требуют `yarn archive:daily-day` перед коммитом.
+---
 
-[Структурщик]: 
-- **C1 (boundaries):** PR #2313 (cabinet journal) добавляет дедублирование в `telemetryReport.create` и `telemetryLiveRecord.create` без расширения границ пакета — всё внутри `modules/journal`. ✅
-- **C4 (services):** Сервис `JournalService` обогащен обработкой `P2002` (уникальный constraint) с fallback на `findUnique` — слабая связанность, ядро не ломается. ✅
-- **C7 (tests):** Новые тесты для concurrent idempotency (`deduplicates concurrent reports/live records`) покрывают гонку; harness `createJournalServiceWriteHarness` корректно имитирует Prisma. ✅
-- **C8 (console.log):** Отсутствует; только инструментация `ingestWindowGauge.recordArrived()`. ✅
+**[Vesnin · Архитектор · ведущий ревью]:**
+Дифф затрагивает исключительно `docs/` — три пути: `docs/tasks/morning-gates-state.json`, `docs/procedure-runs/trail/2026-09-21.jsonl`, плюс незакоммиченные `docs/DAY_PLAN.md`, `docs/STRATEGIC_PLAN_WEEK.md`, `docs/STRATEGY_DAY.md`, `docs/security/deps-watch-snapshot.json`.
+Runtime-пакеты не тронуты, границы модулей не изменены, ADR не требуется — архитектурных рисков нет.
 
-[Математик]: —
+**Бестиарий (T5):** B6 зафиксирован в trail-записи: `sequence:2` фиксирует `status:"fail"` с `gaps:["morning-care"]`, затем немедленно открывается `ritual-day-2026-09-21-r2` — это паттерн ретрая после red-gate. Если ретрай запущен **тем же входом без диагноза причины gap `morning-care`** — это граничит с B5 «Слепой ретрай». Диагноз в диффе отсутствует: нет ни записи `friction`, ни изменения `coverage.evidence` между прогоном 1 и r2.
 
-[Музыкант]: —
+**Вердикт ведущего: пропуск** — runtime не затронут, merge не блокируется. Но риск B5 требует утреннего разбора gap `morning-care`.
 
-[Верстальщик]: —
+---
 
-**Итоговый артефакт:** 
-- `docs/DAILY_CODE_REVIEW.md` (этот файл)
-- Уборка: `yarn archive:daily-day` перед завтра утром
+**[Teamlead · Tarasov]:**
+Три коммита — чистая ритуальная бухгалтерия: обновлён digest и gate ласточки вечера 18.09, открыт trail 21.09.
+PR size: OK (~10 строк).
+Красный CI по `@membrana/media-library-service` и `@membrana/background-media` — **существовал до этого диффа** (docs-only коммиты не могут его породить), но утром нужно выяснить источник до начала новых задач.
+
+Незакоммиченные `docs/security/deps-watch-snapshot.json` — C9: убедиться, что снапшот не содержит токенов/секретов перед коммитом.
+
+Утренние команды:
+
+```bash
+# 1. Выяснить gap morning-care в trail (B5-риск, Vesnin выше)
+cat docs/procedure-runs/trail/2026-09-21.jsonl | jq 'select(.status=="fail")'
+
+# 2. Проверить причину красного билда до начала работы
+yarn turbo run build test --filter=@membrana/media-library-service --filter=@membrana/background-media
+
+# 3. Проверить deps-watch-snapshot на секреты перед коммитом
+grep -iE "(token|secret|password|key)" docs/security/deps-watch-snapshot.json | head -20
+
+# 4. Прочитать DAILY_CODE_REVIEW.md (этот файл), затем standup
+yarn standup
+```
+
+---
+
+**[Структурщик · Ozhegov]:**
+Файл `morning-gates-state.json` получил новое поле `gate: "evening:partner-swallow"` — семантически корректное расширение, не ломает существующие читатели (append-семантика JSON-объекта).
+Trail-файл 2026-09-21.jsonl ведётся как append-only JSONL: порядок `sequence` 1→2→1(r2) корректен — нумерация сбрасывается per-runId, это норма если схема предполагает именно такое поведение; стоит убедиться, что потребители trail читают по `runId`, а не по глобальному `sequence`.
+
+---
+
+**[Математик · Dynin]:** —
+
+**[Музыкант · Kuryokhin]:** —
+
+**[Верстальщик · Rodchenko]:** —
+
+---
+
+**Итоговый артефакт:** `docs/DAILY_CODE_REVIEW.md` (вечер 2026-09-21)
 
 **Definition of Done (утро):**
 ```bash
-yarn turbo run typecheck test --filter='@membrana/background-cabinet'
-yarn turbo run lint --filter='@membrana/background-cabinet @membrana/background-media'
-# Smoke: проверить через Postman/curl: POST /v1/journal/reports (duplicate clientEntryId) → два запроса → один в базе, оба ответ с одинаковым id
+yarn turbo run build test \
+  --filter=@membrana/media-library-service \
+  --filter=@membrana/background-media
+# зелёный билд → незаблокированный старт дня
 ```
 
-**Риски:** 
-- `media-library-service#build` и `background-media#test` упали; нужен прогон после #2313 merge (может быть зависимость от cabinet обновлений).
-- night-hunt trigger (#2357) теперь краснеет на молчание (held count = 0) — это улучшение, но утро проверит, что `night-hunt-office-trigger.yml` с новыми условиями стартует без ошибок.
-
-**Вердикт:** LGTM после green `yarn turbo run test --filter='@membrana/background-cabinet'`
+**Риски:**
+- **P1** — красный билд `media-library-service` / `background-media`: не порождён этим диффом, но блокирует чистый старт; выяснить утром до новых задач.
+- **P2** — B5-риск в trail: ретрай `r2` без видимого диагноза gap `morning-care`; утром проверить через `jq` выше и добавить `friction`-запись если причина найдена.
+- **P2** — `deps-watch-snapshot.json` незакоммичен: проверить на отсутствие секретов (C9) перед включением в следующий коммит.
