@@ -77,11 +77,27 @@ async function readSessionSecret() {
   return secret;
 }
 
-async function call(path, { method = 'GET', cookie, body } = {}) {
+/**
+ * Ключ внутренней охраны офиса (заголовок X-Membrana-Token у ApiTokenGuard).
+ * Как и секрет сессии, читается с VDS и НИКОГДА не печатается.
+ */
+async function readInternalToken() {
+  const { code, stdout } = await captureOnOffice(
+    "grep -m1 '^API_INTERNAL_TOKEN=' /etc/membrana/office.env | cut -d= -f2-",
+  );
+  const token = stdout.trim();
+  if (code !== 0 || !token) {
+    throw new Error('API_INTERNAL_TOKEN не найден в /etc/membrana/office.env на VDS');
+  }
+  return token;
+}
+
+async function call(path, { method = 'GET', cookie, body, internalToken } = {}) {
   const response = await fetch(`${BASE}${path}`, {
     method,
     headers: {
       ...(cookie ? { Cookie: cookie } : {}),
+      ...(internalToken ? { 'X-Membrana-Token': internalToken } : {}),
       ...(body ? { 'Content-Type': 'application/json' } : {}),
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
@@ -179,6 +195,76 @@ async function main() {
       cookie: owner,
     });
     check('промокод смоука отозван (за собой убрано)', revokedCode.json?.ok === true);
+  }
+
+  await cabinetRegistrationDoor(owner);
+}
+
+/**
+ * Дверь регистрации в кабинете (заседание M1 21.09): чеканим код с грантом
+ * cabinet-register → check → redeem → повтор отвечает exhausted. Код одноразовый,
+ * в лог уходит только префикс, в конце отзывается.
+ *
+ * Дверь живёт под внутренней охраной офиса, панельная cookie ей не нужна и не
+ * даётся: смоук заодно проверяет, что без ключа дверь не открывается.
+ */
+async function cabinetRegistrationDoor(owner) {
+  console.log('=== 6. дверь регистрации в кабинете ===');
+  const CONSUME = '/v1/internal/cabinet/registration-codes/consume';
+  const internalToken = await readInternalToken();
+
+  const label = `smoke-cabinet-${new Date().toISOString().slice(0, 16)}`;
+  const minted = await call('/v1/panel/admin/promo-codes', {
+    method: 'POST',
+    cookie: owner,
+    body: { label, grants: ['cabinet-register'], days: 1, maxUses: 1 },
+  });
+  if (!check('код с грантом cabinet-register отчеканен', minted.json?.code, `HTTP ${minted.status}`)) {
+    return;
+  }
+  const code = minted.json.code;
+  console.log(`  код ${codePrefix(code)} (1 день, 1 использование, отзовём в конце)`);
+
+  const noKey = await call(CONSUME, { method: 'POST', body: { code, mode: 'check' } });
+  check('без ключа дверь закрыта (401)', noKey.status === 401, `HTTP ${noKey.status}`);
+
+  const checked = await call(CONSUME, {
+    method: 'POST',
+    internalToken,
+    body: { code, mode: 'check' },
+  });
+  check('check → годен, без приращения', checked.json?.redeemable === true, `HTTP ${checked.status}`);
+  check('check не тронул счётчик', checked.json?.uses?.used === 0, JSON.stringify(checked.json?.uses));
+
+  const redeemed = await call(CONSUME, {
+    method: 'POST',
+    internalToken,
+    body: { code, mode: 'redeem' },
+  });
+  check('redeem → погашен', redeemed.json?.ok === true, `HTTP ${redeemed.status}`);
+  check('счётчик вырос до 1 из 1', redeemed.json?.uses?.used === 1, JSON.stringify(redeemed.json?.uses));
+
+  const again = await call(CONSUME, {
+    method: 'POST',
+    internalToken,
+    body: { code, mode: 'redeem' },
+  });
+  check('повтор → 409 exhausted', again.status === 409 && again.json?.reason === 'exhausted',
+    `HTTP ${again.status} ${JSON.stringify(again.json)}`);
+
+  const badMode = await call(CONSUME, {
+    method: 'POST',
+    internalToken,
+    body: { code, mode: 'погасить' },
+  });
+  check('иной режим → 400', badMode.status === 400, `HTTP ${badMode.status}`);
+
+  if (minted.json?.id) {
+    const revoked = await call(`/v1/panel/admin/promo-codes/${minted.json.id}/revoke`, {
+      method: 'POST',
+      cookie: owner,
+    });
+    check('код смоука отозван (за собой убрано)', revoked.json?.ok === true);
   }
 }
 

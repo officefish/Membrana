@@ -38,7 +38,13 @@ export interface PromoCode {
 export interface AuditEntry {
   readonly at: string;
   readonly actor: string;
-  readonly action: 'register' | 'grants' | 'revoke-user' | 'mint-code' | 'revoke-code';
+  readonly action:
+    | 'register'
+    | 'grants'
+    | 'revoke-user'
+    | 'mint-code'
+    | 'revoke-code'
+    | 'redeem-cabinet-code';
   readonly target: string;
   readonly detail: string;
 }
@@ -216,6 +222,133 @@ export function redeemCode(
       detail: `name=${cleanName} code=${promo.label}`,
     }),
     user,
+  };
+}
+
+// ─── регистрация в кабинете по коду панели ─────────────────────────────────────────
+
+/**
+ * Грант «регистрация в кабинете» (заседание M1 21.09, ратифицировано владельцем).
+ * Это НЕ раздел панели: через grantsAllowSection литерал не идёт, а через
+ * normalizeGrants проходит как обычная строка.
+ */
+export const CABINET_REGISTER_GRANT = 'cabinet-register';
+
+export type CabinetConsumeMode = 'check' | 'redeem';
+
+export type CabinetConsumeRefusal =
+  | 'not_found'
+  | 'revoked'
+  | 'expired'
+  | 'grant_mismatch'
+  | 'exhausted';
+
+export type CabinetConsumeOutcome =
+  | { readonly ok: true; readonly redeemable: true; readonly grant: string; readonly uses: { readonly used: number; readonly max: number } }
+  | { readonly ok: true; readonly code: string; readonly grant: string; readonly uses: { readonly used: number; readonly max: number } }
+  | { readonly ok: false; readonly reason: CabinetConsumeRefusal };
+
+/**
+ * Проверка и погашение кода регистрации в кабинете.
+ *
+ * Порядок предикатов ратифицирован и не переставляется:
+ * not_found → revoked → expired → grant_mismatch → exhausted → ok.
+ *
+ * mode=check отвечает о годности и состояния не меняет. mode=redeem приращает
+ * счётчик использований и пишет аудит — и на успех, и на отказ; check следа не
+ * оставляет (разъяснение ведущей 22.09: действие названо redeem-*, а проверку
+ * живости зовут регулярно — лента с капом вытеснила бы выдачи и отзывы).
+ *
+ * Пользователя панели дверь не создаёт и section-гранты никуда не копирует.
+ */
+export function consumeCabinetRegistrationCode(
+  state: PanelUsersState,
+  rawCode: string,
+  mode: CabinetConsumeMode,
+  nowSec: number,
+  nowIso: string,
+): { state: PanelUsersState; outcome: CabinetConsumeOutcome } {
+  const code = rawCode.trim().toUpperCase();
+  const promo = state.codes.find((c) => c.code === code);
+
+  const refuse = (reason: CabinetConsumeRefusal) => ({
+    state:
+      mode === 'redeem'
+        ? appendAudit(state, {
+            at: nowIso,
+            actor: 'service:cabinet',
+            action: 'redeem-cabinet-code' as const,
+            target: promo?.id ?? codePrefix(code),
+            detail: `mode=redeem ok=false reason=${reason}`,
+          })
+        : state,
+    outcome: { ok: false as const, reason },
+  });
+
+  if (!promo) return refuse('not_found');
+  if (promo.revoked) return refuse('revoked');
+  if (promo.expiresAt !== null && promo.expiresAt <= nowSec) return refuse('expired');
+  if (!promo.grants.includes(CABINET_REGISTER_GRANT)) return refuse('grant_mismatch');
+  if (promo.usedCount >= promo.maxUses) return refuse('exhausted');
+
+  if (mode === 'check') {
+    return {
+      state,
+      outcome: {
+        ok: true,
+        redeemable: true,
+        grant: CABINET_REGISTER_GRANT,
+        uses: { used: promo.usedCount, max: promo.maxUses },
+      },
+    };
+  }
+
+  const used = promo.usedCount + 1;
+  const next: PanelUsersState = {
+    ...state,
+    codes: state.codes.map((c) => (c.id === promo.id ? { ...c, usedCount: used } : c)),
+  };
+  return {
+    state: appendAudit(next, {
+      at: nowIso,
+      actor: 'service:cabinet',
+      action: 'redeem-cabinet-code',
+      target: promo.id,
+      detail: `mode=redeem ok=true usedCount=${used}/${promo.maxUses}`,
+    }),
+    outcome: {
+      ok: true,
+      code: promo.code,
+      grant: CABINET_REGISTER_GRANT,
+      uses: { used, max: promo.maxUses },
+    },
+  };
+}
+
+export interface StateLock {
+  /** Исполнить участок «прочитать — проверить — приростить — записать» в одиночку. */
+  run<T>(section: () => Promise<T>): Promise<T>;
+}
+
+/**
+ * Замок единственного пишущего контура (решение M1, строка «Атомарность»).
+ *
+ * Чистое ядро состояния не хранит, поэтому инвариант «успешных redeem ≤ maxUses»
+ * держится не самой проверкой, а тем, что между чтением состояния и его записью
+ * не вклинивается второй заход. Участки исполняются по одному, в порядке
+ * обращения; падение участка замок освобождает.
+ */
+export function createStateLock(): StateLock {
+  let tail: Promise<unknown> = Promise.resolve();
+  return {
+    run<T>(section: () => Promise<T>): Promise<T> {
+      const result = tail.then(section, section);
+      tail = result.then(
+        () => undefined,
+        () => undefined,
+      );
+      return result;
+    },
   };
 }
 
