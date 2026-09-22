@@ -2,7 +2,9 @@ import { createSessionToken, hashPassword, sessionExpiresAt, verifyPassword } fr
 import type { AuthUser, LoginResult, ValidatedSession } from './auth.types';
 import { PrismaService } from '../../prisma/prisma.service';
 import type { AppConfig } from '../../config/env.schema';
+import type { CabinetConfigWithOffice } from '../../config/office-env.schema';
 import { APP_CONFIG } from '../../config/config.tokens';
+import type { RegistrationOutcome } from '../office-registration';
 import {
   ForbiddenException,
   Inject,
@@ -35,15 +37,10 @@ export const REGISTRATION_TRY_LATER_MESSAGE = 'Please try again later';
 export const REGISTRATION_CODE_MAX_LENGTH = 128;
 
 /**
- * Исход клиента офиса — тип из решения M2, структурно. Сервис регистрации не импортирует
- * модуль B во время выполнения: до слияния B зубы идут на подменном клиенте, а после —
- * класс B удовлетворяет этому порту как есть (TypeScript структурен).
+ * Исход клиента офиса — тип модуля B (решение M2), только тип: во время выполнения сервис
+ * регистрации модуль B не тянет, зубы идут на подменном клиенте по этому же типу.
  */
-export type RegistrationOutcome =
-  | { readonly kind: 'ok'; readonly payload?: unknown }
-  | { readonly kind: 'refused'; readonly reason: string }
-  | { readonly kind: 'office-unavailable'; readonly detail?: string }
-  | { readonly kind: 'config-invalid'; readonly detail?: string };
+export type { RegistrationOutcome };
 
 /** Порт клиента двери офиса (M2): один метод, продуктовый путь — только гашение. */
 export interface RegistrationCodeRedeemer {
@@ -58,11 +55,11 @@ export interface RegistrationCodeRedeemer {
 export const REGISTRATION_CODE_REDEEMER = Symbol('REGISTRATION_CODE_REDEEMER');
 
 /**
- * Конфиг с парой офиса из работы B: `office === null`, когда `OFFICE_URL`/`OFFICE_API_TOKEN`
- * не заданы (M2). До слияния B поля нет вовсе — читается как «не задано», регистрация
- * выключена: отказ закрыт, не открыт.
+ * Конфиг с парой офиса из работы B (`config.module.ts` → `APP_CONFIG`): `office === null`,
+ * когда `OFFICE_URL`/`OFFICE_API_TOKEN` не заданы (M2). Если поля нет вовсе (конфиг
+ * без пары в зубах) — читается как «не задано»: регистрация выключена, отказ закрыт.
  */
-type RegistrationConfig = AppConfig & { readonly office?: unknown };
+type RegistrationConfig = CabinetConfigWithOffice | (AppConfig & { readonly office?: unknown });
 
 type LocalRefusalReason = 'invalid_lengths' | 'empty_code' | 'code_too_long' | 'login_taken';
 

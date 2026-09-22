@@ -16,6 +16,7 @@ import {
   type RegistrationCodeRedeemer,
   type RegistrationOutcome,
 } from './auth.service';
+import type { RegistrationRefusalReason } from '../office-registration';
 
 // ─── подмены ───────────────────────────────────────────────────────────────────────────
 
@@ -67,7 +68,7 @@ function makeRedeemer(outcomes: RegistrationOutcome[] = []) {
     calls,
     redeemRegistrationCode: vi.fn(async (code: string) => {
       calls.push(code);
-      return outcomes.length > 0 ? (outcomes.shift() as RegistrationOutcome) : ({ kind: 'ok' } as const);
+      return outcomes.length > 0 ? (outcomes.shift() as RegistrationOutcome) : ({ kind: 'ok', payload: {} } as const);
     }),
   };
   return redeemer;
@@ -136,7 +137,7 @@ describe('AuthService.register — карта двери M3 по исходам 
 
   it.each(['not_found', 'revoked', 'expired', 'grant_mismatch', 'exhausted'])(
     'refused(%s) → 403 «Registration was not accepted», пользователь не создан, причина только в лог',
-    async (reason: string) => {
+    async (reason: RegistrationRefusalReason) => {
       const { service, prisma } = build({ outcomes: [{ kind: 'refused', reason }] });
       const err = await expectHttp(
         service.register(GOOD.login, GOOD.password, GOOD.code),
@@ -273,7 +274,7 @@ describe('AuthService.register — порядок шагов, гонки и по
     });
     (redeemer.redeemRegistrationCode as ReturnType<typeof vi.fn>).mockImplementation(async () => {
       order.push('redeem');
-      return { kind: 'ok' } as const;
+      return { kind: 'ok', payload: {} } as const;
     });
     prisma.user.create.mockImplementation(async (args: { data: { login: string; passwordHash: string; role: 'user' } }) => {
       order.push('create');
@@ -285,7 +286,7 @@ describe('AuthService.register — порядок шагов, гонки и по
 
   it('гонка одним кодом (maxUses=1): офис гасит один раз — ровно один пользователь, второй 403', async () => {
     const { service, users } = build({
-      outcomes: [{ kind: 'ok' }, { kind: 'refused', reason: 'exhausted' }],
+      outcomes: [{ kind: 'ok', payload: {} }, { kind: 'refused', reason: 'exhausted' }],
     });
     const results = await Promise.allSettled([
       service.register('first-user', GOOD.password, 'ONE-CODE'),
@@ -340,7 +341,7 @@ describe('AuthService.register — порядок шагов, гонки и по
   });
 
   it('повтор после полуудачи тем же кодом: офис отвечает exhausted → 403, пользователя по-прежнему нет', async () => {
-    const { service, prisma, users } = build({ outcomes: [{ kind: 'ok' }, { kind: 'refused', reason: 'exhausted' }] });
+    const { service, prisma, users } = build({ outcomes: [{ kind: 'ok', payload: {} }, { kind: 'refused', reason: 'exhausted' }] });
     prisma.user.create.mockRejectedValueOnce(new Error('unique violation'));
     await expectHttp(service.register(GOOD.login, GOOD.password, GOOD.code), 403, REGISTRATION_NOT_ACCEPTED_MESSAGE);
     await expectHttp(service.register(GOOD.login, GOOD.password, GOOD.code), 403, REGISTRATION_NOT_ACCEPTED_MESSAGE);
