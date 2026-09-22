@@ -84,6 +84,16 @@ function makeService(prisma: PrismaMock, nowRef: { t: number }) {
   return svc;
 }
 
+function makeServiceWithOfficeProbe(
+  prisma: PrismaMock,
+  nowRef: { t: number },
+  officeProbe: { probeOfficeConfig: ReturnType<typeof vi.fn> },
+) {
+  const svc = new HealthDeepService(prisma as unknown as PrismaService, officeProbe as never);
+  svc.setClockForTests(() => nowRef.t);
+  return svc;
+}
+
 describe('HealthDeepService — дешёвые источники (M2: p99, без Θ(N²) на request-path)', () => {
   it('лента = reports + liveRecords; TTL-кэш 30 с не дёргает базу повторно', async () => {
     const prisma = makePrisma();
@@ -117,6 +127,26 @@ describe('HealthDeepService — дешёвые источники (M2: p99, бе
     const svc = makeService(makePrisma(), { t: 1_756_000_000_000 });
     const s = await svc.snapshot();
     expect(s.numbers.ingestArrivedRatio).toBeNull();
+  });
+
+  it('office registration pair is probed inside /health/deep snapshot, not at service construction', async () => {
+    const probe = { probeOfficeConfig: vi.fn().mockResolvedValue({ kind: 'ok' }) };
+    const svc = makeServiceWithOfficeProbe(makePrisma(), { t: 1_756_000_000_000 }, probe);
+    expect(probe.probeOfficeConfig).not.toHaveBeenCalled();
+
+    const s = await svc.snapshot();
+
+    expect(probe.probeOfficeConfig).toHaveBeenCalledTimes(1);
+    expect(s.officeRegistration).toEqual({ kind: 'ok' });
+  });
+
+  it('office registration probe keeps config-invalid visible to health-deep callers', async () => {
+    const probe = { probeOfficeConfig: vi.fn().mockResolvedValue({ kind: 'config-invalid', detail: '401' }) };
+    const svc = makeServiceWithOfficeProbe(makePrisma(), { t: 1_756_000_000_000 }, probe);
+
+    const s = await svc.snapshot();
+
+    expect(s.officeRegistration).toEqual({ kind: 'config-invalid', detail: '401' });
   });
 });
 
