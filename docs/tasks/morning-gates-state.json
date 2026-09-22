@@ -1,31 +1,19 @@
 {
   "magistralOptions": [
-    "tariff-transitions-live-day2",
-    "tariff-downgrade-cold-m4",
-    "tool-silence-fixes"
+    "cabinet-registration-exec",
+    "tariff-transitions-live-day3",
+    "secret-parser-built"
   ],
-  "frozenDigest": "a0f997bb65bff32962a807a3f627fcf7c38f7221f0856e3e2114b630529b9c5d",
-  "magistral": "tariff-transitions-live-day2",
-  "swallow": {
-    "draftDigest": "d65b10208a7ab878975bac95751ddc98a0dfe126843026b8ea7345d3e15d7cf6",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-21.md",
-    "ownerAck": true,
-    "day": "2026-09-21",
-    "claimsProbe": {
-      "verdict": "soft",
-      "protocol": "docs/seanses/team-evening-feedback-2026-09-21.md",
-      "sha": "d21e3f573018",
-      "at": "2026-09-21T21:44:15.898Z"
-    },
-    "gate": "evening:partner-swallow"
-  },
-  "day": "2026-09-21",
-  "magistralChosenAt": "2026-09-21",
+  "frozenDigest": "c168fa52e456d7820f6206dbfc1f741a14920914ebcc48c68f7d94da7e75fc15",
+  "magistral": "cabinet-registration-exec",
+  "swallow": null,
+  "day": "2026-09-22",
+  "magistralChosenAt": "2026-09-22",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-09-21",
-    "chosen": "tariff-transitions-live-day2",
-    "snapshotDigest": "a0f997bb65bff32962a807a3f627fcf7c38f7221f0856e3e2114b630529b9c5d",
+    "at": "2026-09-22",
+    "chosen": "cabinet-registration-exec",
+    "snapshotDigest": "c168fa52e456d7820f6206dbfc1f741a14920914ebcc48c68f7d94da7e75fc15",
     "inSnapshot": true
   }
 }
