@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Optional } from '@nestjs/common';
 
 import { PrismaService } from '../../prisma/prisma.service';
+import { OfficeRegistrationBridgeService, type ConfigProbeOutcome } from '../office-registration';
 import { ingestWindowGauge } from './ingest-window.gauge';
 import {
   DEFAULT_HEALTH_DEEP_THRESHOLDS,
@@ -20,6 +21,8 @@ export type HealthDeepSnapshot = {
   numbers: HealthDeepNumbers;
   /** Проба базы не уложилась в budget → род «не дойти» (unreachable). */
   dbTimedOut: boolean;
+  /** Живость пары OFFICE_URL/OFFICE_API_TOKEN; зовётся только при /health/deep snapshot. */
+  officeRegistration: ConfigProbeOutcome | null;
   arrivedInWindow: number;
   measuredAt: string;
 };
@@ -65,7 +68,10 @@ export class HealthDeepService {
   // деплоя 24.08 (класс #2009). Часы — свойство с тестовым швом.
   private now: () => number = () => Date.now();
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Optional() private readonly officeRegistration?: OfficeRegistrationBridgeService,
+  ) {}
 
   /** Тестовый шов: подмена часов (TTL-кэш, budget). */
   setClockForTests(now: () => number): void {
@@ -81,6 +87,7 @@ export class HealthDeepService {
     const startedAt = this.now();
 
     const db = await this.probeDb();
+    const officeRegistration = await this.probeOfficeRegistration();
     const tapeLength = await this.readTapeLength(db.timedOut);
     const arrivedInWindow = ingestWindowGauge.arrivedInWindow(this.now());
 
@@ -93,9 +100,15 @@ export class HealthDeepService {
         ingestArrivedRatio: null,
       },
       dbTimedOut: db.timedOut,
+      officeRegistration,
       arrivedInWindow,
       measuredAt: new Date(startedAt).toISOString(),
     };
+  }
+
+  private async probeOfficeRegistration(): Promise<ConfigProbeOutcome | null> {
+    if (!this.officeRegistration) return null;
+    return this.officeRegistration.probeOfficeConfig();
   }
 
   private async probeDb(): Promise<{ latencyMs: number | null; timedOut: boolean }> {
