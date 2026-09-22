@@ -1,1 +1,5 @@
 {"ts":"2026-09-22T11:50:49.858Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-09-22T20:50:58.292Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-09-22-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-22T20:50:58.292Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-26-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-22T20:50:58.292Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-07-23-llm-procedure-channels-m3a-llm-proxy-seam","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-22T20:50:58.292Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14388/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 370 (причины в op-log) -->
+Записей: 50 · бюджет 14395/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 371 (причины в op-log) -->
+
+### 2026-09-22 · позиция · team-evening-feedback
+
+> Оценка артефактов: к аудио-контуру и Web Audio артефакты дня не обращались — фокус целиком в auth/cabinet/office; согласованность документов не нарушила зону. Итоги дня: — На завтра: — (по содержательным итогам зоны); процессно — поддержать выкатку регистрации, если появится […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-22.md#reply-1`
 
 ### 2026-09-21 · позиция · cabinet-registration-promo-m0-order
 
@@ -295,12 +301,6 @@
 > Оценка артефактов: Стендап верно отклонил #2177 play-path как primary — на проде принято владельцем. Code-review не тронул Web Audio — фокус дня был корректен. Итоги дня: Буфер/квота узла и GC по сэмплам — media-контур, не звук. Части 1–4 #2204 в стволе. Но до дежурства 28.08 […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-27.md#reply-1`
-
-### 2026-08-26 · позиция · team-evening-feedback
-
-> Оценка артефактов: #2181 лечит зависание sequence — это реальная починка play-пути панелей дублей/чарт-листа. Но ключевой дефект #2177 «треки из выборки не играют» в развёрнутом diff здесь не виден. Итоги дня: Smoke 48 kHz first-track (#2179) опирается на существующий […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-26.md#reply-1`
 
 ### 2026-07-23 · позиция · llm-procedure-channels-m4a-agent-usage
 

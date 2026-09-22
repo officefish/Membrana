@@ -6,7 +6,13 @@
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
 Записей: 49 · бюджет 14329/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 376 (причины в op-log) -->
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 377 (причины в op-log) -->
+
+### 2026-09-22 · позиция · team-evening-feedback
+
+> Оценка артефактов: DAILY_CODE_REVIEW точно поймал структурный риск — два параллельных `runId` (`ritual-day-2026-09-22` и `-r2`) с пересекающимися `sequence`-номерами в одном файле журнала; это дефект контракта агрегации, не косметика. Артефакты дня взаимно согласованы через […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-22.md#reply-1`
 
 ### 2026-09-21 · позиция · cabinet-registration-promo-m0-order
 
@@ -295,9 +301,3 @@
 > Оценка артефактов: Стендап и MAIN_DAY_ISSUE четко развели «не делаем» и «делаем» — это дисциплина. Code-review подтвердил связанность в видимом диффе. Итоги дня: #2207 — чистое ядро в `media-library-service`, export через `index`, план ≠ delete, тесты на […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-27.md#reply-1`
-
-### 2026-08-26 · позиция · team-evening-feedback
-
-> Оценка артефактов: Слабая связанность в #2181 сохранена — сброс `outcome` по `collectionId` симметрично в 4 панелях, логика бюджета в `@membrana/sample-playback`. Хороший пример соблюдения границ. Итоги дня: Основной структурный вклад — #2181 (таймаут sequence + сброс stale […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-26.md#reply-1`

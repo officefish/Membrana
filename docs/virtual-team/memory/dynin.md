@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14298/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 368 (причины в op-log) -->
+Записей: 49 · бюджет 14306/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 369 (причины в op-log) -->
+
+### 2026-09-22 · позиция · team-evening-feedback
+
+> Оценка артефактов: артефакты дня к моей зоне не обращались — стратегия, план и MAIN_DAY_ISSUE согласованно держали фокус на регистрационном контуре, не пытались подмешать DSP/бенчмарки; STRATEGY_DAY по-прежнему устаревший вещдок — это чужой долг, но он делает раздел «стратегия» […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-22.md#reply-1`
 
 ### 2026-09-21 · позиция · cabinet-registration-promo-m0-order
 
@@ -295,9 +301,3 @@
 > Оценка артефактов: MAIN_DAY_ISSUE формализовал критерий успеха (#2204 DoD) — это позволило code-review не зачесть «кнопки» как Done. Хорошая основа. Итоги дня: `planBufferCleanup` — детерминированный отбор по `createdAt`, NaN-время → protected, `freedBytes`/`remaining` — […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-27.md#reply-1`
-
-### 2026-08-26 · позиция · team-evening-feedback
-
-> Оценка артефактов: Математическая составляющая дня скромная, но корректная: `playBudgetMs` с длительностью + slack и fallback на `0`/NaN покрыт тестами; `requestsPerNewItem` без off-by-one. Итоги дня: `BASELINE_2113` заморожен константой — ок для before/after, но я явно […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-26.md#reply-1`
