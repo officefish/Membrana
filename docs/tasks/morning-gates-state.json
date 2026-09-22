@@ -6,7 +6,12 @@
   ],
   "frozenDigest": "c168fa52e456d7820f6206dbfc1f741a14920914ebcc48c68f7d94da7e75fc15",
   "magistral": "cabinet-registration-exec",
-  "swallow": null,
+  "swallow": {
+    "draftDigest": "2e96d4ecef48ccc52e62ede47dae83ac922b8bbf5a99e17b3208095ae4946dfa",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-09-22.md",
+    "ownerAck": true,
+    "day": "2026-09-22"
+  },
   "day": "2026-09-22",
   "magistralChosenAt": "2026-09-22",
   "magistralAuthor": "human",
