@@ -60,13 +60,31 @@ export function createRegisterRateLimiter(
 }
 
 /**
- * Ключ ограничителя — адрес клиента, как его видит Fastify (`req.ip`).
+ * Ключ ограничителя — адрес КЛИЕНТА, каким его видит обратный прокси (разъяснение Р6
+ * ведущей к M3 «ключ = IP», 22.09).
  *
- * Оговорка сессии C (не решение): за обратным прокси без `trustProxy` Fastify отдаёт
- * адрес прокси, и все клиенты попадают в одно окно. Вопрос вынесен ведущей; здесь
- * только честный fallback на «unknown», чтобы отсутствие адреса не роняло дверь.
+ * За Caddy без `trustProxy` Fastify отдаёт в `req.ip` адрес прокси, и все клиенты
+ * попали бы в одно окно. Поэтому: есть заголовок `X-Forwarded-For` — берём ПОСЛЕДНИЙ
+ * адрес в списке (его дописывает сам Caddy при `reverse_proxy`; первый элемент клиент
+ * может подделать и обойти окно); заголовка нет — `req.ip`; нет и его — «unknown»,
+ * чтобы отсутствие адреса не роняло дверь. Панель офиса берёт первый адрес — это её
+ * долг, здесь не повторяется.
  */
-export function registerLimiterKey(ip: string | undefined | null): string {
-  const v = typeof ip === 'string' ? ip.trim() : '';
-  return v || 'unknown';
+export function registerLimiterKey(
+  forwardedFor: string | readonly string[] | undefined | null,
+  ip: string | undefined | null,
+): string {
+  const raw = Array.isArray(forwardedFor)
+    ? forwardedFor.join(',')
+    : typeof forwardedFor === 'string'
+      ? forwardedFor
+      : '';
+  const hops = raw
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+  const last = hops.length > 0 ? hops[hops.length - 1] : '';
+  if (last) return last;
+  const direct = typeof ip === 'string' ? ip.trim() : '';
+  return direct || 'unknown';
 }

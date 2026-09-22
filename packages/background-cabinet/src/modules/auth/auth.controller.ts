@@ -38,8 +38,8 @@ export class AuthController {
     if (!this.authService.registrationEnabled()) {
       throw new UnauthorizedException(REGISTRATION_DISABLED_MESSAGE);
     }
-    // 2) ограничитель по адресу клиента (`req.ip`; за прокси без trustProxy — вопрос ведущей)
-    if (!this.registerLimiter.hit(registerLimiterKey(req.ip), Date.now())) {
+    // 2) ограничитель по адресу клиента: последний адрес из X-Forwarded-For (дописан Caddy), иначе req.ip (Р6)
+    if (!this.registerLimiter.hit(registerLimiterKey(req.headers['x-forwarded-for'], req.ip), Date.now())) {
       throw new HttpException(REGISTRATION_TOO_MANY_REQUESTS_MESSAGE, HttpStatus.TOO_MANY_REQUESTS);
     }
     // 3–8) — в сервисе; причина отказа наружу не пробрасывается (Q3)

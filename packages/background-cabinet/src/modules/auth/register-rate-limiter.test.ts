@@ -55,10 +55,20 @@ describe('register-rate-limiter — скользящее окно двери р�
     expect(() => createRegisterRateLimiter(1, 0)).toThrow(/окно/);
   });
 
-  it('ключ из адреса: пустой или отсутствующий адрес → "unknown", иначе адрес без пробелов', () => {
-    expect(registerLimiterKey('  203.0.113.7 ')).toBe('203.0.113.7');
-    expect(registerLimiterKey('')).toBe('unknown');
-    expect(registerLimiterKey(undefined)).toBe('unknown');
-    expect(registerLimiterKey(null)).toBe('unknown');
+  it('ключ (Р6): X-Forwarded-For «1.2.3.4, 10.0.0.9» → последний адрес 10.0.0.9, не первый', () => {
+    expect(registerLimiterKey('1.2.3.4, 10.0.0.9', '127.0.0.1')).toBe('10.0.0.9');
+    expect(registerLimiterKey(' 1.2.3.4 ,10.0.0.9 , ', '127.0.0.1')).toBe('10.0.0.9');
+    expect(registerLimiterKey(['1.2.3.4', '10.0.0.9'], '127.0.0.1')).toBe('10.0.0.9');
+  });
+
+  it('ключ (Р6): без заголовка — req.ip; пустой заголовок — тоже req.ip', () => {
+    expect(registerLimiterKey(undefined, '  203.0.113.7 ')).toBe('203.0.113.7');
+    expect(registerLimiterKey('', '203.0.113.7')).toBe('203.0.113.7');
+    expect(registerLimiterKey(' , ', '203.0.113.7')).toBe('203.0.113.7');
+  });
+
+  it('ключ (Р6): ни заголовка, ни адреса → "unknown", дверь не падает', () => {
+    expect(registerLimiterKey(undefined, undefined)).toBe('unknown');
+    expect(registerLimiterKey(null, '')).toBe('unknown');
   });
 });

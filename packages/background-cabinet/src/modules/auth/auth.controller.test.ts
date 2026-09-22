@@ -20,7 +20,8 @@ function makeService(enabled = true) {
   };
 }
 
-const req = (ip: string) => ({ ip, headers: {} }) as never;
+const req = (ip: string, forwardedFor?: string) =>
+  ({ ip, headers: forwardedFor === undefined ? {} : { 'x-forwarded-for': forwardedFor } }) as never;
 const body = { login: 'newcomer', password: 'password-8+', code: 'ABCD' };
 
 async function expectStatus(promise: Promise<unknown>, status: number, message: string) {
@@ -95,6 +96,22 @@ describe('AuthController.register — ограничитель и порядок
     // окно не тронуто: после включения первая же попытка проходит
     service.registrationEnabled.mockReturnValue(true);
     await expect(controller.register(body, req('203.0.113.7'))).resolves.toBeTruthy();
+  });
+
+  it('за прокси (Р6): окно считается по последнему адресу X-Forwarded-For, а не по req.ip прокси', async () => {
+    const service = makeService();
+    const controller = new AuthController(service as never);
+    // все запросы приходят с req.ip прокси 127.0.0.1; клиенты различаются последним адресом XFF
+    for (let i = 0; i < 10; i++) {
+      await controller.register(body, req('127.0.0.1', '9.9.9.9, 10.0.0.9'));
+    }
+    await expectStatus(
+      controller.register(body, req('127.0.0.1', '8.8.8.8, 10.0.0.9')),
+      429,
+      REGISTRATION_TOO_MANY_REQUESTS_MESSAGE,
+    );
+    // подделка первого элемента окно не обходит — последний тот же; другой клиент (другой последний) проходит
+    await expect(controller.register(body, req('127.0.0.1', '1.2.3.4, 10.0.0.10'))).resolves.toBeTruthy();
   });
 
   it('адрес не пришёл → ключ «unknown», дверь не падает', async () => {
