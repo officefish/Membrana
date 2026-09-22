@@ -91,9 +91,10 @@ export function LoginPage() {
             noValidate={mode === 'register'}
             onSubmit={(e) => void onSubmit(e)}
           >
-            <label className="form-control w-full">
+            <label className="form-control w-full" htmlFor="login">
               <span className="label-text mb-1">Логин</span>
               <input
+                id="login"
                 type="text"
                 className="input input-bordered w-full"
                 autoComplete="username"
@@ -103,9 +104,10 @@ export function LoginPage() {
                 minLength={3}
               />
             </label>
-            <label className="form-control w-full">
+            <label className="form-control w-full" htmlFor="password">
               <span className="label-text mb-1">Пароль</span>
               <input
+                id="password"
                 type="password"
                 className="input input-bordered w-full"
                 autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
@@ -116,9 +118,10 @@ export function LoginPage() {
               />
             </label>
             {mode === 'register' ? (
-              <label className="form-control w-full">
+              <label className="form-control w-full" htmlFor="invitation-code">
                 <span className="label-text mb-1">Код приглашения</span>
                 <input
+                  id="invitation-code"
                   type="text"
                   className="input input-bordered w-full"
                   autoComplete="one-time-code"
