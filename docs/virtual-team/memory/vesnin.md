@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14355/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 384 (причины в op-log) -->
+Записей: 49 · бюджет 14358/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 385 (причины в op-log) -->
+
+### 2026-09-22 · позиция · team-evening-feedback
+
+> Оценка артефактов: MAIN_DAY_ISSUE — образцовый: таблица обоснования с провенансом на строку и посылки с маркерами файлов; DAY_PLAN — сегодня не в диффе (не менялся утром отдельно, только в архиве); границы файлов сессий A/B/C/D ратификацией M0 соблюдены — ни один PR не вышел за […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-22.md#reply-1`
 
 ### 2026-09-21 · позиция · cabinet-registration-promo-m0-order
 
@@ -295,9 +301,3 @@
 > Оценка артефактов: MAIN_DAY_ISSUE верно развел магистраль (#2204) и контекст (secret-parser-built), но stale assertions создали расхождение У1 — ритуал завтра снова увидит 25.08. Code-review аккуратно развел T2-вердикт и P0-риски. Итоги дня: Границы […]
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-27.md#reply-1`
-
-### 2026-08-26 · позиция · team-evening-feedback
-
-> Оценка артефактов: Архитектурная картина дня собрана корректно: #2187 верно отверг каталожный `placement` в пользу `PagePluginArea` + `pagePluginSource` — один носитель раскладки, второй словарь не завёлся. Границы пакетов в #2184 не разобраны (отложено). Итоги дня: ADR-0025 […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-26.md#reply-1`

@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14394/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 366 (причины в op-log) -->
+Записей: 50 · бюджет 14391/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 367 (причины в op-log) -->
+
+### 2026-09-22 · позиция · team-evening-feedback
+
+> Оценка артефактов: MAIN_DAY_ISSUE точно назвал очерёдность выкатки UI (D-лендинг первым, D-форма после C) — это оправдалось: `#2398` (лендинг) влит в 19:52, `#2401` (форма) — в 23:08 после `#2397` (auth C, 19:43); DAILY_CODE_REVIEW не подсветил UI-долги […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-22.md#reply-1`
 
 ### 2026-09-21 · позиция · cabinet-registration-promo-m0-order
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/team-evening-feedback-2026-08-27.md#reply-1`
 
-### 2026-08-26 · позиция · team-evening-feedback
+### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
 
-> Оценка артефактов: Stale outcome при смене набора — правильный UX-фикс (#2181): не показывать чужие числа. Симметрия библиотеки↔журнал — предмет #2184, но a11y/DESIGN и «виден без подсказки» зубом JSX не доказываются. Итоги дня: Свёртка не уносит органы (#2190) и действия строк […]
+> M4 назначает наблюдаемые значения и вещдоки, но не UI, цвет, текст статуса, endpoint или download flow. Любое представление этих метрик остаётся предметом M5-M6. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/team-evening-feedback-2026-08-26.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m3a-llm-proxy-seam
-
-> Для панели провайдеры — enum из ritual catalog, не весь experimental JSON. Иначе тумблер покажет FreeModel, которого v1 resolve не обещает. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m3a-llm-proxy-seam-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
