@@ -46,6 +46,7 @@ export function LoginPage() {
     setSubmitting(true);
     try {
       if (mode === 'register') {
+        // Пароль передаётся без trim намеренно — решение M4 (протокол cabinet-registration-promo-m4, «пароль без trim»)
         await register(normalizedLogin, password, normalizedCode);
       } else {
         await login(loginName, password);
