@@ -34,6 +34,7 @@ export class HealthDeepController {
       db_latency_ms: snap.numbers.dbLatencyMs,
       ingest_arrived_ratio: snap.numbers.ingestArrivedRatio,
       ingest_arrived_15m: snap.arrivedInWindow,
+      office_registration: snap.officeRegistration,
       measured_at: snap.measuredAt,
     };
 
