@@ -67,5 +67,8 @@ export default defineConfig(({ mode }) => {
     sourcemap: true,
     target: 'es2022',
   },
+  test: {
+    environmentMatchGlobs: [['**/*.test.tsx', 'jsdom']],
+  },
   };
 });

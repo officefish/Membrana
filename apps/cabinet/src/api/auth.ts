@@ -21,6 +21,34 @@ export interface LoginResponse {
   user: AuthUser;
 }
 
+export class AuthApiError extends Error {
+  constructor(
+    public readonly status: number | null,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'AuthApiError';
+  }
+}
+
+export function mapRegisterErrorStatus(status: number | null): string {
+  if (status === null) {
+    return 'Нет связи с сервером. Проверьте интернет и попробуйте снова.';
+  }
+  switch (status) {
+    case 401:
+      return 'Регистрация сейчас закрыта.';
+    case 403:
+      return 'Регистрация не принята.';
+    case 429:
+      return 'Слишком много попыток. Подождите 10 минут.';
+    case 503:
+      return 'Сервис временно недоступен. Попробуйте ещё раз.';
+    default:
+      return 'Не удалось выполнить регистрацию. Попробуйте ещё раз.';
+  }
+}
+
 export function getStoredToken(): string | null {
   return sessionStorage.getItem(STORAGE_KEY);
 }
@@ -51,6 +79,27 @@ export async function loginRequest(login: string, password: string): Promise<Log
     body: JSON.stringify({ login, password }),
   });
   if (!res.ok) throw new Error(await parseError(res));
+  return (await res.json()) as LoginResponse;
+}
+
+export async function registerRequest(
+  login: string,
+  password: string,
+  code: string,
+): Promise<LoginResponse> {
+  let res: Response;
+  try {
+    res = await fetch(`${getApiBase()}/v1/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ login, password, code }),
+    });
+  } catch {
+    throw new AuthApiError(null, mapRegisterErrorStatus(null));
+  }
+  if (!res.ok) {
+    throw new AuthApiError(res.status, mapRegisterErrorStatus(res.status));
+  }
   return (await res.json()) as LoginResponse;
 }
 
