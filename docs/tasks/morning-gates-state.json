@@ -1,31 +1,24 @@
 {
   "magistralOptions": [
-    "cabinet-registration-exec",
-    "tariff-transitions-live-day3",
-    "secret-parser-built"
+    "cabinet-registration-rollout",
+    "morning-truth-fixes",
+    "tariff-transitions-live-day3"
   ],
-  "frozenDigest": "c168fa52e456d7820f6206dbfc1f741a14920914ebcc48c68f7d94da7e75fc15",
-  "magistral": "cabinet-registration-exec",
+  "frozenDigest": "227739a7b847d3dc91fd6121725e31a80f1e08c4b49cce1c6187be77dfb6c6a4",
+  "magistral": "cabinet-registration-rollout",
   "swallow": {
-    "draftDigest": "bbe8cbdeade1f97f7d4c6477c48b304e8225ba2950b84fe3e7bcb5f227aff342",
-    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-22.md",
+    "draftDigest": "86fd1c89f4cd75bfd7f5396ee3f91fb6c7e73aedb6fb6903d777e16520e262b9",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-09-23.md",
     "ownerAck": true,
-    "day": "2026-09-22",
-    "claimsProbe": {
-      "verdict": "hard",
-      "protocol": "docs/seanses/team-evening-feedback-2026-09-22.md",
-      "sha": "5491e3671293",
-      "at": "2026-09-22T20:37:22.742Z"
-    },
-    "gate": "evening:partner-swallow"
+    "day": "2026-09-23"
   },
-  "day": "2026-09-22",
-  "magistralChosenAt": "2026-09-22",
+  "day": "2026-09-23",
+  "magistralChosenAt": "2026-09-23",
   "magistralAuthor": "human",
   "magistralManual": {
-    "at": "2026-09-22",
-    "chosen": "cabinet-registration-exec",
-    "snapshotDigest": "c168fa52e456d7820f6206dbfc1f741a14920914ebcc48c68f7d94da7e75fc15",
+    "at": "2026-09-23",
+    "chosen": "cabinet-registration-rollout",
+    "snapshotDigest": "227739a7b847d3dc91fd6121725e31a80f1e08c4b49cce1c6187be77dfb6c6a4",
     "inSnapshot": true
   }
 }
