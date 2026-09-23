@@ -18,6 +18,7 @@
     "pr:wait": "node scripts/pr-wait.mjs",
     "pr:verify": "node scripts/pr-verify.mjs",
     "pr:recreate": "node scripts/pr-recreate.mjs",
+    "pr:perimeter": "node scripts/pr-perimeter-check.mjs",
     "build:affected": "node scripts/build-affected.mjs",
     "wire:generate": "node scripts/generate-wire-contract.mjs",
     "verify:wire-sync": "node scripts/verify-wire-sync.mjs",
