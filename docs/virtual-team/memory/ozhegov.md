@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14329/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 377 (причины в op-log) -->
+Записей: 49 · бюджет 14350/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 378 (причины в op-log) -->
+
+### 2026-09-23 · позиция · team-evening-feedback
+
+> Ожегов, точность термина, слабая связанность. Оценка артефактов: MAIN_DAY_ISSUE — образцовая структура (метаданные, магистраль, посылки holds/breaks, DoD, «сознательно не делаем»). DAILY_STANDUP — источник магистрали в скрипте зашит неверно, это структурный дефект контракта: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-23.md#reply-1`
 
 ### 2026-09-22 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Леммы. «Обходчик» ≠ «NightHuntService-промпт». «Job охоты» ≠ «суждение LLM». Публичный контракт обходчика — словарная статья: читает дерево, пишет детерминированный результат. Три имени `design-token-drift`, `services-api-contract-drift`, `monorepo-dependency-graph` сейчас — […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/hunt-and-canon-m4-hunter-form-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · team-evening-feedback
-
-> Оценка артефактов: Стендап и MAIN_DAY_ISSUE четко развели «не делаем» и «делаем» — это дисциплина. Code-review подтвердил связанность в видимом диффе. Итоги дня: #2207 — чистое ядро в `media-library-service`, export через `index`, план ≠ delete, тесты на […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-27.md#reply-1`

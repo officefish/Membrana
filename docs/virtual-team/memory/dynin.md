@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14306/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 369 (причины в op-log) -->
+Записей: 49 · бюджет 14313/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 370 (причины в op-log) -->
+
+### 2026-09-23 · позиция · team-evening-feedback
+
+> Дынин, чистые функции и инварианты. Оценка артефактов: DSP/FFT не затрагивались — оценка только процессная. MAIN_DAY_ISSUE держит инвариант «магистраль = owner-choice», это правильная граница ответственности между скриптом и владельцем. Пробный инвариант «trail-агрегатор кладёт […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-23.md#reply-1`
 
 ### 2026-09-22 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Формализую. Измерение `M: Tree → {pass, fail, refused}` детерминировано: один и тот же снимок дерева даёт один и тот же выход. Суждение модели — стохастическое отображение промпта без дерева в текст. Три job'а охоты сейчас — второе, при `MAX_CONTEXT = 24_000` и явном «нет […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/hunt-and-canon-m4-hunter-form-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE формализовал критерий успеха (#2204 DoD) — это позволило code-review не зачесть «кнопки» как Done. Хорошая основа. Итоги дня: `planBufferCleanup` — детерминированный отбор по `createdAt`, NaN-время → protected, `freedBytes`/`remaining` — […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-27.md#reply-1`

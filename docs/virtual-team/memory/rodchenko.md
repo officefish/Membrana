@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14391/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 367 (причины в op-log) -->
+Записей: 50 · бюджет 14392/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 368 (причины в op-log) -->
+
+### 2026-09-23 · позиция · team-evening-feedback
+
+> Родченко, презентационный UI. Оценка артефактов: UI не затрагивался, лендинг `membrana.space` не обновлён (пункт DoD). Форма «Создать учётную запись» уже в стволе (эпик #2369), но приёмка на проде не проведена — визуальный контракт формы не подтверждён живым прогоном. Итоги дня: […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-23.md#reply-1`
 
 ### 2026-09-22 · позиция · team-evening-feedback
 
@@ -295,12 +301,6 @@
 > С витрины и с фактуры 12.07 одно лицо: «отчёт-чеклист» без доступа к `apps/client/src` полтора месяца читался как работа. Это ложь формы. M3 уже закрыл эталон — восемь `--color-*` в `docs/DESIGN.md` и таблица сопряжения DaisyUI. Дрейф токенов на экране — это либо совпало с […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/hunt-and-canon-m4-hunter-form-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE явно перечислил «сознательно не делаем» — это уберегло от распыления. Code-review справедливо отметил отсутствие diff по UI-креплениям. Итоги дня: Journal mount — тот же panel, fallback «Выберите узел» с `role="status"`; локальные tenants через […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-27.md#reply-1`
 
 ### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
 
