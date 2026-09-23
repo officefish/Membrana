@@ -364,7 +364,154 @@ export function assembleStandupPrompt({ context, assignment, maxChars }) {
   return `${trimmed}\n${assignment}`;
 }
 
-function buildTaskPrompt({ outputRel, issueCount, tempFileCount, routingBlock }) {
+// ─── Фокус дня берётся у владельца, а не назначается стендапом ────────────────────────
+//
+// ЧТО ЧИНИТСЯ. Три утра подряд (21–23.09) генератор называл фокусом своё (`tariff…`,
+// `secret-parser-built`, `angelina-hostess-impl`), а владелец выбирал другое из
+// замороженного топ-3; расхождение ловилось руками ведущей и уходило в план дня строкой
+// «стендап ≠ выбор владельца». Вещдок выбора — `sources[0]` в
+// `docs/tasks/main-day-assertions.json` (`origin: owner-choice@…`, `date`, `author: human`) —
+// стендапом не читался вовсе.
+//
+// ПОЧЕМУ НЕ ОДНОЙ ИНСТРУКЦИЕЙ МОДЕЛИ. Данность в промпте исполняет языковая модель, и
+// ничто не заметило бы, если однажды она её не исполнит — тот же класс, что закрывал
+// предикат свежести 02.08 («механизм проверяет, что шаг отработал, и не проверяет, что
+// шаг покрыл свой предмет»). Поэтому два слоя: модель получает выбор данностью, а скрипт
+// после ответа ГАРАНТИРУЕТ первую строку раздела (`enforceOwnerFocus`).
+//
+// Функции ниже чистые: день и документ приходят параметрами, часов и ФС в них нет.
+
+/** Где лежит владельческий выбор магистрали. Стендапом только читается. */
+export const OWNER_FOCUS_ASSERTIONS_REL = 'docs/tasks/main-day-assertions.json';
+
+/** Предел фокуса, когда в посылке нет слова «ЗАМЕР»: дальше идёт разбор дня, а не выбор. */
+const OWNER_FOCUS_MAX_CHARS = 300;
+
+/**
+ * Текст выбора из посылки владельца: первое предложение до слова «ЗАМЕР» либо 300 знаков.
+ * Замер утра в фокус дня не едет — он вещдок, а не решение.
+ *
+ * @param {unknown} claim
+ * @returns {string} пустая строка, если сказать нечего — отсутствие выбора не поломка
+ */
+export function extractOwnerFocusClaim(claim) {
+  if (typeof claim !== 'string') return '';
+  const measureAt = claim.indexOf('ЗАМЕР');
+  const head = measureAt > 0 ? claim.slice(0, measureAt) : claim;
+  const collapsed = head.replace(/\s+/gu, ' ').trim();
+
+  // Первое предложение: точка с пробелом за ней. «23.09» и «#2369» границей не считаются —
+  // дат и номеров в выборе владельца много, и резать по любой точке значило бы обрывать
+  // фокус на середине фразы.
+  const dot = collapsed.search(/\.\s/u);
+  const sentence = dot > 0 ? collapsed.slice(0, dot + 1) : collapsed;
+  if (sentence.length <= OWNER_FOCUS_MAX_CHARS) return sentence;
+
+  // Предложение длиннее предела — режем по границе слова, чтобы фокус не обрывался
+  // на полуслове; многоточие входит в бюджет, а не вылезает за него.
+  const cut = sentence.slice(0, OWNER_FOCUS_MAX_CHARS - 1);
+  const lastSpace = cut.lastIndexOf(' ');
+  const kept = lastSpace > OWNER_FOCUS_MAX_CHARS * 0.6 ? cut.slice(0, lastSpace) : cut;
+  return `${kept.trim()}…`;
+}
+
+/**
+ * Выбор владельца на сегодня — или честное «не выбрана».
+ *
+ * Сегодняшним считается только `sources[0]` с `date === today` и `author: 'human'`:
+ * вчерашняя посылка выбор не переносит (тот же счёт дат, что у предиката свежести), а
+ * машинный автор — это снова назначение скриптом, ровно то, что здесь чинится.
+ *
+ * @param {{assertions: unknown, today: string}} p
+ */
+export function resolveOwnerFocus({ assertions, today }) {
+  const line = `Магистраль владельцем ещё не выбрана (owner-choice отсутствует на ${today}); стендап фокус не назначает`;
+  const none = { chosen: false, text: '', origin: null, date: null, line };
+  const sources = /** @type {any} */ (assertions)?.sources;
+  if (!Array.isArray(sources) || sources.length === 0) return none;
+  const newest = sources[0];
+  if (!newest || newest.date !== today || newest.author !== 'human') return none;
+  const text = extractOwnerFocusClaim(newest.claim);
+  if (!text) return none;
+  return {
+    chosen: true,
+    text,
+    origin: typeof newest.origin === 'string' && newest.origin.trim() !== '' ? newest.origin.trim() : null,
+    date: today,
+    line,
+  };
+}
+
+/** Строки промпта о фокусе: данность при выборе владельца, запрет сочинять — при его отсутствии. */
+export function focusDirectiveLines(focus) {
+  if (focus?.chosen) {
+    return [
+      '## Фокус дня — фокус уже выбран владельцем',
+      '',
+      `ДАННОСТЬ: фокус дня уже выбран владельцем: «${focus.text}»`,
+      `Источник выбора: ${focus.origin ?? 'owner-choice'}.`,
+      '- Не выбирай другой фокус и не переформулируй магистраль своими словами.',
+      '- Первой строкой раздела поставь ровно этот выбор владельца.',
+      '- Дальше 2–3 предложения: почему это сегодня, главный риск, критерий успеха к вечеру,',
+      '  и разложи по ролям из роутинга ниже.',
+    ];
+  }
+  return [
+    '## Фокус дня — НЕ НАЗНАЧАЙ ЕГО',
+    '',
+    `${focus?.line ?? 'Магистраль владельцем не выбрана'}.`,
+    '- Не сочиняй фокус и не выбирай магистраль за владельца: эту строку подставит скрипт.',
+    '- Пиши только раздел «## Что сознательно не делаем».',
+  ];
+}
+
+/**
+ * Гарантия после ответа модели: первой строкой раздела «## Фокус дня» стоит выбор владельца
+ * (или строка о его отсутствии). Самоназначенный фокус не стирается — он остаётся ниже,
+ * чтобы расхождение было видно читателю, а не замолчано.
+ *
+ * @param {string} modelText — ответ модели целиком. Тип строгий намеренно: `String(modelText ?? '')`
+ *   ниже проглотил бы `undefined` молча, и раздел собрался бы из пустоты вместо ответа модели.
+ * @param {{chosen: boolean, text: string, origin: string|null, date: string|null, line: string}|null} focus
+ *   — возврат `resolveOwnerFocus`; `null` читается как «выбора нет», наравне с `chosen: false`.
+ * @returns {{text: string, substituted: boolean}}
+ */
+export function enforceOwnerFocus(modelText, focus) {
+  const heading = '## Фокус дня';
+  const marker = focus?.chosen ? focus.text : (focus?.line ?? '');
+  const ownerLine = focus?.chosen ? `- **Выбор владельца:** ${focus.text}` : `- ${focus?.line ?? ''}`;
+  const text = String(modelText ?? '');
+  const at = text.indexOf(heading);
+  if (at < 0) return { text: `${heading}\n\n${ownerLine}\n\n${text}`, substituted: true };
+
+  const after = text.slice(at + heading.length);
+  const nextIdx = after.search(/\n##\s/u);
+  const section = nextIdx < 0 ? after : after.slice(0, nextIdx);
+  if (marker !== '' && section.includes(marker)) return { text, substituted: false };
+  const rest = nextIdx < 0 ? '' : after.slice(nextIdx);
+  const kept = section.replace(/^\s*\n?/u, '');
+  return { text: `${text.slice(0, at)}${heading}\n\n${ownerLine}\n\n${kept}${rest}`, substituted: true };
+}
+
+/** Строка источника фокуса для шапки стендапа. */
+export function focusProvenanceLine(focus) {
+  return focus?.chosen && focus.origin
+    ? `Источник фокуса: ${focus.origin}`
+    : 'Источник фокуса: нет (магистраль владельцем не выбрана)';
+}
+
+/** Чтение вещдока выбора. Нет файла или он испорчен — «не выбрана», а не падение стендапа. */
+export function readOwnerChoiceAssertions(repoRoot = process.cwd(), rel = OWNER_FOCUS_ASSERTIONS_REL) {
+  const abs = resolve(repoRoot, rel);
+  if (!existsSync(abs)) return null;
+  try {
+    return JSON.parse(readFileSync(abs, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+function buildTaskPrompt({ outputRel, issueCount, tempFileCount, routingBlock, ownerFocus }) {
   const today = new Date().toISOString().slice(0, 10);
   return [
     '# Задание',
@@ -378,9 +525,7 @@ function buildTaskPrompt({ outputRel, issueCount, tempFileCount, routingBlock })
     '',
     '## Обязательная структура — РОВНО два раздела, без отклонений',
     '',
-    '## Фокус дня',
-    '- **Одна строка** — что одно главное делаем сегодня.',
-    '- 2–3 предложения: почему именно это, главный риск, критерий успеха к вечеру.',
+    ...focusDirectiveLines(ownerFocus),
     '',
     '## Что сознательно не делаем',
     '- 2–4 буллета: что откладываем, чтобы не расползтись.',
@@ -504,11 +649,24 @@ export async function runDailyStandup(options) {
     '---',
   ];
 
+  // Фокус дня читается у владельца ДО запроса к модели: `sources[0]` вещдока дня.
+  // Нет сегодняшнего выбора — стендап фокус не назначает и модель его не сочиняет.
+  const ownerFocus = resolveOwnerFocus({
+    assertions: readOwnerChoiceAssertions(),
+    today: new Date().toISOString().slice(0, 10),
+  });
+  console.error(
+    ownerFocus.chosen
+      ? `[фокус] выбор владельца (${ownerFocus.origin ?? 'owner-choice'}): ${ownerFocus.text}`
+      : `[фокус] ${ownerFocus.line}`,
+  );
+
   const assignment = buildTaskPrompt({
     outputRel,
     issueCount: issues.count,
     tempFileCount: temp.fileCount,
     routingBlock: formatStandupRouting(routing),
+    ownerFocus,
   });
 
   const bodyText = assembleStandupPrompt({
@@ -542,6 +700,20 @@ export async function runDailyStandup(options) {
     } else {
       let out = r.text || '';
       {
+        // Фокус дня — не инструкция, а гарантия: первой строкой раздела встаёт выбор
+        // владельца (или строка о его отсутствии). Если модель назвала свой фокус, он
+        // остаётся ниже — расхождение видно читателю, а не замолчано.
+        const enforced = enforceOwnerFocus(out, ownerFocus);
+        out = enforced.text;
+        if (enforced.substituted) {
+          console.error(
+            ownerFocus.chosen
+              ? '[фокус] строка владельца подставлена скриптом — модель её не написала'
+              : '[фокус] раздел фокуса подставлен скриптом: владельческого выбора на сегодня нет',
+          );
+        }
+      }
+      {
         // Роутинг талантов — детерминированная секция, тот же паттерн, что drift ниже.
         // Подставляется ПОСЛЕ ответа модели: что вычислено, то нельзя выдумать.
         out = `${out}\n\n---\n\n${formatStandupSection(routing)}`;
@@ -556,7 +728,12 @@ export async function runDailyStandup(options) {
         outputPath: options.outputPath,
         commandName: options.commandName,
         body: out,
-        meta: { issues: issues.count, tempFiles: temp.fileCount, issueSource: issues.source },
+        meta: {
+          issues: issues.count,
+          tempFiles: temp.fileCount,
+          issueSource: issues.source,
+          focusProvenance: focusProvenanceLine(ownerFocus),
+        },
       });
       console.log(out);
       console.error('Записано:', options.outputPath);
@@ -578,6 +755,7 @@ function writeStandupFile({ outputPath, commandName, body, meta }) {
     `<!-- Тип: ежедневный стендап виртуальной команды (daily standup / daily sync) -->\n` +
     `<!-- Входы: VIRTUAL_TEAM_PROMPT, ${FFT_METRICS_POTENTIAL_AND_LIMITS_REL}, STRATEGY_DAY, DAILY_CODE_REVIEW, GitHub Issues (${meta.issues}), packages/temp (${meta.tempFiles} файлов) -->\n` +
     `<!-- Issues: ${meta.issueSource ?? 'n/a'} -->\n` +
+    `<!-- ${meta.focusProvenance ?? 'Источник фокуса: нет'} -->\n` +
     `${provenanceHeader({ author: 'tarasov', readAt })}\n\n`;
   mkdirSync(dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, header + body, 'utf8');
