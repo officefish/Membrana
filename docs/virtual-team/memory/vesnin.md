@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14358/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 385 (причины в op-log) -->
+Записей: 49 · бюджет 14377/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 386 (причины в op-log) -->
+
+### 2026-09-23 · позиция · team-evening-feedback
+
+> Веснин, границы и контракты. Оценка артефактов: ADR-0029 → ACCEPTED — форма контура регистрации зафиксирована (панель→офис→кабинет, три границы, один внутренний ключ). MAIN_DAY_ISSUE честно называет расхождение стендапа с owner-choice (норма У1). DAY_PLAN содержит две […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-23.md#reply-1`
 
 ### 2026-09-22 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Конструкция. Ночной обходчик — не рецензент и не «умный PR». Это измеритель по дереву в том же роде, что `yarn verify:*` и зубы. Граница модуля: вход — снимок репозитория и манифест предметов замера; выход — машинный вердикт. Путь GitHub → офис → LLM → PR — форма, которая не […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/hunt-and-canon-m4-hunter-form-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · team-evening-feedback
-
-> Оценка артефактов: MAIN_DAY_ISSUE верно развел магистраль (#2204) и контекст (secret-parser-built), но stale assertions создали расхождение У1 — ритуал завтра снова увидит 25.08. Code-review аккуратно развел T2-вердикт и P0-риски. Итоги дня: Границы […]
-
-— источник: `docs/seanses/team-evening-feedback-2026-08-27.md#reply-1`
