@@ -8,7 +8,7 @@
 | Field | Value |
 |-------|-------|
 | Date | 2026-09-23 |
-| Head SHA | 8d4816dc658e520ed96f7e5a40c4dd5434fe8aef |
+| Head SHA | 3608bf974bdd32b8727aad3c33408e16d3b6504a |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1239 |
-| Yarn scripts (package.json) | 472 |
-| Yarn → `scripts/` | 418 |
+| Code files under `scripts/` | 1240 |
+| Yarn scripts (package.json) | 473 |
+| Yarn → `scripts/` | 419 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
 | Code files without yarn ref | 904 |
 
-## Yarn → scripts/ (418)
+## Yarn → scripts/ (419)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -264,6 +264,7 @@
 - `prisma:migration` → `scripts/prisma-migration-new.mjs`
 - `probe:node-link` → `scripts/node-link-probe.mjs`
 - `procedure-run:journal` → `scripts/procedure-run-journal.mjs`
+- `procedure-run:record` → `scripts/procedure-run-record.mjs`
 - `procedure-runs:digest` → `scripts/procedure-runs-digest.mjs`
 - `procedures:license` → `scripts/procedures-license.mjs`
 - `procedures:registry` → `scripts/procedures-registry.mjs`
@@ -578,6 +579,7 @@
 - `scripts/cowork-execution-smoke.test.mjs`
 - `scripts/cowork-open.test.mjs`
 - `scripts/create-detector-github-issues.mjs`
+- `scripts/daily-standup-focus.test.mjs`
 - `scripts/daily-standup-paths.test.mjs`
 - `scripts/day-plan-assemble.test.mjs`
 - `scripts/day-plan-driver.test.mjs`
@@ -1200,7 +1202,6 @@
 - `scripts/procedure-network-preflight.test.mjs`
 - `scripts/procedure-personas.test.mjs`
 - `scripts/procedure-run-journal.test.mjs`
-- `scripts/procedure-run-record.mjs`
 - `scripts/procedure-run-record.test.mjs`
 - `scripts/procedure-runs-digest.test.mjs`
 - `scripts/procedures-registry.test.mjs`
@@ -1361,7 +1362,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1239)
+## All code files (1240)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1586,6 +1587,7 @@
 - `scripts/cowork-open.mjs`
 - `scripts/cowork-open.test.mjs`
 - `scripts/create-detector-github-issues.mjs`
+- `scripts/daily-standup-focus.test.mjs`
 - `scripts/daily-standup-paths.test.mjs`
 - `scripts/daily-standup.mjs`
 - `scripts/day-memo.mjs`
