@@ -10,6 +10,13 @@
 
 ## Порядок (строго по шагам; каждый шаг — вещдок ведущей до следующего)
 
+### Шаг 0а — окружение исполнителя (проверить ДО всего; иначе шаг 0 упадёт)
+Скрипты доступа читают корневой `.env` **рабочего дерева**: как минимум `BACKGROUND_MEDIA_IPV4` и `BACKGROUND_MEDIA_PASSWORD` (хост media; доступ к офису по скиллу идёт через него). Файл `.env` под `.gitignore` (`.gitignore:33`) — в свежем дереве его НЕТ. Замер 23.09: в `practice/Membrana` и `practice/Membrana-tooling` он есть, в `.worktrees/cabinet-register-form` и `.worktrees/cabinet-office-client` его нет.
+
+Проверка из своего дерева: `test -f .env && grep -cE '^(BACKGROUND_MEDIA_IPV4|BACKGROUND_MEDIA_PASSWORD)=' .env` — ожидание `2`. Значения не печатать.
+
+Меньше двух или файла нет — **СТОП — рука владельца**: владелец кладёт `.env` в дерево исполнителя (копией из `practice/Membrana`) либо называет дерево, из которого вести выкатку. Секреты через чат не передавать. Выкатку из главного дерева `practice/Membrana` не вести: оно на чужой ветке и с чужой грязью, а гейт DR0 требует «дерево = origin/main».
+
 ### Шаг 0 — предполётная проверка (чтение)
 - `git fetch origin && git status` — дерево чистое, `HEAD = origin/main`, назвать sha.
 - CI на этой вершине зелёный: `gh run list --branch main --limit 5` — «CI» и «Unit tests» success на sha.
