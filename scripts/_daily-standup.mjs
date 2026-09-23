@@ -470,6 +470,10 @@ export function focusDirectiveLines(focus) {
  * (или строка о его отсутствии). Самоназначенный фокус не стирается — он остаётся ниже,
  * чтобы расхождение было видно читателю, а не замолчано.
  *
+ * @param {string} modelText — ответ модели целиком. Тип строгий намеренно: `String(modelText ?? '')`
+ *   ниже проглотил бы `undefined` молча, и раздел собрался бы из пустоты вместо ответа модели.
+ * @param {{chosen: boolean, text: string, origin: string|null, date: string|null, line: string}|null} focus
+ *   — возврат `resolveOwnerFocus`; `null` читается как «выбора нет», наравне с `chosen: false`.
  * @returns {{text: string, substituted: boolean}}
  */
 export function enforceOwnerFocus(modelText, focus) {
