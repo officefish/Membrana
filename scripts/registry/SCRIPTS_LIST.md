@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-22 |
-| Head SHA | afd6d6aba80c03fd3b4cb255206430d6977cfef5 |
+| Date | 2026-09-23 |
+| Head SHA | 8d4816dc658e520ed96f7e5a40c4dd5434fe8aef |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1237 |
-| Yarn scripts (package.json) | 471 |
-| Yarn → `scripts/` | 417 |
+| Code files under `scripts/` | 1239 |
+| Yarn scripts (package.json) | 472 |
+| Yarn → `scripts/` | 418 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 903 |
+| Code files without yarn ref | 904 |
 
-## Yarn → scripts/ (417)
+## Yarn → scripts/ (418)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -254,6 +254,7 @@
 - `plan:week` → `scripts/strategic-plan-week.mjs`
 - `plan:week:full` → `scripts/strategic-plan-week.mjs`
 - `plugin:run:mfcc` → `scripts/plugin-run-mfcc.mjs`
+- `pr:perimeter` → `scripts/pr-perimeter-check.mjs`
 - `pr:recreate` → `scripts/pr-recreate.mjs`
 - `pr:ship` → `scripts/pr-ship.mjs`
 - `pr:verify` → `scripts/pr-verify.mjs`
@@ -443,7 +444,7 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (903)
+## Code files without yarn ref (904)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -1179,6 +1180,7 @@
 - `scripts/persona-memory/lib/subconscious-retrieval.test.mjs`
 - `scripts/plan-week-if-monday.mjs`
 - `scripts/plan-week-if-monday.test.mjs`
+- `scripts/pr-perimeter-check.test.mjs`
 - `scripts/pr-recreate.test.mjs`
 - `scripts/pr-ship-size.test.mjs`
 - `scripts/pr-ship.test.mjs`
@@ -1359,7 +1361,7 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1237)
+## All code files (1239)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
@@ -2301,6 +2303,8 @@
 - `scripts/plan-week-if-monday.mjs`
 - `scripts/plan-week-if-monday.test.mjs`
 - `scripts/plugin-run-mfcc.mjs`
+- `scripts/pr-perimeter-check.mjs`
+- `scripts/pr-perimeter-check.test.mjs`
 - `scripts/pr-recreate.mjs`
 - `scripts/pr-recreate.test.mjs`
 - `scripts/pr-ship-size.test.mjs`
