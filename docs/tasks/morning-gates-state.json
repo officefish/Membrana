@@ -6,7 +6,12 @@
   ],
   "frozenDigest": "1fe2b9b487173d92cc9d3ecb7ad0aa713ce0af8370f7768a9de369cb9417fc4f",
   "magistral": "cabinet-registration-rollout",
-  "swallow": null,
+  "swallow": {
+    "draftDigest": "b3f25ad26d3783f8d98661ec870739299c3bbc1a11be1a28bd5d401203373d72",
+    "draftFile": "docs/comms/drafts/swallow-day-2026-09-24.md",
+    "ownerAck": true,
+    "day": "2026-09-24"
+  },
   "day": "2026-09-24",
   "magistralChosenAt": "2026-09-24",
   "magistralAuthor": "human",
