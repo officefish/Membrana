@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import {
   CABINET_REGISTER_GRANT,
   canMint,
+  DEFAULT_MINT_MODE,
   defaultsForMode,
   grantsForMode,
   MINT_MODES,
@@ -75,6 +76,27 @@ describe('гранты по режиму', () => {
   it('грант кабинета не примешивается к разделам панели', () => {
     expect(grantsForMode('sections', ['drift-anchors'])).not.toContain(CABINET_REGISTER_GRANT);
     expect(grantsForMode('full')).not.toContain(CABINET_REGISTER_GRANT);
+  });
+});
+
+describe('умолчание режима', () => {
+  /**
+   * Умолчанием стоит самый слабый режим: забывчивое нажатие в нём чеканит
+   * одноразовый вход в кабинет, а не код, открывающий панель целиком.
+   */
+  it('форма по умолчанию предлагает приглашение в кабинет', () => {
+    expect(DEFAULT_MINT_MODE).toBe('cabinet');
+  });
+
+  it('умолчание не даёт «*» — даже если список режимов переставят', () => {
+    expect(grantsForMode(DEFAULT_MINT_MODE)).not.toContain(WILDCARD_GRANT);
+    expect(grantsForMode(DEFAULT_MINT_MODE)).toEqual([CABINET_REGISTER_GRANT]);
+  });
+
+  it('умолчание объявлено отдельно от порядка строк в списке', () => {
+    // Порядок в MINT_MODES — про вёрстку; умолчание от него не зависит и живёт
+    // собственной константой. Перестановка строк не должна менять умолчание.
+    expect(MINT_MODES).toContain(DEFAULT_MINT_MODE);
   });
 });
 

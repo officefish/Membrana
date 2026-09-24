@@ -18,6 +18,7 @@ import {
 } from '@/lib/adminApi';
 import {
   canMint,
+  DEFAULT_MINT_MODE,
   defaultsForMode,
   grantsForMode,
   MINT_MODE_LABELS,
@@ -85,11 +86,11 @@ function GrantCell({
 }
 
 function MintCodeForm({ onMinted }: { onMinted: (code: MintedCode) => void }) {
-  const [mode, setMode] = useState<MintMode>('full');
+  const [mode, setMode] = useState<MintMode>(DEFAULT_MINT_MODE);
   const [label, setLabel] = useState('');
   const [picked, setPicked] = useState<string[]>([]);
-  const [days, setDays] = useState(defaultsForMode('full').days);
-  const [maxUses, setMaxUses] = useState(defaultsForMode('full').maxUses);
+  const [days, setDays] = useState(defaultsForMode(DEFAULT_MINT_MODE).days);
+  const [maxUses, setMaxUses] = useState(defaultsForMode(DEFAULT_MINT_MODE).maxUses);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
