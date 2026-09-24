@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14392/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 368 (причины в op-log) -->
+Записей: 50 · бюджет 14388/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/rodchenko.jsonl · transferred: 369 (причины в op-log) -->
+
+### 2026-09-24 · позиция · team-evening-feedback
+
+> Rodchenko. Оценка артефактов: DESIGN.md и a11y-контракт напрямую не затронуты. MAIN_DAY_ISSUE честно называет `apps/cabinet` lint-хвост (`react-hooks/exhaustive-deps` на `titleOf` в `useCallback`) — третий день без починки, одна строка. Это позор презентационного слоя. Итоги […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-24.md#reply-1`
 
 ### 2026-09-23 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/hunt-and-canon-m3-design-canon-2026-08-27.md#reply-1`
 
-### 2026-08-27 · позиция · hunt-and-canon-m4-hunter-form
+### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 
-> С витрины и с фактуры 12.07 одно лицо: «отчёт-чеклист» без доступа к `apps/client/src` полтора месяца читался как работа. Это ложь формы. M3 уже закрыл эталон — восемь `--color-*` в `docs/DESIGN.md` и таблица сопряжения DaisyUI. Дрейф токенов на экране — это либо совпало с […] _(реплик в сеансе: 6)_
+> Видимость полей разнесена до ответа API: `sensitive.reason` и `location.kind` входят в metadata, `location.ref` выдаётся только действием `read-ref`, байты — только `read-bytes`. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/hunt-and-canon-m4-hunter-form-2026-08-27.md#reply-1`
-
-### 2026-08-04 · позиция · static-mmbrn-container-m4-storage
-
-> M4 назначает наблюдаемые значения и вещдоки, но не UI, цвет, текст статуса, endpoint или download flow. Любое представление этих метрик остаётся предметом M5-M6. _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/static-mmbrn-container-m4-storage-2026-08-04.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`

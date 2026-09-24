@@ -6,7 +6,19 @@
   ],
   "frozenDigest": "1fe2b9b487173d92cc9d3ecb7ad0aa713ce0af8370f7768a9de369cb9417fc4f",
   "magistral": "cabinet-registration-rollout",
-  "swallow": null,
+  "swallow": {
+    "draftDigest": "9d0f1a73689003533df79f2e53b8b3f416414e6f33a94e9ccf668f5927b2d49d",
+    "draftFile": "docs/comms/drafts/swallow-evening-2026-09-24.md",
+    "ownerAck": true,
+    "day": "2026-09-24",
+    "claimsProbe": {
+      "verdict": "soft",
+      "protocol": "docs/seanses/team-evening-feedback-2026-09-24.md",
+      "sha": "02c10be3a8f4",
+      "at": "2026-09-24T17:17:13.721Z"
+    },
+    "gate": "evening:partner-swallow"
+  },
   "day": "2026-09-24",
   "magistralChosenAt": "2026-09-24",
   "magistralAuthor": "human",

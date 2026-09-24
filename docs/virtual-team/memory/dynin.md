@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14313/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 370 (причины в op-log) -->
+Записей: 49 · бюджет 14295/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/dynin.jsonl · transferred: 371 (причины в op-log) -->
+
+### 2026-09-24 · позиция · team-evening-feedback
+
+> Dynin. Оценка артефактов: DSP/чистые функции сегодня не задеты, оценивать могу только процесс. MAIN_DAY_ISSUE точно проводит различие `assign` vs `highlight` (роутинг персон vs магистраль) — это дисциплина, которую я ценю. DAILY_AUDIT количественно чист: 6 коммитов, +788/−157, […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-24.md#reply-1`
 
 ### 2026-09-23 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Формализую. Пусть множество имён токенов продукта \(T = \{bg, surface, border, text, text-muted, accent, accent-hover, danger\}\). Пусть \(D\) — отображение семантических ролей DaisyUI (primary, error, base, …) в значения. Двоевластие = два независимых отображения \(f_{canon}: T […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/hunt-and-canon-m3-design-canon-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m4-hunter-form
-
-> Формализую. Измерение `M: Tree → {pass, fail, refused}` детерминировано: один и тот же снимок дерева даёт один и тот же выход. Суждение модели — стохастическое отображение промпта без дерева в текст. Три job'а охоты сейчас — второе, при `MAX_CONTEXT = 24_000` и явном «нет […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m4-hunter-form-2026-08-27.md#reply-1`

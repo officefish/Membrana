@@ -1,0 +1,5 @@
+{"ts":"2026-09-24T10:57:40.934Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-09-24T17:28:14.869Z","persona":"rodchenko","verb":"write_operational","ref":"rodchenko-2026-09-24-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-24T17:28:14.869Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-27-hunt-and-canon-m4-hunter-form","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-24T17:28:14.869Z","persona":"rodchenko","verb":"transfer_to_archive","ref":"rodchenko-2026-08-04-static-mmbrn-container-m4-storage","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-24T17:28:14.869Z","persona":"rodchenko","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

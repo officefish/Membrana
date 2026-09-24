@@ -7,8 +7,8 @@
 
 | Field | Value |
 |-------|-------|
-| Date | 2026-09-23 |
-| Head SHA | 3608bf974bdd32b8727aad3c33408e16d3b6504a |
+| Date | 2026-09-24 |
+| Head SHA | e30a6f786b620bfcbe6f3927a9be5b93f2e46aad |
 | Source | yarn scripts:registry --report |
 | SoT | scripts/** (code) + package.json#scripts |
 
@@ -16,14 +16,14 @@
 
 | Metric | Count |
 |--------|------:|
-| Code files under `scripts/` | 1240 |
-| Yarn scripts (package.json) | 473 |
-| Yarn → `scripts/` | 419 |
+| Code files under `scripts/` | 1243 |
+| Yarn scripts (package.json) | 474 |
+| Yarn → `scripts/` | 420 |
 | Yarn без пути `scripts/` | 54 |
 | Yarn → missing file | 7 |
-| Code files without yarn ref | 904 |
+| Code files without yarn ref | 906 |
 
-## Yarn → scripts/ (419)
+## Yarn → scripts/ (420)
 
 - `affine:capacity-gate` → `scripts/affine-capacity-gate.mjs`
 - `affine:import` → `scripts/affine-import-markdown.mjs`
@@ -246,6 +246,7 @@
 - `office:ssh` → `scripts/_ssh-office-exec.mjs`
 - `one-shot:rank` → `scripts/one-shot-rank.mjs`
 - `one-shot:trail` → `scripts/one-shot-trail.mjs`
+- `panel:cabinet-invite` → `scripts/panel-cabinet-invite.mjs`
 - `panel:dns-gate` → `scripts/panel-dns-gate.mjs`
 - `panel:invite` → `scripts/panel-invite.mjs`
 - `persona-memory:extract` → `scripts/persona-memory-extract.mjs`
@@ -445,13 +446,14 @@
 - `worktree:sync:dry` → `scripts/worktree-sync.mjs`
 - `worktrees:align` → `scripts/worktrees-align.mjs`
 
-## Code files without yarn ref (904)
+## Code files without yarn ref (906)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
 - `scripts/_daily-standup.mjs`
 - `scripts/_deepseek-env.mjs`
 - `scripts/_deploy-ci-gate.mjs`
+- `scripts/_deploy-ci-gate.test.mjs`
 - `scripts/_deploy-preflight.mjs`
 - `scripts/_deploy-preflight.test.mjs`
 - `scripts/_llm-proxy-env.mjs`
@@ -1155,6 +1157,7 @@
 - `scripts/opencode-with-llm-proxy.mjs`
 - `scripts/optional-yarn-script.test.mjs`
 - `scripts/orphan-waiver.test.mjs`
+- `scripts/panel-cabinet-invite.test.mjs`
 - `scripts/panel-dns-gate.test.mjs`
 - `scripts/parse-studio-shell-log.test.mjs`
 - `scripts/percentile-template.test.mjs`
@@ -1362,13 +1365,14 @@
 - `templates:content:real:speech` → missing `scripts/materialize-free-v1-real.py`
 - `templates:content:real:wind` → missing `scripts/materialize-free-v1-real.py`
 
-## All code files (1240)
+## All code files (1243)
 
 - `scripts/_analyzers-research.mjs`
 - `scripts/_anthropic-env.mjs`
 - `scripts/_daily-standup.mjs`
 - `scripts/_deepseek-env.mjs`
 - `scripts/_deploy-ci-gate.mjs`
+- `scripts/_deploy-ci-gate.test.mjs`
 - `scripts/_deploy-preflight.mjs`
 - `scripts/_deploy-preflight.test.mjs`
 - `scripts/_llm-proxy-env.mjs`
@@ -2272,6 +2276,8 @@
 - `scripts/opencode-with-llm-proxy.mjs`
 - `scripts/optional-yarn-script.test.mjs`
 - `scripts/orphan-waiver.test.mjs`
+- `scripts/panel-cabinet-invite.mjs`
+- `scripts/panel-cabinet-invite.test.mjs`
 - `scripts/panel-dns-gate.mjs`
 - `scripts/panel-dns-gate.test.mjs`
 - `scripts/panel-invite.mjs`

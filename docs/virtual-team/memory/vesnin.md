@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14377/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 386 (причины в op-log) -->
+Записей: 49 · бюджет 14353/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/vesnin.jsonl · transferred: 387 (причины в op-log) -->
+
+### 2026-09-24 · позиция · team-evening-feedback
+
+> Vesnin. Оценка артефактов: MAIN_DAY_ISSUE держит жёсткую границу «код в стволе → работа = выкатка, не переизобретение» — посылка «кода регистрации ещё нет» помечена `violated`, это архитектурно честно. Однако сам день эту границу нарушил: `feat(panel): третий режим чеканки` […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-24.md#reply-1`
 
 ### 2026-09-23 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Комната узкая: предмет измерения для ребра (4)→(1), не метрика M4. Конструкция: сейчас в `DESIGN.md` два независимых узуса цвета — восемь `--color-*` и семантика DaisyUI (`data-theme`, `badge-*`, `text-error`). В `apps/client/src` вхождений `--color-` — ноль. Это не дрейф, а […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/hunt-and-canon-m3-design-canon-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m4-hunter-form
-
-> Конструкция. Ночной обходчик — не рецензент и не «умный PR». Это измеритель по дереву в том же роде, что `yarn verify:*` и зубы. Граница модуля: вход — снимок репозитория и манифест предметов замера; выход — машинный вердикт. Путь GitHub → офис → LLM → PR — форма, которая не […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m4-hunter-form-2026-08-27.md#reply-1`

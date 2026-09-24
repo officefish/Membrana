@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 49 · бюджет 14350/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 378 (причины в op-log) -->
+Записей: 49 · бюджет 14322/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/ozhegov.jsonl · transferred: 379 (причины в op-log) -->
+
+### 2026-09-24 · позиция · team-evening-feedback
+
+> Ozhegov. Оценка артефактов: DAILY_AUDIT — образцовая механическая сводка (35% тулинг / 29% витрина / 28% процессы / 7% кабинет), классификация по областям видна с одного взгляда. MAIN_DAY_ISSUE в разделе «Посылки» корректно ставит `unknown` там, где нет лога отказа — не […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-24.md#reply-1`
 
 ### 2026-09-23 · позиция · team-evening-feedback
 
@@ -295,9 +301,3 @@
 > Леммы. «Канон цвета» ≠ «библиотека DaisyUI» ≠ «файл DESIGN.md как README». Словарно: канон — нормативный набор токенов продукта; тема DaisyUI — адаптер презентации; `DESIGN.md` — носитель нормы, если мы так решим. Слабая связанность: UI-дома не должны каждый тащить свою палитру. […] _(реплик в сеансе: 6)_
 
 — источник: `docs/seanses/hunt-and-canon-m3-design-canon-2026-08-27.md#reply-1`
-
-### 2026-08-27 · позиция · hunt-and-canon-m4-hunter-form
-
-> Леммы. «Обходчик» ≠ «NightHuntService-промпт». «Job охоты» ≠ «суждение LLM». Публичный контракт обходчика — словарная статья: читает дерево, пишет детерминированный результат. Три имени `design-token-drift`, `services-api-contract-drift`, `monorepo-dependency-graph` сейчас — […] _(реплик в сеансе: 6)_
-
-— источник: `docs/seanses/hunt-and-canon-m4-hunter-form-2026-08-27.md#reply-1`
