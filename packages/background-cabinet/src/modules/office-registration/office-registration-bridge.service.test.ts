@@ -14,7 +14,13 @@ const CONFIG: CabinetConfigWithOffice = {
 
 const NO_OFFICE_CONFIG: CabinetConfigWithOffice = { office: null } as CabinetConfigWithOffice;
 
-const reasons: RegistrationRefusalReason[] = ['not_found', 'revoked', 'expired', 'grant_mismatch', 'exhausted'];
+const reasons: RegistrationRefusalReason[] = [
+  'not_found',
+  'revoked',
+  'expired',
+  'grant_mismatch',
+  'exhausted',
+];
 
 function jsonResponse(status: number, body: unknown): Response {
   return {
@@ -42,7 +48,9 @@ afterEach(() => {
 
 describe('OfficeRegistrationBridgeService.redeemRegistrationCode', () => {
   it('200 -> ok; request uses trimmed base, JSON headers, token header and redeem mode', async () => {
-    const { calls } = captureFetch(jsonResponse(200, { ok: true, redeemedAt: '2026-09-22T00:00:00Z' }));
+    const { calls } = captureFetch(
+      jsonResponse(200, { ok: true, redeemedAt: '2026-09-22T00:00:00Z' }),
+    );
     const service = new OfficeRegistrationBridgeService(CONFIG);
 
     await expect(service.redeemRegistrationCode('CODE-1')).resolves.toEqual({
@@ -61,10 +69,40 @@ describe('OfficeRegistrationBridgeService.redeemRegistrationCode', () => {
     expect(calls[0]!.init.signal).toBeInstanceOf(AbortSignal);
   });
 
+  it('201 -> ok: любой 2xx — успех (прод 24.09: дверь отвечала 201, код сгорел впустую)', async () => {
+    captureFetch(jsonResponse(201, { ok: true, redeemedAt: '2026-09-24T12:57:29Z' }));
+    const service = new OfficeRegistrationBridgeService(CONFIG);
+    await expect(service.redeemRegistrationCode('CODE-1')).resolves.toEqual({
+      kind: 'ok',
+      payload: { ok: true, redeemedAt: '2026-09-24T12:57:29Z' },
+    });
+  });
+
+  it('204 -> ok даже без тела', async () => {
+    captureFetch(jsonResponse(204, null));
+    const service = new OfficeRegistrationBridgeService(CONFIG);
+    await expect(service.redeemRegistrationCode('CODE-1')).resolves.toEqual({
+      kind: 'ok',
+      payload: null,
+    });
+  });
+
+  it('300 -> office-unavailable: край 2xx не размыт', async () => {
+    captureFetch(jsonResponse(300, {}));
+    const service = new OfficeRegistrationBridgeService(CONFIG);
+    await expect(service.redeemRegistrationCode('CODE-1')).resolves.toEqual({
+      kind: 'office-unavailable',
+      detail: 'office returned 300',
+    });
+  });
+
   it.each(reasons)('409 %s -> refused with the exact reason', async (reason) => {
     captureFetch(jsonResponse(409, { ok: false, reason }));
     const service = new OfficeRegistrationBridgeService(CONFIG);
-    await expect(service.redeemRegistrationCode('CODE-1')).resolves.toEqual({ kind: 'refused', reason });
+    await expect(service.redeemRegistrationCode('CODE-1')).resolves.toEqual({
+      kind: 'refused',
+      reason,
+    });
   });
 
   it('401 -> config-invalid', async () => {
@@ -132,6 +170,8 @@ describe('OfficeRegistrationBridgeService.probeOfficeConfig', () => {
       throw new TypeError('fetch failed');
     });
     const service = new OfficeRegistrationBridgeService(CONFIG);
-    await expect(service.probeOfficeConfig()).resolves.toMatchObject({ kind: 'office-unavailable' });
+    await expect(service.probeOfficeConfig()).resolves.toMatchObject({
+      kind: 'office-unavailable',
+    });
   });
 });
