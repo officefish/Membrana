@@ -21,6 +21,19 @@ type OfficeRequestInit = RequestInit & {
   dispatcher?: ProxyAgent;
 };
 
+/**
+ * Успех двери — любой 2xx, а не буквально 200.
+ *
+ * 24.09 на проде это стоило живой регистрации: офис отвечал 201 (Nest по умолчанию
+ * на POST), клиент сверял с 200, читал успешное гашение как «исход неизвестен»,
+ * пользователя не создавал — и код сгорал впустую. Дверь с тех пор объявляет 200
+ * явно (@HttpCode), но принимающая сторона обязана быть терпимее отправляющей:
+ * различать успехи внутри 2xx клиенту незачем, а цена ошибки — сожжённое приглашение.
+ */
+export function isSuccess(status: number): boolean {
+  return status >= 200 && status < 300;
+}
+
 function resolveProxyUrl(): string | null {
   const raw = process.env.HTTPS_PROXY || process.env.HTTP_PROXY || '';
   const proxyUrl = raw.trim();
@@ -105,7 +118,7 @@ export class OfficeRegistrationBridgeService {
     res: Response | { kind: 'transport-error'; detail: string },
   ): Promise<RegistrationOutcome> {
     if ('kind' in res) return { kind: 'office-unavailable', detail: res.detail };
-    if (res.status === 200) return { kind: 'ok', payload: await this.safeJson(res) };
+    if (isSuccess(res.status)) return { kind: 'ok', payload: await this.safeJson(res) };
     if (res.status === 409) {
       const body = await this.safeJson(res);
       if (isRegistrationRefusalReason(body?.reason)) {
@@ -131,7 +144,7 @@ export class OfficeRegistrationBridgeService {
     if (res.status === 401 || res.status === 403) {
       return { kind: 'config-invalid', detail: `office returned ${res.status}` };
     }
-    if (res.status === 200) return { kind: 'ok' };
+    if (isSuccess(res.status)) return { kind: 'ok' };
     return { kind: 'office-unavailable', detail: `office returned ${res.status}` };
   }
 

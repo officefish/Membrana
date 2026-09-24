@@ -4,7 +4,7 @@
  * Предмет: контроллер двери — путь, охрана, коды ответов и тело. Красен на
  * стволе: контроллера там нет.
  */
-import { PATH_METADATA } from '@nestjs/common/constants';
+import { HTTP_CODE_METADATA, PATH_METADATA } from '@nestjs/common/constants';
 import { describe, expect, it } from 'vitest';
 
 import { ApiTokenGuard } from '../../common/guards/api-token.guard';
@@ -55,9 +55,18 @@ describe('дверь кабинета: путь и охрана', () => {
     expect(Reflect.getMetadata(PATH_METADATA, PanelUsersInternalController)).toBe(
       'v1/internal/cabinet/registration-codes',
     );
+    expect(Reflect.getMetadata(PATH_METADATA, PanelUsersInternalController.prototype.consume)).toBe(
+      'consume',
+    );
+  });
+
+  it('успех двери — 200, а не 201 по умолчанию Nest', () => {
+    // 24.09 дверь отвечала 201: клиент кабинета сверял с 200, читал успешное
+    // гашение как «исход неизвестен», пользователя не создавал — код сгорал.
+    // Номер ответа здесь часть контракта M2, а не деталь фреймворка.
     expect(
-      Reflect.getMetadata(PATH_METADATA, PanelUsersInternalController.prototype.consume),
-    ).toBe('consume');
+      Reflect.getMetadata(HTTP_CODE_METADATA, PanelUsersInternalController.prototype.consume),
+    ).toBe(200);
   });
 
   it('класс накрыт ApiTokenGuard — внутренняя охрана офиса, не сессия панели', () => {

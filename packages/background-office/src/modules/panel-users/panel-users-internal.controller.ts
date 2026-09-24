@@ -3,6 +3,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  HttpCode,
   Inject,
   Post,
   ServiceUnavailableException,
@@ -40,7 +41,12 @@ export class PanelUsersInternalController {
 
   constructor(@Inject(PanelUsersStore) private readonly store: PanelUsersStore) {}
 
+  // Nest по умолчанию отвечает на POST кодом 201. Клиент кабинета считает успехом
+  // ровно 200 (M2), и 24.09 это стоило живой регистрации: офис погасил код и ответил
+  // 201, кабинет прочитал «исход неизвестен», пользователя не создал, код сгорел.
+  // Номер ответа — часть контракта двери, а не деталь фреймворка.
   @Post('consume')
+  @HttpCode(200)
   async consume(@Body() body: { code?: unknown; mode?: unknown }): Promise<CabinetConsumeOutcome> {
     const code = typeof body?.code === 'string' ? body.code.trim() : '';
     if (!code) {
@@ -63,7 +69,13 @@ export class PanelUsersInternalController {
   private consumeOnce(code: string, mode: CabinetConsumeMode): CabinetConsumeOutcome {
     const nowIso = new Date().toISOString();
     const nowSec = Math.floor(Date.now() / 1000);
-    const result = consumeCabinetRegistrationCode(this.store.snapshot(), code, mode, nowSec, nowIso);
+    const result = consumeCabinetRegistrationCode(
+      this.store.snapshot(),
+      code,
+      mode,
+      nowSec,
+      nowIso,
+    );
 
     // Состояние меняется только на redeem (приращение и аудит); check его не трогает.
     if (result.state !== this.store.snapshot() && !this.store.mutate(() => result.state)) {
