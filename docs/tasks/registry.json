@@ -310,6 +310,24 @@
       "githubIssueClosedAt": null
     },
     {
+      "id": "session-r-registration-rollout",
+      "title": "Сессия R: выкатка регистрации с двумя owner-gate",
+      "promptPath": "docs/prompts/SESSION_R_REGISTRATION_ROLLOUT_2026-09-23.md",
+      "githubIssue": null,
+      "noIssueReason": "Постановка по прямому слову владельца 2026-09-23; Issue привязать при старте кода",
+      "linearId": null,
+      "size": "M",
+      "status": "active",
+      "sprintKind": "day-sprint",
+      "createdAt": "2026-09-23",
+      "archivedAt": null,
+      "leadPersona": "rodchenko",
+      "supportPersonas": [],
+      "notes": "Executor: Rodchenko; two owner-hand gates before contour choice/code and before external enablement",
+      "archiveNotes": null,
+      "githubIssueClosedAt": null
+    },
+    {
       "id": "obs-sentry-container",
       "title": "Кусок E: контейнер Сентри на офисе — картотека происшествий",
       "promptPath": "docs/prompts/OBS_SENTRY_CONTAINER_PROMPT.md",
