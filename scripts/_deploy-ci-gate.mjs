@@ -40,7 +40,9 @@ function requiredWorkflows() {
 function blockOrBypass(message, allowRedCi) {
   console.error(`\n[ci-gate] ${message}`);
   if (allowRedCi) {
-    console.error('[ci-gate] обход включён (--allow-red-ci / DEPLOY_ALLOW_RED_CI=1) — продолжаю.\n');
+    console.error(
+      '[ci-gate] обход включён (--allow-red-ci / DEPLOY_ALLOW_RED_CI=1) — продолжаю.\n',
+    );
     return { green: false };
   }
   console.error(
@@ -57,9 +59,10 @@ function blockOrBypass(message, allowRedCi) {
  * @param {string} opts.branch          Деплоируемая ветка.
  * @param {string | null} opts.sha      SHA коммита (origin/<branch>); null → проверка пропускается.
  * @param {boolean} [opts.allowRedCi]   Разрешить обход (по умолчанию из argv/env).
+ * @param {(args: string) => string} [opts.runGh] Вызов `gh` — подменяется в тесте.
  * @returns {{ green: boolean }}
  */
-export function assertCiGreen({ branch, sha, allowRedCi = isAllowRedCi() }) {
+export function assertCiGreen({ branch, sha, allowRedCi = isAllowRedCi(), runGh = gh }) {
   if (!sha) {
     console.warn('[ci-gate] неизвестен SHA origin-коммита — проверка CI пропущена');
     return { green: false };
@@ -69,8 +72,14 @@ export function assertCiGreen({ branch, sha, allowRedCi = isAllowRedCi() }) {
 
   let runsRaw;
   try {
-    runsRaw = gh(
-      `run list --branch ${branch} --limit 50 --json databaseId,headSha,status,conclusion,workflowName,event,url`,
+    // Спрашиваем про КОММИТ, а не листаем ленту ветки в надежде, что он окажется
+    // на первой странице. 24.09 выкатка кабинета встала на ложном красном: три
+    // одинаковых `run list --branch main --limit 50` подряд дали верхом то прогоны
+    // сегодняшнего коммита, то страницу трёхнедельной давности, и в последнем
+    // случае гейт докладывал «workflow не запускался» о зелёном CI. Ложный красный
+    // здесь опаснее лишней строки: он учит обходить гейт флагом --allow-red-ci.
+    runsRaw = runGh(
+      `run list --commit ${sha} --limit 50 --json databaseId,headSha,status,conclusion,workflowName,event,url`,
     );
   } catch {
     return blockOrBypass(
@@ -111,7 +120,9 @@ export function assertCiGreen({ branch, sha, allowRedCi = isAllowRedCi() }) {
     return { green: true };
   }
 
-  console.error(`\n[ci-gate] ВНИМАНИЕ — CI не подтверждён для коммита ${shortSha} (origin/${branch}):`);
+  console.error(
+    `\n[ci-gate] ВНИМАНИЕ — CI не подтверждён для коммита ${shortSha} (origin/${branch}):`,
+  );
   for (const f of failures) console.error(`  • ${f}`);
   return blockOrBypass('деплой на прод допускается только из зелёного CI.', allowRedCi);
 }
