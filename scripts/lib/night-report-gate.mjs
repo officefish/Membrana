@@ -13,6 +13,8 @@
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+
+import { formatLateness } from './night-summary.mjs';
 import { execFileSync } from 'node:child_process';
 
 export const NIGHT_REPORT_FRAME_ID = 'night-report';
@@ -60,7 +62,8 @@ export function readNightReport(repoRoot, rel) {
   }
   try {
     const report = JSON.parse(text);
-    if (!report || typeof report !== 'object') return { report: null, problem: 'носитель не объект' };
+    if (!report || typeof report !== 'object')
+      return { report: null, problem: 'носитель не объект' };
     return { report, problem: null };
   } catch (e) {
     return { report: null, problem: `носитель не JSON: ${e.message}` };
@@ -80,7 +83,13 @@ export function readNightReport(repoRoot, rel) {
  * @param {string} [input.today] legacy/log-only day; freshness is not decided by calendar date
  * @returns {{ status: 'pass'|'missing'|'stale'|'pending'|'red'|'invalid', blockers: string[], summary: string[] }}
  */
-export function evaluateNightReport({ carrier, report, reportProblem = null, expectedRevision, today = null }) {
+export function evaluateNightReport({
+  carrier,
+  report,
+  reportProblem = null,
+  expectedRevision,
+  today = null,
+}) {
   /** @type {string[]} */
   const summary = [];
   const expr = typeof carrier?.blocksMorningWhen === 'string' ? carrier.blocksMorningWhen : '';
@@ -111,7 +120,9 @@ export function evaluateNightReport({ carrier, report, reportProblem = null, exp
   }
   summary.push(`отчёт: ${generatedAt}`);
   if (today) summary.push(`день чтения: ${today}`);
-  const reportRevision = normalizeRevision(report.git?.revision ?? report.revision ?? report.headSha);
+  const reportRevision = normalizeRevision(
+    report.git?.revision ?? report.revision ?? report.headSha,
+  );
   const wantedRevision = normalizeRevision(expectedRevision);
   if (!wantedRevision) {
     return {
@@ -124,7 +135,9 @@ export function evaluateNightReport({ carrier, report, reportProblem = null, exp
   if (!reportRevision) {
     return {
       status: 'stale',
-      blockers: ['ночь не отработала: у носителя нет ревизии git — свежесть по вершине ствола не подтверждена'],
+      blockers: [
+        'ночь не отработала: у носителя нет ревизии git — свежесть по вершине ствола не подтверждена',
+      ],
       summary,
     };
   }
@@ -143,7 +156,8 @@ export function evaluateNightReport({ carrier, report, reportProblem = null, exp
   const run = Array.isArray(setup.run) ? setup.run.length : null;
   if (run !== null) summary.push(`гонялось файлов: ${run}`);
   if (notRun !== null) summary.push(`не гонялось: ${notRun}`);
-  if (report.kit?.id) summary.push(`кит: ${report.kit.id} (${report.kit.ok ? 'pinned ok' : 'pinned BLOCKED'})`);
+  if (report.kit?.id)
+    summary.push(`кит: ${report.kit.id} (${report.kit.ok ? 'pinned ok' : 'pinned BLOCKED'})`);
   const summaryVerdict = evaluateNightSummary(report);
   if (summaryVerdict) {
     for (const line of summaryVerdict.summary) summary.push(line);
@@ -178,7 +192,15 @@ function evaluateNightSummary(report) {
     const title = check.title ?? check.id ?? check.workflow ?? 'unknown';
     const status = check.status ?? 'unknown';
     const reason = check.reason ? ` — ${check.reason}` : '';
-    return `ночь/${title}: ${status}${reason}`;
+    // Опоздание расписания печатаем ВСЕГДА, когда оно измерено, а не только на
+    // красном: 25.09 ночь приходила через ~5 ч после объявленного часа, и это
+    // не было видно ниоткуда — гейт сообщал «stale», а причиной считали GitHub
+    // вообще. Число рядом со статусом превращает догадку в замер.
+    const sched = check.run?.schedule ?? null;
+    const late = sched
+      ? ` [объявлено ${sched.cron}, пришло ${formatLateness(sched.latenessMs)}]`
+      : '';
+    return `ночь/${title}: ${status}${reason}${late}`;
   });
   if (checks.length === 0) {
     return {
@@ -195,12 +217,16 @@ function evaluateNightSummary(report) {
     });
   if (blockers.length === 0) return { status: 'pass', blockers: [], summary: lines };
   const first = checks.find((check) => check.required !== false && check.status !== 'pass');
-  const status = ['missing', 'stale', 'pending', 'red', 'invalid'].includes(first?.status) ? first.status : 'red';
+  const status = ['missing', 'stale', 'pending', 'red', 'invalid'].includes(first?.status)
+    ? first.status
+    : 'red';
   return { status, blockers, summary: lines };
 }
 
 function normalizeRevision(value) {
-  const s = String(value ?? '').trim().toLowerCase();
+  const s = String(value ?? '')
+    .trim()
+    .toLowerCase();
   return /^[0-9a-f]{12,40}$/u.test(s) ? s : null;
 }
 
@@ -235,7 +261,10 @@ export function runNightReportGate(repoRoot, opts = {}) {
   const log = opts.log ?? console.log;
   const today = opts.today ?? new Date().toISOString().slice(0, 10);
   const expectedRef = opts.expectedRef ?? 'origin/main';
-  const expectedRevision = opts.expectedRevision ?? readGitRevision(repoRoot, expectedRef) ?? readGitRevision(repoRoot, 'HEAD');
+  const expectedRevision =
+    opts.expectedRevision ??
+    readGitRevision(repoRoot, expectedRef) ??
+    readGitRevision(repoRoot, 'HEAD');
   log('→ night-report (гейт ночи, #1293)');
   const { carrier, problems } = loadNightReportFrame(repoRoot);
   if (!carrier) {
@@ -244,7 +273,13 @@ export function runNightReportGate(repoRoot, opts = {}) {
     return 2;
   }
   const { report, problem } = readNightReport(repoRoot, carrier.path);
-  const verdict = evaluateNightReport({ carrier, report, reportProblem: problem, today, expectedRevision });
+  const verdict = evaluateNightReport({
+    carrier,
+    report,
+    reportProblem: problem,
+    today,
+    expectedRevision,
+  });
   for (const s of verdict.summary) log(`  · ${s}`);
   if (verdict.status === 'pass') {
     log('✓ night-report: ночь зелёная и совпадает с вершиной ствола');
