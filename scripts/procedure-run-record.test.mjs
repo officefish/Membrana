@@ -152,6 +152,29 @@ test('amend находит запись в ленте её дня и допис�
   );
 });
 
+test('amend без evidence — отказ: дозаписанный корень доказывается разбором, не словом', () => {
+  const dir = tempRepo();
+  cmdOpen(dir, { procedureId: 'ritual-day', at: AT_D1, evidence: ['e'] });
+  cmdClose(dir, {
+    procedureId: 'ritual-day', status: 'pass', at: '2026-08-03T18:00:00.000Z',
+    evidence: ['e'], friction: ['шаг дал находку'],
+  });
+  // Корень без вещдока — снова слово в ленте; у амандмента своя формулировка того же закона.
+  assert.throws(
+    () => cmdAmend(dir, {
+      runId: 'ritual-day-2026-08-03', sequence: 2, frictionIndex: 0,
+      root: 'корень назван, разбор не предъявлен', at: AT_D2, evidence: [],
+    }),
+    /friction-amend без evidence/u,
+  );
+  // Тот же адрес трения с вещдоком проходит — отказ был именно про evidence, а не про адрес.
+  const { record } = cmdAmend(dir, {
+    runId: 'ritual-day-2026-08-03', sequence: 2, frictionIndex: 0,
+    root: 'корень назван, разбор предъявлен', at: AT_D2, evidence: ['docs/DAILY_CODE_REVIEW.md'],
+  });
+  assert.equal(record.runPhase, 'friction-amend');
+});
+
 test('parseArgs: закрытый список команд и флагов, повторяемые копятся', () => {
   const args = parseArgs(['close', '--procedure', 'p', '--status', 'pass', '--gap', 'a', '--gap', 'b']);
   assert.deepEqual(args.gap, ['a', 'b']);

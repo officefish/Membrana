@@ -17,6 +17,7 @@ import { DeviceCaptureModule } from './modules/device-capture/device-capture.mod
 import { NodeLivenessModule } from './modules/node-liveness/node-liveness.module';
 import { TariffModule } from './modules/tariff/tariff.module';
 import { HealthDeepModule } from './modules/health-deep/health-deep.module';
+import { OfficeRegistrationModule } from './modules/office-registration';
 
 const testImports =
   process.env.NODE_ENV === 'test'
@@ -58,6 +59,7 @@ const testImports =
     DeviceCaptureModule,
     NodeLivenessModule,
     TariffModule,
+    OfficeRegistrationModule,
     HealthDeepModule,
   ],
   controllers: [HealthController],

@@ -12,6 +12,7 @@ import {
   getStoredToken,
   loginRequest,
   logoutRequest,
+  registerRequest,
   setStoredToken,
   type AuthUser,
 } from '@/api/auth';
@@ -24,6 +25,7 @@ interface AuthContextValue {
   user: AuthUser | null;
   loading: boolean;
   login: (login: string, password: string) => Promise<void>;
+  register: (login: string, password: string, code: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -51,6 +53,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(result.user);
   }, []);
 
+  const register = useCallback(async (loginName: string, password: string, code: string) => {
+    const result = await registerRequest(loginName, password, code);
+    setStoredToken(result.token);
+    setUser(await fetchMe(result.token));
+  }, []);
+
   const logout = useCallback(async () => {
     const token = getStoredToken();
     if (token) {
@@ -72,8 +80,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, loading, login, logout }),
-    [user, loading, login, logout],
+    () => ({ user, loading, login, register, logout }),
+    [user, loading, login, register, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

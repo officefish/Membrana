@@ -6,6 +6,19 @@ import { ClaudeService } from '../claude/claude.service';
 import { DeepSeekService } from '../deepseek/deepseek.service';
 import { GithubService } from '../github/github.service';
 import {
+  designSubjectProblems,
+  renderDesignSubject,
+  type SourceFile,
+} from './night-hunt-design';
+import {
+  classifyEdgeKind,
+  findGraphSuspicions,
+  manifestPathOf,
+  parseWorkspaceGraph,
+  renderGraphSubject,
+  type ResolvedSuspicion,
+} from './night-hunt-graph';
+import {
   type NightHuntJobId,
   getNightHuntJob,
   nightHuntOutputPath,
@@ -13,6 +26,12 @@ import {
 import { nightHuntWeekKey } from './night-hunt-week.util';
 
 const MAX_CONTEXT = 24_000;
+
+/** Предмет дела об оформлении: конфиг темы приложения и его компоненты. */
+const THEME_CONFIG_PATH = 'apps/client/tailwind.config.js';
+const DESIGN_SOURCE_DIR = 'apps/client/src/components';
+/** Потолок выборки исходников: дело ходит по сети, а не по диску. */
+const DESIGN_SOURCE_LIMIT = 25;
 
 function truncate(text: string, max: number): string {
   if (text.length <= max) return text;
@@ -135,17 +154,55 @@ export class NightHuntService {
     ].join('\n');
   }
 
+  /**
+   * Исходники компонентов для замера: листинг каталога плюс текст каждого файла.
+   * Листинг GitHub отдаёт только файлы каталога (не вложенные), поэтому выборка
+   * плоская и ограничена потолком — это честная выборка, а не весь клиент.
+   */
+  private async fetchSourceFiles(dir: string, limit: number): Promise<SourceFile[]> {
+    const names = await this.github.listDirectoryFiles(dir);
+    if (!names) return [];
+    const wanted = names.filter((n) => /\.tsx?$/.test(n) && !/\.test\.tsx?$/.test(n));
+    const files: SourceFile[] = [];
+    for (const name of wanted.slice(0, limit)) {
+      const path = `${dir}/${name}`;
+      const text = await this.github.fetchTextFile(path);
+      if (text) files.push({ path, text });
+    }
+    return files;
+  }
+
   private async gatherContext(jobId: NightHuntJobId): Promise<string> {
     const parts: string[] = [];
 
     if (jobId === 'design-token-drift') {
-      const design = await this.github.fetchTextFile('docs/DESIGN.md');
-      const arch = await this.github.fetchTextFile('docs/ARCHITECTURE.md');
-      if (design) parts.push('## DESIGN.md\n\n', truncate(design, 8_000));
-      if (arch) parts.push('\n## ARCHITECTURE.md (excerpt)\n\n', truncate(arch, 4_000));
+      const designMd = (await this.github.fetchTextFile('docs/DESIGN.md')) ?? '';
+      const themeConfig = (await this.github.fetchTextFile(THEME_CONFIG_PATH)) ?? '';
+      const files = await this.fetchSourceFiles(DESIGN_SOURCE_DIR, DESIGN_SOURCE_LIMIT);
+      const subject = {
+        themeConfigPath: THEME_CONFIG_PATH,
+        themeConfig,
+        designMd,
+        files,
+        scope:
+          `файлы каталога \`${DESIGN_SOURCE_DIR}\` без вложенных подкаталогов, ` +
+          `не более ${DESIGN_SOURCE_LIMIT}, тесты исключены`,
+      };
+
+      // Нет предмета — отказ, а не проза. Дело обязано молчать громко: пустой отчёт
+      // никто не разбирает, а отказ с причиной виден в логе и в состоянии прогона.
+      const problems = designSubjectProblems(subject);
+      if (problems.length > 0) {
+        throw new Error(`design-token-drift: предмета нет — ${problems.join('; ')}`);
+      }
+
+      parts.push(renderDesignSubject(subject));
       parts.push(
-        '\n## Задача\n\nСравни токены DESIGN.md с типичными Tailwind/DaisyUI паттернами в `apps/client/src`. ' +
-          'Если нет доступа к файлам компонентов — дай чеклист для ручной проверки.',
+        '\n## Задача\n\nОбъясни замер выше. Каждая находка обязана нести адрес: имя токена ' +
+          'либо файл и строку из таблиц замера. Утверждение без адреса — не находка, его не писать. ' +
+          'Числа замера не пересчитывай и не опровергай: они посчитаны по исходникам. ' +
+          'Главный вопрос: документ описывает цвет значениями палитры, код — семантическими ' +
+          'классами тем; что здесь расхождение по существу, а что законная разница слоёв.',
       );
     }
 
@@ -157,17 +214,57 @@ export class NightHuntService {
       const fft = await this.github.fetchTextFile(
         'packages/services/fft-analyzer/src/index.ts',
       );
-      if (services) parts.push('## SERVICES.md\n\n', truncate(services, 8_000));
-      if (audio) parts.push('\n## audio-engine index.ts\n\n', truncate(audio, 3_000));
-      if (fft) parts.push('\n## fft-analyzer index.ts\n\n', truncate(fft, 3_000));
+
+      // Дело здоровое — оно единственное тянуло настоящие исходники. Но отказа без
+      // предмета у него не было: не прочитались файлы — модель получала пустой
+      // контекст и отвечала прозой. Мина той же породы, снимается до взрыва.
+      const missing: string[] = [];
+      if (!services?.trim()) missing.push('docs/SERVICES.md');
+      if (!audio?.trim()) missing.push('packages/services/audio-engine/src/index.ts');
+      if (!fft?.trim()) missing.push('packages/services/fft-analyzer/src/index.ts');
+      if (missing.length > 0) {
+        throw new Error(
+          `services-api-contract-drift: предмета нет — не прочитано: ${missing.join(', ')}`,
+        );
+      }
+
+      parts.push('## SERVICES.md\n\n', truncate(services!, 8_000));
+      parts.push('\n## audio-engine index.ts\n\n', truncate(audio!, 3_000));
+      parts.push('\n## fft-analyzer index.ts\n\n', truncate(fft!, 3_000));
+      parts.push(
+        '\n## Задача\n\nСравни объявленный контракт из SERVICES.md с тем, что пакеты ' +
+          'действительно экспортируют выше. Каждая находка обязана нести адрес: имя экспорта ' +
+          'и файл, где он объявлен или где его недостаёт. Утверждение без адреса — не находка, ' +
+          'его не писать. Того, чего нет в приведённых исходниках, не домысливать.',
+      );
     }
 
     if (jobId === 'monorepo-dependency-graph') {
-      const arch = await this.github.fetchTextFile('docs/ARCHITECTURE.md');
-      if (arch) parts.push('## ARCHITECTURE.md\n\n', truncate(arch, 10_000));
+      const lock = await this.github.fetchTextFile('yarn.lock');
+      const workspaces = lock ? parseWorkspaceGraph(lock) : [];
+      if (workspaces.length === 0) {
+        throw new Error(
+          'monorepo-dependency-graph: предмета нет — yarn.lock не прочитан или не содержит рабочих областей',
+        );
+      }
+
+      // Lock склеивает dependencies и devDependencies, поэтому сам по себе даёт
+      // только подозрения. Вид ребра выясняем по манифесту подозреваемого — столько
+      // выборок, сколько подозрений (в здоровом стволе ноль).
+      const resolved: ResolvedSuspicion[] = [];
+      for (const suspicion of findGraphSuspicions(workspaces)) {
+        const manifestPath = manifestPathOf(suspicion.fromPath);
+        const manifest = await this.github.fetchTextFile(manifestPath);
+        resolved.push({ ...suspicion, manifestPath, kind: classifyEdgeKind(manifest, suspicion.to) });
+      }
+
+      parts.push(renderGraphSubject(workspaces, resolved));
       parts.push(
-        '\n## Задача\n\nПо правилам §1 ARCHITECTURE перечисли типичные нарушения графа пакетов ' +
-          '(циклы, client→services нарушения, background-* импорты). Дай чеклист для weekly review.',
+        '\n## Задача\n\nОбъясни замер выше. Находка обязана нести адрес: имя пакета и ребро ' +
+          'либо путь к манифесту. Утверждение без адреса — не находка, его не писать. ' +
+          'Рёбра и нарушения посчитаны кодом по правилам §1 ARCHITECTURE — не пересчитывай их и ' +
+          'не добавляй ненайденных. Вид ребра важен: зависимость прода нарушает §1, ' +
+          'зависимость сборки — вопрос, непрочитанный манифест — повод проверить руками, а не вывод.',
       );
     }
 

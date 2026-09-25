@@ -1,5 +1,5 @@
 {
-  "date": "2026-09-06",
+  "date": "2026-09-24",
   "findings": [
     {
       "pkg": "@babel/core",
@@ -58,6 +58,13 @@
       "url": ""
     },
     {
+      "pkg": "@vitest/mocker",
+      "id": "1193684",
+      "severity": "moderate",
+      "issue": "Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock",
+      "url": "https://github.com/advisories/GHSA-82fw-gwwq-j7x9"
+    },
+    {
       "pkg": "@xmldom/xmldom",
       "id": "1158517",
       "severity": "moderate",
@@ -65,11 +72,109 @@
       "url": "https://github.com/advisories/GHSA-6gmq-8vp8-gcm6"
     },
     {
+      "pkg": "@xmldom/xmldom",
+      "id": "1193671",
+      "severity": "high",
+      "issue": "xmldom: HTML raw-text closing-tag case mismatch causes output amplification",
+      "url": "https://github.com/advisories/GHSA-6mj3-qw4j-hgrw"
+    },
+    {
+      "pkg": "@xmldom/xmldom",
+      "id": "1193687",
+      "severity": "high",
+      "issue": "xmldom PI grammar regex ReDoS: quadratic backtracking on unterminated processing instructions",
+      "url": "https://github.com/advisories/GHSA-g53g-w8rj-fmg7"
+    },
+    {
+      "pkg": "@xmldom/xmldom",
+      "id": "1193690",
+      "severity": "high",
+      "issue": "xmldom: Element name injection via createElement() bypasses requireWellFormed",
+      "url": "https://github.com/advisories/GHSA-w2rr-34g9-rvrj"
+    },
+    {
+      "pkg": "@xmldom/xmldom",
+      "id": "1193693",
+      "severity": "high",
+      "issue": "xmldom: Attribute name injection via setAttribute() bypasses requireWellFormed",
+      "url": "https://github.com/advisories/GHSA-4w3w-2rp5-g8jm"
+    },
+    {
+      "pkg": "@xmldom/xmldom",
+      "id": "1193695",
+      "severity": "high",
+      "issue": "xmldom: Processing Instruction Target Injection Bypasses requireWellFormed",
+      "url": "https://github.com/advisories/GHSA-c7q8-3ch8-vqpv"
+    },
+    {
+      "pkg": "@xmldom/xmldom",
+      "id": "1193699",
+      "severity": "high",
+      "issue": "xmldom: DocType `name` Injection Bypasses requireWellFormed",
+      "url": "https://github.com/advisories/GHSA-27p8-2357-5qqv"
+    },
+    {
+      "pkg": "@xmldom/xmldom",
+      "id": "1193701",
+      "severity": "high",
+      "issue": "xmldom: Creation-time XML Name/QName validation is bypassable via an embedded line terminator, allowing injection on the default serialization path",
+      "url": "https://github.com/advisories/GHSA-3px3-54cx-rmw9"
+    },
+    {
+      "pkg": "@xmldom/xmldom",
+      "id": "1193702",
+      "severity": "high",
+      "issue": "xmldom: requireWellFormed DocType publicId/systemId validation is bypassable via an embedded line terminator",
+      "url": "https://github.com/advisories/GHSA-vr34-hp96-76pp"
+    },
+    {
+      "pkg": "@xmldom/xmldom",
+      "id": "1193704",
+      "severity": "moderate",
+      "issue": "xmldom: Parser silently accepts a not-well-formed end tag whose name is followed by a line break and trailing content",
+      "url": "https://github.com/advisories/GHSA-6h8r-xr42-gp59"
+    },
+    {
+      "pkg": "@xmldom/xmldom",
+      "id": "1193707",
+      "severity": "high",
+      "issue": "xmldom: Quadratic-time attribute deduplication",
+      "url": "https://github.com/advisories/GHSA-8344-3jmq-59r6"
+    },
+    {
+      "pkg": "@xmldom/xmldom",
+      "id": "1193711",
+      "severity": "high",
+      "issue": "xmldom: Quadratic-memory consumption",
+      "url": "https://github.com/advisories/GHSA-965w-775f-mr7g"
+    },
+    {
+      "pkg": "@xmldom/xmldom",
+      "id": "1193714",
+      "severity": "high",
+      "issue": "xmldom: Quadratic-time parsing via the malformed-input recovery path — `parseElementStartPart` re-scan and `normalize()` adjacent-text merge",
+      "url": "https://github.com/advisories/GHSA-93r5-fhx6-vmg9"
+    },
+    {
       "pkg": "adm-zip",
       "id": "1123686",
       "severity": "high",
       "issue": "adm-zip: Crafted ZIP file triggers 4GB memory allocation",
       "url": "https://github.com/advisories/GHSA-xcpc-8h2w-3j85"
+    },
+    {
+      "pkg": "adm-zip",
+      "id": "1193734",
+      "severity": "moderate",
+      "issue": "adm-zip extraction follows destination symlinks, allowing arbitrary file overwrite",
+      "url": "https://github.com/advisories/GHSA-vwc7-r8mq-g2x9"
+    },
+    {
+      "pkg": "adm-zip",
+      "id": "1239030",
+      "severity": "high",
+      "issue": "adm-zip: Uncontrolled memory allocation via the declared uncompressed size (DoS)",
+      "url": "https://github.com/advisories/GHSA-7q85-xj36-vmfc"
     },
     {
       "pkg": "ajv",
@@ -91,13 +196,6 @@
       "severity": "moderate",
       "issue": "This package is no longer supported.",
       "url": ""
-    },
-    {
-      "pkg": "axios",
-      "id": "1123969",
-      "severity": "moderate",
-      "issue": "Axios form serializer maxDepth bypass via {} metatoken",
-      "url": "https://github.com/advisories/GHSA-hcpx-6fm6-wx23"
     },
     {
       "pkg": "axios",
@@ -161,6 +259,20 @@
       "severity": "moderate",
       "issue": "Axios: Excessive recursion in formDataToJSON can cause denial of service",
       "url": "https://github.com/advisories/GHSA-42h9-826w-cgv3"
+    },
+    {
+      "pkg": "axios",
+      "id": "1193664",
+      "severity": "moderate",
+      "issue": "Axios form serializer maxDepth bypass via {} metatoken",
+      "url": "https://github.com/advisories/GHSA-hcpx-6fm6-wx23"
+    },
+    {
+      "pkg": "baseline-browser-mapping",
+      "id": "1193686",
+      "severity": "moderate",
+      "issue": "baseline-browser-mapping process termination on invalid input causes denial of service",
+      "url": "https://github.com/advisories/GHSA-w5vr-8v7q-w6rv"
     },
     {
       "pkg": "body-parser",
@@ -245,6 +357,13 @@
       "severity": "high",
       "issue": "extract-zip unvalidated symlink path traversal",
       "url": "https://github.com/advisories/GHSA-jmr9-qjv8-65gv"
+    },
+    {
+      "pkg": "extract-zip",
+      "id": "1193685",
+      "severity": "high",
+      "issue": "extract-zip allows arbitrary file writes through symlink archive entries",
+      "url": "https://github.com/advisories/GHSA-7pqw-9j4j-h8q3"
     },
     {
       "pkg": "fast-uri",
@@ -401,6 +520,20 @@
       "url": "https://github.com/advisories/GHSA-5p4m-2wfm-xmqj"
     },
     {
+      "pkg": "js-yaml",
+      "id": "1193726",
+      "severity": "high",
+      "issue": "js-yaml: maxTotalMergeKeys does not limit CPU use for empty merge sources",
+      "url": "https://github.com/advisories/GHSA-2883-xcg3-v3hh"
+    },
+    {
+      "pkg": "js-yaml",
+      "id": "1193727",
+      "severity": "high",
+      "issue": "js-yaml: maxTotalMergeKeys does not limit CPU use for empty merge sources",
+      "url": "https://github.com/advisories/GHSA-2883-xcg3-v3hh"
+    },
+    {
       "pkg": "lodash",
       "id": "1115806",
       "severity": "high",
@@ -527,6 +660,13 @@
       "url": "https://github.com/advisories/GHSA-f88m-g3jw-g9cj"
     },
     {
+      "pkg": "sharp",
+      "id": "1193725",
+      "severity": "high",
+      "issue": "sharp: Vulnerabilities in libheif: GHSA-g89c-p67h-r497 and GHSA-2jg2-4ch7-h545",
+      "url": "https://github.com/advisories/GHSA-rgj7-g3m4-5g8c"
+    },
+    {
       "pkg": "socket.io-parser",
       "id": "1130713",
       "severity": "high",
@@ -609,6 +749,13 @@
       "severity": "moderate",
       "issue": "undici vulnerable to cookie attribute injection via unsanitized domain and unparsed setCookie fields",
       "url": "https://github.com/advisories/GHSA-v3r7-h72x-cjcm"
+    },
+    {
+      "pkg": "vitest",
+      "id": "1193683",
+      "severity": "moderate",
+      "issue": "Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock",
+      "url": "https://github.com/advisories/GHSA-82fw-gwwq-j7x9"
     },
     {
       "pkg": "vue-template-compiler",

@@ -1,0 +1,6 @@
+{"ts":"2026-09-16T10:02:57.553Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-09-08-tariff-matrix-scalars-fate","origin":"persona-extract"}
+{"ts":"2026-09-16T10:02:57.553Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-09-12-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-16T10:02:57.553Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-08-21-journal-session-twenty-home","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-16T10:02:57.553Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-08-21-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-16T10:02:57.553Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-09-16T20:59:59.226Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

@@ -7,8 +7,11 @@ import { test } from 'node:test';
 import {
   FIVE_PILLARS,
   buildProcedureRunsDigest,
+  findSilentFailures,
   renderProcedureRunsDigest,
 } from './lib/procedure-runs-digest.mjs';
+import { dayCloseArgs } from './lib/ritual-day-close.mjs';
+import { eveningCloseArgs } from './lib/ritual-evening-close-args.mjs';
 import {
   parseDigestArgs,
   readTrailWindow,
@@ -152,4 +155,126 @@ test('CLI --daily: пишет датированный артефакт, exit 0'
   assert.match(md, /ritual-day \| 1 /u);
   assert.match(md, /0 прогонов/u);
   assert.match(md, /Проблемы чтения ленты/u);
+});
+
+// ── #2413: ложное благополучие — «ноль непогашенных трений» в день с падениями ────
+//
+// КРАСНЫЙ ВХОД: живая лента docs/procedure-runs/trail/2026-09-24.jsonl. Вечер закрыт
+// `fail` с тремя gaps (code-review, archive-code-review, deliver-to-main) — и трения
+// в ней есть, но все три рождены НАХОДКАМИ exit 3. Отказы не оставили ни одного
+// симптома, и графа «Трения (непогашенные)» занижена ровно на них.
+
+const failClose = (over = {}) =>
+  rec({
+    runPhase: 'close',
+    status: 'fail',
+    procedureId: 'ritual-evening',
+    runId: 'ritual-evening-2026-09-24',
+    sequence: 2,
+    coverage: { evidence: ['docs/HANDOFF.md'], gaps: ['code-review', 'archive-code-review', 'deliver-to-main'] },
+    ...over,
+  });
+
+test('#2413 ПОРЧА: закрытие с тремя gaps и без friction — предикат называет его', () => {
+  const silent = findSilentFailures([failClose()]);
+  assert.equal(silent.length, 1, 'три отказа без единого трения прошли незамеченными');
+  assert.deepEqual(silent[0].gaps, ['code-review', 'archive-code-review', 'deliver-to-main']);
+  assert.equal(silent[0].runId, 'ritual-evening-2026-09-24');
+});
+
+test('#2413 ПОРЧА: трения есть, но по ДРУГИМ шагам — дыры всё равно молчат', () => {
+  // Это и есть 24.09 дословно: три трения от находок, три дыры от отказов.
+  const silent = findSilentFailures([
+    failClose({
+      friction: [
+        { symptom: 'archive-night-hunt: finding exit 3', root: null, fix: null, prevention: null },
+        { symptom: 'leveling-workspace: finding exit 3', root: null, fix: null, prevention: null },
+        { symptom: 'day-memo: finding exit 3', root: null, fix: null, prevention: null },
+      ],
+    }),
+  ]);
+  assert.equal(silent.length, 1, 'наличие чужих трений погасило чужие дыры');
+  assert.deepEqual(silent[0].gaps, ['code-review', 'archive-code-review', 'deliver-to-main']);
+});
+
+test('#2413 ПОРЧА: `archive-code-review` не гасит дыру `code-review` (сегмент, не подстрока)', () => {
+  const silent = findSilentFailures([
+    failClose({
+      coverage: { evidence: ['e'], gaps: ['code-review'] },
+      friction: [{ symptom: 'archive-code-review: отказ шага, exit 1', root: null, fix: null, prevention: null }],
+    }),
+  ]);
+  assert.deepEqual(silent[0].gaps, ['code-review'], 'подстрочное совпадение погасило бы чужую дыру');
+});
+
+test('#2413 закрытие с трениями ПО СВОИМ отказам — предикат молчит', () => {
+  const silent = findSilentFailures([
+    failClose({
+      friction: [
+        { symptom: 'code-review: отказ шага, exit 1 (корень не назван)', root: null, fix: null, prevention: null },
+        { symptom: 'archive-code-review: отказ шага, exit 1 (корень не назван)', root: null, fix: null, prevention: null },
+        { symptom: 'deliver-to-main: отказ шага, exit 1 (корень не назван)', root: null, fix: null, prevention: null },
+      ],
+    }),
+  ]);
+  assert.deepEqual(silent, [], 'починенное закрытие не должно краснеть');
+});
+
+test('#2413 стык: то, что ПИШУТ сборщики утра и вечера, предикат принимает', () => {
+  const build = (args, over) => {
+    const gaps = args.flatMap((a, i) => (a === '--gap' ? [args[i + 1]] : []));
+    const friction = args
+      .flatMap((a, i) => (a === '--friction' ? [args[i + 1]] : []))
+      .map((symptom) => ({ symptom, root: null, fix: null, prevention: null }));
+    return rec({ runPhase: 'close', status: 'fail', coverage: { evidence: ['e'], gaps }, friction, ...over });
+  };
+  const evening = build(
+    eveningCloseArgs({ failed: [{ id: 'code-review', exitCode: 1 }], findings: [{ id: 'day-memo', exitCode: 3 }] }),
+  );
+  const morningFailed = build(dayCloseArgs({ outcome: 'failed', stepId: 'daily-standup' }));
+  const morningPending = build(dayCloseArgs({ outcome: 'pending-ci', tail: 'жду CI' }), { status: 'skipped' });
+  const morningAborted = build(dayCloseArgs({ outcome: 'aborted' }));
+  assert.deepEqual(
+    findSilentFailures([evening, morningFailed, morningPending, morningAborted]),
+    [],
+    'сборщик пишет дыру, по которой сам же не пишет трения — стык разошёлся',
+  );
+});
+
+test('#2413 служебная сирота orphaned трения не требует', () => {
+  const orphan = failClose({
+    coverage: { evidence: ['вытеснившая запись'], gaps: ['orphaned'] },
+    subject: 'прогон оборван: open не был закрыт',
+  });
+  assert.deepEqual(findSilentFailures([orphan]), [], 'ленивое закрытие — не наблюдение о мире');
+});
+
+test('#2413 дайджест ПЕЧАТАЕТ молчащие отказы рядом с нулём в графе трений', () => {
+  const digest = buildProcedureRunsDigest([failClose()]);
+  const evening = digest.pillars.find((p) => p.procedureId === 'ritual-evening');
+  assert.equal(evening.frictionsUnresolved, 0, 'счёт честен — лгала пустота, которую он считал');
+  assert.equal(digest.silentFailures.length, 1);
+  const md = renderProcedureRunsDigest(digest);
+  assert.match(md, /Отказы без трения \(#2413\)/u);
+  assert.match(md, /code-review, archive-code-review, deliver-to-main/u);
+});
+
+test('#2413 живая лента 2026-09-24 разбирается предикатом (вещдок билета)', () => {
+  const trail = join(process.cwd(), 'docs/procedure-runs/trail/2026-09-24.jsonl');
+  if (!existsSync(trail)) return; // лента живёт в стволе; в чужом дереве зуб не выдумывает
+  const records = readFileSync(trail, 'utf8')
+    .split(/\r?\n/)
+    .filter((l) => l.trim())
+    .map((l) => JSON.parse(l));
+  const evening = records.find((r) => r.procedureId === 'ritual-evening' && r.runPhase === 'close');
+  assert.equal(evening.status, 'fail');
+  assert.deepEqual(evening.coverage.gaps, ['code-review', 'archive-code-review', 'deliver-to-main']);
+  // Вещдок дефекта: ни одно из трёх трений ленты не названо по имени упавшего шага.
+  for (const gap of evening.coverage.gaps) {
+    assert.ok(
+      !evening.friction.some((f) => f.symptom.startsWith(`${gap}:`)),
+      `лента 24.09 уже несёт трение по ${gap} — вещдок билета устарел, зуб пересобрать`,
+    );
+  }
+  assert.equal(findSilentFailures([evening]).length, 1);
 });

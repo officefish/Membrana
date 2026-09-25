@@ -24,11 +24,13 @@ import {
   collectDayDocumentsContext,
   collectGateMagistral,
   collectGitDaySummary,
+  eveningInputFreshness,
   parseTeamEveningFeedbackCli,
   printTeamEveningFeedbackHelp,
   PROMPT_PATH,
   readRequiredFile,
   REGULATION_PATH,
+  renderFreshnessNotice,
   resolveEveningFeedbackOutputPath,
   runEveningFeedbackLlm,
   VIRTUAL_TEAM_PATH,
@@ -72,6 +74,20 @@ const readAt = buildEveningReadAt(
   today,
   readEntry,
 );
+// #2438: гарантия readAt доказывает, что входы прочитаны, и молчит о том, свежи ли они
+// относительно мира. Вечер 24.09 судил день по утреннему срезу MAIN_DAY_ISSUE и назвал
+// несделанным четыре вещи, сделанные после полудня. Оговорка печатается и в промпте
+// команды, и в самом протоколе — ложный вердикт остаётся возможным, но не незаметным.
+const freshness = eveningInputFreshness({ readAt, now: new Date() });
+const freshnessNotice = renderFreshnessNotice(freshness);
+if (freshness.oldest) {
+  console.error(
+    `[freshness] самый старый вход: ${freshness.oldest.key} @ ${freshness.oldest.at} (${freshness.oldest.ageHours.toFixed(1)} ч)`,
+  );
+}
+if (freshness.unknown.length > 0) {
+  console.error(`[freshness] возраст неизвестен: ${freshness.unknown.join(', ')}`);
+}
 
 let ragBlock = '';
 if (!cli.noRag) {
@@ -88,6 +104,7 @@ const bodyText = buildEveningFeedbackUserMessage({
   gitSummary,
   ragBlock,
   magistralBlock: gate.block,
+  freshnessNotice,
   focusNote: cli.focusNote,
 });
 
@@ -114,6 +131,7 @@ try {
     noSave: cli.noSave,
     invoke: invokeProcedureLlm,
     write: writeEveningFeedbackMarkdown,
+    freshnessNotice,
     guard: {
       day: today,
       magistral: { id: gate.id, author: gate.author, source: 'gate-state', fresh: gate.fresh },

@@ -1,0 +1,8 @@
+{"ts":"2026-09-16T10:02:58.347Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-09-08-tariff-matrix-scalars-fate","origin":"persona-extract"}
+{"ts":"2026-09-16T10:02:58.347Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-09-12-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-16T10:02:58.347Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-21-journal-session-twenty-home","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-16T10:02:58.347Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-21-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-16T10:02:58.347Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}
+{"ts":"2026-09-16T21:00:00.410Z","persona":"tarasov","verb":"write_operational","ref":"tarasov-2026-09-16-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-16T21:00:00.410Z","persona":"tarasov","verb":"transfer_to_archive","ref":"tarasov-2026-08-21-duty-node-detection-m9-lifecycle","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-16T21:00:00.410Z","persona":"tarasov","verb":"rebuild_report","ref":"retained:49","origin":"persona-extract"}

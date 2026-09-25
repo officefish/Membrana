@@ -19,6 +19,8 @@ import {
   isJournalPath,
   looksAppendOnly,
   recordKey,
+  NOT_JOURNAL_PREFIXES,
+  OWN_MERGE_DRIVERS,
   unguardedJournals,
 } from './lib/journal-merge.mjs';
 import { mergeAttrs, verifyJournals } from './verify-journal-merge.mjs';
@@ -41,7 +43,6 @@ test('соглашение: вторая ось — имя файла', () => {
 
 test('соглашение: инвентарь docs/**/*.jsonl покрывает носители второй очереди', () => {
   for (const path of [
-    'docs/network/history/2026-08.jsonl',
     'docs/bridge/debt-ledger.jsonl',
     'docs/truth/packets.jsonl',
     'docs/workflows/examples.jsonl',
@@ -247,31 +248,48 @@ test('ПРАВИЛО ЖИВЬЁМ: фикстура и ловушка имени
   } finally { cleanup(); }
 });
 
-test('ПРАВИЛО ЖИВЬЁМ: инвентарь docs/**/*.jsonl имеет merge=union, исключение — нет', () => {
+test('ПРАВИЛО ЖИВЬЁМ: инвентарь docs/**/*.jsonl имеет merge=union, исключения названы поимённо', () => {
   const { root, git, write, cleanup } = repo();
   try {
     const journalPaths = [
-      'docs/network/history/2026-08.jsonl',
       'docs/bridge/debt-ledger.jsonl',
       'docs/truth/packets.jsonl',
       'docs/workflows/examples.jsonl',
       'docs/local-sprint/x/EXPERIENCE.jsonl',
       'docs/audit/network/analysis/2026-08-13/probes.jsonl',
     ];
+    // Исключения из союза — с ИМЕНЕМ драйвера и причиной. Молчаливое исключение
+    // неотличимо от снятого атрибута, а это ровно та порча, которую ловит зуб ниже.
+    const namedExceptions = new Map([
+      [
+        'docs/network/history/2026-08.jsonl',
+        {
+          attr: 'network-history',
+          why: 'ряд ЗАМЕРОВ, а не журнал событий: две ветки меряют один момент по-разному, '
+            + 'и союз склеил бы обе строки в точный повтор с перепутанным порядком (#1449, 11.09)',
+        },
+      ],
+      [
+        'docs/virtual-team/memory/archive/ozhegov.jsonl',
+        { attr: 'unspecified', why: 'смешанный архив: часть файлов переписывается, союз неверен' },
+      ],
+    ]);
     for (const p of journalPaths) write(p, '{"id":"x"}\n');
-    write('docs/virtual-team/memory/archive/ozhegov.jsonl', '{"id":"archive"}\n');
+    for (const p of namedExceptions.keys()) write(p, '{"id":"исключение"}\n');
     git('add', '-A'); git('commit', '-qm', 'base');
 
-    const attrs = mergeAttrs(root, [...journalPaths, 'docs/virtual-team/memory/archive/ozhegov.jsonl'], (args) => git(...args));
+    const attrs = mergeAttrs(root, [...journalPaths, ...namedExceptions.keys()], (args) => git(...args));
     for (const p of journalPaths) assert.equal(attrs.get(p), 'union', `${p} под union`);
-    assert.equal(attrs.get('docs/virtual-team/memory/archive/ozhegov.jsonl'), 'unspecified');
+    for (const [p, { attr, why }] of namedExceptions) {
+      assert.equal(attrs.get(p), attr, `${p} — исключение «${attr}»: ${why}`);
+    }
   } finally { cleanup(); }
 });
 
 test('ПОРЧА: снятый атрибут с одного журнала краснит сторож с именем файла', () => {
   const { root, git, write, cleanup } = repo();
   try {
-    const target = 'docs/network/history/2026-08.jsonl';
+    const target = 'docs/truth/packets.jsonl';
     write(target, '{"id":"net-1"}\n');
     write('.gitattributes', `${readFileSync(join(REPO_ROOT, '.gitattributes'), 'utf8')}\n${target} !merge\n`);
     git('add', '-A'); git('commit', '-qm', 'base');
@@ -279,4 +297,44 @@ test('ПОРЧА: снятый атрибут с одного журнала к�
     const result = verifyJournals(root);
     assert.equal(result.breaches.some((b) => b.includes(target) && b.includes('merge=unspecified')), true);
   } finally { cleanup(); }
+});
+
+// ── P2 ревью 12.09: исключение без драйвера — молчаливая дыра ──────────────────
+
+test('каждый носитель со своим драйвером назван исключением — и наоборот, где драйвер заявлен', () => {
+  // Замечание ревью по PR #2340: OWN_MERGE_DRIVERS не был покрыт зубом, и опись могла
+  // разойтись с NOT_JOURNAL_PREFIXES молча. Разойдётся — и носитель либо снова требует
+  // union (которого у него нет), либо выпадает из проверок вовсе.
+  for (const prefix of Object.keys(OWN_MERGE_DRIVERS)) {
+    assert.ok(
+      NOT_JOURNAL_PREFIXES.includes(prefix),
+      `${prefix} заявил свой драйвер, но не назван исключением соглашения — зуб журналов потребует от него union`,
+    );
+  }
+});
+
+test('ПРАВИЛО ЖИВЬЁМ: носитель со своим драйвером имеет ИМЕННО его, а не пустой атрибут', () => {
+  const { root, git, write, cleanup } = repo();
+  try {
+    // Положительное утверждение вместо отсутствия union: снятый атрибут и «свой драйвер»
+    // выглядят одинаково ровно до этой проверки.
+    const paths = Object.keys(OWN_MERGE_DRIVERS).map((p) => `${p}2026-09.jsonl`);
+    for (const p of paths) write(p, '{"at":"2026-09-09T08:00:00.000Z","host":"D1"}\n');
+    git('add', '-A'); git('commit', '-qm', 'base');
+
+    const attrs = mergeAttrs(root, paths, (args) => git(...args));
+    for (const p of paths) {
+      const prefix = Object.keys(OWN_MERGE_DRIVERS).find((k) => p.startsWith(k));
+      assert.equal(attrs.get(p), OWN_MERGE_DRIVERS[prefix], `${p} обязан нести драйвер ${OWN_MERGE_DRIVERS[prefix]}`);
+      assert.notEqual(attrs.get(p), 'unspecified', 'снятый атрибут неотличим от «своего драйвера» без этой проверки');
+    }
+  } finally { cleanup(); }
+});
+
+test('ПОРЧА: носитель объявил драйвер, но выпал из исключений — зуб краснеет', () => {
+  // Имитируем расхождение описи значением, файлы не трогаем: предикат обязан ловить
+  // рассогласование сам, без git.
+  const drifted = { ...OWN_MERGE_DRIVERS, 'docs/measurements/': 'some-driver' };
+  const orphans = Object.keys(drifted).filter((p) => !NOT_JOURNAL_PREFIXES.includes(p));
+  assert.deepEqual(orphans, ['docs/measurements/'], 'расхождение описи обязано быть видимым');
 });

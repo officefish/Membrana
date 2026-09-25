@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 
 import {
+  allowDirtyBypassHint,
   defaultLiveSessionProbe,
   deployPreflight,
   liveSessionProblem,
@@ -67,6 +68,12 @@ test('deployPreflight: обход без причины запрещён даж�
     () => deployPreflight({ branch: 'main', cwd: root, buildContextPaths: context, allowDirty: true, allowDirtyReason: null, exit: refuse }),
     /exit:1/u,
   );
+});
+
+test('deployPreflight: подсказка обхода называет и флаг, и причину (#2434)', () => {
+  const hint = allowDirtyBypassHint();
+  assert.match(hint, /--allow-dirty --allow-dirty-reason "почему"/u);
+  assert.match(hint, /DEPLOY_ALLOW_DIRTY=1 DEPLOY_DIRTY_REASON="почему"/u);
 });
 
 test('deployPreflight: обход с причиной проходит и возвращает причину', () => {

@@ -34,9 +34,15 @@ jobs:
           url="${OFFICE_URL%/}/v1/night-hunt/run-all"
           body="$(mktemp)"
           # -f снят намеренно: он прячет тело ответа, а в отказе нужен код И адрес.
+          # -d '{}' обязателен (18.09): офис на Fastify отвергает JSON-запрос с пустым телом
+          # (HTTP 400 «Body cannot be empty when content-type is set to 'application/json'»)
+          # ДО охраны и до обработчика. Дверь run-all тело не читает, поэтому пустой объект —
+          # честная форма «без аргументов» и остаётся валидной, если у двери появится схема.
+          # Замер без токена: `{}` → 401 (парсер пройден, отказала охрана), пустое тело → 400.
           if ! code="$(curl -sS -o "$body" -w '%{http_code}' -X POST "$url" \
             -H "X-Membrana-Token: ${OFFICE_API_TOKEN}" \
             -H "Content-Type: application/json" \
+            -d '{}' \
             --max-time 300)"; then
             echo "night-hunt trigger ОТКАЗ: до $url не дозвонились (curl не смог выполнить запрос)"
             exit 1
@@ -47,4 +53,22 @@ jobs:
             head -c 500 "$body" || true
             exit 1
           fi
-          echo "night-hunt trigger OK: HTTP $code от $url"
+          # Второй слой молчания (18.09): дверь отвечает 200 и `ok:true` даже когда каждое дело
+          # пропущено — runJob ловит любое исключение и возвращает `skipped:true` с причиной.
+          # 2xx без единого выполненного дела — не запуск, а тишина; здесь она становится отказом.
+          #
+          # Одно исключение — УДЕРЖАНИЕ: офис не открывает второй PR по делу, пока первый не
+          # разобран (`github.service.ts`: «открыт PR #N с префиксом …»). Это не тишина, а
+          # отчёт, который ждёт ревью; красить его отказом значило бы краснеть каждое утро до
+          # мерджа и приучить к красному. Удержание печатается поимённо и считается живым делом.
+          # Все прочие пропуски (выключено, нет LLM, исключение) — отказ.
+          total="$(jq -r '(.results // []) | length' "$body")"
+          done_count="$(jq -r '[(.results // [])[] | select(.skipped != true)] | length' "$body")"
+          held_count="$(jq -r '[(.results // [])[] | select(.skipped == true and ((.reason // "") | test("^открыт PR #[0-9]+ ")))] | length' "$body")"
+          echo "night-hunt trigger: HTTP $code от $url · дел выполнено $done_count, на удержании $held_count, всего $total"
+          jq -r '(.results // [])[] | "  · \(.id): \(if .skipped != true then (.prUrl // "выполнено, без PR") elif ((.reason // "") | test("^открыт PR #[0-9]+ ")) then "УДЕРЖАНИЕ — \(.reason)" else "ПРОПУЩЕНО — \(.reason // "без причины")" end)"' "$body"
+          if [ "$total" -eq 0 ] || [ $((done_count + held_count)) -eq 0 ]; then
+            echo "night-hunt trigger ОТКАЗ: офис принял запрос, но ни одно дело не выполнено и не удержано открытым PR"
+            exit 1
+          fi
+          echo "night-hunt trigger OK"

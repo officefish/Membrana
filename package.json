@@ -12,12 +12,13 @@
     "apps/demos/Research-Tree"
   ],
   "scripts": {
-    "prepare": "git config core.hooksPath .githooks 2>/dev/null && git config merge.registry-union.driver 'node scripts/registry-merge-driver.mjs %O %A %B' 2>/dev/null && git config merge.registry-union.name 'Membrana task registry union' 2>/dev/null && git config merge.ours.driver true 2>/dev/null && echo 'hooks + registry merge-driver enabled' || echo 'prepare skipped (no git context)'",
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null && git config merge.registry-union.driver 'node scripts/registry-merge-driver.mjs %O %A %B' 2>/dev/null && git config merge.registry-union.name 'Membrana task registry union' 2>/dev/null && git config merge.network-history.driver 'node scripts/network/history-merge.mjs %O %A %B' 2>/dev/null && git config merge.network-history.name 'Membrana network snapshot history' 2>/dev/null && git config merge.ours.driver true 2>/dev/null && echo 'hooks + registry merge-driver enabled' || echo 'prepare skipped (no git context)'",
     "pr:ship": "node scripts/pr-ship.mjs",
     "git:rebase-continue": "node scripts/git-rebase-continue.mjs",
     "pr:wait": "node scripts/pr-wait.mjs",
     "pr:verify": "node scripts/pr-verify.mjs",
     "pr:recreate": "node scripts/pr-recreate.mjs",
+    "pr:perimeter": "node scripts/pr-perimeter-check.mjs",
     "build:affected": "node scripts/build-affected.mjs",
     "wire:generate": "node scripts/generate-wire-contract.mjs",
     "verify:wire-sync": "node scripts/verify-wire-sync.mjs",
@@ -193,6 +194,7 @@
     "telegram:digest:day": "node scripts/telegram-ritual-digest.mjs --kind day",
     "telegram:digest:evening": "node scripts/telegram-ritual-digest.mjs --kind evening",
     "panel:invite": "node scripts/panel-invite.mjs",
+    "panel:cabinet-invite": "node scripts/panel-cabinet-invite.mjs",
     "panel:dns-gate": "node scripts/panel-dns-gate.mjs",
     "affine:capacity-gate": "node scripts/affine-capacity-gate.mjs",
     "affine:inventory": "node scripts/affine-inventory.mjs",
@@ -250,6 +252,7 @@
     "case:generalize": "node scripts/case-generalize.mjs",
     "procedures:registry": "node scripts/procedures-registry.mjs",
     "procedure-run:journal": "node scripts/procedure-run-journal.mjs",
+    "procedure-run:record": "node scripts/procedure-run-record.mjs",
     "procedure-runs:digest": "node scripts/procedure-runs-digest.mjs",
     "skills:verify-mirrors": "node scripts/verify-skill-mirrors.mjs",
     "procedures:license": "node scripts/procedures-license.mjs",
@@ -456,6 +459,7 @@
     "network:snapshot": "node scripts/network/snapshot.mjs",
     "network:preflight": "node scripts/network/preflight.mjs",
     "network:tooth": "node scripts/network/tooth.mjs",
+    "network:history-merge": "node scripts/network/history-merge.mjs",
     "tariff:grid": "node scripts/tariff-grid-validate.mjs",
     "tariff:reseed": "node scripts/tariff-reseed.mjs",
     "tariff:project-cabinet": "node scripts/tariff-project-cabinet.mjs",
@@ -481,7 +485,8 @@
     "buffer:evacuate-evidence": "node scripts/buffer-evacuate-evidence.mjs",
     "buffer:watch": "node scripts/buffer-watch.mjs",
     "node:link-state": "node scripts/node-link-state.mjs",
-    "verify:declared-imports": "node scripts/verify-declared-imports.mjs"
+    "verify:declared-imports": "node scripts/verify-declared-imports.mjs",
+    "verify:adr-registry": "node scripts/verify-adr-registry.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

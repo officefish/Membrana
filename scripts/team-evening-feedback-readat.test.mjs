@@ -7,13 +7,21 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { mkdtempSync, readFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 import {
   EVENING_REQUIRED_KEYS,
+  buildEveningFeedbackUserMessage,
   eveningFeedbackInputs,
+  eveningInputFreshness,
+  renderFreshnessNotice,
+  writeEveningFeedbackMarkdown,
   parseEveningFeedbackGuard,
   validateEveningFeedbackReadAt,
 } from './lib/team-evening-feedback-ritual.mjs';
+import { readEntry } from './lib/angelina-adapter.mjs';
 
 const rec = (v, d) => ({ version: v, digest: d });
 
@@ -128,4 +136,107 @@ test('parseEveningFeedbackGuard: боевая форма — вложеннос�
 test('parseEveningFeedbackGuard: битый JSON → null, не исключение', () => {
   assert.equal(parseEveningFeedbackGuard('<!-- evening-feedback {oops} -->'), null);
   assert.equal(parseEveningFeedbackGuard('нет шапки вовсе'), null);
+});
+
+// ── #2438: вердикт по вчерашним данным ────────────────────────────────────────────
+//
+// КРАСНЫЙ ВХОД — протокол docs/seanses/team-evening-feedback-2026-09-24.md: 5.8/10,
+// «DoD магистрали не закрыт», четыре несущих утверждения ложны по факту. Гарантия
+// readAt при этом ЗЕЛЁНАЯ: команда честно прочитала то, что лежало. Лежал утренний
+// срез — `readAt.MAIN_DAY_ISSUE.version = 8d251ad1`, — и всё, что произошло после
+// полудня, для протокола не существовало.
+
+const EVENING = '2026-09-24T17:16:00.000Z'; // момент генерации протокола 24.09
+const MORNING = '2026-09-24T06:20:00.000Z'; // утренний срез MAIN_DAY_ISSUE
+
+test('#2438 зелёная гарантия readAt НИЧЕГО не говорит о свежести входов', () => {
+  const { readAt, current } = greenPair();
+  for (const k of Object.keys(readAt)) readAt[k].versionAt = MORNING;
+  assert.equal(validateEveningFeedbackReadAt({ readAt, current }).ok, true, 'гарантия и должна быть зелёной');
+  const f = eveningInputFreshness({ readAt, now: EVENING });
+  assert.equal(f.oldest.at, MORNING, 'предикат обязан назвать утро утром при зелёной гарантии');
+  assert.ok(f.oldest.ageHours > 10, `вход старше половины суток, а возраст показан ${f.oldest.ageHours}`);
+});
+
+test('#2438 оговорка печатает ЧАС отсечки словами, а не только отпечаток', () => {
+  const readAt = { MAIN_DAY_ISSUE: rec('8d251ad1', 'd'), DAY_MEMO: rec('b', 'd') };
+  readAt.MAIN_DAY_ISSUE.versionAt = MORNING;
+  readAt.DAY_MEMO.versionAt = EVENING;
+  const notice = renderFreshnessNotice(eveningInputFreshness({ readAt, now: EVENING }));
+  assert.match(notice, /MAIN_DAY_ISSUE/u, 'самый старый вход обязан быть назван по имени');
+  assert.match(notice, /события после 06:20 в нём не учтены/u);
+  assert.match(notice, /утверждать «не сделано» по такому входу нельзя/u);
+});
+
+test('#2438 самым старым назван САМЫЙ старый, а не первый по алфавиту', () => {
+  const readAt = {
+    AAA: { ...rec('a', 'd'), versionAt: EVENING },
+    ZZZ: { ...rec('z', 'd'), versionAt: MORNING },
+  };
+  assert.equal(eveningInputFreshness({ readAt, now: EVENING }).oldest.key, 'ZZZ');
+});
+
+test('#2438 ПОРЧА: вход без отметки версии возраста НЕ выдумывает', () => {
+  const readAt = { MAIN_DAY_ISSUE: rec('8d251ad1', 'd') }; // versionAt отсутствует
+  const f = eveningInputFreshness({ readAt, now: EVENING });
+  assert.equal(f.oldest, null, 'придуманный возраст — та же ложь, только с другой стороны');
+  assert.deepEqual(f.unknown, ['MAIN_DAY_ISSUE']);
+  const notice = renderFreshnessNotice(f);
+  assert.match(notice, /Возраст входов неизвестен/u);
+  assert.match(notice, /MAIN_DAY_ISSUE/u, 'молчать о неизвестном возрасте нельзя');
+});
+
+test('#2438 свежие входы: оговорка есть всегда, но час отсечки — вечерний', () => {
+  const readAt = { MAIN_DAY_ISSUE: { ...rec('a', 'd'), versionAt: '2026-09-24T17:10:00.000Z' } };
+  const notice = renderFreshnessNotice(eveningInputFreshness({ readAt, now: EVENING }));
+  assert.match(notice, /события после 17:10 в нём не учтены/u);
+  assert.match(notice, /0\.1 ч назад/u);
+});
+
+test('#2438 оговорка доезжает до ФАЙЛА протокола и стоит ДО тела вердикта', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'evening-freshness-'));
+  const path = join(dir, 'protocol.md');
+  const notice = '> **Свежесть входов.**\n> Вход датирован 06:20 UTC; события после 06:20 в нём не учтены.';
+  writeEveningFeedbackMarkdown({ path, body: '# Протокол\n\nоценка дня 5.8/10', freshnessNotice: notice });
+  const md = readFileSync(path, 'utf8');
+  assert.ok(md.includes('события после 06:20 в нём не учтены'), 'оговорка не доехала до файла');
+  assert.ok(
+    md.indexOf('Свежесть входов') < md.indexOf('оценка дня 5.8/10'),
+    'оговорка после вердикта — примечание, а не предупреждение',
+  );
+});
+
+test('#2438 протокол БЕЗ оговорки пишется как прежде (обратная совместимость)', () => {
+  const path = join(mkdtempSync(join(tmpdir(), 'evening-freshness-')), 'protocol.md');
+  writeEveningFeedbackMarkdown({ path, body: '# Протокол' });
+  assert.match(readFileSync(path, 'utf8'), /# Протокол/u);
+});
+
+test('#2438 оговорка доезжает до ПРОМПТА команды, и до документов дня', () => {
+  const msg = buildEveningFeedbackUserMessage({
+    regulation: 'Р',
+    prompt: 'П',
+    virtualTeam: 'В',
+    dayDocs: 'MAIN_DAY_ISSUE: план на день',
+    gitSummary: 'G',
+    freshnessNotice: '> Вход датирован 06:20 UTC; события после 06:20 в нём не учтены.',
+    date: new Date('2026-09-24T17:16:00.000Z'),
+  });
+  assert.ok(msg.includes('события после 06:20 в нём не учтены'), 'команда судит, не зная о возрасте входа');
+  assert.ok(
+    msg.indexOf('Свежесть входов') < msg.indexOf('Документы дня'),
+    'оговорка после документов — примечание, а не предупреждение',
+  );
+});
+
+test('#2438 readEntry несёт versionAt, когда io умеет его дать; иначе поля нет', () => {
+  const io = {
+    version: () => 'sha',
+    content: () => 'тело',
+    versionAt: () => '2026-09-24T06:20:00.000Z',
+  };
+  assert.equal(readEntry(io, 'docs/MAIN_DAY_ISSUE.md').versionAt, '2026-09-24T06:20:00.000Z');
+  const legacy = readEntry({ version: () => 'sha', content: () => 'тело' }, 'x.md');
+  assert.equal('versionAt' in legacy, false, 'io без порта не обязан выдумывать возраст');
+  assert.equal(legacy.version, 'sha', 'старый контракт не сломан');
 });

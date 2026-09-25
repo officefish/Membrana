@@ -1,0 +1,4 @@
+{"ts":"2026-09-22T11:50:49.617Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}
+{"ts":"2026-09-22T20:50:56.519Z","persona":"kuryokhin","verb":"write_operational","ref":"kuryokhin-2026-09-22-team-evening-feedback","origin":"persona-extract"}
+{"ts":"2026-09-22T20:50:56.519Z","persona":"kuryokhin","verb":"transfer_to_archive","ref":"kuryokhin-2026-08-26-team-evening-feedback","reason":"budget_evict","origin":"persona-extract","class":"position"}
+{"ts":"2026-09-22T20:50:56.519Z","persona":"kuryokhin","verb":"rebuild_report","ref":"retained:50","origin":"persona-extract"}

@@ -16,6 +16,16 @@ import {
   type AdminUser,
   type MintedCode,
 } from '@/lib/adminApi';
+import {
+  canMint,
+  DEFAULT_MINT_MODE,
+  DEFAULT_MINT_MODE_HINT,
+  defaultsForMode,
+  grantsForMode,
+  MINT_MODE_LABELS,
+  MINT_MODES,
+  type MintMode,
+} from '@/lib/mintModes';
 import { PANEL_SECTIONS } from '@/lib/sections';
 
 /**
@@ -77,18 +87,26 @@ function GrantCell({
 }
 
 function MintCodeForm({ onMinted }: { onMinted: (code: MintedCode) => void }) {
+  const [mode, setMode] = useState<MintMode>(DEFAULT_MINT_MODE);
   const [label, setLabel] = useState('');
-  const [fullAccess, setFullAccess] = useState(true);
   const [picked, setPicked] = useState<string[]>([]);
-  const [days, setDays] = useState(30);
-  const [maxUses, setMaxUses] = useState(1);
+  const [days, setDays] = useState(defaultsForMode(DEFAULT_MINT_MODE).days);
+  const [maxUses, setMaxUses] = useState(defaultsForMode(DEFAULT_MINT_MODE).maxUses);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /** Смена режима подставляет свои умолчания: приглашение в кабинет — короткое. */
+  function switchMode(next: MintMode) {
+    setMode(next);
+    const { days: nextDays, maxUses: nextMaxUses } = defaultsForMode(next);
+    setDays(nextDays);
+    setMaxUses(nextMaxUses);
+  }
+
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    const grants = fullAccess ? ['*'] : picked;
-    if (!label.trim() || grants.length === 0 || submitting) return;
+    const grants = grantsForMode(mode, picked);
+    if (!canMint(mode, label, picked) || submitting) return;
     setSubmitting(true);
     setError(null);
     try {
@@ -115,15 +133,22 @@ function MintCodeForm({ onMinted }: { onMinted: (code: MintedCode) => void }) {
             placeholder="напр. press-июль"
           />
         </label>
-        <label className="flex items-center gap-2 pb-1 text-sm">
-          <input
-            type="checkbox"
-            className="checkbox checkbox-sm"
-            checked={fullAccess}
-            onChange={(e) => setFullAccess(e.target.checked)}
-          />
-          полный доступ («*», все разделы)
-        </label>
+        <div className="flex flex-col gap-1 pb-1 text-sm" role="radiogroup" aria-label="Вид кода">
+          {MINT_MODES.map((m) => (
+            <label key={m} className="flex items-center gap-2">
+              <input
+                type="radio"
+                name="mint-mode"
+                className="radio radio-sm"
+                checked={mode === m}
+                onChange={() => switchMode(m)}
+              />
+              {MINT_MODE_LABELS[m]}
+            </label>
+          ))}
+          {/* #2435: умолчание — самый слабый режим, а не самый частый; форма говорит это вслух */}
+          <p className="text-xs opacity-70">{DEFAULT_MINT_MODE_HINT}</p>
+        </div>
         <label className="form-control w-20">
           <span className="label-text text-xs">Дней</span>
           <input
@@ -148,11 +173,20 @@ function MintCodeForm({ onMinted }: { onMinted: (code: MintedCode) => void }) {
             aria-label="Максимум использований"
           />
         </label>
-        <button type="submit" className="btn btn-primary btn-sm" disabled={submitting || !label.trim() || (!fullAccess && picked.length === 0)}>
+        <button
+          type="submit"
+          className="btn btn-primary btn-sm"
+          disabled={submitting || !canMint(mode, label, picked)}
+        >
           {submitting ? <span className="loading loading-spinner loading-xs" /> : 'Создать код'}
         </button>
       </div>
-      {!fullAccess && (
+      {mode === 'cabinet' && (
+        <p className="mt-2 text-xs text-base-content/70">
+          Разделы панели такому коду не выдаются: это вход в кабинет, а не доступ сюда.
+        </p>
+      )}
+      {mode === 'sections' && (
         <div className="mt-2 flex flex-wrap gap-3" role="group" aria-label="Разделы кода">
           {SECTION_COLUMNS.map((s) => (
             <label key={s.id} className="flex items-center gap-1 text-xs">

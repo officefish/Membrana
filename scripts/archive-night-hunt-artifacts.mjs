@@ -37,6 +37,27 @@ const EXIT_OK = 0;
 const EXIT_ERROR = 1;
 const EXIT_REFUSED = 3;
 
+/**
+ * Последний зачеканенный день архива — нижняя (исключённая) граница окна «с прошлого
+ * архива» (#2418). Имя папки и есть дата: каталог архива сам себе указатель, и заводить
+ * рядом файл-состояние значило бы завести вторую правду о том же.
+ *
+ * Архива нет вовсе → `null`, и окно честно падает обратно к суткам: пустой архив не
+ * повод вымести в него полтора месяца старых отчётов одним вечером.
+ *
+ * @param {string} cwd
+ * @returns {string|null}
+ */
+export function lastArchivedDay(cwd) {
+  const root = resolve(cwd, ARCHIVE_ROOT);
+  if (!existsSync(root)) return null;
+  const days = readdirSync(root, { withFileTypes: true })
+    .filter((e) => e.isDirectory() && /^\d{4}-\d{2}-\d{2}$/u.test(e.name))
+    .map((e) => e.name)
+    .sort();
+  return days.length === 0 ? null : days[days.length - 1];
+}
+
 /** @param {string} content */
 function sha256(content) {
   return createHash('sha256').update(content, 'utf8').digest('hex');
@@ -132,11 +153,12 @@ function main() {
   if (argv.includes('--help') || argv.includes('-h')) {
     console.log(`Usage: yarn archive:night-hunt [--window-hours N] [--mark-tainted]
 
-Чеканит вещдок из ${SOURCE_REL}/ в ${ARCHIVE_ROOT}/<YYYY-MM-DD>/.
-Вещдоком считается отчёт, чей маркер рождения «Generated (UTC)» принадлежит дню
-архивации; протухший источник — отказ (exit 3), а не датированная папка.
+Чеканит вещдок из ${SOURCE_REL}/ в ${ARCHIVE_ROOT}/<день РОЖДЕНИЯ отчёта>/.
+Вещдок — отчёт, родившийся ПОСЛЕ последней зачеканенной папки и не позже сегодня
+(#2418: охота ходит 2–3 раза в неделю, окно суток отказывало каждый вечер).
+Архив пуст → окно падает к суткам. Протухший источник — отказ (exit 3), не папка.
 
-  --window-hours N   судить по возрасту в часах вместо «того же дня»
+  --window-hours N   судить по возрасту в часах (сильнее окна «с прошлого архива»)
   --mark-tainted     разово разобрать УЖЕ существующие папки и проставить им
                      evidenceClass в манифест (сами отчёты не трогаются)`);
     return EXIT_OK;
@@ -171,47 +193,73 @@ function main() {
     content: readFileSync(join(sourceDir, name), 'utf8'),
   }));
 
-  const { exhibits, refused } = classifySources(sources, { day, windowHours });
+  // #2418: окно «с прошлого архива» вместо суток — охота ходит 2–3 раза в неделю, и
+  // требование «родись сегодня» отказывало каждый вечер. Явный --window-hours сильнее.
+  const sinceDay = windowRaw === null ? lastArchivedDay(cwd) : null;
+  const { exhibits, refused } = classifySources(sources, { day, windowHours, sinceDay });
 
   if (exhibits.length === 0) {
-    console.error(`✗ ОТКАЗ: за ночь ${day} вещдоков нет — папка НЕ создаётся.`);
+    const window = sinceDay ? `после ${sinceDay} и по ${day}` : `за ночь ${day}`;
+    console.error(`✗ ОТКАЗ: вещдоков ${window} нет — папка НЕ создаётся.`);
     for (const item of refused) console.error(`  · ${refusalLine(item, day)}`);
     console.error('  что делать: это не поломка архиватора, а молчание охоты.');
     console.error('  чинить не здесь: запуск и форма обходчика — вердикт M4 (карточка К4).');
     return EXIT_REFUSED;
   }
 
-  const destDir = resolve(cwd, ARCHIVE_ROOT, day);
-  mkdirSync(destDir, { recursive: true });
-
-  const entries = [];
+  // Папка — по дню РОЖДЕНИЯ вещдока, не по дню архивации (#2418). Прежде оба совпадали
+  // по построению окна суток, и поэтому вопрос не стоял; с окном «с прошлого архива»
+  // они расходятся, и выбор «сегодняшняя папка» вернул бы ровно ту ложь, ради которой
+  // предикат V(s,d) и заводился: имя папки читалось бы как ночь, которой не было.
+  const byBornDay = new Map();
   for (const item of exhibits) {
-    writeFileSync(join(destDir, item.name), item.content, 'utf8');
-    entries.push({
-      name: item.name,
-      bornAt: item.bornAt,
-      contentHash: sha256(item.content),
-      evidenceClass: evidenceClassOf(item.verity),
-      verdict: item.verity.reason,
-    });
+    const bornDay = item.verity.bornDay ?? day;
+    if (!byBornDay.has(bornDay)) byBornDay.set(bornDay, []);
+    byBornDay.get(bornDay).push(item);
   }
 
-  const manifest = {
-    day,
-    files: entries.map((e) => e.name),
-    archivedAt: new Date().toISOString(),
-    evidenceClass: 'exhibit',
-    entries,
-    refused: refused.map((item) => ({
-      name: item.name,
-      bornAt: item.bornAt,
-      verdict: item.verity.reason,
-      ageHours: item.verity.ageHours === null ? null : Math.round(item.verity.ageHours),
-    })),
-  };
-  writeFileSync(join(destDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+  const archivedAt = new Date().toISOString();
+  const runRefused = refused.map((item) => ({
+    name: item.name,
+    bornAt: item.bornAt,
+    verdict: item.verity.reason,
+    ageHours: item.verity.ageHours === null ? null : Math.round(item.verity.ageHours),
+  }));
 
-  console.error(`→ ${ARCHIVE_ROOT}/${day}/ — вещдоков: ${entries.length}`);
+  let total = 0;
+  for (const [bornDay, items] of [...byBornDay.entries()].sort()) {
+    const destDir = resolve(cwd, ARCHIVE_ROOT, bornDay);
+    mkdirSync(destDir, { recursive: true });
+
+    const entries = [];
+    for (const item of items) {
+      writeFileSync(join(destDir, item.name), item.content, 'utf8');
+      entries.push({
+        name: item.name,
+        bornAt: item.bornAt,
+        contentHash: sha256(item.content),
+        evidenceClass: evidenceClassOf(item.verity),
+        verdict: item.verity.reason,
+      });
+    }
+
+    const manifest = {
+      day: bornDay,
+      files: entries.map((e) => e.name),
+      archivedAt,
+      evidenceClass: 'exhibit',
+      entries,
+      // Провенанс ПРОГОНА, а не свойство дня: кто и каким окном зачеканил эту папку.
+      // Поле `refused` переименовано в `runRefused` именно поэтому — прежнее имя рядом
+      // с `day` читалось как «в этот день отказано», а отказ принадлежит прогону.
+      archivedBy: { runDay: day, sinceDay, windowHours, runRefused },
+    };
+    writeFileSync(join(destDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+    console.error(`→ ${ARCHIVE_ROOT}/${bornDay}/ — вещдоков: ${entries.length}`);
+    total += entries.length;
+  }
+
+  console.error(`  всего зачеканено: ${total} в ${byBornDay.size} папк(ах)`);
   if (refused.length > 0) {
     console.error(`  не зачеканено (копия, не вещдок): ${refused.length}`);
     for (const item of refused) console.error(`  · ${refusalLine(item, day)}`);

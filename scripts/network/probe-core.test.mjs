@@ -5,8 +5,21 @@
  */
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { existsSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-import { buildProbeResult, buildSnapshot, isStale, preflightExitCode, renderAgentBlock, renderSnapshotMd } from './lib/probe-core.mjs';
+import {
+  buildProbeResult,
+  buildSnapshot,
+  counterProbeCommand,
+  isStale,
+  needsCounterProbe,
+  preflightExitCode,
+  renderAgentBlock,
+  renderCounterProbeHint,
+  renderSnapshotMd,
+} from './lib/probe-core.mjs';
 
 const at = '2026-07-29T12:00:00.000Z';
 const probe = (id, role, outcomes) =>
@@ -95,4 +108,43 @@ test('агентский блок несёт правило чтения и не
 test('витрина честно помечает протухший снимок', () => {
   const s = buildSnapshot({ generatedAt: at, env: { proxyConfigured: false, proxyVars: [], host: 'h' }, probes: [] });
   assert.match(renderSnapshotMd(s, '2026-08-05T00:00:00.000Z'), /УСТАРЕЛ/u);
+});
+
+// ── Встречная проба в тексте отказа (блок refusal-counter-probe, 10.09) ─────────
+
+test('ВЕЩДОК 10.09: молчащее звено ⇒ отказ несёт встречную пробу командой', () => {
+  const s = buildSnapshot({
+    generatedAt: at,
+    env: { proxyConfigured: false, proxyVars: [], host: 'x' },
+    probes: [probe('office', 'control', [['direct', { errorCode: 'ECONNRESET' }]])],
+  });
+  const block = renderAgentBlock(s, at);
+  assert.ok(needsCounterProbe(s), 'повод для встречной пробы обязан быть распознан');
+  assert.match(block, /Встречная проба/u, 'ПОРЧА: отказ без подсказки — час на диагноз');
+  assert.match(block, /_ssh-media-exec\.mjs/u, 'подсказка обязана быть КОМАНДОЙ, а не советом');
+  assert.match(block, /канале рабочего места/u, 'смысл пробы: отделить сервер от канала');
+});
+
+test('живая сеть подсказки НЕ получает — поведение при зелёном не меняется', () => {
+  const s = buildSnapshot({
+    generatedAt: at,
+    env: { proxyConfigured: false, proxyVars: [], host: 'x' },
+    probes: [probe('control', 'control', [['direct', { httpStatus: 200 }]])],
+  });
+  assert.equal(needsCounterProbe(s), false);
+  assert.doesNotMatch(renderAgentBlock(s, at), /Встречная проба/u);
+});
+
+test('команда встречной пробы разрешима: настоящий скрипт и настоящая цель', () => {
+  const cmd = counterProbeCommand();
+  assert.match(cmd, /^node scripts\/_ssh-media-exec\.mjs /u);
+  assert.match(cmd, /office\.mmbrn\.tech\/health/u);
+  assert.ok(existsSync(resolve(dirname(fileURLToPath(import.meta.url)), '..', '_ssh-media-exec.mjs')),
+    'подсказка ссылается на скрипт, которого нет — совет вместо команды');
+});
+
+test('подсказка называет обе развилки: ответила оттуда и молчит оттуда', () => {
+  const hint = renderCounterProbeHint().join('\n');
+  assert.match(hint, /Ответила оттуда/u);
+  assert.match(hint, /Молчит и оттуда/u, 'один ответ из двух делает пробу неразрешимой');
 });

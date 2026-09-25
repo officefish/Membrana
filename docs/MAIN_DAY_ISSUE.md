@@ -1,126 +1,151 @@
-<!-- Сгенерировано: 2026-09-08T08:32:00.789Z (yarn main-day-issue@8fa1ba4a) -->
+<!-- Сгенерировано: 2026-09-25T06:20:50.479Z (yarn main-day-issue@7027890f) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
-<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"22c2a3e57141e000d1c9278233d3e26c790f0997","digest":"291b4697c2305fb846475cf2821da8e0c27f61692e9a51765fc467ae7bda04f1"},"DAILY_STANDUP":{"version":"22c2a3e57141e000d1c9278233d3e26c790f0997","digest":"012de2f878b55cf2e45d9f0bf45b2fc30ac46794aec5059e1997df055d2f5ba4"}}} -->
-<!-- Звено канала: provider=xai model=grok-4.5 source=overlay generations=1 -->
+<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"0c061a47a6b71233baa5df2364e5437091a53ce9","digest":"13b422ba847684892f093db96c468738b31ec6a86fa07b49d8deb4de79bf2306"},"DAILY_STANDUP":{"version":"0c061a47a6b71233baa5df2364e5437091a53ce9","digest":"1ec52c08e06d9cde689aa96fbed8e5b2ab79b81d9272dc3a291da40df043d5e2"}}} -->
+<!-- Звено канала: provider=anthropic model=claude-sonnet-4-6 source=overlay generations=1 -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
-<!-- active в реестре: cabinet-deploy-smoke-tooth-2288, cowork-library-open-api, playback-hang-timeout, node-duty-ready-predicate, studio-package-av-refusal, session-digest-library-face, dedup-pairs-show-and-wait, obs-sentry-container, logging-observability-contour, chart-list-plugin, scenario-rate-first-capture, scenario-rate-sprint, media-per-device-token, capture-sidecar-protocol, plugin-results-payload-pocket, firebat-node-device, server-plugin-foundation, static-mmbrn-retirement, static-mmbrn-live-services, static-mmbrn-cutover, static-mmbrn-m6-alignment, static-mmbrn-rehydrate-parity, static-mmbrn-ingress-auth, static-mmbrn-target-provision, static-mmbrn-disposition-ledger, static-mmbrn-container, morning-journal-close-step, frame-holders-reassign-twenty, frame-holder-moderator-split, workflow-examples-marathon, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, meeting-evening-review-predicate, evening-chain-review-predicate, mfcc-compare-sprint, insight-mandate-for-new, frame-rails-2307, lpc-d-panel, lpc-c-office, lpc-b-wire, lpc-a-lib, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, membrane-node-runtime-remote, mp7b-rt7-prod-hardening, device-board-three-hosts-2026-06-26, db3h-s4-microphone-detectors, neural-free-tier-dataset-report, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, detection-alarm-loop-refactor, batch-collection-run-contour -->
+<!-- active в реестре: cowork-library-open-api, node-duty-ready-predicate, studio-package-av-refusal, session-digest-library-face, dedup-pairs-show-and-wait, obs-sentry-container, logging-observability-contour, chart-list-plugin, media-per-device-token, capture-sidecar-protocol, plugin-results-payload-pocket, firebat-node-device, server-plugin-foundation, static-mmbrn-retirement, static-mmbrn-live-services, static-mmbrn-cutover, static-mmbrn-m6-alignment, static-mmbrn-rehydrate-parity, static-mmbrn-ingress-auth, static-mmbrn-target-provision, static-mmbrn-disposition-ledger, static-mmbrn-container, frame-holders-reassign-twenty, workflow-examples-marathon, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, meeting-evening-review-predicate, evening-chain-review-predicate, mfcc-compare-sprint, insight-mandate-for-new, frame-rails-2307, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, membrane-node-runtime-remote, mp7b-rt7-prod-hardening, device-board-three-hosts-2026-06-26, db3h-s4-microphone-detectors, neural-free-tier-dataset-report, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, detection-alarm-loop-refactor, batch-collection-run-contour -->
 
-# MAIN_DAY_ISSUE — 2026-09-08
+# MAIN_DAY_ISSUE · 2026-09-25
 
 ## Метаданные
 
 | Поле | Значение |
-|------|----------|
-| `primaryFocusId` | `tariff-canon-transitions-2329` |
-| `primaryTitle` | Канон тарифов и поведение сервера при переходах (буфер 1 ГБ · upgrade/downgrade · переполнение · знание прибора) |
-| `githubIssue` | #2329 |
+|---|---|
+| `primaryFocusId` | `cabinet-registration-rollout` |
+| `primaryTitle` | Выкатка кабинета регистрации — день 3: получить лог отказа образа офиса и поднять второй кабинет на free-v1 |
+| `githubIssue` | #2369 |
 | `size` | L |
-| `promptPath` | — (фокус по owner-choice из замороженного снимка; карточка/промпт — по реестру `tariff-canon-transitions-2329`) |
-| `сгенерировано` | 2026-09-08 |
+| `promptPath` | `docs/meeting/cabinet-registration-promo/MEETING_ACTIVE.md` |
+| `сгенерировано` | 2026-09-25 |
+
+---
 
 ## Магистраль
 
-**tariff-canon-transitions-2329** — единственный обязательный мандат дня: письменно зафиксировать канон «буфер 1 ГБ на **всех** тарифах» и **проверяемое** поведение сервера (и знания прибора) при переходах free ↔ observatory ↔ checkpoint и при эпизоде переполнения. Вчерашний `cowork-buffer-full-stop` закрыл stop/413/плашку, но на дежурстве прибор снова упирается в буфер: без единого контракта «лимит одинаков / что делает сервер при смене тарифа / что знает прибор» stop-контур дыряв на границах сетки. Замер прод 08.09 (ствол `d0bcf8aa`): `tariff-grid.json` — `storage.buffer = 1 ГБ` у всех; база кабинета — `bufferQuotaBytes` 1 ГБ; расхождение сетка↔база по free `storage.hot` (512 МБ vs 1 ГБ); после self-перехода free→observatory userStorage 2 ГБ доехало, buffer 1 ГБ по канону — ожидание «на старшем тарифе буфер больше» в каноне **отсутствует**. Критерий успеха к вечеру: (1) канон 1 ГБ buffer везде принят как единственная правда сетки; (2) политика upgrade (закрытие эпизода переполнения при росте иных лимитов, знание прибора о переходе) и downgrade (занято > нового лимита: отказ / принять с переполнением / грация + stop по M1, вещдоки не трогать) зафиксированы и проверяемы; (3) прибор получает/держит знание лимита без «записи в никуда»; (4) расхождение free hot закрыто либо явным пересевом, либо принятым ADR «сетка — истина».
+Магистраль дня — `cabinet-registration-rollout`, третий день подряд по выбору владельца (owner-choice 24.09, ответ «1» на замороженный снимок). Выкатка остановлена на шаге 1 по правилу fail-closed: новый образ офиса не поднялся из-за несовместимости `RunRecord.mountTarget` для дома `background-cabinet/journal`; старый офис жив и healthy, прод не тронут.
+
+Сегодняшний мандат: получить дословный лог отказа сборки образа, подтвердить или опровергнуть класс поломки «stale image packages» (`verify:image-workspace-deps`), пересобрать образ и поднять второй кабинет. Параллельно — довнести пару `OFFICE_URL`/`OFFICE_API_TOKEN` и флаг `ALLOW_REGISTRATION=true` в `/etc/membrana/cabinet.env` на VDS (точка руки владельца, не автоматизируется).
+
+**Критерий успеха к вечеру:** второй кабинет владельца живёт на проде на free-v1, Issue #2369 и контейнер заседания закрыты; внешний смоук нового образа даёт ≥ 5 ok / 0 fail / 0 skip; `/health` 200; пишущий смоук панели (шаг 6) прогнан.
+
+---
 
 ## Подкрепление
 
-- **studio-stop-freeze-2328** — зависание Студии при STOP на доске после закрытия окна; контракт «полный буфер» руками владельца уже ок (окно/плашка/статус), остаётся fail-closed stop UI без клиппинга и без ложного «ещё пишем».
-- **team-debts-review-media** — построчный ревью oversized MERGED #2314 / #2316 / #2324; вердикт по локальным красным `@membrana/media-library-service` / `@membrana/background-media` при зелёном CI; хвосты #2313 В, красные #2311 / #2312 Г — без разворота в продуктовую тему дня.
+- **Починить `sequence`-контракт trail-агрегатора** (S) — третий день P1: пока `runId`-уникальность и глобальная монотонность в merge не гарантированы, счётчики манифеста ротации ненадёжны, гейт `secret-parser-built` технически непроходим; выполняется параллельно rollout после разблокирования класса поломки образа.
+- **Патч paths `office-image-smoke.yml`** (S) — без `packages/background-cabinet/**` и `apps/panel/**` в триггере CI молча пропускает регрессы образа; именно эта дыра позволила поломке 22.09 пройти незамеченной; патч < 30 мин, снимает целый класс «тихих блокеров» выкатки.
+
+---
 
 ## Перспективные
 
-- Прохождение `secret-parser-built` (резак + датированный проход с манифестом ротации) снимает амнистию на правку архива и открывает безопасный бэкап сессий без сырых секретов на сервере.
-- Зелёный test+build `media-library-service` / `background-media` разблокирует следующий коворк/интеграции в buffer/media.
-- Калибровка сторожа и разгрузка буфера до следующего дежурства — окно живой записи с рабочим D1 и местом под ночной улов.
+- Закрытие DoD `cabinet-registration-rollout` день 3 открывает движение к вехе `secret-parser-built`: второй кабинет становится стендом для проверки резака секретов и датированного прохода манифеста ротации.
+- Починка `sequence`-контракта снимает последний технический блок на вехе — trail станет надёжным вещдоком для прохождения гейта `secret-parser-built`, после чего амнистия архива снимается предикатом.
+- После стабилизации выкатки открывается старт `angelina-hostess-impl` (L) параллельной полосой — живой исполнитель на контуре хостинга, кандидат магистрали следующего дня.
+
+---
 
 ## Экспериментальные
 
-- Сверить один self-переход free→observatory на копии каталога/стейджа: до/после `bufferQuotaBytes`, `userStorage`, ответ прибора на лимит — без догадок «буфер вырос».
-- Прогнать downgrade-сценарий «занято > нового лимита» на фикстуре (отказ vs грация vs stop) и зафиксировать, какой из трёх путей канон выбирает до кода.
-- Dry-run пересева free `storage.hot` 512 МБ → 1 ГБ идемпотентным скриптом/миграцией на копии БД — узнаем, молчит ли повторный прогон.
+- **Проверить класс «stale image packages» экспериментально:** запустить `yarn verify:image-workspace-deps` на упавшем образе офиса, снять digest пакетов — узнаем, является ли stale-образ единственной причиной отказа шага 1 или есть иной класс поломки (рецидив 21.08 и 27.08 подтверждает, что класс реальный и повторяющийся).
+- **Проверить `sequence`-контракт на синтетике:** создать два параллельных `runId` с намеренно пересекающимися `sequence`, прогнать merge — узнаем, достаточно ли локального уникального счётчика или нужна глобальная монотонность для надёжного вещдока вехи.
+- **Добавить `friction`-запись в `docs/procedure-runs/trail/2026-09-24.jsonl`** (вручную, до первого коммита) — иначе агрегатор прочтёт день 24.09 как безупречный; кристалл-факт по итогу дня записать в граф правды.
+
+---
 
 ## Санитарные
 
-- Построчный ревью oversized MERGED без разворота: #2314 / #2316 / #2324 (`yarn code-review:pr`).
-- Красный test+build `@membrana/media-library-service` и `@membrana/background-media` — P1-хвост до любой новой интеграции в buffer/media.
-- Smoke аудио-пути после media@17473545: запись → квота → отказ/hold → три дороги UI, без клиппинга и «записи в никуда».
-- Граничные условия буфера (#2314/#2324): равенство квоте, +1 байт, fail-closed stop, порог N отказов.
-- Ритуальная помеха: автозабор артефактов + сверка свежести `MAIN_DAY_ISSUE` с фактом дня (не тащить вчерашний мандат).
+- `sequence`-контракт trail-агрегатора не починен третий день — блокирует веху `secret-parser-built` (гейт читает trail как вещдок); P1.
+- `office-image-smoke.yml` не сторожит `packages/background-cabinet/**` и `apps/panel/**` — молчаливые регрессы образа открыты; именно через эту дыру прошла поломка 22.09.
+- Lint `titleOf` (`react-hooks/exhaustive-deps`) в `apps/cabinet` — XS, третий день без правки.
+- `CURRENT_TASK.md` указывает на неактуальный эпик `detector-scoreboard` — дезориентирует холодную сессию.
+- Стендап-генератор `_daily-standup.mjs` читал магистраль из синтеза вместо `sources[0]` три дня подряд — патч #2410 влит 24.09, сегодня проверить предикатом что фикс жив.
+- `docs/tasks/main-day-assertions.json` → `assertions[]` пуст третий день, `sources[0]` несёт дату 24.09: перечеканка под сегодняшний день не сделана — расхождение зафиксировано, перечеканить после подтверждения owner-choice.
+
+---
 
 ## Почему это магистраль (таблица обоснования)
 
 | Утверждение | Происхождение | Первоисточник | Свежесть |
-|-------------|---------------|---------------|----------|
-| Владелец 08.09: магистраль — `tariff-canon-transitions-2329`; «темой сегодняшнего дня будет уточнение канона и корректное поведение сервера при переходах…»; «магистраль подтверждаю»; выбор №1 из снимка (tariff-canon-transitions-2329 · studio-stop-freeze-2328 · team-debts-review-media) | сессия | owner-choice@chat/magistral-08-09 → `docs/tasks/main-day-assertions.json` `sources[0]` | 2026-09-08 |
-| Фокус стендапа дня = канон тарифов / #2329, буфер 1 ГБ, upgrade/downgrade, переполнение, знание прибора | план | `docs/DAILY_STANDUP.md` (отражение owner-choice 08.09, не независимый выбор) | 2026-09-08 |
-| Замер прод: buffer 1 ГБ у всех в сетке и базе; free hot 512 МБ vs 1 ГБ; после free→observatory buffer остался 1 ГБ | код | ствол `d0bcf8aa` + `docs/tariffs/tariff-grid.json` + база Tariff / userStorage (замер в claim владельца) | 2026-09-08 |
-| Контракт «полный буфер» руками на приборе работает; STOP-freeze Студии — #2328 | сессия / issue | слово владельца 08.09 + issue #2328 | 2026-09-08 |
-| Не primary: angelina-hostess-impl / assets-container / batch-collection-run-contour без нового owner-choice | план | `docs/DAY_PLAN.md` top-3 + стендап «сознательно не делаем» | 2026-09-08 |
-| Не магистраль: `secret-parser-built` (#592) — веха горизонта, санитарный/экспериментальный хвост | план | `docs/STRATEGY_DAY.md` gate `secret-parser-built` | 2026-09-08 |
-| Детекционный контур / Этап 1.A / free-v1 benchmark — не магистраль | код | `docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md` §6; `detection-planning-priorities` | 2026-06-14 / канон |
+|---|---|---|---|
+| Владелец выбрал `cabinet-registration-rollout` ответом «1» на замороженный снимок топ-3 | `sources[0].claim` в `docs/tasks/main-day-assertions.json` | owner-choice@chat/magistral-24-09 (реплика владельца) | 2026-09-24 |
+| Выкатка остановлена на шаге 1: новый образ не поднялся, старый healthy | сессия / отчёт исполнителя | замер утра 24.09 в `sources[0]` | 2026-09-24 |
+| `turbo run typecheck build --filter=@membrana/background-office` — зелёный дважды (кеш и --force) | код / CI | замер ведущей против отчёта, зафиксирован в `sources[0]` | 2026-09-24 |
+| Класс поломки «stale image packages» — рецидив 21.08 и 27.08 | план / `sources[0]` | 1 источник, 2 отражения (21.08, 27.08) | 2026-09-24 |
+| `cabinet.env` без пары `OFFICE_URL`/`OFFICE_API_TOKEN` и `ALLOW_REGISTRATION=false` | сессия | отчёт исполнителя выкатки, зафиксирован в `sources[0]` | 2026-09-24 |
+| **Расхождение источников: `sources[0]` несёт дату 24.09, сегодня 25.09; перечеканка `main-day-assertions.json` каноном предписана и не сделана** | `docs/tasks/main-day-assertions.json` | сам файл | 2026-09-25 |
+| Магистраль взята с `sources[0]` (`main-day-assertions.json`); `morning-gates-state.json` на сегодня не проверялся — при наличии `magistral.day == 2026-09-25` приоритет у гейта по норме У1 31.07 | `docs/tasks/main-day-assertions.json` | правило У1 / канон | 2026-07-31 |
 
-**Счёт голосов по различным первоисточникам:** 1 источник owner-choice 08.09 (стендап и формулировка фокуса — **1 источник, 2 отражения** того же выбора). Независимые подпоры: замер кода/прода 08.09; issue #2328 как подкрепление, не конкурент. Синтез из DAY_PLAN top-3 **запрещён** — owner-source задан. Расхождение с top-3 плана: план не назначал магистраль (Q1), ждал слово владельца; слово пришло → `tariff-canon-transitions-2329`. Гейт `morning-gates-state.json` / `magistral` в этом прогоне **не** перебил `sources[0]` (свежий owner-choice того же дня); перечеканка assertions не требуется по У1.
+> Синтезировать магистраль запрещено. Выбор владелец сделал 24.09 — `sources[0].claim`. Сегодняшний стендап фокус не назначал (патч #2410 работает). Расхождение дат `sources[0]` (24.09) и текущего дня (25.09) — наблюдение нормы У1, не нарушение посылки; перечеканка предписана и вынесена в санитарные.
 
-## Посылки
+---
 
-Развилки A/B по «работы ещё нет» в смысле отсутствующего символа **нет**: предмет дня — **канон и контракт переходов**, не missing `fuse*`. Посылки отсутствия работы текущими маркерами probe (file/test/symbol) для «политика downgrade не записана» **невыразимы** честно → не выдумываем суррогат.
+## Посылки (фокус держится на «работа не завершена»)
 
 | Посылка | Маркер | Вердикт |
-|---------|--------|---------|
-| Сетка уже несёт buffer 1 ГБ на всех тарифах | `file:docs/tariffs/tariff-grid.json` (`storage.buffer`) | `violated` как «работы нет» — **канон buffer в сетке УЖЕ есть**; день = поведение переходов + закрытие расхождений, не «вписать 1 ГБ с нуля» |
-| Ожидание «старший тариф → больший buffer» отсутствует в каноне | замер claim 08.09 + сетка | `holds` (ожидание продукта ≠ код) — фиксируем явно в каноне дня |
+|---|---|---|
+| Новый образ офиса не поднят: контейнер с новым образом не в состоянии `running healthy` | `file:docs/evidence/cabinet-rollout-day3-image-up.txt` (артефакт приёмки, не существует) | `holds` — файла нет, образ не поднят |
+| Второй кабинет на free-v1 не живёт: Issue #2369 открыт | `file:docs/evidence/registry.jsonl` → запись `cabinet-registration-rollout` со статусом `done` отсутствует | `holds` — запись не закрыта |
+| `cabinet.env` не содержит пары `OFFICE_URL`/`OFFICE_API_TOKEN` | `file:/etc/membrana/cabinet.env` (VDS, не в репо; подтверждено отчётом исполнителя 24.09) | `holds` — пара отсутствует по замеру |
+| `office-image-smoke.yml` не сторожит `packages/background-cabinet/**` | `symbol:packages/background-cabinet` в `.github/workflows/office-image-smoke.yml` | `holds` — пути нет в триггере |
 
-**развилки нет, посылок «построить отсутствующее» не требуется** — мандат: уточнить канон, серверные переходы, знание прибора; при `violated` «буфера нет в сетке» работу «ввести 1 ГБ» **не** назначать.
+---
 
 ## Сегодня делаем
 
-1. Зафиксировать **письменный канон**: buffer = 1 ГБ на всех тарифах; что растёт на старших (nodes, hot/cold), что не растёт (buffer).
-2. Описать и согласовать **upgrade**: лимиты, закрытие эпизода переполнения при росте релевантного лимита (носитель #2319), доставка знания прибора о новом лимите (#2323).
-3. Описать и согласовать **downgrade**: занято > нового лимита — одна выбранная политика (отказ / принять сверху / грация) + stop по M1; вещдоки не трогать; same_tariff и параллельная смена — явно.
-4. Закрыть или ADR-нуть расхождение **free storage.hot** сетка 512 МБ ↔ база 1 ГБ; принцип «сетка — единственная правда», пересев идемпотентно.
-5. Проверяемый след: прибор после перехода **держит** актуальный buffer/quota без записи в никуда (smoke или протокол на стейдже/приборе по слову владельца).
-6. Подкрепление: минимальный bug-pass по #2328 (STOP-freeze) **без** подмены магистрали.
-7. Санитария параллельно: старт построчного ревью #2314/#2316/#2324 и статус красных media (вердикт, не полный рефакторинг).
+1. **Получить дословный лог отказа** сборки нового образа офиса (шаг 1 rollout) — скопировать `docker build` stderr в `docs/procedure-runs/cabinet-rollout/2026-09-25-build-fail.log`.
+2. **Запустить `yarn verify:image-workspace-deps`** на упавшем образе — подтвердить или опровергнуть класс «stale image packages»; результат зафиксировать в лог выше.
+3. **Пересобрать образ офиса** с устранённым классом поломки; прогнать внешний смоук ≥ 5 ok / 0 fail / 0 skip и `/health` 200.
+4. **Довнести пару и флаг в `cabinet.env`** на VDS вручную (`OFFICE_URL`, `OFFICE_API_TOKEN`, `ALLOW_REGISTRATION=true`) — точка руки владельца.
+5. **Прогнать пишущий смоук панели (шаг 6)** — живая дверь; зафиксировать результат.
+6. **Патч `office-image-smoke.yml`**: добавить `packages/background-cabinet/**` и `apps/panel/**` в триггер `pull_request`; PR с тестом.
+7. **Починить `sequence`-контракт trail-агрегатора** — синтетический тест двух пересекающихся `runId`; PR.
+
+---
 
 ## Definition of Done (фокус)
 
-- [ ] Канон «buffer 1 ГБ на всех тарифах» записан в принимаемом артефакте дня (док/ADR/issue #2329) без двусмысленности «старший = больший buffer».
-- [ ] Поведение сервера на **upgrade** специфицировано и проверяемо (лимиты, эпизод переполнения, ответ API).
-- [ ] Поведение сервера на **downgrade** при occupied > new limit — одна явная политика + stop/M1, вещдоки сохранены.
-- [ ] Правило знания прибора о лимите после перехода (#2323-контур) названо; нет «молчаливой» записи сверх квоты.
-- [ ] Расхождение free `storage.hot` сетка↔база закрыто кодом/пересевом **или** принятым ADR с датой.
-- [ ] same_tariff и гонка параллельной смены тарифа упомянуты в каноне (есть/как обрабатываем).
-- [ ] К вечеру: короткий протокол проверки (ручной или авто) «до/после перехода» по bufferQuota и ответу прибора.
-- [ ] #2329 не подменён UI-only или quota-only фиксом без контракта перехода.
+- [ ] Дословный лог отказа образа офиса получен и сохранён в `docs/procedure-runs/cabinet-rollout/2026-09-25-build-fail.log`
+- [ ] Класс поломки подтверждён или опровергнут `yarn verify:image-workspace-deps` с зафиксированным digest
+- [ ] Новый образ офиса пересобран и поднят: контейнер `running healthy`, внешний смоук ≥ 5 ok / 0 fail
+- [ ] `/etc/membrana/cabinet.env` содержит `OFFICE_URL`, `OFFICE_API_TOKEN`, `ALLOW_REGISTRATION=true`
+- [ ] Пишущий смоук панели (шаг 6) прогнан без ошибок
+- [ ] Issue #2369 закрыт, контейнер заседания закрыт
+- [ ] `friction`-запись за 24.09 добавлена в `docs/procedure-runs/trail/2026-09-24.jsonl`
+
+---
 
 ## Сознательно не делаем сегодня
 
-- Не поднимаем в primary L из top-3 без owner-choice: `angelina-hostess-impl`, `assets-container`, `batch-collection-run-contour`.
-- Не делаем `secret-parser-built` (#592) магистралью — только санитарный/экспериментальный хвост при слоте.
-- Не открываем детекционный контур (scoreboard / DSP benchmark / «Этап 1.A» / повтор free-v1).
-- Не стартуем новый cowork в buffer/media, пока красный test+build media-library / background-media не погашен или не вынесен вердиктом.
-- Не разворачиваем oversized #2314/#2316/#2324 как продуктовую тему дня — только точечный bug-pass/санитария.
-- Не чиним «только UI» или «только квоту» в обход контракта перехода тарифа.
+- **Не стартуем `angelina-hostess-impl` и `assets-container`** — обе L-задачи конкурируют за внимание с незакрытым rollout; старт без стабильного прода создаёт незакрытые полосы.
+- **Не запускаем DSP-бенчмарки** (harmonic / cepstral / spectral-flux / «Этап 1.A») — потолок эшелона 0 зафиксирован, повтор не даст новых чисел (FFT_METRICS_POTENTIAL_AND_LIMITS.md §6).
+- **Не чиним типы/контракты в стволе вслепую** — до дословного лога отказа класс поломки `unknown`; лечение по догадке — риск второго потерянного дня.
+- **Не открываем амнистию архива и не стартуем `mfcc-compare-sprint`** — оба блокированы до стабилизации выкатки.
+- **Не перечеканиваем `main-day-assertions.json`** до подтверждения owner-choice на 25.09 — перечеканка без слова владельца нарушает норму.
+
+---
 
 ## Вторично (если останется время)
 
-- Черновик полей манифеста ротации / dry-run резака на фикстуре (горизонт #592) — без смены primary.
-- Точечный fix STOP-freeze #2328, если канон переходов уже в стабильном тексте.
+- Lint `titleOf` (`react-hooks/exhaustive-deps`) в `apps/cabinet` — XS, правка одной строкой.
+- Обновить `CURRENT_TASK.md` — убрать ссылку на устаревший эпик `detector-scoreboard`, вписать `cabinet-registration-rollout`.
+
+---
 
 ## Зависимости и риски
 
-- **Риск:** починить плашку/квоту без контракта upgrade/downgrade → снова дыра на границе сетки при следующем self-переходе.
-- **Риск:** молчаливое «буфер должен расти на старшем тарифе» против канона 1 ГБ — конфликт ожиданий оператора; снимать текстом канона, не догадкой в коде.
-- **Блокер мягкий:** красные media test+build — не блокируют текст канона, но блокируют новый buffer/media cowork.
-- **Зависимость:** носители #2319 (эпизод переполнения), #2323 (знание прибора), сетка `docs/tariffs/tariff-grid.json` и база Tariff должны читаться из одного источника правды.
+- **Блокер 1:** дословный лог отказа образа офиса не получен → класс поломки остаётся `unknown` → пересборка наугад → третий потерянный день; первый шаг дня — именно этот лог.
+- **Блокер 2:** пара `OFFICE_URL`/`OFFICE_API_TOKEN` в `cabinet.env` — точка руки владельца, не автоматизируется; без неё второй кабинет не поднимется даже при живом образе.
+- **Риск:** если класс поломки окажется НЕ «stale packages», а иным (несовместимость схемы `RunRecord.mountTarget` на уровне миграций), потребуется дополнительный шаг миграции данных — заложить час на разведку.
+- **Риск:** `office-image-smoke.yml` не защищает `background-cabinet/**` — до влития патча любой коммит в кабинет может снова сломать образ молча; патч приоритизировать в первой половине дня.
+
+---
 
 ## Ссылки
 
-- [docs/DAILY_STANDUP.md](./DAILY_STANDUP.md)
-- [docs/DAY_PLAN.md](./DAY_PLAN.md)
-- [docs/STRATEGY_DAY.md](./STRATEGY_DAY.md)
-- [docs/tasks/main-day-assertions.json](./tasks/main-day-assertions.json) — `sources[0]` owner-choice 08.09
-- GitHub Issue #2329 (канон/переходы); подкрепления #2328, #2314, #2316, #2324, #2319, #2323
-- [docs/tariffs/tariff-grid.json](./tariffs/tariff-grid.json)
-- [docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md](./prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) — не детект-магистраль
+- [DAILY_STANDUP.md](docs/DAILY_STANDUP.md) — стендап 2026-09-25
+- [MEETING_ACTIVE.md](docs/meeting/cabinet-registration-promo/MEETING_ACTIVE.md) — порядок выкатки и сквозной приёмки
+- [GitHub Issue #2369](https://github.com/officefish/Membrana/issues/2369) — эпик регистрации по приглашению
+- [main-day-assertions.json](docs/tasks/main-day-assertions.json) — источник owner-choice (`sources[0]`)
+- [FFT_METRICS_POTENTIAL_AND_LIMITS.md](docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) — почему DSP-бенчмарки сегодня не делаем
