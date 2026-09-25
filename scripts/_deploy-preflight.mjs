@@ -317,6 +317,14 @@ export function allowDirtyReason(argv = process.argv.slice(2), env = process.env
   return reason || null;
 }
 
+export function allowDirtyBypassHint() {
+  return (
+    'Закоммить и запушь их, либо осознанно обойди gate: ' +
+    '--allow-dirty --allow-dirty-reason "почему" ' +
+    '(или DEPLOY_ALLOW_DIRTY=1 DEPLOY_DIRTY_REASON="почему").'
+  );
+}
+
 /**
  * Выполнить preflight-проверку перед деплоем.
  * Печатает диагностику; при найденных проблемах и без обхода вызывает process.exit(1).
@@ -435,7 +443,7 @@ export function deployPreflight({
   console.error(
     '\n  Прод собирается из origin/' +
       branch +
-      ' — локальные изменения в build context НЕ попадут в сборку.\n  Закоммить и запушь их, либо осознанно обойди gate: --allow-dirty-reason "почему" (или DEPLOY_DIRTY_REASON).\n',
+      ` — локальные изменения в build context НЕ попадут в сборку.\n  ${allowDirtyBypassHint()}\n`,
   );
 
   if (hardProblems.length > 0) {

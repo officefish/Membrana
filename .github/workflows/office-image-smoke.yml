@@ -19,10 +19,12 @@ on:
   pull_request:
     paths:
       - 'packages/background-office/**'
+      - 'packages/background-cabinet/**'
       - 'packages/core/**'
       - 'packages/services/rag/**'
       - 'packages/services/static-registry/**'
       - 'packages/plugin-contracts/**'
+      - 'apps/panel/**'
       - 'docs/evidence/registry.jsonl'
       - '.dockerignore'
       - 'scripts/lib/**'
@@ -34,10 +36,12 @@ on:
     branches: [main]
     paths:
       - 'packages/background-office/**'
+      - 'packages/background-cabinet/**'
       - 'packages/core/**'
       - 'packages/services/rag/**'
       - 'packages/services/static-registry/**'
       - 'packages/plugin-contracts/**'
+      - 'apps/panel/**'
       - 'docs/evidence/registry.jsonl'
       - '.dockerignore'
       - 'scripts/lib/**'
