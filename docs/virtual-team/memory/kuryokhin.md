@@ -5,8 +5,14 @@
 > (pinned вне бюджета — importance.json ПРОВОДИТСЯ в отбор; comparator ординалами,
 > recency — последний ключ). Полная лента и вытесненное — в архиве, не потеряно.
 
-Записей: 50 · бюджет 14359/14400 · статус ok
-<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 373 (причины в op-log) -->
+Записей: 50 · бюджет 14394/14400 · статус ok
+<!-- archive_from: docs/virtual-team/memory/archive/kuryokhin.jsonl · transferred: 374 (причины в op-log) -->
+
+### 2026-09-25 · позиция · team-evening-feedback
+
+> Kuryokhin **Оценка артефактов:** По моей зоне (Web Audio, эффекты, аудио-контур) день пустой — ни коммитов в `packages/services/*` DSP, ни правок в детекторах, ни изменений в edge-захвате. Стендап явно запрещает DSP-бенчмарки и это правильно (§6 FFT-limits). **Итоги дня:** По […]
+
+— источник: `docs/seanses/team-evening-feedback-2026-09-25.md#reply-1`
 
 ### 2026-09-24 · позиция · team-evening-feedback
 
@@ -296,14 +302,8 @@
 
 — источник: `docs/seanses/hunt-and-canon-m2-false-evidence-2026-08-27.md#reply-1`
 
-### 2026-08-27 · позиция · hunt-and-canon-m3-design-canon
+### 2026-08-04 · позиция · static-mmbrn-container-m3-access
 
-> С края продукта: оператор не слышит CSS, он видит красный «error» и акцентный бейдж. Если `--color-danger` говорит `#EF4444`, а `--er` DaisyUI — другое, на слух это фальшь в одном такте. Два независимых хора — не аранжировка, а разлад. Мне всё равно, hex в документе или в теме, […] _(реплик в сеансе: 6)_
+> Affine остаётся сменным человеческим движком под контейнером. Его нативные роли не определяют, что пользователь Membrana вправе сделать с материалом. _(реплик в сеансе: 6)_
 
-— источник: `docs/seanses/hunt-and-canon-m3-design-canon-2026-08-27.md#reply-1`
-
-### 2026-07-23 · позиция · llm-procedure-channels-m4a-agent-usage
-
-> Флаг worktree без OFFICE URL: emit no-op warn once — не спамить. Не писать события в git. _(реплик в сеансе: 4)_
-
-— источник: `docs/seanses/llm-procedure-channels-m4a-agent-usage-2026-07-23-2026-07-23.md#reply-1`
+— источник: `docs/seanses/static-mmbrn-container-m3-access-2026-08-04.md#reply-1`
