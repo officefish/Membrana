@@ -12,10 +12,10 @@
     "ownerAck": true,
     "day": "2026-09-24",
     "claimsProbe": {
-      "verdict": "soft",
-      "protocol": "docs/seanses/team-evening-feedback-2026-09-24.md",
-      "sha": "02c10be3a8f4",
-      "at": "2026-09-24T17:17:13.721Z"
+      "verdict": "hard",
+      "protocol": "docs/seanses/team-evening-feedback-2026-09-25.md",
+      "sha": "4473df999faf",
+      "at": "2026-09-25T13:31:31.922Z"
     },
     "gate": "evening:partner-swallow"
   },
