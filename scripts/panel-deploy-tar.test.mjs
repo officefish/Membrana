@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import { join } from 'node:path';
 import { test } from 'node:test';
 
 import { tarArgsForDirectory } from './_ssh-panel-deploy.mjs';
@@ -16,7 +15,7 @@ test('panel deploy tar не получает абсолютный Windows archiv
 
 test('panel deploy tar отказывает, если archive path нельзя сделать относительным (#2432)', () => {
   const sourceDir = 'C:\\repo\\apps\\panel\\dist';
-  const archivePath = join('D:\\other', 'panel-dist-1.tgz');
+  const archivePath = 'D:\\other\\panel-dist-1.tgz';
 
   assert.throws(
     () => tarArgsForDirectory({ archivePath, sourceDir }),

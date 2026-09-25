@@ -20,7 +20,7 @@
  */
 import { randomBytes } from 'node:crypto';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, unlinkSync } from 'node:fs';
-import { join, relative, resolve } from 'node:path';
+import { join, resolve, win32 } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { Client } from 'ssh2';
@@ -34,7 +34,7 @@ const tarPath = join(cacheDir, `panel-dist-${Date.now()}.tgz`);
 const remoteTar = '/tmp/panel-dist.tgz';
 
 export function tarArgsForDirectory({ archivePath, sourceDir }) {
-  const archiveArg = relative(sourceDir, archivePath).replace(/\\/gu, '/');
+  const archiveArg = win32.relative(sourceDir, archivePath).replace(/\\/gu, '/');
   if (!archiveArg || /^[A-Za-z]:/u.test(archiveArg) || archiveArg.startsWith('/')) {
     throw new Error(`panel deploy tar: archive path must be relative for tar, got ${archivePath}`);
   }
