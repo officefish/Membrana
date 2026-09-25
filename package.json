@@ -485,7 +485,8 @@
     "buffer:evacuate-evidence": "node scripts/buffer-evacuate-evidence.mjs",
     "buffer:watch": "node scripts/buffer-watch.mjs",
     "node:link-state": "node scripts/node-link-state.mjs",
-    "verify:declared-imports": "node scripts/verify-declared-imports.mjs"
+    "verify:declared-imports": "node scripts/verify-declared-imports.mjs",
+    "verify:adr-registry": "node scripts/verify-adr-registry.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
