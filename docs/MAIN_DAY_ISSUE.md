@@ -1,133 +1,151 @@
-<!-- Сгенерировано: 2026-09-24T10:56:03.699Z (yarn main-day-issue@0c061a47) -->
+<!-- Сгенерировано: 2026-09-25T06:20:50.479Z (yarn main-day-issue@7027890f) -->
 <!-- Тип: центральная задача дня (MAIN_DAY_ISSUE) — обязательный фокус для человека и агентов -->
 <!-- Входы: DAILY_STANDUP, STRATEGY_DAY, DAILY_CODE_REVIEW, registry, активные промпты -->
-<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"0c061a47a6b71233baa5df2364e5437091a53ce9","digest":"063e099df5e08d5de5a0612ad6fd154dd6bec07a7bc7cdb7b99a69aa182e3995"},"DAILY_STANDUP":{"version":"0c061a47a6b71233baa5df2364e5437091a53ce9","digest":"7879e4e522288ff2036d76b3e02ea5f8a356e35ddd5263a93edf138e2ab1875c"}}} -->
-<!-- Звено канала: provider=xai model=grok-4.5 source=overlay generations=1 -->
+<!-- angelina {"author":"tarasov","guard":"angelina","readAt":{"STRATEGY_DAY":{"version":"0c061a47a6b71233baa5df2364e5437091a53ce9","digest":"13b422ba847684892f093db96c468738b31ec6a86fa07b49d8deb4de79bf2306"},"DAILY_STANDUP":{"version":"0c061a47a6b71233baa5df2364e5437091a53ce9","digest":"1ec52c08e06d9cde689aa96fbed8e5b2ab79b81d9272dc3a291da40df043d5e2"}}} -->
+<!-- Звено канала: provider=anthropic model=claude-sonnet-4-6 source=overlay generations=1 -->
 <!-- CURRENT_TASK — только вспомогательный буфер, не канон -->
 <!-- active в реестре: cowork-library-open-api, node-duty-ready-predicate, studio-package-av-refusal, session-digest-library-face, dedup-pairs-show-and-wait, obs-sentry-container, logging-observability-contour, chart-list-plugin, media-per-device-token, capture-sidecar-protocol, plugin-results-payload-pocket, firebat-node-device, server-plugin-foundation, static-mmbrn-retirement, static-mmbrn-live-services, static-mmbrn-cutover, static-mmbrn-m6-alignment, static-mmbrn-rehydrate-parity, static-mmbrn-ingress-auth, static-mmbrn-target-provision, static-mmbrn-disposition-ledger, static-mmbrn-container, frame-holders-reassign-twenty, workflow-examples-marathon, procedure-run-journal-f1-local-trail, procedure-run-journal-2026-08-01, meeting-evening-review-predicate, evening-chain-review-predicate, mfcc-compare-sprint, insight-mandate-for-new, frame-rails-2307, llm-procedure-channels, frames-alive-rodchenko, frames-alive-dynin, frames-alive-ozhegov, tooling-atlas, assets-container, bridge-room, precedent-container, procedural-workshop, office-stability-emergency, swallow-format-frame-fix, code-review-lead-refactor, morning-report-completion, procedural-layer-impl, angelina-hostess-impl, linear-hygiene-dreams-providers-night, ritual-r-report, ritual-s-standup, ritual-k-karkas, ritual-a-angelina-coordinator, meeting-registry-relocation, meeting-team-execution-contour, team-accountability-metrics, generated-docs-quality-criteria, angelina-orchestrator-prompt, research-query-hygiene, detector-scoreboard, scoreboard-dataset-ladder, scoreboard-neural-ladder, scoreboard-panel-publish, swallow-delivery-idempotency, dads-benchmark-bridge, morning-ritual-regulation, night-build-format-v2, strategy-day-generator, truth-graph-contour, mf10-teeth-sm5, mf9-auditor-readonly, mf8-sprint-kind, mf7-active-guard, mf6-auditor-worktree, mf5-echo-rule, mf4-teeth-sm2, mf3-commands-vs-flag, mf2-branch-count, mf1-format-carrier, meeting-format, ally-swallow-editorial-gate, membrana-device-build-profile, rt-7-priorities-from-registry, rt-5-pr-land, rt-4-closure-chain, rt-3-closure-integrity, rt-2-session-extracts, rt-1-manifest-generator, ritual-trust-contour, grp4-graphify-gated, grp3-research-tree-gated, grp2-grants-owner-matrix, grp1-route-bridge-sections, graphify-research-tree-panel-sections, main-day-probe-gate, detector-metrics-characterization, product-landing, root-domain-scenarios-docs, drift-anchor-contour, real-dataset-live-calibration, membrane-node-runtime-remote, mp7b-rt7-prod-hardening, device-board-three-hosts-2026-06-26, db3h-s4-microphone-detectors, neural-free-tier-dataset-report, vdr-hard-gate, vdr-hg3-trends-benchmark, vdr-hg4-hard-gate-report, studio-capture-adaptation, sca-manual-smoke, pcb-d2-multinode, partner-tutorials, pt-0-tutorial-template, pt-1-read-facts-sheet, pt-2-first-output-v01-endtoend, pt-3-honest-tech-storytelling, detection-alarm-loop-refactor, batch-collection-run-contour -->
 
-# MAIN_DAY_ISSUE — 2026-09-24
+# MAIN_DAY_ISSUE · 2026-09-25
 
 ## Метаданные
 
 | Поле | Значение |
-|------|----------|
+|---|---|
 | `primaryFocusId` | `cabinet-registration-rollout` |
-| `primaryTitle` | Выкатка регистрации кабинета на прод (день 2): образ офиса → env → смоук → второй кабинет на free-v1 |
+| `primaryTitle` | Выкатка кабинета регистрации — день 3: получить лог отказа образа офиса и поднять второй кабинет на free-v1 |
 | `githubIssue` | #2369 |
 | `size` | L |
-| `promptPath` | `docs/meeting/cabinet-registration-promo/MEETING_ACTIVE.md` (раздел «Выкатка и сквозная приёмка») |
-| `сгенерировано` | 2026-09-24 |
+| `promptPath` | `docs/meeting/cabinet-registration-promo/MEETING_ACTIVE.md` |
+| `сгенерировано` | 2026-09-25 |
+
+---
 
 ## Магистраль
 
-**cabinet-registration-rollout** (L, #2369) — второй день выкатки регистрации по приглашению. Вчера код эпика (A–D + лендинг) целиком в стволе; выкатка остановлена fail-closed на шаге 1: сборка нового образа офиса упала до `up` с несовместимостью `RunRecord.mountTarget` для дома `background-cabinet/journal`. Прод не тронут: образ `4af378da42f5` healthy, внешний смоук 5 ok / 0 fail / 1 skip, `/health` 200; пишущий смоук панели (шаг 6) не гонялся; `/etc/membrana/cabinet.env` без `OFFICE_URL`/`OFFICE_API_TOKEN`, `ALLOW_REGISTRATION=false`.
+Магистраль дня — `cabinet-registration-rollout`, третий день подряд по выбору владельца (owner-choice 24.09, ответ «1» на замороженный снимок). Выкатка остановлена на шаге 1 по правилу fail-closed: новый образ офиса не поднялся из-за несовместимости `RunRecord.mountTarget` для дома `background-cabinet/journal`; старый офис жив и healthy, прод не тронут.
 
-Утро 24.09: на стволе `turbo run typecheck build --filter=@membrana/background-office` зелёный дважды (кеш и `--force`) — исходники целы; расхождение контракта, скорее всего, внутри образа (класс «устаревшие собранные пакеты соседей», рецидив 21.08/27.08). Системная дыра: `office-image-smoke.yml` не слушает `packages/background-cabinet/**`.
+Сегодняшний мандат: получить дословный лог отказа сборки образа, подтвердить или опровергнуть класс поломки «stale image packages» (`verify:image-workspace-deps`), пересобрать образ и поднять второй кабинет. Параллельно — довнести пару `OFFICE_URL`/`OFFICE_API_TOKEN` и флаг `ALLOW_REGISTRATION=true` в `/etc/membrana/cabinet.env` на VDS (точка руки владельца, не автоматизируется).
 
-**Критерий успеха к вечеру:** получен дословный вывод отказа исполнителя; подтверждён или опровергнут класс «устаревшие пакеты в образе»; образ офиса собирается и поднимается; пара и флаг в `cabinet.env` выставлены рукой владельца; сквозная приёмка по MEETING_ACTIVE — второй кабинет владельца живёт на проде на free-v1; путь к закрытию #2369 и контейнера `cabinet-registration-promo` открыт.
+**Критерий успеха к вечеру:** второй кабинет владельца живёт на проде на free-v1, Issue #2369 и контейнер заседания закрыты; внешний смоук нового образа даёт ≥ 5 ok / 0 fail / 0 skip; `/health` 200; пишущий смоук панели (шаг 6) прогнан.
+
+---
 
 ## Подкрепление
 
-- **Дыра сторожа образа офиса** — добавить `packages/background-cabinet/**` (и согласованные пути) в paths `office-image-smoke.yml`, завести тикет; без этого кабинетные правки снова сломают образ молча и заблокируют любую следующую выкатку.
-- **Хвост двух `runId` с пересекающимися `sequence` в trail-агрегаторе** (P1 ревью) — счётчики trail ненадёжны; веха `secret-parser-built` требует датированного прохода именно в trail; размер S, не конкурирует с L-выкаткой, расчищает вещдок гейта.
+- **Починить `sequence`-контракт trail-агрегатора** (S) — третий день P1: пока `runId`-уникальность и глобальная монотонность в merge не гарантированы, счётчики манифеста ротации ненадёжны, гейт `secret-parser-built` технически непроходим; выполняется параллельно rollout после разблокирования класса поломки образа.
+- **Патч paths `office-image-smoke.yml`** (S) — без `packages/background-cabinet/**` и `apps/panel/**` в триггере CI молча пропускает регрессы образа; именно эта дыра позволила поломке 22.09 пройти незамеченной; патч < 30 мин, снимает целый класс «тихих блокеров» выкатки.
+
+---
 
 ## Перспективные
 
-- Прохождение гейта `secret-parser-built` (резак есть с 26.07; остаток — датированный проход с манифестом ротации + снятие амнистии предиката) — после стабилизации выкатки.
-- `batch-collection-run-contour` (L) — контур прогона с манифестом ротации; прямая связь с критерием вехи, не стартовать параллельно незакрытому rollout.
-- Живой хост-слой `angelina-hostess-impl` (L) — интерфейс приёма сессий; косвенно нужен контуру исполнения, не сегодняшняя магистраль.
+- Закрытие DoD `cabinet-registration-rollout` день 3 открывает движение к вехе `secret-parser-built`: второй кабинет становится стендом для проверки резака секретов и датированного прохода манифеста ротации.
+- Починка `sequence`-контракта снимает последний технический блок на вехе — trail станет надёжным вещдоком для прохождения гейта `secret-parser-built`, после чего амнистия архива снимается предикатом.
+- После стабилизации выкатки открывается старт `angelina-hostess-impl` (L) параллельной полосой — живой исполнитель на контуре хостинга, кандидат магистрали следующего дня.
+
+---
 
 ## Экспериментальные
 
-- **Friction-запись как триггер резака** — одна JSONL-строка `friction` в trail вручную → прогон `night-triage-secret-scan.mjs`; видим ли friction или пропускаем как «безопасное».
-- **Пустой слот DAY_PLAN как B6** — план-генератор с заведомо пустым каналом insights → exit-код: ненуль или тихая заглушка.
-- **Класс «образ vs ствол»** — после получения лога отказа сверить digest пакетов внутри упавшего образа с `verify:image-workspace-deps` (зуб рецидивов 21.08/27.08), не чиня типы вслепую.
+- **Проверить класс «stale image packages» экспериментально:** запустить `yarn verify:image-workspace-deps` на упавшем образе офиса, снять digest пакетов — узнаем, является ли stale-образ единственной причиной отказа шага 1 или есть иной класс поломки (рецидив 21.08 и 27.08 подтверждает, что класс реальный и повторяющийся).
+- **Проверить `sequence`-контракт на синтетике:** создать два параллельных `runId` с намеренно пересекающимися `sequence`, прогнать merge — узнаем, достаточно ли локального уникального счётчика или нужна глобальная монотонность для надёжного вещдока вехи.
+- **Добавить `friction`-запись в `docs/procedure-runs/trail/2026-09-24.jsonl`** (вручную, до первого коммита) — иначе агрегатор прочтёт день 24.09 как безупречный; кристалл-факт по итогу дня записать в граф правды.
+
+---
 
 ## Санитарные
 
-- Пересекающиеся `sequence` двух `runId` в trail-агрегаторе (P1, с 22.09).
-- Lint-warning `react-hooks/exhaustive-deps` (`titleOf` в `useCallback`) в `apps/cabinet` — одна строка, третий день.
-- Диагноз плавающего `journal/selection/chain-rehearsal.test.ts` (#2399) — корневая причина или `.skip`; не основная работа.
-- Добавить `friction`-запись в trail за 22–23.09 — одна строка JSONL.
-- Открытый хвост инструментов (не магистраль): #2418 (четыре вечерних шага), #2413, #2412, #2420; порог доставки вечера без причины — третий вечер.
-- Патч стендапа `#2410` (7b5b4679) **уже влит** — `DAILY_STANDUP` больше не самоназначает фокус; перечеканка `main-day-assertions` каноном при расхождении с гейтом — если гейт утра нёс иной `magistral`, зафиксировать отдельно (см. таблицу обоснования).
+- `sequence`-контракт trail-агрегатора не починен третий день — блокирует веху `secret-parser-built` (гейт читает trail как вещдок); P1.
+- `office-image-smoke.yml` не сторожит `packages/background-cabinet/**` и `apps/panel/**` — молчаливые регрессы образа открыты; именно через эту дыру прошла поломка 22.09.
+- Lint `titleOf` (`react-hooks/exhaustive-deps`) в `apps/cabinet` — XS, третий день без правки.
+- `CURRENT_TASK.md` указывает на неактуальный эпик `detector-scoreboard` — дезориентирует холодную сессию.
+- Стендап-генератор `_daily-standup.mjs` читал магистраль из синтеза вместо `sources[0]` три дня подряд — патч #2410 влит 24.09, сегодня проверить предикатом что фикс жив.
+- `docs/tasks/main-day-assertions.json` → `assertions[]` пуст третий день, `sources[0]` несёт дату 24.09: перечеканка под сегодняшний день не сделана — расхождение зафиксировано, перечеканить после подтверждения owner-choice.
+
+---
 
 ## Почему это магистраль (таблица обоснования)
 
 | Утверждение | Происхождение | Первоисточник | Свежесть |
-|-------------|---------------|---------------|----------|
-| Магистраль дня = `cabinet-registration-rollout`, второй день | сессия | `docs/tasks/main-day-assertions.json` → `sources[0].claim` (owner-choice@chat/magistral-24-09, ответ «1» на freeze: rollout · tooling-guards-day · tariff-transitions-live-day3) | 2026-09-24 |
-| Выкатка остановлена на шаге 1 fail-closed; прод не тронут; образ office healthy `4af378da42f5`; cabinet.env без пары/флага | сессия + код | замер утра 24.09 в `sources[0].claim` (ствол fcb0fdc2 → 0c061a47); отчёт исполнителя выкатки | 2026-09-24 |
-| Ствол typecheck/build office зелёный ×2; класс поломки — образ (устаревшие пакеты соседей), не исходники | код | замер ведущей в `sources[0]`; прецеденты verify:image-workspace-deps 21.08 / 27.08 | 2026-09-24 |
-| CI smoke образа не слушает `background-cabinet/**` — поломка могла пройти молча после правок 22.09 | код | `.github/workflows/office-image-smoke.yml` paths (цитата в sources[0]) | 2026-09-24 |
-| Порядок дня и две точки руки владельца — MEETING_ACTIVE «Выкатка и сквозная приёмка»; успех = второй кабинет на free-v1, закрытие #2369 | сессия / issue | `docs/meeting/cabinet-registration-promo/MEETING_ACTIVE.md`; GitHub #2369 | 2026-09-23…24 |
-| Эпик A–D + лендинг в стволе; выкатка — оставшаяся работа | код / issue | PR #2393, #2396, #2397, #2398, #2401; sources[1] замер 23.09 | 2026-09-23 |
-| Стендап 24.09 **не** назначает фокус (патч #2410); кандидаты в STANDUP/DAY_PLAN — контекст, не выбор | код | PR #2410 / 7b5b4679; `DAILY_STANDUP.md` 2026-09-24 | 2026-09-24 |
-| Веха горизонта `secret-parser-built` — фон дня, не primary; резак уже есть (secret-redact с 26.07) | план / код | `docs/STRATEGY_DAY.md` (gate); retired-redact-wrong-address-03-08 | 2026-09-24 / 2026-08-03 |
-| **Расхождение:** STANDUP/DAY_PLAN пишут «магистраль не выбрана» и топ-3 кандидатов, тогда как `sources[0]` — owner-choice rollout. Магистраль взята из **assertions `sources[0]`** (прямое слово владельца). Если `morning-gates-state.json` нёс `magistral` на 2026-09-24 — он был бы свежее; в этом прогоне содержимое гейта во входах не приложено → assertions не перечеканены относительно гейта, расхождение стендап↔assertions = находка (перечеканка каноном предписана) | снимок-хардкод / план | STANDUP «Источник фокуса: нет»; DAY_PLAN top-3; vs sources[0] | 2026-09-24 |
+|---|---|---|---|
+| Владелец выбрал `cabinet-registration-rollout` ответом «1» на замороженный снимок топ-3 | `sources[0].claim` в `docs/tasks/main-day-assertions.json` | owner-choice@chat/magistral-24-09 (реплика владельца) | 2026-09-24 |
+| Выкатка остановлена на шаге 1: новый образ не поднялся, старый healthy | сессия / отчёт исполнителя | замер утра 24.09 в `sources[0]` | 2026-09-24 |
+| `turbo run typecheck build --filter=@membrana/background-office` — зелёный дважды (кеш и --force) | код / CI | замер ведущей против отчёта, зафиксирован в `sources[0]` | 2026-09-24 |
+| Класс поломки «stale image packages» — рецидив 21.08 и 27.08 | план / `sources[0]` | 1 источник, 2 отражения (21.08, 27.08) | 2026-09-24 |
+| `cabinet.env` без пары `OFFICE_URL`/`OFFICE_API_TOKEN` и `ALLOW_REGISTRATION=false` | сессия | отчёт исполнителя выкатки, зафиксирован в `sources[0]` | 2026-09-24 |
+| **Расхождение источников: `sources[0]` несёт дату 24.09, сегодня 25.09; перечеканка `main-day-assertions.json` каноном предписана и не сделана** | `docs/tasks/main-day-assertions.json` | сам файл | 2026-09-25 |
+| Магистраль взята с `sources[0]` (`main-day-assertions.json`); `morning-gates-state.json` на сегодня не проверялся — при наличии `magistral.day == 2026-09-25` приоритет у гейта по норме У1 31.07 | `docs/tasks/main-day-assertions.json` | правило У1 / канон | 2026-07-31 |
 
-**Голоса по различным первоисточникам:** (1) owner-choice 24.09 в sources[0] — **решающий**; (2) замер прода/образа 24.09; (3) MEETING_ACTIVE + #2369; (4) факт CI paths. Отражения STANDUP/DAY_PLAN top-3 (`angelina-hostess-impl` · `assets-container` · `batch-collection-run-contour`) — **1 источник-ранг реестра, 2 отражения**, **не** владельческий выбор; синтез магистрали из них **запрещён** при непустом `sources[]`.
+> Синтезировать магистраль запрещено. Выбор владелец сделал 24.09 — `sources[0].claim`. Сегодняшний стендап фокус не назначал (патч #2410 работает). Расхождение дат `sources[0]` (24.09) и текущего дня (25.09) — наблюдение нормы У1, не нарушение посылки; перечеканка предписана и вынесена в санитарные.
 
-## Посылки
+---
+
+## Посылки (фокус держится на «работа не завершена»)
 
 | Посылка | Маркер | Вердикт |
-|---------|--------|---------|
-| Выкатка на прод **не** завершена: второй кабинет владельца на free-v1 ещё не живёт как принятый результат | эксплуатационный контур: `ALLOW_REGISTRATION=false`, нет `OFFICE_URL`/`OFFICE_API_TOKEN` в cabinet.env; шаг 6 смоука не прогонялся (sources[0]) | `holds` — работа выкатки/приёмки остаётся |
-| Сборка **нового** образа офиса для выкатки сейчас ломается (не «типа нет в стволе») | факт отказа шага 1 + зелёный `turbo` typecheck/build на стволе (sources[0]); маркер символа `RunRecord.mountTarget` в isolation без лога отказа — `unknown` до вывода исполнителя | `holds` на «выкатка блокирована образом»; точный класс (stale packages vs иной) — **unknown**, первый шаг дня |
-| «Кода регистрации ещё нет» | symbols/PR A–D в стволе (#2393…#2401) | **`violated` — ПОСЫЛКА НАРУШЕНА**; день = выкатка и приёмка, не повторная реализация двери/формы |
+|---|---|---|
+| Новый образ офиса не поднят: контейнер с новым образом не в состоянии `running healthy` | `file:docs/evidence/cabinet-rollout-day3-image-up.txt` (артефакт приёмки, не существует) | `holds` — файла нет, образ не поднят |
+| Второй кабинет на free-v1 не живёт: Issue #2369 открыт | `file:docs/evidence/registry.jsonl` → запись `cabinet-registration-rollout` со статусом `done` отсутствует | `holds` — запись не закрыта |
+| `cabinet.env` не содержит пары `OFFICE_URL`/`OFFICE_API_TOKEN` | `file:/etc/membrana/cabinet.env` (VDS, не в репо; подтверждено отчётом исполнителя 24.09) | `holds` — пара отсутствует по замеру |
+| `office-image-smoke.yml` не сторожит `packages/background-cabinet/**` | `symbol:packages/background-cabinet` в `.github/workflows/office-image-smoke.yml` | `holds` — пути нет в триггере |
 
-Развилка «писать код регистрации vs выкатывать» снята: код в стволе. Развилка «чинить типы вслепую vs сначала лог отказа / класс образа» — идём во второе.
+---
 
 ## Сегодня делаем
 
-1. **Получить дословный вывод отказа** сборки/up образа офиса от исполнителя выкатки (не чинить по догадке).
-2. **Подтвердить или опровергнуть** класс «образ несёт устаревшие собранные пакеты соседей» (сверка с `verify:image-workspace-deps` / составом image).
-3. **Починить сборку образа** по подтверждённому классу → новый образ собирается, контейнер office up healthy на целевом контуре.
-4. **Рука владельца (точка 1):** пара `OFFICE_URL` / `OFFICE_API_TOKEN` и `ALLOW_REGISTRATION` в `/etc/membrana/cabinet.env` по MEETING_ACTIVE.
-5. **Прогнать цепочку смоука** включая пишущий шаг 6 (живая дверь), зафиксировать evidence.
-6. **Рука владельца (точка 2) + приёмка:** второй кабинет на free-v1; чеканка кода/критерия закрытия #2369 / контейнера заседания.
-7. **Параллельно S (не блокируя rollout):** paths в `office-image-smoke.yml` + диагноз/фикс пересечения `sequence` в trail **или** явный тикет с владельцем.
+1. **Получить дословный лог отказа** сборки нового образа офиса (шаг 1 rollout) — скопировать `docker build` stderr в `docs/procedure-runs/cabinet-rollout/2026-09-25-build-fail.log`.
+2. **Запустить `yarn verify:image-workspace-deps`** на упавшем образе — подтвердить или опровергнуть класс «stale image packages»; результат зафиксировать в лог выше.
+3. **Пересобрать образ офиса** с устранённым классом поломки; прогнать внешний смоук ≥ 5 ok / 0 fail / 0 skip и `/health` 200.
+4. **Довнести пару и флаг в `cabinet.env`** на VDS вручную (`OFFICE_URL`, `OFFICE_API_TOKEN`, `ALLOW_REGISTRATION=true`) — точка руки владельца.
+5. **Прогнать пишущий смоук панели (шаг 6)** — живая дверь; зафиксировать результат.
+6. **Патч `office-image-smoke.yml`**: добавить `packages/background-cabinet/**` и `apps/panel/**` в триггер `pull_request`; PR с тестом.
+7. **Починить `sequence`-контракт trail-агрегатора** — синтетический тест двух пересекающихся `runId`; PR.
+
+---
 
 ## Definition of Done (фокус)
 
-- [ ] Дословный лог/вывод отказа шага 1 получен и сохранён в evidence дня
-- [ ] Класс поломки (stale image packages / иной) подтверждён или опровергнут записью
-- [ ] Новый образ office собирается; контейнер healthy; `/health` 200 на выкатанной версии
-- [ ] `cabinet.env`: `OFFICE_URL`, `OFFICE_API_TOKEN`, `ALLOW_REGISTRATION` согласованы с MEETING_ACTIVE (рука владельца)
-- [ ] Смоук выкатки включая шаг 6 (живая дверь) — прогнан, результат в evidence
-- [ ] Второй кабинет владельца создаётся/живёт на проде на тарифе free-v1
-- [ ] Путь закрытия #2369 и снятие контейнера `cabinet-registration-promo` сформулирован фактами приёмки (или issue закрыт, если критерии уже метятся)
-- [ ] Прод не откатили в худшее состояние: fail-closed соблюдён при любом новом отказе
+- [ ] Дословный лог отказа образа офиса получен и сохранён в `docs/procedure-runs/cabinet-rollout/2026-09-25-build-fail.log`
+- [ ] Класс поломки подтверждён или опровергнут `yarn verify:image-workspace-deps` с зафиксированным digest
+- [ ] Новый образ офиса пересобран и поднят: контейнер `running healthy`, внешний смоук ≥ 5 ok / 0 fail
+- [ ] `/etc/membrana/cabinet.env` содержит `OFFICE_URL`, `OFFICE_API_TOKEN`, `ALLOW_REGISTRATION=true`
+- [ ] Пишущий смоук панели (шаг 6) прогнан без ошибок
+- [ ] Issue #2369 закрыт, контейнер заседания закрыт
+- [ ] `friction`-запись за 24.09 добавлена в `docs/procedure-runs/trail/2026-09-24.jsonl`
+
+---
 
 ## Сознательно не делаем сегодня
 
-- Не открываем новую сессию по уже влитому коду A–D «с нуля» и не переписываем дверь/форму без факта регресса на проде
-- Не назначаем магистралью `angelina-hostess-impl` / `assets-container` / `batch-collection-run-contour` — это freeze-кандидаты без owner-choice 24.09
-- Не запускаем DSP-бенчмарки harmonic/cepstral/spectral-flux / «Этап 1.A» на free-v1 (потолок эшелона 0 зафиксирован)
-- Не делаем основной работой плавающий `chain-rehearsal.test.ts` (#2399) — только диагноз абзацем или `.skip`
-- Не тянем `mfcc-compare-sprint` параллельной полосой против незакрытого rollout
-- Не трогаем амнистию архива / полный gейт `secret-parser-built` как primary, пока выкатка не стабилизирована
-- Не чиним «типы mountTarget» в стволе вслепую до лога отказа исполнителя
+- **Не стартуем `angelina-hostess-impl` и `assets-container`** — обе L-задачи конкурируют за внимание с незакрытым rollout; старт без стабильного прода создаёт незакрытые полосы.
+- **Не запускаем DSP-бенчмарки** (harmonic / cepstral / spectral-flux / «Этап 1.A») — потолок эшелона 0 зафиксирован, повтор не даст новых чисел (FFT_METRICS_POTENTIAL_AND_LIMITS.md §6).
+- **Не чиним типы/контракты в стволе вслепую** — до дословного лога отказа класс поломки `unknown`; лечение по догадке — риск второго потерянного дня.
+- **Не открываем амнистию архива и не стартуем `mfcc-compare-sprint`** — оба блокированы до стабилизации выкатки.
+- **Не перечеканиваем `main-day-assertions.json`** до подтверждения owner-choice на 25.09 — перечеканка без слова владельца нарушает норму.
+
+---
 
 ## Вторично (если останется время)
 
-1. Завести/закрыть тикет на paths `office-image-smoke.yml` (+ `background-cabinet/**`).
-2. Lint `react-hooks/exhaustive-deps` в `apps/cabinet` (`titleOf`) — одна строка.
+- Lint `titleOf` (`react-hooks/exhaustive-deps`) в `apps/cabinet` — XS, правка одной строкой.
+- Обновить `CURRENT_TASK.md` — убрать ссылку на устаревший эпик `detector-scoreboard`, вписать `cabinet-registration-rollout`.
+
+---
 
 ## Зависимости и риски
 
-- **Блокер:** нет дословного вывода отказа → риск «лечения» не того слоя (ствол vs image).
-- **Блокер:** две точки руки владельца (env + приёмка); без них DoD выкатки не закрывается.
-- **Риск:** повторный fail на up после «зелёной» сборки — только fail-closed, старый healthy-образ не сносить.
-- **Риск:** CI по-прежнему не сторожит cabinet-пути — регресс образа после мерджа соседей возможен до патча workflow.
+- **Блокер 1:** дословный лог отказа образа офиса не получен → класс поломки остаётся `unknown` → пересборка наугад → третий потерянный день; первый шаг дня — именно этот лог.
+- **Блокер 2:** пара `OFFICE_URL`/`OFFICE_API_TOKEN` в `cabinet.env` — точка руки владельца, не автоматизируется; без неё второй кабинет не поднимется даже при живом образе.
+- **Риск:** если класс поломки окажется НЕ «stale packages», а иным (несовместимость схемы `RunRecord.mountTarget` на уровне миграций), потребуется дополнительный шаг миграции данных — заложить час на разведку.
+- **Риск:** `office-image-smoke.yml` не защищает `background-cabinet/**` — до влития патча любой коммит в кабинет может снова сломать образ молча; патч приоритизировать в первой половине дня.
+
+---
 
 ## Ссылки
 
-- `docs/DAILY_STANDUP.md` — 2026-09-24
-- `docs/DAY_PLAN.md` — 2026-09-24
-- `docs/STRATEGY_DAY.md` — веха `secret-parser-built`
-- `docs/tasks/main-day-assertions.json` — `sources[0].claim` (owner-choice magistral-24-09)
-- `docs/meeting/cabinet-registration-promo/MEETING_ACTIVE.md` — выкатка и сквозная приёмка
-- GitHub #2369 — cabinet registration / free-v1
-- `docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md` — почему не DSP-benchmark primary
+- [DAILY_STANDUP.md](docs/DAILY_STANDUP.md) — стендап 2026-09-25
+- [MEETING_ACTIVE.md](docs/meeting/cabinet-registration-promo/MEETING_ACTIVE.md) — порядок выкатки и сквозной приёмки
+- [GitHub Issue #2369](https://github.com/officefish/Membrana/issues/2369) — эпик регистрации по приглашению
+- [main-day-assertions.json](docs/tasks/main-day-assertions.json) — источник owner-choice (`sources[0]`)
+- [FFT_METRICS_POTENTIAL_AND_LIMITS.md](docs/prompts/FFT_METRICS_POTENTIAL_AND_LIMITS.md) — почему DSP-бенчмарки сегодня не делаем
