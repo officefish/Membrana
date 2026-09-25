@@ -19,6 +19,7 @@ import {
 import {
   canMint,
   DEFAULT_MINT_MODE,
+  DEFAULT_MINT_MODE_HINT,
   defaultsForMode,
   grantsForMode,
   MINT_MODE_LABELS,
@@ -145,6 +146,8 @@ function MintCodeForm({ onMinted }: { onMinted: (code: MintedCode) => void }) {
               {MINT_MODE_LABELS[m]}
             </label>
           ))}
+          {/* #2435: умолчание — самый слабый режим, а не самый частый; форма говорит это вслух */}
+          <p className="text-xs opacity-70">{DEFAULT_MINT_MODE_HINT}</p>
         </div>
         <label className="form-control w-20">
           <span className="label-text text-xs">Дней</span>
